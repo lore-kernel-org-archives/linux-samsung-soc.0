@@ -1,60 +1,54 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCHv10 3/5] ARM: dts: exynos: unuse the slot-node and deprecate
- the supports-highspeed for dw-mmc
-Date: Mon, 18 Aug 2014 12:40:12 -0500
-Message-ID: <53F23A7C.3060404@samsung.com>
-References: <1407397082-32495-1-git-send-email-jh80.chung@samsung.com> <1407397082-32495-4-git-send-email-jh80.chung@samsung.com> <53F1F027.7060609@samsung.com> <53F20955.2050806@suse.de> <53F22FBB.4010801@samsung.com> <53F23283.8040303@suse.de>
+Subject: Re: [RESEND PATCH 1/2] ARM: dts: Improve Peach Pit and Pi power scheme
+Date: Mon, 18 Aug 2014 13:27:48 -0500
+Message-ID: <53F245A4.5010106@samsung.com>
+References: <1407757091-18730-1-git-send-email-javier.martinez@collabora.co.uk> <CAD=FV=UbckfwGucuPjEtHixVgF5K2fD5N3EPS2BH96DRDACuqw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <53F23283.8040303@suse.de>
-Sender: linux-mmc-owner@vger.kernel.org
-To: =?ISO-8859-1?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, tgih.jun@samsung.com, devicetree@vger.kernel.org, heiko@sntech.de, dinguyen@altera.com, Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yh0-f42.google.com ([209.85.213.42]:61440 "EHLO
+	mail-yh0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751676AbaHRS1v (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 18 Aug 2014 14:27:51 -0400
+In-Reply-To: <CAD=FV=UbckfwGucuPjEtHixVgF5K2fD5N3EPS2BH96DRDACuqw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 08/18/14 12:06, Andreas F=E4rber wrote:
-> Am 18.08.2014 18:54, schrieb Kukjin Kim:
->> On 08/18/14 09:10, Andreas F=E4rber wrote:
->>> Hi Jaehoon,
->>>
->>> Am 18.08.2014 14:23, schrieb Jaehoon Chung:
->>>> Socfpga and Rockchip were queued into each SoC tree.
->>>> I want to know whether this patch is queued or not into Samsung-So=
-c
->>>> tree.
->>>> Do you have any other plan for this patch?
->>>
->>> It isn't applied in his tree:
->>>
->>> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git=
-/
->>>
->>> In fact Kukjin has not applied any patches for 3 weeks now, which l=
-ikely
->>> means he's on vacation. I am hoping he will review this and the oth=
-er
->>> pending conflicting patches to decide on a merge order and fix any
->>> trivial conflicts himself. ;)
->>>
->> Oh, I thought it has been queued in previous merge window with my ac=
-k.
+On 08/11/14 10:46, Doug Anderson wrote:
+> Javier,
+>
+> On Mon, Aug 11, 2014 at 4:38 AM, Javier Martinez Canillas
+> <javier.martinez@collabora.co.uk>  wrote:
+>> The DeviceTree files for the Peach Pit and Pi machines have
+>> a simplistic model of the connections between the different
+>> regulators since not all the tps65090 regulators get their
+>> input supply voltage from the VDC. DCDC1-3, LD0-1 and fet7
+>> parent supply is indded VDC but the fet1-6 get their input
+>> supply from the DCDC1 and DCDC2 output voltage rails.
 >>
->> OK, I've applied this in my tree for 3.18.
+>> Update the DeviceTree to better reflect the real connections
+>> between tps65090 regulators. Having this information in the
+>> DTS is useful since FETs are switches that don't provide an
+>> output voltage so the regulator core needs to fetch the FET
+>> parent output voltage if the child voltage is queried.
+>>
+>> Signed-off-by: Javier Martinez Canillas<javier.martinez@collabora.co.uk>
+>> Acked-by: Mark Brown<broonie@linaro.org>
+>> ---
+>>   arch/arm/boot/dts/exynos5420-peach-pit.dts | 12 ++++++------
+>>   arch/arm/boot/dts/exynos5800-peach-pi.dts  | 12 ++++++------
+>>   2 files changed, 12 insertions(+), 12 deletions(-)
 >
-> So, are you dropping the snow mmc pinctrl patch Doug asked you to que=
-ue
-> before this one, and are you merging this with my exynos5250
-> cros-common/style cleanups yourself or do I need yet another respin?
+> Matches my schematics.  Kukjin: I think this could be applied to
+> for-next whenever it's convenient.
 >
-Hi Andreas,
+OK, I've applied this but 2nd in this series...
 
-Thanks for your gentle reminder and I think I can handle it when I appl=
-y=20
-it in my tree :)
-
-Note I will check them today and if any problems, I'll let you know.
-
-- Kukjin
+> Acked-by: Doug Anderson<dianders@chromium.org>
+>
+Thanks,
+Kukjin
