@@ -1,66 +1,61 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: sdhci_s3c_consider_clock scheduling while atomic - clk_round_rate
-Date: Mon, 18 Aug 2014 08:46:25 -0700
-Message-ID: <CAPtuhTiTTLqd1UGoVAnRa0EUHqbGTHm+=Avb=aS8sECOjOqAVQ@mail.gmail.com>
-References: <CAD8Lp45QV4ZcfXA86hoseKfJLLV_BJ-g0UABnOGPkJW1pMXhFw@mail.gmail.com>
- <53A99EB5.6010907@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v2 1/1] ARM: exynos_defconfig: Enable SBS battery support
+Date: Mon, 18 Aug 2014 11:26:56 -0500
+Message-ID: <53F22950.8020801@samsung.com>
+References: <1407779837-10981-1-git-send-email-javier.martinez@collabora.co.uk> <5085566.VKH3IuqYyi@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <53A99EB5.6010907@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: Daniel Drake <drake@endlessm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mmc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Tomasz Figa <tomasz.figa@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yh0-f48.google.com ([209.85.213.48]:45908 "EHLO
+	mail-yh0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750789AbaHRQ1X (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 18 Aug 2014 12:27:23 -0400
+Received: by mail-yh0-f48.google.com with SMTP id i57so4648663yha.7
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Aug 2014 09:27:22 -0700 (PDT)
+In-Reply-To: <5085566.VKH3IuqYyi@amdc1032>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 
-On Tue, Jun 24, 2014 at 8:52 AM, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Daniel,
+On 08/12/14 12:05, Bartlomiej Zolnierkiewicz wrote:
+> On Monday, August 11, 2014 07:57:17 PM Javier Martinez Canillas wrote:
+>> Many Exynos5 boards (e.g: Snow, Peach Pit and Pi) have
+>> a SBS-compliant gas gauge battery. Enable to built it
+>> so the needed support is available for these boards.
+>>
+>> Suggested-by: Doug Anderson<dianders@chromium.org>
+>> Signed-off-by: Javier Martinez Canillas<javier.martinez@collabora.co.uk>
+>> Acked-by: Kukjin Kim<kgene.kim@samsung.com>
+>> Reviewed-by: Doug Anderson<dianders@chromium.org>
 >
-> [adding Ulf, Chris and Mike to the discussion]
+> Thanks for updating the patch.
 >
-> On 24.06.2014 11:48, Daniel Drake wrote:
->> sdhci_s3c_set_clock is called from sdhci_do_set_ios with interrupts
->> disabled, and this calls into sdhci_s3c_consider_clock().
->>
->> The patch "mmc: sdhci-s3c: Cache bus clock rates" addressed some
->> scheduling while atomic in this function, but there are more issues
->> here, seen while testing 3.16-rc2 on exynos4412:
->>
->> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:103
->> in_atomic(): 1, irqs_disabled(): 128, pid: 75, name: mmcqd/0
->> Preemption disabled at:[<  (null)>]   (null)
->>
->> CPU: 0 PID: 75 Comm: mmcqd/0 Not tainted 3.16.0-rc2-00028-ge9fe7eb-dirty #77
->> [<c0016140>] (unwind_backtrace) from [<c0011e14>] (show_stack+0x10/0x14)
->> [<c0011e14>] (show_stack) from [<c05ce8a8>] (dump_stack+0x84/0xc4)
->> [<c05ce8a8>] (dump_stack) from [<c05d2de0>] (mutex_lock+0x1c/0x3c)
->> [<c05d2de0>] (mutex_lock) from [<c046214c>] (clk_prepare_lock+0x6c/0xf4)
->> [<c046214c>] (clk_prepare_lock) from [<c04625ac>] (clk_round_rate+0x10/0x2c)
->> [<c04625ac>] (clk_round_rate) from [<c0447628>] (sdhci_s3c_set_clock+0x4c/0x1e8)
->> [<c0447628>] (sdhci_s3c_set_clock) from [<c0447818>]
->> (sdhci_cmu_set_clock+0x54/0x140)
->> [<c0447818>] (sdhci_cmu_set_clock) from [<c0443a38>]
->> (sdhci_do_set_ios+0x138/0x58c)
->> [<c0443a38>] (sdhci_do_set_ios) from [<c0443864>] (sdhci_set_ios+0x28/0x34)
->>
->> clk_round_rate cannot be called here because it takes a mutex.
->>
->> sdhci_s3c_set_clock() also calls into clk_prepare_enable() which looks
->> like it could trigger this problem too.
+> Reviewed-by: Bartlomiej Zolnierkiewicz<b.zolnierkie@samsung.com>
+>
+Thanks, applied into fixes.
 
-Perhaps this clk_prepare_enable could be converted simply to
-clk_enable? Of course a call to clk_prepare call would still be
-required before entering into the section where clk_enable is called.
+- Kukjin
 
-Regards,
-Mike
-
->
-> Apparently this is related to generic sdhci code calling .set_clock()
-> under spin_lock_irqsave(). For reference, see sdhci_do_set_ios() and
-> sdhci_tasklet_finish().
->
-> Chris, Ulf, any suggestions?
->
-> Best regards,
-> Tomasz
+>>
+>> Changes since v1:
+>>   - Don't build it as a module since is the exception in exynos_defconfig.
+>>     Suggested by Bartlomiej Zolnierkiewicz.
+>>
+>>   arch/arm/configs/exynos_defconfig | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+>> index fc7d168..c390bb9 100644
+>> --- a/arch/arm/configs/exynos_defconfig
+>> +++ b/arch/arm/configs/exynos_defconfig
+>> @@ -77,6 +77,7 @@ CONFIG_SPI_S3C64XX=y
+>>   CONFIG_I2C_S3C2410=y
+>>   CONFIG_DEBUG_GPIO=y
+>>   CONFIG_POWER_SUPPLY=y
+>> +CONFIG_BATTERY_SBS=y
+>>   CONFIG_CHARGER_TPS65090=y
+>>   # CONFIG_HWMON is not set
+>>   CONFIG_THERMAL=y
