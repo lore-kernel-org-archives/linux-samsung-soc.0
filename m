@@ -1,13 +1,11 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v9 2/2] regulator: Add DT bindings for max77802 PMIC regulators
-Date: Mon, 18 Aug 2014 10:32:42 +0200
-Message-ID: <1408350762-15520-3-git-send-email-javier.martinez@collabora.co.uk>
-References: <1408350762-15520-1-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v9 0/6] Add Maxim 77802 clocks support
+Date: Mon, 18 Aug 2014 10:32:58 +0200
+Message-ID: <1408350784-15577-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1408350762-15520-1-git-send-email-javier.martinez@collabora.co.uk>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -17,77 +15,66 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mark Brown <broonie@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add Device Tree binding documentation for the regulators
-present in the Maxim 77802 Power Management IC.
+Hello Mike,
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- .../devicetree/bindings/regulator/max77802.txt     | 53 ++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/regulator/max77802.txt
+This series add support for the clocks present in the Maxim
+77802 Power Managment IC. Previously, the series was part
+of a bigger one [0] that aimed to add support for all the
+devices in the max77802 PMIC. But now the Maxim 77802 PMIC
+dependencies were already merged for 3.17 so the series can
+be split and each driver can go through the relevant tree.
 
-diff --git a/Documentation/devicetree/bindings/regulator/max77802.txt b/Documentation/devicetree/bindings/regulator/max77802.txt
-new file mode 100644
-index 0000000..5aeaffc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/regulator/max77802.txt
-@@ -0,0 +1,53 @@
-+Binding for Maxim MAX77802 regulators
-+
-+This is a part of device tree bindings of MAX77802 multi-function device.
-+More information can be found in bindings/mfd/max77802.txt file.
-+
-+The MAX77802 PMIC has 10 high-efficiency Buck and 32 Low-dropout (LDO)
-+regulators that can be controlled over I2C.
-+
-+Following properties should be present in main device node of the MFD chip.
-+
-+Optional node:
-+- regulators : The regulators of max77802 have to be instantiated
-+  under subnode named "regulators" using the following format.
-+
-+	regulator-name {
-+		standard regulator constraints....
-+	};
-+	refer Documentation/devicetree/bindings/regulator/regulator.txt
-+
-+The regulator node name should be initialized with a string to get matched
-+with their hardware counterparts as follow. The valid names are:
-+
-+	-LDOn 	:	for LDOs, where n can lie in ranges 1-15, 17-21, 23-30
-+			and 32-35.
-+			example: LDO1, LDO2, LDO35.
-+	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 10.
-+			example: BUCK1, BUCK5, BUCK10.
-+Example:
-+
-+	max77802@09 {
-+		compatible = "maxim,max77802";
-+		interrupt-parent = <&wakeup_eint>;
-+		interrupts = <26 0>;
-+		reg = <0x09>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		regulators {
-+			ldo11_reg: LDO11 {
-+				regulator-name = "vdd_ldo11";
-+				regulator-min-microvolt = <1900000>;
-+				regulator-max-microvolt = <1900000>;
-+				regulator-always-on;
-+			};
-+
-+			buck1_reg: BUCK1 {
-+				regulator-name = "vdd_mif";
-+				regulator-min-microvolt = <950000>;
-+				regulator-max-microvolt = <1300000>;
-+				regulator-always-on;
-+				regulator-boot-on;
-+			};
-+	};
--- 
-2.0.1
+The support needed for the clocks in the max77802 is very
+similar to the one for the ones in the max77686 so a generic
+driver was added that allows to remove the duplicated code
+for both drivers. Patch 01/06 adds a dt binding include that
+can be used to share the max77686 clocks between the driver
+and the DTS files. Patch 02/06 adds the generic clock driver
+for maxim pmic clocks and patch 03/06 converts the existing
+max77686 clock driver to the generic one. Patch 04/06 adds
+some improvements to the max77686 clock driver DT binding.
+Patch 05/06 adds the max77802 clock driver and finally patch
+06/06 adds the DT binding documentation for this driver.
+
+I kept the version numbering from the old series so this is
+version 9 although there were no changes on the max77802 clock
+driver since v5 of the old series and all the patches had been
+already acked by you so I hope there won't be issues to get
+them merged.
+
+The series were tested on an Exynos5250 Snow (max77686) and
+Exynos5420 Peach Pit (max77802) machines and applies cleanly
+to both 3.17-rc1 and today's linux-next (20140818).
+
+Javier Martinez Canillas (6):
+  clk: max77686: Add DT include for MAX77686 PMIC clock
+  clk: Add generic driver for Maxim PMIC clocks
+  clk: max77686: Convert to the generic max clock driver
+  clk: max77686: Improve Maxim 77686 PMIC clocks binding
+  clk: Add driver for Maxim 77802 PMIC clocks
+  clk: max77802: Add DT binding documentation
+
+ .../devicetree/bindings/clock/maxim,max77686.txt   |  16 +-
+ .../devicetree/bindings/clock/maxim,max77802.txt   |  44 +++++
+ drivers/clk/Kconfig                                |  11 ++
+ drivers/clk/Makefile                               |   2 +
+ drivers/clk/clk-max-gen.c                          | 192 +++++++++++++++++++++
+ drivers/clk/clk-max-gen.h                          |  32 ++++
+ drivers/clk/clk-max77686.c                         | 183 +-------------------
+ drivers/clk/clk-max77802.c                         |  98 +++++++++++
+ include/dt-bindings/clock/maxim,max77686.h         |  23 +++
+ include/dt-bindings/clock/maxim,max77802.h         |  22 +++
+ 10 files changed, 445 insertions(+), 178 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/maxim,max77802.txt
+ create mode 100644 drivers/clk/clk-max-gen.c
+ create mode 100644 drivers/clk/clk-max-gen.h
+ create mode 100644 drivers/clk/clk-max77802.c
+ create mode 100644 include/dt-bindings/clock/maxim,max77686.h
+ create mode 100644 include/dt-bindings/clock/maxim,max77802.h
+
+Best regards,
+Javier
