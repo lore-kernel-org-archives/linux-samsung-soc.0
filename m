@@ -1,57 +1,63 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 5/5] ARM: dts: add mipi dsi device node to exynos3250.dtsi
-Date: Mon, 18 Aug 2014 11:23:40 +0200
-Message-ID: <53F1C61C.2070805@samsung.com>
-References: <1408350093-26220-1-git-send-email-inki.dae@samsung.com>
- <1408350093-26220-6-git-send-email-inki.dae@samsung.com>
+From: Vikas Sajjan <vikas.sajjan@samsung.com>
+Subject: Re: [PATCH v3 0/2] Refactor the pm code to use DT based lookup
+Date: Mon, 18 Aug 2014 16:03:57 +0530
+Message-ID: <CAGm_ybjZBfmpv2t5kuCvd7F+vMh4mZK+1ULdXuZCRBtEjXMQuA@mail.gmail.com>
+References: <1407412789-1919-1-git-send-email-vikas.sajjan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:48056 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751091AbaHRJXs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Aug 2014 05:23:48 -0400
-In-reply-to: <1408350093-26220-6-git-send-email-inki.dae@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1407412789-1919-1-git-send-email-vikas.sajjan@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Vikas Sajjan <sajjan.linux@gmail.com>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Doug Anderson <dianders@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: airlied@linux.ie, devicetree@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-On 08/18/2014 10:21 AM, Inki Dae wrote:
-> Signed-off-by: Inki Dae <inki.dae@samsung.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
---
-Regards
-Andrzej
-> ---
->  arch/arm/boot/dts/exynos3250.dtsi |   15 +++++++++++++++
->  1 file changed, 15 insertions(+)
+Hi All,
+
+On Thu, Aug 7, 2014 at 5:29 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
+> Refactoring the pm.c to avoid using "soc_is_exynos" checks,
+> instead use the DT based lookup.
 >
-> diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-> index 2bab12f..480dedf 100644
-> --- a/arch/arm/boot/dts/exynos3250.dtsi
-> +++ b/arch/arm/boot/dts/exynos3250.dtsi
-> @@ -234,6 +234,21 @@
->  			status = "disabled";
->  		};
->  
-> +		dsi_0: dsi@11C80000 {
-> +			compatible = "samsung,exynos3250-mipi-dsi";
-> +			reg = <0x11C80000 0x10000>;
-> +			interrupts = <0 83 0>;
-> +			samsung,phy-type = <0>;
-> +			samsung,power-domain = <&pd_lcd0>;
-> +			phys = <&mipi_phy 1>;
-> +			phy-names = "dsim";
-> +			clocks = <&cmu CLK_DSIM0>, <&cmu CLK_SCLK_MIPI0>;
-> +			clock-names = "bus_clk", "pll_clk";
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			status = "disabled";
-> +		};
-> +
->  		mshc_0: mshc@12510000 {
->  			compatible = "samsung,exynos5250-dw-mshc";
->  			reg = <0x12510000 0x1000>;
+> While at it, move exynos5250 specific disabling of JPEG USE_RETENTION to pmu.c
+>
+> changes since v2:
+>         - Addressed Tomasz Figa's comments to unify the functions for exynos4
+>         and exynos5250.
+>         - Added new patch to move exynos5250 specific disabling of
+>                 JPEG USE_RETENTION to pmu.c
+>         - Addressed comment from Thomas Abraham.
+> changes since v1:
+>         - Address Kukjin Kim comments to respin this patch separately from
+>                 http://lists.infradead.org/pipermail/linux-arm-kernel/2014-July/272574.html
+>         - removed panic, returned if no PMU node found and added check in exynos_wkup_irq.
+>
+> Rebased on Kukjin Kim's tree, for-next branch
+>         https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
+>
+> Vikas Sajjan (2):
+>   ARM: EXYNOS: Move Disabling of JPEG USE_RETENTION for exynos5250 to
+>     pmu.c
+>   ARM: EXYNOS: Refactor the pm code to use DT based lookup
+>
+>  arch/arm/mach-exynos/pm.c       |  173 ++++++++++++++++++++++++++++-----------
+>  arch/arm/mach-exynos/pmu.c      |    6 ++
+>  arch/arm/mach-exynos/regs-pmu.h |    1 +
+>  3 files changed, 132 insertions(+), 48 deletions(-)
+
+
+Anymore  comments on this series...
+
+
+>
+> --
+> 1.7.9.5
+>
