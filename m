@@ -1,41 +1,44 @@
-From: Tim Kryger <tim.kryger@gmail.com>
-Subject: Re: [PATCH 1/1] mmc: core: Use regulator_get_voltage() if OCR mask is empty.
-Date: Sun, 17 Aug 2014 10:11:30 -0700
-Message-ID: <CAD7vxxKTk2Na9B4ae6EGT8HaKDRp0iu4zX1tB8DPtmePKbHrLw@mail.gmail.com>
-References: <1408019940-11153-1-git-send-email-javier.martinez@collabora.co.uk>
-	<CAD7vxxKvzxvmzgx=S5ZZn54ts99ca2TqBYFvY1SXZQZDkhjq3w@mail.gmail.com>
-	<20140814151958.GY17528@sirena.org.uk>
-	<CAD7vxxLHtk2ywHGoBtDp6x3-5BtDdaFnCdc_pfgMwq63Cg8Qow@mail.gmail.com>
-	<53EDBB5B.4000209@collabora.co.uk>
-	<CAD7vxxKvZCxnDpPn3X1Uch_6m7Hfj_vApNfxUS2Wex9BjjBUdg@mail.gmail.com>
-	<20140815222914.GM17528@sirena.org.uk>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] cpufreq: exynos: free memory immediately on unknown SoC
+Date: Mon, 18 Aug 2014 13:29:53 +0530
+Message-ID: <CAKohpoke=3vGOoQ9s0snYKZxA_5xMuPtGfAS9uJp1xLJnBwuEA@mail.gmail.com>
+References: <1408248374-1638-1-git-send-email-arjun024@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:34057 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751371AbaHQRLa (ORCPT
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:63981 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750951AbaHRH7x (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 17 Aug 2014 13:11:30 -0400
-In-Reply-To: <20140815222914.GM17528@sirena.org.uk>
+	Mon, 18 Aug 2014 03:59:53 -0400
+Received: by mail-ob0-f174.google.com with SMTP id vb8so3689143obc.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Aug 2014 00:59:53 -0700 (PDT)
+In-Reply-To: <1408248374-1638-1-git-send-email-arjun024@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <chris@printf.net>, Seungwon Jeon <tgih.jun@samsung.com>, Haijun Zhang <Haijun.Zhang@freescale.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Arjun Sreedharan <arjun024@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Fri, Aug 15, 2014 at 3:29 PM, Mark Brown <broonie@kernel.org> wrote:
-> On Fri, Aug 15, 2014 at 07:19:41AM -0700, Tim Kryger wrote:
+On 17 August 2014 09:36, Arjun Sreedharan <arjun024@gmail.com> wrote:
+> Signed-off-by: Arjun Sreedharan <arjun024@gmail.com>
+> ---
+>  drivers/cpufreq/exynos-cpufreq.c | 1 +
+>  1 file changed, 1 insertion(+)
 >
->> That is a little different from my suggestion where the constraints
->> check is skipped when the regulator output is fixed.  It effectively
->> does this now when the regulator itself provides the fixed voltage.
->> However, the checks aren't skipped when that fixed voltage is coming
->> from an ancestor.  Why the difference?
->
-> Nobody has written suitable code, and please bear in mind that even if
-> the code is written there will probably be cases where it's too
-> expensive for whatever reason so Javier's change is going to be needed.
+> diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+> index 1e0ec57..e47d165 100644
+> --- a/drivers/cpufreq/exynos-cpufreq.c
+> +++ b/drivers/cpufreq/exynos-cpufreq.c
+> @@ -178,6 +178,7 @@ static int exynos_cpufreq_probe(struct platform_device *pdev)
+>                 ret = exynos5250_cpufreq_init(exynos_info);
+>         } else {
+>                 pr_err("%s: Unknown SoC type\n", __func__);
+> +               kfree(exynos_info);
+>                 return -ENODEV;
+>         }
 
-I fail to see how replicating similar logic at all current
-regulator_list_voltage call sites would be any more efficient than
-handling this directly in regulator core.
+Apart from the fact that we could have added some logs and improved
+$subject a bit,
+it looks fine.
+
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
