@@ -1,79 +1,51 @@
-From: Punit Agrawal <punit.agrawal@arm.com>
-Subject: Re: [PATCH 1/2] PM / devfreq: Export helper functions for drivers
-Date: Mon, 18 Aug 2014 14:15:48 +0100
-Message-ID: <9hhsikuey63.fsf@arm.com>
-References: <2126088679.390471407886644188.JavaMail.weblogic@epmlwas02a>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 2/2] Input: atmel_mxt_ts - Add keycodes array example
+Date: Mon, 18 Aug 2014 15:20:04 +0200
+Message-ID: <53F1FD84.5020901@collabora.co.uk>
+References: <1407372486-25881-1-git-send-email-javier.martinez@collabora.co.uk> <1407372486-25881-2-git-send-email-javier.martinez@collabora.co.uk> <53E37329.4020002@itdev.co.uk> <53E4E41D.4070703@collabora.co.uk> <53EDF6B4.7080804@collabora.co.uk> <53EE307E.8060507@itdev.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from fw-tnat.cambridge.arm.com ([217.140.96.21]:53104 "EHLO
-	cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751488AbaHRNQ1 convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Aug 2014 09:16:27 -0400
-In-Reply-To: <2126088679.390471407886644188.JavaMail.weblogic@epmlwas02a>
-	(=?utf-8?B?Iu2VqOuqheyjvCIncw==?= message of "Tue, 12 Aug 2014 23:37:25
- +0000 (GMT)")
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <53EE307E.8060507@itdev.co.uk>
+Sender: linux-input-owner@vger.kernel.org
+To: Nick Dyer <nick.dyer@itdev.co.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Stephen Warren <swarren@nvidia.com>, Yufeng Shen <miletus@chromium.org>, Benson Leung <bleung@chromium.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: myungjoo.ham@samsung.com
-Cc: "Hernandez, Carlos" <ceh@ti.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "orjan.eide@arm.com" <orjan.eide@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?utf-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>
 
-=ED=95=A8=EB=AA=85=EC=A3=BC <myungjoo.ham@samsung.com> writes:
+Hello Nick,
 
->> ------- Original Message -------
->> Sender : Hernandez, Carlos<ceh@ti.com>
->> Date : 2014-08-12 22:49 (GMT+09:00)
->> Title : RE: [PATCH 1/2] PM / devfreq: Export helper functions for dr=
-ivers
->>=20
->> Acked-By: Carlos Hernandez=20
->>=20
->> -----Original Message-----
->> From: linux-kernel-owner@vger.kernel.org [mailto:linux-kernel-owner@=
-vger.kernel.org] On Behalf Of Punit Agrawal
->> Sent: Friday, July 18, 2014 10:10 AM
->> To: linux-pm@vger.kernel.org; linux-samsung-soc@vger.kernel.org
->> Cc: orjan.eide@arm.com; linux-kernel@vger.kernel.org; linux-arm-kern=
-el@lists.infradead.org; MyungJoo Ham; Kyungmin Park
->> Subject: [PATCH 1/2] PM / devfreq: Export helper functions for drive=
-rs
->>=20
->> From: =C3=98rjan Eide=20
->>=20
->> These functions are indended for use by drivers and should be availa=
-ble also when the driver is built as a module.>=20
->>=20
->> Cc: MyungJoo Ham=20
->> Cc: Kyungmin Park=20
->> Signed-off-by: =C3=98rjan Eide=20
+On 08/15/2014 06:08 PM, Nick Dyer wrote:
+>> 
+>> Any comments on this? I would really appreciate if you can expand on how
+>> this DT property is supposed to be used so I can re-spin the atmel support
+>> patch for Peach boards.
+> 
+> The below patch improves the documentation for the gpio-property. Stephen
+> Warren has a good example here:
+> https://github.com/swarren/linux-tegra/commit/09789801
+> 
+> trackpad@4b {
+>   compatible = "atmel,maxtouch";
+>   reg = <0x4b>;
+>   interrupt-parent = <&gpio>;
+>   interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_LEVEL_LOW>;
+>   linux,gpio-keymap = <0 0 0 BTN_LEFT>;
+> };
+> 
+> This maps BTN_LEFT to the 4th bit of the T19 message. I haven't looked up
+> what GPIO number that corresponds to on the mXT224SL that he has, it varies
+> with the particular maXTouch device you have.
+> 
+> Hope this helps.
 >
-> Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
->
-> There will be some modifications to this patch for consistency with
-> other pending patches, but please don't worry about them. I'll handle
-> them while merging this.
 
-Great! Thanks MyungJoo.
+Thanks a lot for the patch and the pointer to Stephen's DTS. I'll do some
+experimentation then to figure out the right values since I don't have
+proper documentation. Fortunately the Chrome OS 3.8 downstream driver
+works on -next so I can use evdev to compare if both drivers behave the same.
 
->
->
-> Cheers,
-> MyungJoo.
->
->> ---
->> drivers/devfreq/devfreq.c |    3 +++
->> 1 file changed, 3 insertions(+)
->
->
->
-> --
-> MyungJoo Ham (=ED=95=A8=EB=AA=85=EC=A3=BC), PHD
-> Frontier CS Lab, Software Center
-> Samsung Electronics
-> Cell: +82-10-6714-2858--
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" i=
-n
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Signed-off-by: Nick Dyer <nick.dyer@itdev.co.uk>
+
+Best regards,
+Javier
