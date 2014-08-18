@@ -1,63 +1,76 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: Re: [PATCH v3 0/2] Refactor the pm code to use DT based lookup
-Date: Mon, 18 Aug 2014 16:03:57 +0530
-Message-ID: <CAGm_ybjZBfmpv2t5kuCvd7F+vMh4mZK+1ULdXuZCRBtEjXMQuA@mail.gmail.com>
-References: <1407412789-1919-1-git-send-email-vikas.sajjan@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 3/5] usb: phy: samsung: remove old USB 2.0 PHY driver
+Date: Mon, 18 Aug 2014 13:02:49 +0200
+Message-ID: <3463371.y41zGdSnsX@amdc1032>
+References: <1408026327-31437-1-git-send-email-b.zolnierkie@samsung.com>
+ <1408026327-31437-4-git-send-email-b.zolnierkie@samsung.com>
+ <34FCC3B2EE8F481198CEF3037F168FB3@sisodomain.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1407412789-1919-1-git-send-email-vikas.sajjan@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Vikas Sajjan <sajjan.linux@gmail.com>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Doug Anderson <dianders@chromium.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <34FCC3B2EE8F481198CEF3037F168FB3-htTAPpqcxwk4Q++5jOxPmw@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Brown <broonie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi All,
 
-On Thu, Aug 7, 2014 at 5:29 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
-> Refactoring the pm.c to avoid using "soc_is_exynos" checks,
-> instead use the DT based lookup.
->
-> While at it, move exynos5250 specific disabling of JPEG USE_RETENTION to pmu.c
->
-> changes since v2:
->         - Addressed Tomasz Figa's comments to unify the functions for exynos4
->         and exynos5250.
->         - Added new patch to move exynos5250 specific disabling of
->                 JPEG USE_RETENTION to pmu.c
->         - Addressed comment from Thomas Abraham.
-> changes since v1:
->         - Address Kukjin Kim comments to respin this patch separately from
->                 http://lists.infradead.org/pipermail/linux-arm-kernel/2014-July/272574.html
->         - removed panic, returned if no PMU node found and added check in exynos_wkup_irq.
->
-> Rebased on Kukjin Kim's tree, for-next branch
->         https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
->
-> Vikas Sajjan (2):
->   ARM: EXYNOS: Move Disabling of JPEG USE_RETENTION for exynos5250 to
->     pmu.c
->   ARM: EXYNOS: Refactor the pm code to use DT based lookup
->
->  arch/arm/mach-exynos/pm.c       |  173 ++++++++++++++++++++++++++++-----------
->  arch/arm/mach-exynos/pmu.c      |    6 ++
->  arch/arm/mach-exynos/regs-pmu.h |    1 +
->  3 files changed, 132 insertions(+), 48 deletions(-)
+Hi,
 
+On Thursday, August 14, 2014 08:07:40 PM Vivek Gautam wrote:
+> Hi Bartlomiej Zolnierkiewicz,
+> 
+> 
+> On Thursday, August 14, 2014 7:55 PM, Bartlomiej Zolnierkiewicz 
+> <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote
+> 
+> Subject: [PATCH 3/5] usb: phy: samsung: remove old USB 2.0 PHY driver
+> 
+> I would say it co-incidence that both of us sent the patch-series for 
+> similar cleanup at the same time. ;)
 
-Anymore  comments on this series...
+:)
 
+> There's one thing that I would want to comment here, since we don't have any 
+> new usb-phy driver for S3C64XX,
+> so we can't simply remove this entire driver.
+> I have posted my patch-series [1], which does cleanup while keeping the 
+> support for S3C64XX.
 
->
-> --
-> 1.7.9.5
->
+AFAIK S3C64XX code from drivers/usb/phy/phy-samsung-usb2.c has
+never been used as this platform still uses its own code from
+arch/arm/mach-s3c64xx/setup-usb-phy.c (there are no users in
+the kernel tree of either s3c64xx-usb2phy platform device or
+"samsung,s3c64xx-usb2phy" DT compatible) .  Therefore I think
+that the entire drivers/usb/phy/phy-samsung-usb2.c driver
+should be removed (somebody with the hardware can as well add
+S3C64XX support to the new drivers/phy/phy-samsung-usb2.c
+driver and port the platform to use it).
+
+> Please let me know what you think of that series.
+> 
+> [1] [PATCH 0/7] usb-phy: samsung: Cleanup the unused drivers
+>       https://lkml.org/lkml/2014/8/14/235
+
+Looks fine to me except the above mentioned issue with S3C64XX
+platform support.
+
+> > drivers/usb/phy/phy-samsung-usb2 driver got replaced by
+> > drivers/phy/phy-samsung-usb2 one and is no longer used.
+> >
+> > Cc: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > Cc: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
