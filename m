@@ -1,14 +1,14 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 3/5] ARM: dts: add fimd device node to exynos3250.dsti
-Date: Mon, 18 Aug 2014 11:23:02 +0200
-Message-ID: <53F1C5F6.5050406@samsung.com>
+Subject: Re: [PATCH 4/5] ARM: dts: add mipi_phy device node to exynos3250.dtsi
+Date: Mon, 18 Aug 2014 11:23:17 +0200
+Message-ID: <53F1C605.4060703@samsung.com>
 References: <1408350093-26220-1-git-send-email-inki.dae@samsung.com>
- <1408350093-26220-4-git-send-email-inki.dae@samsung.com>
+ <1408350093-26220-5-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1408350093-26220-4-git-send-email-inki.dae@samsung.com>
+In-reply-to: <1408350093-26220-5-git-send-email-inki.dae@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -23,35 +23,32 @@ Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.ker
 List-Id: linux-samsung-soc@vger.kernel.org
 
 On 08/18/2014 10:21 AM, Inki Dae wrote:
+> This patch adds mipi_phy device node to reset, disable and enable
+> DSIM and CSIS PHY.
+>
 > Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 --
 Regards
 Andrzej
 > ---
->  arch/arm/boot/dts/exynos3250.dtsi |   12 ++++++++++++
->  1 file changed, 12 insertions(+)
+>  arch/arm/boot/dts/exynos3250.dtsi |    6 ++++++
+>  1 file changed, 6 insertions(+)
 >
 > diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-> index 1d52de6..0ec2584 100644
+> index 0ec2584..2bab12f 100644
 > --- a/arch/arm/boot/dts/exynos3250.dtsi
 > +++ b/arch/arm/boot/dts/exynos3250.dtsi
-> @@ -216,6 +216,18 @@
->  			interrupts = <0 240 0>;
+> @@ -132,6 +132,12 @@
+>  			reg = <0x10020000 0x4000>;
 >  		};
 >  
-> +		fimd: fimd@11c00000 {
-> +			compatible = "samsung,exynos3250-fimd";
-> +			reg = <0x11c00000 0x30000>;
-> +			interrupt-names = "fifo", "vsync", "lcd_sys";
-> +			interrupts = <0 84 0>, <0 85 0>, <0 86 0>;
-> +			clocks = <&cmu CLK_SCLK_FIMD0>, <&cmu CLK_FIMD0>;
-> +			clock-names = "sclk_fimd", "fimd";
-> +			samsung,power-domain = <&pd_lcd0>;
-> +			samsung,sysreg = <&sys_reg>;
-> +			status = "disabled";
+> +		mipi_phy: video-phy@10020710 {
+> +			compatible = "samsung,s5pv210-mipi-video-phy";
+> +			reg = <0x10020710 8>;
+> +			#phy-cells = <1>;
 > +		};
 > +
->  		mshc_0: mshc@12510000 {
->  			compatible = "samsung,exynos5250-dw-mshc";
->  			reg = <0x12510000 0x1000>;
+>  		pd_cam: cam-power-domain@10023C00 {
+>  			compatible = "samsung,exynos4210-pd";
+>  			reg = <0x10023C00 0x20>;
