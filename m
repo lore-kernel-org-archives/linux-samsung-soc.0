@@ -1,51 +1,135 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 2/2] Input: atmel_mxt_ts - Add keycodes array example
-Date: Mon, 18 Aug 2014 15:20:04 +0200
-Message-ID: <53F1FD84.5020901@collabora.co.uk>
-References: <1407372486-25881-1-git-send-email-javier.martinez@collabora.co.uk> <1407372486-25881-2-git-send-email-javier.martinez@collabora.co.uk> <53E37329.4020002@itdev.co.uk> <53E4E41D.4070703@collabora.co.uk> <53EDF6B4.7080804@collabora.co.uk> <53EE307E.8060507@itdev.co.uk>
+From: Vikas Sajjan <vikas.sajjan@samsung.com>
+Subject: Re: [PATCH v3 1/2] ARM: EXYNOS: Move Disabling of JPEG USE_RETENTION
+ for exynos5250 to pmu.c
+Date: Mon, 18 Aug 2014 18:51:46 +0530
+Message-ID: <CAGm_ybiKm7sZB0zPoQ99b2+jZ8h=+48zjv24QvaC5GcccAPORg@mail.gmail.com>
+References: <1407412789-1919-1-git-send-email-vikas.sajjan@samsung.com>
+	<1407412789-1919-2-git-send-email-vikas.sajjan@samsung.com>
+	<53F1EDB4.8040906@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <53EE307E.8060507@itdev.co.uk>
-Sender: linux-input-owner@vger.kernel.org
-To: Nick Dyer <nick.dyer@itdev.co.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Stephen Warren <swarren@nvidia.com>, Yufeng Shen <miletus@chromium.org>, Benson Leung <bleung@chromium.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f171.google.com ([74.125.82.171]:62663 "EHLO
+	mail-we0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751488AbaHRNVr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 18 Aug 2014 09:21:47 -0400
+Received: by mail-we0-f171.google.com with SMTP id p10so5080327wes.16
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Aug 2014 06:21:46 -0700 (PDT)
+In-Reply-To: <53F1EDB4.8040906@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>
 
-Hello Nick,
+Hi Tomasz,
 
-On 08/15/2014 06:08 PM, Nick Dyer wrote:
->> 
->> Any comments on this? I would really appreciate if you can expand on how
->> this DT property is supposed to be used so I can re-spin the atmel support
->> patch for Peach boards.
-> 
-> The below patch improves the documentation for the gpio-property. Stephen
-> Warren has a good example here:
-> https://github.com/swarren/linux-tegra/commit/09789801
-> 
-> trackpad@4b {
->   compatible = "atmel,maxtouch";
->   reg = <0x4b>;
->   interrupt-parent = <&gpio>;
->   interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_LEVEL_LOW>;
->   linux,gpio-keymap = <0 0 0 BTN_LEFT>;
-> };
-> 
-> This maps BTN_LEFT to the 4th bit of the T19 message. I haven't looked up
-> what GPIO number that corresponds to on the mXT224SL that he has, it varies
-> with the particular maXTouch device you have.
-> 
-> Hope this helps.
+On Mon, Aug 18, 2014 at 5:42 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Vikas,
+>
+> On 07.08.2014 13:59, Vikas Sajjan wrote:
+>> Move the Disabling of JPEG USE_RETENTION for exynos5250 to pmu.c to make way for
+>> refactoring of pm.c and to create common functions across exynos4 and
+>> exynos5250.
+>>
+>> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+>> ---
+>>  arch/arm/mach-exynos/pm.c  |    7 +------
+>>  arch/arm/mach-exynos/pmu.c |    6 ++++++
+>>  2 files changed, 7 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+>> index c4c6d98..fdd68c2 100644
+>> --- a/arch/arm/mach-exynos/pm.c
+>> +++ b/arch/arm/mach-exynos/pm.c
+>> @@ -265,13 +265,8 @@ static void exynos_pm_prepare(void)
+>>
+>>       s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+>>
+>> -     if (soc_is_exynos5250()) {
+>> +     if (soc_is_exynos5250())
+>>               s3c_pm_do_save(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
+>> -             /* Disable USE_RETENTION of JPEG_MEM_OPTION */
+>> -             tmp = pmu_raw_readl(EXYNOS5_JPEG_MEM_OPTION);
+>> -             tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
+>> -             pmu_raw_writel(tmp, EXYNOS5_JPEG_MEM_OPTION);
+>> -     }
+>>
+>>       /* Set value of power down register for sleep mode */
+>>
+>> diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
+>> index ff9d23f..6021adb 100644
+>> --- a/arch/arm/mach-exynos/pmu.c
+>> +++ b/arch/arm/mach-exynos/pmu.c
+>> @@ -389,6 +389,7 @@ void exynos_sys_powerdown_conf(enum sys_powerdown mode)
+>>  static int __init exynos_pmu_init(void)
+>>  {
+>>       unsigned int value;
+>> +     unsigned int tmp;
+>>
+>>       exynos_pmu_config = exynos4210_pmu_config;
+>>
+>> @@ -411,6 +412,11 @@ static int __init exynos_pmu_init(void)
+>>               value &= ~EXYNOS5_SYS_WDTRESET;
+>>               pmu_raw_writel(value, EXYNOS5_MASK_WDTRESET_REQUEST);
+>>
+>> +             /* Disable USE_RETENTION of JPEG_MEM_OPTION */
+>> +             tmp = pmu_raw_readl(EXYNOS5_JPEG_MEM_OPTION);
+>> +             tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
+>> +             pmu_raw_writel(tmp, EXYNOS5_JPEG_MEM_OPTION);
+>> +
+>
+> Note that this code is executed once at system bootup. Is this register
+> preserved across a suspend/resume cycle?
+>
+> Anyway, what I suggested in my comment to previous revision of this
+> series was stuffing this thing into the PMU configuration array. As you
+> can see in the arrays for Exynos4 SoCs, they just hardcode the
+> MEM_OPTION registers to constant values, because I believe the only
+> field from those registers with non-zero value in practice is
+> EXYNOS5_OPTION_USE_RETENTION (or 0x10 used directly in PMU arrays for
+> Exynos4 SoCs). This would also cover my comment above, because the
+> arrays are written to the PMU every time a low power state is being entered.
 >
 
-Thanks a lot for the patch and the pointer to Stephen's DTS. I'll do some
-experimentation then to figure out the right values since I don't have
-proper documentation. Fortunately the Chrome OS 3.8 downstream driver
-works on -next so I can use evdev to compare if both drivers behave the same.
+Is this what you meant,
 
-> Signed-off-by: Nick Dyer <nick.dyer@itdev.co.uk>
+diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
+index 6021adb..67b70fd 100644
+--- a/arch/arm/mach-exynos/pmu.c
++++ b/arch/arm/mach-exynos/pmu.c
+@@ -264,6 +264,7 @@ static const struct exynos_pmu_conf
+exynos5250_pmu_config[] = {
+        { EXYNOS5_INTRAM_MEM_SYS_PWR_REG,               { 0x3, 0x0, 0x0} },
+        { EXYNOS5_INTROM_MEM_SYS_PWR_REG,               { 0x3, 0x0, 0x0} },
+        { EXYNOS5_JPEG_MEM_SYS_PWR_REG,                 { 0x3, 0x0, 0x0} },
++       { EXYNOS5_JPEG_MEM_OPTION,                      { 0x10, 0x10, 0x0} },
+        { EXYNOS5_HSI_MEM_SYS_PWR_REG,                  { 0x3, 0x0, 0x0} },
+        { EXYNOS5_MCUIOP_MEM_SYS_PWR_REG,               { 0x3, 0x0, 0x0} },
+        { EXYNOS5_SATA_MEM_SYS_PWR_REG,                 { 0x3, 0x0, 0x0} },
+@@ -412,11 +413,6 @@ static int __init exynos_pmu_init(void)
+                value &= ~EXYNOS5_SYS_WDTRESET;
+                pmu_raw_writel(value, EXYNOS5_MASK_WDTRESET_REQUEST);
 
-Best regards,
-Javier
+-               /* Disable USE_RETENTION of JPEG_MEM_OPTION */
+-               tmp = pmu_raw_readl(EXYNOS5_JPEG_MEM_OPTION);
+-               tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
+-               pmu_raw_writel(tmp, EXYNOS5_JPEG_MEM_OPTION);
+-
+                exynos_pmu_config = exynos5250_pmu_config;
+                pr_info("EXYNOS5250 PMU Initialize\n");
+        } else {
+
+for AFTR and LPA mode, i still maintain 0x10 like any other
+XXX_XXX_MEM_OPTION register,
+but for sleep mode, I am disabling USE_RETENTION of JPEG_MEM_OPTION as required.
+
+
+Hope this is fine.
+
+I tested with the above change on snow, S2R works well.
+
+
+
+> Best regards,
+> Tomasz
