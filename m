@@ -1,67 +1,43 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>
-Subject: Re: [PATCH v5 01/10] ARM: dts: Fix MMC pinctrl for exynos5250-snow
-Date: Mon, 18 Aug 2014 22:13:38 +0200
-Message-ID: <53F25E72.4080205@suse.de>
-References: <1406868897-26874-1-git-send-email-afaerber@suse.de>	<1406868897-26874-2-git-send-email-afaerber@suse.de> <CAD=FV=VBa5rs_woj0mshFFbA69Nhyi3hXK_XX7-54T3vFyKYHA@mail.gmail.com> <53F247E2.2070007@samsung.com> <53F24A80.4000607@gmail.com> <53F25C25.4070602@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [RESEND PATCH 1/2] ARM: dts: Improve Peach Pit and Pi power scheme
+Date: Mon, 18 Aug 2014 23:43:49 +0200
+Message-ID: <53F27395.5070601@collabora.co.uk>
+References: <1407757091-18730-1-git-send-email-javier.martinez@collabora.co.uk> <CAD=FV=UbckfwGucuPjEtHixVgF5K2fD5N3EPS2BH96DRDACuqw@mail.gmail.com> <53F245A4.5010106@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <53F25C25.4070602-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephan van Schaik <stephan-zGZ7W/ttz6xN8Ch2cx6nig@public.gmane.org>, Vincent Palatin <vpalatin-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:41972 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751941AbaHRVon (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 18 Aug 2014 17:44:43 -0400
+In-Reply-To: <53F245A4.5010106@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi,
+Hello Kukjin,
 
-Am 18.08.2014 22:03, schrieb Kukjin Kim:
-> On 08/18/14 13:48, Tomasz Figa wrote:
->> On 18.08.2014 20:37, Kukjin Kim wrote:
->>> On 08/01/14 11:26, Doug Anderson wrote:
->>>> On Thu, Jul 31, 2014 at 9:54 PM, Andreas F=C3=A4rber<afaerber@suse=
-=2Ede> =20
->>>> wrote:
->>>>> The pinctrl properties should be on the device directly and not o=
-n the
->>>>> slot sub-node.
->>>>>
->>>>> Reported-by: Doug Anderson<dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->>>>> Cc: Jaehoon Chung<jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>>> Reviewed-by: Tomasz Figa<t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>>>> Signed-off-by: Andreas F=C3=A4rber<afaerber-l3A5Bk7waGM@public.gmane.org>
->>>>
->>>> Let's land this one before Jaehoon's, since it was a hidden
->>>> functionality change in his patch.  It will be an easy conflict to
->>>> resolve when his patch is applied.
->>>>
->>> Sounds good to me, I've applied this before Jaehoon's change.
->>>
->>>> Reviewed-by: Doug Anderson<dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+On 08/18/2014 08:27 PM, Kukjin Kim wrote:
+> On 08/11/14 10:46, Doug Anderson wrote:
 >>
->> Version 6 of this series has been already posted. However this
->> particular patch has not changed, so it's fine.
+> OK, I've applied this but 2nd in this series...
+>
+
+Thanks for picking this and yes PATCH 2/2 from this series was dropped.
+
+>> Acked-by: Doug Anderson<dianders@chromium.org>
 >>
-> Oh, got it. Hope this and 2nd should be same with version 6 ;)
+> Thanks,
+> Kukjin
+> 
 
-It is documented as such. :) Others did have changes, of course.
+I've posted PATCH "mmc: core: Use regulator_get_voltage() if OCR mask is
+empty." [0] instead to solve the issue that patch 2/2 tried to address.
 
-I've started looking into rebasing myself: beware that the smdk5250
-cleanup has an additional conflict in the spi node (cs-gpios movement).
+Best regards,
+Javier
 
-http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/com=
-mit/arch/arm/boot/dts/exynos5250-smdk5250.dts?h=3Dv3.18-next/dt-samsung=
-&id=3De138d4333aa02a3daa12c04192bc5c842bffee74
-
-Thanks,
-Andreas
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+[0]: https://lkml.org/lkml/2014/8/14/200
