@@ -1,203 +1,91 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/2] clk: samsung: Add validation of rate tables for the
- PLL clocks
-Date: Mon, 18 Aug 2014 14:02:13 +0200
-Message-ID: <53F1EB45.3060103@gmail.com>
-References: <1407160968-12108-1-git-send-email-hsnaves@gmail.com> <1407160968-12108-2-git-send-email-hsnaves@gmail.com>
+Subject: Re: [PATCH v3 1/2] ARM: EXYNOS: Move Disabling of JPEG USE_RETENTION
+ for exynos5250 to pmu.c
+Date: Mon, 18 Aug 2014 14:12:36 +0200
+Message-ID: <53F1EDB4.8040906@gmail.com>
+References: <1407412789-1919-1-git-send-email-vikas.sajjan@samsung.com> <1407412789-1919-2-git-send-email-vikas.sajjan@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f48.google.com ([74.125.82.48]:36470 "EHLO
-	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750834AbaHRMCU (ORCPT
+Received: from mail-wg0-f52.google.com ([74.125.82.52]:34924 "EHLO
+	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750836AbaHRMMm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Aug 2014 08:02:20 -0400
-In-Reply-To: <1407160968-12108-2-git-send-email-hsnaves@gmail.com>
+	Mon, 18 Aug 2014 08:12:42 -0400
+Received: by mail-wg0-f52.google.com with SMTP id a1so4839288wgh.35
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Aug 2014 05:12:41 -0700 (PDT)
+In-Reply-To: <1407412789-1919-2-git-send-email-vikas.sajjan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Humberto Silva Naves <hsnaves@gmail.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>
+To: Vikas Sajjan <vikas.sajjan@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, olof@lixom.net
 
-Hi Humberto,
+Hi Vikas,
 
-Sorry for long delay, I've been quite busy with certain things and I
-couldn't reply earlier.
-
-Thanks a lot for the patch. In general it looks very nice and finally
-makes the semantics of this code sane, but please see few minor comments
-inline.
-
-On 04.08.2014 16:02, Humberto Silva Naves wrote:
-> Currently there is no mechanism for validation of the PLL rate tables
-> in the samsung clock driver. In addition, the implementation does not
-> allow the use ``heterogenous'' tables (i.e., tables whose entries can
-> correspond to different clock sources).
-> For instance, consider the VPLL clock from Exynos5410. Its input source
-> is the MUX mout_vpllsrc, which can generate either 24 MHz or 27 MHz.
-> The usual way to add rate tables for these two different clock sources
-> would be:
-
-[snip]
-
-> +	PLL_36XX_RATE(148500000, 24000000,  99, 2, 3,     0),
-> +	PLL_36XX_RATE(148352005, 24000000,  98, 2, 3, 59070),
-> +	PLL_36XX_RATE(108000000, 24000000, 144, 2, 4,     0),
-> +	PLL_36XX_RATE( 74250000, 24000000,  99, 2, 4,     0),
-> +	PLL_36XX_RATE( 74176002, 24000000,  98, 3, 4, 59070),
-> +	PLL_36XX_RATE( 54054000, 24000000, 216, 3, 5, 14156),
-> +	PLL_36XX_RATE( 54000000, 24000000, 144, 2, 5,     0),
->  	{ /* sentinel */ }
->  };
-
-This patch could be split into two or more smaller patches, because it's
-so big that it's quite hard to review.
-
-For example, the extension of struct samsung_pll_rate_table and related
-macros along with related rate tables in SoC drivers could be patch 1
-(even though nothing would use the new data yet, nothing would break),
-then patch 2 could contain changes to the PLL framework and finally
-patch 3 could remove the conditional assignments of rate tables in SoC
-drivers.
-
+On 07.08.2014 13:59, Vikas Sajjan wrote:
+> Move the Disabling of JPEG USE_RETENTION for exynos5250 to pmu.c to make way for
+> refactoring of pm.c and to create common functions across exynos4 and
+> exynos5250.
+> 
+> Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+> ---
+>  arch/arm/mach-exynos/pm.c  |    7 +------
+>  arch/arm/mach-exynos/pmu.c |    6 ++++++
+>  2 files changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index c4c6d98..fdd68c2 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -265,13 +265,8 @@ static void exynos_pm_prepare(void)
 >  
->  static struct samsung_pll_clock exynos3250_plls[nr_plls] __initdata = {
-
-[snip]
-
-> @@ -1144,6 +1235,121 @@ static const struct clk_ops samsung_pll2650xx_clk_min_ops = {
->  	.recalc_rate = samsung_pll2650xx_recalc_rate,
->  };
+>  	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
 >  
-> +static unsigned long __init
-> +_samsung_clk_rate_from_table(struct samsung_pll_rate_table *entry,
-> +				enum samsung_pll_type type)
-> +{
-> +	unsigned long parent_rate;
-> +	u32 pdiv, mdiv, sdiv;
-> +
-> +	parent_rate = (unsigned long) entry->brate;
-> +	pdiv = (u32) entry->pdiv;
-> +	mdiv = (u32) entry->mdiv;
-> +	sdiv = (u32) entry->sdiv;
-> +
-> +	switch (type) {
-> +	case pll_2126:
-> +		return _samsung_pll2126_rate(parent_rate, mdiv, pdiv, sdiv);
-
-[snip]
-
-> +	case pll_2650xx:
-> +		return _samsung_pll2650xx_rate(parent_rate, mdiv, pdiv, sdiv,
-> +					(s16) entry->kdiv);
-> +	default:
-> +		pr_warn("%s: cannot compute rate for pll type %d\n",
-> +			__func__, type);
-> +		return 0;
-> +	}
-> +}
-
-I think it might be a bit cleaner to just save respective function in a
-new field of samsung_clk_pll struct. This would be facilitated by
-_samsung_clk_register_pll() function which already has a big switch over
-pll_clk->type, so you could just stuff there proper assignments. Then
-_samsung_clk_rate_from_table() would take struct samsung_clk_pll *
-instead of pll type and call the function from the stored pointer.
-
-> +
-> +/* used for sorting the pll rate table */
-> +static int __init _samsung_clk_cmp_rates(const void *p1, const void *p2)
-> +{
-> +	const struct samsung_pll_rate_table *e1 = p1;
-> +	const struct samsung_pll_rate_table *e2 = p2;
-> +
-> +	/* sorting in descending order */
-> +	if (e1->orate > e2->orate)
-> +		return -1;
-> +	else if (e1->orate == e2->orate)
-> +		return 0;
-> +	else
-> +		return 1;
-> +}
-> +
-> +static const struct samsung_pll_rate_table * __init
-> +_samsung_clk_copy_rate_table(struct samsung_pll_clock *pll_clk,
-> +			unsigned int *rate_count)
-> +{
-> +	struct samsung_pll_rate_table *tbl;
-> +	unsigned int i, len;
-> +
-> +	/* find count of rates in rate_table (at last entry, brate = 0) */
-> +	for (len = 0; pll_clk->rate_table[len].brate != 0; )
-> +		len++;
-> +
-> +	tbl = kmemdup(pll_clk->rate_table, len *
-> +			sizeof(struct samsung_pll_rate_table), GFP_KERNEL);
-> +	if (!tbl)
-> +		return NULL;
-> +
-> +	/* validate the entries in the table */
-> +	for (i = 0; i < len; i++) {
-> +		unsigned long orate;
-> +		orate = _samsung_clk_rate_from_table(&tbl[i], pll_clk->type);
-> +		if ((unsigned int) orate != tbl[i].orate) {
-> +			pr_warn("%s: invalid entry in table: out_rate=%u"
-> +				" base_rate=%u, replacing with out_rate=$u\n",
-> +				__func__, tbl[i].orate, tbl[i].brate);
-> +			tbl[i].orate = orate;
-
-I wonder if we shouldn't rather disable such entry completely, e.g. by
-assigning 0 to orate (your code below already accounts for such
-entries). The rationale behind this idea is that if an entry has
-incorrect orate, then it's quite likely that prate or coefficients are
-wrong too.
-
-> +		}
-> +	}
-> +
-> +	/* sort in descending order according to output_rate */
-> +	sort(tbl, len, sizeof(*tbl), &_samsung_clk_cmp_rates, NULL);
-
-No need for & in case of function pointers.
-
-> +
-> +	/* discard invalid entries */
-> +	while (len > 0)
-> +		if (tbl[len - 1].orate == 0)
-> +			len--;
-> +
-> +	if (rate_count)
-
-What is the reason to make rate_count optional? IMHO the function could
-be specified to require a valid pointer. Or maybe even better: What
-about changing it to return an integer error and make it take a pointer
-to struct samsung_clk_pll as its argument instead and change its fields
-directly?
-
-> +		*rate_count = len;
-> +
-> +	return tbl;
-> +}
-> +
->  static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
->  				struct samsung_pll_clock *pll_clk,
->  				void __iomem *base)
-
-[snip]
-		\
-> @@ -83,10 +88,9 @@ enum samsung_pll_type {
->  		.vsel	=	(_vsel),			\
->  	}
+> -	if (soc_is_exynos5250()) {
+> +	if (soc_is_exynos5250())
+>  		s3c_pm_do_save(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
+> -		/* Disable USE_RETENTION of JPEG_MEM_OPTION */
+> -		tmp = pmu_raw_readl(EXYNOS5_JPEG_MEM_OPTION);
+> -		tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
+> -		pmu_raw_writel(tmp, EXYNOS5_JPEG_MEM_OPTION);
+> -	}
 >  
-> -/* NOTE: Rate table should be kept sorted in descending order. */
-> -
->  struct samsung_pll_rate_table {
-> -	unsigned int rate;
-> +	unsigned int orate;		/* output rate */
-> +	unsigned int brate;		/* the base rate */
+>  	/* Set value of power down register for sleep mode */
+>  
+> diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
+> index ff9d23f..6021adb 100644
+> --- a/arch/arm/mach-exynos/pmu.c
+> +++ b/arch/arm/mach-exynos/pmu.c
+> @@ -389,6 +389,7 @@ void exynos_sys_powerdown_conf(enum sys_powerdown mode)
+>  static int __init exynos_pmu_init(void)
+>  {
+>  	unsigned int value;
+> +	unsigned int tmp;
+>  
+>  	exynos_pmu_config = exynos4210_pmu_config;
+>  
+> @@ -411,6 +412,11 @@ static int __init exynos_pmu_init(void)
+>  		value &= ~EXYNOS5_SYS_WDTRESET;
+>  		pmu_raw_writel(value, EXYNOS5_MASK_WDTRESET_REQUEST);
+>  
+> +		/* Disable USE_RETENTION of JPEG_MEM_OPTION */
+> +		tmp = pmu_raw_readl(EXYNOS5_JPEG_MEM_OPTION);
+> +		tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
+> +		pmu_raw_writel(tmp, EXYNOS5_JPEG_MEM_OPTION);
+> +
 
-nit: prate (as for parent rate) would be more consistent with what is
-already used in clock code.
+Note that this code is executed once at system bootup. Is this register
+preserved across a suspend/resume cycle?
+
+Anyway, what I suggested in my comment to previous revision of this
+series was stuffing this thing into the PMU configuration array. As you
+can see in the arrays for Exynos4 SoCs, they just hardcode the
+MEM_OPTION registers to constant values, because I believe the only
+field from those registers with non-zero value in practice is
+EXYNOS5_OPTION_USE_RETENTION (or 0x10 used directly in PMU arrays for
+Exynos4 SoCs). This would also cover my comment above, because the
+arrays are written to the PMU every time a low power state is being entered.
 
 Best regards,
 Tomasz
