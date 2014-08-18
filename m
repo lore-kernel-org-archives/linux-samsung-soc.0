@@ -1,71 +1,34 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 1/5] drm/exynos: mipi-dsi: add Exynos3 SoC support
-Date: Mon, 18 Aug 2014 17:21:29 +0900
-Message-ID: <1408350093-26220-2-git-send-email-inki.dae@samsung.com>
-References: <1408350093-26220-1-git-send-email-inki.dae@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1408350093-26220-1-git-send-email-inki.dae@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, a.hajda@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+From: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 0/5] drm/exynos: support Exynos3250 SoC
+Date: Mon, 18 Aug 2014 17:21:28 +0900
+Message-ID: <1408350093-26220-1-git-send-email-inki.dae@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: airlied-cv59FeDIM0c@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds Exynos3250/3472 SoCs support.
+This patch series adds of_device_id and relevant device nodes
+for Exynos3250 SoC support.
 
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
----
+Inki Dae (5):
+  drm/exynos: mipi-dsi: add Exynos3 SoC support
+  drm/exynos: fimd: add Exynos3 SoC support
+  ARM: dts: add fimd device node to exynos3250.dsti
+  ARM: dts: add mipi_phy device node to exynos3240.dtsi
+  ARM: dts: add mipi dsi device node to exynos3250.dtsi
+
  .../devicetree/bindings/video/exynos_dsim.txt      |    1 +
- drivers/gpu/drm/exynos/exynos_drm_dsi.c            |    8 ++++++++
- 2 files changed, 9 insertions(+)
+ .../devicetree/bindings/video/samsung-fimd.txt     |    1 +
+ arch/arm/boot/dts/exynos3250.dtsi                  |   33 ++++++++++++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            |    8 +++++
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c           |   10 ++++++
+ 5 files changed, 53 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_dsim.txt b/Documentation/devicetree/bindings/video/exynos_dsim.txt
-index 31036c6..e74243b 100644
---- a/Documentation/devicetree/bindings/video/exynos_dsim.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_dsim.txt
-@@ -2,6 +2,7 @@ Exynos MIPI DSI Master
- 
- Required properties:
-   - compatible: value should be one of the following
-+		"samsung,exynos3250-mipi-dsi" /* for Exynos3250/3472 SoCs */
- 		"samsung,exynos4210-mipi-dsi" /* for Exynos4 SoCs */
- 		"samsung,exynos5410-mipi-dsi" /* for Exynos5410/5420/5440 SoCs */
-   - reg: physical base address and length of the registers set for the device
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 9a186c0..a8c0c4f 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -304,6 +304,12 @@ struct exynos_dsi {
- #define host_to_dsi(host) container_of(host, struct exynos_dsi, dsi_host)
- #define connector_to_dsi(c) container_of(c, struct exynos_dsi, connector)
- 
-+static struct exynos_dsi_driver_data exynos3_dsi_driver_data = {
-+	.plltmr_reg = 0x50,
-+	.has_freqband = 1,
-+	.has_clklane_stop = 1,
-+};
-+
- static struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
- 	.plltmr_reg = 0x50,
- 	.has_freqband = 1,
-@@ -315,6 +321,8 @@ static struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
- };
- 
- static struct of_device_id exynos_dsi_of_match[] = {
-+	{ .compatible = "samsung,exynos3250-mipi-dsi",
-+	  .data = &exynos3_dsi_driver_data },
- 	{ .compatible = "samsung,exynos4210-mipi-dsi",
- 	  .data = &exynos4_dsi_driver_data },
- 	{ .compatible = "samsung,exynos5410-mipi-dsi",
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
