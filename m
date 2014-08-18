@@ -1,75 +1,47 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/2] ARM: dts: Enable PMIC interrupts on ODROID
-Date: Mon, 18 Aug 2014 11:43:07 -0500
-Message-ID: <53F22D1B.4010900@samsung.com>
-References: <1405500606-5752-1-git-send-email-drake@endlessm.com> <CAAObsKAokjDmpVy5cm_iFD52bCq+3jYeGDWzACsmh-JKktyjDw@mail.gmail.com>
+Subject: Re: [PATCHv10 3/5] ARM: dts: exynos: unuse the slot-node and deprecate
+ the supports-highspeed for dw-mmc
+Date: Mon, 18 Aug 2014 11:54:19 -0500
+Message-ID: <53F22FBB.4010801@samsung.com>
+References: <1407397082-32495-1-git-send-email-jh80.chung@samsung.com> <1407397082-32495-4-git-send-email-jh80.chung@samsung.com> <53F1F027.7060609@samsung.com> <53F20955.2050806@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f170.google.com ([209.85.213.170]:49742 "EHLO
-	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750834AbaHRQnT (ORCPT
+Received: from mail-ig0-f179.google.com ([209.85.213.179]:64293 "EHLO
+	mail-ig0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751968AbaHRQyY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Aug 2014 12:43:19 -0400
-Received: by mail-ig0-f170.google.com with SMTP id h3so8387524igd.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Aug 2014 09:43:18 -0700 (PDT)
-In-Reply-To: <CAAObsKAokjDmpVy5cm_iFD52bCq+3jYeGDWzACsmh-JKktyjDw@mail.gmail.com>
+	Mon, 18 Aug 2014 12:54:24 -0400
+In-Reply-To: <53F20955.2050806@suse.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Cc: Daniel Drake <drake@endlessm.com>, liquid.acid@gmx.net, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: =?ISO-8859-1?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, tgih.jun@samsung.com, devicetree@vger.kernel.org, heiko@sntech.de, dinguyen@altera.com, Mark Rutland <mark.rutland@arm.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 08/12/14 08:06, Tomeu Vizoso wrote:
-> Tested on an Odroid-U2:
+On 08/18/14 09:10, Andreas F=E4rber wrote:
+> Hi Jaehoon,
 >
-> Tested-by: Tomeu Vizoso<tomeu@tomeuvizoso.net>
+> Am 18.08.2014 14:23, schrieb Jaehoon Chung:
+>> Socfpga and Rockchip were queued into each SoC tree.
+>> I want to know whether this patch is queued or not into Samsung-Soc =
+tree.
+>> Do you have any other plan for this patch?
 >
-> Thanks,
+> It isn't applied in his tree:
 >
-> Tomeu
+> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/
 >
+> In fact Kukjin has not applied any patches for 3 weeks now, which lik=
+ely
+> means he's on vacation. I am hoping he will review this and the other
+> pending conflicting patches to decide on a merge order and fix any
+> trivial conflicts himself. ;)
 >
-> On 16 July 2014 10:50, Daniel Drake<drake@endlessm.com>  wrote:
->> The ODROID kernel shows that the PMIC interrupt line is hooked up
->> to pin GPX3-2.
->>
->> This is needed for the max77686-irq driver to create the PMIC IRQ
->> domain, which is needed by max77686-rtc.
->>
->> Signed-off-by: Daniel Drake<drake@endlessm.com>
->> ---
->>   arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->> index 6d6d23c..cb6f55f 100644
->> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
->> @@ -148,6 +148,10 @@
->>
->>                  max77686: pmic@09 {
->>                          compatible = "maxim,max77686";
->> +                       interrupt-parent =<&gpx3>;
->> +                       interrupts =<2 0>;
->> +                       pinctrl-names = "default";
->> +                       pinctrl-0 =<&max77686_irq>;
->>                          reg =<0x09>;
->>                          #clock-cells =<1>;
->>
->> @@ -368,4 +372,11 @@
->>                  samsung,pins = "gpx1-3";
->>                  samsung,pin-pud =<0>;
->>          };
->> +
->> +       max77686_irq: max77686-irq {
->> +               samsung,pins = "gpx3-2";
->> +               samsung,pin-function =<0>;
->> +               samsung,pin-pud =<0>;
->> +               samsung,pin-drv =<0>;
->> +       };
->>   };
+Oh, I thought it has been queued in previous merge window with my ack.
 
-Thanks, applied this series.
+OK, I've applied this in my tree for 3.18.
 
-- Kukjin
+Thanks,
+Kukjin
