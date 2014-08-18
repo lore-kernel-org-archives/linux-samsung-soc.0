@@ -1,177 +1,129 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v9 2/5] rtc: max77686: Remove dead code for SMPL and WTSR.
-Date: Mon, 18 Aug 2014 10:34:34 +0200
-Message-ID: <1408350877-15921-3-git-send-email-javier.martinez@collabora.co.uk>
-References: <1408350877-15921-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1408350877-15921-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alessandro Zummo <a.zummo@towertech.it>
-Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [REPOST PATCH v2] mmc: dw_mmc: Make sure we don't get stuck when
+ we get an error
+Date: Mon, 18 Aug 2014 11:15:13 +0200
+Message-ID: <CAPDyKFpX0PmpuPvgc0WizXAizNiCiqj2y0y4GzcSMt1y4yzyiA@mail.gmail.com>
+References: <1407942823-4271-1-git-send-email-dianders@chromium.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f54.google.com ([209.85.192.54]:49034 "EHLO
+	mail-qg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750762AbaHRJPO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 18 Aug 2014 05:15:14 -0400
+Received: by mail-qg0-f54.google.com with SMTP id j5so1497079qga.27
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 18 Aug 2014 02:15:13 -0700 (PDT)
+In-Reply-To: <1407942823-4271-1-git-send-email-dianders@chromium.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Chris Ball <chris@printf.net>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-The MAX77686 RTC chip has two features called SMPL (Sudden Momentary
-Power Loss) and WTSR (Watchdog Timeout and Software Resets).
-Support for these features seems to be implemented in the driver but
-compilation is disabled using a C pre-processor conditional.
+On 13 August 2014 17:13, Doug Anderson <dianders@chromium.org> wrote:
+> If we happened to get a data error at just the wrong time the dw_mmc
+> driver could get into a state where it would never complete its
+> request.  That would leave the caller just hanging there.
+>
+> We fix this two ways and both of the two fixes on their own appear to
+> fix the problems we've seen:
+>
+> 1. Fix a race in the tasklet where the interrupt setting the data
+>    error happens _just after_ we check for it, then we get a
+>    EVENT_XFER_COMPLETE.  We fix this by repeating a bit of code.
+> 2. Fix it so that if we detect that we've got an error in the "data
+>    busy" state and we're not going to do anything else we end the
+>    request and unblock anyone waiting.
+>
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+> Acked-by: Seungwon Jeon <tgih.jun@samsung.com>
 
-This code has been disabled since the driver was original merged in
-commit fca1dd03 ("rtc: max77686: add Maxim 77686 driver").
+Thanks! Applied for next.
 
-So, since this code has never been built, let's just remove it.
+Kind regards
+Uffe
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/rtc/rtc-max77686.c | 101 ---------------------------------------------
- 1 file changed, 101 deletions(-)
-
-diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
-index c1c6055..7bb5433 100644
---- a/drivers/rtc/rtc-max77686.c
-+++ b/drivers/rtc/rtc-max77686.c
-@@ -32,15 +32,6 @@
- #define RTC_UDR_MASK			(1 << RTC_UDR_SHIFT)
- #define RTC_RBUDR_SHIFT			4
- #define RTC_RBUDR_MASK			(1 << RTC_RBUDR_SHIFT)
--/* WTSR and SMPL Register */
--#define WTSRT_SHIFT			0
--#define SMPLT_SHIFT			2
--#define WTSR_EN_SHIFT			6
--#define SMPL_EN_SHIFT			7
--#define WTSRT_MASK			(3 << WTSRT_SHIFT)
--#define SMPLT_MASK			(3 << SMPLT_SHIFT)
--#define WTSR_EN_MASK			(1 << WTSR_EN_SHIFT)
--#define SMPL_EN_MASK			(1 << SMPL_EN_SHIFT)
- /* RTC Hour register */
- #define HOUR_PM_SHIFT			6
- #define HOUR_PM_MASK			(1 << HOUR_PM_SHIFT)
-@@ -49,7 +40,6 @@
- #define ALARM_ENABLE_MASK		(1 << ALARM_ENABLE_SHIFT)
- 
- #define MAX77686_RTC_UPDATE_DELAY	16
--#undef MAX77686_RTC_WTSR_SMPL
- 
- enum {
- 	RTC_SEC = 0,
-@@ -412,64 +402,6 @@ static const struct rtc_class_ops max77686_rtc_ops = {
- 	.alarm_irq_enable = max77686_rtc_alarm_irq_enable,
- };
- 
--#ifdef MAX77686_RTC_WTSR_SMPL
--static void max77686_rtc_enable_wtsr(struct max77686_rtc_info *info, bool enable)
--{
--	int ret;
--	unsigned int val, mask;
--
--	if (enable)
--		val = (1 << WTSR_EN_SHIFT) | (3 << WTSRT_SHIFT);
--	else
--		val = 0;
--
--	mask = WTSR_EN_MASK | WTSRT_MASK;
--
--	dev_info(info->dev, "%s: %s WTSR\n", __func__,
--			enable ? "enable" : "disable");
--
--	ret = regmap_update_bits(info->max77686->rtc_regmap,
--				 MAX77686_WTSR_SMPL_CNTL, mask, val);
--	if (ret < 0) {
--		dev_err(info->dev, "%s: fail to update WTSR reg(%d)\n",
--				__func__, ret);
--		return;
--	}
--
--	max77686_rtc_update(info, MAX77686_RTC_WRITE);
--}
--
--static void max77686_rtc_enable_smpl(struct max77686_rtc_info *info, bool enable)
--{
--	int ret;
--	unsigned int val, mask;
--
--	if (enable)
--		val = (1 << SMPL_EN_SHIFT) | (0 << SMPLT_SHIFT);
--	else
--		val = 0;
--
--	mask = SMPL_EN_MASK | SMPLT_MASK;
--
--	dev_info(info->dev, "%s: %s SMPL\n", __func__,
--			enable ? "enable" : "disable");
--
--	ret = regmap_update_bits(info->max77686->rtc_regmap,
--				 MAX77686_WTSR_SMPL_CNTL, mask, val);
--	if (ret < 0) {
--		dev_err(info->dev, "%s: fail to update SMPL reg(%d)\n",
--				__func__, ret);
--		return;
--	}
--
--	max77686_rtc_update(info, MAX77686_RTC_WRITE);
--
--	val = 0;
--	regmap_read(info->max77686->rtc_regmap, MAX77686_WTSR_SMPL_CNTL, &val);
--	dev_info(info->dev, "%s: WTSR_SMPL(0x%02x)\n", __func__, val);
--}
--#endif /* MAX77686_RTC_WTSR_SMPL */
--
- static int max77686_rtc_init_reg(struct max77686_rtc_info *info)
- {
- 	u8 data[2];
-@@ -519,11 +451,6 @@ static int max77686_rtc_probe(struct platform_device *pdev)
- 		goto err_rtc;
- 	}
- 
--#ifdef MAX77686_RTC_WTSR_SMPL
--	max77686_rtc_enable_wtsr(info, true);
--	max77686_rtc_enable_smpl(info, true);
--#endif
--
- 	device_init_wakeup(&pdev->dev, 1);
- 
- 	info->rtc_dev = devm_rtc_device_register(&pdev->dev, "max77686-rtc",
-@@ -556,33 +483,6 @@ err_rtc:
- 	return ret;
- }
- 
--static void max77686_rtc_shutdown(struct platform_device *pdev)
--{
--#ifdef MAX77686_RTC_WTSR_SMPL
--	struct max77686_rtc_info *info = platform_get_drvdata(pdev);
--	int i;
--	u8 val = 0;
--
--	for (i = 0; i < 3; i++) {
--		max77686_rtc_enable_wtsr(info, false);
--		regmap_read(info->max77686->rtc_regmap, MAX77686_WTSR_SMPL_CNTL, &val);
--		dev_info(info->dev, "%s: WTSR_SMPL reg(0x%02x)\n", __func__,
--				val);
--		if (val & WTSR_EN_MASK) {
--			dev_emerg(info->dev, "%s: fail to disable WTSR\n",
--					__func__);
--		} else {
--			dev_info(info->dev, "%s: success to disable WTSR\n",
--					__func__);
--			break;
--		}
--	}
--
--	/* Disable SMPL when power off */
--	max77686_rtc_enable_smpl(info, false);
--#endif /* MAX77686_RTC_WTSR_SMPL */
--}
--
- #ifdef CONFIG_PM_SLEEP
- static int max77686_rtc_suspend(struct device *dev)
- {
-@@ -622,7 +522,6 @@ static struct platform_driver max77686_rtc_driver = {
- 		.pm	= &max77686_rtc_pm_ops,
- 	},
- 	.probe		= max77686_rtc_probe,
--	.shutdown	= max77686_rtc_shutdown,
- 	.id_table	= rtc_id,
- };
- 
--- 
-2.0.0.rc2
+> ---
+> Changes in v2:
+> - Removed TODO
+> - Set cmd to NULL before calling dw_mci_request_end()
+>
+>  drivers/mmc/host/dw_mmc.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index 8f216ed..7f227e9 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -1299,6 +1299,14 @@ static void dw_mci_tasklet_func(unsigned long priv)
+>                         /* fall through */
+>
+>                 case STATE_SENDING_DATA:
+> +                       /*
+> +                        * We could get a data error and never a transfer
+> +                        * complete so we'd better check for it here.
+> +                        *
+> +                        * Note that we don't really care if we also got a
+> +                        * transfer complete; stopping the DMA and sending an
+> +                        * abort won't hurt.
+> +                        */
+>                         if (test_and_clear_bit(EVENT_DATA_ERROR,
+>                                                &host->pending_events)) {
+>                                 dw_mci_stop_dma(host);
+> @@ -1312,7 +1320,29 @@ static void dw_mci_tasklet_func(unsigned long priv)
+>                                 break;
+>
+>                         set_bit(EVENT_XFER_COMPLETE, &host->completed_events);
+> +
+> +                       /*
+> +                        * Handle an EVENT_DATA_ERROR that might have shown up
+> +                        * before the transfer completed.  This might not have
+> +                        * been caught by the check above because the interrupt
+> +                        * could have gone off between the previous check and
+> +                        * the check for transfer complete.
+> +                        *
+> +                        * Technically this ought not be needed assuming we
+> +                        * get a DATA_COMPLETE eventually (we'll notice the
+> +                        * error and end the request), but it shouldn't hurt.
+> +                        *
+> +                        * This has the advantage of sending the stop command.
+> +                        */
+> +                       if (test_and_clear_bit(EVENT_DATA_ERROR,
+> +                                              &host->pending_events)) {
+> +                               dw_mci_stop_dma(host);
+> +                               send_stop_abort(host, data);
+> +                               state = STATE_DATA_ERROR;
+> +                               break;
+> +                       }
+>                         prev_state = state = STATE_DATA_BUSY;
+> +
+>                         /* fall through */
+>
+>                 case STATE_DATA_BUSY:
+> @@ -1335,6 +1365,22 @@ static void dw_mci_tasklet_func(unsigned long priv)
+>                                 /* stop command for open-ended transfer*/
+>                                 if (data->stop)
+>                                         send_stop_abort(host, data);
+> +                       } else {
+> +                               /*
+> +                                * If we don't have a command complete now we'll
+> +                                * never get one since we just reset everything;
+> +                                * better end the request.
+> +                                *
+> +                                * If we do have a command complete we'll fall
+> +                                * through to the SENDING_STOP command and
+> +                                * everything will be peachy keen.
+> +                                */
+> +                               if (!test_bit(EVENT_CMD_COMPLETE,
+> +                                             &host->pending_events)) {
+> +                                       host->cmd = NULL;
+> +                                       dw_mci_request_end(host, mrq);
+> +                                       goto unlock;
+> +                               }
+>                         }
+>
+>                         /*
+> --
+> 2.1.0.rc2.206.gedb03e5
+>
