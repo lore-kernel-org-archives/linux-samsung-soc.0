@@ -1,57 +1,90 @@
-From: =?ISO-8859-1?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCHv10 3/5] ARM: dts: exynos: unuse the slot-node and deprecate
- the supports-highspeed for dw-mmc
-Date: Mon, 18 Aug 2014 19:06:11 +0200
-Message-ID: <53F23283.8040303@suse.de>
-References: <1407397082-32495-1-git-send-email-jh80.chung@samsung.com> <1407397082-32495-4-git-send-email-jh80.chung@samsung.com> <53F1F027.7060609@samsung.com> <53F20955.2050806@suse.de> <53F22FBB.4010801@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH v7 3/4] ARM: EXYNOS: Add platform driver support for Exynos
+ PMU
+Date: Mon, 18 Aug 2014 19:42:06 +0200
+Message-ID: <2491338.uD82s4TcKJ@amdc1032>
+References: <1404878455-31518-1-git-send-email-pankaj.dubey@samsung.com>
+ <53D238E1.3030901@gmail.com> <002601cfaa11$93de5060$bb9af120$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:36478 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751762AbaHRRGR (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:63180 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751563AbaHRRmU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 18 Aug 2014 13:06:17 -0400
-In-Reply-To: <53F22FBB.4010801@samsung.com>
+	Mon, 18 Aug 2014 13:42:20 -0400
+In-reply-to: <002601cfaa11$93de5060$bb9af120$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, tgih.jun@samsung.com, devicetree@vger.kernel.org, heiko@sntech.de, dinguyen@altera.com, Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Kukjin Kim' <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, t.figa@samsung.com, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com
 
-Am 18.08.2014 18:54, schrieb Kukjin Kim:
-> On 08/18/14 09:10, Andreas F=E4rber wrote:
->> Hi Jaehoon,
->>
->> Am 18.08.2014 14:23, schrieb Jaehoon Chung:
->>> Socfpga and Rockchip were queued into each SoC tree.
->>> I want to know whether this patch is queued or not into Samsung-Soc
->>> tree.
->>> Do you have any other plan for this patch?
->>
->> It isn't applied in his tree:
->>
->> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/
->>
->> In fact Kukjin has not applied any patches for 3 weeks now, which li=
-kely
->> means he's on vacation. I am hoping he will review this and the othe=
-r
->> pending conflicting patches to decide on a merge order and fix any
->> trivial conflicts himself. ;)
->>
-> Oh, I thought it has been queued in previous merge window with my ack=
-=2E
->=20
-> OK, I've applied this in my tree for 3.18.
 
-So, are you dropping the snow mmc pinctrl patch Doug asked you to queue
-before this one, and are you merging this with my exynos5250
-cros-common/style cleanups yourself or do I need yet another respin?
+Hi,
 
-Andreas
+On Monday, July 28, 2014 08:40:52 AM Pankaj Dubey wrote:
+> Hi Tomasz,
+> 
+> On Friday, July 25, 2014 Tomasz Figa wrote:
+> 
+> > To: Pankaj Dubey; 'Kukjin Kim'; linux-arm-kernel@lists.infradead.org;
+> linux-
+> > samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
+> > Cc: linux@arm.linux.org.uk; t.figa@samsung.com; vikas.sajjan@samsung.com;
+> > joshi@samsung.com; naushad@samsung.com; thomas.ab@samsung.com;
+> > chow.kim@samsung.com
+> > Subject: Re: [PATCH v7 3/4] ARM: EXYNOS: Add platform driver support for
+> > Exynos PMU
+> > 
+> > Hi Pankaj, Kukjin,
+> > 
+> > On 25.07.2014 07:32, Pankaj Dubey wrote:
+> > > Hi Kukjin,
+> > >
+> > > On Friday, July 25, 2014 Kukjin Kim wrote:
+> > 
+> > [snip]
+> > 
+> > >>>
+> > >> Looks good to me, will apply this and 4/4.
+> > >>
+> > >
+> > > We need to hold these two patches until dependent patch [1] from
+> > > Tomasz Figa gets merged.
+> > >
+> > > [1]: mfd: syscon: Decouple syscon interface from syscon devices
+> > >       https://lkml.org/lkml/2014/6/24/188
+> > 
+> > That RFC patch had few comments from Arnd needed to be addressed, so it
+> needs a
+> > new revision.
+> > 
+> > Pankaj, If I remember correctly, we had talked about this and the
+> conclusion was that
+> > you would take care of addressing the comments and sending new version of
+> the
+> > patch. Any update on this or have I missed something?
+> > 
+> 
+> Well, I don't think we concluded as such anything.
+> Since this patch needs to get in so that Exynos PMU and PM related changes
+> can go in,
+> I discussed with you saying that I am not able to understand about Arnd's
+> comments and
+> if possible and time permits I will look into it. Meanwhile I got busy with
+> some other
+> official work, so could not get time to look into it.
 
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
-berg
+Tomasz/Pankaj, could we please get some agreement on what needs to be
+done and who should do the pending work?
+
+syscon patch is blocking PMU cleanup patches which in turn are blocking
+PMU support additions for new SoCs (Exynos5420/5800 and Exynos3250 PMU
+patches).
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
