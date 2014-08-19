@@ -1,99 +1,48 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v7 3/4] ARM: EXYNOS: Add platform driver support for Exynos
- PMU
-Date: Tue, 19 Aug 2014 16:30:44 +0200
-Message-ID: <53F35F94.1010101@gmail.com>
-References: <1404878455-31518-1-git-send-email-pankaj.dubey@samsung.com> <53D238E1.3030901@gmail.com> <002601cfaa11$93de5060$bb9af120$@samsung.com> <2491338.uD82s4TcKJ@amdc1032>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 0/6] Add max77802 support for Peach boards
+Date: Tue, 19 Aug 2014 17:08:27 +0200
+Message-ID: <1408460913-13863-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:56910 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751837AbaHSOaz (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:42424 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753401AbaHSPIn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Aug 2014 10:30:55 -0400
-In-Reply-To: <2491338.uD82s4TcKJ@amdc1032>
+	Tue, 19 Aug 2014 11:08:43 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, t.figa@samsung.com, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Hi Bart,
+Hello Kukjin,
 
-On 18.08.2014 19:42, Bartlomiej Zolnierkiewicz wrote:
-> 
-> Hi,
-> 
-> On Monday, July 28, 2014 08:40:52 AM Pankaj Dubey wrote:
->> Hi Tomasz,
->>
->> On Friday, July 25, 2014 Tomasz Figa wrote:
->>
->>> To: Pankaj Dubey; 'Kukjin Kim'; linux-arm-kernel@lists.infradead.org;
->> linux-
->>> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
->>> Cc: linux@arm.linux.org.uk; t.figa@samsung.com; vikas.sajjan@samsung.com;
->>> joshi@samsung.com; naushad@samsung.com; thomas.ab@samsung.com;
->>> chow.kim@samsung.com
->>> Subject: Re: [PATCH v7 3/4] ARM: EXYNOS: Add platform driver support for
->>> Exynos PMU
->>>
->>> Hi Pankaj, Kukjin,
->>>
->>> On 25.07.2014 07:32, Pankaj Dubey wrote:
->>>> Hi Kukjin,
->>>>
->>>> On Friday, July 25, 2014 Kukjin Kim wrote:
->>>
->>> [snip]
->>>
->>>>>>
->>>>> Looks good to me, will apply this and 4/4.
->>>>>
->>>>
->>>> We need to hold these two patches until dependent patch [1] from
->>>> Tomasz Figa gets merged.
->>>>
->>>> [1]: mfd: syscon: Decouple syscon interface from syscon devices
->>>>       https://lkml.org/lkml/2014/6/24/188
->>>
->>> That RFC patch had few comments from Arnd needed to be addressed, so it
->> needs a
->>> new revision.
->>>
->>> Pankaj, If I remember correctly, we had talked about this and the
->> conclusion was that
->>> you would take care of addressing the comments and sending new version of
->> the
->>> patch. Any update on this or have I missed something?
->>>
->>
->> Well, I don't think we concluded as such anything.
->> Since this patch needs to get in so that Exynos PMU and PM related changes
->> can go in,
->> I discussed with you saying that I am not able to understand about Arnd's
->> comments and
->> if possible and time permits I will look into it. Meanwhile I got busy with
->> some other
->> official work, so could not get time to look into it.
-> 
-> Tomasz/Pankaj, could we please get some agreement on what needs to be
-> done and who should do the pending work?
-> 
-> syscon patch is blocking PMU cleanup patches which in turn are blocking
-> PMU support additions for new SoCs (Exynos5420/5800 and Exynos3250 PMU
-> patches).
+Mark Brown has already queued for 3.18 the max77802 PMIC regulators
+driver so now we can add support for these in the Peach Pit and Pi
+DTS and also merge all the posted patches that depend on this. I've
+picked all the patches I found and rebased them to be sure that they
+apply cleanly on top of linux-next. Also I've taken some DT snippets
+from the downstream Chrome OS 3.8 kernel DTS for devices that use
+one of the regulators of these regulators has their input supply.
 
-Leaving alone the matter who is going to take care of it for now, the
-remaining work to do is to further decouple syscon from struct device,
-which means providing of_ API to register a syscon provider on a device
-tree node even before driver model is available yet.
+The series is composed of the following patches:
 
-I believe it should be quite straightforward on top of my RFC and should
-require only saving syscon's of_node directly in syscon struct, adding
-appropriate API and extending the look-up loops to handle cases when
-syscon's dev is NULL.
+Javier Martinez Canillas (3):
+  ARM: dts: Add Peach Pit and Pi dts entry for max77802 PMIC
+  ARM: dts: Add vmmc and vqmmc supplies for Peach Pit and Pi boards
+  ARM: dts: Add Peach Pit and Pi dts entry for ISL29018 sensor
+
+Naveen Krishna Chatradhi (1):
+  ARM: dts: Add thermistor dts fragment used by exynos based Peach
+    boards
+
+Rahul Sharma (2):
+  ARM: dts: add hdmi regulators for exynos5800 based peach-pi board
+  ARM: dts: add hdmi regulators for exynos5420 based peach-pit board
+
+ arch/arm/boot/dts/cros-adc-thermistors.dtsi |  44 ++++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts  | 390 ++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts   | 390 ++++++++++++++++++++++++++++
+ 3 files changed, 824 insertions(+)
+ create mode 100644 arch/arm/boot/dts/cros-adc-thermistors.dtsi
 
 Best regards,
-Tomasz
+Javier
