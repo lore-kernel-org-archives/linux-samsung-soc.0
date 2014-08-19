@@ -1,127 +1,65 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH] thermal: exynos: Add support for TRIM_RELOAD feature at
- Exynos3250
-Date: Tue, 19 Aug 2014 20:57:43 +0900
-Message-ID: <1408449463-3987-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rui.zhang@intel.com, eduardo.valentin@ti.com
-Cc: kgene.kim@samsung.com, b.zolnierkie@samsung.com, amit.daniel@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, ch.naveen@samsung.com, kyungmin.park@samsung.com, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Eduardo Valentin <edubezval@gmail.com>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 00/29] Exynos SYSMMU (IOMMU) integration with DT and
+	DMA-mapping subsystem
+Date: Tue, 19 Aug 2014 14:01:32 +0200
+Message-ID: <53F33C9C.1080601@samsung.com>
+References: <1407235677-26324-1-git-send-email-m.szyprowski@samsung.com>
+	<20140818233201.GL9809@8bytes.org> <53F2E9AD.9030308@samsung.com>
+	<53F3375E.6030402@suse.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <53F3375E.6030402-l3A5Bk7waGM@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch add support for TRIM_RELOAD feature at Exynos3250. The TMU of
-Exynos3250 has two TRIMINFO_CON register.
-
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Zhang Rui <rui.zhang@intel.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>
----
- drivers/thermal/samsung/exynos_tmu.c      | 7 +++++--
- drivers/thermal/samsung/exynos_tmu.h      | 5 +++--
- drivers/thermal/samsung/exynos_tmu_data.c | 9 ++++++++-
- drivers/thermal/samsung/exynos_tmu_data.h | 7 +++++--
- 4 files changed, 21 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index acbff14..ed01606 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -164,8 +164,11 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
- 		}
- 	}
- 
--	if (TMU_SUPPORTS(pdata, TRIM_RELOAD))
--		__raw_writel(1, data->base + reg->triminfo_ctrl);
-+	if (TMU_SUPPORTS(pdata, TRIM_RELOAD)) {
-+		for (i = 0; i < pdata->triminfo_reload_count; i++)
-+			__raw_writel(pdata->triminfo_reload[i],
-+					data->base + reg->triminfo_ctrl[i]);
-+	}
- 
- 	if (pdata->cal_mode == HW_MODE)
- 		goto skip_calib_data;
-diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-index 1b4a644..72cb54e 100644
---- a/drivers/thermal/samsung/exynos_tmu.h
-+++ b/drivers/thermal/samsung/exynos_tmu.h
-@@ -151,8 +151,7 @@ struct exynos_tmu_registers {
- 	u32	triminfo_25_shift;
- 	u32	triminfo_85_shift;
- 
--	u32	triminfo_ctrl;
--	u32	triminfo_ctrl1;
-+	u32	triminfo_ctrl[2];
- 	u32	triminfo_reload_shift;
- 
- 	u32	tmu_ctrl;
-@@ -295,6 +294,8 @@ struct exynos_tmu_platform_data {
- 	u8 second_point_trim;
- 	u8 default_temp_offset;
- 	u8 test_mux;
-+	u8 triminfo_reload[2];
-+	u8 triminfo_reload_count;
- 
- 	enum calibration_type cal_type;
- 	enum calibration_mode cal_mode;
-diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
-index aa8e0de..25f9890 100644
---- a/drivers/thermal/samsung/exynos_tmu_data.c
-+++ b/drivers/thermal/samsung/exynos_tmu_data.c
-@@ -95,6 +95,8 @@ static const struct exynos_tmu_registers exynos3250_tmu_registers = {
- 	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
- 	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
- 	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
-+	.triminfo_ctrl[0] = EXYNOS_TMU_TRIMINFO_CON1,
-+	.triminfo_ctrl[1] = EXYNOS_TMU_TRIMINFO_CON2,
- 	.tmu_ctrl = EXYNOS_TMU_REG_CONTROL,
- 	.test_mux_addr_shift = EXYNOS4412_MUX_ADDR_SHIFT,
- 	.buf_vref_sel_shift = EXYNOS_TMU_REF_VOLTAGE_SHIFT,
-@@ -160,6 +162,9 @@ static const struct exynos_tmu_registers exynos3250_tmu_registers = {
- 		.temp_level = 95, \
- 	}, \
- 	.freq_tab_count = 2, \
-+	.triminfo_reload[0] = 0x1, \
-+	.triminfo_reload[1] = 0x11, \
-+	.triminfo_reload_count = 2, \
- 	.registers = &exynos3250_tmu_registers, \
- 	.features = (TMU_SUPPORT_EMULATION | \
- 			TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
-@@ -184,7 +189,7 @@ static const struct exynos_tmu_registers exynos4412_tmu_registers = {
- 	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
- 	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
- 	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
--	.triminfo_ctrl = EXYNOS_TMU_TRIMINFO_CON,
-+	.triminfo_ctrl[0] = EXYNOS_TMU_TRIMINFO_CON2,
- 	.triminfo_reload_shift = EXYNOS_TRIMINFO_RELOAD_SHIFT,
- 	.tmu_ctrl = EXYNOS_TMU_REG_CONTROL,
- 	.test_mux_addr_shift = EXYNOS4412_MUX_ADDR_SHIFT,
-@@ -252,6 +257,8 @@ static const struct exynos_tmu_registers exynos4412_tmu_registers = {
- 		.temp_level = 95, \
- 	}, \
- 	.freq_tab_count = 2, \
-+	.triminfo_reload[0] = 0x1, \
-+	.triminfo_reload_count = 1, \
- 	.registers = &exynos4412_tmu_registers, \
- 	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_TRIM_RELOAD | \
- 			TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
-diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
-index f0979e5..e0536c3 100644
---- a/drivers/thermal/samsung/exynos_tmu_data.h
-+++ b/drivers/thermal/samsung/exynos_tmu_data.h
-@@ -57,8 +57,11 @@
- #define EXYNOS4210_TMU_TRIG_LEVEL_MASK	0x1111
- #define EXYNOS4210_TMU_INTCLEAR_VAL	0x1111
- 
--/* Exynos5250 and Exynos4412 specific registers */
--#define EXYNOS_TMU_TRIMINFO_CON	0x14
-+/* Exynos3250 specific registers */
-+#define EXYNOS_TMU_TRIMINFO_CON1	0x10
-+
-+/* Exynos5250, Exynos4412 and Exynos3250 specific registers */
-+#define EXYNOS_TMU_TRIMINFO_CON2	0x14
- #define EXYNOS_THD_TEMP_RISE		0x50
- #define EXYNOS_THD_TEMP_FALL		0x54
- #define EXYNOS_EMUL_CON		0x80
--- 
-1.8.0
+SGVsbG8sCgpPbiAyMDE0LTA4LTE5IDEzOjM5LCBBbmRyZWFzIEbDpHJiZXIgd3JvdGU6Cj4gSGkg
+TWFyZWsgYW5kIElua2ksCj4KPiBBbSAxOS4wOC4yMDE0IDA4OjA3LCBzY2hyaWViIE1hcmVrIFN6
+eXByb3dza2k6Cj4+IE9uIDIwMTQtMDgtMTkgMDE6MzIsIEpvZXJnIFJvZWRlbCB3cm90ZToKPj4+
+IE9uIFR1ZSwgQXVnIDA1LCAyMDE0IGF0IDEyOjQ3OjI4UE0gKzAyMDAsIE1hcmVrIFN6eXByb3dz
+a2kgd3JvdGU6Cj4gWy4uLl0KPj4+PiAgICAzMyBmaWxlcyBjaGFuZ2VkLCAxMDE2IGluc2VydGlv
+bnMoKyksIDM1NiBkZWxldGlvbnMoLSkKPj4+IFRoaXMgdG91Y2hlcyBhIGxvdCBvZiBub24taW9t
+bXUgc3R1ZmYuIFdoYXQgaXMgeW91ciBzdHJhdGVneSBvbiBnZXR0aW5nCj4+PiB0aGlzIGluLCBk
+byB5b3UgcGxhbiB0byBnZXQgdGhlIG5vbi1pb21tdSBjaGFuZ2VzIG1lcmdlZCBmaXJzdCBvciBk
+byB5b3UKPj4+IHdhbnQgdG8gY29sbGVjdCB0aGUgcmVzcGVjdGl2ZSBBY2tzIGFuZCBtZXJnZSB0
+aGlzIGFsbCB0aHJvdWdoIG9uZSB0cmVlPwo+PiBUaG9zZSBwYXRjaGVzIGFyZSBwb3N0ZWQgYXMg
+b25lIHBhdGNoc2V0IG1haW5seSB0byBkZW1vbnN0cmF0ZSBob3cgdG8gZ2V0Cj4+IGV2ZXJ5dGhp
+bmcgdG8gd29yayB0b2dldGhlci4gSSBhbHNvIHBvc3RlZCB0aGlzIGFzIGEgc2luZ2xlIHBhdGNo
+IHNlcmllcwo+PiB0byBnZXQgc29tZSBmZWVkYmFjayBmcm9tIG90aGVyIGlvbW11IGRldmVsb3Bl
+cnMsIGVzcGVjaWFsbHkgYWxsIHRob3NlCj4+IGludm9sdmVkIGluIHRoZSBnZW5lcmljIGlvbW11
+IGR0IGJpbmRpbmdzLgo+Pgo+PiBGb3IgbWVyZ2luZywgSSB3aWxsIHNwbGl0IHRoZW0gaW50byBz
+bWFsbGVyIHNlcmllcyBhbmQgdHJ5IHRvIGdldAo+PiByZXNwZWN0aXZlIGFja3MuCj4gSSdtIHdv
+cmtpbmcgb24gNTI1MCBiYXNlZCBTcHJpbmcgQ2hyb21lYm9vayBhbmQgbm90aWNlZCB0aGF0IHYz
+LjE3LXJjMQo+IGdvdCBzb21lIG1vcmUgaW9tbXUgc3VwcG9ydC4gV2l0aCB0aGUgbmV3IENPTkZJ
+R19EUk1fRVhZTk9TX0lPTU1VPXkgbXkKPiBtYWNoaW5lIHN0b3BzIGJvb3RpbmcuIFNvIEknbSB3
+b25kZXJpbmcsIGlzIGFueSBvZiB0aGlzIGEgZml4IGZvciAzLjE3LAo+IG9yIGlzIGFsbCBvZiB0
+aGlzICJ1bnJlbGF0ZWQiIC1uZXh0IG1hdGVyaWFsPwoKVGhpcyBpcyBwcm9iYWJseSBhIHNpZGUg
+ZWZmZWN0IG9mIHBhdGNoIAozMTcwNDQ3YzFmMjY0ZDUxYjhkMWYzODk4YmYyNTg4NTg4YTY0ZmRj
+CigiaW9tbXUvZXh5bm9zOiBTZWxlY3QgQVJNX0RNQV9VU0VfSU9NTVUiKS4gSXQgYWRkZWQgc2Vs
+ZWN0aW9uIG9mIApBUk1fRE1BX1VTRV9JT01NVQpzeW1ib2wsIG9uIHdoaWNoIElPTU1VIHN1cHBv
+cnQgaW4gRXh5bm9zIERSTSBzdWJzeXN0ZW0gZGVwZW5kcy4gSG93ZXZlciAKc2VsZWN0aW5nCnRo
+aXMgc3ltYm9sIGlzIGFsbCB0aGF0IHRoaXMgcGF0Y2ggZG9lcywgd2l0aG91dCBwcm92aWRpbmcg
+YW55IGNvZGUgY29kZSAKd2hpY2gKaW1wbGVtZW50cyByZWFsIHN1cHBvcnQgZm9yIEFSTSBETUEg
+SU9NTVUgaW50ZWdyYXRpb24sIHdoaWNoIGlzIG5lZWRlZCAKYnkgRXh5bm9zCkRSTSBkcml2ZXIu
+IFBsZWFzZSBkaXNhYmxlIENPTkZJR19EUk1fRVhZTk9TX0lPTU1VIGluIGtlcm5lbCAuY29uZmln
+IGFuZCAKeW91cgpzeXN0ZW0gc2hvdWxkIGJlIGJvb3RhYmxlIGFnYWluLgoKPiBBbHNvLCBhcmUg
+eW91IG9yIHNvbWVvbmUKPiB3b3JraW5nIG9uIHRoZSByZXNwZWN0aXZlIERUIGNoYW5nZXMgZm9y
+IEV4eW5vczU/CgpJIGNhbiBwcmVwYXJlIERUIGNoYW5nZXMgZm9yIEV4eW5vczUgYXMgd2VsbCwg
+YnV0IGZpcnN0IEkgd2FudGVkIHRvIApjbGFyaWZ5IGlmCmV2ZXJ5b25lIGludm9sdmVkIGluIGdl
+bmVyaWMgSU9NTVUgYmluZGluZ3MgYW5kIEV4eW5vcyBJT01NVSBkcml2ZXIgCmFncmVlcyBvbiBt
+eQpwcm9wb3NhbC4KCkJlc3QgcmVnYXJkcwotLSAKTWFyZWsgU3p5cHJvd3NraSwgUGhEClNhbXN1
+bmcgUiZEIEluc3RpdHV0ZSBQb2xhbmQKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmlvbW11IG1haWxpbmcgbGlzdAppb21tdUBsaXN0cy5saW51eC1mb3Vu
+ZGF0aW9uLm9yZwpodHRwczovL2xpc3RzLmxpbnV4Zm91bmRhdGlvbi5vcmcvbWFpbG1hbi9saXN0
+aW5mby9pb21tdQ==
