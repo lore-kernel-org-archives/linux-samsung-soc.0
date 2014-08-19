@@ -1,48 +1,53 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 0/6] Add max77802 support for Peach boards
-Date: Tue, 19 Aug 2014 17:08:27 +0200
-Message-ID: <1408460913-13863-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:42424 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753401AbaHSPIn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Aug 2014 11:08:43 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 3/6] ARM: dts: add hdmi regulators for exynos5420 based
+ peach-pit board
+Date: Tue, 19 Aug 2014 17:08:30 +0200
+Message-ID: <1408460913-13863-4-git-send-email-javier.martinez@collabora.co.uk>
+References: <1408460913-13863-1-git-send-email-javier.martinez@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1408460913-13863-1-git-send-email-javier.martinez@collabora.co.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org, Rahul Sharma <rahul.sharma@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Kukjin,
+From: Rahul Sharma <rahul.sharma@samsung.com>
 
-Mark Brown has already queued for 3.18 the max77802 PMIC regulators
-driver so now we can add support for these in the Peach Pit and Pi
-DTS and also merge all the posted patches that depend on this. I've
-picked all the patches I found and rebased them to be sure that they
-apply cleanly on top of linux-next. Also I've taken some DT snippets
-from the downstream Chrome OS 3.8 kernel DTS for devices that use
-one of the regulators of these regulators has their input supply.
+Adding regulators for hdmi for peach-pit board.
 
-The series is composed of the following patches:
+Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
+ arch/arm/boot/dts/exynos5420-peach-pit.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Javier Martinez Canillas (3):
-  ARM: dts: Add Peach Pit and Pi dts entry for max77802 PMIC
-  ARM: dts: Add vmmc and vqmmc supplies for Peach Pit and Pi boards
-  ARM: dts: Add Peach Pit and Pi dts entry for ISL29018 sensor
-
-Naveen Krishna Chatradhi (1):
-  ARM: dts: Add thermistor dts fragment used by exynos based Peach
-    boards
-
-Rahul Sharma (2):
-  ARM: dts: add hdmi regulators for exynos5800 based peach-pi board
-  ARM: dts: add hdmi regulators for exynos5420 based peach-pit board
-
- arch/arm/boot/dts/cros-adc-thermistors.dtsi |  44 ++++
- arch/arm/boot/dts/exynos5420-peach-pit.dts  | 390 ++++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos5800-peach-pi.dts   | 390 ++++++++++++++++++++++++++++
- 3 files changed, 824 insertions(+)
- create mode 100644 arch/arm/boot/dts/cros-adc-thermistors.dtsi
-
-Best regards,
-Javier
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index 8619d58..9cf53b1 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -142,6 +142,11 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&hdmi_hpd_irq>;
+ 	ddc = <&i2c_2>;
++
++	hdmi-en-supply = <&tps65090_fet7>;
++	vdd-supply = <&ldo8_reg>;
++	vdd_osc-supply = <&ldo10_reg>;
++	vdd_pll-supply = <&ldo8_reg>;
+ };
+ 
+ &hsi2c_4 {
+-- 
+2.0.1
