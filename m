@@ -1,46 +1,43 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [RESEND PATCH 4/7] mfd: cros_ec: move locking into cros_ec_cmd_xfer
-Date: Wed, 20 Aug 2014 15:36:01 -0700
-Message-ID: <CAD=FV=WAMKrmDTQbDrjR2XtFcNVUuzJfWspN5a7nE7kLWS9=4A@mail.gmail.com>
-References: <1408536812-7836-1-git-send-email-javier.martinez@collabora.co.uk>
-	<1408536812-7836-5-git-send-email-javier.martinez@collabora.co.uk>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 1/2] ARM: dts: Enable PMIC interrupts on ODROID
+Date: Tue, 19 Aug 2014 13:18:59 -0700
+Message-ID: <20140819201859.GA7929@localhost>
+References: <1405500606-5752-1-git-send-email-drake@endlessm.com>
+ <CAAObsKAokjDmpVy5cm_iFD52bCq+3jYeGDWzACsmh-JKktyjDw@mail.gmail.com>
+ <53F22D1B.4010900@samsung.com>
+ <3413299.OcpyWkc82q@amdc1032>
+ <CABxcv=mkqmg_b+vwbVPAW7AaB86Fxx+LTuMSyC7L_mUy6u2+TQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f176.google.com ([209.85.220.176]:54816 "EHLO
-	mail-vc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752883AbaHTWgD (ORCPT
+Received: from mail-ig0-f171.google.com ([209.85.213.171]:61410 "EHLO
+	mail-ig0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752775AbaHTW6n (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Aug 2014 18:36:03 -0400
-Received: by mail-vc0-f176.google.com with SMTP id id10so9895262vcb.35
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Aug 2014 15:36:02 -0700 (PDT)
-In-Reply-To: <1408536812-7836-5-git-send-email-javier.martinez@collabora.co.uk>
+	Wed, 20 Aug 2014 18:58:43 -0400
+Received: by mail-ig0-f171.google.com with SMTP id l13so12458817iga.16
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Aug 2014 15:58:42 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CABxcv=mkqmg_b+vwbVPAW7AaB86Fxx+LTuMSyC7L_mUy6u2+TQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomeu Vizoso <tomeu@tomeuvizoso.net>, Daniel Drake <drake@endlessm.com>, liquid.acid@gmx.net, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Javier,
+On Tue, Aug 19, 2014 at 12:15:41PM +0200, Javier Martinez Canillas wrote:
+> Hello,
+> 
+> On Tue, Aug 19, 2014 at 11:57 AM, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+> >
+> > IMHO they should go to upstream ASAP as they fix the boot for
+> > ODROID boards and they cannot break anything as they are limited
+> > to ODROID dts files.
+> >
+> 
+> Agreed, this is definitely -rc material IMHO.
 
-On Wed, Aug 20, 2014 at 5:13 AM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> From: Andrew Bresticker <abrestic@chromium.org>
->
-> Now that there's a central cros_ec_cmd_xfer(), move the locking
-> out of the SPI and LPC drivers.
-
-Slight nit that the LPC driver doesn't exist upstream.  This is in
-prep for adding the LPC driver, though.
+Yes. Definitely.
 
 
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> Reviewed-by: Simon Glass <sjg@chromium.org>
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> ---
->  drivers/mfd/cros_ec.c     | 10 +++++++++-
->  drivers/mfd/cros_ec_spi.c | 11 -----------
->  2 files changed, 9 insertions(+), 12 deletions(-)
-
-After comment nitfix:
-
-Reviewed-by: Doug Anderson <dianders@chromium.org>
+-Olof
