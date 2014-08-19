@@ -1,60 +1,127 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCH 00/29] Exynos SYSMMU (IOMMU) integration with DT and DMA-mapping
- subsystem
-Date: Tue, 19 Aug 2014 13:39:10 +0200
-Message-ID: <53F3375E.6030402@suse.de>
-References: <1407235677-26324-1-git-send-email-m.szyprowski@samsung.com> <20140818233201.GL9809@8bytes.org> <53F2E9AD.9030308@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:48589 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750721AbaHSLjR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Aug 2014 07:39:17 -0400
-In-Reply-To: <53F2E9AD.9030308@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH] thermal: exynos: Add support for TRIM_RELOAD feature at
+ Exynos3250
+Date: Tue, 19 Aug 2014 20:57:43 +0900
+Message-ID: <1408449463-3987-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: rui.zhang@intel.com, eduardo.valentin@ti.com
+Cc: kgene.kim@samsung.com, b.zolnierkie@samsung.com, amit.daniel@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, ch.naveen@samsung.com, kyungmin.park@samsung.com, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Eduardo Valentin <edubezval@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Hi Marek and Inki,
+This patch add support for TRIM_RELOAD feature at Exynos3250. The TMU of
+Exynos3250 has two TRIMINFO_CON register.
 
-Am 19.08.2014 08:07, schrieb Marek Szyprowski:
-> On 2014-08-19 01:32, Joerg Roedel wrote:
->> On Tue, Aug 05, 2014 at 12:47:28PM +0200, Marek Szyprowski wrote:
-[...]
->>>   33 files changed, 1016 insertions(+), 356 deletions(-)
->> This touches a lot of non-iommu stuff. What is your strategy on gett=
-ing
->> this in, do you plan to get the non-iommu changes merged first or do=
- you
->> want to collect the respective Acks and merge this all through one t=
-ree?
->=20
-> Those patches are posted as one patchset mainly to demonstrate how to=
- get
-> everything to work together. I also posted this as a single patch ser=
-ies
-> to get some feedback from other iommu developers, especially all thos=
-e
-> involved in the generic iommu dt bindings.
->=20
-> For merging, I will split them into smaller series and try to get
-> respective acks.
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Zhang Rui <rui.zhang@intel.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>
+---
+ drivers/thermal/samsung/exynos_tmu.c      | 7 +++++--
+ drivers/thermal/samsung/exynos_tmu.h      | 5 +++--
+ drivers/thermal/samsung/exynos_tmu_data.c | 9 ++++++++-
+ drivers/thermal/samsung/exynos_tmu_data.h | 7 +++++--
+ 4 files changed, 21 insertions(+), 7 deletions(-)
 
-I'm working on 5250 based Spring Chromebook and noticed that v3.17-rc1
-got some more iommu support. With the new CONFIG_DRM_EXYNOS_IOMMU=3Dy m=
-y
-machine stops booting. So I'm wondering, is any of this a fix for 3.17,
-or is all of this "unrelated" -next material? Also, are you or someone
-working on the respective DT changes for Exynos5?
-
-Regards,
-Andreas
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index acbff14..ed01606 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -164,8 +164,11 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	if (TMU_SUPPORTS(pdata, TRIM_RELOAD))
+-		__raw_writel(1, data->base + reg->triminfo_ctrl);
++	if (TMU_SUPPORTS(pdata, TRIM_RELOAD)) {
++		for (i = 0; i < pdata->triminfo_reload_count; i++)
++			__raw_writel(pdata->triminfo_reload[i],
++					data->base + reg->triminfo_ctrl[i]);
++	}
+ 
+ 	if (pdata->cal_mode == HW_MODE)
+ 		goto skip_calib_data;
+diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
+index 1b4a644..72cb54e 100644
+--- a/drivers/thermal/samsung/exynos_tmu.h
++++ b/drivers/thermal/samsung/exynos_tmu.h
+@@ -151,8 +151,7 @@ struct exynos_tmu_registers {
+ 	u32	triminfo_25_shift;
+ 	u32	triminfo_85_shift;
+ 
+-	u32	triminfo_ctrl;
+-	u32	triminfo_ctrl1;
++	u32	triminfo_ctrl[2];
+ 	u32	triminfo_reload_shift;
+ 
+ 	u32	tmu_ctrl;
+@@ -295,6 +294,8 @@ struct exynos_tmu_platform_data {
+ 	u8 second_point_trim;
+ 	u8 default_temp_offset;
+ 	u8 test_mux;
++	u8 triminfo_reload[2];
++	u8 triminfo_reload_count;
+ 
+ 	enum calibration_type cal_type;
+ 	enum calibration_mode cal_mode;
+diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
+index aa8e0de..25f9890 100644
+--- a/drivers/thermal/samsung/exynos_tmu_data.c
++++ b/drivers/thermal/samsung/exynos_tmu_data.c
+@@ -95,6 +95,8 @@ static const struct exynos_tmu_registers exynos3250_tmu_registers = {
+ 	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
+ 	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
+ 	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
++	.triminfo_ctrl[0] = EXYNOS_TMU_TRIMINFO_CON1,
++	.triminfo_ctrl[1] = EXYNOS_TMU_TRIMINFO_CON2,
+ 	.tmu_ctrl = EXYNOS_TMU_REG_CONTROL,
+ 	.test_mux_addr_shift = EXYNOS4412_MUX_ADDR_SHIFT,
+ 	.buf_vref_sel_shift = EXYNOS_TMU_REF_VOLTAGE_SHIFT,
+@@ -160,6 +162,9 @@ static const struct exynos_tmu_registers exynos3250_tmu_registers = {
+ 		.temp_level = 95, \
+ 	}, \
+ 	.freq_tab_count = 2, \
++	.triminfo_reload[0] = 0x1, \
++	.triminfo_reload[1] = 0x11, \
++	.triminfo_reload_count = 2, \
+ 	.registers = &exynos3250_tmu_registers, \
+ 	.features = (TMU_SUPPORT_EMULATION | \
+ 			TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
+@@ -184,7 +189,7 @@ static const struct exynos_tmu_registers exynos4412_tmu_registers = {
+ 	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
+ 	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
+ 	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
+-	.triminfo_ctrl = EXYNOS_TMU_TRIMINFO_CON,
++	.triminfo_ctrl[0] = EXYNOS_TMU_TRIMINFO_CON2,
+ 	.triminfo_reload_shift = EXYNOS_TRIMINFO_RELOAD_SHIFT,
+ 	.tmu_ctrl = EXYNOS_TMU_REG_CONTROL,
+ 	.test_mux_addr_shift = EXYNOS4412_MUX_ADDR_SHIFT,
+@@ -252,6 +257,8 @@ static const struct exynos_tmu_registers exynos4412_tmu_registers = {
+ 		.temp_level = 95, \
+ 	}, \
+ 	.freq_tab_count = 2, \
++	.triminfo_reload[0] = 0x1, \
++	.triminfo_reload_count = 1, \
+ 	.registers = &exynos4412_tmu_registers, \
+ 	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_TRIM_RELOAD | \
+ 			TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
+diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
+index f0979e5..e0536c3 100644
+--- a/drivers/thermal/samsung/exynos_tmu_data.h
++++ b/drivers/thermal/samsung/exynos_tmu_data.h
+@@ -57,8 +57,11 @@
+ #define EXYNOS4210_TMU_TRIG_LEVEL_MASK	0x1111
+ #define EXYNOS4210_TMU_INTCLEAR_VAL	0x1111
+ 
+-/* Exynos5250 and Exynos4412 specific registers */
+-#define EXYNOS_TMU_TRIMINFO_CON	0x14
++/* Exynos3250 specific registers */
++#define EXYNOS_TMU_TRIMINFO_CON1	0x10
++
++/* Exynos5250, Exynos4412 and Exynos3250 specific registers */
++#define EXYNOS_TMU_TRIMINFO_CON2	0x14
+ #define EXYNOS_THD_TEMP_RISE		0x50
+ #define EXYNOS_THD_TEMP_FALL		0x54
+ #define EXYNOS_EMUL_CON		0x80
+-- 
+1.8.0
