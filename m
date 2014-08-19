@@ -1,73 +1,100 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 6/6] ARM: dts: Add Peach Pit and Pi dts entry for ISL29018
- sensor
-Date: Tue, 19 Aug 2014 17:08:33 +0200
-Message-ID: <1408460913-13863-7-git-send-email-javier.martinez@collabora.co.uk>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 5/6] ARM: dts: Add vmmc and vqmmc supplies for Peach Pit
+ and Pi boards
+Date: Tue, 19 Aug 2014 09:26:26 -0700
+Message-ID: <CAD=FV=V9oct-iJ==1SLdxusq68AY3utMQF+MbX0Uf+2dC0mwww@mail.gmail.com>
 References: <1408460913-13863-1-git-send-email-javier.martinez@collabora.co.uk>
+	<1408460913-13863-6-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1408460913-13863-1-git-send-email-javier.martinez@collabora.co.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org, Rahul Sharma <rahul.sharma@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:40694 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752044AbaHSQ01 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 19 Aug 2014 12:26:27 -0400
+Received: by mail-ob0-f173.google.com with SMTP id vb8so5321208obc.18
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Aug 2014 09:26:27 -0700 (PDT)
+In-Reply-To: <1408460913-13863-6-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
 
-The Exynos5420 based Peach Pit and the Exynos5800 based Peach Pi
-machines have an i2c ISL29018 light sensor. This patch adds the
-device nodes needed to support this device.
+Javier,
 
-These DTS snippets were taken from the downstream Chrome OS 3.8
-kernel Device Tree for Peach Pit and Pi boards.
+On Tue, Aug 19, 2014 at 8:08 AM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> The VCC/VDD and VCCQ/VDD_IO power supplies for the MMC are
+> provided by the tps65090 fet4 and max77802 ldo4 regulators
+> respectively. Add the phandle to the regulators tree nodes
+> for the the dw_mmc device device.
+>
+> These DTS snippets were taken from the downstream ChromeOS
+> 3.8 kernel Device Tree for Peach Pit and Pi boards.
+>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 2 ++
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 2 ++
+>  2 files changed, 4 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> index 8e50042..5b9dbb9 100644
+> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> @@ -547,6 +547,8 @@
+>  };
+>
+>  &mmc_2 {
+> +       vmmc-supply = <&tps65090_fet4>;
+> +       vqmmc-supply = <&vqmmc_sdcard>;
+>         status = "okay";
+>         num-slots = <1>;
+>         supports-highspeed;
+> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> index 939f91c..dcac443 100644
+> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> @@ -545,6 +545,8 @@
+>  };
+>
+>  &mmc_2 {
+> +       vmmc-supply = <&tps65090_fet4>;
+> +       vqmmc-supply = <&vqmmc_sdcard>;
+>         status = "okay";
+>         num-slots = <1>;
+>         supports-highspeed;
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- arch/arm/boot/dts/exynos5420-peach-pit.dts | 6 ++++++
- arch/arm/boot/dts/exynos5800-peach-pi.dts  | 6 ++++++
- 2 files changed, 12 insertions(+)
+While your change is correct, I have a worry that it will break things
+if it's merged before some patches that Yuvaraj is working on.
 
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index 5b9dbb9..b835953 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -498,6 +498,12 @@
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&max98090_irq>;
- 	};
-+
-+	light-sensor@44 {
-+		compatible = "isil,isl29018";
-+		reg = <0x44>;
-+		vcc-supply = <&tps65090_fet5>;
-+	};
- };
- 
- &hsi2c_9 {
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index dcac443..c3c51c0 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -496,6 +496,12 @@
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&max98091_irq>;
- 	};
-+
-+	light-sensor@44 {
-+		compatible = "isil,isl29018";
-+		reg = <0x44>;
-+		vcc-supply = <&tps65090_fet5>;
-+	};
- };
- 
- &hsi2c_9 {
--- 
-2.0.1
+Specifically the problem on pit and pi (and any exynos5250 / 5420 /
+5800 / ... boards using the built-in "card detect") is that the card
+detect line is on the same power rail as "vqmmc".  That means you
+can't turn off vqmmc if you still need to be able to detect card
+insertions.
+
+...but you can't turn off vmmc without turning off vqmmc, otherwise
+current will leak through the IO lines into the card, which is bad.
+
+
+Right now the SDMMC core will try to turn off power to the card at two times:
+1. when the card is ejected
+2. when it's trying to reset the card
+
+
+Obviously the first problem is a huge problem on exynos because it
+means that we won't be able to detect card insertions.  ...but we
+still want to turn the power off from #2.  To really fix the problem I
+think the core needs to be extended to treat the above as two separate
+cases.
+
+
+Your patch might work at the moment because I think dw_mmc doesn't
+actually try to turn off these rails with the main SDMMC core asks it
+to.  ...but I still worry about merging them before Yuvaraj's changes
+are ready.
+
+
+-Doug
