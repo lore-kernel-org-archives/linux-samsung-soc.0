@@ -1,38 +1,42 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 1/2] ARM: dts: Enable PMIC interrupts on ODROID
-Date: Tue, 19 Aug 2014 12:15:41 +0200
-Message-ID: <CABxcv=mkqmg_b+vwbVPAW7AaB86Fxx+LTuMSyC7L_mUy6u2+TQ@mail.gmail.com>
-References: <1405500606-5752-1-git-send-email-drake@endlessm.com>
-	<CAAObsKAokjDmpVy5cm_iFD52bCq+3jYeGDWzACsmh-JKktyjDw@mail.gmail.com>
-	<53F22D1B.4010900@samsung.com>
-	<3413299.OcpyWkc82q@amdc1032>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 1/1] mmc: core: Use regulator_get_voltage() if OCR mask
+ is empty.
+Date: Tue, 19 Aug 2014 13:29:32 +0200
+Message-ID: <53F3351C.1020500@collabora.co.uk>
+References: <1408019940-11153-1-git-send-email-javier.martinez@collabora.co.uk>	<CAD7vxxKvzxvmzgx=S5ZZn54ts99ca2TqBYFvY1SXZQZDkhjq3w@mail.gmail.com>	<20140814151958.GY17528@sirena.org.uk>	<CAD7vxxLHtk2ywHGoBtDp6x3-5BtDdaFnCdc_pfgMwq63Cg8Qow@mail.gmail.com>	<53EDBB5B.4000209@collabora.co.uk>	<20140815095528.GH17528@sirena.org.uk> <CAPDyKFpm5nzXp5p0qxDof2NcOML911eYkjPNMsn9a2ttdnW7gQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f46.google.com ([74.125.82.46]:63213 "EHLO
-	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750779AbaHSKPn (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:42298 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751960AbaHSL3i (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Aug 2014 06:15:43 -0400
-Received: by mail-wg0-f46.google.com with SMTP id m15so6173645wgh.5
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Aug 2014 03:15:42 -0700 (PDT)
-In-Reply-To: <3413299.OcpyWkc82q@amdc1032>
+	Tue, 19 Aug 2014 07:29:38 -0400
+In-Reply-To: <CAPDyKFpm5nzXp5p0qxDof2NcOML911eYkjPNMsn9a2ttdnW7gQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomeu Vizoso <tomeu@tomeuvizoso.net>, Daniel Drake <drake@endlessm.com>, liquid.acid@gmx.net, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, Tim Kryger <tim.kryger@gmail.com>
+Cc: Chris Ball <chris@printf.net>, Seungwon Jeon <tgih.jun@samsung.com>, Haijun Zhang <Haijun.Zhang@freescale.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Hello,
+Hello Ulf,
 
-On Tue, Aug 19, 2014 at 11:57 AM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
+On 08/15/2014 04:51 PM, Ulf Hansson wrote:
+> 
+> Just wanted to add some input regarding the errors in the mmc case.
+> These are of high importance. In principle if you get, "Failed getting
+> OCR mask: -22", likely you will be using a wrong OCR mask while
+> negotiating the voltage level with the card.
+> 
+> So, somehow we need to address this issue.
 >
-> IMHO they should go to upstream ASAP as they fix the boot for
-> ODROID boards and they cannot break anything as they are limited
-> to ODROID dts files.
->
 
-Agreed, this is definitely -rc material IMHO.
+And do you think that $subject is the right approach to solve this issue?
+If not please let me know so I can address that.
+
+> Kind regards
+> Uffe
+> 
 
 Best regards,
 Javier
