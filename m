@@ -1,42 +1,60 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 1/1] mmc: core: Use regulator_get_voltage() if OCR mask
- is empty.
-Date: Tue, 19 Aug 2014 13:29:32 +0200
-Message-ID: <53F3351C.1020500@collabora.co.uk>
-References: <1408019940-11153-1-git-send-email-javier.martinez@collabora.co.uk>	<CAD7vxxKvzxvmzgx=S5ZZn54ts99ca2TqBYFvY1SXZQZDkhjq3w@mail.gmail.com>	<20140814151958.GY17528@sirena.org.uk>	<CAD7vxxLHtk2ywHGoBtDp6x3-5BtDdaFnCdc_pfgMwq63Cg8Qow@mail.gmail.com>	<53EDBB5B.4000209@collabora.co.uk>	<20140815095528.GH17528@sirena.org.uk> <CAPDyKFpm5nzXp5p0qxDof2NcOML911eYkjPNMsn9a2ttdnW7gQ@mail.gmail.com>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Subject: Re: [PATCH 00/29] Exynos SYSMMU (IOMMU) integration with DT and DMA-mapping
+ subsystem
+Date: Tue, 19 Aug 2014 13:39:10 +0200
+Message-ID: <53F3375E.6030402@suse.de>
+References: <1407235677-26324-1-git-send-email-m.szyprowski@samsung.com> <20140818233201.GL9809@8bytes.org> <53F2E9AD.9030308@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:42298 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751960AbaHSL3i (ORCPT
+Received: from cantor2.suse.de ([195.135.220.15]:48589 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750721AbaHSLjR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Aug 2014 07:29:38 -0400
-In-Reply-To: <CAPDyKFpm5nzXp5p0qxDof2NcOML911eYkjPNMsn9a2ttdnW7gQ@mail.gmail.com>
+	Tue, 19 Aug 2014 07:39:17 -0400
+In-Reply-To: <53F2E9AD.9030308@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, Tim Kryger <tim.kryger@gmail.com>
-Cc: Chris Ball <chris@printf.net>, Seungwon Jeon <tgih.jun@samsung.com>, Haijun Zhang <Haijun.Zhang@freescale.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Cc: Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Hello Ulf,
+Hi Marek and Inki,
 
-On 08/15/2014 04:51 PM, Ulf Hansson wrote:
-> 
-> Just wanted to add some input regarding the errors in the mmc case.
-> These are of high importance. In principle if you get, "Failed getting
-> OCR mask: -22", likely you will be using a wrong OCR mask while
-> negotiating the voltage level with the card.
-> 
-> So, somehow we need to address this issue.
->
+Am 19.08.2014 08:07, schrieb Marek Szyprowski:
+> On 2014-08-19 01:32, Joerg Roedel wrote:
+>> On Tue, Aug 05, 2014 at 12:47:28PM +0200, Marek Szyprowski wrote:
+[...]
+>>>   33 files changed, 1016 insertions(+), 356 deletions(-)
+>> This touches a lot of non-iommu stuff. What is your strategy on gett=
+ing
+>> this in, do you plan to get the non-iommu changes merged first or do=
+ you
+>> want to collect the respective Acks and merge this all through one t=
+ree?
+>=20
+> Those patches are posted as one patchset mainly to demonstrate how to=
+ get
+> everything to work together. I also posted this as a single patch ser=
+ies
+> to get some feedback from other iommu developers, especially all thos=
+e
+> involved in the generic iommu dt bindings.
+>=20
+> For merging, I will split them into smaller series and try to get
+> respective acks.
 
-And do you think that $subject is the right approach to solve this issue?
-If not please let me know so I can address that.
+I'm working on 5250 based Spring Chromebook and noticed that v3.17-rc1
+got some more iommu support. With the new CONFIG_DRM_EXYNOS_IOMMU=3Dy m=
+y
+machine stops booting. So I'm wondering, is any of this a fix for 3.17,
+or is all of this "unrelated" -next material? Also, are you or someone
+working on the respective DT changes for Exynos5?
 
-> Kind regards
-> Uffe
-> 
+Regards,
+Andreas
 
-Best regards,
-Javier
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
+=BCrnberg
