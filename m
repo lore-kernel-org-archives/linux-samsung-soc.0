@@ -1,80 +1,44 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCH 00/29] Exynos SYSMMU (IOMMU) integration with DT and DMA-mapping
- subsystem
-Date: Tue, 19 Aug 2014 14:30:59 +0200
-Message-ID: <53F34383.30100@suse.de>
-References: <1407235677-26324-1-git-send-email-m.szyprowski@samsung.com> <20140818233201.GL9809@8bytes.org> <53F2E9AD.9030308@samsung.com> <53F3375E.6030402@suse.de> <53F33C9C.1080601@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH 1/1] mmc: core: Use regulator_get_voltage() if OCR mask is empty.
+Date: Tue, 19 Aug 2014 14:43:36 +0200
+Message-ID: <CAPDyKFrW1ZojV0sWTswapWDvkmgshtyb=NP9CrY+GymdQeRq5w@mail.gmail.com>
+References: <1408019940-11153-1-git-send-email-javier.martinez@collabora.co.uk>
+	<CAD7vxxKvzxvmzgx=S5ZZn54ts99ca2TqBYFvY1SXZQZDkhjq3w@mail.gmail.com>
+	<20140814151958.GY17528@sirena.org.uk>
+	<CAD7vxxLHtk2ywHGoBtDp6x3-5BtDdaFnCdc_pfgMwq63Cg8Qow@mail.gmail.com>
+	<53EDBB5B.4000209@collabora.co.uk>
+	<20140815095528.GH17528@sirena.org.uk>
+	<CAPDyKFpm5nzXp5p0qxDof2NcOML911eYkjPNMsn9a2ttdnW7gQ@mail.gmail.com>
+	<53F3351C.1020500@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <53F33C9C.1080601@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <53F3351C.1020500@collabora.co.uk>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Mark Brown <broonie@kernel.org>, Tim Kryger <tim.kryger@gmail.com>, Chris Ball <chris@printf.net>, Seungwon Jeon <tgih.jun@samsung.com>, Haijun Zhang <Haijun.Zhang@freescale.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-mmc <linux-mmc@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On 19 August 2014 13:29, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> Hello Ulf,
+>
+> On 08/15/2014 04:51 PM, Ulf Hansson wrote:
+>>
+>> Just wanted to add some input regarding the errors in the mmc case.
+>> These are of high importance. In principle if you get, "Failed getting
+>> OCR mask: -22", likely you will be using a wrong OCR mask while
+>> negotiating the voltage level with the card.
+>>
+>> So, somehow we need to address this issue.
+>>
+>
+> And do you think that $subject is the right approach to solve this issue?
+> If not please let me know so I can address that.
 
-Am 19.08.2014 14:01, schrieb Marek Szyprowski:
-> On 2014-08-19 13:39, Andreas F=C3=A4rber wrote:
->> I'm working on 5250 based Spring Chromebook and noticed that v3.17-r=
-c1
->> got some more iommu support. With the new CONFIG_DRM_EXYNOS_IOMMU=3D=
-y my
->> machine stops booting. So I'm wondering, is any of this a fix for 3.=
-17,
->> or is all of this "unrelated" -next material?
->=20
-> This is probably a side effect of patch
-> 3170447c1f264d51b8d1f3898bf2588588a64fdc
-> ("iommu/exynos: Select ARM_DMA_USE_IOMMU"). It added selection of
-> ARM_DMA_USE_IOMMU
-> symbol, on which IOMMU support in Exynos DRM subsystem depends. Howev=
-er
-> selecting
-> this symbol is all that this patch does, without providing any code c=
-ode
-> which
-> implements real support for ARM DMA IOMMU integration, which is neede=
-d
-> by Exynos
-> DRM driver. Please disable CONFIG_DRM_EXYNOS_IOMMU in kernel .config =
-and
-> your
-> system should be bootable again.
+Well, currently this seems like the best approach. If we end up having
+some new regulator helper function, future wise, we can convert to
+such later on.
 
-Yes, that's what my report implied. :)
-
-I'm bringing this up for -rc2 though: It sounds as if that option shoul=
-d
-remain unavailable until the required code is in? Thanks.
-
->> Also, are you or someone
->> working on the respective DT changes for Exynos5?
->=20
-> I can prepare DT changes for Exynos5 as well, but first I wanted to
-> clarify if
-> everyone involved in generic IOMMU bindings and Exynos IOMMU driver
-> agrees on my
-> proposal.
-
-Sure. I'm updating my old spring-bridge.v6 branch [1] to 3.17-rc1 [2],
-which involves three drm bridge patches rebased onto the new drm panel
-prepare/unprepare infrastructure plus two LVDS DT patches in addition t=
-o
-the IOMMU patches. That old branch included DT changes for 5250 in "ARM=
-:
-dts: add System MMU nodes of Exynos SoCs", but that'll probably need
-updating for the new bindings.
-
-Regards,
-Andreas
-
-[1] https://github.com/afaerber/linux/commits/spring-bridge.v6
-[2] https://github.com/afaerber/linux/commits/spring-next
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+Kind regards
+Uffe
