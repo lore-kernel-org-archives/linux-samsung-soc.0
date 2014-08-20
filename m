@@ -1,49 +1,104 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: [RESEND PATCH 2/7] i2c: i2c-cros-ec-tunnel: Set retries to 3
-Date: Wed, 20 Aug 2014 14:13:27 +0200
-Message-ID: <1408536812-7836-3-git-send-email-javier.martinez@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [RESEND PATCH 4/7] mfd: cros_ec: move locking into cros_ec_cmd_xfer
+Date: Wed, 20 Aug 2014 14:13:29 +0200
+Message-ID: <1408536812-7836-5-git-send-email-javier.martinez@collabora.co.uk>
 References: <1408536812-7836-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1408536812-7836-1-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1408536812-7836-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-input-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+From: Andrew Bresticker <abrestic@chromium.org>
 
-Since the i2c bus can get wedged on the EC sometimes, set the number of retries
-to 3. Since we un-wedge the bus immediately after the wedge happens, this is the
-correct fix since only one transfer will fail.
+Now that there's a central cros_ec_cmd_xfer(), move the locking
+out of the SPI and LPC drivers.
 
-Signed-off-by: Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Acked-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Reviewed-by: Simon Glass <sjg@chromium.org>
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- drivers/i2c/busses/i2c-cros-ec-tunnel.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mfd/cros_ec.c     | 10 +++++++++-
+ drivers/mfd/cros_ec_spi.c | 11 -----------
+ 2 files changed, 9 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-cros-ec-tunnel.c b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-index 05e033c..a4411da 100644
---- a/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-+++ b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-@@ -16,6 +16,8 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- 
-+#define I2C_MAX_RETRIES 3
+diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+index a9faebd..c53804a 100644
+--- a/drivers/mfd/cros_ec.c
++++ b/drivers/mfd/cros_ec.c
+@@ -65,7 +65,13 @@ EXPORT_SYMBOL(cros_ec_check_result);
+ int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
+ 		     struct cros_ec_command *msg)
+ {
+-	return ec_dev->cmd_xfer(ec_dev, msg);
++	int ret;
 +
- /**
-  * struct ec_i2c_device - Driver data for I2C tunnel
-  *
-@@ -290,6 +292,7 @@ static int ec_i2c_probe(struct platform_device *pdev)
- 	bus->adap.algo_data = bus;
- 	bus->adap.dev.parent = &pdev->dev;
- 	bus->adap.dev.of_node = np;
-+	bus->adap.retries = I2C_MAX_RETRIES;
++	mutex_lock(&ec_dev->lock);
++	ret = ec_dev->cmd_xfer(ec_dev, msg);
++	mutex_unlock(&ec_dev->lock);
++
++	return ret;
+ }
+ EXPORT_SYMBOL(cros_ec_cmd_xfer);
  
- 	err = i2c_add_adapter(&bus->adap);
- 	if (err) {
+@@ -98,6 +104,8 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+ 			return -ENOMEM;
+ 	}
+ 
++	mutex_init(&ec_dev->lock);
++
+ 	err = mfd_add_devices(dev, 0, cros_devs,
+ 			      ARRAY_SIZE(cros_devs),
+ 			      NULL, ec_dev->irq, NULL);
+diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+index b396705..bf6e08e 100644
+--- a/drivers/mfd/cros_ec_spi.c
++++ b/drivers/mfd/cros_ec_spi.c
+@@ -79,13 +79,11 @@
+  *	if no record
+  * @end_of_msg_delay: used to set the delay_usecs on the spi_transfer that
+  *      is sent when we want to turn off CS at the end of a transaction.
+- * @lock: mutex to ensure only one user of cros_ec_cmd_xfer_spi at a time
+  */
+ struct cros_ec_spi {
+ 	struct spi_device *spi;
+ 	s64 last_transfer_ns;
+ 	unsigned int end_of_msg_delay;
+-	struct mutex lock;
+ };
+ 
+ static void debug_packet(struct device *dev, const char *name, u8 *ptr,
+@@ -232,13 +230,6 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
+ 	int sum;
+ 	int ret = 0, final_ret;
+ 
+-	/*
+-	 * We have the shared ec_dev buffer plus we do lots of separate spi_sync
+-	 * calls, so we need to make sure only one person is using this at a
+-	 * time.
+-	 */
+-	mutex_lock(&ec_spi->lock);
+-
+ 	len = cros_ec_prepare_tx(ec_dev, ec_msg);
+ 	dev_dbg(ec_dev->dev, "prepared, len=%d\n", len);
+ 
+@@ -327,7 +318,6 @@ exit:
+ 	if (ec_msg->command == EC_CMD_REBOOT_EC)
+ 		msleep(EC_REBOOT_DELAY_MS);
+ 
+-	mutex_unlock(&ec_spi->lock);
+ 	return ret;
+ }
+ 
+@@ -359,7 +349,6 @@ static int cros_ec_spi_probe(struct spi_device *spi)
+ 	if (ec_spi == NULL)
+ 		return -ENOMEM;
+ 	ec_spi->spi = spi;
+-	mutex_init(&ec_spi->lock);
+ 	ec_dev = devm_kzalloc(dev, sizeof(*ec_dev), GFP_KERNEL);
+ 	if (!ec_dev)
+ 		return -ENOMEM;
 -- 
 2.0.1
+
