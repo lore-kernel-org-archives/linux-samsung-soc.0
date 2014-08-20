@@ -1,104 +1,84 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [RESEND PATCH 4/7] mfd: cros_ec: move locking into cros_ec_cmd_xfer
-Date: Wed, 20 Aug 2014 14:13:29 +0200
-Message-ID: <1408536812-7836-5-git-send-email-javier.martinez@collabora.co.uk>
-References: <1408536812-7836-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <1408536812-7836-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-input-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
+Subject: Re: [PATCH v6 10/10] ARM: dts: Add exynos5250-spring device tree
+Date: Wed, 20 Aug 2014 14:50:30 +0200
+Message-ID: <53F49996.30007@suse.de>
+References: <1406940750-15880-1-git-send-email-afaerber@suse.de>	<1406940750-15880-11-git-send-email-afaerber@suse.de> <CAD=FV=WFP53bZAks7t9xybUxpna89Nz=KG+PQwAcxFEH0D+3mw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:45735 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752136AbaHTMuh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 20 Aug 2014 08:50:37 -0400
+In-Reply-To: <CAD=FV=WFP53bZAks7t9xybUxpna89Nz=KG+PQwAcxFEH0D+3mw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephan van Schaik <stephan@synkhronix.com>, Vincent Palatin <vpalatin@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, LKML <linux-kernel@vger.kernel.org>, Julius Werner <jwerner@google.com>
 
-From: Andrew Bresticker <abrestic@chromium.org>
+Kukjin,
 
-Now that there's a central cros_ec_cmd_xfer(), move the locking
-out of the SPI and LPC drivers.
+Am 04.08.2014 17:22, schrieb Doug Anderson:
+> On Fri, Aug 1, 2014 at 5:52 PM, Andreas F=C3=A4rber <afaerber@suse.de=
+> wrote:
+>> diff --git a/arch/arm/boot/dts/exynos5250-spring.dts b/arch/arm/boot=
+/dts/exynos5250-spring.dts
+>> new file mode 100644
+>> index 000000000000..f5566f84d885
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/exynos5250-spring.dts
+[...]
+>> +       usb-hub {
+>> +               compatible =3D "smsc,usb3503a";
+>> +               reset-gpios =3D <&gpe1 0 GPIO_ACTIVE_LOW>;
+>> +       };
+>=20
+> Last I remember hearing about this, Julius said that the generic
+> usb-hub driver didn't work right for asserting the reset line.
+> Something about needing the reset at a very specific time in the USB
+> enumeration, I think.  Maybe it's somehow been fixed since then and
+> that's why it's working?
+>=20
+> Also: you technically should have a pinctrl-0 and pinctrl-names
+> referencing "hsic_reset" below to make sure the pin gets initted
+> properly.
+[...]
+> Technically the missing pinctrl for hsic-reset is something that out
+> to be fixed and we should figure out whether the reset line is
+> actually working properly anyway.  ...but I think this has been
+> through enough spins and any additional fixup can happen later, so yo=
+u
+> can add my:
+>=20
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
 
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-Reviewed-by: Simon Glass <sjg@chromium.org>
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- drivers/mfd/cros_ec.c     | 10 +++++++++-
- drivers/mfd/cros_ec_spi.c | 11 -----------
- 2 files changed, 9 insertions(+), 12 deletions(-)
+I wonder how to proceed now... Are you planning to continue inserting m=
+y
+remaining snow/smdk/arndale refactoring patches [1,2,3,4] before the mm=
+c
+slot node refactoring on v3.18-next/dt-samsung branch?
+I.e., should I send out a v7 rebasing either the remainder or just
+Spring on top of your for-next, or should I just post new follow-up
+patches to this series and wait?
 
-diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-index a9faebd..c53804a 100644
---- a/drivers/mfd/cros_ec.c
-+++ b/drivers/mfd/cros_ec.c
-@@ -65,7 +65,13 @@ EXPORT_SYMBOL(cros_ec_check_result);
- int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
- 		     struct cros_ec_command *msg)
- {
--	return ec_dev->cmd_xfer(ec_dev, msg);
-+	int ret;
-+
-+	mutex_lock(&ec_dev->lock);
-+	ret = ec_dev->cmd_xfer(ec_dev, msg);
-+	mutex_unlock(&ec_dev->lock);
-+
-+	return ret;
- }
- EXPORT_SYMBOL(cros_ec_cmd_xfer);
- 
-@@ -98,6 +104,8 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 			return -ENOMEM;
- 	}
- 
-+	mutex_init(&ec_dev->lock);
-+
- 	err = mfd_add_devices(dev, 0, cros_devs,
- 			      ARRAY_SIZE(cros_devs),
- 			      NULL, ec_dev->irq, NULL);
-diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-index b396705..bf6e08e 100644
---- a/drivers/mfd/cros_ec_spi.c
-+++ b/drivers/mfd/cros_ec_spi.c
-@@ -79,13 +79,11 @@
-  *	if no record
-  * @end_of_msg_delay: used to set the delay_usecs on the spi_transfer that
-  *      is sent when we want to turn off CS at the end of a transaction.
-- * @lock: mutex to ensure only one user of cros_ec_cmd_xfer_spi at a time
-  */
- struct cros_ec_spi {
- 	struct spi_device *spi;
- 	s64 last_transfer_ns;
- 	unsigned int end_of_msg_delay;
--	struct mutex lock;
- };
- 
- static void debug_packet(struct device *dev, const char *name, u8 *ptr,
-@@ -232,13 +230,6 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
- 	int sum;
- 	int ret = 0, final_ret;
- 
--	/*
--	 * We have the shared ec_dev buffer plus we do lots of separate spi_sync
--	 * calls, so we need to make sure only one person is using this at a
--	 * time.
--	 */
--	mutex_lock(&ec_spi->lock);
--
- 	len = cros_ec_prepare_tx(ec_dev, ec_msg);
- 	dev_dbg(ec_dev->dev, "prepared, len=%d\n", len);
- 
-@@ -327,7 +318,6 @@ exit:
- 	if (ec_msg->command == EC_CMD_REBOOT_EC)
- 		msleep(EC_REBOOT_DELAY_MS);
- 
--	mutex_unlock(&ec_spi->lock);
- 	return ret;
- }
- 
-@@ -359,7 +349,6 @@ static int cros_ec_spi_probe(struct spi_device *spi)
- 	if (ec_spi == NULL)
- 		return -ENOMEM;
- 	ec_spi->spi = spi;
--	mutex_init(&ec_spi->lock);
- 	ec_dev = devm_kzalloc(dev, sizeof(*ec_dev), GFP_KERNEL);
- 	if (!ec_dev)
- 		return -ENOMEM;
--- 
-2.0.1
+I've prepared and successfully tested a patch adding the pinctrl Doug
+requested above. Additionally, I have another follow-up ready, adding a
+gmt,g781 temperature sensor (with v3.17-rc1 that actually works).
 
+Also I understood that Javier is waiting for my remaining Snow bits to
+be applied before sending out further Snow DT cleanups/fixes of his.
+
+Thanks,
+Andreas
+
+[1] https://patchwork.kernel.org/patch/4664881/
+[2] https://patchwork.kernel.org/patch/4664801/
+[3] https://patchwork.kernel.org/patch/4664731/
+[4] https://patchwork.kernel.org/patch/4664751/
+
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
+=BCrnberg
