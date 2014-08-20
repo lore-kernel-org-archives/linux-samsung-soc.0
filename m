@@ -1,69 +1,38 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 0/5] usb: phy: samsung: remove old USB PHY code
-Date: Wed, 20 Aug 2014 13:12:44 -0500
-Message-ID: <20140820181244.GX24500@saruman.home>
-References: <1408026327-31437-1-git-send-email-b.zolnierkie@samsung.com>
-Reply-To: <balbi@ti.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [RESEND PATCH 3/7] mfd: cros_ec: stop calling ->cmd_xfer() directly
+Date: Wed, 20 Aug 2014 15:33:47 -0700
+Message-ID: <CAD=FV=XHK_=kxuVmgpDBYWGCFfiVEAuy_BV+YdKi_a2p-rfKrQ@mail.gmail.com>
+References: <1408536812-7836-1-git-send-email-javier.martinez@collabora.co.uk>
+	<1408536812-7836-4-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="MTFjS3R2zZZVGaSB"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:56564 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750851AbaHTSMw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Aug 2014 14:12:52 -0400
-Content-Disposition: inline
-In-Reply-To: <1408026327-31437-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1408536812-7836-4-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-input-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, Kishon Vijay Abraham I <kishon@ti.com>, Kamil Debski <k.debski@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Mark Brown <broonie@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
---MTFjS3R2zZZVGaSB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Javier,
 
-Hi,
+On Wed, Aug 20, 2014 at 5:13 AM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> From: Andrew Bresticker <abrestic@chromium.org>
+>
+> Instead of having users of the ChromeOS EC call the interface-specific
+> cmd_xfer() callback directly, introduce a central cros_ec_cmd_xfer()
+> to use instead.  This will allow us to put all the locking and retry
+> logic in one place instead of duplicating it across the different
+> drivers.
+>
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> Reviewed-by: Simon Glass <sjg@chromium.org>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>  drivers/i2c/busses/i2c-cros-ec-tunnel.c |  2 +-
+>  drivers/input/keyboard/cros_ec_keyb.c   |  2 +-
+>  drivers/mfd/cros_ec.c                   |  7 +++++++
+>  include/linux/mfd/cros_ec.h             | 24 ++++++++++++++++++------
+>  4 files changed, 27 insertions(+), 8 deletions(-)
 
-On Thu, Aug 14, 2014 at 04:25:22PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> Hi,
->=20
-> This patch series removes the old Samsung USB PHY drivers that
-> got replaced by the new ones using the generic PHY layer.
->=20
-> Depends on:
-> - next-20140813 branch of linux-next kernel
-
-this thread seems to have died, what do I need to do with these patches?
-Are we deleting the phy drivers or not ?
-
-Please rebase on v3.17-rc1 and resend with all Acks in place.
-
---=20
-balbi
-
---MTFjS3R2zZZVGaSB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJT9OUcAAoJEIaOsuA1yqREDFAP/2FZrBlfIb/RJcEr0ZHV/w2h
-KS/vfWFeP+3dnF/BEfw7a5AU9YSK9MUeUkAaLgRKFjl7QxcfSwUL8J7EqYbVszpA
-Om+LPiU7/QQqGVUIl7R2oK8gw73+0fQleL0fr/GZkNQNxmTNd+uCm8+DzuJqJUeS
-5BFAjkSnsqg3m4dYslXgOrT+6awRZGNE35psJlv6SgsO/EgbGGvulU1uET4GmuBy
-hhl94o+FkXiVsy+NgtMrmgMQjZH12ouhc+YlzyQ575xMMmzfN3ODBDKzbmfU2zmV
-CStePdZVhC9zqlyTwmkso1WgEdd//M9bVj0S4Ldy/KW+R0Yz6rrQ/V1sTJbKYUy9
-g6e1ehF8IUAGHeCR3ZV+hy4W/zrsBJ3fIQE13uCbsAL8H4YsS1mAJVe0e62ZyOF6
-uhz+o7uH2p1RGMBPvpd4RJi7Yr9BA+3ZNQm/16rHvsF5zv3bhDjO09cgh0nQ25x7
-HZypzgDcbIWeQLyo//S66VXW1+3gqXL4QaFRu2kJOLRtMUpoW90U8W4heAzB8cFR
-jndb1m/sSPv3tjtQ2IFD95QjJXSOqh3BHOPauwUUUGDb4ol/srXM9UPqZQjQDnTF
-2/m/VcWB6JiNgFn+wZB5sG2K7uQwauMluXWt1tVnVm/7gkuM30pxisiUm4lkDht+
-0QVnHIoMJ9sVrESBXKn+
-=GjfH
------END PGP SIGNATURE-----
-
---MTFjS3R2zZZVGaSB--
+Reviewed-by: Doug Anderson <dianders@chromium.org>
