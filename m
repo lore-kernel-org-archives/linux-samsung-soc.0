@@ -1,19 +1,19 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 1/6] ARM: dts: Add Peach Pit and Pi dts entry for max77802
- PMIC
-Date: Wed, 20 Aug 2014 12:27:53 +0200
-Message-ID: <53F47829.5040708@collabora.co.uk>
-References: <1408460913-13863-1-git-send-email-javier.martinez@collabora.co.uk> <1408460913-13863-2-git-send-email-javier.martinez@collabora.co.uk> <53F39CE3.8040303@suse.de>
+Subject: Re: [PATCH 5/6] ARM: dts: Add vmmc and vqmmc supplies for Peach Pit
+ and Pi boards
+Date: Wed, 20 Aug 2014 12:36:11 +0200
+Message-ID: <53F47A1B.2030204@collabora.co.uk>
+References: <1408460913-13863-1-git-send-email-javier.martinez@collabora.co.uk> <1408460913-13863-6-git-send-email-javier.martinez@collabora.co.uk> <53F39978.3080901@suse.de> <53F476C6.9030809@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-15
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:42988 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:43009 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751910AbaHTK17 (ORCPT
+	with ESMTP id S1750939AbaHTKgT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Aug 2014 06:27:59 -0400
-In-Reply-To: <53F39CE3.8040303@suse.de>
+	Wed, 20 Aug 2014 06:36:19 -0400
+In-Reply-To: <53F476C6.9030809@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
@@ -21,22 +21,36 @@ Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, O
 
 Hello Andreas,
 
-On 08/19/2014 08:52 PM, Andreas F=E4rber wrote:
->> +
->> +	max77802-pmic@9 {
->> +		compatible =3D "maxim,max77802";
->> +		interrupt-parent =3D <&gpx3>;
->> +		interrupts =3D <1 0>;
+On 08/20/2014 12:21 PM, Javier Martinez Canillas wrote:
+> Hello Andreas,
 >=20
-> <1 IRQ_TYPE_NONE>?
+> Thanks a lot for your feedback.
+>=20
+> On 08/19/2014 08:37 PM, Andreas F=E4rber wrote:
+>>>  &mmc_2 {
+>>> +	vmmc-supply =3D <&tps65090_fet4>;
+>>> +	vqmmc-supply =3D <&vqmmc_sdcard>;
+>>>  	status =3D "okay";
+>>>  	num-slots =3D <1>;
+>>>  	supports-highspeed;
+>>=20
+>> A convention that I picked up was to place overridden status propert=
+y
+>> first. Do your new properties really need to go before that?
+>>
+>=20
+> OF doesn't care about the order of the child nodes but I do agree tha=
+t
+> consistency is a good thing so I'll change that on v2.
 >=20
 
-Indeed, I'll change both on v2. Thanks a lot.
+Actually I meant that I'll change this for a future re-post since I'm
+completely dropping this patch from the series due Doug's explanation
+about the CD line and VCCQ/VDD_IO being in the same power rail on Exyno=
+s5
+SoCs.
 
->=20
-> Cheers,
-> Andreas
->=20
+Sorry for the noise...
 
 Best regards,
 Javier
