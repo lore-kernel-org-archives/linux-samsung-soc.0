@@ -1,30 +1,24 @@
 From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH 2/5] ARM: dts: remove old USB2 PHY node for Exynos5250
-Date: Wed, 20 Aug 2014 20:50:31 +0530
-Message-ID: <53F4BCBF.1030204@ti.com>
-References: <1408026327-31437-1-git-send-email-b.zolnierkie@samsung.com> <1408026327-31437-3-git-send-email-b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/5] ARM: dts: remove old USB2 PHY node hook for Arndale
+Date: Wed, 20 Aug 2014 20:50:18 +0530
+Message-ID: <53F4BCB2.3030709@ti.com>
+References: <1408026327-31437-1-git-send-email-b.zolnierkie@samsung.com> <1408026327-31437-2-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:48503 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752273AbaHTPVC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Aug 2014 11:21:02 -0400
-In-Reply-To: <1408026327-31437-3-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1408026327-31437-2-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 Cc: Felipe Balbi <balbi@ti.com>, Kamil Debski <k.debski@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Mark Brown <broonie@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 
 
 On Thursday 14 August 2014 07:55 PM, Bartlomiej Zolnierkiewicz wrote:
 > drivers/usb/phy/phy-samsung-usb2 driver got replaced by
-> drivers/phy/phy-samsung-usb2 one.  Remove the leftover
-> USB2 PHY node (EHCI/OHCI USB nodes are using the new one
-> already) from Exynos5250 dtsi file.
+> drivers/phy/phy-samsung-usb2 one.  Remove the leftover hook
+> from Arndale dts file.
 > 
 > Cc: Mark Brown <broonie@linaro.org>
 > Cc: Kamil Debski <k.debski@samsung.com>
@@ -34,33 +28,20 @@ On Thursday 14 August 2014 07:55 PM, Bartlomiej Zolnierkiewicz wrote:
 
 Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 > ---
->  arch/arm/boot/dts/exynos5250.dtsi | 15 ---------------
->  1 file changed, 15 deletions(-)
+>  arch/arm/boot/dts/exynos5250-arndale.dts | 4 ----
+>  1 file changed, 4 deletions(-)
 > 
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 492e1ef..f21b9aa 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -603,21 +603,6 @@
+> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
+> index d0de1f5..dad8f9b 100644
+> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
+> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+> @@ -570,8 +570,4 @@
+>  			connect-gpios = <&gpd1 7 1>;
 >  		};
 >  	};
->  
-> -	usb2_phy: usbphy@12130000 {
-> -		compatible = "samsung,exynos5250-usb2phy";
-> -		reg = <0x12130000 0x100>;
-> -		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_USB2>;
-> -		clock-names = "ext_xtal", "usbhost";
-> -		#address-cells = <1>;
-> -		#size-cells = <1>;
-> -		ranges;
 > -
-> -		usbphy-sys {
-> -			reg = <0x10040704 0x8>,
-> -			      <0x10050230 0x4>;
-> -		};
+> -	usb@12110000 {
+> -		usb-phy = <&usb2_phy>;
 > -	};
-> -
->  	usb2_phy_gen: phy@12130000 {
->  		compatible = "samsung,exynos5250-usb2-phy";
->  		reg = <0x12130000 0x100>;
+>  };
 > 
