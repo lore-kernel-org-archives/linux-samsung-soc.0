@@ -1,177 +1,76 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCHv3] thermal: exynos: Add support for TRIM_RELOAD feature at
- Exynos3250
-Date: Wed, 20 Aug 2014 14:14:52 +0200
-Message-ID: <1706216.YJ4TzvQvn4@amdc1032>
-References: <1408450078-6296-1-git-send-email-cw00.choi@samsung.com>
- <1408492364-8012-1-git-send-email-cw00.choi@samsung.com>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: [RESEND PATCH 0/7] Second batch of cleanups for cros_ec
+Date: Wed, 20 Aug 2014 14:13:25 +0200
+Message-ID: <1408536812-7836-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1408492364-8012-1-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: devicetree@vger.kernel.org, l.majewski@samsung.com, kgene.kim@samsung.com, linux-pm@vger.kernel.org, t.figa@samsung.com, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org, eduardo.valentin@ti.com, amit.daniel@samsung.com, linux-samsung-soc@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, rui.zhang@intel.com, ch.naveen@samsung.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hello Lee,
 
-Hi,
+This is a resend of a patch series originally sent [0] almost a
+month ago (July, 28). The series add a batch of cleanups patches
+for the mfd cros_ec driver and its subdevices drivers. The first
+batch of cleanups was posted by Doug Anderson [1] and have already
+been merged. The patches were taken from the ChromeOS 3.8 kernel
+and after this series, no cleanups patches for cros_ec are left.
+The remaining commits add support not yet available in mainline.
 
-On Wednesday, August 20, 2014 08:52:44 AM Chanwoo Choi wrote:
-> This patch add support for TRIM_RELOAD feature at Exynos3250. The TMU of
-> Exynos3250 has two TRIMINFO_CON register.
+There is almost no functionality added on this series but the
+idea is to reduce the delta between the mainline drivers and
+the ones in the downstream Chrome OS 3.8 kernel so the missing
+functionality can be added on top once these cleanups patches
+are merged. The missing functionlity currently in mainline is:
 
-This patch also silently fixes wrong behavior of the Exynos thermal
-driver and TRIM_RELOAD feature for Exynos5260 and Exynos5420.  Currently
-these SoCs claim TRIM_RELOAD support but don't have triminfo_ctrl
-register address defined in their struct exynos_tmu_registers entries.
-This causes write of value "1" to data->base + 0x00 address (which
-happens to be TRIMINFO register).  Your patch doesn't define
-triminfo_reload_count on all SoCs that use TRIM_RELOAD flag so wrong
-write to TRIMINFO register no longer happens but I think that it would
-be the best to fix it explicitly by removing TRIM_RELOAD flag for
-Exynos5260 and Exynos5420 in a pre-patch to your patch, please see:
+- Chrome OS Embedded Controller userspace device interface
+- Chrome OS Embedded Controller Low Pin Count (LPC) inteface
+- Access to vboot context stored on a block device
+- Access to vboot context stored on EC's nvram
 
-	https://lkml.org/lkml/2014/8/20/334
+The patches in this series are authored by different people
+(all on cc) and consist of the following:
 
-One other issue with your patch is that it modifies struct
-exynos_tmu_registers and struct exynos_tmu_platform_data without
-updating corresponding documentation.  Please fix it.
+Andrew Bresticker (3):
+  mfd: cros_ec: stop calling ->cmd_xfer() directly
+  mfd: cros_ec: move locking into cros_ec_cmd_xfer
+  mfd: cros_ec: wait for completion of commands that return IN_PROGRESS
 
-Otherwise it looks fine to me.
+Derek Basehore (1):
+  i2c: i2c-cros-ec-tunnel: Set retries to 3
+
+Doug Anderson (1):
+  mfd: cros_ec: Delay for 50ms when we see EC_CMD_REBOOT_EC
+
+Todd Broch (2):
+  mfd: cros_ec: Instantiate sub-devices from device tree
+  Input: cros_ec_keyb: Optimize ghosting algorithm.
+
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c |  5 +-
+ drivers/input/keyboard/cros_ec_keyb.c   | 89 +++++++++++++++++--------=
+--------
+ drivers/mfd/cros_ec.c                   | 88 +++++++++++++++++++++++++=
++++----
+ drivers/mfd/cros_ec_spi.c               | 20 ++++----
+ include/linux/mfd/cros_ec.h             | 24 ++++++---
+ 5 files changed, 154 insertions(+), 72 deletions(-)
+
+There were no changes on this resend, just picked Acked-by and
+Tested-by tags and also added my own Signed-off-by tag to all
+the patches as suggested by Andreas F=C3=A4rber even when I just
+picked them from downstream and rebased on top of linux-next.
+
+The patches should be merged together which means that they
+should go through your mfd tree once the relevant acks are
+obtained.
 
 Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
- 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Cc: Zhang Rui <rui.zhang@intel.com>
-> Cc: Eduardo Valentin <edubezval@gmail.com>
-> Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
-> Changes from v2:
-> - Fix build break because of missing 'or' operation.
-> Changes from v1:
-> - Add missing 'TMU_SUPPORT_TRIM_RELOAD' feature
-> 
->  drivers/thermal/samsung/exynos_tmu.c      |  7 +++++--
->  drivers/thermal/samsung/exynos_tmu.h      |  5 +++--
->  drivers/thermal/samsung/exynos_tmu_data.c | 11 +++++++++--
->  drivers/thermal/samsung/exynos_tmu_data.h |  7 +++++--
->  4 files changed, 22 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> index acbff14..ed01606 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.c
-> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> @@ -164,8 +164,11 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
->  		}
->  	}
->  
-> -	if (TMU_SUPPORTS(pdata, TRIM_RELOAD))
-> -		__raw_writel(1, data->base + reg->triminfo_ctrl);
-> +	if (TMU_SUPPORTS(pdata, TRIM_RELOAD)) {
-> +		for (i = 0; i < pdata->triminfo_reload_count; i++)
-> +			__raw_writel(pdata->triminfo_reload[i],
-> +					data->base + reg->triminfo_ctrl[i]);
-> +	}
->  
->  	if (pdata->cal_mode == HW_MODE)
->  		goto skip_calib_data;
-> diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-> index 1b4a644..72cb54e 100644
-> --- a/drivers/thermal/samsung/exynos_tmu.h
-> +++ b/drivers/thermal/samsung/exynos_tmu.h
-> @@ -151,8 +151,7 @@ struct exynos_tmu_registers {
->  	u32	triminfo_25_shift;
->  	u32	triminfo_85_shift;
->  
-> -	u32	triminfo_ctrl;
-> -	u32	triminfo_ctrl1;
-> +	u32	triminfo_ctrl[2];
->  	u32	triminfo_reload_shift;
->  
->  	u32	tmu_ctrl;
-> @@ -295,6 +294,8 @@ struct exynos_tmu_platform_data {
->  	u8 second_point_trim;
->  	u8 default_temp_offset;
->  	u8 test_mux;
-> +	u8 triminfo_reload[2];
-> +	u8 triminfo_reload_count;
->  
->  	enum calibration_type cal_type;
->  	enum calibration_mode cal_mode;
-> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
-> index aa8e0de..8cd609c 100644
-> --- a/drivers/thermal/samsung/exynos_tmu_data.c
-> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
-> @@ -95,6 +95,8 @@ static const struct exynos_tmu_registers exynos3250_tmu_registers = {
->  	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
->  	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
->  	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
-> +	.triminfo_ctrl[0] = EXYNOS_TMU_TRIMINFO_CON1,
-> +	.triminfo_ctrl[1] = EXYNOS_TMU_TRIMINFO_CON2,
->  	.tmu_ctrl = EXYNOS_TMU_REG_CONTROL,
->  	.test_mux_addr_shift = EXYNOS4412_MUX_ADDR_SHIFT,
->  	.buf_vref_sel_shift = EXYNOS_TMU_REF_VOLTAGE_SHIFT,
-> @@ -160,8 +162,11 @@ static const struct exynos_tmu_registers exynos3250_tmu_registers = {
->  		.temp_level = 95, \
->  	}, \
->  	.freq_tab_count = 2, \
-> +	.triminfo_reload[0] = 0x1, \
-> +	.triminfo_reload[1] = 0x11, \
-> +	.triminfo_reload_count = 2, \
->  	.registers = &exynos3250_tmu_registers, \
-> -	.features = (TMU_SUPPORT_EMULATION | \
-> +	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_TRIM_RELOAD | \
->  			TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
->  			TMU_SUPPORT_EMUL_TIME)
->  #endif
-> @@ -184,7 +189,7 @@ static const struct exynos_tmu_registers exynos4412_tmu_registers = {
->  	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
->  	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
->  	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
-> -	.triminfo_ctrl = EXYNOS_TMU_TRIMINFO_CON,
-> +	.triminfo_ctrl[0] = EXYNOS_TMU_TRIMINFO_CON2,
->  	.triminfo_reload_shift = EXYNOS_TRIMINFO_RELOAD_SHIFT,
->  	.tmu_ctrl = EXYNOS_TMU_REG_CONTROL,
->  	.test_mux_addr_shift = EXYNOS4412_MUX_ADDR_SHIFT,
-> @@ -252,6 +257,8 @@ static const struct exynos_tmu_registers exynos4412_tmu_registers = {
->  		.temp_level = 95, \
->  	}, \
->  	.freq_tab_count = 2, \
-> +	.triminfo_reload[0] = 0x1, \
-> +	.triminfo_reload_count = 1, \
->  	.registers = &exynos4412_tmu_registers, \
->  	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_TRIM_RELOAD | \
->  			TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
-> diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
-> index f0979e5..e0536c3 100644
-> --- a/drivers/thermal/samsung/exynos_tmu_data.h
-> +++ b/drivers/thermal/samsung/exynos_tmu_data.h
-> @@ -57,8 +57,11 @@
->  #define EXYNOS4210_TMU_TRIG_LEVEL_MASK	0x1111
->  #define EXYNOS4210_TMU_INTCLEAR_VAL	0x1111
->  
-> -/* Exynos5250 and Exynos4412 specific registers */
-> -#define EXYNOS_TMU_TRIMINFO_CON	0x14
-> +/* Exynos3250 specific registers */
-> +#define EXYNOS_TMU_TRIMINFO_CON1	0x10
-> +
-> +/* Exynos5250, Exynos4412 and Exynos3250 specific registers */
-> +#define EXYNOS_TMU_TRIMINFO_CON2	0x14
->  #define EXYNOS_THD_TEMP_RISE		0x50
->  #define EXYNOS_THD_TEMP_FALL		0x54
->  #define EXYNOS_EMUL_CON		0x80
+Javier
+
+[0]: https://www.mail-archive.com/linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg11385.=
+html
+[1]: https://lkml.org/lkml/2014/6/16/681
