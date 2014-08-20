@@ -1,55 +1,58 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2 0/4] Add Exynos4412 based Odroid X2 and U2/U3/U3+ support
-Date: Wed, 20 Aug 2014 08:29:42 +0200
-Message-ID: <53F44056.5030601@samsung.com>
-References: <1403702773-9141-1-git-send-email-m.szyprowski@samsung.com>
- <53B0F6D1.4090006@samsung.com> <53C93FEB.2030507@samsung.com>
- <CAOesGMh-XRpX_U9s-BVE=BuOG-1EMDL+B_Dm1hdm+tcPQA9E-g@mail.gmail.com>
- <CAD8Lp46pY9_+N6M17i4xv71BR_poT2Pfh4cmM0J2jxP96m9sVA@mail.gmail.com>
- <CAOesGMiSTBt8f4WURFjqpxTZGzy7ZSWw_3RTNdBZ6KD_vei2GA@mail.gmail.com>
+From: Jonghwan Choi <jhbird.choi@samsung.com>
+Subject: Re: [PATCH v9 1/6] clk: samsung: add infrastructure to register cpu
+ clocksClick to teach Gmail this conversation is important.
+Date: Wed, 20 Aug 2014 16:07:57 +0900
+Message-ID: <000001cfbc45$7851dd30$68f59790$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:44675 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750789AbaHTG3q (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Aug 2014 02:29:46 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NAL007J4E6A9250@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 20 Aug 2014 07:32:34 +0100 (BST)
-In-reply-to: <CAOesGMiSTBt8f4WURFjqpxTZGzy7ZSWw_3RTNdBZ6KD_vei2GA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-language: ko
+Sender: linux-pm-owner@vger.kernel.org
+To: 'Thomas Abraham' <thomas.ab@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, viresh.kumar@linaro.org, heiko@sntech.de, cw00.choi@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Daniel Drake <drake@endlessm.com>
-Cc: Przemyslaw Marczak <p.marczak@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>
 
-Hello,
+Hi ~
 
-On 2014-08-19 22:26, Olof Johansson wrote:
-> On Tue, Aug 19, 2014 at 12:54 PM, Daniel Drake <drake@endlessm.com> wrote:
->> On Tue, Aug 19, 2014 at 8:40 PM, Olof Johansson <olof@lixom.net> wrote:
->>> ODROID-U3 has been broken in mainline for quite a while. Have patches
->>> been posted for this already?
->>>
->>> http://arm-soc.lixom.net/bootlogs/mainline/v3.17-rc1/odroidu3-arm-exynos_defconfig.html
->>>   for one of the latest boots that failed.
->> Yes, discussed in the thread titled "[PATCH 1/2] ARM: dts: Enable PMIC
->> interrupts on ODROID"
->> Those patches weren't important for boot at the time of submission,
->> but it looks like something else changed (the max77686 driver?) that
->> makes them now required.
-> Excellent, thanks. A bummer we didn't see this earlier, but let's get
-> the fix in asap.
+On Wed, Jul 30, 2014 at 5:07 PM, Thomas Abraham <thomas.ab@samsung.com> wrote:
+> +
+> +/* handler for post-rate change notification from parent clock */
+> +static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
+> +                       struct exynos_cpuclk *cpuclk, void __iomem *base)
+> +{
+> +       const struct exynos_cpuclk_cfg_data *cfg_data = cpuclk->cfg;
+> +       unsigned long div = 0, div_mask = DIV_MASK;
+> +       unsigned long mux_reg;
+> +
+> +       spin_lock(cpuclk->lock);
+> +
+> +       /* select mout_apll as the alternate parent */
+> +       mux_reg = readl(base + E4210_SRC_CPU);
+> +       writel(mux_reg & ~(1 << 16), base + E4210_SRC_CPU);
+> +       wait_until_mux_stable(base + E4210_STAT_CPU, 16, 1);
+> +
+> +       if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
+> +               /* find out the divider values to use for clock data */
+> +               while ((cfg_data->prate * 1000) != ndata->new_rate) {
+> +                       if (cfg_data->prate == 0)
 
-I've also posted a fix to MAX77686 driver, which restores v3.16-like 
-behavior
-of PMIC driver. I hope it will get merged to one of v3.17 rc series.
+                   missing spin_unlock(cpuclk->lock);? 
+                I think that spin_unlock should be added in here..   
+> +                               return -EINVAL;            
+> +                       cfg_data++;
+> +               }
+> +
+> +               div |= (cfg_data->div0 & E4210_DIV0_ATB_MASK);
+> +               div_mask |= E4210_DIV0_ATB_MASK;
+> +       }
+> +
+> +       exynos_set_safe_div(base, div, div_mask);
+> +       spin_unlock(cpuclk->lock);
+> +       return 0;
+> +}
+> +
+>
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Best regards,
+
