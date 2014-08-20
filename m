@@ -1,98 +1,47 @@
-From: =?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin@gmail.com>
-Subject: Re: [PATCH V2 4/9] drm/exynos: add exynos_dp_panel driver
- registration to drm driver
-Date: Tue, 19 Aug 2014 21:02:39 -0700
-Message-ID: <CACP_E+KntYzVDjZrXcByU2LrCtzDbwW79LpSAazjHzbYbQrpDQ@mail.gmail.com>
-References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
- <1398119958-32005-5-git-send-email-ajaykumar.rs@samsung.com>
- <20140422083311.GC17275@ulmo>
- <CAEC9eQPGfFFRNF4nOgci8KCc+9E=MQRmU-Cz=TGgEdiaOVqTMg@mail.gmail.com>
- <20140422152657.GB30048@ulmo>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20140422152657.GB30048@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH] thermal: exynos: Remove duplicate code when reading triminfo
+ register of Exynos5440
+Date: Wed, 20 Aug 2014 13:24:33 +0900
+Message-ID: <1408508673-3173-1-git-send-email-cw00.choi@samsung.com>
+References: <1408450078-6296-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1408450078-6296-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: rui.zhang@intel.com, eduardo.valentin@ti.com, amit.daniel@samsung.com
+Cc: kgene.kim@samsung.com, b.zolnierkie@samsung.com, t.figa@samsung.com, l.majewski@samsung.com, ch.naveen@samsung.com, kyungmin.park@samsung.com, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Eduardo Valentin <edubezval@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gVHVlLCBBcHIgMjIsIDIwMTQgYXQgODoyNiBBTSwgVGhpZXJyeSBSZWRpbmcKPHRoaWVycnku
-cmVkaW5nQGdtYWlsLmNvbT4gd3JvdGU6Cj4gT24gVHVlLCBBcHIgMjIsIDIwMTQgYXQgMDg6MzM6
-MjNQTSArMDUzMCwgQWpheSBrdW1hciB3cm90ZToKPj4gSGkgVGhpZXJyeSwKPj4KPj4gT24gVHVl
-LCBBcHIgMjIsIDIwMTQgYXQgMjowMyBQTSwgVGhpZXJyeSBSZWRpbmcKPj4gPHRoaWVycnkucmVk
-aW5nQGdtYWlsLmNvbT4gd3JvdGU6Cj4+ID4gT24gVHVlLCBBcHIgMjIsIDIwMTQgYXQgMDQ6MDk6
-MTNBTSArMDUzMCwgQWpheSBLdW1hciB3cm90ZToKPj4gPj4gUmVnaXN0ZXIgZXh5bm9zX2RwX3Bh
-bmVsIGJlZm9yZSB0aGUgbGlzdCBvZiBleHlub3MgY3J0Y3MgYW5kCj4+ID4+IGNvbm5lY3RvcnMg
-YXJlIHByb2JlZC4KPj4gPj4KPj4gPj4gVGhpcyBpcyBuZWVkZWQgYmVjYXVzZSBleHlub3NfZHBf
-cGFuZWwgc2hvdWxkIGJlIHJlZ2lzdGVyZWQgdG8KPj4gPj4gdGhlIGRybV9wYW5lbCBsaXN0IHZp
-YSBwYW5lbC1leHlub3MtZHAgcHJvYmUsIGkuZSBtdWNoIGJlZm9yZQo+PiA+PiBleHlub3NfZHBf
-YmluZCBjYWxscyBvZl9kcm1fZmluZF9wYW5lbCgpLgo+PiA+Pgo+PiA+PiBTaWduZWQtb2ZmLWJ5
-OiBBamF5IEt1bWFyIDxhamF5a3VtYXIucnNAc2Ftc3VuZy5jb20+Cj4+ID4+IC0tLQo+PiA+PiBD
-aGFuZ2VzIHNpbmNlIFYxOgo+PiA+PiAgICAgICBBZGRlZCBwbGF0Zm9ybV9kcml2ZXJfdW5yZWdp
-c3RlcigmZXh5bm9zX2RwX3BhbmVsX2RyaXZlcikgdG8KPj4gPj4gICAgICAgZXh5bm9zX2RybV9w
-bGF0Zm9ybV9yZW1vdmUgYXMgcGVyIEppbmdvbyBIYW4ncyBjb3JyZWN0aW9uCj4+ID4+Cj4+ID4+
-ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgfCAgIDE1ICsrKysrKysr
-KysrKysrKwo+PiA+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oIHwg
-ICAgMSArCj4+ID4+ICAyIGZpbGVzIGNoYW5nZWQsIDE2IGluc2VydGlvbnMoKykKPj4gPj4KPj4g
-Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyBi
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwo+PiA+PiBpbmRleCAxZDY1
-M2Y4Li4yZGI3ZjY3IDEwMDY0NAo+PiA+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZHJ2LmMKPj4gPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX2Rydi5jCj4+ID4+IEBAIC01MzAsMTIgKzUzMCwyMyBAQCBzdGF0aWMgaW50IGV4eW5vc19k
-cm1fcGxhdGZvcm1fcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPj4gPj4gICAg
-ICAgICAgICAgICBnb3RvIGVycl91bnJlZ2lzdGVyX2lwcF9kcnY7Cj4+ID4+ICAjZW5kaWYKPj4g
-Pj4KPj4gPj4gKyNpZmRlZiBDT05GSUdfRFJNX1BBTkVMX0VYWU5PU19EUAo+PiA+PiArICAgICBy
-ZXQgPSBwbGF0Zm9ybV9kcml2ZXJfcmVnaXN0ZXIoJmV4eW5vc19kcF9wYW5lbF9kcml2ZXIpOwo+
-PiA+PiArICAgICBpZiAocmV0IDwgMCkKPj4gPj4gKyAgICAgICAgICAgICBnb3RvIGVycl91bnJl
-Z2lzdGVyX2RwX3BhbmVsOwo+PiA+PiArI2VuZGlmCj4+ID4KPj4gPiBObywgdGhpcyBpcyBub3Qg
-aG93IHlvdSdyZSBzdXBwb3NlZCB0byB1c2UgRFJNIHBhbmVsIGRyaXZlcnMuIFRoZSBpZGVhCj4+
-ID4gaXMgdGhhdCB5b3Ugd3JpdGUgYSBzdGFuZGFsb25lIGRyaXZlciBmb3IgYSBnaXZlbiBwYW5l
-bC4KPj4gPgo+PiA+IFdoYXQgeW91IGRvIGhlcmUgaGFzIGEgbnVtYmVyIG9mIHByb2JsZW1zLiBG
-b3Igb25lIGl0J3MgYSBkcml2ZXIgdGhhdCdzCj4+ID4gdGlnaHRseSBjb3VwbGVkIHRvIEV4eW5v
-cyBTb0NzLiBCdXQgaWYgSSBoYXZlIGEgZGlmZmVyZW50IFNvQyB0aGF0IHVzZXMKPj4gPiB0aGUg
-c2FtZSBwYW5lbCBJIHdhbnQgdG8gYmUgYWJsZSB0byB1c2UgdGhlIHNhbWUgZHJpdmVyLCBhbmQg
-bm90IGhhdmUgdG8KPj4gPiByZXdyaXRlIHRoZSBkcml2ZXIgZm9yIG15IFNvQy4KPj4gPgo+PiA+
-IEFub3RoZXIgcHJvYmxlbSBpcyB0aGF0IHlvdSdyZSBhc3N1bWluZyBoZXJlIHRoYXQgdGhlIGRy
-aXZlciBpcyBidWlsdCBpbgo+PiA+IGFuZCBpdCB3aWxsIGJyZWFrIGlmIHlvdSB0cnkgdG8gYnVp
-bGQgZWl0aGVyIEV4eW5vcyBEUk0gb3IgdGhlIHBhbmVsCj4+ID4gZHJpdmVyIGFzIGEgbW9kdWxl
-LiBUaGlzIGlzIHBlcmhhcHMgbm90aGluZyB5b3UgY2FyZSBhYm91dCByaWdodCBub3csCj4+ID4g
-YnV0IGV2ZW50dWFsbHkgcGVvcGxlIHdpbGwgd2FudCB0byBzaGlwIGEgc2luZ2xlIGtlcm5lbCB0
-aGF0IGNhbiBydW4gb24KPj4gPiBhIG51bWJlciBvZiBTb0NzLiBCdXQgaWYgd2Uga2VlcCBhZGRp
-bmcgdGhpbmdzIGxpa2UgdGhpcywgdGhhdCBrZXJuZWwKPj4gPiB3aWxsIGtlZXAgZ3Jvd2luZyBp
-biBzaXplIHVudGlsIGl0IG5vIGxvbmdlciBmaXRzIGluIGFueSBraW5kIG9mIG1lbW9yeS4KPj4g
-Pgo+PiA+IFRoaWVycnkKPj4KPj4gSSBjb21wbGV0ZWx5IGFncmVlIHdpdGggeW91IGluIHRoaXMh
-Cj4+Cj4+IFllcywgdGhpcyBpcyBub3QgYWNjZXB0YWJsZSwgYnV0IEkgd2FudCB0byBrbm93IGFu
-ICJhY2NlcHRhYmxlIgo+PiB3b3JrYXJvdW5kIGZvciB0aGUgc2l0dWF0aW9uIGJlbG93Ogo+PiBJ
-IHJlZ2lzdGVyIHRoZSBkcml2ZXIgdXNpbmcgbW9kdWxlX2luaXQoKS4KPj4gQW5kLCBleHlub3Nf
-ZHJtIGdldHMgcHJvYmVkIG11Y2ggYmVmb3JlIHRoZSBwYW5lbCBkcml2ZXIgcHJvYmUgaGFwcGVu
-cy4KPj4gU28sIHRoZSBwYW5lbCBkcml2ZXIgaGFzbid0IHByb2JlZCB5ZXQsIGJ1dCBleHlub3Nf
-ZHAgdmlhIGV4eW5vc19kcm0KPj4gdHJpZXMgdG8gY2FsbAo+PiAib2ZfZHJtX2ZpbmRfcGFuZWwi
-IHdoaWNoIGFsd2F5cyByZXR1cm5zIE5VTEwuCj4KPiBUaGF0J3MgYSBzaXR1YXRpb24gdGhhdCB5
-b3VyIGRyaXZlciBuZWVkcyB0byBiZSBhYmxlIHRvIGRlYWwgd2l0aC4gVGhlCj4gZHJpdmVyIHJl
-Z2lzdHJhdGlvbiBvcmRlciBkb2Vzbid0IG1hdHRlciBvbmUgYml0LiBJdCBtYXkgaGFwcGVuIHRv
-IHdvcmsKPiBtb3N0IG9mIHRoZSB0aW1lLCBidXQgYXMgc29vbiBhcyBvbmUgb2YgdGhlIHJlc291
-cmNlcyB0aGF0IHlvdXIgcGFuZWwKPiBkcml2ZXIgbmVlZHMgaXNuJ3QgdGhlcmUgd2hlbiB0aGUg
-cGFuZWwgaXMgcHJvYmVkLCB0aGVuIGl0IHdvbid0IGJlCj4gcmVnaXN0ZXJlZCBhbmQgb2ZfZHJt
-X2ZpbmRfcGFuZWwoKSB3aWxsIHN0aWxsIHJldHVybiBOVUxMLgo+Cj4gVXN1YWxseSB0aGUgcmln
-aHQgdGhpbmcgdG8gZG8gaW4gdGhhdCBjYXNlIHdvdWxkIGJlIHRvIHJldHVybiAoYW5kCj4gcHJv
-cGFnYXRlKSAtRVBST0JFX0RFRkVSIHNvIHRoYXQgeW91ciBkcml2ZXIncyBwcm9iZSBpcyBkZWZl
-cnJlZCBhbmQKPiByZXRyaWVkIHdoZW4gb3RoZXIgZHJpdmVycyBoYXZlIGJlZW4gcHJvYmVkLiBU
-aGF0IHdheSBpdCBzaG91bGQKPiBldmVudHVhbGx5IGdldCBhIG5vbi1OVUxMIHBhbmVsLgoKU28g
-SSBqdXN0IGdhdmUgdGhpcyAoZHJtX3BhbmVsICsgcHJvYmUgZGVmZXJyaW5nKSBhIHNob3Qgb24g
-ZXh5bm9zLAphbmQgY29ycmVjdGx5IHJlYWN0aW5nIHRvIC1FUFJPQkVfREVGRVIgcG9zdHBvbmVz
-IERQIGluaXRpYWxpemF0aW9uIGJ5CmFwcHJveGltYXRlbHkgMS41IHNlY29uZC4gSXMgdGhlcmUg
-YSBnb29kIHdheSB0byBoYW5kbGUgdGhhdD8gQXMgaXQKc3RhbmRzLCB0aGlzIGlzbid0IHVzYWJs
-ZS4KClN0w6lwaGFuZQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+This patch remove simply duplicate code when reading triminfo register of Exynos5440.
+
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Zhang Rui <rui.zhang@intel.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>
+Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
+---
+ drivers/thermal/samsung/exynos_tmu.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index ed01606..13c2e01 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -181,15 +181,13 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+ 		 */
+ 		switch (data->id) {
+ 		case 0:
++		case 2:
+ 			trim_info = readl(data->base +
+ 			EXYNOS5440_EFUSE_SWAP_OFFSET + reg->triminfo_data);
+ 			break;
+ 		case 1:
+ 			trim_info = readl(data->base + reg->triminfo_data);
+ 			break;
+-		case 2:
+-			trim_info = readl(data->base -
+-			EXYNOS5440_EFUSE_SWAP_OFFSET + reg->triminfo_data);
+ 		}
+ 	} else {
+ 		/* On exynos5420 the triminfo register is in the shared space */
+-- 
+1.8.0
