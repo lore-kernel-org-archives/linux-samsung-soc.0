@@ -1,140 +1,53 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: RE: [PATCH v7 3/4] ARM: EXYNOS: Add platform driver support for Exynos
- PMU
-Date: Thu, 21 Aug 2014 19:37:31 +0530
-Message-ID: <001601cfbd49$72359450$56a0bcf0$@samsung.com>
-References: <1404878455-31518-1-git-send-email-pankaj.dubey@samsung.com>
- <53D238E1.3030901@gmail.com> <002601cfaa11$93de5060$bb9af120$@samsung.com>
- <2491338.uD82s4TcKJ@amdc1032> <53F35F94.1010101@gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [RESEND PATCH 3/7] mfd: cros_ec: stop calling ->cmd_xfer()
+ directly
+Date: Thu, 21 Aug 2014 15:08:21 +0100
+Message-ID: <20140821140821.GK4266@lee--X1>
+References: <1408536812-7836-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1408536812-7836-4-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:49242 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754595AbaHUOG5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Aug 2014 10:06:57 -0400
-In-reply-to: <53F35F94.1010101@gmail.com>
-Content-language: en-us
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1408536812-7836-4-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-input-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Lee Jones' <lee.jones@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, t.figa@samsung.com, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, 'Kukjin Kim' <kgene.kim@samsung.com>, PRASHANTH GODREHAL <prashanth.g@samsung.com>
 
-+Arnd, Lee Jones
+On Wed, 20 Aug 2014, Javier Martinez Canillas wrote:
 
-Hi Tomasz,
+> From: Andrew Bresticker <abrestic@chromium.org>
+>=20
+> Instead of having users of the ChromeOS EC call the interface-specifi=
+c
+> cmd_xfer() callback directly, introduce a central cros_ec_cmd_xfer()
+> to use instead.  This will allow us to put all the locking and retry
+> logic in one place instead of duplicating it across the different
+> drivers.
+>=20
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> Reviewed-by: Simon Glass <sjg@chromium.org>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
+=2Euk>
+> ---
+>  drivers/i2c/busses/i2c-cros-ec-tunnel.c |  2 +-
+>  drivers/input/keyboard/cros_ec_keyb.c   |  2 +-
+>  drivers/mfd/cros_ec.c                   |  7 +++++++
+>  include/linux/mfd/cros_ec.h             | 24 ++++++++++++++++++-----=
+-
+>  4 files changed, 27 insertions(+), 8 deletions(-)
 
-On Tuesday, August 19, 2014 Tomasz Figa wrote:
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
-> 
-> Hi Bart,
-> 
-> On 18.08.2014 19:42, Bartlomiej Zolnierkiewicz wrote:
-> >
-> > Hi,
-> >
-> > On Monday, July 28, 2014 08:40:52 AM Pankaj Dubey wrote:
-> >> Hi Tomasz,
-> >>
-> >> On Friday, July 25, 2014 Tomasz Figa wrote:
-> >>
-> >>> To: Pankaj Dubey; 'Kukjin Kim';
-> >>> linux-arm-kernel@lists.infradead.org;
-> >> linux-
-> >>> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
-> >>> Cc: linux@arm.linux.org.uk; t.figa@samsung.com;
-> >>> vikas.sajjan@samsung.com; joshi@samsung.com; naushad@samsung.com;
-> >>> thomas.ab@samsung.com; chow.kim@samsung.com
-> >>> Subject: Re: [PATCH v7 3/4] ARM: EXYNOS: Add platform driver support
-> >>> for Exynos PMU
-> >>>
-> >>> Hi Pankaj, Kukjin,
-> >>>
-> >>> On 25.07.2014 07:32, Pankaj Dubey wrote:
-> >>>> Hi Kukjin,
-> >>>>
-> >>>> On Friday, July 25, 2014 Kukjin Kim wrote:
-> >>>
-> >>> [snip]
-> >>>
-> >>>>>>
-> >>>>> Looks good to me, will apply this and 4/4.
-> >>>>>
-> >>>>
-> >>>> We need to hold these two patches until dependent patch [1] from
-> >>>> Tomasz Figa gets merged.
-> >>>>
-> >>>> [1]: mfd: syscon: Decouple syscon interface from syscon devices
-> >>>>       https://lkml.org/lkml/2014/6/24/188
-> >>>
-> >>> That RFC patch had few comments from Arnd needed to be addressed, so
-> >>> it
-> >> needs a
-> >>> new revision.
-> >>>
-> >>> Pankaj, If I remember correctly, we had talked about this and the
-> >> conclusion was that
-> >>> you would take care of addressing the comments and sending new
-> >>> version of
-> >> the
-> >>> patch. Any update on this or have I missed something?
-> >>>
-> >>
-> >> Well, I don't think we concluded as such anything.
-> >> Since this patch needs to get in so that Exynos PMU and PM related
-> >> changes can go in, I discussed with you saying that I am not able to
-> >> understand about Arnd's comments and if possible and time permits I
-> >> will look into it. Meanwhile I got busy with some other official
-> >> work, so could not get time to look into it.
-> >
-> > Tomasz/Pankaj, could we please get some agreement on what needs to be
-> > done and who should do the pending work?
-> >
-> > syscon patch is blocking PMU cleanup patches which in turn are
-> > blocking PMU support additions for new SoCs (Exynos5420/5800 and
-> > Exynos3250 PMU patches).
-> 
-> Leaving alone the matter who is going to take care of it for now, the
-remaining work
-> to do is to further decouple syscon from struct device, which means
-providing of_
-> API to register a syscon provider on a device tree node even before driver
-model is
-> available yet.
-> 
-
-As per Arnd's comment on your RFC patch he mentioned -
-"I believe the part you are missing is that with the approach I suggested,
-there would be no registration function at all."
-
-I think he is not in favor of adding such registration function at all. So
-do you think
-adding such function will really solve the problem?
-
-Further even Lee Jones agreed to Arnd's point of making syscon independent
-of device,
-but he also mentioned that it can be done in subsequent patch.
-  
-So in IMHO, your RFC patch can be taken as is, and any further improvement
-suggested
-by Arnd can be done in subsequent patches,  because as I can see in 3.17-rc1
-still
-has user of syscon_regmap_lookup_by_pdevname (clps711x.c) so we can't
-completely
-make it independent of platform_device as of now and also the changes
-required
-as per Arnd's suggestions requires considerable effort and time.
-
-> I believe it should be quite straightforward on top of my RFC and should
-require only
-> saving syscon's of_node directly in syscon struct, adding appropriate API
-and
-> extending the look-up loops to handle cases when syscon's dev is NULL.
-> 
-> Best regards,
-> Tomasz
-
-Thanks,
-Pankaj Dubey
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe linux-input" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
