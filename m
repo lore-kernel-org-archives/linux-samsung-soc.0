@@ -1,129 +1,188 @@
-From: =?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin@gmail.com>
+From: Ajay kumar <ajaynumb@gmail.com>
 Subject: Re: [PATCH V2 4/9] drm/exynos: add exynos_dp_panel driver
  registration to drm driver
-Date: Thu, 21 Aug 2014 01:25:07 -0700
-Message-ID: <CACP_E++72CuDCf1yOKk8b0O49mOd1YvBUUGKnD5zpJW6BT7QtA@mail.gmail.com>
+Date: Thu, 21 Aug 2014 14:57:21 +0530
+Message-ID: <CAEC9eQM7R6qy_cVnmFhRTQO+VPT1v25oXW+KSU84G7qGQe-wfw@mail.gmail.com>
 References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
- <1398119958-32005-5-git-send-email-ajaykumar.rs@samsung.com>
- <20140422083311.GC17275@ulmo>
- <CAEC9eQPGfFFRNF4nOgci8KCc+9E=MQRmU-Cz=TGgEdiaOVqTMg@mail.gmail.com>
- <20140422152657.GB30048@ulmo>
- <CACP_E+KntYzVDjZrXcByU2LrCtzDbwW79LpSAazjHzbYbQrpDQ@mail.gmail.com>
- <20140821073631.GH4486@ulmo>
+	<1398119958-32005-5-git-send-email-ajaykumar.rs@samsung.com>
+	<20140422083311.GC17275@ulmo>
+	<CAEC9eQPGfFFRNF4nOgci8KCc+9E=MQRmU-Cz=TGgEdiaOVqTMg@mail.gmail.com>
+	<20140422152657.GB30048@ulmo>
+	<CACP_E+KntYzVDjZrXcByU2LrCtzDbwW79LpSAazjHzbYbQrpDQ@mail.gmail.com>
+	<20140821073631.GH4486@ulmo>
+	<CACP_E++72CuDCf1yOKk8b0O49mOd1YvBUUGKnD5zpJW6BT7QtA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20140821073631.GH4486@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f169.google.com ([209.85.223.169]:49555 "EHLO
+	mail-ie0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753757AbaHUJ1V convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 Aug 2014 05:27:21 -0400
+Received: by mail-ie0-f169.google.com with SMTP id rd18so4381664iec.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Aug 2014 02:27:21 -0700 (PDT)
+In-Reply-To: <CACP_E++72CuDCf1yOKk8b0O49mOd1YvBUUGKnD5zpJW6BT7QtA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: =?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-T24gVGh1LCBBdWcgMjEsIDIwMTQgYXQgMTI6MzYgQU0sIFRoaWVycnkgUmVkaW5nCjx0aGllcnJ5
-LnJlZGluZ0BnbWFpbC5jb20+IHdyb3RlOgo+IE9uIFR1ZSwgQXVnIDE5LCAyMDE0IGF0IDA5OjAy
-OjM5UE0gLTA3MDAsIFN0w6lwaGFuZSBNYXJjaGVzaW4gd3JvdGU6Cj4+IE9uIFR1ZSwgQXByIDIy
-LCAyMDE0IGF0IDg6MjYgQU0sIFRoaWVycnkgUmVkaW5nCj4+IDx0aGllcnJ5LnJlZGluZ0BnbWFp
-bC5jb20+IHdyb3RlOgo+PiA+IE9uIFR1ZSwgQXByIDIyLCAyMDE0IGF0IDA4OjMzOjIzUE0gKzA1
-MzAsIEFqYXkga3VtYXIgd3JvdGU6Cj4+ID4+IEhpIFRoaWVycnksCj4+ID4+Cj4+ID4+IE9uIFR1
-ZSwgQXByIDIyLCAyMDE0IGF0IDI6MDMgUE0sIFRoaWVycnkgUmVkaW5nCj4+ID4+IDx0aGllcnJ5
-LnJlZGluZ0BnbWFpbC5jb20+IHdyb3RlOgo+PiA+PiA+IE9uIFR1ZSwgQXByIDIyLCAyMDE0IGF0
-IDA0OjA5OjEzQU0gKzA1MzAsIEFqYXkgS3VtYXIgd3JvdGU6Cj4+ID4+ID4+IFJlZ2lzdGVyIGV4
-eW5vc19kcF9wYW5lbCBiZWZvcmUgdGhlIGxpc3Qgb2YgZXh5bm9zIGNydGNzIGFuZAo+PiA+PiA+
-PiBjb25uZWN0b3JzIGFyZSBwcm9iZWQuCj4+ID4+ID4+Cj4+ID4+ID4+IFRoaXMgaXMgbmVlZGVk
-IGJlY2F1c2UgZXh5bm9zX2RwX3BhbmVsIHNob3VsZCBiZSByZWdpc3RlcmVkIHRvCj4+ID4+ID4+
-IHRoZSBkcm1fcGFuZWwgbGlzdCB2aWEgcGFuZWwtZXh5bm9zLWRwIHByb2JlLCBpLmUgbXVjaCBi
-ZWZvcmUKPj4gPj4gPj4gZXh5bm9zX2RwX2JpbmQgY2FsbHMgb2ZfZHJtX2ZpbmRfcGFuZWwoKS4K
-Pj4gPj4gPj4KPj4gPj4gPj4gU2lnbmVkLW9mZi1ieTogQWpheSBLdW1hciA8YWpheWt1bWFyLnJz
-QHNhbXN1bmcuY29tPgo+PiA+PiA+PiAtLS0KPj4gPj4gPj4gQ2hhbmdlcyBzaW5jZSBWMToKPj4g
-Pj4gPj4gICAgICAgQWRkZWQgcGxhdGZvcm1fZHJpdmVyX3VucmVnaXN0ZXIoJmV4eW5vc19kcF9w
-YW5lbF9kcml2ZXIpIHRvCj4+ID4+ID4+ICAgICAgIGV4eW5vc19kcm1fcGxhdGZvcm1fcmVtb3Zl
-IGFzIHBlciBKaW5nb28gSGFuJ3MgY29ycmVjdGlvbgo+PiA+PiA+Pgo+PiA+PiA+PiAgZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIHwgICAxNSArKysrKysrKysrKysrKysK
-Pj4gPj4gPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCB8ICAgIDEg
-Kwo+PiA+PiA+PiAgMiBmaWxlcyBjaGFuZ2VkLCAxNiBpbnNlcnRpb25zKCspCj4+ID4+ID4+Cj4+
-ID4+ID4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2
-LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKPj4gPj4gPj4gaW5k
-ZXggMWQ2NTNmOC4uMmRiN2Y2NyAxMDA2NDQKPj4gPj4gPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCj4+ID4+ID4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9kcnYuYwo+PiA+PiA+PiBAQCAtNTMwLDEyICs1MzAsMjMgQEAgc3Rh
-dGljIGludCBleHlub3NfZHJtX3BsYXRmb3JtX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2Ug
-KnBkZXYpCj4+ID4+ID4+ICAgICAgICAgICAgICAgZ290byBlcnJfdW5yZWdpc3Rlcl9pcHBfZHJ2
-Owo+PiA+PiA+PiAgI2VuZGlmCj4+ID4+ID4+Cj4+ID4+ID4+ICsjaWZkZWYgQ09ORklHX0RSTV9Q
-QU5FTF9FWFlOT1NfRFAKPj4gPj4gPj4gKyAgICAgcmV0ID0gcGxhdGZvcm1fZHJpdmVyX3JlZ2lz
-dGVyKCZleHlub3NfZHBfcGFuZWxfZHJpdmVyKTsKPj4gPj4gPj4gKyAgICAgaWYgKHJldCA8IDAp
-Cj4+ID4+ID4+ICsgICAgICAgICAgICAgZ290byBlcnJfdW5yZWdpc3Rlcl9kcF9wYW5lbDsKPj4g
-Pj4gPj4gKyNlbmRpZgo+PiA+PiA+Cj4+ID4+ID4gTm8sIHRoaXMgaXMgbm90IGhvdyB5b3UncmUg
-c3VwcG9zZWQgdG8gdXNlIERSTSBwYW5lbCBkcml2ZXJzLiBUaGUgaWRlYQo+PiA+PiA+IGlzIHRo
-YXQgeW91IHdyaXRlIGEgc3RhbmRhbG9uZSBkcml2ZXIgZm9yIGEgZ2l2ZW4gcGFuZWwuCj4+ID4+
-ID4KPj4gPj4gPiBXaGF0IHlvdSBkbyBoZXJlIGhhcyBhIG51bWJlciBvZiBwcm9ibGVtcy4gRm9y
-IG9uZSBpdCdzIGEgZHJpdmVyIHRoYXQncwo+PiA+PiA+IHRpZ2h0bHkgY291cGxlZCB0byBFeHlu
-b3MgU29Dcy4gQnV0IGlmIEkgaGF2ZSBhIGRpZmZlcmVudCBTb0MgdGhhdCB1c2VzCj4+ID4+ID4g
-dGhlIHNhbWUgcGFuZWwgSSB3YW50IHRvIGJlIGFibGUgdG8gdXNlIHRoZSBzYW1lIGRyaXZlciwg
-YW5kIG5vdCBoYXZlIHRvCj4+ID4+ID4gcmV3cml0ZSB0aGUgZHJpdmVyIGZvciBteSBTb0MuCj4+
-ID4+ID4KPj4gPj4gPiBBbm90aGVyIHByb2JsZW0gaXMgdGhhdCB5b3UncmUgYXNzdW1pbmcgaGVy
-ZSB0aGF0IHRoZSBkcml2ZXIgaXMgYnVpbHQgaW4KPj4gPj4gPiBhbmQgaXQgd2lsbCBicmVhayBp
-ZiB5b3UgdHJ5IHRvIGJ1aWxkIGVpdGhlciBFeHlub3MgRFJNIG9yIHRoZSBwYW5lbAo+PiA+PiA+
-IGRyaXZlciBhcyBhIG1vZHVsZS4gVGhpcyBpcyBwZXJoYXBzIG5vdGhpbmcgeW91IGNhcmUgYWJv
-dXQgcmlnaHQgbm93LAo+PiA+PiA+IGJ1dCBldmVudHVhbGx5IHBlb3BsZSB3aWxsIHdhbnQgdG8g
-c2hpcCBhIHNpbmdsZSBrZXJuZWwgdGhhdCBjYW4gcnVuIG9uCj4+ID4+ID4gYSBudW1iZXIgb2Yg
-U29Dcy4gQnV0IGlmIHdlIGtlZXAgYWRkaW5nIHRoaW5ncyBsaWtlIHRoaXMsIHRoYXQga2VybmVs
-Cj4+ID4+ID4gd2lsbCBrZWVwIGdyb3dpbmcgaW4gc2l6ZSB1bnRpbCBpdCBubyBsb25nZXIgZml0
-cyBpbiBhbnkga2luZCBvZiBtZW1vcnkuCj4+ID4+ID4KPj4gPj4gPiBUaGllcnJ5Cj4+ID4+Cj4+
-ID4+IEkgY29tcGxldGVseSBhZ3JlZSB3aXRoIHlvdSBpbiB0aGlzIQo+PiA+Pgo+PiA+PiBZZXMs
-IHRoaXMgaXMgbm90IGFjY2VwdGFibGUsIGJ1dCBJIHdhbnQgdG8ga25vdyBhbiAiYWNjZXB0YWJs
-ZSIKPj4gPj4gd29ya2Fyb3VuZCBmb3IgdGhlIHNpdHVhdGlvbiBiZWxvdzoKPj4gPj4gSSByZWdp
-c3RlciB0aGUgZHJpdmVyIHVzaW5nIG1vZHVsZV9pbml0KCkuCj4+ID4+IEFuZCwgZXh5bm9zX2Ry
-bSBnZXRzIHByb2JlZCBtdWNoIGJlZm9yZSB0aGUgcGFuZWwgZHJpdmVyIHByb2JlIGhhcHBlbnMu
-Cj4+ID4+IFNvLCB0aGUgcGFuZWwgZHJpdmVyIGhhc24ndCBwcm9iZWQgeWV0LCBidXQgZXh5bm9z
-X2RwIHZpYSBleHlub3NfZHJtCj4+ID4+IHRyaWVzIHRvIGNhbGwKPj4gPj4gIm9mX2RybV9maW5k
-X3BhbmVsIiB3aGljaCBhbHdheXMgcmV0dXJucyBOVUxMLgo+PiA+Cj4+ID4gVGhhdCdzIGEgc2l0
-dWF0aW9uIHRoYXQgeW91ciBkcml2ZXIgbmVlZHMgdG8gYmUgYWJsZSB0byBkZWFsIHdpdGguIFRo
-ZQo+PiA+IGRyaXZlciByZWdpc3RyYXRpb24gb3JkZXIgZG9lc24ndCBtYXR0ZXIgb25lIGJpdC4g
-SXQgbWF5IGhhcHBlbiB0byB3b3JrCj4+ID4gbW9zdCBvZiB0aGUgdGltZSwgYnV0IGFzIHNvb24g
-YXMgb25lIG9mIHRoZSByZXNvdXJjZXMgdGhhdCB5b3VyIHBhbmVsCj4+ID4gZHJpdmVyIG5lZWRz
-IGlzbid0IHRoZXJlIHdoZW4gdGhlIHBhbmVsIGlzIHByb2JlZCwgdGhlbiBpdCB3b24ndCBiZQo+
-PiA+IHJlZ2lzdGVyZWQgYW5kIG9mX2RybV9maW5kX3BhbmVsKCkgd2lsbCBzdGlsbCByZXR1cm4g
-TlVMTC4KPj4gPgo+PiA+IFVzdWFsbHkgdGhlIHJpZ2h0IHRoaW5nIHRvIGRvIGluIHRoYXQgY2Fz
-ZSB3b3VsZCBiZSB0byByZXR1cm4gKGFuZAo+PiA+IHByb3BhZ2F0ZSkgLUVQUk9CRV9ERUZFUiBz
-byB0aGF0IHlvdXIgZHJpdmVyJ3MgcHJvYmUgaXMgZGVmZXJyZWQgYW5kCj4+ID4gcmV0cmllZCB3
-aGVuIG90aGVyIGRyaXZlcnMgaGF2ZSBiZWVuIHByb2JlZC4gVGhhdCB3YXkgaXQgc2hvdWxkCj4+
-ID4gZXZlbnR1YWxseSBnZXQgYSBub24tTlVMTCBwYW5lbC4KPj4KPj4gU28gSSBqdXN0IGdhdmUg
-dGhpcyAoZHJtX3BhbmVsICsgcHJvYmUgZGVmZXJyaW5nKSBhIHNob3Qgb24gZXh5bm9zLAo+PiBh
-bmQgY29ycmVjdGx5IHJlYWN0aW5nIHRvIC1FUFJPQkVfREVGRVIgcG9zdHBvbmVzIERQIGluaXRp
-YWxpemF0aW9uIGJ5Cj4+IGFwcHJveGltYXRlbHkgMS41IHNlY29uZC4gSXMgdGhlcmUgYSBnb29k
-IHdheSB0byBoYW5kbGUgdGhhdD8gQXMgaXQKPj4gc3RhbmRzLCB0aGlzIGlzbid0IHVzYWJsZS4K
-Pgo+IEhvdyBtdWNoIGlzIDEuNSBzZWNvbmRzIGNvbXBhcmVkIHRvIHRoZSBvdmVyYWxsIGJvb3Qg
-dGltZSBvZiB0aGUgZGV2aWNlPwoKMS41cyBpcyAxNS0yMCUgb2YgbXkgYm9vdCB0aW1lIChpZiB5
-b3UgY291bnQgdGhlIGJvb3QgdGltZSBmcm9tCmZpcm13YXJlIHN0YXJ0IHRvIGxvZ2luIHByb21w
-dCwgb3RoZXJ3aXNlIGl0J3MgbW9yZSkuIE5vdGUgdGhhdCBvbgpvdGhlciBwbGF0Zm9ybXMsIHdl
-J3ZlIHNlZW4gdGhpcyB0YWtlIGFzIG11Y2ggYXMgNSBvciA2cywgYnV0IGZvciB0aGUKZXh5bm9z
-IGNhc2UgaXQgaXMgIm9ubHkiIDEuNXMuCgo+IFdoYXQgZXhhY3RseSBpcyBjYXVzaW5nIHRoaXMg
-MS41IHNlY29uZCBkZWxheT8KCkEgcmVndWxhdG9yIGlzbid0IHJlYWR5LCBhbmQgdGhlbiBkcm1f
-cGFuZWwgcmV0dXJucyBkZWZlci4gVGhlbiB0aGUKd2hvbGUgZHJtIGRyaXZlciBpbml0IGlzIGRl
-ZmVycmVkLgoKPgo+IFRoaXMgcmVhbGx5IGlzIGEgZnVuZGFtZW50YWwgaXNzdWUgd2l0aCBkZWZl
-cnJlZCBwcm9iaW5nIGFuZCB0aGUgaXNzdWUKPiBoYXMgY29tZSB1cCBzZXZlcmFsIHRpbWVzIGlu
-IHRoZSBwYXN0LiBBIGNvdXBsZSBvZiBwb3NzaWJsZSBzb2x1dGlvbnMKPiBoYXZlIGJlZW4gcHJv
-cG9zZWQsIHdpdGggdGhlIGxhdGVzdCBiZWluZyBoZXJlWzBdIEkgdGhpbmsuIFRoYXQgZW5kZWQg
-aW4KPiBhIGJpdCBvZiBhIGRlYmFjbGUsIHVuZm9ydHVuYXRlbHksIGJ1dCBvbiBvZiB0aGUgb3V0
-Y29tZXMgd2FzIHRoYXQgYSBsb3QKPiBvZiB0aGUgb3JkZXJpbmcgcHJvYmxlbXMgY291bGQgYmUg
-Zml4ZWQgYnkgdXNpbmcgcGhhbmRsZSByZWZlcmVuY2VzIHRvCj4gdHJhY2sgZGVwZW5kZW5jaWVz
-LiBJJ20gbm90IGF3YXJlIG9mIGFueW9uZSB3b3JraW5nIG9uIHRoYXQgcmlnaHQgbm93LAo+IHBy
-ZXN1bWFibHkgYmVjYXVzZSBldmVyeW9uZSBpcyBidXN5IGdldHRpbmcgZmVhdHVyZXMgbWVyZ2Vk
-IHJhdGhlciB0aGFuCj4gb3B0aW1pemluZyBib290IHNwZWVkLgoKWWVzLCBJIGRvbid0IGJlbGll
-dmUgYm9vdCB0aW1lIG9yZGVyaW5nIHdpbGwgZXZlciBoYXBwZW4gdXBzdHJlYW0sIGJ1dAp0aGVu
-IHRoZSBjdXJyZW50IGltcGxlbWVudGF0aW9uIHdpdGggRVBST0JFX0RFRkVSIGlzbid0IHVzYWJs
-ZSBlaXRoZXIuCkFueSBpZGVhcz8gQVRNIGl0IHNlZW1zIGxpa2UgdGhlIG9ubHkgd2F5IG91dCBp
-cyB0byBqdXN0IHdyaXRlIG15Cm93biBkdCBmb3JtYXQgZm9yIHRoZSBwYW5lbCBhbmQgaWdub3Jl
-IGRybV9wYW5lbC4KClN0w6lwaGFuZQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2RyaS1kZXZlbAo=
+On Thu, Aug 21, 2014 at 1:55 PM, St=C3=A9phane Marchesin
+<stephane.marchesin@gmail.com> wrote:
+> On Thu, Aug 21, 2014 at 12:36 AM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+>> On Tue, Aug 19, 2014 at 09:02:39PM -0700, St=C3=A9phane Marchesin wr=
+ote:
+>>> On Tue, Apr 22, 2014 at 8:26 AM, Thierry Reding
+>>> <thierry.reding@gmail.com> wrote:
+>>> > On Tue, Apr 22, 2014 at 08:33:23PM +0530, Ajay kumar wrote:
+>>> >> Hi Thierry,
+>>> >>
+>>> >> On Tue, Apr 22, 2014 at 2:03 PM, Thierry Reding
+>>> >> <thierry.reding@gmail.com> wrote:
+>>> >> > On Tue, Apr 22, 2014 at 04:09:13AM +0530, Ajay Kumar wrote:
+>>> >> >> Register exynos_dp_panel before the list of exynos crtcs and
+>>> >> >> connectors are probed.
+>>> >> >>
+>>> >> >> This is needed because exynos_dp_panel should be registered t=
+o
+>>> >> >> the drm_panel list via panel-exynos-dp probe, i.e much before
+>>> >> >> exynos_dp_bind calls of_drm_find_panel().
+>>> >> >>
+>>> >> >> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+>>> >> >> ---
+>>> >> >> Changes since V1:
+>>> >> >>       Added platform_driver_unregister(&exynos_dp_panel_drive=
+r) to
+>>> >> >>       exynos_drm_platform_remove as per Jingoo Han's correcti=
+on
+>>> >> >>
+>>> >> >>  drivers/gpu/drm/exynos/exynos_drm_drv.c |   15 +++++++++++++=
+++
+>>> >> >>  drivers/gpu/drm/exynos/exynos_drm_drv.h |    1 +
+>>> >> >>  2 files changed, 16 insertions(+)
+>>> >> >>
+>>> >> >> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/driver=
+s/gpu/drm/exynos/exynos_drm_drv.c
+>>> >> >> index 1d653f8..2db7f67 100644
+>>> >> >> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+>>> >> >> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+>>> >> >> @@ -530,12 +530,23 @@ static int exynos_drm_platform_probe(st=
+ruct platform_device *pdev)
+>>> >> >>               goto err_unregister_ipp_drv;
+>>> >> >>  #endif
+>>> >> >>
+>>> >> >> +#ifdef CONFIG_DRM_PANEL_EXYNOS_DP
+>>> >> >> +     ret =3D platform_driver_register(&exynos_dp_panel_drive=
+r);
+>>> >> >> +     if (ret < 0)
+>>> >> >> +             goto err_unregister_dp_panel;
+>>> >> >> +#endif
+>>> >> >
+>>> >> > No, this is not how you're supposed to use DRM panel drivers. =
+The idea
+>>> >> > is that you write a standalone driver for a given panel.
+>>> >> >
+>>> >> > What you do here has a number of problems. For one it's a driv=
+er that's
+>>> >> > tightly coupled to Exynos SoCs. But if I have a different SoC =
+that uses
+>>> >> > the same panel I want to be able to use the same driver, and n=
+ot have to
+>>> >> > rewrite the driver for my SoC.
+>>> >> >
+>>> >> > Another problem is that you're assuming here that the driver i=
+s built in
+>>> >> > and it will break if you try to build either Exynos DRM or the=
+ panel
+>>> >> > driver as a module. This is perhaps nothing you care about rig=
+ht now,
+>>> >> > but eventually people will want to ship a single kernel that c=
+an run on
+>>> >> > a number of SoCs. But if we keep adding things like this, that=
+ kernel
+>>> >> > will keep growing in size until it no longer fits in any kind =
+of memory.
+>>> >> >
+>>> >> > Thierry
+>>> >>
+>>> >> I completely agree with you in this!
+>>> >>
+>>> >> Yes, this is not acceptable, but I want to know an "acceptable"
+>>> >> workaround for the situation below:
+>>> >> I register the driver using module_init().
+>>> >> And, exynos_drm gets probed much before the panel driver probe h=
+appens.
+>>> >> So, the panel driver hasn't probed yet, but exynos_dp via exynos=
+_drm
+>>> >> tries to call
+>>> >> "of_drm_find_panel" which always returns NULL.
+>>> >
+>>> > That's a situation that your driver needs to be able to deal with=
+=2E The
+>>> > driver registration order doesn't matter one bit. It may happen t=
+o work
+>>> > most of the time, but as soon as one of the resources that your p=
+anel
+>>> > driver needs isn't there when the panel is probed, then it won't =
+be
+>>> > registered and of_drm_find_panel() will still return NULL.
+>>> >
+>>> > Usually the right thing to do in that case would be to return (an=
+d
+>>> > propagate) -EPROBE_DEFER so that your driver's probe is deferred =
+and
+>>> > retried when other drivers have been probed. That way it should
+>>> > eventually get a non-NULL panel.
+>>>
+>>> So I just gave this (drm_panel + probe deferring) a shot on exynos,
+>>> and correctly reacting to -EPROBE_DEFER postpones DP initialization=
+ by
+>>> approximately 1.5 second. Is there a good way to handle that? As it
+>>> stands, this isn't usable.
+>>
+>> How much is 1.5 seconds compared to the overall boot time of the dev=
+ice?
+>
+> 1.5s is 15-20% of my boot time (if you count the boot time from
+> firmware start to login prompt, otherwise it's more). Note that on
+> other platforms, we've seen this take as much as 5 or 6s, but for the
+> exynos case it is "only" 1.5s.
+>
+>> What exactly is causing this 1.5 second delay?
+>
+> A regulator isn't ready, and then drm_panel returns defer. Then the
+> whole drm driver init is deferred.
+>
+>>
+>> This really is a fundamental issue with deferred probing and the iss=
+ue
+>> has come up several times in the past. A couple of possible solution=
+s
+>> have been proposed, with the latest being here[0] I think. That ende=
+d in
+>> a bit of a debacle, unfortunately, but on of the outcomes was that a=
+ lot
+>> of the ordering problems could be fixed by using phandle references =
+to
+>> track dependencies. I'm not aware of anyone working on that right no=
+w,
+>> presumably because everyone is busy getting features merged rather t=
+han
+>> optimizing boot speed.
+>
+> Yes, I don't believe boot time ordering will ever happen upstream, bu=
+t
+> then the current implementation with EPROBE_DEFER isn't usable either=
+=2E
+> Any ideas? ATM it seems like the only way out is to just write my
+> own dt format for the panel and ignore drm_panel.
+Something like this:
+https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chrom=
+eos-3.8/drivers/gpu/drm/exynos/exynos_dp_core.c
+
+With this way also, we would expect the regulator to come up early(befo=
+re drm).
+
+Ajay
