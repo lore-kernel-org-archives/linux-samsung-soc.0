@@ -1,46 +1,67 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v7 02/11] power/restart: Call machine_restart instead of
- arm_pm_restart
-Date: Wed, 20 Aug 2014 21:42:30 -0700
-Message-ID: <20140821044230.GA14609@roeck-us.net>
-References: <1408495538-27480-1-git-send-email-linux@roeck-us.net>
- <1408495538-27480-3-git-send-email-linux@roeck-us.net>
- <CAD=FV=Va8UrpDCLjFQJ6j-K0C3v7NPfifaJGtReCkUEu3x0mLg@mail.gmail.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH 3/5] usb: phy: samsung: remove old USB 2.0 PHY driver
+Date: Thu, 21 Aug 2014 14:11:09 +0900
+Message-ID: <008601cfbcfe$51a70890$f4f519b0$%han@samsung.com>
+References: <1408026327-31437-1-git-send-email-b.zolnierkie@samsung.com>
+ <1408026327-31437-4-git-send-email-b.zolnierkie@samsung.com>
+ <34FCC3B2EE8F481198CEF3037F168FB3@sisodomain.com>
+ <3463371.y41zGdSnsX@amdc1032> <53F1E1EA.8060708@gmail.com>
+ <CAFp+6iGtMUEncFwJ=B_p=q8Bs_O9EMyjsL+ZP9PveO=VMrLmpA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f172.google.com ([209.85.192.172]:45620 "EHLO
-	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750982AbaHUEmg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Aug 2014 00:42:36 -0400
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=Va8UrpDCLjFQJ6j-K0C3v7NPfifaJGtReCkUEu3x0mLg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CAFp+6iGtMUEncFwJ=B_p=q8Bs_O9EMyjsL+ZP9PveO=VMrLmpA@mail.gmail.com>
+Content-language: ko
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Vivek Gautam' <gautam.vivek@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>
+Cc: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Felipe Balbi' <balbi@ti.com>, 'Kishon Vijay Abraham I' <kishon@ti.com>, 'Kamil Debski' <k.debski@samsung.com>, 'Mark Brown' <broonie@linaro.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Linux USB Mailing List' <linux-usb@vger.kernel.org>, linux-kernel@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Russell King <linux@arm.linux.org.uk>, Wim Van Sebroeck <wim@iguana.be>, Catalin Marinas <catalin.marinas@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Andrew Morton <akpm@linux-foundation.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>, Heiko Stuebner <heiko@sntech.de>, Jonas Jensen <jonas.jensen@gmail.com>, Randy Dunlap <rdunlap@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Tomasz Figa <t.figa@samsung.com>, "linux-doc@vger.kernel.org" <linux-doc@vge>
 
-On Wed, Aug 20, 2014 at 09:10:31PM -0700, Doug Anderson wrote:
-> Guenter,
-> 
-> On Tue, Aug 19, 2014 at 5:45 PM, Guenter Roeck <linux@roeck-us.net> wrote:
-> > machine_restart is supported on non-ARM platforms, and and ultimately calls
-> > arm_pm_restart, so dont call arm_pm_restart directly but use the more
-> > generic function.
+On Thursday, August 21, 2014 1:31 PM, Vivek Gautam wrote:
+> On Mon, Aug 18, 2014 at 4:52 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> > On 18.08.2014 13:02, Bartlomiej Zolnierkiewicz wrote:
+> >> On Thursday, August 14, 2014 08:07:40 PM Vivek Gautam wrote:
+> >>> On Thursday, August 14, 2014 7:55 PM, Bartlomiej Zolnierkiewicz
+> >>> <b.zolnierkie@samsung.com> wrote
+> >>
+> >>> There's one thing that I would want to comment here, since we don't have any
+> >>> new usb-phy driver for S3C64XX,
+> >>> so we can't simply remove this entire driver.
+> >>> I have posted my patch-series [1], which does cleanup while keeping the
+> >>> support for S3C64XX.
+> >>
+> >> AFAIK S3C64XX code from drivers/usb/phy/phy-samsung-usb2.c has
+> >> never been used as this platform still uses its own code from
+> >> arch/arm/mach-s3c64xx/setup-usb-phy.c (there are no users in
+> >> the kernel tree of either s3c64xx-usb2phy platform device or
+> >> "samsung,s3c64xx-usb2phy" DT compatible) .  Therefore I think
+> >> that the entire drivers/usb/phy/phy-samsung-usb2.c driver
+> >> should be removed (somebody with the hardware can as well add
+> >> S3C64XX support to the new drivers/phy/phy-samsung-usb2.c
+> >> driver and port the platform to use it).
+> >>
 > >
-> > Cc: Russell King <linux@arm.linux.org.uk>
-> 
-> Do you need to submit this to his patch tracker to get him to pick it
-> up?  How are you envisioning that this series land?  It crosses a lot
-> of boundaries so I guess will need a reasonable amount of coordination
-> between maintainers...
-> 
-> 
-If I get an Acked-by: from all maintainers, I could send a pull request
-to Linus directly. How do I send a patch to Russell's patch tracker ?
-I thought I copied all mailing lists suggested by get_maintainer.pl,
-but maybe I missed one.
+> > I agree with removal of this driver. As Bart said, it is not used for
+> > S3C64xx at all. The platform was supposed to be moved to this driver,
+> > but that never happened.
 
-Thanks,
-Guenter
+Yes, right. As far as I know, you're right.
+
+> > In fact, I already have a patch adding support
+> > for S3C64xx to the new driver.
+
+Good!
+
+> 
+> Cool then, lets remove this driver completely and use the new generic
+> PHY based driver
+> once that comes (from Tomasz).
+
+I agree with this opinion.
+
+> 
+> I shall drop the patches for cleaning up the usb-phy drivers from my series.
+
+Best regards,
+Jingoo Han
