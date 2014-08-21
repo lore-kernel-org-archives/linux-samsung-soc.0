@@ -1,107 +1,60 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 04/29] drivers: base: add notifier for failed driver bind
-Date: Thu, 21 Aug 2014 21:46:30 +0200
-Message-ID: <5058601.WyRAooKDLt@avalon>
-References: <1407235677-26324-1-git-send-email-m.szyprowski@samsung.com> <1407235677-26324-5-git-send-email-m.szyprowski@samsung.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v7 02/11] power/restart: Call machine_restart instead of
+ arm_pm_restart
+Date: Thu, 21 Aug 2014 13:11:10 -0700
+Message-ID: <20140821201110.GA11382@roeck-us.net>
+References: <1408495538-27480-1-git-send-email-linux@roeck-us.net>
+ <1408495538-27480-3-git-send-email-linux@roeck-us.net>
+ <CAD=FV=Va8UrpDCLjFQJ6j-K0C3v7NPfifaJGtReCkUEu3x0mLg@mail.gmail.com>
+ <20140821044230.GA14609@roeck-us.net>
+ <CAD=FV=XMBegDcPWM+sG4S64ZC6KEzKA-ykpEJrcGo2db+P0VLg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:46667 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752284AbaHUTpv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Aug 2014 15:45:51 -0400
-In-Reply-To: <1407235677-26324-5-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=XMBegDcPWM+sG4S64ZC6KEzKA-ykpEJrcGo2db+P0VLg@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Russell King <linux@arm.linux.org.uk>, Wim Van Sebroeck <wim@iguana.be>, Catalin Marinas <catalin.marinas@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Andrew Morton <akpm@linux-foundation.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>, Heiko Stuebner <heiko@sntech.de>, Jonas Jensen <jonas.jensen@gmail.com>, Randy Dunlap <rdunlap@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Tomasz Figa <t.figa@samsung.com>, "linux-doc@vger.kernel.org" <linux-doc@vge>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Rob Herring <robh@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hi Marek,
+On Thu, Aug 21, 2014 at 12:30:44PM -0700, Doug Anderson wrote:
+> Guenter,
+> 
+> On Wed, Aug 20, 2014 at 9:42 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+> > On Wed, Aug 20, 2014 at 09:10:31PM -0700, Doug Anderson wrote:
+> >> Guenter,
+> >>
+> >> On Tue, Aug 19, 2014 at 5:45 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+> >> > machine_restart is supported on non-ARM platforms, and and ultimately calls
+> >> > arm_pm_restart, so dont call arm_pm_restart directly but use the more
+> >> > generic function.
+> >> >
+> >> > Cc: Russell King <linux@arm.linux.org.uk>
+> >>
+> >> Do you need to submit this to his patch tracker to get him to pick it
+> >> up?  How are you envisioning that this series land?  It crosses a lot
+> >> of boundaries so I guess will need a reasonable amount of coordination
+> >> between maintainers...
+> >>
+> >>
+> > If I get an Acked-by: from all maintainers, I could send a pull request
+> > to Linus directly. How do I send a patch to Russell's patch tracker ?
+> > I thought I copied all mailing lists suggested by get_maintainer.pl,
+> > but maybe I missed one.
+> 
+> Ah, OK.  Perhaps it's best to ignore me, then.  ;)  FYI: Russell's
 
-Thank you for the patch.
+No, I appreciate the information.
 
-On Tuesday 05 August 2014 12:47:32 Marek Szyprowski wrote:
-> This patch adds support for getting a notify for failed device driver
-> bind, so all the items done in BUS_NOTIFY_BIND_DRIVER event can be
-> cleaned if the driver fails to bind.
+> Patch System is at <http://www.arm.linux.org.uk/developer/patches/>
+> and is used for getting individual patches into branches maintained by
+> Russel.  If you're just going to send a pull request for the series
+> then I don't think you need it.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/base/dd.c      | 10 +++++++---
->  include/linux/device.h |  4 +++-
->  2 files changed, 10 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-> index e4ffbcf..541a41f 100644
-> --- a/drivers/base/dd.c
-> +++ b/drivers/base/dd.c
-> @@ -237,10 +237,14 @@ static int driver_sysfs_add(struct device *dev)
->  	return ret;
->  }
-> 
-> -static void driver_sysfs_remove(struct device *dev)
-> +static void driver_sysfs_remove(struct device *dev, int failed)
->  {
->  	struct device_driver *drv = dev->driver;
-> 
-> +	if (failed && dev->bus)
-> +		blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
-> +					     BUS_NOTIFY_DRVBIND_FAILED, dev);
+I copied both linux-arm-kernel and Russell himself, so hopefully he is aware
+of the series and can let me know if he wants me to make any further changes
+to it, if it is ready to go, or if I need to do anything else.
 
-This might be a stupid question, but as you only call driver_sysfs_remove with 
-failed set to true in a single location (in the failure path of really_probe), 
-how about moving the blocking_notifier_call_chain to that location ? The code 
-seems to be a bit out of place here.
-
-> +
->  	if (drv) {
->  		sysfs_remove_link(&drv->p->kobj, kobject_name(&dev->kobj));
->  		sysfs_remove_link(&dev->kobj, "driver");
-> @@ -316,7 +320,7 @@ static int really_probe(struct device *dev, struct
-> device_driver *drv)
-> 
->  probe_failed:
->  	devres_release_all(dev);
-> -	driver_sysfs_remove(dev);
-> +	driver_sysfs_remove(dev, true);
->  	dev->driver = NULL;
->  	dev_set_drvdata(dev, NULL);
-> 
-> @@ -509,7 +513,7 @@ static void __device_release_driver(struct device *dev)
->  	if (drv) {
->  		pm_runtime_get_sync(dev);
-> 
-> -		driver_sysfs_remove(dev);
-> +		driver_sysfs_remove(dev, false);
-> 
->  		if (dev->bus)
->  			blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index b387710..92daded 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -176,7 +176,7 @@ extern int bus_register_notifier(struct bus_type *bus,
->  extern int bus_unregister_notifier(struct bus_type *bus,
->  				   struct notifier_block *nb);
-> 
-> -/* All 4 notifers below get called with the target struct device *
-> +/* All 7 notifers below get called with the target struct device *
->   * as an argument. Note that those functions are likely to be called
->   * with the device lock held in the core, so be careful.
->   */
-> @@ -189,6 +189,8 @@ extern int bus_unregister_notifier(struct bus_type *bus,
-> unbound */
->  #define BUS_NOTIFY_UNBOUND_DRIVER	0x00000006 /* driver is unbound
->  						      from the device */
-> +#define BUS_NOTIFY_DRVBIND_FAILED	0x00000007 /* driver failed to bind
-> +						      to device */
-> 
->  extern struct kset *bus_get_kset(struct bus_type *bus);
->  extern struct klist *bus_get_device_klist(struct bus_type *bus);
-
--- 
-Regards,
-
-Laurent Pinchart
+Thanks,
+Guenter
