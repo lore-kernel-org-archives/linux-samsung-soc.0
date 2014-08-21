@@ -1,52 +1,46 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH 0/5] usb: phy: samsung: remove old USB PHY code
-Date: Thu, 21 Aug 2014 10:03:46 +0530
-Message-ID: <CAFp+6iG+BoE5O=EBxNOGPGU3Wws26xtQzzVx1HBhQ3R0SafiMw@mail.gmail.com>
-References: <1408026327-31437-1-git-send-email-b.zolnierkie@samsung.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v7 02/11] power/restart: Call machine_restart instead of
+ arm_pm_restart
+Date: Wed, 20 Aug 2014 21:42:30 -0700
+Message-ID: <20140821044230.GA14609@roeck-us.net>
+References: <1408495538-27480-1-git-send-email-linux@roeck-us.net>
+ <1408495538-27480-3-git-send-email-linux@roeck-us.net>
+ <CAD=FV=Va8UrpDCLjFQJ6j-K0C3v7NPfifaJGtReCkUEu3x0mLg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f41.google.com ([209.85.216.41]:46763 "EHLO
-	mail-qa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753795AbaHUEdr (ORCPT
+Received: from mail-pd0-f172.google.com ([209.85.192.172]:45620 "EHLO
+	mail-pd0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750982AbaHUEmg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Aug 2014 00:33:47 -0400
-In-Reply-To: <1408026327-31437-1-git-send-email-b.zolnierkie@samsung.com>
+	Thu, 21 Aug 2014 00:42:36 -0400
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=Va8UrpDCLjFQJ6j-K0C3v7NPfifaJGtReCkUEu3x0mLg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, Kishon Vijay Abraham I <kishon@ti.com>, Kamil Debski <k.debski@samsung.com>, Mark Brown <broonie@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Russell King <linux@arm.linux.org.uk>, Wim Van Sebroeck <wim@iguana.be>, Catalin Marinas <catalin.marinas@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Andrew Morton <akpm@linux-foundation.org>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>, Heiko Stuebner <heiko@sntech.de>, Jonas Jensen <jonas.jensen@gmail.com>, Randy Dunlap <rdunlap@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Tomasz Figa <t.figa@samsung.com>, "linux-doc@vger.kernel.org" <linux-doc@vge>
 
-On Thu, Aug 14, 2014 at 7:55 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
-> Hi,
->
-> This patch series removes the old Samsung USB PHY drivers that
-> got replaced by the new ones using the generic PHY layer.
->
-> Depends on:
-> - next-20140813 branch of linux-next kernel
->
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
->
->
-> Bartlomiej Zolnierkiewicz (5):
->   ARM: dts: remove old USB2 PHY node hook for Arndale
->   ARM: dts: remove old USB2 PHY node for Exynos5250
->   usb: phy: samsung: remove old USB 2.0 PHY driver
->   usb: phy: samsung: remove old USB 3.0 PHY driver
->   usb: phy: samsung: remove old common USB PHY code
+On Wed, Aug 20, 2014 at 09:10:31PM -0700, Doug Anderson wrote:
+> Guenter,
+> 
+> On Tue, Aug 19, 2014 at 5:45 PM, Guenter Roeck <linux@roeck-us.net> wrote:
+> > machine_restart is supported on non-ARM platforms, and and ultimately calls
+> > arm_pm_restart, so dont call arm_pm_restart directly but use the more
+> > generic function.
+> >
+> > Cc: Russell King <linux@arm.linux.org.uk>
+> 
+> Do you need to submit this to his patch tracker to get him to pick it
+> up?  How are you envisioning that this series land?  It crosses a lot
+> of boundaries so I guess will need a reasonable amount of coordination
+> between maintainers...
+> 
+> 
+If I get an Acked-by: from all maintainers, I could send a pull request
+to Linus directly. How do I send a patch to Russell's patch tracker ?
+I thought I copied all mailing lists suggested by get_maintainer.pl,
+but maybe I missed one.
 
-Reviewed-by: Vivek Gautam <gautam.vivek@samsung.com>
-
-
-
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+Thanks,
+Guenter
