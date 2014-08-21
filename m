@@ -1,62 +1,172 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCHv3] thermal: exynos: Add support for TRIM_RELOAD feature
- at Exynos3250
-Date: Thu, 21 Aug 2014 12:32:47 +0200
-Message-ID: <53F5CACF.4050600@suse.de>
-References: <1408450078-6296-1-git-send-email-cw00.choi@samsung.com> <1408492364-8012-1-git-send-email-cw00.choi@samsung.com> <CAC-25o9LjKwjBwwxcOvV75bXEHGdUh2vU=ae1STsXxD6q4YsiA@mail.gmail.com> <53F54D86.9070601@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <53F54D86.9070601@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, "edubezval@gmail.com" <edubezval@gmail.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, "Valentin, Eduardo" <eduardo.valentin@ti.com>, Amit Kachhap <amit.daniel@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, l.majewski@samsung.com, naveen krishna <ch.naveen@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH v2 1/2] usb: host: ehci-exynos: Remove unnecessary usb-phy support
+Date: Thu, 21 Aug 2014 17:09:57 +0530
+Message-ID: <1408621198-14984-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:50438 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754478AbaHULkM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 Aug 2014 07:40:12 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, kgene.kim@samsung.com, jg1.han@samsung.com, sachin.kamat@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 
-Hello,
+Now that we have completely moved from older USB-PHY drivers
+to newer GENERIC-PHY drivers for PHYs available with USB controllers
+on Exynos series of SoCs, we can remove the support for the same
+in our host drivers too.
+This should fix the issue on ehci-exynos, wherein in the absence of
+SAMSUNG_USB2PHY config symbol, we ended up getting the NOP_USB_XCEIV phy
+when the same is enabled. And thus the PHYs are not configured properly.
 
-Am 21.08.2014 03:38, schrieb Chanwoo Choi:
-> On 08/20/2014 10:38 PM, edubezval@gmail.com wrote:
->> On Tue, Aug 19, 2014 at 7:52 PM, Chanwoo Choi <cw00.choi@samsung.com=
-> wrote:
->>> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/th=
-ermal/samsung/exynos_tmu_data.c
->>> index aa8e0de..8cd609c 100644
->>> --- a/drivers/thermal/samsung/exynos_tmu_data.c
->>> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
->>> @@ -95,6 +95,8 @@ static const struct exynos_tmu_registers exynos32=
-50_tmu_registers =3D {
->>>         .triminfo_data =3D EXYNOS_TMU_REG_TRIMINFO,
->>>         .triminfo_25_shift =3D EXYNOS_TRIMINFO_25_SHIFT,
->>>         .triminfo_85_shift =3D EXYNOS_TRIMINFO_85_SHIFT,
->>> +       .triminfo_ctrl[0] =3D EXYNOS_TMU_TRIMINFO_CON1,
->>> +       .triminfo_ctrl[1] =3D EXYNOS_TMU_TRIMINFO_CON2,
->>>         .tmu_ctrl =3D EXYNOS_TMU_REG_CONTROL,
->>>         .test_mux_addr_shift =3D EXYNOS4412_MUX_ADDR_SHIFT,
->>>         .buf_vref_sel_shift =3D EXYNOS_TMU_REF_VOLTAGE_SHIFT,
->>> @@ -160,8 +162,11 @@ static const struct exynos_tmu_registers exyno=
-s3250_tmu_registers =3D {
->>>                 .temp_level =3D 95, \
->>>         }, \
->>>         .freq_tab_count =3D 2, \
->>> +       .triminfo_reload[0] =3D 0x1, \
->>> +       .triminfo_reload[1] =3D 0x11, \
->>
->> What does 0x1 mean? How about 0x11?
->=20
-> The bit of 'RELOAD' field in TRIMINFO_CONTROL register is [0].
-> and The bit of 'AC Time' field in TRIMINFO_CONTROL register is [5:4].
->=20
-> 0x1 means that set RELOAD field.
-> 0x11 means that set RELOAD field and ACTIME field.
+Reported-by: Sachin Kamat <sachin.kamat@samsung.com>
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+---
 
-Might be a good idea to use #defines for 0x1 and 0x10 then?
+ - This patch was part of the series "[PATCH 0/7] usb-phy: samsung: Cleanup the unused drivers"
+   https://lkml.org/lkml/2014/8/14/235. I have dropped the phy cleanup patches from that series-
+   Patches 1-5.
+ - Rebased this patch on top of 3.17-rc1.
 
-Regards,
-Andreas
+ drivers/usb/host/ehci-exynos.c |   53 ++++++----------------------------------
+ 1 file changed, 8 insertions(+), 45 deletions(-)
 
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+index cda0a2f..54944cc 100644
+--- a/drivers/usb/host/ehci-exynos.c
++++ b/drivers/usb/host/ehci-exynos.c
+@@ -21,11 +21,8 @@
+ #include <linux/of_gpio.h>
+ #include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
+-#include <linux/usb/phy.h>
+-#include <linux/usb/samsung_usb_phy.h>
+ #include <linux/usb.h>
+ #include <linux/usb/hcd.h>
+-#include <linux/usb/otg.h>
+ 
+ #include "ehci.h"
+ 
+@@ -47,9 +44,7 @@ static struct hc_driver __read_mostly exynos_ehci_hc_driver;
+ 
+ struct exynos_ehci_hcd {
+ 	struct clk *clk;
+-	struct usb_phy *phy;
+-	struct usb_otg *otg;
+-	struct phy *phy_g[PHY_NUMBER];
++	struct phy *phy[PHY_NUMBER];
+ };
+ 
+ #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
+@@ -62,18 +57,6 @@ static int exynos_ehci_get_phy(struct device *dev,
+ 	int phy_number;
+ 	int ret = 0;
+ 
+-	exynos_ehci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
+-	if (IS_ERR(exynos_ehci->phy)) {
+-		ret = PTR_ERR(exynos_ehci->phy);
+-		if (ret != -ENXIO && ret != -ENODEV) {
+-			dev_err(dev, "no usb2 phy configured\n");
+-			return ret;
+-		}
+-		dev_dbg(dev, "Failed to get usb2 phy\n");
+-	} else {
+-		exynos_ehci->otg = exynos_ehci->phy->otg;
+-	}
+-
+ 	for_each_available_child_of_node(dev->of_node, child) {
+ 		ret = of_property_read_u32(child, "reg", &phy_number);
+ 		if (ret) {
+@@ -98,7 +81,7 @@ static int exynos_ehci_get_phy(struct device *dev,
+ 			}
+ 			dev_dbg(dev, "Failed to get usb2 phy\n");
+ 		}
+-		exynos_ehci->phy_g[phy_number] = phy;
++		exynos_ehci->phy[phy_number] = phy;
+ 	}
+ 
+ 	return ret;
+@@ -111,16 +94,13 @@ static int exynos_ehci_phy_enable(struct device *dev)
+ 	int i;
+ 	int ret = 0;
+ 
+-	if (!IS_ERR(exynos_ehci->phy))
+-		return usb_phy_init(exynos_ehci->phy);
+-
+ 	for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
+-		if (!IS_ERR(exynos_ehci->phy_g[i]))
+-			ret = phy_power_on(exynos_ehci->phy_g[i]);
++		if (!IS_ERR(exynos_ehci->phy[i]))
++			ret = phy_power_on(exynos_ehci->phy[i]);
+ 	if (ret)
+ 		for (i--; i >= 0; i--)
+-			if (!IS_ERR(exynos_ehci->phy_g[i]))
+-				phy_power_off(exynos_ehci->phy_g[i]);
++			if (!IS_ERR(exynos_ehci->phy[i]))
++				phy_power_off(exynos_ehci->phy[i]);
+ 
+ 	return ret;
+ }
+@@ -131,14 +111,9 @@ static void exynos_ehci_phy_disable(struct device *dev)
+ 	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
+ 	int i;
+ 
+-	if (!IS_ERR(exynos_ehci->phy)) {
+-		usb_phy_shutdown(exynos_ehci->phy);
+-		return;
+-	}
+-
+ 	for (i = 0; i < PHY_NUMBER; i++)
+-		if (!IS_ERR(exynos_ehci->phy_g[i]))
+-			phy_power_off(exynos_ehci->phy_g[i]);
++		if (!IS_ERR(exynos_ehci->phy[i]))
++			phy_power_off(exynos_ehci->phy[i]);
+ }
+ 
+ static void exynos_setup_vbus_gpio(struct device *dev)
+@@ -231,9 +206,6 @@ skip_phy:
+ 		goto fail_io;
+ 	}
+ 
+-	if (exynos_ehci->otg)
+-		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+-
+ 	err = exynos_ehci_phy_enable(&pdev->dev);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Failed to enable USB phy\n");
+@@ -273,9 +245,6 @@ static int exynos_ehci_remove(struct platform_device *pdev)
+ 
+ 	usb_remove_hcd(hcd);
+ 
+-	if (exynos_ehci->otg)
+-		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+-
+ 	exynos_ehci_phy_disable(&pdev->dev);
+ 
+ 	clk_disable_unprepare(exynos_ehci->clk);
+@@ -298,9 +267,6 @@ static int exynos_ehci_suspend(struct device *dev)
+ 	if (rc)
+ 		return rc;
+ 
+-	if (exynos_ehci->otg)
+-		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+-
+ 	exynos_ehci_phy_disable(dev);
+ 
+ 	clk_disable_unprepare(exynos_ehci->clk);
+@@ -316,9 +282,6 @@ static int exynos_ehci_resume(struct device *dev)
+ 
+ 	clk_prepare_enable(exynos_ehci->clk);
+ 
+-	if (exynos_ehci->otg)
+-		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+-
+ 	ret = exynos_ehci_phy_enable(dev);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to enable USB phy\n");
+-- 
+1.7.10.4
