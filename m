@@ -1,356 +1,165 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: Re: [RESEND PATCH v4 2/2] ARM: EXYNOS: Refactor the pm code to use DT
- based lookup
-Date: Thu, 21 Aug 2014 11:40:27 +0530
-Message-ID: <CAGm_ybhDsGpoHg8XVBOPEv7oHc0YdSZBW_JXB0hZk-y6Bac00g@mail.gmail.com>
-References: <1408431167-14134-1-git-send-email-vikas.sajjan@samsung.com>
-	<1408431167-14134-3-git-send-email-vikas.sajjan@samsung.com>
-	<CAGm_ybjx4t7kGg0mJHjrox39jP-DNgc-0rkLNn2rcOLS6JjAHQ@mail.gmail.com>
-	<2186657.jhIisq7Fok@amdc1032>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V2 4/9] drm/exynos: add exynos_dp_panel driver
+ registration to drm driver
+Date: Thu, 21 Aug 2014 09:36:45 +0200
+Message-ID: <20140821073631.GH4486@ulmo>
+References: <1398119958-32005-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1398119958-32005-5-git-send-email-ajaykumar.rs@samsung.com>
+ <20140422083311.GC17275@ulmo>
+ <CAEC9eQPGfFFRNF4nOgci8KCc+9E=MQRmU-Cz=TGgEdiaOVqTMg@mail.gmail.com>
+ <20140422152657.GB30048@ulmo>
+ <CACP_E+KntYzVDjZrXcByU2LrCtzDbwW79LpSAazjHzbYbQrpDQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ik0NlRzMGhMnxrMX"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:54664 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750965AbaHUGK3 (ORCPT
+Received: from mail-we0-f175.google.com ([74.125.82.175]:39444 "EHLO
+	mail-we0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751962AbaHUHgs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Aug 2014 02:10:29 -0400
-Received: by mail-wg0-f47.google.com with SMTP id b13so8543153wgh.6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Aug 2014 23:10:28 -0700 (PDT)
-In-Reply-To: <2186657.jhIisq7Fok@amdc1032>
+	Thu, 21 Aug 2014 03:36:48 -0400
+Received: by mail-we0-f175.google.com with SMTP id t60so8974423wes.34
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Aug 2014 00:36:47 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CACP_E+KntYzVDjZrXcByU2LrCtzDbwW79LpSAazjHzbYbQrpDQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-
-Hi,
-
-On Tue, Aug 19, 2014 at 3:05 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
->
-> Hi,
->
-> On Tuesday, August 19, 2014 01:26:49 PM Vikas Sajjan wrote:
->> Hi Kukjin,
->>
->> On Tue, Aug 19, 2014 at 12:22 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
->> > Refactoring the pm.c to avoid using "soc_is_exynos" checks,
->> > instead use the DT based lookup.
->> >
->> > While at it, consolidate the common code across SoCs
->> > and create static helper functions.
->> >
->> > Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
->> > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->>
->> Can you pick this series...
->
-> I think that my PM_SLEEP=n build fixes should go in before this cleanup
-> series:
-
-Its better for Kukjin to decide which series he wants to pick first.
+To: =?utf-8?B?U3TDqXBoYW5l?= Marchesin <stephane.marchesin@gmail.com>
+Cc: Ajay kumar <ajaynumb@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 
 
->
->   http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35430.html
->
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
->
->> > ---
->> >  arch/arm/mach-exynos/pm.c       |  167 +++++++++++++++++++++++++++++----------
->> >  arch/arm/mach-exynos/regs-pmu.h |    1 +
->> >  2 files changed, 126 insertions(+), 42 deletions(-)
->> >
->> > diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
->> > index 31e209b..16b23d1 100644
->> > --- a/arch/arm/mach-exynos/pm.c
->> > +++ b/arch/arm/mach-exynos/pm.c
->> > @@ -36,6 +36,8 @@
->> >  #include "regs-pmu.h"
->> >  #include "regs-sys.h"
->> >
->> > +#define REG_TABLE_END (-1U)
->> > +
->> >  /**
->> >   * struct exynos_wkup_irq - Exynos GIC to PMU IRQ mapping
->> >   * @hwirq: Hardware IRQ signal of the GIC
->> > @@ -59,6 +61,21 @@ static struct sleep_save exynos_core_save[] = {
->> >         SAVE_ITEM(S5P_SROM_BC3),
->> >  };
->> >
->> > +struct exynos_pm_data {
->> > +       const struct exynos_wkup_irq *wkup_irq;
->> > +       struct sleep_save *extra_save;
->> > +       int num_extra_save;
->> > +       unsigned int wake_disable_mask;
->> > +       unsigned int *release_ret_regs;
->> > +
->> > +       void (*pm_prepare)(void);
->> > +       void (*pm_resume)(void);
->> > +       int (*pm_suspend)(void);
->> > +       int (*cpu_suspend)(unsigned long);
->> > +};
->> > +
->> > +struct exynos_pm_data *pm_data;
->> > +
->> >  /*
->> >   * GIC wake-up support
->> >   */
->> > @@ -77,14 +94,24 @@ static const struct exynos_wkup_irq exynos5250_wkup_irq[] = {
->> >         { /* sentinel */ },
->> >  };
->> >
->> > +unsigned int exynos_release_ret_regs[] = {
->> > +       S5P_PAD_RET_MAUDIO_OPTION,
->> > +       S5P_PAD_RET_GPIO_OPTION,
->> > +       S5P_PAD_RET_UART_OPTION,
->> > +       S5P_PAD_RET_MMCA_OPTION,
->> > +       S5P_PAD_RET_MMCB_OPTION,
->> > +       S5P_PAD_RET_EBIA_OPTION,
->> > +       S5P_PAD_RET_EBIB_OPTION,
->> > +       REG_TABLE_END,
->> > +};
->> > +
->> >  static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
->> >  {
->> >         const struct exynos_wkup_irq *wkup_irq;
->> >
->> > -       if (soc_is_exynos5250())
->> > -               wkup_irq = exynos5250_wkup_irq;
->> > -       else
->> > -               wkup_irq = exynos4_wkup_irq;
->> > +       if (!pm_data->wkup_irq)
->> > +               return -ENOENT;
->> > +       wkup_irq = pm_data->wkup_irq;
->> >
->> >         while (wkup_irq->mask) {
->> >                 if (wkup_irq->hwirq == data->hwirq) {
->> > @@ -229,15 +256,8 @@ void exynos_enter_aftr(void)
->> >         cpu_pm_exit();
->> >  }
->> >
->> > -static int exynos_cpu_suspend(unsigned long arg)
->> > +static int exynos_cpu_do_idle(void)
->> >  {
->> > -#ifdef CONFIG_CACHE_L2X0
->> > -       outer_flush_all();
->> > -#endif
->> > -
->> > -       if (soc_is_exynos5250())
->> > -               flush_cache_all();
->> > -
->> >         /* issue the standby signal into the pm unit. */
->> >         cpu_do_idle();
->> >
->> > @@ -245,29 +265,44 @@ static int exynos_cpu_suspend(unsigned long arg)
->> >         return 1; /* Aborting suspend */
->> >  }
->> >
->> > -static void exynos_pm_prepare(void)
->> > +static int exynos_cpu_suspend(unsigned long arg)
->> >  {
->> > -       unsigned int tmp;
->> > +       flush_cache_all();
->> > +       outer_flush_all();
->> > +       return exynos_cpu_do_idle();
->> > +}
->> >
->> > +static void exynos_pm_set_wakeup_mask(void)
->> > +{
->> >         /* Set wake-up mask registers */
->> >         pmu_raw_writel(exynos_get_eint_wake_mask(), S5P_EINT_WAKEUP_MASK);
->> >         pmu_raw_writel(exynos_irqwake_intmask & ~(1 << 31), S5P_WAKEUP_MASK);
->> > +}
->> >
->> > -       s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
->> > -
->> > -       if (soc_is_exynos5250())
->> > -               s3c_pm_do_save(exynos5_sys_save, ARRAY_SIZE(exynos5_sys_save));
->> > -
->> > +static void exynos_pm_enter_sleep_mode(void)
->> > +{
->> >         /* Set value of power down register for sleep mode */
->> > -
->> >         exynos_sys_powerdown_conf(SYS_SLEEP);
->> >         pmu_raw_writel(S5P_CHECK_SLEEP, S5P_INFORM1);
->> >
->> >         /* ensure at least INFORM0 has the resume address */
->> > -
->> >         pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
->> >  }
->> >
->> > +static void exynos_pm_prepare(void)
->> > +{
->> > +       /* Set wake-up mask registers */
->> > +       exynos_pm_set_wakeup_mask();
->> > +
->> > +       s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
->> > +
->> > +        if (pm_data->extra_save)
->> > +               s3c_pm_do_save(pm_data->extra_save,
->> > +                               pm_data->num_extra_save);
->> > +
->> > +       exynos_pm_enter_sleep_mode();
->> > +}
->> > +
->> >  static int exynos_pm_suspend(void)
->> >  {
->> >         unsigned long tmp;
->> > @@ -285,6 +320,15 @@ static int exynos_pm_suspend(void)
->> >         return 0;
->> >  }
->> >
->> > +static void exynos_pm_release_retention(void)
->> > +{
->> > +       unsigned int i;
->> > +
->> > +       for (i = 0; (pm_data->release_ret_regs[i] != REG_TABLE_END); i++)
->> > +               pmu_raw_writel(EXYNOS_WAKEUP_FROM_LOWPWR,
->> > +                               pm_data->release_ret_regs[i]);
->> > +}
->> > +
->> >  static void exynos_pm_resume(void)
->> >  {
->> >         if (exynos_pm_central_resume())
->> > @@ -294,18 +338,11 @@ static void exynos_pm_resume(void)
->> >                 exynos_cpu_restore_register();
->> >
->> >         /* For release retention */
->> > +       exynos_pm_release_retention();
->> >
->> > -       pmu_raw_writel((1 << 28), S5P_PAD_RET_MAUDIO_OPTION);
->> > -       pmu_raw_writel((1 << 28), S5P_PAD_RET_GPIO_OPTION);
->> > -       pmu_raw_writel((1 << 28), S5P_PAD_RET_UART_OPTION);
->> > -       pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCA_OPTION);
->> > -       pmu_raw_writel((1 << 28), S5P_PAD_RET_MMCB_OPTION);
->> > -       pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIA_OPTION);
->> > -       pmu_raw_writel((1 << 28), S5P_PAD_RET_EBIB_OPTION);
->> > -
->> > -       if (soc_is_exynos5250())
->> > -               s3c_pm_do_restore(exynos5_sys_save,
->> > -                       ARRAY_SIZE(exynos5_sys_save));
->> > +       if (pm_data->extra_save)
->> > +               s3c_pm_do_restore_core(pm_data->extra_save,
->> > +                                       pm_data->num_extra_save);
->> >
->> >         s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
->> >
->> > @@ -316,15 +353,8 @@ early_wakeup:
->> >
->> >         /* Clear SLEEP mode set in INFORM1 */
->> >         pmu_raw_writel(0x0, S5P_INFORM1);
->> > -
->> > -       return;
->> >  }
->> >
->> > -static struct syscore_ops exynos_pm_syscore_ops = {
->> > -       .suspend        = exynos_pm_suspend,
->> > -       .resume         = exynos_pm_resume,
->> > -};
->> > -
->> >  /*
->> >   * Suspend Ops
->> >   */
->> > @@ -348,11 +378,12 @@ static int exynos_suspend_enter(suspend_state_t state)
->> >         }
->> >
->> >         s3c_pm_save_uarts();
->> > -       exynos_pm_prepare();
->> > +       if (pm_data->pm_prepare)
->> > +               pm_data->pm_prepare();
->> >         flush_cache_all();
->> >         s3c_pm_check_store();
->> >
->> > -       ret = cpu_suspend(0, exynos_cpu_suspend);
->> > +       ret = cpu_suspend(0, pm_data->cpu_suspend);
->> >         if (ret)
->> >                 return ret;
->> >
->> > @@ -387,18 +418,70 @@ static const struct platform_suspend_ops exynos_suspend_ops = {
->> >         .valid          = suspend_valid_only_mem,
->> >  };
->> >
->> > +static const struct exynos_pm_data exynos4_pm_data = {
->> > +       .wkup_irq       = exynos4_wkup_irq,
->> > +       .wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
->> > +       .release_ret_regs = exynos_release_ret_regs,
->> > +       .pm_suspend     = exynos_pm_suspend,
->> > +       .pm_resume      = exynos_pm_resume,
->> > +       .pm_prepare     = exynos_pm_prepare,
->> > +       .cpu_suspend    = exynos_cpu_suspend,
->> > +};
->> > +
->> > +static const struct exynos_pm_data exynos5250_pm_data = {
->> > +       .wkup_irq       = exynos5250_wkup_irq,
->> > +       .wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
->> > +       .release_ret_regs = exynos_release_ret_regs,
->> > +       .extra_save     = exynos5_sys_save,
->> > +       .num_extra_save = ARRAY_SIZE(exynos5_sys_save),
->> > +       .pm_suspend     = exynos_pm_suspend,
->> > +       .pm_resume      = exynos_pm_resume,
->> > +       .pm_prepare     = exynos_pm_prepare,
->> > +       .cpu_suspend    = exynos_cpu_suspend,
->> > +};
->> > +
->> > +static struct of_device_id exynos_pmu_of_device_ids[] = {
->> > +       {
->> > +               .compatible = "samsung,exynos4210-pmu",
->> > +               .data = &exynos4_pm_data,
->> > +       }, {
->> > +               .compatible = "samsung,exynos4212-pmu",
->> > +               .data = &exynos4_pm_data,
->> > +       }, {
->> > +               .compatible = "samsung,exynos4412-pmu",
->> > +               .data = &exynos4_pm_data,
->> > +       }, {
->> > +               .compatible = "samsung,exynos5250-pmu",
->> > +               .data = &exynos5250_pm_data,
->> > +       },
->> > +       { /*sentinel*/ },
->> > +};
->> > +
->> > +static struct syscore_ops exynos_pm_syscore_ops;
->> > +
->> >  void __init exynos_pm_init(void)
->> >  {
->> > +       const struct of_device_id *match;
->> >         u32 tmp;
->> >
->> > +       of_find_matching_node_and_match(NULL, exynos_pmu_of_device_ids, &match);
->> > +       if (!match) {
->> > +               pr_err("Failed to find PMU node\n");
->> > +               return;
->> > +       }
->> > +       pm_data = (struct exynos_pm_data *) match->data;
->> > +
->> >         /* Platform-specific GIC callback */
->> >         gic_arch_extn.irq_set_wake = exynos_irq_set_wake;
->> >
->> >         /* All wakeup disable */
->> >         tmp = pmu_raw_readl(S5P_WAKEUP_MASK);
->> > -       tmp |= ((0xFF << 8) | (0x1F << 1));
->> > +       tmp |= pm_data->wake_disable_mask;
->> >         pmu_raw_writel(tmp, S5P_WAKEUP_MASK);
->> >
->> > +       exynos_pm_syscore_ops.suspend   = pm_data->pm_suspend;
->> > +       exynos_pm_syscore_ops.resume    = pm_data->pm_resume;
->> > +
->> >         register_syscore_ops(&exynos_pm_syscore_ops);
->> >         suspend_set_ops(&exynos_suspend_ops);
->> >  }
->> > diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
->> > index 96a1569..30c0301 100644
->> > --- a/arch/arm/mach-exynos/regs-pmu.h
->> > +++ b/arch/arm/mach-exynos/regs-pmu.h
->> > @@ -21,6 +21,7 @@
->> >  #define S5P_USE_STANDBY_WFI0                   (1 << 16)
->> >  #define S5P_USE_STANDBY_WFE0                   (1 << 24)
->> >
->> > +#define EXYNOS_WAKEUP_FROM_LOWPWR              (1 << 28)
->> >  #define EXYNOS_SWRESET                         0x0400
->> >  #define EXYNOS5440_SWRESET                     0x00C4
->
+--ik0NlRzMGhMnxrMX
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Aug 19, 2014 at 09:02:39PM -0700, St=C3=A9phane Marchesin wrote:
+> On Tue, Apr 22, 2014 at 8:26 AM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+> > On Tue, Apr 22, 2014 at 08:33:23PM +0530, Ajay kumar wrote:
+> >> Hi Thierry,
+> >>
+> >> On Tue, Apr 22, 2014 at 2:03 PM, Thierry Reding
+> >> <thierry.reding@gmail.com> wrote:
+> >> > On Tue, Apr 22, 2014 at 04:09:13AM +0530, Ajay Kumar wrote:
+> >> >> Register exynos_dp_panel before the list of exynos crtcs and
+> >> >> connectors are probed.
+> >> >>
+> >> >> This is needed because exynos_dp_panel should be registered to
+> >> >> the drm_panel list via panel-exynos-dp probe, i.e much before
+> >> >> exynos_dp_bind calls of_drm_find_panel().
+> >> >>
+> >> >> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> >> >> ---
+> >> >> Changes since V1:
+> >> >>       Added platform_driver_unregister(&exynos_dp_panel_driver) to
+> >> >>       exynos_drm_platform_remove as per Jingoo Han's correction
+> >> >>
+> >> >>  drivers/gpu/drm/exynos/exynos_drm_drv.c |   15 +++++++++++++++
+> >> >>  drivers/gpu/drm/exynos/exynos_drm_drv.h |    1 +
+> >> >>  2 files changed, 16 insertions(+)
+> >> >>
+> >> >> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/=
+drm/exynos/exynos_drm_drv.c
+> >> >> index 1d653f8..2db7f67 100644
+> >> >> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> >> >> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> >> >> @@ -530,12 +530,23 @@ static int exynos_drm_platform_probe(struct p=
+latform_device *pdev)
+> >> >>               goto err_unregister_ipp_drv;
+> >> >>  #endif
+> >> >>
+> >> >> +#ifdef CONFIG_DRM_PANEL_EXYNOS_DP
+> >> >> +     ret =3D platform_driver_register(&exynos_dp_panel_driver);
+> >> >> +     if (ret < 0)
+> >> >> +             goto err_unregister_dp_panel;
+> >> >> +#endif
+> >> >
+> >> > No, this is not how you're supposed to use DRM panel drivers. The id=
+ea
+> >> > is that you write a standalone driver for a given panel.
+> >> >
+> >> > What you do here has a number of problems. For one it's a driver tha=
+t's
+> >> > tightly coupled to Exynos SoCs. But if I have a different SoC that u=
+ses
+> >> > the same panel I want to be able to use the same driver, and not hav=
+e to
+> >> > rewrite the driver for my SoC.
+> >> >
+> >> > Another problem is that you're assuming here that the driver is buil=
+t in
+> >> > and it will break if you try to build either Exynos DRM or the panel
+> >> > driver as a module. This is perhaps nothing you care about right now,
+> >> > but eventually people will want to ship a single kernel that can run=
+ on
+> >> > a number of SoCs. But if we keep adding things like this, that kernel
+> >> > will keep growing in size until it no longer fits in any kind of mem=
+ory.
+> >> >
+> >> > Thierry
+> >>
+> >> I completely agree with you in this!
+> >>
+> >> Yes, this is not acceptable, but I want to know an "acceptable"
+> >> workaround for the situation below:
+> >> I register the driver using module_init().
+> >> And, exynos_drm gets probed much before the panel driver probe happens.
+> >> So, the panel driver hasn't probed yet, but exynos_dp via exynos_drm
+> >> tries to call
+> >> "of_drm_find_panel" which always returns NULL.
+> >
+> > That's a situation that your driver needs to be able to deal with. The
+> > driver registration order doesn't matter one bit. It may happen to work
+> > most of the time, but as soon as one of the resources that your panel
+> > driver needs isn't there when the panel is probed, then it won't be
+> > registered and of_drm_find_panel() will still return NULL.
+> >
+> > Usually the right thing to do in that case would be to return (and
+> > propagate) -EPROBE_DEFER so that your driver's probe is deferred and
+> > retried when other drivers have been probed. That way it should
+> > eventually get a non-NULL panel.
+>=20
+> So I just gave this (drm_panel + probe deferring) a shot on exynos,
+> and correctly reacting to -EPROBE_DEFER postpones DP initialization by
+> approximately 1.5 second. Is there a good way to handle that? As it
+> stands, this isn't usable.
+
+How much is 1.5 seconds compared to the overall boot time of the device?
+What exactly is causing this 1.5 second delay?
+
+This really is a fundamental issue with deferred probing and the issue
+has come up several times in the past. A couple of possible solutions
+have been proposed, with the latest being here[0] I think. That ended in
+a bit of a debacle, unfortunately, but on of the outcomes was that a lot
+of the ordering problems could be fixed by using phandle references to
+track dependencies. I'm not aware of anyone working on that right now,
+presumably because everyone is busy getting features merged rather than
+optimizing boot speed.
+
+Thierry
+
+[0]: https://lkml.org/lkml/2014/5/12/452
+
+--ik0NlRzMGhMnxrMX
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT9aF/AAoJEN0jrNd/PrOh6DMP/0D+kxGKTtK7ekHTIpNbkocm
+ro3IceccVp/NZSJvGbQqmEt0ZLN2L4m49CuLmwN+L9ibDBkosW4cSuLh9yLX2zS3
+KltupTnCFeUX49k5UMiYi7S+5cpHhCW84eigZiXKXgHKXKfj3OKUxbjl/GwNydVi
+HxLC6V9o/m7+7U3aYC4HdXP3JORrmomlEZfklT5yNcvrZGbGqhG0oSd2YK3hPqY4
+z8MCWbZ2pSv0bms4NBkRZrL2PvFEF0tqAS7V9OMmNQnwdDo69AFdzugZYwMAVB6I
+oCaBI4M6ewdfeA6Ez0J7HaOc0jGpj3lHviKoD2hxD6ENW63gVOmM9qmZ8U772CD3
+XmyDaQXLX8iDCnoteAJDSPG/O3jIUz6uc7WACgGwgld9kd18D012v2lTScB8PGF/
+LM1wG6YXBahL2jpg9Qk8HBJ0Tb2ih63+Nwvr9cGO6P89R4hxQ5BCwcxt2LCxV6g2
+2gf+lwi6iNdOASE9UiYtEqVU0MW3BHnwzL4Bgj/NH0XCE0BazbRJlDmxO+s29sdI
+VfYPI5szz7kebFXQAOvESdmc2Uamj9FUM8ZH/mV90H/eGOKv4fdsYrI9m9NqIKd6
+GKe2nRQp7hsYH7zzCDPQzGiponhnvlbIBnQPQp6MkFHlqAXiPsoSSiT8zn6QVgpV
+upOsypsZu9RPTKj5lDeW
+=M3tC
+-----END PGP SIGNATURE-----
+
+--ik0NlRzMGhMnxrMX--
