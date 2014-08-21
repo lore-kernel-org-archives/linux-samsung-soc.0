@@ -1,60 +1,140 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RESEND PATCH 1/7] mfd: cros_ec: Delay for 50ms when we see EC_CMD_REBOOT_EC
-Date: Thu, 21 Aug 2014 15:49:31 +0200
-Message-ID: <53F5F8EB.1020408@collabora.co.uk>
-References: <1408536812-7836-1-git-send-email-javier.martinez@collabora.co.uk> <1408536812-7836-2-git-send-email-javier.martinez@collabora.co.uk> <20140821133747.GJ4266@lee--X1>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: RE: [PATCH v7 3/4] ARM: EXYNOS: Add platform driver support for Exynos
+ PMU
+Date: Thu, 21 Aug 2014 19:37:31 +0530
+Message-ID: <001601cfbd49$72359450$56a0bcf0$@samsung.com>
+References: <1404878455-31518-1-git-send-email-pankaj.dubey@samsung.com>
+ <53D238E1.3030901@gmail.com> <002601cfaa11$93de5060$bb9af120$@samsung.com>
+ <2491338.uD82s4TcKJ@amdc1032> <53F35F94.1010101@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <20140821133747.GJ4266@lee--X1>
-Sender: linux-input-owner@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:49242 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754595AbaHUOG5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 Aug 2014 10:06:57 -0400
+In-reply-to: <53F35F94.1010101@gmail.com>
+Content-language: en-us
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Lee Jones' <lee.jones@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, t.figa@samsung.com, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, 'Kukjin Kim' <kgene.kim@samsung.com>, PRASHANTH GODREHAL <prashanth.g@samsung.com>
 
-Hello Lee,
++Arnd, Lee Jones
 
-On 08/21/2014 03:37 PM, Lee Jones wrote:
-> On Wed, 20 Aug 2014, Javier Martinez Canillas wrote:
->> From: Doug Anderson <dianders@chromium.org>
->> 
->> If someone sends a EC_CMD_REBOOT_EC to the EC, the EC will likely be
->> unresponsive for quite a while.  Add a delay to the end of the command
->> to prevent random failures of future commands.
->> 
->> NOTES:
->> * This could be optimized a bit by simply delaying the next command
->>   sent, but EC_CMD_REBOOT_EC is such a rare command that the extra
->>   complexity doesn't seem worth it.
->> * This is a bit of an "ugly hack" since the SPI driver is effectively
->>   snooping on the communication and making a lot of assumptions.  It
->>   would be nice to architect in some better solution long term.
+Hi Tomasz,
+
+On Tuesday, August 19, 2014 Tomasz Figa wrote:
+
 > 
-> Are you planning on doing that?
+> Hi Bart,
+> 
+> On 18.08.2014 19:42, Bartlomiej Zolnierkiewicz wrote:
+> >
+> > Hi,
+> >
+> > On Monday, July 28, 2014 08:40:52 AM Pankaj Dubey wrote:
+> >> Hi Tomasz,
+> >>
+> >> On Friday, July 25, 2014 Tomasz Figa wrote:
+> >>
+> >>> To: Pankaj Dubey; 'Kukjin Kim';
+> >>> linux-arm-kernel@lists.infradead.org;
+> >> linux-
+> >>> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
+> >>> Cc: linux@arm.linux.org.uk; t.figa@samsung.com;
+> >>> vikas.sajjan@samsung.com; joshi@samsung.com; naushad@samsung.com;
+> >>> thomas.ab@samsung.com; chow.kim@samsung.com
+> >>> Subject: Re: [PATCH v7 3/4] ARM: EXYNOS: Add platform driver support
+> >>> for Exynos PMU
+> >>>
+> >>> Hi Pankaj, Kukjin,
+> >>>
+> >>> On 25.07.2014 07:32, Pankaj Dubey wrote:
+> >>>> Hi Kukjin,
+> >>>>
+> >>>> On Friday, July 25, 2014 Kukjin Kim wrote:
+> >>>
+> >>> [snip]
+> >>>
+> >>>>>>
+> >>>>> Looks good to me, will apply this and 4/4.
+> >>>>>
+> >>>>
+> >>>> We need to hold these two patches until dependent patch [1] from
+> >>>> Tomasz Figa gets merged.
+> >>>>
+> >>>> [1]: mfd: syscon: Decouple syscon interface from syscon devices
+> >>>>       https://lkml.org/lkml/2014/6/24/188
+> >>>
+> >>> That RFC patch had few comments from Arnd needed to be addressed, so
+> >>> it
+> >> needs a
+> >>> new revision.
+> >>>
+> >>> Pankaj, If I remember correctly, we had talked about this and the
+> >> conclusion was that
+> >>> you would take care of addressing the comments and sending new
+> >>> version of
+> >> the
+> >>> patch. Any update on this or have I missed something?
+> >>>
+> >>
+> >> Well, I don't think we concluded as such anything.
+> >> Since this patch needs to get in so that Exynos PMU and PM related
+> >> changes can go in, I discussed with you saying that I am not able to
+> >> understand about Arnd's comments and if possible and time permits I
+> >> will look into it. Meanwhile I got busy with some other official
+> >> work, so could not get time to look into it.
+> >
+> > Tomasz/Pankaj, could we please get some agreement on what needs to be
+> > done and who should do the pending work?
+> >
+> > syscon patch is blocking PMU cleanup patches which in turn are
+> > blocking PMU support additions for new SoCs (Exynos5420/5800 and
+> > Exynos3250 PMU patches).
+> 
+> Leaving alone the matter who is going to take care of it for now, the
+remaining work
+> to do is to further decouple syscon from struct device, which means
+providing of_
+> API to register a syscon provider on a device tree node even before driver
+model is
+> available yet.
 > 
 
-Yes, I'll add to my TO-DO list to look how better solve this after the
-remaining functionality that is present in downstream but is still not in
-mainline gets merged.
+As per Arnd's comment on your RFC patch he mentioned -
+"I believe the part you are missing is that with the approach I suggested,
+there would be no registration function at all."
 
->> * This same logic probably needs to be applied to the i2c driver.
->> 
->> Signed-off-by: Doug Anderson <dianders@chromium.org>
->> Reviewed-by: Randall Spangler <rspangler@chromium.org>
->> Reviewed-by: Vadim Bendebury <vbendeb@chromium.org>
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> ---
->>  drivers/mfd/cros_ec_spi.c | 9 +++++++++
->>  1 file changed, 9 insertions(+)
+I think he is not in favor of adding such registration function at all. So
+do you think
+adding such function will really solve the problem?
+
+Further even Lee Jones agreed to Arnd's point of making syscon independent
+of device,
+but he also mentioned that it can be done in subsequent patch.
+  
+So in IMHO, your RFC patch can be taken as is, and any further improvement
+suggested
+by Arnd can be done in subsequent patches,  because as I can see in 3.17-rc1
+still
+has user of syscon_regmap_lookup_by_pdevname (clps711x.c) so we can't
+completely
+make it independent of platform_device as of now and also the changes
+required
+as per Arnd's suggestions requires considerable effort and time.
+
+> I believe it should be quite straightforward on top of my RFC and should
+require only
+> saving syscon's of_node directly in syscon struct, adding appropriate API
+and
+> extending the look-up loops to handle cases when syscon's dev is NULL.
 > 
-> I'm willing to accept this as a stand-in.
-> 
+> Best regards,
+> Tomasz
 
-Thanks.
-
-> Acked-by: Lee Jones <lee.jones@linaro.org>
-> 
-
-Best regards,
-Javier
+Thanks,
+Pankaj Dubey
