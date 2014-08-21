@@ -1,74 +1,148 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v5 2/4] usb: host: xhci-plat: Get PHYs for xhci's hcds
-Date: Thu, 21 Aug 2014 20:25:21 +0530
-Message-ID: <1408632923-19591-3-git-send-email-gautam.vivek@samsung.com>
-References: <1408632923-19591-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1408632923-19591-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-usb@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, kishon@ti.com, kgene.kim@samsung.com, mathias.nyman@intel.com, stern@rowland.harvard.edu, sergei.shtylyov@cogentembedded.com, heikki.krogerus@linux.intel.com, balbi@ti.com, Vivek Gautam <gautam.vivek@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v7 3/4] ARM: EXYNOS: Add platform driver support for Exynos
+ PMU
+Date: Thu, 21 Aug 2014 17:59:16 +0200
+Message-ID: <53F61754.6010206@gmail.com>
+References: <1404878455-31518-1-git-send-email-pankaj.dubey@samsung.com> <53D238E1.3030901@gmail.com> <002601cfaa11$93de5060$bb9af120$@samsung.com> <2491338.uD82s4TcKJ@amdc1032> <53F35F94.1010101@gmail.com> <001601cfbd49$72359450$56a0bcf0$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:47345 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751776AbaHUP7X (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 21 Aug 2014 11:59:23 -0400
+In-Reply-To: <001601cfbd49$72359450$56a0bcf0$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Lee Jones' <lee.jones@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, t.figa@samsung.com, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, 'Kukjin Kim' <kgene.kim@samsung.com>, PRASHANTH GODREHAL <prashanth.g@samsung.com>
 
-The host controller by itself may sometimes need to handle PHY
-and/or calibrate some of the PHY settings to get full support out
-of the PHY controller. The PHY core provides a calibration
-funtionality now to do so.
-Therefore, facilitate getting the two possible PHYs, viz.
-USB 2.0 type (UTMI+) and USB 3.0 type (PIPE3).
+On 21.08.2014 16:07, Pankaj Dubey wrote:
+> +Arnd, Lee Jones
+> 
+> Hi Tomasz,
+> 
+> On Tuesday, August 19, 2014 Tomasz Figa wrote:
+> 
+>>
+>> Hi Bart,
+>>
+>> On 18.08.2014 19:42, Bartlomiej Zolnierkiewicz wrote:
+>>>
+>>> Hi,
+>>>
+>>> On Monday, July 28, 2014 08:40:52 AM Pankaj Dubey wrote:
+>>>> Hi Tomasz,
+>>>>
+>>>> On Friday, July 25, 2014 Tomasz Figa wrote:
+>>>>
+>>>>> To: Pankaj Dubey; 'Kukjin Kim';
+>>>>> linux-arm-kernel@lists.infradead.org;
+>>>> linux-
+>>>>> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
+>>>>> Cc: linux@arm.linux.org.uk; t.figa@samsung.com;
+>>>>> vikas.sajjan@samsung.com; joshi@samsung.com; naushad@samsung.com;
+>>>>> thomas.ab@samsung.com; chow.kim@samsung.com
+>>>>> Subject: Re: [PATCH v7 3/4] ARM: EXYNOS: Add platform driver support
+>>>>> for Exynos PMU
+>>>>>
+>>>>> Hi Pankaj, Kukjin,
+>>>>>
+>>>>> On 25.07.2014 07:32, Pankaj Dubey wrote:
+>>>>>> Hi Kukjin,
+>>>>>>
+>>>>>> On Friday, July 25, 2014 Kukjin Kim wrote:
+>>>>>
+>>>>> [snip]
+>>>>>
+>>>>>>>>
+>>>>>>> Looks good to me, will apply this and 4/4.
+>>>>>>>
+>>>>>>
+>>>>>> We need to hold these two patches until dependent patch [1] from
+>>>>>> Tomasz Figa gets merged.
+>>>>>>
+>>>>>> [1]: mfd: syscon: Decouple syscon interface from syscon devices
+>>>>>>       https://lkml.org/lkml/2014/6/24/188
+>>>>>
+>>>>> That RFC patch had few comments from Arnd needed to be addressed, so
+>>>>> it
+>>>> needs a
+>>>>> new revision.
+>>>>>
+>>>>> Pankaj, If I remember correctly, we had talked about this and the
+>>>> conclusion was that
+>>>>> you would take care of addressing the comments and sending new
+>>>>> version of
+>>>> the
+>>>>> patch. Any update on this or have I missed something?
+>>>>>
+>>>>
+>>>> Well, I don't think we concluded as such anything.
+>>>> Since this patch needs to get in so that Exynos PMU and PM related
+>>>> changes can go in, I discussed with you saying that I am not able to
+>>>> understand about Arnd's comments and if possible and time permits I
+>>>> will look into it. Meanwhile I got busy with some other official
+>>>> work, so could not get time to look into it.
+>>>
+>>> Tomasz/Pankaj, could we please get some agreement on what needs to be
+>>> done and who should do the pending work?
+>>>
+>>> syscon patch is blocking PMU cleanup patches which in turn are
+>>> blocking PMU support additions for new SoCs (Exynos5420/5800 and
+>>> Exynos3250 PMU patches).
+>>
+>> Leaving alone the matter who is going to take care of it for now, the
+> remaining work
+>> to do is to further decouple syscon from struct device, which means
+> providing of_
+>> API to register a syscon provider on a device tree node even before driver
+> model is
+>> available yet.
+>>
+> 
+> As per Arnd's comment on your RFC patch he mentioned -
+> "I believe the part you are missing is that with the approach I suggested,
+> there would be no registration function at all."
+> 
+> I think he is not in favor of adding such registration function at all. So
+> do you think
+> adding such function will really solve the problem?
+> 
+> Further even Lee Jones agreed to Arnd's point of making syscon independent
+> of device,
+> but he also mentioned that it can be done in subsequent patch.
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
----
- drivers/usb/host/xhci-plat.c |   23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+Let's look again at the original thread then...
 
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index 1a0cf9f..56ef9cf 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -16,6 +16,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/phy/phy.h>
- #include <linux/slab.h>
- #include <linux/usb/xhci_pdriver.h>
- 
-@@ -180,6 +181,17 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 			goto put_hcd;
- 	}
- 
-+	/* Get possile USB 2.0 type PHY (UTMI+) available with xhci */
-+	hcd->gen_phy = devm_phy_get(&pdev->dev, "usb2-phy");
-+	if (IS_ERR(hcd->gen_phy)) {
-+		ret = PTR_ERR(hcd->gen_phy);
-+		if (ret == -EPROBE_DEFER)
-+			return ret;
-+		else if (ret != -ENOSYS && ret != -ENODEV)
-+			dev_warn(&pdev->dev,
-+				 "Error retrieving usb2 phy: %d\n", ret);
-+	}
-+
- 	ret = usb_add_hcd(hcd, irq, IRQF_SHARED);
- 	if (ret)
- 		goto disable_clk;
-@@ -209,6 +221,17 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 	if (HCC_MAX_PSA(xhci->hcc_params) >= 4)
- 		xhci->shared_hcd->can_do_streams = 1;
- 
-+	/* Get possile USB 3.0 type PHY (PIPE3) available with xhci */
-+	xhci->shared_hcd->gen_phy = devm_phy_get(&pdev->dev, "usb3-phy");
-+	if (IS_ERR(xhci->shared_hcd->gen_phy)) {
-+		ret = PTR_ERR(xhci->shared_hcd->gen_phy);
-+		if (ret == -EPROBE_DEFER)
-+			return ret;
-+		else if (ret != -ENOSYS && ret != -ENODEV)
-+			dev_warn(&pdev->dev,
-+				 "Error retrieving usb3 phy: %d\n", ret);
-+	}
-+
- 	ret = usb_add_hcd(xhci->shared_hcd, irq, IRQF_SHARED);
- 	if (ret)
- 		goto put_usb3_hcd;
--- 
-1.7.10.4
+I believe Lee agreed with my proposed solution or at least he quoted my
+e-mail and pointed that further work addressing Arnd's comments could be
+done in follow up patches. I also think that we should rather make one
+step as a time, especially this patch is required for further clean-up
+of Exynos.
+
+However there was also a reply from Michal Simek, which pointed out that
+even with my patch the syscon is still bound to driver model and for his
+use case he would need a purely OF-based version of the API. That's why
+I think my patch should be re-spun with changes I mentioned in my
+previous message in this thread.
+
+>   
+> So in IMHO, your RFC patch can be taken as is, and any further improvement
+> suggested
+> by Arnd can be done in subsequent patches,  because as I can see in 3.17-rc1
+> still
+> has user of syscon_regmap_lookup_by_pdevname (clps711x.c) so we can't
+> completely
+> make it independent of platform_device as of now and also the changes
+> required
+> as per Arnd's suggestions requires considerable effort and time.
+
+Agreed. However we can still provide OF-only syscon registration
+function and modify look-up functions to allow syscons without struct
+device pointer, just with OF node.
+
+Best regards,
+Tomasz
