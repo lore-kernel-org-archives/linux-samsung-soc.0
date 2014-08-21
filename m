@@ -1,148 +1,67 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v7 3/4] ARM: EXYNOS: Add platform driver support for Exynos
- PMU
-Date: Thu, 21 Aug 2014 17:59:16 +0200
-Message-ID: <53F61754.6010206@gmail.com>
-References: <1404878455-31518-1-git-send-email-pankaj.dubey@samsung.com> <53D238E1.3030901@gmail.com> <002601cfaa11$93de5060$bb9af120$@samsung.com> <2491338.uD82s4TcKJ@amdc1032> <53F35F94.1010101@gmail.com> <001601cfbd49$72359450$56a0bcf0$@samsung.com>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCHv3] thermal: exynos: Add support for TRIM_RELOAD feature at Exynos3250
+Date: Fri, 22 Aug 2014 01:24:10 +0900
+Message-ID: <CAGTfZH2r2hbn9d+3oENDZrSRtyHwUJXt8vjVKk0v=CKNQmLMQQ@mail.gmail.com>
+References: <1408450078-6296-1-git-send-email-cw00.choi@samsung.com>
+	<1408492364-8012-1-git-send-email-cw00.choi@samsung.com>
+	<CAC-25o9LjKwjBwwxcOvV75bXEHGdUh2vU=ae1STsXxD6q4YsiA@mail.gmail.com>
+	<53F54D86.9070601@samsung.com>
+	<53F5CACF.4050600@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:47345 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751776AbaHUP7X (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Aug 2014 11:59:23 -0400
-In-Reply-To: <001601cfbd49$72359450$56a0bcf0$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <53F5CACF.4050600@suse.de>
+Sender: linux-pm-owner@vger.kernel.org
+To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, "edubezval@gmail.com" <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, "Valentin, Eduardo" <eduardo.valentin@ti.com>, Amit Kachhap <amit.daniel@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <t.figa@samsung.com>, l.majewski@samsung.com, naveen krishna <ch.naveen@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Lee Jones' <lee.jones@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux@arm.linux.org.uk, t.figa@samsung.com, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, 'Kukjin Kim' <kgene.kim@samsung.com>, PRASHANTH GODREHAL <prashanth.g@samsung.com>
 
-On 21.08.2014 16:07, Pankaj Dubey wrote:
-> +Arnd, Lee Jones
-> 
-> Hi Tomasz,
-> 
-> On Tuesday, August 19, 2014 Tomasz Figa wrote:
-> 
->>
->> Hi Bart,
->>
->> On 18.08.2014 19:42, Bartlomiej Zolnierkiewicz wrote:
+Dear Andreas,
+
+On Thu, Aug 21, 2014 at 7:32 PM, Andreas F=C3=A4rber <afaerber@suse.de>=
+ wrote:
+> Hello,
+>
+> Am 21.08.2014 03:38, schrieb Chanwoo Choi:
+>> On 08/20/2014 10:38 PM, edubezval@gmail.com wrote:
+>>> On Tue, Aug 19, 2014 at 7:52 PM, Chanwoo Choi <cw00.choi@samsung.co=
+m> wrote:
+>>>> diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/t=
+hermal/samsung/exynos_tmu_data.c
+>>>> index aa8e0de..8cd609c 100644
+>>>> --- a/drivers/thermal/samsung/exynos_tmu_data.c
+>>>> +++ b/drivers/thermal/samsung/exynos_tmu_data.c
+>>>> @@ -95,6 +95,8 @@ static const struct exynos_tmu_registers exynos3=
+250_tmu_registers =3D {
+>>>>         .triminfo_data =3D EXYNOS_TMU_REG_TRIMINFO,
+>>>>         .triminfo_25_shift =3D EXYNOS_TRIMINFO_25_SHIFT,
+>>>>         .triminfo_85_shift =3D EXYNOS_TRIMINFO_85_SHIFT,
+>>>> +       .triminfo_ctrl[0] =3D EXYNOS_TMU_TRIMINFO_CON1,
+>>>> +       .triminfo_ctrl[1] =3D EXYNOS_TMU_TRIMINFO_CON2,
+>>>>         .tmu_ctrl =3D EXYNOS_TMU_REG_CONTROL,
+>>>>         .test_mux_addr_shift =3D EXYNOS4412_MUX_ADDR_SHIFT,
+>>>>         .buf_vref_sel_shift =3D EXYNOS_TMU_REF_VOLTAGE_SHIFT,
+>>>> @@ -160,8 +162,11 @@ static const struct exynos_tmu_registers exyn=
+os3250_tmu_registers =3D {
+>>>>                 .temp_level =3D 95, \
+>>>>         }, \
+>>>>         .freq_tab_count =3D 2, \
+>>>> +       .triminfo_reload[0] =3D 0x1, \
+>>>> +       .triminfo_reload[1] =3D 0x11, \
 >>>
->>> Hi,
->>>
->>> On Monday, July 28, 2014 08:40:52 AM Pankaj Dubey wrote:
->>>> Hi Tomasz,
->>>>
->>>> On Friday, July 25, 2014 Tomasz Figa wrote:
->>>>
->>>>> To: Pankaj Dubey; 'Kukjin Kim';
->>>>> linux-arm-kernel@lists.infradead.org;
->>>> linux-
->>>>> samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
->>>>> Cc: linux@arm.linux.org.uk; t.figa@samsung.com;
->>>>> vikas.sajjan@samsung.com; joshi@samsung.com; naushad@samsung.com;
->>>>> thomas.ab@samsung.com; chow.kim@samsung.com
->>>>> Subject: Re: [PATCH v7 3/4] ARM: EXYNOS: Add platform driver support
->>>>> for Exynos PMU
->>>>>
->>>>> Hi Pankaj, Kukjin,
->>>>>
->>>>> On 25.07.2014 07:32, Pankaj Dubey wrote:
->>>>>> Hi Kukjin,
->>>>>>
->>>>>> On Friday, July 25, 2014 Kukjin Kim wrote:
->>>>>
->>>>> [snip]
->>>>>
->>>>>>>>
->>>>>>> Looks good to me, will apply this and 4/4.
->>>>>>>
->>>>>>
->>>>>> We need to hold these two patches until dependent patch [1] from
->>>>>> Tomasz Figa gets merged.
->>>>>>
->>>>>> [1]: mfd: syscon: Decouple syscon interface from syscon devices
->>>>>>       https://lkml.org/lkml/2014/6/24/188
->>>>>
->>>>> That RFC patch had few comments from Arnd needed to be addressed, so
->>>>> it
->>>> needs a
->>>>> new revision.
->>>>>
->>>>> Pankaj, If I remember correctly, we had talked about this and the
->>>> conclusion was that
->>>>> you would take care of addressing the comments and sending new
->>>>> version of
->>>> the
->>>>> patch. Any update on this or have I missed something?
->>>>>
->>>>
->>>> Well, I don't think we concluded as such anything.
->>>> Since this patch needs to get in so that Exynos PMU and PM related
->>>> changes can go in, I discussed with you saying that I am not able to
->>>> understand about Arnd's comments and if possible and time permits I
->>>> will look into it. Meanwhile I got busy with some other official
->>>> work, so could not get time to look into it.
->>>
->>> Tomasz/Pankaj, could we please get some agreement on what needs to be
->>> done and who should do the pending work?
->>>
->>> syscon patch is blocking PMU cleanup patches which in turn are
->>> blocking PMU support additions for new SoCs (Exynos5420/5800 and
->>> Exynos3250 PMU patches).
+>>> What does 0x1 mean? How about 0x11?
 >>
->> Leaving alone the matter who is going to take care of it for now, the
-> remaining work
->> to do is to further decouple syscon from struct device, which means
-> providing of_
->> API to register a syscon provider on a device tree node even before driver
-> model is
->> available yet.
+>> The bit of 'RELOAD' field in TRIMINFO_CONTROL register is [0].
+>> and The bit of 'AC Time' field in TRIMINFO_CONTROL register is [5:4]=
+=2E
 >>
-> 
-> As per Arnd's comment on your RFC patch he mentioned -
-> "I believe the part you are missing is that with the approach I suggested,
-> there would be no registration function at all."
-> 
-> I think he is not in favor of adding such registration function at all. So
-> do you think
-> adding such function will really solve the problem?
-> 
-> Further even Lee Jones agreed to Arnd's point of making syscon independent
-> of device,
-> but he also mentioned that it can be done in subsequent patch.
+>> 0x1 means that set RELOAD field.
+>> 0x11 means that set RELOAD field and ACTIME field.
+>
+> Might be a good idea to use #defines for 0x1 and 0x10 then?
 
-Let's look again at the original thread then...
+I agree. I'm implementing it to use 'define' keyword.
 
-I believe Lee agreed with my proposed solution or at least he quoted my
-e-mail and pointed that further work addressing Arnd's comments could be
-done in follow up patches. I also think that we should rather make one
-step as a time, especially this patch is required for further clean-up
-of Exynos.
-
-However there was also a reply from Michal Simek, which pointed out that
-even with my patch the syscon is still bound to driver model and for his
-use case he would need a purely OF-based version of the API. That's why
-I think my patch should be re-spun with changes I mentioned in my
-previous message in this thread.
-
->   
-> So in IMHO, your RFC patch can be taken as is, and any further improvement
-> suggested
-> by Arnd can be done in subsequent patches,  because as I can see in 3.17-rc1
-> still
-> has user of syscon_regmap_lookup_by_pdevname (clps711x.c) so we can't
-> completely
-> make it independent of platform_device as of now and also the changes
-> required
-> as per Arnd's suggestions requires considerable effort and time.
-
-Agreed. However we can still provide OF-only syscon registration
-function and modify look-up functions to allow syscons without struct
-device pointer, just with OF node.
-
-Best regards,
-Tomasz
+Thanks,
+Chanwoo Choi
