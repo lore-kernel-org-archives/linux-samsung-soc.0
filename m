@@ -1,40 +1,63 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: [PATCH v2 2/3] ARM: exynos: Add exynos5800-pmu compatible entry
-Date: Thu, 21 Aug 2014 18:52:36 +0545
-Message-ID: <1408626457-3422-3-git-send-email-vikas.sajjan@samsung.com>
-References: <1408626457-3422-1-git-send-email-vikas.sajjan@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [RESEND PATCH 1/7] mfd: cros_ec: Delay for 50ms when we see
+ EC_CMD_REBOOT_EC
+Date: Thu, 21 Aug 2014 14:37:47 +0100
+Message-ID: <20140821133747.GJ4266@lee--X1>
+References: <1408536812-7836-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1408536812-7836-2-git-send-email-javier.martinez@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:52500 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755199AbaHUNH5 (ORCPT
+Received: from mail-ie0-f180.google.com ([209.85.223.180]:60512 "EHLO
+	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754933AbaHUNhy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Aug 2014 09:07:57 -0400
-Received: by mail-pd0-f179.google.com with SMTP id v10so13984050pde.24
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Aug 2014 06:07:56 -0700 (PDT)
-In-Reply-To: <1408626457-3422-1-git-send-email-vikas.sajjan@samsung.com>
+	Thu, 21 Aug 2014 09:37:54 -0400
+Received: by mail-ie0-f180.google.com with SMTP id at20so4686113iec.39
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Aug 2014 06:37:53 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1408536812-7836-2-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, olof@lixom.net
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Adds exynos5800-pmu compatible string entry in the pmu table.
+On Wed, 20 Aug 2014, Javier Martinez Canillas wrote:
+> From: Doug Anderson <dianders@chromium.org>
+>=20
+> If someone sends a EC_CMD_REBOOT_EC to the EC, the EC will likely be
+> unresponsive for quite a while.  Add a delay to the end of the comman=
+d
+> to prevent random failures of future commands.
+>=20
+> NOTES:
+> * This could be optimized a bit by simply delaying the next command
+>   sent, but EC_CMD_REBOOT_EC is such a rare command that the extra
+>   complexity doesn't seem worth it.
+> * This is a bit of an "ugly hack" since the SPI driver is effectively
+>   snooping on the communication and making a lot of assumptions.  It
+>   would be nice to architect in some better solution long term.
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
----
- arch/arm/mach-exynos/exynos.c |    1 +
- 1 file changed, 1 insertion(+)
+Are you planning on doing that?
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 6a24e11..90377c9 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -255,6 +255,7 @@ static const struct of_device_id exynos_dt_pmu_match[] = {
- 	{ .compatible = "samsung,exynos5260-pmu" },
- 	{ .compatible = "samsung,exynos5410-pmu" },
- 	{ .compatible = "samsung,exynos5420-pmu" },
-+	{ .compatible = "samsung,exynos5800-pmu" },
- 	{ /*sentinel*/ },
- };
- 
--- 
-1.7.9.5
+> * This same logic probably needs to be applied to the i2c driver.
+>=20
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> Reviewed-by: Randall Spangler <rspangler@chromium.org>
+> Reviewed-by: Vadim Bendebury <vbendeb@chromium.org>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
+=2Euk>
+> ---
+>  drivers/mfd/cros_ec_spi.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+
+I'm willing to accept this as a stand-in.
+
+Acked-by: Lee Jones <lee.jones@linaro.org>
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
