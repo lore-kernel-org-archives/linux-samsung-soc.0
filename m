@@ -1,122 +1,125 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v7] ARM: dts: Prepare node labels for exynos5250
-Date: Fri, 22 Aug 2014 19:49:44 +0900
-Message-ID: <080101cfbdf6$c8fd1f30$5af75d90$@samsung.com>
-References: <53DCD74B.8090400@gmail.com>
- <1408539764-5835-1-git-send-email-afaerber@suse.de>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [RESEND PATCH 5/7] mfd: cros_ec: wait for completion of commands
+ that return IN_PROGRESS
+Date: Fri, 22 Aug 2014 13:24:52 +0200
+Message-ID: <53F72884.20801@collabora.co.uk>
+References: <1408536812-7836-1-git-send-email-javier.martinez@collabora.co.uk> <1408536812-7836-6-git-send-email-javier.martinez@collabora.co.uk> <20140821142100.GM4266@lee--X1>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1408539764-5835-1-git-send-email-afaerber@suse.de>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?'Andreas_F=C3=A4rber'?= <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 'Vincent Palatin' <vpalatin@chromium.org>, 'Doug Anderson' <dianders@chromium.org>, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Tomasz Figa' <t.figa@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Russell King' <linux@arm.linux.org.uk>, 'open list' <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140821142100.GM4266@lee--X1>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Andreas F=C3=A4rber wrote:
->=20
-> Allows them to be extended by reference.
->=20
-> Reviewed-by: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
-> ---
->  v6 -> v7:
->  * Dropped uart* labels (Tomasz Figa)
->=20
->  v6: Split off from Snow/SMDK cleanups (Doug Anderson)
->=20
->  arch/arm/boot/dts/exynos5250.dtsi | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
->=20
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/ex=
-ynos5250.dtsi
-> index 492e1eff37bd..42eafd19cfb2 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -218,7 +218,7 @@
->  		clock-names =3D "fimg2d";
->  	};
->=20
-> -	codec@11000000 {
-> +	mfc: codec@11000000 {
->  		compatible =3D "samsung,mfc-v6";
->  		reg =3D <0x11000000 0x10000>;
->  		interrupts =3D <0 96 0>;
-> @@ -227,7 +227,7 @@
->  		clock-names =3D "mfc";
->  	};
->=20
-> -	rtc@101E0000 {
-> +	rtc: rtc@101E0000 {
->  		clocks =3D <&clock CLK_RTC>;
->  		clock-names =3D "rtc";
->  		status =3D "disabled";
-> @@ -261,7 +261,7 @@
->  		clock-names =3D "uart", "clk_uart_baud0";
->  	};
->=20
-> -	sata@122F0000 {
-> +	sata: sata@122F0000 {
->  		compatible =3D "snps,dwc-ahci";
->  		samsung,sata-freq =3D <66>;
->  		reg =3D <0x122F0000 0x1ff>;
-> @@ -573,7 +573,7 @@
->  		#phy-cells =3D <1>;
->  	};
->=20
-> -	usb@12110000 {
-> +	ehci: usb@12110000 {
+Hello Lee,
 
-I'm not sure which one is recommended between above and "ehci: ehci@121=
-10000 {"
+Thanks a lot for your feedback.
 
->  		compatible =3D "samsung,exynos4210-ehci";
->  		reg =3D <0x12110000 0x100>;
->  		interrupts =3D <0 71 0>;
-> @@ -588,7 +588,7 @@
->  		};
->  	};
->=20
-> -	usb@12120000 {
-> +	ohci: usb@12120000 {
+On 08/21/2014 04:21 PM, Lee Jones wrote:
+> On Wed, 20 Aug 2014, Javier Martinez Canillas wrote:
+> 
+>> From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> 
+>> When an EC command returns EC_RES_IN_PROGRESS, we need to query
+>> the state of the EC until it indicates that it is no longer busy.
+>> Do this in cros_ec_cmd_xfer() under the EC's mutex so that other
+>> commands (e.g. keyboard, I2C passtru) aren't issued to the EC while
+>> it is working on the in-progress command.
+>> 
+>> Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> Reviewed-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+>> ---
+>>  drivers/mfd/cros_ec.c | 35 ++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 34 insertions(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+>> index c53804a..634c434 100644
+>> --- a/drivers/mfd/cros_ec.c
+>> +++ b/drivers/mfd/cros_ec.c
+>> @@ -23,6 +23,10 @@
+>>  #include <linux/mfd/core.h>
+>>  #include <linux/mfd/cros_ec.h>
+>>  #include <linux/mfd/cros_ec_commands.h>
+>> +#include <linux/delay.h>
+>> +
+>> +#define EC_COMMAND_RETRIES	50
+>> +#define EC_RETRY_DELAY_MS	10
+>>  
+>>  int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
+>>  		       struct cros_ec_command *msg)
+>> @@ -65,10 +69,39 @@ EXPORT_SYMBOL(cros_ec_check_result);
+>>  int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
+>>  		     struct cros_ec_command *msg)
+>>  {
+>> -	int ret;
+>> +	int ret, i;
+>>  
+>>  	mutex_lock(&ec_dev->lock);
+>>  	ret = ec_dev->cmd_xfer(ec_dev, msg);
+>> +	if (ret == -EAGAIN && msg->result == EC_RES_IN_PROGRESS) {
+>> +		/*
+>> +		 * Query the EC's status until it's no longer busy or
+>> +		 * we encounter an error.
+>> +		 */
+>> +		for (i = 0; i < EC_COMMAND_RETRIES; i++) {
+>> +			struct cros_ec_command status_msg;
+>> +			struct ec_response_get_comms_status status;
+>> +
+>> +			msleep(EC_RETRY_DELAY_MS);
+>> +
+>> +			status_msg.version = 0;
+>> +			status_msg.command = EC_CMD_GET_COMMS_STATUS;
+>> +			status_msg.outdata = NULL;
+>> +			status_msg.outsize = 0;
+>> +			status_msg.indata = (uint8_t *)&status;
+>> +			status_msg.insize = sizeof(status);
+>> +
+>> +			ret = ec_dev->cmd_xfer(ec_dev, &status_msg);
+>> +			if (ret < 0)
+>> +				break;
+>> +
+>> +			msg->result = status_msg.result;
+>> +			if (status_msg.result != EC_RES_SUCCESS)
+>> +				break;
+>> +			if (!(status.flags & EC_COMMS_STATUS_PROCESSING))
+>> +				break;
+>> +		}
+>> +	}
+> 
+> Wow!  Things just got ugly real fast.
+> 
+> Do the *xfer() calls fiddle with msg passed into cros_ec_cmd_xfer()?
+> If not, why is it necessary to keep populating it?
+> 
 
-Same as above...
+Not really, I see that only struct cros_ec_command .result and .indata
+fields are modified by the cmd_xfer() function handlers so I agree with
+you that these variables can be defined outside of the for loop and
+reused. I think that even zero'ing indata is not needed between calls
+since on success the full sizeof(status) is copied and on failure it
+doesn't matter what is there.
 
->  		compatible =3D "samsung,exynos4210-ohci";
->  		reg =3D <0x12120000 0x100>;
->  		interrupts =3D <0 71 0>;
-> @@ -725,7 +725,7 @@
->  		clock-names =3D "gscl";
->  	};
->=20
-> -	hdmi {
-> +	hdmi: hdmi {
+Will change this when doing the re-spin.
 
-Should be
+> If all this stuff is necessary (and I really hope that it's not) I
+> think it would be better to have the for() loop as the outer layer.
+> Then we only have one instance of cmd_xfer() invocation and we save a
+> layer of tabbing. 
+> 
 
-+	hdmi: hdmi@14530000 { ?
+Most of this doesn't need to be inside the for loop as you said but there
+is a need for two struct cros_ec_command *msg though, one for the actual
+command made by the caller and other to query the EC if it already
+finished processing the first command.
 
->  		compatible =3D "samsung,exynos4212-hdmi";
->  		reg =3D <0x14530000 0x70000>;
->  		interrupts =3D <0 95 0>;
-> @@ -751,14 +751,14 @@
->  		#phy-cells =3D <0>;
->  	};
->=20
-> -	dp-controller@145B0000 {
-> +	dp: dp-controller@145B0000 {
->  		clocks =3D <&clock CLK_DP>;
->  		clock-names =3D "dp";
->  		phys =3D <&dp_phy>;
->  		phy-names =3D "dp";
->  	};
->=20
-> -	fimd@14400000 {
-> +	fimd: fimd@14400000 {
->  		clocks =3D <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
->  		clock-names =3D "sclk_fimd", "fimd";
->  	};
-> --
-> 2.0.4
+>>  	mutex_unlock(&ec_dev->lock);
+>>  
+>>  	return ret;
+> 
+
+Best regards,
+Javier
