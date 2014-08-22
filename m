@@ -1,54 +1,95 @@
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: [PATCH 1/2] i2c: cros-ec-tunnel: Add of match table
-Date: Sat, 23 Aug 2014 01:03:01 +0200
-Message-ID: <1408748582-29029-2-git-send-email-sjoerd.simons@collabora.co.uk>
-References: <1408748582-29029-1-git-send-email-sjoerd.simons@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 1/1] ARM: exynos_defconfig: Enable options for display panel support
+Date: Sat, 23 Aug 2014 01:13:05 +0200
+Message-ID: <1408749185-14133-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cube.luon.net ([37.72.100.20]:45496 "EHLO cube.luon.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752158AbaHVXDN (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:44829 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752407AbaHVXNV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Aug 2014 19:03:13 -0400
-In-Reply-To: <1408748582-29029-1-git-send-email-sjoerd.simons@collabora.co.uk>
+	Fri, 22 Aug 2014 19:13:21 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>, Lee Jones <lee.jones@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, afaerber@suse.de, Ajay Kumar <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-To enable the cros-ec-tunnel driver to be auto-loaded when build as a
-module add an of match table (and export it) to match the modalias
-information passed on to userspace as the Cros EC MFD driver registers
-the MFD subdevices with an of_compatibility string.
+Many Exynos devices have a display panel, most of them just have
+a simple panel while others have more complex configurations that
+requires an embedded DisplayPort (eDP) to LVDS display bridge.
 
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+This patch enables the following features to support both setups:
+
+- Direct Rendering Manager (DRM)
+- DRM bridge registration and lookup framework
+- Parade ps8622/ps8625 eDP/LVDS bridge
+- NXP ptn3460 eDP/LVDS bridge
+- Exynos Fully Interactive Mobile Display controller (FIMD)
+- Panel registration and lookup framework
+- Simple panels
+- Backlight and LCD device support
+
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- drivers/i2c/busses/i2c-cros-ec-tunnel.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-cros-ec-tunnel.c b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-index 05e033c..3c15dcc 100644
---- a/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-+++ b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-@@ -310,11 +310,20 @@ static int ec_i2c_remove(struct platform_device *dev)
- 	return 0;
- }
- 
-+#ifdef CONFIG_OF
-+static const struct of_device_id cros_ec_i2c_of_match[] = {
-+	{ .compatible = "google,cros-ec-i2c-tunnel" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, cros_ec_i2c_of_match);
-+#endif
-+
- static struct platform_driver ec_i2c_tunnel_driver = {
- 	.probe = ec_i2c_probe,
- 	.remove = ec_i2c_remove,
- 	.driver = {
- 		.name = "cros-ec-i2c-tunnel",
-+		.of_match_table = of_match_ptr (cros_ec_i2c_of_match),
- 	},
- };
- 
+Some of the options enabled here (e.g: the eDP/LVDS bridges)
+are still not merged in mainline so this patch depends on
+the following posted patches that were still not merged:
+
+"drm/bridge: Modify drm_bridge core to support driver model" [0]
+"drm/bridge: Add i2c based driver for ptn3460 bridge" [1]
+"drm/bridge: Add i2c based driver for ps8622/ps8625 bridge" [2]
+
+But I wanted to post anyways to make easier for others to
+figure out what are the needed options to have the display
+working on their Exynos machines.
+
+In order to test the display panel on the Peach machines,
+the following patches are also needed:
+
+"ARM: dts: Add DT changes for display on peach_pit" [3]
+"ARM: dts: Add DT changes for display on peach_pi" [4]
+
+Best regards,
+Javier
+
+[0]: http://patchwork.ozlabs.org/patch/373792/
+[1]: http://patchwork.ozlabs.org/patch/373793/
+[2]: http://patchwork.ozlabs.org/patch/373794/
+[3]: http://www.spinics.net/lists/arm-kernel/msg350568.html
+[4]: http://www.spinics.net/lists/arm-kernel/msg350569.html 
+
+ arch/arm/configs/exynos_defconfig | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 676c744..f69d57e 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -101,11 +101,25 @@ CONFIG_REGULATOR_S2MPA01=y
+ CONFIG_REGULATOR_S2MPS11=y
+ CONFIG_REGULATOR_S5M8767=y
+ CONFIG_REGULATOR_TPS65090=y
++CONFIG_DRM=y
++CONFIG_DRM_BRIDGE=y
++CONFIG_DRM_PS8622=y
++CONFIG_DRM_EXYNOS=y
++CONFIG_DRM_EXYNOS_FIMD=y
++CONFIG_DRM_EXYNOS_DP=y
++CONFIG_DRM_PANEL=y
++CONFIG_DRM_PANEL_SIMPLE=y
+ CONFIG_FB=y
+ CONFIG_FB_MODE_HELPERS=y
+ CONFIG_FB_SIMPLE=y
+ CONFIG_EXYNOS_VIDEO=y
+ CONFIG_EXYNOS_MIPI_DSI=y
++CONFIG_BACKLIGHT_LCD_SUPPORT=y
++CONFIG_LCD_CLASS_DEVICE=y
++CONFIG_LCD_PLATFORM=y
++CONFIG_BACKLIGHT_CLASS_DEVICE=y
++CONFIG_BACKLIGHT_GENERIC=y
++CONFIG_BACKLIGHT_PWM=y
+ CONFIG_FRAMEBUFFER_CONSOLE=y
+ CONFIG_FONTS=y
+ CONFIG_FONT_7x14=y
 -- 
-2.1.0
+2.0.1
