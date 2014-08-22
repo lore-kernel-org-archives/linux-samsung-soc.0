@@ -1,71 +1,37 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v7 04/11] arm: Support restart through restart handler
- call chain
-Date: Thu, 21 Aug 2014 19:19:47 -0700
-Message-ID: <20140822021947.GA17788@roeck-us.net>
-References: <1408495538-27480-1-git-send-email-linux@roeck-us.net>
- <1408495538-27480-5-git-send-email-linux@roeck-us.net>
- <53F69DBA.4070806@suse.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Zhaowei Yuan <zhaowei.yuan@samsung.com>
+Subject: [PATCH V2] vb2: fix plane index sanity check in vb2_plane_cookie()
+Date: Fri, 22 Aug 2014 10:28:21 +0800
+Message-ID: <1408674501-25336-1-git-send-email-zhaowei.yuan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f50.google.com ([209.85.220.50]:49788 "EHLO
-	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755158AbaHVCTx (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:17220 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755497AbaHVCcM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Aug 2014 22:19:53 -0400
-Content-Disposition: inline
-In-Reply-To: <53F69DBA.4070806@suse.de>
+	Thu, 21 Aug 2014 22:32:12 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc: Doug Anderson <dianders@chromium.org>, Russell King <linux@arm.linux.org.uk>, Wim Van Sebroeck <wim@iguana.be>, Catalin Marinas <catalin.marinas@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Andrew Morton <akpm@linux-foundation.org>, linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>, Heiko Stuebner <heiko@sntech.de>, Jonas Jensen <jonas.jensen@gmail.com>, Randy Dunlap <rdunlap@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Tomasz Figa <t.figa@samsung.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-media@vger.kernel.org, k.debski@samsung.com, m.chehab@samsung.com, kyungmin.park@samsung.com, jtp.park@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, hverkuil@xs4all.nl
 
-On Fri, Aug 22, 2014 at 03:32:42AM +0200, Andreas F=E4rber wrote:
-> Hi,
->=20
-> Am 20.08.2014 02:45, schrieb Guenter Roeck:
-> > The kernel core now supports a restart handler call chain for syste=
-m
-> > restart functions.
-> >=20
-> > With this change, the arm_pm_restart callback is now optional, so
-> > drop its initialization and check if it is set before calling it.
-> > Only call the kernel restart handler if arm_pm_restart is not set.
-> [...]
-> > diff --git a/arch/arm/kernel/process.c b/arch/arm/kernel/process.c
-> > index 81ef686..ea279f7 100644
-> > --- a/arch/arm/kernel/process.c
-> > +++ b/arch/arm/kernel/process.c
-> > @@ -114,17 +114,13 @@ void soft_restart(unsigned long addr)
-> >  	BUG();
-> >  }
-> > =20
-> > -static void null_restart(enum reboot_mode reboot_mode, const char =
-*cmd)
-> > -{
-> > -}
-> > -
-> >  /*
-> >   * Function pointers to optional machine specific functions
-> >   */
-> >  void (*pm_power_off)(void);
-> >  EXPORT_SYMBOL(pm_power_off);
-> > =20
-> > -void (*arm_pm_restart)(enum reboot_mode reboot_mode, const char *c=
-md) =3D null_restart;
-> > +void (*arm_pm_restart)(enum reboot_mode reboot_mode, const char *c=
-md);
->=20
-> Stupid newbie question maybe, but isn't this variable uninitialized n=
-ow,
-> like any non-static variable in C99? Or does the kernel assure that a=
-ll
-> such "fields" are zero-initialized?
->=20
-It is initialized with NULL, like all other global and static variables=
- in the
-kernel (and like pm_power_off a few lines above).
+It's also invalid that plane_no equals to vb->num_planes
 
-Guenter
+Signed-off-by: Zhaowei Yuan <zhaowei.yuan@samsung.com>
+---
+ drivers/media/v4l2-core/videobuf2-core.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/v4l2-core/videobuf2-core.c b/drivers/media/v4l2-core/videobuf2-core.c
+index c359006..1ae4e57 100644
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -1130,7 +1130,7 @@ EXPORT_SYMBOL_GPL(vb2_plane_vaddr);
+  */
+ void *vb2_plane_cookie(struct vb2_buffer *vb, unsigned int plane_no)
+ {
+-	if (plane_no > vb->num_planes || !vb->planes[plane_no].mem_priv)
++	if (plane_no >= vb->num_planes || !vb->planes[plane_no].mem_priv)
+ 		return NULL;
+
+ 	return call_ptr_memop(vb, cookie, vb->planes[plane_no].mem_priv);
+--
+1.7.9.5
