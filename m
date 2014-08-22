@@ -1,7 +1,8 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 01/15] drm/exynos/ipp: remove fake pm callbacks
-Date: Fri, 22 Aug 2014 09:52:12 +0200
-Message-ID: <1408693946-15456-2-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 03/15] drm/exynos/ipp: move file reference from memory to
+ command node
+Date: Fri, 22 Aug 2014 09:52:14 +0200
+Message-ID: <1408693946-15456-4-git-send-email-a.hajda@samsung.com>
 References: <1408693946-15456-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,80 +22,71 @@ To: Inki Dae <inki.dae@samsung.com>
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-PM callbacks in ipp core do nothing, so the patch removes it.
+Command node should contain file reference to distinguish commands
+created by different processes.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_ipp.c | 51 ---------------------------------
- 1 file changed, 51 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c | 5 ++---
+ drivers/gpu/drm/exynos/exynos_drm_ipp.h | 2 ++
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index c411399..da917ca 100644
+index 9770966..bbe9968 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -1808,63 +1808,12 @@ static int ipp_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int ipp_power_ctrl(struct ipp_context *ctx, bool enable)
--{
--	DRM_DEBUG_KMS("enable[%d]\n", enable);
--
--	return 0;
--}
--
--#ifdef CONFIG_PM_SLEEP
--static int ipp_suspend(struct device *dev)
--{
--	struct ipp_context *ctx = get_ipp_context(dev);
--
--	if (pm_runtime_suspended(dev))
--		return 0;
--
--	return ipp_power_ctrl(ctx, false);
--}
--
--static int ipp_resume(struct device *dev)
--{
--	struct ipp_context *ctx = get_ipp_context(dev);
--
--	if (!pm_runtime_suspended(dev))
--		return ipp_power_ctrl(ctx, true);
--
--	return 0;
--}
--#endif
--
--#ifdef CONFIG_PM_RUNTIME
--static int ipp_runtime_suspend(struct device *dev)
--{
--	struct ipp_context *ctx = get_ipp_context(dev);
--
--	return ipp_power_ctrl(ctx, false);
--}
--
--static int ipp_runtime_resume(struct device *dev)
--{
--	struct ipp_context *ctx = get_ipp_context(dev);
--
--	return ipp_power_ctrl(ctx, true);
--}
--#endif
--
--static const struct dev_pm_ops ipp_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(ipp_suspend, ipp_resume)
--	SET_RUNTIME_PM_OPS(ipp_runtime_suspend, ipp_runtime_resume, NULL)
--};
--
- struct platform_driver ipp_driver = {
- 	.probe		= ipp_probe,
- 	.remove		= ipp_remove,
- 	.driver		= {
- 		.name	= "exynos-drm-ipp",
- 		.owner	= THIS_MODULE,
--		.pm	= &ipp_pm_ops,
- 	},
+@@ -75,7 +75,6 @@ struct drm_exynos_ipp_mem_node {
+ 	u32	prop_id;
+ 	u32	buf_id;
+ 	struct drm_exynos_ipp_buf_info	buf_info;
+-	struct drm_file		*filp;
  };
  
+ /*
+@@ -448,6 +447,7 @@ int exynos_drm_ipp_set_property(struct drm_device *drm_dev, void *data,
+ 	c_node->dev = dev;
+ 	c_node->property = *property;
+ 	c_node->state = IPP_STATE_IDLE;
++	c_node->filp = file;
+ 
+ 	c_node->start_work = ipp_create_cmd_work();
+ 	if (IS_ERR(c_node->start_work)) {
+@@ -645,7 +645,6 @@ static struct drm_exynos_ipp_mem_node
+ 		}
+ 	}
+ 
+-	m_node->filp = file;
+ 	mutex_lock(&c_node->mem_lock);
+ 	list_add_tail(&m_node->list, &c_node->mem_list[qbuf->ops_id]);
+ 	mutex_unlock(&c_node->mem_lock);
+@@ -677,7 +676,7 @@ static int ipp_put_mem_node(struct drm_device *drm_dev,
+ 		unsigned long handle = m_node->buf_info.handles[i];
+ 		if (handle)
+ 			exynos_drm_gem_put_dma_addr(drm_dev, handle,
+-							m_node->filp);
++							c_node->filp);
+ 	}
+ 
+ 	/* delete list in queue */
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.h b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
+index 6f48d62..0311035 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_ipp.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
+@@ -62,6 +62,7 @@ struct drm_exynos_ipp_cmd_work {
+  * @stop_work: stop command work structure.
+  * @event_work: event work structure.
+  * @state: state of command node.
++ * @filp: associated file pointer.
+  */
+ struct drm_exynos_ipp_cmd_node {
+ 	struct device		*dev;
+@@ -78,6 +79,7 @@ struct drm_exynos_ipp_cmd_node {
+ 	struct drm_exynos_ipp_cmd_work *stop_work;
+ 	struct drm_exynos_ipp_event_work *event_work;
+ 	enum drm_exynos_ipp_state	state;
++	struct drm_file	*filp;
+ };
+ 
+ /*
 -- 
 1.9.1
