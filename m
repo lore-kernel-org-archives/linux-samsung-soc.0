@@ -1,7 +1,8 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 02/15] drm/exynos/ipp: cancel works before command node clean
-Date: Fri, 22 Aug 2014 09:52:13 +0200
-Message-ID: <1408693946-15456-3-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 08/15] drm/exynos/ipp: clean memory nodes on command node
+ cleaning
+Date: Fri, 22 Aug 2014 09:52:19 +0200
+Message-ID: <1408693946-15456-9-git-send-email-a.hajda@samsung.com>
 References: <1408693946-15456-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,7 +22,7 @@ To: Inki Dae <inki.dae@samsung.com>
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-All pending works should be canceled prior to its removal.
+The nodes should be removed before removing command node.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
@@ -29,17 +30,22 @@ Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
  1 file changed, 5 insertions(+)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index da917ca..9770966 100644
+index 22bd551..6ab6190 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -502,6 +502,11 @@ err_clear:
+@@ -604,11 +604,16 @@ static void ipp_clean_mem_nodes(struct drm_device *drm_dev,
  static void ipp_clean_cmd_node(struct ipp_context *ctx,
  				struct drm_exynos_ipp_cmd_node *c_node)
  {
-+	/* cancel works */
-+	cancel_work_sync(&c_node->start_work->work);
-+	cancel_work_sync(&c_node->stop_work->work);
-+	cancel_work_sync(&c_node->event_work->work);
++	int i;
++
+ 	/* cancel works */
+ 	cancel_work_sync(&c_node->start_work->work);
+ 	cancel_work_sync(&c_node->stop_work->work);
+ 	cancel_work_sync(&c_node->event_work->work);
+ 
++	for_each_ipp_ops(i)
++		ipp_clean_mem_nodes(ctx->subdrv.drm_dev, c_node, i);
 +
  	/* delete list */
  	list_del(&c_node->list);
