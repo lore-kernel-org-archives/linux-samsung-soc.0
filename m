@@ -1,101 +1,102 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCHv2 1/5] rtc: s3c: Define s3c_rtc structure to remove
- global variables.
-Date: Fri, 22 Aug 2014 13:42:04 -0700
-Message-ID: <20140822134204.1fa5be7aeb76a50b45ccc5f5@linux-foundation.org>
-References: <y@samsung.com>
-	<1407808871-6046-1-git-send-email-y@samsung.com>
-	<1407808871-6046-2-git-send-email-y@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1407808871-6046-2-git-send-email-y@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: y@samsung.com
-Cc: a.zummo@towertech.it, kgene.kim@samsung.com, kyungmin.park@samsung.com, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Subject: [PATCH 1/2] ARM: dts: exynos: Explicitly set dr_mode on peach-pit and peach-pi
+Date: Fri, 22 Aug 2014 22:57:00 +0200
+Message-ID: <1408741021-17759-2-git-send-email-sjoerd.simons@collabora.co.uk>
+References: <1408741021-17759-1-git-send-email-sjoerd.simons@collabora.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cube.luon.net ([37.72.100.20]:44195 "EHLO cube.luon.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751411AbaHVVE3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 22 Aug 2014 17:04:29 -0400
+In-Reply-To: <1408741021-17759-1-git-send-email-sjoerd.simons@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
-On Tue, 12 Aug 2014 11:01:07 +0900 y@samsung.com wrote:
+In case the optional dr_mode property isn't set in the dwc3 nodes the
+the controller will go into OTG mode iff both USB host and USB gadget
+functionality are enabled in the kernel configuration. Unfortunately this
+results in USB not working on exynos5420-peach-pit and
+exynos5800-peach-pi with such a kernel configuration unless manually
+change the mode. To resolve that explicitely configure the dual role
+mode as host
 
-> This patch define s3c_rtc structure including necessary variables for S3C RTC
-> device instead of global variables. This patch improves the readability by
-> removing global variables.
+Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+---
+ arch/arm/boot/dts/exynos5420-peach-pit.dts | 8 ++++++++
+ arch/arm/boot/dts/exynos5420.dtsi          | 4 ++--
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  | 8 ++++++++
+ 3 files changed, 18 insertions(+), 2 deletions(-)
 
-Below is the v1->v2 delta.
-
-Why were all those tests of info->base added?  Can it really be zero? 
-I don't see how.
-
---- a/drivers/rtc/rtc-s3c.c~rtc-s3c-define-s3c_rtc-structure-to-remove-global-variables-v2
-+++ a/drivers/rtc/rtc-s3c.c
-@@ -121,6 +121,9 @@ static int s3c_rtc_setaie(struct device
- 	struct s3c_rtc *info = dev_get_drvdata(dev);
- 	unsigned int tmp;
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index 228a6b1..6c22610 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -427,10 +427,18 @@
+ 	status = "okay";
+ };
  
-+	if (!info->base)
-+		return -EINVAL;
++&usbdrd_dwc3_0 {
++	dr_mode = "host";
++};
 +
- 	dev_dbg(info->dev, "%s: aie=%d\n", __func__, enabled);
+ &usbdrd_phy0 {
+ 	vbus-supply = <&usb300_vbus_reg>;
+ };
  
- 	clk_enable(info->rtc_clk);
-@@ -180,6 +183,9 @@ static int s3c_rtc_gettime(struct device
- 	struct s3c_rtc *info = dev_get_drvdata(dev);
- 	unsigned int have_retried = 0;
- 
-+	if (!info->base)
-+		return -EINVAL;
++&usbdrd_dwc3_1 {
++	dr_mode = "host";
++};
 +
- 	clk_enable(info->rtc_clk);
-  retry_get_time:
- 	rtc_tm->tm_min  = readb(info->base + S3C2410_RTCMIN);
-@@ -224,6 +230,9 @@ static int s3c_rtc_settime(struct device
- 	struct s3c_rtc *info = dev_get_drvdata(dev);
- 	int year = tm->tm_year - 100;
+ &usbdrd_phy1 {
+ 	vbus-supply = <&usb301_vbus_reg>;
+ };
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index bfe056d..8617a03 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -815,7 +815,7 @@
+ 		#size-cells = <1>;
+ 		ranges;
  
-+	if (!info->base)
-+		return -EINVAL;
+-		dwc3 {
++		usbdrd_dwc3_0: dwc3 {
+ 			compatible = "snps,dwc3";
+ 			reg = <0x12000000 0x10000>;
+ 			interrupts = <0 72 0>;
+@@ -841,7 +841,7 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
+-		dwc3 {
++		usbdrd_dwc3_1: dwc3 {
+ 			compatible = "snps,dwc3";
+ 			reg = <0x12400000 0x10000>;
+ 			interrupts = <0 73 0>;
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index f3ee48b..166b352 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -425,10 +425,18 @@
+ 	status = "okay";
+ };
+ 
++&usbdrd_dwc3_0 {
++	dr_mode = "host";
++};
 +
- 	dev_dbg(dev, "set time %04d.%02d.%02d %02d:%02d:%02d\n",
- 		 1900 + tm->tm_year, tm->tm_mon, tm->tm_mday,
- 		 tm->tm_hour, tm->tm_min, tm->tm_sec);
-@@ -255,6 +264,9 @@ static int s3c_rtc_getalarm(struct devic
- 	struct rtc_time *alm_tm = &alrm->time;
- 	unsigned int alm_en;
+ &usbdrd_phy0 {
+ 	vbus-supply = <&usb300_vbus_reg>;
+ };
  
-+	if (!info->base)
-+		return -EINVAL;
++&usbdrd_dwc3_1 {
++	dr_mode = "host";
++};
 +
- 	clk_enable(info->rtc_clk);
- 	alm_tm->tm_sec  = readb(info->base + S3C2410_ALMSEC);
- 	alm_tm->tm_min  = readb(info->base + S3C2410_ALMMIN);
-@@ -317,6 +329,9 @@ static int s3c_rtc_setalarm(struct devic
- 	struct rtc_time *tm = &alrm->time;
- 	unsigned int alrm_en;
- 
-+	if (!info->base)
-+		return -EINVAL;
-+
- 	clk_enable(info->rtc_clk);
- 	dev_dbg(dev, "s3c_rtc_setalarm: %d, %04d.%02d.%02d %02d:%02d:%02d\n",
- 		 alrm->enabled,
-@@ -357,6 +372,9 @@ static int s3c_rtc_proc(struct device *d
- 	struct s3c_rtc *info = dev_get_drvdata(dev);
- 	unsigned int ticnt;
- 
-+	if (!info->base)
-+		return -EINVAL;
-+
- 	clk_enable(info->rtc_clk);
- 	if (info->cpu_type == TYPE_S3C64XX) {
- 		ticnt = readw(info->base + S3C2410_RTCCON);
-@@ -548,7 +566,7 @@ static int s3c_rtc_probe(struct platform
- 		rtc_tm.tm_min	= 0;
- 		rtc_tm.tm_sec	= 0;
- 
--		s3c_rtc_settime(NULL, &rtc_tm);
-+		s3c_rtc_settime(&pdev->dev, &rtc_tm);
- 
- 		dev_warn(&pdev->dev, "warning: invalid RTC value so initializing it\n");
- 	}
-_
+ &usbdrd_phy1 {
+ 	vbus-supply = <&usb301_vbus_reg>;
+ };
+-- 
+2.1.0
