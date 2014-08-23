@@ -1,72 +1,58 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 2/2] input: cros_ec_keyb: Add of match table
-Date: Sat, 23 Aug 2014 17:42:42 +0400
-Message-ID: <53F89A52.60605@cogentembedded.com>
-References: <1408748582-29029-1-git-send-email-sjoerd.simons@collabora.co.uk> <1408748582-29029-3-git-send-email-sjoerd.simons@collabora.co.uk>
+From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Subject: Re: [PATCH] phy: exynos5-usbdrd: Add MODULE_DEVICE_TABLE entry
+Date: Sat, 23 Aug 2014 18:23:15 +0200
+Message-ID: <53F8BFF3.8020001@suse.de>
+References: <1408715892-27728-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f173.google.com ([209.85.217.173]:37607 "EHLO
-	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751269AbaHWNmp (ORCPT
+Received: from cantor2.suse.de ([195.135.220.15]:49753 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751326AbaHWQXV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 23 Aug 2014 09:42:45 -0400
-Received: by mail-lb0-f173.google.com with SMTP id u10so10496218lbd.18
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 23 Aug 2014 06:42:44 -0700 (PDT)
-In-Reply-To: <1408748582-29029-3-git-send-email-sjoerd.simons@collabora.co.uk>
+	Sat, 23 Aug 2014 12:23:21 -0400
+In-Reply-To: <1408715892-27728-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Lee Jones <lee.jones@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 
-Hello.
+Hi,
 
-On 8/23/2014 3:03 AM, Sjoerd Simons wrote:
-
-> To enable the cros_ec_keyb driver to be auto-loaded when build as
-> module add an of match table (and export it) to match the modalias
-> information passed on to userspace as the Cros EC MFD driver registers
-> the MFD subdevices with an of_compatibility string.
-
+Am 22.08.2014 15:58, schrieb Sjoerd Simons:
+> Add a MODULE_DEVICE_TABLE call for OF match tables. This allows the
+> module to be autoloaded based on devicetree information.
+>=20
 > Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 > ---
->   drivers/input/keyboard/cros_ec_keyb.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
+>  drivers/phy/phy-exynos5-usbdrd.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exyno=
+s5-usbdrd.c
+> index b05302b..e9a0f54 100644
+> --- a/drivers/phy/phy-exynos5-usbdrd.c
+> +++ b/drivers/phy/phy-exynos5-usbdrd.c
+> @@ -542,6 +542,7 @@ static const struct of_device_id exynos5_usbdrd_p=
+hy_of_match[] =3D {
+>  	},
+>  	{ },
+>  };
+> +MODULE_DEVICE_TABLE (of, exynos5_usbdrd_phy_of_match);
 
-> diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
-> index 791781a..0bdbf2d 100644
-> --- a/drivers/input/keyboard/cros_ec_keyb.c
-> +++ b/drivers/input/keyboard/cros_ec_keyb.c
-> @@ -342,10 +342,20 @@ static int cros_ec_keyb_resume(struct device *dev)
->
->   static SIMPLE_DEV_PM_OPS(cros_ec_keyb_pm_ops, NULL, cros_ec_keyb_resume);
->
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id cros_ec_keyb_of_match[] = {
+Nit: Probably there should be no space before '('?
 
-    Perhaps better to use '__maybe_unused' instead of #ifdef...
+> =20
+>  static int exynos5_usbdrd_phy_probe(struct platform_device *pdev)
+>  {
 
-> +	{ .compatible = "google,cros-ec-keyb" },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, cros_ec_keyb_of_match);
-> +#endif
-> +
-> +
+Otherwise certainly sensible. I ran into another such case myself.
 
-    Too many empty lines.
+Regards,
+Andreas
 
->   static struct platform_driver cros_ec_keyb_driver = {
->   	.probe = cros_ec_keyb_probe,
->   	.driver = {
->   		.name = "cros-ec-keyb",
-> +		.of_match_table = of_match_ptr (cros_ec_keyb_of_match),
-
-    There shouldn't be space before (.
-
->   		.pm	= &cros_ec_keyb_pm_ops,
->   	},
->   };
-
-WBR, Sergei
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
+berg
