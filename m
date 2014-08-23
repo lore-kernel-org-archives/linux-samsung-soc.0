@@ -1,73 +1,107 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Enable options for display panel support
-Date: Fri, 22 Aug 2014 20:55:37 -0700
-Message-ID: <7h4mx37tc6.fsf@paris.lan>
-References: <1408749185-14133-1-git-send-email-javier.martinez@collabora.co.uk>
+From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Subject: Re: [PATCH 3/3] ARM: dts: Add DT changes for display on peach_pi
+Date: Sat, 23 Aug 2014 12:29:18 +0200
+Message-ID: <53F86CFE.6070307@suse.de>
+References: <1406317464-7525-1-git-send-email-ajaykumar.rs@samsung.com> <1406317464-7525-4-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f176.google.com ([209.85.192.176]:44001 "EHLO
-	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751863AbaHWDzk (ORCPT
+Received: from cantor2.suse.de ([195.135.220.15]:45587 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752603AbaHWK3Y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Aug 2014 23:55:40 -0400
-Received: by mail-pd0-f176.google.com with SMTP id y10so16675323pdj.35
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Aug 2014 20:55:39 -0700 (PDT)
-In-Reply-To: <1408749185-14133-1-git-send-email-javier.martinez@collabora.co.uk>
-	(Javier Martinez Canillas's message of "Sat, 23 Aug 2014 01:13:05
-	+0200")
+	Sat, 23 Aug 2014 06:29:24 -0400
+In-Reply-To: <1406317464-7525-4-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, afaerber@suse.de, Ajay Kumar <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Ajay Kumar <ajaykumar.rs@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, dianders@chromium.org, ajaynumb@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Thierry Reding <thierry.reding@gmail.com>
 
-Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
+Seeing a Reviewed-by, I'm recording comments from another thread so tha=
+t
+they don't get forgotten:
 
-> Many Exynos devices have a display panel, most of them just have
-> a simple panel while others have more complex configurations that
-> requires an embedded DisplayPort (eDP) to LVDS display bridge.
->
-> This patch enables the following features to support both setups:
->
-> - Direct Rendering Manager (DRM)
-> - DRM bridge registration and lookup framework
-> - Parade ps8622/ps8625 eDP/LVDS bridge
-> - NXP ptn3460 eDP/LVDS bridge
-> - Exynos Fully Interactive Mobile Display controller (FIMD)
-> - Panel registration and lookup framework
-> - Simple panels
-> - Backlight and LCD device support
->
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Am 25.07.2014 21:44, schrieb Ajay Kumar:
+> Add DT nodes for panel-simple "auo,b133htn01" panel.
+> Add backlight enable pin and backlight power supply for pwm-backlight=
+=2E
+> Also add panel phandle needed by dp to enable display on peach_pi.
+>=20
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 > ---
->
-> Some of the options enabled here (e.g: the eDP/LVDS bridges)
-> are still not merged in mainline so this patch depends on
-> the following posted patches that were still not merged:
->
-> "drm/bridge: Modify drm_bridge core to support driver model" [0]
-> "drm/bridge: Add i2c based driver for ptn3460 bridge" [1]
-> "drm/bridge: Add i2c based driver for ps8622/ps8625 bridge" [2]
->
-> But I wanted to post anyways to make easier for others to
-> figure out what are the needed options to have the display
-> working on their Exynos machines.
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts |   27 ++++++++++---------=
+--------
+>  1 file changed, 10 insertions(+), 17 deletions(-)
+>=20
+> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boo=
+t/dts/exynos5800-peach-pi.dts
+> index f3ee48b..5342638 100644
+> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> @@ -28,11 +28,13 @@
+>  		i2c20 =3D "/spi@12d40000/cros-ec@0/i2c-tunnel";
+>  	};
+> =20
+> -	backlight {
+> +	backlight: backlight {
+>  		compatible =3D "pwm-backlight";
+>  		pwms =3D <&pwm 0 1000000 0>;
+>  		brightness-levels =3D <0 100 500 1000 1500 2000 2500 2800>;
+>  		default-brightness-level =3D <7>;
+> +		enable-gpios =3D <&gpx2 2 0>;
+> +		power-supply =3D <&tps65090_fet1>;
+>  		pinctrl-0 =3D <&pwm0_out>;
+>  		pinctrl-names =3D "default";
+>  	};
+> @@ -98,6 +100,12 @@
+>  		regulator-boot-on;
+>  		regulator-always-on;
+>  	};
+> +
+> +	panel: panel-simple {
 
-Great, thanks for this!  I spent/wasted quite a bit of time trying to
-figure out which options I needed to enable to get basic display support
-working.
->
-> In order to test the display panel on the Peach machines,
-> the following patches are also needed:
->
-> "ARM: dts: Add DT changes for display on peach_pit" [3]
-> "ARM: dts: Add DT changes for display on peach_pi" [4]
+Just "panel"? (AF)
 
-Tested-by: Kevin Hilman <khilman@linaro.org>
+> +		compatible =3D "auo,b133htn01", "simple-panel";
 
-On v3.17-rc1 along with these DT patches abvoe on exynos5800/chromebook2
-(peach-pi).
+Drop "simple-panel" (Thierry)
 
-Thanks,
+> +		power-supply =3D <&tps65090_fet6>;
+> +		backlight =3D <&backlight>;
+> +	};
+>  };
+> =20
+>  &dp {
+> @@ -111,22 +119,7 @@
+>  	samsung,link-rate =3D <0x0a>;
+>  	samsung,lane-count =3D <2>;
+>  	samsung,hpd-gpio =3D <&gpx2 6 0>;
+> -
+> -	display-timings {
+> -		native-mode =3D <&timing1>;
+> -
+> -		timing1: timing@1 {
+> -			clock-frequency =3D <150660000>;
+> -			hactive =3D <1920>;
+> -			vactive =3D <1080>;
+> -			hfront-porch =3D <60>;
+> -			hback-porch =3D <172>;
+> -			hsync-len =3D <80>;
+> -			vback-porch =3D <25>;
+> -			vfront-porch =3D <10>;
+> -			vsync-len =3D <10>;
+> -		};
+> -	};
+> +	panel =3D <&panel>;
+>  };
+> =20
+>  &fimd {
 
-Kevin
+Regards,
+Andreas
+
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
+berg
