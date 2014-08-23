@@ -1,82 +1,73 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v9 4/6] ARM: Exynos: switch to using generic cpufreq driver
- for Exynos4210/5250/5420
-Date: Sat, 23 Aug 2014 02:02:27 +0200
-Message-ID: <53F7DA13.6090305@gmail.com>
-References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>	<1406707663-16656-5-git-send-email-thomas.ab@samsung.com>	<53DA8BB9.6020702@samsung.com> <53DA8D85.3050106@gmail.com> <7hbnrc6px3.fsf@paris.lan>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Enable options for display panel support
+Date: Fri, 22 Aug 2014 20:55:37 -0700
+Message-ID: <7h4mx37tc6.fsf@paris.lan>
+References: <1408749185-14133-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <7hbnrc6px3.fsf@paris.lan>
-Sender: linux-pm-owner@vger.kernel.org
-To: Kevin Hilman <khilman@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, l.majewski@samsung.com, mturquette@linaro.org, heiko@sntech.de, viresh.kumar@linaro.org, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, amit.kucheria@linaro.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f176.google.com ([209.85.192.176]:44001 "EHLO
+	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751863AbaHWDzk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 22 Aug 2014 23:55:40 -0400
+Received: by mail-pd0-f176.google.com with SMTP id y10so16675323pdj.35
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Aug 2014 20:55:39 -0700 (PDT)
+In-Reply-To: <1408749185-14133-1-git-send-email-javier.martinez@collabora.co.uk>
+	(Javier Martinez Canillas's message of "Sat, 23 Aug 2014 01:13:05
+	+0200")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, afaerber@suse.de, Ajay Kumar <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hi Kevin,
+Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
 
-Thanks for taking a look at this.
+> Many Exynos devices have a display panel, most of them just have
+> a simple panel while others have more complex configurations that
+> requires an embedded DisplayPort (eDP) to LVDS display bridge.
+>
+> This patch enables the following features to support both setups:
+>
+> - Direct Rendering Manager (DRM)
+> - DRM bridge registration and lookup framework
+> - Parade ps8622/ps8625 eDP/LVDS bridge
+> - NXP ptn3460 eDP/LVDS bridge
+> - Exynos Fully Interactive Mobile Display controller (FIMD)
+> - Panel registration and lookup framework
+> - Simple panels
+> - Backlight and LCD device support
+>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>
+> Some of the options enabled here (e.g: the eDP/LVDS bridges)
+> are still not merged in mainline so this patch depends on
+> the following posted patches that were still not merged:
+>
+> "drm/bridge: Modify drm_bridge core to support driver model" [0]
+> "drm/bridge: Add i2c based driver for ptn3460 bridge" [1]
+> "drm/bridge: Add i2c based driver for ps8622/ps8625 bridge" [2]
+>
+> But I wanted to post anyways to make easier for others to
+> figure out what are the needed options to have the display
+> working on their Exynos machines.
 
-On 23.08.2014 01:54, Kevin Hilman wrote:
-> Tomasz Figa <tomasz.figa@gmail.com> writes:
-> 
->> Kukjin,
->>
->> On 31.07.2014 20:32, Kukjin Kim wrote:
->>> On 07/30/14 17:07, Thomas Abraham wrote:
->>>> The new CPU clock type allows the use of generic CPUfreq drivers. So for
->>>> Exynos4210/5250, switch to using generic cpufreq driver. For Exynos5420,
->>>> which did not have CPUfreq driver support, enable the use of generic
->>>> CPUfreq driver.
->>>>
->>>> Suggested-by: Tomasz Figa<t.figa@samsung.com>
->>>> Cc: Kukjin Kim<kgene.kim@samsung.com>
->>>
->>> Looks good to me,
->>>
->>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->>>
->>> BTW, who will handle this series? I hope see this series in 3.17.
->>
->> This series consists mostly of clock changes and it likely depends on
->> patches already in my for-next, so I would be inclined toward taking it
->> through samsung-clk tree. 
-> 
-> So has this series been picked up anywhere?  I don't see it in your
-> samsung-clk tree, nor in Kukjin's for-next.
+Great, thanks for this!  I spent/wasted quite a bit of time trying to
+figure out which options I needed to enable to get basic display support
+working.
+>
+> In order to test the display panel on the Peach machines,
+> the following patches are also needed:
+>
+> "ARM: dts: Add DT changes for display on peach_pit" [3]
+> "ARM: dts: Add DT changes for display on peach_pi" [4]
 
-No, it has not. In general it was already too late in the release cycle
-when the last version was posted.
+Tested-by: Kevin Hilman <khilman@linaro.org>
 
-I had a plan to take it through clock tree with Kukjin's and Viresh's
-cooperation, but now as you say it...
+On v3.17-rc1 along with these DT patches abvoe on exynos5800/chromebook2
+(peach-pi).
 
-> 
-> Also, I'm curious whether or how this is has been tested on big.LITTLE
-> SoCs.  
-> 
-> I'm trying it on the 5800/Chromebook2 and it's not terribly stable.  I'm
-> testing along with CPUidle, so there may be some untested interactions
-> there as it seems a bit more stable without CPUidle enabled.
-> 
-> I'd love to hear from anyone else that's testing CPUidle and CPUfreq
-> together big.LITTLE 5420/5800, with or without the switcher.
+Thanks,
 
-I'd definitely like to see a clarification on this issues, before this
-series hits mainline or at least its parts related to affected SoCs.
-Also I'd like to hear some confirmation from Samsung Poland R&D Center
-guys (on CC), whether this code works stable on their target boards
-(Universal C210, Trats, Trats2).
-
-> 
-> Also, the patch below[2] is needed for 5800.
-> 
-> FWIW, I have a temporary branch[1] based on the v3.17-rc branch of the
-> exynos-reference tree where I've added the DT patch needed for CPUidle,
-> this series (and it's dependencies) which is what I'm using for testing.
-
-The patch looks fine to me (well, it's trivial :)), thanks.
-
-Best regards,
-Tomasz
+Kevin
