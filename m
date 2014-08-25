@@ -1,79 +1,79 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v9 1/2] regulator: Add driver for max77802 PMIC PMIC regulators
-Date: Mon, 25 Aug 2014 11:07:08 +0200
-Message-ID: <53FAFCBC.2050407@collabora.co.uk>
-References: <1408350762-15520-1-git-send-email-javier.martinez@collabora.co.uk>	<1408350762-15520-2-git-send-email-javier.martinez@collabora.co.uk>	<CA+NduCDL65=Y=PyU3FfXsTz0FfbmYzicGrY4U7ji3_V+nXhtCQ@mail.gmail.com>	<53F73472.8010609@collabora.co.uk>	<20140822144531.GV24407@sirena.org.uk>	<53F7838F.8060906@collabora.co.uk>	<20140822183054.GY24407@sirena.org.uk>	<53F7BDD8.7060500@collabora.co.uk>	<CAD=FV=WC0h7fYm2QFqu3Zka7CsU4BtG-oyPpJav+ygC+gmCR+A@mail.gmail.com> <CA+NduCCT-KQ=gh7QWkBE4qkA2YOJ8KCVqbkC6Tkmb1aPvCsGFQ@mail.gmail.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 2/2] input: cros_ec_keyb: Add of match table
+Date: Mon, 25 Aug 2014 11:33:35 +0200
+Message-ID: <CABxcv=n0J+xXJpD7d0nZj-urXND-i1yCNMQuG2E4LN_sD5gUbQ@mail.gmail.com>
+References: <1408748582-29029-1-git-send-email-sjoerd.simons@collabora.co.uk>
+	<1408748582-29029-3-git-send-email-sjoerd.simons@collabora.co.uk>
+	<53F89A52.60605@cogentembedded.com>
+	<1408952050.31096.5.camel@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:45981 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751849AbaHYJHN (ORCPT
+Received: from mail-wg0-f52.google.com ([74.125.82.52]:58842 "EHLO
+	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751222AbaHYJdg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Aug 2014 05:07:13 -0400
-In-Reply-To: <CA+NduCCT-KQ=gh7QWkBE4qkA2YOJ8KCVqbkC6Tkmb1aPvCsGFQ@mail.gmail.com>
+	Mon, 25 Aug 2014 05:33:36 -0400
+Received: by mail-wg0-f52.google.com with SMTP id a1so12793857wgh.35
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Aug 2014 02:33:35 -0700 (PDT)
+In-Reply-To: <1408952050.31096.5.camel@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yuvaraj Cd <yuvaraj.lkml@gmail.com>, Doug Anderson <dianders@chromium.org>
-Cc: Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, sunil joshi <joshi@samsung.com>
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Doug Anderson <dianders@chromium.org>, Lee Jones <lee.jones@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hello Yuvaraj,
+Hello,
 
-On 08/25/2014 10:22 AM, Yuvaraj Cd wrote:
->>> Good question. I'm not that familiar with the dw_mmc host controller nor
->>> its driver implementation so I'll let Yuvaraj or Doug to answer that.
-> Well,here it goes!
-> 1. Power ON the board LDO4CTRL1[7:6] 11b
-> 2. dw_mmc driver enable the vqmmc.
-> 3. checks for UHS support, complete the voltage switching t0 1.8V
-> 4. Does warm reset by reboot command.
-> 5. mmc core calls mmc_set_ios() with MMC_POWER_OFF.
-> 6. dw_mmc driver cut-off the regulator with LDO4CTRL1[7:6] is 00b
-> 7.dw_mmc driver enable the vqmmc.
->  But after step 7 also, LD4CTRL[7:6] is 00b.
+On Mon, Aug 25, 2014 at 9:34 AM, Sjoerd Simons
+<sjoerd.simons@collabora.co.uk> wrote:
+>> >
+>> >   static SIMPLE_DEV_PM_OPS(cros_ec_keyb_pm_ops, NULL, cros_ec_keyb_resume);
+>> >
+>> > +#ifdef CONFIG_OF
+>> > +static const struct of_device_id cros_ec_keyb_of_match[] = {
+>
+>>     Perhaps better to use '__maybe_unused' instead of #ifdef...
+>
+> Hmm, looks like the rtc-ds1742.c driver is the only one in the kernel
+> tree using that strategy, while all others use #ifdef CONFIG_OF. So i'm
+> inclined to keep the #ifdef here, ooi what is your rationale behind
+> suggesting __maybe_unused?
+>
 
-Ok, so the dw_mmc driver is enabling vqmmc, that's good.
+I agree with Sjoerd on this. Not only using the #ifdef guards makes it
+more evident when reading the code that this depends on OF being
+enabled but also if using __maybe_unused an entry in the struct
+of_device_id table will be added for no reason.
 
+>
+>> > +   { .compatible = "google,cros-ec-keyb" },
+>> > +   {},
+>> > +};
+>> > +MODULE_DEVICE_TABLE(of, cros_ec_keyb_of_match);
+>> > +#endif
+>> > +
+>> > +
 >>
->> I haven't seen the issue that Yuvaraj is reporting (but I also haven't
->> picked up all of the relevant patches and tried to reproduce), so I'm
->> going to have to leave it to Yuvaraj to answer.
->     static int max77802_enable(struct regulator_dev *rdev)
->     {
->       struct max77802_regulator_prv *max77802 = rdev_get_drvdata(rdev);
->      int id = rdev_get_id(rdev);
->      int shift = max77802_get_opmode_shift(id);
->      return regmap_update_bits(rdev->regmap,
-> rdev->desc->enable_reg,rdev->desc->enable_mask,max77802->opmode[id] <<
-> shift);
->   }
-> I think in the above code snippet, the "val" is what we got it during
-> the probe.We always write that value for enabling this regulator(which
-> is LDO4CTRL1[7:6] 00b after warm reset) which is not correct according
-> the MAX77802 manual.
+>>     Too many empty lines.
+>
+>
+>
+>> >   static struct platform_driver cros_ec_keyb_driver = {
+>> >     .probe = cros_ec_keyb_probe,
+>> >     .driver = {
+>> >             .name = "cros-ec-keyb",
+>> > +           .of_match_table = of_match_ptr (cros_ec_keyb_of_match),
 >>
+>>     There shouldn't be space before (.
+>
+> Will fix the identation issues in a v2.
+>
+> Thanks for the review,
+>  Sjoerd
 
-I see, so probably until we have a way to define the operating mode for
-each regulator using DT we should set the opmode to normal when enabling a
-regulator independently of the value the hardware register reported on probe.
+After fixing the empty lines:
 
-Can you please test the following change [0] so I can post as a proper
-patch? Doug, Mark do you think that forcing the regulator to opmode normal
-when enabling is the right solution here?
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
 Best regards,
 Javier
-
-[0]
-diff --git a/drivers/regulator/max77802.c b/drivers/regulator/max77802.c
-index ad1caa9..917b5ab 100644
---- a/drivers/regulator/max77802.c
-+++ b/drivers/regulator/max77802.c
-@@ -180,7 +180,7 @@ static int max77802_enable(struct regulator_dev *rdev)
-
-        return regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
-                                  rdev->desc->enable_mask,
--                                 max77802->opmode[id] << shift);
-+                                 MAX77802_OPMODE_NORMAL << shift);
- }
