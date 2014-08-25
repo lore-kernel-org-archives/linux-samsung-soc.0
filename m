@@ -1,123 +1,89 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH v9 4/6] ARM: Exynos: switch to using generic cpufreq driver
- for Exynos4210/5250/5420
-Date: Mon, 25 Aug 2014 08:53:52 +0200
-Message-ID: <20140825085352.14290508@amdc2363>
-References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
- <1406707663-16656-5-git-send-email-thomas.ab@samsung.com>
- <53DA8BB9.6020702@samsung.com> <53DA8D85.3050106@gmail.com>
- <7hbnrc6px3.fsf@paris.lan> <53F7DA13.6090305@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:49614 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753800AbaHYGyF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Aug 2014 02:54:05 -0400
-In-reply-to: <53F7DA13.6090305@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCHv4 3/4] thermal: exynos: Add support for TRIM_RELOAD feature at
+ Exynos3250
+Date: Mon, 25 Aug 2014 16:30:24 +0900
+Message-ID: <1408951825-2639-4-git-send-email-cw00.choi@samsung.com>
+References: <1408951825-2639-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1408951825-2639-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: eduardo.valentin-l0cyMroinI0@public.gmane.org, amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kevin Hilman <khilman@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, mturquette@linaro.org, heiko@sntech.de, linux-pm@vger.kernel.org, viresh.kumar@linaro.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, amit.kucheria@linaro.org, cw00.choi@samsung.com, Thomas Abraham <thomas.ab@samsung.com>, linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>
 
-Hi Tomasz,
+This patch add support for TRIM_RELOAD feature at Exynos3250. The TMu of
+Exynos3250 has two TRIMINFO_CON register and must need to set RELOAD bit
+before reading TRIMINFO register.
 
-> Hi Kevin,
-> 
-> Thanks for taking a look at this.
-> 
-> On 23.08.2014 01:54, Kevin Hilman wrote:
-> > Tomasz Figa <tomasz.figa@gmail.com> writes:
-> > 
-> >> Kukjin,
-> >>
-> >> On 31.07.2014 20:32, Kukjin Kim wrote:
-> >>> On 07/30/14 17:07, Thomas Abraham wrote:
-> >>>> The new CPU clock type allows the use of generic CPUfreq
-> >>>> drivers. So for Exynos4210/5250, switch to using generic cpufreq
-> >>>> driver. For Exynos5420, which did not have CPUfreq driver
-> >>>> support, enable the use of generic CPUfreq driver.
-> >>>>
-> >>>> Suggested-by: Tomasz Figa<t.figa@samsung.com>
-> >>>> Cc: Kukjin Kim<kgene.kim@samsung.com>
-> >>>
-> >>> Looks good to me,
-> >>>
-> >>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> >>>
-> >>> BTW, who will handle this series? I hope see this series in 3.17.
-> >>
-> >> This series consists mostly of clock changes and it likely depends
-> >> on patches already in my for-next, so I would be inclined toward
-> >> taking it through samsung-clk tree. 
-> > 
-> > So has this series been picked up anywhere?  I don't see it in your
-> > samsung-clk tree, nor in Kukjin's for-next.
-> 
-> No, it has not. In general it was already too late in the release
-> cycle when the last version was posted.
-> 
-> I had a plan to take it through clock tree with Kukjin's and Viresh's
-> cooperation, but now as you say it...
-> 
-> > 
-> > Also, I'm curious whether or how this is has been tested on
-> > big.LITTLE SoCs.  
-> > 
-> > I'm trying it on the 5800/Chromebook2 and it's not terribly
-> > stable.  I'm testing along with CPUidle, so there may be some
-> > untested interactions there as it seems a bit more stable without
-> > CPUidle enabled.
-> > 
-> > I'd love to hear from anyone else that's testing CPUidle and CPUfreq
-> > together big.LITTLE 5420/5800, with or without the switcher.
-> 
-> I'd definitely like to see a clarification on this issues, before this
-> series hits mainline or at least its parts related to affected SoCs.
+Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Amit Daniel Kachhap <amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Amit Daniel Kachhap <amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/thermal/samsung/exynos_tmu_data.c | 11 +++++++++--
+ drivers/thermal/samsung/exynos_tmu_data.h |  7 +++++--
+ 2 files changed, 14 insertions(+), 4 deletions(-)
 
-It is a huge step forward - to be honest it is a serious rework of
-cpufreq subsystem for Exynos SoCs.
-
-> Also I'd like to hear some confirmation from Samsung Poland R&D Center
-> guys (on CC), whether this code works stable on their target boards
-> (Universal C210, Trats, Trats2).
-> 
-
-Since we have missed the merge window with this code, I can declare
-that I will provide code, which means that I will do the cleanup for
-excluded from this series Exynos4 SoCs, to test the cpufreq-cpu0.
-
-However, I'm concerned with Exynos4412, which supports BOOST. It might
-not be trivial to provide support for it.
-
-I think, that we shall not drop behind any functionality during clean
-up.
-
-> > 
-> > Also, the patch below[2] is needed for 5800.
-> > 
-> > FWIW, I have a temporary branch[1] based on the v3.17-rc branch of
-> > the exynos-reference tree where I've added the DT patch needed for
-> > CPUidle, this series (and it's dependencies) which is what I'm
-> > using for testing.
-> 
-> The patch looks fine to me (well, it's trivial :)), thanks.
-> 
-> Best regards,
-> Tomasz
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
-
-
+diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
+index 754c638..4006eb4 100644
+--- a/drivers/thermal/samsung/exynos_tmu_data.c
++++ b/drivers/thermal/samsung/exynos_tmu_data.c
+@@ -95,6 +95,11 @@ static const struct exynos_tmu_registers exynos3250_tmu_registers = {
+ 	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
+ 	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
+ 	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
++	.triminfo_ctrl[0] = EXYNOS_TMU_TRIMINFO_CON1,
++	.triminfo_ctrl[1] = EXYNOS_TMU_TRIMINFO_CON2,
++	.triminfo_ctrl_count = 2,
++	.triminfo_reload_shift = EXYNOS_TRIMINFO_RELOAD_SHIFT,
++	.triminfo_reload_mask = EXYNOS_TRIMINFO_RELOAD_MASK,
+ 	.tmu_ctrl = EXYNOS_TMU_REG_CONTROL,
+ 	.test_mux_addr_shift = EXYNOS4412_MUX_ADDR_SHIFT,
+ 	.buf_vref_sel_shift = EXYNOS_TMU_REF_VOLTAGE_SHIFT,
+@@ -161,7 +166,9 @@ static const struct exynos_tmu_registers exynos3250_tmu_registers = {
+ 	}, \
+ 	.freq_tab_count = 2, \
+ 	.registers = &exynos3250_tmu_registers, \
+-	.features = (TMU_SUPPORT_EMULATION | \
++	.triminfo_reload[0] = EXYNOS_TRIMINFO_RELOAD_ENABLE, \
++	.triminfo_reload[1] = EXYNOS_TRIMINFO_RELOAD_ENABLE, \
++	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_TRIM_RELOAD | \
+ 			TMU_SUPPORT_FALLING_TRIP | TMU_SUPPORT_READY_STATUS | \
+ 			TMU_SUPPORT_EMUL_TIME)
+ #endif
+@@ -184,7 +191,7 @@ static const struct exynos_tmu_registers exynos4412_tmu_registers = {
+ 	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
+ 	.triminfo_25_shift = EXYNOS_TRIMINFO_25_SHIFT,
+ 	.triminfo_85_shift = EXYNOS_TRIMINFO_85_SHIFT,
+-	.triminfo_ctrl[0] = EXYNOS_TMU_TRIMINFO_CON,
++	.triminfo_ctrl[0] = EXYNOS_TMU_TRIMINFO_CON2,
+ 	.triminfo_ctrl_count = 1,
+ 	.triminfo_reload_shift = EXYNOS_TRIMINFO_RELOAD_SHIFT,
+ 	.triminfo_reload_mask = EXYNOS_TRIMINFO_RELOAD_MASK,
+diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
+index 87454f63..f62fdde 100644
+--- a/drivers/thermal/samsung/exynos_tmu_data.h
++++ b/drivers/thermal/samsung/exynos_tmu_data.h
+@@ -57,8 +57,11 @@
+ #define EXYNOS4210_TMU_TRIG_LEVEL_MASK	0x1111
+ #define EXYNOS4210_TMU_INTCLEAR_VAL	0x1111
+ 
+-/* Exynos5250 and Exynos4412 specific registers */
+-#define EXYNOS_TMU_TRIMINFO_CON	0x14
++/*  Exynos3250 specific registers */
++#define EXYNOS_TMU_TRIMINFO_CON1	0x10
++
++/* Exynos5250 ,Exynos4412 and Exynos3250 specific registers */
++#define EXYNOS_TMU_TRIMINFO_CON2	0x14
+ #define EXYNOS_THD_TEMP_RISE		0x50
+ #define EXYNOS_THD_TEMP_FALL		0x54
+ #define EXYNOS_EMUL_CON		0x80
 -- 
-Best regards,
+1.8.0
 
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
