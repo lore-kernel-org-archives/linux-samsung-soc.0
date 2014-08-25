@@ -1,86 +1,108 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCHv10 0/5] ARM: remove the sub-node and deprecate
- supports-highspeed property for dwmmc.
-Date: Mon, 25 Aug 2014 21:11:51 +0900
-Message-ID: <53FB2807.7070503@samsung.com>
-References: <1407397082-32495-1-git-send-email-jh80.chung@samsung.com>
- <20140825112151.GA21336@amd> <53FB1DD5.3050207@samsung.com>
- <20140825113719.GA31960@amd> <53FB278B.7010509@samsung.com>
+From: Chander Kashyap <k.chander@samsung.com>
+Subject: Re: [PATCH v9 4/6] ARM: Exynos: switch to using generic cpufreq
+ driver for Exynos4210/5250/5420
+Date: Mon, 25 Aug 2014 17:45:07 +0530
+Message-ID: <CADWw7OgAS-z-UOrJU-hL2fzuefJmLtCTg57jYk2Df7f5KfLJmA@mail.gmail.com>
+References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
+	<1406707663-16656-5-git-send-email-thomas.ab@samsung.com>
+	<53DA8BB9.6020702@samsung.com>
+	<53DA8D85.3050106@gmail.com>
+	<7hbnrc6px3.fsf@paris.lan>
+	<53F7DA13.6090305@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <53FB278B.7010509@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Pavel Machek <pavel@denx.de>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, kgene.kim@samsung.com, heiko@sntech.de, tgih.jun@samsung.com, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, linux-samsung-soc@vger.kernel.org, dinguyen@altera.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <53F7DA13.6090305@gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Kevin Hilman <khilman@linaro.org>, Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, amit.kucheria@linaro.org, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linaro-kernel@lists.linaro.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 08/25/2014 09:09 PM, Jaehoon Chung wrote:
-> On 08/25/2014 08:37 PM, Pavel Machek wrote:
->> On Mon 2014-08-25 20:28:21, Jaehoon Chung wrote:
->>> On 08/25/2014 08:21 PM, Pavel Machek wrote:
->>>> On Thu 2014-08-07 16:37:57, Jaehoon Chung wrote:
->>>>> Since used the mmc_of_parse(), didn't parse the sub-node.
->>>>> So we can remove the sub-node, because almost SoC used the only one card per a host.
->>>>> And supports-highspeed can be replaced with "cap-mmc/sd-highspeed"
->>>>> property.
->>>>
->>>> Would it be better to fix parsing of the device tree, and not to
->>>> change all the device trees?
->>>>
->>>> Someone will want to do two slots sooner or later...
->>>>
+Hi Kevin, Tomasz,
+
+On Sat, Aug 23, 2014 at 5:32 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Kevin,
+>
+> Thanks for taking a look at this.
+>
+> On 23.08.2014 01:54, Kevin Hilman wrote:
+>> Tomasz Figa <tomasz.figa@gmail.com> writes:
+>>
+>>> Kukjin,
 >>>
->>> First, I had considered that controller can be supported the multiple slot.
->>> But MMC maintainers and other people suggested that consider the only one card per a host.
->>> Two slots or more don't have any benefit, (power or performance, etc).
+>>> On 31.07.2014 20:32, Kukjin Kim wrote:
+>>>> On 07/30/14 17:07, Thomas Abraham wrote:
+>>>>> The new CPU clock type allows the use of generic CPUfreq drivers. So for
+>>>>> Exynos4210/5250, switch to using generic cpufreq driver. For Exynos5420,
+>>>>> which did not have CPUfreq driver support, enable the use of generic
+>>>>> CPUfreq driver.
+>>>>>
+>>>>> Suggested-by: Tomasz Figa<t.figa@samsung.com>
+>>>>> Cc: Kukjin Kim<kgene.kim@samsung.com>
+>>>>
+>>>> Looks good to me,
+>>>>
+>>>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+>>>>
+>>>> BTW, who will handle this series? I hope see this series in 3.17.
+>>>
+>>> This series consists mostly of clock changes and it likely depends on
+>>> patches already in my for-next, so I would be inclined toward taking it
+>>> through samsung-clk tree.
 >>
->> Would you elaborate?
+>> So has this series been picked up anywhere?  I don't see it in your
+>> samsung-clk tree, nor in Kukjin's for-next.
+>
+> No, it has not. In general it was already too late in the release cycle
+> when the last version was posted.
+>
+> I had a plan to take it through clock tree with Kukjin's and Viresh's
+> cooperation, but now as you say it...
+>
 >>
->> If I have a device like a phone, I may want to put one "slot" inside
->> phone for basic system, and offer second slot for user expansion
->> (initially empty).
-> 
-> if multiple slot is supported, then a mmcqd should be processing for multiple slots.
-> It's too inefficient, and affect the whole performance reduction.
-Sorry, Discard this comment. it means dwmci, not mmcqd.
+>> Also, I'm curious whether or how this is has been tested on big.LITTLE
+>> SoCs.
+>>
+>> I'm trying it on the 5800/Chromebook2 and it's not terribly stable.  I'm
+>> testing along with CPUidle, so there may be some untested interactions
+>> there as it seems a bit more stable without CPUidle enabled.
+>>
+>> I'd love to hear from anyone else that's testing CPUidle and CPUfreq
+>> together big.LITTLE 5420/5800, with or without the switcher.
 
-> 
-> If want to offer the second slot for user expansion, add the host for expansion slot.
-> Almost All SoC didn't use the multiple slot per a host controller for eMMC/SD/SDIO.
-> 
-> If Some device(Phone) supports the SD-card and eMMC, then there are two Host IP.
-> One Host IP is used for eMMC, other is used for SD-card.
-> 
-> this is H/W design issue.
-> 
-> a) You means the below,
-> 
-> One Host IP -------- eMMC
-> 		|
-> 		---- SD
-> 		|
-> 		---- SDIO
-> 
-> b) We means the below
-> One Host IP -------- eMMC
-> One Host IP -------- SD
-> One Host IP -------- SDIO
-> 
-> In now, I knew every SoC have used like b) type. I didn't see a) type (especially, dwmmc's case).
-> 
-> If i missed something, let me know, plz.
-> 
-> Best Regards,
-> Jaehoon Chung
-> 
->>
->> Or I may want to have internal slot with a card to boot from and have
->> external slot (initially empty) for system update for embedded system.
->>
->> I see quite an obvious benefit there.
->> 									Pavel
->>
-> 
+I have tested this patch series on SMDK5420 with cpuidle (with and
+without b.L switcher enabled).
 
+As of now voltage scaling support is not there in generic big-little
+cpufreq driver (arm_big_little.c).
+Hence need to tie arm and kfc voltages to highest level for testing.
+
+Without this change stability issues are there, but with this change
+everything is stable.
+
+>
+> I'd definitely like to see a clarification on this issues, before this
+> series hits mainline or at least its parts related to affected SoCs.
+> Also I'd like to hear some confirmation from Samsung Poland R&D Center
+> guys (on CC), whether this code works stable on their target boards
+> (Universal C210, Trats, Trats2).
+>
+>>
+>> Also, the patch below[2] is needed for 5800.
+>>
+>> FWIW, I have a temporary branch[1] based on the v3.17-rc branch of the
+>> exynos-reference tree where I've added the DT patch needed for CPUidle,
+>> this series (and it's dependencies) which is what I'm using for testing.
+>
+> The patch looks fine to me (well, it's trivial :)), thanks.
+>
+> Best regards,
+> Tomasz
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+regards,
+Chander
