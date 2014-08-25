@@ -1,142 +1,55 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCHv4 2/4] thermal: exynos: Add support for many TRIMINFO_CTRL
- registers
-Date: Mon, 25 Aug 2014 13:28:29 +0200
-Message-ID: <1595080.7e4t1E1lOO@amdc1032>
-References: <1408951825-2639-1-git-send-email-cw00.choi@samsung.com>
- <53FB11E5.2070503@samsung.com> <13170930.3cdcLOtxou@amdc1032>
+From: Pavel Machek <pavel@denx.de>
+Subject: Re: [PATCHv10 0/5] ARM: remove the sub-node and deprecate
+ supports-highspeed property for dwmmc.
+Date: Mon, 25 Aug 2014 13:37:19 +0200
+Message-ID: <20140825113719.GA31960@amd>
+References: <1407397082-32495-1-git-send-email-jh80.chung@samsung.com>
+ <20140825112151.GA21336@amd>
+ <53FB1DD5.3050207@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:64809 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755041AbaHYL2j (ORCPT
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:54521 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755150AbaHYLhV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Aug 2014 07:28:39 -0400
-In-reply-to: <13170930.3cdcLOtxou@amdc1032>
+	Mon, 25 Aug 2014 07:37:21 -0400
+Content-Disposition: inline
+In-Reply-To: <53FB1DD5.3050207@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, eduardo.valentin@ti.com, amit.daniel@samsung.com, rui.zhang@intel.com, mark.rutland@arm.com, devicetree@vger.kernel.org, kgene.kim@samsung.com, pawel.moll@arm.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, ch.naveen@samsung.com
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, kgene.kim@samsung.com, heiko@sntech.de, tgih.jun@samsung.com, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, linux-samsung-soc@vger.kernel.org, dinguyen@altera.com, linux-arm-kernel@lists.infradead.org
 
-On Monday, August 25, 2014 01:19:04 PM Bartlomiej Zolnierkiewicz wrote:
-> On Monday, August 25, 2014 07:37:25 PM Chanwoo Choi wrote:
-> > Hi Bartlomiej,
+On Mon 2014-08-25 20:28:21, Jaehoon Chung wrote:
+> On 08/25/2014 08:21 PM, Pavel Machek wrote:
+> > On Thu 2014-08-07 16:37:57, Jaehoon Chung wrote:
+> >> Since used the mmc_of_parse(), didn't parse the sub-node.
+> >> So we can remove the sub-node, because almost SoC used the only one card per a host.
+> >> And supports-highspeed can be replaced with "cap-mmc/sd-highspeed"
+> >> property.
 > > 
-> > On 08/25/2014 07:15 PM, Bartlomiej Zolnierkiewicz wrote:
-> > > 
-> > > Hi,
-> > > 
-> > > On Monday, August 25, 2014 04:30:23 PM Chanwoo Choi wrote:
-> > >> This patch support many TRIMINFO_CTRL registers if specific Exynos SoC
-> > >> has one more TRIMINFO_CTRL registers. Also this patch uses proper 'RELOAD'
-> > >> shift/mask bit operation to set RELOAD feature instead of static value.
-> > >>
-> > >> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> > >> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > >> Cc: Zhang Rui <rui.zhang@intel.com>
-> > >> Cc: Eduardo Valentin <edubezval@gmail.com>
-> > >> Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> > >> Reviewed-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> > >> ---
-> > >>  drivers/thermal/samsung/exynos_thermal_common.h |  1 +
-> > >>  drivers/thermal/samsung/exynos_tmu.c            | 23 ++++++++++++++++++++---
-> > >>  drivers/thermal/samsung/exynos_tmu.h            |  9 +++++++--
-> > >>  drivers/thermal/samsung/exynos_tmu_data.c       |  5 ++++-
-> > >>  drivers/thermal/samsung/exynos_tmu_data.h       |  3 +++
-> > >>  5 files changed, 35 insertions(+), 6 deletions(-)
-> > >>
-> > >> diff --git a/drivers/thermal/samsung/exynos_thermal_common.h b/drivers/thermal/samsung/exynos_thermal_common.h
-> > >> index 3eb2ed9..b211976 100644
-> > >> --- a/drivers/thermal/samsung/exynos_thermal_common.h
-> > >> +++ b/drivers/thermal/samsung/exynos_thermal_common.h
-> > >> @@ -28,6 +28,7 @@
-> > >>  #define MAX_TRIP_COUNT	8
-> > >>  #define MAX_COOLING_DEVICE 4
-> > >>  #define MAX_THRESHOLD_LEVS 5
-> > >> +#define MAX_TRIMINFO_CTRL_REG	2
-> > >>  
-> > >>  #define ACTIVE_INTERVAL 500
-> > >>  #define IDLE_INTERVAL 10000
-> > >> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> > >> index acbff14..7234f38 100644
-> > >> --- a/drivers/thermal/samsung/exynos_tmu.c
-> > >> +++ b/drivers/thermal/samsung/exynos_tmu.c
-> > >> @@ -147,7 +147,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
-> > >>  	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-> > >>  	struct exynos_tmu_platform_data *pdata = data->pdata;
-> > >>  	const struct exynos_tmu_registers *reg = pdata->registers;
-> > >> -	unsigned int status, trim_info = 0, con;
-> > >> +	unsigned int status, trim_info = 0, con, ctrl;
-> > >>  	unsigned int rising_threshold = 0, falling_threshold = 0;
-> > >>  	int ret = 0, threshold_code, i, trigger_levs = 0;
-> > >>  
-> > >> @@ -164,8 +164,25 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
-> > >>  		}
-> > >>  	}
-> > >>  
-> > >> -	if (TMU_SUPPORTS(pdata, TRIM_RELOAD))
-> > >> -		__raw_writel(1, data->base + reg->triminfo_ctrl);
-> > >> +	if (TMU_SUPPORTS(pdata, TRIM_RELOAD)) {
-> > >> +		if (reg->triminfo_ctrl_count > MAX_TRIMINFO_CTRL_REG) {
-> > > 
-> > > Please remove this check and MAX_TRIMINFO_CTRL_REG define.
-> > > 
-> > > We do not want such runtime checks for development time errors.
+> > Would it be better to fix parsing of the device tree, and not to
+> > change all the device trees?
 > > 
-> > OK, I'll remove it.
+> > Someone will want to do two slots sooner or later...
 > > 
-> > > 
-> > >> +			ret = -EINVAL;
-> > >> +			goto out;
-> > >> +		}
-> > >> +
-> > >> +		for (i = 0; i < reg->triminfo_ctrl_count; i++) {
-> > >> +			if (pdata->triminfo_reload[i]) {
-> > >> +				ctrl = readl(data->base +
-> > >> +						reg->triminfo_ctrl[i]);
-> > >> +				ctrl &= ~(reg->triminfo_reload_mask <<
-> > >> +						reg->triminfo_reload_shift);
-> > >> +				ctrl |= pdata->triminfo_reload[i] <<
-> > >> +						reg->triminfo_reload_shift;
-> > > 
-> > > triminfo_reload_shift and triminfo_reload_mask variables have always
-> > > the same values when this code is run so there is no need for them.
-> > 
-> > I don't understand. Do you mean that timinfo_reload_{shift/mask} variable is un-needed?
 > 
-> Yes.
-> 
-> > If you possible, I need more detailed comment.
-> 
-> Currently triminfo_reload_shift is always "0" and triminfo_reload_mask
-> is "1" so there is no need to add an abstraction for different SoCs
-> (it should be added only when there is a real need for it).
-> 
-> Please just rewrite this code as:
-> 
-> 			if (pdata->triminfo_reload[i]) {
-> 				ctrl = readl(data->base +
-> 						reg->triminfo_ctrl[i]);
-> 				ctrl |= pdata->triminfo_reload[i];
-> 				__raw_writel(ctrl, data->base +
-> 						reg->triminfo_ctrl[i]);
-> 			}
+> First, I had considered that controller can be supported the multiple slot.
+> But MMC maintainers and other people suggested that consider the only one card per a host.
+> Two slots or more don't have any benefit, (power or performance, etc).
 
-or even better lets get rid of the only __raw_writel() call in Exynos
-thermal driver while at it:
+Would you elaborate?
 
-			if (pdata->triminfo_reload[i]) {
-				ctrl = readl(data->base +
-						reg->triminfo_ctrl[i]);
-				ctrl |= pdata->triminfo_reload[i];
-				writel(ctrl, data->base +
-						reg->triminfo_ctrl[i]);
-			}
+If I have a device like a phone, I may want to put one "slot" inside
+phone for basic system, and offer second slot for user expansion
+(initially empty).
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Or I may want to have internal slot with a card to boot from and have
+external slot (initially empty) for system update for embedded system.
+
+I see quite an obvious benefit there.
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
