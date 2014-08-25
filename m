@@ -1,69 +1,74 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v9 4/6] ARM: Exynos: switch to using generic cpufreq driver
- for Exynos4210/5250/5420
-Date: Mon, 25 Aug 2014 17:56:36 +0200
-Message-ID: <53FB5CB4.4050705@samsung.com>
-References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
- <1406707663-16656-5-git-send-email-thomas.ab@samsung.com>
- <53DA8BB9.6020702@samsung.com> <53DA8D85.3050106@gmail.com>
- <7hbnrc6px3.fsf@paris.lan> <53F7DA13.6090305@gmail.com>
- <CADWw7OgAS-z-UOrJU-hL2fzuefJmLtCTg57jYk2Df7f5KfLJmA@mail.gmail.com>
- <7h8umc60we.fsf@paris.lan>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v2 0/7] Second batch of cleanups for cros_ec
+Date: Mon, 25 Aug 2014 10:05:34 -0700
+Message-ID: <20140825170533.GA29350@core.coreip.homeip.net>
+References: <1408974008-17184-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <7h8umc60we.fsf@paris.lan>
-Sender: linux-pm-owner@vger.kernel.org
-To: Kevin Hilman <khilman@linaro.org>, Chander Kashyap <k.chander@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?windows-1252?Q?Heiko_St=FCbn?= =?windows-1252?Q?er?= <heiko@sntech.de>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, amit.kucheria@linaro.org, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linaro-kernel@lists.linaro.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1408974008-17184-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-input-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 25.08.2014 17:32, Kevin Hilman wrote:
-> Hi Chander,
+On Mon, Aug 25, 2014 at 03:40:01PM +0200, Javier Martinez Canillas wrote:
+> This is a second batch of cleanups patches for the mfd cros_ec
+> driver and its subdevices drivers. The first batch of cleanups
+> was posted by Doug Anderson [0] and have already been merged.
+> The patches were picked from the ChromeOS 3.8 kernel and after
+> these no cleanups patches for cros_ec are left, only commits
+> that add cros ec support not yet available in mainline.
 > 
-> Chander Kashyap <k.chander@samsung.com> writes:
+> This is a second version of the patch series that addresses
+> issues pointed out by Doug Anderson and Lee Jones on v1 [1].
 > 
-> [...]
+> There is almost no functionality added on this series but the
+> idea is to reduce the delta between the mainline drivers and
+> the ones in the downstream Chrome OS 3.8 kernel so the missing
+> functionality can be added on top once these cleanups patches
+> are merged. The missing functionlity currently in mainline is:
 > 
->>>> I'm trying it on the 5800/Chromebook2 and it's not terribly stable.  I'm
->>>> testing along with CPUidle, so there may be some untested interactions
->>>> there as it seems a bit more stable without CPUidle enabled.
->>>>
->>>> I'd love to hear from anyone else that's testing CPUidle and CPUfreq
->>>> together big.LITTLE 5420/5800, with or without the switcher.
->>
->> I have tested this patch series on SMDK5420 with cpuidle (with and
->> without b.L switcher enabled).
->>
->> As of now voltage scaling support is not there in generic big-little
->> cpufreq driver (arm_big_little.c).
->> Hence need to tie arm and kfc voltages to highest level for testing.
+> - Chrome OS Embedded Controller userspace device interface
+> - Chrome OS Embedded Controller Low Pin Count (LPC) inteface
+> - Access to vboot context stored on a block device
+> - Access to vboot context stored on EC's nvram
 > 
->> Without this change stability issues are there, but with this change
->> everything is stable.
+> The patches in this series are authored by different people
+> (all on cc) and consist of the following:
 > 
-> Can you clarify how you're setting the voltages to ensure stability?
+> Andrew Bresticker (3):
+>   mfd: cros_ec: stop calling ->cmd_xfer() directly
+>   mfd: cros_ec: move locking into cros_ec_cmd_xfer
+>   mfd: cros_ec: wait for completion of commands that return IN_PROGRESS
 > 
-> Tomasz, I didn't mean to suggest this isn't ready for mainline.
+> Derek Basehore (1):
+>   i2c: i2c-cros-ec-tunnel: Set retries to 3
+> 
+> Doug Anderson (1):
+>   mfd: cros_ec: Delay for 50ms when we see EC_CMD_REBOOT_EC
+> 
+> Todd Broch (2):
+>   mfd: cros_ec: Instantiate sub-devices from device tree
+>   Input: cros_ec_keyb: Optimize ghosting algorithm.
+> 
+>  drivers/i2c/busses/i2c-cros-ec-tunnel.c |  5 +-
+>  drivers/input/keyboard/cros_ec_keyb.c   | 94 ++++++++++++++++++---------------
+>  drivers/mfd/cros_ec.c                   | 78 ++++++++++++++++++++-------
+>  drivers/mfd/cros_ec_spi.c               | 20 ++++---
+>  include/linux/mfd/cros_ec.h             | 24 ++++++---
+>  5 files changed, 141 insertions(+), 80 deletions(-)
+> 
+> Patches #1, #2, #6 and #7 do not depend of others so they can be
+> merged independently but patches #3, #4 and #5 have to be merged
+> in that specific order since they depend on the previous one. 
 
-I haven't said that either. I'd just like to know in what state this
-series is in case of those SoCs. However, if there are stability issues
-on them, there is also a chance that the same is true for other boards.
+#7 does not apply to my tree (I guess it depends on the 1st batch which I
+expect will go through MFD tree?). Maybe you could rebase it on top of my next
+so it can be applied sooner? Or it really needs parts of patchset #1?
 
-Anyway, we're early in releasy cycle, so probably we could get better
-test coverage with this series in linux-next.
+Thanks.
 
-Kukjin, Viresh, how would you want to proceed with merging it? It
-touches mach-exynos, cpufreq and samsung-clk, so it is non-trivial to
-merge. However as far as I can see the cpufreq-related changes are just
-a number of full file deletes and minor Makefile/Kconfig updates. It
-will be more difficult with mach-exynos changes, as they are more likely
-to produce conflict.
-
-The only solution that comes to my mind is that I first apply patches 1
-and 2, create a stable branch for Kukjin, then he applies patches 3, 4,
-and 5 and creates a stable branch for me, on top of which I apply patch 6.
-
-Best regards,
-Tomasz
+-- 
+Dmitry
