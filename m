@@ -1,94 +1,75 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v2 5/7] mfd: cros_ec: wait for completion of commands that return IN_PROGRESS
-Date: Mon, 25 Aug 2014 15:40:06 +0200
-Message-ID: <1408974008-17184-6-git-send-email-javier.martinez@collabora.co.uk>
-References: <1408974008-17184-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:46160 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932262AbaHYNkh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Aug 2014 09:40:37 -0400
-In-Reply-To: <1408974008-17184-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Doug Anderson <dianders@google.com>
+Subject: Re: [PATCH V2 1/3] mmc: dw_mmc: use mmc_regulator_get_supply to
+ handle regulators
+Date: Mon, 25 Aug 2014 08:06:50 -0700
+Message-ID: <CAD=FV=U-izXxh2DcBs=ZmS5vhvByHYL9yX7xOsDq-0te=dmC8Q@mail.gmail.com>
+References: <1408715272-13833-1-git-send-email-yuvaraj.cd@samsung.com>
+	<1408715272-13833-2-git-send-email-yuvaraj.cd@samsung.com>
+	<53FB2CC2.9070905@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <53FB2CC2.9070905@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Abhilash Kesavan <a.kesavan@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, CPGS <cpgs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-From: Andrew Bresticker <abrestic@chromium.org>
+Jaehoon,
 
-When an EC command returns EC_RES_IN_PROGRESS, we need to query
-the state of the EC until it indicates that it is no longer busy.
-Do this in cros_ec_cmd_xfer() under the EC's mutex so that other
-commands (e.g. keyboard, I2C passtru) aren't issued to the EC while
-it is working on the in-progress command.
+On Mon, Aug 25, 2014 at 5:32 AM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> On 08/22/2014 10:47 PM, Yuvaraj Kumar C D wrote:
+>> This patch makes use of mmc_regulator_get_supply() to handle
+>> the vmmc and vqmmc regulators.Also it moves the code handling
+>> the these regulators to dw_mci_set_ios().It turned on the vmmc
+>> and vqmmc during MMC_POWER_UP and MMC_POWER_ON,and turned off
+>> during MMC_POWER_OFF.
+>>
+>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+>> ---
+>> changes from v1:
+>>       1.Used mmc_regulator_set_ocr() instead of regulator_enable() for vmmc.
+>>       2.Turned on vmmc and vqmmc during MMC_POWER_UP.
+>>       3. Removed the flags DW_MMC_CARD_POWERED and DW_MMC_IO_POWERED which
+>>          added during the initial version of this patch.
+>>       4. Added error message, if it failed to turn on regulator's.
+>>
+>>  drivers/mmc/host/dw_mmc.c  |   72 +++++++++++++++++++++-----------------------
+>>  include/linux/mmc/dw_mmc.h |    2 +-
+>>  2 files changed, 36 insertions(+), 38 deletions(-)
+>>
+>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>> index 7f227e9..aadb0d6 100644
+>> --- a/drivers/mmc/host/dw_mmc.c
+>> +++ b/drivers/mmc/host/dw_mmc.c
+>> @@ -936,6 +936,7 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>>       struct dw_mci_slot *slot = mmc_priv(mmc);
+>>       const struct dw_mci_drv_data *drv_data = slot->host->drv_data;
+>>       u32 regs;
+>> +     int ret;
+>>
+>>       switch (ios->bus_width) {
+>>       case MMC_BUS_WIDTH_4:
+>> @@ -974,12 +975,38 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>>
+>>       switch (ios->power_mode) {
+>>       case MMC_POWER_UP:
+>> +             if (!IS_ERR(mmc->supply.vmmc)) {
+>> +                     ret = mmc_regulator_set_ocr(mmc, mmc->supply.vmmc,
+>> +                                     ios->vdd);
+>> +                     if (ret) {
+>> +                             dev_err(slot->host->dev,
+>> +                                     "failed to enable vmmc regulator\n");
+>> +                             /*return, if failed turn on vmmc*/
+>> +                             return;
+>> +                     }
+>> +             }
+>> +             if (!IS_ERR(mmc->supply.vqmmc) && !slot->host->vqmmc_enabled) {
+>
+> Can't use the regulator_is_enabled() instead of "slot->host->vqmmc_enabled"?
 
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-Reviewed-by: Simon Glass <sjg@chromium.org>
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
+I think we mentioned this before, but regulator_is_enabled() won't do
+what you want with shared regulators since they are refcounted.  You
+need to keep track of whether you've enabled the regulator yourself.
 
-Changes since v1:
- - The *xfer() calls don't modify the passed cros_ec_command so there is
-   no need to populate it inside the for loop. Suggested by Lee Jones.
----
- drivers/mfd/cros_ec.c | 34 +++++++++++++++++++++++++++++++++-
- 1 file changed, 33 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-index c53804a..cd0c93c 100644
---- a/drivers/mfd/cros_ec.c
-+++ b/drivers/mfd/cros_ec.c
-@@ -23,6 +23,10 @@
- #include <linux/mfd/core.h>
- #include <linux/mfd/cros_ec.h>
- #include <linux/mfd/cros_ec_commands.h>
-+#include <linux/delay.h>
-+
-+#define EC_COMMAND_RETRIES	50
-+#define EC_RETRY_DELAY_MS	10
- 
- int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
- 		       struct cros_ec_command *msg)
-@@ -65,10 +69,38 @@ EXPORT_SYMBOL(cros_ec_check_result);
- int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
- 		     struct cros_ec_command *msg)
- {
--	int ret;
-+	int ret, i;
-+	struct cros_ec_command status_msg;
-+	struct ec_response_get_comms_status status;
- 
- 	mutex_lock(&ec_dev->lock);
- 	ret = ec_dev->cmd_xfer(ec_dev, msg);
-+	if (ret == -EAGAIN && msg->result == EC_RES_IN_PROGRESS) {
-+		/*
-+		 * Query the EC's status until it's no longer busy or
-+		 * we encounter an error.
-+		 */
-+		status_msg.version = 0;
-+		status_msg.command = EC_CMD_GET_COMMS_STATUS;
-+		status_msg.outdata = NULL;
-+		status_msg.outsize = 0;
-+		status_msg.indata = (uint8_t *)&status;
-+		status_msg.insize = sizeof(status);
-+
-+		for (i = 0; i < EC_COMMAND_RETRIES; i++) {
-+			msleep(EC_RETRY_DELAY_MS);
-+
-+			ret = ec_dev->cmd_xfer(ec_dev, &status_msg);
-+			if (ret < 0)
-+				break;
-+
-+			msg->result = status_msg.result;
-+			if (status_msg.result != EC_RES_SUCCESS)
-+				break;
-+			if (!(status.flags & EC_COMMS_STATUS_PROCESSING))
-+				break;
-+		}
-+	}
- 	mutex_unlock(&ec_dev->lock);
- 
- 	return ret;
--- 
-2.0.1
+-Doug
