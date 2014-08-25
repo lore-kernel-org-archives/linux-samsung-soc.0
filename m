@@ -1,83 +1,155 @@
-From: Yuvaraj Cd <yuvaraj.lkml@gmail.com>
-Subject: Re: [PATCH v9 1/2] regulator: Add driver for max77802 PMIC PMIC regulators
-Date: Mon, 25 Aug 2014 13:52:04 +0530
-Message-ID: <CA+NduCCT-KQ=gh7QWkBE4qkA2YOJ8KCVqbkC6Tkmb1aPvCsGFQ@mail.gmail.com>
-References: <1408350762-15520-1-git-send-email-javier.martinez@collabora.co.uk>
-	<1408350762-15520-2-git-send-email-javier.martinez@collabora.co.uk>
-	<CA+NduCDL65=Y=PyU3FfXsTz0FfbmYzicGrY4U7ji3_V+nXhtCQ@mail.gmail.com>
-	<53F73472.8010609@collabora.co.uk>
-	<20140822144531.GV24407@sirena.org.uk>
-	<53F7838F.8060906@collabora.co.uk>
-	<20140822183054.GY24407@sirena.org.uk>
-	<53F7BDD8.7060500@collabora.co.uk>
-	<CAD=FV=WC0h7fYm2QFqu3Zka7CsU4BtG-oyPpJav+ygC+gmCR+A@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH V2 2/3] mmc: dw_mmc: Support voltage changes
+Date: Mon, 25 Aug 2014 10:31:14 +0200
+Message-ID: <CAPDyKFo4fEppn21ani_p_t2Z-hhafAFRVSA2nPr9fed3iS8Q_A@mail.gmail.com>
+References: <1408715272-13833-1-git-send-email-yuvaraj.cd@samsung.com>
+	<1408715272-13833-3-git-send-email-yuvaraj.cd@samsung.com>
+	<CAPDyKFrATFrvVNmrt8bxrKZ_4Wea00R7VUKvyJQp-FQUTJghsA@mail.gmail.com>
+	<CAD=FV=WAKXV4MuqybN4ypA+2tr1m6CP6=9_O+sYYe_-GYiy7SA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f176.google.com ([74.125.82.176]:64998 "EHLO
-	mail-we0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753843AbaHYIWF (ORCPT
+Received: from mail-la0-f44.google.com ([209.85.215.44]:42282 "EHLO
+	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753958AbaHYIbR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Aug 2014 04:22:05 -0400
-In-Reply-To: <CAD=FV=WC0h7fYm2QFqu3Zka7CsU4BtG-oyPpJav+ygC+gmCR+A@mail.gmail.com>
+	Mon, 25 Aug 2014 04:31:17 -0400
+Received: by mail-la0-f44.google.com with SMTP id el20so12458084lab.17
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Aug 2014 01:31:15 -0700 (PDT)
+In-Reply-To: <CAD=FV=WAKXV4MuqybN4ypA+2tr1m6CP6=9_O+sYYe_-GYiy7SA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, sunil joshi <joshi@samsung.com>
+To: Doug Anderson <dianders@google.com>
+Cc: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Abhilash Kesavan <a.kesavan@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-On Sat, Aug 23, 2014 at 3:45 AM, Doug Anderson <dianders@chromium.org> wrote:
-> Hi,
+On 22 August 2014 22:38, Doug Anderson <dianders@google.com> wrote:
+> Ulf,
 >
-> On Fri, Aug 22, 2014 at 3:02 PM, Javier Martinez Canillas
-> <javier.martinez@collabora.co.uk> wrote:
->> Hello Mark,
+> On Fri, Aug 22, 2014 at 8:35 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> On 22 August 2014 15:47, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
+>>> From: Doug Anderson <dianders@chromium.org>
+>>>
+>>> For UHS cards we need the ability to switch voltages from 3.3V to
+>>> 1.8V.  Add support to the dw_mmc driver to handle this.  Note that
+>>> dw_mmc needs a little bit of extra code since the interface needs a
+>>> special bit programmed to the CMD register while CMD11 is progressing.
+>>> This means adding a few extra states to the state machine to track.
+>>>
+>>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+>>> ---
+>>> changes since v1:
+>>>         1. Added error message and return error in case of regulator_set_voltage() fail.
+>>>         2. changed  dw_mci_cmd_interrupt(host,pending | SDMMC_INT_CMD_DONE)
+>>>            to dw_mci_cmd_interrupt(host,pending).
+>>>         3. Removed unnecessary comments.
+>>>
+>>>  drivers/mmc/host/dw_mmc.c  |  134 +++++++++++++++++++++++++++++++++++++++++---
+>>>  drivers/mmc/host/dw_mmc.h  |    5 +-
+>>>  include/linux/mmc/dw_mmc.h |    2 +
+>>>  3 files changed, 131 insertions(+), 10 deletions(-)
+>>>
+>>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>>> index aadb0d6..f20b4b8 100644
+>>> --- a/drivers/mmc/host/dw_mmc.c
+>>> +++ b/drivers/mmc/host/dw_mmc.c
+>>> @@ -29,6 +29,7 @@
+>>>  #include <linux/irq.h>
+>>>  #include <linux/mmc/host.h>
+>>>  #include <linux/mmc/mmc.h>
+>>> +#include <linux/mmc/sd.h>
+>>>  #include <linux/mmc/sdio.h>
+>>>  #include <linux/mmc/dw_mmc.h>
+>>>  #include <linux/bitops.h>
+>>> @@ -234,10 +235,13 @@ err:
+>>>  }
+>>>  #endif /* defined(CONFIG_DEBUG_FS) */
+>>>
+>>> +static void mci_send_cmd(struct dw_mci_slot *slot, u32 cmd, u32 arg);
+>>> +
+>>>  static u32 dw_mci_prepare_command(struct mmc_host *mmc, struct mmc_command *cmd)
+>>>  {
+>>>         struct mmc_data *data;
+>>>         struct dw_mci_slot *slot = mmc_priv(mmc);
+>>> +       struct dw_mci *host = slot->host;
+>>>         const struct dw_mci_drv_data *drv_data = slot->host->drv_data;
+>>>         u32 cmdr;
+>>>         cmd->error = -EINPROGRESS;
+>>> @@ -253,6 +257,31 @@ static u32 dw_mci_prepare_command(struct mmc_host *mmc, struct mmc_command *cmd)
+>>>         else if (cmd->opcode != MMC_SEND_STATUS && cmd->data)
+>>>                 cmdr |= SDMMC_CMD_PRV_DAT_WAIT;
+>>>
+>>> +       if (cmd->opcode == SD_SWITCH_VOLTAGE) {
+>>> +               u32 clk_en_a;
+>>> +
+>>> +               /* Special bit makes CMD11 not die */
+>>> +               cmdr |= SDMMC_CMD_VOLT_SWITCH;
+>>> +
+>>> +               /* Change state to continue to handle CMD11 weirdness */
+>>> +               WARN_ON(slot->host->state != STATE_SENDING_CMD);
+>>> +               slot->host->state = STATE_SENDING_CMD11;
+>>> +
+>>> +               /*
+>>> +                * We need to disable clock stop while doing voltage switch
+>>> +                * according to Voltage Switch Normal Scenario.
+>>> +                * It's assumed that by the next time the CLKENA is updated
+>>> +                * (when we set the clock next) that the voltage change will
+>>> +                * be over, so we don't bother setting any bits to synchronize
+>>> +                * with dw_mci_setup_bus().
+>>> +                */
 >>
->> On 08/22/2014 08:30 PM, Mark Brown wrote:
->>>
->>>> The problem is that one of these regulators is used as the vqmmc-supply
->>>> (VCCQ/VDD_IO) so the mmc host controller driver disables it on
->>>> MMC_POWER_OFF. Now AFAIK (Yuvaraj can correct me what I got wrong) this
->>>> shouldn't be an issue since on card detection, the vqmmc supply should be
->>>> enabled again but on Exynos the built-in card detect line is on the same
->>>> power rail as vqmmc. That means that disabling the regulator prevents card
->>>> insertions to be detected.
->>>
->>> If the MMC host controller needs a supply enabling in order to do card
->>> detection and it's supposed to be doing card detection I'd expect it to
->>> be enabling that supply.  Why is it not doing that?
->>>
+>> I don't know the details about the dw_mmc controller, but normally a
+>> host driver is expected to gate the clock from it's ->set_ios
+>> callback, when the clk frequency are set to 0.
 >>
->> Good question. I'm not that familiar with the dw_mmc host controller nor
->> its driver implementation so I'll let Yuvaraj or Doug to answer that.
-Well,here it goes!
-1. Power ON the board LDO4CTRL1[7:6] 11b
-2. dw_mmc driver enable the vqmmc.
-3. checks for UHS support, complete the voltage switching t0 1.8V
-4. Does warm reset by reboot command.
-5. mmc core calls mmc_set_ios() with MMC_POWER_OFF.
-6. dw_mmc driver cut-off the regulator with LDO4CTRL1[7:6] is 00b
-7.dw_mmc driver enable the vqmmc.
- But after step 7 also, LD4CTRL[7:6] is 00b.
+>> Could you elaborate on why dw_mmc can't do that, but need to handle
+>> this from here?
 >
-> I haven't seen the issue that Yuvaraj is reporting (but I also haven't
-> picked up all of the relevant patches and tried to reproduce), so I'm
-> going to have to leave it to Yuvaraj to answer.
-    static int max77802_enable(struct regulator_dev *rdev)
-    {
-      struct max77802_regulator_prv *max77802 = rdev_get_drvdata(rdev);
-     int id = rdev_get_id(rdev);
-     int shift = max77802_get_opmode_shift(id);
-     return regmap_update_bits(rdev->regmap,
-rdev->desc->enable_reg,rdev->desc->enable_mask,max77802->opmode[id] <<
-shift);
-  }
-I think in the above code snippet, the "val" is what we got it during
-the probe.We always write that value for enabling this regulator(which
-is LDO4CTRL1[7:6] 00b after warm reset) which is not correct according
-the MAX77802 manual.
+> Let's see, it's been a while since I wrote this...
 >
-> As far as I know the dw_mmc driver ought to be enabling vqmmc when it
-> needs it.  Perhaps there's a bug in your patch series that adds vqmmc
-> support to dw_mmc?
 >
-> -Doug
+> So dw_mmc has a special feature where the controller itself will
+> automatically stop the MMC Card clock when nothing is going on.  This
+> is called "low power" mode.  I'm not super familiar with other MMC
+> drivers, I get the impression that this is a special dw_mmc feature
+> and not common to other controllers.  I think other drivers have
+> aggressive runtime PM to get similar power savings.
+
+I see.
+
+I am familiar with such "low power" mode features, there are certainly
+other controllers supporting such as well. My experience tells me,
+it's hard to get things right for all corner cases. The voltage switch
+behaviour is just one of these, then you have SDIO irq etc.
+
+Instead of using the controller HW, yes you may implement clock gating
+through runtime PM in the host driver.
+
+>
+> The dw_mmc auto clock gating can wreck total havoc on the voltage
+> change procedure, since part of the way that the host and card
+> communicate is that the host is supposed to stop its clock when it
+> gets to a certain phase of the voltage switch sequence.  If the
+> controller is stopping the clock for us then it can confuse the card.
+>
+> The dw_mmc manual says that before starting a voltage change you must
+> turn off low power mode.  That's what we're doing here.
+>
+>
+> The comment above refers to the fact dw_mci_setup_bus() will
+> unconditionally turn low power mode back on for us when called with a
+> non-zero clock.  If dw_mci_setup_bus() might be called with a non-zero
+> clock during the voltage change then this would be disaster (low power
+> mode would be back on!).  ...but the clock will always be zero during
+> the voltage change and when it's finally non-zero then it's the last
+> stage of the voltage change and we can go back to low power mode.
+>
+>
+> Possibly the above was not super clear from the comment (even for
+> those familiar with the oddities of dw_mmc).  If you want me to try to
+> rewrite the comment, let me know.
+
+I appreciate an updated comment, it's nice to know what goes on. :-)
+
+Kind regards
+Uffe
