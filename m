@@ -1,51 +1,82 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 1/1] ARM: exynos_defconfig: Enable options for display
- panel support
-Date: Mon, 25 Aug 2014 13:54:07 +0200
-Message-ID: <53FB23DF.70809@collabora.co.uk>
-References: <1408956336-17376-1-git-send-email-javier.martinez@collabora.co.uk> <5825205.70RuHaSG5p@amdc1032> <53FB22E4.8040906@suse.de>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCHv10 0/5] ARM: remove the sub-node and deprecate
+ supports-highspeed property for dwmmc.
+Date: Mon, 25 Aug 2014 21:09:47 +0900
+Message-ID: <53FB278B.7010509@samsung.com>
+References: <1407397082-32495-1-git-send-email-jh80.chung@samsung.com>
+ <20140825112151.GA21336@amd> <53FB1DD5.3050207@samsung.com>
+ <20140825113719.GA31960@amd>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:46081 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932172AbaHYLyM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Aug 2014 07:54:12 -0400
-In-Reply-To: <53FB22E4.8040906@suse.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <20140825113719.GA31960@amd>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Pavel Machek <pavel@denx.de>, Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, kgene.kim@samsung.com, heiko@sntech.de, tgih.jun@samsung.com, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, linux-samsung-soc@vger.kernel.org, dinguyen@altera.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Andreas_F=E4rber?= <afaerber@suse.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, Ajay Kumar <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hello Andreas,
+On 08/25/2014 08:37 PM, Pavel Machek wrote:
+> On Mon 2014-08-25 20:28:21, Jaehoon Chung wrote:
+>> On 08/25/2014 08:21 PM, Pavel Machek wrote:
+>>> On Thu 2014-08-07 16:37:57, Jaehoon Chung wrote:
+>>>> Since used the mmc_of_parse(), didn't parse the sub-node.
+>>>> So we can remove the sub-node, because almost SoC used the only one card per a host.
+>>>> And supports-highspeed can be replaced with "cap-mmc/sd-highspeed"
+>>>> property.
+>>>
+>>> Would it be better to fix parsing of the device tree, and not to
+>>> change all the device trees?
+>>>
+>>> Someone will want to do two slots sooner or later...
+>>>
+>>
+>> First, I had considered that controller can be supported the multiple slot.
+>> But MMC maintainers and other people suggested that consider the only one card per a host.
+>> Two slots or more don't have any benefit, (power or performance, etc).
+> 
+> Would you elaborate?
+> 
+> If I have a device like a phone, I may want to put one "slot" inside
+> phone for basic system, and offer second slot for user expansion
+> (initially empty).
 
-On 08/25/2014 01:49 PM, Andreas F=E4rber wrote:
->>=20
->> Could you please also do corresponding update to multi_v7_defconfig?
->=20
-> As was mentioned in v1 (but now below), some of these options depend =
-on
+if multiple slot is supported, then a mmcqd should be processing for multiple slots.
+It's too inefficient, and affect the whole performance reduction.
 
-Sorry for missing the mention about the dependencies on v2...
+If want to offer the second slot for user expansion, add the host for expansion slot.
+Almost All SoC didn't use the multiple slot per a host controller for eMMC/SD/SDIO.
 
-> patches yet to be respun and be accepted into drm, so I would conside=
-r
-> this an RFC patch and suggest to wait with multi_v7.
->=20
+If Some device(Phone) supports the SD-card and eMMC, then there are two Host IP.
+One Host IP is used for eMMC, other is used for SD-card.
 
-Agreed, I just sent an email to Bartlomiej saying the same.
+this is H/W design issue.
 
-> It could of course be split, as CONFIG_DRM_EXYNOS* and backlight part=
-s
-> are certainly okay.
->
+a) You means the below,
 
-Also agreed.
+One Host IP -------- eMMC
+		|
+		---- SD
+		|
+		---- SDIO
 
-> Regards,
-> Andreas
+b) We means the below
+One Host IP -------- eMMC
+One Host IP -------- SD
+One Host IP -------- SDIO
 
-Best regards,
-Javier
+In now, I knew every SoC have used like b) type. I didn't see a) type (especially, dwmmc's case).
+
+If i missed something, let me know, plz.
+
+Best Regards,
+Jaehoon Chung
+
+> 
+> Or I may want to have internal slot with a card to boot from and have
+> external slot (initially empty) for system update for embedded system.
+> 
+> I see quite an obvious benefit there.
+> 									Pavel
+> 
+
