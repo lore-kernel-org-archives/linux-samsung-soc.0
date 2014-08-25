@@ -1,80 +1,96 @@
 From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V6 6/8] drm/bridge: Modify drm_bridge core to support
- driver model
-Date: Mon, 25 Aug 2014 11:41:44 +0530
-Message-ID: <CAEC9eQOA0NAfAORmd8REvORAPhg2ZdoCMTCrP=KiE_rFABOZ=A@mail.gmail.com>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
- <1406316130-4744-7-git-send-email-ajaykumar.rs@samsung.com>
- <20140730111931.GI29590@ulmo>
- <CAEC9eQPv-D2ThnHR=FZiXJJisMf9NRqS-TJQKdZRjV45Y0Mjsw@mail.gmail.com>
- <20140730150846.GB1345@ulmo>
- <CAEC9eQMywCiQjD68_=Wwwbnb4Gau-gNEowqWPSvSV=AOc3Waeg@mail.gmail.com>
- <20140731105813.GE7458@ulmo>
- <CABxcv=m0eZAOSmTD4GyRmy2eztyBZ3ed27eJEmLXc6cVkZF0iA@mail.gmail.com>
+Subject: Re: [PATCH V3] ARM: dts: Add DT changes for display on peach_pi
+Date: Mon, 25 Aug 2014 11:43:35 +0530
+Message-ID: <CAEC9eQNSPKdTKbAnNpj1ssc==NHkLUUAb+02wZiO+v41XEvutQ@mail.gmail.com>
+References: <1407145638-3803-1-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CABxcv=m0eZAOSmTD4GyRmy2eztyBZ3ed27eJEmLXc6cVkZF0iA@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f179.google.com ([209.85.223.179]:51011 "EHLO
+	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752020AbaHYGNg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 25 Aug 2014 02:13:36 -0400
+In-Reply-To: <1407145638-3803-1-git-send-email-ajaykumar.rs@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@gmail.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, InKi Dae <inki.dae@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Hi Javier,
-
-On Sat, Aug 23, 2014 at 5:03 AM, Javier Martinez Canillas
-<javier@dowhile0.org> wrote:
-> Hello Ajay,
+On Mon, Aug 4, 2014 at 3:17 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
+> Add DT nodes for panel-simple "auo,b133htn01" panel.
+> Add backlight enable pin and backlight power supply for pwm-backlight.
+> Also, add panel phandle needed by dp to enable display on peach_pi.
 >
-> On Thu, Jul 31, 2014 at 12:58 PM, Thierry Reding
-> <thierry.reding@gmail.com> wrote:
->> On Wed, Jul 30, 2014 at 09:33:28PM +0530, Ajay kumar wrote:
->>> On Wed, Jul 30, 2014 at 8:38 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
->> [...]
->>> > I think it should even be possible to do this in more separate steps.
->>> > For example you could add the new bridge infrastructure without touching
->>> > any of the existing drivers (so that they are completely unaffected by
->>> > the changes) and then start converting one by one.
->>> >
->>> > For some of the changes this may be difficult (such as the dev ->
->>> > drm_dev rename to make room for the new struct device *dev). But that
->>> > could for example be done in a preparatory patch that first renames the
->>> > field, so that the "infrastructure" patch can add the new field without
->>> > renaming any fields and therefore needing changes to drivers directly.
->>> >
->>> > The goal of that whole exercise is to allow display drivers to keep
->>> > working with the existing API (ptn3460_init()) while we convert the
->>> > bridge drivers to register with the new framework. Then we can more
->>> > safely convert each display driver individually to make use of the new
->>> > framework and once all drivers have been converted the old API can
->>> > simply be removed.
->>> >
->>> > That way there should be no impact on existing functionality at any
->>> > point.
->>> As of now only exynos_dp uses ptn3460_init.
->>> And, also only 2 drivers use drm_bridge_init.
->>> It should be really easy to bisect if something goes wrong.
->>> Still, I will try to divide it so that each patch contains minimal change.
->>
->> Thanks.
->>
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> ---
+> Changes since V1:
+> Remove "simple-panel" compatible string and use only ""auo,b133htn01".
 >
-> Do you plan to address Thierry's concerns and re-spin this patch?
+> Changes since V2:
+> As suggested by Andreas,
+> Use GPIO_ACTIVE_HIGH for backlight enable-gpios instead of using 0.
+> Change panel node naming from "panel-simple" to "panel".
 >
-> Same question for patches:
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts |   27 ++++++++++-----------------
+>  1 file changed, 10 insertions(+), 17 deletions(-)
 >
-> "drm/bridge: Add i2c based driver for ptn3460 bridge"
-> "drm/bridge: Add i2c based driver for ps8622/ps8625 bridge"
-Yes, I will. I was caught up with some other work.
-I will be sending a version ASAP.
-
-Ajay
+> diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> index f3ee48b..f8c2e61 100644
+> --- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> +++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+> @@ -28,11 +28,13 @@
+>                 i2c20 = "/spi@12d40000/cros-ec@0/i2c-tunnel";
+>         };
+>
+> -       backlight {
+> +       backlight: backlight {
+>                 compatible = "pwm-backlight";
+>                 pwms = <&pwm 0 1000000 0>;
+>                 brightness-levels = <0 100 500 1000 1500 2000 2500 2800>;
+>                 default-brightness-level = <7>;
+> +               enable-gpios = <&gpx2 2 GPIO_ACTIVE_HIGH>;
+> +               power-supply = <&tps65090_fet1>;
+>                 pinctrl-0 = <&pwm0_out>;
+>                 pinctrl-names = "default";
+>         };
+> @@ -98,6 +100,12 @@
+>                 regulator-boot-on;
+>                 regulator-always-on;
+>         };
+> +
+> +       panel: panel {
+> +               compatible = "auo,b133htn01";
+> +               power-supply = <&tps65090_fet6>;
+> +               backlight = <&backlight>;
+> +       };
+>  };
+>
+>  &dp {
+> @@ -111,22 +119,7 @@
+>         samsung,link-rate = <0x0a>;
+>         samsung,lane-count = <2>;
+>         samsung,hpd-gpio = <&gpx2 6 0>;
+> -
+> -       display-timings {
+> -               native-mode = <&timing1>;
+> -
+> -               timing1: timing@1 {
+> -                       clock-frequency = <150660000>;
+> -                       hactive = <1920>;
+> -                       vactive = <1080>;
+> -                       hfront-porch = <60>;
+> -                       hback-porch = <172>;
+> -                       hsync-len = <80>;
+> -                       vback-porch = <25>;
+> -                       vfront-porch = <10>;
+> -                       vsync-len = <10>;
+> -               };
+> -       };
+> +       panel = <&panel>;
+>  };
+>
+>  &fimd {
+> --
+> 1.7.9.5
+>
