@@ -1,75 +1,95 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v2 1/1] ARM: exynos_defconfig: Enable options for display panel support
-Date: Mon, 25 Aug 2014 10:45:36 +0200
-Message-ID: <1408956336-17376-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:45961 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750923AbaHYIqA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Aug 2014 04:46:00 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH V2 3/3] mmc: dw_mmc: Dont cut off vqmmc and vmmc
+Date: Mon, 25 Aug 2014 17:50:15 +0900
+Message-ID: <53FAF8C7.8040007@samsung.com>
+References: <1408715272-13833-1-git-send-email-yuvaraj.cd@samsung.com>
+ <1408715272-13833-4-git-send-email-yuvaraj.cd@samsung.com>
+ <CAPDyKFqz8sGj2td=ihZXN4zvAqmu9FHZjWdCn-ZRcdHugNHe2g@mail.gmail.com>
+ <CAPz6YkXH1mMOTwcLkKdffdUHN+TaCAhpa8oG0h+rFn9i+GMoCw@mail.gmail.com>
+ <CAPDyKFqp7oEt9ASmdxrgUwbQ8aTZzAuJ7uD1oGN50iuzPzBfVg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <CAPDyKFqp7oEt9ASmdxrgUwbQ8aTZzAuJ7uD1oGN50iuzPzBfVg@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>, Sonny Rao <sonnyrao@chromium.org>
+Cc: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Doug Anderson <dianders@google.com>, Doug Anderson <dianders@chromium.org>, Chris Ball <cjb@laptop.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, ABHILASH KESAVAN <a.kesavan@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, cpgs@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, afaerber@suse.de, Ajay Kumar <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Many Exynos devices have a display panel. Most of them just have
-a simple panel while others have more complex configurations that
-requires an embedded DisplayPort (eDP) to LVDS bridges.
+On 08/25/2014 05:13 PM, Ulf Hansson wrote:
+> On 22 August 2014 20:27, Sonny Rao <sonnyrao@chromium.org> wrote:
+>> On Fri, Aug 22, 2014 at 8:31 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>> On 22 August 2014 15:47, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
+>>>> Exynos 5250 and 5420 based boards uses built-in CD# line for card
+>>>> detection.But unfortunately CD# line is on the same voltage rails
+>>>> as of I/O voltage rails. When we cut off vqmmc,the consequent card
+>>>> detection will break in these boards.
 
-This patch enables the following features to be built in the kernel
-image to suport both setups:
+I didn't know that use CD# line for card detect.
+And if CD# voltage rails and I/O voltage rail are same voltage, it doesn't make sense.
+Which card is used with same voltages? (eMMC? SD? SDIO?)
 
-- Direct Rendering Manager (DRM)
-- DRM bridge registration and lookup framework
-- Parade ps8622/ps8625 eDP/LVDS bridge
-- NXP ptn3460 eDP/LVDS bridge
-- Exynos Fully Interactive Mobile Display controller (FIMD)
-- Panel registration and lookup framework
-- Simple panels
-- Backlight & LCD device support
+Well, I have checked Exynos5250 and 5420, but it looks like not same rails.
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Tested-by: Kevin Hilman <khilman@linaro.org>
----
+>>>
+>>> I am not sure I follow here.
+>>>
+>>> Is the card detect mechanism handled internally by the dw_mmc controller?
+>>
+>> Yes
 
-Changes since v1:
- - Forgot to enable ptn3460 eDP/LVDS bridge config option
-   which is used for some boards (e.g: Exynos5250 Snow).
+What card detect mechanism?
 
- arch/arm/configs/exynos_defconfig | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> 
+> Just out of curiosity.
+> 
+> Do you know how the power to the actual dw_mmc controller is handled?
+> I expect it to be SoC specific and I am guessing power domain
+> regulators may be involved!?
+> 
+>>
+>>>
+>>> I thought HW engineers long time ago realized that this should be done
+>>> separately on a GPIO line to be able to save power while waiting for a
+>>> card to be inserted. But that's not case then?
+>>
+>> At least in my limited experience, this seems to be common among SoC
+>> vendors who are using dw_mmc, as we've seen this elsewhere as well and
+>> after seeing it here we know that we need to ignore the CD pin that's
+>> routed to dw_mmc and use a separately powered GPIO on the board, but
+>> still there are probably many SoCs/boards which are doing it this way.
+>>
+>>>>
+>>>> These hosts (obviously) need to keep vqmmc (and thus vmmc) on all the
+>>>> time, even when the mmc core tells them to power off. However, one
+>>>> problem is that these cards won't properly handle mmc_power_cycle().
+>>>> That's needed to handle error cases when trying to switch voltages
+>>>> (see 0797e5f mmc:core: Fixup signal voltage switch).
+>>>>
+>>>> This patch adds a new MMC_POWER_OFF_HARD mode when it's doing a power
+>>>> cycle.  This mode differs from the normal MMC_POWER_OFF mode in that
+>>>> the mmc core will promise to power the slot back on before it expects
+>>>> the host to detect card insertion or removal.
+>>
+>> This patch is based off of one that Doug wrote (sent privately to
+>> Yuvaraj) which just modifies the MMC core, and should be split into
+>> two patches.
+>> One that modifies the mmc core and one that implements this in dw_mmc.
+> 
+> I looked at the mmc core parts, it seems like the wrong approach.
+> 
+> I think you shall be able use MMC_CAP_NEEDS_POLL, to handle this
+> broken card detect mechanism. We even have a DT binding for that,
+> "broken-cd".
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 676c744..d6d1f7c 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -101,11 +101,26 @@ CONFIG_REGULATOR_S2MPA01=y
- CONFIG_REGULATOR_S2MPS11=y
- CONFIG_REGULATOR_S5M8767=y
- CONFIG_REGULATOR_TPS65090=y
-+CONFIG_DRM=y
-+CONFIG_DRM_BRIDGE=y
-+CONFIG_DRM_PTN3460=y
-+CONFIG_DRM_PS8622=y
-+CONFIG_DRM_EXYNOS=y
-+CONFIG_DRM_EXYNOS_FIMD=y
-+CONFIG_DRM_EXYNOS_DP=y
-+CONFIG_DRM_PANEL=y
-+CONFIG_DRM_PANEL_SIMPLE=y
- CONFIG_FB=y
- CONFIG_FB_MODE_HELPERS=y
- CONFIG_FB_SIMPLE=y
- CONFIG_EXYNOS_VIDEO=y
- CONFIG_EXYNOS_MIPI_DSI=y
-+CONFIG_BACKLIGHT_LCD_SUPPORT=y
-+CONFIG_LCD_CLASS_DEVICE=y
-+CONFIG_LCD_PLATFORM=y
-+CONFIG_BACKLIGHT_CLASS_DEVICE=y
-+CONFIG_BACKLIGHT_GENERIC=y
-+CONFIG_BACKLIGHT_PWM=y
- CONFIG_FRAMEBUFFER_CONSOLE=y
- CONFIG_FONTS=y
- CONFIG_FONT_7x14=y
--- 
-2.0.1
+I agreed with Ulf's opinion.
+
+Best Regards,
+Jaehoon Chung
+
+> 
+> Kind regards
+> Uffe
+> 
+
