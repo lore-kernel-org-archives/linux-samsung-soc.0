@@ -1,40 +1,50 @@
 From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 1/2] i2c: cros-ec-tunnel: Add of match table
-Date: Mon, 25 Aug 2014 11:37:01 +0200
-Message-ID: <CABxcv==yuxBmed5pZMwfQTXkwpbW1WkXw58tLsBF16BH60-jAQ@mail.gmail.com>
-References: <1408748582-29029-1-git-send-email-sjoerd.simons@collabora.co.uk>
-	<1408748582-29029-2-git-send-email-sjoerd.simons@collabora.co.uk>
+Subject: Re: [PATCH V6 6/8] drm/bridge: Modify drm_bridge core to support
+ driver model
+Date: Mon, 25 Aug 2014 12:10:17 +0200
+Message-ID: <CABxcv=n=1_gG+B8-qESqAWaX04TPKrmQW-zchHhfabCEbgW+LA@mail.gmail.com>
+References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
+	<1406316130-4744-7-git-send-email-ajaykumar.rs@samsung.com>
+	<20140730111931.GI29590@ulmo>
+	<CAEC9eQPv-D2ThnHR=FZiXJJisMf9NRqS-TJQKdZRjV45Y0Mjsw@mail.gmail.com>
+	<20140730150846.GB1345@ulmo>
+	<CAEC9eQMywCiQjD68_=Wwwbnb4Gau-gNEowqWPSvSV=AOc3Waeg@mail.gmail.com>
+	<20140731105813.GE7458@ulmo>
+	<CABxcv=m0eZAOSmTD4GyRmy2eztyBZ3ed27eJEmLXc6cVkZF0iA@mail.gmail.com>
+	<CAEC9eQOA0NAfAORmd8REvORAPhg2ZdoCMTCrP=KiE_rFABOZ=A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:52772 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751222AbaHYJhD (ORCPT
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:49443 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754767AbaHYKKT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 25 Aug 2014 05:37:03 -0400
-Received: by mail-wg0-f42.google.com with SMTP id l18so12731644wgh.25
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Aug 2014 02:37:01 -0700 (PDT)
-In-Reply-To: <1408748582-29029-2-git-send-email-sjoerd.simons@collabora.co.uk>
+	Mon, 25 Aug 2014 06:10:19 -0400
+Received: by mail-wi0-f180.google.com with SMTP id n3so2269325wiv.13
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 25 Aug 2014 03:10:17 -0700 (PDT)
+In-Reply-To: <CAEC9eQOA0NAfAORmd8REvORAPhg2ZdoCMTCrP=KiE_rFABOZ=A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Cc: Doug Anderson <dianders@chromium.org>, Lee Jones <lee.jones@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-Hello Sjoerd,
+Hello Ajay,
 
-On Sat, Aug 23, 2014 at 1:03 AM, Sjoerd Simons
-<sjoerd.simons@collabora.co.uk> wrote:
-> To enable the cros-ec-tunnel driver to be auto-loaded when build as a
-> module add an of match table (and export it) to match the modalias
-> information passed on to userspace as the Cros EC MFD driver registers
-> the MFD subdevices with an of_compatibility string.
+On Mon, Aug 25, 2014 at 8:11 AM, Ajay kumar <ajaynumb@gmail.com> wrote:
+>>
+>> Do you plan to address Thierry's concerns and re-spin this patch?
+>>
+>> Same question for patches:
+>>
+>> "drm/bridge: Add i2c based driver for ptn3460 bridge"
+>> "drm/bridge: Add i2c based driver for ps8622/ps8625 bridge"
+> Yes, I will. I was caught up with some other work.
+> I will be sending a version ASAP.
 >
-> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-> ---
 
-Looks good to me:
+Great, glad to know that you will be doing a re-spin!
 
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Ajay
 
-Best regards,
+Thanks a lot and best regards,
 Javier
