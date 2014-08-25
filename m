@@ -1,75 +1,103 @@
 From: Doug Anderson <dianders@google.com>
-Subject: Re: [PATCH V2 1/3] mmc: dw_mmc: use mmc_regulator_get_supply to
- handle regulators
-Date: Mon, 25 Aug 2014 08:06:50 -0700
-Message-ID: <CAD=FV=U-izXxh2DcBs=ZmS5vhvByHYL9yX7xOsDq-0te=dmC8Q@mail.gmail.com>
+Subject: Re: [PATCH V2 3/3] mmc: dw_mmc: Dont cut off vqmmc and vmmc
+Date: Mon, 25 Aug 2014 08:20:40 -0700
+Message-ID: <CAD=FV=VQWzhiSU+iULACj+Dp_tDf3SszQ8ELLEGqVEyJJRQy1Q@mail.gmail.com>
 References: <1408715272-13833-1-git-send-email-yuvaraj.cd@samsung.com>
-	<1408715272-13833-2-git-send-email-yuvaraj.cd@samsung.com>
-	<53FB2CC2.9070905@samsung.com>
+	<1408715272-13833-4-git-send-email-yuvaraj.cd@samsung.com>
+	<CAPDyKFqz8sGj2td=ihZXN4zvAqmu9FHZjWdCn-ZRcdHugNHe2g@mail.gmail.com>
+	<CAPz6YkXH1mMOTwcLkKdffdUHN+TaCAhpa8oG0h+rFn9i+GMoCw@mail.gmail.com>
+	<CAPDyKFqp7oEt9ASmdxrgUwbQ8aTZzAuJ7uD1oGN50iuzPzBfVg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <53FB2CC2.9070905@samsung.com>
+In-Reply-To: <CAPDyKFqp7oEt9ASmdxrgUwbQ8aTZzAuJ7uD1oGN50iuzPzBfVg@mail.gmail.com>
 Sender: linux-mmc-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Abhilash Kesavan <a.kesavan@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, CPGS <cpgs@samsung.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Sonny Rao <sonnyrao@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, ABHILASH KESAVAN <a.kesavan@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Jaehoon,
+Ulf,
 
-On Mon, Aug 25, 2014 at 5:32 AM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
-> On 08/22/2014 10:47 PM, Yuvaraj Kumar C D wrote:
->> This patch makes use of mmc_regulator_get_supply() to handle
->> the vmmc and vqmmc regulators.Also it moves the code handling
->> the these regulators to dw_mci_set_ios().It turned on the vmmc
->> and vqmmc during MMC_POWER_UP and MMC_POWER_ON,and turned off
->> during MMC_POWER_OFF.
+On Mon, Aug 25, 2014 at 1:13 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 22 August 2014 20:27, Sonny Rao <sonnyrao@chromium.org> wrote:
+>> On Fri, Aug 22, 2014 at 8:31 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>> On 22 August 2014 15:47, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
+>>>> Exynos 5250 and 5420 based boards uses built-in CD# line for card
+>>>> detection.But unfortunately CD# line is on the same voltage rails
+>>>> as of I/O voltage rails. When we cut off vqmmc,the consequent card
+>>>> detection will break in these boards.
+>>>
+>>> I am not sure I follow here.
+>>>
+>>> Is the card detect mechanism handled internally by the dw_mmc controller?
 >>
->> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
->> ---
->> changes from v1:
->>       1.Used mmc_regulator_set_ocr() instead of regulator_enable() for vmmc.
->>       2.Turned on vmmc and vqmmc during MMC_POWER_UP.
->>       3. Removed the flags DW_MMC_CARD_POWERED and DW_MMC_IO_POWERED which
->>          added during the initial version of this patch.
->>       4. Added error message, if it failed to turn on regulator's.
->>
->>  drivers/mmc/host/dw_mmc.c  |   72 +++++++++++++++++++++-----------------------
->>  include/linux/mmc/dw_mmc.h |    2 +-
->>  2 files changed, 36 insertions(+), 38 deletions(-)
->>
->> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->> index 7f227e9..aadb0d6 100644
->> --- a/drivers/mmc/host/dw_mmc.c
->> +++ b/drivers/mmc/host/dw_mmc.c
->> @@ -936,6 +936,7 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
->>       struct dw_mci_slot *slot = mmc_priv(mmc);
->>       const struct dw_mci_drv_data *drv_data = slot->host->drv_data;
->>       u32 regs;
->> +     int ret;
->>
->>       switch (ios->bus_width) {
->>       case MMC_BUS_WIDTH_4:
->> @@ -974,12 +975,38 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
->>
->>       switch (ios->power_mode) {
->>       case MMC_POWER_UP:
->> +             if (!IS_ERR(mmc->supply.vmmc)) {
->> +                     ret = mmc_regulator_set_ocr(mmc, mmc->supply.vmmc,
->> +                                     ios->vdd);
->> +                     if (ret) {
->> +                             dev_err(slot->host->dev,
->> +                                     "failed to enable vmmc regulator\n");
->> +                             /*return, if failed turn on vmmc*/
->> +                             return;
->> +                     }
->> +             }
->> +             if (!IS_ERR(mmc->supply.vqmmc) && !slot->host->vqmmc_enabled) {
+>> Yes
 >
-> Can't use the regulator_is_enabled() instead of "slot->host->vqmmc_enabled"?
+> Just out of curiosity.
+>
+> Do you know how the power to the actual dw_mmc controller is handled?
+> I expect it to be SoC specific and I am guessing power domain
+> regulators may be involved!?
 
-I think we mentioned this before, but regulator_is_enabled() won't do
-what you want with shared regulators since they are refcounted.  You
-need to keep track of whether you've enabled the regulator yourself.
+You can likely read the dw_mmc registers when vqmmc is off.  Is that
+what you're asking?  Certainly if vqmmc is not powered then the lines
+themselves will be useless, won't they?  The "vqmmc" supply goes to
+the "VDDQ_MMC2" pin on 5420.  In my 5420 user manual, I see that
+"clk", "cmd", "cd", "datN", "wp" and "biuvr" pins are all in this same
+voltage (VDDQ_MMC2) domain.  Can you really read a pin without
+powering that part of the SoC?
+
+
+>>> I thought HW engineers long time ago realized that this should be done
+>>> separately on a GPIO line to be able to save power while waiting for a
+>>> card to be inserted. But that's not case then?
+>>
+>> At least in my limited experience, this seems to be common among SoC
+>> vendors who are using dw_mmc, as we've seen this elsewhere as well and
+>> after seeing it here we know that we need to ignore the CD pin that's
+>> routed to dw_mmc and use a separately powered GPIO on the board, but
+>> still there are probably many SoCs/boards which are doing it this way.
+>>
+>>>>
+>>>> These hosts (obviously) need to keep vqmmc (and thus vmmc) on all the
+>>>> time, even when the mmc core tells them to power off. However, one
+>>>> problem is that these cards won't properly handle mmc_power_cycle().
+>>>> That's needed to handle error cases when trying to switch voltages
+>>>> (see 0797e5f mmc:core: Fixup signal voltage switch).
+>>>>
+>>>> This patch adds a new MMC_POWER_OFF_HARD mode when it's doing a power
+>>>> cycle.  This mode differs from the normal MMC_POWER_OFF mode in that
+>>>> the mmc core will promise to power the slot back on before it expects
+>>>> the host to detect card insertion or removal.
+>>
+>> This patch is based off of one that Doug wrote (sent privately to
+>> Yuvaraj) which just modifies the MMC core, and should be split into
+>> two patches.
+>> One that modifies the mmc core and one that implements this in dw_mmc.
+>
+> I looked at the mmc core parts, it seems like the wrong approach.
+>
+> I think you shall be able use MMC_CAP_NEEDS_POLL, to handle this
+> broken card detect mechanism. We even have a DT binding for that,
+> "broken-cd".
+
+I don't think this is possible, but let me explain why I think so and
+you can correct me.
+
+The voltage domain of the "card detect" pin on the SoC is vqmmc,
+right?  That means that you won't be able to read the pin without
+turning on vqmmc.  Even if you could read the pin without turning on
+vqmmc, the pullup on this line is connected to vqmmc too.  ...so if
+vqmmc is off then there's no pulup and you can't use card detect.
+
+Are you suggesting that we should flip the voltage of vqmmc (and thus
+vmmc to prevent damaging the card) during polling?  That seems ugly.
+
+
+One other thing to mention: we didn't find any power savings by
+actually turning off vmmc and vqmmc when there was no card inserted.
+There's no current running through the lines when there is no card
+inserted and apparently everything is efficient enough that there was
+no problem.
 
 -Doug
