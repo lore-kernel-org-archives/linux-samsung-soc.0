@@ -1,93 +1,174 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 0/7] CMA & device tree, another approach
-Date: Tue, 26 Aug 2014 14:09:41 +0200
-Message-ID: <1409054988-32758-1-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 5/7] media: s5p-mfc: replace custom reserved memory init code
+ with generic one
+Date: Tue, 26 Aug 2014 14:09:46 +0200
+Message-ID: <1409054988-32758-6-git-send-email-m.szyprowski@samsung.com>
+References: <1409054988-32758-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout1.w1.samsung.com ([210.118.77.11]:33892 "EHLO
 	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754601AbaHZMNx (ORCPT
+	with ESMTP id S1757821AbaHZMN4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Aug 2014 08:13:53 -0400
+	Tue, 26 Aug 2014 08:13:56 -0400
+In-reply-to: <1409054988-32758-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Michal Nazarewicz <mina86@mina86.com>, Grant Likely <grant.likely@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Laura Abbott <lauraa@codeaurora.org>, Josh Cartwright <joshc@codeaurora.org>, Joonsoo Kim <iamjoonsoo.kim@lge.com>
 
-Hello,
+This patch removes custom initialization of reserved memory regions from
+s5p-mfc driver and adds a new code for handling reserved memory with
+generic named reserved memory regions read from device tree.
 
-This is another approach to finish support for reserved memory regions
-defined in device tree. Previous attempts 
-(http://lists.linaro.org/pipermail/linaro-mm-sig/2014-February/003738.html
-and https://lkml.org/lkml/2014/7/14/108) ended in merging parts of the
-code and documentation. Merged patches allow to reserve memory, but
-there is still no reserved memory drivers nor any code that actually
-uses reserved memory regions.
+s5p-mfc driver now handles two reserved memory regions: "left" and
+"right", defined by generic reserved memory bindings. Support for non-dt
+platform has been removed, because all supported platforms have been
+converted to device tree.
 
-The final conclusion from the above mentioned threads is that there is
-no automated reserved memory initialization. All drivers that want to
-use reserved memory, should initialize it on their own.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/media/platform/s5p-mfc/s5p_mfc.c | 102 +++++++++++--------------------
+ 1 file changed, 35 insertions(+), 67 deletions(-)
 
-This patch series provides two driver for reserved memory regions (one
-based on CMA and one based on dma_coherent allocator). The main
-improvement comparing to the previous version is removal of automated
-reserved memory for every device and support for named memory regions.
-
-Support for more than one reserved memory region can be considered as a
-separate DMA address space, so support for more than one region per
-device has been implemented the same way as support for separate IO/DMA
-address spaces in my Exynos IOMMU dma-mapping proposal:
-http://thread.gmane.org/gmane.linux.kernel.samsung-soc/36079
-
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-Changes since '[PATCH v2 RESEND 0/4] CMA & device tree, once again' version:
-(https://lkml.org/lkml/2014/7/14/108)
-- added return error value to of_reserved_mem_device_init()
-- added support for named memory regions (so more than one region can be
-  defined per device)
-- added usage example - converted custom reserved memory code used by
-  s5p-mfc driver to the generic reserved memory handling code
-
-Patch summary:
-
-Marek Szyprowski (7):
-  drivers: of: add return value to of_reserved_mem_device_init
-  drivers: of: add support for named memory regions
-  drivers: dma-coherent: add initialization from device tree
-  drivers: dma-contiguous: add initialization from device tree
-  media: s5p-mfc: replace custom reserved memory init code with generic
-    one
-  ARM: Exynos: convert MFC to generic reserved memory bindings
-  ARM: DTS: exynos4412-odroid*: enable MFC device
-
- .../devicetree/bindings/media/s5p-mfc.txt          |  16 +--
- .../bindings/reserved-memory/reserved-memory.txt   |   6 +-
- arch/arm/boot/dts/exynos4210-origen.dts            |  22 +++-
- arch/arm/boot/dts/exynos4210-smdkv310.dts          |  22 +++-
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  24 ++++
- arch/arm/boot/dts/exynos4412-origen.dts            |  22 +++-
- arch/arm/boot/dts/exynos4412-smdk4412.dts          |  22 +++-
- arch/arm/boot/dts/exynos5250-arndale.dts           |  22 +++-
- arch/arm/boot/dts/exynos5250-smdk5250.dts          |  22 +++-
- arch/arm/boot/dts/exynos5420-arndale-octa.dts      |  22 +++-
- arch/arm/boot/dts/exynos5420-smdk5420.dts          |  22 +++-
- arch/arm/mach-exynos/exynos.c                      |  18 ---
- arch/arm/mach-exynos/mfc.h                         |  16 ---
- arch/arm/plat-samsung/Kconfig                      |   5 -
- arch/arm/plat-samsung/Makefile                     |   1 -
- arch/arm/plat-samsung/s5p-dev-mfc.c                |  94 --------------
- drivers/base/dma-coherent.c                        | 138 ++++++++++++++++++---
- drivers/base/dma-contiguous.c                      |  71 +++++++++++
- drivers/media/platform/s5p-mfc/s5p_mfc.c           | 102 ++++++---------
- drivers/of/of_reserved_mem.c                       | 102 ++++++++++-----
- include/linux/cma.h                                |   3 +
- include/linux/of_reserved_mem.h                    |   9 +-
- mm/cma.c                                           |  62 +++++++--
- 23 files changed, 552 insertions(+), 291 deletions(-)
- delete mode 100644 arch/arm/mach-exynos/mfc.h
- delete mode 100644 arch/arm/plat-samsung/s5p-dev-mfc.c
-
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index d35b0418ab37..668e82247a3f 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -22,6 +22,7 @@
+ #include <media/v4l2-event.h>
+ #include <linux/workqueue.h>
+ #include <linux/of.h>
++#include <linux/of_reserved_mem.h>
+ #include <media/videobuf2-core.h>
+ #include "s5p_mfc_common.h"
+ #include "s5p_mfc_ctrl.h"
+@@ -996,55 +997,40 @@ static const struct v4l2_file_operations s5p_mfc_fops = {
+ 	.mmap = s5p_mfc_mmap,
+ };
+ 
+-static int match_child(struct device *dev, void *data)
++static struct device *s5p_mfc_alloc_memdev(struct device *dev, const char *name)
+ {
+-	if (!dev_name(dev))
+-		return 0;
+-	return !strcmp(dev_name(dev), (char *)data);
+-}
+-
+-static void *mfc_get_drv_data(struct platform_device *pdev);
+-
+-static int s5p_mfc_alloc_memdevs(struct s5p_mfc_dev *dev)
+-{
+-	unsigned int mem_info[2] = { };
++	struct device *child;
++	int ret;
+ 
+-	dev->mem_dev_l = devm_kzalloc(&dev->plat_dev->dev,
+-			sizeof(struct device), GFP_KERNEL);
+-	if (!dev->mem_dev_l) {
+-		mfc_err("Not enough memory\n");
+-		return -ENOMEM;
+-	}
+-	device_initialize(dev->mem_dev_l);
+-	of_property_read_u32_array(dev->plat_dev->dev.of_node,
+-			"samsung,mfc-l", mem_info, 2);
+-	if (dma_declare_coherent_memory(dev->mem_dev_l, mem_info[0],
+-				mem_info[0], mem_info[1],
+-				DMA_MEMORY_MAP | DMA_MEMORY_EXCLUSIVE) == 0) {
+-		mfc_err("Failed to declare coherent memory for\n"
+-		"MFC device\n");
+-		return -ENOMEM;
++	child = devm_kzalloc(dev, sizeof(struct device), GFP_KERNEL);
++	if (!child)
++		return NULL;
++
++	device_initialize(child);
++	dev_set_name(child, "%s:%s", dev_name(dev), name);
++	child->parent = dev;
++	child->bus = dev->bus;
++	child->coherent_dma_mask = dev->coherent_dma_mask;
++	child->dma_mask = dev->dma_mask;
++
++	if (device_add(child) == 0) {
++		ret = of_reserved_mem_device_init(child);
++		if (ret == 0)
++			return child;
+ 	}
+ 
+-	dev->mem_dev_r = devm_kzalloc(&dev->plat_dev->dev,
+-			sizeof(struct device), GFP_KERNEL);
+-	if (!dev->mem_dev_r) {
+-		mfc_err("Not enough memory\n");
+-		return -ENOMEM;
+-	}
+-	device_initialize(dev->mem_dev_r);
+-	of_property_read_u32_array(dev->plat_dev->dev.of_node,
+-			"samsung,mfc-r", mem_info, 2);
+-	if (dma_declare_coherent_memory(dev->mem_dev_r, mem_info[0],
+-				mem_info[0], mem_info[1],
+-				DMA_MEMORY_MAP | DMA_MEMORY_EXCLUSIVE) == 0) {
+-		pr_err("Failed to declare coherent memory for\n"
+-		"MFC device\n");
+-		return -ENOMEM;
+-	}
+-	return 0;
++	put_device(child);
++	return NULL;
+ }
+ 
++void s5p_mfc_free_memdev(struct device *dev)
++{
++	of_reserved_mem_device_release(dev);
++	put_device(dev);
++}
++
++static void *mfc_get_drv_data(struct platform_device *pdev);
++
+ /* MFC probe function */
+ static int s5p_mfc_probe(struct platform_device *pdev)
+ {
+@@ -1096,26 +1082,8 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+ 		goto err_res;
+ 	}
+ 
+-	if (pdev->dev.of_node) {
+-		ret = s5p_mfc_alloc_memdevs(dev);
+-		if (ret < 0)
+-			goto err_res;
+-	} else {
+-		dev->mem_dev_l = device_find_child(&dev->plat_dev->dev,
+-				"s5p-mfc-l", match_child);
+-		if (!dev->mem_dev_l) {
+-			mfc_err("Mem child (L) device get failed\n");
+-			ret = -ENODEV;
+-			goto err_res;
+-		}
+-		dev->mem_dev_r = device_find_child(&dev->plat_dev->dev,
+-				"s5p-mfc-r", match_child);
+-		if (!dev->mem_dev_r) {
+-			mfc_err("Mem child (R) device get failed\n");
+-			ret = -ENODEV;
+-			goto err_res;
+-		}
+-	}
++	dev->mem_dev_l = s5p_mfc_alloc_memdev(&dev->plat_dev->dev, "left");
++	dev->mem_dev_r = s5p_mfc_alloc_memdev(&dev->plat_dev->dev, "right");
+ 
+ 	dev->alloc_ctx[0] = vb2_dma_contig_init_ctx(dev->mem_dev_l);
+ 	if (IS_ERR(dev->alloc_ctx[0])) {
+@@ -1246,10 +1214,10 @@ static int s5p_mfc_remove(struct platform_device *pdev)
+ 	s5p_mfc_release_firmware(dev);
+ 	vb2_dma_contig_cleanup_ctx(dev->alloc_ctx[0]);
+ 	vb2_dma_contig_cleanup_ctx(dev->alloc_ctx[1]);
+-	if (pdev->dev.of_node) {
+-		put_device(dev->mem_dev_l);
+-		put_device(dev->mem_dev_r);
+-	}
++	if (dev->mem_dev_l)
++		s5p_mfc_free_memdev(dev->mem_dev_l);
++	if (dev->mem_dev_r)
++		s5p_mfc_free_memdev(dev->mem_dev_r);
+ 
+ 	s5p_mfc_final_pm(dev);
+ 	return 0;
 -- 
 1.9.2
