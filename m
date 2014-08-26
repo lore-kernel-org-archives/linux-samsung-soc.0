@@ -1,16 +1,15 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 03/15] drm/exynos/ipp: move file reference from memory to
- command node
-Date: Tue, 26 Aug 2014 08:16:27 +0200
-Message-ID: <53FC263B.9010709@samsung.com>
+Subject: Re: [PATCH 14/15] drm/exynos/fimc: simplify buffer queuing
+Date: Tue, 26 Aug 2014 08:20:10 +0200
+Message-ID: <53FC271A.9080108@samsung.com>
 References: <1408693946-15456-1-git-send-email-a.hajda@samsung.com>
- <1408693946-15456-4-git-send-email-a.hajda@samsung.com>
- <53FBF71B.7070107@samsung.com> <53FBF818.70407@samsung.com>
+ <1408693946-15456-15-git-send-email-a.hajda@samsung.com>
+ <53FC20EC.7070209@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <53FBF818.70407@samsung.com>
+In-reply-to: <53FC20EC.7070209@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -24,93 +23,131 @@ To: Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Joonyoung,
-
-Thanks for review.
-
-On 08/26/2014 04:59 AM, Joonyoung Shim wrote:
-> On 08/26/2014 11:55 AM, Joonyoung Shim wrote:
->> Hi Andrzej,
+On 08/26/2014 07:53 AM, Joonyoung Shim wrote:
+> Hi Andrzej,
+>
+> On 08/22/2014 04:52 PM, Andrzej Hajda wrote:
+>> The patch removes redundant checks, redundant HW reads
+>> and simplifies code.
 >>
->> On 08/22/2014 04:52 PM, Andrzej Hajda wrote:
->>> Command node should contain file reference to distinguish commands
->>> created by different processes.
->>>
->>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->>> ---
->>>  drivers/gpu/drm/exynos/exynos_drm_ipp.c | 5 ++---
->>>  drivers/gpu/drm/exynos/exynos_drm_ipp.h | 2 ++
->>>  2 files changed, 4 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
->>> index 9770966..bbe9968 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
->>> +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
->>> @@ -75,7 +75,6 @@ struct drm_exynos_ipp_mem_node {
->>>  	u32	prop_id;
->>>  	u32	buf_id;
->>>  	struct drm_exynos_ipp_buf_info	buf_info;
->>> -	struct drm_file		*filp;
->>>  };
->>>  
->>>  /*
->>> @@ -448,6 +447,7 @@ int exynos_drm_ipp_set_property(struct drm_device *drm_dev, void *data,
->>>  	c_node->dev = dev;
->>>  	c_node->property = *property;
->>>  	c_node->state = IPP_STATE_IDLE;
->>> +	c_node->filp = file;
->>>  
->>>  	c_node->start_work = ipp_create_cmd_work();
->>>  	if (IS_ERR(c_node->start_work)) {
->>> @@ -645,7 +645,6 @@ static struct drm_exynos_ipp_mem_node
->>>  		}
->>>  	}
->>>  
->>> -	m_node->filp = file;
->>>  	mutex_lock(&c_node->mem_lock);
->>>  	list_add_tail(&m_node->list, &c_node->mem_list[qbuf->ops_id]);
->>>  	mutex_unlock(&c_node->mem_lock);
->>> @@ -677,7 +676,7 @@ static int ipp_put_mem_node(struct drm_device *drm_dev,
->> Then, could you remove file argument from exynos_drm_ipp_queue_buf() and
->> ipp_get_event()?
-> sorry, i mean ipp_put_mem_node() instead of exynos_drm_ipp_queue_buf().
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_drm_fimc.c | 64 ++++++++------------------------
+>>  1 file changed, 15 insertions(+), 49 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+>> index bd6628d..b20078e 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+>> @@ -1124,67 +1124,34 @@ static int fimc_dst_set_size(struct device *dev, int swap,
+>>  	return 0;
+>>  }
+>>  
+>> -static int fimc_dst_get_buf_count(struct fimc_context *ctx)
+>> -{
+>> -	u32 cfg, buf_num;
+>> -
+>> -	cfg = fimc_read(ctx, EXYNOS_CIFCNTSEQ);
+>> -
+>> -	buf_num = hweight32(cfg);
+>> -
+>> -	DRM_DEBUG_KMS("buf_num[%d]\n", buf_num);
+>> -
+>> -	return buf_num;
+>> -}
+>> -
+>> -static int fimc_dst_set_buf_seq(struct fimc_context *ctx, u32 buf_id,
+>> +static void fimc_dst_set_buf_seq(struct fimc_context *ctx, u32 buf_id,
+>>  		enum drm_exynos_ipp_buf_type buf_type)
+>>  {
+>> -	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
+>> -	bool enable;
+>> -	u32 cfg;
+>> -	u32 mask = 0x00000001 << buf_id;
+>> -	int ret = 0;
+>>  	unsigned long flags;
+>> +	u32 buf_num;
+>> +	u32 cfg;
+>>  
+>>  	DRM_DEBUG_KMS("buf_id[%d]buf_type[%d]\n", buf_id, buf_type);
+>>  
+>>  	spin_lock_irqsave(&ctx->lock, flags);
+>>  
+>> -	/* mask register set */
+>>  	cfg = fimc_read(ctx, EXYNOS_CIFCNTSEQ);
+>>  
+>> -	switch (buf_type) {
+>> -	case IPP_BUF_ENQUEUE:
+>> -		enable = true;
+>> -		break;
+>> -	case IPP_BUF_DEQUEUE:
+>> -		enable = false;
+>> -		break;
+>> -	default:
+>> -		dev_err(ippdrv->dev, "invalid buf ctrl parameter.\n");
+>> -		ret =  -EINVAL;
+>> -		goto err_unlock;
+>> -	}
+>> +	if (buf_type == IPP_BUF_ENQUEUE)
+>> +		cfg |= (1 << buf_id);
+>> +	else
+>> +		cfg &= (1 << buf_id);
+> ~ Missing?
 
-I guess you mean ipp_get_mem_node() and ipp_get_event().
-You are right, it should be removed. Additionally file check should be added
-to exynos_drm_ipp_queue_buf.
+Yes, thanks for pointing it out.
 
 Regards
 Andrzej
 
 >
->>>  		unsigned long handle = m_node->buf_info.handles[i];
->>>  		if (handle)
->>>  			exynos_drm_gem_put_dma_addr(drm_dev, handle,
->>> -							m_node->filp);
->>> +							c_node->filp);
->>>  	}
->>>  
->>>  	/* delete list in queue */
->>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.h b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
->>> index 6f48d62..0311035 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.h
->>> +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
->>> @@ -62,6 +62,7 @@ struct drm_exynos_ipp_cmd_work {
->>>   * @stop_work: stop command work structure.
->>>   * @event_work: event work structure.
->>>   * @state: state of command node.
->>> + * @filp: associated file pointer.
->>>   */
->>>  struct drm_exynos_ipp_cmd_node {
->>>  	struct device		*dev;
->>> @@ -78,6 +79,7 @@ struct drm_exynos_ipp_cmd_node {
->>>  	struct drm_exynos_ipp_cmd_work *stop_work;
->>>  	struct drm_exynos_ipp_event_work *event_work;
->>>  	enum drm_exynos_ipp_state	state;
->>> +	struct drm_file	*filp;
->>>  };
->>>  
->>>  /*
->>>
+>>  
+>> -	/* sequence id */
+>> -	cfg &= ~mask;
+>> -	cfg |= (enable << buf_id);
+>>  	fimc_write(ctx, cfg, EXYNOS_CIFCNTSEQ);
+>>  
+>> -	/* interrupt enable */
+>> -	if (buf_type == IPP_BUF_ENQUEUE &&
+>> -	    fimc_dst_get_buf_count(ctx) >= FIMC_BUF_START)
+>> -		fimc_mask_irq(ctx, true);
+>> +	buf_num = hweight32(cfg);
+>>  
+>> -	/* interrupt disable */
+>> -	if (buf_type == IPP_BUF_DEQUEUE &&
+>> -	    fimc_dst_get_buf_count(ctx) <= FIMC_BUF_STOP)
+>> +	if (buf_type == IPP_BUF_ENQUEUE && buf_num >= FIMC_BUF_START)
+>> +		fimc_mask_irq(ctx, true);
+>> +	else if (buf_type == IPP_BUF_DEQUEUE && buf_num <= FIMC_BUF_STOP)
+>>  		fimc_mask_irq(ctx, false);
+>>  
+>> -err_unlock:
+>>  	spin_unlock_irqrestore(&ctx->lock, flags);
+>> -	return ret;
+>>  }
+>>  
+>>  static int fimc_dst_set_addr(struct device *dev,
+>> @@ -1242,7 +1209,9 @@ static int fimc_dst_set_addr(struct device *dev,
+>>  		break;
+>>  	}
+>>  
+>> -	return fimc_dst_set_buf_seq(ctx, buf_id, buf_type);
+>> +	fimc_dst_set_buf_seq(ctx, buf_id, buf_type);
+>> +
+>> +	return 0;
+>>  }
+>>  
+>>  static struct exynos_drm_ipp_ops fimc_dst_ops = {
+>> @@ -1297,10 +1266,7 @@ static irqreturn_t fimc_irq_handler(int irq, void *dev_id)
+>>  
+>>  	DRM_DEBUG_KMS("buf_id[%d]\n", buf_id);
+>>  
+>> -	if (fimc_dst_set_buf_seq(ctx, buf_id, IPP_BUF_DEQUEUE) < 0) {
+>> -		DRM_ERROR("failed to dequeue.\n");
+>> -		return IRQ_HANDLED;
+>> -	}
+>> +	fimc_dst_set_buf_seq(ctx, buf_id, IPP_BUF_DEQUEUE);
+>>  
+>>  	event_work->ippdrv = ippdrv;
+>>  	event_work->buf_id[EXYNOS_DRM_OPS_DST] = buf_id;
 >>
 >
