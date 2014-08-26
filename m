@@ -1,75 +1,159 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: Re: [PATCH v9 4/6] ARM: Exynos: switch to using generic cpufreq
- driver for Exynos4210/5250/5420
-Date: Tue, 26 Aug 2014 15:25:48 -0700
-Message-ID: <CAGa+x86jU8MR=r_xuaiorbNNyqrezb0b6Ozy-MPg9HvsARESOw@mail.gmail.com>
-References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
-	<1406707663-16656-5-git-send-email-thomas.ab@samsung.com>
-	<53DA8BB9.6020702@samsung.com>
-	<53DA8D85.3050106@gmail.com>
-	<7hbnrc6px3.fsf@paris.lan>
-	<53F7DA13.6090305@gmail.com>
-	<CADWw7OgAS-z-UOrJU-hL2fzuefJmLtCTg57jYk2Df7f5KfLJmA@mail.gmail.com>
-	<7h8umc60we.fsf@paris.lan>
-	<CADWw7OgW+o3tB=ptnsy-PsmXmNv8oXzt_WfK6NswQiEWWwAzNA@mail.gmail.com>
-	<CAGa+x85-Anb+HsSUQRaaeex19-HK+yZDW0UpFBwAtsQ8Sf2Aqg@mail.gmail.com>
+From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Subject: Re: [PATCH v2 1/3] ARM: dts: Add Peach Pit dts entry for Atmel touchpad
+Date: Wed, 27 Aug 2014 00:53:53 +0200
+Message-ID: <53FD1001.30701@suse.de>
+References: <1409066937-3574-1-git-send-email-javier.martinez@collabora.co.uk> <1409066937-3574-2-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f180.google.com ([209.85.216.180]:41166 "EHLO
-	mail-qc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754743AbaHZWZt (ORCPT
+Received: from cantor2.suse.de ([195.135.220.15]:52891 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755000AbaHZWx6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Aug 2014 18:25:49 -0400
-Received: by mail-qc0-f180.google.com with SMTP id l6so16104738qcy.39
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Aug 2014 15:25:48 -0700 (PDT)
-In-Reply-To: <CAGa+x85-Anb+HsSUQRaaeex19-HK+yZDW0UpFBwAtsQ8Sf2Aqg@mail.gmail.com>
+	Tue, 26 Aug 2014 18:53:58 -0400
+In-Reply-To: <1409066937-3574-2-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chander Kashyap <k.chander@samsung.com>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Amit Kucheria <amit.kucheria@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Nick Dyer <nick.dyer@itdev.co.uk>, Yufeng Shen <miletus@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Tomasz Figa <tomasz.figa@gmail.com>
 
-On Tue, Aug 26, 2014 at 8:15 AM, Kevin Hilman <khilman@linaro.org> wrote:
-> On Mon, Aug 25, 2014 at 10:25 PM, Chander Kashyap <k.chander@samsung.com> wrote:
+Hi Javier,
 
-[...]
+Am 26.08.2014 17:28, schrieb Javier Martinez Canillas:
+> From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+>=20
+> The Peach Pit board has an Atmel maXTouch trackpad device.
+> Add the needed Device Tree nodes to support it.
+>=20
+> This Device Tree change is based on the Chrome OS 3.8 tree
+> but adapted to use the mainline Atmel maXTouch DT binding.
+>=20
+> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> [javier.martinez: added linux,gpio-keymap property and changed IRQ ty=
+pe]
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
+=2Euk>
+> ---
+>=20
+> Changes since v1:
+>  - Change trackpad IRQ pad function from 0x0 (GPIO input) to 0xf (GPI=
+O IRQ).
+>    suggested by Tomasz Figa.
+>  - Remove BTN_TOOL_* from "linux,gpio-keymap" property since those ar=
+e set
+>    by input mt core if INPUT_MT_POINTER is set. Suggested by Nick Dye=
+r.
+>  - Use correct values for "linux,gpio-keymap" property. Suggested by =
+Nick Dyer.
+>  - Remove support for Peach Pi board since it uses a different Atmel =
+touchpad
+>    that requires an Atmel object protocol  (T100) not supported by th=
+e driver.
+>  - Use IRQ type constants from <dt-bindings/interrupt-controller/irq.=
+h> instead
+>    of magic numbers. Suggested by Andreas Farber.
+> ---
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 31 ++++++++++++++++++++=
+++++++++++
+>  1 file changed, 31 insertions(+)
+>=20
+> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/bo=
+ot/dts/exynos5420-peach-pit.dts
+> index 228a6b1..e4f82d5 100644
+> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> @@ -11,6 +11,7 @@
+>  /dts-v1/;
+>  #include <dt-bindings/input/input.h>
+>  #include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/interrupt-controller/irq.h>
+>  #include "exynos5420.dtsi"
+> =20
+>  / {
+> @@ -157,6 +158,29 @@
+>  	};
+>  };
+> =20
+> +&hsi2c_8 {
+> +	status =3D "okay";
+> +	clock-frequency =3D <333000>;
+> +
+> +	trackpad@4b {
+> +		compatible=3D"atmel,maxtouch";
+> +		reg=3D<0x4b>;
+> +		interrupt-parent=3D<&gpx1>;
+> +		interrupts=3D<1 IRQ_TYPE_EDGE_FALLING>;
 
->>>
->>> Can you clarify how you're setting the voltages to ensure stability?
->>
->> below is the diff :  wip/exynos/integ
->
-> Thanks.
->
-> I've applied your patch, and bootup shows vdd_arm and vdd_kfc at
-> 1500mV, but still when booting with cpuidle enabled (bL switcher
-> disabled), I'm seeing lockups with no kernel output.  With CPUidle
-> disabled, things are pretty stable.
->
-> What tree are you using to test this out on 5420?  I'm using mainline
-> v3.17-rc1 + DT patch for CPUidle and this cpufreq series.  See my
-> wip/exynos/integ branch at
-> git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux.git.
+Nit: Here's a style break (4x spaces around '=3D' missing).
 
-I mis-stated this.  Actually my tree is based on the v3.17-rc1 branch
-of the exynos-reference tree[1] + the above mentioned patches for
-cpuidle and cpufreq.
+> +		wakeup-source;
+> +		pinctrl-names =3D "default";
+> +		pinctrl-0 =3D <&trackpad_irq>;
+> +		linux,gpio-keymap =3D < KEY_RESERVED
+> +				      KEY_RESERVED
+> +				      0		/* GPIO 0 */
+> +				      0		/* GPIO 1 */
+> +				      0		/* GPIO 2 */
+> +				      BTN_LEFT 	/* GPIO 3 */
+> +				      KEY_RESERVED
+> +				      KEY_RESERVED >;
+> +	};
 
-Also, I've narrowed down the instability a bit, and it's not related
-to CPUidle.  I can now trigger a boot hang even without CPUidle
-enabled.  Here's a quick way to cause a boot lockup. With the switcher
-disabled, I enable CPUfreq and set the default governor to
-performance.  As soon as cpufreq driver loads, it tries to use the top
-frequences for both clusters, and it hangs.
+Coincidentally, I experimentally came up with a very similar DT node fo=
+r
+Spring the weekend:
 
-Selectively disabling frequencies, I narrowed it down to the 1.3GHz
-and 1.2GHz frequencies of the little cluster.  With these commented
-out in the DT, it will fully boot with the performance governor
-enabled.
++	trackpad@4b {
++		compatible =3D "atmel,maxtouch";
++		reg =3D <0x4b>;
++		interrupt-parent =3D <&gpx1>;
++		interrupts =3D <2 IRQ_TYPE_NONE>;
++		pinctrl-names =3D "default";
++		pinctrl-0 =3D <&trackpad_irq>;
++		linux,gpio-keymap =3D <KEY_RESERVED
++		                     KEY_RESERVED
++		                     KEY_RESERVED
++		                     KEY_RESERVED
++		                     KEY_RESERVED
++		                     BTN_LEFT>;
++		wakeup-source;
++	};
 
-So that leads to the question.  Are all of the operating points in
-exynos5420.dtsi valid for exynos5800, and have they been validated?
+0 =3D=3D KEY_RESERVED, so you can consistently use it for GPIO 0-2, too=
+=2E :)
 
-Kevin
+I probably should add the two trailing _RESERVEDs, too?
 
-[1]https://github.com/exynos-reference/kernel.git
+With my above snippet I got an awful lot of "Interrupt triggered but
+zero messages" warnings (which I simply commented out as quickfix).
+Is that why you are using _EDGE_FALLING? Or pin-function 0xf?
+(In my case the ChromeOS DT had IRQ_TYPE_NONE and pin-function 0x0.)
+
+Regards,
+Andreas
+
+> +};
+> +
+>  &hsi2c_9 {
+>  	status =3D "okay";
+>  	clock-frequency =3D <400000>;
+> @@ -249,6 +273,13 @@
+>  		samsung,pin-drv =3D <0>;
+>  	};
+> =20
+> +	trackpad_irq: trackpad-irq {
+> +		samsung,pins =3D "gpx1-1";
+> +		samsung,pin-function =3D <0xf>;
+> +		samsung,pin-pud =3D <0>;
+> +		samsung,pin-drv =3D <0>;
+> +	};
+> +
+>  	power_key_irq: power-key-irq {
+>  		samsung,pins =3D "gpx1-2";
+>  		samsung,pin-function =3D <0>;
+
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
+berg
