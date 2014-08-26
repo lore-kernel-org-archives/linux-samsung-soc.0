@@ -1,67 +1,75 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCHv2 1/5] rtc: s3c: Define s3c_rtc structure to remove
- global variables.
-Date: Tue, 26 Aug 2014 14:31:49 -0700
-Message-ID: <20140826143149.7cd3ab27b6247a59a486e681@linux-foundation.org>
-References: <y@samsung.com>
-	<1407808871-6046-1-git-send-email-y@samsung.com>
-	<1407808871-6046-2-git-send-email-y@samsung.com>
-	<20140822134204.1fa5be7aeb76a50b45ccc5f5@linux-foundation.org>
-	<53FA89FD.1030004@samsung.com>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [PATCH v9 4/6] ARM: Exynos: switch to using generic cpufreq
+ driver for Exynos4210/5250/5420
+Date: Tue, 26 Aug 2014 15:25:48 -0700
+Message-ID: <CAGa+x86jU8MR=r_xuaiorbNNyqrezb0b6Ozy-MPg9HvsARESOw@mail.gmail.com>
+References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
+	<1406707663-16656-5-git-send-email-thomas.ab@samsung.com>
+	<53DA8BB9.6020702@samsung.com>
+	<53DA8D85.3050106@gmail.com>
+	<7hbnrc6px3.fsf@paris.lan>
+	<53F7DA13.6090305@gmail.com>
+	<CADWw7OgAS-z-UOrJU-hL2fzuefJmLtCTg57jYk2Df7f5KfLJmA@mail.gmail.com>
+	<7h8umc60we.fsf@paris.lan>
+	<CADWw7OgW+o3tB=ptnsy-PsmXmNv8oXzt_WfK6NswQiEWWwAzNA@mail.gmail.com>
+	<CAGa+x85-Anb+HsSUQRaaeex19-HK+yZDW0UpFBwAtsQ8Sf2Aqg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44016 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755184AbaHZVbv (ORCPT
+Received: from mail-qc0-f180.google.com ([209.85.216.180]:41166 "EHLO
+	mail-qc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754743AbaHZWZt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Aug 2014 17:31:51 -0400
-In-Reply-To: <53FA89FD.1030004@samsung.com>
+	Tue, 26 Aug 2014 18:25:49 -0400
+Received: by mail-qc0-f180.google.com with SMTP id l6so16104738qcy.39
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Aug 2014 15:25:48 -0700 (PDT)
+In-Reply-To: <CAGa+x85-Anb+HsSUQRaaeex19-HK+yZDW0UpFBwAtsQ8Sf2Aqg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: a.zummo@towertech.it, kgene.kim@samsung.com, kyungmin.park@samsung.com, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Chander Kashyap <k.chander@samsung.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Amit Kucheria <amit.kucheria@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Mon, 25 Aug 2014 09:57:33 +0900 Chanwoo Choi <cw00.choi@samsung.com> wrote:
+On Tue, Aug 26, 2014 at 8:15 AM, Kevin Hilman <khilman@linaro.org> wrote:
+> On Mon, Aug 25, 2014 at 10:25 PM, Chander Kashyap <k.chander@samsung.com> wrote:
 
-> Dear Andrew, 
-> 
-> On 08/23/2014 05:42 AM, Andrew Morton wrote:
-> > On Tue, 12 Aug 2014 11:01:07 +0900 y@samsung.com wrote:
-> > 
-> >> This patch define s3c_rtc structure including necessary variables for S3C RTC
-> >> device instead of global variables. This patch improves the readability by
-> >> removing global variables.
-> > 
-> > Below is the v1->v2 delta.
-> > 
-> > Why were all those tests of info->base added?  Can it really be zero? 
-> > I don't see how.
-> 
-> If some functions (e.g., s3c_rtc_settime) accesses the rtc register
-> by using info->base before the initialization of info->base in s3c_rtc_probe,
-> I thought that null pointer error would happen.
+[...]
 
-probe() should be called before anything else.  If we're somehow
-calling s3c_rtc_settime() before probe() has completed then something
-very bad is happening - for example, the device may have been
-registered far too early.  But I don't think that's the case here.
+>>>
+>>> Can you clarify how you're setting the voltages to ensure stability?
+>>
+>> below is the diff :  wip/exynos/integ
+>
+> Thanks.
+>
+> I've applied your patch, and bootup shows vdd_arm and vdd_kfc at
+> 1500mV, but still when booting with cpuidle enabled (bL switcher
+> disabled), I'm seeing lockups with no kernel output.  With CPUidle
+> disabled, things are pretty stable.
+>
+> What tree are you using to test this out on 5420?  I'm using mainline
+> v3.17-rc1 + DT patch for CPUidle and this cpufreq series.  See my
+> wip/exynos/integ branch at
+> git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux.git.
 
-That being said, it does seem strange that s3c_rtc_probe() calls
-devm_rtc_device_register() *before* trying to request its IRQs.  So if
-IRQ requesting fails, we go and immediately unregister the device. 
-Some other drivers do it this way, others do not.  Wouldn't it be
-better to defer registration until we know that all the probe() setup
-operations have succeeded?
+I mis-stated this.  Actually my tree is based on the v3.17-rc1 branch
+of the exynos-reference tree[1] + the above mentioned patches for
+cpuidle and cpufreq.
 
-> But, I missed one point which info->base might have the garbate data instead of NULL.
-> I'll add the initialization code for info->base.
-> 	info->base = NULL;
-> 
-> If you don't agree it, I'll drop this code checking the state of info->base on next patchset(v3).
+Also, I've narrowed down the instability a bit, and it's not related
+to CPUidle.  I can now trigger a boot hang even without CPUidle
+enabled.  Here's a quick way to cause a boot lockup. With the switcher
+disabled, I enable CPUfreq and set the default governor to
+performance.  As soon as cpufreq driver loads, it tries to use the top
+frequences for both clusters, and it hangs.
 
-Well, we should have those checks in there unless we know they're
-needed.  And if they *are* needed, we should have a good understanding
-of why they're needed, and we should be sure that we're not just
-working around some underlying problem.
+Selectively disabling frequencies, I narrowed it down to the 1.3GHz
+and 1.2GHz frequencies of the little cluster.  With these commented
+out in the DT, it will fully boot with the performance governor
+enabled.
+
+So that leads to the question.  Are all of the operating points in
+exynos5420.dtsi valid for exynos5800, and have they been validated?
+
+Kevin
+
+[1]https://github.com/exynos-reference/kernel.git
