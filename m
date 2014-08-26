@@ -1,55 +1,92 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 04/29] drivers: base: add notifier for failed driver bind
-Date: Tue, 26 Aug 2014 08:30:04 +0200
-Message-ID: <53FC296C.1030202@samsung.com>
-References: <1407235677-26324-1-git-send-email-m.szyprowski@samsung.com>
-	<1407235677-26324-5-git-send-email-m.szyprowski@samsung.com>
-	<20140825211823.GH16329@8bytes.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 15/15] drm/exynos/fimc: fix source buffer registers
+Date: Tue, 26 Aug 2014 08:35:13 +0200
+Message-ID: <53FC2AA1.7030605@samsung.com>
+References: <1408693946-15456-1-git-send-email-a.hajda@samsung.com>
+ <1408693946-15456-16-git-send-email-a.hajda@samsung.com>
+ <53FC21DF.1010504@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <20140825211823.GH16329-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <53FC21DF.1010504@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
+On 08/26/2014 07:57 AM, Joonyoung Shim wrote:
+> Hi Andrzej,
+>
+> On 08/22/2014 04:52 PM, Andrzej Hajda wrote:
+>> FIMC in default mode of operation uses only one input buffer,
+>> but the driver used also second buffer, as a result only the
+>> first frame was processed correctly. The patch fixes it.
+> I can't understand well, then we don't need to distinguish buf_id in
+> fimc_src_set_addr()?
+Yes. FIMC in default operation mode uses only one input buffer pointer
+which should
+be updated when processing of the previous buffer has been finished.
 
-On 2014-08-25 23:18, Joerg Roedel wrote:
-> On Tue, Aug 05, 2014 at 12:47:32PM +0200, Marek Szyprowski wrote:
->> +	if (failed && dev->bus)
->> +		blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
->> +					     BUS_NOTIFY_DRVBIND_FAILED, dev);
->> +
-> Why can't you just use the notifier for BUS_NOTIFY_UNBIND_DRIVER or
-> BUS_NOTIFY_UNBOUND_DRIVER when something goes wrong in driver
-> initialization?
+There exists also ping-pong mode which uses two buffer pointers, as I
+have spotted in
+specs. However I have not seen it was implemented neither in drm,
+neither in camera drivers.
+I will try to implement it later.
 
-Hmmm, you might be right. BUS_NOTIFY_UNBIND_DRIVER event happens before 
-unbinding
-the driver, but BUS_NOTIFY_UNBOUND_DRIVER is called when driver remove 
-has been
-finished, so it can be considered as a symmetrical pair for 
-BUS_NOTIFY_BIND_DRIVER.
-Driver which registered bus notifiers is mainly interested in doing 
-right cleanup,
-so the code executed for IOMMU_GROUP_NOTIFY_UNBOUND_DRIVER and
-IOMMU_GROUP_NOTIFY_DRVBIND_FAILED is same.
+Regards
+Andrzej
 
-I will remove this additional event and simply add a call to
-BUS_NOTIFY_UNBOUND_DRIVER event when driver probe fails.
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+>
+>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_drm_fimc.c | 16 ++++++++--------
+>>  1 file changed, 8 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+>> index b20078e..e985253 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+>> @@ -720,24 +720,24 @@ static int fimc_src_set_addr(struct device *dev,
+>>  	case IPP_BUF_ENQUEUE:
+>>  		config = &property->config[EXYNOS_DRM_OPS_SRC];
+>>  		fimc_write(ctx, buf_info->base[EXYNOS_DRM_PLANAR_Y],
+>> -			EXYNOS_CIIYSA(buf_id));
+>> +			EXYNOS_CIIYSA0);
+>>  
+>>  		if (config->fmt == DRM_FORMAT_YVU420) {
+>>  			fimc_write(ctx, buf_info->base[EXYNOS_DRM_PLANAR_CR],
+>> -				EXYNOS_CIICBSA(buf_id));
+>> +				EXYNOS_CIICBSA0);
+>>  			fimc_write(ctx, buf_info->base[EXYNOS_DRM_PLANAR_CB],
+>> -				EXYNOS_CIICRSA(buf_id));
+>> +				EXYNOS_CIICRSA0);
+>>  		} else {
+>>  			fimc_write(ctx, buf_info->base[EXYNOS_DRM_PLANAR_CB],
+>> -				EXYNOS_CIICBSA(buf_id));
+>> +				EXYNOS_CIICBSA0);
+>>  			fimc_write(ctx, buf_info->base[EXYNOS_DRM_PLANAR_CR],
+>> -				EXYNOS_CIICRSA(buf_id));
+>> +				EXYNOS_CIICRSA0);
+>>  		}
+>>  		break;
+>>  	case IPP_BUF_DEQUEUE:
+>> -		fimc_write(ctx, 0x0, EXYNOS_CIIYSA(buf_id));
+>> -		fimc_write(ctx, 0x0, EXYNOS_CIICBSA(buf_id));
+>> -		fimc_write(ctx, 0x0, EXYNOS_CIICRSA(buf_id));
+>> +		fimc_write(ctx, 0x0, EXYNOS_CIIYSA0);
+>> +		fimc_write(ctx, 0x0, EXYNOS_CIICBSA0);
+>> +		fimc_write(ctx, 0x0, EXYNOS_CIICRSA0);
+>>  		break;
+>>  	default:
+>>  		/* bypass */
+>>
+>
