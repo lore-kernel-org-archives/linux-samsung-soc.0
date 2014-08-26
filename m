@@ -1,70 +1,97 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 0/7] Exynos4: enable HDMI support for Odroid and
- UniversalC210
-Date: Tue, 26 Aug 2014 15:03:35 +0200
-Message-ID: <53FC85A7.4090303@samsung.com>
-References: <1404202211-15788-1-git-send-email-m.szyprowski@samsung.com>
- <CAAObsKC96xCOU8-hoecDn0PAZM5Z-T6Y3pb885csQm4_AakuyA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH v3 1/5] ARM: firmware: Introduce suspend and resume operations
+Date: Tue, 26 Aug 2014 16:10:24 +0200
+Message-ID: <1409062228-14690-2-git-send-email-t.figa@samsung.com>
+References: <1409062228-14690-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:37202 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754828AbaHZNDj (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:38330 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755357AbaHZOKq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Aug 2014 09:03:39 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NAX00C5T0EWS820@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 26 Aug 2014 14:06:32 +0100 (BST)
-In-reply-to: <CAAObsKC96xCOU8-hoecDn0PAZM5Z-T6Y3pb885csQm4_AakuyA@mail.gmail.com>
+	Tue, 26 Aug 2014 10:10:46 -0400
+In-reply-to: <1409062228-14690-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomeu Vizoso <tomeu@tomeuvizoso.net>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Tomasz Stanislawski <t.stanislaws@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, swarren@nvidia.com, acourbot@nvidia.com, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, drake@endlessm.com, tomeu@tomeuvizoso.net, Tomasz Figa <t.figa@samsung.com>
 
-Hello,
+This patch extends the firmware_ops structure with two new callbacks:
+.suspend() and .resume(). The former is intended to ask the firmware to
+save all its volatile state and suspend the system, without returning
+back to the kernel in between. The latter is to be called early by
+very low level platform suspend code after waking up to restore low
+level hardware state, which can't be restored in non-secure mode.
 
-On 2014-08-12 15:00, Tomeu Vizoso wrote:
-> On 1 July 2014 10:10, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
->> This is a long awaited patch series enabling support for HDMI output
->> available on Exynos4412-based Odroid boards (X/X2/U2/U3/U3+) and
->> Exynos4210 Universal C210 board.
-> Hello,
->
-> have tested a few of these patches on an Odroid-U2 on top of
-> linux/master (c8d6637):
->
-> 1a8edf8 clk: exynos4: add support for MOUT_HDMI and MOUT_MIXER clocks
-> bb2561d drm: exynos: hdmi: make 'hdmi-en' regulator optional and keep it enabled
-> afe0bff Exynos: add support for 'domain-always-on' property
-> be421b7 ARM: dts: exynos4: add hdmi related nodes
-> 1206d41 ARM: dts: exynos4412-odroid: enable hdmi support
->
-> Tested-by: Tomeu Vizoso <tomeu@tomeuvizoso.net>
->
-> I also needed these two patches from Daniel Drake:
->
-> 64489ec ARM: dts: Enable PMIC interrupts on ODROID
-> ef009d7 ARM: dts: ODROID i2c improvements
+While at it, outdated version of the structure is removed from the
+documentation and replaced with a reference to the header file.
 
-Those 2 patches finally reached v3.17-rc2.
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+ Documentation/arm/firmware.txt  | 28 +++++-----------------------
+ arch/arm/include/asm/firmware.h |  8 ++++++++
+ 2 files changed, 13 insertions(+), 23 deletions(-)
 
-> HDMI worked just fine in the testing I did, I have pushed a branch here:
->
-> http://cgit.collabora.com/git/user/tomeu/linux.git/log/?h=odroid-hdmi
->
-> Marek, Daniel: would you like me to send a series with all the needed
-> patches together?
-
-I don't think it is needed now, especially taking into account that there
-is no consensus on domain-always-on approach. Maybe I will try once again
-to investigate the power on/off issue and check if it is possible to get
-rid of it.
-
-Best regards
+diff --git a/Documentation/arm/firmware.txt b/Documentation/arm/firmware.txt
+index c2e468f..da6713a 100644
+--- a/Documentation/arm/firmware.txt
++++ b/Documentation/arm/firmware.txt
+@@ -7,32 +7,14 @@ world, which changes the way some things have to be initialized. This makes
+ a need to provide an interface for such platforms to specify available firmware
+ operations and call them when needed.
+ 
+-Firmware operations can be specified using struct firmware_ops
+-
+-	struct firmware_ops {
+-		/*
+-		* Enters CPU idle mode
+-		*/
+-		int (*do_idle)(void);
+-		/*
+-		* Sets boot address of specified physical CPU
+-		*/
+-		int (*set_cpu_boot_addr)(int cpu, unsigned long boot_addr);
+-		/*
+-		* Boots specified physical CPU
+-		*/
+-		int (*cpu_boot)(int cpu);
+-		/*
+-		* Initializes L2 cache
+-		*/
+-		int (*l2x0_init)(void);
+-	};
+-
+-and then registered with register_firmware_ops function
++Firmware operations can be specified by filling in a struct firmware_ops
++with appropriate callbacks and then registering it with register_firmware_ops()
++function.
+ 
+ 	void register_firmware_ops(const struct firmware_ops *ops)
+ 
+-the ops pointer must be non-NULL.
++The ops pointer must be non-NULL. More information about struct firmware_ops
++and its members can be found in arch/arm/include/asm/firmware.h header.
+ 
+ There is a default, empty set of operations provided, so there is no need to
+ set anything if platform does not require firmware operations.
+diff --git a/arch/arm/include/asm/firmware.h b/arch/arm/include/asm/firmware.h
+index 2c9f10d..5904f59 100644
+--- a/arch/arm/include/asm/firmware.h
++++ b/arch/arm/include/asm/firmware.h
+@@ -41,6 +41,14 @@ struct firmware_ops {
+ 	 * Initializes L2 cache
+ 	 */
+ 	int (*l2x0_init)(void);
++	/*
++	 * Enter system-wide suspend.
++	 */
++	int (*suspend)(void);
++	/*
++	 * Restore state of privileged hardware after system-wide suspend.
++	 */
++	int (*resume)(void);
+ };
+ 
+ /* Global pointer for current firmware_ops structure, can't be NULL. */
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+2.0.4
