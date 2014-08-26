@@ -1,189 +1,93 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 9/9] ARM: exynos: Move to generic power domain bindings
-Date: Tue, 26 Aug 2014 14:07:17 +0200
-Message-ID: <1409054837-5667-10-git-send-email-ulf.hansson@linaro.org>
-References: <1409054837-5667-1-git-send-email-ulf.hansson@linaro.org>
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1409054837-5667-1-git-send-email-ulf.hansson@linaro.org>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pm@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Chris Ball <chris@printf.net>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 0/7] CMA & device tree, another approach
+Date: Tue, 26 Aug 2014 14:09:41 +0200
+Message-ID: <1409054988-32758-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:33892 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754601AbaHZMNx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 26 Aug 2014 08:13:53 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linaro-mm-sig@lists.linaro.org, linux-media@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Michal Nazarewicz <mina86@mina86.com>, Grant Likely <grant.likely@linaro.org>, Tomasz Figa <t.figa@samsung.com>, Laura Abbott <lauraa@codeaurora.org>, Josh Cartwright <joshc@codeaurora.org>, Joonsoo Kim <iamjoonsoo.kim@lge.com>
 
-From: Tomasz Figa <t.figa@samsung.com>
+Hello,
 
-This patch moves Exynos power domain code to use the new generic power
-domain look-up framework introduced in previous patches, thus also
-allowing the new code to be compiled with CONFIG_ARCH_EXYNOS as well.
+This is another approach to finish support for reserved memory regions
+defined in device tree. Previous attempts 
+(http://lists.linaro.org/pipermail/linaro-mm-sig/2014-February/003738.html
+and https://lkml.org/lkml/2014/7/14/108) ended in merging parts of the
+code and documentation. Merged patches allow to reserve memory, but
+there is still no reserved memory drivers nor any code that actually
+uses reserved memory regions.
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-[Ulf:Rebased and resolved conflicts]
----
- .../bindings/arm/exynos/power_domain.txt           | 13 ++--
- arch/arm/mach-exynos/pm_domains.c                  | 78 +---------------------
- kernel/power/Kconfig                               |  2 +-
- 3 files changed, 8 insertions(+), 85 deletions(-)
+The final conclusion from the above mentioned threads is that there is
+no automated reserved memory initialization. All drivers that want to
+use reserved memory, should initialize it on their own.
 
-diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-index 8b4f7b7f..abde1ea 100644
---- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-+++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-@@ -8,6 +8,8 @@ Required Properties:
-     * samsung,exynos4210-pd - for exynos4210 type power domain.
- - reg: physical base address of the controller and length of memory mapped
-     region.
-+- #power-domain-cells: number of cells in power domain specifier;
-+    must be 0.
- 
- Optional Properties:
- - clocks: List of clock handles. The parent clocks of the input clocks to the
-@@ -29,6 +31,7 @@ Example:
- 	lcd0: power-domain-lcd0 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10023C00 0x10>;
-+		#power-domain-cells = <0>;
- 	};
- 
- 	mfc_pd: power-domain@10044060 {
-@@ -37,12 +40,8 @@ Example:
- 		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_SW_ACLK333>,
- 			<&clock CLK_MOUT_USER_ACLK333>;
- 		clock-names = "oscclk", "pclk0", "clk0";
-+		#power-domain-cells = <0>;
- 	};
- 
--Example of the node using power domain:
--
--	node {
--		/* ... */
--		samsung,power-domain = <&lcd0>;
--		/* ... */
--	};
-+See Documentation/devicetree/bindings/power/power_domain.txt for description
-+of consumer-side bindings.
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 797cb13..d05ecd1 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -106,78 +106,6 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
- 	return exynos_pd_power(domain, false);
- }
- 
--static void exynos_add_device_to_domain(struct exynos_pm_domain *pd,
--					 struct device *dev)
--{
--	int ret;
--
--	dev_dbg(dev, "adding to power domain %s\n", pd->pd.name);
--
--	while (1) {
--		ret = pm_genpd_add_device(&pd->pd, dev);
--		if (ret != -EAGAIN)
--			break;
--		cond_resched();
--	}
--
--	pm_genpd_dev_need_restore(dev, true);
--}
--
--static void exynos_remove_device_from_domain(struct device *dev)
--{
--	struct generic_pm_domain *genpd = dev_to_genpd(dev);
--	int ret;
--
--	dev_dbg(dev, "removing from power domain %s\n", genpd->name);
--
--	while (1) {
--		ret = pm_genpd_remove_device(genpd, dev);
--		if (ret != -EAGAIN)
--			break;
--		cond_resched();
--	}
--}
--
--static void exynos_read_domain_from_dt(struct device *dev)
--{
--	struct platform_device *pd_pdev;
--	struct exynos_pm_domain *pd;
--	struct device_node *node;
--
--	node = of_parse_phandle(dev->of_node, "samsung,power-domain", 0);
--	if (!node)
--		return;
--	pd_pdev = of_find_device_by_node(node);
--	if (!pd_pdev)
--		return;
--	pd = platform_get_drvdata(pd_pdev);
--	exynos_add_device_to_domain(pd, dev);
--}
--
--static int exynos_pm_notifier_call(struct notifier_block *nb,
--				    unsigned long event, void *data)
--{
--	struct device *dev = data;
--
--	switch (event) {
--	case BUS_NOTIFY_BIND_DRIVER:
--		if (dev->of_node)
--			exynos_read_domain_from_dt(dev);
--
--		break;
--
--	case BUS_NOTIFY_UNBOUND_DRIVER:
--		exynos_remove_device_from_domain(dev);
--
--		break;
--	}
--	return NOTIFY_DONE;
--}
--
--static struct notifier_block platform_nb = {
--	.notifier_call = exynos_pm_notifier_call,
--};
--
- static __init int exynos4_pm_init_power_domain(void)
- {
- 	struct platform_device *pdev;
-@@ -203,7 +131,6 @@ static __init int exynos4_pm_init_power_domain(void)
- 		pd->base = of_iomap(np, 0);
- 		pd->pd.power_off = exynos_pd_power_off;
- 		pd->pd.power_on = exynos_pd_power_on;
--		pd->pd.of_node = np;
- 
- 		pd->oscclk = clk_get(dev, "oscclk");
- 		if (IS_ERR(pd->oscclk))
-@@ -229,15 +156,12 @@ static __init int exynos4_pm_init_power_domain(void)
- 			clk_put(pd->oscclk);
- 
- no_clk:
--		platform_set_drvdata(pdev, pd);
--
- 		on = __raw_readl(pd->base + 0x4) & S5P_INT_LOCAL_PWR_EN;
- 
- 		pm_genpd_init(&pd->pd, NULL, !on);
-+		of_genpd_add_provider(np, of_genpd_xlate_simple, &pd->pd);
- 	}
- 
--	bus_register_notifier(&platform_bus_type, &platform_nb);
--
- 	return 0;
- }
- arch_initcall(exynos4_pm_init_power_domain);
-diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
-index 897619b..bbef57f 100644
---- a/kernel/power/Kconfig
-+++ b/kernel/power/Kconfig
-@@ -304,7 +304,7 @@ config PM_GENERIC_DOMAINS_RUNTIME
- 
- config PM_GENERIC_DOMAINS_OF
- 	def_bool y
--	depends on PM_GENERIC_DOMAINS && OF && !ARCH_EXYNOS
-+	depends on PM_GENERIC_DOMAINS && OF
- 
- config CPU_PM
- 	bool
+This patch series provides two driver for reserved memory regions (one
+based on CMA and one based on dma_coherent allocator). The main
+improvement comparing to the previous version is removal of automated
+reserved memory for every device and support for named memory regions.
+
+Support for more than one reserved memory region can be considered as a
+separate DMA address space, so support for more than one region per
+device has been implemented the same way as support for separate IO/DMA
+address spaces in my Exynos IOMMU dma-mapping proposal:
+http://thread.gmane.org/gmane.linux.kernel.samsung-soc/36079
+
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
+
+Changes since '[PATCH v2 RESEND 0/4] CMA & device tree, once again' version:
+(https://lkml.org/lkml/2014/7/14/108)
+- added return error value to of_reserved_mem_device_init()
+- added support for named memory regions (so more than one region can be
+  defined per device)
+- added usage example - converted custom reserved memory code used by
+  s5p-mfc driver to the generic reserved memory handling code
+
+Patch summary:
+
+Marek Szyprowski (7):
+  drivers: of: add return value to of_reserved_mem_device_init
+  drivers: of: add support for named memory regions
+  drivers: dma-coherent: add initialization from device tree
+  drivers: dma-contiguous: add initialization from device tree
+  media: s5p-mfc: replace custom reserved memory init code with generic
+    one
+  ARM: Exynos: convert MFC to generic reserved memory bindings
+  ARM: DTS: exynos4412-odroid*: enable MFC device
+
+ .../devicetree/bindings/media/s5p-mfc.txt          |  16 +--
+ .../bindings/reserved-memory/reserved-memory.txt   |   6 +-
+ arch/arm/boot/dts/exynos4210-origen.dts            |  22 +++-
+ arch/arm/boot/dts/exynos4210-smdkv310.dts          |  22 +++-
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  24 ++++
+ arch/arm/boot/dts/exynos4412-origen.dts            |  22 +++-
+ arch/arm/boot/dts/exynos4412-smdk4412.dts          |  22 +++-
+ arch/arm/boot/dts/exynos5250-arndale.dts           |  22 +++-
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |  22 +++-
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      |  22 +++-
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |  22 +++-
+ arch/arm/mach-exynos/exynos.c                      |  18 ---
+ arch/arm/mach-exynos/mfc.h                         |  16 ---
+ arch/arm/plat-samsung/Kconfig                      |   5 -
+ arch/arm/plat-samsung/Makefile                     |   1 -
+ arch/arm/plat-samsung/s5p-dev-mfc.c                |  94 --------------
+ drivers/base/dma-coherent.c                        | 138 ++++++++++++++++++---
+ drivers/base/dma-contiguous.c                      |  71 +++++++++++
+ drivers/media/platform/s5p-mfc/s5p_mfc.c           | 102 ++++++---------
+ drivers/of/of_reserved_mem.c                       | 102 ++++++++++-----
+ include/linux/cma.h                                |   3 +
+ include/linux/of_reserved_mem.h                    |   9 +-
+ mm/cma.c                                           |  62 +++++++--
+ 23 files changed, 552 insertions(+), 291 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/mfc.h
+ delete mode 100644 arch/arm/plat-samsung/s5p-dev-mfc.c
+
 -- 
-1.9.1
-
+1.9.2
