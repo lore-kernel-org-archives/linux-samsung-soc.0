@@ -1,51 +1,71 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH] MAINTAINERS: Tomasz has moved
-Date: Tue, 26 Aug 2014 16:30:53 +0200
-Message-ID: <1409063453-16124-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:42971 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754610AbaHZObe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Aug 2014 10:31:34 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [PATCH v9 4/6] ARM: Exynos: switch to using generic cpufreq
+ driver for Exynos4210/5250/5420
+Date: Tue, 26 Aug 2014 08:15:40 -0700
+Message-ID: <CAGa+x85-Anb+HsSUQRaaeex19-HK+yZDW0UpFBwAtsQ8Sf2Aqg@mail.gmail.com>
+References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
+	<1406707663-16656-5-git-send-email-thomas.ab@samsung.com>
+	<53DA8BB9.6020702@samsung.com>
+	<53DA8D85.3050106@gmail.com>
+	<7hbnrc6px3.fsf@paris.lan>
+	<53F7DA13.6090305@gmail.com>
+	<CADWw7OgAS-z-UOrJU-hL2fzuefJmLtCTg57jYk2Df7f5KfLJmA@mail.gmail.com>
+	<7h8umc60we.fsf@paris.lan>
+	<CADWw7OgW+o3tB=ptnsy-PsmXmNv8oXzt_WfK6NswQiEWWwAzNA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CADWw7OgW+o3tB=ptnsy-PsmXmNv8oXzt_WfK6NswQiEWWwAzNA@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Chander Kashyap <k.chander@samsung.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Amit Kucheria <amit.kucheria@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <t.figa@samsung.com>
 
-I am leaving Samsung, so my current e-mail address is not going to work
-any longer. Replace it with my private one. In addition, Sylwester
-Nawrocki is being added as co-maintainer for Samsung clock drivers to
-take some of the responsibilities, as I will be doing my part in my spare
-time.
+On Mon, Aug 25, 2014 at 10:25 PM, Chander Kashyap <k.chander@samsung.com> wrote:
+> Hi Kevin,
+>
+> On Mon, Aug 25, 2014 at 9:02 PM, Kevin Hilman <khilman@linaro.org> wrote:
+>> Hi Chander,
+>>
+>> Chander Kashyap <k.chander@samsung.com> writes:
+>>
+>> [...]
+>>
+>>>>> I'm trying it on the 5800/Chromebook2 and it's not terribly stable.  I'm
+>>>>> testing along with CPUidle, so there may be some untested interactions
+>>>>> there as it seems a bit more stable without CPUidle enabled.
+>>>>>
+>>>>> I'd love to hear from anyone else that's testing CPUidle and CPUfreq
+>>>>> together big.LITTLE 5420/5800, with or without the switcher.
+>>>
+>>> I have tested this patch series on SMDK5420 with cpuidle (with and
+>>> without b.L switcher enabled).
+>>>
+>>> As of now voltage scaling support is not there in generic big-little
+>>> cpufreq driver (arm_big_little.c).
+>>> Hence need to tie arm and kfc voltages to highest level for testing.
+>>
+>>> Without this change stability issues are there, but with this change
+>>> everything is stable.
+>>
+>> Can you clarify how you're setting the voltages to ensure stability?
+>
+> below is the diff :  wip/exynos/integ
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
----
- MAINTAINERS | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Thanks.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index acd44c3..d57f6ce 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7062,7 +7062,7 @@ S:	Maintained
- F:	drivers/pinctrl/sh-pfc/
- 
- PIN CONTROLLER - SAMSUNG
--M:	Tomasz Figa <t.figa@samsung.com>
-+M:	Tomasz Figa <tomasz.figa@gmail.com>
- M:	Thomas Abraham <thomas.abraham@linaro.org>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
-@@ -7908,7 +7908,8 @@ S:	Supported
- F:	drivers/media/i2c/s5k5baf.c
- 
- SAMSUNG SOC CLOCK DRIVERS
--M:	Tomasz Figa <t.figa@samsung.com>
-+M:	Sylwester Nawrocki <s.nawrocki@samsung.com>
-+M:	Tomasz Figa <tomasz.figa@gmail.com>
- S:	Supported
- L:	linux-samsung-soc@vger.kernel.org (moderated for non-subscribers)
- F:	drivers/clk/samsung/
--- 
-2.0.4
+I've applied your patch, and bootup shows vdd_arm and vdd_kfc at
+1500mV, but still when booting with cpuidle enabled (bL switcher
+disabled), I'm seeing lockups with no kernel output.  With CPUidle
+disabled, things are pretty stable.
+
+What tree are you using to test this out on 5420?  I'm using mainline
+v3.17-rc1 + DT patch for CPUidle and this cpufreq series.  See my
+wip/exynos/integ branch at
+git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux.git.
+
+Are there other out of tree dependencies that I'm missing?  Is the
+max77802 regulator support that's in mainline sufficient?  or am I
+missing some stuff there?
+
+Kevin
