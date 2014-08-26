@@ -1,39 +1,41 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH] ARM: dts: exynos4x12: Fix pull setting in sd4_width8 pin group
-Date: Tue, 26 Aug 2014 16:13:25 +0200
-Message-ID: <1409062405-15215-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:41922 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758272AbaHZONg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Aug 2014 10:13:36 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v4 3/7] ARM: l2c: Get outer cache .write_sec callback from
+ mach_desc only if not NULL
+Date: Tue, 26 Aug 2014 16:17:56 +0200
+Message-ID: <1409062680-15906-4-git-send-email-t.figa@samsung.com>
+References: <1409062680-15906-1-git-send-email-t.figa@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1409062680-15906-1-git-send-email-t.figa@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <t.figa@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, linux-omap@vger.kernel.org, linus.walleij@linaro.org, santosh.shilimkar@ti.com, tony@atomide.com, drake@endlessm.com, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, loeliger@gmail.com, Tomasz Figa <t.figa@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The group has the samsung,pin-pud property set to 4, which is not a
-correct value. This patch fixes this by replacing it with 3, which is
-the correct value for pull-up.
+Certain platforms (i.e. Exynos) might need to set .write_sec callback
+from firmware initialization which is happenning in .init_early callback
+of machine descriptor. However current code will overwrite the pointer
+with whatever is present in machine descriptor, even though it can be
+already set earlier. This patch fixes this by making the assignment
+conditional, depending on whether current .write_sec callback is NULL.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 ---
- arch/arm/boot/dts/exynos4x12-pinctrl.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/kernel/irq.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-index 927fec6..c141931 100644
---- a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-@@ -691,7 +691,7 @@
- 		sd4_bus8: sd4-bus-width8 {
- 			samsung,pins = "gpk1-3", "gpk1-4", "gpk1-5", "gpk1-6";
- 			samsung,pin-function = <4>;
--			samsung,pin-pud = <4>;
-+			samsung,pin-pud = <3>;
- 			samsung,pin-drv = <3>;
- 		};
+diff --git a/arch/arm/kernel/irq.c b/arch/arm/kernel/irq.c
+index 2c42576..e7383b9 100644
+--- a/arch/arm/kernel/irq.c
++++ b/arch/arm/kernel/irq.c
+@@ -125,7 +125,8 @@ void __init init_IRQ(void)
  
+ 	if (IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_CACHE_L2X0) &&
+ 	    (machine_desc->l2c_aux_mask || machine_desc->l2c_aux_val)) {
+-		outer_cache.write_sec = machine_desc->l2c_write_sec;
++		if (!outer_cache.write_sec)
++			outer_cache.write_sec = machine_desc->l2c_write_sec;
+ 		ret = l2x0_of_init(machine_desc->l2c_aux_val,
+ 				   machine_desc->l2c_aux_mask);
+ 		if (ret)
 -- 
 2.0.4
