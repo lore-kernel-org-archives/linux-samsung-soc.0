@@ -1,75 +1,52 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v9 1/2] regulator: Add driver for max77802 PMIC PMIC
- regulators
-Date: Tue, 26 Aug 2014 10:12:26 +0100
-Message-ID: <20140826091226.GD17528@sirena.org.uk>
-References: <20140822144531.GV24407@sirena.org.uk>
- <53F7838F.8060906@collabora.co.uk>
- <20140822183054.GY24407@sirena.org.uk>
- <53F7BDD8.7060500@collabora.co.uk>
- <CAD=FV=WC0h7fYm2QFqu3Zka7CsU4BtG-oyPpJav+ygC+gmCR+A@mail.gmail.com>
- <CA+NduCCT-KQ=gh7QWkBE4qkA2YOJ8KCVqbkC6Tkmb1aPvCsGFQ@mail.gmail.com>
- <53FAFCBC.2050407@collabora.co.uk>
- <CAD=FV=V4TSKsbjj3dXCdSzVrh3sxH-FkpFEbEo+JA1bN9R-XWA@mail.gmail.com>
- <20140826071721.GV17528@sirena.org.uk>
- <53FC4E77.2090205@collabora.co.uk>
+From: Pavel Machek <pavel@denx.de>
+Subject: Re: [PATCHv10 0/5] ARM: remove the sub-node and deprecate
+ supports-highspeed property for dwmmc.
+Date: Tue, 26 Aug 2014 12:19:24 +0200
+Message-ID: <20140826101923.GA13619@amd>
+References: <1407397082-32495-1-git-send-email-jh80.chung@samsung.com>
+ <20140825112151.GA21336@amd>
+ <53FB1DD5.3050207@samsung.com>
+ <20140825113719.GA31960@amd>
+ <53FB278B.7010509@samsung.com>
+ <53FB2807.7070503@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ig7JDkzUL4ONGnSW"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33671 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934092AbaHZJMm (ORCPT
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33310 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754089AbaHZKT0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Aug 2014 05:12:42 -0400
+	Tue, 26 Aug 2014 06:19:26 -0400
 Content-Disposition: inline
-In-Reply-To: <53FC4E77.2090205@collabora.co.uk>
+In-Reply-To: <53FB2807.7070503@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Doug Anderson <dianders@chromium.org>, Yuvaraj Cd <yuvaraj.lkml@gmail.com>, Olof Johansson <olof@lixom.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, sunil joshi <joshi@samsung.com>
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, kgene.kim@samsung.com, heiko@sntech.de, tgih.jun@samsung.com, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, linux-samsung-soc@vger.kernel.org, dinguyen@altera.com, linux-arm-kernel@lists.infradead.org
 
+Hi!
 
---ig7JDkzUL4ONGnSW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> >> Would you elaborate?
+> >>
+> >> If I have a device like a phone, I may want to put one "slot" inside
+> >> phone for basic system, and offer second slot for user expansion
+> >> (initially empty).
+> > 
+> > if multiple slot is supported, then a mmcqd should be processing for multiple slots.
+> > It's too inefficient, and affect the whole performance reduction.
+> Sorry, Discard this comment. it means dwmci, not mmcqd.
 
-On Tue, Aug 26, 2014 at 11:08:07AM +0200, Javier Martinez Canillas wrote:
-> On 08/26/2014 09:17 AM, Mark Brown wrote:
+Well, that's a Linux problem, and for many applications, not even
+problem at all.
 
-> > No, this doesn't make any obvious sense to me at all.  Picking normal as
-> > a default if the hardware reads back off due to overlapping
-> > impelementation or something *might* make sense but not overwriting the
-> > hardware state without explicit permission from the machine integration
-> > is a key goal for the regulator API.
+Device tree should describe hardware, and hardware can do multiple
+slots per controller, so device tree should describe multiple slots
+per controller.
 
-> Just to be sure I understood you correctly, what might makes sense to you
-> then is to set the opmode to normal as default on probe only if off is
-> read back from the hardware register but leaving the enable function as it
-> is now using the opmode set on probe?
+Now, the configuration may be uncommon, but you are moving from good
+hardware description to bad hardware description.
 
-Yes.
-
---ig7JDkzUL4ONGnSW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT/E93AAoJELSic+t+oim9Z9wP/ilHZSLQJ/CVDF09FNLu2Jpu
-n844oCfKVtBN64UHeW1yulg3uO+/G2hKOllLYJVRtWMe8kocZNJm7a08tQQco3lu
-TrBvp79d6Bav5vhjCL/1Oq6vCPWPpZXuYMhrWSrefT6OPViEA6CS+W5issxjBjD7
-gsB1kUJY5OKs/pCw0CuSXxDIM1FMFvcAvjxcBbB5JAKPqhvIwB11J4wdT6GuKZ80
-DxZwLD6xh/senl8mR9dU0RqLogNJmLtACFxG8KZ9AfJVudue8Y+L+G/UonXOYsre
-OFXQq75X2FkztoIyNCh0TuLejlCk0hPDATkFLpJZSzXV6Dx+oqUUtSnfkEQiMSmB
-btCC9Fc7bhK2Vc8k1cScriUd/TaaWo02ehTvao7FoZZ6lFid01HSwM2rTExu66yD
-IdXVmFR+prBaLKWZJgcbndB02CDO7yOcM5Tys0y3GAEcDx+dvZx0vNt4L4YU8mNy
-8HM8hR9xVa89R4Uo5SaRQW6cX741ObAFBuKfa0WlwS1KhSQtLSekRZ5msak1pdr8
-7JSnhDGHFWMFRN9rXnuwB1IsHRMxcGmxvj0gsWfnhMi1GybHi10etj6H9jJh+NWX
-FfPNz5TqAw6y4xxI5wWrhQJjSPVdt4xgICOXscmGwOVRlkyN5g938HIa8HJ6YGzO
-HKH27p07KKyfKIgU7+uJ
-=ojZJ
------END PGP SIGNATURE-----
-
---ig7JDkzUL4ONGnSW--
+									Pavel
+-- 
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
