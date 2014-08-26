@@ -1,130 +1,94 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 06/15] drm/exynos/ipp: free partially allocated resources
- on error
-Date: Tue, 26 Aug 2014 14:00:16 +0900
-Message-ID: <53FC1460.5090000@samsung.com>
-References: <1408693946-15456-1-git-send-email-a.hajda@samsung.com>
- <1408693946-15456-7-git-send-email-a.hajda@samsung.com>
+From: Chander Kashyap <k.chander@samsung.com>
+Subject: Re: [PATCH v9 4/6] ARM: Exynos: switch to using generic cpufreq
+ driver for Exynos4210/5250/5420
+Date: Tue, 26 Aug 2014 10:55:05 +0530
+Message-ID: <CADWw7OgW+o3tB=ptnsy-PsmXmNv8oXzt_WfK6NswQiEWWwAzNA@mail.gmail.com>
+References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
+	<1406707663-16656-5-git-send-email-thomas.ab@samsung.com>
+	<53DA8BB9.6020702@samsung.com>
+	<53DA8D85.3050106@gmail.com>
+	<7hbnrc6px3.fsf@paris.lan>
+	<53F7DA13.6090305@gmail.com>
+	<CADWw7OgAS-z-UOrJU-hL2fzuefJmLtCTg57jYk2Df7f5KfLJmA@mail.gmail.com>
+	<7h8umc60we.fsf@paris.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:46423 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933725AbaHZFAR (ORCPT
+Received: from mail-ob0-f177.google.com ([209.85.214.177]:62876 "EHLO
+	mail-ob0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933755AbaHZFZH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Aug 2014 01:00:17 -0400
-In-reply-to: <1408693946-15456-7-git-send-email-a.hajda@samsung.com>
+	Tue, 26 Aug 2014 01:25:07 -0400
+In-Reply-To: <7h8umc60we.fsf@paris.lan>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>
+To: Kevin Hilman <khilman@linaro.org>
+Cc: Chander Kashyap <k.chander@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Amit Kucheria <amit.kucheria@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linaro-kernel@lists.linaro.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi Andrzej,
+Hi Kevin,
 
-On 08/22/2014 04:52 PM, Andrzej Hajda wrote:
-> In case of allocation errors some already allocated buffers
-> were not freed. The patch fixes it.
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_ipp.c | 68 ++++++++++++++++-----------------
->  1 file changed, 33 insertions(+), 35 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-> index 060a198..728f3b9 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-> @@ -599,6 +599,37 @@ static int ipp_set_mem_node(struct exynos_drm_ippdrv *ippdrv,
->  	return ret;
->  }
->  
-> +static int ipp_put_mem_node(struct drm_device *drm_dev,
-> +		struct drm_exynos_ipp_cmd_node *c_node,
-> +		struct drm_exynos_ipp_mem_node *m_node)
-> +{
-> +	int i;
-> +
-> +	DRM_DEBUG_KMS("node[0x%x]\n", (int)m_node);
-> +
-> +	if (!m_node) {
-> +		DRM_ERROR("invalid dequeue node.\n");
-> +		return -EFAULT;
-> +	}
-> +
-> +	DRM_DEBUG_KMS("ops_id[%d]\n", m_node->ops_id);
-> +
-> +	/* put gem buffer */
-> +	for_each_ipp_planar(i) {
-> +		unsigned long handle = m_node->buf_info.handles[i];
-> +		if (handle)
-> +			exynos_drm_gem_put_dma_addr(drm_dev, handle,
-> +							c_node->filp);
-> +	}
-> +
-> +	/* conditionally remove from queue */
-> +	if (m_node->list.next)
+On Mon, Aug 25, 2014 at 9:02 PM, Kevin Hilman <khilman@linaro.org> wrote:
+> Hi Chander,
+>
+> Chander Kashyap <k.chander@samsung.com> writes:
+>
+> [...]
+>
+>>>> I'm trying it on the 5800/Chromebook2 and it's not terribly stable.  I'm
+>>>> testing along with CPUidle, so there may be some untested interactions
+>>>> there as it seems a bit more stable without CPUidle enabled.
+>>>>
+>>>> I'd love to hear from anyone else that's testing CPUidle and CPUfreq
+>>>> together big.LITTLE 5420/5800, with or without the switcher.
+>>
+>> I have tested this patch series on SMDK5420 with cpuidle (with and
+>> without b.L switcher enabled).
+>>
+>> As of now voltage scaling support is not there in generic big-little
+>> cpufreq driver (arm_big_little.c).
+>> Hence need to tie arm and kfc voltages to highest level for testing.
+>
+>> Without this change stability issues are there, but with this change
+>> everything is stable.
+>
+> Can you clarify how you're setting the voltages to ensure stability?
 
-How about do INIT_LIST_HEAD for list in ipp_get_mem_node()?
+below is the diff :  wip/exynos/integ
 
-> +		list_del(&m_node->list);
-> +	kfree(m_node);
-> +
-> +	return 0;
-> +}
-> +
->  static struct drm_exynos_ipp_mem_node
->  		*ipp_get_mem_node(struct drm_device *drm_dev,
->  		struct drm_file *file,
-> @@ -634,7 +665,8 @@ static struct drm_exynos_ipp_mem_node
->  					qbuf->handle[i], file);
->  			if (IS_ERR(addr)) {
->  				DRM_ERROR("failed to get addr.\n");
-> -				goto err_clear;
-> +				ipp_put_mem_node(drm_dev, c_node, m_node);
-> +				return ERR_PTR(-EFAULT);
->  			}
->  
->  			buf_info->handles[i] = qbuf->handle[i];
-> @@ -649,40 +681,6 @@ static struct drm_exynos_ipp_mem_node
->  	mutex_unlock(&c_node->mem_lock);
->  
->  	return m_node;
-> -
-> -err_clear:
-> -	kfree(m_node);
-> -	return ERR_PTR(-EFAULT);
-> -}
-> -
-> -static int ipp_put_mem_node(struct drm_device *drm_dev,
-> -		struct drm_exynos_ipp_cmd_node *c_node,
-> -		struct drm_exynos_ipp_mem_node *m_node)
-> -{
-> -	int i;
-> -
-> -	DRM_DEBUG_KMS("node[0x%x]\n", (int)m_node);
-> -
-> -	if (!m_node) {
-> -		DRM_ERROR("invalid dequeue node.\n");
-> -		return -EFAULT;
-> -	}
-> -
-> -	DRM_DEBUG_KMS("ops_id[%d]\n", m_node->ops_id);
-> -
-> -	/* put gem buffer */
-> -	for_each_ipp_planar(i) {
-> -		unsigned long handle = m_node->buf_info.handles[i];
-> -		if (handle)
-> -			exynos_drm_gem_put_dma_addr(drm_dev, handle,
-> -							c_node->filp);
-> -	}
-> -
-> -	/* delete list in queue */
-> -	list_del(&m_node->list);
-> -	kfree(m_node);
-> -
-> -	return 0;
->  }
->  
->  static void ipp_free_event(struct drm_pending_event *event)
-> 
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -225,7 +225,7 @@
+
+                        buck2_reg: BUCK2 {
+                                regulator-name = "vdd_arm";
+-                               regulator-min-microvolt = <800000>;
++                               regulator-min-microvolt = <1500000>;
+                                regulator-max-microvolt = <1500000>;
+                                regulator-always-on;
+                                regulator-boot-on;
+@@ -260,7 +260,7 @@
+
+                        buck6_reg: BUCK6 {
+                                regulator-name = "vdd_kfc";
+-                               regulator-min-microvolt = <800000>;
++                               regulator-min-microvolt = <1500000>;
+                                regulator-max-microvolt = <1500000>;
+                                regulator-always-on;
+                                regulator-boot-on;
+
+>
+> Tomasz, I didn't mean to suggest this isn't ready for mainline.  For the
+> 5420/5800 it seems cpufreq support is a new feature, so this isn't a
+> regression against previous (mainline) behavior.  Maybe the big.LITTLE
+> cpufreq support should've been separated out from the cleanup since it's
+> more of a new feature, but that's up to you.
+>
+> Kevin
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+regards,
+Chander
