@@ -1,35 +1,65 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v2 3/3] ARM: multi_v7_defconfig: Enable Atmel maXTouch support
-Date: Tue, 26 Aug 2014 17:28:57 +0200
-Message-ID: <1409066937-3574-4-git-send-email-javier.martinez@collabora.co.uk>
-References: <1409066937-3574-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1409066937-3574-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, afaerber@suse.de, Nick Dyer <nick.dyer@itdev.co.uk>, Yufeng Shen <miletus@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 1/1] regulator: max77802: set opmode to normal if off is
+ read from hw
+Date: Tue, 26 Aug 2014 08:44:31 -0700
+Message-ID: <CAD=FV=WWPWpytKAGBJXPJdGa8MrBwocDi_tOw6hYvqorL64ckg@mail.gmail.com>
+References: <1409053061-22568-1-git-send-email-javier.martinez@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f174.google.com ([209.85.160.174]:41862 "EHLO
+	mail-yk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751956AbaHZPoc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 26 Aug 2014 11:44:32 -0400
+Received: by mail-yk0-f174.google.com with SMTP id q9so11459012ykb.33
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Aug 2014 08:44:31 -0700 (PDT)
+In-Reply-To: <1409053061-22568-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Some boards with multi platform support (e.g: Exynos based
-Chromebooks) have an Atmel trackpad so enable support for
-as a module will make easier for users.
+Javier,
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+On Tue, Aug 26, 2014 at 4:37 AM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> The max77802 driver reads the default operating mode (opmode)
+> set for regulators when enabled from the hardware registers.
+>
+> But if a regulator is disabled and the system warm restarted,
+> the hardware reports OFF as the opmode so the regulator is
+> not enabled. Default to operating mode NORMAL if OFF is read
+> from the hardware register.
+>
+> Reported-by: Yuvaraj Cd <yuvaraj.lkml@gmail.com>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>
+> This patch fixes the issue reported in https://lkml.org/lkml/2014/8/25/69
+>
+>  drivers/regulator/max77802.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/regulator/max77802.c b/drivers/regulator/max77802.c
+> index ad1caa9..967e109 100644
+> --- a/drivers/regulator/max77802.c
+> +++ b/drivers/regulator/max77802.c
+> @@ -540,7 +540,17 @@ static int max77802_pmic_probe(struct platform_device *pdev)
+>                 config.of_node = pdata->regulators[i].of_node;
+>
+>                 ret = regmap_read(iodev->regmap, regulators[i].enable_reg, &val);
+> -               max77802->opmode[id] = val >> shift & MAX77802_OPMODE_MASK;
+> +               val = val >> shift & MAX77802_OPMODE_MASK;
+> +
+> +               /*
+> +                * If the regulator is disabled and the system warm rebooted,
+> +                * the hardware reports OFF as the regulator operating mode.
+> +                * Default to operating mode NORMAL in that case.
+> +                */
+> +               if (val == MAX77802_OPMODE_OFF)
+> +                       max77802->opmode[id] = MAX77802_OPMODE_NORMAL;
+> +               else
+> +                       max77802->opmode[id] = val;
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 5fb95fb..d139a8d 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -164,6 +164,7 @@ CONFIG_KEYBOARD_ST_KEYSCAN=y
- CONFIG_KEYBOARD_CROS_EC=y
- CONFIG_MOUSE_PS2_ELANTECH=y
- CONFIG_INPUT_TOUCHSCREEN=y
-+CONFIG_TOUCHSCREEN_ATMEL_MXT=m
- CONFIG_TOUCHSCREEN_STMPE=y
- CONFIG_INPUT_MISC=y
- CONFIG_INPUT_MPU3050=y
--- 
-2.0.1
+Reviewed-by: Doug Anderson <dianders@chromium.org>
