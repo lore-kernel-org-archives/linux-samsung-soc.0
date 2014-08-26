@@ -1,37 +1,61 @@
-From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 04/29] drivers: base: add notifier for failed driver bind
-Date: Mon, 25 Aug 2014 23:18:23 +0200
-Message-ID: <20140825211823.GH16329@8bytes.org>
-References: <1407235677-26324-1-git-send-email-m.szyprowski@samsung.com>
-	<1407235677-26324-5-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1407235677-26324-5-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCHv5 0/4] thermal: exynos: Add support for TRIMINFO feature of
+ Exynos3250
+Date: Tue, 26 Aug 2014 10:31:01 +0900
+Message-ID: <1409016665-3824-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:44204 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753547AbaHZBbQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 25 Aug 2014 21:31:16 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: eduardo.valentin@ti.com, amit.daniel@samsung.com, rui.zhang@intel.com
+Cc: kgene.kim@samsung.com, ch.naveen@samsung.com, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Tue, Aug 05, 2014 at 12:47:32PM +0200, Marek Szyprowski wrote:
-> +	if (failed && dev->bus)
-> +		blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
-> +					     BUS_NOTIFY_DRVBIND_FAILED, dev);
-> +
+This patchset add the support of TRIMINFO_RELOAD feature for Exynos3250.
+But Exynos3250 has two TRIMINFO_CTRL register instead other Exynos has only one
+TRIMINFO_CTRL register. So, this patchset support the some Exynos SoC which
+has more than one TRIMINF_CTRL.
 
-Why can't you just use the notifier for BUS_NOTIFY_UNBIND_DRIVER or
-BUS_NOTIFY_UNBOUND_DRIVER when something goes wrong in driver
-initialization?
+Also, this patchset fix wrong value of TRIMINFO_RELOAD_SHIFT and remove
+duplicate code when reading triminfo register of Exynos5440.
 
+Changes from v4:
+- Remove un-necessary triminfo_ctrl_{shift, mask} field
+- Includes Bartlomiej's patch[1] that Exynos5260 / Exynos5420 should not use
+TRIM_RELOAD flag
+[2] https://lkml.org/lkml/2014/8/20/481
 
-	Joerg
+Changes from v3:
+- Add reviewed message of Amit Daniel Kachhap <amit.daniel@samsung.com>
+- Split RELOAD patch as two patch
+- Fix 'TRIMINFO_RELOAD_SHIFT' value
+- This series includes separate patch[1]
+[1] https://lkml.org/lkml/2014/8/20/5
+- Drop ACTIME bit setting because TRM includes not enough information of ACTIME bit.
+
+Changes from v2:
+- Fix build break because of missing 'or' operation.
+
+Changes from v1:
+- Add missing 'TMU_SUPPORT_TRIM_RELOAD' features
+
+Bartlomiej Zolnierkiewicz (1):
+  thermal: samsung: Exynos5260 and Exynos5420 should not use TRIM_RELOAD flag
+
+Chanwoo Choi (3):
+  thermal: exynos: Add support for many TRIMINFO_CTRL registers
+  thermal: exynos: Add support for TRIM_RELOAD feature at Exynos3250
+  thermal: exynos: Remove duplicate code when reading triminfo register of Exynos5440
+
+ drivers/thermal/samsung/exynos_thermal_common.h |  1 +
+ drivers/thermal/samsung/exynos_tmu.c            | 19 +++++++++++------
+ drivers/thermal/samsung/exynos_tmu.h            |  9 ++++----
+ drivers/thermal/samsung/exynos_tmu_data.c       | 28 ++++++++++++++-----------
+ drivers/thermal/samsung/exynos_tmu_data.h       |  9 +++++---
+ 5 files changed, 40 insertions(+), 26 deletions(-)
+
+-- 
+1.8.0
