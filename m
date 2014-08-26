@@ -1,97 +1,57 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v3 1/5] ARM: firmware: Introduce suspend and resume operations
-Date: Tue, 26 Aug 2014 16:10:24 +0200
-Message-ID: <1409062228-14690-2-git-send-email-t.figa@samsung.com>
+Subject: [PATCH v3 3/5] ARM: dts: exynos4412-trats2: Keep eMMC regulators
+ soft-disabled
+Date: Tue, 26 Aug 2014 16:10:26 +0200
+Message-ID: <1409062228-14690-4-git-send-email-t.figa@samsung.com>
 References: <1409062228-14690-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:38330 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755357AbaHZOKq (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:41715 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758160AbaHZOKr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Aug 2014 10:10:46 -0400
+	Tue, 26 Aug 2014 10:10:47 -0400
 In-reply-to: <1409062228-14690-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, swarren@nvidia.com, acourbot@nvidia.com, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Olof Johansson <olof@lixom.net>, drake@endlessm.com, tomeu@tomeuvizoso.net, Tomasz Figa <t.figa@samsung.com>
 
-This patch extends the firmware_ops structure with two new callbacks:
-.suspend() and .resume(). The former is intended to ask the firmware to
-save all its volatile state and suspend the system, without returning
-back to the kernel in between. The latter is to be called early by
-very low level platform suspend code after waking up to restore low
-level hardware state, which can't be restored in non-secure mode.
+In MAX77686 PMIC two regulators dedicated for eMMC memory can be
+controlled both by I2C interface and a GPIO pin, with the resulting
+regulator state being a logical OR of both. Since the GPIO control is
+used both by the kernel and the lowest level bootloader at reset, the
+regulator should be disabled by I2C control to allow it to be turned off
+by GPIO control.
 
-While at it, outdated version of the structure is removed from the
-documentation and replaced with a reference to the header file.
+This patch removes regulator-always-on properties from both regulators
+and, while at it, also unsupported regulator-mem-off.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- Documentation/arm/firmware.txt  | 28 +++++-----------------------
- arch/arm/include/asm/firmware.h |  8 ++++++++
- 2 files changed, 13 insertions(+), 23 deletions(-)
+ arch/arm/boot/dts/exynos4412-trats2.dts | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/Documentation/arm/firmware.txt b/Documentation/arm/firmware.txt
-index c2e468f..da6713a 100644
---- a/Documentation/arm/firmware.txt
-+++ b/Documentation/arm/firmware.txt
-@@ -7,32 +7,14 @@ world, which changes the way some things have to be initialized. This makes
- a need to provide an interface for such platforms to specify available firmware
- operations and call them when needed.
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 5e066cd..a75034c 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -399,8 +399,6 @@
+ 					regulator-name = "VMEM_VDD_2.8V";
+ 					regulator-min-microvolt = <2800000>;
+ 					regulator-max-microvolt = <2800000>;
+-					regulator-always-on;
+-					regulator-mem-off;
+ 				};
  
--Firmware operations can be specified using struct firmware_ops
--
--	struct firmware_ops {
--		/*
--		* Enters CPU idle mode
--		*/
--		int (*do_idle)(void);
--		/*
--		* Sets boot address of specified physical CPU
--		*/
--		int (*set_cpu_boot_addr)(int cpu, unsigned long boot_addr);
--		/*
--		* Boots specified physical CPU
--		*/
--		int (*cpu_boot)(int cpu);
--		/*
--		* Initializes L2 cache
--		*/
--		int (*l2x0_init)(void);
--	};
--
--and then registered with register_firmware_ops function
-+Firmware operations can be specified by filling in a struct firmware_ops
-+with appropriate callbacks and then registering it with register_firmware_ops()
-+function.
+ 				ldo23_reg: ldo23 {
+@@ -503,8 +501,6 @@
+ 					regulator-name = "VMEM_VDDF_3.0V";
+ 					regulator-min-microvolt = <2850000>;
+ 					regulator-max-microvolt = <2850000>;
+-					regulator-always-on;
+-					regulator-mem-off;
+ 				};
  
- 	void register_firmware_ops(const struct firmware_ops *ops)
- 
--the ops pointer must be non-NULL.
-+The ops pointer must be non-NULL. More information about struct firmware_ops
-+and its members can be found in arch/arm/include/asm/firmware.h header.
- 
- There is a default, empty set of operations provided, so there is no need to
- set anything if platform does not require firmware operations.
-diff --git a/arch/arm/include/asm/firmware.h b/arch/arm/include/asm/firmware.h
-index 2c9f10d..5904f59 100644
---- a/arch/arm/include/asm/firmware.h
-+++ b/arch/arm/include/asm/firmware.h
-@@ -41,6 +41,14 @@ struct firmware_ops {
- 	 * Initializes L2 cache
- 	 */
- 	int (*l2x0_init)(void);
-+	/*
-+	 * Enter system-wide suspend.
-+	 */
-+	int (*suspend)(void);
-+	/*
-+	 * Restore state of privileged hardware after system-wide suspend.
-+	 */
-+	int (*resume)(void);
- };
- 
- /* Global pointer for current firmware_ops structure, can't be NULL. */
+ 				buck9_reg: buck9 {
 -- 
 2.0.4
