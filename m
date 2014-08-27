@@ -1,156 +1,90 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] usb: dwc3: exynos: remove usb_phy_generic support
-Date: Wed, 27 Aug 2014 09:52:59 +0200
-Message-ID: <2141307.zYQLjP6V6U@amdc1032>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH 00/14] Support 64bit Cortex A57 based Exynos7 SoC
+Date: Wed, 27 Aug 2014 15:14:16 +0530
+Message-ID: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:62588 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751513AbaH0HxK (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:49777 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753318AbaH0Jsp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Aug 2014 03:53:10 -0400
+	Wed, 27 Aug 2014 05:48:45 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: catalin.marinas@arm.com
+Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, cpgs@samsung.com
 
-dwc3 driver is using the new Exynos5 SoC series USB DRD PHY driver
-(PHY_EXYNOS5_USBDRD which selects GENERIC_PHY) as can be seen by
-looking at the following commits:
+This patchset supports new Exynos7 Samsung SoC based on Cortex-A57.
+Exynos7 is a System-On-Chip (SoC) that is based on 64-bit
+ARMv8 RISC processor.
 
-  7a4cf0fde054 ("ARM: dts: Update DWC3 usb controller to use new
-  phy driver for exynos5250")
+This patchset includes the following:
+- Support for pinctrl on Exynos7
+- Support for clock control on Exynos7 using common clk framework
+- DTS and DTSI file addition for Exynos7 based Espresso board
+- Support for serial driver on Exynos7
+- Support for HSI2C driver on Exynos7
+- Support for Watchdog driver on Exynos7
 
-  f070267b5fc1 ("ARM: dts: Enable support for DWC3 controller for
-  exynos5420")
+NOTE:
+We tested these patches with the 
+"arm64: dts: add <dt-bindings/> symlink" change posted @
+http://lists.infradead.org/pipermail/linux-arm-kernel/2014-January/224629.html
 
-Thus remove unused usb_phy_generic support from dwc3 Exynos glue
-layer.
+The following patches are tested based on Kgene's for-next tree.
+https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
 
-[ The code that is being removed is harmful in the context of
-  multi_v7_defconfig and enabling "EHCI support for Samsung
-  S5P/EXYNOS SoC Series" (USB_EHCI_EXYNOS) + "OHCI support for
-  Samsung S5P/EXYNOS SoC Series" (USB_OHCI_EXYNOS) because "EHCI
-  support for OMAP3 and later chips" (USB_EHCI_HCD_OMAP) selects
-  "NOP USB Transceiver Driver" (NOP_USB_XCEIV).  NOP USB driver
-  attaches itself to usb_phy_generic platform devices created by
-  dwc3 Exynos glue layer and later causes Exynos EHCI driver to
-  fail probe and Exynos OHCI driver to hang on probe (as observed
-  on Exynos5250 Arndale board). ]
+Alim Akhtar (2):
+  arm64: exynos7: Enable ARMv8 based Exynos7 (SoC) support
+  tty/serial: samsung: add support for exynos7
 
-Cc: Olof Johansson <olof@lixom.net>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
- drivers/usb/dwc3/dwc3-exynos.c |   68 -----------------------------------------
- 1 file changed, 1 insertion(+), 67 deletions(-)
+Naveen Krishna Chatradhi (12):
+  clk: samsung: add support for 145xx and 1460x PLLs
+  clk: samsung: Factor out the common code to clk.c
+  clk: samsung: Add fixed_factor_clocks field to struct exynos_cmu_info
+  clk: samsung: Add clock description for basic CMU blocks
+  pinctrl: exynos: Add driver data for Exynos7
+  pinctrl: samsung: use CONFIG_PINCTRL_SAMSUNG symbol in makefile
+  i2c: exynos: add support for HSI2C module on Exynos7
+  i2c: exynos5: Add Kconfig dependencies
+  watchdog: s3c2410_wdt: Add support for Watchdog device on Exynos7
+  arm64: dts: add pinctrl support to EXYNOS7
+  arm64: dts: Add initial device tree support for EXYNOS7
+  arm64: dts: add Exynos7 based Espresso board dts file
 
-Index: b/drivers/usb/dwc3/dwc3-exynos.c
-===================================================================
---- a/drivers/usb/dwc3/dwc3-exynos.c	2014-08-25 14:57:04.991781925 +0200
-+++ b/drivers/usb/dwc3/dwc3-exynos.c	2014-08-27 09:16:38.312617727 +0200
-@@ -23,15 +23,12 @@
- #include <linux/platform_data/dwc3-exynos.h>
- #include <linux/dma-mapping.h>
- #include <linux/clk.h>
--#include <linux/usb/otg.h>
--#include <linux/usb/usb_phy_generic.h>
-+#include <linux/pm_runtime.h>
- #include <linux/of.h>
- #include <linux/of_platform.h>
- #include <linux/regulator/consumer.h>
- 
- struct dwc3_exynos {
--	struct platform_device	*usb2_phy;
--	struct platform_device	*usb3_phy;
- 	struct device		*dev;
- 
- 	struct clk		*clk;
-@@ -39,61 +36,6 @@ struct dwc3_exynos {
- 	struct regulator	*vdd10;
- };
- 
--static int dwc3_exynos_register_phys(struct dwc3_exynos *exynos)
--{
--	struct usb_phy_generic_platform_data pdata;
--	struct platform_device	*pdev;
--	int			ret;
--
--	memset(&pdata, 0x00, sizeof(pdata));
--
--	pdev = platform_device_alloc("usb_phy_generic", PLATFORM_DEVID_AUTO);
--	if (!pdev)
--		return -ENOMEM;
--
--	exynos->usb2_phy = pdev;
--	pdata.type = USB_PHY_TYPE_USB2;
--	pdata.gpio_reset = -1;
--
--	ret = platform_device_add_data(exynos->usb2_phy, &pdata, sizeof(pdata));
--	if (ret)
--		goto err1;
--
--	pdev = platform_device_alloc("usb_phy_generic", PLATFORM_DEVID_AUTO);
--	if (!pdev) {
--		ret = -ENOMEM;
--		goto err1;
--	}
--
--	exynos->usb3_phy = pdev;
--	pdata.type = USB_PHY_TYPE_USB3;
--
--	ret = platform_device_add_data(exynos->usb3_phy, &pdata, sizeof(pdata));
--	if (ret)
--		goto err2;
--
--	ret = platform_device_add(exynos->usb2_phy);
--	if (ret)
--		goto err2;
--
--	ret = platform_device_add(exynos->usb3_phy);
--	if (ret)
--		goto err3;
--
--	return 0;
--
--err3:
--	platform_device_del(exynos->usb2_phy);
--
--err2:
--	platform_device_put(exynos->usb3_phy);
--
--err1:
--	platform_device_put(exynos->usb2_phy);
--
--	return ret;
--}
--
- static int dwc3_exynos_remove_child(struct device *dev, void *unused)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
-@@ -127,12 +69,6 @@ static int dwc3_exynos_probe(struct plat
- 
- 	platform_set_drvdata(pdev, exynos);
- 
--	ret = dwc3_exynos_register_phys(exynos);
--	if (ret) {
--		dev_err(dev, "couldn't register PHYs\n");
--		return ret;
--	}
--
- 	clk = devm_clk_get(dev, "usbdrd30");
- 	if (IS_ERR(clk)) {
- 		dev_err(dev, "couldn't get clock\n");
-@@ -194,8 +130,6 @@ static int dwc3_exynos_remove(struct pla
- 	struct dwc3_exynos	*exynos = platform_get_drvdata(pdev);
- 
- 	device_for_each_child(&pdev->dev, NULL, dwc3_exynos_remove_child);
--	platform_device_unregister(exynos->usb2_phy);
--	platform_device_unregister(exynos->usb3_phy);
- 
- 	clk_disable_unprepare(exynos->clk);
- 
+ .../devicetree/bindings/clock/exynos7-clock.txt    |  209 +++
+ .../devicetree/bindings/i2c/i2c-exynos5.txt        |    2 +
+ .../bindings/pinctrl/samsung-pinctrl.txt           |    1 +
+ .../devicetree/bindings/watchdog/samsung-wdt.txt   |    1 +
+ arch/arm64/Kconfig                                 |   17 +
+ arch/arm64/boot/dts/Makefile                       |    1 +
+ arch/arm64/boot/dts/exynos7-espresso.dts           |   69 +
+ arch/arm64/boot/dts/exynos7-pinctrl.dtsi           |  691 +++++++
+ arch/arm64/boot/dts/exynos7.dtsi                   |  553 ++++++
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos5260.c               |  181 +-
+ drivers/clk/samsung/clk-exynos7.c                  | 1929 ++++++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                      |   50 +-
+ drivers/clk/samsung/clk-pll.h                      |    4 +
+ drivers/clk/samsung/clk.c                          |  104 ++
+ drivers/clk/samsung/clk.h                          |   37 +
+ drivers/i2c/busses/Kconfig                         |    2 +-
+ drivers/i2c/busses/i2c-exynos5.c                   |   71 +-
+ drivers/pinctrl/Makefile                           |    2 +-
+ drivers/pinctrl/samsung/Kconfig                    |    2 +-
+ drivers/pinctrl/samsung/pinctrl-exynos.c           |  145 ++
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |    2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |    1 +
+ drivers/tty/serial/Kconfig                         |    6 +-
+ drivers/tty/serial/samsung.c                       |    2 +-
+ drivers/watchdog/s3c2410_wdt.c                     |   11 +
+ include/dt-bindings/clock/exynos7-clk.h            |  236 +++
+ 27 files changed, 4151 insertions(+), 179 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos7-clock.txt
+ create mode 100644 arch/arm64/boot/dts/exynos7-espresso.dts
+ create mode 100644 arch/arm64/boot/dts/exynos7-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos7.dtsi
+ create mode 100644 drivers/clk/samsung/clk-exynos7.c
+ create mode 100644 include/dt-bindings/clock/exynos7-clk.h
+
+-- 
+1.7.9.5
