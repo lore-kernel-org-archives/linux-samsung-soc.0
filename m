@@ -1,42 +1,60 @@
-From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH 0/2 v2] Fix Exynos peach USB on kernels with USB Gadget
- support
-Date: Wed, 27 Aug 2014 04:08:23 +0200
-Message-ID: <53FD3D97.3010002@suse.de>
-References: <1409038230-7242-1-git-send-email-sjoerd.simons@collabora.co.uk>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCHv10 0/5] ARM: remove the sub-node and deprecate
+ supports-highspeed property for dwmmc.
+Date: Wed, 27 Aug 2014 12:11:55 +0900
+Message-ID: <53FD4C7B.2030008@samsung.com>
+References: <1407397082-32495-1-git-send-email-jh80.chung@samsung.com>
+ <20140825112151.GA21336@amd> <53FB1DD5.3050207@samsung.com>
+ <20140825113719.GA31960@amd> <53FB278B.7010509@samsung.com>
+ <53FB2807.7070503@samsung.com> <20140826101923.GA13619@amd>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:54334 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753836AbaH0CI2 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:63080 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756160AbaH0DL6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Aug 2014 22:08:28 -0400
-In-Reply-To: <1409038230-7242-1-git-send-email-sjoerd.simons@collabora.co.uk>
+	Tue, 26 Aug 2014 23:11:58 -0400
+In-reply-to: <20140826101923.GA13619@amd>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Pavel Machek <pavel@denx.de>, Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, kgene.kim@samsung.com, heiko@sntech.de, tgih.jun@samsung.com, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, linux-samsung-soc@vger.kernel.org, dinguyen@altera.com, linux-arm-kernel@lists.infradead.org
 
 Hi,
 
-Am 26.08.2014 09:30, schrieb Sjoerd Simons:
-> I suspect other boards base using exynos5420/5800 might need the simi=
-lar fixes
-> (Arndale Octa and Samsung SMDK5420) to their dts files, so would be g=
-reat if
-> folks with those board could verify this.
+On 08/26/2014 07:19 PM, Pavel Machek wrote:
+> Hi!
+> 
+>>>> Would you elaborate?
+>>>>
+>>>> If I have a device like a phone, I may want to put one "slot" inside
+>>>> phone for basic system, and offer second slot for user expansion
+>>>> (initially empty).
+>>>
+>>> if multiple slot is supported, then a mmcqd should be processing for multiple slots.
+>>> It's too inefficient, and affect the whole performance reduction.
+>> Sorry, Discard this comment. it means dwmci, not mmcqd.
+> 
+> Well, that's a Linux problem, and for many applications, not even
+> problem at all.
+> 
+> Device tree should describe hardware, and hardware can do multiple
+> slots per controller, so device tree should describe multiple slots
+> per controller.
+> 
+> Now, the configuration may be uncommon, but you are moving from good
+> hardware description to bad hardware description.
 
-usbdrd_dwc3_1 is indeed required for the Arndale Octa. Not sure about 0=
-=2E
+Well, i don't think it's bad hardware description. And this policy is suggested by other mmc developers and maintainers.
+At first time, I had also suggested same opinion with yours.
+Refer to below..
 
-I tested my attaching a USB 3.0 disk - is there an easier way to tell?
+https://patchwork.kernel.org/patch/4276481/
 
-Regards,
-Andreas
-
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
-berg
+Best Regards,
+Jaehoon Chung
+> 
+> 									Pavel
+> 
