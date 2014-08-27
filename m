@@ -1,72 +1,69 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 14/14] tty/serial: samsung: add support for exynos7
-Date: Wed, 27 Aug 2014 15:16:35 +0530
-Message-ID: <1409132795-1991-1-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH 09/14] watchdog: s3c2410_wdt: Add support for Watchdog device
+ on Exynos7
+Date: Wed, 27 Aug 2014 15:17:11 +0530
+Message-ID: <1409132831-2032-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:50131 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:50223 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932642AbaH0JvB (ORCPT
+	with ESMTP id S932642AbaH0Jvd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Aug 2014 05:51:01 -0400
+	Wed, 27 Aug 2014 05:51:33 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-serial@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, Alim Akhtar <alim.akhtar@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: linux-watchdog@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, Wim Van Sebroeck <wim@iguana.be>
 
-From: Alim Akhtar <alim.akhtar@samsung.com>
+Exynos7 SoC has a Watchdog for Atlas (A57) cores
+This patch adds support for the Atlas watchdog.
 
-This patch enables upcoming exynos7 SoCs serial driver.
-This also modifies various dependencies for Kconfig
-
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: Wim Van Sebroeck <wim@iguana.be>
 ---
- drivers/tty/serial/Kconfig   |    6 +++---
- drivers/tty/serial/samsung.c |    2 +-
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ .../devicetree/bindings/watchdog/samsung-wdt.txt   |    1 +
+ drivers/watchdog/s3c2410_wdt.c                     |   11 +++++++++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 26cec64..f858d57 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -220,7 +220,7 @@ config SERIAL_CLPS711X_CONSOLE
+diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
+index cfff375..8f3d96a 100644
+--- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
++++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
+@@ -9,6 +9,7 @@ Required properties:
+ 	(a) "samsung,s3c2410-wdt" for Exynos4 and previous SoCs
+ 	(b) "samsung,exynos5250-wdt" for Exynos5250
+ 	(c) "samsung,exynos5420-wdt" for Exynos5420
++	(c) "samsung,exynos7-wdt" for Exynos7
  
- config SERIAL_SAMSUNG
- 	tristate "Samsung SoC serial support"
--	depends on PLAT_SAMSUNG
-+	depends on PLAT_SAMSUNG || ARCH_EXYNOS7
- 	select SERIAL_CORE
- 	help
- 	  Support for the on-chip UARTs on the Samsung S3C24XX series CPUs,
-@@ -230,14 +230,14 @@ config SERIAL_SAMSUNG
+ - reg : base physical address of the controller and length of memory mapped
+ 	region.
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 7c6ccd0..015256e 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -155,6 +155,15 @@ static const struct s3c2410_wdt_variant drv_data_exynos5420 = {
+ 	.quirks = QUIRK_HAS_PMU_CONFIG | QUIRK_HAS_RST_STAT,
+ };
  
- config SERIAL_SAMSUNG_UARTS_4
- 	bool
--	depends on PLAT_SAMSUNG
-+	depends on SERIAL_SAMSUNG
- 	default y if !(CPU_S3C2410 || CPU_S3C2412 || CPU_S3C2440 || CPU_S3C2442)
- 	help
- 	  Internal node for the common case of 4 Samsung compatible UARTs
- 
- config SERIAL_SAMSUNG_UARTS
- 	int
--	depends on PLAT_SAMSUNG
-+	depends on SERIAL_SAMSUNG
- 	default 4 if SERIAL_SAMSUNG_UARTS_4 || CPU_S3C2416
- 	default 3
- 	help
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index c78f43a..31be983 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -1770,7 +1770,7 @@ static struct s3c24xx_serial_drv_data s5pv210_serial_drv_data = {
- #define S5PV210_SERIAL_DRV_DATA	(kernel_ulong_t)NULL
- #endif
- 
--#if defined(CONFIG_ARCH_EXYNOS)
-+#if defined(CONFIG_ARCH_EXYNOS) || defined(CONFIG_ARCH_EXYNOS7)
- static struct s3c24xx_serial_drv_data exynos4210_serial_drv_data = {
- 	.info = &(struct s3c24xx_uart_info) {
- 		.name		= "Samsung Exynos4 UART",
++static const struct s3c2410_wdt_variant drv_data_exynos7 = {
++	.disable_reg = EXYNOS5_WDT_DISABLE_REG_OFFSET,
++	.mask_reset_reg = EXYNOS5_WDT_MASK_RESET_REG_OFFSET,
++	.mask_bit = 0,
++	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
++	.rst_stat_bit = 23,	/* A57 WDTRESET */
++	.quirks = QUIRK_HAS_PMU_CONFIG | QUIRK_HAS_RST_STAT,
++};
++
+ static const struct of_device_id s3c2410_wdt_match[] = {
+ 	{ .compatible = "samsung,s3c2410-wdt",
+ 	  .data = &drv_data_s3c2410 },
+@@ -162,6 +171,8 @@ static const struct of_device_id s3c2410_wdt_match[] = {
+ 	  .data = &drv_data_exynos5250 },
+ 	{ .compatible = "samsung,exynos5420-wdt",
+ 	  .data = &drv_data_exynos5420 },
++	{ .compatible = "samsung,exynos7-wdt",
++	  .data = &drv_data_exynos7 },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
 -- 
 1.7.9.5
