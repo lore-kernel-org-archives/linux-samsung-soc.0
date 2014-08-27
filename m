@@ -1,53 +1,39 @@
 From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V7 11/12] Documentation: bridge: Add documentation for ps8622
- DT properties
-Date: Wed, 27 Aug 2014 20:09:57 +0530
-Message-ID: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
+Subject: [PATCH V7 10/12] Documentation: devicetree: Add vendor prefix for
+ parade
+Date: Wed, 27 Aug 2014 20:09:58 +0530
+Message-ID: <1409150399-12534-2-git-send-email-ajaykumar.rs@samsung.com>
+References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:18911 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:19021 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933698AbaH0OpB (ORCPT
+	with ESMTP id S934812AbaH0Opy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Aug 2014 10:45:01 -0400
+	Wed, 27 Aug 2014 10:45:54 -0400
+In-reply-to: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 Cc: inki.dae@samsung.com, thierry.reding@gmail.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Add documentation for DT properties supported by ps8622/ps8625
-eDP-LVDS converter.
+ps8622 eDP-LVDS converter bridge chip is from parade technologies
 
 Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 ---
- .../devicetree/bindings/video/bridge/ps8622.txt    |   20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/video/bridge/ps8622.txt
+ .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/video/bridge/ps8622.txt b/Documentation/devicetree/bindings/video/bridge/ps8622.txt
-new file mode 100644
-index 0000000..0ec8172
---- /dev/null
-+++ b/Documentation/devicetree/bindings/video/bridge/ps8622.txt
-@@ -0,0 +1,20 @@
-+ps8622-bridge bindings
-+
-+Required properties:
-+	- compatible: "parade,ps8622" or "parade,ps8625"
-+	- reg: first i2c address of the bridge
-+	- sleep-gpios: OF device-tree gpio specification for PD_ pin.
-+	- reset-gpios: OF device-tree gpio specification for RST_ pin.
-+
-+Optional properties:
-+	- lane-count: number of DP lanes to use
-+	- use-external-pwm: backlight will be controlled by an external PWM
-+
-+Example:
-+	lvds-bridge@48 {
-+		compatible = "parade,ps8622";
-+		reg = <0x48>;
-+		sleep-gpios = <&gpc3 6 1 0 0>;
-+		reset-gpios = <&gpc3 1 1 0 0>;
-+		lane-count = <1>;
-+	};
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index ac7269f..5f28264 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -100,6 +100,7 @@ nxp	NXP Semiconductors
+ onnn	ON Semiconductor Corp.
+ opencores	OpenCores.org
+ panasonic	Panasonic Corporation
++parade	Parade Technologies Inc.
+ phytec	PHYTEC Messtechnik GmbH
+ picochip	Picochip Ltd
+ plathome	Plat'Home Co., Ltd.
 -- 
 1.7.9.5
