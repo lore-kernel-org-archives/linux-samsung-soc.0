@@ -1,153 +1,173 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH V2 1/2] ARM: dts: Add DT changes for display on snow
-Date: Wed, 27 Aug 2014 16:01:46 +0100
-Message-ID: <20140827150146.GB9737@leverpostej>
-References: <1409150908-12801-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Doug Anderson <dianders@google.com>
+Subject: Re: [PATCH V2 3/3] mmc: dw_mmc: Dont cut off vqmmc and vmmc
+Date: Wed, 27 Aug 2014 08:49:27 -0700
+Message-ID: <CAD=FV=X+BsvTth4J3oqLJ=pMw_NB-GoYnaqJgyOSr9foLreLvQ@mail.gmail.com>
+References: <1408715272-13833-1-git-send-email-yuvaraj.cd@samsung.com>
+	<1408715272-13833-4-git-send-email-yuvaraj.cd@samsung.com>
+	<CAPDyKFqz8sGj2td=ihZXN4zvAqmu9FHZjWdCn-ZRcdHugNHe2g@mail.gmail.com>
+	<CAPz6YkXH1mMOTwcLkKdffdUHN+TaCAhpa8oG0h+rFn9i+GMoCw@mail.gmail.com>
+	<CAPDyKFqp7oEt9ASmdxrgUwbQ8aTZzAuJ7uD1oGN50iuzPzBfVg@mail.gmail.com>
+	<53FAF8C7.8040007@samsung.com>
+	<CAD=FV=XbV7R+FqRRucA5Cv2A+=3g8zccASwxcTtJD6YyO-ioCg@mail.gmail.com>
+	<53FD5501.1010007@samsung.com>
+	<CAD=FV=VCw1mLpArSY1uj+1zorWROjqGeT3dcTJYzr_1J6jdsBQ@mail.gmail.com>
+	<53FD62C6.8010100@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:53724 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S934344AbaH0PCk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Aug 2014 11:02:40 -0400
-Content-Disposition: inline
-In-Reply-To: <1409150908-12801-1-git-send-email-ajaykumar.rs@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <53FD62C6.8010100@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Sonny Rao <sonnyrao@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Ball <cjb@laptop.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, ABHILASH KESAVAN <a.kesavan@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, "cpgs ." <cpgs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "kgene.kim@gmail.com" <kgene.kim@gmail.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "seanpaul@google.com" <seanpaul@google.com>, "ajaynumb@gmail.com" <ajaynumb@gmail.com>, "jg1.han@samsung.com" <jg1.han@samsung.com>, "joshi@samsung.com" <joshi@samsung.com>, "prashanth.g@samsung.com" <prashanth.g@samsung.com>
 
-On Wed, Aug 27, 2014 at 03:48:27PM +0100, Ajay Kumar wrote:
-> Add DT nodes for ptn3460 bridge chip and panel.
-> Add backlight enable pin and backlight power supply for pwm-backlight.
-> Also add bridge phandle needed by dp to enable display on snow.
-> 
-> Note that, snow doesn't support "chunghwa,claa101wb01" panel,
-> but still we choose to reuse the binding since "chunghwa,claa101wb01"
-> has similar LCD timings.
+Jaehoon,
 
-What does it actually have?
+On Tue, Aug 26, 2014 at 9:47 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> Doug,
+>
+> On 08/27/2014 01:14 PM, Doug Anderson wrote:
+>> Jaehoon,
+>>
+>> On Tue, Aug 26, 2014 at 8:48 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>>> Hi, Doug,
+>>>
+>>> On 08/26/2014 12:25 AM, Doug Anderson wrote:
+>>>> Jaehoon,
+>>>>
+>>>> On Mon, Aug 25, 2014 at 1:50 AM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>>>>> On 08/25/2014 05:13 PM, Ulf Hansson wrote:
+>>>>>> On 22 August 2014 20:27, Sonny Rao <sonnyrao@chromium.org> wrote:
+>>>>>>> On Fri, Aug 22, 2014 at 8:31 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>>>>>>> On 22 August 2014 15:47, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
+>>>>>>>>> Exynos 5250 and 5420 based boards uses built-in CD# line for card
+>>>>>>>>> detection.But unfortunately CD# line is on the same voltage rails
+>>>>>>>>> as of I/O voltage rails. When we cut off vqmmc,the consequent card
+>>>>>>>>> detection will break in these boards.
+>>>>>
+>>>>> I didn't know that use CD# line for card detect.
+>>>>> And if CD# voltage rails and I/O voltage rail are same voltage, it doesn't make sense.
+>>>>> Which card is used with same voltages? (eMMC? SD? SDIO?)
+>>>>>
+>>>>> Well, I have checked Exynos5250 and 5420, but it looks like not same rails.
+>>>>
+>>>> I'm not sure I totally understood what you said.  In my manual I have
+>>>> a table titled "Table 2-1 Exynos 5420 Pin List".  Look in this table
+>>>> for XMMC2CDN and XMMC2DATA_0.  Look to the right of the table and
+>>>> you'll see the power domain.  For both it shows VDDQ_MMC2.  If that
+>>>> doesn't mean that the two are in the same voltage domain then I don't
+>>>> know what does.  Can you point to any examples where they have
+>>>> different voltage domains?
+>>> I think you're mis-understanding for it.
+>>> Right, It's described at exynos5420, but it's not connected.
+>>
+>> "It's not connected".  What do you mean?  If I were to guess I'd say
+>> that on some particular board you're looking at they don't happen to
+>> use the "CD" pin for card detect.  If this is what you mean, it
+>> doesn't help me.  exynos5420-peach-pit does use the CD pin for card
+>> detect.  You can look at the DTS file and confirm it.
+>
+> I didn't know how exynos5420-peach-pit's circuit is configured.
+> But i guess that almost all exynos5 boards are configured with the similar circuit.
+>
+> At Almost all Exynos5 board, CD-pin is used, but not included in Same power domain.
+> (CD-pin is external card-detect pin. - like XEINT_# pin)
+> You mentioned CD# and DATA# lines is used the same power domain, right?
+> In Circuit (not exynos5420-peach-pit), DATA# line and CMD/CLK(vqmmc) is same power supply, and vdd is used other power supply.
+> Not use the CD# pin, used the XEINT_# pin.
+> So i think we don't need to consider the CD#.
+> If exynos5420-peach-pit board is used the CD#-pin, then our discussion can be changed.
 
-It's fine to have "chunghwa,claa101wb01" as a fallback but we should
-have an identifier for the actual display, too.
+Maybe on your board you have CD connected to a "gpx" line.  ...but not
+mine.  The guys who designed our hardware followed the SMDK5420
+reference schematics which connect the SD card slot card detect to
+"gpc2_2", which is the card detect pin.
 
-Thanks,
-Mark.
+See "arch/arm/boot/dts/exynos5420-smdk5420.dts", specifically noting
+the lack of a GPIO card detect and the inclusion of "sd2_cd"
 
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> ---
-> Changes since V1:
-> 	-- Remove "simple-panel" compatible string.
-> 	-- Use GPIO_ACTIVE_HIGH instead of 0.
-> 	-- Change panel node naming from "panel-simple" to "panel".
-> 
->  arch/arm/boot/dts/exynos5250-snow.dts |   41 ++++++++++++++++++---------------
->  1 file changed, 22 insertions(+), 19 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-> index f2b8c41..1ac9709 100644
-> --- a/arch/arm/boot/dts/exynos5250-snow.dts
-> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-> @@ -9,6 +9,7 @@
->  */
->  
->  /dts-v1/;
-> +#include <dt-bindings/gpio/gpio.h>
->  #include "exynos5250.dtsi"
->  #include "exynos5250-cros-common.dtsi"
->  
-> @@ -181,7 +182,7 @@
->  					dcdc3 {
->  						ti,enable-ext-control;
->  					};
-> -					fet1 {
-> +					fet1: fet1 {
->  						regulator-name = "vcd_led";
->  						ti,overcurrent-wait = <3>;
->  					};
-> @@ -204,7 +205,7 @@
->  						regulator-always-on;
->  						ti,overcurrent-wait = <3>;
->  					};
-> -					fet6 {
-> +					fet6: fet6 {
->  						regulator-name = "lcd_vdd";
->  						ti,overcurrent-wait = <3>;
->  					};
-> @@ -253,6 +254,15 @@
->  			pinctrl-0 = <&max98095_en>;
->  			pinctrl-names = "default";
->  		};
-> +
-> +		ptn3460: lvds-bridge@20 {
-> +			compatible = "nxp,ptn3460";
-> +			reg = <0x20>;
-> +			powerdown-gpios = <&gpy2 5 GPIO_ACTIVE_HIGH>;
-> +			reset-gpios = <&gpx1 5 GPIO_ACTIVE_HIGH>;
-> +			edid-emulation = <5>;
-> +			panel = <&panel>;
-> +		};
->  	};
->  
->  	i2s0: i2s@03830000 {
-> @@ -300,11 +310,13 @@
->  		vdd_pll-supply = <&ldo8_reg>;
->  	};
->  
-> -	backlight {
-> +	backlight: backlight {
->  		compatible = "pwm-backlight";
->  		pwms = <&pwm 0 1000000 0>;
->  		brightness-levels = <0 100 500 1000 1500 2000 2500 2800>;
->  		default-brightness-level = <7>;
-> +		enable-gpios = <&gpx3 0 GPIO_ACTIVE_HIGH>;
-> +		power-supply = <&fet1>;
->  		pinctrl-0 = <&pwm0_out>;
->  		pinctrl-names = "default";
->  	};
-> @@ -314,6 +326,12 @@
->  		samsung,invert-vclk;
->  	};
->  
-> +	panel: panel {
-> +		compatible = "chunghwa,claa101wb01";
-> +		power-supply = <&fet6>;
-> +		backlight = <&backlight>;
-> +	};
-> +
->  	dp-controller@145B0000 {
->  		status = "okay";
->  		pinctrl-names = "default";
-> @@ -325,22 +343,7 @@
->  		samsung,link-rate = <0x0a>;
->  		samsung,lane-count = <2>;
->  		samsung,hpd-gpio = <&gpx0 7 0>;
-> -
-> -		display-timings {
-> -			native-mode = <&timing1>;
-> -
-> -			timing1: timing@1 {
-> -				clock-frequency = <70589280>;
-> -				hactive = <1366>;
-> -				vactive = <768>;
-> -				hfront-porch = <40>;
-> -				hback-porch = <40>;
-> -				hsync-len = <32>;
-> -				vback-porch = <10>;
-> -				vfront-porch = <12>;
-> -				vsync-len = <6>;
-> -			};
-> -		};
-> +		bridge = <&ptn3460>;
->  	};
->  };
->  
-> -- 
-> 1.7.9.5
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+mmc@12220000 {
+  status = "okay";
+  card-detect-delay = <200>;
+  samsung,dw-mshc-ciu-div = <3>;
+  samsung,dw-mshc-sdr-timing = <2 3>;
+  samsung,dw-mshc-ddr-timing = <1 2>;
+  pinctrl-names = "default";
+  pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+  bus-width = <4>;
+  cap-sd-highspeed;
+};
+
+See "arch/arm/boot/dts/exynos5420-peach-pit.dts" too:
+
+&mmc_2 {
+  status = "okay";
+  num-slots = <1>;
+  cap-sd-highspeed;
+  card-detect-delay = <200>;
+  clock-frequency = <400000000>;
+  samsung,dw-mshc-ciu-div = <3>;
+  samsung,dw-mshc-sdr-timing = <2 3>;
+  samsung,dw-mshc-ddr-timing = <1 2>;
+  pinctrl-names = "default";
+  pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+  bus-width = <4>;
+};
+
+
+Here, see this ASCII art that shows how some lines are hooked up on
+peach-pit.  You might need to paste this into something with a
+fixed-width font.
+
+                     +--------------------
+                     |    Exynos 5420
+                     |
+                     |
+P2.8V_LOUT4 ---------|- VDDQ_MMC2 (AK7)
+    |                |
+    |                |
+  +-+- 10K res -+----|- XMMC2CDN (AK6)
+  |             |    |
+  |             |    |
+  |             |    |
+  |           Ext CD |
+  |                  |
+  +-- 10K res-+--+---|- XMMC2CMD (AK8)
+                 |
+                 |
+               Ext CMD
+
+You can see from the above that the external card detect signal (that
+goes to the connector) named "Ext CD" is pulled up to the same voltage
+as the external CMD signal (that also goes to the connector).  This is
+vqmmc.  If we turn off vqmmc then the 10K resistor will (I think) act
+as a pull down, or in the best case it will be floating.
+
+Said another way: we can't read card detect when vqmmc is off.
+
+> Your commit message looks like all exynos5250/5420 board are used CD# line.
+
+The commit message should be clearer, agreed.  I think I asked Yuvaraj
+to make sure that the code only invoked this quirk on exynos and only
+if a GPIO was not used for card detect.  Yuvaraj: can you make it more
+obvious that not all exynos5250/5420 boards need this, only those that
+use the "official" card detect line?
+
+
+>> ...or are you saying that the CD pin somehow changes voltage domains
+>> when configured as a GPIO?  I find that very hard to believe.  What
+>> voltage domain does it go to?  If it goes to a 1.8V voltage domain
+>> then that would be bad when vqmmc was 3.3V.  If it goes to a 3.3V
+>> voltage domain then that would be bad when vqmmc was 1.8V.  Remember
+>> that externally we've got a pull up to vqmmc.
+>
+> It is used with XEINT_# pin instead of CD# pin.
+> As i mentioned above, if exynos5420-peach-pit is used CD# line and not used XEINT_# pin,
+> my point is meaningless. :)
+>
+> Is exynos5420-peach-pit board used with CD#pin, not XEINT_# pin?
+
+Yes.  It is using CD#.  Do you remove your objections to this patch,
+then (once the commit message is clearer)?
+
+-Doug
