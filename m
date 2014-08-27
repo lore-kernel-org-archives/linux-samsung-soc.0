@@ -1,52 +1,55 @@
-From: Doug Anderson <dianders@google.com>
-Subject: Re: [PATCH V2 3/3] mmc: dw_mmc: Dont cut off vqmmc and vmmc
-Date: Wed, 27 Aug 2014 08:52:50 -0700
-Message-ID: <CAD=FV=Vqz=kA=D5KDyq_QuPi-6B05VixYManTsFe2PC-fzxRkw@mail.gmail.com>
-References: <1408715272-13833-1-git-send-email-yuvaraj.cd@samsung.com>
-	<1408715272-13833-4-git-send-email-yuvaraj.cd@samsung.com>
-	<CAPDyKFqz8sGj2td=ihZXN4zvAqmu9FHZjWdCn-ZRcdHugNHe2g@mail.gmail.com>
-	<CAPz6YkXH1mMOTwcLkKdffdUHN+TaCAhpa8oG0h+rFn9i+GMoCw@mail.gmail.com>
-	<CAPDyKFqp7oEt9ASmdxrgUwbQ8aTZzAuJ7uD1oGN50iuzPzBfVg@mail.gmail.com>
-	<CAD=FV=VQWzhiSU+iULACj+Dp_tDf3SszQ8ELLEGqVEyJJRQy1Q@mail.gmail.com>
-	<CAPDyKFo9-5=uPqD8RvLGsYtSCynBFnGGeSCpwLZuzDtW+652hA@mail.gmail.com>
-	<CAD=FV=VveHTYmiBu42DJeFFGARV2+1bS6Y2CQM995YkX_O9SQA@mail.gmail.com>
-	<CAPDyKFpUU643iXVbxuu9Vx1zY0K7x4z-ZxxVEWd+Lsuwp0iA+g@mail.gmail.com>
+From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Subject: Re: [PATCH 1/2] ARM: exynos_defconfig: Enable Control Groups support
+Date: Wed, 27 Aug 2014 18:10:14 +0200
+Message-ID: <53FE02E6.3030302@suse.de>
+References: <1409137341-20516-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFpUU643iXVbxuu9Vx1zY0K7x4z-ZxxVEWd+Lsuwp0iA+g@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Sonny Rao <sonnyrao@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, ABHILASH KESAVAN <a.kesavan@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cantor2.suse.de ([195.135.220.15]:39394 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S935294AbaH0QKR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Aug 2014 12:10:17 -0400
+In-Reply-To: <1409137341-20516-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Ulf,
+Am 27.08.2014 13:02, schrieb Javier Martinez Canillas:
+> systemd needs control groups support to be enabled in the
+> kernel so let's enable it by default since is quite likely
+> that a user-space with systemd will be used.
+>=20
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
+=2Euk>
+> ---
+>  arch/arm/configs/exynos_defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exy=
+nos_defconfig
+> index 676c744..590abde 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -1,6 +1,7 @@
+>  CONFIG_SYSVIPC=3Dy
+>  CONFIG_NO_HZ=3Dy
+>  CONFIG_HIGH_RES_TIMERS=3Dy
+> +CONFIG_CGROUPS=3Dy
+>  CONFIG_BLK_DEV_INITRD=3Dy
+>  CONFIG_KALLSYMS_ALL=3Dy
+>  CONFIG_MODULES=3Dy
 
-On Wed, Aug 27, 2014 at 4:17 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> Now, we've got MMC_CAP_NEEDS_POLL, so dw_mmc will periodically be
->> called to check the card detect line, but with vmmc and vqmmc off.  It
->> will be unable to return a sensible value without actually turning on
->> vmmc and vqmmc.
->
-> Currently MMC_CAP_NEEDS_POLL mean the mmc rescan work will reschedule
-> itself with HZ interval. This to check for card insert/removal.
->
-> Now, mmc_rescan() will, if present, invoke host's ->get_cd() callback
-> to check whether it's worth to continue initialization sequence or if
-> it should re-schedule itself again.
->
-> If your host driver can distinguish whether a card is inserted, which
-> in this case are when vccq is turned off, your ->get_cd() callback need
-> to return 1. That will allow mmc_rescan() to continue it's
-> initialization sequence and do mmc_power_up().
+CONFIG_FHANDLE=3Dy is also needed for systemd to get a serial console.
+multi_v7 has that already.
 
-As per my other email, we can't tell whether a card is inserted when
-vqmmc is off.
+Regards,
+Andreas
 
-Does this mean that you have removed your objections to a solution
-like Yuvaraj has posted?  We still need to break it into two patches
-(the core part and the dwmmc part), but otherwise is it OK?  I can
-post the original patch I sent Yuvaraj if it's helpful (or he can just
-include my patch as part 1 of his series).
-
--Doug
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
+berg
