@@ -1,72 +1,70 @@
 From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v2 0/5] usb: phy: samsung: remove old USB PHY code
-Date: Wed, 27 Aug 2014 14:23:12 -0500
-Message-ID: <20140827192312.GH6347@saruman.home>
+Subject: Re: [PATCH v2 5/5] usb: phy: samsung: remove old common USB PHY code
+Date: Wed, 27 Aug 2014 14:25:11 -0500
+Message-ID: <20140827192511.GI6347@saruman.home>
 References: <1408726745-31135-1-git-send-email-b.zolnierkie@samsung.com>
+ <1408726745-31135-6-git-send-email-b.zolnierkie@samsung.com>
 Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="bygAmIonOAIqBxQB"
+	protocol="application/pgp-signature"; boundary="lqaZmxkhekPBfBzr"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:58684 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S935182AbaH0TX2 (ORCPT
+Received: from devils.ext.ti.com ([198.47.26.153]:44637 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935181AbaH0TZ0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Aug 2014 15:23:28 -0400
+	Wed, 27 Aug 2014 15:25:26 -0400
 Content-Disposition: inline
-In-Reply-To: <1408726745-31135-1-git-send-email-b.zolnierkie@samsung.com>
+In-Reply-To: <1408726745-31135-6-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, Kishon Vijay Abraham I <kishon@ti.com>, Kamil Debski <k.debski@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Mark Brown <broonie@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
---bygAmIonOAIqBxQB
+--lqaZmxkhekPBfBzr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-On Fri, Aug 22, 2014 at 06:59:00PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> Hi,
+On Fri, Aug 22, 2014 at 06:59:05PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> drivers/usb/phy/phy-samsung-usb[2,3] drivers got replaced by
+> drivers/phy/phy-samsung-usb[2,3] ones and the old common Samsung
+> USB PHY code is no longer used.
 >=20
-> This patch series removes the old Samsung USB PHY drivers that
-> got replaced by the new ones using the generic PHY layer.
->=20
-> Depends on:
-> - v3.17-rc1 branch of Linus' kernel
->=20
-> Changes since v1 (https://lkml.org/lkml/2014/8/14/241):
-> - rebased on v3.17-rc1 kernel
-> - added Acked-by-s from Kishon Vijay Abraham I
-> - added Reviewed-by-s from Vivek Gautam and Jingoo Han
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Reviewed-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+> Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+> Cc: Kamil Debski <k.debski@samsung.com>
 
-So, everybody agrees that there will be no regressions, right ? I'll
-merge this on my testing/next.
+this patch doesn't apply. Please rebase on my testing/next
 
 --=20
 balbi
 
---bygAmIonOAIqBxQB
+--lqaZmxkhekPBfBzr
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJT/jAgAAoJEIaOsuA1yqREMPkP/AoInxTvy7cl3Q90yb+c+uc2
-Qqs0FQd81qQyRJHfzuqPyBZJCbsydBfMQxh6Kz7QEHdoWJD101YRYO5tVBuh93kO
-mHtCMy0TOiReJg+S7m/X0KiTteGYu2X5fB7YvNjMli+QIM/wqTV5xWDrK9+ZtBxo
-XW7oywMBgCzcVGGO8yixT98ZrmlshPOFeAefMQM9CGp6GT+rVQH8gVVBjXpjegmP
-IpCxpyLCWQZPIK9TmbluaLvsBVK74ZxPDLdMLdLl681F0nYYFg/WkcZfWo6OyPx2
-5qwSjDIgxvM7Wgy12s4Jhe4vK/L3X3mWGFJ2aofJZJPA1d9w51qMoxrpClhfRNKK
-uBQ2imbTkZJ880zdeG/dxabmR7Q9v2RPkiy1jf/HVSV8ZPPKNODl2vLVucZJcZhk
-rULmGGriPdOofLofIKKBEavL0Wrz6WmBQwBNW4T0a1jKFhs5mp47v8uYr/Rvkne/
-MHAs7M841p7CRatNHykl6HZsA2E2DfdxcyUpR0AgvQ2up4jWDzISCN69eQhhw3z/
-kZo/kxFece7lLDw8OqtCV+q9Te8Lagcol5ogL8VQBXm3SY3bfLIA2GhZEcewBeVl
-yyoPZkvc0ZQ9OoJDCRZtSSSnlKQqbs+DFRguORvuQJ7OdEb7dzYodKeEXTsKRadz
-HxjklGMmWK448/nUnw+Z
-=QB+n
+iQIbBAEBAgAGBQJT/jCXAAoJEIaOsuA1yqREtA8P91qAkizr1qs7wr6r8JuOgceP
+KXwZGRlBCa44JY81ermTjGwlB19JiQ/LucM6K0ZTgi2HlMUTRVwqxPSHrNtRK/Xc
+xZhNMJUkgWZ5aBN09jMgq5pOWGSppwe4/jMXIr2PcWbKpGMXhYv4LFtqx+dQQgDj
+HUvZ2YXjeQjQmweQck4HWIziFZLCd+tLGoYktbtyA3PQT2/ttedFDJCkVWw943HL
+eNkyS0LEdeKn0EJ2tpxF6dww7V9qdp9USgNgpXxYC7UGaHVHCmG619dZgtbSDU7m
+mpHybY1coLG77MOosQBOX8b7fRtlCI2CS8HjBpRamcacjDJ17oUq3wL8vSFjdtm6
+uylME3g12ybM7ArS0ZH6Ua2lOJKDf4ObGlXJq3D6IHM1TnEWeMjwtmdK/1+LDPQ0
+mexGdTK1EllzMkWwec7qMoI83GcBWXs/BWy3zrGih2gS3xjtWLaRkohnQGne+j+l
+7DEzsmi0vE/URB+mVXreGL9hXkNVuiwaQacEEz5eeN43tqm+rXvrYUAPSbffG+1D
+3XQkOR46Caz+yxaxIcdz/YHCxCle7ksEr/e9KuDlJWstM+o5lLx3rpEBPQPeXlb9
+6MRUiA4PeSk2Q+prmy1OQP5Z5nzQB3o72MmXe4DE3PuhSNKO/Nfsw0w9+wkhYB24
+KY31S/nNxYYuz+mQJ04=
+=L4rZ
 -----END PGP SIGNATURE-----
 
---bygAmIonOAIqBxQB--
+--lqaZmxkhekPBfBzr--
