@@ -1,69 +1,204 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 09/14] watchdog: s3c2410_wdt: Add support for Watchdog device
- on Exynos7
-Date: Wed, 27 Aug 2014 15:17:11 +0530
-Message-ID: <1409132831-2032-1-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH 01/14] clk: samsung: add support for 145xx and 1460x PLLs
+Date: Wed, 27 Aug 2014 15:18:04 +0530
+Message-ID: <1409132889-2080-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:50223 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932642AbaH0Jvd (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:42241 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933090AbaH0Jwa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Aug 2014 05:51:33 -0400
+	Wed, 27 Aug 2014 05:52:30 -0400
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NAY001VVM3GZB90@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 27 Aug 2014 18:52:28 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-watchdog@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, Wim Van Sebroeck <wim@iguana.be>
+Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, Thomas Abraham <thomas.ab@samsung.com>
 
-Exynos7 SoC has a Watchdog for Atlas (A57) cores
-This patch adds support for the Atlas watchdog.
+By registers bits and offsets the 145xx PLL is similar to
+pll_type "pll_35xx". Also, 1460x PLL is similar to pll_type
+"pll_46xx".
+
+Hence, reusing the functions defined for pll_35xx and pll_46xx
+to support 145xx and 1460x PLLs respectively.
 
 Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Wim Van Sebroeck <wim@iguana.be>
+Cc: Tomasz Figa <t.figa@samsung.com>
+Cc: Mike Turquette <mturquette@linaro.org>
+Cc: Thomas Abraham <thomas.ab@samsung.com>
 ---
- .../devicetree/bindings/watchdog/samsung-wdt.txt   |    1 +
- drivers/watchdog/s3c2410_wdt.c                     |   11 +++++++++++
- 2 files changed, 12 insertions(+)
+ drivers/clk/samsung/clk-pll.c |   50 ++++++++++++++++++++++++++++++++---------
+ drivers/clk/samsung/clk-pll.h |    4 ++++
+ 2 files changed, 43 insertions(+), 11 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
-index cfff375..8f3d96a 100644
---- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
-+++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
-@@ -9,6 +9,7 @@ Required properties:
- 	(a) "samsung,s3c2410-wdt" for Exynos4 and previous SoCs
- 	(b) "samsung,exynos5250-wdt" for Exynos5250
- 	(c) "samsung,exynos5420-wdt" for Exynos5420
-+	(c) "samsung,exynos7-wdt" for Exynos7
+diff --git a/drivers/clk/samsung/clk-pll.c b/drivers/clk/samsung/clk-pll.c
+index b07fad2..fe24e4d 100644
+--- a/drivers/clk/samsung/clk-pll.c
++++ b/drivers/clk/samsung/clk-pll.c
+@@ -130,6 +130,7 @@ static const struct clk_ops samsung_pll3000_clk_ops = {
+  */
+ /* Maximum lock time can be 270 * PDIV cycles */
+ #define PLL35XX_LOCK_FACTOR	(270)
++#define PLL145XX_LOCK_FACTOR	(150)
  
- - reg : base physical address of the controller and length of memory mapped
- 	region.
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 7c6ccd0..015256e 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -155,6 +155,15 @@ static const struct s3c2410_wdt_variant drv_data_exynos5420 = {
- 	.quirks = QUIRK_HAS_PMU_CONFIG | QUIRK_HAS_RST_STAT,
- };
+ #define PLL35XX_MDIV_MASK       (0x3FF)
+ #define PLL35XX_PDIV_MASK       (0x3F)
+@@ -139,6 +140,7 @@ static const struct clk_ops samsung_pll3000_clk_ops = {
+ #define PLL35XX_PDIV_SHIFT      (8)
+ #define PLL35XX_SDIV_SHIFT      (0)
+ #define PLL35XX_LOCK_STAT_SHIFT	(29)
++#define PLL145XX_ENABLE		BIT(31)
  
-+static const struct s3c2410_wdt_variant drv_data_exynos7 = {
-+	.disable_reg = EXYNOS5_WDT_DISABLE_REG_OFFSET,
-+	.mask_reset_reg = EXYNOS5_WDT_MASK_RESET_REG_OFFSET,
-+	.mask_bit = 0,
-+	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
-+	.rst_stat_bit = 23,	/* A57 WDTRESET */
-+	.quirks = QUIRK_HAS_PMU_CONFIG | QUIRK_HAS_RST_STAT,
-+};
+ static unsigned long samsung_pll35xx_recalc_rate(struct clk_hw *hw,
+ 				unsigned long parent_rate)
+@@ -186,6 +188,10 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 
+ 	tmp = __raw_readl(pll->con_reg);
+ 
++	/* Enable PLL */
++	if (pll->type == (pll_1450x || pll_1451x || pll_1452x))
++		tmp |= PLL145XX_ENABLE;
 +
- static const struct of_device_id s3c2410_wdt_match[] = {
- 	{ .compatible = "samsung,s3c2410-wdt",
- 	  .data = &drv_data_s3c2410 },
-@@ -162,6 +171,8 @@ static const struct of_device_id s3c2410_wdt_match[] = {
- 	  .data = &drv_data_exynos5250 },
- 	{ .compatible = "samsung,exynos5420-wdt",
- 	  .data = &drv_data_exynos5420 },
-+	{ .compatible = "samsung,exynos7-wdt",
-+	  .data = &drv_data_exynos7 },
- 	{},
+ 	if (!(samsung_pll35xx_mp_change(rate, tmp))) {
+ 		/* If only s change, change just s value only*/
+ 		tmp &= ~(PLL35XX_SDIV_MASK << PLL35XX_SDIV_SHIFT);
+@@ -196,8 +202,12 @@ static int samsung_pll35xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	}
+ 
+ 	/* Set PLL lock time. */
+-	__raw_writel(rate->pdiv * PLL35XX_LOCK_FACTOR,
+-			pll->lock_reg);
++	if (pll->type == (pll_1450x || pll_1451x || pll_1452x))
++		__raw_writel(rate->pdiv * PLL145XX_LOCK_FACTOR,
++				pll->lock_reg);
++	else
++		__raw_writel(rate->pdiv * PLL35XX_LOCK_FACTOR,
++				pll->lock_reg);
+ 
+ 	/* Change PLL PMS values */
+ 	tmp &= ~((PLL35XX_MDIV_MASK << PLL35XX_MDIV_SHIFT) |
+@@ -356,7 +366,6 @@ static const struct clk_ops samsung_pll36xx_clk_min_ops = {
+ 
+ #define PLL45XX_ENABLE		BIT(31)
+ #define PLL45XX_LOCKED		BIT(29)
+-
+ static unsigned long samsung_pll45xx_recalc_rate(struct clk_hw *hw,
+ 				unsigned long parent_rate)
+ {
+@@ -482,6 +491,8 @@ static const struct clk_ops samsung_pll45xx_clk_min_ops = {
+ 
+ #define PLL46XX_VSEL_MASK	(1)
+ #define PLL46XX_MDIV_MASK	(0x1FF)
++#define PLL1460X_MDIV_MASK	(0x3FF)
++
+ #define PLL46XX_PDIV_MASK	(0x3F)
+ #define PLL46XX_SDIV_MASK	(0x7)
+ #define PLL46XX_VSEL_SHIFT	(27)
+@@ -511,13 +522,14 @@ static unsigned long samsung_pll46xx_recalc_rate(struct clk_hw *hw,
+ 
+ 	pll_con0 = __raw_readl(pll->con_reg);
+ 	pll_con1 = __raw_readl(pll->con_reg + 4);
+-	mdiv = (pll_con0 >> PLL46XX_MDIV_SHIFT) & PLL46XX_MDIV_MASK;
++	mdiv = (pll_con0 >> PLL46XX_MDIV_SHIFT) & ((pll->type == pll_1460x) ?
++				PLL1460X_MDIV_MASK : PLL46XX_MDIV_MASK);
+ 	pdiv = (pll_con0 >> PLL46XX_PDIV_SHIFT) & PLL46XX_PDIV_MASK;
+ 	sdiv = (pll_con0 >> PLL46XX_SDIV_SHIFT) & PLL46XX_SDIV_MASK;
+-	kdiv = pll->type == pll_4650c ? pll_con1 & PLL4650C_KDIV_MASK :
++	kdiv = (pll->type == pll_4650c) ? pll_con1 & PLL4650C_KDIV_MASK :
+ 					pll_con1 & PLL46XX_KDIV_MASK;
+ 
+-	shift = pll->type == pll_4600 ? 16 : 10;
++	shift = (pll->type == (pll_4600 || pll_1460x)) ? 16 : 10;
+ 	fvco *= (mdiv << shift) + kdiv;
+ 	do_div(fvco, (pdiv << sdiv));
+ 	fvco >>= shift;
+@@ -526,11 +538,14 @@ static unsigned long samsung_pll46xx_recalc_rate(struct clk_hw *hw,
+ }
+ 
+ static bool samsung_pll46xx_mpk_change(u32 pll_con0, u32 pll_con1,
+-				const struct samsung_pll_rate_table *rate)
++				const struct samsung_pll_rate_table *rate,
++				struct samsung_clk_pll *pll)
+ {
+ 	u32 old_mdiv, old_pdiv, old_kdiv;
+ 
+-	old_mdiv = (pll_con0 >> PLL46XX_MDIV_SHIFT) & PLL46XX_MDIV_MASK;
++	old_mdiv = (pll_con0 >> PLL46XX_MDIV_SHIFT) &
++			((pll->type == pll_1460x) ?
++			PLL1460X_MDIV_MASK : PLL46XX_MDIV_MASK);
+ 	old_pdiv = (pll_con0 >> PLL46XX_PDIV_SHIFT) & PLL46XX_PDIV_MASK;
+ 	old_kdiv = (pll_con1 >> PLL46XX_KDIV_SHIFT) & PLL46XX_KDIV_MASK;
+ 
+@@ -557,7 +572,7 @@ static int samsung_pll46xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 	con0 = __raw_readl(pll->con_reg);
+ 	con1 = __raw_readl(pll->con_reg + 0x4);
+ 
+-	if (!(samsung_pll46xx_mpk_change(con0, con1, rate))) {
++	if (!(samsung_pll46xx_mpk_change(con0, con1, rate, pll))) {
+ 		/* If only s change, change just s value only*/
+ 		con0 &= ~(PLL46XX_SDIV_MASK << PLL46XX_SDIV_SHIFT);
+ 		con0 |= rate->sdiv << PLL46XX_SDIV_SHIFT;
+@@ -573,14 +588,23 @@ static int samsung_pll46xx_set_rate(struct clk_hw *hw, unsigned long drate,
+ 		lock = 0xffff;
+ 
+ 	/* Set PLL PMS and VSEL values. */
+-	con0 &= ~((PLL46XX_MDIV_MASK << PLL46XX_MDIV_SHIFT) |
++	if (pll->type == pll_1460x) {
++		con0 &= ~((PLL46XX_MDIV_MASK << PLL46XX_MDIV_SHIFT) |
++			(PLL46XX_PDIV_MASK << PLL46XX_PDIV_SHIFT) |
++			(PLL46XX_SDIV_MASK << PLL46XX_SDIV_SHIFT));
++		con0 |= (rate->mdiv << PLL46XX_MDIV_SHIFT) |
++			(rate->pdiv << PLL46XX_PDIV_SHIFT) |
++			(rate->sdiv << PLL46XX_SDIV_SHIFT);
++	} else {
++		con0 &= ~((PLL46XX_MDIV_MASK << PLL46XX_MDIV_SHIFT) |
+ 			(PLL46XX_PDIV_MASK << PLL46XX_PDIV_SHIFT) |
+ 			(PLL46XX_SDIV_MASK << PLL46XX_SDIV_SHIFT) |
+ 			(PLL46XX_VSEL_MASK << PLL46XX_VSEL_SHIFT));
+-	con0 |= (rate->mdiv << PLL46XX_MDIV_SHIFT) |
++		con0 |= (rate->mdiv << PLL46XX_MDIV_SHIFT) |
+ 			(rate->pdiv << PLL46XX_PDIV_SHIFT) |
+ 			(rate->sdiv << PLL46XX_SDIV_SHIFT) |
+ 			(rate->vsel << PLL46XX_VSEL_SHIFT);
++	}
+ 
+ 	/* Set PLL K, MFR and MRR values. */
+ 	con1 = __raw_readl(pll->con_reg + 0x4);
+@@ -1190,6 +1214,9 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 	/* clk_ops for 35xx and 2550 are similar */
+ 	case pll_35xx:
+ 	case pll_2550:
++	case pll_1450x:
++	case pll_1451x:
++	case pll_1452x:
+ 		if (!pll->rate_table)
+ 			init.ops = &samsung_pll35xx_clk_min_ops;
+ 		else
+@@ -1223,6 +1250,7 @@ static void __init _samsung_clk_register_pll(struct samsung_clk_provider *ctx,
+ 	case pll_4600:
+ 	case pll_4650:
+ 	case pll_4650c:
++	case pll_1460x:
+ 		if (!pll->rate_table)
+ 			init.ops = &samsung_pll46xx_clk_min_ops;
+ 		else
+diff --git a/drivers/clk/samsung/clk-pll.h b/drivers/clk/samsung/clk-pll.h
+index c0ed4d4..213de9a 100644
+--- a/drivers/clk/samsung/clk-pll.h
++++ b/drivers/clk/samsung/clk-pll.h
+@@ -33,6 +33,10 @@ enum samsung_pll_type {
+ 	pll_s3c2440_mpll,
+ 	pll_2550xx,
+ 	pll_2650xx,
++	pll_1450x,
++	pll_1451x,
++	pll_1452x,
++	pll_1460x,
  };
- MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
+ 
+ #define PLL_35XX_RATE(_rate, _m, _p, _s)			\
 -- 
 1.7.9.5
