@@ -1,106 +1,83 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH] usb: dwc3: exynos: remove usb_phy_generic support
-Date: Wed, 27 Aug 2014 14:28:25 -0500
-Message-ID: <20140827192825.GJ6347@saruman.home>
-References: <2141307.zYQLjP6V6U@amdc1032>
- <CAFp+6iF10hSNzkVWwF2QkDLRkhKQ_STN8N8vH2eatM4qjjt7MQ@mail.gmail.com>
-Reply-To: <balbi@ti.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/1] regulator: max77802: set opmode to normal if off is
+ read from hw
+Date: Wed, 27 Aug 2014 20:44:11 +0100
+Message-ID: <20140827194411.GU17528@sirena.org.uk>
+References: <1409053061-22568-1-git-send-email-javier.martinez@collabora.co.uk>
+ <53FE2446.3040402@gmail.com>
+ <20140827183733.GN17528@sirena.org.uk>
+ <53FE25EB.7060702@gmail.com>
+ <20140827184705.GO17528@sirena.org.uk>
+ <53FE2901.50508@gmail.com>
+ <20140827191526.GS17528@sirena.org.uk>
+ <53FE2F9E.80501@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gBdJBemW82xJqIAr"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="6PDkkIznEI+zY3BQ"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36545 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935556AbaH0ToY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Aug 2014 15:44:24 -0400
 Content-Disposition: inline
-In-Reply-To: <CAFp+6iF10hSNzkVWwF2QkDLRkhKQ_STN8N8vH2eatM4qjjt7MQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Felipe Balbi <balbi@ti.com>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+In-Reply-To: <53FE2F9E.80501@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
---gBdJBemW82xJqIAr
+
+--6PDkkIznEI+zY3BQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Aug 27, 2014 at 09:21:02PM +0200, Tomasz Figa wrote:
+> On 27.08.2014 21:15, Mark Brown wrote:
 
-On Wed, Aug 27, 2014 at 11:42:25PM +0530, Vivek Gautam wrote:
-> On Wed, Aug 27, 2014 at 1:22 PM, Bartlomiej Zolnierkiewicz
-> <b.zolnierkie@samsung.com> wrote:
-> > dwc3 driver is using the new Exynos5 SoC series USB DRD PHY driver
-> > (PHY_EXYNOS5_USBDRD which selects GENERIC_PHY) as can be seen by
-> > looking at the following commits:
-> >
-> >   7a4cf0fde054 ("ARM: dts: Update DWC3 usb controller to use new
-> >   phy driver for exynos5250")
-> >
-> >   f070267b5fc1 ("ARM: dts: Enable support for DWC3 controller for
-> >   exynos5420")
-> >
-> > Thus remove unused usb_phy_generic support from dwc3 Exynos glue
-> > layer.
-> >
-> > [ The code that is being removed is harmful in the context of
-> >   multi_v7_defconfig and enabling "EHCI support for Samsung
-> >   S5P/EXYNOS SoC Series" (USB_EHCI_EXYNOS) + "OHCI support for
-> >   Samsung S5P/EXYNOS SoC Series" (USB_OHCI_EXYNOS) because "EHCI
-> >   support for OMAP3 and later chips" (USB_EHCI_HCD_OMAP) selects
-> >   "NOP USB Transceiver Driver" (NOP_USB_XCEIV).  NOP USB driver
-> >   attaches itself to usb_phy_generic platform devices created by
-> >   dwc3 Exynos glue layer and later causes Exynos EHCI driver to
-> >   fail probe and Exynos OHCI driver to hang on probe (as observed
-> >   on Exynos5250 Arndale board). ]
->=20
-> The issue with EHCI and OHCI on exynos platforms is that until now
-> they also request
-> usb-phy and only later if they don't find one, they go ahead and get a
-> 'phy' generic.
->=20
-> Fortunately we missed this issue with exynos_defconfig, and as you rightly
-> mentioned with multi_v7_defconfig, the NOP_USB_XCEIV gets enabled and
-> EHCI and OHCI exynos get no-op usb-phy, which actually blocks EHCI/OHCI f=
-rom
-> initializing the real PHYs.
+> > This is in the scenario where the previously running Linux changed the
+> > mode to something other than normal and where the freshly booted Linux
+> > can't figure out how to do that when it needs to.  I'm not sure how
+> > plausible that scenario is, or that real systems would handle it
+> > robustly.
 
-right, when I added PHY support to dwc3 I expected people to remote NOP
-transceivers from their glue layers after they had proper PHY drivers
-available.
+> I'm not sure I'm getting your point.
 
-> This issue is resolved with patches:
-> [PATCH v2 1/2] usb: host: ehci-exynos: Remove unnecessary usb-phy support
-> [PATCH v2 2/2] usb: host: ohci-exynos: Remove unnecessary usb-phy support
-> wherein we are completely removing the usb-phy support from ehci/ohci-exy=
-nos.
-> So with these patches we should not see the issue mentioned by you.
->=20
-> Now for the DWC3 part, the usb-phy part was added to use register two
-> separate no-op-xceivers of USB2_PHY type and USB3_PHY type,
-> so that platforms with no separate PHY can still be able to use dwc3.
+> If the only thing Linux can do is read back the opmode from PMIC
+> registers, it doesn't explicitly set it to something other, but rather
+> reuses what was set by something before it (or, after this patch,
+> defaults to NORMAL if it's OFF), i.e. the low level firmware or Linux.
 
-correct.
+> However the information about original setting is lost whenever Linux
+> turns the regulator off and performs a warm reboot, which I believe
+> would be a quite common scenario.
 
---=20
-balbi
+The point is that if anything was setting the mode to something other
+than normal it was almost certainly a previously running copy of Linux
+and one would expect that if the mode does need to be changed the new
+copy will be doing that anyway.  It's rare enough to need to actively
+manage modes in the first place.
 
---gBdJBemW82xJqIAr
+--6PDkkIznEI+zY3BQ
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJT/jFZAAoJEIaOsuA1yqRE5fEP/RKzYqbF5AaTr9JeUjDCfBrR
-IHgV4wPDMfBdajroYZVM+dvEzePFwrEDcaATI+jnXnO6op0tgdmfklthhyopxfnH
-5P7I0BnHiPlBVnAOaXJGchqmvr5OokabRy0rdXLbD0tacVCOXvBPPOjG5Qqjz9VR
-Im0CG05N35exacMcld8nl/iRZ35pjxucMeopBpB6pYkA5shQ28OdeRAFe8iXjNC8
-/IQDSPvgxn2s8ILq+xiSx9JWKjDICrwFsIThA92D+AG9SkVGokbnMCeNhfPRuEch
-GywfhLOikQlIlB5KJ8v3IiVMEaW6TEPbgd+aKJpCpsrERvJqtxVPaas4yPSAE2f0
-UHw48HVW+ngQ66acBcfbYiUJcfyp3u82S8Zq+0bvXK0tyXOuQ9cSSPcQN7uljw0N
-8STUExqYuwMf5mBTTfdAvHULr6lPHwMLAk0kB9W1OD0e34Ss+Mf+BN26ezWXx/dL
-q3zmfNRDMdr1o4tOo4tKQC2D3EEzef/QFmAKYJEm9EGPhw5Ftj2gbBfC2c3nA06A
-vsyyu1ExfaqOWhT2/5ZLrm3EvZMm2kSQT5k+6DLcnFWX1zb3Z5J597O4BuoAy/Kf
-y4As3GsuNwVI2oMlzob0780DUoCFpnVmuLtFrK56MTjC6k0ZPIdWI/45OdMIyC5o
-mIcxFCFU2z4vFI3hqJg2
-=/rUU
+iQIcBAEBAgAGBQJT/jUIAAoJELSic+t+oim9DQgP/0Bxrl4n5C43L+j8yqeYrD4D
+knra4JUSpAOwSA6HVOHJCOxK9cmzcD1qT04XZAFDXBFVFozQVWH/tpSNw+QCPB/k
+L9IvWsF4KrmO4flt8lrVz+CfOICFj+3pgfBZ8UlXsEhuG1JV5wHUrKUUbruR8U0O
+TxIawBRVzby6L0QnQQLLKH8WIf9/T2Z4ETjWI39Jm18qAdc5W2SeDYyDnMazZnFx
+uQH2Xn/9fZfaa9pOG+3d2fXEB2i2XM/ZHnFTzW5lo/aj/9f847c1sDsYEBd8Nq2q
+HCcBwQPLc2hc9kue8bpGPl7vT3zG5GL2AvHFbYbXP4DA+adCzSrkzSxRRtDSLCV0
+SFF7DhYM7q+GuC5DvrC/3iFfFg0d0W3irlQl1NT9MZeZ+NWHkyHcfCBQkGYqBiOi
+7nV24Vk063hOl3Q+BcLbKKEV0Wg5vTz7p1TQUkFj4Yvawn5wuIbRrY27ESHfcIAF
+pbpkoslWZQlr7DakKM2RAHv0fLunC81I5SDNucQB5mzUAKxkDYB9P7bgcMAeCe9A
+eUJ6Kw2N6yj0YRSA9D+9UJ87B+Uy0gtzfYzZR6663xnXVZkAazsPhnAF+S8i0sBO
+sReEsD3GOsZyxfEsuAW1qY517k2iPEIb/eCRWHOkX2dI6rE7uf8pm0QqQZr1Efb9
+rnX72YMGMEoRiSPASH6k
+=XXLh
 -----END PGP SIGNATURE-----
 
---gBdJBemW82xJqIAr--
+--6PDkkIznEI+zY3BQ--
