@@ -1,122 +1,91 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
+From: Doug Anderson <dianders@google.com>
 Subject: Re: [PATCH V2 3/3] mmc: dw_mmc: Dont cut off vqmmc and vmmc
-Date: Wed, 27 Aug 2014 12:55:09 +0900
-Message-ID: <53FD569D.60002@samsung.com>
+Date: Tue, 26 Aug 2014 21:14:11 -0700
+Message-ID: <CAD=FV=VCw1mLpArSY1uj+1zorWROjqGeT3dcTJYzr_1J6jdsBQ@mail.gmail.com>
 References: <1408715272-13833-1-git-send-email-yuvaraj.cd@samsung.com>
- <1408715272-13833-4-git-send-email-yuvaraj.cd@samsung.com>
- <CAPDyKFqz8sGj2td=ihZXN4zvAqmu9FHZjWdCn-ZRcdHugNHe2g@mail.gmail.com>
- <CAPz6YkXH1mMOTwcLkKdffdUHN+TaCAhpa8oG0h+rFn9i+GMoCw@mail.gmail.com>
- <CAPDyKFqp7oEt9ASmdxrgUwbQ8aTZzAuJ7uD1oGN50iuzPzBfVg@mail.gmail.com>
- <CAD=FV=VQWzhiSU+iULACj+Dp_tDf3SszQ8ELLEGqVEyJJRQy1Q@mail.gmail.com>
+	<1408715272-13833-4-git-send-email-yuvaraj.cd@samsung.com>
+	<CAPDyKFqz8sGj2td=ihZXN4zvAqmu9FHZjWdCn-ZRcdHugNHe2g@mail.gmail.com>
+	<CAPz6YkXH1mMOTwcLkKdffdUHN+TaCAhpa8oG0h+rFn9i+GMoCw@mail.gmail.com>
+	<CAPDyKFqp7oEt9ASmdxrgUwbQ8aTZzAuJ7uD1oGN50iuzPzBfVg@mail.gmail.com>
+	<53FAF8C7.8040007@samsung.com>
+	<CAD=FV=XbV7R+FqRRucA5Cv2A+=3g8zccASwxcTtJD6YyO-ioCg@mail.gmail.com>
+	<53FD5501.1010007@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <CAD=FV=VQWzhiSU+iULACj+Dp_tDf3SszQ8ELLEGqVEyJJRQy1Q@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Doug Anderson <dianders@google.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Sonny Rao <sonnyrao@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Ball <cjb@laptop.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, ABHILASH KESAVAN <a.kesavan@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, CPGS <cpgs@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yh0-f49.google.com ([209.85.213.49]:58310 "EHLO
+	mail-yh0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932478AbaH0EOM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Aug 2014 00:14:12 -0400
+Received: by mail-yh0-f49.google.com with SMTP id b6so12884399yha.22
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 26 Aug 2014 21:14:11 -0700 (PDT)
+In-Reply-To: <53FD5501.1010007@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Sonny Rao <sonnyrao@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Ball <cjb@laptop.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, ABHILASH KESAVAN <a.kesavan@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, "cpgs ." <cpgs@samsung.com>
 
-Hi.
+Jaehoon,
 
-On 08/26/2014 12:20 AM, Doug Anderson wrote:
-> Ulf,
-> 
-> On Mon, Aug 25, 2014 at 1:13 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> On 22 August 2014 20:27, Sonny Rao <sonnyrao@chromium.org> wrote:
->>> On Fri, Aug 22, 2014 at 8:31 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>>> On 22 August 2014 15:47, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
->>>>> Exynos 5250 and 5420 based boards uses built-in CD# line for card
->>>>> detection.But unfortunately CD# line is on the same voltage rails
->>>>> as of I/O voltage rails. When we cut off vqmmc,the consequent card
->>>>> detection will break in these boards.
->>>>
->>>> I am not sure I follow here.
->>>>
->>>> Is the card detect mechanism handled internally by the dw_mmc controller?
->>>
->>> Yes
+On Tue, Aug 26, 2014 at 8:48 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> Hi, Doug,
+>
+> On 08/26/2014 12:25 AM, Doug Anderson wrote:
+>> Jaehoon,
 >>
->> Just out of curiosity.
->>
->> Do you know how the power to the actual dw_mmc controller is handled?
->> I expect it to be SoC specific and I am guessing power domain
->> regulators may be involved!?
-> 
-> You can likely read the dw_mmc registers when vqmmc is off.  Is that
-> what you're asking?  Certainly if vqmmc is not powered then the lines
-> themselves will be useless, won't they?  The "vqmmc" supply goes to
-> the "VDDQ_MMC2" pin on 5420.  In my 5420 user manual, I see that
-> "clk", "cmd", "cd", "datN", "wp" and "biuvr" pins are all in this same
-> voltage (VDDQ_MMC2) domain.  Can you really read a pin without
-> powering that part of the SoC?
-
-It's not correct.
-At TRM, described as same voltage domain. But CD-pin is used with "always-on" power.
-In circuit, CD# pin is disconnected.
-
-> 
-> 
->>>> I thought HW engineers long time ago realized that this should be done
->>>> separately on a GPIO line to be able to save power while waiting for a
->>>> card to be inserted. But that's not case then?
+>> On Mon, Aug 25, 2014 at 1:50 AM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>>> On 08/25/2014 05:13 PM, Ulf Hansson wrote:
+>>>> On 22 August 2014 20:27, Sonny Rao <sonnyrao@chromium.org> wrote:
+>>>>> On Fri, Aug 22, 2014 at 8:31 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>>>>> On 22 August 2014 15:47, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
+>>>>>>> Exynos 5250 and 5420 based boards uses built-in CD# line for card
+>>>>>>> detection.But unfortunately CD# line is on the same voltage rails
+>>>>>>> as of I/O voltage rails. When we cut off vqmmc,the consequent card
+>>>>>>> detection will break in these boards.
 >>>
->>> At least in my limited experience, this seems to be common among SoC
->>> vendors who are using dw_mmc, as we've seen this elsewhere as well and
->>> after seeing it here we know that we need to ignore the CD pin that's
->>> routed to dw_mmc and use a separately powered GPIO on the board, but
->>> still there are probably many SoCs/boards which are doing it this way.
+>>> I didn't know that use CD# line for card detect.
+>>> And if CD# voltage rails and I/O voltage rail are same voltage, it doesn't make sense.
+>>> Which card is used with same voltages? (eMMC? SD? SDIO?)
 >>>
->>>>>
->>>>> These hosts (obviously) need to keep vqmmc (and thus vmmc) on all the
->>>>> time, even when the mmc core tells them to power off. However, one
->>>>> problem is that these cards won't properly handle mmc_power_cycle().
->>>>> That's needed to handle error cases when trying to switch voltages
->>>>> (see 0797e5f mmc:core: Fixup signal voltage switch).
->>>>>
->>>>> This patch adds a new MMC_POWER_OFF_HARD mode when it's doing a power
->>>>> cycle.  This mode differs from the normal MMC_POWER_OFF mode in that
->>>>> the mmc core will promise to power the slot back on before it expects
->>>>> the host to detect card insertion or removal.
->>>
->>> This patch is based off of one that Doug wrote (sent privately to
->>> Yuvaraj) which just modifies the MMC core, and should be split into
->>> two patches.
->>> One that modifies the mmc core and one that implements this in dw_mmc.
+>>> Well, I have checked Exynos5250 and 5420, but it looks like not same rails.
 >>
->> I looked at the mmc core parts, it seems like the wrong approach.
->>
->> I think you shall be able use MMC_CAP_NEEDS_POLL, to handle this
->> broken card detect mechanism. We even have a DT binding for that,
->> "broken-cd".
-> 
-> I don't think this is possible, but let me explain why I think so and
-> you can correct me.
+>> I'm not sure I totally understood what you said.  In my manual I have
+>> a table titled "Table 2-1 Exynos 5420 Pin List".  Look in this table
+>> for XMMC2CDN and XMMC2DATA_0.  Look to the right of the table and
+>> you'll see the power domain.  For both it shows VDDQ_MMC2.  If that
+>> doesn't mean that the two are in the same voltage domain then I don't
+>> know what does.  Can you point to any examples where they have
+>> different voltage domains?
+> I think you're mis-understanding for it.
+> Right, It's described at exynos5420, but it's not connected.
 
-Exynos series is using the external gpio-cd concept. So it need not to use MMC_CAP_NEEDS_POLL.
-Can use the slot-gpio API. In my exynos5 board, it's working fine with the slot-gpio API.
+"It's not connected".  What do you mean?  If I were to guess I'd say
+that on some particular board you're looking at they don't happen to
+use the "CD" pin for card detect.  If this is what you mean, it
+doesn't help me.  exynos5420-peach-pit does use the CD pin for card
+detect.  You can look at the DTS file and confirm it.
 
-Best Regards,
-Jaehoon Chung
+...or are you saying that the CD pin somehow changes voltage domains
+when configured as a GPIO?  I find that very hard to believe.  What
+voltage domain does it go to?  If it goes to a 1.8V voltage domain
+then that would be bad when vqmmc was 3.3V.  If it goes to a 3.3V
+voltage domain then that would be bad when vqmmc was 1.8V.  Remember
+that externally we've got a pull up to vqmmc.
 
-> 
-> The voltage domain of the "card detect" pin on the SoC is vqmmc,
-> right?  That means that you won't be able to read the pin without
-> turning on vqmmc.  Even if you could read the pin without turning on
-> vqmmc, the pullup on this line is connected to vqmmc too.  ...so if
-> vqmmc is off then there's no pulup and you can't use card detect.
-> 
-> Are you suggesting that we should flip the voltage of vqmmc (and thus
-> vmmc to prevent damaging the card) during polling?  That seems ugly.
-> 
-> 
-> One other thing to mention: we didn't find any power savings by
-> actually turning off vmmc and vqmmc when there was no card inserted.
-> There's no current running through the lines when there is no card
-> inserted and apparently everything is efficient enough that there was
-> no problem.
-> 
-> -Doug
-> 
+Even if somehow magically we can read the card detect pin with vqmmc
+off, we have an external pullup on this line that goes directly to the
+"vqmmc" power rail.  If the vqmmc power rail is off then this external
+pull up would not work and would actually act as an external pull down
+if you could somehow configure the internal line to be a pullup.
 
+
+> Exynos4 series are also described, but we used the broken card detection scheme and power used one of "always-on" powers.
+> Because Card-detection rail need to enable as "always-on".
+>
+> We don't need to consider this. I checked the circuit, this patch didn't need.
+>
+> exynos5 also used the gpio-pin for card-detection. And we can use the slot-gpio API.
+
+When you say "exynos5", what do you mean here?  Do you mean the smdk
+for 5250, or something else?
