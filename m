@@ -1,46 +1,109 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/1] regulator: max77802: set opmode to normal if off
- is read from hw
-Date: Wed, 27 Aug 2014 23:03:37 +0200
-Message-ID: <53FE47A9.1020701@gmail.com>
-References: <1409053061-22568-1-git-send-email-javier.martinez@collabora.co.uk> <53FE2446.3040402@gmail.com> <20140827183733.GN17528@sirena.org.uk> <53FE25EB.7060702@gmail.com> <20140827184705.GO17528@sirena.org.uk> <53FE2901.50508@gmail.com> <20140827191526.GS17528@sirena.org.uk> <53FE2F9E.80501@gmail.com> <20140827194411.GU17528@sirena.org.uk> <53FE387F.3030302@gmail.com> <20140827202554.GW17528@sirena.org.uk> <53FE4286.3050305@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/1] regulator: max77802: set opmode to normal if off is
+ read from hw
+Date: Wed, 27 Aug 2014 22:03:50 +0100
+Message-ID: <20140827210350.GD17528@sirena.org.uk>
+References: <20140827183733.GN17528@sirena.org.uk>
+ <53FE25EB.7060702@gmail.com>
+ <20140827184705.GO17528@sirena.org.uk>
+ <53FE2901.50508@gmail.com>
+ <20140827191526.GS17528@sirena.org.uk>
+ <53FE2F9E.80501@gmail.com>
+ <20140827194411.GU17528@sirena.org.uk>
+ <53FE387F.3030302@gmail.com>
+ <20140827202554.GW17528@sirena.org.uk>
+ <53FE4286.3050305@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="2RIAITazYFwT/YFl"
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <53FE4286.3050305@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
+To: Tomasz Figa <tomasz.figa@gmail.com>
 Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 27.08.2014 22:41, Tomasz Figa wrote:
+
+--2RIAITazYFwT/YFl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Aug 27, 2014 at 10:41:42PM +0200, Tomasz Figa wrote:
 > On 27.08.2014 22:25, Mark Brown wrote:
->> On Wed, Aug 27, 2014 at 09:58:55PM +0200, Tomasz Figa wrote:
->>> On 27.08.2014 21:44, Mark Brown wrote:
->>
->>>> The point is that if anything was setting the mode to something other
->>>> than normal it was almost certainly a previously running copy of Linux
->>>> and one would expect that if the mode does need to be changed the new
->>>> copy will be doing that anyway.  It's rare enough to need to actively
->>>> manage modes in the first place.
->>
->>> From what I know based on my experience with Samsung boards we used, the
->>> opmodes of regulators are preconfigured by board bootloader to certain
->>> values based on power design of the board (i.e. there is no need to keep
->>> a regulator in full power mode, if on given board only a little fraction
->>> of it is needed).
->>
->> Well, presumably the bootloader is going to run again even for a warm
->> reboot?
-> 
+
+> > Well, presumably the bootloader is going to run again even for a warm
+> > reboot?
+
 > This is strange, but apparently it's not the case for the hardware which
 > this patch is supposed to fix or at least this is how I understood it.
-> 
 
-OK, I just realized that Javier's problem might be caused by the fact
-that the bootloader he use doesn't change the regulators from defaults
-at all. In this case this patch is just fine.
+Fun.  It's like everyone was setting out to define the most fragile
+system they could, from the chip design up...  so many moving pieces
+that have to line up.
 
-Best regards,
-Tomasz
+> > It's not in general true that Linux should never change the mode (the
+> > main case for toggling modes is usually going between an idle/suspend
+> > state and active state)
+
+> I believe this is yet another reason why we should have a way to specify
+> opmodes in DT, now not only active but also suspend/idle opmodes.
+
+> However on many PMICs this is a bit more complicated. There are opmodes
+> such as
+
+Well, quite.  Plus the more basic question of what a mode actually is
+and how you talk about them generically.  It's not that there's no use
+for this functionality, it's that it doesn't lend itself to defining
+ABIs.
+
+> > You're talking about the case
+> > where the bootloader does set something but avoids doing so on warm
+> > reboots only here.
+
+> From Javier's description I understood this is the case for the board
+> for which he develops.
+
+No, the issue is that the bootloader isn't touching the regulator then
+Linux turns it off, reboots and ends up thinking the default operating
+mode is off which doesn't work terribly well when it tries to enable the
+regulator.  The reading back from hardware is trying to implement the
+standard Linux behaviour of not changing a setting without explicit
+permission, this change is providing a fallback for the case where
+that's giving us something obviously wrong.
+
+> > Besides, even if we did have a way of specifying modes in DT (with all
+> > the problems that brings) we still have to pick a default if that's not
+> > used).
+
+> Sure we do and we can define the binding to default to something (e.g.
+> normal mode) if respective property is not present. Btw. the issue with
+> opmode also affects other PMIC chips such as Samsung S5M ones.
+
+That's then going against our purposely conservative implementation, and
+would be especially bad if it overrode one of the hardware managed modes
+on an otherwise unused regulator.
+
+--2RIAITazYFwT/YFl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT/kezAAoJELSic+t+oim9LPsP/3BYo98aFAqI01X/ynGe22S1
+ZFy/iFZi4TOzqhYQDIEHUwQsrf8v2OEKdDNHoadNrJU5B52S909diuGYMfI9KaGT
+b7SwsHaVXJ/VJBjoj4+Dt5l0Q5MWSlEP07nvlN3YulH5r4Bg8FSkGNAxjW7boFG+
+xSaEJuCLlsacGDAiQc/WA3RTTTtLAtojACYrupUNsD1UQRK56nlwN1JEJdlimEi0
+lJC9yqwVQuaJgoDdh/Tr0C3afTnNXmOa9JkmG6zKgHxm+ZvR3jqb7PrkbqC1mdip
+QriL4z7O6+BCYWLQbpJ70FlmbSKQx48sUTZ7pB7SoVc+mC1ekX4ohI9dITBmVHli
+sMShbRS5XwCkQS8fYxGmKT+Lil2vf9h01AZvicwpz+lO/UPsXWbMghtGyxFH4DnS
+VFpRaatx/nvxcJ3QBKD2T+Xb8t1EqCbzj7ZqSWA6UL5A5Phjts/PeAjFXgvuoR4s
+u0AFzMAX53TdIPDv3vvjoBZAzDHnQpqlmoL2mgPcOlE//3Z7s1397ZrKZIKi+WuN
+F68HQ1/X+VgyvCNpRoc0NDMPWUqwwmIxw4mAhKGgmNYUxS9PQV0khaKCQrhMisCG
+L25SId4lB6pBuZsLcUmt6CO2sNO4q5/U9FEVACnTPEhats5dsQlhqy91oStWVb1N
+YekNSkItnuyZbljsvREG
+=dCU2
+-----END PGP SIGNATURE-----
+
+--2RIAITazYFwT/YFl--
