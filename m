@@ -1,142 +1,80 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 14/15] drm/exynos/fimc: simplify buffer queuing
-Date: Wed, 27 Aug 2014 13:07:03 +0200
-Message-ID: <1409137623-20936-1-git-send-email-a.hajda@samsung.com>
-References: <1408693946-15456-15-git-send-email-a.hajda@samsung.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 13/14] arm64: exynos7: Enable ARMv8 based Exynos7 (SoC)
+ support
+Date: Wed, 27 Aug 2014 12:09:28 +0100
+Message-ID: <20140827110927.GC7773@leverpostej>
+References: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com>
+ <1409132660-1898-5-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1408693946-15456-15-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:50150 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754242AbaH0LKJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Aug 2014 07:10:09 -0400
+Content-Disposition: inline
+In-Reply-To: <1409132660-1898-5-git-send-email-ch.naveen@samsung.com>
+Content-Language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: Catalin Marinas <Catalin.Marinas@arm.com>, "naveenkrishna.ch@gmail.com" <naveenkrishna.ch@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "cpgs@samsung.com" <cpgs@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>
 
-The patch removes redundant checks, redundant HW reads
-and simplifies code.
+Hi,
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
-v2:
-- fixed bit cleaning operation
----
- drivers/gpu/drm/exynos/exynos_drm_fimc.c | 64 ++++++++------------------------
- 1 file changed, 15 insertions(+), 49 deletions(-)
+On Wed, Aug 27, 2014 at 10:44:20AM +0100, Naveen Krishna Chatradhi wrote:
+> From: Alim Akhtar <alim.akhtar@samsung.com>
+> 
+> This patch adds the necessary Kconfig entries to enable
+> support for the ARMv8 based Exynos7 SoC.
+> 
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> ---
+>  arch/arm64/Kconfig |   17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index fd4e81a..d555558 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -134,6 +134,23 @@ source "kernel/Kconfig.freezer"
+>  
+>  menu "Platform selection"
+>  
+> +config ARCH_EXYNOS7
+> +	bool "ARMv8 based SAMSUNG EXYNOS7"
+> +	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+> +	select CLKSRC_OF
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-index 62ba033..59ba8bb 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-@@ -1126,67 +1126,34 @@ static int fimc_dst_set_size(struct device *dev, int swap,
- 	return 0;
- }
- 
--static int fimc_dst_get_buf_count(struct fimc_context *ctx)
--{
--	u32 cfg, buf_num;
--
--	cfg = fimc_read(ctx, EXYNOS_CIFCNTSEQ);
--
--	buf_num = hweight32(cfg);
--
--	DRM_DEBUG_KMS("buf_num[%d]\n", buf_num);
--
--	return buf_num;
--}
--
--static int fimc_dst_set_buf_seq(struct fimc_context *ctx, u32 buf_id,
-+static void fimc_dst_set_buf_seq(struct fimc_context *ctx, u32 buf_id,
- 		enum drm_exynos_ipp_buf_type buf_type)
- {
--	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
--	bool enable;
--	u32 cfg;
--	u32 mask = 0x00000001 << buf_id;
--	int ret = 0;
- 	unsigned long flags;
-+	u32 buf_num;
-+	u32 cfg;
- 
- 	DRM_DEBUG_KMS("buf_id[%d]buf_type[%d]\n", buf_id, buf_type);
- 
- 	spin_lock_irqsave(&ctx->lock, flags);
- 
--	/* mask register set */
- 	cfg = fimc_read(ctx, EXYNOS_CIFCNTSEQ);
- 
--	switch (buf_type) {
--	case IPP_BUF_ENQUEUE:
--		enable = true;
--		break;
--	case IPP_BUF_DEQUEUE:
--		enable = false;
--		break;
--	default:
--		dev_err(ippdrv->dev, "invalid buf ctrl parameter.\n");
--		ret =  -EINVAL;
--		goto err_unlock;
--	}
-+	if (buf_type == IPP_BUF_ENQUEUE)
-+		cfg |= (1 << buf_id);
-+	else
-+		cfg &= ~(1 << buf_id);
- 
--	/* sequence id */
--	cfg &= ~mask;
--	cfg |= (enable << buf_id);
- 	fimc_write(ctx, cfg, EXYNOS_CIFCNTSEQ);
- 
--	/* interrupt enable */
--	if (buf_type == IPP_BUF_ENQUEUE &&
--	    fimc_dst_get_buf_count(ctx) >= FIMC_BUF_START)
--		fimc_mask_irq(ctx, true);
-+	buf_num = hweight32(cfg);
- 
--	/* interrupt disable */
--	if (buf_type == IPP_BUF_DEQUEUE &&
--	    fimc_dst_get_buf_count(ctx) <= FIMC_BUF_STOP)
-+	if (buf_type == IPP_BUF_ENQUEUE && buf_num >= FIMC_BUF_START)
-+		fimc_mask_irq(ctx, true);
-+	else if (buf_type == IPP_BUF_DEQUEUE && buf_num <= FIMC_BUF_STOP)
- 		fimc_mask_irq(ctx, false);
- 
--err_unlock:
- 	spin_unlock_irqrestore(&ctx->lock, flags);
--	return ret;
- }
- 
- static int fimc_dst_set_addr(struct device *dev,
-@@ -1244,7 +1211,9 @@ static int fimc_dst_set_addr(struct device *dev,
- 		break;
- 	}
- 
--	return fimc_dst_set_buf_seq(ctx, buf_id, buf_type);
-+	fimc_dst_set_buf_seq(ctx, buf_id, buf_type);
-+
-+	return 0;
- }
- 
- static struct exynos_drm_ipp_ops fimc_dst_ops = {
-@@ -1299,10 +1268,7 @@ static irqreturn_t fimc_irq_handler(int irq, void *dev_id)
- 
- 	DRM_DEBUG_KMS("buf_id[%d]\n", buf_id);
- 
--	if (fimc_dst_set_buf_seq(ctx, buf_id, IPP_BUF_DEQUEUE) < 0) {
--		DRM_ERROR("failed to dequeue.\n");
--		return IRQ_HANDLED;
--	}
-+	fimc_dst_set_buf_seq(ctx, buf_id, IPP_BUF_DEQUEUE);
- 
- 	event_work->ippdrv = ippdrv;
- 	event_work->buf_id[EXYNOS_DRM_OPS_DST] = buf_id;
--- 
-1.9.1
+This seems to be implied by ARM_ARCH_TIMER in the core arm64 Kconfig, so
+I'm not sure this is necessary.
+
+> +	select COMMON_CLK_SAMSUNG
+> +	select GPIOLIB
+
+You select ARCH_REQUIRE_GPIOLIB below, so is this necessary?
+
+> +	select PINCTRL
+> +	select PINCTRL_EXYNOS
+> +	select RTC_CLASS
+> +	select HAVE_S3C_RTC
+> +	select GENERIC_GPIO
+> +	select ARCH_REQUIRE_GPIOLIB
+> +	select HAVE_CLK
+
+Isn't this selected already through the core arm64 Kconfig?
+
+It looks like we have COMMON_CLK, which selects CLKDEV_LOOKUP, which
+selects HAVE_CLK.
+
+> +	select HAVE_SMP
+
+I may have missed something, but I didn't see any SMP support in this
+series.
+
+Thanks,
+Mark.
