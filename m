@@ -1,35 +1,41 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 2/2] ARM: multi_v7_defconfig: Enable Control Groups support
-Date: Wed, 27 Aug 2014 13:02:21 +0200
-Message-ID: <1409137341-20516-2-git-send-email-javier.martinez@collabora.co.uk>
-References: <1409137341-20516-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1409137341-20516-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] cpufreq: s5pv210: Remove spurious __init annotation
+Date: Wed, 27 Aug 2014 16:34:28 +0530
+Message-ID: <CAKohpokyUWnzUOdTtevGG8G8vrdxBCo3XsH9YdvmSt8BPZ1KwA@mail.gmail.com>
+References: <1409137227-27080-1-git-send-email-broonie@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1409137227-27080-1-git-send-email-broonie@kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, Mark Brown <broonie@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-systemd needs control groups support to be enabled in the
-kernel so let's enable it by default since is quite likely
-that a user-space with systemd will be used.
+On 27 August 2014 16:30, Mark Brown <broonie@kernel.org> wrote:
+> From: Mark Brown <broonie@linaro.org>
+>
+> Since this is a platform driver and can be probed at any time we can't
+> annotate funtions in the probe path as __init, the code can't safely be
+> discarded at the end of kernel init.
+>
+> Signed-off-by: Mark Brown <broonie@linaro.org>
+> ---
+>  drivers/cpufreq/s5pv210-cpufreq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+> index 9a68225a757e..3f9791f07b8e 100644
+> --- a/drivers/cpufreq/s5pv210-cpufreq.c
+> +++ b/drivers/cpufreq/s5pv210-cpufreq.c
+> @@ -501,7 +501,7 @@ static int check_mem_type(void __iomem *dmc_reg)
+>         return val >> 8;
+>  }
+>
+> -static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
+> +static int s5pv210_cpu_init(struct cpufreq_policy *policy)
+>  {
+>         unsigned long mem_type;
+>         int ret;
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 7cfa5fa..abf6490 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -3,6 +3,7 @@ CONFIG_FHANDLE=y
- CONFIG_IRQ_DOMAIN_DEBUG=y
- CONFIG_NO_HZ=y
- CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_CGROUPS=y
- CONFIG_BLK_DEV_INITRD=y
- CONFIG_EMBEDDED=y
- CONFIG_PERF_EVENTS=y
--- 
-2.0.1
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
