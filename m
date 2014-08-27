@@ -1,187 +1,186 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 1/3] ARM: dts: Add Peach Pit dts entry for Atmel touchpad
-Date: Wed, 27 Aug 2014 09:13:44 +0200
-Message-ID: <53FD8528.7090504@collabora.co.uk>
-References: <1409066937-3574-1-git-send-email-javier.martinez@collabora.co.uk> <1409066937-3574-2-git-send-email-javier.martinez@collabora.co.uk> <53FD1001.30701@suse.de>
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Subject: Re: [PATCH 2/2 v2] ARM: exynos_defconfig: enable USB gadget support
+Date: Wed, 27 Aug 2014 09:28:29 +0200
+Message-ID: <1409124509.31096.42.camel@collabora.co.uk>
+References: <1409038230-7242-1-git-send-email-sjoerd.simons@collabora.co.uk>
+	 <1409038230-7242-3-git-send-email-sjoerd.simons@collabora.co.uk>
+	 <53FD36AD.1020509@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg="sha-1"; protocol="application/x-pkcs7-signature";
+	boundary="=-dopSnCAkQYD92HKKxYwG"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:47329 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:47338 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751998AbaH0HNx (ORCPT
+	with ESMTP id S1752121AbaH0H2h (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Aug 2014 03:13:53 -0400
-In-Reply-To: <53FD1001.30701@suse.de>
+	Wed, 27 Aug 2014 03:28:37 -0400
+In-Reply-To: <53FD36AD.1020509@suse.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Nick Dyer <nick.dyer@itdev.co.uk>, Yufeng Shen <miletus@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Tomasz Figa <tomasz.figa@gmail.com>
+To: Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hello Andreas,
 
-On 08/27/2014 12:53 AM, Andreas F=E4rber wrote:
->> =20
->> +&hsi2c_8 {
->> +	status =3D "okay";
->> +	clock-frequency =3D <333000>;
->> +
->> +	trackpad@4b {
->> +		compatible=3D"atmel,maxtouch";
->> +		reg=3D<0x4b>;
->> +		interrupt-parent=3D<&gpx1>;
->> +		interrupts=3D<1 IRQ_TYPE_EDGE_FALLING>;
+--=-dopSnCAkQYD92HKKxYwG
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, 2014-08-27 at 03:38 +0200, Andreas F=C3=A4rber wrote:
+> Am 26.08.2014 09:30, schrieb Sjoerd Simons:
+> > Enable USB gadget support without support for any specific gadgets to
+> > more easily catch cases where a devices dts doesn't specify the usb
+> > controllers dr_mode while it should.
+> >=20
+> > Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> > ---
+> >  Changes in v2: none
+> >=20
+> >  arch/arm/configs/exynos_defconfig | 1 +
+> >  1 file changed, 1 insertion(+)
+> >=20
+> > diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exyno=
+s_defconfig
+> > index fc7d168..3664120 100644
+> > --- a/arch/arm/configs/exynos_defconfig
+> > +++ b/arch/arm/configs/exynos_defconfig
+> > @@ -54,6 +54,7 @@ CONFIG_SMSC911X=3Dy
+> >  CONFIG_USB_USBNET=3Dy
+> >  CONFIG_USB_NET_SMSC75XX=3Dy
+> >  CONFIG_USB_NET_SMSC95XX=3Dy
+> > +CONFIG_USB_GADGET=3Dy
 >=20
-> Nit: Here's a style break (4x spaces around '=3D' missing).
->
+> Do we also need CONFIG_USB_DWC3_DUAL_ROLE=3Dy? The default seemed to be
+> CONFIG_USB_DWC3_HOST.
 
-True, these bits were copied from the downstream Chrome OS verbatim and
-the missing space around '=3D' was there, I missed that when reviewing.
+Nope that gets set by this Kconfig snippet:
 
-I'll re-spin and fix those style issues.
+choice
+   bool "DWC3 Mode Selection"
+   default USB_DWC3_DUAL_ROLE if (USB && USB_GADGET)
+   default USB_DWC3_HOST if (USB && !USB_GADGET)
+   default USB_DWC3_GADGET if (!USB && USB_GADGET)
 
->> +		wakeup-source;
->> +		pinctrl-names =3D "default";
->> +		pinctrl-0 =3D <&trackpad_irq>;
->> +		linux,gpio-keymap =3D < KEY_RESERVED
->> +				      KEY_RESERVED
->> +				      0		/* GPIO 0 */
->> +				      0		/* GPIO 1 */
->> +				      0		/* GPIO 2 */
->> +				      BTN_LEFT 	/* GPIO 3 */
->> +				      KEY_RESERVED
->> +				      KEY_RESERVED >;
->> +	};
->=20
-> Coincidentally, I experimentally came up with a very similar DT node =
-for
-> Spring the weekend:
->=20
-> +	trackpad@4b {
-> +		compatible =3D "atmel,maxtouch";
-> +		reg =3D <0x4b>;
-> +		interrupt-parent =3D <&gpx1>;
-> +		interrupts =3D <2 IRQ_TYPE_NONE>;
-> +		pinctrl-names =3D "default";
-> +		pinctrl-0 =3D <&trackpad_irq>;
-> +		linux,gpio-keymap =3D <KEY_RESERVED
-> +		                     KEY_RESERVED
-> +		                     KEY_RESERVED
-> +		                     KEY_RESERVED
-> +		                     KEY_RESERVED
-> +		                     BTN_LEFT>;
-> +		wakeup-source;
-> +	};
->=20
-> 0 =3D=3D KEY_RESERVED, so you can consistently use it for GPIO 0-2, t=
-oo. :)
->=20
+Iotw by both enable USB and USB_GADGET the default will switch form
+CONFIG_USB_DWC3_HOST to CONFIG_USB_DWC3_DUAL_ROLE=3Dy
 
-I know that the value of KEY_RESERVED is 0 but I didn't use KEY_RESERVE=
-D
-for the GPIO on purpose.
+--=20
+Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Collabora Ltd.
 
-What I understood is that the SPT_GPIOPWN_T19 object sends messages usi=
-ng
-a status byte so you have a maximum of 8 GPIO but not every maXTouch
-devices use all of them. So in the particular case of the device in the
-Peach Pit, from the 8 possible GPIO only 4 can be used and these are pi=
-ns
-2-5. So in theory you could connect 3 more GPIO in case you had more
-buttons (e.g: BTN_RIGHT, BTN_MIDDLE) but only 1 is used since the
-Chromebook just have BTN_LEFT.
+--=-dopSnCAkQYD92HKKxYwG
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
-Nick sent a patch [0] that extend the atmel touchpad DT binding and the
-doc says "Use KEY_RESERVED for unused padding values". But is not clear
-what value you should use for GPIO that are actually supported by the
-device but have no keycode associated.
+MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIUzDCCBsIw
+ggWqoAMCAQICEAoE3yF0XU0rjOozcgUAUOkwDQYJKoZIhvcNAQEFBQAwZTELMAkGA1UEBhMCVVMx
+FTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEkMCIGA1UE
+AxMbRGlnaUNlcnQgQXNzdXJlZCBJRCBSb290IENBMB4XDTA2MTExMDAwMDAwMFoXDTIxMTExMDAw
+MDAwMFowYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3
+LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6IItmfnKwkKVpYBzQHDSnlZUXKnE0kEGj8kz/E1FkVyB
+n+0snPgWWd+etSQVwpi5tHdJ3InECtqvy15r7a2wcTHrzzpADEZNk+yLejYIA6sMNP4YSYL+x8cx
+SIB8HqIPkg5QycaH6zY/2DDD/6b3+6LNb3Mj/qxWBZDwMiEWicZwiPkFl32jx0PdAug7Pe2xQaPt
+P77blUjE7h6z8rwMK5nQxl0SQoHhg26Ccz8mSxSQrllmCsSNvtLOBq6thG9IhJtPQLnxTPKvmPv2
+zkBdXPao8S+v7Iki8msYZbHBc63X8djPHgp0XEK4aH631XcKJ1Z8D2KkPzIUYJX9BwSiCQIDAQAB
+o4IDbzCCA2swDgYDVR0PAQH/BAQDAgGGMDsGA1UdJQQ0MDIGCCsGAQUFBwMBBggrBgEFBQcDAgYI
+KwYBBQUHAwMGCCsGAQUFBwMEBggrBgEFBQcDCDCCAcYGA1UdIASCAb0wggG5MIIBtQYLYIZIAYb9
+bAEDAAQwggGkMDoGCCsGAQUFBwIBFi5odHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJl
+cG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUHAgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAA
+dABoAGkAcwAgAEMAZQByAHQAaQBmAGkAYwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAg
+AGEAYwBjAGUAcAB0AGEAbgBjAGUAIABvAGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMA
+UAAvAEMAUABTACAAYQBuAGQAIAB0AGgAZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABB
+AGcAcgBlAGUAbQBlAG4AdAAgAHcAaABpAGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkA
+dAB5ACAAYQBuAGQAIABhAHIAZQAgAGkAbgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBp
+AG4AIABiAHkAIAByAGUAZgBlAHIAZQBuAGMAZQAuMA8GA1UdEwEB/wQFMAMBAf8wfQYIKwYBBQUH
+AQEEcTBvMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wRwYIKwYBBQUHMAKG
+O2h0dHA6Ly93d3cuZGlnaWNlcnQuY29tL0NBQ2VydHMvRGlnaUNlcnRBc3N1cmVkSURSb290Q0Eu
+Y3J0MIGBBgNVHR8EejB4MDqgOKA2hjRodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRB
+c3N1cmVkSURSb290Q0EuY3JsMDqgOKA2hjRodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vRGlnaUNl
+cnRBc3N1cmVkSURSb290Q0EuY3JsMB0GA1UdDgQWBBQVABIrE5iymQftHt+ivlcNK2cCzTAfBgNV
+HSMEGDAWgBRF66Kv9JLLgjEtUYunpyGd823IDzANBgkqhkiG9w0BAQUFAAOCAQEAhGFOQR64dgQq
+tbbvj/JVhbldVv4KmObkvWWKfUAp0/yxXUX9OrgqWzNLJFzNubTkc61hXXatdDOKZtUjr0wfcm5F
+2XVAu6I7z41JL8BBsOIpo1E4Q1CZFKwzBjViiX13qVIH5WwgV7aBum+8s8KU7XYCgNl8zoWoHOzH
+Q0pLsVfPcs7f9SU8yyJP/Z9S0TfLCLs4PuDVPm95Ca1bfDGzdzXD5GP5aAqYB+dGOHeE0j6XvAqg
+qKwlT0RukeHSWq9r7zAcjaNEQrMQiyP61+Y1dDesz+urWB/JiCP/NtQH6jRqR+qdlWyeKU9T7eMr
+lSBOKs+WYHr4LIDwlVLOKZaBYjCCBv8wggXnoAMCAQICEA2fwUKNhvkL8dN88tUFvVwwDQYJKoZI
+hvcNAQEFBQAwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQ
+d3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMB4XDTE0
+MDIxNzAwMDAwMFoXDTE1MDMxMjEyMDAwMFowgaQxCzAJBgNVBAYTAkdCMRcwFQYDVQQIEw5DYW1i
+cmlkZ2VzaGlyZTESMBAGA1UEBxMJQ2FtYnJpZGdlMRYwFAYDVQQKEw1Db2xsYWJvcmEgTHRkMQow
+CAYDVQQLEwExMRYwFAYDVQQDEw1Tam9lcmQgU2ltb25zMSwwKgYJKoZIhvcNAQkBFh1zam9lcmQu
+c2ltb25zQGNvbGxhYm9yYS5jby51azCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAN4Q
+EHeW1NbogMVZpHedG7o509/L4VBhqQd8j8JViWd+yvLlxOBw/gY+7ioHMatrQY2VvY6QOLle2Xqs
+CDvELcXMxwyFpBC0Ia+CVE+5pF+0IMuVkGIL1T8LHeKZYeRP+uFXtmWzas12hsMILNRmK7Q5PACm
++v/6HFn111hLKkANBtRHIRiDbFQOiluNeR2bq+ck1y2+X//SGumA1XZFdCB/1VcRJXDdFnYdU3j/
+RkoiGggo3MSq3mJ6yV7sqzk04fTLFvfL0KadCMauputeGBybEiFAt6rCm5TkyUqoDOTU07byOEXO
+M32EGeYeV515RzARTpOSE9sdmRq0jNNAqGsCAwEAAaOCA2wwggNoMB8GA1UdIwQYMBaAFBUAEisT
+mLKZB+0e36K+Vw0rZwLNMB0GA1UdDgQWBBRaTG8RXMDSFO5XcrjqYs/YDlmqSDAoBgNVHREEITAf
+gR1zam9lcmQuc2ltb25zQGNvbGxhYm9yYS5jby51azAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMH0GA1UdHwR2MHQwOKA2oDSGMmh0dHA6Ly9jcmwzLmRpZ2lj
+ZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3JsMDigNqA0hjJodHRwOi8vY3JsNC5kaWdp
+Y2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0xLmNybDCCAcUGA1UdIASCAbwwggG4MIIBtAYK
+YIZIAYb9bAQBAjCCAaQwOgYIKwYBBQUHAgEWLmh0dHA6Ly93d3cuZGlnaWNlcnQuY29tL3NzbC1j
+cHMtcmVwb3NpdG9yeS5odG0wggFkBggrBgEFBQcCAjCCAVYeggFSAEEAbgB5ACAAdQBzAGUAIABv
+AGYAIAB0AGgAaQBzACAAQwBlAHIAdABpAGYAaQBjAGEAdABlACAAYwBvAG4AcwB0AGkAdAB1AHQA
+ZQBzACAAYQBjAGMAZQBwAHQAYQBuAGMAZQAgAG8AZgAgAHQAaABlACAARABpAGcAaQBDAGUAcgB0
+ACAAQwBQAC8AQwBQAFMAIABhAG4AZAAgAHQAaABlACAAUgBlAGwAeQBpAG4AZwAgAFAAYQByAHQA
+eQAgAEEAZwByAGUAZQBtAGUAbgB0ACAAdwBoAGkAYwBoACAAbABpAG0AaQB0ACAAbABpAGEAYgBp
+AGwAaQB0AHkAIABhAG4AZAAgAGEAcgBlACAAaQBuAGMAbwByAHAAbwByAGEAdABlAGQAIABoAGUA
+cgBlAGkAbgAgAGIAeQAgAHIAZQBmAGUAcgBlAG4AYwBlAC4wdwYIKwYBBQUHAQEEazBpMCQGCCsG
+AQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQQYIKwYBBQUHMAKGNWh0dHA6Ly9jYWNl
+cnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3J0MAwGA1UdEwEB/wQCMAAw
+DQYJKoZIhvcNAQEFBQADggEBAAc8CwXSms3RbIx+bhxFsGQoN+RpHtjnPvMPPAobv7rxdhQPPz+N
+6h3hpVzegeW2XhyZVC8MT0U6uWXrk+1uQUAXrJEG+W2X8yTEoHDS/SCF/POOsj/ekaDuNE9JJB/9
+cspoa4W+W8pX1sRurBDFHL0DBudUQ1PgvTSLPOHtfKQpu4gRb2u8KpJermp/IvPLImX9xSCbYKQM
+2L0wbpStFIYdyKCKuXuQxOX3BdBKLCFvcIDE6hjj3UpOlThCbeul2Tz5jARCfRK4OUxnXyb/Tp5j
+tshIAa2ZMGaTH9ApeY7P6C2ONF+Mh5yV/raWXOnJ9dEg6/sXcbdiieqzLKYBIgQwggb/MIIF56AD
+AgECAhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBBQUAMGIxCzAJBgNVBAYTAlVTMRUwEwYD
+VQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xITAfBgNVBAMTGERp
+Z2lDZXJ0IEFzc3VyZWQgSUQgQ0EtMTAeFw0xNDAyMTcwMDAwMDBaFw0xNTAzMTIxMjAwMDBaMIGk
+MQswCQYDVQQGEwJHQjEXMBUGA1UECBMOQ2FtYnJpZGdlc2hpcmUxEjAQBgNVBAcTCUNhbWJyaWRn
+ZTEWMBQGA1UEChMNQ29sbGFib3JhIEx0ZDEKMAgGA1UECxMBMTEWMBQGA1UEAxMNU2pvZXJkIFNp
+bW9uczEsMCoGCSqGSIb3DQEJARYdc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28udWswggEiMA0G
+CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDeEBB3ltTW6IDFWaR3nRu6OdPfy+FQYakHfI/CVYln
+fsry5cTgcP4GPu4qBzGra0GNlb2OkDi5Xtl6rAg7xC3FzMcMhaQQtCGvglRPuaRftCDLlZBiC9U/
+Cx3imWHkT/rhV7Zls2rNdobDCCzUZiu0OTwApvr/+hxZ9ddYSypADQbURyEYg2xUDopbjXkdm6vn
+JNctvl//0hrpgNV2RXQgf9VXESVw3RZ2HVN4/0ZKIhoIKNzEqt5iesle7Ks5NOH0yxb3y9CmnQjG
+rqbrXhgcmxIhQLeqwpuU5MlKqAzk1NO28jhFzjN9hBnmHledeUcwEU6TkhPbHZkatIzTQKhrAgMB
+AAGjggNsMIIDaDAfBgNVHSMEGDAWgBQVABIrE5iymQftHt+ivlcNK2cCzTAdBgNVHQ4EFgQUWkxv
+EVzA0hTuV3K46mLP2A5ZqkgwKAYDVR0RBCEwH4Edc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28u
+dWswDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMEBggrBgEFBQcDAjB9BgNVHR8E
+djB0MDigNqA0hjJodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0x
+LmNybDA4oDagNIYyaHR0cDovL2NybDQuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0QXNzdXJlZElEQ0Et
+MS5jcmwwggHFBgNVHSAEggG8MIIBuDCCAbQGCmCGSAGG/WwEAQIwggGkMDoGCCsGAQUFBwIBFi5o
+dHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJlcG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUH
+AgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAAdABoAGkAcwAgAEMAZQByAHQAaQBmAGkA
+YwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAgAGEAYwBjAGUAcAB0AGEAbgBjAGUAIABv
+AGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMAUAAvAEMAUABTACAAYQBuAGQAIAB0AGgA
+ZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABBAGcAcgBlAGUAbQBlAG4AdAAgAHcAaABp
+AGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkAdAB5ACAAYQBuAGQAIABhAHIAZQAgAGkA
+bgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBpAG4AIABiAHkAIAByAGUAZgBlAHIAZQBu
+AGMAZQAuMHcGCCsGAQUFBwEBBGswaTAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQu
+Y29tMEEGCCsGAQUFBzAChjVodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1
+cmVkSURDQS0xLmNydDAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBBQUAA4IBAQAHPAsF0prN0WyM
+fm4cRbBkKDfkaR7Y5z7zDzwKG7+68XYUDz8/jeod4aVc3oHltl4cmVQvDE9FOrll65PtbkFAF6yR
+Bvltl/MkxKBw0v0ghfzzjrI/3pGg7jRPSSQf/XLKaGuFvlvKV9bEbqwQxRy9AwbnVENT4L00izzh
+7XykKbuIEW9rvCqSXq5qfyLzyyJl/cUgm2CkDNi9MG6UrRSGHcigirl7kMTl9wXQSiwhb3CAxOoY
+491KTpU4Qm3rpdk8+YwEQn0SuDlMZ18m/06eY7bISAGtmTBmkx/QKXmOz+gtjjRfjIeclf62llzp
+yfXRIOv7F3G3YonqsyymASIEMYIDEDCCAwwCAQEwdjBiMQswCQYDVQQGEwJVUzEVMBMGA1UEChMM
+RGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSEwHwYDVQQDExhEaWdpQ2Vy
+dCBBc3N1cmVkIElEIENBLTECEA2fwUKNhvkL8dN88tUFvVwwCQYFKw4DAhoFAKCCAW8wGAYJKoZI
+hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTQwODI3MDcyODI5WjAjBgkqhkiG
+9w0BCQQxFgQU1rUDsTiZpLQMB9I/2ODyw9V9QAIwgYUGCSsGAQQBgjcQBDF4MHYwYjELMAkGA1UE
+BhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEh
+MB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xAhANn8FCjYb5C/HTfPLVBb1cMIGHBgsq
+hkiG9w0BCRACCzF4oHYwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcG
+A1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0x
+AhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBAQUABIIBAF4OHSZ8LxkkLKGqQn72dCIdhA2c
+gCVDfGg509xQ15IMXEfZwZIAbjrZnh7mzF5CYFnBMcLSBc3C41g/NgkG0c36JkZSz0kZi/nnriM5
+7l893p91sNI7jSjW/o9Wcv3rscFnmWJVtXpsA73WwUBgx0UxU+zM9vGluDBOJZVXHu0tkk9TnVp8
+RgEa8FBK+AZyxaLG1Ag1hfrW/VMPmGGiKgj++4MeLHfzwV32CFLXr+3RkHqciYqJ1ZO+GB/7HRgW
+bHUNjjuRAI0NreFqpDLMMI311AsF6F/SH6qqrXdEdrMDxi9BGNThR7V7WHz+JDpJ1Xi5cHFJy48M
+xlvDsxMP0+4AAAAAAAA=
 
-So by using 0 instead of KEY_RESERVED I wanted to document that pins 2-=
-4
-are actually supported and not reserved by the device but there is no
-keycode associated with that GPIO.
 
-If there was a BTN_NONE or KEY_UNUSED it would had been better but I th=
-ink
-that making a distinction between these two cases (reserved pin vs GPIO
-available but not used) is useful.
-
-> I probably should add the two trailing _RESERVEDs, too?
->=20
-
-I see that is used for properties that are arrays, for example
-"linux,keymap" in Documentation/devicetree/bindings/input/matrix-keymap=
-=2Etxt.
-
-> With my above snippet I got an awful lot of "Interrupt triggered but
-> zero messages" warnings (which I simply commented out as quickfix).
-> Is that why you are using _EDGE_FALLING? Or pin-function 0xf?
-> (In my case the ChromeOS DT had IRQ_TYPE_NONE and pin-function 0x0.)
->
-
-These are two separate but related things:
-
-a) IRQF_TRIGGER_FALLING:
-
-Yes, the Chrome OS DT for Peach Pit also has IRQ_TYPE_NONE but the DTS =
-is
-not correct.
-
-If you look at the Chrome OS atmel driver
-(drivers/input/touchscreen/atmel_mxt_ts.c), it passes IRQF_TRIGGER_FALL=
-ING
-to request_threaded_irq():
-
-/* Default to falling edge if no platform data provided */
-irqflags =3D data->pdata ? data->pdata->irqflags : IRQF_TRIGGER_FALLING=
-;
-error =3D request_threaded_irq(client->irq, NULL, mxt_interrupt,
-			     irqflags | IRQF_ONESHOT,
-			     client->name, data);
-
-The above code is wrong since is overwriting the edge/level type flags =
-set
-by OF when parsing the "interrupts" property so you have to use the
-expected IRQ flags in your DTS.
-
-b) pin-function 0xf instead of 0x0:
-
-The pin-function 0x0 is GPIO input while 0xf is GPIO IRQ. Usually on ot=
-her
-SoCs to use a GPIO IRQ you just configure the pad as GPIO input and the=
-n
-enable the pin as an interrupt but on Exynos SoC these are really two
-different functions. So if you configure the pin as GPIO input and this
-happens after the pin is configured as GPIO IRQ, interrupts are not tri=
-ggered.
-
-I faced that issue before [1] and was solved with Tomasz's commit:
-
-f6a8249 pinctrl: exynos: Lock GPIOs as interrupts when used as EINTs
-
-which changes the pinctrl-exynos driver to setup a pin as GPIO IRQ on
-=2Eirq_request_resources instead of .irq_set_type. So, with that patch =
-even
-when pin-function re-configures the function to GPIO input, is then
-configured as GPIO IRQ when request_threaded_irq() is called.
-
-So probably is working for you just because you tested on linux-next th=
-at
-already has Tomasz's changes but still the correct thing to do is to se=
-tup
-the pin as 0xf. This change probably is needed on other pins used as GP=
-IO
-IRQ that are using 0x0 now.
-
-Sorry, the email became longer than I wanted but I hope is helpful to y=
-ou.
-
-> Regards,
-> Andreas
->=20
-
-Best regards,
-Javier
-
-[0]: https://lkml.org/lkml/2014/8/15/244
-[1]: https://lkml.org/lkml/2014/8/8/621
+--=-dopSnCAkQYD92HKKxYwG--
