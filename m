@@ -1,52 +1,72 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/1] regulator: max77802: set opmode to normal if off
- is read from hw
-Date: Wed, 27 Aug 2014 21:21:02 +0200
-Message-ID: <53FE2F9E.80501@gmail.com>
-References: <1409053061-22568-1-git-send-email-javier.martinez@collabora.co.uk> <53FE2446.3040402@gmail.com> <20140827183733.GN17528@sirena.org.uk> <53FE25EB.7060702@gmail.com> <20140827184705.GO17528@sirena.org.uk> <53FE2901.50508@gmail.com> <20140827191526.GS17528@sirena.org.uk>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v2 0/5] usb: phy: samsung: remove old USB PHY code
+Date: Wed, 27 Aug 2014 14:23:12 -0500
+Message-ID: <20140827192312.GH6347@saruman.home>
+References: <1408726745-31135-1-git-send-email-b.zolnierkie@samsung.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20140827191526.GS17528@sirena.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="bygAmIonOAIqBxQB"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:58684 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S935182AbaH0TX2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 27 Aug 2014 15:23:28 -0400
+Content-Disposition: inline
+In-Reply-To: <1408726745-31135-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>, Kishon Vijay Abraham I <kishon@ti.com>, Kamil Debski <k.debski@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Mark Brown <broonie@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 27.08.2014 21:15, Mark Brown wrote:
-> On Wed, Aug 27, 2014 at 08:52:49PM +0200, Tomasz Figa wrote:
->> On 27.08.2014 20:47, Mark Brown wrote:
-> 
->>> I'm not convinced that's worth it - chances are that if anything changed
->>> the mode it was a previously running Linux which will most likely be
->>> doing the same things when it starts running anyway.
-> 
->> The previously running Linux would have changed the opmode accidentally,
->> due to hardware design of PMIC chip, which doesn't allow powering off a
->> regulator in other way than setting opmode to OFF.
-> 
->> If you provide the "active" opmode to that Linux, after a warm reboot it
->> will be able to power on such regulator to correct opmode, without
->> defaulting it incorrectly to NORMAL.
-> 
-> This is in the scenario where the previously running Linux changed the
-> mode to something other than normal and where the freshly booted Linux
-> can't figure out how to do that when it needs to.  I'm not sure how
-> plausible that scenario is, or that real systems would handle it
-> robustly.
-> 
+--bygAmIonOAIqBxQB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm not sure I'm getting your point.
+Hi,
 
-If the only thing Linux can do is read back the opmode from PMIC
-registers, it doesn't explicitly set it to something other, but rather
-reuses what was set by something before it (or, after this patch,
-defaults to NORMAL if it's OFF), i.e. the low level firmware or Linux.
+On Fri, Aug 22, 2014 at 06:59:00PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> Hi,
+>=20
+> This patch series removes the old Samsung USB PHY drivers that
+> got replaced by the new ones using the generic PHY layer.
+>=20
+> Depends on:
+> - v3.17-rc1 branch of Linus' kernel
+>=20
+> Changes since v1 (https://lkml.org/lkml/2014/8/14/241):
+> - rebased on v3.17-rc1 kernel
+> - added Acked-by-s from Kishon Vijay Abraham I
+> - added Reviewed-by-s from Vivek Gautam and Jingoo Han
 
-However the information about original setting is lost whenever Linux
-turns the regulator off and performs a warm reboot, which I believe
-would be a quite common scenario.
+So, everybody agrees that there will be no regressions, right ? I'll
+merge this on my testing/next.
 
-Best regards,
-Tomasz
+--=20
+balbi
+
+--bygAmIonOAIqBxQB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJT/jAgAAoJEIaOsuA1yqREMPkP/AoInxTvy7cl3Q90yb+c+uc2
+Qqs0FQd81qQyRJHfzuqPyBZJCbsydBfMQxh6Kz7QEHdoWJD101YRYO5tVBuh93kO
+mHtCMy0TOiReJg+S7m/X0KiTteGYu2X5fB7YvNjMli+QIM/wqTV5xWDrK9+ZtBxo
+XW7oywMBgCzcVGGO8yixT98ZrmlshPOFeAefMQM9CGp6GT+rVQH8gVVBjXpjegmP
+IpCxpyLCWQZPIK9TmbluaLvsBVK74ZxPDLdMLdLl681F0nYYFg/WkcZfWo6OyPx2
+5qwSjDIgxvM7Wgy12s4Jhe4vK/L3X3mWGFJ2aofJZJPA1d9w51qMoxrpClhfRNKK
+uBQ2imbTkZJ880zdeG/dxabmR7Q9v2RPkiy1jf/HVSV8ZPPKNODl2vLVucZJcZhk
+rULmGGriPdOofLofIKKBEavL0Wrz6WmBQwBNW4T0a1jKFhs5mp47v8uYr/Rvkne/
+MHAs7M841p7CRatNHykl6HZsA2E2DfdxcyUpR0AgvQ2up4jWDzISCN69eQhhw3z/
+kZo/kxFece7lLDw8OqtCV+q9Te8Lagcol5ogL8VQBXm3SY3bfLIA2GhZEcewBeVl
+yyoPZkvc0ZQ9OoJDCRZtSSSnlKQqbs+DFRguORvuQJ7OdEb7dzYodKeEXTsKRadz
+HxjklGMmWK448/nUnw+Z
+=QB+n
+-----END PGP SIGNATURE-----
+
+--bygAmIonOAIqBxQB--
