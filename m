@@ -1,141 +1,167 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 06/15] drm/exynos/ipp: free partially allocated resources
- on error
-Date: Wed, 27 Aug 2014 12:27:35 +0200
-Message-ID: <53FDB297.7070400@samsung.com>
-References: <1408693946-15456-1-git-send-email-a.hajda@samsung.com>
- <1408693946-15456-7-git-send-email-a.hajda@samsung.com>
- <53FC1460.5090000@samsung.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 11/14] arm64: dts: Add initial device tree support for
+ EXYNOS7
+Date: Wed, 27 Aug 2014 11:42:31 +0100
+Message-ID: <20140827104231.GB7773@leverpostej>
+References: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com>
+ <1409132660-1898-3-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:24820 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933323AbaH0K1k (ORCPT
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:49760 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S933467AbaH0Kn1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Aug 2014 06:27:40 -0400
-In-reply-to: <53FC1460.5090000@samsung.com>
+	Wed, 27 Aug 2014 06:43:27 -0400
+Content-Disposition: inline
+In-Reply-To: <1409132660-1898-3-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: Catalin Marinas <Catalin.Marinas@arm.com>, "naveenkrishna.ch@gmail.com" <naveenkrishna.ch@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "cpgs@samsung.com" <cpgs@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Rob Herring <robh@kernel.org>
 
-On 08/26/2014 07:00 AM, Joonyoung Shim wrote:
-> Hi Andrzej,
->
-> On 08/22/2014 04:52 PM, Andrzej Hajda wrote:
->> In case of allocation errors some already allocated buffers
->> were not freed. The patch fixes it.
->>
->> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->> ---
->>  drivers/gpu/drm/exynos/exynos_drm_ipp.c | 68 ++++++++++++++++-----------------
->>  1 file changed, 33 insertions(+), 35 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
->> index 060a198..728f3b9 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
->> @@ -599,6 +599,37 @@ static int ipp_set_mem_node(struct exynos_drm_ippdrv *ippdrv,
->>  	return ret;
->>  }
->>  
->> +static int ipp_put_mem_node(struct drm_device *drm_dev,
->> +		struct drm_exynos_ipp_cmd_node *c_node,
->> +		struct drm_exynos_ipp_mem_node *m_node)
->> +{
->> +	int i;
->> +
->> +	DRM_DEBUG_KMS("node[0x%x]\n", (int)m_node);
->> +
->> +	if (!m_node) {
->> +		DRM_ERROR("invalid dequeue node.\n");
->> +		return -EFAULT;
->> +	}
->> +
->> +	DRM_DEBUG_KMS("ops_id[%d]\n", m_node->ops_id);
->> +
->> +	/* put gem buffer */
->> +	for_each_ipp_planar(i) {
->> +		unsigned long handle = m_node->buf_info.handles[i];
->> +		if (handle)
->> +			exynos_drm_gem_put_dma_addr(drm_dev, handle,
->> +							c_node->filp);
->> +	}
->> +
->> +	/* conditionally remove from queue */
->> +	if (m_node->list.next)
-> How about do INIT_LIST_HEAD for list in ipp_get_mem_node()?
+Hi Naveen,
 
-I am not sure if it is better. For sure it adds unnecessary
-initialization sequence.
-Maybe adding list_is_initialized inline function to list.h would be the
-best solution.
+On Wed, Aug 27, 2014 at 10:44:18AM +0100, Naveen Krishna Chatradhi wrote:
+> Add initial device tree nodes for EXYNOS7 SoC.
+> Also, includes the dt-binding definitions for clock ids.
 
-Regards
-Andrzej
+Fallout from a rebase? That latter part doesn't seem to be relevant.
 
->
->> +		list_del(&m_node->list);
->> +	kfree(m_node);
->> +
->> +	return 0;
->> +}
->> +
->>  static struct drm_exynos_ipp_mem_node
->>  		*ipp_get_mem_node(struct drm_device *drm_dev,
->>  		struct drm_file *file,
->> @@ -634,7 +665,8 @@ static struct drm_exynos_ipp_mem_node
->>  					qbuf->handle[i], file);
->>  			if (IS_ERR(addr)) {
->>  				DRM_ERROR("failed to get addr.\n");
->> -				goto err_clear;
->> +				ipp_put_mem_node(drm_dev, c_node, m_node);
->> +				return ERR_PTR(-EFAULT);
->>  			}
->>  
->>  			buf_info->handles[i] = qbuf->handle[i];
->> @@ -649,40 +681,6 @@ static struct drm_exynos_ipp_mem_node
->>  	mutex_unlock(&c_node->mem_lock);
->>  
->>  	return m_node;
->> -
->> -err_clear:
->> -	kfree(m_node);
->> -	return ERR_PTR(-EFAULT);
->> -}
->> -
->> -static int ipp_put_mem_node(struct drm_device *drm_dev,
->> -		struct drm_exynos_ipp_cmd_node *c_node,
->> -		struct drm_exynos_ipp_mem_node *m_node)
->> -{
->> -	int i;
->> -
->> -	DRM_DEBUG_KMS("node[0x%x]\n", (int)m_node);
->> -
->> -	if (!m_node) {
->> -		DRM_ERROR("invalid dequeue node.\n");
->> -		return -EFAULT;
->> -	}
->> -
->> -	DRM_DEBUG_KMS("ops_id[%d]\n", m_node->ops_id);
->> -
->> -	/* put gem buffer */
->> -	for_each_ipp_planar(i) {
->> -		unsigned long handle = m_node->buf_info.handles[i];
->> -		if (handle)
->> -			exynos_drm_gem_put_dma_addr(drm_dev, handle,
->> -							c_node->filp);
->> -	}
->> -
->> -	/* delete list in queue */
->> -	list_del(&m_node->list);
->> -	kfree(m_node);
->> -
->> -	return 0;
->>  }
->>  
->>  static void ipp_free_event(struct drm_pending_event *event)
->>
->
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> ---
+>  arch/arm64/boot/dts/exynos7.dtsi |  553 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 553 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos7.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/exynos7.dtsi b/arch/arm64/boot/dts/exynos7.dtsi
+> new file mode 100644
+> index 0000000..6b9eaf4
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos7.dtsi
+> @@ -0,0 +1,553 @@
+> +/*
+> + * SAMSUNG EXYNOS7 SoC device tree source
+> + *
+> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> + *             http://www.samsung.com
+> + *
+> + * SAMSUNG EXYNOS7 SoC device nodes are listed in this file.
+> + * EXYNOS7 based board files can include this file and provide
+> + * values for board specfic bindings.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <dt-bindings/clock/exynos7-clk.h>
+> +
+> +/ {
+> +       compatible = "samsung,exynos7";
+> +       interrupt-parent = <&gic>;
+> +       #address-cells = <1>;
+> +       #size-cells = <1>;
+
+Can we guarantee everything going to live within 0x0 - 0xffffffff for
+all boards using the SoC?
+
+I suspect that we can't, so the addresses and sizes at the top level
+should be two cells. At some point there is bound to be something above
+4GB that we'll need to map, so to save us from a painful dts refactoring
+we should have the dts organised to support that from the outside.
+
+[...]
+
+> +       cpus {
+> +               #address-cells = <2>;
+> +               #size-cells = <0>;
+> +
+> +               cpu@0 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a57", "arm,armv8";
+> +                       reg = <0x0 0x0>;
+> +               };
+> +       };
+
+Only UP?
+
+[...]
+
+> +       gic: interrupt-controller@11001000 {
+> +               compatible = "arm,gic-400";
+> +               #interrupt-cells = <3>;
+> +               #address-cells = <0>;
+> +               interrupt-controller;
+> +               reg =   <0x11001000 0x1000>,
+> +                       <0x11002000 0x1000>,
+> +                       <0x11004000 0x2000>,
+> +                       <0x11006000 0x2000>;
+> +       };
+
+Nice to see GICV and GICH.
+
+[...]
+
+> +       mct@101C0000 {
+> +               compatible = "samsung,exynos4210-mct";
+> +               reg = <0x101C0000 0x800>;
+> +               interrupt-controller;
+> +               #interrupt-cells = <1>;
+> +               interrupt-parent = <&mct_map>;
+> +               interrupts =    <0>, <1>, <2>, <3>,
+> +                               <4>, <5>, <6>, <7>,
+> +                               <8>, <9>, <10>, <11>;
+> +               clocks = <&fin_pll>, <&clock_peris PCLK_MCT>;
+> +               clock-names = "fin_pll", "mct";
+> +
+> +               mct_map: mct-map {
+> +                       #interrupt-cells = <1>;
+> +                       #address-cells = <0>;
+> +                       #size-cells = <0>;
+> +                       interrupt-map = <0 &gic 0 112 0>,
+> +                                       <1 &gic 0 113 0>,
+> +                                       <2 &gic 0 114 0>,
+> +                                       <3 &gic 0 115 0>,
+> +                                       <4 &gic 0 116 0>,
+> +                                       <5 &gic 0 117 0>,
+> +                                       <6 &gic 0 118 0>,
+> +                                       <7 &gic 0 119 0>,
+> +                                       <8 &gic 0 120 0>,
+> +                                       <9 &gic 0 121 0>,
+> +                                       <10 &gic 0 122 0>,
+> +                                       <11 &gic 0 123 0>;
+> +               };
+> +       };
+
+I don't see why need the map here. Why can't we describe the GIC
+interrupts directly?
+
+[...]
+
+> +       timer {
+> +               compatible = "arm,armv8-timer";
+> +               interrupts = <1 13 0xff01>,
+> +                            <1 14 0xff01>,
+> +                            <1 11 0xff01>,
+> +                            <1 10 0xff01>;
+> +               clock-frequency = <24000000>;
+
+Your firmware/bootloader should configure CNTFRQ, and this shouldn't be
+necessary. The clock-frequency property is an incomplete workaround for
+broken firmware that in an ideal world we could kill off.
+
+> +               use-clocksource-only;
+> +               use-physical-timer;
+
+Neither of these properties were introduced by this series, and no
+rationale was given.
+
+What are these properties for, and why do you believe they are
+necessary?
+
+Thanks,
+Mark.
