@@ -1,167 +1,41 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 11/14] arm64: dts: Add initial device tree support for
- EXYNOS7
-Date: Wed, 27 Aug 2014 11:42:31 +0100
-Message-ID: <20140827104231.GB7773@leverpostej>
-References: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com>
- <1409132660-1898-3-git-send-email-ch.naveen@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH] cpufreq: s5pv210: Remove spurious __init annotation
+Date: Wed, 27 Aug 2014 12:00:27 +0100
+Message-ID: <1409137227-27080-1-git-send-email-broonie@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:49760 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S933467AbaH0Kn1 (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35840 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755202AbaH0LAk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Aug 2014 06:43:27 -0400
-Content-Disposition: inline
-In-Reply-To: <1409132660-1898-3-git-send-email-ch.naveen@samsung.com>
+	Wed, 27 Aug 2014 07:00:40 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Catalin Marinas <Catalin.Marinas@arm.com>, "naveenkrishna.ch@gmail.com" <naveenkrishna.ch@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "cpgs@samsung.com" <cpgs@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Rob Herring <robh@kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-pm@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@linaro.org>
 
-Hi Naveen,
+From: Mark Brown <broonie@linaro.org>
 
-On Wed, Aug 27, 2014 at 10:44:18AM +0100, Naveen Krishna Chatradhi wrote:
-> Add initial device tree nodes for EXYNOS7 SoC.
-> Also, includes the dt-binding definitions for clock ids.
+Since this is a platform driver and can be probed at any time we can't
+annotate funtions in the probe path as __init, the code can't safely be
+discarded at the end of kernel init.
 
-Fallout from a rebase? That latter part doesn't seem to be relevant.
+Signed-off-by: Mark Brown <broonie@linaro.org>
+---
+ drivers/cpufreq/s5pv210-cpufreq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> Cc: Thomas Abraham <thomas.ab@samsung.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> ---
->  arch/arm64/boot/dts/exynos7.dtsi |  553 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 553 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos7.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/exynos7.dtsi b/arch/arm64/boot/dts/exynos7.dtsi
-> new file mode 100644
-> index 0000000..6b9eaf4
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos7.dtsi
-> @@ -0,0 +1,553 @@
-> +/*
-> + * SAMSUNG EXYNOS7 SoC device tree source
-> + *
-> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-> + *             http://www.samsung.com
-> + *
-> + * SAMSUNG EXYNOS7 SoC device nodes are listed in this file.
-> + * EXYNOS7 based board files can include this file and provide
-> + * values for board specfic bindings.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include <dt-bindings/clock/exynos7-clk.h>
-> +
-> +/ {
-> +       compatible = "samsung,exynos7";
-> +       interrupt-parent = <&gic>;
-> +       #address-cells = <1>;
-> +       #size-cells = <1>;
-
-Can we guarantee everything going to live within 0x0 - 0xffffffff for
-all boards using the SoC?
-
-I suspect that we can't, so the addresses and sizes at the top level
-should be two cells. At some point there is bound to be something above
-4GB that we'll need to map, so to save us from a painful dts refactoring
-we should have the dts organised to support that from the outside.
-
-[...]
-
-> +       cpus {
-> +               #address-cells = <2>;
-> +               #size-cells = <0>;
-> +
-> +               cpu@0 {
-> +                       device_type = "cpu";
-> +                       compatible = "arm,cortex-a57", "arm,armv8";
-> +                       reg = <0x0 0x0>;
-> +               };
-> +       };
-
-Only UP?
-
-[...]
-
-> +       gic: interrupt-controller@11001000 {
-> +               compatible = "arm,gic-400";
-> +               #interrupt-cells = <3>;
-> +               #address-cells = <0>;
-> +               interrupt-controller;
-> +               reg =   <0x11001000 0x1000>,
-> +                       <0x11002000 0x1000>,
-> +                       <0x11004000 0x2000>,
-> +                       <0x11006000 0x2000>;
-> +       };
-
-Nice to see GICV and GICH.
-
-[...]
-
-> +       mct@101C0000 {
-> +               compatible = "samsung,exynos4210-mct";
-> +               reg = <0x101C0000 0x800>;
-> +               interrupt-controller;
-> +               #interrupt-cells = <1>;
-> +               interrupt-parent = <&mct_map>;
-> +               interrupts =    <0>, <1>, <2>, <3>,
-> +                               <4>, <5>, <6>, <7>,
-> +                               <8>, <9>, <10>, <11>;
-> +               clocks = <&fin_pll>, <&clock_peris PCLK_MCT>;
-> +               clock-names = "fin_pll", "mct";
-> +
-> +               mct_map: mct-map {
-> +                       #interrupt-cells = <1>;
-> +                       #address-cells = <0>;
-> +                       #size-cells = <0>;
-> +                       interrupt-map = <0 &gic 0 112 0>,
-> +                                       <1 &gic 0 113 0>,
-> +                                       <2 &gic 0 114 0>,
-> +                                       <3 &gic 0 115 0>,
-> +                                       <4 &gic 0 116 0>,
-> +                                       <5 &gic 0 117 0>,
-> +                                       <6 &gic 0 118 0>,
-> +                                       <7 &gic 0 119 0>,
-> +                                       <8 &gic 0 120 0>,
-> +                                       <9 &gic 0 121 0>,
-> +                                       <10 &gic 0 122 0>,
-> +                                       <11 &gic 0 123 0>;
-> +               };
-> +       };
-
-I don't see why need the map here. Why can't we describe the GIC
-interrupts directly?
-
-[...]
-
-> +       timer {
-> +               compatible = "arm,armv8-timer";
-> +               interrupts = <1 13 0xff01>,
-> +                            <1 14 0xff01>,
-> +                            <1 11 0xff01>,
-> +                            <1 10 0xff01>;
-> +               clock-frequency = <24000000>;
-
-Your firmware/bootloader should configure CNTFRQ, and this shouldn't be
-necessary. The clock-frequency property is an incomplete workaround for
-broken firmware that in an ideal world we could kill off.
-
-> +               use-clocksource-only;
-> +               use-physical-timer;
-
-Neither of these properties were introduced by this series, and no
-rationale was given.
-
-What are these properties for, and why do you believe they are
-necessary?
-
-Thanks,
-Mark.
+diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
+index 9a68225a757e..3f9791f07b8e 100644
+--- a/drivers/cpufreq/s5pv210-cpufreq.c
++++ b/drivers/cpufreq/s5pv210-cpufreq.c
+@@ -501,7 +501,7 @@ static int check_mem_type(void __iomem *dmc_reg)
+ 	return val >> 8;
+ }
+ 
+-static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
++static int s5pv210_cpu_init(struct cpufreq_policy *policy)
+ {
+ 	unsigned long mem_type;
+ 	int ret;
+-- 
+2.1.0.rc1
