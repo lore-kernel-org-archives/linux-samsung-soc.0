@@ -1,41 +1,38 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH] cpufreq: s5pv210: Remove spurious __init annotation
-Date: Wed, 27 Aug 2014 12:00:27 +0100
-Message-ID: <1409137227-27080-1-git-send-email-broonie@kernel.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 1/2] ARM: exynos_defconfig: Enable Control Groups support
+Date: Wed, 27 Aug 2014 13:02:20 +0200
+Message-ID: <1409137341-20516-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35840 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755202AbaH0LAk (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:47476 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756030AbaH0LCk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Aug 2014 07:00:40 -0400
+	Wed, 27 Aug 2014 07:02:40 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-pm@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@linaro.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-From: Mark Brown <broonie@linaro.org>
+systemd needs control groups support to be enabled in the
+kernel so let's enable it by default since is quite likely
+that a user-space with systemd will be used.
 
-Since this is a platform driver and can be probed at any time we can't
-annotate funtions in the probe path as __init, the code can't safely be
-discarded at the end of kernel init.
-
-Signed-off-by: Mark Brown <broonie@linaro.org>
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- drivers/cpufreq/s5pv210-cpufreq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/configs/exynos_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/cpufreq/s5pv210-cpufreq.c b/drivers/cpufreq/s5pv210-cpufreq.c
-index 9a68225a757e..3f9791f07b8e 100644
---- a/drivers/cpufreq/s5pv210-cpufreq.c
-+++ b/drivers/cpufreq/s5pv210-cpufreq.c
-@@ -501,7 +501,7 @@ static int check_mem_type(void __iomem *dmc_reg)
- 	return val >> 8;
- }
- 
--static int __init s5pv210_cpu_init(struct cpufreq_policy *policy)
-+static int s5pv210_cpu_init(struct cpufreq_policy *policy)
- {
- 	unsigned long mem_type;
- 	int ret;
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 676c744..590abde 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -1,6 +1,7 @@
+ CONFIG_SYSVIPC=y
+ CONFIG_NO_HZ=y
+ CONFIG_HIGH_RES_TIMERS=y
++CONFIG_CGROUPS=y
+ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_MODULES=y
 -- 
-2.1.0.rc1
+2.0.1
