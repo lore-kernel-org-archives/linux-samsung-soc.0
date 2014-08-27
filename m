@@ -1,45 +1,71 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/1] regulator: max77802: set opmode to normal if off
- is read from hw
-Date: Wed, 27 Aug 2014 20:52:49 +0200
-Message-ID: <53FE2901.50508@gmail.com>
-References: <1409053061-22568-1-git-send-email-javier.martinez@collabora.co.uk> <53FE2446.3040402@gmail.com> <20140827183733.GN17528@sirena.org.uk> <53FE25EB.7060702@gmail.com> <20140827184705.GO17528@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/1] regulator: max77802: set opmode to normal if off is
+ read from hw
+Date: Wed, 27 Aug 2014 20:15:26 +0100
+Message-ID: <20140827191526.GS17528@sirena.org.uk>
+References: <1409053061-22568-1-git-send-email-javier.martinez@collabora.co.uk>
+ <53FE2446.3040402@gmail.com>
+ <20140827183733.GN17528@sirena.org.uk>
+ <53FE25EB.7060702@gmail.com>
+ <20140827184705.GO17528@sirena.org.uk>
+ <53FE2901.50508@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:54201 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935656AbaH0Swy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Aug 2014 14:52:54 -0400
-In-Reply-To: <20140827184705.GO17528@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Ii+rdjzNWcC1BLUd"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <53FE2901.50508@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
 Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 27.08.2014 20:47, Mark Brown wrote:
-> On Wed, Aug 27, 2014 at 08:39:39PM +0200, Tomasz Figa wrote:
->> On 27.08.2014 20:37, Mark Brown wrote:
-> 
->>> That's essentially the situation the patch is trying to fix - if we boot
->>> and the regulator is off there's no way to figure out what the operating
->>> mode would have been so we have to pick something.  If you've got an
->>> idea for something better to do...
-> 
->> Probably the only way to correctly handle this is to specify the right
->> operating mode in DT (after defining a binding for it).
-> 
-> I'm not convinced that's worth it - chances are that if anything changed
-> the mode it was a previously running Linux which will most likely be
-> doing the same things when it starts running anyway.
-> 
 
-The previously running Linux would have changed the opmode accidentally,
-due to hardware design of PMIC chip, which doesn't allow powering off a
-regulator in other way than setting opmode to OFF.
+--Ii+rdjzNWcC1BLUd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-If you provide the "active" opmode to that Linux, after a warm reboot it
-will be able to power on such regulator to correct opmode, without
-defaulting it incorrectly to NORMAL.
+On Wed, Aug 27, 2014 at 08:52:49PM +0200, Tomasz Figa wrote:
+> On 27.08.2014 20:47, Mark Brown wrote:
+
+> > I'm not convinced that's worth it - chances are that if anything changed
+> > the mode it was a previously running Linux which will most likely be
+> > doing the same things when it starts running anyway.
+
+> The previously running Linux would have changed the opmode accidentally,
+> due to hardware design of PMIC chip, which doesn't allow powering off a
+> regulator in other way than setting opmode to OFF.
+
+> If you provide the "active" opmode to that Linux, after a warm reboot it
+> will be able to power on such regulator to correct opmode, without
+> defaulting it incorrectly to NORMAL.
+
+This is in the scenario where the previously running Linux changed the
+mode to something other than normal and where the freshly booted Linux
+can't figure out how to do that when it needs to.  I'm not sure how
+plausible that scenario is, or that real systems would handle it
+robustly.
+
+--Ii+rdjzNWcC1BLUd
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJT/i5KAAoJELSic+t+oim92xUP/2U48tePsQeLADPGXqKX0zLp
+9JZTNy5JiXkgmxD/KoEJfhyfzHZjvhPmSgnwvVeBneOWTbbvTQlwvwVj/YQSD9d4
+1EI2YfDnEQMDigfjz2g822LaNwV2YbfjQc2wCqmHiTL2ZZ4RsmCstYjOq0LUaSsJ
++E3eh29ubNnc1gyQJw1aOVo43rAQjKR6aAbCiCWcVpDFjqKEUJV1icSOa9jELY6Q
+DKzlzwM30/hdzjo7m9OHnYqYgOjUH2tk+lka7IYBPTXcIR/ZgqisJJcpWfaCIFY+
+29KDAFh+wzSYEhOEhbPdqy/HIVFuIENuDXuwsO8ngJ2Z0/L1hXj/uQMwiCFxVO/D
+Ated4n3C7cYncD0qKu6x8uTn0wIAYoFf8zVZYBPRpdUELiBniPaCK4A5RB4b1N5f
+LTSf77goXEOUNKxKDTLtz9F1UNM+rwCPzxouu+qX1Y2Ly+tREBLK3aTTeuAwtVsm
+Co3p+0TFyPnt+4Ou7JYT39aofpabJjWGAEU9c4Jtr6sZZ6uHR6XqUHsbm8JCYdfp
+h6eJlT3gFUDqio3WzmBOsCb4KF8xsSPYAZrJCEE7dvznYQ5gDC5/iPeKo4qfJjPy
+WI+nhzXXMF+sluZ4MdW26YH+anGFFmMDBd9jOb0mEPz9a88OmzCDfzhxQXixF3U2
+LkXRomIc2ujfo1qlrCuz
+=susY
+-----END PGP SIGNATURE-----
+
+--Ii+rdjzNWcC1BLUd--
