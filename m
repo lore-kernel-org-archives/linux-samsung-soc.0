@@ -1,114 +1,215 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 04/14] clk: samsung: Add clock description for basic CMU
- blocks
-Date: Wed, 27 Aug 2014 14:35:53 +0200
-Message-ID: <53FDD0A9.3040109@samsung.com>
-References: <1409132889-2080-1-git-send-email-ch.naveen@samsung.com>
- <1409132889-2080-4-git-send-email-ch.naveen@samsung.com>
+From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Subject: Re: [PATCH v2 1/3] ARM: dts: Add Peach Pit dts entry for Atmel touchpad
+Date: Wed, 27 Aug 2014 15:11:48 +0200
+Message-ID: <53FDD914.5090208@suse.de>
+References: <1409066937-3574-1-git-send-email-javier.martinez@collabora.co.uk> <1409066937-3574-2-git-send-email-javier.martinez@collabora.co.uk> <53FD1001.30701@suse.de> <53FD8528.7090504@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:14591 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933220AbaH0Mf6 (ORCPT
+Received: from cantor2.suse.de ([195.135.220.15]:35275 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S933467AbaH0NLx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Aug 2014 08:35:58 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NAY00GIATSOVR40@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 27 Aug 2014 13:38:48 +0100 (BST)
-In-reply-to: <1409132889-2080-4-git-send-email-ch.naveen@samsung.com>
+	Wed, 27 Aug 2014 09:11:53 -0400
+In-Reply-To: <53FD8528.7090504@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, cpgs@samsung.com, Mike Turquette <mturquette@linaro.org>, Thomas Abraham <thomas.ab@samsung.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Nick Dyer <nick.dyer@itdev.co.uk>, Yufeng Shen <miletus@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Tomasz Figa <tomasz.figa@gmail.com>
 
-On 27.08.2014 11:48, Naveen Krishna Chatradhi wrote:
-> This patch adds clock description for MUX, DIV, GATE and PLL
-> clocks available in TOPC, TOP0, TOP1, BUS0, BUS1, FSYS0, FSYS1,
-> CCORE, PERIC0, PERIC1, PERIS, DISP, G3D, MSCL and MFC blocks.
+Hi Javier,
 
-[snip]
+Am 27.08.2014 09:13, schrieb Javier Martinez Canillas:
+> On 08/27/2014 12:53 AM, Andreas F=E4rber wrote:
+>>> =20
+>>> +&hsi2c_8 {
+>>> +	status =3D "okay";
+>>> +	clock-frequency =3D <333000>;
+>>> +
+>>> +	trackpad@4b {
+>>> +		compatible=3D"atmel,maxtouch";
+>>> +		reg=3D<0x4b>;
+>>> +		interrupt-parent=3D<&gpx1>;
+>>> +		interrupts=3D<1 IRQ_TYPE_EDGE_FALLING>;
+>>
+>> Nit: Here's a style break (4x spaces around '=3D' missing).
+>>
+>=20
+> True, these bits were copied from the downstream Chrome OS verbatim a=
+nd
+> the missing space around '=3D' was there, I missed that when reviewin=
+g.
+>=20
+> I'll re-spin and fix those style issues.
+>=20
+>>> +		wakeup-source;
+>>> +		pinctrl-names =3D "default";
+>>> +		pinctrl-0 =3D <&trackpad_irq>;
+>>> +		linux,gpio-keymap =3D < KEY_RESERVED
+>>> +				      KEY_RESERVED
+>>> +				      0		/* GPIO 0 */
+>>> +				      0		/* GPIO 1 */
+>>> +				      0		/* GPIO 2 */
+>>> +				      BTN_LEFT 	/* GPIO 3 */
+>>> +				      KEY_RESERVED
+>>> +				      KEY_RESERVED >;
+>>> +	};
+>>
+>> Coincidentally, I experimentally came up with a very similar DT node=
+ for
+>> Spring the weekend:
+>>
+>> +	trackpad@4b {
+>> +		compatible =3D "atmel,maxtouch";
+>> +		reg =3D <0x4b>;
+>> +		interrupt-parent =3D <&gpx1>;
+>> +		interrupts =3D <2 IRQ_TYPE_NONE>;
+>> +		pinctrl-names =3D "default";
+>> +		pinctrl-0 =3D <&trackpad_irq>;
+>> +		linux,gpio-keymap =3D <KEY_RESERVED
+>> +		                     KEY_RESERVED
+>> +		                     KEY_RESERVED
+>> +		                     KEY_RESERVED
+>> +		                     KEY_RESERVED
+>> +		                     BTN_LEFT>;
+>> +		wakeup-source;
+>> +	};
+>>
+>> 0 =3D=3D KEY_RESERVED, so you can consistently use it for GPIO 0-2, =
+too. :)
+>>
+>=20
+> I know that the value of KEY_RESERVED is 0 but I didn't use KEY_RESER=
+VED
+> for the GPIO on purpose.
+>=20
+> What I understood is that the SPT_GPIOPWN_T19 object sends messages u=
+sing
+> a status byte so you have a maximum of 8 GPIO but not every maXTouch
+> devices use all of them. So in the particular case of the device in t=
+he
+> Peach Pit, from the 8 possible GPIO only 4 can be used and these are =
+pins
+> 2-5. So in theory you could connect 3 more GPIO in case you had more
+> buttons (e.g: BTN_RIGHT, BTN_MIDDLE) but only 1 is used since the
+> Chromebook just have BTN_LEFT.
 
-> +Phy clocks:
-> +
-> +There are several clocks which are generated by specific PHYs.
-> +These clocks are fed into the clock controller and then routed to
-> +the hardware blocks. These clocks are defined as fixed clocks in the
-> +driver with following names:
-> +
+=46WIW when I press to the bottom right of my touchpad, I do get
+right-click functionality even with just BTN_LEFT specified in the
+keymap. Magic. :)
 
-The names are missing?
+> Nick sent a patch [0] that extend the atmel touchpad DT binding and t=
+he
+> doc says "Use KEY_RESERVED for unused padding values". But is not cle=
+ar
+> what value you should use for GPIO that are actually supported by the
+> device but have no keycode associated.
+>=20
+> So by using 0 instead of KEY_RESERVED I wanted to document that pins =
+2-4
+> are actually supported and not reserved by the device but there is no
+> keycode associated with that GPIO.
 
-> +Required Properties for Clock Controller:
-> +
-> + - compatible: should be one of the following.
-> +	1) "samsung,exynos7-clock-topc"
-> +	2) "samsung,exynos7-clock-top0"
-> +	3) "samsung,exynos7-clock-top1"
-> +	4) "samsung,exynos7-clock-atlas"
-> +	5) "samsung,exynos7-clock-ccore"
+You already documented that via comments though.
 
-[snip]
+> If there was a BTN_NONE or KEY_UNUSED it would had been better but I =
+think
+> that making a distinction between these two cases (reserved pin vs GP=
+IO
+> available but not used) is useful.
 
-> + - clocks: list of clock identifiers which are fed as the input to
-> +	the given clock controller. Please refer the next section to find
-> +	the input clocks for a given controller.
-> +
-> + - clock-names: list of names of clocks which are fed as the input
-> +	to the given clock controller.
+Maybe Nick can comment here.
 
-In the dtsi file added by patch 11/14, I don't see those being specified.
+>> I probably should add the two trailing _RESERVEDs, too?
+>>
+>=20
+> I see that is used for properties that are arrays, for example
+> "linux,keymap" in Documentation/devicetree/bindings/input/matrix-keym=
+ap.txt.
 
-> +
-> +Input clocks for topc clock controller:
-> +	- fin_pll
-> +	- fout_aud_pll
+That does not answer my question: Do all maxTouch touchpads (or
+specifically that in Spring) need eight entries, padded with said
+KEY_RESERVED? In my experiments using just six entries (i.e., until the
+non-zero entry) worked okay - so does this T19 message have specificall=
+y
+eight bits? Tegra used just four entries iirc.
 
-[snip]
+>> With my above snippet I got an awful lot of "Interrupt triggered but
+>> zero messages" warnings (which I simply commented out as quickfix).
+>> Is that why you are using _EDGE_FALLING? Or pin-function 0xf?
+>> (In my case the ChromeOS DT had IRQ_TYPE_NONE and pin-function 0x0.)
+>>
+>=20
+> These are two separate but related things:
+>=20
+> a) IRQF_TRIGGER_FALLING:
+>=20
+> Yes, the Chrome OS DT for Peach Pit also has IRQ_TYPE_NONE but the DT=
+S is
+> not correct.
+>=20
+> If you look at the Chrome OS atmel driver
+> (drivers/input/touchscreen/atmel_mxt_ts.c), it passes IRQF_TRIGGER_FA=
+LLING
+> to request_threaded_irq():
+>=20
+> /* Default to falling edge if no platform data provided */
+> irqflags =3D data->pdata ? data->pdata->irqflags : IRQF_TRIGGER_FALLI=
+NG;
+> error =3D request_threaded_irq(client->irq, NULL, mxt_interrupt,
+> 			     irqflags | IRQF_ONESHOT,
+> 			     client->name, data);
+>=20
+> The above code is wrong since is overwriting the edge/level type flag=
+s set
+> by OF when parsing the "interrupts" property so you have to use the
+> expected IRQ flags in your DTS.
+>=20
+> b) pin-function 0xf instead of 0x0:
+>=20
+> The pin-function 0x0 is GPIO input while 0xf is GPIO IRQ. Usually on =
+other
+> SoCs to use a GPIO IRQ you just configure the pad as GPIO input and t=
+hen
+> enable the pin as an interrupt but on Exynos SoC these are really two
+> different functions. So if you configure the pin as GPIO input and th=
+is
+> happens after the pin is configured as GPIO IRQ, interrupts are not t=
+riggered.
+>=20
+> I faced that issue before [1] and was solved with Tomasz's commit:
+>=20
+> f6a8249 pinctrl: exynos: Lock GPIOs as interrupts when used as EINTs
+>=20
+> which changes the pinctrl-exynos driver to setup a pin as GPIO IRQ on
+> .irq_request_resources instead of .irq_set_type. So, with that patch =
+even
+> when pin-function re-configures the function to GPIO input, is then
+> configured as GPIO IRQ when request_threaded_irq() is called.
+>=20
+> So probably is working for you just because you tested on linux-next =
+that
+> already has Tomasz's changes but still the correct thing to do is to =
+setup
+> the pin as 0xf. This change probably is needed on other pins used as =
+GPIO
+> IRQ that are using 0x0 now.
+>=20
+> Sorry, the email became longer than I wanted but I hope is helpful to=
+ you.
 
-> +/* PMS values for PLL 1451x */
-> +static const struct samsung_pll_rate_table pll1451x_24mhz_tbl[] = {
-> +	/* rate, m, p, s */
-> +	PLL_35XX_RATE(660000000, 165, 3, 1),
+Thanks for the explanations, I'll test those settings on Spring then.
 
-This array needs to be sorted by output rate. However you might want to
-rebase this series onto series [1] to eliminate this requirement. Be
-aware that mentioned series might need a respin, though.
+Could you point me to what ChromeOS tree and branch I should be looking
+at? For instance, the linux-next.git chromeos-3.8 branch did not have
+any DT for Spring. Therefore my series is based on /proc/device-tree
+rather than any ChromeOS source code.
 
-Also the rates seem to be too nicely rounded. Are they the real values
-that can be obtained using the PLL equation (what is required by the PLL
-framework) or a copy paste from the documentation? Similarly, series [1]
-lessens the requirement a bit, due to recalculation of rates from
-specified coefficients and warning about incorrect entries.
+Thanks,
+Andreas
 
-[1]
-https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35188.html
-
-> +	PLL_35XX_RATE(1800000000, 150, 2, 0),
-> +	PLL_35XX_RATE(1700000000, 425, 6, 0),
-> +	PLL_35XX_RATE(1600000000, 200, 3, 0),
-> +	PLL_35XX_RATE(1500000000, 125, 2, 0),
-> +	PLL_35XX_RATE(1400000000, 175, 3, 0),
-> +	PLL_35XX_RATE(1380000000, 115, 2, 0),
-> +	PLL_35XX_RATE(1300000000, 325, 6, 0),
-> +	PLL_35XX_RATE(1200000000, 100, 2, 0),
-> +	PLL_35XX_RATE(1180000000, 295, 6, 0),
-> +	PLL_35XX_RATE(1104000000, 276, 6, 0),
-
-[snip]
-
-> +	DIV(0, "dout_sclk_aud_pll", "mout_aud_pll_ctrl", DIV_TOPC3, 28, 3),
-> +};
-> +
-> +static struct samsung_gate_clock topc_gate_clks[] __initdata = {
-> +	GATE(ACLK_CCORE_532, "aclk_ccore_532", "dout_aclk_ccore_532",
-> +		ENABLE_ACLK_TOPC0, 0, CLK_IGNORE_UNUSED, 0),
-
-Why CLK_IGNORE_UNUSED? (The same question for all the gate clocks
-defined with it in the driver.)
-
-Best regards,
-Tomasz
+--=20
+SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 16746 AG N=FCrn=
+berg
