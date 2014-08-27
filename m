@@ -1,141 +1,150 @@
 From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V7 05/12] drm/exynos: dp: support drm_bridge
-Date: Wed, 27 Aug 2014 19:59:39 +0530
-Message-ID: <1409149783-12416-6-git-send-email-ajaykumar.rs@samsung.com>
+Subject: [PATCH V7 06/12] drm/bridge: ptn3460: support drm_panel
+Date: Wed, 27 Aug 2014 19:59:40 +0530
+Message-ID: <1409149783-12416-7-git-send-email-ajaykumar.rs@samsung.com>
 References: <1409149783-12416-1-git-send-email-ajaykumar.rs@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:25912 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934508AbaH0OjC (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:18492 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S934508AbaH0Ojw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Aug 2014 10:39:02 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Wed, 27 Aug 2014 10:39:52 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NAY004UCZD14050@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 27 Aug 2014 23:39:01 +0900 (KST)
+ with ESMTP id <0NAY00IVEZEDOV70@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 27 Aug 2014 23:39:49 +0900 (KST)
 In-reply-to: <1409149783-12416-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 Cc: inki.dae@samsung.com, thierry.reding@gmail.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Modify driver to support drm_bridge.
+Add drm_panel calls to the driver to make the panel and
+bridge work together in tandem.
 
 Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 ---
- drivers/gpu/drm/exynos/Kconfig          |    1 +
- drivers/gpu/drm/exynos/exynos_dp_core.c |   38 +++++++++++++++++++++++--------
- drivers/gpu/drm/exynos/exynos_dp_core.h |    1 +
- 3 files changed, 30 insertions(+), 10 deletions(-)
+ drivers/gpu/drm/bridge/Kconfig   |    1 +
+ drivers/gpu/drm/bridge/ptn3460.c |   37 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
 
-diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
-index 4c0e071..bdef294 100644
---- a/drivers/gpu/drm/exynos/Kconfig
-+++ b/drivers/gpu/drm/exynos/Kconfig
-@@ -54,6 +54,7 @@ config DRM_EXYNOS_DP
- 	depends on DRM_EXYNOS_FIMD && ARCH_EXYNOS
- 	default DRM_EXYNOS
- 	select DRM_PANEL
-+	select DRM_BRIDGE
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+index 7e63a52..d35fb68 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -12,6 +12,7 @@ config DRM_PTN3460
+ 	tristate "PTN3460 DP/LVDS bridge"
+ 	depends on OF
+ 	depends on I2C
++	select DRM_PANEL
  	help
- 	  This enables support for DP device.
+ 	  ptn3460 eDP-LVDS bridge chip driver.
  
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index 61ce6e4..a8a8b87 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -987,9 +987,17 @@ static struct drm_connector_helper_funcs exynos_dp_connector_helper_funcs = {
- };
+diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridge/ptn3460.c
+index 651640a..3cb3a7c 100644
+--- a/drivers/gpu/drm/bridge/ptn3460.c
++++ b/drivers/gpu/drm/bridge/ptn3460.c
+@@ -20,6 +20,8 @@
+ #include <linux/of.h>
+ #include <linux/of_gpio.h>
  
- /* returns the number of bridges attached */
--static int exynos_drm_attach_lcd_bridge(struct drm_device *dev,
-+static int exynos_drm_attach_lcd_bridge(struct exynos_dp_device *dp,
- 		struct drm_encoder *encoder)
- {
-+	int ret;
++#include <drm/drm_panel.h>
 +
-+	ret = drm_bridge_attach(dp->bridge, encoder);
-+	if (ret) {
-+		DRM_ERROR("Failed to attach bridge to encoder\n");
-+		return ret;
-+	}
-+
- 	return 0;
- }
+ #include "bridge/ptn3460.h"
  
-@@ -1003,9 +1011,11 @@ static int exynos_dp_create_connector(struct exynos_drm_display *display,
- 	dp->encoder = encoder;
- 
- 	/* Pre-empt DP connector creation if there's a bridge */
--	ret = exynos_drm_attach_lcd_bridge(dp->drm_dev, encoder);
--	if (ret)
--		return 0;
-+	if (dp->bridge) {
-+		ret = exynos_drm_attach_lcd_bridge(dp, encoder);
-+		if (!ret)
-+			return 0;
-+	}
- 
- 	connector->polled = DRM_CONNECTOR_POLL_HPD;
- 
-@@ -1257,7 +1267,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 	if (ret)
- 		return ret;
- 
--	if (!dp->panel) {
-+	if (!dp->panel && !dp->bridge) {
- 		ret = exynos_dp_dt_parse_panel(dp);
- 		if (ret)
- 			return ret;
-@@ -1348,7 +1358,7 @@ static const struct component_ops exynos_dp_ops = {
- static int exynos_dp_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct device_node *panel_node;
-+	struct device_node *node;
- 	struct exynos_dp_device *dp;
- 	int ret;
- 
-@@ -1362,14 +1372,22 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 	if (!dp)
- 		return -ENOMEM;
- 
--	panel_node = of_parse_phandle(dev->of_node, "panel", 0);
--	if (panel_node) {
--		dp->panel = of_drm_find_panel(panel_node);
--		of_node_put(panel_node);
-+	node = of_parse_phandle(dev->of_node, "panel", 0);
-+	if (node) {
-+		dp->panel = of_drm_find_panel(node);
-+		of_node_put(node);
- 		if (!dp->panel)
- 			return -EPROBE_DEFER;
+ #include "drm_crtc.h"
+@@ -38,6 +40,7 @@ struct ptn3460_bridge {
+ 	struct i2c_client *client;
+ 	struct drm_bridge bridge;
+ 	struct edid *edid;
++	struct drm_panel *panel;
+ 	int gpio_pd_n;
+ 	int gpio_rst_n;
+ 	u32 edid_emulation;
+@@ -137,6 +140,11 @@ static void ptn3460_pre_enable(struct drm_bridge *bridge)
+ 		gpio_set_value(ptn_bridge->gpio_rst_n, 1);
  	}
  
-+	node = of_parse_phandle(dev->of_node, "bridge", 0);
-+	if (node) {
-+		dp->bridge = of_drm_find_bridge(node);
-+		of_node_put(node);
-+		if (!dp->bridge)
++	if (drm_panel_prepare(ptn_bridge->panel)) {
++		DRM_ERROR("failed to prepare panel\n");
++		return;
++	}
++
+ 	/*
+ 	 * There's a bug in the PTN chip where it falsely asserts hotplug before
+ 	 * it is fully functional. We're forced to wait for the maximum start up
+@@ -153,6 +161,12 @@ static void ptn3460_pre_enable(struct drm_bridge *bridge)
+ 
+ static void ptn3460_enable(struct drm_bridge *bridge)
+ {
++	struct ptn3460_bridge *ptn_bridge = bridge_to_ptn3460(bridge);
++
++	if (drm_panel_enable(ptn_bridge->panel)) {
++		DRM_ERROR("failed to enable panel\n");
++		return;
++	}
+ }
+ 
+ static void ptn3460_disable(struct drm_bridge *bridge)
+@@ -164,6 +178,11 @@ static void ptn3460_disable(struct drm_bridge *bridge)
+ 
+ 	ptn_bridge->enabled = false;
+ 
++	if (drm_panel_disable(ptn_bridge->panel)) {
++		DRM_ERROR("failed to disable panel\n");
++		return;
++	}
++
+ 	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
+ 		gpio_set_value(ptn_bridge->gpio_rst_n, 1);
+ 
+@@ -173,6 +192,12 @@ static void ptn3460_disable(struct drm_bridge *bridge)
+ 
+ static void ptn3460_post_disable(struct drm_bridge *bridge)
+ {
++	struct ptn3460_bridge *ptn_bridge = bridge_to_ptn3460(bridge);
++
++	if (drm_panel_unprepare(ptn_bridge->panel)) {
++		DRM_ERROR("failed to unprepare panel\n");
++		return;
++	}
+ }
+ 
+ static void ptn3460_bridge_destroy(struct drm_bridge *bridge)
+@@ -274,6 +299,9 @@ int ptn3460_bridge_attach(struct drm_bridge *bridge)
+ 	drm_mode_connector_attach_encoder(&ptn_bridge->connector,
+ 							bridge->encoder);
+ 
++	if (ptn_bridge->panel)
++		drm_panel_attach(ptn_bridge->panel, &ptn_bridge->connector);
++
+ 	return ret;
+ }
+ 
+@@ -291,6 +319,7 @@ static int ptn3460_probe(struct i2c_client *client,
+ {
+ 	struct device *dev = &client->dev;
+ 	struct ptn3460_bridge *ptn_bridge;
++	struct device_node *panel_node;
+ 	int ret;
+ 
+ 	ptn_bridge = devm_kzalloc(dev, sizeof(*ptn_bridge), GFP_KERNEL);
+@@ -298,6 +327,14 @@ static int ptn3460_probe(struct i2c_client *client,
+ 		return -ENOMEM;
+ 	}
+ 
++	panel_node = of_parse_phandle(dev->of_node, "panel", 0);
++	if (panel_node) {
++		ptn_bridge->panel = of_drm_find_panel(panel_node);
++		of_node_put(panel_node);
++		if (!ptn_bridge->panel)
 +			return -EPROBE_DEFER;
 +	}
 +
- 	exynos_dp_display.ctx = dp;
- 
- 	ret = component_add(&pdev->dev, &exynos_dp_ops);
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.h b/drivers/gpu/drm/exynos/exynos_dp_core.h
-index a1aee69..3b0ba93 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.h
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.h
-@@ -150,6 +150,7 @@ struct exynos_dp_device {
- 	struct drm_connector	connector;
- 	struct drm_encoder	*encoder;
- 	struct drm_panel	*panel;
-+	struct drm_bridge	*bridge;
- 	struct clk		*clock;
- 	unsigned int		irq;
- 	void __iomem		*reg_base;
+ 	ptn_bridge->client = client;
+ 	ptn_bridge->gpio_pd_n = of_get_named_gpio(dev->of_node,
+ 							"powerdown-gpio", 0);
 -- 
 1.7.9.5
