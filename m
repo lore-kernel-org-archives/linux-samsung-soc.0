@@ -1,109 +1,43 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH 2/2] ARM: dts: Add DT changes for display on peach_pit
-Date: Wed, 27 Aug 2014 20:18:28 +0530
-Message-ID: <1409150908-12801-2-git-send-email-ajaykumar.rs@samsung.com>
-References: <1409150908-12801-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH 11/14] arm64: dts: Add initial device tree support for
+ EXYNOS7
+Date: Wed, 27 Aug 2014 15:54:00 +0100
+Message-ID: <20140827145359.GD13850@arm.com>
+References: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com>
+ <1409132660-1898-3-git-send-email-ch.naveen@samsung.com>
+ <20140827104231.GB7773@leverpostej>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:55450 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933630AbaH0OyX (ORCPT
+Received: from fw-tnat.austin.arm.com ([217.140.110.23]:24741 "EHLO
+	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S933630AbaH0Oyd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Aug 2014 10:54:23 -0400
-In-reply-to: <1409150908-12801-1-git-send-email-ajaykumar.rs@samsung.com>
+	Wed, 27 Aug 2014 10:54:33 -0400
+Content-Disposition: inline
+In-Reply-To: <20140827104231.GB7773@leverpostej>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, kgene.kim@gmail.com, inki.dae@samsung.com, thierry.reding@gmail.com, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "naveenkrishna.ch@gmail.com" <naveenkrishna.ch@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "cpgs@samsung.com" <cpgs@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Rob Herring <robh@kernel.org>
 
-Add DT nodes for ps8622 bridge chip and panel.
-Add backlight power supply for pwm-backlight.
-Also add bridge phandle needed by dp to enable display on peach_pit.
+On Wed, Aug 27, 2014 at 11:42:31AM +0100, Mark Rutland wrote:
+> On Wed, Aug 27, 2014 at 10:44:18AM +0100, Naveen Krishna Chatradhi wrote:
+> > +       cpus {
+> > +               #address-cells = <2>;
+> > +               #size-cells = <0>;
+> > +
+> > +               cpu@0 {
+> > +                       device_type = "cpu";
+> > +                       compatible = "arm,cortex-a57", "arm,armv8";
+> > +                       reg = <0x0 0x0>;
+> > +               };
+> > +       };
+> 
+> Only UP?
 
-Note that, peach_pit doesn't support "chunghwa,claa101wb01" panel,
-but still we choose to reuse the binding since "chunghwa,claa101wb01"
-has similar LCD timings.
+I see what you meant. Maybe this is populated by firmware and that's
+only an example.
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
----
-Changes since V1:
-	-- Remove "simple-panel" compatible string.
-	-- Use GPIO_ACTIVE_HIGH instead of 0.
-	-- Change panel node naming from "panel-simple" to "panel".
-
- arch/arm/boot/dts/exynos5420-peach-pit.dts |   36 +++++++++++++++-------------
- 1 file changed, 19 insertions(+), 17 deletions(-)
-
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index 228a6b1..1070a31 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -30,11 +30,12 @@
- 		i2c20 = "/spi@12d40000/cros-ec@0/i2c-tunnel";
- 	};
- 
--	backlight {
-+	backlight: backlight {
- 		compatible = "pwm-backlight";
- 		pwms = <&pwm 0 1000000 0>;
- 		brightness-levels = <0 100 500 1000 1500 2000 2500 2800>;
- 		default-brightness-level = <7>;
-+		power-supply = <&tps65090_fet1>;
- 		pinctrl-0 = <&pwm0_out>;
- 		pinctrl-names = "default";
- 	};
-@@ -100,6 +101,12 @@
- 		regulator-boot-on;
- 		regulator-always-on;
- 	};
-+
-+	panel: panel {
-+		compatible = "chunghwa,claa101wb01";
-+		power-supply = <&tps65090_fet6>;
-+		backlight = <&backlight>;
-+	};
- };
- 
- &dp {
-@@ -113,22 +120,7 @@
- 	samsung,link-rate = <0x06>;
- 	samsung,lane-count = <2>;
- 	samsung,hpd-gpio = <&gpx2 6 0>;
--
--	display-timings {
--		native-mode = <&timing1>;
--
--		timing1: timing@1 {
--			clock-frequency = <70589280>;
--			hactive = <1366>;
--			vactive = <768>;
--			hfront-porch = <40>;
--			hback-porch = <40>;
--			hsync-len = <32>;
--			vback-porch = <10>;
--			vfront-porch = <12>;
--			vsync-len = <6>;
--		};
--	};
-+	bridge = <&ps8625>;
- };
- 
- &fimd {
-@@ -155,6 +147,16 @@
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&max98090_irq>;
- 	};
-+
-+	ps8625: lvds-bridge@48 {
-+		compatible = "parade,ps8625";
-+		reg = <0x48>;
-+		sleep-gpios = <&gpx3 5 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&gpy7 7 GPIO_ACTIVE_HIGH>;
-+		lane-count = <2>;
-+		panel = <&panel>;
-+		use-external-pwm;
-+	};
- };
- 
- &hsi2c_9 {
 -- 
-1.7.9.5
+Catalin
