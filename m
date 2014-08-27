@@ -1,73 +1,65 @@
 From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: Re: [PATCH 2/2 v2] ARM: exynos_defconfig: enable USB gadget support
-Date: Wed, 27 Aug 2014 09:28:29 +0200
-Message-ID: <1409124509.31096.42.camel@collabora.co.uk>
+Subject: Re: [PATCH 0/2 v2] Fix Exynos peach USB on kernels with USB Gadget
+ support
+Date: Wed, 27 Aug 2014 09:44:04 +0200
+Message-ID: <1409125444.31096.44.camel@collabora.co.uk>
 References: <1409038230-7242-1-git-send-email-sjoerd.simons@collabora.co.uk>
-	 <1409038230-7242-3-git-send-email-sjoerd.simons@collabora.co.uk>
-	 <53FD36AD.1020509@suse.de>
+	 <53FD3D97.3010002@suse.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg="sha-1"; protocol="application/x-pkcs7-signature";
-	boundary="=-dopSnCAkQYD92HKKxYwG"
+	boundary="=-klu7rfdC2TpLkgcWQMso"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:47338 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:47355 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752121AbaH0H2h (ORCPT
+	with ESMTP id S1753425AbaH0HoL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 27 Aug 2014 03:28:37 -0400
-In-Reply-To: <53FD36AD.1020509@suse.de>
+	Wed, 27 Aug 2014 03:44:11 -0400
+In-Reply-To: <53FD3D97.3010002@suse.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
 
---=-dopSnCAkQYD92HKKxYwG
+--=-klu7rfdC2TpLkgcWQMso
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2014-08-27 at 03:38 +0200, Andreas F=C3=A4rber wrote:
-> Am 26.08.2014 09:30, schrieb Sjoerd Simons:
-> > Enable USB gadget support without support for any specific gadgets to
-> > more easily catch cases where a devices dts doesn't specify the usb
-> > controllers dr_mode while it should.
-> >=20
-> > Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-> > ---
-> >  Changes in v2: none
-> >=20
-> >  arch/arm/configs/exynos_defconfig | 1 +
-> >  1 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exyno=
-s_defconfig
-> > index fc7d168..3664120 100644
-> > --- a/arch/arm/configs/exynos_defconfig
-> > +++ b/arch/arm/configs/exynos_defconfig
-> > @@ -54,6 +54,7 @@ CONFIG_SMSC911X=3Dy
-> >  CONFIG_USB_USBNET=3Dy
-> >  CONFIG_USB_NET_SMSC75XX=3Dy
-> >  CONFIG_USB_NET_SMSC95XX=3Dy
-> > +CONFIG_USB_GADGET=3Dy
+On Wed, 2014-08-27 at 04:08 +0200, Andreas F=C3=A4rber wrote:
+> Hi,
 >=20
-> Do we also need CONFIG_USB_DWC3_DUAL_ROLE=3Dy? The default seemed to be
-> CONFIG_USB_DWC3_HOST.
+> Am 26.08.2014 09:30, schrieb Sjoerd Simons:
+> > I suspect other boards base using exynos5420/5800 might need the simila=
+r fixes
+> > (Arndale Octa and Samsung SMDK5420) to their dts files, so would be gre=
+at if
+> > folks with those board could verify this.
+>=20
+> usbdrd_dwc3_1 is indeed required for the Arndale Octa. Not sure about 0.
+>=20
+> I tested my attaching a USB 3.0 disk - is there an easier way to tell?
 
-Nope that gets set by this Kconfig snippet:
+That seems to be the easiest way to tell. In my testing when things
+broke no USB host functionality would work, so USB 3 isn't a
+requirement.  You can also build with USB_DWC3_DEBUG enabled and check
+the mode file it generates in debugfs to see & set the controller mode
+to see how it gets setup by default and change the mode without
+rebuilding the dts.
 
-choice
-   bool "DWC3 Mode Selection"
-   default USB_DWC3_DUAL_ROLE if (USB && USB_GADGET)
-   default USB_DWC3_HOST if (USB && !USB_GADGET)
-   default USB_DWC3_GADGET if (!USB && USB_GADGET)
+=46rom looking at the board on the arndaleboard wiki[0], it looks like it
+has one USB 3 host (which i guess is usbdrd_dwc3_1?) and a USB 2 OTG
+port which might be usbdrd_dwc3_0 (in which case the default setting for
+otg is correct).=20
 
-Iotw by both enable USB and USB_GADGET the default will switch form
-CONFIG_USB_DWC3_HOST to CONFIG_USB_DWC3_DUAL_ROLE=3Dy
+
+0: http://www.arndaleboard.org/wiki/index.php/O_WiKi#Detail_of_Arndale_Boar=
+d
 
 --=20
 Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 Collabora Ltd.
 
---=-dopSnCAkQYD92HKKxYwG
+--=-klu7rfdC2TpLkgcWQMso
 Content-Type: application/x-pkcs7-signature; name="smime.p7s"
 Content-Disposition: attachment; filename="smime.p7s"
 Content-Transfer-Encoding: base64
@@ -169,18 +161,18 @@ Bvltl/MkxKBw0v0ghfzzjrI/3pGg7jRPSSQf/XLKaGuFvlvKV9bEbqwQxRy9AwbnVENT4L00izzh
 yfXRIOv7F3G3YonqsyymASIEMYIDEDCCAwwCAQEwdjBiMQswCQYDVQQGEwJVUzEVMBMGA1UEChMM
 RGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSEwHwYDVQQDExhEaWdpQ2Vy
 dCBBc3N1cmVkIElEIENBLTECEA2fwUKNhvkL8dN88tUFvVwwCQYFKw4DAhoFAKCCAW8wGAYJKoZI
-hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTQwODI3MDcyODI5WjAjBgkqhkiG
-9w0BCQQxFgQU1rUDsTiZpLQMB9I/2ODyw9V9QAIwgYUGCSsGAQQBgjcQBDF4MHYwYjELMAkGA1UE
+hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTQwODI3MDc0NDA0WjAjBgkqhkiG
+9w0BCQQxFgQUCuOKwiUQTXzyUZwZZyMPjOwkKLwwgYUGCSsGAQQBgjcQBDF4MHYwYjELMAkGA1UE
 BhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEh
 MB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xAhANn8FCjYb5C/HTfPLVBb1cMIGHBgsq
 hkiG9w0BCRACCzF4oHYwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcG
 A1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0x
-AhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBAQUABIIBAF4OHSZ8LxkkLKGqQn72dCIdhA2c
-gCVDfGg509xQ15IMXEfZwZIAbjrZnh7mzF5CYFnBMcLSBc3C41g/NgkG0c36JkZSz0kZi/nnriM5
-7l893p91sNI7jSjW/o9Wcv3rscFnmWJVtXpsA73WwUBgx0UxU+zM9vGluDBOJZVXHu0tkk9TnVp8
-RgEa8FBK+AZyxaLG1Ag1hfrW/VMPmGGiKgj++4MeLHfzwV32CFLXr+3RkHqciYqJ1ZO+GB/7HRgW
-bHUNjjuRAI0NreFqpDLMMI311AsF6F/SH6qqrXdEdrMDxi9BGNThR7V7WHz+JDpJ1Xi5cHFJy48M
-xlvDsxMP0+4AAAAAAAA=
+AhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBAQUABIIBAEYHLoiDXVoIOBK4WWOc6hDMbRR8
+uUzazJEdK3VfNsYYWpeOpgEJKu5zL8z0sjr1PhTbS3pYD3g/W4qzinTNYXTYojrXzbsQ9P26oTAH
+fB36bU6/qX6cNO+SJYOnYYHjjP7OJd7nVIw6O+ZfO2CY/XZFPclPwbE3Z+JzOy8lt+FJWUjhKiWf
+Vk8nbDA6MQvtkcGeOCSyw0ar+3XuC0KOw+smBFns2EFwAm54tmCTFPzW7L31WnosQ4pDpqKt7KNk
+Aa16M199DnX1t+9zSa4xlGeFnGCMCsHQwKi3SrgOpEzBU+KsdcB7qKmPJ60447nY4QPKn+BcUY6v
+TtnDBanFqmgAAAAAAAA=
 
 
---=-dopSnCAkQYD92HKKxYwG--
+--=-klu7rfdC2TpLkgcWQMso--
