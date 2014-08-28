@@ -1,88 +1,110 @@
 From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 11/14] arm64: dts: Add initial device tree support for
- EXYNOS7
-Date: Thu, 28 Aug 2014 19:17:28 +0100
-Message-ID: <20140828181728.GF18005@leverpostej>
-References: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com>
- <1409132660-1898-3-git-send-email-ch.naveen@samsung.com>
- <20140828035639.GB4972@localhost>
- <20140828094846.GD14650@leverpostej>
- <CAOesGMjY8wfAcq2fLgs=ZWHdiWtFqxr+ncUKTje0SnXqO-CCgQ@mail.gmail.com>
- <20140828170306.GQ14650@leverpostej>
- <CAOesGMgYeFObKHA9znzBq9t2mLv8WWT1QaKugQ6yf7RgV09Qyg@mail.gmail.com>
- <20140828173931.GB18005@leverpostej>
- <CAMuHMdXTo+JN+eSgvU_HkMKcv3RS1Dr+D3VnHF8x+EdKiK8j1g@mail.gmail.com>
+Subject: Re: [PATCH 1/5] usb: dwc3: exynos: Add support for SCLK present on
+ Exynos7
+Date: Thu, 28 Aug 2014 19:48:47 +0100
+Message-ID: <20140828184847.GA18464@leverpostej>
+References: <1409212920-28526-1-git-send-email-gautam.vivek@samsung.com>
+ <1409212920-28526-2-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:39469 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750942AbaH1SSa (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Aug 2014 14:18:30 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdXTo+JN+eSgvU_HkMKcv3RS1Dr+D3VnHF8x+EdKiK8j1g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1409212920-28526-2-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "balbi@ti.com" <balbi@ti.com>, "kishon@ti.com" <kishon@ti.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Olof Johansson <olof@lixom.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Rob Herring <robh@kernel.org>, Marc Zyngier <Marc.Zyngier@arm.com>, Catalin Marinas <Catalin.Marinas@arm.com>, Thomas Abraham <thomas.ab@samsung.com>, "cpgs@samsung.com" <cpgs@samsung.com>, "naveenkrishna.ch@gmail.com" <naveenkrishna.ch@gmail.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Thu, Aug 28, 2014 at 06:47:00PM +0100, Geert Uytterhoeven wrote:
-> Hi Mark,
+On Thu, Aug 28, 2014 at 09:01:56AM +0100, Vivek Gautam wrote:
+> Exynos7 also has a separate special gate clock going to the IP
+> apart from the usual AHB clock. So add support for the same.
 > 
-> On Thu, Aug 28, 2014 at 7:39 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> >> >> Ok. If address-cells is kept at 2 the unit address needs to be changed
-> >> >> to "0,0". So one or the other has to be changed.
-> >> >
-> >> > I'm happy either way.
-> >> >
-> >> > I'm not sure the rest of the tree had "0," prefixes on all of the
-> >> > unit-addresses for 64-bit addresses that were under 4GB, and I'm not
-> >> > sure that existing dts consistently do that either.
-> >> >
-> >> > Do we want to enforce that for all 64-bit unit-addresses?
-> >>
-> >> Yeah, I believe that's the only valid format for a 2-address-cell unit address.
-> >
-> > Fair enough. I didn't spot this explicitly mentioned anywhere in ePAPR,
-> > but the examples match.
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> ---
+>  drivers/usb/dwc3/dwc3-exynos.c |   16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
 > 
-> I couldn't find much about how the unit-addresses should really look like.
-> 
-> Power_ePAPR_APPROVED_v1.1.pdf:
-> "The unit-address component of the name is specific to the bus type on
-> which the node sits. It consists
-> of one or more ASCII characters from the set of characters in Table
-> 2-1. The unit-address must
-> match the first address specified in the reg property of the node. If
-> the node has no reg property, the
-> @ and unit-address must be omitted and the node-name alone
-> differentiates the node from other nodes
-> at the same level in the tree. The binding for a particular bus may
-> specify additional, more specific
-> requirements for the format of reg and the unit-address."
-> 
-> "Table 2.1" contains lot of characters, definitely not limited to hex numbers.
-> Also nothing about (not) needing a "0x" prefix.
+> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
+> index f9fb8ad..bab6395 100644
+> --- a/drivers/usb/dwc3/dwc3-exynos.c
+> +++ b/drivers/usb/dwc3/dwc3-exynos.c
+> @@ -35,6 +35,7 @@ struct dwc3_exynos {
+>  	struct device		*dev;
+>  
+>  	struct clk		*clk;
+> +	struct clk		*sclk;
+>  	struct regulator	*vdd33;
+>  	struct regulator	*vdd10;
+>  };
+> @@ -141,10 +142,17 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
+>  		return -EINVAL;
+>  	}
+>  
+> +	/* Exynos7 has a special gate clock going to this IP */
+> +	exynos->sclk = devm_clk_get(dev, "usbdrd30_sclk");
+> +	if (IS_ERR(exynos->sclk))
+> +		dev_warn(dev, "couldn't get sclk\n");
 
-This is unfortunate. I guess this was assumed to be implied by way of
-the examples. :/
+Doesn't this introduce a pointless warning for Exynos SoCs other than
+Exynos7?
 
-> > I should probably re-jig that checkpatch test I had for unit-addresses.
-> 
-> It would be great if dtc started complaining about unit-addresses not
-> matching the first reg property.
+> +
+>  	exynos->dev	= dev;
+>  	exynos->clk	= clk;
+>  
+>  	clk_prepare_enable(exynos->clk);
+> +	if (!IS_ERR(exynos->sclk))
+> +		clk_prepare_enable(exynos->sclk);
 
-Agreed.
-
-When I last tried I thought that required more complex parsing than
-could be done with a regex.
-
-That said, I'd forgotten that properties must come before child nodes,
-so I though I had to at least balance '{' and '}' for children. I guess
-all we need to do is find a line beginning with '\s*reg\s*=\s*<' before
-the next '{' or '}'.
-
-Maybe this will be easier than previously thought. :)
+If you replaced the returned err value with NULL you could avoid these
+IS_ERR cases.
 
 Mark.
+
+>  
+>  	exynos->vdd33 = devm_regulator_get(dev, "vdd33");
+>  	if (IS_ERR(exynos->vdd33)) {
+> @@ -187,6 +195,8 @@ err4:
+>  err3:
+>  	regulator_disable(exynos->vdd33);
+>  err2:
+> +	if (!IS_ERR(exynos->sclk))
+> +		clk_disable_unprepare(exynos->sclk);
+>  	clk_disable_unprepare(clk);
+>  	return ret;
+>  }
+> @@ -199,6 +209,8 @@ static int dwc3_exynos_remove(struct platform_device *pdev)
+>  	platform_device_unregister(exynos->usb2_phy);
+>  	platform_device_unregister(exynos->usb3_phy);
+>  
+> +	if (!IS_ERR(exynos->sclk))
+> +		clk_disable_unprepare(exynos->sclk);
+>  	clk_disable_unprepare(exynos->clk);
+>  
+>  	regulator_disable(exynos->vdd33);
+> @@ -220,6 +232,8 @@ static int dwc3_exynos_suspend(struct device *dev)
+>  {
+>  	struct dwc3_exynos *exynos = dev_get_drvdata(dev);
+>  
+> +	if (!IS_ERR(exynos->sclk))
+> +		clk_disable(exynos->sclk);
+>  	clk_disable(exynos->clk);
+>  
+>  	regulator_disable(exynos->vdd33);
+> @@ -245,6 +259,8 @@ static int dwc3_exynos_resume(struct device *dev)
+>  	}
+>  
+>  	clk_enable(exynos->clk);
+> +	if (!IS_ERR(exynos->sclk))
+> +		clk_enable(exynos->sclk);
+>  
+>  	/* runtime set active to reflect active state. */
+>  	pm_runtime_disable(dev);
+> -- 
+> 1.7.10.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
