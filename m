@@ -1,69 +1,87 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH V2 1/2] ARM: dts: Add DT changes for display on snow
-Date: Thu, 28 Aug 2014 15:28:39 +0100
-Message-ID: <20140828142839.GK14650@leverpostej>
-References: <1409150908-12801-1-git-send-email-ajaykumar.rs@samsung.com>
- <20140827150146.GB9737@leverpostej>
- <CAEC9eQMKfso-rmMdqyDZeCdaxf21O1fqN6Z2YrS=njqGHh5d5Q@mail.gmail.com>
- <20140828091509.GA14650@leverpostej>
- <CAEC9eQN+EJmrG70O+2Sg5GD0OHudhqo5beGDN8K4_kmOKKPOmw@mail.gmail.com>
- <20140828131017.GD14388@ulmo>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v3 0/8] thermal: exynos: various cleanups
+Date: Thu, 28 Aug 2014 10:49:22 -0400
+Message-ID: <20140828144921.GB18194@developer>
+References: <1406826667-2289-1-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:36848 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750764AbaH1O3n (ORCPT
+Received: from mail-vc0-f178.google.com ([209.85.220.178]:39770 "EHLO
+	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750790AbaH1OtP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Aug 2014 10:29:43 -0400
+	Thu, 28 Aug 2014 10:49:15 -0400
 Content-Disposition: inline
-In-Reply-To: <20140828131017.GD14388@ulmo>
+In-Reply-To: <1406826667-2289-1-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Ajay kumar <ajaynumb@gmail.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "kgene.kim@gmail.com" <kgene.kim@gmail.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "seanpaul@google.com" <seanpaul@google.com>, "jg1.han@samsung.com" <jg1.han@samsung.com>, "joshi@samsung.com" <joshi@samsung.com>, "prashanth.g@samsung.com" <prashanth.g@samsung.com>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Eduardo Valentin <eduardo.valentin@ti.com>, Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Thu, Aug 28, 2014 at 02:10:18PM +0100, Thierry Reding wrote:
-> On Thu, Aug 28, 2014 at 03:04:32PM +0530, Ajay kumar wrote:
-> > On Thu, Aug 28, 2014 at 2:45 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> > > On Thu, Aug 28, 2014 at 06:34:33AM +0100, Ajay kumar wrote:
-> > >> On Wed, Aug 27, 2014 at 8:31 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> > >> > On Wed, Aug 27, 2014 at 03:48:27PM +0100, Ajay Kumar wrote:
-> > >> >> Add DT nodes for ptn3460 bridge chip and panel.
-> > >> >> Add backlight enable pin and backlight power supply for pwm-backlight.
-> > >> >> Also add bridge phandle needed by dp to enable display on snow.
-> > >> >>
-> > >> >> Note that, snow doesn't support "chunghwa,claa101wb01" panel,
-> > >> >> but still we choose to reuse the binding since "chunghwa,claa101wb01"
-> > >> >> has similar LCD timings.
-> > >> >
-> > >> > What does it actually have?
-> > >> >
-> > >> > It's fine to have "chunghwa,claa101wb01" as a fallback but we should
-> > >> > have an identifier for the actual display, too.
-> > >> Actual display used is "AUO,B116XTN0", for which no data currently exists
-> > >> in panel file. Instead of adding a new panel_desc for B116XTN0,
-> > >> why not we reuse existing ones? what is the "identifier" you are talking about?
-> > >
-> > > The compatible string.
-> > >
-> > > So in the dts we'd have compatible = "au0,b116xtn0", "chunghwa,claa101wb01";
-> > Sorry, hardware engineer says actual LCD name is "auo,b116xw03".
-> > 
-> > > That way if we need specific data we can add it later.
-> > I think we can add a new panel_desc for "auo,b116xw03".
-> > Because its actual LCD dimension is 256x144, but "chungwa, claa101wb01" has
-> > LCD dimension 223x125.
-> > What is Thierry's opinion on adding this new LCD?
+Amit,
+
+On Thu, Jul 31, 2014 at 07:10:58PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> Hi,
 > 
-> I think you should simply add a new panel_desc for the panel. It may use
-> similar timings, but it's likely not "compatible" in the way required by
-> device tree. As you say, dimensions are different and those may have an
-> influence on the DPI setting. There's really no reason why this should
-> share the panel_desc with another panel.
+> This patch series contains various cleanups for EXYNOS thermal
+> driver.  Overall it decreases driver's LOC by 9%.  It is based
+> on next-20140731 kernel.  It should not cause any functionality
+> changes.
 > 
-> Thierry
 
-This sounds sane to me.
+Did you have the time to test this series?
 
-Mark.
+> Changes since v2 (https://lkml.org/lkml/2014/6/17/436):
+> - synced patches against next-20140731
+> - dropped patch "thermal: exynos: remove dead code for
+>   TYPE_TWO_POINT_TRIMMING calibration" (newly added Exynos3250
+>   SoC support uses TYPE_TWO_POINT_TRIMMING calibration)
+> - updated patch description for patch #2
+> - dropped Reviewed-by from Amit from patch #8 (due to changed
+>   scope of the patch)
+> 
+> Changes since v1 (https://lkml.org/lkml/2014/5/5/194):
+> - synced patches against next-20140617
+> - merged patch "thermal: exynos: remove unused defines" into
+>   "thermal: exynos: remove unused struct exynos_tmu_registers
+>   entries" one (per request from Eduardo)
+> - improved patch descriptions for patches #1-5
+> - fixed documentation for pdata->gain and pdata->reference_voltage
+> - added Reviewed-by from Amit to patches #6, #7 and #10
+> - added missing Acked-by from Kyungmin Park
+> 
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
+> 
+> Bartlomiej Zolnierkiewicz (8):
+>   thermal: exynos: remove unused struct exynos_tmu_registers entries
+>   thermal: exynos: remove dead code for HW_MODE calibration
+>   thermal: exynos: remove redundant pdata checks from
+>     exynos_tmu_initialize()
+>   thermal: exynos: remove redundant threshold_code checks from
+>     exynos_tmu_initialize()
+>   thermal: exynos: simplify temp_to_code() and code_to_temp()
+>   thermal: exynos: cache non_hw_trigger_levels in pdata
+>   thermal: exynos: remove redundant pdata checks from
+>     exynos_tmu_control()
+>   thermal: exynos: remove identical values from exynos*_tmu_registers
+>     structures
+> 
+>  drivers/thermal/samsung/exynos_thermal_common.h |   1 -
+>  drivers/thermal/samsung/exynos_tmu.c            | 126 +++++-------------------
+>  drivers/thermal/samsung/exynos_tmu.h            |  74 +-------------
+>  drivers/thermal/samsung/exynos_tmu_data.c       |  56 ++---------
+>  drivers/thermal/samsung/exynos_tmu_data.h       |  31 +-----
+>  5 files changed, 35 insertions(+), 253 deletions(-)
+> 
+> -- 
+> 1.8.2.3
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
