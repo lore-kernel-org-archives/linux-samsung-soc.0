@@ -1,159 +1,42 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 06/15] drm/exynos/ipp: free partially allocated resources
- on error
-Date: Thu, 28 Aug 2014 08:59:00 +0900
-Message-ID: <53FE70C4.9020501@samsung.com>
-References: <1408693946-15456-1-git-send-email-a.hajda@samsung.com>
- <1408693946-15456-7-git-send-email-a.hajda@samsung.com>
- <53FC1460.5090000@samsung.com> <53FDB297.7070400@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 00/14] Support 64bit Cortex A57 based Exynos7 SoC
+Date: Wed, 27 Aug 2014 20:47:58 -0700
+Message-ID: <20140828034758.GA4972@localhost>
+References: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <53FDB297.7070400@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:44139 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750714AbaH1EFf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 28 Aug 2014 00:05:35 -0400
+Received: by mail-pa0-f41.google.com with SMTP id lj1so814834pab.14
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 27 Aug 2014 21:05:34 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: catalin.marinas@arm.com, naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, cpgs@samsung.com
 
-Hi,
+Naveen,
 
-On 08/27/2014 07:27 PM, Andrzej Hajda wrote:
-> On 08/26/2014 07:00 AM, Joonyoung Shim wrote:
->> Hi Andrzej,
->>
->> On 08/22/2014 04:52 PM, Andrzej Hajda wrote:
->>> In case of allocation errors some already allocated buffers
->>> were not freed. The patch fixes it.
->>>
->>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->>> ---
->>>  drivers/gpu/drm/exynos/exynos_drm_ipp.c | 68 ++++++++++++++++-----------------
->>>  1 file changed, 33 insertions(+), 35 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
->>> index 060a198..728f3b9 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
->>> +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
->>> @@ -599,6 +599,37 @@ static int ipp_set_mem_node(struct exynos_drm_ippdrv *ippdrv,
->>>  	return ret;
->>>  }
->>>  
->>> +static int ipp_put_mem_node(struct drm_device *drm_dev,
->>> +		struct drm_exynos_ipp_cmd_node *c_node,
->>> +		struct drm_exynos_ipp_mem_node *m_node)
->>> +{
->>> +	int i;
->>> +
->>> +	DRM_DEBUG_KMS("node[0x%x]\n", (int)m_node);
->>> +
->>> +	if (!m_node) {
->>> +		DRM_ERROR("invalid dequeue node.\n");
->>> +		return -EFAULT;
->>> +	}
->>> +
->>> +	DRM_DEBUG_KMS("ops_id[%d]\n", m_node->ops_id);
->>> +
->>> +	/* put gem buffer */
->>> +	for_each_ipp_planar(i) {
->>> +		unsigned long handle = m_node->buf_info.handles[i];
->>> +		if (handle)
->>> +			exynos_drm_gem_put_dma_addr(drm_dev, handle,
->>> +							c_node->filp);
->>> +	}
->>> +
->>> +	/* conditionally remove from queue */
->>> +	if (m_node->list.next)
->> How about do INIT_LIST_HEAD for list in ipp_get_mem_node()?
-> 
-> I am not sure if it is better. For sure it adds unnecessary
-> initialization sequence.
+On Wed, Aug 27, 2014 at 03:14:16PM +0530, Naveen Krishna Chatradhi wrote:
+> This patchset supports new Exynos7 Samsung SoC based on Cortex-A57.
+> Exynos7 is a System-On-Chip (SoC) that is based on 64-bit
+> ARMv8 RISC processor.
 
-In other words, this NULL checking is unnecessary if you initialize the
-list_head by INIT_LIST_HEAD.
+Your emails haven't threaded properly, so the series of patches are not
+recognized as comments to the envelope (00/14) email. It makes it harder
+to review them in order, and some mailers might not group them well.
 
-> Maybe adding list_is_initialized inline function to list.h would be the
-> best solution.
+> We tested these patches with the 
+> "arm64: dts: add <dt-bindings/> symlink" change posted @
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-January/224629.html
 
-There is just list_empty and we can't know whether list is initialized
-or not. I recommend to use initialized list_head.
+That means that these patches can't be picked up until a permanent
+solution for that has gone in.
 
-Thanks.
 
-> 
-> Regards
-> Andrzej
-> 
->>
->>> +		list_del(&m_node->list);
->>> +	kfree(m_node);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>>  static struct drm_exynos_ipp_mem_node
->>>  		*ipp_get_mem_node(struct drm_device *drm_dev,
->>>  		struct drm_file *file,
->>> @@ -634,7 +665,8 @@ static struct drm_exynos_ipp_mem_node
->>>  					qbuf->handle[i], file);
->>>  			if (IS_ERR(addr)) {
->>>  				DRM_ERROR("failed to get addr.\n");
->>> -				goto err_clear;
->>> +				ipp_put_mem_node(drm_dev, c_node, m_node);
->>> +				return ERR_PTR(-EFAULT);
->>>  			}
->>>  
->>>  			buf_info->handles[i] = qbuf->handle[i];
->>> @@ -649,40 +681,6 @@ static struct drm_exynos_ipp_mem_node
->>>  	mutex_unlock(&c_node->mem_lock);
->>>  
->>>  	return m_node;
->>> -
->>> -err_clear:
->>> -	kfree(m_node);
->>> -	return ERR_PTR(-EFAULT);
->>> -}
->>> -
->>> -static int ipp_put_mem_node(struct drm_device *drm_dev,
->>> -		struct drm_exynos_ipp_cmd_node *c_node,
->>> -		struct drm_exynos_ipp_mem_node *m_node)
->>> -{
->>> -	int i;
->>> -
->>> -	DRM_DEBUG_KMS("node[0x%x]\n", (int)m_node);
->>> -
->>> -	if (!m_node) {
->>> -		DRM_ERROR("invalid dequeue node.\n");
->>> -		return -EFAULT;
->>> -	}
->>> -
->>> -	DRM_DEBUG_KMS("ops_id[%d]\n", m_node->ops_id);
->>> -
->>> -	/* put gem buffer */
->>> -	for_each_ipp_planar(i) {
->>> -		unsigned long handle = m_node->buf_info.handles[i];
->>> -		if (handle)
->>> -			exynos_drm_gem_put_dma_addr(drm_dev, handle,
->>> -							c_node->filp);
->>> -	}
->>> -
->>> -	/* delete list in queue */
->>> -	list_del(&m_node->list);
->>> -	kfree(m_node);
->>> -
->>> -	return 0;
->>>  }
->>>  
->>>  static void ipp_free_event(struct drm_pending_event *event)
->>>
->>
-> 
-> 
+-Olof
