@@ -1,174 +1,76 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH V2 1/2] ARM: dts: Add DT changes for display on snow
-Date: Thu, 28 Aug 2014 10:15:09 +0100
-Message-ID: <20140828091509.GA14650@leverpostej>
-References: <1409150908-12801-1-git-send-email-ajaykumar.rs@samsung.com>
- <20140827150146.GB9737@leverpostej>
- <CAEC9eQMKfso-rmMdqyDZeCdaxf21O1fqN6Z2YrS=njqGHh5d5Q@mail.gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v9 3/5] rtc: max77686: Fail to probe if no RTC regmap
+ irqchip is set
+Date: Thu, 28 Aug 2014 11:21:55 +0200
+Message-ID: <1409217715.20020.7.camel@AMDC1943>
+References: <1408350877-15921-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1408350877-15921-4-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:65039 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S934783AbaH1JQS (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:57306 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932467AbaH1JV7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Aug 2014 05:16:18 -0400
-Content-Disposition: inline
-In-Reply-To: <CAEC9eQMKfso-rmMdqyDZeCdaxf21O1fqN6Z2YrS=njqGHh5d5Q@mail.gmail.com>
+	Thu, 28 Aug 2014 05:21:59 -0400
+In-reply-to: <1408350877-15921-4-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "kgene.kim@gmail.com" <kgene.kim@gmail.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "seanpaul@google.com" <seanpaul@google.com>, "jg1.han@samsung.com" <jg1.han@samsung.com>, "joshi@samsung.com" <joshi@samsung.com>, "prashanth.g@samsung.com" <prashanth.g@samsung.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Thu, Aug 28, 2014 at 06:34:33AM +0100, Ajay kumar wrote:
-> On Wed, Aug 27, 2014 at 8:31 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> > On Wed, Aug 27, 2014 at 03:48:27PM +0100, Ajay Kumar wrote:
-> >> Add DT nodes for ptn3460 bridge chip and panel.
-> >> Add backlight enable pin and backlight power supply for pwm-backlight.
-> >> Also add bridge phandle needed by dp to enable display on snow.
-> >>
-> >> Note that, snow doesn't support "chunghwa,claa101wb01" panel,
-> >> but still we choose to reuse the binding since "chunghwa,claa101wb01"
-> >> has similar LCD timings.
-> >
-> > What does it actually have?
-> >
-> > It's fine to have "chunghwa,claa101wb01" as a fallback but we should
-> > have an identifier for the actual display, too.
-> Actual display used is "AUO,B116XTN0", for which no data currently exists
-> in panel file. Instead of adding a new panel_desc for B116XTN0,
-> why not we reuse existing ones? what is the "identifier" you are talking about?
+On pon, 2014-08-18 at 10:34 +0200, Javier Martinez Canillas wrote:
+> The max77686 mfd driver adds a regmap IRQ chip which creates an
+> IRQ domain that is used to map the virtual RTC alarm1 interrupt.
+> 
+> The RTC driver assumes that this will always be true since the
+> PMIC IRQ is a required property according to the max77686 DT
+> binding doc. If an "interrupts" property is not defined for a
+> max77686 PMIC, then the mfd probe function will fail and the
+> RTC platform driver will never be probed. But even when it is
+> not possible to probe the rtc-max77686 driver without a regmap
+> IRQ chip, it's better to explicitly check if the IRQ chip data
+> is not NULL and gracefully fail instead of getting an OOPS.
 
-The compatible string.
+The OOPS was possible only with Bartlomiej's patch because he changed
+the MFD driver probe function to skip IRQ setup on lack of interrupts.
+In current state the OOPS should not happen so mentioning OOPS in commit
+message may be misleading. Maybe just don't put the OOPS here?
 
-So in the dts we'd have compatible = "au0,b116xtn0", "chunghwa,claa101wb01";
+Anyway the patch looks good and a check for non-null
+regmap_irq_chip_data is still a valid precaution so:
 
-That way if we need specific data we can add it later.
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-What vendor is AU0? Can we add a vendor-prefix in parallel?
+Best regards,
+Krzysztof
 
-Thanks,
-Mark.
 
 > 
-> Ajay
-> > Thanks,
-> > Mark.
-> >
-> >> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> >> ---
-> >> Changes since V1:
-> >>       -- Remove "simple-panel" compatible string.
-> >>       -- Use GPIO_ACTIVE_HIGH instead of 0.
-> >>       -- Change panel node naming from "panel-simple" to "panel".
-> >>
-> >>  arch/arm/boot/dts/exynos5250-snow.dts |   41 ++++++++++++++++++---------------
-> >>  1 file changed, 22 insertions(+), 19 deletions(-)
-> >>
-> >> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-> >> index f2b8c41..1ac9709 100644
-> >> --- a/arch/arm/boot/dts/exynos5250-snow.dts
-> >> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-> >> @@ -9,6 +9,7 @@
-> >>  */
-> >>
-> >>  /dts-v1/;
-> >> +#include <dt-bindings/gpio/gpio.h>
-> >>  #include "exynos5250.dtsi"
-> >>  #include "exynos5250-cros-common.dtsi"
-> >>
-> >> @@ -181,7 +182,7 @@
-> >>                                       dcdc3 {
-> >>                                               ti,enable-ext-control;
-> >>                                       };
-> >> -                                     fet1 {
-> >> +                                     fet1: fet1 {
-> >>                                               regulator-name = "vcd_led";
-> >>                                               ti,overcurrent-wait = <3>;
-> >>                                       };
-> >> @@ -204,7 +205,7 @@
-> >>                                               regulator-always-on;
-> >>                                               ti,overcurrent-wait = <3>;
-> >>                                       };
-> >> -                                     fet6 {
-> >> +                                     fet6: fet6 {
-> >>                                               regulator-name = "lcd_vdd";
-> >>                                               ti,overcurrent-wait = <3>;
-> >>                                       };
-> >> @@ -253,6 +254,15 @@
-> >>                       pinctrl-0 = <&max98095_en>;
-> >>                       pinctrl-names = "default";
-> >>               };
-> >> +
-> >> +             ptn3460: lvds-bridge@20 {
-> >> +                     compatible = "nxp,ptn3460";
-> >> +                     reg = <0x20>;
-> >> +                     powerdown-gpios = <&gpy2 5 GPIO_ACTIVE_HIGH>;
-> >> +                     reset-gpios = <&gpx1 5 GPIO_ACTIVE_HIGH>;
-> >> +                     edid-emulation = <5>;
-> >> +                     panel = <&panel>;
-> >> +             };
-> >>       };
-> >>
-> >>       i2s0: i2s@03830000 {
-> >> @@ -300,11 +310,13 @@
-> >>               vdd_pll-supply = <&ldo8_reg>;
-> >>       };
-> >>
-> >> -     backlight {
-> >> +     backlight: backlight {
-> >>               compatible = "pwm-backlight";
-> >>               pwms = <&pwm 0 1000000 0>;
-> >>               brightness-levels = <0 100 500 1000 1500 2000 2500 2800>;
-> >>               default-brightness-level = <7>;
-> >> +             enable-gpios = <&gpx3 0 GPIO_ACTIVE_HIGH>;
-> >> +             power-supply = <&fet1>;
-> >>               pinctrl-0 = <&pwm0_out>;
-> >>               pinctrl-names = "default";
-> >>       };
-> >> @@ -314,6 +326,12 @@
-> >>               samsung,invert-vclk;
-> >>       };
-> >>
-> >> +     panel: panel {
-> >> +             compatible = "chunghwa,claa101wb01";
-> >> +             power-supply = <&fet6>;
-> >> +             backlight = <&backlight>;
-> >> +     };
-> >> +
-> >>       dp-controller@145B0000 {
-> >>               status = "okay";
-> >>               pinctrl-names = "default";
-> >> @@ -325,22 +343,7 @@
-> >>               samsung,link-rate = <0x0a>;
-> >>               samsung,lane-count = <2>;
-> >>               samsung,hpd-gpio = <&gpx0 7 0>;
-> >> -
-> >> -             display-timings {
-> >> -                     native-mode = <&timing1>;
-> >> -
-> >> -                     timing1: timing@1 {
-> >> -                             clock-frequency = <70589280>;
-> >> -                             hactive = <1366>;
-> >> -                             vactive = <768>;
-> >> -                             hfront-porch = <40>;
-> >> -                             hback-porch = <40>;
-> >> -                             hsync-len = <32>;
-> >> -                             vback-porch = <10>;
-> >> -                             vfront-porch = <12>;
-> >> -                             vsync-len = <6>;
-> >> -                     };
-> >> -             };
-> >> +             bridge = <&ptn3460>;
-> >>       };
-> >>  };
-> >>
-> >> --
-> >> 1.7.9.5
-> >>
-> >> --
-> >> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> >> the body of a message to majordomo@vger.kernel.org
-> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> >>
+> Reported-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
 > 
+> Fixes the issue reported by Krzystof in: https://lkml.org/lkml/2014/8/8/121
+> ---
+>  drivers/rtc/rtc-max77686.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
+> index 7bb5433..55396bb 100644
+> --- a/drivers/rtc/rtc-max77686.c
+> +++ b/drivers/rtc/rtc-max77686.c
+> @@ -466,6 +466,12 @@ static int max77686_rtc_probe(struct platform_device *pdev)
+>  		goto err_rtc;
+>  	}
+>  
+> +	if (!max77686->rtc_irq_data) {
+> +		ret = -EINVAL;
+> +		dev_err(&pdev->dev, "%s: no RTC regmap IRQ chip\n", __func__);
+> +		goto err_rtc;
+> +	}
+> +
+>  	info->virq = regmap_irq_get_virq(max77686->rtc_irq_data,
+>  					 MAX77686_RTCIRQ_RTCA1);
+>  	if (!info->virq) {
