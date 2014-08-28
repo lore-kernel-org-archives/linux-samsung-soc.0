@@ -1,8 +1,7 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 09/17] drm/exynos/ipp: replace work_struct casting with
- better constructs
-Date: Thu, 28 Aug 2014 11:07:33 +0200
-Message-ID: <1409216861-12452-10-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH v2 14/17] drm/exynos/fimc: simplify buffer queuing
+Date: Thu, 28 Aug 2014 11:07:38 +0200
+Message-ID: <1409216861-12452-15-git-send-email-a.hajda@samsung.com>
 References: <1409216861-12452-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,89 +21,123 @@ To: Inki Dae <inki.dae@samsung.com>
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Type casting should be avoided if possible. In case of
-work_struct it can be simply replaced by reference to member field.
+The patch removes redundant checks, redundant HW reads
+and simplifies code.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_fimc.c    | 2 +-
- drivers/gpu/drm/exynos/exynos_drm_gsc.c     | 3 +--
- drivers/gpu/drm/exynos/exynos_drm_ipp.c     | 6 +++---
- drivers/gpu/drm/exynos/exynos_drm_rotator.c | 3 +--
- 4 files changed, 6 insertions(+), 8 deletions(-)
+v2:
+- fixed bit cleaning operation
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c | 64 ++++++++------------------------
+ 1 file changed, 15 insertions(+), 49 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-index 177e7bc..34367ff 100644
+index 62ba033..59ba8bb 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-@@ -1309,7 +1309,7 @@ static irqreturn_t fimc_irq_handler(int irq, void *dev_id)
+@@ -1126,67 +1126,34 @@ static int fimc_dst_set_size(struct device *dev, int swap,
+ 	return 0;
+ }
+ 
+-static int fimc_dst_get_buf_count(struct fimc_context *ctx)
+-{
+-	u32 cfg, buf_num;
+-
+-	cfg = fimc_read(ctx, EXYNOS_CIFCNTSEQ);
+-
+-	buf_num = hweight32(cfg);
+-
+-	DRM_DEBUG_KMS("buf_num[%d]\n", buf_num);
+-
+-	return buf_num;
+-}
+-
+-static int fimc_dst_set_buf_seq(struct fimc_context *ctx, u32 buf_id,
++static void fimc_dst_set_buf_seq(struct fimc_context *ctx, u32 buf_id,
+ 		enum drm_exynos_ipp_buf_type buf_type)
+ {
+-	struct exynos_drm_ippdrv *ippdrv = &ctx->ippdrv;
+-	bool enable;
+-	u32 cfg;
+-	u32 mask = 0x00000001 << buf_id;
+-	int ret = 0;
+ 	unsigned long flags;
++	u32 buf_num;
++	u32 cfg;
+ 
+ 	DRM_DEBUG_KMS("buf_id[%d]buf_type[%d]\n", buf_id, buf_type);
+ 
+ 	spin_lock_irqsave(&ctx->lock, flags);
+ 
+-	/* mask register set */
+ 	cfg = fimc_read(ctx, EXYNOS_CIFCNTSEQ);
+ 
+-	switch (buf_type) {
+-	case IPP_BUF_ENQUEUE:
+-		enable = true;
+-		break;
+-	case IPP_BUF_DEQUEUE:
+-		enable = false;
+-		break;
+-	default:
+-		dev_err(ippdrv->dev, "invalid buf ctrl parameter.\n");
+-		ret =  -EINVAL;
+-		goto err_unlock;
+-	}
++	if (buf_type == IPP_BUF_ENQUEUE)
++		cfg |= (1 << buf_id);
++	else
++		cfg &= ~(1 << buf_id);
+ 
+-	/* sequence id */
+-	cfg &= ~mask;
+-	cfg |= (enable << buf_id);
+ 	fimc_write(ctx, cfg, EXYNOS_CIFCNTSEQ);
+ 
+-	/* interrupt enable */
+-	if (buf_type == IPP_BUF_ENQUEUE &&
+-	    fimc_dst_get_buf_count(ctx) >= FIMC_BUF_START)
+-		fimc_mask_irq(ctx, true);
++	buf_num = hweight32(cfg);
+ 
+-	/* interrupt disable */
+-	if (buf_type == IPP_BUF_DEQUEUE &&
+-	    fimc_dst_get_buf_count(ctx) <= FIMC_BUF_STOP)
++	if (buf_type == IPP_BUF_ENQUEUE && buf_num >= FIMC_BUF_START)
++		fimc_mask_irq(ctx, true);
++	else if (buf_type == IPP_BUF_DEQUEUE && buf_num <= FIMC_BUF_STOP)
+ 		fimc_mask_irq(ctx, false);
+ 
+-err_unlock:
+ 	spin_unlock_irqrestore(&ctx->lock, flags);
+-	return ret;
+ }
+ 
+ static int fimc_dst_set_addr(struct device *dev,
+@@ -1244,7 +1211,9 @@ static int fimc_dst_set_addr(struct device *dev,
+ 		break;
+ 	}
+ 
+-	return fimc_dst_set_buf_seq(ctx, buf_id, buf_type);
++	fimc_dst_set_buf_seq(ctx, buf_id, buf_type);
++
++	return 0;
+ }
+ 
+ static struct exynos_drm_ipp_ops fimc_dst_ops = {
+@@ -1299,10 +1268,7 @@ static irqreturn_t fimc_irq_handler(int irq, void *dev_id)
+ 
+ 	DRM_DEBUG_KMS("buf_id[%d]\n", buf_id);
+ 
+-	if (fimc_dst_set_buf_seq(ctx, buf_id, IPP_BUF_DEQUEUE) < 0) {
+-		DRM_ERROR("failed to dequeue.\n");
+-		return IRQ_HANDLED;
+-	}
++	fimc_dst_set_buf_seq(ctx, buf_id, IPP_BUF_DEQUEUE);
  
  	event_work->ippdrv = ippdrv;
  	event_work->buf_id[EXYNOS_DRM_OPS_DST] = buf_id;
--	queue_work(ippdrv->event_workq, (struct work_struct *)event_work);
-+	queue_work(ippdrv->event_workq, &event_work->work);
- 
- 	return IRQ_HANDLED;
- }
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-index 9e3ff16..c6a013f 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-@@ -1326,8 +1326,7 @@ static irqreturn_t gsc_irq_handler(int irq, void *dev_id)
- 			buf_id[EXYNOS_DRM_OPS_SRC];
- 		event_work->buf_id[EXYNOS_DRM_OPS_DST] =
- 			buf_id[EXYNOS_DRM_OPS_DST];
--		queue_work(ippdrv->event_workq,
--			(struct work_struct *)event_work);
-+		queue_work(ippdrv->event_workq, &event_work->work);
- 	}
- 
- 	return IRQ_HANDLED;
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index 857817c..fff3509 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -790,7 +790,7 @@ static void ipp_handle_cmd_work(struct device *dev,
- 
- 	cmd_work->ippdrv = ippdrv;
- 	cmd_work->c_node = c_node;
--	queue_work(ctx->cmd_workq, (struct work_struct *)cmd_work);
-+	queue_work(ctx->cmd_workq, &cmd_work->work);
- }
- 
- static int ipp_queue_buf_with_run(struct device *dev,
-@@ -1318,7 +1318,7 @@ err_clear:
- void ipp_sched_cmd(struct work_struct *work)
- {
- 	struct drm_exynos_ipp_cmd_work *cmd_work =
--		(struct drm_exynos_ipp_cmd_work *)work;
-+		container_of(work, struct drm_exynos_ipp_cmd_work, work);
- 	struct exynos_drm_ippdrv *ippdrv;
- 	struct drm_exynos_ipp_cmd_node *c_node;
- 	struct drm_exynos_ipp_property *property;
-@@ -1531,7 +1531,7 @@ err_event_unlock:
- void ipp_sched_event(struct work_struct *work)
- {
- 	struct drm_exynos_ipp_event_work *event_work =
--		(struct drm_exynos_ipp_event_work *)work;
-+		container_of(work, struct drm_exynos_ipp_event_work, work);
- 	struct exynos_drm_ippdrv *ippdrv;
- 	struct drm_exynos_ipp_cmd_node *c_node;
- 	int ret;
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-index 55af6b4..b6a37d4 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-@@ -156,8 +156,7 @@ static irqreturn_t rotator_irq_handler(int irq, void *arg)
- 		event_work->ippdrv = ippdrv;
- 		event_work->buf_id[EXYNOS_DRM_OPS_DST] =
- 			rot->cur_buf_id[EXYNOS_DRM_OPS_DST];
--		queue_work(ippdrv->event_workq,
--			(struct work_struct *)event_work);
-+		queue_work(ippdrv->event_workq, &event_work->work);
- 	} else {
- 		DRM_ERROR("the SFR is set illegally\n");
- 	}
 -- 
 1.9.1
