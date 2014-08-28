@@ -1,8 +1,7 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 08/17] drm/exynos/ipp: clean memory nodes on command node
- cleaning
-Date: Thu, 28 Aug 2014 11:07:32 +0200
-Message-ID: <1409216861-12452-9-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH v2 05/17] drm/exynos/ipp: remove unused field in command node
+Date: Thu, 28 Aug 2014 11:07:29 +0200
+Message-ID: <1409216861-12452-6-git-send-email-a.hajda@samsung.com>
 References: <1409216861-12452-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,34 +21,46 @@ To: Inki Dae <inki.dae@samsung.com>
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The nodes should be removed before removing command node.
+Since command node have file pointer dev field became useless.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_ipp.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c | 1 -
+ drivers/gpu/drm/exynos/exynos_drm_ipp.h | 2 --
+ 2 files changed, 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index 05f103e..857817c 100644
+index 81f780e..060a198 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -603,11 +603,16 @@ static void ipp_clean_mem_nodes(struct drm_device *drm_dev,
- static void ipp_clean_cmd_node(struct ipp_context *ctx,
- 				struct drm_exynos_ipp_cmd_node *c_node)
- {
-+	int i;
-+
- 	/* cancel works */
- 	cancel_work_sync(&c_node->start_work->work);
- 	cancel_work_sync(&c_node->stop_work->work);
- 	cancel_work_sync(&c_node->event_work->work);
+@@ -444,7 +444,6 @@ int exynos_drm_ipp_set_property(struct drm_device *drm_dev, void *data,
+ 		property->prop_id, property->cmd, (int)ippdrv);
  
-+	for_each_ipp_ops(i)
-+		ipp_clean_mem_nodes(ctx->subdrv.drm_dev, c_node, i);
-+
- 	/* delete list */
- 	list_del(&c_node->list);
- 
+ 	/* stored property information and ippdrv in private data */
+-	c_node->dev = dev;
+ 	c_node->property = *property;
+ 	c_node->state = IPP_STATE_IDLE;
+ 	c_node->filp = file;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.h b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
+index 0311035..2a61547 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_ipp.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
+@@ -48,7 +48,6 @@ struct drm_exynos_ipp_cmd_work {
+ /*
+  * A structure of command node.
+  *
+- * @dev: IPP device.
+  * @list: list head to command queue information.
+  * @event_list: list head of event.
+  * @mem_list: list head to source,destination memory queue information.
+@@ -65,7 +64,6 @@ struct drm_exynos_ipp_cmd_work {
+  * @filp: associated file pointer.
+  */
+ struct drm_exynos_ipp_cmd_node {
+-	struct device		*dev;
+ 	struct list_head	list;
+ 	struct list_head	event_list;
+ 	struct list_head	mem_list[EXYNOS_DRM_OPS_MAX];
 -- 
 1.9.1
