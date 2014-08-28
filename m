@@ -1,8 +1,8 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 03/17] drm/exynos/ipp: move file reference from memory to
- command node
-Date: Thu, 28 Aug 2014 11:07:27 +0200
-Message-ID: <1409216861-12452-4-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH v2 08/17] drm/exynos/ipp: clean memory nodes on command node
+ cleaning
+Date: Thu, 28 Aug 2014 11:07:32 +0200
+Message-ID: <1409216861-12452-9-git-send-email-a.hajda@samsung.com>
 References: <1409216861-12452-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,72 +22,34 @@ To: Inki Dae <inki.dae@samsung.com>
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Command node should contain file reference to distinguish commands
-created by different processes.
+The nodes should be removed before removing command node.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_ipp.c | 5 ++---
- drivers/gpu/drm/exynos/exynos_drm_ipp.h | 2 ++
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index 9770966..bbe9968 100644
+index 05f103e..857817c 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -75,7 +75,6 @@ struct drm_exynos_ipp_mem_node {
- 	u32	prop_id;
- 	u32	buf_id;
- 	struct drm_exynos_ipp_buf_info	buf_info;
--	struct drm_file		*filp;
- };
+@@ -603,11 +603,16 @@ static void ipp_clean_mem_nodes(struct drm_device *drm_dev,
+ static void ipp_clean_cmd_node(struct ipp_context *ctx,
+ 				struct drm_exynos_ipp_cmd_node *c_node)
+ {
++	int i;
++
+ 	/* cancel works */
+ 	cancel_work_sync(&c_node->start_work->work);
+ 	cancel_work_sync(&c_node->stop_work->work);
+ 	cancel_work_sync(&c_node->event_work->work);
  
- /*
-@@ -448,6 +447,7 @@ int exynos_drm_ipp_set_property(struct drm_device *drm_dev, void *data,
- 	c_node->dev = dev;
- 	c_node->property = *property;
- 	c_node->state = IPP_STATE_IDLE;
-+	c_node->filp = file;
++	for_each_ipp_ops(i)
++		ipp_clean_mem_nodes(ctx->subdrv.drm_dev, c_node, i);
++
+ 	/* delete list */
+ 	list_del(&c_node->list);
  
- 	c_node->start_work = ipp_create_cmd_work();
- 	if (IS_ERR(c_node->start_work)) {
-@@ -645,7 +645,6 @@ static struct drm_exynos_ipp_mem_node
- 		}
- 	}
- 
--	m_node->filp = file;
- 	mutex_lock(&c_node->mem_lock);
- 	list_add_tail(&m_node->list, &c_node->mem_list[qbuf->ops_id]);
- 	mutex_unlock(&c_node->mem_lock);
-@@ -677,7 +676,7 @@ static int ipp_put_mem_node(struct drm_device *drm_dev,
- 		unsigned long handle = m_node->buf_info.handles[i];
- 		if (handle)
- 			exynos_drm_gem_put_dma_addr(drm_dev, handle,
--							m_node->filp);
-+							c_node->filp);
- 	}
- 
- 	/* delete list in queue */
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.h b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
-index 6f48d62..0311035 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_ipp.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
-@@ -62,6 +62,7 @@ struct drm_exynos_ipp_cmd_work {
-  * @stop_work: stop command work structure.
-  * @event_work: event work structure.
-  * @state: state of command node.
-+ * @filp: associated file pointer.
-  */
- struct drm_exynos_ipp_cmd_node {
- 	struct device		*dev;
-@@ -78,6 +79,7 @@ struct drm_exynos_ipp_cmd_node {
- 	struct drm_exynos_ipp_cmd_work *stop_work;
- 	struct drm_exynos_ipp_event_work *event_work;
- 	enum drm_exynos_ipp_state	state;
-+	struct drm_file	*filp;
- };
- 
- /*
 -- 
 1.9.1
