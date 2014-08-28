@@ -1,76 +1,96 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 4/5] usb: dwc3: Adding Kconfig dependency for Exynos7
-Date: Thu, 28 Aug 2014 14:28:39 -0500
-Message-ID: <20140828192824.GR16689@saruman.home>
-References: <1409212920-28526-1-git-send-email-gautam.vivek@samsung.com>
- <1409212920-28526-5-git-send-email-gautam.vivek@samsung.com>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] usb: dwc3: exynos: remove usb_phy_generic support
+Date: Thu, 28 Aug 2014 12:29:52 -0700
+Message-ID: <20140828192952.GA31255@kroah.com>
+References: <2141307.zYQLjP6V6U@amdc1032>
+ <CAFp+6iF10hSNzkVWwF2QkDLRkhKQ_STN8N8vH2eatM4qjjt7MQ@mail.gmail.com>
+ <44042073.hjFrXas7t7@amdc1032>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="AonAANj1daC6QcQu"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1409212920-28526-5-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-List-Id: linux-samsung-soc@vger.kernel.org
-
---AonAANj1daC6QcQu
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60423 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752620AbaH1Tag (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 28 Aug 2014 15:30:36 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <44042073.hjFrXas7t7@amdc1032>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, Felipe Balbi <balbi@ti.com>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>
 
-On Thu, Aug 28, 2014 at 01:31:59PM +0530, Vivek Gautam wrote:
-> The Exynos-DWC3 USB 3.0 DRD controller is also present on
-> Exynos7 platform, so adding the dependency on ARCH_EXYNOS7
-> for this driver.
->=20
-> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/usb/dwc3/Kconfig |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
-> index 785510a..e235894 100644
-> --- a/drivers/usb/dwc3/Kconfig
-> +++ b/drivers/usb/dwc3/Kconfig
-> @@ -55,7 +55,7 @@ config USB_DWC3_OMAP
-> =20
->  config USB_DWC3_EXYNOS
->  	tristate "Samsung Exynos Platform"
-> -	depends on ARCH_EXYNOS || COMPILE_TEST
-> +	depends on (ARCH_EXYNOS || ARCH_EXYNOS7) || COMPILE_TEST
+On Thu, Aug 28, 2014 at 08:11:04PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> 
+> [ added Alan and Greg to cc: ]
+> 
+> Hi,
+> 
+> On Wednesday, August 27, 2014 11:42:25 PM Vivek Gautam wrote:
+> > Hi Baltlomiej,
+> > 
+> > 
+> > On Wed, Aug 27, 2014 at 1:22 PM, Bartlomiej Zolnierkiewicz
+> > <b.zolnierkie@samsung.com> wrote:
+> > > dwc3 driver is using the new Exynos5 SoC series USB DRD PHY driver
+> > > (PHY_EXYNOS5_USBDRD which selects GENERIC_PHY) as can be seen by
+> > > looking at the following commits:
+> > >
+> > >   7a4cf0fde054 ("ARM: dts: Update DWC3 usb controller to use new
+> > >   phy driver for exynos5250")
+> > >
+> > >   f070267b5fc1 ("ARM: dts: Enable support for DWC3 controller for
+> > >   exynos5420")
+> > >
+> > > Thus remove unused usb_phy_generic support from dwc3 Exynos glue
+> > > layer.
+> > >
+> > > [ The code that is being removed is harmful in the context of
+> > >   multi_v7_defconfig and enabling "EHCI support for Samsung
+> > >   S5P/EXYNOS SoC Series" (USB_EHCI_EXYNOS) + "OHCI support for
+> > >   Samsung S5P/EXYNOS SoC Series" (USB_OHCI_EXYNOS) because "EHCI
+> > >   support for OMAP3 and later chips" (USB_EHCI_HCD_OMAP) selects
+> > >   "NOP USB Transceiver Driver" (NOP_USB_XCEIV).  NOP USB driver
+> > >   attaches itself to usb_phy_generic platform devices created by
+> > >   dwc3 Exynos glue layer and later causes Exynos EHCI driver to
+> > >   fail probe and Exynos OHCI driver to hang on probe (as observed
+> > >   on Exynos5250 Arndale board). ]
+> > 
+> > The issue with EHCI and OHCI on exynos platforms is that until now
+> > they also request
+> > usb-phy and only later if they don't find one, they go ahead and get a
+> > 'phy' generic.
+> > 
+> > Fortunately we missed this issue with exynos_defconfig, and as you rightly
+> > mentioned with multi_v7_defconfig, the NOP_USB_XCEIV gets enabled and
+> > EHCI and OHCI exynos get no-op usb-phy, which actually blocks EHCI/OHCI from
+> > initializing the real PHYs.
+> > 
+> > This issue is resolved with patches:
+> > [PATCH v2 1/2] usb: host: ehci-exynos: Remove unnecessary usb-phy support
+> > [PATCH v2 2/2] usb: host: ohci-exynos: Remove unnecessary usb-phy support
+> > wherein we are completely removing the usb-phy support from ehci/ohci-exynos.
+> > So with these patches we should not see the issue mentioned by you.
+> 
+> Indeed, your patches fix the issue.
+> 
+> Greg, could these two patches ([1] & [2]) get merged quickly, pretty please
+> (they were already acked by Alan)?  They are not a mere cleanups because
+> they fix the actual problem with using multi_v7_defconfig which in turn has
+> been blocking Olof's defconfig update patch [3] for quite some time now.
+> Moreover these patches are limited to Exynos host drivers so they should be
+> pretty safe when it comes to potential regressions.
+> 
+> [1] http://www.spinics.net/lists/linux-usb/msg112294.html
+> [2] http://www.spinics.net/lists/linux-usb/msg112293.html
+> [3] http://www.spinics.net/lists/arm-kernel/msg349654.html
 
-wait when building for ARCH_EXYNOS7 you don't get ARCH_EXYNOS ?
+merged for 3.18-rc1, or do you "need" them for 3.17-final?
 
---=20
-balbi
+I already reverted one patch for exynos for 3.17-final that is sitting
+in my tree to go to Linus soon as you all didn't seem to want it
+anymore, so I'm getting really confused here...
 
---AonAANj1daC6QcQu
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+thanks,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJT/4LYAAoJEIaOsuA1yqRE8D8P/0x6TC8uZM5+NMPlJeCa1R+t
-yRV5KHQibRTl9idBNyoIFZjim70TLGTqGrSAlFr5zT5esgHjuqW5pcKzFWncW4vm
-ABDbsTc+feZPYUUqQLvp6oxJiAkmhWUzjXqPsAXEC0NqhqJbvXhFjgiQHyRyeOd1
-af0x8JR0gZoCupzu6kb6RiX2G5Gk/b8144YdBt2kKO2VvF70UJGTBx8y5eLtawg2
-6esK6yOegPsoUILf9zODwFb1Dhp6L0rFmvPpT6SdPTzaMEhQdC8Z5MVjwwdGj7vf
-oJthXNzF66B2P6MFRp1/kEcTbXjYjE3pDo4gqrOJ4dkPDbC02O8hAMnftSZfCmgE
-wazv1fCvntDh/UponwC5aB8GRRcKiLRaD7YXtRpT1qEu/8nwhi9WggUt3v7NsBfl
-qX75K95iKQlducc2PGnq8pCD1JqOjqliHGsit3kQsYOcILrUVHHzvGGVOTlnpgx4
-66tZLXdLyFBevYpSiihAkYr7Vj3o6igTKhemVatl7u5FAoIKjvpPJxLvGVLJ8090
-FBV/cfO6I5IhiPrmA1C+EVvpIpdFPCK/VbkpAfuXZ8dXgIEW/BtcHHf88HzxJ1Sq
-7aSrnD7fBNZnp7gLHqjl31Z13JsDNB51IZUcba3iP0N1qvoRp/81+8U9+JfZHBu8
-MZy6TVrQuNYo7Kh+FOmD
-=QabP
------END PGP SIGNATURE-----
-
---AonAANj1daC6QcQu--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+greg k-h
