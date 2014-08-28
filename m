@@ -1,40 +1,67 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH v5 3/4] usb: hcd: Caibrate PHY post hcd reset
-Date: Thu, 28 Aug 2014 09:39:07 +0530
-Message-ID: <CAFp+6iHYHeSA8708P5VBe0vUksVTQ6ejtivhFWdVRTnHOJ85Xw@mail.gmail.com>
-References: <1408632923-19591-1-git-send-email-gautam.vivek@samsung.com>
-	<1408632923-19591-4-git-send-email-gautam.vivek@samsung.com>
-	<53F7203E.8030404@suse.de>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv5 4/4] thermal: exynos: Remove duplicate code when reading
+ triminfo register of Exynos5440
+Date: Thu, 28 Aug 2014 13:25:14 +0900
+Message-ID: <53FEAF2A.1080400@samsung.com>
+References: <1409016665-3824-1-git-send-email-cw00.choi@samsung.com>
+ <1409016665-3824-5-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f44.google.com ([209.85.216.44]:46087 "EHLO
-	mail-qa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932215AbaH1EJI convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:62538 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751069AbaH1EZQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Aug 2014 00:09:08 -0400
-In-Reply-To: <53F7203E.8030404@suse.de>
+	Thu, 28 Aug 2014 00:25:16 -0400
+In-reply-to: <1409016665-3824-5-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
-Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Mathias Nyman <mathias.nyman@intel.com>, Alan Stern <stern@rowland.harvard.edu>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Felipe Balbi <balbi@ti.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: eduardo.valentin@ti.com, amit.daniel@samsung.com, rui.zhang@intel.com, kgene.kim@samsung.com, ch.naveen@samsung.com, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>
 
-Hi,
+Dear Eduardo,
 
+This patch is wrong. It is my mistake.
 
-On Fri, Aug 22, 2014 at 4:19 PM, Andreas F=C3=A4rber <afaerber@suse.de>=
- wrote:
-> Hi,
->
-> s/Caibrate/Calibrate/
+Please ignore only this patch because
+the offset calculation of 'case 0' is different from 'case 2'.
 
-Sure, will rectify the title, thanks for pointing it out.
+Best Regards,
+Chanwoo Choi
 
-
-
---=20
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+On 08/26/2014 10:31 AM, Chanwoo Choi wrote:
+> This patch remove simply duplicate code when reading triminfo register of Exynos5440.
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Zhang Rui <rui.zhang@intel.com>
+> Cc: Eduardo Valentin <edubezval@gmail.com>
+> Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> Reviewed-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> ---
+>  drivers/thermal/samsung/exynos_tmu.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+> index 64c702a..5888467 100644
+> --- a/drivers/thermal/samsung/exynos_tmu.c
+> +++ b/drivers/thermal/samsung/exynos_tmu.c
+> @@ -187,15 +187,13 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>  		 */
+>  		switch (data->id) {
+>  		case 0:
+> +		case 2:
+>  			trim_info = readl(data->base +
+>  			EXYNOS5440_EFUSE_SWAP_OFFSET + reg->triminfo_data);
+>  			break;
+>  		case 1:
+>  			trim_info = readl(data->base + reg->triminfo_data);
+>  			break;
+> -		case 2:
+> -			trim_info = readl(data->base -
+> -			EXYNOS5440_EFUSE_SWAP_OFFSET + reg->triminfo_data);
+>  		}
+>  	} else {
+>  		/* On exynos5420 the triminfo register is in the shared space */
+> 
