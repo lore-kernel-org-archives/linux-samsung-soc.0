@@ -1,37 +1,98 @@
-From: Daniele Forsi <dforsi@gmail.com>
-Subject: Re: [PATCH 5/5] phy: exynos5-usbdrd: Adding Kconfig dependency for Exynos7
-Date: Thu, 28 Aug 2014 17:06:58 +0200
-Message-ID: <CAN_we7MQAqEsRaQc_pkRE_KXx9zZNLDBR2aHUrazM30Nv3udmQ@mail.gmail.com>
-References: <1409212920-28526-1-git-send-email-gautam.vivek@samsung.com>
-	<1409212920-28526-6-git-send-email-gautam.vivek@samsung.com>
+From: Doug Anderson <dianders@google.com>
+Subject: Re: [PATCH V2 3/3] mmc: dw_mmc: Dont cut off vqmmc and vmmc
+Date: Thu, 28 Aug 2014 08:50:25 -0700
+Message-ID: <CAD=FV=UykPjixODXJ-s6vrZVs3O3=rX2iUakm6WnqiqvJNkoqQ@mail.gmail.com>
+References: <1408715272-13833-1-git-send-email-yuvaraj.cd@samsung.com>
+	<1408715272-13833-4-git-send-email-yuvaraj.cd@samsung.com>
+	<CAPDyKFqz8sGj2td=ihZXN4zvAqmu9FHZjWdCn-ZRcdHugNHe2g@mail.gmail.com>
+	<CAPz6YkXH1mMOTwcLkKdffdUHN+TaCAhpa8oG0h+rFn9i+GMoCw@mail.gmail.com>
+	<CAPDyKFqp7oEt9ASmdxrgUwbQ8aTZzAuJ7uD1oGN50iuzPzBfVg@mail.gmail.com>
+	<CAD=FV=VQWzhiSU+iULACj+Dp_tDf3SszQ8ELLEGqVEyJJRQy1Q@mail.gmail.com>
+	<CAPDyKFo9-5=uPqD8RvLGsYtSCynBFnGGeSCpwLZuzDtW+652hA@mail.gmail.com>
+	<CAD=FV=VveHTYmiBu42DJeFFGARV2+1bS6Y2CQM995YkX_O9SQA@mail.gmail.com>
+	<CAPDyKFpUU643iXVbxuu9Vx1zY0K7x4z-ZxxVEWd+Lsuwp0iA+g@mail.gmail.com>
+	<CAD=FV=Vqz=kA=D5KDyq_QuPi-6B05VixYManTsFe2PC-fzxRkw@mail.gmail.com>
+	<CAPDyKFrcA183V-R-nbZcY8wXCRqONb1WUu3BS_0vNJe2+Ej2_w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f42.google.com ([209.85.215.42]:33234 "EHLO
-	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751309AbaH1PHE (ORCPT
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:39525 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751875AbaH1Pu0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Aug 2014 11:07:04 -0400
-In-Reply-To: <1409212920-28526-6-git-send-email-gautam.vivek@samsung.com>
+	Thu, 28 Aug 2014 11:50:26 -0400
+Received: by mail-vc0-f174.google.com with SMTP id hy4so1047699vcb.33
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Aug 2014 08:50:25 -0700 (PDT)
+In-Reply-To: <CAPDyKFrcA183V-R-nbZcY8wXCRqONb1WUu3BS_0vNJe2+Ej2_w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: USB list <linux-usb@vger.kernel.org>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Felipe Balbi <balbi@ti.com>, kishon@ti.com, kgene.kim@samsung.com
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Sonny Rao <sonnyrao@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, ABHILASH KESAVAN <a.kesavan@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-2014-08-28 10:02 GMT+02:00 Vivek Gautam:
+Ulf,
 
-> This USB 3.0 PHY controller is also present on Exynos7
-> platform, so adding the dependency on ARCH_EXYNOS7 for this driver.
-
-> +++ b/drivers/phy/Kconfig
-> @@ -186,7 +186,7 @@ config PHY_EXYNOS5250_USB2
+On Thu, Aug 28, 2014 at 12:25 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 27 August 2014 17:52, Doug Anderson <dianders@google.com> wrote:
+>> Ulf,
+>>
+>> On Wed, Aug 27, 2014 at 4:17 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>>> Now, we've got MMC_CAP_NEEDS_POLL, so dw_mmc will periodically be
+>>>> called to check the card detect line, but with vmmc and vqmmc off.  It
+>>>> will be unable to return a sensible value without actually turning on
+>>>> vmmc and vqmmc.
+>>>
+>>> Currently MMC_CAP_NEEDS_POLL mean the mmc rescan work will reschedule
+>>> itself with HZ interval. This to check for card insert/removal.
+>>>
+>>> Now, mmc_rescan() will, if present, invoke host's ->get_cd() callback
+>>> to check whether it's worth to continue initialization sequence or if
+>>> it should re-schedule itself again.
+>>>
+>>> If your host driver can distinguish whether a card is inserted, which
+>>> in this case are when vccq is turned off, your ->get_cd() callback need
+>>> to return 1. That will allow mmc_rescan() to continue it's
+>>> initialization sequence and do mmc_power_up().
+>>
+>> As per my other email, we can't tell whether a card is inserted when
+>> vqmmc is off.
 >
->  config PHY_EXYNOS5_USBDRD
->         tristate "Exynos5 SoC series USB DRD PHY driver"
-> -       depends on ARCH_EXYNOS5 && OF
-> +       depends on (ARCH_EXYNOS5 || ARCH_EXYNOS7) && OF
+> I understand.
+>
+> The solution I proposed above, is:
+>
+> 1) Enable MMC_CAP_NEEDS_POLL.
+> 2) Make ->get_cd() return 1, when you can't distinguish if the card is inserted.
+>
+> That will solve this issue and without messing up the mmc core.
 
-shouldn't that prompt and its help text be updated to mention also Exynos7?
+Ah, I see!  So every 1 second, we'll do the following:
 
--- 
-Daniele Forsi
+1. Call get_cd(), which returns 1.
+
+2. MMC core will power everything up (turn on all regulators) for MMC.
+
+3. We'll start to initialize a card.
+
+4. We'll notice that, oops, there's no card there.
+
+5. MMC core will shut things down again.
+
+
+That seems awfully expensive to do every second when the card detect
+line actually does work (as long as you keep power lines).  Is the
+patch to separate out the concepts of "power off because no card is
+inserted" and "power off because we're power cycling the card" really
+bad enough to warrant forcing us to use the above?
+
+I'm not an EE, but cycling regulators on and off every second doesn't
+seem super ideal, but maybe they're designed for it?
+
+
+Personally, I'd be tempted to just leave the power on all the time and
+if a card somehow needs to be power cycled (because UHS negotiation
+failed?) then that card just isn't supported.  This could be done in
+the dts by saying that the regulator is "always on" and no need to
+pollute any source files.
+
+
+-Doug
