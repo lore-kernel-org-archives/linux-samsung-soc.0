@@ -1,108 +1,62 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 11/14] arm64: dts: Add initial device tree support for
- EXYNOS7
-Date: Thu, 28 Aug 2014 18:30:37 +0100
-Message-ID: <20140828173037.GA18005@leverpostej>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 11/14] arm64: dts: Add initial device tree support for EXYNOS7
+Date: Thu, 28 Aug 2014 12:33:13 -0500
+Message-ID: <CAL_JsqKB-gganC6H1XBzUbFzXk8zy08U4X3mFWhxNWZO=upJPQ@mail.gmail.com>
 References: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com>
- <1409132660-1898-3-git-send-email-ch.naveen@samsung.com>
- <20140828035639.GB4972@localhost>
- <20140828094846.GD14650@leverpostej>
- <CAOesGMjY8wfAcq2fLgs=ZWHdiWtFqxr+ncUKTje0SnXqO-CCgQ@mail.gmail.com>
- <20140828170306.GQ14650@leverpostej>
- <53FF6668.4080502@arm.com>
+ <1409132660-1898-3-git-send-email-ch.naveen@samsung.com> <20140828035639.GB4972@localhost>
+ <20140828094846.GD14650@leverpostej> <CAOesGMjY8wfAcq2fLgs=ZWHdiWtFqxr+ncUKTje0SnXqO-CCgQ@mail.gmail.com>
+ <20140828170306.GQ14650@leverpostej> <53FF6668.4080502@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:38956 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750942AbaH1Rb0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Aug 2014 13:31:26 -0400
-Content-Disposition: inline
-In-Reply-To: <53FF6668.4080502@arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <53FF6668.4080502-5wv7dgnIgG8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, "naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thomas Abraham <thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Olof Johansson <olof@lixom.net>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Catalin Marinas <Catalin.Marinas@arm.com>, "naveenkrishna.ch@gmail.com" <naveenkrishna.ch@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "cpgs@samsung.com" <cpgs@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Rob Herring <robh@kernel.org>
 
-On Thu, Aug 28, 2014 at 06:27:04PM +0100, Marc Zyngier wrote:
+On Thu, Aug 28, 2014 at 12:27 PM, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org> wrote:
 > On 28/08/14 18:03, Mark Rutland wrote:
-> 
-> > From 67104ad5a56e4c18f9c41f06af028b7561740afd Mon Sep 17 00:00:00 2001
-> > From: Mark Rutland <mark.rutland@arm.com>
-> > Date: Thu, 28 Aug 2014 17:41:03 +0100
-> > Subject: [PATCH] Doc: dt: arch_timer: discourage clock-frequency use
-> > 
-> > The ARM Generic Timer (AKA the architected timer, arm_arch_timer)
-> > features a CPU register (CNTFRQ) which firmware is intended to
-> > initialize, and non-secure software can read to determine the frequency
-> > of the timer. On CPUs with secure state, this register cannot be written
-> > from non-secure states.
-> > 
-> > The firmware of early SoCs featuring the timer did not correctly
-> > initialize CNTFRQ correctly on all CPUs, requiring the frequency to be
-> > described in DT as a workaround. This workaround is not complete however
-> > as CNTFRQ is exposed to all software in a privileged non-secure mode,
-> > including KVM guests. The firmware and DTs for recent SoCs have followed
-> 
+>
+>> From 67104ad5a56e4c18f9c41f06af028b7561740afd Mon Sep 17 00:00:00 2001
+>> From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+>> Date: Thu, 28 Aug 2014 17:41:03 +0100
+>> Subject: [PATCH] Doc: dt: arch_timer: discourage clock-frequency use
+>>
+>> The ARM Generic Timer (AKA the architected timer, arm_arch_timer)
+>> features a CPU register (CNTFRQ) which firmware is intended to
+>> initialize, and non-secure software can read to determine the frequency
+>> of the timer. On CPUs with secure state, this register cannot be written
+>> from non-secure states.
+>>
+>> The firmware of early SoCs featuring the timer did not correctly
+>> initialize CNTFRQ correctly on all CPUs, requiring the frequency to be
+>> described in DT as a workaround. This workaround is not complete however
+>> as CNTFRQ is exposed to all software in a privileged non-secure mode,
+>> including KVM guests. The firmware and DTs for recent SoCs have followed
+>
 > I believe Xen is also affected by this.
-
-True.
-
-s/KVM/KVM\/Xen/, then?
-
-> > the example set by these early SoCs.
-> > 
-> > This patch updates the arch timer binding documentation to make it
-> > clearer that the use of the clock-frequency property is a poor
-> > work-around. The MMIO generic timer binding is similarly updated, though
-> > this is less of a concern as there is generally no need to expose the
-> > MMIO timers to guest OSs.
-> > 
-> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Marc Zyngier <marc.zyngier@arm.com>
-> 
+>
+>> the example set by these early SoCs.
+>>
+>> This patch updates the arch timer binding documentation to make it
+>> clearer that the use of the clock-frequency property is a poor
+>> work-around. The MMIO generic timer binding is similarly updated, though
+>> this is less of a concern as there is generally no need to expose the
+>> MMIO timers to guest OSs.
+>>
+>> Signed-off-by: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+>> Cc: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+>
 > Short of more explicit threats:
-> 
-> Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 
-Cheers.
+Why not also add WARNs (and mark for stable). People tend to notice
+and fix those. If not the vendors, those pesky customers always
+complain (the same ones that get concerned about BogoMIPS values being
+too low).
 
-Mark.
-
-> 
-> > ---
-> >  Documentation/devicetree/bindings/arm/arch_timer.txt | 8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/arm/arch_timer.txt b/Documentation/devicetree/bindings/arm/arch_timer.txt
-> > index 37b2caf..5ca3f95 100644
-> > --- a/Documentation/devicetree/bindings/arm/arch_timer.txt
-> > +++ b/Documentation/devicetree/bindings/arm/arch_timer.txt
-> > @@ -17,7 +17,10 @@ to deliver its interrupts via SPIs.
-> >  - interrupts : Interrupt list for secure, non-secure, virtual and
-> >    hypervisor timers, in that order.
-> >  
-> > -- clock-frequency : The frequency of the main counter, in Hz. Optional.
-> > +- clock-frequency : The frequency of the main counter, in Hz. Should be present
-> > +  only where necessary to work around BROKEN firmware which does not configure
-> > +  CNTFRQ on all CPUs to a uniform correct value. Use of this property is
-> > +  STRONGLY DISCOURAGED; fix your firmware unless absolutely impossible.
-> >  
-> >  - always-on : a boolean property. If present, the timer is powered through an
-> >    always-on power domain, therefore it never loses context.
-> > @@ -38,7 +41,8 @@ Example:
-> >  
-> >  - compatible : Should at least contain "arm,armv7-timer-mem".
-> >  
-> > -- clock-frequency : The frequency of the main counter, in Hz. Optional.
-> > +- clock-frequency : The frequency of the main counter, in Hz. Should be present
-> > +  only when firmware has not configured the MMIO CNTFRQ registers.
-> >  
-> >  - reg : The control frame base address.
-> >  
-> > 
-> 
-> 
-> -- 
-> Jazz is not dead. It just smells funny...
+Rob
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
