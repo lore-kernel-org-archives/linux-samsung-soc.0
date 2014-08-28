@@ -1,140 +1,65 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv3 2/5] rtc: s3c: Remove warning message when checking coding
- style with checkpatch script
-Date: Thu, 28 Aug 2014 18:02:36 +0900
-Message-ID: <1409216559-22402-3-git-send-email-cw00.choi@samsung.com>
-References: <1409216559-22402-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1409216559-22402-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: a.zummo@towertech.it
-Cc: kgene.kim@samsung.com, akpm@linux-foundation.org, kyungmin.park@samsung.com, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v2 00/17] drm/exynos/ipp: image post processing fixes and
+ improvements, part four
+Date: Thu, 28 Aug 2014 11:07:24 +0200
+Message-ID: <1409216861-12452-1-git-send-email-a.hajda@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch remove warning message when checking codeing style with checkpatch
-script and reduce un-necessary i2c read operation on s3c_rtc_enable.
+This set of patches contains various improvement and fixes
+for exynos_drm ipp framework.
+The patchset is based on exynos-drm-next branch.
 
-	WARNING: line over 80 characters
-	#406: FILE: drivers/rtc/rtc-s3c.c:406:
-	+		if ((readw(info->base + S3C2410_RTCCON) & S3C2410_RTCCON_RTCEN) == 0) {
+IPP framework was tested for regressions on exynos4210-trats target.
 
-	WARNING: line over 80 characters
-	#414: FILE: drivers/rtc/rtc-s3c.c:414:
-	+		if ((readw(info->base + S3C2410_RTCCON) & S3C2410_RTCCON_CNTSEL)) {
+In the 2nd version of the series I have included changes proposed by Joonyoung Shim.
+I have decided to resend whole series because the changes caused merge conflicts and
+two separate patches have been added to the series.
+Changes are described in comit messages.
 
-	WARNING: line over 80 characters
-	#422: FILE: drivers/rtc/rtc-s3c.c:422:
-	+		if ((readw(info->base + S3C2410_RTCCON) & S3C2410_RTCCON_CLKRST)) {
+Regards
+Andrzej
 
-	WARNING: Missing a blank line after declarations
-	#451: FILE: drivers/rtc/rtc-s3c.c:451:
-	+	struct s3c_rtc_drv_data *data;
-	+	if (pdev->dev.of_node) {
 
-	WARNING: Missing a blank line after declarations
-	#453: FILE: drivers/rtc/rtc-s3c.c:453:
-	+		const struct of_device_id *match;
-	+		match = of_match_node(s3c_rtc_dt_match, pdev->dev.of_node);
+Andrzej Hajda (17):
+  drm/exynos/ipp: remove fake pm callbacks
+  drm/exynos/ipp: cancel works before command node clean
+  drm/exynos/ipp: move file reference from memory to command node
+  drm/exynos/ipp: remove only related commands on file close
+  drm/exynos/ipp: remove unused field in command node
+  drm/exynos/ipp: free partially allocated resources on error
+  drm/exynos/ipp: move nodes cleaning to separate function
+  drm/exynos/ipp: clean memory nodes on command node cleaning
+  drm/exynos/ipp: replace work_struct casting with better constructs
+  drm/exynos/ipp: stop hardware before freeing memory
+  drm/exynos/ipp: remove events during command cleaning
+  drm/exynos/fimc: avoid clearing overflow bits
+  drm/exynos/fimc: do not enable fimc twice
+  drm/exynos/fimc: simplify buffer queuing
+  drm/exynos/fimc: fix source buffer registers
+  drm/exynos/ipp: remove file argument from node related functions
+  drm/exynos/ipp: add file checks for ioctls
 
-	WARNING: DT compatible string "samsung,s3c2416-rtc" appears un-documented -- check ./Documentation/devicetree/bindings/
-	#650: FILE: drivers/rtc/rtc-s3c.c:650:
-	+		.compatible = "samsung,s3c2416-rtc",
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c    |  90 ++-----
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c     |   3 +-
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c     | 397 ++++++++++++----------------
+ drivers/gpu/drm/exynos/exynos_drm_ipp.h     |   4 +-
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c |   3 +-
+ 5 files changed, 195 insertions(+), 302 deletions(-)
 
-	WARNING: DT compatible string "samsung,s3c2443-rtc" appears un-documented -- check ./Documentation/devicetree/bindings/
-	#653: FILE: drivers/rtc/rtc-s3c.c:653:
-	+		.compatible = "samsung,s3c2443-rtc",
-
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
- Documentation/devicetree/bindings/rtc/s3c-rtc.txt |  2 ++
- drivers/rtc/rtc-s3c.c                             | 26 ++++++++++++-----------
- 2 files changed, 16 insertions(+), 12 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-index 7ac7259..06db446 100644
---- a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-+++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-@@ -3,6 +3,8 @@
- Required properties:
- - compatible: should be one of the following.
-     * "samsung,s3c2410-rtc" - for controllers compatible with s3c2410 rtc.
-+    * "samsung,s3c2416-rtc" - for controllers compatible with s3c2416 rtc.
-+    * "samsung,s3c2443-rtc" - for controllers compatible with s3c2443 rtc.
-     * "samsung,s3c6410-rtc" - for controllers compatible with s3c6410 rtc.
- - reg: physical base address of the controller and length of memory mapped
-   region.
-diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-index 2f71b13..4e95cca 100644
---- a/drivers/rtc/rtc-s3c.c
-+++ b/drivers/rtc/rtc-s3c.c
-@@ -382,25 +382,25 @@ static const struct rtc_class_ops s3c_rtcops = {
- 
- static void s3c_rtc_enable(struct s3c_rtc *info, int en)
- {
--	unsigned int tmp;
-+	unsigned int con, tmp;
- 
- 	clk_enable(info->rtc_clk);
-+
-+	con = readw(info->base + S3C2410_RTCCON);
- 	if (!en) {
--		tmp = readw(info->base + S3C2410_RTCCON);
- 		if (info->cpu_type == TYPE_S3C64XX)
--			tmp &= ~S3C64XX_RTCCON_TICEN;
--		tmp &= ~S3C2410_RTCCON_RTCEN;
--		writew(tmp, info->base + S3C2410_RTCCON);
-+			con &= ~S3C64XX_RTCCON_TICEN;
-+		con &= ~S3C2410_RTCCON_RTCEN;
-+		writew(con, info->base + S3C2410_RTCCON);
- 
- 		if (info->cpu_type != TYPE_S3C64XX) {
--			tmp = readb(info->base + S3C2410_TICNT);
--			tmp &= ~S3C2410_TICNT_ENABLE;
--			writeb(tmp, info->base + S3C2410_TICNT);
-+			con = readb(info->base + S3C2410_TICNT);
-+			con &= ~S3C2410_TICNT_ENABLE;
-+			writeb(con, info->base + S3C2410_TICNT);
- 		}
- 	} else {
- 		/* re-enable the device, and check it is ok */
--
--		if ((readw(info->base + S3C2410_RTCCON) & S3C2410_RTCCON_RTCEN) == 0) {
-+		if ((con & S3C2410_RTCCON_RTCEN) == 0) {
- 			dev_info(info->dev, "rtc disabled, re-enabling\n");
- 
- 			tmp = readw(info->base + S3C2410_RTCCON);
-@@ -408,7 +408,7 @@ static void s3c_rtc_enable(struct s3c_rtc *info, int en)
- 				info->base + S3C2410_RTCCON);
- 		}
- 
--		if ((readw(info->base + S3C2410_RTCCON) & S3C2410_RTCCON_CNTSEL)) {
-+		if (con & S3C2410_RTCCON_CNTSEL) {
- 			dev_info(info->dev, "removing RTCCON_CNTSEL\n");
- 
- 			tmp = readw(info->base + S3C2410_RTCCON);
-@@ -416,7 +416,7 @@ static void s3c_rtc_enable(struct s3c_rtc *info, int en)
- 				info->base + S3C2410_RTCCON);
- 		}
- 
--		if ((readw(info->base + S3C2410_RTCCON) & S3C2410_RTCCON_CLKRST)) {
-+		if (con & S3C2410_RTCCON_CLKRST) {
- 			dev_info(info->dev, "removing RTCCON_CLKRST\n");
- 
- 			tmp = readw(info->base + S3C2410_RTCCON);
-@@ -445,8 +445,10 @@ static inline int s3c_rtc_get_driver_data(struct platform_device *pdev)
- {
- #ifdef CONFIG_OF
- 	struct s3c_rtc_drv_data *data;
-+
- 	if (pdev->dev.of_node) {
- 		const struct of_device_id *match;
-+
- 		match = of_match_node(s3c_rtc_dt_match, pdev->dev.of_node);
- 		data = (struct s3c_rtc_drv_data *) match->data;
- 		return data->cpu_type;
 -- 
-1.8.0
+1.9.1
