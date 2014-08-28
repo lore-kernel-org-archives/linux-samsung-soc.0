@@ -1,7 +1,7 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 11/17] drm/exynos/ipp: remove events during command cleaning
-Date: Thu, 28 Aug 2014 11:07:35 +0200
-Message-ID: <1409216861-12452-12-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH v2 13/17] drm/exynos/fimc: do not enable fimc twice
+Date: Thu, 28 Aug 2014 11:07:37 +0200
+Message-ID: <1409216861-12452-14-git-send-email-a.hajda@samsung.com>
 References: <1409216861-12452-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,202 +21,31 @@ To: Inki Dae <inki.dae@samsung.com>
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Events were removed only during stop command, as a result
-there were memory leaks if program prematurely exited.
-This patch fixes it.
+The patch removes redundant H/W activation.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_ipp.c | 155 ++++++++++++++++----------------
- 1 file changed, 78 insertions(+), 77 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index 341db52..05f0f4e 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -600,6 +600,81 @@ static void ipp_clean_mem_nodes(struct drm_device *drm_dev,
- 	mutex_unlock(&c_node->mem_lock);
- }
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+index 6dc9c41..62ba033 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+@@ -1598,12 +1598,9 @@ static int fimc_ippdrv_start(struct device *dev, enum drm_exynos_ipp_cmd cmd)
  
-+static void ipp_free_event(struct drm_pending_event *event)
-+{
-+	kfree(event);
-+}
-+
-+static int ipp_get_event(struct drm_device *drm_dev,
-+		struct drm_file *file,
-+		struct drm_exynos_ipp_cmd_node *c_node,
-+		struct drm_exynos_ipp_queue_buf *qbuf)
-+{
-+	struct drm_exynos_ipp_send_event *e;
-+	unsigned long flags;
-+
-+	DRM_DEBUG_KMS("ops_id[%d]buf_id[%d]\n", qbuf->ops_id, qbuf->buf_id);
-+
-+	e = kzalloc(sizeof(*e), GFP_KERNEL);
-+	if (!e) {
-+		spin_lock_irqsave(&drm_dev->event_lock, flags);
-+		file->event_space += sizeof(e->event);
-+		spin_unlock_irqrestore(&drm_dev->event_lock, flags);
-+		return -ENOMEM;
-+	}
-+
-+	/* make event */
-+	e->event.base.type = DRM_EXYNOS_IPP_EVENT;
-+	e->event.base.length = sizeof(e->event);
-+	e->event.user_data = qbuf->user_data;
-+	e->event.prop_id = qbuf->prop_id;
-+	e->event.buf_id[EXYNOS_DRM_OPS_DST] = qbuf->buf_id;
-+	e->base.event = &e->event.base;
-+	e->base.file_priv = file;
-+	e->base.destroy = ipp_free_event;
-+	mutex_lock(&c_node->event_lock);
-+	list_add_tail(&e->base.link, &c_node->event_list);
-+	mutex_unlock(&c_node->event_lock);
-+
-+	return 0;
-+}
-+
-+static void ipp_put_event(struct drm_exynos_ipp_cmd_node *c_node,
-+		struct drm_exynos_ipp_queue_buf *qbuf)
-+{
-+	struct drm_exynos_ipp_send_event *e, *te;
-+	int count = 0;
-+
-+	mutex_lock(&c_node->event_lock);
-+	list_for_each_entry_safe(e, te, &c_node->event_list, base.link) {
-+		DRM_DEBUG_KMS("count[%d]e[0x%x]\n", count++, (int)e);
-+
-+		/*
-+		 * qbuf == NULL condition means all event deletion.
-+		 * stop operations want to delete all event list.
-+		 * another case delete only same buf id.
-+		 */
-+		if (!qbuf) {
-+			/* delete list */
-+			list_del(&e->base.link);
-+			kfree(e);
-+		}
-+
-+		/* compare buffer id */
-+		if (qbuf && (qbuf->buf_id ==
-+		    e->event.buf_id[EXYNOS_DRM_OPS_DST])) {
-+			/* delete list */
-+			list_del(&e->base.link);
-+			kfree(e);
-+			goto out_unlock;
-+		}
-+	}
-+
-+out_unlock:
-+	mutex_unlock(&c_node->event_lock);
-+	return;
-+}
-+
- static void ipp_clean_cmd_node(struct ipp_context *ctx,
- 				struct drm_exynos_ipp_cmd_node *c_node)
- {
-@@ -610,6 +685,9 @@ static void ipp_clean_cmd_node(struct ipp_context *ctx,
- 	cancel_work_sync(&c_node->stop_work->work);
- 	cancel_work_sync(&c_node->event_work->work);
+ 	fimc_clear_bits(ctx, EXYNOS_CIOCTRL, EXYNOS_CIOCTRL_WEAVE_MASK);
  
-+	/* put event */
-+	ipp_put_event(c_node, NULL);
-+
- 	for_each_ipp_ops(i)
- 		ipp_clean_mem_nodes(ctx->subdrv.drm_dev, c_node, i);
+-	if (cmd == IPP_CMD_M2M) {
++	if (cmd == IPP_CMD_M2M)
+ 		fimc_set_bits(ctx, EXYNOS_MSCTRL, EXYNOS_MSCTRL_ENVID);
  
-@@ -706,81 +784,6 @@ static int ipp_set_mem_node(struct exynos_drm_ippdrv *ippdrv,
- 	return ret;
- }
- 
--static void ipp_free_event(struct drm_pending_event *event)
--{
--	kfree(event);
--}
--
--static int ipp_get_event(struct drm_device *drm_dev,
--		struct drm_file *file,
--		struct drm_exynos_ipp_cmd_node *c_node,
--		struct drm_exynos_ipp_queue_buf *qbuf)
--{
--	struct drm_exynos_ipp_send_event *e;
--	unsigned long flags;
--
--	DRM_DEBUG_KMS("ops_id[%d]buf_id[%d]\n", qbuf->ops_id, qbuf->buf_id);
--
--	e = kzalloc(sizeof(*e), GFP_KERNEL);
--	if (!e) {
--		spin_lock_irqsave(&drm_dev->event_lock, flags);
--		file->event_space += sizeof(e->event);
--		spin_unlock_irqrestore(&drm_dev->event_lock, flags);
--		return -ENOMEM;
+-		fimc_set_bits(ctx, EXYNOS_MSCTRL, EXYNOS_MSCTRL_ENVID);
 -	}
 -
--	/* make event */
--	e->event.base.type = DRM_EXYNOS_IPP_EVENT;
--	e->event.base.length = sizeof(e->event);
--	e->event.user_data = qbuf->user_data;
--	e->event.prop_id = qbuf->prop_id;
--	e->event.buf_id[EXYNOS_DRM_OPS_DST] = qbuf->buf_id;
--	e->base.event = &e->event.base;
--	e->base.file_priv = file;
--	e->base.destroy = ipp_free_event;
--	mutex_lock(&c_node->event_lock);
--	list_add_tail(&e->base.link, &c_node->event_list);
--	mutex_unlock(&c_node->event_lock);
--
--	return 0;
--}
--
--static void ipp_put_event(struct drm_exynos_ipp_cmd_node *c_node,
--		struct drm_exynos_ipp_queue_buf *qbuf)
--{
--	struct drm_exynos_ipp_send_event *e, *te;
--	int count = 0;
--
--	mutex_lock(&c_node->event_lock);
--	list_for_each_entry_safe(e, te, &c_node->event_list, base.link) {
--		DRM_DEBUG_KMS("count[%d]e[0x%x]\n", count++, (int)e);
--
--		/*
--		 * qbuf == NULL condition means all event deletion.
--		 * stop operations want to delete all event list.
--		 * another case delete only same buf id.
--		 */
--		if (!qbuf) {
--			/* delete list */
--			list_del(&e->base.link);
--			kfree(e);
--		}
--
--		/* compare buffer id */
--		if (qbuf && (qbuf->buf_id ==
--		    e->event.buf_id[EXYNOS_DRM_OPS_DST])) {
--			/* delete list */
--			list_del(&e->base.link);
--			kfree(e);
--			goto out_unlock;
--		}
--	}
--
--out_unlock:
--	mutex_unlock(&c_node->event_lock);
--	return;
--}
--
- static void ipp_handle_cmd_work(struct device *dev,
- 		struct exynos_drm_ippdrv *ippdrv,
- 		struct drm_exynos_ipp_cmd_work *cmd_work,
-@@ -1286,8 +1289,6 @@ static int ipp_stop_property(struct drm_device *drm_dev,
+ 	return 0;
+ }
  
- 	DRM_DEBUG_KMS("prop_id[%d]\n", property->prop_id);
- 
--	/* put event */
--	ipp_put_event(c_node, NULL);
- 	/* stop operations */
- 	if (ippdrv->stop)
- 		ippdrv->stop(ippdrv->dev, property->cmd);
 -- 
 1.9.1
