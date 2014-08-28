@@ -1,7 +1,8 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 01/17] drm/exynos/ipp: remove fake pm callbacks
-Date: Thu, 28 Aug 2014 11:07:25 +0200
-Message-ID: <1409216861-12452-2-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH v2 02/17] drm/exynos/ipp: cancel works before command node
+ clean
+Date: Thu, 28 Aug 2014 11:07:26 +0200
+Message-ID: <1409216861-12452-3-git-send-email-a.hajda@samsung.com>
 References: <1409216861-12452-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,81 +22,29 @@ To: Inki Dae <inki.dae@samsung.com>
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-PM callbacks in ipp core do nothing, so the patch removes it.
+All pending works should be canceled prior to its removal.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_ipp.c | 51 ---------------------------------
- 1 file changed, 51 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index c411399..da917ca 100644
+index da917ca..9770966 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -1808,63 +1808,12 @@ static int ipp_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int ipp_power_ctrl(struct ipp_context *ctx, bool enable)
--{
--	DRM_DEBUG_KMS("enable[%d]\n", enable);
--
--	return 0;
--}
--
--#ifdef CONFIG_PM_SLEEP
--static int ipp_suspend(struct device *dev)
--{
--	struct ipp_context *ctx = get_ipp_context(dev);
--
--	if (pm_runtime_suspended(dev))
--		return 0;
--
--	return ipp_power_ctrl(ctx, false);
--}
--
--static int ipp_resume(struct device *dev)
--{
--	struct ipp_context *ctx = get_ipp_context(dev);
--
--	if (!pm_runtime_suspended(dev))
--		return ipp_power_ctrl(ctx, true);
--
--	return 0;
--}
--#endif
--
--#ifdef CONFIG_PM_RUNTIME
--static int ipp_runtime_suspend(struct device *dev)
--{
--	struct ipp_context *ctx = get_ipp_context(dev);
--
--	return ipp_power_ctrl(ctx, false);
--}
--
--static int ipp_runtime_resume(struct device *dev)
--{
--	struct ipp_context *ctx = get_ipp_context(dev);
--
--	return ipp_power_ctrl(ctx, true);
--}
--#endif
--
--static const struct dev_pm_ops ipp_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(ipp_suspend, ipp_resume)
--	SET_RUNTIME_PM_OPS(ipp_runtime_suspend, ipp_runtime_resume, NULL)
--};
--
- struct platform_driver ipp_driver = {
- 	.probe		= ipp_probe,
- 	.remove		= ipp_remove,
- 	.driver		= {
- 		.name	= "exynos-drm-ipp",
- 		.owner	= THIS_MODULE,
--		.pm	= &ipp_pm_ops,
- 	},
- };
+@@ -502,6 +502,11 @@ err_clear:
+ static void ipp_clean_cmd_node(struct ipp_context *ctx,
+ 				struct drm_exynos_ipp_cmd_node *c_node)
+ {
++	/* cancel works */
++	cancel_work_sync(&c_node->start_work->work);
++	cancel_work_sync(&c_node->stop_work->work);
++	cancel_work_sync(&c_node->event_work->work);
++
+ 	/* delete list */
+ 	list_del(&c_node->list);
  
 -- 
 1.9.1
