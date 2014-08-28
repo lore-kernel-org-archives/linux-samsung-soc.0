@@ -1,126 +1,81 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH 11/14] arm64: dts: Add initial device tree support for
- EXYNOS7
-Date: Fri, 29 Aug 2014 08:30:06 +0900
-Message-ID: <20140828233006.GC16165@verge.net.au>
-References: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com>
- <1409132660-1898-3-git-send-email-ch.naveen@samsung.com>
- <20140828035639.GB4972@localhost>
- <20140828094846.GD14650@leverpostej>
- <CAOesGMjY8wfAcq2fLgs=ZWHdiWtFqxr+ncUKTje0SnXqO-CCgQ@mail.gmail.com>
- <20140828170306.GQ14650@leverpostej>
- <CAOesGMgYeFObKHA9znzBq9t2mLv8WWT1QaKugQ6yf7RgV09Qyg@mail.gmail.com>
- <CAL_JsqLVsjJVL+GoJVMoXGiGxVKSh0oyJ-nwKEkXfa+fWid7yA@mail.gmail.com>
- <CAOesGMhsayvhBK_gVgzB3+69YC1Ca6hsBHsONJm_QEcSKpVZOw@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv5 4/4] thermal: exynos: Remove duplicate code when reading
+ triminfo register of Exynos5440
+Date: Fri, 29 Aug 2014 08:50:41 +0900
+Message-ID: <53FFC051.7040907@samsung.com>
+References: <1409016665-3824-1-git-send-email-cw00.choi@samsung.com>
+ <1409016665-3824-5-git-send-email-cw00.choi@samsung.com>
+ <53FEAF2A.1080400@samsung.com> <20140828145310.GC18194@developer>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:45519 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750773AbaH1Xa5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Aug 2014 19:30:57 -0400
-Content-Disposition: inline
-In-Reply-To: <CAOesGMhsayvhBK_gVgzB3+69YC1Ca6hsBHsONJm_QEcSKpVZOw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <20140828145310.GC18194@developer>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: eduardo.valentin@ti.com, amit.daniel@samsung.com, rui.zhang@intel.com, kgene.kim@samsung.com, ch.naveen@samsung.com, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Catalin Marinas <Catalin.Marinas@arm.com>, "naveenkrishna.ch@gmail.com" <naveenkrishna.ch@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "cpgs@samsung.com" <cpgs@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-On Thu, Aug 28, 2014 at 03:23:49PM -0700, Olof Johansson wrote:
-> On Thu, Aug 28, 2014 at 10:54 AM, Rob Herring <robh@kernel.org> wrote:
-> > On Thu, Aug 28, 2014 at 12:19 PM, Olof Johansson <olof@lixom.net> wrote:
-> >> On Thu, Aug 28, 2014 at 10:03 AM, Mark Rutland <mark.rutland@arm.com> wrote:
-> >>> On Thu, Aug 28, 2014 at 05:28:22PM +0100, Olof Johansson wrote:
-> >>>> On Thu, Aug 28, 2014 at 2:48 AM, Mark Rutland <mark.rutland@arm.com> wrote:
-> >>>> > Hi,
-> >>>> >
-> >>>> >> > +   cpus {
-> >>>> >> > +           #address-cells = <2>;
-> >>>> >> > +           #size-cells = <0>;
-> >>>> >>
-> >>>> >> Why size-cells=2? Can you not fit a cpuid in 32 bits?
-> >>>> >
-> >>>> > As of commit 72aea393a2e7 (arm64: smp: honour #address-size when parsing
-> >>>> > CPU reg property) Linux can handle single-cell cpu node reg entries
-> >>>> > where /cpus/#address-cells = <1>.
-> >>>> >
-> >>>> > I can't make any guarantees about other code (e.g. bootloaders) which
-> >>>> > might try to do things with cpu nodes, YMMV.
-> >>>>
-> >>>> Ok. If address-cells is kept at 2 the unit address needs to be changed
-> >>>> to "0,0". So one or the other has to be changed.
-> >>>
-> >>> I'm happy either way.
-> >>>
-> >>> I'm not sure the rest of the tree had "0," prefixes on all of the
-> >>> unit-addresses for 64-bit addresses that were under 4GB, and I'm not
-> >>> sure that existing dts consistently do that either.
-> >>>
-> >>> Do we want to enforce that for all 64-bit unit-addresses?
-> >>
-> >> Yeah, I believe that's the only valid format for a 2-address-cell unit address.
-> >
-> > But we don't do leading 0's anywhere else like single cell unit
-> > addresses. Buses expressed with ranges and offsets are one example.
-> > Also, I2C addresses have a 32-bit size in DT yet are only 8-bit and we
-> > don't do leading zero's there.
+Dear Eduardo,
+
+On 08/28/2014 11:53 PM, Eduardo Valentin wrote:
+> On Thu, Aug 28, 2014 at 01:25:14PM +0900, Chanwoo Choi wrote:
+>> Dear Eduardo,
+>>
+>> This patch is wrong. It is my mistake.
+>>
+>> Please ignore only this patch because
+>> the offset calculation of 'case 0' is different from 'case 2'.
 > 
-> Ok, I'm happily proven wrong here, also by confirming how this is done
-> on "real" OF.
 > 
-> According to benh:
+> Do patches 1 - 3 are still correct? Patch 1, from Barlomiej, seams to be
+> a common agreement. 
+
+Yes, patches 1 - 3 are correct.
+
+Best Regards,
+Chanwoo Choi
+
 > 
-> 15:20 <benh> ojn: 0,0 is not quite right, it's supposed to be used
-> when the two numbers are different things, like device,fn on PCI
+>>
+>> Best Regards,
+>> Chanwoo Choi
+>>
+>> On 08/26/2014 10:31 AM, Chanwoo Choi wrote:
+>>> This patch remove simply duplicate code when reading triminfo register of Exynos5440.
+>>>
+>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> Cc: Zhang Rui <rui.zhang@intel.com>
+>>> Cc: Eduardo Valentin <edubezval@gmail.com>
+>>> Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>>> Reviewed-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>>> ---
+>>>  drivers/thermal/samsung/exynos_tmu.c | 4 +---
+>>>  1 file changed, 1 insertion(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+>>> index 64c702a..5888467 100644
+>>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>>> @@ -187,15 +187,13 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>>>  		 */
+>>>  		switch (data->id) {
+>>>  		case 0:
+>>> +		case 2:
+>>>  			trim_info = readl(data->base +
+>>>  			EXYNOS5440_EFUSE_SWAP_OFFSET + reg->triminfo_data);
+>>>  			break;
+>>>  		case 1:
+>>>  			trim_info = readl(data->base + reg->triminfo_data);
+>>>  			break;
+>>> -		case 2:
+>>> -			trim_info = readl(data->base -
+>>> -			EXYNOS5440_EFUSE_SWAP_OFFSET + reg->triminfo_data);
+>>>  		}
+>>>  	} else {
+>>>  		/* On exynos5420 the triminfo register is in the shared space */
+>>>
+>>
 > 
-> The same is true for >2^32 unit addresses, they just use the one
-> integer instead of x,y.
-> 
-> So, I take back all I've said on this in the last 72 hours. :) It
-> looks like we might need to revisit some of the 32-bit DTs.  Simon,
-> drop the series you had. :)
 
-Thanks will do.
-
-Is the way forward for me to apply my original patch to
-change memory@180000000 to memory@140000000? And abandon all
-the ',' only changes?This one:
-
-This is the original patch:
-
-From: Simon Horman <horms+renesas@verge.net.au>
-
-[PATCH] ARM: shmobile: lager: correct memory map
-
-The base address of the second memory region on the lager
-board is 0x140000000. Update the tag used in the dts file accordingly.
-
-This is a documentation fix and should have no run-time affect.
-
-This problem was introduced when the second memory region
-was added to the lager dts file by 62bc32a2573c4219
-("ARM: shmobile: Include all 4 GiB of memory on Lager)"
-in v3.14.
-
-Reported-by: NAOYA SHIIBA <naoya.shiiba.nx@renesas.com>
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
----
- arch/arm/boot/dts/r8a7790-lager.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/r8a7790-lager.dts b/arch/arm/boot/dts/r8a7790-lager.dts
-index 0118cbf..84dcafa 100644
---- a/arch/arm/boot/dts/r8a7790-lager.dts
-+++ b/arch/arm/boot/dts/r8a7790-lager.dts
-@@ -32,7 +32,7 @@
- 		reg = <0 0x40000000 0 0x40000000>;
- 	};
- 
--	memory@180000000 {
-+	memory@140000000 {
- 		device_type = "memory";
- 		reg = <1 0x40000000 0 0xc0000000>;
- 	};
--- 
-2.0.1
