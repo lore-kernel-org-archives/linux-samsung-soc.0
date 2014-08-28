@@ -1,195 +1,201 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v2 9/9] ARM: exynos: Move to generic power domain bindings
-Date: Thu, 28 Aug 2014 10:39:02 +0200
-Message-ID: <1409215142-8218-10-git-send-email-ulf.hansson@linaro.org>
-References: <1409215142-8218-1-git-send-email-ulf.hansson@linaro.org>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH V2 3/3] mmc: dw_mmc: Dont cut off vqmmc and vmmc
+Date: Thu, 28 Aug 2014 17:43:54 +0900
+Message-ID: <53FEEBCA.3040909@samsung.com>
+References: <1408715272-13833-1-git-send-email-yuvaraj.cd@samsung.com>
+ <1408715272-13833-4-git-send-email-yuvaraj.cd@samsung.com>
+ <CAPDyKFqz8sGj2td=ihZXN4zvAqmu9FHZjWdCn-ZRcdHugNHe2g@mail.gmail.com>
+ <CAPz6YkXH1mMOTwcLkKdffdUHN+TaCAhpa8oG0h+rFn9i+GMoCw@mail.gmail.com>
+ <CAPDyKFqp7oEt9ASmdxrgUwbQ8aTZzAuJ7uD1oGN50iuzPzBfVg@mail.gmail.com>
+ <53FAF8C7.8040007@samsung.com>
+ <CAD=FV=XbV7R+FqRRucA5Cv2A+=3g8zccASwxcTtJD6YyO-ioCg@mail.gmail.com>
+ <53FD5501.1010007@samsung.com>
+ <CAD=FV=VCw1mLpArSY1uj+1zorWROjqGeT3dcTJYzr_1J6jdsBQ@mail.gmail.com>
+ <53FD62C6.8010100@samsung.com>
+ <CAD=FV=X+BsvTth4J3oqLJ=pMw_NB-GoYnaqJgyOSr9foLreLvQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f54.google.com ([209.85.215.54]:42021 "EHLO
-	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S936434AbaH1Ijd (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:16557 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757021AbaH1IoF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Aug 2014 04:39:33 -0400
-Received: by mail-la0-f54.google.com with SMTP id b17so519179lan.13
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Aug 2014 01:39:32 -0700 (PDT)
-In-Reply-To: <1409215142-8218-1-git-send-email-ulf.hansson@linaro.org>
+	Thu, 28 Aug 2014 04:44:05 -0400
+In-reply-to: <CAD=FV=X+BsvTth4J3oqLJ=pMw_NB-GoYnaqJgyOSr9foLreLvQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pm@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Chris Ball <chris@printf.net>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
+To: Doug Anderson <dianders@google.com>, Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Sonny Rao <sonnyrao@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Ball <cjb@laptop.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, ABHILASH KESAVAN <a.kesavan@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, "cpgs ." <cpgs@samsung.com>
 
-From: Tomasz Figa <t.figa@samsung.com>
+On 08/28/2014 12:49 AM, Doug Anderson wrote:
+> Jaehoon,
+> 
+> On Tue, Aug 26, 2014 at 9:47 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>> Doug,
+>>
+>> On 08/27/2014 01:14 PM, Doug Anderson wrote:
+>>> Jaehoon,
+>>>
+>>> On Tue, Aug 26, 2014 at 8:48 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>>>> Hi, Doug,
+>>>>
+>>>> On 08/26/2014 12:25 AM, Doug Anderson wrote:
+>>>>> Jaehoon,
+>>>>>
+>>>>> On Mon, Aug 25, 2014 at 1:50 AM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>>>>>> On 08/25/2014 05:13 PM, Ulf Hansson wrote:
+>>>>>>> On 22 August 2014 20:27, Sonny Rao <sonnyrao@chromium.org> wrote:
+>>>>>>>> On Fri, Aug 22, 2014 at 8:31 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>>>>>>>>> On 22 August 2014 15:47, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
+>>>>>>>>>> Exynos 5250 and 5420 based boards uses built-in CD# line for card
+>>>>>>>>>> detection.But unfortunately CD# line is on the same voltage rails
+>>>>>>>>>> as of I/O voltage rails. When we cut off vqmmc,the consequent card
+>>>>>>>>>> detection will break in these boards.
+>>>>>>
+>>>>>> I didn't know that use CD# line for card detect.
+>>>>>> And if CD# voltage rails and I/O voltage rail are same voltage, it doesn't make sense.
+>>>>>> Which card is used with same voltages? (eMMC? SD? SDIO?)
+>>>>>>
+>>>>>> Well, I have checked Exynos5250 and 5420, but it looks like not same rails.
+>>>>>
+>>>>> I'm not sure I totally understood what you said.  In my manual I have
+>>>>> a table titled "Table 2-1 Exynos 5420 Pin List".  Look in this table
+>>>>> for XMMC2CDN and XMMC2DATA_0.  Look to the right of the table and
+>>>>> you'll see the power domain.  For both it shows VDDQ_MMC2.  If that
+>>>>> doesn't mean that the two are in the same voltage domain then I don't
+>>>>> know what does.  Can you point to any examples where they have
+>>>>> different voltage domains?
+>>>> I think you're mis-understanding for it.
+>>>> Right, It's described at exynos5420, but it's not connected.
+>>>
+>>> "It's not connected".  What do you mean?  If I were to guess I'd say
+>>> that on some particular board you're looking at they don't happen to
+>>> use the "CD" pin for card detect.  If this is what you mean, it
+>>> doesn't help me.  exynos5420-peach-pit does use the CD pin for card
+>>> detect.  You can look at the DTS file and confirm it.
+>>
+>> I didn't know how exynos5420-peach-pit's circuit is configured.
+>> But i guess that almost all exynos5 boards are configured with the similar circuit.
+>>
+>> At Almost all Exynos5 board, CD-pin is used, but not included in Same power domain.
+>> (CD-pin is external card-detect pin. - like XEINT_# pin)
+>> You mentioned CD# and DATA# lines is used the same power domain, right?
+>> In Circuit (not exynos5420-peach-pit), DATA# line and CMD/CLK(vqmmc) is same power supply, and vdd is used other power supply.
+>> Not use the CD# pin, used the XEINT_# pin.
+>> So i think we don't need to consider the CD#.
+>> If exynos5420-peach-pit board is used the CD#-pin, then our discussion can be changed.
+> 
+> Maybe on your board you have CD connected to a "gpx" line.  ...but not
+> mine.  The guys who designed our hardware followed the SMDK5420
+> reference schematics which connect the SD card slot card detect to
+> "gpc2_2", which is the card detect pin.
+> 
+> See "arch/arm/boot/dts/exynos5420-smdk5420.dts", specifically noting
+> the lack of a GPIO card detect and the inclusion of "sd2_cd"
+> 
+> mmc@12220000 {
+>   status = "okay";
+>   card-detect-delay = <200>;
+>   samsung,dw-mshc-ciu-div = <3>;
+>   samsung,dw-mshc-sdr-timing = <2 3>;
+>   samsung,dw-mshc-ddr-timing = <1 2>;
+>   pinctrl-names = "default";
+>   pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+>   bus-width = <4>;
+>   cap-sd-highspeed;
+> };
+> 
+> See "arch/arm/boot/dts/exynos5420-peach-pit.dts" too:
+> 
+> &mmc_2 {
+>   status = "okay";
+>   num-slots = <1>;
+>   cap-sd-highspeed;
+>   card-detect-delay = <200>;
+>   clock-frequency = <400000000>;
+>   samsung,dw-mshc-ciu-div = <3>;
+>   samsung,dw-mshc-sdr-timing = <2 3>;
+>   samsung,dw-mshc-ddr-timing = <1 2>;
+>   pinctrl-names = "default";
+>   pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+>   bus-width = <4>;
+> };
+> 
+> 
+> Here, see this ASCII art that shows how some lines are hooked up on
+> peach-pit.  You might need to paste this into something with a
+> fixed-width font.
+> 
+>                      +--------------------
+>                      |    Exynos 5420
+>                      |
+>                      |
+> P2.8V_LOUT4 ---------|- VDDQ_MMC2 (AK7)
+>     |                |
+>     |                |
+>   +-+- 10K res -+----|- XMMC2CDN (AK6)
+>   |             |    |
+>   |             |    |
+>   |             |    |
+>   |           Ext CD |
+>   |                  |
+>   +-- 10K res-+--+---|- XMMC2CMD (AK8)
+>                  |
+>                  |
+>                Ext CMD
+> 
+> You can see from the above that the external card detect signal (that
+> goes to the connector) named "Ext CD" is pulled up to the same voltage
+> as the external CMD signal (that also goes to the connector).  This is
+> vqmmc.  If we turn off vqmmc then the 10K resistor will (I think) act
+> as a pull down, or in the best case it will be floating.
+> 
+> Said another way: we can't read card detect when vqmmc is off.
 
-This patch moves Exynos power domain code to use the new generic power
-domain look-up framework introduced in previous patches, thus also
-allowing the new code to be compiled with CONFIG_ARCH_EXYNOS as well.
+If that's the case, it makes sense. But i wonder why designed like that.
+Anyway, then we need to consider that controls the vqmmc power for card-detection.
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-[Ulf:Rebased and resolved conflicts]
----
- .../bindings/arm/exynos/power_domain.txt           | 13 ++--
- arch/arm/mach-exynos/pm_domains.c                  | 78 +---------------------
- kernel/power/Kconfig                               |  2 +-
- 3 files changed, 8 insertions(+), 85 deletions(-)
+But if polling system uses, it seems to detect the card.
+Polling is the method that sends the status command.
+At that time, we can notice whether card is insert/remove. Is it impossible?
 
-diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-index 8b4f7b7f..abde1ea 100644
---- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-+++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-@@ -8,6 +8,8 @@ Required Properties:
-     * samsung,exynos4210-pd - for exynos4210 type power domain.
- - reg: physical base address of the controller and length of memory mapped
-     region.
-+- #power-domain-cells: number of cells in power domain specifier;
-+    must be 0.
- 
- Optional Properties:
- - clocks: List of clock handles. The parent clocks of the input clocks to the
-@@ -29,6 +31,7 @@ Example:
- 	lcd0: power-domain-lcd0 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10023C00 0x10>;
-+		#power-domain-cells = <0>;
- 	};
- 
- 	mfc_pd: power-domain@10044060 {
-@@ -37,12 +40,8 @@ Example:
- 		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_SW_ACLK333>,
- 			<&clock CLK_MOUT_USER_ACLK333>;
- 		clock-names = "oscclk", "pclk0", "clk0";
-+		#power-domain-cells = <0>;
- 	};
- 
--Example of the node using power domain:
--
--	node {
--		/* ... */
--		samsung,power-domain = <&lcd0>;
--		/* ... */
--	};
-+See Documentation/devicetree/bindings/power/power_domain.txt for description
-+of consumer-side bindings.
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index fd76e1b..46b6502 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -105,78 +105,6 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
- 	return exynos_pd_power(domain, false);
- }
- 
--static void exynos_add_device_to_domain(struct exynos_pm_domain *pd,
--					 struct device *dev)
--{
--	int ret;
--
--	dev_dbg(dev, "adding to power domain %s\n", pd->pd.name);
--
--	while (1) {
--		ret = pm_genpd_add_device(&pd->pd, dev);
--		if (ret != -EAGAIN)
--			break;
--		cond_resched();
--	}
--
--	pm_genpd_dev_need_restore(dev, true);
--}
--
--static void exynos_remove_device_from_domain(struct device *dev)
--{
--	struct generic_pm_domain *genpd = dev_to_genpd(dev);
--	int ret;
--
--	dev_dbg(dev, "removing from power domain %s\n", genpd->name);
--
--	while (1) {
--		ret = pm_genpd_remove_device(genpd, dev);
--		if (ret != -EAGAIN)
--			break;
--		cond_resched();
--	}
--}
--
--static void exynos_read_domain_from_dt(struct device *dev)
--{
--	struct platform_device *pd_pdev;
--	struct exynos_pm_domain *pd;
--	struct device_node *node;
--
--	node = of_parse_phandle(dev->of_node, "samsung,power-domain", 0);
--	if (!node)
--		return;
--	pd_pdev = of_find_device_by_node(node);
--	if (!pd_pdev)
--		return;
--	pd = platform_get_drvdata(pd_pdev);
--	exynos_add_device_to_domain(pd, dev);
--}
--
--static int exynos_pm_notifier_call(struct notifier_block *nb,
--				    unsigned long event, void *data)
--{
--	struct device *dev = data;
--
--	switch (event) {
--	case BUS_NOTIFY_BIND_DRIVER:
--		if (dev->of_node)
--			exynos_read_domain_from_dt(dev);
--
--		break;
--
--	case BUS_NOTIFY_UNBOUND_DRIVER:
--		exynos_remove_device_from_domain(dev);
--
--		break;
--	}
--	return NOTIFY_DONE;
--}
--
--static struct notifier_block platform_nb = {
--	.notifier_call = exynos_pm_notifier_call,
--};
--
- static __init int exynos4_pm_init_power_domain(void)
- {
- 	struct platform_device *pdev;
-@@ -202,7 +130,6 @@ static __init int exynos4_pm_init_power_domain(void)
- 		pd->base = of_iomap(np, 0);
- 		pd->pd.power_off = exynos_pd_power_off;
- 		pd->pd.power_on = exynos_pd_power_on;
--		pd->pd.of_node = np;
- 
- 		pd->oscclk = clk_get(dev, "oscclk");
- 		if (IS_ERR(pd->oscclk))
-@@ -228,15 +155,12 @@ static __init int exynos4_pm_init_power_domain(void)
- 			clk_put(pd->oscclk);
- 
- no_clk:
--		platform_set_drvdata(pdev, pd);
--
- 		on = __raw_readl(pd->base + 0x4) & INT_LOCAL_PWR_EN;
- 
- 		pm_genpd_init(&pd->pd, NULL, !on);
-+		of_genpd_add_provider(np, of_genpd_xlate_simple, &pd->pd);
- 	}
- 
--	bus_register_notifier(&platform_bus_type, &platform_nb);
--
- 	return 0;
- }
- arch_initcall(exynos4_pm_init_power_domain);
-diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
-index 897619b..bbef57f 100644
---- a/kernel/power/Kconfig
-+++ b/kernel/power/Kconfig
-@@ -304,7 +304,7 @@ config PM_GENERIC_DOMAINS_RUNTIME
- 
- config PM_GENERIC_DOMAINS_OF
- 	def_bool y
--	depends on PM_GENERIC_DOMAINS && OF && !ARCH_EXYNOS
-+	depends on PM_GENERIC_DOMAINS && OF
- 
- config CPU_PM
- 	bool
--- 
-1.9.1
+> 
+>> Your commit message looks like all exynos5250/5420 board are used CD# line.
+> 
+> The commit message should be clearer, agreed.  I think I asked Yuvaraj
+> to make sure that the code only invoked this quirk on exynos and only
+> if a GPIO was not used for card detect.  Yuvaraj: can you make it more
+> obvious that not all exynos5250/5420 boards need this, only those that
+> use the "official" card detect line?
+> 
+> 
+>>> ...or are you saying that the CD pin somehow changes voltage domains
+>>> when configured as a GPIO?  I find that very hard to believe.  What
+>>> voltage domain does it go to?  If it goes to a 1.8V voltage domain
+>>> then that would be bad when vqmmc was 3.3V.  If it goes to a 3.3V
+>>> voltage domain then that would be bad when vqmmc was 1.8V.  Remember
+>>> that externally we've got a pull up to vqmmc.
+>>
+>> It is used with XEINT_# pin instead of CD# pin.
+>> As i mentioned above, if exynos5420-peach-pit is used CD# line and not used XEINT_# pin,
+>> my point is meaningless. :)
+>>
+>> Is exynos5420-peach-pit board used with CD#pin, not XEINT_# pin?
+> 
+> Yes.  It is using CD#.  Do you remove your objections to this patch,
+> then (once the commit message is clearer)?
+
+Sure.
+And I will also effort to find it, if we can find the more generic approach.
+
+Best Regards,
+Jaehoon Chung
+
+> 
+> -Doug
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
