@@ -1,108 +1,60 @@
-From: Sonny Rao <sonnyrao@chromium.org>
-Subject: Re: [PATCH V2 3/3] mmc: dw_mmc: Dont cut off vqmmc and vmmc
-Date: Thu, 28 Aug 2014 10:50:28 -0700
-Message-ID: <CAPz6YkXOxunSP9ZT_Ur+i3CicZ+rv-pvTE2M+rvODTqh8PHZrA@mail.gmail.com>
-References: <1408715272-13833-1-git-send-email-yuvaraj.cd@samsung.com>
- <1408715272-13833-4-git-send-email-yuvaraj.cd@samsung.com>
- <CAPDyKFqz8sGj2td=ihZXN4zvAqmu9FHZjWdCn-ZRcdHugNHe2g@mail.gmail.com>
- <CAPz6YkXH1mMOTwcLkKdffdUHN+TaCAhpa8oG0h+rFn9i+GMoCw@mail.gmail.com>
- <CAPDyKFqp7oEt9ASmdxrgUwbQ8aTZzAuJ7uD1oGN50iuzPzBfVg@mail.gmail.com>
- <CAD=FV=VQWzhiSU+iULACj+Dp_tDf3SszQ8ELLEGqVEyJJRQy1Q@mail.gmail.com>
- <CAPDyKFo9-5=uPqD8RvLGsYtSCynBFnGGeSCpwLZuzDtW+652hA@mail.gmail.com>
- <CAD=FV=VveHTYmiBu42DJeFFGARV2+1bS6Y2CQM995YkX_O9SQA@mail.gmail.com>
- <CAPDyKFpUU643iXVbxuu9Vx1zY0K7x4z-ZxxVEWd+Lsuwp0iA+g@mail.gmail.com>
- <CAD=FV=Vqz=kA=D5KDyq_QuPi-6B05VixYManTsFe2PC-fzxRkw@mail.gmail.com>
- <CAPDyKFrcA183V-R-nbZcY8wXCRqONb1WUu3BS_0vNJe2+Ej2_w@mail.gmail.com> <CAD=FV=UykPjixODXJ-s6vrZVs3O3=rX2iUakm6WnqiqvJNkoqQ@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH 11/14] arm64: dts: Add initial device tree support for EXYNOS7
+Date: Thu, 28 Aug 2014 12:54:11 -0500
+Message-ID: <CAL_JsqLVsjJVL+GoJVMoXGiGxVKSh0oyJ-nwKEkXfa+fWid7yA@mail.gmail.com>
+References: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com>
+ <1409132660-1898-3-git-send-email-ch.naveen@samsung.com> <20140828035639.GB4972@localhost>
+ <20140828094846.GD14650@leverpostej> <CAOesGMjY8wfAcq2fLgs=ZWHdiWtFqxr+ncUKTje0SnXqO-CCgQ@mail.gmail.com>
+ <20140828170306.GQ14650@leverpostej> <CAOesGMgYeFObKHA9znzBq9t2mLv8WWT1QaKugQ6yf7RgV09Qyg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f48.google.com ([209.85.216.48]:38259 "EHLO
-	mail-qa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750892AbaH1Rut (ORCPT
+Received: from mail-vc0-f171.google.com ([209.85.220.171]:42373 "EHLO
+	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750820AbaH1Ryd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Aug 2014 13:50:49 -0400
-Received: by mail-qa0-f48.google.com with SMTP id m5so1053359qaj.21
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Aug 2014 10:50:48 -0700 (PDT)
-In-Reply-To: <CAD=FV=UykPjixODXJ-s6vrZVs3O3=rX2iUakm6WnqiqvJNkoqQ@mail.gmail.com>
+	Thu, 28 Aug 2014 13:54:33 -0400
+In-Reply-To: <CAOesGMgYeFObKHA9znzBq9t2mLv8WWT1QaKugQ6yf7RgV09Qyg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@google.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, ABHILASH KESAVAN <a.kesavan@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+To: Olof Johansson <olof@lixom.net>
+Cc: Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <marc.zyngier@arm.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Catalin Marinas <Catalin.Marinas@arm.com>, "naveenkrishna.ch@gmail.com" <naveenkrishna.ch@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "cpgs@samsung.com" <cpgs@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>
 
-On Thu, Aug 28, 2014 at 8:50 AM, Doug Anderson <dianders@google.com> wrote:
-> Ulf,
->
-> On Thu, Aug 28, 2014 at 12:25 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> On 27 August 2014 17:52, Doug Anderson <dianders@google.com> wrote:
->>> Ulf,
+On Thu, Aug 28, 2014 at 12:19 PM, Olof Johansson <olof@lixom.net> wrote:
+> On Thu, Aug 28, 2014 at 10:03 AM, Mark Rutland <mark.rutland@arm.com> wrote:
+>> On Thu, Aug 28, 2014 at 05:28:22PM +0100, Olof Johansson wrote:
+>>> On Thu, Aug 28, 2014 at 2:48 AM, Mark Rutland <mark.rutland@arm.com> wrote:
+>>> > Hi,
+>>> >
+>>> >> > +   cpus {
+>>> >> > +           #address-cells = <2>;
+>>> >> > +           #size-cells = <0>;
+>>> >>
+>>> >> Why size-cells=2? Can you not fit a cpuid in 32 bits?
+>>> >
+>>> > As of commit 72aea393a2e7 (arm64: smp: honour #address-size when parsing
+>>> > CPU reg property) Linux can handle single-cell cpu node reg entries
+>>> > where /cpus/#address-cells = <1>.
+>>> >
+>>> > I can't make any guarantees about other code (e.g. bootloaders) which
+>>> > might try to do things with cpu nodes, YMMV.
 >>>
->>> On Wed, Aug 27, 2014 at 4:17 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>>>> Now, we've got MMC_CAP_NEEDS_POLL, so dw_mmc will periodically be
->>>>> called to check the card detect line, but with vmmc and vqmmc off.  It
->>>>> will be unable to return a sensible value without actually turning on
->>>>> vmmc and vqmmc.
->>>>
->>>> Currently MMC_CAP_NEEDS_POLL mean the mmc rescan work will reschedule
->>>> itself with HZ interval. This to check for card insert/removal.
->>>>
->>>> Now, mmc_rescan() will, if present, invoke host's ->get_cd() callback
->>>> to check whether it's worth to continue initialization sequence or if
->>>> it should re-schedule itself again.
->>>>
->>>> If your host driver can distinguish whether a card is inserted, which
->>>> in this case are when vccq is turned off, your ->get_cd() callback need
->>>> to return 1. That will allow mmc_rescan() to continue it's
->>>> initialization sequence and do mmc_power_up().
->>>
->>> As per my other email, we can't tell whether a card is inserted when
->>> vqmmc is off.
+>>> Ok. If address-cells is kept at 2 the unit address needs to be changed
+>>> to "0,0". So one or the other has to be changed.
 >>
->> I understand.
+>> I'm happy either way.
 >>
->> The solution I proposed above, is:
+>> I'm not sure the rest of the tree had "0," prefixes on all of the
+>> unit-addresses for 64-bit addresses that were under 4GB, and I'm not
+>> sure that existing dts consistently do that either.
 >>
->> 1) Enable MMC_CAP_NEEDS_POLL.
->> 2) Make ->get_cd() return 1, when you can't distinguish if the card is inserted.
->>
->> That will solve this issue and without messing up the mmc core.
+>> Do we want to enforce that for all 64-bit unit-addresses?
 >
-> Ah, I see!  So every 1 second, we'll do the following:
->
-> 1. Call get_cd(), which returns 1.
->
-> 2. MMC core will power everything up (turn on all regulators) for MMC.
->
-> 3. We'll start to initialize a card.
->
-> 4. We'll notice that, oops, there's no card there.
->
-> 5. MMC core will shut things down again.
->
->
-> That seems awfully expensive to do every second when the card detect
-> line actually does work (as long as you keep power lines).  Is the
-> patch to separate out the concepts of "power off because no card is
-> inserted" and "power off because we're power cycling the card" really
-> bad enough to warrant forcing us to use the above?
->
-> I'm not an EE, but cycling regulators on and off every second doesn't
-> seem super ideal, but maybe they're designed for it?
->
->
-> Personally, I'd be tempted to just leave the power on all the time and
-> if a card somehow needs to be power cycled (because UHS negotiation
-> failed?) then that card just isn't supported.  This could be done in
-> the dts by saying that the regulator is "always on" and no need to
-> pollute any source files.
+> Yeah, I believe that's the only valid format for a 2-address-cell unit address.
 
-Yeah, power cycling the regulators constantly doesn't seem like a
-great idea, we can ask the EEs what they think.
+But we don't do leading 0's anywhere else like single cell unit
+addresses. Buses expressed with ranges and offsets are one example.
+Also, I2C addresses have a 32-bit size in DT yet are only 8-bit and we
+don't do leading zero's there.
 
-This scheme of leaving them on all the time would prevent us from
-being able to actually power cycle the card, which I think is required
-by the spec in case UHS negotiation fails.
-
-
->
->
-> -Doug
+Rob
