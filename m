@@ -1,79 +1,210 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/1] regulator: max77802: set opmode to normal if off is
- read from hw
-Date: Thu, 28 Aug 2014 09:28:38 +0100
-Message-ID: <20140828082838.GH17528@sirena.org.uk>
-References: <CABxcv=k2PH-BksYyWirAoL=DiVuy+O=Y1c+pMO=EK58XNKMsFw@mail.gmail.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH 11/14] arm64: dts: Add initial device tree support for
+ EXYNOS7
+Date: Thu, 28 Aug 2014 09:35:50 +0100
+Message-ID: <53FEE9E6.2000204@arm.com>
+References: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com> <1409132660-1898-3-git-send-email-ch.naveen@samsung.com> <20140828035639.GB4972@localhost>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="FtoCNUwdcqbKhyPv"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:37347 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934238AbaH1I3E (ORCPT
+Received: from fw-tnat.austin.arm.com ([217.140.110.23]:23203 "EHLO
+	collaborate-mta1.arm.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S936218AbaH1Ifx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Aug 2014 04:29:04 -0400
-Content-Disposition: inline
-In-Reply-To: <CABxcv=k2PH-BksYyWirAoL=DiVuy+O=Y1c+pMO=EK58XNKMsFw@mail.gmail.com>
+	Thu, 28 Aug 2014 04:35:53 -0400
+In-Reply-To: <20140828035639.GB4972@localhost>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Rob Herring <robh@kernel.org>, Catalin Marinas <Catalin.Marinas@arm.com>, Thomas Abraham <thomas.ab@samsung.com>, "cpgs@samsung.com" <cpgs@samsung.com>, "naveenkrishna.ch@gmail.com" <naveenkrishna.ch@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
+On 28/08/14 04:56, Olof Johansson wrote:
+> Hi,
+> 
+> On Wed, Aug 27, 2014 at 03:14:18PM +0530, Naveen Krishna Chatradhi wrote:
+>> Add initial device tree nodes for EXYNOS7 SoC.
+>> Also, includes the dt-binding definitions for clock ids.
+> 
+> Uh, no -- it just adds the dtsi.
+> 
+>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+>> Cc: Thomas Abraham <thomas.ab@samsung.com>
+>> Cc: Rob Herring <robh@kernel.org>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> ---
+>>  arch/arm64/boot/dts/exynos7.dtsi |  553 ++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 553 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/exynos7.dtsi
+>>
+>> diff --git a/arch/arm64/boot/dts/exynos7.dtsi b/arch/arm64/boot/dts/exynos7.dtsi
+>> new file mode 100644
+>> index 0000000..6b9eaf4
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/exynos7.dtsi
+> 
+> Let's not make the same mistake as on 32-bit, and go with a directory
+> hierarchy here from day one.
+> 
+> So, please create a exynos subdirectory for this file. You also need
+> a Makefile when you add a board dts.
+> 
+>> @@ -0,0 +1,553 @@
+>> +/*
+>> + * SAMSUNG EXYNOS7 SoC device tree source
+>> + *
+>> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+>> + *		http://www.samsung.com
+>> + *
+>> + * SAMSUNG EXYNOS7 SoC device nodes are listed in this file.
+>> + * EXYNOS7 based board files can include this file and provide
+>> + * values for board specfic bindings.
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +#include <dt-bindings/clock/exynos7-clk.h>
+>> +
+>> +/ {
+>> +	compatible = "samsung,exynos7";
+>> +	interrupt-parent = <&gic>;
+>> +	#address-cells = <1>;
+>> +	#size-cells = <1>;
+> 
+> You should probably use address-cells/size-cells 2/2 on a 64-bit platform.
+> 
+>> +	aliases {
+>> +		pinctrl0 = &pinctrl_0;
+>> +		pinctrl1 = &pinctrl_1;
+>> +		pinctrl2 = &pinctrl_2;
+>> +		pinctrl3 = &pinctrl_3;
+>> +		pinctrl4 = &pinctrl_4;
+>> +		pinctrl5 = &pinctrl_5;
+>> +		pinctrl6 = &pinctrl_6;
+>> +		pinctrl7 = &pinctrl_7;
+>> +		pinctrl8 = &pinctrl_8;
+>> +		pinctrl9 = &pinctrl_9;
+>> +		mshc0 = &mmc_0;
+>> +		mshc2 = &mmc_2;
+>> +	};
+>> +
+>> +	chipid@10000000 {
+>> +		compatible = "samsung,exynos4210-chipid";
+>> +		reg = <0x10000000 0x100>;
+>> +	};
+>> +
+>> +	cpus {
+>> +		#address-cells = <2>;
+>> +		#size-cells = <0>;
+> 
+> Why size-cells=2? Can you not fit a cpuid in 32 bits?
+> 
+>> +		cpu@0 {
+>> +			device_type = "cpu";
+>> +			compatible = "arm,cortex-a57", "arm,armv8";
+>> +			reg = <0x0 0x0>;
+>> +		};
+>> +	};
+>> +
+>> +	fin_pll: xxti {
+>> +		compatible = "fixed-clock";
+>> +		clock-frequency = <24000000>;
+>> +		clock-output-names = "fin_pll";
+>> +		#clock-cells = <0>;
+>> +	};
+>> +
+>> +	gic: interrupt-controller@11001000 {
+>> +		compatible = "arm,gic-400";
+>> +		#interrupt-cells = <3>;
+>> +		#address-cells = <0>;
+>> +		interrupt-controller;
+>> +		reg =	<0x11001000 0x1000>,
+>> +			<0x11002000 0x1000>,
+>> +			<0x11004000 0x2000>,
+>> +			<0x11006000 0x2000>;
+>> +	};
+>> +
+>> +	hsi2c_0: hsi2c@13640000 {
+>> +		compatible = "samsung,exynos7-hsi2c";
+> 
+> Is the i2c controller here completely new?
+> 
+> Also, please use 'i2c' for node name on these nodes.
+> 
+>> +		reg = <0x13640000 0x1000>;
+>> +		interrupts = <0 441 0>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&hs_i2c0_bus>;
+>> +		clocks = <&clock_peric0 PCLK_HSI2C0>;
+>> +		clock-names = "hsi2c";
+>> +		status = "disabled";
+>> +	};
+>> +
+>> +	hsi2c_1: hsi2c@13650000 {
+>> +		compatible = "samsung,exynos7-hsi2c";
+>> +		reg = <0x13650000 0x1000>;
+>> +		interrupts = <0 442 0>;
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&hs_i2c1_bus>;
+>> +		clocks = <&clock_peric0 PCLK_HSI2C1>;
+>> +		clock-names = "hsi2c";
+>> +		status = "disabled";
+>> +	};
+>> +
+>> +	hsi2c_2: hsi2c@14E60000 {
+> 
+> I much prefer lowercase hex in unit addresses (and reg entries) below. I
+> know 32-bit uses uppercase, but let's switch going forward here.
+> 
+>> +	mct@101C0000 {
+>> +		compatible = "samsung,exynos4210-mct";
+> 
+> Please just do away with MCT here, and use architected timers going
+> forward. There really shouldn't be a need to keep supporting MCT any
+> more -- it's a construct from before arch timers on Cortex-A9.
+> 
+>> +	mmc_0: mmc@15740000 {
+>> +		compatible = "samsung,exynos7-dw-mshc-smu";
+> 
+> Is this controller backwards compatible with exynos5 ones?
+> 
+>> +	/* The Clock nodes are ordered as per the usermanual. */
+> 
+> "The clock"
+> 
+> "user manual"
+> 
+>> +	timer {
+>> +	        compatible = "arm,armv8-timer";
+>> +	        interrupts = <1 13 0xff01>,
+>> +	                     <1 14 0xff01>,
+>> +	                     <1 11 0xff01>,
+>> +	                     <1 10 0xff01>;
+>> +	        clock-frequency = <24000000>;
+>> +		use-clocksource-only;
+>> +		use-physical-timer;
+> 
+> These two properties are not standard, and I would expect any 64-bit
+> platform to come with PSCI such that you have a way to initialize the
+> virtual timers.
 
---FtoCNUwdcqbKhyPv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+It really sickens me that this is the n-th iteration of a Samsung SoC
+having the generic timer (basically since the 5250 came out), and still
+it is littered with stupid firmware bugs:
+- Broken CNTFRQ (as outlined by the need of clock-frequency)
+- Broken CNTVOFF (as hinted by the reliance on the physical timer)
 
-On Thu, Aug 28, 2014 at 12:44:18AM +0200, Javier Martinez Canillas wrote:
-> On Wed, Aug 27, 2014 at 11:03 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+You would think that after over two years, someone would have a clue and
+added the missing 4 instructions to the boot ROM.
 
-> This is the case for Chromebooks as well but the solution implemented
-> in the downstream Chrome OS 3.8 kernel is what Tomasz suggested
+Or not.
 
-*sigh*  This is not what you were describing, though most of what you
-then go on to say doesn't correspond to the issue Tomasz was describing.
-
-> Yes, AFAIK the bootloader (none of them because Chromebooks use two
-> chained U-boots) change the regulators default opmode so once is set
-> to OFF on .disable, that value is preserved on warm reboot. This made
-> sense with the Chrome OS kernel since the kernel always set the opmode
-> defined in the "regulator-op-mode" DT property and did not relied on
-> the bootloader to set the most efficient default opmode.
-
-I'm sorry but this is just really unclear.  Does the bootloader change
-the mode or does it not change the mode?  You start off saying that the
-bootloader does change the mode, then go on to say that it doesn't and
-that the system relies on Linux changing the mode (which is consistent
-with what you were originally saying and what you say for much of the
-rest of this mail but not with what Tomasz was talking about).
-
-> Also, other drivers have customs operating mode DT properties, please
-> take a look at Documentation/devicetree/bindings/regulator/s5m8767-regulator.txt:
-
-Per driver things can potentially be fine, trying to define generic
-properties is much harder.
-
---FtoCNUwdcqbKhyPv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJT/ugzAAoJELSic+t+oim9/eAP/31xRVon8OM6Xeh0NLiRpzDK
-2n1JhH2YiDel5IsQzpPdwsX5E2sy0rlCYPxVe7Cf1e4JXN/dVUbGE06AEMx6JXvc
-nbwgM57WOm1JqZifXuW1m+502PgkxagV+6TgUdHFXuHKfJDFnnPT/aAT8jMkKKGi
-JGPZF//1VmdspHPmxaxB4Oxuj+Oo+BeZLWnOAuMHbu1y1dymfsostQwqHIjRZsYi
-xsN+xDrHFS72tcWU/212bz6dhcoh7mCCH9dwFW6unPOV/hMqsZJG1BJVvKnyx1sk
-wZQERWtHspZleEM/islsBIzcM234Q3YYUbfGmGH4LeMWkksaAsKrLY/UDLl221hF
-hMWAlDigMcrpAXp9JTkiUgjU8/XJ0Q0fEXIBZJ7pxCZVfF7z8Kn272txJTFEf2gD
-VSykBC/t1LN//antMv5/mA5hcMvRJE9RTAG2fuSUVjUVmKLW26eKdG88EijGuOSN
-7CYv+6WC4Fh8f5zGGvZpHkw0ZwCwzP/C+3r5/ddT6GluTPOkIeaO9Z80Uy5DjJtD
-0y77saLri493wTI7zlb+QY8nGKzHeiid5n4ArARXpWcQuZNZ25PeDHWLoY1SqJtt
-A1JcN+ueZ66FN5+OfY3lda2CZqGHJ383fymI0ezwQasj6Uptgy7LHBDUhwfZOp7V
-Xx4LBKOE5TqHShaYneKT
-=PjJD
------END PGP SIGNATURE-----
-
---FtoCNUwdcqbKhyPv--
+	M.
+-- 
+Jazz is not dead. It just smells funny...
