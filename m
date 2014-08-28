@@ -1,245 +1,93 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH v5 4/4] phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800
-Date: Thu, 28 Aug 2014 09:59:05 +0530
-Message-ID: <CAFp+6iGySo_73h-V308Sm+LmX+GNRaJSmYmZjoUEAR_SpUr8CQ@mail.gmail.com>
-References: <1408632923-19591-1-git-send-email-gautam.vivek@samsung.com>
-	<1408632923-19591-5-git-send-email-gautam.vivek@samsung.com>
-	<000001cfc19a$6190fd10$24b2f730$%han@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv2 1/5] rtc: s3c: Define s3c_rtc structure to remove global
+ variables.
+Date: Thu, 28 Aug 2014 13:49:25 +0900
+Message-ID: <53FEB4D5.8000704@samsung.com>
+References: <y@samsung.com> <1407808871-6046-1-git-send-email-y@samsung.com>
+ <1407808871-6046-2-git-send-email-y@samsung.com>
+ <20140822134204.1fa5be7aeb76a50b45ccc5f5@linux-foundation.org>
+ <53FA89FD.1030004@samsung.com>
+ <20140826143149.7cd3ab27b6247a59a486e681@linux-foundation.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <000001cfc19a$6190fd10$24b2f730$%han@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Mathias Nyman <mathias.nyman@intel.com>, Alan Stern <stern@rowland.harvard.edu>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Felipe Balbi <balbi@ti.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:50469 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751297AbaH1Et1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 28 Aug 2014 00:49:27 -0400
+In-reply-to: <20140826143149.7cd3ab27b6247a59a486e681@linux-foundation.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: a.zummo@towertech.it, kgene.kim@samsung.com, kyungmin.park@samsung.com, rtc-linux@googlegroups.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hi Jingoo,
+Dear Andrew,
 
-
-On Wed, Aug 27, 2014 at 7:28 AM, Jingoo Han <jg1.han@samsung.com> wrote:
-> On Thursday, August 21, 2014 11:55 PM, Vivek Gautam wrote:
+On 08/27/2014 06:31 AM, Andrew Morton wrote:
+> On Mon, 25 Aug 2014 09:57:33 +0900 Chanwoo Choi <cw00.choi@samsung.com> wrote:
+> 
+>> Dear Andrew, 
 >>
->> Adding phy calibrate callback, which facilitates setting certain
->> PHY settings post initialization of the PHY controller.
->> Exynos5420 and Exynos5800 have 28nm USB 3.0 DRD PHY for which
->> the Loss-of-Signal (LOS) Detector Threshold Level as well as
->> Tx-Vboost-Level should be controlled for Super-Speed operations.
+>> On 08/23/2014 05:42 AM, Andrew Morton wrote:
+>>> On Tue, 12 Aug 2014 11:01:07 +0900 y@samsung.com wrote:
+>>>
+>>>> This patch define s3c_rtc structure including necessary variables for S3C RTC
+>>>> device instead of global variables. This patch improves the readability by
+>>>> removing global variables.
+>>>
+>>> Below is the v1->v2 delta.
+>>>
+>>> Why were all those tests of info->base added?  Can it really be zero? 
+>>> I don't see how.
 >>
->> Additionally set proper time to wait for RxDetect measurement,
->> for desired PHY reference clock, so as to solve issue with enumeration
->> of few USB 3.0 devices, like Samsung SUM-TSB16S 3.0 USB drive
->> on the controller.
->> We are using CR_port for this purpose to send required data
->> to override the LOS values.
+>> If some functions (e.g., s3c_rtc_settime) accesses the rtc register
+>> by using info->base before the initialization of info->base in s3c_rtc_probe,
+>> I thought that null pointer error would happen.
+> 
+> probe() should be called before anything else.  If we're somehow
+> calling s3c_rtc_settime() before probe() has completed then something
+> very bad is happening - for example, the device may have been
+> registered far too early.  But I don't think that's the case here.
+
+I means that existing rtc-s3c.c driver executed s3c_rtc_settime() in s3c_rtc_probe()
+before initialization of info->base. But, It is my mistake. so, I modified it just as following:
+
+-		s3c_rtc_settime(NULL, &rtc_tm);
++		s3c_rtc_settime(&pdev->dev, &rtc_tm);
+
+> 
+> That being said, it does seem strange that s3c_rtc_probe() calls
+> devm_rtc_device_register() *before* trying to request its IRQs.  So if
+> IRQ requesting fails, we go and immediately unregister the device. 
+> Some other drivers do it this way, others do not.  Wouldn't it be
+> better to defer registration until we know that all the probe() setup
+> operations have succeeded?
+
+You're right. I missed this point. If rtc-s3c.c driver completed the probe function,
+info->base has always right address.
+
++	if (!info->base)
++		return -EINVAL;
++
+
+As you said, checking state of 'info-base' is un-needed.
+I'll send new patchset(v3) to fix it.
+
+> 
+>> But, I missed one point which info->base might have the garbate data instead of NULL.
+>> I'll add the initialization code for info->base.
+>> 	info->base = NULL;
 >>
->> On testing with USB 3.0 devices on USB 3.0 port present on
->> SMDK5420, and peach-pit boards should see following message:
->> usb 2-1: new SuperSpeed USB device number 2 using xhci-hcd
->>
->> and without this patch, should see below shown message:
->> usb 1-1: new high-speed USB device number 2 using xhci-hcd
->>
->> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->> ---
->>  drivers/phy/phy-exynos5-usbdrd.c |  169 ++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 169 insertions(+)
->>
->> diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
->> index 47f47fe..fa13784 100644
->> --- a/drivers/phy/phy-exynos5-usbdrd.c
->> +++ b/drivers/phy/phy-exynos5-usbdrd.c
->> @@ -89,8 +89,20 @@
->>  #define PHYCLKRST_COMMONONN                  BIT(0)
->>
->>  #define EXYNOS5_DRD_PHYREG0                  0x14
->> +
->> +#define EXYNOS5_DRD_PHYREG0_SSC_REF_CLK_SEL  BIT(21)
->> +#define EXYNOS5_DRD_PHYREG0_SSC_RANGE                BIT(20)
->> +#define EXYNOS5_DRD_PHYREG0_CR_WRITE         BIT(19)
->> +#define EXYNOS5_DRD_PHYREG0_CR_READ          BIT(18)
->> +#define EXYNOS5_DRD_PHYREG0_CR_DATA_IN(_x)   ((_x) << 2)
->> +#define EXYNOS5_DRD_PHYREG0_CR_CAP_DATA              BIT(1)
->> +#define EXYNOS5_DRD_PHYREG0_CR_CAP_ADDR              BIT(0)
->> +
->>  #define EXYNOS5_DRD_PHYREG1                  0x18
->>
->> +#define EXYNOS5_DRD_PHYREG1_CR_DATA_OUT(_x)  ((_x) << 1)
->> +#define EXYNOS5_DRD_PHYREG1_CR_ACK           BIT(0)
->> +
->>  #define EXYNOS5_DRD_PHYPARAM0                        0x1c
->>
->>  #define PHYPARAM0_REF_USE_PAD                        BIT(31)
->> @@ -118,6 +130,26 @@
->>  #define EXYNOS5_DRD_PHYRESUME                        0x34
->>  #define EXYNOS5_DRD_LINKPORT                 0x44
->>
->> +/* USB 3.0 DRD PHY SS Function Control Reg; accessed by CR_PORT */
->> +#define EXYNOS5_DRD_PHYSS_LOSLEVEL_OVRD_IN           (0x15)
->> +
->
-> Please remove unnecessary line.
+>> If you don't agree it, I'll drop this code checking the state of info->base on next patchset(v3).
+> 
+> Well, we should have those checks in there unless we know they're
+> needed.  And if they *are* needed, we should have a good understanding
+> of why they're needed, and we should be sure that we're not just
+> working around some underlying problem.
 
-Sure will remove extra lines.
+You are right. Thanks for your comment and advice.
 
-[snip]
-
->> +static void crport_ctrl_write(struct exynos5_usbdrd_phy *phy_drd,
->> +                                             u32 addr, u32 data)
->> +{
->> +     /* Write Address */
->> +     crport_handshake(phy_drd, EXYNOS5_DRD_PHYREG0_CR_DATA_IN(addr),
->> +                      EXYNOS5_DRD_PHYREG0_CR_CAP_ADDR);
->
-> According to the guidance from H/W team, before calling crport_handshake(),
-> write access for EXYNOS5_DRD_PHYREG0 register is necessary.
->
-> Please, add the write access as follows.
->
-> +       /* Write Address */
-> +       writel(EXYNOS5_DRD_PHYREG0_CR_DATA_IN(addr),
-> +               phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
-> +       crport_handshake(phy_drd, EXYNOS5_DRD_PHYREG0_CR_DATA_IN(addr),
-> +                        EXYNOS5_DRD_PHYREG0_CR_CAP_ADDR);
-
-Sure will add this, thanks for getting the information from H/W team
-and suggesting.
-
->
-> Best regards,
-> Jingoo Han
->
->> +
->> +     /* Write Data */
->> +     crport_handshake(phy_drd, EXYNOS5_DRD_PHYREG0_CR_DATA_IN(data),
->> +                      EXYNOS5_DRD_PHYREG0_CR_CAP_DATA);
->> +     crport_handshake(phy_drd, EXYNOS5_DRD_PHYREG0_CR_DATA_IN(data),
->> +                      EXYNOS5_DRD_PHYREG0_CR_WRITE);
->> +}
->> +
->> +/*
->> + * Override PHY paramaeters using CR_PORT register to calibrate settings
->> + * to meet meet SuperSpeed requirements, on Exynos5420 and Exynos5800 systems,
->> + * which have 28nm USB 3.0 DRD PHY.
->> + */
->> +static void exynos5420_usbdrd_phy_calibrate(struct exynos5_usbdrd_phy *phy_drd)
->> +{
->> +     u32 temp;
->> +
->> +     /*
->> +      * Change los_bias to (0x5) for 28nm PHY from a
->> +      * default value (0x0); los_level is set as default
->> +      * (0x9) as also reflected in los_level[30:26] bits
->> +      * of PHYPARAM0 register.
->> +      */
->> +     temp = LOSLEVEL_OVRD_IN_LOS_BIAS_5420 |
->> +             LOSLEVEL_OVRD_IN_EN |
->> +             LOSLEVEL_OVRD_IN_LOS_LEVEL_DEFAULT;
->> +     crport_ctrl_write(phy_drd,
->> +                       EXYNOS5_DRD_PHYSS_LOSLEVEL_OVRD_IN,
->> +                       temp);
->> +
->> +     /*
->> +      * Set tx_vboost_lvl to (0x5) for 28nm PHY Tuning,
->> +      * to raise Tx signal level from its default value of (0x4)
->> +      */
->> +     temp = TX_VBOOSTLEVEL_OVRD_IN_VBOOST_5420;
->> +     crport_ctrl_write(phy_drd,
->> +                       EXYNOS5_DRD_PHYSS_TX_VBOOSTLEVEL_OVRD_IN,
->> +                       temp);
->> +
->> +     /*
->> +      * Set proper time to wait for RxDetect measurement, for
->> +      * desired reference clock of PHY, by tuning the CRPORT
->> +      * register LANE0.TX_DEBUG which is internal to PHY.
->> +      * This fixes issue with few USB 3.0 devices, which are
->> +      * not detected (not even generate interrupts on the bus
->> +      * on insertion) without this change.
->> +      * e.g. Samsung SUM-TSB16S 3.0 USB drive.
->> +      */
->> +     switch (phy_drd->extrefclk) {
->> +     case EXYNOS5_FSEL_50MHZ:
->> +             temp = LANE0_TX_DEBUG_RXDET_MEAS_TIME_48M_50M_52M;
->> +             break;
->> +     case EXYNOS5_FSEL_20MHZ:
->> +     case EXYNOS5_FSEL_19MHZ2:
->> +             temp = LANE0_TX_DEBUG_RXDET_MEAS_TIME_19M2_20M;
->> +             break;
->> +     case EXYNOS5_FSEL_24MHZ:
->> +     default:
->> +             temp = LANE0_TX_DEBUG_RXDET_MEAS_TIME_24M;
->> +             break;
->> +     }
->> +
->> +     crport_ctrl_write(phy_drd,
->> +                       EXYNOS5_DRD_PHYSS_LANE0_TX_DEBUG,
->> +                       temp);
->> +}
->> +
->> +/* Calibrate PIPE3 PHY settings, if any */
->> +static int exynos5_usbdrd_pipe3_calibrate(struct phy_usb_instance *inst)
->> +{
->> +     struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
->> +
->> +     /* Call respective phy_calibrate given by certain platform */
->> +     if (phy_drd->drv_data->calibrate)
->> +             phy_drd->drv_data->calibrate(phy_drd);
->> +
->> +     return 0;
->> +}
->> +
->> +static int exynos5_usbdrd_phy_calibrate(struct phy *phy)
->> +{
->> +     struct phy_usb_instance *inst = phy_get_drvdata(phy);
->> +
->> +     if (inst->phy_cfg->phy_calibrate)
->> +             inst->phy_cfg->phy_calibrate(inst);
->> +
->> +     return 0;
->> +}
->> +
->>  static struct phy *exynos5_usbdrd_phy_xlate(struct device *dev,
->>                                       struct of_phandle_args *args)
->>  {
->> @@ -503,6 +669,7 @@ static struct phy_ops exynos5_usbdrd_phy_ops = {
->>       .exit           = exynos5_usbdrd_phy_exit,
->>       .power_on       = exynos5_usbdrd_phy_power_on,
->>       .power_off      = exynos5_usbdrd_phy_power_off,
->> +     .calibrate      = exynos5_usbdrd_phy_calibrate,
->>       .owner          = THIS_MODULE,
->>  };
->>
->> @@ -518,6 +685,7 @@ static const struct exynos5_usbdrd_phy_config phy_cfg_exynos5[] = {
->>               .phy_isol       = exynos5_usbdrd_phy_isol,
->>               .phy_init       = exynos5_usbdrd_pipe3_init,
->>               .set_refclk     = exynos5_usbdrd_pipe3_set_refclk,
->> +             .phy_calibrate  = exynos5_usbdrd_pipe3_calibrate,
->>       },
->>  };
->>
->> @@ -525,6 +693,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5420_usbdrd_phy = {
->>       .phy_cfg                = phy_cfg_exynos5,
->>       .pmu_offset_usbdrd0_phy = EXYNOS5_USBDRD_PHY_CONTROL,
->>       .pmu_offset_usbdrd1_phy = EXYNOS5420_USBDRD1_PHY_CONTROL,
->> +     .calibrate              = exynos5420_usbdrd_phy_calibrate,
->
-> Hmm, how about adding just flag for this, instead of function callback?
-> It looks a little bit confusing.
-
-Yeah, i understand the function pointer name looks a bit confusing
-since we are using same name in struct phy_ops too.
-But i think keeping a function here for each platform may help in
-adding any such support in future SoCs too.
-
-May be we can rename it to phy_exynos_calibrate, if you think
-that's fine.
-Please let me know your opinion about this.
-
-
-
-
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+Best Regards,
+Chanwoo Choi
