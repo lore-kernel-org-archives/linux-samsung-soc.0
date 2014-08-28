@@ -1,7 +1,7 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH v2 05/17] drm/exynos/ipp: remove unused field in command node
-Date: Thu, 28 Aug 2014 11:07:29 +0200
-Message-ID: <1409216861-12452-6-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH v2 10/17] drm/exynos/ipp: stop hardware before freeing memory
+Date: Thu, 28 Aug 2014 11:07:34 +0200
+Message-ID: <1409216861-12452-11-git-send-email-a.hajda@samsung.com>
 References: <1409216861-12452-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,46 +21,53 @@ To: Inki Dae <inki.dae@samsung.com>
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Since command node have file pointer dev field became useless.
+Memory shouldn't be freed when hardware is still running.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_ipp.c | 1 -
- drivers/gpu/drm/exynos/exynos_drm_ipp.h | 2 --
- 2 files changed, 3 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index 81f780e..060a198 100644
+index fff3509..341db52 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -444,7 +444,6 @@ int exynos_drm_ipp_set_property(struct drm_device *drm_dev, void *data,
- 		property->prop_id, property->cmd, (int)ippdrv);
+@@ -1282,12 +1282,15 @@ static int ipp_stop_property(struct drm_device *drm_dev,
+ 		struct drm_exynos_ipp_cmd_node *c_node)
+ {
+ 	struct drm_exynos_ipp_property *property = &c_node->property;
+-	int ret = 0, i;
++	int i;
  
- 	/* stored property information and ippdrv in private data */
--	c_node->dev = dev;
- 	c_node->property = *property;
- 	c_node->state = IPP_STATE_IDLE;
- 	c_node->filp = file;
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.h b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
-index 0311035..2a61547 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_ipp.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.h
-@@ -48,7 +48,6 @@ struct drm_exynos_ipp_cmd_work {
- /*
-  * A structure of command node.
-  *
-- * @dev: IPP device.
-  * @list: list head to command queue information.
-  * @event_list: list head of event.
-  * @mem_list: list head to source,destination memory queue information.
-@@ -65,7 +64,6 @@ struct drm_exynos_ipp_cmd_work {
-  * @filp: associated file pointer.
-  */
- struct drm_exynos_ipp_cmd_node {
--	struct device		*dev;
- 	struct list_head	list;
- 	struct list_head	event_list;
- 	struct list_head	mem_list[EXYNOS_DRM_OPS_MAX];
+ 	DRM_DEBUG_KMS("prop_id[%d]\n", property->prop_id);
+ 
+ 	/* put event */
+ 	ipp_put_event(c_node, NULL);
++	/* stop operations */
++	if (ippdrv->stop)
++		ippdrv->stop(ippdrv->dev, property->cmd);
+ 
+ 	/* check command */
+ 	switch (property->cmd) {
+@@ -1303,16 +1306,10 @@ static int ipp_stop_property(struct drm_device *drm_dev,
+ 		break;
+ 	default:
+ 		DRM_ERROR("invalid operations.\n");
+-		ret = -EINVAL;
+-		goto err_clear;
++		return -EINVAL;
+ 	}
+ 
+-err_clear:
+-	/* stop operations */
+-	if (ippdrv->stop)
+-		ippdrv->stop(ippdrv->dev, property->cmd);
+-
+-	return ret;
++	return 0;
+ }
+ 
+ void ipp_sched_cmd(struct work_struct *work)
 -- 
 1.9.1
