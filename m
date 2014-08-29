@@ -1,101 +1,245 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] usb: dwc3: exynos: remove usb_phy_generic support
-Date: Fri, 29 Aug 2014 11:02:52 +0200
-Message-ID: <2682311.psIh2sovYX@amdc1032>
-References: <2141307.zYQLjP6V6U@amdc1032> <44042073.hjFrXas7t7@amdc1032>
- <20140828192952.GA31255@kroah.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH] mmc: dw_mmc: exynos: Add support for exynos7
+Date: Fri, 29 Aug 2014 19:44:32 +0900
+Message-ID: <54005990.8070306@samsung.com>
+References: <1409231933-14796-1-git-send-email-yuvaraj.cd@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20140828192952.GA31255@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, Felipe Balbi <balbi@ti.com>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:21126 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750983AbaH2Kof (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 29 Aug 2014 06:44:35 -0400
+In-reply-to: <1409231933-14796-1-git-send-email-yuvaraj.cd@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dianders@google.com, dianders@chromium.org, cjb@laptop.org, tgih.jun@samsung.com, linux-mmc@vger.kernel.org, ulf.hansson@linaro.org
+Cc: sonnyrao@chromium.org, t.figa@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, alim.akhtar@samsung.com, Abhilash Kesavan <a.kesavan@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, CPGS <cpgs@samsung.com>
 
-On Thursday, August 28, 2014 12:29:52 PM Greg Kroah-Hartman wrote:
-> On Thu, Aug 28, 2014 at 08:11:04PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> > 
-> > [ added Alan and Greg to cc: ]
-> > 
-> > Hi,
-> > 
-> > On Wednesday, August 27, 2014 11:42:25 PM Vivek Gautam wrote:
-> > > Hi Baltlomiej,
-> > > 
-> > > 
-> > > On Wed, Aug 27, 2014 at 1:22 PM, Bartlomiej Zolnierkiewicz
-> > > <b.zolnierkie@samsung.com> wrote:
-> > > > dwc3 driver is using the new Exynos5 SoC series USB DRD PHY driver
-> > > > (PHY_EXYNOS5_USBDRD which selects GENERIC_PHY) as can be seen by
-> > > > looking at the following commits:
-> > > >
-> > > >   7a4cf0fde054 ("ARM: dts: Update DWC3 usb controller to use new
-> > > >   phy driver for exynos5250")
-> > > >
-> > > >   f070267b5fc1 ("ARM: dts: Enable support for DWC3 controller for
-> > > >   exynos5420")
-> > > >
-> > > > Thus remove unused usb_phy_generic support from dwc3 Exynos glue
-> > > > layer.
-> > > >
-> > > > [ The code that is being removed is harmful in the context of
-> > > >   multi_v7_defconfig and enabling "EHCI support for Samsung
-> > > >   S5P/EXYNOS SoC Series" (USB_EHCI_EXYNOS) + "OHCI support for
-> > > >   Samsung S5P/EXYNOS SoC Series" (USB_OHCI_EXYNOS) because "EHCI
-> > > >   support for OMAP3 and later chips" (USB_EHCI_HCD_OMAP) selects
-> > > >   "NOP USB Transceiver Driver" (NOP_USB_XCEIV).  NOP USB driver
-> > > >   attaches itself to usb_phy_generic platform devices created by
-> > > >   dwc3 Exynos glue layer and later causes Exynos EHCI driver to
-> > > >   fail probe and Exynos OHCI driver to hang on probe (as observed
-> > > >   on Exynos5250 Arndale board). ]
-> > > 
-> > > The issue with EHCI and OHCI on exynos platforms is that until now
-> > > they also request
-> > > usb-phy and only later if they don't find one, they go ahead and get a
-> > > 'phy' generic.
-> > > 
-> > > Fortunately we missed this issue with exynos_defconfig, and as you rightly
-> > > mentioned with multi_v7_defconfig, the NOP_USB_XCEIV gets enabled and
-> > > EHCI and OHCI exynos get no-op usb-phy, which actually blocks EHCI/OHCI from
-> > > initializing the real PHYs.
-> > > 
-> > > This issue is resolved with patches:
-> > > [PATCH v2 1/2] usb: host: ehci-exynos: Remove unnecessary usb-phy support
-> > > [PATCH v2 2/2] usb: host: ohci-exynos: Remove unnecessary usb-phy support
-> > > wherein we are completely removing the usb-phy support from ehci/ohci-exynos.
-> > > So with these patches we should not see the issue mentioned by you.
-> > 
-> > Indeed, your patches fix the issue.
-> > 
-> > Greg, could these two patches ([1] & [2]) get merged quickly, pretty please
-> > (they were already acked by Alan)?  They are not a mere cleanups because
-> > they fix the actual problem with using multi_v7_defconfig which in turn has
-> > been blocking Olof's defconfig update patch [3] for quite some time now.
-> > Moreover these patches are limited to Exynos host drivers so they should be
-> > pretty safe when it comes to potential regressions.
-> > 
-> > [1] http://www.spinics.net/lists/linux-usb/msg112294.html
-> > [2] http://www.spinics.net/lists/linux-usb/msg112293.html
-> > [3] http://www.spinics.net/lists/arm-kernel/msg349654.html
+Hi, Abhilash.
+
+On 08/28/2014 10:18 PM, Yuvaraj Kumar C D wrote:
+> From: Abhilash Kesavan <a.kesavan@samsung.com>
 > 
-> merged for 3.18-rc1, or do you "need" them for 3.17-final?
+> The Exynos7 has a DWMMC controller (v2.70a) which is different from
+> prior versions. This patch adds new compatible strings for exynos7.
+> This patch also fixes the CLKSEL register offset on exynos7.
 
-If it is not too much trouble please push them to 3.17-final.
+If support the 64bit, dw-mmc.c need to modify.(according to v2.70, some offset is changed for 64-bit address)
+But i didn't see any patches at mailing. 
+Do you have the plan which send patch of dw-mmc.c?
 
-> I already reverted one patch for exynos for 3.17-final that is sitting
-> in my tree to go to Linus soon as you all didn't seem to want it
-> anymore, so I'm getting really confused here...
-
-These two patches are a replacement for the one reverted and
-they just remove the old code instead of keeping it as fallback.
-This means that the reverted patch was not breaking anything and
-these two new patches could have been also done as incremental
-ones.  Sorry for the confusion.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Best Regards,
+Jaehoon Chung
+> 
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+> ---
+>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    4 +
+>  drivers/mmc/host/dw_mmc-exynos.c                   |   91 +++++++++++++++++---
+>  2 files changed, 82 insertions(+), 13 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> index 6cd3525..ee4fc05 100644
+> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> @@ -18,6 +18,10 @@ Required Properties:
+>  	  specific extensions.
+>  	- "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
+>  	  specific extensions.
+> +	- "samsung,exynos7-dw-mshc": for controllers with Samsung Exynos7
+> +	  specific extensions.
+> +	- "samsung,exynos7-dw-mshc-smu": for controllers with Samsung Exynos7
+> +	  specific extensions having an SMU.
+>  
+>  * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
+>    unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
+> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+> index 0fbc53a..509365c 100644
+> --- a/drivers/mmc/host/dw_mmc-exynos.c
+> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> @@ -25,6 +25,7 @@
+>  #define NUM_PINS(x)			(x + 2)
+>  
+>  #define SDMMC_CLKSEL			0x09C
+> +#define SDMMC_CLKSEL64			0x0A8
+>  #define SDMMC_CLKSEL_CCLK_SAMPLE(x)	(((x) & 7) << 0)
+>  #define SDMMC_CLKSEL_CCLK_DRIVE(x)	(((x) & 7) << 16)
+>  #define SDMMC_CLKSEL_CCLK_DIVIDER(x)	(((x) & 7) << 24)
+> @@ -65,6 +66,8 @@ enum dw_mci_exynos_type {
+>  	DW_MCI_TYPE_EXYNOS5250,
+>  	DW_MCI_TYPE_EXYNOS5420,
+>  	DW_MCI_TYPE_EXYNOS5420_SMU,
+> +	DW_MCI_TYPE_EXYNOS7,
+> +	DW_MCI_TYPE_EXYNOS7_SMU,
+>  };
+>  
+>  /* Exynos implementation specific driver private data */
+> @@ -95,6 +98,12 @@ static struct dw_mci_exynos_compatible {
+>  	}, {
+>  		.compatible	= "samsung,exynos5420-dw-mshc-smu",
+>  		.ctrl_type	= DW_MCI_TYPE_EXYNOS5420_SMU,
+> +	}, {
+> +		.compatible	= "samsung,exynos7-dw-mshc",
+> +		.ctrl_type	= DW_MCI_TYPE_EXYNOS7,
+> +	}, {
+> +		.compatible	= "samsung,exynos7-dw-mshc-smu",
+> +		.ctrl_type	= DW_MCI_TYPE_EXYNOS7_SMU,
+>  	},
+>  };
+>  
+> @@ -102,7 +111,8 @@ static int dw_mci_exynos_priv_init(struct dw_mci *host)
+>  {
+>  	struct dw_mci_exynos_priv_data *priv = host->priv;
+>  
+> -	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS5420_SMU) {
+> +	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS5420_SMU ||
+> +		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU) {
+>  		mci_writel(host, MPSBEGIN0, 0);
+>  		mci_writel(host, MPSEND0, DWMCI_BLOCK_NUM);
+>  		mci_writel(host, MPSCTRL0, DWMCI_MPSCTRL_SECURE_WRITE_BIT |
+> @@ -153,11 +163,22 @@ static int dw_mci_exynos_resume(struct device *dev)
+>  static int dw_mci_exynos_resume_noirq(struct device *dev)
+>  {
+>  	struct dw_mci *host = dev_get_drvdata(dev);
+> +	struct dw_mci_exynos_priv_data *priv = host->priv;
+>  	u32 clksel;
+>  
+> -	clksel = mci_readl(host, CLKSEL);
+> -	if (clksel & SDMMC_CLKSEL_WAKEUP_INT)
+> -		mci_writel(host, CLKSEL, clksel);
+> +	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+> +		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+> +		clksel = mci_readl(host, CLKSEL64);
+> +	else
+> +		clksel = mci_readl(host, CLKSEL);
+> +
+> +	if (clksel & SDMMC_CLKSEL_WAKEUP_INT) {
+> +		if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+> +			priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+> +			mci_writel(host, CLKSEL64, clksel);
+> +		else
+> +			mci_writel(host, CLKSEL, clksel);
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -169,6 +190,7 @@ static int dw_mci_exynos_resume_noirq(struct device *dev)
+>  
+>  static void dw_mci_exynos_prepare_command(struct dw_mci *host, u32 *cmdr)
+>  {
+> +	struct dw_mci_exynos_priv_data *priv = host->priv;
+>  	/*
+>  	 * Exynos4412 and Exynos5250 extends the use of CMD register with the
+>  	 * use of bit 29 (which is reserved on standard MSHC controllers) for
+> @@ -176,8 +198,14 @@ static void dw_mci_exynos_prepare_command(struct dw_mci *host, u32 *cmdr)
+>  	 * HOLD register should be bypassed in case there is no phase shift
+>  	 * applied on CMD/DATA that is sent to the card.
+>  	 */
+> -	if (SDMMC_CLKSEL_GET_DRV_WD3(mci_readl(host, CLKSEL)))
+> -		*cmdr |= SDMMC_CMD_USE_HOLD_REG;
+> +	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+> +		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU) {
+> +		if (SDMMC_CLKSEL_GET_DRV_WD3(mci_readl(host, CLKSEL64)))
+> +			*cmdr |= SDMMC_CMD_USE_HOLD_REG;
+> +	 } else {
+> +		if (SDMMC_CLKSEL_GET_DRV_WD3(mci_readl(host, CLKSEL)))
+> +			*cmdr |= SDMMC_CMD_USE_HOLD_REG;
+> +	}
+>  }
+>  
+>  static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+> @@ -188,12 +216,20 @@ static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+>  	u8 div = priv->ciu_div + 1;
+>  
+>  	if (ios->timing == MMC_TIMING_MMC_DDR52) {
+> -		mci_writel(host, CLKSEL, priv->ddr_timing);
+> +		if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+> +			priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+> +			mci_writel(host, CLKSEL64, priv->ddr_timing);
+> +		else
+> +			mci_writel(host, CLKSEL, priv->ddr_timing);
+>  		/* Should be double rate for DDR mode */
+>  		if (ios->bus_width == MMC_BUS_WIDTH_8)
+>  			wanted <<= 1;
+>  	} else {
+> -		mci_writel(host, CLKSEL, priv->sdr_timing);
+> +		if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+> +			priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+> +			mci_writel(host, CLKSEL64, priv->sdr_timing);
+> +		else
+> +			mci_writel(host, CLKSEL, priv->sdr_timing);
+>  	}
+>  
+>  	/* Don't care if wanted clock is zero */
+> @@ -265,26 +301,51 @@ static int dw_mci_exynos_parse_dt(struct dw_mci *host)
+>  
+>  static inline u8 dw_mci_exynos_get_clksmpl(struct dw_mci *host)
+>  {
+> -	return SDMMC_CLKSEL_CCLK_SAMPLE(mci_readl(host, CLKSEL));
+> +	struct dw_mci_exynos_priv_data *priv = host->priv;
+> +
+> +	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+> +		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+> +		return SDMMC_CLKSEL_CCLK_SAMPLE(mci_readl(host, CLKSEL64));
+> +	else
+> +		return SDMMC_CLKSEL_CCLK_SAMPLE(mci_readl(host, CLKSEL));
+>  }
+>  
+>  static inline void dw_mci_exynos_set_clksmpl(struct dw_mci *host, u8 sample)
+>  {
+>  	u32 clksel;
+> -	clksel = mci_readl(host, CLKSEL);
+> +	struct dw_mci_exynos_priv_data *priv = host->priv;
+> +
+> +	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+> +		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+> +		clksel = mci_readl(host, CLKSEL64);
+> +	else
+> +		clksel = mci_readl(host, CLKSEL);
+>  	clksel = (clksel & ~0x7) | SDMMC_CLKSEL_CCLK_SAMPLE(sample);
+> -	mci_writel(host, CLKSEL, clksel);
+> +	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+> +		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+> +		mci_writel(host, CLKSEL64, clksel);
+> +	else
+> +		mci_writel(host, CLKSEL, clksel);
+>  }
+>  
+>  static inline u8 dw_mci_exynos_move_next_clksmpl(struct dw_mci *host)
+>  {
+> +	struct dw_mci_exynos_priv_data *priv = host->priv;
+>  	u32 clksel;
+>  	u8 sample;
+>  
+> -	clksel = mci_readl(host, CLKSEL);
+> +	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+> +		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+> +		clksel = mci_readl(host, CLKSEL64);
+> +	else
+> +		clksel = mci_readl(host, CLKSEL);
+>  	sample = (clksel + 1) & 0x7;
+>  	clksel = (clksel & ~0x7) | sample;
+> -	mci_writel(host, CLKSEL, clksel);
+> +	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+> +		priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+> +		mci_writel(host, CLKSEL64, clksel);
+> +	else
+> +		mci_writel(host, CLKSEL, clksel);
+>  	return sample;
+>  }
+>  
+> @@ -411,6 +472,10 @@ static const struct of_device_id dw_mci_exynos_match[] = {
+>  			.data = &exynos_drv_data, },
+>  	{ .compatible = "samsung,exynos5420-dw-mshc-smu",
+>  			.data = &exynos_drv_data, },
+> +	{ .compatible = "samsung,exynos7-dw-mshc",
+> +			.data = &exynos_drv_data, },
+> +	{ .compatible = "samsung,exynos7-dw-mshc-smu",
+> +			.data = &exynos_drv_data, },
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(of, dw_mci_exynos_match);
+> 
