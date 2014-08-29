@@ -1,38 +1,46 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] MAINTAINERS: Tomasz has moved
-Date: Fri, 29 Aug 2014 14:18:15 +0200
-Message-ID: <CACRpkdY87ptY4riPDmy3aiHekFEg+n3eKVJyW3fff+W1ocfMVA@mail.gmail.com>
-References: <1409063453-16124-1-git-send-email-t.figa@samsung.com>
+Subject: Re: [PATCH 06/14] pinctrl: samsung: use CONFIG_PINCTRL_SAMSUNG symbol
+ in makefile
+Date: Fri, 29 Aug 2014 14:37:07 +0200
+Message-ID: <CACRpkda=LCT_P7czZ6mNX_7eS9nyKwxZrzXO2AAQ8W5RrehCcw@mail.gmail.com>
+References: <1409132889-2080-1-git-send-email-ch.naveen@samsung.com>
+	<1409132889-2080-6-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f51.google.com ([209.85.219.51]:40656 "EHLO
-	mail-oa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752645AbaH2MSQ (ORCPT
+Received: from mail-ob0-f173.google.com ([209.85.214.173]:43363 "EHLO
+	mail-ob0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751608AbaH2MhI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 29 Aug 2014 08:18:16 -0400
-Received: by mail-oa0-f51.google.com with SMTP id n16so1690177oag.24
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Aug 2014 05:18:16 -0700 (PDT)
-In-Reply-To: <1409063453-16124-1-git-send-email-t.figa@samsung.com>
+	Fri, 29 Aug 2014 08:37:08 -0400
+Received: by mail-ob0-f173.google.com with SMTP id uy5so1734011obc.4
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 29 Aug 2014 05:37:07 -0700 (PDT)
+In-Reply-To: <1409132889-2080-6-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: naveenkrishna.ch@gmail.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "cpgs ." <cpgs@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>
 
-On Tue, Aug 26, 2014 at 4:30 PM, Tomasz Figa <t.figa@samsung.com> wrote:
+On Wed, Aug 27, 2014 at 11:48 AM, Naveen Krishna Chatradhi
+<ch.naveen@samsung.com> wrote:
 
-> I am leaving Samsung, so my current e-mail address is not going to work
-> any longer. Replace it with my private one. In addition, Sylwester
-> Nawrocki is being added as co-maintainer for Samsung clock drivers to
-> take some of the responsibilities, as I will be doing my part in my spare
-> time.
+> Samsung Exynos7 is a ARM64bit processor. Which does not select
+> the CONFIG_PLAT_SAMSUNG symbol. CONFIG_PINCTRL_SAMSUNG is being
+> selected for both PLAT_SAMSUNG and ARCH_EXYNOS7 symbols.
 >
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> This patch modifes the pinctrl/Makefile to use
+> CONFIG_PINCTRL_SAMSUNG symbol to compile the pinctrl/samsung/*.c
+>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Cc: Tomasz Figa <t.figa@samsung.com>
+> Cc: linus.walleij@linaro.org
+> Cc: Thomas Abraham <thomas.ab@samsung.com>
 
-OK I'm taking this patch through pinctrl fixes. Not much controversy
-here, Mike you need not worry about it.
+Excellent catch, thanks, patch applied!
 
-Patch applied.
+I should use this pattern on more places in the Makefile,
+I was confused by logically thinking that Kconfig symbols
+used in Makefile cannot be from a Kconfig one level below.
 
 Yours,
 Linus Walleij
