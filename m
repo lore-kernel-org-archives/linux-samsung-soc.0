@@ -1,84 +1,123 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 5/5] phy: exynos5-usbdrd: Adding Kconfig dependency for
- Exynos7
-Date: Tue, 2 Sep 2014 09:37:11 -0500
-Message-ID: <20140902143711.GD16872@saruman.home>
-References: <1409212920-28526-1-git-send-email-gautam.vivek@samsung.com>
- <1409212920-28526-6-git-send-email-gautam.vivek@samsung.com>
- <CAN_we7MQAqEsRaQc_pkRE_KXx9zZNLDBR2aHUrazM30Nv3udmQ@mail.gmail.com>
- <CAFp+6iHsfg6Ru0LBN=JviV=-mSdmuSo9Te3EXYF+X8jssD_BYQ@mail.gmail.com>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v3 0/8] thermal: exynos: various cleanups
+Date: Fri, 29 Aug 2014 15:25:53 -0400
+Message-ID: <20140829192551.GA23645@developer>
+References: <1406826667-2289-1-git-send-email-b.zolnierkie@samsung.com>
+ <20140828144921.GB18194@developer>
+ <CADGdYn7NzwJKuO1DG2OJdWwd_keZbUJXY=+XeHhf1e+xcSvoVw@mail.gmail.com>
+ <CAC-25o9ajcpusqUzxTXpVKgi6YBy3_9wZNihtm-9hKXn5OFgNw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2Z2K0IlrPCVsbNpk"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iHsfg6Ru0LBN=JviV=-mSdmuSo9Te3EXYF+X8jssD_BYQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Daniele Forsi <dforsi-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, kishon <kishon-l0cyMroinI0@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Id: linux-samsung-soc@vger.kernel.org
-
---2Z2K0IlrPCVsbNpk
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f182.google.com ([209.85.220.182]:58955 "EHLO
+	mail-vc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753528AbaIBOp2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 2 Sep 2014 10:45:28 -0400
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAC-25o9ajcpusqUzxTXpVKgi6YBy3_9wZNihtm-9hKXn5OFgNw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: amit daniel kachhap <amit.daniel@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Mon, Sep 01, 2014 at 01:30:21PM +0530, Vivek Gautam wrote:
-> On Thu, Aug 28, 2014 at 8:36 PM, Daniele Forsi <dforsi-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> > 2014-08-28 10:02 GMT+02:00 Vivek Gautam:
-> >
-> >> This USB 3.0 PHY controller is also present on Exynos7
-> >> platform, so adding the dependency on ARCH_EXYNOS7 for this driver.
-> >
-> >> +++ b/drivers/phy/Kconfig
-> >> @@ -186,7 +186,7 @@ config PHY_EXYNOS5250_USB2
+On Mon, Sep 01, 2014 at 07:05:27AM -0400, edubezval@gmail.com wrote:
+> Amit
+> 
+> On Mon, Sep 1, 2014 at 6:53 AM, amit daniel kachhap
+> <amit.daniel@samsung.com> wrote:
+> > On Thu, Aug 28, 2014 at 8:19 PM, Eduardo Valentin <edubezval@gmail.com> wrote:
+> >> Amit,
 > >>
-> >>  config PHY_EXYNOS5_USBDRD
-> >>         tristate "Exynos5 SoC series USB DRD PHY driver"
-> >> -       depends on ARCH_EXYNOS5 && OF
-> >> +       depends on (ARCH_EXYNOS5 || ARCH_EXYNOS7) && OF
+> >> On Thu, Jul 31, 2014 at 07:10:58PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> >>> Hi,
+> >>>
+> >>> This patch series contains various cleanups for EXYNOS thermal
+> >>> driver.  Overall it decreases driver's LOC by 9%.  It is based
+> >>> on next-20140731 kernel.  It should not cause any functionality
+> >>> changes.
+> >>>
+> >>
+> >> Did you have the time to test this series?
 > >
-> > shouldn't that prompt and its help text be updated to mention also Exyn=
-os7?
->=20
-> Right, even that has to be updated accordingly. Will update the same in n=
-ext
-> version of the patch. Thanks for pointing this.
+> > Hi Eduardo/Bartlomiej,
+> >
+> > For the whole series tested on exynos5250 based arndale board.
+> > Tested-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> >
+> 
+> Thanks! I will pull the series on my tree.
 
-I would rather change that to ARCH_EXYNOS, unless Kishon doesn't like
-that idea. The thing is that this will likely need to be patches for
-exynos8, 9, 10, 11...
 
-cheers
+Pulled into my next branch. Thanks.
 
---=20
-balbi
-
---2Z2K0IlrPCVsbNpk
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUBdYXAAoJEIaOsuA1yqREy/kP+gL2LlhK87Z2C3Yj98QNTCm7
-5eWyPXvWu4qFCUb/bS/XyZKZ1fILcTUEN6U/OJsreTwLZv5Bz1CR/vUYRMyenBj2
-UKqoqHgzUZXCVC8XpUwm5G7LcNnoZfT5f7KarxT7FrXKQ7Yc8SLZm2xXkxySk8Gq
-4ts1cfj1NdGIGX8S9vv5+OH3+Go05SILNxsmSkedvH4lfHW4F5LRQnKkgLWmOaoK
-2P3+t7jjepTw5tRbR2KYaovRUlRkjzh+gDUUInxIYW26ajigMl2aMcuFf4Y/6Mpa
-AQUbX7IoIhjdgNBRIBSf+is2LtVm2fVzmLy3sz2RgMEV02UNfYpYoJpIkLzNcMB1
-cYTGlpJ6jIZleEXJU31RoSYXse1sR/K/APM8TM8F0susxyOH37PndRcNr5hhU6oE
-vlhftuQVXEtgx3t+zsa3azebGqxW5GZLp8w2lwyFTQtzAAmm/J8V3JgnFe4ku54m
-GTk2+SJNfBwP/ERj43xjikcajXpOSaqe89XAyUtTzQ+OLMl7/p+ax3QV/gxlooj1
-RYNOZMWL3hjwXBv1rdSxuIHk/hebeKCaoVy5SOfynR4hrEZ0lNK+x5GqwMxC5UUn
-C5XN5icdY9HttNpkOhwXfy1B8JyR6hmftnGsKkMCQs3v6L7LDPTYtbPAIivaMIIj
-X23IO7W19CzHqpFN/jpl
-=DSEq
------END PGP SIGNATURE-----
-
---2Z2K0IlrPCVsbNpk--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> > Sorry for the delay as I was busy in some internal work.
+> >
+> > Thanks,
+> > Amit D
+> >>
+> >>> Changes since v2 (https://lkml.org/lkml/2014/6/17/436):
+> >>> - synced patches against next-20140731
+> >>> - dropped patch "thermal: exynos: remove dead code for
+> >>>   TYPE_TWO_POINT_TRIMMING calibration" (newly added Exynos3250
+> >>>   SoC support uses TYPE_TWO_POINT_TRIMMING calibration)
+> >>> - updated patch description for patch #2
+> >>> - dropped Reviewed-by from Amit from patch #8 (due to changed
+> >>>   scope of the patch)
+> >>>
+> >>> Changes since v1 (https://lkml.org/lkml/2014/5/5/194):
+> >>> - synced patches against next-20140617
+> >>> - merged patch "thermal: exynos: remove unused defines" into
+> >>>   "thermal: exynos: remove unused struct exynos_tmu_registers
+> >>>   entries" one (per request from Eduardo)
+> >>> - improved patch descriptions for patches #1-5
+> >>> - fixed documentation for pdata->gain and pdata->reference_voltage
+> >>> - added Reviewed-by from Amit to patches #6, #7 and #10
+> >>> - added missing Acked-by from Kyungmin Park
+> >>>
+> >>> Best regards,
+> >>> --
+> >>> Bartlomiej Zolnierkiewicz
+> >>> Samsung R&D Institute Poland
+> >>> Samsung Electronics
+> >>>
+> >>>
+> >>> Bartlomiej Zolnierkiewicz (8):
+> >>>   thermal: exynos: remove unused struct exynos_tmu_registers entries
+> >>>   thermal: exynos: remove dead code for HW_MODE calibration
+> >>>   thermal: exynos: remove redundant pdata checks from
+> >>>     exynos_tmu_initialize()
+> >>>   thermal: exynos: remove redundant threshold_code checks from
+> >>>     exynos_tmu_initialize()
+> >>>   thermal: exynos: simplify temp_to_code() and code_to_temp()
+> >>>   thermal: exynos: cache non_hw_trigger_levels in pdata
+> >>>   thermal: exynos: remove redundant pdata checks from
+> >>>     exynos_tmu_control()
+> >>>   thermal: exynos: remove identical values from exynos*_tmu_registers
+> >>>     structures
+> >>>
+> >>>  drivers/thermal/samsung/exynos_thermal_common.h |   1 -
+> >>>  drivers/thermal/samsung/exynos_tmu.c            | 126 +++++-------------------
+> >>>  drivers/thermal/samsung/exynos_tmu.h            |  74 +-------------
+> >>>  drivers/thermal/samsung/exynos_tmu_data.c       |  56 ++---------
+> >>>  drivers/thermal/samsung/exynos_tmu_data.h       |  31 +-----
+> >>>  5 files changed, 35 insertions(+), 253 deletions(-)
+> >>>
+> >>> --
+> >>> 1.8.2.3
+> >>>
+> >>> --
+> >>> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> >>> the body of a message to majordomo@vger.kernel.org
+> >>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> >> --
+> >> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> >> the body of a message to majordomo@vger.kernel.org
+> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> 
+> -- 
+> Eduardo Bezerra Valentin
