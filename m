@@ -1,94 +1,113 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH v9 4/6] ARM: Exynos: switch to using generic cpufreq
- driver for Exynos4210/5250/5420
-Date: Fri, 29 Aug 2014 08:03:12 -0700
-Message-ID: <CAMAWPa-8h5PNhgT+ApBhA8p=i+4oFOnYnQsQ4mK1JKwwAhpvpQ@mail.gmail.com>
-References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
-	<1406707663-16656-5-git-send-email-thomas.ab@samsung.com>
-	<53DA8BB9.6020702@samsung.com>
-	<53DA8D85.3050106@gmail.com>
-	<7hbnrc6px3.fsf@paris.lan>
-	<53F7DA13.6090305@gmail.com>
-	<CADWw7OgAS-z-UOrJU-hL2fzuefJmLtCTg57jYk2Df7f5KfLJmA@mail.gmail.com>
-	<7h8umc60we.fsf@paris.lan>
-	<CADWw7OgW+o3tB=ptnsy-PsmXmNv8oXzt_WfK6NswQiEWWwAzNA@mail.gmail.com>
-	<CAGa+x85-Anb+HsSUQRaaeex19-HK+yZDW0UpFBwAtsQ8Sf2Aqg@mail.gmail.com>
-	<CAGa+x86jU8MR=r_xuaiorbNNyqrezb0b6Ozy-MPg9HvsARESOw@mail.gmail.com>
-	<CAJuA9ajtsrY7zSDMs=c6BZ0AqERoBgvq++dTF4Dn673zGMfcgQ@mail.gmail.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] usb: dwc3: exynos: remove usb_phy_generic support
+Date: Fri, 29 Aug 2014 11:33:04 -0700
+Message-ID: <20140829183304.GB9380@kroah.com>
+References: <2141307.zYQLjP6V6U@amdc1032>
+ <44042073.hjFrXas7t7@amdc1032>
+ <20140828192952.GA31255@kroah.com>
+ <2682311.psIh2sovYX@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAJuA9ajtsrY7zSDMs=c6BZ0AqERoBgvq++dTF4Dn673zGMfcgQ@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>
-Cc: Chander Kashyap <k.chander@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Amit Kucheria <amit.kucheria@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:45038 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753214AbaH2SdF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 29 Aug 2014 14:33:05 -0400
+Content-Disposition: inline
+In-Reply-To: <2682311.psIh2sovYX@amdc1032>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, Felipe Balbi <balbi@ti.com>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>
 
-Hi Thomas,
+On Fri, Aug 29, 2014 at 11:02:52AM +0200, Bartlomiej Zolnierkiewicz wrote:
+> On Thursday, August 28, 2014 12:29:52 PM Greg Kroah-Hartman wrote:
+> > On Thu, Aug 28, 2014 at 08:11:04PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> > > 
+> > > [ added Alan and Greg to cc: ]
+> > > 
+> > > Hi,
+> > > 
+> > > On Wednesday, August 27, 2014 11:42:25 PM Vivek Gautam wrote:
+> > > > Hi Baltlomiej,
+> > > > 
+> > > > 
+> > > > On Wed, Aug 27, 2014 at 1:22 PM, Bartlomiej Zolnierkiewicz
+> > > > <b.zolnierkie@samsung.com> wrote:
+> > > > > dwc3 driver is using the new Exynos5 SoC series USB DRD PHY driver
+> > > > > (PHY_EXYNOS5_USBDRD which selects GENERIC_PHY) as can be seen by
+> > > > > looking at the following commits:
+> > > > >
+> > > > >   7a4cf0fde054 ("ARM: dts: Update DWC3 usb controller to use new
+> > > > >   phy driver for exynos5250")
+> > > > >
+> > > > >   f070267b5fc1 ("ARM: dts: Enable support for DWC3 controller for
+> > > > >   exynos5420")
+> > > > >
+> > > > > Thus remove unused usb_phy_generic support from dwc3 Exynos glue
+> > > > > layer.
+> > > > >
+> > > > > [ The code that is being removed is harmful in the context of
+> > > > >   multi_v7_defconfig and enabling "EHCI support for Samsung
+> > > > >   S5P/EXYNOS SoC Series" (USB_EHCI_EXYNOS) + "OHCI support for
+> > > > >   Samsung S5P/EXYNOS SoC Series" (USB_OHCI_EXYNOS) because "EHCI
+> > > > >   support for OMAP3 and later chips" (USB_EHCI_HCD_OMAP) selects
+> > > > >   "NOP USB Transceiver Driver" (NOP_USB_XCEIV).  NOP USB driver
+> > > > >   attaches itself to usb_phy_generic platform devices created by
+> > > > >   dwc3 Exynos glue layer and later causes Exynos EHCI driver to
+> > > > >   fail probe and Exynos OHCI driver to hang on probe (as observed
+> > > > >   on Exynos5250 Arndale board). ]
+> > > > 
+> > > > The issue with EHCI and OHCI on exynos platforms is that until now
+> > > > they also request
+> > > > usb-phy and only later if they don't find one, they go ahead and get a
+> > > > 'phy' generic.
+> > > > 
+> > > > Fortunately we missed this issue with exynos_defconfig, and as you rightly
+> > > > mentioned with multi_v7_defconfig, the NOP_USB_XCEIV gets enabled and
+> > > > EHCI and OHCI exynos get no-op usb-phy, which actually blocks EHCI/OHCI from
+> > > > initializing the real PHYs.
+> > > > 
+> > > > This issue is resolved with patches:
+> > > > [PATCH v2 1/2] usb: host: ehci-exynos: Remove unnecessary usb-phy support
+> > > > [PATCH v2 2/2] usb: host: ohci-exynos: Remove unnecessary usb-phy support
+> > > > wherein we are completely removing the usb-phy support from ehci/ohci-exynos.
+> > > > So with these patches we should not see the issue mentioned by you.
+> > > 
+> > > Indeed, your patches fix the issue.
+> > > 
+> > > Greg, could these two patches ([1] & [2]) get merged quickly, pretty please
+> > > (they were already acked by Alan)?  They are not a mere cleanups because
+> > > they fix the actual problem with using multi_v7_defconfig which in turn has
+> > > been blocking Olof's defconfig update patch [3] for quite some time now.
+> > > Moreover these patches are limited to Exynos host drivers so they should be
+> > > pretty safe when it comes to potential regressions.
+> > > 
+> > > [1] http://www.spinics.net/lists/linux-usb/msg112294.html
+> > > [2] http://www.spinics.net/lists/linux-usb/msg112293.html
+> > > [3] http://www.spinics.net/lists/arm-kernel/msg349654.html
+> > 
+> > merged for 3.18-rc1, or do you "need" them for 3.17-final?
+> 
+> If it is not too much trouble please push them to 3.17-final.
 
-On Fri, Aug 29, 2014 at 5:52 AM, Thomas Abraham <ta.omasab@gmail.com> wrote:
-> Hi Kevin,
->
-> On Wed, Aug 27, 2014 at 3:55 AM, Kevin Hilman <khilman@linaro.org> wrote:
->> On Tue, Aug 26, 2014 at 8:15 AM, Kevin Hilman <khilman@linaro.org> wrote:
->>> On Mon, Aug 25, 2014 at 10:25 PM, Chander Kashyap <k.chander@samsung.com> wrote:
->>
->> [...]
->>
->>>>>
->>>>> Can you clarify how you're setting the voltages to ensure stability?
->>>>
->>>> below is the diff :  wip/exynos/integ
->>>
->>> Thanks.
->>>
->>> I've applied your patch, and bootup shows vdd_arm and vdd_kfc at
->>> 1500mV, but still when booting with cpuidle enabled (bL switcher
->>> disabled), I'm seeing lockups with no kernel output.  With CPUidle
->>> disabled, things are pretty stable.
->>>
->>> What tree are you using to test this out on 5420?  I'm using mainline
->>> v3.17-rc1 + DT patch for CPUidle and this cpufreq series.  See my
->>> wip/exynos/integ branch at
->>> git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux.git.
->>
->> I mis-stated this.  Actually my tree is based on the v3.17-rc1 branch
->> of the exynos-reference tree[1] + the above mentioned patches for
->> cpuidle and cpufreq.
->>
->> Also, I've narrowed down the instability a bit, and it's not related
->> to CPUidle.  I can now trigger a boot hang even without CPUidle
->> enabled.  Here's a quick way to cause a boot lockup. With the switcher
->> disabled, I enable CPUfreq and set the default governor to
->> performance.  As soon as cpufreq driver loads, it tries to use the top
->> frequences for both clusters, and it hangs.
->>
->> Selectively disabling frequencies, I narrowed it down to the 1.3GHz
->> and 1.2GHz frequencies of the little cluster.  With these commented
->> out in the DT, it will fully boot with the performance governor
->> enabled.
->>
->> So that leads to the question.  Are all of the operating points in
->> exynos5420.dtsi valid for exynos5800, and have they been validated?
->
-> I tried to recreate the boot lockup issue using the same steps you
-> listed above for the Exynos5800 peach-pi platform (Chromebook2), but I
-> do not see any issues. I can see both clusters with max clock speed
-> after boot (1.8GHz and 1.3GHz).
->
-> I am using v3.17-rc2 + CPUFreq Patches + max77802 regulator support
-> patches for Chromebook2 + temp hack to set A15 voltage to 1.35V and A7
-> voltage to 1.3V.
+They don't meet the "regression or bugfix" rule at all, so I can't do
+this, sorry.  I'll queue them up for 3.18.
 
-Can you share your branch and temp hack(s) as well as your defconfig?
+> > I already reverted one patch for exynos for 3.17-final that is sitting
+> > in my tree to go to Linus soon as you all didn't seem to want it
+> > anymore, so I'm getting really confused here...
+> 
+> These two patches are a replacement for the one reverted and
+> they just remove the old code instead of keeping it as fallback.
+> This means that the reverted patch was not breaking anything and
+> these two new patches could have been also done as incremental
+> ones.  Sorry for the confusion.
 
-I'm using the v3.17-rc1 branch from the exynos tree (which includes
-the max77802 series) but also has a bunch of other stuff which may be
-causing the issue.
+As they came in too late for 3.17-rc1, they will have to wait for
+3.18-rc1.
 
-It would be good if I can reproduce your exact tree/branch and see if
-I still have the same problem.
+thanks,
 
-Thanks for looking into this,
-
-Kevin
+greg k-h
