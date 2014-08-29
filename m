@@ -1,133 +1,113 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH 12/14] arm64: dts: add Exynos7 based Espresso board dts file
-Date: Fri, 29 Aug 2014 11:21:20 +0530
-Message-ID: <CAHfPSqBbaVJ07OpQY1GyPbUMJ8mR2eGPO0dZ0-6fwOVjre9A0Q@mail.gmail.com>
-References: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com>
- <1409132660-1898-4-git-send-email-ch.naveen@samsung.com> <20140828040015.GC4972@localhost>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH v2 16/17] drm/exynos/ipp: remove file argument from node
+ related functions
+Date: Fri, 29 Aug 2014 16:03:23 +0900
+Message-ID: <540025BB.6070209@samsung.com>
+References: <1409216861-12452-1-git-send-email-a.hajda@samsung.com>
+ <1409216861-12452-17-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f170.google.com ([209.85.216.170]:40932 "EHLO
-	mail-qc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751595AbaH2Fvl (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:28746 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750983AbaH2HD3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 29 Aug 2014 01:51:41 -0400
-In-Reply-To: <20140828040015.GC4972@localhost>
+	Fri, 29 Aug 2014 03:03:29 -0400
+In-reply-to: <1409216861-12452-17-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, catalin.marinas@arm.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, cpgs@samsung.com, Rob Herring <robh@kernel.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>
 
-Hello Olof,
+Hi Andrzej,
 
-On 28 August 2014 09:30, Olof Johansson <olof@lixom.net> wrote:
-> Hi,
->
-> On Wed, Aug 27, 2014 at 03:14:19PM +0530, Naveen Krishna Chatradhi wrote:
->> This patch adds initial dts file for the Espresso board
->> based on Exynos7 from Samsung.
->>
->> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->> Cc: Rob Herring <robh@kernel.org>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> ---
->>  arch/arm64/boot/dts/Makefile             |    1 +
->>  arch/arm64/boot/dts/exynos7-espresso.dts |   69 ++++++++++++++++++++++++++++++
->>  2 files changed, 70 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/exynos7-espresso.dts
->>
->> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
->> index c52bdb0..d160de1 100644
->> --- a/arch/arm64/boot/dts/Makefile
->> +++ b/arch/arm64/boot/dts/Makefile
->> @@ -1,5 +1,6 @@
->>  dtb-$(CONFIG_ARCH_VEXPRESS) += rtsm_ve-aemv8a.dtb foundation-v8.dtb
->>  dtb-$(CONFIG_ARCH_XGENE) += apm-mustang.dtb
->> +dtb-$(CONFIG_ARCH_EXYNOS7) += exynos7-espresso.dtb
->
-> As mentioned on the dtsi patch, please create a subdirectory.
+On 08/28/2014 06:07 PM, Andrzej Hajda wrote:
+> Since file pointer is preserved in c_node passing it
+> as argument in node functions is redundant.
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_ipp.c | 14 ++++++--------
+>  1 file changed, 6 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+> index 05f0f4e..fc8bb67 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+> @@ -529,7 +529,6 @@ static int ipp_put_mem_node(struct drm_device *drm_dev,
+>  
+>  static struct drm_exynos_ipp_mem_node
+>  		*ipp_get_mem_node(struct drm_device *drm_dev,
+> -		struct drm_file *file,
+>  		struct drm_exynos_ipp_cmd_node *c_node,
+>  		struct drm_exynos_ipp_queue_buf *qbuf)
+>  {
+> @@ -560,7 +559,7 @@ static struct drm_exynos_ipp_mem_node
+>  			dma_addr_t *addr;
+>  
+>  			addr = exynos_drm_gem_get_dma_addr(drm_dev,
+> -					qbuf->handle[i], file);
+> +					qbuf->handle[i], c_node->filp);
+>  			if (IS_ERR(addr)) {
+>  				DRM_ERROR("failed to get addr.\n");
+>  				ipp_put_mem_node(drm_dev, c_node, m_node);
+> @@ -606,7 +605,6 @@ static void ipp_free_event(struct drm_pending_event *event)
+>  }
+>  
+>  static int ipp_get_event(struct drm_device *drm_dev,
+> -		struct drm_file *file,
+>  		struct drm_exynos_ipp_cmd_node *c_node,
+>  		struct drm_exynos_ipp_queue_buf *qbuf)
+>  {
+> @@ -618,7 +616,7 @@ static int ipp_get_event(struct drm_device *drm_dev,
+>  	e = kzalloc(sizeof(*e), GFP_KERNEL);
+>  	if (!e) {
+>  		spin_lock_irqsave(&drm_dev->event_lock, flags);
+> -		file->event_space += sizeof(e->event);
+> +		c_node->filp->event_space += sizeof(e->event);
+>  		spin_unlock_irqrestore(&drm_dev->event_lock, flags);
+>  		return -ENOMEM;
+>  	}
+> @@ -630,7 +628,7 @@ static int ipp_get_event(struct drm_device *drm_dev,
+>  	e->event.prop_id = qbuf->prop_id;
+>  	e->event.buf_id[EXYNOS_DRM_OPS_DST] = qbuf->buf_id;
+>  	e->base.event = &e->event.base;
+> -	e->base.file_priv = file;
+> +	e->base.file_priv = c_node->filp;
+>  	e->base.destroy = ipp_free_event;
+>  	mutex_lock(&c_node->event_lock);
+>  	list_add_tail(&e->base.link, &c_node->event_list);
+> @@ -899,7 +897,7 @@ int exynos_drm_ipp_queue_buf(struct drm_device *drm_dev, void *data,
+>  	/* find command node */
+>  	c_node = ipp_find_obj(&ctx->prop_idr, &ctx->prop_lock,
+>  		qbuf->prop_id);
+> -	if (!c_node) {
+> +	if (!c_node || c_node->filp != file) {
 
-Sure, Will make it.
->
->>  targets += dtbs
->>  targets += $(dtb-y)
->> diff --git a/arch/arm64/boot/dts/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos7-espresso.dts
->> new file mode 100644
->> index 0000000..e35e83c
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/exynos7-espresso.dts
->> @@ -0,0 +1,69 @@
->> +/*
->> + * SAMSUNG Espresso board device tree source
->> + *
->> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
->> + *           http://www.samsung.com
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> +*/
->> +
->> +/dts-v1/;
->> +#include <dt-bindings/gpio/gpio.h>
->> +#include "exynos7.dtsi"
->> +
->> +/ {
->> +     model = "Samsung ESPRESSO board based on EXYNOS7";
->> +     compatible = "samsung,espresso", "samsung,exynos7";
->> +
->> +     chosen {
->> +             bootargs = "console=ttySAC2,115200n8 root=/dev/ram0 ramdisk=16384 initrd=0x42000000,16M init=/linuxrc";
->
-> Having ramdisk bootargs like these in the upstream dts doesn't make much
-> sense. Configure your bootloader to pass them in instead.
+I think this should go to patch 17.
 
-Right, We have tested with ramdisk. So, Left it that way.
-Will remove this.
+Thanks.
 
->
-> You might want to specify the console through chosen instead, there's
-> been recent support added for that.
->
->> +
->> +     memory@40000000 {
->> +             device_type = "memory";
->> +             reg = <0x40000000 0xC0000000>;
->> +     };
->> +
->> +     mmc@15740000 {
->> +             status = "okay";
->> +             num-slots = <1>;
->> +             broken-cd;
->> +             caps2-mmc-hs200-1_8v;
->> +             supports-highspeed;
->> +             non-removable;
->> +             card-detect-delay = <200>;
->> +             clock-frequency = <800000000>;
->> +             samsung,dw-mshc-ciu-div = <3>;
->> +             samsung,dw-mshc-sdr-timing = <0 4>;
->> +             samsung,dw-mshc-ddr-timing = <0 2>;
->> +             pinctrl-names = "default";
->> +             pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_rdqs &sd0_bus1 &sd0_bus4 &sd0_bus8>;
->> +             bus-width = <8>;
->> +
->> +             slot@0 {
->> +                     reg = <0>;
->> +                     bus-width = <8>;
->> +             };
->
-> I thought the use of slot was deprecated. Why do you have it here?
->
-> Also, as mentioned by others elsewhere, please use references instead
-> of duplicating the structure here.
-
-Sure, will rebase with the references.
->
->
-> -Olof
-Thanks for the review.
-
-
--- 
-Thanks & Regards,
-(: Nav :)
+>  		DRM_ERROR("failed to get command node.\n");
+>  		return -ENODEV;
+>  	}
+> @@ -908,7 +906,7 @@ int exynos_drm_ipp_queue_buf(struct drm_device *drm_dev, void *data,
+>  	switch (qbuf->buf_type) {
+>  	case IPP_BUF_ENQUEUE:
+>  		/* get memory node */
+> -		m_node = ipp_get_mem_node(drm_dev, file, c_node, qbuf);
+> +		m_node = ipp_get_mem_node(drm_dev, c_node, qbuf);
+>  		if (IS_ERR(m_node)) {
+>  			DRM_ERROR("failed to get m_node.\n");
+>  			return PTR_ERR(m_node);
+> @@ -921,7 +919,7 @@ int exynos_drm_ipp_queue_buf(struct drm_device *drm_dev, void *data,
+>  		 */
+>  		if (qbuf->ops_id == EXYNOS_DRM_OPS_DST) {
+>  			/* get event for destination buffer */
+> -			ret = ipp_get_event(drm_dev, file, c_node, qbuf);
+> +			ret = ipp_get_event(drm_dev, c_node, qbuf);
+>  			if (ret) {
+>  				DRM_ERROR("failed to get event.\n");
+>  				goto err_clean_node;
+> 
