@@ -1,53 +1,71 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [PATCH v8 3/7] clk: Move all drivers to use internal API
-Date: Wed, 03 Sep 2014 14:59:38 +0200
-Message-ID: <540710BA.60108@collabora.com>
-References: <1409585377-26091-1-git-send-email-tomeu.vizoso@collabora.com>	<1409585574-26673-1-git-send-email-tomeu.vizoso@collabora.com>
- <CAPDyKFq2vzUT+NSkC8ZTau=sbFW_frpQ+paLM_EsYLyp_5ivag@mail.gmail.com>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCHv6 0/2] thermal: exynos: Add support for TRIMINFO feature
+ of Exynos3250
+Date: Fri, 29 Aug 2014 22:39:30 -0400
+Message-ID: <20140830023928.GC23645@developer>
+References: <1409713743-6124-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <CAPDyKFq2vzUT+NSkC8ZTau=sbFW_frpQ+paLM_EsYLyp_5ivag@mail.gmail.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, alsa-devel@alsa-project.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Tony Lindgren <tony@atomide.com>, Tomasz Figa <t.figa@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Paul Mackerras <paulus@samba.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Daniel Walker <dwalker@fifo99.com>, linux-arch@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?B?RW1pbGlvIEzDs3Bleg==?= <emilio@elopez.com.ar>, Takashi Iwai <tiwai@suse.de>, Michal Simek <michal.simek@xilinx.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kevin Hilman <khilman@deeprootsystems.com>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-k>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1409713743-6124-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: eduardo.valentin@ti.com, amit.daniel@samsung.com, rui.zhang@intel.com, kgene.kim@samsung.com, ch.naveen@samsung.com, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMDkvMDIvMjAxNCAwOToxMyBBTSwgVWxmIEhhbnNzb24gd3JvdGU6Cj4gT24gMSBTZXB0ZW1i
-ZXIgMjAxNCAxNzozMiwgVG9tZXUgVml6b3NvIDx0b21ldS52aXpvc29AY29sbGFib3JhLmNvbT4g
-d3JvdGU6Cj4+IEluIHByZXBhcmF0aW9uIHRvIGNoYW5nZSB0aGUgcHVibGljIEFQSSB0byByZXR1
-cm4gYSBwZXItdXNlciBjbGsgc3RydWN0dXJlLAo+PiByZW1vdmUgYW55IHVzYWdlIG9mIHRoaXMg
-cHVibGljIEFQSSBmcm9tIHRoZSBjbG9jayBpbXBsZW1lbnRhdGlvbnMuCj4+Cj4+IFRoZSByZWFz
-b24gZm9yIGhhdmluZyB0aGlzIGluIGEgc2VwYXJhdGUgY29tbWl0IGZyb20gdGhlIG9uZSB0aGF0
-IGludHJvZHVjZXMKPj4gdGhlIGltcGxlbWVudGF0aW9uIG9mIHRoZSBuZXcgZnVuY3Rpb25zIGlz
-IHRvIHNlcGFyYXRlIHRoZSBjaGFuZ2VzIGdlbmVyYXRlZAo+PiB3aXRoIENvY2NpbmVsbGUgZnJv
-bSB0aGUgcmVzdCwgYW5kIGtlZXAgdGhlIHBhdGNoZXMnIHNpemUgcmVhc29uYWJsZS4KPj4KPj4g
-U2lnbmVkLW9mZi1ieTogVG9tZXUgVml6b3NvIDx0b21ldS52aXpvc29AY29sbGFib3JhLmNvbT4K
-Pj4gVGVzdGVkLWJ5OiBCb3JpcyBCcmV6aWxsb24gPGJvcmlzLmJyZXppbGxvbkBmcmVlLWVsZWN0
-cm9ucy5jb20+Cj4+IFRlc3RlZC1ieTogSGVpa28gU3R1ZWJuZXIgPGhlaWtvQHNudGVjaC5kZT4K
-Pj4gQWNrZWQtYnk6IEJvcmlzIEJyZXppbGxvbiA8Ym9yaXMuYnJlemlsbG9uQGZyZWUtZWxlY3Ry
-b25zLmNvbT4KPgo+IEhpIFRvbWV1LAo+Cj4gSHVoLCB3aGF0IGEgcGF0Y2guIDotKSBHcmVhdCB3
-b3JrIHlvdSBhcmUgZG9pbmcgaGVyZSEKClRoYW5rcyEKCj4gQnkganVzdCBsb29raW5nIGF0IHRo
-ZSB1eDUwMCBjaGFuZ2VzLCBJIHJlYWxpemUgdGhhdCB5b3Ugbm93IGhhdmUKPiByZW1vdmVkIHRo
-ZSBkZXBlbmRlbmN5IHRvICJzdHJ1Y3QgY2xrIiwgdGh1cyB3ZSBzaG91bGRuJ3QgaW5jbHVkZSB0
-aGUKPiBoZWFkZXIgZmlsZSBsaW51eC9jbGsuaCBpbiBhbnkgZmlsZSBsb2NhdGVkIGluIGRyaXZl
-ci9jbGsvdXg1MDAvKiwKPiByaWdodCE/Cj4KPiBJIHN1cHBvc2UgdGhpcyBjb21tZW50IG1heSBh
-bHNvIGFwcGxpY2FibGUgZm9yIG90aGVycyB0aGFuIHRoZSB1eDUwMAo+IGNsayBkcml2ZXIsIGJ1
-dCBoYXZlbid0IGNoZWNrZWQuCgpZb3UgYXJlIHJpZ2h0LiBJIGhhdmUgZ29uZSBhaGVhZCBhbmQg
-cmVtb3ZlZCB0aGUgaW5jbHVkZSBmcm9tIGFsbCBmaWxlcyAKdGhhdCBhcmUgZmVkIHRvIHRoZSBj
-b2NjaW5lbGxlIHNjcmlwdC4gRXZlcnl0aGluZyBidWlsZHMgZmluZSBpbiBhbGwgCmNvbmZpZ3Vy
-YXRpb25zIEkgaGF2ZSB0ZXN0ZWQsIHNvIEkgd2lsbCBiZSBhZGRpbmcgaXQgdG8gdjkuCgpUaGFu
-a3MgZm9yIHRoZSBpZGVhLAoKVG9tZXUKCgo+IEtpbmQgcmVnYXJkcwo+IFVmZmUKPgoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTGludXhwcGMtZGV2IG1h
-aWxpbmcgbGlzdApMaW51eHBwYy1kZXZAbGlzdHMub3psYWJzLm9yZwpodHRwczovL2xpc3RzLm96
-bGFicy5vcmcvbGlzdGluZm8vbGludXhwcGMtZGV2
+Hi,
+
+On Wed, Sep 03, 2014 at 12:09:01PM +0900, Chanwoo Choi wrote:
+> This patchset add the support of TRIMINFO_RELOAD feature for Exynos3250.
+> But Exynos3250 has two TRIMINFO_CTRL register instead other Exynos has only one
+> TRIMINFO_CTRL register. So, this patchset support the some Exynos SoC which
+> has more than one TRIMINF_CTRL.
+> 
+> Also, this patchset fix wrong value of TRIMINFO_RELOAD_SHIFT and remove
+> duplicate code when reading triminfo register of Exynos5440.
+> 
+> Changes from v5:
+> - Rebase this patchset on next branch of linux-soc-thermal.git
+> 
+
+Pulled into my next branch. Thanks.
+
+> Changes from v4:
+> - Remove un-necessary triminfo_ctrl_{shift, mask} field
+> - Includes Bartlomiej's patch[1] that Exynos5260 / Exynos5420 should not use
+> TRIM_RELOAD flag
+> [2] https://lkml.org/lkml/2014/8/20/481
+> 
+> Changes from v3:
+> - Add reviewed message of Amit Daniel Kachhap <amit.daniel@samsung.com>
+> - Split RELOAD patch as two patch
+> - Fix 'TRIMINFO_RELOAD_SHIFT' value
+> - This series includes separate patch[1]
+> [1] https://lkml.org/lkml/2014/8/20/5
+> - Drop ACTIME bit setting because TRM includes not enough information of ACTIME bit.
+> 
+> Changes from v2:
+> - Fix build break because of missing 'or' operation.
+> 
+> Changes from v1:
+> - Add missing 'TMU_SUPPORT_TRIM_RELOAD' features
+> 
+> Chanwoo Choi (2):
+>   thermal: exynos: Add support for many TRIMINFO_CTRL registers
+>   thermal: exynos: Add support for TRIM_RELOAD feature at Exynos3250
+> 
+>  drivers/thermal/samsung/exynos_thermal_common.h |  1 +
+>  drivers/thermal/samsung/exynos_tmu.c            | 15 ++++++++++++---
+>  drivers/thermal/samsung/exynos_tmu.h            |  7 +++++--
+>  drivers/thermal/samsung/exynos_tmu_data.c       | 11 +++++++++--
+>  drivers/thermal/samsung/exynos_tmu_data.h       |  8 ++++++--
+>  5 files changed, 33 insertions(+), 9 deletions(-)
+> 
+> -- 
+> 1.8.0
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
