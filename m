@@ -1,101 +1,97 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 10/29] drivers: add DRIVER_HAS_OWN_IOMMU_MANAGER flag
-Date: Mon, 01 Sep 2014 12:47:08 +0200
-Message-ID: <54044EAC.6010701@samsung.com>
-References: <1407235677-26324-1-git-send-email-m.szyprowski@samsung.com>
- <20140901070748.GA24226@ulmo.nvidia.com> <540425F9.7080307@samsung.com>
- <4621634.jlJLccozTJ@wuerfel>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH v3 0/8] thermal: exynos: various cleanups
+Date: Mon, 1 Sep 2014 16:23:34 +0530
+Message-ID: <CADGdYn7NzwJKuO1DG2OJdWwd_keZbUJXY=+XeHhf1e+xcSvoVw@mail.gmail.com>
+References: <1406826667-2289-1-git-send-email-b.zolnierkie@samsung.com>
+	<20140828144921.GB18194@developer>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:37074 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752363AbaIAKrO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Sep 2014 06:47:14 -0400
-In-reply-to: <4621634.jlJLccozTJ@wuerfel>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20140828144921.GB18194@developer>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>, Zhang Rui <rui.zhang@intel.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: Thierry Reding <treding@nvidia.com>, Rob Herring <robh@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Inki Dae <inki.dae@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joerg Roedel <joro@8bytes.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Olof Johansson <olof@lixom.net>, Kyungmin Park <kyungmin.park@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>
 
-Hello,
-
-On 2014-09-01 11:38, Arnd Bergmann wrote:
-> On Monday 01 September 2014 09:53:29 Marek Szyprowski wrote:
->> On 2014-09-01 09:07, Thierry Reding wrote:
->>> On Mon, Sep 01, 2014 at 07:22:32AM +0200, Marek Szyprowski wrote:
->>>> Hi Greg,
->>>>
->>>> On 2014-08-05 12:47, Marek Szyprowski wrote:
->>>>> This patch adds a new flags for device drivers. This flag instructs
->>>>> kernel that the device driver does it own management of IOMMU assisted
->>>>> IO address space translations, so no default dma-mapping structures
->>>>> should be initialized.
->>>>>
->>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>>> ---
->>>>>     include/linux/device.h | 2 ++
->>>>>     1 file changed, 2 insertions(+)
->>>>>
->>>>> diff --git a/include/linux/device.h b/include/linux/device.h
->>>>> index 5f4ff02..2e62371 100644
->>>>> --- a/include/linux/device.h
->>>>> +++ b/include/linux/device.h
->>>>> @@ -253,6 +253,8 @@ struct device_driver {
->>>>>     
->>>>>     /* disables bind/unbind via sysfs */
->>>>>     #define DRIVER_SUPPRESS_BIND_ATTRS       (1 << 0)
->>>>> +/* driver uses own methods to manage IO address space */
->>>>> +#define DRIVER_HAS_OWN_IOMMU_MANAGER       (1 << 1)
->>>>>     
->>>>>     extern int __must_check driver_register(struct device_driver *drv);
->>>>>     extern void driver_unregister(struct device_driver *drv);
->>>> Could you comment if the approach of using flags in the struct driver
->>>> could be accepted? I've converted suppress_bind_attrs entry to flags to
->>>> avoid extending the structure, please see patch "[PATCH 05/29] drivers:
->>>> convert suppress_bind_attrs parameter into flags".
->>> Is this really necessary? What I did as part of an RFC series for Tegra
->>> IOMMU support is keep this knowledge within the IOMMU driver rather than
->>> export it to the driver core.i
->> The problem with embedding the list of drivers that you would need to update
->> it everytime when you modify or extend iommu support in the other drivers.
->> I've tried also other approach, like adding respective notifiers to
->> individual
->> drivers to initialize custom iommu support (or disable default iommu
->> mapping)
->> before iommu driver gets initialized, but such solution is in my opinion too
->> complex and hard to understand if one is not familiar will all this stuff.
+On Thu, Aug 28, 2014 at 8:19 PM, Eduardo Valentin <edubezval@gmail.com> wrote:
+> Amit,
+>
+> On Thu, Jul 31, 2014 at 07:10:58PM +0200, Bartlomiej Zolnierkiewicz wrote:
+>> Hi,
 >>
->> All in all it turned out that the simplest and most generic way is to simply
->> add the flag to the driver core. Flags might be also used in the future
->> to model other kinds of dependencies between device drivers and/or driver
->> core.
-> I don't get it yet. I would expect that a driver doing its own management
-> of the iommu gets to use the linux/iommu.h interfaces, while a driver
-> using the default iommu setup uses linux/dma-mapping.h.
+>> This patch series contains various cleanups for EXYNOS thermal
+>> driver.  Overall it decreases driver's LOC by 9%.  It is based
+>> on next-20140731 kernel.  It should not cause any functionality
+>> changes.
+>>
+>
+> Did you have the time to test this series?
 
-You are right.
+Hi Eduardo/Bartlomiej,
 
-> Who do you think needs to set this flag, and who needs to read it?
+For the whole series tested on exynos5250 based arndale board.
+Tested-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
 
-In the proposed solution Exynos IOMMU driver creates a separate IO 
-address space
-for every client device in a system and binds it to the default 
-dma-mapping space
-for the given device. When drivers are doing its own management of IO 
-address
-space, instead of relying on what is available by default with dma-mapping
-interface, this will require releasing of the previously created default
-structures and resources. So this flag is set by the driver doing its own
-management of io address space. The flags is then checked by Exynos 
-IOMMU driver
-to avoid creating the default dma-mapping address space for devices 
-which driver
-does its own management.
+Sorry for the delay as I was busy in some internal work.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+Thanks,
+Amit D
+>
+>> Changes since v2 (https://lkml.org/lkml/2014/6/17/436):
+>> - synced patches against next-20140731
+>> - dropped patch "thermal: exynos: remove dead code for
+>>   TYPE_TWO_POINT_TRIMMING calibration" (newly added Exynos3250
+>>   SoC support uses TYPE_TWO_POINT_TRIMMING calibration)
+>> - updated patch description for patch #2
+>> - dropped Reviewed-by from Amit from patch #8 (due to changed
+>>   scope of the patch)
+>>
+>> Changes since v1 (https://lkml.org/lkml/2014/5/5/194):
+>> - synced patches against next-20140617
+>> - merged patch "thermal: exynos: remove unused defines" into
+>>   "thermal: exynos: remove unused struct exynos_tmu_registers
+>>   entries" one (per request from Eduardo)
+>> - improved patch descriptions for patches #1-5
+>> - fixed documentation for pdata->gain and pdata->reference_voltage
+>> - added Reviewed-by from Amit to patches #6, #7 and #10
+>> - added missing Acked-by from Kyungmin Park
+>>
+>> Best regards,
+>> --
+>> Bartlomiej Zolnierkiewicz
+>> Samsung R&D Institute Poland
+>> Samsung Electronics
+>>
+>>
+>> Bartlomiej Zolnierkiewicz (8):
+>>   thermal: exynos: remove unused struct exynos_tmu_registers entries
+>>   thermal: exynos: remove dead code for HW_MODE calibration
+>>   thermal: exynos: remove redundant pdata checks from
+>>     exynos_tmu_initialize()
+>>   thermal: exynos: remove redundant threshold_code checks from
+>>     exynos_tmu_initialize()
+>>   thermal: exynos: simplify temp_to_code() and code_to_temp()
+>>   thermal: exynos: cache non_hw_trigger_levels in pdata
+>>   thermal: exynos: remove redundant pdata checks from
+>>     exynos_tmu_control()
+>>   thermal: exynos: remove identical values from exynos*_tmu_registers
+>>     structures
+>>
+>>  drivers/thermal/samsung/exynos_thermal_common.h |   1 -
+>>  drivers/thermal/samsung/exynos_tmu.c            | 126 +++++-------------------
+>>  drivers/thermal/samsung/exynos_tmu.h            |  74 +-------------
+>>  drivers/thermal/samsung/exynos_tmu_data.c       |  56 ++---------
+>>  drivers/thermal/samsung/exynos_tmu_data.h       |  31 +-----
+>>  5 files changed, 35 insertions(+), 253 deletions(-)
+>>
+>> --
+>> 1.8.2.3
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
