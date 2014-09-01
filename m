@@ -1,72 +1,72 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] drivers: mfd: exynos-pmu: Add support for Exynos7
-Date: Mon, 1 Sep 2014 09:22:43 +0100
-Message-ID: <20140901082243.GC6226@lee--X1>
-References: <1409544769-2695-1-git-send-email-a.kesavan@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH RESEND] ARM: EXYNOS: Do not calculate boot address twice
+Date: Mon, 01 Sep 2014 10:39:14 +0200
+Message-ID: <1409560754.26751.2.camel@AMDC1943>
+References: <1403783163-28638-1-git-send-email-k.kozlowski@samsung.com>
+ <032901cf9763$b7733150$265993f0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1409544769-2695-1-git-send-email-a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kesavan.abhilash-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Eunseok Choi <es10.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <032901cf9763$b7733150$265993f0$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Russell King' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, 01 Sep 2014, Abhilash Kesavan wrote:
-
-> Add intial PMU settings for exynos7. This is required for
-> future suspend-to-ram and cpuidle support.
+On pi=C4=85, 2014-07-04 at 17:41 +0900, Kukjin Kim wrote:
+> Krzysztof Kozlowski wrote:
+> >=20
+> > Commit b3205dea8fbf ("ARM: EXYNOS: Map SYSRAM through generic DT
+> > bindings") introduced local variable boot_reg where boot address fr=
+om
+> > cpu_boot_reg() call is stored. Re-use it instead calling cpu_boot_r=
+eg()
+> > again.
+> >=20
+> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > ---
+> >  arch/arm/mach-exynos/platsmp.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/=
+platsmp.c
+> > index 1c8d31e39520..55ed2e6729c5 100644
+> > --- a/arch/arm/mach-exynos/platsmp.c
+> > +++ b/arch/arm/mach-exynos/platsmp.c
+> > @@ -155,7 +155,7 @@ static int exynos_boot_secondary(unsigned int c=
+pu, struct task_struct *idle)
+> >  				ret =3D PTR_ERR(boot_reg);
+> >  				goto fail;
+> >  			}
+> > -			__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
+> > +			__raw_writel(boot_addr, boot_reg);
+> >  		}
+> >=20
+> >  		call_firmware_op(cpu_boot, phys_cpu);
+> > @@ -242,7 +242,7 @@ static void __init exynos_smp_prepare_cpus(unsi=
+gned int max_cpus)
+> >=20
+> >  			if (IS_ERR(boot_reg))
+> >  				break;
+> > -			__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
+> > +			__raw_writel(boot_addr, boot_reg);
+> >  		}
+> >  	}
+> >  }
+> > --
+> > 1.9.1
 >=20
-> Signed-off-by: Eunseok Choi <es10.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
-> This patch has been tested on an Exynos7 espresso board and is based
-> on Kgene's tree (for-next branch).
->=20
-> Following are the dependencies:
-> 1) Support 64bit Cortex A57 based Exynos7 SoC
-> http://www.spinics.net/lists/arm-kernel/msg357380.html
-> 2) mfd: syscon: Decouple syscon interface from syscon devices
-> http://www.spinics.net/lists/linux-samsung-soc/msg35906.html
-> 3) ARM: EXYNOS: Add platform driver support for Exynos PMU
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-July/27567=
-5.html
-> 4) ARM: EXYNOS: Move PMU specific definitions from common.h
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-July/27065=
-5.html
-> 5) ARM: EXYNOS: Move pmu specific header files under "linux/mfd/samsu=
-ng"
-> https://lkml.org/lkml/2014/4/28/217
-> 6) drivers: mfd: Add support for Exynos PMU driver
-> https://lkml.org/lkml/2014/4/28/332
->=20
-> NOTE: The above dependencies are not final yet, especially the
-> movement of exynos pmu driver to the mfd directory. I will re-work
-> this patch when the final location for exynos PMU driver is decided.
+> Oh, good catch. will apply :-)
 
-Let me know when this patch is ready to go in and I'll review.
+Hi Kukjin,
 
->  .../devicetree/bindings/arm/samsung/pmu.txt        |    1 +
->  arch/arm64/boot/dts/exynos7.dtsi                   |    5 +
->  drivers/mfd/exynos-pmu.c                           |  285 ++++++++++=
-++++++++++
->  include/linux/mfd/samsung/exynos-regs-pmu.h        |  212 ++++++++++=
-+++++
->  4 files changed, 503 insertions(+)
+I cannot find this patch in your tree or in next. Did you applied this?=
+=20
 
-This all needs to be broken up into seperate patches.
+Best regards,
+Krzysztof
 
-Also, see: Documentation/devicetree/bindings/submitting-patches.txt.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Thanks,
+> Kukjin
