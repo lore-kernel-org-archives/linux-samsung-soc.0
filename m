@@ -1,72 +1,123 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 10/29] drivers: add DRIVER_HAS_OWN_IOMMU_MANAGER flag
-Date: Mon, 01 Sep 2014 11:38:31 +0200
-Message-ID: <4621634.jlJLccozTJ@wuerfel>
-References: <1407235677-26324-1-git-send-email-m.szyprowski@samsung.com> <20140901070748.GA24226@ulmo.nvidia.com> <540425F9.7080307@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] usb: dwc3: exynos: remove usb_phy_generic support
+Date: Mon, 01 Sep 2014 12:01:35 +0200
+Message-ID: <140959597.EmCWO5CWP9@amdc1032>
+References: <2141307.zYQLjP6V6U@amdc1032> <2682311.psIh2sovYX@amdc1032>
+ <20140829183304.GB9380@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <540425F9.7080307@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Thierry Reding <treding@nvidia.com>, Rob Herring <robh@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Inki Dae <inki.dae@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joerg Roedel <joro@8bytes.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Olof Johansson <olof@lixom.net>, Kyungmin Park <kyungmin.park@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:48975 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752969AbaIAKBk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 1 Sep 2014 06:01:40 -0400
+In-reply-to: <20140829183304.GB9380@kroah.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, Felipe Balbi <balbi@ti.com>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>
 
-On Monday 01 September 2014 09:53:29 Marek Szyprowski wrote:
-> On 2014-09-01 09:07, Thierry Reding wrote:
-> > On Mon, Sep 01, 2014 at 07:22:32AM +0200, Marek Szyprowski wrote:
-> >> Hi Greg,
-> >>
-> >> On 2014-08-05 12:47, Marek Szyprowski wrote:
-> >>> This patch adds a new flags for device drivers. This flag instructs
-> >>> kernel that the device driver does it own management of IOMMU assisted
-> >>> IO address space translations, so no default dma-mapping structures
-> >>> should be initialized.
-> >>>
-> >>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >>> ---
-> >>>    include/linux/device.h | 2 ++
-> >>>    1 file changed, 2 insertions(+)
-> >>>
-> >>> diff --git a/include/linux/device.h b/include/linux/device.h
-> >>> index 5f4ff02..2e62371 100644
-> >>> --- a/include/linux/device.h
-> >>> +++ b/include/linux/device.h
-> >>> @@ -253,6 +253,8 @@ struct device_driver {
-> >>>    
-> >>>    /* disables bind/unbind via sysfs */
-> >>>    #define DRIVER_SUPPRESS_BIND_ATTRS       (1 << 0)
-> >>> +/* driver uses own methods to manage IO address space */
-> >>> +#define DRIVER_HAS_OWN_IOMMU_MANAGER       (1 << 1)
-> >>>    
-> >>>    extern int __must_check driver_register(struct device_driver *drv);
-> >>>    extern void driver_unregister(struct device_driver *drv);
-> >> Could you comment if the approach of using flags in the struct driver
-> >> could be accepted? I've converted suppress_bind_attrs entry to flags to
-> >> avoid extending the structure, please see patch "[PATCH 05/29] drivers:
-> >> convert suppress_bind_attrs parameter into flags".
-> > Is this really necessary? What I did as part of an RFC series for Tegra
-> > IOMMU support is keep this knowledge within the IOMMU driver rather than
-> > export it to the driver core.i
+
+Hi,
+
+On Friday, August 29, 2014 11:33:04 AM Greg Kroah-Hartman wrote:
+> On Fri, Aug 29, 2014 at 11:02:52AM +0200, Bartlomiej Zolnierkiewicz wrote:
+> > On Thursday, August 28, 2014 12:29:52 PM Greg Kroah-Hartman wrote:
+> > > On Thu, Aug 28, 2014 at 08:11:04PM +0200, Bartlomiej Zolnierkiewicz wrote:
+> > > > 
+> > > > [ added Alan and Greg to cc: ]
+> > > > 
+> > > > Hi,
+> > > > 
+> > > > On Wednesday, August 27, 2014 11:42:25 PM Vivek Gautam wrote:
+> > > > > Hi Baltlomiej,
+> > > > > 
+> > > > > 
+> > > > > On Wed, Aug 27, 2014 at 1:22 PM, Bartlomiej Zolnierkiewicz
+> > > > > <b.zolnierkie@samsung.com> wrote:
+> > > > > > dwc3 driver is using the new Exynos5 SoC series USB DRD PHY driver
+> > > > > > (PHY_EXYNOS5_USBDRD which selects GENERIC_PHY) as can be seen by
+> > > > > > looking at the following commits:
+> > > > > >
+> > > > > >   7a4cf0fde054 ("ARM: dts: Update DWC3 usb controller to use new
+> > > > > >   phy driver for exynos5250")
+> > > > > >
+> > > > > >   f070267b5fc1 ("ARM: dts: Enable support for DWC3 controller for
+> > > > > >   exynos5420")
+> > > > > >
+> > > > > > Thus remove unused usb_phy_generic support from dwc3 Exynos glue
+> > > > > > layer.
+> > > > > >
+> > > > > > [ The code that is being removed is harmful in the context of
+> > > > > >   multi_v7_defconfig and enabling "EHCI support for Samsung
+> > > > > >   S5P/EXYNOS SoC Series" (USB_EHCI_EXYNOS) + "OHCI support for
+> > > > > >   Samsung S5P/EXYNOS SoC Series" (USB_OHCI_EXYNOS) because "EHCI
+> > > > > >   support for OMAP3 and later chips" (USB_EHCI_HCD_OMAP) selects
+> > > > > >   "NOP USB Transceiver Driver" (NOP_USB_XCEIV).  NOP USB driver
+> > > > > >   attaches itself to usb_phy_generic platform devices created by
+> > > > > >   dwc3 Exynos glue layer and later causes Exynos EHCI driver to
+> > > > > >   fail probe and Exynos OHCI driver to hang on probe (as observed
+> > > > > >   on Exynos5250 Arndale board). ]
+> > > > > 
+> > > > > The issue with EHCI and OHCI on exynos platforms is that until now
+> > > > > they also request
+> > > > > usb-phy and only later if they don't find one, they go ahead and get a
+> > > > > 'phy' generic.
+> > > > > 
+> > > > > Fortunately we missed this issue with exynos_defconfig, and as you rightly
+> > > > > mentioned with multi_v7_defconfig, the NOP_USB_XCEIV gets enabled and
+> > > > > EHCI and OHCI exynos get no-op usb-phy, which actually blocks EHCI/OHCI from
+> > > > > initializing the real PHYs.
+> > > > > 
+> > > > > This issue is resolved with patches:
+> > > > > [PATCH v2 1/2] usb: host: ehci-exynos: Remove unnecessary usb-phy support
+> > > > > [PATCH v2 2/2] usb: host: ohci-exynos: Remove unnecessary usb-phy support
+> > > > > wherein we are completely removing the usb-phy support from ehci/ohci-exynos.
+> > > > > So with these patches we should not see the issue mentioned by you.
+> > > > 
+> > > > Indeed, your patches fix the issue.
+> > > > 
+> > > > Greg, could these two patches ([1] & [2]) get merged quickly, pretty please
+> > > > (they were already acked by Alan)?  They are not a mere cleanups because
+> > > > they fix the actual problem with using multi_v7_defconfig which in turn has
+> > > > been blocking Olof's defconfig update patch [3] for quite some time now.
+> > > > Moreover these patches are limited to Exynos host drivers so they should be
+> > > > pretty safe when it comes to potential regressions.
+> > > > 
+> > > > [1] http://www.spinics.net/lists/linux-usb/msg112294.html
+> > > > [2] http://www.spinics.net/lists/linux-usb/msg112293.html
+> > > > [3] http://www.spinics.net/lists/arm-kernel/msg349654.html
+> > > 
+> > > merged for 3.18-rc1, or do you "need" them for 3.17-final?
+> > 
+> > If it is not too much trouble please push them to 3.17-final.
 > 
-> The problem with embedding the list of drivers that you would need to update
-> it everytime when you modify or extend iommu support in the other drivers.
-> I've tried also other approach, like adding respective notifiers to 
-> individual
-> drivers to initialize custom iommu support (or disable default iommu 
-> mapping)
-> before iommu driver gets initialized, but such solution is in my opinion too
-> complex and hard to understand if one is not familiar will all this stuff.
+> They don't meet the "regression or bugfix" rule at all, so I can't do
+> this, sorry.  I'll queue them up for 3.18.
+
+These patches fix a real problem of boot hang when enabling Exynos USB
+host drivers and using ARM multiplatform config so IMHO they fall into
+bugfix category.
+
+> > > I already reverted one patch for exynos for 3.17-final that is sitting
+> > > in my tree to go to Linus soon as you all didn't seem to want it
+> > > anymore, so I'm getting really confused here...
+> > 
+> > These two patches are a replacement for the one reverted and
+> > they just remove the old code instead of keeping it as fallback.
+> > This means that the reverted patch was not breaking anything and
+> > these two new patches could have been also done as incremental
+> > ones.  Sorry for the confusion.
 > 
-> All in all it turned out that the simplest and most generic way is to simply
-> add the flag to the driver core. Flags might be also used in the future
-> to model other kinds of dependencies between device drivers and/or driver
-> core.
+> As they came in too late for 3.17-rc1, they will have to wait for
+> 3.18-rc1.
 
-I don't get it yet. I would expect that a driver doing its own management
-of the iommu gets to use the linux/iommu.h interfaces, while a driver
-using the default iommu setup uses linux/dma-mapping.h. Who do you think
-needs to set this flag, and who needs to read it?
+Okay..
 
-	Arnd
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
