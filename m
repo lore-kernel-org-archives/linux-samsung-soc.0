@@ -1,35 +1,79 @@
 From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [PATCH] mfd: syscon: Decouple syscon interface from syscon devices
-Date: Mon, 01 Sep 2014 16:18 +0200
-Message-ID: <6929512.Xet4VLKWdC@wuerfel>
-References: <1408694991-21615-1-git-send-email-pankaj.dubey@samsung.com> <4121644.3haxjiIdIo@wuerfel> <000c01cfc5d9$03866c30$0a934490$@samsung.com>
+Date: Mon, 01 Sep 2014 16:24:27 +0200
+Message-ID: <12348292.z1qJl96tVA@wuerfel>
+References: <1408694991-21615-1-git-send-email-pankaj.dubey@samsung.com> <4121644.3haxjiIdIo@wuerfel> <20140901112549.GM7374@lee--X1>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:54217 "EHLO
+Received: from mout.kundenserver.de ([212.227.126.187]:49890 "EHLO
 	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753398AbaIAOS0 (ORCPT
+	with ESMTP id S1753398AbaIAOZm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Sep 2014 10:18:26 -0400
-In-Reply-To: <000c01cfc5d9$03866c30$0a934490$@samsung.com>
+	Mon, 1 Sep 2014 10:25:42 -0400
+In-Reply-To: <20140901112549.GM7374@lee--X1>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: 'Lee Jones' <lee.jones@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, 'Tomasz Figa' <t.figa@samsung.com>, broonie@kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Lee Jones <lee.jones@linaro.org>, kgene.kim@samsung.com, linux@arm.linux.org.uk, naushad@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-kernel@vger.kernel.org, joshi@samsung.com, linux-samsung-soc@vger.kernel.org, broonie@kernel.org, thomas.ab@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com
 
-On Monday 01 September 2014 17:05:33 Pankaj Dubey wrote:
+On Monday 01 September 2014 12:25:49 Lee Jones wrote:
+> On Mon, 01 Sep 2014, Arnd Bergmann wrote:
+> > On Monday 01 September 2014 08:49:18 Lee Jones wrote:
+> > > On Fri, 22 Aug 2014, Pankaj Dubey wrote:
+> > > 
+> > > > From: Tomasz Figa <t.figa@samsung.com>
+> > > > 
+> > > > Currently a syscon entity can be only registered directly through a
+> > > > platform device that binds to a dedicated driver. However in certain use
+> > > > cases it is desirable to make a device used with another driver a syscon
+> > > > interface provider. For example, certain SoCs (e.g. Exynos) contain
+> > > > system controller blocks which perform various functions such as power
+> > > > domain control, CPU power management, low power mode control, but in
+> > > > addition contain certain IP integration glue, such as various signal
+> > > > masks, coprocessor power control, etc. In such case, there is a need to
+> > > > have a dedicated driver for such system controller but also share
+> > > > registers with other drivers. The latter is where the syscon interface
+> > > > is helpful.
+> > > > 
+> > > > This patch decouples syscon object from syscon driver, so that it can be
+> > > > registered from any driver in addition to the original "syscon" platform
+> > > > driver.
+> > > > 
+> > > > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> > > > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> > > > ---
+> > > > 
+> > > > RFC patch [1] was posted by Tomasz Figa. This patch addresses some of
+> > > > comments given by Arnd to RFC patch, and further decouples syscon from
+> > > > device model. It also gives flexibility of registering with syscon at
+> > > > early stage using device_node object.
+> > > 
+> > > It would be helpful if Arnd gave this revision his blessing (Ack).
+> > 
+> > I never saw a reason why we don't take this all the way as discussed
+> > a few times: Completely remove the dependency of syscon on having
+> > a platform driver for it, and make it possible to just call
+> > syscon_regmap_lookup_by_phandle() without having to register
+> > it first.
 > 
-> Please have a look at this thread [1], where we discussed the need of syscon
-> as platform device.
-> Looks like still there are users of syscon_regmap_lookup_by_pdevname
-> (clps711x.c).
-> So we can't make it completely independent of platform_device. 
-> 
-> [1]
-> https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35708.html
+> I think this sounds like a good end-state.  Migrating over by
+> supporting both methods in this way does sound like the correct thing
+> to do though.  Doing so is likely to dramatically reduce the effect on
+> current users.
 
-I think the clps711x platform will soon stop using it, we already
-have patches for migrating to DT.
+Maybe I'm misreading the patch, but I don't see how it creates a
+migration path. What I want to end up with is infrastructure that
+lets anybody call syscon_regmap_lookup_by_pdevname or
+syscon_regmap_lookup_by_compatible (if they really need to)
+without needing the platform_driver for syscon. That should not
+require any form of compatibility layer because to the driver
+using it there is no API change.
+
+In contrast, this patch introduces a new of_syscon_{un,}register()
+interface that would get removed after the the above has
+been implemented, causing extra churn for any driver that also
+wants to provide a regmap-like interface.
 
 	Arnd
