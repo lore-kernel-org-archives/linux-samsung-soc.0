@@ -1,82 +1,49 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: RE: [PATCH] mfd: syscon: Decouple syscon interface from syscon devices
-Date: Mon, 01 Sep 2014 17:05:33 +0530
-Message-ID: <000c01cfc5d9$03866c30$0a934490$@samsung.com>
-References: <1408694991-21615-1-git-send-email-pankaj.dubey@samsung.com>
- <20140901074918.GB6226@lee--X1> <4121644.3haxjiIdIo@wuerfel>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH 10/29] drivers: add DRIVER_HAS_OWN_IOMMU_MANAGER flag
+Date: Mon, 01 Sep 2014 13:56:42 +0200
+Message-ID: <5493968.dbuSPSqts4@wuerfel>
+References: <1407235677-26324-1-git-send-email-m.szyprowski@samsung.com>
+	<4621634.jlJLccozTJ@wuerfel> <54044EAC.6010701@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <4121644.3haxjiIdIo@wuerfel>
-Content-language: en-us
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, 'Lee Jones' <lee.jones@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, 'Tomasz Figa' <t.figa@samsung.com>, broonie@kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <54044EAC.6010701-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Arnd,
-
-> -----Original Message-----
-> From: Arnd Bergmann [mailto:arnd@arndb.de]
-> Sent: Monday, September 01, 2014 4:07 PM
-> To: Lee Jones
-> Cc: Pankaj Dubey; linux-arm-kernel@lists.infradead.org; linux-samsung-
-> soc@vger.kernel.org; linux-kernel@vger.kernel.org; kgene.kim@samsung.com;
-> linux@arm.linux.org.uk; vikas.sajjan@samsung.com; joshi@samsung.com;
-> naushad@samsung.com; thomas.ab@samsung.com; chow.kim@samsung.com;
-> Tomasz Figa; broonie@kernel.org
-> Subject: Re: [PATCH] mfd: syscon: Decouple syscon interface from syscon
-devices
+On Monday 01 September 2014 12:47:08 Marek Szyprowski wrote:
+> > Who do you think needs to set this flag, and who needs to read it?
 > 
-> On Monday 01 September 2014 08:49:18 Lee Jones wrote:
-> > On Fri, 22 Aug 2014, Pankaj Dubey wrote:
-> >
-> > > From: Tomasz Figa <t.figa@samsung.com>
-> > >
-> > > Currently a syscon entity can be only registered directly through a
-> > > platform device that binds to a dedicated driver. However in certain
-> > > use cases it is desirable to make a device used with another driver
-> > > a syscon interface provider. For example, certain SoCs (e.g. Exynos)
-> > > contain system controller blocks which perform various functions
-> > > such as power domain control, CPU power management, low power mode
-> > > control, but in addition contain certain IP integration glue, such
-> > > as various signal masks, coprocessor power control, etc. In such
-> > > case, there is a need to have a dedicated driver for such system
-> > > controller but also share registers with other drivers. The latter
-> > > is where the syscon interface is helpful.
-> > >
-> > > This patch decouples syscon object from syscon driver, so that it
-> > > can be registered from any driver in addition to the original
-> > > "syscon" platform driver.
-> > >
-> > > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> > > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> > > ---
-> > >
-> > > RFC patch [1] was posted by Tomasz Figa. This patch addresses some
-> > > of comments given by Arnd to RFC patch, and further decouples syscon
-> > > from device model. It also gives flexibility of registering with
-> > > syscon at early stage using device_node object.
-> >
-> > It would be helpful if Arnd gave this revision his blessing (Ack).
-> 
-> I never saw a reason why we don't take this all the way as discussed a few
-times:
-> Completely remove the dependency of syscon on having a platform driver for
-it, and
-> make it possible to just call
-> syscon_regmap_lookup_by_phandle() without having to register it first.
-> 
+> In the proposed solution Exynos IOMMU driver creates a separate IO 
+> address space
+> for every client device in a system and binds it to the default 
+> dma-mapping space
+> for the given device. When drivers are doing its own management of IO 
+> address
+> space, instead of relying on what is available by default with dma-mapping
+> interface, this will require releasing of the previously created default
+> structures and resources. So this flag is set by the driver doing its own
+> management of io address space. The flags is then checked by Exynos 
+> IOMMU driver
+> to avoid creating the default dma-mapping address space for devices 
+> which driver
+> does its own management.
 
-Please have a look at this thread [1], where we discussed the need of syscon
-as platform device.
-Looks like still there are users of syscon_regmap_lookup_by_pdevname
-(clps711x.c).
-So we can't make it completely independent of platform_device. 
+I don't completely understand it yet. I would assume the device
+to be added to the default domain at device creation time
+(of_platform_populate), way before we know which device driver
+is going to be used. How can this prevent the iommu driver
+from doing the association with the domain?
 
-[1]
-https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35708.html
-
-
-> 	Arnd
+	Arnd
