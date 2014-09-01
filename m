@@ -1,112 +1,86 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH] mfd: syscon: Decouple syscon interface from syscon
- devices
-Date: Mon, 1 Sep 2014 08:49:18 +0100
-Message-ID: <20140901074918.GB6226@lee--X1>
-References: <1408694991-21615-1-git-send-email-pankaj.dubey@samsung.com>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 10/29] drivers: add DRIVER_HAS_OWN_IOMMU_MANAGER flag
+Date: Mon, 01 Sep 2014 09:53:29 +0200
+Message-ID: <540425F9.7080307@samsung.com>
+References: <1407235677-26324-1-git-send-email-m.szyprowski@samsung.com>
+	<1407235677-26324-11-git-send-email-m.szyprowski@samsung.com>
+	<54040298.9020002@samsung.com> <20140901070748.GA24226@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1408694991-21615-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, Tomasz Figa <t.figa@samsung.com>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <20140901070748.GA24226-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 22 Aug 2014, Pankaj Dubey wrote:
+Hello,
 
-> From: Tomasz Figa <t.figa@samsung.com>
->=20
-> Currently a syscon entity can be only registered directly through a
-> platform device that binds to a dedicated driver. However in certain =
-use
-> cases it is desirable to make a device used with another driver a sys=
-con
-> interface provider. For example, certain SoCs (e.g. Exynos) contain
-> system controller blocks which perform various functions such as powe=
-r
-> domain control, CPU power management, low power mode control, but in
-> addition contain certain IP integration glue, such as various signal
-> masks, coprocessor power control, etc. In such case, there is a need =
-to
-> have a dedicated driver for such system controller but also share
-> registers with other drivers. The latter is where the syscon interfac=
-e
-> is helpful.
->=20
-> This patch decouples syscon object from syscon driver, so that it can=
- be
-> registered from any driver in addition to the original "syscon" platf=
-orm
-> driver.
->=20
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
->=20
-> RFC patch [1] was posted by Tomasz Figa. This patch addresses some of
-> comments given by Arnd to RFC patch, and further decouples syscon fro=
-m
-> device model. It also gives flexibility of registering with syscon at
-> early stage using device_node object.
+On 2014-09-01 09:07, Thierry Reding wrote:
+> On Mon, Sep 01, 2014 at 07:22:32AM +0200, Marek Szyprowski wrote:
+>> Hi Greg,
+>>
+>> On 2014-08-05 12:47, Marek Szyprowski wrote:
+>>> This patch adds a new flags for device drivers. This flag instructs
+>>> kernel that the device driver does it own management of IOMMU assisted
+>>> IO address space translations, so no default dma-mapping structures
+>>> should be initialized.
+>>>
+>>> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>>> ---
+>>>    include/linux/device.h | 2 ++
+>>>    1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/include/linux/device.h b/include/linux/device.h
+>>> index 5f4ff02..2e62371 100644
+>>> --- a/include/linux/device.h
+>>> +++ b/include/linux/device.h
+>>> @@ -253,6 +253,8 @@ struct device_driver {
+>>>    
+>>>    /* disables bind/unbind via sysfs */
+>>>    #define DRIVER_SUPPRESS_BIND_ATTRS	(1 << 0)
+>>> +/* driver uses own methods to manage IO address space */
+>>> +#define DRIVER_HAS_OWN_IOMMU_MANAGER	(1 << 1)
+>>>    
+>>>    extern int __must_check driver_register(struct device_driver *drv);
+>>>    extern void driver_unregister(struct device_driver *drv);
+>> Could you comment if the approach of using flags in the struct driver
+>> could be accepted? I've converted suppress_bind_attrs entry to flags to
+>> avoid extending the structure, please see patch "[PATCH 05/29] drivers:
+>> convert suppress_bind_attrs parameter into flags".
+> Is this really necessary? What I did as part of an RFC series for Tegra
+> IOMMU support is keep this knowledge within the IOMMU driver rather than
+> export it to the driver core.i
 
-It would be helpful if Arnd gave this revision his blessing (Ack).
+The problem with embedding the list of drivers that you would need to update
+it everytime when you modify or extend iommu support in the other drivers.
+I've tried also other approach, like adding respective notifiers to 
+individual
+drivers to initialize custom iommu support (or disable default iommu 
+mapping)
+before iommu driver gets initialized, but such solution is in my opinion too
+complex and hard to understand if one is not familiar will all this stuff.
 
-> [1]: https://lkml.org/lkml/2014/6/17/331
->=20
->  drivers/mfd/syscon.c       |  112 ++++++++++++++++++++++++++++------=
-----------
->  include/linux/mfd/syscon.h |   14 ++++++
->  2 files changed, 86 insertions(+), 40 deletions(-)
->=20
-> diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
-> index ca15878..a91db30 100644
-> --- a/drivers/mfd/syscon.c
-> +++ b/drivers/mfd/syscon.c
-> @@ -14,6 +14,7 @@
+All in all it turned out that the simplest and most generic way is to simply
+add the flag to the driver core. Flags might be also used in the future
+to model other kinds of dependencies between device drivers and/or driver
+core.
 
-[...]
+> The idea being that the IOMMU driver wouldn't create an ARM DMA/IOMMU
+> mapping by default but rather allow individual drivers to be marked as
+> "kernel-internal" and use the DMA/IOMMU glue in that case. Drivers such
+> as DRM would use the IOMMU API directly.
 
->  struct regmap *syscon_regmap_lookup_by_pdevname(const char *s)
->  {
-> -	struct device *dev;
-> -	struct syscon *syscon;
-> -
-> -	dev =3D driver_find_device(&syscon_driver.driver, NULL, (void *)s,
-> -				 syscon_match_pdevname);
-> -	if (!dev)
-> -		return ERR_PTR(-EPROBE_DEFER);
-> -
-> -	syscon =3D dev_get_drvdata(dev);
-> +	struct syscon *entry, *syscon =3D NULL;
-> +	struct platform_device *pdev =3D NULL;
-> +
-> +	spin_lock(&syscon_list_slock);
-> +	list_for_each_entry(entry, &syscon_list, list) {
-> +		 pdev =3D of_find_device_by_node(entry->np);
-
-White space error.
-
-Did you run this through checkpatch.pl?
-
-> +		if (pdev && !strcmp(dev_name(&pdev->dev), s)) {
-> +			syscon =3D entry;
-> +			break;
-> +		}
-> +	}
-> +	spin_unlock(&syscon_list_slock);
-> =20
-> -	return syscon->regmap;
-> +	return syscon ? syscon->regmap : ERR_PTR(-EPROBE_DEFER);
->  }
->  EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_pdevname);
-
-[...]
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
