@@ -1,108 +1,101 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V3 2/2] ARM: dts: Add DT changes for display on peach_pit
-Date: Mon, 01 Sep 2014 16:06:32 +0530
-Message-ID: <1409567792-8281-2-git-send-email-ajaykumar.rs@samsung.com>
-References: <1409567792-8281-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 10/29] drivers: add DRIVER_HAS_OWN_IOMMU_MANAGER flag
+Date: Mon, 01 Sep 2014 12:47:08 +0200
+Message-ID: <54044EAC.6010701@samsung.com>
+References: <1407235677-26324-1-git-send-email-m.szyprowski@samsung.com>
+ <20140901070748.GA24226@ulmo.nvidia.com> <540425F9.7080307@samsung.com>
+ <4621634.jlJLccozTJ@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:55135 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752638AbaIAKlF (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:37074 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752363AbaIAKrO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Sep 2014 06:41:05 -0400
-In-reply-to: <1409567792-8281-1-git-send-email-ajaykumar.rs@samsung.com>
+	Mon, 1 Sep 2014 06:47:14 -0400
+In-reply-to: <4621634.jlJLccozTJ@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, thierry.reding@gmail.com, seanpaul@google.com, ajaynumb@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: Thierry Reding <treding@nvidia.com>, Rob Herring <robh@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Inki Dae <inki.dae@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joerg Roedel <joro@8bytes.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Olof Johansson <olof@lixom.net>, Kyungmin Park <kyungmin.park@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>
 
-Add DT nodes for ps8622 bridge chip and panel.
-Add backlight power supply for pwm-backlight.
-Also add bridge phandle needed by dp to enable display on peach_pit.
+Hello,
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
----
-Changes since V1:
-	-- Remove "simple-panel" compatible string.
-	-- Use GPIO_ACTIVE_HIGH instead of 0.
-	-- Change panel node naming from "panel-simple" to "panel".
+On 2014-09-01 11:38, Arnd Bergmann wrote:
+> On Monday 01 September 2014 09:53:29 Marek Szyprowski wrote:
+>> On 2014-09-01 09:07, Thierry Reding wrote:
+>>> On Mon, Sep 01, 2014 at 07:22:32AM +0200, Marek Szyprowski wrote:
+>>>> Hi Greg,
+>>>>
+>>>> On 2014-08-05 12:47, Marek Szyprowski wrote:
+>>>>> This patch adds a new flags for device drivers. This flag instructs
+>>>>> kernel that the device driver does it own management of IOMMU assisted
+>>>>> IO address space translations, so no default dma-mapping structures
+>>>>> should be initialized.
+>>>>>
+>>>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>>>>> ---
+>>>>>     include/linux/device.h | 2 ++
+>>>>>     1 file changed, 2 insertions(+)
+>>>>>
+>>>>> diff --git a/include/linux/device.h b/include/linux/device.h
+>>>>> index 5f4ff02..2e62371 100644
+>>>>> --- a/include/linux/device.h
+>>>>> +++ b/include/linux/device.h
+>>>>> @@ -253,6 +253,8 @@ struct device_driver {
+>>>>>     
+>>>>>     /* disables bind/unbind via sysfs */
+>>>>>     #define DRIVER_SUPPRESS_BIND_ATTRS       (1 << 0)
+>>>>> +/* driver uses own methods to manage IO address space */
+>>>>> +#define DRIVER_HAS_OWN_IOMMU_MANAGER       (1 << 1)
+>>>>>     
+>>>>>     extern int __must_check driver_register(struct device_driver *drv);
+>>>>>     extern void driver_unregister(struct device_driver *drv);
+>>>> Could you comment if the approach of using flags in the struct driver
+>>>> could be accepted? I've converted suppress_bind_attrs entry to flags to
+>>>> avoid extending the structure, please see patch "[PATCH 05/29] drivers:
+>>>> convert suppress_bind_attrs parameter into flags".
+>>> Is this really necessary? What I did as part of an RFC series for Tegra
+>>> IOMMU support is keep this knowledge within the IOMMU driver rather than
+>>> export it to the driver core.i
+>> The problem with embedding the list of drivers that you would need to update
+>> it everytime when you modify or extend iommu support in the other drivers.
+>> I've tried also other approach, like adding respective notifiers to
+>> individual
+>> drivers to initialize custom iommu support (or disable default iommu
+>> mapping)
+>> before iommu driver gets initialized, but such solution is in my opinion too
+>> complex and hard to understand if one is not familiar will all this stuff.
+>>
+>> All in all it turned out that the simplest and most generic way is to simply
+>> add the flag to the driver core. Flags might be also used in the future
+>> to model other kinds of dependencies between device drivers and/or driver
+>> core.
+> I don't get it yet. I would expect that a driver doing its own management
+> of the iommu gets to use the linux/iommu.h interfaces, while a driver
+> using the default iommu setup uses linux/dma-mapping.h.
 
-Changes since V2:
-	-- Use proper compatible string: "auo,b116xw03"
+You are right.
 
- arch/arm/boot/dts/exynos5420-peach-pit.dts |   36 +++++++++++++++-------------
- 1 file changed, 19 insertions(+), 17 deletions(-)
+> Who do you think needs to set this flag, and who needs to read it?
 
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index 228a6b1..1070a31 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -30,11 +30,12 @@
- 		i2c20 = "/spi@12d40000/cros-ec@0/i2c-tunnel";
- 	};
- 
--	backlight {
-+	backlight: backlight {
- 		compatible = "pwm-backlight";
- 		pwms = <&pwm 0 1000000 0>;
- 		brightness-levels = <0 100 500 1000 1500 2000 2500 2800>;
- 		default-brightness-level = <7>;
-+		power-supply = <&tps65090_fet1>;
- 		pinctrl-0 = <&pwm0_out>;
- 		pinctrl-names = "default";
- 	};
-@@ -100,6 +101,12 @@
- 		regulator-boot-on;
- 		regulator-always-on;
- 	};
-+
-+	panel: panel {
-+		compatible = "auo,b116xw03";
-+		power-supply = <&tps65090_fet6>;
-+		backlight = <&backlight>;
-+	};
- };
- 
- &dp {
-@@ -113,22 +120,7 @@
- 	samsung,link-rate = <0x06>;
- 	samsung,lane-count = <2>;
- 	samsung,hpd-gpio = <&gpx2 6 0>;
--
--	display-timings {
--		native-mode = <&timing1>;
--
--		timing1: timing@1 {
--			clock-frequency = <70589280>;
--			hactive = <1366>;
--			vactive = <768>;
--			hfront-porch = <40>;
--			hback-porch = <40>;
--			hsync-len = <32>;
--			vback-porch = <10>;
--			vfront-porch = <12>;
--			vsync-len = <6>;
--		};
--	};
-+	bridge = <&ps8625>;
- };
- 
- &fimd {
-@@ -155,6 +147,16 @@
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&max98090_irq>;
- 	};
-+
-+	ps8625: lvds-bridge@48 {
-+		compatible = "parade,ps8625";
-+		reg = <0x48>;
-+		sleep-gpios = <&gpx3 5 GPIO_ACTIVE_HIGH>;
-+		reset-gpios = <&gpy7 7 GPIO_ACTIVE_HIGH>;
-+		lane-count = <2>;
-+		panel = <&panel>;
-+		use-external-pwm;
-+	};
- };
- 
- &hsi2c_9 {
+In the proposed solution Exynos IOMMU driver creates a separate IO 
+address space
+for every client device in a system and binds it to the default 
+dma-mapping space
+for the given device. When drivers are doing its own management of IO 
+address
+space, instead of relying on what is available by default with dma-mapping
+interface, this will require releasing of the previously created default
+structures and resources. So this flag is set by the driver doing its own
+management of io address space. The flags is then checked by Exynos 
+IOMMU driver
+to avoid creating the default dma-mapping address space for devices 
+which driver
+does its own management.
+
+Best regards
 -- 
-1.7.9.5
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
