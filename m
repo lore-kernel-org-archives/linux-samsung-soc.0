@@ -1,85 +1,59 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH] drm/panel: simple: Add AUO B116XW03 panel support
-Date: Mon, 01 Sep 2014 15:40:02 +0530
-Message-ID: <1409566202-7946-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] mfd: syscon: Decouple syscon interface from syscon devices
+Date: Mon, 01 Sep 2014 12:37:10 +0200
+Message-ID: <4121644.3haxjiIdIo@wuerfel>
+References: <1408694991-21615-1-git-send-email-pankaj.dubey@samsung.com> <20140901074918.GB6226@lee--X1>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:48140 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752241AbaIAKOn (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.131]:56915 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753284AbaIAKh1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Sep 2014 06:14:43 -0400
+	Mon, 1 Sep 2014 06:37:27 -0400
+In-Reply-To: <20140901074918.GB6226@lee--X1>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: thierry.reding@gmail.com, seanpaul@google.com, ajaynumb@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, Tomasz Figa <t.figa@samsung.com>, broonie@kernel.org
 
-The AUO B116XW03 is a 11.6" HD TFT LCD panel connecting to a LVDS
-interface and with an integrated LED backlight unit.
+On Monday 01 September 2014 08:49:18 Lee Jones wrote:
+> On Fri, 22 Aug 2014, Pankaj Dubey wrote:
+> 
+> > From: Tomasz Figa <t.figa@samsung.com>
+> > 
+> > Currently a syscon entity can be only registered directly through a
+> > platform device that binds to a dedicated driver. However in certain use
+> > cases it is desirable to make a device used with another driver a syscon
+> > interface provider. For example, certain SoCs (e.g. Exynos) contain
+> > system controller blocks which perform various functions such as power
+> > domain control, CPU power management, low power mode control, but in
+> > addition contain certain IP integration glue, such as various signal
+> > masks, coprocessor power control, etc. In such case, there is a need to
+> > have a dedicated driver for such system controller but also share
+> > registers with other drivers. The latter is where the syscon interface
+> > is helpful.
+> > 
+> > This patch decouples syscon object from syscon driver, so that it can be
+> > registered from any driver in addition to the original "syscon" platform
+> > driver.
+> > 
+> > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> > ---
+> > 
+> > RFC patch [1] was posted by Tomasz Figa. This patch addresses some of
+> > comments given by Arnd to RFC patch, and further decouples syscon from
+> > device model. It also gives flexibility of registering with syscon at
+> > early stage using device_node object.
+> 
+> It would be helpful if Arnd gave this revision his blessing (Ack).
 
-This panel is used on the Samsung Chromebook(XE303C12).
+I never saw a reason why we don't take this all the way as discussed
+a few times: Completely remove the dependency of syscon on having
+a platform driver for it, and make it possible to just call
+syscon_regmap_lookup_by_phandle() without having to register
+it first.
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
----
- .../devicetree/bindings/panel/auo,b116xw03.txt     |    7 ++++++
- drivers/gpu/drm/panel/panel-simple.c               |   25 ++++++++++++++++++++
- 2 files changed, 32 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/panel/auo,b116xw03.txt
-
-diff --git a/Documentation/devicetree/bindings/panel/auo,b116xw03.txt b/Documentation/devicetree/bindings/panel/auo,b116xw03.txt
-new file mode 100644
-index 0000000..690d0a5
---- /dev/null
-+++ b/Documentation/devicetree/bindings/panel/auo,b116xw03.txt
-@@ -0,0 +1,7 @@
-+AU Optronics Corporation 11.6" HD (1366x768) color TFT-LCD panel
-+
-+Required properties:
-+- compatible: should be "auo,b116xw03"
-+
-+This binding is compatible with the simple-panel binding, which is specified
-+in simple-panel.txt in this directory.
-diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 4ce1db0..51566e0 100644
---- a/drivers/gpu/drm/panel/panel-simple.c
-+++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -352,6 +352,28 @@ static const struct panel_desc auo_b101aw03 = {
- 	},
- };
- 
-+static const struct drm_display_mode auo_b116xw03_mode = {
-+	.clock = 70589,
-+	.hdisplay = 1366,
-+	.hsync_start = 1366 + 40,
-+	.hsync_end = 1366 + 40 + 40,
-+	.htotal = 1366 + 40 + 40 + 32,
-+	.vdisplay = 768,
-+	.vsync_start = 768 + 10,
-+	.vsync_end = 768 + 10 + 12,
-+	.vtotal = 768 + 10 + 12 + 6,
-+	.vrefresh = 60,
-+};
-+
-+static const struct panel_desc auo_b116xw03 = {
-+	.modes = &auo_b116xw03_mode,
-+	.num_modes = 1,
-+	.size = {
-+		.width = 256,
-+		.height = 144,
-+	},
-+};
-+
- static const struct drm_display_mode auo_b133xtn01_mode = {
- 	.clock = 69500,
- 	.hdisplay = 1366,
-@@ -616,6 +638,9 @@ static const struct of_device_id platform_of_match[] = {
- 		.compatible = "auo,b101aw03",
- 		.data = &auo_b101aw03,
- 	}, {
-+		.compatible = "auo,b116xw03",
-+		.data = &auo_b116xw03,
-+	}, {
- 		.compatible = "auo,b133htn01",
- 		.data = &auo_b133htn01,
- 	}, {
--- 
-1.7.9.5
+	Arnd
