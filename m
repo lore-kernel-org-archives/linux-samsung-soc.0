@@ -1,94 +1,112 @@
-From: Thierry Reding <treding@nvidia.com>
-Subject: Re: [PATCH 10/29] drivers: add DRIVER_HAS_OWN_IOMMU_MANAGER flag
-Date: Mon, 1 Sep 2014 09:07:49 +0200
-Message-ID: <20140901070748.GA24226@ulmo.nvidia.com>
-References: <1407235677-26324-1-git-send-email-m.szyprowski@samsung.com>
- <1407235677-26324-11-git-send-email-m.szyprowski@samsung.com>
- <54040298.9020002@samsung.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH] mfd: syscon: Decouple syscon interface from syscon
+ devices
+Date: Mon, 1 Sep 2014 08:49:18 +0100
+Message-ID: <20140901074918.GB6226@lee--X1>
+References: <1408694991-21615-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="6c2NcOVqGQ03X4Wi"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:8026 "EHLO
-	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751198AbaIAHHz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Sep 2014 03:07:55 -0400
-In-Reply-To: <54040298.9020002@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1408694991-21615-1-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, Tomasz Figa <t.figa@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Olof Johansson <olof@lixom.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin
 
---6c2NcOVqGQ03X4Wi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 22 Aug 2014, Pankaj Dubey wrote:
 
-On Mon, Sep 01, 2014 at 07:22:32AM +0200, Marek Szyprowski wrote:
-> Hi Greg,
+> From: Tomasz Figa <t.figa@samsung.com>
 >=20
-> On 2014-08-05 12:47, Marek Szyprowski wrote:
-> > This patch adds a new flags for device drivers. This flag instructs
-> > kernel that the device driver does it own management of IOMMU assisted
-> > IO address space translations, so no default dma-mapping structures
-> > should be initialized.
-> >
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > ---
-> >   include/linux/device.h | 2 ++
-> >   1 file changed, 2 insertions(+)
-> >
-> > diff --git a/include/linux/device.h b/include/linux/device.h
-> > index 5f4ff02..2e62371 100644
-> > --- a/include/linux/device.h
-> > +++ b/include/linux/device.h
-> > @@ -253,6 +253,8 @@ struct device_driver {
-> >  =20
-> >   /* disables bind/unbind via sysfs */
-> >   #define DRIVER_SUPPRESS_BIND_ATTRS	(1 << 0)
-> > +/* driver uses own methods to manage IO address space */
-> > +#define DRIVER_HAS_OWN_IOMMU_MANAGER	(1 << 1)
-> >  =20
-> >   extern int __must_check driver_register(struct device_driver *drv);
-> >   extern void driver_unregister(struct device_driver *drv);
+> Currently a syscon entity can be only registered directly through a
+> platform device that binds to a dedicated driver. However in certain =
+use
+> cases it is desirable to make a device used with another driver a sys=
+con
+> interface provider. For example, certain SoCs (e.g. Exynos) contain
+> system controller blocks which perform various functions such as powe=
+r
+> domain control, CPU power management, low power mode control, but in
+> addition contain certain IP integration glue, such as various signal
+> masks, coprocessor power control, etc. In such case, there is a need =
+to
+> have a dedicated driver for such system controller but also share
+> registers with other drivers. The latter is where the syscon interfac=
+e
+> is helpful.
 >=20
-> Could you comment if the approach of using flags in the struct driver
-> could be accepted? I've converted suppress_bind_attrs entry to flags to
-> avoid extending the structure, please see patch "[PATCH 05/29] drivers:
-> convert suppress_bind_attrs parameter into flags".
+> This patch decouples syscon object from syscon driver, so that it can=
+ be
+> registered from any driver in addition to the original "syscon" platf=
+orm
+> driver.
+>=20
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>=20
+> RFC patch [1] was posted by Tomasz Figa. This patch addresses some of
+> comments given by Arnd to RFC patch, and further decouples syscon fro=
+m
+> device model. It also gives flexibility of registering with syscon at
+> early stage using device_node object.
 
-Is this really necessary? What I did as part of an RFC series for Tegra
-IOMMU support is keep this knowledge within the IOMMU driver rather than
-export it to the driver core.
+It would be helpful if Arnd gave this revision his blessing (Ack).
 
-The idea being that the IOMMU driver wouldn't create an ARM DMA/IOMMU
-mapping by default but rather allow individual drivers to be marked as
-"kernel-internal" and use the DMA/IOMMU glue in that case. Drivers such
-as DRM would use the IOMMU API directly.
+> [1]: https://lkml.org/lkml/2014/6/17/331
+>=20
+>  drivers/mfd/syscon.c       |  112 ++++++++++++++++++++++++++++------=
+----------
+>  include/linux/mfd/syscon.h |   14 ++++++
+>  2 files changed, 86 insertions(+), 40 deletions(-)
+>=20
+> diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+> index ca15878..a91db30 100644
+> --- a/drivers/mfd/syscon.c
+> +++ b/drivers/mfd/syscon.c
+> @@ -14,6 +14,7 @@
 
-Thierry
+[...]
 
---6c2NcOVqGQ03X4Wi
-Content-Type: application/pgp-signature
+>  struct regmap *syscon_regmap_lookup_by_pdevname(const char *s)
+>  {
+> -	struct device *dev;
+> -	struct syscon *syscon;
+> -
+> -	dev =3D driver_find_device(&syscon_driver.driver, NULL, (void *)s,
+> -				 syscon_match_pdevname);
+> -	if (!dev)
+> -		return ERR_PTR(-EPROBE_DEFER);
+> -
+> -	syscon =3D dev_get_drvdata(dev);
+> +	struct syscon *entry, *syscon =3D NULL;
+> +	struct platform_device *pdev =3D NULL;
+> +
+> +	spin_lock(&syscon_list_slock);
+> +	list_for_each_entry(entry, &syscon_list, list) {
+> +		 pdev =3D of_find_device_by_node(entry->np);
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+White space error.
 
-iQIcBAEBAgAGBQJUBBtEAAoJEN0jrNd/PrOhF3MP/1ssXeNRPb3m/7VTznB7wung
-9DLRtgN4WVUDwhx0MRhDB6O4k3Jb667azWOBis8NIal5mcc0Vapoy4CiJKdt/piv
-t5FwD0xgo41avHjgvw+x1YNxwsiavBCBKuVZp80JaHYIfIV4E+T9V/gFfgK+ZWhQ
-i2lE7VAYkUaDk4JLIDhTkYjn/1Onftsw+WT7imGSmZ9vQ0r7Yu27rOhs8pB59Adu
-7La8FMcL7L58Q5BDcSeemQu4ajxIakDhXOtvfSpM0VbC/JV/nW+DaRkxW7gf8VsF
-aRH31I42pssQDcEBoHLrK5igHUH7VDSwitMEUtVMTPx7jm+uKn3bWEw/z69hn9a2
-2YvRZofQAaGxsl9okoFuOM1XBsxEytjJgfcAAI2uKEv7jNjlOV+0vILhzYsCqe4N
-nUzSYwR0Hmk3YRwZPiGiQBbBcRRstVyLswR0zGnZrq1Eerf7PrSn+KveJ7Hw6rZL
-l2wjSyr4X6k5ovI9HFslCnh494cIPX6qAyjnHaINMkGwGuVKO3CexWXejvVBMZQD
-13QVm9MA50Qya9syIdQC4KYJTgcLAzt4ipDKGN4R9hFSuzM8vyJol/XQVURNQSs5
-j1+G9TMdgDjPV1ayR529Fm95vGFAA6jbu29LRhzq5xAaplAFUNrGT9swgjJGK1im
-iBwJIbSbueWALvGLJT9K
-=U8N1
------END PGP SIGNATURE-----
+Did you run this through checkpatch.pl?
 
---6c2NcOVqGQ03X4Wi--
+> +		if (pdev && !strcmp(dev_name(&pdev->dev), s)) {
+> +			syscon =3D entry;
+> +			break;
+> +		}
+> +	}
+> +	spin_unlock(&syscon_list_slock);
+> =20
+> -	return syscon->regmap;
+> +	return syscon ? syscon->regmap : ERR_PTR(-EPROBE_DEFER);
+>  }
+>  EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_pdevname);
+
+[...]
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
