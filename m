@@ -1,123 +1,85 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] usb: dwc3: exynos: remove usb_phy_generic support
-Date: Mon, 01 Sep 2014 12:01:35 +0200
-Message-ID: <140959597.EmCWO5CWP9@amdc1032>
-References: <2141307.zYQLjP6V6U@amdc1032> <2682311.psIh2sovYX@amdc1032>
- <20140829183304.GB9380@kroah.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [PATCH] drm/panel: simple: Add AUO B116XW03 panel support
+Date: Mon, 01 Sep 2014 15:40:02 +0530
+Message-ID: <1409566202-7946-1-git-send-email-ajaykumar.rs@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:48975 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752969AbaIAKBk (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:48140 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752241AbaIAKOn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Sep 2014 06:01:40 -0400
-In-reply-to: <20140829183304.GB9380@kroah.com>
+	Mon, 1 Sep 2014 06:14:43 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, Felipe Balbi <balbi@ti.com>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: thierry.reding@gmail.com, seanpaul@google.com, ajaynumb@gmail.com, joshi@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
+The AUO B116XW03 is a 11.6" HD TFT LCD panel connecting to a LVDS
+interface and with an integrated LED backlight unit.
 
-Hi,
+This panel is used on the Samsung Chromebook(XE303C12).
 
-On Friday, August 29, 2014 11:33:04 AM Greg Kroah-Hartman wrote:
-> On Fri, Aug 29, 2014 at 11:02:52AM +0200, Bartlomiej Zolnierkiewicz wrote:
-> > On Thursday, August 28, 2014 12:29:52 PM Greg Kroah-Hartman wrote:
-> > > On Thu, Aug 28, 2014 at 08:11:04PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> > > > 
-> > > > [ added Alan and Greg to cc: ]
-> > > > 
-> > > > Hi,
-> > > > 
-> > > > On Wednesday, August 27, 2014 11:42:25 PM Vivek Gautam wrote:
-> > > > > Hi Baltlomiej,
-> > > > > 
-> > > > > 
-> > > > > On Wed, Aug 27, 2014 at 1:22 PM, Bartlomiej Zolnierkiewicz
-> > > > > <b.zolnierkie@samsung.com> wrote:
-> > > > > > dwc3 driver is using the new Exynos5 SoC series USB DRD PHY driver
-> > > > > > (PHY_EXYNOS5_USBDRD which selects GENERIC_PHY) as can be seen by
-> > > > > > looking at the following commits:
-> > > > > >
-> > > > > >   7a4cf0fde054 ("ARM: dts: Update DWC3 usb controller to use new
-> > > > > >   phy driver for exynos5250")
-> > > > > >
-> > > > > >   f070267b5fc1 ("ARM: dts: Enable support for DWC3 controller for
-> > > > > >   exynos5420")
-> > > > > >
-> > > > > > Thus remove unused usb_phy_generic support from dwc3 Exynos glue
-> > > > > > layer.
-> > > > > >
-> > > > > > [ The code that is being removed is harmful in the context of
-> > > > > >   multi_v7_defconfig and enabling "EHCI support for Samsung
-> > > > > >   S5P/EXYNOS SoC Series" (USB_EHCI_EXYNOS) + "OHCI support for
-> > > > > >   Samsung S5P/EXYNOS SoC Series" (USB_OHCI_EXYNOS) because "EHCI
-> > > > > >   support for OMAP3 and later chips" (USB_EHCI_HCD_OMAP) selects
-> > > > > >   "NOP USB Transceiver Driver" (NOP_USB_XCEIV).  NOP USB driver
-> > > > > >   attaches itself to usb_phy_generic platform devices created by
-> > > > > >   dwc3 Exynos glue layer and later causes Exynos EHCI driver to
-> > > > > >   fail probe and Exynos OHCI driver to hang on probe (as observed
-> > > > > >   on Exynos5250 Arndale board). ]
-> > > > > 
-> > > > > The issue with EHCI and OHCI on exynos platforms is that until now
-> > > > > they also request
-> > > > > usb-phy and only later if they don't find one, they go ahead and get a
-> > > > > 'phy' generic.
-> > > > > 
-> > > > > Fortunately we missed this issue with exynos_defconfig, and as you rightly
-> > > > > mentioned with multi_v7_defconfig, the NOP_USB_XCEIV gets enabled and
-> > > > > EHCI and OHCI exynos get no-op usb-phy, which actually blocks EHCI/OHCI from
-> > > > > initializing the real PHYs.
-> > > > > 
-> > > > > This issue is resolved with patches:
-> > > > > [PATCH v2 1/2] usb: host: ehci-exynos: Remove unnecessary usb-phy support
-> > > > > [PATCH v2 2/2] usb: host: ohci-exynos: Remove unnecessary usb-phy support
-> > > > > wherein we are completely removing the usb-phy support from ehci/ohci-exynos.
-> > > > > So with these patches we should not see the issue mentioned by you.
-> > > > 
-> > > > Indeed, your patches fix the issue.
-> > > > 
-> > > > Greg, could these two patches ([1] & [2]) get merged quickly, pretty please
-> > > > (they were already acked by Alan)?  They are not a mere cleanups because
-> > > > they fix the actual problem with using multi_v7_defconfig which in turn has
-> > > > been blocking Olof's defconfig update patch [3] for quite some time now.
-> > > > Moreover these patches are limited to Exynos host drivers so they should be
-> > > > pretty safe when it comes to potential regressions.
-> > > > 
-> > > > [1] http://www.spinics.net/lists/linux-usb/msg112294.html
-> > > > [2] http://www.spinics.net/lists/linux-usb/msg112293.html
-> > > > [3] http://www.spinics.net/lists/arm-kernel/msg349654.html
-> > > 
-> > > merged for 3.18-rc1, or do you "need" them for 3.17-final?
-> > 
-> > If it is not too much trouble please push them to 3.17-final.
-> 
-> They don't meet the "regression or bugfix" rule at all, so I can't do
-> this, sorry.  I'll queue them up for 3.18.
+Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+---
+ .../devicetree/bindings/panel/auo,b116xw03.txt     |    7 ++++++
+ drivers/gpu/drm/panel/panel-simple.c               |   25 ++++++++++++++++++++
+ 2 files changed, 32 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/panel/auo,b116xw03.txt
 
-These patches fix a real problem of boot hang when enabling Exynos USB
-host drivers and using ARM multiplatform config so IMHO they fall into
-bugfix category.
-
-> > > I already reverted one patch for exynos for 3.17-final that is sitting
-> > > in my tree to go to Linus soon as you all didn't seem to want it
-> > > anymore, so I'm getting really confused here...
-> > 
-> > These two patches are a replacement for the one reverted and
-> > they just remove the old code instead of keeping it as fallback.
-> > This means that the reverted patch was not breaking anything and
-> > these two new patches could have been also done as incremental
-> > ones.  Sorry for the confusion.
-> 
-> As they came in too late for 3.17-rc1, they will have to wait for
-> 3.18-rc1.
-
-Okay..
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+diff --git a/Documentation/devicetree/bindings/panel/auo,b116xw03.txt b/Documentation/devicetree/bindings/panel/auo,b116xw03.txt
+new file mode 100644
+index 0000000..690d0a5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/panel/auo,b116xw03.txt
+@@ -0,0 +1,7 @@
++AU Optronics Corporation 11.6" HD (1366x768) color TFT-LCD panel
++
++Required properties:
++- compatible: should be "auo,b116xw03"
++
++This binding is compatible with the simple-panel binding, which is specified
++in simple-panel.txt in this directory.
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index 4ce1db0..51566e0 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -352,6 +352,28 @@ static const struct panel_desc auo_b101aw03 = {
+ 	},
+ };
+ 
++static const struct drm_display_mode auo_b116xw03_mode = {
++	.clock = 70589,
++	.hdisplay = 1366,
++	.hsync_start = 1366 + 40,
++	.hsync_end = 1366 + 40 + 40,
++	.htotal = 1366 + 40 + 40 + 32,
++	.vdisplay = 768,
++	.vsync_start = 768 + 10,
++	.vsync_end = 768 + 10 + 12,
++	.vtotal = 768 + 10 + 12 + 6,
++	.vrefresh = 60,
++};
++
++static const struct panel_desc auo_b116xw03 = {
++	.modes = &auo_b116xw03_mode,
++	.num_modes = 1,
++	.size = {
++		.width = 256,
++		.height = 144,
++	},
++};
++
+ static const struct drm_display_mode auo_b133xtn01_mode = {
+ 	.clock = 69500,
+ 	.hdisplay = 1366,
+@@ -616,6 +638,9 @@ static const struct of_device_id platform_of_match[] = {
+ 		.compatible = "auo,b101aw03",
+ 		.data = &auo_b101aw03,
+ 	}, {
++		.compatible = "auo,b116xw03",
++		.data = &auo_b116xw03,
++	}, {
+ 		.compatible = "auo,b133htn01",
+ 		.data = &auo_b133htn01,
+ 	}, {
+-- 
+1.7.9.5
