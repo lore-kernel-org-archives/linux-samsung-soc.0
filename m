@@ -1,111 +1,82 @@
-From: "edubezval@gmail.com" <edubezval@gmail.com>
-Subject: Re: [PATCH v3 0/8] thermal: exynos: various cleanups
-Date: Mon, 1 Sep 2014 07:05:27 -0400
-Message-ID: <CAC-25o9ajcpusqUzxTXpVKgi6YBy3_9wZNihtm-9hKXn5OFgNw@mail.gmail.com>
-References: <1406826667-2289-1-git-send-email-b.zolnierkie@samsung.com>
-	<20140828144921.GB18194@developer>
-	<CADGdYn7NzwJKuO1DG2OJdWwd_keZbUJXY=+XeHhf1e+xcSvoVw@mail.gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH] mfd: syscon: Decouple syscon interface from syscon
+ devices
+Date: Mon, 1 Sep 2014 12:25:49 +0100
+Message-ID: <20140901112549.GM7374@lee--X1>
+References: <1408694991-21615-1-git-send-email-pankaj.dubey@samsung.com>
+ <20140901074918.GB6226@lee--X1>
+ <4121644.3haxjiIdIo@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CADGdYn7NzwJKuO1DG2OJdWwd_keZbUJXY=+XeHhf1e+xcSvoVw@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <4121644.3haxjiIdIo@wuerfel>
 Sender: linux-kernel-owner@vger.kernel.org
-To: amit daniel kachhap <amit.daniel@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Eduardo Valentin <eduardo.valentin@ti.com>, Zhang Rui <rui.zhang@intel.com>, Tomasz Figa <t.figa@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, Tomasz Figa <t.figa@samsung.com>, broonie@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Amit
+On Mon, 01 Sep 2014, Arnd Bergmann wrote:
+> On Monday 01 September 2014 08:49:18 Lee Jones wrote:
+> > On Fri, 22 Aug 2014, Pankaj Dubey wrote:
+> >=20
+> > > From: Tomasz Figa <t.figa@samsung.com>
+> > >=20
+> > > Currently a syscon entity can be only registered directly through=
+ a
+> > > platform device that binds to a dedicated driver. However in cert=
+ain use
+> > > cases it is desirable to make a device used with another driver a=
+ syscon
+> > > interface provider. For example, certain SoCs (e.g. Exynos) conta=
+in
+> > > system controller blocks which perform various functions such as =
+power
+> > > domain control, CPU power management, low power mode control, but=
+ in
+> > > addition contain certain IP integration glue, such as various sig=
+nal
+> > > masks, coprocessor power control, etc. In such case, there is a n=
+eed to
+> > > have a dedicated driver for such system controller but also share
+> > > registers with other drivers. The latter is where the syscon inte=
+rface
+> > > is helpful.
+> > >=20
+> > > This patch decouples syscon object from syscon driver, so that it=
+ can be
+> > > registered from any driver in addition to the original "syscon" p=
+latform
+> > > driver.
+> > >=20
+> > > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> > > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> > > ---
+> > >=20
+> > > RFC patch [1] was posted by Tomasz Figa. This patch addresses som=
+e of
+> > > comments given by Arnd to RFC patch, and further decouples syscon=
+ from
+> > > device model. It also gives flexibility of registering with sysco=
+n at
+> > > early stage using device_node object.
+> >=20
+> > It would be helpful if Arnd gave this revision his blessing (Ack).
+>=20
+> I never saw a reason why we don't take this all the way as discussed
+> a few times: Completely remove the dependency of syscon on having
+> a platform driver for it, and make it possible to just call
+> syscon_regmap_lookup_by_phandle() without having to register
+> it first.
 
-On Mon, Sep 1, 2014 at 6:53 AM, amit daniel kachhap
-<amit.daniel@samsung.com> wrote:
-> On Thu, Aug 28, 2014 at 8:19 PM, Eduardo Valentin <edubezval@gmail.com> wrote:
->> Amit,
->>
->> On Thu, Jul 31, 2014 at 07:10:58PM +0200, Bartlomiej Zolnierkiewicz wrote:
->>> Hi,
->>>
->>> This patch series contains various cleanups for EXYNOS thermal
->>> driver.  Overall it decreases driver's LOC by 9%.  It is based
->>> on next-20140731 kernel.  It should not cause any functionality
->>> changes.
->>>
->>
->> Did you have the time to test this series?
->
-> Hi Eduardo/Bartlomiej,
->
-> For the whole series tested on exynos5250 based arndale board.
-> Tested-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->
+I think this sounds like a good end-state.  Migrating over by
+supporting both methods in this way does sound like the correct thing
+to do though.  Doing so is likely to dramatically reduce the effect on
+current users.
 
-Thanks! I will pull the series on my tree.
-
-
-> Sorry for the delay as I was busy in some internal work.
->
-> Thanks,
-> Amit D
->>
->>> Changes since v2 (https://lkml.org/lkml/2014/6/17/436):
->>> - synced patches against next-20140731
->>> - dropped patch "thermal: exynos: remove dead code for
->>>   TYPE_TWO_POINT_TRIMMING calibration" (newly added Exynos3250
->>>   SoC support uses TYPE_TWO_POINT_TRIMMING calibration)
->>> - updated patch description for patch #2
->>> - dropped Reviewed-by from Amit from patch #8 (due to changed
->>>   scope of the patch)
->>>
->>> Changes since v1 (https://lkml.org/lkml/2014/5/5/194):
->>> - synced patches against next-20140617
->>> - merged patch "thermal: exynos: remove unused defines" into
->>>   "thermal: exynos: remove unused struct exynos_tmu_registers
->>>   entries" one (per request from Eduardo)
->>> - improved patch descriptions for patches #1-5
->>> - fixed documentation for pdata->gain and pdata->reference_voltage
->>> - added Reviewed-by from Amit to patches #6, #7 and #10
->>> - added missing Acked-by from Kyungmin Park
->>>
->>> Best regards,
->>> --
->>> Bartlomiej Zolnierkiewicz
->>> Samsung R&D Institute Poland
->>> Samsung Electronics
->>>
->>>
->>> Bartlomiej Zolnierkiewicz (8):
->>>   thermal: exynos: remove unused struct exynos_tmu_registers entries
->>>   thermal: exynos: remove dead code for HW_MODE calibration
->>>   thermal: exynos: remove redundant pdata checks from
->>>     exynos_tmu_initialize()
->>>   thermal: exynos: remove redundant threshold_code checks from
->>>     exynos_tmu_initialize()
->>>   thermal: exynos: simplify temp_to_code() and code_to_temp()
->>>   thermal: exynos: cache non_hw_trigger_levels in pdata
->>>   thermal: exynos: remove redundant pdata checks from
->>>     exynos_tmu_control()
->>>   thermal: exynos: remove identical values from exynos*_tmu_registers
->>>     structures
->>>
->>>  drivers/thermal/samsung/exynos_thermal_common.h |   1 -
->>>  drivers/thermal/samsung/exynos_tmu.c            | 126 +++++-------------------
->>>  drivers/thermal/samsung/exynos_tmu.h            |  74 +-------------
->>>  drivers/thermal/samsung/exynos_tmu_data.c       |  56 ++---------
->>>  drivers/thermal/samsung/exynos_tmu_data.h       |  31 +-----
->>>  5 files changed, 35 insertions(+), 253 deletions(-)
->>>
->>> --
->>> 1.8.2.3
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-Eduardo Bezerra Valentin
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
