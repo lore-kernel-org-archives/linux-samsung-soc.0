@@ -1,72 +1,115 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH RESEND] ARM: EXYNOS: Do not calculate boot address twice
-Date: Mon, 01 Sep 2014 10:39:14 +0200
-Message-ID: <1409560754.26751.2.camel@AMDC1943>
-References: <1403783163-28638-1-git-send-email-k.kozlowski@samsung.com>
- <032901cf9763$b7733150$265993f0$@samsung.com>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH v9 4/6] ARM: Exynos: switch to using generic cpufreq
+ driver for Exynos4210/5250/5420
+Date: Mon, 1 Sep 2014 14:17:20 +0530
+Message-ID: <CAJuA9ah5M_pXRMXPB6o7JLhgVUHM7kYo9HOV6Yxv4Z=hKMdG=w@mail.gmail.com>
+References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
+	<1406707663-16656-5-git-send-email-thomas.ab@samsung.com>
+	<53DA8BB9.6020702@samsung.com>
+	<53DA8D85.3050106@gmail.com>
+	<7hbnrc6px3.fsf@paris.lan>
+	<53F7DA13.6090305@gmail.com>
+	<CADWw7OgAS-z-UOrJU-hL2fzuefJmLtCTg57jYk2Df7f5KfLJmA@mail.gmail.com>
+	<7h8umc60we.fsf@paris.lan>
+	<CADWw7OgW+o3tB=ptnsy-PsmXmNv8oXzt_WfK6NswQiEWWwAzNA@mail.gmail.com>
+	<CAGa+x85-Anb+HsSUQRaaeex19-HK+yZDW0UpFBwAtsQ8Sf2Aqg@mail.gmail.com>
+	<CAGa+x86jU8MR=r_xuaiorbNNyqrezb0b6Ozy-MPg9HvsARESOw@mail.gmail.com>
+	<CAJuA9ajtsrY7zSDMs=c6BZ0AqERoBgvq++dTF4Dn673zGMfcgQ@mail.gmail.com>
+	<CAMAWPa-8h5PNhgT+ApBhA8p=i+4oFOnYnQsQ4mK1JKwwAhpvpQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <032901cf9763$b7733150$265993f0$@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Russell King' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:65471 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752031AbaIAIrX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 1 Sep 2014 04:47:23 -0400
+In-Reply-To: <CAMAWPa-8h5PNhgT+ApBhA8p=i+4oFOnYnQsQ4mK1JKwwAhpvpQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Chander Kashyap <k.chander@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Amit Kucheria <amit.kucheria@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On pi=C4=85, 2014-07-04 at 17:41 +0900, Kukjin Kim wrote:
-> Krzysztof Kozlowski wrote:
-> >=20
-> > Commit b3205dea8fbf ("ARM: EXYNOS: Map SYSRAM through generic DT
-> > bindings") introduced local variable boot_reg where boot address fr=
-om
-> > cpu_boot_reg() call is stored. Re-use it instead calling cpu_boot_r=
-eg()
-> > again.
-> >=20
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > ---
-> >  arch/arm/mach-exynos/platsmp.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/=
-platsmp.c
-> > index 1c8d31e39520..55ed2e6729c5 100644
-> > --- a/arch/arm/mach-exynos/platsmp.c
-> > +++ b/arch/arm/mach-exynos/platsmp.c
-> > @@ -155,7 +155,7 @@ static int exynos_boot_secondary(unsigned int c=
-pu, struct task_struct *idle)
-> >  				ret =3D PTR_ERR(boot_reg);
-> >  				goto fail;
-> >  			}
-> > -			__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
-> > +			__raw_writel(boot_addr, boot_reg);
-> >  		}
-> >=20
-> >  		call_firmware_op(cpu_boot, phys_cpu);
-> > @@ -242,7 +242,7 @@ static void __init exynos_smp_prepare_cpus(unsi=
-gned int max_cpus)
-> >=20
-> >  			if (IS_ERR(boot_reg))
-> >  				break;
-> > -			__raw_writel(boot_addr, cpu_boot_reg(phys_cpu));
-> > +			__raw_writel(boot_addr, boot_reg);
-> >  		}
-> >  	}
-> >  }
-> > --
-> > 1.9.1
->=20
-> Oh, good catch. will apply :-)
-
-Hi Kukjin,
-
-I cannot find this patch in your tree or in next. Did you applied this?=
-=20
-
-Best regards,
-Krzysztof
+Hi Kevin,
 
 
-> Thanks,
-> Kukjin
+On Fri, Aug 29, 2014 at 8:33 PM, Kevin Hilman <khilman@kernel.org> wrote:
+> Hi Thomas,
+>
+> On Fri, Aug 29, 2014 at 5:52 AM, Thomas Abraham <ta.omasab@gmail.com> wrote:
+>> Hi Kevin,
+>>
+>> On Wed, Aug 27, 2014 at 3:55 AM, Kevin Hilman <khilman@linaro.org> wrote:
+>>> On Tue, Aug 26, 2014 at 8:15 AM, Kevin Hilman <khilman@linaro.org> wrote:
+>>>> On Mon, Aug 25, 2014 at 10:25 PM, Chander Kashyap <k.chander@samsung.com> wrote:
+>>>
+>>> [...]
+>>>
+>>>>>>
+>>>>>> Can you clarify how you're setting the voltages to ensure stability?
+>>>>>
+>>>>> below is the diff :  wip/exynos/integ
+>>>>
+>>>> Thanks.
+>>>>
+>>>> I've applied your patch, and bootup shows vdd_arm and vdd_kfc at
+>>>> 1500mV, but still when booting with cpuidle enabled (bL switcher
+>>>> disabled), I'm seeing lockups with no kernel output.  With CPUidle
+>>>> disabled, things are pretty stable.
+>>>>
+>>>> What tree are you using to test this out on 5420?  I'm using mainline
+>>>> v3.17-rc1 + DT patch for CPUidle and this cpufreq series.  See my
+>>>> wip/exynos/integ branch at
+>>>> git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux.git.
+>>>
+>>> I mis-stated this.  Actually my tree is based on the v3.17-rc1 branch
+>>> of the exynos-reference tree[1] + the above mentioned patches for
+>>> cpuidle and cpufreq.
+>>>
+>>> Also, I've narrowed down the instability a bit, and it's not related
+>>> to CPUidle.  I can now trigger a boot hang even without CPUidle
+>>> enabled.  Here's a quick way to cause a boot lockup. With the switcher
+>>> disabled, I enable CPUfreq and set the default governor to
+>>> performance.  As soon as cpufreq driver loads, it tries to use the top
+>>> frequences for both clusters, and it hangs.
+>>>
+>>> Selectively disabling frequencies, I narrowed it down to the 1.3GHz
+>>> and 1.2GHz frequencies of the little cluster.  With these commented
+>>> out in the DT, it will fully boot with the performance governor
+>>> enabled.
+>>>
+>>> So that leads to the question.  Are all of the operating points in
+>>> exynos5420.dtsi valid for exynos5800, and have they been validated?
+>>
+>> I tried to recreate the boot lockup issue using the same steps you
+>> listed above for the Exynos5800 peach-pi platform (Chromebook2), but I
+>> do not see any issues. I can see both clusters with max clock speed
+>> after boot (1.8GHz and 1.3GHz).
+>>
+>> I am using v3.17-rc2 + CPUFreq Patches + max77802 regulator support
+>> patches for Chromebook2 + temp hack to set A15 voltage to 1.35V and A7
+>> voltage to 1.3V.
+>
+> Can you share your branch and temp hack(s) as well as your defconfig?
+>
+> I'm using the v3.17-rc1 branch from the exynos tree (which includes
+> the max77802 series) but also has a bunch of other stuff which may be
+> causing the issue.
+>
+> It would be good if I can reproduce your exact tree/branch and see if
+> I still have the same problem.
+
+The branch with the patches that have been used to test cpufreq on
+Exynos5800 is available at
+
+https://github.com/exynos-reference/kernel/tree/exynos5-v3.17-rc3-temp-cpufreq
+
+Please let me know if this works or if there are any issues.
+
+Thanks,
+Thomas.
+
+>
+> Thanks for looking into this,
+>
+> Kevin
