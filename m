@@ -1,63 +1,135 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 10/29] drivers: add DRIVER_HAS_OWN_IOMMU_MANAGER flag
-Date: Mon, 01 Sep 2014 14:07:34 +0200
-Message-ID: <54046186.5030407@samsung.com>
-References: <1407235677-26324-1-git-send-email-m.szyprowski@samsung.com>
- <4621634.jlJLccozTJ@wuerfel> <54044EAC.6010701@samsung.com>
- <5493968.dbuSPSqts4@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH] drm/exynos: update to use component match support
+Date: Mon, 01 Sep 2014 21:19:52 +0900
+Message-ID: <1409573992-19721-1-git-send-email-inki.dae@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:57763 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752997AbaIAMHl (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:26605 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752311AbaIAMTz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Sep 2014 08:07:41 -0400
-In-reply-to: <5493968.dbuSPSqts4@wuerfel>
+	Mon, 1 Sep 2014 08:19:55 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NB8001R4294N010@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 01 Sep 2014 21:19:53 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Thierry Reding <treding@nvidia.com>, Rob Herring <robh@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Inki Dae <inki.dae@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Joerg Roedel <joro@8bytes.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Olof Johansson <olof@lixom.net>, Kyungmin Park <kyungmin.park@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>
+To: dri-devel@lists.freedesktop.org
+Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, Inki Dae <inki.dae@samsung.com>
 
-Hello,
+Update Exynos's DRM driver to use component match support rater than
+add_components.
 
-On 2014-09-01 13:56, Arnd Bergmann wrote:
-> On Monday 01 September 2014 12:47:08 Marek Szyprowski wrote:
->>> Who do you think needs to set this flag, and who needs to read it?
->> In the proposed solution Exynos IOMMU driver creates a separate IO
->> address space
->> for every client device in a system and binds it to the default
->> dma-mapping space
->> for the given device. When drivers are doing its own management of IO
->> address
->> space, instead of relying on what is available by default with dma-mapping
->> interface, this will require releasing of the previously created default
->> structures and resources. So this flag is set by the driver doing its own
->> management of io address space. The flags is then checked by Exynos
->> IOMMU driver
->> to avoid creating the default dma-mapping address space for devices
->> which driver
->> does its own management.
-> I don't completely understand it yet. I would assume the device
-> to be added to the default domain at device creation time
-> (of_platform_populate), way before we know which device driver
-> is going to be used. How can this prevent the iommu driver
-> from doing the association with the domain?
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.c |   40 ++++++++++++++-----------------
+ 1 file changed, 18 insertions(+), 22 deletions(-)
 
-of_platform_populate() is too early to do the association, because that 
-time the
-exynos iommu driver is even not yet probed.
-
-The association with default dma-mapping domain is done in
-IOMMU_GROUP_NOTIFY_BIND_DRIVER notifier, just before binding the driver 
-to the
-given device. This way iommu driver can check dev->driver->flags and 
-skip creating
-default dma-mapping domain if driver announces that it wants to handle it by
-itself.
-
-Best regards
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index feee991..dae62c2 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -503,16 +503,15 @@ static int compare_of(struct device *dev, void *data)
+ 	return dev == (struct device *)data;
+ }
+ 
+-static int exynos_drm_add_components(struct device *dev, struct master *m)
++static struct component_match *exynos_drm_match_add(struct device *dev)
+ {
++	struct component_match *match = NULL;
+ 	struct component_dev *cdev;
+ 	unsigned int attach_cnt = 0;
+ 
+ 	mutex_lock(&drm_component_lock);
+ 
+ 	list_for_each_entry(cdev, &drm_component_list, list) {
+-		int ret;
+-
+ 		/*
+ 		 * Add components to master only in case that crtc and
+ 		 * encoder/connector device objects exist.
+@@ -527,16 +526,10 @@ static int exynos_drm_add_components(struct device *dev, struct master *m)
+ 		/*
+ 		 * fimd and dpi modules have same device object so add
+ 		 * only crtc device object in this case.
+-		 *
+-		 * TODO. if dpi module follows driver-model driver then
+-		 * below codes can be removed.
+ 		 */
+ 		if (cdev->crtc_dev == cdev->conn_dev) {
+-			ret = component_master_add_child(m, compare_of,
+-					cdev->crtc_dev);
+-			if (ret < 0)
+-				return ret;
+-
++			component_match_add(dev, &match, compare_of,
++						cdev->crtc_dev);
+ 			goto out_lock;
+ 		}
+ 
+@@ -546,11 +539,8 @@ static int exynos_drm_add_components(struct device *dev, struct master *m)
+ 		 * connector/encoder need pipe number of crtc when they
+ 		 * are created.
+ 		 */
+-		ret = component_master_add_child(m, compare_of, cdev->crtc_dev);
+-		ret |= component_master_add_child(m, compare_of,
+-							cdev->conn_dev);
+-		if (ret < 0)
+-			return ret;
++		component_match_add(dev, &match, compare_of, cdev->crtc_dev);
++		component_match_add(dev, &match, compare_of, cdev->conn_dev);
+ 
+ out_lock:
+ 		mutex_lock(&drm_component_lock);
+@@ -558,7 +548,7 @@ out_lock:
+ 
+ 	mutex_unlock(&drm_component_lock);
+ 
+-	return attach_cnt ? 0 : -ENODEV;
++	return attach_cnt ? match : ERR_PTR(-EPROBE_DEFER);
+ }
+ 
+ static int exynos_drm_bind(struct device *dev)
+@@ -572,13 +562,13 @@ static void exynos_drm_unbind(struct device *dev)
+ }
+ 
+ static const struct component_master_ops exynos_drm_ops = {
+-	.add_components = exynos_drm_add_components,
+ 	.bind		= exynos_drm_bind,
+ 	.unbind		= exynos_drm_unbind,
+ };
+ 
+ static int exynos_drm_platform_probe(struct platform_device *pdev)
+ {
++	struct component_match *match;
+ 	int ret;
+ 
+ 	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+@@ -645,13 +635,19 @@ static int exynos_drm_platform_probe(struct platform_device *pdev)
+ 		goto err_unregister_ipp_drv;
+ #endif
+ 
+-	ret = component_master_add(&pdev->dev, &exynos_drm_ops);
+-	if (ret < 0)
+-		DRM_DEBUG_KMS("re-tried by last sub driver probed later.\n");
++	match = exynos_drm_match_add(&pdev->dev);
++	if (IS_ERR(match)) {
++		ret = PTR_ERR(match);
++		goto err_unregister_ipp_dev;
++	}
+ 
+-	return 0;
++	return component_master_add_with_match(&pdev->dev, &exynos_drm_ops,
++						match);
++
++err_unregister_ipp_dev:
+ 
+ #ifdef CONFIG_DRM_EXYNOS_IPP
++	exynos_platform_device_ipp_unregister();
+ err_unregister_ipp_drv:
+ 	platform_driver_unregister(&ipp_driver);
+ err_unregister_gsc_drv:
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+1.7.9.5
