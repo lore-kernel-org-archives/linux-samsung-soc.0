@@ -2,24 +2,19 @@ From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
 Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2Ml0gbWZkOiBzeXNjb246IERlY291cGxlIHN5c2NvbiBp?=
  =?UTF-8?B?bnRlcmZhY2UgZnJvbSBwbGF0Zm9ybSBkZXZpY2Vz?=
 Date: Tue, 02 Sep 2014 19:42:52 +0400
-Message-ID: <1409672572.303525842__16647.2922931009$1409673488$gmane$org@f75.i.mail.ru>
+Message-ID: <1409672572.303525842__10261.2617695288$1409673498$gmane$org@f75.i.mail.ru>
 References: <1409668935-10667-1-git-send-email-pankaj.dubey@samsung.com>
  <6034841.GFrG3XCMdb@wuerfel>
 Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: base64
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from fallback7.mail.ru ([94.100.181.128]:42049 "EHLO
-	fallback7.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753526AbaIBP5z (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Sep 2014 11:57:55 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <6034841.GFrG3XCMdb@wuerfel>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: =?UTF-8?B?QXJuZCBCZXJnbWFubg==?= <arnd@arndb.de>
 Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, naushad@samsung.com, =?UTF-8?B?VG9tYXN6IEZpZ2E=?= <t.figa@samsung.com>, linux-kernel@vger.kernel.org, joshi@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, tomasz.figa@gmail.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, lee.jones@linaro.org, =?UTF-8?B?TWljaGFsIFNpbWVr?= <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org, =?UTF-8?B?UGFua2FqIER1YmV5?= <pankaj.dubey@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 VHVlLCAwMiBTZXAgMjAxNCAxNzoyMDowMyArMDIwMCDQvtGCIEFybmQgQmVyZ21hbm4gPGFybmRA
 YXJuZGIuZGU+Ogo+IE9uIFR1ZXNkYXkgMDIgU2VwdGVtYmVyIDIwMTQgMjA6MTI6MTUgUGFua2Fq
