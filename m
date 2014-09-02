@@ -1,47 +1,82 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v8 3/7] clk: Move all drivers to use internal API
-Date: Tue, 2 Sep 2014 09:13:14 +0200
-Message-ID: <CAPDyKFq2vzUT+NSkC8ZTau=sbFW_frpQ+paLM_EsYLyp_5ivag@mail.gmail.com>
-References: <1409585377-26091-1-git-send-email-tomeu.vizoso@collabora.com>
- <1409585574-26673-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH] mfd: syscon: Decouple syscon interface from syscon
+ devices
+Date: Tue, 2 Sep 2014 09:05:16 +0100
+Message-ID: <20140902080516.GE17117@lee--X1>
+References: <1408694991-21615-1-git-send-email-pankaj.dubey@samsung.com>
+ <12348292.z1qJl96tVA@wuerfel>
+ <20140901160426.GJ8796@lee--X1>
+ <3343901.7HpqcTBEp1@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-In-Reply-To: <1409585574-26673-1-git-send-email-tomeu.vizoso@collabora.com>
-List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
-List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
-List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
- <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
-Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
-Sender: "Linuxppc-dev"
- <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, alsa-devel@alsa-project.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Tony Lindgren <tony@atomide.com>, Tomasz Figa <t.figa@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Paul Mackerras <paulus@samba.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Daniel Walker <dwalker@fifo99.com>, linux-arch@vger.kernel.org, Boris Brezillon <boris.brezillon@free-electrons.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>, Takashi Iwai <tiwai@suse.de>, Michal Simek <michal.simek@xilinx.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kevin Hilman <khilman@deeprootsystems.com>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kern>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ig0-f178.google.com ([209.85.213.178]:40015 "EHLO
+	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750778AbaIBIFX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 2 Sep 2014 04:05:23 -0400
+Received: by mail-ig0-f178.google.com with SMTP id hn18so6807542igb.11
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Sep 2014 01:05:23 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <3343901.7HpqcTBEp1@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, naushad@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-kernel@vger.kernel.org, joshi@samsung.com, linux-samsung-soc@vger.kernel.org, broonie@kernel.org, thomas.ab@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com
 
-T24gMSBTZXB0ZW1iZXIgMjAxNCAxNzozMiwgVG9tZXUgVml6b3NvIDx0b21ldS52aXpvc29AY29s
-bGFib3JhLmNvbT4gd3JvdGU6Cj4gSW4gcHJlcGFyYXRpb24gdG8gY2hhbmdlIHRoZSBwdWJsaWMg
-QVBJIHRvIHJldHVybiBhIHBlci11c2VyIGNsayBzdHJ1Y3R1cmUsCj4gcmVtb3ZlIGFueSB1c2Fn
-ZSBvZiB0aGlzIHB1YmxpYyBBUEkgZnJvbSB0aGUgY2xvY2sgaW1wbGVtZW50YXRpb25zLgo+Cj4g
-VGhlIHJlYXNvbiBmb3IgaGF2aW5nIHRoaXMgaW4gYSBzZXBhcmF0ZSBjb21taXQgZnJvbSB0aGUg
-b25lIHRoYXQgaW50cm9kdWNlcwo+IHRoZSBpbXBsZW1lbnRhdGlvbiBvZiB0aGUgbmV3IGZ1bmN0
-aW9ucyBpcyB0byBzZXBhcmF0ZSB0aGUgY2hhbmdlcyBnZW5lcmF0ZWQKPiB3aXRoIENvY2NpbmVs
-bGUgZnJvbSB0aGUgcmVzdCwgYW5kIGtlZXAgdGhlIHBhdGNoZXMnIHNpemUgcmVhc29uYWJsZS4K
-Pgo+IFNpZ25lZC1vZmYtYnk6IFRvbWV1IFZpem9zbyA8dG9tZXUudml6b3NvQGNvbGxhYm9yYS5j
-b20+Cj4gVGVzdGVkLWJ5OiBCb3JpcyBCcmV6aWxsb24gPGJvcmlzLmJyZXppbGxvbkBmcmVlLWVs
-ZWN0cm9ucy5jb20+Cj4gVGVzdGVkLWJ5OiBIZWlrbyBTdHVlYm5lciA8aGVpa29Ac250ZWNoLmRl
-Pgo+IEFja2VkLWJ5OiBCb3JpcyBCcmV6aWxsb24gPGJvcmlzLmJyZXppbGxvbkBmcmVlLWVsZWN0
-cm9ucy5jb20+CgpIaSBUb21ldSwKCkh1aCwgd2hhdCBhIHBhdGNoLiA6LSkgR3JlYXQgd29yayB5
-b3UgYXJlIGRvaW5nIGhlcmUhCgpCeSBqdXN0IGxvb2tpbmcgYXQgdGhlIHV4NTAwIGNoYW5nZXMs
-IEkgcmVhbGl6ZSB0aGF0IHlvdSBub3cgaGF2ZQpyZW1vdmVkIHRoZSBkZXBlbmRlbmN5IHRvICJz
-dHJ1Y3QgY2xrIiwgdGh1cyB3ZSBzaG91bGRuJ3QgaW5jbHVkZSB0aGUKaGVhZGVyIGZpbGUgbGlu
-dXgvY2xrLmggaW4gYW55IGZpbGUgbG9jYXRlZCBpbiBkcml2ZXIvY2xrL3V4NTAwLyosCnJpZ2h0
-IT8KCkkgc3VwcG9zZSB0aGlzIGNvbW1lbnQgbWF5IGFsc28gYXBwbGljYWJsZSBmb3Igb3RoZXJz
-IHRoYW4gdGhlIHV4NTAwCmNsayBkcml2ZXIsIGJ1dCBoYXZlbid0IGNoZWNrZWQuCgpLaW5kIHJl
-Z2FyZHMKVWZmZQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpMaW51eHBwYy1kZXYgbWFpbGluZyBsaXN0CkxpbnV4cHBjLWRldkBsaXN0cy5vemxhYnMub3Jn
-Cmh0dHBzOi8vbGlzdHMub3psYWJzLm9yZy9saXN0aW5mby9saW51eHBwYy1kZXY=
+On Mon, 01 Sep 2014, Arnd Bergmann wrote:
+
+> On Monday 01 September 2014 17:04:26 Lee Jones wrote:
+> > On Mon, 01 Sep 2014, Arnd Bergmann wrote:
+> > > Maybe I'm misreading the patch, but I don't see how it creates a
+> > > migration path. What I want to end up with is infrastructure that
+> > > lets anybody call syscon_regmap_lookup_by_pdevname or
+> > > syscon_regmap_lookup_by_compatible (if they really need to)
+> > > without needing the platform_driver for syscon. That should not
+> > > require any form of compatibility layer because to the driver
+> > > using it there is no API change.
+> >=20
+> > Somehow I think the likelyhood is that I am misreading the patch.
+> >=20
+> > I thought that before this patch drivers we had to register a sysco=
+n
+> > device to bind to this driver, which was fine for the first use-cas=
+es
+> > of syscon as it wasn't required too early during boot.  However, no=
+w
+> > there are use-cases where systems require access to syscon register=
+s
+> > eariler in boot we require a means to obtain access prior to device
+> > probing.  I thought this patch not only provides that possibilty, b=
+ut
+> > also leaves in the ability to register direct from DT.
+>=20
+> Right, it does provide the ability to have syscon before devices
+> are registered, I missed that part.
+>=20
+> > > In contrast, this patch introduces a new of_syscon_{un,}register(=
+)
+> > > interface that would get removed after the the above has
+> > > been implemented, causing extra churn for any driver that also
+> > > wants to provide a regmap-like interface.
+> >=20
+> > When will we ever not have to register syscon?
+>=20
+> The idea is that we implicitly register the syscon block when someone
+> calls syscon_regmap_lookup_by_compatible or syscon_regmap_lookup_by_p=
+handle
+> and then return a reference to that new syscon. When another driver
+> looks up the same device node, we just pass a reference to the existi=
+ng
+> syscon.
+
+Doesn't sound too unreasonable.  So how about instead of exporting
+these new of_syscon_{un,}register() calls, we make them static and
+call them from syscon_regmap_lookup_by_{phandle,compatible}?
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
