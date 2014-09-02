@@ -1,52 +1,36 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH] irqchip: exynos-combiner: Fix compilation error on ARM64
-Date: Tue, 02 Sep 2014 17:00:08 +0100
-Message-ID: <5405E988.7050707@arm.com>
-References: <1409671492-7725-1-git-send-email-ch.naveen@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2 0/7] arch: arm64: enable support for Samsung Exynos7
+ SoC
+Date: Tue, 02 Sep 2014 18:37:27 +0200
+Message-ID: <5405F247.4060009@gmail.com>
+References: <1409672143-8574-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:33371 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754206AbaIBP7X convert rfc822-to-8bit (ORCPT
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:60869 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754182AbaIBQhb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Sep 2014 11:59:23 -0400
-In-Reply-To: <1409671492-7725-1-git-send-email-ch.naveen@samsung.com>
+	Tue, 2 Sep 2014 12:37:31 -0400
+In-Reply-To: <1409672143-8574-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, "naveenkrishna.ch@gmail.com" <naveenkrishna.ch@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-arm-kernel@lists.infradead.org
+Cc: naveenkrishna.ch@gmail.com, linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, t.figa@samsung.com, kgene.kim@samsung.com
 
+Hi Naveen,
 
+On 02.09.2014 17:35, Naveen Krishna Chatradhi wrote:
+> Changes since v1:
+> - Reduced the number of features targetted for the initial platform support.
+> 
 
-On 02/09/14 16:24, Naveen Krishna Chatradhi wrote:
-> The following compilation error occurs on 64-bit Exynos7 SoC:
->
-> drivers/irqchip/exynos-combiner.c: In function =E2=80=98combiner_irq_=
-domain_map=E2=80=99:
-> drivers/irqchip/exynos-combiner.c:162:2: error: implicit declaration =
-of function =E2=80=98set_irq_flags=E2=80=99 [-Werror=3Dimplicit-functio=
-n-declaration]
->    set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
->    ^
-> drivers/irqchip/exynos-combiner.c:162:21: error: =E2=80=98IRQF_VALID=E2=
-=80=99 undeclared (first use in this function)
->    set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
->                       ^
-> drivers/irqchip/exynos-combiner.c:162:21: note: each undeclared ident=
-ifier is reported only once for each function it appears in
-> drivers/irqchip/exynos-combiner.c:162:34: error: =E2=80=98IRQF_PROBE=E2=
-=80=99 undeclared (first use in this function)
->    set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
->
-> Fix the build error by including asm/hardirq.h.
->
+Are you going to reply to my comments to previous version?
 
-You should avoid using asm headers whenever possible esp. in driver
-code. linux/hardirq.h or much better linux/interrupt.h should fix this
-error.
+Btw. My @samsung.com e-mail is no longer valid. Please use my private
+one for patches related to Samsung clocks and pin control drivers.
+Respective patch for MAINTAINERS file has been applied already.
 
-Regards,
-Sudeep
+Best regards,
+Tomasz
