@@ -1,81 +1,78 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 1/5] usb: dwc3: exynos: Add support for SCLK present on
- Exynos7
-Date: Tue, 2 Sep 2014 12:01:02 +0100
-Message-ID: <20140902110102.GC6725@leverpostej>
-References: <1409212920-28526-1-git-send-email-gautam.vivek@samsung.com>
- <1409212920-28526-2-git-send-email-gautam.vivek@samsung.com>
- <20140828184847.GA18464@leverpostej>
- <CAFp+6iHLSaUjHqaKXXX0QLiRd3h+O67DRSQdExag-KUH0dnpag@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iHLSaUjHqaKXXX0QLiRd3h+O67DRSQdExag-KUH0dnpag@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "balbi@ti.com" <balbi@ti.com>, "kishon@ti.com" <kishon@ti.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH v6 2/4] usb: host: xhci-plat: Get PHYs for xhci's hcds
+Date: Tue,  2 Sep 2014 16:42:16 +0530
+Message-ID: <1409656338-20337-3-git-send-email-gautam.vivek@samsung.com>
+References: <1409656338-20337-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1409656338-20337-1-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-usb@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, kishon@ti.com, balbi@ti.com, stern@rowland.harvard.edu, kgene.kim@samsung.com, heikki.krogerus@linux.intel.com, mathias.nyman@intel.com, sergei.shtylyov@cogentembedded.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Sep 02, 2014 at 11:39:08AM +0100, Vivek Gautam wrote:
-> Hi,
-> 
-> 
-> On Fri, Aug 29, 2014 at 12:18 AM, Mark Rutland <mark.rutland@arm.com> wrote:
-> > On Thu, Aug 28, 2014 at 09:01:56AM +0100, Vivek Gautam wrote:
-> >> Exynos7 also has a separate special gate clock going to the IP
-> >> apart from the usual AHB clock. So add support for the same.
-> >>
-> >> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> >> ---
-> >>  drivers/usb/dwc3/dwc3-exynos.c |   16 ++++++++++++++++
-> >>  1 file changed, 16 insertions(+)
-> >>
-> >> diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-exynos.c
-> >> index f9fb8ad..bab6395 100644
-> >> --- a/drivers/usb/dwc3/dwc3-exynos.c
-> >> +++ b/drivers/usb/dwc3/dwc3-exynos.c
-> >> @@ -35,6 +35,7 @@ struct dwc3_exynos {
-> >>       struct device           *dev;
-> >>
-> >>       struct clk              *clk;
-> >> +     struct clk              *sclk;
-> >>       struct regulator        *vdd33;
-> >>       struct regulator        *vdd10;
-> >>  };
-> >> @@ -141,10 +142,17 @@ static int dwc3_exynos_probe(struct platform_device *pdev)
-> >>               return -EINVAL;
-> >>       }
-> >>
-> >> +     /* Exynos7 has a special gate clock going to this IP */
-> >> +     exynos->sclk = devm_clk_get(dev, "usbdrd30_sclk");
-> >> +     if (IS_ERR(exynos->sclk))
-> >> +             dev_warn(dev, "couldn't get sclk\n");
-> >
-> > Doesn't this introduce a pointless warning for Exynos SoCs other than
-> > Exynos7?
-> 
-> True, it will introduce an unnecessary warning for non-Exynos7 systems.
-> I initially thought of introducing a compatible check for Exynos7-dwc3, but that
-> way we may end up adding such checks for future SoCs which have similar
-> controller but have some clock difference or some other small change, no ?
+The host controller by itself may sometimes need to handle PHY
+and/or calibrate some of the PHY settings to get full support out
+of the PHY controller. The PHY core provides a calibration
+funtionality now to do so.
+Therefore, facilitate getting the two possible PHYs, viz.
+USB 2.0 type (UTMI+) and USB 3.0 type (PIPE3).
 
-Perhaps. I don't know what your future hardware will look like.
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+---
+ drivers/usb/host/xhci-plat.c |   27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-Is the usbdrd30_sclk input unique to Exynos7, or was it previously there
-but just without an input?
-
-If the latter you could just reduce this to:
-
-dev_info(dev, "no sclk specified");
-
-Mark.
+diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+index 1a0cf9f..6afd508 100644
+--- a/drivers/usb/host/xhci-plat.c
++++ b/drivers/usb/host/xhci-plat.c
+@@ -16,6 +16,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
++#include <linux/phy/phy.h>
+ #include <linux/slab.h>
+ #include <linux/usb/xhci_pdriver.h>
+ 
+@@ -180,6 +181,19 @@ static int xhci_plat_probe(struct platform_device *pdev)
+ 			goto put_hcd;
+ 	}
+ 
++	/* Get possile USB 2.0 type PHY (UTMI+) available with xhci */
++	hcd->gen_phy = devm_phy_get(&pdev->dev, "usb2-phy");
++	if (IS_ERR(hcd->gen_phy)) {
++		ret = PTR_ERR(hcd->gen_phy);
++		if (ret == -EPROBE_DEFER) {
++			return ret;
++		} else if (ret != -ENOSYS && ret != -ENODEV) {
++			hcd->gen_phy = NULL;
++			dev_warn(&pdev->dev,
++				 "Error retrieving usb2 phy: %d\n", ret);
++		}
++	}
++
+ 	ret = usb_add_hcd(hcd, irq, IRQF_SHARED);
+ 	if (ret)
+ 		goto disable_clk;
+@@ -209,6 +223,19 @@ static int xhci_plat_probe(struct platform_device *pdev)
+ 	if (HCC_MAX_PSA(xhci->hcc_params) >= 4)
+ 		xhci->shared_hcd->can_do_streams = 1;
+ 
++	/* Get possile USB 3.0 type PHY (PIPE3) available with xhci */
++	xhci->shared_hcd->gen_phy = devm_phy_get(&pdev->dev, "usb3-phy");
++	if (IS_ERR(xhci->shared_hcd->gen_phy)) {
++		ret = PTR_ERR(xhci->shared_hcd->gen_phy);
++		if (ret == -EPROBE_DEFER) {
++			return ret;
++		} else if (ret != -ENOSYS && ret != -ENODEV) {
++			xhci->shared_hcd->gen_phy = NULL;
++			dev_warn(&pdev->dev,
++				 "Error retrieving usb3 phy: %d\n", ret);
++		}
++	}
++
+ 	ret = usb_add_hcd(xhci->shared_hcd, irq, IRQF_SHARED);
+ 	if (ret)
+ 		goto put_usb3_hcd;
+-- 
+1.7.10.4
