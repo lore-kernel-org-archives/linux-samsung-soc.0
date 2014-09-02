@@ -1,328 +1,292 @@
-From: Daniel Thompson <daniel.thompson@linaro.org>
-Subject: [PATCH v11 11/19] irqchip: vic: Add support for FIQ management
-Date: Tue,  2 Sep 2014 14:00:45 +0100
-Message-ID: <1409662853-29313-12-git-send-email-daniel.thompson@linaro.org>
-References: <1408466769-20004-1-git-send-email-daniel.thompson@linaro.org>
- <1409662853-29313-1-git-send-email-daniel.thompson@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:42843 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754277AbaIBNDm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Sep 2014 09:03:42 -0400
-Received: by mail-wi0-f181.google.com with SMTP id e4so7829621wiv.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Sep 2014 06:03:40 -0700 (PDT)
-In-Reply-To: <1409662853-29313-1-git-send-email-daniel.thompson@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 1/3] clk: samsung: exynos3250: Register DMC clk provider
+Date: Tue, 02 Sep 2014 15:21:15 +0200
+Message-ID: <1409664077-27121-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgdb-bugreport@lists.sourceforge.net, patches@linaro.org, linaro-kernel@lists.linaro.org, John Stultz <john.stultz@linaro.org>, Anton Vorontsov <anton.vorontsov@linaro.org>, Colin Cross <ccross@android.com>, kernel-team@android.com, Rob Herring <robherring2@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Ben Dooks <ben.dooks@codethink.co.uk>, Catalin Marinas <catalin.marinas@arm.com>, Dave Martin <Dave.Martin@arm.com>, Fabio Estevam <festevam@gmail.com>, Frederic Weisbecker <fweisbec@gmail.com>, Nicolas Pitre <nico@linaro.org>, Hartley Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>
 
-This patch introduces callbacks to route interrupts to or away
-from the FIQ signal. It also causes these callbacks to be registered
-with the FIQ infrastructure.
+Add clock provider for clocks in DMC domain including EPLL and BPLL. The
+DMC clocks are necessary for Exynos3 devfreq driver.
 
-This patch enable FIQ support for mach-versatile whilst mach-ep93xx,
-mach-netx, mach-s3c64xx and plat-samsung are unmodified (and can therefore
-continue to use init_FIQ() as before).
+The DMC clock domain uses different address space (0x105C0000) than
+standard clock domain (0x10030000 - 0x10050000). The difference is huge
+enough to add new DT node for the clock provider, rather than extending
+existing address space.
 
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Hartley Sweeten <hsweeten@visionengravers.com>
-Cc: Ryan Mallon <rmallon@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Ben Dooks <ben-linux@fluff.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jason Cooper <jason@lakedaemon.net>
-Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+
 ---
- arch/arm/mach-versatile/core.c  |  2 +-
- drivers/irqchip/irq-gic.c       | 21 ++++------
- drivers/irqchip/irq-vic.c       | 92 ++++++++++++++++++++++++++++++++---------
- include/linux/irqchip/arm-gic.h |  3 ++
- include/linux/irqchip/arm-vic.h |  6 ++-
- 5 files changed, 88 insertions(+), 36 deletions(-)
 
-diff --git a/arch/arm/mach-versatile/core.c b/arch/arm/mach-versatile/core.c
-index 08fb8c8..bad1d30 100644
---- a/arch/arm/mach-versatile/core.c
-+++ b/arch/arm/mach-versatile/core.c
-@@ -108,7 +108,7 @@ void __init versatile_init_irq(void)
- 
- 	np = of_find_matching_node_by_address(NULL, vic_of_match,
- 					      VERSATILE_VIC_BASE);
--	__vic_init(VA_VIC_BASE, 0, IRQ_VIC_START, ~0, 0, np);
-+	__vic_init(VA_VIC_BASE, 0, IRQ_VIC_START, ~0, 0, np ? false : true, np);
- 
- 	writel(~0, VA_SIC_BASE + SIC_IRQ_ENABLE_CLEAR);
- 
-diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-index bda5a91..8821160 100644
---- a/drivers/irqchip/irq-gic.c
-+++ b/drivers/irqchip/irq-gic.c
-@@ -502,13 +502,17 @@ static void __init gic_init_fiq(struct gic_chip_data *gic,
- /*
-  * Fully acknowledge (both ack and eoi) a FIQ-based IPI
-  */
--static int gic_handle_fiq_ipi(struct notifier_block *nb, unsigned long regs,
--			   void *data)
-+void gic_handle_fiq_ipi(void)
- {
- 	struct gic_chip_data *gic = &gic_data[0];
--	void __iomem *cpu_base = gic_data_cpu_base(gic);
-+	void __iomem *cpu_base;
- 	unsigned long irqstat, irqnr;
- 
-+	if (!gic || !gic->fiq_enable)
-+		return;
-+
-+	cpu_base = gic_data_cpu_base(gic);
-+
- 	if (WARN_ON(!in_nmi()))
- 		return NOTIFY_BAD;
- 
-@@ -525,13 +529,6 @@ static int gic_handle_fiq_ipi(struct notifier_block *nb, unsigned long regs,
- 
- 	return NOTIFY_OK;
- }
--
--/*
-- * Notifier to ensure IPI FIQ is acknowledged correctly.
-- */
--static struct notifier_block gic_fiq_ipi_notifier = {
--	.notifier_call = gic_handle_fiq_ipi,
--};
- #else /* CONFIG_FIQ */
- static inline void gic_set_group_irq(void __iomem *base, unsigned int hwirq,
- 				     int group) {}
-@@ -1250,10 +1247,6 @@ void __init gic_init_bases(unsigned int gic_nr, int irq_start,
- #ifdef CONFIG_SMP
- 		set_smp_cross_call(gic_raise_softirq);
- 		register_cpu_notifier(&gic_cpu_notifier);
--#ifdef CONFIG_FIQ
--		if (gic_data_fiq_enable(gic))
--			register_fiq_nmi_notifier(&gic_fiq_ipi_notifier);
--#endif
- #endif
- 		set_handle_irq(gic_handle_irq);
- 	}
-diff --git a/drivers/irqchip/irq-vic.c b/drivers/irqchip/irq-vic.c
-index 7d35287..22aa126 100644
---- a/drivers/irqchip/irq-vic.c
-+++ b/drivers/irqchip/irq-vic.c
-@@ -36,6 +36,9 @@
- 
- #include <asm/exception.h>
- #include <asm/irq.h>
-+#ifdef CONFIG_FIQ
-+#include <asm/fiq.h>
-+#endif
- 
- #include "irqchip.h"
- 
-@@ -261,11 +264,53 @@ static struct irq_domain_ops vic_irqdomain_ops = {
- 	.xlate = irq_domain_xlate_onetwocell,
+Changes since v1:
+=================
+1. Fix overwritteing main clock provider reg_base with DMC clock domain
+   reg_basr. This leads to OOPS in suspend.
+---
+ drivers/clk/samsung/clk-exynos3250.c   | 195 +++++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/exynos3250.h |  27 +++++
+ 2 files changed, 222 insertions(+)
+
+diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+index dc85f8e7a2d7..6840dc71c72b 100644
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -110,7 +110,14 @@ enum exynos3250_plls {
+ 	nr_plls
  };
  
-+#ifdef CONFIG_FIQ
-+static DEFINE_RAW_SPINLOCK(irq_controller_lock);
-+
-+static void vic_set_fiq(struct irq_data *d, bool enable)
-+{
-+	void __iomem *base = irq_data_get_irq_chip_data(d);
-+	unsigned int irq = d->hwirq;
-+	u32 val;
-+
-+	raw_spin_lock(&irq_controller_lock);
-+	val = readl(base + VIC_INT_SELECT);
-+	if (enable)
-+		val |= 1 << irq;
-+	else
-+		val &= ~(1 << irq);
-+	writel(val, base + VIC_INT_SELECT);
-+	raw_spin_unlock(&irq_controller_lock);
-+}
-+
-+static void vic_enable_fiq(struct irq_data *d)
-+{
-+	vic_set_fiq(d, true);
-+}
-+
-+static void vic_disable_fiq(struct irq_data *d)
-+{
-+	vic_set_fiq(d, false);
-+}
-+
-+struct fiq_chip vic_fiq = {
-+	.fiq_enable = vic_enable_fiq,
-+	.fiq_disable = vic_disable_fiq,
++/* list of PLLs in DMC block to be registered */
++enum exynos3250_dmc_plls {
++	bpll, epll,
++	nr_dmc_plls
 +};
 +
-+static void vic_register_fiq(int irq)
-+{
-+	fiq_register_mapping(irq, &vic_fiq);
-+}
-+#else /* CONFIG_FIQ */
-+static inline void vic_register_fiq(int irq) {}
-+#endif /* CONFIG_FIQ */
+ static void __iomem *reg_base;
++static void __iomem *dmc_reg_base;
+ 
+ /*
+  * Support for CMU save/restore across system suspends
+@@ -724,6 +731,25 @@ static struct samsung_pll_rate_table exynos3250_pll_rates[] = {
+ 	{ /* sentinel */ }
+ };
+ 
++/* EPLL */
++static struct samsung_pll_rate_table exynos3250_epll_rates[] = {
++	PLL_36XX_RATE(800000000, 200, 3, 1,     0),
++	PLL_36XX_RATE(288000000,  96, 2, 2,     0),
++	PLL_36XX_RATE(192000000, 128, 2, 3,     0),
++	PLL_36XX_RATE(144000000,  96, 2, 3,     0),
++	PLL_36XX_RATE( 96000000, 128, 2, 4,     0),
++	PLL_36XX_RATE( 84000000, 112, 2, 4,     0),
++	PLL_36XX_RATE( 80000004, 106, 2, 4, 43691),
++	PLL_36XX_RATE( 73728000,  98, 2, 4, 19923),
++	PLL_36XX_RATE( 67737598, 270, 3, 5, 62285),
++	PLL_36XX_RATE( 65535999, 174, 2, 5, 49982),
++	PLL_36XX_RATE( 50000000, 200, 3, 5,     0),
++	PLL_36XX_RATE( 49152002, 131, 2, 5,  4719),
++	PLL_36XX_RATE( 48000000, 128, 2, 5,     0),
++	PLL_36XX_RATE( 45158401, 180, 3, 5, 41524),
++	{ /* sentinel */ }
++};
 +
- /**
-  * vic_register() - Register a VIC.
-  * @base: The base address of the VIC.
-  * @parent_irq: The parent IRQ if cascaded, else 0.
-- * @irq: The base IRQ for the VIC.
-+ * @irq_start: The base IRQ for the VIC.
-  * @valid_sources: bitmask of valid interrupts
-  * @resume_sources: bitmask of interrupts allowed for resume sources.
-  * @node: The device tree node associated with the VIC.
-@@ -277,12 +322,13 @@ static struct irq_domain_ops vic_irqdomain_ops = {
-  * This also configures the IRQ domain for the VIC.
-  */
- static void __init vic_register(void __iomem *base, unsigned int parent_irq,
--				unsigned int irq,
-+				unsigned int irq_start,
- 				u32 valid_sources, u32 resume_sources,
--				struct device_node *node)
-+				bool map_fiqs, struct device_node *node)
- {
- 	struct vic_device *v;
- 	int i;
-+	unsigned int irq;
- 
- 	if (vic_id >= ARRAY_SIZE(vic_devices)) {
- 		printk(KERN_ERR "%s: too few VICs, increase CONFIG_ARM_VIC_NR\n", __func__);
-@@ -301,15 +347,19 @@ static void __init vic_register(void __iomem *base, unsigned int parent_irq,
- 		irq_set_chained_handler(parent_irq, vic_handle_irq_cascaded);
- 	}
- 
--	v->domain = irq_domain_add_simple(node, fls(valid_sources), irq,
-+	v->domain = irq_domain_add_simple(node, fls(valid_sources), irq_start,
- 					  &vic_irqdomain_ops, v);
- 	/* create an IRQ mapping for each valid IRQ */
--	for (i = 0; i < fls(valid_sources); i++)
--		if (valid_sources & (1 << i))
--			irq_create_mapping(v->domain, i);
-+	for (i = 0; i < fls(valid_sources); i++) {
-+		if (valid_sources & (1 << i)) {
-+			irq = irq_create_mapping(v->domain, i);
-+			vic_register_fiq(irq);
-+		}
+ /* VPLL */
+ static struct samsung_pll_rate_table exynos3250_vpll_rates[] = {
+ 	PLL_36XX_RATE(600000000, 100, 2, 1,     0),
+@@ -821,3 +847,172 @@ static void __init exynos3250_cmu_init(struct device_node *np)
+ 	samsung_clk_of_add_provider(np, ctx);
+ }
+ CLK_OF_DECLARE(exynos3250_cmu, "samsung,exynos3250-cmu", exynos3250_cmu_init);
++
++/*
++ * CMU DMC
++ */
++
++#define BPLL_LOCK		0x0118
++#define BPLL_CON0		0x0218
++#define BPLL_CON1		0x021c
++#define BPLL_CON2		0x0220
++#define SRC_DMC			0x0300
++#define DIV_DMC1		0x0504
++#define GATE_BUS_DMC0		0x0700
++#define GATE_BUS_DMC1		0x0704
++#define GATE_BUS_DMC2		0x0708
++#define GATE_BUS_DMC3		0x070c
++#define GATE_SCLK_DMC		0x0800
++#define GATE_IP_DMC0		0x0900
++#define GATE_IP_DMC1		0x0904
++#define EPLL_LOCK		0x1110
++#define EPLL_CON0		0x1114
++#define EPLL_CON1		0x1118
++#define EPLL_CON2		0x111c
++#define SRC_EPLL		0x1120
++
++/*
++ * Support for CMU save/restore across system suspends
++ */
++#ifdef CONFIG_PM_SLEEP
++static struct samsung_clk_reg_dump *exynos3250_dmc_clk_regs;
++
++static unsigned long exynos3250_cmu_dmc_clk_regs[] __initdata = {
++	BPLL_LOCK,
++	BPLL_CON0,
++	BPLL_CON1,
++	BPLL_CON2,
++	SRC_DMC,
++	DIV_DMC1,
++	GATE_BUS_DMC0,
++	GATE_BUS_DMC1,
++	GATE_BUS_DMC2,
++	GATE_BUS_DMC3,
++	GATE_SCLK_DMC,
++	GATE_IP_DMC0,
++	GATE_IP_DMC1,
++	EPLL_LOCK,
++	EPLL_CON0,
++	EPLL_CON1,
++	EPLL_CON2,
++	SRC_EPLL,
++};
++
++static int exynos3250_dmc_clk_suspend(void)
++{
++	samsung_clk_save(dmc_reg_base, exynos3250_dmc_clk_regs,
++				ARRAY_SIZE(exynos3250_cmu_dmc_clk_regs));
++	return 0;
++}
++
++static void exynos3250_dmc_clk_resume(void)
++{
++	samsung_clk_restore(dmc_reg_base, exynos3250_dmc_clk_regs,
++				ARRAY_SIZE(exynos3250_cmu_dmc_clk_regs));
++}
++
++static struct syscore_ops exynos3250_dmc_clk_syscore_ops = {
++	.suspend = exynos3250_dmc_clk_suspend,
++	.resume = exynos3250_dmc_clk_resume,
++};
++
++static void exynos3250_dmc_clk_sleep_init(void)
++{
++	exynos3250_dmc_clk_regs =
++		samsung_clk_alloc_reg_dump(exynos3250_cmu_dmc_clk_regs,
++				   ARRAY_SIZE(exynos3250_cmu_dmc_clk_regs));
++	if (!exynos3250_dmc_clk_regs) {
++		pr_warn("%s: Failed to allocate sleep save data\n", __func__);
++		goto err;
 +	}
 +
- 	/* If no base IRQ was passed, figure out our allocated base */
--	if (irq)
--		v->irq = irq;
-+	if (irq_start)
-+		v->irq = irq_start;
- 	else
- 		v->irq = irq_find_mapping(v->domain, 0);
- }
-@@ -413,7 +463,8 @@ static void __init vic_clear_interrupts(void __iomem *base)
-  *  and 020 within the page. We call this "second block".
++	register_syscore_ops(&exynos3250_dmc_clk_syscore_ops);
++	return;
++err:
++	kfree(exynos3250_dmc_clk_regs);
++}
++#else
++static inline void exynos3250_dmc_clk_sleep_init(void) { }
++#endif
++
++PNAME(mout_epll_p)	= { "fin_pll", "fout_epll", };
++PNAME(mout_bpll_p)	= { "fin_pll", "fout_bpll", };
++PNAME(mout_mpll_mif_p)	= { "fin_pll", "sclk_mpll_mif", };
++PNAME(mout_dphy_p)	= { "mout_mpll_mif", "mout_bpll", };
++
++static struct samsung_mux_clock dmc_mux_clks[] __initdata = {
++	/*
++	 * NOTE: Following table is sorted by register address in ascending
++	 * order and then bitfield shift in descending order, as it is done
++	 * in the User's Manual. When adding new entries, please make sure
++	 * that the order is preserved, to avoid merge conflicts and make
++	 * further work with defined data easier.
++	 */
++
++	/* SRC_DMC */
++	MUX(CLK_MOUT_MPLL_MIF, "mout_mpll_mif", mout_mpll_mif_p, SRC_DMC, 12, 1),
++	MUX(CLK_MOUT_BPLL, "mout_bpll", mout_bpll_p, SRC_DMC, 10, 1),
++	MUX(CLK_MOUT_DPHY, "mout_dphy", mout_dphy_p, SRC_DMC, 8, 1),
++	MUX(CLK_MOUT_DMC_BUS, "mout_dmc_bus", mout_dphy_p, SRC_DMC,  4, 1),
++
++	/* SRC_EPLL */
++	MUX(CLK_MOUT_EPLL, "mout_epll", mout_epll_p, SRC_EPLL, 4, 1),
++};
++
++static struct samsung_div_clock dmc_div_clks[] __initdata = {
++	/*
++	 * NOTE: Following table is sorted by register address in ascending
++	 * order and then bitfield shift in descending order, as it is done
++	 * in the User's Manual. When adding new entries, please make sure
++	 * that the order is preserved, to avoid merge conflicts and make
++	 * further work with defined data easier.
++	 */
++
++	/* DIV_DMC1 */
++	DIV(CLK_DIV_DMC, "div_dmc", "div_dmc_pre", DIV_DMC1, 27, 3),
++	DIV(CLK_DIV_DPHY, "div_dphy", "mout_dphy", DIV_DMC1, 23, 3),
++	DIV(CLK_DIV_DMC_PRE, "div_dmc_pre", "mout_dmc_bus", DIV_DMC1, 19, 2),
++	DIV(CLK_DIV_DMCP, "div_dmcp", "div_dmcd", DIV_DMC1, 15, 3),
++	DIV(CLK_DIV_DMCD, "div_dmcd", "div_dmc", DIV_DMC1, 11, 3),
++};
++
++static struct samsung_pll_clock exynos3250_dmc_plls[nr_dmc_plls] __initdata = {
++	[bpll] = PLL(pll_35xx, CLK_FOUT_BPLL, "fout_bpll", "fin_pll",
++			BPLL_LOCK, BPLL_CON0, NULL),
++	[epll] = PLL(pll_36xx, CLK_FOUT_EPLL, "fout_epll", "fin_pll",
++			EPLL_LOCK, EPLL_CON0, NULL),
++};
++
++static void __init exynos3250_cmu_dmc_init(struct device_node *np)
++{
++	struct samsung_clk_provider *ctx;
++
++	dmc_reg_base = of_iomap(np, 0);
++	if (!dmc_reg_base)
++		panic("%s: failed to map registers\n", __func__);
++
++	ctx = samsung_clk_init(np, dmc_reg_base, NR_CLKS_DMC);
++	if (!ctx)
++		panic("%s: unable to allocate context.\n", __func__);
++
++	exynos3250_dmc_plls[bpll].rate_table = exynos3250_pll_rates;
++	exynos3250_dmc_plls[epll].rate_table = exynos3250_epll_rates;
++
++	pr_err("CLK registering epll bpll: %d, %d, %d, %d\n",
++			exynos3250_dmc_plls[bpll].rate_table[0].rate,
++			exynos3250_dmc_plls[bpll].rate_table[0].mdiv,
++			exynos3250_dmc_plls[bpll].rate_table[0].pdiv,
++			exynos3250_dmc_plls[bpll].rate_table[0].sdiv
++	      );
++	samsung_clk_register_pll(ctx, exynos3250_dmc_plls,
++				ARRAY_SIZE(exynos3250_dmc_plls), dmc_reg_base);
++
++	samsung_clk_register_mux(ctx, dmc_mux_clks, ARRAY_SIZE(dmc_mux_clks));
++	samsung_clk_register_div(ctx, dmc_div_clks, ARRAY_SIZE(dmc_div_clks));
++
++	exynos3250_dmc_clk_sleep_init();
++
++	samsung_clk_of_add_provider(np, ctx);
++}
++CLK_OF_DECLARE(exynos3250_cmu_dmc, "samsung,exynos3250-cmu-dmc",
++		exynos3250_cmu_dmc_init);
+diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
+index b535e9da7de6..961b9c130ea9 100644
+--- a/include/dt-bindings/clock/exynos3250.h
++++ b/include/dt-bindings/clock/exynos3250.h
+@@ -255,4 +255,31 @@
   */
- static void __init vic_init_st(void __iomem *base, unsigned int irq_start,
--			       u32 vic_sources, struct device_node *node)
-+			       u32 vic_sources, bool map_fiqs,
-+			       struct device_node *node)
- {
- 	unsigned int i;
- 	int vic_2nd_block = ((unsigned long)base & ~PAGE_MASK) != 0;
-@@ -439,12 +490,12 @@ static void __init vic_init_st(void __iomem *base, unsigned int irq_start,
- 		writel(32, base + VIC_PL190_DEF_VECT_ADDR);
- 	}
+ #define CLK_NR_CLKS			248
  
--	vic_register(base, 0, irq_start, vic_sources, 0, node);
-+	vic_register(base, 0, irq_start, vic_sources, 0, map_fiqs, node);
- }
- 
- void __init __vic_init(void __iomem *base, int parent_irq, int irq_start,
--			      u32 vic_sources, u32 resume_sources,
--			      struct device_node *node)
-+		       u32 vic_sources, u32 resume_sources,
-+		       bool map_fiqs, struct device_node *node)
- {
- 	unsigned int i;
- 	u32 cellid = 0;
-@@ -462,7 +513,7 @@ void __init __vic_init(void __iomem *base, int parent_irq, int irq_start,
- 
- 	switch(vendor) {
- 	case AMBA_VENDOR_ST:
--		vic_init_st(base, irq_start, vic_sources, node);
-+		vic_init_st(base, irq_start, vic_sources, map_fiqs, node);
- 		return;
- 	default:
- 		printk(KERN_WARNING "VIC: unknown vendor, continuing anyways\n");
-@@ -479,7 +530,8 @@ void __init __vic_init(void __iomem *base, int parent_irq, int irq_start,
- 
- 	vic_init2(base);
- 
--	vic_register(base, parent_irq, irq_start, vic_sources, resume_sources, node);
-+	vic_register(base, parent_irq, irq_start, vic_sources, resume_sources,
-+		     map_fiqs, node);
- }
- 
- /**
-@@ -492,7 +544,8 @@ void __init __vic_init(void __iomem *base, int parent_irq, int irq_start,
- void __init vic_init(void __iomem *base, unsigned int irq_start,
- 		     u32 vic_sources, u32 resume_sources)
- {
--	__vic_init(base, 0, irq_start, vic_sources, resume_sources, NULL);
-+	__vic_init(base, 0, irq_start, vic_sources, resume_sources,
-+		   false, NULL);
- }
- 
- /**
-@@ -511,7 +564,8 @@ int __init vic_init_cascaded(void __iomem *base, unsigned int parent_irq,
- 	struct vic_device *v;
- 
- 	v = &vic_devices[vic_id];
--	__vic_init(base, parent_irq, 0, vic_sources, resume_sources, NULL);
-+	__vic_init(base, parent_irq, 0, vic_sources, resume_sources, false,
-+		   NULL);
- 	/* Return out acquired base */
- 	return v->irq;
- }
-@@ -535,9 +589,9 @@ int __init vic_of_init(struct device_node *node, struct device_node *parent)
- 	of_property_read_u32(node, "valid-wakeup-mask", &wakeup_mask);
- 
- 	/*
--	 * Passing 0 as first IRQ makes the simple domain allocate descriptors
-+	 * Passing 0 as first IRQ makes the domain allocate descriptors.
- 	 */
--	__vic_init(regs, 0, 0, interrupt_mask, wakeup_mask, node);
-+	__vic_init(regs, 0, 0, interrupt_mask, wakeup_mask, true, node);
- 
- 	return 0;
- }
-diff --git a/include/linux/irqchip/arm-gic.h b/include/linux/irqchip/arm-gic.h
-index 45e2d8c..52a5676 100644
---- a/include/linux/irqchip/arm-gic.h
-+++ b/include/linux/irqchip/arm-gic.h
-@@ -101,5 +101,8 @@ static inline void __init register_routable_domain_ops
- {
- 	gic_routable_irq_domain_ops = ops;
- }
++/*
++ * CMU DMC
++ */
 +
-+void gic_handle_fiq_ipi(void);
++#define CLK_FOUT_BPLL			1
++#define CLK_FOUT_EPLL			2
 +
- #endif /* __ASSEMBLY */
- #endif
-diff --git a/include/linux/irqchip/arm-vic.h b/include/linux/irqchip/arm-vic.h
-index ba46c79..30ab39f 100644
---- a/include/linux/irqchip/arm-vic.h
-+++ b/include/linux/irqchip/arm-vic.h
-@@ -30,8 +30,10 @@ struct device_node;
- struct pt_regs;
- 
- void __vic_init(void __iomem *base, int parent_irq, int irq_start,
--		u32 vic_sources, u32 resume_sources, struct device_node *node);
--void vic_init(void __iomem *base, unsigned int irq_start, u32 vic_sources, u32 resume_sources);
-+		u32 vic_sources, u32 resume_sources,
-+		bool map_fiqs, struct device_node *node);
-+void vic_init(void __iomem *base, unsigned int irq_start, u32 vic_sources,
-+	      u32 resume_sources);
- int vic_init_cascaded(void __iomem *base, unsigned int parent_irq,
- 		      u32 vic_sources, u32 resume_sources);
- 
++/* Muxes */
++#define CLK_MOUT_MPLL_MIF		8
++#define CLK_MOUT_BPLL			9
++#define CLK_MOUT_DPHY			10
++#define CLK_MOUT_DMC_BUS		11
++#define CLK_MOUT_EPLL			12
++
++/* Dividers */
++#define CLK_DIV_DMC			16
++#define CLK_DIV_DPHY			17
++#define CLK_DIV_DMC_PRE			18
++#define CLK_DIV_DMCP			19
++#define CLK_DIV_DMCD			20
++
++/*
++ * Total number of clocks of main CMU.
++ * NOTE: Must be equal to last clock ID increased by one.
++ */
++#define NR_CLKS_DMC			21
++
+ #endif /* _DT_BINDINGS_CLOCK_SAMSUNG_EXYNOS3250_CLOCK_H */
 -- 
-1.9.3
+1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
