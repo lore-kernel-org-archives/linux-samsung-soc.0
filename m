@@ -1,44 +1,43 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 2/3] ARM: dts: exynos3250: Add CMU node for DMC domain clocks
-Date: Tue, 02 Sep 2014 15:21:16 +0200
-Message-ID: <1409664077-27121-2-git-send-email-k.kozlowski@samsung.com>
-References: <1409664077-27121-1-git-send-email-k.kozlowski@samsung.com>
+From: Nick Dyer <nick.dyer@itdev.co.uk>
+Subject: Re: [PATCH v2 1/3] ARM: dts: Add Peach Pit dts entry for Atmel touchpad
+Date: Tue, 02 Sep 2014 14:46:55 +0100
+Message-ID: <5405CA4F.10507@itdev.co.uk>
+References: <1409066937-3574-1-git-send-email-javier.martinez@collabora.co.uk> <1409066937-3574-2-git-send-email-javier.martinez@collabora.co.uk> <53FD1001.30701@suse.de> <53FD8528.7090504@collabora.co.uk> <53FDD914.5090208@suse.de> <53FDE9B2.4040001@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:37247 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753406AbaIBNWT (ORCPT
+Received: from kdh-gw.itdev.co.uk ([89.21.227.133]:59169 "EHLO
+	hermes.kdh.itdev.co.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751500AbaIBNrE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Sep 2014 09:22:19 -0400
-In-reply-to: <1409664077-27121-1-git-send-email-k.kozlowski@samsung.com>
+	Tue, 2 Sep 2014 09:47:04 -0400
+In-Reply-To: <53FDE9B2.4040001@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Russell King <linux@arm.linux.org.uk>, Tomasz Figa <t.figa@samsung.com>, Mike Turquette <mturquette@linaro.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yufeng Shen <miletus@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Tomasz Figa <tomasz.figa@gmail.com>, Daniel Stone <daniels@collabora.com>
 
-Add CMU (Clock Management Unit) node for DMC (Dynamic Memory Controller)
-domain clocks on Exynos3250.
+On 27/08/14 15:22, Javier Martinez Canillas wrote:
+>>> If there was a BTN_NONE or KEY_UNUSED it would had been better but I think
+>>> that making a distinction between these two cases (reserved pin vs GPIO
+>>> available but not used) is useful.
+>>
+>> Maybe Nick can comment here.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/boot/dts/exynos3250.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+Yes, this is probably useful to document. However, I fear that it's not
+going to be obvious what the distinction is to someone who doesn't have the
+Atmel docs. Perhaps it would be clearer to just do something like:
 
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 429a6c6cfcf9..8c3a9cc0a4d1 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -163,6 +163,12 @@
- 			#clock-cells = <1>;
- 		};
- 
-+		cmu_dmc: clock-controller@105C0000 {
-+			compatible = "samsung,exynos3250-cmu-dmc";
-+			reg = <0x105C0000 0x2000>;
-+			#clock-cells = <1>;
-+		};
-+
- 		rtc: rtc@10070000 {
- 			compatible = "samsung,exynos3250-rtc";
- 			reg = <0x10070000 0x100>;
--- 
-1.9.1
+		linux,gpio-keymap = <KEY_RESERVED
+		                     KEY_RESERVED
+		                     KEY_RESERVED /* GPIO0 */
+	        	             KEY_RESERVED /* GPIO1 */
+		                     KEY_RESERVED /* GPIO2 */
+		                     BTN_LEFT>;   /* GPIO3 */
+
+If you omit any trailing KEY_RESERVED values it doesn't affect anything.
+
+I was also going to suggest that you put something like "/* Atmel mXT224SL
+*/" in your .dts file so it's clear what version of the maXTouch device you
+are configuring.
