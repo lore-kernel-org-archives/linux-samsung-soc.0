@@ -1,75 +1,52 @@
-From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2Ml0gbWZkOiBzeXNjb246IERlY291cGxlIHN5c2NvbiBp?=
- =?UTF-8?B?bnRlcmZhY2UgZnJvbSBwbGF0Zm9ybSBkZXZpY2Vz?=
-Date: Tue, 02 Sep 2014 19:42:52 +0400
-Message-ID: <1409672572.303525842__10261.2617695288$1409673498$gmane$org@f75.i.mail.ru>
-References: <1409668935-10667-1-git-send-email-pankaj.dubey@samsung.com>
- <6034841.GFrG3XCMdb@wuerfel>
-Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH] irqchip: exynos-combiner: Fix compilation error on ARM64
+Date: Tue, 02 Sep 2014 17:00:08 +0100
+Message-ID: <5405E988.7050707@arm.com>
+References: <1409671492-7725-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <6034841.GFrG3XCMdb@wuerfel>
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?B?QXJuZCBCZXJnbWFubg==?= <arnd@arndb.de>
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, naushad@samsung.com, =?UTF-8?B?VG9tYXN6IEZpZ2E=?= <t.figa@samsung.com>, linux-kernel@vger.kernel.org, joshi@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, tomasz.figa@gmail.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, lee.jones@linaro.org, =?UTF-8?B?TWljaGFsIFNpbWVr?= <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org, =?UTF-8?B?UGFua2FqIER1YmV5?= <pankaj.dubey@samsung.com>
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from service87.mimecast.com ([91.220.42.44]:33371 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754206AbaIBP7X convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 2 Sep 2014 11:59:23 -0400
+In-Reply-To: <1409671492-7725-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, "naveenkrishna.ch@gmail.com" <naveenkrishna.ch@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-VHVlLCAwMiBTZXAgMjAxNCAxNzoyMDowMyArMDIwMCDQvtGCIEFybmQgQmVyZ21hbm4gPGFybmRA
-YXJuZGIuZGU+Ogo+IE9uIFR1ZXNkYXkgMDIgU2VwdGVtYmVyIDIwMTQgMjA6MTI6MTUgUGFua2Fq
-IER1YmV5IHdyb3RlOgo+ID4gQ3VycmVudGx5IGEgc3lzY29uIGVudGl0eSBjYW4gb25seSBiZSBy
-ZWdpc3RlcmVkIGRpcmVjdGx5IHRocm91Z2ggYQo+ID4gcGxhdGZvcm0gZGV2aWNlIHRoYXQgYmlu
-ZHMgdG8gYSBkZWRpY2F0ZWQgc3lzY29uIGRyaXZlci4gSG93ZXZlciBpbgo+ID4gY2VydGFpbiBj
-YXNlcyBpdCBpcyByZXF1aXJlZCB0byBiaW5kIGEgZGV2aWNlIHdpdGggaXQncyBkZWRpY2F0ZWQK
-PiA+IGRyaXZlciByYXRoZXIgdGhhbiBiaW5kaW5nIHdpdGggc3lzY29uIGRyaXZlci4KPiA+IAo+
-ID4gRm9yIGV4YW1wbGUsIGNlcnRhaW4gU29DcyAoZS5nLiBFeHlub3MpIGNvbnRhaW4gc3lzdGVt
-IGNvbnRyb2xsZXIKPiA+IGJsb2NrcyB3aGljaCBwZXJmb3JtIHZhcmlvdXMgZnVuY3Rpb25zIHN1
-Y2ggYXMgcG93ZXIgZG9tYWluIGNvbnRyb2wsCj4gPiBDUFUgcG93ZXIgbWFuYWdlbWVudCwgbG93
-IHBvd2VyIG1vZGUgY29udHJvbCwgYnV0IGluIGFkZGl0aW9uIGNvbnRhaW4KPiA+IGNlcnRhaW4g
-SVAgaW50ZWdyYXRpb24gZ2x1ZSwgc3VjaCBhcyB2YXJpb3VzIHNpZ25hbCBtYXNrcywKPiA+IGNv
-cHJvY2Vzc29yIHBvd2VyIGNvbnRyb2wsIGV0Yy4gSW4gc3VjaCBjYXNlLCB0aGVyZSBpcyBhIG5l
-ZWQgdG8gaGF2ZQo+ID4gYSBkZWRpY2F0ZWQgZHJpdmVyIGZvciBzdWNoIHN5c3RlbSBjb250cm9s
-bGVyIGJ1dCBhbHNvIHNoYXJlIHJlZ2lzdGVycwo+ID4gd2l0aCBvdGhlciBkcml2ZXJzLiBUaGUg
-bGF0dGVyIGlzIHdoZXJlIHRoZSBzeXNjb24gaW50ZXJmYWNlIGlzIGhlbHBmdWwuCj4gPiAKPiA+
-IFRoaXMgcGF0Y2ggZGVjb3VwbGVzIHN5c2NvbiBvYmplY3QgZnJvbSBzeXNjb24gcGxhdGZvcm0g
-ZHJpdmVyLCBhbmQKPiA+IGFsbG93cyB0byBjcmVhdGUgc3lzY29uIG9iamVjdHMgZmlyc3QgdGlt
-ZSB3aGVuIGl0IGlzIHJlcXVpcmVkIGJ5Cj4gPiBjYWxsaW5nIG9mIHN5c2Nvbl9yZWdtYXBfbG9v
-a3VwX2J5IEFQSXMgYW5kIGtlZXBzIGEgbGlzdCBvZiBzdWNoIHN5c2Nvbgo+ID4gb2JqZWN0cyBh
-bG9uZyB3aXRoIHN5c2NvbiBwcm92aWRlciBkZXZpY2Vfbm9kZXMgYW5kIHJlZ21hcCBoYW5kbGVz
-Lgo+ID4gCj4gPiBTaWduZWQtb2ZmLWJ5OiBQYW5rYWogRHViZXkgPHBhbmthai5kdWJleUBzYW1z
-dW5nLmNvbT4KPiA+IFNpZ25lZC1vZmYtYnk6IFRvbWFzeiBGaWdhIDx0LmZpZ2FAc2Ftc3VuZy5j
-b20+Cj4gPiAtLS0KPiA+IFYxIG9mIHRoaXMgcGF0Y2hzZXQgWzFdIGFuZCByZWxhdGVkIGRpc2N1
-c3Npb24gY2FuIGJlIGZvdW5kIGhlcmUgWzFdLgo+ID4gIAo+ID4gQ2hhbmdlcyBzaW5jZSB2MToK
-PiA+ICAtIFJlbW92ZWQgb2Zfc3lzY29uX3VucmVnaXN0ZXIgZnVuY3Rpb24uCj4gPiAgLSBNb2Rp
-ZmllZCBvZl9zeXNjb25fcmVnaXN0ZXIgZnVuY3Rpb24gYW5kIGl0IHdpbGwgYmUgdXNlZCBieSBz
-eXNjb24uYyAKPiA+ICAgIHRvIGNyZWF0ZSBzeXNjb24gb2JqZWN0cyB3aGVuZXZlciByZXF1aXJl
-ZC4gCj4gPiAgLSBSZW1vdmVkIHBsYXRmb3JtIGRldmljZSBzdXBwb3J0IGZyb20gc3lzY29uLgo+
-ID4gIC0gUmVtb3ZlZCBzeXNjb25fcmVnbWFwX2xvb2t1cF9ieV9wZGV2bmFtZSBBUEkgc3VwcG9y
-dC4KPiA+ICAtIEFzIHRoZXJlIGFyZSBzaWduaWZpY2FudCBjaGFuZ2VzIHcuci50IHBhdGNoc2V0
-IHYxLCBJIGFtIHRha2luZyBvdmVyCj4gPiAgICBhdXRob3IgZm9yIHRoaXMgcGF0Y2hzZXQgZnJv
-bSBUb21hc3ogRmlnYS4KPiAKPiBOb3RlIHRoYXQgeW91IGdvdCB0aGUgU2lnbmVkLW9mZi1ieTog
-bGlzdCB3cm9uZywgeW91IHNob3VsZCBuZXZlciBoYXZlCj4gYW55IHBlb3BsZSBsaXN0ZWQgYXMg
-U2lnbmVkLW9mZi1ieSBhZnRlciB5b3VyIG93biBuYW1lLCBhbmQgdGhleSBzaG91bGQKPiBiZSBs
-aXN0ZWQgYmVmb3JlIHlvdXIgbmFtZSBvbmx5IHdoZW4geW91IGFyZSBmb3J3YXJkaW5nIHRoZWly
-IHBhdGNoZXMuCj4gCj4gPiBOb3RlOiBDdXJyZW50IGtlcm5lbCBoYXMgY2xwczcxMXggdXNlciBv
-ZiBzeXNjb25fcmVnbWFwX2xvb2t1cF9ieV9wZGV2bmFtZSBhbmQgCj4gPiB3aWxsIGJlIGJyb2tl
-biBhZnRlciB0aGlzIHBhdGNoLiBBcyBwZXIgZGlzY3Vzc2lvbiBvdmVyIGhlcmUgWzFdLCBwYXRj
-aGVzIAo+ID4gZm9yIG1ha2luZyB0aGVzZSBkcml2ZXJzIERUIGJhc2VkIGFyZSByZWFkeSBhbmQg
-b25jZSB0aGF0IGlzIGRvbmUgdGhleSBjYW4gdXNlCj4gPiBzeXNjb25fcmVnbWFwX2xvb2t1cF9i
-eV9waGFuZGxlIG9yIHN5c2Nvbl9yZWdtYXBfbG9va3VwX2J5X2NvbXBhdGlibGUuCj4gPiAKPiA+
-IFsxXTogaHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTQvOC8yMi84MQouLi4KPiA+IC1zdHJ1Y3Qg
-cmVnbWFwICpzeXNjb25fcmVnbWFwX2xvb2t1cF9ieV9wZGV2bmFtZShjb25zdCBjaGFyICpzKQo+
-ID4gLXsKPiA+IC0Jc3RydWN0IGRldmljZSAqZGV2Owo+ID4gLQlzdHJ1Y3Qgc3lzY29uICpzeXNj
-b247Cj4gPiAtCj4gPiAtCWRldiA9IGRyaXZlcl9maW5kX2RldmljZSgmc3lzY29uX2RyaXZlci5k
-cml2ZXIsIE5VTEwsICh2b2lkICopcywKPiA+IC0JCQkJIHN5c2Nvbl9tYXRjaF9wZGV2bmFtZSk7
-Cj4gPiAtCWlmICghZGV2KQo+ID4gLQkJcmV0dXJuIEVSUl9QVFIoLUVQUk9CRV9ERUZFUik7Cj4g
-PiAtCj4gPiAtCXN5c2NvbiA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwo+ID4gLQo+ID4gLQlyZXR1
-cm4gc3lzY29uLT5yZWdtYXA7Cj4gPiAtfQo+ID4gLUVYUE9SVF9TWU1CT0xfR1BMKHN5c2Nvbl9y
-ZWdtYXBfbG9va3VwX2J5X3BkZXZuYW1lKTsKPiAKPiBJIHRoaW5rIHRoaXMgY2FuIGFjdHVhbGx5
-IGJlIGxlZnQgaW50YWN0IGlmIHRoYXQgaGVscHMgd2l0aCBjbHBzNzF4eC4KPiBJdCBjb3VsZCBi
-ZSBkb25lIGluIGEgaGFja3kgd2F5IHVzaW5nIGJ1c19maW5kX2RldmljZV9ieV9uYW1lKCkKPiB0
-byBrZWVwIGl0IHNpbXBsZSwgb3IgaW4gYSBzb21ld2hhdCBuaWNlciB3YXkgYnkga2VlcGluZyB0
-aGUgCj4gc3lzY29uIHBsYXRmb3JtX2RyaXZlciBhcm91bmQgZm9yIHRoZSBub24tRFQgY2FzZS4K
-Ckl0IHdpbGwgbm90IHdvcmsgYW55d2F5IGJlY2F1c2UgdGhlIHBhdGNoIGludm9sdmVzIHRoZSB1
-c2Ugb2YKb2ZfZGV2aWNlX2lzX2NvbXBhdGlibGUoKSwgb2ZfaW9tYXAoKSBldGMuLi4KCi0tLQoK
+
+
+On 02/09/14 16:24, Naveen Krishna Chatradhi wrote:
+> The following compilation error occurs on 64-bit Exynos7 SoC:
+>
+> drivers/irqchip/exynos-combiner.c: In function =E2=80=98combiner_irq_=
+domain_map=E2=80=99:
+> drivers/irqchip/exynos-combiner.c:162:2: error: implicit declaration =
+of function =E2=80=98set_irq_flags=E2=80=99 [-Werror=3Dimplicit-functio=
+n-declaration]
+>    set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
+>    ^
+> drivers/irqchip/exynos-combiner.c:162:21: error: =E2=80=98IRQF_VALID=E2=
+=80=99 undeclared (first use in this function)
+>    set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
+>                       ^
+> drivers/irqchip/exynos-combiner.c:162:21: note: each undeclared ident=
+ifier is reported only once for each function it appears in
+> drivers/irqchip/exynos-combiner.c:162:34: error: =E2=80=98IRQF_PROBE=E2=
+=80=99 undeclared (first use in this function)
+>    set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
+>
+> Fix the build error by including asm/hardirq.h.
+>
+
+You should avoid using asm headers whenever possible esp. in driver
+code. linux/hardirq.h or much better linux/interrupt.h should fix this
+error.
+
+Regards,
+Sudeep
