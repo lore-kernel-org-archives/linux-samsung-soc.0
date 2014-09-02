@@ -1,61 +1,70 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH] irqchip: exynos-combiner: Fix compilation error on ARM64
-Date: Tue, 02 Sep 2014 20:54:52 +0530
-Message-ID: <1409671492-7725-1-git-send-email-ch.naveen@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Subject: [PATCH v2 0/7] arch: arm64: enable support for Samsung Exynos7 SoC
+Date: Tue, 02 Sep 2014 21:05:36 +0530
+Message-ID: <1409672143-8574-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:13134 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751764AbaIBP3g (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:23727 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751735AbaIBPky (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Sep 2014 11:29:36 -0400
+	Tue, 2 Sep 2014 11:40:54 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: naveenkrishna.ch@gmail.com, linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, t.figa@samsung.com, kgene.kim@samsung.com
 
-The following compilation error occurs on 64-bit Exynos7 SoC:
+Changes since v1:
+- Reduced the number of features targetted for the initial platform support.
 
-drivers/irqchip/exynos-combiner.c: In function =E2=80=98combiner_irq_do=
-main_map=E2=80=99:
-drivers/irqchip/exynos-combiner.c:162:2: error: implicit declaration of=
- function =E2=80=98set_irq_flags=E2=80=99 [-Werror=3Dimplicit-function-=
-declaration]
-  set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
-  ^
-drivers/irqchip/exynos-combiner.c:162:21: error: =E2=80=98IRQF_VALID=E2=
-=80=99 undeclared (first use in this function)
-  set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
-                     ^
-drivers/irqchip/exynos-combiner.c:162:21: note: each undeclared identif=
-ier is reported only once for each function it appears in
-drivers/irqchip/exynos-combiner.c:162:34: error: =E2=80=98IRQF_PROBE=E2=
-=80=99 undeclared (first use in this function)
-  set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
+This patchset supports new Exynos7 Samsung SoC based on Cortex-A57.
+Exynos7 is a System-On-Chip (SoC) that is based on 64-bit
+ARMv8 RISC processor.
 
-=46ix the build error by including asm/hardirq.h.
+NOTE:
+We tested these patches with the 
+"arm64: dts: add <dt-bindings/> symlink" change posted @
+https://lkml.org/lkml/2014/9/1/688
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
----
- drivers/irqchip/exynos-combiner.c |    2 ++
- 1 file changed, 2 insertions(+)
+The following patches are tested based on Kgene's for-next tree.
+https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
 
-diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos=
--combiner.c
-index f8636a6..7fbedcc 100644
---- a/drivers/irqchip/exynos-combiner.c
-+++ b/drivers/irqchip/exynos-combiner.c
-@@ -18,6 +18,8 @@
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
-=20
-+#include <asm/hardirq.h>
-+
- #include "irqchip.h"
-=20
- #define COMBINER_ENABLE_SET	0x0
---=20
+The following patches are required for this series.
+1- "irqchip: exynos-combiner: Fix compilation error on ARM64"
+   https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg36209.html
+2- "tty/serial: fix config dependencies for samsung serial"
+   https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg36208.html
+
+Alim Akhtar (1):
+  arm64: exynos7: Enable ARMv8 based Exynos7 (SoC) support
+
+Naveen Krishna Chatradhi (6):
+  clk: samsung: add support for 145xx and 1460x PLLs
+  clk: samsung: Factor out the common code to clk.c
+  clk: samsung: Add fixed_factor_clocks field to struct exynos_cmu_info
+  clk: samsung: add initial clock support for Exynos7 SoC
+  tty/serial: samsung: enable usage for 64-bit Exynos platforms
+  arm64: dts: Add initial device tree support for EXYNOS7
+
+ .../devicetree/bindings/clock/exynos7-clock.txt    |   37 ++
+ arch/arm64/Kconfig                                 |   12 +
+ arch/arm64/boot/dts/Makefile                       |    1 +
+ arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |   31 ++
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            |  168 ++++++++
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos5260.c               |  183 ++------
+ drivers/clk/samsung/clk-exynos7.c                  |  438 ++++++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                      |   25 +-
+ drivers/clk/samsung/clk-pll.h                      |    4 +
+ drivers/clk/samsung/clk.c                          |   98 +++++
+ drivers/clk/samsung/clk.h                          |   37 ++
+ drivers/tty/serial/Kconfig                         |    2 +-
+ include/dt-bindings/clock/exynos7-clk.h            |   55 +++
+ 14 files changed, 929 insertions(+), 163 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos7-clock.txt
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7.dtsi
+ create mode 100644 drivers/clk/samsung/clk-exynos7.c
+ create mode 100644 include/dt-bindings/clock/exynos7-clk.h
+
+-- 
 1.7.9.5
