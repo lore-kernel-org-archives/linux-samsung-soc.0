@@ -1,126 +1,47 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2] mfd: syscon: Decouple syscon interface from platform devices
-Date: Tue, 02 Sep 2014 17:20:03 +0200
-Message-ID: <6034841.GFrG3XCMdb@wuerfel>
-References: <1409668935-10667-1-git-send-email-pankaj.dubey@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:55404 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751735AbaIBPU1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Sep 2014 11:20:27 -0400
-In-Reply-To: <1409668935-10667-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH] tty/serial: fix config dependencies for samsung serial
+Date: Tue, 02 Sep 2014 20:52:00 +0530
+Message-ID: <1409671320-7604-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-serial-owner@vger.kernel.org>
+Sender: linux-serial-owner@vger.kernel.org
+To: linux-serial@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Pankaj Dubey <pankaj.dubey@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, tomasz.figa@gmail.com, Tomasz Figa <t.figa@samsung.com>, Alexander Shiyan <shc_work@mail.ru>, Michal Simek <michal.simek@xilinx.com>
 
-On Tuesday 02 September 2014 20:12:15 Pankaj Dubey wrote:
-> Currently a syscon entity can only be registered directly through a
-> platform device that binds to a dedicated syscon driver. However in
-> certain cases it is required to bind a device with it's dedicated
-> driver rather than binding with syscon driver.
-> 
-> For example, certain SoCs (e.g. Exynos) contain system controller
-> blocks which perform various functions such as power domain control,
-> CPU power management, low power mode control, but in addition contain
-> certain IP integration glue, such as various signal masks,
-> coprocessor power control, etc. In such case, there is a need to have
-> a dedicated driver for such system controller but also share registers
-> with other drivers. The latter is where the syscon interface is helpful.
-> 
-> This patch decouples syscon object from syscon platform driver, and
-> allows to create syscon objects first time when it is required by
-> calling of syscon_regmap_lookup_by APIs and keeps a list of such syscon
-> objects along with syscon provider device_nodes and regmap handles.
-> 
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> ---
-> V1 of this patchset [1] and related discussion can be found here [1].
->  
-> Changes since v1:
->  - Removed of_syscon_unregister function.
->  - Modified of_syscon_register function and it will be used by syscon.c 
->    to create syscon objects whenever required. 
->  - Removed platform device support from syscon.
->  - Removed syscon_regmap_lookup_by_pdevname API support.
->  - As there are significant changes w.r.t patchset v1, I am taking over
->    author for this patchset from Tomasz Figa.
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Note that you got the Signed-off-by: list wrong, you should never have
-any people listed as Signed-off-by after your own name, and they should
-be listed before your name only when you are forwarding their patches.
+Make the config symbols SERIAL_SAMSUNG_UARTS_4 and
+SERIAL_SAMSUNG_UARTS depend on SERIAL_SAMSUNG rather than
+PLAT_SAMSUNG.
 
-> Note: Current kernel has clps711x user of syscon_regmap_lookup_by_pdevname and 
-> will be broken after this patch. As per discussion over here [1], patches 
-> for making these drivers DT based are ready and once that is done they can use
-> syscon_regmap_lookup_by_phandle or syscon_regmap_lookup_by_compatible.
-> 
-> [1]: https://lkml.org/lkml/2014/8/22/81
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/tty/serial/Kconfig |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Adding Alexander Shiyan to Cc here, so we can make sure this is well
-coordinated.
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 26cec64..4f27f0c 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -230,14 +230,14 @@ config SERIAL_SAMSUNG
+ 
+ config SERIAL_SAMSUNG_UARTS_4
+ 	bool
+-	depends on PLAT_SAMSUNG
++	depends on SERIAL_SAMSUNG
+ 	default y if !(CPU_S3C2410 || CPU_S3C2412 || CPU_S3C2440 || CPU_S3C2442)
+ 	help
+ 	  Internal node for the common case of 4 Samsung compatible UARTs
+ 
+ config SERIAL_SAMSUNG_UARTS
+ 	int
+-	depends on PLAT_SAMSUNG
++	depends on SERIAL_SAMSUNG
+ 	default 4 if SERIAL_SAMSUNG_UARTS_4 || CPU_S3C2416
+ 	default 3
+ 	help
+-- 
+1.7.9.5
 
-I'm also adding Michal Simek, since here was involved in earlier discussions
-about doing this.
-
->  drivers/mfd/syscon.c       |  143 +++++++++++++-------------------------------
->  include/linux/mfd/syscon.h |    1 +
->  2 files changed, 44 insertions(+), 100 deletions(-)
-
-I certainly like the diffstat ;-)
-
->  struct syscon {
-> +	struct device_node *np;
->  	struct regmap *regmap;
-> +	struct list_head list;
->  };
-
-Right
-
-> @@ -68,27 +72,6 @@ struct regmap *syscon_regmap_lookup_by_compatible(const char *s)
->  }
->  EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_compatible);
->  
-> -static int syscon_match_pdevname(struct device *dev, void *data)
-> -{
-> -	return !strcmp(dev_name(dev), (const char *)data);
-> -}
-> -
-> -struct regmap *syscon_regmap_lookup_by_pdevname(const char *s)
-> -{
-> -	struct device *dev;
-> -	struct syscon *syscon;
-> -
-> -	dev = driver_find_device(&syscon_driver.driver, NULL, (void *)s,
-> -				 syscon_match_pdevname);
-> -	if (!dev)
-> -		return ERR_PTR(-EPROBE_DEFER);
-> -
-> -	syscon = dev_get_drvdata(dev);
-> -
-> -	return syscon->regmap;
-> -}
-> -EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_pdevname);
-
-I think this can actually be left intact if that helps with clps71xx.
-It could be done in a hacky way using bus_find_device_by_name()
-to keep it simple, or in a somewhat nicer way by keeping the 
-syscon platform_driver around for the non-DT case.
-
-
-> +	regmap = regmap_init_mmio(NULL, base, &syscon_regmap_config);
-> +	if (IS_ERR(regmap)) {
-> +		pr_err("regmap init failed\n");
-> +		return ERR_CAST(regmap);
-> +	}
-
-The last time I looked over this code, I think it was not safe to
-call regmap_init_mmio() with a NULL device pointer, and we decided
-that should be fixed. Have you checked whether it is ok now?
-
-	Arnd
