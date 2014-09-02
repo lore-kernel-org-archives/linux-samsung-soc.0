@@ -1,502 +1,355 @@
-From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: [PATCH v9 1/6] clk: samsung: add infrastructure to register cpu clocks
-Date: Tue, 2 Sep 2014 19:23:41 +0530
-Message-ID: <CAJuA9agpJ+ayz7Y5qXe4H5Htbyh3TNDOK_bVsFB7qonph8=jTw@mail.gmail.com>
-References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
-	<1406707663-16656-2-git-send-email-thomas.ab@samsung.com>
-	<20140901222937.5251.81359@quantum>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v6 4/4] phy: exynos5-usbdrd: Calibrate LOS levels for
+ exynos5420/5800
+Date: Tue, 2 Sep 2014 09:34:38 -0500
+Message-ID: <20140902143438.GB16872@saruman.home>
+References: <1409656338-20337-1-git-send-email-gautam.vivek@samsung.com>
+ <1409656338-20337-5-git-send-email-gautam.vivek@samsung.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20140901222937.5251.81359@quantum>
-Sender: linux-pm-owner@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="f2QGlHpHGjS2mn6Y"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:55960 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753522AbaIBOfP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 2 Sep 2014 10:35:15 -0400
+Content-Disposition: inline
+In-Reply-To: <1409656338-20337-5-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, kishon@ti.com, balbi@ti.com, stern@rowland.harvard.edu, kgene.kim@samsung.com, heikki.krogerus@linux.intel.com, mathias.nyman@intel.com, sergei.shtylyov@cogentembedded.com, jg1.han@samsung.com
 
-On Tue, Sep 2, 2014 at 3:59 AM, Mike Turquette <mturquette@linaro.org> wrote:
-> Quoting Thomas Abraham (2014-07-30 01:07:38)
->> The CPU clock provider supplies the clock to the CPU clock domain. The
->> composition and organization of the CPU clock provider could vary among
->> Exynos SoCs. A CPU clock provider can be composed of clock mux, dividers
->> and gates. This patch defines a new clock type for CPU clock provider and
->> adds infrastructure to register the CPU clock providers for Samsung
->> platforms.
->>
->> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
->> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->
-> Acked-by: Mike Turquette <mturquette@linaro.org>
+--f2QGlHpHGjS2mn6Y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thank you Mike.
+Hi,
 
-Regards,
-Thomas.
+On Tue, Sep 02, 2014 at 04:42:18PM +0530, Vivek Gautam wrote:
+> Adding phy calibrate callback, which facilitates setting certain
+> PHY settings post initialization of the PHY controller.
+> Exynos5420 and Exynos5800 have 28nm USB 3.0 DRD PHY for which
+> the Loss-of-Signal (LOS) Detector Threshold Level as well as
+> Tx-Vboost-Level should be controlled for Super-Speed operations.
+>=20
+> Additionally set proper time to wait for RxDetect measurement,
+> for desired PHY reference clock, so as to solve issue with enumeration
+> of few USB 3.0 devices, like Samsung SUM-TSB16S 3.0 USB drive
+> on the controller.
+> We are using CR_port for this purpose to send required data
+> to override the LOS values.
+>=20
+> On testing with USB 3.0 devices on USB 3.0 port present on
+> SMDK5420, and peach-pit boards should see following message:
+> usb 2-1: new SuperSpeed USB device number 2 using xhci-hcd
+>=20
+> and without this patch, should see below shown message:
+> usb 1-1: new high-speed USB device number 2 using xhci-hcd
+>=20
+> [Also removed unnecessary extra lines in the register macro definitions]
+>=20
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> ---
+>  drivers/phy/phy-exynos5-usbdrd.c |  185 ++++++++++++++++++++++++++++++++=
+++----
+>  1 file changed, 170 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-u=
+sbdrd.c
+> index 47f47fe..85742b0 100644
+> --- a/drivers/phy/phy-exynos5-usbdrd.c
+> +++ b/drivers/phy/phy-exynos5-usbdrd.c
+> @@ -37,13 +37,11 @@
+> =20
+>  /* EXYNOS5: USB 3.0 DRD PHY registers */
+>  #define EXYNOS5_DRD_LINKSYSTEM			0x04
+> -
+>  #define LINKSYSTEM_FLADJ_MASK			(0x3f << 1)
+>  #define LINKSYSTEM_FLADJ(_x)			((_x) << 1)
+>  #define LINKSYSTEM_XHCI_VERSION_CONTROL		BIT(27)
+> =20
+>  #define EXYNOS5_DRD_PHYUTMI			0x08
+> -
+>  #define PHYUTMI_OTGDISABLE			BIT(6)
+>  #define PHYUTMI_FORCESUSPEND			BIT(1)
+>  #define PHYUTMI_FORCESLEEP			BIT(0)
+> @@ -51,26 +49,20 @@
+>  #define EXYNOS5_DRD_PHYPIPE			0x0c
+> =20
+>  #define EXYNOS5_DRD_PHYCLKRST			0x10
+> -
+>  #define PHYCLKRST_EN_UTMISUSPEND		BIT(31)
+> -
+>  #define PHYCLKRST_SSC_REFCLKSEL_MASK		(0xff << 23)
+>  #define PHYCLKRST_SSC_REFCLKSEL(_x)		((_x) << 23)
+> -
+>  #define PHYCLKRST_SSC_RANGE_MASK		(0x03 << 21)
+>  #define PHYCLKRST_SSC_RANGE(_x)			((_x) << 21)
+> -
+>  #define PHYCLKRST_SSC_EN			BIT(20)
+>  #define PHYCLKRST_REF_SSP_EN			BIT(19)
+>  #define PHYCLKRST_REF_CLKDIV2			BIT(18)
+> -
+>  #define PHYCLKRST_MPLL_MULTIPLIER_MASK		(0x7f << 11)
+>  #define PHYCLKRST_MPLL_MULTIPLIER_100MHZ_REF	(0x19 << 11)
+>  #define PHYCLKRST_MPLL_MULTIPLIER_50M_REF	(0x32 << 11)
+>  #define PHYCLKRST_MPLL_MULTIPLIER_24MHZ_REF	(0x68 << 11)
+>  #define PHYCLKRST_MPLL_MULTIPLIER_20MHZ_REF	(0x7d << 11)
+>  #define PHYCLKRST_MPLL_MULTIPLIER_19200KHZ_REF	(0x02 << 11)
+> -
+>  #define PHYCLKRST_FSEL_UTMI_MASK		(0x7 << 5)
+>  #define PHYCLKRST_FSEL_PIPE_MASK		(0x7 << 8)
+>  #define PHYCLKRST_FSEL(_x)			((_x) << 5)
+> @@ -78,46 +70,68 @@
+>  #define PHYCLKRST_FSEL_PAD_24MHZ		(0x2a << 5)
+>  #define PHYCLKRST_FSEL_PAD_20MHZ		(0x31 << 5)
+>  #define PHYCLKRST_FSEL_PAD_19_2MHZ		(0x38 << 5)
+> -
+>  #define PHYCLKRST_RETENABLEN			BIT(4)
+> -
+>  #define PHYCLKRST_REFCLKSEL_MASK		(0x03 << 2)
+>  #define PHYCLKRST_REFCLKSEL_PAD_REFCLK		(0x2 << 2)
+>  #define PHYCLKRST_REFCLKSEL_EXT_REFCLK		(0x3 << 2)
+> -
+>  #define PHYCLKRST_PORTRESET			BIT(1)
+>  #define PHYCLKRST_COMMONONN			BIT(0)
+> =20
+>  #define EXYNOS5_DRD_PHYREG0			0x14
+> +#define PHYREG0_SSC_REF_CLK_SEL			BIT(21)
+> +#define PHYREG0_SSC_RANGE			BIT(20)
+> +#define PHYREG0_CR_WRITE			BIT(19)
+> +#define PHYREG0_CR_READ				BIT(18)
+> +#define PHYREG0_CR_DATA_IN(_x)			((_x) << 2)
+> +#define PHYREG0_CR_CAP_DATA			BIT(1)
+> +#define PHYREG0_CR_CAP_ADDR			BIT(0)
+> +
+>  #define EXYNOS5_DRD_PHYREG1			0x18
+> +#define PHYREG1_CR_DATA_OUT(_x)			((_x) << 1)
+> +#define PHYREG1_CR_ACK				BIT(0)
+> =20
+>  #define EXYNOS5_DRD_PHYPARAM0			0x1c
+> -
+>  #define PHYPARAM0_REF_USE_PAD			BIT(31)
+>  #define PHYPARAM0_REF_LOSLEVEL_MASK		(0x1f << 26)
+>  #define PHYPARAM0_REF_LOSLEVEL			(0x9 << 26)
+> =20
+>  #define EXYNOS5_DRD_PHYPARAM1			0x20
+> -
+>  #define PHYPARAM1_PCS_TXDEEMPH_MASK		(0x1f << 0)
+>  #define PHYPARAM1_PCS_TXDEEMPH			(0x1c)
+> =20
+>  #define EXYNOS5_DRD_PHYTERM			0x24
+> =20
+>  #define EXYNOS5_DRD_PHYTEST			0x28
+> -
+>  #define PHYTEST_POWERDOWN_SSP			BIT(3)
+>  #define PHYTEST_POWERDOWN_HSP			BIT(2)
+> =20
+>  #define EXYNOS5_DRD_PHYADP			0x2c
+> =20
+>  #define EXYNOS5_DRD_PHYUTMICLKSEL		0x30
+> -
 
->
->> ---
->>  drivers/clk/samsung/Makefile  |    2 +-
->>  drivers/clk/samsung/clk-cpu.c |  335 +++++++++++++++++++++++++++++++++++++++++
->>  drivers/clk/samsung/clk-cpu.h |   91 +++++++++++
->>  3 files changed, 427 insertions(+), 1 deletion(-)
->>  create mode 100644 drivers/clk/samsung/clk-cpu.c
->>  create mode 100644 drivers/clk/samsung/clk-cpu.h
->>
->> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
->> index 6fb4bc6..8909c93 100644
->> --- a/drivers/clk/samsung/Makefile
->> +++ b/drivers/clk/samsung/Makefile
->> @@ -2,7 +2,7 @@
->>  # Samsung Clock specific Makefile
->>  #
->>
->> -obj-$(CONFIG_COMMON_CLK)       += clk.o clk-pll.o
->> +obj-$(CONFIG_COMMON_CLK)       += clk.o clk-pll.o clk-cpu.o
->>  obj-$(CONFIG_SOC_EXYNOS3250)   += clk-exynos3250.o
->>  obj-$(CONFIG_ARCH_EXYNOS4)     += clk-exynos4.o
->>  obj-$(CONFIG_SOC_EXYNOS5250)   += clk-exynos5250.o
->> diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
->> new file mode 100644
->> index 0000000..009a21b
->> --- /dev/null
->> +++ b/drivers/clk/samsung/clk-cpu.c
->> @@ -0,0 +1,335 @@
->> +/*
->> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
->> + * Author: Thomas Abraham <thomas.ab@samsung.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + *
->> + * This file contains the utility function to register CPU clock for Samsung
->> + * Exynos platforms. A CPU clock is defined as a clock supplied to a CPU or a
->> + * group of CPUs. The CPU clock is typically derived from a hierarchy of clock
->> + * blocks which includes mux and divider blocks. There are a number of other
->> + * auxiliary clocks supplied to the CPU domain such as the debug blocks and AXI
->> + * clock for CPU domain. The rates of these auxiliary clocks are related to the
->> + * CPU clock rate and this relation is usually specified in the hardware manual
->> + * of the SoC or supplied after the SoC characterization.
->> + *
->> + * The below implementation of the CPU clock allows the rate changes of the CPU
->> + * clock and the corresponding rate changes of the auxillary clocks of the CPU
->> + * domain. The platform clock driver provides a clock register configuration
->> + * for each configurable rate which is then used to program the clock hardware
->> + * registers to acheive a fast co-oridinated rate change for all the CPU domain
->> + * clocks.
->> + *
->> + * On a rate change request for the CPU clock, the rate change is propagated
->> + * upto the PLL supplying the clock to the CPU domain clock blocks. While the
->> + * CPU domain PLL is reconfigured, the CPU domain clocks are driven using an
->> + * alternate clock source. If required, the alternate clock source is divided
->> + * down in order to keep the output clock rate within the previous OPP limits.
->> +*/
->> +
->> +#include <linux/errno.h>
->> +#include "clk-cpu.h"
->> +
->> +#define E4210_SRC_CPU          0x0
->> +#define E4210_STAT_CPU         0x200
->> +#define E4210_DIV_CPU0         0x300
->> +#define E4210_DIV_CPU1         0x304
->> +#define E4210_DIV_STAT_CPU0    0x400
->> +#define E4210_DIV_STAT_CPU1    0x404
->> +
->> +#define E4210_DIV0_RATIO0_MASK 0x7
->> +#define E4210_DIV1_HPM_MASK    (0x7 << 4)
->> +#define E4210_DIV1_COPY_MASK   (0x7 << 0)
->> +#define E4210_MUX_HPM_MASK     (1 << 20)
->> +#define E4210_DIV0_ATB_SHIFT   16
->> +#define E4210_DIV0_ATB_MASK    (DIV_MASK << E4210_DIV0_ATB_SHIFT)
->> +
->> +#define MAX_DIV                        8
->> +#define DIV_MASK               7
->> +#define DIV_MASK_ALL           0xffffffff
->> +#define MUX_MASK               7
->> +
->> +/*
->> + * Helper function to wait until divider(s) have stabilized after the divider
->> + * value has changed.
->> + */
->> +static void wait_until_divider_stable(void __iomem *div_reg, unsigned long mask)
->> +{
->> +       unsigned long timeout = jiffies + msecs_to_jiffies(10);
->> +
->> +       do {
->> +               if (!(readl(div_reg) & mask))
->> +                       return;
->> +       } while (time_before(jiffies, timeout));
->> +
->> +       pr_err("%s: timeout in divider stablization\n", __func__);
->> +}
->> +
->> +/*
->> + * Helper function to wait until mux has stabilized after the mux selection
->> + * value was changed.
->> + */
->> +static void wait_until_mux_stable(void __iomem *mux_reg, u32 mux_pos,
->> +                                       unsigned long mux_value)
->> +{
->> +       unsigned long timeout = jiffies + msecs_to_jiffies(10);
->> +
->> +       do {
->> +               if (((readl(mux_reg) >> mux_pos) & MUX_MASK) == mux_value)
->> +                       return;
->> +       } while (time_before(jiffies, timeout));
->> +
->> +       pr_err("%s: re-parenting mux timed-out\n", __func__);
->> +}
->> +
->> +/* common round rate callback useable for all types of CPU clocks */
->> +static long exynos_cpuclk_round_rate(struct clk_hw *hw,
->> +                       unsigned long drate, unsigned long *prate)
->> +{
->> +       struct clk *parent = __clk_get_parent(hw->clk);
->> +       *prate = __clk_round_rate(parent, drate);
->> +       return *prate;
->> +}
->> +
->> +/* common recalc rate callback useable for all types of CPU clocks */
->> +static unsigned long exynos_cpuclk_recalc_rate(struct clk_hw *hw,
->> +                       unsigned long parent_rate)
->> +{
->> +       /*
->> +        * The CPU clock output (armclk) rate is the same as its parent
->> +        * rate. Although there exist certain dividers inside the CPU
->> +        * clock block that could be used to divide the parent clock,
->> +        * the driver does not make use of them currently, except during
->> +        * frequency transitions.
->> +        */
->> +       return parent_rate;
->> +}
->> +
->> +static const struct clk_ops exynos_cpuclk_clk_ops = {
->> +       .recalc_rate = exynos_cpuclk_recalc_rate,
->> +       .round_rate = exynos_cpuclk_round_rate,
->> +};
->> +
->> +/*
->> + * Helper function to set the 'safe' dividers for the CPU clock. The parameters
->> + * div and mask contain the divider value and the register bit mask of the
->> + * dividers to be programmed.
->> + */
->> +static void exynos_set_safe_div(void __iomem *base, unsigned long div,
->> +                                       unsigned long mask)
->> +{
->> +       unsigned long div0;
->> +
->> +       div0 = readl(base + E4210_DIV_CPU0);
->> +       div0 = (div0 & ~mask) | (div & mask);
->> +       writel(div0, base + E4210_DIV_CPU0);
->> +       wait_until_divider_stable(base + E4210_DIV_STAT_CPU0, mask);
->> +}
->> +
->> +/* handler for pre-rate change notification from parent clock */
->> +static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
->> +                       struct exynos_cpuclk *cpuclk, void __iomem *base)
->> +{
->> +       const struct exynos_cpuclk_cfg_data *cfg_data = cpuclk->cfg;
->> +       unsigned long alt_prate = clk_get_rate(cpuclk->alt_parent);
->> +       unsigned long alt_div = 0, alt_div_mask = DIV_MASK;
->> +       unsigned long div0, div1 = 0, mux_reg;
->> +
->> +       /* find out the divider values to use for clock data */
->> +       while ((cfg_data->prate * 1000) != ndata->new_rate) {
->> +               if (cfg_data->prate == 0)
->> +                       return -EINVAL;
->> +               cfg_data++;
->> +       }
->> +
->> +       /*
->> +        * For the selected PLL clock frequency, get the pre-defined divider
->> +        * values. If the clock for sclk_hpm is not sourced from apll, then
->> +        * the values for DIV_COPY and DIV_HPM dividers need not be set.
->> +        */
->> +       div0 = cfg_data->div0;
->> +       if (test_bit(CLK_CPU_HAS_DIV1, &cpuclk->flags)) {
->> +               div1 = cfg_data->div1;
->> +               if (readl(base + E4210_SRC_CPU) & E4210_MUX_HPM_MASK)
->> +                       div1 = readl(base + E4210_DIV_CPU1) &
->> +                               (E4210_DIV1_HPM_MASK | E4210_DIV1_COPY_MASK);
->> +       }
->> +
->> +       spin_lock(cpuclk->lock);
->> +
->> +       /*
->> +        * If the new and old parent clock speed is less than the clock speed
->> +        * of the alternate parent, then it should be ensured that at no point
->> +        * the armclk speed is more than the old_prate until the dividers are
->> +        * set.
->> +        */
->> +       if (alt_prate > ndata->old_rate) {
->> +               alt_div =  DIV_ROUND_UP(alt_prate, ndata->old_rate) - 1;
->> +               WARN_ON(alt_div >= MAX_DIV);
->> +
->> +               if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
->> +                       /*
->> +                        * In Exynos4210, ATB clock parent is also mout_core. So
->> +                        * ATB clock also needs to be mantained at safe speed.
->> +                        */
->> +                       alt_div |= E4210_DIV0_ATB_MASK;
->> +                       alt_div_mask |= E4210_DIV0_ATB_MASK;
->> +               }
->> +               exynos_set_safe_div(base, alt_div, alt_div_mask);
->> +               div0 |= alt_div;
->> +       }
->> +
->> +       /* select sclk_mpll as the alternate parent */
->> +       mux_reg = readl(base + E4210_SRC_CPU);
->> +       writel(mux_reg | (1 << 16), base + E4210_SRC_CPU);
->> +       wait_until_mux_stable(base + E4210_STAT_CPU, 16, 2);
->> +
->> +       /* alternate parent is active now. set the dividers */
->> +       writel(div0, base + E4210_DIV_CPU0);
->> +       wait_until_divider_stable(base + E4210_DIV_STAT_CPU0, DIV_MASK_ALL);
->> +
->> +       if (test_bit(CLK_CPU_HAS_DIV1, &cpuclk->flags)) {
->> +               writel(div1, base + E4210_DIV_CPU1);
->> +               wait_until_divider_stable(base + E4210_DIV_STAT_CPU1,
->> +                               DIV_MASK_ALL);
->> +       }
->> +
->> +       spin_unlock(cpuclk->lock);
->> +       return 0;
->> +}
->> +
->> +/* handler for post-rate change notification from parent clock */
->> +static int exynos_cpuclk_post_rate_change(struct clk_notifier_data *ndata,
->> +                       struct exynos_cpuclk *cpuclk, void __iomem *base)
->> +{
->> +       const struct exynos_cpuclk_cfg_data *cfg_data = cpuclk->cfg;
->> +       unsigned long div = 0, div_mask = DIV_MASK;
->> +       unsigned long mux_reg;
->> +
->> +       spin_lock(cpuclk->lock);
->> +
->> +       /* select mout_apll as the alternate parent */
->> +       mux_reg = readl(base + E4210_SRC_CPU);
->> +       writel(mux_reg & ~(1 << 16), base + E4210_SRC_CPU);
->> +       wait_until_mux_stable(base + E4210_STAT_CPU, 16, 1);
->> +
->> +       if (test_bit(CLK_CPU_NEEDS_DEBUG_ALT_DIV, &cpuclk->flags)) {
->> +               /* find out the divider values to use for clock data */
->> +               while ((cfg_data->prate * 1000) != ndata->new_rate) {
->> +                       if (cfg_data->prate == 0)
->> +                               return -EINVAL;
->> +                       cfg_data++;
->> +               }
->> +
->> +               div |= (cfg_data->div0 & E4210_DIV0_ATB_MASK);
->> +               div_mask |= E4210_DIV0_ATB_MASK;
->> +       }
->> +
->> +       exynos_set_safe_div(base, div, div_mask);
->> +       spin_unlock(cpuclk->lock);
->> +       return 0;
->> +}
->> +
->> +/*
->> + * This notifier function is called for the pre-rate and post-rate change
->> + * notifications of the parent clock of cpuclk.
->> + */
->> +static int exynos_cpuclk_notifier_cb(struct notifier_block *nb,
->> +                               unsigned long event, void *data)
->> +{
->> +       struct clk_notifier_data *ndata = data;
->> +       struct exynos_cpuclk *cpuclk;
->> +       void __iomem *base;
->> +       int err = 0;
->> +
->> +       cpuclk = container_of(nb, struct exynos_cpuclk, clk_nb);
->> +       base = cpuclk->ctrl_base;
->> +
->> +       if (event == PRE_RATE_CHANGE)
->> +               err = exynos_cpuclk_pre_rate_change(ndata, cpuclk, base);
->> +       else if (event == POST_RATE_CHANGE)
->> +               err = exynos_cpuclk_post_rate_change(ndata, cpuclk, base);
->> +
->> +       return notifier_from_errno(err);
->> +}
->> +
->> +/* helper function to register a CPU clock */
->> +int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
->> +               unsigned int lookup_id, const char *name, const char *parent,
->> +               const char *alt_parent, unsigned long offset,
->> +               const struct exynos_cpuclk_cfg_data *cfg,
->> +               unsigned long num_cfgs, unsigned long flags)
->> +{
->> +       struct exynos_cpuclk *cpuclk;
->> +       struct clk_init_data init;
->> +       struct clk *clk;
->> +       int ret = 0;
->> +
->> +       cpuclk = kzalloc(sizeof(*cpuclk), GFP_KERNEL);
->> +       if (!cpuclk)
->> +               return -ENOMEM;
->> +
->> +       init.name = name;
->> +       init.flags = CLK_SET_RATE_PARENT;
->> +       init.parent_names = &parent;
->> +       init.num_parents = 1;
->> +       init.ops = &exynos_cpuclk_clk_ops;
->> +
->> +       cpuclk->hw.init = &init;
->> +       cpuclk->ctrl_base = ctx->reg_base + offset;
->> +       cpuclk->lock = &ctx->lock;
->> +       cpuclk->flags = flags;
->> +       cpuclk->clk_nb.notifier_call = exynos_cpuclk_notifier_cb;
->> +
->> +       cpuclk->alt_parent = __clk_lookup(alt_parent);
->> +       if (!cpuclk->alt_parent) {
->> +               pr_err("%s: could not lookup alternate parent %s\n",
->> +                               __func__, alt_parent);
->> +               ret = -EINVAL;
->> +               goto free_cpuclk;
->> +       }
->> +
->> +       clk = __clk_lookup(parent);
->> +       if (!clk) {
->> +               pr_err("%s: could not lookup parent clock %s\n",
->> +                               __func__, parent);
->> +               ret = -EINVAL;
->> +               goto free_cpuclk;
->> +       }
->> +
->> +       ret = clk_notifier_register(clk, &cpuclk->clk_nb);
->> +       if (ret) {
->> +               pr_err("%s: failed to register clock notifier for %s\n",
->> +                               __func__, name);
->> +               goto free_cpuclk;
->> +       }
->> +
->> +       cpuclk->cfg = kmemdup(cfg, sizeof(*cfg) * num_cfgs, GFP_KERNEL);
->> +       if (!cpuclk->cfg) {
->> +               pr_err("%s: could not allocate memory for cpuclk data\n",
->> +                               __func__);
->> +               kfree(cpuclk);
->> +               ret = -ENOMEM;
->> +               goto unregister_clk_nb;
->> +       }
->> +
->> +       clk = clk_register(NULL, &cpuclk->hw);
->> +       if (IS_ERR(clk)) {
->> +               pr_err("%s: could not register cpuclk %s\n", __func__,  name);
->> +               ret = PTR_ERR(clk);
->> +               goto free_cpuclk_data;
->> +       }
->> +
->> +       samsung_clk_add_lookup(ctx, clk, lookup_id);
->> +       return 0;
->> +
->> +free_cpuclk_data:
->> +       kfree(cpuclk->cfg);
->> +unregister_clk_nb:
->> +       clk_notifier_unregister(__clk_lookup(parent), &cpuclk->clk_nb);
->> +free_cpuclk:
->> +       kfree(cpuclk);
->> +       return ret;
->> +}
->> diff --git a/drivers/clk/samsung/clk-cpu.h b/drivers/clk/samsung/clk-cpu.h
->> new file mode 100644
->> index 0000000..42e1905
->> --- /dev/null
->> +++ b/drivers/clk/samsung/clk-cpu.h
->> @@ -0,0 +1,91 @@
->> +/*
->> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + *
->> + * Common Clock Framework support for all PLL's in Samsung platforms
->> +*/
->> +
->> +#ifndef __SAMSUNG_CLK_CPU_H
->> +#define __SAMSUNG_CLK_CPU_H
->> +
->> +#include "clk.h"
->> +
->> +#define E4210_CPU_DIV0(apll, pclk_dbg, atb, periph, corem1, corem0)    \
->> +               (((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) |  \
->> +               ((periph) << 12) | ((corem1) << 8) | ((corem0) <<  4))
->> +#define E4210_CPU_DIV1(hpm, copy)                                      \
->> +               (((hpm) << 4) | ((copy) << 0))
->> +
->> +#define E5250_CPU_DIV0(apll, pclk_dbg, atb, periph, acp, cpud)         \
->> +               ((((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) | \
->> +                ((periph) << 12) | ((acp) << 8) | ((cpud) << 4)))
->> +#define E5250_CPU_DIV1(hpm, copy)                                      \
->> +               (((hpm) << 4) | (copy))
->> +
->> +#define E5420_EGL_DIV0(apll, pclk_dbg, atb, cpud)                      \
->> +               ((((apll) << 24) | ((pclk_dbg) << 20) | ((atb) << 16) | \
->> +                ((cpud) << 4)))
->> +#define E5420_KFC_DIV(kpll, pclk, aclk)                                        \
->> +               ((((kpll) << 24) | ((pclk) << 20) | ((aclk) << 4)))
->> +
->> +/**
->> + * struct exynos_cpuclk_data: config data to setup cpu clocks.
->> + * @prate: frequency of the primary parent clock (in KHz).
->> + * @div0: value to be programmed in the div_cpu0 register.
->> + * @div1: value to be programmed in the div_cpu1 register.
->> + *
->> + * This structure holds the divider configuration data for dividers in the CPU
->> + * clock domain. The parent frequency at which these divider values are valid is
->> + * specified in @prate. The @prate is the frequency of the primary parent clock.
->> + * For CPU clock domains that do not have a DIV1 register, the @div1 member
->> + * value is not used.
->> + */
->> +struct exynos_cpuclk_cfg_data {
->> +       unsigned long   prate;
->> +       unsigned long   div0;
->> +       unsigned long   div1;
->> +};
->> +
->> +/**
->> + * struct exynos_cpuclk: information about clock supplied to a CPU core.
->> + * @hw:        handle between CCF and CPU clock.
->> + * @alt_parent: alternate parent clock to use when switching the speed
->> + *     of the primary parent clock.
->> + * @ctrl_base: base address of the clock controller.
->> + * @lock: cpu clock domain register access lock.
->> + * @cfg: cpu clock rate configuration data.
->> + * @num_cfgs: number of array elements in @cfg array.
->> + * @clk_nb: clock notifier registered for changes in clock speed of the
->> + *     primary parent clock.
->> + * @flags: configuration flags for the CPU clock.
->> + *
->> + * This structure holds information required for programming the CPU clock for
->> + * various clock speeds.
->> + */
->> +struct exynos_cpuclk {
->> +       struct clk_hw                           hw;
->> +       struct clk                              *alt_parent;
->> +       void __iomem                            *ctrl_base;
->> +       spinlock_t                              *lock;
->> +       const struct exynos_cpuclk_cfg_data     *cfg;
->> +       const unsigned long                     num_cfgs;
->> +       struct notifier_block                   clk_nb;
->> +       unsigned long                           flags;
->> +
->> +/* The CPU clock registers has DIV1 configuration register */
->> +#define CLK_CPU_HAS_DIV1               (1 << 0)
->> +/* When ALT parent is active, debug clocks need safe divider values */
->> +#define CLK_CPU_NEEDS_DEBUG_ALT_DIV    (1 << 1)
->> +};
->> +
->> +extern int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
->> +                       unsigned int lookup_id, const char *name,
->> +                       const char *parent, const char *alt_parent,
->> +                       unsigned long offset,
->> +                       const struct exynos_cpuclk_cfg_data *cfg,
->> +                       unsigned long num_cfgs, unsigned long flags);
->> +
->> +#endif /* __SAMSUNG_CLK_CPU_H */
->> --
->> 1.7.9.5
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+this and all above are unrelated to $subject.
+
+>  #define PHYUTMICLKSEL_UTMI_CLKSEL		BIT(2)
+> =20
+>  #define EXYNOS5_DRD_PHYRESUME			0x34
+>  #define EXYNOS5_DRD_LINKPORT			0x44
+> =20
+> +/* USB 3.0 DRD PHY SS Function Control Reg; accessed by CR_PORT */
+> +#define EXYNOS5_DRD_PHYSS_LOSLEVEL_OVRD_IN		(0x15)
+> +#define LOSLEVEL_OVRD_IN_LOS_BIAS_5420			(0x5 << 13)
+> +#define LOSLEVEL_OVRD_IN_LOS_BIAS_DEFAULT		(0x0 << 13)
+> +#define LOSLEVEL_OVRD_IN_EN				(0x1 << 10)
+> +#define LOSLEVEL_OVRD_IN_LOS_LEVEL_DEFAULT		(0x9 << 0)
+> +
+> +#define EXYNOS5_DRD_PHYSS_TX_VBOOSTLEVEL_OVRD_IN	(0x12)
+> +#define TX_VBOOSTLEVEL_OVRD_IN_VBOOST_5420		(0x5 << 13)
+> +#define TX_VBOOSTLEVEL_OVRD_IN_VBOOST_DEFAULT		(0x4 << 13)
+> +
+> +#define EXYNOS5_DRD_PHYSS_LANE0_TX_DEBUG		(0x1010)
+> +#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_19M2_20M		(0x4 << 4)
+> +#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_24M		(0x8 << 4)
+> +#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_25M_26M		(0x8 << 4)
+> +#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_48M_50M_52M	(0x20 << 4)
+> +#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_62M5		(0x20 << 4)
+> +#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_96M_100M		(0x40 << 4)
+> +
+>  #define KHZ	1000
+>  #define MHZ	(KHZ * KHZ)
+> =20
+> @@ -135,12 +149,14 @@ struct exynos5_usbdrd_phy_config {
+>  	void (*phy_isol)(struct phy_usb_instance *inst, u32 on);
+>  	void (*phy_init)(struct exynos5_usbdrd_phy *phy_drd);
+>  	unsigned int (*set_refclk)(struct phy_usb_instance *inst);
+> +	int (*phy_calibrate)(struct phy_usb_instance *inst);
+>  };
+> =20
+>  struct exynos5_usbdrd_phy_drvdata {
+>  	const struct exynos5_usbdrd_phy_config *phy_cfg;
+>  	u32 pmu_offset_usbdrd0_phy;
+>  	u32 pmu_offset_usbdrd1_phy;
+> +	void (*phy_exynos_calibrate)(struct exynos5_usbdrd_phy *phy_drd);
+>  };
+> =20
+>  /**
+> @@ -487,6 +503,142 @@ static int exynos5_usbdrd_phy_power_off(struct phy =
+*phy)
+>  	return 0;
+>  }
+> =20
+> +static void crport_handshake(struct exynos5_usbdrd_phy *phy_drd,
+> +						u32 val, u32 cmd)
+> +{
+> +	u32 usec =3D 100;
+> +	u32 result;
+> +
+> +	writel(val | cmd, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
+> +
+> +	do {
+> +		result =3D readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
+> +		if (result & PHYREG1_CR_ACK)
+> +			break;
+> +
+> +		udelay(1);
+> +	} while (usec-- > 0);
+> +
+> +	if (!usec)
+> +		dev_err(phy_drd->dev,
+> +			"CRPORT handshake timeout1 (0x%08x)\n", val);
+
+if handshake timed out, shouldn't you error out here ? IOW, make this
+function return an int and return an error code from this point ? Why
+would you even continue to the next step ?
+
+> +
+> +	usec =3D 100;
+> +
+> +	writel(val, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
+> +
+> +	do {
+> +		result =3D readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
+> +		if (!(result & PHYREG1_CR_ACK))
+> +			break;
+> +
+> +		udelay(1);
+> +	} while (usec-- > 0);
+> +
+> +	if (!usec)
+> +		dev_err(phy_drd->dev,
+> +			"CRPORT handshake timeout2 (0x%08x)\n", val);
+
+return an error ?
+
+> +}
+> +
+> +static void crport_ctrl_write(struct exynos5_usbdrd_phy *phy_drd,
+> +						u32 addr, u32 data)
+> +{
+> +	/* Write Address */
+> +	writel(PHYREG0_CR_DATA_IN(addr),
+> +			phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
+> +	crport_handshake(phy_drd, PHYREG0_CR_DATA_IN(addr),
+> +			 PHYREG0_CR_CAP_ADDR);
+> +
+> +	/* Write Data */
+> +	writel(PHYREG0_CR_DATA_IN(data),
+> +			phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
+> +	crport_handshake(phy_drd, PHYREG0_CR_DATA_IN(data),
+> +			 PHYREG0_CR_CAP_DATA);
+> +	crport_handshake(phy_drd, PHYREG0_CR_DATA_IN(data),
+> +			 PHYREG0_CR_WRITE);
+> +}
+> +
+> +/*
+> + * Override PHY paramaeters using CR_PORT register to calibrate settings
+> + * to meet meet SuperSpeed requirements, on Exynos5420 and Exynos5800 sy=
+stems,
+> + * which have 28nm USB 3.0 DRD PHY.
+> + */
+> +static void exynos5420_usbdrd_phy_calibrate(struct exynos5_usbdrd_phy *p=
+hy_drd)
+> +{
+> +	u32 temp;
+> +
+> +	/*
+> +	 * Change los_bias to (0x5) for 28nm PHY from a
+> +	 * default value (0x0); los_level is set as default
+> +	 * (0x9) as also reflected in los_level[30:26] bits
+> +	 * of PHYPARAM0 register.
+> +	 */
+> +	temp =3D LOSLEVEL_OVRD_IN_LOS_BIAS_5420 |
+> +		LOSLEVEL_OVRD_IN_EN |
+> +		LOSLEVEL_OVRD_IN_LOS_LEVEL_DEFAULT;
+> +	crport_ctrl_write(phy_drd,
+> +			  EXYNOS5_DRD_PHYSS_LOSLEVEL_OVRD_IN,
+> +			  temp);
+> +
+> +	/*
+> +	 * Set tx_vboost_lvl to (0x5) for 28nm PHY Tuning,
+> +	 * to raise Tx signal level from its default value of (0x4)
+> +	 */
+> +	temp =3D TX_VBOOSTLEVEL_OVRD_IN_VBOOST_5420;
+> +	crport_ctrl_write(phy_drd,
+> +			  EXYNOS5_DRD_PHYSS_TX_VBOOSTLEVEL_OVRD_IN,
+> +			  temp);
+> +
+> +	/*
+> +	 * Set proper time to wait for RxDetect measurement, for
+> +	 * desired reference clock of PHY, by tuning the CRPORT
+> +	 * register LANE0.TX_DEBUG which is internal to PHY.
+> +	 * This fixes issue with few USB 3.0 devices, which are
+> +	 * not detected (not even generate interrupts on the bus
+> +	 * on insertion) without this change.
+> +	 * e.g. Samsung SUM-TSB16S 3.0 USB drive.
+> +	 */
+> +	switch (phy_drd->extrefclk) {
+> +	case EXYNOS5_FSEL_50MHZ:
+> +		temp =3D LANE0_TX_DEBUG_RXDET_MEAS_TIME_48M_50M_52M;
+> +		break;
+> +	case EXYNOS5_FSEL_20MHZ:
+> +	case EXYNOS5_FSEL_19MHZ2:
+> +		temp =3D LANE0_TX_DEBUG_RXDET_MEAS_TIME_19M2_20M;
+> +		break;
+> +	case EXYNOS5_FSEL_24MHZ:
+
+why can't this be done during probe() ? Are you going to change external
+reference clock frequency during runtime ? And even if you do,
+wouldn't it be easier to subscribe to clock rate change notifiers
+instead of adding this ->calibrate() ?
+
+It still looks, to me, that this ->calibrate() thing is unnecessary. We
+have a single user for it and this user could very well get this sorted
+out during probe() or by subscribing to clock rate notifiers.
+
+--=20
+balbi
+
+--f2QGlHpHGjS2mn6Y
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUBdV9AAoJEIaOsuA1yqRE4eMP/0M/Ll4iton1UguVAe/lixqL
+F4Ki8ROCcakFCaK39Lp44K7cV9mtl3QVkBaHEiChIyzwg+V//Juc/P7o1pfnLxuG
+wwjpG1YD1tmGRXUE/cKCeD02AOyLTZGc6ZI0N/z9yly4w6hGhAMjcG36+Jc5FUZP
+Sz1oN5tojW57LQnMGJyvU9EiZLYgBShBqRQwM9gaqnXkc80opsgBe3UVJoCi54ST
+8O8cV6ol4CdZ1j7uO5D9a5S3IKdAJnmYrUTHrRhmwbc9IHFCVtRE4MExjUnl+sNy
+yit+sVt7WRchZDR+qxyD7pIiVi4hNxkkKdlA3QfB60Jc/F+dhTqAD9Mnez1CZs+D
+C//LrJtUeyjpAJaIJ46Ry+1ONzNo1g7evlTisNrpQtVtA4WG6mohwKe9zU9PyO/+
+iE2FhbptbYq4QFHQD3RgItrv8IeKrfMOKMr0O014mnscjlXzo4mQV372WKhzIiNp
+Bj4zDrAUGJSTpe9Wug1zfFGj4+U/Pau5QnPXRNWLPH/rLDoeAJO5wXR6GTJS/st7
+PBadiaQU4A/poiy7HrD5UyPGPZta0KDR70ljeKla0D/RonVoig88Nz3uPs31pUOs
+wLOE1IJswCiwKHyFiHszoFFAxNISmG+DNlFOXavDEooGPCQnslXvvw3A1qJgnwGQ
+ad8pNiIEDYETaGQmVG8v
+=wyRp
+-----END PGP SIGNATURE-----
+
+--f2QGlHpHGjS2mn6Y--
