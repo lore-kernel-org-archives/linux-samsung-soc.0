@@ -1,47 +1,61 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH] tty/serial: fix config dependencies for samsung serial
-Date: Tue, 02 Sep 2014 20:52:00 +0530
-Message-ID: <1409671320-7604-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-serial-owner@vger.kernel.org>
-Sender: linux-serial-owner@vger.kernel.org
-To: linux-serial@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Pankaj Dubey <pankaj.dubey@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH] irqchip: exynos-combiner: Fix compilation error on ARM64
+Date: Tue, 02 Sep 2014 20:54:52 +0530
+Message-ID: <1409671492-7725-1-git-send-email-ch.naveen@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:13134 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751764AbaIBP3g (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 2 Sep 2014 11:29:36 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
 
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
+The following compilation error occurs on 64-bit Exynos7 SoC:
 
-Make the config symbols SERIAL_SAMSUNG_UARTS_4 and
-SERIAL_SAMSUNG_UARTS depend on SERIAL_SAMSUNG rather than
-PLAT_SAMSUNG.
+drivers/irqchip/exynos-combiner.c: In function =E2=80=98combiner_irq_do=
+main_map=E2=80=99:
+drivers/irqchip/exynos-combiner.c:162:2: error: implicit declaration of=
+ function =E2=80=98set_irq_flags=E2=80=99 [-Werror=3Dimplicit-function-=
+declaration]
+  set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
+  ^
+drivers/irqchip/exynos-combiner.c:162:21: error: =E2=80=98IRQF_VALID=E2=
+=80=99 undeclared (first use in this function)
+  set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
+                     ^
+drivers/irqchip/exynos-combiner.c:162:21: note: each undeclared identif=
+ier is reported only once for each function it appears in
+drivers/irqchip/exynos-combiner.c:162:34: error: =E2=80=98IRQF_PROBE=E2=
+=80=99 undeclared (first use in this function)
+  set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+=46ix the build error by including asm/hardirq.h.
+
 Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 ---
- drivers/tty/serial/Kconfig |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/irqchip/exynos-combiner.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 26cec64..4f27f0c 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -230,14 +230,14 @@ config SERIAL_SAMSUNG
- 
- config SERIAL_SAMSUNG_UARTS_4
- 	bool
--	depends on PLAT_SAMSUNG
-+	depends on SERIAL_SAMSUNG
- 	default y if !(CPU_S3C2410 || CPU_S3C2412 || CPU_S3C2440 || CPU_S3C2442)
- 	help
- 	  Internal node for the common case of 4 Samsung compatible UARTs
- 
- config SERIAL_SAMSUNG_UARTS
- 	int
--	depends on PLAT_SAMSUNG
-+	depends on SERIAL_SAMSUNG
- 	default 4 if SERIAL_SAMSUNG_UARTS_4 || CPU_S3C2416
- 	default 3
- 	help
--- 
+diff --git a/drivers/irqchip/exynos-combiner.c b/drivers/irqchip/exynos=
+-combiner.c
+index f8636a6..7fbedcc 100644
+--- a/drivers/irqchip/exynos-combiner.c
++++ b/drivers/irqchip/exynos-combiner.c
+@@ -18,6 +18,8 @@
+ #include <linux/of_address.h>
+ #include <linux/of_irq.h>
+=20
++#include <asm/hardirq.h>
++
+ #include "irqchip.h"
+=20
+ #define COMBINER_ENABLE_SET	0x0
+--=20
 1.7.9.5
-
