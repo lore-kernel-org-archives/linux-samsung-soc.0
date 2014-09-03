@@ -1,61 +1,190 @@
 From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH 08/14] i2c: exynos5: Add Kconfig dependencies
-Date: Wed, 3 Sep 2014 13:13:21 +0530
-Message-ID: <CAHfPSqBTskQxC_HktLyPF=4cmmzZvVZO2u_Y4tXkftA1qtsR4g@mail.gmail.com>
-References: <1409132740-1954-1-git-send-email-ch.naveen@samsung.com>
- <1409132740-1954-2-git-send-email-ch.naveen@samsung.com> <20140828040311.GD4972@localhost>
+Subject: Re: [PATCH 11/14] arm64: dts: Add initial device tree support for EXYNOS7
+Date: Wed, 3 Sep 2014 13:18:41 +0530
+Message-ID: <CAHfPSqD2_=-zr8p0STSThfdik296tHZkHhXemdxCrSqTx7e1UQ@mail.gmail.com>
+References: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com>
+ <1409132660-1898-3-git-send-email-ch.naveen@samsung.com> <20140827104231.GB7773@leverpostej>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f46.google.com ([209.85.216.46]:53657 "EHLO
-	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755618AbaICHnl (ORCPT
+Received: from mail-qg0-f49.google.com ([209.85.192.49]:58510 "EHLO
+	mail-qg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755306AbaICHtD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Sep 2014 03:43:41 -0400
-In-Reply-To: <20140828040311.GD4972@localhost>
+	Wed, 3 Sep 2014 03:49:03 -0400
+In-Reply-To: <20140827104231.GB7773@leverpostej>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, cpgs@samsung.com, broonie@kernel.org, Wolfram Sang <wsa@the-dreams.de>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Catalin Marinas <Catalin.Marinas@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "cpgs@samsung.com" <cpgs@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Rob Herring <robh@kernel.org>
 
-Hi Olof,
+Hi Mark,
 
-On 28 August 2014 09:33, Olof Johansson <olof@lixom.net> wrote:
-> On Wed, Aug 27, 2014 at 03:15:40PM +0530, Naveen Krishna Chatradhi wrote:
->> The i2c-exynos5.c driver can be reused for the HSI2C controller
->> on Exynos7 SoCs from Samsung.
->>
->> This patch adds the Kconfig dependency to choose i2c-exynos5.c
->> for CONFIG_ARCH_EXYNOS7.
->>
+On 27 August 2014 16:12, Mark Rutland <mark.rutland@arm.com> wrote:
+> Hi Naveen,
+>
+> On Wed, Aug 27, 2014 at 10:44:18AM +0100, Naveen Krishna Chatradhi wrote:
+>> Add initial device tree nodes for EXYNOS7 SoC.
+>> Also, includes the dt-binding definitions for clock ids.
+>
+> Fallout from a rebase? That latter part doesn't seem to be relevant.
+
+Yes, this is fixed now.
+
+>
 >> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->> To: linux-i2c@vger.kernel.org
->> Cc: Wolfram Sang <wsa@the-dreams.de>
+>> Cc: Thomas Abraham <thomas.ab@samsung.com>
+>> Cc: Rob Herring <robh@kernel.org>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
 >> ---
->>  drivers/i2c/busses/Kconfig |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>  arch/arm64/boot/dts/exynos7.dtsi |  553 ++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 553 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/exynos7.dtsi
 >>
->> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
->> index 2ac87fa..bd18fa6 100644
->> --- a/drivers/i2c/busses/Kconfig
->> +++ b/drivers/i2c/busses/Kconfig
->> @@ -465,7 +465,7 @@ config I2C_EG20T
->>
->>  config I2C_EXYNOS5
->>       tristate "Exynos5 high-speed I2C driver"
->> -     depends on ARCH_EXYNOS5 && OF
->> +     depends on (ARCH_EXYNOS5 || ARCH_EXYNOS7) && OF
+>> diff --git a/arch/arm64/boot/dts/exynos7.dtsi b/arch/arm64/boot/dts/exynos7.dtsi
+>> new file mode 100644
+>> index 0000000..6b9eaf4
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/exynos7.dtsi
+>> @@ -0,0 +1,553 @@
+>> +/*
+>> + * SAMSUNG EXYNOS7 SoC device tree source
+>> + *
+>> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+>> + *             http://www.samsung.com
+>> + *
+>> + * SAMSUNG EXYNOS7 SoC device nodes are listed in this file.
+>> + * EXYNOS7 based board files can include this file and provide
+>> + * values for board specfic bindings.
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +#include <dt-bindings/clock/exynos7-clk.h>
+>> +
+>> +/ {
+>> +       compatible = "samsung,exynos7";
+>> +       interrupt-parent = <&gic>;
+>> +       #address-cells = <1>;
+>> +       #size-cells = <1>;
 >
-> Ick, this will keep growing. Please use ARCH_EXYNOS instead. Yes,
-> this means you need to add it to the arm64 Kconfig and select it from
-> ARCH_EXYNOS7.
+> Can we guarantee everything going to live within 0x0 - 0xffffffff for
+> all boards using the SoC?
+>
+> I suspect that we can't, so the addresses and sizes at the top level
+> should be two cells. At some point there is bound to be something above
+> 4GB that we'll need to map, so to save us from a painful dts refactoring
+> we should have the dts organised to support that from the outside.
 
-Ok, will repost with ARCH_EXYNOS. Thanks.
+Ok, this is fixed with #address-cells = 2 and #size-cells = 2.
 
 >
+> [...]
 >
+>> +       cpus {
+>> +               #address-cells = <2>;
+>> +               #size-cells = <0>;
+>> +
+>> +               cpu@0 {
+>> +                       device_type = "cpu";
+>> +                       compatible = "arm,cortex-a57", "arm,armv8";
+>> +                       reg = <0x0 0x0>;
+>> +               };
+>> +       };
 >
-> -Olof
+> Only UP?
+
+This is a quad core SoC and the rest of the CPU nodes have been added
+in the second version of this series.
+
+>
+> [...]
+>
+>> +       gic: interrupt-controller@11001000 {
+>> +               compatible = "arm,gic-400";
+>> +               #interrupt-cells = <3>;
+>> +               #address-cells = <0>;
+>> +               interrupt-controller;
+>> +               reg =   <0x11001000 0x1000>,
+>> +                       <0x11002000 0x1000>,
+>> +                       <0x11004000 0x2000>,
+>> +                       <0x11006000 0x2000>;
+>> +       };
+>
+> Nice to see GICV and GICH.
+>
+> [...]
+>
+>> +       mct@101C0000 {
+>> +               compatible = "samsung,exynos4210-mct";
+>> +               reg = <0x101C0000 0x800>;
+>> +               interrupt-controller;
+>> +               #interrupt-cells = <1>;
+>> +               interrupt-parent = <&mct_map>;
+>> +               interrupts =    <0>, <1>, <2>, <3>,
+>> +                               <4>, <5>, <6>, <7>,
+>> +                               <8>, <9>, <10>, <11>;
+>> +               clocks = <&fin_pll>, <&clock_peris PCLK_MCT>;
+>> +               clock-names = "fin_pll", "mct";
+>> +
+>> +               mct_map: mct-map {
+>> +                       #interrupt-cells = <1>;
+>> +                       #address-cells = <0>;
+>> +                       #size-cells = <0>;
+>> +                       interrupt-map = <0 &gic 0 112 0>,
+>> +                                       <1 &gic 0 113 0>,
+>> +                                       <2 &gic 0 114 0>,
+>> +                                       <3 &gic 0 115 0>,
+>> +                                       <4 &gic 0 116 0>,
+>> +                                       <5 &gic 0 117 0>,
+>> +                                       <6 &gic 0 118 0>,
+>> +                                       <7 &gic 0 119 0>,
+>> +                                       <8 &gic 0 120 0>,
+>> +                                       <9 &gic 0 121 0>,
+>> +                                       <10 &gic 0 122 0>,
+>> +                                       <11 &gic 0 123 0>;
+>> +               };
+>> +       };
+>
+> I don't see why need the map here. Why can't we describe the GIC
+> interrupts directly?
+
+Right, it was not required. Also, we will try and use only arch timer
+and not MCT.
+
+>
+> [...]
+>
+>> +       timer {
+>> +               compatible = "arm,armv8-timer";
+>> +               interrupts = <1 13 0xff01>,
+>> +                            <1 14 0xff01>,
+>> +                            <1 11 0xff01>,
+>> +                            <1 10 0xff01>;
+>> +               clock-frequency = <24000000>;
+>
+> Your firmware/bootloader should configure CNTFRQ, and this shouldn't be
+> necessary. The clock-frequency property is an incomplete workaround for
+> broken firmware that in an ideal world we could kill off.
+>
+>> +               use-clocksource-only;
+>> +               use-physical-timer;
+>
+> Neither of these properties were introduced by this series, and no
+> rationale was given.
+>
+> What are these properties for, and why do you believe they are
+> necessary?
+
+Sorry, that was a mistake. This has been fixed.
+
+>
+> Thanks,
+> Mark.
+
+Thanks.
 
 -- 
 Shine bright,
