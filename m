@@ -1,61 +1,68 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH] tty/serial: fix config dependencies for samsung serial
-Date: Wed, 3 Sep 2014 13:51:56 +0530
-Message-ID: <CAHfPSqAn5gHjDA75Zf1W5=GH9_W+X6+4oc9rDK7CqeSoF3DURw@mail.gmail.com>
-References: <1409671320-7604-1-git-send-email-ch.naveen@samsung.com> <3749760.naNt3fHoTI@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-Reply-To: <3749760.naNt3fHoTI@wuerfel>
-Sender: linux-serial-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-serial@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, Pankaj Dubey <pankaj.dubey@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 00/15] PM / Domains: Cleanups and remove superfluous APIs
+Date: Wed,  3 Sep 2014 12:52:16 +0200
+Message-ID: <1409741551-16437-1-git-send-email-ulf.hansson@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f177.google.com ([74.125.82.177]:33054 "EHLO
+	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755885AbaICKwx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 3 Sep 2014 06:52:53 -0400
+Received: by mail-we0-f177.google.com with SMTP id u56so8352899wes.36
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 03 Sep 2014 03:52:52 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
 
-Hi Arnd,
+This patchset has a bit of a history and some parts of it has been posted
+earlier.
+http://lists.infradead.org/pipermail/linux-arm-kernel/2014-June/262725.html
 
-On 2 September 2014 21:16, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Tuesday 02 September 2014 20:52:00 Naveen Krishna Chatradhi wrote:
->> Make the config symbols SERIAL_SAMSUNG_UARTS_4 and
->> SERIAL_SAMSUNG_UARTS depend on SERIAL_SAMSUNG rather than
->> PLAT_SAMSUNG.
->
-> Please always describe why you are doing a change. This patch
-> seems really pointless.
+The intent is to simplify code for the generic power domain and also some of
+the machine specific code that uses the generic power domain.
 
-The SERIAL_SAMSUNG_UARTS_4 and SERIAL_SAMSUNG_UARTS config options are
-meaningful only if SERIAL_SAMSUNG is enabled. Hence the dependency
-rules were changed. I will repost this patch with better description.
+Do note, there are dependencies through this patchset, especially related to
+the ARM SoC changes, thus they all need to be kept together.
 
->
->>  config SERIAL_SAMSUNG_UARTS_4
->>         bool
->> -       depends on PLAT_SAMSUNG
->> +       depends on SERIAL_SAMSUNG
->>         default y if !(CPU_S3C2410 || CPU_S3C2412 || CPU_S3C2440 || CPU_S3C2442)
->>         help
->>           Internal node for the common case of 4 Samsung compatible UARTs
->>
->>  config SERIAL_SAMSUNG_UARTS
->>         int
->> -       depends on PLAT_SAMSUNG
->> +       depends on SERIAL_SAMSUNG
->>         default 4 if SERIAL_SAMSUNG_UARTS_4 || CPU_S3C2416
->>         default 3
->>         help
->>
->
-> Have you checked that it still builds on all samsung platforms when
-> SERIAL_SAMSUNG is disabled? We have had build errors in this area
-> in the past.
+Ulf Hansson (15):
+  PM / Domains: Remove the pm_genpd_add|remove_callbacks APIs
+  PM / Domains: Ignore callbacks for subsys generic_pm_domain_data
+  PM / Domains: Remove system PM callbacks from gpd_dev_ops
+  ARM: shmobile: Drop dev_irq_safe from r8a7779 genpd config
+  ARM: shmobile: Drop dev_irq_safe from R-mobile genpd config
+  PM / Domains: Remove dev_irq_safe from genpd config
+  PM / Domains: Remove redundant check for CONFIG_PM
+  PM / Domains: Remove pm_genpd_syscore_switch() API
+  PM / Domains: Remove genpd_queue_power_off_work() API
+  PM / Domains: Add late_initcall to disable unused PM domains
+  ARM: exynos: Leave disabling of unused PM domains to genpd
+  ARM: s3c64xx: Leave disabling of unused PM domains to genpd
+  drivers: sh: Leave disabling of unused PM domains to genpd
+  PM / Domains: Remove default_stop_ok() API
+  PM / Domains: Keep declaration of dev_power_governors together
 
-Yes, it builds for other Samsung platforms.
-
->
->         Arnd
-
-Thanks.
+ arch/arm/mach-exynos/exynos.c         |   1 -
+ arch/arm/mach-s3c64xx/common.c        |   5 -
+ arch/arm/mach-s3c64xx/common.h        |   7 -
+ arch/arm/mach-s3c64xx/mach-anw6410.c  |   1 -
+ arch/arm/mach-s3c64xx/mach-crag6410.c |   1 -
+ arch/arm/mach-s3c64xx/mach-hmt.c      |   1 -
+ arch/arm/mach-s3c64xx/mach-mini6410.c |   1 -
+ arch/arm/mach-s3c64xx/mach-ncp.c      |   1 -
+ arch/arm/mach-s3c64xx/mach-real6410.c |   1 -
+ arch/arm/mach-s3c64xx/mach-smartq5.c  |   1 -
+ arch/arm/mach-s3c64xx/mach-smartq7.c  |   1 -
+ arch/arm/mach-s3c64xx/mach-smdk6400.c |   1 -
+ arch/arm/mach-s3c64xx/mach-smdk6410.c |   1 -
+ arch/arm/mach-s3c64xx/pm.c            |   7 -
+ arch/arm/mach-shmobile/pm-r8a7779.c   |   1 -
+ arch/arm/mach-shmobile/pm-rmobile.c   |   1 -
+ drivers/base/power/domain.c           | 322 ++++------------------------------
+ drivers/base/power/domain_governor.c  |   7 +-
+ drivers/sh/pm_runtime.c               |  11 --
+ include/linux/pm_domain.h             |  56 +-----
+ 20 files changed, 40 insertions(+), 388 deletions(-)
 
 -- 
-Shine bright,
-(: Nav :)
+1.9.1
