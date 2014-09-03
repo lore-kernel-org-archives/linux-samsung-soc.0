@@ -1,88 +1,291 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 5/5] phy: exynos5-usbdrd: Adding Kconfig dependency for
- Exynos7
-Date: Wed, 3 Sep 2014 09:46:11 -0500
-Message-ID: <20140903144611.GE31855@saruman.home>
-References: <1409212920-28526-1-git-send-email-gautam.vivek@samsung.com>
- <1409212920-28526-6-git-send-email-gautam.vivek@samsung.com>
- <CAN_we7MQAqEsRaQc_pkRE_KXx9zZNLDBR2aHUrazM30Nv3udmQ@mail.gmail.com>
- <CAFp+6iHsfg6Ru0LBN=JviV=-mSdmuSo9Te3EXYF+X8jssD_BYQ@mail.gmail.com>
- <20140902143711.GD16872@saruman.home>
- <CAFp+6iE4V4bWHGasr2qNC14mGNAfjQbgerCDMLLatnQQJ86NuA@mail.gmail.com>
-Reply-To: <balbi@ti.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 5/7] arm64: dts: Add initial device tree support for
+ EXYNOS7
+Date: Thu, 04 Sep 2014 01:15:20 +0900
+Message-ID: <036a01cfc792$422271e0$c66755a0$@samsung.com>
+References: <1409672143-8574-1-git-send-email-ch.naveen@samsung.com>
+ <1409672143-8574-6-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="SNIs70sCzqvszXB4"
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iE4V4bWHGasr2qNC14mGNAfjQbgerCDMLLatnQQJ86NuA@mail.gmail.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Felipe Balbi <balbi@ti.com>, Daniele Forsi <dforsi@gmail.com>, USB list <linux-usb@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Kukjin Kim <kgene.kim@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
-
---SNIs70sCzqvszXB4
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:53400 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753209AbaICQPW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 3 Sep 2014 12:15:22 -0400
+In-reply-to: <1409672143-8574-6-git-send-email-ch.naveen@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>, linux-arm-kernel@lists.infradead.org
+Cc: naveenkrishna.ch@gmail.com, linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, t.figa@samsung.com
 
-On Wed, Sep 03, 2014 at 09:32:14AM +0530, Vivek Gautam wrote:
-> On Tue, Sep 2, 2014 at 8:07 PM, Felipe Balbi <balbi@ti.com> wrote:
-> > On Mon, Sep 01, 2014 at 01:30:21PM +0530, Vivek Gautam wrote:
-> >> On Thu, Aug 28, 2014 at 8:36 PM, Daniele Forsi <dforsi@gmail.com> wrot=
-e:
-> >> > 2014-08-28 10:02 GMT+02:00 Vivek Gautam:
-> >> >
-> >> >> This USB 3.0 PHY controller is also present on Exynos7
-> >> >> platform, so adding the dependency on ARCH_EXYNOS7 for this driver.
-> >> >
-> >> >> +++ b/drivers/phy/Kconfig
-> >> >> @@ -186,7 +186,7 @@ config PHY_EXYNOS5250_USB2
-> >> >>
-> >> >>  config PHY_EXYNOS5_USBDRD
-> >> >>         tristate "Exynos5 SoC series USB DRD PHY driver"
-> >> >> -       depends on ARCH_EXYNOS5 && OF
-> >> >> +       depends on (ARCH_EXYNOS5 || ARCH_EXYNOS7) && OF
-> >> >
-> >> > shouldn't that prompt and its help text be updated to mention also E=
-xynos7?
-> >>
-> >> Right, even that has to be updated accordingly. Will update the same i=
-n next
-> >> version of the patch. Thanks for pointing this.
-> >
-> > I would rather change that to ARCH_EXYNOS, unless Kishon doesn't like
-> > that idea. The thing is that this will likely need to be patches for
-> > exynos8, 9, 10, 11...
->=20
-> Yes, after we have the 2nd version of Exynos7 support patches, it makes
-> more sense to keep dependency on ARCH_EXYNOS.
+Naveen Krishna Chatradhi wrote:
+> 
+> Add initial device tree nodes for EXYNOS7 SoC and board dts file
+> to support Espresso board based on Exynos7 SoC.
+> 
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
 
-thank you, that'll help new silicon wakeup; one less thing to patch :-p
+NAK.
 
---=20
-balbi
+There are several exynos7 SoCs which cannot be supported with one dt file. I
+mean just one exynos7 cannot represent all of exynos7 SoCs... 
 
---SNIs70sCzqvszXB4
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> ---
+>  arch/arm64/boot/dts/Makefile                    |    1 +
+>  arch/arm64/boot/dts/exynos/exynos7-espresso.dts |   31 +++++
+>  arch/arm64/boot/dts/exynos/exynos7.dtsi         |  168 +++++++++++++++++++++++
+>  3 files changed, 200 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
+> index c52bdb0..a3bc18a 100644
+> --- a/arch/arm64/boot/dts/Makefile
+> +++ b/arch/arm64/boot/dts/Makefile
+> @@ -1,3 +1,4 @@
+> +dtb-$(CONFIG_ARCH_EXYNOS7) += exynos/exynos7-espresso.dtb
+>  dtb-$(CONFIG_ARCH_VEXPRESS) += rtsm_ve-aemv8a.dtb foundation-v8.dtb
+>  dtb-$(CONFIG_ARCH_XGENE) += apm-mustang.dtb
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-
+> espresso.dts
+> new file mode 100644
+> index 0000000..f6a8879
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> @@ -0,0 +1,31 @@
+> +/*
+> + * SAMSUNG Exynos7 Espresso board device tree source
+> + *
+> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +/dts-v1/;
+> +#include "exynos7.dtsi"
+> +
+> +/ {
+> +	model = "Samsung Exynos7 Espresso board based on EXYNOS7";
+> +	compatible = "samsung,exynos7-espresso", "samsung,exynos7";
+> +
+> +	chosen {
+> +		linux,stdout-path = &serial_2;
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Well...
 
-iQIcBAEBAgAGBQJUBymzAAoJEIaOsuA1yqREYaEQAJ9dKi8ErbHY2N98fpeo3a3W
-pqe496n8nmczlK3x1mCcEYwqPQcX95mDI11iKArSfCnaSQA5shMoGel3tjWFS6yQ
-3nCVpoi78PLvgwCu6HDPOuCCa74HRnW1eRS+gnnnEoVA2oufxU76G/f8WkYJFQkm
-EyMUZ+4nn1XrdXyudpaf8hWzVu7Ru2TvUx4HTe0QLRmFr1uxpfN/sAKAcjmx+Kn1
-zITKZ22qYt1RlN+mB3YqpENZzF9LV57AWHvy+RtJarFbMtHBJsbYruXKoxLbHbHK
-Q9qtDHNNq27cNAWlLsjFVAXMgAfUNkVfX/9qsH0NCidGVf4yD/SlM8QALaH5fKHX
-/JjBvjWU9qTScXCa3IcQxv8uOcgQdAioePEHQ7cvU2aVZzvRC3rbbXgsW46AtJqO
-0niicdNmkhv2E0ImlSWgc3ZvG9z440AaeMKJuqH22utUNUR6I0hngf1jlyJUa59P
-m5yrWXkYJVnSwKkW9I/KhDPGWYbygAcMVsS9ReN0p5I+fXAiqi0BfQlcNgrCyJfs
-QPQ6snXCFdQJMkz5xDC0rumxgdLELMNuMd83HeHuOfRZaurHkXswS76rsI8yVRQ5
-+eIuSDB2/XGrrWlTo5YThB32dd+Ak54g0rtpl1Yqg13gSbmnmQif7fByGJ7RxHIp
-eqrAfEoXvlxElVLR6bSu
-=ASkT
------END PGP SIGNATURE-----
+> +	};
+> +
+> +	memory@40000000 {
+> +		device_type = "memory";
+> +		reg = <0x0 0x40000000 0x0 0xC0000000>;
 
---SNIs70sCzqvszXB4--
+The base address of system memory is depending on each board, actually some of
+them are 0x20000000.
+
+> +	};
+> +};
+> +
+> +&serial_2 {
+> +	status = "okay";
+> +};
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> new file mode 100644
+> index 0000000..e593af55
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> @@ -0,0 +1,168 @@
+> +/*
+> + * SAMSUNG EXYNOS7 SoC device tree source
+> + *
+> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <dt-bindings/clock/exynos7-clk.h>
+> +
+> +/ {
+> +	compatible = "samsung,exynos7";
+> +	interrupt-parent = <&gic>;
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> +
+> +	aliases {
+> +		serial0 = &serial_0;
+> +		serial1 = &serial_1;
+> +		serial2 = &serial_2;
+> +		serial3 = &serial_3;
+
+There are exynos7 SoC is having 3 serial IPs...
+
+> +	};
+> +
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		cpu@0 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a57", "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x0>;
+> +		};
+> +
+> +		cpu@1 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a57", "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x1>;
+> +		};
+> +
+> +		cpu@2 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a57", "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x2>;
+> +		};
+> +
+> +		cpu@3 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a57", "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x3>;
+> +		};
+> +	};
+
+Naveen, please don't assume all of exynos7 SoCs are having quad a57s...
+
+> +
+> +	psci {
+> +		compatible = "arm,psci-0.2";
+> +		method = "smc";
+> +	};
+> +
+> +	soc: soc {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0 0 0 0x18000000>;
+> +
+> +		chipid@10000000 {
+> +			compatible = "samsung,exynos4210-chipid";
+> +			reg = <0x10000000 0x100>;
+> +		};
+> +
+> +		fin_pll: xxti {
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <24000000>;
+
+It's wrong on some exynos7 SoCs...
+
+> +			clock-output-names = "fin_pll";
+> +			#clock-cells = <0>;
+> +		};
+> +
+
+Unfortunately the addresses are different on each exynos7 SoCs...
+
+> +		gic: interrupt-controller@11001000 {
+> +			compatible = "arm,gic-400";
+> +			#interrupt-cells = <3>;
+> +			#address-cells = <0>;
+> +			interrupt-controller;
+> +			reg =	<0x11001000 0x1000>,
+> +				<0x11002000 0x1000>,
+> +				<0x11004000 0x2000>,
+> +				<0x11006000 0x2000>;
+> +		};
+> +
+> +		clock_topc: clock-controller@10570000 {
+> +			compatible = "samsung,exynos7-clock-topc";
+> +			reg = <0x10570000 0x10000>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		clock_top0: clock-controller@105d0000 {
+> +			compatible = "samsung,exynos7-clock-top0";
+> +			reg = <0x105d0000 0xb000>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		clock_peric0: clock-controller@13610000 {
+> +			compatible = "samsung,exynos7-clock-peric0";
+> +			reg = <0x13610000 0xd00>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		clock_peric1: clock-controller@14C80000 {
+> +			compatible = "samsung,exynos7-clock-peric1";
+> +			reg = <0x14c80000 0xd00>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		clock_peris: clock-controller@10040000 {
+> +			compatible = "samsung,exynos7-clock-peris";
+> +			reg = <0x10040000 0xd00>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		serial_0: serial@13630000 {
+> +			compatible = "samsung,exynos4210-uart";
+> +			reg = <0x13630000 0x100>;
+> +			interrupts = <0 440 0>;
+> +			clocks = <&clock_peric0 PCLK_UART0>, <&clock_peric0 SCLK_UART0>;
+> +			clock-names = "uart", "clk_uart_baud0";
+> +			status = "disabled";
+> +		};
+> +
+> +		serial_1: serial@14c20000 {
+> +			compatible = "samsung,exynos4210-uart";
+> +			reg = <0x14c20000 0x100>;
+> +			interrupts = <0 456 0>;
+> +			clocks = <&clock_peric1 PCLK_UART1>, <&clock_peric1 SCLK_UART1>;
+> +			clock-names = "uart", "clk_uart_baud0";
+> +			status = "disabled";
+> +		};
+> +
+> +		serial_2: serial@14c30000 {
+> +			compatible = "samsung,exynos4210-uart";
+> +			reg = <0x14c30000 0x100>;
+> +			interrupts = <0 457 0>;
+> +			clocks = <&clock_peric1 PCLK_UART2>, <&clock_peric1 SCLK_UART2>;
+> +			clock-names = "uart", "clk_uart_baud0";
+> +			status = "disabled";
+> +		};
+> +
+> +		serial_3: serial@14c40000 {
+> +			compatible = "samsung,exynos4210-uart";
+> +			reg = <0x14c40000 0x100>;
+> +			interrupts = <0 458 0>;
+> +			clocks = <&clock_peric1 PCLK_UART3>, <&clock_peric1 SCLK_UART3>;
+> +			clock-names = "uart", "clk_uart_baud0";
+> +			status = "disabled";
+> +		};
+> +
+> +		timer {
+> +			compatible = "arm,armv8-timer";
+> +			interrupts = <1 13 0xff01>,
+> +				     <1 14 0xff01>,
+> +				     <1 11 0xff01>,
+> +				     <1 10 0xff01>;
+> +		};
+> +	};
+> +};
+> --
+> 1.7.9.5
+
+So this is not acceptable...
+
+- Kukjin
