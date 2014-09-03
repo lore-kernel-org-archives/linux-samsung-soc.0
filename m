@@ -1,107 +1,107 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v3 16/17] drm/exynos/ipp: remove file argument from node
- related functions
-Date: Wed, 03 Sep 2014 10:42:52 +0900
-Message-ID: <5406721C.9030906@samsung.com>
-References: <1409216861-12452-17-git-send-email-a.hajda@samsung.com>
- <1409662506-30270-1-git-send-email-a.hajda@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv5 4/4] thermal: exynos: Remove duplicate code when reading
+ triminfo register of Exynos5440
+Date: Wed, 03 Sep 2014 11:08:43 +0900
+Message-ID: <5406782B.9000408@samsung.com>
+References: <1409016665-3824-1-git-send-email-cw00.choi@samsung.com>
+ <1409016665-3824-5-git-send-email-cw00.choi@samsung.com>
+ <53FEAF2A.1080400@samsung.com> <20140828145310.GC18194@developer>
+ <53FFC051.7040907@samsung.com> <20140829192818.GB23645@developer>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:17589 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751168AbaICBm7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Sep 2014 21:42:59 -0400
-In-reply-to: <1409662506-30270-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <20140829192818.GB23645@developer>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: eduardo.valentin@ti.com, amit.daniel@samsung.com, rui.zhang@intel.com, kgene.kim@samsung.com, ch.naveen@samsung.com, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>
 
-On 09/02/2014 09:55 PM, Andrzej Hajda wrote:
-> Since file pointer is preserved in c_node passing it
-> as argument in node functions is redundant.
+Dear Eduardo,
+
+On 08/30/2014 04:28 AM, Eduardo Valentin wrote:
+> Chanwoo,
 > 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
-> v3:
-> - file check moved to next patch
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_ipp.c | 12 +++++-------
->  1 file changed, 5 insertions(+), 7 deletions(-)
+> On Fri, Aug 29, 2014 at 08:50:41AM +0900, Chanwoo Choi wrote:
+>> Dear Eduardo,
+>>
+>> On 08/28/2014 11:53 PM, Eduardo Valentin wrote:
+>>> On Thu, Aug 28, 2014 at 01:25:14PM +0900, Chanwoo Choi wrote:
+>>>> Dear Eduardo,
+>>>>
+>>>> This patch is wrong. It is my mistake.
+>>>>
+>>>> Please ignore only this patch because
+>>>> the offset calculation of 'case 0' is different from 'case 2'.
+>>>
+>>>
+>>> Do patches 1 - 3 are still correct? Patch 1, from Barlomiej, seams to be
+>>> a common agreement. 
+> 
+>>
+>> Yes, patches 1 - 3 are correct.
+>>
+> 
+> OK. I pulled patch 01 into my next branch.
+> 
+> Can you please update patches 02 and 03 based on my next brach? They are
+> conflicting with the massive cleanups done by Bartlomiej (Thanks
+> Bartlomiej). So, please, resend patches 02 and 03 only, refreshed onto
+> my next branch.
+
+OK, I'll send new patchset after rebase it.
+
+Best Regards,
+Chanwoo Choi
+
+> 
+> Cheers.
+> 
+>> Best Regards,
+>> Chanwoo Choi
+>>
+>>>
+>>>>
+>>>> Best Regards,
+>>>> Chanwoo Choi
+>>>>
+>>>> On 08/26/2014 10:31 AM, Chanwoo Choi wrote:
+>>>>> This patch remove simply duplicate code when reading triminfo register of Exynos5440.
+>>>>>
+>>>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>>> Cc: Zhang Rui <rui.zhang@intel.com>
+>>>>> Cc: Eduardo Valentin <edubezval@gmail.com>
+>>>>> Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>>>>> Reviewed-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>>>>> ---
+>>>>>  drivers/thermal/samsung/exynos_tmu.c | 4 +---
+>>>>>  1 file changed, 1 insertion(+), 3 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+>>>>> index 64c702a..5888467 100644
+>>>>> --- a/drivers/thermal/samsung/exynos_tmu.c
+>>>>> +++ b/drivers/thermal/samsung/exynos_tmu.c
+>>>>> @@ -187,15 +187,13 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+>>>>>  		 */
+>>>>>  		switch (data->id) {
+>>>>>  		case 0:
+>>>>> +		case 2:
+>>>>>  			trim_info = readl(data->base +
+>>>>>  			EXYNOS5440_EFUSE_SWAP_OFFSET + reg->triminfo_data);
+>>>>>  			break;
+>>>>>  		case 1:
+>>>>>  			trim_info = readl(data->base + reg->triminfo_data);
+>>>>>  			break;
+>>>>> -		case 2:
+>>>>> -			trim_info = readl(data->base -
+>>>>> -			EXYNOS5440_EFUSE_SWAP_OFFSET + reg->triminfo_data);
+>>>>>  		}
+>>>>>  	} else {
+>>>>>  		/* On exynos5420 the triminfo register is in the shared space */
+>>>>>
+>>>>
+>>>
+>>
 > 
 
-About both patch 16 and 17
-
-Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
-
-Thanks.
-
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-> index 05f0f4e..9e9714a 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-> @@ -529,7 +529,6 @@ static int ipp_put_mem_node(struct drm_device *drm_dev,
->  
->  static struct drm_exynos_ipp_mem_node
->  		*ipp_get_mem_node(struct drm_device *drm_dev,
-> -		struct drm_file *file,
->  		struct drm_exynos_ipp_cmd_node *c_node,
->  		struct drm_exynos_ipp_queue_buf *qbuf)
->  {
-> @@ -560,7 +559,7 @@ static struct drm_exynos_ipp_mem_node
->  			dma_addr_t *addr;
->  
->  			addr = exynos_drm_gem_get_dma_addr(drm_dev,
-> -					qbuf->handle[i], file);
-> +					qbuf->handle[i], c_node->filp);
->  			if (IS_ERR(addr)) {
->  				DRM_ERROR("failed to get addr.\n");
->  				ipp_put_mem_node(drm_dev, c_node, m_node);
-> @@ -606,7 +605,6 @@ static void ipp_free_event(struct drm_pending_event *event)
->  }
->  
->  static int ipp_get_event(struct drm_device *drm_dev,
-> -		struct drm_file *file,
->  		struct drm_exynos_ipp_cmd_node *c_node,
->  		struct drm_exynos_ipp_queue_buf *qbuf)
->  {
-> @@ -618,7 +616,7 @@ static int ipp_get_event(struct drm_device *drm_dev,
->  	e = kzalloc(sizeof(*e), GFP_KERNEL);
->  	if (!e) {
->  		spin_lock_irqsave(&drm_dev->event_lock, flags);
-> -		file->event_space += sizeof(e->event);
-> +		c_node->filp->event_space += sizeof(e->event);
->  		spin_unlock_irqrestore(&drm_dev->event_lock, flags);
->  		return -ENOMEM;
->  	}
-> @@ -630,7 +628,7 @@ static int ipp_get_event(struct drm_device *drm_dev,
->  	e->event.prop_id = qbuf->prop_id;
->  	e->event.buf_id[EXYNOS_DRM_OPS_DST] = qbuf->buf_id;
->  	e->base.event = &e->event.base;
-> -	e->base.file_priv = file;
-> +	e->base.file_priv = c_node->filp;
->  	e->base.destroy = ipp_free_event;
->  	mutex_lock(&c_node->event_lock);
->  	list_add_tail(&e->base.link, &c_node->event_list);
-> @@ -908,7 +906,7 @@ int exynos_drm_ipp_queue_buf(struct drm_device *drm_dev, void *data,
->  	switch (qbuf->buf_type) {
->  	case IPP_BUF_ENQUEUE:
->  		/* get memory node */
-> -		m_node = ipp_get_mem_node(drm_dev, file, c_node, qbuf);
-> +		m_node = ipp_get_mem_node(drm_dev, c_node, qbuf);
->  		if (IS_ERR(m_node)) {
->  			DRM_ERROR("failed to get m_node.\n");
->  			return PTR_ERR(m_node);
-> @@ -921,7 +919,7 @@ int exynos_drm_ipp_queue_buf(struct drm_device *drm_dev, void *data,
->  		 */
->  		if (qbuf->ops_id == EXYNOS_DRM_OPS_DST) {
->  			/* get event for destination buffer */
-> -			ret = ipp_get_event(drm_dev, file, c_node, qbuf);
-> +			ret = ipp_get_event(drm_dev, c_node, qbuf);
->  			if (ret) {
->  				DRM_ERROR("failed to get event.\n");
->  				goto err_clean_node;
-> 
