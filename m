@@ -1,166 +1,181 @@
-From: Boris BREZILLON <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH v2] mfd: syscon: Decouple syscon interface from platform
- devices
-Date: Wed, 3 Sep 2014 15:16:11 +0200
-Message-ID: <20140903151611.260a7218@bbrezillon>
-References: <1409668935-10667-1-git-send-email-pankaj.dubey@samsung.com>
-	<6034841.GFrG3XCMdb@wuerfel>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH v9 4/6] ARM: Exynos: switch to using generic cpufreq
+ driver for Exynos4210/5250/5420
+Date: Wed, 3 Sep 2014 18:48:35 +0530
+Message-ID: <CAJuA9ag2pybyLDUyW43wMQu4PA1cB4V9c1bc7WB3xjqzhqNGTw@mail.gmail.com>
+References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
+	<1406707663-16656-5-git-send-email-thomas.ab@samsung.com>
+	<53DA8BB9.6020702@samsung.com>
+	<53DA8D85.3050106@gmail.com>
+	<7hbnrc6px3.fsf@paris.lan>
+	<53F7DA13.6090305@gmail.com>
+	<CADWw7OgAS-z-UOrJU-hL2fzuefJmLtCTg57jYk2Df7f5KfLJmA@mail.gmail.com>
+	<7h8umc60we.fsf@paris.lan>
+	<CADWw7OgW+o3tB=ptnsy-PsmXmNv8oXzt_WfK6NswQiEWWwAzNA@mail.gmail.com>
+	<CAGa+x85-Anb+HsSUQRaaeex19-HK+yZDW0UpFBwAtsQ8Sf2Aqg@mail.gmail.com>
+	<CAGa+x86jU8MR=r_xuaiorbNNyqrezb0b6Ozy-MPg9HvsARESOw@mail.gmail.com>
+	<CAJuA9ajtsrY7zSDMs=c6BZ0AqERoBgvq++dTF4Dn673zGMfcgQ@mail.gmail.com>
+	<CAMAWPa-8h5PNhgT+ApBhA8p=i+4oFOnYnQsQ4mK1JKwwAhpvpQ@mail.gmail.com>
+	<CAJuA9ah5M_pXRMXPB6o7JLhgVUHM7kYo9HOV6Yxv4Z=hKMdG=w@mail.gmail.com>
+	<7hmwah6cop.fsf@paris.lan>
+	<CAJuA9ahe=9gdTaGcRb69syvRfwkkGMgDiiNfOMA9TBo42cWVZw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:46063 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S932411AbaICNQP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Sep 2014 09:16:15 -0400
-In-Reply-To: <6034841.GFrG3XCMdb@wuerfel>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAJuA9ahe=9gdTaGcRb69syvRfwkkGMgDiiNfOMA9TBo42cWVZw@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Chander Kashyap <k.chander@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Amit Kucheria <amit.kucheria@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, kgene.kim@samsung.com, linux@arm.linux.org.uk, Alexander Shiyan <shc_work@mail.ru>, naushad@samsung.com, Tomasz Figa <t.figa@samsung.com>, linux-kernel@vger.kernel.org, joshi@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, tomasz.figa@gmail.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, lee.jones@linaro.org, Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@kernel.org>
 
-Hi,
+On Wed, Sep 3, 2014 at 9:56 AM, Thomas Abraham <ta.omasab@gmail.com> wrote:
+> Hi Kevin,
+>
+> On Wed, Sep 3, 2014 at 1:02 AM, Kevin Hilman <khilman@kernel.org> wrote:
+>> HI Thomas,
+>>
+>> Thomas Abraham <ta.omasab@gmail.com> writes:
+>>
+>>> On Fri, Aug 29, 2014 at 8:33 PM, Kevin Hilman <khilman@kernel.org> wrote:
+>>>> Hi Thomas,
+>>>>
+>>>> On Fri, Aug 29, 2014 at 5:52 AM, Thomas Abraham <ta.omasab@gmail.com> wrote:
+>>>>> Hi Kevin,
+>>>>>
+>>>>> On Wed, Aug 27, 2014 at 3:55 AM, Kevin Hilman <khilman@linaro.org> wrote:
+>>>>>> On Tue, Aug 26, 2014 at 8:15 AM, Kevin Hilman <khilman@linaro.org> wrote:
+>>>>>>> On Mon, Aug 25, 2014 at 10:25 PM, Chander Kashyap <k.chander@samsung.com> wrote:
+>>>>>>
+>>>>>> [...]
+>>>>>>
+>>>>>>>>>
+>>>>>>>>> Can you clarify how you're setting the voltages to ensure stability?
+>>>>>>>>
+>>>>>>>> below is the diff :  wip/exynos/integ
+>>>>>>>
+>>>>>>> Thanks.
+>>>>>>>
+>>>>>>> I've applied your patch, and bootup shows vdd_arm and vdd_kfc at
+>>>>>>> 1500mV, but still when booting with cpuidle enabled (bL switcher
+>>>>>>> disabled), I'm seeing lockups with no kernel output.  With CPUidle
+>>>>>>> disabled, things are pretty stable.
+>>>>>>>
+>>>>>>> What tree are you using to test this out on 5420?  I'm using mainline
+>>>>>>> v3.17-rc1 + DT patch for CPUidle and this cpufreq series.  See my
+>>>>>>> wip/exynos/integ branch at
+>>>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/khilman/linux.git.
+>>>>>>
+>>>>>> I mis-stated this.  Actually my tree is based on the v3.17-rc1 branch
+>>>>>> of the exynos-reference tree[1] + the above mentioned patches for
+>>>>>> cpuidle and cpufreq.
+>>>>>>
+>>>>>> Also, I've narrowed down the instability a bit, and it's not related
+>>>>>> to CPUidle.  I can now trigger a boot hang even without CPUidle
+>>>>>> enabled.  Here's a quick way to cause a boot lockup. With the switcher
+>>>>>> disabled, I enable CPUfreq and set the default governor to
+>>>>>> performance.  As soon as cpufreq driver loads, it tries to use the top
+>>>>>> frequences for both clusters, and it hangs.
+>>>>>>
+>>>>>> Selectively disabling frequencies, I narrowed it down to the 1.3GHz
+>>>>>> and 1.2GHz frequencies of the little cluster.  With these commented
+>>>>>> out in the DT, it will fully boot with the performance governor
+>>>>>> enabled.
+>>>>>>
+>>>>>> So that leads to the question.  Are all of the operating points in
+>>>>>> exynos5420.dtsi valid for exynos5800, and have they been validated?
+>>>>>
+>>>>> I tried to recreate the boot lockup issue using the same steps you
+>>>>> listed above for the Exynos5800 peach-pi platform (Chromebook2), but I
+>>>>> do not see any issues. I can see both clusters with max clock speed
+>>>>> after boot (1.8GHz and 1.3GHz).
+>>>>>
+>>>>> I am using v3.17-rc2 + CPUFreq Patches + max77802 regulator support
+>>>>> patches for Chromebook2 + temp hack to set A15 voltage to 1.35V and A7
+>>>>> voltage to 1.3V.
+>>>>
+>>>> Can you share your branch and temp hack(s) as well as your defconfig?
+>>>>
+>>>> I'm using the v3.17-rc1 branch from the exynos tree (which includes
+>>>> the max77802 series) but also has a bunch of other stuff which may be
+>>>> causing the issue.
+>>>>
+>>>> It would be good if I can reproduce your exact tree/branch and see if
+>>>> I still have the same problem.
+>>>
+>>> The branch with the patches that have been used to test cpufreq on
+>>> Exynos5800 is available at
+>>>
+>>> https://github.com/exynos-reference/kernel/tree/exynos5-v3.17-rc3-temp-cpufreq
+>>>
+>>> Please let me know if this works or if there are any issues.
+>>
+>> Yes, your branch works fine, but it's because of the last (unposted)
+>> patch on your branch[1]:
+>> ARM: dts: remove all supplies sourced from tps65090 PMIC
+>
+> I must have explicitly stated that I am using local changes to get
+> vdd_arm and vdd_kfc to required levels. I apologize for that. These
+> are local temporary changes which I did not want to post. I am working
+> on adding voltage scaling support in arm bL cpufreq driver with which
+> these local hacks would not be necessary.
+>
+>>
+>> That patch had not been posted, so I hadn't seen it before, but based on
+>> the changelog, it's pretty clear you had the same problems that I had
+>> without it, so I'm not sure why it wasn't mentioned earlier in this
+>> thread.
+>
+> At the time of posting, this patch series was only tested on
+> Exynos5420 based smdk5420 board. There was no regulator support for
+> peach-pit and peach-pi at that time and so I had not tested this
+> series on Exynos5800 Chromebook2. But the code was written to be fully
+> compatible for Exynos5800 as well. It was when you reported a problem
+> with Exynos5800 that I tested this series on Exynos5800 with the
+> regulator patches from Javier.
+>
+>>
+>> I also noticed that the "force vdd_arm and vdd_kfc to max voltage" patch
+>> is not actually using the max voltage, which appears to be 1.5V from the
+>> DT, but actually using 1.35 V, however the changelog has no explanation
+>> for this.
+>
+> This also is a temporary patch and by "max voltage" I actually meant
+> max voltage required to operate the cpus and not the max voltage that
+> the buck can supply.
+>
+>>
+>> One other thing, your temp-cpufreq branch has conflicts with max77802
+>> stuff in the v3.17-rc1 branch of the exynos-reference tree (which I'm
+>> using for CPUidle dependencies, on the PMU series IIRC.)
+>
+> I haven't checked but probably there is an older version of Javier's
+> regulator patches in the v3.17-rc1 branch.
+>
+>>
+>> Are there any plans to update the main referece branch and include
+>> cpufreq?
+>
+> Yes, a new branch with all the latest patches (cpufreq + regulator +
+> temp fixes) will be created. I will let you when that is ready.
 
-I'm joining the thread cause I'm really interested in having a syscon
-dev available during early init (I need it to share at91 PMC
-registers among several subsystems, one of this subsystem being the CCF
-which is called during early ARM boot process to register system
-clocks).
+Hi Kevin,
 
-On Tue, 02 Sep 2014 17:20:03 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
+A new branch [1] has been created using commits from exynos5-v3.17-rc1
+branch + cpufreq + regulator + temp fixes. I have tested this branch
+on Exynos5800 Chromebook2 and cpufreq works fine with both ondemand
+and performance governors. Please let me know if there are any issues
+with this new branch. It is based on v3.17-rc3.
 
-> On Tuesday 02 September 2014 20:12:15 Pankaj Dubey wrote:
-> > Currently a syscon entity can only be registered directly through a
-> > platform device that binds to a dedicated syscon driver. However in
-> > certain cases it is required to bind a device with it's dedicated
-> > driver rather than binding with syscon driver.
-> > 
-> > For example, certain SoCs (e.g. Exynos) contain system controller
-> > blocks which perform various functions such as power domain control,
-> > CPU power management, low power mode control, but in addition contain
-> > certain IP integration glue, such as various signal masks,
-> > coprocessor power control, etc. In such case, there is a need to have
-> > a dedicated driver for such system controller but also share registers
-> > with other drivers. The latter is where the syscon interface is helpful.
-> > 
-> > This patch decouples syscon object from syscon platform driver, and
-> > allows to create syscon objects first time when it is required by
-> > calling of syscon_regmap_lookup_by APIs and keeps a list of such syscon
-> > objects along with syscon provider device_nodes and regmap handles.
-> > 
-> > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> > ---
-> > V1 of this patchset [1] and related discussion can be found here [1].
-> >  
-> > Changes since v1:
-> >  - Removed of_syscon_unregister function.
-> >  - Modified of_syscon_register function and it will be used by syscon.c 
-> >    to create syscon objects whenever required. 
-> >  - Removed platform device support from syscon.
-> >  - Removed syscon_regmap_lookup_by_pdevname API support.
-> >  - As there are significant changes w.r.t patchset v1, I am taking over
-> >    author for this patchset from Tomasz Figa.
-> 
-> Note that you got the Signed-off-by: list wrong, you should never have
-> any people listed as Signed-off-by after your own name, and they should
-> be listed before your name only when you are forwarding their patches.
-> 
-> > Note: Current kernel has clps711x user of syscon_regmap_lookup_by_pdevname and 
-> > will be broken after this patch. As per discussion over here [1], patches 
-> > for making these drivers DT based are ready and once that is done they can use
-> > syscon_regmap_lookup_by_phandle or syscon_regmap_lookup_by_compatible.
-> > 
-> > [1]: https://lkml.org/lkml/2014/8/22/81
-> 
-> Adding Alexander Shiyan to Cc here, so we can make sure this is well
-> coordinated.
-> 
-> I'm also adding Michal Simek, since here was involved in earlier discussions
-> about doing this.
-> 
-> >  drivers/mfd/syscon.c       |  143 +++++++++++++-------------------------------
-> >  include/linux/mfd/syscon.h |    1 +
-> >  2 files changed, 44 insertions(+), 100 deletions(-)
-> 
-> I certainly like the diffstat ;-)
-> 
-> >  struct syscon {
-> > +	struct device_node *np;
-> >  	struct regmap *regmap;
-> > +	struct list_head list;
-> >  };
-> 
-> Right
-> 
-> > @@ -68,27 +72,6 @@ struct regmap *syscon_regmap_lookup_by_compatible(const char *s)
-> >  }
-> >  EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_compatible);
-> >  
-> > -static int syscon_match_pdevname(struct device *dev, void *data)
-> > -{
-> > -	return !strcmp(dev_name(dev), (const char *)data);
-> > -}
-> > -
-> > -struct regmap *syscon_regmap_lookup_by_pdevname(const char *s)
-> > -{
-> > -	struct device *dev;
-> > -	struct syscon *syscon;
-> > -
-> > -	dev = driver_find_device(&syscon_driver.driver, NULL, (void *)s,
-> > -				 syscon_match_pdevname);
-> > -	if (!dev)
-> > -		return ERR_PTR(-EPROBE_DEFER);
-> > -
-> > -	syscon = dev_get_drvdata(dev);
-> > -
-> > -	return syscon->regmap;
-> > -}
-> > -EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_pdevname);
-> 
-> I think this can actually be left intact if that helps with clps71xx.
-> It could be done in a hacky way using bus_find_device_by_name()
-> to keep it simple, or in a somewhat nicer way by keeping the 
-> syscon platform_driver around for the non-DT case.
-> 
-> 
-> > +	regmap = regmap_init_mmio(NULL, base, &syscon_regmap_config);
-> > +	if (IS_ERR(regmap)) {
-> > +		pr_err("regmap init failed\n");
-> > +		return ERR_CAST(regmap);
-> > +	}
-> 
-> The last time I looked over this code, I think it was not safe to
-> call regmap_init_mmio() with a NULL device pointer, and we decided
-> that should be fixed. Have you checked whether it is ok now?
+[1] https://github.com/exynos-reference/kernel/tree/exynos5-v3.17-rc3
 
-I checked that part, and it appears most of the code is already there
-(see usage of regmap_attach_dev function here [1]).
+Thanks,
+Thomas.
 
-The only problem I see is that errors are still printed with dev_err,
-which, AFAIK, will trigger a kernel panic if dev is NULL.
-This is an issue in both the regmap_init function itself and the
-regcache_init function (which is called by regmap_init).
-
-BTW, maybe we should remove this line [2], as this is now part of the
-regmap_attach_dev function [3] which is called at the end of
-regmap_init if dev is not NULL [4].
-
-Adding Mark in Cc.
-
-Best Regards,
-
-Boris
-
-[1]http://lxr.free-electrons.com/source/drivers/base/regmap/regmap.c#L826
-[2]http://lxr.free-electrons.com/source/drivers/base/regmap/regmap.c#L511
-[3]http://lxr.free-electrons.com/source/drivers/base/regmap/regmap.c#L434
-[4]http://lxr.free-electrons.com/source/drivers/base/regmap/regmap.c#L826
-
-
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+>
+> Thanks,
+> Thomas.
+>
+>>
+>> Kevin
+>>
+>> [1] https://github.com/exynos-reference/kernel/commit/f08be7e4296a3452ee5d1aae31e3de5bbff2cf1a
