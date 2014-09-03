@@ -1,108 +1,76 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/1] ARM: exynos_defconfig: Enable options for display
- panel support
-Date: Thu, 04 Sep 2014 01:26:37 +0900
-Message-ID: <041101cfc793$d5cdd4b0$81697e10$@samsung.com>
-References: <1408749185-14133-1-git-send-email-javier.martinez@collabora.co.uk>
+Subject: RE: [PATCH v2 5/7] arm64: dts: Add initial device tree support for
+ EXYNOS7
+Date: Thu, 04 Sep 2014 01:31:21 +0900
+Message-ID: <043401cfc794$7f228650$7d6792f0$@samsung.com>
+References: <1409672143-8574-1-git-send-email-ch.naveen@samsung.com>
+ <1409672143-8574-6-git-send-email-ch.naveen@samsung.com>
+ <036a01cfc792$422271e0$c66755a0$@samsung.com> <3382034.5ADO0F7naY@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1408749185-14133-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:54293 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752645AbaICQbY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 3 Sep 2014 12:31:24 -0400
+In-reply-to: <3382034.5ADO0F7naY@wuerfel>
 Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>
-Cc: 'Doug Anderson' <dianders@chromium.org>, 'Olof Johansson' <olof@lixom.net>, 'Kevin Hilman' <khilman@linaro.org>, afaerber@suse.de, 'Ajay Kumar' <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Arnd Bergmann' <arnd@arndb.de>
+Cc: 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>, linux-arm-kernel@lists.infradead.org, naveenkrishna.ch@gmail.com, linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, t.figa@samsung.com
 
-Javier Martinez Canillas wrote:
+Arnd Bergmann wrote:
 > 
-> Many Exynos devices have a display panel, most of them just have
-> a simple panel while others have more complex configurations that
-> requires an embedded DisplayPort (eDP) to LVDS display bridge.
-> 
-> This patch enables the following features to support both setups:
-> 
-> - Direct Rendering Manager (DRM)
-> - DRM bridge registration and lookup framework
-> - Parade ps8622/ps8625 eDP/LVDS bridge
-> - NXP ptn3460 eDP/LVDS bridge
-> - Exynos Fully Interactive Mobile Display controller (FIMD)
-> - Panel registration and lookup framework
-> - Simple panels
-> - Backlight and LCD device support
-> 
-Thanks a lot.
+Hi, Arnd
 
-
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> ---
+> On Thursday 04 September 2014 01:15:20 Kukjin Kim wrote:
+> > Naveen Krishna Chatradhi wrote:
+> >
+> > > diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-
+> > > espresso.dts
+> > > new file mode 100644
+> > > index 0000000..f6a8879
+> > > --- /dev/null
+> > > +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> > > @@ -0,0 +1,31 @@
+> > > +/*
+> > > + * SAMSUNG Exynos7 Espresso board device tree source
+> > > + *
+> > > + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> > > + *		http://www.samsung.com
+> > > + *
+> > > + * This program is free software; you can redistribute it and/or modify
+> > > + * it under the terms of the GNU General Public License version 2 as
+> > > + * published by the Free Software Foundation.
+> > > +*/
+> > > +
+> > > +/dts-v1/;
+> > > +#include "exynos7.dtsi"
+> > > +
+> > > +/ {
+> > > +	model = "Samsung Exynos7 Espresso board based on EXYNOS7";
+> > > +	compatible = "samsung,exynos7-espresso", "samsung,exynos7";
+> > > +
+> > > +	chosen {
+> > > +		linux,stdout-path = &serial_2;
+> >
+> > Well...
+> >
+> > > +	};
+> > > +
+> > > +	memory@40000000 {
+> > > +		device_type = "memory";
+> > > +		reg = <0x0 0x40000000 0x0 0xC0000000>;
+> >
+> > The base address of system memory is depending on each board, actually some of
+> > them are 0x20000000.
 > 
-> Some of the options enabled here (e.g: the eDP/LVDS bridges)
-> are still not merged in mainline so this patch depends on
-> the following posted patches that were still not merged:
+> This is the board specific file, so it seems ok.
 > 
-> "drm/bridge: Modify drm_bridge core to support driver model" [0]
-> "drm/bridge: Add i2c based driver for ptn3460 bridge" [1]
-> "drm/bridge: Add i2c based driver for ps8622/ps8625 bridge" [2]
-> 
-BTW, I can't find its re-spin...how was going on?
-
-> But I wanted to post anyways to make easier for others to
-> figure out what are the needed options to have the display
-> working on their Exynos machines.
-> 
-> In order to test the display panel on the Peach machines,
-> the following patches are also needed:
-> 
-> "ARM: dts: Add DT changes for display on peach_pit" [3]
-> "ARM: dts: Add DT changes for display on peach_pi" [4]
-> 
-I'll have a look them soon.
+I mean there are many espresso boards are having different exynos7 SoC. I mean
+exynos7-espresso cannot represent all of espresso boards.
 
 - Kukjin
-
-> Best regards,
-> Javier
-> 
-> [0]: http://patchwork.ozlabs.org/patch/373792/
-> [1]: http://patchwork.ozlabs.org/patch/373793/
-> [2]: http://patchwork.ozlabs.org/patch/373794/
-> [3]: http://www.spinics.net/lists/arm-kernel/msg350568.html
-> [4]: http://www.spinics.net/lists/arm-kernel/msg350569.html
-> 
->  arch/arm/configs/exynos_defconfig | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
-> 
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index 676c744..f69d57e 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -101,11 +101,25 @@ CONFIG_REGULATOR_S2MPA01=y
->  CONFIG_REGULATOR_S2MPS11=y
->  CONFIG_REGULATOR_S5M8767=y
->  CONFIG_REGULATOR_TPS65090=y
-> +CONFIG_DRM=y
-> +CONFIG_DRM_BRIDGE=y
-> +CONFIG_DRM_PS8622=y
-> +CONFIG_DRM_EXYNOS=y
-> +CONFIG_DRM_EXYNOS_FIMD=y
-> +CONFIG_DRM_EXYNOS_DP=y
-> +CONFIG_DRM_PANEL=y
-> +CONFIG_DRM_PANEL_SIMPLE=y
->  CONFIG_FB=y
->  CONFIG_FB_MODE_HELPERS=y
->  CONFIG_FB_SIMPLE=y
->  CONFIG_EXYNOS_VIDEO=y
->  CONFIG_EXYNOS_MIPI_DSI=y
-> +CONFIG_BACKLIGHT_LCD_SUPPORT=y
-> +CONFIG_LCD_CLASS_DEVICE=y
-> +CONFIG_LCD_PLATFORM=y
-> +CONFIG_BACKLIGHT_CLASS_DEVICE=y
-> +CONFIG_BACKLIGHT_GENERIC=y
-> +CONFIG_BACKLIGHT_PWM=y
->  CONFIG_FRAMEBUFFER_CONSOLE=y
->  CONFIG_FONTS=y
->  CONFIG_FONT_7x14=y
-> --
-> 2.0.1
