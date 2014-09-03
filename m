@@ -1,77 +1,107 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v11 11/19] irqchip: vic: Add support for FIQ management
-Date: Tue, 2 Sep 2014 20:40:47 +0100
-Message-ID: <20140902194047.GY30401@n2100.arm.linux.org.uk>
-References: <1408466769-20004-1-git-send-email-daniel.thompson@linaro.org> <1409662853-29313-1-git-send-email-daniel.thompson@linaro.org> <1409662853-29313-12-git-send-email-daniel.thompson@linaro.org>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH v3 16/17] drm/exynos/ipp: remove file argument from node
+ related functions
+Date: Wed, 03 Sep 2014 10:42:52 +0900
+Message-ID: <5406721C.9030906@samsung.com>
+References: <1409216861-12452-17-git-send-email-a.hajda@samsung.com>
+ <1409662506-30270-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:40951 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1754581AbaIBTlQ (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:17589 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751168AbaICBm7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Sep 2014 15:41:16 -0400
-Content-Disposition: inline
-In-Reply-To: <1409662853-29313-12-git-send-email-daniel.thompson@linaro.org>
+	Tue, 2 Sep 2014 21:42:59 -0400
+In-reply-to: <1409662506-30270-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgdb-bugreport@lists.sourceforge.net, patches@linaro.org, linaro-kernel@lists.linaro.org, John Stultz <john.stultz@linaro.org>, Anton Vorontsov <anton.vorontsov@linaro.org>, Colin Cross <ccross@android.com>, kernel-team@android.com, Rob Herring <robherring2@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Ben Dooks <ben.dooks@codethink.co.uk>, Catalin Marinas <catalin.marinas@arm.com>, Dave Martin <Dave.Martin@arm.com>, Fabio Estevam <festevam@gmail.com>, Frederic Weisbecker <fweisbec@gmail.com>, Nicolas Pitre <nico@linaro.org>, Hartley Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>
 
-On Tue, Sep 02, 2014 at 02:00:45PM +0100, Daniel Thompson wrote:
-> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-> index bda5a91..8821160 100644
-> --- a/drivers/irqchip/irq-gic.c
-> +++ b/drivers/irqchip/irq-gic.c
-> @@ -502,13 +502,17 @@ static void __init gic_init_fiq(struct gic_chip_data *gic,
->  /*
->   * Fully acknowledge (both ack and eoi) a FIQ-based IPI
->   */
-> -static int gic_handle_fiq_ipi(struct notifier_block *nb, unsigned long regs,
-> -			   void *data)
-> +void gic_handle_fiq_ipi(void)
+On 09/02/2014 09:55 PM, Andrzej Hajda wrote:
+> Since file pointer is preserved in c_node passing it
+> as argument in node functions is redundant.
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+> v3:
+> - file check moved to next patch
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_ipp.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+
+About both patch 16 and 17
+
+Reviewed-by: Joonyoung Shim <jy0922.shim@samsung.com>
+
+Thanks.
+
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+> index 05f0f4e..9e9714a 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+> @@ -529,7 +529,6 @@ static int ipp_put_mem_node(struct drm_device *drm_dev,
+>  
+>  static struct drm_exynos_ipp_mem_node
+>  		*ipp_get_mem_node(struct drm_device *drm_dev,
+> -		struct drm_file *file,
+>  		struct drm_exynos_ipp_cmd_node *c_node,
+>  		struct drm_exynos_ipp_queue_buf *qbuf)
 >  {
->  	struct gic_chip_data *gic = &gic_data[0];
-> -	void __iomem *cpu_base = gic_data_cpu_base(gic);
-> +	void __iomem *cpu_base;
->  	unsigned long irqstat, irqnr;
+> @@ -560,7 +559,7 @@ static struct drm_exynos_ipp_mem_node
+>  			dma_addr_t *addr;
 >  
-> +	if (!gic || !gic->fiq_enable)
-> +		return;
-> +
-> +	cpu_base = gic_data_cpu_base(gic);
-> +
->  	if (WARN_ON(!in_nmi()))
->  		return NOTIFY_BAD;
->  
-> @@ -525,13 +529,6 @@ static int gic_handle_fiq_ipi(struct notifier_block *nb, unsigned long regs,
->  
->  	return NOTIFY_OK;
+>  			addr = exynos_drm_gem_get_dma_addr(drm_dev,
+> -					qbuf->handle[i], file);
+> +					qbuf->handle[i], c_node->filp);
+>  			if (IS_ERR(addr)) {
+>  				DRM_ERROR("failed to get addr.\n");
+>  				ipp_put_mem_node(drm_dev, c_node, m_node);
+> @@ -606,7 +605,6 @@ static void ipp_free_event(struct drm_pending_event *event)
 >  }
-> -
-> -/*
-> - * Notifier to ensure IPI FIQ is acknowledged correctly.
-> - */
-> -static struct notifier_block gic_fiq_ipi_notifier = {
-> -	.notifier_call = gic_handle_fiq_ipi,
-> -};
->  #else /* CONFIG_FIQ */
->  static inline void gic_set_group_irq(void __iomem *base, unsigned int hwirq,
->  				     int group) {}
-> @@ -1250,10 +1247,6 @@ void __init gic_init_bases(unsigned int gic_nr, int irq_start,
->  #ifdef CONFIG_SMP
->  		set_smp_cross_call(gic_raise_softirq);
->  		register_cpu_notifier(&gic_cpu_notifier);
-> -#ifdef CONFIG_FIQ
-> -		if (gic_data_fiq_enable(gic))
-> -			register_fiq_nmi_notifier(&gic_fiq_ipi_notifier);
-> -#endif
->  #endif
->  		set_handle_irq(gic_handle_irq);
+>  
+>  static int ipp_get_event(struct drm_device *drm_dev,
+> -		struct drm_file *file,
+>  		struct drm_exynos_ipp_cmd_node *c_node,
+>  		struct drm_exynos_ipp_queue_buf *qbuf)
+>  {
+> @@ -618,7 +616,7 @@ static int ipp_get_event(struct drm_device *drm_dev,
+>  	e = kzalloc(sizeof(*e), GFP_KERNEL);
+>  	if (!e) {
+>  		spin_lock_irqsave(&drm_dev->event_lock, flags);
+> -		file->event_space += sizeof(e->event);
+> +		c_node->filp->event_space += sizeof(e->event);
+>  		spin_unlock_irqrestore(&drm_dev->event_lock, flags);
+>  		return -ENOMEM;
 >  	}
-
-Shouldn't this be merged into some other patch?
-
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+> @@ -630,7 +628,7 @@ static int ipp_get_event(struct drm_device *drm_dev,
+>  	e->event.prop_id = qbuf->prop_id;
+>  	e->event.buf_id[EXYNOS_DRM_OPS_DST] = qbuf->buf_id;
+>  	e->base.event = &e->event.base;
+> -	e->base.file_priv = file;
+> +	e->base.file_priv = c_node->filp;
+>  	e->base.destroy = ipp_free_event;
+>  	mutex_lock(&c_node->event_lock);
+>  	list_add_tail(&e->base.link, &c_node->event_list);
+> @@ -908,7 +906,7 @@ int exynos_drm_ipp_queue_buf(struct drm_device *drm_dev, void *data,
+>  	switch (qbuf->buf_type) {
+>  	case IPP_BUF_ENQUEUE:
+>  		/* get memory node */
+> -		m_node = ipp_get_mem_node(drm_dev, file, c_node, qbuf);
+> +		m_node = ipp_get_mem_node(drm_dev, c_node, qbuf);
+>  		if (IS_ERR(m_node)) {
+>  			DRM_ERROR("failed to get m_node.\n");
+>  			return PTR_ERR(m_node);
+> @@ -921,7 +919,7 @@ int exynos_drm_ipp_queue_buf(struct drm_device *drm_dev, void *data,
+>  		 */
+>  		if (qbuf->ops_id == EXYNOS_DRM_OPS_DST) {
+>  			/* get event for destination buffer */
+> -			ret = ipp_get_event(drm_dev, file, c_node, qbuf);
+> +			ret = ipp_get_event(drm_dev, c_node, qbuf);
+>  			if (ret) {
+>  				DRM_ERROR("failed to get event.\n");
+>  				goto err_clean_node;
+> 
