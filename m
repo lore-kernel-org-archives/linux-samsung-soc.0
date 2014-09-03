@@ -1,34 +1,37 @@
 From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
 Subject: Re: [PATCH 11/14] arm64: dts: Add initial device tree support for EXYNOS7
-Date: Wed, 3 Sep 2014 13:25:02 +0530
-Message-ID: <CAHfPSqB1_ovDYSBU4trPaEZ7PYGuqFkeOw07mQLkgTU+iv_Ymw@mail.gmail.com>
+Date: Wed, 3 Sep 2014 13:35:46 +0530
+Message-ID: <CAHfPSqDHoawng0xH6ibYRyzn2uqODhW9W9ZCUNa=bN-d20aRtg@mail.gmail.com>
 References: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com>
- <1409132660-1898-3-git-send-email-ch.naveen@samsung.com> <53FDC155.1070506@samsung.com>
+ <1409132660-1898-3-git-send-email-ch.naveen@samsung.com> <20140828035639.GB4972@localhost>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f179.google.com ([209.85.216.179]:52763 "EHLO
-	mail-qc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755867AbaICHzY (ORCPT
+Received: from mail-qg0-f46.google.com ([209.85.192.46]:32795 "EHLO
+	mail-qg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755179AbaICIGI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Sep 2014 03:55:24 -0400
-In-Reply-To: <53FDC155.1070506@samsung.com>
+	Wed, 3 Sep 2014 04:06:08 -0400
+In-Reply-To: <20140828035639.GB4972@localhost>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: tomasz.figa@gmail.com
+To: Olof Johansson <olof@lixom.net>
 Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, catalin.marinas@arm.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, cpgs@samsung.com, Thomas Abraham <thomas.ab@samsung.com>, Rob Herring <robh@kernel.org>
 
-Hi Tomasz,
+Hi Olof,
 
-On 27 August 2014 17:00, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi Naveen,
+On 28 August 2014 09:26, Olof Johansson <olof@lixom.net> wrote:
+> Hi,
 >
-> Please see my comments inline.
->
-> On 27.08.2014 11:44, Naveen Krishna Chatradhi wrote:
+> On Wed, Aug 27, 2014 at 03:14:18PM +0530, Naveen Krishna Chatradhi wrote:
 >> Add initial device tree nodes for EXYNOS7 SoC.
 >> Also, includes the dt-binding definitions for clock ids.
->>
+>
+> Uh, no -- it just adds the dtsi.
+
+Ok. Will fix.
+
+>
 >> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 >> Cc: Thomas Abraham <thomas.ab@samsung.com>
 >> Cc: Rob Herring <robh@kernel.org>
@@ -43,6 +46,16 @@ On 27 August 2014 17:00, Tomasz Figa <t.figa@samsung.com> wrote:
 >> index 0000000..6b9eaf4
 >> --- /dev/null
 >> +++ b/arch/arm64/boot/dts/exynos7.dtsi
+>
+> Let's not make the same mistake as on 32-bit, and go with a directory
+> hierarchy here from day one.
+>
+> So, please create a exynos subdirectory for this file. You also need
+> a Makefile when you add a board dts.
+
+Ok. Will fix.
+
+>
 >> @@ -0,0 +1,553 @@
 >> +/*
 >> + * SAMSUNG EXYNOS7 SoC device tree source
@@ -66,7 +79,12 @@ On 27 August 2014 17:00, Tomasz Figa <t.figa@samsung.com> wrote:
 >> +     interrupt-parent = <&gic>;
 >> +     #address-cells = <1>;
 >> +     #size-cells = <1>;
->> +
+>
+> You should probably use address-cells/size-cells 2/2 on a 64-bit platform.
+
+Ok.
+
+>
 >> +     aliases {
 >> +             pinctrl0 = &pinctrl_0;
 >> +             pinctrl1 = &pinctrl_1;
@@ -80,198 +98,139 @@ On 27 August 2014 17:00, Tomasz Figa <t.figa@samsung.com> wrote:
 >> +             pinctrl9 = &pinctrl_9;
 >> +             mshc0 = &mmc_0;
 >> +             mshc2 = &mmc_2;
->
-> Please add aliases for serial controllers. Refer to relevant DT binding
-> documentation for more information.
-
-Ok.
-
->
 >> +     };
 >> +
 >> +     chipid@10000000 {
 >> +             compatible = "samsung,exynos4210-chipid";
 >> +             reg = <0x10000000 0x100>;
 >> +     };
->
-> Please put SoC components (except cpus node) under a simple-bus node
-> called "soc". Please see exynos5260.dtsi as an example.
-
-Ok.
-
->
 >> +
 >> +     cpus {
 >> +             #address-cells = <2>;
 >> +             #size-cells = <0>;
->> +
+>
+> Why size-cells=2? Can you not fit a cpuid in 32 bits?
+>
 >> +             cpu@0 {
 >> +                     device_type = "cpu";
 >> +                     compatible = "arm,cortex-a57", "arm,armv8";
 >> +                     reg = <0x0 0x0>;
 >> +             };
->
-> Does this SoC really has only one CPU or this is a workaround for things
-> like missing CPU bring-up code?
->
 >> +     };
+>> +
+>> +     fin_pll: xxti {
+>> +             compatible = "fixed-clock";
+>> +             clock-frequency = <24000000>;
+>> +             clock-output-names = "fin_pll";
+>> +             #clock-cells = <0>;
+>> +     };
+>> +
+>> +     gic: interrupt-controller@11001000 {
+>> +             compatible = "arm,gic-400";
+>> +             #interrupt-cells = <3>;
+>> +             #address-cells = <0>;
+>> +             interrupt-controller;
+>> +             reg =   <0x11001000 0x1000>,
+>> +                     <0x11002000 0x1000>,
+>> +                     <0x11004000 0x2000>,
+>> +                     <0x11006000 0x2000>;
+>> +     };
+>> +
+>> +     hsi2c_0: hsi2c@13640000 {
+>> +             compatible = "samsung,exynos7-hsi2c";
 >
-> [snip]
+> Is the i2c controller here completely new?
+
+It is almost the same as in Exynos5 but few register bits have been
+changed. So we have added a new compatible string.
+
+>
+> Also, please use 'i2c' for node name on these nodes.
+
+Ok.
+
+>
+>> +             reg = <0x13640000 0x1000>;
+>> +             interrupts = <0 441 0>;
+>> +             #address-cells = <1>;
+>> +             #size-cells = <0>;
+>> +             pinctrl-names = "default";
+>> +             pinctrl-0 = <&hs_i2c0_bus>;
+>> +             clocks = <&clock_peric0 PCLK_HSI2C0>;
+>> +             clock-names = "hsi2c";
+>> +             status = "disabled";
+>> +     };
+>> +
+>> +     hsi2c_1: hsi2c@13650000 {
+>> +             compatible = "samsung,exynos7-hsi2c";
+>> +             reg = <0x13650000 0x1000>;
+>> +             interrupts = <0 442 0>;
+>> +             #address-cells = <1>;
+>> +             #size-cells = <0>;
+>> +             pinctrl-names = "default";
+>> +             pinctrl-0 = <&hs_i2c1_bus>;
+>> +             clocks = <&clock_peric0 PCLK_HSI2C1>;
+>> +             clock-names = "hsi2c";
+>> +             status = "disabled";
+>> +     };
+>> +
+>> +     hsi2c_2: hsi2c@14E60000 {
+>
+> I much prefer lowercase hex in unit addresses (and reg entries) below. I
+> know 32-bit uses uppercase, but let's switch going forward here.
+
+Ok. Will fix.
+
 >
 >> +     mct@101C0000 {
 >> +             compatible = "samsung,exynos4210-mct";
->> +             reg = <0x101C0000 0x800>;
->> +             interrupt-controller;
->> +             #interrupt-cells = <1>;
 >
-> MCT is not an interrupt controller.
+> Please just do away with MCT here, and use architected timers going
+> forward. There really shouldn't be a need to keep supporting MCT any
+> more -- it's a construct from before arch timers on Cortex-A9.
+
+Ok.
+
 >
->> +             interrupt-parent = <&mct_map>;
->> +             interrupts =    <0>, <1>, <2>, <3>,
->> +                             <4>, <5>, <6>, <7>,
->> +                             <8>, <9>, <10>, <11>;
->> +             clocks = <&fin_pll>, <&clock_peris PCLK_MCT>;
->> +             clock-names = "fin_pll", "mct";
->> +
->> +             mct_map: mct-map {
->> +                     #interrupt-cells = <1>;
->> +                     #address-cells = <0>;
->> +                     #size-cells = <0>;
->> +                     interrupt-map = <0 &gic 0 112 0>,
->> +                                     <1 &gic 0 113 0>,
->> +                                     <2 &gic 0 114 0>,
->> +                                     <3 &gic 0 115 0>,
->> +                                     <4 &gic 0 116 0>,
->> +                                     <5 &gic 0 117 0>,
->> +                                     <6 &gic 0 118 0>,
->> +                                     <7 &gic 0 119 0>,
->> +                                     <8 &gic 0 120 0>,
->> +                                     <9 &gic 0 121 0>,
->> +                                     <10 &gic 0 122 0>,
->> +                                     <11 &gic 0 123 0>;
->
-> All inputs of this interrupt map come from the same interrupt
-> controller. What's the point of this map then?
->
->> +             };
->> +     };
->> +
 >> +     mmc_0: mmc@15740000 {
 >> +             compatible = "samsung,exynos7-dw-mshc-smu";
->> +             interrupts = <0 201 0>;
->> +             #address-cells = <1>;
->> +             #size-cells = <0>;
->> +             reg = <0x15740000 0x2000>;
->> +             clocks = <&clock_fsys1 ACLK_MMC0>,
->> +                     <&clock_top1 CLK_SCLK_MMC0>;
->> +             clock-names = "biu", "ciu";
->> +             fifo-depth = <0x40>;
->> +             status = "disabled";
->> +     };
->> +
->> +     mmc_2: mmc@15560000 {
->> +             compatible = "samsung,exynos7-dw-mshc-smu";
->> +             interrupts = <0 216 0>;
->> +             #address-cells = <1>;
->> +             #size-cells = <0>;
->> +             reg = <0x15560000 0x2000>;
->> +             clocks = <&clock_fsys0 ACLK_MMC2>,
->> +                     <&clock_top1 CLK_SCLK_MMC2>;
->> +             clock-names = "biu", "ciu";
->> +             fifo-depth = <0x40>;
->> +             status = "disabled";
->> +     };
->> +
->> +     pinctrl_0: pinctrl@10580000 {
->> +             compatible = "samsung,exynos7-pinctrl";
->> +             reg = <0x10580000 0x1000>;
->> +             interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
->> +                             <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
->> +                             <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
->> +                             <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
 >
-> According to patch 5/14, this bank supports only wake-up interrupts.
-> Their interrupt specifiers should be specified either in the wake-up
-> interrupt controller node (for muxed wake-up interrupts) or in nodes of
-> respective banks (for direct wake-up interrupts).
+> Is this controller backwards compatible with exynos5 ones?
 
-Ok, will fix.
+The dwmmc controller in Exynos7 is not fully backward compatible with
+Exynos5. Specifically, it requires 64-bit related changes for IDMAC
+and handling the changes in register offsets.
 
 >
->> +             wakeup-interrupt-controller {
->> +                     compatible = "samsung,exynos4210-wakeup-eint";
->> +                     interrupt-parent = <&gic>;
->> +                     interrupts = <0 16 0>;
->> +             };
->> +     };
+>> +     /* The Clock nodes are ordered as per the usermanual. */
 >
-> [snip]
+> "The clock"
 >
->> +     serial@13630000 {
->> +             compatible = "samsung,exynos4210-uart";
->> +             reg = <0x13630000 0x100>;
->> +             interrupts = <0 440 0>;
->> +             clocks = <&clock_peric0 PCLK_UART0>, <&clock_peric0 SCLK_UART0>;
->> +             clock-names = "uart", "clk_uart_baud0";
->> +             status = "okay";
->
-> No need to explicitly specify the status as "okay" in top level dtsi file.
+> "user manual"
 
-Ok. Fixed.
+Ok.
 
 >
->> +     };
->> +
->> +     serial@14C20000 {
->> +             compatible = "samsung,exynos4210-uart";
->> +             reg = <0x14C20000 0x100>;
->> +             interrupts = <0 456 0>;
->> +             clocks = <&clock_peric1 PCLK_UART1>, <&clock_peric1 SCLK_UART1>;
->> +             clock-names = "uart", "clk_uart_baud1";
+>> +     timer {
+>> +             compatible = "arm,armv8-timer";
+>> +             interrupts = <1 13 0xff01>,
+>> +                          <1 14 0xff01>,
+>> +                          <1 11 0xff01>,
+>> +                          <1 10 0xff01>;
+>> +             clock-frequency = <24000000>;
+>> +             use-clocksource-only;
+>> +             use-physical-timer;
 >
-> The "clk_uart_baud1" clock doesn't seem right. The N in "clk_uart_baudN"
-> stands for the input of internal clock source mux, not index of the IP
-> block in the SoC. Please make sure this is defined correctly.
+> These two properties are not standard, and I would expect any 64-bit
+> platform to come with PSCI such that you have a way to initialize the
+> virtual timers.
 
-Right. That was a mistake. This is fixed.
+Ok.
 
 >
->> +             status = "okay";
 >
-> Ditto.
->
->> +     };
->> +
->> +     serial@14C30000 {
->> +             compatible = "samsung,exynos4210-uart";
->> +             reg = <0x14C30000 0x100>;
->> +             interrupts = <0 457 0>;
->> +             clocks = <&clock_peric1 PCLK_UART2>, <&clock_peric1 SCLK_UART2>;
->> +             clock-names = "uart", "clk_uart_baud2";
->
-> Ditto.
->
->> +             status = "okay";
->
-> Ditto.
->
->> +     };
->> +
->> +     serial@14C40000 {
->> +             compatible = "samsung,exynos4210-uart";
->> +             reg = <0x14C40000 0x100>;
->> +             interrupts = <0 458 0>;
->> +             clocks = <&clock_peric1 PCLK_UART3>, <&clock_peric1 SCLK_UART3>;
->> +             clock-names = "uart", "clk_uart_baud3";
->
-> Ditto.
->
->> +             status = "okay";
->
-> Ditto.
->
-> Best regards,
-> Tomasz
+> -Olof
+
 
 Thanks for your comments.
 
