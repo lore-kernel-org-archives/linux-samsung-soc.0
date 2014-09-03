@@ -1,139 +1,53 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v7 11/11] clk: rockchip: add restart handler
-Date: Wed, 03 Sep 2014 12:05:42 -0700
-Message-ID: <20140903190542.11368.20755@quantum>
-References: <1408495538-27480-1-git-send-email-linux@roeck-us.net>
- <1408495538-27480-12-git-send-email-linux@roeck-us.net>
+From: Mauro Carvalho Chehab <m.chehab@samsung.com>
+Subject: [PATCH 40/46] [media] marvel-ccic: just return 0 instead of using a
+ var
+Date: Wed,  3 Sep 2014 17:33:12 -0300
+Message-ID: <85652b7edb36b905a7765dab8c9b52453554aa9e.1409775488.git.m.chehab@samsung.com>
+References: <cover.1409775488.git.m.chehab@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:59313 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756026AbaICTGB convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Sep 2014 15:06:01 -0400
-Received: by mail-pa0-f44.google.com with SMTP id rd3so18272108pab.3
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 03 Sep 2014 12:05:57 -0700 (PDT)
-In-Reply-To: <1408495538-27480-12-git-send-email-linux@roeck-us.net>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <cover.1409775488.git.m.chehab@samsung.com>
+In-Reply-To: <cover.1409775488.git.m.chehab@samsung.com>
+References: <cover.1409775488.git.m.chehab@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-arm-kernel@lists.infradead.org, Linux Media Mailing List <linux-media@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Wim Van Sebroeck <wim@iguana.be>, Catalin Marinas <catalin.marinas@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>, Heiko Stuebner <heiko@sntech.de>, Jonas Jensen <jonas.jensen@gmail.com>, Randy Dunlap <rdunlap@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Tomasz Figa <t.figa@samsung.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
 
-Quoting Guenter Roeck (2014-08-19 17:45:38)
-> From: Heiko St=C3=BCbner <heiko@sntech.de>
->=20
-> Add infrastructure to write the correct value to the restart register=
- and
-> register the restart notifier for both rk3188 (including rk3066) and =
-rk3288.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Instead of allocating a var to store 0 and just return it,
+change the code to return 0 directly.
 
-Acked-by: Mike Turquette <mturquette@linaro.org>
+Signed-off-by: Mauro Carvalho Chehab <m.chehab@samsung.com>
 
-> ---
-> v7: Added patch to series.
->=20
->  drivers/clk/rockchip/clk-rk3188.c |  2 ++
->  drivers/clk/rockchip/clk-rk3288.c |  2 ++
->  drivers/clk/rockchip/clk.c        | 25 +++++++++++++++++++++++++
->  drivers/clk/rockchip/clk.h        |  1 +
->  4 files changed, 30 insertions(+)
->=20
-> diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip=
-/clk-rk3188.c
-> index a83a6d8..71b661a 100644
-> --- a/drivers/clk/rockchip/clk-rk3188.c
-> +++ b/drivers/clk/rockchip/clk-rk3188.c
-> @@ -631,6 +631,8 @@ static void __init rk3188_common_clk_init(struct =
-device_node *np)
-> =20
->         rockchip_register_softrst(np, 9, reg_base + RK2928_SOFTRST_CO=
-N(0),
->                                   ROCKCHIP_SOFTRST_HIWORD_MASK);
-> +
-> +       rockchip_register_restart_notifier(RK2928_GLB_SRST_FST);
->  }
-> =20
->  static void __init rk3066a_clk_init(struct device_node *np)
-> diff --git a/drivers/clk/rockchip/clk-rk3288.c b/drivers/clk/rockchip=
-/clk-rk3288.c
-> index 0d8c6c5..b604217 100644
-> --- a/drivers/clk/rockchip/clk-rk3288.c
-> +++ b/drivers/clk/rockchip/clk-rk3288.c
-> @@ -713,5 +713,7 @@ static void __init rk3288_clk_init(struct device_=
-node *np)
-> =20
->         rockchip_register_softrst(np, 9, reg_base + RK3288_SOFTRST_CO=
-N(0),
->                                   ROCKCHIP_SOFTRST_HIWORD_MASK);
-> +
-> +       rockchip_register_restart_notifier(RK3288_GLB_SRST_FST);
->  }
->  CLK_OF_DECLARE(rk3288_cru, "rockchip,rk3288-cru", rk3288_clk_init);
-> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-> index 278cf9d..aa41433 100644
-> --- a/drivers/clk/rockchip/clk.c
-> +++ b/drivers/clk/rockchip/clk.c
-> @@ -25,6 +25,7 @@
->  #include <linux/clk-provider.h>
->  #include <linux/mfd/syscon.h>
->  #include <linux/regmap.h>
-> +#include <linux/reboot.h>
->  #include "clk.h"
-> =20
->  /**
-> @@ -242,3 +243,27 @@ void __init rockchip_clk_register_branches(
->                 rockchip_clk_add_lookup(clk, list->id);
->         }
->  }
-> +
-> +static unsigned int reg_restart;
-> +static int rockchip_restart_notify(struct notifier_block *this,
-> +                                  unsigned long mode, void *cmd)
-> +{
-> +       writel(0xfdb9, reg_base + reg_restart);
-> +       return NOTIFY_DONE;
-> +}
-> +
-> +static struct notifier_block rockchip_restart_handler =3D {
-> +       .notifier_call =3D rockchip_restart_notify,
-> +       .priority =3D 128,
-> +};
-> +
-> +void __init rockchip_register_restart_notifier(unsigned int reg)
-> +{
-> +       int ret;
-> +
-> +       reg_restart =3D reg;
-> +       ret =3D register_restart_handler(&rockchip_restart_handler);
-> +       if (ret)
-> +               pr_err("%s: cannot register restart handler, %d\n",
-> +                      __func__, ret);
-> +}
-> diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-> index 887cbde..0b5eab5 100644
-> --- a/drivers/clk/rockchip/clk.h
-> +++ b/drivers/clk/rockchip/clk.h
-> @@ -329,6 +329,7 @@ void rockchip_clk_register_branches(struct rockch=
-ip_clk_branch *clk_list,
->                                     unsigned int nr_clk);
->  void rockchip_clk_register_plls(struct rockchip_pll_clock *pll_list,
->                                 unsigned int nr_pll, int grf_lock_off=
-set);
-> +void rockchip_register_restart_notifier(unsigned int reg);
-> =20
->  #define ROCKCHIP_SOFTRST_HIWORD_MASK   BIT(0)
-> =20
-> --=20
-> 1.9.1
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
-l" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+index 93f9cf2ebcd6..9d8d885558e5 100644
+--- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+@@ -313,7 +313,6 @@ static int isp_video_release(struct file *file)
+ 	struct fimc_is_video *ivc = &isp->video_capture;
+ 	struct media_entity *entity = &ivc->ve.vdev.entity;
+ 	struct media_device *mdev = entity->parent;
+-	int ret = 0;
+ 
+ 	mutex_lock(&isp->video_lock);
+ 
+@@ -335,7 +334,7 @@ static int isp_video_release(struct file *file)
+ 	pm_runtime_put(&isp->pdev->dev);
+ 	mutex_unlock(&isp->video_lock);
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static const struct v4l2_file_operations isp_video_fops = {
+-- 
+1.9.3
