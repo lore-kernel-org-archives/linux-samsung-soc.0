@@ -1,236 +1,95 @@
 From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH 11/14] arm64: dts: Add initial device tree support for EXYNOS7
-Date: Wed, 3 Sep 2014 13:35:46 +0530
-Message-ID: <CAHfPSqDHoawng0xH6ibYRyzn2uqODhW9W9ZCUNa=bN-d20aRtg@mail.gmail.com>
+Subject: Re: [PATCH 13/14] arm64: exynos7: Enable ARMv8 based Exynos7 (SoC) support
+Date: Wed, 3 Sep 2014 13:44:11 +0530
+Message-ID: <CAHfPSqBDJwOtZhoS7OC1N72Sa=YgdZKcnw+mczCEmVTrYvUF4A@mail.gmail.com>
 References: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com>
- <1409132660-1898-3-git-send-email-ch.naveen@samsung.com> <20140828035639.GB4972@localhost>
+ <1409132660-1898-5-git-send-email-ch.naveen@samsung.com> <20140827110927.GC7773@leverpostej>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f46.google.com ([209.85.192.46]:32795 "EHLO
-	mail-qg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755179AbaICIGI (ORCPT
+Received: from mail-qc0-f171.google.com ([209.85.216.171]:33929 "EHLO
+	mail-qc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754760AbaICIOc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Sep 2014 04:06:08 -0400
-In-Reply-To: <20140828035639.GB4972@localhost>
+	Wed, 3 Sep 2014 04:14:32 -0400
+In-Reply-To: <20140827110927.GC7773@leverpostej>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, catalin.marinas@arm.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, cpgs@samsung.com, Thomas Abraham <thomas.ab@samsung.com>, Rob Herring <robh@kernel.org>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Catalin Marinas <Catalin.Marinas@arm.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "cpgs@samsung.com" <cpgs@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>
 
-Hi Olof,
+Hi Mark,
 
-On 28 August 2014 09:26, Olof Johansson <olof@lixom.net> wrote:
+On 27 August 2014 16:39, Mark Rutland <mark.rutland@arm.com> wrote:
 > Hi,
 >
-> On Wed, Aug 27, 2014 at 03:14:18PM +0530, Naveen Krishna Chatradhi wrote:
->> Add initial device tree nodes for EXYNOS7 SoC.
->> Also, includes the dt-binding definitions for clock ids.
->
-> Uh, no -- it just adds the dtsi.
-
-Ok. Will fix.
-
->
+> On Wed, Aug 27, 2014 at 10:44:20AM +0100, Naveen Krishna Chatradhi wrote:
+>> From: Alim Akhtar <alim.akhtar@samsung.com>
+>>
+>> This patch adds the necessary Kconfig entries to enable
+>> support for the ARMv8 based Exynos7 SoC.
+>>
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 >> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->> Cc: Thomas Abraham <thomas.ab@samsung.com>
 >> Cc: Rob Herring <robh@kernel.org>
 >> Cc: Catalin Marinas <catalin.marinas@arm.com>
 >> ---
->>  arch/arm64/boot/dts/exynos7.dtsi |  553 ++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 553 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/exynos7.dtsi
+>>  arch/arm64/Kconfig |   17 +++++++++++++++++
+>>  1 file changed, 17 insertions(+)
 >>
->> diff --git a/arch/arm64/boot/dts/exynos7.dtsi b/arch/arm64/boot/dts/exynos7.dtsi
->> new file mode 100644
->> index 0000000..6b9eaf4
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/exynos7.dtsi
+>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>> index fd4e81a..d555558 100644
+>> --- a/arch/arm64/Kconfig
+>> +++ b/arch/arm64/Kconfig
+>> @@ -134,6 +134,23 @@ source "kernel/Kconfig.freezer"
+>>
+>>  menu "Platform selection"
+>>
+>> +config ARCH_EXYNOS7
+>> +     bool "ARMv8 based SAMSUNG EXYNOS7"
+>> +     select HAVE_S3C2410_WATCHDOG if WATCHDOG
+>> +     select CLKSRC_OF
 >
-> Let's not make the same mistake as on 32-bit, and go with a directory
-> hierarchy here from day one.
->
-> So, please create a exynos subdirectory for this file. You also need
-> a Makefile when you add a board dts.
-
-Ok. Will fix.
-
->
->> @@ -0,0 +1,553 @@
->> +/*
->> + * SAMSUNG EXYNOS7 SoC device tree source
->> + *
->> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
->> + *           http://www.samsung.com
->> + *
->> + * SAMSUNG EXYNOS7 SoC device nodes are listed in this file.
->> + * EXYNOS7 based board files can include this file and provide
->> + * values for board specfic bindings.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +#include <dt-bindings/clock/exynos7-clk.h>
->> +
->> +/ {
->> +     compatible = "samsung,exynos7";
->> +     interrupt-parent = <&gic>;
->> +     #address-cells = <1>;
->> +     #size-cells = <1>;
->
-> You should probably use address-cells/size-cells 2/2 on a 64-bit platform.
+> This seems to be implied by ARM_ARCH_TIMER in the core arm64 Kconfig, so
+> I'm not sure this is necessary.
 
 Ok.
 
 >
->> +     aliases {
->> +             pinctrl0 = &pinctrl_0;
->> +             pinctrl1 = &pinctrl_1;
->> +             pinctrl2 = &pinctrl_2;
->> +             pinctrl3 = &pinctrl_3;
->> +             pinctrl4 = &pinctrl_4;
->> +             pinctrl5 = &pinctrl_5;
->> +             pinctrl6 = &pinctrl_6;
->> +             pinctrl7 = &pinctrl_7;
->> +             pinctrl8 = &pinctrl_8;
->> +             pinctrl9 = &pinctrl_9;
->> +             mshc0 = &mmc_0;
->> +             mshc2 = &mmc_2;
->> +     };
->> +
->> +     chipid@10000000 {
->> +             compatible = "samsung,exynos4210-chipid";
->> +             reg = <0x10000000 0x100>;
->> +     };
->> +
->> +     cpus {
->> +             #address-cells = <2>;
->> +             #size-cells = <0>;
+>> +     select COMMON_CLK_SAMSUNG
+>> +     select GPIOLIB
 >
-> Why size-cells=2? Can you not fit a cpuid in 32 bits?
->
->> +             cpu@0 {
->> +                     device_type = "cpu";
->> +                     compatible = "arm,cortex-a57", "arm,armv8";
->> +                     reg = <0x0 0x0>;
->> +             };
->> +     };
->> +
->> +     fin_pll: xxti {
->> +             compatible = "fixed-clock";
->> +             clock-frequency = <24000000>;
->> +             clock-output-names = "fin_pll";
->> +             #clock-cells = <0>;
->> +     };
->> +
->> +     gic: interrupt-controller@11001000 {
->> +             compatible = "arm,gic-400";
->> +             #interrupt-cells = <3>;
->> +             #address-cells = <0>;
->> +             interrupt-controller;
->> +             reg =   <0x11001000 0x1000>,
->> +                     <0x11002000 0x1000>,
->> +                     <0x11004000 0x2000>,
->> +                     <0x11006000 0x2000>;
->> +     };
->> +
->> +     hsi2c_0: hsi2c@13640000 {
->> +             compatible = "samsung,exynos7-hsi2c";
->
-> Is the i2c controller here completely new?
+> You select ARCH_REQUIRE_GPIOLIB below, so is this necessary?
 
-It is almost the same as in Exynos5 but few register bits have been
-changed. So we have added a new compatible string.
+Yes, this is not required. Will remove.
 
 >
-> Also, please use 'i2c' for node name on these nodes.
+>> +     select PINCTRL
+>> +     select PINCTRL_EXYNOS
+>> +     select RTC_CLASS
+>> +     select HAVE_S3C_RTC
+>> +     select GENERIC_GPIO
+>> +     select ARCH_REQUIRE_GPIOLIB
+>> +     select HAVE_CLK
+>
+> Isn't this selected already through the core arm64 Kconfig?
+>
+> It looks like we have COMMON_CLK, which selects CLKDEV_LOOKUP, which
+> selects HAVE_CLK.
 
 Ok.
 
 >
->> +             reg = <0x13640000 0x1000>;
->> +             interrupts = <0 441 0>;
->> +             #address-cells = <1>;
->> +             #size-cells = <0>;
->> +             pinctrl-names = "default";
->> +             pinctrl-0 = <&hs_i2c0_bus>;
->> +             clocks = <&clock_peric0 PCLK_HSI2C0>;
->> +             clock-names = "hsi2c";
->> +             status = "disabled";
->> +     };
->> +
->> +     hsi2c_1: hsi2c@13650000 {
->> +             compatible = "samsung,exynos7-hsi2c";
->> +             reg = <0x13650000 0x1000>;
->> +             interrupts = <0 442 0>;
->> +             #address-cells = <1>;
->> +             #size-cells = <0>;
->> +             pinctrl-names = "default";
->> +             pinctrl-0 = <&hs_i2c1_bus>;
->> +             clocks = <&clock_peric0 PCLK_HSI2C1>;
->> +             clock-names = "hsi2c";
->> +             status = "disabled";
->> +     };
->> +
->> +     hsi2c_2: hsi2c@14E60000 {
+>> +     select HAVE_SMP
 >
-> I much prefer lowercase hex in unit addresses (and reg entries) below. I
-> know 32-bit uses uppercase, but let's switch going forward here.
+> I may have missed something, but I didn't see any SMP support in this
+> series.
 
-Ok. Will fix.
+As Catalin suggested, will remove this.
 
 >
->> +     mct@101C0000 {
->> +             compatible = "samsung,exynos4210-mct";
->
-> Please just do away with MCT here, and use architected timers going
-> forward. There really shouldn't be a need to keep supporting MCT any
-> more -- it's a construct from before arch timers on Cortex-A9.
-
-Ok.
-
->
->> +     mmc_0: mmc@15740000 {
->> +             compatible = "samsung,exynos7-dw-mshc-smu";
->
-> Is this controller backwards compatible with exynos5 ones?
-
-The dwmmc controller in Exynos7 is not fully backward compatible with
-Exynos5. Specifically, it requires 64-bit related changes for IDMAC
-and handling the changes in register offsets.
-
->
->> +     /* The Clock nodes are ordered as per the usermanual. */
->
-> "The clock"
->
-> "user manual"
-
-Ok.
-
->
->> +     timer {
->> +             compatible = "arm,armv8-timer";
->> +             interrupts = <1 13 0xff01>,
->> +                          <1 14 0xff01>,
->> +                          <1 11 0xff01>,
->> +                          <1 10 0xff01>;
->> +             clock-frequency = <24000000>;
->> +             use-clocksource-only;
->> +             use-physical-timer;
->
-> These two properties are not standard, and I would expect any 64-bit
-> platform to come with PSCI such that you have a way to initialize the
-> virtual timers.
-
-Ok.
-
->
->
-> -Olof
-
+> Thanks,
+> Mark.
 
 Thanks for your comments.
 
