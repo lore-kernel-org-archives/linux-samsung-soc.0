@@ -1,41 +1,61 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv6 0/2] thermal: exynos: Add support for TRIMINFO feature of
- Exynos3250
-Date: Wed, 03 Sep 2014 23:11:23 +0900
-Message-ID: <5407218B.1020702@samsung.com>
-References: <1409713743-6124-1-git-send-email-cw00.choi@samsung.com>
- <20140830023928.GC23645@developer>
+From: Boris BREZILLON <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v2] mfd: syscon: Decouple syscon interface from platform
+ devices
+Date: Wed, 3 Sep 2014 16:15:28 +0200
+Message-ID: <20140903161528.05f566e1@bbrezillon>
+References: <1409668935-10667-1-git-send-email-pankaj.dubey@samsung.com>
+	<6034841.GFrG3XCMdb@wuerfel>
+	<20140903151611.260a7218@bbrezillon>
+	<4224773.hl3QDeILqz@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20140830023928.GC23645@developer>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: eduardo.valentin@ti.com, amit.daniel@samsung.com, rui.zhang@intel.com, kgene.kim@samsung.com, ch.naveen@samsung.com, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from top.free-electrons.com ([176.31.233.9]:46532 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1755817AbaICOPb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 3 Sep 2014 10:15:31 -0400
+In-Reply-To: <4224773.hl3QDeILqz@wuerfel>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, kgene.kim@samsung.com, linux@arm.linux.org.uk, Alexander Shiyan <shc_work@mail.ru>, naushad@samsung.com, Tomasz Figa <t.figa@samsung.com>, linux-kernel@vger.kernel.org, joshi@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, tomasz.figa@gmail.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, lee.jones@linaro.org, Michal Simek <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@kernel.org>
 
-Dear Eduardo,
+On Wed, 03 Sep 2014 15:49:04 +0200
+Arnd Bergmann <arnd@arndb.de> wrote:
 
-On 08/30/2014 11:39 AM, Eduardo Valentin wrote:
-> Hi,
+> On Wednesday 03 September 2014 15:16:11 Boris BREZILLON wrote:
+> > I checked that part, and it appears most of the code is already there
+> > (see usage of regmap_attach_dev function here [1]).
+> > 
+> > The only problem I see is that errors are still printed with dev_err,
+> > which, AFAIK, will trigger a kernel panic if dev is NULL.
 > 
-> On Wed, Sep 03, 2014 at 12:09:01PM +0900, Chanwoo Choi wrote:
->> This patchset add the support of TRIMINFO_RELOAD feature for Exynos3250.
->> But Exynos3250 has two TRIMINFO_CTRL register instead other Exynos has only one
->> TRIMINFO_CTRL register. So, this patchset support the some Exynos SoC which
->> has more than one TRIMINF_CTRL.
->>
->> Also, this patchset fix wrong value of TRIMINFO_RELOAD_SHIFT and remove
->> duplicate code when reading triminfo register of Exynos5440.
->>
->> Changes from v5:
->> - Rebase this patchset on next branch of linux-soc-thermal.git
->>
+> Actually not:
 > 
-> Pulled into my next branch. Thanks.
+> static int __dev_printk(const char *level, const struct device *dev,
+>                         struct va_format *vaf)
+> {
+>         if (!dev)
+>                 return printk("%s(NULL device *): %pV", level, vaf);
+> 
+>         return dev_printk_emit(level[1] - '0', dev,
+>                                "%s %s: %pV",
+>                                dev_driver_string(dev), dev_name(dev), vaf);
+> }
+> 
 
-Thanks.
+My bad then (I don't know where I looked at to think NULL dev was not
+gracefully handled :-)). Thanks for pointing this out.
+Given that, I think it should work fine even with a NULL dev.
+I'll give it a try on at91 ;-).
 
 Best Regards,
-Chanwoo Choi
+
+Boris
+
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
