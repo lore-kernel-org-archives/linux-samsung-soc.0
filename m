@@ -1,55 +1,41 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: dts: exynos4x12: Fix pull setting in sd4_width8 pin
- group
-Date: Wed, 03 Sep 2014 22:50:46 +0900
-Message-ID: <02ed01cfc77e$0fede790$2fc9b6b0$@samsung.com>
-References: <1409062405-15215-1-git-send-email-t.figa@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv6 0/2] thermal: exynos: Add support for TRIMINFO feature of
+ Exynos3250
+Date: Wed, 03 Sep 2014 23:11:23 +0900
+Message-ID: <5407218B.1020702@samsung.com>
+References: <1409713743-6124-1-git-send-email-cw00.choi@samsung.com>
+ <20140830023928.GC23645@developer>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:48575 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756344AbaICNus (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Sep 2014 09:50:48 -0400
-In-reply-to: <1409062405-15215-1-git-send-email-t.figa@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20140830023928.GC23645@developer>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: eduardo.valentin@ti.com, amit.daniel@samsung.com, rui.zhang@intel.com, kgene.kim@samsung.com, ch.naveen@samsung.com, kyungmin.park@samsung.com, b.zolnierkie@samsung.com, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>
 
-Tomasz Figa wrote:
-> 
-> The group has the samsung,pin-pud property set to 4, which is not a
-> correct value. This patch fixes this by replacing it with 3, which is
-> the correct value for pull-up.
-> 
-Yes, I checked the value. You're right.
+Dear Eduardo,
 
-Will apply into fixes.
-
-Thanks,
-Kukjin
-
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4x12-pinctrl.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On 08/30/2014 11:39 AM, Eduardo Valentin wrote:
+> Hi,
 > 
-> diff --git a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-> index 927fec6..c141931 100644
-> --- a/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-> +++ b/arch/arm/boot/dts/exynos4x12-pinctrl.dtsi
-> @@ -691,7 +691,7 @@
->  		sd4_bus8: sd4-bus-width8 {
->  			samsung,pins = "gpk1-3", "gpk1-4", "gpk1-5", "gpk1-6";
->  			samsung,pin-function = <4>;
-> -			samsung,pin-pud = <4>;
-> +			samsung,pin-pud = <3>;
->  			samsung,pin-drv = <3>;
->  		};
+> On Wed, Sep 03, 2014 at 12:09:01PM +0900, Chanwoo Choi wrote:
+>> This patchset add the support of TRIMINFO_RELOAD feature for Exynos3250.
+>> But Exynos3250 has two TRIMINFO_CTRL register instead other Exynos has only one
+>> TRIMINFO_CTRL register. So, this patchset support the some Exynos SoC which
+>> has more than one TRIMINF_CTRL.
+>>
+>> Also, this patchset fix wrong value of TRIMINFO_RELOAD_SHIFT and remove
+>> duplicate code when reading triminfo register of Exynos5440.
+>>
+>> Changes from v5:
+>> - Rebase this patchset on next branch of linux-soc-thermal.git
+>>
 > 
-> --
-> 2.0.4
+> Pulled into my next branch. Thanks.
+
+Thanks.
+
+Best Regards,
+Chanwoo Choi
