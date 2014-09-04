@@ -1,46 +1,75 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v2 7/7] Input: cros_ec_keyb: Optimize ghosting algorithm.
-Date: Wed, 3 Sep 2014 17:06:43 -0700
-Message-ID: <20140904000643.GA8034@core.coreip.homeip.net>
-References: <1408974008-17184-1-git-send-email-javier.martinez@collabora.co.uk>
- <1408974008-17184-8-git-send-email-javier.martinez@collabora.co.uk>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH 13/15] drivers: sh: Leave disabling of unused PM domains
+ to genpd
+Date: Thu, 4 Sep 2014 09:33:51 +0900
+Message-ID: <20140904003351.GB13821@verge.net.au>
+References: <1409741551-16437-1-git-send-email-ulf.hansson@linaro.org>
+ <1409741551-16437-14-git-send-email-ulf.hansson@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f176.google.com ([209.85.192.176]:55763 "EHLO
-	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756554AbaIDAGs (ORCPT
+Received: from kirsty.vergenet.net ([202.4.237.240]:37743 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754312AbaIDAdz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Sep 2014 20:06:48 -0400
+	Wed, 3 Sep 2014 20:33:55 -0400
 Content-Disposition: inline
-In-Reply-To: <1408974008-17184-8-git-send-email-javier.martinez@collabora.co.uk>
+In-Reply-To: <1409741551-16437-14-git-send-email-ulf.hansson@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>
 
-On Mon, Aug 25, 2014 at 03:40:08PM +0200, Javier Martinez Canillas wrot=
-e:
-> From: Todd Broch <tbroch@chromium.org>
->=20
-> Previous algorithm was a bit conservative and complicating with
-> respect to identifying key ghosting.  This CL uses the bitops hamming
-> weight function (hweight8) to count the number of matching rows for
-> colM & colN.  If that number is > 1 ghosting is present.
->=20
-> Additionally it removes NULL keys and our one virtual keypress
-> KEY_BATTERY from consideration as these inputs are never physical
-> keypresses.
->=20
-> Signed-off-by: Todd Broch <tbroch@chromium.org>
-> Reviewed-by: Vincent Palatin <vpalatin@chromium.org>
-> Reviewed-by: Luigi Semenzato <semenzato@chromium.org>
-> Tested-by: Andreas F=E4rber <afaerber@suse.de>
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
-=2Euk>
+On Wed, Sep 03, 2014 at 12:52:29PM +0200, Ulf Hansson wrote:
+> Since genpd at late init, will try to disable unused PM domains we
+> don't need to do it from here as well.
+> 
+> Cc: Simon Horman <horms@verge.net.au>
+> Cc: Magnus Damm <magnus.damm@gmail.com>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Applied, thank you.
 
---=20
-Dmitry
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
+
+> ---
+>  drivers/sh/pm_runtime.c | 11 -----------
+>  1 file changed, 11 deletions(-)
+> 
+> diff --git a/drivers/sh/pm_runtime.c b/drivers/sh/pm_runtime.c
+> index 72f6381..fe2c2d5 100644
+> --- a/drivers/sh/pm_runtime.c
+> +++ b/drivers/sh/pm_runtime.c
+> @@ -75,8 +75,6 @@ static struct pm_clk_notifier_block platform_bus_notifier = {
+>  	.con_ids = { NULL, },
+>  };
+>  
+> -static bool default_pm_on;
+> -
+>  static int __init sh_pm_runtime_init(void)
+>  {
+>  	if (IS_ENABLED(CONFIG_ARCH_SHMOBILE_MULTI)) {
+> @@ -96,16 +94,7 @@ static int __init sh_pm_runtime_init(void)
+>  			return 0;
+>  	}
+>  
+> -	default_pm_on = true;
+>  	pm_clk_add_notifier(&platform_bus_type, &platform_bus_notifier);
+>  	return 0;
+>  }
+>  core_initcall(sh_pm_runtime_init);
+> -
+> -static int __init sh_pm_runtime_late_init(void)
+> -{
+> -	if (default_pm_on)
+> -		pm_genpd_poweroff_unused();
+> -	return 0;
+> -}
+> -late_initcall(sh_pm_runtime_late_init);
+> -- 
+> 1.9.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-sh" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
