@@ -1,90 +1,65 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: RE: [PATCH v2] mfd: syscon: Decouple syscon interface from platform
- devices
-Date: Thu, 04 Sep 2014 10:15:27 +0530
-Message-ID: <002701cfc7fb$110a7350$331f59f0$@samsung.com>
+From: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2Ml0gbWZkOiBzeXNjb246IERlY291cGxlIHN5c2NvbiBp?=
+ =?UTF-8?B?bnRlcmZhY2UgZnJvbSBwbGF0Zm9ybSBkZXZpY2Vz?=
+Date: Thu, 04 Sep 2014 08:52:47 +0400
+Message-ID: <1409806367.933281809@f338.i.mail.ru>
 References: <1409668935-10667-1-git-send-email-pankaj.dubey@samsung.com>
- <6034841.GFrG3XCMdb@wuerfel> <20140903151611.260a7218@bbrezillon>
- <4224773.hl3QDeILqz@wuerfel> <20140903161528.05f566e1@bbrezillon>
+ <6034841.GFrG3XCMdb@wuerfel>
+ <002601cfc7fa$39413580$abc3a080$@samsung.com>
+Reply-To: =?UTF-8?B?QWxleGFuZGVyIFNoaXlhbg==?= <shc_work@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:55344 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750908AbaIDEnT (ORCPT
+Received: from fallback7.mail.ru ([94.100.181.128]:51931 "EHLO
+	fallback7.mail.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751175AbaIDExW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Sep 2014 00:43:19 -0400
-In-reply-to: <20140903161528.05f566e1@bbrezillon>
-Content-language: en-us
+	Thu, 4 Sep 2014 00:53:22 -0400
+In-Reply-To: <002601cfc7fa$39413580$abc3a080$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Boris BREZILLON' <boris.brezillon@free-electrons.com>, 'Arnd Bergmann' <arnd@arndb.de>
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, 'Alexander Shiyan' <shc_work@mail.ru>, naushad@samsung.com, 'Tomasz Figa' <t.figa@samsung.com>, linux-kernel@vger.kernel.org, joshi@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, tomasz.figa@gmail.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, lee.jones@linaro.org, 'Michal Simek' <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org, 'Mark Brown' <broonie@kernel.org>
+To: =?UTF-8?B?UGFua2FqIER1YmV5?= <pankaj.dubey@samsung.com>
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, naushad@samsung.com, =?UTF-8?B?J1RvbWFzeiBGaWdhJw==?= <t.figa@samsung.com>, linux-kernel@vger.kernel.org, joshi@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, tomasz.figa@gmail.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, lee.jones@linaro.org, =?UTF-8?B?J01pY2hhbCBTaW1layc=?= <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org, =?UTF-8?B?J0FybmQgQmVyZ21hbm4n?= <arnd@arndb.de>
 
-Hi Boris,
-
-On Wednesday, September 03, 2014 Boris BREZILLON wrote,
-> To: Arnd Bergmann
-> Cc: Pankaj Dubey; kgene.kim@samsung.com; linux@arm.linux.org.uk; Alexander
-> Shiyan; naushad@samsung.com; Tomasz Figa; linux-kernel@vger.kernel.org;
-> joshi@samsung.com; linux-samsung-soc@vger.kernel.org;
-thomas.ab@samsung.com;
-> tomasz.figa@gmail.com; vikas.sajjan@samsung.com; chow.kim@samsung.com;
-> lee.jones@linaro.org; Michal Simek; linux-arm-kernel@lists.infradead.org;
-Mark
-> Brown
-> Subject: Re: [PATCH v2] mfd: syscon: Decouple syscon interface from
-platform
-> devices
-> 
-> On Wed, 03 Sep 2014 15:49:04 +0200
-> Arnd Bergmann <arnd@arndb.de> wrote:
-> 
-> > On Wednesday 03 September 2014 15:16:11 Boris BREZILLON wrote:
-> > > I checked that part, and it appears most of the code is already
-> > > there (see usage of regmap_attach_dev function here [1]).
-> > >
-> > > The only problem I see is that errors are still printed with
-> > > dev_err, which, AFAIK, will trigger a kernel panic if dev is NULL.
-> >
-> > Actually not:
-> >
-> > static int __dev_printk(const char *level, const struct device *dev,
-> >                         struct va_format *vaf) {
-> >         if (!dev)
-> >                 return printk("%s(NULL device *): %pV", level, vaf);
-> >
-> >         return dev_printk_emit(level[1] - '0', dev,
-> >                                "%s %s: %pV",
-> >                                dev_driver_string(dev), dev_name(dev),
-> > vaf); }
-> >
-> 
-> My bad then (I don't know where I looked at to think NULL dev was not
-gracefully
-> handled :-)). Thanks for pointing this out.
-> Given that, I think it should work fine even with a NULL dev.
-> I'll give it a try on at91 ;-).
-> 
-
-We have tested this patch, on Exynos board and found working well.
-In our use case DT based drivers such as USB Phy, SATA Phy, Watchdog are
-calling 
-syscon_regmap_lookup_by APIs to get regmap handle to Exynos PMU and it
-worked 
-well for these drivers. 
-
-It would be great if after testing you share result here or give a
-Tested-By.
-
-Thanks,
-Pankaj Dubey 
-> Best Regards,
-> 
-> Boris
-> 
-> --
-> Boris Brezillon, Free Electrons
-> Embedded Linux and Kernel engineering
-> http://free-electrons.com
+VGh1LCAwNCBTZXAgMjAxNCAxMDowOToxOSArMDUzMCDQvtGCIFBhbmthaiBEdWJleSA8cGFua2Fq
+LmR1YmV5QHNhbXN1bmcuY29tPjoKPiBIaSBBcm5kLAo+IAo+IE9uIFR1ZXNkYXksIFNlcHRlbWJl
+ciAwMiwgMjAxNCBBcm5kIEJlcmdtYW5uIHdyb3RlLAo+ID4gVG86IFBhbmthaiBEdWJleQo+ID4g
+Q2M6IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsKPiBsaW51eC1zYW1zdW5n
+LXNvY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQo+ID4ga2VybmVsQHZnZXIua2VybmVsLm9yZzsg
+bGVlLmpvbmVzQGxpbmFyby5vcmc7IGtnZW5lLmtpbUBzYW1zdW5nLmNvbTsKPiA+IGxpbnV4QGFy
+bS5saW51eC5vcmcudWs7IHZpa2FzLnNhamphbkBzYW1zdW5nLmNvbTsgam9zaGlAc2Ftc3VuZy5j
+b207Cj4gPiBuYXVzaGFkQHNhbXN1bmcuY29tOyB0aG9tYXMuYWJAc2Ftc3VuZy5jb207IGNob3cu
+a2ltQHNhbXN1bmcuY29tOwo+ID4gdG9tYXN6LmZpZ2FAZ21haWwuY29tOyBUb21hc3ogRmlnYTsg
+QWxleGFuZGVyIFNoaXlhbjsgTWljaGFsIFNpbWVrCj4gPiBTdWJqZWN0OiBSZTogW1BBVENIIHYy
+XSBtZmQ6IHN5c2NvbjogRGVjb3VwbGUgc3lzY29uIGludGVyZmFjZSBmcm9tCj4gcGxhdGZvcm0K
+PiA+IGRldmljZXMKLi4uCj4gPiA+IC1zdHJ1Y3QgcmVnbWFwICpzeXNjb25fcmVnbWFwX2xvb2t1
+cF9ieV9wZGV2bmFtZShjb25zdCBjaGFyICpzKSAtewo+ID4gPiAtCXN0cnVjdCBkZXZpY2UgKmRl
+djsKPiA+ID4gLQlzdHJ1Y3Qgc3lzY29uICpzeXNjb247Cj4gPiA+IC0KPiA+ID4gLQlkZXYgPSBk
+cml2ZXJfZmluZF9kZXZpY2UoJnN5c2Nvbl9kcml2ZXIuZHJpdmVyLCBOVUxMLCAodm9pZCAqKXMs
+Cj4gPiA+IC0JCQkJIHN5c2Nvbl9tYXRjaF9wZGV2bmFtZSk7Cj4gPiA+IC0JaWYgKCFkZXYpCj4g
+PiA+IC0JCXJldHVybiBFUlJfUFRSKC1FUFJPQkVfREVGRVIpOwo+ID4gPiAtCj4gPiA+IC0Jc3lz
+Y29uID0gZGV2X2dldF9kcnZkYXRhKGRldik7Cj4gPiA+IC0KPiA+ID4gLQlyZXR1cm4gc3lzY29u
+LT5yZWdtYXA7Cj4gPiA+IC19Cj4gPiA+IC1FWFBPUlRfU1lNQk9MX0dQTChzeXNjb25fcmVnbWFw
+X2xvb2t1cF9ieV9wZGV2bmFtZSk7Cj4gPiAKPiA+IEkgdGhpbmsgdGhpcyBjYW4gYWN0dWFsbHkg
+YmUgbGVmdCBpbnRhY3QgaWYgdGhhdCBoZWxwcyB3aXRoIGNscHM3MXh4Lgo+ID4gSXQgY291bGQg
+YmUgZG9uZSBpbiBhIGhhY2t5IHdheSB1c2luZyBidXNfZmluZF9kZXZpY2VfYnlfbmFtZSgpIHRv
+IGtlZXAgaXQKPiBzaW1wbGUsCj4gPiBvciBpbiBhIHNvbWV3aGF0IG5pY2VyIHdheSBieSBrZWVw
+aW5nIHRoZSBzeXNjb24gcGxhdGZvcm1fZHJpdmVyIGFyb3VuZAo+IGZvciB0aGUKPiA+IG5vbi1E
+VCBjYXNlLgo+ID4gCj4gCj4gT2sgYXMgcGVyIG91ciBsYXN0IGRpc2N1c3Npb24geW91IG1lbnRp
+b25lZCB0aGF0IGNscHM3MXh4IHdpbGwgYmUgc29vbgo+IG1pZ3JhdGluZyB0byBEVC4KPiBTbyBp
+ZiB0aGF0IGlzIG5vdCBnb2luZyB0byBoYXBwZW4gc29vbmVyLCBJIHdvdWxkIGFsc28gcHJlZmVy
+IGJldHRlciBrZWVwCj4gc3lzY29uX3JlZ21hcF9sb29rdXBfYnlfcGRldm5hbWUgYW5kIHN5c2Nv
+biBwbGF0Zm9ybV9kcml2ZXIgZm9yIG5vbi1EVCBjYXNlLAo+IHNvIHRoYXQgdGhpcyBpc3N1ZSBz
+aG91bGQgbm90IGJsb2NrIHRoaXMgcGF0Y2guCj4gCj4gU28gcGxlYXNlIGxldCdzIG1ha2UgZmlu
+YWwgY2FsbCB0byBrZWVwIHN5c2NvbiBwbGF0Zm9ybV9kcml2ZXIgZm9yIG5vbi1EVAo+IGNhc2Ug
+d2hpY2ggZXZlbnR1YWxseQo+IGNhbiBiZSBkcm9wcGVkIG9uY2UgY2xwczcxeHggZHJpdmVyIG1p
+Z3JhdGVzIHRvIERUIGJhc2VkLiBTbyB0aGF0IEkgY2FuCj4gcHJlcGFyZSBuZXh0IHBhdGNoc2V0
+Cj4ga2VlcGluZyBzeXNjb24gcGxhdGZvcm1fZHJpdmVyIHN1cHBvcnQgIGFuZCBzeXNjb25fcmVn
+bWFwX2xvb2t1cF9ieV9wZGV2bmFtZQo+IEFQSSBzdXBwb3J0Cj4gZm9yIG5vbi1EVCBjYXNlIGFu
+ZCBzZW5kIGFjcm9zcyBmb3IgcmV2aWV3LiAKCkFybmQsIGNhbiB5b3UgZm9yY2UgdGhlIGFwcGx5
+aW5nIG9mIHRoZSBsYXRlc3QgY2xwczcxMXggcGF0Y2hlcyB0byBhY2NlbGVyYXRlIHRoZSBwcm9j
+ZXNzPwpJIG1lYW4gbGF0ZXN0IDMgYXJtLXNvYyBwYXRjaGVzIGZyb20gQXVnLCAxOS4KQWZ0ZXIg
+dGhhdCBJIHdpbGwgbmVlZCB0byBtYWtlIGEgcGF0Y2ggZm9yIHRoZSBTUEkgYW5kIFRUWSBzdWJz
+eXN0ZW1zLCB0aGVuIGluaXRpYWwgRFQKc3VwcG9ydCB3aWxsIGJlIGludHJvZHVjZWQuCgotLS0K
+Cg==
