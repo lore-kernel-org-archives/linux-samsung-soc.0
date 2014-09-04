@@ -1,391 +1,98 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH v6 4/4] phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800
-Date: Thu, 4 Sep 2014 12:01:19 +0530
-Message-ID: <CAFp+6iETPJCWMMkjHrpDcdCv=K0PbefYLa4eBOwN=aUY2=EHLA@mail.gmail.com>
-References: <1409656338-20337-1-git-send-email-gautam.vivek@samsung.com>
-	<1409656338-20337-5-git-send-email-gautam.vivek@samsung.com>
-	<20140902143438.GB16872@saruman.home>
-	<CAFp+6iEyqmbwMLFrBKD7NVLDAC=b+h1hPKFS=BG4k9D69hn_dg@mail.gmail.com>
-	<20140903144225.GD31855@saruman.home>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH v9 4/6] ARM: Exynos: switch to using generic cpufreq driver for Exynos4210/5250/5420
+Date: Thu, 04 Sep 2014 06:30:13 -0700
+Message-ID: <7hfvg74ioq.fsf@paris.lan>
+References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
+	<1406707663-16656-5-git-send-email-thomas.ab@samsung.com>
+	<53DA8BB9.6020702@samsung.com> <53DA8D85.3050106@gmail.com>
+	<7hbnrc6px3.fsf@paris.lan> <53F7DA13.6090305@gmail.com>
+	<CADWw7OgAS-z-UOrJU-hL2fzuefJmLtCTg57jYk2Df7f5KfLJmA@mail.gmail.com>
+	<7h8umc60we.fsf@paris.lan>
+	<CADWw7OgW+o3tB=ptnsy-PsmXmNv8oXzt_WfK6NswQiEWWwAzNA@mail.gmail.com>
+	<CAGa+x85-Anb+HsSUQRaaeex19-HK+yZDW0UpFBwAtsQ8Sf2Aqg@mail.gmail.com>
+	<CAGa+x86jU8MR=r_xuaiorbNNyqrezb0b6Ozy-MPg9HvsARESOw@mail.gmail.com>
+	<CAJuA9ajtsrY7zSDMs=c6BZ0AqERoBgvq++dTF4Dn673zGMfcgQ@mail.gmail.com>
+	<CAMAWPa-8h5PNhgT+ApBhA8p=i+4oFOnYnQsQ4mK1JKwwAhpvpQ@mail.gmail.com>
+	<CAJuA9ah5M_pXRMXPB6o7JLhgVUHM7kYo9HOV6Yxv4Z=hKMdG=w@mail.gmail.com>
+	<7hmwah6cop.fsf@paris.lan>
+	<CAJuA9ahe=9gdTaGcRb69syvRfwkkGMgDiiNfOMA9TBo42cWVZw@mail.gmail.com>
+	<CAJuA9ag2pybyLDUyW43wMQu4PA1cB4V9c1bc7WB3xjqzhqNGTw@mail.gmail.com>
+	<7hsik847p2.fsf@paris.lan>
+	<CAJuA9aiXwgxrS_AYw5tt5GryhrtoOpK2RhhLcjxShNqswiCmqA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f43.google.com ([209.85.216.43]:37833 "EHLO
-	mail-qa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756713AbaIDGbU (ORCPT
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:61173 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751140AbaIDNaV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Sep 2014 02:31:20 -0400
-In-Reply-To: <20140903144225.GD31855@saruman.home>
+	Thu, 4 Sep 2014 09:30:21 -0400
+Received: by mail-pd0-f182.google.com with SMTP id fp1so13639648pdb.27
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Sep 2014 06:30:17 -0700 (PDT)
+In-Reply-To: <CAJuA9aiXwgxrS_AYw5tt5GryhrtoOpK2RhhLcjxShNqswiCmqA@mail.gmail.com>
+	(Thomas Abraham's message of "Thu, 4 Sep 2014 15:52:38 +0530")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg KH <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Jingoo Han <jg1.han@samsung.com>
+To: Thomas Abraham <ta.omasab@gmail.com>
+Cc: Chander Kashyap <k.chander@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Amit Kucheria <amit.kucheria@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Wed, Sep 3, 2014 at 8:12 PM, Felipe Balbi <balbi@ti.com> wrote:
-> Hi,
->
-> On Wed, Sep 03, 2014 at 12:59:27PM +0530, Vivek Gautam wrote:
->> > On Tue, Sep 02, 2014 at 04:42:18PM +0530, Vivek Gautam wrote:
->> >> Adding phy calibrate callback, which facilitates setting certain
->> >> PHY settings post initialization of the PHY controller.
->> >> Exynos5420 and Exynos5800 have 28nm USB 3.0 DRD PHY for which
->> >> the Loss-of-Signal (LOS) Detector Threshold Level as well as
->> >> Tx-Vboost-Level should be controlled for Super-Speed operations.
->> >>
->> >> Additionally set proper time to wait for RxDetect measurement,
->> >> for desired PHY reference clock, so as to solve issue with enumeration
->> >> of few USB 3.0 devices, like Samsung SUM-TSB16S 3.0 USB drive
->> >> on the controller.
->> >> We are using CR_port for this purpose to send required data
->> >> to override the LOS values.
->> >>
->> >> On testing with USB 3.0 devices on USB 3.0 port present on
->> >> SMDK5420, and peach-pit boards should see following message:
->> >> usb 2-1: new SuperSpeed USB device number 2 using xhci-hcd
->> >>
->> >> and without this patch, should see below shown message:
->> >> usb 1-1: new high-speed USB device number 2 using xhci-hcd
->> >>
->> >> [Also removed unnecessary extra lines in the register macro definitions]
->> >>
->> >> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->> >> ---
->> >>  drivers/phy/phy-exynos5-usbdrd.c |  185 ++++++++++++++++++++++++++++++++++----
->> >>  1 file changed, 170 insertions(+), 15 deletions(-)
->> >>
->> >> diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
->> >> index 47f47fe..85742b0 100644
->> >> --- a/drivers/phy/phy-exynos5-usbdrd.c
->> >> +++ b/drivers/phy/phy-exynos5-usbdrd.c
->> >> @@ -37,13 +37,11 @@
->> >>
->> >>  /* EXYNOS5: USB 3.0 DRD PHY registers */
->> >>  #define EXYNOS5_DRD_LINKSYSTEM                       0x04
->> >> -
->> >>  #define LINKSYSTEM_FLADJ_MASK                        (0x3f << 1)
->> >>  #define LINKSYSTEM_FLADJ(_x)                 ((_x) << 1)
->> >>  #define LINKSYSTEM_XHCI_VERSION_CONTROL              BIT(27)
->> >>
->> >>  #define EXYNOS5_DRD_PHYUTMI                  0x08
->> >> -
->> >>  #define PHYUTMI_OTGDISABLE                   BIT(6)
->> >>  #define PHYUTMI_FORCESUSPEND                 BIT(1)
->> >>  #define PHYUTMI_FORCESLEEP                   BIT(0)
->> >> @@ -51,26 +49,20 @@
->> >>  #define EXYNOS5_DRD_PHYPIPE                  0x0c
->> >>
->> >>  #define EXYNOS5_DRD_PHYCLKRST                        0x10
->> >> -
->> >>  #define PHYCLKRST_EN_UTMISUSPEND             BIT(31)
->> >> -
->> >>  #define PHYCLKRST_SSC_REFCLKSEL_MASK         (0xff << 23)
->> >>  #define PHYCLKRST_SSC_REFCLKSEL(_x)          ((_x) << 23)
->> >> -
->> >>  #define PHYCLKRST_SSC_RANGE_MASK             (0x03 << 21)
->> >>  #define PHYCLKRST_SSC_RANGE(_x)                      ((_x) << 21)
->> >> -
->> >>  #define PHYCLKRST_SSC_EN                     BIT(20)
->> >>  #define PHYCLKRST_REF_SSP_EN                 BIT(19)
->> >>  #define PHYCLKRST_REF_CLKDIV2                        BIT(18)
->> >> -
->> >>  #define PHYCLKRST_MPLL_MULTIPLIER_MASK               (0x7f << 11)
->> >>  #define PHYCLKRST_MPLL_MULTIPLIER_100MHZ_REF (0x19 << 11)
->> >>  #define PHYCLKRST_MPLL_MULTIPLIER_50M_REF    (0x32 << 11)
->> >>  #define PHYCLKRST_MPLL_MULTIPLIER_24MHZ_REF  (0x68 << 11)
->> >>  #define PHYCLKRST_MPLL_MULTIPLIER_20MHZ_REF  (0x7d << 11)
->> >>  #define PHYCLKRST_MPLL_MULTIPLIER_19200KHZ_REF       (0x02 << 11)
->> >> -
->> >>  #define PHYCLKRST_FSEL_UTMI_MASK             (0x7 << 5)
->> >>  #define PHYCLKRST_FSEL_PIPE_MASK             (0x7 << 8)
->> >>  #define PHYCLKRST_FSEL(_x)                   ((_x) << 5)
->> >> @@ -78,46 +70,68 @@
->> >>  #define PHYCLKRST_FSEL_PAD_24MHZ             (0x2a << 5)
->> >>  #define PHYCLKRST_FSEL_PAD_20MHZ             (0x31 << 5)
->> >>  #define PHYCLKRST_FSEL_PAD_19_2MHZ           (0x38 << 5)
->> >> -
->> >>  #define PHYCLKRST_RETENABLEN                 BIT(4)
->> >> -
->> >>  #define PHYCLKRST_REFCLKSEL_MASK             (0x03 << 2)
->> >>  #define PHYCLKRST_REFCLKSEL_PAD_REFCLK               (0x2 << 2)
->> >>  #define PHYCLKRST_REFCLKSEL_EXT_REFCLK               (0x3 << 2)
->> >> -
->> >>  #define PHYCLKRST_PORTRESET                  BIT(1)
->> >>  #define PHYCLKRST_COMMONONN                  BIT(0)
->> >>
->> >>  #define EXYNOS5_DRD_PHYREG0                  0x14
->> >> +#define PHYREG0_SSC_REF_CLK_SEL                      BIT(21)
->> >> +#define PHYREG0_SSC_RANGE                    BIT(20)
->> >> +#define PHYREG0_CR_WRITE                     BIT(19)
->> >> +#define PHYREG0_CR_READ                              BIT(18)
->> >> +#define PHYREG0_CR_DATA_IN(_x)                       ((_x) << 2)
->> >> +#define PHYREG0_CR_CAP_DATA                  BIT(1)
->> >> +#define PHYREG0_CR_CAP_ADDR                  BIT(0)
->> >> +
->> >>  #define EXYNOS5_DRD_PHYREG1                  0x18
->> >> +#define PHYREG1_CR_DATA_OUT(_x)                      ((_x) << 1)
->> >> +#define PHYREG1_CR_ACK                               BIT(0)
->> >>
->> >>  #define EXYNOS5_DRD_PHYPARAM0                        0x1c
->> >> -
->> >>  #define PHYPARAM0_REF_USE_PAD                        BIT(31)
->> >>  #define PHYPARAM0_REF_LOSLEVEL_MASK          (0x1f << 26)
->> >>  #define PHYPARAM0_REF_LOSLEVEL                       (0x9 << 26)
->> >>
->> >>  #define EXYNOS5_DRD_PHYPARAM1                        0x20
->> >> -
->> >>  #define PHYPARAM1_PCS_TXDEEMPH_MASK          (0x1f << 0)
->> >>  #define PHYPARAM1_PCS_TXDEEMPH                       (0x1c)
->> >>
->> >>  #define EXYNOS5_DRD_PHYTERM                  0x24
->> >>
->> >>  #define EXYNOS5_DRD_PHYTEST                  0x28
->> >> -
->> >>  #define PHYTEST_POWERDOWN_SSP                        BIT(3)
->> >>  #define PHYTEST_POWERDOWN_HSP                        BIT(2)
->> >>
->> >>  #define EXYNOS5_DRD_PHYADP                   0x2c
->> >>
->> >>  #define EXYNOS5_DRD_PHYUTMICLKSEL            0x30
->> >> -
->> >
->> > this and all above are unrelated to $subject.
+Thomas Abraham <ta.omasab@gmail.com> writes:
+
+> On Thu, Sep 4, 2014 at 4:45 AM, Kevin Hilman <khilman@kernel.org> wrote:
+>> Hi Thomas,
 >>
->> True, but i have mentioned about this change in the commit message.
->> It looked so trivial to me that i included it here in this patch.
+>> Thomas Abraham <ta.omasab@gmail.com> writes:
 >>
->> Will separate it out in a separate patch if you like that. :-)
->
-> probably not necessary. Kishon's got the final word for drivers/phy,
-> though.
-
-sure,
-
->
+>> [...]
 >>
->> >
->> >>  #define PHYUTMICLKSEL_UTMI_CLKSEL            BIT(2)
->> >>
->> >>  #define EXYNOS5_DRD_PHYRESUME                        0x34
->> >>  #define EXYNOS5_DRD_LINKPORT                 0x44
->> >>
->> >> +/* USB 3.0 DRD PHY SS Function Control Reg; accessed by CR_PORT */
->> >> +#define EXYNOS5_DRD_PHYSS_LOSLEVEL_OVRD_IN           (0x15)
->> >> +#define LOSLEVEL_OVRD_IN_LOS_BIAS_5420                       (0x5 << 13)
->> >> +#define LOSLEVEL_OVRD_IN_LOS_BIAS_DEFAULT            (0x0 << 13)
->> >> +#define LOSLEVEL_OVRD_IN_EN                          (0x1 << 10)
->> >> +#define LOSLEVEL_OVRD_IN_LOS_LEVEL_DEFAULT           (0x9 << 0)
->> >> +
->> >> +#define EXYNOS5_DRD_PHYSS_TX_VBOOSTLEVEL_OVRD_IN     (0x12)
->> >> +#define TX_VBOOSTLEVEL_OVRD_IN_VBOOST_5420           (0x5 << 13)
->> >> +#define TX_VBOOSTLEVEL_OVRD_IN_VBOOST_DEFAULT                (0x4 << 13)
->> >> +
->> >> +#define EXYNOS5_DRD_PHYSS_LANE0_TX_DEBUG             (0x1010)
->> >> +#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_19M2_20M              (0x4 << 4)
->> >> +#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_24M           (0x8 << 4)
->> >> +#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_25M_26M               (0x8 << 4)
->> >> +#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_48M_50M_52M   (0x20 << 4)
->> >> +#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_62M5          (0x20 << 4)
->> >> +#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_96M_100M              (0x40 << 4)
->> >> +
->> >>  #define KHZ  1000
->> >>  #define MHZ  (KHZ * KHZ)
->> >>
->> >> @@ -135,12 +149,14 @@ struct exynos5_usbdrd_phy_config {
->> >>       void (*phy_isol)(struct phy_usb_instance *inst, u32 on);
->> >>       void (*phy_init)(struct exynos5_usbdrd_phy *phy_drd);
->> >>       unsigned int (*set_refclk)(struct phy_usb_instance *inst);
->> >> +     int (*phy_calibrate)(struct phy_usb_instance *inst);
->> >>  };
->> >>
->> >>  struct exynos5_usbdrd_phy_drvdata {
->> >>       const struct exynos5_usbdrd_phy_config *phy_cfg;
->> >>       u32 pmu_offset_usbdrd0_phy;
->> >>       u32 pmu_offset_usbdrd1_phy;
->> >> +     void (*phy_exynos_calibrate)(struct exynos5_usbdrd_phy *phy_drd);
->> >>  };
->> >>
->> >>  /**
->> >> @@ -487,6 +503,142 @@ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
->> >>       return 0;
->> >>  }
->> >>
->> >> +static void crport_handshake(struct exynos5_usbdrd_phy *phy_drd,
->> >> +                                             u32 val, u32 cmd)
->> >> +{
->> >> +     u32 usec = 100;
->> >> +     u32 result;
->> >> +
->> >> +     writel(val | cmd, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
->> >> +
->> >> +     do {
->> >> +             result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
->> >> +             if (result & PHYREG1_CR_ACK)
->> >> +                     break;
->> >> +
->> >> +             udelay(1);
->> >> +     } while (usec-- > 0);
->> >> +
->> >> +     if (!usec)
->> >> +             dev_err(phy_drd->dev,
->> >> +                     "CRPORT handshake timeout1 (0x%08x)\n", val);
->> >
->> > if handshake timed out, shouldn't you error out here ? IOW, make this
->> > function return an int and return an error code from this point ? Why
->> > would you even continue to the next step ?
+>>> A new branch [1] has been created using commits from exynos5-v3.17-rc1
+>>> branch + cpufreq + regulator + temp fixes. I have tested this branch
+>>> on Exynos5800 Chromebook2 and cpufreq works fine with both ondemand
+>>> and performance governors. Please let me know if there are any issues
+>>> with this new branch. It is based on v3.17-rc3.
 >>
->> Point taken, we should have error'ed out here once timeout occured.
->> Will update it accordingly.
+>> Excellent!  Thank you.
 >>
->> >
->> >> +
->> >> +     usec = 100;
->> >> +
->> >> +     writel(val, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
->> >> +
->> >> +     do {
->> >> +             result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
->> >> +             if (!(result & PHYREG1_CR_ACK))
->> >> +                     break;
->> >> +
->> >> +             udelay(1);
->> >> +     } while (usec-- > 0);
->> >> +
->> >> +     if (!usec)
->> >> +             dev_err(phy_drd->dev,
->> >> +                     "CRPORT handshake timeout2 (0x%08x)\n", val);
->> >
->> > return an error ?
->> sure
+>> The only thing missing now is the CPUidle support for 5800, and all
+>> that's needed for that is the compatible string patch[1] which Daniel
+>> has queued up.
 >>
->> >
->> >> +}
->> >> +
->> >> +static void crport_ctrl_write(struct exynos5_usbdrd_phy *phy_drd,
->> >> +                                             u32 addr, u32 data)
->> >> +{
->> >> +     /* Write Address */
->> >> +     writel(PHYREG0_CR_DATA_IN(addr),
->> >> +                     phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
->> >> +     crport_handshake(phy_drd, PHYREG0_CR_DATA_IN(addr),
->> >> +                      PHYREG0_CR_CAP_ADDR);
->> >> +
->> >> +     /* Write Data */
->> >> +     writel(PHYREG0_CR_DATA_IN(data),
->> >> +                     phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
->> >> +     crport_handshake(phy_drd, PHYREG0_CR_DATA_IN(data),
->> >> +                      PHYREG0_CR_CAP_DATA);
->> >> +     crport_handshake(phy_drd, PHYREG0_CR_DATA_IN(data),
->> >> +                      PHYREG0_CR_WRITE);
->> >> +}
->> >> +
->> >> +/*
->> >> + * Override PHY paramaeters using CR_PORT register to calibrate settings
->> >> + * to meet meet SuperSpeed requirements, on Exynos5420 and Exynos5800 systems,
->> >> + * which have 28nm USB 3.0 DRD PHY.
->> >> + */
->> >> +static void exynos5420_usbdrd_phy_calibrate(struct exynos5_usbdrd_phy *phy_drd)
->> >> +{
->> >> +     u32 temp;
->> >> +
->> >> +     /*
->> >> +      * Change los_bias to (0x5) for 28nm PHY from a
->> >> +      * default value (0x0); los_level is set as default
->> >> +      * (0x9) as also reflected in los_level[30:26] bits
->> >> +      * of PHYPARAM0 register.
->> >> +      */
->> >> +     temp = LOSLEVEL_OVRD_IN_LOS_BIAS_5420 |
->> >> +             LOSLEVEL_OVRD_IN_EN |
->> >> +             LOSLEVEL_OVRD_IN_LOS_LEVEL_DEFAULT;
->> >> +     crport_ctrl_write(phy_drd,
->> >> +                       EXYNOS5_DRD_PHYSS_LOSLEVEL_OVRD_IN,
->> >> +                       temp);
->> >> +
->> >> +     /*
->> >> +      * Set tx_vboost_lvl to (0x5) for 28nm PHY Tuning,
->> >> +      * to raise Tx signal level from its default value of (0x4)
->> >> +      */
->> >> +     temp = TX_VBOOSTLEVEL_OVRD_IN_VBOOST_5420;
->> >> +     crport_ctrl_write(phy_drd,
->> >> +                       EXYNOS5_DRD_PHYSS_TX_VBOOSTLEVEL_OVRD_IN,
->> >> +                       temp);
->> >> +
->> >> +     /*
->> >> +      * Set proper time to wait for RxDetect measurement, for
->> >> +      * desired reference clock of PHY, by tuning the CRPORT
->> >> +      * register LANE0.TX_DEBUG which is internal to PHY.
->> >> +      * This fixes issue with few USB 3.0 devices, which are
->> >> +      * not detected (not even generate interrupts on the bus
->> >> +      * on insertion) without this change.
->> >> +      * e.g. Samsung SUM-TSB16S 3.0 USB drive.
->> >> +      */
->> >> +     switch (phy_drd->extrefclk) {
->> >> +     case EXYNOS5_FSEL_50MHZ:
->> >> +             temp = LANE0_TX_DEBUG_RXDET_MEAS_TIME_48M_50M_52M;
->> >> +             break;
->> >> +     case EXYNOS5_FSEL_20MHZ:
->> >> +     case EXYNOS5_FSEL_19MHZ2:
->> >> +             temp = LANE0_TX_DEBUG_RXDET_MEAS_TIME_19M2_20M;
->> >> +             break;
->> >> +     case EXYNOS5_FSEL_24MHZ:
->> >
->> > why can't this be done during probe() ? Are you going to change external
->> > reference clock frequency during runtime ? And even if you do,
->> > wouldn't it be easier to subscribe to clock rate change notifiers
->> > instead of adding this ->calibrate() ?
->>
->> Wait, did this patch give an impression that we are changing the reference
->> clock settings ?
+>> With that patch, display + CPUidle + CPUfreq are working pretty well on
+>> my exynos5800/chromebook2 with the big.LITTLE switcher disabled.  If I
+>> turn on the switcher, it boots OK, but as soon as I try to run powertop
+>> (upstream v2.6.1) it gets stuck.  Have you tried this branch with the
+>> switcher enabled?
 >
-> not, it gives the impression that you need to change RX Detect timeout
-> value based on external reference clock frequency :-)
+> Yes, I have tested switcher + cpufreq + cpuidle with this branch and
+> there are no issues found. I haven't tested with powertop yet. I will
+> try and do that and let you know the result.
 >
->> We are actually trying to override some of the PHY parameters, which
->> is possible only after the controller has been reset.
->> These PHY parameter overriding (on PHY registers which are not exposed
->> outside) is done post initialization, only through
->> EXYNOS5_DRD_PHYREG0.
->
-> so it _has_ to be done after dwc3's reset ?
+> You mentioned that when you run powertop, it gets stuck. When that
+> happens, is there any log on the console or does system just turn
+> unresponsive?
 
-By  controller reset i meant XHCI reset in fact.
-What we see with this PHY controller on Exynos5420/5800 that it's only when
-the host controller has been reset, the PHY parameters (which we are
-calibrating here)
-settings remain intact.
-We have already tried earlier moving this calibration afte DWC3 core
-reset occurs,
-but that doesn't help.
-That's the reason we moved the calibration stuff to usb_add_hcd() and
-usb_bus_resume()
-functions.
+The console is not responsive, but kernel seems busy because I see
+periodic timeout messages from the samsung clock driver.
 
-> Don't we have phy_power_on()
-> for that ? It looks like you could just as well do this from
-> phy_power_on() ?
+Note that I see these messages when things are functioning normally
+also.
 
-No, unfortunately keeping these calibration settings in phy_power_on()
-doesn't help, since we need to do this after XHCI reset has happened.
-
->
->> > It still looks, to me, that this ->calibrate() thing is unnecessary. We
->> > have a single user for it and this user could very well get this sorted
->> > out during probe() or by subscribing to clock rate notifiers.
->>
->> We can't program these parameters during PHY probe(), since they reset to
->> their default value after the controller reset.
->> So we needed a way to do this post initialization, once the controller
->> has been reset.
->
-> right, and we already have a call to phy_power_on() after core has been
-> reset. Can't you use that ?
->
-> --
-> balbi
+Kevin
 
 
-
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+[1]
+[  337.832031] wait_until_divider_stable: timeout in divider stablization
+[  337.847024] wait_until_divider_stable: timeout in divider stablization
+[  337.862024] wait_until_divider_stable: timeout in divider stablization
+[  337.957028] wait_until_divider_stable: timeout in divider stablization
+[  337.972024] wait_until_divider_stable: timeout in divider stablization
+[  337.987024] wait_until_divider_stable: timeout in divider stablization
+[  340.082029] wait_until_divider_stable: timeout in divider stablization
+[  340.097024] wait_until_divider_stable: timeout in divider stablization
+[  340.112024] wait_until_divider_stable: timeout in divider stablization
+[  346.242030] wait_until_divider_stable: timeout in divider stablization
+[  346.257024] wait_until_divider_stable: timeout in divider stablization
+[  346.272024] wait_until_divider_stable: timeout in divider stablization
+[  348.322029] wait_until_divider_stable: timeout in divider stablization
+[  348.337025] wait_until_divider_stable: timeout in divider stablization
+[  348.352024] wait_until_divider_stable: timeout in divider stablization
