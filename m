@@ -1,63 +1,46 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH v9 4/6] ARM: Exynos: switch to using generic cpufreq driver for Exynos4210/5250/5420
-Date: Wed, 03 Sep 2014 16:15:21 -0700
-Message-ID: <7hsik847p2.fsf@paris.lan>
-References: <1406707663-16656-1-git-send-email-thomas.ab@samsung.com>
-	<1406707663-16656-5-git-send-email-thomas.ab@samsung.com>
-	<53DA8BB9.6020702@samsung.com> <53DA8D85.3050106@gmail.com>
-	<7hbnrc6px3.fsf@paris.lan> <53F7DA13.6090305@gmail.com>
-	<CADWw7OgAS-z-UOrJU-hL2fzuefJmLtCTg57jYk2Df7f5KfLJmA@mail.gmail.com>
-	<7h8umc60we.fsf@paris.lan>
-	<CADWw7OgW+o3tB=ptnsy-PsmXmNv8oXzt_WfK6NswQiEWWwAzNA@mail.gmail.com>
-	<CAGa+x85-Anb+HsSUQRaaeex19-HK+yZDW0UpFBwAtsQ8Sf2Aqg@mail.gmail.com>
-	<CAGa+x86jU8MR=r_xuaiorbNNyqrezb0b6Ozy-MPg9HvsARESOw@mail.gmail.com>
-	<CAJuA9ajtsrY7zSDMs=c6BZ0AqERoBgvq++dTF4Dn673zGMfcgQ@mail.gmail.com>
-	<CAMAWPa-8h5PNhgT+ApBhA8p=i+4oFOnYnQsQ4mK1JKwwAhpvpQ@mail.gmail.com>
-	<CAJuA9ah5M_pXRMXPB6o7JLhgVUHM7kYo9HOV6Yxv4Z=hKMdG=w@mail.gmail.com>
-	<7hmwah6cop.fsf@paris.lan>
-	<CAJuA9ahe=9gdTaGcRb69syvRfwkkGMgDiiNfOMA9TBo42cWVZw@mail.gmail.com>
-	<CAJuA9ag2pybyLDUyW43wMQu4PA1cB4V9c1bc7WB3xjqzhqNGTw@mail.gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v2 7/7] Input: cros_ec_keyb: Optimize ghosting algorithm.
+Date: Wed, 3 Sep 2014 17:06:43 -0700
+Message-ID: <20140904000643.GA8034@core.coreip.homeip.net>
+References: <1408974008-17184-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1408974008-17184-8-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:38586 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S933489AbaICXPY (ORCPT
+Received: from mail-pd0-f176.google.com ([209.85.192.176]:55763 "EHLO
+	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756554AbaIDAGs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Sep 2014 19:15:24 -0400
-In-Reply-To: <CAJuA9ag2pybyLDUyW43wMQu4PA1cB4V9c1bc7WB3xjqzhqNGTw@mail.gmail.com>
-	(Thomas Abraham's message of "Wed, 3 Sep 2014 18:48:35 +0530")
+	Wed, 3 Sep 2014 20:06:48 -0400
+Content-Disposition: inline
+In-Reply-To: <1408974008-17184-8-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>
-Cc: Chander Kashyap <k.chander@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Amit Kucheria <amit.kucheria@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hi Thomas,
+On Mon, Aug 25, 2014 at 03:40:08PM +0200, Javier Martinez Canillas wrot=
+e:
+> From: Todd Broch <tbroch@chromium.org>
+>=20
+> Previous algorithm was a bit conservative and complicating with
+> respect to identifying key ghosting.  This CL uses the bitops hamming
+> weight function (hweight8) to count the number of matching rows for
+> colM & colN.  If that number is > 1 ghosting is present.
+>=20
+> Additionally it removes NULL keys and our one virtual keypress
+> KEY_BATTERY from consideration as these inputs are never physical
+> keypresses.
+>=20
+> Signed-off-by: Todd Broch <tbroch@chromium.org>
+> Reviewed-by: Vincent Palatin <vpalatin@chromium.org>
+> Reviewed-by: Luigi Semenzato <semenzato@chromium.org>
+> Tested-by: Andreas F=E4rber <afaerber@suse.de>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
+=2Euk>
 
-Thomas Abraham <ta.omasab@gmail.com> writes:
+Applied, thank you.
 
-[...]
-
-> A new branch [1] has been created using commits from exynos5-v3.17-rc1
-> branch + cpufreq + regulator + temp fixes. I have tested this branch
-> on Exynos5800 Chromebook2 and cpufreq works fine with both ondemand
-> and performance governors. Please let me know if there are any issues
-> with this new branch. It is based on v3.17-rc3.
-
-Excellent!  Thank you.
-
-The only thing missing now is the CPUidle support for 5800, and all
-that's needed for that is the compatible string patch[1] which Daniel
-has queued up.
-
-With that patch, display + CPUidle + CPUfreq are working pretty well on
-my exynos5800/chromebook2 with the big.LITTLE switcher disabled.  If I
-turn on the switcher, it boots OK, but as soon as I try to run powertop
-(upstream v2.6.1) it gets stuck.  Have you tried this branch with the
-switcher enabled?
-
-Thanks again for your work on this, we're getting close!  
-
-Kevin
-
-[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2014-August/279028.html
+--=20
+Dmitry
