@@ -1,74 +1,90 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: Unable to boot mainline on snow chromebook since 3.15
-Date: Fri, 5 Sep 2014 19:16:03 +0530
-Message-ID: <CAEC9eQOMd7ME5KiG2QHCf3TMJAwSxLUgGpmFrpw_HQT4me9YWg@mail.gmail.com>
-References: <20140905115704.GO13515@arm.com>
-	<20140905122232.GP13515@arm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f180.google.com ([209.85.223.180]:58208 "EHLO
-	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756935AbaIENqD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Sep 2014 09:46:03 -0400
-Received: by mail-ie0-f180.google.com with SMTP id at1so568691iec.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Sep 2014 06:46:03 -0700 (PDT)
-In-Reply-To: <20140905122232.GP13515@arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v6 2/5] ARM: EXYNOS: add AFTR mode support to firmware do_idle
+ method
+Date: Fri, 05 Sep 2014 15:51:25 +0200
+Message-ID: <1409925088-4705-3-git-send-email-b.zolnierkie@samsung.com>
+References: <1409925088-4705-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1409925088-4705-1-git-send-email-b.zolnierkie@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Will Deacon <will.deacon@arm.com>
-Cc: "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "olof@lixom.net" <olof@lixom.net>, "dianders@chromium.org" <dianders@chromium.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Will,
+On some platforms (i.e. EXYNOS ones) more than one idle mode is
+available and we need to distinguish them in firmware do_idle method.
 
-On Fri, Sep 5, 2014 at 5:52 PM, Will Deacon <will.deacon@arm.com> wrote:
-> [Looks like it's not just Rutland that can't spell the address of the
->  mailing list today. Fixed here, so please use this post in any replies].
->
-> On Fri, Sep 05, 2014 at 12:57:04PM +0100, Will Deacon wrote:
->> Hi all,
->>
->> I'm one of the few, foolish people to try running mainline on my 5250-based
->> Samsung Chromebook (snow). I can live without wireless, usb3 and video
->> acceleration, so actually it makes a reasonable development platform for
->> doing A15-based (micro)-architectural work.
->>
->> However, since 3.15 I've not been able to boot *any* mainline kernels on
->> this board. I did mean to report this earlier, but I have other machines
->> that can run mainline so this has fallen by the wayside.
->>
->> The problems started with 3.16, where simple-fb would fail to initialise
->> and I lost my display. Note that I don't have a serial console on this
->> machine (I looked at the PCB and there's no way I can solder one of those
->> myself :) I bisected the issue at the time, and I could get my display back
->> by removing some of the new regulator and hdmi properties from the DT. At
->> that point, I could boot, but DMA didn't initialise for the MMC controller
->> so I couldn't mount my root filesystem.
->>http://www.spinics.net/lists/dri-devel/msg66740.html
->> With 3.17-rc3, it seems a lot worse -- I don't get any output after nv-uboot
->> (i.e. the nv-uboot screen just remains on the display, with the last line
->> reading "Stashed 20 records").
->>
->> I'd usually try to debug this a bit further, but without a console it's
->> really painful to get anywhere. I've been working with 3.15, but now I'm
->> having to backport patches when I want to test them, which is more effort
->> than I can be bothered with.
->>
->> Is anybody else running mainline on this device and are these known/fixed
->> problems?
-AFAIK, ARM chromebooks use DRM based display drivers and the required
-patches are still not merged:
-http://www.spinics.net/lists/dri-devel/msg66740.html
+Add mode parameter to do_idle firmware method and AFTR mode support
+to EXYNOS do_idle implementation.
 
-Corresponding DT patches are also still not merged:
-http://www.spinics.net/lists/arm-kernel/msg358324.html
-http://www.spinics.net/lists/arm-kernel/msg358325.html
+This change is a preparation for adding secure firmware support to
+EXYNOS cpuidle driver.
 
-There is a patch for configs as well:
-https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35828.html
+This patch shouldn't cause any functionality changes (please note
+that do_idle firmware method is unused currently).
 
-Try these patches(I hope they will apply directly on 3.17-rc3) and you should
-be able to use display on snow.
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+v6:
+- no changes
 
-Ajay
+ arch/arm/include/asm/firmware.h |  2 +-
+ arch/arm/mach-exynos/common.h   |  5 +++++
+ arch/arm/mach-exynos/firmware.c | 10 ++++++++--
+ 3 files changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/include/asm/firmware.h b/arch/arm/include/asm/firmware.h
+index 5904f59..89aefe1 100644
+--- a/arch/arm/include/asm/firmware.h
++++ b/arch/arm/include/asm/firmware.h
+@@ -28,7 +28,7 @@ struct firmware_ops {
+ 	/*
+ 	 * Enters CPU idle mode
+ 	 */
+-	int (*do_idle)(void);
++	int (*do_idle)(unsigned long mode);
+ 	/*
+ 	 * Sets boot address of specified physical CPU
+ 	 */
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index c218200..2d830df 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -119,6 +119,11 @@ extern void __iomem *sysram_base_addr;
+ extern void __iomem *pmu_base_addr;
+ void exynos_sysram_init(void);
+ 
++enum {
++	FW_DO_IDLE_SLEEP,
++	FW_DO_IDLE_AFTR,
++};
++
+ void exynos_firmware_init(void);
+ 
+ extern u32 exynos_get_eint_wake_mask(void);
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index f5e626d..e57b7c3 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -28,9 +28,15 @@
+ #define EXYNOS_BOOT_ADDR	0x8
+ #define EXYNOS_BOOT_FLAG	0xc
+ 
+-static int exynos_do_idle(void)
++static int exynos_do_idle(unsigned long mode)
+ {
+-	exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
++	switch (mode) {
++	case FW_DO_IDLE_AFTR:
++		exynos_smc(SMC_CMD_CPU0AFTR, 0, 0, 0);
++		break;
++	case FW_DO_IDLE_SLEEP:
++		exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
++	}
+ 	return 0;
+ }
+ 
+-- 
+1.8.2.3
+
