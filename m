@@ -1,165 +1,147 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [RFC PATCH 4/5] ARM: dts: Add PPMU dt node for Exynos4 SoC
-Date: Fri, 05 Sep 2014 13:30:18 +0900
-Message-ID: <1409891419-28560-5-git-send-email-cw00.choi@samsung.com>
-References: <1409891419-28560-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1409891419-28560-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: myungjoo.ham@samsung.com, linux-pm@vger.kernel.org
-Cc: kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, a.kesavan@samsung.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, b.zolnierkie@samsung.com, nm@ti.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Chanwoo Choi <cw00.choi@samsung.com>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Enable options for display
+ panel support
+Date: Fri, 5 Sep 2014 12:05:03 +0530
+Message-ID: <CAEC9eQNy=3LwwyAEJOSt1vFkZACzx9CAzAbsrpS2q4RfW3JiUw@mail.gmail.com>
+References: <1408749185-14133-1-git-send-email-javier.martinez@collabora.co.uk>
+	<041101cfc793$d5cdd4b0$81697e10$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ig0-f174.google.com ([209.85.213.174]:34464 "EHLO
+	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750765AbaIEGfE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 5 Sep 2014 02:35:04 -0400
+In-Reply-To: <041101cfc793$d5cdd4b0$81697e10$@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, InKi Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>
 
-This patch add PPMU (Performance Profiling Monitoring Unit) dt node for Exynos4
-(Exynos4210/4212/4412) SoC. PPMU dt node is used to monitor the utilization of
-each IP.
+Hi,
 
-The Exynos4210/Exynos4212/Exynos4412 SoC includes following PPMUs:
-- PPMU_DMC0      0x106A_0000
-- PPMU_DMC1      0x106B_0000
-- PPMU_CPU       0x106C_0000
-- PPMU_ACP       0x10AE_0000
-- PPMU_RIGHT_BUS 0x112A_0000
-- PPMU_LEFT_BUS  0x116A_0000
-- PPMU_LCD0      0x11E4_0000
-- PPMU_CAMIF     0x11AC_0000
-- PPMU_IMAGE     0x12AA_0000
-- PPMU_TV        0x12E4_0000
-- PPMU_3D        0x1322_0000
-- PPMU_MFC_L     0x1366_0000
-- PPMU_MFC_R     0x1367_0000
+On Wed, Sep 3, 2014 at 9:56 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Javier Martinez Canillas wrote:
+>>
+>> Many Exynos devices have a display panel, most of them just have
+>> a simple panel while others have more complex configurations that
+>> requires an embedded DisplayPort (eDP) to LVDS display bridge.
+>>
+>> This patch enables the following features to support both setups:
+>>
+>> - Direct Rendering Manager (DRM)
+>> - DRM bridge registration and lookup framework
+>> - Parade ps8622/ps8625 eDP/LVDS bridge
+>> - NXP ptn3460 eDP/LVDS bridge
+>> - Exynos Fully Interactive Mobile Display controller (FIMD)
+>> - Panel registration and lookup framework
+>> - Simple panels
+>> - Backlight and LCD device support
+>>
+> Thanks a lot.
+>
+>
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> ---
+>>
+>> Some of the options enabled here (e.g: the eDP/LVDS bridges)
+>> are still not merged in mainline so this patch depends on
+>> the following posted patches that were still not merged:
+>>
+>> "drm/bridge: Modify drm_bridge core to support driver model" [0]
+>> "drm/bridge: Add i2c based driver for ptn3460 bridge" [1]
+>> "drm/bridge: Add i2c based driver for ps8622/ps8625 bridge" [2]
+>>
+> BTW, I can't find its re-spin...how was going on?
+I already sent this a week back.Find it here:
+http://www.spinics.net/lists/dri-devel/msg66740.html
 
-Additionally, the Exynos4210 SoC includes following PPMUs:
-- PPMU_LCD1      0x1224_0000
+Inki Dae,
+In this patchset, patch "[PATCH V7 5/12] drm/exynos: dp: support drm_bridge"
+introduces following Kconfig error:
+drivers/video/fbdev/Kconfig:5:error: recursive dependency detected!
+drivers/video/fbdev/Kconfig:5: symbol FB is selected by DRM_KMS_FB_HELPER
+drivers/gpu/drm/Kconfig:39: symbol DRM_KMS_FB_HELPER depends on DRM_KMS_HELPER
+drivers/gpu/drm/Kconfig:33: symbol DRM_KMS_HELPER is selected by DRM_BRIDGE
+drivers/gpu/drm/bridge/Kconfig:1: symbol DRM_BRIDGE is selected by DRM_EXYNOS_DP
+drivers/gpu/drm/exynos/Kconfig:53: symbol DRM_EXYNOS_DP depends on
+DRM_EXYNOS_FIMD
+drivers/gpu/drm/exynos/Kconfig:28: symbol DRM_EXYNOS_FIMD depends on FB_S3C
+drivers/video/fbdev/Kconfig:2038: symbol FB_S3C depends on FB
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/boot/dts/exynos4.dtsi    | 96 +++++++++++++++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos4210.dtsi |  8 ++++
- 2 files changed, 104 insertions(+)
+How to fix this?
+Can we remove dependency between FB_S3C and DRM_EXYNOS_FIMD?
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index e0278ec..c58d3f3 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -645,4 +645,100 @@
- 		samsung,sysreg = <&sys_reg>;
- 		status = "disabled";
- 	};
-+
-+	ppmu_dmc0: ppmu_dmc0@106a0000 {
-+		compatible = "samsung,exynos4210-ppmu";
-+		reg = <0x106a0000 0x2000>;
-+		clocks = <&clock CLK_PPMUDMC0>;
-+		clock-names = "ppmu";
-+		status = "disabled";
-+	};
-+
-+	ppmu_dmc1: ppmu_dmc1@106b0000 {
-+		compatible = "samsung,exynos4210-ppmu";
-+		reg = <0x106b0000 0x2000>;
-+		clocks = <&clock CLK_PPMUDMC1>;
-+		clock-names = "ppmu";
-+		status = "disabled";
-+	};
-+
-+	ppmu_cpu: ppmu_cpu@106c0000 {
-+		compatible = "samsung,exynos4210-ppmu";
-+		reg = <0x106c0000 0x2000>;
-+		clocks = <&clock CLK_PPMUCPU>;
-+		clock-names = "ppmu";
-+		status = "disabled";
-+	};
-+
-+	ppmu_rightbus: ppmu_rightbus@112a0000 {
-+		compatible = "samsung,exynos4210-ppmu";
-+		reg = <0x112a0000 0x2000>;
-+		clocks = <&clock CLK_PPMURIGHT>;
-+		clock-names = "ppmu";
-+		status = "disabled";
-+	};
-+
-+	ppmu_leftbus: ppmu_leftbus0@116a0000 {
-+		compatible = "samsung,exynos4210-ppmu";
-+		reg = <0x116a0000 0x2000>;
-+		clocks = <&clock CLK_PPMULEFT>;
-+		clock-names = "ppmu";
-+		status = "disabled";
-+	};
-+
-+	ppmu_camif: ppmu_camif@11ac0000 {
-+		compatible = "samsung,exynos4210-ppmu";
-+		reg = <0x11ac0000 0x2000>;
-+		clocks = <&clock CLK_PPMUCAMIF>;
-+		clock-names = "ppmu";
-+		status = "disabled";
-+	};
-+
-+	ppmu_lcd0: ppmu_lcd0@11e40000 {
-+		compatible = "samsung,exynos4210-ppmu";
-+		reg = <0x11e40000 0x2000>;
-+		clocks = <&clock CLK_PPMULCD0>;
-+		clock-names = "ppmu";
-+		status = "disabled";
-+	};
-+
-+	ppmu_image: ppmu_image@12aa0000 {
-+		compatible = "samsung,exynos4210-ppmu";
-+		reg = <0x12aa0000 0x2000>;
-+		clocks = <&clock CLK_PPMUIMAGE>;
-+		clock-names = "ppmu";
-+		status = "disabled";
-+	};
-+
-+	ppmu_tv: ppmu_tv@12e40000 {
-+		compatible = "samsung,exynos4210-ppmu";
-+		reg = <0x12e40000 0x2000>;
-+		clocks = <&clock CLK_PPMUTV>;
-+		clock-names = "ppmu";
-+		status = "disabled";
-+	};
-+
-+	ppmu_g3d: ppmu_g3d@13220000 {
-+		compatible = "samsung,exynos4210-ppmu";
-+		reg = <0x13220000 0x2000>;
-+		clocks = <&clock CLK_PPMUG3D>;
-+		clock-names = "ppmu";
-+		status = "disabled";
-+	};
-+
-+	ppmu_mfc_l: ppmu_mfc_l@13660000 {
-+		compatible = "samsung,exynos4210-ppmu";
-+		reg = <0x13660000 0x2000>;
-+		clocks = <&clock CLK_PPMUMFC_L>;
-+		clock-names = "ppmu";
-+		status = "disabled";
-+	};
-+
-+	ppmu_mfc_r: ppmu_mfc_r@13670000 {
-+		compatible = "samsung,exynos4210-ppmu";
-+		reg = <0x13670000 0x2000>;
-+		clocks = <&clock CLK_PPMUMFC_R>;
-+		clock-names = "ppmu";
-+		status = "disabled";
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 807bb5b..1b854e6 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -175,4 +175,12 @@
- 			samsung,lcd-wb;
- 		};
- 	};
-+
-+	ppmu_lcd1: ppmu_lcd1@12240000 {
-+		compatible = "samsung,exynos4210-ppmu";
-+		reg = <0x12240000 0x2000>;
-+		clocks = <&clock CLK_PPMULCD1>;
-+		clock-names = "ppmu";
-+		status = "disabled";
-+	};
- };
--- 
-1.8.0
+>> But I wanted to post anyways to make easier for others to
+>> figure out what are the needed options to have the display
+>> working on their Exynos machines.
+>>
+>> In order to test the display panel on the Peach machines,
+>> the following patches are also needed:
+>>
+>> "ARM: dts: Add DT changes for display on peach_pit" [3]
+>> "ARM: dts: Add DT changes for display on peach_pi" [4]
+>>
+> I'll have a look them soon.
+The above ones are older versions. Latest ones are here:
+1) http://www.spinics.net/lists/linux-samsung-soc/msg35344.html
+2) http://www.spinics.net/lists/arm-kernel/msg358324.html
+3) http://www.spinics.net/lists/arm-kernel/msg358325.html
+
+Among the above, patch (1) can be merged because corresponding
+driver changes are already merged!
+
+Ajay
+
+> - Kukjin
+>
+>> Best regards,
+>> Javier
+>>
+>> [0]: http://patchwork.ozlabs.org/patch/373792/
+>> [1]: http://patchwork.ozlabs.org/patch/373793/
+>> [2]: http://patchwork.ozlabs.org/patch/373794/
+>> [3]: http://www.spinics.net/lists/arm-kernel/msg350568.html
+>> [4]: http://www.spinics.net/lists/arm-kernel/msg350569.html
+>>
+>>  arch/arm/configs/exynos_defconfig | 14 ++++++++++++++
+>>  1 file changed, 14 insertions(+)
+>>
+>> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+>> index 676c744..f69d57e 100644
+>> --- a/arch/arm/configs/exynos_defconfig
+>> +++ b/arch/arm/configs/exynos_defconfig
+>> @@ -101,11 +101,25 @@ CONFIG_REGULATOR_S2MPA01=y
+>>  CONFIG_REGULATOR_S2MPS11=y
+>>  CONFIG_REGULATOR_S5M8767=y
+>>  CONFIG_REGULATOR_TPS65090=y
+>> +CONFIG_DRM=y
+>> +CONFIG_DRM_BRIDGE=y
+>> +CONFIG_DRM_PS8622=y
+>> +CONFIG_DRM_EXYNOS=y
+>> +CONFIG_DRM_EXYNOS_FIMD=y
+>> +CONFIG_DRM_EXYNOS_DP=y
+>> +CONFIG_DRM_PANEL=y
+>> +CONFIG_DRM_PANEL_SIMPLE=y
+>>  CONFIG_FB=y
+>>  CONFIG_FB_MODE_HELPERS=y
+>>  CONFIG_FB_SIMPLE=y
+>>  CONFIG_EXYNOS_VIDEO=y
+>>  CONFIG_EXYNOS_MIPI_DSI=y
+>> +CONFIG_BACKLIGHT_LCD_SUPPORT=y
+>> +CONFIG_LCD_CLASS_DEVICE=y
+>> +CONFIG_LCD_PLATFORM=y
+>> +CONFIG_BACKLIGHT_CLASS_DEVICE=y
+>> +CONFIG_BACKLIGHT_GENERIC=y
+>> +CONFIG_BACKLIGHT_PWM=y
+>>  CONFIG_FRAMEBUFFER_CONSOLE=y
+>>  CONFIG_FONTS=y
+>>  CONFIG_FONT_7x14=y
+>> --
+>> 2.0.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
