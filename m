@@ -1,147 +1,234 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Enable options for display
- panel support
-Date: Fri, 5 Sep 2014 12:05:03 +0530
-Message-ID: <CAEC9eQNy=3LwwyAEJOSt1vFkZACzx9CAzAbsrpS2q4RfW3JiUw@mail.gmail.com>
-References: <1408749185-14133-1-git-send-email-javier.martinez@collabora.co.uk>
-	<041101cfc793$d5cdd4b0$81697e10$@samsung.com>
+From: Boris BREZILLON <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v2] mfd: syscon: Decouple syscon interface from platform
+ devices
+Date: Fri, 5 Sep 2014 10:14:09 +0200
+Message-ID: <20140905101409.68b14cc3@bbrezillon>
+References: <1409668935-10667-1-git-send-email-pankaj.dubey@samsung.com>
+	<6034841.GFrG3XCMdb@wuerfel>
+	<20140903151611.260a7218@bbrezillon>
+	<4224773.hl3QDeILqz@wuerfel>
+	<20140903161528.05f566e1@bbrezillon>
+	<002701cfc7fb$110a7350$331f59f0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f174.google.com ([209.85.213.174]:34464 "EHLO
-	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750765AbaIEGfE (ORCPT
+Received: from top.free-electrons.com ([176.31.233.9]:58513 "EHLO
+	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1751641AbaIEIOR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Sep 2014 02:35:04 -0400
-In-Reply-To: <041101cfc793$d5cdd4b0$81697e10$@samsung.com>
+	Fri, 5 Sep 2014 04:14:17 -0400
+In-Reply-To: <002701cfc7fb$110a7350$331f59f0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, InKi Dae <inki.dae@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, kgene.kim@samsung.com, linux@arm.linux.org.uk, 'Alexander Shiyan' <shc_work@mail.ru>, naushad@samsung.com, 'Tomasz Figa' <t.figa@samsung.com>, linux-kernel@vger.kernel.org, joshi@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, tomasz.figa@gmail.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, lee.jones@linaro.org, 'Michal Simek' <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org, 'Mark Brown' <broonie@kernel.org>
 
-Hi,
+On Thu, 04 Sep 2014 10:15:27 +0530
+Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
 
-On Wed, Sep 3, 2014 at 9:56 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Javier Martinez Canillas wrote:
->>
->> Many Exynos devices have a display panel, most of them just have
->> a simple panel while others have more complex configurations that
->> requires an embedded DisplayPort (eDP) to LVDS display bridge.
->>
->> This patch enables the following features to support both setups:
->>
->> - Direct Rendering Manager (DRM)
->> - DRM bridge registration and lookup framework
->> - Parade ps8622/ps8625 eDP/LVDS bridge
->> - NXP ptn3460 eDP/LVDS bridge
->> - Exynos Fully Interactive Mobile Display controller (FIMD)
->> - Panel registration and lookup framework
->> - Simple panels
->> - Backlight and LCD device support
->>
-> Thanks a lot.
->
->
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> ---
->>
->> Some of the options enabled here (e.g: the eDP/LVDS bridges)
->> are still not merged in mainline so this patch depends on
->> the following posted patches that were still not merged:
->>
->> "drm/bridge: Modify drm_bridge core to support driver model" [0]
->> "drm/bridge: Add i2c based driver for ptn3460 bridge" [1]
->> "drm/bridge: Add i2c based driver for ps8622/ps8625 bridge" [2]
->>
-> BTW, I can't find its re-spin...how was going on?
-I already sent this a week back.Find it here:
-http://www.spinics.net/lists/dri-devel/msg66740.html
+> Hi Boris,
+> 
+> On Wednesday, September 03, 2014 Boris BREZILLON wrote,
+> > To: Arnd Bergmann
+> > Cc: Pankaj Dubey; kgene.kim@samsung.com; linux@arm.linux.org.uk; Alexander
+> > Shiyan; naushad@samsung.com; Tomasz Figa; linux-kernel@vger.kernel.org;
+> > joshi@samsung.com; linux-samsung-soc@vger.kernel.org;
+> thomas.ab@samsung.com;
+> > tomasz.figa@gmail.com; vikas.sajjan@samsung.com; chow.kim@samsung.com;
+> > lee.jones@linaro.org; Michal Simek; linux-arm-kernel@lists.infradead.org;
+> Mark
+> > Brown
+> > Subject: Re: [PATCH v2] mfd: syscon: Decouple syscon interface from
+> platform
+> > devices
+> > 
+> > On Wed, 03 Sep 2014 15:49:04 +0200
+> > Arnd Bergmann <arnd@arndb.de> wrote:
+> > 
+> > > On Wednesday 03 September 2014 15:16:11 Boris BREZILLON wrote:
+> > > > I checked that part, and it appears most of the code is already
+> > > > there (see usage of regmap_attach_dev function here [1]).
+> > > >
+> > > > The only problem I see is that errors are still printed with
+> > > > dev_err, which, AFAIK, will trigger a kernel panic if dev is NULL.
+> > >
+> > > Actually not:
+> > >
+> > > static int __dev_printk(const char *level, const struct device *dev,
+> > >                         struct va_format *vaf) {
+> > >         if (!dev)
+> > >                 return printk("%s(NULL device *): %pV", level, vaf);
+> > >
+> > >         return dev_printk_emit(level[1] - '0', dev,
+> > >                                "%s %s: %pV",
+> > >                                dev_driver_string(dev), dev_name(dev),
+> > > vaf); }
+> > >
+> > 
+> > My bad then (I don't know where I looked at to think NULL dev was not
+> gracefully
+> > handled :-)). Thanks for pointing this out.
+> > Given that, I think it should work fine even with a NULL dev.
+> > I'll give it a try on at91 ;-).
+> > 
+> 
+> We have tested this patch, on Exynos board and found working well.
+> In our use case DT based drivers such as USB Phy, SATA Phy, Watchdog are
+> calling 
+> syscon_regmap_lookup_by APIs to get regmap handle to Exynos PMU and it
+> worked 
+> well for these drivers. 
+> 
+> It would be great if after testing you share result here or give a
+> Tested-By.
+> 
 
-Inki Dae,
-In this patchset, patch "[PATCH V7 5/12] drm/exynos: dp: support drm_bridge"
-introduces following Kconfig error:
-drivers/video/fbdev/Kconfig:5:error: recursive dependency detected!
-drivers/video/fbdev/Kconfig:5: symbol FB is selected by DRM_KMS_FB_HELPER
-drivers/gpu/drm/Kconfig:39: symbol DRM_KMS_FB_HELPER depends on DRM_KMS_HELPER
-drivers/gpu/drm/Kconfig:33: symbol DRM_KMS_HELPER is selected by DRM_BRIDGE
-drivers/gpu/drm/bridge/Kconfig:1: symbol DRM_BRIDGE is selected by DRM_EXYNOS_DP
-drivers/gpu/drm/exynos/Kconfig:53: symbol DRM_EXYNOS_DP depends on
-DRM_EXYNOS_FIMD
-drivers/gpu/drm/exynos/Kconfig:28: symbol DRM_EXYNOS_FIMD depends on FB_S3C
-drivers/video/fbdev/Kconfig:2038: symbol FB_S3C depends on FB
+I eventually tested it (just required minor modifications to my PMC
+code: see below).
+Still, this patch is not achieving my final goal which is to remove the
+global at91_pmc_base variable and make use of the syscon regmap to
+implement at91 cpu idle and platform suspend.
+Moreover, I'd like to remove the lock in at91_pmc struct as regmap is
+already taking care of locking the resources when accessing a
+register, but this requires a lot more changes.
 
-How to fix this?
-Can we remove dependency between FB_S3C and DRM_EXYNOS_FIMD?
+Anyway, here is my
 
->> But I wanted to post anyways to make easier for others to
->> figure out what are the needed options to have the display
->> working on their Exynos machines.
->>
->> In order to test the display panel on the Peach machines,
->> the following patches are also needed:
->>
->> "ARM: dts: Add DT changes for display on peach_pit" [3]
->> "ARM: dts: Add DT changes for display on peach_pi" [4]
->>
-> I'll have a look them soon.
-The above ones are older versions. Latest ones are here:
-1) http://www.spinics.net/lists/linux-samsung-soc/msg35344.html
-2) http://www.spinics.net/lists/arm-kernel/msg358324.html
-3) http://www.spinics.net/lists/arm-kernel/msg358325.html
+Tested-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-Among the above, patch (1) can be merged because corresponding
-driver changes are already merged!
 
-Ajay
 
-> - Kukjin
->
->> Best regards,
->> Javier
->>
->> [0]: http://patchwork.ozlabs.org/patch/373792/
->> [1]: http://patchwork.ozlabs.org/patch/373793/
->> [2]: http://patchwork.ozlabs.org/patch/373794/
->> [3]: http://www.spinics.net/lists/arm-kernel/msg350568.html
->> [4]: http://www.spinics.net/lists/arm-kernel/msg350569.html
->>
->>  arch/arm/configs/exynos_defconfig | 14 ++++++++++++++
->>  1 file changed, 14 insertions(+)
->>
->> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
->> index 676c744..f69d57e 100644
->> --- a/arch/arm/configs/exynos_defconfig
->> +++ b/arch/arm/configs/exynos_defconfig
->> @@ -101,11 +101,25 @@ CONFIG_REGULATOR_S2MPA01=y
->>  CONFIG_REGULATOR_S2MPS11=y
->>  CONFIG_REGULATOR_S5M8767=y
->>  CONFIG_REGULATOR_TPS65090=y
->> +CONFIG_DRM=y
->> +CONFIG_DRM_BRIDGE=y
->> +CONFIG_DRM_PS8622=y
->> +CONFIG_DRM_EXYNOS=y
->> +CONFIG_DRM_EXYNOS_FIMD=y
->> +CONFIG_DRM_EXYNOS_DP=y
->> +CONFIG_DRM_PANEL=y
->> +CONFIG_DRM_PANEL_SIMPLE=y
->>  CONFIG_FB=y
->>  CONFIG_FB_MODE_HELPERS=y
->>  CONFIG_FB_SIMPLE=y
->>  CONFIG_EXYNOS_VIDEO=y
->>  CONFIG_EXYNOS_MIPI_DSI=y
->> +CONFIG_BACKLIGHT_LCD_SUPPORT=y
->> +CONFIG_LCD_CLASS_DEVICE=y
->> +CONFIG_LCD_PLATFORM=y
->> +CONFIG_BACKLIGHT_CLASS_DEVICE=y
->> +CONFIG_BACKLIGHT_GENERIC=y
->> +CONFIG_BACKLIGHT_PWM=y
->>  CONFIG_FRAMEBUFFER_CONSOLE=y
->>  CONFIG_FONTS=y
->>  CONFIG_FONT_7x14=y
->> --
->> 2.0.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/mach-at91/Kconfig b/arch/arm/mach-at91/Kconfig
+index dd28e1f..7df2c9b 100644
+--- a/arch/arm/mach-at91/Kconfig
++++ b/arch/arm/mach-at91/Kconfig
+@@ -23,6 +23,7 @@ config COMMON_CLK_AT91
+ 	bool
+ 	default AT91_PMC_UNIT && USE_OF && !AT91_USE_OLD_CLK
+ 	select COMMON_CLK
++	select MFD_SYSCON
+ 
+ config OLD_CLK_AT91
+ 	bool
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index 524196b..fb2c0af 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -19,6 +19,7 @@
+ #include <linux/irqchip/chained_irq.h>
+ #include <linux/irqdomain.h>
+ #include <linux/of_irq.h>
++#include <linux/mfd/syscon.h>
+ 
+ #include <asm/proc-fns.h>
+ 
+@@ -190,6 +191,7 @@ static const struct at91_pmc_caps sama5d3_caps = {
+ };
+ 
+ static struct at91_pmc *__init at91_pmc_init(struct device_node *np,
++					     struct regmap *regmap,
+ 					     void __iomem *regbase,
+int virq, const struct at91_pmc_caps *caps)
+ {
+@@ -205,7 +207,7 @@ static struct at91_pmc *__init at91_pmc_init(struct
+device_node *np, return NULL;
+ 
+ 	spin_lock_init(&pmc->lock);
+-	pmc->regbase = regbase;
++	pmc->regmap = regmap;
+ 	pmc->virq = virq;
+ 	pmc->caps = caps;
+ 
+@@ -348,16 +350,46 @@ static void __init of_at91_pmc_setup(struct
+device_node *np, void (*clk_setup)(struct device_node *, struct
+at91_pmc *); const struct of_device_id *clk_id;
+ 	void __iomem *regbase = of_iomap(np, 0);
++	struct regmap *regmap;
+ 	int virq;
+ 
+-	if (!regbase)
+-		return;
++	/*
++	 * If the pmc compatible property does not contain the "syscon"
++	 * string, patch the property so that syscon_node_to_regmap can
++	 * consider it as a syscon device.
++	 */
++	if (!of_device_is_compatible(np, "syscon")) {
++		struct property *newprop, *oldprop;
++
++		oldprop = of_find_property(np, "compatible", NULL);
++		if (!oldprop)
++			panic("Could not find compatible property");
++
++		newprop = kzalloc(sizeof(*newprop), GFP_KERNEL);
++		if (!newprop)
++			panic("Could not allocate compatible
+property"); +
++		newprop->name = "compatible";
++		newprop->length = oldprop->length + sizeof("syscon");
++		newprop->value = kmalloc(newprop->length, GFP_KERNEL);
++		if (!newprop->value) {
++			kfree(newprop->value);
++			panic("Could not allocate compatible string");
++		}
++		memcpy(newprop->value, oldprop->value,
+oldprop->length);
++		memcpy(newprop->value + oldprop->length, "syscon",
+sizeof("syscon"));
++		of_update_property(np, newprop);
++	}
++
++	regmap = syscon_node_to_regmap(np);
++	if (IS_ERR(regmap))
++		panic("Could not retrieve syscon regmap");
+ 
+ 	virq = irq_of_parse_and_map(np, 0);
+ 	if (!virq)
+ 		return;
+ 
+-	pmc = at91_pmc_init(np, regbase, virq, caps);
++	pmc = at91_pmc_init(np, regmap, regbase, virq, caps);
+ 	if (!pmc)
+ 		return;
+ 	for_each_child_of_node(np, childnp) {
+diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
+index 6c76259..49589ea 100644
+--- a/drivers/clk/at91/pmc.h
++++ b/drivers/clk/at91/pmc.h
+@@ -14,6 +14,7 @@
+ 
+ #include <linux/io.h>
+ #include <linux/irqdomain.h>
++#include <linux/regmap.h>
+ #include <linux/spinlock.h>
+ 
+ struct clk_range {
+@@ -28,7 +29,7 @@ struct at91_pmc_caps {
+ };
+ 
+ struct at91_pmc {
+-	void __iomem *regbase;
++	struct regmap *regmap;
+ 	int virq;
+ 	spinlock_t lock;
+ 	const struct at91_pmc_caps *caps;
+@@ -47,12 +48,16 @@ static inline void pmc_unlock(struct at91_pmc *pmc)
+ 
+ static inline u32 pmc_read(struct at91_pmc *pmc, int offset)
+ {
+-	return readl(pmc->regbase + offset);
++	unsigned int ret = 0;
++
++	regmap_read(pmc->regmap, offset, &ret);
++
++	return ret;
+ }
+ 
+ static inline void pmc_write(struct at91_pmc *pmc, int offset, u32
+value) {
+-	writel(value, pmc->regbase + offset);
++	regmap_write(pmc->regmap, offset, value);
+ }
+ 
+ int of_at91_get_clk_range(struct device_node *np, const char *propname,
