@@ -1,52 +1,39 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Unable to boot mainline on snow chromebook since 3.15
-Date: Fri, 5 Sep 2014 12:57:04 +0100
-Message-ID: <20140905115704.GO13515@arm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH] clk: samsung: exynos3250: fix width field of mout_mmc0/1
+Date: Fri, 05 Sep 2014 17:24:41 +0530
+Message-ID: <1409918081-2464-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:42150 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932096AbaIEL4u (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:25198 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751232AbaIEL7a (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Sep 2014 07:56:50 -0400
-Content-Disposition: inline
+	Fri, 5 Sep 2014 07:59:30 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, olof@lixom.net, dianders@chromium.org, rahul.sharma@samsung.com
-Cc: linux-arm-kernel@lists-infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, mturquette@linaro.org, naushad@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Hi all,
+As per Exynos3250 user manual mmc0/1 mux selection has 4 bit wide.
 
-I'm one of the few, foolish people to try running mainline on my 5250-based
-Samsung Chromebook (snow). I can live without wireless, usb3 and video
-acceleration, so actually it makes a reasonable development platform for
-doing A15-based (micro)-architectural work.
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos3250.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-However, since 3.15 I've not been able to boot *any* mainline kernels on
-this board. I did mean to report this earlier, but I have other machines
-that can run mainline so this has fallen by the wayside.
-
-The problems started with 3.16, where simple-fb would fail to initialise
-and I lost my display. Note that I don't have a serial console on this
-machine (I looked at the PCB and there's no way I can solder one of those
-myself :) I bisected the issue at the time, and I could get my display back
-by removing some of the new regulator and hdmi properties from the DT. At
-that point, I could boot, but DMA didn't initialise for the MMC controller
-so I couldn't mount my root filesystem.
-
-With 3.17-rc3, it seems a lot worse -- I don't get any output after nv-uboot
-(i.e. the nv-uboot screen just remains on the display, with the last line
-reading "Stashed 20 records").
-
-I'd usually try to debug this a bit further, but without a console it's
-really painful to get anywhere. I've been working with 3.15, but now I'm
-having to backport patches when I want to test them, which is more effort
-than I can be bothered with.
-
-Is anybody else running mainline on this device and are these known/fixed
-problems?
-
-Cheers,
-
-Will
+diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+index 7a17bd4..e1cb464 100644
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -335,8 +335,8 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
+ 
+ 	/* SRC_FSYS */
+ 	MUX(CLK_MOUT_TSADC, "mout_tsadc", group_sclk_p, SRC_FSYS, 28, 4),
+-	MUX(CLK_MOUT_MMC1, "mout_mmc1", group_sclk_p, SRC_FSYS, 4, 3),
+-	MUX(CLK_MOUT_MMC0, "mout_mmc0", group_sclk_p, SRC_FSYS, 0, 3),
++	MUX(CLK_MOUT_MMC1, "mout_mmc1", group_sclk_p, SRC_FSYS, 4, 4),
++	MUX(CLK_MOUT_MMC0, "mout_mmc0", group_sclk_p, SRC_FSYS, 0, 4),
+ 
+ 	/* SRC_PERIL0 */
+ 	MUX(CLK_MOUT_UART1, "mout_uart1", group_sclk_p, SRC_PERIL0, 4, 4),
+-- 
+1.7.9.5
