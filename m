@@ -1,39 +1,33 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH] clk: samsung: exynos3250: fix width field of mout_mmc0/1
-Date: Fri, 05 Sep 2014 17:24:41 +0530
-Message-ID: <1409918081-2464-1-git-send-email-pankaj.dubey@samsung.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [PATCH 11/19] ARM: S5PV210: Remove support for board files
+Date: Fri, 05 Sep 2014 14:04:18 +0200
+Message-ID: <1409918658.7832.25.camel@x220>
+References: <1404496099-26708-1-git-send-email-t.figa@samsung.com>
+	 <53C675E4.4020502@samsung.com> <1409825105.5546.91.camel@x220>
+	 <201409041802.36466.arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:25198 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751232AbaIEL7a (ORCPT
+Received: from cpsmtpb-ews05.kpnxchange.com ([213.75.39.8]:63774 "EHLO
+	cpsmtpb-ews05.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932147AbaIEMEV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Sep 2014 07:59:30 -0400
+	Fri, 5 Sep 2014 08:04:21 -0400
+In-Reply-To: <201409041802.36466.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, mturquette@linaro.org, naushad@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Marek Szyprowski <m.szyprowski@samsung.com>, Mark Brown <broonie@kernel.org>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
 
-As per Exynos3250 user manual mmc0/1 mux selection has 4 bit wide.
+Hi Arnd,
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
- drivers/clk/samsung/clk-exynos3250.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Thu, 2014-09-04 at 18:02 +0200, Arnd Bergmann wrote:
+> I think it would be nice if you could submit a patch to remove the
+> drivers from ASoC, then we can see if anybody complains.
 
-diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
-index 7a17bd4..e1cb464 100644
---- a/drivers/clk/samsung/clk-exynos3250.c
-+++ b/drivers/clk/samsung/clk-exynos3250.c
-@@ -335,8 +335,8 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
- 
- 	/* SRC_FSYS */
- 	MUX(CLK_MOUT_TSADC, "mout_tsadc", group_sclk_p, SRC_FSYS, 28, 4),
--	MUX(CLK_MOUT_MMC1, "mout_mmc1", group_sclk_p, SRC_FSYS, 4, 3),
--	MUX(CLK_MOUT_MMC0, "mout_mmc0", group_sclk_p, SRC_FSYS, 0, 3),
-+	MUX(CLK_MOUT_MMC1, "mout_mmc1", group_sclk_p, SRC_FSYS, 4, 4),
-+	MUX(CLK_MOUT_MMC0, "mout_mmc0", group_sclk_p, SRC_FSYS, 0, 4),
- 
- 	/* SRC_PERIL0 */
- 	MUX(CLK_MOUT_UART1, "mout_uart1", group_sclk_p, SRC_PERIL0, 4, 4),
--- 
-1.7.9.5
+Just to know what I'm getting my self into: whom would you expect to
+send me agitated messages once those patches have landed?
+
+
+Paul Bolle
