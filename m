@@ -1,106 +1,97 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v6 0/5] ARM: EXYNOS: cpuidle: fix AFTR mode on boards with
- secure firmware enabled
-Date: Fri, 05 Sep 2014 15:51:23 +0200
-Message-ID: <1409925088-4705-1-git-send-email-b.zolnierkie@samsung.com>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: Unable to boot mainline on snow chromebook since 3.15
+Date: Fri, 5 Sep 2014 19:26:42 +0530
+Message-ID: <CAFp+6iF7EbcVqrDKpP4KbYVTEFMD7Jvp9B9kXbAQjpQN3vM=aQ@mail.gmail.com>
+References: <20140905115704.GO13515@arm.com>
+	<20140905122232.GP13515@arm.com>
+	<CAEC9eQOMd7ME5KiG2QHCf3TMJAwSxLUgGpmFrpw_HQT4me9YWg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f44.google.com ([209.85.216.44]:58383 "EHLO
+	mail-qa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932169AbaIEN4o (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 5 Sep 2014 09:56:44 -0400
+Received: by mail-qa0-f44.google.com with SMTP id j7so11090953qaq.31
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Sep 2014 06:56:43 -0700 (PDT)
+In-Reply-To: <CAEC9eQOMd7ME5KiG2QHCf3TMJAwSxLUgGpmFrpw_HQT4me9YWg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: Will Deacon <will.deacon@arm.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "olof@lixom.net" <olof@lixom.net>, "dianders@chromium.org" <dianders@chromium.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi,
-
-This patch series adds support for AFTR idle mode on boards with
-secure firmware enabled and allows EXYNOS cpuidle driver usage on
-Exynos4x12 SoCs.
-
-It has been tested on Trats2 board (using Exynos4412 SoC with secure
-firmware enabled) on which AFTR mode reduces power consumption by ~12%
-when EXYNOS cpuidle driver is enabled (in both cases the default
-exynos_defconfig config is used and CPU1-3 are offlined).
-
-Currently Exynos4412 SoC support is limited to Trats2 board.
-
-Depends on:
-- next-20140904 branch of linux-next kernel tree
-- "irqchip: Properly fetch the per cpu offset" patch
-  (https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg716674.html)
-- [PATCH v3 0/5] Firmware-assisted suspend/resume of Exynos SoCs
-  (https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35921.html)
-
-Changes since v5:
-- rebased on top of next-20140904 +
-  "irqchip: Properly fetch the per cpu offset" patch
-  (https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg716674.html)
-  [PATCH v3 0/5] Firmware-assisted suspend/resume of Exynos SoCs
-  (https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35921.html)
-- limit Exynos4412 SoC support to Trats2 board for now
-
-Changes since v4:
-- rebased on top of next-20140804 +
-  [PATCH v5][next-20140804] ARM: EXYNOS: Fix suspend/resume sequences
-  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35262.html)
-  [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
-  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34282.html)
-- call exynos_save_cp15() only on A9 type core (this is needed for the future
-  Exynos3250 SoC support)
-
-Changes since v3:
-- rebased on top of next-20140804 +
-  [PATCH v4][next-20140804] ARM: EXYNOS: Fix suspend/resume sequences
-  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35192.html)
-  [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
-  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34282.html)
-- (re-)added patch fixing S5P_CENTRAL_SEQ_OPTION register setup
-
-Changes since v2:
-- rebased on top of next-20140708 +
-  [PATCH 5/6] ARM: EXYNOS: Fix suspend/resume sequencies
-  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32809.html)
-  [with rejects fixed]
-  [PATCH 6/6] ARM: EXYNOS: Register cpuidle device only on Exynos4210 and 5250
-  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32808.html)
-  [PATCH 0/2] Firmware-assisted suspend/resume of Exynos SoCs
-  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32991.html)
-  [with rejects fixed in patch #2]
-- addressed review comments from Tomasz Figa and Daniel Lezcano
-
-Changes since v1:
-- synced against next-20140602
-- added missing Acked-by-s
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Hi Will,
 
 
-Bartlomiej Zolnierkiewicz (5):
-  ARM: EXYNOS: PM: replace EXYNOS_BOOT_VECTOR_* macros by static inlines
-  ARM: EXYNOS: add AFTR mode support to firmware do_idle method
-  ARM: EXYNOS: cpuidle: add secure firmware support to AFTR mode code
-  ARM: EXYNOS: PM: fix register setup for AFTR mode code
-  ARM: EXYNOS: cpuidle: allow driver usage on Exynos4x12 SoCs
+On Fri, Sep 5, 2014 at 7:16 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
+> Hi Will,
+>
+> On Fri, Sep 5, 2014 at 5:52 PM, Will Deacon <will.deacon@arm.com> wrote:
+>> [Looks like it's not just Rutland that can't spell the address of the
+>>  mailing list today. Fixed here, so please use this post in any replies].
+>>
+>> On Fri, Sep 05, 2014 at 12:57:04PM +0100, Will Deacon wrote:
+>>> Hi all,
+>>>
+>>> I'm one of the few, foolish people to try running mainline on my 5250-based
+>>> Samsung Chromebook (snow). I can live without wireless, usb3 and video
+>>> acceleration, so actually it makes a reasonable development platform for
+>>> doing A15-based (micro)-architectural work.
+>>>
+>>> However, since 3.15 I've not been able to boot *any* mainline kernels on
+>>> this board. I did mean to report this earlier, but I have other machines
+>>> that can run mainline so this has fallen by the wayside.
+>>>
+>>> The problems started with 3.16, where simple-fb would fail to initialise
+>>> and I lost my display. Note that I don't have a serial console on this
+>>> machine (I looked at the PCB and there's no way I can solder one of those
+>>> myself :) I bisected the issue at the time, and I could get my display back
+>>> by removing some of the new regulator and hdmi properties from the DT. At
+>>> that point, I could boot, but DMA didn't initialise for the MMC controller
+>>> so I couldn't mount my root filesystem.
+>>>http://www.spinics.net/lists/dri-devel/msg66740.html
+>>> With 3.17-rc3, it seems a lot worse -- I don't get any output after nv-uboot
+>>> (i.e. the nv-uboot screen just remains on the display, with the last line
+>>> reading "Stashed 20 records").
 
- arch/arm/include/asm/firmware.h |  2 +-
- arch/arm/mach-exynos/common.h   |  5 ++++
- arch/arm/mach-exynos/exynos.c   |  5 +++-
- arch/arm/mach-exynos/firmware.c | 34 ++++++++++++++++-------
- arch/arm/mach-exynos/pm.c       | 60 ++++++++++++++++++++++++-----------------
- 5 files changed, 71 insertions(+), 35 deletions(-)
+It's unfortunate that you have not been able to use display on snow.
+As Ajay has mentioned in the previous mail, there are still some in-flight
+patches needed to get display up and running.
+And since you don't have a serial console available with your machine,
+the last print with you see is from the u-boot only.
+
+>>>
+>>> I'd usually try to debug this a bit further, but without a console it's
+>>> really painful to get anywhere. I've been working with 3.15, but now I'm
+>>> having to backport patches when I want to test them, which is more effort
+>>> than I can be bothered with.
+>>>
+>>> Is anybody else running mainline on this device and are these known/fixed
+>>> problems?
+> AFAIK, ARM chromebooks use DRM based display drivers and the required
+> patches are still not merged:
+> http://www.spinics.net/lists/dri-devel/msg66740.html
+>
+> Corresponding DT patches are also still not merged:
+> http://www.spinics.net/lists/arm-kernel/msg358324.html
+> http://www.spinics.net/lists/arm-kernel/msg358325.html
+>
+> There is a patch for configs as well:
+> https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35828.html
+>
+> Try these patches(I hope they will apply directly on 3.17-rc3) and you should
+> be able to use display on snow.
+
+We have pushed 3.17-rc3 kernel with above mentioned patches to github [1]
+Please use that, and in case you have some other requirements let us know.
+
+[1] https://github.com/exynos-reference/kernel/tree/exynos5-v3.17-rc3-display
+
+
 
 -- 
-1.8.2.3
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
