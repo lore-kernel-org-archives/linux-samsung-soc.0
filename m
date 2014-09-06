@@ -1,76 +1,38 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: Unable to boot mainline on snow chromebook since 3.15
-Date: Fri, 5 Sep 2014 13:25:51 -0700
-Message-ID: <CAD=FV=VfioJf9VYoSYL0QBk-bN93-Ecx3=0n9hb5Q4rcx43-_g@mail.gmail.com>
-References: <20140905115704.GO13515@arm.com>
-	<20140905122232.GP13515@arm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH] clk: samsung: exynos3250: fix mout_cam_blk parent list
+Date: Sat, 06 Sep 2014 18:33:33 +0530
+Message-ID: <1410008613-20861-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f179.google.com ([209.85.220.179]:36482 "EHLO
-	mail-vc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750869AbaIEUZw (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:53461 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750913AbaIFNH5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Sep 2014 16:25:52 -0400
-Received: by mail-vc0-f179.google.com with SMTP id hy4so12712160vcb.24
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Sep 2014 13:25:51 -0700 (PDT)
-In-Reply-To: <20140905122232.GP13515@arm.com>
+	Sat, 6 Sep 2014 09:07:57 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Will Deacon <will.deacon@arm.com>
-Cc: "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "olof@lixom.net" <olof@lixom.net>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, mturquette@linaro.org, naushad@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Will,
+As per user manual of Exynos3250 SRC_CAM can select
+div_cam_blk_320 if it's value is 0xC, so placing
+div_cam_blk_320 at proper index in parent list of mout_cam_blk.
 
-On Fri, Sep 5, 2014 at 5:22 AM, Will Deacon <will.deacon@arm.com> wrote:
-> [Looks like it's not just Rutland that can't spell the address of the
->  mailing list today. Fixed here, so please use this post in any replies].
->
-> On Fri, Sep 05, 2014 at 12:57:04PM +0100, Will Deacon wrote:
->> Hi all,
->>
->> I'm one of the few, foolish people to try running mainline on my 5250-based
->> Samsung Chromebook (snow). I can live without wireless, usb3 and video
->> acceleration, so actually it makes a reasonable development platform for
->> doing A15-based (micro)-architectural work.
->>
->> However, since 3.15 I've not been able to boot *any* mainline kernels on
->> this board. I did mean to report this earlier, but I have other machines
->> that can run mainline so this has fallen by the wayside.
->>
->> The problems started with 3.16, where simple-fb would fail to initialise
->> and I lost my display. Note that I don't have a serial console on this
->> machine (I looked at the PCB and there's no way I can solder one of those
->> myself :) I bisected the issue at the time, and I could get my display back
->> by removing some of the new regulator and hdmi properties from the DT. At
->> that point, I could boot, but DMA didn't initialise for the MMC controller
->> so I couldn't mount my root filesystem.
->>
->> With 3.17-rc3, it seems a lot worse -- I don't get any output after nv-uboot
->> (i.e. the nv-uboot screen just remains on the display, with the last line
->> reading "Stashed 20 records").
->>
->> I'd usually try to debug this a bit further, but without a console it's
->> really painful to get anywhere. I've been working with 3.15, but now I'm
->> having to backport patches when I want to test them, which is more effort
->> than I can be bothered with.
->>
->> Is anybody else running mainline on this device and are these known/fixed
->> problems?
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos3250.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-I've added Javier, who says he'll try to take a look at the problem on
-Monday.  He's got a snow and I think he's got a serial console hooked
-up to it (but I don't think he's tried the simplefb workflow).
-
-
-He also added the following thoughts:
-
-> Have you seen the very long "[PATCH 4/4] simplefb: add clock handling
-> code" thread [0]?. I wonder if the problem is that the display clocks were
-> not known to the kernel before 3.15 but now are getting disabled and thus
-> the simplefb driver not working?
->
-> So probably is worth to try passing clk_ignore_unused as a parameter to
-> the kernel command line.
->
-> [0]: https://www.mail-archive.com/linux-sunxi@googlegroups.com/msg06623.html
+diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+index e1cb464..ba8f073f 100644
+--- a/drivers/clk/samsung/clk-exynos3250.c
++++ b/drivers/clk/samsung/clk-exynos3250.c
+@@ -248,6 +248,7 @@ PNAME(group_sclk_cam_blk_p)	= { "xxti", "xusbxti",
+ 				    "none", "none", "none",
+ 				    "none", "div_mpll_pre",
+ 				    "mout_epll_user", "mout_vpll",
++				    "none", "none", "none",
+ 				    "div_cam_blk_320", };
+ PNAME(group_sclk_fimd0_p)	= { "xxti", "xusbxti",
+ 				    "m_bitclkhsdiv4_2l", "none",
+-- 
+1.7.9.5
