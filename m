@@ -1,80 +1,54 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 Subject: Re: Unable to boot mainline on snow chromebook since 3.15
-Date: Sun, 07 Sep 2014 18:19:03 +0200
-Message-ID: <540C8577.2070907@gmail.com>
-References: <20140905115704.GO13515@arm.com>	<20140905122232.GP13515@arm.com> <CAD=FV=VfioJf9VYoSYL0QBk-bN93-Ecx3=0n9hb5Q4rcx43-_g@mail.gmail.com> <540C202E.2060009@collabora.co.uk> <540C7F5B.6070307@gmail.com> <540C83DE.10505@collabora.co.uk>
+Date: Sun, 07 Sep 2014 18:40:47 +0200
+Message-ID: <540C8A8F.5010106@collabora.co.uk>
+References: <20140905115704.GO13515@arm.com>	<20140905122232.GP13515@arm.com> <CAD=FV=VfioJf9VYoSYL0QBk-bN93-Ecx3=0n9hb5Q4rcx43-_g@mail.gmail.com> <540C202E.2060009@collabora.co.uk> <540C7F5B.6070307@gmail.com> <540C83DE.10505@collabora.co.uk> <540C8577.2070907@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f175.google.com ([209.85.212.175]:59492 "EHLO
-	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752538AbaIGQTI (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:32911 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752509AbaIGQky (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 7 Sep 2014 12:19:08 -0400
-Received: by mail-wi0-f175.google.com with SMTP id ex7so1347536wid.2
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Sep 2014 09:19:06 -0700 (PDT)
-In-Reply-To: <540C83DE.10505@collabora.co.uk>
+	Sun, 7 Sep 2014 12:40:54 -0400
+In-Reply-To: <540C8577.2070907@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Will Deacon <will.deacon@arm.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>, Will Deacon <will.deacon@arm.com>
 Cc: Doug Anderson <dianders@chromium.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "olof@lixom.net" <olof@lixom.net>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mark Brown <broonie@kernel.org>
 
-On 07.09.2014 18:12, Javier Martinez Canillas wrote:
-> Hello Tomasz,
-> 
-> On 09/07/2014 05:52 PM, Tomasz Figa wrote:
->>
->> So I believe we've got a process issue here. If you don't have normal
->> support for display hardware, but you want to keep the display
->> operational thanks to bootloader already initializing it, you should not
->> add anything to the kernel which breaks it, until full support comes in.
->>
->> This means that respective regulators should be either always-on or not
->> listed at all (I'd favor the former)
-> 
-> So that means that do you think that the workaround patch I shared on the
-> previous email could be considered as a correct solution? In that case I can
-> post it as a proper patch.
+Hello Tomasz,
 
-Right.
-
+On 09/07/2014 06:19 PM, Tomasz Figa wrote:
+> On 07.09.2014 18:12, Javier Martinez Canillas wrote:
+>> Clocks is not an issue at least on this machine since the bootloader already
+>> passes the clk_ignore_unused parameter to the kernel command line so in that
+>> sense there isn't a regression comparing with older kernels. If possible I
+>> would prefer to leave this way instead of adding quirks to the clock driver,
+>> specially since there are proposed patches to have the display working using
+>> the Exynos DRM driver on this machine.
 > 
->> somehow enabled at boot-up or completely ignored, including all their
->> parents capable of being gated.
->>
+> Well, clk_ignore_unused seems a bit too coarse grained to me. Also
+> forcing the user to add it in his bootloader (or any other way) is not
+> really the best practice IMHO.
+>
+
+Fair enough.
+
+> At least for next 3.17-rc I'd suggest fixing this up in respective clock
+> driver and dropping the hack only after Exynos DRM patches are merged
+> and confirmed working.
 > 
-> AFAIU from the thread I mentioned before, Nvidia folks proposed the same to
-> fix the simplefb issue on sunxi, to avoid the clocks in question being turned
-> off at boot by modifying the sunxi clock driver.
 
-OK.
+Ok, I'll prepare a patch to add the CLK_IGNORE_UNUSED flag to the needed
+clocks in drivers/clk/samsung/clk-exynos5250.c. That will be a more
+fine-grained solution since the clk_ignore_unused kernel parameter won't be
+needed.
 
+> Best regards,
+> Tomasz
 > 
->> Now with regulators this is pretty straightforward, but with clocks I
->> believe it's an open issue. AFAIR we've discussed this on MLs some time
->> ago (at least I remember Doug commenting on that topic) and kind of
->> concluded that SoC clock drivers could include lists of clocks to be
->> enabled at boot-up (as a HACK to enable things like simplefb until
->> proper support for respective features are added).
->>
->> I believe this would be the proper solution for $subject.
->>
-> 
-> Clocks is not an issue at least on this machine since the bootloader already
-> passes the clk_ignore_unused parameter to the kernel command line so in that
-> sense there isn't a regression comparing with older kernels. If possible I
-> would prefer to leave this way instead of adding quirks to the clock driver,
-> specially since there are proposed patches to have the display working using
-> the Exynos DRM driver on this machine.
-
-Well, clk_ignore_unused seems a bit too coarse grained to me. Also
-forcing the user to add it in his bootloader (or any other way) is not
-really the best practice IMHO.
-
-At least for next 3.17-rc I'd suggest fixing this up in respective clock
-driver and dropping the hack only after Exynos DRM patches are merged
-and confirmed working.
 
 Best regards,
-Tomasz
+Javier
