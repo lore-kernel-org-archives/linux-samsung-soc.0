@@ -1,49 +1,61 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v9 0/6] Add Maxim 77802 clocks support
-Date: Mon, 8 Sep 2014 08:49:28 +0200
-Message-ID: <CABxcv=mww1wcf+vo5uLxBrNZBVJhj9zvbwGu_oAKXm4XDUNvCQ@mail.gmail.com>
-References: <1408350784-15577-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v9 3/5] rtc: max77686: Fail to probe if no RTC regmap
+ irqchip is set
+Date: Mon, 08 Sep 2014 08:50:26 +0200
+Message-ID: <540D51B2.9000908@collabora.co.uk>
+References: <1408350877-15921-1-git-send-email-javier.martinez@collabora.co.uk> <1408350877-15921-4-git-send-email-javier.martinez@collabora.co.uk> <1409217715.20020.7.camel@AMDC1943>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:47178 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752185AbaIHGt3 (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:33371 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751483AbaIHGub (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Sep 2014 02:49:29 -0400
-Received: by mail-we0-f174.google.com with SMTP id t60so612733wes.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Sep 2014 23:49:28 -0700 (PDT)
-In-Reply-To: <1408350784-15577-1-git-send-email-javier.martinez@collabora.co.uk>
+	Mon, 8 Sep 2014 02:50:31 -0400
+In-Reply-To: <1409217715.20020.7.camel@AMDC1943>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Mike Turquette <mturquette@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Doug Anderson <dianders@chromium.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hello Mike,
+Hello Krzysztof,
 
-On Mon, Aug 18, 2014 at 10:32 AM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> This series add support for the clocks present in the Maxim
-> 77802 Power Managment IC. Previously, the series was part
-> of a bigger one [0] that aimed to add support for all the
-> devices in the max77802 PMIC. But now the Maxim 77802 PMIC
-> dependencies were already merged for 3.17 so the series can
-> be split and each driver can go through the relevant tree.
+Sorry for the late response, I was on holidays and slowly catching up on email.
+
+On 08/28/2014 11:21 AM, Krzysztof Kozlowski wrote:
+> On pon, 2014-08-18 at 10:34 +0200, Javier Martinez Canillas wrote:
+>> The max77686 mfd driver adds a regmap IRQ chip which creates an
+>> IRQ domain that is used to map the virtual RTC alarm1 interrupt.
+>> 
+>> The RTC driver assumes that this will always be true since the
+>> PMIC IRQ is a required property according to the max77686 DT
+>> binding doc. If an "interrupts" property is not defined for a
+>> max77686 PMIC, then the mfd probe function will fail and the
+>> RTC platform driver will never be probed. But even when it is
+>> not possible to probe the rtc-max77686 driver without a regmap
+>> IRQ chip, it's better to explicitly check if the IRQ chip data
+>> is not NULL and gracefully fail instead of getting an OOPS.
+> 
+> The OOPS was possible only with Bartlomiej's patch because he changed
+> the MFD driver probe function to skip IRQ setup on lack of interrupts.
+> In current state the OOPS should not happen so mentioning OOPS in commit
+> message may be misleading. Maybe just don't put the OOPS here?
+> 
+> Anyway the patch looks good and a check for non-null
+> regmap_irq_chip_data is still a valid precaution so:
 >
 
-This series was first posted for 3.17 and you acked the whole set but
-it missed 3.17 because had as a dependency some changes in the
-max77802 mfd driver. Those dependencies made for 3.17 and that's why I
-re-posted it for 3.18 about a month ago.
+Yes I know but as you said the check for non-null is still a valid precaution
+(albeit maybe paranoid) just in case someone find that not having the IRQ
+hooked makes sense in a design and changes the mfd driver in the future.
 
-Since we are in 3.17-rc4 already, I'm afraid that this series may miss
-3.18 again, is there anything else you need from me to pick this
-series? It will obviously conflict with Tomeu's "Per-user clock
-constraints" series [0] so if you want I can rebase it on top of your
-clk-next-tomeu-kirkwood-v2 branch [1].
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
 
-Thanks a lot and best regards,
+Best regards,
 Javier
-
-[0]: https://lkml.org/lkml/2014/9/1/466
-[1]: https://git.linaro.org/people/mike.turquette/linux.git/shortlog/refs/heads/clk-next-tomeu-kirkwood-v2
