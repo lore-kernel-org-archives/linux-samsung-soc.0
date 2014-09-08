@@ -1,52 +1,87 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 1/3] ARM: dts: Add Peach Pit dts entry for Atmel touchpad
-Date: Mon, 08 Sep 2014 09:26:36 +0200
-Message-ID: <540D5A2C.7080808@collabora.co.uk>
-References: <1409066937-3574-1-git-send-email-javier.martinez@collabora.co.uk> <1409066937-3574-2-git-send-email-javier.martinez@collabora.co.uk> <53FD1001.30701@suse.de> <53FD8528.7090504@collabora.co.uk> <53FDD914.5090208@suse.de> <53FDE9B2.4040001@collabora.co.uk> <5405CA4F.10507@itdev.co.uk>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: Unable to boot mainline on snow chromebook since 3.15
+Date: Mon, 8 Sep 2014 11:20:10 +0100
+Message-ID: <20140908102010.GF4015@sirena.org.uk>
+References: <20140905115704.GO13515@arm.com>
+ <20140905122232.GP13515@arm.com>
+ <CAD=FV=VfioJf9VYoSYL0QBk-bN93-Ecx3=0n9hb5Q4rcx43-_g@mail.gmail.com>
+ <540C202E.2060009@collabora.co.uk>
+ <540C7F5B.6070307@gmail.com>
+ <CAD=FV=UYDDhL02CrhPUAHPncepwAF2-BgTmXOamy-Mdz80S-vw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="x4pBfXISqBoDm8sr"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:33399 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751962AbaIHH0m (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56847 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752990AbaIHKUc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Sep 2014 03:26:42 -0400
-In-Reply-To: <5405CA4F.10507@itdev.co.uk>
+	Mon, 8 Sep 2014 06:20:32 -0400
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=UYDDhL02CrhPUAHPncepwAF2-BgTmXOamy-Mdz80S-vw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nick Dyer <nick.dyer@itdev.co.uk>, =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yufeng Shen <miletus@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Tomasz Figa <tomasz.figa@gmail.com>, Daniel Stone <daniels@collabora.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Will Deacon <will.deacon@arm.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "olof@lixom.net" <olof@lixom.net>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hello Nick,
 
-On 09/02/2014 03:46 PM, Nick Dyer wrote:
-> On 27/08/14 15:22, Javier Martinez Canillas wrote:
->>>> If there was a BTN_NONE or KEY_UNUSED it would had been better but I think
->>>> that making a distinction between these two cases (reserved pin vs GPIO
->>>> available but not used) is useful.
->>>
->>> Maybe Nick can comment here.
-> 
-> Yes, this is probably useful to document. However, I fear that it's not
-> going to be obvious what the distinction is to someone who doesn't have the
-> Atmel docs. Perhaps it would be clearer to just do something like:
-> 
-> 		linux,gpio-keymap = <KEY_RESERVED
-> 		                     KEY_RESERVED
-> 		                     KEY_RESERVED /* GPIO0 */
-> 	        	             KEY_RESERVED /* GPIO1 */
-> 		                     KEY_RESERVED /* GPIO2 */
-> 		                     BTN_LEFT>;   /* GPIO3 */
-> 
-> If you omit any trailing KEY_RESERVED values it doesn't affect anything.
-> 
-> I was also going to suggest that you put something like "/* Atmel mXT224SL
-> */" in your .dts file so it's clear what version of the maXTouch device you
-> are configuring.
-> 
+--x4pBfXISqBoDm8sr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Ok, I'll re-spin with those changes. Thanks a lot for your feedback.
+On Sun, Sep 07, 2014 at 09:36:56PM -0700, Doug Anderson wrote:
+> On Sun, Sep 7, 2014 at 8:52 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 
-Best regards,
-Javier
+> > So I believe we've got a process issue here. If you don't have normal
+> > support for display hardware, but you want to keep the display
+> > operational thanks to bootloader already initializing it, you should not
+> > add anything to the kernel which breaks it, until full support comes in.
+
+> > This means that respective regulators should be either always-on or not
+> > listed at all (I'd favor the former) and respective clocks either
+> > somehow enabled at boot-up or completely ignored, including all their
+> > parents capable of being gated.
+
+> It seems slightly broken to hack the device tree in this way.  I'll be
+> the first to admit that I often list regulators as "always-on" during
+> bringup when not everything is done, and I guess it's not that
+> different.  ...but given everything going on upstream (and people
+> working on Suspend/Resume, DRM, etc) it seems like it might be a bit
+> of a pain.  ...but if that's what everyone agrees on, I won't disagree
+> too strongly.
+
+> One (ugly?) solution would be to add a feature to your bootloader to
+> modify the device tree to mark regulators as "always-on".  Since the
+> booloader gets to touch the device tree and the bootloader is involved
+> in communicating into about SimpleFB, it kinda makes sense.
+
+That would seem to make sense, yes - we're apparently communicating this
+as a virtual device so we should make sure that virtual device has the
+resources it needs either directly or by reference to other devices so
+the driver can keep them on.  Ideally we'd be doing this with fallback
+compatibles or something but this will probably work OK.
+
+I'd expect we're also going to run into the same problems with what
+people are currently doing with the SoC power domains, we also have code
+to power them off when they're idle, and this whole performance with
+adding hacks isn't going to be robust or scale - it's essentially just
+praying that nothing turns off the resources we need as far as I can
+tell.
+
+--x4pBfXISqBoDm8sr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUDYLVAAoJECTWi3JdVIfQqYcH/1Y8P1yHUXsXl9+i/gpw/YZl
++cmprPAOccDqakra3lB9BUGU5ftE4QkJHZVTEMrTuLU1otHI/hMcwlxfSicsFDM2
+skOL3iAa2oyF5KpIIEaiSst6DPWr+fNs78CHekzx00CFmjMD+HxRjdgTKKgK/Jpi
+qQRyQBUldRmEzgapiQG4wh+CaZ3xsop4rv2yQSXtBQ7RzQDzPCT6E/a/BYkqkfdC
+XKDykQjadBA5uIUFYG4PAg0s/XV8Y2DY0gx+BXoYfog+zCxpQeo3t9ZMgoOTJuvg
+0F/RnJO4u6Wzd1r/7JKPkh2aNVerU/4P4KJjCqNJ21PUtIxlr+x09TiA0Ef3GSw=
+=W6Tx
+-----END PGP SIGNATURE-----
+
+--x4pBfXISqBoDm8sr--
