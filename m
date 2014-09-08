@@ -1,54 +1,53 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: Unable to boot mainline on snow chromebook since 3.15
-Date: Sun, 07 Sep 2014 18:40:47 +0200
-Message-ID: <540C8A8F.5010106@collabora.co.uk>
-References: <20140905115704.GO13515@arm.com>	<20140905122232.GP13515@arm.com> <CAD=FV=VfioJf9VYoSYL0QBk-bN93-Ecx3=0n9hb5Q4rcx43-_g@mail.gmail.com> <540C202E.2060009@collabora.co.uk> <540C7F5B.6070307@gmail.com> <540C83DE.10505@collabora.co.uk> <540C8577.2070907@gmail.com>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: [PATCH v6 4/4] phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800
+Date: Mon, 8 Sep 2014 09:53:09 +0530
+Message-ID: <CAFp+6iGU86yL8Ry3ArJJjBy2Cs0Em2B49yssH3BK5fJwyaZbtA@mail.gmail.com>
+References: <1409656338-20337-1-git-send-email-gautam.vivek@samsung.com>
+	<1409656338-20337-5-git-send-email-gautam.vivek@samsung.com>
+	<20140902143438.GB16872@saruman.home>
+	<CAFp+6iEyqmbwMLFrBKD7NVLDAC=b+h1hPKFS=BG4k9D69hn_dg@mail.gmail.com>
+	<20140903144225.GD31855@saruman.home>
+	<CAFp+6iETPJCWMMkjHrpDcdCv=K0PbefYLa4eBOwN=aUY2=EHLA@mail.gmail.com>
+	<20140905175651.GK24449@saruman.home>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:32911 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752509AbaIGQky (ORCPT
+Received: from mail-qa0-f41.google.com ([209.85.216.41]:62158 "EHLO
+	mail-qa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751308AbaIHEXL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 7 Sep 2014 12:40:54 -0400
-In-Reply-To: <540C8577.2070907@gmail.com>
+	Mon, 8 Sep 2014 00:23:11 -0400
+In-Reply-To: <20140905175651.GK24449@saruman.home>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Will Deacon <will.deacon@arm.com>
-Cc: Doug Anderson <dianders@chromium.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "olof@lixom.net" <olof@lixom.net>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+To: Felipe Balbi <balbi@ti.com>
+Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg KH <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Jingoo Han <jg1.han@samsung.com>
 
-Hello Tomasz,
-
-On 09/07/2014 06:19 PM, Tomasz Figa wrote:
-> On 07.09.2014 18:12, Javier Martinez Canillas wrote:
->> Clocks is not an issue at least on this machine since the bootloader already
->> passes the clk_ignore_unused parameter to the kernel command line so in that
->> sense there isn't a regression comparing with older kernels. If possible I
->> would prefer to leave this way instead of adding quirks to the clock driver,
->> specially since there are proposed patches to have the display working using
->> the Exynos DRM driver on this machine.
-> 
-> Well, clk_ignore_unused seems a bit too coarse grained to me. Also
-> forcing the user to add it in his bootloader (or any other way) is not
-> really the best practice IMHO.
+On Fri, Sep 5, 2014 at 11:26 PM, Felipe Balbi <balbi@ti.com> wrote:
+> On Thu, Sep 04, 2014 at 12:01:19PM +0530, Vivek Gautam wrote:
+>> > Don't we have phy_power_on()
+>> > for that ? It looks like you could just as well do this from
+>> > phy_power_on() ?
+>>
+>> No, unfortunately keeping these calibration settings in phy_power_on()
+>> doesn't help, since we need to do this after XHCI reset has happened.
 >
+> teach xHCI about PHYs ?
 
-Fair enough.
+sorry i couldn't understand you here.
+Aren't we trying to do the same with Heikki's patch about dwc3 :
+[PATCH 6/6] usb: dwc3: host: convey the PHYs to xhci
 
-> At least for next 3.17-rc I'd suggest fixing this up in respective clock
-> driver and dropping the hack only after Exynos DRM patches are merged
-> and confirmed working.
-> 
+and the 2nd patch in this series :
+[PATCH v6 2/4] usb: host: xhci-plat: Get PHYs for xhci's hcds
 
-Ok, I'll prepare a patch to add the CLK_IGNORE_UNUSED flag to the needed
-clocks in drivers/clk/samsung/clk-exynos5250.c. That will be a more
-fine-grained solution since the clk_ignore_unused kernel parameter won't be
-needed.
+Is there something else that is expected ?
 
-> Best regards,
-> Tomasz
-> 
 
-Best regards,
-Javier
+
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
