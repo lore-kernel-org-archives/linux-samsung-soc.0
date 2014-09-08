@@ -1,66 +1,48 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 1/2] ARM: exynos_defconfig: Enable Control Groups support
-Date: Mon, 08 Sep 2014 14:43:10 +0200
-Message-ID: <540DA45E.1040702@collabora.co.uk>
-References: <1409137341-20516-1-git-send-email-javier.martinez@collabora.co.uk> <53FE02E6.3030302@suse.de>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: Unable to boot mainline on snow chromebook since 3.15
+Date: Mon, 8 Sep 2014 13:46:01 +0100
+Message-ID: <20140908124601.GN26030@arm.com>
+References: <20140905115704.GO13515@arm.com>
+ <20140905122232.GP13515@arm.com>
+ <CAD=FV=VfioJf9VYoSYL0QBk-bN93-Ecx3=0n9hb5Q4rcx43-_g@mail.gmail.com>
+ <540C202E.2060009@collabora.co.uk>
+ <540C7F5B.6070307@gmail.com>
+ <540C83DE.10505@collabora.co.uk>
+ <540C8577.2070907@gmail.com>
+ <20140908112112.GK26030@arm.com>
+ <540D9931.6050603@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:33665 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752784AbaIHMnP (ORCPT
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:53614 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752185AbaIHMqV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Sep 2014 08:43:15 -0400
-In-Reply-To: <53FE02E6.3030302@suse.de>
+	Mon, 8 Sep 2014 08:46:21 -0400
+Content-Disposition: inline
+In-Reply-To: <540D9931.6050603@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Doug Anderson <dianders@chromium.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "olof@lixom.net" <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>
 
-Hello Andreas,
+On Mon, Sep 08, 2014 at 12:55:29PM +0100, Javier Martinez Canillas wrote:
+> On 09/08/2014 01:21 PM, Will Deacon wrote:
+> > On Sun, Sep 07, 2014 at 05:19:03PM +0100, Tomasz Figa wrote:
+> >> At least for next 3.17-rc I'd suggest fixing this up in respective clock
+> >> driver and dropping the hack only after Exynos DRM patches are merged
+> >> and confirmed working.
+> > 
+> > Whilst I'm sympathetic to people working to enable DRM, I think this is
+> > the right solution to the problem. The transition from simplefb to DRM
+> > shouldn't break display for a bunch of kernel revisions whilst the code is
+> > in flux.
+> > 
+> 
+> Agreed, I'm preparing a patch-set to prevent the kernel to disable both the
+> clocks and regulators needed for the display, I'll try to post it today or
+> tomorrow at worst.
 
-On 08/27/2014 06:10 PM, Andreas F=E4rber wrote:
-> Am 27.08.2014 13:02, schrieb Javier Martinez Canillas:
->> systemd needs control groups support to be enabled in the
->> kernel so let's enable it by default since is quite likely
->> that a user-space with systemd will be used.
->>=20
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.c=
-o.uk>
->> ---
->>  arch/arm/configs/exynos_defconfig | 1 +
->>  1 file changed, 1 insertion(+)
->>=20
->> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/ex=
-ynos_defconfig
->> index 676c744..590abde 100644
->> --- a/arch/arm/configs/exynos_defconfig
->> +++ b/arch/arm/configs/exynos_defconfig
->> @@ -1,6 +1,7 @@
->>  CONFIG_SYSVIPC=3Dy
->>  CONFIG_NO_HZ=3Dy
->>  CONFIG_HIGH_RES_TIMERS=3Dy
->> +CONFIG_CGROUPS=3Dy
->>  CONFIG_BLK_DEV_INITRD=3Dy
->>  CONFIG_KALLSYMS_ALL=3Dy
->>  CONFIG_MODULES=3Dy
->=20
-> CONFIG_FHANDLE=3Dy is also needed for systemd to get a serial console=
-=2E
-> multi_v7 has that already.
->=20
+Thanks, Javier. Please CC me on the patch and I'll take it for a spin.
 
-That's a requirement for systemd >=3D 209 AFAIK. I've systemd 208 on my=
- debian
-jessie and it works without it.
-
-I agree that it should be included but I think it can be in a follow-up=
- patch.
-
-> Regards,
-> Andreas
->=20
-
-Best regards,
-Javier
+Will
