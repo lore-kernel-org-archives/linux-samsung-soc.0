@@ -1,70 +1,37 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: Unable to boot mainline on snow chromebook since 3.15
-Date: Mon, 8 Sep 2014 20:40:23 +0100
-Message-ID: <CACxGe6t_ex1bU=CvTpXR4VJgNf1hAq33hr6ykbHy_sMXEk4h-g@mail.gmail.com>
-References: <20140905115704.GO13515@arm.com> <20140905122232.GP13515@arm.com>
- <CAD=FV=VfioJf9VYoSYL0QBk-bN93-Ecx3=0n9hb5Q4rcx43-_g@mail.gmail.com>
- <540C202E.2060009@collabora.co.uk> <540C7F5B.6070307@gmail.com>
- <540C83DE.10505@collabora.co.uk> <540C8577.2070907@gmail.com>
- <20140908112112.GK26030@arm.com> <CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
- <CAD=FV=VAqzvJQDQMjjeQ1p5okyDzE=ff_sguObZxh59qbzcaTQ@mail.gmail.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH 00/15] PM / Domains: Cleanups and remove superfluous APIs
+Date: Tue, 09 Sep 2014 01:07:14 +0200
+Message-ID: <2208348.uMLR68bVng@vostro.rjw.lan>
+References: <1409741551-16437-1-git-send-email-ulf.hansson@linaro.org> <7ha96eyt9f.fsf@paris.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:37080 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754574AbaIHTko (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Sep 2014 15:40:44 -0400
-Received: by mail-ie0-f173.google.com with SMTP id x19so247528ier.32
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Sep 2014 12:40:44 -0700 (PDT)
-In-Reply-To: <CAD=FV=VAqzvJQDQMjjeQ1p5okyDzE=ff_sguObZxh59qbzcaTQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <7ha96eyt9f.fsf@paris.lan>
+Sender: linux-sh-owner@vger.kernel.org
+To: Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sh@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Mark Brown <broonie@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "olof@lixom.net" <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>
 
-On Mon, Sep 8, 2014 at 4:58 PM, Doug Anderson <dianders@chromium.org> wrote:
-> Grant,
->
-> On Mon, Sep 8, 2014 at 5:20 AM, Grant Likely <grant.likely@secretlab.ca> wrote:
->> On Mon, Sep 8, 2014 at 12:21 PM, Will Deacon <will.deacon@arm.com> wrote:
->>> On Sun, Sep 07, 2014 at 05:19:03PM +0100, Tomasz Figa wrote:
->>>> At least for next 3.17-rc I'd suggest fixing this up in respective clock
->>>> driver and dropping the hack only after Exynos DRM patches are merged
->>>> and confirmed working.
->>>
->>> Whilst I'm sympathetic to people working to enable DRM, I think this is
->>> the right solution to the problem. The transition from simplefb to DRM
->>> shouldn't break display for a bunch of kernel revisions whilst the code is
->>> in flux.
->>
->> I would go further. The kernel behaviour has changed, and we have to
->> deal with platforms that assume the old behaviour. That means either
->> defaulting to leaving enabled regulators/clocks alone unless there is
->> a flag in the DT saying they can be power managed, or black listing
->> platforms that are known to depend on the regulator being on.
->>
->> Updating the device tree must not be required to get the kernel to
->> boot, but it is valid to require a DT upgrade to get better
->> performance (battery life) out of the platform.
->
-> In this case people using SImple FB are not really using an officially
-> sanctioned device tree.  The simple-fb fragment is created on the fly
-> via a "DO NOT SUBMIT" patch sitting on a code review server.  It's not
-> something that's shipped with real firmware nor is it something
-> present in the kernel.  See
-> <https://chromium-review.googlesource.com/#/c/49358/2/board/samsung/smdk5250/smdk5250.c>
-> as I mentioned above.
->
-> Is this really a device tree that we need to guarantee backward
-> compatibility with?
+On Friday, September 05, 2014 08:35:56 AM Kevin Hilman wrote:
+> Ulf Hansson <ulf.hansson@linaro.org> writes:
+> 
+> > This patchset has a bit of a history and some parts of it has been posted
+> > earlier.
+> > http://lists.infradead.org/pipermail/linux-arm-kernel/2014-June/262725.html
+> >
+> > The intent is to simplify code for the generic power domain and also some of
+> > the machine specific code that uses the generic power domain.
+> >
+> > Do note, there are dependencies through this patchset, especially related to
+> > the ARM SoC changes, thus they all need to be kept together.
+> 
+> Reviewed-by: Kevin Hilman <khilman@linaro.org>
 
-Well, lets see... We've got a real user complaining about a platform
-that used to work on mainline, and no longer does. The only loophole
-for ignoring breakage is if there nobody cares that it is broken. That
-currently isn't the case. So even though it's based on a patch that
-has "DO NOT SUBMIT" in large friendly letters on the front cover, it
-doesn't change the situation that mainline has a regression.
+My understanding is that this is for the whole series.
 
-g.
+Which I'm queuing up for 3.18, thanks!
+
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
