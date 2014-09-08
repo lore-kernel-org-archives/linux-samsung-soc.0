@@ -1,87 +1,104 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: Unable to boot mainline on snow chromebook since 3.15
-Date: Mon, 8 Sep 2014 11:20:10 +0100
-Message-ID: <20140908102010.GF4015@sirena.org.uk>
-References: <20140905115704.GO13515@arm.com>
- <20140905122232.GP13515@arm.com>
- <CAD=FV=VfioJf9VYoSYL0QBk-bN93-Ecx3=0n9hb5Q4rcx43-_g@mail.gmail.com>
- <540C202E.2060009@collabora.co.uk>
- <540C7F5B.6070307@gmail.com>
- <CAD=FV=UYDDhL02CrhPUAHPncepwAF2-BgTmXOamy-Mdz80S-vw@mail.gmail.com>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [PATCH v2 6/7] mfd: cros_ec: Instantiate sub-devices from device
+ tree
+Date: Mon, 08 Sep 2014 12:57:31 +0200
+Message-ID: <540D8B9B.8020805@collabora.co.uk>
+References: <1408974008-17184-1-git-send-email-javier.martinez@collabora.co.uk> <1408974008-17184-7-git-send-email-javier.martinez@collabora.co.uk> <20140904082513.GC8257@lee--X1>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="x4pBfXISqBoDm8sr"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56847 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752990AbaIHKUc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Sep 2014 06:20:32 -0400
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=UYDDhL02CrhPUAHPncepwAF2-BgTmXOamy-Mdz80S-vw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140904082513.GC8257@lee--X1>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Will Deacon <will.deacon@arm.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "olof@lixom.net" <olof@lixom.net>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
+Hello Lee,
 
---x4pBfXISqBoDm8sr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Sorry for the delay but had been on holidays last week.
 
-On Sun, Sep 07, 2014 at 09:36:56PM -0700, Doug Anderson wrote:
-> On Sun, Sep 7, 2014 at 8:52 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+On 09/04/2014 10:25 AM, Lee Jones wrote:
+>>  
+>> -static const struct mfd_cell cros_devs[] = {
+>> -	{
+>> -		.name = "cros-ec-keyb",
+>> -		.id = 1,
+>> -		.of_compatible = "google,cros-ec-keyb",
+>> -	},
+>> -	{
+>> -		.name = "cros-ec-i2c-tunnel",
+>> -		.id = 2,
+>> -		.of_compatible = "google,cros-ec-i2c-tunnel",
+>> -	},
+>> -};
+>> -
+>>  int cros_ec_register(struct cros_ec_device *ec_dev)
+>>  {
+>>  	struct device *dev = ec_dev->dev;
+>> +#ifdef CONFIG_OF
+>> +	struct device_node *node = dev->of_node;
+>> +#endif
+> 
+> Drop the #ifdiffery.
+>
 
-> > So I believe we've got a process issue here. If you don't have normal
-> > support for display hardware, but you want to keep the display
-> > operational thanks to bootloader already initializing it, you should not
-> > add anything to the kernel which breaks it, until full support comes in.
+I used the #ifdef guards because I remembered of_node being conditionally
+build but I see that this is not longer true after commmit:
 
-> > This means that respective regulators should be either always-on or not
-> > listed at all (I'd favor the former) and respective clocks either
-> > somehow enabled at boot-up or completely ignored, including all their
-> > parents capable of being gated.
+c9e358d driver-core: remove conditionals around devicetree pointers
 
-> It seems slightly broken to hack the device tree in this way.  I'll be
-> the first to admit that I often list regulators as "always-on" during
-> bringup when not everything is done, and I guess it's not that
-> different.  ...but given everything going on upstream (and people
-> working on Suspend/Resume, DRM, etc) it seems like it might be a bit
-> of a pain.  ...but if that's what everyone agrees on, I won't disagree
-> too strongly.
+So I'll remove it, thanks for the pointer.
 
-> One (ugly?) solution would be to add a feature to your bootloader to
-> modify the device tree to mark regulators as "always-on".  Since the
-> booloader gets to touch the device tree and the bootloader is involved
-> in communicating into about SimpleFB, it kinda makes sense.
+>>  	int err = 0;
+>>  
+>>  	if (ec_dev->din_size) {
+>> @@ -138,13 +129,19 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+>>  
+>>  	mutex_init(&ec_dev->lock);
+>>  
+>> -	err = mfd_add_devices(dev, 0, cros_devs,
+>> -			      ARRAY_SIZE(cros_devs),
+>> -			      NULL, ec_dev->irq, NULL);
+>> -	if (err) {
+>> -		dev_err(dev, "failed to add mfd devices\n");
+>> -		return err;
+>> +#ifdef CONFIG_OF
+> 
+> And here.
+> 
 
-That would seem to make sense, yes - we're apparently communicating this
-as a virtual device so we should make sure that virtual device has the
-resources it needs either directly or by reference to other devices so
-the driver can keep them on.  Ideally we'd be doing this with fallback
-compatibles or something but this will probably work OK.
+Nod.
 
-I'd expect we're also going to run into the same problems with what
-people are currently doing with the SoC power domains, we also have code
-to power them off when they're idle, and this whole performance with
-adding hacks isn't going to be robust or scale - it's essentially just
-praying that nothing turns off the resources we need as far as I can
-tell.
+>> +	/*
+>> +	 * Add sub-devices declared in the device tree.  NOTE they should NOT be
+>> +	 * declared in cros_devs
+>> +	 */
+> 
+> Drop this comment.  cros_devs no longer exists and we know what
+> of_platform_populate() does.
+> 
 
---x4pBfXISqBoDm8sr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Ok.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+>> +	if (node) {
+>> +		err = of_platform_populate(node, NULL, NULL, dev);
+>> +		if (err) {
+>> +			dev_err(dev, "fail to add %s\n", node->full_name);
+> 
+> That's not true.  Just put "Failed to register subordinate devices".
+> 
 
-iQEcBAEBAgAGBQJUDYLVAAoJECTWi3JdVIfQqYcH/1Y8P1yHUXsXl9+i/gpw/YZl
-+cmprPAOccDqakra3lB9BUGU5ftE4QkJHZVTEMrTuLU1otHI/hMcwlxfSicsFDM2
-skOL3iAa2oyF5KpIIEaiSst6DPWr+fNs78CHekzx00CFmjMD+HxRjdgTKKgK/Jpi
-qQRyQBUldRmEzgapiQG4wh+CaZ3xsop4rv2yQSXtBQ7RzQDzPCT6E/a/BYkqkfdC
-XKDykQjadBA5uIUFYG4PAg0s/XV8Y2DY0gx+BXoYfog+zCxpQeo3t9ZMgoOTJuvg
-0F/RnJO4u6Wzd1r/7JKPkh2aNVerU/4P4KJjCqNJ21PUtIxlr+x09TiA0Ef3GSw=
-=W6Tx
------END PGP SIGNATURE-----
+Ok.
 
---x4pBfXISqBoDm8sr--
+>> +			return err;
+>> +		}
+>>  	}
+>> +#endif
+>>  
+>>  	dev_info(dev, "Chrome EC device registered\n");
+>>  
+> 
+
+Thanks a lot for the feedback and best regards,
+Javier
