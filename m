@@ -1,53 +1,50 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH v6 4/4] phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800
-Date: Mon, 8 Sep 2014 09:53:09 +0530
-Message-ID: <CAFp+6iGU86yL8Ry3ArJJjBy2Cs0Em2B49yssH3BK5fJwyaZbtA@mail.gmail.com>
-References: <1409656338-20337-1-git-send-email-gautam.vivek@samsung.com>
-	<1409656338-20337-5-git-send-email-gautam.vivek@samsung.com>
-	<20140902143438.GB16872@saruman.home>
-	<CAFp+6iEyqmbwMLFrBKD7NVLDAC=b+h1hPKFS=BG4k9D69hn_dg@mail.gmail.com>
-	<20140903144225.GD31855@saruman.home>
-	<CAFp+6iETPJCWMMkjHrpDcdCv=K0PbefYLa4eBOwN=aUY2=EHLA@mail.gmail.com>
-	<20140905175651.GK24449@saruman.home>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: Unable to boot mainline on snow chromebook since 3.15
+Date: Sun, 7 Sep 2014 21:36:56 -0700
+Message-ID: <CAD=FV=UYDDhL02CrhPUAHPncepwAF2-BgTmXOamy-Mdz80S-vw@mail.gmail.com>
+References: <20140905115704.GO13515@arm.com>
+	<20140905122232.GP13515@arm.com>
+	<CAD=FV=VfioJf9VYoSYL0QBk-bN93-Ecx3=0n9hb5Q4rcx43-_g@mail.gmail.com>
+	<540C202E.2060009@collabora.co.uk>
+	<540C7F5B.6070307@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f41.google.com ([209.85.216.41]:62158 "EHLO
-	mail-qa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751308AbaIHEXL (ORCPT
+Received: from mail-ob0-f171.google.com ([209.85.214.171]:48698 "EHLO
+	mail-ob0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750845AbaIHEg5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Sep 2014 00:23:11 -0400
-In-Reply-To: <20140905175651.GK24449@saruman.home>
+	Mon, 8 Sep 2014 00:36:57 -0400
+Received: by mail-ob0-f171.google.com with SMTP id wn1so10457502obc.30
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 07 Sep 2014 21:36:57 -0700 (PDT)
+In-Reply-To: <540C7F5B.6070307@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg KH <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Jingoo Han <jg1.han@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Will Deacon <will.deacon@arm.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "olof@lixom.net" <olof@lixom.net>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mark Brown <broonie@kernel.org>
 
-On Fri, Sep 5, 2014 at 11:26 PM, Felipe Balbi <balbi@ti.com> wrote:
-> On Thu, Sep 04, 2014 at 12:01:19PM +0530, Vivek Gautam wrote:
->> > Don't we have phy_power_on()
->> > for that ? It looks like you could just as well do this from
->> > phy_power_on() ?
->>
->> No, unfortunately keeping these calibration settings in phy_power_on()
->> doesn't help, since we need to do this after XHCI reset has happened.
+Hi,
+
+On Sun, Sep 7, 2014 at 8:52 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> So I believe we've got a process issue here. If you don't have normal
+> support for display hardware, but you want to keep the display
+> operational thanks to bootloader already initializing it, you should not
+> add anything to the kernel which breaks it, until full support comes in.
 >
-> teach xHCI about PHYs ?
+> This means that respective regulators should be either always-on or not
+> listed at all (I'd favor the former) and respective clocks either
+> somehow enabled at boot-up or completely ignored, including all their
+> parents capable of being gated.
 
-sorry i couldn't understand you here.
-Aren't we trying to do the same with Heikki's patch about dwc3 :
-[PATCH 6/6] usb: dwc3: host: convey the PHYs to xhci
+It seems slightly broken to hack the device tree in this way.  I'll be
+the first to admit that I often list regulators as "always-on" during
+bringup when not everything is done, and I guess it's not that
+different.  ...but given everything going on upstream (and people
+working on Suspend/Resume, DRM, etc) it seems like it might be a bit
+of a pain.  ...but if that's what everyone agrees on, I won't disagree
+too strongly.
 
-and the 2nd patch in this series :
-[PATCH v6 2/4] usb: host: xhci-plat: Get PHYs for xhci's hcds
-
-Is there something else that is expected ?
-
-
-
-
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+One (ugly?) solution would be to add a feature to your bootloader to
+modify the device tree to mark regulators as "always-on".  Since the
+booloader gets to touch the device tree and the bootloader is involved
+in communicating into about SimpleFB, it kinda makes sense.
