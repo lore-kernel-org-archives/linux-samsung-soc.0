@@ -1,72 +1,70 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH v2 5/7] mfd: cros_ec: wait for completion of commands that
- return IN_PROGRESS
-Date: Mon, 8 Sep 2014 09:16:17 -0700
-Message-ID: <CAL1qeaHeAkr+1i1wP=Q=LUugDab78LCFGiVHs2F5CR6Ofgc-uA@mail.gmail.com>
-References: <1408974008-17184-1-git-send-email-javier.martinez@collabora.co.uk>
-	<1408974008-17184-6-git-send-email-javier.martinez@collabora.co.uk>
-	<20140904083426.GD8257@lee--X1>
-	<540D9577.9000702@collabora.co.uk>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: Unable to boot mainline on snow chromebook since 3.15
+Date: Mon, 8 Sep 2014 20:40:23 +0100
+Message-ID: <CACxGe6t_ex1bU=CvTpXR4VJgNf1hAq33hr6ykbHy_sMXEk4h-g@mail.gmail.com>
+References: <20140905115704.GO13515@arm.com> <20140905122232.GP13515@arm.com>
+ <CAD=FV=VfioJf9VYoSYL0QBk-bN93-Ecx3=0n9hb5Q4rcx43-_g@mail.gmail.com>
+ <540C202E.2060009@collabora.co.uk> <540C7F5B.6070307@gmail.com>
+ <540C83DE.10505@collabora.co.uk> <540C8577.2070907@gmail.com>
+ <20140908112112.GK26030@arm.com> <CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
+ <CAD=FV=VAqzvJQDQMjjeQ1p5okyDzE=ff_sguObZxh59qbzcaTQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f178.google.com ([209.85.220.178]:57822 "EHLO
-	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754391AbaIHQQR (ORCPT
+Received: from mail-ie0-f173.google.com ([209.85.223.173]:37080 "EHLO
+	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754574AbaIHTko (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Sep 2014 12:16:17 -0400
-Received: by mail-vc0-f178.google.com with SMTP id hy4so1046026vcb.9
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Sep 2014 09:16:17 -0700 (PDT)
-In-Reply-To: <540D9577.9000702@collabora.co.uk>
+	Mon, 8 Sep 2014 15:40:44 -0400
+Received: by mail-ie0-f173.google.com with SMTP id x19so247528ier.32
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Sep 2014 12:40:44 -0700 (PDT)
+In-Reply-To: <CAD=FV=VAqzvJQDQMjjeQ1p5okyDzE=ff_sguObZxh59qbzcaTQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Mark Brown <broonie@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "olof@lixom.net" <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>
 
-On Mon, Sep 8, 2014 at 4:39 AM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> Hello Lee,
+On Mon, Sep 8, 2014 at 4:58 PM, Doug Anderson <dianders@chromium.org> wrote:
+> Grant,
 >
-> On 09/04/2014 10:34 AM, Lee Jones wrote:
->> On Mon, 25 Aug 2014, Javier Martinez Canillas wrote:
->>> From: Andrew Bresticker <abrestic@chromium.org>
+> On Mon, Sep 8, 2014 at 5:20 AM, Grant Likely <grant.likely@secretlab.ca> wrote:
+>> On Mon, Sep 8, 2014 at 12:21 PM, Will Deacon <will.deacon@arm.com> wrote:
+>>> On Sun, Sep 07, 2014 at 05:19:03PM +0100, Tomasz Figa wrote:
+>>>> At least for next 3.17-rc I'd suggest fixing this up in respective clock
+>>>> driver and dropping the hack only after Exynos DRM patches are merged
+>>>> and confirmed working.
 >>>
->>> When an EC command returns EC_RES_IN_PROGRESS, we need to query
->>> the state of the EC until it indicates that it is no longer busy.
->>> Do this in cros_ec_cmd_xfer() under the EC's mutex so that other
->>> commands (e.g. keyboard, I2C passtru) aren't issued to the EC while
->>> it is working on the in-progress command.
->>>
->>> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
->>> Reviewed-by: Simon Glass <sjg@chromium.org>
->>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->>> ---
->>>
->>> Changes since v1:
->>>  - The *xfer() calls don't modify the passed cros_ec_command so there is
->>>    no need to populate it inside the for loop. Suggested by Lee Jones.
->>> ---
->>>  drivers/mfd/cros_ec.c | 34 +++++++++++++++++++++++++++++++++-
->>>  1 file changed, 33 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
->>> index c53804a..cd0c93c 100644
->>> --- a/drivers/mfd/cros_ec.c
->>> +++ b/drivers/mfd/cros_ec.c
->>> @@ -23,6 +23,10 @@
->>>  #include <linux/mfd/core.h>
->>>  #include <linux/mfd/cros_ec.h>
->>>  #include <linux/mfd/cros_ec_commands.h>
->>> +#include <linux/delay.h>
->>> +
->>> +#define EC_COMMAND_RETRIES  50
->>> +#define EC_RETRY_DELAY_MS   10
+>>> Whilst I'm sympathetic to people working to enable DRM, I think this is
+>>> the right solution to the problem. The transition from simplefb to DRM
+>>> shouldn't break display for a bunch of kernel revisions whilst the code is
+>>> in flux.
 >>
->> Where did these values come from?
+>> I would go further. The kernel behaviour has changed, and we have to
+>> deal with platforms that assume the old behaviour. That means either
+>> defaulting to leaving enabled regulators/clocks alone unless there is
+>> a flag in the DT saying they can be power managed, or black listing
+>> platforms that are known to depend on the regulator being on.
 >>
+>> Updating the device tree must not be required to get the kernel to
+>> boot, but it is valid to require a DT upgrade to get better
+>> performance (battery life) out of the platform.
 >
-> These patches were taken from the ChromeOS 3.8 kernel so I don't really know
-> why these values were chosen. I'll let Andrew or one of the ChromiumOS folks
-> to answer this question.
+> In this case people using SImple FB are not really using an officially
+> sanctioned device tree.  The simple-fb fragment is created on the fly
+> via a "DO NOT SUBMIT" patch sitting on a code review server.  It's not
+> something that's shipped with real firmware nor is it something
+> present in the kernel.  See
+> <https://chromium-review.googlesource.com/#/c/49358/2/board/samsung/smdk5250/smdk5250.c>
+> as I mentioned above.
+>
+> Is this really a device tree that we need to guarantee backward
+> compatibility with?
 
-These are the values flashrom used when retrying commands.
+Well, lets see... We've got a real user complaining about a platform
+that used to work on mainline, and no longer does. The only loophole
+for ignoring breakage is if there nobody cares that it is broken. That
+currently isn't the case. So even though it's based on a patch that
+has "DO NOT SUBMIT" in large friendly letters on the front cover, it
+doesn't change the situation that mainline has a regression.
+
+g.
