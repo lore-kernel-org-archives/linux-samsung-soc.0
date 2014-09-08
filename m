@@ -1,48 +1,98 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: Unable to boot mainline on snow chromebook since 3.15
-Date: Mon, 8 Sep 2014 13:46:01 +0100
-Message-ID: <20140908124601.GN26030@arm.com>
-References: <20140905115704.GO13515@arm.com>
- <20140905122232.GP13515@arm.com>
- <CAD=FV=VfioJf9VYoSYL0QBk-bN93-Ecx3=0n9hb5Q4rcx43-_g@mail.gmail.com>
- <540C202E.2060009@collabora.co.uk>
- <540C7F5B.6070307@gmail.com>
- <540C83DE.10505@collabora.co.uk>
- <540C8577.2070907@gmail.com>
- <20140908112112.GK26030@arm.com>
- <540D9931.6050603@collabora.co.uk>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v2 5/7] mfd: cros_ec: wait for completion of commands
+ that return IN_PROGRESS
+Date: Mon, 8 Sep 2014 13:48:11 +0100
+Message-ID: <20140908124811.GD26284@lee--X1>
+References: <1408974008-17184-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1408974008-17184-6-git-send-email-javier.martinez@collabora.co.uk>
+ <20140904083426.GD8257@lee--X1>
+ <540D9577.9000702@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:53614 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752185AbaIHMqV (ORCPT
+Received: from mail-ie0-f179.google.com ([209.85.223.179]:58926 "EHLO
+	mail-ie0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752665AbaIHMsR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Sep 2014 08:46:21 -0400
+	Mon, 8 Sep 2014 08:48:17 -0400
+Received: by mail-ie0-f179.google.com with SMTP id rl12so2017305iec.38
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Sep 2014 05:48:17 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <540D9931.6050603@collabora.co.uk>
+In-Reply-To: <540D9577.9000702@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Doug Anderson <dianders@chromium.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "olof@lixom.net" <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On Mon, Sep 08, 2014 at 12:55:29PM +0100, Javier Martinez Canillas wrote:
-> On 09/08/2014 01:21 PM, Will Deacon wrote:
-> > On Sun, Sep 07, 2014 at 05:19:03PM +0100, Tomasz Figa wrote:
-> >> At least for next 3.17-rc I'd suggest fixing this up in respective clock
-> >> driver and dropping the hack only after Exynos DRM patches are merged
-> >> and confirmed working.
-> > 
-> > Whilst I'm sympathetic to people working to enable DRM, I think this is
-> > the right solution to the problem. The transition from simplefb to DRM
-> > shouldn't break display for a bunch of kernel revisions whilst the code is
-> > in flux.
-> > 
-> 
-> Agreed, I'm preparing a patch-set to prevent the kernel to disable both the
-> clocks and regulators needed for the display, I'll try to post it today or
-> tomorrow at worst.
+On Mon, 08 Sep 2014, Javier Martinez Canillas wrote:
+> On 09/04/2014 10:34 AM, Lee Jones wrote:
+> > On Mon, 25 Aug 2014, Javier Martinez Canillas wrote:
+> >> From: Andrew Bresticker <abrestic@chromium.org>
+> >>=20
+> >> When an EC command returns EC_RES_IN_PROGRESS, we need to query
+> >> the state of the EC until it indicates that it is no longer busy.
+> >> Do this in cros_ec_cmd_xfer() under the EC's mutex so that other
+> >> commands (e.g. keyboard, I2C passtru) aren't issued to the EC whil=
+e
+> >> it is working on the in-progress command.
+> >>=20
+> >> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> >> Reviewed-by: Simon Glass <sjg@chromium.org>
+> >> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora=
+=2Eco.uk>
+> >> ---
+> >>=20
+> >> Changes since v1:
+> >>  - The *xfer() calls don't modify the passed cros_ec_command so th=
+ere is
+> >>    no need to populate it inside the for loop. Suggested by Lee Jo=
+nes.
+> >> ---
+> >>  drivers/mfd/cros_ec.c | 34 +++++++++++++++++++++++++++++++++-
+> >>  1 file changed, 33 insertions(+), 1 deletion(-)
+> >>=20
+> >> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+> >> index c53804a..cd0c93c 100644
+> >> --- a/drivers/mfd/cros_ec.c
+> >> +++ b/drivers/mfd/cros_ec.c
 
-Thanks, Javier. Please CC me on the patch and I'll take it for a spin.
+[...]
 
-Will
+> >>  	mutex_lock(&ec_dev->lock);
+> >>  	ret =3D ec_dev->cmd_xfer(ec_dev, msg);
+> >> +	if (ret =3D=3D -EAGAIN && msg->result =3D=3D EC_RES_IN_PROGRESS)=
+ {
+> >=20
+> > Is there ever a time where (ret =3D=3D -EAGAIN) but (msg->result !=3D
+> > EC_RES_IN_PROGRESS) [note the !=3D].  And/or is there ever a time w=
+here
+> > (msg->result =3D=3D EC_RES_IN_PROGRESS) but (ret !=3D -EAGAIN) [aga=
+in, not
+> > the !=3D].
+> >=20
+> > Another way of explaining it.  Can ret be anything other than -EAGA=
+IN
+> > when the result is EC_RES_IN_PROGRESS.  And can the result be anyth=
+ing
+> > other than EC_RES_IN_PROGRESS when ret is -EAGAIN?
+
+[...]
+
+> But after looking at all the cros_ec transport drivers it seems to be=
+ safe to
+> just check if result is EC_RES_IN_PROGRESS instead of checking also i=
+f ret is
+> -EAGAIN since (at least on all the current transport drivers) the for=
+mer
+> implies the later.
+
+That's exactly what I was getting at.
+
+[...]
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
