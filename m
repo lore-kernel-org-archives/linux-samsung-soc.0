@@ -1,55 +1,72 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: Unable to boot mainline on snow chromebook since 3.15
-Date: Mon, 8 Sep 2014 09:12:03 -0700
-Message-ID: <CAD=FV=UkuxpSxAhheRXqzyKLYSh6GyQPP86oD-58UsK6=gLzeQ@mail.gmail.com>
-References: <20140905115704.GO13515@arm.com>
-	<20140905122232.GP13515@arm.com>
-	<CAD=FV=VfioJf9VYoSYL0QBk-bN93-Ecx3=0n9hb5Q4rcx43-_g@mail.gmail.com>
-	<540C202E.2060009@collabora.co.uk>
-	<540C7F5B.6070307@gmail.com>
-	<CAD=FV=UYDDhL02CrhPUAHPncepwAF2-BgTmXOamy-Mdz80S-vw@mail.gmail.com>
-	<540D481F.8030500@collabora.co.uk>
-	<CAD=FV=U_ZwgqBWN_bLfi97rjMLmDoQBk17gtQS1_ekxJKWJO6w@mail.gmail.com>
-	<20140908160758.GS26030@arm.com>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: Re: [PATCH v2 5/7] mfd: cros_ec: wait for completion of commands that
+ return IN_PROGRESS
+Date: Mon, 8 Sep 2014 09:16:17 -0700
+Message-ID: <CAL1qeaHeAkr+1i1wP=Q=LUugDab78LCFGiVHs2F5CR6Ofgc-uA@mail.gmail.com>
+References: <1408974008-17184-1-git-send-email-javier.martinez@collabora.co.uk>
+	<1408974008-17184-6-git-send-email-javier.martinez@collabora.co.uk>
+	<20140904083426.GD8257@lee--X1>
+	<540D9577.9000702@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f179.google.com ([209.85.220.179]:33890 "EHLO
-	mail-vc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753034AbaIHQME (ORCPT
+Received: from mail-vc0-f178.google.com ([209.85.220.178]:57822 "EHLO
+	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754391AbaIHQQR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Sep 2014 12:12:04 -0400
-Received: by mail-vc0-f179.google.com with SMTP id im17so1299997vcb.24
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Sep 2014 09:12:03 -0700 (PDT)
-In-Reply-To: <20140908160758.GS26030@arm.com>
+	Mon, 8 Sep 2014 12:16:17 -0400
+Received: by mail-vc0-f178.google.com with SMTP id hy4so1046026vcb.9
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Sep 2014 09:16:17 -0700 (PDT)
+In-Reply-To: <540D9577.9000702@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Will Deacon <will.deacon@arm.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <tomasz.figa@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "olof@lixom.net" <olof@lixom.net>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Will,
-
-On Mon, Sep 8, 2014 at 9:07 AM, Will Deacon <will.deacon@arm.com> wrote:
-> On Mon, Sep 08, 2014 at 04:55:31PM +0100, Doug Anderson wrote:
->> So "simple-framebuffer" is added to the device tree here:
->>
->> https://chromium-review.googlesource.com/#/c/49358/2/board/samsung/smdk5250/smdk5250.c
->>
->> That's one of the two patches to build your own U-Boot for enabling
->> simplefb.  You'll notice that's not a super official thing.  It's a
->> "DO NOT SUBMIT" patch sitting in a gerrit code review server, so I
->> wouldn't exactly call it a stable ABI that we can't break.  It's not
->> something shipping in real products and it's not even landed in a git
->> tree (I suppose maybe someone somewhere landed it, but...).
+On Mon, Sep 8, 2014 at 4:39 AM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> Hello Lee,
 >
-> I just took the uboot image linked to from the chromium.org page here:
+> On 09/04/2014 10:34 AM, Lee Jones wrote:
+>> On Mon, 25 Aug 2014, Javier Martinez Canillas wrote:
+>>> From: Andrew Bresticker <abrestic@chromium.org>
+>>>
+>>> When an EC command returns EC_RES_IN_PROGRESS, we need to query
+>>> the state of the EC until it indicates that it is no longer busy.
+>>> Do this in cros_ec_cmd_xfer() under the EC's mutex so that other
+>>> commands (e.g. keyboard, I2C passtru) aren't issued to the EC while
+>>> it is working on the in-progress command.
+>>>
+>>> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+>>> Reviewed-by: Simon Glass <sjg@chromium.org>
+>>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>>> ---
+>>>
+>>> Changes since v1:
+>>>  - The *xfer() calls don't modify the passed cros_ec_command so there is
+>>>    no need to populate it inside the for loop. Suggested by Lee Jones.
+>>> ---
+>>>  drivers/mfd/cros_ec.c | 34 +++++++++++++++++++++++++++++++++-
+>>>  1 file changed, 33 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+>>> index c53804a..cd0c93c 100644
+>>> --- a/drivers/mfd/cros_ec.c
+>>> +++ b/drivers/mfd/cros_ec.c
+>>> @@ -23,6 +23,10 @@
+>>>  #include <linux/mfd/core.h>
+>>>  #include <linux/mfd/cros_ec.h>
+>>>  #include <linux/mfd/cros_ec_commands.h>
+>>> +#include <linux/delay.h>
+>>> +
+>>> +#define EC_COMMAND_RETRIES  50
+>>> +#define EC_RETRY_DELAY_MS   10
+>>
+>> Where did these values come from?
+>>
 >
->   http://www.chromium.org/chromium-os/u-boot-porting-guide/using-nv-u-boot-on-the-samsung-arm-chromebook#TOC-Getting-nv-U-Boot
+> These patches were taken from the ChromeOS 3.8 kernel so I don't really know
+> why these values were chosen. I'll let Andrew or one of the ChromiumOS folks
+> to answer this question.
 
-Ah, OK.  It's still using the "DO NOT SUBMIT" patchs, but I guess
-given that there is a binary built up there by a fairly official
-source...  Hrmm.  I think Olof is the one that built that.  Perhaps
-he'd be willing to muck with that and see if he can grab the
-regulators?
-
--Doug
+These are the values flashrom used when retrying commands.
