@@ -1,108 +1,79 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v6 4/4] phy: exynos5-usbdrd: Calibrate LOS levels for
- exynos5420/5800
-Date: Mon, 8 Sep 2014 08:44:54 -0500
-Message-ID: <20140908134454.GK22409@saruman.home>
-References: <1409656338-20337-1-git-send-email-gautam.vivek@samsung.com>
- <1409656338-20337-5-git-send-email-gautam.vivek@samsung.com>
- <20140902143438.GB16872@saruman.home>
- <CAFp+6iEyqmbwMLFrBKD7NVLDAC=b+h1hPKFS=BG4k9D69hn_dg@mail.gmail.com>
- <20140903144225.GD31855@saruman.home>
- <CAFp+6iETPJCWMMkjHrpDcdCv=K0PbefYLa4eBOwN=aUY2=EHLA@mail.gmail.com>
- <20140905175651.GK24449@saruman.home>
- <CAFp+6iGU86yL8Ry3ArJJjBy2Cs0Em2B49yssH3BK5fJwyaZbtA@mail.gmail.com>
-Reply-To: balbi@ti.com
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: Unable to boot mainline on snow chromebook since 3.15
+Date: Mon, 8 Sep 2014 14:49:37 +0100
+Message-ID: <20140908134937.GK4015@sirena.org.uk>
+References: <20140905115704.GO13515@arm.com>
+ <20140905122232.GP13515@arm.com>
+ <CAD=FV=VfioJf9VYoSYL0QBk-bN93-Ecx3=0n9hb5Q4rcx43-_g@mail.gmail.com>
+ <540C202E.2060009@collabora.co.uk>
+ <540C7F5B.6070307@gmail.com>
+ <540C83DE.10505@collabora.co.uk>
+ <540C8577.2070907@gmail.com>
+ <20140908112112.GK26030@arm.com>
+ <CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7802615023701398419=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAFp+6iGU86yL8Ry3ArJJjBy2Cs0Em2B49yssH3BK5fJwyaZbtA@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Jingoo Han <jg1.han@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Mathias Nyman <mathias.nyman@intel.com>, Greg KH <gregkh@linuxfoundation.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, kishon <kishon@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Alan Stern <stern@rowland.harvard.edu>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-List-Id: linux-samsung-soc@vger.kernel.org
-
---===============7802615023701398419==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tBhgiDt8dP1efIIJ"
+	protocol="application/pgp-signature"; boundary="wZdghQXYJzyo6AGC"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57142 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751781AbaIHNuF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 8 Sep 2014 09:50:05 -0400
 Content-Disposition: inline
+In-Reply-To: <CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "olof@lixom.net" <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, Stephen Warren <swarren@nvidia.com>
 
---tBhgiDt8dP1efIIJ
+
+--wZdghQXYJzyo6AGC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Sep 08, 2014 at 01:20:11PM +0100, Grant Likely wrote:
+> On Mon, Sep 8, 2014 at 12:21 PM, Will Deacon <will.deacon@arm.com> wrote:
 
-On Mon, Sep 08, 2014 at 09:53:09AM +0530, Vivek Gautam wrote:
-> On Fri, Sep 5, 2014 at 11:26 PM, Felipe Balbi <balbi@ti.com> wrote:
-> > On Thu, Sep 04, 2014 at 12:01:19PM +0530, Vivek Gautam wrote:
-> >> > Don't we have phy_power_on()
-> >> > for that ? It looks like you could just as well do this from
-> >> > phy_power_on() ?
-> >>
-> >> No, unfortunately keeping these calibration settings in phy_power_on()
-> >> doesn't help, since we need to do this after XHCI reset has happened.
-> >
-> > teach xHCI about PHYs ?
->=20
-> sorry i couldn't understand you here.
-> Aren't we trying to do the same with Heikki's patch about dwc3 :
-> [PATCH 6/6] usb: dwc3: host: convey the PHYs to xhci
->=20
-> and the 2nd patch in this series :
-> [PATCH v6 2/4] usb: host: xhci-plat: Get PHYs for xhci's hcds
->=20
-> Is there something else that is expected ?
+> > Whilst I'm sympathetic to people working to enable DRM, I think this is
+> > the right solution to the problem. The transition from simplefb to DRM
+> > shouldn't break display for a bunch of kernel revisions whilst the code is
+> > in flux.
 
-right, use that to call phy_init() at the right time, then you need to
-add a new ->calibrate() method which, likely, will only be used by you
-;-)
+> I would go further. The kernel behaviour has changed, and we have to
+> deal with platforms that assume the old behaviour. That means either
+> defaulting to leaving enabled regulators/clocks alone unless there is
+> a flag in the DT saying they can be power managed, or black listing
+> platforms that are known to depend on the regulator being on.
 
---=20
-balbi
+For regulators there is essentially a flag in DT already - the
+regulators should not be described in DT if the OS isn't supposed to be
+managing them.
 
---tBhgiDt8dP1efIIJ
+> Updating the device tree must not be required to get the kernel to
+> boot, but it is valid to require a DT upgrade to get better
+> performance (battery life) out of the platform.
+
+This has got to be a blacklist then, and it seems like we've got to fix
+simplefb to actually support managing the resources it's using.  The
+current plan does not seem at all sensible - we're talking about adding
+hacks in every subsystem that provides resources and bodging DTs in
+order to work around simplefb.
+
+--wZdghQXYJzyo6AGC
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUDbLWAAoJEIaOsuA1yqRE8c8P/1ZtYbUpQZ4fWetW61TQPWu4
-MYK6RzBzeCwaJQNjELvEZpdDVZJY0tIrm9YqYs2pDtujMLi3Y8F7gR2YBKR9qXhd
-60pBMljyhYzh7j23kuzTzW7z9WpKMAKvQntlXz9mbpw5OnUXV07WQJQYPbiarxDC
-96N3OVwmX70qzAbkFdJSD/VVh13xzplhX7YYnubpliU82X+h5JewpmXNvjBf8lyS
-vSLV/gLDwCrCgg7m9ZfvuPUDjvz4uY6z4c7t8pfHE1Ol/Sj34lovN4l8FR8qnSkU
-BTkt8q/gO1BrjbOGIksf2tU+mv7LNnJTk0VUfCIS2zZAq9OEy1senGk6dniAT/tS
-6yzYhghnVn8S+X0AL+6OXIvqjRT2Qonvf2TIdHW+8Laye6cdtS1MdsCWv4mjJqlz
-UJXhRV1RufFCAlBnk/y41YIei9qBfWubxJD1YHW/otdSDaETB3oSwzLrfh4iPJ2m
-wySbDrNIl19V2asJ7Ii/ATILYzfhQ1tyMdsJaLgLo6V79XrkSeCxceCJRdsuEFNM
-iAcyAs25GICVZmVuECWnGEG8aMiYH3dYJIn3qB87DUT7flV+tI9ba+bl5gMVNs06
-rvlaB5nQoPbTbp4RmOUq9t/vJPPRNBD5L7ee0YM2ZTIc0nJe31YnAzarCwgT754A
-pBdrbtUiD5Fb7HjoHdkq
-=GOVy
+iQEcBAEBAgAGBQJUDbPwAAoJECTWi3JdVIfQe60H/0Xh0CCNufK362TTDmZ3bSN+
+6K7hBMQ/7quCdPZFeW3W3SIxd4omZCgytJIePlYi/59qbXSED1d+kWazIcHSpOs1
+VGS/aD8t/qwYuTmmTXdYK7nnC+YT3XT55sNA8nG8l9QfOjiwktWe/fo2wJTlHp5W
+z5TreVpNixDcYedYXstuKpNXnerMz97gLJ+DJA1Cz4kiZM5s5/sYefLs8jJWRS41
+WQ5wbA/qt7BdDt8R68fIQA+DXXoQnUHRJY+LpFyfstM3KX0f4OFr3HCqECkeT5gv
+ttdFxl3ziFmjJVQjEzlTj+/kJCNPJ0oCiGN702mdGn+BUbPJGfW2nVDDph4ZZuw=
+=cjyz
 -----END PGP SIGNATURE-----
 
---tBhgiDt8dP1efIIJ--
-
-
---===============7802615023701398419==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============7802615023701398419==--
+--wZdghQXYJzyo6AGC--
