@@ -1,61 +1,52 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v9 3/5] rtc: max77686: Fail to probe if no RTC regmap
- irqchip is set
-Date: Mon, 08 Sep 2014 08:50:26 +0200
-Message-ID: <540D51B2.9000908@collabora.co.uk>
-References: <1408350877-15921-1-git-send-email-javier.martinez@collabora.co.uk> <1408350877-15921-4-git-send-email-javier.martinez@collabora.co.uk> <1409217715.20020.7.camel@AMDC1943>
+Subject: Re: [PATCH v2 1/3] ARM: dts: Add Peach Pit dts entry for Atmel touchpad
+Date: Mon, 08 Sep 2014 09:26:36 +0200
+Message-ID: <540D5A2C.7080808@collabora.co.uk>
+References: <1409066937-3574-1-git-send-email-javier.martinez@collabora.co.uk> <1409066937-3574-2-git-send-email-javier.martinez@collabora.co.uk> <53FD1001.30701@suse.de> <53FD8528.7090504@collabora.co.uk> <53FDD914.5090208@suse.de> <53FDE9B2.4040001@collabora.co.uk> <5405CA4F.10507@itdev.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-15
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:33371 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:33399 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751483AbaIHGub (ORCPT
+	with ESMTP id S1751962AbaIHH0m (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Sep 2014 02:50:31 -0400
-In-Reply-To: <1409217715.20020.7.camel@AMDC1943>
+	Mon, 8 Sep 2014 03:26:42 -0400
+In-Reply-To: <5405CA4F.10507@itdev.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Nick Dyer <nick.dyer@itdev.co.uk>, =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yufeng Shen <miletus@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Tomasz Figa <tomasz.figa@gmail.com>, Daniel Stone <daniels@collabora.com>
 
-Hello Krzysztof,
+Hello Nick,
 
-Sorry for the late response, I was on holidays and slowly catching up on email.
+On 09/02/2014 03:46 PM, Nick Dyer wrote:
+> On 27/08/14 15:22, Javier Martinez Canillas wrote:
+>>>> If there was a BTN_NONE or KEY_UNUSED it would had been better but I think
+>>>> that making a distinction between these two cases (reserved pin vs GPIO
+>>>> available but not used) is useful.
+>>>
+>>> Maybe Nick can comment here.
+> 
+> Yes, this is probably useful to document. However, I fear that it's not
+> going to be obvious what the distinction is to someone who doesn't have the
+> Atmel docs. Perhaps it would be clearer to just do something like:
+> 
+> 		linux,gpio-keymap = <KEY_RESERVED
+> 		                     KEY_RESERVED
+> 		                     KEY_RESERVED /* GPIO0 */
+> 	        	             KEY_RESERVED /* GPIO1 */
+> 		                     KEY_RESERVED /* GPIO2 */
+> 		                     BTN_LEFT>;   /* GPIO3 */
+> 
+> If you omit any trailing KEY_RESERVED values it doesn't affect anything.
+> 
+> I was also going to suggest that you put something like "/* Atmel mXT224SL
+> */" in your .dts file so it's clear what version of the maXTouch device you
+> are configuring.
+> 
 
-On 08/28/2014 11:21 AM, Krzysztof Kozlowski wrote:
-> On pon, 2014-08-18 at 10:34 +0200, Javier Martinez Canillas wrote:
->> The max77686 mfd driver adds a regmap IRQ chip which creates an
->> IRQ domain that is used to map the virtual RTC alarm1 interrupt.
->> 
->> The RTC driver assumes that this will always be true since the
->> PMIC IRQ is a required property according to the max77686 DT
->> binding doc. If an "interrupts" property is not defined for a
->> max77686 PMIC, then the mfd probe function will fail and the
->> RTC platform driver will never be probed. But even when it is
->> not possible to probe the rtc-max77686 driver without a regmap
->> IRQ chip, it's better to explicitly check if the IRQ chip data
->> is not NULL and gracefully fail instead of getting an OOPS.
-> 
-> The OOPS was possible only with Bartlomiej's patch because he changed
-> the MFD driver probe function to skip IRQ setup on lack of interrupts.
-> In current state the OOPS should not happen so mentioning OOPS in commit
-> message may be misleading. Maybe just don't put the OOPS here?
-> 
-> Anyway the patch looks good and a check for non-null
-> regmap_irq_chip_data is still a valid precaution so:
->
-
-Yes I know but as you said the check for non-null is still a valid precaution
-(albeit maybe paranoid) just in case someone find that not having the IRQ
-hooked makes sense in a design and changes the mfd driver in the future.
-
-> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+Ok, I'll re-spin with those changes. Thanks a lot for your feedback.
 
 Best regards,
 Javier
