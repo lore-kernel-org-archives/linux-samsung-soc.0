@@ -1,54 +1,84 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH v9 0/6] Add Maxim 77802 clocks support
-Date: Tue, 09 Sep 2014 13:57:39 -0700
-Message-ID: <20140909205739.19023.50828@quantum>
-References: <1408350784-15577-1-git-send-email-javier.martinez@collabora.co.uk>
- <CABxcv=mww1wcf+vo5uLxBrNZBVJhj9zvbwGu_oAKXm4XDUNvCQ@mail.gmail.com>
+From: Simon Horman <horms@verge.net.au>
+Subject: Re: [PATCH 1/3] kbuild: remove unnecessary "obj- := dummy.o" trick
+Date: Wed, 10 Sep 2014 08:45:10 +0900
+Message-ID: <20140909234510.GB16682@verge.net.au>
+References: <1410258381-7088-1-git-send-email-yamada.m@jp.panasonic.com>
+ <1410258381-7088-2-git-send-email-yamada.m@jp.panasonic.com>
+ <20140909174337.19023.97772@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CABxcv=mww1wcf+vo5uLxBrNZBVJhj9zvbwGu_oAKXm4XDUNvCQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Doug Anderson <dianders@chromium.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from kirsty.vergenet.net ([202.4.237.240]:47722 "EHLO
+	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751457AbaIIXpP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 9 Sep 2014 19:45:15 -0400
+Content-Disposition: inline
+In-Reply-To: <20140909174337.19023.97772@quantum>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Masahiro Yamada <yamada.m@jp.panasonic.com>, linux-kbuild@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Wolfram Sang <wsa@sang-engineering.com>, Takashi Yoshii <takasi-y@ops.dti.ne.jp>, Ulrich Hecht <ulrich.hecht@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 
-Quoting Javier Martinez Canillas (2014-09-07 23:49:28)
-> Hello Mike,
+On Tue, Sep 09, 2014 at 10:43:37AM -0700, Mike Turquette wrote:
+> Quoting Masahiro Yamada (2014-09-09 03:26:19)
+> > In these Makefiles, at least one of "obj-y" and "obj-" is non-empty,
+> > hence built-in.o is always created without such a trick.
+> > 
+> > Signed-off-by: Masahiro Yamada <yamada.m@jp.panasonic.com>
 > 
-> On Mon, Aug 18, 2014 at 10:32 AM, Javier Martinez Canillas
-> <javier.martinez@collabora.co.uk> wrote:
-> > This series add support for the clocks present in the Maxim
-> > 77802 Power Managment IC. Previously, the series was part
-> > of a bigger one [0] that aimed to add support for all the
-> > devices in the max77802 PMIC. But now the Maxim 77802 PMIC
-> > dependencies were already merged for 3.17 so the series can
-> > be split and each driver can go through the relevant tree.
-> >
-> 
-> This series was first posted for 3.17 and you acked the whole set but
-> it missed 3.17 because had as a dependency some changes in the
-> max77802 mfd driver. Those dependencies made for 3.17 and that's why I
-> re-posted it for 3.18 about a month ago.
-> 
-> Since we are in 3.17-rc4 already, I'm afraid that this series may miss
-> 3.18 again, is there anything else you need from me to pick this
-> series? It will obviously conflict with Tomeu's "Per-user clock
-> constraints" series [0] so if you want I can rebase it on top of your
-> clk-next-tomeu-kirkwood-v2 branch [1].
+> Acked-by: Mike Turquette <mturquette@linaro.org>
 
-Thanks for pinging me about it. I've pulled this series into clk-next
-for 3.18. Everything is going to conflict with Tomeu's series so we'll
-just handle that when it comes to merge his series (which I've since
-removed from clk-next due to pending issues).
+shmobile portion:
 
-Regards,
-Mike
+Acked-by: Simon Horman <horms+renesas@verge.net.au>
 
 > 
-> Thanks a lot and best regards,
-> Javier
+> > ---
+> > 
+> >  arch/arm/plat-samsung/Makefile | 1 -
+> >  drivers/clk/shmobile/Makefile  | 2 --
+> >  drivers/net/wimax/Makefile     | 4 ----
+> >  3 files changed, 7 deletions(-)
+> > 
+> > diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
+> > index 5fe1750..a402262 100644
+> > --- a/arch/arm/plat-samsung/Makefile
+> > +++ b/arch/arm/plat-samsung/Makefile
+> > @@ -8,7 +8,6 @@ ccflags-$(CONFIG_ARCH_MULTI_V7) += -I$(srctree)/$(src)/include
+> >  
+> >  obj-y                          :=
+> >  obj-m                          :=
+> > -obj-n                          := dummy.o
+> >  obj-                           :=
+> >  
+> >  # Objects we always build independent of SoC choice
+> > diff --git a/drivers/clk/shmobile/Makefile b/drivers/clk/shmobile/Makefile
+> > index e002923..9aab51c8 100644
+> > --- a/drivers/clk/shmobile/Makefile
+> > +++ b/drivers/clk/shmobile/Makefile
+> > @@ -6,5 +6,3 @@ obj-$(CONFIG_ARCH_R8A7790)              += clk-rcar-gen2.o
+> >  obj-$(CONFIG_ARCH_R8A7791)             += clk-rcar-gen2.o
+> >  obj-$(CONFIG_ARCH_SHMOBILE_MULTI)      += clk-div6.o
+> >  obj-$(CONFIG_ARCH_SHMOBILE_MULTI)      += clk-mstp.o
+> > -# for emply built-in.o
+> > -obj-n  := dummy
+> > diff --git a/drivers/net/wimax/Makefile b/drivers/net/wimax/Makefile
+> > index 992bc02..692184d 100644
+> > --- a/drivers/net/wimax/Makefile
+> > +++ b/drivers/net/wimax/Makefile
+> > @@ -1,5 +1 @@
+> > -
+> >  obj-$(CONFIG_WIMAX_I2400M)     += i2400m/
+> > -
+> > -# (from Sam Ravnborg) force kbuild to create built-in.o
+> > -obj- := dummy.o
+> > -- 
+> > 1.9.1
+> > 
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > Please read the FAQ at  http://www.tux.org/lkml/
 > 
-> [0]: https://lkml.org/lkml/2014/9/1/466
-> [1]: https://git.linaro.org/people/mike.turquette/linux.git/shortlog/refs/heads/clk-next-tomeu-kirkwood-v2
