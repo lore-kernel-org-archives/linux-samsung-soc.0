@@ -1,49 +1,36 @@
-From: =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynos3250: fix mout_cam_blk parent list
-Date: Tue, 09 Sep 2014 14:24:23 +0200
-Message-ID: <540EF177.8090005@samsung.com>
-References: <1410008613-20861-1-git-send-email-pankaj.dubey@samsung.com>
+From: Nick Dyer <nick.dyer@itdev.co.uk>
+Subject: Re: [PATCH] Input: atmel_mxt_ts: Add of node type to the i2c table
+Date: Tue, 09 Sep 2014 13:36:27 +0100
+Message-ID: <540EF44B.4070907@itdev.co.uk>
+References: <1410249158-18192-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:30679 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752908AbaIIMY1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Sep 2014 08:24:27 -0400
-In-reply-to: <1410008613-20861-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <1410249158-18192-1-git-send-email-sjoerd.simons@collabora.co.uk>
+Sender: linux-input-owner@vger.kernel.org
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, mturquette@linaro.org, naushad@samsung.com
 
-On 06.09.2014 15:03, Pankaj Dubey wrote:
-> As per user manual of Exynos3250 SRC_CAM can select
-> div_cam_blk_320 if it's value is 0xC, so placing
-> div_cam_blk_320 at proper index in parent list of mout_cam_blk.
->
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
->   drivers/clk/samsung/clk-exynos3250.c |    1 +
->   1 file changed, 1 insertion(+)
+On 09/09/14 08:52, Sjoerd Simons wrote:
+> For i2c devices in OF the modalias exposed to userspace is i2c:<node
+> type>, for the Maxtouch driver this is i2c:maxtouch.
+> 
+> Add maxtouch to the i2c id table such that userspace can correctly
+> load the module for the device and drop the OF table as it's not
+> needed for i2c devices.
+> 
+> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+I've tested this and it does work. In fact, it seems that you can use
+	compatible = "i2c:atmel,maxtouch";
 
-Best regards,
-Krzysztof
+because the "atmel," is ignored in the matching.
 
->
-> diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
-> index e1cb464..ba8f073f 100644
-> --- a/drivers/clk/samsung/clk-exynos3250.c
-> +++ b/drivers/clk/samsung/clk-exynos3250.c
-> @@ -248,6 +248,7 @@ PNAME(group_sclk_cam_blk_p)	= { "xxti", "xusbxti",
->   				    "none", "none", "none",
->   				    "none", "div_mpll_pre",
->   				    "mout_epll_user", "mout_vpll",
-> +				    "none", "none", "none",
->   				    "div_cam_blk_320", };
->   PNAME(group_sclk_fimd0_p)	= { "xxti", "xusbxti",
->   				    "m_bitclkhsdiv4_2l", "none",
->
+Before I could ack this patch, we will need to update this dts file:
+	arch/arm/boot/dts/s5pv210-goni.dts
+and this documentation file:
+	Documentation/devicetree/bindings/input/atmel,maxtouch.txt
+
+thanks!
