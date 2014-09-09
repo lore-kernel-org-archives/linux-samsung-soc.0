@@ -1,199 +1,323 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v4 9/9] ARM: exynos: Move to generic PM domain DT bindings
-Date: Tue,  9 Sep 2014 13:36:10 +0200
-Message-ID: <1410262570-22785-10-git-send-email-ulf.hansson@linaro.org>
-References: <1409838756-31963-1-git-send-email-ulf.hansson@linaro.org>
- <1410262570-22785-1-git-send-email-ulf.hansson@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f50.google.com ([209.85.215.50]:63819 "EHLO
-	mail-la0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932455AbaIILhH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Sep 2014 07:37:07 -0400
-Received: by mail-la0-f50.google.com with SMTP id ty20so4231936lab.37
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Sep 2014 04:37:05 -0700 (PDT)
-In-Reply-To: <1410262570-22785-1-git-send-email-ulf.hansson@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Nicolas Ferre <nicolas.ferre@atmel.com>
+Subject: Re: [PATCH 2/3] kbuild: remove unnecessary variable initializaions
+Date: Tue, 9 Sep 2014 13:52:17 +0200
+Message-ID: <540EE9F1.4030301@atmel.com>
+References: <1410258381-7088-1-git-send-email-yamada.m@jp.panasonic.com> <1410258381-7088-3-git-send-email-yamada.m@jp.panasonic.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <1410258381-7088-3-git-send-email-yamada.m@jp.panasonic.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Masahiro Yamada <yamada.m@jp.panasonic.com>, linux-kbuild@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Ryan Mallon <rmallon@gmail.com>, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, Hartley Sweeten <hsweeten@visionengravers.com>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Greg Ungerer <gerg@uclinux.org>, linux-omap@vger.kernel.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Andrew Victor <linux@maxim.org.za>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-pm@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-acpi@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, devicetree@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Chris Ball <chris@printf.net>, Russell King <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
 
-From: Tomasz Figa <tomasz.figa@gmail.com>
+On 09/09/2014 12:26, Masahiro Yamada :
+> Clearing obj-y, obj-m, obj-n, obj- in each Makefile is
+> a useless habit.
+> 
+> They are non-exported variables; therefore they are always empty
+> whenever descending into each subdirectory.
+> (Moreorver, obj-y and obj-m are also set to empty at the beginning
+> of scripts/Makefile.build)
+> 
+> Signed-off-by: Masahiro Yamada <yamada.m@jp.panasonic.com>
+> ---
+> 
+>  arch/arm/mach-at91/Makefile       | 3 ---
+>  arch/arm/mach-ebsa110/Makefile    | 3 ---
+>  arch/arm/mach-ep93xx/Makefile     | 3 ---
+>  arch/arm/mach-exynos/Makefile     | 5 -----
+>  arch/arm/mach-footbridge/Makefile | 3 ---
+>  arch/arm/mach-iop13xx/Makefile    | 5 -----
+>  arch/arm/mach-iop32x/Makefile     | 3 ---
+>  arch/arm/mach-iop33x/Makefile     | 3 ---
+>  arch/arm/mach-ks8695/Makefile     | 3 ---
+>  arch/arm/mach-rpc/Makefile        | 4 ----
+>  arch/arm/mach-s3c24xx/Makefile    | 5 -----
+>  arch/arm/mach-s3c64xx/Makefile    | 5 -----
+>  arch/arm/mach-s5pv210/Makefile    | 5 -----
+>  arch/arm/mach-sa1100/Makefile     | 3 ---
+>  arch/arm/mach-u300/Makefile       | 3 ---
+>  arch/arm/plat-iop/Makefile        | 6 ------
+>  arch/arm/plat-omap/Makefile       | 3 ---
+>  arch/arm/plat-samsung/Makefile    | 4 ----
+>  18 files changed, 69 deletions(-)
+> 
+> diff --git a/arch/arm/mach-at91/Makefile b/arch/arm/mach-at91/Makefile
+> index 78e9cec..75033839 100644
+> --- a/arch/arm/mach-at91/Makefile
+> +++ b/arch/arm/mach-at91/Makefile
+> @@ -3,9 +3,6 @@
+>  #
+>  
+>  obj-y		:= irq.o gpio.o setup.o sysirq_mask.o
+> -obj-m		:=
+> -obj-n		:=
+> -obj-		:=
 
-This patch moves Exynos PM domain code to use the new generic PM domain
-look-up framework introduced in previous patches, thus also allowing
-the new code to be compiled with CONFIG_ARCH_EXYNOS.
+I agree:
+Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
 
-This patch was originally submitted by Tomasz Figa when he was employed
-by Samsung.
-http://marc.info/?l=linux-pm&m=139955336002083&w=2
+But I have patches that will mess with these changes already queued for
+3.18. You may have to signal these conflicts when carrying the patch
+upstream.
 
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Reviewed-by: Kevin Hilman <khilman@linaro.org>
----
- .../bindings/arm/exynos/power_domain.txt           | 13 ++--
- arch/arm/mach-exynos/pm_domains.c                  | 78 +---------------------
- kernel/power/Kconfig                               |  2 +-
- 3 files changed, 8 insertions(+), 85 deletions(-)
+Thanks, best regards,
 
-diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-index 8b4f7b7f..abde1ea 100644
---- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-+++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-@@ -8,6 +8,8 @@ Required Properties:
-     * samsung,exynos4210-pd - for exynos4210 type power domain.
- - reg: physical base address of the controller and length of memory mapped
-     region.
-+- #power-domain-cells: number of cells in power domain specifier;
-+    must be 0.
- 
- Optional Properties:
- - clocks: List of clock handles. The parent clocks of the input clocks to the
-@@ -29,6 +31,7 @@ Example:
- 	lcd0: power-domain-lcd0 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10023C00 0x10>;
-+		#power-domain-cells = <0>;
- 	};
- 
- 	mfc_pd: power-domain@10044060 {
-@@ -37,12 +40,8 @@ Example:
- 		clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_SW_ACLK333>,
- 			<&clock CLK_MOUT_USER_ACLK333>;
- 		clock-names = "oscclk", "pclk0", "clk0";
-+		#power-domain-cells = <0>;
- 	};
- 
--Example of the node using power domain:
--
--	node {
--		/* ... */
--		samsung,power-domain = <&lcd0>;
--		/* ... */
--	};
-+See Documentation/devicetree/bindings/power/power_domain.txt for description
-+of consumer-side bindings.
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index fd76e1b..20f2671 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -105,78 +105,6 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
- 	return exynos_pd_power(domain, false);
- }
- 
--static void exynos_add_device_to_domain(struct exynos_pm_domain *pd,
--					 struct device *dev)
--{
--	int ret;
--
--	dev_dbg(dev, "adding to power domain %s\n", pd->pd.name);
--
--	while (1) {
--		ret = pm_genpd_add_device(&pd->pd, dev);
--		if (ret != -EAGAIN)
--			break;
--		cond_resched();
--	}
--
--	pm_genpd_dev_need_restore(dev, true);
--}
--
--static void exynos_remove_device_from_domain(struct device *dev)
--{
--	struct generic_pm_domain *genpd = dev_to_genpd(dev);
--	int ret;
--
--	dev_dbg(dev, "removing from power domain %s\n", genpd->name);
--
--	while (1) {
--		ret = pm_genpd_remove_device(genpd, dev);
--		if (ret != -EAGAIN)
--			break;
--		cond_resched();
--	}
--}
--
--static void exynos_read_domain_from_dt(struct device *dev)
--{
--	struct platform_device *pd_pdev;
--	struct exynos_pm_domain *pd;
--	struct device_node *node;
--
--	node = of_parse_phandle(dev->of_node, "samsung,power-domain", 0);
--	if (!node)
--		return;
--	pd_pdev = of_find_device_by_node(node);
--	if (!pd_pdev)
--		return;
--	pd = platform_get_drvdata(pd_pdev);
--	exynos_add_device_to_domain(pd, dev);
--}
--
--static int exynos_pm_notifier_call(struct notifier_block *nb,
--				    unsigned long event, void *data)
--{
--	struct device *dev = data;
--
--	switch (event) {
--	case BUS_NOTIFY_BIND_DRIVER:
--		if (dev->of_node)
--			exynos_read_domain_from_dt(dev);
--
--		break;
--
--	case BUS_NOTIFY_UNBOUND_DRIVER:
--		exynos_remove_device_from_domain(dev);
--
--		break;
--	}
--	return NOTIFY_DONE;
--}
--
--static struct notifier_block platform_nb = {
--	.notifier_call = exynos_pm_notifier_call,
--};
--
- static __init int exynos4_pm_init_power_domain(void)
- {
- 	struct platform_device *pdev;
-@@ -202,7 +130,6 @@ static __init int exynos4_pm_init_power_domain(void)
- 		pd->base = of_iomap(np, 0);
- 		pd->pd.power_off = exynos_pd_power_off;
- 		pd->pd.power_on = exynos_pd_power_on;
--		pd->pd.of_node = np;
- 
- 		pd->oscclk = clk_get(dev, "oscclk");
- 		if (IS_ERR(pd->oscclk))
-@@ -228,15 +155,12 @@ static __init int exynos4_pm_init_power_domain(void)
- 			clk_put(pd->oscclk);
- 
- no_clk:
--		platform_set_drvdata(pdev, pd);
--
- 		on = __raw_readl(pd->base + 0x4) & INT_LOCAL_PWR_EN;
- 
- 		pm_genpd_init(&pd->pd, NULL, !on);
-+		of_genpd_add_provider_simple(np, &pd->pd);
- 	}
- 
--	bus_register_notifier(&platform_bus_type, &platform_nb);
--
- 	return 0;
- }
- arch_initcall(exynos4_pm_init_power_domain);
-diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
-index 897619b..bbef57f 100644
---- a/kernel/power/Kconfig
-+++ b/kernel/power/Kconfig
-@@ -304,7 +304,7 @@ config PM_GENERIC_DOMAINS_RUNTIME
- 
- config PM_GENERIC_DOMAINS_OF
- 	def_bool y
--	depends on PM_GENERIC_DOMAINS && OF && !ARCH_EXYNOS
-+	depends on PM_GENERIC_DOMAINS && OF
- 
- config CPU_PM
- 	bool
+>  obj-$(CONFIG_OLD_CLK_AT91)	+= clock.o
+>  obj-$(CONFIG_AT91_SAM9_ALT_RESET) += at91sam9_alt_reset.o
+> diff --git a/arch/arm/mach-ebsa110/Makefile b/arch/arm/mach-ebsa110/Makefile
+> index 935e4af..a7d68c1 100644
+> --- a/arch/arm/mach-ebsa110/Makefile
+> +++ b/arch/arm/mach-ebsa110/Makefile
+> @@ -5,6 +5,3 @@
+>  # Object file lists.
+>  
+>  obj-y			:= core.o io.o leds.o
+> -obj-m			:=
+> -obj-n			:=
+> -obj-			:=
+> diff --git a/arch/arm/mach-ep93xx/Makefile b/arch/arm/mach-ep93xx/Makefile
+> index 0dc51f9..78d427b 100644
+> --- a/arch/arm/mach-ep93xx/Makefile
+> +++ b/arch/arm/mach-ep93xx/Makefile
+> @@ -2,9 +2,6 @@
+>  # Makefile for the linux kernel.
+>  #
+>  obj-y			:= core.o clock.o
+> -obj-m			:=
+> -obj-n			:=
+> -obj-			:=
+>  
+>  obj-$(CONFIG_EP93XX_DMA)	+= dma.o
+>  
+> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+> index 788f26d..27ae614 100644
+> --- a/arch/arm/mach-exynos/Makefile
+> +++ b/arch/arm/mach-exynos/Makefile
+> @@ -7,11 +7,6 @@
+>  
+>  ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/$(src)/include -I$(srctree)/arch/arm/plat-samsung/include
+>  
+> -obj-y				:=
+> -obj-m				:=
+> -obj-n				:=
+> -obj-				:=
+> -
+>  # Core
+>  
+>  obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o
+> diff --git a/arch/arm/mach-footbridge/Makefile b/arch/arm/mach-footbridge/Makefile
+> index c3faa3b..e83d5c8 100644
+> --- a/arch/arm/mach-footbridge/Makefile
+> +++ b/arch/arm/mach-footbridge/Makefile
+> @@ -5,9 +5,6 @@
+>  # Object file lists.
+>  
+>  obj-y			:= common.o dma.o isa-irq.o
+> -obj-m			:=
+> -obj-n			:=
+> -obj-			:=
+>  
+>  pci-y			+= dc21285.o
+>  pci-$(CONFIG_ARCH_CATS) += cats-pci.o
+> diff --git a/arch/arm/mach-iop13xx/Makefile b/arch/arm/mach-iop13xx/Makefile
+> index cad015f..a3d9260 100644
+> --- a/arch/arm/mach-iop13xx/Makefile
+> +++ b/arch/arm/mach-iop13xx/Makefile
+> @@ -1,8 +1,3 @@
+> -obj-y			:=
+> -obj-m			:=
+> -obj-n			:=
+> -obj-			:=
+> -
+>  obj-$(CONFIG_ARCH_IOP13XX) += setup.o
+>  obj-$(CONFIG_ARCH_IOP13XX) += irq.o
+>  obj-$(CONFIG_ARCH_IOP13XX) += pci.o
+> diff --git a/arch/arm/mach-iop32x/Makefile b/arch/arm/mach-iop32x/Makefile
+> index cfdf8a1..2d4010a 100644
+> --- a/arch/arm/mach-iop32x/Makefile
+> +++ b/arch/arm/mach-iop32x/Makefile
+> @@ -3,9 +3,6 @@
+>  #
+>  
+>  obj-y			:= irq.o
+> -obj-m			:=
+> -obj-n			:=
+> -obj-			:=
+>  
+>  obj-$(CONFIG_MACH_GLANTANK) += glantank.o
+>  obj-$(CONFIG_ARCH_IQ80321) += iq80321.o
+> diff --git a/arch/arm/mach-iop33x/Makefile b/arch/arm/mach-iop33x/Makefile
+> index 90081d8..e95db30 100644
+> --- a/arch/arm/mach-iop33x/Makefile
+> +++ b/arch/arm/mach-iop33x/Makefile
+> @@ -3,9 +3,6 @@
+>  #
+>  
+>  obj-y			:= irq.o uart.o
+> -obj-m			:=
+> -obj-n			:=
+> -obj-			:=
+>  
+>  obj-$(CONFIG_ARCH_IQ80331) += iq80331.o
+>  obj-$(CONFIG_MACH_IQ80332) += iq80332.o
+> diff --git a/arch/arm/mach-ks8695/Makefile b/arch/arm/mach-ks8695/Makefile
+> index e370caf..8ecb797 100644
+> --- a/arch/arm/mach-ks8695/Makefile
+> +++ b/arch/arm/mach-ks8695/Makefile
+> @@ -4,9 +4,6 @@
+>  #
+>  
+>  obj-y				:= cpu.o irq.o time.o devices.o
+> -obj-m				:=
+> -obj-n				:=
+> -obj-				:=
+>  
+>  # PCI support is optional
+>  obj-$(CONFIG_PCI)		+= pci.o
+> diff --git a/arch/arm/mach-rpc/Makefile b/arch/arm/mach-rpc/Makefile
+> index 992e28b..2ebc687 100644
+> --- a/arch/arm/mach-rpc/Makefile
+> +++ b/arch/arm/mach-rpc/Makefile
+> @@ -5,7 +5,3 @@
+>  # Object file lists.
+>  
+>  obj-y			:= dma.o ecard.o fiq.o irq.o riscpc.o time.o
+> -obj-m			:=
+> -obj-n			:=
+> -obj-			:=
+> -
+> diff --git a/arch/arm/mach-s3c24xx/Makefile b/arch/arm/mach-s3c24xx/Makefile
+> index 2235d0d..b920716 100644
+> --- a/arch/arm/mach-s3c24xx/Makefile
+> +++ b/arch/arm/mach-s3c24xx/Makefile
+> @@ -7,11 +7,6 @@
+>  #
+>  # Licensed under GPLv2
+>  
+> -obj-y				:=
+> -obj-m				:=
+> -obj-n				:=
+> -obj-				:=
+> -
+>  # core
+>  
+>  obj-y				+= common.o
+> diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
+> index 58069a7..12f67b6 100644
+> --- a/arch/arm/mach-s3c64xx/Makefile
+> +++ b/arch/arm/mach-s3c64xx/Makefile
+> @@ -5,11 +5,6 @@
+>  #
+>  # Licensed under GPLv2
+>  
+> -obj-y				:=
+> -obj-m				:=
+> -obj-n				:=
+> -obj-				:=
+> -
+>  # Core
+>  
+>  obj-y				+= common.o
+> diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
+> index 7dc2d0e..72b9e96 100644
+> --- a/arch/arm/mach-s5pv210/Makefile
+> +++ b/arch/arm/mach-s5pv210/Makefile
+> @@ -7,11 +7,6 @@
+>  
+>  ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/$(src)/include -I$(srctree)/arch/arm/plat-samsung/include
+>  
+> -obj-y				:=
+> -obj-m				:=
+> -obj-n				:=
+> -obj-				:=
+> -
+>  # Core
+>  
+>  obj-$(CONFIG_PM_SLEEP)		+= pm.o sleep.o
+> diff --git a/arch/arm/mach-sa1100/Makefile b/arch/arm/mach-sa1100/Makefile
+> index 2732eef..f1114d1 100644
+> --- a/arch/arm/mach-sa1100/Makefile
+> +++ b/arch/arm/mach-sa1100/Makefile
+> @@ -4,9 +4,6 @@
+>  
+>  # Common support
+>  obj-y := clock.o generic.o irq.o time.o #nmi-oopser.o
+> -obj-m :=
+> -obj-n :=
+> -obj-  :=
+>  
+>  # Specific board support
+>  obj-$(CONFIG_SA1100_ASSABET)		+= assabet.o
+> diff --git a/arch/arm/mach-u300/Makefile b/arch/arm/mach-u300/Makefile
+> index 3ec74ac..87d37de 100644
+> --- a/arch/arm/mach-u300/Makefile
+> +++ b/arch/arm/mach-u300/Makefile
+> @@ -3,9 +3,6 @@
+>  #
+>  
+>  obj-y		:= core.o
+> -obj-m		:=
+> -obj-n		:=
+> -obj-		:=
+>  
+>  obj-$(CONFIG_MACH_U300_SPIDUMMY)  += dummyspichip.o
+>  obj-$(CONFIG_REGULATOR_AB3100)    += regulator.o
+> diff --git a/arch/arm/plat-iop/Makefile b/arch/arm/plat-iop/Makefile
+> index 224e56c..f2af203 100644
+> --- a/arch/arm/plat-iop/Makefile
+> +++ b/arch/arm/plat-iop/Makefile
+> @@ -2,8 +2,6 @@
+>  # Makefile for the linux kernel.
+>  #
+>  
+> -obj-y :=
+> -
+>  # IOP32X
+>  obj-$(CONFIG_ARCH_IOP32X) += i2c.o
+>  obj-$(CONFIG_ARCH_IOP32X) += pci.o
+> @@ -27,7 +25,3 @@ obj-$(CONFIG_ARCH_IOP33X) += restart.o
+>  # IOP13XX
+>  obj-$(CONFIG_ARCH_IOP13XX) += cp6.o
+>  obj-$(CONFIG_ARCH_IOP13XX) += time.o
+> -
+> -obj-m                  :=
+> -obj-n                  :=
+> -obj-                   :=
+> diff --git a/arch/arm/plat-omap/Makefile b/arch/arm/plat-omap/Makefile
+> index 0b01b68..97a50e8 100644
+> --- a/arch/arm/plat-omap/Makefile
+> +++ b/arch/arm/plat-omap/Makefile
+> @@ -6,9 +6,6 @@ ccflags-$(CONFIG_ARCH_MULTIPLATFORM) := -I$(srctree)/arch/arm/plat-omap/include
+>  
+>  # Common support
+>  obj-y := sram.o dma.o counter_32k.o
+> -obj-m :=
+> -obj-n :=
+> -obj-  :=
+>  
+>  # omap_device support (OMAP2+ only at the moment)
+>  
+> diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
+> index a402262..f0a0084 100644
+> --- a/arch/arm/plat-samsung/Makefile
+> +++ b/arch/arm/plat-samsung/Makefile
+> @@ -6,10 +6,6 @@
+>  
+>  ccflags-$(CONFIG_ARCH_MULTI_V7) += -I$(srctree)/$(src)/include
+>  
+> -obj-y				:=
+> -obj-m				:=
+> -obj-				:=
+> -
+>  # Objects we always build independent of SoC choice
+>  
+>  obj-y				+= init.o cpu.o
+> 
+
+
 -- 
-1.9.1
+Nicolas Ferre
