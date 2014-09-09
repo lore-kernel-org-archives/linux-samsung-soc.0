@@ -1,7 +1,7 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 8/9] drm/exynos/dp: unregister connector on removal
-Date: Tue, 09 Sep 2014 15:16:12 +0200
-Message-ID: <1410268573-2297-9-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 6/9] drm/exynos/dsi: unregister connector on removal
+Date: Tue, 09 Sep 2014 15:16:10 +0200
+Message-ID: <1410268573-2297-7-git-send-email-a.hajda@samsung.com>
 References: <1410268573-2297-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,35 +21,41 @@ To: Inki Dae <inki.dae@samsung.com>
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-During component removal driver should unregister connector.
+During component unbind connector should be unregistered.
+Also DSI host should be unregistered after KMS cleanup.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_dp_core.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index 4f3c7eb..32716c0 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -937,6 +937,8 @@ static enum drm_connector_status exynos_dp_detect(
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 0065a5a..24741d8 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1441,6 +1441,9 @@ exynos_dsi_detect(struct drm_connector *connector, bool force)
  
- static void exynos_dp_connector_destroy(struct drm_connector *connector)
+ static void exynos_dsi_connector_destroy(struct drm_connector *connector)
  {
 +	drm_connector_unregister(connector);
 +	drm_connector_cleanup(connector);
++	connector->dev = NULL;
  }
  
- static struct drm_connector_funcs exynos_dp_connector_funcs = {
-@@ -1358,8 +1360,8 @@ static void exynos_dp_unbind(struct device *dev, struct device *master,
+ static struct drm_connector_funcs exynos_dsi_connector_funcs = {
+@@ -1661,10 +1664,10 @@ static void exynos_dsi_unbind(struct device *dev, struct device *master,
  
- 	exynos_dp_dpms(display, DRM_MODE_DPMS_OFF);
+ 	exynos_dsi_dpms(&exynos_dsi_display, DRM_MODE_DPMS_OFF);
  
-+	exynos_dp_connector_destroy(&dp->connector);
+-	mipi_dsi_host_unregister(&dsi->dsi_host);
+-
++	exynos_dsi_connector_destroy(&dsi->connector);
  	encoder->funcs->destroy(encoder);
--	drm_connector_cleanup(&dp->connector);
+-	drm_connector_cleanup(&dsi->connector);
++
++	mipi_dsi_host_unregister(&dsi->dsi_host);
  }
  
- static const struct component_ops exynos_dp_ops = {
+ static const struct component_ops exynos_dsi_component_ops = {
 -- 
 1.9.1
