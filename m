@@ -1,71 +1,49 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH 1/3] kbuild: remove unnecessary "obj- := dummy.o" trick
-Date: Tue, 09 Sep 2014 10:43:37 -0700
-Message-ID: <20140909174337.19023.97772@quantum>
-References: <1410258381-7088-1-git-send-email-yamada.m@jp.panasonic.com>
- <1410258381-7088-2-git-send-email-yamada.m@jp.panasonic.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/3] [media] s5p-jpeg: Fix compilation with COMPILE_TEST
+Date: Tue, 09 Sep 2014 19:54:19 +0200
+Message-ID: <60097822.tu6OncvLxQ@wuerfel>
+References: <20140909124306.2d5a0d76@canb.auug.org.au>
+ <540F15B2.3000902@samsung.com> <20140909120936.527bd852.m.chehab@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kbuild-owner@vger.kernel.org>
-In-Reply-To: <1410258381-7088-2-git-send-email-yamada.m@jp.panasonic.com>
-Sender: linux-kbuild-owner@vger.kernel.org
-To: linux-kbuild@vger.kernel.org
-Cc: Masahiro Yamada <yamada.m@jp.panasonic.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Simon Horman <horms+renesas@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Wolfram Sang <wsa@sang-engineering.com>, Takashi Yoshii <takasi-y@ops.dti.ne.jp>, Ulrich Hecht <ulrich.hecht@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20140909120936.527bd852.m.chehab@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-next@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, Jacek Anaszewski <j.anaszewski@samsung.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Masahiro Yamada (2014-09-09 03:26:19)
-> In these Makefiles, at least one of "obj-y" and "obj-" is non-empty,
-> hence built-in.o is always created without such a trick.
+On Tuesday 09 September 2014 12:09:36 Mauro Carvalho Chehab wrote:
+> -exynos4.c
+> > > index e51c078360f5..01eeacf28843 100644
+> > > --- a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
+> > > +++ b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
+> > > @@ -23,7 +23,9 @@ void exynos4_jpeg_sw_reset(void __iomem *base)
+> > >     reg = readl(base + EXYNOS4_JPEG_CNTL_REG);
+> > >     writel(reg & ~EXYNOS4_SOFT_RESET_HI, base + EXYNOS4_JPEG_CNTL_REG);
+> > >  
+> > > +#ifndef CONFIG_COMPILE_TEST
+> > >     ndelay(100000);
+> > > +#endif
+> > 
+> > Wouldn't be a better fix to replace ndelay(100000); with udelay(100),
+> > rather than sticking in a not so pretty #ifndef ?
 > 
-> Signed-off-by: Masahiro Yamada <yamada.m@jp.panasonic.com>
+> Works for me. I'll submit a new version.
 
-Acked-by: Mike Turquette <mturquette@linaro.org>
+New version looks good to me. On a more general level, I would argue
+that we should not disable code based on COMPILE_TEST. The typical
+use of this symbol is to make it possible to compile more code, not
+to change the behavior of code on machines that were able to build
+it already.
 
-> ---
-> 
->  arch/arm/plat-samsung/Makefile | 1 -
->  drivers/clk/shmobile/Makefile  | 2 --
->  drivers/net/wimax/Makefile     | 4 ----
->  3 files changed, 7 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-> index 5fe1750..a402262 100644
-> --- a/arch/arm/plat-samsung/Makefile
-> +++ b/arch/arm/plat-samsung/Makefile
-> @@ -8,7 +8,6 @@ ccflags-$(CONFIG_ARCH_MULTI_V7) += -I$(srctree)/$(src)/include
->  
->  obj-y                          :=
->  obj-m                          :=
-> -obj-n                          := dummy.o
->  obj-                           :=
->  
->  # Objects we always build independent of SoC choice
-> diff --git a/drivers/clk/shmobile/Makefile b/drivers/clk/shmobile/Makefile
-> index e002923..9aab51c8 100644
-> --- a/drivers/clk/shmobile/Makefile
-> +++ b/drivers/clk/shmobile/Makefile
-> @@ -6,5 +6,3 @@ obj-$(CONFIG_ARCH_R8A7790)              += clk-rcar-gen2.o
->  obj-$(CONFIG_ARCH_R8A7791)             += clk-rcar-gen2.o
->  obj-$(CONFIG_ARCH_SHMOBILE_MULTI)      += clk-div6.o
->  obj-$(CONFIG_ARCH_SHMOBILE_MULTI)      += clk-mstp.o
-> -# for emply built-in.o
-> -obj-n  := dummy
-> diff --git a/drivers/net/wimax/Makefile b/drivers/net/wimax/Makefile
-> index 992bc02..692184d 100644
-> --- a/drivers/net/wimax/Makefile
-> +++ b/drivers/net/wimax/Makefile
-> @@ -1,5 +1 @@
-> -
->  obj-$(CONFIG_WIMAX_I2400M)     += i2400m/
-> -
-> -# (from Sam Ravnborg) force kbuild to create built-in.o
-> -obj- := dummy.o
-> -- 
-> 1.9.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+	Arnd
