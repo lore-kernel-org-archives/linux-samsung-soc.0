@@ -1,119 +1,67 @@
 From: kgene@kernel.org
-Subject: RE: [PATCH v6 0/5] ARM: EXYNOS: cpuidle: fix AFTR mode on boards with
- secure firmware enabled
-Date: Tue, 09 Sep 2014 12:34:21 +0900
-Message-ID: <034a01cfcbde$f1a98270$d4fc8750$@kernel.org>
-References: <1409925088-4705-1-git-send-email-b.zolnierkie@samsung.com>
+Subject: RE: [PATCH v5 RESEND 1/3] ARM: EXYNOS: Move code from hotplug.c to
+ platsmp.c
+Date: Tue, 09 Sep 2014 12:39:36 +0900
+Message-ID: <03a501cfcbdf$ad9f5680$08de0380$@kernel.org>
+References: <1409920495-16533-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:13797 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753171AbaIIDeY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Sep 2014 23:34:24 -0400
-In-reply-to: <1409925088-4705-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1409920495-16533-1-git-send-email-k.kozlowski@samsung.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Russell King' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Daniel Lezcano' <daniel.lezcano@linaro.org>, 'Sachin Kamat' <sachin.kamat@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
-Cc: 'Daniel Lezcano' <daniel.lezcano@linaro.org>, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Viresh Kumar' <viresh.kumar@linaro.org>, "'Rafael J. Wysocki'" <rjw@rjwysocki.net>, 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
 
-Bartlomiej Zolnierkiewicz wrote:
+Krzysztof Kozlowski wrote:
 > 
-> Hi,
+> Cleanup a little the SMP/hotplug code for Exynos by:
+> 1. Moving completely all functions from hotplug.c into the platsmp.c;
+> 2. Deleting the hotplug.c file.
 > 
-Hi,
+> After recent cleanups (e.g. 75ad2ab28f0f "ARM: EXYNOS: use
+> v7_exit_coherency_flush macro for cache disabling") there was only CPU
+> power down related code in hotplug.c file.
+> 
+> Rationale behind the code movement and benefits:
+> 1. The file platsmp.c is the only user of code located in hotplug.c.
+>    Keeping code in hotplug.c required declaring exynos_cpu_die() in common.h.
+>    Such dependencies and mentioned exynos_cpu_die() declaration can be
+>    removed.
+> 2. In next patches exynos_set_delayed_reset_assertion() will be
+>    introduced. This function will be called by:
+>     - cpu_leave_power (hotplug.c),
+>     - platform_do_lowpower (hotplug.c),
+>     - exynos_boot_secondary (platsmp.c).
+> 
+> Merging hotplug.c into platsmp.c leads to simpler and cleaner code with
+> less dependencies between files.
+> 
+> The commit only moves code around with one additional observable change:
+> the hotplug.c was compiled with custom CFLAGS (-march=armv7-a). These
+> CFLAGS are not necessary any more.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> 
+> ---
+> Changes since v4:
+> 1. Rebase on linux-next-20140804.
+> 2. Add Reviewed-by Tomasz Figa.
+> ---
+>  arch/arm/mach-exynos/Makefile  |  3 --
+>  arch/arm/mach-exynos/common.h  |  2 -
+>  arch/arm/mach-exynos/hotplug.c | 91 ------------------------------------------
+>  arch/arm/mach-exynos/platsmp.c | 74 ++++++++++++++++++++++++++++++++++
+>  4 files changed, 74 insertions(+), 96 deletions(-)
+>  delete mode 100644 arch/arm/mach-exynos/hotplug.c
 
-> This patch series adds support for AFTR idle mode on boards with
-> secure firmware enabled and allows EXYNOS cpuidle driver usage on
-> Exynos4x12 SoCs.
-> 
-> It has been tested on Trats2 board (using Exynos4412 SoC with secure
-> firmware enabled) on which AFTR mode reduces power consumption by ~12%
+[...]
 
-Nice.
-
-> when EXYNOS cpuidle driver is enabled (in both cases the default
-> exynos_defconfig config is used and CPU1-3 are offlined).
-> 
-> Currently Exynos4412 SoC support is limited to Trats2 board.
-> 
-> Depends on:
-> - next-20140904 branch of linux-next kernel tree
-> - "irqchip: Properly fetch the per cpu offset" patch
->   (https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg716674.html)
-> - [PATCH v3 0/5] Firmware-assisted suspend/resume of Exynos SoCs
->   (https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35921.html)
-> 
-OK this series looks good to me, I will take this series once above patches are
-landed.
+OK, I will take this series but I'm not sure what conflicts will be happened
+with other pm related patches. If anything, I'll let you know ;)
 
 Thanks,
 Kukjin
-
-> Changes since v5:
-> - rebased on top of next-20140904 +
->   "irqchip: Properly fetch the per cpu offset" patch
->   (https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg716674.html)
->   [PATCH v3 0/5] Firmware-assisted suspend/resume of Exynos SoCs
->   (https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35921.html)
-> - limit Exynos4412 SoC support to Trats2 board for now
-> 
-> Changes since v4:
-> - rebased on top of next-20140804 +
->   [PATCH v5][next-20140804] ARM: EXYNOS: Fix suspend/resume sequences
->   (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35262.html)
->   [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
->   (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34282.html)
-> - call exynos_save_cp15() only on A9 type core (this is needed for the future
->   Exynos3250 SoC support)
-> 
-> Changes since v3:
-> - rebased on top of next-20140804 +
->   [PATCH v4][next-20140804] ARM: EXYNOS: Fix suspend/resume sequences
->   (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35192.html)
->   [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
->   (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34282.html)
-> - (re-)added patch fixing S5P_CENTRAL_SEQ_OPTION register setup
-> 
-> Changes since v2:
-> - rebased on top of next-20140708 +
->   [PATCH 5/6] ARM: EXYNOS: Fix suspend/resume sequencies
->   (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32809.html)
->   [with rejects fixed]
->   [PATCH 6/6] ARM: EXYNOS: Register cpuidle device only on Exynos4210 and 5250
->   (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32808.html)
->   [PATCH 0/2] Firmware-assisted suspend/resume of Exynos SoCs
->   (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32991.html)
->   [with rejects fixed in patch #2]
-> - addressed review comments from Tomasz Figa and Daniel Lezcano
-> 
-> Changes since v1:
-> - synced against next-20140602
-> - added missing Acked-by-s
-> 
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
-> 
-> 
-> Bartlomiej Zolnierkiewicz (5):
->   ARM: EXYNOS: PM: replace EXYNOS_BOOT_VECTOR_* macros by static inlines
->   ARM: EXYNOS: add AFTR mode support to firmware do_idle method
->   ARM: EXYNOS: cpuidle: add secure firmware support to AFTR mode code
->   ARM: EXYNOS: PM: fix register setup for AFTR mode code
->   ARM: EXYNOS: cpuidle: allow driver usage on Exynos4x12 SoCs
-> 
->  arch/arm/include/asm/firmware.h |  2 +-
->  arch/arm/mach-exynos/common.h   |  5 ++++
->  arch/arm/mach-exynos/exynos.c   |  5 +++-
->  arch/arm/mach-exynos/firmware.c | 34 ++++++++++++++++-------
->  arch/arm/mach-exynos/pm.c       | 60 ++++++++++++++++++++++++-----------------
->  5 files changed, 71 insertions(+), 35 deletions(-)
-> 
-> --
-> 1.8.2.3
