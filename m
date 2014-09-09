@@ -1,45 +1,29 @@
-From: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Subject: [PATCHv2 2/3] [media] s5p-jpeg: Fix compilation with COMPILE_TEST
-Date: Tue, 09 Sep 2014 13:10:36 -0300
-Message-ID: <20140909131036.7265121f.m.chehab@samsung.com>
-References: <20140909124306.2d5a0d76@canb.auug.org.au>
- <6cbd00c5f2d342b573aaf9c0e533778374dd2e1e.1410273306.git.m.chehab@samsung.com>
- <b7343e6296b5d1d68b7229b8307442fd4141bcb3.1410273306.git.m.chehab@samsung.com>
- <540F15B2.3000902@samsung.com> <20140909120936.527bd852.m.chehab@samsung.com>
- <540F1D11.9030400@samsung.com>
+From: Peter Foley <pefoley2@pefoley.com>
+Subject: Re: [PATCH 1/3] kbuild: remove unnecessary "obj- := dummy.o" trick
+Date: Tue, 9 Sep 2014 12:21:56 -0400
+Message-ID: <CAOFdcFMs7j3CAnu4XSFCSaYwKub5KcTqyz97C=0U9KbcRZEGOg@mail.gmail.com>
+References: <1410258381-7088-1-git-send-email-yamada.m@jp.panasonic.com> <1410258381-7088-2-git-send-email-yamada.m@jp.panasonic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-next-owner@vger.kernel.org>
-In-reply-to: <540F1D11.9030400@samsung.com>
-Sender: linux-next-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f170.google.com ([209.85.220.170]:43532 "EHLO
+	mail-vc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751295AbaIIQWQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 9 Sep 2014 12:22:16 -0400
+Received: by mail-vc0-f170.google.com with SMTP id hy4so2599434vcb.15
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Sep 2014 09:22:16 -0700 (PDT)
+In-Reply-To: <1410258381-7088-2-git-send-email-yamada.m@jp.panasonic.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Masahiro Yamada <yamada.m@jp.panasonic.com>
+Cc: linux-kbuild@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Mike Turquette <mturquette@linaro.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Simon Horman <horms+renesas@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Wolfram Sang <wsa@sang-engineering.com>, Takashi Yoshii <takasi-y@ops.dti.ne.jp>, Ulrich Hecht <ulrich.hecht@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
 
-ERROR: "__bad_ndelay" [drivers/media/platform/s5p-jpeg/s5p-jpeg.ko] undefined!
+On Tue, Sep 9, 2014 at 6:26 AM, Masahiro Yamada
+<yamada.m@jp.panasonic.com> wrote:
+> In these Makefiles, at least one of "obj-y" and "obj-" is non-empty,
+> hence built-in.o is always created without such a trick.
+>
+> Signed-off-by: Masahiro Yamada <yamada.m@jp.panasonic.com>
 
-That happens because asm-generic doesn't like any ndelay time
-bigger than 20us.
-
-Currently, usleep_range() couldn't simply be used, since
-exynos4_jpeg_sw_reset() is called with a spinlock held.
-
-So, let's use ndelay() instead.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Mauro Carvalho Chehab <m.chehab@samsung.com>
-
-diff --git a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
-index e51c078360f5..ab6d6f43c96f 100644
---- a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
-+++ b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
-@@ -23,7 +23,7 @@ void exynos4_jpeg_sw_reset(void __iomem *base)
- 	reg = readl(base + EXYNOS4_JPEG_CNTL_REG);
- 	writel(reg & ~EXYNOS4_SOFT_RESET_HI, base + EXYNOS4_JPEG_CNTL_REG);
- 
--	ndelay(100000);
-+	udelay(100);
- 
- 	writel(reg | EXYNOS4_SOFT_RESET_HI, base + EXYNOS4_JPEG_CNTL_REG);
- }
+Acked-by: Peter Foley <pefoley2@pefoley.com>
