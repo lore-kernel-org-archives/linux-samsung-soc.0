@@ -1,7 +1,7 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 2/9] drm/exynos: fix drm driver de-initialization order
-Date: Tue, 09 Sep 2014 15:16:06 +0200
-Message-ID: <1410268573-2297-3-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 3/9] drm/exynos/fbdev: fix fbdev gem object cleanup
+Date: Tue, 09 Sep 2014 15:16:07 +0200
+Message-ID: <1410268573-2297-4-git-send-email-a.hajda@samsung.com>
 References: <1410268573-2297-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,38 +21,28 @@ To: Inki Dae <inki.dae@samsung.com>
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Since components have their own cleanup routines calling
-drm_mode_config_cleanup before component_unbind_all causes errors
-due to double free of KMS objects. The patch fixes it by changing
-de-initialization order. Now it is exactly opposite to init order.
+exynos_gem_obj is used by exynos_drm_fbdev_destroy so it cannot be destroyed
+before calling the latter. exynos_gem_obj will be destroyed anyway by
+exynos_drm_fbdev_destroy->...->exynos_drm_fb_destroy.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_drv.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index e11c4d6..b2c710a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -136,14 +136,14 @@ static int exynos_drm_unload(struct drm_device *dev)
- 	exynos_drm_device_subdrv_remove(dev);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+index 32e63f6..586e40d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fbdev.c
+@@ -353,9 +353,6 @@ void exynos_drm_fbdev_fini(struct drm_device *dev)
  
- 	exynos_drm_fbdev_fini(dev);
--	drm_vblank_cleanup(dev);
- 	drm_kms_helper_poll_fini(dev);
--	drm_mode_config_cleanup(dev);
+ 	fbdev = to_exynos_fbdev(private->fb_helper);
  
-+	component_unbind_all(dev->dev, dev);
-+	drm_vblank_cleanup(dev);
-+	drm_mode_config_cleanup(dev);
- 	drm_release_iommu_mapping(dev);
--	kfree(dev->dev_private);
- 
--	component_unbind_all(dev->dev, dev);
-+	kfree(dev->dev_private);
- 	dev->dev_private = NULL;
- 
- 	return 0;
+-	if (fbdev->exynos_gem_obj)
+-		exynos_drm_gem_destroy(fbdev->exynos_gem_obj);
+-
+ 	exynos_drm_fbdev_destroy(dev, private->fb_helper);
+ 	kfree(fbdev);
+ 	private->fb_helper = NULL;
 -- 
 1.9.1
