@@ -1,7 +1,7 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 6/9] drm/exynos/dsi: unregister connector on removal
-Date: Tue, 09 Sep 2014 15:16:10 +0200
-Message-ID: <1410268573-2297-7-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 9/9] drm/exynos/hdmi: unregister connector on removal
+Date: Tue, 09 Sep 2014 15:16:13 +0200
+Message-ID: <1410268573-2297-10-git-send-email-a.hajda@samsung.com>
 References: <1410268573-2297-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,41 +21,35 @@ To: Inki Dae <inki.dae@samsung.com>
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-During component unbind connector should be unregistered.
-Also DSI host should be unregistered after KMS cleanup.
+During component removal driver should unregister connector.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/exynos/exynos_hdmi.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 0065a5a..24741d8 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1441,6 +1441,9 @@ exynos_dsi_detect(struct drm_connector *connector, bool force)
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 562966d..7910fb3 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -1040,6 +1040,8 @@ static enum drm_connector_status hdmi_detect(struct drm_connector *connector,
  
- static void exynos_dsi_connector_destroy(struct drm_connector *connector)
+ static void hdmi_connector_destroy(struct drm_connector *connector)
  {
 +	drm_connector_unregister(connector);
 +	drm_connector_cleanup(connector);
-+	connector->dev = NULL;
  }
  
- static struct drm_connector_funcs exynos_dsi_connector_funcs = {
-@@ -1661,10 +1664,10 @@ static void exynos_dsi_unbind(struct device *dev, struct device *master,
+ static struct drm_connector_funcs hdmi_connector_funcs = {
+@@ -2314,8 +2316,8 @@ static void hdmi_unbind(struct device *dev, struct device *master, void *data)
+ 	struct drm_encoder *encoder = display->encoder;
+ 	struct hdmi_context *hdata = display->ctx;
  
- 	exynos_dsi_dpms(&exynos_dsi_display, DRM_MODE_DPMS_OFF);
- 
--	mipi_dsi_host_unregister(&dsi->dsi_host);
--
-+	exynos_dsi_connector_destroy(&dsi->connector);
++	hdmi_connector_destroy(&hdata->connector);
  	encoder->funcs->destroy(encoder);
--	drm_connector_cleanup(&dsi->connector);
-+
-+	mipi_dsi_host_unregister(&dsi->dsi_host);
+-	drm_connector_cleanup(&hdata->connector);
  }
  
- static const struct component_ops exynos_dsi_component_ops = {
+ static const struct component_ops hdmi_component_ops = {
 -- 
 1.9.1
