@@ -1,39 +1,59 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 0/5] Add max77802 support for Peach boards
-Date: Tue, 09 Sep 2014 08:37:22 +0200
-Message-ID: <540EA022.4030106@collabora.co.uk>
-References: <1408533593-32346-1-git-send-email-javier.martinez@collabora.co.uk> <CABxcv==ycrPw1MTv7X0baX2WfqgDS+4EEfGAWc+ZhpiR6=Uy+Q@mail.gmail.com> <04ab01cfcbe0$caeac4d0$60c04e70$@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Subject: [PATCH] Input: atmel_mxt_ts: Add of node type to the i2c table
+Date: Tue,  9 Sep 2014 09:52:38 +0200
+Message-ID: <1410249158-18192-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:34427 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:34483 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755869AbaIIGh3 (ORCPT
+	with ESMTP id S1755315AbaIIHw7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Sep 2014 02:37:29 -0400
-In-Reply-To: <04ab01cfcbe0$caeac4d0$60c04e70$@kernel.org>
+	Tue, 9 Sep 2014 03:52:59 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org, 'Javier Martinez Canillas' <javier@dowhile0.org>
-Cc: linux-samsung-soc@vger.kernel.org, 'Doug Anderson' <dianders@chromium.org>, 'Linux Kernel' <linux-kernel@vger.kernel.org>, 'Mark Brown' <broonie@kernel.org>, 'Olof Johansson' <olof@lixom.net>, 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>, =?UTF-8?B?J0FuZHJlYXMgRsOkcmJlcic=?= <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, 'Rahul Sharma' <rahul.sharma@samsung.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Nick Dyer <nick.dyer@itdev.co.uk>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
-Hello Kukjin,
+For i2c devices in OF the modalias exposed to userspace is i2c:<node
+type>, for the Maxtouch driver this is i2c:maxtouch.
 
-On 09/09/2014 05:47 AM, kgene@kernel.org wrote:
-> Javier Martinez Canillas wrote:
->> 
->> Any comments on this series?
->> 
-> Looks good to me but I just wanted to get ack from chrome guy, Doug? But since
-> Naveen tested, it should be fine I think. I'll take the series.
->
+Add maxtouch to the i2c id table such that userspace can correctly
+load the module for the device and drop the OF table as it's not
+needed for i2c devices.
 
-Great, thanks!
+Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+---
+ drivers/input/touchscreen/atmel_mxt_ts.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-> Thanks,
-> Kukjin
-> 
-
-Best regards,
-Javier
+diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
+index db178ed..57ff26d 100644
+--- a/drivers/input/touchscreen/atmel_mxt_ts.c
++++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+@@ -2267,16 +2267,11 @@ static int mxt_resume(struct device *dev)
+ 
+ static SIMPLE_DEV_PM_OPS(mxt_pm_ops, mxt_suspend, mxt_resume);
+ 
+-static const struct of_device_id mxt_of_match[] = {
+-	{ .compatible = "atmel,maxtouch", },
+-	{},
+-};
+-MODULE_DEVICE_TABLE(of, mxt_of_match);
+-
+ static const struct i2c_device_id mxt_id[] = {
+ 	{ "qt602240_ts", 0 },
+ 	{ "atmel_mxt_ts", 0 },
+ 	{ "atmel_mxt_tp", 0 },
++	{ "maxtouch", 0 },
+ 	{ "mXT224", 0 },
+ 	{ }
+ };
+@@ -2286,7 +2281,6 @@ static struct i2c_driver mxt_driver = {
+ 	.driver = {
+ 		.name	= "atmel_mxt_ts",
+ 		.owner	= THIS_MODULE,
+-		.of_match_table = of_match_ptr(mxt_of_match),
+ 		.pm	= &mxt_pm_ops,
+ 	},
+ 	.probe		= mxt_probe,
+-- 
+2.1.0
