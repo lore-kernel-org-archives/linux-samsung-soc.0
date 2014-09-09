@@ -1,36 +1,53 @@
-From: Nick Dyer <nick.dyer@itdev.co.uk>
-Subject: Re: [PATCH] Input: atmel_mxt_ts: Add of node type to the i2c table
-Date: Tue, 09 Sep 2014 13:36:27 +0100
-Message-ID: <540EF44B.4070907@itdev.co.uk>
-References: <1410249158-18192-1-git-send-email-sjoerd.simons@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <1410249158-18192-1-git-send-email-sjoerd.simons@collabora.co.uk>
-Sender: linux-input-owner@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH v3] ARM: dts: exynos3250: add JPEG codec device node
+Date: Tue, 09 Sep 2014 15:09:28 +0200
+Message-ID: <1410268169-18424-1-git-send-email-j.anaszewski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:34350 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756757AbaIINJl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 9 Sep 2014 09:09:41 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NBM00ABXXW3CZB0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 09 Sep 2014 22:09:39 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On 09/09/14 08:52, Sjoerd Simons wrote:
-> For i2c devices in OF the modalias exposed to userspace is i2c:<node
-> type>, for the Maxtouch driver this is i2c:maxtouch.
-> 
-> Add maxtouch to the i2c id table such that userspace can correctly
-> load the module for the device and drop the OF table as it's not
-> needed for i2c devices.
-> 
-> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/boot/dts/exynos3250.dtsi |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-I've tested this and it does work. In fact, it seems that you can use
-	compatible = "i2c:atmel,maxtouch";
-
-because the "atmel," is ignored in the matching.
-
-Before I could ack this patch, we will need to update this dts file:
-	arch/arm/boot/dts/s5pv210-goni.dts
-and this documentation file:
-	Documentation/devicetree/bindings/input/atmel,maxtouch.txt
-
-thanks!
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 1d52de6..bbc1e4c 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -216,6 +216,19 @@
+ 			interrupts = <0 240 0>;
+ 		};
+ 
++		jpeg-codec@11830000 {
++			compatible = "samsung,exynos3250-jpeg";
++			reg = <0x11830000 0x1000>;
++			interrupts = <0 171 0>;
++			clocks = <&cmu CLK_JPEG>, <&cmu CLK_SCLK_JPEG>;
++			clock-names = "jpeg", "sclk";
++			samsung,power-domain = <&pd_cam>;
++			assigned-clocks = <&cmu CLK_MOUT_CAM_BLK>, <&cmu CLK_SCLK_JPEG>;
++			assigned-clock-rates = <0>, <150000000>;
++			assigned-clock-parents = <&cmu CLK_DIV_MPLL_PRE>;
++			status = "disabled";
++		};
++
+ 		mshc_0: mshc@12510000 {
+ 			compatible = "samsung,exynos5250-dw-mshc";
+ 			reg = <0x12510000 0x1000>;
+-- 
+1.7.9.5
