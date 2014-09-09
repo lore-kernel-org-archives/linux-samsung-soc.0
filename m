@@ -1,34 +1,37 @@
-From: Peter Foley <pefoley2@pefoley.com>
-Subject: Re: [PATCH 2/3] kbuild: remove unnecessary variable initializaions
-Date: Tue, 9 Sep 2014 12:23:45 -0400
-Message-ID: <CAOFdcFOxDSJfT2J382c6X9ryWhtYdfZdBmhxDxrhEkxkiUwx4w@mail.gmail.com>
-References: <1410258381-7088-1-git-send-email-yamada.m@jp.panasonic.com> <1410258381-7088-3-git-send-email-yamada.m@jp.panasonic.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] ASoC: samsung-i2s: Check secondary DAI exists before
+ referencing
+Date: Tue, 09 Sep 2014 19:08:17 +0200
+Message-ID: <540F3401.5090003@samsung.com>
+References: <1410277909-27922-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f171.google.com ([209.85.220.171]:55539 "EHLO
-	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753967AbaIIQYG (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:27192 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754742AbaIIRIo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Sep 2014 12:24:06 -0400
-Received: by mail-vc0-f171.google.com with SMTP id id10so17242640vcb.2
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Sep 2014 09:24:05 -0700 (PDT)
-In-Reply-To: <1410258381-7088-3-git-send-email-yamada.m@jp.panasonic.com>
+	Tue, 9 Sep 2014 13:08:44 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NBN0071K938WF20@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 09 Sep 2014 18:11:32 +0100 (BST)
+In-reply-to: <1410277909-27922-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Masahiro Yamada <yamada.m@jp.panasonic.com>
-Cc: linux-kbuild@vger.kernel.org, Andrew Victor <linux@maxim.org.za>, Nicolas Ferre <nicolas.ferre@atmel.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Russell King <linux@arm.linux.org.uk>, Hartley Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Greg Ungerer <gerg@uclinux.org>, Ben Dooks <ben-linux@fluff.org>, Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>, linux-arm-kernel@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, broonie@kernel.org
+Cc: sbkim73@samsung.com, lgirdwood@gmail.com, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, patches@opensource.wolfsonmicro.com
 
-On Tue, Sep 9, 2014 at 6:26 AM, Masahiro Yamada
-<yamada.m@jp.panasonic.com> wrote:
-> Clearing obj-y, obj-m, obj-n, obj- in each Makefile is
-> a useless habit.
->
-> They are non-exported variables; therefore they are always empty
-> whenever descending into each subdirectory.
-> (Moreorver, obj-y and obj-m are also set to empty at the beginning
-> of scripts/Makefile.build)
->
-> Signed-off-by: Masahiro Yamada <yamada.m@jp.panasonic.com>
+On 09/09/14 17:51, Charles Keepax wrote:
+> In a couple of places the driver is missing a check to ensure there is a
+> secondary DAI before it de-references the pointer to it, causing a null
+> pointer de-reference. This patch adds a check to avoid this.
+> 
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 
-Acked-by: Peter Foley <pefoley2@pefoley.com>
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+Thanks for the patch. We had one of those occurrences fixed internally
+but I missed to submit the patch upstream.
