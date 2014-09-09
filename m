@@ -1,60 +1,56 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH 2/3] [media] s5p-jpeg: Fix compilation with COMPILE_TEST
-Date: Tue, 09 Sep 2014 17:30:25 +0200
-Message-ID: <540F1D11.9030400@samsung.com>
-References: <20140909124306.2d5a0d76@canb.auug.org.au>
- <6cbd00c5f2d342b573aaf9c0e533778374dd2e1e.1410273306.git.m.chehab@samsung.com>
- <b7343e6296b5d1d68b7229b8307442fd4141bcb3.1410273306.git.m.chehab@samsung.com>
- <540F15B2.3000902@samsung.com> <20140909120936.527bd852.m.chehab@samsung.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: [PATCH] ASoC: samsung-i2s: Check secondary DAI exists
+	before referencing
+Date: Tue,  9 Sep 2014 16:51:49 +0100
+Message-ID: <1410277909-27922-1-git-send-email-ckeepax@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20140909120936.527bd852.m.chehab@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: broonie@kernel.org
+Cc: sbkim73@samsung.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, lgirdwood@gmail.com, patches@opensource.wolfsonmicro.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Mauro, Sylwester,
+In a couple of places the driver is missing a check to ensure there is a
+secondary DAI before it de-references the pointer to it, causing a null
+pointer de-reference. This patch adds a check to avoid this.
 
-On 09/09/2014 05:09 PM, Mauro Carvalho Chehab wrote:
-> Em Tue, 09 Sep 2014 16:58:58 +0200
-> Sylwester Nawrocki <s.nawrocki@samsung.com> escreveu:
->
->> On 09/09/14 16:38, Mauro Carvalho Chehab wrote:
->>> ERROR: "__bad_ndelay" [drivers/media/platform/s5p-jpeg/s5p-jpeg.ko] undefined!
->>>
->>> Yet, it sounds a bad idea to use ndelay to wait for 100 us
->>> for the device to reset.
->>>
->>> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
->>> Signed-off-by: Mauro Carvalho Chehab <m.chehab@samsung.com>
->>>
->>> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
->>> index e51c078360f5..01eeacf28843 100644
->>> --- a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
->>> +++ b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
->>> @@ -23,7 +23,9 @@ void exynos4_jpeg_sw_reset(void __iomem *base)
->>>   	reg = readl(base + EXYNOS4_JPEG_CNTL_REG);
->>>   	writel(reg & ~EXYNOS4_SOFT_RESET_HI, base + EXYNOS4_JPEG_CNTL_REG);
->>>
->>> +#ifndef CONFIG_COMPILE_TEST
->>>   	ndelay(100000);
->>> +#endif
->>
->> Wouldn't be a better fix to replace ndelay(100000); with udelay(100),
->> rather than sticking in a not so pretty #ifndef ?
->
-> Works for me. I'll submit a new version.
->
->> I guess usleep_range() couldn't simply be used, since
->> exynos4_jpeg_sw_reset() is called with a spinlock held.
->
-> Ok.
+Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+---
+ sound/soc/samsung/i2s.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
 
-Within few days I will perform some hardware tests, to verify
-if there is more room for improvement here.
-
-Best Regards,
-Jacek Anaszewski
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 03eec22..9d51347 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -462,7 +462,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+ 		if (dir == SND_SOC_CLOCK_IN)
+ 			rfs = 0;
+ 
+-		if ((rfs && other->rfs && (other->rfs != rfs)) ||
++		if ((rfs && other && other->rfs && (other->rfs != rfs)) ||
+ 				(any_active(i2s) &&
+ 				(((dir == SND_SOC_CLOCK_IN)
+ 					&& !(mod & MOD_CDCLKCON)) ||
+@@ -762,7 +762,8 @@ static void i2s_shutdown(struct snd_pcm_substream *substream,
+ 	} else {
+ 		u32 mod = readl(i2s->addr + I2SMOD);
+ 		i2s->cdclk_out = !(mod & MOD_CDCLKCON);
+-		other->cdclk_out = i2s->cdclk_out;
++		if (other)
++			other->cdclk_out = i2s->cdclk_out;
+ 	}
+ 	/* Reset any constraint on RFS and BFS */
+ 	i2s->rfs = 0;
+-- 
+1.7.2.5
