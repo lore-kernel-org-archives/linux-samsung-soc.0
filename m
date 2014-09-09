@@ -1,102 +1,119 @@
 From: kgene@kernel.org
-Subject: RE: [PATCH v2 5/7] arm64: dts: Add initial device tree support for
- EXYNOS7
-Date: Tue, 09 Sep 2014 12:28:37 +0900
-Message-ID: <02f801cfcbde$24a40160$6dec0420$@kernel.org>
-References: <1409672143-8574-1-git-send-email-ch.naveen@samsung.com>
- <1409672143-8574-6-git-send-email-ch.naveen@samsung.com>
+Subject: RE: [PATCH v6 0/5] ARM: EXYNOS: cpuidle: fix AFTR mode on boards with
+ secure firmware enabled
+Date: Tue, 09 Sep 2014 12:34:21 +0900
+Message-ID: <034a01cfcbde$f1a98270$d4fc8750$@kernel.org>
+References: <1409925088-4705-1-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:13063 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:13797 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753171AbaIID2j (ORCPT
+	with ESMTP id S1753171AbaIIDeY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Sep 2014 23:28:39 -0400
-In-reply-to: <1409672143-8574-6-git-send-email-ch.naveen@samsung.com>
+	Mon, 8 Sep 2014 23:34:24 -0400
+In-reply-to: <1409925088-4705-1-git-send-email-b.zolnierkie@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>, linux-arm-kernel@lists.infradead.org
-Cc: naveenkrishna.ch@gmail.com, linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, t.figa@samsung.com
+To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
+Cc: 'Daniel Lezcano' <daniel.lezcano@linaro.org>, 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Viresh Kumar' <viresh.kumar@linaro.org>, "'Rafael J. Wysocki'" <rjw@rjwysocki.net>, 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
 
-Naveen Krishna Chatradhi wrote:
+Bartlomiej Zolnierkiewicz wrote:
 > 
-> Add initial device tree nodes for EXYNOS7 SoC and board dts file
-> to support Espresso board based on Exynos7 SoC.
+> Hi,
 > 
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> ---
->  arch/arm64/boot/dts/Makefile                    |    1 +
->  arch/arm64/boot/dts/exynos/exynos7-espresso.dts |   31 +++++
->  arch/arm64/boot/dts/exynos/exynos7.dtsi         |  168 +++++++++++++++++++++++
->  3 files changed, 200 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos7-espresso.dts
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos7.dtsi
+Hi,
 
-[...]
+> This patch series adds support for AFTR idle mode on boards with
+> secure firmware enabled and allows EXYNOS cpuidle driver usage on
+> Exynos4x12 SoCs.
+> 
+> It has been tested on Trats2 board (using Exynos4412 SoC with secure
+> firmware enabled) on which AFTR mode reduces power consumption by ~12%
 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> new file mode 100644
-> index 0000000..e593af55
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> @@ -0,0 +1,168 @@
-> +/*
-> + * SAMSUNG EXYNOS7 SoC device tree source
-> + *
-> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include <dt-bindings/clock/exynos7-clk.h>
-> +
-> +/ {
-> +	compatible = "samsung,exynos7";
-> +	interrupt-parent = <&gic>;
-> +	#address-cells = <2>;
+Nice.
 
-+	#address-cells = <1>; ?
+> when EXYNOS cpuidle driver is enabled (in both cases the default
+> exynos_defconfig config is used and CPU1-3 are offlined).
+> 
+> Currently Exynos4412 SoC support is limited to Trats2 board.
+> 
+> Depends on:
+> - next-20140904 branch of linux-next kernel tree
+> - "irqchip: Properly fetch the per cpu offset" patch
+>   (https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg716674.html)
+> - [PATCH v3 0/5] Firmware-assisted suspend/resume of Exynos SoCs
+>   (https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35921.html)
+> 
+OK this series looks good to me, I will take this series once above patches are
+landed.
 
-Hmm...I can't see any 64-bit address here.
+Thanks,
+Kukjin
 
-> +	#size-cells = <2>;
-> +
-
-[...]
-
-> +
-> +	soc: soc {
-> +		compatible = "simple-bus";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0 0 0 0x18000000>;
-> +
-> +		chipid@10000000 {
-> +			compatible = "samsung,exynos4210-chipid";
-> +			reg = <0x10000000 0x100>;
-> +		};
-
-Maybe this is not required? There is no check chipid in arm/arm64.
-
-[...]
-
-> +		timer {
-> +			compatible = "arm,armv8-timer";
-> +			interrupts = <1 13 0xff01>,
-> +				     <1 14 0xff01>,
-> +				     <1 11 0xff01>,
-> +				     <1 10 0xff01>;
-
-clock-frequency ?
-
-[...]
-
-- Kukjin
+> Changes since v5:
+> - rebased on top of next-20140904 +
+>   "irqchip: Properly fetch the per cpu offset" patch
+>   (https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg716674.html)
+>   [PATCH v3 0/5] Firmware-assisted suspend/resume of Exynos SoCs
+>   (https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35921.html)
+> - limit Exynos4412 SoC support to Trats2 board for now
+> 
+> Changes since v4:
+> - rebased on top of next-20140804 +
+>   [PATCH v5][next-20140804] ARM: EXYNOS: Fix suspend/resume sequences
+>   (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35262.html)
+>   [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
+>   (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34282.html)
+> - call exynos_save_cp15() only on A9 type core (this is needed for the future
+>   Exynos3250 SoC support)
+> 
+> Changes since v3:
+> - rebased on top of next-20140804 +
+>   [PATCH v4][next-20140804] ARM: EXYNOS: Fix suspend/resume sequences
+>   (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35192.html)
+>   [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
+>   (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34282.html)
+> - (re-)added patch fixing S5P_CENTRAL_SEQ_OPTION register setup
+> 
+> Changes since v2:
+> - rebased on top of next-20140708 +
+>   [PATCH 5/6] ARM: EXYNOS: Fix suspend/resume sequencies
+>   (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32809.html)
+>   [with rejects fixed]
+>   [PATCH 6/6] ARM: EXYNOS: Register cpuidle device only on Exynos4210 and 5250
+>   (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32808.html)
+>   [PATCH 0/2] Firmware-assisted suspend/resume of Exynos SoCs
+>   (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg32991.html)
+>   [with rejects fixed in patch #2]
+> - addressed review comments from Tomasz Figa and Daniel Lezcano
+> 
+> Changes since v1:
+> - synced against next-20140602
+> - added missing Acked-by-s
+> 
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
+> 
+> Bartlomiej Zolnierkiewicz (5):
+>   ARM: EXYNOS: PM: replace EXYNOS_BOOT_VECTOR_* macros by static inlines
+>   ARM: EXYNOS: add AFTR mode support to firmware do_idle method
+>   ARM: EXYNOS: cpuidle: add secure firmware support to AFTR mode code
+>   ARM: EXYNOS: PM: fix register setup for AFTR mode code
+>   ARM: EXYNOS: cpuidle: allow driver usage on Exynos4x12 SoCs
+> 
+>  arch/arm/include/asm/firmware.h |  2 +-
+>  arch/arm/mach-exynos/common.h   |  5 ++++
+>  arch/arm/mach-exynos/exynos.c   |  5 +++-
+>  arch/arm/mach-exynos/firmware.c | 34 ++++++++++++++++-------
+>  arch/arm/mach-exynos/pm.c       | 60 ++++++++++++++++++++++++-----------------
+>  5 files changed, 71 insertions(+), 35 deletions(-)
+> 
+> --
+> 1.8.2.3
