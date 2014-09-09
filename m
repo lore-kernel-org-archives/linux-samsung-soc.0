@@ -1,28 +1,33 @@
 From: Peter Foley <pefoley2@pefoley.com>
-Subject: Re: [PATCH 1/3] kbuild: remove unnecessary "obj- := dummy.o" trick
-Date: Tue, 9 Sep 2014 12:21:56 -0400
-Message-ID: <CAOFdcFMs7j3CAnu4XSFCSaYwKub5KcTqyz97C=0U9KbcRZEGOg@mail.gmail.com>
-References: <1410258381-7088-1-git-send-email-yamada.m@jp.panasonic.com> <1410258381-7088-2-git-send-email-yamada.m@jp.panasonic.com>
+Subject: Re: [PATCH 2/3] kbuild: remove unnecessary variable initializaions
+Date: Tue, 9 Sep 2014 12:23:45 -0400
+Message-ID: <CAOFdcFOxDSJfT2J382c6X9ryWhtYdfZdBmhxDxrhEkxkiUwx4w@mail.gmail.com>
+References: <1410258381-7088-1-git-send-email-yamada.m@jp.panasonic.com> <1410258381-7088-3-git-send-email-yamada.m@jp.panasonic.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f170.google.com ([209.85.220.170]:43532 "EHLO
-	mail-vc0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751295AbaIIQWQ (ORCPT
+Received: from mail-vc0-f171.google.com ([209.85.220.171]:55539 "EHLO
+	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753967AbaIIQYG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Sep 2014 12:22:16 -0400
-Received: by mail-vc0-f170.google.com with SMTP id hy4so2599434vcb.15
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Sep 2014 09:22:16 -0700 (PDT)
-In-Reply-To: <1410258381-7088-2-git-send-email-yamada.m@jp.panasonic.com>
+	Tue, 9 Sep 2014 12:24:06 -0400
+Received: by mail-vc0-f171.google.com with SMTP id id10so17242640vcb.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Sep 2014 09:24:05 -0700 (PDT)
+In-Reply-To: <1410258381-7088-3-git-send-email-yamada.m@jp.panasonic.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Masahiro Yamada <yamada.m@jp.panasonic.com>
-Cc: linux-kbuild@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Mike Turquette <mturquette@linaro.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Simon Horman <horms+renesas@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Wolfram Sang <wsa@sang-engineering.com>, Takashi Yoshii <takasi-y@ops.dti.ne.jp>, Ulrich Hecht <ulrich.hecht@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org, Andrew Victor <linux@maxim.org.za>, Nicolas Ferre <nicolas.ferre@atmel.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Russell King <linux@arm.linux.org.uk>, Hartley Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Greg Ungerer <gerg@uclinux.org>, Ben Dooks <ben-linux@fluff.org>, Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>, linux-arm-kernel@lists.infradead.org, LKML <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
 
 On Tue, Sep 9, 2014 at 6:26 AM, Masahiro Yamada
 <yamada.m@jp.panasonic.com> wrote:
-> In these Makefiles, at least one of "obj-y" and "obj-" is non-empty,
-> hence built-in.o is always created without such a trick.
+> Clearing obj-y, obj-m, obj-n, obj- in each Makefile is
+> a useless habit.
+>
+> They are non-exported variables; therefore they are always empty
+> whenever descending into each subdirectory.
+> (Moreorver, obj-y and obj-m are also set to empty at the beginning
+> of scripts/Makefile.build)
 >
 > Signed-off-by: Masahiro Yamada <yamada.m@jp.panasonic.com>
 
