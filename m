@@ -1,43 +1,54 @@
-From: Mauro Carvalho Chehab <m.chehab@samsung.com>
-Subject: [PATCHv3 2/3] [media] s5p-jpeg: Fix compilation with COMPILE_TEST
-Date: Tue,  9 Sep 2014 15:54:05 -0300
-Message-ID: <e9793025e2d9a18dacfc302e2f032f2f49f9f746.1410288748.git.m.chehab@samsung.com>
-References: <6cbd00c5f2d342b573aaf9c0e533778374dd2e1e.1410273306.git.m.chehab@samsung.com>
- <5f850d5d45a27c50dabf3da08689cbedf986841b.1410288748.git.m.chehab@samsung.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v9 0/6] Add Maxim 77802 clocks support
+Date: Tue, 09 Sep 2014 13:57:39 -0700
+Message-ID: <20140909205739.19023.50828@quantum>
+References: <1408350784-15577-1-git-send-email-javier.martinez@collabora.co.uk>
+ <CABxcv=mww1wcf+vo5uLxBrNZBVJhj9zvbwGu_oAKXm4XDUNvCQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5f850d5d45a27c50dabf3da08689cbedf986841b.1410288748.git.m.chehab@samsung.com>
-In-Reply-To: <5f850d5d45a27c50dabf3da08689cbedf986841b.1410288748.git.m.chehab@samsung.com>
-References: <5f850d5d45a27c50dabf3da08689cbedf986841b.1410288748.git.m.chehab@samsung.com>
+In-Reply-To: <CABxcv=mww1wcf+vo5uLxBrNZBVJhj9zvbwGu_oAKXm4XDUNvCQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, Linux Media Mailing List <linux-media@vger.kernel.org>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Kamil Debski <k.debski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-next@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>
+To: Javier Martinez Canillas <javier@dowhile0.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Doug Anderson <dianders@chromium.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-ERROR: "__bad_ndelay" [drivers/media/platform/s5p-jpeg/s5p-jpeg.ko] undefined!
+Quoting Javier Martinez Canillas (2014-09-07 23:49:28)
+> Hello Mike,
+> 
+> On Mon, Aug 18, 2014 at 10:32 AM, Javier Martinez Canillas
+> <javier.martinez@collabora.co.uk> wrote:
+> > This series add support for the clocks present in the Maxim
+> > 77802 Power Managment IC. Previously, the series was part
+> > of a bigger one [0] that aimed to add support for all the
+> > devices in the max77802 PMIC. But now the Maxim 77802 PMIC
+> > dependencies were already merged for 3.17 so the series can
+> > be split and each driver can go through the relevant tree.
+> >
+> 
+> This series was first posted for 3.17 and you acked the whole set but
+> it missed 3.17 because had as a dependency some changes in the
+> max77802 mfd driver. Those dependencies made for 3.17 and that's why I
+> re-posted it for 3.18 about a month ago.
+> 
+> Since we are in 3.17-rc4 already, I'm afraid that this series may miss
+> 3.18 again, is there anything else you need from me to pick this
+> series? It will obviously conflict with Tomeu's "Per-user clock
+> constraints" series [0] so if you want I can rebase it on top of your
+> clk-next-tomeu-kirkwood-v2 branch [1].
 
-That happens because asm-generic doesn't like any ndelay time
-bigger than 20us.
+Thanks for pinging me about it. I've pulled this series into clk-next
+for 3.18. Everything is going to conflict with Tomeu's series so we'll
+just handle that when it comes to merge his series (which I've since
+removed from clk-next due to pending issues).
 
-Currently, usleep_range() couldn't simply be used, since
-exynos4_jpeg_sw_reset() is called with a spinlock held.
+Regards,
+Mike
 
-So, let's use udelay() instead.
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Mauro Carvalho Chehab <m.chehab@samsung.com>
-
-diff --git a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
-index e51c078360f5..ab6d6f43c96f 100644
---- a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
-+++ b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
-@@ -23,7 +23,7 @@ void exynos4_jpeg_sw_reset(void __iomem *base)
- 	reg = readl(base + EXYNOS4_JPEG_CNTL_REG);
- 	writel(reg & ~EXYNOS4_SOFT_RESET_HI, base + EXYNOS4_JPEG_CNTL_REG);
- 
--	ndelay(100000);
-+	udelay(100);
- 
- 	writel(reg | EXYNOS4_SOFT_RESET_HI, base + EXYNOS4_JPEG_CNTL_REG);
- }
--- 
-1.9.3
+> 
+> Thanks a lot and best regards,
+> Javier
+> 
+> [0]: https://lkml.org/lkml/2014/9/1/466
+> [1]: https://git.linaro.org/people/mike.turquette/linux.git/shortlog/refs/heads/clk-next-tomeu-kirkwood-v2
