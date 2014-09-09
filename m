@@ -1,54 +1,49 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: [PATCH v4] ARM: dts: exynos3250: add MFC codec device node
-Date: Tue, 09 Sep 2014 15:09:29 +0200
-Message-ID: <1410268169-18424-2-git-send-email-j.anaszewski@samsung.com>
-References: <1410268169-18424-1-git-send-email-j.anaszewski@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 0/9] drm/exynos: initialization/deinitialization fixes
+Date: Tue, 09 Sep 2014 15:16:04 +0200
+Message-ID: <1410268573-2297-1-git-send-email-a.hajda@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:34350 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756890AbaIINJm (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:38620 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750970AbaIINQ5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Sep 2014 09:09:42 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NBM00AFBXW38EB0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 09 Sep 2014 22:09:39 +0900 (KST)
-In-reply-to: <1410268169-18424-1-git-send-email-j.anaszewski@samsung.com>
+	Tue, 9 Sep 2014 09:16:57 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, dri-devel@lists.freedesktop.org, open list <linux-kernel@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
 
-Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/boot/dts/exynos3250.dtsi |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
+This set of patches contains fixes of initialization and deinitialization
+code of exynos_drm core and components.
+It is based on exynos-drm-next branch.
 
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index bbc1e4c..95cc5a1 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -294,6 +294,18 @@
- 			status = "disabled";
- 		};
- 
-+		mfc-codec@13400000 {
-+			compatible = "samsung,mfc-v7";
-+			reg = <0x13400000 0x10000>;
-+			interrupts = <0 102 0>;
-+			clock-names = "mfc", "sclk_mfc";
-+			clocks = <&cmu CLK_MFC>, <&cmu CLK_SCLK_MFC>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			samsung,power-domain = <&pd_mfc>;
-+			status = "disabled";
-+		};
-+
- 		serial_0: serial@13800000 {
- 			compatible = "samsung,exynos4210-uart";
- 			reg = <0x13800000 0x100>;
+Patchset has been tested on trats and universal_c210 platforms.
+
+Regards
+Andrzej
+
+
+Andrzej Hajda (9):
+  drm/exynos/ipp: traverse ipp drivers list safely
+  drm/exynos: fix drm driver de-initialization order
+  drm/exynos/fbdev: fix fbdev gem object cleanup
+  drm/exynos/fb: free exynos framebuffer on error
+  drm/exynos/crtc: fix framebuffer reference sequence
+  drm/exynos/dsi: unregister connector on removal
+  drm/exynos/dpi: unregister connector and panel on removal
+  drm/exynos/dp: unregister connector on removal
+  drm/exynos/hdmi: unregister connector on removal
+
+ drivers/gpu/drm/exynos/exynos_dp_core.c   | 4 +++-
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c  | 6 ++++++
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c   | 6 +++++-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c   | 8 ++++----
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c   | 9 ++++++---
+ drivers/gpu/drm/exynos/exynos_drm_fb.c    | 1 +
+ drivers/gpu/drm/exynos/exynos_drm_fbdev.c | 3 ---
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c   | 4 ++--
+ drivers/gpu/drm/exynos/exynos_hdmi.c      | 4 +++-
+ 9 files changed, 30 insertions(+), 15 deletions(-)
+
 -- 
-1.7.9.5
+1.9.1
