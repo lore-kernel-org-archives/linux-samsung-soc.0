@@ -1,78 +1,57 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH] Input: atmel_mxt_ts: Add of node type to the i2c table
-Date: Tue, 09 Sep 2014 12:21:09 +0200
-Message-ID: <540ED495.20609@collabora.co.uk>
-References: <1410249158-18192-1-git-send-email-sjoerd.simons@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:34549 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752521AbaIIKVO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Sep 2014 06:21:14 -0400
-In-Reply-To: <1410249158-18192-1-git-send-email-sjoerd.simons@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Masahiro Yamada <yamada.m@jp.panasonic.com>
+Subject: [PATCH 1/3] kbuild: remove unnecessary "obj- := dummy.o" trick
+Date: Tue,  9 Sep 2014 19:26:19 +0900
+Message-ID: <1410258381-7088-2-git-send-email-yamada.m@jp.panasonic.com>
+References: <1410258381-7088-1-git-send-email-yamada.m@jp.panasonic.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1410258381-7088-1-git-send-email-yamada.m@jp.panasonic.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kbuild@vger.kernel.org
+Cc: Masahiro Yamada <yamada.m@jp.panasonic.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Mike Turquette <mturquette@linaro.org>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Simon Horman <horms+renesas@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Wolfram Sang <wsa@sang-engineering.com>, Takashi Yoshii <takasi-y@ops.dti.ne.jp>, Ulrich Hecht <ulrich.hecht@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Nick Dyer <nick.dyer@itdev.co.uk>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Lee Jones <lee.jones@linaro.org>
 
-[adding Lee Jones to cc list since I'm referring on a series he posted]
+In these Makefiles, at least one of "obj-y" and "obj-" is non-empty,
+hence built-in.o is always created without such a trick.
 
-Hello Sjoerd,
+Signed-off-by: Masahiro Yamada <yamada.m@jp.panasonic.com>
+---
 
-On 09/09/2014 09:52 AM, Sjoerd Simons wrote:
-> For i2c devices in OF the modalias exposed to userspace is i2c:<node
-> type>, for the Maxtouch driver this is i2c:maxtouch.
-> 
-> Add maxtouch to the i2c id table such that userspace can correctly
-> load the module for the device and drop the OF table as it's not
-> needed for i2c devices.
-> 
-> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-> ---
->  drivers/input/touchscreen/atmel_mxt_ts.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-> index db178ed..57ff26d 100644
-> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
-> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-> @@ -2267,16 +2267,11 @@ static int mxt_resume(struct device *dev)
->  
->  static SIMPLE_DEV_PM_OPS(mxt_pm_ops, mxt_suspend, mxt_resume);
->  
-> -static const struct of_device_id mxt_of_match[] = {
-> -	{ .compatible = "atmel,maxtouch", },
-> -	{},
-> -};
-> -MODULE_DEVICE_TABLE(of, mxt_of_match);
-> -
->  static const struct i2c_device_id mxt_id[] = {
->  	{ "qt602240_ts", 0 },
->  	{ "atmel_mxt_ts", 0 },
->  	{ "atmel_mxt_tp", 0 },
-> +	{ "maxtouch", 0 },
->  	{ "mXT224", 0 },
->  	{ }
->  };
-> @@ -2286,7 +2281,6 @@ static struct i2c_driver mxt_driver = {
->  	.driver = {
->  		.name	= "atmel_mxt_ts",
->  		.owner	= THIS_MODULE,
-> -		.of_match_table = of_match_ptr(mxt_of_match),
->  		.pm	= &mxt_pm_ops,
->  	},
->  	.probe		= mxt_probe,
-> 
+ arch/arm/plat-samsung/Makefile | 1 -
+ drivers/clk/shmobile/Makefile  | 2 --
+ drivers/net/wimax/Makefile     | 4 ----
+ 3 files changed, 7 deletions(-)
 
-I see that Lee is working to allow the I2C subsystem to not need an I2C ID
-table to match [0]. I'll let Lee to comment what the future plans are and if
-his series are going to solve your issue since I'm not that familiar with the
-I2C core.
-
-Best regards,
-Javier
-
-[0]: https://lkml.org/lkml/2014/6/20/199
+diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
+index 5fe1750..a402262 100644
+--- a/arch/arm/plat-samsung/Makefile
++++ b/arch/arm/plat-samsung/Makefile
+@@ -8,7 +8,6 @@ ccflags-$(CONFIG_ARCH_MULTI_V7) += -I$(srctree)/$(src)/include
+ 
+ obj-y				:=
+ obj-m				:=
+-obj-n				:= dummy.o
+ obj-				:=
+ 
+ # Objects we always build independent of SoC choice
+diff --git a/drivers/clk/shmobile/Makefile b/drivers/clk/shmobile/Makefile
+index e002923..9aab51c8 100644
+--- a/drivers/clk/shmobile/Makefile
++++ b/drivers/clk/shmobile/Makefile
+@@ -6,5 +6,3 @@ obj-$(CONFIG_ARCH_R8A7790)		+= clk-rcar-gen2.o
+ obj-$(CONFIG_ARCH_R8A7791)		+= clk-rcar-gen2.o
+ obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-div6.o
+ obj-$(CONFIG_ARCH_SHMOBILE_MULTI)	+= clk-mstp.o
+-# for emply built-in.o
+-obj-n	:= dummy
+diff --git a/drivers/net/wimax/Makefile b/drivers/net/wimax/Makefile
+index 992bc02..692184d 100644
+--- a/drivers/net/wimax/Makefile
++++ b/drivers/net/wimax/Makefile
+@@ -1,5 +1 @@
+-
+ obj-$(CONFIG_WIMAX_I2400M)	+= i2400m/
+-
+-# (from Sam Ravnborg) force kbuild to create built-in.o
+-obj- := dummy.o
+-- 
+1.9.1
