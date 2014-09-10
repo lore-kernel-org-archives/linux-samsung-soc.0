@@ -1,37 +1,45 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH] clk: samsung: exynos5260: fix typo in clock name
-Date: Wed, 10 Sep 2014 11:26:05 +0530
-Message-ID: <1410328565-25122-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, mturquette@linaro.org, Chander Kashyap <k.chander@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v9 0/6] Add Maxim 77802 clocks support
+Date: Wed, 10 Sep 2014 09:18:03 +0200
+Message-ID: <540FFB2B.6010203@collabora.co.uk>
+References: <1408350784-15577-1-git-send-email-javier.martinez@collabora.co.uk> <CABxcv=mww1wcf+vo5uLxBrNZBVJhj9zvbwGu_oAKXm4XDUNvCQ@mail.gmail.com> <20140909205739.19023.50828@quantum>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:35136 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750791AbaIJHSJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 10 Sep 2014 03:18:09 -0400
+In-Reply-To: <20140909205739.19023.50828@quantum>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>, Javier Martinez Canillas <javier@dowhile0.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Yadwinder Singh Brar <yadi.brar01@gmail.com>, Doug Anderson <dianders@chromium.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-From: Chander Kashyap <k.chander@samsung.com>
+Hello Mike,
 
-The parent name added in parent list as
-mout_phyclk_mipi_dphy_4l_m_txbyte_clkhs_p, is different
-than the defined parent due to typo.
+On 09/09/2014 10:57 PM, Mike Turquette wrote:
+> Quoting Javier Martinez Canillas (2014-09-07 23:49:28)
+>> 
+>> Since we are in 3.17-rc4 already, I'm afraid that this series may miss
+>> 3.18 again, is there anything else you need from me to pick this
+>> series? It will obviously conflict with Tomeu's "Per-user clock
+>> constraints" series [0] so if you want I can rebase it on top of your
+>> clk-next-tomeu-kirkwood-v2 branch [1].
+> 
+> Thanks for pinging me about it. I've pulled this series into clk-next
+> for 3.18. Everything is going to conflict with Tomeu's series so we'll
+> just handle that when it comes to merge his series (which I've since
+> removed from clk-next due to pending issues).
+> 
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-Signed-off-by: Chander Kashyap <k.chander@samsung.com>
----
- drivers/clk/samsung/clk-exynos5260.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Great, thanks a lot!
 
-diff --git a/drivers/clk/samsung/clk-exynos5260.c b/drivers/clk/samsung/clk-exynos5260.c
-index 64596ba..4db4e8d 100644
---- a/drivers/clk/samsung/clk-exynos5260.c
-+++ b/drivers/clk/samsung/clk-exynos5260.c
-@@ -1579,7 +1579,7 @@ struct samsung_fixed_rate_clock fixed_rate_clks[] __initdata = {
- 	FRATE(PHYCLK_HDMI_LINK_O_TMDS_CLKHI, "phyclk_hdmi_link_o_tmds_clkhi",
- 			NULL, CLK_IS_ROOT, 125000000),
- 	FRATE(PHYCLK_MIPI_DPHY_4L_M_TXBYTECLKHS,
--			"phyclk_mipi_dphy_4l_m_txbyteclkhs" , NULL,
-+			"phyclk_mipi_dphy_4l_m_txbyte_clkhs" , NULL,
- 			CLK_IS_ROOT, 187500000),
- 	FRATE(PHYCLK_DPTX_PHY_O_REF_CLK_24M, "phyclk_dptx_phy_o_ref_clk_24m",
- 			NULL, CLK_IS_ROOT, 24000000),
--- 
-1.7.9.5
+> Regards,
+> Mike
+> 
+
+Best regards,
+Javier
