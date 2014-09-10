@@ -1,7 +1,7 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v3 7/7] ARM: exynos_defconfig: Enable MAX77802
-Date: Wed, 10 Sep 2014 12:19:51 +0200
-Message-ID: <1410344391-5675-8-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v3 4/7] ARM: dts: Add thermistor dts fragment used by exynos based Peach boards
+Date: Wed, 10 Sep 2014 12:19:48 +0200
+Message-ID: <1410344391-5675-5-git-send-email-javier.martinez@collabora.co.uk>
 References: <1410344391-5675-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1410344391-5675-1-git-send-email-javier.martinez@collabora.co.uk>
@@ -10,46 +10,115 @@ To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Andreas Faerber <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Vivek Gautam <gautam.vivek@samsung.com>
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 
-Enabled MAX77802 pmic for exynos systems.
-One config USB_ANNOUNCE_NEW_DEVICES to display device
-information on connect.
-Another config for I2C_CHARDEV to see i2c device nodes.
+This patch creates a thermistor fragment carrying the NTC Thermistor
+nodes as children of the IIO based ADC.
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+This fragment is included in exynos5420-peach-pit.dts and
+exynos5800-peach-pi.dts.
+
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Reviewed-by: Doug Anderson <dianders@chromium.org>
 ---
- arch/arm/configs/exynos_defconfig | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/cros-adc-thermistors.dtsi | 44 +++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts  |  6 ++++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts   |  6 ++++
+ 3 files changed, 56 insertions(+)
+ create mode 100644 arch/arm/boot/dts/cros-adc-thermistors.dtsi
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 676c744..fbbac06 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -68,6 +68,7 @@ CONFIG_HW_RANDOM=y
- CONFIG_TCG_TPM=y
- CONFIG_TCG_TIS_I2C_INFINEON=y
- CONFIG_I2C=y
-+CONFIG_I2C_CHARDEV=y
- CONFIG_I2C_MUX=y
- CONFIG_I2C_ARB_GPIO_CHALLENGE=y
- CONFIG_I2C_EXYNOS5=y
-@@ -97,6 +98,7 @@ CONFIG_REGULATOR_FIXED_VOLTAGE=y
- CONFIG_REGULATOR_GPIO=y
- CONFIG_REGULATOR_MAX8997=y
- CONFIG_REGULATOR_MAX77686=y
-+CONFIG_REGULATOR_MAX77802=y
- CONFIG_REGULATOR_S2MPA01=y
- CONFIG_REGULATOR_S2MPS11=y
- CONFIG_REGULATOR_S5M8767=y
-@@ -116,6 +118,7 @@ CONFIG_SND_SOC=y
- CONFIG_SND_SOC_SAMSUNG=y
- CONFIG_SND_SOC_SNOW=y
- CONFIG_USB=y
-+CONFIG_USB_ANNOUNCE_NEW_DEVICES=y
- CONFIG_USB_XHCI_HCD=y
- CONFIG_USB_EHCI_HCD=y
- CONFIG_USB_EHCI_EXYNOS=y
+diff --git a/arch/arm/boot/dts/cros-adc-thermistors.dtsi b/arch/arm/boot/dts/cros-adc-thermistors.dtsi
+new file mode 100644
+index 0000000..acd4fe1
+--- /dev/null
++++ b/arch/arm/boot/dts/cros-adc-thermistors.dtsi
+@@ -0,0 +1,44 @@
++/*
++ * Thermistor dts fragment for devices that use Thermistors as
++ * children of the IIO based ADC.
++ *
++ * Currently, used by Exynos5420 based Peach PIT and
++ * Exynos5800 based Peach PI.
++ *
++ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++&adc {
++	ncp15wb473@3 {
++		compatible = "murata,ncp15wb473";
++		pullup-uv = <1800000>;
++		pullup-ohm = <47000>;
++		pulldown-ohm = <0>;
++		io-channels = <&adc 3>;
++	};
++	ncp15wb473@4 {
++		compatible = "murata,ncp15wb473";
++		pullup-uv = <1800000>;
++		pullup-ohm = <47000>;
++		pulldown-ohm = <0>;
++		io-channels = <&adc 4>;
++	};
++	ncp15wb473@5 {
++		compatible = "murata,ncp15wb473";
++		pullup-uv = <1800000>;
++		pullup-ohm = <47000>;
++		pulldown-ohm = <0>;
++		io-channels = <&adc 5>;
++	};
++	ncp15wb473@6 {
++		compatible = "murata,ncp15wb473";
++		pullup-uv = <1800000>;
++		pullup-ohm = <47000>;
++		pulldown-ohm = <0>;
++		io-channels = <&adc 6>;
++	};
++};
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index 88f1620..07115b7 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -103,6 +103,11 @@
+ 	};
+ };
+ 
++&adc {
++	status = "okay";
++	vdd-supply = <&ldo9_reg>;
++};
++
+ &dp {
+ 	status = "okay";
+ 	pinctrl-names = "default";
+@@ -813,3 +818,4 @@
+ };
+ 
+ #include "cros-ec-keyboard.dtsi"
++#include "cros-adc-thermistors.dtsi"
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index 7c2095b..1c128e1 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -101,6 +101,11 @@
+ 	};
+ };
+ 
++&adc {
++	status = "okay";
++	vdd-supply = <&ldo9_reg>;
++};
++
+ &dp {
+ 	status = "okay";
+ 	pinctrl-names = "default";
+@@ -811,3 +816,4 @@
+ };
+ 
+ #include "cros-ec-keyboard.dtsi"
++#include "cros-adc-thermistors.dtsi"
 -- 
 2.1.0
