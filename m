@@ -1,129 +1,148 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ARM: dts: Specify default clocks for Exynos4 FIMC devices
-Date: Wed, 10 Sep 2014 18:37:34 +0200
-Message-ID: <1410367054-30926-1-git-send-email-s.nawrocki@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: Unable to boot mainline on snow chromebook since 3.15
+Date: Wed, 10 Sep 2014 09:45:21 -0700
+Message-ID: <CAD=FV=W0qQZF58AvF8kZW+z4CsfnruQZLw_TA-eGy3fUruLbcg@mail.gmail.com>
+References: <540C7F5B.6070307@gmail.com>
+	<540C83DE.10505@collabora.co.uk>
+	<540C8577.2070907@gmail.com>
+	<20140908112112.GK26030@arm.com>
+	<CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
+	<CAD=FV=VAqzvJQDQMjjeQ1p5okyDzE=ff_sguObZxh59qbzcaTQ@mail.gmail.com>
+	<CACxGe6t_ex1bU=CvTpXR4VJgNf1hAq33hr6ykbHy_sMXEk4h-g@mail.gmail.com>
+	<CAOesGMipX3MV6sMWLuY=D+bQ6qe8P17YFbTFwZOHPeSc3Pw9Cg@mail.gmail.com>
+	<20140910143144.GF7960@sirena.org.uk>
+	<CACxGe6u=QkGTKGfaE_jJ5VFMhdVKQNggp3qVBUgNP7rDbZss_A@mail.gmail.com>
+	<20140910153919.GH7960@sirena.org.uk>
+	<CACxGe6uBcTPMh4p=oi7m_TVpjUrkgbQvxbStAn27HXEJxYe5fw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:60787 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751472AbaIJQht (ORCPT
+Received: from mail-vc0-f178.google.com ([209.85.220.178]:44672 "EHLO
+	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751647AbaIJQpW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Sep 2014 12:37:49 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NBP00E3D270TK70@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Sep 2014 01:37:48 +0900 (KST)
+	Wed, 10 Sep 2014 12:45:22 -0400
+Received: by mail-vc0-f178.google.com with SMTP id hy4so4200329vcb.37
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Sep 2014 09:45:21 -0700 (PDT)
+In-Reply-To: <CACxGe6uBcTPMh4p=oi7m_TVpjUrkgbQvxbStAn27HXEJxYe5fw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-The default mux and divider clocks are specified in device tree
-so that the FIMC devices in Exynos4210 and Exynos4x12 SoCs are
-clocked from recommended clock source and with maximum supported
-frequency. If needed these settings could be overrode in board
-specific dts files, however they are in practice optimal in most
-cases.
+Grant,
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- arch/arm/boot/dts/exynos4210.dtsi |   16 ++++++++++++++++
- arch/arm/boot/dts/exynos4x12.dtsi |   16 ++++++++++++++++
- 2 files changed, 32 insertions(+)
+On Wed, Sep 10, 2014 at 9:29 AM, Grant Likely <grant.likely@secretlab.ca> wrote:
+> On Wed, Sep 10, 2014 at 4:39 PM, Mark Brown <broonie@kernel.org> wrote:
+>> On Wed, Sep 10, 2014 at 03:56:16PM +0100, Grant Likely wrote:
+>>> On Wed, Sep 10, 2014 at 3:31 PM, Mark Brown <broonie@kernel.org> wrote:
+>>
+>>> > As far as I can tell the problem here is coming from the decision to
+>>> > have simplefb use resources without knowing about them - can we agree
+>>> > that this is a bad idea?
+>>
+>>> No, I don't think we can... there is a certain amount of "firmware got
+>>> things working for us, and we're going to use it for a while" that is
+>>> absolutely reasonable. simplefb is a good example, but there are
+>>> certainly others.
+>>
+>> That bit is fine - I definitely think it's reasonable to have things
+>> like this where the device is initialized prior to the kernel starting
+>> and we use some simplified subset.  What I think is a big problem here
+>> is that we're not being told what parts of the system state are relevant
+>> to this initialization (worse, we're being told things that are actively
+>> wrong for some of the resources).  This seems inherently fragile.
+>>
+>>> I /do/ think it would be better for the simplefb data to get embedded
+>>> or linked into the node of the graphics controller so that it can be
+>>> torn down appropriately, and we need a rule for how long boot-state
+>>> can be considered valid so that a proper driver can either reserve the
+>>> resources for a given SoC, or do a full handoff from the simplefb.
+>>> Even without that though, we need to be able to handle the case of an
+>>> anonymous simplefb node with no regulator information. If that means
+>>> the default simplefb behaviour is to inhibit runtime pm on all
+>>> resources until a real driver show up, then that might just be what we
+>>> need to do.
+>>
+>> I think saying that it's a good idea to have an simplefb node without
+>> resource management is exactly the problem here - if we start from the
+>> assumption that this is a good idea we do get dragged down this path but
+>> it seems like we took a wrong turn going that way in the first place.
+>>
+>> It's not just regulators - we've got exactly the same problem with
+>> clocks on this system for example, they're also getting disabled because
+>> they seem unused and users have to pass in a kernel command line bodge
+>> to avoid that.  We'd also have an issue if something decided to change
+>> the rates of some of the clocks, and power domains have the same problem
+>> (Ulf's patches to genericise their code has the same behaviour with
+>> regard to powering off unused domains, some of the existing
+>> implementations do that already).
+>>
+>>> Two things should probably be changed from the current setup. 1)
+>>> simplefb shouldn't be a platform driver. It is a boot thing that
+>>> handles initial state from the graphics chip. By implementing it as a
+>>> platform driver, it prevents the real driver from binding to the real
+>>> device if the simplefb data embedded into it. 2) make sure that an SoC
+>>> driver can protect the needed resources before they are automatically
+>>> disabled. Either by putting them in an earlier initcall, or handling
+>>> it in the subsystem code. I don't know enough about the regulator and
+>>> clock runtime PM to know what the best way to do this is.
+>>
+>> Right, I agree with what you're saying here but what I'm saying is that
+>> the way to ensure that the resources are protected is for the simplefb
+>> node to tell the kernel what resources are being used, otherwise it
+>> seems like we're just guessing and will fall over ourselves sooner or
+>> later.
+>>
+>> We can't use initcall hacks as these only work in cases where we will at
+>> some point hand over to a real driver and there seems to be a clear use
+>> case for using simplefb prior to that driver being written; even where
+>> we will hand over to a real driver we can't put a definite timescale on
+>> that happening since in the distro case it might be being loaded from
+>> disk at some point after userspace is running.
+>
+> What we can do is have an inhibit flag for
+> simplefb/simpleuart/simplewhatever that holds off PM. When a real
+> driver, or a stub that understands parsing the resource dependencies,
+> takes ownership of the device (or userspace tells the kernel to stop
+> caring) it can clear the inhibit.
 
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 807bb5b..0969d2e 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -154,18 +154,30 @@
- 			samsung,pix-limits = <4224 8192 1920 4224>;
- 			samsung,mainscaler-ext;
- 			samsung,cam-if;
-+			assigned-clocks = <&clock CLK_MOUT_FIMC0>,
-+					<&clock CLK_SCLK_FIMC0>;
-+			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
-+			assigned-clock-rates = <0>, <160000000>;
- 		};
- 
- 		fimc_1: fimc@11810000 {
- 			samsung,pix-limits = <4224 8192 1920 4224>;
- 			samsung,mainscaler-ext;
- 			samsung,cam-if;
-+			assigned-clocks = <&clock CLK_MOUT_FIMC1>,
-+					<&clock CLK_SCLK_FIMC1>;
-+			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
-+			assigned-clock-rates = <0>, <160000000>;
- 		};
- 
- 		fimc_2: fimc@11820000 {
- 			samsung,pix-limits = <4224 8192 1920 4224>;
- 			samsung,mainscaler-ext;
- 			samsung,lcd-wb;
-+			assigned-clocks = <&clock CLK_MOUT_FIMC2>,
-+					<&clock CLK_SCLK_FIMC2>;
-+			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
-+			assigned-clock-rates = <0>, <160000000>;
- 		};
- 
- 		fimc_3: fimc@11830000 {
-@@ -173,6 +185,10 @@
- 			samsung,rotators = <0>;
- 			samsung,mainscaler-ext;
- 			samsung,lcd-wb;
-+			assigned-clocks = <&clock CLK_MOUT_FIMC3>,
-+					<&clock CLK_SCLK_FIMC3>;
-+			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
-+			assigned-clock-rates = <0>, <160000000>;
- 		};
- 	};
- };
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index 861bb91..38ba14f 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -162,6 +162,10 @@
- 			samsung,mainscaler-ext;
- 			samsung,isp-wb;
- 			samsung,cam-if;
-+			assigned-clocks = <&clock CLK_MOUT_FIMC0>,
-+					<&clock CLK_SCLK_FIMC0>;
-+			assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
-+			assigned-clock-rates = <0>, <176000000>;
- 		};
- 
- 		fimc_1: fimc@11810000 {
-@@ -170,6 +174,10 @@
- 			samsung,mainscaler-ext;
- 			samsung,isp-wb;
- 			samsung,cam-if;
-+			assigned-clocks = <&clock CLK_MOUT_FIMC1>,
-+					<&clock CLK_SCLK_FIMC1>;
-+			assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
-+			assigned-clock-rates = <0>, <176000000>;
- 		};
- 
- 		fimc_2: fimc@11820000 {
-@@ -179,6 +187,10 @@
- 			samsung,isp-wb;
- 			samsung,lcd-wb;
- 			samsung,cam-if;
-+			assigned-clocks = <&clock CLK_MOUT_FIMC2>,
-+					<&clock CLK_SCLK_FIMC2>;
-+			assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
-+			assigned-clock-rates = <0>, <176000000>;
- 		};
- 
- 		fimc_3: fimc@11830000 {
-@@ -188,6 +200,10 @@
- 			samsung,mainscaler-ext;
- 			samsung,isp-wb;
- 			samsung,lcd-wb;
-+			assigned-clocks = <&clock CLK_MOUT_FIMC3>,
-+					<&clock CLK_SCLK_FIMC3>;
-+			assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
-+			assigned-clock-rates = <0>, <176000000>;
- 		};
- 
- 		fimc_lite_0: fimc-lite@12390000 {
--- 
-1.7.9.5
+This doesn't seem crazy, though it means that if you're planning on
+using nothing but simplefb then you're never going to be able to get
+any power savings anywhere.
+
+Right now I know that clock disabling is supposed to be inhibited
+during the early boot process.  I think regulators too?
+
+
+> I don't want to build knowledge of resource dependencies into the
+> simple case. We'll simply frequently get it wrong. For example: A
+> future kernel will have better PM and will turn off more devices which
+> isn't accounted for in an older DT.
+
+In IRC I made a suggestion that perhaps the "simplefb" ought to be put
+in the main in-kernel "dts" file but with no address information and
+set to "disabled".  Then the firmware can do something very simple:
+set to enabled and fill in the address.
+
+Right now the firmware is taking a dts that it doesn't really own (it
+grabs it from the kernel FIT image) and making changes to it to add
+simplefb.  That's inherently pretty fragile.  If the kernel DTS file
+adds regulators then as we saw things break.  I can imagine lots of
+other breakages, too.  If the dts is in kernel then we can add
+regulator / clock references very easily.  As regulators are added to
+the kernel dts file then the references can be added to simplefb.
+
+That doesn't solve the problem with people who have old copies of
+U-Boot.  All of those people have already flashed a custom firmware
+though, so it doesn't seem unreasonable (to me) to solve their problem
+by giving them a new custom firmware.  I agree that something needs to
+be done to help those people, but I don't feel like adding extra hacks
+to the kernel is the right answer to solve people who are clearly
+living on the bleeding edge.
+
+
+Note that I haven't actually worked with simplefb or the custom
+U-Boots, so perhaps there's something I'm missing...
+
+-Doug
