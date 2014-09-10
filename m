@@ -1,156 +1,53 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v6 4/4] phy: exynos5-usbdrd: Calibrate LOS levels for
- exynos5420/5800
-Date: Tue, 9 Sep 2014 23:53:28 -0500
-Message-ID: <20140910045328.GA32475@saruman.home>
-References: <CAFp+6iEyqmbwMLFrBKD7NVLDAC=b+h1hPKFS=BG4k9D69hn_dg@mail.gmail.com>
- <20140903144225.GD31855@saruman.home>
- <CAFp+6iETPJCWMMkjHrpDcdCv=K0PbefYLa4eBOwN=aUY2=EHLA@mail.gmail.com>
- <20140905175651.GK24449@saruman.home>
- <CAFp+6iGU86yL8Ry3ArJJjBy2Cs0Em2B49yssH3BK5fJwyaZbtA@mail.gmail.com>
- <20140908134454.GK22409@saruman.home>
- <CAFp+6iG+gmD_JseytYuVQcRK9ErOqQrUEWJoU1KUU7PqMd=aRw@mail.gmail.com>
- <20140909144225.GF6151@saruman.home>
- <CAFp+6iHJKmeothDM67WW60Sqqj8BQroBCzZ8zecKwM_GcYL8HA@mail.gmail.com>
- <CAFp+6iHRJ5oAA+K1Y0Y2uadPhsR6wmrd13DM39dqiL4jj+swHg@mail.gmail.com>
-Reply-To: balbi@ti.com
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v2 0/5] Add max77802 support for Peach boards
+Date: Tue, 9 Sep 2014 21:58:00 -0700
+Message-ID: <CAD=FV=UuT_78kWS274jY1y69XQoYCadgfAHXjdBaJdJDsVk-pw@mail.gmail.com>
+References: <1408533593-32346-1-git-send-email-javier.martinez@collabora.co.uk>
+	<CABxcv==ycrPw1MTv7X0baX2WfqgDS+4EEfGAWc+ZhpiR6=Uy+Q@mail.gmail.com>
+	<04ab01cfcbe0$caeac4d0$60c04e70$@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2851534998753057530=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAFp+6iHRJ5oAA+K1Y0Y2uadPhsR6wmrd13DM39dqiL4jj+swHg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Jingoo Han <jg1.han@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Mathias Nyman <mathias.nyman@intel.com>, Greg KH <gregkh@linuxfoundation.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, kishon <kishon@ti.com>, Julius Werner <jwerner@google.com>, Alan Stern <stern@rowland.harvard.edu>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Julius Werner <jwerner@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <04ab01cfcbe0$caeac4d0$60c04e70$@kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: kgene@kernel.org
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Linux Kernel <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rahul Sharma <rahul.sharma@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
---===============2851534998753057530==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
-Content-Disposition: inline
+Hi,
 
---d6Gm4EdcadzBjdND
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, Sep 8, 2014 at 8:47 PM,  <kgene@kernel.org> wrote:
+> Javier Martinez Canillas wrote:
+>>
+>> Hello Kukjin,
+>>
+> Hi,
+>
+>> On Wed, Aug 20, 2014 at 1:19 PM, Javier Martinez Canillas
+>> <javier.martinez@collabora.co.uk> wrote:
+>> >
+>> > This is a second version of the series that adds max77802 support for
+>> > the Peach Pit and Pi boards. The series also have all the pending
+>> > patches that were posted but depended on this support. I've picked
+>> > all the patches I found and rebased them to be sure that they apply
+>> > cleanly on top of linux-next. Also I've taken some DT snippets from
+>> > the downstream Chrome OS 3.8 kernel DTS for devices that use one of
+>> > these regulators as their input supply.
+>> >
+>>
+>> Any comments on this series?
+>>
+> Looks good to me but I just wanted to get ack from chrome guy, Doug? But since
+> Naveen tested, it should be fine I think. I'll take the series.
 
-On Wed, Sep 10, 2014 at 09:09:57AM +0530, Vivek Gautam wrote:
-> On Wed, Sep 10, 2014 at 9:07 AM, Vivek Gautam <gautam.vivek@samsung.com> =
-wrote:
-> > adding Julius here,
->=20
-> i think i had missed adding Julius for this entire series :-(
-> I should be more careful with the CC list in future.
-> Added his chromium id, since that seems to be more active.
->=20
-> >
-> >
-> > On Tue, Sep 9, 2014 at 8:12 PM, Felipe Balbi <balbi@ti.com> wrote:
-> >> On Tue, Sep 09, 2014 at 07:19:50AM +0530, Vivek Gautam wrote:
-> >>> Hi,
-> >>>
-> >>>
-> >>> On Mon, Sep 8, 2014 at 7:14 PM, Felipe Balbi <balbi@ti.com> wrote:
-> >>> > Hi,
-> >>> >
-> >>> > On Mon, Sep 08, 2014 at 09:53:09AM +0530, Vivek Gautam wrote:
-> >>> >> On Fri, Sep 5, 2014 at 11:26 PM, Felipe Balbi <balbi@ti.com> wrote:
-> >>> >> > On Thu, Sep 04, 2014 at 12:01:19PM +0530, Vivek Gautam wrote:
-> >>> >> >> > Don't we have phy_power_on()
-> >>> >> >> > for that ? It looks like you could just as well do this from
-> >>> >> >> > phy_power_on() ?
-> >>> >> >>
-> >>> >> >> No, unfortunately keeping these calibration settings in phy_pow=
-er_on()
-> >>> >> >> doesn't help, since we need to do this after XHCI reset has hap=
-pened.
-> >>> >> >
-> >>> >> > teach xHCI about PHYs ?
-> >>> >>
-> >>> >> sorry i couldn't understand you here.
-> >>> >> Aren't we trying to do the same with Heikki's patch about dwc3 :
-> >>> >> [PATCH 6/6] usb: dwc3: host: convey the PHYs to xhci
-> >>> >>
-> >>> >> and the 2nd patch in this series :
-> >>> >> [PATCH v6 2/4] usb: host: xhci-plat: Get PHYs for xhci's hcds
-> >>> >>
-> >>> >> Is there something else that is expected ?
-> >>> >
-> >>> > right, use that to call phy_init() at the right time, then you need=
- to
-> >>> > add a new ->calibrate() method which, likely, will only be used by =
-you
-> >>> > ;-)
-> >>>
-> >>> so you mean, the xhci should itself call phy_init() at a time suitabl=
-e,
-> >>> so that ->calibrate() is not required at all ?
-> >>>
-> >>> i think you meant there - "then you __do not__ need to
-> >>
-> >> right :-)
-> >
-> > alright, i will prepare a patch for the suggested change.
-> >
-> > But AFAI remember we had discussion for this patch in earlier
-> > version, and Julius suggested to use a generic approach for such
-> > change wherein other users in future may be able to use the
-> > facility.
+I haven't had crazy amounts of time to review pit/pi patches recently,
+but luckily Javier has been picking up my slack.  I think he's more of
+a maintainer for these file than I am at this point.
 
-right, and what's more generic than adding the support for PHYs straight
-into xHCI ?
+...but I did do a quick skim / compare to our tree and found one small
+bug (see patch #1) and added my Reviewed-by tags.
 
-What I fear is that we end up opening the doors for every odd
-platform-specific operation to be added to the framework without really
-considering what needs to be done. That would defeat the idea of having
-a generic framework altogether.
-
-cheers
-
---=20
-balbi
-
---d6Gm4EdcadzBjdND
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUD9lIAAoJEIaOsuA1yqREjQQQAKGPe5DdtVF8lgqzyrDml5J+
-2dlaXKlL8/TFUhU/P/hScwU4zc31gOZhNJ0V9fR9p9bhQxWpWXEsepuPy3unk4Sr
-DbSgaVXC3cvS++4pWKsJoRcDeid0C+K++vMlgRqY2mzhY4wYzvtDMjIsf6CQ0fdf
-7PFsap9E0N7Qn/nlzFxV2qLYWdoVygc9639qpHVK+v/HOMRTePfLT7EachY6H6TL
-X04qx414MYyBGi2Xk/RFGHcuzChN6PTMImFoKnCappBc5egOJHpJBZC03aaxxHfB
-nVBQ5tRnxvt5cXNAikqnLIT3m/Ot5ckMPdythjfis1uoXkxYqj+1NkJleDDlZiQC
-goydyPTxCPu+cp/YGTxBIoZIR0iWaEFhvUz5wiuY7+SDTWelQGz/JlcDwzyT2seU
-lOTfdGF3MVGdptkPPeufXlbWJmzIK9E43J7EmdYJdXSSyTgnPd4vvwSFhMw/9Jge
-i12FVH8oNWr5Vanf6Zw+SoLPy3KGwNDEqsBjn5lThgJzh2U9sUpayrgdF3tEVQMm
-sJfVyKoYpxag2aRkVfReCP7Ia/iQogJBViaICefdZ1gor2gRW0ByRYhxYXG/CybR
-nEUAp2iAxYi5VKZxH3MuNFgHRKGxo6YGaIsl/5ls/Nwo9Q9dGKIb8m+j3oANjd3S
-2x5tpmxZl1u937W9AD1Z
-=93B6
------END PGP SIGNATURE-----
-
---d6Gm4EdcadzBjdND--
+-Doug
 
 
---===============2851534998753057530==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============2851534998753057530==--
+-Doug
