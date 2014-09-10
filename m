@@ -1,67 +1,59 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: Unable to boot mainline on snow chromebook since 3.15
-Date: Wed, 10 Sep 2014 12:17:28 +0100
-Message-ID: <20140910111728.GG28488@arm.com>
-References: <20140905122232.GP13515@arm.com>
- <CAD=FV=VfioJf9VYoSYL0QBk-bN93-Ecx3=0n9hb5Q4rcx43-_g@mail.gmail.com>
- <540C202E.2060009@collabora.co.uk>
- <540C7F5B.6070307@gmail.com>
- <540C83DE.10505@collabora.co.uk>
- <540C8577.2070907@gmail.com>
- <20140908112112.GK26030@arm.com>
- <CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
- <20140908134937.GK4015@sirena.org.uk>
- <540DB7B4.4060300@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v4 0/3] Add Atmel maXTouch support for Peach boards
+Date: Wed, 10 Sep 2014 13:31:28 +0200
+Message-ID: <1410348691-18317-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:62442 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751338AbaIJLSX (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:35415 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750988AbaIJLbp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Sep 2014 07:18:23 -0400
-Content-Disposition: inline
-In-Reply-To: <540DB7B4.4060300@collabora.co.uk>
+	Wed, 10 Sep 2014 07:31:45 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "olof@lixom.net" <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, Stephen Warren <swarren@nvidia.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, afaerber@suse.de, Nick Dyer <nick.dyer@itdev.co.uk>, Yufeng Shen <miletus@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-On Mon, Sep 08, 2014 at 03:05:40PM +0100, Javier Martinez Canillas wrote:
-> Hello Will,
+Hello Kukjin,
 
-Hi Javier,
+This is a fourth version of the series that adds support
+for the Atmel trackpad found on the Exynos5420 Peach Pit
+and Pi boards.
 
-> Since many folks don't agree that hacking different subsystems is the way
-> forward I'll hold the patches and don't post them. The sunxi thread [0]
-> already shows how different people have strong opposite positions on the
-> correct approach to handle this.
-> 
-> For now you can just disable the tps65090 PMIC support by not enabling the
-> CONFIG_REGULATOR_TPS65090 kconfig symbol on your kernel config. That will give
-> you exactly the same behavior that before tps65090 support was added to the
-> Snow DT on commit b16be76 ("ARM: dts: add tps65090 power regulator for
-> exynos5250-snow") which AFAIU was good enough for your workflow.
+Support for Pi was included again even when the driver
+does not support yet the T100 touchscreen objects used
+by the Atmel mXT540S chip found on the Peach Pi, since
+Nick Dyer said that he will push the T100 support for
+3.18. So we can queue the Peach Pi DTS snippet for 3.18
+since by then the driver should already support it.
+It was tested on a Peach Pi with an out-of-tree patch
+that adds support the needed T100 object support.
 
-Disabling the regulator support gives me my framebuffer back, thanks. I
-then get stuck mounting my root filesystem over sd card because it's
-reported as read-only. The following hack solved the issue, but I'm not
-exactly sure where this regression has come from (whether this is a board
-quirk or pinctrl is really misconfigured).
+The first patch adds the needed changes for the Peach Pit
+DTS, the second patch does the same but for the Peach Pi
+DTS and the third patch enables the driver in the Exynos
+specific kernel configuration.
 
-Will
+The patch that enables the driver on the ARMv7 multi-platform
+config file was dropped since that is not meant to be merged
+through the linux-samsung tree. I'll post a separate series
+to sync exynos_defconfig and multi_v7_defconfig so those can
+be picked through the arm-soc tree.
 
---->8
+This series must be merged after [0] to avoid merge conflicts.
 
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index f2b8c41..932d82e 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -231,6 +231,7 @@
-        };
- 
-        mmc@12220000 {
-+               disable-wp;
-                status = "okay";
-        };
- 
+Javier Martinez Canillas (2):
+  ARM: dts: Add Peach Pi dts entry for Atmel touchpad
+  ARM: exynos_defconfig: Enable Atmel maXTouch support
+
+Sjoerd Simons (1):
+  ARM: dts: Add Peach Pit dts entry for Atmel touchpad
+
+ arch/arm/boot/dts/exynos5420-peach-pit.dts | 29 +++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  | 28 ++++++++++++++++++++++++++++
+ arch/arm/configs/exynos_defconfig          |  1 +
+ 3 files changed, 58 insertions(+)
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2014/9/10/226
