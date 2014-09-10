@@ -1,97 +1,339 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v4 1/3] ARM: dts: Add Peach Pit dts entry for Atmel touchpad
-Date: Wed, 10 Sep 2014 13:31:29 +0200
-Message-ID: <1410348691-18317-2-git-send-email-javier.martinez@collabora.co.uk>
-References: <1410348691-18317-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1410348691-18317-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, afaerber@suse.de, Nick Dyer <nick.dyer@itdev.co.uk>, Yufeng Shen <miletus@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH] drm/exynos: remove ifdeferry from initialization code
+Date: Wed, 10 Sep 2014 13:53:00 +0200
+Message-ID: <1410349980-10473-1-git-send-email-a.hajda@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+The patch replaces separate calls to driver (de)registration by
+loops over the array of drivers. As a result it significantly
+decreases number of ifdefs. Additionally it moves device registration
+related ifdefs to header file.
 
-The Peach Pit board has an Atmel maXTouch trackpad device.
-Add the needed Device Tree nodes to support it.
-
-This Device Tree change is based on the Chrome OS 3.8 tree
-but adapted to use the mainline Atmel maXTouch DT binding.
-
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
+Hi Inki,
 
-Changes since v3:
- - Use KEY_RESERVED even for not reserved pins with a GPIO not hooked.
-   Suggested by Nick Dyer.
- - Add a comment to specify the maXTouch chip version so is more clear.
-   Suggested by Nick Dyer.
- - Omit trailing omit KEY_RESERVED after the GPIO pins. Suggested by Nick Dyer.
+During testing your component match support patch [1] I have prepared patch
+removing most ifdefs from exynos_drm_drv.c. It is based on your patch, but
+I can rebase it if necessary.
 
-Changes since v2:
- - Add spaces around '=' on properties. Suggested by Andreas Faerber.
+[1]: http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/37031
 
-Changes since v1:
- - Change trackpad IRQ pad function from 0x0 (GPIO input) to 0xf (GPIO IRQ).
-   suggested by Tomasz Figa.
- - Remove BTN_TOOL_* from "linux,gpio-keymap" property since those are set
-   by input mt core if INPUT_MT_POINTER is set. Suggested by Nick Dyer.
- - Use correct values for "linux,gpio-keymap" property. Suggested by Nick Dyer.
- - Remove support for Peach Pi board since it uses a different Atmel touchpad
-   that requires an Atmel object protocol  (T100) not supported by the driver.
- - Use IRQ type constants from <dt-bindings/interrupt-controller/irq.h> instead
-   of magic numbers. Suggested by Andreas Faerber.
+Regards
+Andrzej
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.c | 170 +++++++-------------------------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h |  25 +++--
+ 2 files changed, 48 insertions(+), 147 deletions(-)
 
- arch/arm/boot/dts/exynos5420-peach-pit.dts | 29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index f247709..ad56d4c 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -507,6 +507,28 @@
- 	};
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index b2c710a..a660e46 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -553,74 +553,54 @@ static const struct component_master_ops exynos_drm_ops = {
+ 	.unbind		= exynos_drm_unbind,
  };
  
-+&hsi2c_8 {
-+	status = "okay";
-+	clock-frequency = <333000>;
-+
-+	/* Atmel mXT336S */
-+	trackpad@4b {
-+		compatible = "atmel,maxtouch";
-+		reg = <0x4b>;
-+		interrupt-parent = <&gpx1>;
-+		interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
-+		wakeup-source;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&trackpad_irq>;
-+		linux,gpio-keymap = <KEY_RESERVED
-+				     KEY_RESERVED
-+				     KEY_RESERVED	/* GPIO0 */
-+				     KEY_RESERVED	/* GPIO1 */
-+				     KEY_RESERVED	/* GPIO2 */
-+				     BTN_LEFT>; 	/* GPIO3 */
-+	};
+-static int exynos_drm_platform_probe(struct platform_device *pdev)
+-{
+-	struct component_match *match;
+-	int ret;
+-
+-	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+-	exynos_drm_driver.num_ioctls = ARRAY_SIZE(exynos_ioctls);
+-
++static struct platform_driver * const exynos_drm_drivers[] = {
+ #ifdef CONFIG_DRM_EXYNOS_FIMD
+-	ret = platform_driver_register(&fimd_driver);
+-	if (ret < 0)
+-		return ret;
++	&fimd_driver,
+ #endif
+-
+ #ifdef CONFIG_DRM_EXYNOS_DP
+-	ret = platform_driver_register(&dp_driver);
+-	if (ret < 0)
+-		goto err_unregister_fimd_drv;
++	&dp_driver,
+ #endif
+-
+ #ifdef CONFIG_DRM_EXYNOS_DSI
+-	ret = platform_driver_register(&dsi_driver);
+-	if (ret < 0)
+-		goto err_unregister_dp_drv;
++	&dsi_driver,
+ #endif
+-
+ #ifdef CONFIG_DRM_EXYNOS_HDMI
+-	ret = platform_driver_register(&mixer_driver);
+-	if (ret < 0)
+-		goto err_unregister_dsi_drv;
+-	ret = platform_driver_register(&hdmi_driver);
+-	if (ret < 0)
+-		goto err_unregister_mixer_drv;
++	&mixer_driver,
++	&hdmi_driver,
+ #endif
+-
+ #ifdef CONFIG_DRM_EXYNOS_G2D
+-	ret = platform_driver_register(&g2d_driver);
+-	if (ret < 0)
+-		goto err_unregister_hdmi_drv;
++	&g2d_driver,
+ #endif
+-
+ #ifdef CONFIG_DRM_EXYNOS_FIMC
+-	ret = platform_driver_register(&fimc_driver);
+-	if (ret < 0)
+-		goto err_unregister_g2d_drv;
++	&fimc_driver,
+ #endif
+-
+ #ifdef CONFIG_DRM_EXYNOS_ROTATOR
+-	ret = platform_driver_register(&rotator_driver);
+-	if (ret < 0)
+-		goto err_unregister_fimc_drv;
++	&rotator_driver,
+ #endif
+-
+ #ifdef CONFIG_DRM_EXYNOS_GSC
+-	ret = platform_driver_register(&gsc_driver);
+-	if (ret < 0)
+-		goto err_unregister_rotator_drv;
++	&gsc_driver,
+ #endif
+-
+ #ifdef CONFIG_DRM_EXYNOS_IPP
+-	ret = platform_driver_register(&ipp_driver);
+-	if (ret < 0)
+-		goto err_unregister_gsc_drv;
++	&ipp_driver,
++#endif
 +};
 +
- &hsi2c_9 {
- 	status = "okay";
- 	clock-frequency = <400000>;
-@@ -591,6 +613,13 @@
- 		samsung,pin-drv = <0>;
- 	};
- 
-+	trackpad_irq: trackpad-irq {
-+		samsung,pins = "gpx1-1";
-+		samsung,pin-function = <0xf>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
++static int exynos_drm_platform_probe(struct platform_device *pdev)
++{
++	struct component_match *match;
++	int ret, i;
 +
- 	power_key_irq: power-key-irq {
- 		samsung,pins = "gpx1-2";
- 		samsung,pin-function = <0>;
++	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
++	exynos_drm_driver.num_ioctls = ARRAY_SIZE(exynos_ioctls);
++
++	for (i = 0; i < ARRAY_SIZE(exynos_drm_drivers); ++i) {
++		ret = platform_driver_register(exynos_drm_drivers[i]);
++		if (ret < 0)
++			goto err_unregister_drivers;
++	}
+ 
+ 	ret = exynos_platform_device_ipp_register();
+ 	if (ret < 0)
+-		goto err_unregister_ipp_drv;
+-#endif
++		goto err_unregister_drivers;
+ 
+ 	match = exynos_drm_match_add(&pdev->dev);
+ 	if (IS_ERR(match)) {
+@@ -632,96 +612,24 @@ static int exynos_drm_platform_probe(struct platform_device *pdev)
+ 						match);
+ 
+ err_unregister_ipp_dev:
+-
+-#ifdef CONFIG_DRM_EXYNOS_IPP
+ 	exynos_platform_device_ipp_unregister();
+-err_unregister_ipp_drv:
+-	platform_driver_unregister(&ipp_driver);
+-err_unregister_gsc_drv:
+-#endif
+ 
+-#ifdef CONFIG_DRM_EXYNOS_GSC
+-	platform_driver_unregister(&gsc_driver);
+-err_unregister_rotator_drv:
+-#endif
++err_unregister_drivers:
++	while (--i >= 0)
++		platform_driver_unregister(exynos_drm_drivers[i]);
+ 
+-#ifdef CONFIG_DRM_EXYNOS_ROTATOR
+-	platform_driver_unregister(&rotator_driver);
+-err_unregister_fimc_drv:
+-#endif
+-
+-#ifdef CONFIG_DRM_EXYNOS_FIMC
+-	platform_driver_unregister(&fimc_driver);
+-err_unregister_g2d_drv:
+-#endif
+-
+-#ifdef CONFIG_DRM_EXYNOS_G2D
+-	platform_driver_unregister(&g2d_driver);
+-err_unregister_hdmi_drv:
+-#endif
+-
+-#ifdef CONFIG_DRM_EXYNOS_HDMI
+-	platform_driver_unregister(&hdmi_driver);
+-err_unregister_mixer_drv:
+-	platform_driver_unregister(&mixer_driver);
+-err_unregister_dsi_drv:
+-#endif
+-
+-#ifdef CONFIG_DRM_EXYNOS_DSI
+-	platform_driver_unregister(&dsi_driver);
+-err_unregister_dp_drv:
+-#endif
+-
+-#ifdef CONFIG_DRM_EXYNOS_DP
+-	platform_driver_unregister(&dp_driver);
+-err_unregister_fimd_drv:
+-#endif
+-
+-#ifdef CONFIG_DRM_EXYNOS_FIMD
+-	platform_driver_unregister(&fimd_driver);
+-#endif
+ 	return ret;
+ }
+ 
+ static int exynos_drm_platform_remove(struct platform_device *pdev)
+ {
+-#ifdef CONFIG_DRM_EXYNOS_IPP
+-	exynos_platform_device_ipp_unregister();
+-	platform_driver_unregister(&ipp_driver);
+-#endif
+-
+-#ifdef CONFIG_DRM_EXYNOS_GSC
+-	platform_driver_unregister(&gsc_driver);
+-#endif
+-
+-#ifdef CONFIG_DRM_EXYNOS_ROTATOR
+-	platform_driver_unregister(&rotator_driver);
+-#endif
+-
+-#ifdef CONFIG_DRM_EXYNOS_FIMC
+-	platform_driver_unregister(&fimc_driver);
+-#endif
+-
+-#ifdef CONFIG_DRM_EXYNOS_G2D
+-	platform_driver_unregister(&g2d_driver);
+-#endif
+-
+-#ifdef CONFIG_DRM_EXYNOS_HDMI
+-	platform_driver_unregister(&mixer_driver);
+-	platform_driver_unregister(&hdmi_driver);
+-#endif
++	int i;
+ 
+-#ifdef CONFIG_DRM_EXYNOS_FIMD
+-	platform_driver_unregister(&fimd_driver);
+-#endif
++	exynos_platform_device_ipp_unregister();
+ 
+-#ifdef CONFIG_DRM_EXYNOS_DSI
+-	platform_driver_unregister(&dsi_driver);
+-#endif
++	for (i = ARRAY_SIZE(exynos_drm_drivers) - 1; i >= 0; --i)
++		platform_driver_unregister(exynos_drm_drivers[i]);
+ 
+-#ifdef CONFIG_DRM_EXYNOS_DP
+-	platform_driver_unregister(&dp_driver);
+-#endif
+ 	component_master_del(&pdev->dev, &exynos_drm_ops);
+ 	return 0;
+ }
+@@ -745,11 +653,9 @@ static int exynos_drm_init(void)
+ 	if (IS_ERR(exynos_drm_pdev))
+ 		return PTR_ERR(exynos_drm_pdev);
+ 
+-#ifdef CONFIG_DRM_EXYNOS_VIDI
+ 	ret = exynos_drm_probe_vidi();
+ 	if (ret < 0)
+ 		goto err_unregister_pd;
+-#endif
+ 
+ 	ret = platform_driver_register(&exynos_drm_platform_driver);
+ 	if (ret)
+@@ -758,11 +664,9 @@ static int exynos_drm_init(void)
+ 	return 0;
+ 
+ err_remove_vidi:
+-#ifdef CONFIG_DRM_EXYNOS_VIDI
+ 	exynos_drm_remove_vidi();
+ 
+ err_unregister_pd:
+-#endif
+ 	platform_device_unregister(exynos_drm_pdev);
+ 
+ 	return ret;
+@@ -771,9 +675,9 @@ err_unregister_pd:
+ static void exynos_drm_exit(void)
+ {
+ 	platform_driver_unregister(&exynos_drm_platform_driver);
+-#ifdef CONFIG_DRM_EXYNOS_VIDI
++
+ 	exynos_drm_remove_vidi();
+-#endif
++
+ 	platform_device_unregister(exynos_drm_pdev);
+ }
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 69a6fa3..76d5d02 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -324,15 +324,14 @@ int exynos_platform_device_hdmi_register(void);
+  */
+ void exynos_platform_device_hdmi_unregister(void);
+ 
+-/*
+- * this function registers exynos drm ipp platform device.
+- */
++#ifdef CONFIG_DRM_EXYNOS_IPP
+ int exynos_platform_device_ipp_register(void);
+-
+-/*
+- * this function unregisters exynos drm ipp platform device if it exists.
+- */
+ void exynos_platform_device_ipp_unregister(void);
++#else
++static inline int exynos_platform_device_ipp_register(void) { return 0; }
++static inline void exynos_platform_device_ipp_unregister(void) {}
++#endif
++
+ 
+ #ifdef CONFIG_DRM_EXYNOS_DPI
+ struct exynos_drm_display * exynos_dpi_probe(struct device *dev);
+@@ -343,15 +342,13 @@ exynos_dpi_probe(struct device *dev) { return NULL; }
+ static inline int exynos_dpi_remove(struct device *dev) { return 0; }
+ #endif
+ 
+-/*
+- * this function registers exynos drm vidi platform device/driver.
+- */
++#ifdef CONFIG_DRM_EXYNOS_VIDI
+ int exynos_drm_probe_vidi(void);
+-
+-/*
+- * this function unregister exynos drm vidi platform device/driver.
+- */
+ void exynos_drm_remove_vidi(void);
++#else
++static inline int exynos_drm_probe_vidi(void) { return 0; }
++static inline void exynos_drm_remove_vidi(void) {}
++#endif
+ 
+ /* This function creates a encoder and a connector, and initializes them. */
+ int exynos_drm_create_enc_conn(struct drm_device *dev,
 -- 
-2.1.0
+1.9.1
