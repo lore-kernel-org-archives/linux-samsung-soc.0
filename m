@@ -1,55 +1,93 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ARM: dts: Specify Odroid X2/U3 audio clock parents and rates
-Date: Wed, 10 Sep 2014 16:43:43 +0200
-Message-ID: <1410360223-18363-1-git-send-email-s.nawrocki@samsung.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: Unable to boot mainline on snow chromebook since 3.15
+Date: Wed, 10 Sep 2014 15:56:16 +0100
+Message-ID: <CACxGe6u=QkGTKGfaE_jJ5VFMhdVKQNggp3qVBUgNP7rDbZss_A@mail.gmail.com>
+References: <CAD=FV=VfioJf9VYoSYL0QBk-bN93-Ecx3=0n9hb5Q4rcx43-_g@mail.gmail.com>
+ <540C202E.2060009@collabora.co.uk> <540C7F5B.6070307@gmail.com>
+ <540C83DE.10505@collabora.co.uk> <540C8577.2070907@gmail.com>
+ <20140908112112.GK26030@arm.com> <CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
+ <CAD=FV=VAqzvJQDQMjjeQ1p5okyDzE=ff_sguObZxh59qbzcaTQ@mail.gmail.com>
+ <CACxGe6t_ex1bU=CvTpXR4VJgNf1hAq33hr6ykbHy_sMXEk4h-g@mail.gmail.com>
+ <CAOesGMipX3MV6sMWLuY=D+bQ6qe8P17YFbTFwZOHPeSc3Pw9Cg@mail.gmail.com> <20140910143144.GF7960@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:37244 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752040AbaIJOny (ORCPT
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:59658 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750956AbaIJO4h (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Sep 2014 10:43:54 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NBO00B2CWX5XR00@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 10 Sep 2014 23:43:53 +0900 (KST)
+	Wed, 10 Sep 2014 10:56:37 -0400
+Received: by mail-ie0-f172.google.com with SMTP id tr6so5337137ieb.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Sep 2014 07:56:36 -0700 (PDT)
+In-Reply-To: <20140910143144.GF7960@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-This ensures the core and the audio subsystem clocks are configured
-properly, as expected by the sound machine driver. These bits are
-missing to obtain proper audio sample rates in kernel v3.17, where
-audio support for Odroid X2/U3 was first added.
+On Wed, Sep 10, 2014 at 3:31 PM, Mark Brown <broonie@kernel.org> wrote:
+> On Wed, Sep 10, 2014 at 06:06:46AM -0700, Olof Johansson wrote:
+>> On Mon, Sep 8, 2014 at 12:40 PM, Grant Likely <grant.likely@secretlab.ca> wrote:
+>
+>> > Well, lets see... We've got a real user complaining about a platform
+>> > that used to work on mainline, and no longer does. The only loophole
+>> > for ignoring breakage is if there nobody cares that it is broken. That
+>> > currently isn't the case. So even though it's based on a patch that
+>> > has "DO NOT SUBMIT" in large friendly letters on the front cover, it
+>> > doesn't change the situation that mainline has a regression.
+>
+>> Yeah, I'm with you on this Grant, it doesn't matter what the patch is
+>> labelled as.
+>
+>> One way to deal with this could be to add a quirk at boot time --
+>> looking for the simplefb and if found, modifies the regulators to keep
+>> them on. That'd go in the kernel, not in firmware.
+>
+> Well, we should also be fixing simplefb to manage the resources it uses
+> though that doesn't clean up after the broken DTs that are currently
+> deployed.
+>
+> As well as the regulators we'll also need to fix the clocks.  If we're
+> going to start adding these fixups perhaps we want to consider having a
+> wrapper stage that deals with rewriting DTs prior to trying to use them?
+> I'm not sure if it makes much difference but there's overlap with other
+> tools like the ATAGs conversion wrapper and building separately would
+> let the fixup code run early without directly going into the early init
+> code (which seems a bit scary).
+>
+>> Much better would have been if the DRM changes worked when they
+>> landed, so that the migration form simplefb to drm was invisible to
+>> the user. Or at least, to get them working ASAP since they're still
+>> broken. :(
+>
+> As far as I can tell the problem here is coming from the decision to
+> have simplefb use resources without knowing about them - can we agree
+> that this is a bad idea?
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-It would be good to have it applied as a fix for v3.17.
+No, I don't think we can... there is a certain amount of "firmware got
+things working for us, and we're going to use it for a while" that is
+absolutely reasonable. simplefb is a good example, but there are
+certainly others.
 
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+I /do/ think it would be better for the simplefb data to get embedded
+or linked into the node of the graphics controller so that it can be
+torn down appropriately, and we need a rule for how long boot-state
+can be considered valid so that a proper driver can either reserve the
+resources for a given SoC, or do a full handoff from the simplefb.
+Even without that though, we need to be able to handle the case of an
+anonymous simplefb node with no regulator information. If that means
+the default simplefb behaviour is to inhibit runtime pm on all
+resources until a real driver show up, then that might just be what we
+need to do.
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index adadaf9..b40f766 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -45,6 +45,16 @@
- 		compatible = "samsung,odroidx2-audio";
- 		samsung,i2s-controller = <&i2s0>;
- 		samsung,audio-codec = <&max98090>;
-+		assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
-+				<&clock_audss EXYNOS_MOUT_I2S>,
-+				<&clock_audss EXYNOS_DOUT_SRP>,
-+				<&clock_audss EXYNOS_DOUT_AUD_BUS>;
-+		assigned-clock-parents = <&clock CLK_FOUT_EPLL>,
-+				<&clock_audss EXYNOS_MOUT_AUDSS>;
-+		assigned-clock-rates = <0>,
-+				<0>,
-+				<192000000>,
-+				<19200000>;
- 	};
+Two things should probably be changed from the current setup. 1)
+simplefb shouldn't be a platform driver. It is a boot thing that
+handles initial state from the graphics chip. By implementing it as a
+platform driver, it prevents the real driver from binding to the real
+device if the simplefb data embedded into it. 2) make sure that an SoC
+driver can protect the needed resources before they are automatically
+disabled. Either by putting them in an earlier initcall, or handling
+it in the subsystem code. I don't know enough about the regulator and
+clock runtime PM to know what the best way to do this is.
 
- 	mmc@12550000 {
---
-1.7.9.5
+g.
