@@ -1,53 +1,65 @@
-From: =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynos5260: fix typo in clock name
-Date: Wed, 10 Sep 2014 09:58:29 +0200
-Message-ID: <541004A5.50802@samsung.com>
-References: <1410328565-25122-1-git-send-email-pankaj.dubey@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v2 1/5] ARM: dts: Add Peach Pit and Pi dts entry for max77802
+ PMIC
+Date: Wed, 10 Sep 2014 10:59:20 +0200
+Message-ID: <541012E8.9010208@collabora.co.uk>
+References: <1408533593-32346-1-git-send-email-javier.martinez@collabora.co.uk>	<1408533593-32346-2-git-send-email-javier.martinez@collabora.co.uk> <CAD=FV=VVLmnvZToewvsiJDUbapPj5BBA=RG4a7_N9wadRN7CTg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:60730 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750803AbaIJH6e (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:35219 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750803AbaIJI7Z (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Sep 2014 03:58:34 -0400
-In-reply-to: <1410328565-25122-1-git-send-email-pankaj.dubey@samsung.com>
+	Wed, 10 Sep 2014 04:59:25 -0400
+In-Reply-To: <CAD=FV=VVLmnvZToewvsiJDUbapPj5BBA=RG4a7_N9wadRN7CTg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, s.nawrocki@samsung.com, mturquette@linaro.org, Chander Kashyap <k.chander@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 10.09.2014 07:56, Pankaj Dubey wrote:
-> From: Chander Kashyap <k.chander@samsung.com>
->
-> The parent name added in parent list as
-> mout_phyclk_mipi_dphy_4l_m_txbyte_clkhs_p, is different
-> than the defined parent due to typo.
->
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
-> ---
->   drivers/clk/samsung/clk-exynos5260.c |    2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+Hello Doug,
 
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+On 09/10/2014 06:42 AM, Doug Anderson wrote:
+>> +
+>> +                       ldo35_reg: LDO35 {
+>> +                               regulator-name = "ldo_35";
+>> +                               regulator-min-microvolt = <1200000>;
+>> +                               regulator-max-microvolt = <1200000>;
+>> +                               inl2-supply = <&buck7_reg>;
+> 
+> Is this a typo?  Shouldn't supplies be specified at the top?
+>
+
+Yes it is a left over from a previous attempt. The first time I looked at the
+DT binding doc to see how parent supplies should be defined, the example said:
+
+        xyzreg: regulator@0 {
+                regulator-min-microvolt = <1000000>;
+                regulator-max-microvolt = <2500000>;
+                regulator-always-on;
+                vin-supply = <&vin>;
+        };
+
+but that didn't work for me since the parent supplies are not parsed in
+of_get_regulation_constraints() [0] but in regulator_register() [1] by calling
+regulator_dev_lookup() passing the parent device.
+
+So then I looked at other DTS and found that the supplies where indeed defined
+on the top as properties of the "regulators" parent node so that's what I
+used. I missed to remove the supply for this regulator, thanks a lot for noticing.
+
+BTW, Documentation/devicetree/bindings/regulator/regulator.txt should be
+changed to reflect that the supplies should not be defined in the regulator
+node but in the parent node but that is unrelated to this patch of course.
+
+> 
+> Other than that, you can add my Reviewed-by.
+> 
 
 Best regards,
-Krzysztof
+Javier
 
->
-> diff --git a/drivers/clk/samsung/clk-exynos5260.c b/drivers/clk/samsung/clk-exynos5260.c
-> index 64596ba..4db4e8d 100644
-> --- a/drivers/clk/samsung/clk-exynos5260.c
-> +++ b/drivers/clk/samsung/clk-exynos5260.c
-> @@ -1579,7 +1579,7 @@ struct samsung_fixed_rate_clock fixed_rate_clks[] __initdata = {
->   	FRATE(PHYCLK_HDMI_LINK_O_TMDS_CLKHI, "phyclk_hdmi_link_o_tmds_clkhi",
->   			NULL, CLK_IS_ROOT, 125000000),
->   	FRATE(PHYCLK_MIPI_DPHY_4L_M_TXBYTECLKHS,
-> -			"phyclk_mipi_dphy_4l_m_txbyteclkhs" , NULL,
-> +			"phyclk_mipi_dphy_4l_m_txbyte_clkhs" , NULL,
->   			CLK_IS_ROOT, 187500000),
->   	FRATE(PHYCLK_DPTX_PHY_O_REF_CLK_24M, "phyclk_dptx_phy_o_ref_clk_24m",
->   			NULL, CLK_IS_ROOT, 24000000),
->
+[0]: http://lxr.free-electrons.com/source/drivers/regulator/of_regulator.c#L19
+[1]: http://lxr.free-electrons.com/source/drivers/regulator/core.c#L3506
