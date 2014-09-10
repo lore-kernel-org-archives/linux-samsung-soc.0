@@ -1,98 +1,130 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: Unable to boot mainline on snow chromebook since 3.15
-Date: Wed, 10 Sep 2014 06:06:46 -0700
-Message-ID: <CAOesGMipX3MV6sMWLuY=D+bQ6qe8P17YFbTFwZOHPeSc3Pw9Cg@mail.gmail.com>
-References: <20140905115704.GO13515@arm.com> <20140905122232.GP13515@arm.com>
- <CAD=FV=VfioJf9VYoSYL0QBk-bN93-Ecx3=0n9hb5Q4rcx43-_g@mail.gmail.com>
- <540C202E.2060009@collabora.co.uk> <540C7F5B.6070307@gmail.com>
- <540C83DE.10505@collabora.co.uk> <540C8577.2070907@gmail.com>
- <20140908112112.GK26030@arm.com>
- <CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
- <CAD=FV=VAqzvJQDQMjjeQ1p5okyDzE=ff_sguObZxh59qbzcaTQ@mail.gmail.com>
- <CACxGe6t_ex1bU=CvTpXR4VJgNf1hAq33hr6ykbHy_sMXEk4h-g@mail.gmail.com>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V7 00/12] drm/exynos: few patches to enhance bridge chip support
+Date: Wed, 10 Sep 2014 18:48:45 +0530
+Message-ID: <CAEC9eQOkW+WU1B_QBm1_JBbPEfFqFqDDWv=tqKB_=AABY5rXaw@mail.gmail.com>
+References: <1409149783-12416-1-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CACxGe6t_ex1bU=CvTpXR4VJgNf1hAq33hr6ykbHy_sMXEk4h-g@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Mark Brown <broonie@kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f180.google.com ([209.85.223.180]:40001 "EHLO
+	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751211AbaIJNSq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 10 Sep 2014 09:18:46 -0400
+Received: by mail-ie0-f180.google.com with SMTP id rd18so4704602iec.39
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Sep 2014 06:18:46 -0700 (PDT)
+In-Reply-To: <1409149783-12416-1-git-send-email-ajaykumar.rs@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, Will Deacon <will.deacon@arm.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-Hi,
+ping.
 
-Been travelling I'm buried in email, so a bit slow at responding.
-
-On Mon, Sep 8, 2014 at 12:40 PM, Grant Likely <grant.likely@secretlab.ca> wrote:
-> On Mon, Sep 8, 2014 at 4:58 PM, Doug Anderson <dianders@chromium.org> wrote:
->> Grant,
->>
->> On Mon, Sep 8, 2014 at 5:20 AM, Grant Likely <grant.likely@secretlab.ca> wrote:
->>> On Mon, Sep 8, 2014 at 12:21 PM, Will Deacon <will.deacon@arm.com> wrote:
->>>> On Sun, Sep 07, 2014 at 05:19:03PM +0100, Tomasz Figa wrote:
->>>>> At least for next 3.17-rc I'd suggest fixing this up in respective clock
->>>>> driver and dropping the hack only after Exynos DRM patches are merged
->>>>> and confirmed working.
->>>>
->>>> Whilst I'm sympathetic to people working to enable DRM, I think this is
->>>> the right solution to the problem. The transition from simplefb to DRM
->>>> shouldn't break display for a bunch of kernel revisions whilst the code is
->>>> in flux.
->>>
->>> I would go further. The kernel behaviour has changed, and we have to
->>> deal with platforms that assume the old behaviour. That means either
->>> defaulting to leaving enabled regulators/clocks alone unless there is
->>> a flag in the DT saying they can be power managed, or black listing
->>> platforms that are known to depend on the regulator being on.
->>>
->>> Updating the device tree must not be required to get the kernel to
->>> boot, but it is valid to require a DT upgrade to get better
->>> performance (battery life) out of the platform.
->>
->> In this case people using SImple FB are not really using an officially
->> sanctioned device tree.  The simple-fb fragment is created on the fly
->> via a "DO NOT SUBMIT" patch sitting on a code review server.  It's not
->> something that's shipped with real firmware nor is it something
->> present in the kernel.  See
->> <https://chromium-review.googlesource.com/#/c/49358/2/board/samsung/smdk5250/smdk5250.c>
->> as I mentioned above.
->>
->> Is this really a device tree that we need to guarantee backward
->> compatibility with?
+On Wed, Aug 27, 2014 at 7:59 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
+> This series is based on master branch of Linus tree at:
+> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
 >
-> Well, lets see... We've got a real user complaining about a platform
-> that used to work on mainline, and no longer does. The only loophole
-> for ignoring breakage is if there nobody cares that it is broken. That
-> currently isn't the case. So even though it's based on a patch that
-> has "DO NOT SUBMIT" in large friendly letters on the front cover, it
-> doesn't change the situation that mainline has a regression.
-
-Yeah, I'm with you on this Grant, it doesn't matter what the patch is
-labelled as.
-
-For extra added complication, the firmware that is referenced above
-isn't what most people use, they use another binary that someone that
-I don't even know who it is has built, that boots the kernel in HYP
-mode. I expect the ARM guys to be using that version since they make
-use of KVM, etc.
-
-One way to deal with this could be to add a quirk at boot time --
-looking for the simplefb and if found, modifies the regulators to keep
-them on. That'd go in the kernel, not in firmware.
-
-Much better would have been if the DRM changes worked when they
-landed, so that the migration form simplefb to drm was invisible to
-the user. Or at least, to get them working ASAP since they're still
-broken. :(
-
-
--Olof
+> I have tested this after adding few DT changes for exynos5250-snow and
+> exynos5420-peach-pit boards.
+>
+> The V4 series of this particular patchset was also tested by:
+> Rahul Sharma <rahul.sharma@samsung.com>
+> Javier Martinez Canillas <javier@dowhile0.org>
+>
+> Changes since V2:
+>         -- Address comments from Jingoo Han for ps8622 driver
+>         -- Address comments from Daniel, Rob and Thierry regarding
+>            bridge chaining
+>         -- Address comments from Thierry regarding the names for
+>            new drm_panel functions
+>
+> Changes since V3:
+>         -- Remove hotplug based initialization of exynos_dp
+>         -- Make exynos_dp work directly with drm_panel, remove
+>            dependency on panel_binder
+>         -- Minor cleanups in panel_binder and panel_lvds driver
+>
+> Changes since V4:
+>         -- Use gpiod interface for panel-lvds and ps8622 drivers.
+>         -- Address comments from Javier.
+>         -- Fix compilation issues when PANEL_BINDER is selected as module.
+>         -- Split Documentation patches from driver patches.
+>         -- Rebase on top of the tree.
+>
+> Changes since V5:
+>         -- Modify bridge drivers to support driver model.
+>         -- Drop the concept of bridge chain(sincle there are no 2 real bridges)
+>            Hence drop bridge-panel_binder layer.
+>         -- Drop panel-lvds driver and accomodate the required changes in
+>            panel-simple driver.
+>         -- Use gpiod interface in ptn3460 driver.
+>         -- Address all comments by Thierry Reding for V5 series.
+>         -- Address comments from Sean Paul for exynos_dp_commit issue.
+>
+> Changes since V6:
+>         -- Panel patches were seperated and they are merged already.
+>         -- Fix few issues with ptn3460, before modifying the bridge core.
+>         -- Modify drm_bridge as per Thierry's comments for V6 series.
+>         -- Add drm_bridge changes minimally without breaking existing code.
+>         -- Add new features for ptn3460, step-by-step.
+>         -- Address comments from Thierry and Andreas for ptn3460 and ps8622.
+>         -- Split documentation patches from driver patches.
+>
+> "[PATCH V7 5/12] drm/exynos: dp: support drm_bridge" introduces following
+> Kconfig error:
+> drivers/video/fbdev/Kconfig:5:error: recursive dependency detected!
+> drivers/video/fbdev/Kconfig:5:  symbol FB is selected by DRM_KMS_FB_HELPER
+> drivers/gpu/drm/Kconfig:39:     symbol DRM_KMS_FB_HELPER depends on DRM_KMS_HELPER
+> drivers/gpu/drm/Kconfig:33:     symbol DRM_KMS_HELPER is selected by DRM_BRIDGE
+> drivers/gpu/drm/bridge/Kconfig:1:       symbol DRM_BRIDGE is selected by DRM_EXYNOS_DP
+> drivers/gpu/drm/exynos/Kconfig:53:      symbol DRM_EXYNOS_DP depends on DRM_EXYNOS_FIMD
+> drivers/gpu/drm/exynos/Kconfig:28:      symbol DRM_EXYNOS_FIMD depends on FB_S3C
+> drivers/video/fbdev/Kconfig:2038:       symbol FB_S3C depends on FB
+>
+> What's the best way to fix the above ambiguity?
+>
+> Ajay Kumar (11):
+>   [PATCH V7 1/12] drm/bridge: ptn3460: Few trivial cleanups
+>   [PATCH V7 2/12] drm/bridge: do not pass drm_bridge_funcs to drm_bridge_init
+>   [PATCH V7 3/12] drm/bridge: Add helper functions for drm_bridge
+>   [PATCH V7 4/12] drm/bridge: ptn3460: convert to i2c driver model
+>   [PATCH V7 5/12] drm/exynos: dp: support drm_bridge
+>   [PATCH V7 6/12] drm/bridge: ptn3460: support drm_panel
+>   [PATCH V7 7/12] drm/bridge: ptn3460: probe connector at the end of bridge attach
+>   [PATCH V7 8/12] drm/bridge: ptn3460: use gpiod interface
+>   [PATCH V7 9/12] Documentation: drm: bridge: move to video/bridge
+>   [PATCH V7 10/12] Documentation: devicetree: Add vendor prefix for parade
+>   [PATCH V7 11/12] Documentation: bridge: Add documentation for ps8622 DT properties
+>
+> Vincent Palatin (1):
+>   [PATCH V7 12/12] drm/bridge: Add i2c based driver for ps8622/ps8625 bridge
+>
+>  .../devicetree/bindings/drm/bridge/ptn3460.txt     |   27 -
+>  .../devicetree/bindings/vendor-prefixes.txt        |    1 +
+>  .../devicetree/bindings/video/bridge/ps8622.txt    |   20 +
+>  .../devicetree/bindings/video/bridge/ptn3460.txt   |   27 +
+>  drivers/gpu/drm/Makefile                           |    1 +
+>  drivers/gpu/drm/bridge/Kconfig                     |   30 +-
+>  drivers/gpu/drm/bridge/Makefile                    |    1 +
+>  drivers/gpu/drm/bridge/ps8622.c                    |  681 ++++++++++++++++++++
+>  drivers/gpu/drm/bridge/ptn3460.c                   |  302 +++++----
+>  drivers/gpu/drm/drm_bridge.c                       |  102 +++
+>  drivers/gpu/drm/drm_crtc.c                         |    9 +-
+>  drivers/gpu/drm/exynos/Kconfig                     |    3 +-
+>  drivers/gpu/drm/exynos/exynos_dp_core.c            |   54 +-
+>  drivers/gpu/drm/exynos/exynos_dp_core.h            |    1 +
+>  drivers/gpu/drm/msm/hdmi/hdmi_bridge.c             |    7 +-
+>  drivers/gpu/drm/sti/sti_hda.c                      |    3 +-
+>  drivers/gpu/drm/sti/sti_hdmi.c                     |    3 +-
+>  include/drm/drm_crtc.h                             |   15 +-
+>  18 files changed, 1098 insertions(+), 189 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/drm/bridge/ptn3460.txt
+>  create mode 100644 Documentation/devicetree/bindings/video/bridge/ps8622.txt
+>  create mode 100644 Documentation/devicetree/bindings/video/bridge/ptn3460.txt
+>  create mode 100644 drivers/gpu/drm/bridge/ps8622.c
+>  create mode 100644 drivers/gpu/drm/drm_bridge.c
+>
+> --
+> 1.7.9.5
+>
