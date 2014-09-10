@@ -1,7 +1,7 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v3 2/7] ARM: dts: add hdmi regulators for exynos5800 based peach-pi board
-Date: Wed, 10 Sep 2014 12:19:46 +0200
-Message-ID: <1410344391-5675-3-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v3 5/7] ARM: dts: Add Peach Pit and Pi dts entry for ISL29018 sensor
+Date: Wed, 10 Sep 2014 12:19:49 +0200
+Message-ID: <1410344391-5675-6-git-send-email-javier.martinez@collabora.co.uk>
 References: <1410344391-5675-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1410344391-5675-1-git-send-email-javier.martinez@collabora.co.uk>
@@ -10,33 +10,53 @@ To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Andreas Faerber <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Rahul Sharma <rahul.sharma@samsung.com>
+The Exynos5420 based Peach Pit and the Exynos5800 based Peach Pi
+machines have an i2c ISL29018 light sensor. This patch adds the
+device nodes needed to support this device.
 
-Adding regulators for HDMI for Peach-pi board.
+These DTS snippets were taken from the downstream Chrome OS 3.8
+kernel Device Tree for Peach Pit and Pi boards.
 
-Signed-off-by: Rahul Sharma <rahul.sharma@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 Reviewed-by: Doug Anderson <dianders@chromium.org>
 ---
- arch/arm/boot/dts/exynos5800-peach-pi.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+ arch/arm/boot/dts/exynos5420-peach-pit.dts | 6 ++++++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  | 6 ++++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index 315a8cb..7c2095b 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -141,6 +141,11 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&hdmi_hpd_irq>;
- 	ddc = <&i2c_2>;
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index 07115b7..b8fea56 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -498,6 +498,12 @@
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&max98090_irq>;
+ 	};
 +
-+	hdmi-en-supply = <&tps65090_fet7>;
-+	vdd-supply = <&ldo8_reg>;
-+	vdd_osc-supply = <&ldo10_reg>;
-+	vdd_pll-supply = <&ldo8_reg>;
++	light-sensor@44 {
++		compatible = "isil,isl29018";
++		reg = <0x44>;
++		vcc-supply = <&tps65090_fet5>;
++	};
  };
  
- &hsi2c_4 {
+ &hsi2c_9 {
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index 1c128e1..17537f0 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -496,6 +496,12 @@
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&max98091_irq>;
+ 	};
++
++	light-sensor@44 {
++		compatible = "isil,isl29018";
++		reg = <0x44>;
++		vcc-supply = <&tps65090_fet5>;
++	};
+ };
+ 
+ &hsi2c_9 {
 -- 
 2.1.0
