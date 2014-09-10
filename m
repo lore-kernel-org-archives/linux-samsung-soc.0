@@ -1,42 +1,59 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v3 7/7] ARM: exynos_defconfig: Enable MAX77802
-Date: Wed, 10 Sep 2014 13:03:28 -0700
-Message-ID: <CAD=FV=UL8gUO7bGk4vxZxuUuwZumzNZsR5+DVXafB6Z7Psc2kQ@mail.gmail.com>
-References: <1410344391-5675-1-git-send-email-javier.martinez@collabora.co.uk>
-	<1410344391-5675-8-git-send-email-javier.martinez@collabora.co.uk>
+From: Julius Werner <jwerner@google.com>
+Subject: Re: [PATCH v6 4/4] phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800
+Date: Wed, 10 Sep 2014 13:22:44 -0700
+Message-ID: <CAODwPW9QOD-7Wyc1Bh8QKfArSmsdqzYTOx6-gc8V5ace9-oPFQ@mail.gmail.com>
+References: <CAFp+6iEyqmbwMLFrBKD7NVLDAC=b+h1hPKFS=BG4k9D69hn_dg@mail.gmail.com>
+	<20140903144225.GD31855@saruman.home>
+	<CAFp+6iETPJCWMMkjHrpDcdCv=K0PbefYLa4eBOwN=aUY2=EHLA@mail.gmail.com>
+	<20140905175651.GK24449@saruman.home>
+	<CAFp+6iGU86yL8Ry3ArJJjBy2Cs0Em2B49yssH3BK5fJwyaZbtA@mail.gmail.com>
+	<20140908134454.GK22409@saruman.home>
+	<CAFp+6iG+gmD_JseytYuVQcRK9ErOqQrUEWJoU1KUU7PqMd=aRw@mail.gmail.com>
+	<20140909144225.GF6151@saruman.home>
+	<CAFp+6iHJKmeothDM67WW60Sqqj8BQroBCzZ8zecKwM_GcYL8HA@mail.gmail.com>
+	<CAFp+6iHRJ5oAA+K1Y0Y2uadPhsR6wmrd13DM39dqiL4jj+swHg@mail.gmail.com>
+	<20140910045328.GA32475@saruman.home>
+	<CAFp+6iHMhbi4V4LAkNsgzDc192ihT2a1mZHgLbia=K2U8+x=2w@mail.gmail.com>
+	<CAFp+6iErXKpXgE0tRPB=tEqXxcXgQAeFJP1TpSwRN6fNu9a-qw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f177.google.com ([209.85.220.177]:60913 "EHLO
-	mail-vc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752568AbaIJUD3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Sep 2014 16:03:29 -0400
-Received: by mail-vc0-f177.google.com with SMTP id la4so2579214vcb.22
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Sep 2014 13:03:28 -0700 (PDT)
-In-Reply-To: <1410344391-5675-8-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAFp+6iErXKpXgE0tRPB=tEqXxcXgQAeFJP1TpSwRN6fNu9a-qw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: Felipe Balbi <balbi@ti.com>, Julius Werner <jwerner@chromium.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg KH <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Jingoo Han <jg1.han@samsung.com>, "Andrew Bresticker (abrestic@chromium.org)" <abrestic@chromium.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Andreas Faerber <afaerber@suse.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>
 
-Javier,
+>> right, use that to call phy_init() at the right time, then you need to
+>> add a new ->calibrate() method which, likely, will only be used by you
+>> ;-)
 
-On Wed, Sep 10, 2014 at 3:19 AM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> From: Vivek Gautam <gautam.vivek@samsung.com>
->
-> Enabled MAX77802 pmic for exynos systems.
-> One config USB_ANNOUNCE_NEW_DEVICES to display device
-> information on connect.
-> Another config for I2C_CHARDEV to see i2c device nodes.
->
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> ---
->  arch/arm/configs/exynos_defconfig | 3 +++
->  1 file changed, 3 insertions(+)
+> so you mean, the xhci should itself call phy_init() at a time suitable,
+> so that ->calibrate() is not required at all ?
 
-I've no complaints about any of that.
+I'm not sure if that's a good idea because it would require phy_init()
+and calibrate() to always mean the same thing. The calibrate() for
+Exynos5420 needs to be called both during boot and after system
+resume, but there might be other platforms that don't want to
+completely shutdown and reinit their PHYs during suspend/resume with
+the same functions used for boot. For example, Tegra5 (proposed driver
+at http://www.spinics.net/lists/linux-usb/msg113093.html) can
+power-gate the PHY during suspend, but that's not running the same
+code as in the phy_init()/phy_shutdown() methods (the posted patch
+doesn't contain all power-gating code yet, but you can get an idea
+about how it has to work from
+https://chromium.googlesource.com/chromiumos/third_party/kernel-next/+/chromeos-3.10/drivers/usb/host/xhci-tegra.c).
+It would also mean that the initial phy_init() call must always come
+after the XHCI reset, and I am not sure if that would fit nicely with
+all platforms.
 
-Reviewed-by: Doug Anderson <dianders@chromium.org>
+> right, and what's more generic than adding the support for PHYs straight into xHCI ?
+
+Well, if we are going to have a calibrate() method (as in "stuff the
+PHY does after every controller reset if it needs to"), we have to add
+it either to the XHCI stack or the USB core. I thought the USB core
+would be more generic, because in theory it's possible that e.g. an
+EHCI controller might have a similar requirement. (Also, we have the
+gen_phy pointer in a USB core structure (struct usb_hcd), so I thought
+making this feature generic to the USB core and thus available to all
+kinds of host controllers would be more natural.)
