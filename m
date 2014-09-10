@@ -1,84 +1,88 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH 1/3] kbuild: remove unnecessary "obj- := dummy.o" trick
-Date: Wed, 10 Sep 2014 08:45:10 +0900
-Message-ID: <20140909234510.GB16682@verge.net.au>
-References: <1410258381-7088-1-git-send-email-yamada.m@jp.panasonic.com>
- <1410258381-7088-2-git-send-email-yamada.m@jp.panasonic.com>
- <20140909174337.19023.97772@quantum>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: [PATCH v6 4/4] phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800
+Date: Wed, 10 Sep 2014 09:07:28 +0530
+Message-ID: <CAFp+6iHJKmeothDM67WW60Sqqj8BQroBCzZ8zecKwM_GcYL8HA@mail.gmail.com>
+References: <1409656338-20337-1-git-send-email-gautam.vivek@samsung.com>
+	<1409656338-20337-5-git-send-email-gautam.vivek@samsung.com>
+	<20140902143438.GB16872@saruman.home>
+	<CAFp+6iEyqmbwMLFrBKD7NVLDAC=b+h1hPKFS=BG4k9D69hn_dg@mail.gmail.com>
+	<20140903144225.GD31855@saruman.home>
+	<CAFp+6iETPJCWMMkjHrpDcdCv=K0PbefYLa4eBOwN=aUY2=EHLA@mail.gmail.com>
+	<20140905175651.GK24449@saruman.home>
+	<CAFp+6iGU86yL8Ry3ArJJjBy2Cs0Em2B49yssH3BK5fJwyaZbtA@mail.gmail.com>
+	<20140908134454.GK22409@saruman.home>
+	<CAFp+6iG+gmD_JseytYuVQcRK9ErOqQrUEWJoU1KUU7PqMd=aRw@mail.gmail.com>
+	<20140909144225.GF6151@saruman.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:47722 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751457AbaIIXpP (ORCPT
+Received: from mail-qa0-f51.google.com ([209.85.216.51]:47462 "EHLO
+	mail-qa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750770AbaIJDh3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Sep 2014 19:45:15 -0400
-Content-Disposition: inline
-In-Reply-To: <20140909174337.19023.97772@quantum>
+	Tue, 9 Sep 2014 23:37:29 -0400
+In-Reply-To: <20140909144225.GF6151@saruman.home>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Masahiro Yamada <yamada.m@jp.panasonic.com>, linux-kbuild@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Wolfram Sang <wsa@sang-engineering.com>, Takashi Yoshii <takasi-y@ops.dti.ne.jp>, Ulrich Hecht <ulrich.hecht@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+To: Felipe Balbi <balbi@ti.com>, Julius Werner <jwerner@google.com>
+Cc: Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg KH <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Jingoo Han <jg1.han@samsung.com>
 
-On Tue, Sep 09, 2014 at 10:43:37AM -0700, Mike Turquette wrote:
-> Quoting Masahiro Yamada (2014-09-09 03:26:19)
-> > In these Makefiles, at least one of "obj-y" and "obj-" is non-empty,
-> > hence built-in.o is always created without such a trick.
-> > 
-> > Signed-off-by: Masahiro Yamada <yamada.m@jp.panasonic.com>
-> 
-> Acked-by: Mike Turquette <mturquette@linaro.org>
+adding Julius here,
 
-shmobile portion:
 
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+On Tue, Sep 9, 2014 at 8:12 PM, Felipe Balbi <balbi@ti.com> wrote:
+> On Tue, Sep 09, 2014 at 07:19:50AM +0530, Vivek Gautam wrote:
+>> Hi,
+>>
+>>
+>> On Mon, Sep 8, 2014 at 7:14 PM, Felipe Balbi <balbi@ti.com> wrote:
+>> > Hi,
+>> >
+>> > On Mon, Sep 08, 2014 at 09:53:09AM +0530, Vivek Gautam wrote:
+>> >> On Fri, Sep 5, 2014 at 11:26 PM, Felipe Balbi <balbi@ti.com> wrote:
+>> >> > On Thu, Sep 04, 2014 at 12:01:19PM +0530, Vivek Gautam wrote:
+>> >> >> > Don't we have phy_power_on()
+>> >> >> > for that ? It looks like you could just as well do this from
+>> >> >> > phy_power_on() ?
+>> >> >>
+>> >> >> No, unfortunately keeping these calibration settings in phy_power_on()
+>> >> >> doesn't help, since we need to do this after XHCI reset has happened.
+>> >> >
+>> >> > teach xHCI about PHYs ?
+>> >>
+>> >> sorry i couldn't understand you here.
+>> >> Aren't we trying to do the same with Heikki's patch about dwc3 :
+>> >> [PATCH 6/6] usb: dwc3: host: convey the PHYs to xhci
+>> >>
+>> >> and the 2nd patch in this series :
+>> >> [PATCH v6 2/4] usb: host: xhci-plat: Get PHYs for xhci's hcds
+>> >>
+>> >> Is there something else that is expected ?
+>> >
+>> > right, use that to call phy_init() at the right time, then you need to
+>> > add a new ->calibrate() method which, likely, will only be used by you
+>> > ;-)
+>>
+>> so you mean, the xhci should itself call phy_init() at a time suitable,
+>> so that ->calibrate() is not required at all ?
+>>
+>> i think you meant there - "then you __do not__ need to
+>
+> right :-)
 
-> 
-> > ---
-> > 
-> >  arch/arm/plat-samsung/Makefile | 1 -
-> >  drivers/clk/shmobile/Makefile  | 2 --
-> >  drivers/net/wimax/Makefile     | 4 ----
-> >  3 files changed, 7 deletions(-)
-> > 
-> > diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-> > index 5fe1750..a402262 100644
-> > --- a/arch/arm/plat-samsung/Makefile
-> > +++ b/arch/arm/plat-samsung/Makefile
-> > @@ -8,7 +8,6 @@ ccflags-$(CONFIG_ARCH_MULTI_V7) += -I$(srctree)/$(src)/include
-> >  
-> >  obj-y                          :=
-> >  obj-m                          :=
-> > -obj-n                          := dummy.o
-> >  obj-                           :=
-> >  
-> >  # Objects we always build independent of SoC choice
-> > diff --git a/drivers/clk/shmobile/Makefile b/drivers/clk/shmobile/Makefile
-> > index e002923..9aab51c8 100644
-> > --- a/drivers/clk/shmobile/Makefile
-> > +++ b/drivers/clk/shmobile/Makefile
-> > @@ -6,5 +6,3 @@ obj-$(CONFIG_ARCH_R8A7790)              += clk-rcar-gen2.o
-> >  obj-$(CONFIG_ARCH_R8A7791)             += clk-rcar-gen2.o
-> >  obj-$(CONFIG_ARCH_SHMOBILE_MULTI)      += clk-div6.o
-> >  obj-$(CONFIG_ARCH_SHMOBILE_MULTI)      += clk-mstp.o
-> > -# for emply built-in.o
-> > -obj-n  := dummy
-> > diff --git a/drivers/net/wimax/Makefile b/drivers/net/wimax/Makefile
-> > index 992bc02..692184d 100644
-> > --- a/drivers/net/wimax/Makefile
-> > +++ b/drivers/net/wimax/Makefile
-> > @@ -1,5 +1 @@
-> > -
-> >  obj-$(CONFIG_WIMAX_I2400M)     += i2400m/
-> > -
-> > -# (from Sam Ravnborg) force kbuild to create built-in.o
-> > -obj- := dummy.o
-> > -- 
-> > 1.9.1
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > Please read the FAQ at  http://www.tux.org/lkml/
-> 
+alright, i will prepare a patch for the suggested change.
+
+But AFAI remember we had discussion for this patch in earlier version,
+and Julius suggested to use a generic approach for such
+change wherein other users in future may be able to use the
+facility.
+Julius any thoughts about the change suggested by Felipe.
+
+[snip]
+
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
