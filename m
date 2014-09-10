@@ -1,89 +1,129 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: Unable to boot mainline on snow chromebook since 3.15
-Date: Wed, 10 Sep 2014 09:36:32 -0700
-Message-ID: <CAOesGMgn7F7UoGJmO6K74KE_x+Rw8H2MpzCjBjNOq0g9o1TuNg@mail.gmail.com>
-References: <CAD=FV=VfioJf9VYoSYL0QBk-bN93-Ecx3=0n9hb5Q4rcx43-_g@mail.gmail.com>
-	<540C202E.2060009@collabora.co.uk>
-	<540C7F5B.6070307@gmail.com>
-	<540C83DE.10505@collabora.co.uk>
-	<540C8577.2070907@gmail.com>
-	<20140908112112.GK26030@arm.com>
-	<CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
-	<CAD=FV=VAqzvJQDQMjjeQ1p5okyDzE=ff_sguObZxh59qbzcaTQ@mail.gmail.com>
-	<CACxGe6t_ex1bU=CvTpXR4VJgNf1hAq33hr6ykbHy_sMXEk4h-g@mail.gmail.com>
-	<CAOesGMipX3MV6sMWLuY=D+bQ6qe8P17YFbTFwZOHPeSc3Pw9Cg@mail.gmail.com>
-	<20140910143144.GF7960@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] ARM: dts: Specify default clocks for Exynos4 FIMC devices
+Date: Wed, 10 Sep 2014 18:37:34 +0200
+Message-ID: <1410367054-30926-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f179.google.com ([209.85.220.179]:55096 "EHLO
-	mail-vc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751744AbaIJQgd (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:60787 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751472AbaIJQht (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Sep 2014 12:36:33 -0400
-Received: by mail-vc0-f179.google.com with SMTP id im17so4495669vcb.38
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Sep 2014 09:36:32 -0700 (PDT)
-In-Reply-To: <20140910143144.GF7960@sirena.org.uk>
+	Wed, 10 Sep 2014 12:37:49 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NBP00E3D270TK70@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Sep 2014 01:37:48 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Doug Anderson <dianders@chromium.org>, Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, Prashanth G <prashanth.g@samsung.com>
+To: kgene.kim@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Wed, Sep 10, 2014 at 7:31 AM, Mark Brown <broonie@kernel.org> wrote:
-> On Wed, Sep 10, 2014 at 06:06:46AM -0700, Olof Johansson wrote:
->> On Mon, Sep 8, 2014 at 12:40 PM, Grant Likely <grant.likely@secretlab.ca> wrote:
->
->> > Well, lets see... We've got a real user complaining about a platform
->> > that used to work on mainline, and no longer does. The only loophole
->> > for ignoring breakage is if there nobody cares that it is broken. That
->> > currently isn't the case. So even though it's based on a patch that
->> > has "DO NOT SUBMIT" in large friendly letters on the front cover, it
->> > doesn't change the situation that mainline has a regression.
->
->> Yeah, I'm with you on this Grant, it doesn't matter what the patch is
->> labelled as.
->
->> One way to deal with this could be to add a quirk at boot time --
->> looking for the simplefb and if found, modifies the regulators to keep
->> them on. That'd go in the kernel, not in firmware.
->
-> Well, we should also be fixing simplefb to manage the resources it uses
-> though that doesn't clean up after the broken DTs that are currently
-> deployed.
->
-> As well as the regulators we'll also need to fix the clocks.  If we're
-> going to start adding these fixups perhaps we want to consider having a
-> wrapper stage that deals with rewriting DTs prior to trying to use them?
-> I'm not sure if it makes much difference but there's overlap with other
-> tools like the ATAGs conversion wrapper and building separately would
-> let the fixup code run early without directly going into the early init
-> code (which seems a bit scary).
+The default mux and divider clocks are specified in device tree
+so that the FIMC devices in Exynos4210 and Exynos4x12 SoCs are
+clocked from recommended clock source and with maximum supported
+frequency. If needed these settings could be overrode in board
+specific dts files, however they are in practice optimal in most
+cases.
 
-Yes, having a stage that fixes up broken device trees makes a lot of
-sense. It can likely be plugged into the machine descriptor today per
-platform, since I think most things we have going on right now are
-platform-specific quirks.
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ arch/arm/boot/dts/exynos4210.dtsi |   16 ++++++++++++++++
+ arch/arm/boot/dts/exynos4x12.dtsi |   16 ++++++++++++++++
+ 2 files changed, 32 insertions(+)
 
-I'm strongly against doing this outside of the kernel, since they're
-closely tied together today. We've always had the quirk tables for
-devices in the kernel, and we used to do this a long time ago on
-powerpc as well (we did it before we built the flat DT out of the OF
-equivalent there, most of the time).
-
->> Much better would have been if the DRM changes worked when they
->> landed, so that the migration form simplefb to drm was invisible to
->> the user. Or at least, to get them working ASAP since they're still
->> broken. :(
->
-> As far as I can tell the problem here is coming from the decision to
-> have simplefb use resources without knowing about them - can we agree
-> that this is a bad idea?
-
-As already argued, there are good reasons to sometimes allow this, as
-long as it can be expected that it's something that's just used during
-early boot. For example, having DEBUG_LL output on a pre-mapped
-framebuffer could be really useful. Once DRM comes up, it'll tear down
-the existing one.
-
-
--Olof
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index 807bb5b..0969d2e 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -154,18 +154,30 @@
+ 			samsung,pix-limits = <4224 8192 1920 4224>;
+ 			samsung,mainscaler-ext;
+ 			samsung,cam-if;
++			assigned-clocks = <&clock CLK_MOUT_FIMC0>,
++					<&clock CLK_SCLK_FIMC0>;
++			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
++			assigned-clock-rates = <0>, <160000000>;
+ 		};
+ 
+ 		fimc_1: fimc@11810000 {
+ 			samsung,pix-limits = <4224 8192 1920 4224>;
+ 			samsung,mainscaler-ext;
+ 			samsung,cam-if;
++			assigned-clocks = <&clock CLK_MOUT_FIMC1>,
++					<&clock CLK_SCLK_FIMC1>;
++			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
++			assigned-clock-rates = <0>, <160000000>;
+ 		};
+ 
+ 		fimc_2: fimc@11820000 {
+ 			samsung,pix-limits = <4224 8192 1920 4224>;
+ 			samsung,mainscaler-ext;
+ 			samsung,lcd-wb;
++			assigned-clocks = <&clock CLK_MOUT_FIMC2>,
++					<&clock CLK_SCLK_FIMC2>;
++			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
++			assigned-clock-rates = <0>, <160000000>;
+ 		};
+ 
+ 		fimc_3: fimc@11830000 {
+@@ -173,6 +185,10 @@
+ 			samsung,rotators = <0>;
+ 			samsung,mainscaler-ext;
+ 			samsung,lcd-wb;
++			assigned-clocks = <&clock CLK_MOUT_FIMC3>,
++					<&clock CLK_SCLK_FIMC3>;
++			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
++			assigned-clock-rates = <0>, <160000000>;
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index 861bb91..38ba14f 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -162,6 +162,10 @@
+ 			samsung,mainscaler-ext;
+ 			samsung,isp-wb;
+ 			samsung,cam-if;
++			assigned-clocks = <&clock CLK_MOUT_FIMC0>,
++					<&clock CLK_SCLK_FIMC0>;
++			assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
++			assigned-clock-rates = <0>, <176000000>;
+ 		};
+ 
+ 		fimc_1: fimc@11810000 {
+@@ -170,6 +174,10 @@
+ 			samsung,mainscaler-ext;
+ 			samsung,isp-wb;
+ 			samsung,cam-if;
++			assigned-clocks = <&clock CLK_MOUT_FIMC1>,
++					<&clock CLK_SCLK_FIMC1>;
++			assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
++			assigned-clock-rates = <0>, <176000000>;
+ 		};
+ 
+ 		fimc_2: fimc@11820000 {
+@@ -179,6 +187,10 @@
+ 			samsung,isp-wb;
+ 			samsung,lcd-wb;
+ 			samsung,cam-if;
++			assigned-clocks = <&clock CLK_MOUT_FIMC2>,
++					<&clock CLK_SCLK_FIMC2>;
++			assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
++			assigned-clock-rates = <0>, <176000000>;
+ 		};
+ 
+ 		fimc_3: fimc@11830000 {
+@@ -188,6 +200,10 @@
+ 			samsung,mainscaler-ext;
+ 			samsung,isp-wb;
+ 			samsung,lcd-wb;
++			assigned-clocks = <&clock CLK_MOUT_FIMC3>,
++					<&clock CLK_SCLK_FIMC3>;
++			assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
++			assigned-clock-rates = <0>, <176000000>;
+ 		};
+ 
+ 		fimc_lite_0: fimc-lite@12390000 {
+-- 
+1.7.9.5
