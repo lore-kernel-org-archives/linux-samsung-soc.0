@@ -1,93 +1,62 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH] Input: atmel_mxt_ts: Add of node type to the i2c table
-Date: Wed, 10 Sep 2014 10:28:32 +0100
-Message-ID: <20140910092832.GM30307@lee--X1>
-References: <1410249158-18192-1-git-send-email-sjoerd.simons@collabora.co.uk>
- <540ED495.20609@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <540ED495.20609@collabora.co.uk>
-Sender: linux-input-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Nick Dyer <nick.dyer@itdev.co.uk>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v3 0/7] Add max77802 support for Peach boards
+Date: Wed, 10 Sep 2014 12:19:44 +0200
+Message-ID: <1410344391-5675-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Mark Brown <broonie@kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Rahul Sharma <rahul.sharma@samsung.com>, Andreas Faerber <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, 09 Sep 2014, Javier Martinez Canillas wrote:
+Hello Kukjin,
 
-> [adding Lee Jones to cc list since I'm referring on a series he poste=
-d]
->=20
-> Hello Sjoerd,
->=20
-> On 09/09/2014 09:52 AM, Sjoerd Simons wrote:
-> > For i2c devices in OF the modalias exposed to userspace is i2c:<nod=
-e
-> > type>, for the Maxtouch driver this is i2c:maxtouch.
-> >=20
-> > Add maxtouch to the i2c id table such that userspace can correctly
-> > load the module for the device and drop the OF table as it's not
-> > needed for i2c devices.
-> >=20
-> > Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-> > ---
-> >  drivers/input/touchscreen/atmel_mxt_ts.c | 8 +-------
-> >  1 file changed, 1 insertion(+), 7 deletions(-)
-> >=20
-> > diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/inp=
-ut/touchscreen/atmel_mxt_ts.c
-> > index db178ed..57ff26d 100644
-> > --- a/drivers/input/touchscreen/atmel_mxt_ts.c
-> > +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-> > @@ -2267,16 +2267,11 @@ static int mxt_resume(struct device *dev)
-> > =20
-> >  static SIMPLE_DEV_PM_OPS(mxt_pm_ops, mxt_suspend, mxt_resume);
-> > =20
-> > -static const struct of_device_id mxt_of_match[] =3D {
-> > -	{ .compatible =3D "atmel,maxtouch", },
-> > -	{},
-> > -};
-> > -MODULE_DEVICE_TABLE(of, mxt_of_match);
-> > -
-> >  static const struct i2c_device_id mxt_id[] =3D {
-> >  	{ "qt602240_ts", 0 },
-> >  	{ "atmel_mxt_ts", 0 },
-> >  	{ "atmel_mxt_tp", 0 },
-> > +	{ "maxtouch", 0 },
-> >  	{ "mXT224", 0 },
-> >  	{ }
-> >  };
-> > @@ -2286,7 +2281,6 @@ static struct i2c_driver mxt_driver =3D {
-> >  	.driver =3D {
-> >  		.name	=3D "atmel_mxt_ts",
-> >  		.owner	=3D THIS_MODULE,
-> > -		.of_match_table =3D of_match_ptr(mxt_of_match),
-> >  		.pm	=3D &mxt_pm_ops,
-> >  	},
-> >  	.probe		=3D mxt_probe,
-> >=20
->=20
-> I see that Lee is working to allow the I2C subsystem to not need an I=
-2C ID
-> table to match [0]. I'll let Lee to comment what the future plans are=
- and if
-> his series are going to solve your issue since I'm not that familiar =
-with the
-> I2C core.
+This is a third version of th series that adds max77802 support for
+the Peach Pit and Pi boards. The series also have all the pending
+patches that were posted but depended on this support. I've picked
+all the patches I found and rebased them to be sure that they apply
+cleanly on top of linux-next. Also I've taken some DT snippets from
+the downstream Chrome OS 3.8 kernel DTS for devices that use one of
+these regulators as their input supply.
 
-It's wrong to expect DT to probe these devices without a compatible
-string.  It does so at the moment, but this is a bi-product and not
-the correct method.
+Changes since v2 [0]:
+ - Remove left over supply on ldo35 regulator, suggested by Doug Anderson.
+ - Add a patch to change the i2c7 clock at 400kHz, suggested by Doug Anderson.
+ - Add a patch from Vivek Gautam to enable max77802 regulator driver support.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe linux-input" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Changes sinve v1 [1]:
+ - Dropped patch that added vmmc and vqmmc supplies as suggested
+   by Doug Anderson.
+ - Use IRQ flags define instead of a magic number as suggested by
+   Andreas Faerber.
+
+The series is composed of the following patches:
+
+Javier Martinez Canillas (3):
+  ARM: dts: Add Peach Pit and Pi dts entry for max77802 PMIC
+  ARM: dts: Add Peach Pit and Pi dts entry for ISL29018 sensor
+  ARM: dts: Set i2c7 clock at 400kHz for Peach boards
+
+Naveen Krishna Chatradhi (1):
+  ARM: dts: Add thermistor dts fragment used by exynos based Peach
+    boards
+
+Rahul Sharma (2):
+  ARM: dts: add hdmi regulators for exynos5800 based peach-pi board
+  ARM: dts: add hdmi regulators for exynos5420 based peach-pit board
+
+Vivek Gautam (1):
+  ARM: exynos_defconfig: Enable MAX77802
+
+ arch/arm/boot/dts/cros-adc-thermistors.dtsi |  44 ++++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts  | 389 ++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts   | 389 ++++++++++++++++++++++++++++
+ arch/arm/configs/exynos_defconfig           |   3 +
+ 4 files changed, 825 insertions(+)
+ create mode 100644 arch/arm/boot/dts/cros-adc-thermistors.dtsi
+
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2014/8/20/225
+[1]: https://lkml.org/lkml/2014/8/19/372
