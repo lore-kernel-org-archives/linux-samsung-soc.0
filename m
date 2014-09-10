@@ -1,53 +1,106 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v2 0/5] Add max77802 support for Peach boards
-Date: Tue, 9 Sep 2014 21:58:00 -0700
-Message-ID: <CAD=FV=UuT_78kWS274jY1y69XQoYCadgfAHXjdBaJdJDsVk-pw@mail.gmail.com>
-References: <1408533593-32346-1-git-send-email-javier.martinez@collabora.co.uk>
-	<CABxcv==ycrPw1MTv7X0baX2WfqgDS+4EEfGAWc+ZhpiR6=Uy+Q@mail.gmail.com>
-	<04ab01cfcbe0$caeac4d0$60c04e70$@kernel.org>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: [PATCH v6 4/4] phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800
+Date: Wed, 10 Sep 2014 10:53:23 +0530
+Message-ID: <CAFp+6iHMhbi4V4LAkNsgzDc192ihT2a1mZHgLbia=K2U8+x=2w@mail.gmail.com>
+References: <CAFp+6iEyqmbwMLFrBKD7NVLDAC=b+h1hPKFS=BG4k9D69hn_dg@mail.gmail.com>
+	<20140903144225.GD31855@saruman.home>
+	<CAFp+6iETPJCWMMkjHrpDcdCv=K0PbefYLa4eBOwN=aUY2=EHLA@mail.gmail.com>
+	<20140905175651.GK24449@saruman.home>
+	<CAFp+6iGU86yL8Ry3ArJJjBy2Cs0Em2B49yssH3BK5fJwyaZbtA@mail.gmail.com>
+	<20140908134454.GK22409@saruman.home>
+	<CAFp+6iG+gmD_JseytYuVQcRK9ErOqQrUEWJoU1KUU7PqMd=aRw@mail.gmail.com>
+	<20140909144225.GF6151@saruman.home>
+	<CAFp+6iHJKmeothDM67WW60Sqqj8BQroBCzZ8zecKwM_GcYL8HA@mail.gmail.com>
+	<CAFp+6iHRJ5oAA+K1Y0Y2uadPhsR6wmrd13DM39dqiL4jj+swHg@mail.gmail.com>
+	<20140910045328.GA32475@saruman.home>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <04ab01cfcbe0$caeac4d0$60c04e70$@kernel.org>
+In-Reply-To: <20140910045328.GA32475@saruman.home>
 Sender: linux-kernel-owner@vger.kernel.org
-To: kgene@kernel.org
-Cc: Javier Martinez Canillas <javier@dowhile0.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Linux Kernel <linux-kernel@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rahul Sharma <rahul.sharma@samsung.com>
+To: Felipe Balbi <balbi@ti.com>
+Cc: Julius Werner <jwerner@google.com>, Julius Werner <jwerner@chromium.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg KH <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Jingoo Han <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On Mon, Sep 8, 2014 at 8:47 PM,  <kgene@kernel.org> wrote:
-> Javier Martinez Canillas wrote:
+On Wed, Sep 10, 2014 at 10:23 AM, Felipe Balbi <balbi@ti.com> wrote:
+> On Wed, Sep 10, 2014 at 09:09:57AM +0530, Vivek Gautam wrote:
+>> On Wed, Sep 10, 2014 at 9:07 AM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+>> > adding Julius here,
 >>
->> Hello Kukjin,
+>> i think i had missed adding Julius for this entire series :-(
+>> I should be more careful with the CC list in future.
+>> Added his chromium id, since that seems to be more active.
 >>
-> Hi,
+>> >
+>> >
+>> > On Tue, Sep 9, 2014 at 8:12 PM, Felipe Balbi <balbi@ti.com> wrote:
+>> >> On Tue, Sep 09, 2014 at 07:19:50AM +0530, Vivek Gautam wrote:
+>> >>> Hi,
+>> >>>
+>> >>>
+>> >>> On Mon, Sep 8, 2014 at 7:14 PM, Felipe Balbi <balbi@ti.com> wrote:
+>> >>> > Hi,
+>> >>> >
+>> >>> > On Mon, Sep 08, 2014 at 09:53:09AM +0530, Vivek Gautam wrote:
+>> >>> >> On Fri, Sep 5, 2014 at 11:26 PM, Felipe Balbi <balbi@ti.com> wrote:
+>> >>> >> > On Thu, Sep 04, 2014 at 12:01:19PM +0530, Vivek Gautam wrote:
+>> >>> >> >> > Don't we have phy_power_on()
+>> >>> >> >> > for that ? It looks like you could just as well do this from
+>> >>> >> >> > phy_power_on() ?
+>> >>> >> >>
+>> >>> >> >> No, unfortunately keeping these calibration settings in phy_power_on()
+>> >>> >> >> doesn't help, since we need to do this after XHCI reset has happened.
+>> >>> >> >
+>> >>> >> > teach xHCI about PHYs ?
+>> >>> >>
+>> >>> >> sorry i couldn't understand you here.
+>> >>> >> Aren't we trying to do the same with Heikki's patch about dwc3 :
+>> >>> >> [PATCH 6/6] usb: dwc3: host: convey the PHYs to xhci
+>> >>> >>
+>> >>> >> and the 2nd patch in this series :
+>> >>> >> [PATCH v6 2/4] usb: host: xhci-plat: Get PHYs for xhci's hcds
+>> >>> >>
+>> >>> >> Is there something else that is expected ?
+>> >>> >
+>> >>> > right, use that to call phy_init() at the right time, then you need to
+>> >>> > add a new ->calibrate() method which, likely, will only be used by you
+>> >>> > ;-)
+>> >>>
+>> >>> so you mean, the xhci should itself call phy_init() at a time suitable,
+>> >>> so that ->calibrate() is not required at all ?
+>> >>>
+>> >>> i think you meant there - "then you __do not__ need to
+>> >>
+>> >> right :-)
+>> >
+>> > alright, i will prepare a patch for the suggested change.
+>> >
+>> > But AFAI remember we had discussion for this patch in earlier
+>> > version, and Julius suggested to use a generic approach for such
+>> > change wherein other users in future may be able to use the
+>> > facility.
 >
->> On Wed, Aug 20, 2014 at 1:19 PM, Javier Martinez Canillas
->> <javier.martinez@collabora.co.uk> wrote:
->> >
->> > This is a second version of the series that adds max77802 support for
->> > the Peach Pit and Pi boards. The series also have all the pending
->> > patches that were posted but depended on this support. I've picked
->> > all the patches I found and rebased them to be sure that they apply
->> > cleanly on top of linux-next. Also I've taken some DT snippets from
->> > the downstream Chrome OS 3.8 kernel DTS for devices that use one of
->> > these regulators as their input supply.
->> >
->>
->> Any comments on this series?
->>
-> Looks good to me but I just wanted to get ack from chrome guy, Doug? But since
-> Naveen tested, it should be fine I think. I'll take the series.
+> right, and what's more generic than adding the support for PHYs straight
+> into xHCI ?
+>
+> What I fear is that we end up opening the doors for every odd
+> platform-specific operation to be added to the framework without really
+> considering what needs to be done. That would defeat the idea of having
+> a generic framework altogether.
 
-I haven't had crazy amounts of time to review pit/pi patches recently,
-but luckily Javier has been picking up my slack.  I think he's more of
-a maintainer for these file than I am at this point.
+Ok, i will prepare the patch series as suggested and post it
+to gather opinion from you. :-)
 
-...but I did do a quick skim / compare to our tree and found one small
-bug (see patch #1) and added my Reviewed-by tags.
-
--Doug
+>
+> cheers
+>
+> --
+> balbi
 
 
--Doug
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
