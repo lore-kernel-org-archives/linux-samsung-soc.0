@@ -1,59 +1,97 @@
-From: Julius Werner <jwerner@google.com>
-Subject: Re: [PATCH v6 4/4] phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800
-Date: Wed, 10 Sep 2014 13:22:44 -0700
-Message-ID: <CAODwPW9QOD-7Wyc1Bh8QKfArSmsdqzYTOx6-gc8V5ace9-oPFQ@mail.gmail.com>
-References: <CAFp+6iEyqmbwMLFrBKD7NVLDAC=b+h1hPKFS=BG4k9D69hn_dg@mail.gmail.com>
-	<20140903144225.GD31855@saruman.home>
-	<CAFp+6iETPJCWMMkjHrpDcdCv=K0PbefYLa4eBOwN=aUY2=EHLA@mail.gmail.com>
-	<20140905175651.GK24449@saruman.home>
-	<CAFp+6iGU86yL8Ry3ArJJjBy2Cs0Em2B49yssH3BK5fJwyaZbtA@mail.gmail.com>
-	<20140908134454.GK22409@saruman.home>
-	<CAFp+6iG+gmD_JseytYuVQcRK9ErOqQrUEWJoU1KUU7PqMd=aRw@mail.gmail.com>
-	<20140909144225.GF6151@saruman.home>
-	<CAFp+6iHJKmeothDM67WW60Sqqj8BQroBCzZ8zecKwM_GcYL8HA@mail.gmail.com>
-	<CAFp+6iHRJ5oAA+K1Y0Y2uadPhsR6wmrd13DM39dqiL4jj+swHg@mail.gmail.com>
-	<20140910045328.GA32475@saruman.home>
-	<CAFp+6iHMhbi4V4LAkNsgzDc192ihT2a1mZHgLbia=K2U8+x=2w@mail.gmail.com>
-	<CAFp+6iErXKpXgE0tRPB=tEqXxcXgQAeFJP1TpSwRN6fNu9a-qw@mail.gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH v4 1/3] ARM: dts: Add Peach Pit dts entry for Atmel
+ touchpad
+Date: Wed, 10 Sep 2014 15:25:56 -0700
+Message-ID: <20140910222553.GF38736@core.coreip.homeip.net>
+References: <1410348691-18317-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1410348691-18317-2-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAFp+6iErXKpXgE0tRPB=tEqXxcXgQAeFJP1TpSwRN6fNu9a-qw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Felipe Balbi <balbi@ti.com>, Julius Werner <jwerner@chromium.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg KH <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Jingoo Han <jg1.han@samsung.com>, "Andrew Bresticker (abrestic@chromium.org)" <abrestic@chromium.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f176.google.com ([209.85.192.176]:55368 "EHLO
+	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752241AbaIJW0A (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 10 Sep 2014 18:26:00 -0400
+Content-Disposition: inline
+In-Reply-To: <1410348691-18317-2-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, afaerber@suse.de, Nick Dyer <nick.dyer@itdev.co.uk>, Yufeng Shen <miletus@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
->> right, use that to call phy_init() at the right time, then you need to
->> add a new ->calibrate() method which, likely, will only be used by you
->> ;-)
+On Wed, Sep 10, 2014 at 01:31:29PM +0200, Javier Martinez Canillas wrote:
+> From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> 
+> The Peach Pit board has an Atmel maXTouch trackpad device.
+> Add the needed Device Tree nodes to support it.
+> 
+> This Device Tree change is based on the Chrome OS 3.8 tree
+> but adapted to use the mainline Atmel maXTouch DT binding.
+> 
+> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-> so you mean, the xhci should itself call phy_init() at a time suitable,
-> so that ->calibrate() is not required at all ?
+Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-I'm not sure if that's a good idea because it would require phy_init()
-and calibrate() to always mean the same thing. The calibrate() for
-Exynos5420 needs to be called both during boot and after system
-resume, but there might be other platforms that don't want to
-completely shutdown and reinit their PHYs during suspend/resume with
-the same functions used for boot. For example, Tegra5 (proposed driver
-at http://www.spinics.net/lists/linux-usb/msg113093.html) can
-power-gate the PHY during suspend, but that's not running the same
-code as in the phy_init()/phy_shutdown() methods (the posted patch
-doesn't contain all power-gating code yet, but you can get an idea
-about how it has to work from
-https://chromium.googlesource.com/chromiumos/third_party/kernel-next/+/chromeos-3.10/drivers/usb/host/xhci-tegra.c).
-It would also mean that the initial phy_init() call must always come
-after the XHCI reset, and I am not sure if that would fit nicely with
-all platforms.
+> ---
+> 
+> Changes since v3:
+>  - Use KEY_RESERVED even for not reserved pins with a GPIO not hooked.
+>    Suggested by Nick Dyer.
+>  - Add a comment to specify the maXTouch chip version so is more clear.
+>    Suggested by Nick Dyer.
+>  - Omit trailing omit KEY_RESERVED after the GPIO pins. Suggested by Nick Dyer.
+> 
+> Changes since v2:
+>  - Add spaces around '=' on properties. Suggested by Andreas Faerber.
+> 
+> Changes since v1:
+>  - Change trackpad IRQ pad function from 0x0 (GPIO input) to 0xf (GPIO IRQ).
+>    suggested by Tomasz Figa.
+>  - Remove BTN_TOOL_* from "linux,gpio-keymap" property since those are set
+>    by input mt core if INPUT_MT_POINTER is set. Suggested by Nick Dyer.
+>  - Use correct values for "linux,gpio-keymap" property. Suggested by Nick Dyer.
+>  - Remove support for Peach Pi board since it uses a different Atmel touchpad
+>    that requires an Atmel object protocol  (T100) not supported by the driver.
+>  - Use IRQ type constants from <dt-bindings/interrupt-controller/irq.h> instead
+>    of magic numbers. Suggested by Andreas Faerber.
+> 
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> index f247709..ad56d4c 100644
+> --- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> +++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+> @@ -507,6 +507,28 @@
+>  	};
+>  };
+>  
+> +&hsi2c_8 {
+> +	status = "okay";
+> +	clock-frequency = <333000>;
+> +
+> +	/* Atmel mXT336S */
+> +	trackpad@4b {
+> +		compatible = "atmel,maxtouch";
+> +		reg = <0x4b>;
+> +		interrupt-parent = <&gpx1>;
+> +		interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
+> +		wakeup-source;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&trackpad_irq>;
+> +		linux,gpio-keymap = <KEY_RESERVED
+> +				     KEY_RESERVED
+> +				     KEY_RESERVED	/* GPIO0 */
+> +				     KEY_RESERVED	/* GPIO1 */
+> +				     KEY_RESERVED	/* GPIO2 */
+> +				     BTN_LEFT>; 	/* GPIO3 */
 
-> right, and what's more generic than adding the support for PHYs straight into xHCI ?
+Seems like a single space sneaked between the semicolon and the tab.
+Maybe whoever applies could squash it.
 
-Well, if we are going to have a calibrate() method (as in "stuff the
-PHY does after every controller reset if it needs to"), we have to add
-it either to the XHCI stack or the USB core. I thought the USB core
-would be more generic, because in theory it's possible that e.g. an
-EHCI controller might have a similar requirement. (Also, we have the
-gen_phy pointer in a USB core structure (struct usb_hcd), so I thought
-making this feature generic to the USB core and thus available to all
-kinds of host controllers would be more natural.)
+Thanks.
+
+-- 
+Dmitry
