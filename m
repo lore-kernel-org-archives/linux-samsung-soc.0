@@ -1,119 +1,67 @@
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Subject: Re: [PATCH v2 5/7] arm64: dts: Add initial device tree support for EXYNOS7
-Date: Thu, 11 Sep 2014 14:12:34 +0530
-Message-ID: <CAHfPSqAJF4PNr8BAzY=pFNTKjivrkWUz2Ceg8a0z0w1ad-O14w@mail.gmail.com>
-References: <1409672143-8574-1-git-send-email-ch.naveen@samsung.com>
- <1409672143-8574-6-git-send-email-ch.naveen@samsung.com> <02f801cfcbde$24a40160$6dec0420$@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: Unable to boot mainline on snow chromebook since 3.15
+Date: Thu, 11 Sep 2014 10:06:08 +0100
+Message-ID: <20140911090608.598CFC40862@trevor.secretlab.ca>
+References: <CAD=FV=VfioJf9VYoSYL0QBk-bN93-Ecx3=0n9hb5Q4rcx43-_g@mail.gmail.com>
+	<540C202E.2060009@collabora.co.uk> <540C7F5B.6070307@gmail.com>
+	<540C83DE.10505@collabora.co.uk> <540C8577.2070907@gmail.com>
+	<20140908112112.GK26030@arm.com>
+	<CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
+	<CAD=FV=VAqzvJQDQMjjeQ1p5okyDzE=ff_sguObZxh59qbzcaTQ@mail.gmail.com>
+	<CACxGe6t_ex1bU=CvTpXR4VJgNf1hAq33hr6ykbHy_sMXEk4h-g@mail.gmail.com>
+	<CAOesGMipX3MV6sMWLuY=D+bQ6qe8P17YFbTFwZOHPeSc3Pw9Cg@mail.gmail.com>
+	<20140910143144.GF7960@sirena.org.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f41.google.com ([209.85.216.41]:60028 "EHLO
-	mail-qa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753801AbaIKImz (ORCPT
+Received: from mail-wg0-f45.google.com ([74.125.82.45]:41981 "EHLO
+	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752111AbaIKJGL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Sep 2014 04:42:55 -0400
-In-Reply-To: <02f801cfcbde$24a40160$6dec0420$@kernel.org>
+	Thu, 11 Sep 2014 05:06:11 -0400
+Received: by mail-wg0-f45.google.com with SMTP id z12so5392526wgg.16
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Sep 2014 02:06:10 -0700 (PDT)
+In-Reply-To: <20140910143144.GF7960@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>
+Cc: Doug Anderson <dianders@chromium.org>, Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-On 9 September 2014 08:58,  <kgene@kernel.org> wrote:
-> Naveen Krishna Chatradhi wrote:
->>
->> Add initial device tree nodes for EXYNOS7 SoC and board dts file
->> to support Espresso board based on Exynos7 SoC.
->>
->> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->> Cc: Rob Herring <robh@kernel.org>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> ---
->>  arch/arm64/boot/dts/Makefile                    |    1 +
->>  arch/arm64/boot/dts/exynos/exynos7-espresso.dts |   31 +++++
->>  arch/arm64/boot/dts/exynos/exynos7.dtsi         |  168 +++++++++++++++++++++++
->>  3 files changed, 200 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7-espresso.dts
->>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7.dtsi
->
-> [...]
->
->> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
->> new file mode 100644
->> index 0000000..e593af55
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
->> @@ -0,0 +1,168 @@
->> +/*
->> + * SAMSUNG EXYNOS7 SoC device tree source
->> + *
->> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
->> + *           http://www.samsung.com
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +#include <dt-bindings/clock/exynos7-clk.h>
->> +
->> +/ {
->> +     compatible = "samsung,exynos7";
->> +     interrupt-parent = <&gic>;
->> +     #address-cells = <2>;
->
-> +       #address-cells = <1>; ?
->
-> Hmm...I can't see any 64-bit address here.
+On Wed, 10 Sep 2014 15:31:44 +0100, Mark Brown <broonie@kernel.org> wrote:
+> On Wed, Sep 10, 2014 at 06:06:46AM -0700, Olof Johansson wrote:
+> > On Mon, Sep 8, 2014 at 12:40 PM, Grant Likely <grant.likely@secretlab.ca> wrote:
+> 
+> > > Well, lets see... We've got a real user complaining about a platform
+> > > that used to work on mainline, and no longer does. The only loophole
+> > > for ignoring breakage is if there nobody cares that it is broken. That
+> > > currently isn't the case. So even though it's based on a patch that
+> > > has "DO NOT SUBMIT" in large friendly letters on the front cover, it
+> > > doesn't change the situation that mainline has a regression.
+> 
+> > Yeah, I'm with you on this Grant, it doesn't matter what the patch is
+> > labelled as.
+> 
+> > One way to deal with this could be to add a quirk at boot time --
+> > looking for the simplefb and if found, modifies the regulators to keep
+> > them on. That'd go in the kernel, not in firmware.
+> 
+> Well, we should also be fixing simplefb to manage the resources it uses
+> though that doesn't clean up after the broken DTs that are currently
+> deployed.
+> 
+> As well as the regulators we'll also need to fix the clocks.  If we're
+> going to start adding these fixups perhaps we want to consider having a
+> wrapper stage that deals with rewriting DTs prior to trying to use them?
+> I'm not sure if it makes much difference but there's overlap with other
+> tools like the ATAGs conversion wrapper and building separately would
+> let the fixup code run early without directly going into the early init
+> code (which seems a bit scary).
 
-All the SoC peripherals have been put into the soc node and ranges
-property in that node is used to convert 64-bit to 32-bit addresses.
-But since this is a 64-bit SoC, we use #address-cells as 2.
+We've already got a dt fixup hook in the machine struct, created for
+exactly this reason. Fixing an incorrect DT provided by firmware:
 
->
->> +     #size-cells = <2>;
->> +
->
-> [...]
->
->> +
->> +     soc: soc {
->> +             compatible = "simple-bus";
->> +             #address-cells = <1>;
->> +             #size-cells = <1>;
->> +             ranges = <0 0 0 0x18000000>;
->> +
->> +             chipid@10000000 {
->> +                     compatible = "samsung,exynos4210-chipid";
->> +                     reg = <0x10000000 0x100>;
->> +             };
->
-> Maybe this is not required? There is no check chipid in arm/arm64.
+arch/arm/include/asm/mach/arch.h:
+struct machine_desc {
+	...
+	void (*dt_fixup)(void);
+	...
 
-This is only describing the hardware and it does not depend on linux
-using this information. And support for chip id can be used later for
-64-bit Exynos platforms as well.
-
->
-> [...]
->
->> +             timer {
->> +                     compatible = "arm,armv8-timer";
->> +                     interrupts = <1 13 0xff01>,
->> +                                  <1 14 0xff01>,
->> +                                  <1 11 0xff01>,
->> +                                  <1 10 0xff01>;
->
-> clock-frequency ?
-
-That is programmed by the bootloader / firmware.
-
->
-> [...]
->
-> - Kukjin
->
-
-Thanks,
--- 
-Shine bright,
-(: Nav :)
+g.
