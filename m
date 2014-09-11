@@ -1,39 +1,116 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v4 2/3] ARM: dts: Add Peach Pi dts entry for Atmel
- touchpad
-Date: Wed, 10 Sep 2014 15:26:52 -0700
-Message-ID: <20140910222652.GG38736@core.coreip.homeip.net>
-References: <1410348691-18317-1-git-send-email-javier.martinez@collabora.co.uk>
- <1410348691-18317-3-git-send-email-javier.martinez@collabora.co.uk>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: update to use component match support
+Date: Thu, 11 Sep 2014 10:46:54 +0900
+Message-ID: <5410FF0E.7040702@samsung.com>
+References: <1409573992-19721-1-git-send-email-inki.dae@samsung.com>
+ <541026E6.3020107@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:58925 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751453AbaIJW04 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Sep 2014 18:26:56 -0400
-Content-Disposition: inline
-In-Reply-To: <1410348691-18317-3-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <541026E6.3020107@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, afaerber@suse.de, Nick Dyer <nick.dyer@itdev.co.uk>, Yufeng Shen <miletus@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Wed, Sep 10, 2014 at 01:31:30PM +0200, Javier Martinez Canillas wrote:
-> The Peach Pi board has an Atmel maXTouch trackpad device.
-> Add the needed Device Tree nodes to support it.
-> 
-> This Device Tree change is based on the Chrome OS 3.8 tree
-> but adapted to use the mainline Atmel maXTouch DT binding.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-
-This one looks fine to me as well.
-
-Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-
-Thanks.
-
--- 
-Dmitry
+T24gMjAxNOuFhCAwOeyblCAxMOydvCAxOToyNCwgQW5kcnplaiBIYWpkYSB3cm90ZToKPiBIaSBJ
+bmtpLAo+IAo+IFRvIHRlc3QgaXQgcHJvcGVybHkgSSBoYXZlIHRvIGZpeCBpbml0L3JlbW92ZSBi
+dWdzIFsxXS4KPiBPZiBjb3Vyc2UgdGhlc2UgYnVncyB3ZXJlIG5vdCBpbnRyb2R1Y2VkIGJ5IHRo
+aXMgcGF0Y2gsCj4gYnV0IHRoZXkgcHJldmVudGVkIHNvbWUgYmFzaWMgdGVzdHMuCj4gCj4gWzFd
+OiBodHRwOi8vcGVybWFsaW5rLmdtYW5lLm9yZy9nbWFuZS5saW51eC5rZXJuZWwuc2Ftc3VuZy1z
+b2MvMzcyNjYKPiAKPiBJIGhhdmUgdGVzdGVkIHN1Y2Nlc3NmdWxseSB5b3VyIHBhdGNoIHdpdGgg
+dHJhdHMgYW5kIHVuaXZlcnNhbF9jMjEwIGJvYXJkcy4KPiAKPiBGZXcgYWRkaXRpb25hbCBjb21t
+ZW50cyBiZWxvdy4KPiAKPiBPbiAwOS8wMS8yMDE0IDAyOjE5IFBNLCBJbmtpIERhZSB3cm90ZToK
+Pj4gVXBkYXRlIEV4eW5vcydzIERSTSBkcml2ZXIgdG8gdXNlIGNvbXBvbmVudCBtYXRjaCBzdXBw
+b3J0IHJhdGVyIHRoYW4KPj4gYWRkX2NvbXBvbmVudHMuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IElu
+a2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgfCAgIDQwICsrKysrKysrKysrKysrLS0tLS0tLS0tLS0t
+LS0tLS0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAxOCBpbnNlcnRpb25zKCspLCAyMiBkZWxldGlvbnMo
+LSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
+cnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwo+PiBpbmRleCBm
+ZWVlOTkxLi5kYWU2MmMyIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZHJ2LmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2Rydi5jCj4+IEBAIC01MDMsMTYgKzUwMywxNSBAQCBzdGF0aWMgaW50IGNvbXBhcmVfb2Yoc3Ry
+dWN0IGRldmljZSAqZGV2LCB2b2lkICpkYXRhKQo+PiAgCXJldHVybiBkZXYgPT0gKHN0cnVjdCBk
+ZXZpY2UgKilkYXRhOwo+PiAgfQo+IAo+IE5pdHBpY2suCj4gCj4gVGhpcyBpcyBub3QgYSBwYXJ0
+IG9mIHRoaXMgcGF0Y2ggYnV0IGNvbXBhcmVfb2Ygc3VnZ2VzdHMgaXQgY29tcGFyZXMgT0YKPiBu
+b2RlcyBidXQgdGhpcyBmdW5jdGlvbiBjb21wYXJlcyBkZXZpY2VzLCBtYXliZSBjb21wYXJlX2Rl
+diB3b3VsZCBiZSBiZXR0ZXIuCgpBZ3JlZS4KCj4gCj4+ICAKPj4gLXN0YXRpYyBpbnQgZXh5bm9z
+X2RybV9hZGRfY29tcG9uZW50cyhzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBtYXN0ZXIgKm0p
+Cj4+ICtzdGF0aWMgc3RydWN0IGNvbXBvbmVudF9tYXRjaCAqZXh5bm9zX2RybV9tYXRjaF9hZGQo
+c3RydWN0IGRldmljZSAqZGV2KQo+PiAgewo+PiArCXN0cnVjdCBjb21wb25lbnRfbWF0Y2ggKm1h
+dGNoID0gTlVMTDsKPj4gIAlzdHJ1Y3QgY29tcG9uZW50X2RldiAqY2RldjsKPj4gIAl1bnNpZ25l
+ZCBpbnQgYXR0YWNoX2NudCA9IDA7Cj4+ICAKPj4gIAltdXRleF9sb2NrKCZkcm1fY29tcG9uZW50
+X2xvY2spOwo+PiAgCj4+ICAJbGlzdF9mb3JfZWFjaF9lbnRyeShjZGV2LCAmZHJtX2NvbXBvbmVu
+dF9saXN0LCBsaXN0KSB7Cj4+IC0JCWludCByZXQ7Cj4+IC0KPj4gIAkJLyoKPj4gIAkJICogQWRk
+IGNvbXBvbmVudHMgdG8gbWFzdGVyIG9ubHkgaW4gY2FzZSB0aGF0IGNydGMgYW5kCj4+ICAJCSAq
+IGVuY29kZXIvY29ubmVjdG9yIGRldmljZSBvYmplY3RzIGV4aXN0Lgo+PiBAQCAtNTI3LDE2ICs1
+MjYsMTAgQEAgc3RhdGljIGludCBleHlub3NfZHJtX2FkZF9jb21wb25lbnRzKHN0cnVjdCBkZXZp
+Y2UgKmRldiwgc3RydWN0IG1hc3RlciAqbSkKPj4gIAkJLyoKPj4gIAkJICogZmltZCBhbmQgZHBp
+IG1vZHVsZXMgaGF2ZSBzYW1lIGRldmljZSBvYmplY3Qgc28gYWRkCj4+ICAJCSAqIG9ubHkgY3J0
+YyBkZXZpY2Ugb2JqZWN0IGluIHRoaXMgY2FzZS4KPj4gLQkJICoKPj4gLQkJICogVE9ETy4gaWYg
+ZHBpIG1vZHVsZSBmb2xsb3dzIGRyaXZlci1tb2RlbCBkcml2ZXIgdGhlbgo+PiAtCQkgKiBiZWxv
+dyBjb2RlcyBjYW4gYmUgcmVtb3ZlZC4KPj4gIAkJICovCj4+ICAJCWlmIChjZGV2LT5jcnRjX2Rl
+diA9PSBjZGV2LT5jb25uX2Rldikgewo+PiAtCQkJcmV0ID0gY29tcG9uZW50X21hc3Rlcl9hZGRf
+Y2hpbGQobSwgY29tcGFyZV9vZiwKPj4gLQkJCQkJY2Rldi0+Y3J0Y19kZXYpOwo+PiAtCQkJaWYg
+KHJldCA8IDApCj4+IC0JCQkJcmV0dXJuIHJldDsKPj4gLQo+PiArCQkJY29tcG9uZW50X21hdGNo
+X2FkZChkZXYsICZtYXRjaCwgY29tcGFyZV9vZiwKPj4gKwkJCQkJCWNkZXYtPmNydGNfZGV2KTsK
+Pj4gIAkJCWdvdG8gb3V0X2xvY2s7Cj4+ICAJCX0KPj4gIAo+PiBAQCAtNTQ2LDExICs1MzksOCBA
+QCBzdGF0aWMgaW50IGV4eW5vc19kcm1fYWRkX2NvbXBvbmVudHMoc3RydWN0IGRldmljZSAqZGV2
+LCBzdHJ1Y3QgbWFzdGVyICptKQo+PiAgCQkgKiBjb25uZWN0b3IvZW5jb2RlciBuZWVkIHBpcGUg
+bnVtYmVyIG9mIGNydGMgd2hlbiB0aGV5Cj4+ICAJCSAqIGFyZSBjcmVhdGVkLgo+PiAgCQkgKi8K
+Pj4gLQkJcmV0ID0gY29tcG9uZW50X21hc3Rlcl9hZGRfY2hpbGQobSwgY29tcGFyZV9vZiwgY2Rl
+di0+Y3J0Y19kZXYpOwo+PiAtCQlyZXQgfD0gY29tcG9uZW50X21hc3Rlcl9hZGRfY2hpbGQobSwg
+Y29tcGFyZV9vZiwKPj4gLQkJCQkJCQljZGV2LT5jb25uX2Rldik7Cj4+IC0JCWlmIChyZXQgPCAw
+KQo+PiAtCQkJcmV0dXJuIHJldDsKPj4gKwkJY29tcG9uZW50X21hdGNoX2FkZChkZXYsICZtYXRj
+aCwgY29tcGFyZV9vZiwgY2Rldi0+Y3J0Y19kZXYpOwo+PiArCQljb21wb25lbnRfbWF0Y2hfYWRk
+KGRldiwgJm1hdGNoLCBjb21wYXJlX29mLCBjZGV2LT5jb25uX2Rldik7Cj4+ICAKPj4gIG91dF9s
+b2NrOgo+PiAgCQltdXRleF9sb2NrKCZkcm1fY29tcG9uZW50X2xvY2spOwo+PiBAQCAtNTU4LDcg
+KzU0OCw3IEBAIG91dF9sb2NrOgo+PiAgCj4+ICAJbXV0ZXhfdW5sb2NrKCZkcm1fY29tcG9uZW50
+X2xvY2spOwo+PiAgCj4+IC0JcmV0dXJuIGF0dGFjaF9jbnQgPyAwIDogLUVOT0RFVjsKPj4gKwly
+ZXR1cm4gYXR0YWNoX2NudCA/IG1hdGNoIDogRVJSX1BUUigtRVBST0JFX0RFRkVSKTsKPj4gIH0K
+Pj4gIAo+PiAgc3RhdGljIGludCBleHlub3NfZHJtX2JpbmQoc3RydWN0IGRldmljZSAqZGV2KQo+
+PiBAQCAtNTcyLDEzICs1NjIsMTMgQEAgc3RhdGljIHZvaWQgZXh5bm9zX2RybV91bmJpbmQoc3Ry
+dWN0IGRldmljZSAqZGV2KQo+PiAgfQo+PiAgCj4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGNvbXBv
+bmVudF9tYXN0ZXJfb3BzIGV4eW5vc19kcm1fb3BzID0gewo+PiAtCS5hZGRfY29tcG9uZW50cyA9
+IGV4eW5vc19kcm1fYWRkX2NvbXBvbmVudHMsCj4+ICAJLmJpbmQJCT0gZXh5bm9zX2RybV9iaW5k
+LAo+PiAgCS51bmJpbmQJCT0gZXh5bm9zX2RybV91bmJpbmQsCj4+ICB9Owo+PiAgCj4+ICBzdGF0
+aWMgaW50IGV4eW5vc19kcm1fcGxhdGZvcm1fcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAq
+cGRldikKPj4gIHsKPj4gKwlzdHJ1Y3QgY29tcG9uZW50X21hdGNoICptYXRjaDsKPj4gIAlpbnQg
+cmV0Owo+PiAgCj4+ICAJcGRldi0+ZGV2LmNvaGVyZW50X2RtYV9tYXNrID0gRE1BX0JJVF9NQVNL
+KDMyKTsKPj4gQEAgLTY0NSwxMyArNjM1LDE5IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9wbGF0
+Zm9ybV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+PiAgCQlnb3RvIGVycl91
+bnJlZ2lzdGVyX2lwcF9kcnY7Cj4+ICAjZW5kaWYKPj4gIAo+PiAtCXJldCA9IGNvbXBvbmVudF9t
+YXN0ZXJfYWRkKCZwZGV2LT5kZXYsICZleHlub3NfZHJtX29wcyk7Cj4+IC0JaWYgKHJldCA8IDAp
+Cj4+IC0JCURSTV9ERUJVR19LTVMoInJlLXRyaWVkIGJ5IGxhc3Qgc3ViIGRyaXZlciBwcm9iZWQg
+bGF0ZXIuXG4iKTsKPj4gKwltYXRjaCA9IGV4eW5vc19kcm1fbWF0Y2hfYWRkKCZwZGV2LT5kZXYp
+Owo+PiArCWlmIChJU19FUlIobWF0Y2gpKSB7Cj4+ICsJCXJldCA9IFBUUl9FUlIobWF0Y2gpOwo+
+PiArCQlnb3RvIGVycl91bnJlZ2lzdGVyX2lwcF9kZXY7Cj4+ICsJfQo+PiAgCj4+IC0JcmV0dXJu
+IDA7Cj4+ICsJcmV0dXJuIGNvbXBvbmVudF9tYXN0ZXJfYWRkX3dpdGhfbWF0Y2goJnBkZXYtPmRl
+diwgJmV4eW5vc19kcm1fb3BzLAo+PiArCQkJCQkJbWF0Y2gpOwo+IAo+IEluIGNhc2UgY29tcG9u
+ZW50X21hc3Rlcl9hZGRfd2l0aF9tYXRjaCBmYWlscyB0aGVyZSB3aWxsIGJlIG5vIGNsZWFudXAg
+LQo+IHBsYXRmb3JtIGRldmljZXMgYW5kIGRyaXZlcnMgd2lsbCBub3QgYmUgcmVtb3ZlZC4KPiAK
+ClJpZ2h0LgoKPj4gKwo+PiArZXJyX3VucmVnaXN0ZXJfaXBwX2RldjoKPj4gIAo+PiAgI2lmZGVm
+IENPTkZJR19EUk1fRVhZTk9TX0lQUAo+PiArCWV4eW5vc19wbGF0Zm9ybV9kZXZpY2VfaXBwX3Vu
+cmVnaXN0ZXIoKTsKPiAKPiBJdCBzaG91bGQgbm90IGJlIGEgcGFydCBvZiB0aGlzIHBhdGNoLgoK
+aXBwIHNob3VsZCBiZSB1bnJlZ2lzdGVyZWQgaWYgZXh5bm9zX2RybV9tYXRjaF9hZGQoKSBmYWls
+ZWQgc28gaXQgc2VlbXMKYmV0dGVyIHRvIGluY2x1ZGUgdGhpcyBleGNlcHRpb24uCgpUaGFua3Ms
+Cklua2kgRGFlCgo+IAo+IFJlZ2FyZHMKPiBBbmRyemVqCj4gCj4+ICBlcnJfdW5yZWdpc3Rlcl9p
+cHBfZHJ2Ogo+PiAgCXBsYXRmb3JtX2RyaXZlcl91bnJlZ2lzdGVyKCZpcHBfZHJpdmVyKTsKPj4g
+IGVycl91bnJlZ2lzdGVyX2dzY19kcnY6Cj4+Cj4gCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9t
+IHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2Mi
+IGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcK
+PiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9t
+by1pbmZvLmh0bWwKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
+dmVsCg==
