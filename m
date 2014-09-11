@@ -1,117 +1,53 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v3 4/6] mfd: cros_ec: move locking into cros_ec_cmd_xfer
-Date: Thu, 11 Sep 2014 11:38:07 +0200
-Message-ID: <1410428289-18229-5-git-send-email-javier.martinez@collabora.co.uk>
-References: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v4 1/3] ARM: dts: Add Peach Pit dts entry for Atmel touchpad
+Date: Thu, 11 Sep 2014 11:44:39 +0200
+Message-ID: <54116F07.9090007@collabora.co.uk>
+References: <1410348691-18317-1-git-send-email-javier.martinez@collabora.co.uk> <1410348691-18317-2-git-send-email-javier.martinez@collabora.co.uk> <20140910222553.GF38736@core.coreip.homeip.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:36115 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:36149 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752260AbaIKJi3 (ORCPT
+	with ESMTP id S1753994AbaIKJoq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Sep 2014 05:38:29 -0400
-In-Reply-To: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk>
+	Thu, 11 Sep 2014 05:44:46 -0400
+In-Reply-To: <20140910222553.GF38736@core.coreip.homeip.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, Andreas Faerber <afaerber@suse.de>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, afaerber@suse.de, Nick Dyer <nick.dyer@itdev.co.uk>, Yufeng Shen <miletus@chromium.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
-From: Andrew Bresticker <abrestic@chromium.org>
+Hello Dmitry,
 
-Now that there's a central cros_ec_cmd_xfer(), move the locking
-out of the SPI driver.
+On 09/11/2014 12:25 AM, Dmitry Torokhov wrote:
+>>  
+>> +&hsi2c_8 {
+>> +	status = "okay";
+>> +	clock-frequency = <333000>;
+>> +
+>> +	/* Atmel mXT336S */
+>> +	trackpad@4b {
+>> +		compatible = "atmel,maxtouch";
+>> +		reg = <0x4b>;
+>> +		interrupt-parent = <&gpx1>;
+>> +		interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
+>> +		wakeup-source;
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&trackpad_irq>;
+>> +		linux,gpio-keymap = <KEY_RESERVED
+>> +				     KEY_RESERVED
+>> +				     KEY_RESERVED	/* GPIO0 */
+>> +				     KEY_RESERVED	/* GPIO1 */
+>> +				     KEY_RESERVED	/* GPIO2 */
+>> +				     BTN_LEFT>; 	/* GPIO3 */
+> 
+> Seems like a single space sneaked between the semicolon and the tab.
+> Maybe whoever applies could squash it.
+> 
 
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-Reviewed-by: Simon Glass <sjg@chromium.org>
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Reviewed-by: Doug Anderson <dianders@chromium.org>
-Acked-by: Lee Jones <lee.jones@linaro.org>
----
+Right, I set c-default-style to "linux" on Emacs but seems it gets confused
+sometimes when editing Device Tree source files. Sorry about that.
 
-Changes since v2: None
-
-Changes since v1:
- - Remove mention of LPC driver in the commit message since it does not
-   exist in mainline yet. Suggested by Doug Anderson.
-
- drivers/mfd/cros_ec.c     | 10 +++++++++-
- drivers/mfd/cros_ec_spi.c | 11 -----------
- 2 files changed, 9 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-index a9faebd..c53804a 100644
---- a/drivers/mfd/cros_ec.c
-+++ b/drivers/mfd/cros_ec.c
-@@ -65,7 +65,13 @@ EXPORT_SYMBOL(cros_ec_check_result);
- int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
- 		     struct cros_ec_command *msg)
- {
--	return ec_dev->cmd_xfer(ec_dev, msg);
-+	int ret;
-+
-+	mutex_lock(&ec_dev->lock);
-+	ret = ec_dev->cmd_xfer(ec_dev, msg);
-+	mutex_unlock(&ec_dev->lock);
-+
-+	return ret;
- }
- EXPORT_SYMBOL(cros_ec_cmd_xfer);
- 
-@@ -98,6 +104,8 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
- 			return -ENOMEM;
- 	}
- 
-+	mutex_init(&ec_dev->lock);
-+
- 	err = mfd_add_devices(dev, 0, cros_devs,
- 			      ARRAY_SIZE(cros_devs),
- 			      NULL, ec_dev->irq, NULL);
-diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-index b396705..bf6e08e 100644
---- a/drivers/mfd/cros_ec_spi.c
-+++ b/drivers/mfd/cros_ec_spi.c
-@@ -79,13 +79,11 @@
-  *	if no record
-  * @end_of_msg_delay: used to set the delay_usecs on the spi_transfer that
-  *      is sent when we want to turn off CS at the end of a transaction.
-- * @lock: mutex to ensure only one user of cros_ec_cmd_xfer_spi at a time
-  */
- struct cros_ec_spi {
- 	struct spi_device *spi;
- 	s64 last_transfer_ns;
- 	unsigned int end_of_msg_delay;
--	struct mutex lock;
- };
- 
- static void debug_packet(struct device *dev, const char *name, u8 *ptr,
-@@ -232,13 +230,6 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
- 	int sum;
- 	int ret = 0, final_ret;
- 
--	/*
--	 * We have the shared ec_dev buffer plus we do lots of separate spi_sync
--	 * calls, so we need to make sure only one person is using this at a
--	 * time.
--	 */
--	mutex_lock(&ec_spi->lock);
--
- 	len = cros_ec_prepare_tx(ec_dev, ec_msg);
- 	dev_dbg(ec_dev->dev, "prepared, len=%d\n", len);
- 
-@@ -327,7 +318,6 @@ exit:
- 	if (ec_msg->command == EC_CMD_REBOOT_EC)
- 		msleep(EC_REBOOT_DELAY_MS);
- 
--	mutex_unlock(&ec_spi->lock);
- 	return ret;
- }
- 
-@@ -359,7 +349,6 @@ static int cros_ec_spi_probe(struct spi_device *spi)
- 	if (ec_spi == NULL)
- 		return -ENOMEM;
- 	ec_spi->spi = spi;
--	mutex_init(&ec_spi->lock);
- 	ec_dev = devm_kzalloc(dev, sizeof(*ec_dev), GFP_KERNEL);
- 	if (!ec_dev)
- 		return -ENOMEM;
--- 
-2.1.0
+Best regards,
+Javier
