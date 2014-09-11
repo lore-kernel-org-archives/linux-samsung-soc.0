@@ -1,79 +1,76 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH v6 4/4] phy: exynos5-usbdrd: Calibrate LOS levels for
- exynos5420/5800
-Date: Thu, 11 Sep 2014 21:10:21 +0530
-Message-ID: <5411C265.2080203@ti.com>
-References: <CAFp+6iEyqmbwMLFrBKD7NVLDAC=b+h1hPKFS=BG4k9D69hn_dg@mail.gmail.com>	<20140903144225.GD31855@saruman.home>	<CAFp+6iETPJCWMMkjHrpDcdCv=K0PbefYLa4eBOwN=aUY2=EHLA@mail.gmail.com>	<20140905175651.GK24449@saruman.home>	<CAFp+6iGU86yL8Ry3ArJJjBy2Cs0Em2B49yssH3BK5fJwyaZbtA@mail.gmail.com>	<20140908134454.GK22409@saruman.home>	<CAFp+6iG+gmD_JseytYuVQcRK9ErOqQrUEWJoU1KUU7PqMd=aRw@mail.gmail.com>	<20140909144225.GF6151@saruman.home>	<CAFp+6iHJKmeothDM67WW60Sqqj8BQroBCzZ8zecKwM_GcYL8HA@mail.gmail.com>	<CAFp+6iHRJ5oAA+K1Y0Y2uadPhsR6wmrd13DM39dqiL4jj+swHg@mail.gmail.com>	<20140910045328.GA32475@saruman.home>	<CAFp+6iHMhbi4V4LAkNsgzDc192ihT2a1mZHgLbia=K2U8+x=2w@mail.gmail.com> <CAFp+6iErXKpXgE0tRPB=tEqXxcXgQAeFJP1TpSwRN6fNu9a-qw@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: Unable to boot mainline on snow chromebook since 3.15
+Date: Thu, 11 Sep 2014 17:16:23 +0100
+Message-ID: <20140911161623.GN4015@sirena.org.uk>
+References: <540C7F5B.6070307@gmail.com>
+ <540C83DE.10505@collabora.co.uk>
+ <540C8577.2070907@gmail.com>
+ <20140908112112.GK26030@arm.com>
+ <CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
+ <CAD=FV=VAqzvJQDQMjjeQ1p5okyDzE=ff_sguObZxh59qbzcaTQ@mail.gmail.com>
+ <CACxGe6t_ex1bU=CvTpXR4VJgNf1hAq33hr6ykbHy_sMXEk4h-g@mail.gmail.com>
+ <CAOesGMipX3MV6sMWLuY=D+bQ6qe8P17YFbTFwZOHPeSc3Pw9Cg@mail.gmail.com>
+ <20140910143144.GF7960@sirena.org.uk>
+ <20140911090608.598CFC40862@trevor.secretlab.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="nrM5Z5VIJgwP9LWp"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:44429 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751075AbaIKPlS (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35183 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756729AbaIKQQs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Sep 2014 11:41:18 -0400
-In-Reply-To: <CAFp+6iErXKpXgE0tRPB=tEqXxcXgQAeFJP1TpSwRN6fNu9a-qw@mail.gmail.com>
+	Thu, 11 Sep 2014 12:16:48 -0400
+Content-Disposition: inline
+In-Reply-To: <20140911090608.598CFC40862@trevor.secretlab.ca>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>, Felipe Balbi <balbi@ti.com>
-Cc: Julius Werner <jwerner@google.com>, Julius Werner <jwerner@chromium.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg KH <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Jingoo Han <jg1.han@samsung.com>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-Hi,
 
-On Wednesday 10 September 2014 01:26 PM, Vivek Gautam wrote:
-> On Wed, Sep 10, 2014 at 10:53 AM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
->> On Wed, Sep 10, 2014 at 10:23 AM, Felipe Balbi <balbi@ti.com> wrote:
->>> On Wed, Sep 10, 2014 at 09:09:57AM +0530, Vivek Gautam wrote:
->>>> On Wed, Sep 10, 2014 at 9:07 AM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
->>>>> adding Julius here,
->>>>
->>>> i think i had missed adding Julius for this entire series :-(
->>>> I should be more careful with the CC list in future.
->>>> Added his chromium id, since that seems to be more active.
->>>>
->>>>>
->>>>>
->>>>> On Tue, Sep 9, 2014 at 8:12 PM, Felipe Balbi <balbi@ti.com> wrote:
->>>>>> On Tue, Sep 09, 2014 at 07:19:50AM +0530, Vivek Gautam wrote:
->>>>>>> Hi,
->>>>>>>
->>>>>>>
->>>>>>> On Mon, Sep 8, 2014 at 7:14 PM, Felipe Balbi <balbi@ti.com> wrote:
->>>>>>>> Hi,
->>>>>>>>
->>>>>>>> On Mon, Sep 08, 2014 at 09:53:09AM +0530, Vivek Gautam wrote:
->>>>>>>>> On Fri, Sep 5, 2014 at 11:26 PM, Felipe Balbi <balbi@ti.com> wrote:
->>>>>>>>>> On Thu, Sep 04, 2014 at 12:01:19PM +0530, Vivek Gautam wrote:
->>>>>>>>>>>> Don't we have phy_power_on()
->>>>>>>>>>>> for that ? It looks like you could just as well do this from
->>>>>>>>>>>> phy_power_on() ?
->>>>>>>>>>>
->>>>>>>>>>> No, unfortunately keeping these calibration settings in phy_power_on()
->>>>>>>>>>> doesn't help, since we need to do this after XHCI reset has happened.
->>>>>>>>>>
->>>>>>>>>> teach xHCI about PHYs ?
->>>>>>>>>
->>>>>>>>> sorry i couldn't understand you here.
->>>>>>>>> Aren't we trying to do the same with Heikki's patch about dwc3 :
->>>>>>>>> [PATCH 6/6] usb: dwc3: host: convey the PHYs to xhci
->>>>>>>>>
->>>>>>>>> and the 2nd patch in this series :
->>>>>>>>> [PATCH v6 2/4] usb: host: xhci-plat: Get PHYs for xhci's hcds
->>>>>>>>>
->>>>>>>>> Is there something else that is expected ?
->>>>>>>>
->>>>>>>> right, use that to call phy_init() at the right time, then you need to
->>>>>>>> add a new ->calibrate() method which, likely, will only be used by you
->>>>>>>> ;-)
->>>>>>>
->>>>>>> so you mean, the xhci should itself call phy_init() at a time suitable,
->>>>>>> so that ->calibrate() is not required at all ?
-> 
-> but wait, dwc3 does a phy_init() already, then how xhci will be able to
-> do that again. We can't do phy_init() multiple times right ?
+--nrM5Z5VIJgwP9LWp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-right. I think we should split and do phy ops separately for dwc3 host and gadget?
+On Thu, Sep 11, 2014 at 10:06:08AM +0100, Grant Likely wrote:
+> On Wed, 10 Sep 2014 15:31:44 +0100, Mark Brown <broonie@kernel.org> wrote:
 
-Thanks
-Kishon
+> > As well as the regulators we'll also need to fix the clocks.  If we're
+> > going to start adding these fixups perhaps we want to consider having a
+> > wrapper stage that deals with rewriting DTs prior to trying to use them?
+> > I'm not sure if it makes much difference but there's overlap with other
+> > tools like the ATAGs conversion wrapper and building separately would
+> > let the fixup code run early without directly going into the early init
+> > code (which seems a bit scary).
+
+> We've already got a dt fixup hook in the machine struct, created for
+> exactly this reason. Fixing an incorrect DT provided by firmware:
+
+> arch/arm/include/asm/mach/arch.h:
+> struct machine_desc {
+> 	...
+> 	void (*dt_fixup)(void);
+> 	...
+
+Hrm, that's in the machine descriptor which doesn't seem the ideal
+place - something keying off machine ID would be nicer.  But that's
+relatively speaking just detail.
+
+--nrM5Z5VIJgwP9LWp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUEcrWAAoJECTWi3JdVIfQiw0H/0dER5qQpAylgjS9egW2EY+D
+d5tMSHuvJgReqUfaIQ+s7RAYSmJsZXS/Ra+sL0MrHZh4BV0GWahYRf2pcVwhfd2o
+dxhMYkNNoC0hQsGmx/4fvL+pSM7gIxvsuPXeLGP5cNQfu6nJ80E7PLZ7QG0+IS60
+UuS3192t1jmNjmCKb6xcwufYUK9fIexGy1jQ73N2Lk3g+1Z5b5QzyVJ9vTK7590L
+eyUrQ7kuqcVf6IUglFTuzJc1qv2Afw0RmUvTW8sE31NyQCHF1Kt/8i6U9RpbBiSv
+627TIo9tn4FkyzhW9S2tjhszo9y5aVdS++8e3IIDK6ZyAdlxaeHXTEAP1XX9l9Y=
+=atGB
+-----END PGP SIGNATURE-----
+
+--nrM5Z5VIJgwP9LWp--
