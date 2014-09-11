@@ -1,60 +1,63 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH] clk: don't use __initconst for non-const arrays
-Date: Fri, 12 Sep 2014 00:04:45 +0200
-Message-ID: <20140911220445.GQ3755@pengutronix.de>
-References: <1410469471-31027-1-git-send-email-u.kleine-koenig@pengutronix.de>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: Unable to boot mainline on snow chromebook since 3.15
+Date: Thu, 11 Sep 2014 15:54:55 -0700
+Message-ID: <CAD=FV=Vg-c6NyV5h2K-=UCU4dRyhQM-muH8T_VD2ULQFH=uzmQ@mail.gmail.com>
+References: <CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
+	<CAD=FV=VAqzvJQDQMjjeQ1p5okyDzE=ff_sguObZxh59qbzcaTQ@mail.gmail.com>
+	<CACxGe6t_ex1bU=CvTpXR4VJgNf1hAq33hr6ykbHy_sMXEk4h-g@mail.gmail.com>
+	<CAOesGMipX3MV6sMWLuY=D+bQ6qe8P17YFbTFwZOHPeSc3Pw9Cg@mail.gmail.com>
+	<20140910143144.GF7960@sirena.org.uk>
+	<CACxGe6u=QkGTKGfaE_jJ5VFMhdVKQNggp3qVBUgNP7rDbZss_A@mail.gmail.com>
+	<20140910153919.GH7960@sirena.org.uk>
+	<CACxGe6uBcTPMh4p=oi7m_TVpjUrkgbQvxbStAn27HXEJxYe5fw@mail.gmail.com>
+	<20140910165723.GK7960@sirena.org.uk>
+	<20140911092233.CBC5CC40738@trevor.secretlab.ca>
+	<20140911180322.GP4015@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:42162 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753559AbaIKWFU (ORCPT
+Received: from mail-vc0-f176.google.com ([209.85.220.176]:52808 "EHLO
+	mail-vc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751233AbaIKWy4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Sep 2014 18:05:20 -0400
-Content-Disposition: inline
-In-Reply-To: <1410469471-31027-1-git-send-email-u.kleine-koenig@pengutronix.de>
+	Thu, 11 Sep 2014 18:54:56 -0400
+Received: by mail-vc0-f176.google.com with SMTP id la4so4876613vcb.35
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Sep 2014 15:54:55 -0700 (PDT)
+In-Reply-To: <20140911180322.GP4015@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tero Kristo <t-kristo@ti.com>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, kernel@pengutronix.de
+To: Mark Brown <broonie@kernel.org>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Olof Johansson <olof@lixom.net>, Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-Hello,
+Hi,
 
-On Thu, Sep 11, 2014 at 11:04:31PM +0200, Uwe Kleine-K=F6nig wrote:
->  /* Mux parent lists. */
-> -static const char *fin_pll_p[] __initconst =3D {
-> +static const char *fin_pll_p[] __initdata =3D {
->  	"xxti",
->  	"xusbxti"
->  };
-As discussed with Tomasz on irc: The sad thing here is that for this
-array only 8 bytes are freed when .init.rodata is thrown away (that is
-two pointers). The actual data---5 + 8 bytes + maybe aligning---isn't
-freed though.
+On Thu, Sep 11, 2014 at 11:03 AM, Mark Brown <broonie@kernel.org> wrote:
+> On Thu, Sep 11, 2014 at 10:22:32AM +0100, Grant Likely wrote:
+>> On Wed, 10 Sep 2014 17:57:23 +0100, Mark Brown <broonie@kernel.org> wrote:
+>
+>> > It's not quite as simple as just disabling PM - for example in the
+>> > clocks case we've also got to worry about what happens with rate changes
+>> > (which is going to get more and more risky as we get smarter about being
+>> > able to push configuration changes back up the tree), regulators have a
+>> > similar thing with voltage changes.  With simple enables and disables we
+>> > have to worry about things like handling users who actively want to
+>> > power things on and and off but may potentially be sharing a resource
+>> > with an undeclared dependency.
+>
+>> I think we can be okay with the above. This is a best-effort situation
+>> where we don't want to tear down how firmware has set up the board if
+>> it can be reasonably assumed that something depends on it (simplefb).
+>> However, if clocks or regulators are shared with other devices and those
+>> drivers ask for other settings, then there is simply no recourse. In
+>> that situation there must be a driver for the video device that takes
+>> care of any constraints.
+>
+> When things break I'm not sure that users are going to understand that
+> something that used to work for them was only provided on a best effort
+> basis, I think they will expect things to carry on working.
 
-We wondered if there is a nice and easy way to throw away the
-characters, too.
+Right.  This is exactly what happened at the start of this thread.
+SimpleFB was working only on a best effort basis and then it stopped
+working.  I agree that's pretty non-ideal.
 
-The only way I currently see is:
-
-	const char xxti[] __initconst =3D "xxti";
-	...
-
-	static const char *fin_pll_p[] __initdata =3D {
-		xxti,
-		...
-	};
-
-but this definitively doesn't qualify as "nice and easy". Is there an
-alternative?
-
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+-Doug
