@@ -1,47 +1,85 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] Input: atmel_mxt_ts - fix merge in DT documentation
-Date: Thu, 11 Sep 2014 10:32:57 -0700
-Message-ID: <20140911173256.GA36295@core.coreip.homeip.net>
-References: <1407372486-25881-1-git-send-email-javier.martinez@collabora.co.uk>
- <1407372486-25881-2-git-send-email-javier.martinez@collabora.co.uk>
- <53E37329.4020002@itdev.co.uk>
- <53E4E41D.4070703@collabora.co.uk>
- <53EDF6B4.7080804@collabora.co.uk>
- <53EE307E.8060507@itdev.co.uk>
- <53EE319A.1030304@wwwdotorg.org>
- <5411B73E.4040404@itdev.co.uk>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: Unable to boot mainline on snow chromebook since 3.15
+Date: Thu, 11 Sep 2014 19:03:22 +0100
+Message-ID: <20140911180322.GP4015@sirena.org.uk>
+References: <CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
+ <CAD=FV=VAqzvJQDQMjjeQ1p5okyDzE=ff_sguObZxh59qbzcaTQ@mail.gmail.com>
+ <CACxGe6t_ex1bU=CvTpXR4VJgNf1hAq33hr6ykbHy_sMXEk4h-g@mail.gmail.com>
+ <CAOesGMipX3MV6sMWLuY=D+bQ6qe8P17YFbTFwZOHPeSc3Pw9Cg@mail.gmail.com>
+ <20140910143144.GF7960@sirena.org.uk>
+ <CACxGe6u=QkGTKGfaE_jJ5VFMhdVKQNggp3qVBUgNP7rDbZss_A@mail.gmail.com>
+ <20140910153919.GH7960@sirena.org.uk>
+ <CACxGe6uBcTPMh4p=oi7m_TVpjUrkgbQvxbStAn27HXEJxYe5fw@mail.gmail.com>
+ <20140910165723.GK7960@sirena.org.uk>
+ <20140911092233.CBC5CC40738@trevor.secretlab.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="O27Gs9jTTFWz3gAR"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35324 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751042AbaIKSDx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Sep 2014 14:03:53 -0400
 Content-Disposition: inline
-In-Reply-To: <5411B73E.4040404@itdev.co.uk>
-Sender: linux-input-owner@vger.kernel.org
-To: Nick Dyer <nick.dyer@itdev.co.uk>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Stephen Warren <swarren@nvidia.com>, Yufeng Shen <miletus@chromium.org>, Benson Leung <bleung@chromium.org>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-input@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20140911092233.CBC5CC40738@trevor.secretlab.ca>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-On Thu, Sep 11, 2014 at 03:52:46PM +0100, Nick Dyer wrote:
-> On 15/08/14 17:13, Stephen Warren wrote:
-> >>> Any comments on this? I would really appreciate if you can expand on how
-> >>> this DT property is supposed to be used so I can re-spin the atmel support
-> >>> patch for Peach boards.
-> >>
-> >> The below patch improves the documentation for the gpio-property.
-> > 
-> > That patch makes sense, and is a nice description,
-> > Acked-by: Stephen Warren <swarren@nvidia.com>
-> 
-> Hi Dmitry-
-> 
-> Something went a bit wrong in merging f5940231a - there's a bit of repeated
-> text that's been introduced.
-> 
-> Signed-off-by: Nick Dyer <nick.dyer@itdev.co.uk>
 
-Hmm, not sure how I messed this up, but I will queue the patch for the
-next push.
+--O27Gs9jTTFWz3gAR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks.
+On Thu, Sep 11, 2014 at 10:22:32AM +0100, Grant Likely wrote:
+> On Wed, 10 Sep 2014 17:57:23 +0100, Mark Brown <broonie@kernel.org> wrote:
 
--- 
-Dmitry
+> > It's not quite as simple as just disabling PM - for example in the
+> > clocks case we've also got to worry about what happens with rate changes
+> > (which is going to get more and more risky as we get smarter about being
+> > able to push configuration changes back up the tree), regulators have a
+> > similar thing with voltage changes.  With simple enables and disables we
+> > have to worry about things like handling users who actively want to
+> > power things on and and off but may potentially be sharing a resource
+> > with an undeclared dependency.
+
+> I think we can be okay with the above. This is a best-effort situation
+> where we don't want to tear down how firmware has set up the board if
+> it can be reasonably assumed that something depends on it (simplefb).
+> However, if clocks or regulators are shared with other devices and those
+> drivers ask for other settings, then there is simply no recourse. In
+> that situation there must be a driver for the video device that takes
+> care of any constraints.
+
+When things break I'm not sure that users are going to understand that
+something that used to work for them was only provided on a best effort
+basis, I think they will expect things to carry on working.  It's not
+going to be great if enabling some driver for a device that happens to
+be in the same power domain as a component used in a framebuffer causes
+the display to vanish, or if better power management in an existing
+driver causes breakage.  It's relatively OK to have a brief hiccup
+during boot but usage seems to have expanded beyond that point and I
+think we need to take robustness more seriously.
+
+Given that we have straightforward ways to communicate resource usage it
+seems sensible to add robustness to the system by making use of them.
+
+--O27Gs9jTTFWz3gAR
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUEePqAAoJECTWi3JdVIfQ7DoH/1HMb4rl9GM3pqpiEkbp817g
+bG50fz3l6fxxbWmf6y9odQ6VG96wg4WugZwXJBUXtSwXKcEFIxTGHnt2VQ0YTHuA
+v3iV/KjFGkzA9q/acXr/AIPsYKwSR84rUKWfUtmYUUJHBwYBTve3hY8yj2dBUwTX
+ER/slZzxvCP+dKuLRp0sZ98L3m3FQMM4HMZDsqko0V+pu70G1pID+go6rrrF4+IF
+9SXg6pbs0xrf+2qpHqdl47VCdVObyJ3Ier6Z/397k8U4xWMgxXuTKWYT+lnq5zSX
+X/EEpaqcw8lt00mG394HdNaf1lKPrZQrQPaF06VqzRu/tdYJeYgmUl1PPaaP7C8=
+=1DQg
+-----END PGP SIGNATURE-----
+
+--O27Gs9jTTFWz3gAR--
