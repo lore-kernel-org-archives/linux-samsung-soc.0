@@ -1,141 +1,96 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: [PATCH v3 3/6] mfd: cros_ec: stop calling ->cmd_xfer() directly
-Date: Thu, 11 Sep 2014 11:38:06 +0200
-Message-ID: <1410428289-18229-4-git-send-email-javier.martinez@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v3 6/6] mfd: cros_ec: Instantiate sub-devices from device tree
+Date: Thu, 11 Sep 2014 11:38:09 +0200
+Message-ID: <1410428289-18229-7-git-send-email-javier.martinez@collabora.co.uk>
 References: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1410428289-18229-1-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Andreas Faerber <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:36138 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753900AbaIKJid (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Sep 2014 05:38:33 -0400
+In-Reply-To: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, Andreas Faerber <afaerber@suse.de>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+From: Todd Broch <tbroch@chromium.org>
 
-Instead of having users of the ChromeOS EC call the interface-specific
-cmd_xfer() callback directly, introduce a central cros_ec_cmd_xfer()
-to use instead.  This will allow us to put all the locking and retry
-logic in one place instead of duplicating it across the different
-drivers.
+If the EC device tree node has sub-nodes, try to instantiate them as
+MFD sub-devices.  We can configure the EC features provided by the board.
 
-Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Reviewed-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Signed-off-by: Todd Broch <tbroch@chromium.org>
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- drivers/i2c/busses/i2c-cros-ec-tunnel.c |  2 +-
- drivers/input/keyboard/cros_ec_keyb.c   |  2 +-
- drivers/mfd/cros_ec.c                   |  7 +++++++
- include/linux/mfd/cros_ec.h             | 24 ++++++++++++++++++------
- 4 files changed, 27 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-cros-ec-tunnel.c b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-index 97e6369..ec5c38d 100644
---- a/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-+++ b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-@@ -229,7 +229,7 @@ static int ec_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg i2c_msgs[],
- 	msg.indata = response;
- 	msg.insize = response_len;
- 
--	result = bus->ec->cmd_xfer(bus->ec, &msg);
-+	result = cros_ec_cmd_xfer(bus->ec, &msg);
- 	if (result < 0)
- 		goto exit;
- 
-diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
-index 8c09b3e..462bfcb 100644
---- a/drivers/input/keyboard/cros_ec_keyb.c
-+++ b/drivers/input/keyboard/cros_ec_keyb.c
-@@ -157,7 +157,7 @@ static int cros_ec_keyb_get_state(struct cros_ec_keyb *ckdev, uint8_t *kb_state)
- 		.insize = ckdev->cols,
- 	};
- 
--	return ckdev->ec->cmd_xfer(ckdev->ec, &msg);
-+	return cros_ec_cmd_xfer(ckdev->ec, &msg);
- }
- 
- static irqreturn_t cros_ec_keyb_irq(int irq, void *data)
+Changes since v2:
+ - Drop if guards since of_node is unconditionally built. Suggested by Lee Jones
+ - Drop unneeded comment about of_platform_populate(). Suggested by Lee Jones.
+ - Fix error message if of_platform_populate() fails. Suggested by Lee Jones.
+
+Changes since v1:
+ - Don't leave an empty struct mfd_cell array. Suggested by Lee Jones.
+ - Just use of_platform_populate() instead of manually iterating through
+   sub-devices and calling mfd_add_devices. Suggested by Lee Jones.
+---
+ drivers/mfd/cros_ec.c | 27 ++++++++-------------------
+ 1 file changed, 8 insertions(+), 19 deletions(-)
+
 diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-index 4873f9c..a9faebd 100644
+index 751af0b..7c533d2 100644
 --- a/drivers/mfd/cros_ec.c
 +++ b/drivers/mfd/cros_ec.c
-@@ -62,6 +62,13 @@ int cros_ec_check_result(struct cros_ec_device *ec_dev,
+@@ -21,6 +21,7 @@
+ #include <linux/slab.h>
+ #include <linux/module.h>
+ #include <linux/mfd/core.h>
++#include <linux/of_platform.h>
+ #include <linux/mfd/cros_ec.h>
+ #include <linux/mfd/cros_ec_commands.h>
+ #include <linux/delay.h>
+@@ -109,22 +110,10 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
  }
- EXPORT_SYMBOL(cros_ec_check_result);
+ EXPORT_SYMBOL(cros_ec_cmd_xfer);
  
-+int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
-+		     struct cros_ec_command *msg)
-+{
-+	return ec_dev->cmd_xfer(ec_dev, msg);
-+}
-+EXPORT_SYMBOL(cros_ec_cmd_xfer);
-+
- static const struct mfd_cell cros_devs[] = {
- 	{
- 		.name = "cros-ec-keyb",
-diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
-index fcbe9d1..0e166b9 100644
---- a/include/linux/mfd/cros_ec.h
-+++ b/include/linux/mfd/cros_ec.h
-@@ -62,10 +62,6 @@ struct cros_ec_command {
-  * @dev: Device pointer
-  * @was_wake_device: true if this device was set to wake the system from
-  * sleep at the last suspend
-- * @cmd_xfer: send command to EC and get response
-- *     Returns the number of bytes received if the communication succeeded, but
-- *     that doesn't mean the EC was happy with the command. The caller
-- *     should check msg.result for the EC's result code.
-  *
-  * @priv: Private data
-  * @irq: Interrupt to use
-@@ -82,6 +78,10 @@ struct cros_ec_command {
-  * @dout_size: size of dout buffer to allocate (zero to use static dout)
-  * @parent: pointer to parent device (e.g. i2c or spi device)
-  * @wake_enabled: true if this device can wake the system from sleep
-+ * @cmd_xfer: send command to EC and get response
-+ *     Returns the number of bytes received if the communication succeeded, but
-+ *     that doesn't mean the EC was happy with the command. The caller
-+ *     should check msg.result for the EC's result code.
-  * @lock: one transaction at a time
-  */
- struct cros_ec_device {
-@@ -92,8 +92,6 @@ struct cros_ec_device {
- 	struct device *dev;
- 	bool was_wake_device;
- 	struct class *cros_class;
--	int (*cmd_xfer)(struct cros_ec_device *ec,
--			struct cros_ec_command *msg);
+-static const struct mfd_cell cros_devs[] = {
+-	{
+-		.name = "cros-ec-keyb",
+-		.id = 1,
+-		.of_compatible = "google,cros-ec-keyb",
+-	},
+-	{
+-		.name = "cros-ec-i2c-tunnel",
+-		.id = 2,
+-		.of_compatible = "google,cros-ec-i2c-tunnel",
+-	},
+-};
+-
+ int cros_ec_register(struct cros_ec_device *ec_dev)
+ {
+ 	struct device *dev = ec_dev->dev;
++	struct device_node *node = dev->of_node;
+ 	int err = 0;
  
- 	/* These are used to implement the platform-specific interface */
- 	void *priv;
-@@ -104,6 +102,8 @@ struct cros_ec_device {
- 	int dout_size;
- 	struct device *parent;
- 	bool wake_enabled;
-+	int (*cmd_xfer)(struct cros_ec_device *ec,
-+			struct cros_ec_command *msg);
- 	struct mutex lock;
- };
+ 	if (ec_dev->din_size) {
+@@ -140,12 +129,12 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
  
-@@ -153,6 +153,18 @@ int cros_ec_check_result(struct cros_ec_device *ec_dev,
- 			 struct cros_ec_command *msg);
+ 	mutex_init(&ec_dev->lock);
  
- /**
-+ * cros_ec_cmd_xfer - Send a command to the ChromeOS EC
-+ *
-+ * Call this to send a command to the ChromeOS EC.  This should be used
-+ * instead of calling the EC's cmd_xfer() callback directly.
-+ *
-+ * @ec_dev: EC device
-+ * @msg: Message to write
-+ */
-+int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
-+		     struct cros_ec_command *msg);
-+
-+/**
-  * cros_ec_remove - Remove a ChromeOS EC
-  *
-  * Call this to deregister a ChromeOS EC, then clean up any private data.
+-	err = mfd_add_devices(dev, 0, cros_devs,
+-			      ARRAY_SIZE(cros_devs),
+-			      NULL, ec_dev->irq, NULL);
+-	if (err) {
+-		dev_err(dev, "failed to add mfd devices\n");
+-		return err;
++	if (node) {
++		err = of_platform_populate(node, NULL, NULL, dev);
++		if (err) {
++			dev_err(dev, "Failed to register subordinate devices");
++			return err;
++		}
+ 	}
+ 
+ 	dev_info(dev, "Chrome EC device registered\n");
 -- 
 2.1.0
