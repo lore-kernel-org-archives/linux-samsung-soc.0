@@ -1,59 +1,65 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: Unable to boot mainline on snow chromebook since 3.15
-Date: Thu, 11 Sep 2014 10:22:32 +0100
-Message-ID: <20140911092233.CBC5CC40738@trevor.secretlab.ca>
-References: <540C8577.2070907@gmail.com> <20140908112112.GK26030@arm.com>
- <CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
- <CAD=FV=VAqzvJQDQMjjeQ1p5okyDzE=ff_sguObZxh59qbzcaTQ@mail.gmail.com>
- <CACxGe6t_ex1bU=CvTpXR4VJgNf1hAq33hr6ykbHy_sMXEk4h-g@mail.gmail.com>
- <CAOesGMipX3MV6sMWLuY=D+bQ6qe8P17YFbTFwZOHPeSc3Pw9Cg@mail.gmail.com>
- <20140910143144.GF7960@sirena.org.uk>
- <CACxGe6u=QkGTKGfaE_jJ5VFMhdVKQNggp3qVBUgNP7rDbZss_A@mail.gmail.com>
- <20140910153919.GH7960@sirena.org.uk>
- <CACxGe6uBcTPMh4p=oi7m_TVpjUrkgbQvxbStAn27HXEJxYe5fw@mail.gmail.com>
- <20140910165723.GK7960@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20140910165723.GK7960@sirena.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mark Brown <broonie@kernel.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Prashanth G <prashanth.g@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: [PATCH v3 0/6] Second batch of cleanups for cros_ec
+Date: Thu, 11 Sep 2014 11:38:03 +0200
+Message-ID: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Andreas Faerber <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, 10 Sep 2014 17:57:23 +0100, Mark Brown <broonie@kernel.org> wrote:
-> On Wed, Sep 10, 2014 at 05:29:32PM +0100, Grant Likely wrote:
-> 
-> > What we can do is have an inhibit flag for
-> > simplefb/simpleuart/simplewhatever that holds off PM. When a real
-> > driver, or a stub that understands parsing the resource dependencies,
-> > takes ownership of the device (or userspace tells the kernel to stop
-> > caring) it can clear the inhibit.
-> 
-> It's not quite as simple as just disabling PM - for example in the
-> clocks case we've also got to worry about what happens with rate changes
-> (which is going to get more and more risky as we get smarter about being
-> able to push configuration changes back up the tree), regulators have a
-> similar thing with voltage changes.  With simple enables and disables we
-> have to worry about things like handling users who actively want to
-> power things on and and off but may potentially be sharing a resource
-> with an undeclared dependency.
+Hello,
 
-I think we can be okay with the above. This is a best-effort situation
-where we don't want to tear down how firmware has set up the board if
-it can be reasonably assumed that something depends on it (simplefb).
-However, if clocks or regulators are shared with other devices and those
-drivers ask for other settings, then there is simply no recourse. In
-that situation there must be a driver for the video device that takes
-care of any constraints.
+This is a second batch of cleanups patches for the mfd cros_ec
+driver and its subdevices drivers. The first batch of cleanups
+was posted by Doug Anderson [0] and have already been merged.
+The patches were picked from the ChromeOS 3.8 kernel and after
+these no cleanups patches for cros_ec are left, only commits
+that add cros ec support not yet available in mainline.
 
-g.
+This is a third version of the patch series that addresses
+issues pointed out by Lee Jones on v2 [1].
+
+There is almost no functionality added on this series but the
+idea is to reduce the delta between the mainline drivers and
+the ones in the downstream Chrome OS 3.8 kernel so the missing
+functionality can be added on top once these cleanups patches
+are merged. The missing functionlity currently in mainline is:
+
+- Chrome OS Embedded Controller userspace device interface
+- Chrome OS Embedded Controller Low Pin Count (LPC) inteface
+- Access to vboot context stored on a block device
+- Access to vboot context stored on EC's nvram
+
+The patches in this series are authored by different people
+(all on cc) and consist of the following:
+
+Andrew Bresticker (3):
+  mfd: cros_ec: stop calling ->cmd_xfer() directly
+  mfd: cros_ec: move locking into cros_ec_cmd_xfer
+  mfd: cros_ec: wait for completion of commands that return IN_PROGRESS
+
+Derek Basehore (1):
+  i2c: i2c-cros-ec-tunnel: Set retries to 3
+
+Doug Anderson (1):
+  mfd: cros_ec: Delay for 50ms when we see EC_CMD_REBOOT_EC
+
+Todd Broch (1):
+  mfd: cros_ec: Instantiate sub-devices from device tree
+
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c |  5 ++-
+ drivers/input/keyboard/cros_ec_keyb.c   |  2 +-
+ drivers/mfd/cros_ec.c                   | 74 +++++++++++++++++++++++++--------
+ drivers/mfd/cros_ec_spi.c               | 20 ++++-----
+ include/linux/mfd/cros_ec.h             | 24 ++++++++---
+ 5 files changed, 88 insertions(+), 37 deletions(-)
+
+Patches #1, #2 and #6 can be applied independently but patches #3, #4 and #5
+rely on the previous one so they should be applied together and in that order.
+
+Best regards,
+Javier
+
+[0]: https://www.mail-archive.com/linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg11385.html
+[1]: https://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg35858.html
