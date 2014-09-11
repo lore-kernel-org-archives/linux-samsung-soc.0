@@ -1,150 +1,64 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH v2] drm/exynos: update to use component match support
-Date: Thu, 11 Sep 2014 21:57:30 +0900
-Message-ID: <1410440250-5209-1-git-send-email-inki.dae@samsung.com>
-References: <1409573992-19721-1-git-send-email-inki.dae@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] thermal: exynos: use correct offset for TMU_CONTROL register
+ on Exynos5260
+Date: Thu, 11 Sep 2014 15:00:49 +0200
+Message-ID: <1594947.1Ri7fFnV5h@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1409573992-19721-1-git-send-email-inki.dae@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:23540 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751720AbaIKNBB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Sep 2014 09:01:01 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Update Exynos's DRM driver to use component match support rater than
-add_components.
+In exynos5260_tmu_registers tmu_ctrl entry is erroneously
+assigned twice.  The second assignment (to EXYNOS_TMU_REG_CONTROL1
+define which represents 0x24 value) overrides the first one
+(to EXYNOS_TMU_REG_CONTROL define which represents 0x20 value)
+which results in the wrong (according to the Exynos5260 SoC
+documentation that I have) offset being used for TMU_CONTROL
+register.  Fix it by removing the wrong assignment and then
+remove no longer used EXYNOS_TMU_REG_CONTROL1 define.
 
-Changelog v2:
-- release devices and drivers if failed.
-- change compare_of to compare_dev.
-
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>
+Cc: Zhang Rui <rui.zhang@intel.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_drv.c |   44 +++++++++++++++----------------
- 1 file changed, 22 insertions(+), 22 deletions(-)
+ drivers/thermal/samsung/exynos_tmu_data.c |    1 -
+ drivers/thermal/samsung/exynos_tmu_data.h |    1 -
+ 2 files changed, 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index 5aae95c..3f6ec96 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -486,21 +486,20 @@ void exynos_drm_component_del(struct device *dev,
- 	mutex_unlock(&drm_component_lock);
- }
+Index: b/drivers/thermal/samsung/exynos_tmu_data.c
+===================================================================
+--- a/drivers/thermal/samsung/exynos_tmu_data.c	2014-09-11 14:41:12.567347442 +0200
++++ b/drivers/thermal/samsung/exynos_tmu_data.c	2014-09-11 14:43:00.211350284 +0200
+@@ -273,7 +273,6 @@ struct exynos_tmu_init_data const exynos
+ static const struct exynos_tmu_registers exynos5260_tmu_registers = {
+ 	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
+ 	.tmu_ctrl = EXYNOS_TMU_REG_CONTROL,
+-	.tmu_ctrl = EXYNOS_TMU_REG_CONTROL1,
+ 	.therm_trip_mode_shift = EXYNOS_TMU_TRIP_MODE_SHIFT,
+ 	.therm_trip_mode_mask = EXYNOS_TMU_TRIP_MODE_MASK,
+ 	.therm_trip_en_shift = EXYNOS_TMU_THERM_TRIP_EN_SHIFT,
+Index: b/drivers/thermal/samsung/exynos_tmu_data.h
+===================================================================
+--- a/drivers/thermal/samsung/exynos_tmu_data.h	2014-09-11 14:41:12.243347433 +0200
++++ b/drivers/thermal/samsung/exynos_tmu_data.h	2014-09-11 14:43:36.167351233 +0200
+@@ -83,7 +83,6 @@
+ #define EXYNOS_MAX_TRIGGER_PER_REG	4
  
--static int compare_of(struct device *dev, void *data)
-+static int compare_dev(struct device *dev, void *data)
- {
- 	return dev == (struct device *)data;
- }
- 
--static int exynos_drm_add_components(struct device *dev, struct master *m)
-+static struct component_match *exynos_drm_match_add(struct device *dev)
- {
-+	struct component_match *match = NULL;
- 	struct component_dev *cdev;
- 	unsigned int attach_cnt = 0;
- 
- 	mutex_lock(&drm_component_lock);
- 
- 	list_for_each_entry(cdev, &drm_component_list, list) {
--		int ret;
--
- 		/*
- 		 * Add components to master only in case that crtc and
- 		 * encoder/connector device objects exist.
-@@ -515,16 +514,10 @@ static int exynos_drm_add_components(struct device *dev, struct master *m)
- 		/*
- 		 * fimd and dpi modules have same device object so add
- 		 * only crtc device object in this case.
--		 *
--		 * TODO. if dpi module follows driver-model driver then
--		 * below codes can be removed.
- 		 */
- 		if (cdev->crtc_dev == cdev->conn_dev) {
--			ret = component_master_add_child(m, compare_of,
--					cdev->crtc_dev);
--			if (ret < 0)
--				return ret;
--
-+			component_match_add(dev, &match, compare_dev,
-+						cdev->crtc_dev);
- 			goto out_lock;
- 		}
- 
-@@ -534,11 +527,8 @@ static int exynos_drm_add_components(struct device *dev, struct master *m)
- 		 * connector/encoder need pipe number of crtc when they
- 		 * are created.
- 		 */
--		ret = component_master_add_child(m, compare_of, cdev->crtc_dev);
--		ret |= component_master_add_child(m, compare_of,
--							cdev->conn_dev);
--		if (ret < 0)
--			return ret;
-+		component_match_add(dev, &match, compare_dev, cdev->crtc_dev);
-+		component_match_add(dev, &match, compare_dev, cdev->conn_dev);
- 
- out_lock:
- 		mutex_lock(&drm_component_lock);
-@@ -546,7 +536,7 @@ out_lock:
- 
- 	mutex_unlock(&drm_component_lock);
- 
--	return attach_cnt ? 0 : -ENODEV;
-+	return attach_cnt ? match : ERR_PTR(-EPROBE_DEFER);
- }
- 
- static int exynos_drm_bind(struct device *dev)
-@@ -560,13 +550,13 @@ static void exynos_drm_unbind(struct device *dev)
- }
- 
- static const struct component_master_ops exynos_drm_ops = {
--	.add_components = exynos_drm_add_components,
- 	.bind		= exynos_drm_bind,
- 	.unbind		= exynos_drm_unbind,
- };
- 
- static int exynos_drm_platform_probe(struct platform_device *pdev)
- {
-+	struct component_match *match;
- 	int ret;
- 
- 	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
-@@ -633,13 +623,23 @@ static int exynos_drm_platform_probe(struct platform_device *pdev)
- 		goto err_unregister_ipp_drv;
- #endif
- 
--	ret = component_master_add(&pdev->dev, &exynos_drm_ops);
-+	match = exynos_drm_match_add(&pdev->dev);
-+	if (IS_ERR(match)) {
-+		ret = PTR_ERR(match);
-+		goto err_unregister_resources;
-+	}
-+
-+	ret = component_master_add_with_match(&pdev->dev, &exynos_drm_ops,
-+						match);
- 	if (ret < 0)
--		DRM_DEBUG_KMS("re-tried by last sub driver probed later.\n");
-+		goto err_unregister_resources;
- 
--	return 0;
-+	return ret;
-+
-+err_unregister_resources:
- 
- #ifdef CONFIG_DRM_EXYNOS_IPP
-+	exynos_platform_device_ipp_unregister();
- err_unregister_ipp_drv:
- 	platform_driver_unregister(&ipp_driver);
- err_unregister_gsc_drv:
--- 
-1.7.9.5
+ /* Exynos5260 specific */
+-#define EXYNOS_TMU_REG_CONTROL1			0x24
+ #define EXYNOS5260_TMU_REG_INTEN		0xC0
+ #define EXYNOS5260_TMU_REG_INTSTAT		0xC4
+ #define EXYNOS5260_TMU_REG_INTCLEAR		0xC8
