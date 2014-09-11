@@ -1,7 +1,7 @@
 From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: [PATCH v3 2/6] i2c: i2c-cros-ec-tunnel: Set retries to 3
-Date: Thu, 11 Sep 2014 11:38:05 +0200
-Message-ID: <1410428289-18229-3-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v3 5/6] mfd: cros_ec: wait for completion of commands that return IN_PROGRESS
+Date: Thu, 11 Sep 2014 11:38:08 +0200
+Message-ID: <1410428289-18229-6-git-send-email-javier.martinez@collabora.co.uk>
 References: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1410428289-18229-1-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
@@ -10,40 +10,89 @@ To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Andreas Faerber <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
-Since the i2c bus can get wedged on the EC sometimes, set the number of retries
-to 3. Since we un-wedge the bus immediately after the wedge happens, this is the
-correct fix since only one transfer will fail.
+When an EC command returns EC_RES_IN_PROGRESS, we need to query
+the state of the EC until it indicates that it is no longer busy.
+Do this in cros_ec_cmd_xfer() under the EC's mutex so that other
+commands (e.g. keyboard, I2C passtru) aren't issued to the EC while
+it is working on the in-progress command.
 
-Signed-off-by: Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Acked-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+The delay in milliseconds and the number of retries are the values
+that were used by the flashrom tool when retrying commands.
+
+Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Reviewed-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 ---
- drivers/i2c/busses/i2c-cros-ec-tunnel.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-cros-ec-tunnel.c b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-index 3c15dcc..97e6369 100644
---- a/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-+++ b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
-@@ -16,6 +16,8 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- 
-+#define I2C_MAX_RETRIES 3
+Changes since v2:
+ - Explain in the commit message from where the delay and retry values come from.
+   Commented by Andrew Bresticker.
+ - Move the needed definitions inside the if block. Suggested by Lee Jones.
+ - Only check if result is EC_RES_IN_PROGRESS instead of checking also if ret is
+   -EAGAIN since the former implies the later. Suggested by Lee Jones.
+ - Use usleep_range() instead of msleep() since doesn't handle values between 1~20.
+   Suggested by Lee Jones.
+
+Changes since v1:
+ - The *xfer() calls don't modify the passed cros_ec_command so there is
+   no need to populate it inside the for loop. Suggested by Lee Jones.
+
+ drivers/mfd/cros_ec.c | 34 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+
+diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
+index c53804a..af2fadf 100644
+--- a/drivers/mfd/cros_ec.c
++++ b/drivers/mfd/cros_ec.c
+@@ -23,6 +23,10 @@
+ #include <linux/mfd/core.h>
+ #include <linux/mfd/cros_ec.h>
+ #include <linux/mfd/cros_ec_commands.h>
++#include <linux/delay.h>
 +
- /**
-  * struct ec_i2c_device - Driver data for I2C tunnel
-  *
-@@ -290,6 +292,7 @@ static int ec_i2c_probe(struct platform_device *pdev)
- 	bus->adap.algo_data = bus;
- 	bus->adap.dev.parent = &pdev->dev;
- 	bus->adap.dev.of_node = np;
-+	bus->adap.retries = I2C_MAX_RETRIES;
++#define EC_COMMAND_RETRIES	50
++#define EC_RETRY_DELAY_MS	10
  
- 	err = i2c_add_adapter(&bus->adap);
- 	if (err) {
+ int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
+ 		       struct cros_ec_command *msg)
+@@ -69,6 +73,36 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
+ 
+ 	mutex_lock(&ec_dev->lock);
+ 	ret = ec_dev->cmd_xfer(ec_dev, msg);
++	if (msg->result == EC_RES_IN_PROGRESS) {
++		int i;
++		struct cros_ec_command status_msg;
++		struct ec_response_get_comms_status status;
++
++		status_msg.version = 0;
++		status_msg.command = EC_CMD_GET_COMMS_STATUS;
++		status_msg.outdata = NULL;
++		status_msg.outsize = 0;
++		status_msg.indata = (uint8_t *)&status;
++		status_msg.insize = sizeof(status);
++
++		/*
++		 * Query the EC's status until it's no longer busy or
++		 * we encounter an error.
++		 */
++		for (i = 0; i < EC_COMMAND_RETRIES; i++) {
++			usleep_range(EC_RETRY_DELAY_MS, EC_RETRY_DELAY_MS + 1);
++
++			ret = ec_dev->cmd_xfer(ec_dev, &status_msg);
++			if (ret < 0)
++				break;
++
++			msg->result = status_msg.result;
++			if (status_msg.result != EC_RES_SUCCESS)
++				break;
++			if (!(status.flags & EC_COMMS_STATUS_PROCESSING))
++				break;
++		}
++	}
+ 	mutex_unlock(&ec_dev->lock);
+ 
+ 	return ret;
 -- 
 2.1.0
