@@ -1,116 +1,92 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: update to use component match support
-Date: Thu, 11 Sep 2014 10:46:54 +0900
-Message-ID: <5410FF0E.7040702@samsung.com>
-References: <1409573992-19721-1-git-send-email-inki.dae@samsung.com>
- <541026E6.3020107@samsung.com>
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v6 4/4] phy: exynos5-usbdrd: Calibrate LOS levels for
+ exynos5420/5800
+Date: Thu, 11 Sep 2014 08:50:30 +0530
+Message-ID: <7AFBEAB40137492BBF4D80EBC3E6EBB3@sisodomain.com>
+References: <CAFp+6iEyqmbwMLFrBKD7NVLDAC=b+h1hPKFS=BG4k9D69hn_dg@mail.gmail.com>
+ <20140903144225.GD31855@saruman.home>
+ <CAFp+6iETPJCWMMkjHrpDcdCv=K0PbefYLa4eBOwN=aUY2=EHLA@mail.gmail.com>
+ <20140905175651.GK24449@saruman.home>
+ <CAFp+6iGU86yL8Ry3ArJJjBy2Cs0Em2B49yssH3BK5fJwyaZbtA@mail.gmail.com>
+ <20140908134454.GK22409@saruman.home>
+ <CAFp+6iG+gmD_JseytYuVQcRK9ErOqQrUEWJoU1KUU7PqMd=aRw@mail.gmail.com>
+ <20140909144225.GF6151@saruman.home>
+ <CAFp+6iHJKmeothDM67WW60Sqqj8BQroBCzZ8zecKwM_GcYL8HA@mail.gmail.com>
+ <CAFp+6iHRJ5oAA+K1Y0Y2uadPhsR6wmrd13DM39dqiL4jj+swHg@mail.gmail.com>
+ <20140910045328.GA32475@saruman.home>
+ <CAFp+6iHMhbi4V4LAkNsgzDc192ihT2a1mZHgLbia=K2U8+x=2w@mail.gmail.com>
+ <CAFp+6iErXKpXgE0tRPB=tEqXxcXgQAeFJP1TpSwRN6fNu9a-qw@mail.gmail.com>
+ <CAODwPW9QOD-7Wyc1Bh8QKfArSmsdqzYTOx6-gc8V5ace9-oPFQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <541026E6.3020107@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; format=flowed; charset=UTF-8; reply-type=original
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <CAODwPW9QOD-7Wyc1Bh8QKfArSmsdqzYTOx6-gc8V5ace9-oPFQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Julius Werner <jwerner-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Cc: Julius Werner <jwerner-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, kishon <kishon-l0cyMroinI0@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Sergei Shtylyov <sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNOuFhCAwOeyblCAxMOydvCAxOToyNCwgQW5kcnplaiBIYWpkYSB3cm90ZToKPiBIaSBJ
-bmtpLAo+IAo+IFRvIHRlc3QgaXQgcHJvcGVybHkgSSBoYXZlIHRvIGZpeCBpbml0L3JlbW92ZSBi
-dWdzIFsxXS4KPiBPZiBjb3Vyc2UgdGhlc2UgYnVncyB3ZXJlIG5vdCBpbnRyb2R1Y2VkIGJ5IHRo
-aXMgcGF0Y2gsCj4gYnV0IHRoZXkgcHJldmVudGVkIHNvbWUgYmFzaWMgdGVzdHMuCj4gCj4gWzFd
-OiBodHRwOi8vcGVybWFsaW5rLmdtYW5lLm9yZy9nbWFuZS5saW51eC5rZXJuZWwuc2Ftc3VuZy1z
-b2MvMzcyNjYKPiAKPiBJIGhhdmUgdGVzdGVkIHN1Y2Nlc3NmdWxseSB5b3VyIHBhdGNoIHdpdGgg
-dHJhdHMgYW5kIHVuaXZlcnNhbF9jMjEwIGJvYXJkcy4KPiAKPiBGZXcgYWRkaXRpb25hbCBjb21t
-ZW50cyBiZWxvdy4KPiAKPiBPbiAwOS8wMS8yMDE0IDAyOjE5IFBNLCBJbmtpIERhZSB3cm90ZToK
-Pj4gVXBkYXRlIEV4eW5vcydzIERSTSBkcml2ZXIgdG8gdXNlIGNvbXBvbmVudCBtYXRjaCBzdXBw
-b3J0IHJhdGVyIHRoYW4KPj4gYWRkX2NvbXBvbmVudHMuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IElu
-a2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgfCAgIDQwICsrKysrKysrKysrKysrLS0tLS0tLS0tLS0t
-LS0tLS0KPj4gIDEgZmlsZSBjaGFuZ2VkLCAxOCBpbnNlcnRpb25zKCspLCAyMiBkZWxldGlvbnMo
-LSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
-cnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwo+PiBpbmRleCBm
-ZWVlOTkxLi5kYWU2MmMyIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZHJ2LmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2Rydi5jCj4+IEBAIC01MDMsMTYgKzUwMywxNSBAQCBzdGF0aWMgaW50IGNvbXBhcmVfb2Yoc3Ry
-dWN0IGRldmljZSAqZGV2LCB2b2lkICpkYXRhKQo+PiAgCXJldHVybiBkZXYgPT0gKHN0cnVjdCBk
-ZXZpY2UgKilkYXRhOwo+PiAgfQo+IAo+IE5pdHBpY2suCj4gCj4gVGhpcyBpcyBub3QgYSBwYXJ0
-IG9mIHRoaXMgcGF0Y2ggYnV0IGNvbXBhcmVfb2Ygc3VnZ2VzdHMgaXQgY29tcGFyZXMgT0YKPiBu
-b2RlcyBidXQgdGhpcyBmdW5jdGlvbiBjb21wYXJlcyBkZXZpY2VzLCBtYXliZSBjb21wYXJlX2Rl
-diB3b3VsZCBiZSBiZXR0ZXIuCgpBZ3JlZS4KCj4gCj4+ICAKPj4gLXN0YXRpYyBpbnQgZXh5bm9z
-X2RybV9hZGRfY29tcG9uZW50cyhzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBtYXN0ZXIgKm0p
-Cj4+ICtzdGF0aWMgc3RydWN0IGNvbXBvbmVudF9tYXRjaCAqZXh5bm9zX2RybV9tYXRjaF9hZGQo
-c3RydWN0IGRldmljZSAqZGV2KQo+PiAgewo+PiArCXN0cnVjdCBjb21wb25lbnRfbWF0Y2ggKm1h
-dGNoID0gTlVMTDsKPj4gIAlzdHJ1Y3QgY29tcG9uZW50X2RldiAqY2RldjsKPj4gIAl1bnNpZ25l
-ZCBpbnQgYXR0YWNoX2NudCA9IDA7Cj4+ICAKPj4gIAltdXRleF9sb2NrKCZkcm1fY29tcG9uZW50
-X2xvY2spOwo+PiAgCj4+ICAJbGlzdF9mb3JfZWFjaF9lbnRyeShjZGV2LCAmZHJtX2NvbXBvbmVu
-dF9saXN0LCBsaXN0KSB7Cj4+IC0JCWludCByZXQ7Cj4+IC0KPj4gIAkJLyoKPj4gIAkJICogQWRk
-IGNvbXBvbmVudHMgdG8gbWFzdGVyIG9ubHkgaW4gY2FzZSB0aGF0IGNydGMgYW5kCj4+ICAJCSAq
-IGVuY29kZXIvY29ubmVjdG9yIGRldmljZSBvYmplY3RzIGV4aXN0Lgo+PiBAQCAtNTI3LDE2ICs1
-MjYsMTAgQEAgc3RhdGljIGludCBleHlub3NfZHJtX2FkZF9jb21wb25lbnRzKHN0cnVjdCBkZXZp
-Y2UgKmRldiwgc3RydWN0IG1hc3RlciAqbSkKPj4gIAkJLyoKPj4gIAkJICogZmltZCBhbmQgZHBp
-IG1vZHVsZXMgaGF2ZSBzYW1lIGRldmljZSBvYmplY3Qgc28gYWRkCj4+ICAJCSAqIG9ubHkgY3J0
-YyBkZXZpY2Ugb2JqZWN0IGluIHRoaXMgY2FzZS4KPj4gLQkJICoKPj4gLQkJICogVE9ETy4gaWYg
-ZHBpIG1vZHVsZSBmb2xsb3dzIGRyaXZlci1tb2RlbCBkcml2ZXIgdGhlbgo+PiAtCQkgKiBiZWxv
-dyBjb2RlcyBjYW4gYmUgcmVtb3ZlZC4KPj4gIAkJICovCj4+ICAJCWlmIChjZGV2LT5jcnRjX2Rl
-diA9PSBjZGV2LT5jb25uX2Rldikgewo+PiAtCQkJcmV0ID0gY29tcG9uZW50X21hc3Rlcl9hZGRf
-Y2hpbGQobSwgY29tcGFyZV9vZiwKPj4gLQkJCQkJY2Rldi0+Y3J0Y19kZXYpOwo+PiAtCQkJaWYg
-KHJldCA8IDApCj4+IC0JCQkJcmV0dXJuIHJldDsKPj4gLQo+PiArCQkJY29tcG9uZW50X21hdGNo
-X2FkZChkZXYsICZtYXRjaCwgY29tcGFyZV9vZiwKPj4gKwkJCQkJCWNkZXYtPmNydGNfZGV2KTsK
-Pj4gIAkJCWdvdG8gb3V0X2xvY2s7Cj4+ICAJCX0KPj4gIAo+PiBAQCAtNTQ2LDExICs1MzksOCBA
-QCBzdGF0aWMgaW50IGV4eW5vc19kcm1fYWRkX2NvbXBvbmVudHMoc3RydWN0IGRldmljZSAqZGV2
-LCBzdHJ1Y3QgbWFzdGVyICptKQo+PiAgCQkgKiBjb25uZWN0b3IvZW5jb2RlciBuZWVkIHBpcGUg
-bnVtYmVyIG9mIGNydGMgd2hlbiB0aGV5Cj4+ICAJCSAqIGFyZSBjcmVhdGVkLgo+PiAgCQkgKi8K
-Pj4gLQkJcmV0ID0gY29tcG9uZW50X21hc3Rlcl9hZGRfY2hpbGQobSwgY29tcGFyZV9vZiwgY2Rl
-di0+Y3J0Y19kZXYpOwo+PiAtCQlyZXQgfD0gY29tcG9uZW50X21hc3Rlcl9hZGRfY2hpbGQobSwg
-Y29tcGFyZV9vZiwKPj4gLQkJCQkJCQljZGV2LT5jb25uX2Rldik7Cj4+IC0JCWlmIChyZXQgPCAw
-KQo+PiAtCQkJcmV0dXJuIHJldDsKPj4gKwkJY29tcG9uZW50X21hdGNoX2FkZChkZXYsICZtYXRj
-aCwgY29tcGFyZV9vZiwgY2Rldi0+Y3J0Y19kZXYpOwo+PiArCQljb21wb25lbnRfbWF0Y2hfYWRk
-KGRldiwgJm1hdGNoLCBjb21wYXJlX29mLCBjZGV2LT5jb25uX2Rldik7Cj4+ICAKPj4gIG91dF9s
-b2NrOgo+PiAgCQltdXRleF9sb2NrKCZkcm1fY29tcG9uZW50X2xvY2spOwo+PiBAQCAtNTU4LDcg
-KzU0OCw3IEBAIG91dF9sb2NrOgo+PiAgCj4+ICAJbXV0ZXhfdW5sb2NrKCZkcm1fY29tcG9uZW50
-X2xvY2spOwo+PiAgCj4+IC0JcmV0dXJuIGF0dGFjaF9jbnQgPyAwIDogLUVOT0RFVjsKPj4gKwly
-ZXR1cm4gYXR0YWNoX2NudCA/IG1hdGNoIDogRVJSX1BUUigtRVBST0JFX0RFRkVSKTsKPj4gIH0K
-Pj4gIAo+PiAgc3RhdGljIGludCBleHlub3NfZHJtX2JpbmQoc3RydWN0IGRldmljZSAqZGV2KQo+
-PiBAQCAtNTcyLDEzICs1NjIsMTMgQEAgc3RhdGljIHZvaWQgZXh5bm9zX2RybV91bmJpbmQoc3Ry
-dWN0IGRldmljZSAqZGV2KQo+PiAgfQo+PiAgCj4+ICBzdGF0aWMgY29uc3Qgc3RydWN0IGNvbXBv
-bmVudF9tYXN0ZXJfb3BzIGV4eW5vc19kcm1fb3BzID0gewo+PiAtCS5hZGRfY29tcG9uZW50cyA9
-IGV4eW5vc19kcm1fYWRkX2NvbXBvbmVudHMsCj4+ICAJLmJpbmQJCT0gZXh5bm9zX2RybV9iaW5k
-LAo+PiAgCS51bmJpbmQJCT0gZXh5bm9zX2RybV91bmJpbmQsCj4+ICB9Owo+PiAgCj4+ICBzdGF0
-aWMgaW50IGV4eW5vc19kcm1fcGxhdGZvcm1fcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAq
-cGRldikKPj4gIHsKPj4gKwlzdHJ1Y3QgY29tcG9uZW50X21hdGNoICptYXRjaDsKPj4gIAlpbnQg
-cmV0Owo+PiAgCj4+ICAJcGRldi0+ZGV2LmNvaGVyZW50X2RtYV9tYXNrID0gRE1BX0JJVF9NQVNL
-KDMyKTsKPj4gQEAgLTY0NSwxMyArNjM1LDE5IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9wbGF0
-Zm9ybV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+PiAgCQlnb3RvIGVycl91
-bnJlZ2lzdGVyX2lwcF9kcnY7Cj4+ICAjZW5kaWYKPj4gIAo+PiAtCXJldCA9IGNvbXBvbmVudF9t
-YXN0ZXJfYWRkKCZwZGV2LT5kZXYsICZleHlub3NfZHJtX29wcyk7Cj4+IC0JaWYgKHJldCA8IDAp
-Cj4+IC0JCURSTV9ERUJVR19LTVMoInJlLXRyaWVkIGJ5IGxhc3Qgc3ViIGRyaXZlciBwcm9iZWQg
-bGF0ZXIuXG4iKTsKPj4gKwltYXRjaCA9IGV4eW5vc19kcm1fbWF0Y2hfYWRkKCZwZGV2LT5kZXYp
-Owo+PiArCWlmIChJU19FUlIobWF0Y2gpKSB7Cj4+ICsJCXJldCA9IFBUUl9FUlIobWF0Y2gpOwo+
-PiArCQlnb3RvIGVycl91bnJlZ2lzdGVyX2lwcF9kZXY7Cj4+ICsJfQo+PiAgCj4+IC0JcmV0dXJu
-IDA7Cj4+ICsJcmV0dXJuIGNvbXBvbmVudF9tYXN0ZXJfYWRkX3dpdGhfbWF0Y2goJnBkZXYtPmRl
-diwgJmV4eW5vc19kcm1fb3BzLAo+PiArCQkJCQkJbWF0Y2gpOwo+IAo+IEluIGNhc2UgY29tcG9u
-ZW50X21hc3Rlcl9hZGRfd2l0aF9tYXRjaCBmYWlscyB0aGVyZSB3aWxsIGJlIG5vIGNsZWFudXAg
-LQo+IHBsYXRmb3JtIGRldmljZXMgYW5kIGRyaXZlcnMgd2lsbCBub3QgYmUgcmVtb3ZlZC4KPiAK
-ClJpZ2h0LgoKPj4gKwo+PiArZXJyX3VucmVnaXN0ZXJfaXBwX2RldjoKPj4gIAo+PiAgI2lmZGVm
-IENPTkZJR19EUk1fRVhZTk9TX0lQUAo+PiArCWV4eW5vc19wbGF0Zm9ybV9kZXZpY2VfaXBwX3Vu
-cmVnaXN0ZXIoKTsKPiAKPiBJdCBzaG91bGQgbm90IGJlIGEgcGFydCBvZiB0aGlzIHBhdGNoLgoK
-aXBwIHNob3VsZCBiZSB1bnJlZ2lzdGVyZWQgaWYgZXh5bm9zX2RybV9tYXRjaF9hZGQoKSBmYWls
-ZWQgc28gaXQgc2VlbXMKYmV0dGVyIHRvIGluY2x1ZGUgdGhpcyBleGNlcHRpb24uCgpUaGFua3Ms
-Cklua2kgRGFlCgo+IAo+IFJlZ2FyZHMKPiBBbmRyemVqCj4gCj4+ICBlcnJfdW5yZWdpc3Rlcl9p
-cHBfZHJ2Ogo+PiAgCXBsYXRmb3JtX2RyaXZlcl91bnJlZ2lzdGVyKCZpcHBfZHJpdmVyKTsKPj4g
-IGVycl91bnJlZ2lzdGVyX2dzY19kcnY6Cj4+Cj4gCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9t
-IHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2Mi
-IGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcK
-PiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9t
-by1pbmZvLmh0bWwKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+
+Hi,
+
+
+On Thursday, September 11, 2014 1:52 AM, "Julius Werner" 
+<jwerner-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org> wrote
+
+
+>>> right, use that to call phy_init() at the right time, then you need to
+>>> add a new ->calibrate() method which, likely, will only be used by you
+>>> ;-)
+>
+>> so you mean, the xhci should itself call phy_init() at a time suitable,
+>> so that ->calibrate() is not required at all ?
+>
+> I'm not sure if that's a good idea because it would require phy_init()
+> and calibrate() to always mean the same thing. The calibrate() for
+> Exynos5420 needs to be called both during boot and after system
+> resume, but there might be other platforms that don't want to
+> completely shutdown and reinit their PHYs during suspend/resume with
+> the same functions used for boot. For example, Tegra5 (proposed driver
+> at http://www.spinics.net/lists/linux-usb/msg113093.html) can
+> power-gate the PHY during suspend, but that's not running the same
+> code as in the phy_init()/phy_shutdown() methods (the posted patch
+> doesn't contain all power-gating code yet, but you can get an idea
+> about how it has to work from
+> https://chromium.googlesource.com/chromiumos/third_party/kernel-next/+/chromeos-3.10/drivers/usb/host/xhci-tegra.c).
+> It would also mean that the initial phy_init() call must always come
+> after the XHCI reset, and I am not sure if that would fit nicely with
+> all platforms.
+>
+>> right, and what's more generic than adding the support for PHYs straight 
+>> into xHCI ?
+>
+> Well, if we are going to have a calibrate() method (as in "stuff the
+> PHY does after every controller reset if it needs to"), we have to add
+> it either to the XHCI stack or the USB core.
+> I thought the USB core would be more generic, because in theory it's 
+> possible that e.g. an
+> EHCI controller might have a similar requirement.
+
+Atleast on Exynos systems I can see that unless PHY is initialized the 
+controller
+fails to reset. So taking a path wherein we initialize the PHYs after 
+controller resets
+is not going to help us generically across all controllers.
+With XHCI though things are OK while resetting, and we can initialize the 
+PHYs
+after controller reset happens but here too DWC3 is already initializing the 
+PHYs
+for exynos systems too, so it may not be very wise to do that initialization 
+stuff
+once again. Plus the PHY core prevents multiple initialization anyways.
+
+> (Also, we have the gen_phy pointer in a USB core structure (struct 
+> usb_hcd), so I thought
+> making this feature generic to the USB core and thus available to all
+> kinds of host controllers would be more natural.) 
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
