@@ -1,162 +1,79 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH v2] drm/exynos: update to use component match support
-Date: Thu, 11 Sep 2014 17:05:16 +0200
-Message-ID: <5411BA2C.6010301@samsung.com>
-References: <1409573992-19721-1-git-send-email-inki.dae@samsung.com>
- <1410440250-5209-1-git-send-email-inki.dae@samsung.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH v6 4/4] phy: exynos5-usbdrd: Calibrate LOS levels for
+ exynos5420/5800
+Date: Thu, 11 Sep 2014 21:10:21 +0530
+Message-ID: <5411C265.2080203@ti.com>
+References: <CAFp+6iEyqmbwMLFrBKD7NVLDAC=b+h1hPKFS=BG4k9D69hn_dg@mail.gmail.com>	<20140903144225.GD31855@saruman.home>	<CAFp+6iETPJCWMMkjHrpDcdCv=K0PbefYLa4eBOwN=aUY2=EHLA@mail.gmail.com>	<20140905175651.GK24449@saruman.home>	<CAFp+6iGU86yL8Ry3ArJJjBy2Cs0Em2B49yssH3BK5fJwyaZbtA@mail.gmail.com>	<20140908134454.GK22409@saruman.home>	<CAFp+6iG+gmD_JseytYuVQcRK9ErOqQrUEWJoU1KUU7PqMd=aRw@mail.gmail.com>	<20140909144225.GF6151@saruman.home>	<CAFp+6iHJKmeothDM67WW60Sqqj8BQroBCzZ8zecKwM_GcYL8HA@mail.gmail.com>	<CAFp+6iHRJ5oAA+K1Y0Y2uadPhsR6wmrd13DM39dqiL4jj+swHg@mail.gmail.com>	<20140910045328.GA32475@saruman.home>	<CAFp+6iHMhbi4V4LAkNsgzDc192ihT2a1mZHgLbia=K2U8+x=2w@mail.gmail.com> <CAFp+6iErXKpXgE0tRPB=tEqXxcXgQAeFJP1TpSwRN6fNu9a-qw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:26055 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752998AbaIKPFV (ORCPT
+Received: from comal.ext.ti.com ([198.47.26.152]:44429 "EHLO comal.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751075AbaIKPlS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Sep 2014 11:05:21 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NBQ002Q0SPPCF40@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Sep 2014 16:08:13 +0100 (BST)
-In-reply-to: <1410440250-5209-1-git-send-email-inki.dae@samsung.com>
+	Thu, 11 Sep 2014 11:41:18 -0400
+In-Reply-To: <CAFp+6iErXKpXgE0tRPB=tEqXxcXgQAeFJP1TpSwRN6fNu9a-qw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>, Felipe Balbi <balbi@ti.com>
+Cc: Julius Werner <jwerner@google.com>, Julius Werner <jwerner@chromium.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg KH <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Jingoo Han <jg1.han@samsung.com>
 
-On 09/11/2014 02:57 PM, Inki Dae wrote:
-> Update Exynos's DRM driver to use component match support rater than
-> add_components.
+Hi,
+
+On Wednesday 10 September 2014 01:26 PM, Vivek Gautam wrote:
+> On Wed, Sep 10, 2014 at 10:53 AM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+>> On Wed, Sep 10, 2014 at 10:23 AM, Felipe Balbi <balbi@ti.com> wrote:
+>>> On Wed, Sep 10, 2014 at 09:09:57AM +0530, Vivek Gautam wrote:
+>>>> On Wed, Sep 10, 2014 at 9:07 AM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+>>>>> adding Julius here,
+>>>>
+>>>> i think i had missed adding Julius for this entire series :-(
+>>>> I should be more careful with the CC list in future.
+>>>> Added his chromium id, since that seems to be more active.
+>>>>
+>>>>>
+>>>>>
+>>>>> On Tue, Sep 9, 2014 at 8:12 PM, Felipe Balbi <balbi@ti.com> wrote:
+>>>>>> On Tue, Sep 09, 2014 at 07:19:50AM +0530, Vivek Gautam wrote:
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>>
+>>>>>>> On Mon, Sep 8, 2014 at 7:14 PM, Felipe Balbi <balbi@ti.com> wrote:
+>>>>>>>> Hi,
+>>>>>>>>
+>>>>>>>> On Mon, Sep 08, 2014 at 09:53:09AM +0530, Vivek Gautam wrote:
+>>>>>>>>> On Fri, Sep 5, 2014 at 11:26 PM, Felipe Balbi <balbi@ti.com> wrote:
+>>>>>>>>>> On Thu, Sep 04, 2014 at 12:01:19PM +0530, Vivek Gautam wrote:
+>>>>>>>>>>>> Don't we have phy_power_on()
+>>>>>>>>>>>> for that ? It looks like you could just as well do this from
+>>>>>>>>>>>> phy_power_on() ?
+>>>>>>>>>>>
+>>>>>>>>>>> No, unfortunately keeping these calibration settings in phy_power_on()
+>>>>>>>>>>> doesn't help, since we need to do this after XHCI reset has happened.
+>>>>>>>>>>
+>>>>>>>>>> teach xHCI about PHYs ?
+>>>>>>>>>
+>>>>>>>>> sorry i couldn't understand you here.
+>>>>>>>>> Aren't we trying to do the same with Heikki's patch about dwc3 :
+>>>>>>>>> [PATCH 6/6] usb: dwc3: host: convey the PHYs to xhci
+>>>>>>>>>
+>>>>>>>>> and the 2nd patch in this series :
+>>>>>>>>> [PATCH v6 2/4] usb: host: xhci-plat: Get PHYs for xhci's hcds
+>>>>>>>>>
+>>>>>>>>> Is there something else that is expected ?
+>>>>>>>>
+>>>>>>>> right, use that to call phy_init() at the right time, then you need to
+>>>>>>>> add a new ->calibrate() method which, likely, will only be used by you
+>>>>>>>> ;-)
+>>>>>>>
+>>>>>>> so you mean, the xhci should itself call phy_init() at a time suitable,
+>>>>>>> so that ->calibrate() is not required at all ?
 > 
-> Changelog v2:
-> - release devices and drivers if failed.
-> - change compare_of to compare_dev.
-> 
-> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+> but wait, dwc3 does a phy_init() already, then how xhci will be able to
+> do that again. We can't do phy_init() multiple times right ?
 
-Modulo fixes I have posted earlier.
+right. I think we should split and do phy ops separately for dwc3 host and gadget?
 
-Tested-by: Andrzej Hajda <a.hajda@samsung.com>
-
---
-Regards
-Andrzej
-
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_drv.c |   44 +++++++++++++++----------------
->  1 file changed, 22 insertions(+), 22 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> index 5aae95c..3f6ec96 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -486,21 +486,20 @@ void exynos_drm_component_del(struct device *dev,
->  	mutex_unlock(&drm_component_lock);
->  }
->  
-> -static int compare_of(struct device *dev, void *data)
-> +static int compare_dev(struct device *dev, void *data)
->  {
->  	return dev == (struct device *)data;
->  }
->  
-> -static int exynos_drm_add_components(struct device *dev, struct master *m)
-> +static struct component_match *exynos_drm_match_add(struct device *dev)
->  {
-> +	struct component_match *match = NULL;
->  	struct component_dev *cdev;
->  	unsigned int attach_cnt = 0;
->  
->  	mutex_lock(&drm_component_lock);
->  
->  	list_for_each_entry(cdev, &drm_component_list, list) {
-> -		int ret;
-> -
->  		/*
->  		 * Add components to master only in case that crtc and
->  		 * encoder/connector device objects exist.
-> @@ -515,16 +514,10 @@ static int exynos_drm_add_components(struct device *dev, struct master *m)
->  		/*
->  		 * fimd and dpi modules have same device object so add
->  		 * only crtc device object in this case.
-> -		 *
-> -		 * TODO. if dpi module follows driver-model driver then
-> -		 * below codes can be removed.
->  		 */
->  		if (cdev->crtc_dev == cdev->conn_dev) {
-> -			ret = component_master_add_child(m, compare_of,
-> -					cdev->crtc_dev);
-> -			if (ret < 0)
-> -				return ret;
-> -
-> +			component_match_add(dev, &match, compare_dev,
-> +						cdev->crtc_dev);
->  			goto out_lock;
->  		}
->  
-> @@ -534,11 +527,8 @@ static int exynos_drm_add_components(struct device *dev, struct master *m)
->  		 * connector/encoder need pipe number of crtc when they
->  		 * are created.
->  		 */
-> -		ret = component_master_add_child(m, compare_of, cdev->crtc_dev);
-> -		ret |= component_master_add_child(m, compare_of,
-> -							cdev->conn_dev);
-> -		if (ret < 0)
-> -			return ret;
-> +		component_match_add(dev, &match, compare_dev, cdev->crtc_dev);
-> +		component_match_add(dev, &match, compare_dev, cdev->conn_dev);
->  
->  out_lock:
->  		mutex_lock(&drm_component_lock);
-> @@ -546,7 +536,7 @@ out_lock:
->  
->  	mutex_unlock(&drm_component_lock);
->  
-> -	return attach_cnt ? 0 : -ENODEV;
-> +	return attach_cnt ? match : ERR_PTR(-EPROBE_DEFER);
->  }
->  
->  static int exynos_drm_bind(struct device *dev)
-> @@ -560,13 +550,13 @@ static void exynos_drm_unbind(struct device *dev)
->  }
->  
->  static const struct component_master_ops exynos_drm_ops = {
-> -	.add_components = exynos_drm_add_components,
->  	.bind		= exynos_drm_bind,
->  	.unbind		= exynos_drm_unbind,
->  };
->  
->  static int exynos_drm_platform_probe(struct platform_device *pdev)
->  {
-> +	struct component_match *match;
->  	int ret;
->  
->  	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
-> @@ -633,13 +623,23 @@ static int exynos_drm_platform_probe(struct platform_device *pdev)
->  		goto err_unregister_ipp_drv;
->  #endif
->  
-> -	ret = component_master_add(&pdev->dev, &exynos_drm_ops);
-> +	match = exynos_drm_match_add(&pdev->dev);
-> +	if (IS_ERR(match)) {
-> +		ret = PTR_ERR(match);
-> +		goto err_unregister_resources;
-> +	}
-> +
-> +	ret = component_master_add_with_match(&pdev->dev, &exynos_drm_ops,
-> +						match);
->  	if (ret < 0)
-> -		DRM_DEBUG_KMS("re-tried by last sub driver probed later.\n");
-> +		goto err_unregister_resources;
->  
-> -	return 0;
-> +	return ret;
-> +
-> +err_unregister_resources:
->  
->  #ifdef CONFIG_DRM_EXYNOS_IPP
-> +	exynos_platform_device_ipp_unregister();
->  err_unregister_ipp_drv:
->  	platform_driver_unregister(&ipp_driver);
->  err_unregister_gsc_drv:
-> 
+Thanks
+Kishon
