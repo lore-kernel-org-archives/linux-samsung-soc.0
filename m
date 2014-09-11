@@ -1,85 +1,398 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: Unable to boot mainline on snow chromebook since 3.15
-Date: Thu, 11 Sep 2014 19:03:22 +0100
-Message-ID: <20140911180322.GP4015@sirena.org.uk>
-References: <CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
- <CAD=FV=VAqzvJQDQMjjeQ1p5okyDzE=ff_sguObZxh59qbzcaTQ@mail.gmail.com>
- <CACxGe6t_ex1bU=CvTpXR4VJgNf1hAq33hr6ykbHy_sMXEk4h-g@mail.gmail.com>
- <CAOesGMipX3MV6sMWLuY=D+bQ6qe8P17YFbTFwZOHPeSc3Pw9Cg@mail.gmail.com>
- <20140910143144.GF7960@sirena.org.uk>
- <CACxGe6u=QkGTKGfaE_jJ5VFMhdVKQNggp3qVBUgNP7rDbZss_A@mail.gmail.com>
- <20140910153919.GH7960@sirena.org.uk>
- <CACxGe6uBcTPMh4p=oi7m_TVpjUrkgbQvxbStAn27HXEJxYe5fw@mail.gmail.com>
- <20140910165723.GK7960@sirena.org.uk>
- <20140911092233.CBC5CC40738@trevor.secretlab.ca>
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: [PATCH] clk: don't use __initconst for non-const arrays
+Date: Thu, 11 Sep 2014 23:04:31 +0200
+Message-ID: <1410469471-31027-1-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="O27Gs9jTTFWz3gAR"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35324 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751042AbaIKSDx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Sep 2014 14:03:53 -0400
-Content-Disposition: inline
-In-Reply-To: <20140911092233.CBC5CC40738@trevor.secretlab.ca>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-omap-owner@vger.kernel.org>
+Sender: linux-omap-owner@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, Tomasz Figa <t.figa@samsung.com>, Tero Kristo <t-kristo@ti.com>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, kernel@pengutronix.de
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
+The statement
 
---O27Gs9jTTFWz3gAR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+	static const char *name[];
 
-On Thu, Sep 11, 2014 at 10:22:32AM +0100, Grant Likely wrote:
-> On Wed, 10 Sep 2014 17:57:23 +0100, Mark Brown <broonie@kernel.org> wrote:
+defines a modifiable array of pointers to constant chars. That is
 
-> > It's not quite as simple as just disabling PM - for example in the
-> > clocks case we've also got to worry about what happens with rate changes
-> > (which is going to get more and more risky as we get smarter about being
-> > able to push configuration changes back up the tree), regulators have a
-> > similar thing with voltage changes.  With simple enables and disables we
-> > have to worry about things like handling users who actively want to
-> > power things on and and off but may potentially be sharing a resource
-> > with an undeclared dependency.
+	*name[0] =3D 'f';
 
-> I think we can be okay with the above. This is a best-effort situation
-> where we don't want to tear down how firmware has set up the board if
-> it can be reasonably assumed that something depends on it (simplefb).
-> However, if clocks or regulators are shared with other devices and those
-> drivers ask for other settings, then there is simply no recourse. In
-> that situation there must be a driver for the video device that takes
-> care of any constraints.
+is forbidden, but
 
-When things break I'm not sure that users are going to understand that
-something that used to work for them was only provided on a best effort
-basis, I think they will expect things to carry on working.  It's not
-going to be great if enabling some driver for a device that happens to
-be in the same power domain as a component used in a framebuffer causes
-the display to vanish, or if better power management in an existing
-driver causes breakage.  It's relatively OK to have a brief hiccup
-during boot but usage seems to have expanded beyond that point and I
-think we need to take robustness more seriously.
+	name[0] =3D "f";
 
-Given that we have straightforward ways to communicate resource usage it
-seems sensible to add robustness to the system by making use of them.
+is not. So marking an array that is defined as above with __initconst i=
+s
+wrong. Either an additional const must be added such that the whole
+definition reads:
 
---O27Gs9jTTFWz3gAR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+	static const char *const name[] __initconst;
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+or where this is not possible __initdata must be used.
 
-iQEcBAEBAgAGBQJUEePqAAoJECTWi3JdVIfQ7DoH/1HMb4rl9GM3pqpiEkbp817g
-bG50fz3l6fxxbWmf6y9odQ6VG96wg4WugZwXJBUXtSwXKcEFIxTGHnt2VQ0YTHuA
-v3iV/KjFGkzA9q/acXr/AIPsYKwSR84rUKWfUtmYUUJHBwYBTve3hY8yj2dBUwTX
-ER/slZzxvCP+dKuLRp0sZ98L3m3FQMM4HMZDsqko0V+pu70G1pID+go6rrrF4+IF
-9SXg6pbs0xrf+2qpHqdl47VCdVObyJ3Ier6Z/397k8U4xWMgxXuTKWYT+lnq5zSX
-X/EEpaqcw8lt00mG394HdNaf1lKPrZQrQPaF06VqzRu/tdYJeYgmUl1PPaaP7C8=
-=1DQg
------END PGP SIGNATURE-----
+Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+---
+ drivers/clk/hisilicon/clk-hix5hd2.c |  6 ++--
+ drivers/clk/mxs/clk-imx23.c         | 12 ++++----
+ drivers/clk/mxs/clk-imx28.c         | 18 ++++++------
+ drivers/clk/rockchip/clk.h          |  2 +-
+ drivers/clk/samsung/clk-s5pv210.c   | 56 ++++++++++++++++++-----------=
+--------
+ drivers/clk/ti/composite.c          |  2 +-
+ 6 files changed, 48 insertions(+), 48 deletions(-)
 
---O27Gs9jTTFWz3gAR--
+diff --git a/drivers/clk/hisilicon/clk-hix5hd2.c b/drivers/clk/hisilico=
+n/clk-hix5hd2.c
+index e5fcfb4e32ef..7acae2eeb490 100644
+--- a/drivers/clk/hisilicon/clk-hix5hd2.c
++++ b/drivers/clk/hisilicon/clk-hix5hd2.c
+@@ -44,15 +44,15 @@ static struct hisi_fixed_rate_clock hix5hd2_fixed_r=
+ate_clks[] __initdata =3D {
+ 	{ HIX5HD2_FIXED_83M, "83m", NULL, CLK_IS_ROOT, 83333333, },
+ };
+=20
+-static const char *sfc_mux_p[] __initconst =3D {
++static const char *sfc_mux_p[] __initdata =3D {
+ 		"24m", "150m", "200m", "100m", "75m", };
+ static u32 sfc_mux_table[] =3D {0, 4, 5, 6, 7};
+=20
+-static const char *sdio1_mux_p[] __initconst =3D {
++static const char *sdio1_mux_p[] __initdata =3D {
+ 		"75m", "100m", "50m", "15m", };
+ static u32 sdio1_mux_table[] =3D {0, 1, 2, 3};
+=20
+-static const char *fephy_mux_p[] __initconst =3D { "25m", "125m"};
++static const char *fephy_mux_p[] __initdata =3D { "25m", "125m"};
+ static u32 fephy_mux_table[] =3D {0, 1};
+=20
+=20
+diff --git a/drivers/clk/mxs/clk-imx23.c b/drivers/clk/mxs/clk-imx23.c
+index 9fc9359f5133..22d136aa699f 100644
+--- a/drivers/clk/mxs/clk-imx23.c
++++ b/drivers/clk/mxs/clk-imx23.c
+@@ -77,12 +77,12 @@ static void __init clk_misc_init(void)
+ 	writel_relaxed(30 << BP_FRAC_IOFRAC, FRAC + SET);
+ }
+=20
+-static const char *sel_pll[]  __initconst =3D { "pll", "ref_xtal", };
+-static const char *sel_cpu[]  __initconst =3D { "ref_cpu", "ref_xtal",=
+ };
+-static const char *sel_pix[]  __initconst =3D { "ref_pix", "ref_xtal",=
+ };
+-static const char *sel_io[]   __initconst =3D { "ref_io", "ref_xtal", =
+};
+-static const char *cpu_sels[] __initconst =3D { "cpu_pll", "cpu_xtal",=
+ };
+-static const char *emi_sels[] __initconst =3D { "emi_pll", "emi_xtal",=
+ };
++static const char *sel_pll[]  __initdata =3D { "pll", "ref_xtal", };
++static const char *sel_cpu[]  __initdata =3D { "ref_cpu", "ref_xtal", =
+};
++static const char *sel_pix[]  __initdata =3D { "ref_pix", "ref_xtal", =
+};
++static const char *sel_io[]   __initdata =3D { "ref_io", "ref_xtal", }=
+;
++static const char *cpu_sels[] __initdata =3D { "cpu_pll", "cpu_xtal", =
+};
++static const char *emi_sels[] __initdata =3D { "emi_pll", "emi_xtal", =
+};
+=20
+ enum imx23_clk {
+ 	ref_xtal, pll, ref_cpu, ref_emi, ref_pix, ref_io, saif_sel,
+diff --git a/drivers/clk/mxs/clk-imx28.c b/drivers/clk/mxs/clk-imx28.c
+index a6c35010e4e5..b1be3746ce95 100644
+--- a/drivers/clk/mxs/clk-imx28.c
++++ b/drivers/clk/mxs/clk-imx28.c
+@@ -125,15 +125,15 @@ static void __init clk_misc_init(void)
+ 	writel_relaxed(val, FRAC0);
+ }
+=20
+-static const char *sel_cpu[]  __initconst =3D { "ref_cpu", "ref_xtal",=
+ };
+-static const char *sel_io0[]  __initconst =3D { "ref_io0", "ref_xtal",=
+ };
+-static const char *sel_io1[]  __initconst =3D { "ref_io1", "ref_xtal",=
+ };
+-static const char *sel_pix[]  __initconst =3D { "ref_pix", "ref_xtal",=
+ };
+-static const char *sel_gpmi[] __initconst =3D { "ref_gpmi", "ref_xtal"=
+, };
+-static const char *sel_pll0[] __initconst =3D { "pll0", "ref_xtal", };
+-static const char *cpu_sels[] __initconst =3D { "cpu_pll", "cpu_xtal",=
+ };
+-static const char *emi_sels[] __initconst =3D { "emi_pll", "emi_xtal",=
+ };
+-static const char *ptp_sels[] __initconst =3D { "ref_xtal", "pll0", };
++static const char *sel_cpu[]  __initdata =3D { "ref_cpu", "ref_xtal", =
+};
++static const char *sel_io0[]  __initdata =3D { "ref_io0", "ref_xtal", =
+};
++static const char *sel_io1[]  __initdata =3D { "ref_io1", "ref_xtal", =
+};
++static const char *sel_pix[]  __initdata =3D { "ref_pix", "ref_xtal", =
+};
++static const char *sel_gpmi[] __initdata =3D { "ref_gpmi", "ref_xtal",=
+ };
++static const char *sel_pll0[] __initdata =3D { "pll0", "ref_xtal", };
++static const char *cpu_sels[] __initdata =3D { "cpu_pll", "cpu_xtal", =
+};
++static const char *emi_sels[] __initdata =3D { "emi_pll", "emi_xtal", =
+};
++static const char *ptp_sels[] __initdata =3D { "ref_xtal", "pll0", };
+=20
+ enum imx28_clk {
+ 	ref_xtal, pll0, pll1, pll2, ref_cpu, ref_emi, ref_io0, ref_io1,
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 887cbdeca2aa..74fbb9c4b6de 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -120,7 +120,7 @@ struct clk *rockchip_clk_register_pll(enum rockchip=
+_pll_type pll_type,
+ 		struct rockchip_pll_rate_table *rate_table,
+ 		spinlock_t *lock);
+=20
+-#define PNAME(x) static const char *x[] __initconst
++#define PNAME(x) static const char *x[] __initdata
+=20
+ enum rockchip_clk_branch_type {
+ 	branch_composite,
+diff --git a/drivers/clk/samsung/clk-s5pv210.c b/drivers/clk/samsung/cl=
+k-s5pv210.c
+index d270a2084644..e668e479a697 100644
+--- a/drivers/clk/samsung/clk-s5pv210.c
++++ b/drivers/clk/samsung/clk-s5pv210.c
+@@ -169,44 +169,44 @@ static inline void s5pv210_clk_sleep_init(void) {=
+ }
+ #endif
+=20
+ /* Mux parent lists. */
+-static const char *fin_pll_p[] __initconst =3D {
++static const char *fin_pll_p[] __initdata =3D {
+ 	"xxti",
+ 	"xusbxti"
+ };
+=20
+-static const char *mout_apll_p[] __initconst =3D {
++static const char *mout_apll_p[] __initdata =3D {
+ 	"fin_pll",
+ 	"fout_apll"
+ };
+=20
+-static const char *mout_mpll_p[] __initconst =3D {
++static const char *mout_mpll_p[] __initdata =3D {
+ 	"fin_pll",
+ 	"fout_mpll"
+ };
+=20
+-static const char *mout_epll_p[] __initconst =3D {
++static const char *mout_epll_p[] __initdata =3D {
+ 	"fin_pll",
+ 	"fout_epll"
+ };
+=20
+-static const char *mout_vpllsrc_p[] __initconst =3D {
++static const char *mout_vpllsrc_p[] __initdata =3D {
+ 	"fin_pll",
+ 	"sclk_hdmi27m"
+ };
+=20
+-static const char *mout_vpll_p[] __initconst =3D {
++static const char *mout_vpll_p[] __initdata =3D {
+ 	"mout_vpllsrc",
+ 	"fout_vpll"
+ };
+=20
+-static const char *mout_group1_p[] __initconst =3D {
++static const char *mout_group1_p[] __initdata =3D {
+ 	"dout_a2m",
+ 	"mout_mpll",
+ 	"mout_epll",
+ 	"mout_vpll"
+ };
+=20
+-static const char *mout_group2_p[] __initconst =3D {
++static const char *mout_group2_p[] __initdata =3D {
+ 	"xxti",
+ 	"xusbxti",
+ 	"sclk_hdmi27m",
+@@ -218,7 +218,7 @@ static const char *mout_group2_p[] __initconst =3D =
+{
+ 	"mout_vpll",
+ };
+=20
+-static const char *mout_audio0_p[] __initconst =3D {
++static const char *mout_audio0_p[] __initdata =3D {
+ 	"xxti",
+ 	"pcmcdclk0",
+ 	"sclk_hdmi27m",
+@@ -230,7 +230,7 @@ static const char *mout_audio0_p[] __initconst =3D =
+{
+ 	"mout_vpll",
+ };
+=20
+-static const char *mout_audio1_p[] __initconst =3D {
++static const char *mout_audio1_p[] __initdata =3D {
+ 	"i2scdclk1",
+ 	"pcmcdclk1",
+ 	"sclk_hdmi27m",
+@@ -242,7 +242,7 @@ static const char *mout_audio1_p[] __initconst =3D =
+{
+ 	"mout_vpll",
+ };
+=20
+-static const char *mout_audio2_p[] __initconst =3D {
++static const char *mout_audio2_p[] __initdata =3D {
+ 	"i2scdclk2",
+ 	"pcmcdclk2",
+ 	"sclk_hdmi27m",
+@@ -254,63 +254,63 @@ static const char *mout_audio2_p[] __initconst =3D=
+ {
+ 	"mout_vpll",
+ };
+=20
+-static const char *mout_spdif_p[] __initconst =3D {
++static const char *mout_spdif_p[] __initdata =3D {
+ 	"dout_audio0",
+ 	"dout_audio1",
+ 	"dout_audio3",
+ };
+=20
+-static const char *mout_group3_p[] __initconst =3D {
++static const char *mout_group3_p[] __initdata =3D {
+ 	"mout_apll",
+ 	"mout_mpll"
+ };
+=20
+-static const char *mout_group4_p[] __initconst =3D {
++static const char *mout_group4_p[] __initdata =3D {
+ 	"mout_mpll",
+ 	"dout_a2m"
+ };
+=20
+-static const char *mout_flash_p[] __initconst =3D {
++static const char *mout_flash_p[] __initdata =3D {
+ 	"dout_hclkd",
+ 	"dout_hclkp"
+ };
+=20
+-static const char *mout_dac_p[] __initconst =3D {
++static const char *mout_dac_p[] __initdata =3D {
+ 	"mout_vpll",
+ 	"sclk_hdmiphy"
+ };
+=20
+-static const char *mout_hdmi_p[] __initconst =3D {
++static const char *mout_hdmi_p[] __initdata =3D {
+ 	"sclk_hdmiphy",
+ 	"dout_tblk"
+ };
+=20
+-static const char *mout_mixer_p[] __initconst =3D {
++static const char *mout_mixer_p[] __initdata =3D {
+ 	"mout_dac",
+ 	"mout_hdmi"
+ };
+=20
+-static const char *mout_vpll_6442_p[] __initconst =3D {
++static const char *mout_vpll_6442_p[] __initdata =3D {
+ 	"fin_pll",
+ 	"fout_vpll"
+ };
+=20
+-static const char *mout_mixer_6442_p[] __initconst =3D {
++static const char *mout_mixer_6442_p[] __initdata =3D {
+ 	"mout_vpll",
+ 	"dout_mixer"
+ };
+=20
+-static const char *mout_d0sync_6442_p[] __initconst =3D {
++static const char *mout_d0sync_6442_p[] __initdata =3D {
+ 	"mout_dsys",
+ 	"div_apll"
+ };
+=20
+-static const char *mout_d1sync_6442_p[] __initconst =3D {
++static const char *mout_d1sync_6442_p[] __initdata =3D {
+ 	"mout_psys",
+ 	"div_apll"
+ };
+=20
+-static const char *mout_group2_6442_p[] __initconst =3D {
++static const char *mout_group2_6442_p[] __initdata =3D {
+ 	"fin_pll",
+ 	"none",
+ 	"none",
+@@ -322,7 +322,7 @@ static const char *mout_group2_6442_p[] __initconst=
+ =3D {
+ 	"mout_vpll",
+ };
+=20
+-static const char *mout_audio0_6442_p[] __initconst =3D {
++static const char *mout_audio0_6442_p[] __initdata =3D {
+ 	"fin_pll",
+ 	"pcmcdclk0",
+ 	"none",
+@@ -334,7 +334,7 @@ static const char *mout_audio0_6442_p[] __initconst=
+ =3D {
+ 	"mout_vpll",
+ };
+=20
+-static const char *mout_audio1_6442_p[] __initconst =3D {
++static const char *mout_audio1_6442_p[] __initdata =3D {
+ 	"i2scdclk1",
+ 	"pcmcdclk1",
+ 	"none",
+@@ -347,7 +347,7 @@ static const char *mout_audio1_6442_p[] __initconst=
+ =3D {
+ 	"fin_pll",
+ };
+=20
+-static const char *mout_clksel_p[] __initconst =3D {
++static const char *mout_clksel_p[] __initdata =3D {
+ 	"fout_apll_clkout",
+ 	"fout_mpll_clkout",
+ 	"fout_epll",
+@@ -370,7 +370,7 @@ static const char *mout_clksel_p[] __initconst =3D =
+{
+ 	"div_dclk"
+ };
+=20
+-static const char *mout_clksel_6442_p[] __initconst =3D {
++static const char *mout_clksel_6442_p[] __initdata =3D {
+ 	"fout_apll_clkout",
+ 	"fout_mpll_clkout",
+ 	"fout_epll",
+@@ -393,7 +393,7 @@ static const char *mout_clksel_6442_p[] __initconst=
+ =3D {
+ 	"div_dclk"
+ };
+=20
+-static const char *mout_clkout_p[] __initconst =3D {
++static const char *mout_clkout_p[] __initdata =3D {
+ 	"dout_clkout",
+ 	"none",
+ 	"xxti",
+diff --git a/drivers/clk/ti/composite.c b/drivers/clk/ti/composite.c
+index 19d8980ba458..c429c65b5b21 100644
+--- a/drivers/clk/ti/composite.c
++++ b/drivers/clk/ti/composite.c
+@@ -67,7 +67,7 @@ struct component_clk {
+ 	struct list_head link;
+ };
+=20
+-static const char * __initconst component_clk_types[] =3D {
++static const char * const component_clk_types[] __initconst =3D {
+ 	"gate", "divider", "mux"
+ };
+=20
+--=20
+2.1.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-omap" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
