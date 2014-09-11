@@ -1,256 +1,55 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH v3 5/8] arm64: dts: Add initial device tree support for EXYNOS7
-Date: Thu, 11 Sep 2014 15:50:49 +0530
-Message-ID: <1410430852-3491-6-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH v3 6/8] arm64: exynos7: Enable ARMv8 based Exynos7 (SoC) support
+Date: Thu, 11 Sep 2014 15:50:50 +0530
+Message-ID: <1410430852-3491-7-git-send-email-ch.naveen@samsung.com>
 References: <1410430852-3491-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:61901 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:61913 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754373AbaIKK0P (ORCPT
+	with ESMTP id S1754373AbaIKK0U (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Sep 2014 06:26:15 -0400
+	Thu, 11 Sep 2014 06:26:20 -0400
 In-reply-to: <1410430852-3491-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: naveenkrishna.ch@gmail.com, linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, tomasz.figa@gmail.com, kgene.kim@samsung.com
+Cc: naveenkrishna.ch@gmail.com, linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, Alim Akhtar <alim.akhtar@samsung.com>
 
-Add initial device tree nodes for EXYNOS7 SoC and board dts file
-to support Espresso board based on Exynos7 SoC.
+From: Alim Akhtar <alim.akhtar@samsung.com>
 
+This patch adds the necessary Kconfig entries to enable
+support for the ARMv8 based Exynos7 SoC.
+
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 Cc: Rob Herring <robh@kernel.org>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 ---
- arch/arm64/boot/dts/Makefile                    |    1 +
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts |   35 +++++
- arch/arm64/boot/dts/exynos/exynos7.dtsi         |  167 +++++++++++++++++++++++
- 3 files changed, 203 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos7-espresso.dts
- create mode 100644 arch/arm64/boot/dts/exynos/exynos7.dtsi
+ arch/arm64/Kconfig |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
-index c52bdb0..a3bc18a 100644
---- a/arch/arm64/boot/dts/Makefile
-+++ b/arch/arm64/boot/dts/Makefile
-@@ -1,3 +1,4 @@
-+dtb-$(CONFIG_ARCH_EXYNOS7) += exynos/exynos7-espresso.dtb
- dtb-$(CONFIG_ARCH_VEXPRESS) += rtsm_ve-aemv8a.dtb foundation-v8.dtb
- dtb-$(CONFIG_ARCH_XGENE) += apm-mustang.dtb
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index fd4e81a..b4d1dc2 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -134,6 +134,18 @@ source "kernel/Kconfig.freezer"
  
-diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-new file mode 100644
-index 0000000..4f69991
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-@@ -0,0 +1,35 @@
-+/*
-+ * SAMSUNG Exynos7 Espresso board device tree source
-+ *
-+ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
+ menu "Platform selection"
+ 
++config ARCH_EXYNOS
++	bool
++	help
++	  This enables support for Samsung Exynos SoC family
 +
-+/dts-v1/;
-+#include "exynos7.dtsi"
++config ARCH_EXYNOS7
++	bool "ARMv8 based Samsung Exynos7"
++	select ARCH_EXYNOS
++	select COMMON_CLK_SAMSUNG
++	help
++	  This enables support for Samsung Exynos7 SoC family
 +
-+/ {
-+	model = "Samsung Exynos7 Espresso board based on EXYNOS7";
-+	compatible = "samsung,exynos7-espresso", "samsung,exynos7";
-+
-+	chosen {
-+		linux,stdout-path = &serial_2;
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0x0 0x40000000 0x0 0xC0000000>;
-+	};
-+};
-+
-+&fin_pll {
-+	clock-frequency = <24000000>;
-+};
-+
-+&serial_2 {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-new file mode 100644
-index 0000000..56ec5f4
---- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-@@ -0,0 +1,167 @@
-+/*
-+ * SAMSUNG EXYNOS7 SoC device tree source
-+ *
-+ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <dt-bindings/clock/exynos7-clk.h>
-+
-+/ {
-+	compatible = "samsung,exynos7";
-+	interrupt-parent = <&gic>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	aliases {
-+		serial0 = &serial_0;
-+		serial1 = &serial_1;
-+		serial2 = &serial_2;
-+		serial3 = &serial_3;
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a57", "arm,armv8";
-+			enable-method = "psci";
-+			reg = <0x0>;
-+		};
-+
-+		cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a57", "arm,armv8";
-+			enable-method = "psci";
-+			reg = <0x1>;
-+		};
-+
-+		cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a57", "arm,armv8";
-+			enable-method = "psci";
-+			reg = <0x2>;
-+		};
-+
-+		cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a57", "arm,armv8";
-+			enable-method = "psci";
-+			reg = <0x3>;
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	soc: soc {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0 0 0x18000000>;
-+
-+		chipid@10000000 {
-+			compatible = "samsung,exynos4210-chipid";
-+			reg = <0x10000000 0x100>;
-+		};
-+
-+		fin_pll: xxti {
-+			compatible = "fixed-clock";
-+			clock-output-names = "fin_pll";
-+			#clock-cells = <0>;
-+		};
-+
-+		gic: interrupt-controller@11001000 {
-+			compatible = "arm,gic-400";
-+			#interrupt-cells = <3>;
-+			#address-cells = <0>;
-+			interrupt-controller;
-+			reg =	<0x11001000 0x1000>,
-+				<0x11002000 0x1000>,
-+				<0x11004000 0x2000>,
-+				<0x11006000 0x2000>;
-+		};
-+
-+		clock_topc: clock-controller@10570000 {
-+			compatible = "samsung,exynos7-clock-topc";
-+			reg = <0x10570000 0x10000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		clock_top0: clock-controller@105d0000 {
-+			compatible = "samsung,exynos7-clock-top0";
-+			reg = <0x105d0000 0xb000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		clock_peric0: clock-controller@13610000 {
-+			compatible = "samsung,exynos7-clock-peric0";
-+			reg = <0x13610000 0xd00>;
-+			#clock-cells = <1>;
-+		};
-+
-+		clock_peric1: clock-controller@14C80000 {
-+			compatible = "samsung,exynos7-clock-peric1";
-+			reg = <0x14c80000 0xd00>;
-+			#clock-cells = <1>;
-+		};
-+
-+		clock_peris: clock-controller@10040000 {
-+			compatible = "samsung,exynos7-clock-peris";
-+			reg = <0x10040000 0xd00>;
-+			#clock-cells = <1>;
-+		};
-+
-+		serial_0: serial@13630000 {
-+			compatible = "samsung,exynos4210-uart";
-+			reg = <0x13630000 0x100>;
-+			interrupts = <0 440 0>;
-+			clocks = <&clock_peric0 PCLK_UART0>, <&clock_peric0 SCLK_UART0>;
-+			clock-names = "uart", "clk_uart_baud0";
-+			status = "disabled";
-+		};
-+
-+		serial_1: serial@14c20000 {
-+			compatible = "samsung,exynos4210-uart";
-+			reg = <0x14c20000 0x100>;
-+			interrupts = <0 456 0>;
-+			clocks = <&clock_peric1 PCLK_UART1>, <&clock_peric1 SCLK_UART1>;
-+			clock-names = "uart", "clk_uart_baud0";
-+			status = "disabled";
-+		};
-+
-+		serial_2: serial@14c30000 {
-+			compatible = "samsung,exynos4210-uart";
-+			reg = <0x14c30000 0x100>;
-+			interrupts = <0 457 0>;
-+			clocks = <&clock_peric1 PCLK_UART2>, <&clock_peric1 SCLK_UART2>;
-+			clock-names = "uart", "clk_uart_baud0";
-+			status = "disabled";
-+		};
-+
-+		serial_3: serial@14c40000 {
-+			compatible = "samsung,exynos4210-uart";
-+			reg = <0x14c40000 0x100>;
-+			interrupts = <0 458 0>;
-+			clocks = <&clock_peric1 PCLK_UART3>, <&clock_peric1 SCLK_UART3>;
-+			clock-names = "uart", "clk_uart_baud0";
-+			status = "disabled";
-+		};
-+
-+		timer {
-+			compatible = "arm,armv8-timer";
-+			interrupts = <1 13 0xff01>,
-+				     <1 14 0xff01>,
-+				     <1 11 0xff01>,
-+				     <1 10 0xff01>;
-+		};
-+	};
-+};
+ config ARCH_VEXPRESS
+ 	bool "ARMv8 software model (Versatile Express)"
+ 	select ARCH_REQUIRE_GPIOLIB
 -- 
 1.7.9.5
