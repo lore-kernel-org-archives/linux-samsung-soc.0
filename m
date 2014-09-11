@@ -1,70 +1,49 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v3 1/6] mfd: cros_ec: Delay for 50ms when we see EC_CMD_REBOOT_EC
-Date: Thu, 11 Sep 2014 11:38:04 +0200
-Message-ID: <1410428289-18229-2-git-send-email-javier.martinez@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: [PATCH v3 2/6] i2c: i2c-cros-ec-tunnel: Set retries to 3
+Date: Thu, 11 Sep 2014 11:38:05 +0200
+Message-ID: <1410428289-18229-3-git-send-email-javier.martinez@collabora.co.uk>
 References: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:36108 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753209AbaIKJiZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Sep 2014 05:38:25 -0400
-In-Reply-To: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1410428289-18229-1-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Andreas Faerber <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, Andreas Faerber <afaerber@suse.de>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-From: Doug Anderson <dianders@chromium.org>
+From: Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 
-If someone sends a EC_CMD_REBOOT_EC to the EC, the EC will likely be
-unresponsive for quite a while.  Add a delay to the end of the command
-to prevent random failures of future commands.
+Since the i2c bus can get wedged on the EC sometimes, set the number of retries
+to 3. Since we un-wedge the bus immediately after the wedge happens, this is the
+correct fix since only one transfer will fail.
 
-NOTES:
-* This could be optimized a bit by simply delaying the next command
-  sent, but EC_CMD_REBOOT_EC is such a rare command that the extra
-  complexity doesn't seem worth it.
-* This is a bit of an "ugly hack" since the SPI driver is effectively
-  snooping on the communication and making a lot of assumptions.  It
-  would be nice to architect in some better solution long term.
-* This same logic probably needs to be applied to the i2c driver.
-
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-Reviewed-by: Randall Spangler <rspangler@chromium.org>
-Reviewed-by: Vadim Bendebury <vbendeb@chromium.org>
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Acked-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Reviewed-by: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Acked-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 ---
- drivers/mfd/cros_ec_spi.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
-index 588c700..b396705 100644
---- a/drivers/mfd/cros_ec_spi.c
-+++ b/drivers/mfd/cros_ec_spi.c
-@@ -65,6 +65,12 @@
-   */
- #define EC_SPI_RECOVERY_TIME_NS	(200 * 1000)
+diff --git a/drivers/i2c/busses/i2c-cros-ec-tunnel.c b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
+index 3c15dcc..97e6369 100644
+--- a/drivers/i2c/busses/i2c-cros-ec-tunnel.c
++++ b/drivers/i2c/busses/i2c-cros-ec-tunnel.c
+@@ -16,6 +16,8 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
  
-+/*
-+ * The EC is unresponsive for a time after a reboot command.  Add a
-+ * simple delay to make sure that the bus stays locked.
-+ */
-+#define EC_REBOOT_DELAY_MS	50
++#define I2C_MAX_RETRIES 3
 +
  /**
-  * struct cros_ec_spi - information about a SPI-connected EC
+  * struct ec_i2c_device - Driver data for I2C tunnel
   *
-@@ -318,6 +324,9 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_device *ec_dev,
+@@ -290,6 +292,7 @@ static int ec_i2c_probe(struct platform_device *pdev)
+ 	bus->adap.algo_data = bus;
+ 	bus->adap.dev.parent = &pdev->dev;
+ 	bus->adap.dev.of_node = np;
++	bus->adap.retries = I2C_MAX_RETRIES;
  
- 	ret = len;
- exit:
-+	if (ec_msg->command == EC_CMD_REBOOT_EC)
-+		msleep(EC_REBOOT_DELAY_MS);
-+
- 	mutex_unlock(&ec_spi->lock);
- 	return ret;
- }
+ 	err = i2c_add_adapter(&bus->adap);
+ 	if (err) {
 -- 
 2.1.0
