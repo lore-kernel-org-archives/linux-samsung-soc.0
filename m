@@ -1,121 +1,119 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH] Input: atmel_mxt_ts: Add of node type to the i2c table
-Date: Thu, 11 Sep 2014 10:38:06 +0200
-Message-ID: <54115F6E.3010007@collabora.co.uk>
-References: <1410249158-18192-1-git-send-email-sjoerd.simons@collabora.co.uk>	 <540ED495.20609@collabora.co.uk> <20140910092832.GM30307@lee--X1> <1410422429.2857.16.camel@collabora.co.uk>
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Subject: Re: [PATCH v2 5/7] arm64: dts: Add initial device tree support for EXYNOS7
+Date: Thu, 11 Sep 2014 14:12:34 +0530
+Message-ID: <CAHfPSqAJF4PNr8BAzY=pFNTKjivrkWUz2Ceg8a0z0w1ad-O14w@mail.gmail.com>
+References: <1409672143-8574-1-git-send-email-ch.naveen@samsung.com>
+ <1409672143-8574-6-git-send-email-ch.naveen@samsung.com> <02f801cfcbde$24a40160$6dec0420$@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:36055 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752821AbaIKIiS (ORCPT
+Received: from mail-qa0-f41.google.com ([209.85.216.41]:60028 "EHLO
+	mail-qa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753801AbaIKImz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Sep 2014 04:38:18 -0400
-In-Reply-To: <1410422429.2857.16.camel@collabora.co.uk>
+	Thu, 11 Sep 2014 04:42:55 -0400
+In-Reply-To: <02f801cfcbde$24a40160$6dec0420$@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Lee Jones <lee.jones@linaro.org>, Wolfram Sang <wsa@the-dreams.de>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Nick Dyer <nick.dyer@itdev.co.uk>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: kgene@kernel.org
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org
 
-Hello Lee,
+On 9 September 2014 08:58,  <kgene@kernel.org> wrote:
+> Naveen Krishna Chatradhi wrote:
+>>
+>> Add initial device tree nodes for EXYNOS7 SoC and board dts file
+>> to support Espresso board based on Exynos7 SoC.
+>>
+>> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+>> Cc: Rob Herring <robh@kernel.org>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> ---
+>>  arch/arm64/boot/dts/Makefile                    |    1 +
+>>  arch/arm64/boot/dts/exynos/exynos7-espresso.dts |   31 +++++
+>>  arch/arm64/boot/dts/exynos/exynos7.dtsi         |  168 +++++++++++++++++++++++
+>>  3 files changed, 200 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7.dtsi
+>
+> [...]
+>
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+>> new file mode 100644
+>> index 0000000..e593af55
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+>> @@ -0,0 +1,168 @@
+>> +/*
+>> + * SAMSUNG EXYNOS7 SoC device tree source
+>> + *
+>> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+>> + *           http://www.samsung.com
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +#include <dt-bindings/clock/exynos7-clk.h>
+>> +
+>> +/ {
+>> +     compatible = "samsung,exynos7";
+>> +     interrupt-parent = <&gic>;
+>> +     #address-cells = <2>;
+>
+> +       #address-cells = <1>; ?
+>
+> Hmm...I can't see any 64-bit address here.
 
-On 09/11/2014 10:00 AM, Sjoerd Simons wrote:
->> > >  
->> > > -static const struct of_device_id mxt_of_match[] = {
->> > > -	{ .compatible = "atmel,maxtouch", },
->> > > -	{},
->> > > -};
->> > > -MODULE_DEVICE_TABLE(of, mxt_of_match);
->> > > -
->> > >  static const struct i2c_device_id mxt_id[] = {
->> > >  	{ "qt602240_ts", 0 },
->> > >  	{ "atmel_mxt_ts", 0 },
->> > >  	{ "atmel_mxt_tp", 0 },
->> > > +	{ "maxtouch", 0 },
->> > >  	{ "mXT224", 0 },
->> > >  	{ }
->> > >  };
->> > > @@ -2286,7 +2281,6 @@ static struct i2c_driver mxt_driver = {
->> > >  	.driver = {
->> > >  		.name	= "atmel_mxt_ts",
->> > >  		.owner	= THIS_MODULE,
->> > > -		.of_match_table = of_match_ptr(mxt_of_match),
->> > >  		.pm	= &mxt_pm_ops,
->> > >  	},
->> > >  	.probe		= mxt_probe,
->> > > 
->> > 
->> > I see that Lee is working to allow the I2C subsystem to not need an I2C ID
->> > table to match [0]. I'll let Lee to comment what the future plans are and if
->> > his series are going to solve your issue since I'm not that familiar with the
->> > I2C core.
->> 
->> It's wrong to expect DT to probe these devices without a compatible
->> string.  It does so at the moment, but this is a bi-product and not
->> the correct method.
-> 
-> Ok, which means removing the mxt_of_match table in this patch is wrong..
-> I'll fix that for for a V2.
-> 
-> However that makes adding the "maxtouch" string to the i2c device table
-> somewhat cumbersome as it only gets added in this case to ensure
-> module-autoloading can happen as the modalias presented to userspace is
-> going still going to be i2c:maxtouch.
-> 
-> Tbh, the bigger problem this is pointing out is that for I2C devices
-> with only an OF compability tring module auto-loading is broken...
-> 
+All the SoC peripherals have been put into the soc node and ranges
+property in that node is used to convert 64-bit to 32-bit addresses.
+But since this is a 64-bit SoC, we use #address-cells as 2.
 
-To expand on what Sjoerd already said and just to be sure everyone is on the
-same page.
+>
+>> +     #size-cells = <2>;
+>> +
+>
+> [...]
+>
+>> +
+>> +     soc: soc {
+>> +             compatible = "simple-bus";
+>> +             #address-cells = <1>;
+>> +             #size-cells = <1>;
+>> +             ranges = <0 0 0 0x18000000>;
+>> +
+>> +             chipid@10000000 {
+>> +                     compatible = "samsung,exynos4210-chipid";
+>> +                     reg = <0x10000000 0x100>;
+>> +             };
+>
+> Maybe this is not required? There is no check chipid in arm/arm64.
 
-The problem is that right now the driver reports the following modalias:
+This is only describing the hardware and it does not depend on linux
+using this information. And support for chip id can be used later for
+64-bit Exynos platforms as well.
 
-# cat /sys/class/i2c-adapter/i2c-8/8-004b/modalias
-i2c:maxtouch
+>
+> [...]
+>
+>> +             timer {
+>> +                     compatible = "arm,armv8-timer";
+>> +                     interrupts = <1 13 0xff01>,
+>> +                                  <1 14 0xff01>,
+>> +                                  <1 11 0xff01>,
+>> +                                  <1 10 0xff01>;
+>
+> clock-frequency ?
 
-but if you look at the module information, that is not a valid alias:
+That is programmed by the bootloader / firmware.
 
-# modinfo atmel_mxt_ts | grep alias
-alias:          i2c:mXT224
-alias:          i2c:atmel_mxt_tp
-alias:          i2c:atmel_mxt_ts
-alias:          i2c:qt602240_ts
-alias:          of:N*T*Catmel,maxtouch*
+>
+> [...]
+>
+> - Kukjin
+>
 
-which means that udev/kmod can't load the module automatically based on the
-alias information.
-
-The aliases are filled by both MODULE_DEVICE_TABLE(i2c, mxt_id) and
-MODULE_DEVICE_TABLE(of, mxt_of_match) so after Sjoerd's patch:
-
-# cat /sys/class/i2c-adapter/i2c-8/8-004b/modalias
-i2c:maxtouch
-
-# modinfo atmel_mxt_ts | grep alias
-alias:          i2c:mXT224
-alias:          i2c:maxtouch
-alias:          i2c:atmel_mxt_tp
-alias:          i2c:atmel_mxt_ts
-alias:          i2c:qt602240_ts
-
-which matches the reported uevent so the module will be auto-loaded.
-
-This is because the I2C subsystem hardcodes i2c:<client->name>, if you look at
-drivers/i2c/i2c-core.c:
-
-/* uevent helps with hotplug: modprobe -q $(MODALIAS) */
-static int i2c_device_uevent(struct device *dev, struct kobj_uevent_env *env)
-{
-...
-        if (add_uevent_var(env, "MODALIAS=%s%s",
-                           I2C_MODULE_PREFIX, client->name))
-...
-}
-
-I've looked at Lee's series and AFAICT that remains the same so I second
-Sjoerd that module auto-loading will continue to be broken.
-
-Best regards,
-Javier
+Thanks,
+-- 
+Shine bright,
+(: Nav :)
