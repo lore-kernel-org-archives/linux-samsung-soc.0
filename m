@@ -1,40 +1,62 @@
-From: Nick Dyer <nick.dyer@itdev.co.uk>
-Subject: Re: [PATCH] Input: atmel_mxt_ts: Add of node type to the i2c table
-Date: Thu, 11 Sep 2014 13:24:34 +0100
-Message-ID: <54119482.6070506@itdev.co.uk>
-References: <1410249158-18192-1-git-send-email-sjoerd.simons@collabora.co.uk> <540ED495.20609@collabora.co.uk> <20140910092832.GM30307@lee--X1> <1410422429.2857.16.camel@collabora.co.uk> <54115F6E.3010007@collabora.co.uk> <5411693A.3050300@itdev.co.uk> <20140911110829.GA5149@katana> <54118687.8040802@collabora.co.uk> <20140911113548.GB5149@katana> <54118A7E.4090902@collabora.co.uk>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 00/17] drm/exynos/ipp: image post processing fixes and
+ improvements, part four
+Date: Thu, 11 Sep 2014 21:50:24 +0900
+Message-ID: <54119A90.7080107@samsung.com>
+References: <1409216861-12452-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <54118A7E.4090902@collabora.co.uk>
-Sender: linux-input-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Wolfram Sang <wsa@the-dreams.de>
-Cc: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Lee Jones <lee.jones@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, "Bowens, Alan" <Alan.Bowens@atmel.com>, Benson Leung <bleung@chromium.org>, yufeng Shen <miletus@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1409216861-12452-1-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 11/09/14 12:41, Javier Martinez Canillas wrote:
-> On 09/11/2014 01:35 PM, Wolfram Sang wrote:
->>>> This is a workaround. It would make sense, however, to add it because we
->>>> want to support i2c_board_info structures.
->>>>
->>>
->>> I think it really depends if an IP block can be used on non-DT platforms
->>> (which I think is true for this trackpad) but if a driver is for an IP block
->>> that can only be used on a DT-only platform (e.g: a PMIC that is controlled
->>> over I2C and is only compatible with a DT-only SoC) then I don't think we need
->>> to support the i2c_board_info structure and can get rid of the I2C ID table on
->>> these drivers once Lee series land.
->>
->> That is exactly what I meant. It should be only added if there is a
->> reason other than "workaround". If you say, it doesn't make sense on
->> non-DT, then it should not be added.
-> 
-> Sorry for explaining myself badly. I just tried to say that this is a decision
-> that has to be made on a per-driver basis but I don't really know if makes
-> sense or not in this case since I don't know if this device is (or could be)
-> shipped on non-DT platforms. Nick is in a much better position to answer that
-> question.
-
-There are plenty of out-of-tree users of this driver which don't use DT.
-The most significant use I'm aware of is on Chromium OS systems.
+T24gMjAxNOuFhCAwOOyblCAyOOydvCAxODowNywgQW5kcnplaiBIYWpkYSB3cm90ZToKPiBUaGlz
+IHNldCBvZiBwYXRjaGVzIGNvbnRhaW5zIHZhcmlvdXMgaW1wcm92ZW1lbnQgYW5kIGZpeGVzCj4g
+Zm9yIGV4eW5vc19kcm0gaXBwIGZyYW1ld29yay4KPiBUaGUgcGF0Y2hzZXQgaXMgYmFzZWQgb24g
+ZXh5bm9zLWRybS1uZXh0IGJyYW5jaC4KPiAKPiBJUFAgZnJhbWV3b3JrIHdhcyB0ZXN0ZWQgZm9y
+IHJlZ3Jlc3Npb25zIG9uIGV4eW5vczQyMTAtdHJhdHMgdGFyZ2V0Lgo+IAo+IEluIHRoZSAybmQg
+dmVyc2lvbiBvZiB0aGUgc2VyaWVzIEkgaGF2ZSBpbmNsdWRlZCBjaGFuZ2VzIHByb3Bvc2VkIGJ5
+IEpvb255b3VuZyBTaGltLgo+IEkgaGF2ZSBkZWNpZGVkIHRvIHJlc2VuZCB3aG9sZSBzZXJpZXMg
+YmVjYXVzZSB0aGUgY2hhbmdlcyBjYXVzZWQgbWVyZ2UgY29uZmxpY3RzIGFuZAo+IHR3byBzZXBh
+cmF0ZSBwYXRjaGVzIGhhdmUgYmVlbiBhZGRlZCB0byB0aGUgc2VyaWVzLgo+IENoYW5nZXMgYXJl
+IGRlc2NyaWJlZCBpbiBjb21pdCBtZXNzYWdlcy4KCkFwcGxpZWQuCgpUaGFua3MsCklua2kgRGFl
+Cgo+IAo+IFJlZ2FyZHMKPiBBbmRyemVqCj4gCj4gCj4gQW5kcnplaiBIYWpkYSAoMTcpOgo+ICAg
+ZHJtL2V4eW5vcy9pcHA6IHJlbW92ZSBmYWtlIHBtIGNhbGxiYWNrcwo+ICAgZHJtL2V4eW5vcy9p
+cHA6IGNhbmNlbCB3b3JrcyBiZWZvcmUgY29tbWFuZCBub2RlIGNsZWFuCj4gICBkcm0vZXh5bm9z
+L2lwcDogbW92ZSBmaWxlIHJlZmVyZW5jZSBmcm9tIG1lbW9yeSB0byBjb21tYW5kIG5vZGUKPiAg
+IGRybS9leHlub3MvaXBwOiByZW1vdmUgb25seSByZWxhdGVkIGNvbW1hbmRzIG9uIGZpbGUgY2xv
+c2UKPiAgIGRybS9leHlub3MvaXBwOiByZW1vdmUgdW51c2VkIGZpZWxkIGluIGNvbW1hbmQgbm9k
+ZQo+ICAgZHJtL2V4eW5vcy9pcHA6IGZyZWUgcGFydGlhbGx5IGFsbG9jYXRlZCByZXNvdXJjZXMg
+b24gZXJyb3IKPiAgIGRybS9leHlub3MvaXBwOiBtb3ZlIG5vZGVzIGNsZWFuaW5nIHRvIHNlcGFy
+YXRlIGZ1bmN0aW9uCj4gICBkcm0vZXh5bm9zL2lwcDogY2xlYW4gbWVtb3J5IG5vZGVzIG9uIGNv
+bW1hbmQgbm9kZSBjbGVhbmluZwo+ICAgZHJtL2V4eW5vcy9pcHA6IHJlcGxhY2Ugd29ya19zdHJ1
+Y3QgY2FzdGluZyB3aXRoIGJldHRlciBjb25zdHJ1Y3RzCj4gICBkcm0vZXh5bm9zL2lwcDogc3Rv
+cCBoYXJkd2FyZSBiZWZvcmUgZnJlZWluZyBtZW1vcnkKPiAgIGRybS9leHlub3MvaXBwOiByZW1v
+dmUgZXZlbnRzIGR1cmluZyBjb21tYW5kIGNsZWFuaW5nCj4gICBkcm0vZXh5bm9zL2ZpbWM6IGF2
+b2lkIGNsZWFyaW5nIG92ZXJmbG93IGJpdHMKPiAgIGRybS9leHlub3MvZmltYzogZG8gbm90IGVu
+YWJsZSBmaW1jIHR3aWNlCj4gICBkcm0vZXh5bm9zL2ZpbWM6IHNpbXBsaWZ5IGJ1ZmZlciBxdWV1
+aW5nCj4gICBkcm0vZXh5bm9zL2ZpbWM6IGZpeCBzb3VyY2UgYnVmZmVyIHJlZ2lzdGVycwo+ICAg
+ZHJtL2V4eW5vcy9pcHA6IHJlbW92ZSBmaWxlIGFyZ3VtZW50IGZyb20gbm9kZSByZWxhdGVkIGZ1
+bmN0aW9ucwo+ICAgZHJtL2V4eW5vcy9pcHA6IGFkZCBmaWxlIGNoZWNrcyBmb3IgaW9jdGxzCj4g
+Cj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1jLmMgICAgfCAgOTAgKyst
+LS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ3NjLmMgICAgIHwgICAz
+ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9pcHAuYyAgICAgfCAzOTcg
+KysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1faXBwLmggICAgIHwgICA0ICstCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9yb3RhdG9yLmMgfCAgIDMgKy0KPiAgNSBmaWxlcyBjaGFuZ2VkLCAxOTUgaW5zZXJ0
+aW9ucygrKSwgMzAyIGRlbGV0aW9ucygtKQo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
+aXN0aW5mby9kcmktZGV2ZWwK
