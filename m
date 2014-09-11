@@ -1,43 +1,43 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH v3 7/8] tty/serial: samsung: enable usage for 64-bit Exynos
- platforms
-Date: Thu, 11 Sep 2014 15:50:51 +0530
-Message-ID: <1410430852-3491-8-git-send-email-ch.naveen@samsung.com>
+From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v3 8/8] arm64: dts: add <dt-bindings/> symlink
+Date: Thu, 11 Sep 2014 15:50:52 +0530
+Message-ID: <1410430852-3491-9-git-send-email-ch.naveen@samsung.com>
 References: <1410430852-3491-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:61924 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754373AbaIKK0Z (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Sep 2014 06:26:25 -0400
-In-reply-to: <1410430852-3491-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1410430852-3491-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: naveenkrishna.ch@gmail.com, linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Allow Samsung serial driver to be usable on Exynos 64-bit SoC based
-platforms.
+From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Add symlink to include/dt-bindings from arch/arm64/boot/dts/include/ to
+match the ones in ARM architectures so that preprocessed device
+tree files can include various useful constant definitions.
+
+See commit c58299aa8754 ("kbuild: create an "include chroot" for DT bindings")
+merged in v3.10-rc1 for details.
+
+CC: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
+Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/tty/serial/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/include/dt-bindings |    1 +
+ 1 file changed, 1 insertion(+)
+ create mode 120000 arch/arm64/boot/dts/include/dt-bindings
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 26cec64..3383744 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -220,7 +220,7 @@ config SERIAL_CLPS711X_CONSOLE
- 
- config SERIAL_SAMSUNG
- 	tristate "Samsung SoC serial support"
--	depends on PLAT_SAMSUNG
-+	depends on PLAT_SAMSUNG || ARCH_EXYNOS
- 	select SERIAL_CORE
- 	help
- 	  Support for the on-chip UARTs on the Samsung S3C24XX series CPUs,
+diff --git a/arch/arm64/boot/dts/include/dt-bindings b/arch/arm64/boot/dts/include/dt-bindings
+new file mode 120000
+index 0000000..08c00e4
+--- /dev/null
++++ b/arch/arm64/boot/dts/include/dt-bindings
+@@ -0,0 +1 @@
++../../../../../include/dt-bindings
+\ No newline at end of file
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
