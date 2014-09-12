@@ -1,58 +1,111 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: RE: [PATCH] clk: samsung: exynos5260: fix typo in clock name
-Date: Fri, 12 Sep 2014 14:57:04 +0530
-Message-ID: <000e01cfce6b$bf538ca0$3dfaa5e0$@samsung.com>
-References: <1410328565-25122-1-git-send-email-pankaj.dubey@samsung.com>
- <54122962.5020903@gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH 5/9] drm/exynos/crtc: fix framebuffer reference sequence
+Date: Fri, 12 Sep 2014 11:27:41 +0200
+Message-ID: <5412BC8D.2030007@samsung.com>
+References: <1410268573-2297-1-git-send-email-a.hajda@samsung.com>
+ <1410268573-2297-6-git-send-email-a.hajda@samsung.com>
+ <5412B02A.6040609@samsung.com> <20140912085710.GD4740@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:18124 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751646AbaILJYg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Sep 2014 05:24:36 -0400
-In-reply-to: <54122962.5020903@gmail.com>
-Content-language: en-us
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20140912085710.GD4740@phenom.ffwll.local>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, s.nawrocki@samsung.com, mturquette@linaro.org, 'Chander Kashyap' <k.chander@samsung.com>, 'Abhilash Kesavan' <a.kesavan@samsung.com>
 
-Hi Tomasz,
-
-> -----Original Message-----
-> From: Tomasz Figa [mailto:tomasz.figa@gmail.com]
-> Sent: Friday, September 12, 2014 4:30 AM
-> To: Pankaj Dubey; linux-arm-kernel@lists.infradead.org; linux-samsung-
-> soc@vger.kernel.org; linux-kernel@vger.kernel.org
-> Cc: kgene.kim@samsung.com; s.nawrocki@samsung.com; mturquette@linaro.org;
-> Chander Kashyap; Abhilash Kesavan
-> Subject: Re: [PATCH] clk: samsung: exynos5260: fix typo in clock name
-> 
-> Hi Pankaj,
-> 
-> On 10.09.2014 07:56, Pankaj Dubey wrote:
-> > From: Chander Kashyap <k.chander@samsung.com>
-> >
-> > The parent name added in parent list as
-> > mout_phyclk_mipi_dphy_4l_m_txbyte_clkhs_p, is different than the
-> > defined parent due to typo.
-> >
-> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> > Signed-off-by: Chander Kashyap <k.chander@samsung.com>
-
-Please add my sign-off as 
-
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-
-> 
-> Missed your sign-off? You can reply with it inline and I will add it when
-applying this
-> weekend.
-> 
-> P.S. Please keep me on CC when sending patches for Samsung clock drivers.
-> 
-> Best regards,
-> Tomasz
+T24gMDkvMTIvMjAxNCAxMDo1NyBBTSwgRGFuaWVsIFZldHRlciB3cm90ZToKPiBPbiBGcmksIFNl
+cCAxMiwgMjAxNCBhdCAwNTozNDo1MFBNICswOTAwLCBJbmtpIERhZSB3cm90ZToKPj4gSGkgQW5k
+cnplaiwKPj4KPj4gT24gMjAxNOuFhCAwOeyblCAwOeydvCAyMjoxNiwgQW5kcnplaiBIYWpkYSB3
+cm90ZToKPj4+IEFkZGluZyByZWZlcmVuY2UgdG8gZnJhbWVidWZmZXIgc2hvdWxkIGJlIGFjY29t
+cGFuaWVkIHdpdGggcmVtb3ZpbmcKPj4+IHJlZmVyZW5jZSB0byBvbGQgZnJhbWVidWZmZXIgYXNz
+aWduZWQgdG8gdGhlIHBsYW5lLgo+Pj4gVGhpcyBwYXRjaCByZW1vdmVzIGZvbGxvd2luZyB3YXJu
+aW5nOgo+Pj4KPj4+IFsgICA5NS4wMzgwMTddIFdBUk5JTkc6IENQVTogMSBQSUQ6IDMwNjcgYXQg
+ZHJpdmVycy9ncHUvZHJtL2RybV9jcnRjLmM6NTExNSBkcm1fbW9kZV9jb25maWdfY2xlYW51cCsw
+eDI1OC8weDI2OCgpCj4+PiBbICAgOTUuMDQ4MDg2XSBNb2R1bGVzIGxpbmtlZCBpbjoKPj4+IFsg
+ICA5NS4wNTE0MzBdIENQVTogMSBQSUQ6IDMwNjcgQ29tbTogYmFzaCBUYWludGVkOiBHICAgICAg
+ICBXICAgICAgMy4xNi4wLTExMzU1LWc3YTZlY2E1LWRpcnR5ICMzMDE1Cj4+PiBbICAgOTUuMDYw
+MDU4XSBbPGMwMDEzZTkwPl0gKHVud2luZF9iYWNrdHJhY2UpIGZyb20gWzxjMDAxMTEyOD5dIChz
+aG93X3N0YWNrKzB4MTAvMHgxNCkKPj4+IFsgICA5NS4wNjc3NjZdIFs8YzAwMTExMjg+XSAoc2hv
+d19zdGFjaykgZnJvbSBbPGMwNGE1ZGM0Pl0gKGR1bXBfc3RhY2srMHg3MC8weGJjKQo+Pj4gWyAg
+IDk1LjA3NDk1M10gWzxjMDRhNWRjND5dIChkdW1wX3N0YWNrKSBmcm9tIFs8YzAwMjE3ODQ+XSAo
+d2Fybl9zbG93cGF0aF9jb21tb24rMHg2NC8weDg4KQo+Pj4gWyAgIDk1LjA4MzAwNV0gWzxjMDAy
+MTc4ND5dICh3YXJuX3Nsb3dwYXRoX2NvbW1vbikgZnJvbSBbPGMwMDIxN2M0Pl0gKHdhcm5fc2xv
+d3BhdGhfbnVsbCsweDFjLzB4MjQpCj4+PiBbICAgOTUuMDkxNzgwXSBbPGMwMDIxN2M0Pl0gKHdh
+cm5fc2xvd3BhdGhfbnVsbCkgZnJvbSBbPGMwMjc1ZmEwPl0gKGRybV9tb2RlX2NvbmZpZ19jbGVh
+bnVwKzB4MjU4LzB4MjY4KQo+Pj4gWyAgIDk1LjEwMDk4M10gWzxjMDI3NWZhMD5dIChkcm1fbW9k
+ZV9jb25maWdfY2xlYW51cCkgZnJvbSBbPGMwMjgxNzI0Pl0gKGV4eW5vc19kcm1fdW5sb2FkKzB4
+MzgvMHg1MCkKPj4+IFsgICA5NS4xMDk5MTVdIFs8YzAyODE3MjQ+XSAoZXh5bm9zX2RybV91bmxv
+YWQpIGZyb20gWzxjMDI2ZTI0OD5dIChkcm1fZGV2X3VucmVnaXN0ZXIrMHgyNC8weDk4KQo+Pj4g
+WyAgIDk1LjExODQxNF0gWzxjMDI2ZTI0OD5dIChkcm1fZGV2X3VucmVnaXN0ZXIpIGZyb20gWzxj
+MDI2ZWNiMD5dIChkcm1fcHV0X2RldisweDI4LzB4NjQpCj4+PiBbICAgOTUuMTI2NDEyXSBbPGMw
+MjZlY2IwPl0gKGRybV9wdXRfZGV2KSBmcm9tIFs8YzAyOTQ3YzQ+XSAodGFrZV9kb3duX21hc3Rl
+cisweDI0LzB4NDQpCj4+PiBbICAgOTUuMTM0MjE4XSBbPGMwMjk0N2M0Pl0gKHRha2VfZG93bl9t
+YXN0ZXIpIGZyb20gWzxjMDI5NDg3MD5dIChjb21wb25lbnRfZGVsKzB4OGMvMHhjOCkKPj4+IFsg
+ICA5NS4xNDIyMDFdIFs8YzAyOTQ4NzA+XSAoY29tcG9uZW50X2RlbCkgZnJvbSBbPGMwMjg2YzEw
+Pl0gKGV4eW5vc19kc2lfcmVtb3ZlKzB4MTgvMHgyYykKPj4+IFsgICA5NS4xNTAyOTRdIFs8YzAy
+ODZjMTA+XSAoZXh5bm9zX2RzaV9yZW1vdmUpIGZyb20gWzxjMDI5OWUwND5dIChwbGF0Zm9ybV9k
+cnZfcmVtb3ZlKzB4MTgvMHgxYykKPj4+IFsgICA5NS4xNTg4NzJdIFs8YzAyOTllMDQ+XSAocGxh
+dGZvcm1fZHJ2X3JlbW92ZSkgZnJvbSBbPGMwMjk4N2E0Pl0gKF9fZGV2aWNlX3JlbGVhc2VfZHJp
+dmVyKzB4NzAvMHhjNCkKPj4+IFsgICA5NS4xNjc5ODFdIFs8YzAyOTg3YTQ+XSAoX19kZXZpY2Vf
+cmVsZWFzZV9kcml2ZXIpIGZyb20gWzxjMDI5ODgxOD5dIChkZXZpY2VfcmVsZWFzZV9kcml2ZXIr
+MHgyMC8weDJjKQo+Pj4gWyAgIDk1LjE3NzI2OF0gWzxjMDI5ODgxOD5dIChkZXZpY2VfcmVsZWFz
+ZV9kcml2ZXIpIGZyb20gWzxjMDI5NzlkMD5dICh1bmJpbmRfc3RvcmUrMHg1Yy8weDk0KQo+Pj4g
+WyAgIDk1LjE4NTU5N10gWzxjMDI5NzlkMD5dICh1bmJpbmRfc3RvcmUpIGZyb20gWzxjMDI5NzI3
+OD5dIChkcnZfYXR0cl9zdG9yZSsweDIwLzB4MmMpCj4+PiBbICAgOTUuMTkzMzIzXSBbPGMwMjk3
+Mjc4Pl0gKGRydl9hdHRyX3N0b3JlKSBmcm9tIFs8YzAxMmFhOTA+XSAoc3lzZnNfa2Zfd3JpdGUr
+MHg0Yy8weDUwKQo+Pj4gWyAgIDk1LjIwMTIyNF0gWzxjMDEyYWE5MD5dIChzeXNmc19rZl93cml0
+ZSkgZnJvbSBbPGMwMTI5ZTk0Pl0gKGtlcm5mc19mb3Bfd3JpdGUrMHhjNC8weDE4NCkKPj4+IFsg
+ICA5NS4yMDkzOTNdIFs8YzAxMjllOTQ+XSAoa2VybmZzX2ZvcF93cml0ZSkgZnJvbSBbPGMwMGQw
+M2VjPl0gKHZmc193cml0ZSsweGEwLzB4MWE4KQo+Pj4gWyAgIDk1LjIxNzExMV0gWzxjMDBkMDNl
+Yz5dICh2ZnNfd3JpdGUpIGZyb20gWzxjMDBkMDdmOD5dIChTeVNfd3JpdGUrMHg0MC8weDhjKQo+
+Pj4gWyAgIDk1LjIyNDE0Nl0gWzxjMDBkMDdmOD5dIChTeVNfd3JpdGUpIGZyb20gWzxjMDAwZTY2
+MD5dIChyZXRfZmFzdF9zeXNjYWxsKzB4MC8weDQ4KQo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IEFu
+ZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4+PiAtLS0KPj4+ICBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jIHwgNiArKysrKysKPj4+ICAxIGZpbGUgY2hh
+bmdlZCwgNiBpbnNlcnRpb25zKCspCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fY3J0Yy5jCj4+PiBpbmRleCBiNjhlNThmLi5iZGUxOWY0IDEwMDY0NAo+Pj4gLS0tIGEv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+Pj4gKysrIGIvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+Pj4gQEAgLTE0NSwxMCArMTQ1LDE2
+IEBAIGV4eW5vc19kcm1fY3J0Y19tb2RlX3NldChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsIHN0cnVj
+dCBkcm1fZGlzcGxheV9tb2RlICptb2RlLAo+Pj4gIAlpZiAocmV0KQo+Pj4gIAkJcmV0dXJuIHJl
+dDsKPj4+ICAKPj4+ICsJLyogd2UgbmVlZCB0byB1bnJlZmVyZW5jZSBjdXJyZW50IGZiIGFmdGVy
+IHJlcGxhY2luZyBpdCB3aXRoIG5ldyBvbmUgKi8KPj4+ICsJb2xkX2ZiID0gcGxhbmUtPmZiOwo+
+Pj4gKwo+Pj4gIAlwbGFuZS0+Y3J0YyA9IGNydGM7Cj4+PiAgCXBsYW5lLT5mYiA9IGNydGMtPnBy
+aW1hcnktPmZiOwo+Pj4gIAlkcm1fZnJhbWVidWZmZXJfcmVmZXJlbmNlKHBsYW5lLT5mYik7Cj4+
+PiAgCj4+PiArCWlmIChvbGRfZmIpCj4+PiArCQlkcm1fZnJhbWVidWZmZXJfdW5yZWZlcmVuY2Uo
+b2xkX2ZiKTsKPj4gVGhpcyB0aW1lIHdvdWxkIGJlIGEgZ29vZCBjaGFuY2UgdGhhdCB3ZSBjYW4g
+Y29uc2lkZXIgZHJtIGZsaXAgcXVldWUgdG8KPj4gbWFrZSBzdXJlIHRoYXQgd2hvbGUgbWVtb3J5
+IHJlZ2lvbiB0byBvbGRfZmIgaXMgc2Nhbm5lZCBvdXQgY29tcGxldGVseQo+PiBiZWZvcmUgZHJv
+cHBpbmcgYSByZWZlcmVuY2Ugb2Ygb2xkX2ZiLiB0aGUgcmVmZXJlbmNlIG9mIG9sZF9mYiBzaG91
+bGQgYmUKPj4gZHJvcHBlZCBhdCBpcnEgaGFuZGxlciBvZiBlYWNoIGNydGMgZGV2aWNlcywgZmlt
+ZCBhbmQgbWl4ZXIuCj4gR2VuZXJhbGx5IGl0J3Mgbm90IGEgZ29vZCBpZGVhIHRvIGRyb3AgZmIg
+cmVmZXJlbmNlcyBmcm9tIGlycSBjb250ZXh0LAo+IHNpbmNlIGlmIHlvdSBhY3R1YWxseSBkcm9w
+IHRoZSBsYXN0IHJlZmVyZW5jZSBpdCdsbCBibG93IHVwOiBmYiBjbGVhbnVwCj4gbmVlZHMgYSBi
+dW5jaCBvZiBtdXRleGVzLgoKSSBhZ3JlZSB3aXRoIHRoYXQuCgo+Cj4gQWxzbyB0aGUgZHJtIGNv
+cmUgcmVhbGx5IHNob3VsZCBiZSB0YWtpbmcgY2FyZSBvZiB0aGlzIGZvciB5b3UsIHlvdSBvbmx5
+Cj4gbmVlZCB0byBncmFiIHJlZmVyZW5jZXMgeW91cnNlbGYgZm9yIGFzeW5jIGZsaXBzIGlmIHlv
+dSB3YW50IHRoZSBidWZmZXIgdG8KPiBzdXJ2aXZlIGEgYml0LiBjcnRjX21vZGVfc2V0IGhhcyBu
+b3QgbmVlZCBmb3IgdGhpcy4gSSBleHBlY3QgdGhhdCB0aGUKPiByZWZjb3VudGluZyBidWcgaXMg
+c29tZXdoZXJlIGVsc2UsIGF0IGxlYXN0IGZyb20gbXkgZXhwZXJpZW5jZSBjaGFzaW5nCj4gc3Vj
+aCBpc3N1ZXMgaW4gaTkxNSA7LSkKCkhtbSwgbWF5YmUgSSBtaXNzIHNvbWV0aGluZyBidXQgSSBk
+byBub3Qgc2VlIHRoZSBjb3JlIGdyYWJiaW5nIGZiIHJlZmVyZW5jZQpvbiBwbGFuZS0+ZmIgdXBk
+YXRlLiBPbiB0aGUgb3RoZXIgc2lkZSBkcm1fZnJhbWVidWZmZXJfcmVtb3ZlIGNhbGxzCmRybV9w
+bGFuZV9mb3JjZV9kaXNhYmxlIHdoaWNoIGRyb3BzIHBsYW5lLT5mYiByZWZlcmVuY2UuCkkgYW0g
+bm90IHlldCBmYW1pbGlhciB3aXRoIHRoaXMgY29kZSBzbyBtYXliZSB0aGVyZSBpcyBiZXR0ZXIg
+c29sdXRpb24uCgpJZiBub3QgSSBndWVzcyBpdCB3b3VsZCBiZSBiZXR0ZXIgdG8gbW92ZSB0aGlz
+IGNvZGUgdG8KZXh5bm9zX3BsYW5lX21vZGVfc2V0LgpBdCBsZWFzdCBpdCBpcyBkb25lIHRoaXMg
+d2F5IGluIG9tYXAgYW5kIG1zbSwgaW4gZmFjdCBpdCBzZWVtcyBiZXR0ZXIgcGxhY2UKZm9yIHN1
+Y2ggdGhpbmdzLiBXaGF0IGRvIHlvdSB0aGluaz8KClJlZ2FyZHMKQW5kcnplagoKPiAtRGFuaWVs
+CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
+ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
