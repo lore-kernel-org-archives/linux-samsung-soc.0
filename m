@@ -1,59 +1,105 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [RFC PATCH 2/5] devfreq: event: Add exynos-ppmu devfreq evnet
- driver
-Date: Fri, 12 Sep 2014 10:41:14 +0200
-Message-ID: <1410511274.31130.7.camel@x220>
-References: <1409891419-28560-1-git-send-email-cw00.choi@samsung.com>
-	 <1409891419-28560-3-git-send-email-cw00.choi@samsung.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 5/9] drm/exynos/crtc: fix framebuffer reference sequence
+Date: Fri, 12 Sep 2014 10:57:10 +0200
+Message-ID: <20140912085710.GD4740@phenom.ffwll.local>
+References: <1410268573-2297-1-git-send-email-a.hajda@samsung.com>
+ <1410268573-2297-6-git-send-email-a.hajda@samsung.com>
+ <5412B02A.6040609@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1409891419-28560-3-git-send-email-cw00.choi@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: myungjoo.ham@samsung.com, linux-pm@vger.kernel.org, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, a.kesavan@samsung.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, b.zolnierkie@samsung.com, nm@ti.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <5412B02A.6040609@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, 2014-09-05 at 13:30 +0900, Chanwoo Choi wrote:
-> This patch add exynos-ppmu devfreq event driver to provider raw data about
-> the utilization of each IP in Exynos SoC series.
-> 
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/devfreq/Kconfig             |  10 +
->  drivers/devfreq/event/Makefile      |   1 +
->  drivers/devfreq/event/exynos-ppmu.c | 410 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 421 insertions(+)
->  create mode 100644 drivers/devfreq/event/exynos-ppmu.c
-> 
-> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-> index ef839e7..4fbbcea 100644
-> --- a/drivers/devfreq/Kconfig
-> +++ b/drivers/devfreq/Kconfig
-> @@ -90,4 +90,14 @@ config ARM_EXYNOS5_BUS_DEVFREQ
->  
->  comment "DEVFREQ Event Drivers"
->  
-> +config DEVFREQ_EVENT_EXYNOS_PPMU
-> +	bool "EXYNOS PPMU (Performance Profiling Monitoring Unit) DEVFREQ event Driver"
-> +	depends on ARCH_EXYNOS
-> +	select ARCH_HAS_OPP
-
-This select statement can be dropped: see commit 78c5e0bb145d ("PM /
-OPP: Remove ARCH_HAS_OPP").
-
-By the way: there's a typo in the commit summary ("evnet").
-
-> +	select PM_OPP
-> +	help
-> +	 This add the DEVFREQ event driver for Exynos SoC. It provides PPMU
-> +	 (Performance Profiling Monitoring Unit) counters to estimate the
-> +	 utilization of each module.
-> +
->  endif # PM_DEVFREQ
-
-
-Paul Bolle
-
+T24gRnJpLCBTZXAgMTIsIDIwMTQgYXQgMDU6MzQ6NTBQTSArMDkwMCwgSW5raSBEYWUgd3JvdGU6
+Cj4gSGkgQW5kcnplaiwKPiAKPiBPbiAyMDE064WEIDA57JuUIDA57J28IDIyOjE2LCBBbmRyemVq
+IEhhamRhIHdyb3RlOgo+ID4gQWRkaW5nIHJlZmVyZW5jZSB0byBmcmFtZWJ1ZmZlciBzaG91bGQg
+YmUgYWNjb21wYW5pZWQgd2l0aCByZW1vdmluZwo+ID4gcmVmZXJlbmNlIHRvIG9sZCBmcmFtZWJ1
+ZmZlciBhc3NpZ25lZCB0byB0aGUgcGxhbmUuCj4gPiBUaGlzIHBhdGNoIHJlbW92ZXMgZm9sbG93
+aW5nIHdhcm5pbmc6Cj4gPiAKPiA+IFsgICA5NS4wMzgwMTddIFdBUk5JTkc6IENQVTogMSBQSUQ6
+IDMwNjcgYXQgZHJpdmVycy9ncHUvZHJtL2RybV9jcnRjLmM6NTExNSBkcm1fbW9kZV9jb25maWdf
+Y2xlYW51cCsweDI1OC8weDI2OCgpCj4gPiBbICAgOTUuMDQ4MDg2XSBNb2R1bGVzIGxpbmtlZCBp
+bjoKPiA+IFsgICA5NS4wNTE0MzBdIENQVTogMSBQSUQ6IDMwNjcgQ29tbTogYmFzaCBUYWludGVk
+OiBHICAgICAgICBXICAgICAgMy4xNi4wLTExMzU1LWc3YTZlY2E1LWRpcnR5ICMzMDE1Cj4gPiBb
+ICAgOTUuMDYwMDU4XSBbPGMwMDEzZTkwPl0gKHVud2luZF9iYWNrdHJhY2UpIGZyb20gWzxjMDAx
+MTEyOD5dIChzaG93X3N0YWNrKzB4MTAvMHgxNCkKPiA+IFsgICA5NS4wNjc3NjZdIFs8YzAwMTEx
+Mjg+XSAoc2hvd19zdGFjaykgZnJvbSBbPGMwNGE1ZGM0Pl0gKGR1bXBfc3RhY2srMHg3MC8weGJj
+KQo+ID4gWyAgIDk1LjA3NDk1M10gWzxjMDRhNWRjND5dIChkdW1wX3N0YWNrKSBmcm9tIFs8YzAw
+MjE3ODQ+XSAod2Fybl9zbG93cGF0aF9jb21tb24rMHg2NC8weDg4KQo+ID4gWyAgIDk1LjA4MzAw
+NV0gWzxjMDAyMTc4ND5dICh3YXJuX3Nsb3dwYXRoX2NvbW1vbikgZnJvbSBbPGMwMDIxN2M0Pl0g
+KHdhcm5fc2xvd3BhdGhfbnVsbCsweDFjLzB4MjQpCj4gPiBbICAgOTUuMDkxNzgwXSBbPGMwMDIx
+N2M0Pl0gKHdhcm5fc2xvd3BhdGhfbnVsbCkgZnJvbSBbPGMwMjc1ZmEwPl0gKGRybV9tb2RlX2Nv
+bmZpZ19jbGVhbnVwKzB4MjU4LzB4MjY4KQo+ID4gWyAgIDk1LjEwMDk4M10gWzxjMDI3NWZhMD5d
+IChkcm1fbW9kZV9jb25maWdfY2xlYW51cCkgZnJvbSBbPGMwMjgxNzI0Pl0gKGV4eW5vc19kcm1f
+dW5sb2FkKzB4MzgvMHg1MCkKPiA+IFsgICA5NS4xMDk5MTVdIFs8YzAyODE3MjQ+XSAoZXh5bm9z
+X2RybV91bmxvYWQpIGZyb20gWzxjMDI2ZTI0OD5dIChkcm1fZGV2X3VucmVnaXN0ZXIrMHgyNC8w
+eDk4KQo+ID4gWyAgIDk1LjExODQxNF0gWzxjMDI2ZTI0OD5dIChkcm1fZGV2X3VucmVnaXN0ZXIp
+IGZyb20gWzxjMDI2ZWNiMD5dIChkcm1fcHV0X2RldisweDI4LzB4NjQpCj4gPiBbICAgOTUuMTI2
+NDEyXSBbPGMwMjZlY2IwPl0gKGRybV9wdXRfZGV2KSBmcm9tIFs8YzAyOTQ3YzQ+XSAodGFrZV9k
+b3duX21hc3RlcisweDI0LzB4NDQpCj4gPiBbICAgOTUuMTM0MjE4XSBbPGMwMjk0N2M0Pl0gKHRh
+a2VfZG93bl9tYXN0ZXIpIGZyb20gWzxjMDI5NDg3MD5dIChjb21wb25lbnRfZGVsKzB4OGMvMHhj
+OCkKPiA+IFsgICA5NS4xNDIyMDFdIFs8YzAyOTQ4NzA+XSAoY29tcG9uZW50X2RlbCkgZnJvbSBb
+PGMwMjg2YzEwPl0gKGV4eW5vc19kc2lfcmVtb3ZlKzB4MTgvMHgyYykKPiA+IFsgICA5NS4xNTAy
+OTRdIFs8YzAyODZjMTA+XSAoZXh5bm9zX2RzaV9yZW1vdmUpIGZyb20gWzxjMDI5OWUwND5dIChw
+bGF0Zm9ybV9kcnZfcmVtb3ZlKzB4MTgvMHgxYykKPiA+IFsgICA5NS4xNTg4NzJdIFs8YzAyOTll
+MDQ+XSAocGxhdGZvcm1fZHJ2X3JlbW92ZSkgZnJvbSBbPGMwMjk4N2E0Pl0gKF9fZGV2aWNlX3Jl
+bGVhc2VfZHJpdmVyKzB4NzAvMHhjNCkKPiA+IFsgICA5NS4xNjc5ODFdIFs8YzAyOTg3YTQ+XSAo
+X19kZXZpY2VfcmVsZWFzZV9kcml2ZXIpIGZyb20gWzxjMDI5ODgxOD5dIChkZXZpY2VfcmVsZWFz
+ZV9kcml2ZXIrMHgyMC8weDJjKQo+ID4gWyAgIDk1LjE3NzI2OF0gWzxjMDI5ODgxOD5dIChkZXZp
+Y2VfcmVsZWFzZV9kcml2ZXIpIGZyb20gWzxjMDI5NzlkMD5dICh1bmJpbmRfc3RvcmUrMHg1Yy8w
+eDk0KQo+ID4gWyAgIDk1LjE4NTU5N10gWzxjMDI5NzlkMD5dICh1bmJpbmRfc3RvcmUpIGZyb20g
+WzxjMDI5NzI3OD5dIChkcnZfYXR0cl9zdG9yZSsweDIwLzB4MmMpCj4gPiBbICAgOTUuMTkzMzIz
+XSBbPGMwMjk3Mjc4Pl0gKGRydl9hdHRyX3N0b3JlKSBmcm9tIFs8YzAxMmFhOTA+XSAoc3lzZnNf
+a2Zfd3JpdGUrMHg0Yy8weDUwKQo+ID4gWyAgIDk1LjIwMTIyNF0gWzxjMDEyYWE5MD5dIChzeXNm
+c19rZl93cml0ZSkgZnJvbSBbPGMwMTI5ZTk0Pl0gKGtlcm5mc19mb3Bfd3JpdGUrMHhjNC8weDE4
+NCkKPiA+IFsgICA5NS4yMDkzOTNdIFs8YzAxMjllOTQ+XSAoa2VybmZzX2ZvcF93cml0ZSkgZnJv
+bSBbPGMwMGQwM2VjPl0gKHZmc193cml0ZSsweGEwLzB4MWE4KQo+ID4gWyAgIDk1LjIxNzExMV0g
+WzxjMDBkMDNlYz5dICh2ZnNfd3JpdGUpIGZyb20gWzxjMDBkMDdmOD5dIChTeVNfd3JpdGUrMHg0
+MC8weDhjKQo+ID4gWyAgIDk1LjIyNDE0Nl0gWzxjMDBkMDdmOD5dIChTeVNfd3JpdGUpIGZyb20g
+WzxjMDAwZTY2MD5dIChyZXRfZmFzdF9zeXNjYWxsKzB4MC8weDQ4KQo+ID4gCj4gPiBTaWduZWQt
+b2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgo+ID4gLS0tCj4gPiAg
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyB8IDYgKysrKysrCj4gPiAg
+MSBmaWxlIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKQo+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9jcnRjLmMKPiA+IGluZGV4IGI2OGU1OGYuLmJkZTE5ZjQgMTAwNjQ0
+Cj4gPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4gPiAr
+KysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4gPiBAQCAtMTQ1
+LDEwICsxNDUsMTYgQEAgZXh5bm9zX2RybV9jcnRjX21vZGVfc2V0KHN0cnVjdCBkcm1fY3J0YyAq
+Y3J0Yywgc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm1vZGUsCj4gPiAgCWlmIChyZXQpCj4gPiAg
+CQlyZXR1cm4gcmV0Owo+ID4gIAo+ID4gKwkvKiB3ZSBuZWVkIHRvIHVucmVmZXJlbmNlIGN1cnJl
+bnQgZmIgYWZ0ZXIgcmVwbGFjaW5nIGl0IHdpdGggbmV3IG9uZSAqLwo+ID4gKwlvbGRfZmIgPSBw
+bGFuZS0+ZmI7Cj4gPiArCj4gPiAgCXBsYW5lLT5jcnRjID0gY3J0YzsKPiA+ICAJcGxhbmUtPmZi
+ID0gY3J0Yy0+cHJpbWFyeS0+ZmI7Cj4gPiAgCWRybV9mcmFtZWJ1ZmZlcl9yZWZlcmVuY2UocGxh
+bmUtPmZiKTsKPiA+ICAKPiA+ICsJaWYgKG9sZF9mYikKPiA+ICsJCWRybV9mcmFtZWJ1ZmZlcl91
+bnJlZmVyZW5jZShvbGRfZmIpOwo+IAo+IFRoaXMgdGltZSB3b3VsZCBiZSBhIGdvb2QgY2hhbmNl
+IHRoYXQgd2UgY2FuIGNvbnNpZGVyIGRybSBmbGlwIHF1ZXVlIHRvCj4gbWFrZSBzdXJlIHRoYXQg
+d2hvbGUgbWVtb3J5IHJlZ2lvbiB0byBvbGRfZmIgaXMgc2Nhbm5lZCBvdXQgY29tcGxldGVseQo+
+IGJlZm9yZSBkcm9wcGluZyBhIHJlZmVyZW5jZSBvZiBvbGRfZmIuIHRoZSByZWZlcmVuY2Ugb2Yg
+b2xkX2ZiIHNob3VsZCBiZQo+IGRyb3BwZWQgYXQgaXJxIGhhbmRsZXIgb2YgZWFjaCBjcnRjIGRl
+dmljZXMsIGZpbWQgYW5kIG1peGVyLgoKR2VuZXJhbGx5IGl0J3Mgbm90IGEgZ29vZCBpZGVhIHRv
+IGRyb3AgZmIgcmVmZXJlbmNlcyBmcm9tIGlycSBjb250ZXh0LApzaW5jZSBpZiB5b3UgYWN0dWFs
+bHkgZHJvcCB0aGUgbGFzdCByZWZlcmVuY2UgaXQnbGwgYmxvdyB1cDogZmIgY2xlYW51cApuZWVk
+cyBhIGJ1bmNoIG9mIG11dGV4ZXMuCgpBbHNvIHRoZSBkcm0gY29yZSByZWFsbHkgc2hvdWxkIGJl
+IHRha2luZyBjYXJlIG9mIHRoaXMgZm9yIHlvdSwgeW91IG9ubHkKbmVlZCB0byBncmFiIHJlZmVy
+ZW5jZXMgeW91cnNlbGYgZm9yIGFzeW5jIGZsaXBzIGlmIHlvdSB3YW50IHRoZSBidWZmZXIgdG8K
+c3Vydml2ZSBhIGJpdC4gY3J0Y19tb2RlX3NldCBoYXMgbm90IG5lZWQgZm9yIHRoaXMuIEkgZXhw
+ZWN0IHRoYXQgdGhlCnJlZmNvdW50aW5nIGJ1ZyBpcyBzb21ld2hlcmUgZWxzZSwgYXQgbGVhc3Qg
+ZnJvbSBteSBleHBlcmllbmNlIGNoYXNpbmcKc3VjaCBpc3N1ZXMgaW4gaTkxNSA7LSkKLURhbmll
+bAotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24K
+KzQxICgwKSA3OSAzNjUgNTcgNDggLSBodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
+CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
+Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
