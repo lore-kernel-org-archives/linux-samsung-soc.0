@@ -1,42 +1,40 @@
-From: Doug Anderson <dianders@chromium.org>
+From: Andrew Morton <akpm@linux-foundation.org>
 Subject: Re: [PATCH RESEND v9 1/5] rtc: max77686: Allow the max77686 rtc to
  wakeup the system
-Date: Fri, 12 Sep 2014 09:03:50 -0700
-Message-ID: <CAD=FV=W3soOh2yf0pDcP0cXVGvxcbyTkO7z-1k0rV7DJAyhf=g@mail.gmail.com>
+Date: Fri, 12 Sep 2014 15:05:37 -0700
+Message-ID: <20140912150537.56419981804c68f9108a22b6@linux-foundation.org>
 References: <1410509864-10019-1-git-send-email-javier.martinez@collabora.co.uk>
 	<1410509864-10019-2-git-send-email-javier.martinez@collabora.co.uk>
-	<CAD=FV=Vu3u=KfUNUpL6qcr0Fp42WbY8AqfOXyWr-D3KW1PucxA@mail.gmail.com>
-	<5413173A.9070705@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f178.google.com ([209.85.220.178]:51442 "EHLO
-	mail-vc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751944AbaILQDv (ORCPT
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56429 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752879AbaILWFj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Sep 2014 12:03:51 -0400
-Received: by mail-vc0-f178.google.com with SMTP id hy4so885735vcb.23
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Sep 2014 09:03:50 -0700 (PDT)
-In-Reply-To: <5413173A.9070705@collabora.co.uk>
+	Fri, 12 Sep 2014 18:05:39 -0400
+In-Reply-To: <1410509864-10019-2-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Alessandro Zummo <a.zummo@towertech.it>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, 12 Sep 2014 10:17:39 +0200 Javier Martinez Canillas <javier.martinez@collabora.co.uk> wrote:
 
-On Fri, Sep 12, 2014 at 8:54 AM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> You are right, I completely forgot to check if that actually landed and to
-> remove the note in that case...
->
-> Maybe when the set is applied the note can be removed from this patch or do
-> you think that I should re-spin the series for that?
+> From: Doug Anderson <dianders@chromium.org>
+> 
+> The max77686 includes an RTC that keeps power during suspend.  It's
+> convenient to be able to use it as a wakeup source.
+> 
+> NOTE: due to wakeup ordering problems this patch alone doesn't work so
+> well on exynos5250-snow.  You also need something that brings the i2c
+> bus up before the max77686 wakeup runs.
 
-This seems like something a maintainer could handle removing, but I
-guess it's totally up to the maintainer.  If I were the maintainer I'd
-rather remove the note myself then see a whole spin of a 5-part series
-just to fix this.  ;)
+I removed this paragraph.
 
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
--Doug
+And I rewrote this to Signed-off-by:, as you were on the patch delivery
+path. Documentation/SubmittingPatches section 12 has the gory details.
