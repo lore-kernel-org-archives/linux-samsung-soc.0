@@ -1,112 +1,58 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 5/9] drm/exynos/crtc: fix framebuffer reference sequence
-Date: Fri, 12 Sep 2014 18:21:57 +0900
-Message-ID: <5412BB35.7050309@samsung.com>
-References: <1410268573-2297-1-git-send-email-a.hajda@samsung.com>
- <1410268573-2297-6-git-send-email-a.hajda@samsung.com>
- <5412B02A.6040609@samsung.com> <20140912085710.GD4740@phenom.ffwll.local>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: RE: [PATCH] clk: samsung: exynos5260: fix typo in clock name
+Date: Fri, 12 Sep 2014 14:57:04 +0530
+Message-ID: <000e01cfce6b$bf538ca0$3dfaa5e0$@samsung.com>
+References: <1410328565-25122-1-git-send-email-pankaj.dubey@samsung.com>
+ <54122962.5020903@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20140912085710.GD4740@phenom.ffwll.local>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:18124 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751646AbaILJYg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 12 Sep 2014 05:24:36 -0400
+In-reply-to: <54122962.5020903@gmail.com>
+Content-language: en-us
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kgene.kim@samsung.com, s.nawrocki@samsung.com, mturquette@linaro.org, 'Chander Kashyap' <k.chander@samsung.com>, 'Abhilash Kesavan' <a.kesavan@samsung.com>
 
-T24gMjAxNOuFhCAwOeyblCAxMuydvCAxNzo1NywgRGFuaWVsIFZldHRlciB3cm90ZToKPiBPbiBG
-cmksIFNlcCAxMiwgMjAxNCBhdCAwNTozNDo1MFBNICswOTAwLCBJbmtpIERhZSB3cm90ZToKPj4g
-SGkgQW5kcnplaiwKPj4KPj4gT24gMjAxNOuFhCAwOeyblCAwOeydvCAyMjoxNiwgQW5kcnplaiBI
-YWpkYSB3cm90ZToKPj4+IEFkZGluZyByZWZlcmVuY2UgdG8gZnJhbWVidWZmZXIgc2hvdWxkIGJl
-IGFjY29tcGFuaWVkIHdpdGggcmVtb3ZpbmcKPj4+IHJlZmVyZW5jZSB0byBvbGQgZnJhbWVidWZm
-ZXIgYXNzaWduZWQgdG8gdGhlIHBsYW5lLgo+Pj4gVGhpcyBwYXRjaCByZW1vdmVzIGZvbGxvd2lu
-ZyB3YXJuaW5nOgo+Pj4KPj4+IFsgICA5NS4wMzgwMTddIFdBUk5JTkc6IENQVTogMSBQSUQ6IDMw
-NjcgYXQgZHJpdmVycy9ncHUvZHJtL2RybV9jcnRjLmM6NTExNSBkcm1fbW9kZV9jb25maWdfY2xl
-YW51cCsweDI1OC8weDI2OCgpCj4+PiBbICAgOTUuMDQ4MDg2XSBNb2R1bGVzIGxpbmtlZCBpbjoK
-Pj4+IFsgICA5NS4wNTE0MzBdIENQVTogMSBQSUQ6IDMwNjcgQ29tbTogYmFzaCBUYWludGVkOiBH
-ICAgICAgICBXICAgICAgMy4xNi4wLTExMzU1LWc3YTZlY2E1LWRpcnR5ICMzMDE1Cj4+PiBbICAg
-OTUuMDYwMDU4XSBbPGMwMDEzZTkwPl0gKHVud2luZF9iYWNrdHJhY2UpIGZyb20gWzxjMDAxMTEy
-OD5dIChzaG93X3N0YWNrKzB4MTAvMHgxNCkKPj4+IFsgICA5NS4wNjc3NjZdIFs8YzAwMTExMjg+
-XSAoc2hvd19zdGFjaykgZnJvbSBbPGMwNGE1ZGM0Pl0gKGR1bXBfc3RhY2srMHg3MC8weGJjKQo+
-Pj4gWyAgIDk1LjA3NDk1M10gWzxjMDRhNWRjND5dIChkdW1wX3N0YWNrKSBmcm9tIFs8YzAwMjE3
-ODQ+XSAod2Fybl9zbG93cGF0aF9jb21tb24rMHg2NC8weDg4KQo+Pj4gWyAgIDk1LjA4MzAwNV0g
-WzxjMDAyMTc4ND5dICh3YXJuX3Nsb3dwYXRoX2NvbW1vbikgZnJvbSBbPGMwMDIxN2M0Pl0gKHdh
-cm5fc2xvd3BhdGhfbnVsbCsweDFjLzB4MjQpCj4+PiBbICAgOTUuMDkxNzgwXSBbPGMwMDIxN2M0
-Pl0gKHdhcm5fc2xvd3BhdGhfbnVsbCkgZnJvbSBbPGMwMjc1ZmEwPl0gKGRybV9tb2RlX2NvbmZp
-Z19jbGVhbnVwKzB4MjU4LzB4MjY4KQo+Pj4gWyAgIDk1LjEwMDk4M10gWzxjMDI3NWZhMD5dIChk
-cm1fbW9kZV9jb25maWdfY2xlYW51cCkgZnJvbSBbPGMwMjgxNzI0Pl0gKGV4eW5vc19kcm1fdW5s
-b2FkKzB4MzgvMHg1MCkKPj4+IFsgICA5NS4xMDk5MTVdIFs8YzAyODE3MjQ+XSAoZXh5bm9zX2Ry
-bV91bmxvYWQpIGZyb20gWzxjMDI2ZTI0OD5dIChkcm1fZGV2X3VucmVnaXN0ZXIrMHgyNC8weDk4
-KQo+Pj4gWyAgIDk1LjExODQxNF0gWzxjMDI2ZTI0OD5dIChkcm1fZGV2X3VucmVnaXN0ZXIpIGZy
-b20gWzxjMDI2ZWNiMD5dIChkcm1fcHV0X2RldisweDI4LzB4NjQpCj4+PiBbICAgOTUuMTI2NDEy
-XSBbPGMwMjZlY2IwPl0gKGRybV9wdXRfZGV2KSBmcm9tIFs8YzAyOTQ3YzQ+XSAodGFrZV9kb3du
-X21hc3RlcisweDI0LzB4NDQpCj4+PiBbICAgOTUuMTM0MjE4XSBbPGMwMjk0N2M0Pl0gKHRha2Vf
-ZG93bl9tYXN0ZXIpIGZyb20gWzxjMDI5NDg3MD5dIChjb21wb25lbnRfZGVsKzB4OGMvMHhjOCkK
-Pj4+IFsgICA5NS4xNDIyMDFdIFs8YzAyOTQ4NzA+XSAoY29tcG9uZW50X2RlbCkgZnJvbSBbPGMw
-Mjg2YzEwPl0gKGV4eW5vc19kc2lfcmVtb3ZlKzB4MTgvMHgyYykKPj4+IFsgICA5NS4xNTAyOTRd
-IFs8YzAyODZjMTA+XSAoZXh5bm9zX2RzaV9yZW1vdmUpIGZyb20gWzxjMDI5OWUwND5dIChwbGF0
-Zm9ybV9kcnZfcmVtb3ZlKzB4MTgvMHgxYykKPj4+IFsgICA5NS4xNTg4NzJdIFs8YzAyOTllMDQ+
-XSAocGxhdGZvcm1fZHJ2X3JlbW92ZSkgZnJvbSBbPGMwMjk4N2E0Pl0gKF9fZGV2aWNlX3JlbGVh
-c2VfZHJpdmVyKzB4NzAvMHhjNCkKPj4+IFsgICA5NS4xNjc5ODFdIFs8YzAyOTg3YTQ+XSAoX19k
-ZXZpY2VfcmVsZWFzZV9kcml2ZXIpIGZyb20gWzxjMDI5ODgxOD5dIChkZXZpY2VfcmVsZWFzZV9k
-cml2ZXIrMHgyMC8weDJjKQo+Pj4gWyAgIDk1LjE3NzI2OF0gWzxjMDI5ODgxOD5dIChkZXZpY2Vf
-cmVsZWFzZV9kcml2ZXIpIGZyb20gWzxjMDI5NzlkMD5dICh1bmJpbmRfc3RvcmUrMHg1Yy8weDk0
-KQo+Pj4gWyAgIDk1LjE4NTU5N10gWzxjMDI5NzlkMD5dICh1bmJpbmRfc3RvcmUpIGZyb20gWzxj
-MDI5NzI3OD5dIChkcnZfYXR0cl9zdG9yZSsweDIwLzB4MmMpCj4+PiBbICAgOTUuMTkzMzIzXSBb
-PGMwMjk3Mjc4Pl0gKGRydl9hdHRyX3N0b3JlKSBmcm9tIFs8YzAxMmFhOTA+XSAoc3lzZnNfa2Zf
-d3JpdGUrMHg0Yy8weDUwKQo+Pj4gWyAgIDk1LjIwMTIyNF0gWzxjMDEyYWE5MD5dIChzeXNmc19r
-Zl93cml0ZSkgZnJvbSBbPGMwMTI5ZTk0Pl0gKGtlcm5mc19mb3Bfd3JpdGUrMHhjNC8weDE4NCkK
-Pj4+IFsgICA5NS4yMDkzOTNdIFs8YzAxMjllOTQ+XSAoa2VybmZzX2ZvcF93cml0ZSkgZnJvbSBb
-PGMwMGQwM2VjPl0gKHZmc193cml0ZSsweGEwLzB4MWE4KQo+Pj4gWyAgIDk1LjIxNzExMV0gWzxj
-MDBkMDNlYz5dICh2ZnNfd3JpdGUpIGZyb20gWzxjMDBkMDdmOD5dIChTeVNfd3JpdGUrMHg0MC8w
-eDhjKQo+Pj4gWyAgIDk1LjIyNDE0Nl0gWzxjMDBkMDdmOD5dIChTeVNfd3JpdGUpIGZyb20gWzxj
-MDAwZTY2MD5dIChyZXRfZmFzdF9zeXNjYWxsKzB4MC8weDQ4KQo+Pj4KPj4+IFNpZ25lZC1vZmYt
-Ynk6IEFuZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4+PiAtLS0KPj4+ICBkcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jIHwgNiArKysrKysKPj4+ICAxIGZp
-bGUgY2hhbmdlZCwgNiBpbnNlcnRpb25zKCspCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fY3J0Yy5jCj4+PiBpbmRleCBiNjhlNThmLi5iZGUxOWY0IDEwMDY0NAo+Pj4g
-LS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+Pj4gKysrIGIv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+Pj4gQEAgLTE0NSwxMCAr
-MTQ1LDE2IEBAIGV4eW5vc19kcm1fY3J0Y19tb2RlX3NldChzdHJ1Y3QgZHJtX2NydGMgKmNydGMs
-IHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2RlLAo+Pj4gIAlpZiAocmV0KQo+Pj4gIAkJcmV0
-dXJuIHJldDsKPj4+ICAKPj4+ICsJLyogd2UgbmVlZCB0byB1bnJlZmVyZW5jZSBjdXJyZW50IGZi
-IGFmdGVyIHJlcGxhY2luZyBpdCB3aXRoIG5ldyBvbmUgKi8KPj4+ICsJb2xkX2ZiID0gcGxhbmUt
-PmZiOwo+Pj4gKwo+Pj4gIAlwbGFuZS0+Y3J0YyA9IGNydGM7Cj4+PiAgCXBsYW5lLT5mYiA9IGNy
-dGMtPnByaW1hcnktPmZiOwo+Pj4gIAlkcm1fZnJhbWVidWZmZXJfcmVmZXJlbmNlKHBsYW5lLT5m
-Yik7Cj4+PiAgCj4+PiArCWlmIChvbGRfZmIpCj4+PiArCQlkcm1fZnJhbWVidWZmZXJfdW5yZWZl
-cmVuY2Uob2xkX2ZiKTsKPj4KPj4gVGhpcyB0aW1lIHdvdWxkIGJlIGEgZ29vZCBjaGFuY2UgdGhh
-dCB3ZSBjYW4gY29uc2lkZXIgZHJtIGZsaXAgcXVldWUgdG8KPj4gbWFrZSBzdXJlIHRoYXQgd2hv
-bGUgbWVtb3J5IHJlZ2lvbiB0byBvbGRfZmIgaXMgc2Nhbm5lZCBvdXQgY29tcGxldGVseQo+PiBi
-ZWZvcmUgZHJvcHBpbmcgYSByZWZlcmVuY2Ugb2Ygb2xkX2ZiLiB0aGUgcmVmZXJlbmNlIG9mIG9s
-ZF9mYiBzaG91bGQgYmUKPj4gZHJvcHBlZCBhdCBpcnEgaGFuZGxlciBvZiBlYWNoIGNydGMgZGV2
-aWNlcywgZmltZCBhbmQgbWl4ZXIuCj4gCj4gR2VuZXJhbGx5IGl0J3Mgbm90IGEgZ29vZCBpZGVh
-IHRvIGRyb3AgZmIgcmVmZXJlbmNlcyBmcm9tIGlycSBjb250ZXh0LAo+IHNpbmNlIGlmIHlvdSBh
-Y3R1YWxseSBkcm9wIHRoZSBsYXN0IHJlZmVyZW5jZSBpdCdsbCBibG93IHVwOiBmYiBjbGVhbnVw
-Cj4gbmVlZHMgYSBidW5jaCBvZiBtdXRleGVzLgoKQWN0dWFsbHksIGRybV9mbGlwX3dvcmtfY29t
-bWl0IGZ1bmN0aW9uIHdpbGwgYmUgY2FsbGVkIGF0IGlycSBjb250ZXh0IHNvCnRoZSByZWZlcmVu
-Y2Ugd2lsbCBiZSBkcm9wcGVkIGJ5IHdvcmsgcXVldWUgaGFuZGxlciBzbyBtdXRleCBsb2NrIHdv
-dWxkCmJlIHJlcXVpcmVkIGJlZm9yZSBkcm9wcGluZyB0aGUgcmVmZXJlbmNlLiBNeSBjb25jZXJu
-IHdhcyB0aGF0IGdlbQptZW1vcnkgbWF5IGJlIGZyZWVkIGJlZm9yZSB0aGUgbWVtb3J5IHJlZ2lv
-biBpcyBzY2FubmVkIG91dCBjb21wbGV0ZWx5CnNvIEkgdGhvdWdodCB3ZSBuZWVkIHRvIG1ha2Ug
-c3VyZSB0byBzY2FuIG91dCBjb21wbGV0ZWx5IHNvbWVob3cuCgo+IAo+IEFsc28gdGhlIGRybSBj
-b3JlIHJlYWxseSBzaG91bGQgYmUgdGFraW5nIGNhcmUgb2YgdGhpcyBmb3IgeW91LCB5b3Ugb25s
-eQo+IG5lZWQgdG8gZ3JhYiByZWZlcmVuY2VzIHlvdXJzZWxmIGZvciBhc3luYyBmbGlwcyBpZiB5
-b3Ugd2FudCB0aGUgYnVmZmVyIHRvCj4gc3Vydml2ZSBhIGJpdC4gY3J0Y19tb2RlX3NldCBoYXMg
-bm90IG5lZWQgZm9yIHRoaXMuIEkgZXhwZWN0IHRoYXQgdGhlCj4gcmVmY291bnRpbmcgYnVnIGlz
-IHNvbWV3aGVyZSBlbHNlLCBhdCBsZWFzdCBmcm9tIG15IGV4cGVyaWVuY2UgY2hhc2luZwo+IHN1
-Y2ggaXNzdWVzIGluIGk5MTUgOy0pCgpUaGFua3MgZm9yIGNvbW1lbnRzLiBZZXMsIHRoZXJlIG1h
-eSBiZSByZWZjb3VudGluZyBidWcgc29tZXdoZXJlIGVsc2UgaWYKZHJtIGNvcmUgbWFrZXMgc3Vy
-ZSB0byB0YWtlIGNhcmUgb2YgdGhpcy4gSXQgc2VlbXMgdG8gbmVlZCBtb3JlIGNoZWNraW5nLgoK
-VGhhbmtzLApJbmtpIERhZQoKPiAtRGFuaWVsCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Tomasz,
+
+> -----Original Message-----
+> From: Tomasz Figa [mailto:tomasz.figa@gmail.com]
+> Sent: Friday, September 12, 2014 4:30 AM
+> To: Pankaj Dubey; linux-arm-kernel@lists.infradead.org; linux-samsung-
+> soc@vger.kernel.org; linux-kernel@vger.kernel.org
+> Cc: kgene.kim@samsung.com; s.nawrocki@samsung.com; mturquette@linaro.org;
+> Chander Kashyap; Abhilash Kesavan
+> Subject: Re: [PATCH] clk: samsung: exynos5260: fix typo in clock name
+> 
+> Hi Pankaj,
+> 
+> On 10.09.2014 07:56, Pankaj Dubey wrote:
+> > From: Chander Kashyap <k.chander@samsung.com>
+> >
+> > The parent name added in parent list as
+> > mout_phyclk_mipi_dphy_4l_m_txbyte_clkhs_p, is different than the
+> > defined parent due to typo.
+> >
+> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> > Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+
+Please add my sign-off as 
+
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+
+> 
+> Missed your sign-off? You can reply with it inline and I will add it when
+applying this
+> weekend.
+> 
+> P.S. Please keep me on CC when sending patches for Samsung clock drivers.
+> 
+> Best regards,
+> Tomasz
