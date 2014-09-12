@@ -1,43 +1,51 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH v4 8/8] arm64: dts: add <dt-bindings/> symlink
-Date: Fri, 12 Sep 2014 20:56:32 +0530
-Message-ID: <1410535592-5782-10-git-send-email-ch.naveen@samsung.com>
-References: <1410535592-5782-1-git-send-email-ch.naveen@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH RESEND v9 1/5] rtc: max77686: Allow the max77686 rtc to
+ wakeup the system
+Date: Fri, 12 Sep 2014 17:54:34 +0200
+Message-ID: <5413173A.9070705@collabora.co.uk>
+References: <1410509864-10019-1-git-send-email-javier.martinez@collabora.co.uk>	<1410509864-10019-2-git-send-email-javier.martinez@collabora.co.uk> <CAD=FV=Vu3u=KfUNUpL6qcr0Fp42WbY8AqfOXyWr-D3KW1PucxA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:51357 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751685AbaILPeP (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:37220 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751587AbaILPyj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Sep 2014 11:34:15 -0400
-In-reply-to: <1410535592-5782-1-git-send-email-ch.naveen@samsung.com>
+	Fri, 12 Sep 2014 11:54:39 -0400
+In-Reply-To: <CAD=FV=Vu3u=KfUNUpL6qcr0Fp42WbY8AqfOXyWr-D3KW1PucxA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: naveenkrishna.ch@gmail.com, linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, gregkh@linuxfoundation.org, Pankaj Dubey <pankaj.dubey@samsung.com>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Alessandro Zummo <a.zummo@towertech.it>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Hello Doug,
 
-Add symlink to include/dt-bindings from arch/arm64/boot/dts/include/ to
-match the ones in ARM architectures so that preprocessed device
-tree files can include various useful constant definitions.
+On 09/12/2014 05:12 PM, Doug Anderson wrote:
+> Hi,
+> 
+> On Fri, Sep 12, 2014 at 1:17 AM, Javier Martinez Canillas
+> <javier.martinez@collabora.co.uk> wrote:
+>> From: Doug Anderson <dianders@chromium.org>
+>>
+>> The max77686 includes an RTC that keeps power during suspend.  It's
+>> convenient to be able to use it as a wakeup source.
+>>
+>> NOTE: due to wakeup ordering problems this patch alone doesn't work so
+>> well on exynos5250-snow.  You also need something that brings the i2c
+>> bus up before the max77686 wakeup runs.
+> 
+> This note made sense when the patch was first submitted, but no longer
+> does since the i2c change landed.  See:
+> 
+> b19c195 i2c: s3c2410: resume the I2C controller earlier
+> 
 
-See commit c58299aa8754 ("kbuild: create an "include chroot" for DT bindings")
-merged in v3.10-rc1 for details.
+You are right, I completely forgot to check if that actually landed and to
+remove the note in that case...
 
-CC: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
- arch/arm64/boot/dts/include/dt-bindings |    1 +
- 1 file changed, 1 insertion(+)
- create mode 120000 arch/arm64/boot/dts/include/dt-bindings
+Maybe when the set is applied the note can be removed from this patch or do
+you think that I should re-spin the series for that?
 
-diff --git a/arch/arm64/boot/dts/include/dt-bindings b/arch/arm64/boot/dts/include/dt-bindings
-new file mode 120000
-index 0000000..08c00e4
---- /dev/null
-+++ b/arch/arm64/boot/dts/include/dt-bindings
-@@ -0,0 +1 @@
-+../../../../../include/dt-bindings
-\ No newline at end of file
--- 
-1.7.9.5
+Best regards,
+Javier
