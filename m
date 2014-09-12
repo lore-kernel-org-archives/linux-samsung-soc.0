@@ -1,13 +1,15 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 Subject: [PATCH v4 0/8] arch: arm64: enable support for Samsung Exynos7 SoC
-Date: Fri, 12 Sep 2014 20:56:23 +0530
-Message-ID: <1410535592-5782-1-git-send-email-ch.naveen@samsung.com>
+Date: Fri, 12 Sep 2014 20:56:24 +0530
+Message-ID: <1410535592-5782-2-git-send-email-ch.naveen@samsung.com>
+References: <1410535592-5782-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:54170 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751445AbaILPbx (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:50858 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751296AbaILPcL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Sep 2014 11:31:53 -0400
+	Fri, 12 Sep 2014 11:32:11 -0400
+In-reply-to: <1410535592-5782-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
@@ -71,3 +73,6 @@ Pankaj Dubey (1):
  create mode 120000 arch/arm64/boot/dts/include/dt-bindings
  create mode 100644 drivers/clk/samsung/clk-exynos7.c
  create mode 100644 include/dt-bindings/clock/exynos7-clk.h
+
+-- 
+1.7.9.5
