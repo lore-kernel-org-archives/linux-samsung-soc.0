@@ -1,601 +1,90 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH RESEND v9 5/5] rtc: Add driver for Maxim 77802 PMIC
- Real-Time-Clock
-Date: Fri, 12 Sep 2014 10:17:43 +0200
-Message-ID: <1410509864-10019-6-git-send-email-javier.martinez@collabora.co.uk>
-References: <1410509864-10019-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 5/9] drm/exynos/crtc: fix framebuffer reference sequence
+Date: Fri, 12 Sep 2014 17:34:50 +0900
+Message-ID: <5412B02A.6040609@samsung.com>
+References: <1410268573-2297-1-git-send-email-a.hajda@samsung.com>
+ <1410268573-2297-6-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1410509864-10019-1-git-send-email-javier.martinez@collabora.co.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, rtc-linux@googlegroups.com, Doug Anderson <dianders@chromium.org>, linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1410268573-2297-6-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The MAX7802 PMIC has a Real-Time-Clock (RTC) with two alarms.
-This patch adds support for the RTC and is based on a driver
-added by Simon Glass to the Chrome OS kernel 3.8 tree.
-
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
-
-Changes since v6:
- - Remove unused code for SMPL and WTSR. Suggested by Krzysztof Kozlowski.
- - Don't spam the kernel log with unnecessarily info and just print for debug.
-   Suggested by Krzysztof Kozlowski.
- - Use ARRAY_SIZE() instead of constant value. Suggested by Krzysztof Kozlowski.
- - Remove duplicated register setup. Suggested by Krzysztof Kozlowski.
- - Don't free/unregister managed allocated resources.
-   Suggested by Krzysztof Kozlowski.
----
- drivers/rtc/Kconfig        |  10 +
- drivers/rtc/Makefile       |   1 +
- drivers/rtc/rtc-max77802.c | 513 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 524 insertions(+)
- create mode 100644 drivers/rtc/rtc-max77802.c
-
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index a168e96..a5c476d 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -288,6 +288,16 @@ config RTC_DRV_MAX77686
- 	  This driver can also be built as a module. If so, the module
- 	  will be called rtc-max77686.
- 
-+config RTC_DRV_MAX77802
-+	tristate "Maxim 77802 RTC"
-+	depends on MFD_MAX77686
-+	help
-+	  If you say yes here you will get support for the
-+	  RTC of Maxim MAX77802 PMIC.
-+
-+	  This driver can also be built as a module. If so, the module
-+	  will be called rtc-max77802.
-+
- config RTC_DRV_RS5C372
- 	tristate "Ricoh R2025S/D, RS5C372A/B, RV5C386, RV5C387A"
- 	help
-diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-index 56f061c..d55ebe2 100644
---- a/drivers/rtc/Makefile
-+++ b/drivers/rtc/Makefile
-@@ -85,6 +85,7 @@ obj-$(CONFIG_RTC_DRV_MAX8998)	+= rtc-max8998.o
- obj-$(CONFIG_RTC_DRV_MAX8997)	+= rtc-max8997.o
- obj-$(CONFIG_RTC_DRV_MAX6902)	+= rtc-max6902.o
- obj-$(CONFIG_RTC_DRV_MAX77686)	+= rtc-max77686.o
-+obj-$(CONFIG_RTC_DRV_MAX77802)  += rtc-max77802.o
- obj-$(CONFIG_RTC_DRV_MC13XXX)	+= rtc-mc13xxx.o
- obj-$(CONFIG_RTC_DRV_MCP795)	+= rtc-mcp795.o
- obj-$(CONFIG_RTC_DRV_MSM6242)	+= rtc-msm6242.o
-diff --git a/drivers/rtc/rtc-max77802.c b/drivers/rtc/rtc-max77802.c
-new file mode 100644
-index 0000000..21f844d
---- /dev/null
-+++ b/drivers/rtc/rtc-max77802.c
-@@ -0,0 +1,513 @@
-+/*
-+ * RTC driver for Maxim MAX77802
-+ *
-+ * Copyright (C) 2013 Google, Inc
-+ *
-+ * Copyright (C) 2012 Samsung Electronics Co.Ltd
-+ *
-+ *  based on rtc-max8997.c
-+ *
-+ *  This program is free software; you can redistribute  it and/or modify it
-+ *  under  the terms of  the GNU General  Public License as published by the
-+ *  Free Software Foundation;  either version 2 of the  License, or (at your
-+ *  option) any later version.
-+ *
-+ */
-+
-+#include <linux/slab.h>
-+#include <linux/rtc.h>
-+#include <linux/delay.h>
-+#include <linux/mutex.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/mfd/max77686-private.h>
-+#include <linux/irqdomain.h>
-+#include <linux/regmap.h>
-+
-+/* RTC Control Register */
-+#define BCD_EN_SHIFT			0
-+#define BCD_EN_MASK			(1 << BCD_EN_SHIFT)
-+#define MODEL24_SHIFT			1
-+#define MODEL24_MASK			(1 << MODEL24_SHIFT)
-+/* RTC Update Register1 */
-+#define RTC_UDR_SHIFT			0
-+#define RTC_UDR_MASK			(1 << RTC_UDR_SHIFT)
-+#define RTC_RBUDR_SHIFT			4
-+#define RTC_RBUDR_MASK			(1 << RTC_RBUDR_SHIFT)
-+/* RTC Hour register */
-+#define HOUR_PM_SHIFT			6
-+#define HOUR_PM_MASK			(1 << HOUR_PM_SHIFT)
-+/* RTC Alarm Enable */
-+#define ALARM_ENABLE_SHIFT		7
-+#define ALARM_ENABLE_MASK		(1 << ALARM_ENABLE_SHIFT)
-+
-+/* For the RTCAE1 register, we write this value to enable the alarm */
-+#define ALARM_ENABLE_VALUE		0x77
-+
-+#define MAX77802_RTC_UPDATE_DELAY_US	200
-+
-+enum {
-+	RTC_SEC = 0,
-+	RTC_MIN,
-+	RTC_HOUR,
-+	RTC_WEEKDAY,
-+	RTC_MONTH,
-+	RTC_YEAR,
-+	RTC_DATE,
-+	RTC_NR_TIME
-+};
-+
-+struct max77802_rtc_info {
-+	struct device		*dev;
-+	struct max77686_dev	*max77802;
-+	struct i2c_client	*rtc;
-+	struct rtc_device	*rtc_dev;
-+	struct mutex		lock;
-+
-+	struct regmap		*regmap;
-+
-+	int virq;
-+	int rtc_24hr_mode;
-+};
-+
-+enum MAX77802_RTC_OP {
-+	MAX77802_RTC_WRITE,
-+	MAX77802_RTC_READ,
-+};
-+
-+static inline int max77802_rtc_calculate_wday(u8 shifted)
-+{
-+	int counter = -1;
-+
-+	while (shifted) {
-+		shifted >>= 1;
-+		counter++;
-+	}
-+
-+	return counter;
-+}
-+
-+static void max77802_rtc_data_to_tm(u8 *data, struct rtc_time *tm,
-+				   int rtc_24hr_mode)
-+{
-+	tm->tm_sec = data[RTC_SEC] & 0xff;
-+	tm->tm_min = data[RTC_MIN] & 0xff;
-+	if (rtc_24hr_mode)
-+		tm->tm_hour = data[RTC_HOUR] & 0x1f;
-+	else {
-+		tm->tm_hour = data[RTC_HOUR] & 0x0f;
-+		if (data[RTC_HOUR] & HOUR_PM_MASK)
-+			tm->tm_hour += 12;
-+	}
-+
-+	tm->tm_wday = max77802_rtc_calculate_wday(data[RTC_WEEKDAY] & 0xff);
-+	tm->tm_mday = data[RTC_DATE] & 0x1f;
-+	tm->tm_mon = (data[RTC_MONTH] & 0x0f) - 1;
-+
-+	tm->tm_year = data[RTC_YEAR] & 0xff;
-+	tm->tm_yday = 0;
-+	tm->tm_isdst = 0;
-+}
-+
-+static int max77802_rtc_tm_to_data(struct rtc_time *tm, u8 *data)
-+{
-+	data[RTC_SEC] = tm->tm_sec;
-+	data[RTC_MIN] = tm->tm_min;
-+	data[RTC_HOUR] = tm->tm_hour;
-+	data[RTC_WEEKDAY] = 1 << tm->tm_wday;
-+	data[RTC_DATE] = tm->tm_mday;
-+	data[RTC_MONTH] = tm->tm_mon + 1;
-+	data[RTC_YEAR] = tm->tm_year;
-+
-+	return 0;
-+}
-+
-+static int max77802_rtc_update(struct max77802_rtc_info *info,
-+	enum MAX77802_RTC_OP op)
-+{
-+	int ret;
-+	unsigned int data;
-+
-+	if (op == MAX77802_RTC_WRITE)
-+		data = 1 << RTC_UDR_SHIFT;
-+	else
-+		data = 1 << RTC_RBUDR_SHIFT;
-+
-+	ret = regmap_update_bits(info->max77802->regmap,
-+				 MAX77802_RTC_UPDATE0, data, data);
-+	if (ret < 0)
-+		dev_err(info->dev, "%s: fail to write update reg(ret=%d, data=0x%x)\n",
-+				__func__, ret, data);
-+	else {
-+		/* Minimum delay required before RTC update. */
-+		usleep_range(MAX77802_RTC_UPDATE_DELAY_US,
-+			     MAX77802_RTC_UPDATE_DELAY_US * 2);
-+	}
-+
-+	return ret;
-+}
-+
-+static int max77802_rtc_read_time(struct device *dev, struct rtc_time *tm)
-+{
-+	struct max77802_rtc_info *info = dev_get_drvdata(dev);
-+	u8 data[RTC_NR_TIME];
-+	int ret;
-+
-+	mutex_lock(&info->lock);
-+
-+	ret = max77802_rtc_update(info, MAX77802_RTC_READ);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = regmap_bulk_read(info->max77802->regmap,
-+				MAX77802_RTC_SEC, data, RTC_NR_TIME);
-+	if (ret < 0) {
-+		dev_err(info->dev, "%s: fail to read time reg(%d)\n", __func__,
-+			ret);
-+		goto out;
-+	}
-+
-+	max77802_rtc_data_to_tm(data, tm, info->rtc_24hr_mode);
-+
-+	ret = rtc_valid_tm(tm);
-+
-+out:
-+	mutex_unlock(&info->lock);
-+	return ret;
-+}
-+
-+static int max77802_rtc_set_time(struct device *dev, struct rtc_time *tm)
-+{
-+	struct max77802_rtc_info *info = dev_get_drvdata(dev);
-+	u8 data[RTC_NR_TIME];
-+	int ret;
-+
-+	ret = max77802_rtc_tm_to_data(tm, data);
-+	if (ret < 0)
-+		return ret;
-+
-+	mutex_lock(&info->lock);
-+
-+	ret = regmap_bulk_write(info->max77802->regmap,
-+				 MAX77802_RTC_SEC, data, RTC_NR_TIME);
-+	if (ret < 0) {
-+		dev_err(info->dev, "%s: fail to write time reg(%d)\n", __func__,
-+			ret);
-+		goto out;
-+	}
-+
-+	ret = max77802_rtc_update(info, MAX77802_RTC_WRITE);
-+
-+out:
-+	mutex_unlock(&info->lock);
-+	return ret;
-+}
-+
-+static int max77802_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-+{
-+	struct max77802_rtc_info *info = dev_get_drvdata(dev);
-+	u8 data[RTC_NR_TIME];
-+	unsigned int val;
-+	int ret;
-+
-+	mutex_lock(&info->lock);
-+
-+	ret = max77802_rtc_update(info, MAX77802_RTC_READ);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = regmap_bulk_read(info->max77802->regmap,
-+				 MAX77802_ALARM1_SEC, data, RTC_NR_TIME);
-+	if (ret < 0) {
-+		dev_err(info->dev, "%s:%d fail to read alarm reg(%d)\n",
-+				__func__, __LINE__, ret);
-+		goto out;
-+	}
-+
-+	max77802_rtc_data_to_tm(data, &alrm->time, info->rtc_24hr_mode);
-+
-+	alrm->enabled = 0;
-+	ret = regmap_read(info->max77802->regmap,
-+			  MAX77802_RTC_AE1, &val);
-+	if (ret < 0) {
-+		dev_err(info->dev, "%s:%d fail to read alarm enable(%d)\n",
-+			__func__, __LINE__, ret);
-+		goto out;
-+	}
-+	if (val)
-+		alrm->enabled = 1;
-+
-+	alrm->pending = 0;
-+	ret = regmap_read(info->max77802->regmap, MAX77802_REG_STATUS2, &val);
-+	if (ret < 0) {
-+		dev_err(info->dev, "%s:%d fail to read status2 reg(%d)\n",
-+				__func__, __LINE__, ret);
-+		goto out;
-+	}
-+
-+	if (val & (1 << 2)) /* RTCA1 */
-+		alrm->pending = 1;
-+
-+out:
-+	mutex_unlock(&info->lock);
-+	return 0;
-+}
-+
-+static int max77802_rtc_stop_alarm(struct max77802_rtc_info *info)
-+{
-+	int ret;
-+
-+	if (!mutex_is_locked(&info->lock))
-+		dev_warn(info->dev, "%s: should have mutex locked\n", __func__);
-+
-+	ret = max77802_rtc_update(info, MAX77802_RTC_READ);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = regmap_write(info->max77802->regmap,
-+			   MAX77802_RTC_AE1, 0);
-+	if (ret < 0) {
-+		dev_err(info->dev, "%s: fail to write alarm reg(%d)\n",
-+			__func__, ret);
-+		goto out;
-+	}
-+
-+	ret = max77802_rtc_update(info, MAX77802_RTC_WRITE);
-+out:
-+	return ret;
-+}
-+
-+static int max77802_rtc_start_alarm(struct max77802_rtc_info *info)
-+{
-+	int ret;
-+
-+	if (!mutex_is_locked(&info->lock))
-+		dev_warn(info->dev, "%s: should have mutex locked\n",
-+			 __func__);
-+
-+	ret = max77802_rtc_update(info, MAX77802_RTC_READ);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = regmap_write(info->max77802->regmap,
-+				   MAX77802_RTC_AE1,
-+				   ALARM_ENABLE_VALUE);
-+
-+	if (ret < 0) {
-+		dev_err(info->dev, "%s: fail to read alarm reg(%d)\n",
-+				__func__, ret);
-+		goto out;
-+	}
-+
-+	ret = max77802_rtc_update(info, MAX77802_RTC_WRITE);
-+out:
-+	return ret;
-+}
-+
-+static int max77802_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-+{
-+	struct max77802_rtc_info *info = dev_get_drvdata(dev);
-+	u8 data[RTC_NR_TIME];
-+	int ret;
-+
-+	ret = max77802_rtc_tm_to_data(&alrm->time, data);
-+	if (ret < 0)
-+		return ret;
-+
-+	mutex_lock(&info->lock);
-+
-+	ret = max77802_rtc_stop_alarm(info);
-+	if (ret < 0)
-+		goto out;
-+
-+	ret = regmap_bulk_write(info->max77802->regmap,
-+				 MAX77802_ALARM1_SEC, data, RTC_NR_TIME);
-+
-+	if (ret < 0) {
-+		dev_err(info->dev, "%s: fail to write alarm reg(%d)\n",
-+				__func__, ret);
-+		goto out;
-+	}
-+
-+	ret = max77802_rtc_update(info, MAX77802_RTC_WRITE);
-+	if (ret < 0)
-+		goto out;
-+
-+	if (alrm->enabled)
-+		ret = max77802_rtc_start_alarm(info);
-+out:
-+	mutex_unlock(&info->lock);
-+	return ret;
-+}
-+
-+static int max77802_rtc_alarm_irq_enable(struct device *dev,
-+					 unsigned int enabled)
-+{
-+	struct max77802_rtc_info *info = dev_get_drvdata(dev);
-+	int ret;
-+
-+	mutex_lock(&info->lock);
-+	if (enabled)
-+		ret = max77802_rtc_start_alarm(info);
-+	else
-+		ret = max77802_rtc_stop_alarm(info);
-+	mutex_unlock(&info->lock);
-+
-+	return ret;
-+}
-+
-+static irqreturn_t max77802_rtc_alarm_irq(int irq, void *data)
-+{
-+	struct max77802_rtc_info *info = data;
-+
-+	dev_dbg(info->dev, "%s:irq(%d)\n", __func__, irq);
-+
-+	rtc_update_irq(info->rtc_dev, 1, RTC_IRQF | RTC_AF);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static const struct rtc_class_ops max77802_rtc_ops = {
-+	.read_time = max77802_rtc_read_time,
-+	.set_time = max77802_rtc_set_time,
-+	.read_alarm = max77802_rtc_read_alarm,
-+	.set_alarm = max77802_rtc_set_alarm,
-+	.alarm_irq_enable = max77802_rtc_alarm_irq_enable,
-+};
-+
-+static int max77802_rtc_init_reg(struct max77802_rtc_info *info)
-+{
-+	u8 data[2];
-+	int ret;
-+
-+	max77802_rtc_update(info, MAX77802_RTC_READ);
-+
-+	/* Set RTC control register : Binary mode, 24hour mdoe */
-+	data[0] = (1 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
-+	data[1] = (0 << BCD_EN_SHIFT) | (1 << MODEL24_SHIFT);
-+
-+	info->rtc_24hr_mode = 1;
-+
-+	ret = regmap_bulk_write(info->max77802->regmap,
-+				MAX77802_RTC_CONTROLM, data, ARRAY_SIZE(data));
-+	if (ret < 0) {
-+		dev_err(info->dev, "%s: fail to write controlm reg(%d)\n",
-+				__func__, ret);
-+		return ret;
-+	}
-+
-+	ret = max77802_rtc_update(info, MAX77802_RTC_WRITE);
-+	return ret;
-+}
-+
-+static int max77802_rtc_probe(struct platform_device *pdev)
-+{
-+	struct max77686_dev *max77802 = dev_get_drvdata(pdev->dev.parent);
-+	struct max77802_rtc_info *info;
-+	int ret;
-+
-+	dev_dbg(&pdev->dev, "%s\n", __func__);
-+
-+	info = devm_kzalloc(&pdev->dev, sizeof(struct max77802_rtc_info),
-+			    GFP_KERNEL);
-+	if (!info)
-+		return -ENOMEM;
-+
-+	mutex_init(&info->lock);
-+	info->dev = &pdev->dev;
-+	info->max77802 = max77802;
-+	info->rtc = max77802->i2c;
-+
-+	platform_set_drvdata(pdev, info);
-+
-+	ret = max77802_rtc_init_reg(info);
-+
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to initialize RTC reg:%d\n", ret);
-+		return ret;
-+	}
-+
-+	device_init_wakeup(&pdev->dev, 1);
-+
-+	info->rtc_dev = devm_rtc_device_register(&pdev->dev, "max77802-rtc",
-+						 &max77802_rtc_ops, THIS_MODULE);
-+
-+	if (IS_ERR(info->rtc_dev)) {
-+		ret = PTR_ERR(info->rtc_dev);
-+		dev_err(&pdev->dev, "Failed to register RTC device: %d\n", ret);
-+		if (ret == 0)
-+			ret = -EINVAL;
-+		return ret;
-+	}
-+
-+	if (!max77802->rtc_irq_data) {
-+		dev_err(&pdev->dev, "No RTC regmap IRQ chip\n");
-+		return -EINVAL;
-+	}
-+
-+	info->virq = regmap_irq_get_virq(max77802->rtc_irq_data,
-+					 MAX77686_RTCIRQ_RTCA1);
-+
-+	if (info->virq <= 0) {
-+		dev_err(&pdev->dev, "Failed to get virtual IRQ %d\n",
-+			MAX77686_RTCIRQ_RTCA1);
-+		return -EINVAL;
-+	}
-+
-+	ret = devm_request_threaded_irq(&pdev->dev, info->virq, NULL,
-+					max77802_rtc_alarm_irq, 0, "rtc-alarm1",
-+					info);
-+	if (ret < 0)
-+		dev_err(&pdev->dev, "Failed to request alarm IRQ: %d: %d\n",
-+			info->virq, ret);
-+
-+	return ret;
-+}
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int max77802_rtc_suspend(struct device *dev)
-+{
-+	if (device_may_wakeup(dev)) {
-+		struct max77802_rtc_info *info = dev_get_drvdata(dev);
-+
-+		return enable_irq_wake(info->virq);
-+	}
-+
-+	return 0;
-+}
-+
-+static int max77802_rtc_resume(struct device *dev)
-+{
-+	if (device_may_wakeup(dev)) {
-+		struct max77802_rtc_info *info = dev_get_drvdata(dev);
-+
-+		return disable_irq_wake(info->virq);
-+	}
-+
-+	return 0;
-+}
-+#endif
-+
-+static SIMPLE_DEV_PM_OPS(max77802_rtc_pm_ops,
-+			 max77802_rtc_suspend, max77802_rtc_resume);
-+
-+static const struct platform_device_id rtc_id[] = {
-+	{ "max77802-rtc", 0 },
-+	{},
-+};
-+
-+static struct platform_driver max77802_rtc_driver = {
-+	.driver		= {
-+		.name	= "max77802-rtc",
-+		.owner	= THIS_MODULE,
-+		.pm	= &max77802_rtc_pm_ops,
-+	},
-+	.probe		= max77802_rtc_probe,
-+	.id_table	= rtc_id,
-+};
-+
-+module_platform_driver(max77802_rtc_driver);
-+
-+MODULE_DESCRIPTION("Maxim MAX77802 RTC driver");
-+MODULE_AUTHOR("Simon Glass <sjg@chromium.org>");
-+MODULE_LICENSE("GPL");
--- 
-2.0.0.rc2
+SGkgQW5kcnplaiwKCk9uIDIwMTTrhYQgMDnsm5QgMDnsnbwgMjI6MTYsIEFuZHJ6ZWogSGFqZGEg
+d3JvdGU6Cj4gQWRkaW5nIHJlZmVyZW5jZSB0byBmcmFtZWJ1ZmZlciBzaG91bGQgYmUgYWNjb21w
+YW5pZWQgd2l0aCByZW1vdmluZwo+IHJlZmVyZW5jZSB0byBvbGQgZnJhbWVidWZmZXIgYXNzaWdu
+ZWQgdG8gdGhlIHBsYW5lLgo+IFRoaXMgcGF0Y2ggcmVtb3ZlcyBmb2xsb3dpbmcgd2FybmluZzoK
+PiAKPiBbICAgOTUuMDM4MDE3XSBXQVJOSU5HOiBDUFU6IDEgUElEOiAzMDY3IGF0IGRyaXZlcnMv
+Z3B1L2RybS9kcm1fY3J0Yy5jOjUxMTUgZHJtX21vZGVfY29uZmlnX2NsZWFudXArMHgyNTgvMHgy
+NjgoKQo+IFsgICA5NS4wNDgwODZdIE1vZHVsZXMgbGlua2VkIGluOgo+IFsgICA5NS4wNTE0MzBd
+IENQVTogMSBQSUQ6IDMwNjcgQ29tbTogYmFzaCBUYWludGVkOiBHICAgICAgICBXICAgICAgMy4x
+Ni4wLTExMzU1LWc3YTZlY2E1LWRpcnR5ICMzMDE1Cj4gWyAgIDk1LjA2MDA1OF0gWzxjMDAxM2U5
+MD5dICh1bndpbmRfYmFja3RyYWNlKSBmcm9tIFs8YzAwMTExMjg+XSAoc2hvd19zdGFjaysweDEw
+LzB4MTQpCj4gWyAgIDk1LjA2Nzc2Nl0gWzxjMDAxMTEyOD5dIChzaG93X3N0YWNrKSBmcm9tIFs8
+YzA0YTVkYzQ+XSAoZHVtcF9zdGFjaysweDcwLzB4YmMpCj4gWyAgIDk1LjA3NDk1M10gWzxjMDRh
+NWRjND5dIChkdW1wX3N0YWNrKSBmcm9tIFs8YzAwMjE3ODQ+XSAod2Fybl9zbG93cGF0aF9jb21t
+b24rMHg2NC8weDg4KQo+IFsgICA5NS4wODMwMDVdIFs8YzAwMjE3ODQ+XSAod2Fybl9zbG93cGF0
+aF9jb21tb24pIGZyb20gWzxjMDAyMTdjND5dICh3YXJuX3Nsb3dwYXRoX251bGwrMHgxYy8weDI0
+KQo+IFsgICA5NS4wOTE3ODBdIFs8YzAwMjE3YzQ+XSAod2Fybl9zbG93cGF0aF9udWxsKSBmcm9t
+IFs8YzAyNzVmYTA+XSAoZHJtX21vZGVfY29uZmlnX2NsZWFudXArMHgyNTgvMHgyNjgpCj4gWyAg
+IDk1LjEwMDk4M10gWzxjMDI3NWZhMD5dIChkcm1fbW9kZV9jb25maWdfY2xlYW51cCkgZnJvbSBb
+PGMwMjgxNzI0Pl0gKGV4eW5vc19kcm1fdW5sb2FkKzB4MzgvMHg1MCkKPiBbICAgOTUuMTA5OTE1
+XSBbPGMwMjgxNzI0Pl0gKGV4eW5vc19kcm1fdW5sb2FkKSBmcm9tIFs8YzAyNmUyNDg+XSAoZHJt
+X2Rldl91bnJlZ2lzdGVyKzB4MjQvMHg5OCkKPiBbICAgOTUuMTE4NDE0XSBbPGMwMjZlMjQ4Pl0g
+KGRybV9kZXZfdW5yZWdpc3RlcikgZnJvbSBbPGMwMjZlY2IwPl0gKGRybV9wdXRfZGV2KzB4Mjgv
+MHg2NCkKPiBbICAgOTUuMTI2NDEyXSBbPGMwMjZlY2IwPl0gKGRybV9wdXRfZGV2KSBmcm9tIFs8
+YzAyOTQ3YzQ+XSAodGFrZV9kb3duX21hc3RlcisweDI0LzB4NDQpCj4gWyAgIDk1LjEzNDIxOF0g
+WzxjMDI5NDdjND5dICh0YWtlX2Rvd25fbWFzdGVyKSBmcm9tIFs8YzAyOTQ4NzA+XSAoY29tcG9u
+ZW50X2RlbCsweDhjLzB4YzgpCj4gWyAgIDk1LjE0MjIwMV0gWzxjMDI5NDg3MD5dIChjb21wb25l
+bnRfZGVsKSBmcm9tIFs8YzAyODZjMTA+XSAoZXh5bm9zX2RzaV9yZW1vdmUrMHgxOC8weDJjKQo+
+IFsgICA5NS4xNTAyOTRdIFs8YzAyODZjMTA+XSAoZXh5bm9zX2RzaV9yZW1vdmUpIGZyb20gWzxj
+MDI5OWUwND5dIChwbGF0Zm9ybV9kcnZfcmVtb3ZlKzB4MTgvMHgxYykKPiBbICAgOTUuMTU4ODcy
+XSBbPGMwMjk5ZTA0Pl0gKHBsYXRmb3JtX2Rydl9yZW1vdmUpIGZyb20gWzxjMDI5ODdhND5dIChf
+X2RldmljZV9yZWxlYXNlX2RyaXZlcisweDcwLzB4YzQpCj4gWyAgIDk1LjE2Nzk4MV0gWzxjMDI5
+ODdhND5dIChfX2RldmljZV9yZWxlYXNlX2RyaXZlcikgZnJvbSBbPGMwMjk4ODE4Pl0gKGRldmlj
+ZV9yZWxlYXNlX2RyaXZlcisweDIwLzB4MmMpCj4gWyAgIDk1LjE3NzI2OF0gWzxjMDI5ODgxOD5d
+IChkZXZpY2VfcmVsZWFzZV9kcml2ZXIpIGZyb20gWzxjMDI5NzlkMD5dICh1bmJpbmRfc3RvcmUr
+MHg1Yy8weDk0KQo+IFsgICA5NS4xODU1OTddIFs8YzAyOTc5ZDA+XSAodW5iaW5kX3N0b3JlKSBm
+cm9tIFs8YzAyOTcyNzg+XSAoZHJ2X2F0dHJfc3RvcmUrMHgyMC8weDJjKQo+IFsgICA5NS4xOTMz
+MjNdIFs8YzAyOTcyNzg+XSAoZHJ2X2F0dHJfc3RvcmUpIGZyb20gWzxjMDEyYWE5MD5dIChzeXNm
+c19rZl93cml0ZSsweDRjLzB4NTApCj4gWyAgIDk1LjIwMTIyNF0gWzxjMDEyYWE5MD5dIChzeXNm
+c19rZl93cml0ZSkgZnJvbSBbPGMwMTI5ZTk0Pl0gKGtlcm5mc19mb3Bfd3JpdGUrMHhjNC8weDE4
+NCkKPiBbICAgOTUuMjA5MzkzXSBbPGMwMTI5ZTk0Pl0gKGtlcm5mc19mb3Bfd3JpdGUpIGZyb20g
+WzxjMDBkMDNlYz5dICh2ZnNfd3JpdGUrMHhhMC8weDFhOCkKPiBbICAgOTUuMjE3MTExXSBbPGMw
+MGQwM2VjPl0gKHZmc193cml0ZSkgZnJvbSBbPGMwMGQwN2Y4Pl0gKFN5U193cml0ZSsweDQwLzB4
+OGMpCj4gWyAgIDk1LjIyNDE0Nl0gWzxjMDBkMDdmOD5dIChTeVNfd3JpdGUpIGZyb20gWzxjMDAw
+ZTY2MD5dIChyZXRfZmFzdF9zeXNjYWxsKzB4MC8weDQ4KQo+IAo+IFNpZ25lZC1vZmYtYnk6IEFu
+ZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgfCA2ICsrKysrKwo+ICAxIGZpbGUgY2hhbmdlZCwg
+NiBpbnNlcnRpb25zKCspCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0
+Yy5jCj4gaW5kZXggYjY4ZTU4Zi4uYmRlMTlmNCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfZHJtX2NydGMuYwo+IEBAIC0xNDUsMTAgKzE0NSwxNiBAQCBleHlub3NfZHJtX2Ny
+dGNfbW9kZV9zZXQoc3RydWN0IGRybV9jcnRjICpjcnRjLCBzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9k
+ZSAqbW9kZSwKPiAgCWlmIChyZXQpCj4gIAkJcmV0dXJuIHJldDsKPiAgCj4gKwkvKiB3ZSBuZWVk
+IHRvIHVucmVmZXJlbmNlIGN1cnJlbnQgZmIgYWZ0ZXIgcmVwbGFjaW5nIGl0IHdpdGggbmV3IG9u
+ZSAqLwo+ICsJb2xkX2ZiID0gcGxhbmUtPmZiOwo+ICsKPiAgCXBsYW5lLT5jcnRjID0gY3J0YzsK
+PiAgCXBsYW5lLT5mYiA9IGNydGMtPnByaW1hcnktPmZiOwo+ICAJZHJtX2ZyYW1lYnVmZmVyX3Jl
+ZmVyZW5jZShwbGFuZS0+ZmIpOwo+ICAKPiArCWlmIChvbGRfZmIpCj4gKwkJZHJtX2ZyYW1lYnVm
+ZmVyX3VucmVmZXJlbmNlKG9sZF9mYik7CgpUaGlzIHRpbWUgd291bGQgYmUgYSBnb29kIGNoYW5j
+ZSB0aGF0IHdlIGNhbiBjb25zaWRlciBkcm0gZmxpcCBxdWV1ZSB0bwptYWtlIHN1cmUgdGhhdCB3
+aG9sZSBtZW1vcnkgcmVnaW9uIHRvIG9sZF9mYiBpcyBzY2FubmVkIG91dCBjb21wbGV0ZWx5CmJl
+Zm9yZSBkcm9wcGluZyBhIHJlZmVyZW5jZSBvZiBvbGRfZmIuIHRoZSByZWZlcmVuY2Ugb2Ygb2xk
+X2ZiIHNob3VsZCBiZQpkcm9wcGVkIGF0IGlycSBoYW5kbGVyIG9mIGVhY2ggY3J0YyBkZXZpY2Vz
+LCBmaW1kIGFuZCBtaXhlci4KClRoYW5rcywKSW5raSBEYWUKCj4gKwo+ICAJcmV0dXJuIDA7Cj4g
+IH0KPiAgCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
+aHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
