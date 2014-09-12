@@ -1,111 +1,59 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: DTS for exynos5422 odroid-xu3: anyone working on it?
-Date: Thu, 11 Sep 2014 16:58:02 -0700
-Message-ID: <7hd2b1lng5.fsf@deeprootsystems.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: RE: [PATCH] clk: samsung: exynos5260: fix typo in clock name
+Date: Fri, 12 Sep 2014 09:23:50 +0530
+Message-ID: <000401cfce3d$3fc3b0b0$bf4b1210$@samsung.com>
+References: <1410328565-25122-1-git-send-email-pankaj.dubey@samsung.com>
+ <54122962.5020903@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:45231 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754499AbaIKX6H (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:45354 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750976AbaILDv5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Sep 2014 19:58:07 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id CCB0920263
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Sep 2014 23:58:05 +0000 (UTC)
-Received: from localhost (c-67-183-17-239.hsd1.wa.comcast.net [67.183.17.239])
-	(using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPSA id 306A72022A
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 11 Sep 2014 23:58:04 +0000 (UTC)
+	Thu, 11 Sep 2014 23:51:57 -0400
+In-reply-to: <54122962.5020903@gmail.com>
+Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kgene.kim@samsung.com, s.nawrocki@samsung.com, mturquette@linaro.org, 'Chander Kashyap' <k.chander@samsung.com>, 'Abhilash Kesavan' <a.kesavan@samsung.com>
 
-Just curious if anyone is working on upstream DTS for the odroid-xu3?
+Hi Tomasz,
 
-It's booting fine with mainline using exynos5420-smdk5420.dts, but would
-like to see more devices added.
+On Friday, September 12, 2014, Tomasz Figa wrote,
+> To: Pankaj Dubey; linux-arm-kernel@lists.infradead.org; linux-samsung-
+> soc@vger.kernel.org; linux-kernel@vger.kernel.org
+> Cc: kgene.kim@samsung.com; s.nawrocki@samsung.com; mturquette@linaro.org;
+> Chander Kashyap; Abhilash Kesavan
+> Subject: Re: [PATCH] clk: samsung: exynos5260: fix typo in clock name
+> 
+> Hi Pankaj,
+> 
+> On 10.09.2014 07:56, Pankaj Dubey wrote:
+> > From: Chander Kashyap <k.chander@samsung.com>
+> >
+> > The parent name added in parent list as
+> > mout_phyclk_mipi_dphy_4l_m_txbyte_clkhs_p, is different than the
+> > defined parent due to typo.
+> >
+> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> > Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+> 
+> Missed your sign-off? You can reply with it inline and I will add it when
+applying this
+> weekend.
+> 
 
-I found the DTS files in the hardkernel v3.10.y branch which can be used
-as a starting point, but wanted to know if anyone else is working on it
-before duplicating effort.
+OK.
 
-In particular, one of the first bits I'm trying to add are the nodes for
-the on-board INA231 voltage/current sensors that are hanging of i2c_0.
-I just stole the driver and DTS snippet[1] from the hardkernel tree and
-tried it with mainline, and can get the driver to probe, but it fails
-the first I2C write, suggesting that I'm missing something else in the
-DTS, which leads me to this posting.
+> P.S. Please keep me on CC when sending patches for Samsung clock drivers.
 
-Kevin
+Sure.
 
-
-[1]
-diff --git a/arch/arm/boot/dts/exynos5420-smdk5420.dts b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-index d789a2361612..9d629377869e 100644
---- a/arch/arm/boot/dts/exynos5420-smdk5420.dts
-+++ b/arch/arm/boot/dts/exynos5420-smdk5420.dts
-@@ -31,6 +31,62 @@
- 		};
- 	};
- 
-+    /* i2c0 INA231 Sensors */
-+    /*
-+        - include/linux/platform_data/ina231.h
-+        
-+        config         = INA231_CONFIG(VSH_CT(eVSH_CT_8244uS)      | \
-+                                        VBUS_CT(eVBUS_CT_8244uS)   | \
-+                                        AVG_BIT(eAVG_16)           | \
-+                                        eSHUNT_BUS_VOLT_CONTINUOUS),
-+        update_period  = CONVERSION_DELAY(eVSH_CON_8244uS, eVBUS_CON_8244uS, eAVG_CON_16),   // unit = usec
-+    */
-+
-+	i2c@12C60000 {
-+		status = "okay";
-+        clock-frequency = <400000>;
-+        ina231@40  {
-+			compatible = "hardkernel,INA231";
-+			reg = <0x40>;
-+    		sensor-name = "sensor_arm";
-+    		enable = <1>;
-+    		max_A = <9>;
-+    		shunt_R_mohm = <10>;
-+    		config = <0x45FF>;
-+    		update_period = <263808>;
-+        };
-+        ina231@41  {
-+			compatible = "hardkernel,INA231";
-+			reg = <0x41>;
-+    		sensor-name = "sensor_mem";
-+    		enable = <0>;
-+    		max_A = <3>;
-+    		shunt_R_mohm = <10>;
-+    		config = <0x45FF>;
-+    		update_period = <263808>;
-+        };
-+        ina231@44  {
-+			compatible = "hardkernel,INA231";
-+			reg = <0x44>;
-+    		sensor-name = "sensor_g3d";
-+    		enable = <0>;
-+    		max_A = <5>;
-+    		shunt_R_mohm = <10>;
-+    		config = <0x45FF>;
-+    		update_period = <263808>;
-+        };
-+        ina231@45  {
-+			compatible = "hardkernel,INA231";
-+			reg = <0x45>;
-+    		sensor-name = "sensor_kfc";
-+    		enable = <0>;
-+    		max_A = <2>;
-+    		shunt_R_mohm = <10>;
-+    		config = <0x45FF>;
-+    		update_period = <263808>;
-+        };
-+	};
-+
- 	regulators {
- 		compatible = "simple-bus";
- 		#address-cells = <1>;
+Thanks,
+Pankaj Dubey
+> 
+> Best regards,
+> Tomasz
