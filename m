@@ -1,90 +1,59 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 5/9] drm/exynos/crtc: fix framebuffer reference sequence
-Date: Fri, 12 Sep 2014 17:34:50 +0900
-Message-ID: <5412B02A.6040609@samsung.com>
-References: <1410268573-2297-1-git-send-email-a.hajda@samsung.com>
- <1410268573-2297-6-git-send-email-a.hajda@samsung.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: [RFC PATCH 2/5] devfreq: event: Add exynos-ppmu devfreq evnet
+ driver
+Date: Fri, 12 Sep 2014 10:41:14 +0200
+Message-ID: <1410511274.31130.7.camel@x220>
+References: <1409891419-28560-1-git-send-email-cw00.choi@samsung.com>
+	 <1409891419-28560-3-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1410268573-2297-6-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1409891419-28560-3-git-send-email-cw00.choi@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: myungjoo.ham@samsung.com, linux-pm@vger.kernel.org, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, a.kesavan@samsung.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, b.zolnierkie@samsung.com, nm@ti.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgQW5kcnplaiwKCk9uIDIwMTTrhYQgMDnsm5QgMDnsnbwgMjI6MTYsIEFuZHJ6ZWogSGFqZGEg
-d3JvdGU6Cj4gQWRkaW5nIHJlZmVyZW5jZSB0byBmcmFtZWJ1ZmZlciBzaG91bGQgYmUgYWNjb21w
-YW5pZWQgd2l0aCByZW1vdmluZwo+IHJlZmVyZW5jZSB0byBvbGQgZnJhbWVidWZmZXIgYXNzaWdu
-ZWQgdG8gdGhlIHBsYW5lLgo+IFRoaXMgcGF0Y2ggcmVtb3ZlcyBmb2xsb3dpbmcgd2FybmluZzoK
-PiAKPiBbICAgOTUuMDM4MDE3XSBXQVJOSU5HOiBDUFU6IDEgUElEOiAzMDY3IGF0IGRyaXZlcnMv
-Z3B1L2RybS9kcm1fY3J0Yy5jOjUxMTUgZHJtX21vZGVfY29uZmlnX2NsZWFudXArMHgyNTgvMHgy
-NjgoKQo+IFsgICA5NS4wNDgwODZdIE1vZHVsZXMgbGlua2VkIGluOgo+IFsgICA5NS4wNTE0MzBd
-IENQVTogMSBQSUQ6IDMwNjcgQ29tbTogYmFzaCBUYWludGVkOiBHICAgICAgICBXICAgICAgMy4x
-Ni4wLTExMzU1LWc3YTZlY2E1LWRpcnR5ICMzMDE1Cj4gWyAgIDk1LjA2MDA1OF0gWzxjMDAxM2U5
-MD5dICh1bndpbmRfYmFja3RyYWNlKSBmcm9tIFs8YzAwMTExMjg+XSAoc2hvd19zdGFjaysweDEw
-LzB4MTQpCj4gWyAgIDk1LjA2Nzc2Nl0gWzxjMDAxMTEyOD5dIChzaG93X3N0YWNrKSBmcm9tIFs8
-YzA0YTVkYzQ+XSAoZHVtcF9zdGFjaysweDcwLzB4YmMpCj4gWyAgIDk1LjA3NDk1M10gWzxjMDRh
-NWRjND5dIChkdW1wX3N0YWNrKSBmcm9tIFs8YzAwMjE3ODQ+XSAod2Fybl9zbG93cGF0aF9jb21t
-b24rMHg2NC8weDg4KQo+IFsgICA5NS4wODMwMDVdIFs8YzAwMjE3ODQ+XSAod2Fybl9zbG93cGF0
-aF9jb21tb24pIGZyb20gWzxjMDAyMTdjND5dICh3YXJuX3Nsb3dwYXRoX251bGwrMHgxYy8weDI0
-KQo+IFsgICA5NS4wOTE3ODBdIFs8YzAwMjE3YzQ+XSAod2Fybl9zbG93cGF0aF9udWxsKSBmcm9t
-IFs8YzAyNzVmYTA+XSAoZHJtX21vZGVfY29uZmlnX2NsZWFudXArMHgyNTgvMHgyNjgpCj4gWyAg
-IDk1LjEwMDk4M10gWzxjMDI3NWZhMD5dIChkcm1fbW9kZV9jb25maWdfY2xlYW51cCkgZnJvbSBb
-PGMwMjgxNzI0Pl0gKGV4eW5vc19kcm1fdW5sb2FkKzB4MzgvMHg1MCkKPiBbICAgOTUuMTA5OTE1
-XSBbPGMwMjgxNzI0Pl0gKGV4eW5vc19kcm1fdW5sb2FkKSBmcm9tIFs8YzAyNmUyNDg+XSAoZHJt
-X2Rldl91bnJlZ2lzdGVyKzB4MjQvMHg5OCkKPiBbICAgOTUuMTE4NDE0XSBbPGMwMjZlMjQ4Pl0g
-KGRybV9kZXZfdW5yZWdpc3RlcikgZnJvbSBbPGMwMjZlY2IwPl0gKGRybV9wdXRfZGV2KzB4Mjgv
-MHg2NCkKPiBbICAgOTUuMTI2NDEyXSBbPGMwMjZlY2IwPl0gKGRybV9wdXRfZGV2KSBmcm9tIFs8
-YzAyOTQ3YzQ+XSAodGFrZV9kb3duX21hc3RlcisweDI0LzB4NDQpCj4gWyAgIDk1LjEzNDIxOF0g
-WzxjMDI5NDdjND5dICh0YWtlX2Rvd25fbWFzdGVyKSBmcm9tIFs8YzAyOTQ4NzA+XSAoY29tcG9u
-ZW50X2RlbCsweDhjLzB4YzgpCj4gWyAgIDk1LjE0MjIwMV0gWzxjMDI5NDg3MD5dIChjb21wb25l
-bnRfZGVsKSBmcm9tIFs8YzAyODZjMTA+XSAoZXh5bm9zX2RzaV9yZW1vdmUrMHgxOC8weDJjKQo+
-IFsgICA5NS4xNTAyOTRdIFs8YzAyODZjMTA+XSAoZXh5bm9zX2RzaV9yZW1vdmUpIGZyb20gWzxj
-MDI5OWUwND5dIChwbGF0Zm9ybV9kcnZfcmVtb3ZlKzB4MTgvMHgxYykKPiBbICAgOTUuMTU4ODcy
-XSBbPGMwMjk5ZTA0Pl0gKHBsYXRmb3JtX2Rydl9yZW1vdmUpIGZyb20gWzxjMDI5ODdhND5dIChf
-X2RldmljZV9yZWxlYXNlX2RyaXZlcisweDcwLzB4YzQpCj4gWyAgIDk1LjE2Nzk4MV0gWzxjMDI5
-ODdhND5dIChfX2RldmljZV9yZWxlYXNlX2RyaXZlcikgZnJvbSBbPGMwMjk4ODE4Pl0gKGRldmlj
-ZV9yZWxlYXNlX2RyaXZlcisweDIwLzB4MmMpCj4gWyAgIDk1LjE3NzI2OF0gWzxjMDI5ODgxOD5d
-IChkZXZpY2VfcmVsZWFzZV9kcml2ZXIpIGZyb20gWzxjMDI5NzlkMD5dICh1bmJpbmRfc3RvcmUr
-MHg1Yy8weDk0KQo+IFsgICA5NS4xODU1OTddIFs8YzAyOTc5ZDA+XSAodW5iaW5kX3N0b3JlKSBm
-cm9tIFs8YzAyOTcyNzg+XSAoZHJ2X2F0dHJfc3RvcmUrMHgyMC8weDJjKQo+IFsgICA5NS4xOTMz
-MjNdIFs8YzAyOTcyNzg+XSAoZHJ2X2F0dHJfc3RvcmUpIGZyb20gWzxjMDEyYWE5MD5dIChzeXNm
-c19rZl93cml0ZSsweDRjLzB4NTApCj4gWyAgIDk1LjIwMTIyNF0gWzxjMDEyYWE5MD5dIChzeXNm
-c19rZl93cml0ZSkgZnJvbSBbPGMwMTI5ZTk0Pl0gKGtlcm5mc19mb3Bfd3JpdGUrMHhjNC8weDE4
-NCkKPiBbICAgOTUuMjA5MzkzXSBbPGMwMTI5ZTk0Pl0gKGtlcm5mc19mb3Bfd3JpdGUpIGZyb20g
-WzxjMDBkMDNlYz5dICh2ZnNfd3JpdGUrMHhhMC8weDFhOCkKPiBbICAgOTUuMjE3MTExXSBbPGMw
-MGQwM2VjPl0gKHZmc193cml0ZSkgZnJvbSBbPGMwMGQwN2Y4Pl0gKFN5U193cml0ZSsweDQwLzB4
-OGMpCj4gWyAgIDk1LjIyNDE0Nl0gWzxjMDBkMDdmOD5dIChTeVNfd3JpdGUpIGZyb20gWzxjMDAw
-ZTY2MD5dIChyZXRfZmFzdF9zeXNjYWxsKzB4MC8weDQ4KQo+IAo+IFNpZ25lZC1vZmYtYnk6IEFu
-ZHJ6ZWogSGFqZGEgPGEuaGFqZGFAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgfCA2ICsrKysrKwo+ICAxIGZpbGUgY2hhbmdlZCwg
-NiBpbnNlcnRpb25zKCspCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0
-Yy5jCj4gaW5kZXggYjY4ZTU4Zi4uYmRlMTlmNCAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2NydGMuYwo+IEBAIC0xNDUsMTAgKzE0NSwxNiBAQCBleHlub3NfZHJtX2Ny
-dGNfbW9kZV9zZXQoc3RydWN0IGRybV9jcnRjICpjcnRjLCBzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9k
-ZSAqbW9kZSwKPiAgCWlmIChyZXQpCj4gIAkJcmV0dXJuIHJldDsKPiAgCj4gKwkvKiB3ZSBuZWVk
-IHRvIHVucmVmZXJlbmNlIGN1cnJlbnQgZmIgYWZ0ZXIgcmVwbGFjaW5nIGl0IHdpdGggbmV3IG9u
-ZSAqLwo+ICsJb2xkX2ZiID0gcGxhbmUtPmZiOwo+ICsKPiAgCXBsYW5lLT5jcnRjID0gY3J0YzsK
-PiAgCXBsYW5lLT5mYiA9IGNydGMtPnByaW1hcnktPmZiOwo+ICAJZHJtX2ZyYW1lYnVmZmVyX3Jl
-ZmVyZW5jZShwbGFuZS0+ZmIpOwo+ICAKPiArCWlmIChvbGRfZmIpCj4gKwkJZHJtX2ZyYW1lYnVm
-ZmVyX3VucmVmZXJlbmNlKG9sZF9mYik7CgpUaGlzIHRpbWUgd291bGQgYmUgYSBnb29kIGNoYW5j
-ZSB0aGF0IHdlIGNhbiBjb25zaWRlciBkcm0gZmxpcCBxdWV1ZSB0bwptYWtlIHN1cmUgdGhhdCB3
-aG9sZSBtZW1vcnkgcmVnaW9uIHRvIG9sZF9mYiBpcyBzY2FubmVkIG91dCBjb21wbGV0ZWx5CmJl
-Zm9yZSBkcm9wcGluZyBhIHJlZmVyZW5jZSBvZiBvbGRfZmIuIHRoZSByZWZlcmVuY2Ugb2Ygb2xk
-X2ZiIHNob3VsZCBiZQpkcm9wcGVkIGF0IGlycSBoYW5kbGVyIG9mIGVhY2ggY3J0YyBkZXZpY2Vz
-LCBmaW1kIGFuZCBtaXhlci4KClRoYW5rcywKSW5raSBEYWUKCj4gKwo+ICAJcmV0dXJuIDA7Cj4g
-IH0KPiAgCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
-aHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Fri, 2014-09-05 at 13:30 +0900, Chanwoo Choi wrote:
+> This patch add exynos-ppmu devfreq event driver to provider raw data about
+> the utilization of each IP in Exynos SoC series.
+> 
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  drivers/devfreq/Kconfig             |  10 +
+>  drivers/devfreq/event/Makefile      |   1 +
+>  drivers/devfreq/event/exynos-ppmu.c | 410 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 421 insertions(+)
+>  create mode 100644 drivers/devfreq/event/exynos-ppmu.c
+> 
+> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+> index ef839e7..4fbbcea 100644
+> --- a/drivers/devfreq/Kconfig
+> +++ b/drivers/devfreq/Kconfig
+> @@ -90,4 +90,14 @@ config ARM_EXYNOS5_BUS_DEVFREQ
+>  
+>  comment "DEVFREQ Event Drivers"
+>  
+> +config DEVFREQ_EVENT_EXYNOS_PPMU
+> +	bool "EXYNOS PPMU (Performance Profiling Monitoring Unit) DEVFREQ event Driver"
+> +	depends on ARCH_EXYNOS
+> +	select ARCH_HAS_OPP
+
+This select statement can be dropped: see commit 78c5e0bb145d ("PM /
+OPP: Remove ARCH_HAS_OPP").
+
+By the way: there's a typo in the commit summary ("evnet").
+
+> +	select PM_OPP
+> +	help
+> +	 This add the DEVFREQ event driver for Exynos SoC. It provides PPMU
+> +	 (Performance Profiling Monitoring Unit) counters to estimate the
+> +	 utilization of each module.
+> +
+>  endif # PM_DEVFREQ
+
+
+Paul Bolle
+
