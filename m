@@ -1,43 +1,43 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH v4 7/8] tty/serial: samsung: enable usage for 64-bit Exynos
- platforms
-Date: Fri, 12 Sep 2014 20:56:31 +0530
-Message-ID: <1410535592-5782-9-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH v4 8/8] arm64: dts: add <dt-bindings/> symlink
+Date: Fri, 12 Sep 2014 20:56:32 +0530
+Message-ID: <1410535592-5782-10-git-send-email-ch.naveen@samsung.com>
 References: <1410535592-5782-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:51312 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:51357 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751186AbaILPeC (ORCPT
+	with ESMTP id S1751685AbaILPeP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Sep 2014 11:34:02 -0400
+	Fri, 12 Sep 2014 11:34:15 -0400
 In-reply-to: <1410535592-5782-1-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: naveenkrishna.ch@gmail.com, linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, gregkh@linuxfoundation.org
+Cc: naveenkrishna.ch@gmail.com, linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, gregkh@linuxfoundation.org, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Allow Samsung serial driver to be usable on Exynos 64-bit SoC based
-platforms.
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
 
+Add symlink to include/dt-bindings from arch/arm64/boot/dts/include/ to
+match the ones in ARM architectures so that preprocessed device
+tree files can include various useful constant definitions.
+
+See commit c58299aa8754 ("kbuild: create an "include chroot" for DT bindings")
+merged in v3.10-rc1 for details.
+
+CC: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/tty/serial/Kconfig |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/include/dt-bindings |    1 +
+ 1 file changed, 1 insertion(+)
+ create mode 120000 arch/arm64/boot/dts/include/dt-bindings
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 26cec64..3383744 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -220,7 +220,7 @@ config SERIAL_CLPS711X_CONSOLE
- 
- config SERIAL_SAMSUNG
- 	tristate "Samsung SoC serial support"
--	depends on PLAT_SAMSUNG
-+	depends on PLAT_SAMSUNG || ARCH_EXYNOS
- 	select SERIAL_CORE
- 	help
- 	  Support for the on-chip UARTs on the Samsung S3C24XX series CPUs,
+diff --git a/arch/arm64/boot/dts/include/dt-bindings b/arch/arm64/boot/dts/include/dt-bindings
+new file mode 120000
+index 0000000..08c00e4
+--- /dev/null
++++ b/arch/arm64/boot/dts/include/dt-bindings
+@@ -0,0 +1 @@
++../../../../../include/dt-bindings
+\ No newline at end of file
 -- 
 1.7.9.5
