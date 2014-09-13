@@ -1,42 +1,75 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 0/4] Add initial support for pinctrl on Exynos7
-Date: Sat, 13 Sep 2014 13:34:33 +0200
-Message-ID: <54142BC9.9050303@gmail.com>
-References: <1410598252-30931-1-git-send-email-a.kesavan@samsung.com>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: exynos5420/arndale-octa: imprecise external aborts on exynos_defconfig
+Date: Sat, 13 Sep 2014 18:29:58 +0530
+Message-ID: <CAJuA9ahkpZ4EJQz4DoAjYzo0OQw5zXLavAVoXRBdgPcm9EUQYA@mail.gmail.com>
+References: <CANMBJr41TQx4jVjnOO9WThn=SiZCq12mx1xtGN8_ubzZrO1=YA@mail.gmail.com>
+	<7h7g1bwbyh.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f50.google.com ([74.125.82.50]:38405 "EHLO
-	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751180AbaIMLei (ORCPT
+Received: from mail-la0-f49.google.com ([209.85.215.49]:45265 "EHLO
+	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751336AbaIMM77 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 13 Sep 2014 07:34:38 -0400
-In-Reply-To: <1410598252-30931-1-git-send-email-a.kesavan@samsung.com>
+	Sat, 13 Sep 2014 08:59:59 -0400
+Received: by mail-la0-f49.google.com with SMTP id pv20so2411599lab.22
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Sep 2014 05:59:58 -0700 (PDT)
+In-Reply-To: <7h7g1bwbyh.fsf@deeprootsystems.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <a.kesavan@samsung.com>, linux-arm-kernel@lists.infradead.org
-Cc: kesavan.abhilash@gmail.com, linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, linus.walleij@linaro.org, thomas.ab@samsung.com, Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Tyler Baker <tyler.baker@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Abhilash,
+On Thu, Sep 11, 2014 at 12:16 AM, Kevin Hilman <khilman@kernel.org> wrote:
+> Tyler Baker <tyler.baker@linaro.org> writes:
+>
+>> Exynos5420-based Arndale octa boards have recently started failing boot
+>> tests due to imprecise external aborts.  This only appears to happen
+>> when using exynos_defconfig and boots fine with multi_v7_defconfig.  The
+>> issue seems to be intermittent, so is not reliably reproducable and
+>> difficult to bisect.  Here are a few boot logs from recent
+>> mainline/linux-next kernels that are failing:
+>
+> FYI, I'm seeing the same periodic aborts.  For example, here's my boot
+> of next-20140910:
+> http://images.armcloud.us/kernel-ci/next/next-20140910/arm-exynos_defconfig/boot-exynos5420-arndale-octa.html
+>
+> However, my userspace is much simpler and doesn't seem to cause a panic,
+> so my boot tests report passing. (I should fixup my scripts so these
+> imprecise aborts are reported as a FAIL.)
+>
+> I'm glad you pointed out that it happens only with exynos_defconfig and
+> not multi_v7_defconfig because I noticed that too.  I haven't had the
+> time to track it any further than that, so maybe the exynos folks can
+> help track it down from here.
+>
+> Thanks for reporting this,
+>
+> Kevin
 
-On 13.09.2014 10:50, Abhilash Kesavan wrote:
-> The following patches are tested based on Kgene's for-next tree.
-> https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
-> 
-> Following patches are required for this series:
-> 1- "tty/serial: fix config dependencies for samsung serial"
->    https://www.mail-archive.com/linux-samsung-soc <at> vger.kernel.org/msg36208.html
-> 2- "dts, kbuild: Implement support for dtb vendor subdirs" patchset 
->    http://comments.gmane.org/gmane.linux.kbuild.devel/12131
-> 3- "arch: arm64: enable support for Samsung Exynos7 SoC" patchset
->    http://www.spinics.net/lists/linux-samsung-soc/msg36728.html
-> 
+Hi Tyler, Kevin,
 
-Other than few of my and Thomas's comments, my further actions (i.e. an
-ACK) will depend on reply to [1].
+>From the bootlog you have shared,
 
-[1] http://thread.gmane.org/gmane.linux.kernel.samsung-soc/36823/focus=37456
+[    1.060016] CPU4: failed to come online
+[    2.070031] CPU5: failed to come online
+[    3.080049] CPU6: failed to come online
+[    4.090066] CPU7: failed to come online
+[    4.090099] Brought up 4 CPUs
+[    4.090109] SMP: Total of 4 processors activated.
+[    4.090119] CPU: WARNING: CPU(s) started in wrong/inconsistent
+modes (primary CPU mode 0x13)
+[    4.090128] CPU: This may indicate a broken bootloader or firmware.
 
-Best regards,
-Tomasz
+Would it be possible to set max cpus to 1, disable switcher and try
+again. I don't have a arndale octa board but I have tested mainline
+kernel with smdk5420 board. It boots all eight CPUs, switcher works
+fine and there are no imprecise aborts seen.
+
+Thanks,
+Thomas.
+
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
