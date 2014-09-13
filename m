@@ -1,74 +1,57 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: S3C24XX: remove separate restart code
-Date: Sun, 14 Sep 2014 02:44:52 +0900
-Message-ID: <54148294.50906@samsung.com>
-References: <15331569.UPPHKgXBj9@diego>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V3 1/2] ARM: dts: Add DT changes for display on snow
+Date: Sun, 14 Sep 2014 00:17:21 +0530
+Message-ID: <CAEC9eQNPipVNGjsjc+etCY-w4BErqLxeC5kFStM14rE+wtQvHA@mail.gmail.com>
+References: <1409567792-8281-1-git-send-email-ajaykumar.rs@samsung.com>
+	<54147D6E.2030103@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:36881 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752056AbaIMRpA (ORCPT
+Received: from mail-ie0-f180.google.com ([209.85.223.180]:38421 "EHLO
+	mail-ie0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752024AbaIMSrW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 13 Sep 2014 13:45:00 -0400
-Received: by mail-pd0-f174.google.com with SMTP id v10so3436784pde.33
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Sep 2014 10:44:59 -0700 (PDT)
-In-Reply-To: <15331569.UPPHKgXBj9@diego>
+	Sat, 13 Sep 2014 14:47:22 -0400
+In-Reply-To: <54147D6E.2030103@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: "kgene.kim@samsung.com" <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-On 09/09/14 00:30, Heiko St=FCbner wrote:
-> The restart-handler series from Guenter Roeck got accepted recently a=
-nd
-> implements among other things also the restart handler in the samsung
-> watchdog driver and where applicable in the clock drivers. So there i=
-s
-> no need for having the restart callbacks in s3c24xx boards anymore.
->
-> Signed-off-by: Heiko Stuebner<heiko@sntech.de>
-> ---
->   arch/arm/mach-s3c24xx/Kconfig                      |  2 --
->   arch/arm/mach-s3c24xx/common.c                     |  4 ----
->   arch/arm/mach-s3c24xx/common.h                     |  5 -----
->   .../mach-s3c24xx/include/mach/regs-s3c2443-clock.h |  2 --
->   arch/arm/mach-s3c24xx/mach-amlm5900.c              |  1 -
->   arch/arm/mach-s3c24xx/mach-anubis.c                |  1 -
->   arch/arm/mach-s3c24xx/mach-at2440evb.c             |  1 -
->   arch/arm/mach-s3c24xx/mach-bast.c                  |  1 -
->   arch/arm/mach-s3c24xx/mach-gta02.c                 |  1 -
->   arch/arm/mach-s3c24xx/mach-h1940.c                 |  1 -
->   arch/arm/mach-s3c24xx/mach-jive.c                  |  1 -
->   arch/arm/mach-s3c24xx/mach-mini2440.c              |  1 -
->   arch/arm/mach-s3c24xx/mach-n30.c                   |  2 --
->   arch/arm/mach-s3c24xx/mach-nexcoder.c              |  1 -
->   arch/arm/mach-s3c24xx/mach-osiris.c                |  1 -
->   arch/arm/mach-s3c24xx/mach-otom.c                  |  1 -
->   arch/arm/mach-s3c24xx/mach-qt2410.c                |  1 -
->   arch/arm/mach-s3c24xx/mach-rx1950.c                |  1 -
->   arch/arm/mach-s3c24xx/mach-rx3715.c                |  1 -
->   arch/arm/mach-s3c24xx/mach-s3c2416-dt.c            |  1 -
->   arch/arm/mach-s3c24xx/mach-smdk2410.c              |  1 -
->   arch/arm/mach-s3c24xx/mach-smdk2413.c              |  3 ---
->   arch/arm/mach-s3c24xx/mach-smdk2416.c              |  1 -
->   arch/arm/mach-s3c24xx/mach-smdk2440.c              |  1 -
->   arch/arm/mach-s3c24xx/mach-smdk2443.c              |  1 -
->   arch/arm/mach-s3c24xx/mach-tct_hammer.c            |  1 -
->   arch/arm/mach-s3c24xx/mach-vr1000.c                |  1 -
->   arch/arm/mach-s3c24xx/mach-vstms.c                 |  1 -
->   arch/arm/mach-s3c24xx/s3c2410.c                    | 13 -----------=
--
->   arch/arm/mach-s3c24xx/s3c2412.c                    | 23 -----------=
------------
->   arch/arm/mach-s3c24xx/s3c2416.c                    |  8 --------
->   arch/arm/mach-s3c24xx/s3c2443.c                    |  8 --------
->   arch/arm/mach-s3c24xx/s3c244x.c                    | 12 -----------
->   33 files changed, 104 deletions(-)
->
-Looks good to me, applied.
+Hi Kukjin,
 
-Thanks,
-Kukjin
+
+On Sat, Sep 13, 2014 at 10:52 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> On 09/01/14 19:36, Ajay Kumar wrote:
+>>
+>> Add DT nodes for ptn3460 bridge chip and panel.
+>> Add backlight enable pin and backlight power supply for pwm-backlight.
+>> Also add bridge phandle needed by dp to enable display on snow.
+>>
+>> Signed-off-by: Ajay Kumar<ajaykumar.rs@samsung.com>
+>> ---
+>> Changes since V1:
+>>         -- Remove "simple-panel" compatible string.
+>>         -- Use GPIO_ACTIVE_HIGH instead of 0.
+>>         -- Change panel node naming from "panel-simple" to "panel".
+>>
+>> Changes since V2:
+>>         -- Use proper compatible string: "auo,b116xw03"
+>>
+>>   arch/arm/boot/dts/exynos5250-snow.dts |   41
+>> ++++++++++++++++++---------------
+>>   1 file changed, 22 insertions(+), 19 deletions(-)
+>>
+> Applied this and 2nd one.
+>
+> BTW, I resolved conflict when I applied. Please check my tree and then if
+> any problems, please let me know.
+
+This patchset has dependency on driver patches.
+But, no harm merging it since DT bindings are almost agreed.
+
+The below patch should be merged ASAP. Because, driver changes are already in
+for this patch:
+https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35182.html
+
+Ajay
