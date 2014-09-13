@@ -1,36 +1,65 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 00/14] Support 64bit Cortex A57 based Exynos7 SoC
-Date: Sat, 13 Sep 2014 12:57:40 +0200
-Message-ID: <54142324.600@gmail.com>
-References: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com> <53FDC25A.2010806@samsung.com>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH 0/4] Add initial support for pinctrl on Exynos7
+Date: Sat, 13 Sep 2014 16:38:22 +0530
+Message-ID: <CAJuA9ah-krSiN5=r82rPnoNBtU2rCDXkRUDQhre5kekOvC-N_A@mail.gmail.com>
+References: <1410598252-30931-1-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:39254 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750944AbaIMK5p (ORCPT
+Received: from mail-la0-f45.google.com ([209.85.215.45]:54350 "EHLO
+	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750750AbaIMLIY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 13 Sep 2014 06:57:45 -0400
-In-Reply-To: <53FDC25A.2010806@samsung.com>
+	Sat, 13 Sep 2014 07:08:24 -0400
+In-Reply-To: <1410598252-30931-1-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, catalin.marinas@arm.com
-Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, cpgs@samsung.com
+To: Abhilash Kesavan <a.kesavan@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, catalin.marinas@arm.com, robh@kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On 27.08.2014 13:34, Tomasz Figa wrote:
-> Hi Naveen,
-> 
-> On 27.08.2014 11:44, Naveen Krishna Chatradhi wrote:
->> This patchset supports new Exynos7 Samsung SoC based on Cortex-A57.
->> Exynos7 is a System-On-Chip (SoC) that is based on 64-bit
->> ARMv8 RISC processor.
-> 
-> A general issue with this series is that it introduces a very generic
-> name for a very specific single SoC. We remember exactly the same cases
-> for Exynos4 (original name used for Exynos5250) and Exynos5 (Exynos5250)
-> and we should have learned that it is better to use a specific name
-> first and only then try to make things common if it turns out to be
-> appropriate.
+On Sat, Sep 13, 2014 at 2:20 PM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
+> The following patches are tested based on Kgene's for-next tree.
+> https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
+>
+> Following patches are required for this series:
+> 1- "tty/serial: fix config dependencies for samsung serial"
+>    https://www.mail-archive.com/linux-samsung-soc <at> vger.kernel.org/msg36208.html
+> 2- "dts, kbuild: Implement support for dtb vendor subdirs" patchset
+>    http://comments.gmane.org/gmane.linux.kbuild.devel/12131
+> 3- "arch: arm64: enable support for Samsung Exynos7 SoC" patchset
+>    http://www.spinics.net/lists/linux-samsung-soc/msg36728.html
+>
+> Abhilash Kesavan (2):
+>   pinctrl: exynos: Generalize the eint16_31 demux code
+>   pinctrl: exynos: Add irq_chip instance for Exynos7 wakeup interrupts
+>
+> Naveen Krishna Chatradhi (2):
+>   pinctrl: exynos: Add initial driver data for Exynos7
+>   arm64: dts: Add initial pinctrl support to EXYNOS7
+>
+>  .../bindings/pinctrl/samsung-pinctrl.txt           |    3 +
+>  arch/arm64/Kconfig                                 |    2 +
+>  arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    |  560 ++++++++++++++++++++
+>  arch/arm64/boot/dts/exynos/exynos7.dtsi            |   66 +++
+>  drivers/pinctrl/samsung/pinctrl-exynos.c           |  161 +++++-
+>  drivers/pinctrl/samsung/pinctrl-exynos.h           |    4 +
+>  drivers/pinctrl/samsung/pinctrl-samsung.c          |    2 +
+>  drivers/pinctrl/samsung/pinctrl-samsung.h          |    1 +
+>  8 files changed, 788 insertions(+), 11 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
 
-Any comments on this?
+Tested GPIO and Wakeup interrupts. After fixing comments for patches
+in this series, this series
+
+Reviewed-by: Thomas Abraham <thomas.ab@samsung.com>
+Tested-by: Thomas Abraham <thomas.ab@samsung.com>
+
+>
+> --
+> 1.7.9.5
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
