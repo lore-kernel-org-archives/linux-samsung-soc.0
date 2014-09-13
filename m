@@ -1,75 +1,60 @@
-From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: exynos5420/arndale-octa: imprecise external aborts on exynos_defconfig
-Date: Sat, 13 Sep 2014 18:29:58 +0530
-Message-ID: <CAJuA9ahkpZ4EJQz4DoAjYzo0OQw5zXLavAVoXRBdgPcm9EUQYA@mail.gmail.com>
-References: <CANMBJr41TQx4jVjnOO9WThn=SiZCq12mx1xtGN8_ubzZrO1=YA@mail.gmail.com>
-	<7h7g1bwbyh.fsf@deeprootsystems.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v4 1/3] ARM: dts: Add Peach Pit dts entry for Atmel touchpad
+Date: Sun, 14 Sep 2014 01:36:34 +0900
+Message-ID: <54147292.2000901@samsung.com>
+References: <1410348691-18317-1-git-send-email-javier.martinez@collabora.co.uk> <1410348691-18317-2-git-send-email-javier.martinez@collabora.co.uk> <20140910222553.GF38736@core.coreip.homeip.net> <54116F07.9090007@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f49.google.com ([209.85.215.49]:45265 "EHLO
-	mail-la0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751336AbaIMM77 (ORCPT
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:33823 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752104AbaIMQgx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 13 Sep 2014 08:59:59 -0400
-Received: by mail-la0-f49.google.com with SMTP id pv20so2411599lab.22
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 13 Sep 2014 05:59:58 -0700 (PDT)
-In-Reply-To: <7h7g1bwbyh.fsf@deeprootsystems.com>
+	Sat, 13 Sep 2014 12:36:53 -0400
+In-Reply-To: <54116F07.9090007@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Tyler Baker <tyler.baker@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Nick Dyer <nick.dyer@itdev.co.uk>, linux-kernel@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>, Yufeng Shen <miletus@chromium.org>, afaerber@suse.de, linux-arm-kernel@lists.infradead.org
 
-On Thu, Sep 11, 2014 at 12:16 AM, Kevin Hilman <khilman@kernel.org> wrote:
-> Tyler Baker <tyler.baker@linaro.org> writes:
+On 09/11/14 18:44, Javier Martinez Canillas wrote:
+> Hello Dmitry,
 >
->> Exynos5420-based Arndale octa boards have recently started failing boot
->> tests due to imprecise external aborts.  This only appears to happen
->> when using exynos_defconfig and boots fine with multi_v7_defconfig.  The
->> issue seems to be intermittent, so is not reliably reproducable and
->> difficult to bisect.  Here are a few boot logs from recent
->> mainline/linux-next kernels that are failing:
->
-> FYI, I'm seeing the same periodic aborts.  For example, here's my boot
-> of next-20140910:
-> http://images.armcloud.us/kernel-ci/next/next-20140910/arm-exynos_defconfig/boot-exynos5420-arndale-octa.html
->
-> However, my userspace is much simpler and doesn't seem to cause a panic,
-> so my boot tests report passing. (I should fixup my scripts so these
-> imprecise aborts are reported as a FAIL.)
->
-> I'm glad you pointed out that it happens only with exynos_defconfig and
-> not multi_v7_defconfig because I noticed that too.  I haven't had the
-> time to track it any further than that, so maybe the exynos folks can
-> help track it down from here.
->
-> Thanks for reporting this,
->
-> Kevin
+Hi,
 
-Hi Tyler, Kevin,
+> On 09/11/2014 12:25 AM, Dmitry Torokhov wrote:
+>>>
+>>> +&hsi2c_8 {
+>>> +	status = "okay";
+>>> +	clock-frequency =<333000>;
+>>> +
+>>> +	/* Atmel mXT336S */
+>>> +	trackpad@4b {
+>>> +		compatible = "atmel,maxtouch";
+>>> +		reg =<0x4b>;
+>>> +		interrupt-parent =<&gpx1>;
+>>> +		interrupts =<1 IRQ_TYPE_EDGE_FALLING>;
+>>> +		wakeup-source;
+>>> +		pinctrl-names = "default";
+>>> +		pinctrl-0 =<&trackpad_irq>;
+>>> +		linux,gpio-keymap =<KEY_RESERVED
+>>> +				     KEY_RESERVED
+>>> +				     KEY_RESERVED	/* GPIO0 */
+>>> +				     KEY_RESERVED	/* GPIO1 */
+>>> +				     KEY_RESERVED	/* GPIO2 */
+>>> +				     BTN_LEFT>; 	/* GPIO3 */
+>>
+>> Seems like a single space sneaked between the semicolon and the tab.
+>> Maybe whoever applies could squash it.
+>>
+>
+> Right, I set c-default-style to "linux" on Emacs but seems it gets confused
+> sometimes when editing Device Tree source files. Sorry about that.
+>
+Applied this whole series with fixing a white space Dmitry commented.
 
->From the bootlog you have shared,
-
-[    1.060016] CPU4: failed to come online
-[    2.070031] CPU5: failed to come online
-[    3.080049] CPU6: failed to come online
-[    4.090066] CPU7: failed to come online
-[    4.090099] Brought up 4 CPUs
-[    4.090109] SMP: Total of 4 processors activated.
-[    4.090119] CPU: WARNING: CPU(s) started in wrong/inconsistent
-modes (primary CPU mode 0x13)
-[    4.090128] CPU: This may indicate a broken bootloader or firmware.
-
-Would it be possible to set max cpus to 1, disable switcher and try
-again. I don't have a arndale octa board but I have tested mainline
-kernel with smdk5420 board. It boots all eight CPUs, switcher works
-fine and there are no imprecise aborts seen.
+Note, I will handle all of exynos_defconfig changes separately.
 
 Thanks,
-Thomas.
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Kukjin
