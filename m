@@ -1,38 +1,42 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v4 0/7] Enable L2 cache support on Exynos4210/4x12 SoCs
-Date: Sun, 14 Sep 2014 19:50:32 +0200
-Message-ID: <5415D568.60802@gmail.com>
-References: <1409062680-15906-1-git-send-email-t.figa@samsung.com>
+From: Ian Campbell <ijc@hellion.org.uk>
+Subject: [PATCH] trivial: Fix typo "Crotex" in CONFIG_ARCH_EXYNOS3 help
+Date: Sun, 14 Sep 2014 20:24:10 +0100
+Message-ID: <1410722650-6428-1-git-send-email-ijc@hellion.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:45977 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752498AbaINRug (ORCPT
+Received: from smtp02.citrix.com ([66.165.176.63]:34389 "EHLO
+	SMTP02.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752652AbaINTYN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 14 Sep 2014 13:50:36 -0400
-In-Reply-To: <1409062680-15906-1-git-send-email-t.figa@samsung.com>
+	Sun, 14 Sep 2014 15:24:13 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, lauraa@codeaurora.org, linux-omap@vger.kernel.org, linus.walleij@linaro.org, santosh.shilimkar@ti.com, tony@atomide.com, drake@endlessm.com, Marek Szyprowski <m.szyprowski@samsung.com>, loeliger@gmail.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Ian Campbell <ijc@hellion.org.uk>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, trivial@kernel.org
 
-Russell, Olof, Kukjin,
+Signed-off-by: Ian Campbell <ijc@hellion.org.uk>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: trivial@kernel.org
+---
+ arch/arm/mach-exynos/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 26.08.2014 16:17, Tomasz Figa wrote:
-> This series intends to add support for L2 cache on Exynos4 SoCs on boards
-> running under secure firmware, which requires certain initialization steps
-> to be done with help of firmware, as selected registers are writable only
-> from secure mode.
-
-I assume that since there has not been any input for almost 3 weeks,
-this series can be merged. How should we proceed with it? Note that it
-touches both core ARM and Exynos-specific areas and depends on another
-Exynos-specific series [1].
-
-[1] [PATCH v3 0/5] Firmware-assisted suspend/resume of Exynos SoCs
-    (https://lkml.org/lkml/2014/8/26/445)
-
-Best regards,
-Tomasz
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 8f9b66c..e201e0b 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -33,7 +33,7 @@ config ARCH_EXYNOS3
+ 	bool "SAMSUNG EXYNOS3"
+ 	select ARM_CPU_SUSPEND if PM
+ 	help
+-	  Samsung EXYNOS3 (Crotex-A7) SoC based systems
++	  Samsung EXYNOS3 (Cortex-A7) SoC based systems
+ 
+ config ARCH_EXYNOS4
+ 	bool "SAMSUNG EXYNOS4"
+-- 
+1.7.10.4
