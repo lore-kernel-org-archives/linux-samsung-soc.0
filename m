@@ -1,42 +1,63 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH V3] ARM: dts: Add DT changes for display on peach_pi
-Date: Sun, 14 Sep 2014 09:23:46 +0900
-Message-ID: <5414E012.3060701@samsung.com>
-References: <1407145638-3803-1-git-send-email-ajaykumar.rs@samsung.com> <CAEC9eQNSPKdTKbAnNpj1ssc==NHkLUUAb+02wZiO+v41XEvutQ@mail.gmail.com>
+Subject: Re: [PATCH 0/5] usb: phy: samsung: remove old USB PHY code
+Date: Sun, 14 Sep 2014 10:12:16 +0900
+Message-ID: <5414EB70.3080105@samsung.com>
+References: <1408026327-31437-1-git-send-email-b.zolnierkie@samsung.com> <20140820181244.GX24500@saruman.home> <9785858.kcvmMFDl1x@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f176.google.com ([209.85.192.176]:54928 "EHLO
-	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752281AbaINAYA (ORCPT
+Received: from mail-pd0-f179.google.com ([209.85.192.179]:41523 "EHLO
+	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752254AbaINBMY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 13 Sep 2014 20:24:00 -0400
-In-Reply-To: <CAEC9eQNSPKdTKbAnNpj1ssc==NHkLUUAb+02wZiO+v41XEvutQ@mail.gmail.com>
+	Sat, 13 Sep 2014 21:12:24 -0400
+In-Reply-To: <9785858.kcvmMFDl1x@amdc1032>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, InKi Dae <inki.dae@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: balbi@ti.com, Kukjin Kim <kgene.kim@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Kamil Debski <k.debski@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Mark Brown <broonie@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 08/25/14 15:13, Ajay kumar wrote:
-> On Mon, Aug 4, 2014 at 3:17 PM, Ajay Kumar<ajaykumar.rs@samsung.com>  wrote:
->> Add DT nodes for panel-simple "auo,b133htn01" panel.
->> Add backlight enable pin and backlight power supply for pwm-backlight.
->> Also, add panel phandle needed by dp to enable display on peach_pi.
+On 08/23/14 02:14, Bartlomiej Zolnierkiewicz wrote:
+>
+> Hi,
+>
+> On Wednesday, August 20, 2014 01:12:44 PM Felipe Balbi wrote:
+>> Hi,
 >>
->> Signed-off-by: Ajay Kumar<ajaykumar.rs@samsung.com>
->> ---
->> Changes since V1:
->> Remove "simple-panel" compatible string and use only ""auo,b133htn01".
+>> On Thu, Aug 14, 2014 at 04:25:22PM +0200, Bartlomiej Zolnierkiewicz wrote:
+>>> Hi,
+>>>
+>>> This patch series removes the old Samsung USB PHY drivers that
+>>> got replaced by the new ones using the generic PHY layer.
+>>>
+>>> Depends on:
+>>> - next-20140813 branch of linux-next kernel
 >>
->> Changes since V2:
->> As suggested by Andreas,
->> Use GPIO_ACTIVE_HIGH for backlight enable-gpios instead of using 0.
->> Change panel node naming from "panel-simple" to "panel".
->>
->>   arch/arm/boot/dts/exynos5800-peach-pi.dts |   27 ++++++++++-----------------
->>   1 file changed, 10 insertions(+), 17 deletions(-)
->>
-Applied, thanks.
+>> this thread seems to have died, what do I need to do with these patches?
+>
+> Please apply them (patches #3, #4 and #5).  Patches #1 and #2
+> should be applied (or Acked-by) by Kukjin Kim.
+>
+I've applied #1 and #2, sorry for late taking.
 
-- Kukjin
+Thanks,
+Kukjin
+
+>> Are we deleting the phy drivers or not ?
+>
+> Yes, we are deleting them.  It has been agreed on by Kishon and
+> Vivek.
+>
+>> Please rebase on v3.17-rc1 and resend with all Acks in place.
+>
+> Done:
+>
+> 	https://lkml.org/lkml/2014/8/22/446
+>
+> Please note that if you want to apply it to current -next kernel
+> (next-20140822) then you need to resolve conflict between patch
+> #5/5 ("usb: phy: samsung: remove old common USB PHY code") and
+> commit bbc66e140bab ("usb: phy: samsung: Fix wrong bit mask for
+> PHYPARAM1_PCS_TXDEEMPH") by simply removing the new version of
+> drivers/usb/phy/phy-samsung-usb.h file.
