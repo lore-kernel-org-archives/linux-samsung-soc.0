@@ -1,54 +1,104 @@
-From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: [PATCH 00/14] Support 64bit Cortex A57 based Exynos7 SoC
-Date: Sun, 14 Sep 2014 19:15:14 +0530
-Message-ID: <CAJuA9ahjdZw23CyEJBO8wwypR0QCf=4+QXB1LXUSzc5rRoDe_w@mail.gmail.com>
-References: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com>
-	<53FDC25A.2010806@samsung.com>
-	<54142324.600@gmail.com>
+From: Vikas Sajjan <vikas.sajjan@samsung.com>
+Subject: Re: [PATCH v7 0/2] Adds PMU and S2R support for exynos5420
+Date: Sun, 14 Sep 2014 20:27:28 +0530
+Message-ID: <CAGm_ybh-R1GsHF-BRhRYQKkCpQFQSE6Mem=A3kz=H3Bemor9xA@mail.gmail.com>
+References: <1408625982-3267-1-git-send-email-vikas.sajjan@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f42.google.com ([209.85.215.42]:59653 "EHLO
-	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752441AbaINNpQ (ORCPT
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:47535 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752580AbaINO5a (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 14 Sep 2014 09:45:16 -0400
-In-Reply-To: <54142324.600@gmail.com>
+	Sun, 14 Sep 2014 10:57:30 -0400
+Received: by mail-wi0-f172.google.com with SMTP id e4so2943554wiv.5
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Sep 2014 07:57:28 -0700 (PDT)
+In-Reply-To: <1408625982-3267-1-git-send-email-vikas.sajjan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, catalin.marinas@arm.com, naveenkrishna.ch@gmail.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, cpgs@samsung.com
+To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>
 
-Hi Tomasz,
+Hi All,
 
-On Sat, Sep 13, 2014 at 4:27 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On 27.08.2014 13:34, Tomasz Figa wrote:
->> Hi Naveen,
->>
->> On 27.08.2014 11:44, Naveen Krishna Chatradhi wrote:
->>> This patchset supports new Exynos7 Samsung SoC based on Cortex-A57.
->>> Exynos7 is a System-On-Chip (SoC) that is based on 64-bit
->>> ARMv8 RISC processor.
->>
->> A general issue with this series is that it introduces a very generic
->> name for a very specific single SoC. We remember exactly the same cases
->> for Exynos4 (original name used for Exynos5250) and Exynos5 (Exynos5250)
->> and we should have learned that it is better to use a specific name
->> first and only then try to make things common if it turns out to be
->> appropriate.
+
+On Thu, Aug 21, 2014 at 6:29 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
+> Rebased on
+> 1] Kukjin Kim's tree, master branch
+> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/
+> 2] Pankaj Dubey's v7 PMU patchset
+> https://lkml.org/lkml/2014/7/9/2
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-July/270655.html
+> 3] My pm.c refactoring patchset
+> http://www.spinics.net/lists/linux-samsung-soc/msg35740.html
 >
-> Any comments on this?
+> changes since v6:
+>         - rebased on 3.17.rc1.
+>
+> changes since v5:
+>         - Refactored pm.c to use DT based lookup as suggested by Tomasz Figa.
+>
+> changes since v4:
+>         - Adressed comments from Tomasz figa and rebased on Pankaj Dubey's v5 PMU patchset
+>
+> changes since v3:
+> Addressed the following comments from Pankaj Dubey, Bartlomiej Zolnierkiewicz,
+> Tomasz Figa and Alim Akhtar:
+>         - Moved EXYNOS5420_USE_STANDBY_WFI_ALL define to regs-pmu.h.
+>         - Merged exynos5420_set_core_flag function into powerdown_conf.
+>         - Removed XXTI_DURATION3 register setting.
+>         - Updated the commit message and ordered the clock registers in clock
+>           patch.
+>         - Removed the code for SYS_DISP1_BLK_CFG handling.
+>         - Modified SoC checks to A9 specific checks in PM code.
+>         - Updated some comments in the code and added macros for register offsets.
+>         - Fixed code which was changing pad retention code for older SoCs.
+>
+> changes since v2:
+>         - Addressed comments from Tomasz figa
+>         - rebased on Pankaj's V3 patchset https://lkml.org/lkml/2014/5/2/612
+>         - dropped patch "ARM: dts: Add node for GPIO keys on SMDK5420",
+>           will be sent separately.
+>
+> changes since v1:
+>         - Addressed comments from Tomasz figa.
+>         - restructured/consolidated as per Tomasz figa's PM consolidations for exynos
+>
+> Tested on Kukjin Kim's tree, master branch + http://www.spinics.net/lists/linux-samsung-soc/msg33750.html
+>
+> on Exynos5420 based chromebook (peach-pit board)
+>
+> PS : Not tested on exynos4 based boards.
+>
+> Tested-by for exynos4 would be appreciated.
+>
+> Below procedures were followed to test S2R:
+> Procedure A:
+>         1. make multi_v7_defconfig
+>         2  enable MCPM for 5420
+>         3. enable S3C RTC
+>         4. pass "no_console_suspend" in bootargs
+>         5. echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
+> Procedure B:
+>         1. make exynos_defconfig
+>         2  disable BL_SWITCHER
+>         3. pass "no_console_suspend" in bootargs
+>         4. echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
+>
+> Abhilash Kesavan (2):
+>   ARM: exynos5: Add PMU support for 5420
+>   ARM: exynos5: Add Suspend-to-RAM support for 5420
+>
+>  arch/arm/mach-exynos/pm.c       |  149 +++++++++++++++++++-
+>  arch/arm/mach-exynos/pmu.c      |  288 +++++++++++++++++++++++++++++++++++++++
+>  arch/arm/mach-exynos/regs-pmu.h |  229 +++++++++++++++++++++++++++++++
+>  3 files changed, 665 insertions(+), 1 deletion(-)
+>
 
-The name of the SoC is Exynos7 and so all these patches are using
-Exynos7 in dt compatible string and file names. If there are any
-variants of Exynos7 SoC in future, support those variants will be
-based on what is already merged for Exynos7 SoC. There is no specific
-generalization targeted in this series by using Exynos7 name.
 
-Thanks,
-Thomas.
+Anymore comments on this....
+
 
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 1.7.9.5
+>
