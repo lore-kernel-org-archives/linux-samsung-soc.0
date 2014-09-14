@@ -1,88 +1,83 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: Re: [RESEND PATCH v4 2/2] ARM: EXYNOS: Refactor the pm code to use DT
- based lookup
-Date: Sun, 14 Sep 2014 20:29:15 +0530
-Message-ID: <CAGm_ybh7bXy3HkXeu54dP=5ZQsU--KB38XOhjamwO2fJ_AwygA@mail.gmail.com>
-References: <1408431167-14134-1-git-send-email-vikas.sajjan@samsung.com>
-	<1408431167-14134-3-git-send-email-vikas.sajjan@samsung.com>
-	<CAGm_ybjx4t7kGg0mJHjrox39jP-DNgc-0rkLNn2rcOLS6JjAHQ@mail.gmail.com>
-	<2186657.jhIisq7Fok@amdc1032>
-	<CAGm_ybhDsGpoHg8XVBOPEv7oHc0YdSZBW_JXB0hZk-y6Bac00g@mail.gmail.com>
-	<02aa01cfc77c$94865f20$bd931d60$@samsung.com>
-	<CAGm_ybj2jekeq0pqqYeXyr6e6cMRfVkto8=nGm=2utCnJSvy_g@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v3 0/5] Firmware-assisted suspend/resume of Exynos SoCs
+Date: Sun, 14 Sep 2014 19:47:20 +0200
+Message-ID: <5415D4A8.4010304@gmail.com>
+References: <1409062228-14690-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f177.google.com ([74.125.82.177]:37847 "EHLO
-	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752580AbaINO7R (ORCPT
+Received: from mail-wi0-f169.google.com ([209.85.212.169]:57139 "EHLO
+	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752523AbaINRrY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 14 Sep 2014 10:59:17 -0400
-Received: by mail-we0-f177.google.com with SMTP id u57so2837425wes.22
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 14 Sep 2014 07:59:15 -0700 (PDT)
-In-Reply-To: <CAGm_ybj2jekeq0pqqYeXyr6e6cMRfVkto8=nGm=2utCnJSvy_g@mail.gmail.com>
+	Sun, 14 Sep 2014 13:47:24 -0400
+In-Reply-To: <1409062228-14690-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, swarren@nvidia.com, acourbot@nvidia.com, Marek Szyprowski <m.szyprowski@samsung.com>, Olof Johansson <olof@lixom.net>, drake@endlessm.com, tomeu@tomeuvizoso.net
 
-Hi kukjin,
+Hi Kukjin,
 
+On 26.08.2014 16:10, Tomasz Figa wrote:
+> On Exynos-based boards running secure firmware the sequence of low level
+> operations to enter and leave system-wide sleep mode is different than
+> on those without the firmware. Namely:
+>  - CP15 power control and diagnostic registers cannot be written directly,
+>  - the way of setting boot address and boot flag is different,
+>  - different resume handler needs to be used,
+>  - dedicated SMC call needs to be performed instead of letting the CPU enter
+>    WFI.
+> 
+> This series introduces .suspend() and .resume() firmware operations to
+> perform low level firmware-specific suspend and resume and then leverages
+> them to provide suspend-resume path meeting the above requirements. Three
+> additional patches extend device tree sources of Trats2 board with necessary
+> setup to enable suspend/resume support.
+> 
+> This series has been tested on Exynos4412-based Trats2 board, without any
+> additional patches. Unfortunately v3.17-rc1 regressed ODROID support and
+> suspend stopped working on those boards, due to unknown reasons still being
+> investigated. It does not seem to be related to anything in this series,
+> though, so I would not consider this as a stopper.
+> 
+> Changes since v2:
+> (https://lkml.org/lkml/2014/7/17/431)
+>  - added board-specific fixes for device tree sources of Trats2 board,
+>  - rebased on next-20140826 of linux-next tree.
+> 
+> Changes since v1:
+>  - dropped outer_resume() - will be handled in assembly in further patches,
+>    as support for L2C in non-secure mode gets added,
+>  - moved CP15 resume to assembly as it needs to be done before MMU is enabled,
+>  - surrounded CP15 save with a check for cpuid part, because it is valid only
+>    on Cortex A9,
+>  - rebased on next-20140717 tag of linux-next tree.
+> 
+> Tomasz Figa (5):
+>   ARM: firmware: Introduce suspend and resume operations
+>   ARM: EXYNOS: Add support for firmware-assisted suspend/resume
+>   ARM: dts: exynos4412-trats2: Keep eMMC regulators soft-disabled
+>   ARM: dts: exynos4x12: Add utility macro to define pin sleep states
+>   ARM: dts: exynos4412-trats2: Add sleep mode pin configuration
+> 
+>  Documentation/arm/firmware.txt            |  28 +--
+>  arch/arm/boot/dts/exynos4412-trats2.dts   | 320 +++++++++++++++++++++++++++++-
+>  arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |  16 ++
+>  arch/arm/include/asm/firmware.h           |   8 +
+>  arch/arm/mach-exynos/Makefile             |   1 +
+>  arch/arm/mach-exynos/common.h             |   4 +
+>  arch/arm/mach-exynos/firmware.c           |  45 +++++
+>  arch/arm/mach-exynos/pm.c                 |  16 +-
+>  arch/arm/mach-exynos/sleep.S              |  28 +++
+>  arch/arm/mach-exynos/smc.h                |   4 +
+>  10 files changed, 438 insertions(+), 32 deletions(-)
+> 
 
-On Tue, Sep 9, 2014 at 11:24 AM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
-> Hi Kukjin,
->
-> On Wed, Sep 3, 2014 at 7:10 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> Vikas Sajjan wrote:
->>>
->>> Hi,
->>>
->> Hi,
->>
->> Sorry for late response...
->>
->>> On Tue, Aug 19, 2014 at 3:05 PM, Bartlomiej Zolnierkiewicz
->>> <b.zolnierkie@samsung.com> wrote:
->>> >
->>> > Hi,
->>> >
->>> > On Tuesday, August 19, 2014 01:26:49 PM Vikas Sajjan wrote:
->>> >> Hi Kukjin,
->>> >>
->>> >> On Tue, Aug 19, 2014 at 12:22 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
->>> >> > Refactoring the pm.c to avoid using "soc_is_exynos" checks,
->>> >> > instead use the DT based lookup.
->>> >> >
->>> >> > While at it, consolidate the common code across SoCs
->>> >> > and create static helper functions.
->>> >> >
->>> >> > Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
->>> >> > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
->>> >>
->>> >> Can you pick this series...
->>> >
->>> > I think that my PM_SLEEP=n build fixes should go in before this cleanup
->>> > series:
->>>
->>> Its better for Kukjin to decide which series he wants to pick first.
->>>
->> Hmm...I need to have a look at the Bart's fix then I'll let you know. Maybe
->> tomorrow morning ;)
->>
+Would you consider applying this series? It has been waiting on the ML
+long enough (note no changes in core patches since last revision, just
+few more board specific patches). Thanks in advance.
 
-Any plans to apply this series....
-
->
-> PING...
->
->>>
->>> >
->>> >   http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35430.html
->>> >
->>
->> - Kukjin
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+Tomasz
