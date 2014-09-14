@@ -1,63 +1,54 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 0/5] usb: phy: samsung: remove old USB PHY code
-Date: Sun, 14 Sep 2014 10:12:16 +0900
-Message-ID: <5414EB70.3080105@samsung.com>
-References: <1408026327-31437-1-git-send-email-b.zolnierkie@samsung.com> <20140820181244.GX24500@saruman.home> <9785858.kcvmMFDl1x@amdc1032>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH 00/14] Support 64bit Cortex A57 based Exynos7 SoC
+Date: Sun, 14 Sep 2014 19:15:14 +0530
+Message-ID: <CAJuA9ahjdZw23CyEJBO8wwypR0QCf=4+QXB1LXUSzc5rRoDe_w@mail.gmail.com>
+References: <1409132660-1898-1-git-send-email-ch.naveen@samsung.com>
+	<53FDC25A.2010806@samsung.com>
+	<54142324.600@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:41523 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752254AbaINBMY (ORCPT
+Received: from mail-la0-f42.google.com ([209.85.215.42]:59653 "EHLO
+	mail-la0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752441AbaINNpQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 13 Sep 2014 21:12:24 -0400
-In-Reply-To: <9785858.kcvmMFDl1x@amdc1032>
+	Sun, 14 Sep 2014 09:45:16 -0400
+In-Reply-To: <54142324.600@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: balbi@ti.com, Kukjin Kim <kgene.kim@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Kamil Debski <k.debski@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Mark Brown <broonie@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, catalin.marinas@arm.com, naveenkrishna.ch@gmail.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, cpgs@samsung.com
 
-On 08/23/14 02:14, Bartlomiej Zolnierkiewicz wrote:
->
-> Hi,
->
-> On Wednesday, August 20, 2014 01:12:44 PM Felipe Balbi wrote:
->> Hi,
+Hi Tomasz,
+
+On Sat, Sep 13, 2014 at 4:27 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On 27.08.2014 13:34, Tomasz Figa wrote:
+>> Hi Naveen,
 >>
->> On Thu, Aug 14, 2014 at 04:25:22PM +0200, Bartlomiej Zolnierkiewicz wrote:
->>> Hi,
->>>
->>> This patch series removes the old Samsung USB PHY drivers that
->>> got replaced by the new ones using the generic PHY layer.
->>>
->>> Depends on:
->>> - next-20140813 branch of linux-next kernel
+>> On 27.08.2014 11:44, Naveen Krishna Chatradhi wrote:
+>>> This patchset supports new Exynos7 Samsung SoC based on Cortex-A57.
+>>> Exynos7 is a System-On-Chip (SoC) that is based on 64-bit
+>>> ARMv8 RISC processor.
 >>
->> this thread seems to have died, what do I need to do with these patches?
+>> A general issue with this series is that it introduces a very generic
+>> name for a very specific single SoC. We remember exactly the same cases
+>> for Exynos4 (original name used for Exynos5250) and Exynos5 (Exynos5250)
+>> and we should have learned that it is better to use a specific name
+>> first and only then try to make things common if it turns out to be
+>> appropriate.
 >
-> Please apply them (patches #3, #4 and #5).  Patches #1 and #2
-> should be applied (or Acked-by) by Kukjin Kim.
->
-I've applied #1 and #2, sorry for late taking.
+> Any comments on this?
+
+The name of the SoC is Exynos7 and so all these patches are using
+Exynos7 in dt compatible string and file names. If there are any
+variants of Exynos7 SoC in future, support those variants will be
+based on what is already merged for Exynos7 SoC. There is no specific
+generalization targeted in this series by using Exynos7 name.
 
 Thanks,
-Kukjin
+Thomas.
 
->> Are we deleting the phy drivers or not ?
->
-> Yes, we are deleting them.  It has been agreed on by Kishon and
-> Vivek.
->
->> Please rebase on v3.17-rc1 and resend with all Acks in place.
->
-> Done:
->
-> 	https://lkml.org/lkml/2014/8/22/446
->
-> Please note that if you want to apply it to current -next kernel
-> (next-20140822) then you need to resolve conflict between patch
-> #5/5 ("usb: phy: samsung: remove old common USB PHY code") and
-> commit bbc66e140bab ("usb: phy: samsung: Fix wrong bit mask for
-> PHYPARAM1_PCS_TXDEEMPH") by simply removing the new version of
-> drivers/usb/phy/phy-samsung-usb.h file.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
