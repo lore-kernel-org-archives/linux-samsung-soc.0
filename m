@@ -1,67 +1,56 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v4 6/7] ARM: EXYNOS: Add support for non-secure L2X0
-	resume
-Date: Mon, 15 Sep 2014 10:03:53 +0100
-Message-ID: <20140915090353.GD12379@n2100.arm.linux.org.uk>
-References: <1409062680-15906-1-git-send-email-t.figa@samsung.com> <1409062680-15906-7-git-send-email-t.figa@samsung.com>
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Subject: [PATCH 0/3 v3] Fix Exynos USB on kernels with USB Gadget support
+Date: Mon, 15 Sep 2014 12:52:31 +0200
+Message-ID: <1410778354-31210-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:56907 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1753252AbaIOJED (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:38757 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753237AbaIOKwy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Sep 2014 05:04:03 -0400
-Content-Disposition: inline
-In-Reply-To: <1409062680-15906-7-git-send-email-t.figa@samsung.com>
+	Mon, 15 Sep 2014 06:52:54 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, linux-omap@vger.kernel.org, linus.walleij@linaro.org, santosh.shilimkar@ti.com, tony@atomide.com, drake@endlessm.com, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, loeliger@gmail.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
-On Tue, Aug 26, 2014 at 04:17:59PM +0200, Tomasz Figa wrote:
-> On Exynos SoCs it is necessary to resume operation of L2C early in
-> assembly code, because otherwise certain systems will crash. This patch
-> adds necessary code to non-secure resume handler.
-> 
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> ---
->  arch/arm/mach-exynos/common.h   |  1 +
->  arch/arm/mach-exynos/firmware.c |  4 +++-
->  arch/arm/mach-exynos/sleep.S    | 41 +++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 45 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-> index c218200..e88c0f9 100644
-> --- a/arch/arm/mach-exynos/common.h
-> +++ b/arch/arm/mach-exynos/common.h
-> @@ -113,6 +113,7 @@ IS_SAMSUNG_CPU(exynos5800, EXYNOS5800_SOC_ID, EXYNOS5_SOC_MASK)
->  
->  extern u32 cp15_save_diag;
->  extern u32 cp15_save_power;
-> +extern unsigned long l2x0_regs_phys;
->  
->  extern void __iomem *sysram_ns_base_addr;
->  extern void __iomem *sysram_base_addr;
-> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
-> index 554b350..71bcfbd 100644
-> --- a/arch/arm/mach-exynos/firmware.c
-> +++ b/arch/arm/mach-exynos/firmware.c
-> @@ -102,7 +102,9 @@ static int exynos_suspend(void)
->  	writel(EXYNOS_SLEEP_MAGIC, sysram_ns_base_addr + EXYNOS_BOOT_FLAG);
->  	writel(virt_to_phys(exynos_cpu_resume_ns),
->  		sysram_ns_base_addr + EXYNOS_BOOT_ADDR);
-> -
-> +#ifdef CONFIG_CACHE_L2X0
-> +	l2x0_regs_phys = virt_to_phys(&l2x0_saved_regs);
-> +#endif
+When building a kernel with support for both USB host and USB Gadget su=
+pport on
+the dwc3 controller on the Exynos5 soc will go into USB OTG mode unless
+otherwise specified in the dtb, which is unhelpful for boards hooked up=
+ to run
+as USB host.
 
-NAK.  Please look at how arch/arm/mm/l2c-l2x0-resume.S gets the address
-of this structure in assembly code.  The name of this variable is crap
-in any case.  It's not the registers, it's the saved registers.  So even
-more reason to kill this abomination, which incidentally, I've already
-killed off once before in the exynos code.
+=46irst patch in this set explicitely set the dual-role mode for the dw=
+c3
+controller on Peach pi and Peach pit boards to host mode. Second patch =
+adds
+similar updates for Arndale Octa as reported by Andreas F=C3=A4rber. La=
+st patch
+enables gadget mode in the default exynos config to more easily catch/t=
+rigger
+issues like these.
 
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+I suspect the Samsung SMDK5420 DTS might need similar changes, so it wo=
+uld be
+great if users of those board could verify this.
+
+Changes in v2: alphabetically sort the dts entries
+Changes in v3: Add DTS updates for arndale octa
+
+Sjoerd Simons (3):
+  ARM: dts: exynos: Explicitly set dr_mode on peach-pit and peach-pi
+  ARM: dts: exynos: Explicitly set dr_mode on arndale-octa
+  ARM: exynos_defconfig: enable USB gadget support
+
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts | 4 ++++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts    | 8 ++++++++
+ arch/arm/boot/dts/exynos5420.dtsi             | 4 ++--
+ arch/arm/boot/dts/exynos5800-peach-pi.dts     | 8 ++++++++
+ arch/arm/configs/exynos_defconfig             | 1 +
+ 5 files changed, 23 insertions(+), 2 deletions(-)
+
+--=20
+2.1.0
