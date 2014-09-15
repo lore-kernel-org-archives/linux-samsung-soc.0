@@ -1,76 +1,53 @@
-From: Jacek Anaszewski <j.anaszewski@samsung.com>
-Subject: Re: [PATCH v4] ARM: dts: exynos3250: add MFC codec device node
-Date: Mon, 15 Sep 2014 13:45:09 +0200
-Message-ID: <5416D145.5080402@samsung.com>
-References: <1410268169-18424-1-git-send-email-j.anaszewski@samsung.com>
- <1410268169-18424-2-git-send-email-j.anaszewski@samsung.com>
- <541479F3.2030907@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:64843 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753526AbaIOLpN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Sep 2014 07:45:13 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NBX007MHY41A800@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 15 Sep 2014 12:48:01 +0100 (BST)
-In-reply-to: <541479F3.2030907@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH 3/3] arm: dts: Exynos5: Use pmu_system_controller phandle for dp phy
+Date: Mon, 15 Sep 2014 18:43:05 +0530
+Message-ID: <1410786785-9838-4-git-send-email-gautam.vivek@samsung.com>
+References: <1410786785-9838-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1410786785-9838-1-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: inki.dae@samsung.com, seanpaul@google.com, kishon@ti.com, ajaykumar.rs@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>, Jingoo Han <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hi Kukjin,
+DP PHY now require pmu-system-controller to handle PMU register
+to control PHY's power isolation. Adding the same to dp-phy
+node.
 
-On 09/13/2014 07:08 PM, Kukjin Kim wrote:
-> On 09/09/14 22:09, Jacek Anaszewski wrote:
->> Signed-off-by: Jacek Anaszewski<j.anaszewski@samsung.com>
->> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
->> Cc: Kukjin Kim<kgene.kim@samsung.com>
->> ---
->>   arch/arm/boot/dts/exynos3250.dtsi |   12 ++++++++++++
->>   1 file changed, 12 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/exynos3250.dtsi
->> b/arch/arm/boot/dts/exynos3250.dtsi
->> index bbc1e4c..95cc5a1 100644
->> --- a/arch/arm/boot/dts/exynos3250.dtsi
->> +++ b/arch/arm/boot/dts/exynos3250.dtsi
->> @@ -294,6 +294,18 @@
->>               status = "disabled";
->>           };
->>
->> +        mfc-codec@13400000 {
->
-> mfc: codec@13400000 {
->
->> +            compatible = "samsung,mfc-v7";
->> +            reg =<0x13400000 0x10000>;
->> +            interrupts =<0 102 0>;
->> +            clock-names = "mfc", "sclk_mfc";
->> +            clocks =<&cmu CLK_MFC>,<&cmu CLK_SCLK_MFC>;
->> +            #address-cells =<1>;
->> +            #size-cells =<0>;
->
-> are the address-cells and size-cells required here?
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: Jingoo Han <jg1.han@samsung.com>
+---
+ arch/arm/boot/dts/exynos5250.dtsi |    2 +-
+ arch/arm/boot/dts/exynos5420.dtsi |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-They are not. I overlooked this.
-
->> +            samsung,power-domain =<&pd_mfc>;
->> +            status = "disabled";
->> +        };
->> +
->>           serial_0: serial@13800000 {
->>               compatible = "samsung,exynos4210-uart";
->>               reg =<0x13800000 0x100>;
->
-> - Kukjin
->
-
-Best Regards,
-Jacek Anaszewski
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index f21b9aa..9b85a2b 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -732,7 +732,7 @@
+ 
+ 	dp_phy: video-phy@10040720 {
+ 		compatible = "samsung,exynos5250-dp-video-phy";
+-		reg = <0x10040720 4>;
++		samsung,pmu-syscon = <&pmu_system_controller>;
+ 		#phy-cells = <0>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index bfe056d..a677812 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -503,8 +503,8 @@
+ 	};
+ 
+ 	dp_phy: video-phy@10040728 {
+-		compatible = "samsung,exynos5250-dp-video-phy";
+-		reg = <0x10040728 4>;
++		compatible = "samsung,exynos5420-dp-video-phy";
++		samsung,pmu-syscon = <&pmu_system_controller>;
+ 		#phy-cells = <0>;
+ 	};
+ 
+-- 
+1.7.10.4
