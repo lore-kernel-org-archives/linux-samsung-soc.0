@@ -1,62 +1,92 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Exynos build failure in -next allmodconfig
-Date: Mon, 15 Sep 2014 09:34:58 -0700
-Message-ID: <20140915163458.GS7960@sirena.org.uk>
-References: <E1XTTy1-0000vT-NC@cassiel.sirena.org.uk>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH V6 6/8] drm/bridge: Modify drm_bridge core to support driver model
+Date: Mon, 15 Sep 2014 20:37:57 +0300
+Message-ID: <2567411.1uGei9I2NP@avalon>
+References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com> <1406316130-4744-7-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="BOY+hQj86lETlGFu"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43002 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754172AbaIOQoJ (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:38054 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753190AbaIORhz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Sep 2014 12:44:09 -0400
-Content-Disposition: inline
-In-Reply-To: <E1XTTy1-0000vT-NC@cassiel.sirena.org.uk>
+	Mon, 15 Sep 2014 13:37:55 -0400
+In-Reply-To: <1406316130-4744-7-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kernel-build-reports@lists.linaro.org, linaro-kernel@lists.linaro.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+To: dri-devel@lists.freedesktop.org
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, seanpaul@google.com, daniel.vetter@ffwll.ch, joshi@samsung.com, ajaynumb@gmail.com, prashanth.g@samsung.com, Sean Cross <xobs@kosagi.com>, Thierry Reding <thierry.reding@gmail.com>
 
+Hi Ajay,
 
---BOY+hQj86lETlGFu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thank you for the patch.
 
-On Mon, Sep 15, 2014 at 11:57:09AM +0100, Build bot for Mark Brown wrote:
+I think we're moving in the right direction, but we're not there yet.
 
-Today's -next got a build failure in ARM allmodconfig due to platsmp.c:
+On Saturday 26 July 2014 00:52:08 Ajay Kumar wrote:
+> This patch tries to seperate drm_bridge implementation
+> into 2 parts, a drm part and a non_drm part.
+> 
+> A set of helper functions are defined in this patch to make
+> bridge driver probe independent of the drm flow.
+> 
+> The bridge devices register themselves on a lookup table
+> when they get probed by calling "drm_bridge_add_for_lookup".
+> 
+> The parent encoder driver waits till the bridge is available in the
+> lookup table(by calling "of_drm_find_bridge") and then continues with
+> its initialization.
 
-| arch/arm/mach-exynos/platsmp.c:198:31: warning: incorrect type in return expression (different address spaces)
-| arch/arm/mach-exynos/platsmp.c:198:31:    expected void [noderef] <asn:2>*
-| arch/arm/mach-exynos/platsmp.c:198:31:    got void *
-| arch/arm/mach-exynos/platsmp.c:198:31: warning: incorrect type in return expression (different address spaces)
-| arch/arm/mach-exynos/platsmp.c:198:31:    expected void [noderef] <asn:2>*
-| arch/arm/mach-exynos/platsmp.c:198:31:    got void *
-|   CC      arch/arm/mach-exynos/platsmp.o
-| /tmp/ccC9fkwF.s: Assembler messages:
-| /tmp/ccC9fkwF.s:423: Error: selected processor does not support ARM mode `isb '
-| /tmp/ccC9fkwF.s:428: Error: selected processor does not support ARM mode `isb '
-| /tmp/ccC9fkwF.s:429: Error: selected processor does not support ARM mode `dsb '
-| scripts/Makefile.build:257: recipe for target 'arch/arm/mach-exynos/platsmp.o' failed
+Before the introduction of the component framework I would have said this is 
+the way to go. Now, I think bridges should register themselves as components, 
+and the DRM master driver should use the component framework to get a 
+reference to the bridges it needs.
 
-Looks like we need a compiler flags override for that file.
+> The encoder driver should call "drm_bridge_attach_encoder" to pass on
+> the drm_device and the encoder pointers to the bridge object.
+> 
+> Now that the drm_device pointer is available, the encoder then calls
+> "bridge->funcs->post_encoder_init" to allow the bridge to continue
+> registering itself with the drm core.
 
---BOY+hQj86lETlGFu
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+This is what really bothers me with DRM bridge.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+The framework assumes that a bridge will always bridge an encoder and a 
+connector. Beside lacking support for chained bridges, this creates an 
+artificial split between bridges and encoders by modeling the same components 
+using drm_encoder or drm_bridge depending on their position in the video 
+output pipeline.
 
-iQEcBAEBAgAGBQJUFxUyAAoJECTWi3JdVIfQkgcH/0cPA3WlheHMtFTAM5Tu1YoM
-nS6hCb4C16JBtdfvqQLJue8LCs3jMcUPvn1gkNLazfikfVVUrOSrpkA9UeY4S4U7
-rNxPpeD91+kUB44+LtIfkC1cRFbBbirOsyfNcG61+OKDT1zb9vJZUL67MfmDkFQs
-j/3zQnfr2Xtzi6wDmL/ZzuqzNbZgbuvQdFBmzaNdN54vZUmTGRloEM5tDFU1Woro
-uXB64rZgYFxAOF6/95ASLE/F7Bkt+b1pmMfI9FuLxKHAWVbPvRMrmWyEb4Cb6kZt
-uCvdy0dmwXnA0MyFVuGsUhuqI8Bxblut4AOU1A97iyuOzYA0nywYjbCJPnMvasM=
-=4fU7
------END PGP SIGNATURE-----
+I would like to see drm_bridge becoming more self-centric, removing the 
+awareness of the upstream encoder and downstream connector. I'll give this a 
+try, but it will conflict with this patch, so I'd like to share opinions and 
+coordinate efforts sooner than later if possible.
 
---BOY+hQj86lETlGFu--
+> Also, non driver model based ptn3460 driver is removed in this patch.
+> 
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> ---
+>  .../devicetree/bindings/drm/bridge/ptn3460.txt     |   27 --
+>  drivers/gpu/drm/Makefile                           |    1 +
+>  drivers/gpu/drm/bridge/Kconfig                     |   12 +-
+>  drivers/gpu/drm/bridge/Makefile                    |    2 -
+>  drivers/gpu/drm/bridge/ptn3460.c                   |  343 -----------------
+>  drivers/gpu/drm/drm_bridge.c                       |   89 +++++
+>  drivers/gpu/drm/drm_crtc.c                         |    9 +-
+>  drivers/gpu/drm/exynos/Kconfig                     |    3 +-
+>  drivers/gpu/drm/exynos/exynos_dp_core.c            |   57 ++--
+>  drivers/gpu/drm/exynos/exynos_dp_core.h            |    1 +
+>  drivers/gpu/drm/msm/hdmi/hdmi_bridge.c             |    3 +-
+>  include/drm/bridge/ptn3460.h                       |   37 ---
+>  include/drm/drm_crtc.h                             |   16 +-
+>  13 files changed, 147 insertions(+), 453 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/drm/bridge/ptn3460.txt
+>  delete mode 100644 drivers/gpu/drm/bridge/ptn3460.c
+>  create mode 100644 drivers/gpu/drm/drm_bridge.c
+>  delete mode 100644 include/drm/bridge/ptn3460.h
+
+-- 
+Regards,
+
+Laurent Pinchart
