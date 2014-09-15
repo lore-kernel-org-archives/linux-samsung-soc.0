@@ -1,32 +1,50 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH 0/3]  drm-exynos-dp/phy-exynos-dp: Refactor to use pmu-system-controller and dp driver cleanup
-Date: Mon, 15 Sep 2014 18:43:02 +0530
-Message-ID: <1410786785-9838-1-git-send-email-gautam.vivek@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH RESEND v9 1/5] rtc: max77686: Allow the max77686 rtc to
+ wakeup the system
+Date: Mon, 15 Sep 2014 16:03:09 +0200
+Message-ID: <5416F19D.4030105@collabora.co.uk>
+References: <1410509864-10019-1-git-send-email-javier.martinez@collabora.co.uk>	<1410509864-10019-2-git-send-email-javier.martinez@collabora.co.uk> <20140912150537.56419981804c68f9108a22b6@linux-foundation.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140912150537.56419981804c68f9108a22b6@linux-foundation.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: inki.dae@samsung.com, seanpaul@google.com, kishon@ti.com, ajaykumar.rs@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-These patches are based on 'for-next' branch of kgene's linux-samsung tree.
+Hello Andrew,
 
-Refactoring the exynos-dp-video phy to use pmu-system-controller handle
-and access the register using mfd-syscon and regmap.
-Simultaneously, removing the support for older dptx-phy, since it's obsolete
-now and noone uses it.
+Thanks a lot for taking a look to these patches!
 
-Vivek Gautam (3):
-  phy: exynos-dp-video: Use syscon support to control pmu register
-  drm/exynos: dp: Remove support for unused dptx-phy
-  arm: dts: Exynos5: Use pmu_system_controller phandle for dp phy
+On 09/13/2014 12:05 AM, Andrew Morton wrote:
+> On Fri, 12 Sep 2014 10:17:39 +0200 Javier Martinez Canillas <javier.martinez@collabora.co.uk> wrote:
+> 
+>> From: Doug Anderson <dianders@chromium.org>
+>> 
+>> The max77686 includes an RTC that keeps power during suspend.  It's
+>> convenient to be able to use it as a wakeup source.
+>> 
+>> NOTE: due to wakeup ordering problems this patch alone doesn't work so
+>> well on exynos5250-snow.  You also need something that brings the i2c
+>> bus up before the max77686 wakeup runs.
+> 
+> I removed this paragraph.
+> 
 
- .../devicetree/bindings/phy/samsung-phy.txt        |    7 +-
- arch/arm/boot/dts/exynos5250.dtsi                  |    2 +-
- arch/arm/boot/dts/exynos5420.dtsi                  |    4 +-
- drivers/gpu/drm/exynos/exynos_dp_core.c            |   58 ++++-----------
- drivers/gpu/drm/exynos/exynos_dp_core.h            |    2 -
- drivers/phy/phy-exynos-dp-video.c                  |   76 ++++++++++++++------
- 6 files changed, 75 insertions(+), 74 deletions(-)
+Great.
 
--- 
-1.7.10.4
+>> Signed-off-by: Doug Anderson <dianders@chromium.org>
+>> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> 
+> And I rewrote this to Signed-off-by:, as you were on the patch delivery
+> path. Documentation/SubmittingPatches section 12 has the gory details.
+> 
+
+Yes, originally Doug posted this patch separately but was never picked so I
+included on my series but forgot to add my s-o-b and also to remove the note
+paragraph.
+
+Best regards,
+Javier
