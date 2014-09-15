@@ -1,91 +1,100 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Add Maxim 77693 PMIC to the Trats2 board
-Date: Mon, 15 Sep 2014 16:56:06 +0200
-Message-ID: <1410792966.883.2.camel@AMDC1943>
-References: <1410523386-10581-1-git-send-email-k.kozlowski@samsung.com>
- <CABxcv=mYWDVwOWbvV4xy+xS5tQUrCexCT_LD7hgUO2d3FPe56w@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:23408 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753132AbaIOO4K (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Sep 2014 10:56:10 -0400
-In-reply-to: <CABxcv=mYWDVwOWbvV4xy+xS5tQUrCexCT_LD7hgUO2d3FPe56w@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH v2] ARM: dts: Add Maxim 77693 PMIC to the Trats2 board
+Date: Mon, 15 Sep 2014 17:06:04 +0200
+Message-ID: <1410793564-30445-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-On pon, 2014-09-15 at 16:36 +0200, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On Fri, Sep 12, 2014 at 2:03 PM, Krzysztof Kozlowski
-> <k.kozlowski@samsung.com> wrote:
-> > +       i2c_max77693: i2c-gpio-1 {
-> > +               compatible = "i2c-gpio";
-> > +               gpios = <&gpm2 0 0>, <&gpm2 1 0 >;
-> 
-> Can you please include <dt-bindings/gpio/gpio.h> and use
-> GPIO_ACTIVE_HIGH instead of 0 here for the type/level flags?
+The MAX77693 is a companion power management IC for smart phones and tablets.
 
-Sure!
+The MAX77693 contains input over-voltage protection (OVP),
+a fully-integrated 2.5A switching charger for Lithium Ion battery with
+integrated battery disconnect, OTG/accessory 5V output power,
+a high-current white LED driver for camera flash, two safeout LDOs,
+a haptic motor driver, Model Gauge m3 battery fuel gauge and MicroUSB
+Interface Controller (MUIC). I2C serial interface is used for
+communicating.
 
-> 
-> > +               i2c-gpio,delay-us = <2>;
-> > +               #address-cells = <1>;
-> > +               #size-cells = <0>;
-> > +               status = "okay";
-> > +
-> > +               max77693@66 {
-> > +                       compatible = "maxim,max77693";
-> > +                       interrupt-parent = <&gpx1>;
-> > +                       interrupts = <5 2>;
-> > +                       reg = <0x66>;
-> > +
-> > +                       regulators {
-> > +                               esafeout1_reg: esafeout@1 {
-> > +                                       regulator-compatible = "ESAFEOUT1";
-> 
-> According to Documentation/devicetree/bindings/regulator/regulator.txt,
-> the "regulator-compatible" DT property has been deprecated in favor of
-> just using the regulator node's name.
+Add MAX77693 node to the Trats2 board. This allows using:
+ - charger regulator,
+ - 2 safeout LDO regulators (for USB OTG),
+ - extcon.
 
-OK
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-> 
-> > +                                       regulator-name = "ESAFEOUT1";
-> > +                               };
-> > +                               esafeout2_reg: esafeout@2 {
-> > +                                       regulator-compatible = "ESAFEOUT2";
-> > +                                       regulator-name = "ESAFEOUT2";
-> > +                               };
-> > +                               charger_reg: charger@0 {
-> > +                                       regulator-compatible = "CHARGER";
-> > +                                       regulator-name = "CHARGER";
-> > +                                       regulator-min-microamp = <60000>;
-> > +                                       regulator-max-microamp = <2580000>;
-> > +                               };
-> > +                       };
-> > +               };
-> > +       };
-> > +
-> >         mmc@12550000 {
-> >                 num-slots = <1>;
-> >                 supports-highspeed;
-> >
-> 
-> Once those two issues are addressed, feel free to add my
-> 
-> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
 
-Thank you for feedback!
+Changes since v1:
+==================
+1. Use GPIO_ACTIVE_HIGH for gpio flags (suggested by Javier Martinez
+   Canillas).
+2. Use regulator node name instead of deprecated regulator-compatible
+   property (suggested by Javier Martinez Canillas).
+3. Add Javier Martinez Canillas' reviewed-by tag.
+---
+ arch/arm/boot/dts/exynos4412-trats2.dts | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-Best regards,
-Krzysztof
-
-> 
-> Best regards,
-> Javier
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 11967f4561e0..1953317bd658 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -14,6 +14,7 @@
+ 
+ /dts-v1/;
+ #include "exynos4412.dtsi"
++#include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+ 	model = "Samsung Trats 2 based on Exynos4412";
+@@ -22,6 +23,7 @@
+ 	aliases {
+ 		i2c9 = &i2c_ak8975;
+ 		i2c10 = &i2c_cm36651;
++		i2c11 = &i2c_max77693;
+ 	};
+ 
+ 	memory {
+@@ -518,6 +520,36 @@
+ 		};
+ 	};
+ 
++	i2c_max77693: i2c-gpio-1 {
++		compatible = "i2c-gpio";
++		gpios = <&gpm2 0 GPIO_ACTIVE_HIGH>, <&gpm2 1 GPIO_ACTIVE_HIGH>;
++		i2c-gpio,delay-us = <2>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "okay";
++
++		max77693@66 {
++			compatible = "maxim,max77693";
++			interrupt-parent = <&gpx1>;
++			interrupts = <5 2>;
++			reg = <0x66>;
++
++			regulators {
++				esafeout1_reg: ESAFEOUT1@1 {
++					regulator-name = "ESAFEOUT1";
++				};
++				esafeout2_reg: ESAFEOUT2@2 {
++					regulator-name = "ESAFEOUT2";
++				};
++				charger_reg: CHARGER@0 {
++					regulator-name = "CHARGER";
++					regulator-min-microamp = <60000>;
++					regulator-max-microamp = <2580000>;
++				};
++			};
++		};
++	};
++
+ 	mmc@12550000 {
+ 		num-slots = <1>;
+ 		supports-highspeed;
+-- 
+1.9.1
