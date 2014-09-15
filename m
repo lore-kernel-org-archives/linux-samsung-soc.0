@@ -1,64 +1,78 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH RESEND v9 5/5] rtc: Add driver for Maxim 77802 PMIC Real-Time-Clock
-Date: Mon, 15 Sep 2014 16:07:46 +0200
-Message-ID: <5416F2B2.1060300@collabora.co.uk>
-References: <1410509864-10019-1-git-send-email-javier.martinez@collabora.co.uk>	<1410509864-10019-6-git-send-email-javier.martinez@collabora.co.uk> <20140912151334.cd53fca611a7de487f23241b@linux-foundation.org>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH] ARM: dts: Add Maxim 77693 PMIC to the Trats2 board
+Date: Mon, 15 Sep 2014 16:36:27 +0200
+Message-ID: <CABxcv=mYWDVwOWbvV4xy+xS5tQUrCexCT_LD7hgUO2d3FPe56w@mail.gmail.com>
+References: <1410523386-10581-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:38896 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753077AbaIOOHt (ORCPT
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:48992 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752826AbaIOOg3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Sep 2014 10:07:49 -0400
-In-Reply-To: <20140912151334.cd53fca611a7de487f23241b@linux-foundation.org>
+	Mon, 15 Sep 2014 10:36:29 -0400
+Received: by mail-wi0-f174.google.com with SMTP id n3so4370666wiv.13
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 15 Sep 2014 07:36:28 -0700 (PDT)
+In-Reply-To: <1410523386-10581-1-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alessandro Zummo <a.zummo@towertech.it>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Simon Glass <sjg@chromium.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
-Hello Andrew,
+Hello Krzysztof,
 
-On 09/13/2014 12:13 AM, Andrew Morton wrote:
-> On Fri, 12 Sep 2014 10:17:43 +0200 Javier Martinez Canillas <javier.martinez@collabora.co.uk> wrote:
-> 
->> The MAX7802 PMIC has a Real-Time-Clock (RTC) with two alarms.
->> This patch adds support for the RTC and is based on a driver
->> added by Simon Glass to the Chrome OS kernel 3.8 tree.
->> 
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> Would it be appropriate to gather Simon's signoff?
-> 
+On Fri, Sep 12, 2014 at 2:03 PM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> +       i2c_max77693: i2c-gpio-1 {
+> +               compatible = "i2c-gpio";
+> +               gpios = <&gpm2 0 0>, <&gpm2 1 0 >;
 
-I don't know. The original driver written by Simon supported 2 devices:
-max77686 and max77802. I split the max77802 bits and addressed all the issues
-pointed out on early revisions so even when Simon is mentioned as the
-MODULE_AUTHOR(), I didn't know if he would like his s-o-b to remain in the
-patch since it was quite different than the original one from which was based.
+Can you please include <dt-bindings/gpio/gpio.h> and use
+GPIO_ACTIVE_HIGH instead of 0 here for the type/level flags?
 
->> +static inline int max77802_rtc_calculate_wday(u8 shifted)
->> +{
->> +	int counter = -1;
->> +
->> +	while (shifted) {
->> +		shifted >>= 1;
->> +		counter++;
->> +	}
-> 
-> Can't use log2() or similar?
-> 
+> +               i2c-gpio,delay-us = <2>;
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +               status = "okay";
+> +
+> +               max77693@66 {
+> +                       compatible = "maxim,max77693";
+> +                       interrupt-parent = <&gpx1>;
+> +                       interrupts = <5 2>;
+> +                       reg = <0x66>;
+> +
+> +                       regulators {
+> +                               esafeout1_reg: esafeout@1 {
+> +                                       regulator-compatible = "ESAFEOUT1";
 
-Yes, ffs() - 1 can be used instead of this function indeed.
+According to Documentation/devicetree/bindings/regulator/regulator.txt,
+the "regulator-compatible" DT property has been deprecated in favor of
+just using the regulator node's name.
 
-I see that you already included this patch to your -mm tree [0]. Does it mean
-that I've to send a follow-up patch on top of this to remove this function or
-should I send a new version of this patch?
+> +                                       regulator-name = "ESAFEOUT1";
+> +                               };
+> +                               esafeout2_reg: esafeout@2 {
+> +                                       regulator-compatible = "ESAFEOUT2";
+> +                                       regulator-name = "ESAFEOUT2";
+> +                               };
+> +                               charger_reg: charger@0 {
+> +                                       regulator-compatible = "CHARGER";
+> +                                       regulator-name = "CHARGER";
+> +                                       regulator-min-microamp = <60000>;
+> +                                       regulator-max-microamp = <2580000>;
+> +                               };
+> +                       };
+> +               };
+> +       };
+> +
+>         mmc@12550000 {
+>                 num-slots = <1>;
+>                 supports-highspeed;
+>
+
+Once those two issues are addressed, feel free to add my
+
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
 Best regards,
 Javier
-
-[0]:
-http://ozlabs.org/~akpm/mmots/broken-out/rtc-add-driver-for-maxim-77802-pmic-real-time-clock.patch
