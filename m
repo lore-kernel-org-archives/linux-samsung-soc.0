@@ -1,90 +1,69 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v3 0/5] Firmware-assisted suspend/resume of Exynos SoCs
-Date: Mon, 15 Sep 2014 09:21:55 +0900
-Message-ID: <0d2401cfd07b$0e21e190$2a65a4b0$@kernel.org>
-References: <1409062228-14690-1-git-send-email-t.figa@samsung.com>
- <5415D4A8.4010304@gmail.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v4 5/7] ARM: EXYNOS: Add .write_sec outer cache
+	callback for L2C-310
+Date: Mon, 15 Sep 2014 09:58:45 +0100
+Message-ID: <20140915085845.GC12379@n2100.arm.linux.org.uk>
+References: <1409062680-15906-1-git-send-email-t.figa@samsung.com> <1409062680-15906-6-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:35967 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752907AbaIOAWB (ORCPT
+Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:56891 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1753430AbaIOI65 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 14 Sep 2014 20:22:01 -0400
-In-reply-to: <5415D4A8.4010304@gmail.com>
-Content-language: ko
+	Mon, 15 Sep 2014 04:58:57 -0400
+Content-Disposition: inline
+In-Reply-To: <1409062680-15906-6-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Arnd Bergmann' <arnd@arndb.de>, swarren@nvidia.com, acourbot@nvidia.com, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Olof Johansson' <olof@lixom.net>, drake@endlessm.com, tomeu@tomeuvizoso.net
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, linux-omap@vger.kernel.org, linus.walleij@linaro.org, santosh.shilimkar@ti.com, tony@atomide.com, drake@endlessm.com, Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, loeliger@gmail.com
 
-Tomasz Figa wrote:
+On Tue, Aug 26, 2014 at 04:17:58PM +0200, Tomasz Figa wrote:
+> Exynos4 SoCs equipped with an L2C-310 cache controller and running under
+> secure firmware require certain registers of aforementioned IP to be
+> accessed only from secure mode. This means that SMC calls are required
+> for certain register writes. To handle this, an implementation of
+> .write_sec and .configure callbacks is provided by this patch.
 > 
-> Hi Kukjin,
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> ---
+>  arch/arm/mach-exynos/firmware.c | 38 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
 > 
-Hi,
+> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+> index f5e626d..554b350 100644
+> --- a/arch/arm/mach-exynos/firmware.c
+> +++ b/arch/arm/mach-exynos/firmware.c
+> @@ -17,6 +17,7 @@
+>  #include <asm/cacheflush.h>
+>  #include <asm/cputype.h>
+>  #include <asm/firmware.h>
+> +#include <asm/hardware/cache-l2x0.h>
+>  #include <asm/suspend.h>
+>  
+>  #include <mach/map.h>
+> @@ -120,6 +121,31 @@ static const struct firmware_ops exynos_firmware_ops = {
+>  	.resume			= exynos_resume,
+>  };
+>  
+> +static void exynos_l2_write_sec(unsigned long val, unsigned reg)
+> +{
+> +	switch (reg) {
+> +	case L2X0_CTRL:
+> +		if (val & L2X0_CTRL_EN)
+> +			exynos_smc(SMC_CMD_L2X0INVALL, 0, 0, 0);
 
-> On 26.08.2014 16:10, Tomasz Figa wrote:
-> > On Exynos-based boards running secure firmware the sequence of low level
-> > operations to enter and leave system-wide sleep mode is different than
-> > on those without the firmware. Namely:
-> >  - CP15 power control and diagnostic registers cannot be written directly,
-> >  - the way of setting boot address and boot flag is different,
-> >  - different resume handler needs to be used,
-> >  - dedicated SMC call needs to be performed instead of letting the CPU enter
-> >    WFI.
-> >
-> > This series introduces .suspend() and .resume() firmware operations to
-> > perform low level firmware-specific suspend and resume and then leverages
-> > them to provide suspend-resume path meeting the above requirements. Three
-> > additional patches extend device tree sources of Trats2 board with necessary
-> > setup to enable suspend/resume support.
-> >
-> > This series has been tested on Exynos4412-based Trats2 board, without any
-> > additional patches. Unfortunately v3.17-rc1 regressed ODROID support and
-> > suspend stopped working on those boards, due to unknown reasons still being
-> > investigated. It does not seem to be related to anything in this series,
-> > though, so I would not consider this as a stopper.
-> >
-> > Changes since v2:
-> > (https://lkml.org/lkml/2014/7/17/431)
-> >  - added board-specific fixes for device tree sources of Trats2 board,
-> >  - rebased on next-20140826 of linux-next tree.
-> >
-> > Changes since v1:
-> >  - dropped outer_resume() - will be handled in assembly in further patches,
-> >    as support for L2C in non-secure mode gets added,
-> >  - moved CP15 resume to assembly as it needs to be done before MMU is enabled,
-> >  - surrounded CP15 save with a check for cpuid part, because it is valid only
-> >    on Cortex A9,
-> >  - rebased on next-20140717 tag of linux-next tree.
-> >
-> > Tomasz Figa (5):
-> >   ARM: firmware: Introduce suspend and resume operations
-> >   ARM: EXYNOS: Add support for firmware-assisted suspend/resume
-> >   ARM: dts: exynos4412-trats2: Keep eMMC regulators soft-disabled
-> >   ARM: dts: exynos4x12: Add utility macro to define pin sleep states
-> >   ARM: dts: exynos4412-trats2: Add sleep mode pin configuration
-> >
-> >  Documentation/arm/firmware.txt            |  28 +--
-> >  arch/arm/boot/dts/exynos4412-trats2.dts   | 320 +++++++++++++++++++++++++++++-
-> >  arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |  16 ++
-> >  arch/arm/include/asm/firmware.h           |   8 +
-> >  arch/arm/mach-exynos/Makefile             |   1 +
-> >  arch/arm/mach-exynos/common.h             |   4 +
-> >  arch/arm/mach-exynos/firmware.c           |  45 +++++
-> >  arch/arm/mach-exynos/pm.c                 |  16 +-
-> >  arch/arm/mach-exynos/sleep.S              |  28 +++
-> >  arch/arm/mach-exynos/smc.h                |   4 +
-> >  10 files changed, 438 insertions(+), 32 deletions(-)
-> >
-> 
-> Would you consider applying this series? It has been waiting on the ML
-> long enough (note no changes in core patches since last revision, just
-> few more board specific patches). Thanks in advance.
-> 
-Sure, I will. Thanks for your gentle reminder.
+If we're calling this with the cache already enabled, presumably you're
+doing this to cover the case where we're disabling the cache.
 
-- Kukjin
+1. Do you really want to *invalidate* the L2 cache, discarding its
+   contents?
+2. Don't you think that... if you needed something like this here, then
+   it could be a defficiency in the common code?
+
+If (2) doesn't apply, then should be a comment here why this is needed.
+
+-- 
+FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
+according to speedtest.net.
