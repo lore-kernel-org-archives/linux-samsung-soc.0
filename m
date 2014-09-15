@@ -1,48 +1,50 @@
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: [PATCH 2/3 v3] ARM: dts: exynos: Explicitly set dr_mode on arndale-octa
-Date: Mon, 15 Sep 2014 12:52:33 +0200
-Message-ID: <1410778354-31210-3-git-send-email-sjoerd.simons@collabora.co.uk>
-References: <1410778354-31210-1-git-send-email-sjoerd.simons@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: [PATCH v5] ARM: dts: exynos3250 add MFC codec device node
+Date: Mon, 15 Sep 2014 13:44:46 +0200
+Message-ID: <1410781486-13983-1-git-send-email-j.anaszewski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:38767 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753322AbaIOKw5 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:12918 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753526AbaIOLpE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Sep 2014 06:52:57 -0400
-In-Reply-To: <1410778354-31210-1-git-send-email-sjoerd.simons@collabora.co.uk>
+	Mon, 15 Sep 2014 07:45:04 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NBX00LMUXZ23Y60@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 15 Sep 2014 20:45:02 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Jacek Anaszewski <j.anaszewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Explicitly set the dr_mode for the second dwc3 controller on the
-Arndale Octa board to host mode. This is required to ensure the
-controller is initialized in the right mode if the kernel is build with
-USB gadget support
-
-Reported-By: Andreas F=C3=A4rber <afaerber@suse.de>
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Signed-off-by: Jacek Anaszewski <j.anaszewski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
 ---
- Changes in v3: new patch
+ arch/arm/boot/dts/exynos3250.dtsi |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
- arch/arm/boot/dts/exynos5420-arndale-octa.dts | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/b=
-oot/dts/exynos5420-arndale-octa.dts
-index 434fd9d..fc2e983 100644
---- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-+++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-@@ -375,3 +375,7 @@
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 351871a..68c9e7c 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -283,6 +283,16 @@
+ 			status = "disabled";
  		};
- 	};
- };
+ 
++		mfc: codec@13400000 {
++			compatible = "samsung,mfc-v7";
++			reg = <0x13400000 0x10000>;
++			interrupts = <0 102 0>;
++			clock-names = "mfc", "sclk_mfc";
++			clocks = <&cmu CLK_MFC>, <&cmu CLK_SCLK_MFC>;
++			samsung,power-domain = <&pd_mfc>;
++			status = "disabled";
++		};
 +
-+&usbdrd_dwc3_1 {
-+	dr_mode =3D "host";
-+};
---=20
-2.1.0
+ 		serial_0: serial@13800000 {
+ 			compatible = "samsung,exynos4210-uart";
+ 			reg = <0x13800000 0x100>;
+-- 
+1.7.9.5
