@@ -1,91 +1,60 @@
-From: Alim Akhtar <alim.akhtar@samsung.com>
-Subject: [PATCH] tty/serial: samsung: Add earlycon support
-Date: Tue, 16 Sep 2014 17:02:43 +0530
-Message-ID: <1410867163-27962-1-git-send-email-alim.akhtar@samsung.com>
+From: =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski@samsung.com>
+Subject: Re: Exynos build failure in -next allmodconfig
+Date: Tue, 16 Sep 2014 13:44:44 +0200
+Message-ID: <541822AC.8040805@samsung.com>
+References: <E1XTTy1-0000vT-NC@cassiel.sirena.org.uk>
+ <20140915163458.GS7960@sirena.org.uk>
+ <20140915175709.GE12361@n2100.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:39107 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753422AbaIPLhL (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:57572 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751229AbaIPLos (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Sep 2014 07:37:11 -0400
+	Tue, 16 Sep 2014 07:44:48 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NBZ00409SRDGBB0@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 16 Sep 2014 12:47:37 +0100 (BST)
+In-reply-to: <20140915175709.GE12361@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: gregkh@linuxfoundation.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@list.infradead.org, linux-kernel@vger.kernel.org, robh@kernel.org, thomas.ab@samsung.com
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Mark Brown <broonie@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Add earlycon support for the samsung serial port. This allows enabling
-the samsung serial port for console when early_params are parse and processed.
+On 15.09.2014 19:57, Russell King - ARM Linux wrote:
+> On Mon, Sep 15, 2014 at 09:34:58AM -0700, Mark Brown wrote:
+>> On Mon, Sep 15, 2014 at 11:57:09AM +0100, Build bot for Mark Brown wrote:
+>>
+>> Today's -next got a build failure in ARM allmodconfig due to platsmp.c:
+>>
+>> | arch/arm/mach-exynos/platsmp.c:198:31: warning: incorrect type in return expression (different address spaces)
+>> | arch/arm/mach-exynos/platsmp.c:198:31:    expected void [noderef] <asn:2>*
+>> | arch/arm/mach-exynos/platsmp.c:198:31:    got void *
+>> | arch/arm/mach-exynos/platsmp.c:198:31: warning: incorrect type in return expression (different address spaces)
+>> | arch/arm/mach-exynos/platsmp.c:198:31:    expected void [noderef] <asn:2>*
+>> | arch/arm/mach-exynos/platsmp.c:198:31:    got void *
+>> |   CC      arch/arm/mach-exynos/platsmp.o
+>> | /tmp/ccC9fkwF.s: Assembler messages:
+>> | /tmp/ccC9fkwF.s:423: Error: selected processor does not support ARM mode `isb '
+>> | /tmp/ccC9fkwF.s:428: Error: selected processor does not support ARM mode `isb '
+>> | /tmp/ccC9fkwF.s:429: Error: selected processor does not support ARM mode `dsb '
+>> | scripts/Makefile.build:257: recipe for target 'arch/arm/mach-exynos/platsmp.o' failed
+>>
+>> Looks like we need a compiler flags override for that file.
+>
+> Or.. the question is why a .c file is not using the proper macros.
 
-Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
----
- Documentation/kernel-parameters.txt |    6 ++++++
- drivers/tty/serial/Kconfig          |    1 +
- drivers/tty/serial/samsung.c        |   17 +++++++++++++++++
- 3 files changed, 24 insertions(+)
+Actually I am the one to blame for build failure (commit: "ARM: EXYNOS: 
+Move code from hotplug.c to platsmp.c"). The problem is 
+v7_exit_coherency_flush() which I think does not make sense on ARMv6.
 
-diff --git a/Documentation/kernel-parameters.txt b/Documentation/kernel-parameters.txt
-index 5ae8608..e01c0e5 100644
---- a/Documentation/kernel-parameters.txt
-+++ b/Documentation/kernel-parameters.txt
-@@ -936,6 +936,12 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
- 			must already be setup and configured. Options are not
- 			yet supported.
- 
-+		samsung,<addr>
-+			Start an early, polled-mode console on a samsung serial
-+			port at the specified address. The samsung serial port
-+			must already be setup and configured. Options are not
-+			yet supported.
-+
- 		smh	Use ARM semihosting calls for early console.
- 
- 	earlyprintk=	[X86,SH,BLACKFIN,ARM,M68k]
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 249e340..9d42ac8 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -257,6 +257,7 @@ config SERIAL_SAMSUNG_CONSOLE
- 	bool "Support for console on Samsung SoC serial port"
- 	depends on SERIAL_SAMSUNG=y
- 	select SERIAL_CORE_CONSOLE
-+	select SERIAL_EARLYCON
- 	help
- 	  Allow selection of the S3C24XX on-board serial ports for use as
- 	  an virtual console.
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index c78f43a..f32e9c8 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -917,6 +917,7 @@ s3c24xx_serial_verify_port(struct uart_port *port, struct serial_struct *ser)
- #ifdef CONFIG_SERIAL_SAMSUNG_CONSOLE
- 
- static struct console s3c24xx_serial_console;
-+static void s3c24xx_serial_console_putchar(struct uart_port *port, int ch);
- 
- static int __init s3c24xx_serial_console_init(void)
- {
-@@ -926,6 +927,22 @@ static int __init s3c24xx_serial_console_init(void)
- console_initcall(s3c24xx_serial_console_init);
- 
- #define S3C24XX_SERIAL_CONSOLE &s3c24xx_serial_console
-+static void samsung_early_write(struct console *con, const char *s, unsigned n)
-+{
-+	struct earlycon_device *dev = con->data;
-+
-+	uart_console_write(&dev->port, s, n, s3c24xx_serial_console_putchar);
-+}
-+
-+static int __init samsung_early_console_setup(struct earlycon_device *device,
-+					      const char *opt)
-+{
-+	if (!device->port.membase)
-+		return -ENODEV;
-+	device->con->write = samsung_early_write;
-+	return 0;
-+}
-+EARLYCON_DECLARE(samsung, samsung_early_console_setup);
- #else
- #define S3C24XX_SERIAL_CONSOLE NULL
- #endif
--- 
-1.7.10.4
+I'll replace the ISB and DSB commands with macros but the real question 
+is whether the mach-exynos/platsmp.c file and mach-exynos directory 
+should be compiled when CONFIG_ARCH_EXYNOS is not defined?
+
+Best regards,
+Krzysztof
