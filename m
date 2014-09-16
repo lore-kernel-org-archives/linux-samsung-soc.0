@@ -1,204 +1,127 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v3 1/3] phy: exynos-dp-video: Use syscon support to control pmu register
-Date: Tue, 16 Sep 2014 10:32:06 +0530
-Message-ID: <1410843726-4235-1-git-send-email-gautam.vivek@samsung.com>
-References: <1410840408-19954-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1410840408-19954-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH] drm/exynos: fix plane-framebuffer linkage
+Date: Tue, 16 Sep 2014 08:35:01 +0200
+Message-ID: <20140916063501.GT4740@phenom.ffwll.local>
+References: <1410807137-8323-1-git-send-email-drake@endlessm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <1410807137-8323-1-git-send-email-drake@endlessm.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Drake <drake@endlessm.com>
+Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Currently the DP_PHY_ENABLE register is mapped in the driver,
-and accessed to control power to the PHY.
-With mfd-syscon and regmap interface available at our disposal,
-it's wise to use that instead of using a 'reg' property for the
-controller and allocating a memory resource for that.
+On Mon, Sep 15, 2014 at 12:52:17PM -0600, Daniel Drake wrote:
+> Pageflipping currently causes some inconsistencies that lead to
+> crashes. Just run an app that causes a CRTC pageflip in a raw X session
+> and check that it exits cleanly and can be restarted - you'll see
+> crashes like:
+>  Unable to handle kernel NULL pointer dereference at virtual address 00000334
+>  PC is at exynos_drm_crtc_plane_commit+0x20/0x40
+>  LR is at exynos_drm_crtc_plane_commit+0x20/0x40
+>  [<c03749b4>] (exynos_drm_crtc_plane_commit) from [<c03741bc>] (exynos_drm_crtc_commit+0x44/0x70)
+>  [<c03741bc>] (exynos_drm_crtc_commit) from [<c03743a0>] (exynos_drm_crtc_mode_set_commit.isra.2+0xb4/0xc4)
+>  [<c03743a0>] (exynos_drm_crtc_mode_set_commit.isra.2) from [<c03744f4>] (exynos_drm_crtc_page_flip+0x140/0x1a8)
+>  [<c03744f4>] (exynos_drm_crtc_page_flip) from [<c036b20c>] (drm_mode_page_flip_ioctl+0x224/0x2dc)
+>  [<c036b20c>] (drm_mode_page_flip_ioctl) from [<c035c324>] (drm_ioctl+0x338/0x4fc)
+> 
+> These crashes happen because drm_plane_force_disable has previously set
+> plane->crtc to NULL.
+> 
+> When drm_mode_page_flip_ioctl() is used to flip another framebuffer
+> onto the primary plane, crtc->primary->fb is correctly updated (this is
+> a virtual plane created by plane_helper), but plane->fb is not (this
+> plane is the real one, created by exynos_drm_crtc_create).
+> 
+> We then come to handle rmfb of the backbuffer, which the "real" primary
+> plane is incorrectly pointing at. So drm_framebuffer_remove() decides that
+> the buffer is actually active on a plane and force-disables the plane.
+> 
+> Ensuring that plane->fb is kept up-to-date solves that issue, but
+> exposes a reference counting problem. Now we see crashes when rmfb is
+> called on the front-buffer, because the rmfb code expects to drop 3
+> references here, and there are only 2.
+> 
+> That can be fixed by adopting the reference management found in omapdrm:
+> Framebuffer references are not taken directly in crtc mode_set context,
+> but rather in the context of updating the plane, which also covers
+> flips. Like omapdrm we also unreference the old framebuffer here.
+> 
+> Signed-off-by: Daniel Drake <drake@endlessm.com>
 
-To facilitate this, we have added another compatible string
-for Exynso5420 SoC to acquire driver data which contains
-different DP-PHY-CONTROL register offset.
+This sounds very much like exynos should switch to universal planes so
+that the fake primary plane created by the helpers doesn't get in the way.
+And for chips which already use planes for everything internally this
+shouldn't be a lot more than a few lines.
+-Daniel
 
-Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
----
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c  | 12 ++----------
+>  drivers/gpu/drm/exynos/exynos_drm_plane.c |  8 ++++++++
+>  2 files changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> index b68e58f..7aa9dee 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> @@ -140,16 +140,8 @@ exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
+>  	if (manager->ops->mode_set)
+>  		manager->ops->mode_set(manager, &crtc->mode);
+>  
+> -	ret = exynos_plane_mode_set(plane, crtc, crtc->primary->fb, 0, 0, crtc_w, crtc_h,
+> -				    x, y, crtc_w, crtc_h);
+> -	if (ret)
+> -		return ret;
+> -
+> -	plane->crtc = crtc;
+> -	plane->fb = crtc->primary->fb;
+> -	drm_framebuffer_reference(plane->fb);
+> -
+> -	return 0;
+> +	return exynos_plane_mode_set(plane, crtc, crtc->primary->fb, 0, 0,
+> +				     crtc_w, crtc_h, x, y, crtc_w, crtc_h);
+>  }
+>  
+>  static int exynos_drm_crtc_mode_set_commit(struct drm_crtc *crtc, int x, int y,
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> index 8371cbd..df27e35 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+> @@ -139,6 +139,14 @@ int exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+>  			overlay->crtc_x, overlay->crtc_y,
+>  			overlay->crtc_width, overlay->crtc_height);
+>  
+> +	if (plane->fb)
+> +		drm_framebuffer_unreference(plane->fb);
+> +
+> +	drm_framebuffer_reference(fb);
+> +
+> +	plane->fb = fb;
+> +	plane->crtc = crtc;
+> +
+>  	exynos_drm_crtc_plane_mode_set(crtc, overlay);
+>  
+>  	return 0;
+> -- 
+> 1.9.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-Changes since v2:
- - Using 'EXYNOS5_PHY_ENABLE' macro instead of 'EXYNOS_DPTX_PHY_ENABLE'
-   since that's available with us in "linux/mfd/syscon/exynos5-pmu.h" file.
-
-Changes since v1:
- - state->regs should have been "struct regmap *" instead of
-   "void __iomem *". So corrected the same.
-
- .../devicetree/bindings/phy/samsung-phy.txt        |    7 +-
- drivers/phy/phy-exynos-dp-video.c                  |   79 +++++++++++++-------
- 2 files changed, 59 insertions(+), 27 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-index 7a6feea..15e0f2c 100644
---- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
-@@ -17,8 +17,11 @@ Samsung EXYNOS SoC series Display Port PHY
- -------------------------------------------------
- 
- Required properties:
--- compatible : should be "samsung,exynos5250-dp-video-phy";
--- reg : offset and length of the Display Port PHY register set;
-+- compatible : should be one of the following supported values:
-+	 - "samsung,exynos5250-dp-video-phy"
-+	 - "samsung,exynos5420-dp-video-phy"
-+- samsung,pmu-syscon: phandle for PMU system controller interface, used to
-+		      control pmu registers for power isolation.
- - #phy-cells : from the generic PHY bindings, must be 0;
- 
- Samsung S5P/EXYNOS SoC series USB PHY
-diff --git a/drivers/phy/phy-exynos-dp-video.c b/drivers/phy/phy-exynos-dp-video.c
-index 8b3026e..53f44a0 100644
---- a/drivers/phy/phy-exynos-dp-video.c
-+++ b/drivers/phy/phy-exynos-dp-video.c
-@@ -13,44 +13,55 @@
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/mfd/syscon/exynos5-pmu.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
-+#include <linux/regmap.h>
- 
--/* DPTX_PHY_CONTROL register */
--#define EXYNOS_DPTX_PHY_ENABLE		(1 << 0)
-+struct exynos_dp_video_phy_drvdata {
-+	u32 phy_ctrl_offset;
-+};
- 
- struct exynos_dp_video_phy {
--	void __iomem *regs;
-+	struct regmap *regs;
-+	const struct exynos_dp_video_phy_drvdata *drvdata;
- };
- 
--static int __set_phy_state(struct exynos_dp_video_phy *state, unsigned int on)
-+static void exynos_dp_video_phy_pwr_isol(struct exynos_dp_video_phy *state,
-+							unsigned int on)
- {
--	u32 reg;
-+	unsigned int val;
-+
-+	if (IS_ERR(state->regs))
-+		return;
- 
--	reg = readl(state->regs);
--	if (on)
--		reg |= EXYNOS_DPTX_PHY_ENABLE;
--	else
--		reg &= ~EXYNOS_DPTX_PHY_ENABLE;
--	writel(reg, state->regs);
-+	val = on ? 0 : EXYNOS5_PHY_ENABLE;
- 
--	return 0;
-+	regmap_update_bits(state->regs, state->drvdata->phy_ctrl_offset,
-+			   EXYNOS5_PHY_ENABLE, val);
- }
- 
- static int exynos_dp_video_phy_power_on(struct phy *phy)
- {
- 	struct exynos_dp_video_phy *state = phy_get_drvdata(phy);
- 
--	return __set_phy_state(state, 1);
-+	/* Disable power isolation on DP-PHY */
-+	exynos_dp_video_phy_pwr_isol(state, 0);
-+
-+	return 0;
- }
- 
- static int exynos_dp_video_phy_power_off(struct phy *phy)
- {
- 	struct exynos_dp_video_phy *state = phy_get_drvdata(phy);
- 
--	return __set_phy_state(state, 0);
-+	/* Enable power isolation on DP-PHY */
-+	exynos_dp_video_phy_pwr_isol(state, 1);
-+
-+	return 0;
- }
- 
- static struct phy_ops exynos_dp_video_phy_ops = {
-@@ -59,11 +70,31 @@ static struct phy_ops exynos_dp_video_phy_ops = {
- 	.owner		= THIS_MODULE,
- };
- 
-+static const struct exynos_dp_video_phy_drvdata exynos5250_dp_video_phy = {
-+	.phy_ctrl_offset	= EXYNOS5_DPTX_PHY_CONTROL,
-+};
-+
-+static const struct exynos_dp_video_phy_drvdata exynos5420_dp_video_phy = {
-+	.phy_ctrl_offset	= EXYNOS5420_DPTX_PHY_CONTROL,
-+};
-+
-+static const struct of_device_id exynos_dp_video_phy_of_match[] = {
-+	{
-+		.compatible = "samsung,exynos5250-dp-video-phy",
-+		.data = &exynos5250_dp_video_phy,
-+	}, {
-+		.compatible = "samsung,exynos5420-dp-video-phy",
-+		.data = &exynos5420_dp_video_phy,
-+	},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, exynos_dp_video_phy_of_match);
-+
- static int exynos_dp_video_phy_probe(struct platform_device *pdev)
- {
- 	struct exynos_dp_video_phy *state;
- 	struct device *dev = &pdev->dev;
--	struct resource *res;
-+	const struct of_device_id *match;
- 	struct phy_provider *phy_provider;
- 	struct phy *phy;
- 
-@@ -71,11 +102,15 @@ static int exynos_dp_video_phy_probe(struct platform_device *pdev)
- 	if (!state)
- 		return -ENOMEM;
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--
--	state->regs = devm_ioremap_resource(dev, res);
--	if (IS_ERR(state->regs))
-+	state->regs = syscon_regmap_lookup_by_phandle(dev->of_node,
-+						      "samsung,pmu-syscon");
-+	if (IS_ERR(state->regs)) {
-+		dev_err(dev, "Failed to lookup PMU regmap\n");
- 		return PTR_ERR(state->regs);
-+	}
-+
-+	match = of_match_node(exynos_dp_video_phy_of_match, dev->of_node);
-+	state->drvdata = match->data;
- 
- 	phy = devm_phy_create(dev, NULL, &exynos_dp_video_phy_ops, NULL);
- 	if (IS_ERR(phy)) {
-@@ -89,12 +124,6 @@ static int exynos_dp_video_phy_probe(struct platform_device *pdev)
- 	return PTR_ERR_OR_ZERO(phy_provider);
- }
- 
--static const struct of_device_id exynos_dp_video_phy_of_match[] = {
--	{ .compatible = "samsung,exynos5250-dp-video-phy" },
--	{ },
--};
--MODULE_DEVICE_TABLE(of, exynos_dp_video_phy_of_match);
--
- static struct platform_driver exynos_dp_video_phy_driver = {
- 	.probe	= exynos_dp_video_phy_probe,
- 	.driver = {
 -- 
-1.7.10.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
