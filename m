@@ -1,259 +1,88 @@
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Subject: [PATCH 04/22] video: fbdev: Replace strnicmp with strncasecmp
-Date: Tue, 16 Sep 2014 22:51:18 +0200
-Message-ID: <1410900696-6481-5-git-send-email-linux@rasmusvillemoes.dk>
-References: <1410900696-6481-1-git-send-email-linux@rasmusvillemoes.dk>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCHv3 4/5] rtc: s3c: Add support for RTC of Exynos3250 SoC
+Date: Tue, 16 Sep 2014 15:15:53 -0700
+Message-ID: <CAD=FV=VsSg5QLbdhgb4vV1+boeWaksCGj4MfGnCQnyhQR6Dr5A@mail.gmail.com>
+References: <1409216559-22402-1-git-send-email-cw00.choi@samsung.com>
+	<1409216559-22402-5-git-send-email-cw00.choi@samsung.com>
+	<CABxcv=ku9fjFfzyXZEnCGpTrWQ0pN+5mLWay90jXBhkFeWb7sg@mail.gmail.com>
+	<CAD8Lp47M8jHLrQAdYUn6NZn2Ety_02E6HPzPDUX3uGLVqf1riw@mail.gmail.com>
+	<CABxcv==CBbaY_GVgmWe5QzJdhMipyx5TpZ4_3oKLzkyiGPOBrw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1410900696-6481-1-git-send-email-linux@rasmusvillemoes.dk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-kernel@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f171.google.com ([209.85.220.171]:33275 "EHLO
+	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753252AbaIPWPy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 16 Sep 2014 18:15:54 -0400
+Received: by mail-vc0-f171.google.com with SMTP id im17so540828vcb.16
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Sep 2014 15:15:53 -0700 (PDT)
+In-Reply-To: <CABxcv==CBbaY_GVgmWe5QzJdhMipyx5TpZ4_3oKLzkyiGPOBrw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Daniel Drake <drake@endlessm.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Kyungmin Park <kyungmin.park@samsung.com>, rtc-linux@googlegroups.com, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-The kernel used to contain two functions for length-delimited,
-case-insensitive string comparison, strnicmp with correct semantics
-and a slightly buggy strncasecmp. The latter is the POSIX name, so
-strnicmp was renamed to strncasecmp, and strnicmp made into a wrapper
-for the new strncasecmp to avoid breaking existing users.
+Hi,
 
-To allow the compat wrapper strnicmp to be removed at some point in
-the future, and to avoid the extra indirection cost, do
-s/strnicmp/strncasecmp/g.
+On Tue, Sep 16, 2014 at 8:20 AM, Javier Martinez Canillas
+<javier@dowhile0.org> wrote:
+> Hello Daniel,
+>
+> On Tue, Sep 16, 2014 at 5:03 PM, Daniel Drake <drake@endlessm.com> wrote:
+>> On Tue, Sep 16, 2014 at 7:48 AM, Javier Martinez Canillas
+>> <javier@dowhile0.org> wrote:
+>>>> Clock list for s3c-rtc device:
+>>>> - rtc : CLK_RTC of CLK_GATE_IP_PERIR is gate clock for RTC.
+>>>> - rtc_src : XrtcXTI is 32.768.kHz source clock for RTC.
+>>>
+>>> Is this RTC source clock needed for all Exynos SoCs?
+>>
+>> It is at least needed on Exynos4412, which has the XrtcXTI thing
+>> exactly as you describe. However the very standard setup there is to
+>> hook it up to the CP clock output of the MAX76686 PMIC. This CP clock
+>> is on by default, so you can potentially live without that detail
+>> being present in the DT.
+>>
+>
+> Thanks for confirming for Exynos4412, I just answered my own email
+> saying that I found to be needed on Exynos5420 as well and as you
+> said, it was just working because the Maxim clocks were left on by
+> default.
+>
+>> However... one small issue with this setup is that when you enable
+>> CONFIG_COMMON_CLK_MAX77686, the CP clock gets exposed in Linux's
+>> common clock framework, and Linux then turns it off because it
+>> believes it is unused. Then the RTC stops ticking.
+>>
+>
+> Indeed, this is an issue about relying on default state. We had a
+> quite long discussion a couple of weeks ago about simplefb relying on
+> clocks and regulators left enabled by the bootloader but once these
+> were know to the kernel, the frameworks disable them because were
+> unused making simplefb to fail.
+>
+>> So the rtc_src idea would also be good for Exynos4412. Maybe it would
+>> make sense to drop the needs_src_clk flag, and simply require/enable
+>> the src clock whenever it is present in the DT.
+>>
+>
+> That sounds more sensible to me as well. I wonder what should happen
+> in this case with DT backward compatibility though. But as you said,
+> the external clock is required and the kernel will disable this clock
+> once is know to the CCF since is not used so maybe will be hard to
+> maintain DT backward compatibility in this case.
 
-Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: linux-fbdev@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
- drivers/video/fbdev/pvr2fb.c       |  2 +-
- drivers/video/fbdev/s3c2410fb.c    |  8 ++---
- drivers/video/fbdev/sis/sis_main.c | 66 +++++++++++++++++++-------------------
- drivers/video/fbdev/sm501fb.c      |  4 +--
- 4 files changed, 40 insertions(+), 40 deletions(-)
+I think you can turn off CONFIG_COMMON_CLK_MAX77686 and then this
+clock will be left at whatever the bootloader set it to, right?  Then
+there will be no auto-disabling by the CCF and the RTC will work.
+That's one argument for making the clock "optional".
 
-diff --git a/drivers/video/fbdev/pvr2fb.c b/drivers/video/fbdev/pvr2fb.c
-index 167cfff..7c74f58 100644
---- a/drivers/video/fbdev/pvr2fb.c
-+++ b/drivers/video/fbdev/pvr2fb.c
-@@ -1001,7 +1001,7 @@ static int pvr2_get_param(const struct pvr2_params *p, const char *s, int val,
- 
- 	for (i = 0 ; i < size ; i++ ) {
- 		if (s != NULL) {
--			if (!strnicmp(p[i].name, s, strlen(s)))
-+			if (!strncasecmp(p[i].name, s, strlen(s)))
- 				return p[i].val;
- 		} else {
- 			if (p[i].val == val)
-diff --git a/drivers/video/fbdev/s3c2410fb.c b/drivers/video/fbdev/s3c2410fb.c
-index 43c63a4..e350eb5 100644
---- a/drivers/video/fbdev/s3c2410fb.c
-+++ b/drivers/video/fbdev/s3c2410fb.c
-@@ -601,12 +601,12 @@ static int s3c2410fb_debug_store(struct device *dev,
- 	if (len < 1)
- 		return -EINVAL;
- 
--	if (strnicmp(buf, "on", 2) == 0 ||
--	    strnicmp(buf, "1", 1) == 0) {
-+	if (strncasecmp(buf, "on", 2) == 0 ||
-+	    strncasecmp(buf, "1", 1) == 0) {
- 		debug = 1;
- 		dev_dbg(dev, "s3c2410fb: Debug On");
--	} else if (strnicmp(buf, "off", 3) == 0 ||
--		   strnicmp(buf, "0", 1) == 0) {
-+	} else if (strncasecmp(buf, "off", 3) == 0 ||
-+		   strncasecmp(buf, "0", 1) == 0) {
- 		debug = 0;
- 		dev_dbg(dev, "s3c2410fb: Debug Off");
- 	} else {
-diff --git a/drivers/video/fbdev/sis/sis_main.c b/drivers/video/fbdev/sis/sis_main.c
-index 3f12a2d..4f5cf03 100644
---- a/drivers/video/fbdev/sis/sis_main.c
-+++ b/drivers/video/fbdev/sis/sis_main.c
-@@ -162,7 +162,7 @@ static void sisfb_search_mode(char *name, bool quiet)
- 		return;
- 	}
- 
--	if(!strnicmp(name, sisbios_mode[MODE_INDEX_NONE].name, strlen(name))) {
-+	if(!strncasecmp(name, sisbios_mode[MODE_INDEX_NONE].name, strlen(name))) {
- 		if(!quiet)
- 			printk(KERN_ERR "sisfb: Mode 'none' not supported anymore. Using default.\n");
- 
-@@ -201,7 +201,7 @@ static void sisfb_search_mode(char *name, bool quiet)
- 
- 	i = 0; j = 0;
- 	while(sisbios_mode[i].mode_no[0] != 0) {
--		if(!strnicmp(nameptr, sisbios_mode[i++].name, strlen(nameptr))) {
-+		if(!strncasecmp(nameptr, sisbios_mode[i++].name, strlen(nameptr))) {
- 			if(sisfb_fstn) {
- 				if(sisbios_mode[i-1].mode_no[1] == 0x50 ||
- 				   sisbios_mode[i-1].mode_no[1] == 0x56 ||
-@@ -262,7 +262,7 @@ sisfb_search_crt2type(const char *name)
- 	if(name == NULL) return;
- 
- 	while(sis_crt2type[i].type_no != -1) {
--		if(!strnicmp(name, sis_crt2type[i].name, strlen(sis_crt2type[i].name))) {
-+		if(!strncasecmp(name, sis_crt2type[i].name, strlen(sis_crt2type[i].name))) {
- 			sisfb_crt2type = sis_crt2type[i].type_no;
- 			sisfb_tvplug = sis_crt2type[i].tvplug_no;
- 			sisfb_crt2flags = sis_crt2type[i].flags;
-@@ -289,7 +289,7 @@ sisfb_search_tvstd(const char *name)
- 		return;
- 
- 	while(sis_tvtype[i].type_no != -1) {
--		if(!strnicmp(name, sis_tvtype[i].name, strlen(sis_tvtype[i].name))) {
-+		if(!strncasecmp(name, sis_tvtype[i].name, strlen(sis_tvtype[i].name))) {
- 			sisfb_tvstd = sis_tvtype[i].type_no;
- 			break;
- 		}
-@@ -308,12 +308,12 @@ sisfb_search_specialtiming(const char *name)
- 	if(name == NULL)
- 		return;
- 
--	if(!strnicmp(name, "none", 4)) {
-+	if(!strncasecmp(name, "none", 4)) {
- 		sisfb_specialtiming = CUT_FORCENONE;
- 		printk(KERN_DEBUG "sisfb: Special timing disabled\n");
- 	} else {
- 		while(mycustomttable[i].chipID != 0) {
--			if(!strnicmp(name,mycustomttable[i].optionName,
-+			if(!strncasecmp(name,mycustomttable[i].optionName,
- 			   strlen(mycustomttable[i].optionName))) {
- 				sisfb_specialtiming = mycustomttable[i].SpecialID;
- 				found = true;
-@@ -3952,68 +3952,68 @@ static int __init sisfb_setup(char *options)
- 
- 		if(!(*this_opt)) continue;
- 
--		if(!strnicmp(this_opt, "off", 3)) {
-+		if(!strncasecmp(this_opt, "off", 3)) {
- 			sisfb_off = 1;
--		} else if(!strnicmp(this_opt, "forcecrt2type:", 14)) {
-+		} else if(!strncasecmp(this_opt, "forcecrt2type:", 14)) {
- 			/* Need to check crt2 type first for fstn/dstn */
- 			sisfb_search_crt2type(this_opt + 14);
--		} else if(!strnicmp(this_opt, "tvmode:",7)) {
-+		} else if(!strncasecmp(this_opt, "tvmode:",7)) {
- 			sisfb_search_tvstd(this_opt + 7);
--		} else if(!strnicmp(this_opt, "tvstandard:",11)) {
-+		} else if(!strncasecmp(this_opt, "tvstandard:",11)) {
- 			sisfb_search_tvstd(this_opt + 11);
--		} else if(!strnicmp(this_opt, "mode:", 5)) {
-+		} else if(!strncasecmp(this_opt, "mode:", 5)) {
- 			sisfb_search_mode(this_opt + 5, false);
--		} else if(!strnicmp(this_opt, "vesa:", 5)) {
-+		} else if(!strncasecmp(this_opt, "vesa:", 5)) {
- 			sisfb_search_vesamode(simple_strtoul(this_opt + 5, NULL, 0), false);
--		} else if(!strnicmp(this_opt, "rate:", 5)) {
-+		} else if(!strncasecmp(this_opt, "rate:", 5)) {
- 			sisfb_parm_rate = simple_strtoul(this_opt + 5, NULL, 0);
--		} else if(!strnicmp(this_opt, "forcecrt1:", 10)) {
-+		} else if(!strncasecmp(this_opt, "forcecrt1:", 10)) {
- 			sisfb_forcecrt1 = (int)simple_strtoul(this_opt + 10, NULL, 0);
--		} else if(!strnicmp(this_opt, "mem:",4)) {
-+		} else if(!strncasecmp(this_opt, "mem:",4)) {
- 			sisfb_parm_mem = simple_strtoul(this_opt + 4, NULL, 0);
--		} else if(!strnicmp(this_opt, "pdc:", 4)) {
-+		} else if(!strncasecmp(this_opt, "pdc:", 4)) {
- 			sisfb_pdc = simple_strtoul(this_opt + 4, NULL, 0);
--		} else if(!strnicmp(this_opt, "pdc1:", 5)) {
-+		} else if(!strncasecmp(this_opt, "pdc1:", 5)) {
- 			sisfb_pdca = simple_strtoul(this_opt + 5, NULL, 0);
--		} else if(!strnicmp(this_opt, "noaccel", 7)) {
-+		} else if(!strncasecmp(this_opt, "noaccel", 7)) {
- 			sisfb_accel = 0;
--		} else if(!strnicmp(this_opt, "accel", 5)) {
-+		} else if(!strncasecmp(this_opt, "accel", 5)) {
- 			sisfb_accel = -1;
--		} else if(!strnicmp(this_opt, "noypan", 6)) {
-+		} else if(!strncasecmp(this_opt, "noypan", 6)) {
- 			sisfb_ypan = 0;
--		} else if(!strnicmp(this_opt, "ypan", 4)) {
-+		} else if(!strncasecmp(this_opt, "ypan", 4)) {
- 			sisfb_ypan = -1;
--		} else if(!strnicmp(this_opt, "nomax", 5)) {
-+		} else if(!strncasecmp(this_opt, "nomax", 5)) {
- 			sisfb_max = 0;
--		} else if(!strnicmp(this_opt, "max", 3)) {
-+		} else if(!strncasecmp(this_opt, "max", 3)) {
- 			sisfb_max = -1;
--		} else if(!strnicmp(this_opt, "userom:", 7)) {
-+		} else if(!strncasecmp(this_opt, "userom:", 7)) {
- 			sisfb_userom = (int)simple_strtoul(this_opt + 7, NULL, 0);
--		} else if(!strnicmp(this_opt, "useoem:", 7)) {
-+		} else if(!strncasecmp(this_opt, "useoem:", 7)) {
- 			sisfb_useoem = (int)simple_strtoul(this_opt + 7, NULL, 0);
--		} else if(!strnicmp(this_opt, "nocrt2rate", 10)) {
-+		} else if(!strncasecmp(this_opt, "nocrt2rate", 10)) {
- 			sisfb_nocrt2rate = 1;
--		} else if(!strnicmp(this_opt, "scalelcd:", 9)) {
-+		} else if(!strncasecmp(this_opt, "scalelcd:", 9)) {
- 			unsigned long temp = 2;
- 			temp = simple_strtoul(this_opt + 9, NULL, 0);
- 			if((temp == 0) || (temp == 1)) {
- 			   sisfb_scalelcd = temp ^ 1;
- 			}
--		} else if(!strnicmp(this_opt, "tvxposoffset:", 13)) {
-+		} else if(!strncasecmp(this_opt, "tvxposoffset:", 13)) {
- 			int temp = 0;
- 			temp = (int)simple_strtol(this_opt + 13, NULL, 0);
- 			if((temp >= -32) && (temp <= 32)) {
- 			   sisfb_tvxposoffset = temp;
- 			}
--		} else if(!strnicmp(this_opt, "tvyposoffset:", 13)) {
-+		} else if(!strncasecmp(this_opt, "tvyposoffset:", 13)) {
- 			int temp = 0;
- 			temp = (int)simple_strtol(this_opt + 13, NULL, 0);
- 			if((temp >= -32) && (temp <= 32)) {
- 			   sisfb_tvyposoffset = temp;
- 			}
--		} else if(!strnicmp(this_opt, "specialtiming:", 14)) {
-+		} else if(!strncasecmp(this_opt, "specialtiming:", 14)) {
- 			sisfb_search_specialtiming(this_opt + 14);
--		} else if(!strnicmp(this_opt, "lvdshl:", 7)) {
-+		} else if(!strncasecmp(this_opt, "lvdshl:", 7)) {
- 			int temp = 4;
- 			temp = simple_strtoul(this_opt + 7, NULL, 0);
- 			if((temp >= 0) && (temp <= 3)) {
-@@ -4022,9 +4022,9 @@ static int __init sisfb_setup(char *options)
- 		} else if(this_opt[0] >= '0' && this_opt[0] <= '9') {
- 			sisfb_search_mode(this_opt, true);
- #if !defined(__i386__) && !defined(__x86_64__)
--		} else if(!strnicmp(this_opt, "resetcard", 9)) {
-+		} else if(!strncasecmp(this_opt, "resetcard", 9)) {
- 			sisfb_resetcard = 1;
--	        } else if(!strnicmp(this_opt, "videoram:", 9)) {
-+	        } else if(!strncasecmp(this_opt, "videoram:", 9)) {
- 			sisfb_videoram = simple_strtoul(this_opt + 9, NULL, 0);
- #endif
- 		} else {
-diff --git a/drivers/video/fbdev/sm501fb.c b/drivers/video/fbdev/sm501fb.c
-index c2c8eb6..9e74e8f 100644
---- a/drivers/video/fbdev/sm501fb.c
-+++ b/drivers/video/fbdev/sm501fb.c
-@@ -1187,9 +1187,9 @@ static ssize_t sm501fb_crtsrc_store(struct device *dev,
- 	if (len < 1)
- 		return -EINVAL;
- 
--	if (strnicmp(buf, "crt", 3) == 0)
-+	if (strncasecmp(buf, "crt", 3) == 0)
- 		head = HEAD_CRT;
--	else if (strnicmp(buf, "panel", 5) == 0)
-+	else if (strncasecmp(buf, "panel", 5) == 0)
- 		head = HEAD_PANEL;
- 	else
- 		return -EINVAL;
--- 
-2.0.4
+NOTE: I don't think that the builtin RTC is terribly important for any
+exynos-based Chromebooks that I'm aware of.  We rely on the RTC that's
+part of the Maxim PMIC itself and pretty much ignore the one built-in
+to the exynos.  I think there are some cases it was used (as a
+fallback wakeup source in certain test scripts), but nothing very
+important.
+
+-Doug
