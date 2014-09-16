@@ -1,45 +1,39 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 0/2] i2c: Add i2c support for Exynos7 SoC
-Date: Tue, 16 Sep 2014 15:03:16 +0530
-Message-ID: <1410859998-29285-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:29669 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752732AbaIPJiI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Sep 2014 05:38:08 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 2/2] i2c: exynos5: Add Kconfig dependencies
+Date: Tue, 16 Sep 2014 15:03:18 +0530
+Message-ID: <1410859998-29285-3-git-send-email-ch.naveen@samsung.com>
+References: <1410859998-29285-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1410859998-29285-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-i2c@vger.kernel.org
 Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, sjg@chromium.org, grundler@chromium.org, linux-kernel@vger.kernel.org, wsa@the-dreams.de, cpgs@samsung.com, devicetree@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patchset adds code to the i2c-exynos5.c driver to support
-the HSI2C H/W available on Exynos7 SoC.
+The i2c-exynos5.c driver can be reused for the HSI2C controller
+on Exynos7 SoCs from Samsung.
 
-Also, modifies the Kconfig dependencies to be able to select
-for ARCH_EXYNOS7 platform.
+This patch adds the Kconfig dependency to choose i2c-exynos5.c
+for CONFIG_ARCH_EXYNOS7.
 
-The following patches are tested based on Kgene's for-next tree.
-https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Cc: Wolfram Sang <wsa@the-dreams.de>
+---
+ drivers/i2c/busses/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Following patches are required for this series:
-1. "tty/serial: fix config dependencies for samsung serial"
-   https://www.mail-archive.com/linux-samsung-soc <at> vger.kernel.org/msg36208.html
-2. "dts, kbuild: Implement support for dtb vendor subdirs" patchset 
-   http://comments.gmane.org/gmane.linux.kbuild.devel/12131
-3. [PATCH v4 0/8] arch: arm64: enable support for Samsung Exynos7 SoC
-   http://www.spinics.net/lists/devicetree/msg49130.html
-4. [PATCH 0/4] Add initial support for pinctrl on Exynos7
-   http://www.spinics.net/lists/devicetree/msg49237.html
-
-Naveen Krishna Chatradhi (2):
-  i2c: exynos: add support for HSI2C module on Exynos7
-  i2c: exynos5: Add Kconfig dependencies
-
- .../devicetree/bindings/i2c/i2c-exynos5.txt        |    2 +
- drivers/i2c/busses/Kconfig                         |    2 +-
- drivers/i2c/busses/i2c-exynos5.c                   |   71 ++++++++++++++++++--
- 3 files changed, 68 insertions(+), 7 deletions(-)
-
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 2ac87fa..1f3b9cb 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -465,7 +465,7 @@ config I2C_EG20T
+ 
+ config I2C_EXYNOS5
+ 	tristate "Exynos5 high-speed I2C driver"
+-	depends on ARCH_EXYNOS5 && OF
++	depends on ARCH_EXYNOS && OF
+ 	default y
+ 	help
+ 	  High-speed I2C controller on Exynos5 based Samsung SoCs.
 -- 
 1.7.9.5
