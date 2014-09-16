@@ -1,88 +1,96 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCHv3 4/5] rtc: s3c: Add support for RTC of Exynos3250 SoC
-Date: Tue, 16 Sep 2014 15:15:53 -0700
-Message-ID: <CAD=FV=VsSg5QLbdhgb4vV1+boeWaksCGj4MfGnCQnyhQR6Dr5A@mail.gmail.com>
-References: <1409216559-22402-1-git-send-email-cw00.choi@samsung.com>
-	<1409216559-22402-5-git-send-email-cw00.choi@samsung.com>
-	<CABxcv=ku9fjFfzyXZEnCGpTrWQ0pN+5mLWay90jXBhkFeWb7sg@mail.gmail.com>
-	<CAD8Lp47M8jHLrQAdYUn6NZn2Ety_02E6HPzPDUX3uGLVqf1riw@mail.gmail.com>
-	<CABxcv==CBbaY_GVgmWe5QzJdhMipyx5TpZ4_3oKLzkyiGPOBrw@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL 1/2] Samsung cleanup for 3.18
+Date: Wed, 17 Sep 2014 07:41:11 +0900
+Message-ID: <5418BC87.8000306@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f171.google.com ([209.85.220.171]:33275 "EHLO
-	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753252AbaIPWPy (ORCPT
+Received: from mail-pd0-f179.google.com ([209.85.192.179]:50560 "EHLO
+	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752714AbaIPWlS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Sep 2014 18:15:54 -0400
-Received: by mail-vc0-f171.google.com with SMTP id im17so540828vcb.16
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Sep 2014 15:15:53 -0700 (PDT)
-In-Reply-To: <CABxcv==CBbaY_GVgmWe5QzJdhMipyx5TpZ4_3oKLzkyiGPOBrw@mail.gmail.com>
+	Tue, 16 Sep 2014 18:41:18 -0400
+Received: by mail-pd0-f179.google.com with SMTP id g10so707146pdj.38
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Sep 2014 15:41:17 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Daniel Drake <drake@endlessm.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Kyungmin Park <kyungmin.park@samsung.com>, rtc-linux@googlegroups.com, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi,
+The following changes since commit 7d1311b93e58ed55f3a31cc8f94c4b8fe988a2b9:
 
-On Tue, Sep 16, 2014 at 8:20 AM, Javier Martinez Canillas
-<javier@dowhile0.org> wrote:
-> Hello Daniel,
->
-> On Tue, Sep 16, 2014 at 5:03 PM, Daniel Drake <drake@endlessm.com> wrote:
->> On Tue, Sep 16, 2014 at 7:48 AM, Javier Martinez Canillas
->> <javier@dowhile0.org> wrote:
->>>> Clock list for s3c-rtc device:
->>>> - rtc : CLK_RTC of CLK_GATE_IP_PERIR is gate clock for RTC.
->>>> - rtc_src : XrtcXTI is 32.768.kHz source clock for RTC.
->>>
->>> Is this RTC source clock needed for all Exynos SoCs?
->>
->> It is at least needed on Exynos4412, which has the XrtcXTI thing
->> exactly as you describe. However the very standard setup there is to
->> hook it up to the CP clock output of the MAX76686 PMIC. This CP clock
->> is on by default, so you can potentially live without that detail
->> being present in the DT.
->>
->
-> Thanks for confirming for Exynos4412, I just answered my own email
-> saying that I found to be needed on Exynos5420 as well and as you
-> said, it was just working because the Maxim clocks were left on by
-> default.
->
->> However... one small issue with this setup is that when you enable
->> CONFIG_COMMON_CLK_MAX77686, the CP clock gets exposed in Linux's
->> common clock framework, and Linux then turns it off because it
->> believes it is unused. Then the RTC stops ticking.
->>
->
-> Indeed, this is an issue about relying on default state. We had a
-> quite long discussion a couple of weeks ago about simplefb relying on
-> clocks and regulators left enabled by the bootloader but once these
-> were know to the kernel, the frameworks disable them because were
-> unused making simplefb to fail.
->
->> So the rtc_src idea would also be good for Exynos4412. Maybe it would
->> make sense to drop the needs_src_clk flag, and simply require/enable
->> the src clock whenever it is present in the DT.
->>
->
-> That sounds more sensible to me as well. I wonder what should happen
-> in this case with DT backward compatibility though. But as you said,
-> the external clock is required and the kernel will disable this clock
-> once is know to the CCF since is not used so maybe will be hard to
-> maintain DT backward compatibility in this case.
+   Linux 3.17-rc1 (2014-08-16 10:40:26 -0600)
 
-I think you can turn off CONFIG_COMMON_CLK_MAX77686 and then this
-clock will be left at whatever the bootloader set it to, right?  Then
-there will be no auto-disabling by the CCF and the RTC will work.
-That's one argument for making the clock "optional".
+are available in the git repository at:
 
-NOTE: I don't think that the builtin RTC is terribly important for any
-exynos-based Chromebooks that I'm aware of.  We rely on the RTC that's
-part of the Maxim PMIC itself and pretty much ignore the one built-in
-to the exynos.  I think there are some cases it was used (as a
-fallback wakeup source in certain test scripts), but nothing very
-important.
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+tags/samsung-cleanup
 
--Doug
+for you to fetch changes up to f6361c6b3880063c2248d4e453331e3dc1efbf83:
+
+   ARM: S3C24XX: remove separate restart code (2014-09-14 02:43:09 +0900)
+
+----------------------------------------------------------------
+Samsung cleanup for 3.18
+- remove unused <mach/memory.h> in exynos
+- local <mach/regs-clock.h> for s5pv210
+- cleanup boot address calculate for exynos
+- remove separate restart code for s3c24xx
+
+----------------------------------------------------------------
+Heiko Stuebner (1):
+       ARM: S3C24XX: remove separate restart code
+
+Krzysztof Kozlowski (1):
+       ARM: EXYNOS: Do not calculate boot address twice
+
+Kukjin Kim (1):
+       ARM: S5PV210: move <mach/regs-clock.h> into mach-s5pv210/
+
+Uwe Kleine-Koenig (1):
+       ARM: EXYNOS: remove unused <mach/memory.h>
+
+  arch/arm/mach-exynos/include/mach/memory.h         | 26 
+----------------------
+  arch/arm/mach-exynos/platsmp.c                     |  4 ++--
+  arch/arm/mach-s3c24xx/Kconfig                      |  2 --
+  arch/arm/mach-s3c24xx/common.c                     |  4 ----
+  arch/arm/mach-s3c24xx/common.h                     |  5 -----
+  .../mach-s3c24xx/include/mach/regs-s3c2443-clock.h |  2 --
+  arch/arm/mach-s3c24xx/mach-amlm5900.c              |  1 -
+  arch/arm/mach-s3c24xx/mach-anubis.c                |  1 -
+  arch/arm/mach-s3c24xx/mach-at2440evb.c             |  1 -
+  arch/arm/mach-s3c24xx/mach-bast.c                  |  1 -
+  arch/arm/mach-s3c24xx/mach-gta02.c                 |  1 -
+  arch/arm/mach-s3c24xx/mach-h1940.c                 |  1 -
+  arch/arm/mach-s3c24xx/mach-jive.c                  |  1 -
+  arch/arm/mach-s3c24xx/mach-mini2440.c              |  1 -
+  arch/arm/mach-s3c24xx/mach-n30.c                   |  2 --
+  arch/arm/mach-s3c24xx/mach-nexcoder.c              |  1 -
+  arch/arm/mach-s3c24xx/mach-osiris.c                |  1 -
+  arch/arm/mach-s3c24xx/mach-otom.c                  |  1 -
+  arch/arm/mach-s3c24xx/mach-qt2410.c                |  1 -
+  arch/arm/mach-s3c24xx/mach-rx1950.c                |  1 -
+  arch/arm/mach-s3c24xx/mach-rx3715.c                |  1 -
+  arch/arm/mach-s3c24xx/mach-s3c2416-dt.c            |  1 -
+  arch/arm/mach-s3c24xx/mach-smdk2410.c              |  1 -
+  arch/arm/mach-s3c24xx/mach-smdk2413.c              |  3 ---
+  arch/arm/mach-s3c24xx/mach-smdk2416.c              |  1 -
+  arch/arm/mach-s3c24xx/mach-smdk2440.c              |  1 -
+  arch/arm/mach-s3c24xx/mach-smdk2443.c              |  1 -
+  arch/arm/mach-s3c24xx/mach-tct_hammer.c            |  1 -
+  arch/arm/mach-s3c24xx/mach-vr1000.c                |  1 -
+  arch/arm/mach-s3c24xx/mach-vstms.c                 |  1 -
+  arch/arm/mach-s3c24xx/s3c2410.c                    | 13 -----------
+  arch/arm/mach-s3c24xx/s3c2412.c                    | 23 
+-------------------
+  arch/arm/mach-s3c24xx/s3c2416.c                    |  8 -------
+  arch/arm/mach-s3c24xx/s3c2443.c                    |  8 -------
+  arch/arm/mach-s3c24xx/s3c244x.c                    | 12 ----------
+  arch/arm/mach-s5pv210/pm.c                         |  3 +--
+  .../mach-s5pv210/{include/mach => }/regs-clock.h   |  3 +--
+  arch/arm/mach-s5pv210/s5pv210.c                    |  2 +-
+  38 files changed, 5 insertions(+), 137 deletions(-)
+  delete mode 100644 arch/arm/mach-exynos/include/mach/memory.h
+  rename arch/arm/mach-s5pv210/{include/mach => }/regs-clock.h (99%)
