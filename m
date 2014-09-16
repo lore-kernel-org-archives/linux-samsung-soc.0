@@ -1,80 +1,45 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCHv3 4/5] rtc: s3c: Add support for RTC of Exynos3250 SoC
-Date: Tue, 16 Sep 2014 17:20:01 +0200
-Message-ID: <CABxcv==CBbaY_GVgmWe5QzJdhMipyx5TpZ4_3oKLzkyiGPOBrw@mail.gmail.com>
-References: <1409216559-22402-1-git-send-email-cw00.choi@samsung.com>
-	<1409216559-22402-5-git-send-email-cw00.choi@samsung.com>
-	<CABxcv=ku9fjFfzyXZEnCGpTrWQ0pN+5mLWay90jXBhkFeWb7sg@mail.gmail.com>
-	<CAD8Lp47M8jHLrQAdYUn6NZn2Ety_02E6HPzPDUX3uGLVqf1riw@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2] mfd: syscon: Decouple syscon interface from platform devices
+Date: Tue, 16 Sep 2014 16:52:15 +0200
+Message-ID: <201409161652.15333.arnd@arndb.de>
+References: <1409668935-10667-1-git-send-email-pankaj.dubey@samsung.com> <20140905101409.68b14cc3@bbrezillon> <000b01cfd1a4$f5ae0d20$e10a2760$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f177.google.com ([74.125.82.177]:45530 "EHLO
-	mail-we0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753088AbaIPPUD (ORCPT
+Received: from mout.kundenserver.de ([212.227.17.24]:59161 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753787AbaIPPvf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Sep 2014 11:20:03 -0400
-Received: by mail-we0-f177.google.com with SMTP id u57so5839049wes.22
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Sep 2014 08:20:01 -0700 (PDT)
-In-Reply-To: <CAD8Lp47M8jHLrQAdYUn6NZn2Ety_02E6HPzPDUX3uGLVqf1riw@mail.gmail.com>
+	Tue, 16 Sep 2014 11:51:35 -0400
+In-Reply-To: <000b01cfd1a4$f5ae0d20$e10a2760$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>, Douglas Anderson <dianders@chromium.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Kyungmin Park <kyungmin.park@samsung.com>, rtc-linux@googlegroups.com, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: lee.jones@linaro.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, 'Alexander Shiyan' <shc_work@mail.ru>, naushad@samsung.com, 'Tomasz Figa' <t.figa@samsung.com>, linux-kernel@vger.kernel.org, joshi@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, tomasz.figa@gmail.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, 'Michal Simek' <michal.simek@xilinx.com>, linux-arm-kernel@lists.infradead.org, 'Mark Brown' <broonie@kernel.org>, 'Boris BREZILLON' <boris.brezillon@free-electrons.com>, PRASHANTH GODREHAL <prashanth.g@samsung.com>
 
-Hello Daniel,
+On Tuesday 16 September 2014, Pankaj Dubey wrote:
+> Hi Arnd,  Lee Jones,
+> > On Thu, 04 Sep 2014 10:15:27 +0530
+> > Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> 
+> Any update on this patch. As already it has been tested on two DT based
+> platforms.
+> 
+> If you think that we can go ahead and break clps711x till it gets migrated
+> over DT,
+> then please ack this patch, or else if you have opinion to keep support for
+> non-DT
+> based drivers (clps711x) then I can post another patch keeping platform
+> driver support
+> for non-DT based platform. 
 
-On Tue, Sep 16, 2014 at 5:03 PM, Daniel Drake <drake@endlessm.com> wrote:
-> On Tue, Sep 16, 2014 at 7:48 AM, Javier Martinez Canillas
-> <javier@dowhile0.org> wrote:
->>> Clock list for s3c-rtc device:
->>> - rtc : CLK_RTC of CLK_GATE_IP_PERIR is gate clock for RTC.
->>> - rtc_src : XrtcXTI is 32.768.kHz source clock for RTC.
->>
->> Is this RTC source clock needed for all Exynos SoCs?
->
-> It is at least needed on Exynos4412, which has the XrtcXTI thing
-> exactly as you describe. However the very standard setup there is to
-> hook it up to the CP clock output of the MAX76686 PMIC. This CP clock
-> is on by default, so you can potentially live without that detail
-> being present in the DT.
->
+The rule is that we don't intentionally break things, so please post a
+patch that keeps the existing platform driver there. Ideally we get a DT-only
+clps711x for the merge window as well, and if that happens we can add another
+patch on top to remove that syscon-pdev support again but then we will
+have a bisectable kernel that works for every point inbetween.
 
-Thanks for confirming for Exynos4412, I just answered my own email
-saying that I found to be needed on Exynos5420 as well and as you
-said, it was just working because the Maxim clocks were left on by
-default.
 
-> However... one small issue with this setup is that when you enable
-> CONFIG_COMMON_CLK_MAX77686, the CP clock gets exposed in Linux's
-> common clock framework, and Linux then turns it off because it
-> believes it is unused. Then the RTC stops ticking.
->
-
-Indeed, this is an issue about relying on default state. We had a
-quite long discussion a couple of weeks ago about simplefb relying on
-clocks and regulators left enabled by the bootloader but once these
-were know to the kernel, the frameworks disable them because were
-unused making simplefb to fail.
-
-> So the rtc_src idea would also be good for Exynos4412. Maybe it would
-> make sense to drop the needs_src_clk flag, and simply require/enable
-> the src clock whenever it is present in the DT.
->
-
-That sounds more sensible to me as well. I wonder what should happen
-in this case with DT backward compatibility though. But as you said,
-the external clock is required and the kernel will disable this clock
-once is know to the CCF since is not used so maybe will be hard to
-maintain DT backward compatibility in this case.
-
-> Also, are you sure about the way you are treating this clock, all
-> those enable/disable calls? You only seem to enable it when doing some
-> particular driver operations e.g. reading the time, leaving it
-> disabled at all other times. However I believe on Exynos4412 that if
-> you disable this clock then the RTC will not tick.
->
-> Daniel
-
-Best regards,
-Javier
+	Arnd
