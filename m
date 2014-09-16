@@ -1,142 +1,45 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH v2 1/3] iio: exyno-adc: use syscon for PMU register access
-Date: Tue, 16 Sep 2014 14:28:49 +0530
-Message-ID: <1410857931-4980-2-git-send-email-ch.naveen@samsung.com>
-References: <1410857931-4980-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1410857931-4980-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cw00.choi@samsung.com, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, cpgs@samsung.com, grundler@chromium.org, jic23@kernel.org
+Subject: [PATCH 0/2] i2c: Add i2c support for Exynos7 SoC
+Date: Tue, 16 Sep 2014 15:03:16 +0530
+Message-ID: <1410859998-29285-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:29669 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752732AbaIPJiI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 16 Sep 2014 05:38:08 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-i2c@vger.kernel.org
+Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, sjg@chromium.org, grundler@chromium.org, linux-kernel@vger.kernel.org, wsa@the-dreams.de, cpgs@samsung.com, devicetree@vger.kernel.org
 
-This patch updates the IIO based ADC driver to use syscon and regmap
-APIs to access and use PMU registers instead of remapping the PMU
-registers in the driver.
+This patchset adds code to the i2c-exynos5.c driver to support
+the HSI2C H/W available on Exynos7 SoC.
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-To: linux-iio@vger.kernel.org
----
-Changes since v1:
-Rebased on top of togreg branch of IIO git
+Also, modifies the Kconfig dependencies to be able to select
+for ARCH_EXYNOS7 platform.
 
- drivers/iio/adc/exynos_adc.c |   30 +++++++++++++++++++++---------
- 1 file changed, 21 insertions(+), 9 deletions(-)
+The following patches are tested based on Kgene's for-next tree.
+https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
 
-diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-index 43620fd..fe03177 100644
---- a/drivers/iio/adc/exynos_adc.c
-+++ b/drivers/iio/adc/exynos_adc.c
-@@ -39,6 +39,8 @@
- #include <linux/iio/iio.h>
- #include <linux/iio/machine.h>
- #include <linux/iio/driver.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
- 
- /* S3C/EXYNOS4412/5250 ADC_V1 registers definitions */
- #define ADC_V1_CON(x)		((x) + 0x00)
-@@ -90,11 +92,14 @@
- 
- #define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(100))
- 
-+#define EXYNOS_ADCV1_PHY_OFFSET	0x0718
-+#define EXYNOS_ADCV2_PHY_OFFSET	0x0720
-+
- struct exynos_adc {
- 	struct exynos_adc_data	*data;
- 	struct device		*dev;
- 	void __iomem		*regs;
--	void __iomem		*enable_reg;
-+	struct regmap		*pmu_map;
- 	struct clk		*clk;
- 	struct clk		*sclk;
- 	unsigned int		irq;
-@@ -110,6 +115,7 @@ struct exynos_adc_data {
- 	int num_channels;
- 	bool needs_sclk;
- 	bool needs_adc_phy;
-+	int phy_offset;
- 	u32 mask;
- 
- 	void (*init_hw)(struct exynos_adc *info);
-@@ -183,7 +189,7 @@ static void exynos_adc_v1_init_hw(struct exynos_adc *info)
- 	u32 con1;
- 
- 	if (info->data->needs_adc_phy)
--		writel(1, info->enable_reg);
-+		regmap_write(info->pmu_map, info->data->phy_offset, 1);
- 
- 	/* set default prescaler values and Enable prescaler */
- 	con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
-@@ -198,7 +204,7 @@ static void exynos_adc_v1_exit_hw(struct exynos_adc *info)
- 	u32 con;
- 
- 	if (info->data->needs_adc_phy)
--		writel(0, info->enable_reg);
-+		regmap_write(info->pmu_map, info->data->phy_offset, 0);
- 
- 	con = readl(ADC_V1_CON(info->regs));
- 	con |= ADC_V1_CON_STANDBY;
-@@ -225,6 +231,7 @@ static const struct exynos_adc_data exynos_adc_v1_data = {
- 	.num_channels	= MAX_ADC_V1_CHANNELS,
- 	.mask		= ADC_DATX_MASK,	/* 12 bit ADC resolution */
- 	.needs_adc_phy	= true,
-+	.phy_offset	= EXYNOS_ADCV1_PHY_OFFSET,
- 
- 	.init_hw	= exynos_adc_v1_init_hw,
- 	.exit_hw	= exynos_adc_v1_exit_hw,
-@@ -314,7 +321,7 @@ static void exynos_adc_v2_init_hw(struct exynos_adc *info)
- 	u32 con1, con2;
- 
- 	if (info->data->needs_adc_phy)
--		writel(1, info->enable_reg);
-+		regmap_write(info->pmu_map, info->data->phy_offset, 1);
- 
- 	con1 = ADC_V2_CON1_SOFT_RESET;
- 	writel(con1, ADC_V2_CON1(info->regs));
-@@ -332,7 +339,7 @@ static void exynos_adc_v2_exit_hw(struct exynos_adc *info)
- 	u32 con;
- 
- 	if (info->data->needs_adc_phy)
--		writel(0, info->enable_reg);
-+		regmap_write(info->pmu_map, info->data->phy_offset, 0);
- 
- 	con = readl(ADC_V2_CON1(info->regs));
- 	con &= ~ADC_CON_EN_START;
-@@ -362,6 +369,7 @@ static const struct exynos_adc_data exynos_adc_v2_data = {
- 	.num_channels	= MAX_ADC_V2_CHANNELS,
- 	.mask		= ADC_DATX_MASK, /* 12 bit ADC resolution */
- 	.needs_adc_phy	= true,
-+	.phy_offset	= EXYNOS_ADCV2_PHY_OFFSET,
- 
- 	.init_hw	= exynos_adc_v2_init_hw,
- 	.exit_hw	= exynos_adc_v2_exit_hw,
-@@ -374,6 +382,7 @@ static const struct exynos_adc_data exynos3250_adc_data = {
- 	.mask		= ADC_DATX_MASK, /* 12 bit ADC resolution */
- 	.needs_sclk	= true,
- 	.needs_adc_phy	= true,
-+	.phy_offset	= EXYNOS_ADCV1_PHY_OFFSET,
- 
- 	.init_hw	= exynos_adc_v2_init_hw,
- 	.exit_hw	= exynos_adc_v2_exit_hw,
-@@ -558,10 +567,13 @@ static int exynos_adc_probe(struct platform_device *pdev)
- 
- 
- 	if (info->data->needs_adc_phy) {
--		mem = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--		info->enable_reg = devm_ioremap_resource(&pdev->dev, mem);
--		if (IS_ERR(info->enable_reg))
--			return PTR_ERR(info->enable_reg);
-+		info->pmu_map = syscon_regmap_lookup_by_phandle(
-+					pdev->dev.of_node,
-+					"samsung,syscon-phandle");
-+		if (IS_ERR(info->pmu_map)) {
-+			dev_err(&pdev->dev, "syscon regmap lookup failed.\n");
-+			return PTR_ERR(info->pmu_map);
-+		}
- 	}
- 
- 	irq = platform_get_irq(pdev, 0);
+Following patches are required for this series:
+1. "tty/serial: fix config dependencies for samsung serial"
+   https://www.mail-archive.com/linux-samsung-soc <at> vger.kernel.org/msg36208.html
+2. "dts, kbuild: Implement support for dtb vendor subdirs" patchset 
+   http://comments.gmane.org/gmane.linux.kbuild.devel/12131
+3. [PATCH v4 0/8] arch: arm64: enable support for Samsung Exynos7 SoC
+   http://www.spinics.net/lists/devicetree/msg49130.html
+4. [PATCH 0/4] Add initial support for pinctrl on Exynos7
+   http://www.spinics.net/lists/devicetree/msg49237.html
+
+Naveen Krishna Chatradhi (2):
+  i2c: exynos: add support for HSI2C module on Exynos7
+  i2c: exynos5: Add Kconfig dependencies
+
+ .../devicetree/bindings/i2c/i2c-exynos5.txt        |    2 +
+ drivers/i2c/busses/Kconfig                         |    2 +-
+ drivers/i2c/busses/i2c-exynos5.c                   |   71 ++++++++++++++++++--
+ 3 files changed, 68 insertions(+), 7 deletions(-)
+
 -- 
 1.7.9.5
