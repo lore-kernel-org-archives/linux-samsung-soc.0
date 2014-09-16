@@ -1,8 +1,7 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH v2 2/3] Documentation: dt-bindings: update exynos-adc.txt with
- syscon handle
-Date: Tue, 16 Sep 2014 14:28:50 +0530
-Message-ID: <1410857931-4980-3-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH v2 3/3] ARM: dts: exynos: Add sysreg phandle to ADC node
+Date: Tue, 16 Sep 2014 14:28:51 +0530
+Message-ID: <1410857931-4980-4-git-send-email-ch.naveen@samsung.com>
 References: <1410857931-4980-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1410857931-4980-1-git-send-email-ch.naveen@samsung.com>
@@ -11,60 +10,97 @@ To: linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vge
 Cc: linux-kernel@vger.kernel.org, cw00.choi@samsung.com, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, cpgs@samsung.com, grundler@chromium.org, jic23@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch updates the DT bindings for ADC in exynos-adc.txt with the
-syscon phandle to the ADC nodes.
+Instead of using the ADC_PHY register base address, use sysreg phandle
+in ADC node to control ADC_PHY configuration register.
+
+This patch adds syscon node for Exynos3250, Exynos4x12, Exynos5250,
+and Exynos5420, Exynos5800.
 
 Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-To: devicetree@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 ---
- .../devicetree/bindings/arm/samsung/exynos-adc.txt |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos3250.dtsi |    3 ++-
+ arch/arm/boot/dts/exynos4x12.dtsi |    3 ++-
+ arch/arm/boot/dts/exynos5250.dtsi |    3 ++-
+ arch/arm/boot/dts/exynos5420.dtsi |    3 ++-
+ 4 files changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-index 709efaa..c368210 100644
---- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
-@@ -43,13 +43,16 @@ Required properties:
- 				   compatible ADC block)
- - vdd-supply		VDD input supply.
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 1d52de6..b997a4c 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -272,12 +272,13 @@
+ 		adc: adc@126C0000 {
+ 			compatible = "samsung,exynos3250-adc",
+ 				     "samsung,exynos-adc-v2";
+-			reg = <0x126C0000 0x100>, <0x10020718 0x4>;
++			reg = <0x126C0000 0x100>;
+ 			interrupts = <0 137 0>;
+ 			clock-names = "adc", "sclk";
+ 			clocks = <&cmu CLK_TSADC>, <&cmu CLK_SCLK_TSADC>;
+ 			#io-channel-cells = <1>;
+ 			io-channel-ranges;
++			samsung,syscon-phandle = <&pmu_system_controller>;
+ 			status = "disabled";
+ 		};
  
-+- samsung,syscon-phandle Contains the PMU system controller node
-+			(To access the ADC_PHY register on Exynos5250/5420/5800/3250)
-+
- Note: child nodes can be added for auto probing from device tree.
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index 861bb91..9ee77d3 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -108,13 +108,14 @@
  
- Example: adding device info in dtsi file
+ 	adc: adc@126C0000 {
+ 		compatible = "samsung,exynos-adc-v1";
+-		reg = <0x126C0000 0x100>, <0x10020718 0x4>;
++		reg = <0x126C0000 0x100>;
+ 		interrupt-parent = <&combiner>;
+ 		interrupts = <10 3>;
+ 		clocks = <&clock CLK_TSADC>;
+ 		clock-names = "adc";
+ 		#io-channel-cells = <1>;
+ 		io-channel-ranges;
++		samsung,syscon-phandle = <&pmu_system_controller>;
+ 		status = "disabled";
+ 	};
  
- adc: adc@12D10000 {
- 	compatible = "samsung,exynos-adc-v1";
--	reg = <0x12D10000 0x100>, <0x10040718 0x4>;
-+	reg = <0x12D10000 0x100>;
- 	interrupts = <0 106 0>;
- 	#io-channel-cells = <1>;
- 	io-channel-ranges;
-@@ -58,13 +61,14 @@ adc: adc@12D10000 {
- 	clock-names = "adc";
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 492e1ef..108adc5 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -765,12 +765,13 @@
  
- 	vdd-supply = <&buck5_reg>;
-+	samsung,syscon-phandle = <&pmu_system_controller>;
- };
+ 	adc: adc@12D10000 {
+ 		compatible = "samsung,exynos-adc-v1";
+-		reg = <0x12D10000 0x100>, <0x10040718 0x4>;
++		reg = <0x12D10000 0x100>;
+ 		interrupts = <0 106 0>;
+ 		clocks = <&clock CLK_ADC>;
+ 		clock-names = "adc";
+ 		#io-channel-cells = <1>;
+ 		io-channel-ranges;
++		samsung,syscon-phandle = <&pmu_system_controller>;
+ 		status = "disabled";
+ 	};
  
- Example: adding device info in dtsi file for Exynos3250 with additional sclk
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index bfe056d..5fd587a 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -541,12 +541,13 @@
  
- adc: adc@126C0000 {
- 	compatible = "samsung,exynos3250-adc", "samsung,exynos-adc-v2;
--	reg = <0x126C0000 0x100>, <0x10020718 0x4>;
-+	reg = <0x126C0000 0x100>;
- 	interrupts = <0 137 0>;
- 	#io-channel-cells = <1>;
- 	io-channel-ranges;
-@@ -73,6 +77,7 @@ adc: adc@126C0000 {
- 	clock-names = "adc", "sclk";
+ 	adc: adc@12D10000 {
+ 		compatible = "samsung,exynos-adc-v2";
+-		reg = <0x12D10000 0x100>, <0x10040720 0x4>;
++		reg = <0x12D10000 0x100>;
+ 		interrupts = <0 106 0>;
+ 		clocks = <&clock CLK_TSADC>;
+ 		clock-names = "adc";
+ 		#io-channel-cells = <1>;
+ 		io-channel-ranges;
++		samsung,syscon-phandle = <&pmu_system_controller>;
+ 		status = "disabled";
+ 	};
  
- 	vdd-supply = <&buck5_reg>;
-+	samsung,syscon-phandle = <&pmu_system_controller>;
- };
- 
- Example: Adding child nodes in dts file
 -- 
 1.7.9.5
