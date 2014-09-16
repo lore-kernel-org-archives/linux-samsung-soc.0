@@ -1,114 +1,259 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH V7 00/12] drm/exynos: few patches to enhance bridge chip support
-Date: Tue, 16 Sep 2014 23:11:04 +0300
-Message-ID: <2714548.pCtGz0272O@avalon>
-References: <1409149783-12416-1-git-send-email-ajaykumar.rs@samsung.com> <CABxcv==KyakjS5cf9PcHL_pEcC5Kzn8Zz9uQ6HpKLdSjTXciFA@mail.gmail.com>
+From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Subject: [PATCH 04/22] video: fbdev: Replace strnicmp with strncasecmp
+Date: Tue, 16 Sep 2014 22:51:18 +0200
+Message-ID: <1410900696-6481-5-git-send-email-linux@rasmusvillemoes.dk>
+References: <1410900696-6481-1-git-send-email-linux@rasmusvillemoes.dk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:39092 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754468AbaIPULE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Sep 2014 16:11:04 -0400
-In-Reply-To: <CABxcv==KyakjS5cf9PcHL_pEcC5Kzn8Zz9uQ6HpKLdSjTXciFA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1410900696-6481-1-git-send-email-linux@rasmusvillemoes.dk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-kernel@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Inki Dae <inki.dae@samsung.com>, Thierry Reding <thierry.reding@gmail.com>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Ajay kumar <ajaynumb@gmail.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-Hi Javier,
+The kernel used to contain two functions for length-delimited,
+case-insensitive string comparison, strnicmp with correct semantics
+and a slightly buggy strncasecmp. The latter is the POSIX name, so
+strnicmp was renamed to strncasecmp, and strnicmp made into a wrapper
+for the new strncasecmp to avoid breaking existing users.
 
-On Tuesday 16 September 2014 14:44:02 Javier Martinez Canillas wrote:
-> [adding Laurent Pinchart to cc who had concerns with a previous
-> version of this patch-set]
+To allow the compat wrapper strnicmp to be removed at some point in
+the future, and to avoid the extra indirection cost, do
+s/strnicmp/strncasecmp/g.
 
-Thank you, I've indeed missed v7.
+Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: linux-fbdev@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ drivers/video/fbdev/pvr2fb.c       |  2 +-
+ drivers/video/fbdev/s3c2410fb.c    |  8 ++---
+ drivers/video/fbdev/sis/sis_main.c | 66 +++++++++++++++++++-------------------
+ drivers/video/fbdev/sm501fb.c      |  4 +--
+ 4 files changed, 40 insertions(+), 40 deletions(-)
 
-> On Wed, Aug 27, 2014 at 4:29 PM, Ajay Kumar wrote:
-> > This series is based on master branch of Linus tree at:
-> > git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-> > 
-> > I have tested this after adding few DT changes for exynos5250-snow and
-> > exynos5420-peach-pit boards.
-> > 
-> > The V4 series of this particular patchset was also tested by:
-> > Rahul Sharma <rahul.sharma@samsung.com>
-> > Javier Martinez Canillas <javier@dowhile0.org>
-> > 
-> > Changes since V2:
-> >         -- Address comments from Jingoo Han for ps8622 driver
-> >         -- Address comments from Daniel, Rob and Thierry regarding
-> >            bridge chaining
-> >         -- Address comments from Thierry regarding the names for
-> >            new drm_panel functions
-> > 
-> > Changes since V3:
-> >         -- Remove hotplug based initialization of exynos_dp
-> >         -- Make exynos_dp work directly with drm_panel, remove
-> >            dependency on panel_binder
-> >         -- Minor cleanups in panel_binder and panel_lvds driver
-> > 
-> > Changes since V4:
-> >         -- Use gpiod interface for panel-lvds and ps8622 drivers.
-> >         -- Address comments from Javier.
-> >         -- Fix compilation issues when PANEL_BINDER is selected as module.
-> >         -- Split Documentation patches from driver patches.
-> >         -- Rebase on top of the tree.
-> > 
-> > Changes since V5:
-> >         -- Modify bridge drivers to support driver model.
-> >         -- Drop the concept of bridge chain(sincle there are no 2 real
-> >         bridges)
-> >            Hence drop bridge-panel_binder layer.
-> >         -- Drop panel-lvds driver and accomodate the required changes in
-> >            panel-simple driver.
-> >         -- Use gpiod interface in ptn3460 driver.
-> >         -- Address all comments by Thierry Reding for V5 series.
-> >         -- Address comments from Sean Paul for exynos_dp_commit issue.
-> > 
-> > Changes since V6:
-> >         -- Panel patches were seperated and they are merged already.
-> >         -- Fix few issues with ptn3460, before modifying the bridge core.
-> >         -- Modify drm_bridge as per Thierry's comments for V6 series.
-> >         -- Add drm_bridge changes minimally without breaking existing
-> >         code.
-> >         -- Add new features for ptn3460, step-by-step.
-> >         -- Address comments from Thierry and Andreas for ptn3460 and
-> >         ps8622.
-> >         -- Split documentation patches from driver patches.
-> 
-> I've tested your series on an Exynos5420 Peach Pit and an Exynos5250
-> Snow Chromebooks and display worked for me on both machines.
-> 
-> I also needed "[PATCH] drm/panel: simple: Add AUO B116XW03 panel
-> support" [0] which does not apply cleanly on linux-next so you may
-> want to do a re-spin for that patch.
-> 
-> For Snow I also had to disable CONFIG_FB_SIMPLE, otherwise I just saw
-> a blink on boot and only the backlight remained turned on (no display
-> output). I don't know if that is expected since IIUC it should be
-> possible to do a transition from simplefb to a DRM/KMS driver. I don't
-> have a serial console hooked on this machine so I couldn't debug it
-> further, sorry.
-> 
-> Also, I saw that Laurent mentioned some concerns today about the
-> previous version (v6) of your series [1]. I guess he missed this v7
-> although AFAIU there was no fundamental change on this one so his
-> concerns remains? I was really hoping that this could make it to 3.18
-> since display support is one of the last major functionalities that is
-> missing on these machines.
-
-My main concern as far as merging this patch set goes is why we can't use the 
-component framework instead of introducing yet another new subsystem-specific 
-component registration framework. My other concerns could be addressed as 
-follow-up patches (but I'd like to start discussing them now).
-
-> [0]: http://patchwork.ozlabs.org/patch/384744/
-> [1]: http://www.spinics.net/lists/linux-samsung-soc/msg36791.html
-
+diff --git a/drivers/video/fbdev/pvr2fb.c b/drivers/video/fbdev/pvr2fb.c
+index 167cfff..7c74f58 100644
+--- a/drivers/video/fbdev/pvr2fb.c
++++ b/drivers/video/fbdev/pvr2fb.c
+@@ -1001,7 +1001,7 @@ static int pvr2_get_param(const struct pvr2_params *p, const char *s, int val,
+ 
+ 	for (i = 0 ; i < size ; i++ ) {
+ 		if (s != NULL) {
+-			if (!strnicmp(p[i].name, s, strlen(s)))
++			if (!strncasecmp(p[i].name, s, strlen(s)))
+ 				return p[i].val;
+ 		} else {
+ 			if (p[i].val == val)
+diff --git a/drivers/video/fbdev/s3c2410fb.c b/drivers/video/fbdev/s3c2410fb.c
+index 43c63a4..e350eb5 100644
+--- a/drivers/video/fbdev/s3c2410fb.c
++++ b/drivers/video/fbdev/s3c2410fb.c
+@@ -601,12 +601,12 @@ static int s3c2410fb_debug_store(struct device *dev,
+ 	if (len < 1)
+ 		return -EINVAL;
+ 
+-	if (strnicmp(buf, "on", 2) == 0 ||
+-	    strnicmp(buf, "1", 1) == 0) {
++	if (strncasecmp(buf, "on", 2) == 0 ||
++	    strncasecmp(buf, "1", 1) == 0) {
+ 		debug = 1;
+ 		dev_dbg(dev, "s3c2410fb: Debug On");
+-	} else if (strnicmp(buf, "off", 3) == 0 ||
+-		   strnicmp(buf, "0", 1) == 0) {
++	} else if (strncasecmp(buf, "off", 3) == 0 ||
++		   strncasecmp(buf, "0", 1) == 0) {
+ 		debug = 0;
+ 		dev_dbg(dev, "s3c2410fb: Debug Off");
+ 	} else {
+diff --git a/drivers/video/fbdev/sis/sis_main.c b/drivers/video/fbdev/sis/sis_main.c
+index 3f12a2d..4f5cf03 100644
+--- a/drivers/video/fbdev/sis/sis_main.c
++++ b/drivers/video/fbdev/sis/sis_main.c
+@@ -162,7 +162,7 @@ static void sisfb_search_mode(char *name, bool quiet)
+ 		return;
+ 	}
+ 
+-	if(!strnicmp(name, sisbios_mode[MODE_INDEX_NONE].name, strlen(name))) {
++	if(!strncasecmp(name, sisbios_mode[MODE_INDEX_NONE].name, strlen(name))) {
+ 		if(!quiet)
+ 			printk(KERN_ERR "sisfb: Mode 'none' not supported anymore. Using default.\n");
+ 
+@@ -201,7 +201,7 @@ static void sisfb_search_mode(char *name, bool quiet)
+ 
+ 	i = 0; j = 0;
+ 	while(sisbios_mode[i].mode_no[0] != 0) {
+-		if(!strnicmp(nameptr, sisbios_mode[i++].name, strlen(nameptr))) {
++		if(!strncasecmp(nameptr, sisbios_mode[i++].name, strlen(nameptr))) {
+ 			if(sisfb_fstn) {
+ 				if(sisbios_mode[i-1].mode_no[1] == 0x50 ||
+ 				   sisbios_mode[i-1].mode_no[1] == 0x56 ||
+@@ -262,7 +262,7 @@ sisfb_search_crt2type(const char *name)
+ 	if(name == NULL) return;
+ 
+ 	while(sis_crt2type[i].type_no != -1) {
+-		if(!strnicmp(name, sis_crt2type[i].name, strlen(sis_crt2type[i].name))) {
++		if(!strncasecmp(name, sis_crt2type[i].name, strlen(sis_crt2type[i].name))) {
+ 			sisfb_crt2type = sis_crt2type[i].type_no;
+ 			sisfb_tvplug = sis_crt2type[i].tvplug_no;
+ 			sisfb_crt2flags = sis_crt2type[i].flags;
+@@ -289,7 +289,7 @@ sisfb_search_tvstd(const char *name)
+ 		return;
+ 
+ 	while(sis_tvtype[i].type_no != -1) {
+-		if(!strnicmp(name, sis_tvtype[i].name, strlen(sis_tvtype[i].name))) {
++		if(!strncasecmp(name, sis_tvtype[i].name, strlen(sis_tvtype[i].name))) {
+ 			sisfb_tvstd = sis_tvtype[i].type_no;
+ 			break;
+ 		}
+@@ -308,12 +308,12 @@ sisfb_search_specialtiming(const char *name)
+ 	if(name == NULL)
+ 		return;
+ 
+-	if(!strnicmp(name, "none", 4)) {
++	if(!strncasecmp(name, "none", 4)) {
+ 		sisfb_specialtiming = CUT_FORCENONE;
+ 		printk(KERN_DEBUG "sisfb: Special timing disabled\n");
+ 	} else {
+ 		while(mycustomttable[i].chipID != 0) {
+-			if(!strnicmp(name,mycustomttable[i].optionName,
++			if(!strncasecmp(name,mycustomttable[i].optionName,
+ 			   strlen(mycustomttable[i].optionName))) {
+ 				sisfb_specialtiming = mycustomttable[i].SpecialID;
+ 				found = true;
+@@ -3952,68 +3952,68 @@ static int __init sisfb_setup(char *options)
+ 
+ 		if(!(*this_opt)) continue;
+ 
+-		if(!strnicmp(this_opt, "off", 3)) {
++		if(!strncasecmp(this_opt, "off", 3)) {
+ 			sisfb_off = 1;
+-		} else if(!strnicmp(this_opt, "forcecrt2type:", 14)) {
++		} else if(!strncasecmp(this_opt, "forcecrt2type:", 14)) {
+ 			/* Need to check crt2 type first for fstn/dstn */
+ 			sisfb_search_crt2type(this_opt + 14);
+-		} else if(!strnicmp(this_opt, "tvmode:",7)) {
++		} else if(!strncasecmp(this_opt, "tvmode:",7)) {
+ 			sisfb_search_tvstd(this_opt + 7);
+-		} else if(!strnicmp(this_opt, "tvstandard:",11)) {
++		} else if(!strncasecmp(this_opt, "tvstandard:",11)) {
+ 			sisfb_search_tvstd(this_opt + 11);
+-		} else if(!strnicmp(this_opt, "mode:", 5)) {
++		} else if(!strncasecmp(this_opt, "mode:", 5)) {
+ 			sisfb_search_mode(this_opt + 5, false);
+-		} else if(!strnicmp(this_opt, "vesa:", 5)) {
++		} else if(!strncasecmp(this_opt, "vesa:", 5)) {
+ 			sisfb_search_vesamode(simple_strtoul(this_opt + 5, NULL, 0), false);
+-		} else if(!strnicmp(this_opt, "rate:", 5)) {
++		} else if(!strncasecmp(this_opt, "rate:", 5)) {
+ 			sisfb_parm_rate = simple_strtoul(this_opt + 5, NULL, 0);
+-		} else if(!strnicmp(this_opt, "forcecrt1:", 10)) {
++		} else if(!strncasecmp(this_opt, "forcecrt1:", 10)) {
+ 			sisfb_forcecrt1 = (int)simple_strtoul(this_opt + 10, NULL, 0);
+-		} else if(!strnicmp(this_opt, "mem:",4)) {
++		} else if(!strncasecmp(this_opt, "mem:",4)) {
+ 			sisfb_parm_mem = simple_strtoul(this_opt + 4, NULL, 0);
+-		} else if(!strnicmp(this_opt, "pdc:", 4)) {
++		} else if(!strncasecmp(this_opt, "pdc:", 4)) {
+ 			sisfb_pdc = simple_strtoul(this_opt + 4, NULL, 0);
+-		} else if(!strnicmp(this_opt, "pdc1:", 5)) {
++		} else if(!strncasecmp(this_opt, "pdc1:", 5)) {
+ 			sisfb_pdca = simple_strtoul(this_opt + 5, NULL, 0);
+-		} else if(!strnicmp(this_opt, "noaccel", 7)) {
++		} else if(!strncasecmp(this_opt, "noaccel", 7)) {
+ 			sisfb_accel = 0;
+-		} else if(!strnicmp(this_opt, "accel", 5)) {
++		} else if(!strncasecmp(this_opt, "accel", 5)) {
+ 			sisfb_accel = -1;
+-		} else if(!strnicmp(this_opt, "noypan", 6)) {
++		} else if(!strncasecmp(this_opt, "noypan", 6)) {
+ 			sisfb_ypan = 0;
+-		} else if(!strnicmp(this_opt, "ypan", 4)) {
++		} else if(!strncasecmp(this_opt, "ypan", 4)) {
+ 			sisfb_ypan = -1;
+-		} else if(!strnicmp(this_opt, "nomax", 5)) {
++		} else if(!strncasecmp(this_opt, "nomax", 5)) {
+ 			sisfb_max = 0;
+-		} else if(!strnicmp(this_opt, "max", 3)) {
++		} else if(!strncasecmp(this_opt, "max", 3)) {
+ 			sisfb_max = -1;
+-		} else if(!strnicmp(this_opt, "userom:", 7)) {
++		} else if(!strncasecmp(this_opt, "userom:", 7)) {
+ 			sisfb_userom = (int)simple_strtoul(this_opt + 7, NULL, 0);
+-		} else if(!strnicmp(this_opt, "useoem:", 7)) {
++		} else if(!strncasecmp(this_opt, "useoem:", 7)) {
+ 			sisfb_useoem = (int)simple_strtoul(this_opt + 7, NULL, 0);
+-		} else if(!strnicmp(this_opt, "nocrt2rate", 10)) {
++		} else if(!strncasecmp(this_opt, "nocrt2rate", 10)) {
+ 			sisfb_nocrt2rate = 1;
+-		} else if(!strnicmp(this_opt, "scalelcd:", 9)) {
++		} else if(!strncasecmp(this_opt, "scalelcd:", 9)) {
+ 			unsigned long temp = 2;
+ 			temp = simple_strtoul(this_opt + 9, NULL, 0);
+ 			if((temp == 0) || (temp == 1)) {
+ 			   sisfb_scalelcd = temp ^ 1;
+ 			}
+-		} else if(!strnicmp(this_opt, "tvxposoffset:", 13)) {
++		} else if(!strncasecmp(this_opt, "tvxposoffset:", 13)) {
+ 			int temp = 0;
+ 			temp = (int)simple_strtol(this_opt + 13, NULL, 0);
+ 			if((temp >= -32) && (temp <= 32)) {
+ 			   sisfb_tvxposoffset = temp;
+ 			}
+-		} else if(!strnicmp(this_opt, "tvyposoffset:", 13)) {
++		} else if(!strncasecmp(this_opt, "tvyposoffset:", 13)) {
+ 			int temp = 0;
+ 			temp = (int)simple_strtol(this_opt + 13, NULL, 0);
+ 			if((temp >= -32) && (temp <= 32)) {
+ 			   sisfb_tvyposoffset = temp;
+ 			}
+-		} else if(!strnicmp(this_opt, "specialtiming:", 14)) {
++		} else if(!strncasecmp(this_opt, "specialtiming:", 14)) {
+ 			sisfb_search_specialtiming(this_opt + 14);
+-		} else if(!strnicmp(this_opt, "lvdshl:", 7)) {
++		} else if(!strncasecmp(this_opt, "lvdshl:", 7)) {
+ 			int temp = 4;
+ 			temp = simple_strtoul(this_opt + 7, NULL, 0);
+ 			if((temp >= 0) && (temp <= 3)) {
+@@ -4022,9 +4022,9 @@ static int __init sisfb_setup(char *options)
+ 		} else if(this_opt[0] >= '0' && this_opt[0] <= '9') {
+ 			sisfb_search_mode(this_opt, true);
+ #if !defined(__i386__) && !defined(__x86_64__)
+-		} else if(!strnicmp(this_opt, "resetcard", 9)) {
++		} else if(!strncasecmp(this_opt, "resetcard", 9)) {
+ 			sisfb_resetcard = 1;
+-	        } else if(!strnicmp(this_opt, "videoram:", 9)) {
++	        } else if(!strncasecmp(this_opt, "videoram:", 9)) {
+ 			sisfb_videoram = simple_strtoul(this_opt + 9, NULL, 0);
+ #endif
+ 		} else {
+diff --git a/drivers/video/fbdev/sm501fb.c b/drivers/video/fbdev/sm501fb.c
+index c2c8eb6..9e74e8f 100644
+--- a/drivers/video/fbdev/sm501fb.c
++++ b/drivers/video/fbdev/sm501fb.c
+@@ -1187,9 +1187,9 @@ static ssize_t sm501fb_crtsrc_store(struct device *dev,
+ 	if (len < 1)
+ 		return -EINVAL;
+ 
+-	if (strnicmp(buf, "crt", 3) == 0)
++	if (strncasecmp(buf, "crt", 3) == 0)
+ 		head = HEAD_CRT;
+-	else if (strnicmp(buf, "panel", 5) == 0)
++	else if (strncasecmp(buf, "panel", 5) == 0)
+ 		head = HEAD_PANEL;
+ 	else
+ 		return -EINVAL;
 -- 
-Regards,
-
-Laurent Pinchart
+2.0.4
