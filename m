@@ -1,41 +1,70 @@
-From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 0/3] iio: exynos-adc: use syscon instead of ioremap
-Date: Tue, 16 Sep 2014 14:28:48 +0530
-Message-ID: <1410857931-4980-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Subject: [PATCH v2 2/3] Documentation: dt-bindings: update exynos-adc.txt with
+ syscon handle
+Date: Tue, 16 Sep 2014 14:28:50 +0530
+Message-ID: <1410857931-4980-3-git-send-email-ch.naveen@samsung.com>
+References: <1410857931-4980-1-git-send-email-ch.naveen@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1410857931-4980-1-git-send-email-ch.naveen@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, cw00.choi@samsung.com, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, cpgs@samsung.com, grundler@chromium.org, jic23@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Changes since v1:
-1. Rebased on top of togreg branch of IIO git.
+This patch updates the DT bindings for ADC in exynos-adc.txt with the
+syscon phandle to the ADC nodes.
 
-This patch set does the following
-1. Use the syscon and Regmap API instead of ioremappaing the
-   ADC_PHY register from PMU.
-2. Updates the Documentation in exynos-adc.txt with syscon phandle
-   for the ADC nodes.
-3. Updates the Dts files for Exynos3250, Exynos4x12, Exynos5250,
-   Exynos5420 with the syscon phandle.
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+To: devicetree@vger.kernel.org
+---
+ .../devicetree/bindings/arm/samsung/exynos-adc.txt |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-Tested on Exynos5420 based Peach PIT and Exynos5800 based Peach PI
-by verifying sysfs entries provided by HWMON based NTC thermistors.
-
-Tested-By for Exynos3250, Exynos4x12 would be appreciated.
-
-Naveen Krishna Chatradhi (3):
-  iio: exyno-adc: use syscon for PMU register access
-  Documentation: dt-bindings: update exynos-adc.txt with syscon handle
-  ARM: dts: exynos: Add sysreg phandle to ADC node
-
- .../devicetree/bindings/arm/samsung/exynos-adc.txt |    9 ++++--
- arch/arm/boot/dts/exynos3250.dtsi                  |    3 +-
- arch/arm/boot/dts/exynos4x12.dtsi                  |    3 +-
- arch/arm/boot/dts/exynos5250.dtsi                  |    3 +-
- arch/arm/boot/dts/exynos5420.dtsi                  |    3 +-
- drivers/iio/adc/exynos_adc.c                       |   30 ++++++++++++++------
- 6 files changed, 36 insertions(+), 15 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+index 709efaa..c368210 100644
+--- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
++++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+@@ -43,13 +43,16 @@ Required properties:
+ 				   compatible ADC block)
+ - vdd-supply		VDD input supply.
+ 
++- samsung,syscon-phandle Contains the PMU system controller node
++			(To access the ADC_PHY register on Exynos5250/5420/5800/3250)
++
+ Note: child nodes can be added for auto probing from device tree.
+ 
+ Example: adding device info in dtsi file
+ 
+ adc: adc@12D10000 {
+ 	compatible = "samsung,exynos-adc-v1";
+-	reg = <0x12D10000 0x100>, <0x10040718 0x4>;
++	reg = <0x12D10000 0x100>;
+ 	interrupts = <0 106 0>;
+ 	#io-channel-cells = <1>;
+ 	io-channel-ranges;
+@@ -58,13 +61,14 @@ adc: adc@12D10000 {
+ 	clock-names = "adc";
+ 
+ 	vdd-supply = <&buck5_reg>;
++	samsung,syscon-phandle = <&pmu_system_controller>;
+ };
+ 
+ Example: adding device info in dtsi file for Exynos3250 with additional sclk
+ 
+ adc: adc@126C0000 {
+ 	compatible = "samsung,exynos3250-adc", "samsung,exynos-adc-v2;
+-	reg = <0x126C0000 0x100>, <0x10020718 0x4>;
++	reg = <0x126C0000 0x100>;
+ 	interrupts = <0 137 0>;
+ 	#io-channel-cells = <1>;
+ 	io-channel-ranges;
+@@ -73,6 +77,7 @@ adc: adc@126C0000 {
+ 	clock-names = "adc", "sclk";
+ 
+ 	vdd-supply = <&buck5_reg>;
++	samsung,syscon-phandle = <&pmu_system_controller>;
+ };
+ 
+ Example: Adding child nodes in dts file
 -- 
 1.7.9.5
