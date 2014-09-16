@@ -1,8 +1,10 @@
 From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 1/3] phy: exynos-dp-video: Use syscon support to control pmu register
-Date: Tue, 16 Sep 2014 09:36:48 +0530
-Message-ID: <1410840408-19954-1-git-send-email-gautam.vivek@samsung.com>
+Subject: [PATCH v3 1/3] phy: exynos-dp-video: Use syscon support to control pmu register
+Date: Tue, 16 Sep 2014 10:32:06 +0530
+Message-ID: <1410843726-4235-1-git-send-email-gautam.vivek@samsung.com>
+References: <1410840408-19954-1-git-send-email-gautam.vivek@samsung.com>
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1410840408-19954-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
@@ -23,13 +25,17 @@ Cc: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Cc: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
 ---
 
+Changes since v2:
+ - Using 'EXYNOS5_PHY_ENABLE' macro instead of 'EXYNOS_DPTX_PHY_ENABLE'
+   since that's available with us in "linux/mfd/syscon/exynos5-pmu.h" file.
+
 Changes since v1:
  - state->regs should have been "struct regmap *" instead of
    "void __iomem *". So corrected the same.
 
  .../devicetree/bindings/phy/samsung-phy.txt        |    7 +-
- drivers/phy/phy-exynos-dp-video.c                  |   78 ++++++++++++++------
- 2 files changed, 60 insertions(+), 25 deletions(-)
+ drivers/phy/phy-exynos-dp-video.c                  |   79 +++++++++++++-------
+ 2 files changed, 59 insertions(+), 27 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
 index 7a6feea..15e0f2c 100644
@@ -50,10 +56,10 @@ index 7a6feea..15e0f2c 100644
  
  Samsung S5P/EXYNOS SoC series USB PHY
 diff --git a/drivers/phy/phy-exynos-dp-video.c b/drivers/phy/phy-exynos-dp-video.c
-index 8b3026e..881ddb5 100644
+index 8b3026e..53f44a0 100644
 --- a/drivers/phy/phy-exynos-dp-video.c
 +++ b/drivers/phy/phy-exynos-dp-video.c
-@@ -13,44 +13,58 @@
+@@ -13,44 +13,55 @@
  #include <linux/io.h>
  #include <linux/kernel.h>
  #include <linux/module.h>
@@ -65,13 +71,12 @@ index 8b3026e..881ddb5 100644
  #include <linux/platform_device.h>
 +#include <linux/regmap.h>
  
- /* DPTX_PHY_CONTROL register */
- #define EXYNOS_DPTX_PHY_ENABLE		(1 << 0)
- 
+-/* DPTX_PHY_CONTROL register */
+-#define EXYNOS_DPTX_PHY_ENABLE		(1 << 0)
 +struct exynos_dp_video_phy_drvdata {
 +	u32 phy_ctrl_offset;
 +};
-+
+ 
  struct exynos_dp_video_phy {
 -	void __iomem *regs;
 +	struct regmap *regs;
@@ -84,6 +89,9 @@ index 8b3026e..881ddb5 100644
  {
 -	u32 reg;
 +	unsigned int val;
++
++	if (IS_ERR(state->regs))
++		return;
  
 -	reg = readl(state->regs);
 -	if (on)
@@ -91,14 +99,11 @@ index 8b3026e..881ddb5 100644
 -	else
 -		reg &= ~EXYNOS_DPTX_PHY_ENABLE;
 -	writel(reg, state->regs);
-+	if (IS_ERR(state->regs))
-+		return;
++	val = on ? 0 : EXYNOS5_PHY_ENABLE;
  
 -	return 0;
-+	val = on ? 0 : EXYNOS_DPTX_PHY_ENABLE;
-+
 +	regmap_update_bits(state->regs, state->drvdata->phy_ctrl_offset,
-+			   EXYNOS_DPTX_PHY_ENABLE, val);
++			   EXYNOS5_PHY_ENABLE, val);
  }
  
  static int exynos_dp_video_phy_power_on(struct phy *phy)
@@ -124,7 +129,7 @@ index 8b3026e..881ddb5 100644
  }
  
  static struct phy_ops exynos_dp_video_phy_ops = {
-@@ -59,11 +73,31 @@ static struct phy_ops exynos_dp_video_phy_ops = {
+@@ -59,11 +70,31 @@ static struct phy_ops exynos_dp_video_phy_ops = {
  	.owner		= THIS_MODULE,
  };
  
@@ -157,7 +162,7 @@ index 8b3026e..881ddb5 100644
  	struct phy_provider *phy_provider;
  	struct phy *phy;
  
-@@ -71,11 +105,15 @@ static int exynos_dp_video_phy_probe(struct platform_device *pdev)
+@@ -71,11 +102,15 @@ static int exynos_dp_video_phy_probe(struct platform_device *pdev)
  	if (!state)
  		return -ENOMEM;
  
@@ -177,7 +182,7 @@ index 8b3026e..881ddb5 100644
  
  	phy = devm_phy_create(dev, NULL, &exynos_dp_video_phy_ops, NULL);
  	if (IS_ERR(phy)) {
-@@ -89,12 +127,6 @@ static int exynos_dp_video_phy_probe(struct platform_device *pdev)
+@@ -89,12 +124,6 @@ static int exynos_dp_video_phy_probe(struct platform_device *pdev)
  	return PTR_ERR_OR_ZERO(phy_provider);
  }
  
