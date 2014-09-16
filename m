@@ -1,127 +1,66 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH] drm/exynos: fix plane-framebuffer linkage
-Date: Tue, 16 Sep 2014 08:35:01 +0200
-Message-ID: <20140916063501.GT4740@phenom.ffwll.local>
-References: <1410807137-8323-1-git-send-email-drake@endlessm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1410807137-8323-1-git-send-email-drake@endlessm.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Drake <drake@endlessm.com>
-Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH RESEND] ARM: DTS: correct the capability string for mmc0
+Date: Tue, 16 Sep 2014 14:20:09 +0530
+Message-ID: <1410857409-24767-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f176.google.com ([209.85.192.176]:40861 "EHLO
+	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752278AbaIPIu2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 16 Sep 2014 04:50:28 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kgene.kim@samsung.com, dianders@chromium.org, jh80.chung@samsung.com, tgih.jun@samsung.com, javier.martinez@collabora.co.uk, khilman@linaro.org, Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 
-On Mon, Sep 15, 2014 at 12:52:17PM -0600, Daniel Drake wrote:
-> Pageflipping currently causes some inconsistencies that lead to
-> crashes. Just run an app that causes a CRTC pageflip in a raw X session
-> and check that it exits cleanly and can be restarted - you'll see
-> crashes like:
->  Unable to handle kernel NULL pointer dereference at virtual address 00000334
->  PC is at exynos_drm_crtc_plane_commit+0x20/0x40
->  LR is at exynos_drm_crtc_plane_commit+0x20/0x40
->  [<c03749b4>] (exynos_drm_crtc_plane_commit) from [<c03741bc>] (exynos_drm_crtc_commit+0x44/0x70)
->  [<c03741bc>] (exynos_drm_crtc_commit) from [<c03743a0>] (exynos_drm_crtc_mode_set_commit.isra.2+0xb4/0xc4)
->  [<c03743a0>] (exynos_drm_crtc_mode_set_commit.isra.2) from [<c03744f4>] (exynos_drm_crtc_page_flip+0x140/0x1a8)
->  [<c03744f4>] (exynos_drm_crtc_page_flip) from [<c036b20c>] (drm_mode_page_flip_ioctl+0x224/0x2dc)
->  [<c036b20c>] (drm_mode_page_flip_ioctl) from [<c035c324>] (drm_ioctl+0x338/0x4fc)
-> 
-> These crashes happen because drm_plane_force_disable has previously set
-> plane->crtc to NULL.
-> 
-> When drm_mode_page_flip_ioctl() is used to flip another framebuffer
-> onto the primary plane, crtc->primary->fb is correctly updated (this is
-> a virtual plane created by plane_helper), but plane->fb is not (this
-> plane is the real one, created by exynos_drm_crtc_create).
-> 
-> We then come to handle rmfb of the backbuffer, which the "real" primary
-> plane is incorrectly pointing at. So drm_framebuffer_remove() decides that
-> the buffer is actually active on a plane and force-disables the plane.
-> 
-> Ensuring that plane->fb is kept up-to-date solves that issue, but
-> exposes a reference counting problem. Now we see crashes when rmfb is
-> called on the front-buffer, because the rmfb code expects to drop 3
-> references here, and there are only 2.
-> 
-> That can be fixed by adopting the reference management found in omapdrm:
-> Framebuffer references are not taken directly in crtc mode_set context,
-> but rather in the context of updating the plane, which also covers
-> flips. Like omapdrm we also unreference the old framebuffer here.
-> 
-> Signed-off-by: Daniel Drake <drake@endlessm.com>
+From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 
-This sounds very much like exynos should switch to universal planes so
-that the fake primary plane created by the helpers doesn't get in the way.
-And for chips which already use planes for everything internally this
-shouldn't be a lot more than a few lines.
--Daniel
+MMC capability for HS200 is parsed in mmc/core/host.c as
+dts string "mmc-hs200-1_8v".
 
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_crtc.c  | 12 ++----------
->  drivers/gpu/drm/exynos/exynos_drm_plane.c |  8 ++++++++
->  2 files changed, 10 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> index b68e58f..7aa9dee 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> @@ -140,16 +140,8 @@ exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
->  	if (manager->ops->mode_set)
->  		manager->ops->mode_set(manager, &crtc->mode);
->  
-> -	ret = exynos_plane_mode_set(plane, crtc, crtc->primary->fb, 0, 0, crtc_w, crtc_h,
-> -				    x, y, crtc_w, crtc_h);
-> -	if (ret)
-> -		return ret;
-> -
-> -	plane->crtc = crtc;
-> -	plane->fb = crtc->primary->fb;
-> -	drm_framebuffer_reference(plane->fb);
-> -
-> -	return 0;
-> +	return exynos_plane_mode_set(plane, crtc, crtc->primary->fb, 0, 0,
-> +				     crtc_w, crtc_h, x, y, crtc_w, crtc_h);
->  }
->  
->  static int exynos_drm_crtc_mode_set_commit(struct drm_crtc *crtc, int x, int y,
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> index 8371cbd..df27e35 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> @@ -139,6 +139,14 @@ int exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
->  			overlay->crtc_x, overlay->crtc_y,
->  			overlay->crtc_width, overlay->crtc_height);
->  
-> +	if (plane->fb)
-> +		drm_framebuffer_unreference(plane->fb);
-> +
-> +	drm_framebuffer_reference(fb);
-> +
-> +	plane->fb = fb;
-> +	plane->crtc = crtc;
-> +
->  	exynos_drm_crtc_plane_mode_set(crtc, overlay);
->  
->  	return 0;
-> -- 
-> 1.9.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+This patch corrects the dts string for Exynos5420 based peach-pit
+and Exynos5800 based peach-pi boards.
 
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+---
+
+Hi Kukjin,
+
+As commented by Doug earlier for this patch, the two patches required
+  -- mmc: dw_mmc: Make sure we don't get stuck when we get an error
+  -- mmc: dw_mmc: change to use recommended reset procedure
+are now merged in upstream.
+So you can go ahead and pick this change.
+
+ arch/arm/boot/dts/exynos5420-peach-pit.dts |    2 +-
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+index 9a23382..e52ed04 100644
+--- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
++++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
+@@ -560,7 +560,7 @@
+ 	status = "okay";
+ 	num-slots = <1>;
+ 	broken-cd;
+-	caps2-mmc-hs200-1_8v;
++	mmc-hs200-1_8v;
+ 	cap-mmc-highspeed;
+ 	non-removable;
+ 	card-detect-delay = <200>;
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index 1d31c81..8616fbd 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -548,7 +548,7 @@
+ 	status = "okay";
+ 	num-slots = <1>;
+ 	broken-cd;
+-	caps2-mmc-hs200-1_8v;
++	mmc-hs200-1_8v;
+ 	cap-mmc-highspeed;
+ 	non-removable;
+ 	card-detect-delay = <200>;
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+1.7.10.4
