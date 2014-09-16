@@ -1,7 +1,7 @@
 From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH v2 3/3] ARM: dts: exynos: Add sysreg phandle to ADC node
-Date: Tue, 16 Sep 2014 14:28:51 +0530
-Message-ID: <1410857931-4980-4-git-send-email-ch.naveen@samsung.com>
+Subject: [PATCH v2 1/3] iio: exyno-adc: use syscon for PMU register access
+Date: Tue, 16 Sep 2014 14:28:49 +0530
+Message-ID: <1410857931-4980-2-git-send-email-ch.naveen@samsung.com>
 References: <1410857931-4980-1-git-send-email-ch.naveen@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1410857931-4980-1-git-send-email-ch.naveen@samsung.com>
@@ -10,97 +10,133 @@ To: linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vge
 Cc: linux-kernel@vger.kernel.org, cw00.choi@samsung.com, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, cpgs@samsung.com, grundler@chromium.org, jic23@kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Instead of using the ADC_PHY register base address, use sysreg phandle
-in ADC node to control ADC_PHY configuration register.
-
-This patch adds syscon node for Exynos3250, Exynos4x12, Exynos5250,
-and Exynos5420, Exynos5800.
+This patch updates the IIO based ADC driver to use syscon and regmap
+APIs to access and use PMU registers instead of remapping the PMU
+registers in the driver.
 
 Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-To: linux-samsung-soc@vger.kernel.org
+To: linux-iio@vger.kernel.org
 ---
- arch/arm/boot/dts/exynos3250.dtsi |    3 ++-
- arch/arm/boot/dts/exynos4x12.dtsi |    3 ++-
- arch/arm/boot/dts/exynos5250.dtsi |    3 ++-
- arch/arm/boot/dts/exynos5420.dtsi |    3 ++-
- 4 files changed, 8 insertions(+), 4 deletions(-)
+Changes since v1:
+Rebased on top of togreg branch of IIO git
 
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 1d52de6..b997a4c 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -272,12 +272,13 @@
- 		adc: adc@126C0000 {
- 			compatible = "samsung,exynos3250-adc",
- 				     "samsung,exynos-adc-v2";
--			reg = <0x126C0000 0x100>, <0x10020718 0x4>;
-+			reg = <0x126C0000 0x100>;
- 			interrupts = <0 137 0>;
- 			clock-names = "adc", "sclk";
- 			clocks = <&cmu CLK_TSADC>, <&cmu CLK_SCLK_TSADC>;
- 			#io-channel-cells = <1>;
- 			io-channel-ranges;
-+			samsung,syscon-phandle = <&pmu_system_controller>;
- 			status = "disabled";
- 		};
+ drivers/iio/adc/exynos_adc.c |   30 +++++++++++++++++++++---------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+index 43620fd..fe03177 100644
+--- a/drivers/iio/adc/exynos_adc.c
++++ b/drivers/iio/adc/exynos_adc.c
+@@ -39,6 +39,8 @@
+ #include <linux/iio/iio.h>
+ #include <linux/iio/machine.h>
+ #include <linux/iio/driver.h>
++#include <linux/mfd/syscon.h>
++#include <linux/regmap.h>
  
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index 861bb91..9ee77d3 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -108,13 +108,14 @@
+ /* S3C/EXYNOS4412/5250 ADC_V1 registers definitions */
+ #define ADC_V1_CON(x)		((x) + 0x00)
+@@ -90,11 +92,14 @@
  
- 	adc: adc@126C0000 {
- 		compatible = "samsung,exynos-adc-v1";
--		reg = <0x126C0000 0x100>, <0x10020718 0x4>;
-+		reg = <0x126C0000 0x100>;
- 		interrupt-parent = <&combiner>;
- 		interrupts = <10 3>;
- 		clocks = <&clock CLK_TSADC>;
- 		clock-names = "adc";
- 		#io-channel-cells = <1>;
- 		io-channel-ranges;
-+		samsung,syscon-phandle = <&pmu_system_controller>;
- 		status = "disabled";
- 	};
+ #define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(100))
  
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 492e1ef..108adc5 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -765,12 +765,13 @@
++#define EXYNOS_ADCV1_PHY_OFFSET	0x0718
++#define EXYNOS_ADCV2_PHY_OFFSET	0x0720
++
+ struct exynos_adc {
+ 	struct exynos_adc_data	*data;
+ 	struct device		*dev;
+ 	void __iomem		*regs;
+-	void __iomem		*enable_reg;
++	struct regmap		*pmu_map;
+ 	struct clk		*clk;
+ 	struct clk		*sclk;
+ 	unsigned int		irq;
+@@ -110,6 +115,7 @@ struct exynos_adc_data {
+ 	int num_channels;
+ 	bool needs_sclk;
+ 	bool needs_adc_phy;
++	int phy_offset;
+ 	u32 mask;
  
- 	adc: adc@12D10000 {
- 		compatible = "samsung,exynos-adc-v1";
--		reg = <0x12D10000 0x100>, <0x10040718 0x4>;
-+		reg = <0x12D10000 0x100>;
- 		interrupts = <0 106 0>;
- 		clocks = <&clock CLK_ADC>;
- 		clock-names = "adc";
- 		#io-channel-cells = <1>;
- 		io-channel-ranges;
-+		samsung,syscon-phandle = <&pmu_system_controller>;
- 		status = "disabled";
- 	};
+ 	void (*init_hw)(struct exynos_adc *info);
+@@ -183,7 +189,7 @@ static void exynos_adc_v1_init_hw(struct exynos_adc *info)
+ 	u32 con1;
  
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index bfe056d..5fd587a 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -541,12 +541,13 @@
+ 	if (info->data->needs_adc_phy)
+-		writel(1, info->enable_reg);
++		regmap_write(info->pmu_map, info->data->phy_offset, 1);
  
- 	adc: adc@12D10000 {
- 		compatible = "samsung,exynos-adc-v2";
--		reg = <0x12D10000 0x100>, <0x10040720 0x4>;
-+		reg = <0x12D10000 0x100>;
- 		interrupts = <0 106 0>;
- 		clocks = <&clock CLK_TSADC>;
- 		clock-names = "adc";
- 		#io-channel-cells = <1>;
- 		io-channel-ranges;
-+		samsung,syscon-phandle = <&pmu_system_controller>;
- 		status = "disabled";
- 	};
+ 	/* set default prescaler values and Enable prescaler */
+ 	con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
+@@ -198,7 +204,7 @@ static void exynos_adc_v1_exit_hw(struct exynos_adc *info)
+ 	u32 con;
  
+ 	if (info->data->needs_adc_phy)
+-		writel(0, info->enable_reg);
++		regmap_write(info->pmu_map, info->data->phy_offset, 0);
+ 
+ 	con = readl(ADC_V1_CON(info->regs));
+ 	con |= ADC_V1_CON_STANDBY;
+@@ -225,6 +231,7 @@ static const struct exynos_adc_data exynos_adc_v1_data = {
+ 	.num_channels	= MAX_ADC_V1_CHANNELS,
+ 	.mask		= ADC_DATX_MASK,	/* 12 bit ADC resolution */
+ 	.needs_adc_phy	= true,
++	.phy_offset	= EXYNOS_ADCV1_PHY_OFFSET,
+ 
+ 	.init_hw	= exynos_adc_v1_init_hw,
+ 	.exit_hw	= exynos_adc_v1_exit_hw,
+@@ -314,7 +321,7 @@ static void exynos_adc_v2_init_hw(struct exynos_adc *info)
+ 	u32 con1, con2;
+ 
+ 	if (info->data->needs_adc_phy)
+-		writel(1, info->enable_reg);
++		regmap_write(info->pmu_map, info->data->phy_offset, 1);
+ 
+ 	con1 = ADC_V2_CON1_SOFT_RESET;
+ 	writel(con1, ADC_V2_CON1(info->regs));
+@@ -332,7 +339,7 @@ static void exynos_adc_v2_exit_hw(struct exynos_adc *info)
+ 	u32 con;
+ 
+ 	if (info->data->needs_adc_phy)
+-		writel(0, info->enable_reg);
++		regmap_write(info->pmu_map, info->data->phy_offset, 0);
+ 
+ 	con = readl(ADC_V2_CON1(info->regs));
+ 	con &= ~ADC_CON_EN_START;
+@@ -362,6 +369,7 @@ static const struct exynos_adc_data exynos_adc_v2_data = {
+ 	.num_channels	= MAX_ADC_V2_CHANNELS,
+ 	.mask		= ADC_DATX_MASK, /* 12 bit ADC resolution */
+ 	.needs_adc_phy	= true,
++	.phy_offset	= EXYNOS_ADCV2_PHY_OFFSET,
+ 
+ 	.init_hw	= exynos_adc_v2_init_hw,
+ 	.exit_hw	= exynos_adc_v2_exit_hw,
+@@ -374,6 +382,7 @@ static const struct exynos_adc_data exynos3250_adc_data = {
+ 	.mask		= ADC_DATX_MASK, /* 12 bit ADC resolution */
+ 	.needs_sclk	= true,
+ 	.needs_adc_phy	= true,
++	.phy_offset	= EXYNOS_ADCV1_PHY_OFFSET,
+ 
+ 	.init_hw	= exynos_adc_v2_init_hw,
+ 	.exit_hw	= exynos_adc_v2_exit_hw,
+@@ -558,10 +567,13 @@ static int exynos_adc_probe(struct platform_device *pdev)
+ 
+ 
+ 	if (info->data->needs_adc_phy) {
+-		mem = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-		info->enable_reg = devm_ioremap_resource(&pdev->dev, mem);
+-		if (IS_ERR(info->enable_reg))
+-			return PTR_ERR(info->enable_reg);
++		info->pmu_map = syscon_regmap_lookup_by_phandle(
++					pdev->dev.of_node,
++					"samsung,syscon-phandle");
++		if (IS_ERR(info->pmu_map)) {
++			dev_err(&pdev->dev, "syscon regmap lookup failed.\n");
++			return PTR_ERR(info->pmu_map);
++		}
+ 	}
+ 
+ 	irq = platform_get_irq(pdev, 0);
 -- 
 1.7.9.5
