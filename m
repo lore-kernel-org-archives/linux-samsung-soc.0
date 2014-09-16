@@ -1,203 +1,91 @@
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Subject: [PATCH 1/2] i2c: exynos: add support for HSI2C module on Exynos7
-Date: Tue, 16 Sep 2014 15:03:17 +0530
-Message-ID: <1410859998-29285-2-git-send-email-ch.naveen@samsung.com>
-References: <1410859998-29285-1-git-send-email-ch.naveen@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1410859998-29285-1-git-send-email-ch.naveen@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-i2c@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, sjg@chromium.org, grundler@chromium.org, linux-kernel@vger.kernel.org, wsa@the-dreams.de, cpgs@samsung.com, devicetree@vger.kernel.org
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH] tty/serial: samsung: Add earlycon support
+Date: Tue, 16 Sep 2014 17:02:43 +0530
+Message-ID: <1410867163-27962-1-git-send-email-alim.akhtar@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:39107 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753422AbaIPLhL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 16 Sep 2014 07:37:11 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: gregkh@linuxfoundation.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@list.infradead.org, linux-kernel@vger.kernel.org, robh@kernel.org, thomas.ab@samsung.com
 
-The HSI2C module on Exynos7 differs in the transfer status
-bits. Transfer status bits were moved to INT_ENABLE and
-INT_STATUS registers
+Add earlycon support for the samsung serial port. This allows enabling
+the samsung serial port for console when early_params are parse and processed.
 
-This patch adds support for the HSI2C module on Exynos7.
-1. Implementes a "hw" field in the variant struct to distinguish
-   the hardware.
-2. Updates the dt-new compatible in dt-binding documenation
-
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 ---
- .../devicetree/bindings/i2c/i2c-exynos5.txt        |    2 +
- drivers/i2c/busses/i2c-exynos5.c                   |   71 ++++++++++++++++++--
- 2 files changed, 67 insertions(+), 6 deletions(-)
+ Documentation/kernel-parameters.txt |    6 ++++++
+ drivers/tty/serial/Kconfig          |    1 +
+ drivers/tty/serial/samsung.c        |   17 +++++++++++++++++
+ 3 files changed, 24 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
-index d4745e3..2dbc0b6 100644
---- a/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
-+++ b/Documentation/devicetree/bindings/i2c/i2c-exynos5.txt
-@@ -12,6 +12,8 @@ Required properties:
- 				on Exynos5250 and Exynos5420 SoCs.
- 	-> "samsung,exynos5260-hsi2c", for i2c compatible with HSI2C available
- 				on Exynos5260 SoCs.
-+	-> "samsung,exynos7-hsi2c", for i2c compatible with HSI2C available
-+				on Exynos7 SoCs.
+diff --git a/Documentation/kernel-parameters.txt b/Documentation/kernel-parameters.txt
+index 5ae8608..e01c0e5 100644
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -936,6 +936,12 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
+ 			must already be setup and configured. Options are not
+ 			yet supported.
  
-   - reg: physical base address of the controller and length of memory mapped
-     region.
-diff --git a/drivers/i2c/busses/i2c-exynos5.c b/drivers/i2c/busses/i2c-exynos5.c
-index 28073f1..81e6263 100644
---- a/drivers/i2c/busses/i2c-exynos5.c
-+++ b/drivers/i2c/busses/i2c-exynos5.c
-@@ -83,7 +83,6 @@
- #define HSI2C_INT_TX_ALMOSTEMPTY_EN		(1u << 0)
- #define HSI2C_INT_RX_ALMOSTFULL_EN		(1u << 1)
- #define HSI2C_INT_TRAILING_EN			(1u << 6)
--#define HSI2C_INT_I2C_EN			(1u << 9)
- 
- /* I2C_INT_STAT Register bits */
- #define HSI2C_INT_TX_ALMOSTEMPTY		(1u << 0)
-@@ -95,6 +94,17 @@
- #define HSI2C_INT_TRAILING			(1u << 6)
- #define HSI2C_INT_I2C				(1u << 9)
- 
-+#define HSI2C_INT_TRANS_DONE			(1u << 7)
-+#define HSI2C_INT_TRANS_ABORT			(1u << 8)
-+#define HSI2C_INT_NO_DEV_ACK			(1u << 9)
-+#define HSI2C_INT_NO_DEV			(1u << 10)
-+#define HSI2C_INT_TIMEOUT			(1u << 11)
-+#define HSI2C_INT_I2C_TRANS			(HSI2C_INT_TRANS_DONE |	\
-+						HSI2C_INT_TRANS_ABORT |	\
-+						HSI2C_INT_NO_DEV_ACK |	\
-+						HSI2C_INT_NO_DEV |	\
-+						HSI2C_INT_TIMEOUT)
++		samsung,<addr>
++			Start an early, polled-mode console on a samsung serial
++			port at the specified address. The samsung serial port
++			must already be setup and configured. Options are not
++			yet supported.
 +
- /* I2C_FIFO_STAT Register bits */
- #define HSI2C_RX_FIFO_EMPTY			(1u << 24)
- #define HSI2C_RX_FIFO_FULL			(1u << 23)
-@@ -143,6 +153,8 @@
+ 		smh	Use ARM semihosting calls for early console.
  
- #define EXYNOS5_I2C_TIMEOUT (msecs_to_jiffies(1000))
+ 	earlyprintk=	[X86,SH,BLACKFIN,ARM,M68k]
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 249e340..9d42ac8 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -257,6 +257,7 @@ config SERIAL_SAMSUNG_CONSOLE
+ 	bool "Support for console on Samsung SoC serial port"
+ 	depends on SERIAL_SAMSUNG=y
+ 	select SERIAL_CORE_CONSOLE
++	select SERIAL_EARLYCON
+ 	help
+ 	  Allow selection of the S3C24XX on-board serial ports for use as
+ 	  an virtual console.
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index c78f43a..f32e9c8 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -917,6 +917,7 @@ s3c24xx_serial_verify_port(struct uart_port *port, struct serial_struct *ser)
+ #ifdef CONFIG_SERIAL_SAMSUNG_CONSOLE
  
-+#define HSI2C_EXYNOS7	BIT(0)
-+
- struct exynos5_i2c {
- 	struct i2c_adapter	adap;
- 	unsigned int		suspended:1;
-@@ -192,6 +204,7 @@ struct exynos5_i2c {
-  */
- struct exynos_hsi2c_variant {
- 	unsigned int	fifo_depth;
-+	unsigned int	hw;
- };
+ static struct console s3c24xx_serial_console;
++static void s3c24xx_serial_console_putchar(struct uart_port *port, int ch);
  
- static const struct exynos_hsi2c_variant exynos5250_hsi2c_data = {
-@@ -202,6 +215,11 @@ static const struct exynos_hsi2c_variant exynos5260_hsi2c_data = {
- 	.fifo_depth	= 16,
- };
- 
-+static const struct exynos_hsi2c_variant exynos7_hsi2c_data = {
-+	.fifo_depth	= 16,
-+	.hw		= HSI2C_EXYNOS7,
-+};
-+
- static const struct of_device_id exynos5_i2c_match[] = {
- 	{
- 		.compatible = "samsung,exynos5-hsi2c",
-@@ -212,6 +230,9 @@ static const struct of_device_id exynos5_i2c_match[] = {
- 	}, {
- 		.compatible = "samsung,exynos5260-hsi2c",
- 		.data = &exynos5260_hsi2c_data
-+	}, {
-+		.compatible = "samsung,exynos7-hsi2c",
-+		.data = &exynos7_hsi2c_data
- 	}, {},
- };
- MODULE_DEVICE_TABLE(of, exynos5_i2c_match);
-@@ -256,13 +277,24 @@ static int exynos5_i2c_set_timing(struct exynos5_i2c *i2c, int mode)
- 				i2c->hs_clock : i2c->fs_clock;
- 
- 	/*
-+	 * In case of HSI2C controller in Exynos5 series
- 	 * FPCLK / FI2C =
- 	 * (CLK_DIV + 1) * (TSCLK_L + TSCLK_H + 2) + 8 + 2 * FLT_CYCLE
-+	 *
-+	 * In case of HSI2C controllers in Exynos7 series
-+	 * FPCLK / FI2C =
-+	 * (CLK_DIV + 1) * (TSCLK_L + TSCLK_H + 2) + 8 + FLT_CYCLE
-+	 *
- 	 * utemp0 = (CLK_DIV + 1) * (TSCLK_L + TSCLK_H + 2)
- 	 * utemp1 = (TSCLK_L + TSCLK_H + 2)
- 	 */
- 	t_ftl_cycle = (readl(i2c->regs + HSI2C_CONF) >> 16) & 0x7;
--	utemp0 = (clkin / op_clk) - 8 - 2 * t_ftl_cycle;
-+	utemp0 = (clkin / op_clk) - 8;
-+
-+	if (i2c->variant->hw == HSI2C_EXYNOS7)
-+		utemp0 -= t_ftl_cycle;
-+	else
-+		utemp0 -= 2 * t_ftl_cycle;
- 
- 	/* CLK_DIV max is 256 */
- 	for (div = 0; div < 256; div++) {
-@@ -407,7 +439,28 @@ static irqreturn_t exynos5_i2c_irq(int irqno, void *dev_id)
- 	writel(int_status, i2c->regs + HSI2C_INT_STATUS);
- 
- 	/* handle interrupt related to the transfer status */
--	if (int_status & HSI2C_INT_I2C) {
-+	if (i2c->variant->hw == HSI2C_EXYNOS7) {
-+		if (int_status & HSI2C_INT_TRANS_DONE) {
-+			i2c->trans_done = 1;
-+			i2c->state = 0;
-+		} else if (int_status & HSI2C_INT_TRANS_ABORT) {
-+			dev_dbg(i2c->dev, "Deal with arbitration lose\n");
-+			i2c->state = -EAGAIN;
-+			goto stop;
-+		} else if (int_status & HSI2C_INT_NO_DEV_ACK) {
-+			dev_dbg(i2c->dev, "No ACK from device\n");
-+			i2c->state = -ENXIO;
-+			goto stop;
-+		} else if (int_status & HSI2C_INT_NO_DEV) {
-+			dev_dbg(i2c->dev, "No device\n");
-+			i2c->state = -ENXIO;
-+			goto stop;
-+		} else if (int_status & HSI2C_INT_TIMEOUT) {
-+			dev_dbg(i2c->dev, "Accessing device timed out\n");
-+			i2c->state = -EAGAIN;
-+			goto stop;
-+		}
-+	} else if (int_status & HSI2C_INT_I2C) {
- 		trans_status = readl(i2c->regs + HSI2C_TRANS_STATUS);
- 		if (trans_status & HSI2C_NO_DEV_ACK) {
- 			dev_dbg(i2c->dev, "No ACK from device\n");
-@@ -512,12 +565,17 @@ static int exynos5_i2c_wait_bus_idle(struct exynos5_i2c *i2c)
- static void exynos5_i2c_message_start(struct exynos5_i2c *i2c, int stop)
+ static int __init s3c24xx_serial_console_init(void)
  {
- 	u32 i2c_ctl;
--	u32 int_en = HSI2C_INT_I2C_EN;
-+	u32 int_en = 0;
- 	u32 i2c_auto_conf = 0;
- 	u32 fifo_ctl;
- 	unsigned long flags;
- 	unsigned short trig_lvl;
+@@ -926,6 +927,22 @@ static int __init s3c24xx_serial_console_init(void)
+ console_initcall(s3c24xx_serial_console_init);
  
-+	if (i2c->variant->hw == HSI2C_EXYNOS7)
-+		int_en |= HSI2C_INT_I2C_TRANS;
-+	else
-+		int_en |= HSI2C_INT_I2C;
+ #define S3C24XX_SERIAL_CONSOLE &s3c24xx_serial_console
++static void samsung_early_write(struct console *con, const char *s, unsigned n)
++{
++	struct earlycon_device *dev = con->data;
 +
- 	i2c_ctl = readl(i2c->regs + HSI2C_CTL);
- 	i2c_ctl &= ~(HSI2C_TXCHON | HSI2C_RXCHON);
- 	fifo_ctl = HSI2C_RXFIFO_EN | HSI2C_TXFIFO_EN;
-@@ -724,12 +782,13 @@ static int exynos5_i2c_probe(struct platform_device *pdev)
- 		goto err_clk;
- 	}
- 
-+	/* Need to check the variant before setting up. */
-+	i2c->variant = exynos5_i2c_get_variant(pdev);
++	uart_console_write(&dev->port, s, n, s3c24xx_serial_console_putchar);
++}
 +
- 	ret = exynos5_hsi2c_clock_setup(i2c);
- 	if (ret)
- 		goto err_clk;
- 
--	i2c->variant = exynos5_i2c_get_variant(pdev);
--
- 	exynos5_i2c_reset(i2c);
- 
- 	ret = i2c_add_adapter(&i2c->adap);
++static int __init samsung_early_console_setup(struct earlycon_device *device,
++					      const char *opt)
++{
++	if (!device->port.membase)
++		return -ENODEV;
++	device->con->write = samsung_early_write;
++	return 0;
++}
++EARLYCON_DECLARE(samsung, samsung_early_console_setup);
+ #else
+ #define S3C24XX_SERIAL_CONSOLE NULL
+ #endif
 -- 
-1.7.9.5
+1.7.10.4
