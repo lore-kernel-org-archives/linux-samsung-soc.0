@@ -1,137 +1,202 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH] drm/exynos: fix plane-framebuffer linkage
-Date: Wed, 17 Sep 2014 08:35:29 +0200
-Message-ID: <54192BB1.8060606@samsung.com>
-References: <1410807137-8323-1-git-send-email-drake@endlessm.com>
- <20140916063501.GT4740@phenom.ffwll.local>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v3] mfd: syscon: Decouple syscon interface from platform devices
+Date: Wed, 17 Sep 2014 12:01:50 +0530
+Message-ID: <1410935510-1567-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:47114 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751362AbaIQGff (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:57554 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751362AbaIQGgb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Sep 2014 02:35:35 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NC100EFP93Z9P10@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 17 Sep 2014 07:38:23 +0100 (BST)
-In-reply-to: <20140916063501.GT4740@phenom.ffwll.local>
+	Wed, 17 Sep 2014 02:36:31 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Vetter <daniel@ffwll.ch>, Daniel Drake <drake@endlessm.com>
-Cc: inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: lee.jones@linaro.org, arnd@arndb.de, tomasz.figa@gmail.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, kgene.kim@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Hi,
+Currently a syscon entity can be only registered directly through a
+platform device that binds to a dedicated syscon driver. However in
+certain use cases it is desirable to make a device used with another
+driver a syscon interface provider.
 
-On 09/16/2014 08:35 AM, Daniel Vetter wrote:
-> On Mon, Sep 15, 2014 at 12:52:17PM -0600, Daniel Drake wrote:
->> Pageflipping currently causes some inconsistencies that lead to
->> crashes. Just run an app that causes a CRTC pageflip in a raw X session
->> and check that it exits cleanly and can be restarted - you'll see
->> crashes like:
->>  Unable to handle kernel NULL pointer dereference at virtual address 00000334
->>  PC is at exynos_drm_crtc_plane_commit+0x20/0x40
->>  LR is at exynos_drm_crtc_plane_commit+0x20/0x40
->>  [<c03749b4>] (exynos_drm_crtc_plane_commit) from [<c03741bc>] (exynos_drm_crtc_commit+0x44/0x70)
->>  [<c03741bc>] (exynos_drm_crtc_commit) from [<c03743a0>] (exynos_drm_crtc_mode_set_commit.isra.2+0xb4/0xc4)
->>  [<c03743a0>] (exynos_drm_crtc_mode_set_commit.isra.2) from [<c03744f4>] (exynos_drm_crtc_page_flip+0x140/0x1a8)
->>  [<c03744f4>] (exynos_drm_crtc_page_flip) from [<c036b20c>] (drm_mode_page_flip_ioctl+0x224/0x2dc)
->>  [<c036b20c>] (drm_mode_page_flip_ioctl) from [<c035c324>] (drm_ioctl+0x338/0x4fc)
->>
->> These crashes happen because drm_plane_force_disable has previously set
->> plane->crtc to NULL.
->>
->> When drm_mode_page_flip_ioctl() is used to flip another framebuffer
->> onto the primary plane, crtc->primary->fb is correctly updated (this is
->> a virtual plane created by plane_helper), but plane->fb is not (this
->> plane is the real one, created by exynos_drm_crtc_create).
->>
->> We then come to handle rmfb of the backbuffer, which the "real" primary
->> plane is incorrectly pointing at. So drm_framebuffer_remove() decides that
->> the buffer is actually active on a plane and force-disables the plane.
->>
->> Ensuring that plane->fb is kept up-to-date solves that issue, but
->> exposes a reference counting problem. Now we see crashes when rmfb is
->> called on the front-buffer, because the rmfb code expects to drop 3
->> references here, and there are only 2.
->>
->> That can be fixed by adopting the reference management found in omapdrm:
->> Framebuffer references are not taken directly in crtc mode_set context,
->> but rather in the context of updating the plane, which also covers
->> flips. Like omapdrm we also unreference the old framebuffer here.
->>
->> Signed-off-by: Daniel Drake <drake@endlessm.com>
-> This sounds very much like exynos should switch to universal planes so
-> that the fake primary plane created by the helpers doesn't get in the way.
-> And for chips which already use planes for everything internally this
-> shouldn't be a lot more than a few lines.
-> -Daniel
+For example, certain SoCs (e.g. Exynos) contain system controller
+blocks which perform various functions such as power domain control,
+CPU power management, low power mode control, but in addition contain
+certain IP integration glue, such as various signal masks,
+coprocessor power control, etc. In such case, there is a need to have
+a dedicated driver for such system controller but also share registers
+with other drivers. The latter is where the syscon interface is helpful.
 
-The patch proposed here of course supersedes my patch fixing fb refcounting.
-But the best solution is to get rid of virtual plane as Daniel Vetter
-stated.
-Daniel (Drake of course :) ) do you want to prepare patch switching to
-universal planes?
-Maybe other volunteers? If not I can try to do it, as it seems quite
-straightforward.
+In case of DT based platforms, this patch decouples syscon object from
+syscon platform driver, and allows to create syscon objects first time
+when it is required by calling of syscon_regmap_lookup_by APIs and keep
+a list of such syscon objects along with syscon provider device_nodes
+and regmap handles.
 
-Regards
-Andrzej
+For non-DT based platforms, this patch keeps syscon platform driver
+structure where is can be probed and such non-DT based drivers can use
+syscon_regmap_lookup_by_pdev API and get access to regmap handles.
+Once all users of "syscon_regmap_lookup_by_pdev" migrated to DT based,
+we can completly remove platform driver of syscon, and keep only helper
+functions to get regmap handles.
 
->> ---
->>  drivers/gpu/drm/exynos/exynos_drm_crtc.c  | 12 ++----------
->>  drivers/gpu/drm/exynos/exynos_drm_plane.c |  8 ++++++++
->>  2 files changed, 10 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
->> index b68e58f..7aa9dee 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
->> @@ -140,16 +140,8 @@ exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
->>  	if (manager->ops->mode_set)
->>  		manager->ops->mode_set(manager, &crtc->mode);
->>  
->> -	ret = exynos_plane_mode_set(plane, crtc, crtc->primary->fb, 0, 0, crtc_w, crtc_h,
->> -				    x, y, crtc_w, crtc_h);
->> -	if (ret)
->> -		return ret;
->> -
->> -	plane->crtc = crtc;
->> -	plane->fb = crtc->primary->fb;
->> -	drm_framebuffer_reference(plane->fb);
->> -
->> -	return 0;
->> +	return exynos_plane_mode_set(plane, crtc, crtc->primary->fb, 0, 0,
->> +				     crtc_w, crtc_h, x, y, crtc_w, crtc_h);
->>  }
->>  
->>  static int exynos_drm_crtc_mode_set_commit(struct drm_crtc *crtc, int x, int y,
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
->> index 8371cbd..df27e35 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
->> @@ -139,6 +139,14 @@ int exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
->>  			overlay->crtc_x, overlay->crtc_y,
->>  			overlay->crtc_width, overlay->crtc_height);
->>  
->> +	if (plane->fb)
->> +		drm_framebuffer_unreference(plane->fb);
->> +
->> +	drm_framebuffer_reference(fb);
->> +
->> +	plane->fb = fb;
->> +	plane->crtc = crtc;
->> +
->>  	exynos_drm_crtc_plane_mode_set(crtc, overlay);
->>  
->>  	return 0;
->> -- 
->> 1.9.1
->>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+---
+V2 of this patchset and related discussion can be found here [1].
+
+Changes since v2:
+ - Added back platform device support from syscon, with one change that
+   syscon will not be probed for DT based platform.
+ - Added back syscon_regmap_lookup_by_pdevname API so that non-DT base
+   users of syscon will not be broken.
+ - Removed unwanted change in syscon.h.
+ - Modified Signed-off-by list, added Suggested-by of Tomasz Figa and
+   Arnd Bergmann.
+ - Added Tested-by of Vivek Gautam for testing on Exynos platform.
+
+Changes since v1:
+ - Removed of_syscon_unregister function.
+ - Modified of_syscon_register function and it will be used by syscon.c 
+   to create syscon objects whenever required. 
+ - Removed platform device support from syscon.
+ - Removed syscon_regmap_lookup_by_pdevname API support.
+ - As there are significant changes w.r.t patchset v1, I am taking over
+   author for this patchset from Tomasz Figa.
+
+[1]: https://lkml.org/lkml/2014/9/2/299
+
+ drivers/mfd/syscon.c |   78 ++++++++++++++++++++++++++++++++++++--------------
+ 1 file changed, 57 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+index ca15878..4a4bad9 100644
+--- a/drivers/mfd/syscon.c
++++ b/drivers/mfd/syscon.c
+@@ -15,40 +15,49 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
++#include <linux/list.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+-#include <linux/of_platform.h>
+ #include <linux/platform_data/syscon.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/mfd/syscon.h>
++#include <linux/slab.h>
+ 
+ static struct platform_driver syscon_driver;
+ 
++static DEFINE_SPINLOCK(syscon_list_slock);
++static LIST_HEAD(syscon_list);
++
+ struct syscon {
++	struct device_node *np;
+ 	struct regmap *regmap;
++	struct list_head list;
+ };
+ 
+-static int syscon_match_node(struct device *dev, void *data)
+-{
+-	struct device_node *dn = data;
+-
+-	return (dev->of_node == dn) ? 1 : 0;
+-}
++static struct syscon *of_syscon_register(struct device_node *np);
+ 
+ struct regmap *syscon_node_to_regmap(struct device_node *np)
+ {
+-	struct syscon *syscon;
+-	struct device *dev;
++	struct syscon *entry, *syscon = NULL;
+ 
+-	dev = driver_find_device(&syscon_driver.driver, NULL, np,
+-				 syscon_match_node);
+-	if (!dev)
+-		return ERR_PTR(-EPROBE_DEFER);
++	spin_lock(&syscon_list_slock);
+ 
+-	syscon = dev_get_drvdata(dev);
++	list_for_each_entry(entry, &syscon_list, list)
++		if (entry->np == np) {
++			syscon = entry;
++			break;
++		}
+ 
+-	return syscon->regmap;
++	spin_unlock(&syscon_list_slock);
++
++	if (!syscon)
++		syscon = of_syscon_register(np);
++
++	if (!IS_ERR(syscon))
++		return syscon->regmap;
++
++	return ERR_CAST(syscon);
+ }
+ EXPORT_SYMBOL_GPL(syscon_node_to_regmap);
+ 
+@@ -110,17 +119,45 @@ struct regmap *syscon_regmap_lookup_by_phandle(struct device_node *np,
+ }
+ EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle);
+ 
+-static const struct of_device_id of_syscon_match[] = {
+-	{ .compatible = "syscon", },
+-	{ },
+-};
+-
+ static struct regmap_config syscon_regmap_config = {
+ 	.reg_bits = 32,
+ 	.val_bits = 32,
+ 	.reg_stride = 4,
+ };
+ 
++static struct syscon *of_syscon_register(struct device_node *np)
++{
++	struct syscon *syscon;
++	struct regmap *regmap;
++	void __iomem *base;
++
++	if (!of_device_is_compatible(np, "syscon"))
++		return ERR_PTR(-EINVAL);
++
++	syscon = kzalloc(sizeof(*syscon), GFP_KERNEL);
++	if (!syscon)
++		return ERR_PTR(-ENOMEM);
++
++	base = of_iomap(np, 0);
++	if (!base)
++		return ERR_PTR(-ENOMEM);
++
++	regmap = regmap_init_mmio(NULL, base, &syscon_regmap_config);
++	if (IS_ERR(regmap)) {
++		pr_err("regmap init failed\n");
++		return ERR_CAST(regmap);
++	}
++
++	syscon->regmap = regmap;
++	syscon->np = np;
++
++	spin_lock(&syscon_list_slock);
++	list_add_tail(&syscon->list, &syscon_list);
++	spin_unlock(&syscon_list_slock);
++
++	return syscon;
++}
++
+ static int syscon_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -167,7 +204,6 @@ static struct platform_driver syscon_driver = {
+ 	.driver = {
+ 		.name = "syscon",
+ 		.owner = THIS_MODULE,
+-		.of_match_table = of_syscon_match,
+ 	},
+ 	.probe		= syscon_probe,
+ 	.id_table	= syscon_ids,
+-- 
+1.7.9.5
