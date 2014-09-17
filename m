@@ -1,97 +1,47 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCH 2/2] ARM: dts: Add rtc_src clk for s3c-rtc on exynos5250-snow
-Date: Wed, 17 Sep 2014 17:51:21 +0200
-Message-ID: <5419ADF9.3010509@suse.de>
-References: <1410954633-27025-1-git-send-email-javier.martinez@collabora.co.uk>	<1410954633-27025-3-git-send-email-javier.martinez@collabora.co.uk> <CAD=FV=W7xJ01m2oLtuDnogOmrpwpztbir=59oSWU6oojFYUWKw@mail.gmail.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH 7/9] phy: remove .owner field for drivers using module_platform_driver
+Date: Wed, 17 Sep 2014 21:49:17 +0530
+Message-ID: <5419B485.8010002@ti.com>
+References: <1408106416-19044-1-git-send-email-peter.griffin@linaro.org> <1408106416-19044-8-git-send-email-peter.griffin@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:36345 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755232AbaIQPv3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Sep 2014 11:51:29 -0400
-In-Reply-To: <CAD=FV=W7xJ01m2oLtuDnogOmrpwpztbir=59oSWU6oojFYUWKw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1408106416-19044-8-git-send-email-peter.griffin@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, maxime.ripard@free-electrons.com, linux-samsung-soc@vger.kernel.org
+Cc: patches@linaro.org, lee.jones@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Daniel Drake <drake@endlessm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Am 17.09.2014 um 17:47 schrieb Doug Anderson:
-> Hi,
->=20
-> On Wed, Sep 17, 2014 at 4:50 AM, Javier Martinez Canillas
-> <javier.martinez@collabora.co.uk> wrote:
->> commit 546b117fdf17 ("rtc: s3c: add support for RTC of Exynos3250 So=
-C")
->> added an "rtc_src" DT property for the Samsung's S3C Real Time Clock
->> controller that specifies the 32.768 kHz clock that uses the RTC as =
-its
->> source clock. In the case of the Exynos5250 based Snow board, the Ma=
-xim
->> 77686 32kHz AP clock is used as the source clock.
->>
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.c=
-o.uk>
->> ---
->>  arch/arm/boot/dts/exynos5250-snow.dts | 5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/d=
-ts/exynos5250-snow.dts
->> index e51fcef..56eec56 100644
->> --- a/arch/arm/boot/dts/exynos5250-snow.dts
->> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
->> @@ -10,6 +10,7 @@
->>
->>  /dts-v1/;
->>  #include <dt-bindings/gpio/gpio.h>
->> +#include <dt-bindings/clock/maxim,max77686.h>
->>  #include "exynos5250.dtsi"
->>
->>  / {
->> @@ -29,6 +30,8 @@
->>
->>         rtc@101E0000 {
->>                 status =3D "okay";
->> +               clocks =3D <&clock CLK_RTC>, <&max77686 MAX77686_CLK=
-_AP>;
->> +               clock-names =3D "rtc", "rtc_src";
->=20
-> Wait, seriously?  Snow is still using the "rtc@101E0000" syntax?
-> Whatever happened to the series that Andreas worked so hard on,
-> including <https://patchwork.kernel.org/patch/4664801/>?
->=20
-> Kukjin: Andreas's patch series was Reviewed long ago I think and by
-> now I'd imagine it's got some conflicts due to it not having been
-> applied in a timely fashion.  Perhaps you could fix it up for Andreas
-> (since he's already rebased it several times) and land it?
->=20
-> If I had to guess, outstanding from Andreas's series (patchwork IDs l=
-isted):
->=20
-> 4751131 New          [v7] ARM: dts: Prepare node labels for exynos525=
-0
-> 4664801 New          [v6,04/10] ARM: dts: Clean up exynos5250-snow
-> 4664771 New          [v6,05/10] ARM: dts: Fill in bootargs for exynos=
-5250-snow
-> 4664731 New          [v6,06/10] ARM: dts: Clean up exynos5250-smdk525=
-0
-> 4664751 New          [v6,07/10] ARM: dts: Clean up exynos5250-arndale
-> 4664711 New          [v6,08/10] ARM: dts: Fix apparent GPIO typo in
-> exynos5250-arndale
-> 4664681 New          [v6,09/10] ARM: dts: Simplify USB3503 on exynos5=
-250-arndale
-> 4664691 New          [v6,10/10] ARM: dts: Add exynos5250-spring devic=
-e tree
+Hi,
 
-Yes, Kukjin told me not to resend anything, and I haven't heard back
-from him since his Kernel Summit trip.
+On Friday 15 August 2014 06:10 PM, Peter Griffin wrote:
+> This patch removes the superflous .owner field for drivers which
+> use the module_platform_driver or platform_driver_register api,
+> as this is overriden in __platform_driver_register.
+> 
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  drivers/phy/phy-bcm-kona-usb2.c     | 1 -
+>  drivers/phy/phy-berlin-sata.c       | 1 -
+>  drivers/phy/phy-exynos-dp-video.c   | 1 -
+>  drivers/phy/phy-exynos-mipi-video.c | 1 -
+>  drivers/phy/phy-exynos5-usbdrd.c    | 1 -
+>  drivers/phy/phy-exynos5250-sata.c   | 1 -
+>  drivers/phy/phy-hix5hd2-sata.c      | 1 -
+>  drivers/phy/phy-miphy365x.c         | 1 -
+>  drivers/phy/phy-mvebu-sata.c        | 1 -
+>  drivers/phy/phy-omap-control.c      | 1 -
+>  drivers/phy/phy-omap-usb2.c         | 1 -
+>  drivers/phy/phy-qcom-apq8064-sata.c | 1 -
+>  drivers/phy/phy-qcom-ipq806x-sata.c | 1 -
+>  drivers/phy/phy-samsung-usb2.c      | 1 -
+>  drivers/phy/phy-sun4i-usb.c         | 1 -
+>  drivers/phy/phy-ti-pipe3.c          | 1 -
+>  drivers/phy/phy-twl4030-usb.c       | 1 -
 
-Andreas
+twl4030-usb doesn't use module_platform_driver. Care to resend this patch
+along? I've merged all other patches in this series.
 
---=20
-SUSE LINUX Products GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 16746 AG N=C3=
-=BCrnberg
+Cheers
+Kishon
