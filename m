@@ -1,127 +1,115 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v3 5/6] mfd: cros_ec: wait for completion of commands
- that return IN_PROGRESS
-Date: Wed, 17 Sep 2014 09:23:36 -0700
-Message-ID: <20140917162336.GK30918@lee--X1>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 6/6] mfd: cros_ec: Instantiate sub-devices from device
+ tree
+Date: Wed, 17 Sep 2014 09:31:14 -0700
+Message-ID: <20140917163114.GL30918@lee--X1>
 References: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk>
- <1410428289-18229-6-git-send-email-javier.martinez@collabora.co.uk>
+ <1410428289-18229-7-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f175.google.com ([209.85.223.175]:42627 "EHLO
-	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755347AbaIQQXl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Sep 2014 12:23:41 -0400
-Received: by mail-ie0-f175.google.com with SMTP id lx4so2122132iec.34
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Sep 2014 09:23:40 -0700 (PDT)
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1410428289-18229-6-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1410428289-18229-7-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Andreas Faerber <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, Andreas Faerber <afaerber@suse.de>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
 On Thu, 11 Sep 2014, Javier Martinez Canillas wrote:
 
-> From: Andrew Bresticker <abrestic@chromium.org>
+> From: Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 >=20
-> When an EC command returns EC_RES_IN_PROGRESS, we need to query
-> the state of the EC until it indicates that it is no longer busy.
-> Do this in cros_ec_cmd_xfer() under the EC's mutex so that other
-> commands (e.g. keyboard, I2C passtru) aren't issued to the EC while
-> it is working on the in-progress command.
+> If the EC device tree node has sub-nodes, try to instantiate them as
+> MFD sub-devices.  We can configure the EC features provided by the bo=
+ard.
 >=20
-> The delay in milliseconds and the number of retries are the values
-> that were used by the flashrom tool when retrying commands.
->=20
-> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> Reviewed-by: Simon Glass <sjg@chromium.org>
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
+> Signed-off-by: Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8rSCDK34cm6iQ@public.gmane.org=
 =2Euk>
 > ---
 >=20
 > Changes since v2:
->  - Explain in the commit message from where the delay and retry value=
-s come from.
->    Commented by Andrew Bresticker.
->  - Move the needed definitions inside the if block. Suggested by Lee =
-Jones.
->  - Only check if result is EC_RES_IN_PROGRESS instead of checking als=
-o if ret is
->    -EAGAIN since the former implies the later. Suggested by Lee Jones=
-=2E
->  - Use usleep_range() instead of msleep() since doesn't handle values=
- between 1~20.
->    Suggested by Lee Jones.
+>  - Drop if guards since of_node is unconditionally built. Suggested b=
+y Lee Jones
+>  - Drop unneeded comment about of_platform_populate(). Suggested by L=
+ee Jones.
+>  - Fix error message if of_platform_populate() fails. Suggested by Le=
+e Jones.
 >=20
 > Changes since v1:
->  - The *xfer() calls don't modify the passed cros_ec_command so there=
- is
->    no need to populate it inside the for loop. Suggested by Lee Jones=
+>  - Don't leave an empty struct mfd_cell array. Suggested by Lee Jones=
 =2E
->=20
->  drivers/mfd/cros_ec.c | 34 ++++++++++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
+>  - Just use of_platform_populate() instead of manually iterating thro=
+ugh
+>    sub-devices and calling mfd_add_devices. Suggested by Lee Jones.
+> ---
+>  drivers/mfd/cros_ec.c | 27 ++++++++-------------------
+>  1 file changed, 8 insertions(+), 19 deletions(-)
 >=20
 > diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-> index c53804a..af2fadf 100644
+> index 751af0b..7c533d2 100644
 > --- a/drivers/mfd/cros_ec.c
 > +++ b/drivers/mfd/cros_ec.c
-> @@ -23,6 +23,10 @@
+> @@ -21,6 +21,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/module.h>
 >  #include <linux/mfd/core.h>
+> +#include <linux/of_platform.h>
 >  #include <linux/mfd/cros_ec.h>
 >  #include <linux/mfd/cros_ec_commands.h>
-> +#include <linux/delay.h>
-> +
-> +#define EC_COMMAND_RETRIES	50
-> +#define EC_RETRY_DELAY_MS	10
+>  #include <linux/delay.h>
+> @@ -109,22 +110,10 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_=
+dev,
+>  }
+>  EXPORT_SYMBOL(cros_ec_cmd_xfer);
 > =20
->  int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
->  		       struct cros_ec_command *msg)
-> @@ -69,6 +73,36 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev=
-,
+> -static const struct mfd_cell cros_devs[] =3D {
+> -	{
+> -		.name =3D "cros-ec-keyb",
+> -		.id =3D 1,
+> -		.of_compatible =3D "google,cros-ec-keyb",
+> -	},
+> -	{
+> -		.name =3D "cros-ec-i2c-tunnel",
+> -		.id =3D 2,
+> -		.of_compatible =3D "google,cros-ec-i2c-tunnel",
+> -	},
+> -};
+> -
+>  int cros_ec_register(struct cros_ec_device *ec_dev)
+>  {
+>  	struct device *dev =3D ec_dev->dev;
+> +	struct device_node *node =3D dev->of_node;
+>  	int err =3D 0;
 > =20
->  	mutex_lock(&ec_dev->lock);
->  	ret =3D ec_dev->cmd_xfer(ec_dev, msg);
-> +	if (msg->result =3D=3D EC_RES_IN_PROGRESS) {
-> +		int i;
-> +		struct cros_ec_command status_msg;
-> +		struct ec_response_get_comms_status status;
-> +
-> +		status_msg.version =3D 0;
-> +		status_msg.command =3D EC_CMD_GET_COMMS_STATUS;
-> +		status_msg.outdata =3D NULL;
-> +		status_msg.outsize =3D 0;
-> +		status_msg.indata =3D (uint8_t *)&status;
-> +		status_msg.insize =3D sizeof(status);
-> +
-> +		/*
-> +		 * Query the EC's status until it's no longer busy or
-> +		 * we encounter an error.
-> +		 */
-> +		for (i =3D 0; i < EC_COMMAND_RETRIES; i++) {
-> +			usleep_range(EC_RETRY_DELAY_MS, EC_RETRY_DELAY_MS + 1);
+>  	if (ec_dev->din_size) {
+> @@ -140,12 +129,12 @@ int cros_ec_register(struct cros_ec_device *ec_=
+dev)
+> =20
+>  	mutex_init(&ec_dev->lock);
+> =20
+> -	err =3D mfd_add_devices(dev, 0, cros_devs,
+> -			      ARRAY_SIZE(cros_devs),
+> -			      NULL, ec_dev->irq, NULL);
+> -	if (err) {
+> -		dev_err(dev, "failed to add mfd devices\n");
+> -		return err;
 
-Remove the EC_RETRY_DELAY_MS define and place the values in raw.
+So these devices will only ever probe with DT now ...
 
-You're now sleeping for 10us.  Did you test the changes?
+> +	if (node) {
 
-> +			ret =3D ec_dev->cmd_xfer(ec_dev, &status_msg);
-> +			if (ret < 0)
-> +				break;
-> +
-> +			msg->result =3D status_msg.result;
-> +			if (status_msg.result !=3D EC_RES_SUCCESS)
-> +				break;
-> +			if (!(status.flags & EC_COMMS_STATUS_PROCESSING))
-> +				break;
+So it would be wrong for dev->of_node not to be populated.
+
+> +		err =3D of_platform_populate(node, NULL, NULL, dev);
+> +		if (err) {
+> +			dev_err(dev, "Failed to register subordinate devices");
+> +			return err;
 > +		}
-> +	}
->  	mutex_unlock(&ec_dev->lock);
+>  	}
 > =20
->  	return ret;
+>  	dev_info(dev, "Chrome EC device registered\n");
 
 --=20
 Lee Jones
