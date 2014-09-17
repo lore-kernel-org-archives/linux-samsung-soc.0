@@ -1,226 +1,120 @@
-From: Dong Aisheng <b29396@freescale.com>
-Subject: Re: [PATCH v3] mfd: syscon: Decouple syscon interface from
- platform devices
-Date: Wed, 17 Sep 2014 16:58:42 +0800
-Message-ID: <20140917085818.GA10285@shlinux1.ap.freescale.net>
-References: <1410935510-1567-1-git-send-email-pankaj.dubey@samsung.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH V6 6/8] drm/bridge: Modify drm_bridge core to support driver model
+Date: Wed, 17 Sep 2014 12:27:13 +0300
+Message-ID: <3764548.s4ysdtHE5z@avalon>
+References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com> <2567411.1uGei9I2NP@avalon> <CAEC9eQMYTELvK_0bcrs+wNk=qYXzS69bOqYGr-yLf6h18bfM4Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1410935510-1567-1-git-send-email-pankaj.dubey@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de, naushad@samsung.com, linux-kernel@vger.kernel.org, tomasz.figa@gmail.com, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, joshi@samsung.com, lee.jones@linaro.org, linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from galahad.ideasonboard.com ([185.26.127.97]:39422 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755199AbaIQJ1N (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 17 Sep 2014 05:27:13 -0400
+In-Reply-To: <CAEC9eQMYTELvK_0bcrs+wNk=qYXzS69bOqYGr-yLf6h18bfM4Q@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Rob Clark <robdclark@gmail.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Sean Cross <xobs@kosagi.com>
 
-On Wed, Sep 17, 2014 at 12:01:50PM +0530, Pankaj Dubey wrote:
-> Currently a syscon entity can be only registered directly through a
-> platform device that binds to a dedicated syscon driver. However in
-> certain use cases it is desirable to make a device used with another
-> driver a syscon interface provider.
-> 
-> For example, certain SoCs (e.g. Exynos) contain system controller
-> blocks which perform various functions such as power domain control,
-> CPU power management, low power mode control, but in addition contain
-> certain IP integration glue, such as various signal masks,
-> coprocessor power control, etc. In such case, there is a need to have
-> a dedicated driver for such system controller but also share registers
-> with other drivers. The latter is where the syscon interface is helpful.
-> 
-> In case of DT based platforms, this patch decouples syscon object from
-> syscon platform driver, and allows to create syscon objects first time
-> when it is required by calling of syscon_regmap_lookup_by APIs and keep
-> a list of such syscon objects along with syscon provider device_nodes
-> and regmap handles.
-> 
-> For non-DT based platforms, this patch keeps syscon platform driver
-> structure where is can be probed and such non-DT based drivers can use
-> syscon_regmap_lookup_by_pdev API and get access to regmap handles.
-> Once all users of "syscon_regmap_lookup_by_pdev" migrated to DT based,
-> we can completly remove platform driver of syscon, and keep only helper
-> functions to get regmap handles.
-> 
-> Suggested-by: Arnd Bergmann <arnd@arndb.de>
-> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
-> Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
-> V2 of this patchset and related discussion can be found here [1].
-> 
-> Changes since v2:
->  - Added back platform device support from syscon, with one change that
->    syscon will not be probed for DT based platform.
->  - Added back syscon_regmap_lookup_by_pdevname API so that non-DT base
->    users of syscon will not be broken.
->  - Removed unwanted change in syscon.h.
->  - Modified Signed-off-by list, added Suggested-by of Tomasz Figa and
->    Arnd Bergmann.
->  - Added Tested-by of Vivek Gautam for testing on Exynos platform.
-> 
-> Changes since v1:
->  - Removed of_syscon_unregister function.
->  - Modified of_syscon_register function and it will be used by syscon.c 
->    to create syscon objects whenever required. 
->  - Removed platform device support from syscon.
->  - Removed syscon_regmap_lookup_by_pdevname API support.
->  - As there are significant changes w.r.t patchset v1, I am taking over
->    author for this patchset from Tomasz Figa.
-> 
-> [1]: https://lkml.org/lkml/2014/9/2/299
-> 
->  drivers/mfd/syscon.c |   78 ++++++++++++++++++++++++++++++++++++--------------
->  1 file changed, 57 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
-> index ca15878..4a4bad9 100644
-> --- a/drivers/mfd/syscon.c
-> +++ b/drivers/mfd/syscon.c
-> @@ -15,40 +15,49 @@
->  #include <linux/err.h>
->  #include <linux/io.h>
->  #include <linux/module.h>
-> +#include <linux/list.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> -#include <linux/of_platform.h>
->  #include <linux/platform_data/syscon.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
->  #include <linux/mfd/syscon.h>
-> +#include <linux/slab.h>
->  
->  static struct platform_driver syscon_driver;
->  
-> +static DEFINE_SPINLOCK(syscon_list_slock);
-> +static LIST_HEAD(syscon_list);
-> +
->  struct syscon {
-> +	struct device_node *np;
->  	struct regmap *regmap;
-> +	struct list_head list;
->  };
->  
-> -static int syscon_match_node(struct device *dev, void *data)
-> -{
-> -	struct device_node *dn = data;
-> -
-> -	return (dev->of_node == dn) ? 1 : 0;
-> -}
-> +static struct syscon *of_syscon_register(struct device_node *np);
->  
->  struct regmap *syscon_node_to_regmap(struct device_node *np)
->  {
-> -	struct syscon *syscon;
-> -	struct device *dev;
-> +	struct syscon *entry, *syscon = NULL;
->  
-> -	dev = driver_find_device(&syscon_driver.driver, NULL, np,
-> -				 syscon_match_node);
-> -	if (!dev)
-> -		return ERR_PTR(-EPROBE_DEFER);
-> +	spin_lock(&syscon_list_slock);
->  
-> -	syscon = dev_get_drvdata(dev);
-> +	list_for_each_entry(entry, &syscon_list, list)
-> +		if (entry->np == np) {
-> +			syscon = entry;
-> +			break;
-> +		}
->  
-> -	return syscon->regmap;
-> +	spin_unlock(&syscon_list_slock);
-> +
-> +	if (!syscon)
-> +		syscon = of_syscon_register(np);
-> +
-> +	if (!IS_ERR(syscon))
-> +		return syscon->regmap;
-> +
-> +	return ERR_CAST(syscon);
->  }
->  EXPORT_SYMBOL_GPL(syscon_node_to_regmap);
->  
-> @@ -110,17 +119,45 @@ struct regmap *syscon_regmap_lookup_by_phandle(struct device_node *np,
->  }
->  EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle);
->  
-> -static const struct of_device_id of_syscon_match[] = {
-> -	{ .compatible = "syscon", },
-> -	{ },
-> -};
-> -
->  static struct regmap_config syscon_regmap_config = {
->  	.reg_bits = 32,
->  	.val_bits = 32,
->  	.reg_stride = 4,
->  };
->  
-> +static struct syscon *of_syscon_register(struct device_node *np)
-> +{
-> +	struct syscon *syscon;
-> +	struct regmap *regmap;
-> +	void __iomem *base;
-> +
-> +	if (!of_device_is_compatible(np, "syscon"))
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	syscon = kzalloc(sizeof(*syscon), GFP_KERNEL);
-> +	if (!syscon)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	base = of_iomap(np, 0);
-> +	if (!base)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	regmap = regmap_init_mmio(NULL, base, &syscon_regmap_config);
+Hi Ajay,
 
-Does a NULL device pointer work?
-I just tested on MX6SX SDB board and it seemed crashed at here in regmap_init function.
-
-Regards
-Dong Aisheng
-
-> +	if (IS_ERR(regmap)) {
-> +		pr_err("regmap init failed\n");
-> +		return ERR_CAST(regmap);
-> +	}
-> +
-> +	syscon->regmap = regmap;
-> +	syscon->np = np;
-> +
-> +	spin_lock(&syscon_list_slock);
-> +	list_add_tail(&syscon->list, &syscon_list);
-> +	spin_unlock(&syscon_list_slock);
-> +
-> +	return syscon;
-> +}
-> +
->  static int syscon_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -167,7 +204,6 @@ static struct platform_driver syscon_driver = {
->  	.driver = {
->  		.name = "syscon",
->  		.owner = THIS_MODULE,
-> -		.of_match_table = of_syscon_match,
->  	},
->  	.probe		= syscon_probe,
->  	.id_table	= syscon_ids,
-> -- 
-> 1.7.9.5
+On Wednesday 17 September 2014 14:37:30 Ajay kumar wrote:
+> On Mon, Sep 15, 2014 at 11:07 PM, Laurent Pinchart wrote:
+> > Hi Ajay,
+> > 
+> > Thank you for the patch.
+> > 
+> > I think we're moving in the right direction, but we're not there yet.
+> > 
+> > On Saturday 26 July 2014 00:52:08 Ajay Kumar wrote:
+> >> This patch tries to seperate drm_bridge implementation
+> >> into 2 parts, a drm part and a non_drm part.
+> >> 
+> >> A set of helper functions are defined in this patch to make
+> >> bridge driver probe independent of the drm flow.
+> >> 
+> >> The bridge devices register themselves on a lookup table
+> >> when they get probed by calling "drm_bridge_add_for_lookup".
+> >> 
+> >> The parent encoder driver waits till the bridge is available in the
+> >> lookup table(by calling "of_drm_find_bridge") and then continues with
+> >> its initialization.
+> > 
+> > Before the introduction of the component framework I would have said this
+> > is the way to go. Now, I think bridges should register themselves as
+> > components, and the DRM master driver should use the component framework
+> > to get a reference to the bridges it needs.
 > 
+> Well, I have modified the bridge framework exactly the way Thierry wanted it
+> to be, I mean the same way the current panel framework is.
+> And, I don't think there is a problem with that.
+> What problem are you facing with current bridge implementation?
+> What is the advantage of using the component framework to register bridges?
+
+There are several advantages.
+
+- The component framework has been designed with this exact problem in mind, 
+piecing multiple components into a display device. This patch set introduces 
+yet another framework, without any compelling reason as far as I can see. 
+Today DRM drivers already need to use three different frameworks (component, 
+I2C slave encoder and panel), and we're adding a fourth one to make the mess 
+even messier. This is really a headlong rush, we need to stop and fix the 
+design mistakes.
+
+- The component framework solves the probe ordering problem. Bridges can use 
+deferred probing, but when a bridge requires a resources (such as a clock for 
+instance) provided by the display controller, this will break.
+
+> >> The encoder driver should call "drm_bridge_attach_encoder" to pass on
+> >> the drm_device and the encoder pointers to the bridge object.
+> >> 
+> >> Now that the drm_device pointer is available, the encoder then calls
+> >> "bridge->funcs->post_encoder_init" to allow the bridge to continue
+> >> registering itself with the drm core.
+> > 
+> > This is what really bothers me with DRM bridge.
+> > 
+> > The framework assumes that a bridge will always bridge an encoder and a
+> > connector. Beside lacking support for chained bridges, this creates an
+> > artificial split between bridges and encoders by modeling the same
+> > components using drm_encoder or drm_bridge depending on their position in
+> > the video output pipeline.
+> > 
+> > I would like to see drm_bridge becoming more self-centric, removing the
+> > awareness of the upstream encoder and downstream connector. I'll give this
+> > a try, but it will conflict with this patch, so I'd like to share
+> > opinions and coordinate efforts sooner than later if possible.
 > 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> I am not really able to understand how you want "drm_bridge" to be.
+> As of now, there are many platforms using drm_bridge and they don't
+> have a problem with current implementation.
+> Regarding chained bridges: Can't you add this once my patchset is merged?
+> As an additional feature?
+
+Yes, as I mentioned in another e-mail this can be fixed later. I want to start 
+discussing it though.
+
+> To be honest, I have spent quite sometime for working on this patchset.
+> All I started with was to add drm_panel support to drm_bridge.
+> When I sent the first patchset for that, Daniel, Rob and Thierry raised a
+> concern that current bridge framework itself is not proper and hence
+> they asked me to fix that first. And we have reached till here based on
+> their comments only.
+> 
+> Without this patchset, you cannot bring an X server
+> based display on snow and peach_pit. Also, day by day the number of
+> platforms using drm_bridge is increasing.
+
+That's exactly why I'd like to use the component framework now, as the 
+conversion will become more complex as time goes by.
+
+> And, I don't really see a problem with the current approach(which is exactly
+> the same way panel framework is). And, I am no decision maker here. I would
+> expect the top guys to comment!
+
+-- 
+Regards,
+
+Laurent Pinchart
