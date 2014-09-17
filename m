@@ -1,58 +1,76 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCHv3 4/5] rtc: s3c: Add support for RTC of Exynos3250 SoC
-Date: Wed, 17 Sep 2014 10:39:39 +0200
-Message-ID: <CABxcv=m2XbqDTskHD0U3h+o7kXH51KVySs7tVBGpyozLmzUqkw@mail.gmail.com>
-References: <1409216559-22402-1-git-send-email-cw00.choi@samsung.com>
-	<1409216559-22402-5-git-send-email-cw00.choi@samsung.com>
-	<CABxcv=ku9fjFfzyXZEnCGpTrWQ0pN+5mLWay90jXBhkFeWb7sg@mail.gmail.com>
-	<CAD8Lp47M8jHLrQAdYUn6NZn2Ety_02E6HPzPDUX3uGLVqf1riw@mail.gmail.com>
-	<CABxcv==CBbaY_GVgmWe5QzJdhMipyx5TpZ4_3oKLzkyiGPOBrw@mail.gmail.com>
-	<CAD=FV=VsSg5QLbdhgb4vV1+boeWaksCGj4MfGnCQnyhQR6Dr5A@mail.gmail.com>
+From: Vikas Sajjan <vikas.sajjan@samsung.com>
+Subject: Re: [RESEND PATCH] arm: exynos: Allow rtc alarm and tick wakeup irq
+ for exynos3250.
+Date: Wed, 17 Sep 2014 14:38:44 +0545
+Message-ID: <CAGm_ybjMaLHPALp519fe=UdMy1DeJbcxUxJN+hcPecttY7A_tQ@mail.gmail.com>
+References: <1410923262-4771-1-git-send-email-jonghwa3.lee@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:56105 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753985AbaIQIjk (ORCPT
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:58169 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752905AbaIQIxq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Sep 2014 04:39:40 -0400
-Received: by mail-we0-f174.google.com with SMTP id x48so174870wes.5
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Sep 2014 01:39:39 -0700 (PDT)
-In-Reply-To: <CAD=FV=VsSg5QLbdhgb4vV1+boeWaksCGj4MfGnCQnyhQR6Dr5A@mail.gmail.com>
+	Wed, 17 Sep 2014 04:53:46 -0400
+In-Reply-To: <1410923262-4771-1-git-send-email-jonghwa3.lee@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Daniel Drake <drake@endlessm.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alessandro Zummo <a.zummo@towertech.it>, Kukjin Kim <kgene.kim@samsung.com>, Andrew Morton <akpm@linux-foundation.org>, Kyungmin Park <kyungmin.park@samsung.com>, rtc-linux@googlegroups.com, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Jonghwa Lee <jonghwa3.lee@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 
-Hello Doug,
+Hi,
 
-On Wed, Sep 17, 2014 at 12:15 AM, Doug Anderson <dianders@chromium.org> wrote:
+On Wed, Sep 17, 2014 at 8:52 AM, Jonghwa Lee <jonghwa3.lee@samsung.com> wrote:
+> Add rtc alarm and tick irq to wakeup sources in exynos3250.
 >
-> I think you can turn off CONFIG_COMMON_CLK_MAX77686 and then this
-> clock will be left at whatever the bootloader set it to, right?  Then
-> there will be no auto-disabling by the CCF and the RTC will work.
-
-Yes, that's how Daniel was working around the issue.
-
-> That's one argument for making the clock "optional".
+> Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+> Acked-by : Chanwoo choi <cw00.choi@samsung.com>
+> ---
+>  arch/arm/mach-exynos/pm.c |    9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
 >
-
-Indeed.
-
-> NOTE: I don't think that the builtin RTC is terribly important for any
-> exynos-based Chromebooks that I'm aware of.  We rely on the RTC that's
-> part of the Maxim PMIC itself and pretty much ignore the one built-in
-> to the exynos.  I think there are some cases it was used (as a
-> fallback wakeup source in certain test scripts), but nothing very
-> important.
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index fa7218a..d78dcf9 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -66,6 +66,12 @@ static struct sleep_save exynos_core_save[] = {
 >
+>  static u32 exynos_irqwake_intmask = 0xffffffff;
+>
+> +static const struct exynos_wkup_irq exynos3250_wkup_irq[] = {
+> +       { 105, BIT(1) }, /* RTC alarm */
+> +       { 106, BIT(2) }, /* RTC tick */
+> +       { /* sentinel */ },
+> +};
+> +
+>  static const struct exynos_wkup_irq exynos4_wkup_irq[] = {
+>         { 76, BIT(1) }, /* RTC alarm */
+>         { 77, BIT(2) }, /* RTC tick */
+> @@ -81,9 +87,10 @@ static const struct exynos_wkup_irq exynos5250_wkup_irq[] = {
+>  static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
+>  {
+>         const struct exynos_wkup_irq *wkup_irq;
+> -
+>         if (soc_is_exynos5250())
+>                 wkup_irq = exynos5250_wkup_irq;
+> +       else if (soc_is_exynos3250())
+> +               wkup_irq = exynos3250_wkup_irq;
 
-Ok, I'll post the patch I shared before that makes the rtc to claim
-the max77802 32kHz clock as "rtc_src" anyways since that is the right
-thing to do even if the "rtc_src" ends being optional due DT backward
-compat.
 
-> -Doug
+Don't add anymore soc_is_exynosxxx() checks, please rebase on [1],
+which refactors the pm.c to use DT based lookup.
 
-Best regards,
-Javier
+[1] http://www.spinics.net/lists/arm-kernel/msg355266.html
+
+
+
+>         else
+>                 wkup_irq = exynos4_wkup_irq;
+>
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
