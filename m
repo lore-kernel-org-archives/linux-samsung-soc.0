@@ -1,121 +1,200 @@
-From: Inki Dae <inki.dae@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
 Subject: Re: [PATCH] drm/exynos: fix plane-framebuffer linkage
-Date: Wed, 17 Sep 2014 15:49:20 +0900
-Message-ID: <54192EF0.5000705@samsung.com>
+Date: Wed, 17 Sep 2014 16:44:13 +0900
+Message-ID: <54193BCD.3090003@samsung.com>
 References: <1410807137-8323-1-git-send-email-drake@endlessm.com>
  <20140916063501.GT4740@phenom.ffwll.local> <54192BB1.8060606@samsung.com>
+ <54192EF0.5000705@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <54192BB1.8060606@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, Daniel Drake <drake@endlessm.com>, kyungmin.park@samsung.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:17994 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751888AbaIQHoR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 17 Sep 2014 03:44:17 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NC1009IBC5NBG60@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 17 Sep 2014 16:44:11 +0900 (KST)
+In-reply-to: <54192EF0.5000705@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
+Cc: Daniel Vetter <daniel@ffwll.ch>, Daniel Drake <drake@endlessm.com>, sw0312.kim@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-T24gMjAxNOuFhCAwOeyblCAxN+ydvCAxNTozNSwgQW5kcnplaiBIYWpkYSB3cm90ZToKPiBIaSwK
-PiAKPiBPbiAwOS8xNi8yMDE0IDA4OjM1IEFNLCBEYW5pZWwgVmV0dGVyIHdyb3RlOgo+PiBPbiBN
-b24sIFNlcCAxNSwgMjAxNCBhdCAxMjo1MjoxN1BNIC0wNjAwLCBEYW5pZWwgRHJha2Ugd3JvdGU6
-Cj4+PiBQYWdlZmxpcHBpbmcgY3VycmVudGx5IGNhdXNlcyBzb21lIGluY29uc2lzdGVuY2llcyB0
-aGF0IGxlYWQgdG8KPj4+IGNyYXNoZXMuIEp1c3QgcnVuIGFuIGFwcCB0aGF0IGNhdXNlcyBhIENS
-VEMgcGFnZWZsaXAgaW4gYSByYXcgWCBzZXNzaW9uCj4+PiBhbmQgY2hlY2sgdGhhdCBpdCBleGl0
-cyBjbGVhbmx5IGFuZCBjYW4gYmUgcmVzdGFydGVkIC0geW91J2xsIHNlZQo+Pj4gY3Jhc2hlcyBs
-aWtlOgo+Pj4gIFVuYWJsZSB0byBoYW5kbGUga2VybmVsIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5j
-ZSBhdCB2aXJ0dWFsIGFkZHJlc3MgMDAwMDAzMzQKPj4+ICBQQyBpcyBhdCBleHlub3NfZHJtX2Ny
-dGNfcGxhbmVfY29tbWl0KzB4MjAvMHg0MAo+Pj4gIExSIGlzIGF0IGV4eW5vc19kcm1fY3J0Y19w
-bGFuZV9jb21taXQrMHgyMC8weDQwCj4+PiAgWzxjMDM3NDliND5dIChleHlub3NfZHJtX2NydGNf
-cGxhbmVfY29tbWl0KSBmcm9tIFs8YzAzNzQxYmM+XSAoZXh5bm9zX2RybV9jcnRjX2NvbW1pdCsw
-eDQ0LzB4NzApCj4+PiAgWzxjMDM3NDFiYz5dIChleHlub3NfZHJtX2NydGNfY29tbWl0KSBmcm9t
-IFs8YzAzNzQzYTA+XSAoZXh5bm9zX2RybV9jcnRjX21vZGVfc2V0X2NvbW1pdC5pc3JhLjIrMHhi
-NC8weGM0KQo+Pj4gIFs8YzAzNzQzYTA+XSAoZXh5bm9zX2RybV9jcnRjX21vZGVfc2V0X2NvbW1p
-dC5pc3JhLjIpIGZyb20gWzxjMDM3NDRmND5dIChleHlub3NfZHJtX2NydGNfcGFnZV9mbGlwKzB4
-MTQwLzB4MWE4KQo+Pj4gIFs8YzAzNzQ0ZjQ+XSAoZXh5bm9zX2RybV9jcnRjX3BhZ2VfZmxpcCkg
-ZnJvbSBbPGMwMzZiMjBjPl0gKGRybV9tb2RlX3BhZ2VfZmxpcF9pb2N0bCsweDIyNC8weDJkYykK
-Pj4+ICBbPGMwMzZiMjBjPl0gKGRybV9tb2RlX3BhZ2VfZmxpcF9pb2N0bCkgZnJvbSBbPGMwMzVj
-MzI0Pl0gKGRybV9pb2N0bCsweDMzOC8weDRmYykKPj4+Cj4+PiBUaGVzZSBjcmFzaGVzIGhhcHBl
-biBiZWNhdXNlIGRybV9wbGFuZV9mb3JjZV9kaXNhYmxlIGhhcyBwcmV2aW91c2x5IHNldAo+Pj4g
-cGxhbmUtPmNydGMgdG8gTlVMTC4KPj4+Cj4+PiBXaGVuIGRybV9tb2RlX3BhZ2VfZmxpcF9pb2N0
-bCgpIGlzIHVzZWQgdG8gZmxpcCBhbm90aGVyIGZyYW1lYnVmZmVyCj4+PiBvbnRvIHRoZSBwcmlt
-YXJ5IHBsYW5lLCBjcnRjLT5wcmltYXJ5LT5mYiBpcyBjb3JyZWN0bHkgdXBkYXRlZCAodGhpcyBp
-cwo+Pj4gYSB2aXJ0dWFsIHBsYW5lIGNyZWF0ZWQgYnkgcGxhbmVfaGVscGVyKSwgYnV0IHBsYW5l
-LT5mYiBpcyBub3QgKHRoaXMKPj4+IHBsYW5lIGlzIHRoZSByZWFsIG9uZSwgY3JlYXRlZCBieSBl
-eHlub3NfZHJtX2NydGNfY3JlYXRlKS4KPj4+Cj4+PiBXZSB0aGVuIGNvbWUgdG8gaGFuZGxlIHJt
-ZmIgb2YgdGhlIGJhY2tidWZmZXIsIHdoaWNoIHRoZSAicmVhbCIgcHJpbWFyeQo+Pj4gcGxhbmUg
-aXMgaW5jb3JyZWN0bHkgcG9pbnRpbmcgYXQuIFNvIGRybV9mcmFtZWJ1ZmZlcl9yZW1vdmUoKSBk
-ZWNpZGVzIHRoYXQKPj4+IHRoZSBidWZmZXIgaXMgYWN0dWFsbHkgYWN0aXZlIG9uIGEgcGxhbmUg
-YW5kIGZvcmNlLWRpc2FibGVzIHRoZSBwbGFuZS4KPj4+Cj4+PiBFbnN1cmluZyB0aGF0IHBsYW5l
-LT5mYiBpcyBrZXB0IHVwLXRvLWRhdGUgc29sdmVzIHRoYXQgaXNzdWUsIGJ1dAo+Pj4gZXhwb3Nl
-cyBhIHJlZmVyZW5jZSBjb3VudGluZyBwcm9ibGVtLiBOb3cgd2Ugc2VlIGNyYXNoZXMgd2hlbiBy
-bWZiIGlzCj4+PiBjYWxsZWQgb24gdGhlIGZyb250LWJ1ZmZlciwgYmVjYXVzZSB0aGUgcm1mYiBj
-b2RlIGV4cGVjdHMgdG8gZHJvcCAzCj4+PiByZWZlcmVuY2VzIGhlcmUsIGFuZCB0aGVyZSBhcmUg
-b25seSAyLgo+Pj4KPj4+IFRoYXQgY2FuIGJlIGZpeGVkIGJ5IGFkb3B0aW5nIHRoZSByZWZlcmVu
-Y2UgbWFuYWdlbWVudCBmb3VuZCBpbiBvbWFwZHJtOgo+Pj4gRnJhbWVidWZmZXIgcmVmZXJlbmNl
-cyBhcmUgbm90IHRha2VuIGRpcmVjdGx5IGluIGNydGMgbW9kZV9zZXQgY29udGV4dCwKPj4+IGJ1
-dCByYXRoZXIgaW4gdGhlIGNvbnRleHQgb2YgdXBkYXRpbmcgdGhlIHBsYW5lLCB3aGljaCBhbHNv
-IGNvdmVycwo+Pj4gZmxpcHMuIExpa2Ugb21hcGRybSB3ZSBhbHNvIHVucmVmZXJlbmNlIHRoZSBv
-bGQgZnJhbWVidWZmZXIgaGVyZS4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBEYW5pZWwgRHJha2Ug
-PGRyYWtlQGVuZGxlc3NtLmNvbT4KPj4gVGhpcyBzb3VuZHMgdmVyeSBtdWNoIGxpa2UgZXh5bm9z
-IHNob3VsZCBzd2l0Y2ggdG8gdW5pdmVyc2FsIHBsYW5lcyBzbwo+PiB0aGF0IHRoZSBmYWtlIHBy
-aW1hcnkgcGxhbmUgY3JlYXRlZCBieSB0aGUgaGVscGVycyBkb2Vzbid0IGdldCBpbiB0aGUgd2F5
-Lgo+PiBBbmQgZm9yIGNoaXBzIHdoaWNoIGFscmVhZHkgdXNlIHBsYW5lcyBmb3IgZXZlcnl0aGlu
-ZyBpbnRlcm5hbGx5IHRoaXMKPj4gc2hvdWxkbid0IGJlIGEgbG90IG1vcmUgdGhhbiBhIGZldyBs
-aW5lcy4KPj4gLURhbmllbAo+IAo+IFRoZSBwYXRjaCBwcm9wb3NlZCBoZXJlIG9mIGNvdXJzZSBz
-dXBlcnNlZGVzIG15IHBhdGNoIGZpeGluZyBmYiByZWZjb3VudGluZy4KPiBCdXQgdGhlIGJlc3Qg
-c29sdXRpb24gaXMgdG8gZ2V0IHJpZCBvZiB2aXJ0dWFsIHBsYW5lIGFzIERhbmllbCBWZXR0ZXIK
-PiBzdGF0ZWQuCj4gRGFuaWVsIChEcmFrZSBvZiBjb3Vyc2UgOikgKSBkbyB5b3Ugd2FudCB0byBw
-cmVwYXJlIHBhdGNoIHN3aXRjaGluZyB0bwo+IHVuaXZlcnNhbCBwbGFuZXM/Cj4gTWF5YmUgb3Ro
-ZXIgdm9sdW50ZWVycz8gSWYgbm90IEkgY2FuIHRyeSB0byBkbyBpdCwgYXMgaXQgc2VlbXMgcXVp
-dGUKPiBzdHJhaWdodGZvcndhcmQuCgpJIHRoaW5rIHlvdSBjYW4gZG8gaXQgYW5kIHlvdSB3b3Vs
-ZCBiZSBhIHJpZ2h0IHBlcnNvbiB0byBkbyBpdC4KClRoYW5rcywKSW5raSBEYWUKCj4gCj4gUmVn
-YXJkcwo+IEFuZHJ6ZWoKPiAKPj4+IC0tLQo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9jcnRjLmMgIHwgMTIgKystLS0tLS0tLS0tCj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgfCAgOCArKysrKysrKwo+Pj4gIDIgZmlsZXMgY2hhbmdl
-ZCwgMTAgaW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4+PiBpbmRleCBiNjhlNThmLi43YWE5ZGVlIDEw
-MDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+
-Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+Pj4gQEAg
-LTE0MCwxNiArMTQwLDggQEAgZXh5bm9zX2RybV9jcnRjX21vZGVfc2V0KHN0cnVjdCBkcm1fY3J0
-YyAqY3J0Yywgc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm1vZGUsCj4+PiAgCWlmIChtYW5hZ2Vy
-LT5vcHMtPm1vZGVfc2V0KQo+Pj4gIAkJbWFuYWdlci0+b3BzLT5tb2RlX3NldChtYW5hZ2VyLCAm
-Y3J0Yy0+bW9kZSk7Cj4+PiAgCj4+PiAtCXJldCA9IGV4eW5vc19wbGFuZV9tb2RlX3NldChwbGFu
-ZSwgY3J0YywgY3J0Yy0+cHJpbWFyeS0+ZmIsIDAsIDAsIGNydGNfdywgY3J0Y19oLAo+Pj4gLQkJ
-CQkgICAgeCwgeSwgY3J0Y193LCBjcnRjX2gpOwo+Pj4gLQlpZiAocmV0KQo+Pj4gLQkJcmV0dXJu
-IHJldDsKPj4+IC0KPj4+IC0JcGxhbmUtPmNydGMgPSBjcnRjOwo+Pj4gLQlwbGFuZS0+ZmIgPSBj
-cnRjLT5wcmltYXJ5LT5mYjsKPj4+IC0JZHJtX2ZyYW1lYnVmZmVyX3JlZmVyZW5jZShwbGFuZS0+
-ZmIpOwo+Pj4gLQo+Pj4gLQlyZXR1cm4gMDsKPj4+ICsJcmV0dXJuIGV4eW5vc19wbGFuZV9tb2Rl
-X3NldChwbGFuZSwgY3J0YywgY3J0Yy0+cHJpbWFyeS0+ZmIsIDAsIDAsCj4+PiArCQkJCSAgICAg
-Y3J0Y193LCBjcnRjX2gsIHgsIHksIGNydGNfdywgY3J0Y19oKTsKPj4+ICB9Cj4+PiAgCj4+PiAg
-c3RhdGljIGludCBleHlub3NfZHJtX2NydGNfbW9kZV9zZXRfY29tbWl0KHN0cnVjdCBkcm1fY3J0
-YyAqY3J0YywgaW50IHgsIGludCB5LAo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX3BsYW5lLmMKPj4+IGluZGV4IDgzNzFjYmQuLmRmMjdlMzUgMTAwNjQ0Cj4+PiAtLS0gYS9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwo+Pj4gKysrIGIvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKPj4+IEBAIC0xMzksNiArMTM5LDE0
-IEBAIGludCBleHlub3NfcGxhbmVfbW9kZV9zZXQoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsIHN0
-cnVjdCBkcm1fY3J0YyAqY3J0YywKPj4+ICAJCQlvdmVybGF5LT5jcnRjX3gsIG92ZXJsYXktPmNy
-dGNfeSwKPj4+ICAJCQlvdmVybGF5LT5jcnRjX3dpZHRoLCBvdmVybGF5LT5jcnRjX2hlaWdodCk7
-Cj4+PiAgCj4+PiArCWlmIChwbGFuZS0+ZmIpCj4+PiArCQlkcm1fZnJhbWVidWZmZXJfdW5yZWZl
-cmVuY2UocGxhbmUtPmZiKTsKPj4+ICsKPj4+ICsJZHJtX2ZyYW1lYnVmZmVyX3JlZmVyZW5jZShm
-Yik7Cj4+PiArCj4+PiArCXBsYW5lLT5mYiA9IGZiOwo+Pj4gKwlwbGFuZS0+Y3J0YyA9IGNydGM7
-Cj4+PiArCj4+PiAgCWV4eW5vc19kcm1fY3J0Y19wbGFuZV9tb2RlX3NldChjcnRjLCBvdmVybGF5
-KTsKPj4+ICAKPj4+ICAJcmV0dXJuIDA7Cj4+PiAtLSAKPj4+IDEuOS4xCj4+Pgo+Pj4gX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPj4+IGRyaS1kZXZlbCBt
-YWlsaW5nIGxpc3QKPj4+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPj4+IGh0dHA6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwKPiAKPiAt
-LQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNj
-cmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFq
-b3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92
-Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAoKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
-ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi,
+
+On 09/17/2014 03:49 PM, Inki Dae wrote:
+> On 2014=EB=85=84 09=EC=9B=94 17=EC=9D=BC 15:35, Andrzej Hajda wrote:
+>> Hi,
+>>
+>> On 09/16/2014 08:35 AM, Daniel Vetter wrote:
+>>> On Mon, Sep 15, 2014 at 12:52:17PM -0600, Daniel Drake wrote:
+>>>> Pageflipping currently causes some inconsistencies that lead to
+>>>> crashes. Just run an app that causes a CRTC pageflip in a raw X se=
+ssion
+>>>> and check that it exits cleanly and can be restarted - you'll see
+>>>> crashes like:
+>>>>  Unable to handle kernel NULL pointer dereference at virtual addre=
+ss 00000334
+>>>>  PC is at exynos_drm_crtc_plane_commit+0x20/0x40
+>>>>  LR is at exynos_drm_crtc_plane_commit+0x20/0x40
+>>>>  [<c03749b4>] (exynos_drm_crtc_plane_commit) from [<c03741bc>] (ex=
+ynos_drm_crtc_commit+0x44/0x70)
+>>>>  [<c03741bc>] (exynos_drm_crtc_commit) from [<c03743a0>] (exynos_d=
+rm_crtc_mode_set_commit.isra.2+0xb4/0xc4)
+>>>>  [<c03743a0>] (exynos_drm_crtc_mode_set_commit.isra.2) from [<c037=
+44f4>] (exynos_drm_crtc_page_flip+0x140/0x1a8)
+>>>>  [<c03744f4>] (exynos_drm_crtc_page_flip) from [<c036b20c>] (drm_m=
+ode_page_flip_ioctl+0x224/0x2dc)
+>>>>  [<c036b20c>] (drm_mode_page_flip_ioctl) from [<c035c324>] (drm_io=
+ctl+0x338/0x4fc)
+>>>>
+>>>> These crashes happen because drm_plane_force_disable has previousl=
+y set
+>>>> plane->crtc to NULL.
+>>>>
+>>>> When drm_mode_page_flip_ioctl() is used to flip another framebuffe=
+r
+>>>> onto the primary plane, crtc->primary->fb is correctly updated (th=
+is is
+>>>> a virtual plane created by plane_helper), but plane->fb is not (th=
+is
+>>>> plane is the real one, created by exynos_drm_crtc_create).
+>>>>
+>>>> We then come to handle rmfb of the backbuffer, which the "real" pr=
+imary
+>>>> plane is incorrectly pointing at. So drm_framebuffer_remove() deci=
+des that
+>>>> the buffer is actually active on a plane and force-disables the pl=
+ane.
+>>>>
+>>>> Ensuring that plane->fb is kept up-to-date solves that issue, but
+>>>> exposes a reference counting problem. Now we see crashes when rmfb=
+ is
+>>>> called on the front-buffer, because the rmfb code expects to drop =
+3
+>>>> references here, and there are only 2.
+>>>>
+>>>> That can be fixed by adopting the reference management found in om=
+apdrm:
+>>>> Framebuffer references are not taken directly in crtc mode_set con=
+text,
+>>>> but rather in the context of updating the plane, which also covers
+>>>> flips. Like omapdrm we also unreference the old framebuffer here.
+>>>>
+>>>> Signed-off-by: Daniel Drake <drake@endlessm.com>
+>>> This sounds very much like exynos should switch to universal planes=
+ so
+>>> that the fake primary plane created by the helpers doesn't get in t=
+he way.
+>>> And for chips which already use planes for everything internally th=
+is
+>>> shouldn't be a lot more than a few lines.
+>>> -Daniel
+>>
+>> The patch proposed here of course supersedes my patch fixing fb refc=
+ounting.
+>> But the best solution is to get rid of virtual plane as Daniel Vette=
+r
+>> stated.
+>> Daniel (Drake of course :) ) do you want to prepare patch switching =
+to
+>> universal planes?
+>> Maybe other volunteers? If not I can try to do it, as it seems quite
+>> straightforward.
+>=20
+> I think you can do it and you would be a right person to do it.
+>=20
+> Thanks,
+> Inki Dae
+>=20
+>>
+>> Regards
+>> Andrzej
+>>
+>>>> ---
+>>>>  drivers/gpu/drm/exynos/exynos_drm_crtc.c  | 12 ++----------
+>>>>  drivers/gpu/drm/exynos/exynos_drm_plane.c |  8 ++++++++
+>>>>  2 files changed, 10 insertions(+), 10 deletions(-)
+>>>>
+>>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gp=
+u/drm/exynos/exynos_drm_crtc.c
+>>>> index b68e58f..7aa9dee 100644
+>>>> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+>>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+>>>> @@ -140,16 +140,8 @@ exynos_drm_crtc_mode_set(struct drm_crtc *crt=
+c, struct drm_display_mode *mode,
+>>>>  	if (manager->ops->mode_set)
+>>>>  		manager->ops->mode_set(manager, &crtc->mode);
+>>>> =20
+>>>> -	ret =3D exynos_plane_mode_set(plane, crtc, crtc->primary->fb, 0,=
+ 0, crtc_w, crtc_h,
+>>>> -				    x, y, crtc_w, crtc_h);
+>>>> -	if (ret)
+>>>> -		return ret;
+>>>> -
+>>>> -	plane->crtc =3D crtc;
+>>>> -	plane->fb =3D crtc->primary->fb;
+>>>> -	drm_framebuffer_reference(plane->fb);
+
+It's problem to add this from commit 25c8b5c3048cb6c98d402ca8d4735ccf91=
+0f727c.
+Chip specific drm driver internally doesn't have to care fb reference c=
+ount if
+there is no special case. We should have switched to universal plane at=
+ that
+time.
+
+Thanks.
+
+>>>> -
+>>>> -	return 0;
+>>>> +	return exynos_plane_mode_set(plane, crtc, crtc->primary->fb, 0, =
+0,
+>>>> +				     crtc_w, crtc_h, x, y, crtc_w, crtc_h);
+>>>>  }
+>>>> =20
+>>>>  static int exynos_drm_crtc_mode_set_commit(struct drm_crtc *crtc,=
+ int x, int y,
+>>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/g=
+pu/drm/exynos/exynos_drm_plane.c
+>>>> index 8371cbd..df27e35 100644
+>>>> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
+>>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+>>>> @@ -139,6 +139,14 @@ int exynos_plane_mode_set(struct drm_plane *p=
+lane, struct drm_crtc *crtc,
+>>>>  			overlay->crtc_x, overlay->crtc_y,
+>>>>  			overlay->crtc_width, overlay->crtc_height);
+>>>> =20
+>>>> +	if (plane->fb)
+>>>> +		drm_framebuffer_unreference(plane->fb);
+>>>> +
+>>>> +	drm_framebuffer_reference(fb);
+>>>> +
+>>>> +	plane->fb =3D fb;
+>>>> +	plane->crtc =3D crtc;
+>>>> +
+>>>>  	exynos_drm_crtc_plane_mode_set(crtc, overlay);
+>>>> =20
+>>>>  	return 0;
+>>>> --=20
+>>>> 1.9.1
+>>>>
+>>>> _______________________________________________
+>>>> dri-devel mailing list
+>>>> dri-devel@lists.freedesktop.org
+>>>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-sams=
+ung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>=20
+>=20
