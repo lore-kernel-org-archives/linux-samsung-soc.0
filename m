@@ -1,118 +1,114 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 6/6] mfd: cros_ec: Instantiate sub-devices from device
- tree
-Date: Wed, 17 Sep 2014 09:31:14 -0700
-Message-ID: <20140917163114.GL30918@lee--X1>
-References: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk>
- <1410428289-18229-7-git-send-email-javier.martinez@collabora.co.uk>
+From: Daniel Drake <drake@endlessm.com>
+Subject: Re: [PATCH] drm/exynos: fix plane-framebuffer linkage
+Date: Wed, 17 Sep 2014 10:41:05 -0600
+Message-ID: <CAD8Lp458rPEAtDdZDs5KtcbP_kRUF6nTKZhk4S+q5m_41BUagA@mail.gmail.com>
+References: <1410807137-8323-1-git-send-email-drake@endlessm.com>
+ <20140916063501.GT4740@phenom.ffwll.local>
+ <54192BB1.8060606@samsung.com> <54192EF0.5000705@samsung.com>
+ <54193BCD.3090003@samsung.com>
+ <CAD8Lp47-ho47WF-te15NZ=JHTd-zt1JxPXwQsTh_Ta_G89zrTA@mail.gmail.com>
+ <CAKMK7uFuo_Sq8cjaiTopSmex6c4hMcAFrD7Ya+R059v=ThurXA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1410428289-18229-7-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Andreas Faerber <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAKMK7uFuo_Sq8cjaiTopSmex6c4hMcAFrD7Ya+R059v=ThurXA@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 11 Sep 2014, Javier Martinez Canillas wrote:
+On Wed, Sep 17, 2014 at 7:45 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
+> I think fb refcounting in exynos is just plain busted. If you look at
+> other drivers the only place the refcount framebuffers or backing
+> storage objects is for pageflips to make sure the memory doesn't go
+> away while the hw is still scanning out the old framebuffer. If you
+> refcount anywhere else you either do something really crazy or your
+> driver is broken.
 
-> From: Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->=20
-> If the EC device tree node has sub-nodes, try to instantiate them as
-> MFD sub-devices.  We can configure the EC features provided by the bo=
-ard.
->=20
-> Signed-off-by: Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8rSCDK34cm6iQ@public.gmane.org=
-=2Euk>
-> ---
->=20
-> Changes since v2:
->  - Drop if guards since of_node is unconditionally built. Suggested b=
-y Lee Jones
->  - Drop unneeded comment about of_platform_populate(). Suggested by L=
-ee Jones.
->  - Fix error message if of_platform_populate() fails. Suggested by Le=
-e Jones.
->=20
-> Changes since v1:
->  - Don't leave an empty struct mfd_cell array. Suggested by Lee Jones=
-=2E
->  - Just use of_platform_populate() instead of manually iterating thro=
-ugh
->    sub-devices and calling mfd_add_devices. Suggested by Lee Jones.
-> ---
->  drivers/mfd/cros_ec.c | 27 ++++++++-------------------
->  1 file changed, 8 insertions(+), 19 deletions(-)
->=20
-> diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-> index 751af0b..7c533d2 100644
-> --- a/drivers/mfd/cros_ec.c
-> +++ b/drivers/mfd/cros_ec.c
-> @@ -21,6 +21,7 @@
->  #include <linux/slab.h>
->  #include <linux/module.h>
->  #include <linux/mfd/core.h>
-> +#include <linux/of_platform.h>
->  #include <linux/mfd/cros_ec.h>
->  #include <linux/mfd/cros_ec_commands.h>
->  #include <linux/delay.h>
-> @@ -109,22 +110,10 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_=
-dev,
->  }
->  EXPORT_SYMBOL(cros_ec_cmd_xfer);
-> =20
-> -static const struct mfd_cell cros_devs[] =3D {
-> -	{
-> -		.name =3D "cros-ec-keyb",
-> -		.id =3D 1,
-> -		.of_compatible =3D "google,cros-ec-keyb",
-> -	},
-> -	{
-> -		.name =3D "cros-ec-i2c-tunnel",
-> -		.id =3D 2,
-> -		.of_compatible =3D "google,cros-ec-i2c-tunnel",
-> -	},
-> -};
-> -
->  int cros_ec_register(struct cros_ec_device *ec_dev)
->  {
->  	struct device *dev =3D ec_dev->dev;
-> +	struct device_node *node =3D dev->of_node;
->  	int err =3D 0;
-> =20
->  	if (ec_dev->din_size) {
-> @@ -140,12 +129,12 @@ int cros_ec_register(struct cros_ec_device *ec_=
-dev)
-> =20
->  	mutex_init(&ec_dev->lock);
-> =20
-> -	err =3D mfd_add_devices(dev, 0, cros_devs,
-> -			      ARRAY_SIZE(cros_devs),
-> -			      NULL, ec_dev->irq, NULL);
-> -	if (err) {
-> -		dev_err(dev, "failed to add mfd devices\n");
-> -		return err;
+With my patch actually the behaviour is much more similar to omapdrm,
+which also doesn't quite match your description of "other drivers".
+See omap_plane.c.
 
-So these devices will only ever probe with DT now ...
+There is a fb reference taken for "pinning" in update_pin() which
+presumably is what you describe - avoid destroying the fb while it is
+being scanned out. (Maybe exynos should have something equivalent too,
+but thats a separate issue)
 
-> +	if (node) {
+However there is *another* fb reference taken in
+omap_plane_mode_set(). And my patch is modelled to do the same in
+exynos-drm.
 
-So it would be wrong for dev->of_node not to be populated.
+I believe this is necessary under the current model. At least, when
+drm_mode_rmfb() is running for the last user of the active
+framebuffer, it expects to drop 3 references from the framebuffer
+before dropping the 4th causes the object to be destroyed, as follows:
 
-> +		err =3D of_platform_populate(node, NULL, NULL, dev);
-> +		if (err) {
-> +			dev_err(dev, "Failed to register subordinate devices");
-> +			return err;
-> +		}
->  	}
-> =20
->  	dev_info(dev, "Chrome EC device registered\n");
+1. drm_mode_rmfb explicitly drops a reference - it calls
+__drm_framebuffer_unregister which then calls
+__drm_framebuffer_unreference
+    /* Mark fb as reaped, we still have a ref from fpriv->fbs. */
+    __drm_framebuffer_unregister(dev, fb);
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+2. drm_mode_rmfb then calls drm_framebuffer_remove, which calls
+drm_mode_set_config_internal() in order to turn off the CRTC, dropping
+another reference in the process.
+        if (tmp->old_fb)
+            drm_framebuffer_unreference(tmp->old_fb);
+
+3. drm_framebuffer_remove calls drm_plane_force_disable() which drops
+another reference:
+    /* disconnect the plane from the fb and crtc: */
+    __drm_framebuffer_unreference(old_fb);
+
+4. drm_framebuffer drops the final reference itself, to cause freeing
+of the object:
+    drm_framebuffer_unreference(fb);
+
+
+So ordinarily, after a fb is created by drm core (with refcnt at 1),
+there would have to be 3 references added to it by the time it is the
+primary fb so that when we do rmfb, it has a refcnt of 4, and gets
+freed correctly.
+(The second bug I was seeing with pageflips was that refcnt was 3,
+which means that the final reference was dropped in (3) above, but
+__drm_framebuffer_unreference doesn't like that at all - it calls
+drm_framebuffer_free_bug)
+
+Not being overly familiar with DRM internals I tried to go backwards
+to find out where these 3 references would be created during normal
+operation. 2 are clear:
+
+1. drm_framebuffer_init() explicitly grabs one:
+    /* Grab the idr reference. */
+    drm_framebuffer_reference(fb)
+
+2. drm_mode_set_config_internal() takes one:
+        if (tmp->primary->fb)
+            drm_framebuffer_reference(tmp->primary->fb);
+
+Where should the 3rd one be created? I don't know, but looking at
+previous exynos commit 25c8b5c304 and omapdrm, I assumed that the drm
+driver should take one, both on crtc mode set and crtc page flip.
+
+>> However, I'll be happy if universal planes means the driver does not
+>> have to care about this any more. Andrej, please go ahead if you are
+>> interested, I'll be happy to test your results.
+>
+> universal planes will fix up the mess with 2 drm plane objects
+> (primary plane + exonys internal primary). So should help to untangle
+> this not, but it will not magically fix the refcounting bugs itself.
+
+So even when we move to universal planes (fixing 1 of the issues), its
+good that we're having this refcount discussion (which we need to
+understand to confidently solve the 2nd issue). Thanks for your input!
+
+Daniel
