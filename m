@@ -1,222 +1,60 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH v3 2/2] usb: host: ohci-exynos: Remove unnecessary usb-phy
- support
-Date: Wed, 17 Sep 2014 21:06:05 +0900
-Message-ID: <001501cfd26f$c1c32bf0$454983d0$%han@samsung.com>
-References: <1410952662-4297-1-git-send-email-gautam.vivek@samsung.com>
- <1410952662-4297-3-git-send-email-gautam.vivek@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH RESEND] ARM: DTS: correct the capability string for mmc0
+Date: Wed, 17 Sep 2014 21:09:28 +0900
+Message-ID: <01ce01cfd270$3b3d31b0$b1b79510$@kernel.org>
+References: <1410857409-24767-1-git-send-email-gautam.vivek@samsung.com>
+ <CAD=FV=U4rPsfGkTcSY3OYHPgCFOccaHTjG1qC6WAekOEV09Q7A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:22618 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754061AbaIQMGI (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:32608 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754653AbaIQMJb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Sep 2014 08:06:08 -0400
-In-reply-to: <1410952662-4297-3-git-send-email-gautam.vivek@samsung.com>
+	Wed, 17 Sep 2014 08:09:31 -0400
+In-reply-to: <CAD=FV=U4rPsfGkTcSY3OYHPgCFOccaHTjG1qC6WAekOEV09Q7A@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, kgene.kim@samsung.com, 'Jingoo Han' <jg1.han@samsung.com>
+To: 'Doug Anderson' <dianders@chromium.org>, 'Vivek Gautam' <gautam.vivek@samsung.com>
+Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Seungwon Jeon' <tgih.jun@samsung.com>, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Kevin Hilman' <khilman@linaro.org>, 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>
 
-On Wednesday, September 17, 2014 8:18 PM, Vivek Gautam wrote:
+Doug Anderson wrote:
 > 
-> Now that we have completely moved from older USB-PHY drivers
-> to newer GENERIC-PHY drivers for PHYs available with USB controllers
-> on Exynos series of SoCs, we can remove the support for the same
-> in our host drivers too.
+> Vivek,
 > 
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Hi,
 
-Acked-by: Jingoo Han <jg1.han@samsung.com>
+> On Tue, Sep 16, 2014 at 1:50 AM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+> > From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> >
+> > MMC capability for HS200 is parsed in mmc/core/host.c as
+> > dts string "mmc-hs200-1_8v".
+> >
+> > This patch corrects the dts string for Exynos5420 based peach-pit
+> > and Exynos5800 based peach-pi boards.
+> >
+> > Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 
-Best regards,
-Jingoo Han
+In this case, Vivek's sign is required here.
 
-> ---
->  drivers/usb/host/ohci-exynos.c |   89 +++++++++++-----------------------------
->  1 file changed, 24 insertions(+), 65 deletions(-)
+> > ---
+> >
+> > Hi Kukjin,
+> >
+> > As commented by Doug earlier for this patch, the two patches required
+> >   -- mmc: dw_mmc: Make sure we don't get stuck when we get an error
+> >   -- mmc: dw_mmc: change to use recommended reset procedure
+> > are now merged in upstream.
+> > So you can go ahead and pick this change.
+> >
+> >  arch/arm/boot/dts/exynos5420-peach-pit.dts |    2 +-
+> >  arch/arm/boot/dts/exynos5800-peach-pi.dts  |    2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-> index 7c48e3f..992b28d 100644
-> --- a/drivers/usb/host/ohci-exynos.c
-> +++ b/drivers/usb/host/ohci-exynos.c
-> @@ -19,11 +19,8 @@
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/phy/phy.h>
-> -#include <linux/usb/phy.h>
-> -#include <linux/usb/samsung_usb_phy.h>
->  #include <linux/usb.h>
->  #include <linux/usb/hcd.h>
-> -#include <linux/usb/otg.h>
-> 
->  #include "ohci.h"
-> 
-> @@ -38,9 +35,7 @@ static struct hc_driver __read_mostly exynos_ohci_hc_driver;
-> 
->  struct exynos_ohci_hcd {
->  	struct clk *clk;
-> -	struct usb_phy *phy;
-> -	struct usb_otg *otg;
-> -	struct phy *phy_g[PHY_NUMBER];
-> +	struct phy *phy[PHY_NUMBER];
->  };
-> 
->  static int exynos_ohci_get_phy(struct device *dev,
-> @@ -48,56 +43,40 @@ static int exynos_ohci_get_phy(struct device *dev,
->  {
->  	struct device_node *child;
->  	struct phy *phy;
-> -	int phy_number;
-> -	int ret = 0;
-> +	int phy_num;
-> +	int ret;
-> 
-> -	/*
-> -	 * Getting generic phy:
-> -	 * We are keeping both types of phys as a part of transiting OHCI
-> -	 * to generic phy framework, so as to maintain backward compatibilty
-> -	 * with old DTB too.
-> -	 * We fallback to older USB-PHYs when we fail to get generic PHYs.
-> -	 */
-> +	/* Get the generic phys */
->  	for_each_available_child_of_node(dev->of_node, child) {
-> -		ret = of_property_read_u32(child, "reg", &phy_number);
-> +		ret = of_property_read_u32(child, "reg", &phy_num);
->  		if (ret) {
->  			dev_err(dev, "Failed to parse device tree\n");
->  			of_node_put(child);
->  			return ret;
->  		}
-> 
-> -		if (phy_number >= PHY_NUMBER) {
-> +		if (phy_num >= PHY_NUMBER) {
->  			dev_err(dev, "Invalid number of PHYs\n");
->  			of_node_put(child);
->  			return -EINVAL;
->  		}
-> 
-> -		phy = devm_of_phy_get(dev, child, NULL);
-> +		exynos_ohci->phy[phy_num] = devm_of_phy_get(dev, child, NULL);
-> +		phy = exynos_ohci->phy[phy_num];
->  		of_node_put(child);
-> -		if (IS_ERR(phy))
-> -			/* Lets fallback to older USB-PHYs */
-> -			goto usb_phy_old;
-> -		exynos_ohci->phy_g[phy_number] = phy;
-> -		/* Make the older PHYs unavailable */
-> -		exynos_ohci->phy = ERR_PTR(-ENXIO);
-> -	}
-> -
-> -	return 0;
-> -
-> -usb_phy_old:
-> -	exynos_ohci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
-> -	if (IS_ERR(exynos_ohci->phy)) {
-> -		ret = PTR_ERR(exynos_ohci->phy);
-> -		if (ret != -ENXIO && ret != -ENODEV) {
-> -			dev_err(dev, "no usb2 phy configured\n");
-> -			return ret;
-> +		if (IS_ERR(phy)) {
-> +			ret = PTR_ERR(phy);
-> +			if (ret == -EPROBE_DEFER) {
-> +				return ret;
-> +			} else if (ret != -ENOSYS && ret != -ENODEV) {
-> +				dev_err(dev,
-> +					"Error retrieving usb2 phy: %d\n", ret);
-> +				return PTR_ERR(phy);
-> +			}
->  		}
-> -		dev_dbg(dev, "Failed to get usb2 phy\n");
-> -	} else {
-> -		exynos_ohci->otg = exynos_ohci->phy->otg;
->  	}
-> 
-> -	return ret;
-> +	return 0;
->  }
-> 
->  static int exynos_ohci_phy_enable(struct device *dev)
-> @@ -107,16 +86,13 @@ static int exynos_ohci_phy_enable(struct device *dev)
->  	int i;
->  	int ret = 0;
-> 
-> -	if (!IS_ERR(exynos_ohci->phy))
-> -		return usb_phy_init(exynos_ohci->phy);
-> -
->  	for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
-> -		if (!IS_ERR(exynos_ohci->phy_g[i]))
-> -			ret = phy_power_on(exynos_ohci->phy_g[i]);
-> +		if (!IS_ERR(exynos_ohci->phy[i]))
-> +			ret = phy_power_on(exynos_ohci->phy[i]);
->  	if (ret)
->  		for (i--; i >= 0; i--)
-> -			if (!IS_ERR(exynos_ohci->phy_g[i]))
-> -				phy_power_off(exynos_ohci->phy_g[i]);
-> +			if (!IS_ERR(exynos_ohci->phy[i]))
-> +				phy_power_off(exynos_ohci->phy[i]);
-> 
->  	return ret;
->  }
-> @@ -127,14 +103,9 @@ static void exynos_ohci_phy_disable(struct device *dev)
->  	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
->  	int i;
-> 
-> -	if (!IS_ERR(exynos_ohci->phy)) {
-> -		usb_phy_shutdown(exynos_ohci->phy);
-> -		return;
-> -	}
-> -
->  	for (i = 0; i < PHY_NUMBER; i++)
-> -		if (!IS_ERR(exynos_ohci->phy_g[i]))
-> -			phy_power_off(exynos_ohci->phy_g[i]);
-> +		if (!IS_ERR(exynos_ohci->phy[i]))
-> +			phy_power_off(exynos_ohci->phy[i]);
->  }
-> 
->  static int exynos_ohci_probe(struct platform_device *pdev)
-> @@ -206,9 +177,6 @@ skip_phy:
->  		goto fail_io;
->  	}
-> 
-> -	if (exynos_ohci->otg)
-> -		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
-> -
->  	platform_set_drvdata(pdev, hcd);
-> 
->  	err = exynos_ohci_phy_enable(&pdev->dev);
-> @@ -241,9 +209,6 @@ static int exynos_ohci_remove(struct platform_device *pdev)
-> 
->  	usb_remove_hcd(hcd);
-> 
-> -	if (exynos_ohci->otg)
-> -		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
-> -
->  	exynos_ohci_phy_disable(&pdev->dev);
-> 
->  	clk_disable_unprepare(exynos_ohci->clk);
-> @@ -272,9 +237,6 @@ static int exynos_ohci_suspend(struct device *dev)
->  	if (rc)
->  		return rc;
-> 
-> -	if (exynos_ohci->otg)
-> -		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
-> -
->  	exynos_ohci_phy_disable(dev);
-> 
->  	clk_disable_unprepare(exynos_ohci->clk);
-> @@ -290,9 +252,6 @@ static int exynos_ohci_resume(struct device *dev)
-> 
->  	clk_prepare_enable(exynos_ohci->clk);
-> 
-> -	if (exynos_ohci->otg)
-> -		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
-> -
->  	ret = exynos_ohci_phy_enable(dev);
->  	if (ret) {
->  		dev_err(dev, "Failed to enable USB phy\n");
-> --
-> 1.7.10.4
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
+
+Thanks, I will take this patch once Vivek replies his sign on this patch.
+
+- Kukjin
