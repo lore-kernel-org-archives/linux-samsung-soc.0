@@ -1,121 +1,197 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V6 0/8] drm/exynos: few patches to enhance bridge chip
- support
-Date: Wed, 17 Sep 2014 15:43:04 +0530
-Message-ID: <CAEC9eQOKYSVi+CG__wzo3bwMZTBc+y10WZuYnoz7A5=RJV2D2Q@mail.gmail.com>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com>
- <CAEC9eQOpmUsZKEJ_uK7Y73kn9Q5Rk8=n3jV9orBYwn2R4M0efA@mail.gmail.com>
- <20140730094053.GB29590@ulmo> <2405684.4GKZfmgcCP@avalon>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <2405684.4GKZfmgcCP@avalon>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Doug Anderson <dianders@chromium.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, sunil joshi <joshi@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v3 2/2] usb: host: ohci-exynos: Remove unnecessary usb-phy support
+Date: Wed, 17 Sep 2014 16:47:42 +0530
+Message-ID: <1410952662-4297-3-git-send-email-gautam.vivek@samsung.com>
+References: <1410952662-4297-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1410952662-4297-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgTGF1cmVudCwKClBsZWFzZSBmaW5kIHRoZSBsYXRlc3Qgc2VyaWVzIGhlcmU6Cmh0dHA6Ly93
-d3cuc3Bpbmljcy5uZXQvbGlzdHMvZHJpLWRldmVsL21zZzY2NzQwLmh0bWwKCk9uIFdlZCwgU2Vw
-IDE3LCAyMDE0IGF0IDM6MjMgUE0sIExhdXJlbnQgUGluY2hhcnQKPGxhdXJlbnQucGluY2hhcnRA
-aWRlYXNvbmJvYXJkLmNvbT4gd3JvdGU6Cj4gSGkgVGhpZXJyeSwKPgo+IE9uIFdlZG5lc2RheSAz
-MCBKdWx5IDIwMTQgMTE6NDA6NTQgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4+IE9uIFdlZCwgSnVs
-IDMwLCAyMDE0IGF0IDExOjU0OjAwQU0gKzA1MzAsIEFqYXkga3VtYXIgd3JvdGU6Cj4+ID4gT24g
-VHVlLCBKdWwgMjksIDIwMTQgYXQgNToxNyBQTSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4+ID4g
-PiBPbiBUdWUsIEp1bCAyOSwgMjAxNCBhdCAwMTo0MjowOVBNICswMjAwLCBBbmRyZWFzIEbDpHJi
-ZXIgd3JvdGU6Cj4+ID4gPj4gQW0gMjkuMDcuMjAxNCAxMzozNiwgc2NocmllYiBUaGllcnJ5IFJl
-ZGluZzoKPj4gPiA+PiA+IE9uIFR1ZSwgSnVsIDI5LCAyMDE0IGF0IDAxOjIxOjQ4UE0gKzAyMDAs
-IEFuZHJlYXMgRsOkcmJlciB3cm90ZToKPj4gPiA+PiA+PiBBbSAyOC4wNy4yMDE0IDA4OjEzLCBz
-Y2hyaWViIEFqYXkga3VtYXI6Cj4+ID4gPj4gPj4+IE9uIDcvMjcvMTQsIEFuZHJlYXMgRsOkcmJl
-ciA8YWZhZXJiZXJAc3VzZS5kZT4gd3JvdGU6Cj4+ID4gPj4gPj4+PiBBbSAyNS4wNy4yMDE0IDIx
-OjIyLCBzY2hyaWViIEFqYXkgS3VtYXI6Cj4+ID4gPj4gPj4+Pj4gVGhpcyBzZXJpZXMgaXMgYmFz
-ZWQgb24gZXh5bm9zLWRybS1uZXh0IGJyYW5jaCBvZiBJbmtpIERhZSdzIHRyZWUKPj4gPiA+PiA+
-Pj4+PiBhdDoKPj4gPiA+PiA+Pj4+PiBnaXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4
-L2tlcm5lbC9naXQvZGFlaW5raS9kcm0tZXh5bm9zLgo+PiA+ID4+ID4+Pj4+IGdpdAo+PiA+ID4+
-ID4+Pj4+Cj4+ID4gPj4gPj4+Pj4gSSBoYXZlIHRlc3RlZCB0aGlzIGFmdGVyIGFkZGluZyBmZXcg
-RFQgY2hhbmdlcyBmb3IKPj4gPiA+PiA+Pj4+PiBleHlub3M1MjUwLXNub3csCj4+ID4gPj4gPj4+
-Pj4gZXh5bm9zNTQyMC1wZWFjaC1waXQgYW5kIGV4eW5vczU4MDAtcGVhY2gtcGkgYm9hcmRzLgo+
-PiA+ID4+ID4+Pj4KPj4gPiA+PiA+Pj4+IEknbSB0cnlpbmcgdG8gdGVzdCB0aGlzIHdpdGggYSBt
-b2RpZmllZCBleHlub3M1MjUwLXNwcmluZyBEVAo+PiA+ID4+Cj4+ID4gPj4gWy4uLl0KPj4gPiA+
-Pgo+PiA+ID4+ID4+IFVuZm9ydHVuYXRlbHkgdGhlIG1vc3QgSSBnb3Qgb24gU3ByaW5nIHdpdGgg
-YXR0YWNoZWQgRFQgd2FzIGEgYmxhbmsKPj4gPiA+PiA+PiBzY3JlZW4gd2l0aCBhIHdoaXRlIGhv
-cml6b250YWwgbGluZSBpbiB0aGUgbWlkZGxlLgo+PiA+ID4+ID4+Cj4+ID4gPj4gPj4gRG8gSSBu
-ZWVkIHRvIHNwZWNpZnkgYSBzcGVjaWZpYyBwYW5lbCBtb2RlbCBmb3IgU3ByaW5nPwo+PiA+ID4+
-Cj4+ID4gPj4gWy4uLl0KPj4gPiA+Pgo+PiA+ID4+ID4+IEZyb20gOTE3MmEyNmE4ZjBkMGYwZDE3
-MGJkMjdlMWMxNTBhZDIwNGQ4MDg2YSBNb24gU2VwIDE3IDAwOjAwOjAwCj4+ID4gPj4gPj4gMjAw
-MQo+PiA+ID4+ID4+IEZyb206ID0/VVRGLTg/cT9BbmRyZWFzPTIwRj1DMz1BNHJiZXI/PSA8YWZh
-ZXJiZXJAc3VzZS5kZT4KPj4gPiA+PiA+PiBEYXRlOiBTdW4sIDI3IEp1bCAyMDE0IDIxOjU4OjA2
-ICswMjAwCj4+ID4gPj4gPj4gU3ViamVjdDogW1BBVENIXSBBUk06IGR0czogZXh5bm9zNTI1MDog
-QWRkIGVEUC9MVkRTIGJyaWRnZSB0byBTcHJpbmcKPj4gPiA+PiA+PiBNSU1FLVZlcnNpb246IDEu
-MAo+PiA+ID4+ID4+IENvbnRlbnQtVHlwZTogdGV4dC9wbGFpbjsgY2hhcnNldD1VVEYtOAo+PiA+
-ID4+ID4+IENvbnRlbnQtVHJhbnNmZXItRW5jb2Rpbmc6IDhiaXQKPj4gPiA+PiA+Pgo+PiA+ID4+
-ID4+IFNpZ25lZC1vZmYtYnk6IEFqYXkgS3VtYXIgPGFqYXlrdW1hci5yc0BzYW1zdW5nLmNvbT4K
-Pj4gPiA+PiA+PiBbQUY6IFJlZG9uZSBmb3IgdjZdCj4+ID4gPj4gPj4gU2lnbmVkLW9mZi1ieTog
-QW5kcmVhcyBGPz9yYmVyIDxhZmFlcmJlckBzdXNlLmRlPgo+PiA+ID4+ID4+IC0tLQo+PiA+ID4+
-ID4+Cj4+ID4gPj4gPj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtc3ByaW5nLmR0cyB8
-IDMyICsrKysrKysrKysrKysrKysrKysrKy0KPj4gPiA+PiA+PiAgMSBmaWxlIGNoYW5nZWQsIDMx
-IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKPj4gPiA+PiA+Pgo+PiA+ID4+ID4+IGRpZmYg
-LS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLXNwcmluZy5kdHMKPj4gPiA+PiA+
-PiBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtc3ByaW5nLmR0cyBpbmRleAo+PiA+ID4+
-ID4+IDY4N2RmYWI4NmJjOC4uNTE3YjFmZjJiZmRmIDEwMDY0NAo+PiA+ID4+ID4+IC0tLSBhL2Fy
-Y2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtc3ByaW5nLmR0cwo+PiA+ID4+ID4+ICsrKyBiL2Fy
-Y2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAtc3ByaW5nLmR0cwo+PiA+ID4+ID4+IEBAIC02NCwx
-MCArNjQsMTQgQEAKPj4gPiA+PiA+PiAgICAgICAgICAgIHZkZF9wbGwtc3VwcGx5ID0gPCZzNW1f
-bGRvOF9yZWc+Owo+PiA+ID4+ID4+ICAgIH07Cj4+ID4gPj4gPj4KPj4gPiA+PiA+PiArICBwYW5l
-bDogcGFuZWwgewo+PiA+ID4+ID4+ICsgICAgICAgICAgY29tcGF0aWJsZSA9ICJzaW1wbGUtcGFu
-ZWwiOwo+PiA+ID4+ID4+ICsgIH07Cj4+ID4gPj4gPgo+PiA+ID4+ID4gWW91IGNhbid0IGRvIHRo
-aXMuICJzaW1wbGUtcGFuZWwiIGlzbid0IGEgdmFsaWQgcGFuZWwgbW9kZWwuIEl0Cj4+ID4gPj4g
-PiBzaG91bGQgcHJvYmFibHkgYmUgcmVtb3ZlZCBmcm9tIHRoZSBwbGF0Zm9ybV9vZl9tYXRjaCB0
-YWJsZSBpbiB0aGUKPj4gPiA+PiA+IGRyaXZlci4KPj4gPiA+Pgo+PiA+ID4+IE9rYXksIHRoYXQg
-bWVhbnMgdGhlIFNub3cgRFQgaXMgd3JvbmcsIHRvbzoKPj4gPiA+PiBodHRwczovL3BhdGNod29y
-ay5rZXJuZWwub3JnL3BhdGNoLzQ2MjU0NDEvCj4+ID4gPj4KPj4gPiA+PiBBbmQgdGhlIG90aGVy
-cyBzcGVjaWZ5IGl0IGFzIGZhbGxiYWNrOgo+PiA+ID4+IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5l
-bC5vcmcvcGF0Y2gvNDYyNTQ2MS8KPj4gPiA+PiBodHRwczovL3BhdGNod29yay5rZXJuZWwub3Jn
-L3BhdGNoLzQ2MjU0NTEvCj4+ID4gPgo+PiA+ID4gQSBxdWljayBncmVwIHNob3dzIHRoYXQgbWFu
-eSAoYWxsPykgZGV2aWNlcyB0aGF0IHVzZSBEUk0gcGFuZWxzIHByb3ZpZGUKPj4gPiA+IHNpbXBs
-ZS1wYW5lbCBhcyBmYWxsYmFjay4gVGhhdCdzIHByb2JhYmx5IGZpbmUgYXMgbG9uZyBhcyB0aGV5
-IGFsc28gZG8KPj4gPiA+IHByb3ZpZGUgdGhlIHNwZWNpZmljIG1vZGVsLiBCdXQgZ2l2ZW4gdGhh
-dCBzaW1wbGUtcGFuZWwgZG9lcyBub3QgaGF2ZSBhCj4+ID4gPiBtb2RlIG9yIHBoeXNpY2FsIHNp
-emUsIEkgZG9uJ3QgdGhpbmsgZXZlbiB0aGF0IG1ha2VzIHNlbnNlLgo+PiA+Cj4+ID4gT24gc25v
-dywgdGhlIGJyaWRnZSBjaGlwIHByb3ZpZGVzIHRoZSBkaXNwbGF5IG1vZGUgaW5zdGVhZCBvZiB0
-aGUgcGFuZWwuCj4+ID4gVGhhdCBpcyB3aHkgZGlzcGxheSB3YXMgd29ya2luZyBmb3IgbWUuCj4+
-Cj4+IE9rYXksIEkgc3VwcG9zZSB1bmRlciBzb21lIGNpcmN1bXN0YW5jZXMgdGhhdCBtaWdodCBt
-YWtlIHNlbnNlLiBBbHRob3VnaAo+PiBpdCdzIHN0aWxsIGFsd2F5cyB0aGUgcGFuZWwgdGhhdCBk
-aWN0YXRlcyB0aGUgZGlzcGxheSB0aW1pbmdzLCBzbyB0aGUKPj4gcGFuZWwgbm9kZSBuZWVkcyB0
-byBoYXZlIGEgcGFuZWwgbW9kZWwgc3BlY2lmaWMgY29tcGF0aWJsZSB2YWx1ZSB3aXRoIGEKPj4g
-bWF0Y2hpbmcgZW50cnkgaW4gdGhlIHBhbmVsLXNpbXBsZSBkcml2ZXIgc28gdGhhdCBpdCBjYW4g
-ZXZlbiBiZSB1c2VkIGluCj4+IHNldHVwcyB3aXRob3V0IGEgYnJpZGdlLgo+Pgo+PiBPbmUgb3Ro
-ZXIgdGhpbmc6IGhvdyBkb2VzIHRoZSBicmlkZ2Uga25vdyB3aGljaCBtb2RlIHRvIGRyaXZlPyBJ
-IHN1c3BlY3QKPj4gdGhhdCBpdCBjYW4gZHJpdmUgbW9yZSB0aGFuIG9uZSBtb2RlPyBDYW4gaXQg
-ZnJlZWx5IGJlIGNvbmZpZ3VyZWQgb3IKPj4gZG9lcyBpdCBoYXZlIGEgcHJlZGVmaW5lZCBzZXQg
-b2YgbW9kZXM/IElmIHRoZSBsYXR0ZXIsIHRoZW4gYWNjb3JkaW5nIHRvCj4+IHdoYXQgeW91IHNh
-aWQgYWJvdmUgdGhlcmUgbmVlZHMgdG8gYmUgYSB3YXkgdG8gY29uZmlndXJlIHRoZSBicmlkZ2Ug
-KHZpYQo+PiBEVD8pIHNvIHRoYXQgaXQgcmVwb3J0cyB0aGUgbW9kZSBtYXRjaGluZyB0aGUgcGFu
-ZWwuIEkgd29uZGVyIGlmIHRoYXQKPj4gc2hvdWxkIGJlIGhhbmRsZWQgY29tcGxldGVseSBpbiBj
-b2RlLCBzbyB0aGF0IGZvciBleGFtcGxlIGEgYnJpZGdlIGhhcyBhCj4+IHBhbmVsIGF0dGFjaGVk
-IGl0IGNhbiB1c2UgdGhlIHBhbmVsJ3MgLmdldF9tb2RlcygpIGFuZCBzZWxlY3QgYSBtYXRjaGlu
-Zwo+PiBtb2RlIGFtb25nIHRoZSBzZXQgdGhhdCBpdCBzdXBwb3J0cy4KPgo+IFllcywgcHJldHR5
-IHBsZWFzZSA6LSkgSSBkb24ndCB0aGluayBpdCB3b3VsZCBiZSBhIGdvb2QgaWRlYSB0byBkdXBs
-aWNhdGUgbW9kZQo+IGluZm9ybWF0aW9uIGluIHRoZSBicmlkZ2UgRFQgbm9kZSwgYXMgdGhhdCdz
-IG5vdCBhIHByb3BlcnR5IG9mIHRoZSBicmlkZ2UuCj4gUXVlcnlpbmcgdGhlIG1vZGUgYXQgcnVu
-dGltZSBpcyBpbiBteSBvcGluaW9uIGEgbXVjaCBiZXR0ZXIgb3B0aW9uLCBhbmQgd291bGQKPiBh
-bHNvIGFsbG93IHN3aXRjaGluZyBiZXR3ZWVuIGRpZmZlcmVudCBtb2RlcyBhdCBydW50aW1lIHdo
-ZW4gdGhhdCBtYWtlcyBzZW5zZS4KPgo+IE5vdywgSSdtIG5vdCBzdXJlIHdoZXRoZXIgaXQgc2hv
-dWxkIGJlIHRoZSBicmlkZ2UgZHJpdmVyIHF1ZXJ5aW5nIHRoZSBwYW5lbAo+IGRyaXZlciBkaXJl
-Y3RseSwgb3IgdGhlIGRpc3BsYXkgY29udHJvbGxlciBkcml2ZXIgZG9pbmcgaXQgYW5kIHRoZW4K
-PiBjb25maWd1cmluZyB0aGUgYnJpZGdlIGFjY29yZGluZ2x5LiBUaGUgbGF0dGVyIHNlZW1zIG1v
-cmUgZ2VuZXJpYyB0byBtZSBhbmQKPiBkb2Vzbid0IHJlbHkgb24gdGhlIGFzc3VtcHRpb24gdGhh
-dCB0aGUgYnJpZGdlIG91dHB1dCB3aWxsIGFsd2F5cyBiZSBkaXJlY3RseQo+IGNvbm5lY3RlZCB0
-byBhIHBhbmVsLgo+Cj4gLS0KPiBSZWdhcmRzLAo+Cj4gTGF1cmVudCBQaW5jaGFydAo+Cl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
-aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Now that we have completely moved from older USB-PHY drivers
+to newer GENERIC-PHY drivers for PHYs available with USB controllers
+on Exynos series of SoCs, we can remove the support for the same
+in our host drivers too.
+
+Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/usb/host/ohci-exynos.c |   89 +++++++++++-----------------------------
+ 1 file changed, 24 insertions(+), 65 deletions(-)
+
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index 7c48e3f..992b28d 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -19,11 +19,8 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/phy/phy.h>
+-#include <linux/usb/phy.h>
+-#include <linux/usb/samsung_usb_phy.h>
+ #include <linux/usb.h>
+ #include <linux/usb/hcd.h>
+-#include <linux/usb/otg.h>
+ 
+ #include "ohci.h"
+ 
+@@ -38,9 +35,7 @@ static struct hc_driver __read_mostly exynos_ohci_hc_driver;
+ 
+ struct exynos_ohci_hcd {
+ 	struct clk *clk;
+-	struct usb_phy *phy;
+-	struct usb_otg *otg;
+-	struct phy *phy_g[PHY_NUMBER];
++	struct phy *phy[PHY_NUMBER];
+ };
+ 
+ static int exynos_ohci_get_phy(struct device *dev,
+@@ -48,56 +43,40 @@ static int exynos_ohci_get_phy(struct device *dev,
+ {
+ 	struct device_node *child;
+ 	struct phy *phy;
+-	int phy_number;
+-	int ret = 0;
++	int phy_num;
++	int ret;
+ 
+-	/*
+-	 * Getting generic phy:
+-	 * We are keeping both types of phys as a part of transiting OHCI
+-	 * to generic phy framework, so as to maintain backward compatibilty
+-	 * with old DTB too.
+-	 * We fallback to older USB-PHYs when we fail to get generic PHYs.
+-	 */
++	/* Get the generic phys */
+ 	for_each_available_child_of_node(dev->of_node, child) {
+-		ret = of_property_read_u32(child, "reg", &phy_number);
++		ret = of_property_read_u32(child, "reg", &phy_num);
+ 		if (ret) {
+ 			dev_err(dev, "Failed to parse device tree\n");
+ 			of_node_put(child);
+ 			return ret;
+ 		}
+ 
+-		if (phy_number >= PHY_NUMBER) {
++		if (phy_num >= PHY_NUMBER) {
+ 			dev_err(dev, "Invalid number of PHYs\n");
+ 			of_node_put(child);
+ 			return -EINVAL;
+ 		}
+ 
+-		phy = devm_of_phy_get(dev, child, NULL);
++		exynos_ohci->phy[phy_num] = devm_of_phy_get(dev, child, NULL);
++		phy = exynos_ohci->phy[phy_num];
+ 		of_node_put(child);
+-		if (IS_ERR(phy))
+-			/* Lets fallback to older USB-PHYs */
+-			goto usb_phy_old;
+-		exynos_ohci->phy_g[phy_number] = phy;
+-		/* Make the older PHYs unavailable */
+-		exynos_ohci->phy = ERR_PTR(-ENXIO);
+-	}
+-
+-	return 0;
+-
+-usb_phy_old:
+-	exynos_ohci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
+-	if (IS_ERR(exynos_ohci->phy)) {
+-		ret = PTR_ERR(exynos_ohci->phy);
+-		if (ret != -ENXIO && ret != -ENODEV) {
+-			dev_err(dev, "no usb2 phy configured\n");
+-			return ret;
++		if (IS_ERR(phy)) {
++			ret = PTR_ERR(phy);
++			if (ret == -EPROBE_DEFER) {
++				return ret;
++			} else if (ret != -ENOSYS && ret != -ENODEV) {
++				dev_err(dev,
++					"Error retrieving usb2 phy: %d\n", ret);
++				return PTR_ERR(phy);
++			}
+ 		}
+-		dev_dbg(dev, "Failed to get usb2 phy\n");
+-	} else {
+-		exynos_ohci->otg = exynos_ohci->phy->otg;
+ 	}
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int exynos_ohci_phy_enable(struct device *dev)
+@@ -107,16 +86,13 @@ static int exynos_ohci_phy_enable(struct device *dev)
+ 	int i;
+ 	int ret = 0;
+ 
+-	if (!IS_ERR(exynos_ohci->phy))
+-		return usb_phy_init(exynos_ohci->phy);
+-
+ 	for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
+-		if (!IS_ERR(exynos_ohci->phy_g[i]))
+-			ret = phy_power_on(exynos_ohci->phy_g[i]);
++		if (!IS_ERR(exynos_ohci->phy[i]))
++			ret = phy_power_on(exynos_ohci->phy[i]);
+ 	if (ret)
+ 		for (i--; i >= 0; i--)
+-			if (!IS_ERR(exynos_ohci->phy_g[i]))
+-				phy_power_off(exynos_ohci->phy_g[i]);
++			if (!IS_ERR(exynos_ohci->phy[i]))
++				phy_power_off(exynos_ohci->phy[i]);
+ 
+ 	return ret;
+ }
+@@ -127,14 +103,9 @@ static void exynos_ohci_phy_disable(struct device *dev)
+ 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
+ 	int i;
+ 
+-	if (!IS_ERR(exynos_ohci->phy)) {
+-		usb_phy_shutdown(exynos_ohci->phy);
+-		return;
+-	}
+-
+ 	for (i = 0; i < PHY_NUMBER; i++)
+-		if (!IS_ERR(exynos_ohci->phy_g[i]))
+-			phy_power_off(exynos_ohci->phy_g[i]);
++		if (!IS_ERR(exynos_ohci->phy[i]))
++			phy_power_off(exynos_ohci->phy[i]);
+ }
+ 
+ static int exynos_ohci_probe(struct platform_device *pdev)
+@@ -206,9 +177,6 @@ skip_phy:
+ 		goto fail_io;
+ 	}
+ 
+-	if (exynos_ohci->otg)
+-		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
+-
+ 	platform_set_drvdata(pdev, hcd);
+ 
+ 	err = exynos_ohci_phy_enable(&pdev->dev);
+@@ -241,9 +209,6 @@ static int exynos_ohci_remove(struct platform_device *pdev)
+ 
+ 	usb_remove_hcd(hcd);
+ 
+-	if (exynos_ohci->otg)
+-		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
+-
+ 	exynos_ohci_phy_disable(&pdev->dev);
+ 
+ 	clk_disable_unprepare(exynos_ohci->clk);
+@@ -272,9 +237,6 @@ static int exynos_ohci_suspend(struct device *dev)
+ 	if (rc)
+ 		return rc;
+ 
+-	if (exynos_ohci->otg)
+-		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
+-
+ 	exynos_ohci_phy_disable(dev);
+ 
+ 	clk_disable_unprepare(exynos_ohci->clk);
+@@ -290,9 +252,6 @@ static int exynos_ohci_resume(struct device *dev)
+ 
+ 	clk_prepare_enable(exynos_ohci->clk);
+ 
+-	if (exynos_ohci->otg)
+-		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
