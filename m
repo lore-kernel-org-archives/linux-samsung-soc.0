@@ -1,202 +1,121 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v3] mfd: syscon: Decouple syscon interface from platform devices
-Date: Wed, 17 Sep 2014 12:01:50 +0530
-Message-ID: <1410935510-1567-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:57554 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751362AbaIQGgb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Sep 2014 02:36:31 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: fix plane-framebuffer linkage
+Date: Wed, 17 Sep 2014 15:49:20 +0900
+Message-ID: <54192EF0.5000705@samsung.com>
+References: <1410807137-8323-1-git-send-email-drake@endlessm.com>
+ <20140916063501.GT4740@phenom.ffwll.local> <54192BB1.8060606@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <54192BB1.8060606@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, Daniel Drake <drake@endlessm.com>, kyungmin.park@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: lee.jones@linaro.org, arnd@arndb.de, tomasz.figa@gmail.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, kgene.kim@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Currently a syscon entity can be only registered directly through a
-platform device that binds to a dedicated syscon driver. However in
-certain use cases it is desirable to make a device used with another
-driver a syscon interface provider.
-
-For example, certain SoCs (e.g. Exynos) contain system controller
-blocks which perform various functions such as power domain control,
-CPU power management, low power mode control, but in addition contain
-certain IP integration glue, such as various signal masks,
-coprocessor power control, etc. In such case, there is a need to have
-a dedicated driver for such system controller but also share registers
-with other drivers. The latter is where the syscon interface is helpful.
-
-In case of DT based platforms, this patch decouples syscon object from
-syscon platform driver, and allows to create syscon objects first time
-when it is required by calling of syscon_regmap_lookup_by APIs and keep
-a list of such syscon objects along with syscon provider device_nodes
-and regmap handles.
-
-For non-DT based platforms, this patch keeps syscon platform driver
-structure where is can be probed and such non-DT based drivers can use
-syscon_regmap_lookup_by_pdev API and get access to regmap handles.
-Once all users of "syscon_regmap_lookup_by_pdev" migrated to DT based,
-we can completly remove platform driver of syscon, and keep only helper
-functions to get regmap handles.
-
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
-Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
-V2 of this patchset and related discussion can be found here [1].
-
-Changes since v2:
- - Added back platform device support from syscon, with one change that
-   syscon will not be probed for DT based platform.
- - Added back syscon_regmap_lookup_by_pdevname API so that non-DT base
-   users of syscon will not be broken.
- - Removed unwanted change in syscon.h.
- - Modified Signed-off-by list, added Suggested-by of Tomasz Figa and
-   Arnd Bergmann.
- - Added Tested-by of Vivek Gautam for testing on Exynos platform.
-
-Changes since v1:
- - Removed of_syscon_unregister function.
- - Modified of_syscon_register function and it will be used by syscon.c 
-   to create syscon objects whenever required. 
- - Removed platform device support from syscon.
- - Removed syscon_regmap_lookup_by_pdevname API support.
- - As there are significant changes w.r.t patchset v1, I am taking over
-   author for this patchset from Tomasz Figa.
-
-[1]: https://lkml.org/lkml/2014/9/2/299
-
- drivers/mfd/syscon.c |   78 ++++++++++++++++++++++++++++++++++++--------------
- 1 file changed, 57 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
-index ca15878..4a4bad9 100644
---- a/drivers/mfd/syscon.c
-+++ b/drivers/mfd/syscon.c
-@@ -15,40 +15,49 @@
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/module.h>
-+#include <linux/list.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
--#include <linux/of_platform.h>
- #include <linux/platform_data/syscon.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/slab.h>
- 
- static struct platform_driver syscon_driver;
- 
-+static DEFINE_SPINLOCK(syscon_list_slock);
-+static LIST_HEAD(syscon_list);
-+
- struct syscon {
-+	struct device_node *np;
- 	struct regmap *regmap;
-+	struct list_head list;
- };
- 
--static int syscon_match_node(struct device *dev, void *data)
--{
--	struct device_node *dn = data;
--
--	return (dev->of_node == dn) ? 1 : 0;
--}
-+static struct syscon *of_syscon_register(struct device_node *np);
- 
- struct regmap *syscon_node_to_regmap(struct device_node *np)
- {
--	struct syscon *syscon;
--	struct device *dev;
-+	struct syscon *entry, *syscon = NULL;
- 
--	dev = driver_find_device(&syscon_driver.driver, NULL, np,
--				 syscon_match_node);
--	if (!dev)
--		return ERR_PTR(-EPROBE_DEFER);
-+	spin_lock(&syscon_list_slock);
- 
--	syscon = dev_get_drvdata(dev);
-+	list_for_each_entry(entry, &syscon_list, list)
-+		if (entry->np == np) {
-+			syscon = entry;
-+			break;
-+		}
- 
--	return syscon->regmap;
-+	spin_unlock(&syscon_list_slock);
-+
-+	if (!syscon)
-+		syscon = of_syscon_register(np);
-+
-+	if (!IS_ERR(syscon))
-+		return syscon->regmap;
-+
-+	return ERR_CAST(syscon);
- }
- EXPORT_SYMBOL_GPL(syscon_node_to_regmap);
- 
-@@ -110,17 +119,45 @@ struct regmap *syscon_regmap_lookup_by_phandle(struct device_node *np,
- }
- EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle);
- 
--static const struct of_device_id of_syscon_match[] = {
--	{ .compatible = "syscon", },
--	{ },
--};
--
- static struct regmap_config syscon_regmap_config = {
- 	.reg_bits = 32,
- 	.val_bits = 32,
- 	.reg_stride = 4,
- };
- 
-+static struct syscon *of_syscon_register(struct device_node *np)
-+{
-+	struct syscon *syscon;
-+	struct regmap *regmap;
-+	void __iomem *base;
-+
-+	if (!of_device_is_compatible(np, "syscon"))
-+		return ERR_PTR(-EINVAL);
-+
-+	syscon = kzalloc(sizeof(*syscon), GFP_KERNEL);
-+	if (!syscon)
-+		return ERR_PTR(-ENOMEM);
-+
-+	base = of_iomap(np, 0);
-+	if (!base)
-+		return ERR_PTR(-ENOMEM);
-+
-+	regmap = regmap_init_mmio(NULL, base, &syscon_regmap_config);
-+	if (IS_ERR(regmap)) {
-+		pr_err("regmap init failed\n");
-+		return ERR_CAST(regmap);
-+	}
-+
-+	syscon->regmap = regmap;
-+	syscon->np = np;
-+
-+	spin_lock(&syscon_list_slock);
-+	list_add_tail(&syscon->list, &syscon_list);
-+	spin_unlock(&syscon_list_slock);
-+
-+	return syscon;
-+}
-+
- static int syscon_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -167,7 +204,6 @@ static struct platform_driver syscon_driver = {
- 	.driver = {
- 		.name = "syscon",
- 		.owner = THIS_MODULE,
--		.of_match_table = of_syscon_match,
- 	},
- 	.probe		= syscon_probe,
- 	.id_table	= syscon_ids,
--- 
-1.7.9.5
+T24gMjAxNOuFhCAwOeyblCAxN+ydvCAxNTozNSwgQW5kcnplaiBIYWpkYSB3cm90ZToKPiBIaSwK
+PiAKPiBPbiAwOS8xNi8yMDE0IDA4OjM1IEFNLCBEYW5pZWwgVmV0dGVyIHdyb3RlOgo+PiBPbiBN
+b24sIFNlcCAxNSwgMjAxNCBhdCAxMjo1MjoxN1BNIC0wNjAwLCBEYW5pZWwgRHJha2Ugd3JvdGU6
+Cj4+PiBQYWdlZmxpcHBpbmcgY3VycmVudGx5IGNhdXNlcyBzb21lIGluY29uc2lzdGVuY2llcyB0
+aGF0IGxlYWQgdG8KPj4+IGNyYXNoZXMuIEp1c3QgcnVuIGFuIGFwcCB0aGF0IGNhdXNlcyBhIENS
+VEMgcGFnZWZsaXAgaW4gYSByYXcgWCBzZXNzaW9uCj4+PiBhbmQgY2hlY2sgdGhhdCBpdCBleGl0
+cyBjbGVhbmx5IGFuZCBjYW4gYmUgcmVzdGFydGVkIC0geW91J2xsIHNlZQo+Pj4gY3Jhc2hlcyBs
+aWtlOgo+Pj4gIFVuYWJsZSB0byBoYW5kbGUga2VybmVsIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5j
+ZSBhdCB2aXJ0dWFsIGFkZHJlc3MgMDAwMDAzMzQKPj4+ICBQQyBpcyBhdCBleHlub3NfZHJtX2Ny
+dGNfcGxhbmVfY29tbWl0KzB4MjAvMHg0MAo+Pj4gIExSIGlzIGF0IGV4eW5vc19kcm1fY3J0Y19w
+bGFuZV9jb21taXQrMHgyMC8weDQwCj4+PiAgWzxjMDM3NDliND5dIChleHlub3NfZHJtX2NydGNf
+cGxhbmVfY29tbWl0KSBmcm9tIFs8YzAzNzQxYmM+XSAoZXh5bm9zX2RybV9jcnRjX2NvbW1pdCsw
+eDQ0LzB4NzApCj4+PiAgWzxjMDM3NDFiYz5dIChleHlub3NfZHJtX2NydGNfY29tbWl0KSBmcm9t
+IFs8YzAzNzQzYTA+XSAoZXh5bm9zX2RybV9jcnRjX21vZGVfc2V0X2NvbW1pdC5pc3JhLjIrMHhi
+NC8weGM0KQo+Pj4gIFs8YzAzNzQzYTA+XSAoZXh5bm9zX2RybV9jcnRjX21vZGVfc2V0X2NvbW1p
+dC5pc3JhLjIpIGZyb20gWzxjMDM3NDRmND5dIChleHlub3NfZHJtX2NydGNfcGFnZV9mbGlwKzB4
+MTQwLzB4MWE4KQo+Pj4gIFs8YzAzNzQ0ZjQ+XSAoZXh5bm9zX2RybV9jcnRjX3BhZ2VfZmxpcCkg
+ZnJvbSBbPGMwMzZiMjBjPl0gKGRybV9tb2RlX3BhZ2VfZmxpcF9pb2N0bCsweDIyNC8weDJkYykK
+Pj4+ICBbPGMwMzZiMjBjPl0gKGRybV9tb2RlX3BhZ2VfZmxpcF9pb2N0bCkgZnJvbSBbPGMwMzVj
+MzI0Pl0gKGRybV9pb2N0bCsweDMzOC8weDRmYykKPj4+Cj4+PiBUaGVzZSBjcmFzaGVzIGhhcHBl
+biBiZWNhdXNlIGRybV9wbGFuZV9mb3JjZV9kaXNhYmxlIGhhcyBwcmV2aW91c2x5IHNldAo+Pj4g
+cGxhbmUtPmNydGMgdG8gTlVMTC4KPj4+Cj4+PiBXaGVuIGRybV9tb2RlX3BhZ2VfZmxpcF9pb2N0
+bCgpIGlzIHVzZWQgdG8gZmxpcCBhbm90aGVyIGZyYW1lYnVmZmVyCj4+PiBvbnRvIHRoZSBwcmlt
+YXJ5IHBsYW5lLCBjcnRjLT5wcmltYXJ5LT5mYiBpcyBjb3JyZWN0bHkgdXBkYXRlZCAodGhpcyBp
+cwo+Pj4gYSB2aXJ0dWFsIHBsYW5lIGNyZWF0ZWQgYnkgcGxhbmVfaGVscGVyKSwgYnV0IHBsYW5l
+LT5mYiBpcyBub3QgKHRoaXMKPj4+IHBsYW5lIGlzIHRoZSByZWFsIG9uZSwgY3JlYXRlZCBieSBl
+eHlub3NfZHJtX2NydGNfY3JlYXRlKS4KPj4+Cj4+PiBXZSB0aGVuIGNvbWUgdG8gaGFuZGxlIHJt
+ZmIgb2YgdGhlIGJhY2tidWZmZXIsIHdoaWNoIHRoZSAicmVhbCIgcHJpbWFyeQo+Pj4gcGxhbmUg
+aXMgaW5jb3JyZWN0bHkgcG9pbnRpbmcgYXQuIFNvIGRybV9mcmFtZWJ1ZmZlcl9yZW1vdmUoKSBk
+ZWNpZGVzIHRoYXQKPj4+IHRoZSBidWZmZXIgaXMgYWN0dWFsbHkgYWN0aXZlIG9uIGEgcGxhbmUg
+YW5kIGZvcmNlLWRpc2FibGVzIHRoZSBwbGFuZS4KPj4+Cj4+PiBFbnN1cmluZyB0aGF0IHBsYW5l
+LT5mYiBpcyBrZXB0IHVwLXRvLWRhdGUgc29sdmVzIHRoYXQgaXNzdWUsIGJ1dAo+Pj4gZXhwb3Nl
+cyBhIHJlZmVyZW5jZSBjb3VudGluZyBwcm9ibGVtLiBOb3cgd2Ugc2VlIGNyYXNoZXMgd2hlbiBy
+bWZiIGlzCj4+PiBjYWxsZWQgb24gdGhlIGZyb250LWJ1ZmZlciwgYmVjYXVzZSB0aGUgcm1mYiBj
+b2RlIGV4cGVjdHMgdG8gZHJvcCAzCj4+PiByZWZlcmVuY2VzIGhlcmUsIGFuZCB0aGVyZSBhcmUg
+b25seSAyLgo+Pj4KPj4+IFRoYXQgY2FuIGJlIGZpeGVkIGJ5IGFkb3B0aW5nIHRoZSByZWZlcmVu
+Y2UgbWFuYWdlbWVudCBmb3VuZCBpbiBvbWFwZHJtOgo+Pj4gRnJhbWVidWZmZXIgcmVmZXJlbmNl
+cyBhcmUgbm90IHRha2VuIGRpcmVjdGx5IGluIGNydGMgbW9kZV9zZXQgY29udGV4dCwKPj4+IGJ1
+dCByYXRoZXIgaW4gdGhlIGNvbnRleHQgb2YgdXBkYXRpbmcgdGhlIHBsYW5lLCB3aGljaCBhbHNv
+IGNvdmVycwo+Pj4gZmxpcHMuIExpa2Ugb21hcGRybSB3ZSBhbHNvIHVucmVmZXJlbmNlIHRoZSBv
+bGQgZnJhbWVidWZmZXIgaGVyZS4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBEYW5pZWwgRHJha2Ug
+PGRyYWtlQGVuZGxlc3NtLmNvbT4KPj4gVGhpcyBzb3VuZHMgdmVyeSBtdWNoIGxpa2UgZXh5bm9z
+IHNob3VsZCBzd2l0Y2ggdG8gdW5pdmVyc2FsIHBsYW5lcyBzbwo+PiB0aGF0IHRoZSBmYWtlIHBy
+aW1hcnkgcGxhbmUgY3JlYXRlZCBieSB0aGUgaGVscGVycyBkb2Vzbid0IGdldCBpbiB0aGUgd2F5
+Lgo+PiBBbmQgZm9yIGNoaXBzIHdoaWNoIGFscmVhZHkgdXNlIHBsYW5lcyBmb3IgZXZlcnl0aGlu
+ZyBpbnRlcm5hbGx5IHRoaXMKPj4gc2hvdWxkbid0IGJlIGEgbG90IG1vcmUgdGhhbiBhIGZldyBs
+aW5lcy4KPj4gLURhbmllbAo+IAo+IFRoZSBwYXRjaCBwcm9wb3NlZCBoZXJlIG9mIGNvdXJzZSBz
+dXBlcnNlZGVzIG15IHBhdGNoIGZpeGluZyBmYiByZWZjb3VudGluZy4KPiBCdXQgdGhlIGJlc3Qg
+c29sdXRpb24gaXMgdG8gZ2V0IHJpZCBvZiB2aXJ0dWFsIHBsYW5lIGFzIERhbmllbCBWZXR0ZXIK
+PiBzdGF0ZWQuCj4gRGFuaWVsIChEcmFrZSBvZiBjb3Vyc2UgOikgKSBkbyB5b3Ugd2FudCB0byBw
+cmVwYXJlIHBhdGNoIHN3aXRjaGluZyB0bwo+IHVuaXZlcnNhbCBwbGFuZXM/Cj4gTWF5YmUgb3Ro
+ZXIgdm9sdW50ZWVycz8gSWYgbm90IEkgY2FuIHRyeSB0byBkbyBpdCwgYXMgaXQgc2VlbXMgcXVp
+dGUKPiBzdHJhaWdodGZvcndhcmQuCgpJIHRoaW5rIHlvdSBjYW4gZG8gaXQgYW5kIHlvdSB3b3Vs
+ZCBiZSBhIHJpZ2h0IHBlcnNvbiB0byBkbyBpdC4KClRoYW5rcywKSW5raSBEYWUKCj4gCj4gUmVn
+YXJkcwo+IEFuZHJ6ZWoKPiAKPj4+IC0tLQo+Pj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9jcnRjLmMgIHwgMTIgKystLS0tLS0tLS0tCj4+PiAgZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgfCAgOCArKysrKysrKwo+Pj4gIDIgZmlsZXMgY2hhbmdl
+ZCwgMTAgaW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCj4+PiBpbmRleCBiNjhlNThmLi43YWE5ZGVlIDEw
+MDY0NAo+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+
+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+Pj4gQEAg
+LTE0MCwxNiArMTQwLDggQEAgZXh5bm9zX2RybV9jcnRjX21vZGVfc2V0KHN0cnVjdCBkcm1fY3J0
+YyAqY3J0Yywgc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm1vZGUsCj4+PiAgCWlmIChtYW5hZ2Vy
+LT5vcHMtPm1vZGVfc2V0KQo+Pj4gIAkJbWFuYWdlci0+b3BzLT5tb2RlX3NldChtYW5hZ2VyLCAm
+Y3J0Yy0+bW9kZSk7Cj4+PiAgCj4+PiAtCXJldCA9IGV4eW5vc19wbGFuZV9tb2RlX3NldChwbGFu
+ZSwgY3J0YywgY3J0Yy0+cHJpbWFyeS0+ZmIsIDAsIDAsIGNydGNfdywgY3J0Y19oLAo+Pj4gLQkJ
+CQkgICAgeCwgeSwgY3J0Y193LCBjcnRjX2gpOwo+Pj4gLQlpZiAocmV0KQo+Pj4gLQkJcmV0dXJu
+IHJldDsKPj4+IC0KPj4+IC0JcGxhbmUtPmNydGMgPSBjcnRjOwo+Pj4gLQlwbGFuZS0+ZmIgPSBj
+cnRjLT5wcmltYXJ5LT5mYjsKPj4+IC0JZHJtX2ZyYW1lYnVmZmVyX3JlZmVyZW5jZShwbGFuZS0+
+ZmIpOwo+Pj4gLQo+Pj4gLQlyZXR1cm4gMDsKPj4+ICsJcmV0dXJuIGV4eW5vc19wbGFuZV9tb2Rl
+X3NldChwbGFuZSwgY3J0YywgY3J0Yy0+cHJpbWFyeS0+ZmIsIDAsIDAsCj4+PiArCQkJCSAgICAg
+Y3J0Y193LCBjcnRjX2gsIHgsIHksIGNydGNfdywgY3J0Y19oKTsKPj4+ICB9Cj4+PiAgCj4+PiAg
+c3RhdGljIGludCBleHlub3NfZHJtX2NydGNfbW9kZV9zZXRfY29tbWl0KHN0cnVjdCBkcm1fY3J0
+YyAqY3J0YywgaW50IHgsIGludCB5LAo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX3BsYW5lLmMKPj4+IGluZGV4IDgzNzFjYmQuLmRmMjdlMzUgMTAwNjQ0Cj4+PiAtLS0gYS9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYwo+Pj4gKysrIGIvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMKPj4+IEBAIC0xMzksNiArMTM5LDE0
+IEBAIGludCBleHlub3NfcGxhbmVfbW9kZV9zZXQoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsIHN0
+cnVjdCBkcm1fY3J0YyAqY3J0YywKPj4+ICAJCQlvdmVybGF5LT5jcnRjX3gsIG92ZXJsYXktPmNy
+dGNfeSwKPj4+ICAJCQlvdmVybGF5LT5jcnRjX3dpZHRoLCBvdmVybGF5LT5jcnRjX2hlaWdodCk7
+Cj4+PiAgCj4+PiArCWlmIChwbGFuZS0+ZmIpCj4+PiArCQlkcm1fZnJhbWVidWZmZXJfdW5yZWZl
+cmVuY2UocGxhbmUtPmZiKTsKPj4+ICsKPj4+ICsJZHJtX2ZyYW1lYnVmZmVyX3JlZmVyZW5jZShm
+Yik7Cj4+PiArCj4+PiArCXBsYW5lLT5mYiA9IGZiOwo+Pj4gKwlwbGFuZS0+Y3J0YyA9IGNydGM7
+Cj4+PiArCj4+PiAgCWV4eW5vc19kcm1fY3J0Y19wbGFuZV9tb2RlX3NldChjcnRjLCBvdmVybGF5
+KTsKPj4+ICAKPj4+ICAJcmV0dXJuIDA7Cj4+PiAtLSAKPj4+IDEuOS4xCj4+Pgo+Pj4gX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPj4+IGRyaS1kZXZlbCBt
+YWlsaW5nIGxpc3QKPj4+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPj4+IGh0dHA6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwKPiAKPiAt
+LQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNj
+cmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFq
+b3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92
+Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAoKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
