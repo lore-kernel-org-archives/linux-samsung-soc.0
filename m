@@ -1,47 +1,39 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3] mfd: syscon: Decouple syscon interface from platform devices
-Date: Wed, 17 Sep 2014 17:23:04 +0200
-Message-ID: <201409171723.04549.arnd@arndb.de>
-References: <1410935510-1567-1-git-send-email-pankaj.dubey@samsung.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 1/2] ARM: dts: Add rtc_src clk for s3c-rtc on exynos Peach boards
+Date: Wed, 17 Sep 2014 08:24:03 -0700
+Message-ID: <CAD=FV=WctxZpkun4z8yZ89GrKoMZvvzcEPSLa9nrxEmjh_W1uw@mail.gmail.com>
+References: <1410954633-27025-1-git-send-email-javier.martinez@collabora.co.uk>
+	<1410954633-27025-2-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1410935510-1567-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, tomasz.figa@gmail.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, kgene.kim@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f181.google.com ([209.85.220.181]:35928 "EHLO
+	mail-vc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755540AbaIQPYE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 17 Sep 2014 11:24:04 -0400
+Received: by mail-vc0-f181.google.com with SMTP id ij19so1428333vcb.26
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Sep 2014 08:24:04 -0700 (PDT)
+In-Reply-To: <1410954633-27025-2-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Daniel Drake <drake@endlessm.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Wednesday 17 September 2014, Pankaj Dubey wrote:
-> ---
-> V2 of this patchset and related discussion can be found here [1].
-> 
-> Changes since v2:
->  - Added back platform device support from syscon, with one change that
->    syscon will not be probed for DT based platform.
->  - Added back syscon_regmap_lookup_by_pdevname API so that non-DT base
->    users of syscon will not be broken.
->  - Removed unwanted change in syscon.h.
->  - Modified Signed-off-by list, added Suggested-by of Tomasz Figa and
->    Arnd Bergmann.
->  - Added Tested-by of Vivek Gautam for testing on Exynos platform.
+Javier,
 
-Looks fine. Provided you can figure out the problem that Dong Aisheng
-reported, please add my
-
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-
-> -}
-> +static struct syscon *of_syscon_register(struct device_node *np);
+On Wed, Sep 17, 2014 at 4:50 AM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> commit 546b117fdf17 ("rtc: s3c: add support for RTC of Exynos3250 SoC")
+> added an "rtc_src" DT property for the Samsung's S3C Real Time Clock
+> controller that specifies the 32.768 kHz clock that uses the RTC as its
+> source clock. In the case of the Peach Pit and Pi machines, the Maxim
+> 77802 32kHz AP clock is used as the source clock.
 >
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 5 ++++-
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 5 ++++-
+>  2 files changed, 8 insertions(+), 2 deletions(-)
 
-One  minor comment: please avoid doing forward declarations of
-local functions. It took me a while to understand what is going on
-because I expect all functions to be ordered such that they only get
-called by functions below, and don't need this.
-
-Just move of_syscon_register() here directly.
-
-	Arnd
+Reviewed-by: Doug Anderson <dianders@chromium.org>
