@@ -1,13 +1,15 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 2/2] drm/exynos: use drm generic mmap interface
-Date: Wed, 17 Sep 2014 22:48:46 +0900
-Message-ID: <1410961726-2533-3-git-send-email-inki.dae@samsung.com>
-References: <1410961726-2533-1-git-send-email-inki.dae@samsung.com>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
+ ps8622 DT properties
+Date: Wed, 17 Sep 2014 19:59:50 +0530
+Message-ID: <CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com>
+References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
+ <5419760A.7020908@ti.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1410961726-2533-1-git-send-email-inki.dae@samsung.com>
+In-Reply-To: <5419760A.7020908@ti.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -17,302 +19,62 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch removes DRM_EXYNOS_GEM_MMAP ictrl feature specific
-to Exynos drm and instead uses drm generic mmap.
+Hi Tomi,
 
-We had used the interface specific to Exynos drm to do mmap directly,
-not to use demand paging which maps each page with physical memory
-at page fault handler. We don't need the specific mmap interface
-because the drm generic mmap which uses vm offset manager stuff can
-also do mmap directly.
+Thanks for your comments.
 
-This patch makes a userspace region to be mapped with whole physical
-memory region allocated by userspace request when mmap system call is
-requested.
+On Wed, Sep 17, 2014 at 5:22 PM, Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
+> On 27/08/14 17:39, Ajay Kumar wrote:
+>> Add documentation for DT properties supported by ps8622/ps8625
+>> eDP-LVDS converter.
+>>
+>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+>> ---
+>>  .../devicetree/bindings/video/bridge/ps8622.txt    |   20 ++++++++++++++++++++
+>>  1 file changed, 20 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/video/bridge/ps8622.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/video/bridge/ps8622.txt b/Documentation/devicetree/bindings/video/bridge/ps8622.txt
+>> new file mode 100644
+>> index 0000000..0ec8172
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/video/bridge/ps8622.txt
+>> @@ -0,0 +1,20 @@
+>> +ps8622-bridge bindings
+>> +
+>> +Required properties:
+>> +     - compatible: "parade,ps8622" or "parade,ps8625"
+>> +     - reg: first i2c address of the bridge
+>> +     - sleep-gpios: OF device-tree gpio specification for PD_ pin.
+>> +     - reset-gpios: OF device-tree gpio specification for RST_ pin.
+>> +
+>> +Optional properties:
+>> +     - lane-count: number of DP lanes to use
+>> +     - use-external-pwm: backlight will be controlled by an external PWM
+>
+> What does this mean? That the backlight support from ps8625 is not used?
+> If so, maybe "disable-pwm" or something?
+"use-external-pwm" or "disable-bridge-pwm" would be better.
 
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_drv.c |   25 ---------
- drivers/gpu/drm/exynos/exynos_drm_drv.h |    1 -
- drivers/gpu/drm/exynos/exynos_drm_gem.c |   84 ++++++-------------------------
- drivers/gpu/drm/exynos/exynos_drm_gem.h |   10 ----
- include/uapi/drm/exynos_drm.h           |   22 --------
- 5 files changed, 14 insertions(+), 128 deletions(-)
+>> +
+>> +Example:
+>> +     lvds-bridge@48 {
+>> +             compatible = "parade,ps8622";
+>> +             reg = <0x48>;
+>> +             sleep-gpios = <&gpc3 6 1 0 0>;
+>> +             reset-gpios = <&gpc3 1 1 0 0>;
+>> +             lane-count = <1>;
+>> +     };
+>>
+>
+> I wish all new display component bindings would use the video
+> ports/endpoints to describe the connections. It will be very difficult
+> to improve the display driver model later if we're missing such critical
+> pieces from the DT bindings.
+Why do we need a complex graph when it can be handled using a simple phandle?
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index 10ad3d4..a7819eb 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -149,10 +149,6 @@ static int exynos_drm_unload(struct drm_device *dev)
- 	return 0;
- }
- 
--static const struct file_operations exynos_drm_gem_fops = {
--	.mmap = exynos_drm_gem_mmap_buffer,
--};
--
- static int exynos_drm_suspend(struct drm_device *dev, pm_message_t state)
- {
- 	struct drm_connector *connector;
-@@ -191,7 +187,6 @@ static int exynos_drm_resume(struct drm_device *dev)
- static int exynos_drm_open(struct drm_device *dev, struct drm_file *file)
- {
- 	struct drm_exynos_file_private *file_priv;
--	struct file *anon_filp;
- 	int ret;
- 
- 	file_priv = kzalloc(sizeof(*file_priv), GFP_KERNEL);
-@@ -204,21 +199,8 @@ static int exynos_drm_open(struct drm_device *dev, struct drm_file *file)
- 	if (ret)
- 		goto err_file_priv_free;
- 
--	anon_filp = anon_inode_getfile("exynos_gem", &exynos_drm_gem_fops,
--					NULL, 0);
--	if (IS_ERR(anon_filp)) {
--		ret = PTR_ERR(anon_filp);
--		goto err_subdrv_close;
--	}
--
--	anon_filp->f_mode = FMODE_READ | FMODE_WRITE;
--	file_priv->anon_filp = anon_filp;
--
- 	return ret;
- 
--err_subdrv_close:
--	exynos_drm_subdrv_close(dev, file);
--
- err_file_priv_free:
- 	kfree(file_priv);
- 	file->driver_priv = NULL;
-@@ -234,7 +216,6 @@ static void exynos_drm_preclose(struct drm_device *dev,
- static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
- {
- 	struct exynos_drm_private *private = dev->dev_private;
--	struct drm_exynos_file_private *file_priv;
- 	struct drm_pending_vblank_event *v, *vt;
- 	struct drm_pending_event *e, *et;
- 	unsigned long flags;
-@@ -260,10 +241,6 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
- 	}
- 	spin_unlock_irqrestore(&dev->event_lock, flags);
- 
--	file_priv = file->driver_priv;
--	if (file_priv->anon_filp)
--		fput(file_priv->anon_filp);
--
- 	kfree(file->driver_priv);
- 	file->driver_priv = NULL;
- }
-@@ -282,8 +259,6 @@ static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
- static const struct drm_ioctl_desc exynos_ioctls[] = {
- 	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_CREATE, exynos_drm_gem_create_ioctl,
- 			DRM_UNLOCKED | DRM_AUTH),
--	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_MMAP,
--			exynos_drm_gem_mmap_ioctl, DRM_UNLOCKED | DRM_AUTH),
- 	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_GET,
- 			exynos_drm_gem_get_ioctl, DRM_UNLOCKED),
- 	DRM_IOCTL_DEF_DRV(EXYNOS_VIDI_CONNECTION,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 69a6fa3..d22e640 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -240,7 +240,6 @@ struct exynos_drm_g2d_private {
- struct drm_exynos_file_private {
- 	struct exynos_drm_g2d_private	*g2d_priv;
- 	struct device			*ipp_dev;
--	struct file			*anon_filp;
- };
- 
- /*
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-index 2f3665d..3cf6494 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
-@@ -318,21 +318,17 @@ void exynos_drm_gem_put_dma_addr(struct drm_device *dev,
- 	drm_gem_object_unreference_unlocked(obj);
- }
- 
--int exynos_drm_gem_mmap_buffer(struct file *filp,
-+int exynos_drm_gem_mmap_buffer(struct exynos_drm_gem_obj *exynos_gem_obj,
- 				      struct vm_area_struct *vma)
- {
--	struct drm_gem_object *obj = filp->private_data;
--	struct exynos_drm_gem_obj *exynos_gem_obj = to_exynos_gem_obj(obj);
--	struct drm_device *drm_dev = obj->dev;
-+	struct drm_device *drm_dev = exynos_gem_obj->base.dev;
- 	struct exynos_drm_gem_buf *buffer;
- 	unsigned long vm_size;
- 	int ret;
- 
--	WARN_ON(!mutex_is_locked(&obj->dev->struct_mutex));
--
- 	vma->vm_flags |= VM_IO | VM_DONTEXPAND | VM_DONTDUMP;
--	vma->vm_private_data = obj;
--	vma->vm_ops = drm_dev->driver->gem_vm_ops;
-+	vma->vm_flags &= ~VM_PFNMAP;
-+	vma->vm_pgoff = 0;
- 
- 	update_vm_cache_attr(exynos_gem_obj, vma);
- 
-@@ -356,60 +352,6 @@ int exynos_drm_gem_mmap_buffer(struct file *filp,
- 		return ret;
- 	}
- 
--	/*
--	 * take a reference to this mapping of the object. And this reference
--	 * is unreferenced by the corresponding vm_close call.
--	 */
--	drm_gem_object_reference(obj);
--
--	drm_vm_open_locked(drm_dev, vma);
--
--	return 0;
--}
--
--int exynos_drm_gem_mmap_ioctl(struct drm_device *dev, void *data,
--			      struct drm_file *file_priv)
--{
--	struct drm_exynos_file_private *exynos_file_priv;
--	struct drm_exynos_gem_mmap *args = data;
--	struct drm_gem_object *obj;
--	struct file *anon_filp;
--	unsigned long addr;
--
--	if (!(dev->driver->driver_features & DRIVER_GEM)) {
--		DRM_ERROR("does not support GEM.\n");
--		return -ENODEV;
--	}
--
--	mutex_lock(&dev->struct_mutex);
--
--	obj = drm_gem_object_lookup(dev, file_priv, args->handle);
--	if (!obj) {
--		DRM_ERROR("failed to lookup gem object.\n");
--		mutex_unlock(&dev->struct_mutex);
--		return -EINVAL;
--	}
--
--	exynos_file_priv = file_priv->driver_priv;
--	anon_filp = exynos_file_priv->anon_filp;
--	anon_filp->private_data = obj;
--
--	addr = vm_mmap(anon_filp, 0, args->size, PROT_READ | PROT_WRITE,
--			MAP_SHARED, 0);
--
--	drm_gem_object_unreference(obj);
--
--	if (IS_ERR_VALUE(addr)) {
--		mutex_unlock(&dev->struct_mutex);
--		return (int)addr;
--	}
--
--	mutex_unlock(&dev->struct_mutex);
--
--	args->mapped = addr;
--
--	DRM_DEBUG_KMS("mapped = 0x%lx\n", (unsigned long)args->mapped);
--
- 	return 0;
- }
- 
-@@ -693,16 +635,18 @@ int exynos_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
- 	exynos_gem_obj = to_exynos_gem_obj(obj);
- 
- 	ret = check_gem_flags(exynos_gem_obj->flags);
--	if (ret) {
--		drm_gem_vm_close(vma);
--		drm_gem_free_mmap_offset(obj);
--		return ret;
--	}
-+	if (ret)
-+		goto err_close_vm;
- 
--	vma->vm_flags &= ~VM_PFNMAP;
--	vma->vm_flags |= VM_MIXEDMAP;
-+	ret = exynos_drm_gem_mmap_buffer(exynos_gem_obj, vma);
-+	if (ret)
-+		goto err_close_vm;
- 
--	update_vm_cache_attr(exynos_gem_obj, vma);
-+	return ret;
-+
-+err_close_vm:
-+	drm_gem_vm_close(vma);
-+	drm_gem_free_mmap_offset(obj);
- 
- 	return ret;
- }
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.h b/drivers/gpu/drm/exynos/exynos_drm_gem.h
-index 8e46094..09d021b 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_gem.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_gem.h
-@@ -111,16 +111,6 @@ void exynos_drm_gem_put_dma_addr(struct drm_device *dev,
- 					unsigned int gem_handle,
- 					struct drm_file *filp);
- 
--/*
-- * mmap the physically continuous memory that a gem object contains
-- * to user space.
-- */
--int exynos_drm_gem_mmap_ioctl(struct drm_device *dev, void *data,
--			      struct drm_file *file_priv);
--
--int exynos_drm_gem_mmap_buffer(struct file *filp,
--				      struct vm_area_struct *vma);
--
- /* map user space allocated by malloc to pages. */
- int exynos_drm_gem_userptr_ioctl(struct drm_device *dev, void *data,
- 				      struct drm_file *file_priv);
-diff --git a/include/uapi/drm/exynos_drm.h b/include/uapi/drm/exynos_drm.h
-index 67a751c..5575ed1 100644
---- a/include/uapi/drm/exynos_drm.h
-+++ b/include/uapi/drm/exynos_drm.h
-@@ -33,24 +33,6 @@ struct drm_exynos_gem_create {
- };
- 
- /**
-- * A structure for mapping buffer.
-- *
-- * @handle: a handle to gem object created.
-- * @pad: just padding to be 64-bit aligned.
-- * @size: memory size to be mapped.
-- * @mapped: having user virtual address mmaped.
-- *	- this variable would be filled by exynos gem module
-- *	of kernel side with user virtual address which is allocated
-- *	by do_mmap().
-- */
--struct drm_exynos_gem_mmap {
--	unsigned int handle;
--	unsigned int pad;
--	uint64_t size;
--	uint64_t mapped;
--};
--
--/**
-  * A structure to gem information.
-  *
-  * @handle: a handle to gem object created.
-@@ -302,7 +284,6 @@ struct drm_exynos_ipp_cmd_ctrl {
- };
- 
- #define DRM_EXYNOS_GEM_CREATE		0x00
--#define DRM_EXYNOS_GEM_MMAP		0x02
- /* Reserved 0x03 ~ 0x05 for exynos specific gem ioctl */
- #define DRM_EXYNOS_GEM_GET		0x04
- #define DRM_EXYNOS_VIDI_CONNECTION	0x07
-@@ -321,9 +302,6 @@ struct drm_exynos_ipp_cmd_ctrl {
- #define DRM_IOCTL_EXYNOS_GEM_CREATE		DRM_IOWR(DRM_COMMAND_BASE + \
- 		DRM_EXYNOS_GEM_CREATE, struct drm_exynos_gem_create)
- 
--#define DRM_IOCTL_EXYNOS_GEM_MMAP	DRM_IOWR(DRM_COMMAND_BASE + \
--		DRM_EXYNOS_GEM_MMAP, struct drm_exynos_gem_mmap)
--
- #define DRM_IOCTL_EXYNOS_GEM_GET	DRM_IOWR(DRM_COMMAND_BASE + \
- 		DRM_EXYNOS_GEM_GET,	struct drm_exynos_gem_info)
- 
--- 
-1.7.9.5
+Ajay
