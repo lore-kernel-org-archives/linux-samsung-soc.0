@@ -1,104 +1,214 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
- ps8622 DT properties
-Date: Wed, 17 Sep 2014 14:52:42 +0300
-Message-ID: <5419760A.7020908@ti.com>
-References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH v3 1/2] usb: host: ehci-exynos: Remove unnecessary usb-phy
+ support
+Date: Wed, 17 Sep 2014 21:04:13 +0900
+Message-ID: <001401cfd26f$7f39c910$7dad5b30$%han@samsung.com>
+References: <1410952662-4297-1-git-send-email-gautam.vivek@samsung.com>
+ <1410952662-4297-2-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="w1e2rHFt46iGsneeBqEHjINkBS07KPaEW"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:46692 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753107AbaIQLw4 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:46930 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754416AbaIQMEQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Sep 2014 07:52:56 -0400
-In-Reply-To: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
+	Wed, 17 Sep 2014 08:04:16 -0400
+In-reply-to: <1410952662-4297-2-git-send-email-gautam.vivek@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: inki.dae@samsung.com, thierry.reding@gmail.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, kgene.kim@samsung.com, 'Jingoo Han' <jg1.han@samsung.com>
 
---w1e2rHFt46iGsneeBqEHjINkBS07KPaEW
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+On Wednesday, September 17, 2014 8:18 PM, Vivek Gautam wrote:
+> 
+> Now that we have completely moved from older USB-PHY drivers
+> to newer GENERIC-PHY drivers for PHYs available with USB controllers
+> on Exynos series of SoCs, we can remove the support for the same
+> in our host drivers too.
+> 
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
 
-On 27/08/14 17:39, Ajay Kumar wrote:
-> Add documentation for DT properties supported by ps8622/ps8625
-> eDP-LVDS converter.
->=20
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+Acked-by: Jingoo Han <jg1.han@samsung.com>
+
+Best regards,
+Jingoo Han
+
 > ---
->  .../devicetree/bindings/video/bridge/ps8622.txt    |   20 ++++++++++++=
-++++++++
->  1 file changed, 20 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/video/bridge/ps86=
-22.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/video/bridge/ps8622.txt =
-b/Documentation/devicetree/bindings/video/bridge/ps8622.txt
-> new file mode 100644
-> index 0000000..0ec8172
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/video/bridge/ps8622.txt
-> @@ -0,0 +1,20 @@
-> +ps8622-bridge bindings
-> +
-> +Required properties:
-> +	- compatible: "parade,ps8622" or "parade,ps8625"
-> +	- reg: first i2c address of the bridge
-> +	- sleep-gpios: OF device-tree gpio specification for PD_ pin.
-> +	- reset-gpios: OF device-tree gpio specification for RST_ pin.
-> +
-> +Optional properties:
-> +	- lane-count: number of DP lanes to use
-> +	- use-external-pwm: backlight will be controlled by an external PWM
-
-What does this mean? That the backlight support from ps8625 is not used?
-If so, maybe "disable-pwm" or something?
-
-> +
-> +Example:
-> +	lvds-bridge@48 {
-> +		compatible =3D "parade,ps8622";
-> +		reg =3D <0x48>;
-> +		sleep-gpios =3D <&gpc3 6 1 0 0>;
-> +		reset-gpios =3D <&gpc3 1 1 0 0>;
-> +		lane-count =3D <1>;
-> +	};
->=20
-
-I wish all new display component bindings would use the video
-ports/endpoints to describe the connections. It will be very difficult
-to improve the display driver model later if we're missing such critical
-pieces from the DT bindings.
-
- Tomi
-
-
-
---w1e2rHFt46iGsneeBqEHjINkBS07KPaEW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUGXYKAAoJEPo9qoy8lh71AOgP/3fCOrwcDPTe9lq3AOmIN91G
-xowHY/h40oWxdPBHmgcrcPevUMVUWlMzI4ndArsQLNwIId4Z1l72l0lWFTNyJY63
-7DxxoaAURuj7aTpoH1mEqGEZoXBPcEhN8vGJNaUDGvvjbxwL5LKF7s/ScIjAm/rV
-l8FHjWQHIWLI9aAqtVU1so2ehnMwLyvJHeUp3tBTLQ5Hea0WtNovrP5Zsj97D+2K
-s+hjVEHSJ/WRa4n0voY+bY/9tSJZrPaV57Jwl4EhSUuoZWDiGnnsxzE/P1HHWPGI
-eM/xiTglowxsQYQBojr4KqdHUOvV7+w4wUvczJEqNj8qA8RTEPYJANJFH420Qjxo
-MiwSNouYxi2tan38pOp7EJ+IYA8GR9btM54mMgAD5XBo8v6e6/aq5hAiQ3nBp+PW
-rHHPSybZwM9SW5Ex87/GKZUqxSA8Jm7U8I0yAqRcjmSCl8MTNnKpaGFadA6Z+Z23
-hyyQFixaxIW8sftx4zTZw/E4SL3qoV75vtlGcRahpOW/9xYPOY+bJlyz0FKXyLD2
-Q15Q/RkQ73KC4TJ8W6ezQNVuPNIv2G6eZwrvK/gPfvctcsX79+kXZjIIfS8eagSo
-0KMT9Bpo9irFpRQCDi6JBSOdqbUcfMHmKwXx8s2riHj+UR4/HFtcvxgVsQmGIOWx
-k6mhzAWW0Hfc5PoWRHdz
-=fiiX
------END PGP SIGNATURE-----
-
---w1e2rHFt46iGsneeBqEHjINkBS07KPaEW--
+>  drivers/usb/host/ehci-exynos.c |   81 ++++++++++++----------------------------
+>  1 file changed, 23 insertions(+), 58 deletions(-)
+> 
+> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+> index 2eed9a4..99c5f5f 100644
+> --- a/drivers/usb/host/ehci-exynos.c
+> +++ b/drivers/usb/host/ehci-exynos.c
+> @@ -21,11 +21,8 @@
+>  #include <linux/of_gpio.h>
+>  #include <linux/phy/phy.h>
+>  #include <linux/platform_device.h>
+> -#include <linux/usb/phy.h>
+> -#include <linux/usb/samsung_usb_phy.h>
+>  #include <linux/usb.h>
+>  #include <linux/usb/hcd.h>
+> -#include <linux/usb/otg.h>
+> 
+>  #include "ehci.h"
+> 
+> @@ -47,9 +44,7 @@ static struct hc_driver __read_mostly exynos_ehci_hc_driver;
+> 
+>  struct exynos_ehci_hcd {
+>  	struct clk *clk;
+> -	struct usb_phy *phy;
+> -	struct usb_otg *otg;
+> -	struct phy *phy_g[PHY_NUMBER];
+> +	struct phy *phy[PHY_NUMBER];
+>  };
+> 
+>  #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
+> @@ -59,49 +54,39 @@ static int exynos_ehci_get_phy(struct device *dev,
+>  {
+>  	struct device_node *child;
+>  	struct phy *phy;
+> -	int phy_number;
+> -	int ret = 0;
+> +	int phy_num;
+> +	int ret;
+> 
+>  	for_each_available_child_of_node(dev->of_node, child) {
+> -		ret = of_property_read_u32(child, "reg", &phy_number);
+> +		ret = of_property_read_u32(child, "reg", &phy_num);
+>  		if (ret) {
+>  			dev_err(dev, "Failed to parse device tree\n");
+>  			of_node_put(child);
+>  			return ret;
+>  		}
+> 
+> -		if (phy_number >= PHY_NUMBER) {
+> +		if (phy_num >= PHY_NUMBER) {
+>  			dev_err(dev, "Invalid number of PHYs\n");
+>  			of_node_put(child);
+>  			return -EINVAL;
+>  		}
+> 
+> -		phy = devm_of_phy_get(dev, child, NULL);
+> +		exynos_ehci->phy[phy_num] = devm_of_phy_get(dev, child, NULL);
+> +		phy = exynos_ehci->phy[phy_num];
+>  		of_node_put(child);
+> -		if (IS_ERR(phy))
+> -			/* Lets fallback to older USB-PHYs */
+> -			goto usb_phy_old;
+> -		exynos_ehci->phy_g[phy_number] = phy;
+> -		/* Make the older PHYs unavailable */
+> -		exynos_ehci->phy = ERR_PTR(-ENXIO);
+> -	}
+> -
+> -	return 0;
+> -
+> -usb_phy_old:
+> -	exynos_ehci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
+> -	if (IS_ERR(exynos_ehci->phy)) {
+> -		ret = PTR_ERR(exynos_ehci->phy);
+> -		if (ret != -ENXIO && ret != -ENODEV) {
+> -			dev_err(dev, "no usb2 phy configured\n");
+> -			return ret;
+> +		if (IS_ERR(phy)) {
+> +			ret = PTR_ERR(phy);
+> +			if (ret == -EPROBE_DEFER) {
+> +				return ret;
+> +			} else if (ret != -ENOSYS && ret != -ENODEV) {
+> +				dev_err(dev,
+> +					"Error retrieving usb2 phy: %d\n", ret);
+> +				return PTR_ERR(phy);
+> +			}
+>  		}
+> -		dev_dbg(dev, "Failed to get usb2 phy\n");
+> -	} else {
+> -		exynos_ehci->otg = exynos_ehci->phy->otg;
+>  	}
+> 
+> -	return ret;
+> +	return 0;
+>  }
+> 
+>  static int exynos_ehci_phy_enable(struct device *dev)
+> @@ -111,16 +96,13 @@ static int exynos_ehci_phy_enable(struct device *dev)
+>  	int i;
+>  	int ret = 0;
+> 
+> -	if (!IS_ERR(exynos_ehci->phy))
+> -		return usb_phy_init(exynos_ehci->phy);
+> -
+>  	for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
+> -		if (!IS_ERR(exynos_ehci->phy_g[i]))
+> -			ret = phy_power_on(exynos_ehci->phy_g[i]);
+> +		if (!IS_ERR(exynos_ehci->phy[i]))
+> +			ret = phy_power_on(exynos_ehci->phy[i]);
+>  	if (ret)
+>  		for (i--; i >= 0; i--)
+> -			if (!IS_ERR(exynos_ehci->phy_g[i]))
+> -				phy_power_off(exynos_ehci->phy_g[i]);
+> +			if (!IS_ERR(exynos_ehci->phy[i]))
+> +				phy_power_off(exynos_ehci->phy[i]);
+> 
+>  	return ret;
+>  }
+> @@ -131,14 +113,9 @@ static void exynos_ehci_phy_disable(struct device *dev)
+>  	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
+>  	int i;
+> 
+> -	if (!IS_ERR(exynos_ehci->phy)) {
+> -		usb_phy_shutdown(exynos_ehci->phy);
+> -		return;
+> -	}
+> -
+>  	for (i = 0; i < PHY_NUMBER; i++)
+> -		if (!IS_ERR(exynos_ehci->phy_g[i]))
+> -			phy_power_off(exynos_ehci->phy_g[i]);
+> +		if (!IS_ERR(exynos_ehci->phy[i]))
+> +			phy_power_off(exynos_ehci->phy[i]);
+>  }
+> 
+>  static void exynos_setup_vbus_gpio(struct device *dev)
+> @@ -231,9 +208,6 @@ skip_phy:
+>  		goto fail_io;
+>  	}
+> 
+> -	if (exynos_ehci->otg)
+> -		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+> -
+>  	err = exynos_ehci_phy_enable(&pdev->dev);
+>  	if (err) {
+>  		dev_err(&pdev->dev, "Failed to enable USB phy\n");
+> @@ -273,9 +247,6 @@ static int exynos_ehci_remove(struct platform_device *pdev)
+> 
+>  	usb_remove_hcd(hcd);
+> 
+> -	if (exynos_ehci->otg)
+> -		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+> -
+>  	exynos_ehci_phy_disable(&pdev->dev);
+> 
+>  	clk_disable_unprepare(exynos_ehci->clk);
+> @@ -298,9 +269,6 @@ static int exynos_ehci_suspend(struct device *dev)
+>  	if (rc)
+>  		return rc;
+> 
+> -	if (exynos_ehci->otg)
+> -		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+> -
+>  	exynos_ehci_phy_disable(dev);
+> 
+>  	clk_disable_unprepare(exynos_ehci->clk);
+> @@ -316,9 +284,6 @@ static int exynos_ehci_resume(struct device *dev)
+> 
+>  	clk_prepare_enable(exynos_ehci->clk);
+> 
+> -	if (exynos_ehci->otg)
+> -		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+> -
+>  	ret = exynos_ehci_phy_enable(dev);
+>  	if (ret) {
+>  		dev_err(dev, "Failed to enable USB phy\n");
+> --
+> 1.7.10.4
