@@ -1,86 +1,133 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: exynos5420/arndale-octa: imprecise external aborts on exynos_defconfig
-Date: Wed, 17 Sep 2014 17:39:29 -0700
-Message-ID: <7hk351ep8e.fsf@deeprootsystems.com>
-References: <CANMBJr41TQx4jVjnOO9WThn=SiZCq12mx1xtGN8_ubzZrO1=YA@mail.gmail.com>
-	<7h7g1bwbyh.fsf@deeprootsystems.com>
-	<CAJuA9ahkpZ4EJQz4DoAjYzo0OQw5zXLavAVoXRBdgPcm9EUQYA@mail.gmail.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH] drm/exynos: fix plane-framebuffer linkage
+Date: Thu, 18 Sep 2014 09:42:42 +0900
+Message-ID: <541A2A82.1070405@samsung.com>
+References: <1410807137-8323-1-git-send-email-drake@endlessm.com>
+ <20140916063501.GT4740@phenom.ffwll.local> <54192BB1.8060606@samsung.com>
+ <54192EF0.5000705@samsung.com> <54193BCD.3090003@samsung.com>
+ <CAD8Lp47-ho47WF-te15NZ=JHTd-zt1JxPXwQsTh_Ta_G89zrTA@mail.gmail.com>
+ <CAKMK7uFuo_Sq8cjaiTopSmex6c4hMcAFrD7Ya+R059v=ThurXA@mail.gmail.com>
+ <CAD8Lp458rPEAtDdZDs5KtcbP_kRUF6nTKZhk4S+q5m_41BUagA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:35882 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752994AbaIRAjc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Sep 2014 20:39:32 -0400
-In-Reply-To: <CAJuA9ahkpZ4EJQz4DoAjYzo0OQw5zXLavAVoXRBdgPcm9EUQYA@mail.gmail.com>
-	(Thomas Abraham's message of "Sat, 13 Sep 2014 18:29:58 +0530")
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CAD8Lp458rPEAtDdZDs5KtcbP_kRUF6nTKZhk4S+q5m_41BUagA@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Drake <drake@endlessm.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <ta.omasab@gmail.com>
-Cc: Tyler Baker <tyler.baker@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Thomas Abraham <ta.omasab@gmail.com> writes:
+Hi,
 
-> On Thu, Sep 11, 2014 at 12:16 AM, Kevin Hilman <khilman@kernel.org> wrote:
->> Tyler Baker <tyler.baker@linaro.org> writes:
+On 09/18/2014 01:41 AM, Daniel Drake wrote:
+> On Wed, Sep 17, 2014 at 7:45 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
+>> I think fb refcounting in exynos is just plain busted. If you look at
+>> other drivers the only place the refcount framebuffers or backing
+>> storage objects is for pageflips to make sure the memory doesn't go
+>> away while the hw is still scanning out the old framebuffer. If you
+>> refcount anywhere else you either do something really crazy or your
+>> driver is broken.
+> 
+> With my patch actually the behaviour is much more similar to omapdrm,
+
+Your patch will occur fb reference count problem when setplane.
+
+> which also doesn't quite match your description of "other drivers".
+> See omap_plane.c.
+> 
+> There is a fb reference taken for "pinning" in update_pin() which
+> presumably is what you describe - avoid destroying the fb while it is
+> being scanned out. (Maybe exynos should have something equivalent too,
+> but thats a separate issue)
+> 
+> However there is *another* fb reference taken in
+> omap_plane_mode_set(). And my patch is modelled to do the same in
+> exynos-drm.
+> 
+> I believe this is necessary under the current model. At least, when
+> drm_mode_rmfb() is running for the last user of the active
+> framebuffer, it expects to drop 3 references from the framebuffer
+> before dropping the 4th causes the object to be destroyed, as follows:
+> 
+> 1. drm_mode_rmfb explicitly drops a reference - it calls
+> __drm_framebuffer_unregister which then calls
+> __drm_framebuffer_unreference
+>     /* Mark fb as reaped, we still have a ref from fpriv->fbs. */
+>     __drm_framebuffer_unregister(dev, fb);
+> 
+> 2. drm_mode_rmfb then calls drm_framebuffer_remove, which calls
+> drm_mode_set_config_internal() in order to turn off the CRTC, dropping
+> another reference in the process.
+>         if (tmp->old_fb)
+>             drm_framebuffer_unreference(tmp->old_fb);
+> 
+> 3. drm_framebuffer_remove calls drm_plane_force_disable() which drops
+> another reference:
+>     /* disconnect the plane from the fb and crtc: */
+>     __drm_framebuffer_unreference(old_fb);
+
+This call is new path, before universal planes merged, private plane of
+exynos crtc wasn't included in dev->mode_config.plane_list because
+private plane wasn't exposed to userspace so this path wasn't called.
+
+> 
+> 4. drm_framebuffer drops the final reference itself, to cause freeing
+> of the object:
+>     drm_framebuffer_unreference(fb);
+> 
+> 
+> So ordinarily, after a fb is created by drm core (with refcnt at 1),
+> there would have to be 3 references added to it by the time it is the
+> primary fb so that when we do rmfb, it has a refcnt of 4, and gets
+> freed correctly.
+> (The second bug I was seeing with pageflips was that refcnt was 3,
+> which means that the final reference was dropped in (3) above, but
+> __drm_framebuffer_unreference doesn't like that at all - it calls
+> drm_framebuffer_free_bug)
+> 
+> Not being overly familiar with DRM internals I tried to go backwards
+> to find out where these 3 references would be created during normal
+> operation. 2 are clear:
+> 
+> 1. drm_framebuffer_init() explicitly grabs one:
+>     /* Grab the idr reference. */
+>     drm_framebuffer_reference(fb)
+> 
+> 2. drm_mode_set_config_internal() takes one:
+>         if (tmp->primary->fb)
+>             drm_framebuffer_reference(tmp->primary->fb);
+> 
+> Where should the 3rd one be created? I don't know, but looking at
+> previous exynos commit 25c8b5c304 and omapdrm, I assumed that the drm
+> driver should take one, both on crtc mode set and crtc page flip.
+
+So Andrzej added fb reference count increasing in crtc modeset path, but
+i think we can take away this workaround if remove private plane for
+exynos crtc.
+
+Thanks.
+
+> 
+>>> However, I'll be happy if universal planes means the driver does not
+>>> have to care about this any more. Andrej, please go ahead if you are
+>>> interested, I'll be happy to test your results.
 >>
->>> Exynos5420-based Arndale octa boards have recently started failing boot
->>> tests due to imprecise external aborts.  This only appears to happen
->>> when using exynos_defconfig and boots fine with multi_v7_defconfig.  The
->>> issue seems to be intermittent, so is not reliably reproducable and
->>> difficult to bisect.  Here are a few boot logs from recent
->>> mainline/linux-next kernels that are failing:
->>
->> FYI, I'm seeing the same periodic aborts.  For example, here's my boot
->> of next-20140910:
->> http://images.armcloud.us/kernel-ci/next/next-20140910/arm-exynos_defconfig/boot-exynos5420-arndale-octa.html
->>
->> However, my userspace is much simpler and doesn't seem to cause a panic,
->> so my boot tests report passing. (I should fixup my scripts so these
->> imprecise aborts are reported as a FAIL.)
->>
->> I'm glad you pointed out that it happens only with exynos_defconfig and
->> not multi_v7_defconfig because I noticed that too.  I haven't had the
->> time to track it any further than that, so maybe the exynos folks can
->> help track it down from here.
->>
->> Thanks for reporting this,
->>
->> Kevin
->
-> Hi Tyler, Kevin,
->
-> From the bootlog you have shared,
->
-> [    1.060016] CPU4: failed to come online
-> [    2.070031] CPU5: failed to come online
-> [    3.080049] CPU6: failed to come online
-> [    4.090066] CPU7: failed to come online
-> [    4.090099] Brought up 4 CPUs
-> [    4.090109] SMP: Total of 4 processors activated.
-> [    4.090119] CPU: WARNING: CPU(s) started in wrong/inconsistent
-> modes (primary CPU mode 0x13)
-> [    4.090128] CPU: This may indicate a broken bootloader or firmware.
->
-> Would it be possible to set max cpus to 1, disable switcher and try
-> again. I don't have a arndale octa board but I have tested mainline
-> kernel with smdk5420 board. It boots all eight CPUs, switcher works
-> fine and there are no imprecise aborts seen.
-
-Sorry for the delay, I'm travelling this week.
-
-FWIW, the same CPU boot failures you hilight above are happening on
-multi_v7_defconfig[1] which is not getting the imprecise abort.  This is
-only happening on exynos_defconfig[2], so I'm curious why you think the
-switcher or NR_CPUS might be the issues.
-
-Anyways, I narrowed this down a bit and discovered it's
-CONFIG_EXYNOS5420_MCPM=y that's the root cause.  If I use
-exynos_defconfig and then disable that option, I don't get any more
-imprecise aborts.
-
-Kevin
-
-[1] http://images.armcloud.us/kernel-ci/mainline/v3.17-rc5-25-g8ba4caf/arm-multi_v7_defconfig/boot-exynos5420-arndale-octa.html
-[2] http://images.armcloud.us/kernel-ci/mainline/v3.17-rc5-25-g8ba4caf/arm-exynos_defconfig/boot-exynos5420-arndale-octa.html
+>> universal planes will fix up the mess with 2 drm plane objects
+>> (primary plane + exonys internal primary). So should help to untangle
+>> this not, but it will not magically fix the refcounting bugs itself.
+> 
+> So even when we move to universal planes (fixing 1 of the issues), its
+> good that we're having this refcount discussion (which we need to
+> understand to confidently solve the 2nd issue). Thanks for your input!
+> 
+> Daniel
+> 
