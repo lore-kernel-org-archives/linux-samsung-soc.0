@@ -1,100 +1,95 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: [PATCH v4 5/5] mfd: cros_ec: wait for completion of commands that return IN_PROGRESS
-Date: Thu, 18 Sep 2014 17:18:58 +0200
-Message-ID: <1411053538-17237-6-git-send-email-javier.martinez@collabora.co.uk>
-References: <1411053538-17237-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1411053538-17237-1-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Gwendal Grignou <gwendal-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH 00/33] thermal: exynos: convert the driver to use per-SoC type
+ operations
+Date: Thu, 18 Sep 2014 17:27:17 +0200
+Message-ID: <1411054070-25757-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:29133 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756059AbaIRP2L (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 18 Sep 2014 11:28:11 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Hi,
 
-When an EC command returns EC_RES_IN_PROGRESS, we need to query
-the state of the EC until it indicates that it is no longer busy.
-Do this in cros_ec_cmd_xfer() under the EC's mutex so that other
-commands (e.g. keyboard, I2C passtru) aren't issued to the EC while
-it is working on the in-progress command.
+This patch series replaces the hardware registers abstractions in
+the Exynos thermal driver by the usage of per-SoC type operations.
+Such solution provides simpler, easier to understand code and
+allows removal of ~250 LOCs (~11% of the whole source code) from
+the driver.  Some other driver improvements are now also possible
+thanks to these changes but are scheduled at later time (like
+consolidating code for clearing IRQs using INTCLEAR register).
 
-The 10 milliseconds delay and the number of retries are the values
-that were used by the flashrom tool when retrying commands.
+The patchset should not cause any functionality changes.  This
+means that unless there are some bugs in the patches itself there
+should be no behavior changes for the driver (this also includes
+lack of changes in the way hardware is accessed by the driver).
 
-Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Reviewed-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
----
+All testing was done on (Exynos4412 SoC based) ODROID U3 board
+(some additional patches are needed to make the Exynos thermal
+driver work on this hardware).
 
-Changes since v3:
- - Fix us time and use raw values instead of a define. Suggested by Lee Jones.
+Depends on:
+- 'next' branch of linux-soc-thermal.git kernel tree from Eduardo
+- [PATCH] thermal: exynos: use correct offset for TMU_CONTROL
+  register on Exynos5260
+  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg36529.html)
 
-Changes since v2:
- - Explain in the commit message from where the delay and retry values come from.
-   Commented by Andrew Bresticker.
- - Move the needed definitions inside the if block. Suggested by Lee Jones.
- - Only check if result is EC_RES_IN_PROGRESS instead of checking also if ret is
-   -EAGAIN since the former implies the later. Suggested by Lee Jones.
- - Use usleep_range() instead of msleep() since doesn't handle values between 1~20.
-   Suggested by Lee Jones.
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-Changes since v1:
- - The *xfer() calls don't modify the passed cros_ec_command so there is
-   no need to populate it inside the for loop. Suggested by Lee Jones.
 
- drivers/mfd/cros_ec.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+Bartlomiej Zolnierkiewicz (33):
+  thermal: exynos: remove needless triminfo_data abstraction
+  thermal: exynos: remove needless tmu_status abstraction
+  thermal: exynos: remove needless threshold_temp abstraction
+  thermal: exynos: remove needless triminfo_ctrl abstraction
+  thermal: exynos: remove needless test_mux_addr_shift abstraction
+  thermal: exynos: remove needless therm_trip_[mode,mask]_shift
+    abstractions
+  thermal: exynos: remove needless therm_trip_en_shift abstraction
+  thermal: exynos: remove needless emul_temp_shift abstraction
+  thermal: exynos: remove needless emul_time_shift abstraction
+  thermal: exynos: replace tmu_irqstatus check by Exynos5440 one
+  thermal: exynos: replace tmu_pmin check by Exynos5440 one
+  thermal: exynos: simplify HW_TRIP level setting
+  thermal: exynos: replace threshold_falling check by Exynos SoC type
+    one
+  thermal: exynos: remove TMU_SUPPORT_READY_STATUS flag
+  thermal: exynos: remove TMU_SUPPORT_TRIM_RELOAD flag
+  thermal: exynos: add sanitize_temp_error() helper
+  thermal: exynos: add get_th_reg() helper
+  thermal: exynos: add ->tmu_initialize method
+  thermal: exynos: add get_con_reg() helper
+  thermal: exynos: add ->tmu_control method
+  thermal: exynos: add ->tmu_read method
+  thermal: exynos: add get_emul_con_reg() helper
+  thermal: exynos: add ->tmu_set_emulation method
+  thermal: exynos: add ->tmu_clear_irqs method
+  thermal: exynos: remove TMU_SUPPORT_FALLING_TRIP flag
+  thermal: exynos: remove TMU_SUPPORT_EMUL_TIME flag
+  thermal: exynos: remove TMU_SUPPORT_EMULATION flag
+  thermal: exynos: remove TMU_SUPPORT_ADDRESS_MULTIPLE flag
+  thermal: exynos: remove TMU_SUPPORT_MULTI_INST flag
+  thermal: exynos: remove test_mux pdata field
+  thermal: exynos: remove SoC type ifdefs
+  thermal: exynos: remove __EXYNOS5420_TMU_DATA macro
+  thermal: exynos: remove exynos_tmu_data.h include
 
-diff --git a/drivers/mfd/cros_ec.c b/drivers/mfd/cros_ec.c
-index c53804a..fc0c81e 100644
---- a/drivers/mfd/cros_ec.c
-+++ b/drivers/mfd/cros_ec.c
-@@ -23,6 +23,9 @@
- #include <linux/mfd/core.h>
- #include <linux/mfd/cros_ec.h>
- #include <linux/mfd/cros_ec_commands.h>
-+#include <linux/delay.h>
-+
-+#define EC_COMMAND_RETRIES	50
- 
- int cros_ec_prepare_tx(struct cros_ec_device *ec_dev,
- 		       struct cros_ec_command *msg)
-@@ -69,6 +72,36 @@ int cros_ec_cmd_xfer(struct cros_ec_device *ec_dev,
- 
- 	mutex_lock(&ec_dev->lock);
- 	ret = ec_dev->cmd_xfer(ec_dev, msg);
-+	if (msg->result == EC_RES_IN_PROGRESS) {
-+		int i;
-+		struct cros_ec_command status_msg;
-+		struct ec_response_get_comms_status status;
-+
-+		status_msg.version = 0;
-+		status_msg.command = EC_CMD_GET_COMMS_STATUS;
-+		status_msg.outdata = NULL;
-+		status_msg.outsize = 0;
-+		status_msg.indata = (uint8_t *)&status;
-+		status_msg.insize = sizeof(status);
-+
-+		/*
-+		 * Query the EC's status until it's no longer busy or
-+		 * we encounter an error.
-+		 */
-+		for (i = 0; i < EC_COMMAND_RETRIES; i++) {
-+			usleep_range(10000, 11000);
-+
-+			ret = ec_dev->cmd_xfer(ec_dev, &status_msg);
-+			if (ret < 0)
-+				break;
-+
-+			msg->result = status_msg.result;
-+			if (status_msg.result != EC_RES_SUCCESS)
-+				break;
-+			if (!(status.flags & EC_COMMS_STATUS_PROCESSING))
-+				break;
-+		}
-+	}
- 	mutex_unlock(&ec_dev->lock);
- 
- 	return ret;
+ drivers/thermal/samsung/exynos_thermal_common.h |   1 -
+ drivers/thermal/samsung/exynos_tmu.c            | 706 +++++++++++++++++-------
+ drivers/thermal/samsung/exynos_tmu.h            | 131 +----
+ drivers/thermal/samsung/exynos_tmu_data.c       | 260 +--------
+ drivers/thermal/samsung/exynos_tmu_data.h       | 174 ------
+ 5 files changed, 509 insertions(+), 763 deletions(-)
+ delete mode 100644 drivers/thermal/samsung/exynos_tmu_data.h
+
 -- 
-2.1.0
+1.8.2.3
