@@ -1,152 +1,63 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 25/33] thermal: exynos: remove TMU_SUPPORT_FALLING_TRIP flag
-Date: Thu, 18 Sep 2014 17:27:42 +0200
-Message-ID: <1411054070-25757-26-git-send-email-b.zolnierkie@samsung.com>
-References: <1411054070-25757-1-git-send-email-b.zolnierkie@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v3 6/6] mfd: cros_ec: Instantiate sub-devices from device
+ tree
+Date: Thu, 18 Sep 2014 17:33:19 +0200
+Message-ID: <541AFB3F.6000705@collabora.co.uk>
+References: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk> <1410428289-18229-7-git-send-email-javier.martinez@collabora.co.uk> <20140917163114.GL30918@lee--X1> <541A8E88.6050707@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:14701 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932568AbaIRPaG (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:41013 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932363AbaIRPdZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Sep 2014 11:30:06 -0400
-In-reply-to: <1411054070-25757-1-git-send-email-b.zolnierkie@samsung.com>
+	Thu, 18 Sep 2014 11:33:25 -0400
+In-Reply-To: <541A8E88.6050707@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, Andreas Faerber <afaerber@suse.de>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Replace TMU_SUPPORT_FALLING_TRIP flag check in
-exynos[4210,5440]_tmu_control() by an explicit check
-for a SoC type (all SoC types except Exynos4210 have
-TMU_SUPPORT_FALLING_TRIP flag set in their struct
-exynos_tmu_init_data instances).
+Hello Lee,
 
-There should be no functional changes caused by this patch.
+On 09/18/2014 09:49 AM, Javier Martinez Canillas wrote:
+>>>  int cros_ec_register(struct cros_ec_device *ec_dev)
+>>>  {
+>>>  	struct device *dev = ec_dev->dev;
+>>> +	struct device_node *node = dev->of_node;
+>>>  	int err = 0;
+>>>  
+>>>  	if (ec_dev->din_size) {
+>>> @@ -140,12 +129,12 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
+>>>  
+>>>  	mutex_init(&ec_dev->lock);
+>>>  
+>>> -	err = mfd_add_devices(dev, 0, cros_devs,
+>>> -			      ARRAY_SIZE(cros_devs),
+>>> -			      NULL, ec_dev->irq, NULL);
+>>> -	if (err) {
+>>> -		dev_err(dev, "failed to add mfd devices\n");
+>>> -		return err;
+>> 
+>> So these devices will only ever probe with DT now ...
+>>
+> 
+> Well, these are preparatory patches to reduce the delta between upstream and
+> the downstream so the missing functionality could be added. One of the missing
+> drivers is the cros_ec_dev.c [0] which allows user-space to access the
+> ChromeOS Embedded Controller using a virtual character device (/dev/cros_ec).
+> 
+> Since that is a virtual device, it does not fit on the DT which only describes
+> hw and also is used on x86 machines so that subdevice is still probed using
+> mfd_add_devices() and the mfd_cells array is not empty in the downstream
+> cros_ec driver [1].
+> 
 
-Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>
-Cc: Zhang Rui <rui.zhang@intel.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/thermal/samsung/exynos_tmu.c      |  6 ++----
- drivers/thermal/samsung/exynos_tmu.h      |  7 ++-----
- drivers/thermal/samsung/exynos_tmu_data.c | 20 ++++++++------------
- 3 files changed, 12 insertions(+), 21 deletions(-)
+I posted a new revision (v4) of the series but dropped this patch since this
+change probably makes more sense once the cros_ec_dev driver lands. Since then
+the mfd cells array will not be empty and not all subdevices will be probed
+with of_platform_populate().
 
-diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-index 30fd87a..121bc5d 100644
---- a/drivers/thermal/samsung/exynos_tmu.c
-+++ b/drivers/thermal/samsung/exynos_tmu.c
-@@ -388,7 +388,7 @@ static void exynos4210_tmu_control(struct platform_device *pdev, bool on)
- 			pdata->trigger_enable[2] << EXYNOS_TMU_INTEN_RISE2_SHIFT |
- 			pdata->trigger_enable[1] << EXYNOS_TMU_INTEN_RISE1_SHIFT |
- 			pdata->trigger_enable[0] << EXYNOS_TMU_INTEN_RISE0_SHIFT;
--		if (TMU_SUPPORTS(pdata, FALLING_TRIP))
-+		if (data->soc != SOC_ARCH_EXYNOS4210)
- 			interrupt_en |=
- 				interrupt_en << EXYNOS_TMU_INTEN_FALL0_SHIFT;
- 	} else {
-@@ -414,9 +414,7 @@ static void exynos5440_tmu_control(struct platform_device *pdev, bool on)
- 			pdata->trigger_enable[2] << EXYNOS5440_TMU_INTEN_RISE2_SHIFT |
- 			pdata->trigger_enable[1] << EXYNOS5440_TMU_INTEN_RISE1_SHIFT |
- 			pdata->trigger_enable[0] << EXYNOS5440_TMU_INTEN_RISE0_SHIFT;
--		if (TMU_SUPPORTS(pdata, FALLING_TRIP))
--			interrupt_en |=
--				interrupt_en << EXYNOS5440_TMU_INTEN_FALL0_SHIFT;
-+		interrupt_en |= interrupt_en << EXYNOS5440_TMU_INTEN_FALL0_SHIFT;
- 	} else {
- 		con &= ~(1 << EXYNOS_TMU_CORE_EN_SHIFT);
- 		interrupt_en = 0; /* Disable all interrupts */
-diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
-index c4c0aa5..ed83d3d 100644
---- a/drivers/thermal/samsung/exynos_tmu.h
-+++ b/drivers/thermal/samsung/exynos_tmu.h
-@@ -51,8 +51,6 @@ enum soc_type {
-  *			temperature to the TMU controller.
-  * TMU_SUPPORT_MULTI_INST - This features denotes that the soc
-  *			has many instances of TMU.
-- * TMU_SUPPORT_FALLING_TRIP - This features shows that interrupt can
-- *			be registered for falling trips also.
-  * TMU_SUPPORT_EMUL_TIME - This features allows to set next temp emulation
-  *			sample time.
-  * TMU_SUPPORT_ADDRESS_MULTIPLE - This feature tells that the different TMU
-@@ -61,9 +59,8 @@ enum soc_type {
-  */
- #define TMU_SUPPORT_EMULATION			BIT(0)
- #define TMU_SUPPORT_MULTI_INST			BIT(1)
--#define TMU_SUPPORT_FALLING_TRIP		BIT(2)
--#define TMU_SUPPORT_EMUL_TIME			BIT(3)
--#define TMU_SUPPORT_ADDRESS_MULTIPLE		BIT(4)
-+#define TMU_SUPPORT_EMUL_TIME			BIT(2)
-+#define TMU_SUPPORT_ADDRESS_MULTIPLE		BIT(3)
- 
- #define TMU_SUPPORTS(a, b)	(a->features & TMU_SUPPORT_ ## b)
- 
-diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
-index d35ec15..39b9651 100644
---- a/drivers/thermal/samsung/exynos_tmu_data.c
-+++ b/drivers/thermal/samsung/exynos_tmu_data.c
-@@ -101,8 +101,7 @@ struct exynos_tmu_init_data const exynos4210_default_tmu_data = {
- 		.temp_level = 95, \
- 	}, \
- 	.freq_tab_count = 2, \
--	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_FALLING_TRIP | \
--			TMU_SUPPORT_EMUL_TIME)
-+	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_EMUL_TIME)
- #endif
- 
- #if defined(CONFIG_SOC_EXYNOS3250)
-@@ -154,8 +153,7 @@ struct exynos_tmu_init_data const exynos3250_default_tmu_data = {
- 		.temp_level = 95, \
- 	}, \
- 	.freq_tab_count = 2, \
--	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_FALLING_TRIP | \
--			TMU_SUPPORT_EMUL_TIME)
-+	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_EMUL_TIME)
- #endif
- 
- #if defined(CONFIG_SOC_EXYNOS4412)
-@@ -223,8 +221,7 @@ struct exynos_tmu_init_data const exynos5250_default_tmu_data = {
- #define EXYNOS5260_TMU_DATA \
- 	__EXYNOS5260_TMU_DATA \
- 	.type = SOC_ARCH_EXYNOS5260, \
--	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_FALLING_TRIP | \
--			TMU_SUPPORT_EMUL_TIME)
-+	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_EMUL_TIME)
- 
- struct exynos_tmu_init_data const exynos5260_default_tmu_data = {
- 	.tmu_data = {
-@@ -278,14 +275,13 @@ struct exynos_tmu_init_data const exynos5260_default_tmu_data = {
- #define EXYNOS5420_TMU_DATA \
- 	__EXYNOS5420_TMU_DATA \
- 	.type = SOC_ARCH_EXYNOS5420, \
--	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_FALLING_TRIP | \
--			TMU_SUPPORT_EMUL_TIME)
-+	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_EMUL_TIME)
- 
- #define EXYNOS5420_TMU_DATA_SHARED \
- 	__EXYNOS5420_TMU_DATA \
- 	.type = SOC_ARCH_EXYNOS5420_TRIMINFO, \
--	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_FALLING_TRIP | \
--			TMU_SUPPORT_EMUL_TIME | TMU_SUPPORT_ADDRESS_MULTIPLE)
-+	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_EMUL_TIME | \
-+			TMU_SUPPORT_ADDRESS_MULTIPLE)
- 
- struct exynos_tmu_init_data const exynos5420_default_tmu_data = {
- 	.tmu_data = {
-@@ -319,8 +315,8 @@ struct exynos_tmu_init_data const exynos5420_default_tmu_data = {
- 	.second_point_trim = 70, \
- 	.default_temp_offset = 25, \
- 	.type = SOC_ARCH_EXYNOS5440, \
--	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_FALLING_TRIP | \
--			TMU_SUPPORT_MULTI_INST | TMU_SUPPORT_ADDRESS_MULTIPLE),
-+	.features = (TMU_SUPPORT_EMULATION | TMU_SUPPORT_MULTI_INST | \
-+			TMU_SUPPORT_ADDRESS_MULTIPLE),
- 
- struct exynos_tmu_init_data const exynos5440_default_tmu_data = {
- 	.tmu_data = {
--- 
-1.8.2.3
+Best regards,
+Javier
