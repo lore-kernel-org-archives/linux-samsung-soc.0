@@ -1,407 +1,61 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: [PATCH] ASoC: samsung: Remove goni or aquila with the WM8994
-Date: Thu, 18 Sep 2014 11:43:29 +0200
-Message-ID: <1411033409.2017.15.camel@x220>
-References: <1404496099-26708-1-git-send-email-t.figa@samsung.com>
-	 <53C675E4.4020502@samsung.com> <1409825105.5546.91.camel@x220>
-	 <201409041802.36466.arnd@arndb.de>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH V6 0/8] drm/exynos: few patches to enhance bridge chip support
+Date: Thu, 18 Sep 2014 12:54:02 +0300
+Message-ID: <3187222.N10z9QsVIV@avalon>
+References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com> <2405684.4GKZfmgcCP@avalon> <CAEC9eQOKYSVi+CG__wzo3bwMZTBc+y10WZuYnoz7A5=RJV2D2Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews01.kpnxchange.com ([213.75.39.4]:56888 "EHLO
-	cpsmtpb-ews01.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755754AbaIRJnd (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:40286 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754935AbaIRJx5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Sep 2014 05:43:33 -0400
-In-Reply-To: <201409041802.36466.arnd@arndb.de>
+	Thu, 18 Sep 2014 05:53:57 -0400
+In-Reply-To: <CAEC9eQOKYSVi+CG__wzo3bwMZTBc+y10WZuYnoz7A5=RJV2D2Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Thierry Reding <thierry.reding@gmail.com>, Doug Anderson <dianders@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Prashanth G <prashanth.g@samsung.com>, Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>
 
-On Thu, 2014-09-04 at 18:02 +0200, Arnd Bergmann wrote:
-> On Thursday 04 September 2014, Paul Bolle wrote: 
-> > References to MACH_GONI and MACH_AQUILA can still be seen in v3.17-rc3
-> > and next-20140903. Note that as consequence SND_SOC_GONI_AQUILA_WM8994
-> > can not be set anymore.
+Hi Ajay,
+
+On Wednesday 17 September 2014 15:43:04 Ajay kumar wrote:
+> Hi Laurent,
+> 
+> Please find the latest series here:
+> http://www.spinics.net/lists/dri-devel/msg66740.html
+
+Thank you. My comment was meant to be general though, not just for your patch 
+series.
+
+> On Wed, Sep 17, 2014 at 3:23 PM, Laurent Pinchart wrote:
+> > On Wednesday 30 July 2014 11:40:54 Thierry Reding wrote:
+
+[snip]
+
+> >> One other thing: how does the bridge know which mode to drive? I suspect
+> >> that it can drive more than one mode? Can it freely be configured or
+> >> does it have a predefined set of modes? If the latter, then according to
+> >> what you said above there needs to be a way to configure the bridge (via
+> >> DT?) so that it reports the mode matching the panel. I wonder if that
+> >> should be handled completely in code, so that for example a bridge has a
+> >> panel attached it can use the panel's .get_modes() and select a matching
+> >> mode among the set that it supports.
 > > 
-> [...]
->
-> I think it would be nice if you could submit a patch to remove the
-> drivers from ASoC, then we can see if anybody complains.
+> > Yes, pretty please :-) I don't think it would be a good idea to duplicate
+> > mode information in the bridge DT node, as that's not a property of the
+> > bridge. Querying the mode at runtime is in my opinion a much better
+> > option, and would also allow switching between different modes at runtime
+> > when that makes sense.
+> > 
+> > Now, I'm not sure whether it should be the bridge driver querying the
+> > panel driver directly, or the display controller driver doing it and then
+> > configuring the bridge accordingly. The latter seems more generic to me
+> > and doesn't rely on the assumption that the bridge output will always be
+> > directly connected to a panel.
 
-Same thing for v3.17-rc5 and next-20140918. Let's see if we can remove
-the goni or aquila with wm8994 driver.
-
-Done on top of next-20140918. Untested.
---------->8---------
-From: Paul Bolle <pebolle@tiscali.nl>
-
-Commit 28c8331d386a ("ARM: S5PV210: Remove support for board files")
-removed the Kconfig symbols MACH_GONI and MACH_AQUILA. As a result the
-dependencies of SND_SOC_GONI_AQUILA_WM8994 can never be met. So remove
-the unbuildable "SoC I2S Audio support for AQUILA/GONI - WM8994".
-
-Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
----
- sound/soc/samsung/Kconfig       |  11 --
- sound/soc/samsung/Makefile      |   2 -
- sound/soc/samsung/goni_wm8994.c | 304 ----------------------------------------
- 3 files changed, 317 deletions(-)
- delete mode 100644 sound/soc/samsung/goni_wm8994.c
-
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index 55a38697443d..9d9b149ad977 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -146,17 +146,6 @@ config SND_SOC_SMARTQ
- 	select SND_SAMSUNG_I2S
- 	select SND_SOC_WM8750
- 
--config SND_SOC_GONI_AQUILA_WM8994
--	tristate "SoC I2S Audio support for AQUILA/GONI - WM8994"
--	depends on SND_SOC_SAMSUNG && (MACH_GONI || MACH_AQUILA)
--	depends on I2C=y
--	select SND_SAMSUNG_I2S
--	select MFD_WM8994
--	select SND_SOC_WM8994
--	help
--	  Say Y if you want to add support for SoC audio on goni or aquila
--	  with the WM8994.
--
- config SND_SOC_SAMSUNG_SMDK_SPDIF
- 	tristate "SoC S/PDIF Audio support for SMDK"
- 	depends on SND_SOC_SAMSUNG
-diff --git a/sound/soc/samsung/Makefile b/sound/soc/samsung/Makefile
-index 91505ddaaf95..c30293a67176 100644
---- a/sound/soc/samsung/Makefile
-+++ b/sound/soc/samsung/Makefile
-@@ -35,7 +35,6 @@ snd-soc-smdk-wm8994-objs := smdk_wm8994.o
- snd-soc-snow-objs := snow.o
- snd-soc-smdk-wm9713-objs := smdk_wm9713.o
- snd-soc-s3c64xx-smartq-wm8987-objs := smartq_wm8987.o
--snd-soc-goni-wm8994-objs := goni_wm8994.o
- snd-soc-smdk-spdif-objs := smdk_spdif.o
- snd-soc-smdk-wm8580pcm-objs := smdk_wm8580pcm.o
- snd-soc-smdk-wm8994pcm-objs := smdk_wm8994pcm.o
-@@ -62,7 +61,6 @@ obj-$(CONFIG_SND_SOC_SNOW) += snd-soc-snow.o
- obj-$(CONFIG_SND_SOC_SAMSUNG_SMDK_WM9713) += snd-soc-smdk-wm9713.o
- obj-$(CONFIG_SND_SOC_SMARTQ) += snd-soc-s3c64xx-smartq-wm8987.o
- obj-$(CONFIG_SND_SOC_SAMSUNG_SMDK_SPDIF) += snd-soc-smdk-spdif.o
--obj-$(CONFIG_SND_SOC_GONI_AQUILA_WM8994) += snd-soc-goni-wm8994.o
- obj-$(CONFIG_SND_SOC_SMDK_WM8580_PCM) += snd-soc-smdk-wm8580pcm.o
- obj-$(CONFIG_SND_SOC_SMDK_WM8994_PCM) += snd-soc-smdk-wm8994pcm.o
- obj-$(CONFIG_SND_SOC_SPEYSIDE) += snd-soc-speyside.o
-diff --git a/sound/soc/samsung/goni_wm8994.c b/sound/soc/samsung/goni_wm8994.c
-deleted file mode 100644
-index 3b527dcfc0aa..000000000000
---- a/sound/soc/samsung/goni_wm8994.c
-+++ /dev/null
-@@ -1,304 +0,0 @@
--/*
-- * goni_wm8994.c
-- *
-- * Copyright (C) 2010 Samsung Electronics Co.Ltd
-- * Author: Chanwoo Choi <cw00.choi@samsung.com>
-- *
-- *  This program is free software; you can redistribute  it and/or modify it
-- *  under  the terms of  the GNU General  Public License as published by the
-- *  Free Software Foundation;  either version 2 of the  License, or (at your
-- *  option) any later version.
-- *
-- */
--
--#include <linux/module.h>
--#include <sound/soc.h>
--#include <sound/jack.h>
--
--#include <asm/mach-types.h>
--#include <mach/gpio-samsung.h>
--
--#include "../codecs/wm8994.h"
--
--#define MACHINE_NAME	0
--#define CPU_VOICE_DAI	1
--
--static const char *aquila_str[] = {
--	[MACHINE_NAME] = "aquila",
--	[CPU_VOICE_DAI] = "aquila-voice-dai",
--};
--
--static struct snd_soc_card goni;
--static struct platform_device *goni_snd_device;
--
--/* 3.5 pie jack */
--static struct snd_soc_jack jack;
--
--/* 3.5 pie jack detection DAPM pins */
--static struct snd_soc_jack_pin jack_pins[] = {
--	{
--		.pin = "Headset Mic",
--		.mask = SND_JACK_MICROPHONE,
--	}, {
--		.pin = "Headset Stereophone",
--		.mask = SND_JACK_HEADPHONE | SND_JACK_MECHANICAL |
--			SND_JACK_AVOUT,
--	},
--};
--
--/* 3.5 pie jack detection gpios */
--static struct snd_soc_jack_gpio jack_gpios[] = {
--	{
--		.gpio = S5PV210_GPH0(6),
--		.name = "DET_3.5",
--		.report = SND_JACK_HEADSET | SND_JACK_MECHANICAL |
--			SND_JACK_AVOUT,
--		.debounce_time = 200,
--	},
--};
--
--static const struct snd_soc_dapm_widget goni_dapm_widgets[] = {
--	SND_SOC_DAPM_SPK("Ext Left Spk", NULL),
--	SND_SOC_DAPM_SPK("Ext Right Spk", NULL),
--	SND_SOC_DAPM_SPK("Ext Rcv", NULL),
--	SND_SOC_DAPM_HP("Headset Stereophone", NULL),
--	SND_SOC_DAPM_MIC("Headset Mic", NULL),
--	SND_SOC_DAPM_MIC("Main Mic", NULL),
--	SND_SOC_DAPM_MIC("2nd Mic", NULL),
--	SND_SOC_DAPM_LINE("Radio In", NULL),
--};
--
--static const struct snd_soc_dapm_route goni_dapm_routes[] = {
--	{"Ext Left Spk", NULL, "SPKOUTLP"},
--	{"Ext Left Spk", NULL, "SPKOUTLN"},
--
--	{"Ext Right Spk", NULL, "SPKOUTRP"},
--	{"Ext Right Spk", NULL, "SPKOUTRN"},
--
--	{"Ext Rcv", NULL, "HPOUT2N"},
--	{"Ext Rcv", NULL, "HPOUT2P"},
--
--	{"Headset Stereophone", NULL, "HPOUT1L"},
--	{"Headset Stereophone", NULL, "HPOUT1R"},
--
--	{"IN1RN", NULL, "Headset Mic"},
--	{"IN1RP", NULL, "Headset Mic"},
--
--	{"IN1RN", NULL, "2nd Mic"},
--	{"IN1RP", NULL, "2nd Mic"},
--
--	{"IN1LN", NULL, "Main Mic"},
--	{"IN1LP", NULL, "Main Mic"},
--
--	{"IN2LN", NULL, "Radio In"},
--	{"IN2RN", NULL, "Radio In"},
--};
--
--static int goni_wm8994_init(struct snd_soc_pcm_runtime *rtd)
--{
--	struct snd_soc_codec *codec = rtd->codec;
--	struct snd_soc_dapm_context *dapm = &codec->dapm;
--	int ret;
--
--	/* set endpoints to not connected */
--	snd_soc_dapm_nc_pin(dapm, "IN2LP:VXRN");
--	snd_soc_dapm_nc_pin(dapm, "IN2RP:VXRP");
--	snd_soc_dapm_nc_pin(dapm, "LINEOUT1N");
--	snd_soc_dapm_nc_pin(dapm, "LINEOUT1P");
--	snd_soc_dapm_nc_pin(dapm, "LINEOUT2N");
--	snd_soc_dapm_nc_pin(dapm, "LINEOUT2P");
--
--	if (machine_is_aquila()) {
--		snd_soc_dapm_nc_pin(dapm, "SPKOUTRN");
--		snd_soc_dapm_nc_pin(dapm, "SPKOUTRP");
--	}
--
--	/* Headset jack detection */
--	ret = snd_soc_jack_new(codec, "Headset Jack",
--			SND_JACK_HEADSET | SND_JACK_MECHANICAL | SND_JACK_AVOUT,
--			&jack);
--	if (ret)
--		return ret;
--
--	ret = snd_soc_jack_add_pins(&jack, ARRAY_SIZE(jack_pins), jack_pins);
--	if (ret)
--		return ret;
--
--	ret = snd_soc_jack_add_gpios(&jack, ARRAY_SIZE(jack_gpios), jack_gpios);
--	if (ret)
--		return ret;
--
--	return 0;
--}
--
--static int goni_hifi_hw_params(struct snd_pcm_substream *substream,
--		struct snd_pcm_hw_params *params)
--{
--	struct snd_soc_pcm_runtime *rtd = substream->private_data;
--	struct snd_soc_dai *codec_dai = rtd->codec_dai;
--	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
--	unsigned int pll_out = 24000000;
--	int ret = 0;
--
--	/* set the cpu DAI configuration */
--	ret = snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_I2S |
--			SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_CBM_CFM);
--	if (ret < 0)
--		return ret;
--
--	/* set codec DAI configuration */
--	ret = snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_I2S |
--			SND_SOC_DAIFMT_NB_NF | SND_SOC_DAIFMT_CBM_CFM);
--	if (ret < 0)
--		return ret;
--
--	/* set the codec FLL */
--	ret = snd_soc_dai_set_pll(codec_dai, WM8994_FLL1, 0, pll_out,
--			params_rate(params) * 256);
--	if (ret < 0)
--		return ret;
--
--	/* set the codec system clock */
--	ret = snd_soc_dai_set_sysclk(codec_dai, WM8994_SYSCLK_FLL1,
--			params_rate(params) * 256, SND_SOC_CLOCK_IN);
--	if (ret < 0)
--		return ret;
--
--	return 0;
--}
--
--static struct snd_soc_ops goni_hifi_ops = {
--	.hw_params = goni_hifi_hw_params,
--};
--
--static int goni_voice_hw_params(struct snd_pcm_substream *substream,
--		struct snd_pcm_hw_params *params)
--{
--	struct snd_soc_pcm_runtime *rtd = substream->private_data;
--	struct snd_soc_dai *codec_dai = rtd->codec_dai;
--	unsigned int pll_out = 24000000;
--	int ret = 0;
--
--	if (params_rate(params) != 8000)
--		return -EINVAL;
--
--	/* set codec DAI configuration */
--	ret = snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_LEFT_J |
--			SND_SOC_DAIFMT_IB_IF | SND_SOC_DAIFMT_CBM_CFM);
--	if (ret < 0)
--		return ret;
--
--	/* set the codec FLL */
--	ret = snd_soc_dai_set_pll(codec_dai, WM8994_FLL2, 0, pll_out,
--			params_rate(params) * 256);
--	if (ret < 0)
--		return ret;
--
--	/* set the codec system clock */
--	ret = snd_soc_dai_set_sysclk(codec_dai, WM8994_SYSCLK_FLL2,
--			params_rate(params) * 256, SND_SOC_CLOCK_IN);
--	if (ret < 0)
--		return ret;
--
--	return 0;
--}
--
--static struct snd_soc_dai_driver voice_dai = {
--	.name = "goni-voice-dai",
--	.id = 0,
--	.playback = {
--		.channels_min = 1,
--		.channels_max = 2,
--		.rates = SNDRV_PCM_RATE_8000,
--		.formats = SNDRV_PCM_FMTBIT_S16_LE,},
--	.capture = {
--		.channels_min = 1,
--		.channels_max = 2,
--		.rates = SNDRV_PCM_RATE_8000,
--		.formats = SNDRV_PCM_FMTBIT_S16_LE,},
--};
--
--static const struct snd_soc_component_driver voice_component = {
--	.name		= "goni-voice",
--};
--
--static struct snd_soc_ops goni_voice_ops = {
--	.hw_params = goni_voice_hw_params,
--};
--
--static struct snd_soc_dai_link goni_dai[] = {
--{
--	.name = "WM8994",
--	.stream_name = "WM8994 HiFi",
--	.cpu_dai_name = "samsung-i2s.0",
--	.codec_dai_name = "wm8994-aif1",
--	.platform_name = "samsung-i2s.0",
--	.codec_name = "wm8994-codec.0-001a",
--	.init = goni_wm8994_init,
--	.ops = &goni_hifi_ops,
--}, {
--	.name = "WM8994 Voice",
--	.stream_name = "Voice",
--	.cpu_dai_name = "goni-voice-dai",
--	.codec_dai_name = "wm8994-aif2",
--	.codec_name = "wm8994-codec.0-001a",
--	.ops = &goni_voice_ops,
--},
--};
--
--static struct snd_soc_card goni = {
--	.name = "goni",
--	.owner = THIS_MODULE,
--	.dai_link = goni_dai,
--	.num_links = ARRAY_SIZE(goni_dai),
--
--	.dapm_widgets = goni_dapm_widgets,
--	.num_dapm_widgets = ARRAY_SIZE(goni_dapm_widgets),
--	.dapm_routes = goni_dapm_routes,
--	.num_dapm_routes = ARRAY_SIZE(goni_dapm_routes),
--};
--
--static int __init goni_init(void)
--{
--	int ret;
--
--	if (machine_is_aquila()) {
--		voice_dai.name = aquila_str[CPU_VOICE_DAI];
--		goni_dai[1].cpu_dai_name = aquila_str[CPU_VOICE_DAI];
--		goni.name = aquila_str[MACHINE_NAME];
--	} else if (!machine_is_goni())
--		return -ENODEV;
--
--	goni_snd_device = platform_device_alloc("soc-audio", -1);
--	if (!goni_snd_device)
--		return -ENOMEM;
--
--	/* register voice DAI here */
--	ret = devm_snd_soc_register_component(&goni_snd_device->dev,
--			&voice_component, &voice_dai, 1);
--	if (ret) {
--		platform_device_put(goni_snd_device);
--		return ret;
--	}
--
--	platform_set_drvdata(goni_snd_device, &goni);
--	ret = platform_device_add(goni_snd_device);
--
--	if (ret)
--		platform_device_put(goni_snd_device);
--
--	return ret;
--}
--
--static void __exit goni_exit(void)
--{
--	platform_device_unregister(goni_snd_device);
--}
--
--module_init(goni_init);
--module_exit(goni_exit);
--
--/* Module information */
--MODULE_DESCRIPTION("ALSA SoC WM8994 GONI(S5PV210)");
--MODULE_AUTHOR("Chanwoo Choi <cw00.choi@samsung.com>");
--MODULE_LICENSE("GPL");
 -- 
-1.9.3
+Regards,
+
+Laurent Pinchart
