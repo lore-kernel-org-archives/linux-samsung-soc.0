@@ -1,42 +1,65 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH v4 1/2] usb: host: ehci-exynos: Remove unnecessary usb-phy
- support
-Date: Thu, 18 Sep 2014 10:50:26 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1409181048290.894-100000@iolanthe.rowland.org>
-References: <1411014258-17877-1-git-send-email-gautam.vivek@samsung.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1411014258-17877-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, kgene.kim@samsung.com, jg1.han@samsung.com
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v4 0/5] Second batch of cleanups for cros_ec
+Date: Thu, 18 Sep 2014 17:18:53 +0200
+Message-ID: <1411053538-17237-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-input-owner@vger.kernel.org>
+Sender: linux-input-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Gwendal Grignou <gwendal@google.com>, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 18 Sep 2014, Vivek Gautam wrote:
+Hello,
 
-> Now that we have completely moved from older USB-PHY drivers
-> to newer GENERIC-PHY drivers for PHYs available with USB controllers
-> on Exynos series of SoCs, we can remove the support for the same
-> in our host drivers too.
-> 
-> We also defer the probe for our host in case we end up getting
-> EPROBE_DEFER error when getting PHYs.
+This is a second batch of cleanups patches for the mfd cros_ec
+driver and its subdevices drivers. The first batch of cleanups
+was posted by Doug Anderson [0] and have already been merged.
+The patches were picked from the ChromeOS 3.8 kernel and after
+these no cleanups patches for cros_ec are left, only commits
+that add cros ec support not yet available in mainline.
 
-Better now.  But I didn't notice this the first time:
+This is a fourth version of the patch series that addresses
+issues pointed out by Lee Jones on v3 [1]. I dropped patch #6
+from this version since that change will make more sense once
+the cros_ec_dev driver is added and the cells array isn't empty.
 
-> +		if (IS_ERR(phy)) {
-> +			ret = PTR_ERR(phy);
-> +			if (ret == -EPROBE_DEFER) {
-> +				return ret;
-> +			} else if (ret != -ENOSYS && ret != -ENODEV) {
-> +				dev_err(dev,
-> +					"Error retrieving usb2 phy: %d\n", ret);
-> +				return PTR_ERR(phy);
+There is almost no functionality added on this series but the
+idea is to reduce the delta between the mainline drivers and
+the ones in the downstream Chrome OS 3.8 kernel so the missing
+functionality can be added on top once these cleanups patches
+are merged. The missing functionality currently in mainline is:
 
-It doesn't make any real difference, but wouldn't you prefer to say
-"return ret" here?
+- Chrome OS Embedded Controller userspace device interface
+- Chrome OS Embedded Controller Low Pin Count (LPC) inteface
+- Access to vboot context stored on a block device
+- Access to vboot context stored on EC's nvram
 
-With or without that change, for both these two patches:
+The patches in this series are authored by different people
+(all on cc) and consist of the following:
 
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Andrew Bresticker (3):
+  mfd: cros_ec: stop calling ->cmd_xfer() directly
+  mfd: cros_ec: move locking into cros_ec_cmd_xfer
+  mfd: cros_ec: wait for completion of commands that return IN_PROGRESS
+
+Derek Basehore (1):
+  i2c: i2c-cros-ec-tunnel: Set retries to 3
+
+Doug Anderson (1):
+  mfd: cros_ec: Delay for 50ms when we see EC_CMD_REBOOT_EC
+
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c |  5 +++-
+ drivers/input/keyboard/cros_ec_keyb.c   |  2 +-
+ drivers/mfd/cros_ec.c                   | 48 +++++++++++++++++++++++++++++++++
+ drivers/mfd/cros_ec_spi.c               | 20 +++++++-------
+ include/linux/mfd/cros_ec.h             | 24 ++++++++++++-----
+ 5 files changed, 80 insertions(+), 19 deletions(-)
+
+Patches #1 and #2 can be applied independently but patches #3, #4 and #5
+rely on the previous one so they should be applied together and in that order.
+
+Best regards,
+Javier
+
+[0]: https://www.mail-archive.com/linux-input@vger.kernel.org/msg11385.html
+[1]: https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg36505.html
+
