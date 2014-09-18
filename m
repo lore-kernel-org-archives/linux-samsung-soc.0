@@ -1,285 +1,281 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: [PATCH] ASoC: samsung: Remove PCM support for WM8580 on SMDK
-Date: Thu, 18 Sep 2014 12:42:16 +0200
-Message-ID: <1411036935.2017.30.camel@x220>
-References: <1404496099-26708-1-git-send-email-t.figa@samsung.com>
-	 <53C675E4.4020502@samsung.com> <1409825105.5546.91.camel@x220>
-	 <201409041802.36466.arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH] drm/exynos: switch to universal plane API
+Date: Thu, 18 Sep 2014 15:17:03 +0200
+Message-ID: <1411046223-22703-1-git-send-email-a.hajda@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews08.kpnxchange.com ([213.75.39.13]:56496 "EHLO
-	cpsmtpb-ews08.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756428AbaIRKmT (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:51703 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755843AbaIRNRd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Sep 2014 06:42:19 -0400
-In-Reply-To: <201409041802.36466.arnd@arndb.de>
+	Thu, 18 Sep 2014 09:17:33 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, drake@endlessm.com, daniel@ffwll.ch, m.szyprowski@samsung.com
 
-On Thu, 2014-09-04 at 18:02 +0200, Arnd Bergmann wrote:
-> On Thursday 04 September 2014, Paul Bolle wrote:
-> > Ditto for [...] MACH_SMDKC110, and MACH_SMDKV210. Note that
-> > here SND_SOC_SMDK_WM8580_PCM can not be set anymore.
->>
-> [...]
-> I think it would be nice if you could submit a patch to remove the
-> drivers from ASoC, then we can see if anybody complains.
+The patch replaces legacy functions
+drm_plane_init() / drm_crtc_init() with
+drm_universal_plane_init() and drm_crtc_init_with_planes().
+It allows to replace fake primary plane with the real one.
 
-Also the same thing for v3.17-rc5 and next-20140918. So let's see if we
-can remove this driver too.
-
-Done on top of next-20140918. Again untested.
--------->8--------
-From: Paul Bolle <pebolle@tiscali.nl>
-
-Commit 28c8331d386a ("ARM: S5PV210: Remove support for board files")
-removed the Kconfig symbols MACH_SMDKC110 and MACH_SMDKV210. As a result
-the dependencies of SND_SOC_SMDK_WM8580_PCM can never be met. So remove
-the unbuildable "SoC PCM Audio support for WM8580 on SMDK".
-
-Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- sound/soc/samsung/Kconfig          |   9 --
- sound/soc/samsung/Makefile         |   2 -
- sound/soc/samsung/smdk_wm8580pcm.c | 186 -------------------------------------
- 3 files changed, 197 deletions(-)
- delete mode 100644 sound/soc/samsung/smdk_wm8580pcm.c
+Hi Inki,
 
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index 9d9b149ad977..52fd0a446bdf 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -153,15 +153,6 @@ config SND_SOC_SAMSUNG_SMDK_SPDIF
- 	help
- 	  Say Y if you want to add support for SoC S/PDIF audio on the SMDK.
+I have tested this patch with trats board, it looks OK.
+As a side effect it should solve fb refcounting issues
+reported by me and Daniel Drake.
+
+Regards
+Andrzej
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c  | 63 ++++++++++++++++---------------
+ drivers/gpu/drm/exynos/exynos_drm_drv.c   |  5 ++-
+ drivers/gpu/drm/exynos/exynos_drm_plane.c | 17 +++++----
+ drivers/gpu/drm/exynos/exynos_drm_plane.h |  3 +-
+ 4 files changed, 47 insertions(+), 41 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index b68e58f..d2f713e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -32,7 +32,6 @@ enum exynos_crtc_mode {
+  * Exynos specific crtc structure.
+  *
+  * @drm_crtc: crtc object.
+- * @drm_plane: pointer of private plane object for this crtc
+  * @manager: the manager associated with this crtc
+  * @pipe: a crtc index created at load() with a new crtc object creation
+  *	and the crtc object would be set to private->crtc array
+@@ -46,7 +45,6 @@ enum exynos_crtc_mode {
+  */
+ struct exynos_drm_crtc {
+ 	struct drm_crtc			drm_crtc;
+-	struct drm_plane		*plane;
+ 	struct exynos_drm_manager	*manager;
+ 	unsigned int			pipe;
+ 	unsigned int			dpms;
+@@ -94,12 +92,12 @@ static void exynos_drm_crtc_commit(struct drm_crtc *crtc)
  
--config SND_SOC_SMDK_WM8580_PCM
--	tristate "SoC PCM Audio support for WM8580 on SMDK"
--	depends on SND_SOC_SAMSUNG && (MACH_SMDKV210 || MACH_SMDKC110)
--	depends on REGMAP_I2C
--	select SND_SOC_WM8580
--	select SND_SAMSUNG_PCM
--	help
--	  Say Y if you want to add support for SoC audio on the SMDK.
--
- config SND_SOC_SMDK_WM8994_PCM
- 	tristate "SoC PCM Audio support for WM8994 on SMDK"
- 	depends on SND_SOC_SAMSUNG
-diff --git a/sound/soc/samsung/Makefile b/sound/soc/samsung/Makefile
-index c30293a67176..51b471ace06f 100644
---- a/sound/soc/samsung/Makefile
-+++ b/sound/soc/samsung/Makefile
-@@ -36,7 +36,6 @@ snd-soc-snow-objs := snow.o
- snd-soc-smdk-wm9713-objs := smdk_wm9713.o
- snd-soc-s3c64xx-smartq-wm8987-objs := smartq_wm8987.o
- snd-soc-smdk-spdif-objs := smdk_spdif.o
--snd-soc-smdk-wm8580pcm-objs := smdk_wm8580pcm.o
- snd-soc-smdk-wm8994pcm-objs := smdk_wm8994pcm.o
- snd-soc-speyside-objs := speyside.o
- snd-soc-tobermory-objs := tobermory.o
-@@ -61,7 +60,6 @@ obj-$(CONFIG_SND_SOC_SNOW) += snd-soc-snow.o
- obj-$(CONFIG_SND_SOC_SAMSUNG_SMDK_WM9713) += snd-soc-smdk-wm9713.o
- obj-$(CONFIG_SND_SOC_SMARTQ) += snd-soc-s3c64xx-smartq-wm8987.o
- obj-$(CONFIG_SND_SOC_SAMSUNG_SMDK_SPDIF) += snd-soc-smdk-spdif.o
--obj-$(CONFIG_SND_SOC_SMDK_WM8580_PCM) += snd-soc-smdk-wm8580pcm.o
- obj-$(CONFIG_SND_SOC_SMDK_WM8994_PCM) += snd-soc-smdk-wm8994pcm.o
- obj-$(CONFIG_SND_SOC_SPEYSIDE) += snd-soc-speyside.o
- obj-$(CONFIG_SND_SOC_TOBERMORY) += snd-soc-tobermory.o
-diff --git a/sound/soc/samsung/smdk_wm8580pcm.c b/sound/soc/samsung/smdk_wm8580pcm.c
-deleted file mode 100644
-index 63d079303561..000000000000
---- a/sound/soc/samsung/smdk_wm8580pcm.c
-+++ /dev/null
-@@ -1,186 +0,0 @@
--/*
-- *  sound/soc/samsung/smdk_wm8580pcm.c
-- *
-- *  Copyright (c) 2011 Samsung Electronics Co. Ltd
-- *
-- *  This program is free software; you can redistribute  it and/or  modify it
-- *  under  the terms of  the GNU General  Public License as published by the
-- *  Free Software Foundation;  either version 2 of the  License, or (at your
-- *  option) any later version.
-- */
--#include <linux/module.h>
--#include <sound/soc.h>
--#include <sound/pcm_params.h>
--#include <sound/pcm.h>
--
--#include <asm/mach-types.h>
--
--#include "../codecs/wm8580.h"
--#include "dma.h"
--#include "pcm.h"
--
--/*
-- * Board Settings:
-- *  o '1' means 'ON'
-- *  o '0' means 'OFF'
-- *  o 'X' means 'Don't care'
-- *
-- * SMDK6410 Base B/D: CFG1-0000, CFG2-1111
-- * SMDKC110, SMDKV210: CFGB11-100100, CFGB12-0000
-- */
--
--#define SMDK_WM8580_EXT_OSC 12000000
--#define SMDK_WM8580_EXT_MCLK 4096000
--#define SMDK_WM8580_EXT_VOICE 2048000
--
--static unsigned long mclk_freq;
--static unsigned long xtal_freq;
--
--/*
-- * If MCLK clock directly gets from XTAL, we don't have to use PLL
-- * to make MCLK, but if XTAL clock source connects with other codec
-- * pin (like XTI), we should have to set codec's PLL to make MCLK.
-- * Because Samsung SoC does not support pcmcdclk output like I2S.
-- */
--
--static int smdk_wm8580_pcm_hw_params(struct snd_pcm_substream *substream,
--			      struct snd_pcm_hw_params *params)
--{
--	struct snd_soc_pcm_runtime *rtd = substream->private_data;
--	struct snd_soc_dai *codec_dai = rtd->codec_dai;
--	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
--	int rfs, ret;
--
--	switch (params_rate(params)) {
--	case 8000:
--		break;
--	default:
--		printk(KERN_ERR "%s:%d Sampling Rate %u not supported!\n",
--		__func__, __LINE__, params_rate(params));
--		return -EINVAL;
--	}
--
--	rfs = mclk_freq / params_rate(params) / 2;
--
--	/* Set the codec DAI configuration */
--	ret = snd_soc_dai_set_fmt(codec_dai, SND_SOC_DAIFMT_DSP_B
--				| SND_SOC_DAIFMT_IB_NF
--				| SND_SOC_DAIFMT_CBS_CFS);
--	if (ret < 0)
+ 	exynos_drm_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
+ 
+-	exynos_plane_commit(exynos_crtc->plane);
++	exynos_plane_commit(crtc->primary);
+ 
+ 	if (manager->ops->commit)
+ 		manager->ops->commit(manager);
+ 
+-	exynos_plane_dpms(exynos_crtc->plane, DRM_MODE_DPMS_ON);
++	exynos_plane_dpms(crtc->primary, DRM_MODE_DPMS_ON);
+ }
+ 
+ static bool
+@@ -123,10 +121,9 @@ exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
+ {
+ 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+ 	struct exynos_drm_manager *manager = exynos_crtc->manager;
+-	struct drm_plane *plane = exynos_crtc->plane;
++	struct drm_framebuffer *fb = crtc->primary->fb;
+ 	unsigned int crtc_w;
+ 	unsigned int crtc_h;
+-	int ret;
+ 
+ 	/*
+ 	 * copy the mode data adjusted by mode_fixup() into crtc->mode
+@@ -134,29 +131,21 @@ exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
+ 	 */
+ 	memcpy(&crtc->mode, adjusted_mode, sizeof(*adjusted_mode));
+ 
+-	crtc_w = crtc->primary->fb->width - x;
+-	crtc_h = crtc->primary->fb->height - y;
++	crtc_w = fb->width - x;
++	crtc_h = fb->height - y;
+ 
+ 	if (manager->ops->mode_set)
+ 		manager->ops->mode_set(manager, &crtc->mode);
+ 
+-	ret = exynos_plane_mode_set(plane, crtc, crtc->primary->fb, 0, 0, crtc_w, crtc_h,
+-				    x, y, crtc_w, crtc_h);
+-	if (ret)
 -		return ret;
 -
--	/* Set the cpu DAI configuration */
--	ret = snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_DSP_B
--				| SND_SOC_DAIFMT_IB_NF
--				| SND_SOC_DAIFMT_CBS_CFS);
--	if (ret < 0)
--		return ret;
--
--	if (mclk_freq == xtal_freq) {
--		ret = snd_soc_dai_set_sysclk(codec_dai, WM8580_CLKSRC_MCLK,
--						mclk_freq, SND_SOC_CLOCK_IN);
--		if (ret < 0)
--			return ret;
--
--		ret = snd_soc_dai_set_clkdiv(codec_dai, WM8580_MCLK,
--						WM8580_CLKSRC_MCLK);
--		if (ret < 0)
--			return ret;
--	} else {
--		ret = snd_soc_dai_set_sysclk(codec_dai, WM8580_CLKSRC_PLLA,
--						mclk_freq, SND_SOC_CLOCK_IN);
--		if (ret < 0)
--			return ret;
--
--		ret = snd_soc_dai_set_clkdiv(codec_dai, WM8580_MCLK,
--						WM8580_CLKSRC_PLLA);
--		if (ret < 0)
--			return ret;
--
--		ret = snd_soc_dai_set_pll(codec_dai, WM8580_PLLA, 0,
--						xtal_freq, mclk_freq);
--		if (ret < 0)
--			return ret;
--	}
--
--	/* Set PCM source clock on CPU */
--	ret = snd_soc_dai_set_sysclk(cpu_dai, S3C_PCM_CLKSRC_MUX,
--					mclk_freq, SND_SOC_CLOCK_IN);
--	if (ret < 0)
--		return ret;
--
--	/* Set SCLK_DIV for making bclk */
--	ret = snd_soc_dai_set_clkdiv(cpu_dai, S3C_PCM_SCLK_PER_FS, rfs);
--	if (ret < 0)
--		return ret;
+-	plane->crtc = crtc;
+-	plane->fb = crtc->primary->fb;
+-	drm_framebuffer_reference(plane->fb);
 -
 -	return 0;
--}
--
--static struct snd_soc_ops smdk_wm8580_pcm_ops = {
--	.hw_params = smdk_wm8580_pcm_hw_params,
--};
--
--static struct snd_soc_dai_link smdk_dai[] = {
--	{
--		.name = "WM8580 PAIF PCM RX",
--		.stream_name = "Playback",
--		.cpu_dai_name = "samsung-pcm.0",
--		.codec_dai_name = "wm8580-hifi-playback",
--		.platform_name = "samsung-audio",
--		.codec_name = "wm8580.0-001b",
--		.ops = &smdk_wm8580_pcm_ops,
--	}, {
--		.name = "WM8580 PAIF PCM TX",
--		.stream_name = "Capture",
--		.cpu_dai_name = "samsung-pcm.0",
--		.codec_dai_name = "wm8580-hifi-capture",
--		.platform_name = "samsung-pcm.0",
--		.codec_name = "wm8580.0-001b",
--		.ops = &smdk_wm8580_pcm_ops,
--	},
--};
--
--static struct snd_soc_card smdk_pcm = {
--	.name = "SMDK-PCM",
--	.owner = THIS_MODULE,
--	.dai_link = smdk_dai,
--	.num_links = 2,
--};
--
--/*
-- * After SMDKC110 Base Board's Rev is '0.1', 12MHz External OSC(X1)
-- * is absent (or not connected), so we connect EXT_VOICE_CLK(OSC4),
-- * 2.0484Mhz, directly with MCLK both Codec and SoC.
-- */
--static int snd_smdk_probe(struct platform_device *pdev)
--{
--	int ret = 0;
--
--	xtal_freq = SMDK_WM8580_EXT_OSC;
--	mclk_freq = SMDK_WM8580_EXT_MCLK;
--
--	if (machine_is_smdkc110() || machine_is_smdkv210())
--		xtal_freq = mclk_freq = SMDK_WM8580_EXT_VOICE;
--
--	smdk_pcm.dev = &pdev->dev;
--	ret = devm_snd_soc_register_card(&pdev->dev, &smdk_pcm);
--	if (ret)
--		dev_err(&pdev->dev, "snd_soc_register_card failed %d\n", ret);
--
--	return ret;
--}
--
--static struct platform_driver snd_smdk_driver = {
--	.driver = {
--		.owner = THIS_MODULE,
--		.name = "samsung-smdk-pcm",
--	},
--	.probe = snd_smdk_probe,
--};
--
--module_platform_driver(snd_smdk_driver);
--
--MODULE_AUTHOR("Sangbeom Kim, <sbkim73@samsung.com>");
--MODULE_DESCRIPTION("ALSA SoC SMDK WM8580 for PCM");
--MODULE_LICENSE("GPL");
++	return exynos_plane_mode_set(crtc->primary, crtc, fb, 0, 0,
++				     crtc_w, crtc_h, x, y, crtc_w, crtc_h);
+ }
+ 
+ static int exynos_drm_crtc_mode_set_commit(struct drm_crtc *crtc, int x, int y,
+ 					  struct drm_framebuffer *old_fb)
+ {
+ 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+-	struct drm_plane *plane = exynos_crtc->plane;
++	struct drm_framebuffer *fb = crtc->primary->fb;
+ 	unsigned int crtc_w;
+ 	unsigned int crtc_h;
+ 	int ret;
+@@ -167,11 +156,11 @@ static int exynos_drm_crtc_mode_set_commit(struct drm_crtc *crtc, int x, int y,
+ 		return -EPERM;
+ 	}
+ 
+-	crtc_w = crtc->primary->fb->width - x;
+-	crtc_h = crtc->primary->fb->height - y;
++	crtc_w = fb->width - x;
++	crtc_h = fb->height - y;
+ 
+-	ret = exynos_plane_mode_set(plane, crtc, crtc->primary->fb, 0, 0, crtc_w, crtc_h,
+-				    x, y, crtc_w, crtc_h);
++	ret = exynos_plane_mode_set(crtc->primary, crtc, fb, 0, 0,
++				    crtc_w, crtc_h, x, y, crtc_w, crtc_h);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -279,6 +268,7 @@ static void exynos_drm_crtc_destroy(struct drm_crtc *crtc)
+ 
+ 	private->crtc[exynos_crtc->pipe] = NULL;
+ 
++	crtc->primary->funcs->destroy(crtc->primary);
+ 	drm_crtc_cleanup(crtc);
+ 	kfree(exynos_crtc);
+ }
+@@ -304,8 +294,7 @@ static int exynos_drm_crtc_set_property(struct drm_crtc *crtc,
+ 			exynos_drm_crtc_commit(crtc);
+ 			break;
+ 		case CRTC_MODE_BLANK:
+-			exynos_plane_dpms(exynos_crtc->plane,
+-					  DRM_MODE_DPMS_OFF);
++			exynos_plane_dpms(crtc->primary, DRM_MODE_DPMS_OFF);
+ 			break;
+ 		default:
+ 			break;
+@@ -351,8 +340,10 @@ static void exynos_drm_crtc_attach_mode_property(struct drm_crtc *crtc)
+ int exynos_drm_crtc_create(struct exynos_drm_manager *manager)
+ {
+ 	struct exynos_drm_crtc *exynos_crtc;
++	struct drm_plane *plane;
+ 	struct exynos_drm_private *private = manager->drm_dev->dev_private;
+ 	struct drm_crtc *crtc;
++	int ret;
+ 
+ 	exynos_crtc = kzalloc(sizeof(*exynos_crtc), GFP_KERNEL);
+ 	if (!exynos_crtc)
+@@ -364,11 +355,11 @@ int exynos_drm_crtc_create(struct exynos_drm_manager *manager)
+ 	exynos_crtc->dpms = DRM_MODE_DPMS_OFF;
+ 	exynos_crtc->manager = manager;
+ 	exynos_crtc->pipe = manager->pipe;
+-	exynos_crtc->plane = exynos_plane_init(manager->drm_dev,
+-				1 << manager->pipe, true);
+-	if (!exynos_crtc->plane) {
+-		kfree(exynos_crtc);
+-		return -ENOMEM;
++	plane = exynos_plane_init(manager->drm_dev, 1 << manager->pipe,
++				  DRM_PLANE_TYPE_PRIMARY);
++	if (IS_ERR(plane)) {
++		ret = PTR_ERR(plane);
++		goto err_plane;
+ 	}
+ 
+ 	manager->crtc = &exynos_crtc->drm_crtc;
+@@ -376,12 +367,22 @@ int exynos_drm_crtc_create(struct exynos_drm_manager *manager)
+ 
+ 	private->crtc[manager->pipe] = crtc;
+ 
+-	drm_crtc_init(manager->drm_dev, crtc, &exynos_crtc_funcs);
++	ret = drm_crtc_init_with_planes(manager->drm_dev, crtc, plane, NULL,
++					&exynos_crtc_funcs);
++	if (ret < 0)
++		goto err_crtc;
++
+ 	drm_crtc_helper_add(crtc, &exynos_crtc_helper_funcs);
+ 
+ 	exynos_drm_crtc_attach_mode_property(crtc);
+ 
+ 	return 0;
++
++err_crtc:
++	plane->funcs->destroy(plane);
++err_plane:
++	kfree(exynos_crtc);
++	return ret;
+ }
+ 
+ int exynos_drm_crtc_enable_vblank(struct drm_device *dev, int pipe)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 9b00e4e..a439452 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -86,8 +86,9 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
+ 		struct drm_plane *plane;
+ 		unsigned long possible_crtcs = (1 << MAX_CRTC) - 1;
+ 
+-		plane = exynos_plane_init(dev, possible_crtcs, false);
+-		if (!plane)
++		plane = exynos_plane_init(dev, possible_crtcs,
++					  DRM_PLANE_TYPE_OVERLAY);
++		if (IS_ERR(plane))
+ 			goto err_mode_config_cleanup;
+ 	}
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index 8371cbd..15e37a0 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -139,6 +139,8 @@ int exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+ 			overlay->crtc_x, overlay->crtc_y,
+ 			overlay->crtc_width, overlay->crtc_height);
+ 
++	plane->crtc = crtc;
++
+ 	exynos_drm_crtc_plane_mode_set(crtc, overlay);
+ 
+ 	return 0;
+@@ -254,25 +256,26 @@ static void exynos_plane_attach_zpos_property(struct drm_plane *plane)
+ }
+ 
+ struct drm_plane *exynos_plane_init(struct drm_device *dev,
+-				    unsigned long possible_crtcs, bool priv)
++				    unsigned long possible_crtcs,
++				    enum drm_plane_type type)
+ {
+ 	struct exynos_plane *exynos_plane;
+ 	int err;
+ 
+ 	exynos_plane = kzalloc(sizeof(struct exynos_plane), GFP_KERNEL);
+ 	if (!exynos_plane)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+-	err = drm_plane_init(dev, &exynos_plane->base, possible_crtcs,
+-			      &exynos_plane_funcs, formats, ARRAY_SIZE(formats),
+-			      priv);
++	err = drm_universal_plane_init(dev, &exynos_plane->base, possible_crtcs,
++				       &exynos_plane_funcs, formats,
++				       ARRAY_SIZE(formats), type);
+ 	if (err) {
+ 		DRM_ERROR("failed to initialize plane\n");
+ 		kfree(exynos_plane);
+-		return NULL;
++		return ERR_PTR(err);
+ 	}
+ 
+-	if (priv)
++	if (type == DRM_PLANE_TYPE_PRIMARY)
+ 		exynos_plane->overlay.zpos = DEFAULT_ZPOS;
+ 	else
+ 		exynos_plane_attach_zpos_property(&exynos_plane->base);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.h b/drivers/gpu/drm/exynos/exynos_drm_plane.h
+index 84d464c..0d1986b 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.h
+@@ -17,4 +17,5 @@ int exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+ void exynos_plane_commit(struct drm_plane *plane);
+ void exynos_plane_dpms(struct drm_plane *plane, int mode);
+ struct drm_plane *exynos_plane_init(struct drm_device *dev,
+-				    unsigned long possible_crtcs, bool priv);
++				    unsigned long possible_crtcs,
++				    enum drm_plane_type type);
 -- 
-1.9.3
+1.9.1
