@@ -1,207 +1,333 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v4 2/2] usb: host: ohci-exynos: Remove unnecessary usb-phy support
-Date: Thu, 18 Sep 2014 09:55:15 +0530
-Message-ID: <1411014315-17914-1-git-send-email-gautam.vivek@samsung.com>
-References: <001501cfd26f54983d0$%han@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH 2/2] drm/exynos: use drm generic mmap interface
+Date: Thu, 18 Sep 2014 13:56:56 +0900
+Message-ID: <541A6618.1030004@samsung.com>
+References: <1410961726-2533-1-git-send-email-inki.dae@samsung.com>
+ <1410961726-2533-3-git-send-email-inki.dae@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f181.google.com ([209.85.192.181]:46478 "EHLO
-	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751264AbaIREZW (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:37438 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751060AbaIRE46 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Sep 2014 00:25:22 -0400
-In-Reply-To: <001501cfd26f54983d0$%han@samsung.com>
+	Thu, 18 Sep 2014 00:56:58 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NC2009HJZ2WT180@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 18 Sep 2014 13:56:56 +0900 (KST)
+In-reply-to: <1410961726-2533-3-git-send-email-inki.dae@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, kgene.kim@samsung.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
+To: Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org
 
-Now that we have completely moved from older USB-PHY drivers
-to newer GENERIC-PHY drivers for PHYs available with USB controllers
-on Exynos series of SoCs, we can remove the support for the same
-in our host drivers too.
+Hi,
 
-We also defer the probe for our host in case we end up getting
-EPROBE_DEFER error when getting PHYs.
+On 09/17/2014 10:48 PM, Inki Dae wrote:
+> This patch removes DRM_EXYNOS_GEM_MMAP ictrl feature specific
+> to Exynos drm and instead uses drm generic mmap.
+> 
+> We had used the interface specific to Exynos drm to do mmap directly,
+> not to use demand paging which maps each page with physical memory
+> at page fault handler. We don't need the specific mmap interface
+> because the drm generic mmap which uses vm offset manager stuff can
+> also do mmap directly.
+> 
+> This patch makes a userspace region to be mapped with whole physical
+> memory region allocated by userspace request when mmap system call is
+> requested.
+> 
+> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c |   25 ---------
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h |    1 -
+>  drivers/gpu/drm/exynos/exynos_drm_gem.c |   84 ++++++-------------------------
+>  drivers/gpu/drm/exynos/exynos_drm_gem.h |   10 ----
+>  include/uapi/drm/exynos_drm.h           |   22 --------
+>  5 files changed, 14 insertions(+), 128 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> index 10ad3d4..a7819eb 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-Acked-by: Jingoo Han <jg1.han@samsung.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>
----
+Because anymore anon file doesn't use, you can remove to include
+<linux/anon_inodes.h>.
 
-Changes since v3:
- - Addressed review comments by Alan:
-   -- Skipped renaming 'phy_number' variable,
-   -- resorted to just adding minimal change required for phy assignment.
-   -- updated patch description to mention EPROBE_DEFER support.
+> @@ -149,10 +149,6 @@ static int exynos_drm_unload(struct drm_device *dev)
+>  	return 0;
+>  }
+>  
+> -static const struct file_operations exynos_drm_gem_fops = {
+> -	.mmap = exynos_drm_gem_mmap_buffer,
+> -};
+> -
+>  static int exynos_drm_suspend(struct drm_device *dev, pm_message_t state)
+>  {
+>  	struct drm_connector *connector;
+> @@ -191,7 +187,6 @@ static int exynos_drm_resume(struct drm_device *dev)
+>  static int exynos_drm_open(struct drm_device *dev, struct drm_file *file)
+>  {
+>  	struct drm_exynos_file_private *file_priv;
+> -	struct file *anon_filp;
+>  	int ret;
+>  
+>  	file_priv = kzalloc(sizeof(*file_priv), GFP_KERNEL);
+> @@ -204,21 +199,8 @@ static int exynos_drm_open(struct drm_device *dev, struct drm_file *file)
+>  	if (ret)
+>  		goto err_file_priv_free;
+>  
+> -	anon_filp = anon_inode_getfile("exynos_gem", &exynos_drm_gem_fops,
+> -					NULL, 0);
+> -	if (IS_ERR(anon_filp)) {
+> -		ret = PTR_ERR(anon_filp);
+> -		goto err_subdrv_close;
+> -	}
+> -
+> -	anon_filp->f_mode = FMODE_READ | FMODE_WRITE;
+> -	file_priv->anon_filp = anon_filp;
+> -
+>  	return ret;
+>  
+> -err_subdrv_close:
+> -	exynos_drm_subdrv_close(dev, file);
+> -
+>  err_file_priv_free:
+>  	kfree(file_priv);
+>  	file->driver_priv = NULL;
+> @@ -234,7 +216,6 @@ static void exynos_drm_preclose(struct drm_device *dev,
+>  static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+>  {
+>  	struct exynos_drm_private *private = dev->dev_private;
+> -	struct drm_exynos_file_private *file_priv;
+>  	struct drm_pending_vblank_event *v, *vt;
+>  	struct drm_pending_event *e, *et;
+>  	unsigned long flags;
+> @@ -260,10 +241,6 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+>  	}
+>  	spin_unlock_irqrestore(&dev->event_lock, flags);
+>  
+> -	file_priv = file->driver_priv;
+> -	if (file_priv->anon_filp)
+> -		fput(file_priv->anon_filp);
+> -
+>  	kfree(file->driver_priv);
+>  	file->driver_priv = NULL;
+>  }
+> @@ -282,8 +259,6 @@ static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
+>  static const struct drm_ioctl_desc exynos_ioctls[] = {
+>  	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_CREATE, exynos_drm_gem_create_ioctl,
+>  			DRM_UNLOCKED | DRM_AUTH),
+> -	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_MMAP,
+> -			exynos_drm_gem_mmap_ioctl, DRM_UNLOCKED | DRM_AUTH),
+>  	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_GET,
+>  			exynos_drm_gem_get_ioctl, DRM_UNLOCKED),
+>  	DRM_IOCTL_DEF_DRV(EXYNOS_VIDI_CONNECTION,
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> index 69a6fa3..d22e640 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> @@ -240,7 +240,6 @@ struct exynos_drm_g2d_private {
+>  struct drm_exynos_file_private {
+>  	struct exynos_drm_g2d_private	*g2d_priv;
+>  	struct device			*ipp_dev;
+> -	struct file			*anon_filp;
+>  };
+>  
+>  /*
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> index 2f3665d..3cf6494 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+> @@ -318,21 +318,17 @@ void exynos_drm_gem_put_dma_addr(struct drm_device *dev,
+>  	drm_gem_object_unreference_unlocked(obj);
+>  }
+>  
+> -int exynos_drm_gem_mmap_buffer(struct file *filp,
+> +int exynos_drm_gem_mmap_buffer(struct exynos_drm_gem_obj *exynos_gem_obj,
+>  				      struct vm_area_struct *vma)
+>  {
+> -	struct drm_gem_object *obj = filp->private_data;
+> -	struct exynos_drm_gem_obj *exynos_gem_obj = to_exynos_gem_obj(obj);
+> -	struct drm_device *drm_dev = obj->dev;
+> +	struct drm_device *drm_dev = exynos_gem_obj->base.dev;
+>  	struct exynos_drm_gem_buf *buffer;
+>  	unsigned long vm_size;
+>  	int ret;
+>  
+> -	WARN_ON(!mutex_is_locked(&obj->dev->struct_mutex));
+> -
+>  	vma->vm_flags |= VM_IO | VM_DONTEXPAND | VM_DONTDUMP;
 
- drivers/usb/host/ohci-exynos.c |   81 ++++++++++------------------------------
- 1 file changed, 20 insertions(+), 61 deletions(-)
+Above flags already set from drm_gem_mmap.
 
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index 7c48e3f..e8bf4bb 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -19,11 +19,8 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/phy/phy.h>
--#include <linux/usb/phy.h>
--#include <linux/usb/samsung_usb_phy.h>
- #include <linux/usb.h>
- #include <linux/usb/hcd.h>
--#include <linux/usb/otg.h>
- 
- #include "ohci.h"
- 
-@@ -38,9 +35,7 @@ static struct hc_driver __read_mostly exynos_ohci_hc_driver;
- 
- struct exynos_ohci_hcd {
- 	struct clk *clk;
--	struct usb_phy *phy;
--	struct usb_otg *otg;
--	struct phy *phy_g[PHY_NUMBER];
-+	struct phy *phy[PHY_NUMBER];
- };
- 
- static int exynos_ohci_get_phy(struct device *dev,
-@@ -49,15 +44,9 @@ static int exynos_ohci_get_phy(struct device *dev,
- 	struct device_node *child;
- 	struct phy *phy;
- 	int phy_number;
--	int ret = 0;
-+	int ret;
- 
--	/*
--	 * Getting generic phy:
--	 * We are keeping both types of phys as a part of transiting OHCI
--	 * to generic phy framework, so as to maintain backward compatibilty
--	 * with old DTB too.
--	 * We fallback to older USB-PHYs when we fail to get generic PHYs.
--	 */
-+	/* Get PHYs for the controller */
- 	for_each_available_child_of_node(dev->of_node, child) {
- 		ret = of_property_read_u32(child, "reg", &phy_number);
- 		if (ret) {
-@@ -73,31 +62,21 @@ static int exynos_ohci_get_phy(struct device *dev,
- 		}
- 
- 		phy = devm_of_phy_get(dev, child, NULL);
-+		exynos_ohci->phy[phy_number] = phy;
- 		of_node_put(child);
--		if (IS_ERR(phy))
--			/* Lets fallback to older USB-PHYs */
--			goto usb_phy_old;
--		exynos_ohci->phy_g[phy_number] = phy;
--		/* Make the older PHYs unavailable */
--		exynos_ohci->phy = ERR_PTR(-ENXIO);
--	}
--
--	return 0;
--
--usb_phy_old:
--	exynos_ohci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
--	if (IS_ERR(exynos_ohci->phy)) {
--		ret = PTR_ERR(exynos_ohci->phy);
--		if (ret != -ENXIO && ret != -ENODEV) {
--			dev_err(dev, "no usb2 phy configured\n");
--			return ret;
-+		if (IS_ERR(phy)) {
-+			ret = PTR_ERR(phy);
-+			if (ret == -EPROBE_DEFER) {
-+				return ret;
-+			} else if (ret != -ENOSYS && ret != -ENODEV) {
-+				dev_err(dev,
-+					"Error retrieving usb2 phy: %d\n", ret);
-+				return PTR_ERR(phy);
-+			}
- 		}
--		dev_dbg(dev, "Failed to get usb2 phy\n");
--	} else {
--		exynos_ohci->otg = exynos_ohci->phy->otg;
- 	}
- 
--	return ret;
-+	return 0;
- }
- 
- static int exynos_ohci_phy_enable(struct device *dev)
-@@ -107,16 +86,13 @@ static int exynos_ohci_phy_enable(struct device *dev)
- 	int i;
- 	int ret = 0;
- 
--	if (!IS_ERR(exynos_ohci->phy))
--		return usb_phy_init(exynos_ohci->phy);
--
- 	for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
--		if (!IS_ERR(exynos_ohci->phy_g[i]))
--			ret = phy_power_on(exynos_ohci->phy_g[i]);
-+		if (!IS_ERR(exynos_ohci->phy[i]))
-+			ret = phy_power_on(exynos_ohci->phy[i]);
- 	if (ret)
- 		for (i--; i >= 0; i--)
--			if (!IS_ERR(exynos_ohci->phy_g[i]))
--				phy_power_off(exynos_ohci->phy_g[i]);
-+			if (!IS_ERR(exynos_ohci->phy[i]))
-+				phy_power_off(exynos_ohci->phy[i]);
- 
- 	return ret;
- }
-@@ -127,14 +103,9 @@ static void exynos_ohci_phy_disable(struct device *dev)
- 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
- 	int i;
- 
--	if (!IS_ERR(exynos_ohci->phy)) {
--		usb_phy_shutdown(exynos_ohci->phy);
--		return;
--	}
--
- 	for (i = 0; i < PHY_NUMBER; i++)
--		if (!IS_ERR(exynos_ohci->phy_g[i]))
--			phy_power_off(exynos_ohci->phy_g[i]);
-+		if (!IS_ERR(exynos_ohci->phy[i]))
-+			phy_power_off(exynos_ohci->phy[i]);
- }
- 
- static int exynos_ohci_probe(struct platform_device *pdev)
-@@ -206,9 +177,6 @@ skip_phy:
- 		goto fail_io;
- 	}
- 
--	if (exynos_ohci->otg)
--		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
--
- 	platform_set_drvdata(pdev, hcd);
- 
- 	err = exynos_ohci_phy_enable(&pdev->dev);
-@@ -241,9 +209,6 @@ static int exynos_ohci_remove(struct platform_device *pdev)
- 
- 	usb_remove_hcd(hcd);
- 
--	if (exynos_ohci->otg)
--		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
--
- 	exynos_ohci_phy_disable(&pdev->dev);
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
-@@ -272,9 +237,6 @@ static int exynos_ohci_suspend(struct device *dev)
- 	if (rc)
- 		return rc;
- 
--	if (exynos_ohci->otg)
--		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
--
- 	exynos_ohci_phy_disable(dev);
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
-@@ -290,9 +252,6 @@ static int exynos_ohci_resume(struct device *dev)
- 
- 	clk_prepare_enable(exynos_ohci->clk);
- 
--	if (exynos_ohci->otg)
--		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
--
- 	ret = exynos_ohci_phy_enable(dev);
- 	if (ret) {
- 		dev_err(dev, "Failed to enable USB phy\n");
--- 
-1.7.10.4
+Thanks.
+
+> -	vma->vm_private_data = obj;
+> -	vma->vm_ops = drm_dev->driver->gem_vm_ops;
+> +	vma->vm_flags &= ~VM_PFNMAP;
+> +	vma->vm_pgoff = 0;
+>  
+>  	update_vm_cache_attr(exynos_gem_obj, vma);
+>  
+> @@ -356,60 +352,6 @@ int exynos_drm_gem_mmap_buffer(struct file *filp,
+>  		return ret;
+>  	}
+>  
+> -	/*
+> -	 * take a reference to this mapping of the object. And this reference
+> -	 * is unreferenced by the corresponding vm_close call.
+> -	 */
+> -	drm_gem_object_reference(obj);
+> -
+> -	drm_vm_open_locked(drm_dev, vma);
+> -
+> -	return 0;
+> -}
+> -
+> -int exynos_drm_gem_mmap_ioctl(struct drm_device *dev, void *data,
+> -			      struct drm_file *file_priv)
+> -{
+> -	struct drm_exynos_file_private *exynos_file_priv;
+> -	struct drm_exynos_gem_mmap *args = data;
+> -	struct drm_gem_object *obj;
+> -	struct file *anon_filp;
+> -	unsigned long addr;
+> -
+> -	if (!(dev->driver->driver_features & DRIVER_GEM)) {
+> -		DRM_ERROR("does not support GEM.\n");
+> -		return -ENODEV;
+> -	}
+> -
+> -	mutex_lock(&dev->struct_mutex);
+> -
+> -	obj = drm_gem_object_lookup(dev, file_priv, args->handle);
+> -	if (!obj) {
+> -		DRM_ERROR("failed to lookup gem object.\n");
+> -		mutex_unlock(&dev->struct_mutex);
+> -		return -EINVAL;
+> -	}
+> -
+> -	exynos_file_priv = file_priv->driver_priv;
+> -	anon_filp = exynos_file_priv->anon_filp;
+> -	anon_filp->private_data = obj;
+> -
+> -	addr = vm_mmap(anon_filp, 0, args->size, PROT_READ | PROT_WRITE,
+> -			MAP_SHARED, 0);
+> -
+> -	drm_gem_object_unreference(obj);
+> -
+> -	if (IS_ERR_VALUE(addr)) {
+> -		mutex_unlock(&dev->struct_mutex);
+> -		return (int)addr;
+> -	}
+> -
+> -	mutex_unlock(&dev->struct_mutex);
+> -
+> -	args->mapped = addr;
+> -
+> -	DRM_DEBUG_KMS("mapped = 0x%lx\n", (unsigned long)args->mapped);
+> -
+>  	return 0;
+>  }
+>  
+> @@ -693,16 +635,18 @@ int exynos_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+>  	exynos_gem_obj = to_exynos_gem_obj(obj);
+>  
+>  	ret = check_gem_flags(exynos_gem_obj->flags);
+> -	if (ret) {
+> -		drm_gem_vm_close(vma);
+> -		drm_gem_free_mmap_offset(obj);
+> -		return ret;
+> -	}
+> +	if (ret)
+> +		goto err_close_vm;
+>  
+> -	vma->vm_flags &= ~VM_PFNMAP;
+> -	vma->vm_flags |= VM_MIXEDMAP;
+> +	ret = exynos_drm_gem_mmap_buffer(exynos_gem_obj, vma);
+> +	if (ret)
+> +		goto err_close_vm;
+>  
+> -	update_vm_cache_attr(exynos_gem_obj, vma);
+> +	return ret;
+> +
+> +err_close_vm:
+> +	drm_gem_vm_close(vma);
+> +	drm_gem_free_mmap_offset(obj);
+>  
+>  	return ret;
+>  }
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.h b/drivers/gpu/drm/exynos/exynos_drm_gem.h
+> index 8e46094..09d021b 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_gem.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_gem.h
+> @@ -111,16 +111,6 @@ void exynos_drm_gem_put_dma_addr(struct drm_device *dev,
+>  					unsigned int gem_handle,
+>  					struct drm_file *filp);
+>  
+> -/*
+> - * mmap the physically continuous memory that a gem object contains
+> - * to user space.
+> - */
+> -int exynos_drm_gem_mmap_ioctl(struct drm_device *dev, void *data,
+> -			      struct drm_file *file_priv);
+> -
+> -int exynos_drm_gem_mmap_buffer(struct file *filp,
+> -				      struct vm_area_struct *vma);
+> -
+>  /* map user space allocated by malloc to pages. */
+>  int exynos_drm_gem_userptr_ioctl(struct drm_device *dev, void *data,
+>  				      struct drm_file *file_priv);
+> diff --git a/include/uapi/drm/exynos_drm.h b/include/uapi/drm/exynos_drm.h
+> index 67a751c..5575ed1 100644
+> --- a/include/uapi/drm/exynos_drm.h
+> +++ b/include/uapi/drm/exynos_drm.h
+> @@ -33,24 +33,6 @@ struct drm_exynos_gem_create {
+>  };
+>  
+>  /**
+> - * A structure for mapping buffer.
+> - *
+> - * @handle: a handle to gem object created.
+> - * @pad: just padding to be 64-bit aligned.
+> - * @size: memory size to be mapped.
+> - * @mapped: having user virtual address mmaped.
+> - *	- this variable would be filled by exynos gem module
+> - *	of kernel side with user virtual address which is allocated
+> - *	by do_mmap().
+> - */
+> -struct drm_exynos_gem_mmap {
+> -	unsigned int handle;
+> -	unsigned int pad;
+> -	uint64_t size;
+> -	uint64_t mapped;
+> -};
+> -
+> -/**
+>   * A structure to gem information.
+>   *
+>   * @handle: a handle to gem object created.
+> @@ -302,7 +284,6 @@ struct drm_exynos_ipp_cmd_ctrl {
+>  };
+>  
+>  #define DRM_EXYNOS_GEM_CREATE		0x00
+> -#define DRM_EXYNOS_GEM_MMAP		0x02
+>  /* Reserved 0x03 ~ 0x05 for exynos specific gem ioctl */
+>  #define DRM_EXYNOS_GEM_GET		0x04
+>  #define DRM_EXYNOS_VIDI_CONNECTION	0x07
+> @@ -321,9 +302,6 @@ struct drm_exynos_ipp_cmd_ctrl {
+>  #define DRM_IOCTL_EXYNOS_GEM_CREATE		DRM_IOWR(DRM_COMMAND_BASE + \
+>  		DRM_EXYNOS_GEM_CREATE, struct drm_exynos_gem_create)
+>  
+> -#define DRM_IOCTL_EXYNOS_GEM_MMAP	DRM_IOWR(DRM_COMMAND_BASE + \
+> -		DRM_EXYNOS_GEM_MMAP, struct drm_exynos_gem_mmap)
+> -
+>  #define DRM_IOCTL_EXYNOS_GEM_GET	DRM_IOWR(DRM_COMMAND_BASE + \
+>  		DRM_EXYNOS_GEM_GET,	struct drm_exynos_gem_info)
+>  
+> 
