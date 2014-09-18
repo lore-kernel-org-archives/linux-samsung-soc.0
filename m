@@ -1,52 +1,38 @@
-From: Paul Bolle <pebolle@tiscali.nl>
-Subject: Re: [PATCH] ASoC: samsung: Remove goni or aquila with the WM8994
-Date: Thu, 18 Sep 2014 23:57:07 +0200
-Message-ID: <1411077427.2012.6.camel@x41>
-References: <1404496099-26708-1-git-send-email-t.figa@samsung.com>
-	 <53C675E4.4020502@samsung.com> <1409825105.5546.91.camel@x220>
-	 <201409041802.36466.arnd@arndb.de> <1411033409.2017.15.camel@x220>
-	 <20140918175752.GC7960@sirena.org.uk>
+From: Daniel Drake <drake@endlessm.com>
+Subject: Re: [PATCH] ARM: dts: Specify default clocks for Exynos4 FIMC devices
+Date: Thu, 18 Sep 2014 17:53:40 -0600
+Message-ID: <CAD8Lp44n3xArQ-xvZsFdYn13x80Dqv1oCY=dLm1UPxKr8XbyJQ@mail.gmail.com>
+References: <1410367054-30926-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cpsmtpb-ews06.kpnxchange.com ([213.75.39.9]:59235 "EHLO
-	cpsmtpb-ews06.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755159AbaIRV5J (ORCPT
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:35265 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750895AbaIRXxl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Sep 2014 17:57:09 -0400
-In-Reply-To: <20140918175752.GC7960@sirena.org.uk>
+	Thu, 18 Sep 2014 19:53:41 -0400
+Received: by mail-wi0-f171.google.com with SMTP id d1so1078054wiv.16
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Sep 2014 16:53:40 -0700 (PDT)
+In-Reply-To: <1410367054-30926-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi Mark,
+On Wed, Sep 10, 2014 at 10:37 AM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> The default mux and divider clocks are specified in device tree
+> so that the FIMC devices in Exynos4210 and Exynos4x12 SoCs are
+> clocked from recommended clock source and with maximum supported
+> frequency. If needed these settings could be overrode in board
+> specific dts files, however they are in practice optimal in most
+> cases.
 
-Mark Brown schreef op do 18-09-2014 om 10:57 [-0700]:
-> On Thu, Sep 18, 2014 at 11:43:29AM +0200, Paul Bolle wrote:
-> > On Thu, 2014-09-04 at 18:02 +0200, Arnd Bergmann wrote:
-> 
-> > > I think it would be nice if you could submit a patch to remove the
-> > > drivers from ASoC, then we can see if anybody complains.
-> 
-> > Same thing for v3.17-rc5 and next-20140918. Let's see if we can remove
-> > the goni or aquila with wm8994 driver.
-> > 
-> > Done on top of next-20140918. Untested.
-> > --------->8---------
-> > From: Paul Bolle <pebolle@tiscali.nl>
-> 
-> Please follow the patch submission process in SubmittingPatches.
+Another consideration for this patch.
 
-Could you please be more specific? What part of SubmittingPatches have I
-skipped?
+fimc-core.c already has probe-time code that tries to set the clock
+frequency, using a clock-frequency property in the DT, and falling
+back to a hardcoded value in the driver. Maybe it is best to just set
+the clock rate from one place.
 
-Is it the perhaps the use of scissors? Or the superfluous From: line?
-"git am -c" appears to handle this message (and the very similar message
-I also sent today) just fine.
-
-Thanks,
-
-
-Paul Bolle
+Daniel
