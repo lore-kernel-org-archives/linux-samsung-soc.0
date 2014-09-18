@@ -1,206 +1,52 @@
-From: "Li.Xiubo@freescale.com" <Li.Xiubo@freescale.com>
-Subject: RE: [PATCH v3] mfd: syscon: Decouple syscon interface from platform
- devices
-Date: Thu, 18 Sep 2014 06:33:24 +0000
-Message-ID: <c93278a6da2b40649089426026a857f7@BY2PR0301MB0613.namprd03.prod.outlook.com>
-References: <1410935510-1567-1-git-send-email-pankaj.dubey@samsung.com>
- <20140917085818.GA10285@shlinux1.ap.freescale.net>
- <000401cfd269$922dfc40$b689f4c0$@samsung.com>
- <20140918030552.GA26661@shlinux1.ap.freescale.net>
- <000701cfd306$4d3e8080$e7bb8180$@samsung.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH] drm/exynos: fix plane-framebuffer linkage
+Date: Thu, 18 Sep 2014 08:39:46 +0200
+Message-ID: <CAKMK7uFGyYfwTx7+Xt2ng74QD+jUwA-tv-aW+jLsLMtk2uw3_g@mail.gmail.com>
+References: <1410807137-8323-1-git-send-email-drake@endlessm.com>
+	<20140916063501.GT4740@phenom.ffwll.local>
+	<54192BB1.8060606@samsung.com>
+	<54192EF0.5000705@samsung.com>
+	<54193BCD.3090003@samsung.com>
+	<CAD8Lp47-ho47WF-te15NZ=JHTd-zt1JxPXwQsTh_Ta_G89zrTA@mail.gmail.com>
+	<CAKMK7uFuo_Sq8cjaiTopSmex6c4hMcAFrD7Ya+R059v=ThurXA@mail.gmail.com>
+	<CAD8Lp458rPEAtDdZDs5KtcbP_kRUF6nTKZhk4S+q5m_41BUagA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <000701cfd306$4d3e8080$e7bb8180$@samsung.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, "Aisheng.Dong@freescale.com" <Aisheng.Dong@freescale.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "arnd@arndb.de" <arnd@arndb.de>, "naushad@samsung.com" <naushad@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, "joshi@samsung.com" <joshi@samsung.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, "vikas.sajjan@samsung.com" <vikas.sajjan@samsung.com>, "chow.kim@samsung.com" <chow.kim@samsung.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>, 'Boris BREZILLON' <boris.brezillon@free-electrons.com>, 'Geert Uytterhoeven' <geert+renesas@glider.be>, 'Stephen Warren' <swarren@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f172.google.com ([209.85.223.172]:46764 "EHLO
+	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751149AbaIRGjq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 18 Sep 2014 02:39:46 -0400
+Received: by mail-ie0-f172.google.com with SMTP id rd18so566477iec.17
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Sep 2014 23:39:46 -0700 (PDT)
+In-Reply-To: <CAD8Lp458rPEAtDdZDs5KtcbP_kRUF6nTKZhk4S+q5m_41BUagA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Drake <drake@endlessm.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 
-Hi Pankaj,
+On Wed, Sep 17, 2014 at 6:41 PM, Daniel Drake <drake@endlessm.com> wrote:
+> 2. drm_mode_rmfb then calls drm_framebuffer_remove, which calls
+> drm_mode_set_config_internal() in order to turn off the CRTC, dropping
+> another reference in the process.
+>         if (tmp->old_fb)
+>             drm_framebuffer_unreference(tmp->old_fb);
+>
+> 3. drm_framebuffer_remove calls drm_plane_force_disable() which drops
+> another reference:
+>     /* disconnect the plane from the fb and crtc: */
+>     __drm_framebuffer_unreference(old_fb);
 
-One more question:
-For example:
+If 3. here is about the primary plane then this won't happen, since
+the primary plane pointer&reference has already been cleared in step
+2.
 
-regmap_read()
-    ----> _regmap_read()
-        ----> 2112 #ifdef LOG_DEVICE
-        ----> 2113                 if (strcmp(dev_name(map->dev), LOG_DEVICE) == 0)
-        ----> 2114                         dev_info(map->dev, "%x => %x\n", reg, *val);
-        ----> 2115 #endif 
-
-In dev_name(map->dev) will also encounter the same crash core trace like in
-regmap_get_val_endian(dev, ...).
-
-Could there be another method, such as using 'dummy dev' instead of 'NULL dev' ?
-Just one suggestion.
-
-
-BRs
-Xiubo
-
-
-> -----Original Message-----
-> From: Pankaj Dubey [mailto:pankaj.dubey@samsung.com]
-> Sent: Thursday, September 18, 2014 2:03 PM
-> To: Dong Aisheng-B29396
-> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
-> linux-kernel@vger.kernel.org; kgene.kim@samsung.com; linux@arm.linux.org.uk;
-> arnd@arndb.de; naushad@samsung.com; tomasz.figa@gmail.com; joshi@samsung.com;
-> thomas.ab@samsung.com; vikas.sajjan@samsung.com; chow.kim@samsung.com;
-> lee.jones@linaro.org; 'Boris BREZILLON'; Xiubo Li-B47053; 'Geert Uytterhoeven';
-> 'Stephen Warren'
-> Subject: RE: [PATCH v3] mfd: syscon: Decouple syscon interface from platform
-> devices
-> 
-> Hi,
-> 
-> Adding CC to Xiubo Li, Geert Uytterhoeven and Stephen Warren.
-> 
-> On Thursday, September 18, 2014, Dong Aisheng wrote,
-> > On Wed, Sep 17, 2014 at 04:50:50PM +0530, Pankaj Dubey wrote:
-> > > Hi,
-> > >
-> > > On Wednesday, September 17, 2014, Dong Aisheng Wrote,
-> > > > >
-> > > > > +	regmap = regmap_init_mmio(NULL, base,
-> &syscon_regmap_config);
-> > > >
-> > > > Does a NULL device pointer work?
-> > >
-> > > Yes, it is safe, at least we are able to test on Exynos based SoC.
-> > > I have tested it with kgene/for-next kernel on Exynos3250.
-> > > Also it has been tested on Exynos5250 based Snow board with 3.17-rc5
-> > > based kernel by Vivek Gautam.
-> > >
-> > > Patch V2 also has been tested by "Borris Brezillon" on AT91 platform.
-> > >
-> > >
-> >
-> > The kernel i tested was next-20140915 of linux-next.
-> >
-> > please see regmap_get_val_endian called in regmap_init function.
-> > static enum regmap_endian regmap_get_val_endian(struct device *dev,
-> >                                         const struct regmap_bus *bus,
-> >                                         const struct regmap_config
-> *config) {
-> >         struct device_node *np = dev->of_node;
-> >         enum regmap_endian endian;
-> > ...
-> > }
-> > It will crash at the first line of dev->of_node if dev is NULL.
-> >
-> > Can you check if you're using the same code as mine?
-> 
-> No, it's not same.
-> My bad that I was not using linux-next for testing this patch.
-> We tested on kgene/for-next where these changes still have not come.
-> Just now I checked linux-next and found that it will crash at first line of
-> "regmap_get_val_endian" as there is no check for NULL on dev.
-> 
-> I checked git history of regmap.c file and found recently this file has been
-> modified
-> for adding DT endianness binding support. Following are set of patches gone
-> for this
-> 
-> cf673fb regmap: Split regmap_get_endian() in two functions
-> 5844a8b regmap: Fix handling of volatile registers for format_write() chips
-> 45e1a27 regmap: of_regmap_get_endian() cleanup
-> ba1b53f regmap: Fix DT endianess parsing logic
-> d647c19 regmap: add DT endianness binding support.
-> 
-> I think there should have been a check for NULL on "dev" in
-> "regmap_get_val_endian", so that if dev pointer exist then only it makes
-> sense to get
-> endianness property from DT.
-> 
-> I will suggest following fix in regmap.c for this. With following fix I
-> tested it and it works well
-> on linux-next also. So if you can confirm following fix is working for you
-> then I can post this
-> patch.
-> 
-> --------------------------------------------
-> Subject: [PATCH] regmap: fix NULL pointer dereference in
->  regmap_get_val_endian
-> 
-> Recent commits for getting reg endianess causing NULL pointer
-> dereference if dev is passed NULL in regmap_init_mmio. This patch
-> fixes this issue, and allows to parse reg endianess only if dev
-> and dev->of_node exist.
-> 
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
->  drivers/base/regmap/regmap.c |   23 ++++++++++++++---------
->  1 file changed, 14 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
-> index f2281af..455a877 100644
-> --- a/drivers/base/regmap/regmap.c
-> +++ b/drivers/base/regmap/regmap.c
-> @@ -477,7 +477,7 @@ static enum regmap_endian regmap_get_val_endian(struct
-> device *dev,
->  					const struct regmap_bus *bus,
->  					const struct regmap_config *config)
->  {
-> -	struct device_node *np = dev->of_node;
-> +	struct device_node *np;
->  	enum regmap_endian endian;
-> 
->  	/* Retrieve the endianness specification from the regmap config */
-> @@ -487,15 +487,20 @@ static enum regmap_endian regmap_get_val_endian(struct
-> device *dev,
->  	if (endian != REGMAP_ENDIAN_DEFAULT)
->  		return endian;
-> 
-> -	/* Parse the device's DT node for an endianness specification */
-> -	if (of_property_read_bool(np, "big-endian"))
-> -		endian = REGMAP_ENDIAN_BIG;
-> -	else if (of_property_read_bool(np, "little-endian"))
-> -		endian = REGMAP_ENDIAN_LITTLE;
-> +	/* If the dev and dev->of_node exist try to get endianness from DT
-> */
-> +	if (dev && dev->of_node) {
-> +		np = dev->of_node;
-> 
-> -	/* If the endianness was specified in DT, use that */
-> -	if (endian != REGMAP_ENDIAN_DEFAULT)
-> -		return endian;
-> +		/* Parse the device's DT node for an endianness
-> specification */
-> +		if (of_property_read_bool(np, "big-endian"))
-> +			endian = REGMAP_ENDIAN_BIG;
-> +		else if (of_property_read_bool(np, "little-endian"))
-> +			endian = REGMAP_ENDIAN_LITTLE;
-> +
-> +		/* If the endianness was specified in DT, use that */
-> +		if (endian != REGMAP_ENDIAN_DEFAULT)
-> +			return endian;
-> +	}
-> 
->  	/* Retrieve the endianness specification from the bus config */
->  	if (bus && bus->val_format_endian_default)
-> --
-> 
-> Thanks,
-> Pankaj Dubey
-> 
-> > Regards
-> > Dong Aisheng
-> >
-> > >
-> > > Thanks,
-> > > Pankaj Dubey
-> > >
-> > > > Regards
-> > > > Dong Aisheng
-> > > >
-> > > > >
-> > > > >
-> > > > > _______________________________________________
-> > > > > linux-arm-kernel mailing list
-> > > > > linux-arm-kernel@lists.infradead.org
-> > > > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> > >
+And even if their would be a bug in here, you _certainly_ should not
+try to paper over this in your driver, but instead fix up the
+refcounting done in the drm core.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
