@@ -1,112 +1,241 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
- ps8622 DT properties
-Date: Thu, 18 Sep 2014 11:20:40 +0530
-Message-ID: <CAEC9eQO2rfmVEKTCUJk+SpfdeUr81gN3stYV3wE6yR3E=-zonA@mail.gmail.com>
-References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
- <5419760A.7020908@ti.com>
- <CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com>
- <5419B52D.4060107@ti.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH v3 1/3] phy: exynos-dp-video: Use syscon support to control
+ pmu register
+Date: Thu, 18 Sep 2014 11:21:33 +0530
+Message-ID: <541A72E5.4000809@ti.com>
+References: <1410840408-19954-1-git-send-email-gautam.vivek@samsung.com>	<1410843726-4235-1-git-send-email-gautam.vivek@samsung.com>	<5419BCC9.6000607@ti.com> <CAFp+6iGNNygVrpQFaEao+aGAad=vgb6EDpJqRj8cA+5XSC8ZSg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <5419B52D.4060107@ti.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:59694 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757624AbaIRFvn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 18 Sep 2014 01:51:43 -0400
+In-Reply-To: <CAFp+6iGNNygVrpQFaEao+aGAad=vgb6EDpJqRj8cA+5XSC8ZSg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, inki.dae@samsung.com, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, ajaykumar.rs@samsung.com
 
-Hi Tomi,
 
-On Wed, Sep 17, 2014 at 9:52 PM, Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
-> On 17/09/14 17:29, Ajay kumar wrote:
->> Hi Tomi,
+
+On Thursday 18 September 2014 08:55 AM, Vivek Gautam wrote:
+> Hi Kishon,
+> 
+> 
+> On Wed, Sep 17, 2014 at 10:24 PM, Kishon Vijay Abraham I <kishon@ti.com> wrote:
 >>
->> Thanks for your comments.
 >>
->> On Wed, Sep 17, 2014 at 5:22 PM, Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
->>> On 27/08/14 17:39, Ajay Kumar wrote:
->>>> Add documentation for DT properties supported by ps8622/ps8625
->>>> eDP-LVDS converter.
->>>>
->>>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
->>>> ---
->>>>  .../devicetree/bindings/video/bridge/ps8622.txt    |   20 ++++++++++++++++++++
->>>>  1 file changed, 20 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/video/bridge/ps8622.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/video/bridge/ps8622.txt b/Documentation/devicetree/bindings/video/bridge/ps8622.txt
->>>> new file mode 100644
->>>> index 0000000..0ec8172
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/video/bridge/ps8622.txt
->>>> @@ -0,0 +1,20 @@
->>>> +ps8622-bridge bindings
->>>> +
->>>> +Required properties:
->>>> +     - compatible: "parade,ps8622" or "parade,ps8625"
->>>> +     - reg: first i2c address of the bridge
->>>> +     - sleep-gpios: OF device-tree gpio specification for PD_ pin.
->>>> +     - reset-gpios: OF device-tree gpio specification for RST_ pin.
->>>> +
->>>> +Optional properties:
->>>> +     - lane-count: number of DP lanes to use
->>>> +     - use-external-pwm: backlight will be controlled by an external PWM
+>> On Tuesday 16 September 2014 10:32 AM, Vivek Gautam wrote:
+>>> Currently the DP_PHY_ENABLE register is mapped in the driver,
+>>> and accessed to control power to the PHY.
+>>> With mfd-syscon and regmap interface available at our disposal,
+>>> it's wise to use that instead of using a 'reg' property for the
+>>> controller and allocating a memory resource for that.
 >>>
->>> What does this mean? That the backlight support from ps8625 is not used?
->>> If so, maybe "disable-pwm" or something?
->> "use-external-pwm" or "disable-bridge-pwm" would be better.
->
-> Well, the properties are about the bridge. "use-external-pwm" means that
-> the bridge uses an external PWM, which, if I understood correctly, is
-> not what the property is about.
->
-> "disable-bridge-pwm" is ok, but the "bridge" there is extra. The
-> properties are about the bridge, so it's implicit.
-Ok. I will use "disable-pwm".
-
->>>> +
->>>> +Example:
->>>> +     lvds-bridge@48 {
->>>> +             compatible = "parade,ps8622";
->>>> +             reg = <0x48>;
->>>> +             sleep-gpios = <&gpc3 6 1 0 0>;
->>>> +             reset-gpios = <&gpc3 1 1 0 0>;
->>>> +             lane-count = <1>;
->>>> +     };
->>>>
+>>> To facilitate this, we have added another compatible string
+>>> for Exynso5420 SoC to acquire driver data which contains
+>>> different DP-PHY-CONTROL register offset.
 >>>
->>> I wish all new display component bindings would use the video
->>> ports/endpoints to describe the connections. It will be very difficult
->>> to improve the display driver model later if we're missing such critical
->>> pieces from the DT bindings.
->> Why do we need a complex graph when it can be handled using a simple phandle?
->
-> Maybe in your case you can handle it with simple phandle. Can you
-> guarantee that it's enough for everyone, on all platforms?
-Yes, as of now exynos5420-peach-pit and exynos5250-spring boards use
-this. In case of both, the phandle to bridge node is passed to the
-exynos_dp node.
+>>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>>> Cc: Jingoo Han <jg1.han@samsung.com>
+>>> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+>>
+>> Taking this in linux-phy tree. If someone has already taken this patch, please
+>> let me know.
+> 
+> Thanks for taking this. But just one check, i think i need to separate
+> out the Documentation
+> to a separate patch even before this driver patch. Isn't it ?
 
-> The point of the ports/endpoint graph is to also support more
-> complicated scenarios. If you now create ps8622 bindings that do not
-> support those graphs, the no one else using ps8622 can use
-> ports/endpoint graphs either.
->
-> Btw, is there an example how the bridge with these bindings is used in a
-> board's .dts file? I couldn't find any example with a quick search. So
-> it's unclear to me what the "simple phandle" actually is.
-Please refer to the following link:
-https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/tree/arch/arm/boot/dts/exynos5420-peach-pit.dts?id=samsung-dt#n129
-Let me know if you still think we would need to describe it as a complex graph!
+no.. that's alright.
 
-Ajay
+Thanks
+Kishon
+> 
+>>
+>> Thanks
+>> Kishon
+>>
+>>> ---
+>>>
+>>> Changes since v2:
+>>>  - Using 'EXYNOS5_PHY_ENABLE' macro instead of 'EXYNOS_DPTX_PHY_ENABLE'
+>>>    since that's available with us in "linux/mfd/syscon/exynos5-pmu.h" file.
+>>>
+>>> Changes since v1:
+>>>  - state->regs should have been "struct regmap *" instead of
+>>>    "void __iomem *". So corrected the same.
+>>>
+>>>  .../devicetree/bindings/phy/samsung-phy.txt        |    7 +-
+>>>  drivers/phy/phy-exynos-dp-video.c                  |   79 +++++++++++++-------
+>>>  2 files changed, 59 insertions(+), 27 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/phy/samsung-phy.txt b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>> index 7a6feea..15e0f2c 100644
+>>> --- a/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>> +++ b/Documentation/devicetree/bindings/phy/samsung-phy.txt
+>>> @@ -17,8 +17,11 @@ Samsung EXYNOS SoC series Display Port PHY
+>>>  -------------------------------------------------
+>>>
+>>>  Required properties:
+>>> -- compatible : should be "samsung,exynos5250-dp-video-phy";
+>>> -- reg : offset and length of the Display Port PHY register set;
+>>> +- compatible : should be one of the following supported values:
+>>> +      - "samsung,exynos5250-dp-video-phy"
+>>> +      - "samsung,exynos5420-dp-video-phy"
+>>> +- samsung,pmu-syscon: phandle for PMU system controller interface, used to
+>>> +                   control pmu registers for power isolation.
+>>>  - #phy-cells : from the generic PHY bindings, must be 0;
+>>>
+>>>  Samsung S5P/EXYNOS SoC series USB PHY
+>>> diff --git a/drivers/phy/phy-exynos-dp-video.c b/drivers/phy/phy-exynos-dp-video.c
+>>> index 8b3026e..53f44a0 100644
+>>> --- a/drivers/phy/phy-exynos-dp-video.c
+>>> +++ b/drivers/phy/phy-exynos-dp-video.c
+>>> @@ -13,44 +13,55 @@
+>>>  #include <linux/io.h>
+>>>  #include <linux/kernel.h>
+>>>  #include <linux/module.h>
+>>> +#include <linux/mfd/syscon.h>
+>>> +#include <linux/mfd/syscon/exynos5-pmu.h>
+>>>  #include <linux/of.h>
+>>>  #include <linux/of_address.h>
+>>>  #include <linux/phy/phy.h>
+>>>  #include <linux/platform_device.h>
+>>> +#include <linux/regmap.h>
+>>>
+>>> -/* DPTX_PHY_CONTROL register */
+>>> -#define EXYNOS_DPTX_PHY_ENABLE               (1 << 0)
+>>> +struct exynos_dp_video_phy_drvdata {
+>>> +     u32 phy_ctrl_offset;
+>>> +};
+>>>
+>>>  struct exynos_dp_video_phy {
+>>> -     void __iomem *regs;
+>>> +     struct regmap *regs;
+>>> +     const struct exynos_dp_video_phy_drvdata *drvdata;
+>>>  };
+>>>
+>>> -static int __set_phy_state(struct exynos_dp_video_phy *state, unsigned int on)
+>>> +static void exynos_dp_video_phy_pwr_isol(struct exynos_dp_video_phy *state,
+>>> +                                                     unsigned int on)
+>>>  {
+>>> -     u32 reg;
+>>> +     unsigned int val;
+>>> +
+>>> +     if (IS_ERR(state->regs))
+>>> +             return;
+>>>
+>>> -     reg = readl(state->regs);
+>>> -     if (on)
+>>> -             reg |= EXYNOS_DPTX_PHY_ENABLE;
+>>> -     else
+>>> -             reg &= ~EXYNOS_DPTX_PHY_ENABLE;
+>>> -     writel(reg, state->regs);
+>>> +     val = on ? 0 : EXYNOS5_PHY_ENABLE;
+>>>
+>>> -     return 0;
+>>> +     regmap_update_bits(state->regs, state->drvdata->phy_ctrl_offset,
+>>> +                        EXYNOS5_PHY_ENABLE, val);
+>>>  }
+>>>
+>>>  static int exynos_dp_video_phy_power_on(struct phy *phy)
+>>>  {
+>>>       struct exynos_dp_video_phy *state = phy_get_drvdata(phy);
+>>>
+>>> -     return __set_phy_state(state, 1);
+>>> +     /* Disable power isolation on DP-PHY */
+>>> +     exynos_dp_video_phy_pwr_isol(state, 0);
+>>> +
+>>> +     return 0;
+>>>  }
+>>>
+>>>  static int exynos_dp_video_phy_power_off(struct phy *phy)
+>>>  {
+>>>       struct exynos_dp_video_phy *state = phy_get_drvdata(phy);
+>>>
+>>> -     return __set_phy_state(state, 0);
+>>> +     /* Enable power isolation on DP-PHY */
+>>> +     exynos_dp_video_phy_pwr_isol(state, 1);
+>>> +
+>>> +     return 0;
+>>>  }
+>>>
+>>>  static struct phy_ops exynos_dp_video_phy_ops = {
+>>> @@ -59,11 +70,31 @@ static struct phy_ops exynos_dp_video_phy_ops = {
+>>>       .owner          = THIS_MODULE,
+>>>  };
+>>>
+>>> +static const struct exynos_dp_video_phy_drvdata exynos5250_dp_video_phy = {
+>>> +     .phy_ctrl_offset        = EXYNOS5_DPTX_PHY_CONTROL,
+>>> +};
+>>> +
+>>> +static const struct exynos_dp_video_phy_drvdata exynos5420_dp_video_phy = {
+>>> +     .phy_ctrl_offset        = EXYNOS5420_DPTX_PHY_CONTROL,
+>>> +};
+>>> +
+>>> +static const struct of_device_id exynos_dp_video_phy_of_match[] = {
+>>> +     {
+>>> +             .compatible = "samsung,exynos5250-dp-video-phy",
+>>> +             .data = &exynos5250_dp_video_phy,
+>>> +     }, {
+>>> +             .compatible = "samsung,exynos5420-dp-video-phy",
+>>> +             .data = &exynos5420_dp_video_phy,
+>>> +     },
+>>> +     { },
+>>> +};
+>>> +MODULE_DEVICE_TABLE(of, exynos_dp_video_phy_of_match);
+>>> +
+>>>  static int exynos_dp_video_phy_probe(struct platform_device *pdev)
+>>>  {
+>>>       struct exynos_dp_video_phy *state;
+>>>       struct device *dev = &pdev->dev;
+>>> -     struct resource *res;
+>>> +     const struct of_device_id *match;
+>>>       struct phy_provider *phy_provider;
+>>>       struct phy *phy;
+>>>
+>>> @@ -71,11 +102,15 @@ static int exynos_dp_video_phy_probe(struct platform_device *pdev)
+>>>       if (!state)
+>>>               return -ENOMEM;
+>>>
+>>> -     res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>> -
+>>> -     state->regs = devm_ioremap_resource(dev, res);
+>>> -     if (IS_ERR(state->regs))
+>>> +     state->regs = syscon_regmap_lookup_by_phandle(dev->of_node,
+>>> +                                                   "samsung,pmu-syscon");
+>>> +     if (IS_ERR(state->regs)) {
+>>> +             dev_err(dev, "Failed to lookup PMU regmap\n");
+>>>               return PTR_ERR(state->regs);
+>>> +     }
+>>> +
+>>> +     match = of_match_node(exynos_dp_video_phy_of_match, dev->of_node);
+>>> +     state->drvdata = match->data;
+>>>
+>>>       phy = devm_phy_create(dev, NULL, &exynos_dp_video_phy_ops, NULL);
+>>>       if (IS_ERR(phy)) {
+>>> @@ -89,12 +124,6 @@ static int exynos_dp_video_phy_probe(struct platform_device *pdev)
+>>>       return PTR_ERR_OR_ZERO(phy_provider);
+>>>  }
+>>>
+>>> -static const struct of_device_id exynos_dp_video_phy_of_match[] = {
+>>> -     { .compatible = "samsung,exynos5250-dp-video-phy" },
+>>> -     { },
+>>> -};
+>>> -MODULE_DEVICE_TABLE(of, exynos_dp_video_phy_of_match);
+>>> -
+>>>  static struct platform_driver exynos_dp_video_phy_driver = {
+>>>       .probe  = exynos_dp_video_phy_probe,
+>>>       .driver = {
+>>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> 
