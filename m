@@ -1,61 +1,46 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH V6 0/8] drm/exynos: few patches to enhance bridge chip support
-Date: Thu, 18 Sep 2014 12:54:02 +0300
-Message-ID: <3187222.N10z9QsVIV@avalon>
-References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com> <2405684.4GKZfmgcCP@avalon> <CAEC9eQOKYSVi+CG__wzo3bwMZTBc+y10WZuYnoz7A5=RJV2D2Q@mail.gmail.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: ASoC: samsung: MACH_SMDKC100
+Date: Thu, 18 Sep 2014 11:55:22 +0200
+Message-ID: <1411034122.2017.18.camel@x220>
+References: <1404288063.12021.13.camel@x220> <1405673749.2155.5.camel@x220>
+	 <53C96F67.7010108@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:40286 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754935AbaIRJx5 (ORCPT
+Received: from cpsmtpb-ews06.kpnxchange.com ([213.75.39.9]:51754 "EHLO
+	cpsmtpb-ews06.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756545AbaIRJzY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Sep 2014 05:53:57 -0400
-In-Reply-To: <CAEC9eQOKYSVi+CG__wzo3bwMZTBc+y10WZuYnoz7A5=RJV2D2Q@mail.gmail.com>
+	Thu, 18 Sep 2014 05:55:24 -0400
+In-Reply-To: <53C96F67.7010108@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Thierry Reding <thierry.reding@gmail.com>, Doug Anderson <dianders@chromium.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Prashanth G <prashanth.g@samsung.com>, Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Jason Cooper <jason@lakedaemon.net>, Ben Dooks <ben-linux@fluff.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 
-Hi Ajay,
+Hi Kukjin,
 
-On Wednesday 17 September 2014 15:43:04 Ajay kumar wrote:
-> Hi Laurent,
+On Sat, 2014-07-19 at 04:03 +0900, Kukjin Kim wrote:
+> On 07/18/14 17:55, Paul Bolle wrote:
+> > On Wed, 2014-07-02 at 10:01 +0200, Paul Bolle wrote:
+> >> Your commit 52ad6582ceb2 ("ARM: S5PC100: no more support S5PC100 SoC"
+> >> landed in next-20140702. It removed the Kconfig symbol MACH_SMDKC100
+> >> (and a lot of other stuff).
+> >>
+> >> Is the trivial patch to also remove the last two references to
+> >> MACH_SMDKC100 from sound/soc/samsung/Kconfig/ queued somewhere? I don't
+> >> think it was part of the series that included the above commit.
+> >
+> > Have you had time to look at this? Those last two references to
+> > MACH_SMDKC100 can still be seen in next-20140718.
+> >
+> Yeah you're right. The MACH_SMDKC100 is no more required...
 > 
-> Please find the latest series here:
-> http://www.spinics.net/lists/dri-devel/msg66740.html
+> I submitted its fixup to Mark and I think he will take it for v3.17.
 
-Thank you. My comment was meant to be general though, not just for your patch 
-series.
+What ever happened to that fixup? There are still (pointless) references
+to MACH_SMDKC100 in v3.17-rc5 and in next-20140918.
 
-> On Wed, Sep 17, 2014 at 3:23 PM, Laurent Pinchart wrote:
-> > On Wednesday 30 July 2014 11:40:54 Thierry Reding wrote:
 
-[snip]
-
-> >> One other thing: how does the bridge know which mode to drive? I suspect
-> >> that it can drive more than one mode? Can it freely be configured or
-> >> does it have a predefined set of modes? If the latter, then according to
-> >> what you said above there needs to be a way to configure the bridge (via
-> >> DT?) so that it reports the mode matching the panel. I wonder if that
-> >> should be handled completely in code, so that for example a bridge has a
-> >> panel attached it can use the panel's .get_modes() and select a matching
-> >> mode among the set that it supports.
-> > 
-> > Yes, pretty please :-) I don't think it would be a good idea to duplicate
-> > mode information in the bridge DT node, as that's not a property of the
-> > bridge. Querying the mode at runtime is in my opinion a much better
-> > option, and would also allow switching between different modes at runtime
-> > when that makes sense.
-> > 
-> > Now, I'm not sure whether it should be the bridge driver querying the
-> > panel driver directly, or the display controller driver doing it and then
-> > configuring the bridge accordingly. The latter seems more generic to me
-> > and doesn't rely on the assumption that the bridge output will always be
-> > directly connected to a panel.
-
--- 
-Regards,
-
-Laurent Pinchart
+Paul Bolle
