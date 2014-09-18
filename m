@@ -1,216 +1,335 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 2/2] drm/exynos: use drm generic mmap interface
-Date: Thu, 18 Sep 2014 14:15:22 +0900
-Message-ID: <541A6A6A.1000202@samsung.com>
-References: <1410961726-2533-1-git-send-email-inki.dae@samsung.com>
- <1410961726-2533-3-git-send-email-inki.dae@samsung.com>
- <541A6618.1030004@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <541A6618.1030004@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH v2] drm/exynos: use drm generic mmap interface
+Date: Thu, 18 Sep 2014 14:19:01 +0900
+Message-ID: <1411017541-24450-1-git-send-email-inki.dae@samsung.com>
+References: <1410961726-2533-3-git-send-email-inki.dae@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:32129 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751090AbaIRFTE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 18 Sep 2014 01:19:04 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NC3003CP03QSR10@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 18 Sep 2014 14:19:02 +0900 (KST)
+In-reply-to: <1410961726-2533-3-git-send-email-inki.dae@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: airlied@linux.ie, daniel@ffwll.ch, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
 
-ClRoYW5rcyBmb3IgcmV2aWV3LgoKQmVsb3cgdHJpdmlhbCB0aGluZ3MgeW91IHBvaW50ZWQgb3V0
-IHdpbGwgYmUgZml4ZWQgc29vbi4KCk9uIDIwMTTrhYQgMDnsm5QgMTjsnbwgMTM6NTYsIEpvb255
-b3VuZyBTaGltIHdyb3RlOgo+IEhpLAo+IAo+IE9uIDA5LzE3LzIwMTQgMTA6NDggUE0sIElua2kg
-RGFlIHdyb3RlOgo+PiBUaGlzIHBhdGNoIHJlbW92ZXMgRFJNX0VYWU5PU19HRU1fTU1BUCBpY3Ry
-bCBmZWF0dXJlIHNwZWNpZmljCj4+IHRvIEV4eW5vcyBkcm0gYW5kIGluc3RlYWQgdXNlcyBkcm0g
-Z2VuZXJpYyBtbWFwLgo+Pgo+PiBXZSBoYWQgdXNlZCB0aGUgaW50ZXJmYWNlIHNwZWNpZmljIHRv
-IEV4eW5vcyBkcm0gdG8gZG8gbW1hcCBkaXJlY3RseSwKPj4gbm90IHRvIHVzZSBkZW1hbmQgcGFn
-aW5nIHdoaWNoIG1hcHMgZWFjaCBwYWdlIHdpdGggcGh5c2ljYWwgbWVtb3J5Cj4+IGF0IHBhZ2Ug
-ZmF1bHQgaGFuZGxlci4gV2UgZG9uJ3QgbmVlZCB0aGUgc3BlY2lmaWMgbW1hcCBpbnRlcmZhY2UK
-Pj4gYmVjYXVzZSB0aGUgZHJtIGdlbmVyaWMgbW1hcCB3aGljaCB1c2VzIHZtIG9mZnNldCBtYW5h
-Z2VyIHN0dWZmIGNhbgo+PiBhbHNvIGRvIG1tYXAgZGlyZWN0bHkuCj4+Cj4+IFRoaXMgcGF0Y2gg
-bWFrZXMgYSB1c2Vyc3BhY2UgcmVnaW9uIHRvIGJlIG1hcHBlZCB3aXRoIHdob2xlIHBoeXNpY2Fs
-Cj4+IG1lbW9yeSByZWdpb24gYWxsb2NhdGVkIGJ5IHVzZXJzcGFjZSByZXF1ZXN0IHdoZW4gbW1h
-cCBzeXN0ZW0gY2FsbCBpcwo+PiByZXF1ZXN0ZWQuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IElua2kg
-RGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fZHJ2LmMgfCAgIDI1IC0tLS0tLS0tLQo+PiAgZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2Rydi5oIHwgICAgMSAtCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fZ2VtLmMgfCAgIDg0ICsrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0KPj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uaCB8ICAgMTAgLS0t
-LQo+PiAgaW5jbHVkZS91YXBpL2RybS9leHlub3NfZHJtLmggICAgICAgICAgIHwgICAyMiAtLS0t
-LS0tLQo+PiAgNSBmaWxlcyBjaGFuZ2VkLCAxNCBpbnNlcnRpb25zKCspLCAxMjggZGVsZXRpb25z
-KC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-ZHJ2LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKPj4gaW5kZXgg
-MTBhZDNkNC4uYTc4MTllYiAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2Rydi5jCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9kcnYuYwo+IAo+IEJlY2F1c2UgYW55bW9yZSBhbm9uIGZpbGUgZG9lc24ndCB1c2UsIHlvdSBj
-YW4gcmVtb3ZlIHRvIGluY2x1ZGUKPiA8bGludXgvYW5vbl9pbm9kZXMuaD4uCgpSaWdodCwgSSBt
-aXNzZWQgaXQgd2hpbGUgdGFraW5nIGF3YXkgdGhlIGRpcmVjdCBtbWFwIHN0dWZmIHNwZWNpZmlj
-IHRvCkV4eW5vcyBkcm0uCgo+IAo+PiBAQCAtMTQ5LDEwICsxNDksNiBAQCBzdGF0aWMgaW50IGV4
-eW5vc19kcm1fdW5sb2FkKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpCj4+ICAJcmV0dXJuIDA7Cj4+
-ICB9Cj4+ICAKPj4gLXN0YXRpYyBjb25zdCBzdHJ1Y3QgZmlsZV9vcGVyYXRpb25zIGV4eW5vc19k
-cm1fZ2VtX2ZvcHMgPSB7Cj4+IC0JLm1tYXAgPSBleHlub3NfZHJtX2dlbV9tbWFwX2J1ZmZlciwK
-Pj4gLX07Cj4+IC0KPj4gIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9zdXNwZW5kKHN0cnVjdCBkcm1f
-ZGV2aWNlICpkZXYsIHBtX21lc3NhZ2VfdCBzdGF0ZSkKPj4gIHsKPj4gIAlzdHJ1Y3QgZHJtX2Nv
-bm5lY3RvciAqY29ubmVjdG9yOwo+PiBAQCAtMTkxLDcgKzE4Nyw2IEBAIHN0YXRpYyBpbnQgZXh5
-bm9zX2RybV9yZXN1bWUoc3RydWN0IGRybV9kZXZpY2UgKmRldikKPj4gIHN0YXRpYyBpbnQgZXh5
-bm9zX2RybV9vcGVuKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1fZmlsZSAqZmls
-ZSkKPj4gIHsKPj4gIAlzdHJ1Y3QgZHJtX2V4eW5vc19maWxlX3ByaXZhdGUgKmZpbGVfcHJpdjsK
-Pj4gLQlzdHJ1Y3QgZmlsZSAqYW5vbl9maWxwOwo+PiAgCWludCByZXQ7Cj4+ICAKPj4gIAlmaWxl
-X3ByaXYgPSBremFsbG9jKHNpemVvZigqZmlsZV9wcml2KSwgR0ZQX0tFUk5FTCk7Cj4+IEBAIC0y
-MDQsMjEgKzE5OSw4IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9vcGVuKHN0cnVjdCBkcm1fZGV2
-aWNlICpkZXYsIHN0cnVjdCBkcm1fZmlsZSAqZmlsZSkKPj4gIAlpZiAocmV0KQo+PiAgCQlnb3Rv
-IGVycl9maWxlX3ByaXZfZnJlZTsKPj4gIAo+PiAtCWFub25fZmlscCA9IGFub25faW5vZGVfZ2V0
-ZmlsZSgiZXh5bm9zX2dlbSIsICZleHlub3NfZHJtX2dlbV9mb3BzLAo+PiAtCQkJCQlOVUxMLCAw
-KTsKPj4gLQlpZiAoSVNfRVJSKGFub25fZmlscCkpIHsKPj4gLQkJcmV0ID0gUFRSX0VSUihhbm9u
-X2ZpbHApOwo+PiAtCQlnb3RvIGVycl9zdWJkcnZfY2xvc2U7Cj4+IC0JfQo+PiAtCj4+IC0JYW5v
-bl9maWxwLT5mX21vZGUgPSBGTU9ERV9SRUFEIHwgRk1PREVfV1JJVEU7Cj4+IC0JZmlsZV9wcml2
-LT5hbm9uX2ZpbHAgPSBhbm9uX2ZpbHA7Cj4+IC0KPj4gIAlyZXR1cm4gcmV0Owo+PiAgCj4+IC1l
-cnJfc3ViZHJ2X2Nsb3NlOgo+PiAtCWV4eW5vc19kcm1fc3ViZHJ2X2Nsb3NlKGRldiwgZmlsZSk7
-Cj4+IC0KPj4gIGVycl9maWxlX3ByaXZfZnJlZToKPj4gIAlrZnJlZShmaWxlX3ByaXYpOwo+PiAg
-CWZpbGUtPmRyaXZlcl9wcml2ID0gTlVMTDsKPj4gQEAgLTIzNCw3ICsyMTYsNiBAQCBzdGF0aWMg
-dm9pZCBleHlub3NfZHJtX3ByZWNsb3NlKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCj4+ICBzdGF0
-aWMgdm9pZCBleHlub3NfZHJtX3Bvc3RjbG9zZShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBzdHJ1
-Y3QgZHJtX2ZpbGUgKmZpbGUpCj4+ICB7Cj4+ICAJc3RydWN0IGV4eW5vc19kcm1fcHJpdmF0ZSAq
-cHJpdmF0ZSA9IGRldi0+ZGV2X3ByaXZhdGU7Cj4+IC0Jc3RydWN0IGRybV9leHlub3NfZmlsZV9w
-cml2YXRlICpmaWxlX3ByaXY7Cj4+ICAJc3RydWN0IGRybV9wZW5kaW5nX3ZibGFua19ldmVudCAq
-diwgKnZ0Owo+PiAgCXN0cnVjdCBkcm1fcGVuZGluZ19ldmVudCAqZSwgKmV0Owo+PiAgCXVuc2ln
-bmVkIGxvbmcgZmxhZ3M7Cj4+IEBAIC0yNjAsMTAgKzI0MSw2IEBAIHN0YXRpYyB2b2lkIGV4eW5v
-c19kcm1fcG9zdGNsb3NlKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1fZmlsZSAq
-ZmlsZSkKPj4gIAl9Cj4+ICAJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmZGV2LT5ldmVudF9sb2Nr
-LCBmbGFncyk7Cj4+ICAKPj4gLQlmaWxlX3ByaXYgPSBmaWxlLT5kcml2ZXJfcHJpdjsKPj4gLQlp
-ZiAoZmlsZV9wcml2LT5hbm9uX2ZpbHApCj4+IC0JCWZwdXQoZmlsZV9wcml2LT5hbm9uX2ZpbHAp
-Owo+PiAtCj4+ICAJa2ZyZWUoZmlsZS0+ZHJpdmVyX3ByaXYpOwo+PiAgCWZpbGUtPmRyaXZlcl9w
-cml2ID0gTlVMTDsKPj4gIH0KPj4gQEAgLTI4Miw4ICsyNTksNiBAQCBzdGF0aWMgY29uc3Qgc3Ry
-dWN0IHZtX29wZXJhdGlvbnNfc3RydWN0IGV4eW5vc19kcm1fZ2VtX3ZtX29wcyA9IHsKPj4gIHN0
-YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2lvY3RsX2Rlc2MgZXh5bm9zX2lvY3Rsc1tdID0gewo+PiAg
-CURSTV9JT0NUTF9ERUZfRFJWKEVYWU5PU19HRU1fQ1JFQVRFLCBleHlub3NfZHJtX2dlbV9jcmVh
-dGVfaW9jdGwsCj4+ICAJCQlEUk1fVU5MT0NLRUQgfCBEUk1fQVVUSCksCj4+IC0JRFJNX0lPQ1RM
-X0RFRl9EUlYoRVhZTk9TX0dFTV9NTUFQLAo+PiAtCQkJZXh5bm9zX2RybV9nZW1fbW1hcF9pb2N0
-bCwgRFJNX1VOTE9DS0VEIHwgRFJNX0FVVEgpLAo+PiAgCURSTV9JT0NUTF9ERUZfRFJWKEVYWU5P
-U19HRU1fR0VULAo+PiAgCQkJZXh5bm9zX2RybV9nZW1fZ2V0X2lvY3RsLCBEUk1fVU5MT0NLRUQp
-LAo+PiAgCURSTV9JT0NUTF9ERUZfRFJWKEVYWU5PU19WSURJX0NPTk5FQ1RJT04sCj4+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggYi9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKPj4gaW5kZXggNjlhNmZhMy4uZDIyZTY0
-MCAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5o
-Cj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAo+PiBAQCAt
-MjQwLDcgKzI0MCw2IEBAIHN0cnVjdCBleHlub3NfZHJtX2cyZF9wcml2YXRlIHsKPj4gIHN0cnVj
-dCBkcm1fZXh5bm9zX2ZpbGVfcHJpdmF0ZSB7Cj4+ICAJc3RydWN0IGV4eW5vc19kcm1fZzJkX3By
-aXZhdGUJKmcyZF9wcml2Owo+PiAgCXN0cnVjdCBkZXZpY2UJCQkqaXBwX2RldjsKPj4gLQlzdHJ1
-Y3QgZmlsZQkJCSphbm9uX2ZpbHA7Cj4+ICB9Owo+PiAgCj4+ICAvKgo+PiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5jIGIvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHJtX2dlbS5jCj4+IGluZGV4IDJmMzY2NWQuLjNjZjY0OTQgMTAwNjQ0
-Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uYwo+PiArKysg
-Yi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmMKPj4gQEAgLTMxOCwyMSAr
-MzE4LDE3IEBAIHZvaWQgZXh5bm9zX2RybV9nZW1fcHV0X2RtYV9hZGRyKHN0cnVjdCBkcm1fZGV2
-aWNlICpkZXYsCj4+ICAJZHJtX2dlbV9vYmplY3RfdW5yZWZlcmVuY2VfdW5sb2NrZWQob2JqKTsK
-Pj4gIH0KPj4gIAo+PiAtaW50IGV4eW5vc19kcm1fZ2VtX21tYXBfYnVmZmVyKHN0cnVjdCBmaWxl
-ICpmaWxwLAo+PiAraW50IGV4eW5vc19kcm1fZ2VtX21tYXBfYnVmZmVyKHN0cnVjdCBleHlub3Nf
-ZHJtX2dlbV9vYmogKmV4eW5vc19nZW1fb2JqLAo+PiAgCQkJCSAgICAgIHN0cnVjdCB2bV9hcmVh
-X3N0cnVjdCAqdm1hKQo+PiAgewo+PiAtCXN0cnVjdCBkcm1fZ2VtX29iamVjdCAqb2JqID0gZmls
-cC0+cHJpdmF0ZV9kYXRhOwo+PiAtCXN0cnVjdCBleHlub3NfZHJtX2dlbV9vYmogKmV4eW5vc19n
-ZW1fb2JqID0gdG9fZXh5bm9zX2dlbV9vYmoob2JqKTsKPj4gLQlzdHJ1Y3QgZHJtX2RldmljZSAq
-ZHJtX2RldiA9IG9iai0+ZGV2Owo+PiArCXN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2ID0gZXh5
-bm9zX2dlbV9vYmotPmJhc2UuZGV2Owo+PiAgCXN0cnVjdCBleHlub3NfZHJtX2dlbV9idWYgKmJ1
-ZmZlcjsKPj4gIAl1bnNpZ25lZCBsb25nIHZtX3NpemU7Cj4+ICAJaW50IHJldDsKPj4gIAo+PiAt
-CVdBUk5fT04oIW11dGV4X2lzX2xvY2tlZCgmb2JqLT5kZXYtPnN0cnVjdF9tdXRleCkpOwo+PiAt
-Cj4+ICAJdm1hLT52bV9mbGFncyB8PSBWTV9JTyB8IFZNX0RPTlRFWFBBTkQgfCBWTV9ET05URFVN
-UDsKPiAKPiBBYm92ZSBmbGFncyBhbHJlYWR5IHNldCBmcm9tIGRybV9nZW1fbW1hcC4KPiAKClJp
-Z2h0LiBBY3R1YWxseSBpdCBpcyBkb25lIGF0IGRybV9tbWFwX2xvY2tlZCBmdW5jdGlvbi4KClRo
-YW5rcywKSW5raSBEYWUKCj4gVGhhbmtzLgo+IAo+PiAtCXZtYS0+dm1fcHJpdmF0ZV9kYXRhID0g
-b2JqOwo+PiAtCXZtYS0+dm1fb3BzID0gZHJtX2Rldi0+ZHJpdmVyLT5nZW1fdm1fb3BzOwo+PiAr
-CXZtYS0+dm1fZmxhZ3MgJj0gflZNX1BGTk1BUDsKPj4gKwl2bWEtPnZtX3Bnb2ZmID0gMDsKPj4g
-IAo+PiAgCXVwZGF0ZV92bV9jYWNoZV9hdHRyKGV4eW5vc19nZW1fb2JqLCB2bWEpOwo+PiAgCj4+
-IEBAIC0zNTYsNjAgKzM1Miw2IEBAIGludCBleHlub3NfZHJtX2dlbV9tbWFwX2J1ZmZlcihzdHJ1
-Y3QgZmlsZSAqZmlscCwKPj4gIAkJcmV0dXJuIHJldDsKPj4gIAl9Cj4+ICAKPj4gLQkvKgo+PiAt
-CSAqIHRha2UgYSByZWZlcmVuY2UgdG8gdGhpcyBtYXBwaW5nIG9mIHRoZSBvYmplY3QuIEFuZCB0
-aGlzIHJlZmVyZW5jZQo+PiAtCSAqIGlzIHVucmVmZXJlbmNlZCBieSB0aGUgY29ycmVzcG9uZGlu
-ZyB2bV9jbG9zZSBjYWxsLgo+PiAtCSAqLwo+PiAtCWRybV9nZW1fb2JqZWN0X3JlZmVyZW5jZShv
-YmopOwo+PiAtCj4+IC0JZHJtX3ZtX29wZW5fbG9ja2VkKGRybV9kZXYsIHZtYSk7Cj4+IC0KPj4g
-LQlyZXR1cm4gMDsKPj4gLX0KPj4gLQo+PiAtaW50IGV4eW5vc19kcm1fZ2VtX21tYXBfaW9jdGwo
-c3RydWN0IGRybV9kZXZpY2UgKmRldiwgdm9pZCAqZGF0YSwKPj4gLQkJCSAgICAgIHN0cnVjdCBk
-cm1fZmlsZSAqZmlsZV9wcml2KQo+PiAtewo+PiAtCXN0cnVjdCBkcm1fZXh5bm9zX2ZpbGVfcHJp
-dmF0ZSAqZXh5bm9zX2ZpbGVfcHJpdjsKPj4gLQlzdHJ1Y3QgZHJtX2V4eW5vc19nZW1fbW1hcCAq
-YXJncyA9IGRhdGE7Cj4+IC0Jc3RydWN0IGRybV9nZW1fb2JqZWN0ICpvYmo7Cj4+IC0Jc3RydWN0
-IGZpbGUgKmFub25fZmlscDsKPj4gLQl1bnNpZ25lZCBsb25nIGFkZHI7Cj4+IC0KPj4gLQlpZiAo
-IShkZXYtPmRyaXZlci0+ZHJpdmVyX2ZlYXR1cmVzICYgRFJJVkVSX0dFTSkpIHsKPj4gLQkJRFJN
-X0VSUk9SKCJkb2VzIG5vdCBzdXBwb3J0IEdFTS5cbiIpOwo+PiAtCQlyZXR1cm4gLUVOT0RFVjsK
-Pj4gLQl9Cj4+IC0KPj4gLQltdXRleF9sb2NrKCZkZXYtPnN0cnVjdF9tdXRleCk7Cj4+IC0KPj4g
-LQlvYmogPSBkcm1fZ2VtX29iamVjdF9sb29rdXAoZGV2LCBmaWxlX3ByaXYsIGFyZ3MtPmhhbmRs
-ZSk7Cj4+IC0JaWYgKCFvYmopIHsKPj4gLQkJRFJNX0VSUk9SKCJmYWlsZWQgdG8gbG9va3VwIGdl
-bSBvYmplY3QuXG4iKTsKPj4gLQkJbXV0ZXhfdW5sb2NrKCZkZXYtPnN0cnVjdF9tdXRleCk7Cj4+
-IC0JCXJldHVybiAtRUlOVkFMOwo+PiAtCX0KPj4gLQo+PiAtCWV4eW5vc19maWxlX3ByaXYgPSBm
-aWxlX3ByaXYtPmRyaXZlcl9wcml2Owo+PiAtCWFub25fZmlscCA9IGV4eW5vc19maWxlX3ByaXYt
-PmFub25fZmlscDsKPj4gLQlhbm9uX2ZpbHAtPnByaXZhdGVfZGF0YSA9IG9iajsKPj4gLQo+PiAt
-CWFkZHIgPSB2bV9tbWFwKGFub25fZmlscCwgMCwgYXJncy0+c2l6ZSwgUFJPVF9SRUFEIHwgUFJP
-VF9XUklURSwKPj4gLQkJCU1BUF9TSEFSRUQsIDApOwo+PiAtCj4+IC0JZHJtX2dlbV9vYmplY3Rf
-dW5yZWZlcmVuY2Uob2JqKTsKPj4gLQo+PiAtCWlmIChJU19FUlJfVkFMVUUoYWRkcikpIHsKPj4g
-LQkJbXV0ZXhfdW5sb2NrKCZkZXYtPnN0cnVjdF9tdXRleCk7Cj4+IC0JCXJldHVybiAoaW50KWFk
-ZHI7Cj4+IC0JfQo+PiAtCj4+IC0JbXV0ZXhfdW5sb2NrKCZkZXYtPnN0cnVjdF9tdXRleCk7Cj4+
-IC0KPj4gLQlhcmdzLT5tYXBwZWQgPSBhZGRyOwo+PiAtCj4+IC0JRFJNX0RFQlVHX0tNUygibWFw
-cGVkID0gMHglbHhcbiIsICh1bnNpZ25lZCBsb25nKWFyZ3MtPm1hcHBlZCk7Cj4+IC0KPj4gIAly
-ZXR1cm4gMDsKPj4gIH0KPj4gIAo+PiBAQCAtNjkzLDE2ICs2MzUsMTggQEAgaW50IGV4eW5vc19k
-cm1fZ2VtX21tYXAoc3RydWN0IGZpbGUgKmZpbHAsIHN0cnVjdCB2bV9hcmVhX3N0cnVjdCAqdm1h
-KQo+PiAgCWV4eW5vc19nZW1fb2JqID0gdG9fZXh5bm9zX2dlbV9vYmoob2JqKTsKPj4gIAo+PiAg
-CXJldCA9IGNoZWNrX2dlbV9mbGFncyhleHlub3NfZ2VtX29iai0+ZmxhZ3MpOwo+PiAtCWlmIChy
-ZXQpIHsKPj4gLQkJZHJtX2dlbV92bV9jbG9zZSh2bWEpOwo+PiAtCQlkcm1fZ2VtX2ZyZWVfbW1h
-cF9vZmZzZXQob2JqKTsKPj4gLQkJcmV0dXJuIHJldDsKPj4gLQl9Cj4+ICsJaWYgKHJldCkKPj4g
-KwkJZ290byBlcnJfY2xvc2Vfdm07Cj4+ICAKPj4gLQl2bWEtPnZtX2ZsYWdzICY9IH5WTV9QRk5N
-QVA7Cj4+IC0Jdm1hLT52bV9mbGFncyB8PSBWTV9NSVhFRE1BUDsKPj4gKwlyZXQgPSBleHlub3Nf
-ZHJtX2dlbV9tbWFwX2J1ZmZlcihleHlub3NfZ2VtX29iaiwgdm1hKTsKPj4gKwlpZiAocmV0KQo+
-PiArCQlnb3RvIGVycl9jbG9zZV92bTsKPj4gIAo+PiAtCXVwZGF0ZV92bV9jYWNoZV9hdHRyKGV4
-eW5vc19nZW1fb2JqLCB2bWEpOwo+PiArCXJldHVybiByZXQ7Cj4+ICsKPj4gK2Vycl9jbG9zZV92
-bToKPj4gKwlkcm1fZ2VtX3ZtX2Nsb3NlKHZtYSk7Cj4+ICsJZHJtX2dlbV9mcmVlX21tYXBfb2Zm
-c2V0KG9iaik7Cj4+ICAKPj4gIAlyZXR1cm4gcmV0Owo+PiAgfQo+PiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2dlbS5oIGIvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2dlbS5oCj4+IGluZGV4IDhlNDYwOTQuLjA5ZDAyMWIgMTAwNjQ0Cj4+
-IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9nZW0uaAo+PiArKysgYi9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZ2VtLmgKPj4gQEAgLTExMSwxNiArMTEx
-LDYgQEAgdm9pZCBleHlub3NfZHJtX2dlbV9wdXRfZG1hX2FkZHIoc3RydWN0IGRybV9kZXZpY2Ug
-KmRldiwKPj4gIAkJCQkJdW5zaWduZWQgaW50IGdlbV9oYW5kbGUsCj4+ICAJCQkJCXN0cnVjdCBk
-cm1fZmlsZSAqZmlscCk7Cj4+ICAKPj4gLS8qCj4+IC0gKiBtbWFwIHRoZSBwaHlzaWNhbGx5IGNv
-bnRpbnVvdXMgbWVtb3J5IHRoYXQgYSBnZW0gb2JqZWN0IGNvbnRhaW5zCj4+IC0gKiB0byB1c2Vy
-IHNwYWNlLgo+PiAtICovCj4+IC1pbnQgZXh5bm9zX2RybV9nZW1fbW1hcF9pb2N0bChzdHJ1Y3Qg
-ZHJtX2RldmljZSAqZGV2LCB2b2lkICpkYXRhLAo+PiAtCQkJICAgICAgc3RydWN0IGRybV9maWxl
-ICpmaWxlX3ByaXYpOwo+PiAtCj4+IC1pbnQgZXh5bm9zX2RybV9nZW1fbW1hcF9idWZmZXIoc3Ry
-dWN0IGZpbGUgKmZpbHAsCj4+IC0JCQkJICAgICAgc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWEp
-Owo+PiAtCj4+ICAvKiBtYXAgdXNlciBzcGFjZSBhbGxvY2F0ZWQgYnkgbWFsbG9jIHRvIHBhZ2Vz
-LiAqLwo+PiAgaW50IGV4eW5vc19kcm1fZ2VtX3VzZXJwdHJfaW9jdGwoc3RydWN0IGRybV9kZXZp
-Y2UgKmRldiwgdm9pZCAqZGF0YSwKPj4gIAkJCQkgICAgICBzdHJ1Y3QgZHJtX2ZpbGUgKmZpbGVf
-cHJpdik7Cj4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL3VhcGkvZHJtL2V4eW5vc19kcm0uaCBiL2lu
-Y2x1ZGUvdWFwaS9kcm0vZXh5bm9zX2RybS5oCj4+IGluZGV4IDY3YTc1MWMuLjU1NzVlZDEgMTAw
-NjQ0Cj4+IC0tLSBhL2luY2x1ZGUvdWFwaS9kcm0vZXh5bm9zX2RybS5oCj4+ICsrKyBiL2luY2x1
-ZGUvdWFwaS9kcm0vZXh5bm9zX2RybS5oCj4+IEBAIC0zMywyNCArMzMsNiBAQCBzdHJ1Y3QgZHJt
-X2V4eW5vc19nZW1fY3JlYXRlIHsKPj4gIH07Cj4+ICAKPj4gIC8qKgo+PiAtICogQSBzdHJ1Y3R1
-cmUgZm9yIG1hcHBpbmcgYnVmZmVyLgo+PiAtICoKPj4gLSAqIEBoYW5kbGU6IGEgaGFuZGxlIHRv
-IGdlbSBvYmplY3QgY3JlYXRlZC4KPj4gLSAqIEBwYWQ6IGp1c3QgcGFkZGluZyB0byBiZSA2NC1i
-aXQgYWxpZ25lZC4KPj4gLSAqIEBzaXplOiBtZW1vcnkgc2l6ZSB0byBiZSBtYXBwZWQuCj4+IC0g
-KiBAbWFwcGVkOiBoYXZpbmcgdXNlciB2aXJ0dWFsIGFkZHJlc3MgbW1hcGVkLgo+PiAtICoJLSB0
-aGlzIHZhcmlhYmxlIHdvdWxkIGJlIGZpbGxlZCBieSBleHlub3MgZ2VtIG1vZHVsZQo+PiAtICoJ
-b2Yga2VybmVsIHNpZGUgd2l0aCB1c2VyIHZpcnR1YWwgYWRkcmVzcyB3aGljaCBpcyBhbGxvY2F0
-ZWQKPj4gLSAqCWJ5IGRvX21tYXAoKS4KPj4gLSAqLwo+PiAtc3RydWN0IGRybV9leHlub3NfZ2Vt
-X21tYXAgewo+PiAtCXVuc2lnbmVkIGludCBoYW5kbGU7Cj4+IC0JdW5zaWduZWQgaW50IHBhZDsK
-Pj4gLQl1aW50NjRfdCBzaXplOwo+PiAtCXVpbnQ2NF90IG1hcHBlZDsKPj4gLX07Cj4+IC0KPj4g
-LS8qKgo+PiAgICogQSBzdHJ1Y3R1cmUgdG8gZ2VtIGluZm9ybWF0aW9uLgo+PiAgICoKPj4gICAq
-IEBoYW5kbGU6IGEgaGFuZGxlIHRvIGdlbSBvYmplY3QgY3JlYXRlZC4KPj4gQEAgLTMwMiw3ICsy
-ODQsNiBAQCBzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfY21kX2N0cmwgewo+PiAgfTsKPj4gIAo+PiAg
-I2RlZmluZSBEUk1fRVhZTk9TX0dFTV9DUkVBVEUJCTB4MDAKPj4gLSNkZWZpbmUgRFJNX0VYWU5P
-U19HRU1fTU1BUAkJMHgwMgo+PiAgLyogUmVzZXJ2ZWQgMHgwMyB+IDB4MDUgZm9yIGV4eW5vcyBz
-cGVjaWZpYyBnZW0gaW9jdGwgKi8KPj4gICNkZWZpbmUgRFJNX0VYWU5PU19HRU1fR0VUCQkweDA0
-Cj4+ICAjZGVmaW5lIERSTV9FWFlOT1NfVklESV9DT05ORUNUSU9OCTB4MDcKPj4gQEAgLTMyMSw5
-ICszMDIsNiBAQCBzdHJ1Y3QgZHJtX2V4eW5vc19pcHBfY21kX2N0cmwgewo+PiAgI2RlZmluZSBE
-Uk1fSU9DVExfRVhZTk9TX0dFTV9DUkVBVEUJCURSTV9JT1dSKERSTV9DT01NQU5EX0JBU0UgKyBc
-Cj4+ICAJCURSTV9FWFlOT1NfR0VNX0NSRUFURSwgc3RydWN0IGRybV9leHlub3NfZ2VtX2NyZWF0
-ZSkKPj4gIAo+PiAtI2RlZmluZSBEUk1fSU9DVExfRVhZTk9TX0dFTV9NTUFQCURSTV9JT1dSKERS
-TV9DT01NQU5EX0JBU0UgKyBcCj4+IC0JCURSTV9FWFlOT1NfR0VNX01NQVAsIHN0cnVjdCBkcm1f
-ZXh5bm9zX2dlbV9tbWFwKQo+PiAtCj4+ICAjZGVmaW5lIERSTV9JT0NUTF9FWFlOT1NfR0VNX0dF
-VAlEUk1fSU9XUihEUk1fQ09NTUFORF9CQVNFICsgXAo+PiAgCQlEUk1fRVhZTk9TX0dFTV9HRVQs
-CXN0cnVjdCBkcm1fZXh5bm9zX2dlbV9pbmZvKQo+PiAgCj4+Cj4gCj4gCgpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
-CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+This patch removes DRM_EXYNOS_GEM_MMAP ictrl feature specific
+to Exynos drm and instead uses drm generic mmap.
+
+We had used the interface specific to Exynos drm to do mmap directly,
+not to use demand paging which maps each page with physical memory
+at page fault handler. We don't need the specific mmap interface
+because the drm generic mmap which uses vm offset manager stuff can
+also do mmap directly.
+
+This patch makes a userspace region to be mapped with whole physical
+memory region allocated by userspace request when mmap system call is
+requested.
+
+Changelog v2:
+- do not set VM_IO, VM_DONTEXPEND and VM_DONTDUMP. These flags were already
+  set by drm_gem_mmap
+- do not include <linux/anon_inodes.h>, which isn't needed anymore.
+
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.c |   26 ---------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h |    1 -
+ drivers/gpu/drm/exynos/exynos_drm_gem.c |   89 ++++++-------------------------
+ drivers/gpu/drm/exynos/exynos_drm_gem.h |   10 ----
+ include/uapi/drm/exynos_drm.h           |   22 --------
+ 5 files changed, 16 insertions(+), 132 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 10ad3d4..928c514 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -15,7 +15,6 @@
+ #include <drm/drmP.h>
+ #include <drm/drm_crtc_helper.h>
+ 
+-#include <linux/anon_inodes.h>
+ #include <linux/component.h>
+ 
+ #include <drm/exynos_drm.h>
+@@ -149,10 +148,6 @@ static int exynos_drm_unload(struct drm_device *dev)
+ 	return 0;
+ }
+ 
+-static const struct file_operations exynos_drm_gem_fops = {
+-	.mmap = exynos_drm_gem_mmap_buffer,
+-};
+-
+ static int exynos_drm_suspend(struct drm_device *dev, pm_message_t state)
+ {
+ 	struct drm_connector *connector;
+@@ -191,7 +186,6 @@ static int exynos_drm_resume(struct drm_device *dev)
+ static int exynos_drm_open(struct drm_device *dev, struct drm_file *file)
+ {
+ 	struct drm_exynos_file_private *file_priv;
+-	struct file *anon_filp;
+ 	int ret;
+ 
+ 	file_priv = kzalloc(sizeof(*file_priv), GFP_KERNEL);
+@@ -204,21 +198,8 @@ static int exynos_drm_open(struct drm_device *dev, struct drm_file *file)
+ 	if (ret)
+ 		goto err_file_priv_free;
+ 
+-	anon_filp = anon_inode_getfile("exynos_gem", &exynos_drm_gem_fops,
+-					NULL, 0);
+-	if (IS_ERR(anon_filp)) {
+-		ret = PTR_ERR(anon_filp);
+-		goto err_subdrv_close;
+-	}
+-
+-	anon_filp->f_mode = FMODE_READ | FMODE_WRITE;
+-	file_priv->anon_filp = anon_filp;
+-
+ 	return ret;
+ 
+-err_subdrv_close:
+-	exynos_drm_subdrv_close(dev, file);
+-
+ err_file_priv_free:
+ 	kfree(file_priv);
+ 	file->driver_priv = NULL;
+@@ -234,7 +215,6 @@ static void exynos_drm_preclose(struct drm_device *dev,
+ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+ {
+ 	struct exynos_drm_private *private = dev->dev_private;
+-	struct drm_exynos_file_private *file_priv;
+ 	struct drm_pending_vblank_event *v, *vt;
+ 	struct drm_pending_event *e, *et;
+ 	unsigned long flags;
+@@ -260,10 +240,6 @@ static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
+ 	}
+ 	spin_unlock_irqrestore(&dev->event_lock, flags);
+ 
+-	file_priv = file->driver_priv;
+-	if (file_priv->anon_filp)
+-		fput(file_priv->anon_filp);
+-
+ 	kfree(file->driver_priv);
+ 	file->driver_priv = NULL;
+ }
+@@ -282,8 +258,6 @@ static const struct vm_operations_struct exynos_drm_gem_vm_ops = {
+ static const struct drm_ioctl_desc exynos_ioctls[] = {
+ 	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_CREATE, exynos_drm_gem_create_ioctl,
+ 			DRM_UNLOCKED | DRM_AUTH),
+-	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_MMAP,
+-			exynos_drm_gem_mmap_ioctl, DRM_UNLOCKED | DRM_AUTH),
+ 	DRM_IOCTL_DEF_DRV(EXYNOS_GEM_GET,
+ 			exynos_drm_gem_get_ioctl, DRM_UNLOCKED),
+ 	DRM_IOCTL_DEF_DRV(EXYNOS_VIDI_CONNECTION,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 69a6fa3..d22e640 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -240,7 +240,6 @@ struct exynos_drm_g2d_private {
+ struct drm_exynos_file_private {
+ 	struct exynos_drm_g2d_private	*g2d_priv;
+ 	struct device			*ipp_dev;
+-	struct file			*anon_filp;
+ };
+ 
+ /*
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.c b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+index 2f3665d..0d5b969 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gem.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gem.c
+@@ -318,23 +318,16 @@ void exynos_drm_gem_put_dma_addr(struct drm_device *dev,
+ 	drm_gem_object_unreference_unlocked(obj);
+ }
+ 
+-int exynos_drm_gem_mmap_buffer(struct file *filp,
++int exynos_drm_gem_mmap_buffer(struct exynos_drm_gem_obj *exynos_gem_obj,
+ 				      struct vm_area_struct *vma)
+ {
+-	struct drm_gem_object *obj = filp->private_data;
+-	struct exynos_drm_gem_obj *exynos_gem_obj = to_exynos_gem_obj(obj);
+-	struct drm_device *drm_dev = obj->dev;
++	struct drm_device *drm_dev = exynos_gem_obj->base.dev;
+ 	struct exynos_drm_gem_buf *buffer;
+ 	unsigned long vm_size;
+ 	int ret;
+ 
+-	WARN_ON(!mutex_is_locked(&obj->dev->struct_mutex));
+-
+-	vma->vm_flags |= VM_IO | VM_DONTEXPAND | VM_DONTDUMP;
+-	vma->vm_private_data = obj;
+-	vma->vm_ops = drm_dev->driver->gem_vm_ops;
+-
+-	update_vm_cache_attr(exynos_gem_obj, vma);
++	vma->vm_flags &= ~VM_PFNMAP;
++	vma->vm_pgoff = 0;
+ 
+ 	vm_size = vma->vm_end - vma->vm_start;
+ 
+@@ -356,60 +349,6 @@ int exynos_drm_gem_mmap_buffer(struct file *filp,
+ 		return ret;
+ 	}
+ 
+-	/*
+-	 * take a reference to this mapping of the object. And this reference
+-	 * is unreferenced by the corresponding vm_close call.
+-	 */
+-	drm_gem_object_reference(obj);
+-
+-	drm_vm_open_locked(drm_dev, vma);
+-
+-	return 0;
+-}
+-
+-int exynos_drm_gem_mmap_ioctl(struct drm_device *dev, void *data,
+-			      struct drm_file *file_priv)
+-{
+-	struct drm_exynos_file_private *exynos_file_priv;
+-	struct drm_exynos_gem_mmap *args = data;
+-	struct drm_gem_object *obj;
+-	struct file *anon_filp;
+-	unsigned long addr;
+-
+-	if (!(dev->driver->driver_features & DRIVER_GEM)) {
+-		DRM_ERROR("does not support GEM.\n");
+-		return -ENODEV;
+-	}
+-
+-	mutex_lock(&dev->struct_mutex);
+-
+-	obj = drm_gem_object_lookup(dev, file_priv, args->handle);
+-	if (!obj) {
+-		DRM_ERROR("failed to lookup gem object.\n");
+-		mutex_unlock(&dev->struct_mutex);
+-		return -EINVAL;
+-	}
+-
+-	exynos_file_priv = file_priv->driver_priv;
+-	anon_filp = exynos_file_priv->anon_filp;
+-	anon_filp->private_data = obj;
+-
+-	addr = vm_mmap(anon_filp, 0, args->size, PROT_READ | PROT_WRITE,
+-			MAP_SHARED, 0);
+-
+-	drm_gem_object_unreference(obj);
+-
+-	if (IS_ERR_VALUE(addr)) {
+-		mutex_unlock(&dev->struct_mutex);
+-		return (int)addr;
+-	}
+-
+-	mutex_unlock(&dev->struct_mutex);
+-
+-	args->mapped = addr;
+-
+-	DRM_DEBUG_KMS("mapped = 0x%lx\n", (unsigned long)args->mapped);
+-
+ 	return 0;
+ }
+ 
+@@ -693,16 +632,20 @@ int exynos_drm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
+ 	exynos_gem_obj = to_exynos_gem_obj(obj);
+ 
+ 	ret = check_gem_flags(exynos_gem_obj->flags);
+-	if (ret) {
+-		drm_gem_vm_close(vma);
+-		drm_gem_free_mmap_offset(obj);
+-		return ret;
+-	}
+-
+-	vma->vm_flags &= ~VM_PFNMAP;
+-	vma->vm_flags |= VM_MIXEDMAP;
++	if (ret)
++		goto err_close_vm;
+ 
+ 	update_vm_cache_attr(exynos_gem_obj, vma);
+ 
++	ret = exynos_drm_gem_mmap_buffer(exynos_gem_obj, vma);
++	if (ret)
++		goto err_close_vm;
++
++	return ret;
++
++err_close_vm:
++	drm_gem_vm_close(vma);
++	drm_gem_free_mmap_offset(obj);
++
+ 	return ret;
+ }
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gem.h b/drivers/gpu/drm/exynos/exynos_drm_gem.h
+index 8e46094..09d021b 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gem.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_gem.h
+@@ -111,16 +111,6 @@ void exynos_drm_gem_put_dma_addr(struct drm_device *dev,
+ 					unsigned int gem_handle,
+ 					struct drm_file *filp);
+ 
+-/*
+- * mmap the physically continuous memory that a gem object contains
+- * to user space.
+- */
+-int exynos_drm_gem_mmap_ioctl(struct drm_device *dev, void *data,
+-			      struct drm_file *file_priv);
+-
+-int exynos_drm_gem_mmap_buffer(struct file *filp,
+-				      struct vm_area_struct *vma);
+-
+ /* map user space allocated by malloc to pages. */
+ int exynos_drm_gem_userptr_ioctl(struct drm_device *dev, void *data,
+ 				      struct drm_file *file_priv);
+diff --git a/include/uapi/drm/exynos_drm.h b/include/uapi/drm/exynos_drm.h
+index 67a751c..5575ed1 100644
+--- a/include/uapi/drm/exynos_drm.h
++++ b/include/uapi/drm/exynos_drm.h
+@@ -33,24 +33,6 @@ struct drm_exynos_gem_create {
+ };
+ 
+ /**
+- * A structure for mapping buffer.
+- *
+- * @handle: a handle to gem object created.
+- * @pad: just padding to be 64-bit aligned.
+- * @size: memory size to be mapped.
+- * @mapped: having user virtual address mmaped.
+- *	- this variable would be filled by exynos gem module
+- *	of kernel side with user virtual address which is allocated
+- *	by do_mmap().
+- */
+-struct drm_exynos_gem_mmap {
+-	unsigned int handle;
+-	unsigned int pad;
+-	uint64_t size;
+-	uint64_t mapped;
+-};
+-
+-/**
+  * A structure to gem information.
+  *
+  * @handle: a handle to gem object created.
+@@ -302,7 +284,6 @@ struct drm_exynos_ipp_cmd_ctrl {
+ };
+ 
+ #define DRM_EXYNOS_GEM_CREATE		0x00
+-#define DRM_EXYNOS_GEM_MMAP		0x02
+ /* Reserved 0x03 ~ 0x05 for exynos specific gem ioctl */
+ #define DRM_EXYNOS_GEM_GET		0x04
+ #define DRM_EXYNOS_VIDI_CONNECTION	0x07
+@@ -321,9 +302,6 @@ struct drm_exynos_ipp_cmd_ctrl {
+ #define DRM_IOCTL_EXYNOS_GEM_CREATE		DRM_IOWR(DRM_COMMAND_BASE + \
+ 		DRM_EXYNOS_GEM_CREATE, struct drm_exynos_gem_create)
+ 
+-#define DRM_IOCTL_EXYNOS_GEM_MMAP	DRM_IOWR(DRM_COMMAND_BASE + \
+-		DRM_EXYNOS_GEM_MMAP, struct drm_exynos_gem_mmap)
+-
+ #define DRM_IOCTL_EXYNOS_GEM_GET	DRM_IOWR(DRM_COMMAND_BASE + \
+ 		DRM_EXYNOS_GEM_GET,	struct drm_exynos_gem_info)
+ 
+-- 
+1.7.9.5
