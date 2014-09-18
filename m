@@ -1,84 +1,93 @@
-From: Dong Aisheng <b29396@freescale.com>
-Subject: Re: [PATCH v3] mfd: syscon: Decouple syscon interface from
- platform devices
-Date: Thu, 18 Sep 2014 11:07:24 +0800
-Message-ID: <20140918030722.GB26661@shlinux1.ap.freescale.net>
-References: <1410935510-1567-1-git-send-email-pankaj.dubey@samsung.com>
- <201409171723.04549.arnd@arndb.de>
- <000001cfd2f0$c9d0ebd0$5d72c370$@samsung.com>
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v3 1/2] usb: host: ehci-exynos: Remove unnecessary usb-phy support
+Date: Thu, 18 Sep 2014 09:20:20 +0530
+Message-ID: <CAFp+6iGVGJKrKZLBAsZG5o+EBCQgQUbayhP4UiQNQf6=SVcibA@mail.gmail.com>
+References: <1410952662-4297-2-git-send-email-gautam.vivek@samsung.com>
+	<Pine.LNX.4.44L0.1409171051520.1579-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bl2on0144.outbound.protection.outlook.com ([65.55.169.144]:51756
-	"EHLO na01-bl2-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1757263AbaIRDdv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Sep 2014 23:33:51 -0400
-Content-Disposition: inline
-In-Reply-To: <000001cfd2f0$c9d0ebd0$5d72c370$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <Pine.LNX.4.44L0.1409171051520.1579-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
+Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, tomasz.figa@gmail.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, kgene.kim@samsung.com
 
-On Thu, Sep 18, 2014 at 08:59:32AM +0530, Pankaj Dubey wrote:
-> +CC: Dong Aisheng 
-> 
-> Hi Arnd,
-> 
-> On Wednesday, September 17, 2014, Arnd Bergmann wrote,
-> > > V2 of this patchset and related discussion can be found here [1].
-> > >
-> > > Changes since v2:
-> > >  - Added back platform device support from syscon, with one change that
-> > >    syscon will not be probed for DT based platform.
-> > >  - Added back syscon_regmap_lookup_by_pdevname API so that non-DT base
-> > >    users of syscon will not be broken.
-> > >  - Removed unwanted change in syscon.h.
-> > >  - Modified Signed-off-by list, added Suggested-by of Tomasz Figa and
-> > >    Arnd Bergmann.
-> > >  - Added Tested-by of Vivek Gautam for testing on Exynos platform.
-> > 
-> > Looks fine. Provided you can figure out the problem that Dong Aisheng
-> reported,
-> > please add my
-> > 
-> > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> >
-> 
-> Thanks. 
-> After he reported I have again done code walk-through of regmap_init_mmio
-> and 
-> could not see any such fatal error.  At the same time I have replied to Dong
-> Aisheng,
-> asking for more details and waiting for his reply. 
->  
+Hi Alan,
 
-I just replied and gave the log.
 
-Regards
-Dong Aisheng
+On Wed, Sep 17, 2014 at 8:27 PM, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org> wrote:
+> On Wed, 17 Sep 2014, Vivek Gautam wrote:
+>
+>> Now that we have completely moved from older USB-PHY drivers
+>> to newer GENERIC-PHY drivers for PHYs available with USB controllers
+>> on Exynos series of SoCs, we can remove the support for the same
+>> in our host drivers too.
+>>
+>> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>
+> I don't see why you made your changes in this awkward way.  For
+> instance...
+>
+>> @@ -59,49 +54,39 @@ static int exynos_ehci_get_phy(struct device *dev,
+>>  {
+>>       struct device_node *child;
+>>       struct phy *phy;
+>> -     int phy_number;
+>> -     int ret = 0;
+>> +     int phy_num;
+>
+> Why rename this variable?  Wasn't the original name good enough?
 
-> > > -}
-> > > +static struct syscon *of_syscon_register(struct device_node *np);
-> > >
-> > 
-> > One  minor comment: please avoid doing forward declarations of local
-> functions. It
-> > took me a while to understand what is going on because I expect all
-> functions to be
-> > ordered such that they only get called by functions below, and don't need
-> this.
-> > 
-> > Just move of_syscon_register() here directly.
-> > 
-> 
-> OK, I will remove forward declaration of "of_syscon_register" and respin
-> patch once again.
-> 
-> > 	Arnd
-> 
-> Thanks,
-> Pankaj Dubey
-> 
+fair enough, don't need to rename the variable.
+
+>
+>> +     int ret;
+>>
+>>       for_each_available_child_of_node(dev->of_node, child) {
+>> -             ret = of_property_read_u32(child, "reg", &phy_number);
+>> +             ret = of_property_read_u32(child, "reg", &phy_num);
+>>               if (ret) {
+>>                       dev_err(dev, "Failed to parse device tree\n");
+>>                       of_node_put(child);
+>>                       return ret;
+>>               }
+>>
+>> -             if (phy_number >= PHY_NUMBER) {
+>> +             if (phy_num >= PHY_NUMBER) {
+>>                       dev_err(dev, "Invalid number of PHYs\n");
+>>                       of_node_put(child);
+>>                       return -EINVAL;
+>>               }
+>>
+>> -             phy = devm_of_phy_get(dev, child, NULL);
+>> +             exynos_ehci->phy[phy_num] = devm_of_phy_get(dev, child, NULL);
+>> +             phy = exynos_ehci->phy[phy_num];
+>
+> Why make two changes, resulting in more code, when you could have made
+> just one change?
+>
+>                 phy = devm_of_phy_get(dev, child, NULL);
+> +               exynos_ehci->phy[phy_num] = phy;
+
+Right. i don't know what state of mind i was in while making these changes.
+i should have kept the changes to minimal.
+
+>
+> Also, the patch description should mention that you are adding support
+> for EPROBE_DEFER.
+
+Sure, will add that description.
+
+
+
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
