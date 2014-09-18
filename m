@@ -1,99 +1,166 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v3 6/6] mfd: cros_ec: Instantiate sub-devices from device
- tree
-Date: Thu, 18 Sep 2014 09:49:28 +0200
-Message-ID: <541A8E88.6050707@collabora.co.uk>
-References: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk> <1410428289-18229-7-git-send-email-javier.martinez@collabora.co.uk> <20140917163114.GL30918@lee--X1>
+From: "Li.Xiubo@freescale.com" <Li.Xiubo@freescale.com>
+Subject: RE: [PATCH v3] mfd: syscon: Decouple syscon interface from platform
+ devices
+Date: Thu, 18 Sep 2014 07:58:17 +0000
+Message-ID: <7154374a11f94c868e551bfe8bb8ecb6@BY2PR0301MB0613.namprd03.prod.outlook.com>
+References: <1410935510-1567-1-git-send-email-pankaj.dubey@samsung.com>
+ <20140917085818.GA10285@shlinux1.ap.freescale.net>
+ <000401cfd269$922dfc40$b689f4c0$@samsung.com>
+ <20140918030552.GA26661@shlinux1.ap.freescale.net>
+ <000701cfd306$4d3e8080$e7bb8180$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:40724 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750738AbaIRHtf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Sep 2014 03:49:35 -0400
-In-Reply-To: <20140917163114.GL30918@lee--X1>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <000701cfd306$4d3e8080$e7bb8180$@samsung.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, "Aisheng.Dong@freescale.com" <Aisheng.Dong@freescale.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "arnd@arndb.de" <arnd@arndb.de>, "naushad@samsung.com" <naushad@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, "joshi@samsung.com" <joshi@samsung.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, "vikas.sajjan@samsung.com" <vikas.sajjan@samsung.com>, "chow.kim@samsung.com" <chow.kim@samsung.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>, 'Boris BREZILLON' <boris.brezillon@free-electrons.com>, 'Geert Uytterhoeven' <geert+renesas@glider.be>, 'Stephen Warren' <swarren@nvidia.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, Andreas Faerber <afaerber@suse.de>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hello Lee,
+Hi,
 
-On 09/17/2014 06:31 PM, Lee Jones wrote:
->>  
->> -static const struct mfd_cell cros_devs[] = {
->> -	{
->> -		.name = "cros-ec-keyb",
->> -		.id = 1,
->> -		.of_compatible = "google,cros-ec-keyb",
->> -	},
->> -	{
->> -		.name = "cros-ec-i2c-tunnel",
->> -		.id = 2,
->> -		.of_compatible = "google,cros-ec-i2c-tunnel",
->> -	},
->> -};
->> -
->>  int cros_ec_register(struct cros_ec_device *ec_dev)
->>  {
->>  	struct device *dev = ec_dev->dev;
->> +	struct device_node *node = dev->of_node;
->>  	int err = 0;
->>  
->>  	if (ec_dev->din_size) {
->> @@ -140,12 +129,12 @@ int cros_ec_register(struct cros_ec_device *ec_dev)
->>  
->>  	mutex_init(&ec_dev->lock);
->>  
->> -	err = mfd_add_devices(dev, 0, cros_devs,
->> -			      ARRAY_SIZE(cros_devs),
->> -			      NULL, ec_dev->irq, NULL);
->> -	if (err) {
->> -		dev_err(dev, "failed to add mfd devices\n");
->> -		return err;
+[...]
+> > please see regmap_get_val_endian called in regmap_init function.
+> > static enum regmap_endian regmap_get_val_endian(struct device *dev,
+> >                                         const struct regmap_bus *bus,
+> >                                         const struct regmap_config
+> *config) {
+> >         struct device_node *np = dev->of_node;
+> >         enum regmap_endian endian;
+> > ...
+> > }
+> > It will crash at the first line of dev->of_node if dev is NULL.
+> >
+> > Can you check if you're using the same code as mine?
 > 
-> So these devices will only ever probe with DT now ...
->
-
-Well, these are preparatory patches to reduce the delta between upstream and
-the downstream so the missing functionality could be added. One of the missing
-drivers is the cros_ec_dev.c [0] which allows user-space to access the
-ChromeOS Embedded Controller using a virtual character device (/dev/cros_ec).
-
-Since that is a virtual device, it does not fit on the DT which only describes
-hw and also is used on x86 machines so that subdevice is still probed using
-mfd_add_devices() and the mfd_cells array is not empty in the downstream
-cros_ec driver [1].
-
-That's why I didn't just made the cros_ec MFD to depend on OF, since I didn't
-want to diverge too much from the downstream driver because the idea of the
-series was to reduce the difference in order to add the missing bits on top.
-
->> +	if (node) {
+> No, it's not same.
+> My bad that I was not using linux-next for testing this patch.
+> We tested on kgene/for-next where these changes still have not come.
+> Just now I checked linux-next and found that it will crash at first line of
+> "regmap_get_val_endian" as there is no check for NULL on dev.
 > 
-> So it would be wrong for dev->of_node not to be populated.
+> I checked git history of regmap.c file and found recently this file has been
+> modified
+> for adding DT endianness binding support. Following are set of patches gone
+> for this
+> 
+> cf673fb regmap: Split regmap_get_endian() in two functions
+> 5844a8b regmap: Fix handling of volatile registers for format_write() chips
+> 45e1a27 regmap: of_regmap_get_endian() cleanup
+> ba1b53f regmap: Fix DT endianess parsing logic
+> d647c19 regmap: add DT endianness binding support.
+> 
+> I think there should have been a check for NULL on "dev" in
+> "regmap_get_val_endian", so that if dev pointer exist then only it makes
+> sense to get
+> endianness property from DT.
+> 
+> I will suggest following fix in regmap.c for this. With following fix I
+> tested it and it works well
+> on linux-next also. So if you can confirm following fix is working for you
+> then I can post this
+> patch.
+> 
+> --------------------------------------------
+> Subject: [PATCH] regmap: fix NULL pointer dereference in
+>  regmap_get_val_endian
+> 
+> Recent commits for getting reg endianess causing NULL pointer
+> dereference if dev is passed NULL in regmap_init_mmio. This patch
+> fixes this issue, and allows to parse reg endianess only if dev
+> and dev->of_node exist.
 > 
 
-As explained above, DT, non-DT and x86 platforms instantiate the cros-ec-dev
-cells but DT platforms can define other child nodes. But I can remove the
-conditional if you want and reintroduce it once cros-ec-dev support is added.
+Another question:
 
->> +		err = of_platform_populate(node, NULL, NULL, dev);
->> +		if (err) {
->> +			dev_err(dev, "Failed to register subordinate devices");
->> +			return err;
->> +		}
->>  	}
->>  
->>  	dev_info(dev, "Chrome EC device registered\n");
+Then the regmap core cannot deal with the following issue:
+Like the patch adding the endianness support for syscon:
+    [PATCH] mfd: syscon: binding: Add syscon endianness support.
+
+So here just register one dummy syscon device is a good choice I do
+think.
+:)
+
+
+Thanks,
+
+BRs
+Xiubo
+
+
+
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  drivers/base/regmap/regmap.c |   23 ++++++++++++++---------
+>  1 file changed, 14 insertions(+), 9 deletions(-)
 > 
-
-Best regards,
-Javier
-
-[0]:
-https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/drivers/mfd/cros_ec_dev.c
-[1]:
-https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.8/drivers/mfd/cros_ec.c#93
+> diff --git a/drivers/base/regmap/regmap.c b/drivers/base/regmap/regmap.c
+> index f2281af..455a877 100644
+> --- a/drivers/base/regmap/regmap.c
+> +++ b/drivers/base/regmap/regmap.c
+> @@ -477,7 +477,7 @@ static enum regmap_endian regmap_get_val_endian(struct
+> device *dev,
+>  					const struct regmap_bus *bus,
+>  					const struct regmap_config *config)
+>  {
+> -	struct device_node *np = dev->of_node;
+> +	struct device_node *np;
+>  	enum regmap_endian endian;
+> 
+>  	/* Retrieve the endianness specification from the regmap config */
+> @@ -487,15 +487,20 @@ static enum regmap_endian regmap_get_val_endian(struct
+> device *dev,
+>  	if (endian != REGMAP_ENDIAN_DEFAULT)
+>  		return endian;
+> 
+> -	/* Parse the device's DT node for an endianness specification */
+> -	if (of_property_read_bool(np, "big-endian"))
+> -		endian = REGMAP_ENDIAN_BIG;
+> -	else if (of_property_read_bool(np, "little-endian"))
+> -		endian = REGMAP_ENDIAN_LITTLE;
+> +	/* If the dev and dev->of_node exist try to get endianness from DT
+> */
+> +	if (dev && dev->of_node) {
+> +		np = dev->of_node;
+> 
+> -	/* If the endianness was specified in DT, use that */
+> -	if (endian != REGMAP_ENDIAN_DEFAULT)
+> -		return endian;
+> +		/* Parse the device's DT node for an endianness
+> specification */
+> +		if (of_property_read_bool(np, "big-endian"))
+> +			endian = REGMAP_ENDIAN_BIG;
+> +		else if (of_property_read_bool(np, "little-endian"))
+> +			endian = REGMAP_ENDIAN_LITTLE;
+> +
+> +		/* If the endianness was specified in DT, use that */
+> +		if (endian != REGMAP_ENDIAN_DEFAULT)
+> +			return endian;
+> +	}
+> 
+>  	/* Retrieve the endianness specification from the bus config */
+>  	if (bus && bus->val_format_endian_default)
+> --
+> 
+> Thanks,
+> Pankaj Dubey
+> 
+> > Regards
+> > Dong Aisheng
+> >
+> > >
+> > > Thanks,
+> > > Pankaj Dubey
+> > >
+> > > > Regards
+> > > > Dong Aisheng
+> > > >
+> > > > >
+> > > > >
+> > > > > _______________________________________________
+> > > > > linux-arm-kernel mailing list
+> > > > > linux-arm-kernel@lists.infradead.org
+> > > > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> > >
