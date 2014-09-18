@@ -1,93 +1,200 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] usb: host: ehci-exynos: Remove unnecessary usb-phy support
-Date: Thu, 18 Sep 2014 09:20:20 +0530
-Message-ID: <CAFp+6iGVGJKrKZLBAsZG5o+EBCQgQUbayhP4UiQNQf6=SVcibA@mail.gmail.com>
-References: <1410952662-4297-2-git-send-email-gautam.vivek@samsung.com>
-	<Pine.LNX.4.44L0.1409171051520.1579-100000@iolanthe.rowland.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <Pine.LNX.4.44L0.1409171051520.1579-100000-IYeN2dnnYyZXsRXLowluHWD2FQJk+8+b@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>
-Cc: Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH v4 1/2] usb: host: ehci-exynos: Remove unnecessary usb-phy support
+Date: Thu, 18 Sep 2014 09:54:18 +0530
+Message-ID: <1411014258-17877-1-git-send-email-gautam.vivek@samsung.com>
+References: <CAFp+6iGVGJKrKZLBAsZG5o+EBCQgQUbayhP4UiQNQf6=SVcibA@mail.gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:64423 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751018AbaIREYb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 18 Sep 2014 00:24:31 -0400
+In-Reply-To: <CAFp+6iGVGJKrKZLBAsZG5o+EBCQgQUbayhP4UiQNQf6=SVcibA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, kgene.kim@samsung.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 
-Hi Alan,
+Now that we have completely moved from older USB-PHY drivers
+to newer GENERIC-PHY drivers for PHYs available with USB controllers
+on Exynos series of SoCs, we can remove the support for the same
+in our host drivers too.
 
+We also defer the probe for our host in case we end up getting
+EPROBE_DEFER error when getting PHYs.
 
-On Wed, Sep 17, 2014 at 8:27 PM, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org> wrote:
-> On Wed, 17 Sep 2014, Vivek Gautam wrote:
->
->> Now that we have completely moved from older USB-PHY drivers
->> to newer GENERIC-PHY drivers for PHYs available with USB controllers
->> on Exynos series of SoCs, we can remove the support for the same
->> in our host drivers too.
->>
->> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->
-> I don't see why you made your changes in this awkward way.  For
-> instance...
->
->> @@ -59,49 +54,39 @@ static int exynos_ehci_get_phy(struct device *dev,
->>  {
->>       struct device_node *child;
->>       struct phy *phy;
->> -     int phy_number;
->> -     int ret = 0;
->> +     int phy_num;
->
-> Why rename this variable?  Wasn't the original name good enough?
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Acked-by: Jingoo Han <jg1.han@samsung.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+---
 
-fair enough, don't need to rename the variable.
+Changes since v3:
+ - Addressed review comments by Alan:
+   -- Skipped renaming 'phy_number' variable,
+   -- resorted to just adding minimal change required for phy assignment.
+   -- updated patch description to mention EPROBE_DEFER support.
 
->
->> +     int ret;
->>
->>       for_each_available_child_of_node(dev->of_node, child) {
->> -             ret = of_property_read_u32(child, "reg", &phy_number);
->> +             ret = of_property_read_u32(child, "reg", &phy_num);
->>               if (ret) {
->>                       dev_err(dev, "Failed to parse device tree\n");
->>                       of_node_put(child);
->>                       return ret;
->>               }
->>
->> -             if (phy_number >= PHY_NUMBER) {
->> +             if (phy_num >= PHY_NUMBER) {
->>                       dev_err(dev, "Invalid number of PHYs\n");
->>                       of_node_put(child);
->>                       return -EINVAL;
->>               }
->>
->> -             phy = devm_of_phy_get(dev, child, NULL);
->> +             exynos_ehci->phy[phy_num] = devm_of_phy_get(dev, child, NULL);
->> +             phy = exynos_ehci->phy[phy_num];
->
-> Why make two changes, resulting in more code, when you could have made
-> just one change?
->
->                 phy = devm_of_phy_get(dev, child, NULL);
-> +               exynos_ehci->phy[phy_num] = phy;
+ drivers/usb/host/ehci-exynos.c |   74 +++++++++++-----------------------------
+ 1 file changed, 20 insertions(+), 54 deletions(-)
 
-Right. i don't know what state of mind i was in while making these changes.
-i should have kept the changes to minimal.
-
->
-> Also, the patch description should mention that you are adding support
-> for EPROBE_DEFER.
-
-Sure, will add that description.
-
-
-
-
+diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+index 2eed9a4..f293453 100644
+--- a/drivers/usb/host/ehci-exynos.c
++++ b/drivers/usb/host/ehci-exynos.c
+@@ -21,11 +21,8 @@
+ #include <linux/of_gpio.h>
+ #include <linux/phy/phy.h>
+ #include <linux/platform_device.h>
+-#include <linux/usb/phy.h>
+-#include <linux/usb/samsung_usb_phy.h>
+ #include <linux/usb.h>
+ #include <linux/usb/hcd.h>
+-#include <linux/usb/otg.h>
+ 
+ #include "ehci.h"
+ 
+@@ -47,9 +44,7 @@ static struct hc_driver __read_mostly exynos_ehci_hc_driver;
+ 
+ struct exynos_ehci_hcd {
+ 	struct clk *clk;
+-	struct usb_phy *phy;
+-	struct usb_otg *otg;
+-	struct phy *phy_g[PHY_NUMBER];
++	struct phy *phy[PHY_NUMBER];
+ };
+ 
+ #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
+@@ -60,8 +55,9 @@ static int exynos_ehci_get_phy(struct device *dev,
+ 	struct device_node *child;
+ 	struct phy *phy;
+ 	int phy_number;
+-	int ret = 0;
++	int ret;
+ 
++	/* Get PHYs for the controller */
+ 	for_each_available_child_of_node(dev->of_node, child) {
+ 		ret = of_property_read_u32(child, "reg", &phy_number);
+ 		if (ret) {
+@@ -77,31 +73,21 @@ static int exynos_ehci_get_phy(struct device *dev,
+ 		}
+ 
+ 		phy = devm_of_phy_get(dev, child, NULL);
++		exynos_ehci->phy[phy_number] = phy;
+ 		of_node_put(child);
+-		if (IS_ERR(phy))
+-			/* Lets fallback to older USB-PHYs */
+-			goto usb_phy_old;
+-		exynos_ehci->phy_g[phy_number] = phy;
+-		/* Make the older PHYs unavailable */
+-		exynos_ehci->phy = ERR_PTR(-ENXIO);
+-	}
+-
+-	return 0;
+-
+-usb_phy_old:
+-	exynos_ehci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
+-	if (IS_ERR(exynos_ehci->phy)) {
+-		ret = PTR_ERR(exynos_ehci->phy);
+-		if (ret != -ENXIO && ret != -ENODEV) {
+-			dev_err(dev, "no usb2 phy configured\n");
+-			return ret;
++		if (IS_ERR(phy)) {
++			ret = PTR_ERR(phy);
++			if (ret == -EPROBE_DEFER) {
++				return ret;
++			} else if (ret != -ENOSYS && ret != -ENODEV) {
++				dev_err(dev,
++					"Error retrieving usb2 phy: %d\n", ret);
++				return PTR_ERR(phy);
++			}
+ 		}
+-		dev_dbg(dev, "Failed to get usb2 phy\n");
+-	} else {
+-		exynos_ehci->otg = exynos_ehci->phy->otg;
+ 	}
+ 
+-	return ret;
++	return 0;
+ }
+ 
+ static int exynos_ehci_phy_enable(struct device *dev)
+@@ -111,16 +97,13 @@ static int exynos_ehci_phy_enable(struct device *dev)
+ 	int i;
+ 	int ret = 0;
+ 
+-	if (!IS_ERR(exynos_ehci->phy))
+-		return usb_phy_init(exynos_ehci->phy);
+-
+ 	for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
+-		if (!IS_ERR(exynos_ehci->phy_g[i]))
+-			ret = phy_power_on(exynos_ehci->phy_g[i]);
++		if (!IS_ERR(exynos_ehci->phy[i]))
++			ret = phy_power_on(exynos_ehci->phy[i]);
+ 	if (ret)
+ 		for (i--; i >= 0; i--)
+-			if (!IS_ERR(exynos_ehci->phy_g[i]))
+-				phy_power_off(exynos_ehci->phy_g[i]);
++			if (!IS_ERR(exynos_ehci->phy[i]))
++				phy_power_off(exynos_ehci->phy[i]);
+ 
+ 	return ret;
+ }
+@@ -131,14 +114,9 @@ static void exynos_ehci_phy_disable(struct device *dev)
+ 	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
+ 	int i;
+ 
+-	if (!IS_ERR(exynos_ehci->phy)) {
+-		usb_phy_shutdown(exynos_ehci->phy);
+-		return;
+-	}
+-
+ 	for (i = 0; i < PHY_NUMBER; i++)
+-		if (!IS_ERR(exynos_ehci->phy_g[i]))
+-			phy_power_off(exynos_ehci->phy_g[i]);
++		if (!IS_ERR(exynos_ehci->phy[i]))
++			phy_power_off(exynos_ehci->phy[i]);
+ }
+ 
+ static void exynos_setup_vbus_gpio(struct device *dev)
+@@ -231,9 +209,6 @@ skip_phy:
+ 		goto fail_io;
+ 	}
+ 
+-	if (exynos_ehci->otg)
+-		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+-
+ 	err = exynos_ehci_phy_enable(&pdev->dev);
+ 	if (err) {
+ 		dev_err(&pdev->dev, "Failed to enable USB phy\n");
+@@ -273,9 +248,6 @@ static int exynos_ehci_remove(struct platform_device *pdev)
+ 
+ 	usb_remove_hcd(hcd);
+ 
+-	if (exynos_ehci->otg)
+-		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+-
+ 	exynos_ehci_phy_disable(&pdev->dev);
+ 
+ 	clk_disable_unprepare(exynos_ehci->clk);
+@@ -298,9 +270,6 @@ static int exynos_ehci_suspend(struct device *dev)
+ 	if (rc)
+ 		return rc;
+ 
+-	if (exynos_ehci->otg)
+-		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+-
+ 	exynos_ehci_phy_disable(dev);
+ 
+ 	clk_disable_unprepare(exynos_ehci->clk);
+@@ -316,9 +285,6 @@ static int exynos_ehci_resume(struct device *dev)
+ 
+ 	clk_prepare_enable(exynos_ehci->clk);
+ 
+-	if (exynos_ehci->otg)
+-		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+-
+ 	ret = exynos_ehci_phy_enable(dev);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to enable USB phy\n");
 -- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.7.10.4
