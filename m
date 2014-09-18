@@ -1,52 +1,54 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH] drm/exynos: fix plane-framebuffer linkage
-Date: Thu, 18 Sep 2014 08:39:46 +0200
-Message-ID: <CAKMK7uFGyYfwTx7+Xt2ng74QD+jUwA-tv-aW+jLsLMtk2uw3_g@mail.gmail.com>
-References: <1410807137-8323-1-git-send-email-drake@endlessm.com>
-	<20140916063501.GT4740@phenom.ffwll.local>
-	<54192BB1.8060606@samsung.com>
-	<54192EF0.5000705@samsung.com>
-	<54193BCD.3090003@samsung.com>
-	<CAD8Lp47-ho47WF-te15NZ=JHTd-zt1JxPXwQsTh_Ta_G89zrTA@mail.gmail.com>
-	<CAKMK7uFuo_Sq8cjaiTopSmex6c4hMcAFrD7Ya+R059v=ThurXA@mail.gmail.com>
-	<CAD8Lp458rPEAtDdZDs5KtcbP_kRUF6nTKZhk4S+q5m_41BUagA@mail.gmail.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 2/2] ARM: dts: Add rtc_src clk for s3c-rtc on
+ exynos5250-snow
+Date: Thu, 18 Sep 2014 08:48:49 +0200
+Message-ID: <541A8051.20207@collabora.co.uk>
+References: <1410954633-27025-1-git-send-email-javier.martinez@collabora.co.uk>	<1410954633-27025-3-git-send-email-javier.martinez@collabora.co.uk>
+ <CAD=FV=W7xJ01m2oLtuDnogOmrpwpztbir=59oSWU6oojFYUWKw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f172.google.com ([209.85.223.172]:46764 "EHLO
-	mail-ie0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751149AbaIRGjq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Sep 2014 02:39:46 -0400
-Received: by mail-ie0-f172.google.com with SMTP id rd18so566477iec.17
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Sep 2014 23:39:46 -0700 (PDT)
-In-Reply-To: <CAD8Lp458rPEAtDdZDs5KtcbP_kRUF6nTKZhk4S+q5m_41BUagA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAD=FV=W7xJ01m2oLtuDnogOmrpwpztbir=59oSWU6oojFYUWKw@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Daniel Drake <drake@endlessm.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 
-On Wed, Sep 17, 2014 at 6:41 PM, Daniel Drake <drake@endlessm.com> wrote:
-> 2. drm_mode_rmfb then calls drm_framebuffer_remove, which calls
-> drm_mode_set_config_internal() in order to turn off the CRTC, dropping
-> another reference in the process.
->         if (tmp->old_fb)
->             drm_framebuffer_unreference(tmp->old_fb);
+Hello Doug, Andreas,
+
+On 09/17/2014 05:47 PM, Doug Anderson wrote:
+>>
+>>         rtc@101E0000 {
+>>                 status = "okay";
+>> +               clocks = <&clock CLK_RTC>, <&max77686 MAX77686_CLK_AP>;
+>> +               clock-names = "rtc", "rtc_src";
+> 
+> Wait, seriously?  Snow is still using the "rtc@101E0000" syntax?
+> Whatever happened to the series that Andreas worked so hard on,
+> including <https://patchwork.kernel.org/patch/4664801/>?
 >
-> 3. drm_framebuffer_remove calls drm_plane_force_disable() which drops
-> another reference:
->     /* disconnect the plane from the fb and crtc: */
->     __drm_framebuffer_unreference(old_fb);
 
-If 3. here is about the primary plane then this won't happen, since
-the primary plane pointer&reference has already been cleared in step
-2.
+Andreas, I completely forgot about your series when writing this patch even
+though I've on my TO-DO to sync the downstream and upstream Snow DTS once your
+patches land. Sorry about that.
 
-And even if their would be a bug in here, you _certainly_ should not
-try to paper over this in your driver, but instead fix up the
-refcounting done in the drm core.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> 
+> In any case, there's nothing wrong with Javier's patch other than the
+> fact that it will eventually need to get merged with Andreas's, so:
+> 
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
+> 
+
+Thanks, I'll re-spin and post again once Kukjin merges Andreas series.
+
+Best regards,
+Javier
