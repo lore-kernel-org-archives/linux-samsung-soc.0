@@ -1,220 +1,193 @@
-From: Dong Aisheng <b29396@freescale.com>
-Subject: Re: [PATCH v3] mfd: syscon: Decouple syscon interface from
- platform devices
-Date: Fri, 19 Sep 2014 13:46:04 +0800
-Message-ID: <20140919054602.GC19346@shlinux1.ap.freescale.net>
-References: <20140917085818.GA10285@shlinux1.ap.freescale.net>
- <000401cfd269$922dfc40$b689f4c0$@samsung.com>
- <20140918030552.GA26661@shlinux1.ap.freescale.net>
- <000701cfd306$4d3e8080$e7bb8180$@samsung.com>
- <20140918075516.GB15363@shlinux1.ap.freescale.net>
- <000c01cfd324$1f2cd930$5d868b90$@samsung.com>
- <20140918100505.GA19346@shlinux1.ap.freescale.net>
- <48f9f4067cc44ad49297bb4b62c56c88@BY2PR0301MB0613.namprd03.prod.outlook.com>
- <20140919041933.GB19346@shlinux1.ap.freescale.net>
- <8e0ba684d5fe4663a8842336385ed7ad@BY2PR0301MB0613.namprd03.prod.outlook.com>
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Subject: Re: [PATCH 0/3 v3] Fix Exynos USB on kernels with USB Gadget support
+Date: Fri, 19 Sep 2014 09:43:34 +0200
+Message-ID: <1411112614.29071.1.camel@collabora.co.uk>
+References: <1410778354-31210-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg="sha-1"; protocol="application/x-pkcs7-signature";
+	boundary="=-9wxN9YAPSOp18bhU6+pp"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bn1bn0104.outbound.protection.outlook.com ([157.56.110.104]:44735
-	"EHLO na01-bn1-obe.outbound.protection.outlook.com"
-	rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-	id S1755888AbaISGMw (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:41399 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750738AbaISHnk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Sep 2014 02:12:52 -0400
-Content-Disposition: inline
-In-Reply-To: <8e0ba684d5fe4663a8842336385ed7ad@BY2PR0301MB0613.namprd03.prod.outlook.com>
+	Fri, 19 Sep 2014 03:43:40 -0400
+In-Reply-To: <1410778354-31210-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Xiubo Li-B47053 <Li.Xiubo@freescale.com>
-Cc: Dong Aisheng-B29396 <Aisheng.Dong@freescale.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, "arnd@arndb.de" <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "naushad@samsung.com" <naushad@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, "joshi@samsung.com" <joshi@samsung.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, "vikas.sajjan@samsung.com" <vikas.sajjan@samsung.com>, "chow.kim@samsung.com" <chow.kim@samsung.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>, 'Boris BREZILLON' <boris.brezillon@free-electrons.com>, 'Geert Uytterhoeven' <geert+renesas@glider.be>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Andreas =?ISO-8859-1?Q?F=E4rber?= <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 
-On Fri, Sep 19, 2014 at 01:20:18PM +0800, Xiubo Li-B47053 wrote:
-> [...]
-> > >    create child: /dcsr@20000000/dcsr-atbrepl@3a8000
-> > >    create child: /dcsr@20000000/dcsr-tsgen-ctrl@3a9000
-> > >    create child: /dcsr@20000000/dcsr-tsgen-read@3aa000
-> > >    create child: /regulators/regulator@0
-> > >    ...
-> > >
-> > > As default the Linux will create all the platform device for each DT node,
-> > which
-> > > Can be found from "drivers/of/platform.c".
-> > >
-> > > So we can get the pdev node using the specified DT node, and feel safe to
-> > use
-> > > it as Pankaj's patch does.
-> > >
-> > 
-> > I mean before the devices are populated from device tree.
-> > For example, we usually call of_platform_populate in .init_machine.
-> > Before it, we may not be able to get it's device, isn't it?
-> > 
-> 
-> Yes, right.
-> 
-> For this case, we'd better create the pdev or dev manually for the first time
-> We use it, right ?
 
-Yes, that's my understanding.
+--=-9wxN9YAPSOp18bhU6+pp
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Regards
-Dong Aisheng
+Hey Kukjin,
 
-> 
-> Thanks,
-> 
-> BRs
-> Xiubo
-> 
-> 
-> > Regards
-> > Dong Aisheng
-> > 
-> > > And also we must make sure that the 'syscon' DT nodes has the compatible
-> > prop.
-> > >
-> > > Thanks,
-> > >
-> > > BRs
-> > > Xiubo
-> > >
-> > >
-> > > > Regards
-> > > > Dong Aisheng
-> > > >
-> > > > > ----
-> > > > > static struct syscon *of_syscon_register(struct device_node *np)
-> > > > >  {
-> > > > > +	struct platform_device *pdev;
-> > > > >  	struct syscon *syscon;
-> > > > >  	struct regmap *regmap;
-> > > > >  	void __iomem *base;
-> > > > > @@ -142,7 +144,11 @@ static struct syscon *of_syscon_register(struct
-> > > > > device_node *np)
-> > > > >  	if (!base)
-> > > > >  		return ERR_PTR(-ENOMEM);
-> > > > >
-> > > > > -	regmap = regmap_init_mmio(NULL, base, &syscon_regmap_config);
-> > > > > +	pdev = of_find_device_by_node(np);
-> > > > > +	if (!(&pdev->dev))
-> > > > > +		return ERR_PTR(-ENODEV);
-> > > > > +
-> > > > > +	regmap = regmap_init_mmio(&pdev->dev, base,
-> > &syscon_regmap_config);
-> > > > >  	if (IS_ERR(regmap)) {
-> > > > >  		pr_err("regmap init failed\n");
-> > > > >  		return ERR_CAST(regmap);
-> > > > > -------
-> > > > >
-> > > > > I have tested this in linux-next and it works well. In this way there
-> > won't
-> > > > > be any issues of
-> > > > > dereferencing NULL pointer in regmap.c and at the same time, if DT has
-> > > > > {big,little}-endian
-> > > > > optional property in syscon device node, it will be taken care.
-> > > > >
-> > > > > So I would wait for Arnd's opinion about above mentioned changes and
-> > then
-> > > > > post a new
-> > > > > change after addressing Arnd's minor comment along with this fix in next
-> > > > > revision.
-> > > > >
-> > > > >
-> > > > > Thanks,
-> > > > > Pankaj Dubey
-> > > > > > Maybe we could consider create device structure for each syscon
-> > compatible
-> > > > > device in
-> > > > > > syscon driver in of_syscon_register in first time which seems to be
-> > > > > reasonable.
-> > > > > >
-> > > > > > Regards
-> > > > > > Dong Aisheng
-> > > > > >
-> > > > > > > --------------------------------------------
-> > > > > > > Subject: [PATCH] regmap: fix NULL pointer dereference in
-> > > > > > > regmap_get_val_endian
-> > > > > > >
-> > > > > > > Recent commits for getting reg endianess causing NULL pointer
-> > > > > > > dereference if dev is passed NULL in regmap_init_mmio. This patch
-> > > > > > > fixes this issue, and allows to parse reg endianess only if dev and
-> > > > > > > dev->of_node exist.
-> > > > > > >
-> > > > > > > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> > > > > > > ---
-> > > > > > >  drivers/base/regmap/regmap.c |   23 ++++++++++++++---------
-> > > > > > >  1 file changed, 14 insertions(+), 9 deletions(-)
-> > > > > > >
-> > > > > > > diff --git a/drivers/base/regmap/regmap.c
-> > > > > > > b/drivers/base/regmap/regmap.c index f2281af..455a877 100644
-> > > > > > > --- a/drivers/base/regmap/regmap.c
-> > > > > > > +++ b/drivers/base/regmap/regmap.c
-> > > > > > > @@ -477,7 +477,7 @@ static enum regmap_endian
-> > > > > > > regmap_get_val_endian(struct device *dev,
-> > > > > > >  					const struct regmap_bus *bus,
-> > > > > > >  					const struct regmap_config *config)
-> > > > > {
-> > > > > > > -	struct device_node *np = dev->of_node;
-> > > > > > > +	struct device_node *np;
-> > > > > > >  	enum regmap_endian endian;
-> > > > > > >
-> > > > > > >  	/* Retrieve the endianness specification from the regmap config
-> > > > */
-> > > > > > > @@ -487,15 +487,20 @@ static enum regmap_endian
-> > > > > > > regmap_get_val_endian(struct device *dev,
-> > > > > > >  	if (endian != REGMAP_ENDIAN_DEFAULT)
-> > > > > > >  		return endian;
-> > > > > > >
-> > > > > > > -	/* Parse the device's DT node for an endianness specification */
-> > > > > > > -	if (of_property_read_bool(np, "big-endian"))
-> > > > > > > -		endian = REGMAP_ENDIAN_BIG;
-> > > > > > > -	else if (of_property_read_bool(np, "little-endian"))
-> > > > > > > -		endian = REGMAP_ENDIAN_LITTLE;
-> > > > > > > +	/* If the dev and dev->of_node exist try to get endianness from
-> > > > DT
-> > > > > > > */
-> > > > > > > +	if (dev && dev->of_node) {
-> > > > > > > +		np = dev->of_node;
-> > > > > > >
-> > > > > > > -	/* If the endianness was specified in DT, use that */
-> > > > > > > -	if (endian != REGMAP_ENDIAN_DEFAULT)
-> > > > > > > -		return endian;
-> > > > > > > +		/* Parse the device's DT node for an endianness
-> > > > > > > specification */
-> > > > > > > +		if (of_property_read_bool(np, "big-endian"))
-> > > > > > > +			endian = REGMAP_ENDIAN_BIG;
-> > > > > > > +		else if (of_property_read_bool(np, "little-endian"))
-> > > > > > > +			endian = REGMAP_ENDIAN_LITTLE;
-> > > > > > > +
-> > > > > > > +		/* If the endianness was specified in DT, use that */
-> > > > > > > +		if (endian != REGMAP_ENDIAN_DEFAULT)
-> > > > > > > +			return endian;
-> > > > > > > +	}
-> > > > > > >
-> > > > > > >  	/* Retrieve the endianness specification from the bus config */
-> > > > > > >  	if (bus && bus->val_format_endian_default)
-> > > > > > > --
-> > > > > > >
-> > > > > > > Thanks,
-> > > > > > > Pankaj Dubey
-> > > > > > >
-> > > > > > > > Regards
-> > > > > > > > Dong Aisheng
-> > > > > > > >
-> > > > > > > > >
-> > > > > > > > > Thanks,
-> > > > > > > > > Pankaj Dubey
-> > > > > > > > >
-> > > > > > > > > > Regards
-> > > > > > > > > > Dong Aisheng
-> > > > > > > > > >
-> > > > > > > > > > >
-> > > > > > > > > > >
-> > > > > > > > > > > _______________________________________________
-> > > > > > > > > > > linux-arm-kernel mailing list
-> > > > > > > > > > > linux-arm-kernel@lists.infradead.org
-> > > > > > > > > > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> > > > > > > > >
-> > > > > > >
-> > > > >
+It's been almost a month since I posted the first iteration of this
+patchset on the list, with only trivial cosmetic changes and an addition
+of a similar fix for Arndale Octa boards. Do you feel it needs more
+review from specific folks before pulling it in or ?
+
+Seems a bit of a shame if this would fail to make it for 3.18 (one could
+even argue the dt patches are 3.17 RC material!) as it fixes USB
+functionality being broken depending on the kernel configuration used.
+
+
+On Mon, 2014-09-15 at 12:52 +0200, Sjoerd Simons wrote:
+> When building a kernel with support for both USB host and USB Gadget supp=
+ort on
+> the dwc3 controller on the Exynos5 soc will go into USB OTG mode unless
+> otherwise specified in the dtb, which is unhelpful for boards hooked up t=
+o run
+> as USB host.
+>=20
+> First patch in this set explicitely set the dual-role mode for the dwc3
+> controller on Peach pi and Peach pit boards to host mode. Second patch ad=
+ds
+> similar updates for Arndale Octa as reported by Andreas F=C3=A4rber. Last=
+ patch
+> enables gadget mode in the default exynos config to more easily catch/tri=
+gger
+> issues like these.
+>=20
+> I suspect the Samsung SMDK5420 DTS might need similar changes, so it woul=
+d be
+> great if users of those board could verify this.
+>=20
+> Changes in v2: alphabetically sort the dts entries
+> Changes in v3: Add DTS updates for arndale octa
+>=20
+> Sjoerd Simons (3):
+>   ARM: dts: exynos: Explicitly set dr_mode on peach-pit and peach-pi
+>   ARM: dts: exynos: Explicitly set dr_mode on arndale-octa
+>   ARM: exynos_defconfig: enable USB gadget support
+>=20
+>  arch/arm/boot/dts/exynos5420-arndale-octa.dts | 4 ++++
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts    | 8 ++++++++
+>  arch/arm/boot/dts/exynos5420.dtsi             | 4 ++--
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts     | 8 ++++++++
+>  arch/arm/configs/exynos_defconfig             | 1 +
+>  5 files changed, 23 insertions(+), 2 deletions(-)
+>=20
+
+
+
+--=-9wxN9YAPSOp18bhU6+pp
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIUzDCCBsIw
+ggWqoAMCAQICEAoE3yF0XU0rjOozcgUAUOkwDQYJKoZIhvcNAQEFBQAwZTELMAkGA1UEBhMCVVMx
+FTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEkMCIGA1UE
+AxMbRGlnaUNlcnQgQXNzdXJlZCBJRCBSb290IENBMB4XDTA2MTExMDAwMDAwMFoXDTIxMTExMDAw
+MDAwMFowYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3
+LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMIIBIjANBgkq
+hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6IItmfnKwkKVpYBzQHDSnlZUXKnE0kEGj8kz/E1FkVyB
+n+0snPgWWd+etSQVwpi5tHdJ3InECtqvy15r7a2wcTHrzzpADEZNk+yLejYIA6sMNP4YSYL+x8cx
+SIB8HqIPkg5QycaH6zY/2DDD/6b3+6LNb3Mj/qxWBZDwMiEWicZwiPkFl32jx0PdAug7Pe2xQaPt
+P77blUjE7h6z8rwMK5nQxl0SQoHhg26Ccz8mSxSQrllmCsSNvtLOBq6thG9IhJtPQLnxTPKvmPv2
+zkBdXPao8S+v7Iki8msYZbHBc63X8djPHgp0XEK4aH631XcKJ1Z8D2KkPzIUYJX9BwSiCQIDAQAB
+o4IDbzCCA2swDgYDVR0PAQH/BAQDAgGGMDsGA1UdJQQ0MDIGCCsGAQUFBwMBBggrBgEFBQcDAgYI
+KwYBBQUHAwMGCCsGAQUFBwMEBggrBgEFBQcDCDCCAcYGA1UdIASCAb0wggG5MIIBtQYLYIZIAYb9
+bAEDAAQwggGkMDoGCCsGAQUFBwIBFi5odHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJl
+cG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUHAgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAA
+dABoAGkAcwAgAEMAZQByAHQAaQBmAGkAYwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAg
+AGEAYwBjAGUAcAB0AGEAbgBjAGUAIABvAGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMA
+UAAvAEMAUABTACAAYQBuAGQAIAB0AGgAZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABB
+AGcAcgBlAGUAbQBlAG4AdAAgAHcAaABpAGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkA
+dAB5ACAAYQBuAGQAIABhAHIAZQAgAGkAbgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBp
+AG4AIABiAHkAIAByAGUAZgBlAHIAZQBuAGMAZQAuMA8GA1UdEwEB/wQFMAMBAf8wfQYIKwYBBQUH
+AQEEcTBvMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wRwYIKwYBBQUHMAKG
+O2h0dHA6Ly93d3cuZGlnaWNlcnQuY29tL0NBQ2VydHMvRGlnaUNlcnRBc3N1cmVkSURSb290Q0Eu
+Y3J0MIGBBgNVHR8EejB4MDqgOKA2hjRodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRB
+c3N1cmVkSURSb290Q0EuY3JsMDqgOKA2hjRodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vRGlnaUNl
+cnRBc3N1cmVkSURSb290Q0EuY3JsMB0GA1UdDgQWBBQVABIrE5iymQftHt+ivlcNK2cCzTAfBgNV
+HSMEGDAWgBRF66Kv9JLLgjEtUYunpyGd823IDzANBgkqhkiG9w0BAQUFAAOCAQEAhGFOQR64dgQq
+tbbvj/JVhbldVv4KmObkvWWKfUAp0/yxXUX9OrgqWzNLJFzNubTkc61hXXatdDOKZtUjr0wfcm5F
+2XVAu6I7z41JL8BBsOIpo1E4Q1CZFKwzBjViiX13qVIH5WwgV7aBum+8s8KU7XYCgNl8zoWoHOzH
+Q0pLsVfPcs7f9SU8yyJP/Z9S0TfLCLs4PuDVPm95Ca1bfDGzdzXD5GP5aAqYB+dGOHeE0j6XvAqg
+qKwlT0RukeHSWq9r7zAcjaNEQrMQiyP61+Y1dDesz+urWB/JiCP/NtQH6jRqR+qdlWyeKU9T7eMr
+lSBOKs+WYHr4LIDwlVLOKZaBYjCCBv8wggXnoAMCAQICEA2fwUKNhvkL8dN88tUFvVwwDQYJKoZI
+hvcNAQEFBQAwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQ
+d3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMB4XDTE0
+MDIxNzAwMDAwMFoXDTE1MDMxMjEyMDAwMFowgaQxCzAJBgNVBAYTAkdCMRcwFQYDVQQIEw5DYW1i
+cmlkZ2VzaGlyZTESMBAGA1UEBxMJQ2FtYnJpZGdlMRYwFAYDVQQKEw1Db2xsYWJvcmEgTHRkMQow
+CAYDVQQLEwExMRYwFAYDVQQDEw1Tam9lcmQgU2ltb25zMSwwKgYJKoZIhvcNAQkBFh1zam9lcmQu
+c2ltb25zQGNvbGxhYm9yYS5jby51azCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAN4Q
+EHeW1NbogMVZpHedG7o509/L4VBhqQd8j8JViWd+yvLlxOBw/gY+7ioHMatrQY2VvY6QOLle2Xqs
+CDvELcXMxwyFpBC0Ia+CVE+5pF+0IMuVkGIL1T8LHeKZYeRP+uFXtmWzas12hsMILNRmK7Q5PACm
++v/6HFn111hLKkANBtRHIRiDbFQOiluNeR2bq+ck1y2+X//SGumA1XZFdCB/1VcRJXDdFnYdU3j/
+RkoiGggo3MSq3mJ6yV7sqzk04fTLFvfL0KadCMauputeGBybEiFAt6rCm5TkyUqoDOTU07byOEXO
+M32EGeYeV515RzARTpOSE9sdmRq0jNNAqGsCAwEAAaOCA2wwggNoMB8GA1UdIwQYMBaAFBUAEisT
+mLKZB+0e36K+Vw0rZwLNMB0GA1UdDgQWBBRaTG8RXMDSFO5XcrjqYs/YDlmqSDAoBgNVHREEITAf
+gR1zam9lcmQuc2ltb25zQGNvbGxhYm9yYS5jby51azAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMH0GA1UdHwR2MHQwOKA2oDSGMmh0dHA6Ly9jcmwzLmRpZ2lj
+ZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3JsMDigNqA0hjJodHRwOi8vY3JsNC5kaWdp
+Y2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0xLmNybDCCAcUGA1UdIASCAbwwggG4MIIBtAYK
+YIZIAYb9bAQBAjCCAaQwOgYIKwYBBQUHAgEWLmh0dHA6Ly93d3cuZGlnaWNlcnQuY29tL3NzbC1j
+cHMtcmVwb3NpdG9yeS5odG0wggFkBggrBgEFBQcCAjCCAVYeggFSAEEAbgB5ACAAdQBzAGUAIABv
+AGYAIAB0AGgAaQBzACAAQwBlAHIAdABpAGYAaQBjAGEAdABlACAAYwBvAG4AcwB0AGkAdAB1AHQA
+ZQBzACAAYQBjAGMAZQBwAHQAYQBuAGMAZQAgAG8AZgAgAHQAaABlACAARABpAGcAaQBDAGUAcgB0
+ACAAQwBQAC8AQwBQAFMAIABhAG4AZAAgAHQAaABlACAAUgBlAGwAeQBpAG4AZwAgAFAAYQByAHQA
+eQAgAEEAZwByAGUAZQBtAGUAbgB0ACAAdwBoAGkAYwBoACAAbABpAG0AaQB0ACAAbABpAGEAYgBp
+AGwAaQB0AHkAIABhAG4AZAAgAGEAcgBlACAAaQBuAGMAbwByAHAAbwByAGEAdABlAGQAIABoAGUA
+cgBlAGkAbgAgAGIAeQAgAHIAZQBmAGUAcgBlAG4AYwBlAC4wdwYIKwYBBQUHAQEEazBpMCQGCCsG
+AQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQQYIKwYBBQUHMAKGNWh0dHA6Ly9jYWNl
+cnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3J0MAwGA1UdEwEB/wQCMAAw
+DQYJKoZIhvcNAQEFBQADggEBAAc8CwXSms3RbIx+bhxFsGQoN+RpHtjnPvMPPAobv7rxdhQPPz+N
+6h3hpVzegeW2XhyZVC8MT0U6uWXrk+1uQUAXrJEG+W2X8yTEoHDS/SCF/POOsj/ekaDuNE9JJB/9
+cspoa4W+W8pX1sRurBDFHL0DBudUQ1PgvTSLPOHtfKQpu4gRb2u8KpJermp/IvPLImX9xSCbYKQM
+2L0wbpStFIYdyKCKuXuQxOX3BdBKLCFvcIDE6hjj3UpOlThCbeul2Tz5jARCfRK4OUxnXyb/Tp5j
+tshIAa2ZMGaTH9ApeY7P6C2ONF+Mh5yV/raWXOnJ9dEg6/sXcbdiieqzLKYBIgQwggb/MIIF56AD
+AgECAhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBBQUAMGIxCzAJBgNVBAYTAlVTMRUwEwYD
+VQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xITAfBgNVBAMTGERp
+Z2lDZXJ0IEFzc3VyZWQgSUQgQ0EtMTAeFw0xNDAyMTcwMDAwMDBaFw0xNTAzMTIxMjAwMDBaMIGk
+MQswCQYDVQQGEwJHQjEXMBUGA1UECBMOQ2FtYnJpZGdlc2hpcmUxEjAQBgNVBAcTCUNhbWJyaWRn
+ZTEWMBQGA1UEChMNQ29sbGFib3JhIEx0ZDEKMAgGA1UECxMBMTEWMBQGA1UEAxMNU2pvZXJkIFNp
+bW9uczEsMCoGCSqGSIb3DQEJARYdc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28udWswggEiMA0G
+CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDeEBB3ltTW6IDFWaR3nRu6OdPfy+FQYakHfI/CVYln
+fsry5cTgcP4GPu4qBzGra0GNlb2OkDi5Xtl6rAg7xC3FzMcMhaQQtCGvglRPuaRftCDLlZBiC9U/
+Cx3imWHkT/rhV7Zls2rNdobDCCzUZiu0OTwApvr/+hxZ9ddYSypADQbURyEYg2xUDopbjXkdm6vn
+JNctvl//0hrpgNV2RXQgf9VXESVw3RZ2HVN4/0ZKIhoIKNzEqt5iesle7Ks5NOH0yxb3y9CmnQjG
+rqbrXhgcmxIhQLeqwpuU5MlKqAzk1NO28jhFzjN9hBnmHledeUcwEU6TkhPbHZkatIzTQKhrAgMB
+AAGjggNsMIIDaDAfBgNVHSMEGDAWgBQVABIrE5iymQftHt+ivlcNK2cCzTAdBgNVHQ4EFgQUWkxv
+EVzA0hTuV3K46mLP2A5ZqkgwKAYDVR0RBCEwH4Edc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28u
+dWswDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMEBggrBgEFBQcDAjB9BgNVHR8E
+djB0MDigNqA0hjJodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0x
+LmNybDA4oDagNIYyaHR0cDovL2NybDQuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0QXNzdXJlZElEQ0Et
+MS5jcmwwggHFBgNVHSAEggG8MIIBuDCCAbQGCmCGSAGG/WwEAQIwggGkMDoGCCsGAQUFBwIBFi5o
+dHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJlcG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUH
+AgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAAdABoAGkAcwAgAEMAZQByAHQAaQBmAGkA
+YwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAgAGEAYwBjAGUAcAB0AGEAbgBjAGUAIABv
+AGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMAUAAvAEMAUABTACAAYQBuAGQAIAB0AGgA
+ZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABBAGcAcgBlAGUAbQBlAG4AdAAgAHcAaABp
+AGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkAdAB5ACAAYQBuAGQAIABhAHIAZQAgAGkA
+bgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBpAG4AIABiAHkAIAByAGUAZgBlAHIAZQBu
+AGMAZQAuMHcGCCsGAQUFBwEBBGswaTAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQu
+Y29tMEEGCCsGAQUFBzAChjVodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1
+cmVkSURDQS0xLmNydDAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBBQUAA4IBAQAHPAsF0prN0WyM
+fm4cRbBkKDfkaR7Y5z7zDzwKG7+68XYUDz8/jeod4aVc3oHltl4cmVQvDE9FOrll65PtbkFAF6yR
+Bvltl/MkxKBw0v0ghfzzjrI/3pGg7jRPSSQf/XLKaGuFvlvKV9bEbqwQxRy9AwbnVENT4L00izzh
+7XykKbuIEW9rvCqSXq5qfyLzyyJl/cUgm2CkDNi9MG6UrRSGHcigirl7kMTl9wXQSiwhb3CAxOoY
+491KTpU4Qm3rpdk8+YwEQn0SuDlMZ18m/06eY7bISAGtmTBmkx/QKXmOz+gtjjRfjIeclf62llzp
+yfXRIOv7F3G3YonqsyymASIEMYIDEDCCAwwCAQEwdjBiMQswCQYDVQQGEwJVUzEVMBMGA1UEChMM
+RGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSEwHwYDVQQDExhEaWdpQ2Vy
+dCBBc3N1cmVkIElEIENBLTECEA2fwUKNhvkL8dN88tUFvVwwCQYFKw4DAhoFAKCCAW8wGAYJKoZI
+hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTQwOTE5MDc0MzM0WjAjBgkqhkiG
+9w0BCQQxFgQUdyMShhwAgFZzTmkce6ASZD9II3AwgYUGCSsGAQQBgjcQBDF4MHYwYjELMAkGA1UE
+BhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEh
+MB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xAhANn8FCjYb5C/HTfPLVBb1cMIGHBgsq
+hkiG9w0BCRACCzF4oHYwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcG
+A1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0x
+AhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBAQUABIIBAAh9FonbXUnjK03IF1FWIkJ0IUo4
+JbsLZE/+rZBP7osZQD634Wna7ix8Qcdugm8JZ8ihpPFFImSV58MFV7P0r8XFGfN6QM8qGr4OKKFg
+QJV5p6b7Z6XsjGp2NramuvwTeQ3xdPOBu91fnm2JTx3igDPrKXs7PWnS0icJX3W6aXx8m9/EfcLO
+ecSt2OVTGpY+xquglBMfJ8mePgc1uSCa5vTpOxRGh5j4LZvhKHpHp44CDOA+W//OcuxJCoQVMCv5
+xP6b8ltIWW+wS8ods+ru/t/88Ha2Ls5/nceiHd1I6YlMj40EQzkeotc99xXB9oXM5A7i7+duappo
+VwXLAvJSTC8AAAAAAAA=
+
+
+--=-9wxN9YAPSOp18bhU6+pp--
