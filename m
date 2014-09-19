@@ -1,58 +1,46 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: ASoC: samsung: MACH_SMDKC100
-Date: Fri, 19 Sep 2014 23:30:17 +0900
-Message-ID: <017301cfd416$3bf90be0$b3eb23a0$@kernel.org>
-References: <1404288063.12021.13.camel@x220> <1405673749.2155.5.camel@x220>
- <53C96F67.7010108@samsung.com> <1411034122.2017.18.camel@x220>
+From: Joe Perches <joe@perches.com>
+Subject: Re: [PATCH v10 5/6] rtc: max77686: Use ffs() to calculate tm_wday
+Date: Fri, 19 Sep 2014 07:39:21 -0700
+Message-ID: <1411137561.24444.5.camel@joe-AO725>
+References: <1411122377-10426-1-git-send-email-javier.martinez@collabora.co.uk>
+	 <1411122377-10426-6-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="ISO-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:19228 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756626AbaISOaU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Sep 2014 10:30:20 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NC500828KAHSA90@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 19 Sep 2014 23:30:18 +0900 (KST)
-In-reply-to: <1411034122.2017.18.camel@x220>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1411122377-10426-6-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Alessandro Zummo <a.zummo@towertech.it>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Paul Bolle' <pebolle@tiscali.nl>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, 'Jason Cooper' <jason@lakedaemon.net>, 'Ben Dooks' <ben-linux@fluff.org>, 'Sangbeom Kim' <sbkim73@samsung.com>, 'Liam Girdwood' <lgirdwood@gmail.com>, 'Mark Brown' <broonie@kernel.org>, 'Jaroslav Kysela' <perex@perex.cz>, 'Takashi Iwai' <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 
-Paul Bolle wrote:
-> 
-> Hi Kukjin,
-> 
-Hi,
+On Fri, 2014-09-19 at 12:26 +0200, Javier Martinez Canillas wrote:
+> The function max77686_rtc_calculate_wday() is used to
+> calculate the day of the week to be filled in struct
+> rtc_time but that function only calculates the number
+> of bits shifted. So the ffs() function can be used to
+> find the first bit set instead of a special function.
 
-> On Sat, 2014-07-19 at 04:03 +0900, Kukjin Kim wrote:
-> > On 07/18/14 17:55, Paul Bolle wrote:
-> > > On Wed, 2014-07-02 at 10:01 +0200, Paul Bolle wrote:
-> > >> Your commit 52ad6582ceb2 ("ARM: S5PC100: no more support S5PC100 SoC"
-> > >> landed in next-20140702. It removed the Kconfig symbol MACH_SMDKC100
-> > >> (and a lot of other stuff).
-> > >>
-> > >> Is the trivial patch to also remove the last two references to
-> > >> MACH_SMDKC100 from sound/soc/samsung/Kconfig/ queued somewhere? I don't
-> > >> think it was part of the series that included the above commit.
-> > >
-> > > Have you had time to look at this? Those last two references to
-> > > MACH_SMDKC100 can still be seen in next-20140718.
-> > >
-> > Yeah you're right. The MACH_SMDKC100 is no more required...
-> >
-> > I submitted its fixup to Mark and I think he will take it for v3.17.
-> 
-> What ever happened to that fixup? There are still (pointless) references
-> to MACH_SMDKC100 in v3.17-rc5 and in next-20140918.
-> 
-Oh....Mark, what's wrong?
+This isn't the same logic.  Perhaps you want fls.
 
-- Kukjin
+> diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
+[]
+> -static inline int max77686_rtc_calculate_wday(u8 shifted)
+> -{
+> -	int counter = -1;
+> -	while (shifted) {
+> -		shifted >>= 1;
+> -		counter++;
+> -	}
+> -	return counter;
+> -}
+> -
+>  static void max77686_rtc_data_to_tm(u8 *data, struct rtc_time *tm,
+>  				   int rtc_24hr_mode)
+>  {
+> @@ -93,7 +83,7 @@ static void max77686_rtc_data_to_tm(u8 *data, struct rtc_time *tm,
+>  			tm->tm_hour += 12;
+>  	}
+>  
+> -	tm->tm_wday = max77686_rtc_calculate_wday(data[RTC_WEEKDAY] & 0x7f);
+> +	tm->tm_wday = ffs(data[RTC_WEEKDAY] & 0x7f) - 1;
