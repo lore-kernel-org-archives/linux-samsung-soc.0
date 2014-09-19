@@ -1,58 +1,36 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v4 4/7] ARM: l2c: Add support for overriding prefetch
-	settings
-Date: Fri, 19 Sep 2014 17:39:32 +0100
-Message-ID: <20140919163932.GH12379@n2100.arm.linux.org.uk>
-References: <1409062680-15906-1-git-send-email-t.figa@samsung.com> <1409062680-15906-5-git-send-email-t.figa@samsung.com> <20140919095000.GF29620@piout.net>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v4] mfd: syscon: Decouple syscon interface from platform
+ devices
+Date: Fri, 19 Sep 2014 19:39:54 +0200
+Message-ID: <541C6A6A.40006@gmail.com>
+References: <1411132009-11173-1-git-send-email-pankaj.dubey@samsung.com> <541C47BD.3070601@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:34943 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1755848AbaISQjp (ORCPT
+Received: from mail-wg0-f46.google.com ([74.125.82.46]:65249 "EHLO
+	mail-wg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932146AbaISRj6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Sep 2014 12:39:45 -0400
-Content-Disposition: inline
-In-Reply-To: <20140919095000.GF29620@piout.net>
+	Fri, 19 Sep 2014 13:39:58 -0400
+In-Reply-To: <541C47BD.3070601@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, tony@atomide.com, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, drake@endlessm.com, loeliger@gmail.com, santosh.shilimkar@ti.com, linux-omap@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: lee.jones@linaro.org, arnd@arndb.de, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, kgene.kim@samsung.com, b29396@freescale.com, Li.Xiubo@freescale.com
 
-On Fri, Sep 19, 2014 at 11:50:01AM +0200, Alexandre Belloni wrote:
-> On 26/08/2014 at 16:17:57 +0200, Tomasz Figa wrote :
-> > Firmware on certain boards (e.g. ODROID-U3) can leave incorrect L2C prefetch
-> > settings configured in registers leading to crashes if L2C is enabled
-> > without overriding them. This patch introduces bindings to enable
-> > prefetch settings to be specified from DT and necessary support in the
-> > driver.
-> > 
-> > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+On 19.09.2014 17:11, Tomasz Figa wrote:
+>> +
+>> +	if (!of_device_is_available(np) ||
 > 
-> Tested-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+> Wouldn't it be enough to simply call of_find_device_by_node(np) and if
+> it fails then instead create a dummy device?
 > 
-> It is working and useful on Atmel's sama5d4 were the bootloader is not
-> configuring the L2C prefetch. However, I'm wondering whether we should
-> add support for setting L310_PREFETCH_CTRL_DATA_PREFETCH and
-> L310_PREFETCH_CTRL_INSTR_PREFETCH. I'm currently doing it by using
-> ".l2c_aux_val    = L310_AUX_CTRL_DATA_PREFETCH |
-> L310_AUX_CTRL_INSTR_PREFETCH" (those are the same bits) but this has the
-> disadvantage of displaying the "L2C: platform modifies aux control
-> register:" twice.
+>> +			of_node_test_and_set_flag(np, OF_POPULATED)) {
 
-The L2C documentation, freely available from the ARM infocentre website,
-has the answer to this for you.
+One more thing I forgot to mention, the call to
+of_node_test_and_set_flag() is also wrong, because it sets the flag,
+marking the device as already populated, while it isn't.
 
-The two bits in the prefetch control register which control the data
-and instruction prefetching are aliases of the aux control register.
-If you set them to a value in one register, they are reflected in the
-other.
-
-The reason for that is that once the L2 cache is enabled, writes to
-the aux control register are no longer permitted, but it's safe to
-enable and disable the prefetching with the cache already enabled.
-This reason is even stated in the documentation.
-
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+Best regards,
+Tomasz
