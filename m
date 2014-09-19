@@ -1,291 +1,111 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH] drm/exynos: switch to universal plane API
-Date: Fri, 19 Sep 2014 13:51:21 +0200
-Message-ID: <541C18B9.1010107@samsung.com>
-References: <1411046223-22703-1-git-send-email-a.hajda@samsung.com>
- <541B8093.6040807@samsung.com> <541C0B5B.7010100@samsung.com>
- <541C0F7E.1080808@samsung.com>
+From: Pramod Gurav <pramod.gurav@smartplayin.com>
+Subject: Re: [PATCH v7 00/11] kernel: Add support for restart handler call
+ chain
+Date: Fri, 19 Sep 2014 18:24:54 +0530
+Message-ID: <541C279E.2000602@smartplayin.com>
+References: <1408495538-27480-1-git-send-email-linux@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <541C0F7E.1080808@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, drake@endlessm.com, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, m.szyprowski@samsung.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1408495538-27480-1-git-send-email-linux@roeck-us.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Russell King <linux@arm.linux.org.uk>, Wim Van Sebroeck <wim@iguana.be>, Catalin Marinas <catalin.marinas@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Andrew Morton <akpm@linux-foundation.org>, linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>, Heiko Stuebner <heiko@sntech.de>, Jonas Jensen <jonas.jensen@gmail.com>, Randy Dunlap <rdunlap@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Tomasz Figa <t.figa@samsung.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 09/19/2014 01:11 PM, Joonyoung Shim wrote:
-> Hi,
->
-> On 09/19/2014 07:54 PM, Andrzej Hajda wrote:
->> On 09/19/2014 03:02 AM, Joonyoung Shim wrote:
->>> Hi Andrzej,
->>>
->>> On 09/18/2014 10:17 PM, Andrzej Hajda wrote:
->>>> The patch replaces legacy functions
->>>> drm_plane_init() / drm_crtc_init() with
->>>> drm_universal_plane_init() and drm_crtc_init_with_planes().
->>>> It allows to replace fake primary plane with the real one.
->>>>
->>>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->>>> ---
->>>> Hi Inki,
->>>>
->>>> I have tested this patch with trats board, it looks OK.
->>>> As a side effect it should solve fb refcounting issues
->>>> reported by me and Daniel Drake.
->>>>
->>>> Regards
->>>> Andrzej
->>>> ---
->>>>  drivers/gpu/drm/exynos/exynos_drm_crtc.c  | 63 ++++++++++++++++---------------
->>>>  drivers/gpu/drm/exynos/exynos_drm_drv.c   |  5 ++-
->>>>  drivers/gpu/drm/exynos/exynos_drm_plane.c | 17 +++++----
->>>>  drivers/gpu/drm/exynos/exynos_drm_plane.h |  3 +-
->>>>  4 files changed, 47 insertions(+), 41 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
->>>> index b68e58f..d2f713e 100644
->>>> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
->>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
->>>> @@ -32,7 +32,6 @@ enum exynos_crtc_mode {
->>>>   * Exynos specific crtc structure.
->>>>   *
->>>>   * @drm_crtc: crtc object.
->>>> - * @drm_plane: pointer of private plane object for this crtc
->>>>   * @manager: the manager associated with this crtc
->>>>   * @pipe: a crtc index created at load() with a new crtc object creation
->>>>   *	and the crtc object would be set to private->crtc array
->>>> @@ -46,7 +45,6 @@ enum exynos_crtc_mode {
->>>>   */
->>>>  struct exynos_drm_crtc {
->>>>  	struct drm_crtc			drm_crtc;
->>>> -	struct drm_plane		*plane;
->>>>  	struct exynos_drm_manager	*manager;
->>>>  	unsigned int			pipe;
->>>>  	unsigned int			dpms;
->>>> @@ -94,12 +92,12 @@ static void exynos_drm_crtc_commit(struct drm_crtc *crtc)
->>>>  
->>>>  	exynos_drm_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
->>>>  
->>>> -	exynos_plane_commit(exynos_crtc->plane);
->>>> +	exynos_plane_commit(crtc->primary);
->>>>  
->>>>  	if (manager->ops->commit)
->>>>  		manager->ops->commit(manager);
->>>>  
->>>> -	exynos_plane_dpms(exynos_crtc->plane, DRM_MODE_DPMS_ON);
->>>> +	exynos_plane_dpms(crtc->primary, DRM_MODE_DPMS_ON);
->>>>  }
->>>>  
->>>>  static bool
->>>> @@ -123,10 +121,9 @@ exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
->>>>  {
->>>>  	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
->>>>  	struct exynos_drm_manager *manager = exynos_crtc->manager;
->>>> -	struct drm_plane *plane = exynos_crtc->plane;
->>>> +	struct drm_framebuffer *fb = crtc->primary->fb;
->>>>  	unsigned int crtc_w;
->>>>  	unsigned int crtc_h;
->>>> -	int ret;
->>>>  
->>>>  	/*
->>>>  	 * copy the mode data adjusted by mode_fixup() into crtc->mode
->>>> @@ -134,29 +131,21 @@ exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
->>>>  	 */
->>>>  	memcpy(&crtc->mode, adjusted_mode, sizeof(*adjusted_mode));
->>>>  
->>>> -	crtc_w = crtc->primary->fb->width - x;
->>>> -	crtc_h = crtc->primary->fb->height - y;
->>>> +	crtc_w = fb->width - x;
->>>> +	crtc_h = fb->height - y;
->>>>  
->>>>  	if (manager->ops->mode_set)
->>>>  		manager->ops->mode_set(manager, &crtc->mode);
->>>>  
->>>> -	ret = exynos_plane_mode_set(plane, crtc, crtc->primary->fb, 0, 0, crtc_w, crtc_h,
->>>> -				    x, y, crtc_w, crtc_h);
->>>> -	if (ret)
->>>> -		return ret;
->>>> -
->>>> -	plane->crtc = crtc;
->>>> -	plane->fb = crtc->primary->fb;
->>>> -	drm_framebuffer_reference(plane->fb);
->>>> -
->>>> -	return 0;
->>>> +	return exynos_plane_mode_set(crtc->primary, crtc, fb, 0, 0,
->>>> +				     crtc_w, crtc_h, x, y, crtc_w, crtc_h);
->>>>  }
->>>>  
->>>>  static int exynos_drm_crtc_mode_set_commit(struct drm_crtc *crtc, int x, int y,
->>>>  					  struct drm_framebuffer *old_fb)
->>>>  {
->>>>  	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
->>>> -	struct drm_plane *plane = exynos_crtc->plane;
->>>> +	struct drm_framebuffer *fb = crtc->primary->fb;
->>>>  	unsigned int crtc_w;
->>>>  	unsigned int crtc_h;
->>>>  	int ret;
->>>> @@ -167,11 +156,11 @@ static int exynos_drm_crtc_mode_set_commit(struct drm_crtc *crtc, int x, int y,
->>>>  		return -EPERM;
->>>>  	}
->>>>  
->>>> -	crtc_w = crtc->primary->fb->width - x;
->>>> -	crtc_h = crtc->primary->fb->height - y;
->>>> +	crtc_w = fb->width - x;
->>>> +	crtc_h = fb->height - y;
->>>>  
->>>> -	ret = exynos_plane_mode_set(plane, crtc, crtc->primary->fb, 0, 0, crtc_w, crtc_h,
->>>> -				    x, y, crtc_w, crtc_h);
->>>> +	ret = exynos_plane_mode_set(crtc->primary, crtc, fb, 0, 0,
->>>> +				    crtc_w, crtc_h, x, y, crtc_w, crtc_h);
->>>>  	if (ret)
->>>>  		return ret;
->>>>  
->>>> @@ -279,6 +268,7 @@ static void exynos_drm_crtc_destroy(struct drm_crtc *crtc)
->>>>  
->>>>  	private->crtc[exynos_crtc->pipe] = NULL;
->>>>  
->>>> +	crtc->primary->funcs->destroy(crtc->primary);
->>> This is unnecessary.
->> The question is how these object should be destroyed. In current code
->> crtc is destroyed in fimd_unbind and it is called before
->> drm_mode_config_cleanup
->> which destroys all planes.
->> In such case primary plane will stay with .crtc pointing to non-existing
->> crtc.
->> Maybe performing crtcs cleanup after planes cleanup is better solution???
-> I think it's wrong to call destroy function of crtc in fimd_unbind, all
-> objects should be destroyed by drm_mode_config_cleanup except error
-> cases while initializing.
+Hello Guenter,
 
-Yes, it looks better this way. As I lurked in other drm drivers only
-exynos and imx
-destroys their objects directly, not via drm_mode_config_cleanup.
+Thanks for the patches.
+Tested patches 1,2 & 4 from this series on qcom apq8064 based IFC6410
+with Josh's patches which replace arm restart with restart notifier for
+this target.
 
->
->>>>  	drm_crtc_cleanup(crtc);
->>>>  	kfree(exynos_crtc);
->>>>  }
->>>> @@ -304,8 +294,7 @@ static int exynos_drm_crtc_set_property(struct drm_crtc *crtc,
->>>>  			exynos_drm_crtc_commit(crtc);
->>>>  			break;
->>>>  		case CRTC_MODE_BLANK:
->>>> -			exynos_plane_dpms(exynos_crtc->plane,
->>>> -					  DRM_MODE_DPMS_OFF);
->>>> +			exynos_plane_dpms(crtc->primary, DRM_MODE_DPMS_OFF);
->>>>  			break;
->>>>  		default:
->>>>  			break;
->>>> @@ -351,8 +340,10 @@ static void exynos_drm_crtc_attach_mode_property(struct drm_crtc *crtc)
->>>>  int exynos_drm_crtc_create(struct exynos_drm_manager *manager)
->>>>  {
->>>>  	struct exynos_drm_crtc *exynos_crtc;
->>>> +	struct drm_plane *plane;
->>>>  	struct exynos_drm_private *private = manager->drm_dev->dev_private;
->>>>  	struct drm_crtc *crtc;
->>>> +	int ret;
->>>>  
->>>>  	exynos_crtc = kzalloc(sizeof(*exynos_crtc), GFP_KERNEL);
->>>>  	if (!exynos_crtc)
->>>> @@ -364,11 +355,11 @@ int exynos_drm_crtc_create(struct exynos_drm_manager *manager)
->>>>  	exynos_crtc->dpms = DRM_MODE_DPMS_OFF;
->>>>  	exynos_crtc->manager = manager;
->>>>  	exynos_crtc->pipe = manager->pipe;
->>>> -	exynos_crtc->plane = exynos_plane_init(manager->drm_dev,
->>>> -				1 << manager->pipe, true);
->>>> -	if (!exynos_crtc->plane) {
->>>> -		kfree(exynos_crtc);
->>>> -		return -ENOMEM;
->>>> +	plane = exynos_plane_init(manager->drm_dev, 1 << manager->pipe,
->>>> +				  DRM_PLANE_TYPE_PRIMARY);
->>>> +	if (IS_ERR(plane)) {
->>>> +		ret = PTR_ERR(plane);
->>>> +		goto err_plane;
->>>>  	}
->>>>  
->>>>  	manager->crtc = &exynos_crtc->drm_crtc;
->>>> @@ -376,12 +367,22 @@ int exynos_drm_crtc_create(struct exynos_drm_manager *manager)
->>>>  
->>>>  	private->crtc[manager->pipe] = crtc;
->>>>  
->>>> -	drm_crtc_init(manager->drm_dev, crtc, &exynos_crtc_funcs);
->>>> +	ret = drm_crtc_init_with_planes(manager->drm_dev, crtc, plane, NULL,
->>>> +					&exynos_crtc_funcs);
->>>> +	if (ret < 0)
->>>> +		goto err_crtc;
->>>> +
->>>>  	drm_crtc_helper_add(crtc, &exynos_crtc_helper_funcs);
->>>>  
->>>>  	exynos_drm_crtc_attach_mode_property(crtc);
->>>>  
->>>>  	return 0;
->>>> +
->>>> +err_crtc:
->>>> +	plane->funcs->destroy(plane);
->>>> +err_plane:
->>>> +	kfree(exynos_crtc);
->>>> +	return ret;
->>>>  }
->>>>  
->>>>  int exynos_drm_crtc_enable_vblank(struct drm_device *dev, int pipe)
->>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
->>>> index 9b00e4e..a439452 100644
->>>> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
->>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
->>>> @@ -86,8 +86,9 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
->>>>  		struct drm_plane *plane;
->>>>  		unsigned long possible_crtcs = (1 << MAX_CRTC) - 1;
->>>>  
->>>> -		plane = exynos_plane_init(dev, possible_crtcs, false);
->>>> -		if (!plane)
->>>> +		plane = exynos_plane_init(dev, possible_crtcs,
->>>> +					  DRM_PLANE_TYPE_OVERLAY);
->>>> +		if (IS_ERR(plane))
->>>>  			goto err_mode_config_cleanup;
->>>>  	}
->>>>  
->>>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
->>>> index 8371cbd..15e37a0 100644
->>>> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
->>>> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
->>>> @@ -139,6 +139,8 @@ int exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
->>>>  			overlay->crtc_x, overlay->crtc_y,
->>>>  			overlay->crtc_width, overlay->crtc_height);
->>>>  
->>>> +	plane->crtc = crtc;
->>>> +
->>> OK, then we can remove same code from exynos_update_plane().
->> Right.
->>
->>> One more, plane->crtc is NULL before mode_set or setplane so it's
->>> problem if call plane->funcs->destroy with plane->crtc == NULL.
->>> We need checking plane->crtc is NULL in exynos_disable_plane().
->> I can simply add checks, but why we allow the plane with NULL crtc to be
->> enabled?
->>
-> I mean plane disable case, not enable case.
+Tested-by: pramod.gurav@smartplayin.com
 
-exynos_plane_dpms(off) calls exynos_drm_crtc_plane_disable only if
-exynos_plane->enabled
-is true, so only if plane changes state from enabled to disabled
-exynos_drm_crtc_plane_disable
-is called. I guess it should not be allowed that plane have .enabled
-true and .crtc NULL, if so
-we do not need checks here.
-
-Regards
-Andrzej
-
->
-> Thanks.
->
+On Wednesday 20 August 2014 06:15 AM, Guenter Roeck wrote:
+> Various drivers implement architecture and/or device specific means
+> to restart (reset) the system. Various mechanisms have been implemented
+> to support those schemes. The best known mechanism is arm_pm_restart,
+> which is a function pointer to be set either from platform specific code
+> or from drivers. Another mechanism is to use hardware watchdogs to issue
+> a reset; this mechanism is used if there is no other method available
+> to reset a board or system. Two examples are alim7101_wdt, which currently
+> uses the reboot notifier to trigger a reset, and moxart_wdt, which registers
+> the arm_pm_restart function. Several other restart drivers for arm, all
+> directly calling arm_pm_restart, are in the process of being integrated
+> into the kernel. All those drivers would benefit from the new API.
+> 
+> The existing mechanisms have a number of drawbacks. Typically only one scheme
+> to restart the system is supported (at least if arm_pm_restart is used).
+> At least in theory there can be multiple means to restart the system, some of
+> which may be less desirable (for example one mechanism may only reset the CPU,
+> while another may reset the entire system). Using arm_pm_restart can also be
+> racy if the function pointer is set from a driver, as the driver may be in
+> the process of being unloaded when arm_pm_restart is called.
+> Using the reboot notifier is always racy, as it is unknown if and when
+> other functions using the reboot notifier have completed execution
+> by the time the watchdog fires.
+> 
+> Introduce a system restart handler call chain to solve the described problems.
+> This call chain is expected to be executed from the architecture specific
+> machine_restart() function. Drivers providing system restart functionality
+> (such as the watchdog drivers mentioned above) are expected to register
+> with this call chain. By using the priority field in the notifier block,
+> callers can control restart handler execution sequence and thus ensure that
+> the restart handler with the optimal restart capabilities for a given system
+> is called first.
+> 
+> Since the first revision of this patchset, a number of separate patch
+> submissions have been made which either depend on it or could make use of it.
+> 
+> http://www.spinics.net/linux/lists/arm-kernel/msg344796.html
+> 	registers three notifiers.
+> https://lkml.org/lkml/2014/7/8/962
+> 	would benefit from it.
+> 
+> Patch 1 of this series implements the restart handler function. Patches 2 and 3
+> implement calling the restart handler chain from arm and arm64 restart code.
+> 
+> Patch 4 modifies the restart-poweroff driver to no longer call arm_pm_restart
+> directly but machine_restart. This is done to avoid calling arm_pm_restart
+> from more than one place. The change makes the driver architecture independent,
+> so it would be possible to drop the arm dependency from its Kconfig entry.
+> 
+> Patch 5 and 6 convert existing restart handlers in the watchdog subsystem
+> to use the restart handler. Patch 7 unexports arm_pm_restart to ensure
+> that no one gets the idea to implement a restart handler as module.
+> 
+> The entire patch series, including additional patches depending on it,
+> is available from
+> https://git.kernel.org/cgit/linux/kernel/git/groeck/linux-staging.git/
+> in branch 'restart-staging'.
+> 
+> ---
+> v7: Rebased to v3.17-rc1
+>     Dropped null_restart from arm code to make arm_pm_restart truly optional
+>     Reordered series. power/restart must be patched to not use arm_pm_restart
+>     prior to making arm_pm_restart optional.
+>     Added all pending patches to series
+> v6: Use atomic notifier call chain 
+>     Rebased series to v3.16
+> v5: Rebased series to v3.16-rc5
+>     Function renames:
+>     register_restart_notifier -> register_restart_handler
+>     unregister_restart_notifier -> unregister_restart_handler
+>     kernel_restart_notify -> do_kernel_restart
+> v4: Document restart notifier priorities
+>     Select 128 as default priority for newly introduced notifiers
+>     Fix checkpatch warning (line too long) in moxart patch
+> v3: Drop RFC.
+>     Add kernel_restart_notify wrapper function to execute notifier
+>     Improve documentation.
+>     Move restart_notifier_list into kernel/reboot.c and make it static.
+> v2: Add patch 4.
+>     Only call blocking notifier call chain if arm_pm_restart was not set.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+> 
