@@ -1,164 +1,103 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v4] mfd: syscon: Decouple syscon interface from platform
- devices
-Date: Fri, 19 Sep 2014 17:11:57 +0200
-Message-ID: <541C47BD.3070601@gmail.com>
-References: <1411132009-11173-1-git-send-email-pankaj.dubey@samsung.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH] drm/exynos: init vblank with real number of crtcs
+Date: Fri, 19 Sep 2014 17:31:21 +0200
+Message-ID: <20140919153121.GC15734@phenom.ffwll.local>
+References: <1411131440-15395-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1411132009-11173-1-git-send-email-pankaj.dubey@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de, naushad@samsung.com, b29396@freescale.com, joshi@samsung.com, thomas.ab@samsung.com, Li.Xiubo@freescale.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, lee.jones@linaro.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <1411131440-15395-1-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, drake@endlessm.com, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Pankaj,
-
-Please see my comments inline.
-
-On 19.09.2014 15:06, Pankaj Dubey wrote:
-> Currently a syscon entity can be only registered directly through a
-> platform device that binds to a dedicated syscon driver. However in
-> certain use cases it is desirable to make a device used with another
-> driver a syscon interface provider.
-
-[snip]
-
-> -static int syscon_match_node(struct device *dev, void *data)
-> +static struct syscon *of_syscon_register(struct device_node *np)
->  {
-> -	struct device_node *dn = data;
-> +	struct platform_device *pdev = NULL;
-> +	struct syscon *syscon;
-> +	struct regmap *regmap;
-> +	void __iomem *base;
-> +
-> +
-
-nit: Stray blank line.
-
-> +	if (!of_device_is_compatible(np, "syscon"))
-> +		return ERR_PTR(-EINVAL);
-
-I don't think this check is needed at all. I'd say that drivers should
-be free to register a syscon provider for any node.
-
-> +
-> +	syscon = kzalloc(sizeof(*syscon), GFP_KERNEL);
-> +	if (!syscon)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	base = of_iomap(np, 0);
-> +	if (!base)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	if (!of_device_is_available(np) ||
-
-Wouldn't it be enough to simply call of_find_device_by_node(np) and if
-it fails then instead create a dummy device?
-
-> +			of_node_test_and_set_flag(np, OF_POPULATED)) {
-> +		/* if device is already populated and avaiable then use it */
-> +		pdev = of_find_device_by_node(np);
-> +		if (!(&pdev->dev))
-
-This is just plain wrong, because this condition will always evaluate to
-true (see the definition of struct platform_device). Shouldn't you
-rather just check the pdev pointer?
-
-> +			return ERR_PTR(-ENODEV);
-> +
-> +	} else {
-> +		/* for early users create dummy syscon device and use it */
-> +		pdev = kzalloc(sizeof(*pdev), GFP_KERNEL);
-> +		if (!pdev)
-> +			return ERR_PTR(-ENOMEM);
-
-Any clean-up on error path?
-
-> +
-> +		pdev->name = "dummy-syscon";
-> +		pdev->id = -1;
-
-Wouldn't you get an ID collision if more than one syscon is registered
-early? Maybe the naming scheme from of_device_alloc() could be adopted
-partially?
-
-> +		device_initialize(&pdev->dev);
-
-I wonder if you couldn't simply reuse platform_device_alloc() for all of
-this, except the line below, which would still have to be handled
-separately.
-
-> +		pdev->dev.of_node = np;
-> +	}
-> +
-> +	regmap = regmap_init_mmio(&pdev->dev, base, &syscon_regmap_config);
-> +	if (IS_ERR(regmap)) {
-> +		pr_err("regmap init failed\n");
-
-If you have a dev here then you should be able to use dev_err() already.
-
-> +		return ERR_CAST(regmap);
-> +	}
-> +
-> +	syscon->regmap = regmap;
-> +	syscon->np = np;
+On Fri, Sep 19, 2014 at 02:57:20PM +0200, Andrzej Hajda wrote:
+> Initialization of vblank with MAX_CRTC caused attempts
+> to disabling vblanks for non-existing crtcs in case
+> drm used fewer crtcs. The patch fixes it.
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c | 18 +++++++++---------
+>  1 file changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> index 9b00e4e..dc4affd 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> @@ -94,10 +94,6 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
+>  	/* init kms poll for handling hpd */
+>  	drm_kms_helper_poll_init(dev);
 >  
-> -	return (dev->of_node == dn) ? 1 : 0;
-> +	spin_lock(&syscon_list_slock);
-> +	list_add_tail(&syscon->list, &syscon_list);
-> +	spin_unlock(&syscon_list_slock);
-> +
-> +	return syscon;
->  }
+> -	ret = drm_vblank_init(dev, MAX_CRTC);
+> -	if (ret)
+> -		goto err_mode_config_cleanup;
+> -
+>  	/* setup possible_clones. */
+>  	exynos_drm_encoder_setup(dev);
 >  
->  struct regmap *syscon_node_to_regmap(struct device_node *np)
->  {
-> -	struct syscon *syscon;
-> -	struct device *dev;
-> +	struct syscon *entry, *syscon = NULL;
->  
-> -	dev = driver_find_device(&syscon_driver.driver, NULL, np,
-> -				 syscon_match_node);
-> -	if (!dev)
-> -		return ERR_PTR(-EPROBE_DEFER);
-> +	spin_lock(&syscon_list_slock);
->  
-> -	syscon = dev_get_drvdata(dev);
-> +	list_for_each_entry(entry, &syscon_list, list)
-> +		if (entry->np == np) {
-> +			syscon = entry;
-> +			break;
-> +		}
->  
-> -	return syscon->regmap;
-> +	spin_unlock(&syscon_list_slock);
+> @@ -106,22 +102,26 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
+>  	/* Try to bind all sub drivers. */
+>  	ret = component_bind_all(dev->dev, dev);
+>  	if (ret)
+> -		goto err_cleanup_vblank;
+> +		goto err_mode_config_cleanup;
 > +
-> +	if (!syscon)
-> +		syscon = of_syscon_register(np);
-> +
-> +	if (!IS_ERR(syscon))
-> +		return syscon->regmap;
-> +
-> +	return ERR_CAST(syscon);
+> +	ret = drm_vblank_init(dev, dev->mode_config.num_crtc);
 
-nit: Usually error checking is done the opposite way, i.e.
+Hm, I wonder whether we should have a drm_mode_vblank_init which dtrt here
+for kms drivers? Suggestions for a better name welcome ;-)
+-Daniel
 
-	if (IS_ERR(syscon))
-		return ERR_CAST(syscon);
+> +	if (ret)
+> +		goto err_unbind_all;
+>  
+>  	/* Probe non kms sub drivers and virtual display driver. */
+>  	ret = exynos_drm_device_subdrv_probe(dev);
+>  	if (ret)
+> -		goto err_unbind_all;
+> +		goto err_cleanup_vblank;
+>  
+>  	/* force connectors detection */
+>  	drm_helper_hpd_irq_event(dev);
+>  
+>  	return 0;
+>  
+> -err_unbind_all:
+> -	component_unbind_all(dev->dev, dev);
+>  err_cleanup_vblank:
+>  	drm_vblank_cleanup(dev);
+> +err_unbind_all:
+> +	component_unbind_all(dev->dev, dev);
+>  err_mode_config_cleanup:
+>  	drm_mode_config_cleanup(dev);
+>  	drm_release_iommu_mapping(dev);
+> @@ -138,8 +138,8 @@ static int exynos_drm_unload(struct drm_device *dev)
+>  	exynos_drm_fbdev_fini(dev);
+>  	drm_kms_helper_poll_fini(dev);
+>  
+> -	component_unbind_all(dev->dev, dev);
+>  	drm_vblank_cleanup(dev);
+> +	component_unbind_all(dev->dev, dev);
+>  	drm_mode_config_cleanup(dev);
+>  	drm_release_iommu_mapping(dev);
+>  
+> -- 
+> 1.9.1
+> 
 
-	return syscon->regmap;
-
-Best regards,
-Tomasz
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
