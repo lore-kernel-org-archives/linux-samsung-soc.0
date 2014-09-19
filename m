@@ -1,55 +1,64 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: [PATCH v4 4/7] ARM: l2c: Add support for overriding prefetch
- settings
-Date: Fri, 19 Sep 2014 11:50:01 +0200
-Message-ID: <20140919095000.GF29620@piout.net>
-References: <1409062680-15906-1-git-send-email-t.figa@samsung.com>
- <1409062680-15906-5-git-send-email-t.figa@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1409062680-15906-5-git-send-email-t.figa@samsung.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, tony@atomide.com, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, drake@endlessm.com, loeliger@gmail.com, santosh.shilimkar@ti.com, Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-omap@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v10 0/6] Add Maxim 77802 RTC support
+Date: Fri, 19 Sep 2014 12:26:11 +0200
+Message-ID: <1411122377-10426-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:41498 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751223AbaISK0i (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 19 Sep 2014 06:26:38 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Alessandro Zummo <a.zummo@towertech.it>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-On 26/08/2014 at 16:17:57 +0200, Tomasz Figa wrote :
-> Firmware on certain boards (e.g. ODROID-U3) can leave incorrect L2C prefetch
-> settings configured in registers leading to crashes if L2C is enabled
-> without overriding them. This patch introduces bindings to enable
-> prefetch settings to be specified from DT and necessary support in the
-> driver.
-> 
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Hello Andrew,
 
-Tested-by: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+This series add support for the Real Time clock present in
+the Maxim 77802 Power Managment IC. The version number is
+quite high because it previously was part of a bigger series
+[0] that aimed to add support for all the devices in the
+max77802 PMIC. But now that the max77802 dependencies were
+already merged for 3.17, the series were split but I kept
+the version numbering.
 
-It is working and useful on Atmel's sama5d4 were the bootloader is not
-configuring the L2C prefetch. However, I'm wondering whether we should
-add support for setting L310_PREFETCH_CTRL_DATA_PREFETCH and
-L310_PREFETCH_CTRL_INSTR_PREFETCH. I'm currently doing it by using
-".l2c_aux_val    = L310_AUX_CTRL_DATA_PREFETCH |
-L310_AUX_CTRL_INSTR_PREFETCH" (those are the same bits) but this has the
-disadvantage of displaying the "L2C: platform modifies aux control
-register:" twice.
+While working on the max77802 rtc support a lot of feedback
+was given and the issues pointed out also apply to a driver
+for a similar PMIC RTC (max77686). So patches 01/06 to 05/06
+in the series are cleanups for the max77686 driver and patch
+06/06 adds the support for the max77802 RTC.
 
-> +	if (!of_property_read_u32(np, "arm,prefetch-offset", &val)) {
-> +		prefetch &= ~L310_PREFETCH_CTRL_OFFSET_MASK;
-> +		prefetch |= val & L310_PREFETCH_CTRL_OFFSET_MASK;
-> +	}
-> +
+This version address the issues pointed out on the previous
+version [1] and changelog are present on each patch when is
+applicable.
 
-While you use val directly here, later, while printing the offset, val +
-1 is used. Maybe it would be better to have the same number in both
-places, else you end up with having "arm,prefetch-offset = <1>" in your
-DT and the kernel printing "L2C-310 ID prefetch enabled, offset 2
-lines".
+The series were tested on an Exynos5250 Snow (max77686) and
+Exynos5420 Peach Pit (max77802) machines and applies cleanly
+to both 3.17-rc1 and today's linux-next (20140919).
 
+NOTE: The patches from the previous version [1] were already
+present in the -mm tree [2] so I didn't know if I should had
+sent this as a delta or as a new revision. I decided to do
+the later but please let me know if you expected the former.
 
+Doug Anderson (1):
+  rtc: max77686: Allow the max77686 rtc to wakeup the system
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Javier Martinez Canillas (5):
+  rtc: max77686: Remove dead code for SMPL and WTSR.
+  rtc: max77686: Fail to probe if no RTC regmap irqchip is set
+  rtc: max77686: Remove unneded info log
+  rtc: max77686: Use ffs() to calculate tm_wday
+  rtc: Add driver for Maxim 77802 PMIC Real-Time-Clock
+
+ drivers/rtc/Kconfig        |  10 +
+ drivers/rtc/Makefile       |   1 +
+ drivers/rtc/rtc-max77686.c | 139 +++----------
+ drivers/rtc/rtc-max77802.c | 501 +++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 542 insertions(+), 109 deletions(-)
+ create mode 100644 drivers/rtc/rtc-max77802.c
+
+[0]: http://lwn.net/Articles/605350/
+[1]: https://lkml.org/lkml/2014/9/12/87
+[2]: http://ozlabs.org/~akpm/mmots/series
