@@ -1,87 +1,96 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
- ps8622 DT properties
-Date: Fri, 19 Sep 2014 19:29:29 +0530
-Message-ID: <CAEC9eQMQrM289J+ukkshKtTo9dB=G4cvg-4zF6LR6snqE5BL0A@mail.gmail.com>
-References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
- <5419760A.7020908@ti.com>
- <CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com>
- <5419B52D.4060107@ti.com>
- <CAEC9eQO2rfmVEKTCUJk+SpfdeUr81gN3stYV3wE6yR3E=-zonA@mail.gmail.com>
- <541C279A.2030601@ti.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v4] mfd: syscon: Decouple syscon interface from platform
+ devices
+Date: Fri, 19 Sep 2014 16:18:36 +0200
+Message-ID: <CABxcv=m4CX6ZiWxq0kNZ-3iLg9J8pqguhcr5G7Ud0+8N-8RDjQ@mail.gmail.com>
+References: <1411132009-11173-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <541C279A.2030601@ti.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1411132009-11173-1-git-send-email-pankaj.dubey@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, naushad@samsung.com, b29396@freescale.com, Linux Kernel <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, thomas.ab@samsung.com, Li.Xiubo@freescale.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, sunil joshi <joshi@samsung.com>, Lee Jones <lee.jones@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Sep 19, 2014 at 6:24 PM, Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
-> On 18/09/14 08:50, Ajay kumar wrote:
->
->>>> Why do we need a complex graph when it can be handled using a simple phandle?
->>>
->>> Maybe in your case you can handle it with simple phandle. Can you
->>> guarantee that it's enough for everyone, on all platforms?
->> Yes, as of now exynos5420-peach-pit and exynos5250-spring boards use
->> this. In case of both, the phandle to bridge node is passed to the
->> exynos_dp node.
->>
->>> The point of the ports/endpoint graph is to also support more
->>> complicated scenarios. If you now create ps8622 bindings that do not
->>> support those graphs, the no one else using ps8622 can use
->>> ports/endpoint graphs either.
->>>
->>> Btw, is there an example how the bridge with these bindings is used in a
->>> board's .dts file? I couldn't find any example with a quick search. So
->>> it's unclear to me what the "simple phandle" actually is.
->> Please refer to the following link:
->> https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/tree/arch/arm/boot/dts/exynos5420-peach-pit.dts?id=samsung-dt#n129
->> Let me know if you still think we would need to describe it as a complex graph!
->
-> Yes, I think so. I'm not the DRM maintainer, though.
->
-> I think we have two options:
->
-> 1) Describe the video component connections with the ports/endpoints
-> properly for all new display device bindings, and know that it's
-> (hopefully) future proof and covers even the more complex boards that
-> use the devices.
->
-> or
->
-> 2) Use some simple methods to describe the links, like single phandle as
-> you do, knowing that we can't support more complex boards in the future.
-I am not really able to understand, what's stopping us from using this
-bridge on a board with "complex" display connections. To use ps8622 driver,
-one needs to "attach" it to the DRM framework. For this, the DRM driver
-would need the DT node for ps8622 bridge. For which I use a phandle.
+Hello Pankaj,
 
-If some XYZ platform wishes to pick the DT node via a different method,
-they are always welcome to do it. Just because I am not specifying a
-video port/endpoint in the DT binding example, would it mean that platform
-cannot make use of ports in future? If that is the case, I can add something
-like this:
-http://lxr.free-electrons.com/source/Documentation/devicetree/bindings/panel/samsung,ld9040.txt#L61
+On Fri, Sep 19, 2014 at 3:06 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> Currently a syscon entity can be only registered directly through a
+> platform device that binds to a dedicated syscon driver. However in
+> certain use cases it is desirable to make a device used with another
+> driver a syscon interface provider.
+>
+> For example, certain SoCs (e.g. Exynos) contain system controller
+> blocks which perform various functions such as power domain control,
+> CPU power management, low power mode control, but in addition contain
+> certain IP integration glue, such as various signal masks,
+> coprocessor power control, etc. In such case, there is a need to have
+> a dedicated driver for such system controller but also share registers
+> with other drivers. The latter is where the syscon interface is helpful.
+>
+> In case of DT based platforms, this patch decouples syscon object from
+> syscon platform driver, and allows to create syscon objects first time
+> when it is required by calling of syscon_regmap_lookup_by APIs and keep
+> a list of such syscon objects along with syscon provider device_nodes
+> and regmap handles.
+>
+> For non-DT based platforms, this patch keeps syscon platform driver
+> structure where is can be probed and such non-DT based drivers can use
+> syscon_regmap_lookup_by_pdev API and get access to regmap handles.
+> Once all users of "syscon_regmap_lookup_by_pdev" migrated to DT based,
+> we can completly remove platform driver of syscon, and keep only helper
+> functions to get regmap handles.
+>
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+> Changes since v3:
+>  - Addressed Arnd's comment for v2.
+>  - Updated of_syscon_register for adding dev pointer in regmap_init_mmio.
+>  - For early users created dummy platform device.
+>
+> Changes since v2:
+>  - Added back platform device support from syscon, with one change that
+>    syscon will not be probed for DT based platform.
+>  - Added back syscon_regmap_lookup_by_pdevname API so that non-DT base
+>    users of syscon will not be broken.
+>  - Removed unwanted change in syscon.h.
+>  - Modified Signed-off-by list, added Suggested-by of Tomasz Figa and
+>    Arnd Bergmann.
+>  - Added Tested-by of Vivek Gautam for testing on Exynos platform.
+>
+> Changes since v1:
+>  - Removed of_syscon_unregister function.
+>  - Modified of_syscon_register function and it will be used by syscon.c
+>    to create syscon objects whenever required.
+>  - Removed platform device support from syscon.
+>  - Removed syscon_regmap_lookup_by_pdevname API support.
+>  - As there are significant changes w.r.t patchset v1, I am taking over
+>    author for this patchset from Tomasz Figa.
+>
+> [1]: https://lkml.org/lkml/2014/9/2/299
+>  drivers/mfd/syscon.c |  102 ++++++++++++++++++++++++++++++++++++++------------
+>  1 file changed, 79 insertions(+), 23 deletions(-)
+>
 
-Regards,
-Ajay kumar
+I tested this patch on an Exynos5420 Peach Pit Chromebook and I see
+that of_syscon_register() is called for the PMU system controller with
+compatible string "samsung,exynos5420-pmu", "syscon" which does not
+have a dedicated platform driver, so:
 
-> I see some exynos boards already using the ports/endpoints, like
-> arch/arm/boot/dts/exynos4412-trats2.dts. Why not use it for all new
-> display devices?
->
->  Tomi
->
->
+Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+
+Best regards,
+Javier
