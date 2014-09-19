@@ -1,64 +1,36 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v10 0/6] Add Maxim 77802 RTC support
-Date: Fri, 19 Sep 2014 12:26:11 +0200
-Message-ID: <1411122377-10426-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:41498 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751223AbaISK0i (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Sep 2014 06:26:38 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v10 4/6] rtc: max77686: Remove unneded info log
+Date: Fri, 19 Sep 2014 12:26:15 +0200
+Message-ID: <1411122377-10426-5-git-send-email-javier.martinez@collabora.co.uk>
+References: <1411122377-10426-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1411122377-10426-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Alessandro Zummo <a.zummo@towertech.it>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Andrew,
+If devm_rtc_device_register() fails a dev_err() is already
+reported so there is no need to do an additional dev_info().
 
-This series add support for the Real Time clock present in
-the Maxim 77802 Power Managment IC. The version number is
-quite high because it previously was part of a bigger series
-[0] that aimed to add support for all the devices in the
-max77802 PMIC. But now that the max77802 dependencies were
-already merged for 3.17, the series were split but I kept
-the version numbering.
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ drivers/rtc/rtc-max77686.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-While working on the max77802 rtc support a lot of feedback
-was given and the issues pointed out also apply to a driver
-for a similar PMIC RTC (max77686). So patches 01/06 to 05/06
-in the series are cleanups for the max77686 driver and patch
-06/06 adds the support for the max77802 RTC.
-
-This version address the issues pointed out on the previous
-version [1] and changelog are present on each patch when is
-applicable.
-
-The series were tested on an Exynos5250 Snow (max77686) and
-Exynos5420 Peach Pit (max77802) machines and applies cleanly
-to both 3.17-rc1 and today's linux-next (20140919).
-
-NOTE: The patches from the previous version [1] were already
-present in the -mm tree [2] so I didn't know if I should had
-sent this as a delta or as a new revision. I decided to do
-the later but please let me know if you expected the former.
-
-Doug Anderson (1):
-  rtc: max77686: Allow the max77686 rtc to wakeup the system
-
-Javier Martinez Canillas (5):
-  rtc: max77686: Remove dead code for SMPL and WTSR.
-  rtc: max77686: Fail to probe if no RTC regmap irqchip is set
-  rtc: max77686: Remove unneded info log
-  rtc: max77686: Use ffs() to calculate tm_wday
-  rtc: Add driver for Maxim 77802 PMIC Real-Time-Clock
-
- drivers/rtc/Kconfig        |  10 +
- drivers/rtc/Makefile       |   1 +
- drivers/rtc/rtc-max77686.c | 139 +++----------
- drivers/rtc/rtc-max77802.c | 501 +++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 542 insertions(+), 109 deletions(-)
- create mode 100644 drivers/rtc/rtc-max77802.c
-
-[0]: http://lwn.net/Articles/605350/
-[1]: https://lkml.org/lkml/2014/9/12/87
-[2]: http://ozlabs.org/~akpm/mmots/series
+diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
+index 55396bb..b177ba1 100644
+--- a/drivers/rtc/rtc-max77686.c
++++ b/drivers/rtc/rtc-max77686.c
+@@ -457,8 +457,6 @@ static int max77686_rtc_probe(struct platform_device *pdev)
+ 					&max77686_rtc_ops, THIS_MODULE);
+ 
+ 	if (IS_ERR(info->rtc_dev)) {
+-		dev_info(&pdev->dev, "%s: fail\n", __func__);
+-
+ 		ret = PTR_ERR(info->rtc_dev);
+ 		dev_err(&pdev->dev, "Failed to register RTC device: %d\n", ret);
+ 		if (ret == 0)
+-- 
+2.1.0
