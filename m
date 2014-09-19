@@ -1,279 +1,285 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH] drm/exynos: switch to universal plane API
-Date: Fri, 19 Sep 2014 20:11:58 +0900
-Message-ID: <541C0F7E.1080808@samsung.com>
-References: <1411046223-22703-1-git-send-email-a.hajda@samsung.com>
- <541B8093.6040807@samsung.com> <541C0B5B.7010100@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH v4 5/8] arm64: dts: Add initial device tree support for
+ EXYNOS7
+Date: Fri, 19 Sep 2014 20:26:04 +0900
+Message-ID: <010f01cfd3fc$80eabb00$82c03100$@kernel.org>
+References: <1410535592-5782-1-git-send-email-ch.naveen@samsung.com>
+ <1410535592-5782-7-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <541C0B5B.7010100@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, drake@endlessm.com, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, m.szyprowski@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:31008 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755787AbaISL0J (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 19 Sep 2014 07:26:09 -0400
+In-reply-to: <1410535592-5782-7-git-send-email-ch.naveen@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>, linux-arm-kernel@lists.infradead.org
+Cc: naveenkrishna.ch@gmail.com, linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, tomasz.figa@gmail.com, gregkh@linuxfoundation.org
 
-Hi,
+Naveen Krishna Chatradhi wrote:
+> 
+> Add initial device tree nodes for EXYNOS7 SoC and board dts file
+> to support Espresso board based on Exynos7 SoC.
+> 
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
 
-On 09/19/2014 07:54 PM, Andrzej Hajda wrote:
-> On 09/19/2014 03:02 AM, Joonyoung Shim wrote:
->> Hi Andrzej,
->>
->> On 09/18/2014 10:17 PM, Andrzej Hajda wrote:
->>> The patch replaces legacy functions
->>> drm_plane_init() / drm_crtc_init() with
->>> drm_universal_plane_init() and drm_crtc_init_with_planes().
->>> It allows to replace fake primary plane with the real one.
->>>
->>> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->>> ---
->>> Hi Inki,
->>>
->>> I have tested this patch with trats board, it looks OK.
->>> As a side effect it should solve fb refcounting issues
->>> reported by me and Daniel Drake.
->>>
->>> Regards
->>> Andrzej
->>> ---
->>>  drivers/gpu/drm/exynos/exynos_drm_crtc.c  | 63 ++++++++++++++++---------------
->>>  drivers/gpu/drm/exynos/exynos_drm_drv.c   |  5 ++-
->>>  drivers/gpu/drm/exynos/exynos_drm_plane.c | 17 +++++----
->>>  drivers/gpu/drm/exynos/exynos_drm_plane.h |  3 +-
->>>  4 files changed, 47 insertions(+), 41 deletions(-)
->>>
->>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
->>> index b68e58f..d2f713e 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
->>> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
->>> @@ -32,7 +32,6 @@ enum exynos_crtc_mode {
->>>   * Exynos specific crtc structure.
->>>   *
->>>   * @drm_crtc: crtc object.
->>> - * @drm_plane: pointer of private plane object for this crtc
->>>   * @manager: the manager associated with this crtc
->>>   * @pipe: a crtc index created at load() with a new crtc object creation
->>>   *	and the crtc object would be set to private->crtc array
->>> @@ -46,7 +45,6 @@ enum exynos_crtc_mode {
->>>   */
->>>  struct exynos_drm_crtc {
->>>  	struct drm_crtc			drm_crtc;
->>> -	struct drm_plane		*plane;
->>>  	struct exynos_drm_manager	*manager;
->>>  	unsigned int			pipe;
->>>  	unsigned int			dpms;
->>> @@ -94,12 +92,12 @@ static void exynos_drm_crtc_commit(struct drm_crtc *crtc)
->>>  
->>>  	exynos_drm_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
->>>  
->>> -	exynos_plane_commit(exynos_crtc->plane);
->>> +	exynos_plane_commit(crtc->primary);
->>>  
->>>  	if (manager->ops->commit)
->>>  		manager->ops->commit(manager);
->>>  
->>> -	exynos_plane_dpms(exynos_crtc->plane, DRM_MODE_DPMS_ON);
->>> +	exynos_plane_dpms(crtc->primary, DRM_MODE_DPMS_ON);
->>>  }
->>>  
->>>  static bool
->>> @@ -123,10 +121,9 @@ exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
->>>  {
->>>  	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
->>>  	struct exynos_drm_manager *manager = exynos_crtc->manager;
->>> -	struct drm_plane *plane = exynos_crtc->plane;
->>> +	struct drm_framebuffer *fb = crtc->primary->fb;
->>>  	unsigned int crtc_w;
->>>  	unsigned int crtc_h;
->>> -	int ret;
->>>  
->>>  	/*
->>>  	 * copy the mode data adjusted by mode_fixup() into crtc->mode
->>> @@ -134,29 +131,21 @@ exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
->>>  	 */
->>>  	memcpy(&crtc->mode, adjusted_mode, sizeof(*adjusted_mode));
->>>  
->>> -	crtc_w = crtc->primary->fb->width - x;
->>> -	crtc_h = crtc->primary->fb->height - y;
->>> +	crtc_w = fb->width - x;
->>> +	crtc_h = fb->height - y;
->>>  
->>>  	if (manager->ops->mode_set)
->>>  		manager->ops->mode_set(manager, &crtc->mode);
->>>  
->>> -	ret = exynos_plane_mode_set(plane, crtc, crtc->primary->fb, 0, 0, crtc_w, crtc_h,
->>> -				    x, y, crtc_w, crtc_h);
->>> -	if (ret)
->>> -		return ret;
->>> -
->>> -	plane->crtc = crtc;
->>> -	plane->fb = crtc->primary->fb;
->>> -	drm_framebuffer_reference(plane->fb);
->>> -
->>> -	return 0;
->>> +	return exynos_plane_mode_set(crtc->primary, crtc, fb, 0, 0,
->>> +				     crtc_w, crtc_h, x, y, crtc_w, crtc_h);
->>>  }
->>>  
->>>  static int exynos_drm_crtc_mode_set_commit(struct drm_crtc *crtc, int x, int y,
->>>  					  struct drm_framebuffer *old_fb)
->>>  {
->>>  	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
->>> -	struct drm_plane *plane = exynos_crtc->plane;
->>> +	struct drm_framebuffer *fb = crtc->primary->fb;
->>>  	unsigned int crtc_w;
->>>  	unsigned int crtc_h;
->>>  	int ret;
->>> @@ -167,11 +156,11 @@ static int exynos_drm_crtc_mode_set_commit(struct drm_crtc *crtc, int x, int y,
->>>  		return -EPERM;
->>>  	}
->>>  
->>> -	crtc_w = crtc->primary->fb->width - x;
->>> -	crtc_h = crtc->primary->fb->height - y;
->>> +	crtc_w = fb->width - x;
->>> +	crtc_h = fb->height - y;
->>>  
->>> -	ret = exynos_plane_mode_set(plane, crtc, crtc->primary->fb, 0, 0, crtc_w, crtc_h,
->>> -				    x, y, crtc_w, crtc_h);
->>> +	ret = exynos_plane_mode_set(crtc->primary, crtc, fb, 0, 0,
->>> +				    crtc_w, crtc_h, x, y, crtc_w, crtc_h);
->>>  	if (ret)
->>>  		return ret;
->>>  
->>> @@ -279,6 +268,7 @@ static void exynos_drm_crtc_destroy(struct drm_crtc *crtc)
->>>  
->>>  	private->crtc[exynos_crtc->pipe] = NULL;
->>>  
->>> +	crtc->primary->funcs->destroy(crtc->primary);
->> This is unnecessary.
-> 
-> The question is how these object should be destroyed. In current code
-> crtc is destroyed in fimd_unbind and it is called before
-> drm_mode_config_cleanup
-> which destroys all planes.
-> In such case primary plane will stay with .crtc pointing to non-existing
-> crtc.
-> Maybe performing crtcs cleanup after planes cleanup is better solution???
+Looks good to me,
 
-I think it's wrong to call destroy function of crtc in fimd_unbind, all
-objects should be destroyed by drm_mode_config_cleanup except error
-cases while initializing.
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-> 
->>
->>>  	drm_crtc_cleanup(crtc);
->>>  	kfree(exynos_crtc);
->>>  }
->>> @@ -304,8 +294,7 @@ static int exynos_drm_crtc_set_property(struct drm_crtc *crtc,
->>>  			exynos_drm_crtc_commit(crtc);
->>>  			break;
->>>  		case CRTC_MODE_BLANK:
->>> -			exynos_plane_dpms(exynos_crtc->plane,
->>> -					  DRM_MODE_DPMS_OFF);
->>> +			exynos_plane_dpms(crtc->primary, DRM_MODE_DPMS_OFF);
->>>  			break;
->>>  		default:
->>>  			break;
->>> @@ -351,8 +340,10 @@ static void exynos_drm_crtc_attach_mode_property(struct drm_crtc *crtc)
->>>  int exynos_drm_crtc_create(struct exynos_drm_manager *manager)
->>>  {
->>>  	struct exynos_drm_crtc *exynos_crtc;
->>> +	struct drm_plane *plane;
->>>  	struct exynos_drm_private *private = manager->drm_dev->dev_private;
->>>  	struct drm_crtc *crtc;
->>> +	int ret;
->>>  
->>>  	exynos_crtc = kzalloc(sizeof(*exynos_crtc), GFP_KERNEL);
->>>  	if (!exynos_crtc)
->>> @@ -364,11 +355,11 @@ int exynos_drm_crtc_create(struct exynos_drm_manager *manager)
->>>  	exynos_crtc->dpms = DRM_MODE_DPMS_OFF;
->>>  	exynos_crtc->manager = manager;
->>>  	exynos_crtc->pipe = manager->pipe;
->>> -	exynos_crtc->plane = exynos_plane_init(manager->drm_dev,
->>> -				1 << manager->pipe, true);
->>> -	if (!exynos_crtc->plane) {
->>> -		kfree(exynos_crtc);
->>> -		return -ENOMEM;
->>> +	plane = exynos_plane_init(manager->drm_dev, 1 << manager->pipe,
->>> +				  DRM_PLANE_TYPE_PRIMARY);
->>> +	if (IS_ERR(plane)) {
->>> +		ret = PTR_ERR(plane);
->>> +		goto err_plane;
->>>  	}
->>>  
->>>  	manager->crtc = &exynos_crtc->drm_crtc;
->>> @@ -376,12 +367,22 @@ int exynos_drm_crtc_create(struct exynos_drm_manager *manager)
->>>  
->>>  	private->crtc[manager->pipe] = crtc;
->>>  
->>> -	drm_crtc_init(manager->drm_dev, crtc, &exynos_crtc_funcs);
->>> +	ret = drm_crtc_init_with_planes(manager->drm_dev, crtc, plane, NULL,
->>> +					&exynos_crtc_funcs);
->>> +	if (ret < 0)
->>> +		goto err_crtc;
->>> +
->>>  	drm_crtc_helper_add(crtc, &exynos_crtc_helper_funcs);
->>>  
->>>  	exynos_drm_crtc_attach_mode_property(crtc);
->>>  
->>>  	return 0;
->>> +
->>> +err_crtc:
->>> +	plane->funcs->destroy(plane);
->>> +err_plane:
->>> +	kfree(exynos_crtc);
->>> +	return ret;
->>>  }
->>>  
->>>  int exynos_drm_crtc_enable_vblank(struct drm_device *dev, int pipe)
->>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
->>> index 9b00e4e..a439452 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
->>> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
->>> @@ -86,8 +86,9 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
->>>  		struct drm_plane *plane;
->>>  		unsigned long possible_crtcs = (1 << MAX_CRTC) - 1;
->>>  
->>> -		plane = exynos_plane_init(dev, possible_crtcs, false);
->>> -		if (!plane)
->>> +		plane = exynos_plane_init(dev, possible_crtcs,
->>> +					  DRM_PLANE_TYPE_OVERLAY);
->>> +		if (IS_ERR(plane))
->>>  			goto err_mode_config_cleanup;
->>>  	}
->>>  
->>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
->>> index 8371cbd..15e37a0 100644
->>> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
->>> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
->>> @@ -139,6 +139,8 @@ int exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
->>>  			overlay->crtc_x, overlay->crtc_y,
->>>  			overlay->crtc_width, overlay->crtc_height);
->>>  
->>> +	plane->crtc = crtc;
->>> +
->> OK, then we can remove same code from exynos_update_plane().
-> 
-> Right.
-> 
->>
->> One more, plane->crtc is NULL before mode_set or setplane so it's
->> problem if call plane->funcs->destroy with plane->crtc == NULL.
->> We need checking plane->crtc is NULL in exynos_disable_plane().
-> 
-> I can simply add checks, but why we allow the plane with NULL crtc to be
-> enabled?
-> 
+Thanks,
+Kukjin
 
-I mean plane disable case, not enable case.
-
-Thanks.
+> ---
+>  arch/arm64/boot/dts/Makefile                    |    1 +
+>  arch/arm64/boot/dts/exynos/Makefile             |    5 +
+>  arch/arm64/boot/dts/exynos/exynos7-espresso.dts |   39 ++++++
+>  arch/arm64/boot/dts/exynos/exynos7.dtsi         |  160 +++++++++++++++++++++++
+>  4 files changed, 205 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/Makefile
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
+> index 309c3dc..b13bf21 100644
+> --- a/arch/arm64/boot/dts/Makefile
+> +++ b/arch/arm64/boot/dts/Makefile
+> @@ -1,5 +1,6 @@
+>  dts-dirs += apm
+>  dts-dirs += arm
+> +dts-dirs += exynos
+> 
+>  always		:= $(dtb-y)
+>  subdir-y	:= $(dts-dirs)
+> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+> new file mode 100644
+> index 0000000..20310e5
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/Makefile
+> @@ -0,0 +1,5 @@
+> +dtb-$(CONFIG_ARCH_EXYNOS7) += exynos7-espresso.dtb
+> +
+> +always		:= $(dtb-y)
+> +subdir-y	:= $(dts-dirs)
+> +clean-files	:= *.dtb
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-
+> espresso.dts
+> new file mode 100644
+> index 0000000..e2c8283
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+> @@ -0,0 +1,39 @@
+> +/*
+> + * SAMSUNG Exynos7 Espresso board device tree source
+> + *
+> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +/dts-v1/;
+> +#include "exynos7.dtsi"
+> +
+> +/ {
+> +	model = "Samsung Exynos7 Espresso board based on EXYNOS7";
+> +	compatible = "samsung,exynos7-espresso", "samsung,exynos7";
+> +
+> +	aliases {
+> +		serial0 = &serial_2;
+> +	};
+> +
+> +	chosen {
+> +		linux,stdout-path = &serial_2;
+> +	};
+> +
+> +	memory@40000000 {
+> +		device_type = "memory";
+> +		reg = <0x0 0x40000000 0x0 0xC0000000>;
+> +	};
+> +};
+> +
+> +&fin_pll {
+> +	clock-frequency = <24000000>;
+> +};
+> +
+> +&serial_2 {
+> +	status = "okay";
+> +};
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> new file mode 100644
+> index 0000000..c5b1b86
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> @@ -0,0 +1,160 @@
+> +/*
+> + * SAMSUNG EXYNOS7 SoC device tree source
+> + *
+> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <dt-bindings/clock/exynos7-clk.h>
+> +
+> +/ {
+> +	compatible = "samsung,exynos7";
+> +	interrupt-parent = <&gic>;
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> +
+> +	cpus {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		cpu@0 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a57", "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x0>;
+> +		};
+> +
+> +		cpu@1 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a57", "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x1>;
+> +		};
+> +
+> +		cpu@2 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a57", "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x2>;
+> +		};
+> +
+> +		cpu@3 {
+> +			device_type = "cpu";
+> +			compatible = "arm,cortex-a57", "arm,armv8";
+> +			enable-method = "psci";
+> +			reg = <0x3>;
+> +		};
+> +	};
+> +
+> +	psci {
+> +		compatible = "arm,psci-0.2";
+> +		method = "smc";
+> +	};
+> +
+> +	soc: soc {
+> +		compatible = "simple-bus";
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		ranges = <0 0 0 0x18000000>;
+> +
+> +		chipid@10000000 {
+> +			compatible = "samsung,exynos4210-chipid";
+> +			reg = <0x10000000 0x100>;
+> +		};
+> +
+> +		fin_pll: xxti {
+> +			compatible = "fixed-clock";
+> +			clock-output-names = "fin_pll";
+> +			#clock-cells = <0>;
+> +		};
+> +
+> +		gic: interrupt-controller@11001000 {
+> +			compatible = "arm,gic-400";
+> +			#interrupt-cells = <3>;
+> +			#address-cells = <0>;
+> +			interrupt-controller;
+> +			reg =	<0x11001000 0x1000>,
+> +				<0x11002000 0x1000>,
+> +				<0x11004000 0x2000>,
+> +				<0x11006000 0x2000>;
+> +		};
+> +
+> +		clock_topc: clock-controller@10570000 {
+> +			compatible = "samsung,exynos7-clock-topc";
+> +			reg = <0x10570000 0x10000>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		clock_top0: clock-controller@105d0000 {
+> +			compatible = "samsung,exynos7-clock-top0";
+> +			reg = <0x105d0000 0xb000>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		clock_peric0: clock-controller@13610000 {
+> +			compatible = "samsung,exynos7-clock-peric0";
+> +			reg = <0x13610000 0xd00>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		clock_peric1: clock-controller@14C80000 {
+> +			compatible = "samsung,exynos7-clock-peric1";
+> +			reg = <0x14c80000 0xd00>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		clock_peris: clock-controller@10040000 {
+> +			compatible = "samsung,exynos7-clock-peris";
+> +			reg = <0x10040000 0xd00>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		serial_0: serial@13630000 {
+> +			compatible = "samsung,exynos4210-uart";
+> +			reg = <0x13630000 0x100>;
+> +			interrupts = <0 440 0>;
+> +			clocks = <&clock_peric0 PCLK_UART0>, <&clock_peric0 SCLK_UART0>;
+> +			clock-names = "uart", "clk_uart_baud0";
+> +			status = "disabled";
+> +		};
+> +
+> +		serial_1: serial@14c20000 {
+> +			compatible = "samsung,exynos4210-uart";
+> +			reg = <0x14c20000 0x100>;
+> +			interrupts = <0 456 0>;
+> +			clocks = <&clock_peric1 PCLK_UART1>, <&clock_peric1 SCLK_UART1>;
+> +			clock-names = "uart", "clk_uart_baud0";
+> +			status = "disabled";
+> +		};
+> +
+> +		serial_2: serial@14c30000 {
+> +			compatible = "samsung,exynos4210-uart";
+> +			reg = <0x14c30000 0x100>;
+> +			interrupts = <0 457 0>;
+> +			clocks = <&clock_peric1 PCLK_UART2>, <&clock_peric1 SCLK_UART2>;
+> +			clock-names = "uart", "clk_uart_baud0";
+> +			status = "disabled";
+> +		};
+> +
+> +		serial_3: serial@14c40000 {
+> +			compatible = "samsung,exynos4210-uart";
+> +			reg = <0x14c40000 0x100>;
+> +			interrupts = <0 458 0>;
+> +			clocks = <&clock_peric1 PCLK_UART3>, <&clock_peric1 SCLK_UART3>;
+> +			clock-names = "uart", "clk_uart_baud0";
+> +			status = "disabled";
+> +		};
+> +
+> +		timer {
+> +			compatible = "arm,armv8-timer";
+> +			interrupts = <1 13 0xff01>,
+> +				     <1 14 0xff01>,
+> +				     <1 11 0xff01>,
+> +				     <1 10 0xff01>;
+> +		};
+> +	};
+> +};
+> --
+> 1.7.9.5
