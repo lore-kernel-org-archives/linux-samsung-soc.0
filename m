@@ -1,111 +1,99 @@
-From: Pramod Gurav <pramod.gurav@smartplayin.com>
-Subject: Re: [PATCH v7 00/11] kernel: Add support for restart handler call
- chain
-Date: Fri, 19 Sep 2014 18:24:54 +0530
-Message-ID: <541C279E.2000602@smartplayin.com>
-References: <1408495538-27480-1-git-send-email-linux@roeck-us.net>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
+ ps8622 DT properties
+Date: Fri, 19 Sep 2014 15:54:50 +0300
+Message-ID: <541C279A.2030601@ti.com>
+References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>	<5419760A.7020908@ti.com>	<CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com>	<5419B52D.4060107@ti.com> <CAEC9eQO2rfmVEKTCUJk+SpfdeUr81gN3stYV3wE6yR3E=-zonA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1408495538-27480-1-git-send-email-linux@roeck-us.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Russell King <linux@arm.linux.org.uk>, Wim Van Sebroeck <wim@iguana.be>, Catalin Marinas <catalin.marinas@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Andrew Morton <akpm@linux-foundation.org>, linux-watchdog@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Arnd Bergmann <arnd@arndb.de>, Heiko Stuebner <heiko@sntech.de>, Jonas Jensen <jonas.jensen@gmail.com>, Randy Dunlap <rdunlap@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Tomasz Figa <t.figa@samsung.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="AxLQKvb7qRmNVrJuVJ1DKjsPXB884rf3D"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bear.ext.ti.com ([192.94.94.41]:55753 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756137AbaISMzF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 19 Sep 2014 08:55:05 -0400
+In-Reply-To: <CAEC9eQO2rfmVEKTCUJk+SpfdeUr81gN3stYV3wE6yR3E=-zonA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, InKi Dae <inki.dae@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Hello Guenter,
+--AxLQKvb7qRmNVrJuVJ1DKjsPXB884rf3D
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for the patches.
-Tested patches 1,2 & 4 from this series on qcom apq8064 based IFC6410
-with Josh's patches which replace arm restart with restart notifier for
-this target.
+On 18/09/14 08:50, Ajay kumar wrote:
 
-Tested-by: pramod.gurav@smartplayin.com
+>>> Why do we need a complex graph when it can be handled using a simple =
+phandle?
+>>
+>> Maybe in your case you can handle it with simple phandle. Can you
+>> guarantee that it's enough for everyone, on all platforms?
+> Yes, as of now exynos5420-peach-pit and exynos5250-spring boards use
+> this. In case of both, the phandle to bridge node is passed to the
+> exynos_dp node.
+>=20
+>> The point of the ports/endpoint graph is to also support more
+>> complicated scenarios. If you now create ps8622 bindings that do not
+>> support those graphs, the no one else using ps8622 can use
+>> ports/endpoint graphs either.
+>>
+>> Btw, is there an example how the bridge with these bindings is used in=
+ a
+>> board's .dts file? I couldn't find any example with a quick search. So=
 
-On Wednesday 20 August 2014 06:15 AM, Guenter Roeck wrote:
-> Various drivers implement architecture and/or device specific means
-> to restart (reset) the system. Various mechanisms have been implemented
-> to support those schemes. The best known mechanism is arm_pm_restart,
-> which is a function pointer to be set either from platform specific code
-> or from drivers. Another mechanism is to use hardware watchdogs to issue
-> a reset; this mechanism is used if there is no other method available
-> to reset a board or system. Two examples are alim7101_wdt, which currently
-> uses the reboot notifier to trigger a reset, and moxart_wdt, which registers
-> the arm_pm_restart function. Several other restart drivers for arm, all
-> directly calling arm_pm_restart, are in the process of being integrated
-> into the kernel. All those drivers would benefit from the new API.
-> 
-> The existing mechanisms have a number of drawbacks. Typically only one scheme
-> to restart the system is supported (at least if arm_pm_restart is used).
-> At least in theory there can be multiple means to restart the system, some of
-> which may be less desirable (for example one mechanism may only reset the CPU,
-> while another may reset the entire system). Using arm_pm_restart can also be
-> racy if the function pointer is set from a driver, as the driver may be in
-> the process of being unloaded when arm_pm_restart is called.
-> Using the reboot notifier is always racy, as it is unknown if and when
-> other functions using the reboot notifier have completed execution
-> by the time the watchdog fires.
-> 
-> Introduce a system restart handler call chain to solve the described problems.
-> This call chain is expected to be executed from the architecture specific
-> machine_restart() function. Drivers providing system restart functionality
-> (such as the watchdog drivers mentioned above) are expected to register
-> with this call chain. By using the priority field in the notifier block,
-> callers can control restart handler execution sequence and thus ensure that
-> the restart handler with the optimal restart capabilities for a given system
-> is called first.
-> 
-> Since the first revision of this patchset, a number of separate patch
-> submissions have been made which either depend on it or could make use of it.
-> 
-> http://www.spinics.net/linux/lists/arm-kernel/msg344796.html
-> 	registers three notifiers.
-> https://lkml.org/lkml/2014/7/8/962
-> 	would benefit from it.
-> 
-> Patch 1 of this series implements the restart handler function. Patches 2 and 3
-> implement calling the restart handler chain from arm and arm64 restart code.
-> 
-> Patch 4 modifies the restart-poweroff driver to no longer call arm_pm_restart
-> directly but machine_restart. This is done to avoid calling arm_pm_restart
-> from more than one place. The change makes the driver architecture independent,
-> so it would be possible to drop the arm dependency from its Kconfig entry.
-> 
-> Patch 5 and 6 convert existing restart handlers in the watchdog subsystem
-> to use the restart handler. Patch 7 unexports arm_pm_restart to ensure
-> that no one gets the idea to implement a restart handler as module.
-> 
-> The entire patch series, including additional patches depending on it,
-> is available from
-> https://git.kernel.org/cgit/linux/kernel/git/groeck/linux-staging.git/
-> in branch 'restart-staging'.
-> 
-> ---
-> v7: Rebased to v3.17-rc1
->     Dropped null_restart from arm code to make arm_pm_restart truly optional
->     Reordered series. power/restart must be patched to not use arm_pm_restart
->     prior to making arm_pm_restart optional.
->     Added all pending patches to series
-> v6: Use atomic notifier call chain 
->     Rebased series to v3.16
-> v5: Rebased series to v3.16-rc5
->     Function renames:
->     register_restart_notifier -> register_restart_handler
->     unregister_restart_notifier -> unregister_restart_handler
->     kernel_restart_notify -> do_kernel_restart
-> v4: Document restart notifier priorities
->     Select 128 as default priority for newly introduced notifiers
->     Fix checkpatch warning (line too long) in moxart patch
-> v3: Drop RFC.
->     Add kernel_restart_notify wrapper function to execute notifier
->     Improve documentation.
->     Move restart_notifier_list into kernel/reboot.c and make it static.
-> v2: Add patch 4.
->     Only call blocking notifier call chain if arm_pm_restart was not set.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
-> 
+>> it's unclear to me what the "simple phandle" actually is.
+> Please refer to the following link:
+> https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/tr=
+ee/arch/arm/boot/dts/exynos5420-peach-pit.dts?id=3Dsamsung-dt#n129
+> Let me know if you still think we would need to describe it as a comple=
+x graph!
+
+Yes, I think so. I'm not the DRM maintainer, though.
+
+I think we have two options:
+
+1) Describe the video component connections with the ports/endpoints
+properly for all new display device bindings, and know that it's
+(hopefully) future proof and covers even the more complex boards that
+use the devices.
+
+or
+
+2) Use some simple methods to describe the links, like single phandle as
+you do, knowing that we can't support more complex boards in the future.
+
+I see some exynos boards already using the ports/endpoints, like
+arch/arm/boot/dts/exynos4412-trats2.dts. Why not use it for all new
+display devices?
+
+ Tomi
+
+
+
+--AxLQKvb7qRmNVrJuVJ1DKjsPXB884rf3D
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUHCeaAAoJEPo9qoy8lh71kCkP/iPA5hM0uWtOdH9vBriFc36Z
+wKuwJ2QRQn/Vy9St8y02PMyZe0jjC5tx1NphRBPhuJ7SwbL6kxzwq5rppoZdvPgs
+zB2qzaFUdSOp7CHeb6ezAKTp8kpXNh4Z3dfVyItC6RdXFXJgZVeoFmIr6lWQjDM3
+tNdGjOFhJWlt2kA0PiZ2ZphebnBQ5CKd8yQZH5Eg3bb607uRUZoN7Jz1bisNb32G
+y4xJjmYqi9q7oFFjrsYMZz5qbZA4+zFJ1969HUavaxalz7/i1SRNWMDlGPq1uBj/
+M3hGY88J9rdv6p/g6ciRfkIVCfjjSQkQ5BbyxQyselwKpMGVyaVrofmJV6gOCudk
+kChHoAa4XoDlh+oRK3Fc66CbAKSkrcCKycoaEcwygyPPIsxaGQC05nr9GO8CrZiP
+vSj4LmnscOcmlwD7Oj0lAtmD8WzylZmfc6QwS1PbjNBLFHX2cwlPdqP9Kvw45VW5
+NEjhSb6pRcgpv7Gxaq/I8iDH7WOCnTAlzoPWF8v6SGSr+ideelks1zmDKOvaEYwQ
+6z/dCyGfWzq3a3UaAwMV4n+ijNs9Owy9tDWYPlys6aBxiv+jHqAw0CnGHQPPkY3L
+0DdOgx38XW9PTBtDbBAuacDtc5fzCVR94TThVcWtP+JvCj7TG8pNqQ60jUGvfCRQ
+UKZlIhV31xrxKpksH2dQ
+=VVVN
+-----END PGP SIGNATURE-----
+
+--AxLQKvb7qRmNVrJuVJ1DKjsPXB884rf3D--
