@@ -1,7 +1,7 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
 Subject: Re: [PATCH] drm/exynos: switch to universal plane API
-Date: Fri, 19 Sep 2014 20:29:22 +0900
-Message-ID: <541C1392.6070801@samsung.com>
+Date: Fri, 19 Sep 2014 13:51:21 +0200
+Message-ID: <541C18B9.1010107@samsung.com>
 References: <1411046223-22703-1-git-send-email-a.hajda@samsung.com>
  <541B8093.6040807@samsung.com> <541C0B5B.7010100@samsung.com>
  <541C0F7E.1080808@samsung.com>
@@ -19,15 +19,13 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
+To: Joonyoung Shim <jy0922.shim@samsung.com>, Inki Dae <inki.dae@samsung.com>
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, drake@endlessm.com, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On 09/19/2014 08:11 PM, Joonyoung Shim wrote:
+On 09/19/2014 01:11 PM, Joonyoung Shim wrote:
 > Hi,
-> 
+>
 > On 09/19/2014 07:54 PM, Andrzej Hajda wrote:
 >> On 09/19/2014 03:02 AM, Joonyoung Shim wrote:
 >>> Hi Andrzej,
@@ -159,7 +157,6 @@ On 09/19/2014 08:11 PM, Joonyoung Shim wrote:
 >>>>  
 >>>> +	crtc->primary->funcs->destroy(crtc->primary);
 >>> This is unnecessary.
->>
 >> The question is how these object should be destroyed. In current code
 >> crtc is destroyed in fimd_unbind and it is called before
 >> drm_mode_config_cleanup
@@ -167,13 +164,15 @@ On 09/19/2014 08:11 PM, Joonyoung Shim wrote:
 >> In such case primary plane will stay with .crtc pointing to non-existing
 >> crtc.
 >> Maybe performing crtcs cleanup after planes cleanup is better solution???
-> 
 > I think it's wrong to call destroy function of crtc in fimd_unbind, all
 > objects should be destroyed by drm_mode_config_cleanup except error
 > cases while initializing.
-> 
->>
->>>
+
+Yes, it looks better this way. As I lurked in other drm drivers only
+exynos and imx
+destroys their objects directly, not via drm_mode_config_cleanup.
+
+>
 >>>>  	drm_crtc_cleanup(crtc);
 >>>>  	kfree(exynos_crtc);
 >>>>  }
@@ -266,23 +265,27 @@ On 09/19/2014 08:11 PM, Joonyoung Shim wrote:
 >>>> +	plane->crtc = crtc;
 >>>> +
 >>> OK, then we can remove same code from exynos_update_plane().
->>
 >> Right.
 >>
->>>
 >>> One more, plane->crtc is NULL before mode_set or setplane so it's
 >>> problem if call plane->funcs->destroy with plane->crtc == NULL.
 >>> We need checking plane->crtc is NULL in exynos_disable_plane().
->>
 >> I can simply add checks, but why we allow the plane with NULL crtc to be
 >> enabled?
 >>
-> 
 > I mean plane disable case, not enable case.
 
-OK, i am missing plane DPMS, the plane DPMS is not ON before mode_set
-and setplane so plane->crtc is not referenced while disable plane.
+exynos_plane_dpms(off) calls exynos_drm_crtc_plane_disable only if
+exynos_plane->enabled
+is true, so only if plane changes state from enabled to disabled
+exynos_drm_crtc_plane_disable
+is called. I guess it should not be allowed that plane have .enabled
+true and .crtc NULL, if so
+we do not need checks here.
 
-Please ignore this comment.
+Regards
+Andrzej
 
-Thanks.
+>
+> Thanks.
+>
