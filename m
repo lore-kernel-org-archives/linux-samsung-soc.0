@@ -1,56 +1,53 @@
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: [PATCH 2/2] input: cros_ec_keyb: Add of match table
-Date: Fri, 19 Sep 2014 10:08:13 +0200
-Message-ID: <1411114093-3505-3-git-send-email-sjoerd.simons@collabora.co.uk>
-References: <1411114093-3505-1-git-send-email-sjoerd.simons@collabora.co.uk>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] clk: s5pv210: add missing call to samsung_clk_of_add_provider()
+Date: Fri, 19 Sep 2014 11:00:16 +0200
+Message-ID: <1411117216-11456-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:41421 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751223AbaISIKE (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:25605 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751954AbaISJAg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Sep 2014 04:10:04 -0400
-In-Reply-To: <1411114093-3505-1-git-send-email-sjoerd.simons@collabora.co.uk>
+	Fri, 19 Sep 2014 05:00:36 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Wolfram Sang <wsa@the-dreams.de>
-Cc: Doug Anderson <dianders@chromium.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>
 
-To enable the cros_ec_keyb driver to be auto-loaded when build as
-module add an of match table (and export it) to match the modalias
-information passed on to userspace as the Cros EC MFD driver registers
-the MFD subdevices with an of_compatibility string.
+Commit d5e136a21b2028fb1f45143ea7112d5869bfc6c7 ("clk: samsung: Register
+clk provider only after registering its all clocks", merged to v3.17-rc1)
+modified a way that driver registers registers to core framework. This
+change has not been applied to s5pv210 clocks driver, which has been
+merged in parallel to that commit. This patch adds a missing call to
+samsung_clk_of_add_provider(), so the driver is operational again.
 
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- Changes in v2: Fixed some indentation issues
+Hello!
 
- drivers/input/keyboard/cros_ec_keyb.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+This is an important fix to v3.17-rcX. Without it support for Samsung
+S5PV210 SoCs is not functional.
 
-diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
-index 791781a..e1903ec 100644
---- a/drivers/input/keyboard/cros_ec_keyb.c
-+++ b/drivers/input/keyboard/cros_ec_keyb.c
-@@ -342,10 +342,19 @@ static int cros_ec_keyb_resume(struct device *dev)
+Mike, could you take it to the fixes branch?
+
+Best regards
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+---
+ drivers/clk/samsung/clk-s5pv210.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/clk/samsung/clk-s5pv210.c b/drivers/clk/samsung/clk-s5pv210.c
+index d270a20..f41b017 100644
+--- a/drivers/clk/samsung/clk-s5pv210.c
++++ b/drivers/clk/samsung/clk-s5pv210.c
+@@ -828,6 +828,8 @@ static void __init __s5pv210_clk_init(struct device_node *np,
  
- static SIMPLE_DEV_PM_OPS(cros_ec_keyb_pm_ops, NULL, cros_ec_keyb_resume);
+ 	s5pv210_clk_sleep_init();
  
-+#ifdef CONFIG_OF
-+static const struct of_device_id cros_ec_keyb_of_match[] = {
-+	{ .compatible = "google,cros-ec-keyb" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, cros_ec_keyb_of_match);
-+#endif
++	samsung_clk_of_add_provider(np, ctx);
 +
- static struct platform_driver cros_ec_keyb_driver = {
- 	.probe = cros_ec_keyb_probe,
- 	.driver = {
- 		.name = "cros-ec-keyb",
-+		.of_match_table = of_match_ptr(cros_ec_keyb_of_match),
- 		.pm	= &cros_ec_keyb_pm_ops,
- 	},
- };
+ 	pr_info("%s clocks: mout_apll = %ld, mout_mpll = %ld\n"
+ 		"\tmout_epll = %ld, mout_vpll = %ld\n",
+ 		is_s5p6442 ? "S5P6442" : "S5PV210",
 -- 
-2.1.0
+1.9.2
