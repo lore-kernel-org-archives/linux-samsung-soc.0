@@ -1,300 +1,323 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH] drm/exynos: switch to universal plane API
-Date: Fri, 19 Sep 2014 10:02:11 +0900
-Message-ID: <541B8093.6040807@samsung.com>
-References: <1411046223-22703-1-git-send-email-a.hajda@samsung.com>
+From: "Li.Xiubo@freescale.com" <Li.Xiubo@freescale.com>
+Subject: RE: [PATCH v3] mfd: syscon: Decouple syscon interface from platform
+ devices
+Date: Fri, 19 Sep 2014 03:38:03 +0000
+Message-ID: <48f9f4067cc44ad49297bb4b62c56c88@BY2PR0301MB0613.namprd03.prod.outlook.com>
+References: <1410935510-1567-1-git-send-email-pankaj.dubey@samsung.com>
+ <20140917085818.GA10285@shlinux1.ap.freescale.net>
+ <000401cfd269$922dfc40$b689f4c0$@samsung.com>
+ <20140918030552.GA26661@shlinux1.ap.freescale.net>
+ <000701cfd306$4d3e8080$e7bb8180$@samsung.com>
+ <20140918075516.GB15363@shlinux1.ap.freescale.net>
+ <000c01cfd324$1f2cd930$5d868b90$@samsung.com>
+ <20140918100505.GA19346@shlinux1.ap.freescale.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:39060 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751253AbaISBCO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Sep 2014 21:02:14 -0400
-In-reply-to: <1411046223-22703-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20140918100505.GA19346@shlinux1.ap.freescale.net>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Aisheng.Dong@freescale.com" <Aisheng.Dong@freescale.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: "arnd@arndb.de" <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "naushad@samsung.com" <naushad@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, "joshi@samsung.com" <joshi@samsung.com>, "thomas.ab@samsung.com" <thomas.ab@samsung.com>, "vikas.sajjan@samsung.com" <vikas.sajjan@samsung.com>, "chow.kim@samsung.com" <chow.kim@samsung.com>, "lee.jones@linaro.org" <lee.jones@linaro.org>, 'Boris BREZILLON' <boris.brezillon@free-electrons.com>, 'Geert Uytterhoeven' <geert+renesas@glider.be>, 'Stephen Warren' <swarren@nvidia.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, drake@endlessm.com, daniel@ffwll.ch, m.szyprowski@samsung.com
 
-Hi Andrzej,
+> > Thanks for testing. In that case I will post this change, as I feel this
+> > should be
+> > fixed irrespective of my syscon patch.
+> >
+> > > But as Xiubo pointed in another mail, it may still cause other issues.
+> > > Looking at regmap.c, there're still some other places using the device
+> > pointer, e.g.
+> > > dev_xxx debug information and some tracepoints also take device pointer as
+> > > parameter(not sure if it will break if dev is NULL).
+> > > Another thing is that if dev is NULL, we may not be able to use regmap
+> > debugfs
+> > > feature which seems also not as our expected.
+> > >
+> >
+> > I would have preferred to check dev for NULL, as it's only at two places and
+> > we could
+> > still have debug prints for NULL dev, as normal pr_info instead of dev_info.
+> >
+> > But Xiubo also pointed out that his patch [1] which updates syscon binding
+> > information
+> > will be useless if we pass NULL dev in regmap_init_mmio, which he posted
+> > today,
+> > and it requires dev pointer in "regmap_get_val_endian" function to read DT
+> > property.
+> >
+> > [1]: [PATCH] mfd: syscon: binding: Add syscon endianness support
+> >       https://lkml.org/lkml/2014/9/18/67
+> >
+> > So instead of adding dummy device or creating device structure, I would
+> > prefer to get actual
+> > device pointer corresponding to "np" passed in of_syscon_register function
+> > as shown below:
+> >
+> 
+> I wonder this may not work at early stage before the devices are populated
+> from device tree.
+> My initial understanding that one important thing for your patch is
+> to address this issue, isn't it?
+> Many people have asked for this feature before.
+> 
 
-On 09/18/2014 10:17 PM, Andrzej Hajda wrote:
-> The patch replaces legacy functions
-> drm_plane_init() / drm_crtc_init() with
-> drm_universal_plane_init() and drm_crtc_init_with_planes().
-> It allows to replace fake primary plane with the real one.
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
-> Hi Inki,
-> 
-> I have tested this patch with trats board, it looks OK.
-> As a side effect it should solve fb refcounting issues
-> reported by me and Daniel Drake.
-> 
+My boot log:
+
+   ...
+of_platform_bus_create() - skipping /chosen, no compatible prop
+of_platform_bus_create() - skipping /aliases, no compatible prop
+of_platform_bus_create() - skipping /memory, no compatible prop
+of_platform_bus_create() - skipping /cpus, no compatible prop
+   create child: /soc/smmu@1200000
+   create child: /soc/smmu@1280000
+   create child: /soc/smmu@1300000
+   create child: /soc/smmu@1380000
+   create child: /soc/interrupt-controller@1400000
+   create child: /soc/tzasc@1500000
+of_platform_bus_create() - skipping /soc/tzasc@1500000, no compatible prop
+   create child: /soc/ifc@1530000
+   create child: /soc/ifc@1530000/nor@0,0
+   create child: /soc/ifc@1530000/board-control@2,0
+   create child: /soc/dcfg@1ee0000
+syscon 1ee0000.dcfg: regmap [mem 0x01ee0000-0x01eeffff] registered
+   create child: /soc/quadspi@1550000
+   create child: /soc/esdhc@1560000
+   create child: /soc/scfg@1570000
+   create child: /soc/crypto@1700000
+   create child: /soc/sfp@1e80000
+of_platform_bus_create() - skipping /soc/sfp@1e80000, no compatible prop
+   create child: /soc/snvs@1e90000
+of_platform_bus_create() - skipping /soc/snvs@1e90000, no compatible prop
+   create child: /soc/serdes1@1ea0000
+of_platform_bus_create() - skipping /soc/serdes1@1ea0000, no compatible prop
+   create child: /soc/clocking@1ee1000
+   create child: /soc/rcpm@1ee2000
+   create child: /soc/dspi@2100000
+   create child: /soc/dspi@2110000
+   create child: /soc/i2c@2180000
+   create child: /soc/i2c@2190000
+   create child: /soc/i2c@21a0000
+   create child: /soc/serial@21c0500
+   create child: /soc/serial@21c0600
+   create child: /soc/serial@21d0500
+   create child: /soc/serial@21d0600
+   create child: /soc/gpio@2300000
+   create child: /soc/gpio@2310000
+   create child: /soc/gpio@2320000
+   create child: /soc/gpio@2330000
+   create child: /soc/uqe@2400000
+   create child: /soc/uqe@2400000/qeic@80
+   create child: /soc/uqe@2400000/ucc@2000
+irq: no irq domain found for /soc/uqe@2400000/qeic@80 !
+   create child: /soc/uqe@2400000/ucc@2200
+irq: no irq domain found for /soc/uqe@2400000/qeic@80 !
+   create child: /soc/uqe@2400000/muram@10000
+   create child: /soc/uqe@2400000/si@700
+   create child: /soc/uqe@2400000/siram@1000
+   create child: /soc/serial@2950000
+   create child: /soc/serial@2960000
+   create child: /soc/serial@2970000
+   create child: /soc/serial@2980000
+   create child: /soc/serial@2990000
+   create child: /soc/serial@29a0000
+   create child: /soc/ftm0_1@29d0000
+   create child: /soc/ftm@29f0000
+of_platform_bus_create() - skipping /soc/ftm@29f0000, no compatible prop
+   create child: /soc/ftm@2a00000
+   create child: /soc/ftm@2a10000
+of_platform_bus_create() - skipping /soc/ftm@2a10000, no compatible prop
+   create child: /soc/ftm@2a20000
+of_platform_bus_create() - skipping /soc/ftm@2a20000, no compatible prop
+   create child: /soc/ftm@2a30000
+   create child: /soc/ftm@2a40000
+   create child: /soc/wdog@2ad0000
+   create child: /soc/sai@2b60000
+   create child: /soc/edma@2c00000
+   create child: /soc/dcu@2ce0000
+   create child: /soc/mdio@2d24000
+   create child: /soc/ptp_clock@2d10e00
+   create child: /soc/ethernet@2d10000
+   create child: /soc/ethernet@2d50000
+   create child: /soc/ethernet@2d90000
+   create child: /soc/usb@8600000
+   create child: /soc/usb3@3100000
+   create child: /soc/can@2a70000
+   create child: /soc/can@2a80000
+   create child: /soc/can@2a90000
+   create child: /soc/can@2aa0000
+   create child: /soc/pcie@3400000
+   create child: /soc/pcie@3500000
+   create child: /dcsr@20000000/dcsr-epu@0
+   create child: /dcsr@20000000/dcsr-gdi@100000
+   create child: /dcsr@20000000/dcsr-dddi@120000
+   create child: /dcsr@20000000/dcsr-dcfg@220000
+   create child: /dcsr@20000000/dcsr-clock@221000
+   create child: /dcsr@20000000/dcsr-rcpm@222000
+   create child: /dcsr@20000000/dcsr-ccp@225000
+   create child: /dcsr@20000000/dcsr-fusectrl@226000
+   create child: /dcsr@20000000/dcsr-dap@300000
+   create child: /dcsr@20000000/dcsr-cstf@350000
+   create child: /dcsr@20000000/dcsr-a7rom@360000
+   create child: /dcsr@20000000/dcsr-a7cpu@370000
+   create child: /dcsr@20000000/dcsr-a7cti@378000
+   create child: /dcsr@20000000/dcsr-etm@37c000
+   create child: /dcsr@20000000/dcsr-hugorom@3a0000
+   create child: /dcsr@20000000/dcsr-etf@3a1000
+   create child: /dcsr@20000000/dcsr-etr@3a3000
+   create child: /dcsr@20000000/dcsr-cti@3a4000
+   create child: /dcsr@20000000/dcsr-atbrepl@3a8000
+   create child: /dcsr@20000000/dcsr-tsgen-ctrl@3a9000
+   create child: /dcsr@20000000/dcsr-tsgen-read@3aa000
+   create child: /regulators/regulator@0
+   ...
+
+As default the Linux will create all the platform device for each DT node, which
+Can be found from "drivers/of/platform.c".
+
+So we can get the pdev node using the specified DT node, and feel safe to use
+it as Pankaj's patch does.
+
+And also we must make sure that the 'syscon' DT nodes has the compatible prop.
+
+Thanks,
+
+BRs
+Xiubo
+
+
 > Regards
-> Andrzej
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_crtc.c  | 63 ++++++++++++++++---------------
->  drivers/gpu/drm/exynos/exynos_drm_drv.c   |  5 ++-
->  drivers/gpu/drm/exynos/exynos_drm_plane.c | 17 +++++----
->  drivers/gpu/drm/exynos/exynos_drm_plane.h |  3 +-
->  4 files changed, 47 insertions(+), 41 deletions(-)
+> Dong Aisheng
 > 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> index b68e58f..d2f713e 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> @@ -32,7 +32,6 @@ enum exynos_crtc_mode {
->   * Exynos specific crtc structure.
->   *
->   * @drm_crtc: crtc object.
-> - * @drm_plane: pointer of private plane object for this crtc
->   * @manager: the manager associated with this crtc
->   * @pipe: a crtc index created at load() with a new crtc object creation
->   *	and the crtc object would be set to private->crtc array
-> @@ -46,7 +45,6 @@ enum exynos_crtc_mode {
->   */
->  struct exynos_drm_crtc {
->  	struct drm_crtc			drm_crtc;
-> -	struct drm_plane		*plane;
->  	struct exynos_drm_manager	*manager;
->  	unsigned int			pipe;
->  	unsigned int			dpms;
-> @@ -94,12 +92,12 @@ static void exynos_drm_crtc_commit(struct drm_crtc *crtc)
->  
->  	exynos_drm_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
->  
-> -	exynos_plane_commit(exynos_crtc->plane);
-> +	exynos_plane_commit(crtc->primary);
->  
->  	if (manager->ops->commit)
->  		manager->ops->commit(manager);
->  
-> -	exynos_plane_dpms(exynos_crtc->plane, DRM_MODE_DPMS_ON);
-> +	exynos_plane_dpms(crtc->primary, DRM_MODE_DPMS_ON);
->  }
->  
->  static bool
-> @@ -123,10 +121,9 @@ exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
->  {
->  	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
->  	struct exynos_drm_manager *manager = exynos_crtc->manager;
-> -	struct drm_plane *plane = exynos_crtc->plane;
-> +	struct drm_framebuffer *fb = crtc->primary->fb;
->  	unsigned int crtc_w;
->  	unsigned int crtc_h;
-> -	int ret;
->  
->  	/*
->  	 * copy the mode data adjusted by mode_fixup() into crtc->mode
-> @@ -134,29 +131,21 @@ exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
->  	 */
->  	memcpy(&crtc->mode, adjusted_mode, sizeof(*adjusted_mode));
->  
-> -	crtc_w = crtc->primary->fb->width - x;
-> -	crtc_h = crtc->primary->fb->height - y;
-> +	crtc_w = fb->width - x;
-> +	crtc_h = fb->height - y;
->  
->  	if (manager->ops->mode_set)
->  		manager->ops->mode_set(manager, &crtc->mode);
->  
-> -	ret = exynos_plane_mode_set(plane, crtc, crtc->primary->fb, 0, 0, crtc_w, crtc_h,
-> -				    x, y, crtc_w, crtc_h);
-> -	if (ret)
-> -		return ret;
-> -
-> -	plane->crtc = crtc;
-> -	plane->fb = crtc->primary->fb;
-> -	drm_framebuffer_reference(plane->fb);
-> -
-> -	return 0;
-> +	return exynos_plane_mode_set(crtc->primary, crtc, fb, 0, 0,
-> +				     crtc_w, crtc_h, x, y, crtc_w, crtc_h);
->  }
->  
->  static int exynos_drm_crtc_mode_set_commit(struct drm_crtc *crtc, int x, int y,
->  					  struct drm_framebuffer *old_fb)
->  {
->  	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
-> -	struct drm_plane *plane = exynos_crtc->plane;
-> +	struct drm_framebuffer *fb = crtc->primary->fb;
->  	unsigned int crtc_w;
->  	unsigned int crtc_h;
->  	int ret;
-> @@ -167,11 +156,11 @@ static int exynos_drm_crtc_mode_set_commit(struct drm_crtc *crtc, int x, int y,
->  		return -EPERM;
->  	}
->  
-> -	crtc_w = crtc->primary->fb->width - x;
-> -	crtc_h = crtc->primary->fb->height - y;
-> +	crtc_w = fb->width - x;
-> +	crtc_h = fb->height - y;
->  
-> -	ret = exynos_plane_mode_set(plane, crtc, crtc->primary->fb, 0, 0, crtc_w, crtc_h,
-> -				    x, y, crtc_w, crtc_h);
-> +	ret = exynos_plane_mode_set(crtc->primary, crtc, fb, 0, 0,
-> +				    crtc_w, crtc_h, x, y, crtc_w, crtc_h);
->  	if (ret)
->  		return ret;
->  
-> @@ -279,6 +268,7 @@ static void exynos_drm_crtc_destroy(struct drm_crtc *crtc)
->  
->  	private->crtc[exynos_crtc->pipe] = NULL;
->  
-> +	crtc->primary->funcs->destroy(crtc->primary);
-
-This is unnecessary.
-
->  	drm_crtc_cleanup(crtc);
->  	kfree(exynos_crtc);
->  }
-> @@ -304,8 +294,7 @@ static int exynos_drm_crtc_set_property(struct drm_crtc *crtc,
->  			exynos_drm_crtc_commit(crtc);
->  			break;
->  		case CRTC_MODE_BLANK:
-> -			exynos_plane_dpms(exynos_crtc->plane,
-> -					  DRM_MODE_DPMS_OFF);
-> +			exynos_plane_dpms(crtc->primary, DRM_MODE_DPMS_OFF);
->  			break;
->  		default:
->  			break;
-> @@ -351,8 +340,10 @@ static void exynos_drm_crtc_attach_mode_property(struct drm_crtc *crtc)
->  int exynos_drm_crtc_create(struct exynos_drm_manager *manager)
->  {
->  	struct exynos_drm_crtc *exynos_crtc;
-> +	struct drm_plane *plane;
->  	struct exynos_drm_private *private = manager->drm_dev->dev_private;
->  	struct drm_crtc *crtc;
-> +	int ret;
->  
->  	exynos_crtc = kzalloc(sizeof(*exynos_crtc), GFP_KERNEL);
->  	if (!exynos_crtc)
-> @@ -364,11 +355,11 @@ int exynos_drm_crtc_create(struct exynos_drm_manager *manager)
->  	exynos_crtc->dpms = DRM_MODE_DPMS_OFF;
->  	exynos_crtc->manager = manager;
->  	exynos_crtc->pipe = manager->pipe;
-> -	exynos_crtc->plane = exynos_plane_init(manager->drm_dev,
-> -				1 << manager->pipe, true);
-> -	if (!exynos_crtc->plane) {
-> -		kfree(exynos_crtc);
-> -		return -ENOMEM;
-> +	plane = exynos_plane_init(manager->drm_dev, 1 << manager->pipe,
-> +				  DRM_PLANE_TYPE_PRIMARY);
-> +	if (IS_ERR(plane)) {
-> +		ret = PTR_ERR(plane);
-> +		goto err_plane;
->  	}
->  
->  	manager->crtc = &exynos_crtc->drm_crtc;
-> @@ -376,12 +367,22 @@ int exynos_drm_crtc_create(struct exynos_drm_manager *manager)
->  
->  	private->crtc[manager->pipe] = crtc;
->  
-> -	drm_crtc_init(manager->drm_dev, crtc, &exynos_crtc_funcs);
-> +	ret = drm_crtc_init_with_planes(manager->drm_dev, crtc, plane, NULL,
-> +					&exynos_crtc_funcs);
-> +	if (ret < 0)
-> +		goto err_crtc;
-> +
->  	drm_crtc_helper_add(crtc, &exynos_crtc_helper_funcs);
->  
->  	exynos_drm_crtc_attach_mode_property(crtc);
->  
->  	return 0;
-> +
-> +err_crtc:
-> +	plane->funcs->destroy(plane);
-> +err_plane:
-> +	kfree(exynos_crtc);
-> +	return ret;
->  }
->  
->  int exynos_drm_crtc_enable_vblank(struct drm_device *dev, int pipe)
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> index 9b00e4e..a439452 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -86,8 +86,9 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
->  		struct drm_plane *plane;
->  		unsigned long possible_crtcs = (1 << MAX_CRTC) - 1;
->  
-> -		plane = exynos_plane_init(dev, possible_crtcs, false);
-> -		if (!plane)
-> +		plane = exynos_plane_init(dev, possible_crtcs,
-> +					  DRM_PLANE_TYPE_OVERLAY);
-> +		if (IS_ERR(plane))
->  			goto err_mode_config_cleanup;
->  	}
->  
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> index 8371cbd..15e37a0 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> @@ -139,6 +139,8 @@ int exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
->  			overlay->crtc_x, overlay->crtc_y,
->  			overlay->crtc_width, overlay->crtc_height);
->  
-> +	plane->crtc = crtc;
-> +
-
-OK, then we can remove same code from exynos_update_plane().
-
-One more, plane->crtc is NULL before mode_set or setplane so it's
-problem if call plane->funcs->destroy with plane->crtc == NULL.
-We need checking plane->crtc is NULL in exynos_disable_plane().
-
->  	exynos_drm_crtc_plane_mode_set(crtc, overlay);
->  
->  	return 0;
-> @@ -254,25 +256,26 @@ static void exynos_plane_attach_zpos_property(struct drm_plane *plane)
->  }
->  
->  struct drm_plane *exynos_plane_init(struct drm_device *dev,
-> -				    unsigned long possible_crtcs, bool priv)
-> +				    unsigned long possible_crtcs,
-> +				    enum drm_plane_type type)
->  {
->  	struct exynos_plane *exynos_plane;
->  	int err;
->  
->  	exynos_plane = kzalloc(sizeof(struct exynos_plane), GFP_KERNEL);
->  	if (!exynos_plane)
-> -		return NULL;
-> +		return ERR_PTR(-ENOMEM);
->  
-> -	err = drm_plane_init(dev, &exynos_plane->base, possible_crtcs,
-> -			      &exynos_plane_funcs, formats, ARRAY_SIZE(formats),
-> -			      priv);
-> +	err = drm_universal_plane_init(dev, &exynos_plane->base, possible_crtcs,
-> +				       &exynos_plane_funcs, formats,
-> +				       ARRAY_SIZE(formats), type);
->  	if (err) {
->  		DRM_ERROR("failed to initialize plane\n");
->  		kfree(exynos_plane);
-> -		return NULL;
-> +		return ERR_PTR(err);
->  	}
->  
-> -	if (priv)
-> +	if (type == DRM_PLANE_TYPE_PRIMARY)
->  		exynos_plane->overlay.zpos = DEFAULT_ZPOS;
->  	else
->  		exynos_plane_attach_zpos_property(&exynos_plane->base);
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.h b/drivers/gpu/drm/exynos/exynos_drm_plane.h
-> index 84d464c..0d1986b 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.h
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.h
-> @@ -17,4 +17,5 @@ int exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
->  void exynos_plane_commit(struct drm_plane *plane);
->  void exynos_plane_dpms(struct drm_plane *plane, int mode);
->  struct drm_plane *exynos_plane_init(struct drm_device *dev,
-> -				    unsigned long possible_crtcs, bool priv);
-> +				    unsigned long possible_crtcs,
-> +				    enum drm_plane_type type);
-> 
-
-Thanks.
+> > ----
+> > static struct syscon *of_syscon_register(struct device_node *np)
+> >  {
+> > +	struct platform_device *pdev;
+> >  	struct syscon *syscon;
+> >  	struct regmap *regmap;
+> >  	void __iomem *base;
+> > @@ -142,7 +144,11 @@ static struct syscon *of_syscon_register(struct
+> > device_node *np)
+> >  	if (!base)
+> >  		return ERR_PTR(-ENOMEM);
+> >
+> > -	regmap = regmap_init_mmio(NULL, base, &syscon_regmap_config);
+> > +	pdev = of_find_device_by_node(np);
+> > +	if (!(&pdev->dev))
+> > +		return ERR_PTR(-ENODEV);
+> > +
+> > +	regmap = regmap_init_mmio(&pdev->dev, base, &syscon_regmap_config);
+> >  	if (IS_ERR(regmap)) {
+> >  		pr_err("regmap init failed\n");
+> >  		return ERR_CAST(regmap);
+> > -------
+> >
+> > I have tested this in linux-next and it works well. In this way there won't
+> > be any issues of
+> > dereferencing NULL pointer in regmap.c and at the same time, if DT has
+> > {big,little}-endian
+> > optional property in syscon device node, it will be taken care.
+> >
+> > So I would wait for Arnd's opinion about above mentioned changes and then
+> > post a new
+> > change after addressing Arnd's minor comment along with this fix in next
+> > revision.
+> >
+> >
+> > Thanks,
+> > Pankaj Dubey
+> > > Maybe we could consider create device structure for each syscon compatible
+> > device in
+> > > syscon driver in of_syscon_register in first time which seems to be
+> > reasonable.
+> > >
+> > > Regards
+> > > Dong Aisheng
+> > >
+> > > > --------------------------------------------
+> > > > Subject: [PATCH] regmap: fix NULL pointer dereference in
+> > > > regmap_get_val_endian
+> > > >
+> > > > Recent commits for getting reg endianess causing NULL pointer
+> > > > dereference if dev is passed NULL in regmap_init_mmio. This patch
+> > > > fixes this issue, and allows to parse reg endianess only if dev and
+> > > > dev->of_node exist.
+> > > >
+> > > > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> > > > ---
+> > > >  drivers/base/regmap/regmap.c |   23 ++++++++++++++---------
+> > > >  1 file changed, 14 insertions(+), 9 deletions(-)
+> > > >
+> > > > diff --git a/drivers/base/regmap/regmap.c
+> > > > b/drivers/base/regmap/regmap.c index f2281af..455a877 100644
+> > > > --- a/drivers/base/regmap/regmap.c
+> > > > +++ b/drivers/base/regmap/regmap.c
+> > > > @@ -477,7 +477,7 @@ static enum regmap_endian
+> > > > regmap_get_val_endian(struct device *dev,
+> > > >  					const struct regmap_bus *bus,
+> > > >  					const struct regmap_config *config)
+> > {
+> > > > -	struct device_node *np = dev->of_node;
+> > > > +	struct device_node *np;
+> > > >  	enum regmap_endian endian;
+> > > >
+> > > >  	/* Retrieve the endianness specification from the regmap config
+> */
+> > > > @@ -487,15 +487,20 @@ static enum regmap_endian
+> > > > regmap_get_val_endian(struct device *dev,
+> > > >  	if (endian != REGMAP_ENDIAN_DEFAULT)
+> > > >  		return endian;
+> > > >
+> > > > -	/* Parse the device's DT node for an endianness specification */
+> > > > -	if (of_property_read_bool(np, "big-endian"))
+> > > > -		endian = REGMAP_ENDIAN_BIG;
+> > > > -	else if (of_property_read_bool(np, "little-endian"))
+> > > > -		endian = REGMAP_ENDIAN_LITTLE;
+> > > > +	/* If the dev and dev->of_node exist try to get endianness from
+> DT
+> > > > */
+> > > > +	if (dev && dev->of_node) {
+> > > > +		np = dev->of_node;
+> > > >
+> > > > -	/* If the endianness was specified in DT, use that */
+> > > > -	if (endian != REGMAP_ENDIAN_DEFAULT)
+> > > > -		return endian;
+> > > > +		/* Parse the device's DT node for an endianness
+> > > > specification */
+> > > > +		if (of_property_read_bool(np, "big-endian"))
+> > > > +			endian = REGMAP_ENDIAN_BIG;
+> > > > +		else if (of_property_read_bool(np, "little-endian"))
+> > > > +			endian = REGMAP_ENDIAN_LITTLE;
+> > > > +
+> > > > +		/* If the endianness was specified in DT, use that */
+> > > > +		if (endian != REGMAP_ENDIAN_DEFAULT)
+> > > > +			return endian;
+> > > > +	}
+> > > >
+> > > >  	/* Retrieve the endianness specification from the bus config */
+> > > >  	if (bus && bus->val_format_endian_default)
+> > > > --
+> > > >
+> > > > Thanks,
+> > > > Pankaj Dubey
+> > > >
+> > > > > Regards
+> > > > > Dong Aisheng
+> > > > >
+> > > > > >
+> > > > > > Thanks,
+> > > > > > Pankaj Dubey
+> > > > > >
+> > > > > > > Regards
+> > > > > > > Dong Aisheng
+> > > > > > >
+> > > > > > > >
+> > > > > > > >
+> > > > > > > > _______________________________________________
+> > > > > > > > linux-arm-kernel mailing list
+> > > > > > > > linux-arm-kernel@lists.infradead.org
+> > > > > > > > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> > > > > >
+> > > >
+> >
