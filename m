@@ -1,70 +1,44 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH] tty/serial: samsung: Add earlycon support
-Date: Sat, 20 Sep 2014 13:00:15 -0500
-Message-ID: <541DC0AF.2060704@gmail.com>
-References: <1410867163-27962-1-git-send-email-alim.akhtar@samsung.com> <541D83AE.1050006@gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] clk: s5pv210: add missing call to samsung_clk_of_add_provider()
+Date: Sat, 20 Sep 2014 20:20:10 +0200
+Message-ID: <541DC55A.9080702@gmail.com>
+References: <1411117216-11456-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:56489 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756143AbaITSAT (ORCPT
+Received: from mail-wg0-f48.google.com ([74.125.82.48]:33493 "EHLO
+	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756508AbaITSUO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 20 Sep 2014 14:00:19 -0400
-In-Reply-To: <541D83AE.1050006@gmail.com>
+	Sat, 20 Sep 2014 14:20:14 -0400
+In-Reply-To: <1411117216-11456-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Alim Akhtar <alim.akhtar@samsung.com>, gregkh@linuxfoundation.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, thomas.ab@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>
 
-On 09/20/2014 08:39 AM, Tomasz Figa wrote:
-> Hi Alim,
+On 19.09.2014 11:00, Marek Szyprowski wrote:
+> Commit d5e136a21b2028fb1f45143ea7112d5869bfc6c7 ("clk: samsung: Register
+> clk provider only after registering its all clocks", merged to v3.17-rc1)
+> modified a way that driver registers registers to core framework. This
+> change has not been applied to s5pv210 clocks driver, which has been
+> merged in parallel to that commit. This patch adds a missing call to
+> samsung_clk_of_add_provider(), so the driver is operational again.
 > 
-> Please see my comments inline.
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> Hello!
 > 
-> On 16.09.2014 13:32, Alim Akhtar wrote:
->> Add earlycon support for the samsung serial port. This allows enabling
->> the samsung serial port for console when early_params are parse and processed.
->>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> ---
->>  Documentation/kernel-parameters.txt |    6 ++++++
->>  drivers/tty/serial/Kconfig          |    1 +
->>  drivers/tty/serial/samsung.c        |   17 +++++++++++++++++
->>  3 files changed, 24 insertions(+)
->>
->> diff --git a/Documentation/kernel-parameters.txt b/Documentation/kernel-parameters.txt
->> index 5ae8608..e01c0e5 100644
->> --- a/Documentation/kernel-parameters.txt
->> +++ b/Documentation/kernel-parameters.txt
->> @@ -936,6 +936,12 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
->>  			must already be setup and configured. Options are not
->>  			yet supported.
->>  
->> +		samsung,<addr>
-
-There will only ever be 1 samsung uart? This is an ABI to some extent,
-so you will be stuck with it.
-
->> +			Start an early, polled-mode console on a samsung serial
->> +			port at the specified address. The samsung serial port
->> +			must already be setup and configured. Options are not
->> +			yet supported.
->> +
+> This is an important fix to v3.17-rcX. Without it support for Samsung
+> S5PV210 SoCs is not functional.
 > 
-> Couldn't you simply parse this from DT? I believe there is already code
-> parsing stdout property in chosen node for earlycon purposes present in
-> the kernel.
+> Mike, could you take it to the fixes branch?
 
-You should support both and it is just a OF_EARLYCON_DECLARE line to add.
+Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-> Anyway, we already had a patch for this in our internal tree, but it
-> wasn't submitted because there was no support for early ioremap on ARM
-> at that time. I haven't been following it since then (and I'm no longer
-> at Samsung; Marek might be able to take this topic), is it already
-> available?
+Mike, since it seems like this is the only fix to be queued for next -rc
+release, I think it would be reasonable if you picked it up directly.
 
-No, but should be soonish. fixmap parts are being worked on by Kees.
-
-Rob
+Best regards,
+Tomasz
