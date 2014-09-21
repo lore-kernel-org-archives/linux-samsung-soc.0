@@ -1,44 +1,57 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] clk: s5pv210: add missing call to samsung_clk_of_add_provider()
-Date: Sat, 20 Sep 2014 20:20:10 +0200
-Message-ID: <541DC55A.9080702@gmail.com>
-References: <1411117216-11456-1-git-send-email-m.szyprowski@samsung.com>
+From: Jonathan Cameron <jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 0/3] iio: exynos-adc: use syscon instead of ioremap
+Date: Sun, 21 Sep 2014 13:17:06 +0100
+Message-ID: <541EC1C2.6090608@kernel.org>
+References: <1410857931-4980-1-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f48.google.com ([74.125.82.48]:33493 "EHLO
-	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756508AbaITSUO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 20 Sep 2014 14:20:14 -0400
-In-Reply-To: <1411117216-11456-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1410857931-4980-1-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>
 
-On 19.09.2014 11:00, Marek Szyprowski wrote:
-> Commit d5e136a21b2028fb1f45143ea7112d5869bfc6c7 ("clk: samsung: Register
-> clk provider only after registering its all clocks", merged to v3.17-rc1)
-> modified a way that driver registers registers to core framework. This
-> change has not been applied to s5pv210 clocks driver, which has been
-> merged in parallel to that commit. This patch adds a missing call to
-> samsung_clk_of_add_provider(), so the driver is operational again.
+On 16/09/14 09:58, Naveen Krishna Chatradhi wrote:
+> Changes since v1:
+> 1. Rebased on top of togreg branch of IIO git.
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
-> Hello!
+> This patch set does the following
+> 1. Use the syscon and Regmap API instead of ioremappaing the
+>    ADC_PHY register from PMU.
+> 2. Updates the Documentation in exynos-adc.txt with syscon phandle
+>    for the ADC nodes.
+> 3. Updates the Dts files for Exynos3250, Exynos4x12, Exynos5250,
+>    Exynos5420 with the syscon phandle.
 > 
-> This is an important fix to v3.17-rcX. Without it support for Samsung
-> S5PV210 SoCs is not functional.
+> Tested on Exynos5420 based Peach PIT and Exynos5800 based Peach PI
+> by verifying sysfs entries provided by HWMON based NTC thermistors.
 > 
-> Mike, could you take it to the fixes branch?
+> Tested-By for Exynos3250, Exynos4x12 would be appreciated.
+Would definitely be good!
 
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
+The main issue I have with this series is that it breaks backward
+compatibility with old device trees and newer kernels.
 
-Mike, since it seems like this is the only fix to be queued for next -rc
-release, I think it would be reasonable if you picked it up directly.
+Now I appreciate that sometimes there are reasons to do it but want this
+to have deeper consideration (and acks to show it) from the Exynos side
+of things and preferably from the device tree side of things as well.
 
-Best regards,
-Tomasz
+cc'd Kukjin Kim for the Exynos side of things as the listed Maintainer.
+
+Otherwise, the series looks fine to me.
+> 
+> Naveen Krishna Chatradhi (3):
+>   iio: exyno-adc: use syscon for PMU register access
+>   Documentation: dt-bindings: update exynos-adc.txt with syscon handle
+>   ARM: dts: exynos: Add sysreg phandle to ADC node
+> 
+>  .../devicetree/bindings/arm/samsung/exynos-adc.txt |    9 ++++--
+>  arch/arm/boot/dts/exynos3250.dtsi                  |    3 +-
+>  arch/arm/boot/dts/exynos4x12.dtsi                  |    3 +-
+>  arch/arm/boot/dts/exynos5250.dtsi                  |    3 +-
+>  arch/arm/boot/dts/exynos5420.dtsi                  |    3 +-
+>  drivers/iio/adc/exynos_adc.c                       |   30 ++++++++++++++------
+>  6 files changed, 36 insertions(+), 15 deletions(-)
+> 
