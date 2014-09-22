@@ -1,131 +1,253 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH] drm/exynos: remove explicit encoder/connector
- de-initialization
-Date: Mon, 22 Sep 2014 11:30:48 +0200
-Message-ID: <1411378248-17479-1-git-send-email-a.hajda@samsung.com>
+From: Dong Aisheng <b29396@freescale.com>
+Subject: Re: [PATCH v5] mfd: syscon: Decouple syscon interface from
+ platform devices
+Date: Mon, 22 Sep 2014 17:19:30 +0800
+Message-ID: <20140922091925.GA19778@shlinux1.ap.freescale.net>
+References: <1411360807-7750-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, m.szyprowski@samsung.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1411360807-7750-1-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, arnd@arndb.de, tomasz.figa@gmail.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, kgene.kim@samsung.com, Li.Xiubo@freescale.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-All KMS objects are destroyed by drm_mode_config_cleanup in proper order
-so component drivers should not care about it.
+On Mon, Sep 22, 2014 at 10:10:07AM +0530, Pankaj Dubey wrote:
+> Currently a syscon entity can be only registered directly through a
+> platform device that binds to a dedicated syscon driver. However in
+> certain use cases it is desirable to make a device used with another
+> driver a syscon interface provider.
+> 
+> For example, certain SoCs (e.g. Exynos) contain system controller
+> blocks which perform various functions such as power domain control,
+> CPU power management, low power mode control, but in addition contain
+> certain IP integration glue, such as various signal masks,
+> coprocessor power control, etc. In such case, there is a need to have
+> a dedicated driver for such system controller but also share registers
+> with other drivers. The latter is where the syscon interface is helpful.
+> 
+> In case of DT based platforms, this patch decouples syscon object from
+> syscon platform driver, and allows to create syscon objects first time
+> when it is required by calling of syscon_regmap_lookup_by APIs and keep
+> a list of such syscon objects along with syscon provider device_nodes
+> and regmap handles.
+> 
+> For non-DT based platforms, this patch keeps syscon platform driver
+> structure where is can be probed and such non-DT based drivers can use
+> syscon_regmap_lookup_by_pdev API and get access to regmap handles.
+> Once all users of "syscon_regmap_lookup_by_pdev" migrated to DT based,
+> we can completly remove platform driver of syscon, and keep only helper
+> functions to get regmap handles.
+> 
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+> Patch v4 and related discussions can be found here [1].
+> 
+> Changes since v4:
+>  - Addressed Tomasz Figa's comments for v4.
+>  - Added error handing in of_syscon_register function.
+>  - Using devm_regmap_init_mmio instead of regmap_init_mmio.
+> 
+> Changes since v3:
+>  - Addressed Arnd's comment for v2.
+>  - Updated of_syscon_register for adding dev pointer in regmap_init_mmio.
+>  - For early users created dummy platform device.
+>    
+> Changes since v2:
+>  - Added back platform device support from syscon, with one change that
+>    syscon will not be probed for DT based platform.
+>  - Added back syscon_regmap_lookup_by_pdevname API so that non-DT base
+>    users of syscon will not be broken.
+>  - Removed unwanted change in syscon.h.
+>  - Modified Signed-off-by list, added Suggested-by of Tomasz Figa and
+>    Arnd Bergmann.
+>  - Added Tested-by of Vivek Gautam for testing on Exynos platform.
+> 
+> Changes since v1:
+>  - Removed of_syscon_unregister function.
+>  - Modified of_syscon_register function and it will be used by syscon.c
+>    to create syscon objects whenever required.
+>  - Removed platform device support from syscon.
+>  - Removed syscon_regmap_lookup_by_pdevname API support.
+>  - As there are significant changes w.r.t patchset v1, I am taking over
+>    author for this patchset from Tomasz Figa.
+> 
+> [1]: https://lkml.org/lkml/2014/9/19/267
+> 
+>  drivers/mfd/syscon.c |  107 +++++++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 85 insertions(+), 22 deletions(-)
+> 
+> diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+> index ca15878..0b17f50 100644
+> --- a/drivers/mfd/syscon.c
+> +++ b/drivers/mfd/syscon.c
+> @@ -15,6 +15,7 @@
+>  #include <linux/err.h>
+>  #include <linux/io.h>
+>  #include <linux/module.h>
+> +#include <linux/list.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_platform.h>
+> @@ -22,31 +23,105 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/regmap.h>
+>  #include <linux/mfd/syscon.h>
+> +#include <linux/slab.h>
+>  
+>  static struct platform_driver syscon_driver;
+>  
+> +static DEFINE_SPINLOCK(syscon_list_slock);
+> +static LIST_HEAD(syscon_list);
+> +
+>  struct syscon {
+> +	struct device_node *np;
+>  	struct regmap *regmap;
+> +	struct list_head list;
+> +};
+> +
+> +static struct regmap_config syscon_regmap_config = {
+> +	.reg_bits = 32,
+> +	.val_bits = 32,
+> +	.reg_stride = 4,
+>  };
+>  
+> -static int syscon_match_node(struct device *dev, void *data)
+> +static struct syscon *of_syscon_register(struct device_node *np)
+>  {
+> -	struct device_node *dn = data;
+> +	struct platform_device *pdev = NULL;
+> +	struct syscon *syscon;
+> +	struct regmap *regmap;
+> +	void __iomem *base;
+> +	int ret;
+> +
+> +	if (!of_device_is_compatible(np, "syscon"))
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	syscon = kzalloc(sizeof(*syscon), GFP_KERNEL);
+> +	if (!syscon)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	base = of_iomap(np, 0);
+> +	if (!base) {
+> +		ret = -ENOMEM;
+> +		goto err_map;
+> +	}
+> +
+> +	/* if device is already populated and available then use it */
+> +	pdev = of_find_device_by_node(np);
+> +	if (!pdev) {
+> +		/* for early users create dummy syscon device and use it */
+> +		pdev = platform_device_alloc("dummy-syscon", -1);
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
-Hi Inki,
-
-This is another spin-off of exynos_drm tests regarding your
-component support update.
-The patch is based as usual on the latest exynos-drm-next branch.
+Can we create specific devices for each syscon device?
+That looks more reasonable to me.
+Then we can dump registers in regmap debugfs more clearly, just like other devices.
+And i think it's better to follow device tree way to generate devices from node.
+If DT core find a device is already created, it can ignore that device to avoid
+creating duplicated device during of_platform_populate.
 
 Regards
-Andrzej
----
- drivers/gpu/drm/exynos/exynos_dp_core.c  | 5 -----
- drivers/gpu/drm/exynos/exynos_drm_dpi.c  | 4 ----
- drivers/gpu/drm/exynos/exynos_drm_dsi.c  | 4 ----
- drivers/gpu/drm/exynos/exynos_drm_vidi.c | 3 ---
- drivers/gpu/drm/exynos/exynos_hdmi.c     | 6 ------
- 5 files changed, 22 deletions(-)
+Dong Aisheng
 
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index cd50ece..6adb1e5 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -1355,13 +1355,8 @@ static void exynos_dp_unbind(struct device *dev, struct device *master,
- 				void *data)
- {
- 	struct exynos_drm_display *display = dev_get_drvdata(dev);
--	struct exynos_dp_device *dp = display->ctx;
--	struct drm_encoder *encoder = dp->encoder;
- 
- 	exynos_dp_dpms(display, DRM_MODE_DPMS_OFF);
--
--	exynos_dp_connector_destroy(&dp->connector);
--	encoder->funcs->destroy(encoder);
- }
- 
- static const struct component_ops exynos_dp_ops = {
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-index 96c87db..3dc678e 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-@@ -338,14 +338,10 @@ err_del_component:
- 
- int exynos_dpi_remove(struct device *dev)
- {
--	struct drm_encoder *encoder = exynos_dpi_display.encoder;
- 	struct exynos_dpi *ctx = exynos_dpi_display.ctx;
- 
- 	exynos_dpi_dpms(&exynos_dpi_display, DRM_MODE_DPMS_OFF);
- 
--	exynos_dpi_connector_destroy(&ctx->connector);
--	encoder->funcs->destroy(encoder);
--
- 	if (ctx->panel)
- 		drm_panel_detach(ctx->panel);
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 24741d8..acf7e9e 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1660,13 +1660,9 @@ static void exynos_dsi_unbind(struct device *dev, struct device *master,
- 				void *data)
- {
- 	struct exynos_dsi *dsi = exynos_dsi_display.ctx;
--	struct drm_encoder *encoder = dsi->encoder;
- 
- 	exynos_dsi_dpms(&exynos_dsi_display, DRM_MODE_DPMS_OFF);
- 
--	exynos_dsi_connector_destroy(&dsi->connector);
--	encoder->funcs->destroy(encoder);
--
- 	mipi_dsi_host_unregister(&dsi->dsi_host);
- }
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index d565207..9395e85 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -639,9 +639,6 @@ static int vidi_remove(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	encoder->funcs->destroy(encoder);
--	drm_connector_cleanup(&ctx->connector);
--
- 	return 0;
- }
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
-index 7910fb3..563a19e 100644
---- a/drivers/gpu/drm/exynos/exynos_hdmi.c
-+++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
-@@ -2312,12 +2312,6 @@ static int hdmi_bind(struct device *dev, struct device *master, void *data)
- 
- static void hdmi_unbind(struct device *dev, struct device *master, void *data)
- {
--	struct exynos_drm_display *display = get_hdmi_display(dev);
--	struct drm_encoder *encoder = display->encoder;
--	struct hdmi_context *hdata = display->ctx;
--
--	hdmi_connector_destroy(&hdata->connector);
--	encoder->funcs->destroy(encoder);
- }
- 
- static const struct component_ops hdmi_component_ops = {
--- 
-1.9.1
+> +		if (!pdev) {
+> +			ret = -ENOMEM;
+> +			goto err_pdev;
+> +		}
+> +		pdev->dev.of_node = of_node_get(np);
+> +	}
+> +
+> +	regmap = devm_regmap_init_mmio(&pdev->dev, base, &syscon_regmap_config);
+> +	if (IS_ERR(regmap)) {
+> +		dev_err(&pdev->dev, "regmap init failed\n");
+> +		ret = PTR_ERR(regmap);
+> +		goto err_regmap;
+> +	}
+> +
+> +	syscon->regmap = regmap;
+> +	syscon->np = np;
+>  
+> -	return (dev->of_node == dn) ? 1 : 0;
+> +	spin_lock(&syscon_list_slock);
+> +	list_add_tail(&syscon->list, &syscon_list);
+> +	spin_unlock(&syscon_list_slock);
+> +
+> +	return syscon;
+> +
+> +err_regmap:
+> +	if (!strcmp(pdev->name, "dummy-syscon")) {
+> +		of_node_put(np);
+> +		platform_device_put(pdev);
+> +	}
+> +err_pdev:
+> +	iounmap(base);
+> +err_map:
+> +	kfree(syscon);
+> +	return ERR_PTR(ret);
+>  }
+>  
+>  struct regmap *syscon_node_to_regmap(struct device_node *np)
+>  {
+> -	struct syscon *syscon;
+> -	struct device *dev;
+> +	struct syscon *entry, *syscon = NULL;
+>  
+> -	dev = driver_find_device(&syscon_driver.driver, NULL, np,
+> -				 syscon_match_node);
+> -	if (!dev)
+> -		return ERR_PTR(-EPROBE_DEFER);
+> +	spin_lock(&syscon_list_slock);
+>  
+> -	syscon = dev_get_drvdata(dev);
+> +	list_for_each_entry(entry, &syscon_list, list)
+> +		if (entry->np == np) {
+> +			syscon = entry;
+> +			break;
+> +		}
+> +
+> +	spin_unlock(&syscon_list_slock);
+> +
+> +	if (!syscon)
+> +		syscon = of_syscon_register(np);
+> +
+> +	if (IS_ERR(syscon))
+> +		return ERR_CAST(syscon);
+>  
+>  	return syscon->regmap;
+>  }
+> @@ -110,17 +185,6 @@ struct regmap *syscon_regmap_lookup_by_phandle(struct device_node *np,
+>  }
+>  EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle);
+>  
+> -static const struct of_device_id of_syscon_match[] = {
+> -	{ .compatible = "syscon", },
+> -	{ },
+> -};
+> -
+> -static struct regmap_config syscon_regmap_config = {
+> -	.reg_bits = 32,
+> -	.val_bits = 32,
+> -	.reg_stride = 4,
+> -};
+> -
+>  static int syscon_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -167,7 +231,6 @@ static struct platform_driver syscon_driver = {
+>  	.driver = {
+>  		.name = "syscon",
+>  		.owner = THIS_MODULE,
+> -		.of_match_table = of_syscon_match,
+>  	},
+>  	.probe		= syscon_probe,
+>  	.id_table	= syscon_ids,
+> -- 
+> 1.7.9.5
+> 
