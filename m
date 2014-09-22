@@ -1,45 +1,156 @@
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: [PATCH] [media] s5p-mfc: Use decode status instead of display status on MFCv5
-Date: Mon, 22 Sep 2014 14:52:02 +0200
-Message-ID: <1411390322-25212-1-git-send-email-sjoerd.simons@collabora.co.uk>
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-To: Kyungmin Park <kyungmin.park@samsung.com>, Kamil Debski <k.debski@samsung.com>, Arun Kumar K <arun.kk@samsung.com>
-Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Daniel Drake <drake@endlessm.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH/RFC 1/2] serial: samsung: Add support for of_earlycon
+Date: Mon, 22 Sep 2014 15:14:14 +0200
+Message-ID: <1411391655-6291-2-git-send-email-m.szyprowski@samsung.com>
+References: <1411391655-6291-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:57041 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753934AbaIVNOX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 22 Sep 2014 09:14:23 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NCB003F90WLJL30@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 22 Sep 2014 14:17:09 +0100 (BST)
+In-reply-to: <1411391655-6291-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, thomas.ab@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robherring2@gmail.com>
 
-Commit 90c0ae50097 changed how the frame_type of a decoded frame
-gets determined, by switching from the get_dec_frame_type to
-get_disp_frame_type operation. Unfortunately it seems that on MFC v5 the
-result of get_disp_frame_type is always 0 (no display) when decoding
-(tested with H264), resulting in no frame ever being output from the
-decoder.
+From: Tomasz Figa <t.figa@samsung.com>
 
-This patch reverts MFC v5 to the previous behaviour while keeping the
-new behaviour for v6 and up.
+This patch adds support for early console initialized from device tree
+to all variants of Samsung serial driver.
 
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/media/platform/s5p-mfc/s5p_mfc.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/tty/serial/Kconfig   |  1 +
+ drivers/tty/serial/samsung.c | 97 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 98 insertions(+)
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-index d35b041..27ca9d0 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
-@@ -264,7 +264,12 @@ static void s5p_mfc_handle_frame_new(struct s5p_mfc_ctx *ctx, unsigned int err)
- 	unsigned int frame_type;
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 26cec64dadd7..e87a2dfd9080 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -222,6 +222,7 @@ config SERIAL_SAMSUNG
+ 	tristate "Samsung SoC serial support"
+ 	depends on PLAT_SAMSUNG
+ 	select SERIAL_CORE
++	select SERIAL_EARLYCON
+ 	help
+ 	  Support for the on-chip UARTs on the Samsung S3C24XX series CPUs,
+ 	  providing /dev/ttySAC0, 1 and 2 (note, some machines may not
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index c78f43a481ce..71829ce2410d 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1856,6 +1856,103 @@ static struct platform_driver samsung_serial_driver = {
  
- 	dspl_y_addr = s5p_mfc_hw_call(dev->mfc_ops, get_dspl_y_adr, dev);
--	frame_type = s5p_mfc_hw_call(dev->mfc_ops, get_disp_frame_type, ctx);
-+	if (IS_MFCV6_PLUS(dev))
-+		frame_type = s5p_mfc_hw_call(dev->mfc_ops,
-+			get_disp_frame_type, ctx);
+ module_platform_driver(samsung_serial_driver);
+ 
++/*
++ * Early console.
++ */
++
++struct samsung_early_console_data {
++	u32 txfull_mask;
++};
++
++static void samsung_early_busyuart(struct uart_port *port)
++{
++	while (!(readl(port->membase + S3C2410_UTRSTAT) & S3C2410_UTRSTAT_TXFE))
++		;
++}
++
++static void samsung_early_busyuart_fifo(struct uart_port *port)
++{
++	struct samsung_early_console_data *data = port->private_data;
++
++	while (readl(port->membase + S3C2410_UFSTAT) & data->txfull_mask)
++		;
++}
++
++static void samsung_early_putc(struct uart_port *port, int c)
++{
++	if (readl(port->membase + S3C2410_UFCON) & S3C2410_UFCON_FIFOMODE)
++		samsung_early_busyuart_fifo(port);
 +	else
-+		frame_type = s5p_mfc_hw_call(dev->mfc_ops,
-+			get_dec_frame_type, dev);
- 
- 	/* If frame is same as previous then skip and do not dequeue */
- 	if (frame_type == S5P_FIMV_DECODE_FRAME_SKIPPED) {
++		samsung_early_busyuart(port);
++
++	writeb(c, port->membase + S3C2410_UTXH);
++}
++
++static void samsung_early_write(struct console *con, const char *s, unsigned n)
++{
++	struct earlycon_device *dev = con->data;
++
++	uart_console_write(&dev->port, s, n, samsung_early_putc);
++}
++
++static int __init samsung_early_console_setup(struct earlycon_device *device,
++					      const char *opt)
++{
++	if (!device->port.membase)
++		return -ENODEV;
++
++	device->con->write = samsung_early_write;
++	return 0;
++}
++
++/* S3C2410, S3C2412 */
++static struct samsung_early_console_data s3c2410_early_console_data = {
++	.txfull_mask = S3C2410_UFSTAT_TXFULL,
++};
++
++static int __init s3c2410_early_console_setup(struct earlycon_device *device,
++					      const char *opt)
++{
++	device->port.private_data = &s3c2410_early_console_data;
++	return samsung_early_console_setup(device, opt);
++}
++OF_EARLYCON_DECLARE(s3c2410, "samsung,s3c2410-uart",
++			s3c2410_early_console_setup);
++
++/* S3C2440, S3C64xx */
++static struct samsung_early_console_data s3c2440_early_console_data = {
++	.txfull_mask = S3C2440_UFSTAT_TXFULL,
++};
++
++static int __init s3c2440_early_console_setup(struct earlycon_device *device,
++					      const char *opt)
++{
++	device->port.private_data = &s3c2440_early_console_data;
++	return samsung_early_console_setup(device, opt);
++}
++OF_EARLYCON_DECLARE(s3c2412, "samsung,s3c2412-uart",
++			s3c2440_early_console_setup);
++OF_EARLYCON_DECLARE(s3c2440, "samsung,s3c2440-uart",
++			s3c2440_early_console_setup);
++OF_EARLYCON_DECLARE(s3c6400, "samsung,s3c6400-uart",
++			s3c2440_early_console_setup);
++
++/* S5PV210, EXYNOS */
++static struct samsung_early_console_data s5pv210_early_console_data = {
++	.txfull_mask = S5PV210_UFSTAT_TXFULL,
++};
++
++static int __init s5pv210_early_console_setup(struct earlycon_device *device,
++					      const char *opt)
++{
++	device->port.private_data = &s5pv210_early_console_data;
++	return samsung_early_console_setup(device, opt);
++}
++OF_EARLYCON_DECLARE(s5pv210, "samsung,s5pv210-uart",
++			s5pv210_early_console_setup);
++OF_EARLYCON_DECLARE(exynos4210, "samsung,exynos4210-uart",
++			s5pv210_early_console_setup);
++
+ MODULE_ALIAS("platform:samsung-uart");
+ MODULE_DESCRIPTION("Samsung SoC Serial port driver");
+ MODULE_AUTHOR("Ben Dooks <ben@simtec.co.uk>");
 -- 
-2.1.0
+1.9.2
