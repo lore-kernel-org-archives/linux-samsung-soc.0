@@ -1,210 +1,96 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v5 2/2] usb: host: ohci-exynos: Remove unnecessary usb-phy support
-Date: Mon, 22 Sep 2014 11:16:19 +0530
-Message-ID: <1411364779-28100-1-git-send-email-gautam.vivek@samsung.com>
-References: <1411014315-17914-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:39328 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752757AbaIVFq1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Sep 2014 01:46:27 -0400
-In-Reply-To: <1411014315-17914-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
+ ps8622 DT properties
+Date: Mon, 22 Sep 2014 11:30:19 +0530
+Message-ID: <CAEC9eQPmN0vSFp8OdLPMymw4yLS0i+Y1xNj6YR6EPZy2zE5W8w@mail.gmail.com>
+References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
+ <5419760A.7020908@ti.com>
+ <CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com>
+ <5419B52D.4060107@ti.com>
+ <CAEC9eQO2rfmVEKTCUJk+SpfdeUr81gN3stYV3wE6yR3E=-zonA@mail.gmail.com>
+ <541C279A.2030601@ti.com>
+ <CAEC9eQMQrM289J+ukkshKtTo9dB=G4cvg-4zF6LR6snqE5BL0A@mail.gmail.com>
+ <541C3D95.7080200@ti.com>
+ <CAEC9eQNshrP6wW_9mEDbFR5hRpW6Hy=GBFzV=rf05Wpxz6gtiw@mail.gmail.com>
+ <CABxcv=kGTmYtjDc0isgy=-Ga+w69zVefJwK1qQY7dmER5fhhJg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CABxcv=kGTmYtjDc0isgy=-Ga+w69zVefJwK1qQY7dmER5fhhJg@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene.kim@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, kgene.kim@samsung.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 
-Now that we have completely moved from older USB-PHY drivers
-to newer GENERIC-PHY drivers for PHYs available with USB controllers
-on Exynos series of SoCs, we can remove the support for the same
-in our host drivers too.
+On Sat, Sep 20, 2014 at 8:57 PM, Javier Martinez Canillas
+<javier@dowhile0.org> wrote:
+> [adding Kukjin as cc]
+>
+> Hello Ajay,
+>
+> On Sat, Sep 20, 2014 at 1:22 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
+>>> Generally speaking, I sense that we have different views of how display
+>>> devices and drivers are structured. You say "If some XYZ platform wishes
+>>> to pick the DT node via a different method, they are always welcome to
+>>> do it.". This sounds to me that you see the connections between display
+>>> devices as something handled by a platform specific driver.
+>>> I, on the other hand, see connections between display devices as common
+>>> properties.
+>> Well, I am okay with using video ports to describe the relationship
+>> between the encoder, bridge and the panel.
+>> But, its just that I need to make use of 2 functions when phandle
+>> does it using just one function ;)
+>> -        panel_node = of_parse_phandle(dev->of_node, "panel", 0)
+>> +       endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
+>> +       if (!endpoint)
+>> +               return -EPROBE_DEFER;
+>> +
+>> +       panel_node = of_graph_get_remote_port_parent(endpoint);
+>> +       if (!panel_node)
+>> +               return -EPROBE_DEFER;
+>>
+>>
+>> If nobody else has objections over using of_graph functions instead
+>> of phandles, I can respin this patchset by making use of video ports.
+>
+> I certainly have no objections about re-using the video
+> ports/endpoints DT bindings for the bridges but just wanted to point
+> out that Kukjin has already merged on his tree the DTS changes for
+> display on Snow and Peach Pit using the current binding and also sent
+> the pull request [0] to ARM SoC maintainers since he probably was
+> expecting this series to make ti for 3.18. So that should be handled
+> somehow.
+Kukjin,
+Can you do something about this?
+Or, I shall make video-port changes on top of whatever gets merged?
 
-We also defer the probe for our host in case we end up getting
-EPROBE_DEFER error when getting PHYs.
-
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-Acked-by: Jingoo Han <jg1.han@samsung.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
----
-
-Changes since v4:
- - returning 'ret' instead of PTR_ERR(phy), since ret is nothing but that only.
-
-Changes since v3:
- - Addressed review comments by Alan:
-   -- Skipped renaming 'phy_number' variable,
-   -- resorted to just adding minimal change required for phy assignment.
-   -- updated patch description to mention EPROBE_DEFER support.
-
- drivers/usb/host/ohci-exynos.c |   81 ++++++++++------------------------------
- 1 file changed, 20 insertions(+), 61 deletions(-)
-
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index 7c48e3f..d28b658 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -19,11 +19,8 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/phy/phy.h>
--#include <linux/usb/phy.h>
--#include <linux/usb/samsung_usb_phy.h>
- #include <linux/usb.h>
- #include <linux/usb/hcd.h>
--#include <linux/usb/otg.h>
- 
- #include "ohci.h"
- 
-@@ -38,9 +35,7 @@ static struct hc_driver __read_mostly exynos_ohci_hc_driver;
- 
- struct exynos_ohci_hcd {
- 	struct clk *clk;
--	struct usb_phy *phy;
--	struct usb_otg *otg;
--	struct phy *phy_g[PHY_NUMBER];
-+	struct phy *phy[PHY_NUMBER];
- };
- 
- static int exynos_ohci_get_phy(struct device *dev,
-@@ -49,15 +44,9 @@ static int exynos_ohci_get_phy(struct device *dev,
- 	struct device_node *child;
- 	struct phy *phy;
- 	int phy_number;
--	int ret = 0;
-+	int ret;
- 
--	/*
--	 * Getting generic phy:
--	 * We are keeping both types of phys as a part of transiting OHCI
--	 * to generic phy framework, so as to maintain backward compatibilty
--	 * with old DTB too.
--	 * We fallback to older USB-PHYs when we fail to get generic PHYs.
--	 */
-+	/* Get PHYs for the controller */
- 	for_each_available_child_of_node(dev->of_node, child) {
- 		ret = of_property_read_u32(child, "reg", &phy_number);
- 		if (ret) {
-@@ -73,31 +62,21 @@ static int exynos_ohci_get_phy(struct device *dev,
- 		}
- 
- 		phy = devm_of_phy_get(dev, child, NULL);
-+		exynos_ohci->phy[phy_number] = phy;
- 		of_node_put(child);
--		if (IS_ERR(phy))
--			/* Lets fallback to older USB-PHYs */
--			goto usb_phy_old;
--		exynos_ohci->phy_g[phy_number] = phy;
--		/* Make the older PHYs unavailable */
--		exynos_ohci->phy = ERR_PTR(-ENXIO);
--	}
--
--	return 0;
--
--usb_phy_old:
--	exynos_ohci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
--	if (IS_ERR(exynos_ohci->phy)) {
--		ret = PTR_ERR(exynos_ohci->phy);
--		if (ret != -ENXIO && ret != -ENODEV) {
--			dev_err(dev, "no usb2 phy configured\n");
--			return ret;
-+		if (IS_ERR(phy)) {
-+			ret = PTR_ERR(phy);
-+			if (ret == -EPROBE_DEFER) {
-+				return ret;
-+			} else if (ret != -ENOSYS && ret != -ENODEV) {
-+				dev_err(dev,
-+					"Error retrieving usb2 phy: %d\n", ret);
-+				return ret;
-+			}
- 		}
--		dev_dbg(dev, "Failed to get usb2 phy\n");
--	} else {
--		exynos_ohci->otg = exynos_ohci->phy->otg;
- 	}
- 
--	return ret;
-+	return 0;
- }
- 
- static int exynos_ohci_phy_enable(struct device *dev)
-@@ -107,16 +86,13 @@ static int exynos_ohci_phy_enable(struct device *dev)
- 	int i;
- 	int ret = 0;
- 
--	if (!IS_ERR(exynos_ohci->phy))
--		return usb_phy_init(exynos_ohci->phy);
--
- 	for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
--		if (!IS_ERR(exynos_ohci->phy_g[i]))
--			ret = phy_power_on(exynos_ohci->phy_g[i]);
-+		if (!IS_ERR(exynos_ohci->phy[i]))
-+			ret = phy_power_on(exynos_ohci->phy[i]);
- 	if (ret)
- 		for (i--; i >= 0; i--)
--			if (!IS_ERR(exynos_ohci->phy_g[i]))
--				phy_power_off(exynos_ohci->phy_g[i]);
-+			if (!IS_ERR(exynos_ohci->phy[i]))
-+				phy_power_off(exynos_ohci->phy[i]);
- 
- 	return ret;
- }
-@@ -127,14 +103,9 @@ static void exynos_ohci_phy_disable(struct device *dev)
- 	struct exynos_ohci_hcd *exynos_ohci = to_exynos_ohci(hcd);
- 	int i;
- 
--	if (!IS_ERR(exynos_ohci->phy)) {
--		usb_phy_shutdown(exynos_ohci->phy);
--		return;
--	}
--
- 	for (i = 0; i < PHY_NUMBER; i++)
--		if (!IS_ERR(exynos_ohci->phy_g[i]))
--			phy_power_off(exynos_ohci->phy_g[i]);
-+		if (!IS_ERR(exynos_ohci->phy[i]))
-+			phy_power_off(exynos_ohci->phy[i]);
- }
- 
- static int exynos_ohci_probe(struct platform_device *pdev)
-@@ -206,9 +177,6 @@ skip_phy:
- 		goto fail_io;
- 	}
- 
--	if (exynos_ohci->otg)
--		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
--
- 	platform_set_drvdata(pdev, hcd);
- 
- 	err = exynos_ohci_phy_enable(&pdev->dev);
-@@ -241,9 +209,6 @@ static int exynos_ohci_remove(struct platform_device *pdev)
- 
- 	usb_remove_hcd(hcd);
- 
--	if (exynos_ohci->otg)
--		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
--
- 	exynos_ohci_phy_disable(&pdev->dev);
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
-@@ -272,9 +237,6 @@ static int exynos_ohci_suspend(struct device *dev)
- 	if (rc)
- 		return rc;
- 
--	if (exynos_ohci->otg)
--		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
--
- 	exynos_ohci_phy_disable(dev);
- 
- 	clk_disable_unprepare(exynos_ohci->clk);
-@@ -290,9 +252,6 @@ static int exynos_ohci_resume(struct device *dev)
- 
- 	clk_prepare_enable(exynos_ohci->clk);
- 
--	if (exynos_ohci->otg)
--		exynos_ohci->otg->set_host(exynos_ohci->otg, &hcd->self);
--
- 	ret = exynos_ohci_phy_enable(dev);
- 	if (ret) {
- 		dev_err(dev, "Failed to enable USB phy\n");
--- 
-1.7.10.4
+Ajay
+> Tomi,
+>
+> I see that Documentation/devicetree/bindings/video/ti,omap-dss.txt
+> mentions that the Video Ports binding documentation is in
+> Documentation/devicetree/bindings/video/video-ports.txt but I don't
+> see that this file exists in the kernel [1]. I see though that is was
+> included on your series adding DSS DT support [2].
+>
+> Do you know what happened with this file?
+>
+> Best regards,
+> Javier
+>
+> [0]: https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg36681.html
+> [1]: https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/video
+> [2]: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-January/227088.html
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
