@@ -1,96 +1,137 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
- ps8622 DT properties
-Date: Mon, 22 Sep 2014 11:30:19 +0530
-Message-ID: <CAEC9eQPmN0vSFp8OdLPMymw4yLS0i+Y1xNj6YR6EPZy2zE5W8w@mail.gmail.com>
-References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
- <5419760A.7020908@ti.com>
- <CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com>
- <5419B52D.4060107@ti.com>
- <CAEC9eQO2rfmVEKTCUJk+SpfdeUr81gN3stYV3wE6yR3E=-zonA@mail.gmail.com>
- <541C279A.2030601@ti.com>
- <CAEC9eQMQrM289J+ukkshKtTo9dB=G4cvg-4zF6LR6snqE5BL0A@mail.gmail.com>
- <541C3D95.7080200@ti.com>
- <CAEC9eQNshrP6wW_9mEDbFR5hRpW6Hy=GBFzV=rf05Wpxz6gtiw@mail.gmail.com>
- <CABxcv=kGTmYtjDc0isgy=-Ga+w69zVefJwK1qQY7dmER5fhhJg@mail.gmail.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH 2/4] pinctrl: exynos: Add irq_chip instance for Exynos7
+ wakeup interrupts
+Date: Mon, 22 Sep 2014 11:47:55 +0530
+Message-ID: <CAM4voamF8aydh7-2aC+vLrO1rmPm5GL3Pn6i6rZ3XnzCDHzgJg@mail.gmail.com>
+References: <1410598252-30931-1-git-send-email-a.kesavan@samsung.com>
+	<1410598252-30931-4-git-send-email-a.kesavan@samsung.com>
+	<54142A36.5050703@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CABxcv=kGTmYtjDc0isgy=-Ga+w69zVefJwK1qQY7dmER5fhhJg@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene.kim@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f47.google.com ([209.85.216.47]:61592 "EHLO
+	mail-qa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750894AbaIVGR4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 22 Sep 2014 02:17:56 -0400
+In-Reply-To: <54142A36.5050703@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, "robh@kernel.org" <robh@kernel.org>, devicetree <devicetree@vger.kernel.org>, linus.walleij@linaro.org, Thomas P Abraham <thomas.ab@samsung.com>
 
-On Sat, Sep 20, 2014 at 8:57 PM, Javier Martinez Canillas
-<javier@dowhile0.org> wrote:
-> [adding Kukjin as cc]
+Hi Tomasz,
+
+On Sat, Sep 13, 2014 at 4:57 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi Abhilash,
 >
-> Hello Ajay,
+> Please see my comments inline.
 >
-> On Sat, Sep 20, 2014 at 1:22 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
->>> Generally speaking, I sense that we have different views of how display
->>> devices and drivers are structured. You say "If some XYZ platform wishes
->>> to pick the DT node via a different method, they are always welcome to
->>> do it.". This sounds to me that you see the connections between display
->>> devices as something handled by a platform specific driver.
->>> I, on the other hand, see connections between display devices as common
->>> properties.
->> Well, I am okay with using video ports to describe the relationship
->> between the encoder, bridge and the panel.
->> But, its just that I need to make use of 2 functions when phandle
->> does it using just one function ;)
->> -        panel_node = of_parse_phandle(dev->of_node, "panel", 0)
->> +       endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
->> +       if (!endpoint)
->> +               return -EPROBE_DEFER;
+> On 13.09.2014 10:50, Abhilash Kesavan wrote:
+>> Exynos7 uses different offsets for wakeup interrupt configuration registers.
+>> So a new irq_chip instance for Exynos7 wakeup interrupts is added. The irq_chip
+>> selection is now based on the wakeup interrupt controller compatible string.
+>
+> [snip]
+>
+>> @@ -328,9 +322,11 @@ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
+>>  /*
+>>   * irq_chip for wakeup interrupts
+>>   */
+>> -static struct exynos_irq_chip exynos_wkup_irq_chip = {
+>> +static struct exynos_irq_chip exynos_wkup_irq_chip;
 >> +
->> +       panel_node = of_graph_get_remote_port_parent(endpoint);
->> +       if (!panel_node)
->> +               return -EPROBE_DEFER;
->>
->>
->> If nobody else has objections over using of_graph functions instead
->> of phandles, I can respin this patchset by making use of video ports.
 >
-> I certainly have no objections about re-using the video
-> ports/endpoints DT bindings for the bridges but just wanted to point
-> out that Kukjin has already merged on his tree the DTS changes for
-> display on Snow and Peach Pit using the current binding and also sent
-> the pull request [0] to ARM SoC maintainers since he probably was
-> expecting this series to make ti for 3.18. So that should be handled
-> somehow.
-Kukjin,
-Can you do something about this?
-Or, I shall make video-port changes on top of whatever gets merged?
+> Why do you still need this, if you have both variants below?
 
-Ajay
-> Tomi,
+After adding __initdata to the two variants, I will require to have a
+copy of one of them.
+
 >
-> I see that Documentation/devicetree/bindings/video/ti,omap-dss.txt
-> mentions that the Video Ports binding documentation is in
-> Documentation/devicetree/bindings/video/video-ports.txt but I don't
-> see that this file exists in the kernel [1]. I see though that is was
-> included on your series adding DSS DT support [2].
+>> +static struct exynos_irq_chip exynos4210_wkup_irq_chip = {
+>>       .chip = {
+>> -             .name = "exynos_wkup_irq_chip",
+>> +             .name = "exynos4210_wkup_irq_chip",
+>>               .irq_unmask = exynos_irq_unmask,
+>>               .irq_mask = exynos_irq_mask,
+>>               .irq_ack = exynos_irq_ack,
+>> @@ -342,6 +338,29 @@ static struct exynos_irq_chip exynos_wkup_irq_chip = {
+>>       .eint_pend = EXYNOS_WKUP_EPEND_OFFSET,
+>>  };
+>>
+>> +static struct exynos_irq_chip exynos7_wkup_irq_chip = {
+>> +     .chip = {
+>> +             .name = "exynos7_wkup_irq_chip",
+>> +             .irq_unmask = exynos_irq_unmask,
+>> +             .irq_mask = exynos_irq_mask,
+>> +             .irq_ack = exynos_irq_ack,
+>> +             .irq_set_type = exynos_irq_set_type,
+>> +             .irq_set_wake = exynos_wkup_irq_set_wake,
+>> +     },
+>> +     .eint_con = EXYNOS7_WKUP_ECON_OFFSET,
+>> +     .eint_mask = EXYNOS7_WKUP_EMASK_OFFSET,
+>> +     .eint_pend = EXYNOS7_WKUP_EPEND_OFFSET,
+>> +};
+>> +
+>> +/* list of external wakeup controllers supported */
+>> +static const struct of_device_id exynos_wkup_irq_ids[] = {
+>> +     { .compatible = "samsung,exynos4210-wakeup-eint",
+>> +                     .data = &exynos4210_wkup_irq_chip },
+>> +     { .compatible = "samsung,exynos7-wakeup-eint",
+>> +                     .data = &exynos7_wkup_irq_chip },
+>> +     { }
+>> +};
+>> +
+>>  /* interrupt handler for wakeup interrupts 0..15 */
+>>  static void exynos_irq_eint0_15(unsigned int irq, struct irq_desc *desc)
+>>  {
+>> @@ -434,7 +453,12 @@ static int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
+>>       int idx, irq;
+>>
+>>       for_each_child_of_node(dev->of_node, np) {
+>> -             if (of_match_node(exynos_wkup_irq_ids, np)) {
+>> +             const struct of_device_id *match;
+>> +
+>> +             match = of_match_node(exynos_wkup_irq_ids, np);
+>> +             if (match) {
+>> +                     memcpy(&exynos_wkup_irq_chip, match->data,
+>> +                             sizeof(struct exynos_irq_chip));
 >
-> Do you know what happened with this file?
+> Hmm, this doesn't look correct to me. You are modifying a static struct
+> here. Why couldn't you simply use the exynos irq chip pointed by
+> match->data in further registration code?
+
+That will not be available later once I use __initdata.
+
+>
+>>                       wkup_np = np;
+>>                       break;
+>>               }
+>> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/samsung/pinctrl-exynos.h
+>> index e060722..0db1e52 100644
+>> --- a/drivers/pinctrl/samsung/pinctrl-exynos.h
+>> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
+>> @@ -25,6 +25,9 @@
+>>  #define EXYNOS_WKUP_ECON_OFFSET              0xE00
+>>  #define EXYNOS_WKUP_EMASK_OFFSET     0xF00
+>>  #define EXYNOS_WKUP_EPEND_OFFSET     0xF40
+>> +#define EXYNOS7_WKUP_ECON_OFFSET     0x700
+>> +#define EXYNOS7_WKUP_EMASK_OFFSET    0x900
+>> +#define EXYNOS7_WKUP_EPEND_OFFSET    0xA00
+>
+> Interestingly enough, the offsets look just like the normal GPIO
+> interrupt controller of previous Exynos SoCs. Are you sure those are
+> correct? Also if somehow the controller now resembles the normal one,
+> doesn't it have the SVC register making it possible to reuse the non
+> wake-up code instead?
+
+The wakeup interrupt register offsets are the same as the GPIO
+interrupt offsets in earlier Exynos SoCs. There is no SVC register for
+the wakeup interrupt block.
+
+Regards,
+Abhilash
+
 >
 > Best regards,
-> Javier
->
-> [0]: https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg36681.html
-> [1]: https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/video
-> [2]: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-January/227088.html
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Tomasz
