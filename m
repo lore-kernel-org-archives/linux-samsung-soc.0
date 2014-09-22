@@ -1,55 +1,158 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH/RFC 0/2] serial: samsung: add support for early console
-Date: Mon, 22 Sep 2014 15:14:13 +0200
-Message-ID: <1411391655-6291-1-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH/RFC 2/2] ARM: dts: exynos4: Add stdout-path properties
+Date: Mon, 22 Sep 2014 15:14:15 +0200
+Message-ID: <1411391655-6291-3-git-send-email-m.szyprowski@samsung.com>
+References: <1411391655-6291-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:49248 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753647AbaIVNOX (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:11064 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753647AbaIVNOY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Sep 2014 09:14:23 -0400
+	Mon, 22 Sep 2014 09:14:24 -0400
 Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
+ by mailout3.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NCB00ME90WNST30@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 22 Sep 2014 14:17:11 +0100 (BST)
+ 17 2011)) with ESMTP id <0NCB00IHP0WPK930@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 22 Sep 2014 14:17:13 +0100 (BST)
+In-reply-to: <1411391655-6291-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, thomas.ab@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robherring2@gmail.com>
 
-Hello,
+From: Tomasz Figa <t.figa@samsung.com>
 
-This patchset adds support for early console defined in device tree. As
-an example, DTS files for all Exynos4 based machines are updated with
-the correct value for common chosen/sdtout property.
+This patch adds stdout-path property to chosen nodes of Exynos4 boards
+to enable use of earlycon feature without the need to hardcode port
+number in kernel itself.
 
-To get it fully functional additional improvements (support for
-early_ioremap) are needed in early console code.
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos4210-origen.dts         | 1 +
+ arch/arm/boot/dts/exynos4210-smdkv310.dts       | 1 +
+ arch/arm/boot/dts/exynos4210-trats.dts          | 1 +
+ arch/arm/boot/dts/exynos4210-universal_c210.dts | 1 +
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 4 ++++
+ arch/arm/boot/dts/exynos4412-origen.dts         | 1 +
+ arch/arm/boot/dts/exynos4412-smdk4412.dts       | 1 +
+ arch/arm/boot/dts/exynos4412-tiny4412.dts       | 4 ++++
+ arch/arm/boot/dts/exynos4412-trats2.dts         | 1 +
+ 9 files changed, 15 insertions(+)
 
-Best regards
-Marek Szyprowski
-Samsung R&D Institute Poland
-
-
-Patch summary:
-
-Tomasz Figa (2):
-  serial: samsung: Add support for of_earlycon
-  ARM: dts: exynos4: Add stdout-path properties
-
- arch/arm/boot/dts/exynos4210-origen.dts         |  1 +
- arch/arm/boot/dts/exynos4210-smdkv310.dts       |  1 +
- arch/arm/boot/dts/exynos4210-trats.dts          |  1 +
- arch/arm/boot/dts/exynos4210-universal_c210.dts |  1 +
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 +
- arch/arm/boot/dts/exynos4412-origen.dts         |  1 +
- arch/arm/boot/dts/exynos4412-smdk4412.dts       |  1 +
- arch/arm/boot/dts/exynos4412-tiny4412.dts       |  4 +
- arch/arm/boot/dts/exynos4412-trats2.dts         |  1 +
- drivers/tty/serial/Kconfig                      |  1 +
- drivers/tty/serial/samsung.c                    | 97 +++++++++++++++++++++++++
- 11 files changed, 113 insertions(+)
-
+diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+index f767c425d0b5..b81146141402 100644
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -31,6 +31,7 @@
+ 
+ 	chosen {
+ 		bootargs ="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
++		stdout-path = &serial_2;
+ 	};
+ 
+ 	regulators {
+diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
+index 676e6e0c8cf3..86216fff1b4f 100644
+--- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
++++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
+@@ -27,6 +27,7 @@
+ 
+ 	chosen {
+ 		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc";
++		stdout-path = &serial_1;
+ 	};
+ 
+ 	sdhci@12530000 {
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+index f516da9e8b3a..b351c7bddf2d 100644
+--- a/arch/arm/boot/dts/exynos4210-trats.dts
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -28,6 +28,7 @@
+ 
+ 	chosen {
+ 		bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rootwait earlyprintk panic=5";
++		stdout-path = &serial_2;
+ 	};
+ 
+ 	regulators {
+diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+index d50eb3aa708e..e65ee3cb36c3 100644
+--- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
++++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+@@ -26,6 +26,7 @@
+ 
+ 	chosen {
+ 		bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rw rootwait earlyprintk panic=5 maxcpus=1";
++		stdout-path = &serial_2;
+ 	};
+ 
+ 	sysram@02020000 {
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index adadaf97ac01..0841fd34f9dd 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -11,6 +11,10 @@
+ #include "exynos4412.dtsi"
+ 
+ / {
++	chosen {
++		stdout-path = &serial_1;
++	};
++
+ 	firmware@0204F000 {
+ 		compatible = "samsung,secure-firmware";
+ 		reg = <0x0204F000 0x1000>;
+diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
+index e925c9fbfb07..979dc07c929c 100644
+--- a/arch/arm/boot/dts/exynos4412-origen.dts
++++ b/arch/arm/boot/dts/exynos4412-origen.dts
+@@ -26,6 +26,7 @@
+ 
+ 	chosen {
+ 		bootargs ="console=ttySAC2,115200";
++		stdout-path = &serial_2;
+ 	};
+ 
+ 	firmware@0203F000 {
+diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+index ded0b70f7644..b9256afbcc68 100644
+--- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
++++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
+@@ -25,6 +25,7 @@
+ 
+ 	chosen {
+ 		bootargs ="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc";
++		stdout-path = &serial_1;
+ 	};
+ 
+ 	g2d@10800000 {
+diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+index ea6929d9c621..d46fd4c2aeaa 100644
+--- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
++++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
+@@ -18,6 +18,10 @@
+ 	model = "FriendlyARM TINY4412 board based on Exynos4412";
+ 	compatible = "friendlyarm,tiny4412", "samsung,exynos4412", "samsung,exynos4";
+ 
++	chosen {
++		stdout-path = &serial_0;
++	};
++
+ 	memory {
+ 		reg = <0x40000000 0x40000000>;
+ 	};
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 11967f4561e0..ade31d3174b0 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -30,6 +30,7 @@
+ 
+ 	chosen {
+ 		bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rootwait earlyprintk panic=5";
++		stdout-path = &serial_2;
+ 	};
+ 
+ 	firmware@0204F000 {
 -- 
 1.9.2
