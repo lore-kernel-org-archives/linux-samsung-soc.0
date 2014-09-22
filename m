@@ -1,43 +1,131 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v5 0/8] arch: arm64: Enable support for Samsung Exynos7
- SoC
-Date: Mon, 22 Sep 2014 10:52:39 +0200
-Message-ID: <541FE357.5090000@gmail.com>
-References: <1411361228-18279-1-git-send-email-a.kesavan@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH] drm/exynos: remove explicit encoder/connector
+ de-initialization
+Date: Mon, 22 Sep 2014 11:30:48 +0200
+Message-ID: <1411378248-17479-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f169.google.com ([74.125.82.169]:60979 "EHLO
-	mail-we0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752723AbaIVIwm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Sep 2014 04:52:42 -0400
-In-Reply-To: <1411361228-18279-1-git-send-email-a.kesavan@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <a.kesavan@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, catalin.marinas@arm.com
-Cc: naveenkrishna.ch@gmail.com, kesavan.abhilash@gmail.com
 
-Hi Abhilash,
+All KMS objects are destroyed by drm_mode_config_cleanup in proper order
+so component drivers should not care about it.
 
-On 22.09.2014 06:47, Abhilash Kesavan wrote:
-> Changes since v4:
-> - Fixed comments from Tomasz Figa:
-> 	- Changed the namespace prefix from exynos to samsung
-> 	- Defined bindings to take all input clocks
-> 	- Sorted the Kconfig entries alphabetically in clock Makefile
-> 	- Used consistent 1 tab line breaks across the clock file
-> 	- Statically initialized the samsung_cmu_info struct
-> - Enabled exynos7 in the arm64 defconfig as per Catalin Marinas' comment.
-> - Added Kukjin Kim's ack along with Thomas Abraham's tested and reviewed tags.
-> 
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+Hi Inki,
 
-The clock patches look good to me, but since they are doing quite a lot
-of code moving I'd prefer to take them through clk tree. Based on the
-fact that there are no code dependencies between clock patches and
-remaining ones and Exynos7 is a new material for 3.18, I'm inclined to
-apply them to my tree if nobody minds.
+This is another spin-off of exynos_drm tests regarding your
+component support update.
+The patch is based as usual on the latest exynos-drm-next branch.
 
-Best regards,
-Tomasz
+Regards
+Andrzej
+---
+ drivers/gpu/drm/exynos/exynos_dp_core.c  | 5 -----
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c  | 4 ----
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c  | 4 ----
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c | 3 ---
+ drivers/gpu/drm/exynos/exynos_hdmi.c     | 6 ------
+ 5 files changed, 22 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+index cd50ece..6adb1e5 100644
+--- a/drivers/gpu/drm/exynos/exynos_dp_core.c
++++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+@@ -1355,13 +1355,8 @@ static void exynos_dp_unbind(struct device *dev, struct device *master,
+ 				void *data)
+ {
+ 	struct exynos_drm_display *display = dev_get_drvdata(dev);
+-	struct exynos_dp_device *dp = display->ctx;
+-	struct drm_encoder *encoder = dp->encoder;
+ 
+ 	exynos_dp_dpms(display, DRM_MODE_DPMS_OFF);
+-
+-	exynos_dp_connector_destroy(&dp->connector);
+-	encoder->funcs->destroy(encoder);
+ }
+ 
+ static const struct component_ops exynos_dp_ops = {
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+index 96c87db..3dc678e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+@@ -338,14 +338,10 @@ err_del_component:
+ 
+ int exynos_dpi_remove(struct device *dev)
+ {
+-	struct drm_encoder *encoder = exynos_dpi_display.encoder;
+ 	struct exynos_dpi *ctx = exynos_dpi_display.ctx;
+ 
+ 	exynos_dpi_dpms(&exynos_dpi_display, DRM_MODE_DPMS_OFF);
+ 
+-	exynos_dpi_connector_destroy(&ctx->connector);
+-	encoder->funcs->destroy(encoder);
+-
+ 	if (ctx->panel)
+ 		drm_panel_detach(ctx->panel);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 24741d8..acf7e9e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1660,13 +1660,9 @@ static void exynos_dsi_unbind(struct device *dev, struct device *master,
+ 				void *data)
+ {
+ 	struct exynos_dsi *dsi = exynos_dsi_display.ctx;
+-	struct drm_encoder *encoder = dsi->encoder;
+ 
+ 	exynos_dsi_dpms(&exynos_dsi_display, DRM_MODE_DPMS_OFF);
+ 
+-	exynos_dsi_connector_destroy(&dsi->connector);
+-	encoder->funcs->destroy(encoder);
+-
+ 	mipi_dsi_host_unregister(&dsi->dsi_host);
+ }
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index d565207..9395e85 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -639,9 +639,6 @@ static int vidi_remove(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	encoder->funcs->destroy(encoder);
+-	drm_connector_cleanup(&ctx->connector);
+-
+ 	return 0;
+ }
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 7910fb3..563a19e 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -2312,12 +2312,6 @@ static int hdmi_bind(struct device *dev, struct device *master, void *data)
+ 
+ static void hdmi_unbind(struct device *dev, struct device *master, void *data)
+ {
+-	struct exynos_drm_display *display = get_hdmi_display(dev);
+-	struct drm_encoder *encoder = display->encoder;
+-	struct hdmi_context *hdata = display->ctx;
+-
+-	hdmi_connector_destroy(&hdata->connector);
+-	encoder->funcs->destroy(encoder);
+ }
+ 
+ static const struct component_ops hdmi_component_ops = {
+-- 
+1.9.1
