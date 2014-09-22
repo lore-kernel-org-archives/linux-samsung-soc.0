@@ -1,52 +1,86 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH v4 6/8] arm64: exynos7: Enable ARMv8 based Exynos7 (SoC) support
-Date: Mon, 22 Sep 2014 09:57:34 +0530
-Message-ID: <CAM4voame4yE0AOxqWOr+9pXVKUZkk84qEkHKU81zKvFjNXr8fg@mail.gmail.com>
-References: <1410535592-5782-1-git-send-email-ch.naveen@samsung.com>
-	<1410535592-5782-8-git-send-email-ch.naveen@samsung.com>
-	<20140918161832.GD25330@e104818-lin.cambridge.arm.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Abhilash Kesavan <a.kesavan@samsung.com>
+Subject: [PATCH v5 0/8] arch: arm64: Enable support for Samsung Exynos7 SoC
+Date: Mon, 22 Sep 2014 10:04:49 +0530
+Message-ID: <1411360497-17958-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f53.google.com ([209.85.192.53]:53304 "EHLO
-	mail-qg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750723AbaIVE1f (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:45298 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751649AbaIVEfT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Sep 2014 00:27:35 -0400
-In-Reply-To: <20140918161832.GD25330@e104818-lin.cambridge.arm.com>
+	Mon, 22 Sep 2014 00:35:19 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "robh@kernel.org" <robh@kernel.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, "naveenkrishna.ch@gmail.com" <naveenkrishna.ch@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, catalin.marinas@arm.com
+Cc: tomasz.figa@gmail.com, naveenkrishna.ch@gmail.com, kesavan.abhilash@gmail.com
 
-Hi Catalin,
+Changes since v4:
+- Fixed comments from Tomasz Figa:
+	- Changed the namespace prefix from exynos to samsung
+	- Defined bindings to take all input clocks
+	- Sorted the Kconfig entries alphabetically in clock Makefile
+	- Used consistent 1 tab line breaks across the clock file
+	- Statically initialized the samsung_cmu_info struct
+- Enabled exynos7 in the arm64 defconfig as per Catalin Marinas' comment.
+- Added Kukjin Kim's ack along with Thomas Abraham's tested and reviewed tags.
 
-On Thu, Sep 18, 2014 at 9:48 PM, Catalin Marinas
-<catalin.marinas@arm.com> wrote:
-> On Fri, Sep 12, 2014 at 04:26:30PM +0100, Naveen Krishna Chatradhi wrote:
->> From: Alim Akhtar <alim.akhtar@samsung.com>
->>
->> This patch adds the necessary Kconfig entries to enable
->> support for the ARMv8 based Exynos7 SoC.
->>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->> Cc: Rob Herring <robh@kernel.org>
->> Cc: Catalin Marinas <catalin.marinas@arm.com>
->> ---
->>  arch/arm64/Kconfig |   12 ++++++++++++
->
-> Please update the defconfig as well as we want the default image build
-> to contain all the available platforms.
-Will update the defconfig in the next version.
+Changes since v3:
+- Removed aliases for serial controllers from dtsi file and moved it
+  into board specific dts file as suggested by Arnd.
+- Based this series on Robert Richter's patches for adding vendor
+  device tree sub-directories for arm64.
+  http://comments.gmane.org/gmane.linux.kbuild.devel/12131
 
-Regards,
-Abhilash
->
-> --
-> Catalin
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+This patchset supports the new Exynos7 Samsung SoC based on Cortex-A57.
+Exynos7 is a System-On-Chip (SoC) that is based on 64-bit ARMv8 RISC
+processor.
+
+The following patches are tested based on linux-next tree (20140919).
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/
+
+Following patches are required for this series:
+1- "tty/serial: fix config dependencies for samsung serial"
+   https://www.mail-archive.com/linux-samsung-soc <at> vger.kernel.org/msg36208.html
+2- "dts, kbuild: Implement support for dtb vendor subdirs" patchset 
+   http://comments.gmane.org/gmane.linux.kbuild.devel/12131
+
+Alim Akhtar (2):
+  arm64: exynos7: Enable ARMv8 based Exynos7 (SoC) support
+  arm64: Enable Exynos7 SOC in the defconfig
+
+Naveen Krishna Chatradhi (5):
+  clk: samsung: add support for 145xx and 1460x PLLs
+  clk: samsung: Factor out the common code to clk.c
+  clk: samsung: Add fixed_factor_clocks field to struct exynos_cmu_info
+  clk: samsung: add initial clock support for Exynos7 SoC
+  arm64: dts: Add initial device tree support for EXYNOS7
+
+Pankaj Dubey (1):
+  arm64: dts: add <dt-bindings/> symlink
+
+ .../devicetree/bindings/clock/exynos7-clock.txt    |  67 ++++
+ arch/arm64/Kconfig                                 |  12 +
+ arch/arm64/boot/dts/Makefile                       |   1 +
+ arch/arm64/boot/dts/exynos/Makefile                |   5 +
+ arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |  39 ++
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            | 183 +++++++++
+ arch/arm64/boot/dts/include/dt-bindings            |   1 +
+ arch/arm64/configs/defconfig                       |   4 +
+ drivers/clk/samsung/Makefile                       |   1 +
+ drivers/clk/samsung/clk-exynos5260.c               | 185 ++-------
+ drivers/clk/samsung/clk-exynos7.c                  | 425 +++++++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                      |  25 +-
+ drivers/clk/samsung/clk-pll.h                      |   4 +
+ drivers/clk/samsung/clk.c                          |  98 +++++
+ drivers/clk/samsung/clk.h                          |  37 ++
+ include/dt-bindings/clock/exynos7-clk.h            |  49 +++
+ 16 files changed, 972 insertions(+), 164 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos7-clock.txt
+ create mode 100644 arch/arm64/boot/dts/exynos/Makefile
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7.dtsi
+ create mode 120000 arch/arm64/boot/dts/include/dt-bindings
+ create mode 100644 drivers/clk/samsung/clk-exynos7.c
+ create mode 100644 include/dt-bindings/clock/exynos7-clk.h
+
+-- 
+2.1.0
