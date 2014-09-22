@@ -1,37 +1,45 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] clk: exynos4: fix g3d clocks
-Date: Mon, 22 Sep 2014 14:32:57 +0200
-Message-ID: <542016F9.9090306@gmail.com>
-References: <1411388232-6271-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f52.google.com ([74.125.82.52]:49197 "EHLO
-	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753948AbaIVMdA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Sep 2014 08:33:00 -0400
-Received: by mail-wg0-f52.google.com with SMTP id n12so896785wgh.35
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 22 Sep 2014 05:32:59 -0700 (PDT)
-In-Reply-To: <1411388232-6271-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Subject: [PATCH] [media] s5p-mfc: Use decode status instead of display status on MFCv5
+Date: Mon, 22 Sep 2014 14:52:02 +0200
+Message-ID: <1411390322-25212-1-git-send-email-sjoerd.simons@collabora.co.uk>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: Kyungmin Park <kyungmin.park@samsung.com>, Kamil Debski <k.debski@samsung.com>, Arun Kumar K <arun.kk@samsung.com>
+Cc: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Daniel Drake <drake@endlessm.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On 22.09.2014 14:17, Marek Szyprowski wrote:
-> sclk_g3d clock doesn't have enable/disable bits, but the driver hijacked
-> g3d gate clock bits for this purpose and didn't provide real g3d clock
-> at all. This patch fixes this issue by adding proper definition for g3d
-> clock and removing incorrect access to GATE_IP_G3D register in sclk_g3d.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos4.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+Commit 90c0ae50097 changed how the frame_type of a decoded frame
+gets determined, by switching from the get_dec_frame_type to
+get_disp_frame_type operation. Unfortunately it seems that on MFC v5 the
+result of get_disp_frame_type is always 0 (no display) when decoding
+(tested with H264), resulting in no frame ever being output from the
+decoder.
 
-Applied for next with a minor adjustment of patch description.
+This patch reverts MFC v5 to the previous behaviour while keeping the
+new behaviour for v6 and up.
 
-Best regards,
-Tomasz
+Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+---
+ drivers/media/platform/s5p-mfc/s5p_mfc.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index d35b041..27ca9d0 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -264,7 +264,12 @@ static void s5p_mfc_handle_frame_new(struct s5p_mfc_ctx *ctx, unsigned int err)
+ 	unsigned int frame_type;
+ 
+ 	dspl_y_addr = s5p_mfc_hw_call(dev->mfc_ops, get_dspl_y_adr, dev);
+-	frame_type = s5p_mfc_hw_call(dev->mfc_ops, get_disp_frame_type, ctx);
++	if (IS_MFCV6_PLUS(dev))
++		frame_type = s5p_mfc_hw_call(dev->mfc_ops,
++			get_disp_frame_type, ctx);
++	else
++		frame_type = s5p_mfc_hw_call(dev->mfc_ops,
++			get_dec_frame_type, dev);
+ 
+ 	/* If frame is same as previous then skip and do not dequeue */
+ 	if (frame_type == S5P_FIMV_DECODE_FRAME_SKIPPED) {
+-- 
+2.1.0
