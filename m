@@ -1,132 +1,114 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH] tty/serial: samsung: Add earlycon support
-Date: Mon, 22 Sep 2014 19:11:06 +0530
-Message-ID: <CAGOxZ52jDahcK9m05bMaid9Hh9vsO2cY8uKbdD7kPt_2KUekhw@mail.gmail.com>
-References: <1410867163-27962-1-git-send-email-alim.akhtar@samsung.com>
- <541D83AE.1050006@gmail.com> <CAGOxZ52HY0eEukbWdt0OnUzcfrLi3Y726om+GQAQ_Q0vmwk-=Q@mail.gmail.com>
- <541F09B4.6050907@gmail.com> <CAGOxZ504AXRJ4gYdD1NdvomLeBX4oeLT+XDeDxrS6swYCm4rog@mail.gmail.com>
- <541F5D12.6080605@gmail.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
+ ps8622 DT properties
+Date: Mon, 22 Sep 2014 17:04:54 +0300
+Message-ID: <54202C86.3040808@ti.com>
+References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com> <5419760A.7020908@ti.com> <20140922075424.GB1470@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="ouoOF6nDtBTlAdS2skRcwT5LTd5qbflLc"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f52.google.com ([209.85.213.52]:63584 "EHLO
-	mail-yh0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753719AbaIVNlr (ORCPT
+Received: from arroyo.ext.ti.com ([192.94.94.40]:51163 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753486AbaIVOFK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Sep 2014 09:41:47 -0400
-In-Reply-To: <541F5D12.6080605@gmail.com>
+	Mon, 22 Sep 2014 10:05:10 -0400
+In-Reply-To: <20140922075424.GB1470@ulmo>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, gregkh@linuxfoundation.org, Rob Herring <robh@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, inki.dae@samsung.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-Hi Tomasz,
+--ouoOF6nDtBTlAdS2skRcwT5LTd5qbflLc
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 22, 2014 at 4:49 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On 22.09.2014 01:10, Alim Akhtar wrote:
->
-> [snip]
->
->>>> As you said there is no support for ioremap on ARM, so this is not
->>>> tested on ARM.
->>>
->>> Don't forget that this driver is primarily targeted for ARM platforms
->>> (versus just one ARM64-based Exynos7), so either this feature should be
->>> clearly added as ARM64-specific (and compiled in conditionally) or made
->>> work for all supported platforms.
->>>
->> Well, this will work on every platform which uses
->> "samsung,exynos4210-uart" as a UART controller.
->> Exynos7 also use same, there is nothing special about ARM64 bit here.
->> please see[1].
->> For "s3c24xx-uart", this has to be implemented separably as that is a
->> bit different.
->
-> For this feature, they differ only in locations and lengths of
-> FIFO-related bit fields. We had this already implemented for all
-> hardware variants and so my recommendation to reuse that code.
->
->>>>>
->>>>>>               smh     Use ARM semihosting calls for early console.
->>>>>>
->>>>>>       earlyprintk=    [X86,SH,BLACKFIN,ARM,M68k]
->
-> [snip]
->
->> Tomasz/Marek,
->> Do you think something like below make sense here?
->>
->> +static void exynos4210_serial_console_putc(struct uart_port *port, int ch)
->> +{
->> +       while (!(readl(port->membase + S3C2410_UFCON) & S3C2410_UFCON_FIFOMODE))
->> +               ;
->
-> Waiting in a loop for a software-writable FIFO mode enable bit doesn't
-> look reasonable to me. Probably a typo?
->
->> +
->> +       wr_regb(port, S3C2410_UTXH, ch);
->> +
->> +       while ((readl(port->membase + S3C2410_UFSTAT) & S5PV210_UFSTAT_TXFULL))
->> +               ;
->
-> I wonder if you need to wait for the character to be sent. If you ensure
-> before writing a character that there is no previous one in the buffer
-> or there is space in FIFO then I believe you should be fine.
->
-Well, below is what I was about to post:
+On 22/09/14 10:54, Thierry Reding wrote:
 
- #define S3C24XX_SERIAL_CONSOLE &s3c24xx_serial_console
-+static void s3c24xx_serial_console_putc(struct uart_port *port, int ch)
-+{
-+ unsigned int ufcon = rd_regl(port, S3C2410_UFCON);
-+
-+ if (ufcon & S3C2410_UFCON_FIFOMODE) {
-+  while((readl(port->membase + S3C2410_UFSTAT) &
-+      S5PV210_UFSTAT_TXFULL))
-+   ;
-+  wr_regb(port, S3C2410_UTXH, ch);
-+ }
-+}
-+
-+static void samsung_early_write(struct console *con, const char *s, unsigned n)
-+{
-+ struct earlycon_device *dev = con->data;
-+
-+ uart_console_write(&dev->port, s, n, s3c24xx_serial_console_putc);
-+}
-+
-+static int __init samsung_early_console_setup(struct earlycon_device *device,
-+           const char *opt)
-+{
-+ if (!device->port.membase)
-+  return -ENODEV;
-+ device->con->write = samsung_early_write;
-+ return 0;
-+}
-+EARLYCON_DECLARE(samsung, samsung_early_console_setup);
-+OF_EARLYCON_DECLARE(samsung, "samsung,exynos4210-uart",
-samsung_early_console_setup);
+>> I wish all new display component bindings would use the video
+>> ports/endpoints to describe the connections. It will be very difficult=
 
-but just saw patches from Marek few min back which is similar except
-for the handle non-fifo mode, which is good anyway. :-)
-So lets drops this patch and discussion here.
+>> to improve the display driver model later if we're missing such critic=
+al
+>> pieces from the DT bindings.
+>=20
+> I disagree. Why would we want to burden all devices with a bloated
 
-Thanks!!!
+I agree that the .dts becomes more bloated with video graph.
 
->> +}
->>
->> and call exynos4210_serial_console_putc() in samsung_early_write()?
->> Anyway functions names need to be changes accordingly.
->
-> Yes, this is exactly what we had implemented in the patch I mentioned,
-> except that the putc function was generic for all hardware variants.
->
-> Best regards,
-> Tomasz
+> binding and drivers with parsing a complex graph when it's not even
+
+Hopefully not all drivers will need to do the parsing themselves. If
+it's common stuff, I don't see why we can't have helpers to do the work.
+
+> known that it will be necessary? Evidently this device works fine
+> using the current binding. Just because there are bindings to describe
+
+Well, I can write almost any kind of bindings, and then evidently my
+device would work. For me, on my board.
+
+> ports in a generic way doesn't mean it has to be applied everywhere.
+> After all the concept of ports/endpoints applies to non-video devices
+> too, yet we don't require the bindings for those devices to add ports
+> or endpoints nodes.
+
+I guess non-video devices haven't had need for those. I have had lots of
+boards with video setup that cannot be represented with simple phandles.
+I'm not sure if I have just been unlucky or what, but my understand is
+that other people have encountered such boards also. Usually the
+problems encountered there have been circumvented with some hacky video
+driver for that specific board, or maybe a static configuration handled
+by the boot loader.
+
+> Also it won't be very difficult to extend the binding in a backwards
+> compatible way if that becomes necessary.
+
+I don't know about that. More or less all the cases I've encountered
+where a binding has not been good from the start have been all but "not
+very difficult".
+
+Do we have a standard way of representing the video pipeline with simple
+phandles? Or does everyone just do their own version? If there's no
+standard way, it sounds it'll be a mess to support in the future.
+
+If there's much objection to the bloatiness of video graphs, maybe we
+could come up with an simpler alternative (like the phandles here), and
+"standardize" it. Then, if common display framework or some such ever
+realizes, we could say that if your driver uses CDF, you need to support
+these video graph bindings and these simpler bindings to be compatible.
+
+However, I do have a slight recollection that alternative
+simplifications to the video graph were discussed at some point, and,
+while I may remember wrong, I think it was not accepted. At least I had
+one method to simplify the ports/endpoints, but that was removed from
+the patches I had.
+
+ Tomi
 
 
 
--- 
-Regards,
-Alim
+--ouoOF6nDtBTlAdS2skRcwT5LTd5qbflLc
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUICyGAAoJEPo9qoy8lh71tWgP/28Y3SRoNHXnFODozFhgQKsk
+jCQk0OtQuBfxJn/M1vHvRk87y1IYRyr3HbeA0wSOpKuTTNAt4NxfQFAQEP8WgQ1v
+JbEJR0c3vSTF3evSXydzyQizKQQElPundrG0xvc6xmbi3sBGSKbnfdhOLJa8CLAW
+eJ4VfLR1zn4MIZncJ6FNLsPlKpgbJOcdjlBqDu9u71RivL3T7eTTzH5yhvFIzYlA
+e17nV5yvjwi1VbG9rBLPZziWLyconwMqiY9pVWFLLf2NpSkKUd4rCO2AJOq8szvu
+/Q6T8KVzqTjIhRbo/O/687DHI4HcSFyXKGPP+x7rqVBiPJrnjPLYDnZgtsjZr3tV
+Rd36NqV+KiClJkoKX2fGy1FWyF7OGvWZmmC0Mg6RRmq/wGcefLSGtdLe7L/UJStM
+8YuT3W+bzB2toYFvThyoWzQaxj+ku5dOd1ByucDbDQLkfKkERpfdTLmtlxoHFz5O
+2unh5GS5rkqBuetQls4PVrYxj+YrQK19dDDdEKuzXUrhif41G8r/VieOmCwhA2k9
+zd72uVXekwKZdiqJw6HVo+SuR9sAp0gD5l1u4utirHd8HG/PAer0jYM92AQySRe5
+AMfStUZTus27B4HZxQcSDORh7h2WUTlbAeqq6UcS0hW24BJ3AaXDoQKNdDx/pgZf
+KDGZ7deRQ4C28gvqPthm
+=zv0g
+-----END PGP SIGNATURE-----
+
+--ouoOF6nDtBTlAdS2skRcwT5LTd5qbflLc--
