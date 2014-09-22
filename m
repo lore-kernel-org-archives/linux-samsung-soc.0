@@ -1,158 +1,132 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH/RFC 2/2] ARM: dts: exynos4: Add stdout-path properties
-Date: Mon, 22 Sep 2014 15:14:15 +0200
-Message-ID: <1411391655-6291-3-git-send-email-m.szyprowski@samsung.com>
-References: <1411391655-6291-1-git-send-email-m.szyprowski@samsung.com>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH] tty/serial: samsung: Add earlycon support
+Date: Mon, 22 Sep 2014 19:11:06 +0530
+Message-ID: <CAGOxZ52jDahcK9m05bMaid9Hh9vsO2cY8uKbdD7kPt_2KUekhw@mail.gmail.com>
+References: <1410867163-27962-1-git-send-email-alim.akhtar@samsung.com>
+ <541D83AE.1050006@gmail.com> <CAGOxZ52HY0eEukbWdt0OnUzcfrLi3Y726om+GQAQ_Q0vmwk-=Q@mail.gmail.com>
+ <541F09B4.6050907@gmail.com> <CAGOxZ504AXRJ4gYdD1NdvomLeBX4oeLT+XDeDxrS6swYCm4rog@mail.gmail.com>
+ <541F5D12.6080605@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:11064 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753647AbaIVNOY (ORCPT
+Received: from mail-yh0-f52.google.com ([209.85.213.52]:63584 "EHLO
+	mail-yh0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753719AbaIVNlr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Sep 2014 09:14:24 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NCB00IHP0WPK930@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 22 Sep 2014 14:17:13 +0100 (BST)
-In-reply-to: <1411391655-6291-1-git-send-email-m.szyprowski@samsung.com>
+	Mon, 22 Sep 2014 09:41:47 -0400
+In-Reply-To: <541F5D12.6080605@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, thomas.ab@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robherring2@gmail.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, gregkh@linuxfoundation.org, Rob Herring <robh@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-From: Tomasz Figa <t.figa@samsung.com>
+Hi Tomasz,
 
-This patch adds stdout-path property to chosen nodes of Exynos4 boards
-to enable use of earlycon feature without the need to hardcode port
-number in kernel itself.
+On Mon, Sep 22, 2014 at 4:49 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On 22.09.2014 01:10, Alim Akhtar wrote:
+>
+> [snip]
+>
+>>>> As you said there is no support for ioremap on ARM, so this is not
+>>>> tested on ARM.
+>>>
+>>> Don't forget that this driver is primarily targeted for ARM platforms
+>>> (versus just one ARM64-based Exynos7), so either this feature should be
+>>> clearly added as ARM64-specific (and compiled in conditionally) or made
+>>> work for all supported platforms.
+>>>
+>> Well, this will work on every platform which uses
+>> "samsung,exynos4210-uart" as a UART controller.
+>> Exynos7 also use same, there is nothing special about ARM64 bit here.
+>> please see[1].
+>> For "s3c24xx-uart", this has to be implemented separably as that is a
+>> bit different.
+>
+> For this feature, they differ only in locations and lengths of
+> FIFO-related bit fields. We had this already implemented for all
+> hardware variants and so my recommendation to reuse that code.
+>
+>>>>>
+>>>>>>               smh     Use ARM semihosting calls for early console.
+>>>>>>
+>>>>>>       earlyprintk=    [X86,SH,BLACKFIN,ARM,M68k]
+>
+> [snip]
+>
+>> Tomasz/Marek,
+>> Do you think something like below make sense here?
+>>
+>> +static void exynos4210_serial_console_putc(struct uart_port *port, int ch)
+>> +{
+>> +       while (!(readl(port->membase + S3C2410_UFCON) & S3C2410_UFCON_FIFOMODE))
+>> +               ;
+>
+> Waiting in a loop for a software-writable FIFO mode enable bit doesn't
+> look reasonable to me. Probably a typo?
+>
+>> +
+>> +       wr_regb(port, S3C2410_UTXH, ch);
+>> +
+>> +       while ((readl(port->membase + S3C2410_UFSTAT) & S5PV210_UFSTAT_TXFULL))
+>> +               ;
+>
+> I wonder if you need to wait for the character to be sent. If you ensure
+> before writing a character that there is no previous one in the buffer
+> or there is space in FIFO then I believe you should be fine.
+>
+Well, below is what I was about to post:
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/boot/dts/exynos4210-origen.dts         | 1 +
- arch/arm/boot/dts/exynos4210-smdkv310.dts       | 1 +
- arch/arm/boot/dts/exynos4210-trats.dts          | 1 +
- arch/arm/boot/dts/exynos4210-universal_c210.dts | 1 +
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 4 ++++
- arch/arm/boot/dts/exynos4412-origen.dts         | 1 +
- arch/arm/boot/dts/exynos4412-smdk4412.dts       | 1 +
- arch/arm/boot/dts/exynos4412-tiny4412.dts       | 4 ++++
- arch/arm/boot/dts/exynos4412-trats2.dts         | 1 +
- 9 files changed, 15 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index f767c425d0b5..b81146141402 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -31,6 +31,7 @@
- 
- 	chosen {
- 		bootargs ="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
-+		stdout-path = &serial_2;
- 	};
- 
- 	regulators {
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-index 676e6e0c8cf3..86216fff1b4f 100644
---- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -27,6 +27,7 @@
- 
- 	chosen {
- 		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc";
-+		stdout-path = &serial_1;
- 	};
- 
- 	sdhci@12530000 {
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index f516da9e8b3a..b351c7bddf2d 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -28,6 +28,7 @@
- 
- 	chosen {
- 		bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rootwait earlyprintk panic=5";
-+		stdout-path = &serial_2;
- 	};
- 
- 	regulators {
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index d50eb3aa708e..e65ee3cb36c3 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -26,6 +26,7 @@
- 
- 	chosen {
- 		bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rw rootwait earlyprintk panic=5 maxcpus=1";
-+		stdout-path = &serial_2;
- 	};
- 
- 	sysram@02020000 {
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index adadaf97ac01..0841fd34f9dd 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -11,6 +11,10 @@
- #include "exynos4412.dtsi"
- 
- / {
-+	chosen {
-+		stdout-path = &serial_1;
-+	};
+ #define S3C24XX_SERIAL_CONSOLE &s3c24xx_serial_console
++static void s3c24xx_serial_console_putc(struct uart_port *port, int ch)
++{
++ unsigned int ufcon = rd_regl(port, S3C2410_UFCON);
 +
- 	firmware@0204F000 {
- 		compatible = "samsung,secure-firmware";
- 		reg = <0x0204F000 0x1000>;
-diff --git a/arch/arm/boot/dts/exynos4412-origen.dts b/arch/arm/boot/dts/exynos4412-origen.dts
-index e925c9fbfb07..979dc07c929c 100644
---- a/arch/arm/boot/dts/exynos4412-origen.dts
-+++ b/arch/arm/boot/dts/exynos4412-origen.dts
-@@ -26,6 +26,7 @@
- 
- 	chosen {
- 		bootargs ="console=ttySAC2,115200";
-+		stdout-path = &serial_2;
- 	};
- 
- 	firmware@0203F000 {
-diff --git a/arch/arm/boot/dts/exynos4412-smdk4412.dts b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-index ded0b70f7644..b9256afbcc68 100644
---- a/arch/arm/boot/dts/exynos4412-smdk4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-smdk4412.dts
-@@ -25,6 +25,7 @@
- 
- 	chosen {
- 		bootargs ="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc";
-+		stdout-path = &serial_1;
- 	};
- 
- 	g2d@10800000 {
-diff --git a/arch/arm/boot/dts/exynos4412-tiny4412.dts b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-index ea6929d9c621..d46fd4c2aeaa 100644
---- a/arch/arm/boot/dts/exynos4412-tiny4412.dts
-+++ b/arch/arm/boot/dts/exynos4412-tiny4412.dts
-@@ -18,6 +18,10 @@
- 	model = "FriendlyARM TINY4412 board based on Exynos4412";
- 	compatible = "friendlyarm,tiny4412", "samsung,exynos4412", "samsung,exynos4";
- 
-+	chosen {
-+		stdout-path = &serial_0;
-+	};
++ if (ufcon & S3C2410_UFCON_FIFOMODE) {
++  while((readl(port->membase + S3C2410_UFSTAT) &
++      S5PV210_UFSTAT_TXFULL))
++   ;
++  wr_regb(port, S3C2410_UTXH, ch);
++ }
++}
 +
- 	memory {
- 		reg = <0x40000000 0x40000000>;
- 	};
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 11967f4561e0..ade31d3174b0 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -30,6 +30,7 @@
- 
- 	chosen {
- 		bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rootwait earlyprintk panic=5";
-+		stdout-path = &serial_2;
- 	};
- 
- 	firmware@0204F000 {
++static void samsung_early_write(struct console *con, const char *s, unsigned n)
++{
++ struct earlycon_device *dev = con->data;
++
++ uart_console_write(&dev->port, s, n, s3c24xx_serial_console_putc);
++}
++
++static int __init samsung_early_console_setup(struct earlycon_device *device,
++           const char *opt)
++{
++ if (!device->port.membase)
++  return -ENODEV;
++ device->con->write = samsung_early_write;
++ return 0;
++}
++EARLYCON_DECLARE(samsung, samsung_early_console_setup);
++OF_EARLYCON_DECLARE(samsung, "samsung,exynos4210-uart",
+samsung_early_console_setup);
+
+but just saw patches from Marek few min back which is similar except
+for the handle non-fifo mode, which is good anyway. :-)
+So lets drops this patch and discussion here.
+
+Thanks!!!
+
+>> +}
+>>
+>> and call exynos4210_serial_console_putc() in samsung_early_write()?
+>> Anyway functions names need to be changes accordingly.
+>
+> Yes, this is exactly what we had implemented in the patch I mentioned,
+> except that the putc function was generic for all hardware variants.
+>
+> Best regards,
+> Tomasz
+
+
+
 -- 
-1.9.2
+Regards,
+Alim
