@@ -1,18 +1,19 @@
 From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
  ps8622 DT properties
-Date: Tue, 23 Sep 2014 16:41:28 +0200
-Message-ID: <20140923144127.GE5982@ulmo>
-References: <CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com>
+Date: Tue, 23 Sep 2014 16:45:10 +0200
+Message-ID: <20140923144509.GF5982@ulmo>
+References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
+ <5419760A.7020908@ti.com>
+ <CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com>
  <5419B52D.4060107@ti.com> <20140922080629.GC1470@ulmo>
  <542030DD.3060906@ti.com> <20140923060452.GD30514@ulmo>
- <5421201C.6000509@samsung.com> <20140923083514.GM30514@ulmo>
- <542140D3.8080806@samsung.com> <20140923101032.GU30514@ulmo>
- <54214CCE.7050102@samsung.com>
+ <54213543.7000306@ti.com> <20140923093916.GR30514@ulmo>
+ <54215A17.8050606@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0359028171=="
+Content-Type: multipart/mixed; boundary="===============1063126265=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <54214CCE.7050102@samsung.com>
+In-Reply-To: <54215A17.8050606@ti.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -22,103 +23,85 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---===============0359028171==
+--===============1063126265==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WK3l2KTTmXPVedZ6"
+	protocol="application/pgp-signature"; boundary="Zi0sgQQBxRFxMTsj"
 Content-Disposition: inline
 
 
---WK3l2KTTmXPVedZ6
+--Zi0sgQQBxRFxMTsj
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 23, 2014 at 12:34:54PM +0200, Andrzej Hajda wrote:
-> On 09/23/2014 12:10 PM, Thierry Reding wrote:
-> > On Tue, Sep 23, 2014 at 11:43:47AM +0200, Andrzej Hajda wrote:
-> >> On 09/23/2014 10:35 AM, Thierry Reding wrote:
-> > [...]
-> >>> But I agree that it would be nice to unify bridges and encoders more.=
- It
-> >>> should be possible to make encoder always a bridge (or perhaps even
-> >>> replace encoders with bridges altogether). Then once you're out of the
-> >>> DRM device everything would be a bridge until you get to a panel.
-> >> I agree that some sort of unification of bridges, (slave) encoders is =
-a good
-> >> thing, this way we stay only with bridges and panels as receivers.
-> >> But we will still have to deal with the code like:
-> >>     if (on the other end of the link is panel)
-> >>         do panel framework specific things
-> >>     else
-> >>         do bridge framework specific things
-> >>
-> >> The code in both branches usually does similar things but due to frame=
-work
-> >> differences it is difficult to merge.
-> > That's because they are inherently different entities. You can perform
-> > operations on a panel that don't make sense for a bridge and vice-versa.
-> >
-> >> Ideally it would be best to get rid of such constructs. For example by
-> >> trying to
-> >> make frameworks per interface type exposed by device (eg. video_sink) =
-and
-> >> not by device type (drm_bridge, drm_panel).
-> > But then you loose all information about the real type of device.
-> Driver knows type of its device anyway. Why should it know device
-> type of devices it is connected to? It is enough it knows how to talk to
-> other device.
-> Like in real world, why desktop PC should know it is connected to DVI
-> monitor or to
-> DVI/HDMI converter which is connected to TV?
-
-TVs are much more standardized. There are things like DDC/CI which can
-be used to control the device. Or there's additional circuitry or
-control paths to change things like brightness. The same isn't true of
-panels.
-
-> >  Or you
-> > have to create a common base class. And then you're still back to
-> > dealing with the two specific cases in many places, so the gain seems
-> > rather minimal.
+On Tue, Sep 23, 2014 at 02:31:35PM +0300, Tomi Valkeinen wrote:
+> On 23/09/14 12:39, Thierry Reding wrote:
 >=20
-> For example RGB panel and RGB/??? bridge have the same hardware input
-> interface.
-> Why shall they have different representation in kernel?
+> > My point is that if you use plain phandles you usually have the
+> > meta-data already. Referring to the above example, bridge0 knows that it
+> > should look for a bridge with phandle &bridge1, whereas bridge1 knows
+> > that the device it is connected to is a panel.
+>=20
+> The bridge should not care what kind of device is there on the other
+> end. The bridge just has an output, going to another video component.
 
-Because panels have different requirements than bridges. Panels for
-example require the backlight to be adjustable, bridges don't.
+You'll need to know at some point that one of the devices in a panel,
+otherwise you can't treat it like a panel.
+
+> >> Well, I can't say about this particular bridge, but afaik you can
+> >> connect a parallel RGB signal to multiple panels just like that, witho=
+ut
+> >> any muxing.
+> >=20
+> > Right, but in that case you're not reconfiguring the signal in any way
+> > for each of the panels. You send one single signal to all of them. For
+>=20
+> Yes, that's one use case, cloning. But I was not talking about that.
+>=20
+> > all intents and purposes there is only one panel. Well, I guess you
+> > could have separate backlights for the panels. In that case though it
+> > seems better to represent it at least as a virtual mux or bridge, or
+> > perhaps a "mux panel".
+>=20
+> I was talking about the case where you have two totally different
+> devices, let's say panels, connected to the same output. One could take
+> a 16-bit parallel RGB signal, the other 24-bit. Only one of them can  be
+> enabled at a time (from HW perspective both can be enabled at the same
+> time, but then the other one shows garbage).
+
+So we're essentially back to a mux, albeit maybe a virtual one.
 
 Thierry
 
---WK3l2KTTmXPVedZ6
+--Zi0sgQQBxRFxMTsj
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUIYaXAAoJEN0jrNd/PrOhfqAQAL46pjj3cVUDfUQn7CFcyaek
-hI5HPyMBDkyrIDgc48F/FtGR3DtvV2KexfgHsThBXM1FKsrDSO697kYN5Cqmo0s6
-VUWsed6gnqOkFsPNvwXhkLlHYWHLonK5nR60UFcG39KP0Dh4D4d/2kRYCyiLiC7E
-a6xS/pkbjtU805Mk2HZIy1ItFpyAEZJjtcqfGoiHtd7js0cU2W8Dm2TZ7Q53jcKc
-4vl/MOCxlES7Oz+2Uc4x6DOG19zvX3OKA3QdkqRa/ePYj5Cxc6qvfUbd0ltJLcV+
-CHqEn1+yWlfVRBeo39y4B0o7vhc+pnqpD0u7HE/uSsCjkMfhw2VXLmCMnp0miJ9Z
-tqxN1036z+ME70tu/uPGq8lAsh7LlH9lMRsG+dNGOxBRXhTYehtQmx+qHBCYfavI
-bg+xPmFYQoDExOYUSvoHxK8L3lRv3LsEH3Ai/FnfBPhdzM5JpltqOtIqYPjCTPRV
-/3ZrhiD/qzPcSUu/fLFKhq2oKrp/rxZm2TEo5YEukpgdPzR7DdeZWRs6vo1H2gKT
-C2AeF+5VaZX3ea9hJMiEOfzdCAvX2ouXsinzWfC7/WcbEbxyXv1ybGcj2C8k0CTo
-x2uJQY8NV1jemlgrDuyB7roTveBpbg9/7JYfUdSeQBl57bqnkx1mnZDZgzk30BTy
-FvMspTyHwca6bmzrUCO9
-=FMx4
+iQIcBAEBAgAGBQJUIYd1AAoJEN0jrNd/PrOh2BQP/R/JcsK7BJ/7kgVMxmguOsI3
+3OzzR2hROlFxLx9n45Fp1SegKrZhSZn1DPJwG1cQGirRqDVhUIAADA1TwGyWw9fT
+A2VV82JdEzSnBbMVFoeaWZ+k+2ROc9wVGf/QoTbtq3Qe5J4LFU11iqNwOy95aBeY
+S7T842B1ljRQxQzOiUdeaCO9HMVT3Z8V1XpNlEepigMB9iezaMMbvDYEFRYiSZd1
+KImRFc/Ydoah3B6GjqARHmfDWWBCDXzPfxP3MrB2Y/0TYOrZSDGTziReqfry/2ZW
+IkgAWuZEvzYPeJ0vq7RQ1zCJHPOrBSxe0/9GUmKyCKkPwq/3LMdoGXe7IDN4W35a
+RkYzSh++w1Xok99L7y4C+TYECgHcMXqb7WPIAXLAjE+Ff+F1GcpFAXmnC20+iBaa
++brQWIeKqKhTyA3IzS78KC9vk7uv3zVWB8a1N0WO68p3zudJcDuNR25hAVBMoJig
+mXm+UTw2Nt4yTk5dZEpAX8xN1hpfzO6Bswl9OWq9W3ZduXXKQdrZ+S7v/qr2+aoQ
+OwTNAd8C9n07sIpryVGVUjQCvRMBs0ULwdhrv9pmxmkkReNG3rz5YcUVj9tUuvc7
+MwuFh4WtLbLDBWR5h94CL9lJtqdYDAScd1I5joNDftneEKQ3q6pjpGWRlwXW5X/N
+WVRDaXXbB0LpVASfb2Pk
+=WXti
 -----END PGP SIGNATURE-----
 
---WK3l2KTTmXPVedZ6--
+--Zi0sgQQBxRFxMTsj--
 
---===============0359028171==
+--===============1063126265==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -129,4 +112,4 @@ dri-devel mailing list
 dri-devel@lists.freedesktop.org
 http://lists.freedesktop.org/mailman/listinfo/dri-devel
 
---===============0359028171==--
+--===============1063126265==--
