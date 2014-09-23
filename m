@@ -1,28 +1,34 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
 Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
  ps8622 DT properties
-Date: Tue, 23 Sep 2014 14:40:54 +0200
-Message-ID: <54216A56.4050008@samsung.com>
-References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
- <26633587.NifLIetGL4@avalon> <54215DDC.3050909@samsung.com>
- <2238934.uLuAbtBXFj@avalon>
+Date: Tue, 23 Sep 2014 14:40:45 +0200
+Message-ID: <54216A4D.8070201@samsung.com>
+References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com> <26633587.NifLIetGL4@avalon> <54215DDC.3050909@samsung.com> <2238934.uLuAbtBXFj@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <2238934.uLuAbtBXFj@avalon>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, seanpaul@google.com, daniel.vetter@ffwll.ch, joshi@samsung.com, dri-devel@lists.freedesktop.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, ajaynumb@gmail.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from plane.gmane.org ([80.91.229.3]:40806 "EHLO plane.gmane.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755679AbaIWMmD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 23 Sep 2014 08:42:03 -0400
+Received: from list by plane.gmane.org with local (Exim 4.69)
+	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
+	id 1XWPPj-0001w1-G9
+	for linux-samsung-soc@vger.kernel.org; Tue, 23 Sep 2014 14:41:51 +0200
+Received: from 217-67-201-162.itsa.net.pl ([217.67.201.162])
+        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
+        id 1AlnuQ-0007hv-00
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Sep 2014 14:41:51 +0200
+Received: from a.hajda by 217-67-201-162.itsa.net.pl with local (Gmexim 0.1 (Debian))
+        id 1AlnuQ-0007hv-00
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Sep 2014 14:41:51 +0200
+In-Reply-To: <2238934.uLuAbtBXFj@avalon>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 
 On 09/23/2014 01:52 PM, Laurent Pinchart wrote:
 > On Tuesday 23 September 2014 13:47:40 Andrzej Hajda wrote:
