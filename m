@@ -1,171 +1,227 @@
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: Re: [PATCH] [media] s5p-mfc: Use decode status instead of display
- status on MFCv5
-Date: Tue, 23 Sep 2014 16:10:34 +0200
-Message-ID: <1411481434.4050.16.camel@collabora.co.uk>
-References: <1411390322-25212-1-git-send-email-sjoerd.simons@collabora.co.uk>
-	 <085901cfd736$6ae349c0$40a9dd40$%debski@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
+ ps8622 DT properties
+Date: Tue, 23 Sep 2014 16:29:43 +0200
+Message-ID: <20140923142941.GC5982@ulmo>
+References: <CAEC9eQO2rfmVEKTCUJk+SpfdeUr81gN3stYV3wE6yR3E=-zonA@mail.gmail.com>
+ <541C279A.2030601@ti.com>
+ <CAEC9eQMQrM289J+ukkshKtTo9dB=G4cvg-4zF6LR6snqE5BL0A@mail.gmail.com>
+ <541C3D95.7080200@ti.com> <20140922082647.GE1470@ulmo>
+ <54203561.5090306@ti.com> <20140923055352.GB30514@ulmo>
+ <54213250.8050107@ti.com> <20140923092815.GQ30514@ulmo>
+ <5421566A.7050905@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="sha-1"; protocol="application/x-pkcs7-signature";
-	boundary="=-YhcPQtbd0XoseixdC3UV"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:43734 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751586AbaIWOKj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Sep 2014 10:10:39 -0400
-In-Reply-To: <085901cfd736$6ae349c0$40a9dd40$%debski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============1886796120=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <5421566A.7050905@ti.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>
-Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Arun Kumar K' <arun.kk@samsung.com>, 'Mauro Carvalho Chehab' <m.chehab@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Daniel Drake' <drake@endlessm.com>
 
 
---=-YhcPQtbd0XoseixdC3UV
-Content-Type: text/plain; charset="UTF-8"
+--===============1886796120==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="H8ygTp4AXg6deix2"
+Content-Disposition: inline
+
+
+--H8ygTp4AXg6deix2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hey Kamil,
-
-
-On Tue, 2014-09-23 at 15:58 +0200, Kamil Debski wrote:
-> > Commit 90c0ae50097 changed how the frame_type of a decoded frame
-> > gets determined, by switching from the get_dec_frame_type to
-> > get_disp_frame_type operation. Unfortunately it seems that on MFC v5
-> > the
-> > result of get_disp_frame_type is always 0 (no display) when decoding
-> > (tested with H264), resulting in no frame ever being output from the
-> > decoder.
+On Tue, Sep 23, 2014 at 02:15:54PM +0300, Tomi Valkeinen wrote:
+> On 23/09/14 12:28, Thierry Reding wrote:
 >=20
-> Could you tell me which firmware version do you use (date)?
+> >> But, for example, let's say that the board is designed in a way that f=
+or
+> >> panel0 the bridge needs to output a bit higher level voltages than for
+> >> panel1. That's not a property of the panel, so it can't be queried from
+> >> the panel.
+> >>
+> >> That feature (varying the voltage level) is specific to the bridge, and
+> >> thus the properties should be in the bridge's DT data. So we need two
+> >> different configurations in the bridge, one for panel0 and one for
+> >> panel1. This is what endpoints give us.
+> >=20
+> > You could get the same by moving the mux in front of the bridge instead.
+>=20
+> I didn't understand. Moving the mux between the SoC and the bridge? How
+> would that solve the problem. Or what do you mean with "in the front of
+> the bridge"?
 
-I'm using the firmware version as included in
-http://git.kernel.org/cgit/linux/kernel/git/firmware/linux-firmware.git/
+Because then you'd have multiple instances of the bridge that could
+describe which parameters it wants. But writing it out loud this is
+equally bad. More below.
 
-Unfortunately there is no specific version information included about
-the firmware. The commit that added it is fb5cda9c70277f6 dated Nov 28
-17:43:06 2012 +0530, so that at least gives some information about the
-time-frame.
+> > Trying to do this within the bridge's node directly has two flaws:
+> >=20
+> > 	1) It violates the DT principle of describing hardware. The
+> > 	   device itself does not know anything about multiple streams
+> > 	   and deals only with a single input and output. You'd be
+> > 	   describing a board specific aspect in the device binding.
+>=20
+> We _are_ describing board specific aspects in the board.dts file. That's
+> what it is about.
+>=20
+> If the board's hardware is such that the bridge's voltage level needs to
+> be higher when using panel0, that's very much describing hardware.
 
+You misunderstood. It's describing a use-case rather than the device
+itself. You describe, *within the device node*, that it can be muxed
+whereas the device itself doesn't know anything about muxing. That's
+where the violation is. You require a board-integration issue to be
+described in the binding of a specific device.
 
---=20
-Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Collabora Ltd.
+> > 	2) Such a solution would have to be implemented for all bridge
+> > 	   devices that can potentially be muxed (really all of them).
+> > 	   If you describe it accurately in a separate mux node you get
+> > 	   genericity for free and it will work for all bridges.
+>=20
+> I do agree that a generic mux is better if there's nothing special to be
+> configured. But how do you use a generic mux node for bridge device
+> specific features?
 
---=-YhcPQtbd0XoseixdC3UV
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+Good question. I don't have an immediate answer to that and would have
+to think about it for some more.
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIUzDCCBsIw
-ggWqoAMCAQICEAoE3yF0XU0rjOozcgUAUOkwDQYJKoZIhvcNAQEFBQAwZTELMAkGA1UEBhMCVVMx
-FTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEkMCIGA1UE
-AxMbRGlnaUNlcnQgQXNzdXJlZCBJRCBSb290IENBMB4XDTA2MTExMDAwMDAwMFoXDTIxMTExMDAw
-MDAwMFowYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3
-LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMIIBIjANBgkq
-hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6IItmfnKwkKVpYBzQHDSnlZUXKnE0kEGj8kz/E1FkVyB
-n+0snPgWWd+etSQVwpi5tHdJ3InECtqvy15r7a2wcTHrzzpADEZNk+yLejYIA6sMNP4YSYL+x8cx
-SIB8HqIPkg5QycaH6zY/2DDD/6b3+6LNb3Mj/qxWBZDwMiEWicZwiPkFl32jx0PdAug7Pe2xQaPt
-P77blUjE7h6z8rwMK5nQxl0SQoHhg26Ccz8mSxSQrllmCsSNvtLOBq6thG9IhJtPQLnxTPKvmPv2
-zkBdXPao8S+v7Iki8msYZbHBc63X8djPHgp0XEK4aH631XcKJ1Z8D2KkPzIUYJX9BwSiCQIDAQAB
-o4IDbzCCA2swDgYDVR0PAQH/BAQDAgGGMDsGA1UdJQQ0MDIGCCsGAQUFBwMBBggrBgEFBQcDAgYI
-KwYBBQUHAwMGCCsGAQUFBwMEBggrBgEFBQcDCDCCAcYGA1UdIASCAb0wggG5MIIBtQYLYIZIAYb9
-bAEDAAQwggGkMDoGCCsGAQUFBwIBFi5odHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJl
-cG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUHAgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAA
-dABoAGkAcwAgAEMAZQByAHQAaQBmAGkAYwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAg
-AGEAYwBjAGUAcAB0AGEAbgBjAGUAIABvAGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMA
-UAAvAEMAUABTACAAYQBuAGQAIAB0AGgAZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABB
-AGcAcgBlAGUAbQBlAG4AdAAgAHcAaABpAGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkA
-dAB5ACAAYQBuAGQAIABhAHIAZQAgAGkAbgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBp
-AG4AIABiAHkAIAByAGUAZgBlAHIAZQBuAGMAZQAuMA8GA1UdEwEB/wQFMAMBAf8wfQYIKwYBBQUH
-AQEEcTBvMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wRwYIKwYBBQUHMAKG
-O2h0dHA6Ly93d3cuZGlnaWNlcnQuY29tL0NBQ2VydHMvRGlnaUNlcnRBc3N1cmVkSURSb290Q0Eu
-Y3J0MIGBBgNVHR8EejB4MDqgOKA2hjRodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRB
-c3N1cmVkSURSb290Q0EuY3JsMDqgOKA2hjRodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vRGlnaUNl
-cnRBc3N1cmVkSURSb290Q0EuY3JsMB0GA1UdDgQWBBQVABIrE5iymQftHt+ivlcNK2cCzTAfBgNV
-HSMEGDAWgBRF66Kv9JLLgjEtUYunpyGd823IDzANBgkqhkiG9w0BAQUFAAOCAQEAhGFOQR64dgQq
-tbbvj/JVhbldVv4KmObkvWWKfUAp0/yxXUX9OrgqWzNLJFzNubTkc61hXXatdDOKZtUjr0wfcm5F
-2XVAu6I7z41JL8BBsOIpo1E4Q1CZFKwzBjViiX13qVIH5WwgV7aBum+8s8KU7XYCgNl8zoWoHOzH
-Q0pLsVfPcs7f9SU8yyJP/Z9S0TfLCLs4PuDVPm95Ca1bfDGzdzXD5GP5aAqYB+dGOHeE0j6XvAqg
-qKwlT0RukeHSWq9r7zAcjaNEQrMQiyP61+Y1dDesz+urWB/JiCP/NtQH6jRqR+qdlWyeKU9T7eMr
-lSBOKs+WYHr4LIDwlVLOKZaBYjCCBv8wggXnoAMCAQICEA2fwUKNhvkL8dN88tUFvVwwDQYJKoZI
-hvcNAQEFBQAwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQ
-d3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMB4XDTE0
-MDIxNzAwMDAwMFoXDTE1MDMxMjEyMDAwMFowgaQxCzAJBgNVBAYTAkdCMRcwFQYDVQQIEw5DYW1i
-cmlkZ2VzaGlyZTESMBAGA1UEBxMJQ2FtYnJpZGdlMRYwFAYDVQQKEw1Db2xsYWJvcmEgTHRkMQow
-CAYDVQQLEwExMRYwFAYDVQQDEw1Tam9lcmQgU2ltb25zMSwwKgYJKoZIhvcNAQkBFh1zam9lcmQu
-c2ltb25zQGNvbGxhYm9yYS5jby51azCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAN4Q
-EHeW1NbogMVZpHedG7o509/L4VBhqQd8j8JViWd+yvLlxOBw/gY+7ioHMatrQY2VvY6QOLle2Xqs
-CDvELcXMxwyFpBC0Ia+CVE+5pF+0IMuVkGIL1T8LHeKZYeRP+uFXtmWzas12hsMILNRmK7Q5PACm
-+v/6HFn111hLKkANBtRHIRiDbFQOiluNeR2bq+ck1y2+X//SGumA1XZFdCB/1VcRJXDdFnYdU3j/
-RkoiGggo3MSq3mJ6yV7sqzk04fTLFvfL0KadCMauputeGBybEiFAt6rCm5TkyUqoDOTU07byOEXO
-M32EGeYeV515RzARTpOSE9sdmRq0jNNAqGsCAwEAAaOCA2wwggNoMB8GA1UdIwQYMBaAFBUAEisT
-mLKZB+0e36K+Vw0rZwLNMB0GA1UdDgQWBBRaTG8RXMDSFO5XcrjqYs/YDlmqSDAoBgNVHREEITAf
-gR1zam9lcmQuc2ltb25zQGNvbGxhYm9yYS5jby51azAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMH0GA1UdHwR2MHQwOKA2oDSGMmh0dHA6Ly9jcmwzLmRpZ2lj
-ZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3JsMDigNqA0hjJodHRwOi8vY3JsNC5kaWdp
-Y2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0xLmNybDCCAcUGA1UdIASCAbwwggG4MIIBtAYK
-YIZIAYb9bAQBAjCCAaQwOgYIKwYBBQUHAgEWLmh0dHA6Ly93d3cuZGlnaWNlcnQuY29tL3NzbC1j
-cHMtcmVwb3NpdG9yeS5odG0wggFkBggrBgEFBQcCAjCCAVYeggFSAEEAbgB5ACAAdQBzAGUAIABv
-AGYAIAB0AGgAaQBzACAAQwBlAHIAdABpAGYAaQBjAGEAdABlACAAYwBvAG4AcwB0AGkAdAB1AHQA
-ZQBzACAAYQBjAGMAZQBwAHQAYQBuAGMAZQAgAG8AZgAgAHQAaABlACAARABpAGcAaQBDAGUAcgB0
-ACAAQwBQAC8AQwBQAFMAIABhAG4AZAAgAHQAaABlACAAUgBlAGwAeQBpAG4AZwAgAFAAYQByAHQA
-eQAgAEEAZwByAGUAZQBtAGUAbgB0ACAAdwBoAGkAYwBoACAAbABpAG0AaQB0ACAAbABpAGEAYgBp
-AGwAaQB0AHkAIABhAG4AZAAgAGEAcgBlACAAaQBuAGMAbwByAHAAbwByAGEAdABlAGQAIABoAGUA
-cgBlAGkAbgAgAGIAeQAgAHIAZQBmAGUAcgBlAG4AYwBlAC4wdwYIKwYBBQUHAQEEazBpMCQGCCsG
-AQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQQYIKwYBBQUHMAKGNWh0dHA6Ly9jYWNl
-cnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3J0MAwGA1UdEwEB/wQCMAAw
-DQYJKoZIhvcNAQEFBQADggEBAAc8CwXSms3RbIx+bhxFsGQoN+RpHtjnPvMPPAobv7rxdhQPPz+N
-6h3hpVzegeW2XhyZVC8MT0U6uWXrk+1uQUAXrJEG+W2X8yTEoHDS/SCF/POOsj/ekaDuNE9JJB/9
-cspoa4W+W8pX1sRurBDFHL0DBudUQ1PgvTSLPOHtfKQpu4gRb2u8KpJermp/IvPLImX9xSCbYKQM
-2L0wbpStFIYdyKCKuXuQxOX3BdBKLCFvcIDE6hjj3UpOlThCbeul2Tz5jARCfRK4OUxnXyb/Tp5j
-tshIAa2ZMGaTH9ApeY7P6C2ONF+Mh5yV/raWXOnJ9dEg6/sXcbdiieqzLKYBIgQwggb/MIIF56AD
-AgECAhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBBQUAMGIxCzAJBgNVBAYTAlVTMRUwEwYD
-VQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xITAfBgNVBAMTGERp
-Z2lDZXJ0IEFzc3VyZWQgSUQgQ0EtMTAeFw0xNDAyMTcwMDAwMDBaFw0xNTAzMTIxMjAwMDBaMIGk
-MQswCQYDVQQGEwJHQjEXMBUGA1UECBMOQ2FtYnJpZGdlc2hpcmUxEjAQBgNVBAcTCUNhbWJyaWRn
-ZTEWMBQGA1UEChMNQ29sbGFib3JhIEx0ZDEKMAgGA1UECxMBMTEWMBQGA1UEAxMNU2pvZXJkIFNp
-bW9uczEsMCoGCSqGSIb3DQEJARYdc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28udWswggEiMA0G
-CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDeEBB3ltTW6IDFWaR3nRu6OdPfy+FQYakHfI/CVYln
-fsry5cTgcP4GPu4qBzGra0GNlb2OkDi5Xtl6rAg7xC3FzMcMhaQQtCGvglRPuaRftCDLlZBiC9U/
-Cx3imWHkT/rhV7Zls2rNdobDCCzUZiu0OTwApvr/+hxZ9ddYSypADQbURyEYg2xUDopbjXkdm6vn
-JNctvl//0hrpgNV2RXQgf9VXESVw3RZ2HVN4/0ZKIhoIKNzEqt5iesle7Ks5NOH0yxb3y9CmnQjG
-rqbrXhgcmxIhQLeqwpuU5MlKqAzk1NO28jhFzjN9hBnmHledeUcwEU6TkhPbHZkatIzTQKhrAgMB
-AAGjggNsMIIDaDAfBgNVHSMEGDAWgBQVABIrE5iymQftHt+ivlcNK2cCzTAdBgNVHQ4EFgQUWkxv
-EVzA0hTuV3K46mLP2A5ZqkgwKAYDVR0RBCEwH4Edc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28u
-dWswDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMEBggrBgEFBQcDAjB9BgNVHR8E
-djB0MDigNqA0hjJodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0x
-LmNybDA4oDagNIYyaHR0cDovL2NybDQuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0QXNzdXJlZElEQ0Et
-MS5jcmwwggHFBgNVHSAEggG8MIIBuDCCAbQGCmCGSAGG/WwEAQIwggGkMDoGCCsGAQUFBwIBFi5o
-dHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJlcG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUH
-AgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAAdABoAGkAcwAgAEMAZQByAHQAaQBmAGkA
-YwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAgAGEAYwBjAGUAcAB0AGEAbgBjAGUAIABv
-AGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMAUAAvAEMAUABTACAAYQBuAGQAIAB0AGgA
-ZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABBAGcAcgBlAGUAbQBlAG4AdAAgAHcAaABp
-AGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkAdAB5ACAAYQBuAGQAIABhAHIAZQAgAGkA
-bgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBpAG4AIABiAHkAIAByAGUAZgBlAHIAZQBu
-AGMAZQAuMHcGCCsGAQUFBwEBBGswaTAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQu
-Y29tMEEGCCsGAQUFBzAChjVodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1
-cmVkSURDQS0xLmNydDAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBBQUAA4IBAQAHPAsF0prN0WyM
-fm4cRbBkKDfkaR7Y5z7zDzwKG7+68XYUDz8/jeod4aVc3oHltl4cmVQvDE9FOrll65PtbkFAF6yR
-Bvltl/MkxKBw0v0ghfzzjrI/3pGg7jRPSSQf/XLKaGuFvlvKV9bEbqwQxRy9AwbnVENT4L00izzh
-7XykKbuIEW9rvCqSXq5qfyLzyyJl/cUgm2CkDNi9MG6UrRSGHcigirl7kMTl9wXQSiwhb3CAxOoY
-491KTpU4Qm3rpdk8+YwEQn0SuDlMZ18m/06eY7bISAGtmTBmkx/QKXmOz+gtjjRfjIeclf62llzp
-yfXRIOv7F3G3YonqsyymASIEMYIDEDCCAwwCAQEwdjBiMQswCQYDVQQGEwJVUzEVMBMGA1UEChMM
-RGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSEwHwYDVQQDExhEaWdpQ2Vy
-dCBBc3N1cmVkIElEIENBLTECEA2fwUKNhvkL8dN88tUFvVwwCQYFKw4DAhoFAKCCAW8wGAYJKoZI
-hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTQwOTIzMTQxMDM0WjAjBgkqhkiG
-9w0BCQQxFgQUJQRfH4pOVEGP1jr4BX0KSgkbcvcwgYUGCSsGAQQBgjcQBDF4MHYwYjELMAkGA1UE
-BhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEh
-MB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xAhANn8FCjYb5C/HTfPLVBb1cMIGHBgsq
-hkiG9w0BCRACCzF4oHYwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcG
-A1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0x
-AhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBAQUABIIBALeAWi6aw1+FQ7HWNIf6K+81/bHn
-wRY8FI4f5E+QkPIfMwLhGY2DD+Kp0wZs+DPhOxCmIfzvUS5ZNxH2fiIo+99ZDv1oLY51gEoRg31X
-Ri9JDOjhcleEs//wSFiDsFNta7AylYr0XwM70wR/FDoFPgtRR5n5izk2D6TSrZCfyQFsU5URFNWC
-NIiXuBmwC8efWw/IOGO539EhyBQASJsV7pmyqdFW72gwY0yEsQjP/EeFQPxdgarAwYh45f5YVgzL
-YK45Antl8AbkyUM5D5IhQ5mK+gREUYTEgdY8Raygn3ML38DeLs6tl5C4GyJgyo5FhWaVf5hQHXH6
-XI9pubwR8QgAAAAAAAA=
+> >> I disagree. If we don't have a common way to describe the connections
+> >> between video devices, we cannot:
+> >>
+> >> - have a common helper library to parse the connections
+> >=20
+> > We have a common helper already. It's called of_parse_phandle().
+>=20
+> Yes, but what is the name of the property, and where does it go? Does
+> the panel have a phandle to the bridge? Does the bridge have a phandle
+> to the panel?
 
+My point was that we don't need a common helper library if we have a way
+of getting at the phandle and resolve the phandle to a bridge or a
+panel. While I think standard names can be advantageous, using the
+regular of_parse_phandle() and a lookup function we don't even need
+them.
 
---=-YhcPQtbd0XoseixdC3UV--
+> >> - study the connections before the drivers are loaded
+> >=20
+> > Why would you need that?
+>=20
+> I think this was discussed earlier, maybe Laurent remembers the use cases.
+>=20
+> I think one possibility here is to have an understanding of the
+> pipelines even if the modules have not been loaded or a single device
+> has failed to probe.
+
+I don't see how that would be useful.
+
+> >> - handle the connections anywhere else than the specific driver for the
+> >> component
+> >=20
+> > Why should we do that?
+>=20
+> We could, for example, have a single component (common or SoC specific)
+> that manages the video pipelines. The drivers for the
+> encoders/bridges/panels would just probe the devices, without doing
+> anything else. The master component would then parse the links and
+> connect the devices in whatever way it sees best.
+
+You don't need any of that. The SoC driver simply obtains a phandle to
+the first bridge connected to it. That bridge will already have done the
+same for any chained bridges. There's no need to connect them in any way
+anymore because they are already properly set up.
+
+> > Having a standard representation only matters if you want to be able to
+> > parse the pipeline without knowing about the device specifics. But I'm
+> > not sure I understand why you would want to do that. This sounds like
+> > you'd want some generic code to be able to construct a pipeline. But at
+> > the same time you can't do anything meaningful with that pipeline
+> > because the generic code doesn't know how to program the pipeline. The
+> > only thing you'll get is a list of devices in the pipeline, but you can
+> > do that by looking at the bindings and the DT content, no matter what
+> > the properties are named
+>=20
+> You can, but then you need to know all the possible variations and ways
+> the phandles are used.
+
+Which is described in the DT bindings. Really, the DT should be
+describing the device in whatever is the most natural way for that
+device. It is the job of the OS to abstract things away so that
+components can be seemlessly integrated. The DT doesn't need to (and
+shouldn't) have that kind of abstraction.
+
+> >> Even if the points I gave about why a common way to describe connectio=
+ns
+> >> is important would not be relevant today, it sounds much safer to have=
+ a
+> >> standard representation in the DT for the connections. I'd only go for
+> >> device specific custom descriptions if there's a very important reason
+> >> for that. And I can't come up with any reason.
+> >=20
+> > One of the good practices in DT is to keep property names similar to the
+> > signal names of the chip to make it easy to correlate. So if you have a
+> > bridge that converts RGB to LVDS and DSI for example, you'd have to
+> > describe two outputs. That's kind of difficult to do with standard
+> > property names. Well, it depends, you could do this:
+> >=20
+> > 	bridge {
+> > 		panels =3D <&lvds &dsi>;
+> > 	};
+> >=20
+> > Alternatively:
+> >=20
+> > 	bridge {
+> > 		lvds-panel =3D <&lvds>;
+> > 		dsi-panel =3D <&dsi>;
+> > 	};
+>=20
+> Nothing says the bridge is connected to a panel, so "output" or such
+> would probably be better there.
+
+Hmm? How does the above not say that the bridge is connected to a panel?
+
+Thierry
+
+--H8ygTp4AXg6deix2
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUIYPVAAoJEN0jrNd/PrOh02YQAJT4bOz8amRiYoCBUWbfimtc
+kiAYAKkGk25z3WFTk+ymVhsLdjzNL+1JqIpmW9XTFA4Frjcg5ZqFudp6YFVAy0EO
+gZs9fZoc/0L6upeshSk9gctb9JwpOQ5/yAIVeJMtTRR7/i08y1sZ9YasYOO6Und/
+pEiCRMVkjxorr6SyAv5zcK7fNk9+DNY8GIzB1eZKQG6WJFlwlCukRFkSByuhSevw
+voMaIo5eCXFufDIAqbB/Su8C+yT6LCnOzo7foH4v3Gttpw6Psh+ANFd4l46Cnsd0
+o2+bpStcniqTWha93JELUHOjK3aU1MxOtnITkVgCJHUbE+pJYT5omrka1HZoZZUo
+zap8Upid7yBJEYbFiYjpgPQcOs3xY/os6VMJhqdXh64GyOLV0hCQvctb9NrimSJM
+B0C6Lrk9s20t5QJejKuZIDgEcXcGaX6Q+WoQlbXR+Q1ajqlsDTCTxtxj+sFH54bN
++xqclOYAO6Ej204GGueUpIR/dyc47gCo8OOC95nueaewl/5N1HyUBXPC5vX9dMxC
+7Nz7ayt93iPcawgfnGcICRI+i/Y4neO06KWACpztiuJvXFpOsZwEwOGwvWJJqNWB
+hs3YLoIc7Mo7y48ksgZOq7uMY1hK80+0/5CzflBv6cre8fppu+HlyKB3dLfwI2nf
+FNx3nIHGauoMZzPCuucL
+=cmU8
+-----END PGP SIGNATURE-----
+
+--H8ygTp4AXg6deix2--
+
+--===============1886796120==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============1886796120==--
