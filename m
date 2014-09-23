@@ -1,136 +1,60 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
- ps8622 DT properties
-Date: Tue, 23 Sep 2014 18:33:56 +0300
-Message-ID: <542192E4.70007@ti.com>
-References: <CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com> <5419B52D.4060107@ti.com> <20140922080629.GC1470@ulmo> <542030DD.3060906@ti.com> <20140923060452.GD30514@ulmo> <5421201C.6000509@samsung.com> <20140923083514.GM30514@ulmo> <54214008.4040105@ti.com> <20140923100139.GT30514@ulmo> <54216308.2050500@ti.com> <20140923143854.GD5982@ulmo>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH 2/2] ARM: dts: Add rtc_src clk for s3c-rtc on
+ exynos5250-snow
+Date: Wed, 24 Sep 2014 01:00:47 +0900
+Message-ID: <5421992F.6070908@samsung.com>
+References: <1410954633-27025-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1410954633-27025-3-git-send-email-javier.martinez@collabora.co.uk>
+ <CAD=FV=W7xJ01m2oLtuDnogOmrpwpztbir=59oSWU6oojFYUWKw@mail.gmail.com>
+ <5419ADF9.3010509@suse.de> <00f801cfd6f6$07e10500$17a30f00$@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="Vmdnb98vIaeNujKO45Rdwubr57Umr90wh"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:46035 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755301AbaIWPeX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Sep 2014 11:34:23 -0400
-In-Reply-To: <20140923143854.GD5982@ulmo>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <00f801cfd6f6$07e10500$17a30f00$@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: 'Doug Anderson' <dianders@chromium.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, 'Daniel Drake' <drake@endlessm.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, =?UTF-8?B?J0FuZHJlYXMgRsOkcmJlcic=?= <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 
---Vmdnb98vIaeNujKO45Rdwubr57Umr90wh
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
-
-On 23/09/14 17:38, Thierry Reding wrote:
-> On Tue, Sep 23, 2014 at 03:09:44PM +0300, Tomi Valkeinen wrote:
->> On 23/09/14 13:01, Thierry Reding wrote:
->>> On Tue, Sep 23, 2014 at 12:40:24PM +0300, Tomi Valkeinen wrote:
-> [...]
->>>> What exactly is a bridge and what is an encoder? Those are DRM
->>>> constructs, aren't they?
->>>
->>> Yes. I think bridges are mostly a superset of encoders.
->>
->> Superset in what way? If I have a SiI9022 RGB-to-HDMI encoder embedded=
-
->> into my SoC (i.e. a DRM encoder), or I have a board with a SiI9022
->> encoder on the board (i.e. a DRM bridge), what is different?
->=20
-> Superset in what they represent from a software point of view. As in:
-> an encoder /is a/ bridge. Though they aren't currently implemented that=
-
-> way.
-
-So they are equal, not superset? Or what does an encoder do that a
-bridge doesn't?
-
->>>> As I see it, a video pipeline consist of a video source (display
->>>> controller usually), a chain of encoders (all of which may not be
->>>> strictly "encoders", they could be level shifters, muxes, ESD protec=
-tion
->>>> devices or such), and either a display device like a panel or a
->>>> connector to outside world.
->>>
->>> Well, the panel itself is attached to a connector. The connector is
->>> really what userspace uses to control the output and indirectly the
->>> panel.
->>
->> Yep. That's also something that should be fixed. A connector SW entity=
-
->> is fine when connecting an external monitor, but a panel directly
->> connected to the SoC does not have a connector, and it's the panel tha=
-t
->> should be controlled from the userspace.
->=20
-> I disagree. A panel is usually also attached using some sort of
-> connector. Maybe not an HDMI, VGA or DP connector, but still some sort
-> of connector where often it can even be removed.
-
-Yes, but a normal panel connector is really just an extension of wires.
-There is no difference if you wire the panel directly to the video
-source, or if there's a connector.
-
-I think usually connectors to the external world are not quite as
-simple, as there may be some protection components or such, but even if
-there's nothing extra, they are still a clear component visible to
-outside world. For HDMI you (sometimes) even need properties for the
-connector, like source for +5V, i2c bus, hotplug pin.
-
-But even if there are no extra properties like that, I still think it's
-good to have a connector entity for a connector to outside world.
-Whereas I don't see any need for such when the connector is internal.
-That said, I don't see any reason to prevent that either.
-
-> Panels are theoretically hot-pluggable, too, much in the same way that
-> monitors are.
-
-So are encoders, in the same way. I have a main board, with a video
-connector. That goes to an encoder on display board, and that again has
-a connector, to which the panel is connected.
-
-I also have a panel that can be conneted directly to the main board's
-video output.
-
->> But again, the legacy...
->=20
-> You've got to make the abstraction somewhere, and I'm quite surprised
-> actually how well the DRM abstractions are working out. I mean we can
-> support anything from HDMI to DP to eDP, DSI and LVDS with just the
-> connector abstraction and it all just works. That makes it a pretty
-> good abstraction in my book.
-
-Yes, I agree it's good in the sense that it works. And much better than
-fbdev, which has nothing. But it's not good in the sense that it's not
-what I'd design if I could start from scratch.
-
- Tomi
-
-
-
---Vmdnb98vIaeNujKO45Rdwubr57Umr90wh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUIZLkAAoJEPo9qoy8lh71GZ8QALHkbERHVUntoY56uoQqpTPz
-0vM5X1IYHw7UwYqgjbsEKwGL1jm/uHJkmH6rKgyx63GBKvE1N4TbqBlwp7zsrmQo
-hhQefPyWlWhO4dDjurhhXVk58K01mplJEp1gEzWsj4O76omJLLUGQ6yHCZ+b9MUu
-Q25XlVN5YXT7dYWCLOd3+IY65lNAduS6dUfHkAERvmTj4ec45bwXbGwPErsMZ7Gk
-1OwO7MJvo8YMKi8pcTXzOk15Ezmp5ZwBnKRgO0FwW83aVeatjE3v9dqR7w7s2BOv
-1eeSCWYg7BfmXREGNA7AKxklrZBOk9HKyHHTnO/BmDiKqgkI8aGejh3kXjNn34oj
-0e6jJRAppNWZYPcxxqAahtB5eASE7QAyAJ9BvqcNqlPlSQNaaVmGKJA9z7kujsGF
-6kOw6YjX/natCtzB5LAKwcLT8w0URMtM9/GWr0WUZDuZVjdcmgjaC3BqrcbNw0OJ
-FEXH6cmt3RFnYT+ALjF+8U1eLFPKfj4IaT7kzMbUOsORB5MIU19eWuzUJhuQhuan
-OM0KOCQQ9VhAqNhLB7j/Y6pB3w+rtViJrF5nORvrHQiGzc4Giiy0Vi6YCUCbVhOa
-Gqz6o790Imdk8yB6sLiLWTNwkJQrlmCnVYJ9nMDAMNG9bhZTaCPyevsu0blGu34v
-gcRmohpCHXJ91lMmHfMU
-=B9JS
------END PGP SIGNATURE-----
-
---Vmdnb98vIaeNujKO45Rdwubr57Umr90wh--
+T24gMDkvMjMvMTQgMTU6MTcsIEt1a2ppbiBLaW0gd3JvdGU6Cj4gS3VramluIEtpbSB3cm90ZToK
+Pj4+Cj4+IEFuZHJlYXMgRsOkcmJlciB3cm90ZToKPgo+IFsuLi5dCj4KPj4+PiBLdWtqaW46IEFu
+ZHJlYXMncyBwYXRjaCBzZXJpZXMgd2FzIFJldmlld2VkIGxvbmcgYWdvIEkgdGhpbmsgYW5kIGJ5
+Cj4+Pj4gbm93IEknZCBpbWFnaW5lIGl0J3MgZ290IHNvbWUgY29uZmxpY3RzIGR1ZSB0byBpdCBu
+b3QgaGF2aW5nIGJlZW4KPj4+PiBhcHBsaWVkIGluIGEgdGltZWx5IGZhc2hpb24uICBQZXJoYXBz
+IHlvdSBjb3VsZCBmaXggaXQgdXAgZm9yIEFuZHJlYXMKPj4+PiAoc2luY2UgaGUncyBhbHJlYWR5
+IHJlYmFzZWQgaXQgc2V2ZXJhbCB0aW1lcykgYW5kIGxhbmQgaXQ/Cj4+Pj4KPj4+PiBJZiBJIGhh
+ZCB0byBndWVzcywgb3V0c3RhbmRpbmcgZnJvbSBBbmRyZWFzJ3Mgc2VyaWVzIChwYXRjaHdvcmsg
+SURzIGxpc3RlZCk6Cj4+Pj4KPj4+PiA0NzUxMTMxIE5ldyAgICAgICAgICBbdjddIEFSTTogZHRz
+OiBQcmVwYXJlIG5vZGUgbGFiZWxzIGZvciBleHlub3M1MjUwCj4+Pj4gNDY2NDgwMSBOZXcgICAg
+ICAgICAgW3Y2LDA0LzEwXSBBUk06IGR0czogQ2xlYW4gdXAgZXh5bm9zNTI1MC1zbm93Cj4+Pj4g
+NDY2NDc3MSBOZXcgICAgICAgICAgW3Y2LDA1LzEwXSBBUk06IGR0czogRmlsbCBpbiBib290YXJn
+cyBmb3IgZXh5bm9zNTI1MC1zbm93Cj4+Pj4gNDY2NDczMSBOZXcgICAgICAgICAgW3Y2LDA2LzEw
+XSBBUk06IGR0czogQ2xlYW4gdXAgZXh5bm9zNTI1MC1zbWRrNTI1MAo+Pj4+IDQ2NjQ3NTEgTmV3
+ICAgICAgICAgIFt2NiwwNy8xMF0gQVJNOiBkdHM6IENsZWFuIHVwIGV4eW5vczUyNTAtYXJuZGFs
+ZQo+Pj4+IDQ2NjQ3MTEgTmV3ICAgICAgICAgIFt2NiwwOC8xMF0gQVJNOiBkdHM6IEZpeCBhcHBh
+cmVudCBHUElPIHR5cG8gaW4KPj4+PiBleHlub3M1MjUwLWFybmRhbGUKPj4+PiA0NjY0NjgxIE5l
+dyAgICAgICAgICBbdjYsMDkvMTBdIEFSTTogZHRzOiBTaW1wbGlmeSBVU0IzNTAzIG9uIGV4eW5v
+czUyNTAtYXJuZGFsZQo+Pj4+IDQ2NjQ2OTEgTmV3ICAgICAgICAgIFt2NiwxMC8xMF0gQVJNOiBk
+dHM6IEFkZCBleHlub3M1MjUwLXNwcmluZyBkZXZpY2UgdHJlZQo+Pj4KPj4+IFllcywgS3Vramlu
+IHRvbGQgbWUgbm90IHRvIHJlc2VuZCBhbnl0aGluZywgYW5kIEkgaGF2ZW4ndCBoZWFyZCBiYWNr
+Cj4+PiBmcm9tIGhpbSBzaW5jZSBoaXMgS2VybmVsIFN1bW1pdCB0cmlwLgo+Pj4KPj4gU29ycnkg
+YWJvdXQgdGhhdCBhbmQgSSB0aG91Z2h0IEkgdG9vayB0aGVtIDooIEknbGwgc29ydCB0aGVtIG91
+dCB0b25pZ2h0Cj4+IGluY2x1ZGluZyB0aGlzIHNlcmllcyB0b2dldGhlci4KPj4KPiBIbW0uLi5z
+aW5jZSBzb21lIGNvbmZsaWN0cyB3aXRoIGRwIGFuZCBtbWNfc2xvdCByZWxhdGVkIHBhdGNoZXMs
+IEkgY291bGRuJ3QsCj4gYnV0IEFuZHJlYXMnIHBhdGNoZXMgd2lsbCBiZSBoYW5kbGVkIGJ5IHRv
+bmlnaHQgOigKPgo+IC0gS3VramluCgpJJ3ZlIGFwcGxpZWQgYWJvdmUgYW5kIHRoaXMgc2VyaWVz
+IGFuZCBwbGVhc2UgZG91YmxlLWNoZWNrIHRoZSBjb21taXRzIAppbiBteSB0cmVlLiBJZiBubyBw
+cm9ibGVtcywgSSB3aWxsIHNlbmQgdGhlIGJyYW5jaCBvdXQgZm9yIHYzLjE4IHNvb24uLi4KClRo
+YW5rcywKS3VramluCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3Rz
+LmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9saW51eC1hcm0ta2VybmVsCg==
