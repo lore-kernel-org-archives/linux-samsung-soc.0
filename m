@@ -1,70 +1,32 @@
-From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 2/5] pinctrl: exynos: Add irq_chip instance for Exynos7
- wakeup interrupts
-Date: Tue, 23 Sep 2014 16:49:38 +0200
-Message-ID: <54218882.1050401@gmail.com>
-References: <1411460169-30536-1-git-send-email-a.kesavan@samsung.com> <1411460169-30536-3-git-send-email-a.kesavan@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/3] kbuild: remove unnecessary variable initializaions
+Date: Tue, 23 Sep 2014 16:56:01 +0200
+Message-ID: <CACRpkdZxLrdvPPwrXgTn_oVntxz_f+GCdsdSbDZ0R0Mre6F_Dg@mail.gmail.com>
+References: <1410258381-7088-1-git-send-email-yamada.m@jp.panasonic.com>
+	<1410258381-7088-3-git-send-email-yamada.m@jp.panasonic.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1411460169-30536-3-git-send-email-a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Abraham <thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1410258381-7088-3-git-send-email-yamada.m@jp.panasonic.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Masahiro Yamada <yamada.m@jp.panasonic.com>
+Cc: linux-kbuild <linux-kbuild@vger.kernel.org>, Andrew Victor <linux@maxim.org.za>, Nicolas Ferre <nicolas.ferre@atmel.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Russell King <linux@arm.linux.org.uk>, Hartley Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Greg Ungerer <gerg@uclinux.org>, Ben Dooks <ben-linux@fluff.org>, Tony Lindgren <tony@atomide.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux-OMAP <linux-omap@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 23.09.2014 10:16, Abhilash Kesavan wrote:
-[snip]
-> @@ -383,9 +377,11 @@ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
->  /*
->   * irq_chip for wakeup interrupts
->   */
-> -static struct exynos_irq_chip exynos_wkup_irq_chip = {
-> +static struct exynos_irq_chip *exynos_wkup_irq_chip;
-> +
-[snip]
-> @@ -459,7 +480,7 @@ static void exynos_irq_demux_eint16_31(unsigned int irq, struct irq_desc *desc)
->  static int exynos_wkup_irq_map(struct irq_domain *h, unsigned int virq,
->  					irq_hw_number_t hw)
->  {
-> -	irq_set_chip_and_handler(virq, &exynos_wkup_irq_chip.chip,
-> +	irq_set_chip_and_handler(virq, &exynos_wkup_irq_chip->chip,
->  					handle_level_irq);
->  	irq_set_chip_data(virq, h->host_data);
->  	set_irq_flags(virq, IRQF_VALID);
-> @@ -491,7 +512,12 @@ static int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
->  	int idx, irq;
->  
->  	for_each_child_of_node(dev->of_node, np) {
-> -		if (of_match_node(exynos_wkup_irq_ids, np)) {
-> +		const struct of_device_id *match;
-> +
-> +		match = of_match_node(exynos_wkup_irq_ids, np);
-> +		if (match) {
-> +			exynos_wkup_irq_chip = kmemdup(match->data,
-> +				sizeof(struct exynos_irq_chip), GFP_KERNEL);
+On Tue, Sep 9, 2014 at 12:26 PM, Masahiro Yamada
+<yamada.m@jp.panasonic.com> wrote:
 
-That's not exactly what I had in my mind.
+> Clearing obj-y, obj-m, obj-n, obj- in each Makefile is
+> a useless habit.
+>
+> They are non-exported variables; therefore they are always empty
+> whenever descending into each subdirectory.
+> (Moreorver, obj-y and obj-m are also set to empty at the beginning
+> of scripts/Makefile.build)
+>
+> Signed-off-by: Masahiro Yamada <yamada.m@jp.panasonic.com>
 
-You just changed the code to write to another global variable. This is
-not the best practice and might cause hard to track issues in future,
-when extending the driver.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
->From what I can see, the best solution would be to add .irq_chip field
-to samsung_pin_bank struct. Then exynos_wkup_irq_map() could access it
-through h->host_data pointer and exynos_irq_demux_eint16_31() could also
-retrieve the irq chip through bank struct without the need too add chip
-field to exynos_muxed_weint_data struct.
-
-As a side effect, it would be possible to consolidate
-exynos_wkup_irqd_ops with exynos_gpio_irqd_ops, which currently only
-differ in irq chip passed as argument to irq_set_chip_and_handler() in
-.map() callback.
-
-Best regards,
-Tomasz
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
