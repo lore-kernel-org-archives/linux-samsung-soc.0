@@ -1,21 +1,15 @@
 From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
  ps8622 DT properties
-Date: Tue, 23 Sep 2014 07:53:53 +0200
-Message-ID: <20140923055352.GB30514@ulmo>
+Date: Tue, 23 Sep 2014 07:55:34 +0200
+Message-ID: <20140923055533.GC30514@ulmo>
 References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
- <5419760A.7020908@ti.com>
- <CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com>
- <5419B52D.4060107@ti.com>
- <CAEC9eQO2rfmVEKTCUJk+SpfdeUr81gN3stYV3wE6yR3E=-zonA@mail.gmail.com>
- <541C279A.2030601@ti.com>
- <CAEC9eQMQrM289J+ukkshKtTo9dB=G4cvg-4zF6LR6snqE5BL0A@mail.gmail.com>
- <541C3D95.7080200@ti.com> <20140922082647.GE1470@ulmo>
- <54203561.5090306@ti.com>
+ <CAEC9eQOSFj-NWVYCtdcQz0nFM+1rVxPeC76eBdj-X4w+HWujZA@mail.gmail.com>
+ <20140922113514.GS1470@ulmo> <7550026.qs7FRi8hDC@avalon>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2135436951=="
+Content-Type: multipart/mixed; boundary="===============1835892438=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <54203561.5090306@ti.com>
+In-Reply-To: <7550026.qs7FRi8hDC@avalon>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -25,220 +19,234 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---===============2135436951==
+--===============1835892438==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jho1yZJdad60DJr+"
+	protocol="application/pgp-signature"; boundary="bAmEntskrkuBymla"
 Content-Disposition: inline
 
 
---jho1yZJdad60DJr+
+--bAmEntskrkuBymla
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 22, 2014 at 05:42:41PM +0300, Tomi Valkeinen wrote:
-> On 22/09/14 11:26, Thierry Reding wrote:
-> > On Fri, Sep 19, 2014 at 05:28:37PM +0300, Tomi Valkeinen wrote:
-> >> On 19/09/14 16:59, Ajay kumar wrote:
-> >>
-> >>> I am not really able to understand, what's stopping us from using this
-> >>> bridge on a board with "complex" display connections. To use ps8622 d=
-river,
-> >>> one needs to "attach" it to the DRM framework. For this, the DRM driv=
-er
-> >>
-> >> Remember that when we talk about DT bindings, there's no such thing as
-> >> DRM. We talk about hardware. The same bindings need to work on any
-> >> operating system.
-> >>
-> >>> would need the DT node for ps8622 bridge. For which I use a phandle.
-> >>
-> >> A complex one could be for example a case where you have two different
-> >> panels connected to ps8622, and you can switch between the two panels
-> >> with, say, a gpio. How do you present that with a simple phandle?
+On Tue, Sep 23, 2014 at 03:00:37AM +0300, Laurent Pinchart wrote:
+> On Monday 22 September 2014 13:35:15 Thierry Reding wrote:
+> > On Mon, Sep 22, 2014 at 04:53:22PM +0530, Ajay kumar wrote:
+> > > On Mon, Sep 22, 2014 at 4:11 PM, Thierry Reding wrote:
+> > > > On Mon, Sep 22, 2014 at 02:01:38PM +0530, Ajay kumar wrote:
+> > > >> On Mon, Sep 22, 2014 at 1:40 PM, Thierry Reding wrote:
+> > > >> > On Thu, Sep 18, 2014 at 11:20:40AM +0530, Ajay kumar wrote:
+> > > >> >> On Wed, Sep 17, 2014 at 9:52 PM, Tomi Valkeinen wrote:
+> > > >> >> > On 17/09/14 17:29, Ajay kumar wrote:
+> > > >> >> >> On Wed, Sep 17, 2014 at 5:22 PM, Tomi Valkeinen wrote:
+> > > >> >> >>> On 27/08/14 17:39, Ajay Kumar wrote:
+> > > >> >> >>>> Add documentation for DT properties supported by ps8622/ps=
+8625
+> > > >> >> >>>> eDP-LVDS converter.
+> > > >> >> >>>>=20
+> > > >> >> >>>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> > > >> >> >>>> ---
+> > > >> >> >>>>=20
+> > > >> >> >>>>  .../devicetree/bindings/video/bridge/ps8622.txt    |   20
+> > > >> >> >>>>  ++++++++++++++++++++ 1 file changed, 20 insertions(+)
+> > > >> >> >>>>  create mode 100644
+> > > >> >> >>>>  Documentation/devicetree/bindings/video/bridge/ps8622.txt
+> > > >> >> >>>>
+> > > >> >> >>>> diff --git
+> > > >> >> >>>> a/Documentation/devicetree/bindings/video/bridge/ps8622.txt
+> > > >> >> >>>> b/Documentation/devicetree/bindings/video/bridge/ps8622.txt
+> > > >> >> >>>> new file mode 100644
+> > > >> >> >>>> index 0000000..0ec8172
+> > > >> >> >>>> --- /dev/null
+> > > >> >> >>>> +++ b/Documentation/devicetree/bindings/video/bridge/ps862=
+2.txt
+> > > >> >> >>>> @@ -0,0 +1,20 @@
+> > > >> >> >>>> +ps8622-bridge bindings
+> > > >> >> >>>> +
+> > > >> >> >>>> +Required properties:
+> > > >> >> >>>> +     - compatible: "parade,ps8622" or "parade,ps8625"
+> > > >> >> >>>> +     - reg: first i2c address of the bridge
+> > > >> >> >>>> +     - sleep-gpios: OF device-tree gpio specification for=
+ PD_
+> > > >> >> >>>> pin.
+> > > >> >> >>>> +     - reset-gpios: OF device-tree gpio specification for=
+ RST_
+> > > >> >> >>>> pin.
+> > > >> >> >>>> +
+> > > >> >> >>>> +Optional properties:
+> > > >> >> >>>> +     - lane-count: number of DP lanes to use
+> > > >> >> >>>> +     - use-external-pwm: backlight will be controlled by =
+an
+> > > >> >> >>>> external PWM
+> > > >> >> >>>=20
+> > > >> >> >>> What does this mean? That the backlight support from ps8625=
+ is
+> > > >> >> >>> not used? If so, maybe "disable-pwm" or something?
+> > > >> >> >>=20
+> > > >> >> >> "use-external-pwm" or "disable-bridge-pwm" would be better.
+> > > >> >> >=20
+> > > >> >> > Well, the properties are about the bridge. "use-external-pwm"
+> > > >> >> > means that the bridge uses an external PWM, which, if I under=
+stood
+> > > >> >> > correctly, is not what the property is about.
+> > > >> >> >=20
+> > > >> >> > "disable-bridge-pwm" is ok, but the "bridge" there is extra. =
+The
+> > > >> >> > properties are about the bridge, so it's implicit.
+> > > >> >>=20
+> > > >> >> Ok. I will use "disable-pwm".
+> > > >> >=20
+> > > >> > Why is this even necessary? According to the datasheet this devi=
+ce
+> > > >> > has circuitry for backlight control. If so, I'd expect it to exp=
+ose
+> > > >> > either a backlight device or a PWM device. That way unless someb=
+ody
+> > > >> > is using the backlight/PWM exposed by the bridge the bridge can
+> > > >> > simply disable PWM.
+> > > >>=20
+> > > >> The driver does expose a backlight device.
+> > > >> And, the decision(whether to expose a backlight device or not) is =
+made
+> > > >> based on the DT flag "use-external-pwm".
+> > > >> This was discussed before, and you suggested to use the boolean
+> > > >> property, refer to this link:
+> > > >> http://lists.freedesktop.org/archives/dri-devel/2014-July/065048.h=
+tml
+> > > >=20
+> > > > I think you misunderstood what I said, or maybe I didn't explain cl=
+early
+> > > > what I meant. If the PS8622 provides a backlight there's nothing wr=
+ong
+> > > > with always exposing it. The bridge itself isn't going to be using =
+the
+> > > > backlight anyway. Rather the panel itself should be using the backl=
+ight
+> > > > device exposed by PS8622 or some separate backlight device.
+> > > >=20
+> > > > To illustrate by an example:
+> > > >         ps8622: ... {
+> > > >        =20
+> > > >                 compatible =3D "parade,ps8622";
+> > > >                 ...
+> > > >        =20
+> > > >         };
+> > > >        =20
+> > > >         panel {
+> > > >        =20
+> > > >                 ...
+> > > >                 backlight =3D <&ps8622>;
+> > > >                 ...
+> > > >        =20
+> > > >         };
+> > >=20
+> > > No, if ps8622 backlight control is used, we need not specify the back=
+light
+> > > phandle for the panel driver. Somehow, ps8622 internal circuitry keeps
+> > > the bootup glitch free :)
+> > > Backlight control and panel controls can be separate then.
 > >=20
-> > How do you represent that with a graph? Whether you describe it using a
-> > graph or a simple phandle you'll need additional nodes somewhere in
-> > between. Perhaps something like this:
+> > But they shouldn't. Your panel driver should always be the one to
+> > control backlight. How else is the bridge supposed to know when to turn
+> > backlight on or off?
 > >=20
-> > 	mux: ... {
-> > 		compatible =3D "gpio-mux-bridge";
+> > > > What you did in v6 of this series was look up a backlight device and
+> > > > then not use it. That seemed unnecessary. Looking at v6 again the r=
+eason
+> > > > for getting a phandle to the backlight was so that the device itsel=
+f did
+> > > > not expose its own backlight controlling circuitry if an external o=
+ne
+> > > > was being used. But since the bridge has no business controlling the
+> > > > backlight, having the backlight phandle in the bridge is not correc=
+t.
+> > > >=20
+> > > > So I think what you could do in the driver instead is always expose=
+ the
+> > > > backlight device. If the panel used a different backlight, the PS86=
+22's
+> > > > internal on simply wouldn't be accessed. It would still be possible=
+ to
+> > > > control the backlight in sysfs, but that shouldn't be a problem (on=
+ly
+> > > > root can access it)
+> > >=20
+> > > That would be like simple exposing a feature which cannot be used
+> > > by the user, ideally which "should not be" used by the user.
 > >=20
-> > 		gpio =3D <&gpio 42 GPIO_ACTIVE_HIGH>;
+> > And it won't be used unless they access the sysfs files directly. There
+> > are a lot of cases where we expose functionality that cannot be
+> > meaningfully used by the user. For example, a GPIO may not be routed to
+> > anything on a board, yet we don't explicitly hide any specific GPIOs
+> > from users.
 > >=20
-> > 		panel@0 {
-> > 			panel =3D <&panel0>;
-> > 		};
+> > > > That said, I have no strong objections to the boolean property if y=
+ou
+> > > > feel like it's really necessary.
+> > >=20
+> > > Won't you think having a boolean property for an optional
+> > > feature of the device, is better than all these?
 > >=20
-> > 		panel@1 {
-> > 			panel =3D <&panel1>;
-> > 		};
-> > 	};
-> >=20
-> > 	ps8622: ... {
-> > 		bridge =3D <&mux>;
-> > 	};
-> >=20
-> > 	panel0: ... {
-> > 		...
-> > 	};
-> >=20
-> > 	panel1: ... {
-> > 		...
-> > 	};
+> > Like I said, I'm indifferent on the matter. I don't think it's necessary
+> > to hide the backlight device, but if you want to, please feel free to do
+> > so.
 >=20
-> Yes, it's true we need a mux there. But we still have the complication
-> that for panel0 we may need different ps8622 settings than for panel1.
-
-Yes, and that's why the bridge should be querying the panel for the
-information it needs to determine the settings.
-
-> If that's the case, then I think we'd need to have two output endpoints
-> in ps8622, both going to the mux, and each having the settings for the
-> respective panel.
-
-But we'd be lying in DT. It no longer describes the hardware properly.
-The device only has a single input and a single output with no means to
-mux anything. Hence the device tree shouldn't be faking multiple inputs
-or outputs.
-
-> >>> If some XYZ platform wishes to pick the DT node via a different metho=
-d,
-> >>> they are always welcome to do it. Just because I am not specifying a
-> >>> video port/endpoint in the DT binding example, would it mean that pla=
-tform
-> >>> cannot make use of ports in future? If that is the case, I can add so=
-mething
-> >>
-> >> All the platforms share the same bindings for ps8622. If you now speci=
-fy
-> >> that ps8622 bindings use a simple phandle, then anyone who uses ps8622
-> >> should support that.
-> >>
-> >> Of course the bindings can be extended in the future. In that case the
-> >> drivers need to support both the old and the new bindings, which is
-> >> always a hassle.
-> >>
-> >> Generally speaking, I sense that we have different views of how display
-> >> devices and drivers are structured. You say "If some XYZ platform wish=
-es
-> >> to pick the DT node via a different method, they are always welcome to
-> >> do it.". This sounds to me that you see the connections between display
-> >> devices as something handled by a platform specific driver.
-> >>
-> >> I, on the other hand, see connections between display devices as common
-> >> properties.
-> >>
-> >> Say, we could have a display board, with a panel and an encoder and
-> >> maybe some other components, which takes parallel RGB as input. The sa=
-me
-> >> display board could as well be connected to an OMAP board or to an
-> >> Exynos board.
-> >>
-> >> I think the exact same display-board.dtsi file, which describes the
-> >> devices and connections in the display board, should be usable on both
-> >> OMAP and Exynos platforms. This means we need to have a common way to
-> >> describe video devices, just as we have for other things.
-> >=20
-> > A common way to describe devices in DT isn't going to give you that. The
-> > device tree is completely missing any information about how to access an
-> > extension board like that. The operating system defines the API by which
-> > the board can be accessed. I imagine that this would work by making the
-> > first component of the board a bridge of some sort and then every driver
-> > that supports that type of bridge (ideally just a generic drm_bridge)
-> > would also work with that display board.
+> DT typically use
 >=20
-> I'm not sure I follow.
+> 	status =3D "disabled"
 >=20
-> Obviously there needs to be board specific .dts file that brings the
-> board and the display board together. So, say, the display-board.dtsi
-> has a i2c touchscreen node, but the board.dts will tell which i2c bus
-> it's connected to.
->=20
-> Well, now as I wrote that, I wonder if that's possible... A node needs
-> to have a parent, and for i2c that must be the i2c master. Is that
-> something the DT overlays/fragments or such are supposed to handle?
->=20
-> But let's only think about the video path for now. We could have an
-> encoder and a panel on the board. We could describe the video path
-> between the encoder and the panel in the display-board.dts as that is
-> fixed. Then all that's needed in the board.dts is to connect the board's
-> video output to the encoders input with the video graph. Why would that
-> not work?
+> to disable devices. In this case we don't want to disable the ps8622=20
+> completely, but just one of its functions. Maybe a "backlight-status" pro=
+perty=20
+> could be used for that ? If that's considered too verbose, I would be fin=
+e=20
+> with a "disable-<feature>" boolean property too.
 
-My point is that the video graph isn't the solution to that problem.
-Having an OS abstraction for the devices involved is. DT is only the
-means to connect those devices.
+Another alternative would be to make the backlight a subnode:
 
-> Sure, there's more that's needed. Common encoder and panel drivers for
-> one. But it all starts with a common way to describe the video devices
-> and the connections in the DT. If we don't have that, we don't have
-> anything.
+	ps8622: bridge@... {
+		compatible =3D "parade,ps8622";
+		...
 
-I don't think we need to have a common way to describe video devices. In
-my opinion DT bindings are much better if they are specifically tailored
-towards the device that they describe. We'll provide a driver for that
-device anyway, so we should be creating appropriate abstractions at the
-OS level to properly handle them.
-
-To stay with the example of the board/display, I'd think that the final
-component of the board DT would implement a bridge. The first component
-of the display DT would similarly implement a bridge. Now if we have a
-way of chaining bridges and controlling a chain of bridges, then there
-is no need for anything more complex than a plain phandle in a property
-=66rom the board bridge to the display bridge.
-
-> > Whether this is described using a single phandle to the bridge or a more
-> > complicated graph is irrelevant. What matters is that you get a phandle
-> > to the bridge. The job of the operating system is to give drivers a way
-> > to resolve that phandle to some object and provide an API to access that
-> > object.
->=20
-> I agree it's not relevant whether we use a simple phandle or complex
-> graph. What matter is that we have a standard way to express the video
-> paths, which everybody uses.
-
-Not necessarily. Consistency is always good, but I think simplicity
-trumps consistency. What matters isn't how the phandle is referenced in
-the device tree, what matters is that it is referenced and that it makes
-sense in the context of the specific device. Anything else is the job of
-the OS.
-
-While there are probably legitimate cases where the video graph is
-useful and makes sense, in many cases terms like ports and endpoints are
-simply confusing.
+		backlight {
+			...
+			status =3D "disabled";
+			...
+		};
+	};
 
 Thierry
 
---jho1yZJdad60DJr+
+--bAmEntskrkuBymla
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUIQrwAAoJEN0jrNd/PrOhmDYQAKE0v4KU5Pj5FDVPpYq46Uvy
-GUn39lWVpvoGggueCdGjWdvD7irp5XyKXKyZTUSfo+CPLhAkBP4K64FxYkWZ5HGq
-2U3nM/bD/m9SvRT0Mu9PdQL/+9QJFZnhHZamUSu9tAOh2SG0aajrVMaAV1dkeGat
-9YdLE6phoEF+WFW720gaEiDmOH6YD114xZUjnywFhCLp4poztS6K0jgCgTaojjkR
-00Pk/hChg1TZmQbWBZsVhwmwTjkWYvDcujszqdOG5/efqJqdBhirGU9+lZUA7sEq
-e9qJSUuGUXRsIg5vmiBbpdb8UOStDeDrO5T/BeHpuHfvKEiaZVa6FExpyldMgFC+
-xv1ARxTyXHEzabOlKhhEYi5aAorvthsOVTCvLz/6mfOSvzOX2JfqlOLlIEqeuLge
-K0cnHScB3vRBOLZiELRI6XSP5Ewjhau35OvuB9exKisfN3Bw1L2Qtr9a+WEXQGfL
-0o8sxHEKYRvmA9lfC8O8Xh2VbE24jZOAEs8/1oc8lhxQNI/TrvKCvBBS+qFEEUJ2
-zbzhhFzgl+fjT9V+O60VDPhZp3Y4n/GmvjbXiiXS8JcDndLhoQRRM0g2jF1k7Tck
-YlprhkFabPs0c7fxHmpZ4PXIYxu/sCxVTmtcyr51E2lCygCuTbV0R22lRYMb++t1
-wFN0zGdqCq60ATgKaQNa
-=1WIc
+iQIcBAEBAgAGBQJUIQtVAAoJEN0jrNd/PrOhbPAP+wQISkiVV77/2w/OrVBhNM3I
+zsJX5+vKObTrrbtxLa3nWGQJsWruia7ES68o1USY+AACM0MoCUisxOcaGexP6pag
+AGVwAQ3GbaclvPFlKQTVhCCNDF6vYUgtdJFrwUxOFShiKcxK7LaE0YAnE8txtviB
+mqkHOg9hNndghribPOmv+C903X1FZXClW6LczcUA4vm5vz5jvEliyr2nRlEXWBEv
+rLuzjsCaWMxcr44oM36M390ZbITFJKYxCIrmJFwXPdtBL/1fEKDN/hm+Ax9HJStj
+urSu3qcrmJRNNqYey4xbu9G5aNbizt/ZJtWyS9piFldLTSbwtfv0sGbLPa2Ro7fp
+IhX84kBmBHmhDSx2TyjBsKpcXcXosi14vWYcSnQo1wF9Q3tYwIBq/Ngb581DFMGh
+lOwDJIW+FSwvocO0vyDRpHwwPNlS8eyhBNdDUeTu/dk8sunVZQ2QVRKDFfJeBjLu
+aWTLuNcCRezjwJPcQBE6bmthWJxxdg9MR1oJsCouwK+gwQP3avJVG2zm6s1ncxOQ
+p1cW4jynPO7Lkz90EmUq7SZEBmsb8UDMNfVy5jRKiuL1ogVFQB5AoQ9Mau1i50a5
+Ciqex63x/alV3G49yj4lXTBqiGKUKqD9eFodru8kUu0tkdUGlSDUO0GUhjT16dM5
+aYI3CheHW7pOn0Clo93h
+=0Xry
 -----END PGP SIGNATURE-----
 
---jho1yZJdad60DJr+--
+--bAmEntskrkuBymla--
 
---===============2135436951==
+--===============1835892438==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -249,4 +257,4 @@ dri-devel mailing list
 dri-devel@lists.freedesktop.org
 http://lists.freedesktop.org/mailman/listinfo/dri-devel
 
---===============2135436951==--
+--===============1835892438==--
