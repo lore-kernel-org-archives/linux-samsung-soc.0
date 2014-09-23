@@ -1,15 +1,15 @@
 From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
  ps8622 DT properties
-Date: Tue, 23 Sep 2014 16:49:38 +0200
-Message-ID: <20140923144937.GG5982@ulmo>
+Date: Tue, 23 Sep 2014 16:50:52 +0200
+Message-ID: <20140923145051.GH5982@ulmo>
 References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
- <26633587.NifLIetGL4@avalon> <54215DDC.3050909@samsung.com>
- <2238934.uLuAbtBXFj@avalon>
+ <54213DAC.5010806@ti.com> <20140923095314.GS30514@ulmo>
+ <8067599.NmrXQIO5A1@avalon>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1210435607=="
+Content-Type: multipart/mixed; boundary="===============1112437413=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <2238934.uLuAbtBXFj@avalon>
+In-Reply-To: <8067599.NmrXQIO5A1@avalon>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -20,85 +20,105 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, seanpaul@google.com, daniel.vetter@ffwll.ch, joshi@samsung.com, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, ajaynumb@gmail.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, seanpaul@google.com, daniel.vetter@ffwll.ch, joshi@samsung.com, dri-devel@lists.freedesktop.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, ajaynumb@gmail.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---===============1210435607==
+--===============1112437413==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Zrag5V6pnZGjLKiw"
+	protocol="application/pgp-signature"; boundary="bpVaumkpfGNUagdU"
 Content-Disposition: inline
 
 
---Zrag5V6pnZGjLKiw
+--bpVaumkpfGNUagdU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 23, 2014 at 02:52:24PM +0300, Laurent Pinchart wrote:
-> On Tuesday 23 September 2014 13:47:40 Andrzej Hajda wrote:
-> > On 09/23/2014 01:23 PM, Laurent Pinchart wrote:
-[...]
-> > > This becomes an issue even on Linux when considering video-related de=
-vices
-> > > that can be part of either a capture pipeline or a display pipeline. =
-If
-> > > the link always goes in the data flow direction, then it will be easy=
- to
-> > > locate the downstream device (bridge or panel) from the display contr=
-oller
-> > > driver, but it would be much more difficult to locate the same device=
- from
-> > > a camera driver as all of a sudden the device would become an upstream
-> > > device.
+On Tue, Sep 23, 2014 at 02:12:52PM +0300, Laurent Pinchart wrote:
+> On Tuesday 23 September 2014 11:53:15 Thierry Reding wrote:
+> > On Tue, Sep 23, 2014 at 12:30:20PM +0300, Tomi Valkeinen wrote:
+> > > On 23/09/14 09:21, Thierry Reding wrote:
+> > > >> Well, I can write almost any kind of bindings, and then evidently =
+my
+> > > >> device would work. For me, on my board.
+> > > >=20
+> > > > Well, that's the whole problem with DT. For many devices we only ha=
+ve a
+> > > > single setup to test against. And even when we have several they of=
+ten
+> > > > are derived from each other. But the alternative would be to defer
+> > > > (possibly indefinitely) merging support for a device until a second,
+> > > > wildly different setup shows up. That's completely unreasonable and=
+ we
+> > > > need to start somewhere.
+> > >=20
+> > > Yes, but in this case we know of existing boards that have complex
+> > > setups. It's not theoretical.
 > >=20
-> > Why?
+> > Complex setups involving /this particular/ bridge and binding are
+> > theoretical at this point, however.
 > >=20
-> > If you have graph:
-> > sensor --> camera
+> > > > phandles should simply point to the next element in the pipeline an=
+d the
+> > > > OS abstractions should be good enough to handle the details about h=
+ow to
+> > > > chain the elements.
+> > >=20
+> > > I, on the other hand, would rather see the links the other way around.
+> > > Panel having a link to the video source, etc.
 > >=20
-> > Then camera register itself in some framework as a destination device
-> > and sensor looks in this framework for the device identified by remote
-> > endpoint.
-> > Then sensor tells camera it is connected to it and voila.
+> > Why? It seems much more natural to describe this using the natural flow
+> > of data. The device furthest away from the CPU should be the target of
+> > the phandle. That way the DT can be used to trace the flow of data down
+> > the pipeline.
+> >=20
+> > > The video graphs have two-way links, which of course is the safest
+> > > options, but also more verbose and redundant.
+> >=20
+> > Right. If we take that line of thinking to the extreme we end up listing
+> > individual registers in DT so that we can safely assume that we can
+> > control all possible aspects of the device.
 >=20
-> Except that both kernelspace and userspace deal with cameras the other wa=
-y=20
-> around, the master device is the camera receiver, not the camera sensor. =
-DRM=20
-> is architected the same way, with the component that performs DMA operati=
-ons=20
-> being the master device.
+> And the other extreme would be to have a single DT node for the logical v=
+ideo=20
+> device with all information pertaining to it stored in C code. Extremes a=
+re=20
+> never good, we need to find a reasonable middle-ground here. I believe OF=
+=20
+> graph fulfills that requirement, it might be slightly more verbose than a=
+=20
+> single phandle, but it's also much more versatile.=20
 
-I don't see what's wrong with having the camera reference the sensor by
-phandle instead. That's much more natural in my opinion.
+Oh well, yet another one of these things where we'll never reach an
+agreement I guess.
 
 Thierry
 
---Zrag5V6pnZGjLKiw
+--bpVaumkpfGNUagdU
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUIYiBAAoJEN0jrNd/PrOh4yAQAJi8l8NkOTwAU7jiJEAkAIiQ
-FAlJiiMEqthUAMMabQkLWAKfqjFGeWUBBqKvOvNookBSTWdZ/+It08/Y38DAwZCm
-ZXjqTvWB0bDiKeR9oDCTfu2Zm+8KDJKZWNJ+rJ06MEoiOSeupFgPUsFmEglIxgFd
-Xzpzx5v+pUmsDYm6hJeltUEccI6yr5QY9EuiQ+l2C7E3GtcWpeH6djvHzhiE915M
-ENUbA/F9hH2XSePHO4puQIN1/l+lRKgEFP0rG09t7bTlTOJdVtgLAL3aRzSY2MMU
-LSJPVGjNEcg6kBZ6IpmIMw3zQrirMbHVsBSRTfa3P4yEZMOVnl2FRIg7V+EjHRn5
-VGLG6HZFbHXhQ1QhhrGOqrfSlnHl0cQvvKykaeAsm8R1eDlb4zzoA/zsluveOrLk
-fh9QC/e9KNDO4qIPWiHdyKvObdae+k9vP3SxI5SiRP/d34NFRNIfGQoauGNrQLq4
-depcQv9YSainL3xoQuhQhnBkOGOMdxe01OWqTTqsavqqDDsmkEnKKG3QscI0zB/i
-AzTSPVQxGmygxwbTQMTb62T8aT/QngDjw4JRcyLgsKUoAHaUKoVhlKOHtwZIKqT8
-UIFO8xexDl7OJxlkOz5h9RfFZTzaXMhLlkbe/NWo3Q96/3puTUQKyqYFrhaI8zoP
-zDkqxvR0q7jc8LwfSOtI
-=21fk
+iQIcBAEBAgAGBQJUIYjLAAoJEN0jrNd/PrOhy7kP/3my4pSifsbGN241kJSCDMHa
++0e2yJ2iY2VKK4AAlkiJtDNXgZXf9eV1MbCRDhkDCSRbMo7+jk1iEqA6KjSD025I
+9yBJ3y1gsG1qRyxG3T0pAxn5VLxxbI8tJzQvhFHjKPbg5tf3uEk2+lUdcC3Unvd6
+hHPqUo8aCDWv7WRlJlBuT6TQBUCRebmt/rupKpdwr3YWqSf2gxw/PhB98ARPsVYn
+c/ZIWP/O/cSjJg24XCLGXGR7Xgah+mJa1fF9IvkquYuiH8+ov7bz9Rhc0sbiHL12
+hGvmdle/v3eqHCn8FN3OI7zsqZICwAqRormM4Sh6QomaSmdhf+juylnY3/PodcmV
+FJnVK0VoqQ5+yf1ySqjsrF5m3oMz4nxjAwm64yUXstud41O5AmKe83f9su7OlZgv
+onlaZdhLFO55Hfgejxnh8nGu5O+tYeI5yAEvOiTQV79l8MRaWY1o76vuScLLKVGL
+8G+nGxYuHv5IgeNCMxzUp9Rym2EzNd5h8/ij7ZKYJ+BUQxYE72nDej5OsyIYmwP0
+tgt/AElHTzVZ66wchHeiM6A35s9nLMkWhj1El5O1xocKdX7WrWAtLbwvKp1iJFuc
+SZg0d3uvhf3VhqHeKDfAgVavQo41rZouRYz+C46YfdZXPvS/deOiIWswBwGXijzp
+oSdfnC+yTz/eDEI3fu4P
+=t+Bk
 -----END PGP SIGNATURE-----
 
---Zrag5V6pnZGjLKiw--
+--bpVaumkpfGNUagdU--
 
---===============1210435607==
+--===============1112437413==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -109,4 +129,4 @@ dri-devel mailing list
 dri-devel@lists.freedesktop.org
 http://lists.freedesktop.org/mailman/listinfo/dri-devel
 
---===============1210435607==--
+--===============1112437413==--
