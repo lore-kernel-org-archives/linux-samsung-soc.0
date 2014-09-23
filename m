@@ -1,18 +1,18 @@
 From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
  ps8622 DT properties
-Date: Tue, 23 Sep 2014 16:38:55 +0200
-Message-ID: <20140923143854.GD5982@ulmo>
+Date: Tue, 23 Sep 2014 16:41:28 +0200
+Message-ID: <20140923144127.GE5982@ulmo>
 References: <CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com>
  <5419B52D.4060107@ti.com> <20140922080629.GC1470@ulmo>
  <542030DD.3060906@ti.com> <20140923060452.GD30514@ulmo>
  <5421201C.6000509@samsung.com> <20140923083514.GM30514@ulmo>
- <54214008.4040105@ti.com> <20140923100139.GT30514@ulmo>
- <54216308.2050500@ti.com>
+ <542140D3.8080806@samsung.com> <20140923101032.GU30514@ulmo>
+ <54214CCE.7050102@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1998708128=="
+Content-Type: multipart/mixed; boundary="===============0359028171=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <54216308.2050500@ti.com>
+In-Reply-To: <54214CCE.7050102@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -22,96 +22,103 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---===============1998708128==
+--===============0359028171==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="n/aVsWSeQ4JHkrmm"
+	protocol="application/pgp-signature"; boundary="WK3l2KTTmXPVedZ6"
 Content-Disposition: inline
 
 
---n/aVsWSeQ4JHkrmm
+--WK3l2KTTmXPVedZ6
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 23, 2014 at 03:09:44PM +0300, Tomi Valkeinen wrote:
-> On 23/09/14 13:01, Thierry Reding wrote:
-> > On Tue, Sep 23, 2014 at 12:40:24PM +0300, Tomi Valkeinen wrote:
-[...]
-> >> What exactly is a bridge and what is an encoder? Those are DRM
-> >> constructs, aren't they?
-> >=20
-> > Yes. I think bridges are mostly a superset of encoders.
+On Tue, Sep 23, 2014 at 12:34:54PM +0200, Andrzej Hajda wrote:
+> On 09/23/2014 12:10 PM, Thierry Reding wrote:
+> > On Tue, Sep 23, 2014 at 11:43:47AM +0200, Andrzej Hajda wrote:
+> >> On 09/23/2014 10:35 AM, Thierry Reding wrote:
+> > [...]
+> >>> But I agree that it would be nice to unify bridges and encoders more.=
+ It
+> >>> should be possible to make encoder always a bridge (or perhaps even
+> >>> replace encoders with bridges altogether). Then once you're out of the
+> >>> DRM device everything would be a bridge until you get to a panel.
+> >> I agree that some sort of unification of bridges, (slave) encoders is =
+a good
+> >> thing, this way we stay only with bridges and panels as receivers.
+> >> But we will still have to deal with the code like:
+> >>     if (on the other end of the link is panel)
+> >>         do panel framework specific things
+> >>     else
+> >>         do bridge framework specific things
+> >>
+> >> The code in both branches usually does similar things but due to frame=
+work
+> >> differences it is difficult to merge.
+> > That's because they are inherently different entities. You can perform
+> > operations on a panel that don't make sense for a bridge and vice-versa.
+> >
+> >> Ideally it would be best to get rid of such constructs. For example by
+> >> trying to
+> >> make frameworks per interface type exposed by device (eg. video_sink) =
+and
+> >> not by device type (drm_bridge, drm_panel).
+> > But then you loose all information about the real type of device.
+> Driver knows type of its device anyway. Why should it know device
+> type of devices it is connected to? It is enough it knows how to talk to
+> other device.
+> Like in real world, why desktop PC should know it is connected to DVI
+> monitor or to
+> DVI/HDMI converter which is connected to TV?
+
+TVs are much more standardized. There are things like DDC/CI which can
+be used to control the device. Or there's additional circuitry or
+control paths to change things like brightness. The same isn't true of
+panels.
+
+> >  Or you
+> > have to create a common base class. And then you're still back to
+> > dealing with the two specific cases in many places, so the gain seems
+> > rather minimal.
 >=20
-> Superset in what way? If I have a SiI9022 RGB-to-HDMI encoder embedded
-> into my SoC (i.e. a DRM encoder), or I have a board with a SiI9022
-> encoder on the board (i.e. a DRM bridge), what is different?
+> For example RGB panel and RGB/??? bridge have the same hardware input
+> interface.
+> Why shall they have different representation in kernel?
 
-Superset in what they represent from a software point of view. As in:
-an encoder /is a/ bridge. Though they aren't currently implemented that
-way.
-
-> >> As I see it, a video pipeline consist of a video source (display
-> >> controller usually), a chain of encoders (all of which may not be
-> >> strictly "encoders", they could be level shifters, muxes, ESD protecti=
-on
-> >> devices or such), and either a display device like a panel or a
-> >> connector to outside world.
-> >=20
-> > Well, the panel itself is attached to a connector. The connector is
-> > really what userspace uses to control the output and indirectly the
-> > panel.
->=20
-> Yep. That's also something that should be fixed. A connector SW entity
-> is fine when connecting an external monitor, but a panel directly
-> connected to the SoC does not have a connector, and it's the panel that
-> should be controlled from the userspace.
-
-I disagree. A panel is usually also attached using some sort of
-connector. Maybe not an HDMI, VGA or DP connector, but still some sort
-of connector where often it can even be removed.
-
-Panels are theoretically hot-pluggable, too, much in the same way that
-monitors are.
-
-> But again, the legacy...
-
-You've got to make the abstraction somewhere, and I'm quite surprised
-actually how well the DRM abstractions are working out. I mean we can
-support anything from HDMI to DP to eDP, DSI and LVDS with just the
-connector abstraction and it all just works. That makes it a pretty
-good abstraction in my book.
+Because panels have different requirements than bridges. Panels for
+example require the backlight to be adjustable, bridges don't.
 
 Thierry
 
---n/aVsWSeQ4JHkrmm
+--WK3l2KTTmXPVedZ6
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUIYX+AAoJEN0jrNd/PrOhLjkP/17XiQSB7ueK0cOH+A62xnh/
-J/DSJ6UjelnZ3lvoUhViydBoSyp/duf3rAHRT0M+o9HvbW/qB+a4D6SA6sIR+4bp
-swuAXQBgHo0lWRyriOfY6CXq/9luhuc+Nd9sv433OwymL+SjRKndU8IMFI2eSDCN
-RMhapO4ZomB3/bF0P6NG+v9I31h/Zdtz3xqn1JmaIIp/5pHZ6viIbt7dDdXz+LiG
-JaPJuyJPwfTctkMS9TraGm+R1mHOX5fHm3sU8pp5BeRRbFB3TkUeKb7CHTsE+yUf
-SZgFGQuCKs+RU65HHJX5jiPpmWMPCbPWp1UVww0jwZs1bKdDrKd1sUFuENlI38zR
-bjJyVYe4uJb56hdD3VM0HJgWmKHTPraxu++9RwI9xBEGQ+okOdXEV6puJB8bju90
-oNnxb3D7z4wkHxvJIKVOnSTfgFyltipmdcKudPf2pyefWSQbbqQA11+hHomZfd2I
-wZNZnwda3/agDRmPgmTf++Rn4g8tnV60gQSPwTVDc68T4+lS+ltM38C/RazL+/a/
-SSrLfLxTPMS8Gp8tqH8sqPdK20kjP48hmHvFZv8pSb1DgncOMmzSMx1/A0tEadjx
-8LA+A7gq/0yk5F6d8BoyGmTDXe4MAzHVwBGjv/AlQ9kbZLpDx4fWY4a/a7wJiLeD
-xYaJdXwqcHe4V0jV6YYb
-=DspQ
+iQIcBAEBAgAGBQJUIYaXAAoJEN0jrNd/PrOhfqAQAL46pjj3cVUDfUQn7CFcyaek
+hI5HPyMBDkyrIDgc48F/FtGR3DtvV2KexfgHsThBXM1FKsrDSO697kYN5Cqmo0s6
+VUWsed6gnqOkFsPNvwXhkLlHYWHLonK5nR60UFcG39KP0Dh4D4d/2kRYCyiLiC7E
+a6xS/pkbjtU805Mk2HZIy1ItFpyAEZJjtcqfGoiHtd7js0cU2W8Dm2TZ7Q53jcKc
+4vl/MOCxlES7Oz+2Uc4x6DOG19zvX3OKA3QdkqRa/ePYj5Cxc6qvfUbd0ltJLcV+
+CHqEn1+yWlfVRBeo39y4B0o7vhc+pnqpD0u7HE/uSsCjkMfhw2VXLmCMnp0miJ9Z
+tqxN1036z+ME70tu/uPGq8lAsh7LlH9lMRsG+dNGOxBRXhTYehtQmx+qHBCYfavI
+bg+xPmFYQoDExOYUSvoHxK8L3lRv3LsEH3Ai/FnfBPhdzM5JpltqOtIqYPjCTPRV
+/3ZrhiD/qzPcSUu/fLFKhq2oKrp/rxZm2TEo5YEukpgdPzR7DdeZWRs6vo1H2gKT
+C2AeF+5VaZX3ea9hJMiEOfzdCAvX2ouXsinzWfC7/WcbEbxyXv1ybGcj2C8k0CTo
+x2uJQY8NV1jemlgrDuyB7roTveBpbg9/7JYfUdSeQBl57bqnkx1mnZDZgzk30BTy
+FvMspTyHwca6bmzrUCO9
+=FMx4
 -----END PGP SIGNATURE-----
 
---n/aVsWSeQ4JHkrmm--
+--WK3l2KTTmXPVedZ6--
 
---===============1998708128==
+--===============0359028171==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -122,4 +129,4 @@ dri-devel mailing list
 dri-devel@lists.freedesktop.org
 http://lists.freedesktop.org/mailman/listinfo/dri-devel
 
---===============1998708128==--
+--===============0359028171==--
