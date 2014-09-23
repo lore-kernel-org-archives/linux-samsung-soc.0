@@ -1,74 +1,78 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: Remove goni or aquila with the WM8994
-Date: Mon, 22 Sep 2014 18:04:18 -0700
-Message-ID: <20140923010418.GI7960@sirena.org.uk>
-References: <1404496099-26708-1-git-send-email-t.figa@samsung.com>
- <53C675E4.4020502@samsung.com>
- <1409825105.5546.91.camel@x220>
- <201409041802.36466.arnd@arndb.de>
- <1411033409.2017.15.camel@x220>
- <20140918175752.GC7960@sirena.org.uk>
- <1411077427.2012.6.camel@x41>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [RFC PATCH 2/5] devfreq: event: Add exynos-ppmu devfreq evnet
+ driver
+Date: Tue, 23 Sep 2014 11:11:26 +0900
+Message-ID: <5420D6CE.7050606@samsung.com>
+References: <1409891419-28560-1-git-send-email-cw00.choi@samsung.com>
+ <1409891419-28560-3-git-send-email-cw00.choi@samsung.com>
+ <1410511274.31130.7.camel@x220>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="yTlutJeUbbRRO0QT"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58067 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753328AbaIWBFR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Sep 2014 21:05:17 -0400
-Content-Disposition: inline
-In-Reply-To: <1411077427.2012.6.camel@x41>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1410511274.31130.7.camel@x220>
+Sender: linux-pm-owner@vger.kernel.org
 To: Paul Bolle <pebolle@tiscali.nl>
-Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, Arnd Bergmann <arnd@arndb.de>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: myungjoo.ham@samsung.com, linux-pm@vger.kernel.org, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, a.kesavan@samsung.com, kgene.kim@samsung.com, tomasz.figa@gmail.com, b.zolnierkie@samsung.com, nm@ti.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi Paul,
 
---yTlutJeUbbRRO0QT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 09/12/2014 05:41 PM, Paul Bolle wrote:
+> On Fri, 2014-09-05 at 13:30 +0900, Chanwoo Choi wrote:
+>> This patch add exynos-ppmu devfreq event driver to provider raw data about
+>> the utilization of each IP in Exynos SoC series.
+>>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>  drivers/devfreq/Kconfig             |  10 +
+>>  drivers/devfreq/event/Makefile      |   1 +
+>>  drivers/devfreq/event/exynos-ppmu.c | 410 ++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 421 insertions(+)
+>>  create mode 100644 drivers/devfreq/event/exynos-ppmu.c
+>>
+>> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+>> index ef839e7..4fbbcea 100644
+>> --- a/drivers/devfreq/Kconfig
+>> +++ b/drivers/devfreq/Kconfig
+>> @@ -90,4 +90,14 @@ config ARM_EXYNOS5_BUS_DEVFREQ
+>>  
+>>  comment "DEVFREQ Event Drivers"
+>>  
+>> +config DEVFREQ_EVENT_EXYNOS_PPMU
+>> +	bool "EXYNOS PPMU (Performance Profiling Monitoring Unit) DEVFREQ event Driver"
+>> +	depends on ARCH_EXYNOS
+>> +	select ARCH_HAS_OPP
+> 
+> This select statement can be dropped: see commit 78c5e0bb145d ("PM /
+> OPP: Remove ARCH_HAS_OPP").
 
-On Thu, Sep 18, 2014 at 11:57:07PM +0200, Paul Bolle wrote:
-> Mark Brown schreef op do 18-09-2014 om 10:57 [-0700]:
-> > On Thu, Sep 18, 2014 at 11:43:29AM +0200, Paul Bolle wrote:
+I'll drop it. 
 
-> > > Done on top of next-20140918. Untested.
-> > > --------->8---------
-> > > From: Paul Bolle <pebolle@tiscali.nl>
+> 
+> By the way: there's a typo in the commit summary ("evnet").
 
-> > Please follow the patch submission process in SubmittingPatches.
+My mistake, I'll fix typo.
 
-> Could you please be more specific? What part of SubmittingPatches have I
-> skipped?
+Thanks for your review.
+Chanwoo Choi
 
-> Is it the perhaps the use of scissors? Or the superfluous From: line?
-> "git am -c" appears to handle this message (and the very similar message
-> I also sent today) just fine.
+> 
+>> +	select PM_OPP
+>> +	help
+>> +	 This add the DEVFREQ event driver for Exynos SoC. It provides PPMU
+>> +	 (Performance Profiling Monitoring Unit) counters to estimate the
+>> +	 utilization of each module.
+>> +
+>>  endif # PM_DEVFREQ
+> 
+> 
+> Paul Bolle
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
 
-It's the fact that you've included the patch in the middle of the reply
-to another mail in the middle of a thread after some other stuff; you
-can tell this isn't the normal process by observing that your mail
-doesn't look visually close to a normal patch submission - if that's the
-case then people aren't likely to sit around and try to figure out some
-magic set of git options needed, manually edit or otherwise special case
-to special case it unless it's *really* important.
-
---yTlutJeUbbRRO0QT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUIMcSAAoJECTWi3JdVIfQ64cH/2/QUk0EuKSNmD7qjgFbn3FV
-ewc5aJlqwgBcYcd5LnubLp61YHeALIVfM7b++JjtNSwQsBLlOqTWp6F7Y1IHRwhk
-tOpf8xlJ6ADbqfGlHUYwuvozZHepO9bMcemNc4CpTE68xcBMGrlRWEyYi1vwYW9p
-JDS10eF1MhoVOaDEkjoVwIMAXBiUbPBfLh/WfGoFPyqsKzoy0U2lQ3eIPLwQrYxm
-wbdiCFRmAAOQUJhYMvHGXXzJfHNf5AP6Px8B6ZBTzTXHMxZoCh4gVCxQEssHaBH1
-7I7nVsK+XX5dgF2pOM+zlRFIgd9XcfOW+HZWH7av0u1nrnLe0sgfrIevARMI53E=
-=1HDE
------END PGP SIGNATURE-----
-
---yTlutJeUbbRRO0QT--
