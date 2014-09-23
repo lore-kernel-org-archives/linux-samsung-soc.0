@@ -1,229 +1,195 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for ps8622 DT properties
-Date: Tue, 23 Sep 2014 03:00:37 +0300
-Message-ID: <7550026.qs7FRi8hDC@avalon>
-References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com> <CAEC9eQOSFj-NWVYCtdcQz0nFM+1rVxPeC76eBdj-X4w+HWujZA@mail.gmail.com> <20140922113514.GS1470@ulmo>
+Subject: Re: [PATCH V6 6/8] drm/bridge: Modify drm_bridge core to support driver model
+Date: Tue, 23 Sep 2014 03:29:13 +0300
+Message-ID: <3478703.M4FqhaqXMa@avalon>
+References: <1406316130-4744-1-git-send-email-ajaykumar.rs@samsung.com> <3764548.s4ysdtHE5z@avalon> <20140922074037.GA1470@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart1919974.rbhijzjc4y"; micalg="pgp-sha1"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; boundary="nextPart15343923.Pt2zlWJ9ll"; micalg="pgp-sha1"; protocol="application/pgp-signature"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:43886 "EHLO
+Received: from galahad.ideasonboard.com ([185.26.127.97]:43892 "EHLO
 	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752686AbaIWAAq (ORCPT
+	with ESMTP id S1751619AbaIWA3Q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Sep 2014 20:00:46 -0400
-In-Reply-To: <20140922113514.GS1470@ulmo>
+	Mon, 22 Sep 2014 20:29:16 -0400
+In-Reply-To: <20140922074037.GA1470@ulmo>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Ajay kumar <ajaynumb@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, InKi Dae <inki.dae@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
+Cc: Ajay kumar <ajaynumb@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Rob Clark <robdclark@gmail.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sean Paul <seanpaul@google.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Sean Cross <xobs@kosagi.com>
 
 
---nextPart1919974.rbhijzjc4y
+--nextPart15343923.Pt2zlWJ9ll
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="us-ascii"
 
-On Monday 22 September 2014 13:35:15 Thierry Reding wrote:
-> On Mon, Sep 22, 2014 at 04:53:22PM +0530, Ajay kumar wrote:
-> > On Mon, Sep 22, 2014 at 4:11 PM, Thierry Reding wrote:
-> > > On Mon, Sep 22, 2014 at 02:01:38PM +0530, Ajay kumar wrote:
-> > >> On Mon, Sep 22, 2014 at 1:40 PM, Thierry Reding wrote:
-> > >> > On Thu, Sep 18, 2014 at 11:20:40AM +0530, Ajay kumar wrote:
-> > >> >> On Wed, Sep 17, 2014 at 9:52 PM, Tomi Valkeinen wrote:
-> > >> >> > On 17/09/14 17:29, Ajay kumar wrote:
-> > >> >> >> On Wed, Sep 17, 2014 at 5:22 PM, Tomi Valkeinen wrote:
-> > >> >> >>> On 27/08/14 17:39, Ajay Kumar wrote:
-> > >> >> >>>> Add documentation for DT properties supported by ps8622/=
-ps8625
-> > >> >> >>>> eDP-LVDS converter.
-> > >> >> >>>>=20
-> > >> >> >>>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> > >> >> >>>> ---
-> > >> >> >>>>=20
-> > >> >> >>>>  .../devicetree/bindings/video/bridge/ps8622.txt    |   =
-20
-> > >> >> >>>>  ++++++++++++++++++++ 1 file changed, 20 insertions(+)
-> > >> >> >>>>  create mode 100644
-> > >> >> >>>>  Documentation/devicetree/bindings/video/bridge/ps8622.t=
-xt
-> > >> >> >>>>
-> > >> >> >>>> diff --git
-> > >> >> >>>> a/Documentation/devicetree/bindings/video/bridge/ps8622.=
-txt
-> > >> >> >>>> b/Documentation/devicetree/bindings/video/bridge/ps8622.=
-txt
-> > >> >> >>>> new file mode 100644
-> > >> >> >>>> index 0000000..0ec8172
-> > >> >> >>>> --- /dev/null
-> > >> >> >>>> +++ b/Documentation/devicetree/bindings/video/bridge/ps8=
-622.txt
-> > >> >> >>>> @@ -0,0 +1,20 @@
-> > >> >> >>>> +ps8622-bridge bindings
-> > >> >> >>>> +
-> > >> >> >>>> +Required properties:
-> > >> >> >>>> +     - compatible: "parade,ps8622" or "parade,ps8625"
-> > >> >> >>>> +     - reg: first i2c address of the bridge
-> > >> >> >>>> +     - sleep-gpios: OF device-tree gpio specification f=
-or PD_
-> > >> >> >>>> pin.
-> > >> >> >>>> +     - reset-gpios: OF device-tree gpio specification f=
-or RST_
-> > >> >> >>>> pin.
-> > >> >> >>>> +
-> > >> >> >>>> +Optional properties:
-> > >> >> >>>> +     - lane-count: number of DP lanes to use
-> > >> >> >>>> +     - use-external-pwm: backlight will be controlled b=
-y an
-> > >> >> >>>> external PWM
-> > >> >> >>>=20
-> > >> >> >>> What does this mean? That the backlight support from ps86=
-25 is
-> > >> >> >>> not used? If so, maybe "disable-pwm" or something?
-> > >> >> >>=20
-> > >> >> >> "use-external-pwm" or "disable-bridge-pwm" would be better=
-.
-> > >> >> >=20
-> > >> >> > Well, the properties are about the bridge. "use-external-pw=
-m"
-> > >> >> > means that the bridge uses an external PWM, which, if I und=
-erstood
-> > >> >> > correctly, is not what the property is about.
-> > >> >> >=20
-> > >> >> > "disable-bridge-pwm" is ok, but the "bridge" there is extra=
-. The
-> > >> >> > properties are about the bridge, so it's implicit.
-> > >> >>=20
-> > >> >> Ok. I will use "disable-pwm".
-> > >> >=20
-> > >> > Why is this even necessary? According to the datasheet this de=
-vice
-> > >> > has circuitry for backlight control. If so, I'd expect it to e=
-xpose
-> > >> > either a backlight device or a PWM device. That way unless som=
-ebody
-> > >> > is using the backlight/PWM exposed by the bridge the bridge ca=
-n
-> > >> > simply disable PWM.
-> > >>=20
-> > >> The driver does expose a backlight device.
-> > >> And, the decision(whether to expose a backlight device or not) i=
-s made
-> > >> based on the DT flag "use-external-pwm".
-> > >> This was discussed before, and you suggested to use the boolean
-> > >> property, refer to this link:
-> > >> http://lists.freedesktop.org/archives/dri-devel/2014-July/065048=
-.html
+Hi Thierry,
+
+On Monday 22 September 2014 09:40:38 Thierry Reding wrote:
+> On Wed, Sep 17, 2014 at 12:27:13PM +0300, Laurent Pinchart wrote:
+> > On Wednesday 17 September 2014 14:37:30 Ajay kumar wrote:
+> > > On Mon, Sep 15, 2014 at 11:07 PM, Laurent Pinchart wrote:
+> > > > Hi Ajay,
+> > > >=20
+> > > > Thank you for the patch.
+> > > >=20
+> > > > I think we're moving in the right direction, but we're not ther=
+e yet.
+> > > >=20
+> > > > On Saturday 26 July 2014 00:52:08 Ajay Kumar wrote:
+> > > >> This patch tries to seperate drm_bridge implementation
+> > > >> into 2 parts, a drm part and a non_drm part.
+> > > >>=20
+> > > >> A set of helper functions are defined in this patch to make
+> > > >> bridge driver probe independent of the drm flow.
+> > > >>=20
+> > > >> The bridge devices register themselves on a lookup table
+> > > >> when they get probed by calling "drm_bridge_add_for_lookup".
+> > > >>=20
+> > > >> The parent encoder driver waits till the bridge is available i=
+n the
+> > > >> lookup table(by calling "of_drm_find_bridge") and then continu=
+es with
+> > > >> its initialization.
+> > > >=20
+> > > > Before the introduction of the component framework I would have=
+ said
+> > > > this is the way to go. Now, I think bridges should register the=
+mselves
+> > > > as components, and the DRM master driver should use the compone=
+nt
+> > > > framework to get a reference to the bridges it needs.
 > > >=20
-> > > I think you misunderstood what I said, or maybe I didn't explain =
-clearly
-> > > what I meant. If the PS8622 provides a backlight there's nothing =
-wrong
-> > > with always exposing it. The bridge itself isn't going to be usin=
-g the
-> > > backlight anyway. Rather the panel itself should be using the bac=
-klight
-> > > device exposed by PS8622 or some separate backlight device.
-> > >=20
-> > > To illustrate by an example:
-> > >         ps8622: ... {
-> > >        =20
-> > >                 compatible =3D "parade,ps8622";
-> > >                 ...
-> > >        =20
-> > >         };
-> > >        =20
-> > >         panel {
-> > >        =20
-> > >                 ...
-> > >                 backlight =3D <&ps8622>;
-> > >                 ...
-> > >        =20
-> > >         };
+> > > Well, I have modified the bridge framework exactly the way Thierr=
+y
+> > > wanted it to be, I mean the same way the current panel framework =
+is.
+> > > And, I don't think there is a problem with that.
+> > > What problem are you facing with current bridge implementation?
+> > > What is the advantage of using the component framework to registe=
+r
+> > > bridges?
 > >=20
-> > No, if ps8622 backlight control is used, we need not specify the ba=
-cklight
-> > phandle for the panel driver. Somehow, ps8622 internal circuitry ke=
-eps
-> > the bootup glitch free :)
-> > Backlight control and panel controls can be separate then.
->=20
-> But they shouldn't. Your panel driver should always be the one to
-> control backlight. How else is the bridge supposed to know when to tu=
-rn
-> backlight on or off?
->=20
-> > > What you did in v6 of this series was look up a backlight device =
-and
-> > > then not use it. That seemed unnecessary. Looking at v6 again the=
- reason
-> > > for getting a phandle to the backlight was so that the device its=
-elf did
-> > > not expose its own backlight controlling circuitry if an external=
- one
-> > > was being used. But since the bridge has no business controlling =
-the
-> > > backlight, having the backlight phandle in the bridge is not corr=
-ect.
-> > >=20
-> > > So I think what you could do in the driver instead is always expo=
-se the
-> > > backlight device. If the panel used a different backlight, the PS=
-8622's
-> > > internal on simply wouldn't be accessed. It would still be possib=
-le to
-> > > control the backlight in sysfs, but that shouldn't be a problem (=
-only
-> > > root can access it)
+> > There are several advantages.
 > >=20
-> > That would be like simple exposing a feature which cannot be used
-> > by the user, ideally which "should not be" used by the user.
+> > - The component framework has been designed with this exact problem=
+ in
+> > mind, piecing multiple components into a display device.
 >=20
-> And it won't be used unless they access the sysfs files directly. The=
-re
-> are a lot of cases where we expose functionality that cannot be
-> meaningfully used by the user. For example, a GPIO may not be routed =
+> No. Component framework was designed with multi-device drivers in min=
+d.
+> That is, drivers that need to combine two or more platform devices in=
 to
-> anything on a board, yet we don't explicitly hide any specific GPIOs
-> from users.
+> a single logical device. Typically that includes display controllers =
+and
+> encoders (in various looks) for DRM.
+
+I disagree. AFAIK the component framework was designed to easily combin=
+e=20
+multiple devices into a single logical device, regardless of which bus =
+each=20
+device is connected to. That's what makes the component framework usefu=
+l : it=20
+allows master drivers to build logical devices from heterogeneous compo=
+nents=20
+without having to use one API per bus and/or component type. If the onl=
+y goal=20
+had been to combine platform devices on an SoC, simpler device-specific=
+=20
+solutions would likely have been used instead.
+
+> Panels and bridges are in my opinion different because they are outsi=
+de
+> of the DRM driver. They aren't part of the device complex that an SoC=
+
+> provides. They represent hardware that is external to the SoC and the=
+
+> DRM driver and can be shared across SoCs.
+
+They represent hardware external to the SoC, but internal to the logica=
+l DRM=20
+device.
+
+> Forcing panels and bridges to register as components will require all=
+
+> drivers to implement master/component support solely for accessing th=
+is
+> external hardware.
 >=20
-> > > That said, I have no strong objections to the boolean property if=
- you
-> > > feel like it's really necessary.
+> What you're suggesting is like saying that clocks or regulators shoul=
+d
+> register as components so that their users can get them that way. In
+> fact by that argument everything that's referenced by phandle would n=
+eed
+> to register as component (PHYs, LEDs, GPIOs, I2C controllers, ...).
+
+No, that's very different. The device you list are clearly external res=
+ources,=20
+while the bridges and panels are components part of a logical display d=
+evice.
+
+> > This patch set introduces yet another framework, without any compel=
+ling
+> > reason as far as I can see. Today DRM drivers already need to use t=
+hree
+> > different frameworks (component, I2C slave encoder and panel), and =
+we're
+> > adding a fourth oneto make the mess even messier.
+>=20
+> Panel and bridge aren't really frameworks. Rather they are a simple
+> registry to allow drivers to register panels and bridges and display
+> drivers to look them up.
+
+Regardless of how you call them, we have three interfaces.
+
+> > This is really a headlong rush, we need to stop and fix the  design=
+
+> > mistakes.
+>
+> Can you point out specific design mistakes? I don't see any, but I'm
+> obviously biased.
+
+The slave encoder / bridge split is what I consider a design mistake. T=
+hose=20
+two interfaces serve the same purpose, they should really be merged.
+
+> > - The component framework solves the probe ordering problem. Bridge=
+s can
+> > use deferred probing, but when a bridge requires a resources (such =
+as a
+> > clock for instance) provided by the display controller, this will b=
+reak.
+>=20
+> Panel and bridges can support deferred probing without the component
+> framework just fine.
+
+Not if the bridge requires a clock provided by the display controller, =
+in=20
+which case there's a dependency loop.
+
+> > > Without this patchset, you cannot bring an X server based display=
+ on
+> > > snow and peach_pit. Also, day by day the number of platforms usin=
+g
+> > > drm_bridge is increasing.
 > >=20
-> > Won't you think having a boolean property for an optional
-> > feature of the device, is better than all these?
+> > That's exactly why I'd like to use the component framework now, as =
+the
+> > conversion will become more complex as time goes by.
 >=20
-> Like I said, I'm indifferent on the matter. I don't think it's necess=
-ary
-> to hide the backlight device, but if you want to, please feel free to=
- do
-> so.
+> No it won't. If we ever do decide that component framework is a bette=
+r
+> fit then the conversion may be more work but it would still be largel=
+y
+> mechanical.
 
-DT typically use
-
-=09status =3D "disabled"
-
-to disable devices. In this case we don't want to disable the ps8622=20=
-
-completely, but just one of its functions. Maybe a "backlight-status" p=
-roperty=20
-could be used for that ? If that's considered too verbose, I would be f=
-ine=20
-with a "disable-<feature>" boolean property too.
-
-> Another alternative would be not to expose it at all and not have the=
-
-> boolean property since you don't seem to have a way to test it in the=
-
-> first place (or at least there's no device support upstream where it'=
-s
-> needed).
+Are you volunteering to perform the conversion ? :-)
 
 =2D-=20
 Regards,
 
 Laurent Pinchart
 
---nextPart1919974.rbhijzjc4y
+--nextPart15343923.Pt2zlWJ9ll
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part.
 Content-Transfer-Encoding: 7Bit
@@ -231,13 +197,13 @@ Content-Transfer-Encoding: 7Bit
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAABAgAGBQJUILgqAAoJEIkPb2GL7hl1WFMH/jOBjTqgOSRv4fVDDT6ofLoG
-85uAJX5eMV85wM/9tuaR4hhRCB/qfGCejm8zNpGM/D3rEjV2XqUitKaMtt9dk/he
-Rqc/CF4P1HZlvTe+CmRB5khWPtPU89XymnOq5wJmC0Qc6nj9EOm+ssE0V0wnodL4
-MAR9kTv4jwf66xYTA0xjwLdYLCWPkkx3pXx4o+aWAwSH5S9h7gesxd5RdcqIhX93
-KWgromAgzBZEaSgZLj8Y4YLjuzwlYbPjaCgZoRYqY1ro8GOp56pA2MAGOhExnajO
-aJCeyAzs0bJkSVUm8Ulb0JafboUx7hFye2pXsfrm3qiltMxzV/D8Z3V2c+qorj4=
-=nGz1
+iQEcBAABAgAGBQJUIL7ZAAoJEIkPb2GL7hl1Y10IAIHgZ3pe5TJnn0nedqDD6WTN
+8JdqGWYSwx4gLT52kPcis8zEP+e33qQ6SXeg2svxQqmGlt0PkM4YKsCLo0s1b2sX
+TZFGbsZfTYjHVq51JVjFmA6PBk+8uUluVOnelsFhCm5El41ob69id8HKXy9UkxC+
+JdfnnaAcVAp5xFDHnMkxOXG+Cn5vxLHBr0TM5F95kYMlymbtKGUHTNJ8mlDEOfWs
+s/dLca9LErUyGRTvbIxaHQiG6dgEYv53Nr2KeyVw0Cdsa9SA4du3m2uIXwvQjZ4X
+u3qURiVz0fk9z/anG/ww8BEQke5fs1Bem1m8wqQQtR/gRxkCm7ZNLLm00L1aP0A=
+=1q2G
 -----END PGP SIGNATURE-----
 
---nextPart1919974.rbhijzjc4y--
+--nextPart15343923.Pt2zlWJ9ll--
