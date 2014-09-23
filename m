@@ -1,17 +1,19 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
  ps8622 DT properties
-Date: Tue, 23 Sep 2014 12:02:45 +0200
-Message-ID: <54214545.2090308@samsung.com>
+Date: Tue, 23 Sep 2014 12:10:33 +0200
+Message-ID: <20140923101032.GU30514@ulmo>
 References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
- <5419760A.7020908@ti.com> <20140922075424.GB1470@ulmo>
- <54202C86.3040808@ti.com> <20140923062111.GE30514@ulmo>
- <54213DAC.5010806@ti.com>
+ <5419760A.7020908@ti.com>
+ <CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com>
+ <5419B52D.4060107@ti.com> <20140922080629.GC1470@ulmo>
+ <542030DD.3060906@ti.com> <20140923060452.GD30514@ulmo>
+ <5421201C.6000509@samsung.com> <20140923083514.GM30514@ulmo>
+ <542140D3.8080806@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="===============0711554409=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <54213DAC.5010806@ti.com>
+In-Reply-To: <542140D3.8080806@samsung.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -21,89 +23,89 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, seanpaul@google.com, daniel.vetter@ffwll.ch, joshi@samsung.com, dri-devel@lists.freedesktop.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, ajaynumb@gmail.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 09/23/2014 11:30 AM, Tomi Valkeinen wrote:
-> On 23/09/14 09:21, Thierry Reding wrote:
-> 
->>> Well, I can write almost any kind of bindings, and then evidently my
->>> device would work. For me, on my board.
->>
->> Well, that's the whole problem with DT. For many devices we only have a
->> single setup to test against. And even when we have several they often
->> are derived from each other. But the alternative would be to defer
->> (possibly indefinitely) merging support for a device until a second,
->> wildly different setup shows up. That's completely unreasonable and we
->> need to start somewhere.
-> 
-> Yes, but in this case we know of existing boards that have complex
-> setups. It's not theoretical.
-> 
-> I'm not saying we should stop everything until we have a 100% solution
-> for the rare complex cases. But we should keep them in mind and, when
-> possible, solve problems in a way that will work for the complex cases also.
-> 
->>> I guess non-video devices haven't had need for those. I have had lots of
->>> boards with video setup that cannot be represented with simple phandles.
->>> I'm not sure if I have just been unlucky or what, but my understand is
->>> that other people have encountered such boards also. Usually the
->>> problems encountered there have been circumvented with some hacky video
->>> driver for that specific board, or maybe a static configuration handled
->>> by the boot loader.
->>
->> I have yet to encounter such a setup. Can you point me at a DTS for one
->> such setup? I do remember a couple of hypothetical cases being discussed
->> at one time or another, but I haven't seen any actual DTS content where
->> this was needed.
-> 
-> No, I can't point to them as they are not in the mainline (at least the
-> ones I've been working on), for obvious reasons.
-> 
-> With a quick glance, I have the following devices in my cabinet that
-> have more complex setups: OMAP 4430 SDP, BeagleBoneBlack + LCD, AM43xx
-> EVM. Many Nokia devices used to have such setups, usually so that the
-> LCD and tv-out were connected to the same video source.
-> 
->>> Do we have a standard way of representing the video pipeline with simple
->>> phandles? Or does everyone just do their own version? If there's no
->>> standard way, it sounds it'll be a mess to support in the future.
->>
->> It doesn't matter all that much whether the representation is standard.
-> 
-> Again, I disagree.
-> 
->> phandles should simply point to the next element in the pipeline and the
->> OS abstractions should be good enough to handle the details about how to
->> chain the elements.
-> 
-> I, on the other hand, would rather see the links the other way around.
-> Panel having a link to the video source, etc.
-> 
-> The video graphs have two-way links, which of course is the safest
-> options, but also more verbose and redundant.
-> 
-> When this was discussed earlier, it was unclear which way the links
-> should be. It's true that only links to one direction are strictly
-> needed, but the question raised was that if in the drivers we end up
-> always going the links the other way, the performance penalty may be
-> somewhat big. (If I recall right).
 
-I do not see why performance may drop significantly?
-If the link is one-way it should probably work as below:
-- the destination registers itself in some framework,
-- the source looks for the destination in this framework using phandle,
-- the source starts to communicate with the destination - since now full
-two way link can be established dynamically.
-
-Where do you see here big performance penalty?
-
-Regards
-Andrzej
+--===============0711554409==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="nZJAkgcjPzQrJB+u"
+Content-Disposition: inline
 
 
-> 
->  Tomi
-> 
-> 
+--nZJAkgcjPzQrJB+u
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Sep 23, 2014 at 11:43:47AM +0200, Andrzej Hajda wrote:
+> On 09/23/2014 10:35 AM, Thierry Reding wrote:
+[...]
+> > But I agree that it would be nice to unify bridges and encoders more. It
+> > should be possible to make encoder always a bridge (or perhaps even
+> > replace encoders with bridges altogether). Then once you're out of the
+> > DRM device everything would be a bridge until you get to a panel.
+>=20
+> I agree that some sort of unification of bridges, (slave) encoders is a g=
+ood
+> thing, this way we stay only with bridges and panels as receivers.
+> But we will still have to deal with the code like:
+>     if (on the other end of the link is panel)
+>         do panel framework specific things
+>     else
+>         do bridge framework specific things
+>=20
+> The code in both branches usually does similar things but due to framework
+> differences it is difficult to merge.
+
+That's because they are inherently different entities. You can perform
+operations on a panel that don't make sense for a bridge and vice-versa.
+
+> Ideally it would be best to get rid of such constructs. For example by
+> trying to
+> make frameworks per interface type exposed by device (eg. video_sink) and
+> not by device type (drm_bridge, drm_panel).
+
+But then you loose all information about the real type of device. Or you
+have to create a common base class. And then you're still back to
+dealing with the two specific cases in many places, so the gain seems
+rather minimal.
+
+Thierry
+
+--nZJAkgcjPzQrJB+u
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUIUcYAAoJEN0jrNd/PrOhZvwQAKTJLz/zj7VcMelKI/GkBsxs
+fUr6S9Vj3jlRh0h/dKx/nCl4K2ZX6qj6+Lo4n3BRilKhTe8rf3mpEPiMfL6Xkaze
+J7RF9Rr7oq5GqY+ycw5qLLCKHPwzkfevpVfSUfUmO1j9UcYOBCZZH+4JVnBNMQB7
+nP647n5xqbG3NqUEA2MZEKSbO8FH9qfajWAYjg+2molLDHbRgEWCK+5cS6ip1bCc
+dXfcGLjEyKsn0PDs8gmpnAg0t8+j7RH4lUp/6PtYJuwrK8e1qE15tBxMTY1dx97o
+oHvDCSwUQcmfhievDAQ7TIblPT/szsGZS1J+lpR1iLL7nTjv8tIgdX9EMYGp1s9s
+BHPBsnSaKZnGaFY46h6uv7EbjHefh+MuJxToPEP2+ESXtyEmoRtoP+S3KY9Ep/57
+d+WCxsfQENGErWI8RSnqhxr/jQ7SBYBhKEPGZrUfJBK1r9o/zTyGaA/35wHcS+ME
+ylHng1qGniTZyh2qzRyiCncxYFdUZCiqeKBGncDYRkD0XqnOwPlOPfp+8uO/ABkd
+tqpIgQ7uDo8J9HCZNzl0KS9v14yiZzK65awUJFOEcPd9cM0c4rS2pf6mtCqJGxFH
+uCr3LPIKfowEWmpjRfrPpNnpRNGUtu1NZEiUkpPPb8MtpV2hfQnLNHBZy1XbuMnh
+kGubrvHsB+HLi96xDJ1W
+=QrTg
+-----END PGP SIGNATURE-----
+
+--nZJAkgcjPzQrJB+u--
+
+--===============0711554409==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+dri-devel mailing list
+dri-devel@lists.freedesktop.org
+http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+--===============0711554409==--
