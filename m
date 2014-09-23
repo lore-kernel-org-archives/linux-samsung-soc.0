@@ -1,15 +1,17 @@
 From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
  ps8622 DT properties
-Date: Tue, 23 Sep 2014 08:21:12 +0200
-Message-ID: <20140923062111.GE30514@ulmo>
+Date: Tue, 23 Sep 2014 08:28:57 +0200
+Message-ID: <20140923062856.GF30514@ulmo>
 References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
- <5419760A.7020908@ti.com> <20140922075424.GB1470@ulmo>
- <54202C86.3040808@ti.com>
+ <CAEC9eQOSFj-NWVYCtdcQz0nFM+1rVxPeC76eBdj-X4w+HWujZA@mail.gmail.com>
+ <20140922113514.GS1470@ulmo> <7550026.qs7FRi8hDC@avalon>
+ <20140923055533.GC30514@ulmo>
+ <CAEC9eQOGPcjKiXHTYU6YzzRkNJgiQQOZRZSMvkz_+eyucdzP8Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0372092648=="
+Content-Type: multipart/mixed; boundary="===============0907834374=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <54202C86.3040808@ti.com>
+In-Reply-To: <CAEC9eQOGPcjKiXHTYU6YzzRkNJgiQQOZRZSMvkz_+eyucdzP8Q@mail.gmail.com>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
@@ -19,128 +21,221 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, seanpaul@google.com, daniel.vetter@ffwll.ch, joshi@samsung.com, dri-devel@lists.freedesktop.org, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, ajaynumb@gmail.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---===============0372092648==
+--===============0907834374==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qOrJKOH36bD5yhNe"
+	protocol="application/pgp-signature"; boundary="tmoQ0UElFV5VgXgH"
 Content-Disposition: inline
 
 
---qOrJKOH36bD5yhNe
+--tmoQ0UElFV5VgXgH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 22, 2014 at 05:04:54PM +0300, Tomi Valkeinen wrote:
-> On 22/09/14 10:54, Thierry Reding wrote:
->=20
-> >> I wish all new display component bindings would use the video
-> >> ports/endpoints to describe the connections. It will be very difficult
-> >> to improve the display driver model later if we're missing such critic=
-al
-> >> pieces from the DT bindings.
-> >=20
-> > I disagree. Why would we want to burden all devices with a bloated
->=20
-> I agree that the .dts becomes more bloated with video graph.
->=20
-> > binding and drivers with parsing a complex graph when it's not even
->=20
-> Hopefully not all drivers will need to do the parsing themselves. If
-> it's common stuff, I don't see why we can't have helpers to do the work.
->=20
-> > known that it will be necessary? Evidently this device works fine
-> > using the current binding. Just because there are bindings to describe
->=20
-> Well, I can write almost any kind of bindings, and then evidently my
-> device would work. For me, on my board.
+On Tue, Sep 23, 2014 at 11:41:33AM +0530, Ajay kumar wrote:
+> On Tue, Sep 23, 2014 at 11:25 AM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+> > On Tue, Sep 23, 2014 at 03:00:37AM +0300, Laurent Pinchart wrote:
+> >> On Monday 22 September 2014 13:35:15 Thierry Reding wrote:
+> >> > On Mon, Sep 22, 2014 at 04:53:22PM +0530, Ajay kumar wrote:
+> >> > > On Mon, Sep 22, 2014 at 4:11 PM, Thierry Reding wrote:
+> >> > > > On Mon, Sep 22, 2014 at 02:01:38PM +0530, Ajay kumar wrote:
+> >> > > >> On Mon, Sep 22, 2014 at 1:40 PM, Thierry Reding wrote:
+> >> > > >> > On Thu, Sep 18, 2014 at 11:20:40AM +0530, Ajay kumar wrote:
+> >> > > >> >> On Wed, Sep 17, 2014 at 9:52 PM, Tomi Valkeinen wrote:
+> >> > > >> >> > On 17/09/14 17:29, Ajay kumar wrote:
+> >> > > >> >> >> On Wed, Sep 17, 2014 at 5:22 PM, Tomi Valkeinen wrote:
+> >> > > >> >> >>> On 27/08/14 17:39, Ajay Kumar wrote:
+> >> > > >> >> >>>> Add documentation for DT properties supported by ps8622/ps8625
+> >> > > >> >> >>>> eDP-LVDS converter.
+> >> > > >> >> >>>>
+> >> > > >> >> >>>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> >> > > >> >> >>>> ---
+> >> > > >> >> >>>>
+> >> > > >> >> >>>>  .../devicetree/bindings/video/bridge/ps8622.txt    |   20
+> >> > > >> >> >>>>  ++++++++++++++++++++ 1 file changed, 20 insertions(+)
+> >> > > >> >> >>>>  create mode 100644
+> >> > > >> >> >>>>  Documentation/devicetree/bindings/video/bridge/ps8622.txt
+> >> > > >> >> >>>>
+> >> > > >> >> >>>> diff --git
+> >> > > >> >> >>>> a/Documentation/devicetree/bindings/video/bridge/ps8622.txt
+> >> > > >> >> >>>> b/Documentation/devicetree/bindings/video/bridge/ps8622.txt
+> >> > > >> >> >>>> new file mode 100644
+> >> > > >> >> >>>> index 0000000..0ec8172
+> >> > > >> >> >>>> --- /dev/null
+> >> > > >> >> >>>> +++ b/Documentation/devicetree/bindings/video/bridge/ps8622.txt
+> >> > > >> >> >>>> @@ -0,0 +1,20 @@
+> >> > > >> >> >>>> +ps8622-bridge bindings
+> >> > > >> >> >>>> +
+> >> > > >> >> >>>> +Required properties:
+> >> > > >> >> >>>> +     - compatible: "parade,ps8622" or "parade,ps8625"
+> >> > > >> >> >>>> +     - reg: first i2c address of the bridge
+> >> > > >> >> >>>> +     - sleep-gpios: OF device-tree gpio specification for PD_
+> >> > > >> >> >>>> pin.
+> >> > > >> >> >>>> +     - reset-gpios: OF device-tree gpio specification for RST_
+> >> > > >> >> >>>> pin.
+> >> > > >> >> >>>> +
+> >> > > >> >> >>>> +Optional properties:
+> >> > > >> >> >>>> +     - lane-count: number of DP lanes to use
+> >> > > >> >> >>>> +     - use-external-pwm: backlight will be controlled by an
+> >> > > >> >> >>>> external PWM
+> >> > > >> >> >>>
+> >> > > >> >> >>> What does this mean? That the backlight support from ps8625 is
+> >> > > >> >> >>> not used? If so, maybe "disable-pwm" or something?
+> >> > > >> >> >>
+> >> > > >> >> >> "use-external-pwm" or "disable-bridge-pwm" would be better.
+> >> > > >> >> >
+> >> > > >> >> > Well, the properties are about the bridge. "use-external-pwm"
+> >> > > >> >> > means that the bridge uses an external PWM, which, if I understood
+> >> > > >> >> > correctly, is not what the property is about.
+> >> > > >> >> >
+> >> > > >> >> > "disable-bridge-pwm" is ok, but the "bridge" there is extra. The
+> >> > > >> >> > properties are about the bridge, so it's implicit.
+> >> > > >> >>
+> >> > > >> >> Ok. I will use "disable-pwm".
+> >> > > >> >
+> >> > > >> > Why is this even necessary? According to the datasheet this device
+> >> > > >> > has circuitry for backlight control. If so, I'd expect it to expose
+> >> > > >> > either a backlight device or a PWM device. That way unless somebody
+> >> > > >> > is using the backlight/PWM exposed by the bridge the bridge can
+> >> > > >> > simply disable PWM.
+> >> > > >>
+> >> > > >> The driver does expose a backlight device.
+> >> > > >> And, the decision(whether to expose a backlight device or not) is made
+> >> > > >> based on the DT flag "use-external-pwm".
+> >> > > >> This was discussed before, and you suggested to use the boolean
+> >> > > >> property, refer to this link:
+> >> > > >> http://lists.freedesktop.org/archives/dri-devel/2014-July/065048.html
+> >> > > >
+> >> > > > I think you misunderstood what I said, or maybe I didn't explain clearly
+> >> > > > what I meant. If the PS8622 provides a backlight there's nothing wrong
+> >> > > > with always exposing it. The bridge itself isn't going to be using the
+> >> > > > backlight anyway. Rather the panel itself should be using the backlight
+> >> > > > device exposed by PS8622 or some separate backlight device.
+> >> > > >
+> >> > > > To illustrate by an example:
+> >> > > >         ps8622: ... {
+> >> > > >
+> >> > > >                 compatible = "parade,ps8622";
+> >> > > >                 ...
+> >> > > >
+> >> > > >         };
+> >> > > >
+> >> > > >         panel {
+> >> > > >
+> >> > > >                 ...
+> >> > > >                 backlight = <&ps8622>;
+> >> > > >                 ...
+> >> > > >
+> >> > > >         };
+> >> > >
+> >> > > No, if ps8622 backlight control is used, we need not specify the backlight
+> >> > > phandle for the panel driver. Somehow, ps8622 internal circuitry keeps
+> >> > > the bootup glitch free :)
+> >> > > Backlight control and panel controls can be separate then.
+> >> >
+> >> > But they shouldn't. Your panel driver should always be the one to
+> >> > control backlight. How else is the bridge supposed to know when to turn
+> >> > backlight on or off?
+> >> >
+> >> > > > What you did in v6 of this series was look up a backlight device and
+> >> > > > then not use it. That seemed unnecessary. Looking at v6 again the reason
+> >> > > > for getting a phandle to the backlight was so that the device itself did
+> >> > > > not expose its own backlight controlling circuitry if an external one
+> >> > > > was being used. But since the bridge has no business controlling the
+> >> > > > backlight, having the backlight phandle in the bridge is not correct.
+> >> > > >
+> >> > > > So I think what you could do in the driver instead is always expose the
+> >> > > > backlight device. If the panel used a different backlight, the PS8622's
+> >> > > > internal on simply wouldn't be accessed. It would still be possible to
+> >> > > > control the backlight in sysfs, but that shouldn't be a problem (only
+> >> > > > root can access it)
+> >> > >
+> >> > > That would be like simple exposing a feature which cannot be used
+> >> > > by the user, ideally which "should not be" used by the user.
+> >> >
+> >> > And it won't be used unless they access the sysfs files directly. There
+> >> > are a lot of cases where we expose functionality that cannot be
+> >> > meaningfully used by the user. For example, a GPIO may not be routed to
+> >> > anything on a board, yet we don't explicitly hide any specific GPIOs
+> >> > from users.
+> >> >
+> >> > > > That said, I have no strong objections to the boolean property if you
+> >> > > > feel like it's really necessary.
+> >> > >
+> >> > > Won't you think having a boolean property for an optional
+> >> > > feature of the device, is better than all these?
+> >> >
+> >> > Like I said, I'm indifferent on the matter. I don't think it's necessary
+> >> > to hide the backlight device, but if you want to, please feel free to do
+> >> > so.
+> >>
+> >> DT typically use
+> >>
+> >>       status = "disabled"
+> >>
+> >> to disable devices. In this case we don't want to disable the ps8622
+> >> completely, but just one of its functions. Maybe a "backlight-status" property
+> >> could be used for that ? If that's considered too verbose, I would be fine
+> >> with a "disable-<feature>" boolean property too.
+> >
+> > Another alternative would be to make the backlight a subnode:
+> >
+> >         ps8622: bridge@... {
+> >                 compatible = "parade,ps8622";
+> >                 ...
+> >
+> >                 backlight {
+> >                         ...
+> >                         status = "disabled";
+> >                         ...
+> >                 };
+> In the above case, how do I query the status of backlight sub node in
+> the driver?
 
-Well, that's the whole problem with DT. For many devices we only have a
-single setup to test against. And even when we have several they often
-are derived from each other. But the alternative would be to defer
-(possibly indefinitely) merging support for a device until a second,
-wildly different setup shows up. That's completely unreasonable and we
-need to start somewhere.
+Something like this should work:
 
-The same issue exists whether you use the video graph or not. But like I
-said elsewhere, I think the key to making this work is by keeping the DT
-simple and making sure we can properly use the devices at the OS level
-so that we only need to make sure we have the right connections in the
-DT.
+	struct device_node *np;
 
-> > ports in a generic way doesn't mean it has to be applied everywhere.
-> > After all the concept of ports/endpoints applies to non-video devices
-> > too, yet we don't require the bindings for those devices to add ports
-> > or endpoints nodes.
->=20
-> I guess non-video devices haven't had need for those. I have had lots of
-> boards with video setup that cannot be represented with simple phandles.
-> I'm not sure if I have just been unlucky or what, but my understand is
-> that other people have encountered such boards also. Usually the
-> problems encountered there have been circumvented with some hacky video
-> driver for that specific board, or maybe a static configuration handled
-> by the boot loader.
+	np = of_get_child_by_name(dev->of_node, "backlight");
+	if (np) {
+		if (of_device_is_available(np)) {
+			/* register backlight device */
+		}
 
-I have yet to encounter such a setup. Can you point me at a DTS for one
-such setup? I do remember a couple of hypothetical cases being discussed
-at one time or another, but I haven't seen any actual DTS content where
-this was needed.
-
-> > Also it won't be very difficult to extend the binding in a backwards
-> > compatible way if that becomes necessary.
->=20
-> I don't know about that. More or less all the cases I've encountered
-> where a binding has not been good from the start have been all but "not
-> very difficult".
->=20
-> Do we have a standard way of representing the video pipeline with simple
-> phandles? Or does everyone just do their own version? If there's no
-> standard way, it sounds it'll be a mess to support in the future.
-
-It doesn't matter all that much whether the representation is standard.
-phandles should simply point to the next element in the pipeline and the
-OS abstractions should be good enough to handle the details about how to
-chain the elements.
-
-While it's entirely possible to represent that using a generic graph, in
-most cases (at least the trivial ones) I think that's completely
-redundant. If you have a pipeline of two (single input/output) elements
-where video flows from the first to the second, then all you need is a
-phandle from the first element to the second element. Everything else
-can easily be derived. The input for the second device will be the first
-implicitly. No need to explicitly describe that in DT. Doing it
-explicitly would be redundant.
+		of_node_put(np);
+	}
 
 Thierry
 
---qOrJKOH36bD5yhNe
+--tmoQ0UElFV5VgXgH
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAEBAgAGBQJUIRFXAAoJEN0jrNd/PrOh9M0P/1vuI+W9BEtmNvCz3C2BXOcS
-dHjmCH61uLcQrf9+BFtPZQw590IUbHLLCEWSFEfeXJaoWWzolitQyYY8R+qR0LIt
-YaEcO12Xr5Mta93Sup6sqdVg2n+wFOmUNurWqWVcrq3Y30duTS2Xp8XLPuwg2c8t
-em7g5y4rzWQE+APFSoMJSgdPSzym4HbgvBMulGRJR6cPsHI9SbBAmxnkAkaL8Wr8
-CcCd8mJxej/mTl1OzTGZyV27WMXgZfptYgncSAI5pd+4uVotX6feilrnsoFXefBs
-KiNhNTAQQy1lD6zT0BffbyGVNAERbaFdvvS35teymGjSDcdTeRk/sV0ptfVn5ZYE
-sH4pBYfnL//DInl8ONZnS7HuzK8yuBn9MfBPOAC/f9S2aXQWtrXL+fai7m5mG3nz
-0jdeVi/rPPJCh7pO5IwkLenD1S3EI6EFvM+L3/DWD/mMoUJlHwsw2y+QqW4+jt3c
-KpOGs68TEusnU2AAhnaPj43RmulbdL/axg2+A2EcnmPTR3y1uoRKNXnwufl3V0eY
-0OHslz8JrpdoftTc8t5Bids720IZRG5fRVjFU28asYv4cBaYGg8sN1v4EqEqPy0f
-a6aK4PjbbVeOjBevP5cZM/xcbo0PGw7I3aJk/InNMTVzyooy5J1l7xkV6gTQVk64
-TRcc6LjyO9VgephwZkHU
-=MV0y
+iQIcBAEBAgAGBQJUIRMoAAoJEN0jrNd/PrOhbh8QAMH5hrqmSbJAUGkjtkUjqqgG
+zq2s5e2o/AYToZ98ql3xFTOTMhH21HAsssRwZKjwUPZhL47lPm+VDjDBiUc2er8n
+NOOTHUKdoy2Tz3qrWv4CEG0sfx7eTKBbMte0yWibI4SV9fVNjzTd1xogBZQEajQ3
+TcwatrJwNezVGgqDk39yWfAiqfkN+jYODpBlidNel1xwUITyK+yZiI5fChPCvavw
+JY6fhfcRoMy1e9wXcrM3KHZDc7lCSGwHw1iAfv5iURtRVtGb8reRJeUzQtSGpCcH
+Yq4ruZDIOOUxFO+77DtIvf1I/RWWnJKfYLB5P4P3O8y9XdmPBpS6SRYKVTqYo/eC
+pK7ORbaeLvz9aoAI5Mcycn7q69AInL5nqfOfq/a5+WlgzWloWJjrHhpGSFFs/Iog
+r9sWmsHFcugeBdxdAThzlt4OS63TJ0QVv3kTvoCQSu9YzvmaN8AkPieLTZQ2e7cb
+sO5HM+KILVvKpKwFpYbT/hDNur6s8m658E/wgKoFMUWQ+Mnld79Ml4O/+YDxAwKR
+dr545MW7FX1L76rBjrIOPHENrP5/I6EFyQDgEWkVVpyOdyA0FIJRaDHF40e6JnwY
+dHNZQ6HoC8GU+zjwP7rt8YuOimePOTuMBa5x72Qxs7CgTUExJUr4wrGmvV9kcHq6
+LFAdj4LiwMyPIlZuSeB8
+=PeEp
 -----END PGP SIGNATURE-----
 
---qOrJKOH36bD5yhNe--
+--tmoQ0UElFV5VgXgH--
 
---===============0372092648==
+--===============0907834374==
 Content-Type: text/plain; charset="us-ascii"
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
@@ -151,4 +246,4 @@ dri-devel mailing list
 dri-devel@lists.freedesktop.org
 http://lists.freedesktop.org/mailman/listinfo/dri-devel
 
---===============0372092648==--
+--===============0907834374==--
