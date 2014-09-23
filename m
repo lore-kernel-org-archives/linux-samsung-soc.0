@@ -1,158 +1,91 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
- ps8622 DT properties
-Date: Tue, 23 Sep 2014 14:40:45 +0200
-Message-ID: <54216A4D.8070201@samsung.com>
-References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com> <26633587.NifLIetGL4@avalon> <54215DDC.3050909@samsung.com> <2238934.uLuAbtBXFj@avalon>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH/RFC 0/2] serial: samsung: add support for early console
+Date: Tue, 23 Sep 2014 18:23:07 +0530
+Message-ID: <CAGOxZ51aghOqbZuv34TuBuQdKjmHdkhaYJvH=VxNjxb-pZKE8w@mail.gmail.com>
+References: <1411391655-6291-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from plane.gmane.org ([80.91.229.3]:40806 "EHLO plane.gmane.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755679AbaIWMmD (ORCPT
+Received: from mail-yh0-f54.google.com ([209.85.213.54]:41720 "EHLO
+	mail-yh0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755306AbaIWMxs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Sep 2014 08:42:03 -0400
-Received: from list by plane.gmane.org with local (Exim 4.69)
-	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
-	id 1XWPPj-0001w1-G9
-	for linux-samsung-soc@vger.kernel.org; Tue, 23 Sep 2014 14:41:51 +0200
-Received: from 217-67-201-162.itsa.net.pl ([217.67.201.162])
-        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Sep 2014 14:41:51 +0200
-Received: from a.hajda by 217-67-201-162.itsa.net.pl with local (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Sep 2014 14:41:51 +0200
-In-Reply-To: <2238934.uLuAbtBXFj@avalon>
+	Tue, 23 Sep 2014 08:53:48 -0400
+Received: by mail-yh0-f54.google.com with SMTP id f73so2646447yha.41
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 23 Sep 2014 05:53:47 -0700 (PDT)
+In-Reply-To: <1411391655-6291-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alim Akhtar <alim.akhtar@samsung.com>, Thomas P Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robherring2@gmail.com>
 
-On 09/23/2014 01:52 PM, Laurent Pinchart wrote:
-> On Tuesday 23 September 2014 13:47:40 Andrzej Hajda wrote:
->> On 09/23/2014 01:23 PM, Laurent Pinchart wrote:
->>> On Tuesday 23 September 2014 13:18:30 Andrzej Hajda wrote:
->>>> On 09/23/2014 01:10 PM, Laurent Pinchart wrote:
->>>>> On Tuesday 23 September 2014 12:02:45 Andrzej Hajda wrote:
->>>>>> On 09/23/2014 11:30 AM, Tomi Valkeinen wrote:
->>>>>>> On 23/09/14 09:21, Thierry Reding wrote:
->>>>>>>>> Well, I can write almost any kind of bindings, and then evidently my
->>>>>>>>> device would work. For me, on my board.
->>>>>>>>
->>>>>>>> Well, that's the whole problem with DT. For many devices we only have
->>>>>>>> a single setup to test against. And even when we have several they
->>>>>>>> often are derived from each other. But the alternative would be to
->>>>>>>> defer (possibly indefinitely) merging support for a device until a
->>>>>>>> second, wildly different setup shows up. That's completely
->>>>>>>> unreasonable and we need to start somewhere.
->>>>>>>
->>>>>>> Yes, but in this case we know of existing boards that have complex
->>>>>>> setups. It's not theoretical.
->>>>>>>
->>>>>>> I'm not saying we should stop everything until we have a 100% solution
->>>>>>> for the rare complex cases. But we should keep them in mind and, when
->>>>>>> possible, solve problems in a way that will work for the complex cases
->>>>>>> also.
->>>>>>>
->>>>>>>>> I guess non-video devices haven't had need for those. I have had
->>>>>>>>> lots of boards with video setup that cannot be represented with
->>>>>>>>> simple phandles. I'm not sure if I have just been unlucky or what,
->>>>>>>>> but my understand is that other people have encountered such boards
->>>>>>>>> also. Usually the problems encountered there have been circumvented
->>>>>>>>> with some hacky video driver for that specific board, or maybe a
->>>>>>>>> static configuration handled by the boot loader.
->>>>>>>>
->>>>>>>> I have yet to encounter such a setup. Can you point me at a DTS for
->>>>>>>> one such setup? I do remember a couple of hypothetical cases being
->>>>>>>> discussed at one time or another, but I haven't seen any actual DTS
->>>>>>>> content where this was needed.
->>>>>>>
->>>>>>> No, I can't point to them as they are not in the mainline (at least
->>>>>>> the ones I've been working on), for obvious reasons.
->>>>>>>
->>>>>>> With a quick glance, I have the following devices in my cabinet that
->>>>>>> have more complex setups: OMAP 4430 SDP, BeagleBoneBlack + LCD, AM43xx
->>>>>>> EVM. Many Nokia devices used to have such setups, usually so that the
->>>>>>> LCD and tv-out were connected to the same video source.
->>>>>>>
->>>>>>>>> Do we have a standard way of representing the video pipeline with
->>>>>>>>> simple phandles? Or does everyone just do their own version? If
->>>>>>>>> there's no standard way, it sounds it'll be a mess to support in the
->>>>>>>>> future.
->>>>>>>>
->>>>>>>> It doesn't matter all that much whether the representation is
->>>>>>>> standard.
->>>>>>>
->>>>>>> Again, I disagree.
->>>>>>>
->>>>>>>> phandles should simply point to the next element in the pipeline and
->>>>>>>> the OS abstractions should be good enough to handle the details about
->>>>>>>> how to chain the elements.
->>>>>>>
->>>>>>> I, on the other hand, would rather see the links the other way around.
->>>>>>> Panel having a link to the video source, etc.
->>>>>>>
->>>>>>> The video graphs have two-way links, which of course is the safest
->>>>>>> options, but also more verbose and redundant.
->>>>>>>
->>>>>>> When this was discussed earlier, it was unclear which way the links
->>>>>>> should be. It's true that only links to one direction are strictly
->>>>>>> needed, but the question raised was that if in the drivers we end up
->>>>>>> always going the links the other way, the performance penalty may be
->>>>>>> somewhat big. (If I recall right).
->>>>>>
->>>>>> I do not see why performance may drop significantly?
->>>>>> If the link is one-way it should probably work as below:
->>>>>> - the destination registers itself in some framework,
->>>>>> - the source looks for the destination in this framework using phandle,
->>>>>> - the source starts to communicate with the destination - since now
->>>>>> full two way link can be established dynamically.
->>>>>>
->>>>>> Where do you see here big performance penalty?
->>>>>
->>>>> The performance-related problems arise when you need to locate the
->>>>> remote device in the direction opposite to the phandle link direction.
->>>>> Traversing a link forward just involves a phandle lookup, but traversing
->>>>> it backwards isn't possible the same way.
->>>>
->>>> But you do not need to traverse backwards. You just wait when the source
->>>> start to communicate with the destination, at this moment destination can
->>>> build back-link dynamically.
->>>
->>> Your driver might not need it today for your use cases, but can you be
->>> certain that no driver on any OS would need to ?
->>
->> I have just showed how to create back-link dynamically if we have only
->> forward-link in DT.
->> Ie it is a trivial 'proof' that the direction is not so important.
->> So I do not understand why do you pose such question?
->>
->>> This becomes an issue even on Linux when considering video-related devices
->>> that can be part of either a capture pipeline or a display pipeline. If
->>> the link always goes in the data flow direction, then it will be easy to
->>> locate the downstream device (bridge or panel) from the display controller
->>> driver, but it would be much more difficult to locate the same device from
->>> a camera driver as all of a sudden the device would become an upstream
->>> device.
->>
->> Why?
->>
->> If you have graph:
->> sensor --> camera
->>
->> Then camera register itself in some framework as a destination device
->> and sensor looks in this framework for the device identified by remote
->> endpoint.
->> Then sensor tells camera it is connected to it and voila.
-> 
-> Except that both kernelspace and userspace deal with cameras the other way 
-> around, the master device is the camera receiver, not the camera sensor. DRM 
-> is architected the same way, with the component that performs DMA operations 
-> being the master device.
+Hi Marek,
 
-But the link direction do not determines who should be the master
-device. It just determines who should perform initial handshake.
+On Mon, Sep 22, 2014 at 6:44 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Hello,
+>
+> This patchset adds support for early console defined in device tree. As
+> an example, DTS files for all Exynos4 based machines are updated with
+> the correct value for common chosen/sdtout property.
+>
+> To get it fully functional additional improvements (support for
+> early_ioremap) are needed in early console code.
+>
+Is these really tested?
+So that mean we need to wait till __ioremap__ support available for ARM.
+How to take this forward then? Here is a platform (exynos7) which
+needs earlycon support for debugging some of the early core things and
+ARM64 has ioremap support as well. There is no reason why we should
+hold earlycon support for exyons7.
+I see two solution here:
+1> How about re-spin patch-1 which will just add ealrycon support for
+__exynos4210__ serial type only? And rest of the types can be added as
+incremental patches, as and when ioremap for ARM available.
+Atleast this approch will solve exynos7 problem of not having earlycon support.
+And This patch can be tested on exynos7 (I can do that).
+2> Take  my patch which is working and tested for exynos7 and can be
+easily extended and generalized when ioremap for ARM is available.
 
-Andrzej
+My preference would be the the first one.
+Let me know your thoughts please.
+In case you are ok with 1st approach, can you please re-spin patch1
+with needed changes?
+
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+>
+>
+> Patch summary:
+>
+> Tomasz Figa (2):
+>   serial: samsung: Add support for of_earlycon
+>   ARM: dts: exynos4: Add stdout-path properties
+>
+>  arch/arm/boot/dts/exynos4210-origen.dts         |  1 +
+>  arch/arm/boot/dts/exynos4210-smdkv310.dts       |  1 +
+>  arch/arm/boot/dts/exynos4210-trats.dts          |  1 +
+>  arch/arm/boot/dts/exynos4210-universal_c210.dts |  1 +
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 +
+>  arch/arm/boot/dts/exynos4412-origen.dts         |  1 +
+>  arch/arm/boot/dts/exynos4412-smdk4412.dts       |  1 +
+>  arch/arm/boot/dts/exynos4412-tiny4412.dts       |  4 +
+>  arch/arm/boot/dts/exynos4412-trats2.dts         |  1 +
+>  drivers/tty/serial/Kconfig                      |  1 +
+>  drivers/tty/serial/samsung.c                    | 97 +++++++++++++++++++++++++
+>  11 files changed, 113 insertions(+)
+>
+> --
+> 1.9.2
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Regards,
+Alim
