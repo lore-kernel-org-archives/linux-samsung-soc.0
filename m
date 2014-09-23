@@ -1,149 +1,113 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH 2/4] pinctrl: exynos: Add irq_chip instance for Exynos7
- wakeup interrupts
-Date: Tue, 23 Sep 2014 12:34:33 +0530
-Message-ID: <CAM4voam5KW+gO5QDB_CHOON6v9GXp=7tCpZ-9A9jO99yj+G-=A@mail.gmail.com>
-References: <1410598252-30931-1-git-send-email-a.kesavan@samsung.com>
-	<1410598252-30931-4-git-send-email-a.kesavan@samsung.com>
-	<54142A36.5050703@gmail.com>
-	<CAM4voamF8aydh7-2aC+vLrO1rmPm5GL3Pn6i6rZ3XnzCDHzgJg@mail.gmail.com>
-	<541FD60F.8060008@gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
+ ps8622 DT properties
+Date: Tue, 23 Sep 2014 09:24:12 +0200
+Message-ID: <5421201C.6000509@samsung.com>
+References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
+ <5419760A.7020908@ti.com>
+ <CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com>
+ <5419B52D.4060107@ti.com> <20140922080629.GC1470@ulmo>
+ <542030DD.3060906@ti.com> <20140923060452.GD30514@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f48.google.com ([209.85.216.48]:38428 "EHLO
-	mail-qa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754287AbaIWHEe (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:23918 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753534AbaIWHYU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Sep 2014 03:04:34 -0400
-In-Reply-To: <541FD60F.8060008@gmail.com>
+	Tue, 23 Sep 2014 03:24:20 -0400
+In-reply-to: <20140923060452.GD30514@ulmo>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, "robh@kernel.org" <robh@kernel.org>, devicetree <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Thomas P Abraham <thomas.ab@samsung.com>
+To: Thierry Reding <thierry.reding@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Hi Tomasz,
+Hi Thierry, Tomi,
 
-On Mon, Sep 22, 2014 at 1:25 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On 22.09.2014 08:17, Abhilash Kesavan wrote:
->> Hi Tomasz,
+On 09/23/2014 08:04 AM, Thierry Reding wrote:
+> On Mon, Sep 22, 2014 at 05:23:25PM +0300, Tomi Valkeinen wrote:
+>> On 22/09/14 11:06, Thierry Reding wrote:
 >>
->> On Sat, Sep 13, 2014 at 4:57 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->>> Hi Abhilash,
->>>
->>> Please see my comments inline.
->>>
->>> On 13.09.2014 10:50, Abhilash Kesavan wrote:
->>>> Exynos7 uses different offsets for wakeup interrupt configuration registers.
->>>> So a new irq_chip instance for Exynos7 wakeup interrupts is added. The irq_chip
->>>> selection is now based on the wakeup interrupt controller compatible string.
->>>
->>> [snip]
->>>
->>>> @@ -328,9 +322,11 @@ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
->>>>  /*
->>>>   * irq_chip for wakeup interrupts
->>>>   */
->>>> -static struct exynos_irq_chip exynos_wkup_irq_chip = {
->>>> +static struct exynos_irq_chip exynos_wkup_irq_chip;
->>>> +
->>>
->>> Why do you still need this, if you have both variants below?
->>
->> After adding __initdata to the two variants, I will require to have a
->> copy of one of them.
->>
->>>
->>>> +static struct exynos_irq_chip exynos4210_wkup_irq_chip = {
->>>>       .chip = {
->>>> -             .name = "exynos_wkup_irq_chip",
->>>> +             .name = "exynos4210_wkup_irq_chip",
->>>>               .irq_unmask = exynos_irq_unmask,
->>>>               .irq_mask = exynos_irq_mask,
->>>>               .irq_ack = exynos_irq_ack,
->>>> @@ -342,6 +338,29 @@ static struct exynos_irq_chip exynos_wkup_irq_chip = {
->>>>       .eint_pend = EXYNOS_WKUP_EPEND_OFFSET,
->>>>  };
+>>>>> Why do we need a complex graph when it can be handled using a simple phandle?
 >>>>
->>>> +static struct exynos_irq_chip exynos7_wkup_irq_chip = {
->>>> +     .chip = {
->>>> +             .name = "exynos7_wkup_irq_chip",
->>>> +             .irq_unmask = exynos_irq_unmask,
->>>> +             .irq_mask = exynos_irq_mask,
->>>> +             .irq_ack = exynos_irq_ack,
->>>> +             .irq_set_type = exynos_irq_set_type,
->>>> +             .irq_set_wake = exynos_wkup_irq_set_wake,
->>>> +     },
->>>> +     .eint_con = EXYNOS7_WKUP_ECON_OFFSET,
->>>> +     .eint_mask = EXYNOS7_WKUP_EMASK_OFFSET,
->>>> +     .eint_pend = EXYNOS7_WKUP_EPEND_OFFSET,
->>>> +};
->>>> +
->>>> +/* list of external wakeup controllers supported */
->>>> +static const struct of_device_id exynos_wkup_irq_ids[] = {
->>>> +     { .compatible = "samsung,exynos4210-wakeup-eint",
->>>> +                     .data = &exynos4210_wkup_irq_chip },
->>>> +     { .compatible = "samsung,exynos7-wakeup-eint",
->>>> +                     .data = &exynos7_wkup_irq_chip },
->>>> +     { }
->>>> +};
->>>> +
->>>>  /* interrupt handler for wakeup interrupts 0..15 */
->>>>  static void exynos_irq_eint0_15(unsigned int irq, struct irq_desc *desc)
->>>>  {
->>>> @@ -434,7 +453,12 @@ static int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
->>>>       int idx, irq;
->>>>
->>>>       for_each_child_of_node(dev->of_node, np) {
->>>> -             if (of_match_node(exynos_wkup_irq_ids, np)) {
->>>> +             const struct of_device_id *match;
->>>> +
->>>> +             match = of_match_node(exynos_wkup_irq_ids, np);
->>>> +             if (match) {
->>>> +                     memcpy(&exynos_wkup_irq_chip, match->data,
->>>> +                             sizeof(struct exynos_irq_chip));
+>>>> Maybe in your case you can handle it with simple phandle. Can you
+>>>> guarantee that it's enough for everyone, on all platforms?
 >>>
->>> Hmm, this doesn't look correct to me. You are modifying a static struct
->>> here. Why couldn't you simply use the exynos irq chip pointed by
->>> match->data in further registration code?
+>>> Nobody can guarantee that. An interesting effect that DT ABI stability
+>>> has had is that people now try to come up with overly generic concepts
+>>> to describe devices in an attempt to make them more future-proof. I
+>>> don't think we're doing ourselves a favour with that approach.
 >>
->> That will not be available later once I use __initdata.
+>> I kind of agree. However, there are boards that need a more complex
+>> approach than just a simple phandle. They are nothing new.
 >>
->
-> Then either __initdata shouldn't be necessary or kmemdup() should be
-> used to allocate a copy.
-Will fix this and send out a new version soon.
+>> So while it may be true that this specific encoder has never been used
+>> in such a complex way, and there's a chance that it never will, my
+>> comments are not really about this particular encoder.
+>>
+>> What I want is a standard way to describe the video components. If we
+>> have a standard complex one (video graphs) and a standard simple one
+>> (simple phandles), it's ok for me.
+> 
+> I certainly agree that it's useful to have standard ways to describe at
+> least various aspects. For example I think it would be useful to add
+> standard properties for a bridge's connections, such as "bridge" or
+> "panel" to allow bridge chaining and attaching them to panels.
+> 
+> But I think that should be the end of it. Mandating anything other than
+> that will just complicate things and limit what people can do in the
+> binding.
+> 
+> One of the disadvantages of the video graph bindings is that they are
+> overly vague in that they don't carry information about what type a
+> device is. Bindings then have to require additional meta-data, at which
+> point it's become far easier to describe things with a custom property
+> that already provides context.
 
-Regards,
-Abhilash
->
+I think it is opposite, graph bindings should describe only the link and
+certainly not what type of device is behind the endpoint. The fact we
+may need that information is a disadvantage of Linux frameworks and
+should be corrected in Linux, not by adding Linux specific properties to
+DT. For example display controller should not care where its output goes
+to: panel, encoder, bridge, whatever. It should care only if the
+parameters of the link are agreed with the receiver.
+
+On the other side I agree graph bindings are bloated and it should be
+possible to simplify them to single phandle if we do not need extra
+parameters.
+
+Regards
+Andrzej
+
+> 
+>>>> The point of the ports/endpoint graph is to also support more
+>>>> complicated scenarios.
 >>>
->>>>                       wkup_np = np;
->>>>                       break;
->>>>               }
->>>> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/samsung/pinctrl-exynos.h
->>>> index e060722..0db1e52 100644
->>>> --- a/drivers/pinctrl/samsung/pinctrl-exynos.h
->>>> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
->>>> @@ -25,6 +25,9 @@
->>>>  #define EXYNOS_WKUP_ECON_OFFSET              0xE00
->>>>  #define EXYNOS_WKUP_EMASK_OFFSET     0xF00
->>>>  #define EXYNOS_WKUP_EPEND_OFFSET     0xF40
->>>> +#define EXYNOS7_WKUP_ECON_OFFSET     0x700
->>>> +#define EXYNOS7_WKUP_EMASK_OFFSET    0x900
->>>> +#define EXYNOS7_WKUP_EPEND_OFFSET    0xA00
->>>
->>> Interestingly enough, the offsets look just like the normal GPIO
->>> interrupt controller of previous Exynos SoCs. Are you sure those are
->>> correct? Also if somehow the controller now resembles the normal one,
->>> doesn't it have the SVC register making it possible to reuse the non
->>> wake-up code instead?
+>>> But the scenario will always remain the same for this bridge. There will
+>>> always be an input signal and a translation to some output signal along
+>>> with some parameters to control how that translation happens. More
+>>> complicated scenarios will likely need to be represented differently at
+>>> a higher level than the bridge.
 >>
->> The wakeup interrupt register offsets are the same as the GPIO
->> interrupt offsets in earlier Exynos SoCs. There is no SVC register for
->> the wakeup interrupt block.
->
-> OK, your code is fine then.
->
-> Best regards,
-> Tomasz
+>> Yes, there's always one active input and one output for this bridge.
+>> What the video graphs would bring is to have the possibility to have
+>> multiple inputs and outputs, of which a single ones could be active at a
+>> time. The different inputs and outputs could even have different
+>> settings required (say, first output requires this bit set, but when
+>> using second output that bit must be cleared).
+> 
+> As discussed elsewhere this should be handled at a different level then.
+> DT should describe the hardware and this particular bridge device simply
+> doesn't have a means to connect more than a single input or more than a
+> single output.
+> 
+> Thierry
+> 
+> 
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+> 
