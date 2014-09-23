@@ -1,136 +1,152 @@
-From: Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>
+From: Andrzej Hajda <a.hajda@samsung.com>
 Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
  ps8622 DT properties
-Date: Tue, 23 Sep 2014 15:09:44 +0300
-Message-ID: <54216308.2050500@ti.com>
-References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com> <5419760A.7020908@ti.com> <CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com> <5419B52D.4060107@ti.com> <20140922080629.GC1470@ulmo> <542030DD.3060906@ti.com> <20140923060452.GD30514@ulmo> <5421201C.6000509@samsung.com> <20140923083514.GM30514@ulmo> <54214008.4040105@ti.com> <20140923100139.GT30514@ulmo>
+Date: Tue, 23 Sep 2014 14:40:54 +0200
+Message-ID: <54216A56.4050008@samsung.com>
+References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
+ <26633587.NifLIetGL4@avalon> <54215DDC.3050909@samsung.com>
+ <2238934.uLuAbtBXFj@avalon>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="xw9hOKXafrhkmv9kXts4bVJW1WdE0cXkq"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140923100139.GT30514@ulmo>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sean Paul <seanpaul-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, sunil joshi <joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Ajay kumar <ajaynumb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Prashanth G <prashanth.g-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <2238934.uLuAbtBXFj@avalon>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, seanpaul@google.com, daniel.vetter@ffwll.ch, joshi@samsung.com, dri-devel@lists.freedesktop.org, Tomi Valkeinen <tomi.valkeinen@ti.com>, ajaynumb@gmail.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
---xw9hOKXafrhkmv9kXts4bVJW1WdE0cXkq
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
-
-On 23/09/14 13:01, Thierry Reding wrote:
-> On Tue, Sep 23, 2014 at 12:40:24PM +0300, Tomi Valkeinen wrote:
->> On 23/09/14 11:35, Thierry Reding wrote:
+On 09/23/2014 01:52 PM, Laurent Pinchart wrote:
+> On Tuesday 23 September 2014 13:47:40 Andrzej Hajda wrote:
+>> On 09/23/2014 01:23 PM, Laurent Pinchart wrote:
+>>> On Tuesday 23 September 2014 13:18:30 Andrzej Hajda wrote:
+>>>> On 09/23/2014 01:10 PM, Laurent Pinchart wrote:
+>>>>> On Tuesday 23 September 2014 12:02:45 Andrzej Hajda wrote:
+>>>>>> On 09/23/2014 11:30 AM, Tomi Valkeinen wrote:
+>>>>>>> On 23/09/14 09:21, Thierry Reding wrote:
+>>>>>>>>> Well, I can write almost any kind of bindings, and then evidently my
+>>>>>>>>> device would work. For me, on my board.
+>>>>>>>>
+>>>>>>>> Well, that's the whole problem with DT. For many devices we only have
+>>>>>>>> a single setup to test against. And even when we have several they
+>>>>>>>> often are derived from each other. But the alternative would be to
+>>>>>>>> defer (possibly indefinitely) merging support for a device until a
+>>>>>>>> second, wildly different setup shows up. That's completely
+>>>>>>>> unreasonable and we need to start somewhere.
+>>>>>>>
+>>>>>>> Yes, but in this case we know of existing boards that have complex
+>>>>>>> setups. It's not theoretical.
+>>>>>>>
+>>>>>>> I'm not saying we should stop everything until we have a 100% solution
+>>>>>>> for the rare complex cases. But we should keep them in mind and, when
+>>>>>>> possible, solve problems in a way that will work for the complex cases
+>>>>>>> also.
+>>>>>>>
+>>>>>>>>> I guess non-video devices haven't had need for those. I have had
+>>>>>>>>> lots of boards with video setup that cannot be represented with
+>>>>>>>>> simple phandles. I'm not sure if I have just been unlucky or what,
+>>>>>>>>> but my understand is that other people have encountered such boards
+>>>>>>>>> also. Usually the problems encountered there have been circumvented
+>>>>>>>>> with some hacky video driver for that specific board, or maybe a
+>>>>>>>>> static configuration handled by the boot loader.
+>>>>>>>>
+>>>>>>>> I have yet to encounter such a setup. Can you point me at a DTS for
+>>>>>>>> one such setup? I do remember a couple of hypothetical cases being
+>>>>>>>> discussed at one time or another, but I haven't seen any actual DTS
+>>>>>>>> content where this was needed.
+>>>>>>>
+>>>>>>> No, I can't point to them as they are not in the mainline (at least
+>>>>>>> the ones I've been working on), for obvious reasons.
+>>>>>>>
+>>>>>>> With a quick glance, I have the following devices in my cabinet that
+>>>>>>> have more complex setups: OMAP 4430 SDP, BeagleBoneBlack + LCD, AM43xx
+>>>>>>> EVM. Many Nokia devices used to have such setups, usually so that the
+>>>>>>> LCD and tv-out were connected to the same video source.
+>>>>>>>
+>>>>>>>>> Do we have a standard way of representing the video pipeline with
+>>>>>>>>> simple phandles? Or does everyone just do their own version? If
+>>>>>>>>> there's no standard way, it sounds it'll be a mess to support in the
+>>>>>>>>> future.
+>>>>>>>>
+>>>>>>>> It doesn't matter all that much whether the representation is
+>>>>>>>> standard.
+>>>>>>>
+>>>>>>> Again, I disagree.
+>>>>>>>
+>>>>>>>> phandles should simply point to the next element in the pipeline and
+>>>>>>>> the OS abstractions should be good enough to handle the details about
+>>>>>>>> how to chain the elements.
+>>>>>>>
+>>>>>>> I, on the other hand, would rather see the links the other way around.
+>>>>>>> Panel having a link to the video source, etc.
+>>>>>>>
+>>>>>>> The video graphs have two-way links, which of course is the safest
+>>>>>>> options, but also more verbose and redundant.
+>>>>>>>
+>>>>>>> When this was discussed earlier, it was unclear which way the links
+>>>>>>> should be. It's true that only links to one direction are strictly
+>>>>>>> needed, but the question raised was that if in the drivers we end up
+>>>>>>> always going the links the other way, the performance penalty may be
+>>>>>>> somewhat big. (If I recall right).
+>>>>>>
+>>>>>> I do not see why performance may drop significantly?
+>>>>>> If the link is one-way it should probably work as below:
+>>>>>> - the destination registers itself in some framework,
+>>>>>> - the source looks for the destination in this framework using phandle,
+>>>>>> - the source starts to communicate with the destination - since now
+>>>>>> full two way link can be established dynamically.
+>>>>>>
+>>>>>> Where do you see here big performance penalty?
+>>>>>
+>>>>> The performance-related problems arise when you need to locate the
+>>>>> remote device in the direction opposite to the phandle link direction.
+>>>>> Traversing a link forward just involves a phandle lookup, but traversing
+>>>>> it backwards isn't possible the same way.
+>>>>
+>>>> But you do not need to traverse backwards. You just wait when the source
+>>>> start to communicate with the destination, at this moment destination can
+>>>> build back-link dynamically.
+>>>
+>>> Your driver might not need it today for your use cases, but can you be
+>>> certain that no driver on any OS would need to ?
 >>
->>> Well, a display controller is never going to attach to a panel direct=
-ly.
+>> I have just showed how to create back-link dynamically if we have only
+>> forward-link in DT.
+>> Ie it is a trivial 'proof' that the direction is not so important.
+>> So I do not understand why do you pose such question?
 >>
->> With parallel RGB, that (almost) happens. There's voltage level shifti=
-ng
->> probably in the middle, but I don't see anything else there.
->=20
-> The level shifting could be considered an encoder. Anyway, I didn't mea=
-n
-> physically attach to a panel but rather in DRM. You'll always need an
-> encoder and connector before you go to the panel.
-
-"For now", you mean.
-
-I'd rather see much more freedom there. If a display controller is
-connected to a panel directly, with only non-controllable level shifters
-in between (I don't even think those are strictly needed. why couldn't
-there be a low-end soc that works with higher voltages?), I think we
-should model it in the SW side by just having a device for the display
-controller and a device for the panel. No artificial
-encoders/bridges/connectors needed in between.
-
-But I understand that for DRM legacy reasons that may never happen.
-
->>> But I agree that it would be nice to unify bridges and encoders more.=
- It
->>> should be possible to make encoder always a bridge (or perhaps even
->>> replace encoders with bridges altogether). Then once you're out of th=
-e
->>> DRM device everything would be a bridge until you get to a panel.
+>>> This becomes an issue even on Linux when considering video-related devices
+>>> that can be part of either a capture pipeline or a display pipeline. If
+>>> the link always goes in the data flow direction, then it will be easy to
+>>> locate the downstream device (bridge or panel) from the display controller
+>>> driver, but it would be much more difficult to locate the same device from
+>>> a camera driver as all of a sudden the device would become an upstream
+>>> device.
 >>
->> What exactly is a bridge and what is an encoder? Those are DRM
->> constructs, aren't they?
->=20
-> Yes. I think bridges are mostly a superset of encoders.
+>> Why?
+>>
+>> If you have graph:
+>> sensor --> camera
+>>
+>> Then camera register itself in some framework as a destination device
+>> and sensor looks in this framework for the device identified by remote
+>> endpoint.
+>> Then sensor tells camera it is connected to it and voila.
+> 
+> Except that both kernelspace and userspace deal with cameras the other way 
+> around, the master device is the camera receiver, not the camera sensor. DRM 
+> is architected the same way, with the component that performs DMA operations 
+> being the master device.
 
-Superset in what way? If I have a SiI9022 RGB-to-HDMI encoder embedded
-into my SoC (i.e. a DRM encoder), or I have a board with a SiI9022
-encoder on the board (i.e. a DRM bridge), what is different?
+But the link direction do not determines who should be the master
+device. It just determines who should perform initial handshake.
 
->> As I see it, a video pipeline consist of a video source (display
->> controller usually), a chain of encoders (all of which may not be
->> strictly "encoders", they could be level shifters, muxes, ESD protecti=
-on
->> devices or such), and either a display device like a panel or a
->> connector to outside world.
->=20
-> Well, the panel itself is attached to a connector. The connector is
-> really what userspace uses to control the output and indirectly the
-> panel.
-
-Yep. That's also something that should be fixed. A connector SW entity
-is fine when connecting an external monitor, but a panel directly
-connected to the SoC does not have a connector, and it's the panel that
-should be controlled from the userspace.
-
-But again, the legacy...
-
->> Am I right that in DRM world the encoder is the first device in the
->> display chain after the display controller,
->=20
-> Yes.
->=20
->>                                             and the next is a bridge?
->=20
-> A bridge or a connector. Typically it would be a connector, but that's
-> only if you don't have bridges in between.
->=20
->> That sounds totally artificial, and I hope we don't reflect that in th=
-e
->> DT side in any way.
->=20
-> Yes, they are software concepts and I'm not aware of any of it being
-> exposed in DT. A display controller is usually implemented as DRM CRTC
-> object and outputs (DSI, eDP, HDMI) as encoder (often with a connector
-> tied to it).
-
-Ok. Thanks for the clarifications.
-
- Tomi
-
-
-
---xw9hOKXafrhkmv9kXts4bVJW1WdE0cXkq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUIWMIAAoJEPo9qoy8lh71/bAP/3YNxEr34RZMGRYtkFUS+hQb
-XAYqqagcwmWEebMC/N2kQF9e8dVZ4yjdxa7qqQA+M9biXWd1ouVbbgvIFbA0il/w
-23dZ8Ds72Ac5+R6ERGTyV/NvdFqhLu5+udQuYyEow0rqtCzorvHg89SReT+xWenN
-nzr3e8sVA5LOnrOu//5v4PzB532xA7VBwhFHxIDx7FbATGSMZexeMAaxz9TLuWN5
-L+dgPAA54LehwrtB/A1NF9BM3T4uvIYBi5UxO3ZtnYHjuC6qpdaIF1HSU8EJX8RH
-x2dmd7IUU80naKEYaR2x0h75RTG41FSyV2HWC4yFNnSqwKuLctMopnzT5syTqYsp
-1ShMhP5hHjPjdyGcJq3m823I4DNIfs9fsH+m66oUEQYe+58kJBTdi9ZFjMcj5AJO
-bGO9rjeDj8os745M+O7oqBDnOiyieN1X+mMm4jpowT2j87zUHaYuPnt2uZXWkDYr
-dntvGUHwfHoETLlX8vnD5D+jcbK5j5pLUi+FZmqX4NyGw6+pMnXZkuh2N8RPMMl4
-Zf4YPBW9fRI3MOm7RBe+CI0bor4De0OA2wUSSiKggmGG/mZIXLz6HIkXK514NVdo
-KiHYgfSPjyDV8DIxaiAXclJ2R/Goltobi3w/XKBSYvRbFJ9FKjVc1YHXLJcVOBxf
-QLl4SyMlidyJ/CH41WWs
-=g3aD
------END PGP SIGNATURE-----
-
---xw9hOKXafrhkmv9kXts4bVJW1WdE0cXkq--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Andrzej
