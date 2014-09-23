@@ -1,111 +1,191 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
- ps8622 DT properties
-Date: Tue, 23 Sep 2014 12:10:33 +0200
-Message-ID: <20140923101032.GU30514@ulmo>
-References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
- <5419760A.7020908@ti.com>
- <CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com>
- <5419B52D.4060107@ti.com> <20140922080629.GC1470@ulmo>
- <542030DD.3060906@ti.com> <20140923060452.GD30514@ulmo>
- <5421201C.6000509@samsung.com> <20140923083514.GM30514@ulmo>
- <542140D3.8080806@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: RE: [PATCH v5] mfd: syscon: Decouple syscon interface from platform
+ devices
+Date: Tue, 23 Sep 2014 15:59:43 +0530
+Message-ID: <000001cfd719$51e7e560$f5b7b020$@samsung.com>
+References: <1411360807-7750-1-git-send-email-pankaj.dubey@samsung.com>
+ <20140922091925.GA19778@shlinux1.ap.freescale.net>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0711554409=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <542140D3.8080806@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20140922091925.GA19778@shlinux1.ap.freescale.net>
+Content-language: en-us
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Dong Aisheng' <b29396@freescale.com>, arnd@arndb.de
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, lee.jones@linaro.org, tomasz.figa@gmail.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, joshi@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, chow.kim@samsung.com, kgene.kim@samsung.com, Li.Xiubo@freescale.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi Dong,
 
---===============0711554409==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="nZJAkgcjPzQrJB+u"
-Content-Disposition: inline
+On Monday, September 22, 2014, Dong Aisheng wrote,
+> On Mon, Sep 22, 2014 at 10:10:07AM +0530, Pankaj Dubey wrote:
 
+[snip]
 
---nZJAkgcjPzQrJB+u
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> > -static int syscon_match_node(struct device *dev, void *data)
+> > +static struct syscon *of_syscon_register(struct device_node *np)
+> >  {
+> > -	struct device_node *dn = data;
+> > +	struct platform_device *pdev = NULL;
+> > +	struct syscon *syscon;
+> > +	struct regmap *regmap;
+> > +	void __iomem *base;
+> > +	int ret;
+> > +
+> > +	if (!of_device_is_compatible(np, "syscon"))
+> > +		return ERR_PTR(-EINVAL);
+> > +
+> > +	syscon = kzalloc(sizeof(*syscon), GFP_KERNEL);
+> > +	if (!syscon)
+> > +		return ERR_PTR(-ENOMEM);
+> > +
+> > +	base = of_iomap(np, 0);
+> > +	if (!base) {
+> > +		ret = -ENOMEM;
+> > +		goto err_map;
+> > +	}
+> > +
+> > +	/* if device is already populated and available then use it */
+> > +	pdev = of_find_device_by_node(np);
+> > +	if (!pdev) {
+> > +		/* for early users create dummy syscon device and use it */
+> > +		pdev = platform_device_alloc("dummy-syscon", -1);
+> 
+> Can we create specific devices for each syscon device?
+> That looks more reasonable to me.
+> Then we can dump registers in regmap debugfs more clearly, just like other
+devices.
+> And i think it's better to follow device tree way to generate devices from
+node.
+> If DT core find a device is already created, it can ignore that device to
+avoid creating
+> duplicated device during of_platform_populate.
+> 
 
-On Tue, Sep 23, 2014 at 11:43:47AM +0200, Andrzej Hajda wrote:
-> On 09/23/2014 10:35 AM, Thierry Reding wrote:
-[...]
-> > But I agree that it would be nice to unify bridges and encoders more. It
-> > should be possible to make encoder always a bridge (or perhaps even
-> > replace encoders with bridges altogether). Then once you're out of the
-> > DRM device everything would be a bridge until you get to a panel.
->=20
-> I agree that some sort of unification of bridges, (slave) encoders is a g=
-ood
-> thing, this way we stay only with bridges and panels as receivers.
-> But we will still have to deal with the code like:
->     if (on the other end of the link is panel)
->         do panel framework specific things
->     else
->         do bridge framework specific things
->=20
-> The code in both branches usually does similar things but due to framework
-> differences it is difficult to merge.
+If you are referring to use "of_platform_device_create", then I am afraid
+that it can't be used
+in very early stage. For example, current patch I tested by calling
+syscon_lookup_by_phandle from
+"init_irq" hook of machine_desc, and it worked well, but If I use
+"of_platform_device_create"
+instead of dummy device, it fails to create pdev and this I verified on
+Exynos platform. The reason
+I selected "init_irq" is because this comes just before smp init and where
+once we tried to get regmap handle,
+but could not do so. 
 
-That's because they are inherently different entities. You can perform
-operations on a panel that don't make sense for a bridge and vice-versa.
+Also if it was just a matter of creating platform_device at early stage then
+early initialization of
+syscon could have been solved till now.
 
-> Ideally it would be best to get rid of such constructs. For example by
-> trying to
-> make frameworks per interface type exposed by device (eg. video_sink) and
-> not by device type (drm_bridge, drm_panel).
+So I would suggest if we really want this patch to cover early
+initialization of syscon
+(which is not it's main purpose) current patch is sufficient. 
 
-But then you loose all information about the real type of device. Or you
-have to create a common base class. And then you're still back to
-dealing with the two specific cases in many places, so the gain seems
-rather minimal.
+@Arnd, since I have addressed crash issue as reported by Dong Aisheng, I
+would like to take your ack,
+but since there are some more code changes other than what you suggested I
+request you to check this
+and if you are ok, then I would like to your ack so that I can request to
+maintainer for taking this patch.
 
-Thierry
+Thanks,
+Pankaj Dubey
 
---nZJAkgcjPzQrJB+u
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUIUcYAAoJEN0jrNd/PrOhZvwQAKTJLz/zj7VcMelKI/GkBsxs
-fUr6S9Vj3jlRh0h/dKx/nCl4K2ZX6qj6+Lo4n3BRilKhTe8rf3mpEPiMfL6Xkaze
-J7RF9Rr7oq5GqY+ycw5qLLCKHPwzkfevpVfSUfUmO1j9UcYOBCZZH+4JVnBNMQB7
-nP647n5xqbG3NqUEA2MZEKSbO8FH9qfajWAYjg+2molLDHbRgEWCK+5cS6ip1bCc
-dXfcGLjEyKsn0PDs8gmpnAg0t8+j7RH4lUp/6PtYJuwrK8e1qE15tBxMTY1dx97o
-oHvDCSwUQcmfhievDAQ7TIblPT/szsGZS1J+lpR1iLL7nTjv8tIgdX9EMYGp1s9s
-BHPBsnSaKZnGaFY46h6uv7EbjHefh+MuJxToPEP2+ESXtyEmoRtoP+S3KY9Ep/57
-d+WCxsfQENGErWI8RSnqhxr/jQ7SBYBhKEPGZrUfJBK1r9o/zTyGaA/35wHcS+ME
-ylHng1qGniTZyh2qzRyiCncxYFdUZCiqeKBGncDYRkD0XqnOwPlOPfp+8uO/ABkd
-tqpIgQ7uDo8J9HCZNzl0KS9v14yiZzK65awUJFOEcPd9cM0c4rS2pf6mtCqJGxFH
-uCr3LPIKfowEWmpjRfrPpNnpRNGUtu1NZEiUkpPPb8MtpV2hfQnLNHBZy1XbuMnh
-kGubrvHsB+HLi96xDJ1W
-=QrTg
------END PGP SIGNATURE-----
-
---nZJAkgcjPzQrJB+u--
-
---===============0711554409==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-dri-devel mailing list
-dri-devel@lists.freedesktop.org
-http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---===============0711554409==--
+> Regards
+> Dong Aisheng
+> 
+> > +		if (!pdev) {
+> > +			ret = -ENOMEM;
+> > +			goto err_pdev;
+> > +		}
+> > +		pdev->dev.of_node = of_node_get(np);
+> > +	}
+> > +
+> > +	regmap = devm_regmap_init_mmio(&pdev->dev, base,
+> &syscon_regmap_config);
+> > +	if (IS_ERR(regmap)) {
+> > +		dev_err(&pdev->dev, "regmap init failed\n");
+> > +		ret = PTR_ERR(regmap);
+> > +		goto err_regmap;
+> > +	}
+> > +
+> > +	syscon->regmap = regmap;
+> > +	syscon->np = np;
+> >
+> > -	return (dev->of_node == dn) ? 1 : 0;
+> > +	spin_lock(&syscon_list_slock);
+> > +	list_add_tail(&syscon->list, &syscon_list);
+> > +	spin_unlock(&syscon_list_slock);
+> > +
+> > +	return syscon;
+> > +
+> > +err_regmap:
+> > +	if (!strcmp(pdev->name, "dummy-syscon")) {
+> > +		of_node_put(np);
+> > +		platform_device_put(pdev);
+> > +	}
+> > +err_pdev:
+> > +	iounmap(base);
+> > +err_map:
+> > +	kfree(syscon);
+> > +	return ERR_PTR(ret);
+> >  }
+> >
+> >  struct regmap *syscon_node_to_regmap(struct device_node *np)  {
+> > -	struct syscon *syscon;
+> > -	struct device *dev;
+> > +	struct syscon *entry, *syscon = NULL;
+> >
+> > -	dev = driver_find_device(&syscon_driver.driver, NULL, np,
+> > -				 syscon_match_node);
+> > -	if (!dev)
+> > -		return ERR_PTR(-EPROBE_DEFER);
+> > +	spin_lock(&syscon_list_slock);
+> >
+> > -	syscon = dev_get_drvdata(dev);
+> > +	list_for_each_entry(entry, &syscon_list, list)
+> > +		if (entry->np == np) {
+> > +			syscon = entry;
+> > +			break;
+> > +		}
+> > +
+> > +	spin_unlock(&syscon_list_slock);
+> > +
+> > +	if (!syscon)
+> > +		syscon = of_syscon_register(np);
+> > +
+> > +	if (IS_ERR(syscon))
+> > +		return ERR_CAST(syscon);
+> >
+> >  	return syscon->regmap;
+> >  }
+> > @@ -110,17 +185,6 @@ struct regmap
+> > *syscon_regmap_lookup_by_phandle(struct device_node *np,  }
+> > EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle);
+> >
+> > -static const struct of_device_id of_syscon_match[] = {
+> > -	{ .compatible = "syscon", },
+> > -	{ },
+> > -};
+> > -
+> > -static struct regmap_config syscon_regmap_config = {
+> > -	.reg_bits = 32,
+> > -	.val_bits = 32,
+> > -	.reg_stride = 4,
+> > -};
+> > -
+> >  static int syscon_probe(struct platform_device *pdev)  {
+> >  	struct device *dev = &pdev->dev;
+> > @@ -167,7 +231,6 @@ static struct platform_driver syscon_driver = {
+> >  	.driver = {
+> >  		.name = "syscon",
+> >  		.owner = THIS_MODULE,
+> > -		.of_match_table = of_syscon_match,
+> >  	},
+> >  	.probe		= syscon_probe,
+> >  	.id_table	= syscon_ids,
+> > --
+> > 1.7.9.5
+> >
