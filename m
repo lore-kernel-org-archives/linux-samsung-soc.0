@@ -1,98 +1,108 @@
-From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: [PATCH v10 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
-Date: Wed, 24 Sep 2014 17:56:54 +0530
-Message-ID: <CAJuA9ai8f1wut5v2iZN4YJfJ1tEWyo4WXJtjLAF9bYLj214fuA@mail.gmail.com>
-References: <1411531078-10671-1-git-send-email-thomas.ab@samsung.com>
-	<026501cfd7ca$0857a140$1906e3c0$@kernel.org>
-	<5422A635.2020607@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v3] ARM: EXYNOS: SWRESET is needed to boot secondary CPU on
+ Exynos3250
+Date: Wed, 24 Sep 2014 14:30:51 +0200
+Message-ID: <1411561851-13764-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:60176 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753820AbaIXM04 (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:46573 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750783AbaIXMbC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Sep 2014 08:26:56 -0400
-In-Reply-To: <5422A635.2020607@gmail.com>
+	Wed, 24 Sep 2014 08:31:02 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Lukasz Majewski <l.majewski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Viresh Kumar <viresh.kumar@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hi Tomasz,
+Without software reset the secondary CPU does not power up and
+exynos_boot_secondary() ends with pen_release equal to 1. This can be
+observed in dmesg:
+	CPU1: failed to come online
+	Brought up 1 CPUs
+	SMP: Total of 1 processors activated.
+	CPU: All CPU(s) started in SVC mode.
 
-On Wed, Sep 24, 2014 at 4:38 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On 24.09.2014 09:34, Kukjin Kim wrote:
->> Thomas Abraham wrote:
->>>
->>> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
->>> drivers and enables the use of cpufreq-cpu0 driver for these platforms. This
->>> series also enables cpufreq support for Exynos5420 using arm_big_little cpufreq
->>> driver.
->>>
->>> This patch series is dependent on two other patches
->>> 1. ARM: dts: add CPU nodes for Exynos4 SoCs
->>>    - https://lkml.org/lkml/2014/7/21/315
->>> 2. clk: exynos4: remove duplicate div_core2 divider clock instantiation
->>>    - http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34859.html
->
-> I have applied 2) to Samsung clock tree.
+When booting the secondary CPU on Exynos3250 execute also software
+reset for core 1.
 
-Ok.
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 
->
->>>
->>> Thomas Abraham (6):
->>>   clk: samsung: add infrastructure to register cpu clocks
->>>   clk: samsung: add cpu clock configuration data and instantiate cpu clock
->>>   ARM: dts: Exynos: add CPU OPP and regulator supply property
->>>   ARM: Exynos: switch to using generic cpufreq driver for Exynos4210/5250/5420
->>>   cpufreq: exynos: remove exynos4210/5250 specific cpufreq driver support
->>>   clk: samsung: remove unused clock aliases and update clock flags
->>>
->>>  arch/arm/boot/dts/exynos4210-origen.dts         |    4 +
->>>  arch/arm/boot/dts/exynos4210-trats.dts          |    4 +
->>>  arch/arm/boot/dts/exynos4210-universal_c210.dts |    4 +
->>>  arch/arm/boot/dts/exynos4210.dtsi               |   14 +-
->>>  arch/arm/boot/dts/exynos5250-arndale.dts        |    4 +
->>>  arch/arm/boot/dts/exynos5250-smdk5250.dts       |    4 +
->>>  arch/arm/boot/dts/exynos5250-snow.dts           |    4 +
->>>  arch/arm/boot/dts/exynos5250.dtsi               |   25 ++-
->>>  arch/arm/boot/dts/exynos5420.dtsi               |   38 +++
->>>  arch/arm/mach-exynos/exynos.c                   |   24 ++-
->>>  drivers/clk/samsung/Makefile                    |    2 +-
->>>  drivers/clk/samsung/clk-cpu.c                   |  335 +++++++++++++++++++++++
->>>  drivers/clk/samsung/clk-cpu.h                   |   91 ++++++
->>>  drivers/clk/samsung/clk-exynos4.c               |   63 +++--
->>>  drivers/clk/samsung/clk-exynos5250.c            |   44 +++-
->>>  drivers/clk/samsung/clk-exynos5420.c            |   72 +++++-
->>>  drivers/cpufreq/Kconfig.arm                     |   22 --
->>>  drivers/cpufreq/Makefile                        |    2 -
->>>  include/dt-bindings/clock/exynos5250.h          |    1 +
->>>  include/dt-bindings/clock/exynos5420.h          |    2 +
->>
->> Looks good to me,
->> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->>
->> BTW, who will handle this series? I think this is already ready for v3.18.
->
-> I believe Viresh already acked this series too and since it does quite a
-> lot of shuffling in clock code, I'd prefer to take this through clock
-> tree, but apparently there is a dependency on patch 1), which already
-> went through another tree?
+---
 
-Not yet. The v2 version of the patch does not cleanly apply and needs
-to be refreshed.
-Bartlomiej, would be posting an updated version of this patch?
+Changes since v2:
+1. Rebase on Kukjin's for-next tree from 24th of September
+(v3.17-rc3-97-gbcf20e084a4b)
 
-Thanks,
-Thomas.
+Changes since v1:
+1. Removed inline keyword and change if statement to early return as
+   Tomasz suggested.
+2. Added reviewed-by Tomasz Figa.
+---
+ arch/arm/mach-exynos/platsmp.c  | 23 +++++++++++++++++++++++
+ arch/arm/mach-exynos/regs-pmu.h |  2 ++
+ 2 files changed, 25 insertions(+)
 
->
-> Best regards,
-> Tomasz
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index 41ae28d69e6f..8543064dc445 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -121,6 +121,26 @@ static inline void __iomem *cpu_boot_reg(int cpu)
+ }
+ 
+ /*
++ * Set wake up by local power mode and execute software reset for given core.
++ *
++ * Currently this is needed only when booting secondary CPU on Exynos3250.
++ */
++static void exynos_core_restart(u32 core_id)
++{
++	u32 val;
++
++	if (!of_machine_is_compatible("samsung,exynos3250"))
++		return;
++
++	val = pmu_raw_readl(EXYNOS_ARM_CORE_STATUS(core_id));
++	val |= S5P_CORE_WAKEUP_FROM_LOCAL_CFG;
++	pmu_raw_writel(val, EXYNOS_ARM_CORE_STATUS(core_id));
++
++	pr_info("CPU%u: Software reset\n", core_id);
++	pmu_raw_writel(EXYNOS_CORE_PO_RESET(core_id), EXYNOS_SWRESET);
++}
++
++/*
+  * Write pen_release in a way that is guaranteed to be visible to all
+  * observers, irrespective of whether they're taking part in coherency
+  * or not.  This is necessary for the hotplug code to work reliably.
+@@ -196,6 +216,9 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 			return -ETIMEDOUT;
+ 		}
+ 	}
++
++	exynos_core_restart(core_id);
++
+ 	/*
+ 	 * Send the secondary CPU a soft interrupt, thereby causing
+ 	 * the boot monitor to read the system wide flags register,
+diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+index 30c03017aa6a..4ea5e320c6d1 100644
+--- a/arch/arm/mach-exynos/regs-pmu.h
++++ b/arch/arm/mach-exynos/regs-pmu.h
+@@ -21,6 +21,7 @@
+ #define S5P_USE_STANDBY_WFI0			(1 << 16)
+ #define S5P_USE_STANDBY_WFE0			(1 << 24)
+ 
++#define EXYNOS_CORE_PO_RESET(n)			((1 << 4) << n)
+ #define EXYNOS_WAKEUP_FROM_LOWPWR		(1 << 28)
+ #define EXYNOS_SWRESET				0x0400
+ #define EXYNOS5440_SWRESET			0x00C4
+@@ -125,6 +126,7 @@
+ #define S5P_PAD_RET_EBIB_OPTION			0x31A8
+ 
+ #define S5P_CORE_LOCAL_PWR_EN			0x3
++#define S5P_CORE_WAKEUP_FROM_LOCAL_CFG		(0x3 << 8)
+ 
+ /* Only for EXYNOS4210 */
+ #define S5P_CMU_CLKSTOP_LCD1_LOWPWR	0x1154
+-- 
+1.9.1
