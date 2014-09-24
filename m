@@ -1,139 +1,60 @@
 From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v3] ARM: dts: add CPU nodes for Exynos4 SoCs
-Date: Wed, 24 Sep 2014 15:09:19 +0200
-Message-ID: <5230569.XLlNbB5NvF@amdc1032>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Subject: [PATCH v3 0/1] ARM: EXYNOS: Fix builds with PM_SLEEP=n
+Date: Wed, 24 Sep 2014 16:20:01 +0200
+Message-ID: <1411568402-24561-1-git-send-email-b.zolnierkie@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:15629 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750802AbaIXNJ1 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:23099 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751281AbaIXOUO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Sep 2014 09:09:27 -0400
+	Wed, 24 Sep 2014 10:20:14 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Thomas Abraham <ta.omasab@gmail.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Olof Johansson <olof@lixom.net>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 
-Recent patch by Tomasz Figa ("irqchip: gic: Fix core ID calculation
-when topology is read from DT") fixed GIC driver to filter cluster ID
-from values returned by cpu_logical_map() for SoCs having registers
-mapped without per-CPU banking making it is possible to add CPU nodes
-for Exynos4 SoCs.  In case of Exynos SoCs these CPU nodes are also
-required by future changes adding initialization of cpuidle states in
-Exynos cpuidle driver through DT.
+Hi,
 
-Tested on Origen board (Exynos4210 SoC) and Trats2 (Exynos4412 SoC).
+This patch fixes builds with CONFIG_PM_SLEEP config option disabled.
+It has been runtime tested on Exynos4210 based Origen board.
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
----
-Based on for-next branch of linux-samsung.git tree.
+Depends on:
+- for-next branch of linux-samsung.git kernel tree
+- [PATCH v7 0/5] ARM: EXYNOS: cpuidle: fix AFTR mode on boards with secure
+  firmware enabled
+  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg37073.html)
 
-v3:
-- refreshed on top of Kukjin's tree
+Changes since v2:
+(http://www.mail-archive.com/linux-samsung-soc%40vger.kernel.org/msg35430.html)
+- rebased on top of for-next branch of linux-samsung.git kernel tree +
+  [PATCH v7 0/5] ARM: EXYNOS: cpuidle: fix AFTR mode on boards with secure
+  firmware enabled
+  (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg37073.html)
 
-v2:
-- match the unit-address with the reg
+Changes since v1:
+(http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34079.html)
+- rebased on top of next-20140811
+- fixed OOPS on the first try to enter cpuidle AFTR mode
+  (config with CONFIG_PM_SLEEP=n and CONFIG_ARM_EXYNOS_CPUIDLE=y)
 
- arch/arm/boot/dts/exynos4210.dtsi |   17 +++++++++++++++++
- arch/arm/boot/dts/exynos4212.dtsi |   17 +++++++++++++++++
- arch/arm/boot/dts/exynos4412.dtsi |   29 +++++++++++++++++++++++++++++
- 3 files changed, 63 insertions(+)
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-Index: b/arch/arm/boot/dts/exynos4210.dtsi
-===================================================================
---- a/arch/arm/boot/dts/exynos4210.dtsi	2014-09-24 14:38:18.958571829 +0200
-+++ b/arch/arm/boot/dts/exynos4210.dtsi	2014-09-24 15:08:14.062510517 +0200
-@@ -31,6 +31,23 @@
- 		pinctrl2 = &pinctrl_2;
- 	};
- 
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@900 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <0x900>;
-+		};
-+
-+		cpu@901 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <0x901>;
-+		};
-+	};
-+
- 	pmu_system_controller: system-controller@10020000 {
- 		clock-names = "clkout0", "clkout1", "clkout2", "clkout3",
- 				"clkout4", "clkout8", "clkout9";
-Index: b/arch/arm/boot/dts/exynos4212.dtsi
-===================================================================
---- a/arch/arm/boot/dts/exynos4212.dtsi	2014-09-24 14:38:18.954571828 +0200
-+++ b/arch/arm/boot/dts/exynos4212.dtsi	2014-09-24 14:43:02.198562156 +0200
-@@ -22,6 +22,23 @@
- / {
- 	compatible = "samsung,exynos4212", "samsung,exynos4";
- 
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@A00 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <0xA00>;
-+		};
-+
-+		cpu@A01 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <0xA01>;
-+		};
-+	};
-+
- 	combiner: interrupt-controller@10440000 {
- 		samsung,combiner-nr = <18>;
- 	};
-Index: b/arch/arm/boot/dts/exynos4412.dtsi
-===================================================================
---- a/arch/arm/boot/dts/exynos4412.dtsi	2014-09-24 14:38:18.966571830 +0200
-+++ b/arch/arm/boot/dts/exynos4412.dtsi	2014-09-24 14:43:02.198562156 +0200
-@@ -22,6 +22,35 @@
- / {
- 	compatible = "samsung,exynos4412", "samsung,exynos4";
- 
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu@A00 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <0xA00>;
-+		};
-+
-+		cpu@A01 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <0xA01>;
-+		};
-+
-+		cpu@A02 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <0xA02>;
-+		};
-+
-+		cpu@A03 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a9";
-+			reg = <0xA03>;
-+		};
-+	};
-+
- 	combiner: interrupt-controller@10440000 {
- 		samsung,combiner-nr = <20>;
- 	};
+
+Bartlomiej Zolnierkiewicz (1):
+  ARM: EXYNOS: Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y
+
+ arch/arm/mach-exynos/Kconfig   |   5 +
+ arch/arm/mach-exynos/Makefile  |   5 +-
+ arch/arm/mach-exynos/common.h  |   4 +
+ arch/arm/mach-exynos/pm.c      | 338 +-------------------------------------
+ arch/arm/mach-exynos/suspend.c | 356 +++++++++++++++++++++++++++++++++++++++++
+ arch/arm/plat-samsung/Makefile |   1 +
+ 6 files changed, 374 insertions(+), 335 deletions(-)
+ create mode 100644 arch/arm/mach-exynos/suspend.c
+
+-- 
+1.8.2.3
