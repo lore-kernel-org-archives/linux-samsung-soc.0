@@ -1,80 +1,68 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH/RFC 0/2] serial: samsung: add support for early console
-Date: Thu, 25 Sep 2014 04:37:18 +0530
-Message-ID: <CAGOxZ53+8g5CKHo5GQUQQd=o6rcdWJEWGdHG6CP8z2eS8cYRXw@mail.gmail.com>
-References: <1411391655-6291-1-git-send-email-m.szyprowski@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH 2/2] ARM: dts: Add rtc_src clk for s3c-rtc on exynos5250-snow
+Date: Thu, 25 Sep 2014 08:27:28 +0900
+Message-ID: <54235360.7090303@samsung.com>
+References: <1410954633-27025-1-git-send-email-javier.martinez@collabora.co.uk> <1410954633-27025-3-git-send-email-javier.martinez@collabora.co.uk> <CAD=FV=W7xJ01m2oLtuDnogOmrpwpztbir=59oSWU6oojFYUWKw@mail.gmail.com> <5419ADF9.3010509@suse.de> <00f801cfd6f6$07e10500$17a30f00$@kernel.org> <5421992F.6070908@samsung.com> <54219D47.6010102@collabora.co.uk> <54233A84.7040902@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f176.google.com ([209.85.160.176]:35467 "EHLO
-	mail-yk0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750914AbaIXXH7 (ORCPT
+Received: from mail-pd0-f178.google.com ([209.85.192.178]:46710 "EHLO
+	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751500AbaIXX1g (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Sep 2014 19:07:59 -0400
-Received: by mail-yk0-f176.google.com with SMTP id 19so2840502ykq.35
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Sep 2014 16:07:58 -0700 (PDT)
-In-Reply-To: <1411391655-6291-1-git-send-email-m.szyprowski@samsung.com>
+	Wed, 24 Sep 2014 19:27:36 -0400
+In-Reply-To: <54233A84.7040902@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alim Akhtar <alim.akhtar@samsung.com>, Thomas P Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robherring2@gmail.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, 'Doug Anderson' <dianders@chromium.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org, 'Daniel Drake' <drake@endlessm.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>, =?ISO-8859-1?Q?=27Andreas_F=E4rber=27?= <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org
 
-Hi Marek,
+On 09/25/14 06:41, Javier Martinez Canillas wrote:
+> Hello Kukjin,
+>
+Hi,
 
-On Mon, Sep 22, 2014 at 6:44 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Hello,
+> On 09/23/2014 06:18 PM, Javier Martinez Canillas wrote:
+>> On 09/23/2014 06:00 PM, Kukjin Kim wrote:
+>>> On 09/23/14 15:17, Kukjin Kim wrote:
+>>>
+>>> I've applied above and this series and please double-check the commits
+>>> in my tree. If no problems, I will send the branch out for v3.18 soon...
+>>>
+>>> Thanks,
+>>> Kukjin
+>>>
+>>
+>> I've looked the RTC source clock patches and look good to me. Thanks a lot for your help!
+>>
 >
-> This patchset adds support for early console defined in device tree. As
-> an example, DTS files for all Exynos4 based machines are updated with
-> the correct value for common chosen/sdtout property.
+> Today I also had time to review the rebased patches from Andreas and found
+> two issues introduced during the merge conflict resolution:
 >
-> To get it fully functional additional improvements (support for
-> early_ioremap) are needed in early console code.
->
-> Best regards
-> Marek Szyprowski
-> Samsung R&D Institute Poland
->
->
-> Patch summary:
->
-> Tomasz Figa (2):
->   serial: samsung: Add support for of_earlycon
-Probably you can re-spin this series without RFC tag and fixing a nit.
-Please add command line support also and update the Documentation with
-command line param.
->   ARM: dts: exynos4: Add stdout-path properties
->
-Have tested this on ARM64 based exynos7, both DT and command line way.
-Both works.
-Compile tested on ARM.
-Probably you can rebase on top of
-https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg36208.html
-maybe.
->  arch/arm/boot/dts/exynos4210-origen.dts         |  1 +
->  arch/arm/boot/dts/exynos4210-smdkv310.dts       |  1 +
->  arch/arm/boot/dts/exynos4210-trats.dts          |  1 +
->  arch/arm/boot/dts/exynos4210-universal_c210.dts |  1 +
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  4 +
->  arch/arm/boot/dts/exynos4412-origen.dts         |  1 +
->  arch/arm/boot/dts/exynos4412-smdk4412.dts       |  1 +
->  arch/arm/boot/dts/exynos4412-tiny4412.dts       |  4 +
->  arch/arm/boot/dts/exynos4412-trats2.dts         |  1 +
->  drivers/tty/serial/Kconfig                      |  1 +
->  drivers/tty/serial/samsung.c                    | 97 +++++++++++++++++++++++++
->  11 files changed, 113 insertions(+)
->
-> --
-> 1.9.2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Oops. Thanks for your quick fix it up.
 
+> 1) The spi_1 dev node on exynos5250-smdk5250.dts now uses the old "cs-gpio"
+>     DT property under the controller-data instead of the standard "cs-gpios"
+>     under the SPI parent. IOW, is a regression of the bug fixed in commit
+>     e138d43 ("ARM: dts: fix the chip select gpios definition in the SPI nodes").
+>
+> 2) The display-timings child node of the dp-controller was removed in commit
+>     a98c3c2 ("ARM: dts: update display related nodes for exynos5250-snow") but
+>     was introduced again in the Snow DTS during the merge.
+>
+> I'll post a series that fixes both issues with the following patches:
+>
+I've applied them.
 
+> Javier Martinez Canillas (2):
+>        ARM: dts: Fix chip select GPIO on smdk5250
+>        ARM: dts: Remove display timings node from exynos5250-snow
+>
+> I see that you already send a pull request to arm-soc maintainers so probably
+> these will be part of the fixes during the 3.18 rc cycle.
+>
+I'll queue them in my third pull-request maybe today :)
 
--- 
-Regards,
-Alim
+Thanks,
+Kukjin
