@@ -1,285 +1,76 @@
-From: Thomas Abraham <thomas.ab@samsung.com>
-Subject: [PATCH v10 3/6] ARM: dts: Exynos: add CPU OPP and regulator supply
- property
-Date: Wed, 24 Sep 2014 09:27:55 +0530
-Message-ID: <1411531078-10671-4-git-send-email-thomas.ab@samsung.com>
-References: <1411531078-10671-1-git-send-email-thomas.ab@samsung.com>
- <1411531078-10671-2-git-send-email-thomas.ab@samsung.com>
- <1411531078-10671-3-git-send-email-thomas.ab@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1411531078-10671-3-git-send-email-thomas.ab@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, l.majewski@samsung.com, viresh.kumar@linaro.org, thomas.ab@samsung.com, heiko@sntech.de, cw00.choi@samsung.com, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Andreas Faerber <afaerber@suse.de>, Sachin Kamat <sachin.kamat@linaro.org>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [RESEND PATCH v4 2/2] ARM: EXYNOS: Refactor the pm code to use DT
+ based lookup
+Date: Wed, 24 Sep 2014 14:00:07 +0900
+Message-ID: <01ef01cfd7b4$696d7560$3c486020$@kernel.org>
+References: <1408431167-14134-1-git-send-email-vikas.sajjan@samsung.com>
+ <1408431167-14134-3-git-send-email-vikas.sajjan@samsung.com>
+ <CAGm_ybjx4t7kGg0mJHjrox39jP-DNgc-0rkLNn2rcOLS6JjAHQ@mail.gmail.com>
+ <2186657.jhIisq7Fok@amdc1032>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:47994 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750767AbaIXFAK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 24 Sep 2014 01:00:10 -0400
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NCE00ANO3880870@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 24 Sep 2014 14:00:08 +0900 (KST)
+In-reply-to: <2186657.jhIisq7Fok@amdc1032>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Vikas Sajjan' <vikas.sajjan@samsung.com>
+Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Vikas Sajjan' <sajjan.linux@gmail.com>, 'Doug Anderson' <dianders@chromium.org>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
 
-For Exynos 4210/5250/5420 based platforms, add CPU operating points and CPU
-regulator supply properties for migrating from Exynos specific cpufreq driver
-to using generic cpufreq drivers.
+Bartlomiej Zolnierkiewicz wrote:
+> 
+> Hi,
+> 
+Hi,
 
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Andreas Faerber <afaerber@suse.de>
-Cc: Sachin Kamat <sachin.kamat@linaro.org>
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-Reviewed-by: Andreas Farber <afaerber@suse.de>
-Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Tested-by: Chander Kashyap <k.chander@samsung.com>
----
- arch/arm/boot/dts/exynos4210-origen.dts         |    4 ++
- arch/arm/boot/dts/exynos4210-trats.dts          |    4 ++
- arch/arm/boot/dts/exynos4210-universal_c210.dts |    4 ++
- arch/arm/boot/dts/exynos4210.dtsi               |   14 ++++++++-
- arch/arm/boot/dts/exynos5250-arndale.dts        |    4 ++
- arch/arm/boot/dts/exynos5250-smdk5250.dts       |    4 ++
- arch/arm/boot/dts/exynos5250-snow.dts           |    4 ++
- arch/arm/boot/dts/exynos5250.dtsi               |   25 ++++++++++++++-
- arch/arm/boot/dts/exynos5420.dtsi               |   38 +++++++++++++++++++++++
- 9 files changed, 99 insertions(+), 2 deletions(-)
+> On Tuesday, August 19, 2014 01:26:49 PM Vikas Sajjan wrote:
+> > Hi Kukjin,
+> >
+> > On Tue, Aug 19, 2014 at 12:22 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
+> > > Refactoring the pm.c to avoid using "soc_is_exynos" checks,
+> > > instead use the DT based lookup.
+> > >
+> > > While at it, consolidate the common code across SoCs
+> > > and create static helper functions.
+> > >
+> > > Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
+> > > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
+> >
+> > Can you pick this series...
+> 
+> I think that my PM_SLEEP=n build fixes should go in before this cleanup
+> series:
+> 
+>   http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35430.html
+> 
 
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index f767c42..887dded 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -334,3 +334,7 @@
- 		};
- 	};
- };
-+
-+&cpu0 {
-+	cpu0-supply = <&buck1_reg>;
-+};
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index f516da9..66119dd 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -446,3 +446,7 @@
- 		};
- 	};
- };
-+
-+&cpu0 {
-+	cpu0-supply = <&varm_breg>;
-+};
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index d50eb3a..bf0a39c 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -492,3 +492,7 @@
- &mdma1 {
- 	reg = <0x12840000 0x1000>;
- };
-+
-+&cpu0 {
-+	cpu0-supply = <&vdd_arm_reg>;
-+};
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index bcc9e63..69bac07 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -35,10 +35,22 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		cpu@900 {
-+		cpu0: cpu@900 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a9";
- 			reg = <0x900>;
-+			clocks = <&clock CLK_ARM_CLK>;
-+			clock-names = "cpu";
-+			clock-latency = <160000>;
-+
-+			operating-points = <
-+				1200000 1250000
-+				1000000 1150000
-+				800000	1075000
-+				500000	975000
-+				400000	975000
-+				200000	950000
-+			>;
- 		};
- 
- 		cpu@901 {
-diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot/dts/exynos5250-arndale.dts
-index 3acd97e..da2b3e1 100644
---- a/arch/arm/boot/dts/exynos5250-arndale.dts
-+++ b/arch/arm/boot/dts/exynos5250-arndale.dts
-@@ -563,3 +563,7 @@
- 		};
- 	};
- };
-+
-+&cpu0 {
-+	cpu0-supply = <&buck2_reg>;
-+};
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 6a0f4c0..0eedb88 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -406,3 +406,7 @@
- 		};
- 	};
- };
-+
-+&cpu0 {
-+	cpu0-supply = <&buck2_reg>;
-+};
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index e51fcef..f954e82 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -624,4 +624,8 @@
- 	num-cs = <1>;
- };
- 
-+&cpu0 {
-+	cpu0-supply = <&buck2_reg>;
-+};
-+
- #include "cros-ec-keyboard.dtsi"
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index f21b9aa..d4b418e 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -58,11 +58,34 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		cpu@0 {
-+		cpu0: cpu@0 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0>;
- 			clock-frequency = <1700000000>;
-+
-+			clocks = <&clock CLK_ARM_CLK>;
-+			clock-names = "cpu";
-+			clock-latency = <140000>;
-+
-+			operating-points = <
-+				1700000 1300000
-+				1600000 1250000
-+				1500000 1225000
-+				1400000 1200000
-+				1300000 1150000
-+				1200000 1125000
-+				1100000 1100000
-+				1000000 1075000
-+				 900000 1050000
-+				 800000 1025000
-+				 700000 1012500
-+				 600000 1000000
-+				 500000  975000
-+				 400000  950000
-+				 300000  937500
-+				 200000  925000
-+			>;
- 		};
- 		cpu@1 {
- 			device_type = "cpu";
-diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
-index bfe056d..912deeb 100644
---- a/arch/arm/boot/dts/exynos5420.dtsi
-+++ b/arch/arm/boot/dts/exynos5420.dtsi
-@@ -59,8 +59,26 @@
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0x0>;
-+			clocks = <&clock CLK_ARM_CLK>;
-+			clock-names = "cpu-cluster.0";
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
-+			clock-latency = <140000>;
-+
-+			operating-points = <
-+				1800000 1250000
-+				1700000 1212500
-+				1600000 1175000
-+				1500000 1137500
-+				1400000 1112500
-+				1300000 1062500
-+				1200000 1037500
-+				1100000 1012500
-+				1000000 987500
-+				 900000 962500
-+				 800000 937500
-+				 700000 912500
-+			>;
- 		};
- 
- 		cpu1: cpu@1 {
-@@ -69,6 +87,7 @@
- 			reg = <0x1>;
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
-+			clock-latency = <140000>;
- 		};
- 
- 		cpu2: cpu@2 {
-@@ -77,6 +96,7 @@
- 			reg = <0x2>;
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
-+			clock-latency = <140000>;
- 		};
- 
- 		cpu3: cpu@3 {
-@@ -85,14 +105,29 @@
- 			reg = <0x3>;
- 			clock-frequency = <1800000000>;
- 			cci-control-port = <&cci_control1>;
-+			clock-latency = <140000>;
- 		};
- 
- 		cpu4: cpu@100 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a7";
- 			reg = <0x100>;
-+			clocks = <&clock CLK_KFC_CLK>;
-+			clock-names = "cpu-cluster.1";
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
-+			clock-latency = <140000>;
-+
-+			operating-points = <
-+				1300000 1275000
-+				1200000 1212500
-+				1100000 1162500
-+				1000000 1112500
-+				 900000 1062500
-+				 800000 1025000
-+				 700000 975000
-+				 600000 937500
-+			>;
- 		};
- 
- 		cpu5: cpu@101 {
-@@ -101,6 +136,7 @@
- 			reg = <0x101>;
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
-+			clock-latency = <140000>;
- 		};
- 
- 		cpu6: cpu@102 {
-@@ -109,6 +145,7 @@
- 			reg = <0x102>;
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
-+			clock-latency = <140000>;
- 		};
- 
- 		cpu7: cpu@103 {
-@@ -117,6 +154,7 @@
- 			reg = <0x103>;
- 			clock-frequency = <1000000000>;
- 			cci-control-port = <&cci_control0>;
-+			clock-latency = <140000>;
- 		};
- 	};
- 
--- 
-1.6.6.rc2
+Bart, your patch has a problem due to dependency, Firmware-assisted suspend/
+resume patch from Tomasz as I emailed today morning in my time. So I will
+apply this series firstly. Please respin the fixes once the build breakage
+resolved. If you have any idea, please let me know.
 
+Thanks,
+Kukjin
+
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+> 
+> > > ---
+> > >  arch/arm/mach-exynos/pm.c       |  167 +++++++++++++++++++++++++++++----------
+> > >  arch/arm/mach-exynos/regs-pmu.h |    1 +
+> > >  2 files changed, 126 insertions(+), 42 deletions(-)
