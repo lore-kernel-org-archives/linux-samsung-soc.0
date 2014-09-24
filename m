@@ -1,14 +1,13 @@
 From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: [PATCH 3/3] ARM: exynos_defconfig: enable USB gadget support
-Date: Wed, 24 Sep 2014 09:57:45 +0200
-Message-ID: <1411545465-12930-4-git-send-email-sjoerd.simons@collabora.co.uk>
+Subject: [PATCH 0/3 v4] Fix Exynos USB on kernels with USB Gadget support
+Date: Wed, 24 Sep 2014 09:57:42 +0200
+Message-ID: <1411545465-12930-1-git-send-email-sjoerd.simons@collabora.co.uk>
 References: <542199F4.3090601@samsung.com>
- <1411545465-12930-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1411545465-12930-1-git-send-email-sjoerd.simons@collabora.co.uk>
+In-Reply-To: <542199F4.3090601@samsung.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -22,28 +21,43 @@ To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: devicetree@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Enable USB gadget support without support for any specific gadgets to
-more easily catch cases where a devices dts doesn't specify the usb
-controllers dr_mode while it should.
-
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
----
- Changes in v4: Rebased on linux-samsung for-next
-
- arch/arm/configs/exynos_defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index b14d8c3..2cf22bb 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -54,6 +54,7 @@ CONFIG_SMSC911X=y
- CONFIG_USB_USBNET=y
- CONFIG_USB_NET_SMSC75XX=y
- CONFIG_USB_NET_SMSC95XX=y
-+CONFIG_USB_GADGET=y
- CONFIG_INPUT_EVDEV=y
- CONFIG_KEYBOARD_GPIO=y
- CONFIG_KEYBOARD_CROS_EC=y
--- 
-2.1.0
+U2FtZSBwYXRjaGVzIGFzIHYzIGJ1dCByZWJhc2VkIG9uCmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcv
+Y2dpdC9saW51eC9rZXJuZWwvZ2l0L2tnZW5lL2xpbnV4LXNhbXN1bmcuZ2l0L2xvZy8/aD1mb3It
+bmV4dAoKV2hlbiBidWlsZGluZyBhIGtlcm5lbCB3aXRoIHN1cHBvcnQgZm9yIGJvdGggVVNCIGhv
+c3QgYW5kIFVTQiBHYWRnZXQgc3VwcG9ydCBvbgp0aGUgZHdjMyBjb250cm9sbGVyIG9uIHRoZSBF
+eHlub3M1IHNvYyB3aWxsIGdvIGludG8gVVNCIE9URyBtb2RlIHVubGVzcwpvdGhlcndpc2Ugc3Bl
+Y2lmaWVkIGluIHRoZSBkdGIsIHdoaWNoIGlzIHVuaGVscGZ1bCBmb3IgYm9hcmRzIGhvb2tlZCB1
+cCB0byBydW4KYXMgVVNCIGhvc3QuCgpGaXJzdCBwYXRjaCBpbiB0aGlzIHNldCBleHBsaWNpdGVs
+eSBzZXQgdGhlIGR1YWwtcm9sZSBtb2RlIGZvciB0aGUgZHdjMwpjb250cm9sbGVyIG9uIFBlYWNo
+IHBpIGFuZCBQZWFjaCBwaXQgYm9hcmRzIHRvIGhvc3QgbW9kZS4gU2Vjb25kIHBhdGNoIGFkZHMK
+c2ltaWxhciB1cGRhdGVzIGZvciBBcm5kYWxlIE9jdGEgYXMgcmVwb3J0ZWQgYnkgQW5kcmVhcyBG
+w6RyYmVyLiBMYXN0IHBhdGNoCmVuYWJsZXMgZ2FkZ2V0IG1vZGUgaW4gdGhlIGRlZmF1bHQgZXh5
+bm9zIGNvbmZpZyB0byBtb3JlIGVhc2lseSBjYXRjaC90cmlnZ2VyCmlzc3VlcyBsaWtlIHRoZXNl
+LgoKSSBzdXNwZWN0IHRoZSBTYW1zdW5nIFNNREs1NDIwIERUUyBtaWdodCBuZWVkIHNpbWlsYXIg
+Y2hhbmdlcywgc28gaXQgd291bGQgYmUKZ3JlYXQgaWYgdXNlcnMgb2YgdGhvc2UgYm9hcmQgY291
+bGQgdmVyaWZ5IHRoaXMuCgpDaGFuZ2VzIGluIHYyOiBhbHBoYWJldGljYWxseSBzb3J0IHRoZSBk
+dHMgZW50cmllcwpDaGFuZ2VzIGluIHYzOiBBZGQgRFRTIHVwZGF0ZXMgZm9yIGFybmRhbGUgb2N0
+YQpDaGFuZ2VzIGluIHY0OiBSZWJhc2VkIG9uIHRvZGF5cyBsaW51eC1zYW1zdW5ncyBmb3ItbmV4
+dCBicmFuY2gKClNqb2VyZCBTaW1vbnMgKDMpOgogIEFSTTogZHRzOiBleHlub3M6IEV4cGxpY2l0
+bHkgc2V0IGRyX21vZGUgb24gcGVhY2gtcGl0IGFuZCBwZWFjaC1waQogIEFSTTogZHRzOiBleHlu
+b3M6IEV4cGxpY2l0bHkgc2V0IGRyX21vZGUgb24gYXJuZGFsZS1vY3RhCiAgQVJNOiBleHlub3Nf
+ZGVmY29uZmlnOiBlbmFibGUgVVNCIGdhZGdldCBzdXBwb3J0CgogYXJjaC9hcm0vYm9vdC9kdHMv
+ZXh5bm9zNTQyMC1hcm5kYWxlLW9jdGEuZHRzIHwgNCArKysrCiBhcmNoL2FybS9ib290L2R0cy9l
+eHlub3M1NDIwLXBlYWNoLXBpdC5kdHMgICAgfCA4ICsrKysrKysrCiBhcmNoL2FybS9ib290L2R0
+cy9leHlub3M1NDIwLmR0c2kgICAgICAgICAgICAgfCA0ICsrLS0KIGFyY2gvYXJtL2Jvb3QvZHRz
+L2V4eW5vczU4MDAtcGVhY2gtcGkuZHRzICAgICB8IDggKysrKysrKysKIGFyY2gvYXJtL2NvbmZp
+Z3MvZXh5bm9zX2RlZmNvbmZpZyAgICAgICAgICAgICB8IDEgKwogNSBmaWxlcyBjaGFuZ2VkLCAy
+MyBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQoKLS0gCjIuMS4wCgoKClNqb2VyZCBTaW1v
+bnMgKDMpOgogIEFSTTogZHRzOiBleHlub3M6IEV4cGxpY2l0bHkgc2V0IGRyX21vZGUgb24gcGVh
+Y2gtcGl0IGFuZCBwZWFjaC1waQogIEFSTTogZHRzOiBleHlub3M6IEV4cGxpY2l0bHkgc2V0IGRy
+X21vZGUgb24gYXJuZGFsZS1vY3RhCiAgQVJNOiBleHlub3NfZGVmY29uZmlnOiBlbmFibGUgVVNC
+IGdhZGdldCBzdXBwb3J0CgogYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTQyMC1hcm5kYWxlLW9j
+dGEuZHRzIHwgNCArKysrCiBhcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLXBlYWNoLXBpdC5k
+dHMgICAgfCA4ICsrKysrKysrCiBhcmNoL2FybS9ib290L2R0cy9leHlub3M1NDIwLmR0c2kgICAg
+ICAgICAgICAgfCA0ICsrLS0KIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczU4MDAtcGVhY2gtcGku
+ZHRzICAgICB8IDggKysrKysrKysKIGFyY2gvYXJtL2NvbmZpZ3MvZXh5bm9zX2RlZmNvbmZpZyAg
+ICAgICAgICAgICB8IDEgKwogNSBmaWxlcyBjaGFuZ2VkLCAyMyBpbnNlcnRpb25zKCspLCAyIGRl
+bGV0aW9ucygtKQoKLS0gCjIuMS4wCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtl
+cm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxt
+YW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbAo=
