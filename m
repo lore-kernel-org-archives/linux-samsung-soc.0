@@ -1,96 +1,88 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
- ps8622 DT properties
-Date: Wed, 24 Sep 2014 09:11:17 +0200
-Message-ID: <54226E95.9000706@samsung.com>
-References: <CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com>
- <5419B52D.4060107@ti.com> <20140922080629.GC1470@ulmo>
- <542030DD.3060906@ti.com> <20140923060452.GD30514@ulmo>
- <5421201C.6000509@samsung.com> <20140923083514.GM30514@ulmo>
- <542140D3.8080806@samsung.com> <20140923101032.GU30514@ulmo>
- <54214CCE.7050102@samsung.com> <20140923144127.GE5982@ulmo>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH 0/5] pinctrl: samsung: Data structure clean-up
+Date: Wed, 24 Sep 2014 09:25:28 +0200
+Message-ID: <542271E8.4020606@samsung.com>
+References: <1411499141-26551-1-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20140923144127.GE5982@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:27385 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750772AbaIXHZc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 24 Sep 2014 03:25:32 -0400
+In-reply-to: <1411499141-26551-1-git-send-email-tomasz.figa@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On 09/23/2014 04:41 PM, Thierry Reding wrote:
-> On Tue, Sep 23, 2014 at 12:34:54PM +0200, Andrzej Hajda wrote:
->> On 09/23/2014 12:10 PM, Thierry Reding wrote:
->>> On Tue, Sep 23, 2014 at 11:43:47AM +0200, Andrzej Hajda wrote:
->>>> On 09/23/2014 10:35 AM, Thierry Reding wrote:
->>> [...]
->>>>> But I agree that it would be nice to unify bridges and encoders more. It
->>>>> should be possible to make encoder always a bridge (or perhaps even
->>>>> replace encoders with bridges altogether). Then once you're out of the
->>>>> DRM device everything would be a bridge until you get to a panel.
->>>> I agree that some sort of unification of bridges, (slave) encoders is a good
->>>> thing, this way we stay only with bridges and panels as receivers.
->>>> But we will still have to deal with the code like:
->>>>     if (on the other end of the link is panel)
->>>>         do panel framework specific things
->>>>     else
->>>>         do bridge framework specific things
->>>>
->>>> The code in both branches usually does similar things but due to framework
->>>> differences it is difficult to merge.
->>> That's because they are inherently different entities. You can perform
->>> operations on a panel that don't make sense for a bridge and vice-versa.
->>>
->>>> Ideally it would be best to get rid of such constructs. For example by
->>>> trying to
->>>> make frameworks per interface type exposed by device (eg. video_sink) and
->>>> not by device type (drm_bridge, drm_panel).
->>> But then you loose all information about the real type of device.
->> Driver knows type of its device anyway. Why should it know device
->> type of devices it is connected to? It is enough it knows how to talk to
->> other device.
->> Like in real world, why desktop PC should know it is connected to DVI
->> monitor or to
->> DVI/HDMI converter which is connected to TV?
-> TVs are much more standardized. There are things like DDC/CI which can
-> be used to control the device. Or there's additional circuitry or
-> control paths to change things like brightness. The same isn't true of
-> panels.
-But it is also true on HW level in case of display subsystem components -
-If some device have output format X it means it can be connected to any
-device
-having input format X, whatever it is: panel, bridge, image enhancer...
+Hello,
 
+On 2014-09-23 21:05, Tomasz Figa wrote:
+> This series intends to clean up data structures used by pinctrl-samsung driver.
+> More specifically, it separates initial compile time constants from data used
+> at runtime, allowing unused variant data to be dropped and selected structures
+> constified to improve safety.
 >
->>>  Or you
->>> have to create a common base class. And then you're still back to
->>> dealing with the two specific cases in many places, so the gain seems
->>> rather minimal.
->> For example RGB panel and RGB/??? bridge have the same hardware input
->> interface.
->> Why shall they have different representation in kernel?
-> Because panels have different requirements than bridges. Panels for
-> example require the backlight to be adjustable, bridges don't.
-
-But I have asked about their input interface, RGB panel and RGB/???
-bridge have the
-same input interface.
-In other words if instead of creating frameworks for each device type we
-try to create framework
-for functions/interfaces these device provides we should end up with
-fewer frameworks and more clean code.
-
-Regards
-Andrzej
-
+> As a side effect, size of vmlinux built from multi_v7_defconfig was reduced
+> from:
 >
-> Thierry
+>   text     data    bss    dec      hex    filename
+>   10296708 1227100 313544 11837352 b49fa8 vmlinux
+>
+> to:
+>
+>   text     data    bss    dec      hex    filename
+>   10296740 1176860 313544 11787144 b3db88 vmlinux
+>
+> and quite a bit of data were moved from normal data sections to .init.data:
+>
+> pre:
+>
+> Idx Name          Size      VMA       LMA       File off  Algn
+>    3 .rodata       0026c080  c0881000  c0881000  00681000  2**6
+>   23 .init.data    0003ff7c  c0bdb830  c0bdb830  009e3830  2**3
+>   24 .data..percpu 00002100  c0c1c000  c0c1c000  00a24000  2**6
+>   25 .data         000e98e0  c0c20000  c0c20000  00a28000  2**6
+>
+> post:
+>
+> Idx Name          Size      VMA       LMA       File off  Algn
+>    3 .rodata       0026bf20  c0881000  c0881000  00681000  2**6
+>   23 .init.data    00041bbc  c0bdb830  c0bdb830  009e3830  2**3
+>   24 .data..percpu 00002100  c0c1e000  c0c1e000  00a26000  2**6
+>   25 .data         000db860  c0c22000  c0c22000  00a2a000  2**6
+>
+> This series should not introduce any functional changes.
+>
+> Tested on S3C6410-based Mini6410 board, booting with device tree.
+>
+> Marek, Bart, could you do some testing on Exynos-based boards,
+> just to make sure?
+
+Works fine on Exynos4412 based OdroidU3+ and Exynos4210 Universal C210.
+
+For the whole patchset:
+Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+
+> Tomasz Figa (5):
+>    pinctrl: samsung: Make samsung_pinctrl_get_soc_data use ERR_PTR()
+>    pinctrl: samsung: Drop unused label field in samsung_pin_ctrl struct
+>    pinctrl: samsung: Constify samsung_pin_bank_type struct
+>    pinctrl: samsung: Constify samsung_pin_ctrl struct
+>    pinctrl: samsung: Separate per-bank init and runtime data
+>
+>   drivers/pinctrl/samsung/pinctrl-exynos.c  | 113 +++++++++++----------------
+>   drivers/pinctrl/samsung/pinctrl-s3c24xx.c |  30 +++----
+>   drivers/pinctrl/samsung/pinctrl-s3c64xx.c |  31 ++++----
+>   drivers/pinctrl/samsung/pinctrl-samsung.c | 126 ++++++++++++++++--------------
+>   drivers/pinctrl/samsung/pinctrl-samsung.h |  78 ++++++++++++------
+>   5 files changed, 193 insertions(+), 185 deletions(-)
+>
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
