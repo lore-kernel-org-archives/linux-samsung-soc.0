@@ -1,53 +1,79 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 2/2] ARM: dts: Remove display timings node from exynos5250-snow
-Date: Wed, 24 Sep 2014 23:42:37 +0200
-Message-ID: <1411594957-10681-2-git-send-email-javier.martinez@collabora.co.uk>
-References: <1411594957-10681-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1411594957-10681-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, Andreas Faerber <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v5 4/7] ARM: l2c: Add support for overriding prefetch
+	settings
+Date: Wed, 24 Sep 2014 23:12:20 +0100
+Message-ID: <20140924221220.GJ12379@n2100.arm.linux.org.uk>
+References: <1411556741-5810-1-git-send-email-m.szyprowski@samsung.com> <1411556741-5810-5-git-send-email-m.szyprowski@samsung.com> <20140924111446.GE5729@leverpostej> <5422A8D1.1000507@gmail.com> <20140924121051.GF5729@leverpostej>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:41433 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751184AbaIXWMg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 24 Sep 2014 18:12:36 -0400
+Content-Disposition: inline
+In-Reply-To: <20140924121051.GF5729@leverpostej>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "lauraa@codeaurora.org" <lauraa@codeaurora.org>, "tony@atomide.com" <tony@atomide.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "drake@endlessm.com" <drake@endlessm.com>, "loeliger@gmail.com" <loeliger@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, "santosh.shilimkar@ti.com" <santosh.shilimkar@ti.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
 
-Commit a3d72ca ("ARM: dts: Clean up exynos5250-snow") improved
-the Snow DTS but the patch was rebased due conflicting changes
-and the merge resolution added a device node removed by commit
-a98c3c2 ("ARM: dts: update display related nodes for exynos5250-snow").
+On Wed, Sep 24, 2014 at 01:10:51PM +0100, Mark Rutland wrote:
+> On Wed, Sep 24, 2014 at 12:19:45PM +0100, Tomasz Figa wrote:
+> > On 24.09.2014 13:14, Mark Rutland wrote:
+> > > I'm not too keen on tristate properties. Is this level of flexibility
+> > > really required?
 
-This patch removes the node again to keep the DTS as before.
+I would say that we need a way to enable _and_ disable these features,
+because:
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- arch/arm/boot/dts/exynos5250-snow.dts | 16 ----------------
- 1 file changed, 16 deletions(-)
+1. When we converted the L2 code to DT, no one thought about creating
+   a full and proper DT specification for the L2 code.  So, we have the
+   situation today where platform code (and firmware code) enables or
+   disables these features depending on platform knowledge.
 
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index e562459..f9bc04b 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -241,22 +241,6 @@
- 	samsung,lane-count = <2>;
- 	samsung,hpd-gpio = <&gpx0 7 GPIO_ACTIVE_HIGH>;
- 	bridge = <&ptn3460>;
--
--	display-timings {
--		native-mode = <&timing1>;
--
--		timing1: timing@1 {
--			clock-frequency = <70589280>;
--			hactive = <1366>;
--			vactive = <768>;
--			hfront-porch = <40>;
--			hback-porch = <40>;
--			hsync-len = <32>;
--			vback-porch = <10>;
--			vfront-porch = <12>;
--			vsync-len = <6>;
--		};
--	};
- };
- 
- &ehci {
+2. If we are going to specify these options as a boolean-enable value,
+   this implies that the lack of the boolean disables the option.
+   We have pre-existing DT files which do not contain this option, but
+   the platform may rely on the feature being enabled.
+
+This is precisely the kind of mess that happens when incomplete DT
+bindings are accepted.  DT bindings for any device should be _full_
+bindings from the start, and not a half-hearted attempt at the job.
+
+As much as we don't like tristate properties, we only have ourselves to
+blame for them becoming a necessity in cases like this.
+
+> With the lack of warnings for present but empty properties, I can forsee
+> people placing empty properties (as the names make them sound like
+> booleans which enable features).
+> 
+> Surely for enabling/disabling options we should only need to override
+> one-way, disabling a feature that causes breakage for some reason?
+> Otherwise we can keep the reset value (which might be sub-optimal).
+
+What if enabling prefetching on an existing platform causes a failure?
+That's a regression on a previously working DT file, and needing a DT
+update to resolve.
+
+The obvious alternative is we have two properties per feature - one
+boolean to enable, and one boolean to disable the feature.  We already
+have a number of negative properties because of exactly the same
+problem I mention above (where the driver has assumed defaults for one
+platform which are not appropriate for all platforms.)
+
+> > As for why they cause crashes, I'm not an expert if it is about L2C
+> > internals, so I can't really tell, but apparently the cache can work
+> > correctly only on certain settings.
+> 
+> Likewise, I'm no expert on the l2x0 family. It would be nice to know if
+> this justs masks an issue elsewhere in Linux, is required for some
+> reason by the interconnect, etc. I guess we don't have enough
+> information to figure that out.
+
+No, it would be nice to have some errata information...
+
 -- 
-2.1.0
+FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
+according to speedtest.net.
