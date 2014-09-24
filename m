@@ -1,159 +1,179 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: [PATCH 17/18] [media] s3c-camif: fix dma_addr_t printks
-Date: Wed, 24 Sep 2014 19:27:17 -0300
-Message-ID: <4749fc9fe2ece4e42627b27b01d6939c536fbcea.1411597610.git.mchehab@osg.samsung.com>
-References: <c8634fac0c56cfaa9bdad29d541e95b17c049c0a.1411597610.git.mchehab@osg.samsung.com>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH/RFC 1/2] serial: samsung: Add support for of_earlycon
+Date: Thu, 25 Sep 2014 04:12:06 +0530
+Message-ID: <CAGOxZ50Hr-pSqBDmoGBTC4i4H8h8L_2TkU=3c27JtJ8QZr+CcA@mail.gmail.com>
+References: <1411391655-6291-1-git-send-email-m.szyprowski@samsung.com> <1411391655-6291-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <c8634fac0c56cfaa9bdad29d541e95b17c049c0a.1411597610.git.mchehab@osg.samsung.com>
-In-Reply-To: <c8634fac0c56cfaa9bdad29d541e95b17c049c0a.1411597610.git.mchehab@osg.samsung.com>
-References: <c8634fac0c56cfaa9bdad29d541e95b17c049c0a.1411597610.git.mchehab@osg.samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Linux Media Mailing List <linux-media@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-samsung-soc@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f171.google.com ([209.85.160.171]:54163 "EHLO
+	mail-yk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750793AbaIXWmr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 24 Sep 2014 18:42:47 -0400
+Received: by mail-yk0-f171.google.com with SMTP id 79so3061312ykr.16
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Sep 2014 15:42:47 -0700 (PDT)
+In-Reply-To: <1411391655-6291-2-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Thomas P Abraham <thomas.ab@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>
 
-drivers/media//platform/s3c-camif/camif-capture.c: In function =E2=80=98=
-camif_prepare_addr=E2=80=99:
-include/linux/dynamic_debug.h:64:16: warning: format =E2=80=98%x=E2=80=99=
- expects argument of type =E2=80=98unsigned int=E2=80=99, but argument =
-5 has type =E2=80=98dma_addr_t=E2=80=99 [-Wformat=3D]
-  static struct _ddebug  __aligned(8)   \
-                ^
-include/linux/dynamic_debug.h:76:2: note: in expansion of macro =E2=80=98=
-DEFINE_DYNAMIC_DEBUG_METADATA=E2=80=99
-  DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);  \
-  ^
-include/linux/printk.h:266:2: note: in expansion of macro =E2=80=98dyna=
-mic_pr_debug=E2=80=99
-  dynamic_pr_debug(fmt, ##__VA_ARGS__)
-  ^
-drivers/media//platform/s3c-camif/camif-capture.c:283:2: note: in expan=
-sion of macro =E2=80=98pr_debug=E2=80=99
-  pr_debug("DMA address: y: %#x  cb: %#x cr: %#x\n",
-  ^
-include/linux/dynamic_debug.h:64:16: warning: format =E2=80=98%x=E2=80=99=
- expects argument of type =E2=80=98unsigned int=E2=80=99, but argument =
-6 has type =E2=80=98dma_addr_t=E2=80=99 [-Wformat=3D]
-  static struct _ddebug  __aligned(8)   \
-                ^
-include/linux/dynamic_debug.h:76:2: note: in expansion of macro =E2=80=98=
-DEFINE_DYNAMIC_DEBUG_METADATA=E2=80=99
-  DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);  \
-  ^
-include/linux/printk.h:266:2: note: in expansion of macro =E2=80=98dyna=
-mic_pr_debug=E2=80=99
-  dynamic_pr_debug(fmt, ##__VA_ARGS__)
-  ^
-drivers/media//platform/s3c-camif/camif-capture.c:283:2: note: in expan=
-sion of macro =E2=80=98pr_debug=E2=80=99
-  pr_debug("DMA address: y: %#x  cb: %#x cr: %#x\n",
-  ^
-include/linux/dynamic_debug.h:64:16: warning: format =E2=80=98%x=E2=80=99=
- expects argument of type =E2=80=98unsigned int=E2=80=99, but argument =
-7 has type =E2=80=98dma_addr_t=E2=80=99 [-Wformat=3D]
-  static struct _ddebug  __aligned(8)   \
-                ^
-include/linux/dynamic_debug.h:76:2: note: in expansion of macro =E2=80=98=
-DEFINE_DYNAMIC_DEBUG_METADATA=E2=80=99
-  DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);  \
-  ^
-include/linux/printk.h:266:2: note: in expansion of macro =E2=80=98dyna=
-mic_pr_debug=E2=80=99
-  dynamic_pr_debug(fmt, ##__VA_ARGS__)
-  ^
-drivers/media//platform/s3c-camif/camif-capture.c:283:2: note: in expan=
-sion of macro =E2=80=98pr_debug=E2=80=99
-  pr_debug("DMA address: y: %#x  cb: %#x cr: %#x\n",
-  ^
-include/linux/dynamic_debug.h:64:16: warning: format =E2=80=98%X=E2=80=99=
- expects argument of type =E2=80=98unsigned int=E2=80=99, but argument =
-6 has type =E2=80=98dma_addr_t=E2=80=99 [-Wformat=3D]
-  static struct _ddebug  __aligned(8)   \
-                ^
-include/linux/dynamic_debug.h:76:2: note: in expansion of macro =E2=80=98=
-DEFINE_DYNAMIC_DEBUG_METADATA=E2=80=99
-  DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);  \
-  ^
-include/linux/printk.h:266:2: note: in expansion of macro =E2=80=98dyna=
-mic_pr_debug=E2=80=99
-  dynamic_pr_debug(fmt, ##__VA_ARGS__)
-  ^
-drivers/media//platform/s3c-camif/camif-regs.c:217:2: note: in expansio=
-n of macro =E2=80=98pr_debug=E2=80=99
-  pr_debug("dst_buf[%d]: %#X, cb: %#X, cr: %#X\n",
-  ^
-include/linux/dynamic_debug.h:64:16: warning: format =E2=80=98%X=E2=80=99=
- expects argument of type =E2=80=98unsigned int=E2=80=99, but argument =
-7 has type =E2=80=98dma_addr_t=E2=80=99 [-Wformat=3D]
-  static struct _ddebug  __aligned(8)   \
-                ^
-include/linux/dynamic_debug.h:76:2: note: in expansion of macro =E2=80=98=
-DEFINE_DYNAMIC_DEBUG_METADATA=E2=80=99
-  DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);  \
-  ^
-include/linux/printk.h:266:2: note: in expansion of macro =E2=80=98dyna=
-mic_pr_debug=E2=80=99
-  dynamic_pr_debug(fmt, ##__VA_ARGS__)
-  ^
-drivers/media//platform/s3c-camif/camif-regs.c:217:2: note: in expansio=
-n of macro =E2=80=98pr_debug=E2=80=99
-  pr_debug("dst_buf[%d]: %#X, cb: %#X, cr: %#X\n",
-  ^
-include/linux/dynamic_debug.h:64:16: warning: format =E2=80=98%X=E2=80=99=
- expects argument of type =E2=80=98unsigned int=E2=80=99, but argument =
-8 has type =E2=80=98dma_addr_t=E2=80=99 [-Wformat=3D]
-  static struct _ddebug  __aligned(8)   \
-                ^
-include/linux/dynamic_debug.h:76:2: note: in expansion of macro =E2=80=98=
-DEFINE_DYNAMIC_DEBUG_METADATA=E2=80=99
-  DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);  \
-  ^
-include/linux/printk.h:266:2: note: in expansion of macro =E2=80=98dyna=
-mic_pr_debug=E2=80=99
-  dynamic_pr_debug(fmt, ##__VA_ARGS__)
-  ^
-drivers/media//platform/s3c-camif/camif-regs.c:217:2: note: in expansio=
-n of macro =E2=80=98pr_debug=E2=80=99
-  pr_debug("dst_buf[%d]: %#X, cb: %#X, cr: %#X\n",
-  ^
+Hi Marek
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+On Mon, Sep 22, 2014 at 6:44 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> From: Tomasz Figa <t.figa@samsung.com>
+>
+> This patch adds support for early console initialized from device tree
+> to all variants of Samsung serial driver.
+>
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/tty/serial/Kconfig   |  1 +
+>  drivers/tty/serial/samsung.c | 97 ++++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 98 insertions(+)
+>
+> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+> index 26cec64dadd7..e87a2dfd9080 100644
+> --- a/drivers/tty/serial/Kconfig
+> +++ b/drivers/tty/serial/Kconfig
+> @@ -222,6 +222,7 @@ config SERIAL_SAMSUNG
+>         tristate "Samsung SoC serial support"
+>         depends on PLAT_SAMSUNG
+>         select SERIAL_CORE
+> +       select SERIAL_EARLYCON
+Ideally this should be selected by SERIAL_SAMSUNG_CONSOLE.
+But this is also fine.
+>         help
+>           Support for the on-chip UARTs on the Samsung S3C24XX series CPUs,
+>           providing /dev/ttySAC0, 1 and 2 (note, some machines may not
+> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+> index c78f43a481ce..71829ce2410d 100644
+> --- a/drivers/tty/serial/samsung.c
+> +++ b/drivers/tty/serial/samsung.c
+> @@ -1856,6 +1856,103 @@ static struct platform_driver samsung_serial_driver = {
+>
+>  module_platform_driver(samsung_serial_driver);
+>
+> +/*
+> + * Early console.
+> + */
+> +
+> +struct samsung_early_console_data {
+> +       u32 txfull_mask;
+> +};
+> +
+> +static void samsung_early_busyuart(struct uart_port *port)
+> +{
+> +       while (!(readl(port->membase + S3C2410_UTRSTAT) & S3C2410_UTRSTAT_TXFE))
+> +               ;
+> +}
+> +
+> +static void samsung_early_busyuart_fifo(struct uart_port *port)
+> +{
+> +       struct samsung_early_console_data *data = port->private_data;
+> +
+> +       while (readl(port->membase + S3C2410_UFSTAT) & data->txfull_mask)
+> +               ;
+> +}
+> +
+> +static void samsung_early_putc(struct uart_port *port, int c)
+> +{
+> +       if (readl(port->membase + S3C2410_UFCON) & S3C2410_UFCON_FIFOMODE)
+> +               samsung_early_busyuart_fifo(port);
+> +       else
+> +               samsung_early_busyuart(port);
+> +
+> +       writeb(c, port->membase + S3C2410_UTXH);
+> +}
+> +
+> +static void samsung_early_write(struct console *con, const char *s, unsigned n)
+> +{
+> +       struct earlycon_device *dev = con->data;
+> +
+> +       uart_console_write(&dev->port, s, n, samsung_early_putc);
+> +}
+> +
+> +static int __init samsung_early_console_setup(struct earlycon_device *device,
+> +                                             const char *opt)
+> +{
+> +       if (!device->port.membase)
+> +               return -ENODEV;
+> +
+> +       device->con->write = samsung_early_write;
+> +       return 0;
+> +}
+> +
+> +/* S3C2410, S3C2412 */
+Probably you should move S3C2412 below along with S3C64xx, see your
+OF_EARLYCON_DECLARE below.
+> +static struct samsung_early_console_data s3c2410_early_console_data = {
+> +       .txfull_mask = S3C2410_UFSTAT_TXFULL,
+> +};
+> +
+> +static int __init s3c2410_early_console_setup(struct earlycon_device *device,
+> +                                             const char *opt)
+> +{
+> +       device->port.private_data = &s3c2410_early_console_data;
+> +       return samsung_early_console_setup(device, opt);
+> +}
+> +OF_EARLYCON_DECLARE(s3c2410, "samsung,s3c2410-uart",
+> +                       s3c2410_early_console_setup);
+> +
+> +/* S3C2440, S3C64xx */
+> +static struct samsung_early_console_data s3c2440_early_console_data = {
+> +       .txfull_mask = S3C2440_UFSTAT_TXFULL,
+> +};
+> +
+> +static int __init s3c2440_early_console_setup(struct earlycon_device *device,
+> +                                             const char *opt)
+> +{
+> +       device->port.private_data = &s3c2440_early_console_data;
+> +       return samsung_early_console_setup(device, opt);
+> +}
+> +OF_EARLYCON_DECLARE(s3c2412, "samsung,s3c2412-uart",
+> +                       s3c2440_early_console_setup);
+> +OF_EARLYCON_DECLARE(s3c2440, "samsung,s3c2440-uart",
+> +                       s3c2440_early_console_setup);
+> +OF_EARLYCON_DECLARE(s3c6400, "samsung,s3c6400-uart",
+> +                       s3c2440_early_console_setup);
+> +
+> +/* S5PV210, EXYNOS */
+> +static struct samsung_early_console_data s5pv210_early_console_data = {
+> +       .txfull_mask = S5PV210_UFSTAT_TXFULL,
+> +};
+> +
+> +static int __init s5pv210_early_console_setup(struct earlycon_device *device,
+> +                                             const char *opt)
+> +{
+> +       device->port.private_data = &s5pv210_early_console_data;
+> +       return samsung_early_console_setup(device, opt);
+> +}
+> +OF_EARLYCON_DECLARE(s5pv210, "samsung,s5pv210-uart",
+> +                       s5pv210_early_console_setup);
+> +OF_EARLYCON_DECLARE(exynos4210, "samsung,exynos4210-uart",
+> +                       s5pv210_early_console_setup);
+Please support command line earlycon support also for all type.
+You just need EARLYCON_DECLARE(exynos4210,
+s5pv210_early_console_setup); for exynos4210.
 
-diff --git a/drivers/media/platform/s3c-camif/camif-capture.c b/drivers=
-/media/platform/s3c-camif/camif-capture.c
-index f33641384e15..4f81b4c9d113 100644
---- a/drivers/media/platform/s3c-camif/camif-capture.c
-+++ b/drivers/media/platform/s3c-camif/camif-capture.c
-@@ -280,8 +280,8 @@ static int camif_prepare_addr(struct camif_vp *vp, =
-struct vb2_buffer *vb,
- 		return -EINVAL;
- 	}
-=20
--	pr_debug("DMA address: y: %#x  cb: %#x cr: %#x\n",
--		 paddr->y, paddr->cb, paddr->cr);
-+	pr_debug("DMA address: y: %pad  cb: %pad cr: %pad\n",
-+		 &paddr->y, &paddr->cb, &paddr->cr);
-=20
- 	return 0;
- }
-diff --git a/drivers/media/platform/s3c-camif/camif-regs.c b/drivers/me=
-dia/platform/s3c-camif/camif-regs.c
-index ebf5b184cce4..6e0c9988a191 100644
---- a/drivers/media/platform/s3c-camif/camif-regs.c
-+++ b/drivers/media/platform/s3c-camif/camif-regs.c
-@@ -214,8 +214,8 @@ void camif_hw_set_output_addr(struct camif_vp *vp,
- 								paddr->cr);
- 	}
-=20
--	pr_debug("dst_buf[%d]: %#X, cb: %#X, cr: %#X\n",
--		 i, paddr->y, paddr->cb, paddr->cr);
-+	pr_debug("dst_buf[%d]: %pad, cb: %pad, cr: %pad\n",
-+		 i, &paddr->y, &paddr->cb, &paddr->cr);
- }
-=20
- static void camif_hw_set_out_dma_size(struct camif_vp *vp)
---=20
-1.9.3
+> +
+>  MODULE_ALIAS("platform:samsung-uart");
+>  MODULE_DESCRIPTION("Samsung SoC Serial port driver");
+>  MODULE_AUTHOR("Ben Dooks <ben@simtec.co.uk>");
+> --
+> 1.9.2
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+
+
+-- 
+Regards,
+Alim
