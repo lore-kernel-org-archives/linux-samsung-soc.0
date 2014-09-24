@@ -1,156 +1,139 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
- ps8622 DT properties
-Date: Wed, 24 Sep 2014 11:42:06 +0300
-Message-ID: <542283DE.5040909@ti.com>
-References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com> <5419760A.7020908@ti.com> <CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com> <5419B52D.4060107@ti.com> <20140922080629.GC1470@ulmo> <542030DD.3060906@ti.com> <20140923060452.GD30514@ulmo> <54213543.7000306@ti.com> <20140923093916.GR30514@ulmo> <54215A17.8050606@ti.com> <20140923144509.GF5982@ulmo>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v3 0/5] Firmware-assisted suspend/resume of Exynos SoCs
+Date: Wed, 24 Sep 2014 17:42:19 +0900
+Message-ID: <542283EB.3030809@samsung.com>
+References: <1409062228-14690-1-git-send-email-t.figa@samsung.com> <5415D4A8.4010304@gmail.com> <0d2401cfd07b$0e21e190$2a65a4b0$@kernel.org> <54227893.7020808@samsung.com> <54227F7B.80702@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="Jo9olE8c3GOQiqCrjPwsn8tkKxBkBf3iu"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bear.ext.ti.com ([192.94.94.41]:38354 "EHLO bear.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752169AbaIXImT (ORCPT
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:33635 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751434AbaIXIm2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Sep 2014 04:42:19 -0400
-In-Reply-To: <20140923144509.GF5982@ulmo>
+	Wed, 24 Sep 2014 04:42:28 -0400
+In-Reply-To: <54227F7B.80702@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Ajay kumar <ajaynumb@gmail.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, InKi Dae <inki.dae@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Arnd Bergmann' <arnd@arndb.de>, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, acourbot@nvidia.com, tomeu@tomeuvizoso.net, 'Olof Johansson' <olof@lixom.net>, swarren@nvidia.com, drake@endlessm.com, linux-arm-kernel@lists.infradead.org
 
---Jo9olE8c3GOQiqCrjPwsn8tkKxBkBf3iu
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
-
-On 23/09/14 17:45, Thierry Reding wrote:
-> On Tue, Sep 23, 2014 at 02:31:35PM +0300, Tomi Valkeinen wrote:
->> On 23/09/14 12:39, Thierry Reding wrote:
+On 09/24/14 17:23, Marek Szyprowski wrote:
+> Hi Kukjin,
+>
+> On 2014-09-24 09:53, Kukjin Kim wrote:
 >>
->>> My point is that if you use plain phandles you usually have the
->>> meta-data already. Referring to the above example, bridge0 knows that=
- it
->>> should look for a bridge with phandle &bridge1, whereas bridge1 knows=
-
->>> that the device it is connected to is a panel.
->>
->> The bridge should not care what kind of device is there on the other
->> end. The bridge just has an output, going to another video component.
->=20
-> You'll need to know at some point that one of the devices in a panel,
-> otherwise you can't treat it like a panel.
-
-The bridge doesn't need to treat it like a panel. Someone else might,
-though. But the panel driver knows it is a panel, and can thus register
-needed services, or mark itself as a panel.
-
->>>> Well, I can't say about this particular bridge, but afaik you can
->>>> connect a parallel RGB signal to multiple panels just like that, wit=
-hout
->>>> any muxing.
+>> On 09/15/14 09:21, Kukjin Kim wrote:
 >>>
->>> Right, but in that case you're not reconfiguring the signal in any wa=
-y
->>> for each of the panels. You send one single signal to all of them. Fo=
-r
+>>>> On 26.08.2014 16:10, Tomasz Figa wrote:
+>>>>> On Exynos-based boards running secure firmware the sequence of low
+>>>>> level
+>>>>> operations to enter and leave system-wide sleep mode is different than
+>>>>> on those without the firmware. Namely:
+>>>>> - CP15 power control and diagnostic registers cannot be written
+>>>>> directly,
+>>>>> - the way of setting boot address and boot flag is different,
+>>>>> - different resume handler needs to be used,
+>>>>> - dedicated SMC call needs to be performed instead of letting the
+>>>>> CPU enter
+>>>>> WFI.
+>>>>>
+>>>>> This series introduces .suspend() and .resume() firmware operations to
+>>>>> perform low level firmware-specific suspend and resume and then
+>>>>> leverages
+>>>>> them to provide suspend-resume path meeting the above requirements.
+>>>>> Three
+>>>>> additional patches extend device tree sources of Trats2 board with
+>>>>> necessary
+>>>>> setup to enable suspend/resume support.
+>>>>>
+>>>>> This series has been tested on Exynos4412-based Trats2 board,
+>>>>> without any
+>>>>> additional patches. Unfortunately v3.17-rc1 regressed ODROID
+>>>>> support and
+>>>>> suspend stopped working on those boards, due to unknown reasons
+>>>>> still being
+>>>>> investigated. It does not seem to be related to anything in this
+>>>>> series,
+>>>>> though, so I would not consider this as a stopper.
+>>>>>
+>>>>> Changes since v2:
+>>>>> (https://lkml.org/lkml/2014/7/17/431)
+>>>>> - added board-specific fixes for device tree sources of Trats2 board,
+>>>>> - rebased on next-20140826 of linux-next tree.
+>>>>>
+>>>>> Changes since v1:
+>>>>> - dropped outer_resume() - will be handled in assembly in further
+>>>>> patches,
+>>>>> as support for L2C in non-secure mode gets added,
+>>>>> - moved CP15 resume to assembly as it needs to be done before MMU
+>>>>> is enabled,
+>>>>> - surrounded CP15 save with a check for cpuid part, because it is
+>>>>> valid only
+>>>>> on Cortex A9,
+>>>>> - rebased on next-20140717 tag of linux-next tree.
+>>>>>
+>>>>> Tomasz Figa (5):
+>>>>> ARM: firmware: Introduce suspend and resume operations
+>>>>> ARM: EXYNOS: Add support for firmware-assisted suspend/resume
+>>>>> ARM: dts: exynos4412-trats2: Keep eMMC regulators soft-disabled
+>>>>> ARM: dts: exynos4x12: Add utility macro to define pin sleep states
+>>>>> ARM: dts: exynos4412-trats2: Add sleep mode pin configuration
+>>>>>
+>>>>> Documentation/arm/firmware.txt | 28 +--
+>>>>> arch/arm/boot/dts/exynos4412-trats2.dts | 320
+>>>>> +++++++++++++++++++++++++++++-
+>>>>> arch/arm/boot/dts/exynos4x12-pinctrl.dtsi | 16 ++
+>>>>> arch/arm/include/asm/firmware.h | 8 +
+>>>>> arch/arm/mach-exynos/Makefile | 1 +
+>>>>> arch/arm/mach-exynos/common.h | 4 +
+>>>>> arch/arm/mach-exynos/firmware.c | 45 +++++
+>>>>> arch/arm/mach-exynos/pm.c | 16 +-
+>>>>> arch/arm/mach-exynos/sleep.S | 28 +++
+>>>>> arch/arm/mach-exynos/smc.h | 4 +
+>>>>> 10 files changed, 438 insertions(+), 32 deletions(-)
+>>>>>
+>>>>
+>>>> Would you consider applying this series? It has been waiting on the ML
+>>>> long enough (note no changes in core patches since last revision, just
+>>>> few more board specific patches). Thanks in advance.
+>>>>
+>>> Sure, I will. Thanks for your gentle reminder.
+>>>
+>> I've reverted this series because of following.
 >>
->> Yes, that's one use case, cloning. But I was not talking about that.
+>> In file included from arch/arm/mach-tegra/cpuidle-tegra114.c:17:0:
+>> arch/arm/mach-tegra/cpuidle-tegra114.c: In function
+>> 'tegra114_idle_power_down':
+>> arch/arm/include/asm/firmware.h:64:24: error: too few arguments to
+>> function 'firmware_ops->do_idle'
+>> ((firmware_ops->op) ? firmware_ops->op(__VA_ARGS__) : (-ENOSYS))
+>> ^
+>> arch/arm/mach-tegra/cpuidle-tegra114.c:52:6: note: in expansion of
+>> macro 'call_firmware_op'
+>> if (call_firmware_op(do_idle) == -ENOSYS)
+>> ^
 >>
->>> all intents and purposes there is only one panel. Well, I guess you
->>> could have separate backlights for the panels. In that case though it=
-
->>> seems better to represent it at least as a virtual mux or bridge, or
->>> perhaps a "mux panel".
+>> Caused by commit f5217f3b9332 ("ARM: EXYNOS: add AFTR mode support to
+>> firmware do_idle method").
 >>
->> I was talking about the case where you have two totally different
->> devices, let's say panels, connected to the same output. One could tak=
-e
->> a 16-bit parallel RGB signal, the other 24-bit. Only one of them can  =
-be
->> enabled at a time (from HW perspective both can be enabled at the same=
+>> Need to fix...
+>
+> I don't get why you have reverted the main feature of "Firmware-assisted
+> suspend/resume
+> of Exynos SoCs" because of an issue on the completely independent
+> patchset which adds
+> AFTR idle mode support. Could you please keep the "ARM: firmware:
+> Introduce suspend
+> and resume operations" and "ARM: EXYNOS: Add support for firmware-assisted
+> suspend/resume" patches?
+>
+Hi Marek,
 
->> time, but then the other one shows garbage).
->=20
-> So we're essentially back to a mux, albeit maybe a virtual one.
+Yeah, as you said this series has no dependency and Bart's patches need 
+to be fixed. I thought both should be handled together, so I reverted 
+just the branch from my -next tree but the topic branch is there in my 
+tree. Once it fixed, I will re-merge them.
 
-Yes. Are you suggesting to model virtual hardware in .dts? I got the
-impression that you wanted to model only the real hardware in .dts =3D).
-
-But seriously speaking, I was thinking about this. I'd really like to
-have a generic video-mux node, that would still somehow allow us to have
-device specific configurations for the video sources and sinks (which
-the endpoints provide us), without endpoints.
-
-The reason endpoints don't feel right in this case is that it makes
-sense that the mux has a single input and two outputs, but with
-endpoints we need two endpoints from the bridge (which is still ok), but
-we also need two endpoitns in the mux's input side, which doesn't feel
-right.
-
-I came up with the following. It's quite ugly, though. I hope someone
-has ideas how it could be done in a neater way:
-
-bridge1234 {
-	bridge1234-cfg1: config1 {
-		high-voltage;
-	};
-
-	bridge1234-cfg2: config2 {
-		low-voltage;
-	};
-=09
-	output =3D <&mux>;
-};
-
-mux: video-gpio-mux {
-	gpio =3D <123>;
-
-	outputs =3D <&panel1 &panel2>;
-	input-configs =3D <&bridge1234-cfg1 &bridge1234-cfg2>;
-};
-
-panel1: panel-foo {
-
-};
-
-panel2: panel-foo {
-
-};
-
-So the bridge node has configuration sets. These might be compared to
-pinmux nodes. And the mux has a list of input-configs. When panel1 is to
-be enabled, "bridge1234-cfg1" config becomes active, and the bridge is
-given this configuration.
-
-I have to say the endpoint system feels cleaner than the above, but
-perhaps it's possible to improve the method above somehow.
-
- Tomi
-
-
-
---Jo9olE8c3GOQiqCrjPwsn8tkKxBkBf3iu
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUIoPeAAoJEPo9qoy8lh71xoMQAJ0asuBeb6p8wfZHh6bVpF7D
-I0I4+jVy239yAkDfv+wIB1b7z7KokAvG+GVUNDv5bTGFwv5B3GX055raJ//M0DMx
-Be8OZ5H0LA/AkLQP5e9B79UHzoR/fwXartNVZ3AuiN4deIU6V5glJsL9tBzXQCmZ
-Uc8TDRCO1dNeXfaAv3G/vDSCw3tuP1zjeiQ7bOfOY0CTfo5qVcYsL1VNGD6fc66f
-E4/RlBiwUFyggbEAB101WtVL5/xWV4z/BGj8R4Pe4204n7as3LUZkZn20RVh+X2L
-EgKxkY7Yjs2UvaOvnwZLWjVLA+js+Hq4w4nY7sjpATQa5l0GJ4AhlQucOwamKiAc
-BMj8SAtIV9gyCX53U0l8YVwRQecWqnGdY5/bqx+ot+4mhCrpklKF2uYHYiv0u1Ll
-9/FEfS1X67X6I6EfpdTFy9c5CC0QlEg//LHyZOklgGkl2FQLUigBRMe7mMLggjtW
-qikdmuotbK8OQlrMjgC6eTK/+rA80ZKKrGXpU9WhsvR4sNX1qw0B2ecsWmShvNdM
-sBDDuFyPWeRORsSu5MX9naDdQjzzESt2UcoYurGS8X7NRPS2qZlEoDuoYhcrwi6/
-KnTwh8ClO/qBeXFOaHdMGt0EJkWMpymqip1E+Kg/A3TmNoj3XTvLRft8Zhy/EUmU
-j6cKnPjt/Scpku8ygx1u
-=Bj+m
------END PGP SIGNATURE-----
-
---Jo9olE8c3GOQiqCrjPwsn8tkKxBkBf3iu--
+Thanks,
+Kukjin
