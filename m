@@ -1,88 +1,70 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 0/5] pinctrl: samsung: Data structure clean-up
-Date: Wed, 24 Sep 2014 09:25:28 +0200
-Message-ID: <542271E8.4020606@samsung.com>
-References: <1411499141-26551-1-git-send-email-tomasz.figa@gmail.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH v10 0/6] cpufreq: use generic cpufreq drivers for exynos
+ platforms
+Date: Wed, 24 Sep 2014 16:34:53 +0900
+Message-ID: <026501cfd7ca$0857a140$1906e3c0$@kernel.org>
+References: <1411531078-10671-1-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:27385 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750772AbaIXHZc (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:13772 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752157AbaIXHe4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Sep 2014 03:25:32 -0400
-In-reply-to: <1411499141-26551-1-git-send-email-tomasz.figa@gmail.com>
+	Wed, 24 Sep 2014 03:34:56 -0400
+In-reply-to: <1411531078-10671-1-git-send-email-thomas.ab@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: 'Thomas Abraham' <thomas.ab@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, tomasz.figa@gmail.com, l.majewski@samsung.com, viresh.kumar@linaro.org, heiko@sntech.de, cw00.choi@samsung.com
 
-Hello,
+Thomas Abraham wrote:
+> 
+> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
+> drivers and enables the use of cpufreq-cpu0 driver for these platforms. This
+> series also enables cpufreq support for Exynos5420 using arm_big_little cpufreq
+> driver.
+> 
+> This patch series is dependent on two other patches
+> 1. ARM: dts: add CPU nodes for Exynos4 SoCs
+>    - https://lkml.org/lkml/2014/7/21/315
+> 2. clk: exynos4: remove duplicate div_core2 divider clock instantiation
+>    - http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34859.html
+> 
+> Thomas Abraham (6):
+>   clk: samsung: add infrastructure to register cpu clocks
+>   clk: samsung: add cpu clock configuration data and instantiate cpu clock
+>   ARM: dts: Exynos: add CPU OPP and regulator supply property
+>   ARM: Exynos: switch to using generic cpufreq driver for Exynos4210/5250/5420
+>   cpufreq: exynos: remove exynos4210/5250 specific cpufreq driver support
+>   clk: samsung: remove unused clock aliases and update clock flags
+> 
+>  arch/arm/boot/dts/exynos4210-origen.dts         |    4 +
+>  arch/arm/boot/dts/exynos4210-trats.dts          |    4 +
+>  arch/arm/boot/dts/exynos4210-universal_c210.dts |    4 +
+>  arch/arm/boot/dts/exynos4210.dtsi               |   14 +-
+>  arch/arm/boot/dts/exynos5250-arndale.dts        |    4 +
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts       |    4 +
+>  arch/arm/boot/dts/exynos5250-snow.dts           |    4 +
+>  arch/arm/boot/dts/exynos5250.dtsi               |   25 ++-
+>  arch/arm/boot/dts/exynos5420.dtsi               |   38 +++
+>  arch/arm/mach-exynos/exynos.c                   |   24 ++-
+>  drivers/clk/samsung/Makefile                    |    2 +-
+>  drivers/clk/samsung/clk-cpu.c                   |  335 +++++++++++++++++++++++
+>  drivers/clk/samsung/clk-cpu.h                   |   91 ++++++
+>  drivers/clk/samsung/clk-exynos4.c               |   63 +++--
+>  drivers/clk/samsung/clk-exynos5250.c            |   44 +++-
+>  drivers/clk/samsung/clk-exynos5420.c            |   72 +++++-
+>  drivers/cpufreq/Kconfig.arm                     |   22 --
+>  drivers/cpufreq/Makefile                        |    2 -
+>  include/dt-bindings/clock/exynos5250.h          |    1 +
+>  include/dt-bindings/clock/exynos5420.h          |    2 +
 
-On 2014-09-23 21:05, Tomasz Figa wrote:
-> This series intends to clean up data structures used by pinctrl-samsung driver.
-> More specifically, it separates initial compile time constants from data used
-> at runtime, allowing unused variant data to be dropped and selected structures
-> constified to improve safety.
->
-> As a side effect, size of vmlinux built from multi_v7_defconfig was reduced
-> from:
->
->   text     data    bss    dec      hex    filename
->   10296708 1227100 313544 11837352 b49fa8 vmlinux
->
-> to:
->
->   text     data    bss    dec      hex    filename
->   10296740 1176860 313544 11787144 b3db88 vmlinux
->
-> and quite a bit of data were moved from normal data sections to .init.data:
->
-> pre:
->
-> Idx Name          Size      VMA       LMA       File off  Algn
->    3 .rodata       0026c080  c0881000  c0881000  00681000  2**6
->   23 .init.data    0003ff7c  c0bdb830  c0bdb830  009e3830  2**3
->   24 .data..percpu 00002100  c0c1c000  c0c1c000  00a24000  2**6
->   25 .data         000e98e0  c0c20000  c0c20000  00a28000  2**6
->
-> post:
->
-> Idx Name          Size      VMA       LMA       File off  Algn
->    3 .rodata       0026bf20  c0881000  c0881000  00681000  2**6
->   23 .init.data    00041bbc  c0bdb830  c0bdb830  009e3830  2**3
->   24 .data..percpu 00002100  c0c1e000  c0c1e000  00a26000  2**6
->   25 .data         000db860  c0c22000  c0c22000  00a2a000  2**6
->
-> This series should not introduce any functional changes.
->
-> Tested on S3C6410-based Mini6410 board, booting with device tree.
->
-> Marek, Bart, could you do some testing on Exynos-based boards,
-> just to make sure?
+Looks good to me,
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-Works fine on Exynos4412 based OdroidU3+ and Exynos4210 Universal C210.
+BTW, who will handle this series? I think this is already ready for v3.18.
 
-For the whole patchset:
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-> Tomasz Figa (5):
->    pinctrl: samsung: Make samsung_pinctrl_get_soc_data use ERR_PTR()
->    pinctrl: samsung: Drop unused label field in samsung_pin_ctrl struct
->    pinctrl: samsung: Constify samsung_pin_bank_type struct
->    pinctrl: samsung: Constify samsung_pin_ctrl struct
->    pinctrl: samsung: Separate per-bank init and runtime data
->
->   drivers/pinctrl/samsung/pinctrl-exynos.c  | 113 +++++++++++----------------
->   drivers/pinctrl/samsung/pinctrl-s3c24xx.c |  30 +++----
->   drivers/pinctrl/samsung/pinctrl-s3c64xx.c |  31 ++++----
->   drivers/pinctrl/samsung/pinctrl-samsung.c | 126 ++++++++++++++++--------------
->   drivers/pinctrl/samsung/pinctrl-samsung.h |  78 ++++++++++++------
->   5 files changed, 193 insertions(+), 185 deletions(-)
->
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+- Kukjin
