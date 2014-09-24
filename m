@@ -1,74 +1,135 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v10 0/6] cpufreq: use generic cpufreq drivers for exynos
- platforms
-Date: Wed, 24 Sep 2014 13:08:37 +0200
-Message-ID: <5422A635.2020607@gmail.com>
-References: <1411531078-10671-1-git-send-email-thomas.ab@samsung.com> <026501cfd7ca$0857a140$1906e3c0$@kernel.org>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v5 4/7] ARM: l2c: Add support for overriding prefetch
+ settings
+Date: Wed, 24 Sep 2014 12:14:47 +0100
+Message-ID: <20140924111446.GE5729@leverpostej>
+References: <1411556741-5810-1-git-send-email-m.szyprowski@samsung.com>
+ <1411556741-5810-5-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <026501cfd7ca$0857a140$1906e3c0$@kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, 'Thomas Abraham' <thomas.ab@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, l.majewski@samsung.com, viresh.kumar@linaro.org, heiko@sntech.de, cw00.choi@samsung.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:36383 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751124AbaIXLOu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 24 Sep 2014 07:14:50 -0400
+Content-Disposition: inline
+In-Reply-To: <1411556741-5810-5-git-send-email-m.szyprowski@samsung.com>
+Content-Language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "lauraa@codeaurora.org" <lauraa@codeaurora.org>, "tony@atomide.com" <tony@atomide.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, "drake@endlessm.com" <drake@endlessm.com>, "loeliger@gmail.com" <loeliger@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, "santosh.shilimkar@ti.com" <santosh.shilimkar@ti.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
 
-On 24.09.2014 09:34, Kukjin Kim wrote:
-> Thomas Abraham wrote:
->>
->> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
->> drivers and enables the use of cpufreq-cpu0 driver for these platforms. This
->> series also enables cpufreq support for Exynos5420 using arm_big_little cpufreq
->> driver.
->>
->> This patch series is dependent on two other patches
->> 1. ARM: dts: add CPU nodes for Exynos4 SoCs
->>    - https://lkml.org/lkml/2014/7/21/315
->> 2. clk: exynos4: remove duplicate div_core2 divider clock instantiation
->>    - http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34859.html
-
-I have applied 2) to Samsung clock tree.
-
->>
->> Thomas Abraham (6):
->>   clk: samsung: add infrastructure to register cpu clocks
->>   clk: samsung: add cpu clock configuration data and instantiate cpu clock
->>   ARM: dts: Exynos: add CPU OPP and regulator supply property
->>   ARM: Exynos: switch to using generic cpufreq driver for Exynos4210/5250/5420
->>   cpufreq: exynos: remove exynos4210/5250 specific cpufreq driver support
->>   clk: samsung: remove unused clock aliases and update clock flags
->>
->>  arch/arm/boot/dts/exynos4210-origen.dts         |    4 +
->>  arch/arm/boot/dts/exynos4210-trats.dts          |    4 +
->>  arch/arm/boot/dts/exynos4210-universal_c210.dts |    4 +
->>  arch/arm/boot/dts/exynos4210.dtsi               |   14 +-
->>  arch/arm/boot/dts/exynos5250-arndale.dts        |    4 +
->>  arch/arm/boot/dts/exynos5250-smdk5250.dts       |    4 +
->>  arch/arm/boot/dts/exynos5250-snow.dts           |    4 +
->>  arch/arm/boot/dts/exynos5250.dtsi               |   25 ++-
->>  arch/arm/boot/dts/exynos5420.dtsi               |   38 +++
->>  arch/arm/mach-exynos/exynos.c                   |   24 ++-
->>  drivers/clk/samsung/Makefile                    |    2 +-
->>  drivers/clk/samsung/clk-cpu.c                   |  335 +++++++++++++++++++++++
->>  drivers/clk/samsung/clk-cpu.h                   |   91 ++++++
->>  drivers/clk/samsung/clk-exynos4.c               |   63 +++--
->>  drivers/clk/samsung/clk-exynos5250.c            |   44 +++-
->>  drivers/clk/samsung/clk-exynos5420.c            |   72 +++++-
->>  drivers/cpufreq/Kconfig.arm                     |   22 --
->>  drivers/cpufreq/Makefile                        |    2 -
->>  include/dt-bindings/clock/exynos5250.h          |    1 +
->>  include/dt-bindings/clock/exynos5420.h          |    2 +
+On Wed, Sep 24, 2014 at 12:05:38PM +0100, Marek Szyprowski wrote:
+> From: Tomasz Figa <t.figa@samsung.com>
 > 
-> Looks good to me,
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> Firmware on certain boards (e.g. ODROID-U3) can leave incorrect L2C prefetch
+> settings configured in registers leading to crashes if L2C is enabled
+> without overriding them. This patch introduces bindings to enable
+> prefetch settings to be specified from DT and necessary support in the
+> driver.
 > 
-> BTW, who will handle this series? I think this is already ready for v3.18.
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/arm/l2cc.txt | 10 +++++++
+>  arch/arm/mm/cache-l2x0.c                       | 39 ++++++++++++++++++++++++++
+>  2 files changed, 49 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/l2cc.txt b/Documentation/devicetree/bindings/arm/l2cc.txt
+> index af527ee111c2..3443d2d76788 100644
+> --- a/Documentation/devicetree/bindings/arm/l2cc.txt
+> +++ b/Documentation/devicetree/bindings/arm/l2cc.txt
+> @@ -47,6 +47,16 @@ Optional properties:
+>  - cache-id-part: cache id part number to be used if it is not present
+>    on hardware
+>  - wt-override: If present then L2 is forced to Write through mode
+> +- arm,double-linefill : Override double linefill enable setting. Enable if
+> +  non-zero, disable if zero.
+> +- arm,double-linefill-incr : Override double linefill on INCR read. Enable
+> +  if non-zero, disable if zero.
+> +- arm,double-linefill-wrap : Override double linefill on WRAP read. Enable
+> +  if non-zero, disable if zero.
+> +- arm,prefetch-drop : Override prefetch drop enable setting. Enable if non-zero,
+> +  disable if zero.
 
-I believe Viresh already acked this series too and since it does quite a
-lot of shuffling in clock code, I'd prefer to take this through clock
-tree, but apparently there is a dependency on patch 1), which already
-went through another tree?
+I'm not too keen on tristate properties. Is this level of flexibility
+really required?
 
-Best regards,
-Tomasz
+What exact overrides do you need for boards you know of? Why do these
+cause crashes if not overridden?
+
+Mark.
+
+> +- arm,prefetch-offset : Override prefetch offset value. Valid values are
+> +  0-7, 15, 23, and 31.
+>  
+>  Example:
+>  
+> diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
+> index 84c6c55ab896..af90a6ff6b49 100644
+> --- a/arch/arm/mm/cache-l2x0.c
+> +++ b/arch/arm/mm/cache-l2x0.c
+> @@ -1059,6 +1059,8 @@ static void __init l2c310_of_parse(const struct device_node *np,
+>  	u32 data[3] = { 0, 0, 0 };
+>  	u32 tag[3] = { 0, 0, 0 };
+>  	u32 filter[2] = { 0, 0 };
+> +	u32 prefetch;
+> +	u32 val;
+>  
+>  	of_property_read_u32_array(np, "arm,tag-latency", tag, ARRAY_SIZE(tag));
+>  	if (tag[0] && tag[1] && tag[2])
+> @@ -1083,6 +1085,43 @@ static void __init l2c310_of_parse(const struct device_node *np,
+>  		l2x0_saved_regs.filter_start = (filter[0] & ~(SZ_1M - 1))
+>  					| L310_ADDR_FILTER_EN;
+>  	}
+> +
+> +	prefetch = l2x0_saved_regs.prefetch_ctrl;
+> +
+> +	if (!of_property_read_u32(np, "arm,double-linefill", &val)) {
+> +		if (val)
+> +			prefetch |= L310_PREFETCH_CTRL_DBL_LINEFILL;
+> +		else
+> +			prefetch &= ~L310_PREFETCH_CTRL_DBL_LINEFILL;
+> +	}
+> +
+> +	if (!of_property_read_u32(np, "arm,double-linefill-incr", &val)) {
+> +		if (val)
+> +			prefetch |= L310_PREFETCH_CTRL_DBL_LINEFILL_INCR;
+> +		else
+> +			prefetch &= ~L310_PREFETCH_CTRL_DBL_LINEFILL_INCR;
+> +	}
+> +
+> +	if (!of_property_read_u32(np, "arm,double-linefill-wrap", &val)) {
+> +		if (!val)
+> +			prefetch |= L310_PREFETCH_CTRL_DBL_LINEFILL_WRAP;
+> +		else
+> +			prefetch &= ~L310_PREFETCH_CTRL_DBL_LINEFILL_WRAP;
+> +	}
+> +
+> +	if (!of_property_read_u32(np, "arm,prefetch-drop", &val)) {
+> +		if (val)
+> +			prefetch |= L310_PREFETCH_CTRL_PREFETCH_DROP;
+> +		else
+> +			prefetch &= ~L310_PREFETCH_CTRL_PREFETCH_DROP;
+> +	}
+> +
+> +	if (!of_property_read_u32(np, "arm,prefetch-offset", &val)) {
+> +		prefetch &= ~L310_PREFETCH_CTRL_OFFSET_MASK;
+> +		prefetch |= val & L310_PREFETCH_CTRL_OFFSET_MASK;
+> +	}
+> +
+> +	l2x0_saved_regs.prefetch_ctrl = prefetch;
+>  }
+>  
+>  static const struct l2c_init_data of_l2c310_data __initconst = {
+> -- 
+> 1.9.2
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
