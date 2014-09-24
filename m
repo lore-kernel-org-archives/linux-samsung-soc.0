@@ -1,76 +1,96 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [RESEND PATCH v4 2/2] ARM: EXYNOS: Refactor the pm code to use DT
- based lookup
-Date: Wed, 24 Sep 2014 14:00:07 +0900
-Message-ID: <01ef01cfd7b4$696d7560$3c486020$@kernel.org>
-References: <1408431167-14134-1-git-send-email-vikas.sajjan@samsung.com>
- <1408431167-14134-3-git-send-email-vikas.sajjan@samsung.com>
- <CAGm_ybjx4t7kGg0mJHjrox39jP-DNgc-0rkLNn2rcOLS6JjAHQ@mail.gmail.com>
- <2186657.jhIisq7Fok@amdc1032>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
+ ps8622 DT properties
+Date: Wed, 24 Sep 2014 09:11:17 +0200
+Message-ID: <54226E95.9000706@samsung.com>
+References: <CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com>
+ <5419B52D.4060107@ti.com> <20140922080629.GC1470@ulmo>
+ <542030DD.3060906@ti.com> <20140923060452.GD30514@ulmo>
+ <5421201C.6000509@samsung.com> <20140923083514.GM30514@ulmo>
+ <542140D3.8080806@samsung.com> <20140923101032.GU30514@ulmo>
+ <54214CCE.7050102@samsung.com> <20140923144127.GE5982@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:47994 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750767AbaIXFAK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Sep 2014 01:00:10 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NCE00ANO3880870@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 24 Sep 2014 14:00:08 +0900 (KST)
-In-reply-to: <2186657.jhIisq7Fok@amdc1032>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20140923144127.GE5982@ulmo>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Vikas Sajjan' <vikas.sajjan@samsung.com>
-Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Vikas Sajjan' <sajjan.linux@gmail.com>, 'Doug Anderson' <dianders@chromium.org>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
 
-Bartlomiej Zolnierkiewicz wrote:
-> 
-> Hi,
-> 
-Hi,
+On 09/23/2014 04:41 PM, Thierry Reding wrote:
+> On Tue, Sep 23, 2014 at 12:34:54PM +0200, Andrzej Hajda wrote:
+>> On 09/23/2014 12:10 PM, Thierry Reding wrote:
+>>> On Tue, Sep 23, 2014 at 11:43:47AM +0200, Andrzej Hajda wrote:
+>>>> On 09/23/2014 10:35 AM, Thierry Reding wrote:
+>>> [...]
+>>>>> But I agree that it would be nice to unify bridges and encoders more. It
+>>>>> should be possible to make encoder always a bridge (or perhaps even
+>>>>> replace encoders with bridges altogether). Then once you're out of the
+>>>>> DRM device everything would be a bridge until you get to a panel.
+>>>> I agree that some sort of unification of bridges, (slave) encoders is a good
+>>>> thing, this way we stay only with bridges and panels as receivers.
+>>>> But we will still have to deal with the code like:
+>>>>     if (on the other end of the link is panel)
+>>>>         do panel framework specific things
+>>>>     else
+>>>>         do bridge framework specific things
+>>>>
+>>>> The code in both branches usually does similar things but due to framework
+>>>> differences it is difficult to merge.
+>>> That's because they are inherently different entities. You can perform
+>>> operations on a panel that don't make sense for a bridge and vice-versa.
+>>>
+>>>> Ideally it would be best to get rid of such constructs. For example by
+>>>> trying to
+>>>> make frameworks per interface type exposed by device (eg. video_sink) and
+>>>> not by device type (drm_bridge, drm_panel).
+>>> But then you loose all information about the real type of device.
+>> Driver knows type of its device anyway. Why should it know device
+>> type of devices it is connected to? It is enough it knows how to talk to
+>> other device.
+>> Like in real world, why desktop PC should know it is connected to DVI
+>> monitor or to
+>> DVI/HDMI converter which is connected to TV?
+> TVs are much more standardized. There are things like DDC/CI which can
+> be used to control the device. Or there's additional circuitry or
+> control paths to change things like brightness. The same isn't true of
+> panels.
+But it is also true on HW level in case of display subsystem components -
+If some device have output format X it means it can be connected to any
+device
+having input format X, whatever it is: panel, bridge, image enhancer...
 
-> On Tuesday, August 19, 2014 01:26:49 PM Vikas Sajjan wrote:
-> > Hi Kukjin,
-> >
-> > On Tue, Aug 19, 2014 at 12:22 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
-> > > Refactoring the pm.c to avoid using "soc_is_exynos" checks,
-> > > instead use the DT based lookup.
-> > >
-> > > While at it, consolidate the common code across SoCs
-> > > and create static helper functions.
-> > >
-> > > Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
-> > > Reviewed-by: Tomasz Figa <t.figa@samsung.com>
-> >
-> > Can you pick this series...
-> 
-> I think that my PM_SLEEP=n build fixes should go in before this cleanup
-> series:
-> 
->   http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg35430.html
-> 
+>
+>>>  Or you
+>>> have to create a common base class. And then you're still back to
+>>> dealing with the two specific cases in many places, so the gain seems
+>>> rather minimal.
+>> For example RGB panel and RGB/??? bridge have the same hardware input
+>> interface.
+>> Why shall they have different representation in kernel?
+> Because panels have different requirements than bridges. Panels for
+> example require the backlight to be adjustable, bridges don't.
 
-Bart, your patch has a problem due to dependency, Firmware-assisted suspend/
-resume patch from Tomasz as I emailed today morning in my time. So I will
-apply this series firstly. Please respin the fixes once the build breakage
-resolved. If you have any idea, please let me know.
+But I have asked about their input interface, RGB panel and RGB/???
+bridge have the
+same input interface.
+In other words if instead of creating frameworks for each device type we
+try to create framework
+for functions/interfaces these device provides we should end up with
+fewer frameworks and more clean code.
 
-Thanks,
-Kukjin
+Regards
+Andrzej
 
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
-> 
-> > > ---
-> > >  arch/arm/mach-exynos/pm.c       |  167 +++++++++++++++++++++++++++++----------
-> > >  arch/arm/mach-exynos/regs-pmu.h |    1 +
-> > >  2 files changed, 126 insertions(+), 42 deletions(-)
+>
+> Thierry
