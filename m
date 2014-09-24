@@ -1,53 +1,136 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 2/2] Exynos PM updates for v3.18
-Date: Wed, 24 Sep 2014 17:18:41 +0900
-Message-ID: <54227E61.5060909@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v3 0/5] Firmware-assisted suspend/resume of Exynos SoCs
+Date: Wed, 24 Sep 2014 10:23:23 +0200
+Message-ID: <54227F7B.80702@samsung.com>
+References: <1409062228-14690-1-git-send-email-t.figa@samsung.com>
+ <5415D4A8.4010304@gmail.com> <0d2401cfd07b$0e21e190$2a65a4b0$@kernel.org>
+ <54227893.7020808@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:43528 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754271AbaIXISs (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:9676 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751828AbaIXIX2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Sep 2014 04:18:48 -0400
-Received: by mail-pa0-f47.google.com with SMTP id et14so8250997pad.6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 24 Sep 2014 01:18:48 -0700 (PDT)
+	Wed, 24 Sep 2014 04:23:28 -0400
+In-reply-to: <54227893.7020808@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>
+Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Arnd Bergmann' <arnd@arndb.de>, swarren@nvidia.com, acourbot@nvidia.com, 'Olof Johansson' <olof@lixom.net>, drake@endlessm.com, tomeu@tomeuvizoso.net
 
-The following changes since commit 7d1311b93e58ed55f3a31cc8f94c4b8fe988a2b9:
+Hi Kukjin,
 
-   Linux 3.17-rc1 (2014-08-16 10:40:26 -0600)
+On 2014-09-24 09:53, Kukjin Kim wrote:
+>
+> On 09/15/14 09:21, Kukjin Kim wrote:
+>>
+>>> On 26.08.2014 16:10, Tomasz Figa wrote:
+>>>> On Exynos-based boards running secure firmware the sequence of low 
+>>>> level
+>>>> operations to enter and leave system-wide sleep mode is different than
+>>>> on those without the firmware. Namely:
+>>>>   - CP15 power control and diagnostic registers cannot be written 
+>>>> directly,
+>>>>   - the way of setting boot address and boot flag is different,
+>>>>   - different resume handler needs to be used,
+>>>>   - dedicated SMC call needs to be performed instead of letting the 
+>>>> CPU enter
+>>>>     WFI.
+>>>>
+>>>> This series introduces .suspend() and .resume() firmware operations to
+>>>> perform low level firmware-specific suspend and resume and then 
+>>>> leverages
+>>>> them to provide suspend-resume path meeting the above requirements. 
+>>>> Three
+>>>> additional patches extend device tree sources of Trats2 board with 
+>>>> necessary
+>>>> setup to enable suspend/resume support.
+>>>>
+>>>> This series has been tested on Exynos4412-based Trats2 board, 
+>>>> without any
+>>>> additional patches. Unfortunately v3.17-rc1 regressed ODROID 
+>>>> support and
+>>>> suspend stopped working on those boards, due to unknown reasons 
+>>>> still being
+>>>> investigated. It does not seem to be related to anything in this 
+>>>> series,
+>>>> though, so I would not consider this as a stopper.
+>>>>
+>>>> Changes since v2:
+>>>> (https://lkml.org/lkml/2014/7/17/431)
+>>>>   - added board-specific fixes for device tree sources of Trats2 
+>>>> board,
+>>>>   - rebased on next-20140826 of linux-next tree.
+>>>>
+>>>> Changes since v1:
+>>>>   - dropped outer_resume() - will be handled in assembly in further 
+>>>> patches,
+>>>>     as support for L2C in non-secure mode gets added,
+>>>>   - moved CP15 resume to assembly as it needs to be done before MMU 
+>>>> is enabled,
+>>>>   - surrounded CP15 save with a check for cpuid part, because it is 
+>>>> valid only
+>>>>     on Cortex A9,
+>>>>   - rebased on next-20140717 tag of linux-next tree.
+>>>>
+>>>> Tomasz Figa (5):
+>>>>    ARM: firmware: Introduce suspend and resume operations
+>>>>    ARM: EXYNOS: Add support for firmware-assisted suspend/resume
+>>>>    ARM: dts: exynos4412-trats2: Keep eMMC regulators soft-disabled
+>>>>    ARM: dts: exynos4x12: Add utility macro to define pin sleep states
+>>>>    ARM: dts: exynos4412-trats2: Add sleep mode pin configuration
+>>>>
+>>>>   Documentation/arm/firmware.txt            |  28 +--
+>>>>   arch/arm/boot/dts/exynos4412-trats2.dts   | 320 
+>>>> +++++++++++++++++++++++++++++-
+>>>>   arch/arm/boot/dts/exynos4x12-pinctrl.dtsi |  16 ++
+>>>>   arch/arm/include/asm/firmware.h           |   8 +
+>>>>   arch/arm/mach-exynos/Makefile             |   1 +
+>>>>   arch/arm/mach-exynos/common.h             |   4 +
+>>>>   arch/arm/mach-exynos/firmware.c           |  45 +++++
+>>>>   arch/arm/mach-exynos/pm.c                 |  16 +-
+>>>>   arch/arm/mach-exynos/sleep.S              |  28 +++
+>>>>   arch/arm/mach-exynos/smc.h                |   4 +
+>>>>   10 files changed, 438 insertions(+), 32 deletions(-)
+>>>>
+>>>
+>>> Would you consider applying this series? It has been waiting on the ML
+>>> long enough (note no changes in core patches since last revision, just
+>>> few more board specific patches). Thanks in advance.
+>>>
+>> Sure, I will. Thanks for your gentle reminder.
+>>
+> I've reverted this series because of following.
+>
+> In file included from arch/arm/mach-tegra/cpuidle-tegra114.c:17:0:
+> arch/arm/mach-tegra/cpuidle-tegra114.c: In function 
+> 'tegra114_idle_power_down':
+> arch/arm/include/asm/firmware.h:64:24: error: too few arguments to 
+> function 'firmware_ops->do_idle'
+>   ((firmware_ops->op) ? firmware_ops->op(__VA_ARGS__) : (-ENOSYS))
+>                         ^
+> arch/arm/mach-tegra/cpuidle-tegra114.c:52:6: note: in expansion of 
+> macro 'call_firmware_op'
+>   if (call_firmware_op(do_idle) == -ENOSYS)
+>       ^
+>
+> Caused by commit f5217f3b9332 ("ARM: EXYNOS: add AFTR mode support to
+> firmware do_idle method").
+>
+> Need to fix...
 
-are available in the git repository at:
+I don't get why you have reverted the main feature of "Firmware-assisted 
+suspend/resume
+of Exynos SoCs" because of an issue on the completely independent 
+patchset which adds
+AFTR idle mode support. Could you please keep the "ARM: firmware: 
+Introduce suspend
+and resume operations" and "ARM: EXYNOS: Add support for firmware-assisted
+suspend/resume" patches?
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-tags/exynos-pm
-
-for you to fetch changes up to c3294253713cbc96df59a7cc6a9a3fc0c4ae5ba7:
-
-   ARM: EXYNOS: Refactor the pm code to use DT based lookup (2014-09-24 
-16:45:14 +0900)
-
-----------------------------------------------------------------
-PM related updates for exynos v3.18
-
-- Refactor the pm code to use DT based lookup instead of
-   using "soc_is_exynosxxxx"
-- While at it, move exynos5250 specific disabling of JPEG
-   USE_RETENTION to pmu.c
-
-----------------------------------------------------------------
-Vikas Sajjan (2):
-       ARM: EXYNOS: Move Disabling of JPEG USE_RETENTION for exynos5250 
-to pmu.c
-       ARM: EXYNOS: Refactor the pm code to use DT based lookup
-
-  arch/arm/mach-exynos/pm.c       | 172 
-+++++++++++++++++++++++++++++-----------
-  arch/arm/mach-exynos/pmu.c      |   1 +
-  arch/arm/mach-exynos/regs-pmu.h |   1 +
-  3 files changed, 127 insertions(+), 47 deletions(-)
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
