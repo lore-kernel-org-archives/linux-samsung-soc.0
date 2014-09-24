@@ -1,139 +1,93 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v3 0/5] Firmware-assisted suspend/resume of Exynos SoCs
-Date: Wed, 24 Sep 2014 17:42:19 +0900
-Message-ID: <542283EB.3030809@samsung.com>
-References: <1409062228-14690-1-git-send-email-t.figa@samsung.com> <5415D4A8.4010304@gmail.com> <0d2401cfd07b$0e21e190$2a65a4b0$@kernel.org> <54227893.7020808@samsung.com> <54227F7B.80702@samsung.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
+ ps8622 DT properties
+Date: Wed, 24 Sep 2014 12:08:37 +0300
+Message-ID: <54228A15.4090901@ti.com>
+References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com> <5419760A.7020908@ti.com> <20140922075424.GB1470@ulmo> <54202C86.3040808@ti.com> <20140923062111.GE30514@ulmo> <54213DAC.5010806@ti.com> <20140923095314.GS30514@ulmo> <542160DF.2040008@ti.com> <20140923145833.GI5982@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="NbGcMAWJWkihmncc2QFXaKmI1wS2lSDIi"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:33635 "EHLO
-	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751434AbaIXIm2 (ORCPT
+Received: from devils.ext.ti.com ([198.47.26.153]:50798 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752982AbaIXJIv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Sep 2014 04:42:28 -0400
-In-Reply-To: <54227F7B.80702@samsung.com>
+	Wed, 24 Sep 2014 05:08:51 -0400
+In-Reply-To: <20140923145833.GI5982@ulmo>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Arnd Bergmann' <arnd@arndb.de>, 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, acourbot@nvidia.com, tomeu@tomeuvizoso.net, 'Olof Johansson' <olof@lixom.net>, swarren@nvidia.com, drake@endlessm.com, linux-arm-kernel@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, inki.dae@samsung.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-On 09/24/14 17:23, Marek Szyprowski wrote:
-> Hi Kukjin,
->
-> On 2014-09-24 09:53, Kukjin Kim wrote:
->>
->> On 09/15/14 09:21, Kukjin Kim wrote:
->>>
->>>> On 26.08.2014 16:10, Tomasz Figa wrote:
->>>>> On Exynos-based boards running secure firmware the sequence of low
->>>>> level
->>>>> operations to enter and leave system-wide sleep mode is different than
->>>>> on those without the firmware. Namely:
->>>>> - CP15 power control and diagnostic registers cannot be written
->>>>> directly,
->>>>> - the way of setting boot address and boot flag is different,
->>>>> - different resume handler needs to be used,
->>>>> - dedicated SMC call needs to be performed instead of letting the
->>>>> CPU enter
->>>>> WFI.
->>>>>
->>>>> This series introduces .suspend() and .resume() firmware operations to
->>>>> perform low level firmware-specific suspend and resume and then
->>>>> leverages
->>>>> them to provide suspend-resume path meeting the above requirements.
->>>>> Three
->>>>> additional patches extend device tree sources of Trats2 board with
->>>>> necessary
->>>>> setup to enable suspend/resume support.
->>>>>
->>>>> This series has been tested on Exynos4412-based Trats2 board,
->>>>> without any
->>>>> additional patches. Unfortunately v3.17-rc1 regressed ODROID
->>>>> support and
->>>>> suspend stopped working on those boards, due to unknown reasons
->>>>> still being
->>>>> investigated. It does not seem to be related to anything in this
->>>>> series,
->>>>> though, so I would not consider this as a stopper.
->>>>>
->>>>> Changes since v2:
->>>>> (https://lkml.org/lkml/2014/7/17/431)
->>>>> - added board-specific fixes for device tree sources of Trats2 board,
->>>>> - rebased on next-20140826 of linux-next tree.
->>>>>
->>>>> Changes since v1:
->>>>> - dropped outer_resume() - will be handled in assembly in further
->>>>> patches,
->>>>> as support for L2C in non-secure mode gets added,
->>>>> - moved CP15 resume to assembly as it needs to be done before MMU
->>>>> is enabled,
->>>>> - surrounded CP15 save with a check for cpuid part, because it is
->>>>> valid only
->>>>> on Cortex A9,
->>>>> - rebased on next-20140717 tag of linux-next tree.
->>>>>
->>>>> Tomasz Figa (5):
->>>>> ARM: firmware: Introduce suspend and resume operations
->>>>> ARM: EXYNOS: Add support for firmware-assisted suspend/resume
->>>>> ARM: dts: exynos4412-trats2: Keep eMMC regulators soft-disabled
->>>>> ARM: dts: exynos4x12: Add utility macro to define pin sleep states
->>>>> ARM: dts: exynos4412-trats2: Add sleep mode pin configuration
->>>>>
->>>>> Documentation/arm/firmware.txt | 28 +--
->>>>> arch/arm/boot/dts/exynos4412-trats2.dts | 320
->>>>> +++++++++++++++++++++++++++++-
->>>>> arch/arm/boot/dts/exynos4x12-pinctrl.dtsi | 16 ++
->>>>> arch/arm/include/asm/firmware.h | 8 +
->>>>> arch/arm/mach-exynos/Makefile | 1 +
->>>>> arch/arm/mach-exynos/common.h | 4 +
->>>>> arch/arm/mach-exynos/firmware.c | 45 +++++
->>>>> arch/arm/mach-exynos/pm.c | 16 +-
->>>>> arch/arm/mach-exynos/sleep.S | 28 +++
->>>>> arch/arm/mach-exynos/smc.h | 4 +
->>>>> 10 files changed, 438 insertions(+), 32 deletions(-)
->>>>>
->>>>
->>>> Would you consider applying this series? It has been waiting on the ML
->>>> long enough (note no changes in core patches since last revision, just
->>>> few more board specific patches). Thanks in advance.
->>>>
->>> Sure, I will. Thanks for your gentle reminder.
->>>
->> I've reverted this series because of following.
->>
->> In file included from arch/arm/mach-tegra/cpuidle-tegra114.c:17:0:
->> arch/arm/mach-tegra/cpuidle-tegra114.c: In function
->> 'tegra114_idle_power_down':
->> arch/arm/include/asm/firmware.h:64:24: error: too few arguments to
->> function 'firmware_ops->do_idle'
->> ((firmware_ops->op) ? firmware_ops->op(__VA_ARGS__) : (-ENOSYS))
->> ^
->> arch/arm/mach-tegra/cpuidle-tegra114.c:52:6: note: in expansion of
->> macro 'call_firmware_op'
->> if (call_firmware_op(do_idle) == -ENOSYS)
->> ^
->>
->> Caused by commit f5217f3b9332 ("ARM: EXYNOS: add AFTR mode support to
->> firmware do_idle method").
->>
->> Need to fix...
->
-> I don't get why you have reverted the main feature of "Firmware-assisted
-> suspend/resume
-> of Exynos SoCs" because of an issue on the completely independent
-> patchset which adds
-> AFTR idle mode support. Could you please keep the "ARM: firmware:
-> Introduce suspend
-> and resume operations" and "ARM: EXYNOS: Add support for firmware-assisted
-> suspend/resume" patches?
->
-Hi Marek,
+--NbGcMAWJWkihmncc2QFXaKmI1wS2lSDIi
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
-Yeah, as you said this series has no dependency and Bart's patches need 
-to be fixed. I thought both should be handled together, so I reverted 
-just the branch from my -next tree but the topic branch is there in my 
-tree. Once it fixed, I will re-merge them.
+On 23/09/14 17:58, Thierry Reding wrote:
 
-Thanks,
-Kukjin
+>> But if a panel driver controls its video source, it makes sense for th=
+e
+>> panel driver to get its video source in its probe, and that happens
+>> easiest if the panel has a link to the video source.
+>=20
+> That's an orthogonal problem. You speak about the link in software here=
+,
+> whereas the phandles only represent the link in the description of
+> hardware. Now DT describes hardware from the perspective of the CPU, so=
+
+> it's sort of like a cave that you're trying to explore. You start at th=
+e
+> top with the address bus, from where a couple of tunnels lead to the
+> various peripherals on the address bus. A display controller might have=
+
+> another tunnel to a panel, etc.
+
+We don't do that for GPIOs, regulators, etc. either. And for video data
+there are no address buses. Yes, for DSI and similar we have a control
+bus, but that is modeled differently than the video data path.
+
+Now, I'm fine with starting from the CPU, going outwards. I agree that
+it's probably better to model it in the direction of the data stream,
+even if that would make the SW a bit more complex.
+
+However, I do think it's not as clear as you make it sound, especially
+if we take cameras/sensors into account as Laurent explained elsewhere
+in this thread.
+
+> If you go the other way around, how do you detect how things connect?
+> Where do you get the information about the panel so you can trace back
+> to the origin?
+
+When the panel driver probes, it registers itself as a panel and gets
+its video source. Similarly a bridge in between gets its video source,
+which often would be the SoC, i.e. the origin.
+
+ Tomi
+
+
+
+--NbGcMAWJWkihmncc2QFXaKmI1wS2lSDIi
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUIooVAAoJEPo9qoy8lh71Zl0P/2siTDSQiaqPObwTDpVR2bn+
++wvaFqk/LtFJxeDxptVvGBJLI7KPlMhe/XqH7mpJr4oBGML16o750m7SJPsh+d6V
+5uvdxCS5fEA+JgZQwAfuz1PI1tOsLEgGnWtVZeup8K45Sis8JP7ioXOGnR2hobV9
+jbyl9GYWS7DwnvFPEHwsGnuayDXgKHIQHkBbGSMvxOGjxpq9ZbKUBKbqyow/epi7
+46C8vOHqnjm7QiijMHtDXYsC1EoW4zekm63ljVRJxp4wn4PXuOKOrGFHe6zaDICs
+4eFiwr5Q6KuZa9FdHWwjnwHHVSiJShyzAkb6Z9hysJDeVAxp4UOMreg2NZbW9YFc
+skDzvN0eQLPHkzyX+dcxqtntbExYY2JG7sot/6wGxCSS7wlJ2X0PnoO0OeVGeafT
+BD01plzEDasQQeTYATWQXd2tGHHdemaXnhrBoPhAJY4a59lKER62zyJkYN4s7oe7
+Dpa8g9LzEyt3PDBAZFLhJNlcCIUupGhrsHeYSwsD3mpHQ/Gu+Kqz16g/hPGVfxvL
+v593x9TS/9XrGNAvKirX/cVoNwrbP0rySjmoqSrbGlGMtWn060AHSrv71u/pMpDC
+z28rO2PyJUFD05LCbyJzgWgARXEao0wH5F30ejFtae6Ue7ZgiuaVKgBhcKh/vpn/
+g/Br1ifyBLswH5n1dNQr
+=EUl1
+-----END PGP SIGNATURE-----
+
+--NbGcMAWJWkihmncc2QFXaKmI1wS2lSDIi--
