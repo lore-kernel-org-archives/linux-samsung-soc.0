@@ -1,87 +1,100 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v5 4/7] ARM: l2c: Add support for overriding prefetch
- settings
-Date: Wed, 24 Sep 2014 13:10:51 +0100
-Message-ID: <20140924121051.GF5729@leverpostej>
-References: <1411556741-5810-1-git-send-email-m.szyprowski@samsung.com>
- <1411556741-5810-5-git-send-email-m.szyprowski@samsung.com>
- <20140924111446.GE5729@leverpostej>
- <5422A8D1.1000507@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5422A8D1.1000507@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "lauraa@codeaurora.org" <lauraa@codeaurora.org>, "tony@atomide.com" <tony@atomide.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "drake@endlessm.com" <drake@endlessm.com>, "loeliger@gmail.com" <loeliger@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, "santosh.shilimkar@ti.com" <santosh.shilimkar@ti.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v7 0/5] ARM: EXYNOS: cpuidle: fix AFTR mode on boards with
+ secure firmware enabled
+Date: Wed, 24 Sep 2014 14:24:43 +0200
+Message-ID: <1411561488-1739-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Sep 24, 2014 at 12:19:45PM +0100, Tomasz Figa wrote:
-> On 24.09.2014 13:14, Mark Rutland wrote:
-> > On Wed, Sep 24, 2014 at 12:05:38PM +0100, Marek Szyprowski wrote:
-> >> From: Tomasz Figa <t.figa@samsung.com>
-> >>
-> >> Firmware on certain boards (e.g. ODROID-U3) can leave incorrect L2C prefetch
-> >> settings configured in registers leading to crashes if L2C is enabled
-> >> without overriding them. This patch introduces bindings to enable
-> >> prefetch settings to be specified from DT and necessary support in the
-> >> driver.
-> >>
-> >> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >> ---
-> >>  Documentation/devicetree/bindings/arm/l2cc.txt | 10 +++++++
-> >>  arch/arm/mm/cache-l2x0.c                       | 39 ++++++++++++++++++++++++++
-> >>  2 files changed, 49 insertions(+)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/arm/l2cc.txt b/Documentation/devicetree/bindings/arm/l2cc.txt
-> >> index af527ee111c2..3443d2d76788 100644
-> >> --- a/Documentation/devicetree/bindings/arm/l2cc.txt
-> >> +++ b/Documentation/devicetree/bindings/arm/l2cc.txt
-> >> @@ -47,6 +47,16 @@ Optional properties:
-> >>  - cache-id-part: cache id part number to be used if it is not present
-> >>    on hardware
-> >>  - wt-override: If present then L2 is forced to Write through mode
-> >> +- arm,double-linefill : Override double linefill enable setting. Enable if
-> >> +  non-zero, disable if zero.
-> >> +- arm,double-linefill-incr : Override double linefill on INCR read. Enable
-> >> +  if non-zero, disable if zero.
-> >> +- arm,double-linefill-wrap : Override double linefill on WRAP read. Enable
-> >> +  if non-zero, disable if zero.
-> >> +- arm,prefetch-drop : Override prefetch drop enable setting. Enable if non-zero,
-> >> +  disable if zero.
-> > 
-> > I'm not too keen on tristate properties. Is this level of flexibility
-> > really required?
-> > 
-> > What exact overrides do you need for boards you know of? Why do these
-> > cause crashes if not overridden?
-> 
-> Well, this is all thanks to broken firmware, which doesn't initialize
-> those values properly on certain systems and they must be overridden. On
-> the other side, there are systems with firmware that does it correctly
-> and for those the boot defaults should be preferred. I don't see any
-> other reasonable option of handling this.
+Hi,
 
-With the lack of warnings for present but empty properties, I can forsee
-people placing empty properties (as the names make them sound like
-booleans which enable features).
+This patch series adds support for AFTR idle mode on boards with
+secure firmware enabled and allows EXYNOS cpuidle driver usage on
+Exynos4x12 SoCs.
 
-Surely for enabling/disabling options we should only need to override
-one-way, disabling a feature that causes breakage for some reason?
-Otherwise we can keep the reset value (which might be sub-optimal).
+It has been tested on Trats2 board (using Exynos4412 SoC with secure
+firmware enabled) on which AFTR mode reduces power consumption by ~12%
+when EXYNOS cpuidle driver is enabled (in both cases the default
+exynos_defconfig config is used and CPU1-3 are offlined).
 
-Perhaps a simple warning is sufficient if the property exists but is
-empty.
+Currently Exynos4412 SoC support is limited to Trats2 board.
 
-> As for why they cause crashes, I'm not an expert if it is about L2C
-> internals, so I can't really tell, but apparently the cache can work
-> correctly only on certain settings.
+Depends on:
+- for-next branch of linux-samsung.git kernel tree
+- [PATCH v3 0/5] Firmware-assisted suspend/resume of Exynos SoCs
+  (https://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg35921.html)
 
-Likewise, I'm no expert on the l2x0 family. It would be nice to know if
-this justs masks an issue elsewhere in Linux, is required for some
-reason by the interconnect, etc. I guess we don't have enough
-information to figure that out.
+Changes since v6:
+- rebased on top of for-next branch of linux-samsung.git kernel tree +
+  [PATCH v3 0/5] Firmware-assisted suspend/resume of Exynos SoCs
+  (https://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg35921.html)
+- fixed build on Tegra
+- updated patch #2 summary line
 
-Mark.
+Changes since v5:
+- rebased on top of next-20140904 +
+  "irqchip: Properly fetch the per cpu offset" patch
+  (https://www.mail-archive.com/linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg716674.html)
+  [PATCH v3 0/5] Firmware-assisted suspend/resume of Exynos SoCs
+  (https://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg35921.html)
+- limit Exynos4412 SoC support to Trats2 board for now
+
+Changes since v4:
+- rebased on top of next-20140804 +
+  [PATCH v5][next-20140804] ARM: EXYNOS: Fix suspend/resume sequences
+  (http://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg35262.html)
+  [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
+  (http://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg34282.html)
+- call exynos_save_cp15() only on A9 type core (this is needed for the future
+  Exynos3250 SoC support)
+
+Changes since v3:
+- rebased on top of next-20140804 +
+  [PATCH v4][next-20140804] ARM: EXYNOS: Fix suspend/resume sequences
+  (http://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg35192.html)
+  [PATCH v2 0/2] Firmware-assisted suspend/resume of Exynos SoCs
+  (http://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg34282.html)
+- (re-)added patch fixing S5P_CENTRAL_SEQ_OPTION register setup
+
+Changes since v2:
+- rebased on top of next-20140708 +
+  [PATCH 5/6] ARM: EXYNOS: Fix suspend/resume sequencies
+  (http://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg32809.html)
+  [with rejects fixed]
+  [PATCH 6/6] ARM: EXYNOS: Register cpuidle device only on Exynos4210 and 5250
+  (http://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg32808.html)
+  [PATCH 0/2] Firmware-assisted suspend/resume of Exynos SoCs
+  (http://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg32991.html)
+  [with rejects fixed in patch #2]
+- addressed review comments from Tomasz Figa and Daniel Lezcano
+
+Changes since v1:
+- synced against next-20140602
+- added missing Acked-by-s
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+Bartlomiej Zolnierkiewicz (5):
+  ARM: EXYNOS: PM: replace EXYNOS_BOOT_VECTOR_* macros by static inlines
+  ARM: add AFTR mode support to firmware do_idle method
+  ARM: EXYNOS: cpuidle: add secure firmware support to AFTR mode code
+  ARM: EXYNOS: PM: fix register setup for AFTR mode code
+  ARM: EXYNOS: cpuidle: allow driver usage on Exynos4x12 SoCs
+
+ arch/arm/include/asm/firmware.h        |  2 +-
+ arch/arm/mach-exynos/common.h          |  5 +++
+ arch/arm/mach-exynos/exynos.c          |  5 ++-
+ arch/arm/mach-exynos/firmware.c        | 34 ++++++++++++++-----
+ arch/arm/mach-exynos/pm.c              | 60 ++++++++++++++++++++--------------
+ arch/arm/mach-tegra/cpuidle-tegra114.c |  2 +-
+ 6 files changed, 72 insertions(+), 36 deletions(-)
+
+-- 
+1.8.2.3
