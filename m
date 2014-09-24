@@ -1,173 +1,115 @@
-From: Kiran Padwal <kiran.padwal@smartplayin.com>
-Subject: [PATCH 1/5] char: hw_random: Remove .owner field for driver
-Date: Wed, 24 Sep 2014 15:27:24 +0530
-Message-ID: <1411552645-28025-1-git-send-email-kiran.padwal@smartplayin.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v5 0/7] Enable L2 cache support on Exynos4210/4x12 SoCs
+Date: Wed, 24 Sep 2014 13:05:34 +0200
+Message-ID: <1411556741-5810-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp125.ord1c.emailsrvr.com ([108.166.43.125]:35015 "EHLO
-	smtp125.ord1c.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751593AbaIXJ7t (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:41338 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751133AbaIXLFt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Sep 2014 05:59:49 -0400
+	Wed, 24 Sep 2014 07:05:49 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: mpm@selenic.com, kgene.kim@samsung.com, olof@lixom.net, gregkh@linuxfoundation.org, sboyd@codeaurora.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, Kiran Padwal <kiran.padwal@smartplayin.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, linux-omap@vger.kernel.org, linus.walleij@linaro.org, santosh.shilimkar@ti.com, tony@atomide.com, drake@endlessm.com, loeliger@gmail.com
 
-There is no need to init .owner field.
+This is an updated patchset, which intends to add support for L2 cache
+on Exynos4 SoCs on boards running under secure firmware, which requires
+certain initialization steps to be done with help of firmware, as
+selected registers are writable only from secure mode.
 
-Based on the patch from Peter Griffin <peter.griffin@linaro.org>
-"mmc: remove .owner field for drivers using module_platform_driver"
+First four patches extend existing support for secure write in L2C driver
+to account for design of secure firmware running on Exynos. Namely:
+ 1) direct read access to certain registers is needed on Exynos, because
+    secure firmware calls set several registers at once,
+ 2) not all boards are running secure firmware, so .write_sec callback
+    needs to be installed in Exynos firmware ops initialization code,
+ 3) write access to {DATA,TAG}_LATENCY_CTRL registers fron non-secure world
+    is not allowed and so must use l2c_write_sec as well,
+ 4) on certain boards, default value of prefetch register is incorrect
+    and must be overridden at L2C initialization.
+For boards running with firmware that provides access to individual
+L2C registers this series should introduce no functional changes. However
+since the driver is widely used on other platforms I'd like to kindly ask
+any interested people for testing.
 
-This patch removes the superflous .owner field for drivers which
-use the module_platform_driver API, as this is overriden in
-platform_driver_register anyway."
+Further three patches add implementation of .write_sec and .configure
+callbacks for Exynos secure firmware and necessary DT nodes to enable
+L2 cache.
 
-Signed-off-by: Kiran Padwal <kiran.padwal@smartplayin.com>
----
- drivers/char/hw_random/atmel-rng.c      |    1 -
- drivers/char/hw_random/bcm2835-rng.c    |    1 -
- drivers/char/hw_random/bcm63xx-rng.c    |    1 -
- drivers/char/hw_random/exynos-rng.c     |    1 -
- drivers/char/hw_random/msm-rng.c        |    1 -
- drivers/char/hw_random/n2-drv.c         |    1 -
- drivers/char/hw_random/octeon-rng.c     |    1 -
- drivers/char/hw_random/omap3-rom-rng.c  |    1 -
- drivers/char/hw_random/pasemi-rng.c     |    1 -
- drivers/char/hw_random/ppc4xx-rng.c     |    1 -
- drivers/char/hw_random/timeriomem-rng.c |    1 -
- 11 files changed, 11 deletions(-)
+Changes in this version tested on Exynos4412-based TRATS2 and OdroidU3+
+boards (both with secure firmware). There should be no functional change
+for Exynos boards running without secure firmware. I do not have access
+to affected non-Exynos boards, so I could not test on them.
 
-diff --git a/drivers/char/hw_random/atmel-rng.c b/drivers/char/hw_random/atmel-rng.c
-index 851bc7e..25a4de2 100644
---- a/drivers/char/hw_random/atmel-rng.c
-+++ b/drivers/char/hw_random/atmel-rng.c
-@@ -128,7 +128,6 @@ static struct platform_driver atmel_trng_driver = {
- 	.remove		= atmel_trng_remove,
- 	.driver		= {
- 		.name	= "atmel-trng",
--		.owner	= THIS_MODULE,
- #ifdef CONFIG_PM
- 		.pm	= &atmel_trng_pm_ops,
- #endif /* CONFIG_PM */
-diff --git a/drivers/char/hw_random/bcm2835-rng.c b/drivers/char/hw_random/bcm2835-rng.c
-index e900961..7192ec2 100644
---- a/drivers/char/hw_random/bcm2835-rng.c
-+++ b/drivers/char/hw_random/bcm2835-rng.c
-@@ -99,7 +99,6 @@ MODULE_DEVICE_TABLE(of, bcm2835_rng_of_match);
- static struct platform_driver bcm2835_rng_driver = {
- 	.driver = {
- 		.name = "bcm2835-rng",
--		.owner = THIS_MODULE,
- 		.of_match_table = bcm2835_rng_of_match,
- 	},
- 	.probe		= bcm2835_rng_probe,
-diff --git a/drivers/char/hw_random/bcm63xx-rng.c b/drivers/char/hw_random/bcm63xx-rng.c
-index 36581ea..ba6a65a 100644
---- a/drivers/char/hw_random/bcm63xx-rng.c
-+++ b/drivers/char/hw_random/bcm63xx-rng.c
-@@ -162,7 +162,6 @@ static struct platform_driver bcm63xx_rng_driver = {
- 	.remove		= bcm63xx_rng_remove,
- 	.driver		= {
- 		.name	= "bcm63xx-rng",
--		.owner	= THIS_MODULE,
- 	},
- };
- 
-diff --git a/drivers/char/hw_random/exynos-rng.c b/drivers/char/hw_random/exynos-rng.c
-index 9f8277c..beaa157 100644
---- a/drivers/char/hw_random/exynos-rng.c
-+++ b/drivers/char/hw_random/exynos-rng.c
-@@ -169,7 +169,6 @@ static UNIVERSAL_DEV_PM_OPS(exynos_rng_pm_ops, exynos_rng_runtime_suspend,
- static struct platform_driver exynos_rng_driver = {
- 	.driver		= {
- 		.name	= "exynos-rng",
--		.owner	= THIS_MODULE,
- 		.pm	= &exynos_rng_pm_ops,
- 	},
- 	.probe		= exynos_rng_probe,
-diff --git a/drivers/char/hw_random/msm-rng.c b/drivers/char/hw_random/msm-rng.c
-index 148521e..cea1c70 100644
---- a/drivers/char/hw_random/msm-rng.c
-+++ b/drivers/char/hw_random/msm-rng.c
-@@ -185,7 +185,6 @@ static struct platform_driver msm_rng_driver = {
- 	.remove = msm_rng_remove,
- 	.driver = {
- 		.name = KBUILD_MODNAME,
--		.owner = THIS_MODULE,
- 		.of_match_table = of_match_ptr(msm_rng_of_match),
- 	}
- };
-diff --git a/drivers/char/hw_random/n2-drv.c b/drivers/char/hw_random/n2-drv.c
-index 292a588..843d6f6 100644
---- a/drivers/char/hw_random/n2-drv.c
-+++ b/drivers/char/hw_random/n2-drv.c
-@@ -750,7 +750,6 @@ MODULE_DEVICE_TABLE(of, n2rng_match);
- static struct platform_driver n2rng_driver = {
- 	.driver = {
- 		.name = "n2rng",
--		.owner = THIS_MODULE,
- 		.of_match_table = n2rng_match,
- 	},
- 	.probe		= n2rng_probe,
-diff --git a/drivers/char/hw_random/octeon-rng.c b/drivers/char/hw_random/octeon-rng.c
-index b5cc342..be1c3f6 100644
---- a/drivers/char/hw_random/octeon-rng.c
-+++ b/drivers/char/hw_random/octeon-rng.c
-@@ -117,7 +117,6 @@ static int __exit octeon_rng_remove(struct platform_device *pdev)
- static struct platform_driver octeon_rng_driver = {
- 	.driver = {
- 		.name		= "octeon_rng",
--		.owner		= THIS_MODULE,
- 	},
- 	.probe		= octeon_rng_probe,
- 	.remove		= __exit_p(octeon_rng_remove),
-diff --git a/drivers/char/hw_random/omap3-rom-rng.c b/drivers/char/hw_random/omap3-rom-rng.c
-index 6f2eaff..a405cdc 100644
---- a/drivers/char/hw_random/omap3-rom-rng.c
-+++ b/drivers/char/hw_random/omap3-rom-rng.c
-@@ -126,7 +126,6 @@ static int omap3_rom_rng_remove(struct platform_device *pdev)
- static struct platform_driver omap3_rom_rng_driver = {
- 	.driver = {
- 		.name		= "omap3-rom-rng",
--		.owner		= THIS_MODULE,
- 	},
- 	.probe		= omap3_rom_rng_probe,
- 	.remove		= omap3_rom_rng_remove,
-diff --git a/drivers/char/hw_random/pasemi-rng.c b/drivers/char/hw_random/pasemi-rng.c
-index c66279b..ebd6f65 100644
---- a/drivers/char/hw_random/pasemi-rng.c
-+++ b/drivers/char/hw_random/pasemi-rng.c
-@@ -142,7 +142,6 @@ static struct of_device_id rng_match[] = {
- static struct platform_driver rng_driver = {
- 	.driver = {
- 		.name = "pasemi-rng",
--		.owner = THIS_MODULE,
- 		.of_match_table = rng_match,
- 	},
- 	.probe		= rng_probe,
-diff --git a/drivers/char/hw_random/ppc4xx-rng.c b/drivers/char/hw_random/ppc4xx-rng.c
-index 521f76b..c85d31a 100644
---- a/drivers/char/hw_random/ppc4xx-rng.c
-+++ b/drivers/char/hw_random/ppc4xx-rng.c
-@@ -133,7 +133,6 @@ static struct of_device_id ppc4xx_rng_match[] = {
- static struct platform_driver ppc4xx_rng_driver = {
- 	.driver = {
- 		.name = MODULE_NAME,
--		.owner = THIS_MODULE,
- 		.of_match_table = ppc4xx_rng_match,
- 	},
- 	.probe = ppc4xx_rng_probe,
-diff --git a/drivers/char/hw_random/timeriomem-rng.c b/drivers/char/hw_random/timeriomem-rng.c
-index b6ab9ac..cf37db2 100644
---- a/drivers/char/hw_random/timeriomem-rng.c
-+++ b/drivers/char/hw_random/timeriomem-rng.c
-@@ -200,7 +200,6 @@ MODULE_DEVICE_TABLE(of, timeriomem_rng_match);
- static struct platform_driver timeriomem_rng_driver = {
- 	.driver = {
- 		.name		= "timeriomem_rng",
--		.owner		= THIS_MODULE,
- 		.of_match_table	= timeriomem_rng_match,
- 	},
- 	.probe		= timeriomem_rng_probe,
+
+Depends on:
+ - [PATCH v3 0/5] Firmware-assisted suspend/resume of Exynos SoCs
+   (https://lkml.org/lkml/2014/8/26/445)
+
+
+Changelog:
+
+Changes since v4:
+(https://lkml.org/lkml/2014/8/26/461)
+ - rewrote the code accessing l2x0_saved_regs from assembly code
+ - added comment and reworked unconditional call to SMC_CMD_L2X0INVALL
+
+Changes since v3:
+(https://lkml.org/lkml/2014/7/17/600)
+ - fixed issues with references to initdata on resume path by creating
+   a copy of affected structure (pointed out by Russell King),
+ - fixed unnecessary full reconfiguration of L2C controller on resume
+   (configuration is already determined after initialization, so the
+    only thing to do is to push those values to the controller),
+ - rebased on next-20140717 tag of linux-next tree and last versions
+   of dependencies.
+
+Changes since v2:
+(https://lkml.org/lkml/2014/6/25/416)
+ - refactored L2C driver to use commit-like interface and make it no longer
+   depend on availability of writes to individual registers,
+ - moved L2C resume to assembly code, because doing it later makes some
+   systems unstable - this is also needed for deeper cpuidle modes,
+ - dropped unnecessary patch hacking around the .write_sec interface,
+ - dropped patch making the driver use l2c_write_sec() for LATENCY_CTRL
+   registers as Exynos is no longer affected and I'm not aware of any
+   reports that this is also needed on other platforms (can be applied
+   separately if it turns out to be so),
+ - rebased onto next-20140717 tag of linux-next tree.
+
+Changes since v1:
+(https://www.mail-archive.com/linux-omap@vger.kernel.org/msg106323.html)
+ - rebased onto for-next branch of linux-samsung tree,
+ - changed argument order of outer_cache.write_sec() callback to match
+   l2c_write_sec() function in cache-l2x0.c,
+ - added support of overriding of prefetch settings to work around incorrect
+   default settings on certain Exynos4x12-based boards,
+ - added call to firmware to invalidate whole L2 cache before setting enable
+   bit in L2C control register (required by Exynos secure firmware).
+
+
+Patch summary:
+
+Tomasz Figa (7):
+  ARM: l2c: Refactor the driver to use commit-like interface
+  ARM: l2c: Add interface to ask hypervisor to configure L2C
+  ARM: l2c: Get outer cache .write_sec callback from mach_desc only if
+    not NULL
+  ARM: l2c: Add support for overriding prefetch settings
+  ARM: EXYNOS: Add .write_sec outer cache callback for L2C-310
+  ARM: EXYNOS: Add support for non-secure L2X0 resume
+  ARM: dts: exynos4: Add nodes for L2 cache controller
+
+ Documentation/devicetree/bindings/arm/l2cc.txt |  10 +
+ arch/arm/boot/dts/exynos4210.dtsi              |   9 +
+ arch/arm/boot/dts/exynos4x12.dtsi              |  14 ++
+ arch/arm/include/asm/outercache.h              |   3 +
+ arch/arm/kernel/irq.c                          |   3 +-
+ arch/arm/mach-exynos/firmware.c                |  50 +++++
+ arch/arm/mach-exynos/sleep.S                   |  46 +++++
+ arch/arm/mm/cache-l2x0.c                       | 255 ++++++++++++++++---------
+ 8 files changed, 294 insertions(+), 96 deletions(-)
+
 -- 
-1.7.9.5
+1.9.2
