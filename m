@@ -1,69 +1,100 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v3] ARM: dts: add CPU nodes for Exynos4 SoCs
-Date: Thu, 25 Sep 2014 14:24:22 +0200
-Message-ID: <54240976.5080605@linaro.org>
-References: <5230569.XLlNbB5NvF@amdc1032> <018e01cfd885$770dd940$65298bc0$@kernel.org> <20140925081704.GA20841@e102568-lin.cambridge.arm.com> <5423DA0D.9030100@linaro.org> <20140925093605.GA23853@e102568-lin.cambridge.arm.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v5] mfd: syscon: Decouple syscon interface from platform devices
+Date: Thu, 25 Sep 2014 14:42 +0200
+Message-ID: <5439567.VeRyeUcp1j@wuerfel>
+References: <1411360807-7750-1-git-send-email-pankaj.dubey@samsung.com> <20140922091925.GA19778@shlinux1.ap.freescale.net> <000001cfd719$51e7e560$f5b7b020$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f179.google.com ([74.125.82.179]:59899 "EHLO
-	mail-we0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750821AbaIYMYY (ORCPT
+Received: from mout.kundenserver.de ([212.227.17.13]:49402 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751574AbaIYMmx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Sep 2014 08:24:24 -0400
-Received: by mail-we0-f179.google.com with SMTP id q58so737902wes.38
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2014 05:24:23 -0700 (PDT)
-In-Reply-To: <20140925093605.GA23853@e102568-lin.cambridge.arm.com>
+	Thu, 25 Sep 2014 08:42:53 -0400
+In-Reply-To: <000001cfd719$51e7e560$f5b7b020$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Kukjin Kim <kgene@kernel.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, Mark Rutland <Mark.Rutland@arm.com>, 'Thomas Abraham' <ta.omasab@gmail.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, 'Dong Aisheng' <b29396@freescale.com>, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, naushad@samsung.com, Li.Xiubo@freescale.com, linux-kernel@vger.kernel.org, tomasz.figa@gmail.com, thomas.ab@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, joshi@samsung.com, lee.jones@linaro.org, kgene.kim@samsung.com
 
-On 09/25/2014 11:36 AM, Lorenzo Pieralisi wrote:
-> On Thu, Sep 25, 2014 at 10:02:05AM +0100, Daniel Lezcano wrote:
->> On 09/25/2014 10:17 AM, Lorenzo Pieralisi wrote:
->>> [CC'ed Daniel to make him aware this patch goes through your tree]
->>
->> Thanks for the head up. I was about to send the PR to Rafael.
->>
->> [ ... ]
->>
->>> That's great, now my Exynos CPUidle DT patch should be rebased on t=
-op
->>> of this patch so that thanks to the testing carried out by Bart it =
-can be
->>> merged too.
->>
->> Ok, I am getting confused. How can I rebase the latest patch of your
->> series with a patch no yet available in my tree ?
->
-> I just wanted to say that the Exynos CPUidle DT patch depends on this
-> patch, that is now going through Samsung tree, to make sure we are on
-> the same page and prevent issues, it was not clear, sorry.
+On Tuesday 23 September 2014 15:59:43 Pankaj Dubey wrote:
+> > > -static int syscon_match_node(struct device *dev, void *data)
+> > > +static struct syscon *of_syscon_register(struct device_node *np)
+> > >  {
+> > > -   struct device_node *dn = data;
+> > > +   struct platform_device *pdev = NULL;
+> > > +   struct syscon *syscon;
+> > > +   struct regmap *regmap;
+> > > +   void __iomem *base;
+> > > +   int ret;
+> > > +
+> > > +   if (!of_device_is_compatible(np, "syscon"))
+> > > +           return ERR_PTR(-EINVAL);
+> > > +
+> > > +   syscon = kzalloc(sizeof(*syscon), GFP_KERNEL);
+> > > +   if (!syscon)
+> > > +           return ERR_PTR(-ENOMEM);
+> > > +
+> > > +   base = of_iomap(np, 0);
+> > > +   if (!base) {
+> > > +           ret = -ENOMEM;
+> > > +           goto err_map;
+> > > +   }
+> > > +
+> > > +   /* if device is already populated and available then use it */
+> > > +   pdev = of_find_device_by_node(np);
+> > > +   if (!pdev) {
+> > > +           /* for early users create dummy syscon device and use it */
+> > > +           pdev = platform_device_alloc("dummy-syscon", -1);
+> > 
+> > Can we create specific devices for each syscon device?
+> > That looks more reasonable to me.
+> > Then we can dump registers in regmap debugfs more clearly, just like other
+> devices.
+> > And i think it's better to follow device tree way to generate devices from
+> node.
+> > If DT core find a device is already created, it can ignore that device to
+> avoid creating
+> > duplicated device during of_platform_populate.
+> > 
+> 
+> If you are referring to use "of_platform_device_create", then I am afraid
+> that it can't be used
+> in very early stage. For example, current patch I tested by calling
+> syscon_lookup_by_phandle from
+> "init_irq" hook of machine_desc, and it worked well, but If I use
+> "of_platform_device_create"
+> instead of dummy device, it fails to create pdev and this I verified on
+> Exynos platform. The reason
+> I selected "init_irq" is because this comes just before smp init and where
+> once we tried to get regmap handle,
+> but could not do so. 
 
-Ah, ok.
+I don't remember noticing the of_find_device_by_node or platform_device_alloc
+in earlier versions of this patch, but that could just be me failing to
+read it right.
 
->> I propose just to drop the last patch and wait for the next merge to
->> reintegrate it into the cpuidle tree. Does it make sense ?
->
-> I agree, drop the Exynos CPUidle DT patch, we will reintegrate it in =
-the
-> CPUidle tree when the merge window closes and dependencies are sorted=
- out.
+I think this should get removed: it would be much better to ensure that
+the regmap code can work without a device pointer, which I thought it
+did. We should probably also skip the creation of the debugfs directory
+in that case.
 
-Perfect. I sent the PR to Rafael.
+> Also if it was just a matter of creating platform_device at early stage then
+> early initialization of
+> syscon could have been solved till now.
+> 
+> So I would suggest if we really want this patch to cover early
+> initialization of syscon
+> (which is not it's main purpose) current patch is sufficient. 
+> 
+> @Arnd, since I have addressed crash issue as reported by Dong Aisheng, I
+> would like to take your ack,
+> but since there are some more code changes other than what you suggested I
+> request you to check this
+> and if you are ok, then I would like to your ack so that I can request to
+> maintainer for taking this patch.
 
-Thanks
+I think we first need to resolve the question of the platform device.
 
-   -- Daniel
-
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+	Arnd
