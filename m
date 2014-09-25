@@ -1,100 +1,40 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v5] mfd: syscon: Decouple syscon interface from platform devices
-Date: Thu, 25 Sep 2014 14:42 +0200
-Message-ID: <5439567.VeRyeUcp1j@wuerfel>
-References: <1411360807-7750-1-git-send-email-pankaj.dubey@samsung.com> <20140922091925.GA19778@shlinux1.ap.freescale.net> <000001cfd719$51e7e560$f5b7b020$@samsung.com>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [PATCH v3 6/6] mfd: cros_ec: Instantiate sub-devices from device
+ tree
+Date: Thu, 25 Sep 2014 15:53:56 +0200
+Message-ID: <54241E74.9000403@collabora.co.uk>
+References: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk> <1410428289-18229-7-git-send-email-javier.martinez@collabora.co.uk> <20140917163114.GL30918@lee--X1> <541A8E88.6050707@collabora.co.uk> <20140919001512.GA29852@lee--X1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.13]:49402 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751574AbaIYMmx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Sep 2014 08:42:53 -0400
-In-Reply-To: <000001cfd719$51e7e560$f5b7b020$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140919001512.GA29852@lee--X1>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Andreas Faerber <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, 'Dong Aisheng' <b29396@freescale.com>, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, naushad@samsung.com, Li.Xiubo@freescale.com, linux-kernel@vger.kernel.org, tomasz.figa@gmail.com, thomas.ab@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, joshi@samsung.com, lee.jones@linaro.org, kgene.kim@samsung.com
 
-On Tuesday 23 September 2014 15:59:43 Pankaj Dubey wrote:
-> > > -static int syscon_match_node(struct device *dev, void *data)
-> > > +static struct syscon *of_syscon_register(struct device_node *np)
-> > >  {
-> > > -   struct device_node *dn = data;
-> > > +   struct platform_device *pdev = NULL;
-> > > +   struct syscon *syscon;
-> > > +   struct regmap *regmap;
-> > > +   void __iomem *base;
-> > > +   int ret;
-> > > +
-> > > +   if (!of_device_is_compatible(np, "syscon"))
-> > > +           return ERR_PTR(-EINVAL);
-> > > +
-> > > +   syscon = kzalloc(sizeof(*syscon), GFP_KERNEL);
-> > > +   if (!syscon)
-> > > +           return ERR_PTR(-ENOMEM);
-> > > +
-> > > +   base = of_iomap(np, 0);
-> > > +   if (!base) {
-> > > +           ret = -ENOMEM;
-> > > +           goto err_map;
-> > > +   }
-> > > +
-> > > +   /* if device is already populated and available then use it */
-> > > +   pdev = of_find_device_by_node(np);
-> > > +   if (!pdev) {
-> > > +           /* for early users create dummy syscon device and use it */
-> > > +           pdev = platform_device_alloc("dummy-syscon", -1);
-> > 
-> > Can we create specific devices for each syscon device?
-> > That looks more reasonable to me.
-> > Then we can dump registers in regmap debugfs more clearly, just like other
-> devices.
-> > And i think it's better to follow device tree way to generate devices from
-> node.
-> > If DT core find a device is already created, it can ignore that device to
-> avoid creating
-> > duplicated device during of_platform_populate.
-> > 
+Hello Lee,
+
+On 09/19/2014 02:15 AM, Lee Jones wrote:
+>> 
+>> As explained above, DT, non-DT and x86 platforms instantiate the cros-ec-dev
+>> cells but DT platforms can define other child nodes. But I can remove the
+>> conditional if you want and reintroduce it once cros-ec-dev support is added.
 > 
-> If you are referring to use "of_platform_device_create", then I am afraid
-> that it can't be used
-> in very early stage. For example, current patch I tested by calling
-> syscon_lookup_by_phandle from
-> "init_irq" hook of machine_desc, and it worked well, but If I use
-> "of_platform_device_create"
-> instead of dummy device, it fails to create pdev and this I verified on
-> Exynos platform. The reason
-> I selected "init_irq" is because this comes just before smp init and where
-> once we tried to get regmap handle,
-> but could not do so. 
-
-I don't remember noticing the of_find_device_by_node or platform_device_alloc
-in earlier versions of this patch, but that could just be me failing to
-read it right.
-
-I think this should get removed: it would be much better to ensure that
-the regmap code can work without a device pointer, which I thought it
-did. We should probably also skip the creation of the debugfs directory
-in that case.
-
-> Also if it was just a matter of creating platform_device at early stage then
-> early initialization of
-> syscon could have been solved till now.
+> Yes, that makes sense.  I only care about doing what's right for
+> Mainline, so if it doesn't make sense here, then we shouldn't be doing
+> it.
 > 
-> So I would suggest if we really want this patch to cover early
-> initialization of syscon
-> (which is not it's main purpose) current patch is sufficient. 
-> 
-> @Arnd, since I have addressed crash issue as reported by Dong Aisheng, I
-> would like to take your ack,
-> but since there are some more code changes other than what you suggested I
-> request you to check this
-> and if you are ok, then I would like to your ack so that I can request to
-> maintainer for taking this patch.
 
-I think we first need to resolve the question of the platform device.
+Understood, that's why I dropped this since as explained earlier, it makes more
+sense to include this change once the cros_ec_dev driver is pushed to upstream.
 
-	Arnd
+The last version of the series (v4) I posted a week ago [0], does not include
+this patch so I hope the series can be picked for 3.18 since most of the patches
+were already acked by you.
+
+Thanks a lot and best regards,
+Javier
+
+[0]: https://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg36770.html
