@@ -1,31 +1,63 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 1/2] Samsung cleanup for 3.18
-Date: Thu, 25 Sep 2014 23:24:24 +0200
-Message-ID: <201409252324.24297.arnd@arndb.de>
-References: <5418BC87.8000306@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH] ARM: dts: Specify default clocks for Exynos4 FIMC devices
+Date: Thu, 25 Sep 2014 23:58:37 +0200
+Message-ID: <5424900D.2070709@gmail.com>
+References: <1410367054-30926-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.10]:64699 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751649AbaIYVYb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Sep 2014 17:24:31 -0400
-In-Reply-To: <5418BC87.8000306@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1410367054-30926-1-git-send-email-s.nawrocki@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, kgene.kim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Wednesday 17 September 2014, Kukjin Kim wrote:
-> Samsung cleanup for 3.18
-> - remove unused <mach/memory.h> in exynos
-> - local <mach/regs-clock.h> for s5pv210
-> - cleanup boot address calculate for exynos
-> - remove separate restart code for s3c24xx
+Hi Sylwester,
 
-Pulled into next/cleanup, thanks!
+On 10.09.2014 18:37, Sylwester Nawrocki wrote:
+> The default mux and divider clocks are specified in device tree
+> so that the FIMC devices in Exynos4210 and Exynos4x12 SoCs are
+> clocked from recommended clock source and with maximum supported
+> frequency. If needed these settings could be overrode in board
+> specific dts files, however they are in practice optimal in most
+> cases.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos4210.dtsi |   16 ++++++++++++++++
+>  arch/arm/boot/dts/exynos4x12.dtsi |   16 ++++++++++++++++
+>  2 files changed, 32 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+> index 807bb5b..0969d2e 100644
+> --- a/arch/arm/boot/dts/exynos4210.dtsi
+> +++ b/arch/arm/boot/dts/exynos4210.dtsi
+> @@ -154,18 +154,30 @@
+>  			samsung,pix-limits = <4224 8192 1920 4224>;
+>  			samsung,mainscaler-ext;
+>  			samsung,cam-if;
+> +			assigned-clocks = <&clock CLK_MOUT_FIMC0>,
+> +					<&clock CLK_SCLK_FIMC0>;
+> +			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
+> +			assigned-clock-rates = <0>, <160000000>;
 
-	Arnd
+I wonder whether such settings shouldn't really be set up on a per-board
+basis.
+
+As Daniel already pointed, we have cases when MPLL frequency differs
+across boards, but we might also have boards that differ in power budget
+and so having different desired operating frequencies for various IP blocks.
+
+What do you think?
+
+Best regards,
+Tomasz
