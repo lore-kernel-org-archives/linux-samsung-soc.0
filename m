@@ -1,84 +1,125 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 3/3] 3rd Round of Exynos-PM-2 Updates for v3.18
-Date: Fri, 26 Sep 2014 01:57:23 +0900
-Message-ID: <54244973.7090204@samsung.com>
+Subject: Re: [GIT PULL 2/2] Samsung DT changes for 3.18
+Date: Fri, 26 Sep 2014 02:02:40 +0900
+Message-ID: <54244AB0.4090301@samsung.com>
+References: <5418BC93.5070008@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:33389 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751937AbaIYQ5b (ORCPT
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:32872 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752130AbaIYRCr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Sep 2014 12:57:31 -0400
-Received: by mail-pa0-f54.google.com with SMTP id fb1so11347900pad.41
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2014 09:57:31 -0700 (PDT)
+	Thu, 25 Sep 2014 13:02:47 -0400
+Received: by mail-pa0-f46.google.com with SMTP id kx10so11254906pab.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2014 10:02:47 -0700 (PDT)
+In-Reply-To: <5418BC93.5070008@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
-Cc: arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, arm@kernel.org
 
-The following changes since commit c3294253713cbc96df59a7cc6a9a3fc0c4ae5ba7:
+On 09/17/14 07:41, Kukjin Kim wrote:
 
-   ARM: EXYNOS: Refactor the pm code to use DT based lookup (2014-09-24 
-16:45:14 +0900)
+Hi Arnd, Olof, Kevin
 
-are available in the git repository at:
+Oops, I missed adding arm (at) kernel.org so adding it.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-tags/exynos-pm-2
+Please pull.
 
-for you to fetch changes up to cd925eee6acf7c742a896e0d43ad4f4088bb691c:
+Thanks,
+Kukjin
 
-   ARM: EXYNOS: SWRESET is needed to boot secondary CPU on exynos3250 
-(2014-09-25 18:15:13 +0900)
-
-----------------------------------------------------------------
-Exynos 2nd PM related updates for v3.18
-
-- Firmware supporting suspend and resume to excute of low
-   level operations to enter and leave power mode for exynos
-   : introduce suspend() and resume() firmware operations
-
-- Fix AFTR mode on boards with secure firmware enabled and
-   allows exynos cpuidle driver usage on exynos4x12 SoCs
-
-- Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y
-
-- SWRESET is needed to boot secondary CPU on exynos3250
-
-----------------------------------------------------------------
-Bartlomiej Zolnierkiewicz (6):
-       ARM: EXYNOS: replace EXYNOS_BOOT_VECTOR_* macros by static inlines
-       ARM: firmware: add AFTR mode support to firmware do_idle method
-       ARM: EXYNOS: add secure firmware support to AFTR mode code
-       ARM: EXYNOS: fix register setup for AFTR mode code
-       ARM: EXYNOS: allow driver usage on Exynos4x12 SoCs
-       ARM: EXYNOS: Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y
-
-Krzysztof Kozlowski (1):
-       ARM: EXYNOS: SWRESET is needed to boot secondary CPU on exynos3250
-
-Tomasz Figa (2):
-       ARM: firmware: Introduce suspend and resume operations
-       ARM: EXYNOS: Add support for firmware-assisted suspend/resume
-
-  Documentation/arm/firmware.txt         |  28 +--
-  arch/arm/include/asm/firmware.h        |  10 +-
-  arch/arm/mach-exynos/Kconfig           |   5 +
-  arch/arm/mach-exynos/Makefile          |   6 +-
-  arch/arm/mach-exynos/common.h          |  13 ++
-  arch/arm/mach-exynos/exynos.c          |   5 +-
-  arch/arm/mach-exynos/firmware.c        |  65 +++++-
-  arch/arm/mach-exynos/platsmp.c         |  23 ++
-  arch/arm/mach-exynos/pm.c              | 388 
-++++-----------------------------
-  arch/arm/mach-exynos/regs-pmu.h        |   2 +
-  arch/arm/mach-exynos/sleep.S           |  28 +++
-  arch/arm/mach-exynos/smc.h             |   4 +
-  arch/arm/mach-exynos/suspend.c         | 356 
-++++++++++++++++++++++++++++++
-  arch/arm/mach-tegra/cpuidle-tegra114.c |   2 +-
-  arch/arm/plat-samsung/Makefile         |   1 +
-  15 files changed, 557 insertions(+), 379 deletions(-)
-  create mode 100644 arch/arm/mach-exynos/suspend.c
+> The following changes since commit
+> 7d1311b93e58ed55f3a31cc8f94c4b8fe988a2b9:
+>
+> Linux 3.17-rc1 (2014-08-16 10:40:26 -0600)
+>
+> are available in the git repository at:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> tags/samsung-dt
+>
+> for you to fetch changes up to 9b02732643d9f4b92b14f5ec041c166bd36033fc:
+>
+> ARM: dts: remove old USB2 PHY node for exynos5250 (2014-09-14 10:11:20
+> +0900)
+>
+> ----------------------------------------------------------------
+> Samsung DT update for 3.18
+>
+> - un-use slot-node and deprecate the supports-highspped
+> for dw-mmc
+> - remove old USB2 PHY node for exynos5250
+>
+> - exynos4412-odroid-common
+> enable PMIC interrupt and i2c improvements
+>
+> - exynos5250-snow
+> fold exynos5250-cros-common
+> update display related nodes
+>
+> - Peach Pit and Pi
+> improve power scheme, add support max77802 PMIC,
+> add hdmi regulators add thermistor, ISL29018 sensor,
+> set i2c clock at 400kHz, add support Atmel touchpad,
+> update display related nodes
+>
+> ----------------------------------------------------------------
+> Ajay Kumar (3):
+> ARM: dts: update display related nodes for exynos5250-snow
+> ARM: dts: update display related nodes for exynos5420-peach-pit
+> ARM: dts: update display related nodes for exynos5800-peach-pi
+>
+> Andreas Faerber (2):
+> ARM: dts: Fix MMC pinctrl for exynos5250-snow
+> ARM: dts: Fold exynos5250-cros-common into exynos5250-snow
+>
+> Bartlomiej Zolnierkiewicz (2):
+> ARM: dts: remove old USB2 PHY node hook for exynos5250-arndale
+> ARM: dts: remove old USB2 PHY node for exynos5250
+>
+> Daniel Drake (2):
+> ARM: dts: Enable PMIC interrupts for exynos4412-odroid-common
+> ARM: dts: ODROID i2c improvements for exynos4412-odroid-common
+>
+> Jaehoon Chung (1):
+> ARM: dts: unuse the slot-node and deprecate the supports-highspeed for
+> dw-mmc in exynos
+>
+> Javier Martinez Canillas (5):
+> ARM: dts: Improve Peach Pit and Pi power scheme
+> ARM: dts: Add support max77802 PMIC for exynos based Peach boards
+> ARM: dts: Add ISL29018 sensor for exynos based Peach boards
+> ARM: dts: Set i2c7 clock at 400kHz for exynos based Peach boards
+> ARM: dts: Add support Atmel touchpad for exynos5800-peach-pi
+>
+> Naveen Krishna Chatradhi (1):
+> ARM: dts: Add thermistor dts fragment used by exynos based Peach boards
+>
+> Rahul Sharma (2):
+> ARM: dts: add hdmi regulators for exynos5800-peach-pi
+> ARM: dts: add hdmi regulators for exynos5420-peach-pit
+>
+> Sjoerd Simons (1):
+> ARM: dts: Add support Atmel touchpad for exynos5420-peach-pit
+>
+> arch/arm/boot/dts/cros-adc-thermistors.dtsi | 44 +++
+> arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 21 +-
+> arch/arm/boot/dts/exynos4412-origen.dts | 8 +-
+> arch/arm/boot/dts/exynos4412-trats2.dts | 8 +-
+> arch/arm/boot/dts/exynos5250-arndale.dts | 22 +-
+> arch/arm/boot/dts/exynos5250-cros-common.dtsi | 164 --------
+> arch/arm/boot/dts/exynos5250-smdk5250.dts | 18 +-
+> arch/arm/boot/dts/exynos5250-snow.dts | 195 ++++++++--
+> arch/arm/boot/dts/exynos5250.dtsi | 15 -
+> arch/arm/boot/dts/exynos5260-xyref5260.dts | 18 +-
+> arch/arm/boot/dts/exynos5410-smdk5410.dts | 18 +-
+> arch/arm/boot/dts/exynos5420-arndale-octa.dts | 16 +-
+> arch/arm/boot/dts/exynos5420-peach-pit.dts | 482 ++++++++++++++++++++++--
+> arch/arm/boot/dts/exynos5420-smdk5420.dts | 16 +-
+> arch/arm/boot/dts/exynos5800-peach-pi.dts | 472 +++++++++++++++++++++--
+> 15 files changed, 1130 insertions(+), 387 deletions(-)
+> create mode 100644 arch/arm/boot/dts/cros-adc-thermistors.dtsi
+> delete mode 100644 arch/arm/boot/dts/exynos5250-cros-common.dtsi
