@@ -1,56 +1,68 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v7 0/2] Adds PMU and S2R support for exynos5420
-Date: Thu, 25 Sep 2014 19:15:25 +0200
-Message-ID: <CABxcv=kHwCCYhit20qO1q=Nn3KVj8U=8cpCu=DQRuy+R86N0kQ@mail.gmail.com>
-References: <1408625982-3267-1-git-send-email-vikas.sajjan@samsung.com>
-	<CAGm_ybh-R1GsHF-BRhRYQKkCpQFQSE6Mem=A3kz=H3Bemor9xA@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] ARM: dts: Specify default clocks for Exynos4 FIMC devices
+Date: Thu, 25 Sep 2014 20:05:46 +0200
+Message-ID: <5424597A.7040904@samsung.com>
+References: <1410367054-30926-1-git-send-email-s.nawrocki@samsung.com>
+ <CAD8Lp45F_rgN0JZ2n77VXSqN4C6K_hkqu6vsPqha-UbsVf4bow@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f169.google.com ([209.85.212.169]:44316 "EHLO
-	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752130AbaIYRP1 (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:42586 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753234AbaIYSGD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Sep 2014 13:15:27 -0400
-Received: by mail-wi0-f169.google.com with SMTP id fb4so8762773wid.2
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2014 10:15:26 -0700 (PDT)
-In-Reply-To: <CAGm_ybh-R1GsHF-BRhRYQKkCpQFQSE6Mem=A3kz=H3Bemor9xA@mail.gmail.com>
+	Thu, 25 Sep 2014 14:06:03 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NCG0063CYENRQ10@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 25 Sep 2014 19:08:47 +0100 (BST)
+In-reply-to: <CAD8Lp45F_rgN0JZ2n77VXSqN4C6K_hkqu6vsPqha-UbsVf4bow@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>
+To: Daniel Drake <drake@endlessm.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, Kamil Debski <k.debski@samsung.com>
 
-[adding Pankaj Dubey to cc list]
+Hi Daniel,
 
-Hello Vikas,
-
-On Sun, Sep 14, 2014 at 4:57 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
-> Hi All,
+On 18/09/14 21:27, Daniel Drake wrote:
+> On Wed, Sep 10, 2014 at 10:37 AM, Sylwester Nawrocki
+> <s.nawrocki@samsung.com> wrote:
+>> > The default mux and divider clocks are specified in device tree
+>> > so that the FIMC devices in Exynos4210 and Exynos4x12 SoCs are
+>> > clocked from recommended clock source and with maximum supported
+>> > frequency. If needed these settings could be overrode in board
+>> > specific dts files, however they are in practice optimal in most
+>> > cases.
 >
->
-> On Thu, Aug 21, 2014 at 6:29 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
->> Rebased on
->> 1] Kukjin Kim's tree, master branch
->> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/
->> 2] Pankaj Dubey's v7 PMU patchset
->> https://lkml.org/lkml/2014/7/9/2
->> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-July/270655.html
+> Just curious about the Exynos4x12 situation here.
+> You set the FIMC clocks as 176MHz, child of MPLL, which works for
+> ODROID with a divider:
+> 
+> 880MHz MPLL / 5 = 176MHz
+> 
+> However, talking of recommended frequencies... Is 880MHz really the
+> standard there?
+> Isn't 800MHz the more common one?
 
-The mentioned patches from the PMU series depend on the patch to
-decouple the syscon interface from syscon drivers. The latest version
-of that patch is Pankaj's "[PATCH v5] mfd: syscon: Decouple syscon
-interface from platform devices" [0].
+AFAIK 880 MHz is recommended MPLL frequency for Exynos4412 EVT2.0, which
+is revision of the Exynos4412 SoC the Odroid U3 boards are populated with.
+You can read the main/sub revision information from the chip ID register
+(at 0x10000000).
+The frequencies can always be overwritten in board specific dts or DTB
+could be amended by bootloader if needed.
 
-There is still an ongoing discussion about the implementation details
-since errors were reported (debugfs regmap dir failing to be created
-due a NULL device name) so this won't be a definite version.
+> Also, if you happen to know, I would be curious about the equivalent
+> and recommended situation for the sclk_mfc clock. On the vendor kernel
+> it is clocked at 880/4 = 220MHz. When booting mainline on an odroid it
+> is 880/16 = 55MHz :/
 
-But I tested that patch on an Exynos5420 Peach Pit and it works so
-maybe Pankaj can re-spin his PMU series on top of his latest syscon
-patch so at least the dependencies for your series are sorted and
-people can try it?
+I think we should add similar entry in device tree for the MFC devices.
+AFAIR now the frequency has fixed value in the driver. I saw some changes
+in s5p-mfc driver WRT to clock handling recently though, possibly Jacek
+or Kamil could explain what current situation is.
 
-Best regards,
-Javier
-
-[0]: https://patchwork.kernel.org/patch/4945481/
+--
+Regards,
+Sylwester
