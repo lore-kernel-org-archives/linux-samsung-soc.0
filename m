@@ -1,52 +1,161 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH v3] ARM: dts: add CPU nodes for Exynos4 SoCs
-Date: Thu, 25 Sep 2014 11:02:05 +0200
-Message-ID: <5423DA0D.9030100@linaro.org>
-References: <5230569.XLlNbB5NvF@amdc1032> <018e01cfd885$770dd940$65298bc0$@kernel.org> <20140925081704.GA20841@e102568-lin.cambridge.arm.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v7 2/5] ARM: add AFTR mode support to firmware do_idle
+ method
+Date: Thu, 25 Sep 2014 11:03:11 +0200
+Message-ID: <20140925090310.GA12046@ulmo>
+References: <1411561488-1739-1-git-send-email-b.zolnierkie@samsung.com>
+ <1411561488-1739-3-git-send-email-b.zolnierkie@samsung.com>
+ <5423D104.4050809@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:33195 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751537AbaIYJCI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Sep 2014 05:02:08 -0400
-Received: by mail-wi0-f173.google.com with SMTP id r20so8464234wiv.0
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2014 02:02:06 -0700 (PDT)
-In-Reply-To: <20140925081704.GA20841@e102568-lin.cambridge.arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="oyUTqETQ0mS9luUI"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5423D104.4050809@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Sachin Kamat <sachin.kamat@linaro.org>, Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org, Daniel Lezcano <daniel.lezcano@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Tomasz Figa <tomasz.figa@gmail.com>, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-tegra@vger.kernel.org, linaro-kernel@lists.linaro.org, linux-arm-kernel@lists.infradead.org, Thierry Reding <treding@nvidia.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Kukjin Kim <kgene@kernel.org>
-Cc: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, Mark Rutland <Mark.Rutland@arm.com>, 'Thomas Abraham' <ta.omasab@gmail.com>
-
-On 09/25/2014 10:17 AM, Lorenzo Pieralisi wrote:
-> [CC'ed Daniel to make him aware this patch goes through your tree]
-
-Thanks for the head up. I was about to send the PR to Rafael.
-
-[ ... ]
-
-> That's great, now my Exynos CPUidle DT patch should be rebased on top
-> of this patch so that thanks to the testing carried out by Bart it ca=
-n be
-> merged too.
-
-Ok, I am getting confused. How can I rebase the latest patch of your=20
-series with a patch no yet available in my tree ?
-
-I propose just to drop the last patch and wait for the next merge to=20
-reintegrate it into the cpuidle tree. Does it make sense ?
-
-Thanks
-   -- Daniel
 
 
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
+--oyUTqETQ0mS9luUI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+On Thu, Sep 25, 2014 at 05:23:32PM +0900, Kukjin Kim wrote:
+> On 09/24/14 21:24, Bartlomiej Zolnierkiewicz wrote:
+> >On some platforms (i.e. EXYNOS ones) more than one idle mode is
+> >available and we need to distinguish them in firmware do_idle method.
+> >
+> >Add mode parameter to do_idle firmware method and AFTR mode support
+> >to EXYNOS do_idle implementation.
+> >
+> >This change is a preparation for adding secure firmware support to
+> >EXYNOS cpuidle driver.
+> >
+> >This patch shouldn't cause any functionality changes.
+> >
+> >Signed-off-by: Bartlomiej Zolnierkiewicz<b.zolnierkie@samsung.com>
+> >Acked-by: Kyungmin Park<kyungmin.park@samsung.com>
+> >---
+> >v7:
+> >- fixed build on Tegra
+> >- updated summary line
+> >
+> >  arch/arm/include/asm/firmware.h        |  2 +-
+> >  arch/arm/mach-exynos/common.h          |  5 +++++
+> >  arch/arm/mach-exynos/firmware.c        | 10 ++++++++--
+> >  arch/arm/mach-tegra/cpuidle-tegra114.c |  2 +-
+> >  4 files changed, 15 insertions(+), 4 deletions(-)
+> >
+> >diff --git a/arch/arm/include/asm/firmware.h b/arch/arm/include/asm/firm=
+ware.h
+> >index 5904f59..89aefe1 100644
+> >--- a/arch/arm/include/asm/firmware.h
+> >+++ b/arch/arm/include/asm/firmware.h
+> >@@ -28,7 +28,7 @@ struct firmware_ops {
+> >  	/*
+> >  	 * Enters CPU idle mode
+> >  	 */
+> >-	int (*do_idle)(void);
+> >+	int (*do_idle)(unsigned long mode);
+> >  	/*
+> >  	 * Sets boot address of specified physical CPU
+> >  	 */
+> >diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common=
+=2Eh
+> >index c218200..2d830df 100644
+> >--- a/arch/arm/mach-exynos/common.h
+> >+++ b/arch/arm/mach-exynos/common.h
+> >@@ -119,6 +119,11 @@ extern void __iomem *sysram_base_addr;
+> >  extern void __iomem *pmu_base_addr;
+> >  void exynos_sysram_init(void);
+> >
+> >+enum {
+> >+	FW_DO_IDLE_SLEEP,
+> >+	FW_DO_IDLE_AFTR,
+> >+};
+> >+
+> >  void exynos_firmware_init(void);
+> >
+> >  extern u32 exynos_get_eint_wake_mask(void);
+> >diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firm=
+ware.c
+> >index f5e626d..e57b7c3 100644
+> >--- a/arch/arm/mach-exynos/firmware.c
+> >+++ b/arch/arm/mach-exynos/firmware.c
+> >@@ -28,9 +28,15 @@
+> >  #define EXYNOS_BOOT_ADDR	0x8
+> >  #define EXYNOS_BOOT_FLAG	0xc
+> >
+> >-static int exynos_do_idle(void)
+> >+static int exynos_do_idle(unsigned long mode)
+> >  {
+> >-	exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
+> >+	switch (mode) {
+> >+	case FW_DO_IDLE_AFTR:
+> >+		exynos_smc(SMC_CMD_CPU0AFTR, 0, 0, 0);
+> >+		break;
+> >+	case FW_DO_IDLE_SLEEP:
+> >+		exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
+> >+	}
+> >  	return 0;
+> >  }
+> >
+> >diff --git a/arch/arm/mach-tegra/cpuidle-tegra114.c b/arch/arm/mach-tegr=
+a/cpuidle-tegra114.c
+> >index e3ebdce..425b6c8 100644
+> >--- a/arch/arm/mach-tegra/cpuidle-tegra114.c
+> >+++ b/arch/arm/mach-tegra/cpuidle-tegra114.c
+> >@@ -49,7 +49,7 @@ static int tegra114_idle_power_down(struct cpuidle_dev=
+ice *dev,
+> >  	call_firmware_op(prepare_idle);
+> >
+> >  	/* Do suspend by ourselves if the firmware does not implement it */
+> >-	if (call_firmware_op(do_idle) =3D=3D -ENOSYS)
+> >+	if (call_firmware_op(do_idle, 0) =3D=3D -ENOSYS)
+> >  		cpu_suspend(0, tegra30_sleep_cpu_secondary_finish);
+> >
+> >  	clockevents_notify(CLOCK_EVT_NOTIFY_BROADCAST_EXIT,&dev->cpu);
+>=20
+> + Thierry(using nvidia.com e-mail address)
+>=20
+> Hi Thierry,
+>=20
+> For supporting AFTR mode in call_firmware_op(do_idle), need to modify teg=
+ra
+> stuff as you can see. The functionality will be same with before. Is it OK
+> to you? If you have no objection, I'd like to take this series into samsu=
+ng
+> tree.
+
+I'm only aware of any devices using TrustedFirmware on Tegra, which is
+what the above code handles. The implementation for TrustedFirmware does
+not implement do_idle() (yet?) so I don't think this patch would cause
+any damage.
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--oyUTqETQ0mS9luUI
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUI9pOAAoJEN0jrNd/PrOhLaIQALkgTf/L59tBx3qPUziYpTfU
+Xp4LRKzA6Bo15lN9oeI039VoxLr7xWGqdT7KEQMSHUFv5webCveB93XXMLsoMHpH
+GLuzdYNac9+gE8cTrnszkaO6XcTXtmM/ry+0xVFNZlt39JZWOcH50UQCTcbwXHM1
+IHtNC2zaRJbB7BD8/MVWHg4El0eQmsgOQT4ia1UebaHs0xLMXejYhRMPm0sthqsP
+eFXBqF0EBAK0A0405huwk5Qk6w10SumJw6m0g7QpyAQGPkhzDt4zA7YC2kXMVc4p
+dObQrnKKJwmRF+s6Oh3ISYW+Oxkeroiwb+2tFQV6CVbD7hucOWKqyLU6t/NPwrDu
+pyNSf+65AAtqLODmpYYd+xqd0SW6DeVs0L/K+R/Px4UbSV6sCJDm7E16LQqHvoY+
+W6EXnBSLKVZ7PI2Vy+UdWqtmv7gv8EpZEULw4GdtjZV4SANglkn39YgFQREtyz9P
+BmnsLgkddV52g+B4j/Sj9lpM8NmlhbQ6G91jv67HcYQ2D3JNhMecET1EdsYJ7WN2
+GLamj12PGvFuYkXHaSonF4m2Bc/FWI7FgDvAP5e0BkbVfBskOTO7SSnVwk4nyKlw
+kfVnldKUZOjR/7WdXDJynGucfxO4RHqd+AkEf3Nt7Dj3bVM2PBj43O1fufe5F4+w
+gc1f18vTLcOXotViCAuG
+=3py4
+-----END PGP SIGNATURE-----
+
+--oyUTqETQ0mS9luUI--
