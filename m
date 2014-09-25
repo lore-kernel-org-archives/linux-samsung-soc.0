@@ -1,179 +1,221 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: [PATCH] [media] exynos4-is: fix some warnings when compiling on arm64
-Date: Wed, 24 Sep 2014 22:24:04 -0300
-Message-ID: <416b6af26812eb995333c5bd5a9263775b8c4699.1411607687.git.mchehab@osg.samsung.com>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: [PATCH v5 1/2] usb: host: ehci-exynos: Remove unnecessary usb-phy support
+Date: Thu, 25 Sep 2014 10:50:22 +0530
+Message-ID: <CAFp+6iE0DGZ722kqFmBSDSzKLJ38=n3yfzx8t8knncjGbuAkyA@mail.gmail.com>
+References: <CAFp+6iGXLKhtGaHm=dFDGCpN38G=w6mX0PuatskBhvcL_HA=Bg@mail.gmail.com>
+	<1411364719-28064-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bombadil.infradead.org ([198.137.202.9]:57796 "EHLO
-	bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751134AbaIYBYa (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Sep 2014 21:24:30 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1411364719-28064-1-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linux Media Mailing List <linux-media@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@osg.samsung.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Got those warnings when compiling with gcc 4.9.1 for arm64:
+Hi Greg,
 
-drivers/media/platform/exynos4-is/fimc-isp-video.c: In function =E2=80=98=
-isp_video_capture_buffer_queue=E2=80=99:
-drivers/media/platform/exynos4-is/fimc-isp-video.c:221:4: warning: form=
-at =E2=80=98%x=E2=80=99 expects argument of type =E2=80=98unsigned int=E2=
-=80=99, but argument 7 has type =E2=80=98dma_addr_t=E2=80=99 [-Wformat=3D=
-]
-    isp_dbg(2, &video->ve.vdev,
-    ^
-drivers/media/platform/exynos4-is/fimc-is.c: In function =E2=80=98fimc_=
-is_load_firmware=E2=80=99:
-drivers/media/platform/exynos4-is/fimc-is.c:391:3: warning: format =E2=80=
-=98%d=E2=80=99 expects argument of type =E2=80=98int=E2=80=99, but argu=
-ment 3 has type =E2=80=98size_t=E2=80=99 [-Wformat=3D]
-   dev_err(dev, "wrong firmware size: %d\n", fw->size);
-   ^
-In file included from include/linux/printk.h:260:0,
-                 from include/linux/kernel.h:13,
-                 from include/linux/kernfs.h:10,
-                 from include/linux/sysfs.h:15,
-                 from include/linux/kobject.h:21,
-                 from include/linux/device.h:17,
-                 from drivers/media/platform/exynos4-is/fimc-is.c:15:
-include/linux/dynamic_debug.h:64:16: warning: format =E2=80=98%d=E2=80=99=
- expects argument of type =E2=80=98int=E2=80=99, but argument 4 has typ=
-e =E2=80=98size_t=E2=80=99 [-Wformat=3D]
-  static struct _ddebug  __aligned(8)   \
-                ^
-include/linux/dynamic_debug.h:84:2: note: in expansion of macro =E2=80=98=
-DEFINE_DYNAMIC_DEBUG_METADATA=E2=80=99
-  DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);  \
-  ^
-include/linux/device.h:1106:2: note: in expansion of macro =E2=80=98dyn=
-amic_dev_dbg=E2=80=99
-  dynamic_dev_dbg(dev, format, ##__VA_ARGS__); \
-  ^
-drivers/media/platform/exynos4-is/fimc-is.c:419:2: note: in expansion o=
-f macro =E2=80=98dev_dbg=E2=80=99
-  dev_dbg(dev, "FW size: %d, paddr: %#x\n", fw->size, is->memory.paddr)=
-;
-  ^
-include/linux/dynamic_debug.h:64:16: warning: format =E2=80=98%x=E2=80=99=
- expects argument of type =E2=80=98unsigned int=E2=80=99, but argument =
-5 has type =E2=80=98dma_addr_t=E2=80=99 [-Wformat=3D]
-  static struct _ddebug  __aligned(8)   \
-                ^
-include/linux/dynamic_debug.h:84:2: note: in expansion of macro =E2=80=98=
-DEFINE_DYNAMIC_DEBUG_METADATA=E2=80=99
-  DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);  \
-  ^
-include/linux/device.h:1106:2: note: in expansion of macro =E2=80=98dyn=
-amic_dev_dbg=E2=80=99
-  dynamic_dev_dbg(dev, format, ##__VA_ARGS__); \
-  ^
-drivers/media/platform/exynos4-is/fimc-is.c:419:2: note: in expansion o=
-f macro =E2=80=98dev_dbg=E2=80=99
-  dev_dbg(dev, "FW size: %d, paddr: %#x\n", fw->size, is->memory.paddr)=
-;
-  ^
-drivers/media/platform/exynos4-is/fimc-is.c: In function =E2=80=98fimc_=
-is_hw_initialize=E2=80=99:
-include/linux/dynamic_debug.h:64:16: warning: format =E2=80=98%x=E2=80=99=
- expects argument of type =E2=80=98unsigned int=E2=80=99, but argument =
-5 has type =E2=80=98dma_addr_t=E2=80=99 [-Wformat=3D]
-  static struct _ddebug  __aligned(8)   \
-                ^
-include/linux/dynamic_debug.h:76:2: note: in expansion of macro =E2=80=98=
-DEFINE_DYNAMIC_DEBUG_METADATA=E2=80=99
-  DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);  \
-  ^
-include/linux/printk.h:266:2: note: in expansion of macro =E2=80=98dyna=
-mic_pr_debug=E2=80=99
-  dynamic_pr_debug(fmt, ##__VA_ARGS__)
-  ^
-drivers/media/platform/exynos4-is/fimc-is.c:696:2: note: in expansion o=
-f macro =E2=80=98pr_debug=E2=80=99
-  pr_debug("shared region: %#x, parameter region: %#x\n",
-  ^
-include/linux/dynamic_debug.h:64:16: warning: format =E2=80=98%x=E2=80=99=
- expects argument of type =E2=80=98unsigned int=E2=80=99, but argument =
-6 has type =E2=80=98dma_addr_t=E2=80=99 [-Wformat=3D]
-  static struct _ddebug  __aligned(8)   \
-                ^
-include/linux/dynamic_debug.h:76:2: note: in expansion of macro =E2=80=98=
-DEFINE_DYNAMIC_DEBUG_METADATA=E2=80=99
-  DEFINE_DYNAMIC_DEBUG_METADATA(descriptor, fmt);  \
-  ^
-include/linux/printk.h:266:2: note: in expansion of macro =E2=80=98dyna=
-mic_pr_debug=E2=80=99
-  dynamic_pr_debug(fmt, ##__VA_ARGS__)
-  ^
-drivers/media/platform/exynos4-is/fimc-is.c:696:2: note: in expansion o=
-f macro =E2=80=98pr_debug=E2=80=99
-  pr_debug("shared region: %#x, parameter region: %#x\n",
-  ^
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+On Mon, Sep 22, 2014 at 11:15 AM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+> Now that we have completely moved from older USB-PHY drivers
+> to newer GENERIC-PHY drivers for PHYs available with USB controllers
+> on Exynos series of SoCs, we can remove the support for the same
+> in our host drivers too.
+>
+> We also defer the probe for our host in case we end up getting
+> EPROBE_DEFER error when getting PHYs.
+>
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Acked-by: Jingoo Han <jg1.han@samsung.com>
+> Acked-by: Alan Stern <stern@rowland.harvard.edu>
+> ---
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/medi=
-a/platform/exynos4-is/fimc-is.c
-index 5476dce3ad29..22162b2567da 100644
---- a/drivers/media/platform/exynos4-is/fimc-is.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is.c
-@@ -388,7 +388,7 @@ static void fimc_is_load_firmware(const struct firm=
-ware *fw, void *context)
- 	mutex_lock(&is->lock);
-=20
- 	if (fw->size < FIMC_IS_FW_SIZE_MIN || fw->size > FIMC_IS_FW_SIZE_MAX)=
- {
--		dev_err(dev, "wrong firmware size: %d\n", fw->size);
-+		dev_err(dev, "wrong firmware size: %zu\n", fw->size);
- 		goto done;
- 	}
-=20
-@@ -416,7 +416,7 @@ static void fimc_is_load_firmware(const struct firm=
-ware *fw, void *context)
-=20
- 	dev_info(dev, "loaded firmware: %s, rev. %s\n",
- 		 is->fw.info, is->fw.version);
--	dev_dbg(dev, "FW size: %d, paddr: %#x\n", fw->size, is->memory.paddr)=
-;
-+	dev_dbg(dev, "FW size: %zu, paddr: %pad\n", fw->size, &is->memory.pad=
-dr);
-=20
- 	is->is_shared_region->chip_id =3D 0xe4412;
- 	is->is_shared_region->chip_rev_no =3D 1;
-@@ -693,9 +693,9 @@ int fimc_is_hw_initialize(struct fimc_is *is)
- 		return -EIO;
- 	}
-=20
--	pr_debug("shared region: %#x, parameter region: %#x\n",
--		 is->memory.paddr + FIMC_IS_SHARED_REGION_OFFSET,
--		 is->is_dma_p_region);
-+	pr_debug("shared region: %pad, parameter region: %pad\n",
-+		 &is->memory.paddr + FIMC_IS_SHARED_REGION_OFFSET,
-+		 &is->is_dma_p_region);
-=20
- 	is->setfile.sub_index =3D 0;
-=20
-diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drive=
-rs/media/platform/exynos4-is/fimc-isp-video.c
-index 9d8d885558e5..76b6b4d14616 100644
---- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
-+++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
-@@ -219,9 +219,9 @@ static void isp_video_capture_buffer_queue(struct v=
-b2_buffer *vb)
- 							ivb->dma_addr[i];
-=20
- 			isp_dbg(2, &video->ve.vdev,
--				"dma_buf %d (%d/%d/%d) addr: %#x\n",
--				buf_index, ivb->index, i, vb->v4l2_buf.index,
--				ivb->dma_addr[i]);
-+				"dma_buf %pad (%d/%d/%d) addr: %pad\n",
-+				&buf_index, ivb->index, i, vb->v4l2_buf.index,
-+				&ivb->dma_addr[i]);
- 		}
-=20
- 		if (++video->buf_count < video->reqbufs_count)
---=20
-1.9.3
+Did this one got missed for usb-next ?
+I can only see "usb: host: ohci-exynos: Remove unnecessary usb-phy support"
+in the next branch.
+
+Ignore me if you have already taken care of this, and plan to queue it up.
+
+>
+> Changes since v4:
+>  - returning 'ret' instead of PTR_ERR(phy), since ret is nothing but that only.
+>
+> Changes since v3:
+>  - Addressed review comments by Alan:
+>    -- Skipped renaming 'phy_number' variable,
+>    -- resorted to just adding minimal change required for phy assignment.
+>    -- updated patch description to mention EPROBE_DEFER support.
+>
+>  drivers/usb/host/ehci-exynos.c |   74 +++++++++++-----------------------------
+>  1 file changed, 20 insertions(+), 54 deletions(-)
+>
+> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+> index 2eed9a4..7189f2e 100644
+> --- a/drivers/usb/host/ehci-exynos.c
+> +++ b/drivers/usb/host/ehci-exynos.c
+> @@ -21,11 +21,8 @@
+>  #include <linux/of_gpio.h>
+>  #include <linux/phy/phy.h>
+>  #include <linux/platform_device.h>
+> -#include <linux/usb/phy.h>
+> -#include <linux/usb/samsung_usb_phy.h>
+>  #include <linux/usb.h>
+>  #include <linux/usb/hcd.h>
+> -#include <linux/usb/otg.h>
+>
+>  #include "ehci.h"
+>
+> @@ -47,9 +44,7 @@ static struct hc_driver __read_mostly exynos_ehci_hc_driver;
+>
+>  struct exynos_ehci_hcd {
+>         struct clk *clk;
+> -       struct usb_phy *phy;
+> -       struct usb_otg *otg;
+> -       struct phy *phy_g[PHY_NUMBER];
+> +       struct phy *phy[PHY_NUMBER];
+>  };
+>
+>  #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
+> @@ -60,8 +55,9 @@ static int exynos_ehci_get_phy(struct device *dev,
+>         struct device_node *child;
+>         struct phy *phy;
+>         int phy_number;
+> -       int ret = 0;
+> +       int ret;
+>
+> +       /* Get PHYs for the controller */
+>         for_each_available_child_of_node(dev->of_node, child) {
+>                 ret = of_property_read_u32(child, "reg", &phy_number);
+>                 if (ret) {
+> @@ -77,31 +73,21 @@ static int exynos_ehci_get_phy(struct device *dev,
+>                 }
+>
+>                 phy = devm_of_phy_get(dev, child, NULL);
+> +               exynos_ehci->phy[phy_number] = phy;
+>                 of_node_put(child);
+> -               if (IS_ERR(phy))
+> -                       /* Lets fallback to older USB-PHYs */
+> -                       goto usb_phy_old;
+> -               exynos_ehci->phy_g[phy_number] = phy;
+> -               /* Make the older PHYs unavailable */
+> -               exynos_ehci->phy = ERR_PTR(-ENXIO);
+> -       }
+> -
+> -       return 0;
+> -
+> -usb_phy_old:
+> -       exynos_ehci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
+> -       if (IS_ERR(exynos_ehci->phy)) {
+> -               ret = PTR_ERR(exynos_ehci->phy);
+> -               if (ret != -ENXIO && ret != -ENODEV) {
+> -                       dev_err(dev, "no usb2 phy configured\n");
+> -                       return ret;
+> +               if (IS_ERR(phy)) {
+> +                       ret = PTR_ERR(phy);
+> +                       if (ret == -EPROBE_DEFER) {
+> +                               return ret;
+> +                       } else if (ret != -ENOSYS && ret != -ENODEV) {
+> +                               dev_err(dev,
+> +                                       "Error retrieving usb2 phy: %d\n", ret);
+> +                               return ret;
+> +                       }
+>                 }
+> -               dev_dbg(dev, "Failed to get usb2 phy\n");
+> -       } else {
+> -               exynos_ehci->otg = exynos_ehci->phy->otg;
+>         }
+>
+> -       return ret;
+> +       return 0;
+>  }
+>
+>  static int exynos_ehci_phy_enable(struct device *dev)
+> @@ -111,16 +97,13 @@ static int exynos_ehci_phy_enable(struct device *dev)
+>         int i;
+>         int ret = 0;
+>
+> -       if (!IS_ERR(exynos_ehci->phy))
+> -               return usb_phy_init(exynos_ehci->phy);
+> -
+>         for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
+> -               if (!IS_ERR(exynos_ehci->phy_g[i]))
+> -                       ret = phy_power_on(exynos_ehci->phy_g[i]);
+> +               if (!IS_ERR(exynos_ehci->phy[i]))
+> +                       ret = phy_power_on(exynos_ehci->phy[i]);
+>         if (ret)
+>                 for (i--; i >= 0; i--)
+> -                       if (!IS_ERR(exynos_ehci->phy_g[i]))
+> -                               phy_power_off(exynos_ehci->phy_g[i]);
+> +                       if (!IS_ERR(exynos_ehci->phy[i]))
+> +                               phy_power_off(exynos_ehci->phy[i]);
+>
+>         return ret;
+>  }
+> @@ -131,14 +114,9 @@ static void exynos_ehci_phy_disable(struct device *dev)
+>         struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
+>         int i;
+>
+> -       if (!IS_ERR(exynos_ehci->phy)) {
+> -               usb_phy_shutdown(exynos_ehci->phy);
+> -               return;
+> -       }
+> -
+>         for (i = 0; i < PHY_NUMBER; i++)
+> -               if (!IS_ERR(exynos_ehci->phy_g[i]))
+> -                       phy_power_off(exynos_ehci->phy_g[i]);
+> +               if (!IS_ERR(exynos_ehci->phy[i]))
+> +                       phy_power_off(exynos_ehci->phy[i]);
+>  }
+>
+>  static void exynos_setup_vbus_gpio(struct device *dev)
+> @@ -231,9 +209,6 @@ skip_phy:
+>                 goto fail_io;
+>         }
+>
+> -       if (exynos_ehci->otg)
+> -               exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+> -
+>         err = exynos_ehci_phy_enable(&pdev->dev);
+>         if (err) {
+>                 dev_err(&pdev->dev, "Failed to enable USB phy\n");
+> @@ -273,9 +248,6 @@ static int exynos_ehci_remove(struct platform_device *pdev)
+>
+>         usb_remove_hcd(hcd);
+>
+> -       if (exynos_ehci->otg)
+> -               exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+> -
+>         exynos_ehci_phy_disable(&pdev->dev);
+>
+>         clk_disable_unprepare(exynos_ehci->clk);
+> @@ -298,9 +270,6 @@ static int exynos_ehci_suspend(struct device *dev)
+>         if (rc)
+>                 return rc;
+>
+> -       if (exynos_ehci->otg)
+> -               exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+> -
+>         exynos_ehci_phy_disable(dev);
+>
+>         clk_disable_unprepare(exynos_ehci->clk);
+> @@ -316,9 +285,6 @@ static int exynos_ehci_resume(struct device *dev)
+>
+>         clk_prepare_enable(exynos_ehci->clk);
+>
+> -       if (exynos_ehci->otg)
+> -               exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
+> -
+>         ret = exynos_ehci_phy_enable(dev);
+>         if (ret) {
+>                 dev_err(dev, "Failed to enable USB phy\n");
+> --
+> 1.7.10.4
+>
+
+
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
