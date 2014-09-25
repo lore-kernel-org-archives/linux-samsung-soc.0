@@ -1,46 +1,62 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH v3] ARM: dts: add CPU nodes for Exynos4 SoCs
-Date: Thu, 25 Sep 2014 10:36:05 +0100
-Message-ID: <20140925093605.GA23853@e102568-lin.cambridge.arm.com>
-References: <5230569.XLlNbB5NvF@amdc1032>
- <018e01cfd885$770dd940$65298bc0$@kernel.org>
- <20140925081704.GA20841@e102568-lin.cambridge.arm.com>
- <5423DA0D.9030100@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5423DA0D.9030100@linaro.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Kukjin Kim <kgene@kernel.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, Mark Rutland <Mark.Rutland@arm.com>, 'Thomas Abraham' <ta.omasab@gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v2 0/2] serial: samsung: add support for early console
+Date: Thu, 25 Sep 2014 11:54:50 +0200
+Message-ID: <1411638892-13702-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:63526 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750977AbaIYJzA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 25 Sep 2014 05:55:00 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NCG00LEHBOCOO30@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 25 Sep 2014 10:57:48 +0100 (BST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, thomas.ab@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robherring2@gmail.com>
 
-On Thu, Sep 25, 2014 at 10:02:05AM +0100, Daniel Lezcano wrote:
-> On 09/25/2014 10:17 AM, Lorenzo Pieralisi wrote:
-> > [CC'ed Daniel to make him aware this patch goes through your tree]
-> 
-> Thanks for the head up. I was about to send the PR to Rafael.
-> 
-> [ ... ]
-> 
-> > That's great, now my Exynos CPUidle DT patch should be rebased on top
-> > of this patch so that thanks to the testing carried out by Bart it can be
-> > merged too.
-> 
-> Ok, I am getting confused. How can I rebase the latest patch of your 
-> series with a patch no yet available in my tree ?
+This patchset adds support for early console defined in device tree. As
+an example, DTS files for all Exynos4 based machines are updated with
+the correct value for common chosen/sdtout property.
 
-I just wanted to say that the Exynos CPUidle DT patch depends on this
-patch, that is now going through Samsung tree, to make sure we are on
-the same page and prevent issues, it was not clear, sorry.
+To get it fully functional on ARM architecture, additional improvements
+(support for early_ioremap) are needed in early console code.
 
-> I propose just to drop the last patch and wait for the next merge to 
-> reintegrate it into the cpuidle tree. Does it make sense ?
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
 
-I agree, drop the Exynos CPUidle DT patch, we will reintegrate it in the
-CPUidle tree when the merge window closes and dependencies are sorted out.
+Change log:
 
-Thanks a lot,
-Lorenzo
+v2:
+- added support for command line based initialization
+
+v1: http://www.spinics.net/lists/linux-samsung-soc/msg37094.html
+- initial version
+
+
+Patch summary:
+
+Tomasz Figa (2):
+  serial: samsung: Add support for early console
+  ARM: dts: exynos4: Add stdout-path properties
+
+ Documentation/kernel-parameters.txt             |  10 +++
+ arch/arm/boot/dts/exynos4210-origen.dts         |   1 +
+ arch/arm/boot/dts/exynos4210-smdkv310.dts       |   1 +
+ arch/arm/boot/dts/exynos4210-trats.dts          |   1 +
+ arch/arm/boot/dts/exynos4210-universal_c210.dts |   1 +
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   4 +
+ arch/arm/boot/dts/exynos4412-origen.dts         |   1 +
+ arch/arm/boot/dts/exynos4412-smdk4412.dts       |   1 +
+ arch/arm/boot/dts/exynos4412-tiny4412.dts       |   4 +
+ arch/arm/boot/dts/exynos4412-trats2.dts         |   1 +
+ drivers/tty/serial/Kconfig                      |   1 +
+ drivers/tty/serial/samsung.c                    | 103 ++++++++++++++++++++++++
+ 12 files changed, 129 insertions(+)
+
+-- 
+1.9.2
