@@ -1,40 +1,69 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+From: Lee Jones <lee.jones@linaro.org>
 Subject: Re: [PATCH v3 6/6] mfd: cros_ec: Instantiate sub-devices from device
  tree
-Date: Thu, 25 Sep 2014 15:53:56 +0200
-Message-ID: <54241E74.9000403@collabora.co.uk>
-References: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk> <1410428289-18229-7-git-send-email-javier.martinez@collabora.co.uk> <20140917163114.GL30918@lee--X1> <541A8E88.6050707@collabora.co.uk> <20140919001512.GA29852@lee--X1>
+Date: Thu, 25 Sep 2014 15:48:46 +0100
+Message-ID: <20140925144846.GC21351@lee--X1>
+References: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1410428289-18229-7-git-send-email-javier.martinez@collabora.co.uk>
+ <20140917163114.GL30918@lee--X1>
+ <541A8E88.6050707@collabora.co.uk>
+ <20140919001512.GA29852@lee--X1>
+ <54241E74.9000403@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20140919001512.GA29852@lee--X1>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Andreas Faerber <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ig0-f175.google.com ([209.85.213.175]:61182 "EHLO
+	mail-ig0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752854AbaIYOsw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 25 Sep 2014 10:48:52 -0400
+Received: by mail-ig0-f175.google.com with SMTP id h18so8597416igc.8
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2014 07:48:52 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <54241E74.9000403@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, Andreas Faerber <afaerber@suse.de>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hello Lee,
+On Thu, 25 Sep 2014, Javier Martinez Canillas wrote:
 
-On 09/19/2014 02:15 AM, Lee Jones wrote:
->> 
->> As explained above, DT, non-DT and x86 platforms instantiate the cros-ec-dev
->> cells but DT platforms can define other child nodes. But I can remove the
->> conditional if you want and reintroduce it once cros-ec-dev support is added.
-> 
-> Yes, that makes sense.  I only care about doing what's right for
-> Mainline, so if it doesn't make sense here, then we shouldn't be doing
-> it.
-> 
+> Hello Lee,
+>=20
+> On 09/19/2014 02:15 AM, Lee Jones wrote:
+> >>=20
+> >> As explained above, DT, non-DT and x86 platforms instantiate the c=
+ros-ec-dev
+> >> cells but DT platforms can define other child nodes. But I can rem=
+ove the
+> >> conditional if you want and reintroduce it once cros-ec-dev suppor=
+t is added.
+> >=20
+> > Yes, that makes sense.  I only care about doing what's right for
+> > Mainline, so if it doesn't make sense here, then we shouldn't be do=
+ing
+> > it.
+> >=20
+>=20
+> Understood, that's why I dropped this since as explained earlier, it =
+makes more
+> sense to include this change once the cros_ec_dev driver is pushed to=
+ upstream.
+>=20
+> The last version of the series (v4) I posted a week ago [0], does not=
+ include
+> this patch so I hope the series can be picked for 3.18 since most of =
+the patches
+> were already acked by you.
 
-Understood, that's why I dropped this since as explained earlier, it makes more
-sense to include this change once the cros_ec_dev driver is pushed to upstream.
+Unfortunately this is going to have to wait until v3.19 now, as Linus
+is closing the -rcs early.  I have subsequently applied my last
+patch to the MFD tree for v3.18.  It will be good for these patches to
+get some soak testing in -next anyway, rather than rush them in.
 
-The last version of the series (v4) I posted a week ago [0], does not include
-this patch so I hope the series can be picked for 3.18 since most of the patches
-were already acked by you.
-
-Thanks a lot and best regards,
-Javier
-
-[0]: https://www.mail-archive.com/linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org/msg36770.html
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
