@@ -1,39 +1,61 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 0/5] pinctrl: samsung: Data structure clean-up
-Date: Thu, 25 Sep 2014 09:49:24 +0200
-Message-ID: <5423C904.60708@gmail.com>
-References: <1411499141-26551-1-git-send-email-tomasz.figa@gmail.com> <CACRpkdZCMD4x+wrvTOrrWK-Dy4_rg6bD2xUAA4jtTGTbT1uDag@mail.gmail.com>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH v3] ARM: dts: add CPU nodes for Exynos4 SoCs
+Date: Thu, 25 Sep 2014 09:17:04 +0100
+Message-ID: <20140925081704.GA20841@e102568-lin.cambridge.arm.com>
+References: <5230569.XLlNbB5NvF@amdc1032>
+ <018e01cfd885$770dd940$65298bc0$@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:54070 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750940AbaIYHt2 (ORCPT
+Received: from service87.mimecast.com ([91.220.42.44]:46330 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751284AbaIYIRN convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Sep 2014 03:49:28 -0400
-In-Reply-To: <CACRpkdZCMD4x+wrvTOrrWK-Dy4_rg6bD2xUAA4jtTGTbT1uDag@mail.gmail.com>
+	Thu, 25 Sep 2014 04:17:13 -0400
+In-Reply-To: <018e01cfd885$770dd940$65298bc0$@kernel.org>
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>
+Cc: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, Mark Rutland <Mark.Rutland@arm.com>, 'Thomas Abraham' <ta.omasab@gmail.com>, daniel.lezcano@linaro.org
 
-On 25.09.2014 09:47, Linus Walleij wrote:
-> On Tue, Sep 23, 2014 at 9:05 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> 
->> This series intends to clean up data structures used by pinctrl-samsung driver.
->> More specifically, it separates initial compile time constants from data used
->> at runtime, allowing unused variant data to be dropped and selected structures
->> constified to improve safety.
-> 
-> I like the patch set, tried to apply it but patch 3/5 failed to apply to the
-> devel branch for pinctrl.
-> 
-> Can you rebase this on my "devel" branch, include Marek's Tested-by
-> tag and resend, and I'll take it for v3.18.
+[CC'ed Daniel to make him aware this patch goes through your tree]
 
-Sure. Will do that today evening. Probably clashed with some other
-changes queued in the meantime.
+On Thu, Sep 25, 2014 at 06:56:33AM +0100, Kukjin Kim wrote:
+> Bartlomiej Zolnierkiewicz wrote:
+> > 
+> > Recent patch by Tomasz Figa ("irqchip: gic: Fix core ID calculation
+> > when topology is read from DT") fixed GIC driver to filter cluster ID
+> > from values returned by cpu_logical_map() for SoCs having registers
+> > mapped without per-CPU banking making it is possible to add CPU nodes
+> > for Exynos4 SoCs.  In case of Exynos SoCs these CPU nodes are also
+> > required by future changes adding initialization of cpuidle states in
+> > Exynos cpuidle driver through DT.
+> > 
+> > Tested on Origen board (Exynos4210 SoC) and Trats2 (Exynos4412 SoC).
+> > 
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > ---
+> > Based on for-next branch of linux-samsung.git tree.
+> > 
+> > v3:
+> > - refreshed on top of Kukjin's tree
+> > 
+> > v2:
+> > - match the unit-address with the reg
+> > 
+> >  arch/arm/boot/dts/exynos4210.dtsi |   17 +++++++++++++++++
+> >  arch/arm/boot/dts/exynos4212.dtsi |   17 +++++++++++++++++
+> >  arch/arm/boot/dts/exynos4412.dtsi |   29 +++++++++++++++++++++++++++++
+> >  3 files changed, 63 insertions(+)
+> 
+> Thanks for re-spin and looks good to me.
+> 
+> Applied.
 
-Best regards,
-Tomasz
+That's great, now my Exynos CPUidle DT patch should be rebased on top
+of this patch so that thanks to the testing carried out by Bart it can be
+merged too.
+
+Lorenzo
