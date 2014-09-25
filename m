@@ -1,30 +1,30 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [GIT PULL 2/2] Samsung DT changes for 3.18
-Date: Fri, 26 Sep 2014 02:02:40 +0900
-Message-ID: <54244AB0.4090301@samsung.com>
-References: <5418BC93.5070008@samsung.com>
+Subject: Re: [GIT PULL 2/2] Exynos PM updates for v3.18
+Date: Fri, 26 Sep 2014 02:03:56 +0900
+Message-ID: <54244AFC.7030300@samsung.com>
+References: <54227E61.5060909@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:32872 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752130AbaIYRCr (ORCPT
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:34864 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752624AbaIYRED (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Sep 2014 13:02:47 -0400
-Received: by mail-pa0-f46.google.com with SMTP id kx10so11254906pab.5
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2014 10:02:47 -0700 (PDT)
-In-Reply-To: <5418BC93.5070008@samsung.com>
+	Thu, 25 Sep 2014 13:04:03 -0400
+Received: by mail-pd0-f171.google.com with SMTP id y13so11083343pdi.30
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Sep 2014 10:04:03 -0700 (PDT)
+In-Reply-To: <54227E61.5060909@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, arm@kernel.org
 
-On 09/17/14 07:41, Kukjin Kim wrote:
+On 09/24/14 17:18, Kukjin Kim wrote:
 
-Hi Arnd, Olof, Kevin
+Hi,
 
-Oops, I missed adding arm (at) kernel.org so adding it.
+Same, I missed adding arm (at) kernel.org so adding it.
 
 Please pull.
 
@@ -39,87 +39,27 @@ Kukjin
 > are available in the git repository at:
 >
 > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> tags/samsung-dt
+> tags/exynos-pm
 >
-> for you to fetch changes up to 9b02732643d9f4b92b14f5ec041c166bd36033fc:
+> for you to fetch changes up to c3294253713cbc96df59a7cc6a9a3fc0c4ae5ba7:
 >
-> ARM: dts: remove old USB2 PHY node for exynos5250 (2014-09-14 10:11:20
-> +0900)
->
-> ----------------------------------------------------------------
-> Samsung DT update for 3.18
->
-> - un-use slot-node and deprecate the supports-highspped
-> for dw-mmc
-> - remove old USB2 PHY node for exynos5250
->
-> - exynos4412-odroid-common
-> enable PMIC interrupt and i2c improvements
->
-> - exynos5250-snow
-> fold exynos5250-cros-common
-> update display related nodes
->
-> - Peach Pit and Pi
-> improve power scheme, add support max77802 PMIC,
-> add hdmi regulators add thermistor, ISL29018 sensor,
-> set i2c clock at 400kHz, add support Atmel touchpad,
-> update display related nodes
+> ARM: EXYNOS: Refactor the pm code to use DT based lookup (2014-09-24
+> 16:45:14 +0900)
 >
 > ----------------------------------------------------------------
-> Ajay Kumar (3):
-> ARM: dts: update display related nodes for exynos5250-snow
-> ARM: dts: update display related nodes for exynos5420-peach-pit
-> ARM: dts: update display related nodes for exynos5800-peach-pi
+> PM related updates for exynos v3.18
 >
-> Andreas Faerber (2):
-> ARM: dts: Fix MMC pinctrl for exynos5250-snow
-> ARM: dts: Fold exynos5250-cros-common into exynos5250-snow
+> - Refactor the pm code to use DT based lookup instead of
+> using "soc_is_exynosxxxx"
+> - While at it, move exynos5250 specific disabling of JPEG
+> USE_RETENTION to pmu.c
 >
-> Bartlomiej Zolnierkiewicz (2):
-> ARM: dts: remove old USB2 PHY node hook for exynos5250-arndale
-> ARM: dts: remove old USB2 PHY node for exynos5250
+> ----------------------------------------------------------------
+> Vikas Sajjan (2):
+> ARM: EXYNOS: Move Disabling of JPEG USE_RETENTION for exynos5250 to pmu.c
+> ARM: EXYNOS: Refactor the pm code to use DT based lookup
 >
-> Daniel Drake (2):
-> ARM: dts: Enable PMIC interrupts for exynos4412-odroid-common
-> ARM: dts: ODROID i2c improvements for exynos4412-odroid-common
->
-> Jaehoon Chung (1):
-> ARM: dts: unuse the slot-node and deprecate the supports-highspeed for
-> dw-mmc in exynos
->
-> Javier Martinez Canillas (5):
-> ARM: dts: Improve Peach Pit and Pi power scheme
-> ARM: dts: Add support max77802 PMIC for exynos based Peach boards
-> ARM: dts: Add ISL29018 sensor for exynos based Peach boards
-> ARM: dts: Set i2c7 clock at 400kHz for exynos based Peach boards
-> ARM: dts: Add support Atmel touchpad for exynos5800-peach-pi
->
-> Naveen Krishna Chatradhi (1):
-> ARM: dts: Add thermistor dts fragment used by exynos based Peach boards
->
-> Rahul Sharma (2):
-> ARM: dts: add hdmi regulators for exynos5800-peach-pi
-> ARM: dts: add hdmi regulators for exynos5420-peach-pit
->
-> Sjoerd Simons (1):
-> ARM: dts: Add support Atmel touchpad for exynos5420-peach-pit
->
-> arch/arm/boot/dts/cros-adc-thermistors.dtsi | 44 +++
-> arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 21 +-
-> arch/arm/boot/dts/exynos4412-origen.dts | 8 +-
-> arch/arm/boot/dts/exynos4412-trats2.dts | 8 +-
-> arch/arm/boot/dts/exynos5250-arndale.dts | 22 +-
-> arch/arm/boot/dts/exynos5250-cros-common.dtsi | 164 --------
-> arch/arm/boot/dts/exynos5250-smdk5250.dts | 18 +-
-> arch/arm/boot/dts/exynos5250-snow.dts | 195 ++++++++--
-> arch/arm/boot/dts/exynos5250.dtsi | 15 -
-> arch/arm/boot/dts/exynos5260-xyref5260.dts | 18 +-
-> arch/arm/boot/dts/exynos5410-smdk5410.dts | 18 +-
-> arch/arm/boot/dts/exynos5420-arndale-octa.dts | 16 +-
-> arch/arm/boot/dts/exynos5420-peach-pit.dts | 482 ++++++++++++++++++++++--
-> arch/arm/boot/dts/exynos5420-smdk5420.dts | 16 +-
-> arch/arm/boot/dts/exynos5800-peach-pi.dts | 472 +++++++++++++++++++++--
-> 15 files changed, 1130 insertions(+), 387 deletions(-)
-> create mode 100644 arch/arm/boot/dts/cros-adc-thermistors.dtsi
-> delete mode 100644 arch/arm/boot/dts/exynos5250-cros-common.dtsi
+> arch/arm/mach-exynos/pm.c | 172 +++++++++++++++++++++++++++++-----------
+> arch/arm/mach-exynos/pmu.c | 1 +
+> arch/arm/mach-exynos/regs-pmu.h | 1 +
+> 3 files changed, 127 insertions(+), 47 deletions(-)
