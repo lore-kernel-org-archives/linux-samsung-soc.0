@@ -1,99 +1,27 @@
 From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [PATCH v5] mfd: syscon: Decouple syscon interface from platform devices
-Date: Fri, 26 Sep 2014 09:14:22 +0200
-Message-ID: <1842088.hi6OA3SDTq@wuerfel>
-References: <1411360807-7750-1-git-send-email-pankaj.dubey@samsung.com> <5439567.VeRyeUcp1j@wuerfel> <000e01cfd94a$c5c60510$51520f30$@samsung.com>
+Date: Fri, 26 Sep 2014 09:16:29 +0200
+Message-ID: <2553182.6YgvmDLuEA@wuerfel>
+References: <1411360807-7750-1-git-send-email-pankaj.dubey@samsung.com> <000d01cfd946$521304f0$f6390ed0$@samsung.com> <CAGhQ9VxwTS9=biwp0nCKu2bVU2aNe679aKR=HU5rd_Uaw99sUw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:50766 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753212AbaIZHPT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Sep 2014 03:15:19 -0400
-In-Reply-To: <000e01cfd94a$c5c60510$51520f30$@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAGhQ9VxwTS9=biwp0nCKu2bVU2aNe679aKR=HU5rd_Uaw99sUw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, Li.Xiubo@freescale.com, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, naushad@samsung.com, lee.jones@linaro.org, linux-kernel@vger.kernel.org, tomasz.figa@gmail.com, thomas.ab@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, joshi@samsung.com, 'Dong Aisheng' <b29396@freescale.com>, kgene.kim@samsung.com
+Cc: Joachim Eastwood <manabian@gmail.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, dianders@chromium.org, kgene.kim@samsung.com, Russell King - ARM Linux <linux@arm.linux.org.uk>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, naushad@samsung.com, Li.Xiubo@freescale.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, Lee Jones <lee.jones@linaro.org>, sunil joshi <joshi@samsung.com>, b29396@freescale.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Friday 26 September 2014 10:58:33 Pankaj Dubey wrote:
-> On Thursday, September 25, 2014 6:12 PM, Arnd Bergmann wrote,
-> > I don't remember noticing the of_find_device_by_node or
-> > platform_device_alloc in
-> > earlier versions of this patch, but that could just be me failing to read
-> > it right.
-> > 
-> Yes, till v2 of this patch set we do not used this and while calling
-> regmap_init_mmio, I used
-> NULL pointer while creating regmap handle.  But as you may be remember Dong
-> Aisheng reported crash
-> on latest Linus tree after applying this patch, and it caused because of
-> some recent changes in
-> regmap which has already landed in main tree, which makes passing of dev
-> pointer compulsory
-> while calling regmap_init_mmio. Please check following commits in current
-> tree
+On Friday 26 September 2014 07:34:12 Joachim Eastwood wrote:
+> I am working on Cortex-M4 no-MMU platform that isn't upstream yet, btw.
 > 
-> 1) d647c19 regmap: add DT endianness binding support.
-> 2) ba1b53f regmap: Fix DT endianess parsing logic.
-> 3) 45e1a27 regmap: of_regmap_get_endian() cleanup
-> 
-> and following patch [1] for changing syscon binding from Xiubo Li
-> 
-> [1] [PATCH] mfd: syscon: binding: Add syscon endianness support
-> https://lkml.org/lkml/2014/9/18/67
-> 
-> So we discussed [2] and decided to use either actual device if it's
-> populated and available for use or
-> create either actual device or dummy device for using it during
-> regmap_init_mmio calls.
-> 
-> [2]: https://lkml.org/lkml/2014/9/18/35
-> 
-> So what I understood from these changes from Xiubo Li, they wanted to pass
-> endianness of regmap
-> handle to be passed from DT. 
-> 
-> So I am not sure if we can really make regmap code work without a device
-> pointer. 
 
-Why can't we just have both a dev pointer and an explicit of_node pointer
-that can be used in the absence of the device?
+Sorry for drifting off-topic, but this is very interesting to me. Can you
+say which one you are working on and what your timeline is for submitting
+it upstream?
 
-I think it's dangerous to have a platform device that is allocated but
-not registered as you do in your driver at the moment. We can't register
-it for early callers either, and if we found a way to do so, we'd end
-up with multiple platform devices that contain the same of_node, which
-would then cause other problems, such as binding both devices to the
-same driver.
-
-> > I think this should get removed: it would be much better to ensure that
-> the regmap
-> > code can work without a device pointer, which I thought it did. We should
-> probably
-> > also skip the creation of the debugfs directory in that case.
-> > 
-> > > Also if it was just a matter of creating platform_device at early
-> > > stage then early initialization of syscon could have been solved till
-> > > now.
-> 
-> As far as debugfs of regmap is concerned it can be solved as I replied to
-> Heiko in this thread [3]
-> if we are using device pointer while creating regmap handle. 
-> If we are not using device pointer while creating regmap handle it won't
-> cause any problem and 
-> there won't be any debugfs entry.
-> 
-> [3]: https://lkml.org/lkml/2014/9/26/20
-
-Right, this works, although my earlier thoughts were that we would
-just never have a device for a syscon any more. We could have a
-different representation for syscon regmaps in debugfs though, one
-that is separate from the devices and that is based on the just the
-of_node pointer. syscon is special enough that I think the regmap
-infrastructure should be aware of what is a syscon regmap as opposed
-to one from a device.
+I generally like to know about new platforms early, and sometimes we get
+multiple people working on the same one.
 
 	Arnd
