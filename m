@@ -1,27 +1,56 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v5] mfd: syscon: Decouple syscon interface from platform devices
-Date: Fri, 26 Sep 2014 09:16:29 +0200
-Message-ID: <2553182.6YgvmDLuEA@wuerfel>
-References: <1411360807-7750-1-git-send-email-pankaj.dubey@samsung.com> <000d01cfd946$521304f0$f6390ed0$@samsung.com> <CAGhQ9VxwTS9=biwp0nCKu2bVU2aNe679aKR=HU5rd_Uaw99sUw@mail.gmail.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 6/6] mfd: cros_ec: Instantiate sub-devices from device
+ tree
+Date: Fri, 26 Sep 2014 08:21:50 +0100
+Message-ID: <20140926072150.GE31272@lee--X1>
+References: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1410428289-18229-7-git-send-email-javier.martinez@collabora.co.uk>
+ <20140917163114.GL30918@lee--X1>
+ <541A8E88.6050707@collabora.co.uk>
+ <20140919001512.GA29852@lee--X1>
+ <54241E74.9000403@collabora.co.uk>
+ <20140925144846.GC21351@lee--X1>
+ <542437DE.4090701@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGhQ9VxwTS9=biwp0nCKu2bVU2aNe679aKR=HU5rd_Uaw99sUw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Joachim Eastwood <manabian@gmail.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, dianders@chromium.org, kgene.kim@samsung.com, Russell King - ARM Linux <linux@arm.linux.org.uk>, Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, naushad@samsung.com, Li.Xiubo@freescale.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, Lee Jones <lee.jones@linaro.org>, sunil joshi <joshi@samsung.com>, b29396@freescale.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <542437DE.4090701-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Andreas Faerber <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Friday 26 September 2014 07:34:12 Joachim Eastwood wrote:
-> I am working on Cortex-M4 no-MMU platform that isn't upstream yet, btw.
-> 
+On Thu, 25 Sep 2014, Javier Martinez Canillas wrote:
 
-Sorry for drifting off-topic, but this is very interesting to me. Can you
-say which one you are working on and what your timeline is for submitting
-it upstream?
+> On 09/25/2014 04:48 PM, Lee Jones wrote:
+> > On Thu, 25 Sep 2014, Javier Martinez Canillas wrote:
+> >>=20
+> >> The last version of the series (v4) I posted a week ago [0], does =
+not include
+> >> this patch so I hope the series can be picked for 3.18 since most =
+of the patches
+> >> were already acked by you.
+> >=20
+> > Unfortunately this is going to have to wait until v3.19 now, as Lin=
+us
+> > is closing the -rcs early.  I have subsequently applied my last
+> > patch to the MFD tree for v3.18.  It will be good for these patches=
+ to
+> > get some soak testing in -next anyway, rather than rush them in.
+> >=20
+>=20
+> No worries. Does that mean that you are going to pick this series aft=
+er
+> the 3.18 merge window or should I resend this once 3.18-rc1 is releas=
+ed?
 
-I generally like to know about new platforms early, and sometimes we get
-multiple people working on the same one.
+If you can re-send with any Acks you've been given (no new ones) after
+-rc1, that would be helpful.
 
-	Arnd
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
