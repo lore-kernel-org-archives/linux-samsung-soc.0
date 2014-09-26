@@ -1,162 +1,184 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: RE: [PATCH v5] mfd: syscon: Decouple syscon interface from platform
- devices
-Date: Fri, 26 Sep 2014 10:58:33 +0530
-Message-ID: <000e01cfd94a$c5c60510$51520f30$@samsung.com>
+From: Joachim Eastwood <manabian@gmail.com>
+Subject: Re: [PATCH v5] mfd: syscon: Decouple syscon interface from platform devices
+Date: Fri, 26 Sep 2014 07:34:12 +0200
+Message-ID: <CAGhQ9VxwTS9=biwp0nCKu2bVU2aNe679aKR=HU5rd_Uaw99sUw@mail.gmail.com>
 References: <1411360807-7750-1-git-send-email-pankaj.dubey@samsung.com>
- <20140922091925.GA19778@shlinux1.ap.freescale.net>
- <000001cfd719$51e7e560$f5b7b020$@samsung.com> <5439567.VeRyeUcp1j@wuerfel>
+	<CAGhQ9VzZ8LadDT5RWUSX89q0WP3fGiQ8f=bWbRVfEz5Vy_zZKw@mail.gmail.com>
+	<13449286.k3JCbR2ABy@phil>
+	<4389453.TP96FZcCbx@phil>
+	<000d01cfd946$521304f0$f6390ed0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:29821 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753636AbaIZF3R (ORCPT
+Received: from mail-lb0-f176.google.com ([209.85.217.176]:64577 "EHLO
+	mail-lb0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752170AbaIZFeO convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Sep 2014 01:29:17 -0400
-In-reply-to: <5439567.VeRyeUcp1j@wuerfel>
-Content-language: en-us
+	Fri, 26 Sep 2014 01:34:14 -0400
+In-Reply-To: <000d01cfd946$521304f0$f6390ed0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, Li.Xiubo@freescale.com, linux-arm-kernel@lists.infradead.org
-Cc: 'Dong Aisheng' <b29396@freescale.com>, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, naushad@samsung.com, linux-kernel@vger.kernel.org, tomasz.figa@gmail.com, thomas.ab@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, joshi@samsung.com, lee.jones@linaro.org, kgene.kim@samsung.com
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, kgene.kim@samsung.com, Russell King - ARM Linux <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, naushad@samsung.com, b29396@freescale.com, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, thomas.ab@samsung.com, Li.Xiubo@freescale.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, Lee Jones <lee.jones@linaro.org>, dianders@chromium.org
 
-On Thursday, September 25, 2014 6:12 PM, Arnd Bergmann wrote,
-> Subject: Re: [PATCH v5] mfd: syscon: Decouple syscon interface from
-platform
-> devices
-> 
-> On Tuesday 23 September 2014 15:59:43 Pankaj Dubey wrote:
-> > > > -static int syscon_match_node(struct device *dev, void *data)
-> > > > +static struct syscon *of_syscon_register(struct device_node *np)
-> > > >  {
-> > > > -   struct device_node *dn = data;
-> > > > +   struct platform_device *pdev = NULL;
-> > > > +   struct syscon *syscon;
-> > > > +   struct regmap *regmap;
-> > > > +   void __iomem *base;
-> > > > +   int ret;
-> > > > +
-> > > > +   if (!of_device_is_compatible(np, "syscon"))
-> > > > +           return ERR_PTR(-EINVAL);
-> > > > +
-> > > > +   syscon = kzalloc(sizeof(*syscon), GFP_KERNEL);
-> > > > +   if (!syscon)
-> > > > +           return ERR_PTR(-ENOMEM);
-> > > > +
-> > > > +   base = of_iomap(np, 0);
-> > > > +   if (!base) {
-> > > > +           ret = -ENOMEM;
-> > > > +           goto err_map;
-> > > > +   }
-> > > > +
-> > > > +   /* if device is already populated and available then use it */
-> > > > +   pdev = of_find_device_by_node(np);
-> > > > +   if (!pdev) {
-> > > > +           /* for early users create dummy syscon device and use it
-*/
-> > > > +           pdev = platform_device_alloc("dummy-syscon", -1);
-> > >
-> > > Can we create specific devices for each syscon device?
-> > > That looks more reasonable to me.
-> > > Then we can dump registers in regmap debugfs more clearly, just like
-> > > other
-> > devices.
-> > > And i think it's better to follow device tree way to generate
-> > > devices from
-> > node.
-> > > If DT core find a device is already created, it can ignore that
-> > > device to
-> > avoid creating
-> > > duplicated device during of_platform_populate.
-> > >
-> >
-> > If you are referring to use "of_platform_device_create", then I am
-> > afraid that it can't be used in very early stage. For example, current
-> > patch I tested by calling syscon_lookup_by_phandle from "init_irq"
-> > hook of machine_desc, and it worked well, but If I use
-> > "of_platform_device_create"
-> > instead of dummy device, it fails to create pdev and this I verified
-> > on Exynos platform. The reason I selected "init_irq" is because this
-> > comes just before smp init and where once we tried to get regmap
-> > handle, but could not do so.
-> 
-> I don't remember noticing the of_find_device_by_node or
-platform_device_alloc in
-> earlier versions of this patch, but that could just be me failing to read
-it right.
-> 
-Yes, till v2 of this patch set we do not used this and while calling
-regmap_init_mmio, I used
-NULL pointer while creating regmap handle.  But as you may be remember Dong
-Aisheng reported crash
-on latest Linus tree after applying this patch, and it caused because of
-some recent changes in
-regmap which has already landed in main tree, which makes passing of dev
-pointer compulsory
-while calling regmap_init_mmio. Please check following commits in current
-tree
+On 26 September 2014 06:56, Pankaj Dubey <pankaj.dubey@samsung.com> wro=
+te:
+> Hi Heiko and Joachim,
+>
+>> -----Original Message-----
+>> From: Heiko St=C3=BCbner [mailto:heiko@sntech.de]
+>> Sent: Thursday, September 25, 2014 5:52 PM
+>> To: Pankaj Dubey
+>> Cc: Joachim Eastwood; linux-arm-kernel@lists.infradead.org; linux-sa=
+msung-
+>> soc@vger.kernel.org; linux-kernel@vger.kernel.org; kgene.kim@samsung=
+=2Ecom;
+>> Russell King - ARM Linux; Arnd Bergmann; naushad@samsung.com;
+>> b29396@freescale.com; tomasz.figa@gmail.com; joshi@samsung.com;
+>> thomas.ab@samsung.com; Li.Xiubo@freescale.com; vikas.sajjan@samsung.=
+com;
+>> chow.kim@samsung.com; lee.jones@linaro.org; dianders@chromium.org
+>> Subject: Re: [PATCH v5] mfd: syscon: Decouple syscon interface from
+> platform
+>> devices
+>>
+>> Am Mittwoch, 24. September 2014, 20:35:10 schrieb Heiko St=C3=BCbner=
+:
+>> > Hi Pankaj, Joachim,
+>> >
+>> > Am Dienstag, 23. September 2014, 20:12:50 schrieb Joachim Eastwood=
+:
+>> > > On 22 September 2014 06:40, Pankaj Dubey <pankaj.dubey@samsung.c=
+om>
+>> wrote:
+>> > > > Currently a syscon entity can be only registered directly thro=
+ugh
+>> > > > a platform device that binds to a dedicated syscon driver. How=
+ever
+>> > > > in certain use cases it is desirable to make a device used wit=
+h
+>> > > > another driver a syscon interface provider.
+>> > > >
+>> > > > For example, certain SoCs (e.g. Exynos) contain system control=
+ler
+>> > > > blocks which perform various functions such as power domain
+>> > > > control, CPU power management, low power mode control, but in
+>> > > > addition contain certain IP integration glue, such as various
+>> > > > signal masks, coprocessor power control, etc. In such case, th=
+ere
+>> > > > is a need to have a dedicated driver for such system controlle=
+r
+>> > > > but also share registers with other drivers. The latter is whe=
+re the
+> syscon
+>> interface is helpful.
+>> > > >
+>> > > > In case of DT based platforms, this patch decouples syscon obj=
+ect
+>> > > > from syscon platform driver, and allows to create syscon objec=
+ts
+>> > > > first time when it is required by calling of
+>> > > > syscon_regmap_lookup_by APIs and keep a list of such syscon
+>> > > > objects along with syscon provider device_nodes and regmap han=
+dles.
+>> > > >
+>> > > > For non-DT based platforms, this patch keeps syscon platform
+>> > > > driver structure where is can be probed and such non-DT based
+>> > > > drivers can use syscon_regmap_lookup_by_pdev API and get acces=
+s to
+>> regmap handles.
+>> > > > Once all users of "syscon_regmap_lookup_by_pdev" migrated to D=
+T
+>> > > > based, we can completly remove platform driver of syscon, and =
+keep
+>> > > > only helper functions to get regmap handles.
+>> > > >
+>> > > > Suggested-by: Arnd Bergmann <arnd@arndb.de>
+>> > > > Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+>> > > > Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
+>> > > > Tested-by: Javier Martinez Canillas
+>> > > > <javier.martinez@collabora.co.uk>
+>> > > > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>> > >
+>> > > I wrote a clk driver using syscon and your patch. clk driver use=
+s
+>> > > CLK_OF_DECLARE, btw.
+>> > >
+>> > > It works but I get a '(null): Failed to create debugfs directory=
+'
+>> > > message in the boot log.
+>> > >
+>> > > Tested-by: Joachim Eastwood <manabian@gmail.com>
+>> >
+>> > on Rockchip platforms this syscon support also helps quite a bit, =
+as
+>> > the pll lock-status is sitting in an external syscon register, so
+>> > setting target pll-rates through assigned-clocks is not easily doa=
+ble
+> without it.
+>> > Therefore I'm very much looking forward to this.
+>> >
+>> >
+>> > Similar to Joachim I get an error about debugfs from regmap, which
+>> > seems to be caused by
+>> >     name =3D dev_name(map->dev);
+>> > returning NULL in regmap_debugfs_init in regmap-debugfs.c for such=
+ an
+>> > "early" syscon.
+>>
+>> It looks like of_device_make_bus_id would be able to do the necessar=
+y
+> steps to
+>> populate the dev_name seemingly correctly.
+>>
+>> With the diff below I now get a syscon that can init clocks and also=
+ a
+> sane regmap
+>> debugfs init:
+>>
+>> /debug/regmap # ls -la
+>> total 0
+>> drwxr-xr-x    5 0        0                0 Jan  1  1970 .
+>> drwx------   19 0        0                0 Jan  1  1970 ..
+>> drwxr-xr-x    2 0        0                0 Jan  1  1970 0-001b
+>> drwxr-xr-x    2 0        0                0 Jan  1  1970
+> ff730000.power-management
+>> drwxr-xr-x    2 0        0                0 Jan  1  1970 ff770000.sy=
+scon
+>>
+>>
+>> But of course I don't know enough about device-internals to determin=
+e if
+> this is an
+>> insane solution or not :-)
+>>
+>
+> Thanks Heiko for figuring out issue and proposed solution.
+>
+> As you and Joachim pointed out that current patch failed to create re=
+gmap
+> debugfs entry,
+> I also investigated and found that it fails to create regmap debugfs =
+entry
+> either you call it
+> early (from init_irq or clk_init function) or you call it in later st=
+age
+> before actual device is
+> populated (from init_machine before of_platform_populate_device).
+>
+> One point is regmap debugfs code should have handled it gracefully in=
+stead
+> of kernel panic,
+> so looks like it needs some fix in that part of code.
 
-1) d647c19 regmap: add DT endianness binding support.
-2) ba1b53f regmap: Fix DT endianess parsing logic.
-3) 45e1a27 regmap: of_regmap_get_endian() cleanup
+Just for the records. My kernel didn't panic.
+Don't know why it behaves different from Heiko's kernel but I was able
+to boot into user space with your patch.
 
-and following patch [1] for changing syscon binding from Xiubo Li
+I wouldn't have given my 'Tested-by' if didn't boot properly.
 
-[1] [PATCH] mfd: syscon: binding: Add syscon endianness support
-https://lkml.org/lkml/2014/9/18/67
+I am working on Cortex-M4 no-MMU platform that isn't upstream yet, btw.
 
-So we discussed [2] and decided to use either actual device if it's
-populated and available for use or
-create either actual device or dummy device for using it during
-regmap_init_mmio calls.
-
-[2]: https://lkml.org/lkml/2014/9/18/35
-
-So what I understood from these changes from Xiubo Li, they wanted to pass
-endianness of regmap
-handle to be passed from DT. 
-
-So I am not sure if we can really make regmap code work without a device
-pointer. 
-
-> I think this should get removed: it would be much better to ensure that
-the regmap
-> code can work without a device pointer, which I thought it did. We should
-probably
-> also skip the creation of the debugfs directory in that case.
-> 
-> > Also if it was just a matter of creating platform_device at early
-> > stage then early initialization of syscon could have been solved till
-> > now.
-
-As far as debugfs of regmap is concerned it can be solved as I replied to
-Heiko in this thread [3]
-if we are using device pointer while creating regmap handle. 
-If we are not using device pointer while creating regmap handle it won't
-cause any problem and 
-there won't be any debugfs entry.
-
-[3]: https://lkml.org/lkml/2014/9/26/20
-
-> >
-> > So I would suggest if we really want this patch to cover early
-> > initialization of syscon (which is not it's main purpose) current
-> > patch is sufficient.
-> >
-> > @Arnd, since I have addressed crash issue as reported by Dong Aisheng,
-> > I would like to take your ack, but since there are some more code
-> > changes other than what you suggested I request you to check this and
-> > if you are ok, then I would like to your ack so that I can request to
-> > maintainer for taking this patch.
-> 
-> I think we first need to resolve the question of the platform device.
-> 
-
-OK.
-
-Thanks,
-Pankaj Dubey
-
-> 	Arnd
+regards
+Joachim Eastwood
