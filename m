@@ -1,80 +1,57 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [09/14] watchdog: s3c2410_wdt: Add support for Watchdog device
- on Exynos7
-Date: Fri, 26 Sep 2014 10:39:16 -0700
-Message-ID: <20140926173915.GA834@roeck-us.net>
-References: <1409132831-2032-1-git-send-email-ch.naveen@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v5 RESEND 1/3] ARM: EXYNOS: Move code from hotplug.c to platsmp.c
+Date: Fri, 26 Sep 2014 23:13:26 +0200
+Message-ID: <201409262313.26272.arnd@arndb.de>
+References: <1409920495-16533-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1409132831-2032-1-git-send-email-ch.naveen@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-watchdog@vger.kernel.org, Wim Van Sebroeck <wim@iguana.be>, cpgs@samsung.com, naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org
+Content-Type: Text/Plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.24]:56301 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756247AbaIZVNv convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 26 Sep 2014 17:13:51 -0400
+In-Reply-To: <1409920495-16533-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Wed, Aug 27, 2014 at 03:17:11PM +0530, Naveen Krishna Chatradhi wrote:
-> Exynos7 SoC has a Watchdog for Atlas (A57) cores
-> This patch adds support for the Atlas watchdog.
-> 
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> Cc: Wim Van Sebroeck <wim@iguana.be>
+On Friday 05 September 2014, Krzysztof Kozlowski wrote:
+> The commit only moves code around with one additional observable change:
+> the hotplug.c was compiled with custom CFLAGS (-march=armv7-a). These
+> CFLAGS are not necessary any more.
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+This turns out to be wrong, and your change broke 'allmodconfig' builds
+in linux-next. Please apply this patch on top.
 
-> ---
->  .../devicetree/bindings/watchdog/samsung-wdt.txt   |    1 +
->  drivers/watchdog/s3c2410_wdt.c                     |   11 +++++++++++
->  2 files changed, 12 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
-> index cfff375..8f3d96a 100644
-> --- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
-> +++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
-> @@ -9,6 +9,7 @@ Required properties:
->  	(a) "samsung,s3c2410-wdt" for Exynos4 and previous SoCs
->  	(b) "samsung,exynos5250-wdt" for Exynos5250
->  	(c) "samsung,exynos5420-wdt" for Exynos5420
-> +	(c) "samsung,exynos7-wdt" for Exynos7
->  
->  - reg : base physical address of the controller and length of memory mapped
->  	region.
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-> index 7c6ccd0..015256e 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -155,6 +155,15 @@ static const struct s3c2410_wdt_variant drv_data_exynos5420 = {
->  	.quirks = QUIRK_HAS_PMU_CONFIG | QUIRK_HAS_RST_STAT,
->  };
->  
-> +static const struct s3c2410_wdt_variant drv_data_exynos7 = {
-> +	.disable_reg = EXYNOS5_WDT_DISABLE_REG_OFFSET,
-> +	.mask_reset_reg = EXYNOS5_WDT_MASK_RESET_REG_OFFSET,
-> +	.mask_bit = 0,
-> +	.rst_stat_reg = EXYNOS5_RST_STAT_REG_OFFSET,
-> +	.rst_stat_bit = 23,	/* A57 WDTRESET */
-> +	.quirks = QUIRK_HAS_PMU_CONFIG | QUIRK_HAS_RST_STAT,
-> +};
-> +
->  static const struct of_device_id s3c2410_wdt_match[] = {
->  	{ .compatible = "samsung,s3c2410-wdt",
->  	  .data = &drv_data_s3c2410 },
-> @@ -162,6 +171,8 @@ static const struct of_device_id s3c2410_wdt_match[] = {
->  	  .data = &drv_data_exynos5250 },
->  	{ .compatible = "samsung,exynos5420-wdt",
->  	  .data = &drv_data_exynos5420 },
-> +	{ .compatible = "samsung,exynos7-wdt",
-> +	  .data = &drv_data_exynos7 },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, s3c2410_wdt_match);
+	Arnd
+
+8<----------
+>From 4ba6bf8806caec386e35930314dbad071284c837 Mon Sep 17 00:00:00 2001
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 26 Sep 2014 23:09:38 +0200
+Subject: [PATCH] ARM: EXYNOS: fix build error in platsmp.c
+
+/tmp/ccYeWL3V.s: Assembler messages:
+/tmp/ccYeWL3V.s:659: Error: selected processor does not support ARM mode `isb '
+/tmp/ccYeWL3V.s:664: Error: selected processor does not support ARM mode `isb '
+/tmp/ccYeWL3V.s:665: Error: selected processor does not support ARM mode `dsb '
+make[3]: *** [arch/arm/mach-exynos/platsmp.o] Error 1
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 17342534e1d932 ("ARM: EXYNOS: Move code from hotplug.c to platsmp.c")
+
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index 4e49d4efb264..64324bf5edb4 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -21,6 +21,7 @@ obj-$(CONFIG_PM_SLEEP)		+= suspend.o
+ obj-$(CONFIG_PM_GENERIC_DOMAINS) += pm_domains.o
+ 
+ obj-$(CONFIG_SMP)		+= platsmp.o headsmp.o
++CFLAGS_platsmp.o		:= -march=armv7-a
+ 
+ plus_sec := $(call as-instr,.arch_extension sec,+sec)
+ AFLAGS_exynos-smc.o		:=-Wa,-march=armv7-a$(plus_sec)
