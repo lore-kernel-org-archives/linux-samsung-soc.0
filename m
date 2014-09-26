@@ -1,56 +1,117 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 6/6] mfd: cros_ec: Instantiate sub-devices from device
- tree
-Date: Fri, 26 Sep 2014 08:21:50 +0100
-Message-ID: <20140926072150.GE31272@lee--X1>
-References: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk>
- <1410428289-18229-7-git-send-email-javier.martinez@collabora.co.uk>
- <20140917163114.GL30918@lee--X1>
- <541A8E88.6050707@collabora.co.uk>
- <20140919001512.GA29852@lee--X1>
- <54241E74.9000403@collabora.co.uk>
- <20140925144846.GC21351@lee--X1>
- <542437DE.4090701@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <542437DE.4090701-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Bill Richardson <wfrichar-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Derek Basehore <dbasehore-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Todd Broch <tbroch-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Andreas Faerber <afaerber-l3A5Bk7waGM@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Jonghwa Lee <jonghwa3.lee@samsung.com>
+Subject: [PATCH 1/2] ARM: EXYNOS: suspend: Make restoring registers into
+ selectable option.
+Date: Fri, 26 Sep 2014 16:23:21 +0900
+Message-ID: <1411716202-31644-2-git-send-email-jonghwa3.lee@samsung.com>
+References: <1411716202-31644-1-git-send-email-jonghwa3.lee@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:44418 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753156AbaIZHXa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 26 Sep 2014 03:23:30 -0400
+In-reply-to: <1411716202-31644-1-git-send-email-jonghwa3.lee@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: kgene.kim@samsung.com, cw00.choi@samsung.com, vikas.sajjan@samsung.com, Jonghwa Lee <jonghwa3.lee@samsung.com>
 
-On Thu, 25 Sep 2014, Javier Martinez Canillas wrote:
+Some EXYNOS series may not requried to save ROM registers as it's default
+for now. This patch makes restoring registers into machine-specific option.
 
-> On 09/25/2014 04:48 PM, Lee Jones wrote:
-> > On Thu, 25 Sep 2014, Javier Martinez Canillas wrote:
-> >>=20
-> >> The last version of the series (v4) I posted a week ago [0], does =
-not include
-> >> this patch so I hope the series can be picked for 3.18 since most =
-of the patches
-> >> were already acked by you.
-> >=20
-> > Unfortunately this is going to have to wait until v3.19 now, as Lin=
-us
-> > is closing the -rcs early.  I have subsequently applied my last
-> > patch to the MFD tree for v3.18.  It will be good for these patches=
- to
-> > get some soak testing in -next anyway, rather than rush them in.
-> >=20
->=20
-> No worries. Does that mean that you are going to pick this series aft=
-er
-> the 3.18 merge window or should I resend this once 3.18-rc1 is releas=
-ed?
+Signed-off-by: Jonghwa Lee <jonghwa3.lee@samsung.com>
+---
+ arch/arm/mach-exynos/suspend.c |   39 +++++++++++++++++++++------------------
+ 1 file changed, 21 insertions(+), 18 deletions(-)
 
-If you can re-send with any Acks you've been given (no new ones) after
--rc1, that would be helpful.
-
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index f5d9773..b41d146 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -48,23 +48,28 @@ struct exynos_wkup_irq {
+ 	u32 mask;
+ };
+ 
+-static struct sleep_save exynos5_sys_save[] = {
+-	SAVE_ITEM(EXYNOS5_SYS_I2C_CFG),
++static struct sleep_save exynos_save_regs[] = {
++	/* SROM side */
++	SAVE_ITEM(S5P_SROM_BW),
++	SAVE_ITEM(S5P_SROM_BC0),
++	SAVE_ITEM(S5P_SROM_BC1),
++	SAVE_ITEM(S5P_SROM_BC2),
++	SAVE_ITEM(S5P_SROM_BC3),
+ };
+ 
+-static struct sleep_save exynos_core_save[] = {
+-	/* SROM side */
++static struct sleep_save exynos5_save_regs[] = {
+ 	SAVE_ITEM(S5P_SROM_BW),
+ 	SAVE_ITEM(S5P_SROM_BC0),
+ 	SAVE_ITEM(S5P_SROM_BC1),
+ 	SAVE_ITEM(S5P_SROM_BC2),
+ 	SAVE_ITEM(S5P_SROM_BC3),
++	SAVE_ITEM(EXYNOS5_SYS_I2C_CFG),
+ };
+ 
+ struct exynos_pm_data {
+ 	const struct exynos_wkup_irq *wkup_irq;
+-	struct sleep_save *extra_save;
+-	int num_extra_save;
++	struct sleep_save *save_regs;
++	int num_save_regs;
+ 	unsigned int wake_disable_mask;
+ 	unsigned int *release_ret_regs;
+ 
+@@ -165,11 +170,9 @@ static void exynos_pm_prepare(void)
+ 	/* Set wake-up mask registers */
+ 	exynos_pm_set_wakeup_mask();
+ 
+-	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+-
+-	 if (pm_data->extra_save)
+-		s3c_pm_do_save(pm_data->extra_save,
+-				pm_data->num_extra_save);
++	 if (pm_data->save_regs)
++		s3c_pm_do_save(pm_data->save_regs,
++				pm_data->num_save_regs);
+ 
+ 	exynos_pm_enter_sleep_mode();
+ }
+@@ -203,11 +206,9 @@ static void exynos_pm_resume(void)
+ 	/* For release retention */
+ 	exynos_pm_release_retention();
+ 
+-	if (pm_data->extra_save)
+-		s3c_pm_do_restore_core(pm_data->extra_save,
+-					pm_data->num_extra_save);
+-
+-	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
++	if (pm_data->save_regs)
++		s3c_pm_do_restore_core(pm_data->save_regs,
++					pm_data->num_save_regs);
+ 
+ 	if (cpuid == ARM_CPU_PART_CORTEX_A9)
+ 		scu_enable(S5P_VA_SCU);
+@@ -291,6 +292,8 @@ static const struct exynos_pm_data exynos4_pm_data = {
+ 	.wkup_irq	= exynos4_wkup_irq,
+ 	.wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
+ 	.release_ret_regs = exynos_release_ret_regs,
++	.save_regs	= exynos_save_regs,
++	.num_save_regs	= ARRAY_SIZE(exynos_save_regs),
+ 	.pm_suspend	= exynos_pm_suspend,
+ 	.pm_resume	= exynos_pm_resume,
+ 	.pm_prepare	= exynos_pm_prepare,
+@@ -301,8 +304,8 @@ static const struct exynos_pm_data exynos5250_pm_data = {
+ 	.wkup_irq	= exynos5250_wkup_irq,
+ 	.wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
+ 	.release_ret_regs = exynos_release_ret_regs,
+-	.extra_save	= exynos5_sys_save,
+-	.num_extra_save	= ARRAY_SIZE(exynos5_sys_save),
++	.save_regs	= exynos5_save_regs,
++	.num_save_regs	= ARRAY_SIZE(exynos5_save_regs),
+ 	.pm_suspend	= exynos_pm_suspend,
+ 	.pm_resume	= exynos_pm_resume,
+ 	.pm_prepare	= exynos_pm_prepare,
+-- 
+1.7.9.5
