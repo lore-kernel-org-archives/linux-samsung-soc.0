@@ -1,37 +1,48 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v3 6/6] mfd: cros_ec: Instantiate sub-devices from device
- tree
-Date: Fri, 26 Sep 2014 09:47:39 +0200
-Message-ID: <54251A1B.8040208@collabora.co.uk>
-References: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk> <1410428289-18229-7-git-send-email-javier.martinez@collabora.co.uk> <20140917163114.GL30918@lee--X1> <541A8E88.6050707@collabora.co.uk> <20140919001512.GA29852@lee--X1> <54241E74.9000403@collabora.co.uk> <20140925144846.GC21351@lee--X1> <542437DE.4090701@collabora.co.uk> <20140926072150.GE31272@lee--X1>
+From: Joachim Eastwood <manabian@gmail.com>
+Subject: Re: [PATCH v5] mfd: syscon: Decouple syscon interface from platform devices
+Date: Fri, 26 Sep 2014 09:48:24 +0200
+Message-ID: <CAGhQ9VwAe7d7fX1Lw22ocxDSXjOZbvXdmG1u6_d5v7ptmYMYeg@mail.gmail.com>
+References: <1411360807-7750-1-git-send-email-pankaj.dubey@samsung.com>
+	<000d01cfd946$521304f0$f6390ed0$@samsung.com>
+	<CAGhQ9VxwTS9=biwp0nCKu2bVU2aNe679aKR=HU5rd_Uaw99sUw@mail.gmail.com>
+	<2553182.6YgvmDLuEA@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:45556 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753378AbaIZHrr (ORCPT
+Received: from mail-lb0-f178.google.com ([209.85.217.178]:60368 "EHLO
+	mail-lb0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753378AbaIZHs0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Sep 2014 03:47:47 -0400
-In-Reply-To: <20140926072150.GE31272@lee--X1>
+	Fri, 26 Sep 2014 03:48:26 -0400
+In-Reply-To: <2553182.6YgvmDLuEA@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, Andreas Faerber <afaerber@suse.de>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Pankaj Dubey <pankaj.dubey@samsung.com>, Douglas Anderson <dianders@chromium.org>, kgene.kim@samsung.com, Russell King - ARM Linux <linux@arm.linux.org.uk>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, naushad@samsung.com, Li.Xiubo@freescale.com, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, vikas.sajjan@samsung.com, chow.kim@samsung.com, Lee Jones <lee.jones@linaro.org>, sunil joshi <joshi@samsung.com>, b29396@freescale.com
 
-On 09/26/2014 09:21 AM, Lee Jones wrote:
-> On Thu, 25 Sep 2014, Javier Martinez Canillas wrote:
->> > Unfortunately this is going to have to wait until v3.19 now, as Linus
->> > is closing the -rcs early.  I have subsequently applied my last
->> > patch to the MFD tree for v3.18.  It will be good for these patches to
->> > get some soak testing in -next anyway, rather than rush them in.
->> > 
->> 
->> No worries. Does that mean that you are going to pick this series after
->> the 3.18 merge window or should I resend this once 3.18-rc1 is released?
-> 
-> If you can re-send with any Acks you've been given (no new ones) after
-> -rc1, that would be helpful.
-> 
+On 26 September 2014 09:16, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Friday 26 September 2014 07:34:12 Joachim Eastwood wrote:
+>> I am working on Cortex-M4 no-MMU platform that isn't upstream yet, btw.
+>>
+>
+> Sorry for drifting off-topic, but this is very interesting to me. Can you
+> say which one you are working on and what your timeline is for submitting
+> it upstream?
 
-Will do it, thanks a lot for your help.
+It's NXP LPC18xx/43xx which is Cortex-M3/M4.
+
+3.19 or 3.20 might be target.
+
+Right now everything is in a github repository here:
+https://github.com/manabian/linux-lpc
+
+Most stuff are working now and I am in the process of clean it up and
+adding documentation.
+
+> I generally like to know about new platforms early, and sometimes we get
+> multiple people working on the same one.
+
+I see.
+
+regards,
+Joachim Eastwood
