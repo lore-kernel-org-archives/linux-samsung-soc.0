@@ -1,43 +1,36 @@
-From: Daniel Drake <drake@endlessm.com>
-Subject: 3.17-rc6 on ODROID: ERROR: Bad of_node_put() on /ehci@12580000/port@1
-Date: Fri, 26 Sep 2014 18:24:41 -0600
-Message-ID: <CAD8Lp45qyHpHqRnUy4T9Sm8zV4XJBDp=cLYXjtcxmVrS8GSjbg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH 0/2] Exynos3250: add DT node and clock for UART2 and UART3
+Date: Sat, 27 Sep 2014 10:28:46 +0530
+Message-ID: <1411793928-32692-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f169.google.com ([74.125.82.169]:60436 "EHLO
-	mail-we0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755944AbaI0AYm (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:52693 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750975AbaI0FDm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Sep 2014 20:24:42 -0400
-Received: by mail-we0-f169.google.com with SMTP id k48so10440092wev.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Sep 2014 17:24:41 -0700 (PDT)
+	Sat, 27 Sep 2014 01:03:42 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NCJ002R7NE5T820@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 27 Sep 2014 14:03:41 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, robh+dt@kernel.org, linux@arm.linux.org.uk, naushad@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Hi,
+This patch series adds device tree node and missing clock support of UART2
+and UART3 for Exynos3250. DT patch is dependent on clock patch.
 
-Booting 3.17-rc6 on ODROID-U2, I see this message:
+Pankaj Dubey (2):
+  clk: samsung: exynos3250: add uart2/3 related clocks
+  arm: dts: exynos3250: add device node support for serial2 and serial3
 
-ERROR: Bad of_node_put() on /ehci@12580000/port@1
-CPU: 0 PID: 1 Comm: swapper/0 Not tainted 3.17.0-rc6-00376-g85cd8fd #1031
-[<c0016418>] (unwind_backtrace) from [<c0011f00>] (show_stack+0x10/0x14)
-[<c0011f00>] (show_stack) from [<c08213fc>] (dump_stack+0x84/0xc4)
-[<c08213fc>] (dump_stack) from [<c02dacc0>] (kobject_cleanup+0x58/0x6c)
-[<c02dacc0>] (kobject_cleanup) from [<c0608718>]
-(of_get_next_available_child+0x78/0x98)
-[<c0608718>] (of_get_next_available_child) from [<c05673c8>]
-(exynos_ehci_probe+0x254/0x424)
-[<c05673c8>] (exynos_ehci_probe) from [<c03ce700>]
-(platform_drv_probe+0x2c/0x5c)
-[<c03ce700>] (platform_drv_probe) from [<c03ccd00>]
-(driver_probe_device+0xe8/0x234)
-[<c03ccd00>] (driver_probe_device) from [<c03ccef8>] (__driver_attach+0x68/0x8c)
+ arch/arm/boot/dts/exynos3250-pinctrl.dtsi |   21 +++++++++++++++++++++
+ arch/arm/boot/dts/exynos3250.dtsi         |   24 ++++++++++++++++++++++++
+ drivers/clk/samsung/clk-exynos3250.c      |   11 +++++++++++
+ include/dt-bindings/clock/exynos3250.h    |   10 +++++++++-
+ 4 files changed, 65 insertions(+), 1 deletion(-)
 
-This repeats for all of the ehci and ohci ports.
-
-Haven't had time to dig deeper. Is this a known issue?
-
-Thanks
-Daniel
+-- 
+1.7.9.5
