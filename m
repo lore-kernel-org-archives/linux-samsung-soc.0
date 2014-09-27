@@ -1,89 +1,43 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH v2 0/2] serial: samsung: add support for early console
-Date: Sat, 27 Sep 2014 04:58:05 +0530
-Message-ID: <CAGOxZ509Sfd77FQFSKPgp7piDFa-o2zdFuHy9EzfXULkpJHGrg@mail.gmail.com>
-References: <1411638892-13702-1-git-send-email-m.szyprowski@samsung.com>
+From: Daniel Drake <drake@endlessm.com>
+Subject: 3.17-rc6 on ODROID: ERROR: Bad of_node_put() on /ehci@12580000/port@1
+Date: Fri, 26 Sep 2014 18:24:41 -0600
+Message-ID: <CAD8Lp45qyHpHqRnUy4T9Sm8zV4XJBDp=cLYXjtcxmVrS8GSjbg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f179.google.com ([209.85.160.179]:62303 "EHLO
-	mail-yk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755793AbaIZX2q (ORCPT
+Received: from mail-we0-f169.google.com ([74.125.82.169]:60436 "EHLO
+	mail-we0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755944AbaI0AYm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 26 Sep 2014 19:28:46 -0400
-Received: by mail-yk0-f179.google.com with SMTP id 142so4219605ykq.10
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Sep 2014 16:28:45 -0700 (PDT)
-In-Reply-To: <1411638892-13702-1-git-send-email-m.szyprowski@samsung.com>
+	Fri, 26 Sep 2014 20:24:42 -0400
+Received: by mail-we0-f169.google.com with SMTP id k48so10440092wev.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 26 Sep 2014 17:24:41 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Alim Akhtar <alim.akhtar@samsung.com>, Thomas P Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robherring2@gmail.com>
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
 
-HI Marek,
+Hi,
 
-On Thu, Sep 25, 2014 at 3:24 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> This patchset adds support for early console defined in device tree. As
-> an example, DTS files for all Exynos4 based machines are updated with
-> the correct value for common chosen/sdtout property.
->
-> To get it fully functional on ARM architecture, additional improvements
-> (support for early_ioremap) are needed in early console code.
->
-> Best regards
-> Marek Szyprowski
-> Samsung R&D Institute Poland
->
-> Change log:
->
-> v2:
-> - added support for command line based initialization
->
-> v1: http://www.spinics.net/lists/linux-samsung-soc/msg37094.html
-> - initial version
->
->
-> Patch summary:
->
-> Tomasz Figa (2):
->   serial: samsung: Add support for early console
->   ARM: dts: exynos4: Add stdout-path properties
->
->  Documentation/kernel-parameters.txt             |  10 +++
->  arch/arm/boot/dts/exynos4210-origen.dts         |   1 +
->  arch/arm/boot/dts/exynos4210-smdkv310.dts       |   1 +
->  arch/arm/boot/dts/exynos4210-trats.dts          |   1 +
->  arch/arm/boot/dts/exynos4210-universal_c210.dts |   1 +
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   4 +
->  arch/arm/boot/dts/exynos4412-origen.dts         |   1 +
->  arch/arm/boot/dts/exynos4412-smdk4412.dts       |   1 +
->  arch/arm/boot/dts/exynos4412-tiny4412.dts       |   4 +
->  arch/arm/boot/dts/exynos4412-trats2.dts         |   1 +
->  drivers/tty/serial/Kconfig                      |   1 +
->  drivers/tty/serial/samsung.c                    | 103 ++++++++++++++++++++++++
->  12 files changed, 129 insertions(+)
+Booting 3.17-rc6 on ODROID-U2, I see this message:
 
-Tested this on ARM64 based exynos7 platform, both command line and DT
-ways. Both works well.
-Compile tested on ARM.
-Not sure if my ACK matters here, but you certainly have my
+ERROR: Bad of_node_put() on /ehci@12580000/port@1
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 3.17.0-rc6-00376-g85cd8fd #1031
+[<c0016418>] (unwind_backtrace) from [<c0011f00>] (show_stack+0x10/0x14)
+[<c0011f00>] (show_stack) from [<c08213fc>] (dump_stack+0x84/0xc4)
+[<c08213fc>] (dump_stack) from [<c02dacc0>] (kobject_cleanup+0x58/0x6c)
+[<c02dacc0>] (kobject_cleanup) from [<c0608718>]
+(of_get_next_available_child+0x78/0x98)
+[<c0608718>] (of_get_next_available_child) from [<c05673c8>]
+(exynos_ehci_probe+0x254/0x424)
+[<c05673c8>] (exynos_ehci_probe) from [<c03ce700>]
+(platform_drv_probe+0x2c/0x5c)
+[<c03ce700>] (platform_drv_probe) from [<c03ccd00>]
+(driver_probe_device+0xe8/0x234)
+[<c03ccd00>] (driver_probe_device) from [<c03ccef8>] (__driver_attach+0x68/0x8c)
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-Tested-by: Alim Akhtar <alim.akhtar@samsung.com>
+This repeats for all of the ehci and ohci ports.
 
-I think this is good to go in with a minor comment addressed on 1st patch.
-Thanks!
->
-> --
-> 1.9.2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Haven't had time to dig deeper. Is this a known issue?
 
-
-
--- 
-Regards,
-Alim
+Thanks
+Daniel
