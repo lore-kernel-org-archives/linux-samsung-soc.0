@@ -1,48 +1,62 @@
 From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH v3 6/6] arm64: exynos: Enable pinctrl support for Exynos7
-Date: Mon, 29 Sep 2014 10:45:12 +0530
-Message-ID: <1411967712-8321-7-git-send-email-a.kesavan@samsung.com>
-References: <1411967712-8321-1-git-send-email-a.kesavan@samsung.com>
+Subject: [PATCH] serial: samsung: Fix serial config dependencies for exynos7
+Date: Mon, 29 Sep 2014 10:46:57 +0530
+Message-ID: <1411967817-8423-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:31483 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:31737 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751694AbaI2FQN (ORCPT
+	with ESMTP id S1751519AbaI2FRZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Sep 2014 01:16:13 -0400
-In-reply-to: <1411967712-8321-1-git-send-email-a.kesavan@samsung.com>
+	Mon, 29 Sep 2014 01:17:25 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, tomasz.figa@gmail.com, linus.walleij@linaro.org, Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org, jslaby@suse.cz, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Enable pinctrl support for exynos7 SoCs.
+Exynos7 has a similar serial controller to that present in older Samsung
+SoCs. To re-use the existing serial driver on Exynos7 we need to have
+SERIAL_SAMSUNG_UARTS_4 and SERIAL_SAMSUNG_UARTS selected. This is not
+possible because these symbols are dependent on PLAT_SAMSUNG which is
+not present for the ARMv8 based exynos7.
 
-Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Change the dependency of these symbols from PLAT_SAMSUNG to the serial
+driver thus making it available on exynos7. As the existing platform
+specific code making use of these symbols is related to uart driver this
+change in dependency should not cause any issues.
+
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-Reviewed-by: Thomas Abraham <thomas.ab@samsung.com>
-Tested-by: Thomas Abraham <thomas.ab@samsung.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/Kconfig |    2 ++
- 1 file changed, 2 insertions(+)
+Build tested with s3c6400_defconfig, exynos_defconfig and arm64's defconfig
+with and without the serial driver enabled.
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 1874e1a..4ee1250 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -146,6 +146,8 @@ config ARCH_EXYNOS7
- 	bool "ARMv8 based Samsung Exynos7"
- 	select ARCH_EXYNOS
- 	select COMMON_CLK_SAMSUNG
-+	select PINCTRL
-+	select PINCTRL_EXYNOS
- 	help
- 	  This enables support for Samsung Exynos7 SoC family
+ drivers/tty/serial/Kconfig |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 81f6ee7..e6c0bcb 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -249,14 +249,14 @@ config SERIAL_SAMSUNG
  
+ config SERIAL_SAMSUNG_UARTS_4
+ 	bool
+-	depends on PLAT_SAMSUNG
++	depends on SERIAL_SAMSUNG
+ 	default y if !(CPU_S3C2410 || CPU_S3C2412 || CPU_S3C2440 || CPU_S3C2442)
+ 	help
+ 	  Internal node for the common case of 4 Samsung compatible UARTs
+ 
+ config SERIAL_SAMSUNG_UARTS
+ 	int
+-	depends on PLAT_SAMSUNG
++	depends on SERIAL_SAMSUNG
+ 	default 4 if SERIAL_SAMSUNG_UARTS_4 || CPU_S3C2416
+ 	default 3
+ 	help
 -- 
 1.7.9.5
