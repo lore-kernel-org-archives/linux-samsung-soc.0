@@ -1,158 +1,74 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: Unable to boot mainline on snow chromebook since 3.15
-Date: Mon, 29 Sep 2014 14:57:19 +0200
-Message-ID: <20140929125716.GE26008@ulmo>
-References: <540C7F5B.6070307@gmail.com>
- <540C83DE.10505@collabora.co.uk>
- <540C8577.2070907@gmail.com>
- <20140908112112.GK26030@arm.com>
- <CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
- <CAD=FV=VAqzvJQDQMjjeQ1p5okyDzE=ff_sguObZxh59qbzcaTQ@mail.gmail.com>
- <CACxGe6t_ex1bU=CvTpXR4VJgNf1hAq33hr6ykbHy_sMXEk4h-g@mail.gmail.com>
- <CAOesGMipX3MV6sMWLuY=D+bQ6qe8P17YFbTFwZOHPeSc3Pw9Cg@mail.gmail.com>
- <20140910143144.GF7960@sirena.org.uk>
- <CACxGe6u=QkGTKGfaE_jJ5VFMhdVKQNggp3qVBUgNP7rDbZss_A@mail.gmail.com>
+From: Vikas Sajjan <vikas.sajjan@samsung.com>
+Subject: Re: [PATCH v7 0/2] Adds PMU and S2R support for exynos5420
+Date: Mon, 29 Sep 2014 18:29:00 +0530
+Message-ID: <CAGm_ybgFfnS=bhz2yWUt_b_95Wg=eDNxadzfy7WF+VNFx+pO6Q@mail.gmail.com>
+References: <1408625982-3267-1-git-send-email-vikas.sajjan@samsung.com>
+	<CAGm_ybh-R1GsHF-BRhRYQKkCpQFQSE6Mem=A3kz=H3Bemor9xA@mail.gmail.com>
+	<CABxcv=kHwCCYhit20qO1q=Nn3KVj8U=8cpCu=DQRuy+R86N0kQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ZInfyf7laFu/Kiw7"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:33383 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751753AbaI2M5W (ORCPT
+Received: from mail-wg0-f49.google.com ([74.125.82.49]:37587 "EHLO
+	mail-wg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752885AbaI2M7B (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Sep 2014 08:57:22 -0400
-Received: by mail-wg0-f45.google.com with SMTP id m15so365969wgh.28
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Sep 2014 05:57:21 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CACxGe6u=QkGTKGfaE_jJ5VFMhdVKQNggp3qVBUgNP7rDbZss_A@mail.gmail.com>
+	Mon, 29 Sep 2014 08:59:01 -0400
+Received: by mail-wg0-f49.google.com with SMTP id x12so409297wgg.8
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Sep 2014 05:59:00 -0700 (PDT)
+In-Reply-To: <CABxcv=kHwCCYhit20qO1q=Nn3KVj8U=8cpCu=DQRuy+R86N0kQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: Mark Brown <broonie@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Prashanth G <prashanth.g@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>
+
+Hi Javier,
 
 
---ZInfyf7laFu/Kiw7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Sep 25, 2014 at 10:45 PM, Javier Martinez Canillas
+<javier@dowhile0.org> wrote:
+> [adding Pankaj Dubey to cc list]
+>
+> Hello Vikas,
+>
+> On Sun, Sep 14, 2014 at 4:57 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
+>> Hi All,
+>>
+>>
+>> On Thu, Aug 21, 2014 at 6:29 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
+>>> Rebased on
+>>> 1] Kukjin Kim's tree, master branch
+>>> http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/
+>>> 2] Pankaj Dubey's v7 PMU patchset
+>>> https://lkml.org/lkml/2014/7/9/2
+>>> http://lists.infradead.org/pipermail/linux-arm-kernel/2014-July/270655.html
+>
+> The mentioned patches from the PMU series depend on the patch to
+> decouple the syscon interface from syscon drivers. The latest version
+> of that patch is Pankaj's "[PATCH v5] mfd: syscon: Decouple syscon
+> interface from platform devices" [0].
+>
 
-On Wed, Sep 10, 2014 at 03:56:16PM +0100, Grant Likely wrote:
-> On Wed, Sep 10, 2014 at 3:31 PM, Mark Brown <broonie@kernel.org> wrote:
-> > On Wed, Sep 10, 2014 at 06:06:46AM -0700, Olof Johansson wrote:
-> >> On Mon, Sep 8, 2014 at 12:40 PM, Grant Likely <grant.likely@secretlab.=
-ca> wrote:
-> >
-> >> > Well, lets see... We've got a real user complaining about a platform
-> >> > that used to work on mainline, and no longer does. The only loophole
-> >> > for ignoring breakage is if there nobody cares that it is broken. Th=
-at
-> >> > currently isn't the case. So even though it's based on a patch that
-> >> > has "DO NOT SUBMIT" in large friendly letters on the front cover, it
-> >> > doesn't change the situation that mainline has a regression.
-> >
-> >> Yeah, I'm with you on this Grant, it doesn't matter what the patch is
-> >> labelled as.
-> >
-> >> One way to deal with this could be to add a quirk at boot time --
-> >> looking for the simplefb and if found, modifies the regulators to keep
-> >> them on. That'd go in the kernel, not in firmware.
-> >
-> > Well, we should also be fixing simplefb to manage the resources it uses
-> > though that doesn't clean up after the broken DTs that are currently
-> > deployed.
-> >
-> > As well as the regulators we'll also need to fix the clocks.  If we're
-> > going to start adding these fixups perhaps we want to consider having a
-> > wrapper stage that deals with rewriting DTs prior to trying to use them?
-> > I'm not sure if it makes much difference but there's overlap with other
-> > tools like the ATAGs conversion wrapper and building separately would
-> > let the fixup code run early without directly going into the early init
-> > code (which seems a bit scary).
-> >
-> >> Much better would have been if the DRM changes worked when they
-> >> landed, so that the migration form simplefb to drm was invisible to
-> >> the user. Or at least, to get them working ASAP since they're still
-> >> broken. :(
-> >
-> > As far as I can tell the problem here is coming from the decision to
-> > have simplefb use resources without knowing about them - can we agree
-> > that this is a bad idea?
->=20
-> No, I don't think we can... there is a certain amount of "firmware got
-> things working for us, and we're going to use it for a while" that is
-> absolutely reasonable. simplefb is a good example, but there are
-> certainly others.
->=20
-> I /do/ think it would be better for the simplefb data to get embedded
-> or linked into the node of the graphics controller so that it can be
-> torn down appropriately, and we need a rule for how long boot-state
-> can be considered valid so that a proper driver can either reserve the
-> resources for a given SoC, or do a full handoff from the simplefb.
-> Even without that though, we need to be able to handle the case of an
-> anonymous simplefb node with no regulator information. If that means
-> the default simplefb behaviour is to inhibit runtime pm on all
-> resources until a real driver show up, then that might just be what we
-> need to do.
->=20
-> Two things should probably be changed from the current setup. 1)
-> simplefb shouldn't be a platform driver. It is a boot thing that
-> handles initial state from the graphics chip. By implementing it as a
-> platform driver, it prevents the real driver from binding to the real
-> device if the simplefb data embedded into it. 2) make sure that an SoC
-> driver can protect the needed resources before they are automatically
-> disabled. Either by putting them in an earlier initcall, or handling
-> it in the subsystem code. I don't know enough about the regulator and
-> clock runtime PM to know what the best way to do this is.
+ Since Arnd has given "Reviewed-by" to Pankaj's MFD syscon patch now,
+Pankaj can rebase his PMU patchset [1],  so that I can re-spin my 5420
+S2R patchset on top his PMU patchset.
 
-I posted a patch[0] earlier to do this for the clock framework in "that
-other thread". The idea is that shim drivers for these types of firmware
-devices can tell the various subsystems that they might need resources
-that aren't explicitly requested. The current implementation simply uses
-the existing infrastructure already present for the clk_ignore_unused
-command-line argument and allows drivers to declare this requirement. It
-also allows these drivers to retire the request once they've properly
-handed off to the real driver.
+[1]  https://lkml.org/lkml/2014/7/9/2
+      http://lists.infradead.org/pipermail/linux-arm-kernel/2014-July/270655.html
 
-Something similar could be done other frameworks.
+> There is still an ongoing discussion about the implementation details
+> since errors were reported (debugfs regmap dir failing to be created
+> due a NULL device name) so this won't be a definite version.
+>
+> But I tested that patch on an Exynos5420 Peach Pit and it works so
+> maybe Pankaj can re-spin his PMU series on top of his latest syscon
+> patch so at least the dependencies for your series are sorted and
+> people can try it?
+>
+> Best regards,
+> Javier
+>
+> [0]: https://patchwork.kernel.org/patch/4945481/
 
-One of the objections to that in the other thread is that it won't
-prevent clocks from being disabled if some other driver was using those
-same clocks and doing a clk_enable()/clk_disable() on them. But quite
-frankly I don't think that's something we need to worry about.
 
-Though there are two cases: one is to use simplefb as a means to have
-early boot messages on a graphical display (and optionally hand off to a
-real driver). The other is to use simplefb as the only framebuffer
-driver until a proper driver has been implemented. The latter would have
-the disadvantage of not allowing unused resources from being garbage
-collected at all. Then again, I don't think power consumption is going
-to be a very big issue on hardware where no proper display driver is
-available.
-
-Thierry
-
-[0]: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-September/2=
-91295.html
-
---ZInfyf7laFu/Kiw7
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUKVcsAAoJEN0jrNd/PrOhzNQP/28yMfU8A9zRvOXPJAABtrbU
-CVpibmDgFRrs+NUVjYzN/LrYQ5pOYOj9G+h+j47gYBujIbF6Mva5ZFsKJ49EGBFd
-W0MMo9mr19qI/Ysap95kGZbVa7N9OKIQI7q9J14N5gmy+9VGamGQhdlPjApuR0FL
-WcVZ8KFVrAMxrW94Y9OCi0w8XtB7eRfkDN/MpQIrHGAnzdJxs4UMQ93lTAp4tq0x
-VYYARXmJxe67bUj+C4CXi8Kgxq48CCpnv/fx2efMbx80k2TudRhqiJefgIHlUMtI
-UZVnefFnnwD9rAFT9xj5bPKD0+KeGAR+0/LaGs1kqZiCW6DHUsp8iWPm4SADpnw1
-kOdnwizqvxZGhqOFtVESIbi08pHv8aqhD4/JabzaKHlBPy6LDiSaVUqkK1fbjGBU
-CYmtcwYsM2gWr5qR5IIIDCtRB6miEaYPo205AlJ09d1XXdKDNqVA1ujubz64/HLA
-O2/LhtsLI+gTZJbJD0dr+4pVXHSjuieOVOWTCWa3qqjet5vLeRGZnJWurywIlnEI
-R7kbHKcgDpbN0Lzlj1lpFqP1AYyWeh9ZXTlAfvfBXOOcqvjoP+E+teDa8yIgGro9
-6z2+vre+MCHiaMX+ivotTimTvRonX1XnXfbXBvPbYAMsBIyohNXD934sy7UcTVQw
-pqFVJZYVebPJJTAV94iY
-=58Vl
------END PGP SIGNATURE-----
-
---ZInfyf7laFu/Kiw7--
+Regards
+Vikas Sajjan
