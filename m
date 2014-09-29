@@ -1,66 +1,69 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH 1/2 v2] i2c: cros-ec-tunnel: Add of match table
-Date: Mon, 29 Sep 2014 22:59:23 +0200
-Message-ID: <20140929205922.GB2758@katana>
-References: <1411114093-3505-1-git-send-email-sjoerd.simons@collabora.co.uk>
- <1411114093-3505-2-git-send-email-sjoerd.simons@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="24zk1gE8NUlDmwG9"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1411114093-3505-2-git-send-email-sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Daniel Drake <drake@endlessm.com>
+Subject: [PATCH] ARM: dts: Enable temperature sensor on exynos4412 & ODROID
+Date: Mon, 29 Sep 2014 15:42:14 -0600
+Message-ID: <1412026934-25947-1-git-send-email-drake@endlessm.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f169.google.com ([209.85.160.169]:38504 "EHLO
+	mail-yk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751335AbaI2VmX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 29 Sep 2014 17:42:23 -0400
+Received: by mail-yk0-f169.google.com with SMTP id 10so5629909ykt.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Sep 2014 14:42:22 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: ben-linux@fluff.org, kgene.kim@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
+The Exynos4412 has a Thermal Management Unit (TMU) which provides
+a temperature sensor and related functionality.
 
---24zk1gE8NUlDmwG9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This must be enabled on a per-board basis, as it requires a 100k
+resistance to ground on the XtsRES_EXT pin, as well as a 1.8V input on
+VDD18_TS pin. If that voltage is not supplied, the machine immediately
+reports a maximum temperature of 255C and triggers the thermal subsystem
+to shut down the system.
 
-On Fri, Sep 19, 2014 at 10:08:12AM +0200, Sjoerd Simons wrote:
-> To enable the cros-ec-tunnel driver to be auto-loaded when build as a
-> module add an of match table (and export it) to match the modalias
-> information passed on to userspace as the Cros EC MFD driver registers
-> the MFD subdevices with an of_compatibility string.
->=20
-> Signed-off-by: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-> Reviewed-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+This patch also enables the TMU on the ODROID boards via the appropriate
+power supply.
 
-Applied to for-next, thanks!
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+---
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi |  5 +++++
+ arch/arm/boot/dts/exynos4412.dtsi               | 10 ++++++++++
+ 2 files changed, 15 insertions(+)
 
-However, since you are working on this driver: sparse rightfully
-complains about:
-
-drivers/i2c/busses/i2c-cros-ec-tunnel.c:97:44: warning: cast truncates bits=
- from constant value (10000 becomes 0)
-
-I don't know the EC protocol, can you check?
-
-
---24zk1gE8NUlDmwG9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUKcgqAAoJEBQN5MwUoCm2twEP/1sRKq/eDRFxR5Z5rh67ynUT
-22EIwT6s1A3OTPDWtZ693Wqb2WT1xxaoSdK9idmzX5Hh+FlkHybCqn9SylVGgwVV
-wf8UHidcirrsXhBEZU71pUTxPxEmTOjMxSmLQ9zfG9LkoamsCJ4om0fxZMgGq7ME
-aAqz6sMuTiqxOAl5e7e3eyplIceCYbTzid4cxBhIBlZekFmV6T0oK1effsEbfsuO
-ukaYafpiNze5/2sM6rrwhcd8tse6pgrTtOaI9WJgUqwJUK8bx44rJ29809h8KOxD
-8ijssJVzYwfqbKwadu2Nxsng3WaCQ6rx9Dgbb4zOLKoizBi7qt6KZ2htKe4+bJOi
-rXExDWaqqQkFvDIBb5TFiaLO8w2qy/Lwfk1jJWSBP8AKEalX0PyXdMWxQIg8qsgI
-yuolq9n5/nNa81AyEjHnIiWC7/RYXAPd+FpgRlUrOEDWDjT3cqWCxYl1We/LRzeF
-caxZfPfD+nb0y1gZ76+BL9z9OAhRHPCddBLQOMDHhBMWG41O5+LxEN89yyYwSect
-S4hMnyVNFDeXWWj6zOv3BlgBfPrHtpx2V36sV+/QzPmQd2nGhlPiwSrTl0JbMcUE
-tZYok8W2HVkHvU3aij5jH97hA8k6fD+hBsCinT1rPRpsdNOvzXanEiRz+ndT29B+
-qs/4k5bF7M+0+Ov+WjQr
-=stXG
------END PGP SIGNATURE-----
-
---24zk1gE8NUlDmwG9--
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index 3d8c623..9994a44 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -400,3 +400,8 @@
+ 		samsung,pin-drv = <0>;
+ 	};
+ };
++
++&tmu {
++	status = "okay";
++	vtmu-supply = <&ldo10_reg>;
++};
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index 0f6ec93..ee58e7f 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -66,4 +66,14 @@
+ 	pmu_system_controller: system-controller@10020000 {
+ 		compatible = "samsung,exynos4412-pmu", "syscon";
+ 	};
++
++	tmu: tmu@100C0000 {
++		compatible = "samsung,exynos4412-tmu";
++		interrupt-parent = <&combiner>;
++		reg = <0x100C0000 0x100>;
++		interrupts = <2 4>;
++		clocks = <&clock CLK_TMU_APBIF>;
++		clock-names = "tmu_apbif";
++		status = "disabled";
++	};
+ };
+-- 
+1.9.1
