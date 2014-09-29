@@ -1,87 +1,144 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v5 RESEND 1/3] ARM: EXYNOS: Move code from hotplug.c to
- platsmp.c
-Date: Sun, 28 Sep 2014 13:42:21 +0900
-Message-ID: <542791AD.5080105@samsung.com>
-References: <1409920495-16533-1-git-send-email-k.kozlowski@samsung.com> <201409262313.26272.arnd@arndb.de> <542677B2.70506@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 1/2] clk: samsung: exynos3250: add uart2/3 related clocks
+Date: Mon, 29 Sep 2014 11:12:14 +0900
+Message-ID: <5428BFFE.9090002@samsung.com>
+References: <1411793928-32692-1-git-send-email-pankaj.dubey@samsung.com>
+ <1411793928-32692-2-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:34013 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750734AbaI1Ema (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:63386 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753122AbaI2CMR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 28 Sep 2014 00:42:30 -0400
-In-Reply-To: <542677B2.70506@samsung.com>
+	Sun, 28 Sep 2014 22:12:17 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NCN00GVF4SF3300@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 29 Sep 2014 11:12:15 +0900 (KST)
+In-reply-to: <1411793928-32692-2-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, robh+dt@kernel.org, linux@arm.linux.org.uk, naushad@samsung.com, Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On 09/27/14 17:39, Krzysztof Kozlowski wrote:
-> W dniu 26.09.2014 o 23:13, Arnd Bergmann pisze:
->> On Friday 05 September 2014, Krzysztof Kozlowski wrote:
->>> The commit only moves code around with one additional observable change:
->>> the hotplug.c was compiled with custom CFLAGS (-march=armv7-a). These
->>> CFLAGS are not necessary any more.
->>
->> This turns out to be wrong, and your change broke 'allmodconfig' builds
->> in linux-next. Please apply this patch on top.
->
-Arnd, Krzysztof commented its fix has been submitted and landed in my 
--test tree not -next because it should be handled in rmk's tree I think.
+Hi Pankaj,
 
-I sent the patch to RMK patch tracking system just now and it should be 
-fine in there.
+On 09/27/2014 01:58 PM, Pankaj Dubey wrote:
+> Exynos3250 has four UART channels UART0,1,2 and 3. This patch adds
+> missing clock entries for UART2 and UART3.
+> 
+> CC: Mike Turquette <mturquette@linaro.org>
+> CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos3250.c   |   11 +++++++++++
+>  include/dt-bindings/clock/exynos3250.h |   10 +++++++++-
+>  2 files changed, 20 insertions(+), 1 deletion(-)
 
-BTW, I just applied the fix in my -next until its ladning in RMK tree 
-but as you know it will be not be sent to arm-soc via samsung tree...
-
-One more, Arnd please pull my pull-request 2nd round and 3rd round for 
-samsung stuff for 3.18.
-
-> My patch definitely needed more testing.
-> I posted a fix here:
-> https://lkml.org/lkml/2014/9/24/163
-> However it seems that it wasn't picked up by anyone yet.
->
-> Russell, could you pick up the patch (with acks from Nicolas and Kukjin)?
->
-I believe Russell will take the patch in his tree.
+Exynos3250 has only two UART(0,1) port. Exynos3250 don't support UART 2,3.
 
 Thanks,
-Kukjin
+Chanwoo Choi
 
->> 8<----------
->> From 4ba6bf8806caec386e35930314dbad071284c837 Mon Sep 17 00:00:00 2001
->> From: Arnd Bergmann <arnd@arndb.de>
->> Date: Fri, 26 Sep 2014 23:09:38 +0200
->> Subject: [PATCH] ARM: EXYNOS: fix build error in platsmp.c
->>
->> /tmp/ccYeWL3V.s: Assembler messages:
->> /tmp/ccYeWL3V.s:659: Error: selected processor does not support ARM
->> mode `isb '
->> /tmp/ccYeWL3V.s:664: Error: selected processor does not support ARM
->> mode `isb '
->> /tmp/ccYeWL3V.s:665: Error: selected processor does not support ARM
->> mode `dsb '
->> make[3]: *** [arch/arm/mach-exynos/platsmp.o] Error 1
->>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> Fixes: 17342534e1d932 ("ARM: EXYNOS: Move code from hotplug.c to
->> platsmp.c")
->>
->> diff --git a/arch/arm/mach-exynos/Makefile
->> b/arch/arm/mach-exynos/Makefile
->> index 4e49d4efb264..64324bf5edb4 100644
->> --- a/arch/arm/mach-exynos/Makefile
->> +++ b/arch/arm/mach-exynos/Makefile
->> @@ -21,6 +21,7 @@ obj-$(CONFIG_PM_SLEEP) += suspend.o
->> obj-$(CONFIG_PM_GENERIC_DOMAINS) += pm_domains.o
->>
->> obj-$(CONFIG_SMP) += platsmp.o headsmp.o
->> +CFLAGS_platsmp.o := -march=armv7-a
->>
->> plus_sec := $(call as-instr,.arch_extension sec,+sec)
->> AFLAGS_exynos-smc.o :=-Wa,-march=armv7-a$(plus_sec)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos3250.c b/drivers/clk/samsung/clk-exynos3250.c
+> index dc85f8e..0722fef 100644
+> --- a/drivers/clk/samsung/clk-exynos3250.c
+> +++ b/drivers/clk/samsung/clk-exynos3250.c
+> @@ -357,6 +357,8 @@ static struct samsung_mux_clock mux_clks[] __initdata = {
+>  	MUX(CLK_MOUT_MMC0, "mout_mmc0", group_sclk_p, SRC_FSYS, 0, 3),
+>  
+>  	/* SRC_PERIL0 */
+> +	MUX(CLK_MOUT_UART3, "mout_uart3", group_sclk_p, SRC_PERIL0, 12, 4),
+> +	MUX(CLK_MOUT_UART2, "mout_uart2", group_sclk_p, SRC_PERIL0, 8, 4),
+>  	MUX(CLK_MOUT_UART1, "mout_uart1", group_sclk_p, SRC_PERIL0, 4, 4),
+>  	MUX(CLK_MOUT_UART0, "mout_uart0", group_sclk_p, SRC_PERIL0, 0, 4),
+>  
+> @@ -439,6 +441,8 @@ static struct samsung_div_clock div_clks[] __initdata = {
+>  	DIV(CLK_DIV_MMC0, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
+>  
+>  	/* DIV_PERIL0 */
+> +	DIV(CLK_DIV_UART3, "div_uart3", "mout_uart3", DIV_PERIL0, 12, 4),
+> +	DIV(CLK_DIV_UART2, "div_uart2", "mout_uart2", DIV_PERIL0, 8, 4),
+>  	DIV(CLK_DIV_UART1, "div_uart1", "mout_uart1", DIV_PERIL0, 4, 4),
+>  	DIV(CLK_DIV_UART0, "div_uart0", "mout_uart0", DIV_PERIL0, 0, 4),
+>  
+> @@ -601,6 +605,10 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
+>  		GATE_SCLK_PERIL, 7, CLK_SET_RATE_PARENT, 0),
+>  	GATE(CLK_SCLK_SPI0, "sclk_spi0", "div_spi0_pre",
+>  		GATE_SCLK_PERIL, 6, CLK_SET_RATE_PARENT, 0),
+> +	GATE(CLK_SCLK_UART3, "sclk_uart3", "div_uart3",
+> +		GATE_SCLK_PERIL, 3, CLK_SET_RATE_PARENT, 0),
+> +	GATE(CLK_SCLK_UART2, "sclk_uart2", "div_uart2",
+> +		GATE_SCLK_PERIL, 2, CLK_SET_RATE_PARENT, 0),
+>  	GATE(CLK_SCLK_UART1, "sclk_uart1", "div_uart1",
+>  		GATE_SCLK_PERIL, 1, CLK_SET_RATE_PARENT, 0),
+>  	GATE(CLK_SCLK_UART0, "sclk_uart0", "div_uart0",
+> @@ -679,6 +687,7 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
+>  	GATE(CLK_USBOTG, "usbotg", "div_aclk_200", GATE_IP_FSYS, 13, 0, 0),
+>  	GATE(CLK_USBHOST, "usbhost", "div_aclk_200", GATE_IP_FSYS, 12, 0, 0),
+>  	GATE(CLK_SROMC, "sromc", "div_aclk_200", GATE_IP_FSYS, 11, 0, 0),
+> +	GATE(CLK_SDMMC2, "sdmmc2", "div_aclk_200", GATE_IP_FSYS, 7, 0, 0),
+>  	GATE(CLK_SDMMC1, "sdmmc1", "div_aclk_200", GATE_IP_FSYS, 6, 0, 0),
+>  	GATE(CLK_SDMMC0, "sdmmc0", "div_aclk_200", GATE_IP_FSYS, 5, 0, 0),
+>  	GATE(CLK_PDMA1, "pdma1", "div_aclk_200", GATE_IP_FSYS, 1, 0, 0),
+> @@ -698,6 +707,8 @@ static struct samsung_gate_clock gate_clks[] __initdata = {
+>  	GATE(CLK_I2C2, "i2c2", "div_aclk_100", GATE_IP_PERIL, 8, 0, 0),
+>  	GATE(CLK_I2C1, "i2c1", "div_aclk_100", GATE_IP_PERIL, 7, 0, 0),
+>  	GATE(CLK_I2C0, "i2c0", "div_aclk_100", GATE_IP_PERIL, 6, 0, 0),
+> +	GATE(CLK_UART3, "uart3", "div_aclk_100", GATE_IP_PERIL, 3, 0, 0),
+> +	GATE(CLK_UART2, "uart2", "div_aclk_100", GATE_IP_PERIL, 2, 0, 0),
+>  	GATE(CLK_UART1, "uart1", "div_aclk_100", GATE_IP_PERIL, 1, 0, 0),
+>  	GATE(CLK_UART0, "uart0", "div_aclk_100", GATE_IP_PERIL, 0, 0, 0),
+>  };
+> diff --git a/include/dt-bindings/clock/exynos3250.h b/include/dt-bindings/clock/exynos3250.h
+> index b535e9d..ffeb695 100644
+> --- a/include/dt-bindings/clock/exynos3250.h
+> +++ b/include/dt-bindings/clock/exynos3250.h
+> @@ -78,6 +78,8 @@
+>  #define CLK_MOUT_CORE			58
+>  #define CLK_MOUT_APLL			59
+>  #define CLK_MOUT_ACLK_266_SUB		60
+> +#define CLK_MOUT_UART2			61
+> +#define CLK_MOUT_UART3			62
+>  
+>  /* Dividers */
+>  #define CLK_DIV_GPL			64
+> @@ -126,6 +128,8 @@
+>  #define CLK_DIV_CORE			107
+>  #define CLK_DIV_HPM			108
+>  #define CLK_DIV_COPY			109
+> +#define CLK_DIV_UART2			110
+> +#define CLK_DIV_UART3			111
+>  
+>  /* Gates */
+>  #define CLK_ASYNC_G3D			128
+> @@ -222,6 +226,8 @@
+>  #define CLK_BLOCK_MFC			219
+>  #define CLK_BLOCK_CAM			220
+>  #define CLK_SMIES			221
+> +#define CLK_UART2			222
+> +#define CLK_UART3			223
+>  
+>  /* Special clocks */
+>  #define CLK_SCLK_JPEG			224
+> @@ -248,11 +254,13 @@
+>  #define CLK_SCLK_SPI0			245
+>  #define CLK_SCLK_UART1			246
+>  #define CLK_SCLK_UART0			247
+> +#define CLK_SCLK_UART2			248
+> +#define CLK_SCLK_UART3			249
+>  
+>  /*
+>   * Total number of clocks of main CMU.
+>   * NOTE: Must be equal to last clock ID increased by one.
+>   */
+> -#define CLK_NR_CLKS			248
+> +#define CLK_NR_CLKS			250
+>  
+>  #endif /* _DT_BINDINGS_CLOCK_SAMSUNG_EXYNOS3250_CLOCK_H */
+> 
