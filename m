@@ -1,84 +1,71 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v4 2/5] i2c: i2c-cros-ec-tunnel: Set retries to 3
-Date: Mon, 29 Sep 2014 11:19:44 +0200
-Message-ID: <20140929091944.GA1559@katana>
-References: <1411053538-17237-1-git-send-email-javier.martinez@collabora.co.uk>
- <1411053538-17237-3-git-send-email-javier.martinez@collabora.co.uk>
- <20140929074940.GB5985@lee--X1>
- <20140929075014.GC5985@lee--X1>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v6] mfd: syscon: Decouple syscon interface from platform devices
+Date: Mon, 29 Sep 2014 11:46:22 +0200
+Message-ID: <8048434.zrhWRM6Kke@wuerfel>
+References: <1411980458-32329-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tThc/1wpZn/ma/RB"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:56977 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751037AbaI2JTS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Sep 2014 05:19:18 -0400
-Content-Disposition: inline
-In-Reply-To: <20140929075014.GC5985@lee--X1>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1411980458-32329-1-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, b29396@freescale.com, lee.jones@linaro.org, boris.brezillon@free-electrons.com, tomasz.figa@gmail.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, kgene.kim@samsung.com, Li.Xiubo@freescale.com, geert+renesas@glider.be, swarren@nvidia.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Gwendal Grignou <gwendal@google.com>, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+
+On Monday 29 September 2014 14:17:38 Pankaj Dubey wrote:
+> Currently a syscon entity can be only registered directly through a
+> platform device that binds to a dedicated syscon driver. However in
+> certain use cases it is desirable to make a device used with another
+> driver a syscon interface provider.
+> 
+> For example, certain SoCs (e.g. Exynos) contain system controller
+> blocks which perform various functions such as power domain control,
+> CPU power management, low power mode control, but in addition contain
+> certain IP integration glue, such as various signal masks,
+> coprocessor power control, etc. In such case, there is a need to have
+> a dedicated driver for such system controller but also share registers
+> with other drivers. The latter is where the syscon interface is helpful.
+> 
+> In case of DT based platforms, this patch decouples syscon object from
+> syscon platform driver, and allows to create syscon objects first time
+> when it is required by calling of syscon_regmap_lookup_by APIs and keep
+> a list of such syscon objects along with syscon provider device_nodes
+> and regmap handles.
+> 
+> For non-DT based platforms, this patch keeps syscon platform driver
+> structure where is can be probed and such non-DT based drivers can use
+> syscon_regmap_lookup_by_pdev API and get access to regmap handles.
+> Once all users of "syscon_regmap_lookup_by_pdev" migrated to DT based,
+> we can completely remove platform driver of syscon, and keep only helper
+> functions to get regmap handles.
+> 
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+> Patch v5 and related discussions can be found here [1].
+> 
+> Change since v5:
+>  - Dropping creation of dummy platform device in of_syscon_register.
+>  - As we are changing syscon to decouple from platform_device, creation of 
+>    dummy platform_device does not look good option, and as suggested by Arnd,
+>    I made another attempt so that regmap_mmio_init API should work with NULL
+>    dev pointer itself. Since regmap needs to know about Syscon device node
+>    properties so let's parse device node of syscon in syscon itself for any
+>    such properties and using regmap_config parameter pass all such information
+>    to regmap. Other concern of crashes due to NULL dev pointer in regmap already
+>    addressed in separate patches of regmap. Please see [2] and [3].
+>   
+> 
+> 
+
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+
+Looks good to me, thanks a lot!
 
 
---tThc/1wpZn/ma/RB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 29, 2014 at 08:50:14AM +0100, Lee Jones wrote:
-> On Mon, 29 Sep 2014, Lee Jones wrote:
->=20
-> > On Thu, 18 Sep 2014, Javier Martinez Canillas wrote:
-> >=20
-> > > From: Derek Basehore <dbasehore@chromium.org>
-> > >=20
-> > > Since the i2c bus can get wedged on the EC sometimes, set the number =
-of retries
-> > > to 3. Since we un-wedge the bus immediately after the wedge happens, =
-this is the
-> > > correct fix since only one transfer will fail.
-> > >=20
-> > > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> > > Reviewed-by: Doug Anderson <dianders@chromium.org>
-> > > Acked-by: Wolfram Sang <wsa@the-dreams.de>
-> > > Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
-=2Euk>
-> > > ---
-> > >  drivers/i2c/busses/i2c-cros-ec-tunnel.c | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> >=20
-> > Applied, thanks.
->=20
-> Wolfram,
->=20
-> Do you want a pull-request?
-
-Nope. All fine, there shouldn't be any conflict.
-
-
---tThc/1wpZn/ma/RB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUKSQwAAoJEBQN5MwUoCm2tugQAIknXzS653aexPP7CD6uhrgE
-XRBsZ6vFOBgu4522tCrzRIV3hygVfyTBz8tj+vCaGDoLMSNNKvgB0eA6zv5bJJ1l
-3GqL3HiyAf0vo6i6tLxaI5YsGl/VgN0/NfJU/9gO6rNvyL23rTpKQnOSfeeC/lIs
-mzP9K7L69f95unJuu2u+ZjEoBsVPSAp+JVhNSNdVRlJGYnp5U1/kaxwisATziO4w
-om5SJTRPViWmW8u8ZC6soCepfS3ZXKZm92wfmS1jWLLgCUsMc9LNVtQS5nsyrxLd
-nD/r3Wy2bu1G/n7Ar1E12WN5bW4SBkXMqFuupxI6bN4vsIWtMTaxo7mCifBLzNg5
-ZA9/Lz88OcHJaNVQjz9kHViyVpIu2fOp16q5/YRIpbGNjbc2Tl1IolAozgf6GucZ
-TF0sm6HZuYvARF0MbUsV9LQZzC97FwrPQ0TL/HJCQjU/01pyKY68fbwht5HcWIMR
-Clwgh52vCmnd6gVBghUr68Ul9SwZpgzo1+5v19e2QqFIlz/xYYQUhKD4F2hFZ3HN
-ov5JOEXomj5Obt8U/re8llmotLaaBwJvXr3J3LteukRMlzdvTSUo8e3tRj0+IeTM
-9e/zHqeTK/2OdO3oj5yyhuAEm6vVuTyRjqiapBHt+zGGkuJMP+FpeAXgW0xSS3WQ
-n2IWkjwfIHWbTlQwYSpA
-=RZUZ
------END PGP SIGNATURE-----
-
---tThc/1wpZn/ma/RB--
+	Arnd
