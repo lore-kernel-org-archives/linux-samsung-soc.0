@@ -1,53 +1,89 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v3 6/6] mfd: cros_ec: Instantiate sub-devices from device
- tree
-Date: Mon, 29 Sep 2014 09:33:27 +0200
-Message-ID: <54290B47.2030907@collabora.co.uk>
-References: <1410428289-18229-1-git-send-email-javier.martinez@collabora.co.uk> <1410428289-18229-7-git-send-email-javier.martinez@collabora.co.uk> <20140917163114.GL30918@lee--X1> <541A8E88.6050707@collabora.co.uk> <20140919001512.GA29852@lee--X1> <54241E74.9000403@collabora.co.uk> <20140925144846.GC21351@lee--X1>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v4 1/5] mfd: cros_ec: Delay for 50ms when we see
+ EC_CMD_REBOOT_EC
+Date: Mon, 29 Sep 2014 08:49:21 +0100
+Message-ID: <20140929074921.GA5985@lee--X1>
+References: <1411053538-17237-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1411053538-17237-2-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:47224 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751403AbaI2Hdf (ORCPT
+Received: from mail-ig0-f170.google.com ([209.85.213.170]:39902 "EHLO
+	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751053AbaI2Ht2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Sep 2014 03:33:35 -0400
-In-Reply-To: <20140925144846.GC21351@lee--X1>
+	Mon, 29 Sep 2014 03:49:28 -0400
+Received: by mail-ig0-f170.google.com with SMTP id a13so24582igq.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Sep 2014 00:49:28 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1411053538-17237-2-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lee Jones <lee.jones@linaro.org>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Todd Broch <tbroch@chromium.org>, Olof Johansson <olof@lixom.net>, Andreas Faerber <afaerber@suse.de>, linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Wolfram Sang <wsa@the-dreams.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Andrew Bresticker <abrestic@chromium.org>, Derek Basehore <dbasehore@chromium.org>, Gwendal Grignou <gwendal@google.com>, linux-i2c@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hello Lee,
+On Thu, 18 Sep 2014, Javier Martinez Canillas wrote:
 
-On 09/25/2014 04:48 PM, Lee Jones wrote:
-> On Thu, 25 Sep 2014, Javier Martinez Canillas wrote:
->> 
->> Understood, that's why I dropped this since as explained earlier, it makes more
->> sense to include this change once the cros_ec_dev driver is pushed to upstream.
->> 
->> The last version of the series (v4) I posted a week ago [0], does not include
->> this patch so I hope the series can be picked for 3.18 since most of the patches
->> were already acked by you.
-> 
-> Unfortunately this is going to have to wait until v3.19 now, as Linus
-> is closing the -rcs early.  I have subsequently applied my last
-> patch to the MFD tree for v3.18.  It will be good for these patches to
-> get some soak testing in -next anyway, rather than rush them in.
-> 
+> From: Doug Anderson <dianders@chromium.org>
+>=20
+> If someone sends a EC_CMD_REBOOT_EC to the EC, the EC will likely be
+> unresponsive for quite a while.  Add a delay to the end of the comman=
+d
+> to prevent random failures of future commands.
+>=20
+> NOTES:
+> * This could be optimized a bit by simply delaying the next command
+>   sent, but EC_CMD_REBOOT_EC is such a rare command that the extra
+>   complexity doesn't seem worth it.
+> * This is a bit of an "ugly hack" since the SPI driver is effectively
+>   snooping on the communication and making a lot of assumptions.  It
+>   would be nice to architect in some better solution long term.
+> * This same logic probably needs to be applied to the i2c driver.
+>=20
+> Signed-off-by: Doug Anderson <dianders@chromium.org>
+> Reviewed-by: Randall Spangler <rspangler@chromium.org>
+> Reviewed-by: Vadim Bendebury <vbendeb@chromium.org>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
+=2Euk>
+> Acked-by: Lee Jones <lee.jones@linaro.org>
+> ---
+>  drivers/mfd/cros_ec_spi.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 
-I don't want to be annoying but I was just wondering if now that Linus has
-delayed the 3.18 merge window for two weeks [1], you will consider picking
-this series. Most of the patches have been acked by you a couple of weeks
-ago anyways and I dropped $subject from the last version of the series [2],
-which was the patch you had issues with.
+Applied, thanks.
 
-It would be awesome if this can make it to 3.18 so we can start adding the
-missing functionality and target it to 3.19.
+> diff --git a/drivers/mfd/cros_ec_spi.c b/drivers/mfd/cros_ec_spi.c
+> index 588c700..b396705 100644
+> --- a/drivers/mfd/cros_ec_spi.c
+> +++ b/drivers/mfd/cros_ec_spi.c
+> @@ -65,6 +65,12 @@
+>    */
+>  #define EC_SPI_RECOVERY_TIME_NS	(200 * 1000)
+> =20
+> +/*
+> + * The EC is unresponsive for a time after a reboot command.  Add a
+> + * simple delay to make sure that the bus stays locked.
+> + */
+> +#define EC_REBOOT_DELAY_MS	50
+> +
+>  /**
+>   * struct cros_ec_spi - information about a SPI-connected EC
+>   *
+> @@ -318,6 +324,9 @@ static int cros_ec_cmd_xfer_spi(struct cros_ec_de=
+vice *ec_dev,
+> =20
+>  	ret =3D len;
+>  exit:
+> +	if (ec_msg->command =3D=3D EC_CMD_REBOOT_EC)
+> +		msleep(EC_REBOOT_DELAY_MS);
+> +
+>  	mutex_unlock(&ec_spi->lock);
+>  	return ret;
+>  }
 
-Thanks a lot and best regards,
-Javier
-
-[1]: http://thread.gmane.org/gmane.linux.kernel/1797057
-[2]: https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg36770.html
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
