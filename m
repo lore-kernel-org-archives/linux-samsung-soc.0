@@ -1,203 +1,241 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH v5 RESEND 1/2] usb: host: ehci-exynos: Remove unnecessary usb-phy support
-Date: Mon, 29 Sep 2014 11:54:14 +0530
-Message-ID: <1411971854-14853-1-git-send-email-gautam.vivek@samsung.com>
-References: <CAFp+6iHMBWxy9B03FW05bHPZHEcAg0cWtpTsb8GEzSkzaXSQ9g@mail.gmail.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: RE: [PATCH 1/2] clk: samsung: exynos3250: add uart2/3 related clocks
+Date: Mon, 29 Sep 2014 12:52:15 +0530
+Message-ID: <000001cfdbb6$1aef87b0$50ce9710$@samsung.com>
+References: <1411793928-32692-1-git-send-email-pankaj.dubey@samsung.com>
+ <1411793928-32692-2-git-send-email-pankaj.dubey@samsung.com>
+ <5428BFFE.9090002@samsung.com> <001201cfdb8f$b9dae350$2d90a9f0$@samsung.com>
+ <CAH9JG2UFFHwA=5g5Dg66A5gniPw+mEiVJCd=nZYLWgtLZ1R9zg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f178.google.com ([209.85.192.178]:53150 "EHLO
-	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750791AbaI2GYW (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:61426 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751083AbaI2HWo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Sep 2014 02:24:22 -0400
-In-Reply-To: <CAFp+6iHMBWxy9B03FW05bHPZHEcAg0cWtpTsb8GEzSkzaXSQ9g@mail.gmail.com>
+	Mon, 29 Sep 2014 03:22:44 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NCN002JCJ5U6T80@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 29 Sep 2014 16:22:42 +0900 (KST)
+In-reply-to: <CAH9JG2UFFHwA=5g5Dg66A5gniPw+mEiVJCd=nZYLWgtLZ1R9zg@mail.gmail.com>
+Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org, gregkh@linuxfoundation.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, stern@rowland.harvard.edu, kgene.kim@samsung.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
+To: 'Kyungmin Park' <kmpark@infradead.org>
+Cc: 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, naushad@samsung.com, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, robh+dt@kernel.org, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Mike Turquette' <mturquette@linaro.org>, 'arm-linux' <linux-arm-kernel@lists.infradead.org>
 
-Now that we have completely moved from older USB-PHY drivers
-to newer GENERIC-PHY drivers for PHYs available with USB controllers
-on Exynos series of SoCs, we can remove the support for the same
-in our host drivers too.
+Hi,
 
-We also defer the probe for our host in case we end up getting
-EPROBE_DEFER error when getting PHYs.
+On Monday, September 29, 2014 9:07 AM, Kyungmin Park wrote,
+> To: Pankaj Dubey
+> Cc: Chanwoo Choi; Kukjin Kim; Russell King - ARM Linux;
+naushad@samsung.com;
+> Tomasz Figa; linux-samsung-soc; robh+dt@kernel.org; Sylwester Nawrocki;
+Mike
+> Turquette; arm-linux
+> Subject: Re: [PATCH 1/2] clk: samsung: exynos3250: add uart2/3 related
+clocks
+> 
+> On Mon, Sep 29, 2014 at 11:47 AM, Pankaj Dubey <pankaj.dubey@samsung.com>
+> wrote:
+> > Hi Chanwoo,
+> >
+> > On Monday, September 29, 2014 7:42 AM, Chanwoo Choi wrote,
+> >> To: Pankaj Dubey
+> >> Cc: linux-arm-kernel@lists.infradead.org;
+> > linux-samsung-soc@vger.kernel.org;
+> >> kgene.kim@samsung.com; tomasz.figa@gmail.com; robh+dt@kernel.org;
+> >> linux@arm.linux.org.uk; naushad@samsung.com; Mike Turquette;
+> >> Sylwester Nawrocki
+> >> Subject: Re: [PATCH 1/2] clk: samsung: exynos3250: add uart2/3
+> >> related
+> > clocks
+> >>
+> >> Hi Pankaj,
+> >>
+> >> On 09/27/2014 01:58 PM, Pankaj Dubey wrote:
+> >> > Exynos3250 has four UART channels UART0,1,2 and 3. This patch adds
+> >> > missing clock entries for UART2 and UART3.
+> >> >
+> >> > CC: Mike Turquette <mturquette@linaro.org>
+> >> > CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> >> > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> >> > ---
+> >> >  drivers/clk/samsung/clk-exynos3250.c   |   11 +++++++++++
+> >> >  include/dt-bindings/clock/exynos3250.h |   10 +++++++++-
+> >> >  2 files changed, 20 insertions(+), 1 deletion(-)
+> >>
+> >> Exynos3250 has only two UART(0,1) port. Exynos3250 don't support UART
+> 2,3.
+> >>
+> >
+> > As per Exynos3250 user manual that I have with me it supports
+UART(0,1,2,3).
+> > It has been mentioned
+> which UM do you use? There are two UARTs at rev0.01
+> 
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-Acked-by: Jingoo Han <jg1.han@samsung.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
----
+I am using Rev 2.0.
 
-Changes since v4:
- - returning 'ret' instead of PTR_ERR(phy), since ret is nothing but that only.
+Thanks,
+Pankaj Dubey
 
-Changes since v3:
- - Addressed review comments by Alan:
-   -- Skipped renaming 'phy_number' variable,
-   -- resorted to just adding minimal change required for phy assignment.
-   -- updated patch description to mention EPROBE_DEFER support.
 
- drivers/usb/host/ehci-exynos.c |   74 +++++++++++-----------------------------
- 1 file changed, 20 insertions(+), 54 deletions(-)
-
-diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-index 2eed9a4..7189f2e 100644
---- a/drivers/usb/host/ehci-exynos.c
-+++ b/drivers/usb/host/ehci-exynos.c
-@@ -21,11 +21,8 @@
- #include <linux/of_gpio.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
--#include <linux/usb/phy.h>
--#include <linux/usb/samsung_usb_phy.h>
- #include <linux/usb.h>
- #include <linux/usb/hcd.h>
--#include <linux/usb/otg.h>
- 
- #include "ehci.h"
- 
-@@ -47,9 +44,7 @@ static struct hc_driver __read_mostly exynos_ehci_hc_driver;
- 
- struct exynos_ehci_hcd {
- 	struct clk *clk;
--	struct usb_phy *phy;
--	struct usb_otg *otg;
--	struct phy *phy_g[PHY_NUMBER];
-+	struct phy *phy[PHY_NUMBER];
- };
- 
- #define to_exynos_ehci(hcd) (struct exynos_ehci_hcd *)(hcd_to_ehci(hcd)->priv)
-@@ -60,8 +55,9 @@ static int exynos_ehci_get_phy(struct device *dev,
- 	struct device_node *child;
- 	struct phy *phy;
- 	int phy_number;
--	int ret = 0;
-+	int ret;
- 
-+	/* Get PHYs for the controller */
- 	for_each_available_child_of_node(dev->of_node, child) {
- 		ret = of_property_read_u32(child, "reg", &phy_number);
- 		if (ret) {
-@@ -77,31 +73,21 @@ static int exynos_ehci_get_phy(struct device *dev,
- 		}
- 
- 		phy = devm_of_phy_get(dev, child, NULL);
-+		exynos_ehci->phy[phy_number] = phy;
- 		of_node_put(child);
--		if (IS_ERR(phy))
--			/* Lets fallback to older USB-PHYs */
--			goto usb_phy_old;
--		exynos_ehci->phy_g[phy_number] = phy;
--		/* Make the older PHYs unavailable */
--		exynos_ehci->phy = ERR_PTR(-ENXIO);
--	}
--
--	return 0;
--
--usb_phy_old:
--	exynos_ehci->phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
--	if (IS_ERR(exynos_ehci->phy)) {
--		ret = PTR_ERR(exynos_ehci->phy);
--		if (ret != -ENXIO && ret != -ENODEV) {
--			dev_err(dev, "no usb2 phy configured\n");
--			return ret;
-+		if (IS_ERR(phy)) {
-+			ret = PTR_ERR(phy);
-+			if (ret == -EPROBE_DEFER) {
-+				return ret;
-+			} else if (ret != -ENOSYS && ret != -ENODEV) {
-+				dev_err(dev,
-+					"Error retrieving usb2 phy: %d\n", ret);
-+				return ret;
-+			}
- 		}
--		dev_dbg(dev, "Failed to get usb2 phy\n");
--	} else {
--		exynos_ehci->otg = exynos_ehci->phy->otg;
- 	}
- 
--	return ret;
-+	return 0;
- }
- 
- static int exynos_ehci_phy_enable(struct device *dev)
-@@ -111,16 +97,13 @@ static int exynos_ehci_phy_enable(struct device *dev)
- 	int i;
- 	int ret = 0;
- 
--	if (!IS_ERR(exynos_ehci->phy))
--		return usb_phy_init(exynos_ehci->phy);
--
- 	for (i = 0; ret == 0 && i < PHY_NUMBER; i++)
--		if (!IS_ERR(exynos_ehci->phy_g[i]))
--			ret = phy_power_on(exynos_ehci->phy_g[i]);
-+		if (!IS_ERR(exynos_ehci->phy[i]))
-+			ret = phy_power_on(exynos_ehci->phy[i]);
- 	if (ret)
- 		for (i--; i >= 0; i--)
--			if (!IS_ERR(exynos_ehci->phy_g[i]))
--				phy_power_off(exynos_ehci->phy_g[i]);
-+			if (!IS_ERR(exynos_ehci->phy[i]))
-+				phy_power_off(exynos_ehci->phy[i]);
- 
- 	return ret;
- }
-@@ -131,14 +114,9 @@ static void exynos_ehci_phy_disable(struct device *dev)
- 	struct exynos_ehci_hcd *exynos_ehci = to_exynos_ehci(hcd);
- 	int i;
- 
--	if (!IS_ERR(exynos_ehci->phy)) {
--		usb_phy_shutdown(exynos_ehci->phy);
--		return;
--	}
--
- 	for (i = 0; i < PHY_NUMBER; i++)
--		if (!IS_ERR(exynos_ehci->phy_g[i]))
--			phy_power_off(exynos_ehci->phy_g[i]);
-+		if (!IS_ERR(exynos_ehci->phy[i]))
-+			phy_power_off(exynos_ehci->phy[i]);
- }
- 
- static void exynos_setup_vbus_gpio(struct device *dev)
-@@ -231,9 +209,6 @@ skip_phy:
- 		goto fail_io;
- 	}
- 
--	if (exynos_ehci->otg)
--		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
--
- 	err = exynos_ehci_phy_enable(&pdev->dev);
- 	if (err) {
- 		dev_err(&pdev->dev, "Failed to enable USB phy\n");
-@@ -273,9 +248,6 @@ static int exynos_ehci_remove(struct platform_device *pdev)
- 
- 	usb_remove_hcd(hcd);
- 
--	if (exynos_ehci->otg)
--		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
--
- 	exynos_ehci_phy_disable(&pdev->dev);
- 
- 	clk_disable_unprepare(exynos_ehci->clk);
-@@ -298,9 +270,6 @@ static int exynos_ehci_suspend(struct device *dev)
- 	if (rc)
- 		return rc;
- 
--	if (exynos_ehci->otg)
--		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
--
- 	exynos_ehci_phy_disable(dev);
- 
- 	clk_disable_unprepare(exynos_ehci->clk);
-@@ -316,9 +285,6 @@ static int exynos_ehci_resume(struct device *dev)
- 
- 	clk_prepare_enable(exynos_ehci->clk);
- 
--	if (exynos_ehci->otg)
--		exynos_ehci->otg->set_host(exynos_ehci->otg, &hcd->self);
--
- 	ret = exynos_ehci_phy_enable(dev);
- 	if (ret) {
- 		dev_err(dev, "Failed to enable USB phy\n");
--- 
-1.7.10.4
+> > in UART Chapter as well as CMU IP details also mentioned about the
+> > clock entries. We have tested it also on Espresso3250 board which is
+> > based on Exynos3250 SoC.
+> I can't find it at my UM.
+> 
+> Kyungmin Park
+> >
+> > Thanks,
+> > Pankaj Dubey
+> >
+> >> Thanks,
+> >> Chanwoo Choi
+> >>
+> >> >
+> >> > diff --git a/drivers/clk/samsung/clk-exynos3250.c
+> >> > b/drivers/clk/samsung/clk-exynos3250.c
+> >> > index dc85f8e..0722fef 100644
+> >> > --- a/drivers/clk/samsung/clk-exynos3250.c
+> >> > +++ b/drivers/clk/samsung/clk-exynos3250.c
+> >> > @@ -357,6 +357,8 @@ static struct samsung_mux_clock mux_clks[]
+> > __initdata =
+> >> {
+> >> >     MUX(CLK_MOUT_MMC0, "mout_mmc0", group_sclk_p, SRC_FSYS, 0,
+> 3),
+> >> >
+> >> >     /* SRC_PERIL0 */
+> >> > +   MUX(CLK_MOUT_UART3, "mout_uart3", group_sclk_p, SRC_PERIL0,
+> >> 12, 4),
+> >> > +   MUX(CLK_MOUT_UART2, "mout_uart2", group_sclk_p, SRC_PERIL0,
+> 8,
+> >> 4),
+> >> >     MUX(CLK_MOUT_UART1, "mout_uart1", group_sclk_p, SRC_PERIL0,
+> 4,
+> >> 4),
+> >> >     MUX(CLK_MOUT_UART0, "mout_uart0", group_sclk_p, SRC_PERIL0,
+> 0,
+> >> 4),
+> >> >
+> >> > @@ -439,6 +441,8 @@ static struct samsung_div_clock div_clks[]
+> > __initdata = {
+> >> >     DIV(CLK_DIV_MMC0, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
+> >> >
+> >> >     /* DIV_PERIL0 */
+> >> > +   DIV(CLK_DIV_UART3, "div_uart3", "mout_uart3", DIV_PERIL0, 12,
+> 4),
+> >> > +   DIV(CLK_DIV_UART2, "div_uart2", "mout_uart2", DIV_PERIL0, 8,
+> >> > + 4),
+> >> >     DIV(CLK_DIV_UART1, "div_uart1", "mout_uart1", DIV_PERIL0, 4, 4),
+> >> >     DIV(CLK_DIV_UART0, "div_uart0", "mout_uart0", DIV_PERIL0, 0,
+> >> > 4),
+> >> >
+> >> > @@ -601,6 +605,10 @@ static struct samsung_gate_clock gate_clks[]
+> > __initdata
+> >> = {
+> >> >             GATE_SCLK_PERIL, 7, CLK_SET_RATE_PARENT, 0),
+> >> >     GATE(CLK_SCLK_SPI0, "sclk_spi0", "div_spi0_pre",
+> >> >             GATE_SCLK_PERIL, 6, CLK_SET_RATE_PARENT, 0),
+> >> > +   GATE(CLK_SCLK_UART3, "sclk_uart3", "div_uart3",
+> >> > +           GATE_SCLK_PERIL, 3, CLK_SET_RATE_PARENT, 0),
+> >> > +   GATE(CLK_SCLK_UART2, "sclk_uart2", "div_uart2",
+> >> > +           GATE_SCLK_PERIL, 2, CLK_SET_RATE_PARENT, 0),
+> >> >     GATE(CLK_SCLK_UART1, "sclk_uart1", "div_uart1",
+> >> >             GATE_SCLK_PERIL, 1, CLK_SET_RATE_PARENT, 0),
+> >> >     GATE(CLK_SCLK_UART0, "sclk_uart0", "div_uart0", @@ -679,6
+> >> > +687,7
+> >> @@
+> >> > static struct samsung_gate_clock gate_clks[] __initdata = {
+> >> >     GATE(CLK_USBOTG, "usbotg", "div_aclk_200", GATE_IP_FSYS, 13,
+> 0,
+> >> 0),
+> >> >     GATE(CLK_USBHOST, "usbhost", "div_aclk_200", GATE_IP_FSYS, 12,
+> >> 0, 0),
+> >> >     GATE(CLK_SROMC, "sromc", "div_aclk_200", GATE_IP_FSYS, 11, 0,
+> >> > 0),
+> >> > +   GATE(CLK_SDMMC2, "sdmmc2", "div_aclk_200", GATE_IP_FSYS, 7,
+> 0,
+> >> 0),
+> >> >     GATE(CLK_SDMMC1, "sdmmc1", "div_aclk_200", GATE_IP_FSYS, 6,
+> 0,
+> >> 0),
+> >> >     GATE(CLK_SDMMC0, "sdmmc0", "div_aclk_200", GATE_IP_FSYS, 5,
+> 0,
+> >> 0),
+> >> >     GATE(CLK_PDMA1, "pdma1", "div_aclk_200", GATE_IP_FSYS, 1, 0,
+> >> > 0),
+> >> @@
+> >> > -698,6 +707,8 @@ static struct samsung_gate_clock gate_clks[]
+> >> > __initdata
+> > = {
+> >> >     GATE(CLK_I2C2, "i2c2", "div_aclk_100", GATE_IP_PERIL, 8, 0, 0),
+> >> >     GATE(CLK_I2C1, "i2c1", "div_aclk_100", GATE_IP_PERIL, 7, 0, 0),
+> >> >     GATE(CLK_I2C0, "i2c0", "div_aclk_100", GATE_IP_PERIL, 6, 0, 0),
+> >> > +   GATE(CLK_UART3, "uart3", "div_aclk_100", GATE_IP_PERIL, 3, 0,
+> 0),
+> >> > +   GATE(CLK_UART2, "uart2", "div_aclk_100", GATE_IP_PERIL, 2, 0,
+> >> > + 0),
+> >> >     GATE(CLK_UART1, "uart1", "div_aclk_100", GATE_IP_PERIL, 1, 0, 0),
+> >> >     GATE(CLK_UART0, "uart0", "div_aclk_100", GATE_IP_PERIL, 0, 0,
+> >> > 0), }; diff --git a/include/dt-bindings/clock/exynos3250.h
+> >> > b/include/dt-bindings/clock/exynos3250.h
+> >> > index b535e9d..ffeb695 100644
+> >> > --- a/include/dt-bindings/clock/exynos3250.h
+> >> > +++ b/include/dt-bindings/clock/exynos3250.h
+> >> > @@ -78,6 +78,8 @@
+> >> >  #define CLK_MOUT_CORE                      58
+> >> >  #define CLK_MOUT_APLL                      59
+> >> >  #define CLK_MOUT_ACLK_266_SUB              60
+> >> > +#define CLK_MOUT_UART2                     61
+> >> > +#define CLK_MOUT_UART3                     62
+> >> >
+> >> >  /* Dividers */
+> >> >  #define CLK_DIV_GPL                        64
+> >> > @@ -126,6 +128,8 @@
+> >> >  #define CLK_DIV_CORE                       107
+> >> >  #define CLK_DIV_HPM                        108
+> >> >  #define CLK_DIV_COPY                       109
+> >> > +#define CLK_DIV_UART2                      110
+> >> > +#define CLK_DIV_UART3                      111
+> >> >
+> >> >  /* Gates */
+> >> >  #define CLK_ASYNC_G3D                      128
+> >> > @@ -222,6 +226,8 @@
+> >> >  #define CLK_BLOCK_MFC                      219
+> >> >  #define CLK_BLOCK_CAM                      220
+> >> >  #define CLK_SMIES                  221
+> >> > +#define CLK_UART2                  222
+> >> > +#define CLK_UART3                  223
+> >> >
+> >> >  /* Special clocks */
+> >> >  #define CLK_SCLK_JPEG                      224
+> >> > @@ -248,11 +254,13 @@
+> >> >  #define CLK_SCLK_SPI0                      245
+> >> >  #define CLK_SCLK_UART1                     246
+> >> >  #define CLK_SCLK_UART0                     247
+> >> > +#define CLK_SCLK_UART2                     248
+> >> > +#define CLK_SCLK_UART3                     249
+> >> >
+> >> >  /*
+> >> >   * Total number of clocks of main CMU.
+> >> >   * NOTE: Must be equal to last clock ID increased by one.
+> >> >   */
+> >> > -#define CLK_NR_CLKS                        248
+> >> > +#define CLK_NR_CLKS                        250
+> >> >
+> >> >  #endif /*
+> _DT_BINDINGS_CLOCK_SAMSUNG_EXYNOS3250_CLOCK_H
+> >> */
+> >> >
+> >
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
