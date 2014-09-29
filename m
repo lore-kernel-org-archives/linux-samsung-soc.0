@@ -1,198 +1,66 @@
-From: Maxime Ripard <maxime.ripard@free-electrons.com>
-Subject: Re: Unable to boot mainline on snow chromebook since 3.15
-Date: Mon, 29 Sep 2014 22:46:00 +0200
-Message-ID: <20140929204600.GF4081@lukather>
-References: <540C83DE.10505@collabora.co.uk>
- <540C8577.2070907@gmail.com>
- <20140908112112.GK26030@arm.com>
- <CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
- <CAD=FV=VAqzvJQDQMjjeQ1p5okyDzE=ff_sguObZxh59qbzcaTQ@mail.gmail.com>
- <CACxGe6t_ex1bU=CvTpXR4VJgNf1hAq33hr6ykbHy_sMXEk4h-g@mail.gmail.com>
- <CAOesGMipX3MV6sMWLuY=D+bQ6qe8P17YFbTFwZOHPeSc3Pw9Cg@mail.gmail.com>
- <20140910143144.GF7960@sirena.org.uk>
- <CACxGe6u=QkGTKGfaE_jJ5VFMhdVKQNggp3qVBUgNP7rDbZss_A@mail.gmail.com>
- <20140929125716.GE26008@ulmo>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH 1/2 v2] i2c: cros-ec-tunnel: Add of match table
+Date: Mon, 29 Sep 2014 22:59:23 +0200
+Message-ID: <20140929205922.GB2758@katana>
+References: <1411114093-3505-1-git-send-email-sjoerd.simons@collabora.co.uk>
+ <1411114093-3505-2-git-send-email-sjoerd.simons@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="dgjlcl3Tl+kb3YDk"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from top.free-electrons.com ([176.31.233.9]:50552 "EHLO
-	mail.free-electrons.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1750970AbaI2UuF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Sep 2014 16:50:05 -0400
+	protocol="application/pgp-signature"; boundary="24zk1gE8NUlDmwG9"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20140929125716.GE26008@ulmo>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1411114093-3505-2-git-send-email-sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Mark Brown <broonie@kernel.org>, Will Deacon <will.deacon@arm.com>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Olof Johansson <olof@lixom.net>, Prashanth G <prashanth.g@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>
 
 
---dgjlcl3Tl+kb3YDk
+--24zk1gE8NUlDmwG9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 29, 2014 at 02:57:19PM +0200, Thierry Reding wrote:
-> On Wed, Sep 10, 2014 at 03:56:16PM +0100, Grant Likely wrote:
-> > On Wed, Sep 10, 2014 at 3:31 PM, Mark Brown <broonie@kernel.org> wrote:
-> > > On Wed, Sep 10, 2014 at 06:06:46AM -0700, Olof Johansson wrote:
-> > >> On Mon, Sep 8, 2014 at 12:40 PM, Grant Likely <grant.likely@secretla=
-b.ca> wrote:
-> > >
-> > >> > Well, lets see... We've got a real user complaining about a platfo=
-rm
-> > >> > that used to work on mainline, and no longer does. The only loopho=
-le
-> > >> > for ignoring breakage is if there nobody cares that it is broken. =
-That
-> > >> > currently isn't the case. So even though it's based on a patch that
-> > >> > has "DO NOT SUBMIT" in large friendly letters on the front cover, =
-it
-> > >> > doesn't change the situation that mainline has a regression.
-> > >
-> > >> Yeah, I'm with you on this Grant, it doesn't matter what the patch is
-> > >> labelled as.
-> > >
-> > >> One way to deal with this could be to add a quirk at boot time --
-> > >> looking for the simplefb and if found, modifies the regulators to ke=
-ep
-> > >> them on. That'd go in the kernel, not in firmware.
-> > >
-> > > Well, we should also be fixing simplefb to manage the resources it us=
-es
-> > > though that doesn't clean up after the broken DTs that are currently
-> > > deployed.
-> > >
-> > > As well as the regulators we'll also need to fix the clocks.  If we're
-> > > going to start adding these fixups perhaps we want to consider having=
- a
-> > > wrapper stage that deals with rewriting DTs prior to trying to use th=
-em?
-> > > I'm not sure if it makes much difference but there's overlap with oth=
-er
-> > > tools like the ATAGs conversion wrapper and building separately would
-> > > let the fixup code run early without directly going into the early in=
-it
-> > > code (which seems a bit scary).
-> > >
-> > >> Much better would have been if the DRM changes worked when they
-> > >> landed, so that the migration form simplefb to drm was invisible to
-> > >> the user. Or at least, to get them working ASAP since they're still
-> > >> broken. :(
-> > >
-> > > As far as I can tell the problem here is coming from the decision to
-> > > have simplefb use resources without knowing about them - can we agree
-> > > that this is a bad idea?
-> >=20
-> > No, I don't think we can... there is a certain amount of "firmware got
-> > things working for us, and we're going to use it for a while" that is
-> > absolutely reasonable. simplefb is a good example, but there are
-> > certainly others.
-> >=20
-> > I /do/ think it would be better for the simplefb data to get embedded
-> > or linked into the node of the graphics controller so that it can be
-> > torn down appropriately, and we need a rule for how long boot-state
-> > can be considered valid so that a proper driver can either reserve the
-> > resources for a given SoC, or do a full handoff from the simplefb.
-> > Even without that though, we need to be able to handle the case of an
-> > anonymous simplefb node with no regulator information. If that means
-> > the default simplefb behaviour is to inhibit runtime pm on all
-> > resources until a real driver show up, then that might just be what we
-> > need to do.
-> >=20
-> > Two things should probably be changed from the current setup. 1)
-> > simplefb shouldn't be a platform driver. It is a boot thing that
-> > handles initial state from the graphics chip. By implementing it as a
-> > platform driver, it prevents the real driver from binding to the real
-> > device if the simplefb data embedded into it. 2) make sure that an SoC
-> > driver can protect the needed resources before they are automatically
-> > disabled. Either by putting them in an earlier initcall, or handling
-> > it in the subsystem code. I don't know enough about the regulator and
-> > clock runtime PM to know what the best way to do this is.
+On Fri, Sep 19, 2014 at 10:08:12AM +0200, Sjoerd Simons wrote:
+> To enable the cros-ec-tunnel driver to be auto-loaded when build as a
+> module add an of match table (and export it) to match the modalias
+> information passed on to userspace as the Cros EC MFD driver registers
+> the MFD subdevices with an of_compatibility string.
 >=20
-> I posted a patch[0] earlier to do this for the clock framework in "that
-> other thread". The idea is that shim drivers for these types of firmware
-> devices can tell the various subsystems that they might need resources
-> that aren't explicitly requested. The current implementation simply uses
-> the existing infrastructure already present for the clk_ignore_unused
-> command-line argument and allows drivers to declare this requirement. It
-> also allows these drivers to retire the request once they've properly
-> handed off to the real driver.
->=20
-> Something similar could be done other frameworks.
->=20
-> One of the objections to that in the other thread is that it won't
-> prevent clocks from being disabled if some other driver was using those
-> same clocks and doing a clk_enable()/clk_disable() on them. But quite
-> frankly I don't think that's something we need to worry about.
+> Signed-off-by: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+> Reviewed-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 
-That's not what has been said.
+Applied to for-next, thanks!
 
-What might happen is this.
+However, since you are working on this driver: sparse rightfully
+complains about:
 
-parent (gate)
-  |
-  +------> clock A (sound)
-  |
-  +------> clock B (display)
+drivers/i2c/busses/i2c-cros-ec-tunnel.c:97:44: warning: cast truncates bits=
+ from constant value (10000 becomes 0)
 
-So. Let's say that at boot, we have parent enabled, and display
-enabled, and that the display have been setup.
+I don't know the EC protocol, can you check?
 
-We have a sound driver that is going to probe. If at *any* point in
-time, the sound driver is to disable its clock, the clock framework,
-since there's no registered user left of the parent clock, will
-disable the parent clock as well, effectively disabling the display
-clock.
 
-This can happen for various reason: failed probe, PM, whatever, or
-even if the sound clock is to be reparented.
-
-Quite frankly, I think that's definitely something we need to worry
-about.
-
-> Though there are two cases: one is to use simplefb as a means to have
-> early boot messages on a graphical display (and optionally hand off to a
-> real driver). The other is to use simplefb as the only framebuffer
-> driver until a proper driver has been implemented. The latter would have
-> the disadvantage of not allowing unused resources from being garbage
-> collected at all. Then again, I don't think power consumption is going
-> to be a very big issue on hardware where no proper display driver is
-> available.
-
-Two use cases, one single driver, and a proper way to prevent all the
-issues your solution doesn't address, like the one we saw above, or
-preventing the clock rate to change.
-
-Maxime
-
---=20
-Maxime Ripard, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
-
---dgjlcl3Tl+kb3YDk
+--24zk1gE8NUlDmwG9
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJUKcUIAAoJEBx+YmzsjxAgH2AP/jhnJACUJ6s06ZPrvb/34tjl
-paHgYuD1AOqMTqscH8MZ1fmUdezzH4OVXcIR3vLAjprM9VDQTwZwMD4OZ8gJYki1
-Tko1DwcDVD6arcCgTCCeUPd9Tvv/gVLnq8zswmbHrpODNEqRtyVjpVGeOUZQETD2
-py2QJ7ytGR+aKXmeggQqVkO/WXO5StvKEToe6HUkepaz5ai21rWXn0FsgefB4C26
-a9C6Dq0Fnl58QdMv5xqXQr1NikpqNehLel5zGadZ8BT7yuGggFEoFi3wu/W4OsQu
-xlXdIKWLZuv+5ZiMZs1LrcNcvnXt/YFvKQpo+6zT+4gH+ZDZFaJ++BygIcGlVQE0
-Z2szCi6MKdXzQKjf/dgOPy9kDYn6juruYwzaJq4Gkqw5snlSGRpaseA7Jd0mxVfb
-sxKeft1ML4px5nOhmBnsSg+WPT+XgoheaOdLpjyGWbkNxcHNDbGw58jvGCfGKTJC
-zf/7moH95LQbkZ3dfSsy+4vcZs79w64zYBVpLXaimorEcY9m3Ig0e59j12vHjg94
-iCLNN2PjH9FACHftNrmZ8q2DVjAOWWUKjgc0qg+jcvtqkt13pCzOi49KIJZ9M0g+
-RJ9iFjuYPfw6GV+YwOsQPsY6YVQg421xUEfMRBaPHQSP4V7wpTLp/rHfuf5v1mvF
-0GVKc9dNhvGrmuy7xSEI
-=1bN+
+iQIcBAEBAgAGBQJUKcgqAAoJEBQN5MwUoCm2twEP/1sRKq/eDRFxR5Z5rh67ynUT
+22EIwT6s1A3OTPDWtZ693Wqb2WT1xxaoSdK9idmzX5Hh+FlkHybCqn9SylVGgwVV
+wf8UHidcirrsXhBEZU71pUTxPxEmTOjMxSmLQ9zfG9LkoamsCJ4om0fxZMgGq7ME
+aAqz6sMuTiqxOAl5e7e3eyplIceCYbTzid4cxBhIBlZekFmV6T0oK1effsEbfsuO
+ukaYafpiNze5/2sM6rrwhcd8tse6pgrTtOaI9WJgUqwJUK8bx44rJ29809h8KOxD
+8ijssJVzYwfqbKwadu2Nxsng3WaCQ6rx9Dgbb4zOLKoizBi7qt6KZ2htKe4+bJOi
+rXExDWaqqQkFvDIBb5TFiaLO8w2qy/Lwfk1jJWSBP8AKEalX0PyXdMWxQIg8qsgI
+yuolq9n5/nNa81AyEjHnIiWC7/RYXAPd+FpgRlUrOEDWDjT3cqWCxYl1We/LRzeF
+caxZfPfD+nb0y1gZ76+BL9z9OAhRHPCddBLQOMDHhBMWG41O5+LxEN89yyYwSect
+S4hMnyVNFDeXWWj6zOv3BlgBfPrHtpx2V36sV+/QzPmQd2nGhlPiwSrTl0JbMcUE
+tZYok8W2HVkHvU3aij5jH97hA8k6fD+hBsCinT1rPRpsdNOvzXanEiRz+ndT29B+
+qs/4k5bF7M+0+Ov+WjQr
+=stXG
 -----END PGP SIGNATURE-----
 
---dgjlcl3Tl+kb3YDk--
+--24zk1gE8NUlDmwG9--
