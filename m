@@ -1,70 +1,49 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v3 0/6] Add initial support for pinctrl on Exynos7
-Date: Tue, 30 Sep 2014 00:49:25 +0200
-Message-ID: <5429E1F5.6070206@gmail.com>
-References: <1411967712-8321-1-git-send-email-a.kesavan@samsung.com>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [PATCH 1/2 v2] i2c: cros-ec-tunnel: Add of match table
+Date: Tue, 30 Sep 2014 01:21:38 +0200
+Message-ID: <5429E982.4050509@collabora.co.uk>
+References: <1411114093-3505-1-git-send-email-sjoerd.simons@collabora.co.uk> <1411114093-3505-2-git-send-email-sjoerd.simons@collabora.co.uk> <20140929205922.GB2758@katana>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f47.google.com ([74.125.82.47]:42951 "EHLO
-	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750970AbaI2Wt3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Sep 2014 18:49:29 -0400
-In-Reply-To: <1411967712-8321-1-git-send-email-a.kesavan@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20140929205922.GB2758@katana>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <a.kesavan@samsung.com>, linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org
-Cc: linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org
 
-On 29.09.2014 07:15, Abhilash Kesavan wrote:
-> Changes since v1:
-> 	- Marked the newly created irq_chip instances as __initdata
-> 	- Used kmemdup to keep a copy of the irq_chip
-> 	- Change the pinctrl name from sd0_rdqs to sd0_ds as per UM
-> 	- Moved the pinctrl enablement for exynos7 into a separate patch
-> 	- Added tested-by and reviewed-by tags from Thomas Abraham
+Hello Wolfram,
+
+On 09/29/2014 10:59 PM, Wolfram Sang wrote:
+> On Fri, Sep 19, 2014 at 10:08:12AM +0200, Sjoerd Simons wrote:
+>> To enable the cros-ec-tunnel driver to be auto-loaded when build as a
+>> module add an of match table (and export it) to match the modalias
+>> information passed on to userspace as the Cros EC MFD driver registers
+>> the MFD subdevices with an of_compatibility string.
+>> 
+>> Signed-off-by: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+>> Reviewed-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 > 
-> Following patches have been tested on linux-next (20140926).
-> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/
->  
-> Following patches are required for this series:
-> 1) "tty/serial: fix config dependencies for samsung serial"
->    https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg36208.html
-> 2) "dts, kbuild: Implement support for dtb vendor subdirs" patchset 
->    http://comments.gmane.org/gmane.linux.kbuild.devel/12131
-> 3) "arch: arm64: enable support for Samsung Exynos7 SoC" patchset (v5)
->    http://www.spinics.net/lists/arm-kernel/msg364014.html
+> Applied to for-next, thanks!
 > 
-> Abhilash Kesavan (3):
->   pinctrl: exynos: Generalize the eint16_31 demux code
->   pinctrl: exynos: Consolidate irq domain callbacks
->   pinctrl: exynos: Add irq_chip instance for Exynos7 wakeup interrupts
+> However, since you are working on this driver: sparse rightfully
+> complains about:
 > 
-> Naveen Krishna Ch (3):
->   pinctrl: exynos: Add initial driver data for Exynos7
->   arm64: dts: Add initial pinctrl support to EXYNOS7
->   arm64: exynos: Enable pinctrl support for Exynos7
+> drivers/i2c/busses/i2c-cros-ec-tunnel.c:97:44: warning: cast truncates bits from constant value (10000 becomes 0)
 > 
->  .../bindings/pinctrl/samsung-pinctrl.txt           |    3 +
->  arch/arm64/Kconfig                                 |    2 +
->  arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    |  560 ++++++++++++++++++++
->  arch/arm64/boot/dts/exynos/exynos7.dtsi            |   66 +++
->  drivers/pinctrl/samsung/pinctrl-exynos.c           |  196 +++++--
->  drivers/pinctrl/samsung/pinctrl-exynos.h           |    3 +
->  drivers/pinctrl/samsung/pinctrl-samsung.c          |    2 +
->  drivers/pinctrl/samsung/pinctrl-samsung.h          |    3 +
->  8 files changed, 799 insertions(+), 36 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
+> I don't know the EC protocol, can you check?
 > 
 
-For patches 1-2, 4-6:
+Doug posted a patch [0] to fix the issue you are reporting but it was not
+picked. I tested that the patch applies on top of linux-next + the latest
+cros_ec cleanups (that includes a patch for this i2c driver and was taken
+by Lee. So I think is safe for you take Doug's patch through your tree
+since it seems to not cause any conflict with the mfd tree.
 
-Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-
-Linus, I have replied for patch 3 with 2 minor issues with coding style.
-If you don't mind them, feel free to take the whole series with my Ack.
+Or if you prefer, I can re-post that patch for 3.19.
 
 Best regards,
-Tomasz
+Javier
+
+[0]: https://lkml.org/lkml/2014/6/23/830
