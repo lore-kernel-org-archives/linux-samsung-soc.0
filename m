@@ -1,196 +1,158 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH V2 2/3] mmc: dw_mmc: Support voltage changes
-Date: Mon, 29 Sep 2014 14:49:50 +0200
-Message-ID: <1722401.BdMiYKdVJ3@amdc1032>
-References: <1408715272-13833-1-git-send-email-yuvaraj.cd@samsung.com>
- <CAD=FV=X_PMbovmpp4n9LXY5-9rnfcoF4D1x4wvuGOkayb7aArA@mail.gmail.com>
- <CAPDyKFqi78_s+d47_whCn+6ZhCN+KF_nqyFjnGwQSjPAPjr3iA@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: Unable to boot mainline on snow chromebook since 3.15
+Date: Mon, 29 Sep 2014 14:57:19 +0200
+Message-ID: <20140929125716.GE26008@ulmo>
+References: <540C7F5B.6070307@gmail.com>
+ <540C83DE.10505@collabora.co.uk>
+ <540C8577.2070907@gmail.com>
+ <20140908112112.GK26030@arm.com>
+ <CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
+ <CAD=FV=VAqzvJQDQMjjeQ1p5okyDzE=ff_sguObZxh59qbzcaTQ@mail.gmail.com>
+ <CACxGe6t_ex1bU=CvTpXR4VJgNf1hAq33hr6ykbHy_sMXEk4h-g@mail.gmail.com>
+ <CAOesGMipX3MV6sMWLuY=D+bQ6qe8P17YFbTFwZOHPeSc3Pw9Cg@mail.gmail.com>
+ <20140910143144.GF7960@sirena.org.uk>
+ <CACxGe6u=QkGTKGfaE_jJ5VFMhdVKQNggp3qVBUgNP7rDbZss_A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <CAPDyKFqi78_s+d47_whCn+6ZhCN+KF_nqyFjnGwQSjPAPjr3iA@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Doug Anderson <dianders@google.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Abhilash Kesavan <a.kesavan@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ZInfyf7laFu/Kiw7"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f45.google.com ([74.125.82.45]:33383 "EHLO
+	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751753AbaI2M5W (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 29 Sep 2014 08:57:22 -0400
+Received: by mail-wg0-f45.google.com with SMTP id m15so365969wgh.28
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Sep 2014 05:57:21 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CACxGe6u=QkGTKGfaE_jJ5VFMhdVKQNggp3qVBUgNP7rDbZss_A@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Mark Brown <broonie@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Prashanth G <prashanth.g@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>
 
 
-Hi,
+--ZInfyf7laFu/Kiw7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Friday, August 29, 2014 01:43:16 PM Ulf Hansson wrote:
-> On 25 August 2014 22:59, Doug Anderson <dianders@google.com> wrote:
-> > Ulf,
+On Wed, Sep 10, 2014 at 03:56:16PM +0100, Grant Likely wrote:
+> On Wed, Sep 10, 2014 at 3:31 PM, Mark Brown <broonie@kernel.org> wrote:
+> > On Wed, Sep 10, 2014 at 06:06:46AM -0700, Olof Johansson wrote:
+> >> On Mon, Sep 8, 2014 at 12:40 PM, Grant Likely <grant.likely@secretlab.=
+ca> wrote:
 > >
-> > On Mon, Aug 25, 2014 at 1:31 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> >> On 22 August 2014 22:38, Doug Anderson <dianders@google.com> wrote:
-> >>> Ulf,
-> >>>
-> >>> On Fri, Aug 22, 2014 at 8:35 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> >>>> On 22 August 2014 15:47, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
-> >>>>> From: Doug Anderson <dianders@chromium.org>
-> >>>>>
-> >>>>> For UHS cards we need the ability to switch voltages from 3.3V to
-> >>>>> 1.8V.  Add support to the dw_mmc driver to handle this.  Note that
-> >>>>> dw_mmc needs a little bit of extra code since the interface needs a
-> >>>>> special bit programmed to the CMD register while CMD11 is progressing.
-> >>>>> This means adding a few extra states to the state machine to track.
-> >>>>>
-> >>>>> Signed-off-by: Doug Anderson <dianders@chromium.org>
-> >>>>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
-> >>>>> ---
-> >>>>> changes since v1:
-> >>>>>         1. Added error message and return error in case of regulator_set_voltage() fail.
-> >>>>>         2. changed  dw_mci_cmd_interrupt(host,pending | SDMMC_INT_CMD_DONE)
-> >>>>>            to dw_mci_cmd_interrupt(host,pending).
-> >>>>>         3. Removed unnecessary comments.
-> >>>>>
-> >>>>>  drivers/mmc/host/dw_mmc.c  |  134 +++++++++++++++++++++++++++++++++++++++++---
-> >>>>>  drivers/mmc/host/dw_mmc.h  |    5 +-
-> >>>>>  include/linux/mmc/dw_mmc.h |    2 +
-> >>>>>  3 files changed, 131 insertions(+), 10 deletions(-)
-> >>>>>
-> >>>>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> >>>>> index aadb0d6..f20b4b8 100644
-> >>>>> --- a/drivers/mmc/host/dw_mmc.c
-> >>>>> +++ b/drivers/mmc/host/dw_mmc.c
-> >>>>> @@ -29,6 +29,7 @@
-> >>>>>  #include <linux/irq.h>
-> >>>>>  #include <linux/mmc/host.h>
-> >>>>>  #include <linux/mmc/mmc.h>
-> >>>>> +#include <linux/mmc/sd.h>
-> >>>>>  #include <linux/mmc/sdio.h>
-> >>>>>  #include <linux/mmc/dw_mmc.h>
-> >>>>>  #include <linux/bitops.h>
-> >>>>> @@ -234,10 +235,13 @@ err:
-> >>>>>  }
-> >>>>>  #endif /* defined(CONFIG_DEBUG_FS) */
-> >>>>>
-> >>>>> +static void mci_send_cmd(struct dw_mci_slot *slot, u32 cmd, u32 arg);
-> >>>>> +
-> >>>>>  static u32 dw_mci_prepare_command(struct mmc_host *mmc, struct mmc_command *cmd)
-> >>>>>  {
-> >>>>>         struct mmc_data *data;
-> >>>>>         struct dw_mci_slot *slot = mmc_priv(mmc);
-> >>>>> +       struct dw_mci *host = slot->host;
-> >>>>>         const struct dw_mci_drv_data *drv_data = slot->host->drv_data;
-> >>>>>         u32 cmdr;
-> >>>>>         cmd->error = -EINPROGRESS;
-> >>>>> @@ -253,6 +257,31 @@ static u32 dw_mci_prepare_command(struct mmc_host *mmc, struct mmc_command *cmd)
-> >>>>>         else if (cmd->opcode != MMC_SEND_STATUS && cmd->data)
-> >>>>>                 cmdr |= SDMMC_CMD_PRV_DAT_WAIT;
-> >>>>>
-> >>>>> +       if (cmd->opcode == SD_SWITCH_VOLTAGE) {
-> >>>>> +               u32 clk_en_a;
-> >>>>> +
-> >>>>> +               /* Special bit makes CMD11 not die */
-> >>>>> +               cmdr |= SDMMC_CMD_VOLT_SWITCH;
-> >>>>> +
-> >>>>> +               /* Change state to continue to handle CMD11 weirdness */
-> >>>>> +               WARN_ON(slot->host->state != STATE_SENDING_CMD);
-> >>>>> +               slot->host->state = STATE_SENDING_CMD11;
-> >>>>> +
-> >>>>> +               /*
-> >>>>> +                * We need to disable clock stop while doing voltage switch
-> >>>>> +                * according to Voltage Switch Normal Scenario.
-> >>>>> +                * It's assumed that by the next time the CLKENA is updated
-> >>>>> +                * (when we set the clock next) that the voltage change will
-> >>>>> +                * be over, so we don't bother setting any bits to synchronize
-> >>>>> +                * with dw_mci_setup_bus().
-> >>>>> +                */
-> >>>>
-> >>>> I don't know the details about the dw_mmc controller, but normally a
-> >>>> host driver is expected to gate the clock from it's ->set_ios
-> >>>> callback, when the clk frequency are set to 0.
-> >>>>
-> >>>> Could you elaborate on why dw_mmc can't do that, but need to handle
-> >>>> this from here?
-> >>>
-> >>> Let's see, it's been a while since I wrote this...
-> >>>
-> >>>
-> >>> So dw_mmc has a special feature where the controller itself will
-> >>> automatically stop the MMC Card clock when nothing is going on.  This
-> >>> is called "low power" mode.  I'm not super familiar with other MMC
-> >>> drivers, I get the impression that this is a special dw_mmc feature
-> >>> and not common to other controllers.  I think other drivers have
-> >>> aggressive runtime PM to get similar power savings.
-> >>
-> >> I see.
-> >>
-> >> I am familiar with such "low power" mode features, there are certainly
-> >> other controllers supporting such as well. My experience tells me,
-> >> it's hard to get things right for all corner cases. The voltage switch
-> >> behaviour is just one of these, then you have SDIO irq etc.
-> >>
-> >> Instead of using the controller HW, yes you may implement clock gating
-> >> through runtime PM in the host driver.
-> >>
-> >>>
-> >>> The dw_mmc auto clock gating can wreck total havoc on the voltage
-> >>> change procedure, since part of the way that the host and card
-> >>> communicate is that the host is supposed to stop its clock when it
-> >>> gets to a certain phase of the voltage switch sequence.  If the
-> >>> controller is stopping the clock for us then it can confuse the card.
-> >>>
-> >>> The dw_mmc manual says that before starting a voltage change you must
-> >>> turn off low power mode.  That's what we're doing here.
-> >>>
-> >>>
-> >>> The comment above refers to the fact dw_mci_setup_bus() will
-> >>> unconditionally turn low power mode back on for us when called with a
-> >>> non-zero clock.  If dw_mci_setup_bus() might be called with a non-zero
-> >>> clock during the voltage change then this would be disaster (low power
-> >>> mode would be back on!).  ...but the clock will always be zero during
-> >>> the voltage change and when it's finally non-zero then it's the last
-> >>> stage of the voltage change and we can go back to low power mode.
-> >>>
-> >>>
-> >>> Possibly the above was not super clear from the comment (even for
-> >>> those familiar with the oddities of dw_mmc).  If you want me to try to
-> >>> rewrite the comment, let me know.
-> >>
-> >> I appreciate an updated comment, it's nice to know what goes on. :-)
+> >> > Well, lets see... We've got a real user complaining about a platform
+> >> > that used to work on mainline, and no longer does. The only loophole
+> >> > for ignoring breakage is if there nobody cares that it is broken. Th=
+at
+> >> > currently isn't the case. So even though it's based on a patch that
+> >> > has "DO NOT SUBMIT" in large friendly letters on the front cover, it
+> >> > doesn't change the situation that mainline has a regression.
 > >
-> > OK, how about:
+> >> Yeah, I'm with you on this Grant, it doesn't matter what the patch is
+> >> labelled as.
 > >
-> > /*
-> >  * We need to disable low power mode (automatic clock stop)
-> >  * while doing voltage switch so we don't confuse the card,
-> >  * since stopping the clock is a specific part of the UHS
-> >  * voltage change dance.
-> >  *
-> >  * Note that low power mode (SDMMC_CLKEN_LOW_PWR) will be
-> >  * unconditionally turned back on in dw_mci_setup_bus() if it's
-> >  * ever called with a non-zero clock.  That shouldn't happen
-> >  * until the voltage change is all done.
-> >  */
+> >> One way to deal with this could be to add a quirk at boot time --
+> >> looking for the simplefb and if found, modifies the regulators to keep
+> >> them on. That'd go in the kernel, not in firmware.
 > >
-> > Yuvaraj: can you include that in the next patch set you send out?
-> 
-> Thanks! Applied for next!
-> 
-> I took the liberty to change to the clarified comment from Doug above.
+> > Well, we should also be fixing simplefb to manage the resources it uses
+> > though that doesn't clean up after the broken DTs that are currently
+> > deployed.
+> >
+> > As well as the regulators we'll also need to fix the clocks.  If we're
+> > going to start adding these fixups perhaps we want to consider having a
+> > wrapper stage that deals with rewriting DTs prior to trying to use them?
+> > I'm not sure if it makes much difference but there's overlap with other
+> > tools like the ATAGs conversion wrapper and building separately would
+> > let the fixup code run early without directly going into the early init
+> > code (which seems a bit scary).
+> >
+> >> Much better would have been if the DRM changes worked when they
+> >> landed, so that the migration form simplefb to drm was invisible to
+> >> the user. Or at least, to get them working ASAP since they're still
+> >> broken. :(
+> >
+> > As far as I can tell the problem here is coming from the decision to
+> > have simplefb use resources without knowing about them - can we agree
+> > that this is a bad idea?
+>=20
+> No, I don't think we can... there is a certain amount of "firmware got
+> things working for us, and we're going to use it for a while" that is
+> absolutely reasonable. simplefb is a good example, but there are
+> certainly others.
+>=20
+> I /do/ think it would be better for the simplefb data to get embedded
+> or linked into the node of the graphics controller so that it can be
+> torn down appropriately, and we need a rule for how long boot-state
+> can be considered valid so that a proper driver can either reserve the
+> resources for a given SoC, or do a full handoff from the simplefb.
+> Even without that though, we need to be able to handle the case of an
+> anonymous simplefb node with no regulator information. If that means
+> the default simplefb behaviour is to inhibit runtime pm on all
+> resources until a real driver show up, then that might just be what we
+> need to do.
+>=20
+> Two things should probably be changed from the current setup. 1)
+> simplefb shouldn't be a platform driver. It is a boot thing that
+> handles initial state from the graphics chip. By implementing it as a
+> platform driver, it prevents the real driver from binding to the real
+> device if the simplefb data embedded into it. 2) make sure that an SoC
+> driver can protect the needed resources before they are automatically
+> disabled. Either by putting them in an earlier initcall, or handling
+> it in the subsystem code. I don't know enough about the regulator and
+> clock runtime PM to know what the best way to do this is.
 
-This patch casuses a boot hang during regulators initizalization on
-Exynos5420 Arndale Octa board.
+I posted a patch[0] earlier to do this for the clock framework in "that
+other thread". The idea is that shim drivers for these types of firmware
+devices can tell the various subsystems that they might need resources
+that aren't explicitly requested. The current implementation simply uses
+the existing infrastructure already present for the clk_ignore_unused
+command-line argument and allows drivers to declare this requirement. It
+also allows these drivers to retire the request once they've properly
+handed off to the real driver.
 
-The kernel config used can was posted in other thread:
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg37210.html
+Something similar could be done other frameworks.
 
-IOW I need to revert both
+One of the objections to that in the other thread is that it won't
+prevent clocks from being disabled if some other driver was using those
+same clocks and doing a clk_enable()/clk_disable() on them. But quite
+frankly I don't think that's something we need to worry about.
 
-	"mmc: dw_mmc: Support voltage changes"
+Though there are two cases: one is to use simplefb as a means to have
+early boot messages on a graphical display (and optionally hand off to a
+real driver). The other is to use simplefb as the only framebuffer
+driver until a proper driver has been implemented. The latter would have
+the disadvantage of not allowing unused resources from being garbage
+collected at all. Then again, I don't think power consumption is going
+to be a very big issue on hardware where no proper display driver is
+available.
 
-and
+Thierry
 
-	"mmc: dw_mmc: use mmc_regulator_get_supply to handle regulators"
+[0]: http://lists.infradead.org/pipermail/linux-arm-kernel/2014-September/2=
+91295.html
 
-patches to make next branch of mmc-uh tree work on my setup.
+--ZInfyf7laFu/Kiw7
+Content-Type: application/pgp-signature
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
+iQIcBAEBAgAGBQJUKVcsAAoJEN0jrNd/PrOhzNQP/28yMfU8A9zRvOXPJAABtrbU
+CVpibmDgFRrs+NUVjYzN/LrYQ5pOYOj9G+h+j47gYBujIbF6Mva5ZFsKJ49EGBFd
+W0MMo9mr19qI/Ysap95kGZbVa7N9OKIQI7q9J14N5gmy+9VGamGQhdlPjApuR0FL
+WcVZ8KFVrAMxrW94Y9OCi0w8XtB7eRfkDN/MpQIrHGAnzdJxs4UMQ93lTAp4tq0x
+VYYARXmJxe67bUj+C4CXi8Kgxq48CCpnv/fx2efMbx80k2TudRhqiJefgIHlUMtI
+UZVnefFnnwD9rAFT9xj5bPKD0+KeGAR+0/LaGs1kqZiCW6DHUsp8iWPm4SADpnw1
+kOdnwizqvxZGhqOFtVESIbi08pHv8aqhD4/JabzaKHlBPy6LDiSaVUqkK1fbjGBU
+CYmtcwYsM2gWr5qR5IIIDCtRB6miEaYPo205AlJ09d1XXdKDNqVA1ujubz64/HLA
+O2/LhtsLI+gTZJbJD0dr+4pVXHSjuieOVOWTCWa3qqjet5vLeRGZnJWurywIlnEI
+R7kbHKcgDpbN0Lzlj1lpFqP1AYyWeh9ZXTlAfvfBXOOcqvjoP+E+teDa8yIgGro9
+6z2+vre+MCHiaMX+ivotTimTvRonX1XnXfbXBvPbYAMsBIyohNXD934sy7UcTVQw
+pqFVJZYVebPJJTAV94iY
+=58Vl
+-----END PGP SIGNATURE-----
+
+--ZInfyf7laFu/Kiw7--
