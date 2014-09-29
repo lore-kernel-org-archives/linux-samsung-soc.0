@@ -1,240 +1,252 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH 1/2] clk: samsung: exynos3250: add uart2/3 related clocks
-Date: Mon, 29 Sep 2014 17:47:25 +0900
-Message-ID: <CAH9JG2Wim92gk7=GsJxybbYCVf8aUqiHoWi8h0+N6T8d1V803g@mail.gmail.com>
-References: <1411793928-32692-1-git-send-email-pankaj.dubey@samsung.com>
-	<1411793928-32692-2-git-send-email-pankaj.dubey@samsung.com>
-	<5428BFFE.9090002@samsung.com>
-	<001201cfdb8f$b9dae350$2d90a9f0$@samsung.com>
-	<CAH9JG2UFFHwA=5g5Dg66A5gniPw+mEiVJCd=nZYLWgtLZ1R9zg@mail.gmail.com>
-	<000001cfdbb6$1aef87b0$50ce9710$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v6] mfd: syscon: Decouple syscon interface from platform devices
+Date: Mon, 29 Sep 2014 14:17:38 +0530
+Message-ID: <1411980458-32329-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f176.google.com ([209.85.212.176]:34335 "EHLO
-	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751037AbaI2Ir0 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:21175 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753189AbaI2Iwd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Sep 2014 04:47:26 -0400
-Received: by mail-wi0-f176.google.com with SMTP id n3so2689295wiv.15
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Sep 2014 01:47:25 -0700 (PDT)
-In-Reply-To: <000001cfdbb6$1aef87b0$50ce9710$@samsung.com>
+	Mon, 29 Sep 2014 04:52:33 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, naushad@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, robh+dt@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, arm-linux <linux-arm-kernel@lists.infradead.org>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: arnd@arndb.de, b29396@freescale.com, lee.jones@linaro.org, boris.brezillon@free-electrons.com, tomasz.figa@gmail.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, kgene.kim@samsung.com, Li.Xiubo@freescale.com, geert+renesas@glider.be, swarren@nvidia.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-On Mon, Sep 29, 2014 at 4:22 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
-> Hi,
->
-> On Monday, September 29, 2014 9:07 AM, Kyungmin Park wrote,
->> To: Pankaj Dubey
->> Cc: Chanwoo Choi; Kukjin Kim; Russell King - ARM Linux;
-> naushad@samsung.com;
->> Tomasz Figa; linux-samsung-soc; robh+dt@kernel.org; Sylwester Nawrocki;
-> Mike
->> Turquette; arm-linux
->> Subject: Re: [PATCH 1/2] clk: samsung: exynos3250: add uart2/3 related
-> clocks
->>
->> On Mon, Sep 29, 2014 at 11:47 AM, Pankaj Dubey <pankaj.dubey@samsung.com>
->> wrote:
->> > Hi Chanwoo,
->> >
->> > On Monday, September 29, 2014 7:42 AM, Chanwoo Choi wrote,
->> >> To: Pankaj Dubey
->> >> Cc: linux-arm-kernel@lists.infradead.org;
->> > linux-samsung-soc@vger.kernel.org;
->> >> kgene.kim@samsung.com; tomasz.figa@gmail.com; robh+dt@kernel.org;
->> >> linux@arm.linux.org.uk; naushad@samsung.com; Mike Turquette;
->> >> Sylwester Nawrocki
->> >> Subject: Re: [PATCH 1/2] clk: samsung: exynos3250: add uart2/3
->> >> related
->> > clocks
->> >>
->> >> Hi Pankaj,
->> >>
->> >> On 09/27/2014 01:58 PM, Pankaj Dubey wrote:
->> >> > Exynos3250 has four UART channels UART0,1,2 and 3. This patch adds
->> >> > missing clock entries for UART2 and UART3.
->> >> >
->> >> > CC: Mike Turquette <mturquette@linaro.org>
->> >> > CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> >> > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> >> > ---
->> >> >  drivers/clk/samsung/clk-exynos3250.c   |   11 +++++++++++
->> >> >  include/dt-bindings/clock/exynos3250.h |   10 +++++++++-
->> >> >  2 files changed, 20 insertions(+), 1 deletion(-)
->> >>
->> >> Exynos3250 has only two UART(0,1) port. Exynos3250 don't support UART
->> 2,3.
->> >>
->> >
->> > As per Exynos3250 user manual that I have with me it supports
-> UART(0,1,2,3).
->> > It has been mentioned
->> which UM do you use? There are two UARTs at rev0.01
->>
->
-> I am using Rev 2.0.
-I received the latest manual from LSI. but it's still v1.40.
->
-> Thanks,
-> Pankaj Dubey
->
->
->> > in UART Chapter as well as CMU IP details also mentioned about the
->> > clock entries. We have tested it also on Espresso3250 board which is
->> > based on Exynos3250 SoC.
->> I can't find it at my UM.
->>
->> Kyungmin Park
->> >
->> > Thanks,
->> > Pankaj Dubey
->> >
->> >> Thanks,
->> >> Chanwoo Choi
->> >>
->> >> >
->> >> > diff --git a/drivers/clk/samsung/clk-exynos3250.c
->> >> > b/drivers/clk/samsung/clk-exynos3250.c
->> >> > index dc85f8e..0722fef 100644
->> >> > --- a/drivers/clk/samsung/clk-exynos3250.c
->> >> > +++ b/drivers/clk/samsung/clk-exynos3250.c
->> >> > @@ -357,6 +357,8 @@ static struct samsung_mux_clock mux_clks[]
->> > __initdata =
->> >> {
->> >> >     MUX(CLK_MOUT_MMC0, "mout_mmc0", group_sclk_p, SRC_FSYS, 0,
->> 3),
->> >> >
->> >> >     /* SRC_PERIL0 */
->> >> > +   MUX(CLK_MOUT_UART3, "mout_uart3", group_sclk_p, SRC_PERIL0,
->> >> 12, 4),
->> >> > +   MUX(CLK_MOUT_UART2, "mout_uart2", group_sclk_p, SRC_PERIL0,
->> 8,
->> >> 4),
->> >> >     MUX(CLK_MOUT_UART1, "mout_uart1", group_sclk_p, SRC_PERIL0,
->> 4,
->> >> 4),
->> >> >     MUX(CLK_MOUT_UART0, "mout_uart0", group_sclk_p, SRC_PERIL0,
->> 0,
->> >> 4),
->> >> >
->> >> > @@ -439,6 +441,8 @@ static struct samsung_div_clock div_clks[]
->> > __initdata = {
->> >> >     DIV(CLK_DIV_MMC0, "div_mmc0", "mout_mmc0", DIV_FSYS1, 0, 4),
->> >> >
->> >> >     /* DIV_PERIL0 */
->> >> > +   DIV(CLK_DIV_UART3, "div_uart3", "mout_uart3", DIV_PERIL0, 12,
->> 4),
->> >> > +   DIV(CLK_DIV_UART2, "div_uart2", "mout_uart2", DIV_PERIL0, 8,
->> >> > + 4),
->> >> >     DIV(CLK_DIV_UART1, "div_uart1", "mout_uart1", DIV_PERIL0, 4, 4),
->> >> >     DIV(CLK_DIV_UART0, "div_uart0", "mout_uart0", DIV_PERIL0, 0,
->> >> > 4),
->> >> >
->> >> > @@ -601,6 +605,10 @@ static struct samsung_gate_clock gate_clks[]
->> > __initdata
->> >> = {
->> >> >             GATE_SCLK_PERIL, 7, CLK_SET_RATE_PARENT, 0),
->> >> >     GATE(CLK_SCLK_SPI0, "sclk_spi0", "div_spi0_pre",
->> >> >             GATE_SCLK_PERIL, 6, CLK_SET_RATE_PARENT, 0),
->> >> > +   GATE(CLK_SCLK_UART3, "sclk_uart3", "div_uart3",
->> >> > +           GATE_SCLK_PERIL, 3, CLK_SET_RATE_PARENT, 0),
->> >> > +   GATE(CLK_SCLK_UART2, "sclk_uart2", "div_uart2",
->> >> > +           GATE_SCLK_PERIL, 2, CLK_SET_RATE_PARENT, 0),
->> >> >     GATE(CLK_SCLK_UART1, "sclk_uart1", "div_uart1",
->> >> >             GATE_SCLK_PERIL, 1, CLK_SET_RATE_PARENT, 0),
->> >> >     GATE(CLK_SCLK_UART0, "sclk_uart0", "div_uart0", @@ -679,6
->> >> > +687,7
->> >> @@
->> >> > static struct samsung_gate_clock gate_clks[] __initdata = {
->> >> >     GATE(CLK_USBOTG, "usbotg", "div_aclk_200", GATE_IP_FSYS, 13,
->> 0,
->> >> 0),
->> >> >     GATE(CLK_USBHOST, "usbhost", "div_aclk_200", GATE_IP_FSYS, 12,
->> >> 0, 0),
->> >> >     GATE(CLK_SROMC, "sromc", "div_aclk_200", GATE_IP_FSYS, 11, 0,
->> >> > 0),
->> >> > +   GATE(CLK_SDMMC2, "sdmmc2", "div_aclk_200", GATE_IP_FSYS, 7,
->> 0,
->> >> 0),
->> >> >     GATE(CLK_SDMMC1, "sdmmc1", "div_aclk_200", GATE_IP_FSYS, 6,
->> 0,
->> >> 0),
->> >> >     GATE(CLK_SDMMC0, "sdmmc0", "div_aclk_200", GATE_IP_FSYS, 5,
->> 0,
->> >> 0),
->> >> >     GATE(CLK_PDMA1, "pdma1", "div_aclk_200", GATE_IP_FSYS, 1, 0,
->> >> > 0),
->> >> @@
->> >> > -698,6 +707,8 @@ static struct samsung_gate_clock gate_clks[]
->> >> > __initdata
->> > = {
->> >> >     GATE(CLK_I2C2, "i2c2", "div_aclk_100", GATE_IP_PERIL, 8, 0, 0),
->> >> >     GATE(CLK_I2C1, "i2c1", "div_aclk_100", GATE_IP_PERIL, 7, 0, 0),
->> >> >     GATE(CLK_I2C0, "i2c0", "div_aclk_100", GATE_IP_PERIL, 6, 0, 0),
->> >> > +   GATE(CLK_UART3, "uart3", "div_aclk_100", GATE_IP_PERIL, 3, 0,
->> 0),
->> >> > +   GATE(CLK_UART2, "uart2", "div_aclk_100", GATE_IP_PERIL, 2, 0,
->> >> > + 0),
->> >> >     GATE(CLK_UART1, "uart1", "div_aclk_100", GATE_IP_PERIL, 1, 0, 0),
->> >> >     GATE(CLK_UART0, "uart0", "div_aclk_100", GATE_IP_PERIL, 0, 0,
->> >> > 0), }; diff --git a/include/dt-bindings/clock/exynos3250.h
->> >> > b/include/dt-bindings/clock/exynos3250.h
->> >> > index b535e9d..ffeb695 100644
->> >> > --- a/include/dt-bindings/clock/exynos3250.h
->> >> > +++ b/include/dt-bindings/clock/exynos3250.h
->> >> > @@ -78,6 +78,8 @@
->> >> >  #define CLK_MOUT_CORE                      58
->> >> >  #define CLK_MOUT_APLL                      59
->> >> >  #define CLK_MOUT_ACLK_266_SUB              60
->> >> > +#define CLK_MOUT_UART2                     61
->> >> > +#define CLK_MOUT_UART3                     62
->> >> >
->> >> >  /* Dividers */
->> >> >  #define CLK_DIV_GPL                        64
->> >> > @@ -126,6 +128,8 @@
->> >> >  #define CLK_DIV_CORE                       107
->> >> >  #define CLK_DIV_HPM                        108
->> >> >  #define CLK_DIV_COPY                       109
->> >> > +#define CLK_DIV_UART2                      110
->> >> > +#define CLK_DIV_UART3                      111
->> >> >
->> >> >  /* Gates */
->> >> >  #define CLK_ASYNC_G3D                      128
->> >> > @@ -222,6 +226,8 @@
->> >> >  #define CLK_BLOCK_MFC                      219
->> >> >  #define CLK_BLOCK_CAM                      220
->> >> >  #define CLK_SMIES                  221
->> >> > +#define CLK_UART2                  222
->> >> > +#define CLK_UART3                  223
->> >> >
->> >> >  /* Special clocks */
->> >> >  #define CLK_SCLK_JPEG                      224
->> >> > @@ -248,11 +254,13 @@
->> >> >  #define CLK_SCLK_SPI0                      245
->> >> >  #define CLK_SCLK_UART1                     246
->> >> >  #define CLK_SCLK_UART0                     247
->> >> > +#define CLK_SCLK_UART2                     248
->> >> > +#define CLK_SCLK_UART3                     249
->> >> >
->> >> >  /*
->> >> >   * Total number of clocks of main CMU.
->> >> >   * NOTE: Must be equal to last clock ID increased by one.
->> >> >   */
->> >> > -#define CLK_NR_CLKS                        248
->> >> > +#define CLK_NR_CLKS                        250
->> >> >
->> >> >  #endif /*
->> _DT_BINDINGS_CLOCK_SAMSUNG_EXYNOS3250_CLOCK_H
->> >> */
->> >> >
->> >
->> >
->> > _______________________________________________
->> > linux-arm-kernel mailing list
->> > linux-arm-kernel@lists.infradead.org
->> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
+Currently a syscon entity can be only registered directly through a
+platform device that binds to a dedicated syscon driver. However in
+certain use cases it is desirable to make a device used with another
+driver a syscon interface provider.
+
+For example, certain SoCs (e.g. Exynos) contain system controller
+blocks which perform various functions such as power domain control,
+CPU power management, low power mode control, but in addition contain
+certain IP integration glue, such as various signal masks,
+coprocessor power control, etc. In such case, there is a need to have
+a dedicated driver for such system controller but also share registers
+with other drivers. The latter is where the syscon interface is helpful.
+
+In case of DT based platforms, this patch decouples syscon object from
+syscon platform driver, and allows to create syscon objects first time
+when it is required by calling of syscon_regmap_lookup_by APIs and keep
+a list of such syscon objects along with syscon provider device_nodes
+and regmap handles.
+
+For non-DT based platforms, this patch keeps syscon platform driver
+structure where is can be probed and such non-DT based drivers can use
+syscon_regmap_lookup_by_pdev API and get access to regmap handles.
+Once all users of "syscon_regmap_lookup_by_pdev" migrated to DT based,
+we can completely remove platform driver of syscon, and keep only helper
+functions to get regmap handles.
+
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
+Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+---
+Patch v5 and related discussions can be found here [1].
+
+Change since v5:
+ - Dropping creation of dummy platform device in of_syscon_register.
+ - As we are changing syscon to decouple from platform_device, creation of 
+   dummy platform_device does not look good option, and as suggested by Arnd,
+   I made another attempt so that regmap_mmio_init API should work with NULL
+   dev pointer itself. Since regmap needs to know about Syscon device node
+   properties so let's parse device node of syscon in syscon itself for any
+   such properties and using regmap_config parameter pass all such information
+   to regmap. Other concern of crashes due to NULL dev pointer in regmap already
+   addressed in separate patches of regmap. Please see [2] and [3].
+  
+
+Changes since v4:
+ - Addressed Tomasz Figa's comments for v4.
+ - Added error handing in of_syscon_register function.
+ - Using devm_regmap_init_mmio instead of regmap_init_mmio.
+
+Changes since v3:
+ - Addressed Arnd's comment for v2.
+ - Updated of_syscon_register for adding dev pointer in regmap_init_mmio.
+ - For early users created dummy platform device.
+
+Changes since v2:
+ - Added back platform device support from syscon, with one change that
+   syscon will not be probed for DT based platform.
+ - Added back syscon_regmap_lookup_by_pdevname API so that non-DT base
+   users of syscon will not be broken.
+ - Removed unwanted change in syscon.h.
+ - Modified Signed-off-by list, added Suggested-by of Tomasz Figa and
+   Arnd Bergmann.
+ - Added Tested-by of Vivek Gautam for testing on Exynos platform.
+
+Changes since v1:
+ - Removed of_syscon_unregister function.
+ - Modified of_syscon_register function and it will be used by syscon.c
+   to create syscon objects whenever required.
+ - Removed platform device support from syscon.
+ - Removed syscon_regmap_lookup_by_pdevname API support.
+ - As there are significant changes w.r.t patchset v1, I am taking over
+   author for this patchset from Tomasz Figa.
+
+[1]: https://lkml.org/lkml/2014/9/22/12
+[2]: https://lkml.org/lkml/2014/9/18/130
+[3]: https://lkml.org/lkml/2014/9/27/2
+
+ drivers/mfd/syscon.c |  106 +++++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 84 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
+index ca15878..00a8410 100644
+--- a/drivers/mfd/syscon.c
++++ b/drivers/mfd/syscon.c
+@@ -15,6 +15,7 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
++#include <linux/list.h>
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/of_platform.h>
+@@ -22,31 +23,104 @@
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/mfd/syscon.h>
++#include <linux/slab.h>
+ 
+ static struct platform_driver syscon_driver;
+ 
++static DEFINE_SPINLOCK(syscon_list_slock);
++static LIST_HEAD(syscon_list);
++
+ struct syscon {
++	struct device_node *np;
+ 	struct regmap *regmap;
++	struct list_head list;
++};
++
++static struct regmap_config syscon_regmap_config = {
++	.reg_bits = 32,
++	.val_bits = 32,
++	.reg_stride = 4,
+ };
+ 
+-static int syscon_match_node(struct device *dev, void *data)
++static struct syscon *of_syscon_register(struct device_node *np)
+ {
+-	struct device_node *dn = data;
++	struct syscon *syscon;
++	struct regmap *regmap;
++	void __iomem *base;
++	int ret;
++	enum regmap_endian endian = REGMAP_ENDIAN_DEFAULT;
++
++	if (!of_device_is_compatible(np, "syscon"))
++		return ERR_PTR(-EINVAL);
++
++	syscon = kzalloc(sizeof(*syscon), GFP_KERNEL);
++	if (!syscon)
++		return ERR_PTR(-ENOMEM);
++
++	base = of_iomap(np, 0);
++	if (!base) {
++		ret = -ENOMEM;
++		goto err_map;
++	}
++
++	/* Parse the device's DT node for an endianness specification */
++	if (of_property_read_bool(np, "big-endian"))
++		endian = REGMAP_ENDIAN_BIG;
++	 else if (of_property_read_bool(np, "little-endian"))
++		endian = REGMAP_ENDIAN_LITTLE;
++
++	/* If the endianness was specified in DT, use that */
++	if (endian != REGMAP_ENDIAN_DEFAULT)
++		syscon_regmap_config.val_format_endian = endian;
++
++	regmap = regmap_init_mmio(NULL, base, &syscon_regmap_config);
++	if (IS_ERR(regmap)) {
++		pr_err("regmap init failed\n");
++		ret = PTR_ERR(regmap);
++		goto err_regmap;
++	}
++
++	syscon->regmap = regmap;
++	syscon->np = np;
++
++	spin_lock(&syscon_list_slock);
++	list_add_tail(&syscon->list, &syscon_list);
++	spin_unlock(&syscon_list_slock);
+ 
+-	return (dev->of_node == dn) ? 1 : 0;
++	/* Change back endianness of syscon_regmap_config.
++	 * As this is static config in this file and in one system we may
++	 * have more than one syscon
++	 */
++	syscon_regmap_config.val_format_endian = REGMAP_ENDIAN_DEFAULT;
++
++	return syscon;
++
++err_regmap:
++	iounmap(base);
++err_map:
++	kfree(syscon);
++	return ERR_PTR(ret);
+ }
+ 
+ struct regmap *syscon_node_to_regmap(struct device_node *np)
+ {
+-	struct syscon *syscon;
+-	struct device *dev;
++	struct syscon *entry, *syscon = NULL;
+ 
+-	dev = driver_find_device(&syscon_driver.driver, NULL, np,
+-				 syscon_match_node);
+-	if (!dev)
+-		return ERR_PTR(-EPROBE_DEFER);
++	spin_lock(&syscon_list_slock);
+ 
+-	syscon = dev_get_drvdata(dev);
++	list_for_each_entry(entry, &syscon_list, list)
++		if (entry->np == np) {
++			syscon = entry;
++			break;
++		}
++
++	spin_unlock(&syscon_list_slock);
++
++	if (!syscon)
++		syscon = of_syscon_register(np);
++
++	if (IS_ERR(syscon))
++		return ERR_CAST(syscon);
+ 
+ 	return syscon->regmap;
+ }
+@@ -110,17 +184,6 @@ struct regmap *syscon_regmap_lookup_by_phandle(struct device_node *np,
+ }
+ EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle);
+ 
+-static const struct of_device_id of_syscon_match[] = {
+-	{ .compatible = "syscon", },
+-	{ },
+-};
+-
+-static struct regmap_config syscon_regmap_config = {
+-	.reg_bits = 32,
+-	.val_bits = 32,
+-	.reg_stride = 4,
+-};
+-
+ static int syscon_probe(struct platform_device *pdev)
+ {
+ 	struct device *dev = &pdev->dev;
+@@ -167,7 +230,6 @@ static struct platform_driver syscon_driver = {
+ 	.driver = {
+ 		.name = "syscon",
+ 		.owner = THIS_MODULE,
+-		.of_match_table = of_syscon_match,
+ 	},
+ 	.probe		= syscon_probe,
+ 	.id_table	= syscon_ids,
+-- 
+1.7.9.5
