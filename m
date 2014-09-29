@@ -1,14 +1,14 @@
 From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH v3 4/6] pinctrl: exynos: Add initial driver data for Exynos7
-Date: Mon, 29 Sep 2014 10:45:10 +0530
-Message-ID: <1411967712-8321-5-git-send-email-a.kesavan@samsung.com>
+Subject: [PATCH v3 6/6] arm64: exynos: Enable pinctrl support for Exynos7
+Date: Mon, 29 Sep 2014 10:45:12 +0530
+Message-ID: <1411967712-8321-7-git-send-email-a.kesavan@samsung.com>
 References: <1411967712-8321-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:25317 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751636AbaI2FQF (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:31483 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751694AbaI2FQN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Sep 2014 01:16:05 -0400
+	Mon, 29 Sep 2014 01:16:13 -0400
 In-reply-to: <1411967712-8321-1-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -17,178 +17,32 @@ Cc: linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org,
 
 From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
 
-This patch adds initial driver data for Exynos7 pinctrl support.
+Enable pinctrl support for exynos7 SoCs.
 
 Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
 Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 Reviewed-by: Thomas Abraham <thomas.ab@samsung.com>
 Tested-by: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Tomasz Figa <tomasz.figa@gmail.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 ---
- .../bindings/pinctrl/samsung-pinctrl.txt           |    1 +
- drivers/pinctrl/samsung/pinctrl-exynos.c           |  113 ++++++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.c          |    2 +
- drivers/pinctrl/samsung/pinctrl-samsung.h          |    1 +
- 4 files changed, 117 insertions(+)
+ arch/arm64/Kconfig |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-index f80519a..8425838 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-@@ -18,6 +18,7 @@ Required Properties:
-   - "samsung,exynos5250-pinctrl": for Exynos5250 compatible pin-controller.
-   - "samsung,exynos5260-pinctrl": for Exynos5260 compatible pin-controller.
-   - "samsung,exynos5420-pinctrl": for Exynos5420 compatible pin-controller.
-+  - "samsung,exynos7-pinctrl": for Exynos7 compatible pin-controller.
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 1874e1a..4ee1250 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -146,6 +146,8 @@ config ARCH_EXYNOS7
+ 	bool "ARMv8 based Samsung Exynos7"
+ 	select ARCH_EXYNOS
+ 	select COMMON_CLK_SAMSUNG
++	select PINCTRL
++	select PINCTRL_EXYNOS
+ 	help
+ 	  This enables support for Samsung Exynos7 SoC family
  
- - reg: Base address of the pin controller hardware module and length of
-   the address space it occupies.
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 4ec2d3d..29e6070 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -1189,3 +1189,116 @@ struct samsung_pin_ctrl exynos5420_pin_ctrl[] = {
- 		.label		= "exynos5420-gpio-ctrl4",
- 	},
- };
-+
-+/* pin banks of exynos7 pin-controller - ALIVE */
-+static struct samsung_pin_bank exynos7_pin_banks0[] = {
-+	EXYNOS_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
-+	EXYNOS_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
-+	EXYNOS_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
-+	EXYNOS_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
-+};
-+
-+/* pin banks of exynos7 pin-controller - BUS0 */
-+static struct samsung_pin_bank exynos7_pin_banks1[] = {
-+	EXYNOS_PIN_BANK_EINTG(5, 0x000, "gpb0", 0x00),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x020, "gpc0", 0x04),
-+	EXYNOS_PIN_BANK_EINTG(2, 0x040, "gpc1", 0x08),
-+	EXYNOS_PIN_BANK_EINTG(6, 0x060, "gpc2", 0x0c),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x080, "gpc3", 0x10),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x0a0, "gpd0", 0x14),
-+	EXYNOS_PIN_BANK_EINTG(6, 0x0c0, "gpd1", 0x18),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x0e0, "gpd2", 0x1c),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x100, "gpd4", 0x20),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x120, "gpd5", 0x24),
-+	EXYNOS_PIN_BANK_EINTG(6, 0x140, "gpd6", 0x28),
-+	EXYNOS_PIN_BANK_EINTG(3, 0x160, "gpd7", 0x2c),
-+	EXYNOS_PIN_BANK_EINTG(2, 0x180, "gpd8", 0x30),
-+	EXYNOS_PIN_BANK_EINTG(2, 0x1a0, "gpg0", 0x34),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x1c0, "gpg3", 0x38),
-+};
-+
-+/* pin banks of exynos7 pin-controller - NFC */
-+static struct samsung_pin_bank exynos7_pin_banks2[] = {
-+	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj0", 0x00),
-+};
-+
-+/* pin banks of exynos7 pin-controller - TOUCH */
-+static struct samsung_pin_bank exynos7_pin_banks3[] = {
-+	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj1", 0x00),
-+};
-+
-+/* pin banks of exynos7 pin-controller - FF */
-+static struct samsung_pin_bank exynos7_pin_banks4[] = {
-+	EXYNOS_PIN_BANK_EINTG(4, 0x000, "gpg4", 0x00),
-+};
-+
-+/* pin banks of exynos7 pin-controller - ESE */
-+static struct samsung_pin_bank exynos7_pin_banks5[] = {
-+	EXYNOS_PIN_BANK_EINTG(5, 0x000, "gpv7", 0x00),
-+};
-+
-+/* pin banks of exynos7 pin-controller - FSYS0 */
-+static struct samsung_pin_bank exynos7_pin_banks6[] = {
-+	EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpr4", 0x00),
-+};
-+
-+/* pin banks of exynos7 pin-controller - FSYS1 */
-+static struct samsung_pin_bank exynos7_pin_banks7[] = {
-+	EXYNOS_PIN_BANK_EINTG(4, 0x000, "gpr0", 0x00),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x020, "gpr1", 0x04),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x040, "gpr2", 0x08),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x060, "gpr3", 0x0c),
-+};
-+
-+struct samsung_pin_ctrl exynos7_pin_ctrl[] = {
-+	{
-+		/* pin-controller instance 0 Alive data */
-+		.pin_banks	= exynos7_pin_banks0,
-+		.nr_banks	= ARRAY_SIZE(exynos7_pin_banks0),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.eint_wkup_init = exynos_eint_wkup_init,
-+		.label		= "exynos7-gpio-ctrl0",
-+	}, {
-+		/* pin-controller instance 1 BUS0 data */
-+		.pin_banks	= exynos7_pin_banks1,
-+		.nr_banks	= ARRAY_SIZE(exynos7_pin_banks1),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.label		= "exynos7-gpio-ctrl1",
-+	}, {
-+		/* pin-controller instance 2 NFC data */
-+		.pin_banks	= exynos7_pin_banks2,
-+		.nr_banks	= ARRAY_SIZE(exynos7_pin_banks2),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.label		= "exynos7-gpio-ctrl2",
-+	}, {
-+		/* pin-controller instance 3 TOUCH data */
-+		.pin_banks	= exynos7_pin_banks3,
-+		.nr_banks	= ARRAY_SIZE(exynos7_pin_banks3),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.label		= "exynos7-gpio-ctrl3",
-+	}, {
-+		/* pin-controller instance 4 FF data */
-+		.pin_banks	= exynos7_pin_banks4,
-+		.nr_banks	= ARRAY_SIZE(exynos7_pin_banks4),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.label		= "exynos7-gpio-ctrl4",
-+	}, {
-+		/* pin-controller instance 5 ESE data */
-+		.pin_banks	= exynos7_pin_banks5,
-+		.nr_banks	= ARRAY_SIZE(exynos7_pin_banks5),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.label		= "exynos7-gpio-ctrl5",
-+	}, {
-+		/* pin-controller instance 6 FSYS0 data */
-+		.pin_banks	= exynos7_pin_banks6,
-+		.nr_banks	= ARRAY_SIZE(exynos7_pin_banks6),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.label		= "exynos7-gpio-ctrl6",
-+	}, {
-+		/* pin-controller instance 7 FSYS1 data */
-+		.pin_banks	= exynos7_pin_banks7,
-+		.nr_banks	= ARRAY_SIZE(exynos7_pin_banks7),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.label		= "exynos7-gpio-ctrl7",
-+	},
-+};
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 4a47691..46efdbf 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -1233,6 +1233,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
- 		.data = (void *)exynos5420_pin_ctrl },
- 	{ .compatible = "samsung,s5pv210-pinctrl",
- 		.data = (void *)s5pv210_pin_ctrl },
-+	{ .compatible = "samsung,exynos7-pinctrl",
-+		.data = (void *)exynos7_pin_ctrl },
- #endif
- #ifdef CONFIG_PINCTRL_S3C64XX
- 	{ .compatible = "samsung,s3c64xx-pinctrl",
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index d2c38c8..c0a48ac1 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -244,6 +244,7 @@ extern struct samsung_pin_ctrl exynos4x12_pin_ctrl[];
- extern struct samsung_pin_ctrl exynos5250_pin_ctrl[];
- extern struct samsung_pin_ctrl exynos5260_pin_ctrl[];
- extern struct samsung_pin_ctrl exynos5420_pin_ctrl[];
-+extern struct samsung_pin_ctrl exynos7_pin_ctrl[];
- extern struct samsung_pin_ctrl s3c64xx_pin_ctrl[];
- extern struct samsung_pin_ctrl s3c2412_pin_ctrl[];
- extern struct samsung_pin_ctrl s3c2416_pin_ctrl[];
 -- 
 1.7.9.5
