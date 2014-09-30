@@ -1,112 +1,41 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: exynos5420/arndale-octa: imprecise external aborts on
- exynos_defconfig
-Date: Tue, 30 Sep 2014 20:17:38 +0200
-Message-ID: <11034593.CCZ1LqhX6D@amdc1032>
-References: <CANMBJr41TQx4jVjnOO9WThn=SiZCq12mx1xtGN8_ubzZrO1=YA@mail.gmail.com>
- <CAJuA9ahkpZ4EJQz4DoAjYzo0OQw5zXLavAVoXRBdgPcm9EUQYA@mail.gmail.com>
- <7hk351ep8e.fsf@deeprootsystems.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/2] arch: arm: samsung: Clean-up usage of CONFIG_SERIAL_SAMSUNG_UARTS symbol
+Date: Tue, 30 Sep 2014 20:36:26 +0200
+Message-ID: <78824730.2ZeRMh8EV2@wuerfel>
+References: <1412087695-10591-1-git-send-email-a.kesavan@samsung.com> <2267491.QlLoTEuT3L@wuerfel> <542AD5E6.9050503@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:10735 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751074AbaI3SRw (ORCPT
+Received: from mout.kundenserver.de ([212.227.17.13]:51191 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752222AbaI3Sgi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Sep 2014 14:17:52 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NCQ00MG585QT170@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 01 Oct 2014 03:17:50 +0900 (KST)
-In-reply-to: <7hk351ep8e.fsf@deeprootsystems.com>
+	Tue, 30 Sep 2014 14:36:38 -0400
+In-Reply-To: <542AD5E6.9050503@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Thomas Abraham <ta.omasab@gmail.com>, Tyler Baker <tyler.baker@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sachin Kamat <sachin.kamat@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, Abhilash Kesavan <a.kesavan@samsung.com>, gregkh@linuxfoundation.org, linux-samsung-soc@vger.kernel.org, jslaby@suse.cz
 
-
-Hi,
-
-On Wednesday, September 17, 2014 05:39:29 PM Kevin Hilman wrote:
-> Thomas Abraham <ta.omasab@gmail.com> writes:
+On Tuesday 30 September 2014 18:10:14 Tomasz Figa wrote:
+> >> @@ -110,7 +110,7 @@ void __init s3c24xx_init_uartdevs(char *name,
+> >>                                   struct s3c24xx_uart_resources *res,
+> >>                                   struct s3c2410_uartcfg *cfg, int no)
+> >>  {
+> >> -#ifdef CONFIG_SERIAL_SAMSUNG_UARTS
+> >> +#ifdef CONFIG_SERIAL_SAMSUNG
+> >>         struct platform_device *platdev;
+> >>         struct s3c2410_uartcfg *cfgptr = uart_cfgs;
+> >>         struct s3c24xx_uart_resources *resp;
+> > 
+> > Since you hardcode the number here now, you can actually drop this #ifdef.
 > 
-> > On Thu, Sep 11, 2014 at 12:16 AM, Kevin Hilman <khilman@kernel.org> wrote:
-> >> Tyler Baker <tyler.baker@linaro.org> writes:
-> >>
-> >>> Exynos5420-based Arndale octa boards have recently started failing boot
-> >>> tests due to imprecise external aborts.  This only appears to happen
-> >>> when using exynos_defconfig and boots fine with multi_v7_defconfig.  The
-> >>> issue seems to be intermittent, so is not reliably reproducable and
-> >>> difficult to bisect.  Here are a few boot logs from recent
-> >>> mainline/linux-next kernels that are failing:
-> >>
-> >> FYI, I'm seeing the same periodic aborts.  For example, here's my boot
-> >> of next-20140910:
-> >> http://images.armcloud.us/kernel-ci/next/next-20140910/arm-exynos_defconfig/boot-exynos5420-arndale-octa.html
-> >>
-> >> However, my userspace is much simpler and doesn't seem to cause a panic,
-> >> so my boot tests report passing. (I should fixup my scripts so these
-> >> imprecise aborts are reported as a FAIL.)
-> >>
-> >> I'm glad you pointed out that it happens only with exynos_defconfig and
-> >> not multi_v7_defconfig because I noticed that too.  I haven't had the
-> >> time to track it any further than that, so maybe the exynos folks can
-> >> help track it down from here.
-> >>
-> >> Thanks for reporting this,
-> >>
-> >> Kevin
-> >
-> > Hi Tyler, Kevin,
-> >
-> > From the bootlog you have shared,
-> >
-> > [    1.060016] CPU4: failed to come online
-> > [    2.070031] CPU5: failed to come online
-> > [    3.080049] CPU6: failed to come online
-> > [    4.090066] CPU7: failed to come online
-> > [    4.090099] Brought up 4 CPUs
-> > [    4.090109] SMP: Total of 4 processors activated.
-> > [    4.090119] CPU: WARNING: CPU(s) started in wrong/inconsistent
-> > modes (primary CPU mode 0x13)
-> > [    4.090128] CPU: This may indicate a broken bootloader or firmware.
-> >
-> > Would it be possible to set max cpus to 1, disable switcher and try
-
-Which "max cpus" do you mean?  For NR_CPUS the lower limit is 2.
-
-> > again. I don't have a arndale octa board but I have tested mainline
-> > kernel with smdk5420 board. It boots all eight CPUs, switcher works
-> > fine and there are no imprecise aborts seen.
+> I believe what Abhilash did is correct, because this code is not needed
+> when there is no serial support enabled.
 > 
-> Sorry for the delay, I'm travelling this week.
-> 
-> FWIW, the same CPU boot failures you hilight above are happening on
-> multi_v7_defconfig[1] which is not getting the imprecise abort.  This is
-> only happening on exynos_defconfig[2], so I'm curious why you think the
-> switcher or NR_CPUS might be the issues.
-> 
-> Anyways, I narrowed this down a bit and discovered it's
-> CONFIG_EXYNOS5420_MCPM=y that's the root cause.  If I use
-> exynos_defconfig and then disable that option, I don't get any more
-> imprecise aborts.
 
-I have exactly the same issue with Exynos5420 Arndale Octa.
+I only added the #ifdef here because it was broken when
+CONFIG_SERIAL_SAMSUNG_UARTS was undefined.
 
-CONFIG_EXYNOS5420_MCPM was enabled by commit fc3791f3a95d
-("ARM: exynos_defconfig: Update exynos_defconfig") which
-get merged into v3.17-rc1.  It seems that this part of
-the patch should be reverted for the final v3.17 kernel.
-
-> Kevin
-> 
-> [1] http://images.armcloud.us/kernel-ci/mainline/v3.17-rc5-25-g8ba4caf/arm-multi_v7_defconfig/boot-exynos5420-arndale-octa.html
-> [2] http://images.armcloud.us/kernel-ci/mainline/v3.17-rc5-25-g8ba4caf/arm-exynos_defconfig/boot-exynos5420-arndale-octa.html
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+	Arnd
