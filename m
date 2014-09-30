@@ -1,52 +1,116 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v5 0/8] arch: arm64: Enable support for Samsung Exynos7
- SoC
-Date: Tue, 30 Sep 2014 17:56:30 +0200
-Message-ID: <542AD2AE.6060109@gmail.com>
-References: <1411361228-18279-1-git-send-email-a.kesavan@samsung.com>	<541FE357.5090000@gmail.com> <CAM4voa=Hsux0+rccSvDJsNTFakZwuwYwjkDkkNFfndFm03Pn3g@mail.gmail.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v7] mfd: syscon: Decouple syscon interface from platform devices
+Date: Tue, 30 Sep 2014 09:09:22 -0700
+Message-ID: <CAD=FV=VYc+5qwZ==vTgXkXzbX1wALRpqsaTe8LR-N00nKiyycQ@mail.gmail.com>
+References: <1412066127-27063-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f48.google.com ([74.125.82.48]:39722 "EHLO
-	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751146AbaI3P4d (ORCPT
+Received: from mail-vc0-f181.google.com ([209.85.220.181]:38594 "EHLO
+	mail-vc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752055AbaI3QJX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Sep 2014 11:56:33 -0400
-In-Reply-To: <CAM4voa=Hsux0+rccSvDJsNTFakZwuwYwjkDkkNFfndFm03Pn3g@mail.gmail.com>
+	Tue, 30 Sep 2014 12:09:23 -0400
+Received: by mail-vc0-f181.google.com with SMTP id le20so1453534vcb.12
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2014 09:09:22 -0700 (PDT)
+In-Reply-To: <1412066127-27063-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Naveen Krishna <naveenkrishna.ch@gmail.com>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, b29396@freescale.com, Lee Jones <lee.jones@linaro.org>, boris.brezillon@free-electrons.com, Tomasz Figa <tomasz.figa@gmail.com>, Russell King <linux@arm.linux.org.uk>, VIKAS SAJJAN C <vikas.sajjan@samsung.com>, naushad@samsung.com, Thomas P Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Li.Xiubo@freescale.com, geert+renesas@glider.be, Stephen Warren <swarren@nvidia.com>
 
-On 30.09.2014 17:12, Abhilash Kesavan wrote:
-> Hi Tomasz,
-> 
-> On Mon, Sep 22, 2014 at 2:22 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> Hi Abhilash,
->>
->> On 22.09.2014 06:47, Abhilash Kesavan wrote:
->>> Changes since v4:
->>> - Fixed comments from Tomasz Figa:
->>>       - Changed the namespace prefix from exynos to samsung
->>>       - Defined bindings to take all input clocks
->>>       - Sorted the Kconfig entries alphabetically in clock Makefile
->>>       - Used consistent 1 tab line breaks across the clock file
->>>       - Statically initialized the samsung_cmu_info struct
->>> - Enabled exynos7 in the arm64 defconfig as per Catalin Marinas' comment.
->>> - Added Kukjin Kim's ack along with Thomas Abraham's tested and reviewed tags.
->>>
->>
->> The clock patches look good to me, but since they are doing quite a lot
->> of code moving I'd prefer to take them through clk tree. Based on the
->> fact that there are no code dependencies between clock patches and
->> remaining ones and Exynos7 is a new material for 3.18, I'm inclined to
->> apply them to my tree if nobody minds.
-> 
-> Will you be picking up the clock changes soon ?
+Pankaj,
 
-I'd like to do so. Kukjin, since clock changes are a part of this
-series, might I have your Ack for them to be applied separately?
+On Tue, Sep 30, 2014 at 1:35 AM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> Currently a syscon entity can be only registered directly through a
+> platform device that binds to a dedicated syscon driver. However in
+> certain use cases it is desirable to make a device used with another
+> driver a syscon interface provider.
+>
+> For example, certain SoCs (e.g. Exynos) contain system controller
+> blocks which perform various functions such as power domain control,
+> CPU power management, low power mode control, but in addition contain
+> certain IP integration glue, such as various signal masks,
+> coprocessor power control, etc. In such case, there is a need to have
+> a dedicated driver for such system controller but also share registers
+> with other drivers. The latter is where the syscon interface is helpful.
+>
+> In case of DT based platforms, this patch decouples syscon object from
+> syscon platform driver, and allows to create syscon objects first time
+> when it is required by calling of syscon_regmap_lookup_by APIs and keep
+> a list of such syscon objects along with syscon provider device_nodes
+> and regmap handles.
+>
+> For non-DT based platforms, this patch keeps syscon platform driver
+> structure so that syscon can be probed and such non-DT based drivers
+> can use syscon_regmap_lookup_by_pdev API and access regmap handles.
+> Once all users of "syscon_regmap_lookup_by_pdev" migrated to DT based,
+> we can completely remove platform driver of syscon, and keep only helper
+> functions to get regmap handles.
+>
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> Tested-by: Heiko Stuebner <heiko@sntech.de>
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+> Patch v6 and related discussions can be found here [1].
+>
+> Change since v5:
+>  - Addressed review comments from "Heiko Stuebner".
+>  - Updated commit description.
+>  - Including Arnd's and Heiko's Reviewed-by.
+>
+> Change since v5:
+>  - Dropping creation of dummy platform device in of_syscon_register.
+>  - As we are changing syscon to decouple from platform_device, creation of
+>    dummy platform_device does not look good option, and as suggested by Arnd,
+>    I made another attempt so that regmap_mmio_init API should work with NULL
+>    dev pointer itself. Since regmap needs to know about Syscon device node
+>    properties so let's parse device node of syscon in syscon itself for any
+>    such properties and using regmap_config parameter pass all such information
+>    to regmap. Other concern of crashes due to NULL dev pointer in regmap already
+>    addressed in separate patches of regmap. Please see [2] and [3].
+>
+> Changes since v4:
+>  - Addressed Tomasz Figa's comments for v4.
+>  - Added error handing in of_syscon_register function.
+>  - Using devm_regmap_init_mmio instead of regmap_init_mmio.
+>
+> Changes since v3:
+>  - Addressed Arnd's comment for v2.
+>  - Updated of_syscon_register for adding dev pointer in regmap_init_mmio.
+>  - For early users created dummy platform device.
+>
+> Changes since v2:
+>  - Added back platform device support from syscon, with one change that
+>    syscon will not be probed for DT based platform.
+>  - Added back syscon_regmap_lookup_by_pdevname API so that non-DT base
+>    users of syscon will not be broken.
+>  - Removed unwanted change in syscon.h.
+>  - Modified Signed-off-by list, added Suggested-by of Tomasz Figa and
+>    Arnd Bergmann.
+>  - Added Tested-by of Vivek Gautam for testing on Exynos platform.
+>
+> Changes since v1:
+>  - Removed of_syscon_unregister function.
+>  - Modified of_syscon_register function and it will be used by syscon.c
+>    to create syscon objects whenever required.
+>  - Removed platform device support from syscon.
+>  - Removed syscon_regmap_lookup_by_pdevname API support.
+>  - As there are significant changes w.r.t patchset v1, I am taking over
+>    author for this patchset from Tomasz Figa.
+>
+> [1]: https://lkml.org/lkml/2014/9/29/99
+> [2]: https://lkml.org/lkml/2014/9/18/130
+> [3]: https://lkml.org/lkml/2014/9/27/2
+>  drivers/mfd/syscon.c |   96 ++++++++++++++++++++++++++++++++++++++------------
+>  1 file changed, 74 insertions(+), 22 deletions(-)
 
-Best regards,
-Tomasz
+You probably already have enough tags, but just in case.  ;)  On an
+rk3288-based system (this patch backported to 3.14):
+
+Tested-by: Doug Anderson <dianders@chromium.org>
