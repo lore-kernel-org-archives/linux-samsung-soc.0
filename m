@@ -1,184 +1,105 @@
-From: Daniel Drake <drake@endlessm.com>
-Subject: [PATCH] ASoC: samsung: fix CDCLK handling
-Date: Tue, 30 Sep 2014 10:40:11 -0600
-Message-ID: <1412095211-4012-1-git-send-email-drake@endlessm.com>
+From: Doug Anderson <dianders@google.com>
+Subject: Re: [PATCH V2 1/3] mmc: dw_mmc: use mmc_regulator_get_supply to
+ handle regulators
+Date: Tue, 30 Sep 2014 10:22:34 -0700
+Message-ID: <CAD=FV=W_KiXUU7SmGxTu-JzagW-zEs6AYAbrRMFU3KvppVk_BA@mail.gmail.com>
+References: <1408715272-13833-1-git-send-email-yuvaraj.cd@samsung.com>
+	<1408715272-13833-2-git-send-email-yuvaraj.cd@samsung.com>
+	<CAPDyKFqiv+eGQ_kRpXjRY207PN4J3DGcZU1n5UU0evp_5Dn_Pg@mail.gmail.com>
+	<28242432.noIRZ0lve1@amdc1032>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f172.google.com ([209.85.160.172]:60448 "EHLO
-	mail-yk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751492AbaI3QkU (ORCPT
+Received: from mail-vc0-f171.google.com ([209.85.220.171]:52808 "EHLO
+	mail-vc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753628AbaI3RWg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Sep 2014 12:40:20 -0400
-Received: by mail-yk0-f172.google.com with SMTP id 19so764862ykq.17
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2014 09:40:20 -0700 (PDT)
+	Tue, 30 Sep 2014 13:22:36 -0400
+Received: by mail-vc0-f171.google.com with SMTP id hy10so3010281vcb.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2014 10:22:35 -0700 (PDT)
+In-Reply-To: <28242432.noIRZ0lve1@amdc1032>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ben-linux@fluff.org, kgene.kim@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com, broonie@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, s.nawrocki@samsung.com
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, ABHILASH KESAVAN <a.kesavan@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
 
-ODROID is the only platform that uses CDCLK, and right now,
-CDCLK handling is buggy. If you start pulseaudio on ODROID,
-audio is broken until reboot (even after killing pulse).
+Bartlomiej
 
-This happens because CDCLK gets disabled by i2s.c and never enabled again.
+On Mon, Sep 29, 2014 at 5:31 AM, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+>
+> Hi,
+>
+> On Friday, August 29, 2014 01:34:44 PM Ulf Hansson wrote:
+>> On 22 August 2014 15:47, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
+>> > This patch makes use of mmc_regulator_get_supply() to handle
+>> > the vmmc and vqmmc regulators.Also it moves the code handling
+>> > the these regulators to dw_mci_set_ios().It turned on the vmmc
+>> > and vqmmc during MMC_POWER_UP and MMC_POWER_ON,and turned off
+>> > during MMC_POWER_OFF.
+>> >
+>> > Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+>>
+>> Thanks! Applied for next.
+>
+> Unfortunately this patch breaks mmc1 card (Kingston 32GB micro SDHC)
+> detection on Exynos5420 Arndale Octa for me:
+>
+> [   10.797979] dwmmc_exynos 12220000.mmc: no support for card's volts
+> [   10.797998] mmc1: error -22 whilst initialising SD card
+>
+> Without the patch:
+>
+> [   10.866926] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot req 50000000Hz, actual 50000000HZ div = 0)
+> [   10.866977] mmc1: new high speed SDHC card at address 1234
+> [   10.868730] mmcblk1: mmc1:1234 SA32G 29.3 GiB
+> [   10.915054]  mmcblk1: p1 p2 p3
+>
+> The config is attached (exynos_defconfig doesn't work correctly for
+> this board yet).
 
-pulseaudio does:
-1. i2s_startup for playback channel
-2. i2s_startup for capture channel
-3. i2s_shutdown for capture channel
-4. i2s_shutdown for playback channel
+Yup, this is an expected behavior, unfortunately.  This was talked
+about extensively during the review of this patch series.
 
-In step 3 we disable CDCLK even though playback should still be active.
+I believe that patch #3 in Yuvaraj's series would fix your problem.
+Specifically <https://patchwork.kernel.org/patch/4763891/>.
 
-In step 4 we do this:
-	u32 mod = readl(i2s->addr + I2SMOD);
-	i2s->cdclk_out = !(mod & MOD_CDCLKCON);
 
-and now cdclk_out is always going to be 0, so we'll never turn it back
-on again.
+The current summary of this issue is (Ulf, please correct me if I got
+anything wrong):
 
-Both this bug and the one that b97c60abf9a tries to fix happened
-because of the way that CDCLK handling is painfully split between
-platform and i2s drivers.
+1. If nothing else, Yuvaraj's patch should probably be split in two.
+One half should be the MMC core half that I originally sent Yuvaraj.
+I just rebased and re-uploaed it at
+<https://chromium-review.googlesource.com/220560> in case you're
+curious.  The second half should be the dw_mmc piece that Yuvaraj
+wrote.
 
-Simplify the situation and solve the bug with the following approach:
- - as before, samsung_i2s_dai_probe() gates CDCLK by default
-   (no need for smartq_wm8987 to do this as well)
- - platform drivers can gate/ungate CDCLK as necessary
-   (currently only odroidx2 needs to do this)
- - i2s code has no other interaction with CDCLK
+2. Ulf has indicated that he thinks that the MMC core change (and thus
+Yuvaraj's patch) is ugly and not necessary.  He advocates instead
+using the MMC_CAP_NEEDS_POLL on all affected platforms.  That means
+we'll turn on the power every second, check for the card, then turn
+off power.
 
-Signed-off-by: Daniel Drake <drake@endlessm.com>
+3. I'm still of the opinion that the MMC core change isn't _that_
+ugly.  Given that there are a large number of systems affected (across
+at least two SoC vendors) and that it would be nice if those systems
+didn't have to poll, I'd still be happy if the MMC core change could
+go in.  ...but I'm a pragmatist and know that the polling isn't
+_terrible_, so if that's the way we need to go then so be it.
+
+--
+
+My understanding was that Yuvaraj was going to spin his patch to use a
+similar type of scheme to autodetect affected SoCs (looking for SoCs
+known to have this problem where the platform data shows them using
+the built-in card detect) and then enable MMC_CAP_NEEDS_POLL.  I
+haven't seen a patch from him, so maybe you could post this up?
+
+Note: the reason why exynos5250-snow and some other boards aren't
+affected yet is that the regulator is simply not specified in the
+device tree (it's just left always on).
+
 ---
- sound/soc/samsung/i2s.c               | 19 ++----------------
- sound/soc/samsung/odroidx2_max98090.c | 36 ++++++++++++++++++++++++++---------
- sound/soc/samsung/smartq_wm8987.c     |  6 ------
- 3 files changed, 29 insertions(+), 32 deletions(-)
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 9d51347..6654ce6 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -68,8 +68,6 @@ struct i2s_dai {
- #define DAI_OPENED	(1 << 0) /* Dai is opened */
- #define DAI_MANAGER	(1 << 1) /* Dai is the manager */
- 	unsigned mode;
--	/* CDCLK pin direction: 0  - input, 1 - output */
--	unsigned int cdclk_out:1;
- 	/* Driver for this DAI */
- 	struct snd_soc_dai_driver i2s_dai_drv;
- 	/* DMA parameters */
-@@ -739,9 +737,6 @@ static int i2s_startup(struct snd_pcm_substream *substream,
- 
- 	spin_unlock_irqrestore(&lock, flags);
- 
--	if (!is_opened(other) && i2s->cdclk_out)
--		i2s_set_sysclk(dai, SAMSUNG_I2S_CDCLK,
--				0, SND_SOC_CLOCK_OUT);
- 	return 0;
- }
- 
-@@ -757,24 +752,14 @@ static void i2s_shutdown(struct snd_pcm_substream *substream,
- 	i2s->mode &= ~DAI_OPENED;
- 	i2s->mode &= ~DAI_MANAGER;
- 
--	if (is_opened(other)) {
-+	if (is_opened(other))
- 		other->mode |= DAI_MANAGER;
--	} else {
--		u32 mod = readl(i2s->addr + I2SMOD);
--		i2s->cdclk_out = !(mod & MOD_CDCLKCON);
--		if (other)
--			other->cdclk_out = i2s->cdclk_out;
--	}
-+
- 	/* Reset any constraint on RFS and BFS */
- 	i2s->rfs = 0;
- 	i2s->bfs = 0;
- 
- 	spin_unlock_irqrestore(&lock, flags);
--
--	/* Gate CDCLK by default */
--	if (!is_opened(other))
--		i2s_set_sysclk(dai, SAMSUNG_I2S_CDCLK,
--				0, SND_SOC_CLOCK_IN);
- }
- 
- static int config_setup(struct i2s_dai *i2s)
-diff --git a/sound/soc/samsung/odroidx2_max98090.c b/sound/soc/samsung/odroidx2_max98090.c
-index 278edf9..b700284 100644
---- a/sound/soc/samsung/odroidx2_max98090.c
-+++ b/sound/soc/samsung/odroidx2_max98090.c
-@@ -21,20 +21,37 @@ struct odroidx2_drv_data {
- /* The I2S CDCLK output clock frequency for the MAX98090 codec */
- #define MAX98090_MCLK 19200000
- 
-+static int odroidx2_startup(struct snd_pcm_substream *substream)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+
-+	if (rtd->cpu_dai->active)
-+		return 0;
-+
-+	return snd_soc_dai_set_sysclk(rtd->cpu_dai, SAMSUNG_I2S_CDCLK,
-+				      0, SND_SOC_CLOCK_OUT);
-+}
-+
-+static void odroidx2_shutdown(struct snd_pcm_substream *substream)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+
-+	if (!rtd->cpu_dai->active)
-+		snd_soc_dai_set_sysclk(rtd->cpu_dai, SAMSUNG_I2S_CDCLK,
-+				       0, SND_SOC_CLOCK_IN);
-+}
-+
-+static const struct snd_soc_ops odroidx2_ops = {
-+	.startup = odroidx2_startup,
-+	.shutdown = odroidx2_shutdown,
-+};
-+
- static int odroidx2_late_probe(struct snd_soc_card *card)
- {
- 	struct snd_soc_dai *codec_dai = card->rtd[0].codec_dai;
--	struct snd_soc_dai *cpu_dai = card->rtd[0].cpu_dai;
--	int ret;
- 
--	ret = snd_soc_dai_set_sysclk(codec_dai, 0, MAX98090_MCLK,
-+	return snd_soc_dai_set_sysclk(codec_dai, 0, MAX98090_MCLK,
- 						SND_SOC_CLOCK_IN);
--	if (ret < 0)
--		return ret;
--
--	/* Set the cpu DAI configuration in order to use CDCLK */
--	return snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_CDCLK,
--					0, SND_SOC_CLOCK_OUT);
- }
- 
- static const struct snd_soc_dapm_widget odroidx2_dapm_widgets[] = {
-@@ -55,6 +72,7 @@ static struct snd_soc_dai_link odroidx2_dai[] = {
- 		.codec_dai_name	= "HiFi",
- 		.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
- 				  SND_SOC_DAIFMT_CBM_CFM,
-+		.ops		= &odroidx2_ops,
- 	}
- };
- 
-diff --git a/sound/soc/samsung/smartq_wm8987.c b/sound/soc/samsung/smartq_wm8987.c
-index 9b0ffac..2b5e7c5 100644
---- a/sound/soc/samsung/smartq_wm8987.c
-+++ b/sound/soc/samsung/smartq_wm8987.c
-@@ -76,12 +76,6 @@ static int smartq_hifi_hw_params(struct snd_pcm_substream *substream,
- 	if (ret < 0)
- 		return ret;
- 
--	/* Gate the RCLK output on PAD */
--	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_CDCLK,
--					0, SND_SOC_CLOCK_IN);
--	if (ret < 0)
--		return ret;
--
- 	/* set the codec system clock for DAC and ADC */
- 	ret = snd_soc_dai_set_sysclk(codec_dai, WM8750_SYSCLK, clk,
- 				     SND_SOC_CLOCK_IN);
--- 
-1.9.1
+-Doug
