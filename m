@@ -1,109 +1,65 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH] serial: samsung: Fix serial config dependencies for exynos7
-Date: Tue, 30 Sep 2014 20:02:22 +0530
-Message-ID: <CAM4voam9jEuYvwDUnAZzU4Q-aZdF-P+KUuSm=x-9beobpyeR1w@mail.gmail.com>
-References: <1411967817-8423-1-git-send-email-a.kesavan@samsung.com>
-	<5429DF69.8000201@gmail.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v8 0/2] Adds PMU and S2R support for exynos5420
+Date: Tue, 30 Sep 2014 16:42:56 +0200
+Message-ID: <CABxcv=ndW1j6FfE5a-6jHKjPVsSsp4Hjjz5YK8su8DCjG11-sA@mail.gmail.com>
+References: <1412074969-12704-1-git-send-email-vikas.sajjan@samsung.com>
+	<CABxcv=kEVma+Ho6PPy+4t+zYH67sAWbbvJvrviPop-MBqktbjw@mail.gmail.com>
+	<CAM4voa=TYhF_x7WnM=rkUevuKkt5jqVgjuo7ABa92+bziG+uJw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f171.google.com ([209.85.216.171]:50857 "EHLO
-	mail-qc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750967AbaI3Ojx (ORCPT
+Received: from mail-ob0-f175.google.com ([209.85.214.175]:46405 "EHLO
+	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751068AbaI3Om5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Sep 2014 10:39:53 -0400
-In-Reply-To: <5429DF69.8000201@gmail.com>
+	Tue, 30 Sep 2014 10:42:57 -0400
+Received: by mail-ob0-f175.google.com with SMTP id m8so15092799obr.20
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2014 07:42:56 -0700 (PDT)
+In-Reply-To: <CAM4voa=TYhF_x7WnM=rkUevuKkt5jqVgjuo7ABa92+bziG+uJw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, jslaby@suse.cz, Pankaj Dubey <pankaj.dubey@samsung.com>
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: Vikas Sajjan <vikas.sajjan@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Tomasz,
+Hello Abhilash,
 
-On Tue, Sep 30, 2014 at 4:08 AM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> Hi Abhilash,
->
-> The patch itself seems fine, but I wonder if those config options aren't
-> really just leftovers from the past and couldn't be completely removed.
->
-> On 29.09.2014 07:16, Abhilash Kesavan wrote:
->> From: Pankaj Dubey <pankaj.dubey@samsung.com>
->>
->> Exynos7 has a similar serial controller to that present in older Samsung
->> SoCs. To re-use the existing serial driver on Exynos7 we need to have
->> SERIAL_SAMSUNG_UARTS_4 and SERIAL_SAMSUNG_UARTS selected. This is not
->> possible because these symbols are dependent on PLAT_SAMSUNG which is
->> not present for the ARMv8 based exynos7.
->>
->> Change the dependency of these symbols from PLAT_SAMSUNG to the serial
->> driver thus making it available on exynos7. As the existing platform
->> specific code making use of these symbols is related to uart driver this
->> change in dependency should not cause any issues.
->>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
->> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> ---
->> Build tested with s3c6400_defconfig, exynos_defconfig and arm64's defconfig
->> with and without the serial driver enabled.
->>
->>  drivers/tty/serial/Kconfig |    4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
->> index 81f6ee7..e6c0bcb 100644
->> --- a/drivers/tty/serial/Kconfig
->> +++ b/drivers/tty/serial/Kconfig
->> @@ -249,14 +249,14 @@ config SERIAL_SAMSUNG
->>
->>  config SERIAL_SAMSUNG_UARTS_4
->>       bool
->> -     depends on PLAT_SAMSUNG
->> +     depends on SERIAL_SAMSUNG
->>       default y if !(CPU_S3C2410 || CPU_S3C2412 || CPU_S3C2440 || CPU_S3C2442)
->>       help
->>         Internal node for the common case of 4 Samsung compatible UARTs
->
-> The only place where this symbol is used is below.
->
->>
->>  config SERIAL_SAMSUNG_UARTS
->>       int
->> -     depends on PLAT_SAMSUNG
->> +     depends on SERIAL_SAMSUNG
->>       default 4 if SERIAL_SAMSUNG_UARTS_4 || CPU_S3C2416
->>       default 3
->>       help
->>
->
-> With this symbol the situation isn't that easy, but still should be
-> manageable.
->
-> Looking at the serial-samsung driver, all occurrences of
-> CONFIG_SERIAL_SAMSUNG_UARTS could be simply replaced with a locally
-> defined number equal to the maximum value - in this case 4.
->
-> There are also two places in arch/arm where this symbol is used:
->
-> 1) In arch/arm/mach-s3c64xx/irq-pm.c it's used as the number of serial
-> ports which need suspend/resume handling. Since on s3c64xx the number is
-> always 4, it can be simply defined locally as a constant.
->
-> 2) In arch/arm/plat-samsung/init.c it is used to determine size of a
-> static array of UART ports and to check whether the UART driver is
-> enabled. In former case I believe it should be safe to hardcode it to 4
-> as well, in latter CONFIG_SERIAL_SAMSUNG can be used.
+Thanks a lot for your quick reply.
 
-I will post patches removing these two symbols.
-
-Regards,
-Abhilash
+On Tue, Sep 30, 2014 at 4:24 PM, Abhilash Kesavan
+<kesavan.abhilash@gmail.com> wrote:
+> Hi Javier,
 >
-> Best regards,
-> Tomasz
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+> On Tue, Sep 30, 2014 at 7:00 PM, Javier Martinez Canillas
+> <javier@dowhile0.org> wrote:
+>> Hello Vikas,
+>>
+>> Thanks a lot for the re-spin.
+>>
+>> On Tue, Sep 30, 2014 at 1:02 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
+>>>
+>>> Tested on Kukjin Kim's tree, for-next branch +
+>>> 1] http://www.spinics.net/lists/linux-samsung-soc/msg33750.html
+>>> 2] https://lkml.org/lkml/2014/9/30/156
+>>
+>> I wanted to test your series but I noticed that Abhilash's patch:
+>>
+>> "[PATCH v7] ARM: EXYNOS: Use MCPM call-backs to support S2R on Exynos5420"
+>>
+>> does not apply cleanly on Kukjin's for-next branch. I see that all the
+>> dependencies mentioned (modulo $subject or course) have already been
+>> merged though.
+>
+> If you are looking to test this series right now then I can post an
+> untested rebased version. Otherwise, I will test it tomorrow and post.
+>
+
+Up to you. If is easy for you to post an untested version, that would
+be great and I can test it. But is OK if you prefer to do it tomorrow
+too.
+
+> Regards,
+> Abhilash
+>>
+
+Best regards,
+Javier
