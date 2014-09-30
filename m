@@ -1,48 +1,151 @@
 From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH v4 6/6] arm64: exynos: Enable pinctrl support for Exynos7
-Date: Tue, 30 Sep 2014 20:00:50 +0530
-Message-ID: <1412087450-10495-7-git-send-email-a.kesavan@samsung.com>
+Subject: [PATCH v4 3/6] pinctrl: exynos: Add irq_chip instance for Exynos7 wakeup interrupts
+Date: Tue, 30 Sep 2014 20:00:47 +0530
+Message-ID: <1412087450-10495-4-git-send-email-a.kesavan@samsung.com>
 References: <1412087450-10495-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:45350 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753440AbaI3Obg (ORCPT
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:35522 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753439AbaI3ObZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Sep 2014 10:31:36 -0400
+	Tue, 30 Sep 2014 10:31:25 -0400
 In-Reply-To: <1412087450-10495-1-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: naveenkrishna.ch@gmail.com, linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, tomasz.figa@gmail.com, linus.walleij@linaro.org
 
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Exynos7 uses different offsets for wakeup interrupt configuration registers.
+So a new irq_chip instance for Exynos7 wakeup interrupts is added. The irq_chip
+selection is now based on the wakeup interrupt controller compatible string.
 
-Enable pinctrl support for exynos7 SoCs.
-
-Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
 Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 Reviewed-by: Thomas Abraham <thomas.ab@samsung.com>
 Tested-by: Thomas Abraham <thomas.ab@samsung.com>
 Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm64/Kconfig |    2 ++
- 1 file changed, 2 insertions(+)
+ .../bindings/pinctrl/samsung-pinctrl.txt           |    2 +
+ drivers/pinctrl/samsung/pinctrl-exynos.c           |   45 +++++++++++++++-----
+ drivers/pinctrl/samsung/pinctrl-exynos.h           |    3 ++
+ 3 files changed, 40 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 5285f9c..e8ddd84 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -145,6 +145,8 @@ config ARCH_EXYNOS7
- 	bool "ARMv8 based Samsung Exynos7"
- 	select ARCH_EXYNOS
- 	select COMMON_CLK_SAMSUNG
-+	select PINCTRL
-+	select PINCTRL_EXYNOS
- 	help
- 	  This enables support for Samsung Exynos7 SoC family
+diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+index e82aaf4..f80519a 100644
+--- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+@@ -136,6 +136,8 @@ B. External Wakeup Interrupts: For supporting external wakeup interrupts, a
+        found on Samsung S3C64xx SoCs,
+      - samsung,exynos4210-wakeup-eint: represents wakeup interrupt controller
+        found on Samsung Exynos4210 and S5PC110/S5PV210 SoCs.
++     - samsung,exynos7-wakeup-eint: represents wakeup interrupt controller
++       found on Samsung Exynos7 SoC.
+    - interrupt-parent: phandle of the interrupt parent to which the external
+      wakeup interrupts are forwarded to.
+    - interrupts: interrupt used by multiplexed wakeup interrupts.
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index 54ebcb6..771e821 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -56,12 +56,6 @@ static struct samsung_pin_bank_type bank_type_alive = {
+ 	.reg_offset = { 0x00, 0x04, 0x08, 0x0c, },
+ };
+ 
+-/* list of external wakeup controllers supported */
+-static const struct of_device_id exynos_wkup_irq_ids[] = {
+-	{ .compatible = "samsung,exynos4210-wakeup-eint", },
+-	{ }
+-};
+-
+ static void exynos_irq_mask(struct irq_data *irqd)
+ {
+ 	struct irq_chip *chip = irq_data_get_irq_chip(irqd);
+@@ -385,9 +379,9 @@ static int exynos_wkup_irq_set_wake(struct irq_data *irqd, unsigned int on)
+ /*
+  * irq_chip for wakeup interrupts
+  */
+-static struct exynos_irq_chip exynos_wkup_irq_chip = {
++static struct exynos_irq_chip exynos4210_wkup_irq_chip __initdata = {
+ 	.chip = {
+-		.name = "exynos_wkup_irq_chip",
++		.name = "exynos4210_wkup_irq_chip",
+ 		.irq_unmask = exynos_irq_unmask,
+ 		.irq_mask = exynos_irq_mask,
+ 		.irq_ack = exynos_irq_ack,
+@@ -401,6 +395,31 @@ static struct exynos_irq_chip exynos_wkup_irq_chip = {
+ 	.eint_pend = EXYNOS_WKUP_EPEND_OFFSET,
+ };
+ 
++static struct exynos_irq_chip exynos7_wkup_irq_chip __initdata = {
++	.chip = {
++		.name = "exynos7_wkup_irq_chip",
++		.irq_unmask = exynos_irq_unmask,
++		.irq_mask = exynos_irq_mask,
++		.irq_ack = exynos_irq_ack,
++		.irq_set_type = exynos_irq_set_type,
++		.irq_set_wake = exynos_wkup_irq_set_wake,
++		.irq_request_resources = exynos_irq_request_resources,
++		.irq_release_resources = exynos_irq_release_resources,
++	},
++	.eint_con = EXYNOS7_WKUP_ECON_OFFSET,
++	.eint_mask = EXYNOS7_WKUP_EMASK_OFFSET,
++	.eint_pend = EXYNOS7_WKUP_EPEND_OFFSET,
++};
++
++/* list of external wakeup controllers supported */
++static const struct of_device_id exynos_wkup_irq_ids[] = {
++	{ .compatible = "samsung,exynos4210-wakeup-eint",
++			.data = &exynos4210_wkup_irq_chip },
++	{ .compatible = "samsung,exynos7-wakeup-eint",
++			.data = &exynos7_wkup_irq_chip },
++	{ }
++};
++
+ /* interrupt handler for wakeup interrupts 0..15 */
+ static void exynos_irq_eint0_15(unsigned int irq, struct irq_desc *desc)
+ {
+@@ -469,12 +488,18 @@ static int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
+ 	struct samsung_pin_bank *bank;
+ 	struct exynos_weint_data *weint_data;
+ 	struct exynos_muxed_weint_data *muxed_data;
++	struct exynos_irq_chip *irq_chip;
+ 	unsigned int muxed_banks = 0;
+ 	unsigned int i;
+ 	int idx, irq;
+ 
+ 	for_each_child_of_node(dev->of_node, np) {
+-		if (of_match_node(exynos_wkup_irq_ids, np)) {
++		const struct of_device_id *match;
++
++		match = of_match_node(exynos_wkup_irq_ids, np);
++		if (match) {
++			irq_chip = kmemdup(match->data,
++				sizeof(*irq_chip), GFP_KERNEL);
+ 			wkup_np = np;
+ 			break;
+ 		}
+@@ -494,7 +519,7 @@ static int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
+ 			return -ENXIO;
+ 		}
+ 
+-		bank->irq_chip = &exynos_wkup_irq_chip;
++		bank->irq_chip = irq_chip;
+ 
+ 		if (!of_find_property(bank->of_node, "interrupts", NULL)) {
+ 			bank->eint_type = EINT_TYPE_WKUP_MUX;
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/samsung/pinctrl-exynos.h
+index 3c91c35..0f0f7ce 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.h
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
+@@ -25,6 +25,9 @@
+ #define EXYNOS_WKUP_ECON_OFFSET		0xE00
+ #define EXYNOS_WKUP_EMASK_OFFSET	0xF00
+ #define EXYNOS_WKUP_EPEND_OFFSET	0xF40
++#define EXYNOS7_WKUP_ECON_OFFSET	0x700
++#define EXYNOS7_WKUP_EMASK_OFFSET	0x900
++#define EXYNOS7_WKUP_EPEND_OFFSET	0xA00
+ #define EXYNOS_SVC_OFFSET		0xB08
+ #define EXYNOS_EINT_FUNC		0xF
  
 -- 
 1.7.9.5
