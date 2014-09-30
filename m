@@ -1,248 +1,158 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v7] mfd: syscon: Decouple syscon interface from platform devices
-Date: Tue, 30 Sep 2014 14:05:27 +0530
-Message-ID: <1412066127-27063-1-git-send-email-pankaj.dubey@samsung.com>
+Subject: [PATCH v8 2/2] ARM: EXYNOS: Move PMU specific definitions from common.h
+Date: Tue, 30 Sep 2014 15:51:21 +0530
+Message-ID: <1412072481-22370-3-git-send-email-pankaj.dubey@samsung.com>
+References: <1412072481-22370-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:17929 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:40002 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754059AbaI3Ikg (ORCPT
+	with ESMTP id S1751221AbaI3K0V (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Sep 2014 04:40:36 -0400
+	Tue, 30 Sep 2014 06:26:21 -0400
+In-reply-to: <1412072481-22370-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: arnd@arndb.de, b29396@freescale.com, lee.jones@linaro.org, boris.brezillon@free-electrons.com, tomasz.figa@gmail.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, kgene.kim@samsung.com, Li.Xiubo@freescale.com, geert+renesas@glider.be, swarren@nvidia.com, Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Currently a syscon entity can be only registered directly through a
-platform device that binds to a dedicated syscon driver. However in
-certain use cases it is desirable to make a device used with another
-driver a syscon interface provider.
+This patch moves PMU specific definitions into a new file
+as exynos-pmu.h.
+This will help in reducing dependency of common.h in pmu.c.
 
-For example, certain SoCs (e.g. Exynos) contain system controller
-blocks which perform various functions such as power domain control,
-CPU power management, low power mode control, but in addition contain
-certain IP integration glue, such as various signal masks,
-coprocessor power control, etc. In such case, there is a need to have
-a dedicated driver for such system controller but also share registers
-with other drivers. The latter is where the syscon interface is helpful.
-
-In case of DT based platforms, this patch decouples syscon object from
-syscon platform driver, and allows to create syscon objects first time
-when it is required by calling of syscon_regmap_lookup_by APIs and keep
-a list of such syscon objects along with syscon provider device_nodes
-and regmap handles.
-
-For non-DT based platforms, this patch keeps syscon platform driver
-structure so that syscon can be probed and such non-DT based drivers
-can use syscon_regmap_lookup_by_pdev API and access regmap handles.
-Once all users of "syscon_regmap_lookup_by_pdev" migrated to DT based,
-we can completely remove platform driver of syscon, and keep only helper
-functions to get regmap handles.
-
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
-Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
-Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Reviewed-by: Arnd Bergmann <arnd@arndb.de>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 ---
-Patch v6 and related discussions can be found here [1].
+ arch/arm/mach-exynos/common.h     |   17 -----------------
+ arch/arm/mach-exynos/exynos-pmu.h |   24 ++++++++++++++++++++++++
+ arch/arm/mach-exynos/pm.c         |    1 +
+ arch/arm/mach-exynos/pmu.c        |   20 +++++++++++++++++++-
+ arch/arm/mach-exynos/suspend.c    |    1 +
+ 5 files changed, 45 insertions(+), 18 deletions(-)
+ create mode 100644 arch/arm/mach-exynos/exynos-pmu.h
 
-Change since v5:
- - Addressed review comments from "Heiko Stuebner".
- - Updated commit description.
- - Including Arnd's and Heiko's Reviewed-by.
-
-Change since v5:
- - Dropping creation of dummy platform device in of_syscon_register.
- - As we are changing syscon to decouple from platform_device, creation of 
-   dummy platform_device does not look good option, and as suggested by Arnd,
-   I made another attempt so that regmap_mmio_init API should work with NULL
-   dev pointer itself. Since regmap needs to know about Syscon device node
-   properties so let's parse device node of syscon in syscon itself for any
-   such properties and using regmap_config parameter pass all such information
-   to regmap. Other concern of crashes due to NULL dev pointer in regmap already
-   addressed in separate patches of regmap. Please see [2] and [3].
-
-Changes since v4:
- - Addressed Tomasz Figa's comments for v4.
- - Added error handing in of_syscon_register function.
- - Using devm_regmap_init_mmio instead of regmap_init_mmio.
-
-Changes since v3:
- - Addressed Arnd's comment for v2.
- - Updated of_syscon_register for adding dev pointer in regmap_init_mmio.
- - For early users created dummy platform device.
-
-Changes since v2:
- - Added back platform device support from syscon, with one change that
-   syscon will not be probed for DT based platform.
- - Added back syscon_regmap_lookup_by_pdevname API so that non-DT base
-   users of syscon will not be broken.
- - Removed unwanted change in syscon.h.
- - Modified Signed-off-by list, added Suggested-by of Tomasz Figa and
-   Arnd Bergmann.
- - Added Tested-by of Vivek Gautam for testing on Exynos platform.
-
-Changes since v1:
- - Removed of_syscon_unregister function.
- - Modified of_syscon_register function and it will be used by syscon.c
-   to create syscon objects whenever required.
- - Removed platform device support from syscon.
- - Removed syscon_regmap_lookup_by_pdevname API support.
- - As there are significant changes w.r.t patchset v1, I am taking over
-   author for this patchset from Tomasz Figa.
-
-[1]: https://lkml.org/lkml/2014/9/29/99
-[2]: https://lkml.org/lkml/2014/9/18/130
-[3]: https://lkml.org/lkml/2014/9/27/2
- drivers/mfd/syscon.c |   96 ++++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 74 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
-index ca15878..72373b1 100644
---- a/drivers/mfd/syscon.c
-+++ b/drivers/mfd/syscon.c
-@@ -15,6 +15,7 @@
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/module.h>
-+#include <linux/list.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
-@@ -22,31 +23,94 @@
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/slab.h>
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index d4d09bc..431be1b 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -139,23 +139,6 @@ extern void exynos_cpu_resume_ns(void);
  
- static struct platform_driver syscon_driver;
+ extern struct smp_operations exynos_smp_ops;
  
-+static DEFINE_SPINLOCK(syscon_list_slock);
-+static LIST_HEAD(syscon_list);
+-/* PMU(Power Management Unit) support */
+-
+-#define PMU_TABLE_END	(-1U)
+-
+-enum sys_powerdown {
+-	SYS_AFTR,
+-	SYS_LPA,
+-	SYS_SLEEP,
+-	NUM_SYS_POWERDOWN,
+-};
+-
+-struct exynos_pmu_conf {
+-	unsigned int offset;
+-	unsigned int val[NUM_SYS_POWERDOWN];
+-};
+-
+-extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
+ extern void exynos_cpu_power_down(int cpu);
+ extern void exynos_cpu_power_up(int cpu);
+ extern int  exynos_cpu_power_state(int cpu);
+diff --git a/arch/arm/mach-exynos/exynos-pmu.h b/arch/arm/mach-exynos/exynos-pmu.h
+new file mode 100644
+index 0000000..a2ab0d5
+--- /dev/null
++++ b/arch/arm/mach-exynos/exynos-pmu.h
+@@ -0,0 +1,24 @@
++/*
++ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Header for EXYNOS PMU Driver support
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
 +
- struct syscon {
-+	struct device_node *np;
- 	struct regmap *regmap;
-+	struct list_head list;
++#ifndef __EXYNOS_PMU_H
++#define __EXYNOS_PMU_H
++
++enum sys_powerdown {
++	SYS_AFTR,
++	SYS_LPA,
++	SYS_SLEEP,
++	NUM_SYS_POWERDOWN,
 +};
 +
-+static struct regmap_config syscon_regmap_config = {
-+	.reg_bits = 32,
-+	.val_bits = 32,
-+	.reg_stride = 4,
++extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
++
++#endif /* __EXYNOS_PMU_H */
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index 4f10fa6..86f3ecd 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -26,6 +26,7 @@
+ #include <plat/pm-common.h>
+ 
+ #include "common.h"
++#include "exynos-pmu.h"
+ #include "regs-pmu.h"
+ #include "regs-sys.h"
+ 
+diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
+index 1f5aaa7..87613e0 100644
+--- a/arch/arm/mach-exynos/pmu.c
++++ b/arch/arm/mach-exynos/pmu.c
+@@ -13,9 +13,16 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ 
+-#include "common.h"
++#include "exynos-pmu.h"
+ #include "regs-pmu.h"
+ 
++#define PMU_TABLE_END	(-1U)
++
++struct exynos_pmu_conf {
++	unsigned int offset;
++	unsigned int val[NUM_SYS_POWERDOWN];
++};
++
+ struct exynos_pmu_data {
+ 	const struct exynos_pmu_conf *pmu_config;
+ 	const struct exynos_pmu_conf *pmu_config_extra;
+@@ -29,8 +36,19 @@ struct exynos_pmu_context {
+ 	const struct exynos_pmu_data *pmu_data;
  };
  
--static int syscon_match_node(struct device *dev, void *data)
-+static struct syscon *of_syscon_register(struct device_node *np)
- {
--	struct device_node *dn = data;
-+	struct syscon *syscon;
-+	struct regmap *regmap;
-+	void __iomem *base;
-+	int ret;
-+	struct regmap_config syscon_config = syscon_regmap_config;
-+
-+	if (!of_device_is_compatible(np, "syscon"))
-+		return ERR_PTR(-EINVAL);
-+
-+	syscon = kzalloc(sizeof(*syscon), GFP_KERNEL);
-+	if (!syscon)
-+		return ERR_PTR(-ENOMEM);
-+
-+	base = of_iomap(np, 0);
-+	if (!base) {
-+		ret = -ENOMEM;
-+		goto err_map;
-+	}
-+
-+	/* Parse the device's DT node for an endianness specification */
-+	if (of_property_read_bool(np, "big-endian"))
-+		syscon_config.val_format_endian = REGMAP_ENDIAN_BIG;
-+	 else if (of_property_read_bool(np, "little-endian"))
-+		syscon_config.val_format_endian = REGMAP_ENDIAN_LITTLE;
-+
-+	regmap = regmap_init_mmio(NULL, base, &syscon_config);
-+	if (IS_ERR(regmap)) {
-+		pr_err("regmap init failed\n");
-+		ret = PTR_ERR(regmap);
-+		goto err_regmap;
-+	}
-+
-+	syscon->regmap = regmap;
-+	syscon->np = np;
-+
-+	spin_lock(&syscon_list_slock);
-+	list_add_tail(&syscon->list, &syscon_list);
-+	spin_unlock(&syscon_list_slock);
++static void __iomem *pmu_base_addr;
+ static struct exynos_pmu_context *pmu_context;
  
--	return (dev->of_node == dn) ? 1 : 0;
-+	return syscon;
++static inline void pmu_raw_writel(u32 val, u32 offset)
++{
++	__raw_writel(val, pmu_base_addr + offset);
++}
 +
-+err_regmap:
-+	iounmap(base);
-+err_map:
-+	kfree(syscon);
-+	return ERR_PTR(ret);
- }
- 
- struct regmap *syscon_node_to_regmap(struct device_node *np)
- {
--	struct syscon *syscon;
--	struct device *dev;
-+	struct syscon *entry, *syscon = NULL;
- 
--	dev = driver_find_device(&syscon_driver.driver, NULL, np,
--				 syscon_match_node);
--	if (!dev)
--		return ERR_PTR(-EPROBE_DEFER);
-+	spin_lock(&syscon_list_slock);
- 
--	syscon = dev_get_drvdata(dev);
-+	list_for_each_entry(entry, &syscon_list, list)
-+		if (entry->np == np) {
-+			syscon = entry;
-+			break;
-+		}
++static inline u32 pmu_raw_readl(u32 offset)
++{
++	return __raw_readl(pmu_base_addr + offset);
++}
 +
-+	spin_unlock(&syscon_list_slock);
-+
-+	if (!syscon)
-+		syscon = of_syscon_register(np);
-+
-+	if (IS_ERR(syscon))
-+		return ERR_CAST(syscon);
+ static const struct exynos_pmu_conf exynos4210_pmu_config[] = {
+ 	/* { .offset = offset, .val = { AFTR, LPA, SLEEP } */
+ 	{ S5P_ARM_CORE0_LOWPWR,			{ 0x0, 0x0, 0x2 } },
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index f5d9773..079d999 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -33,6 +33,7 @@
+ #include "common.h"
+ #include "regs-pmu.h"
+ #include "regs-sys.h"
++#include "exynos-pmu.h"
  
- 	return syscon->regmap;
- }
-@@ -110,17 +174,6 @@ struct regmap *syscon_regmap_lookup_by_phandle(struct device_node *np,
- }
- EXPORT_SYMBOL_GPL(syscon_regmap_lookup_by_phandle);
+ #define S5P_CHECK_SLEEP 0x00000BAD
  
--static const struct of_device_id of_syscon_match[] = {
--	{ .compatible = "syscon", },
--	{ },
--};
--
--static struct regmap_config syscon_regmap_config = {
--	.reg_bits = 32,
--	.val_bits = 32,
--	.reg_stride = 4,
--};
--
- static int syscon_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -167,7 +220,6 @@ static struct platform_driver syscon_driver = {
- 	.driver = {
- 		.name = "syscon",
- 		.owner = THIS_MODULE,
--		.of_match_table = of_syscon_match,
- 	},
- 	.probe		= syscon_probe,
- 	.id_table	= syscon_ids,
 -- 
 1.7.9.5
