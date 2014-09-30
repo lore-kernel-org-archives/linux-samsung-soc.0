@@ -1,255 +1,225 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: [PATCH v8 2/2] ARM: exynos5: Add Suspend-to-RAM support for 5420
-Date: Tue, 30 Sep 2014 16:47:49 +0545
-Message-ID: <1412074969-12704-3-git-send-email-vikas.sajjan@samsung.com>
-References: <1412074969-12704-1-git-send-email-vikas.sajjan@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH 2/2] ARM: dts: Add sleep mode pin configuration for
+ exynos3250-rinato
+Date: Tue, 30 Sep 2014 20:07:25 +0900
+Message-ID: <1412075245-5763-3-git-send-email-cw00.choi@samsung.com>
+References: <1412075245-5763-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:36209 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751246AbaI3LDH (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:46179 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751411AbaI3LHc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Sep 2014 07:03:07 -0400
-Received: by mail-pa0-f45.google.com with SMTP id rd3so9769762pab.18
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2014 04:03:07 -0700 (PDT)
-In-Reply-To: <1412074969-12704-1-git-send-email-vikas.sajjan@samsung.com>
+	Tue, 30 Sep 2014 07:07:32 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NCP00K18O8HGN90@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 30 Sep 2014 20:07:29 +0900 (KST)
+In-reply-to: <1412075245-5763-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, olof@lixom.net
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, geunsik.lim@samsung.com, cw00.choi@samsung.com
 
-Adds Suspend-to-RAM support for EXYNOS5420
+This patch add sleep mode pin configuration using pinctrl subsystem
+to reduce leakage power-consumption of gpio pin in sleep state.
 
-Signed-off-by: Vikas Sajjan <vikas.sajjan@samsung.com>
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Kyungmin Park <Kyungmin Park@samsung.com>
 ---
- arch/arm/mach-exynos/suspend.c |  156 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 154 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos3250-pinctrl.dtsi |  16 ++++
+ arch/arm/boot/dts/exynos3250-rinato.dts   | 154 ++++++++++++++++++++++++++++++
+ 2 files changed, 170 insertions(+)
 
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index 079d999..773140c 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -39,6 +39,8 @@
+diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+index 47b92c1..5ab81c3 100644
+--- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
++++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
+@@ -12,6 +12,22 @@
+  * published by the Free Software Foundation.
+ */
  
- #define REG_TABLE_END (-1U)
- 
-+#define EXYNOS5420_CPU_STATE	0x28
++#define PIN_PULL_NONE		0
++#define PIN_PULL_DOWN		1
++#define PIN_PULL_UP		3
 +
- /**
-  * struct exynos_wkup_irq - Exynos GIC to PMU IRQ mapping
-  * @hwirq: Hardware IRQ signal of the GIC
-@@ -77,6 +79,9 @@ struct exynos_pm_data {
- 
- struct exynos_pm_data *pm_data;
- 
-+static int exynos5420_cpu_state;
-+static unsigned int exynos_pmu_spare3;
++#define PIN_PDN_OUT0		0
++#define PIN_PDN_OUT1		1
++#define PIN_PDN_INPUT		2
++#define PIN_PDN_PREV		3
 +
- /*
-  * GIC wake-up support
-  */
-@@ -106,6 +111,23 @@ unsigned int exynos_release_ret_regs[] = {
- 	REG_TABLE_END,
++#define PIN_SLP(_pin, _mode, _pull)				\
++	_pin {							\
++		samsung,pins = #_pin;				\
++		samsung,pin-con-pdn = <PIN_PDN_ ##_mode>;	\
++		samsung,pin-pud-pdn = <PIN_PULL_ ##_pull>;	\
++	}
++
+ &pinctrl_0 {
+ 	gpa0: gpa0 {
+ 		gpio-controller;
+diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
+index f23b8d2..bc4d63e 100644
+--- a/arch/arm/boot/dts/exynos3250-rinato.dts
++++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+@@ -439,3 +439,157 @@
+ &xusbxti {
+ 	clock-frequency = <24000000>;
  };
- 
-+unsigned int exynos5420_release_ret_regs[] = {
-+	EXYNOS_PAD_RET_DRAM_OPTION,
-+	EXYNOS_PAD_RET_MAUDIO_OPTION,
-+	EXYNOS_PAD_RET_JTAG_OPTION,
-+	EXYNOS5420_PAD_RET_GPIO_OPTION,
-+	EXYNOS5420_PAD_RET_UART_OPTION,
-+	EXYNOS5420_PAD_RET_MMCA_OPTION,
-+	EXYNOS5420_PAD_RET_MMCB_OPTION,
-+	EXYNOS5420_PAD_RET_MMCC_OPTION,
-+	EXYNOS5420_PAD_RET_HSI_OPTION,
-+	EXYNOS_PAD_RET_EBIA_OPTION,
-+	EXYNOS_PAD_RET_EBIB_OPTION,
-+	EXYNOS5420_PAD_RET_SPI_OPTION,
-+	EXYNOS5420_PAD_RET_DRAM_COREBLK_OPTION,
-+	REG_TABLE_END,
++
++&pinctrl_0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&sleep0>;
++
++	sleep0: sleep-state {
++		PIN_SLP(gpa0-0, INPUT, DOWN);
++		PIN_SLP(gpa0-1, INPUT, DOWN);
++		PIN_SLP(gpa0-2, INPUT, DOWN);
++		PIN_SLP(gpa0-3, INPUT, DOWN);
++		PIN_SLP(gpa0-4, INPUT, DOWN);
++		PIN_SLP(gpa0-5, INPUT, DOWN);
++		PIN_SLP(gpa0-6, INPUT, DOWN);
++		PIN_SLP(gpa0-7, INPUT, DOWN);
++
++		PIN_SLP(gpa1-0, INPUT, DOWN);
++		PIN_SLP(gpa1-1, INPUT, DOWN);
++		PIN_SLP(gpa1-2, INPUT, DOWN);
++		PIN_SLP(gpa1-3, INPUT, DOWN);
++		PIN_SLP(gpa1-4, INPUT, DOWN);
++		PIN_SLP(gpa1-5, INPUT, DOWN);
++
++		PIN_SLP(gpb-0, PREV, NONE);
++		PIN_SLP(gpb-1, PREV, NONE);
++		PIN_SLP(gpb-2, PREV, NONE);
++		PIN_SLP(gpb-3, PREV, NONE);
++		PIN_SLP(gpb-4, INPUT, DOWN);
++		PIN_SLP(gpb-5, INPUT, DOWN);
++		PIN_SLP(gpb-6, INPUT, DOWN);
++		PIN_SLP(gpb-7, INPUT, DOWN);
++
++		PIN_SLP(gpc0-0, INPUT, DOWN);
++		PIN_SLP(gpc0-1, INPUT, DOWN);
++		PIN_SLP(gpc0-2, INPUT, DOWN);
++		PIN_SLP(gpc0-3, INPUT, DOWN);
++		PIN_SLP(gpc0-4, INPUT, DOWN);
++
++		PIN_SLP(gpc1-0, INPUT, DOWN);
++		PIN_SLP(gpc1-1, INPUT, DOWN);
++		PIN_SLP(gpc1-2, INPUT, DOWN);
++		PIN_SLP(gpc1-3, INPUT, DOWN);
++		PIN_SLP(gpc1-4, INPUT, DOWN);
++
++		PIN_SLP(gpd0-0, INPUT, DOWN);
++		PIN_SLP(gpd0-1, INPUT, DOWN);
++		PIN_SLP(gpd0-2, INPUT, NONE);
++		PIN_SLP(gpd0-3, INPUT, NONE);
++
++		PIN_SLP(gpd1-0, INPUT, NONE);
++		PIN_SLP(gpd1-1, INPUT, NONE);
++		PIN_SLP(gpd1-2, INPUT, NONE);
++		PIN_SLP(gpd1-3, INPUT, NONE);
++	};
 +};
 +
- static int exynos_irq_set_wake(struct irq_data *data, unsigned int state)
- {
- 	const struct exynos_wkup_irq *wkup_irq;
-@@ -136,11 +158,22 @@ static int exynos_cpu_do_idle(void)
- 	pr_info("Failed to suspend the system\n");
- 	return 1; /* Aborting suspend */
- }
--
--static int exynos_cpu_suspend(unsigned long arg)
-+static void exynos_flush_cache_all(void)
- {
- 	flush_cache_all();
- 	outer_flush_all();
-+}
++&pinctrl_1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&sleep1>;
 +
-+static int exynos_cpu_suspend(unsigned long arg)
-+{
-+	exynos_flush_cache_all();
-+	return exynos_cpu_do_idle();
-+}
++	sleep1: sleep-state {
++		PIN_SLP(gpe0-0, PREV, NONE);
++		PIN_SLP(gpe0-1, PREV, NONE);
++		PIN_SLP(gpe0-2, INPUT, DOWN);
++		PIN_SLP(gpe0-3, INPUT, DOWN);
++		PIN_SLP(gpe0-4, INPUT, DOWN);
++		PIN_SLP(gpe0-5, INPUT, DOWN);
++		PIN_SLP(gpe0-6, INPUT, DOWN);
++		PIN_SLP(gpe0-7, INPUT, DOWN);
 +
-+static int exynos5420_cpu_suspend(unsigned long arg)
-+{
-+	exynos_flush_cache_all();
-+	__raw_writel(0x0, sysram_base_addr + EXYNOS5420_CPU_STATE);
- 	return exynos_cpu_do_idle();
- }
- 
-@@ -175,6 +208,50 @@ static void exynos_pm_prepare(void)
- 	exynos_pm_enter_sleep_mode();
- }
- 
-+static void exynos5420_pm_prepare(void)
-+{
-+	unsigned int tmp;
++		PIN_SLP(gpe1-0, INPUT, DOWN);
++		PIN_SLP(gpe1-1, PREV, NONE);
++		PIN_SLP(gpe1-2, INPUT, DOWN);
++		PIN_SLP(gpe1-3, INPUT, DOWN);
++		PIN_SLP(gpe1-4, INPUT, DOWN);
++		PIN_SLP(gpe1-5, INPUT, DOWN);
++		PIN_SLP(gpe1-6, INPUT, DOWN);
++		PIN_SLP(gpe1-7, INPUT, NONE);
 +
-+	/* Set wake-up mask registers */
-+	exynos_pm_set_wakeup_mask();
++		PIN_SLP(gpe2-0, INPUT, NONE);
++		PIN_SLP(gpe2-1, INPUT, NONE);
++		PIN_SLP(gpe2-2, INPUT, NONE);
 +
-+	s3c_pm_do_save(exynos_core_save, ARRAY_SIZE(exynos_core_save));
++		PIN_SLP(gpk0-0, INPUT, DOWN);
++		PIN_SLP(gpk0-1, INPUT, DOWN);
++		PIN_SLP(gpk0-2, OUT0, NONE);
++		PIN_SLP(gpk0-3, INPUT, DOWN);
++		PIN_SLP(gpk0-4, INPUT, DOWN);
++		PIN_SLP(gpk0-5, INPUT, DOWN);
++		PIN_SLP(gpk0-6, INPUT, DOWN);
++		PIN_SLP(gpk0-7, INPUT, DOWN);
 +
-+	exynos_pmu_spare3 = pmu_raw_readl(S5P_PMU_SPARE3);
-+	/*
-+	 * The cpu state needs to be saved and restored so that the
-+	 * secondary CPUs will enter low power start. Though the U-Boot
-+	 * is setting the cpu state with low power flag, the kernel
-+	 * needs to restore it back in case, the primary cpu fails to
-+	 * suspend for any reason.
-+	 */
-+	exynos5420_cpu_state = __raw_readl(sysram_base_addr +
-+						EXYNOS5420_CPU_STATE);
++		PIN_SLP(gpk1-0, INPUT, DOWN);
++		PIN_SLP(gpk1-1, INPUT, DOWN);
++		PIN_SLP(gpk1-2, INPUT, DOWN);
++		PIN_SLP(gpk1-3, INPUT, DOWN);
++		PIN_SLP(gpk1-4, INPUT, DOWN);
++		PIN_SLP(gpk1-5, INPUT, DOWN);
++		PIN_SLP(gpk1-6, INPUT, DOWN);
 +
-+	exynos_pm_enter_sleep_mode();
++		PIN_SLP(gpk2-0, INPUT, DOWN);
++		PIN_SLP(gpk2-1, INPUT, DOWN);
++		PIN_SLP(gpk2-2, INPUT, DOWN);
++		PIN_SLP(gpk2-3, INPUT, DOWN);
++		PIN_SLP(gpk2-4, INPUT, DOWN);
++		PIN_SLP(gpk2-5, INPUT, DOWN);
++		PIN_SLP(gpk2-6, INPUT, DOWN);
 +
-+	tmp = pmu_raw_readl(EXYNOS5_ARM_L2_OPTION);
-+	tmp &= ~EXYNOS5_USE_RETENTION;
-+	pmu_raw_writel(tmp, EXYNOS5_ARM_L2_OPTION);
++		PIN_SLP(gpl0-0, INPUT, DOWN);
++		PIN_SLP(gpl0-1, INPUT, DOWN);
++		PIN_SLP(gpl0-2, INPUT, DOWN);
++		PIN_SLP(gpl0-3, INPUT, DOWN);
 +
-+	tmp = pmu_raw_readl(EXYNOS5420_SFR_AXI_CGDIS1);
-+	tmp |= EXYNOS5420_UFS;
-+	pmu_raw_writel(tmp, EXYNOS5420_SFR_AXI_CGDIS1);
++		PIN_SLP(gpm0-0, INPUT, DOWN);
++		PIN_SLP(gpm0-1, INPUT, DOWN);
++		PIN_SLP(gpm0-2, INPUT, DOWN);
++		PIN_SLP(gpm0-3, INPUT, DOWN);
++		PIN_SLP(gpm0-4, INPUT, DOWN);
++		PIN_SLP(gpm0-5, INPUT, DOWN);
++		PIN_SLP(gpm0-6, INPUT, DOWN);
++		PIN_SLP(gpm0-7, INPUT, DOWN);
 +
-+	tmp = pmu_raw_readl(EXYNOS5420_ARM_COMMON_OPTION);
-+	tmp &= ~EXYNOS5420_L2RSTDISABLE_VALUE;
-+	pmu_raw_writel(tmp, EXYNOS5420_ARM_COMMON_OPTION);
++		PIN_SLP(gpm1-0, INPUT, DOWN);
++		PIN_SLP(gpm1-1, INPUT, DOWN);
++		PIN_SLP(gpm1-2, INPUT, DOWN);
++		PIN_SLP(gpm1-3, INPUT, DOWN);
++		PIN_SLP(gpm1-4, INPUT, DOWN);
++		PIN_SLP(gpm1-5, INPUT, DOWN);
++		PIN_SLP(gpm1-6, INPUT, DOWN);
 +
-+	tmp = pmu_raw_readl(EXYNOS5420_FSYS2_OPTION);
-+	tmp |= EXYNOS5420_EMULATION;
-+	pmu_raw_writel(tmp, EXYNOS5420_FSYS2_OPTION);
++		PIN_SLP(gpm2-0, INPUT, DOWN);
++		PIN_SLP(gpm2-1, INPUT, DOWN);
++		PIN_SLP(gpm2-2, INPUT, DOWN);
++		PIN_SLP(gpm2-3, INPUT, DOWN);
++		PIN_SLP(gpm2-4, INPUT, DOWN);
 +
-+	tmp = pmu_raw_readl(EXYNOS5420_PSGEN_OPTION);
-+	tmp |= EXYNOS5420_EMULATION;
-+	pmu_raw_writel(tmp, EXYNOS5420_PSGEN_OPTION);
-+}
++		PIN_SLP(gpm3-0, INPUT, DOWN);
++		PIN_SLP(gpm3-1, INPUT, DOWN);
++		PIN_SLP(gpm3-2, INPUT, DOWN);
++		PIN_SLP(gpm3-3, INPUT, DOWN);
++		PIN_SLP(gpm3-4, INPUT, DOWN);
++		PIN_SLP(gpm3-5, INPUT, DOWN);
++		PIN_SLP(gpm3-6, INPUT, DOWN);
++		PIN_SLP(gpm3-7, INPUT, DOWN);
 +
-+
- static int exynos_pm_suspend(void)
- {
- 	exynos_pm_central_suspend();
-@@ -185,6 +262,24 @@ static int exynos_pm_suspend(void)
- 	return 0;
- }
- 
-+static int exynos5420_pm_suspend(void)
-+{
-+	u32 this_cluster;
-+
-+	exynos_pm_central_suspend();
-+
-+	/* Setting SEQ_OPTION register */
-+
-+	this_cluster = MPIDR_AFFINITY_LEVEL(read_cpuid_mpidr(), 1);
-+	if (!this_cluster)
-+		pmu_raw_writel(EXYNOS5420_ARM_USE_STANDBY_WFI0,
-+				S5P_CENTRAL_SEQ_OPTION);
-+	else
-+		pmu_raw_writel(EXYNOS5420_KFC_USE_STANDBY_WFI0,
-+				S5P_CENTRAL_SEQ_OPTION);
-+	return 0;
-+}
-+
- static void exynos_pm_release_retention(void)
- {
- 	unsigned int i;
-@@ -223,6 +318,50 @@ early_wakeup:
- 	pmu_raw_writel(0x0, S5P_INFORM1);
- }
- 
-+static void exynos5420_pm_resume(void)
-+{
-+	unsigned long tmp;
-+
-+	/* Restore the CPU0 low power state register */
-+	tmp = pmu_raw_readl(EXYNOS5_ARM_CORE0_SYS_PWR_REG);
-+	pmu_raw_writel(tmp | S5P_CORE_LOCAL_PWR_EN,
-+			EXYNOS5_ARM_CORE0_SYS_PWR_REG);
-+
-+	/* Restore the sysram cpu state register */
-+	__raw_writel(exynos5420_cpu_state,
-+		sysram_base_addr + EXYNOS5420_CPU_STATE);
-+
-+	pmu_raw_writel(EXYNOS5420_USE_STANDBY_WFI_ALL,
-+			S5P_CENTRAL_SEQ_OPTION);
-+
-+	if (exynos_pm_central_resume())
-+		goto early_wakeup;
-+
-+	/* For release retention */
-+	exynos_pm_release_retention();
-+
-+	pmu_raw_writel(exynos_pmu_spare3, S5P_PMU_SPARE3);
-+
-+	s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
-+
-+early_wakeup:
-+
-+	tmp = pmu_raw_readl(EXYNOS5420_SFR_AXI_CGDIS1);
-+	tmp &= ~EXYNOS5420_UFS;
-+	pmu_raw_writel(tmp, EXYNOS5420_SFR_AXI_CGDIS1);
-+
-+	tmp = pmu_raw_readl(EXYNOS5420_FSYS2_OPTION);
-+	tmp &= ~EXYNOS5420_EMULATION;
-+	pmu_raw_writel(tmp, EXYNOS5420_FSYS2_OPTION);
-+
-+	tmp = pmu_raw_readl(EXYNOS5420_PSGEN_OPTION);
-+	tmp &= ~EXYNOS5420_EMULATION;
-+	pmu_raw_writel(tmp, EXYNOS5420_PSGEN_OPTION);
-+
-+	/* Clear SLEEP mode set in INFORM1 */
-+	pmu_raw_writel(0x0, S5P_INFORM1);
-+}
-+
- /*
-  * Suspend Ops
-  */
-@@ -310,6 +449,16 @@ static const struct exynos_pm_data exynos5250_pm_data = {
- 	.cpu_suspend	= exynos_cpu_suspend,
- };
- 
-+static struct exynos_pm_data exynos5420_pm_data = {
-+	.wkup_irq	= exynos5250_wkup_irq,
-+	.wake_disable_mask = (0x7F << 7) | (0x1F << 1),
-+	.release_ret_regs = exynos5420_release_ret_regs,
-+	.pm_resume	= exynos5420_pm_resume,
-+	.pm_suspend	= exynos5420_pm_suspend,
-+	.pm_prepare	= exynos5420_pm_prepare,
-+	.cpu_suspend	= exynos5420_cpu_suspend,
++		PIN_SLP(gpm4-0, INPUT, DOWN);
++		PIN_SLP(gpm4-1, INPUT, DOWN);
++		PIN_SLP(gpm4-2, INPUT, DOWN);
++		PIN_SLP(gpm4-3, INPUT, DOWN);
++		PIN_SLP(gpm4-4, INPUT, DOWN);
++		PIN_SLP(gpm4-5, INPUT, DOWN);
++		PIN_SLP(gpm4-6, INPUT, DOWN);
++		PIN_SLP(gpm4-7, INPUT, DOWN);
++	};
 +};
-+
- static struct of_device_id exynos_pmu_of_device_ids[] = {
- 	{
- 		.compatible = "samsung,exynos4210-pmu",
-@@ -323,6 +472,9 @@ static struct of_device_id exynos_pmu_of_device_ids[] = {
- 	}, {
- 		.compatible = "samsung,exynos5250-pmu",
- 		.data = &exynos5250_pm_data,
-+	}, {
-+		.compatible = "samsung,exynos5420-pmu",
-+		.data = &exynos5420_pm_data,
- 	},
- 	{ /*sentinel*/ },
- };
 -- 
-1.7.9.5
+1.8.0
