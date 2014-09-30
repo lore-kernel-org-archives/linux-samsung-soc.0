@@ -1,89 +1,184 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH 2/2] arch: arm: samsung: Clean-up usage of
- CONFIG_SERIAL_SAMSUNG_UARTS symbol
-Date: Tue, 30 Sep 2014 21:41:25 +0530
-Message-ID: <CAM4voaknOtrsuUmoTZ9gTa-DbzwLXX_8+hAvkB3Mnfnk+8ULjQ@mail.gmail.com>
-References: <1412087695-10591-1-git-send-email-a.kesavan@samsung.com>
-	<1412087695-10591-2-git-send-email-a.kesavan@samsung.com>
-	<2267491.QlLoTEuT3L@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Daniel Drake <drake@endlessm.com>
+Subject: [PATCH] ASoC: samsung: fix CDCLK handling
+Date: Tue, 30 Sep 2014 10:40:11 -0600
+Message-ID: <1412095211-4012-1-git-send-email-drake@endlessm.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f49.google.com ([209.85.192.49]:49425 "EHLO
-	mail-qg0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751245AbaI3QLe (ORCPT
+Received: from mail-yk0-f172.google.com ([209.85.160.172]:60448 "EHLO
+	mail-yk0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751492AbaI3QkU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Sep 2014 12:11:34 -0400
-Received: by mail-qg0-f49.google.com with SMTP id q107so13733496qgd.22
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2014 09:11:27 -0700 (PDT)
-In-Reply-To: <2267491.QlLoTEuT3L@wuerfel>
+	Tue, 30 Sep 2014 12:40:20 -0400
+Received: by mail-yk0-f172.google.com with SMTP id 19so764862ykq.17
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2014 09:40:20 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, jslaby@suse.cz, Tomasz Figa <tomasz.figa@gmail.com>
+To: ben-linux@fluff.org, kgene.kim@samsung.com, sbkim73@samsung.com, lgirdwood@gmail.com, broonie@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, s.nawrocki@samsung.com
 
-Hi Arnd,
+ODROID is the only platform that uses CDCLK, and right now,
+CDCLK handling is buggy. If you start pulseaudio on ODROID,
+audio is broken until reboot (even after killing pulse).
 
-On Tue, Sep 30, 2014 at 8:43 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Tuesday 30 September 2014 20:04:55 Abhilash Kesavan wrote:
->> --- a/arch/arm/mach-s3c64xx/irq-pm.c
->> +++ b/arch/arm/mach-s3c64xx/irq-pm.c
->> @@ -55,10 +55,10 @@ static struct irq_grp_save {
->>         u32     mask;
->>  } eint_grp_save[5];
->>
->> -#ifndef CONFIG_SERIAL_SAMSUNG_UARTS
->> -#define SERIAL_SAMSUNG_UARTS 0
->> +#ifndef CONFIG_SERIAL_SAMSUNG
->> +#define SERIAL_SAMSUNG_UARTS   0
->>  #else
->> -#define        SERIAL_SAMSUNG_UARTS CONFIG_SERIAL_SAMSUNG_UARTS
->> +#define SERIAL_SAMSUNG_UARTS   4
->>  #endif
->>
->>  static u32 irq_uart_mask[SERIAL_SAMSUNG_UARTS];
->
-> I think this won't work because now you access invalid registers
-> on machines that have only three uarts.
+This happens because CDCLK gets disabled by i2s.c and never enabled again.
 
-The 6400 and 6410 SoCs both have 4 uarts. Prior to this patch
-CONFIG_SERIAL_SAMSUNG_UARTS would have been 4 for 64xx.
->
->> diff --git a/arch/arm/plat-samsung/init.c b/arch/arm/plat-samsung/init.c
->> index 11fbbc2..03cafe9 100644
->> --- a/arch/arm/plat-samsung/init.c
->> +++ b/arch/arm/plat-samsung/init.c
->> @@ -93,8 +93,8 @@ void __init s3c24xx_init_clocks(int xtal)
->>  #if IS_ENABLED(CONFIG_SAMSUNG_ATAGS)
->>  static int nr_uarts __initdata = 0;
->>
->> -#ifdef CONFIG_SERIAL_SAMSUNG_UARTS
->> -static struct s3c2410_uartcfg uart_cfgs[CONFIG_SERIAL_SAMSUNG_UARTS];
->> +#ifdef CONFIG_SERIAL_SAMSUNG
->> +static struct s3c2410_uartcfg uart_cfgs[4];
->>  #endif
->>
->>  /* s3c24xx_init_uartdevs
->> @@ -110,7 +110,7 @@ void __init s3c24xx_init_uartdevs(char *name,
->>                                   struct s3c24xx_uart_resources *res,
->>                                   struct s3c2410_uartcfg *cfg, int no)
->>  {
->> -#ifdef CONFIG_SERIAL_SAMSUNG_UARTS
->> +#ifdef CONFIG_SERIAL_SAMSUNG
->>         struct platform_device *platdev;
->>         struct s3c2410_uartcfg *cfgptr = uart_cfgs;
->>         struct s3c24xx_uart_resources *resp;
->
-> Since you hardcode the number here now, you can actually drop this #ifdef.
+pulseaudio does:
+1. i2s_startup for playback channel
+2. i2s_startup for capture channel
+3. i2s_shutdown for capture channel
+4. i2s_shutdown for playback channel
 
-Will remove it.
+In step 3 we disable CDCLK even though playback should still be active.
 
-Regards,
-Abhilash
->
->         Arnd
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+In step 4 we do this:
+	u32 mod = readl(i2s->addr + I2SMOD);
+	i2s->cdclk_out = !(mod & MOD_CDCLKCON);
+
+and now cdclk_out is always going to be 0, so we'll never turn it back
+on again.
+
+Both this bug and the one that b97c60abf9a tries to fix happened
+because of the way that CDCLK handling is painfully split between
+platform and i2s drivers.
+
+Simplify the situation and solve the bug with the following approach:
+ - as before, samsung_i2s_dai_probe() gates CDCLK by default
+   (no need for smartq_wm8987 to do this as well)
+ - platform drivers can gate/ungate CDCLK as necessary
+   (currently only odroidx2 needs to do this)
+ - i2s code has no other interaction with CDCLK
+
+Signed-off-by: Daniel Drake <drake@endlessm.com>
+---
+ sound/soc/samsung/i2s.c               | 19 ++----------------
+ sound/soc/samsung/odroidx2_max98090.c | 36 ++++++++++++++++++++++++++---------
+ sound/soc/samsung/smartq_wm8987.c     |  6 ------
+ 3 files changed, 29 insertions(+), 32 deletions(-)
+
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 9d51347..6654ce6 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -68,8 +68,6 @@ struct i2s_dai {
+ #define DAI_OPENED	(1 << 0) /* Dai is opened */
+ #define DAI_MANAGER	(1 << 1) /* Dai is the manager */
+ 	unsigned mode;
+-	/* CDCLK pin direction: 0  - input, 1 - output */
+-	unsigned int cdclk_out:1;
+ 	/* Driver for this DAI */
+ 	struct snd_soc_dai_driver i2s_dai_drv;
+ 	/* DMA parameters */
+@@ -739,9 +737,6 @@ static int i2s_startup(struct snd_pcm_substream *substream,
+ 
+ 	spin_unlock_irqrestore(&lock, flags);
+ 
+-	if (!is_opened(other) && i2s->cdclk_out)
+-		i2s_set_sysclk(dai, SAMSUNG_I2S_CDCLK,
+-				0, SND_SOC_CLOCK_OUT);
+ 	return 0;
+ }
+ 
+@@ -757,24 +752,14 @@ static void i2s_shutdown(struct snd_pcm_substream *substream,
+ 	i2s->mode &= ~DAI_OPENED;
+ 	i2s->mode &= ~DAI_MANAGER;
+ 
+-	if (is_opened(other)) {
++	if (is_opened(other))
+ 		other->mode |= DAI_MANAGER;
+-	} else {
+-		u32 mod = readl(i2s->addr + I2SMOD);
+-		i2s->cdclk_out = !(mod & MOD_CDCLKCON);
+-		if (other)
+-			other->cdclk_out = i2s->cdclk_out;
+-	}
++
+ 	/* Reset any constraint on RFS and BFS */
+ 	i2s->rfs = 0;
+ 	i2s->bfs = 0;
+ 
+ 	spin_unlock_irqrestore(&lock, flags);
+-
+-	/* Gate CDCLK by default */
+-	if (!is_opened(other))
+-		i2s_set_sysclk(dai, SAMSUNG_I2S_CDCLK,
+-				0, SND_SOC_CLOCK_IN);
+ }
+ 
+ static int config_setup(struct i2s_dai *i2s)
+diff --git a/sound/soc/samsung/odroidx2_max98090.c b/sound/soc/samsung/odroidx2_max98090.c
+index 278edf9..b700284 100644
+--- a/sound/soc/samsung/odroidx2_max98090.c
++++ b/sound/soc/samsung/odroidx2_max98090.c
+@@ -21,20 +21,37 @@ struct odroidx2_drv_data {
+ /* The I2S CDCLK output clock frequency for the MAX98090 codec */
+ #define MAX98090_MCLK 19200000
+ 
++static int odroidx2_startup(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++
++	if (rtd->cpu_dai->active)
++		return 0;
++
++	return snd_soc_dai_set_sysclk(rtd->cpu_dai, SAMSUNG_I2S_CDCLK,
++				      0, SND_SOC_CLOCK_OUT);
++}
++
++static void odroidx2_shutdown(struct snd_pcm_substream *substream)
++{
++	struct snd_soc_pcm_runtime *rtd = substream->private_data;
++
++	if (!rtd->cpu_dai->active)
++		snd_soc_dai_set_sysclk(rtd->cpu_dai, SAMSUNG_I2S_CDCLK,
++				       0, SND_SOC_CLOCK_IN);
++}
++
++static const struct snd_soc_ops odroidx2_ops = {
++	.startup = odroidx2_startup,
++	.shutdown = odroidx2_shutdown,
++};
++
+ static int odroidx2_late_probe(struct snd_soc_card *card)
+ {
+ 	struct snd_soc_dai *codec_dai = card->rtd[0].codec_dai;
+-	struct snd_soc_dai *cpu_dai = card->rtd[0].cpu_dai;
+-	int ret;
+ 
+-	ret = snd_soc_dai_set_sysclk(codec_dai, 0, MAX98090_MCLK,
++	return snd_soc_dai_set_sysclk(codec_dai, 0, MAX98090_MCLK,
+ 						SND_SOC_CLOCK_IN);
+-	if (ret < 0)
+-		return ret;
+-
+-	/* Set the cpu DAI configuration in order to use CDCLK */
+-	return snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_CDCLK,
+-					0, SND_SOC_CLOCK_OUT);
+ }
+ 
+ static const struct snd_soc_dapm_widget odroidx2_dapm_widgets[] = {
+@@ -55,6 +72,7 @@ static struct snd_soc_dai_link odroidx2_dai[] = {
+ 		.codec_dai_name	= "HiFi",
+ 		.dai_fmt	= SND_SOC_DAIFMT_I2S | SND_SOC_DAIFMT_NB_NF |
+ 				  SND_SOC_DAIFMT_CBM_CFM,
++		.ops		= &odroidx2_ops,
+ 	}
+ };
+ 
+diff --git a/sound/soc/samsung/smartq_wm8987.c b/sound/soc/samsung/smartq_wm8987.c
+index 9b0ffac..2b5e7c5 100644
+--- a/sound/soc/samsung/smartq_wm8987.c
++++ b/sound/soc/samsung/smartq_wm8987.c
+@@ -76,12 +76,6 @@ static int smartq_hifi_hw_params(struct snd_pcm_substream *substream,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	/* Gate the RCLK output on PAD */
+-	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_CDCLK,
+-					0, SND_SOC_CLOCK_IN);
+-	if (ret < 0)
+-		return ret;
+-
+ 	/* set the codec system clock for DAC and ADC */
+ 	ret = snd_soc_dai_set_sysclk(codec_dai, WM8750_SYSCLK, clk,
+ 				     SND_SOC_CLOCK_IN);
+-- 
+1.9.1
