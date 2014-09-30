@@ -1,93 +1,91 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: Unable to boot mainline on snow chromebook since 3.15
-Date: Tue, 30 Sep 2014 08:12:07 +0200
-Message-ID: <20140930061206.GG29874@ulmo>
-References: <540C8577.2070907@gmail.com>
- <20140908112112.GK26030@arm.com>
- <CACxGe6v40wMSW8LJRtyZ3C6PinRMcQM-Zog+XpTJ-QG3HHJknw@mail.gmail.com>
- <CAD=FV=VAqzvJQDQMjjeQ1p5okyDzE=ff_sguObZxh59qbzcaTQ@mail.gmail.com>
- <CACxGe6t_ex1bU=CvTpXR4VJgNf1hAq33hr6ykbHy_sMXEk4h-g@mail.gmail.com>
- <CAOesGMipX3MV6sMWLuY=D+bQ6qe8P17YFbTFwZOHPeSc3Pw9Cg@mail.gmail.com>
- <20140910143144.GF7960@sirena.org.uk>
- <CACxGe6u=QkGTKGfaE_jJ5VFMhdVKQNggp3qVBUgNP7rDbZss_A@mail.gmail.com>
- <20140929125716.GE26008@ulmo>
- <CACxGe6uDYNOuhgM_5iQTp=iB4X-osSz8WESiUb2QGj5ZmWFp-A@mail.gmail.com>
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [GIT PULL] Samsung clock changes for v3.18
+Date: Mon, 29 Sep 2014 23:44:04 -0700
+Message-ID: <20140930064404.19023.96162@quantum>
+References: <1412022850-7842-1-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="FwyhczKCDPOVeYh6"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:47254 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752238AbaI3GMK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Sep 2014 02:12:10 -0400
-Received: by mail-wi0-f181.google.com with SMTP id n3so3565952wiv.14
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 29 Sep 2014 23:12:09 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CACxGe6uDYNOuhgM_5iQTp=iB4X-osSz8WESiUb2QGj5ZmWFp-A@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1412022850-7842-1-git-send-email-tomasz.figa@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, Tomasz Figa <tomasz.figa@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: Mark Brown <broonie@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Will Deacon <will.deacon@arm.com>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Prashanth G <prashanth.g@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "rahul.sharma@samsung.com" <rahul.sharma@samsung.com>
 
+Quoting Tomasz Figa (2014-09-29 13:34:10)
+> The following changes since commit a52ae5a755d980e9ff812c6f45a415ba27bfd33b:
+> 
+>   Merge branch 'clk-fixes' into clk-next (2014-09-17 11:47:56 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-clk.git tags/for_3.18/samsung-clk
+> 
+> for you to fetch changes up to fa0111be4ff30150720db3c3e5ee8d7823921639:
+> 
+>   clk: samsung: exynos4: remove duplicate div_core2 divider clock instantiation (2014-09-24 12:41:33 +0200)
 
---FwyhczKCDPOVeYh6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Pulled!
 
-On Mon, Sep 29, 2014 at 02:12:43PM +0100, Grant Likely wrote:
-> On Mon, Sep 29, 2014 at 1:57 PM, Thierry Reding <thierry.reding@gmail.com=
-> wrote:
-> > Though there are two cases: one is to use simplefb as a means to have
-> > early boot messages on a graphical display (and optionally hand off to a
-> > real driver). The other is to use simplefb as the only framebuffer
-> > driver until a proper driver has been implemented. The latter would have
-> > the disadvantage of not allowing unused resources from being garbage
-> > collected at all. Then again, I don't think power consumption is going
-> > to be a very big issue on hardware where no proper display driver is
-> > available.
->=20
-> When simplefb is the only framebuffer to get a platform working, it is
-> reasonable to have a placeholder driver that grabs the resources and
-> nothing else. When a real driver is implemented, and merged, the
-> placeholder driver should drop compatibility with the device node at
-> the same time.
+Thanks,
+Mike
 
-You mean the device node for the real device should be compatible with
-"simplefb"? One problem I see with that is that there may be multiple
-dummy drivers for different pieces of hardware, all of them binding to
-the simplefb compatible and conflicting.
-
-Also this assumes that a device tree node exists for the device. One of
-the reasons for using simplefb is so that you don't have to write that
-device tree node and its binding yet.
-
-Presumably, though, if the firmware already knows what resources are
-needed and generate them at runtime it should be possible to come up
-with a static device tree node, too.
-
-Thierry
-
---FwyhczKCDPOVeYh6
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUKkm2AAoJEN0jrNd/PrOh53AP/REF5Sh1ccz6EgXWNalmhdP/
-zleTHsBUPyEBznzlWpkzS6cvJOMa/s2ObP/Gds9b8jlZGVXAMnuJKQlvbWTnHcdk
-FH14e9AyUnDxa92t86w/g9Nlqoa9ukCCp1HjeIDwq42Aa9Fw1SiwmI3FS2c50BV1
-8fNyXruSH/u6qnR7kbNNysVpB79U4HhvWTpXvQeRvfRogn5SY+7lwIV/qw40Onrj
-Q+AzCSIJezmf/LZRWWuLr9axF+tu20rORL6TsDEXOFjpJw+xKjImvZ3soPSxoMzW
-LqsaMTLjh5RGJeojlCq2HCRoJl4ihFe+hD72VS3x6ejENeS4hSAE+Cc5hnFEjTaw
-b1m4GC4+P8gNH/6fJmnopQCllpsTS4HE0XOImEHA1EeH7OhlVjHEZHBknABl7d0o
-l6P3RK1Udr5qiw2IP9/JMCAAHHRRMJpw+oXY+ZRTC4uA5wVbWydFgul6VLy0n1jQ
-mwjgMHHivCcGJcngr1cJcs/6CXYvz7SqHOR6kuspv306FHScltdma1wMKpESBvmi
-Iw/knP9PQxemAUHQ1AnOZR0KirQ0MF8yXKPTwiefHyoQaJMdwA7Q2Z1Ye3d00UtR
-oeQFy00gN2+kxfnvlxS/O8vg394ieYCC0i7KXSk7jZ6wCdIUDUPy+IFcpoY2n2Tu
-iE8aX6MgMDq64LjQY64M
-=u7UP
------END PGP SIGNATURE-----
-
---FwyhczKCDPOVeYh6--
+> 
+> ----------------------------------------------------------------
+> Samsung clock patches for v3.18
+> 
+> 1) non-critical fixes (without the need to push to stable)
+> 
+> fa0111be4ff3 clk: samsung: exynos4: remove duplicate div_core2 divider clock instantiation
+> b511593d7165 clk: samsung: exynos4: fix g3d clocks
+> c14254300131 clk: samsung: exynos4: add missing smmu_g2d clock and update comments
+> 22842d244af3 clk: samsung: exynos5260: fix typo in clock name
+> e82ba578ccde clk: samsung: exynos3250: fix width field of mout_mmc0/1
+> 59037b92f440 clk: samsung: exynos3250: fix width and shift of div_spi0_isp clock
+> 5ce37f266650 clk: samsung: exynos3250: fix mout_cam_blk parent list
+> 
+> 2) Clock driver extensions
+> 
+> 07ccf02ba5c3 dt-bindings: clk: samsung: Document the DMC domain of Exynos3250 CMU
+> d0e73eaf1925 ARM: dts: exynos3250: Add CMU node for DMC domain clocks
+> e3c3f19bc618 clk: samsung: exynos3250: Register DMC clk provider
+> 4676f0aab9dc clk: samsung: exynos4: add support for MOUT_HDMI and MOUT_MIXER clocks
+> 
+> ----------------------------------------------------------------
+> Chander Kashyap (1):
+>       clk: samsung: exynos5260: fix typo in clock name
+> 
+> Krzysztof Kozlowski (3):
+>       clk: samsung: exynos3250: Register DMC clk provider
+>       ARM: dts: exynos3250: Add CMU node for DMC domain clocks
+>       dt-bindings: clk: samsung: Document the DMC domain of Exynos3250 CMU
+> 
+> Marek Szyprowski (3):
+>       clk: samsung: exynos4: add missing smmu_g2d clock and update comments
+>       clk: samsung: exynos4: add support for MOUT_HDMI and MOUT_MIXER clocks
+>       clk: samsung: exynos4: fix g3d clocks
+> 
+> Pankaj Dubey (3):
+>       clk: samsung: exynos3250: fix mout_cam_blk parent list
+>       clk: samsung: exynos3250: fix width and shift of div_spi0_isp clock
+>       clk: samsung: exynos3250: fix width field of mout_mmc0/1
+> 
+> Thomas Abraham (1):
+>       clk: samsung: exynos4: remove duplicate div_core2 divider clock instantiation
+> 
+>  .../devicetree/bindings/clock/exynos3250-clock.txt |  10 +-
+>  arch/arm/boot/dts/exynos3250.dtsi                  |   6 +
+>  drivers/clk/samsung/clk-exynos3250.c               | 202 ++++++++++++++++++++-
+>  drivers/clk/samsung/clk-exynos4.c                  |  18 +-
+>  drivers/clk/samsung/clk-exynos5260.c               |   2 +-
+>  include/dt-bindings/clock/exynos3250.h             |  27 +++
+>  include/dt-bindings/clock/exynos4.h                |  12 +-
+>  7 files changed, 257 insertions(+), 20 deletions(-)
