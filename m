@@ -1,514 +1,343 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 1/2] ARM: dts: Add board dts file for Exynos3250-based Rinato
- board
-Date: Tue, 30 Sep 2014 20:07:24 +0900
-Message-ID: <1412075245-5763-2-git-send-email-cw00.choi@samsung.com>
-References: <1412075245-5763-1-git-send-email-cw00.choi@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH] drm/exynos: remove ifdeferry from initialization code
+Date: Tue, 30 Sep 2014 13:29:01 +0200
+Message-ID: <542A93FD.7020002@samsung.com>
+References: <1410349980-10473-1-git-send-email-a.hajda@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:46179 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751410AbaI3LHa (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:27886 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751044AbaI3L3N (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Sep 2014 07:07:30 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NCP006XPO8G4U10@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 30 Sep 2014 20:07:29 +0900 (KST)
-In-reply-to: <1412075245-5763-1-git-send-email-cw00.choi@samsung.com>
+	Tue, 30 Sep 2014 07:29:13 -0400
+In-reply-to: <1410349980-10473-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, geunsik.lim@samsung.com, cw00.choi@samsung.com
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
 
-This patch add support for device tree sources for Samsung Rinato baord
-(Gear 2) based on Exynos3250 SoC.
+Hi Inki,
 
-This dts file support following features:
-- eMMC
-- Main PMIC (Samsung S2MPS14)
-- Interface PMIC (Maxim MAX77836, MUIC, fuel-gauge, charger)
-- RTC of Exynos3250
-- ADC of Exynos3250 with NTC thermistor
-- I2S of Exynos3250
-- TMU of Exynos3250
-- MFC of Exynos3250
-- Secure firmware for Exynos3250 secondary cpu boot
-- Serial ports of Exynos3250
-- gpio-key for power key
+Gently ping.
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
-Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/boot/dts/Makefile              |   3 +-
- arch/arm/boot/dts/exynos3250-rinato.dts | 441 ++++++++++++++++++++++++++++++++
- 2 files changed, 443 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/exynos3250-rinato.dts
+Andrzej
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index b4f1fb1..5728918 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -64,7 +64,8 @@ dtb-$(CONFIG_ARCH_BRCMSTB) += \
- dtb-$(CONFIG_ARCH_DAVINCI) += da850-enbw-cmc.dtb \
- 	da850-evm.dtb
- dtb-$(CONFIG_ARCH_EFM32) += efm32gg-dk3750.dtb
--dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
-+dtb-$(CONFIG_ARCH_EXYNOS) += exynos3250-rinato.dtb \
-+	exynos4210-origen.dtb \
- 	exynos4210-smdkv310.dtb \
- 	exynos4210-trats.dtb \
- 	exynos4210-universal_c210.dtb \
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-new file mode 100644
-index 0000000..f23b8d2
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -0,0 +1,441 @@
-+/*
-+ * Samsung's Exynos3250 based Rinato board device tree source
-+ *
-+ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * Device tree source file for Samsung's Rinato board which is based on
-+ * Samsung Exynos3250 SoC.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+/dts-v1/;
-+#include "exynos3250.dtsi"
-+#include <dt-bindings/input/input.h>
-+
-+/ {
-+	model = "Samsung Rinato board";
-+	compatible = "samsung,rinato", "samsung,exynos3250", "samsung,exynos3";
-+
-+	aliases {
-+		i2c7 = &i2c_max77836;
-+	};
-+
-+	memory {
-+		reg =  <0x40000000 0x08000000
-+			0x48000000 0x08000000
-+			0x50000000 0x08000000
-+			0x58000000 0x07F00000>;
-+	};
-+
-+	chosen {
-+		bootargs = "console=ttySAC1,115200N8 root=/dev/mmcblk0p15 rootwait earlyprintk panic=5";
-+	};
-+
-+	firmware@0205F000 {
-+		compatible = "samsung,secure-firmware";
-+		reg = <0x0205F000 0x1000>;
-+	} ;
-+
-+	gpio_keys {
-+		compatible = "gpio-keys";
-+
-+		power_key {
-+			interrupt-parent = <&gpx2>;
-+			interrupts = <7 0>;
-+			gpios = <&gpx2 7 1>;
-+			linux,code = <KEY_POWER>;
-+			label = "power key";
-+			debounce-interval = <10>;
-+			gpio-key,wakeup;
-+		};
-+	};
-+
-+	regulators { 
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		vemmc_reg: voltage-regulator-0 {
-+		        compatible = "regulator-fixed";
-+			regulator-name = "V_EMMC_2.8V-fixed";
-+			regulator-min-microvolt = <2800000>;
-+			regulator-max-microvolt = <2800000>;
-+			gpio = <&gpk0 2 0>;
-+			enable-active-high;
-+		};
-+	};
-+
-+	i2c_max77836: i2c-gpio-0 {
-+		compatible = "i2c-gpio";
-+		gpios = <&gpd0 2 0>, <&gpd0 3 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		max77836: subpmic@25 {
-+			compatible = "maxim,max77836";
-+			interrupt-parent = <&gpx1>;
-+			interrupts = <5 0>;
-+			reg = <0x25>;
-+			wakeup;
-+
-+			muic: max77836-muic {
-+				compatible = "maxim,max77836-muic";
-+			};
-+
-+			regulators {
-+				compatible = "maxim,max77836-regulator";
-+				safeout_reg: SAFEOUT {
-+					regulator-name = "SAFEOUT";
-+				};
-+
-+				charger_reg: CHARGER {
-+					regulator-name = "CHARGER";
-+					regulator-min-microamp = <45000>;
-+					regulator-max-microamp = <475000>;
-+					regulator-boot-on;
-+				};
-+
-+				motor_reg: LDO1 {
-+					regulator-name = "MOT_2.7V";
-+					regulator-min-microvolt = <1100000>;
-+					regulator-max-microvolt = <2700000>;
-+				};
-+
-+				LDO2 {
-+					regulator-name = "UNUSED_LDO2";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <3950000>;
-+				};
-+			};
-+
-+			charger {
-+				compatible = "maxim,max77836-charger";
-+
-+				maxim,constant-uvolt = <4350000>;
-+				maxim,fast-charge-uamp = <225000>;
-+				maxim,eoc-uamp = <7500>;
-+				maxim,ovp-uvolt = <6500000>;
-+			};
-+		};
-+	};
-+};
-+
-+&adc {
-+	vdd-supply = <&ldo3_reg>;
-+	status = "okay";
-+	assigned-clocks = <&cmu CLK_SCLK_TSADC>;
-+	assigned-clock-rates = <6000000>;
-+
-+	thermistor-ap {
-+		compatible = "ntc,ncp15wb473";
-+		pullup-uv = <1800000>;
-+		pullup-ohm = <100000>;
-+		pulldown-ohm = <100000>;
-+		io-channels = <&adc 0>;
-+	};
-+
-+	thermistor-battery {
-+		compatible = "ntc,ncp15wb473";
-+		pullup-uv = <1800000>;
-+		pullup-ohm = <100000>;
-+		pulldown-ohm = <100000>;
-+		io-channels = <&adc 1>;
-+	};
-+};
-+
-+&i2c_0 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	samsung,i2c-sda-delay = <100>;
-+	samsung,i2c-slave-addr = <0x10>;
-+	samsung,i2c-max-bus-freq = <100000>;
-+	status = "okay";
-+
-+	s2mps14_pmic@66 {
-+		compatible = "samsung,s2mps14-pmic";
-+		interrupt-parent = <&gpx0>;
-+		interrupts = <7 0>;
-+		reg = <0x66>;
-+		wakeup;
-+
-+		s2mps14_osc: clocks {
-+			compatible = "samsung,s2mps14-clk";
-+			#clock-cells = <1>;
-+			clock-output-names = "s2mps14_ap", "unused",
-+				"s2mps14_bt";
-+		};
-+
-+		regulators {
-+			ldo1_reg: LDO1 {
-+				regulator-name = "VAP_ALIVE_1.0V";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo2_reg: LDO2 {
-+				regulator-name = "VAP_M1_1.2V";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo3_reg: LDO3 {
-+				regulator-name = "VCC_AP_1.8V";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo4_reg: LDO4 {
-+				regulator-name = "VAP_AVDD_PLL1";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo5_reg: LDO5 {
-+				regulator-name = "VAP_PLL_ISO_1.0V";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo6_reg: LDO6 {
-+				regulator-name = "VAP_VMIPI_1.0V";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+			};
-+
-+			ldo7_reg: LDO7 {
-+				regulator-name = "VAP_AVDD_1.8V";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo8_reg: LDO8 {
-+				regulator-name = "VAP_USB_3.0V";
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo9_reg: LDO9 {
-+				regulator-name = "V_LPDDR_1.2V";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo10_reg: LDO10 {
-+				regulator-name = "UNUSED_LDO10";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+			};
-+
-+			ldo11_reg: LDO11 {
-+				regulator-name = "V_EMMC_1.8V";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				samsung,ext-control-gpios = <&gpk0 2 0>;
-+			};
-+
-+			ldo12_reg: LDO12 {
-+				regulator-name = "V_EMMC_2.8V";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+				samsung,ext-control-gpios = <&gpk0 2 0>;
-+			};
-+
-+			ldo13_reg: LDO13 {
-+				regulator-name = "CAM_AVDD_2.8V";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+			};
-+
-+			ldo14_reg: LDO14 {
-+				regulator-name = "UNUSED_LDO14";
-+				regulator-min-microvolt = <2700000>;
-+				regulator-max-microvolt = <2700000>;
-+			};
-+
-+			ldo15_reg: LDO15 {
-+				regulator-name = "TSP_AVDD_3.3V";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+
-+			ldo16_reg: LDO16 {
-+				regulator-name = "LCD_VDD_3.3V";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+
-+			ldo17_reg: LDO17 {
-+				regulator-name = "V_IRLED_3.3V";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+			};
-+
-+			ldo18_reg: LDO18 {
-+				regulator-name = "CAM_AF_2.8V";
-+				regulator-min-microvolt = <2800000>;
-+				regulator-max-microvolt = <2800000>;
-+			};
-+
-+			ldo19_reg: LDO19 {
-+				regulator-name = "TSP_VDD_1.8V";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+			};
-+
-+			ldo20_reg: LDO20 {
-+				regulator-name = "LCD_VDD_1.8V";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+			};
-+
-+			ldo21_reg: LDO21 {
-+				regulator-name = "CAM_IO_1.8V";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+			};
-+
-+			ldo22_reg: LDO22 {
-+				regulator-name = "CAM_DVDD_1.2V";
-+				regulator-min-microvolt = <1200000>;
-+				regulator-max-microvolt = <1200000>;
-+			};
-+
-+			ldo23_reg: LDO23 {
-+				regulator-name = "HRM_VCC_1.8V";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-always-on;
-+			};
-+
-+			ldo24_reg: LDO24 {
-+				regulator-name = "HRM_VCC_3.3V";
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
-+			};
-+
-+			ldo25_reg: LDO25 {
-+				regulator-name = "UNUSED_LDO25";
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
-+			};
-+
-+			buck1_reg: BUCK1 {
-+				regulator-name = "VAP_MIF_1.0V";
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <900000>;
-+				regulator-always-on;
-+			};
-+
-+			buck2_reg: BUCK2 {
-+				regulator-name = "VAP_ARM_1.0V";
-+				regulator-min-microvolt = <850000>;
-+				regulator-max-microvolt = <1150000>;
-+				regulator-always-on;
-+			};
-+
-+			buck3_reg: BUCK3 {
-+				regulator-name = "VAP_INT3D_1.0V";
-+				regulator-min-microvolt = <850000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-always-on;
-+			};
-+
-+			buck4_reg: BUCK4 {
-+				regulator-name = "VCC_SUB_1.95V";
-+				regulator-min-microvolt = <1950000>;
-+				regulator-max-microvolt = <1950000>;
-+				regulator-always-on;
-+			};
-+
-+			buck5_reg: BUCK5 {
-+				regulator-name = "VCC_SUB_1.35V";
-+				regulator-min-microvolt = <1350000>;
-+				regulator-max-microvolt = <1350000>;
-+				regulator-always-on;
-+			};
-+		};
-+	};
-+};
-+
-+&i2c_1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	samsung,i2c-sda-delay = <100>;
-+	samsung,i2c-slave-addr = <0x10>;
-+	samsung,i2c-max-bus-freq = <400000>;
-+	status = "okay";
-+
-+	fuelgauge@36 {
-+		compatible = "maxim,max77836-battery";
-+		interrupt-parent = <&gpx1>;
-+		interrupts = <2 8>;
-+		reg = <0x36>;
-+	};
-+};
-+
-+&i2s2 {
-+	status = "okay";
-+};
-+
-+&mfc {
-+	status = "okay";
-+};
-+
-+&mshc_0 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	num-slots = <1>;
-+	broken-cd;
-+	non-removable;
-+	cap-mmc-highspeed;
-+	desc-num = <4>;
-+	mmc-hs200-1_8v;
-+	card-detect-delay = <200>;
-+	vmmc-supply = <&vemmc_reg>;
-+	clock-frequency = <100000000>;
-+	clock-freq-min-max = <400000 100000000>;
-+	samsung,dw-mshc-ciu-div = <1>;
-+	samsung,dw-mshc-sdr-timing = <0 1>;
-+	samsung,dw-mshc-ddr-timing = <1 2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
-+	bus-width = <8>;
-+	status = "okay";
-+};
-+
-+&serial_0 {
-+	assigned-clocks = <&cmu CLK_SCLK_UART0>;
-+	assigned-clock-rates = <100000000>;
-+	status = "okay";
-+};
-+
-+&serial_1 {
-+	status = "okay";
-+};
-+
-+&tmu {
-+	vtmu-supply = <&ldo7_reg>;
-+	status = "okay";
-+};
-+
-+&rtc {
-+	clocks = <&cmu CLK_RTC>, <&s2mps14_osc 0>;
-+	clock-names = "rtc", "rtc_src";
-+	status = "okay";
-+};
-+
-+&xusbxti {
-+	clock-frequency = <24000000>;
-+};
--- 
-1.8.0
+On 09/10/2014 01:53 PM, Andrzej Hajda wrote:
+> The patch replaces separate calls to driver (de)registration by
+> loops over the array of drivers. As a result it significantly
+> decreases number of ifdefs. Additionally it moves device registration
+> related ifdefs to header file.
+>
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+> Hi Inki,
+>
+> During testing your component match support patch [1] I have prepared patch
+> removing most ifdefs from exynos_drm_drv.c. It is based on your patch, but
+> I can rebase it if necessary.
+>
+> [1]: http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/37031
+>
+> Regards
+> Andrzej
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c | 170 +++++++-------------------------
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h |  25 +++--
+>  2 files changed, 48 insertions(+), 147 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> index b2c710a..a660e46 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> @@ -553,74 +553,54 @@ static const struct component_master_ops exynos_drm_ops = {
+>  	.unbind		= exynos_drm_unbind,
+>  };
+>  
+> -static int exynos_drm_platform_probe(struct platform_device *pdev)
+> -{
+> -	struct component_match *match;
+> -	int ret;
+> -
+> -	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+> -	exynos_drm_driver.num_ioctls = ARRAY_SIZE(exynos_ioctls);
+> -
+> +static struct platform_driver * const exynos_drm_drivers[] = {
+>  #ifdef CONFIG_DRM_EXYNOS_FIMD
+> -	ret = platform_driver_register(&fimd_driver);
+> -	if (ret < 0)
+> -		return ret;
+> +	&fimd_driver,
+>  #endif
+> -
+>  #ifdef CONFIG_DRM_EXYNOS_DP
+> -	ret = platform_driver_register(&dp_driver);
+> -	if (ret < 0)
+> -		goto err_unregister_fimd_drv;
+> +	&dp_driver,
+>  #endif
+> -
+>  #ifdef CONFIG_DRM_EXYNOS_DSI
+> -	ret = platform_driver_register(&dsi_driver);
+> -	if (ret < 0)
+> -		goto err_unregister_dp_drv;
+> +	&dsi_driver,
+>  #endif
+> -
+>  #ifdef CONFIG_DRM_EXYNOS_HDMI
+> -	ret = platform_driver_register(&mixer_driver);
+> -	if (ret < 0)
+> -		goto err_unregister_dsi_drv;
+> -	ret = platform_driver_register(&hdmi_driver);
+> -	if (ret < 0)
+> -		goto err_unregister_mixer_drv;
+> +	&mixer_driver,
+> +	&hdmi_driver,
+>  #endif
+> -
+>  #ifdef CONFIG_DRM_EXYNOS_G2D
+> -	ret = platform_driver_register(&g2d_driver);
+> -	if (ret < 0)
+> -		goto err_unregister_hdmi_drv;
+> +	&g2d_driver,
+>  #endif
+> -
+>  #ifdef CONFIG_DRM_EXYNOS_FIMC
+> -	ret = platform_driver_register(&fimc_driver);
+> -	if (ret < 0)
+> -		goto err_unregister_g2d_drv;
+> +	&fimc_driver,
+>  #endif
+> -
+>  #ifdef CONFIG_DRM_EXYNOS_ROTATOR
+> -	ret = platform_driver_register(&rotator_driver);
+> -	if (ret < 0)
+> -		goto err_unregister_fimc_drv;
+> +	&rotator_driver,
+>  #endif
+> -
+>  #ifdef CONFIG_DRM_EXYNOS_GSC
+> -	ret = platform_driver_register(&gsc_driver);
+> -	if (ret < 0)
+> -		goto err_unregister_rotator_drv;
+> +	&gsc_driver,
+>  #endif
+> -
+>  #ifdef CONFIG_DRM_EXYNOS_IPP
+> -	ret = platform_driver_register(&ipp_driver);
+> -	if (ret < 0)
+> -		goto err_unregister_gsc_drv;
+> +	&ipp_driver,
+> +#endif
+> +};
+> +
+> +static int exynos_drm_platform_probe(struct platform_device *pdev)
+> +{
+> +	struct component_match *match;
+> +	int ret, i;
+> +
+> +	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+> +	exynos_drm_driver.num_ioctls = ARRAY_SIZE(exynos_ioctls);
+> +
+> +	for (i = 0; i < ARRAY_SIZE(exynos_drm_drivers); ++i) {
+> +		ret = platform_driver_register(exynos_drm_drivers[i]);
+> +		if (ret < 0)
+> +			goto err_unregister_drivers;
+> +	}
+>  
+>  	ret = exynos_platform_device_ipp_register();
+>  	if (ret < 0)
+> -		goto err_unregister_ipp_drv;
+> -#endif
+> +		goto err_unregister_drivers;
+>  
+>  	match = exynos_drm_match_add(&pdev->dev);
+>  	if (IS_ERR(match)) {
+> @@ -632,96 +612,24 @@ static int exynos_drm_platform_probe(struct platform_device *pdev)
+>  						match);
+>  
+>  err_unregister_ipp_dev:
+> -
+> -#ifdef CONFIG_DRM_EXYNOS_IPP
+>  	exynos_platform_device_ipp_unregister();
+> -err_unregister_ipp_drv:
+> -	platform_driver_unregister(&ipp_driver);
+> -err_unregister_gsc_drv:
+> -#endif
+>  
+> -#ifdef CONFIG_DRM_EXYNOS_GSC
+> -	platform_driver_unregister(&gsc_driver);
+> -err_unregister_rotator_drv:
+> -#endif
+> +err_unregister_drivers:
+> +	while (--i >= 0)
+> +		platform_driver_unregister(exynos_drm_drivers[i]);
+>  
+> -#ifdef CONFIG_DRM_EXYNOS_ROTATOR
+> -	platform_driver_unregister(&rotator_driver);
+> -err_unregister_fimc_drv:
+> -#endif
+> -
+> -#ifdef CONFIG_DRM_EXYNOS_FIMC
+> -	platform_driver_unregister(&fimc_driver);
+> -err_unregister_g2d_drv:
+> -#endif
+> -
+> -#ifdef CONFIG_DRM_EXYNOS_G2D
+> -	platform_driver_unregister(&g2d_driver);
+> -err_unregister_hdmi_drv:
+> -#endif
+> -
+> -#ifdef CONFIG_DRM_EXYNOS_HDMI
+> -	platform_driver_unregister(&hdmi_driver);
+> -err_unregister_mixer_drv:
+> -	platform_driver_unregister(&mixer_driver);
+> -err_unregister_dsi_drv:
+> -#endif
+> -
+> -#ifdef CONFIG_DRM_EXYNOS_DSI
+> -	platform_driver_unregister(&dsi_driver);
+> -err_unregister_dp_drv:
+> -#endif
+> -
+> -#ifdef CONFIG_DRM_EXYNOS_DP
+> -	platform_driver_unregister(&dp_driver);
+> -err_unregister_fimd_drv:
+> -#endif
+> -
+> -#ifdef CONFIG_DRM_EXYNOS_FIMD
+> -	platform_driver_unregister(&fimd_driver);
+> -#endif
+>  	return ret;
+>  }
+>  
+>  static int exynos_drm_platform_remove(struct platform_device *pdev)
+>  {
+> -#ifdef CONFIG_DRM_EXYNOS_IPP
+> -	exynos_platform_device_ipp_unregister();
+> -	platform_driver_unregister(&ipp_driver);
+> -#endif
+> -
+> -#ifdef CONFIG_DRM_EXYNOS_GSC
+> -	platform_driver_unregister(&gsc_driver);
+> -#endif
+> -
+> -#ifdef CONFIG_DRM_EXYNOS_ROTATOR
+> -	platform_driver_unregister(&rotator_driver);
+> -#endif
+> -
+> -#ifdef CONFIG_DRM_EXYNOS_FIMC
+> -	platform_driver_unregister(&fimc_driver);
+> -#endif
+> -
+> -#ifdef CONFIG_DRM_EXYNOS_G2D
+> -	platform_driver_unregister(&g2d_driver);
+> -#endif
+> -
+> -#ifdef CONFIG_DRM_EXYNOS_HDMI
+> -	platform_driver_unregister(&mixer_driver);
+> -	platform_driver_unregister(&hdmi_driver);
+> -#endif
+> +	int i;
+>  
+> -#ifdef CONFIG_DRM_EXYNOS_FIMD
+> -	platform_driver_unregister(&fimd_driver);
+> -#endif
+> +	exynos_platform_device_ipp_unregister();
+>  
+> -#ifdef CONFIG_DRM_EXYNOS_DSI
+> -	platform_driver_unregister(&dsi_driver);
+> -#endif
+> +	for (i = ARRAY_SIZE(exynos_drm_drivers) - 1; i >= 0; --i)
+> +		platform_driver_unregister(exynos_drm_drivers[i]);
+>  
+> -#ifdef CONFIG_DRM_EXYNOS_DP
+> -	platform_driver_unregister(&dp_driver);
+> -#endif
+>  	component_master_del(&pdev->dev, &exynos_drm_ops);
+>  	return 0;
+>  }
+> @@ -745,11 +653,9 @@ static int exynos_drm_init(void)
+>  	if (IS_ERR(exynos_drm_pdev))
+>  		return PTR_ERR(exynos_drm_pdev);
+>  
+> -#ifdef CONFIG_DRM_EXYNOS_VIDI
+>  	ret = exynos_drm_probe_vidi();
+>  	if (ret < 0)
+>  		goto err_unregister_pd;
+> -#endif
+>  
+>  	ret = platform_driver_register(&exynos_drm_platform_driver);
+>  	if (ret)
+> @@ -758,11 +664,9 @@ static int exynos_drm_init(void)
+>  	return 0;
+>  
+>  err_remove_vidi:
+> -#ifdef CONFIG_DRM_EXYNOS_VIDI
+>  	exynos_drm_remove_vidi();
+>  
+>  err_unregister_pd:
+> -#endif
+>  	platform_device_unregister(exynos_drm_pdev);
+>  
+>  	return ret;
+> @@ -771,9 +675,9 @@ err_unregister_pd:
+>  static void exynos_drm_exit(void)
+>  {
+>  	platform_driver_unregister(&exynos_drm_platform_driver);
+> -#ifdef CONFIG_DRM_EXYNOS_VIDI
+> +
+>  	exynos_drm_remove_vidi();
+> -#endif
+> +
+>  	platform_device_unregister(exynos_drm_pdev);
+>  }
+>  
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> index 69a6fa3..76d5d02 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> @@ -324,15 +324,14 @@ int exynos_platform_device_hdmi_register(void);
+>   */
+>  void exynos_platform_device_hdmi_unregister(void);
+>  
+> -/*
+> - * this function registers exynos drm ipp platform device.
+> - */
+> +#ifdef CONFIG_DRM_EXYNOS_IPP
+>  int exynos_platform_device_ipp_register(void);
+> -
+> -/*
+> - * this function unregisters exynos drm ipp platform device if it exists.
+> - */
+>  void exynos_platform_device_ipp_unregister(void);
+> +#else
+> +static inline int exynos_platform_device_ipp_register(void) { return 0; }
+> +static inline void exynos_platform_device_ipp_unregister(void) {}
+> +#endif
+> +
+>  
+>  #ifdef CONFIG_DRM_EXYNOS_DPI
+>  struct exynos_drm_display * exynos_dpi_probe(struct device *dev);
+> @@ -343,15 +342,13 @@ exynos_dpi_probe(struct device *dev) { return NULL; }
+>  static inline int exynos_dpi_remove(struct device *dev) { return 0; }
+>  #endif
+>  
+> -/*
+> - * this function registers exynos drm vidi platform device/driver.
+> - */
+> +#ifdef CONFIG_DRM_EXYNOS_VIDI
+>  int exynos_drm_probe_vidi(void);
+> -
+> -/*
+> - * this function unregister exynos drm vidi platform device/driver.
+> - */
+>  void exynos_drm_remove_vidi(void);
+> +#else
+> +static inline int exynos_drm_probe_vidi(void) { return 0; }
+> +static inline void exynos_drm_remove_vidi(void) {}
+> +#endif
+>  
+>  /* This function creates a encoder and a connector, and initializes them. */
+>  int exynos_drm_create_enc_conn(struct drm_device *dev,
