@@ -1,72 +1,143 @@
 From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH 2/2] arch: arm: samsung: Clean-up usage of CONFIG_SERIAL_SAMSUNG_UARTS symbol
-Date: Tue, 30 Sep 2014 20:04:55 +0530
-Message-ID: <1412087695-10591-2-git-send-email-a.kesavan@samsung.com>
-References: <1412087695-10591-1-git-send-email-a.kesavan@samsung.com>
+Subject: [PATCH 1/2] tty: serial: samsung: Clean-up selection of number of available UARTs
+Date: Tue, 30 Sep 2014 20:04:54 +0530
+Message-ID: <1412087695-10591-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:52537 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752586AbaI3OfK (ORCPT
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:58126 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752718AbaI3OfH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 30 Sep 2014 10:35:10 -0400
-Received: by mail-pa0-f42.google.com with SMTP id et14so1915742pad.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2014 07:35:10 -0700 (PDT)
-In-Reply-To: <1412087695-10591-1-git-send-email-a.kesavan@samsung.com>
+	Tue, 30 Sep 2014 10:35:07 -0400
+Received: by mail-pd0-f170.google.com with SMTP id ft15so3593924pdb.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 30 Sep 2014 07:35:07 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, jslaby@suse.cz, gregkh@linuxfoundation.org
 
-Remove usage of CONFIG_SERIAL_SAMSUNG_UARTS symbol from platform
-specific code.
+Remove symbols SERIAL_SAMSUNG_UARTS_4 and SERIAL_SAMSUNG_UARTS which
+select the number of UART ports available on the SoC. Use the maximum
+number of UART ports possible across the serial driver in place of
+SERIAL_SAMSUNG_UARTS. Removal of these symbols also helps in Exynos7
+serial enablement.
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Signed-off-by: Abhilasih Kesavan <a.kesavan@samsung.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-s3c64xx/irq-pm.c |    6 +++---
- arch/arm/plat-samsung/init.c   |    6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+Build tested using s3c2410_defconfig, s3c6400_defconfig, exynos_defconfig
+and arm64's defconfig with and without the serial driver enabled. Boot tested
+on Exynos5420 and Exynos7.
 
-diff --git a/arch/arm/mach-s3c64xx/irq-pm.c b/arch/arm/mach-s3c64xx/irq-pm.c
-index ae4ea76..b20024e 100644
---- a/arch/arm/mach-s3c64xx/irq-pm.c
-+++ b/arch/arm/mach-s3c64xx/irq-pm.c
-@@ -55,10 +55,10 @@ static struct irq_grp_save {
- 	u32	mask;
- } eint_grp_save[5];
+ drivers/tty/serial/Kconfig   |   16 ----------------
+ drivers/tty/serial/samsung.c |   11 +++--------
+ drivers/tty/serial/samsung.h |    5 ++++-
+ 3 files changed, 7 insertions(+), 25 deletions(-)
+
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index 81f6ee7..9fc9092 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -247,22 +247,6 @@ config SERIAL_SAMSUNG
+ 	  provide all of these ports, depending on how the serial port
+ 	  pins are configured.
  
--#ifndef CONFIG_SERIAL_SAMSUNG_UARTS
--#define SERIAL_SAMSUNG_UARTS 0
-+#ifndef CONFIG_SERIAL_SAMSUNG
-+#define SERIAL_SAMSUNG_UARTS	0
- #else
--#define	SERIAL_SAMSUNG_UARTS CONFIG_SERIAL_SAMSUNG_UARTS
-+#define SERIAL_SAMSUNG_UARTS	4
- #endif
+-config SERIAL_SAMSUNG_UARTS_4
+-	bool
+-	depends on PLAT_SAMSUNG
+-	default y if !(CPU_S3C2410 || CPU_S3C2412 || CPU_S3C2440 || CPU_S3C2442)
+-	help
+-	  Internal node for the common case of 4 Samsung compatible UARTs
+-
+-config SERIAL_SAMSUNG_UARTS
+-	int
+-	depends on PLAT_SAMSUNG
+-	default 4 if SERIAL_SAMSUNG_UARTS_4 || CPU_S3C2416
+-	default 3
+-	help
+-	  Select the number of available UART ports for the Samsung S3C
+-	  serial driver
+-	
+ config SERIAL_SAMSUNG_DEBUG
+ 	bool "Samsung SoC serial debug"
+ 	depends on SERIAL_SAMSUNG && DEBUG_LL
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index c78f43a..ba04c6d 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -962,14 +962,14 @@ static struct uart_ops s3c24xx_serial_ops = {
+ static struct uart_driver s3c24xx_uart_drv = {
+ 	.owner		= THIS_MODULE,
+ 	.driver_name	= "s3c2410_serial",
+-	.nr		= CONFIG_SERIAL_SAMSUNG_UARTS,
++	.nr		= MAX_SAMSUNG_UARTS,
+ 	.cons		= S3C24XX_SERIAL_CONSOLE,
+ 	.dev_name	= S3C24XX_SERIAL_NAME,
+ 	.major		= S3C24XX_SERIAL_MAJOR,
+ 	.minor		= S3C24XX_SERIAL_MINOR,
+ };
  
- static u32 irq_uart_mask[SERIAL_SAMSUNG_UARTS];
-diff --git a/arch/arm/plat-samsung/init.c b/arch/arm/plat-samsung/init.c
-index 11fbbc2..03cafe9 100644
---- a/arch/arm/plat-samsung/init.c
-+++ b/arch/arm/plat-samsung/init.c
-@@ -93,8 +93,8 @@ void __init s3c24xx_init_clocks(int xtal)
- #if IS_ENABLED(CONFIG_SAMSUNG_ATAGS)
- static int nr_uarts __initdata = 0;
+-static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS] = {
++static struct s3c24xx_uart_port s3c24xx_serial_ports[MAX_SAMSUNG_UARTS] = {
+ 	[0] = {
+ 		.port = {
+ 			.lock		= __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[0].port.lock),
+@@ -992,8 +992,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
+ 			.line		= 1,
+ 		}
+ 	},
+-#if CONFIG_SERIAL_SAMSUNG_UARTS > 2
+-
+ 	[2] = {
+ 		.port = {
+ 			.lock		= __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[2].port.lock),
+@@ -1005,8 +1003,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
+ 			.line		= 2,
+ 		}
+ 	},
+-#endif
+-#if CONFIG_SERIAL_SAMSUNG_UARTS > 3
+ 	[3] = {
+ 		.port = {
+ 			.lock		= __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[3].port.lock),
+@@ -1018,7 +1014,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
+ 			.line		= 3,
+ 		}
+ 	}
+-#endif
+ };
  
--#ifdef CONFIG_SERIAL_SAMSUNG_UARTS
--static struct s3c2410_uartcfg uart_cfgs[CONFIG_SERIAL_SAMSUNG_UARTS];
-+#ifdef CONFIG_SERIAL_SAMSUNG
-+static struct s3c2410_uartcfg uart_cfgs[4];
- #endif
+ /* s3c24xx_serial_resetport
+@@ -1590,7 +1585,7 @@ s3c24xx_serial_console_setup(struct console *co, char *options)
  
- /* s3c24xx_init_uartdevs
-@@ -110,7 +110,7 @@ void __init s3c24xx_init_uartdevs(char *name,
- 				  struct s3c24xx_uart_resources *res,
- 				  struct s3c2410_uartcfg *cfg, int no)
- {
--#ifdef CONFIG_SERIAL_SAMSUNG_UARTS
-+#ifdef CONFIG_SERIAL_SAMSUNG
- 	struct platform_device *platdev;
- 	struct s3c2410_uartcfg *cfgptr = uart_cfgs;
- 	struct s3c24xx_uart_resources *resp;
+ 	/* is this a valid port */
+ 
+-	if (co->index == -1 || co->index >= CONFIG_SERIAL_SAMSUNG_UARTS)
++	if (co->index == -1 || co->index >= MAX_SAMSUNG_UARTS)
+ 		co->index = 0;
+ 
+ 	port = &s3c24xx_serial_ports[co->index].port;
+diff --git a/drivers/tty/serial/samsung.h b/drivers/tty/serial/samsung.h
+index eb071dd..484b49e 100644
+--- a/drivers/tty/serial/samsung.h
++++ b/drivers/tty/serial/samsung.h
+@@ -1,6 +1,9 @@
+ #ifndef __SAMSUNG_H
+ #define __SAMSUNG_H
+ 
++/* Maximum UART ports available */
++#define MAX_SAMSUNG_UARTS       4
++
+ /*
+  * Driver for Samsung SoC onboard UARTs.
+  *
+@@ -38,7 +41,7 @@ struct s3c24xx_uart_info {
+ struct s3c24xx_serial_drv_data {
+ 	struct s3c24xx_uart_info	*info;
+ 	struct s3c2410_uartcfg		*def_cfg;
+-	unsigned int			fifosize[CONFIG_SERIAL_SAMSUNG_UARTS];
++	unsigned int			fifosize[MAX_SAMSUNG_UARTS];
+ };
+ 
+ struct s3c24xx_uart_port {
 -- 
 1.7.9.5
