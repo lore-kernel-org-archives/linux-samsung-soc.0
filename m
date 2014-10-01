@@ -1,113 +1,82 @@
-From: Doug Anderson <dianders@google.com>
-Subject: Re: [PATCH V2 1/3] mmc: dw_mmc: use mmc_regulator_get_supply to
- handle regulators
-Date: Wed, 1 Oct 2014 09:04:09 -0700
-Message-ID: <CAD=FV=Xcv6E57u=kUj4QSWOpxCwOuJ4UyrFhSg1z0O1zx8nCag@mail.gmail.com>
-References: <01.09.14890.83F4B245@epcpsbge5.samsung.com>
-	<1831792.g28ajrp9B5@amdc1032>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 2/4] ARM: exynos: Ensure PM domains are powered at
+ initialization
+Date: Wed, 01 Oct 2014 18:18:58 +0200
+Message-ID: <542C2972.9070002@samsung.com>
+References: <1412174494-15346-1-git-send-email-ulf.hansson@linaro.org>
+ <1412174494-15346-3-git-send-email-ulf.hansson@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1831792.g28ajrp9B5@amdc1032>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, "cpgs ." <cpgs@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, Seung-Won Jeon <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, SUNIL JOSHI <joshi@samsung.com>, PRASHANTH GODREHAL <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Abhilash Kesavan <a.kesavan@samsung.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:49115 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751525AbaJAQTU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 1 Oct 2014 12:19:20 -0400
+In-reply-to: <1412174494-15346-3-git-send-email-ulf.hansson@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Beata Michalska <b.michalska@samsung.com>
 
-Hi,
+On 01/10/14 16:41, Ulf Hansson wrote:
+> At ->probe() it's common practice for drivers/subsystems to bring their
+> devices to full power and without depending on CONFIG_PM_RUNTIME.
+> 
+> We could also expect that drivers/subsystems requires their device's
+> corresponding PM domains to be powered, to successfully complete a
+> ->probe() sequence.
+> 
+> Align to the behavior above, by ensuring all PM domains are powered
+> prior initialization of a generic PM domain.
+> 
+> Do note, since the generic PM domain will try to power off unused PM
+> domains at late_init, there should be no increased power consumption
+> over time, but potentially during boot.
 
-On Wed, Oct 1, 2014 at 7:00 AM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
->
-> Hi,
->
-> On Wednesday, October 01, 2014 12:47:52 AM YUVARAJ CD wrote:
->
->> Since I am out of station, i dont have an access to my work set up.
->> Can you send me the dts entries of sd crad and their corresponding regulator entries?
->
-> From arch/arm/boot/dts/exynos5420-arndale-octa.dts:
->
-> ...
->         mmc@12200000 {
->                 status = "okay";
->                 broken-cd;
->                 supports-highspeed;
->                 card-detect-delay = <200>;
->                 samsung,dw-mshc-ciu-div = <3>;
->                 samsung,dw-mshc-sdr-timing = <0 4>;
->                 samsung,dw-mshc-ddr-timing = <0 2>;
->                 pinctrl-names = "default";
->                 pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
->                 vmmc-supply = <&ldo10_reg>;
->
->                 slot@0 {
->                         reg = <0>;
->                         bus-width = <8>;
->                 };
->         };
->
->         mmc@12220000 {
->                 status = "okay";
->                 supports-highspeed;
->                 card-detect-delay = <200>;
->                 samsung,dw-mshc-ciu-div = <3>;
->                 samsung,dw-mshc-sdr-timing = <2 3>;
->                 samsung,dw-mshc-ddr-timing = <1 2>;
->                 pinctrl-names = "default";
->                 pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
->                 vmmc-supply = <&ldo10_reg>;
->
->                 slot@0 {
->                         reg = <0>;
->                         bus-width = <4>;
->                 };
->         };
-> ...
->                                 ldo10_reg: LDO10 {
->                                         regulator-name = "PVDD_PRE_1V8";
->                                         regulator-min-microvolt = <1800000>;
->                                         regulator-max-microvolt = <1800000>;
->                                         regulator-always-on;
->                                 };
+Wouldn't it be a better idea to power on the power domains which are
+turned off only when CONFIG_PM_RUNTIME is not enabled ? I had a plan
+to submit a patch doing that but unfortunately this has fallen through
+the cracks. At the moment mach-exynos/pm_domains.c is not even built in
+when CONFIG_PM_RUNTIME is disabled.
 
-I don't have schematics for Arndale Octa, but the above is really
-fishy.  "vmmc" shouldn't be 1.8V.  That's the general power signal to
-MMC and should be 2.7V - 3.6V.  "vqmmc" could be 1.8V in certain
-situations, but my understanding is that for maximum compatibility it
-should at least start out identical to "vmmc" (and later go down to
-1.7V - 1.95V).
+I don't like the behaviour introduced in this patch to be the default,
+i.e. turning all possible power domains during boot sequence, even if
+some are not used and not needed. While we're trying to decrease the
+power consumption in any possible way this doesn't help at all.
 
-My first thought would be to just remove the "vmmc-supply" from your
-DTS.  I think we could land that and pick it back easily.  That will
-get you something working and won't introduce any regressions because:
-1. MMC core will give you a dummy regulator
-2. The code will default to assuming that vmmc is 3.3V, which is what
-it used to do anyway.
-3. The only referenced regulator is always on anyway.
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  arch/arm/mach-exynos/pm_domains.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+> index 20f2671..58e18e9 100644
+> --- a/arch/arm/mach-exynos/pm_domains.c
+> +++ b/arch/arm/mach-exynos/pm_domains.c
+> @@ -112,7 +112,7 @@ static __init int exynos4_pm_init_power_domain(void)
+>  
+>  	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
+>  		struct exynos_pm_domain *pd;
+> -		int on, i;
+> +		int i;
+>  		struct device *dev;
+>  
+>  		pdev = of_find_device_by_node(np);
+> @@ -155,9 +155,10 @@ static __init int exynos4_pm_init_power_domain(void)
+>  			clk_put(pd->oscclk);
+>  
+>  no_clk:
+> -		on = __raw_readl(pd->base + 0x4) & INT_LOCAL_PWR_EN;
+> +		if (!(__raw_readl(pd->base + 0x4) & INT_LOCAL_PWR_EN))
+> +			exynos_pd_power_on(&pd->pd);
+>  
+> -		pm_genpd_init(&pd->pd, NULL, !on);
+> +		pm_genpd_init(&pd->pd, NULL, false);
+>  		of_genpd_add_provider_simple(np, &pd->pd);
+>  	}
 
-Separately you could specify a proper vmmc and maybe even a vqmmc.
-
-On SMDK5420 I see this for the SD card (mmc2):
-* vmmc should be "VDD_SD_2V8".  From LDO19.
-* vqmmc should be "VDDQ_MMC2_AP".  From LDO13.
-
-OK, I dug up the Arndale schematics.  For mmc2:
-* vmmc should be PVDD_TFLASH_2V8.  That's LDO19.
-* vqmmc (hooked up to VDDQ_MMC2): PVDD_APIO_MMCOFF_2V8.  LDO13 just like SMDK.
-
-...sadly it looks like Anrdale has a schematics problem that prevents
-you from doing UHS.  I see that the data lines are pulled up to
-PVDD_TFLASH_2V8 (vmmc), not pulled up to PVDD_APIO_MMCOFF_2V8 (vqmmc).
-I think that means that if you ever lower vqmmc to 1.8V (as needed for
-UHS) then you'll still be pulling up to 2.8V.  That's not good.  You
-should probably make sure that both LDO13 and LDO19 are listed as
-being exactly 2.8V.
-
-
-Anyway, the above has (obviously) not been tested and is just based on
-a casual browsing of schematics.  Please let me know how it goes.
-
-
-
--Doug
+--
+Thanks,
+Sylwester
