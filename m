@@ -1,44 +1,89 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 1/4] PM / Domains: Remove pm_genpd_dev_need_restore() API
-Date: Wed, 01 Oct 2014 18:36:47 +0200
-Message-ID: <542C2D9F.8060005@samsung.com>
-References: <1412174494-15346-1-git-send-email-ulf.hansson@linaro.org>
- <1412174494-15346-2-git-send-email-ulf.hansson@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Abhilash Kesavan <a.kesavan@samsung.com>
+Subject: [PATCH v2 1/2] arch: arm: samsung: Clean-up usage of CONFIG_SERIAL_SAMSUNG_UARTS symbol
+Date: Wed,  1 Oct 2014 22:12:56 +0530
+Message-ID: <1412181777-6388-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:49759 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751612AbaJAQhI (ORCPT
+Received: from mail-pd0-f178.google.com ([209.85.192.178]:60462 "EHLO
+	mail-pd0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751759AbaJAQnM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Oct 2014 12:37:08 -0400
-In-reply-to: <1412174494-15346-2-git-send-email-ulf.hansson@linaro.org>
+	Wed, 1 Oct 2014 12:43:12 -0400
+Received: by mail-pd0-f178.google.com with SMTP id y10so498242pdj.23
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Oct 2014 09:43:11 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Beata Michalska <b.michalska@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, kgene.kim@samsung.com, tomasz.figa@gmail.com
 
-On 01/10/14 16:41, Ulf Hansson wrote:
-> There are currently no users of this API, let's remove it.
+Remove usage of CONFIG_SERIAL_SAMSUNG_UARTS symbol from platform
+specific code.
 
-The sad fact is that removal of pm_genpd_dev_need_restore() calls
-from arch/arm/mach-exynos/pm_domains.c introduces regressions in
-multiple exynos drivers (I'm sure it breaks media drivers).
-I think before doing such changes all relevant drivers should be
-updated first. I need to take a closer look again, but it seems
-after dropping the pm_genpd_dev_need_restore() calls, client
-driver's runtime_resume() callback is not being called in response
-to first pm_runtime_get(_sync) call, even if a device is runtime
-pm active.
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
+---
+Changes in v2:
+	- Re-ordered the patches
+	- Added a define for number of uart ports in arch/arm/plat-samsung/init.c
+	- Removed CONFIG_SERIAL_SAMSUNG #ifdef in arch/arm/plat-samsung/init.c
 
-More details can be found in commit ebc35c726298ba3fdebba316a
-'ARM: EXYNOS: register devices in 'need_restore' state for pm_domains'.
+Build tested using s3c2410_defconfig, s3c6400_defconfig, exynos_defconfig
+and arm64's defconfig with and without the serial driver enabled. Boot tested
+on Exynos5420 and Exynos7.
 
-The above only happens when devices are added to an inactive power
-domain, then I guess patch 2/4 is also an attempt to address this
-issue ?
+ arch/arm/mach-s3c64xx/irq-pm.c |    6 +++---
+ arch/arm/plat-samsung/init.c   |    7 ++-----
+ 2 files changed, 5 insertions(+), 8 deletions(-)
 
---
-Thanks,
-Sylwester
+diff --git a/arch/arm/mach-s3c64xx/irq-pm.c b/arch/arm/mach-s3c64xx/irq-pm.c
+index ae4ea76..b20024e 100644
+--- a/arch/arm/mach-s3c64xx/irq-pm.c
++++ b/arch/arm/mach-s3c64xx/irq-pm.c
+@@ -55,10 +55,10 @@ static struct irq_grp_save {
+ 	u32	mask;
+ } eint_grp_save[5];
+ 
+-#ifndef CONFIG_SERIAL_SAMSUNG_UARTS
+-#define SERIAL_SAMSUNG_UARTS 0
++#ifndef CONFIG_SERIAL_SAMSUNG
++#define SERIAL_SAMSUNG_UARTS	0
+ #else
+-#define	SERIAL_SAMSUNG_UARTS CONFIG_SERIAL_SAMSUNG_UARTS
++#define SERIAL_SAMSUNG_UARTS	4
+ #endif
+ 
+ static u32 irq_uart_mask[SERIAL_SAMSUNG_UARTS];
+diff --git a/arch/arm/plat-samsung/init.c b/arch/arm/plat-samsung/init.c
+index 11fbbc2..6114942 100644
+--- a/arch/arm/plat-samsung/init.c
++++ b/arch/arm/plat-samsung/init.c
+@@ -92,10 +92,9 @@ void __init s3c24xx_init_clocks(int xtal)
+ /* uart management */
+ #if IS_ENABLED(CONFIG_SAMSUNG_ATAGS)
+ static int nr_uarts __initdata = 0;
++#define MAX_UART_PORTS	4
+ 
+-#ifdef CONFIG_SERIAL_SAMSUNG_UARTS
+-static struct s3c2410_uartcfg uart_cfgs[CONFIG_SERIAL_SAMSUNG_UARTS];
+-#endif
++static struct s3c2410_uartcfg uart_cfgs[MAX_UART_PORTS];
+ 
+ /* s3c24xx_init_uartdevs
+  *
+@@ -110,7 +109,6 @@ void __init s3c24xx_init_uartdevs(char *name,
+ 				  struct s3c24xx_uart_resources *res,
+ 				  struct s3c2410_uartcfg *cfg, int no)
+ {
+-#ifdef CONFIG_SERIAL_SAMSUNG_UARTS
+ 	struct platform_device *platdev;
+ 	struct s3c2410_uartcfg *cfgptr = uart_cfgs;
+ 	struct s3c24xx_uart_resources *resp;
+@@ -133,7 +131,6 @@ void __init s3c24xx_init_uartdevs(char *name,
+ 	}
+ 
+ 	nr_uarts = no;
+-#endif
+ }
+ 
+ void __init s3c24xx_init_uarts(struct s3c2410_uartcfg *cfg, int no)
+-- 
+1.7.9.5
