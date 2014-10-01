@@ -1,91 +1,48 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: 3.17-rc6 on ODROID: ERROR: Bad of_node_put() on /ehci@12580000/port@1
-Date: Wed, 1 Oct 2014 12:06:51 +0530
-Message-ID: <CAFp+6iGwB3XuzSuYPzO=5MacPO2LGFDnh9oS5rAL3Ne26wb9Dg@mail.gmail.com>
-References: <CAD8Lp45qyHpHqRnUy4T9Sm8zV4XJBDp=cLYXjtcxmVrS8GSjbg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f47.google.com ([209.85.216.47]:60147 "EHLO
-	mail-qa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751048AbaJAGgw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Oct 2014 02:36:52 -0400
-In-Reply-To: <CAD8Lp45qyHpHqRnUy4T9Sm8zV4XJBDp=cLYXjtcxmVrS8GSjbg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH] drm/exynos: fix vblank handling during dpms off
+Date: Wed, 01 Oct 2014 10:14:47 +0200
+Message-ID: <1412151287-12845-1-git-send-email-a.hajda@samsung.com>
+References: <542B9A0E.7020206@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <542B9A0E.7020206@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>
 
-Hi Daniel,
+The patch disables vblanks during dpms off only if pagefilp has
+not been finished. It also replaces drm_vblank_off with drm_crtc_vblank_put.
+It fixes issue with page_flip ioctl not being able to acquire vblank counter.
 
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+Hi Inki,
 
-On Sat, Sep 27, 2014 at 5:54 AM, Daniel Drake <drake@endlessm.com> wrote:
-> Hi,
+This is fix (or just workaround) of the problem you have reported.
+Please carefully verify it, as I am not familiar with pageflip code.
 
-it's always good to keep the relevant mailing list also in CC (linux-usb).
-Also added Alan here.
+Regards
+Andrzej
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
->
-> Booting 3.17-rc6 on ODROID-U2, I see this message:
->
-> ERROR: Bad of_node_put() on /ehci@12580000/port@1
-> CPU: 0 PID: 1 Comm: swapper/0 Not tainted 3.17.0-rc6-00376-g85cd8fd #1031
-> [<c0016418>] (unwind_backtrace) from [<c0011f00>] (show_stack+0x10/0x14)
-> [<c0011f00>] (show_stack) from [<c08213fc>] (dump_stack+0x84/0xc4)
-> [<c08213fc>] (dump_stack) from [<c02dacc0>] (kobject_cleanup+0x58/0x6c)
-> [<c02dacc0>] (kobject_cleanup) from [<c0608718>]
-> (of_get_next_available_child+0x78/0x98)
-> [<c0608718>] (of_get_next_available_child) from [<c05673c8>]
-> (exynos_ehci_probe+0x254/0x424)
-> [<c05673c8>] (exynos_ehci_probe) from [<c03ce700>]
-> (platform_drv_probe+0x2c/0x5c)
-> [<c03ce700>] (platform_drv_probe) from [<c03ccd00>]
-> (driver_probe_device+0xe8/0x234)
-> [<c03ccd00>] (driver_probe_device) from [<c03ccef8>] (__driver_attach+0x68/0x8c)
->
-> This repeats for all of the ehci and ohci ports.
->
-> Haven't had time to dig deeper. Is this a known issue?
-
-I don't think it's a known issue, atleast i don't see it on exynos5250-smdk5250.
-
-One reason i doubt why it could be coming is because we are
-specifically putting the
-child after doing everything with it.
-
-When we are getting the child node using for_each_available_child_of_node(),
-which calls for of_get_next_available_child(). So of_get_next_available_child()
-does a of_node_put() on the "prev" node, in case we have siblings to the child.
-
-Can you see if the below change helps ?
-
-------------------------------------------------------------------------------------------------------------
-diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-index 7189f2e..1b726bf 100644
---- a/drivers/usb/host/ehci-exynos.c
-+++ b/drivers/usb/host/ehci-exynos.c
-@@ -74,7 +74,6 @@ static int exynos_ehci_get_phy(struct device *dev,
-
-                phy = devm_of_phy_get(dev, child, NULL);
-                exynos_ehci->phy[phy_number] = phy;
--               of_node_put(child);
-                if (IS_ERR(phy)) {
-                        ret = PTR_ERR(phy);
-                        if (ret == -EPROBE_DEFER) {
-------------------------------------------------------------------------------------------------------------
-
-
-This is on top of usb-next.
-If you are testing on rc6 only, then probably you will have to cherrypick two
-patches each for ehci-exynos and ohci-exynos:
-usb: host: ehci-exynos: Remove unnecessary usb-phy support
-usb: host: ohci-exynos: Remove unnecessary usb-phy support
-
-
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 8e38e9f..57fa94d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -69,9 +69,10 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+ 		/* wait for the completion of page flip. */
+ 		if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
+ 				!atomic_read(&exynos_crtc->pending_flip),
+-				HZ/20))
++				HZ/20)) {
+ 			atomic_set(&exynos_crtc->pending_flip, 0);
+-		drm_vblank_off(crtc->dev, exynos_crtc->pipe);
++			drm_crtc_vblank_put(crtc);
++		}
+ 	}
+ 
+ 	if (manager->ops->dpms)
 -- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+1.9.1
