@@ -1,72 +1,59 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: RE: [PATCH 2/2] ARM: EXYNOS: PMU: move restart code into pmu driver
-Date: Wed, 01 Oct 2014 17:12:35 +0530
-Message-ID: <002b01cfdd6c$e57b6730$b0723590$@samsung.com>
-References: <1412142540-3667-1-git-send-email-pankaj.dubey@samsung.com>
- <1412142540-3667-3-git-send-email-pankaj.dubey@samsung.com>
- <542BD948.8040600@gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH 2/4] ARM: exynos: Ensure PM domains are powered at initialization
+Date: Wed, 1 Oct 2014 14:45:41 +0200
+Message-ID: <CAPDyKFq12sgjA71+wPv13xmTq2FO56A2UXP7XLkYRijphG5bGA@mail.gmail.com>
+References: <1412081033-8136-1-git-send-email-ulf.hansson@linaro.org>
+	<1412081033-8136-3-git-send-email-ulf.hansson@linaro.org>
+	<7hiok5x8k1.fsf@deeprootsystems.com>
+	<542BE442.9040505@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:23555 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750768AbaJALnv (ORCPT
+Received: from mail-qc0-f177.google.com ([209.85.216.177]:64374 "EHLO
+	mail-qc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751053AbaJAMpm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Oct 2014 07:43:51 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NCR0043RKL13OB0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 01 Oct 2014 20:43:49 +0900 (KST)
-In-reply-to: <542BD948.8040600@gmail.com>
-Content-language: en-us
+	Wed, 1 Oct 2014 08:45:42 -0400
+Received: by mail-qc0-f177.google.com with SMTP id c9so202747qcz.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Oct 2014 05:45:41 -0700 (PDT)
+In-Reply-To: <542BE442.9040505@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, vikas.sajjan@samsung.com, linux@roeck-us.net, naushad@samsung.com
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Kevin Hilman <khilman@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Philipp Zabel <philipp.zabel@gmail.com>, Russell King <linux@arm.linux.org.uk>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Tomasz,
+On 1 October 2014 13:23, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On 30.09.2014 20:33, Kevin Hilman wrote:
+>> Ulf Hansson <ulf.hansson@linaro.org> writes:
+>>
+>>> At ->probe() it's common practice for drivers/subsystems to bring their
+>>> devices to full power and without depending on CONFIG_PM_RUNTIME.
+>>>
+>>> We could also expect that drivers/subsystems requires their device's
+>>> corresponding PM domains to be powered, to successfully complete a
+>>> ->probe() sequence.
+>>>
+>>> Align to the behavior above, by ensuring all PM domains are powered
+>>> prior initialization of a generic PM domain.
+>>>
+>>> Do note, since the generic PM domain will try to power off unused PM
+>>> domains at late_init, there are no increased power consumption over
+>>> time.
+>>
+>> IMO "no increased power consumption" is a bit misleading because
+>> boot-time power consumption may have a major increase when all power
+>> domains are powered on.  Sure, they will eventually (hopefully) be
+>> turned off in after late_initcall, but there will still be an impact.
+>>
+>> I guess the Samsung folks should comment here on whether that is
+>> significant.
+>
+> Unfortunately this series has not been posted to linux-samsung-soc
+> mailing list and I'm a formerly-Samsung folk now, so it hasn't really
+> reached there.
+>
 
-On Wednesday, October 01, 2014 4:07 PM, Tomasz Figa wrote,
-> To: Pankaj Dubey; linux-arm-kernel@lists.infradead.org; linux-samsung-
-> soc@vger.kernel.org
-> Cc: kgene.kim@samsung.com; linux@arm.linux.org.uk; thomas.ab@samsung.com;
-> vikas.sajjan@samsung.com; linux@roeck-us.net; naushad@samsung.com
-> Subject: Re: [PATCH 2/2] ARM: EXYNOS: PMU: move restart code into pmu
-> driver
-> 
-> Hi Pankaj,
-> 
-> Please see my comments inline.
-> 
-> On 01.10.2014 07:49, Pankaj Dubey wrote:
-> > Let's register reboot_notifier from PMU driver for reboot
-> > functionality. So that we can remove restart hooks from machine
-> > specific file, and thus moving ahead when PMU moved to driver folder,
-> > this functionality can be reused for ARM64 based Exynos SoC's.
-> 
-> [snip]
-> 
-> > +static int pmu_reboot_notify_handler(struct notifier_block *this,
-> > +		unsigned long code, void *unused)
-> > +{
-> > +	if (code == SYS_RESTART) {
-> > +		u32 val = 0x1;
-> > +
-> > +		pmu_raw_writel(val, EXYNOS_SWRESET);
-> 
-> As already mentioned for patch 1, no need for the variable, because this
-is just a
-> constant 1.
-> 
+Ohh, thanks for pointing this out. I will resend it.
 
-Thanks for review.
-Addressed all your review comments for this patch series in v2.
-
-Thanks,
-Pankaj Dubey
-
-> Best regards,
-> Tomasz
+Kind regards
+Uffe
