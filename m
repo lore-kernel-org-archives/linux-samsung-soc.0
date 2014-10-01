@@ -1,105 +1,48 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/2] clk: samsung: exynos5440: move restart code into
- clock driver
-Date: Wed, 01 Oct 2014 12:33:05 +0200
-Message-ID: <542BD861.6030705@gmail.com>
-References: <1412142540-3667-1-git-send-email-pankaj.dubey@samsung.com> <1412142540-3667-2-git-send-email-pankaj.dubey@samsung.com>
+Subject: Re: [PATCH 2/2] ARM: EXYNOS: PMU: move restart code into pmu driver
+Date: Wed, 01 Oct 2014 12:36:56 +0200
+Message-ID: <542BD948.8040600@gmail.com>
+References: <1412142540-3667-1-git-send-email-pankaj.dubey@samsung.com> <1412142540-3667-3-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:33259 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751131AbaJAKdJ (ORCPT
+Received: from mail-wi0-f179.google.com ([209.85.212.179]:35048 "EHLO
+	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751053AbaJAKhA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Oct 2014 06:33:09 -0400
-Received: by mail-wi0-f181.google.com with SMTP id hi2so50836wib.14
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Oct 2014 03:33:07 -0700 (PDT)
-In-Reply-To: <1412142540-3667-2-git-send-email-pankaj.dubey@samsung.com>
+	Wed, 1 Oct 2014 06:37:00 -0400
+Received: by mail-wi0-f179.google.com with SMTP id d1so87658wiv.6
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Oct 2014 03:36:59 -0700 (PDT)
+In-Reply-To: <1412142540-3667-3-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, vikas.sajjan@samsung.com, linux@roeck-us.net, naushad@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, vikas.sajjan@samsung.com, linux@roeck-us.net, naushad@samsung.com
 
 Hi Pankaj,
 
 Please see my comments inline.
 
-On 01.10.2014 07:48, Pankaj Dubey wrote:
-> Let's register reboot_notifier for Exynos5440 from it's clock driver
-> for reboot functionality. So that we can cleanup restart hooks from
-> machine specific file.
-> 
-> CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> CC: Mike Turquette <mturquette@linaro.org>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
->  arch/arm/mach-exynos/exynos.c        |   13 ------------
->  drivers/clk/samsung/clk-exynos5440.c |   37 ++++++++++++++++++++++++++++++++++
->  2 files changed, 37 insertions(+), 13 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index 2f2f7b2..d56134a 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -143,19 +143,6 @@ static void exynos_restart(enum reboot_mode mode, const char *cmd)
->  	u32 val = 0x1;
->  	void __iomem *addr = pmu_base_addr + EXYNOS_SWRESET;
+On 01.10.2014 07:49, Pankaj Dubey wrote:
+> Let's register reboot_notifier from PMU driver for reboot
+> functionality. So that we can remove restart hooks from
+> machine specific file, and thus moving ahead when PMU moved
+> to driver folder, this functionality can be reused for ARM64
+> based Exynos SoC's.
 
-You can remove the variables above as well...
+[snip]
 
->  
-> -	if (of_machine_is_compatible("samsung,exynos5440")) {
-> -		u32 status;
-> -		np = of_find_compatible_node(NULL, NULL, "samsung,exynos5440-clock");
-> -
-> -		addr = of_iomap(np, 0) + 0xbc;
-> -		status = __raw_readl(addr);
-> -
-> -		addr = of_iomap(np, 0) + 0xcc;
-> -		val = __raw_readl(addr);
-> -
-> -		val = (val & 0xffff0000) | (status & 0xffff);
-> -	}
-> -
->  	__raw_writel(val, addr);
-
-and make this use the constants instead.
-
->  }
->  
-> diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
-> index 00d1d00..171d3af 100644
-> --- a/drivers/clk/samsung/clk-exynos5440.c
-> +++ b/drivers/clk/samsung/clk-exynos5440.c
-> @@ -15,6 +15,8 @@
->  #include <linux/clk-provider.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> +#include <linux/notifier.h>
-> +#include <linux/reboot.h>
->  
->  #include "clk.h"
->  #include "clk-pll.h"
-> @@ -89,6 +91,38 @@ static const struct of_device_id ext_clk_match[] __initconst = {
->  	{},
->  };
->  
-> +static int exynos5440_clk_reboot_notify_handler(struct notifier_block *this,
+> +static int pmu_reboot_notify_handler(struct notifier_block *this,
 > +		unsigned long code, void *unused)
 > +{
 > +	if (code == SYS_RESTART) {
-> +		struct device_node *np;
-> +		void __iomem *addr;
-> +		u32 val, status;
+> +		u32 val = 0x1;
 > +
-> +		np = of_find_compatible_node(NULL, NULL,
-> +				"samsung,exynos5440-clock");
-> +
-> +		addr = of_iomap(np, 0) + 0xbc;
+> +		pmu_raw_writel(val, EXYNOS_SWRESET);
 
-You can just save the address in exynos5440_clk_init() and use it here
-without the whole dance with DT and ioremap.
+As already mentioned for patch 1, no need for the variable, because this
+is just a constant 1.
 
 Best regards,
 Tomasz
