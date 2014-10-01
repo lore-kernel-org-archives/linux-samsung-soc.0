@@ -1,61 +1,51 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: pwm-samsung: incorrect register values for 100% duty cycle
-Date: Wed, 01 Oct 2014 12:55:57 +0200
-Message-ID: <542BDDBD.1070708@gmail.com>
-References: <CAD8Lp46rh80KD=jXoGTLt2SzH+zfnuyd=QHrKZncx+YYCp-8dA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] ARM: exynos: Ensure PM domains are powered at initialization
+Date: Wed, 01 Oct 2014 13:23:46 +0200
+Message-ID: <542BE442.9040505@gmail.com>
+References: <1412081033-8136-1-git-send-email-ulf.hansson@linaro.org>	<1412081033-8136-3-git-send-email-ulf.hansson@linaro.org> <7hiok5x8k1.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <CAD8Lp46rh80KD=jXoGTLt2SzH+zfnuyd=QHrKZncx+YYCp-8dA@mail.gmail.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>, linux-pwm@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:43233 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750992AbaJALXu (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 1 Oct 2014 07:23:50 -0400
+In-Reply-To: <7hiok5x8k1.fsf@deeprootsystems.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Philipp Zabel <philipp.zabel@gmail.com>, Russell King <linux@arm.linux.org.uk>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Daniel,
-
-On 18.09.2014 01:42, Daniel Drake wrote:
-> Hi,
+On 30.09.2014 20:33, Kevin Hilman wrote:
+> Ulf Hansson <ulf.hansson@linaro.org> writes:
 > 
-> I'm using pwm-samsung on Exynos4412 for a variable-brightness LED.
+>> At ->probe() it's common practice for drivers/subsystems to bring their
+>> devices to full power and without depending on CONFIG_PM_RUNTIME.
+>>
+>> We could also expect that drivers/subsystems requires their device's
+>> corresponding PM domains to be powered, to successfully complete a
+>> ->probe() sequence.
+>>
+>> Align to the behavior above, by ensuring all PM domains are powered
+>> prior initialization of a generic PM domain.
+>>
+>> Do note, since the generic PM domain will try to power off unused PM
+>> domains at late_init, there are no increased power consumption over
+>> time.
 > 
-> When the LED is set to maximum brightness via the pwm-leds driver, we
-> arrive at pwm_samsung_config with duty_ns = period_ns, i.e. 100% duty
-> cycle.
+> IMO "no increased power consumption" is a bit misleading because
+> boot-time power consumption may have a major increase when all power
+> domains are powered on.  Sure, they will eventually (hopefully) be
+> turned off in after late_initcall, but there will still be an impact.
 > 
-> This function does:
-> 
->     /* -1UL will give 100% duty. */
->     --tcmp;
->     writel(tcmp, our_chip->base + REG_TCMPB(pwm->hwpwm));
-> 
-> I think that comment is incorrect. If tcmp is written as -1UL then the
-> LED totally turns off. And there is nothing in the Exynos4412 manual
-> to suggest that -1UL should be set in the TCMP register for 100% duty.
+> I guess the Samsung folks should comment here on whether that is
+> significant.
 
-Looking at Figure 11-3 in 11.3.2 Basic Timer Operation chapter of Exynos
-4412 public datasheet [1] (page 659), the calculation above seems
-correct. The default state of timer output is high and if TCMP is set to
-a value higher than TCNT, then it will never toggle to low.
-
-[1]
-http://www.samsung.com/global/business/semiconductor/file/product/Exynos_4_Quad_User_Manaul_Public_REV1.00-0.pdf
-
-> 
-> If I remove that --tcmp line, so that 100% duty cycle is handled as
-> tcmp=0, the problem is solved: the LED turns on at max brightness when
-> the leds subsystem requests so.
-
-According to my computations, with tcmp=0 you should get exactly the
-minimum supported duty cycle (1 / N, where N is the number of ticks of
-period), not full brightness. Are you sure that you have the right
-output polarity configured?
-
-> 
-> Any ideas? Is this -1UL thing a quirk from older chip versions not
-> applicable to Exynos4?
-
-Comparing few datasheets, the timers seem identical in this aspect.
+Unfortunately this series has not been posted to linux-samsung-soc
+mailing list and I'm a formerly-Samsung folk now, so it hasn't really
+reached there.
 
 Best regards,
 Tomasz
