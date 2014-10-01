@@ -1,142 +1,95 @@
-From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH v2 2/2] tty: serial: samsung: Clean-up selection of number of available UARTs
-Date: Wed,  1 Oct 2014 22:12:57 +0530
-Message-ID: <1412181777-6388-2-git-send-email-a.kesavan@samsung.com>
-References: <1412181777-6388-1-git-send-email-a.kesavan@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [GIT PULL 3/3] 3rd Round of Exynos-PM-2 Updates for v3.18
+Date: Wed, 01 Oct 2014 18:49:20 +0200
+Message-ID: <1836556.iSSlTrnDdl@amdc1032>
+References: <54244973.7090204@samsung.com> <201410011801.29389.arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f177.google.com ([209.85.192.177]:48403 "EHLO
-	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751759AbaJAQnO (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:31726 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752946AbaJAQtg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Oct 2014 12:43:14 -0400
-Received: by mail-pd0-f177.google.com with SMTP id v10so517146pde.22
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Oct 2014 09:43:14 -0700 (PDT)
-In-Reply-To: <1412181777-6388-1-git-send-email-a.kesavan@samsung.com>
+	Wed, 1 Oct 2014 12:49:36 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NCR003QPYQMIR00@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 02 Oct 2014 01:49:34 +0900 (KST)
+In-reply-to: <201410011801.29389.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, kgene.kim@samsung.com, tomasz.figa@gmail.com
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Remove symbols SERIAL_SAMSUNG_UARTS_4 and SERIAL_SAMSUNG_UARTS which
-select the number of UART ports available on the SoC. Replace the usage
-of SERIAL_SAMSUNG_UARTS in the serial driver with the maximum number of
-UART ports possible. Removal of these symbols also helps in Exynos7
-serial enablement.
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/tty/serial/Kconfig   |   16 ----------------
- drivers/tty/serial/samsung.c |   11 +++--------
- drivers/tty/serial/samsung.h |    5 ++++-
- 3 files changed, 7 insertions(+), 25 deletions(-)
+Hi,
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 81f6ee7..9fc9092 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -247,22 +247,6 @@ config SERIAL_SAMSUNG
- 	  provide all of these ports, depending on how the serial port
- 	  pins are configured.
- 
--config SERIAL_SAMSUNG_UARTS_4
--	bool
--	depends on PLAT_SAMSUNG
--	default y if !(CPU_S3C2410 || CPU_S3C2412 || CPU_S3C2440 || CPU_S3C2442)
--	help
--	  Internal node for the common case of 4 Samsung compatible UARTs
--
--config SERIAL_SAMSUNG_UARTS
--	int
--	depends on PLAT_SAMSUNG
--	default 4 if SERIAL_SAMSUNG_UARTS_4 || CPU_S3C2416
--	default 3
--	help
--	  Select the number of available UART ports for the Samsung S3C
--	  serial driver
--	
- config SERIAL_SAMSUNG_DEBUG
- 	bool "Samsung SoC serial debug"
- 	depends on SERIAL_SAMSUNG && DEBUG_LL
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index c78f43a..ba04c6d 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -962,14 +962,14 @@ static struct uart_ops s3c24xx_serial_ops = {
- static struct uart_driver s3c24xx_uart_drv = {
- 	.owner		= THIS_MODULE,
- 	.driver_name	= "s3c2410_serial",
--	.nr		= CONFIG_SERIAL_SAMSUNG_UARTS,
-+	.nr		= MAX_SAMSUNG_UARTS,
- 	.cons		= S3C24XX_SERIAL_CONSOLE,
- 	.dev_name	= S3C24XX_SERIAL_NAME,
- 	.major		= S3C24XX_SERIAL_MAJOR,
- 	.minor		= S3C24XX_SERIAL_MINOR,
- };
- 
--static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS] = {
-+static struct s3c24xx_uart_port s3c24xx_serial_ports[MAX_SAMSUNG_UARTS] = {
- 	[0] = {
- 		.port = {
- 			.lock		= __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[0].port.lock),
-@@ -992,8 +992,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
- 			.line		= 1,
- 		}
- 	},
--#if CONFIG_SERIAL_SAMSUNG_UARTS > 2
--
- 	[2] = {
- 		.port = {
- 			.lock		= __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[2].port.lock),
-@@ -1005,8 +1003,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
- 			.line		= 2,
- 		}
- 	},
--#endif
--#if CONFIG_SERIAL_SAMSUNG_UARTS > 3
- 	[3] = {
- 		.port = {
- 			.lock		= __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[3].port.lock),
-@@ -1018,7 +1014,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
- 			.line		= 3,
- 		}
- 	}
--#endif
- };
- 
- /* s3c24xx_serial_resetport
-@@ -1590,7 +1585,7 @@ s3c24xx_serial_console_setup(struct console *co, char *options)
- 
- 	/* is this a valid port */
- 
--	if (co->index == -1 || co->index >= CONFIG_SERIAL_SAMSUNG_UARTS)
-+	if (co->index == -1 || co->index >= MAX_SAMSUNG_UARTS)
- 		co->index = 0;
- 
- 	port = &s3c24xx_serial_ports[co->index].port;
-diff --git a/drivers/tty/serial/samsung.h b/drivers/tty/serial/samsung.h
-index eb071dd..484b49e 100644
---- a/drivers/tty/serial/samsung.h
-+++ b/drivers/tty/serial/samsung.h
-@@ -1,6 +1,9 @@
- #ifndef __SAMSUNG_H
- #define __SAMSUNG_H
- 
-+/* Maximum UART ports available */
-+#define MAX_SAMSUNG_UARTS       4
-+
- /*
-  * Driver for Samsung SoC onboard UARTs.
-  *
-@@ -38,7 +41,7 @@ struct s3c24xx_uart_info {
- struct s3c24xx_serial_drv_data {
- 	struct s3c24xx_uart_info	*info;
- 	struct s3c2410_uartcfg		*def_cfg;
--	unsigned int			fifosize[CONFIG_SERIAL_SAMSUNG_UARTS];
-+	unsigned int			fifosize[MAX_SAMSUNG_UARTS];
- };
- 
- struct s3c24xx_uart_port {
--- 
-1.7.9.5
+On Wednesday, October 01, 2014 06:01:29 PM Arnd Bergmann wrote:
+> On Thursday 25 September 2014, Kukjin Kim wrote:
+> > Exynos 2nd PM related updates for v3.18
+> > 
+> > - Firmware supporting suspend and resume to excute of low
+> >    level operations to enter and leave power mode for exynos
+> >    : introduce suspend() and resume() firmware operations
+> > 
+> > - Fix AFTR mode on boards with secure firmware enabled and
+> >    allows exynos cpuidle driver usage on exynos4x12 SoCs
+> > 
+> > - Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y
+> > 
+> > - SWRESET is needed to boot secondary CPU on exynos3250
+> > 
+> 
+> I needed another fixup to make this build, but I'm not sure about
+> whether this is the right solution.
+
+Could you please share the build errors and the used config?
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> I decided not to pull this one, please test again with and without
+> my patch for the case that ARM_CPU_SUSPEND is disabled.
+> 
+> 	Arnd
+> 
+> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+> index 64324bf5edb4..aaab67d84bf6 100644
+> --- a/arch/arm/mach-exynos/Makefile
+> +++ b/arch/arm/mach-exynos/Makefile
+> @@ -14,9 +14,9 @@ obj-				:=
+>  
+>  # Core
+>  
+> -obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o sleep.o
+> +obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o
+>  
+> -obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o
+> +obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o sleep.o
+>  obj-$(CONFIG_PM_SLEEP)		+= suspend.o
+>  obj-$(CONFIG_PM_GENERIC_DOMAINS) += pm_domains.o
+>  
+> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+> index 2c5bc6bfcbdf..b7ff8f25bf4a 100644
+> --- a/arch/arm/mach-exynos/firmware.c
+> +++ b/arch/arm/mach-exynos/firmware.c
+> @@ -129,11 +129,11 @@ static int exynos_resume(void)
+>  }
+>  
+>  static const struct firmware_ops exynos_firmware_ops = {
+> -	.do_idle		= exynos_do_idle,
+> +	.do_idle		= IS_ENABLED(CONFIG_EXYNOS_CPU_SUSPEND) ? exynos_do_idle : NULL,
+>  	.set_cpu_boot_addr	= exynos_set_cpu_boot_addr,
+>  	.cpu_boot		= exynos_cpu_boot,
+> -	.suspend		= exynos_suspend,
+> -	.resume			= exynos_resume,
+> +	.suspend		= IS_ENABLED(CONFIG_PM_SLEEP) ? exynos_suspend : NULL,
+> +	.resume			= IS_ENABLED(CONFIG_PM_SLEEP) ? exynos_resume : NULL,
+>  };
+>  
+>  void __init exynos_firmware_init(void)
