@@ -1,272 +1,64 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH V2 1/3] mmc: dw_mmc: use mmc_regulator_get_supply to handle
- regulators
-Date: Wed, 01 Oct 2014 16:14:32 +0200
-Message-ID: <3871520.cBV7rop9YT@amdc1032>
-References: <1408715272-13833-1-git-send-email-yuvaraj.cd@samsung.com>
- <542A3E60.1000401@samsung.com> <3515419.FCCWMziJlh@amdc1032>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <3515419.FCCWMziJlh@amdc1032>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Doug Anderson <dianders@google.com>, Doug Anderson <dianders@chromium.org>, Chris Ball <cjb@laptop.org>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, ABHILASH KESAVAN <a.kesavan@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, CPGS <cpgs@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH v2 0/4] PM / Domains: Fix race conditions during boot
+Date: Wed,  1 Oct 2014 16:41:30 +0200
+Message-ID: <1412174494-15346-1-git-send-email-ulf.hansson@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f173.google.com ([209.85.217.173]:48989 "EHLO
+	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752093AbaJAOlz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 1 Oct 2014 10:41:55 -0400
+Received: by mail-lb0-f173.google.com with SMTP id 10so457490lbg.32
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Oct 2014 07:41:53 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Ulf Hansson <ulf.hansson@linaro.org>
 
-On Wednesday, October 01, 2014 03:57:54 PM Bartlomiej Zolnierkiewicz wrote:
-> 
-> Hi,
-> 
-> On Tuesday, September 30, 2014 02:23:44 PM Jaehoon Chung wrote:
-> > Hi
-> > 
-> > On 09/29/2014 09:31 PM, Bartlomiej Zolnierkiewicz wrote:
-> > > 
-> > > Hi,
-> > > 
-> > > On Friday, August 29, 2014 01:34:44 PM Ulf Hansson wrote:
-> > >> On 22 August 2014 15:47, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com> wrote:
-> > >>> This patch makes use of mmc_regulator_get_supply() to handle
-> > >>> the vmmc and vqmmc regulators.Also it moves the code handling
-> > >>> the these regulators to dw_mci_set_ios().It turned on the vmmc
-> > >>> and vqmmc during MMC_POWER_UP and MMC_POWER_ON,and turned off
-> > >>> during MMC_POWER_OFF.
-> > >>>
-> > >>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
-> > >>
-> > >> Thanks! Applied for next.
-> > > 
-> > > Unfortunately this patch breaks mmc1 card (Kingston 32GB micro SDHC)
-> > > detection on Exynos5420 Arndale Octa for me:
-> > > 
-> > > [   10.797979] dwmmc_exynos 12220000.mmc: no support for card's volts
-> > > [   10.797998] mmc1: error -22 whilst initialising SD card
-> > 
-> > OCR value is not matched. Which values are supported about the mmc_host's value and card's value?
-> > Could you share the value?
-> 
-> Sure.  I've added dev_info()s at the beginning of mmc_select_voltage():
-> 
-> +	dev_warn(mmc_dev(host), "card's volts: 0x%0x\n", ocr);
-> +	dev_warn(mmc_dev(host), "host's volts: 0x%0x\n", host->ocr_avail);
-> 
-> and got following results:
-> 
-> [   10.851678] dwmmc_exynos 12220000.mmc: card's volts: 0xff8000
-> [   10.851691] dwmmc_exynos 12220000.mmc: host's volts: 0x80
+Changes in v2:
+	-Added some acks.
+	-Updated commit messages.
+	-Included a wider audience of the patchset. V1 was lacking SoC
+	 maintainers.
 
-Data for the working kernel:
+Here are link to the first patchset, were some discussion started.
+http://marc.info/?l=linux-pm&m=141208104729597&w=2
 
-[   10.856214] dwmmc_exynos 12220000.mmc: card's volts: 0xff8000
-[   10.856227] dwmmc_exynos 12220000.mmc: host's volts: 0x300000
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+When there are more than one device in a PM domain these will obviously
+be probed at different times. Depending on timing and the implemented
+support for runtime PM in a driver/subsystem, genpd may be advised to
+power off a PM domain after a successful probe sequence.
 
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
-> 
-> > Best Regards,
-> > Jaehoon Chung
-> > 
-> > > 
-> > > Without the patch:
-> > > 
-> > > [   10.866926] mmc_host mmc1: Bus speed (slot 0) = 50000000Hz (slot req 50000000Hz, actual 50000000HZ div = 0)
-> > > [   10.866977] mmc1: new high speed SDHC card at address 1234
-> > > [   10.868730] mmcblk1: mmc1:1234 SA32G 29.3 GiB 
-> > > [   10.915054]  mmcblk1: p1 p2 p3
-> > > 
-> > > The config is attached (exynos_defconfig doesn't work correctly for
-> > > this board yet).
-> > > 
-> > > Best regards,
-> > > --
-> > > Bartlomiej Zolnierkiewicz
-> > > Samsung R&D Institute Poland
-> > > Samsung Electronics
-> > > 
-> > >> Kind regards
-> > >> Uffe
-> > >>
-> > >>> ---
-> > >>> changes from v1:
-> > >>>         1.Used mmc_regulator_set_ocr() instead of regulator_enable() for vmmc.
-> > >>>         2.Turned on vmmc and vqmmc during MMC_POWER_UP.
-> > >>>         3. Removed the flags DW_MMC_CARD_POWERED and DW_MMC_IO_POWERED which
-> > >>>            added during the initial version of this patch.
-> > >>>         4. Added error message, if it failed to turn on regulator's.
-> > >>>
-> > >>>  drivers/mmc/host/dw_mmc.c  |   72 +++++++++++++++++++++-----------------------
-> > >>>  include/linux/mmc/dw_mmc.h |    2 +-
-> > >>>  2 files changed, 36 insertions(+), 38 deletions(-)
-> > >>>
-> > >>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> > >>> index 7f227e9..aadb0d6 100644
-> > >>> --- a/drivers/mmc/host/dw_mmc.c
-> > >>> +++ b/drivers/mmc/host/dw_mmc.c
-> > >>> @@ -936,6 +936,7 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
-> > >>>         struct dw_mci_slot *slot = mmc_priv(mmc);
-> > >>>         const struct dw_mci_drv_data *drv_data = slot->host->drv_data;
-> > >>>         u32 regs;
-> > >>> +       int ret;
-> > >>>
-> > >>>         switch (ios->bus_width) {
-> > >>>         case MMC_BUS_WIDTH_4:
-> > >>> @@ -974,12 +975,38 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
-> > >>>
-> > >>>         switch (ios->power_mode) {
-> > >>>         case MMC_POWER_UP:
-> > >>> +               if (!IS_ERR(mmc->supply.vmmc)) {
-> > >>> +                       ret = mmc_regulator_set_ocr(mmc, mmc->supply.vmmc,
-> > >>> +                                       ios->vdd);
-> > >>> +                       if (ret) {
-> > >>> +                               dev_err(slot->host->dev,
-> > >>> +                                       "failed to enable vmmc regulator\n");
-> > >>> +                               /*return, if failed turn on vmmc*/
-> > >>> +                               return;
-> > >>> +                       }
-> > >>> +               }
-> > >>> +               if (!IS_ERR(mmc->supply.vqmmc) && !slot->host->vqmmc_enabled) {
-> > >>> +                       ret = regulator_enable(mmc->supply.vqmmc);
-> > >>> +                       if (ret < 0)
-> > >>> +                               dev_err(slot->host->dev,
-> > >>> +                                       "failed to enable vqmmc regulator\n");
-> > >>> +                       else
-> > >>> +                               slot->host->vqmmc_enabled = true;
-> > >>> +               }
-> > >>>                 set_bit(DW_MMC_CARD_NEED_INIT, &slot->flags);
-> > >>>                 regs = mci_readl(slot->host, PWREN);
-> > >>>                 regs |= (1 << slot->id);
-> > >>>                 mci_writel(slot->host, PWREN, regs);
-> > >>>                 break;
-> > >>>         case MMC_POWER_OFF:
-> > >>> +               if (!IS_ERR(mmc->supply.vmmc))
-> > >>> +                       mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, 0);
-> > >>> +
-> > >>> +               if (!IS_ERR(mmc->supply.vqmmc) && slot->host->vqmmc_enabled) {
-> > >>> +                       regulator_disable(mmc->supply.vqmmc);
-> > >>> +                       slot->host->vqmmc_enabled = false;
-> > >>> +               }
-> > >>> +
-> > >>>                 regs = mci_readl(slot->host, PWREN);
-> > >>>                 regs &= ~(1 << slot->id);
-> > >>>                 mci_writel(slot->host, PWREN, regs);
-> > >>> @@ -2110,7 +2137,13 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
-> > >>>                 mmc->f_max = freq[1];
-> > >>>         }
-> > >>>
-> > >>> -       mmc->ocr_avail = MMC_VDD_32_33 | MMC_VDD_33_34;
-> > >>> +       /*if there are external regulators, get them*/
-> > >>> +       ret = mmc_regulator_get_supply(mmc);
-> > >>> +       if (ret == -EPROBE_DEFER)
-> > >>> +               goto err_setup_bus;
-> > >>> +
-> > >>> +       if (!mmc->ocr_avail)
-> > >>> +               mmc->ocr_avail = MMC_VDD_32_33 | MMC_VDD_33_34;
-> > >>>
-> > >>>         if (host->pdata->caps)
-> > >>>                 mmc->caps = host->pdata->caps;
-> > >>> @@ -2176,7 +2209,7 @@ static int dw_mci_init_slot(struct dw_mci *host, unsigned int id)
-> > >>>
-> > >>>  err_setup_bus:
-> > >>>         mmc_free_host(mmc);
-> > >>> -       return -EINVAL;
-> > >>> +       return ret;
-> > >>>  }
-> > >>>
-> > >>>  static void dw_mci_cleanup_slot(struct dw_mci_slot *slot, unsigned int id)
-> > >>> @@ -2469,24 +2502,6 @@ int dw_mci_probe(struct dw_mci *host)
-> > >>>                 }
-> > >>>         }
-> > >>>
-> > >>> -       host->vmmc = devm_regulator_get_optional(host->dev, "vmmc");
-> > >>> -       if (IS_ERR(host->vmmc)) {
-> > >>> -               ret = PTR_ERR(host->vmmc);
-> > >>> -               if (ret == -EPROBE_DEFER)
-> > >>> -                       goto err_clk_ciu;
-> > >>> -
-> > >>> -               dev_info(host->dev, "no vmmc regulator found: %d\n", ret);
-> > >>> -               host->vmmc = NULL;
-> > >>> -       } else {
-> > >>> -               ret = regulator_enable(host->vmmc);
-> > >>> -               if (ret) {
-> > >>> -                       if (ret != -EPROBE_DEFER)
-> > >>> -                               dev_err(host->dev,
-> > >>> -                                       "regulator_enable fail: %d\n", ret);
-> > >>> -                       goto err_clk_ciu;
-> > >>> -               }
-> > >>> -       }
-> > >>> -
-> > >>>         host->quirks = host->pdata->quirks;
-> > >>>
-> > >>>         spin_lock_init(&host->lock);
-> > >>> @@ -2630,8 +2645,6 @@ err_workqueue:
-> > >>>  err_dmaunmap:
-> > >>>         if (host->use_dma && host->dma_ops->exit)
-> > >>>                 host->dma_ops->exit(host);
-> > >>> -       if (host->vmmc)
-> > >>> -               regulator_disable(host->vmmc);
-> > >>>
-> > >>>  err_clk_ciu:
-> > >>>         if (!IS_ERR(host->ciu_clk))
-> > >>> @@ -2667,9 +2680,6 @@ void dw_mci_remove(struct dw_mci *host)
-> > >>>         if (host->use_dma && host->dma_ops->exit)
-> > >>>                 host->dma_ops->exit(host);
-> > >>>
-> > >>> -       if (host->vmmc)
-> > >>> -               regulator_disable(host->vmmc);
-> > >>> -
-> > >>>         if (!IS_ERR(host->ciu_clk))
-> > >>>                 clk_disable_unprepare(host->ciu_clk);
-> > >>>
-> > >>> @@ -2686,9 +2696,6 @@ EXPORT_SYMBOL(dw_mci_remove);
-> > >>>   */
-> > >>>  int dw_mci_suspend(struct dw_mci *host)
-> > >>>  {
-> > >>> -       if (host->vmmc)
-> > >>> -               regulator_disable(host->vmmc);
-> > >>> -
-> > >>>         return 0;
-> > >>>  }
-> > >>>  EXPORT_SYMBOL(dw_mci_suspend);
-> > >>> @@ -2697,15 +2704,6 @@ int dw_mci_resume(struct dw_mci *host)
-> > >>>  {
-> > >>>         int i, ret;
-> > >>>
-> > >>> -       if (host->vmmc) {
-> > >>> -               ret = regulator_enable(host->vmmc);
-> > >>> -               if (ret) {
-> > >>> -                       dev_err(host->dev,
-> > >>> -                               "failed to enable regulator: %d\n", ret);
-> > >>> -                       return ret;
-> > >>> -               }
-> > >>> -       }
-> > >>> -
-> > >>>         if (!dw_mci_ctrl_reset(host, SDMMC_CTRL_ALL_RESET_FLAGS)) {
-> > >>>                 ret = -ENODEV;
-> > >>>                 return ret;
-> > >>> diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
-> > >>> index 29ce014..84e2827 100644
-> > >>> --- a/include/linux/mmc/dw_mmc.h
-> > >>> +++ b/include/linux/mmc/dw_mmc.h
-> > >>> @@ -188,7 +188,7 @@ struct dw_mci {
-> > >>>         /* Workaround flags */
-> > >>>         u32                     quirks;
-> > >>>
-> > >>> -       struct regulator        *vmmc;  /* Power regulator */
-> > >>> +       bool                    vqmmc_enabled;
-> > >>>         unsigned long           irq_flags; /* IRQ flags */
-> > >>>         int                     irq;
-> > >>>  };
-> > >>> --
-> > >>> 1.7.10.4
+Ideally we should have relied on the driver/subsystem, through runtime
+PM, to bring their device's PM domain into powered state prior doing
+probing if such requirement exist.
 
+Since this is not a common practice by drivers/subsystems, enforcing
+such a change doesn't seem viable.
+
+Instead, let's improve the situation, by preventing genpd from powering
+off any of the PM domains until late_init. At that point genpd already
+tries to power off unused PM domains, so it seems like a decent match.
+
+Cases which can't be covered within the window of until late_init needs
+to be adressed separately and likely through a more common long term
+solution.
+
+
+Ulf Hansson (4):
+  PM / Domains: Remove pm_genpd_dev_need_restore() API
+  ARM: exynos: Ensure PM domains are powered at initialization
+  PM / Domains: Expect PM domains being powered at initialization
+  PM / Domains: Enforce PM domains to stay powered during boot
+
+ arch/arm/mach-exynos/pm_domains.c   |  7 ++++---
+ arch/arm/mach-s3c64xx/pm.c          |  4 ++--
+ arch/arm/mach-shmobile/pm-r8a7779.c |  2 +-
+ arch/arm/mach-shmobile/pm-rmobile.c |  2 +-
+ drivers/base/power/domain.c         | 42 ++++++++++++++++---------------------
+ include/linux/pm_domain.h           |  7 +++----
+ 6 files changed, 29 insertions(+), 35 deletions(-)
+
+-- 
+1.9.1
