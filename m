@@ -1,39 +1,79 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 2/3] 3rd Round of Samsung-DT-3 updates for v3.18
-Date: Wed, 1 Oct 2014 17:56:11 +0200
-Message-ID: <201410011756.11635.arnd@arndb.de>
-References: <54244910.3050609@samsung.com>
+Subject: Re: [GIT PULL 3/3] 3rd Round of Exynos-PM-2 Updates for v3.18
+Date: Wed, 1 Oct 2014 18:01:29 +0200
+Message-ID: <201410011801.29389.arnd@arndb.de>
+References: <54244973.7090204@samsung.com>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:61120 "EHLO
+Received: from mout.kundenserver.de ([212.227.126.131]:64556 "EHLO
 	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751399AbaJAP4q (ORCPT
+	with ESMTP id S1753166AbaJAQCD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Oct 2014 11:56:46 -0400
-In-Reply-To: <54244910.3050609@samsung.com>
+	Wed, 1 Oct 2014 12:02:03 -0400
+In-Reply-To: <54244973.7090204@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
 On Thursday 25 September 2014, Kukjin Kim wrote:
-> Samsung 3rd DT updates for v3.18
+> Exynos 2nd PM related updates for v3.18
 > 
-> - Fix rebase conflcits in previous tags/samsung-dt-2
->    : Fix chip select GPIO for exynos5250-smdk5250
->    : Remove display timings node for exynos5250-snow
+> - Firmware supporting suspend and resume to excute of low
+>    level operations to enter and leave power mode for exynos
+>    : introduce suspend() and resume() firmware operations
 > 
-> - Fix Exynos USB on kernels with USB Gadget support
->    : Explicitly set dr_mode for the dwc3 controller
->    for exynos5420-arndale-octa, exynos5420-peach-pit
->    and exynos5800-peach-pi boards
+> - Fix AFTR mode on boards with secure firmware enabled and
+>    allows exynos cpuidle driver usage on exynos4x12 SoCs
 > 
-> - add CPU nodes for exynos4210, exynos4212, exynos4412
+> - Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y
+> 
+> - SWRESET is needed to boot secondary CPU on exynos3250
 > 
 
-Pulled into next/late, thanks
+I needed another fixup to make this build, but I'm not sure about
+whether this is the right solution.
+
+I decided not to pull this one, please test again with and without
+my patch for the case that ARM_CPU_SUSPEND is disabled.
 
 	Arnd
+
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index 64324bf5edb4..aaab67d84bf6 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -14,9 +14,9 @@ obj-				:=
+ 
+ # Core
+ 
+-obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o sleep.o
++obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o
+ 
+-obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o
++obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o sleep.o
+ obj-$(CONFIG_PM_SLEEP)		+= suspend.o
+ obj-$(CONFIG_PM_GENERIC_DOMAINS) += pm_domains.o
+ 
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index 2c5bc6bfcbdf..b7ff8f25bf4a 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -129,11 +129,11 @@ static int exynos_resume(void)
+ }
+ 
+ static const struct firmware_ops exynos_firmware_ops = {
+-	.do_idle		= exynos_do_idle,
++	.do_idle		= IS_ENABLED(CONFIG_EXYNOS_CPU_SUSPEND) ? exynos_do_idle : NULL,
+ 	.set_cpu_boot_addr	= exynos_set_cpu_boot_addr,
+ 	.cpu_boot		= exynos_cpu_boot,
+-	.suspend		= exynos_suspend,
+-	.resume			= exynos_resume,
++	.suspend		= IS_ENABLED(CONFIG_PM_SLEEP) ? exynos_suspend : NULL,
++	.resume			= IS_ENABLED(CONFIG_PM_SLEEP) ? exynos_resume : NULL,
+ };
+ 
+ void __init exynos_firmware_init(void)
