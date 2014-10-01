@@ -1,48 +1,61 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 2/2] ARM: EXYNOS: PMU: move restart code into pmu driver
-Date: Wed, 01 Oct 2014 12:36:56 +0200
-Message-ID: <542BD948.8040600@gmail.com>
-References: <1412142540-3667-1-git-send-email-pankaj.dubey@samsung.com> <1412142540-3667-3-git-send-email-pankaj.dubey@samsung.com>
+Subject: Re: pwm-samsung: incorrect register values for 100% duty cycle
+Date: Wed, 01 Oct 2014 12:55:57 +0200
+Message-ID: <542BDDBD.1070708@gmail.com>
+References: <CAD8Lp46rh80KD=jXoGTLt2SzH+zfnuyd=QHrKZncx+YYCp-8dA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f179.google.com ([209.85.212.179]:35048 "EHLO
-	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751053AbaJAKhA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Oct 2014 06:37:00 -0400
-Received: by mail-wi0-f179.google.com with SMTP id d1so87658wiv.6
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Oct 2014 03:36:59 -0700 (PDT)
-In-Reply-To: <1412142540-3667-3-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <CAD8Lp46rh80KD=jXoGTLt2SzH+zfnuyd=QHrKZncx+YYCp-8dA@mail.gmail.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Daniel Drake <drake@endlessm.com>, linux-pwm@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, vikas.sajjan@samsung.com, linux@roeck-us.net, naushad@samsung.com
 
-Hi Pankaj,
+Hi Daniel,
 
-Please see my comments inline.
+On 18.09.2014 01:42, Daniel Drake wrote:
+> Hi,
+> 
+> I'm using pwm-samsung on Exynos4412 for a variable-brightness LED.
+> 
+> When the LED is set to maximum brightness via the pwm-leds driver, we
+> arrive at pwm_samsung_config with duty_ns = period_ns, i.e. 100% duty
+> cycle.
+> 
+> This function does:
+> 
+>     /* -1UL will give 100% duty. */
+>     --tcmp;
+>     writel(tcmp, our_chip->base + REG_TCMPB(pwm->hwpwm));
+> 
+> I think that comment is incorrect. If tcmp is written as -1UL then the
+> LED totally turns off. And there is nothing in the Exynos4412 manual
+> to suggest that -1UL should be set in the TCMP register for 100% duty.
 
-On 01.10.2014 07:49, Pankaj Dubey wrote:
-> Let's register reboot_notifier from PMU driver for reboot
-> functionality. So that we can remove restart hooks from
-> machine specific file, and thus moving ahead when PMU moved
-> to driver folder, this functionality can be reused for ARM64
-> based Exynos SoC's.
+Looking at Figure 11-3 in 11.3.2 Basic Timer Operation chapter of Exynos
+4412 public datasheet [1] (page 659), the calculation above seems
+correct. The default state of timer output is high and if TCMP is set to
+a value higher than TCNT, then it will never toggle to low.
 
-[snip]
+[1]
+http://www.samsung.com/global/business/semiconductor/file/product/Exynos_4_Quad_User_Manaul_Public_REV1.00-0.pdf
 
-> +static int pmu_reboot_notify_handler(struct notifier_block *this,
-> +		unsigned long code, void *unused)
-> +{
-> +	if (code == SYS_RESTART) {
-> +		u32 val = 0x1;
-> +
-> +		pmu_raw_writel(val, EXYNOS_SWRESET);
+> 
+> If I remove that --tcmp line, so that 100% duty cycle is handled as
+> tcmp=0, the problem is solved: the LED turns on at max brightness when
+> the leds subsystem requests so.
 
-As already mentioned for patch 1, no need for the variable, because this
-is just a constant 1.
+According to my computations, with tcmp=0 you should get exactly the
+minimum supported duty cycle (1 / N, where N is the number of ticks of
+period), not full brightness. Are you sure that you have the right
+output polarity configured?
+
+> 
+> Any ideas? Is this -1UL thing a quirk from older chip versions not
+> applicable to Exynos4?
+
+Comparing few datasheets, the timers seem identical in this aspect.
 
 Best regards,
 Tomasz
