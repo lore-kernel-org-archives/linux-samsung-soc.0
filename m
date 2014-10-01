@@ -1,54 +1,44 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v2 2/4] ARM: exynos: Ensure PM domains are powered at initialization
-Date: Wed, 01 Oct 2014 21:50:08 +0200
-Message-ID: <6158232.Yd6ncToJoF@vostro.rjw.lan>
-References: <1412174494-15346-1-git-send-email-ulf.hansson@linaro.org> <1412174494-15346-3-git-send-email-ulf.hansson@linaro.org> <542C2972.9070002@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH 1/2] drm/exynos: remove DRM_EXYNOS_GEM_MAP_OFFSET ioctl
+Date: Thu, 02 Oct 2014 08:47:12 +0900
+Message-ID: <542C9280.9050800@samsung.com>
+References: <1410961726-2533-1-git-send-email-inki.dae@samsung.com>
+ <1410961726-2533-2-git-send-email-inki.dae@samsung.com>
+ <542C1A16.6030809@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:58715 "HELO
-	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751208AbaJATaK (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:65276 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753054AbaJAXrR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Oct 2014 15:30:10 -0400
-In-Reply-To: <542C2972.9070002@samsung.com>
+	Wed, 1 Oct 2014 19:47:17 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NCS00MAXI2GCG70@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 02 Oct 2014 08:47:05 +0900 (KST)
+In-reply-to: <542C1A16.6030809@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, Len Brown <len.brown@intel.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Beata Michalska <b.michalska@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>, Inki Dae <inki.dae@samsung.com>, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org
 
-On Wednesday, October 01, 2014 06:18:58 PM Sylwester Nawrocki wrote:
-> On 01/10/14 16:41, Ulf Hansson wrote:
-> > At ->probe() it's common practice for drivers/subsystems to bring their
-> > devices to full power and without depending on CONFIG_PM_RUNTIME.
-> > 
-> > We could also expect that drivers/subsystems requires their device's
-> > corresponding PM domains to be powered, to successfully complete a
-> > ->probe() sequence.
-> > 
-> > Align to the behavior above, by ensuring all PM domains are powered
-> > prior initialization of a generic PM domain.
-> > 
-> > Do note, since the generic PM domain will try to power off unused PM
-> > domains at late_init, there should be no increased power consumption
-> > over time, but potentially during boot.
+Hi Tomasz,
+
+On 10/02/2014 12:13 AM, Tomasz Figa wrote:
+> Hi Inki,
 > 
-> Wouldn't it be a better idea to power on the power domains which are
-> turned off only when CONFIG_PM_RUNTIME is not enabled ? I had a plan
-> to submit a patch doing that but unfortunately this has fallen through
-> the cracks. At the moment mach-exynos/pm_domains.c is not even built in
-> when CONFIG_PM_RUNTIME is disabled.
+> On 17.09.2014 15:48, Inki Dae wrote:
+>> This interface and relevant codes aren't used anymore.
+>>
 > 
-> I don't like the behaviour introduced in this patch to be the default,
-> i.e. turning all possible power domains during boot sequence, even if
-> some are not used and not needed. While we're trying to decrease the
-> power consumption in any possible way this doesn't help at all.
+> Hmm, I might be missing something, but after removing this IOCTL, how do
+> we obtain an offset to pass to mmap()?
 
-Agreed (as stated before).
+There is DRM_IOCTL_MODE_MAP_DUMB, it can get mmap offset before mmap and
+the offset is passed via mmap.
 
-And I'm wondering why that comment of mine was ignored?
-
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+Thanks.
