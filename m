@@ -1,125 +1,75 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH] drm/exynos: fix vblank handling during dpms off
-Date: Thu, 02 Oct 2014 17:58:52 +0900
-Message-ID: <542D13CC.5000304@samsung.com>
-References: <542B9A0E.7020206@samsung.com>
- <1412151287-12845-1-git-send-email-a.hajda@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 1/4] PM / Domains: Remove pm_genpd_dev_need_restore() API
+Date: Thu, 2 Oct 2014 11:09:10 +0200
+Message-ID: <CAPDyKFq+9G+n3qaj+Ls9i4sOi_BdOGzk5SypDzEMZJwAJMa97Q@mail.gmail.com>
+References: <1412174494-15346-1-git-send-email-ulf.hansson@linaro.org>
+	<1412174494-15346-2-git-send-email-ulf.hansson@linaro.org>
+	<542C2D9F.8060005@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1412151287-12845-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f52.google.com ([209.85.192.52]:36521 "EHLO
+	mail-qg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751282AbaJBJJM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 2 Oct 2014 05:09:12 -0400
+Received: by mail-qg0-f52.google.com with SMTP id q108so1548244qgd.25
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Oct 2014 02:09:11 -0700 (PDT)
+In-Reply-To: <542C2D9F.8060005@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun
 
-Hi Andrzej,
+On 1 October 2014 18:36, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+> On 01/10/14 16:41, Ulf Hansson wrote:
+>> There are currently no users of this API, let's remove it.
 
-On 10/01/2014 05:14 PM, Andrzej Hajda wrote:
-> The patch disables vblanks during dpms off only if pagefilp has
-> not been finished. It also replaces drm_vblank_off with drm_crtc_vblank_put.
-> It fixes issue with page_flip ioctl not being able to acquire vblank counter.
+Hi Sylwester,
 
-This problem isn't related with pageflip, it just causes from
-7ffd7a68511c710b84db3548a1997fd2625f580a commit (drm: Always reject
-drm_vblank_get() after drm_vblank_off()).
+Thanks for your reply!
 
-We need to use drm_vblank_on() as a counterpart to drm_vblank_off()
-after the commit .
+>
+> The sad fact is that removal of pm_genpd_dev_need_restore() calls
+> from arch/arm/mach-exynos/pm_domains.c introduces regressions in
+> multiple exynos drivers (I'm sure it breaks media drivers).
 
-How about below patch?
+The fact that you need pm_genpd_dev_need_restore() is really worrying.
+That indicates that exynos are suffering from this race condition I am
+trying to fix in this patchset.
 
->From 6de01473746af225c688ee430123001d57d9af2a Mon Sep 17 00:00:00 2001
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Date: Thu, 2 Oct 2014 17:48:27 +0900
-Subject: [PATCH] drm/exynos: use drm_vblank_on()
+> I think before doing such changes all relevant drivers should be
+> updated first. I need to take a closer look again, but it seems
+> after dropping the pm_genpd_dev_need_restore() calls, client
+> driver's runtime_resume() callback is not being called in response
+> to first pm_runtime_get(_sync) call, even if a device is runtime
+> pm active.
 
-We need to use drm_vblank_on() as a counterpart to drm_vblank_off()
-after the commit 7ffd7a68511c ("drm: Always reject drm_vblank_get()
-after drm_vblank_off()"). If not, drm_vblank_get() will be failed
-always after drm_vblank_off().
+Why would runtime PM callbacks be invoked when the device are runtime
+PM active? That's prevented by the runtime PM core and is the expected
+behaviour.
 
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+pm_genpd_dev_need_restore() is not the solution, besides that it gives
+you the option to lie about device's runtime PM state to genpd. Thus,
+if you are really lucky, that might workaround your issues. :-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 8e38e9f..dfa209a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -71,7 +71,6 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
- 				!atomic_read(&exynos_crtc->pending_flip),
- 				HZ/20))
- 			atomic_set(&exynos_crtc->pending_flip, 0);
--		drm_vblank_off(crtc->dev, exynos_crtc->pipe);
- 	}
- 
- 	if (manager->ops->dpms)
-@@ -90,6 +89,7 @@ static void exynos_drm_crtc_commit(struct drm_crtc *crtc)
- 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
- 	struct exynos_drm_manager *manager = exynos_crtc->manager;
- 
-+	drm_vblank_on(crtc->dev, exynos_crtc->pipe);
- 	exynos_drm_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
- 
- 	exynos_plane_commit(crtc->primary);
-@@ -177,10 +177,12 @@ static int exynos_drm_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
- 
- static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
- {
-+	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
- 	struct drm_plane *plane;
- 	int ret;
- 
- 	exynos_drm_crtc_dpms(crtc, DRM_MODE_DPMS_OFF);
-+	drm_vblank_off(crtc->dev, exynos_crtc->pipe);
- 
- 	drm_for_each_legacy_plane(plane, &crtc->dev->mode_config.plane_list) {
- 		if (plane->crtc != crtc)
--- 
-1.9.1
+I will happily help out in fixing drivers for exynos. Would be nice if
+you could provide me with a list of which driver/subsystems that seems
+broken. HW, wise I have a exynos 5250 and exynos 5422 on my desk, so
+those I can test.
 
-Thanks.
+>
+> More details can be found in commit ebc35c726298ba3fdebba316a
+> 'ARM: EXYNOS: register devices in 'need_restore' state for pm_domains'.
+>
+> The above only happens when devices are added to an inactive power
+> domain, then I guess patch 2/4 is also an attempt to address this
+> issue ?
 
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-> ---
-> Hi Inki,
-> 
-> This is fix (or just workaround) of the problem you have reported.
-> Please carefully verify it, as I am not familiar with pageflip code.
-> 
-> Regards
-> Andrzej
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_crtc.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> index 8e38e9f..57fa94d 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-> @@ -69,9 +69,10 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
->  		/* wait for the completion of page flip. */
->  		if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
->  				!atomic_read(&exynos_crtc->pending_flip),
-> -				HZ/20))
-> +				HZ/20)) {
->  			atomic_set(&exynos_crtc->pending_flip, 0);
-> -		drm_vblank_off(crtc->dev, exynos_crtc->pipe);
-> +			drm_crtc_vblank_put(crtc);
-> +		}
->  	}
->  
->  	if (manager->ops->dpms)
-> 
+Yes.
+
+I would really appreciate if you could run a test with the complete
+patchset and see if that resolves the issues.
+
+Kind regards
+Uffe
