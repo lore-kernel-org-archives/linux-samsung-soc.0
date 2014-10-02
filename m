@@ -1,100 +1,134 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [GIT PULL 3/3] 3rd Round of Exynos-PM-2 Updates for v3.18
-Date: Thu, 02 Oct 2014 15:35:18 +0200
-Message-ID: <1414810.2h7O5DlLDc@amdc1032>
-References: <54244973.7090204@samsung.com> <1836556.iSSlTrnDdl@amdc1032>
- <1945452.Fsg7LTeZhk@wuerfel>
+From: Vikas Sajjan <vikas.sajjan@samsung.com>
+Subject: Re: [PATCH v8 0/2] Adds PMU and S2R support for exynos5420
+Date: Thu, 2 Oct 2014 19:54:03 +0530
+Message-ID: <CAGm_ybhtzubG8PoynhM14DWa8EaPj9ZVvNAbL_rysWGfAn94VA@mail.gmail.com>
+References: <1412074969-12704-1-git-send-email-vikas.sajjan@samsung.com>
+	<CABxcv=kEVma+Ho6PPy+4t+zYH67sAWbbvJvrviPop-MBqktbjw@mail.gmail.com>
+	<CAGm_ybhD0N0r5gj=xAp+ERPq7CjO2d6bDLcPHAoZk1_8+t2Fvw@mail.gmail.com>
+	<CABxcv==aA1Ogi_gQfYXxCg2ApFWQdXJLnqne2K=18nx6Oq_jCw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:33715 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753200AbaJBNff (ORCPT
+Received: from mail-wg0-f48.google.com ([74.125.82.48]:48260 "EHLO
+	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752257AbaJBOYF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Oct 2014 09:35:35 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NCT00IKMKF94060@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 02 Oct 2014 22:35:33 +0900 (KST)
-In-reply-to: <1945452.Fsg7LTeZhk@wuerfel>
+	Thu, 2 Oct 2014 10:24:05 -0400
+Received: by mail-wg0-f48.google.com with SMTP id n12so3221050wgh.31
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Oct 2014 07:24:03 -0700 (PDT)
+In-Reply-To: <CABxcv==aA1Ogi_gQfYXxCg2ApFWQdXJLnqne2K=18nx6Oq_jCw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Douglas Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>
+
+Hi Javier,
+
+On Wed, Oct 1, 2014 at 7:20 PM, Javier Martinez Canillas
+<javier@dowhile0.org> wrote:
+> Hello Vikas,
+>
+> On Wed, Oct 1, 2014 at 12:23 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
+>>
+>> My git log looks like below on top of Kukjin's for-next branch,
+>>
+>> d861ddd clk: exynos: Add CLK_IGNORE_UNUSED to aclk200_disp1 and aclk300_disp1
+>> adc14dc POSTED: ARM: EXYNOS: Use MCPM call-backs to support S2R on Exynos5420
+>> d61fc43 ARM: exynos5: Add Suspend-to-RAM support for 5420
+>> 3d1d7bd ARM: exynos5: Add PMU support for 5420
+>> a8887b3 mfd: syscon: Decouple syscon interface from platform devices
+>> 072e2bc ARM: EXYNOS: Move PMU specific definitions from common.h
+>> ec2f950 ARM: EXYNOS: Add platform driver support for Exynos PMU
+>>
+>
+> I tested Kukjin's for-next branch (HEAD in commit a84aaa7) + the
+> patches you mentioned and the system enters in suspend mode but the
+> RTC alarm IRQ does not make it resume. Is the branch you are using to
+> test public so I can give it a try?
+>
+
+Not yet, but as I mentioned, I have only above mentioned 7 patches
+atop kukjin's for-next.
+only difference is the patch " ARM: EXYNOS: Use MCPM call-backs to
+support S2R on Exynos5420"
+which I had rebased myself.
+
+I am out of office till 7th October, once I am back, I can send you
+all those 7 patches, config file and S2R log.
+
+>> recently I noticed that, without the CLK_IGNORE_UNUSED flag for
+>> aclk200_disp1 and aclk300_disp1 CLK,  the system is NOT suspending,
+>> which was NOT the case when i had posted my previous revisions.
+>>
+>
+> I tried both with and without your patch that adds the
+> CLK_IGNORE_UNUSED to aclk200_disp1 and aclk300_disp1 and in both cases
+> it behaves the same, the system seems to go into suspend mode but
+> never resumes:
+
+Can you confirm that the system has really suspended, I mean can you
+measure VDD_EGL or VDD_KFC and check or by any other method you know
+of.
+
+>
+> # echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
+> [  105.376596] PM: Syncing filesystems ... done.
+> [  105.383207] Freezing user space processes ... (elapsed 0.001 seconds) done.
+> [  105.388681] Freezing remaining freezable tasks ... (elapsed 0.001
+> seconds) done.
+> [  105.488589] wake enabled for irq 281
+> [  105.491609] wake enabled for irq 280
+> [  105.498102] wake enabled for irq 284
+> [  105.554736] PM: suspend of devices complete after 155.406 msecs
+> [  105.562572] PM: late suspend of devices complete after 3.361 msecs
+> [  105.570389] PM: noirq suspend of devices complete after 3.102 msecs
+> [  105.575185] Disabling non-boot CPUs ...
+> [  105.579706] IRQ153 no longer affine to CPU1
+> [  105.580008] CPU1: shutdown
+> [  105.587230] IRQ154 no longer affine to CPU2
+> [  105.587472] CPU2: shutdown
+> [  105.594953] IRQ155 no longer affine to CPU3
+> [  105.595190] CPU3: shutdown
+> [  105.602464] IRQ160 no longer affine to CPU4
+> [  105.602979] CPU4: shutdown
+> [  105.609996] IRQ161 no longer affine to CPU5
+> [  105.610424] CPU5: shutdown
+> [  105.617116] IRQ162 no longer affine to CPU6
+> [  105.617557] CPU6: shutdown
+> [  105.625163] IRQ163 no longer affine to CPU7
+> [  105.625596] CPU7: shutdown
+>
+> I'm testing on a Exynos5420 Peach Pit using exynos_defconfig and
+> disabling CONFIG_BL_SWITCHER as you suggested. My bootargs is:
+>
+
+I too tested on 5420 based peach-pit board with exynos_defconfig +
+disabled CONFIG_BL_SWITCHER.
+
+It did suspend and resume gracefully.
+
+> console=ttySAC3,115200 debug earlyprintk root=/dev/mmcblk1p2 rootwait
+> rw no_console_suspend
+>
+
+looks fine.
+
+> And I'm booting using a chained nv-uboot with built version:
+>
+> U-Boot 2013.04-gb98ed09 (Mar 07 2014 - 12:25:37) for Peach
+>
+
+I shall update my U-Boot build version, once I am back at office.
 
 
-Hi,
-
-On Wednesday, October 01, 2014 08:31:47 PM Arnd Bergmann wrote:
-> On Wednesday 01 October 2014 18:49:20 Bartlomiej Zolnierkiewicz wrote:
-> > On Wednesday, October 01, 2014 06:01:29 PM Arnd Bergmann wrote:
-> > > On Thursday 25 September 2014, Kukjin Kim wrote:
-> > > > Exynos 2nd PM related updates for v3.18
-> > > > 
-> > > > - Firmware supporting suspend and resume to excute of low
-> > > >    level operations to enter and leave power mode for exynos
-> > > >    : introduce suspend() and resume() firmware operations
-> > > > 
-> > > > - Fix AFTR mode on boards with secure firmware enabled and
-> > > >    allows exynos cpuidle driver usage on exynos4x12 SoCs
-> > > > 
-> > > > - Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y
-> > > > 
-> > > > - SWRESET is needed to boot secondary CPU on exynos3250
-> > > > 
-> > > 
-> > > I needed another fixup to make this build, but I'm not sure about
-> > > whether this is the right solution.
-> > 
-> > Could you please share the build errors and the used config?
-> 
-> I'm building with an additional series that works around all known
-> build failures in randconfig, so it's possible that the configuration
-> causes other problems in your tree, or that one of my own patches
-> introduces the problem and the exynos tree by itself is fine.
-> 
-> This is the build error I get:
-> 
-> arch/arm/mach-exynos/built-in.o: In function `exynos_suspend':
-> :(.text+0x294): undefined reference to `cpu_suspend'
-> :(.text+0x29c): undefined reference to `cpu_suspend'
-> arch/arm/mach-exynos/built-in.o: In function `skip_cp15':
-> :(.data+0x58): undefined reference to `cpu_resume'
-> arch/arm/mach-exynos/built-in.o: In function `cp15_save_power':
-> :(.data+0x70): undefined reference to `cpu_resume'
-> 
-> The defconfig file is attached, the details don't matter to
-> other readers, except that it has CONFIG_ARM_CPU_SUSPEND
-> disabled, which means that sleep.S can't be linked properly.
-
-It turned out that the breakage came through Exynos tree.  "ARM:
-EXYNOS: Add support for firmware-assisted suspend/resume" added to
-arch/arm/mach-exynos/firmware.c new references to functions from
-arch/arm/mach-exynos/sleep.S causing the CONFIG_PM_SLEEP=n build
-breakage.  Then "ARM: EXYNOS: Fix build with PM_SLEEP=n and
-ARM_EXYNOS_CPUIDLE=y" tried to fix the CONFIG_PM_SLEEP=n issue by
-always building sleep.S causing in turn the CONFIG_ARM_CPU_SUSPEND=n
-build breakage.  I have not noticed the problem earlier because I
-have overlooked the fact that cpu_suspend() is available only when
-CONFIG_ARM_CPU_SUSPEND=y and in all configs tested by me it was on
-(it gets disabled only when both CONFIG_PM and CONFIG_MCPM are off).
-Sorry for that.
-
-Your patch seems to be a correct fix except that the resume entry
-should use IS_ENABLED(CONFIG_EXYNOS_CPU_SUSPEND) instead of
-IS_ENABLED(CONFIG_PM_SLEEP) as resume firmware operations is also
-used by Exynos cpuidle support.
-
-How should we proceed further to get this tree merged?
-
-PS What is interesting in your defconfig is that it has CONFIG_MCPM
-enabled but CONFIG_ARM_CPU_SUSPEND is disabled so there are probably
-some MPCM related changes in your tree.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+> I checked that the s3c2410-rtc alarm IRQ is fired correctly by looking
+> at /sys/class/rtc/rtc0/wakealarm and also /proc/interrupts.
+>
+> Any ideas before I dig into this?
+>
+> Thanks a lot and best regards,
+> Javier
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
