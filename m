@@ -1,61 +1,125 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/5] pinctrl: samsung: Data structure clean-up
-Date: Thu, 2 Oct 2014 09:18:21 +0200
-Message-ID: <CACRpkdY4yXZ4NeCnZkdeBSto6oX2q_svxkr6Six29aKwPm-xjA@mail.gmail.com>
-References: <1411499141-26551-1-git-send-email-tomasz.figa@gmail.com>
-	<CACRpkdZCMD4x+wrvTOrrWK-Dy4_rg6bD2xUAA4jtTGTbT1uDag@mail.gmail.com>
-	<5423C904.60708@gmail.com>
-	<5426B289.7070802@gmail.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH] drm/exynos: fix vblank handling during dpms off
+Date: Thu, 02 Oct 2014 17:58:52 +0900
+Message-ID: <542D13CC.5000304@samsung.com>
+References: <542B9A0E.7020206@samsung.com>
+ <1412151287-12845-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f173.google.com ([209.85.213.173]:41425 "EHLO
-	mail-ig0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750954AbaJBHSW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Oct 2014 03:18:22 -0400
-Received: by mail-ig0-f173.google.com with SMTP id h18so1589519igc.6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Oct 2014 00:18:22 -0700 (PDT)
-In-Reply-To: <5426B289.7070802@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1412151287-12845-1-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Sat, Sep 27, 2014 at 2:50 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On 25.09.2014 09:49, Tomasz Figa wrote:
->> On 25.09.2014 09:47, Linus Walleij wrote:
->>> On Tue, Sep 23, 2014 at 9:05 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->>>
->>>> This series intends to clean up data structures used by pinctrl-samsung driver.
->>>> More specifically, it separates initial compile time constants from data used
->>>> at runtime, allowing unused variant data to be dropped and selected structures
->>>> constified to improve safety.
->>>
->>> I like the patch set, tried to apply it but patch 3/5 failed to apply to the
->>> devel branch for pinctrl.
->>>
->>> Can you rebase this on my "devel" branch, include Marek's Tested-by
->>> tag and resend, and I'll take it for v3.18.
->>
->> Sure. Will do that today evening. Probably clashed with some other
->> changes queued in the meantime.
->
-> Uhm. I went back home and forgot about this series until now. Sorry.
->
-> I have rebased it on your "devel" branch, although it seems like this
-> branch is missing [1], which in turn seems to be already present in your
-> "for-next" branch and is going to cause a merge conflict with this
-> series. Should I still proceed with posting the series based on "devel"?
->
-> [1] f6a8249f9e55d pinctrl: exynos: Lock GPIOs as interrupts when used as
-> EINTs
+Hi Andrzej,
 
-Bah I must have accidentally applied the patch to my for-next
-branch instead of devel, and then wiped it out of existence when
-I later reset the for-next branch to devel.
+On 10/01/2014 05:14 PM, Andrzej Hajda wrote:
+> The patch disables vblanks during dpms off only if pagefilp has
+> not been finished. It also replaces drm_vblank_off with drm_crtc_vblank_put.
+> It fixes issue with page_flip ioctl not being able to acquire vblank counter.
 
-Please resend all 5 rebased on devel.
+This problem isn't related with pageflip, it just causes from
+7ffd7a68511c710b84db3548a1997fd2625f580a commit (drm: Always reject
+drm_vblank_get() after drm_vblank_off()).
 
-Yours,
-Linus Walleij
+We need to use drm_vblank_on() as a counterpart to drm_vblank_off()
+after the commit .
+
+How about below patch?
+
+>From 6de01473746af225c688ee430123001d57d9af2a Mon Sep 17 00:00:00 2001
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Date: Thu, 2 Oct 2014 17:48:27 +0900
+Subject: [PATCH] drm/exynos: use drm_vblank_on()
+
+We need to use drm_vblank_on() as a counterpart to drm_vblank_off()
+after the commit 7ffd7a68511c ("drm: Always reject drm_vblank_get()
+after drm_vblank_off()"). If not, drm_vblank_get() will be failed
+always after drm_vblank_off().
+
+Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 8e38e9f..dfa209a 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -71,7 +71,6 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+ 				!atomic_read(&exynos_crtc->pending_flip),
+ 				HZ/20))
+ 			atomic_set(&exynos_crtc->pending_flip, 0);
+-		drm_vblank_off(crtc->dev, exynos_crtc->pipe);
+ 	}
+ 
+ 	if (manager->ops->dpms)
+@@ -90,6 +89,7 @@ static void exynos_drm_crtc_commit(struct drm_crtc *crtc)
+ 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+ 	struct exynos_drm_manager *manager = exynos_crtc->manager;
+ 
++	drm_vblank_on(crtc->dev, exynos_crtc->pipe);
+ 	exynos_drm_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
+ 
+ 	exynos_plane_commit(crtc->primary);
+@@ -177,10 +177,12 @@ static int exynos_drm_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
+ 
+ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+ {
++	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+ 	struct drm_plane *plane;
+ 	int ret;
+ 
+ 	exynos_drm_crtc_dpms(crtc, DRM_MODE_DPMS_OFF);
++	drm_vblank_off(crtc->dev, exynos_crtc->pipe);
+ 
+ 	drm_for_each_legacy_plane(plane, &crtc->dev->mode_config.plane_list) {
+ 		if (plane->crtc != crtc)
+-- 
+1.9.1
+
+Thanks.
+
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+> ---
+> Hi Inki,
+> 
+> This is fix (or just workaround) of the problem you have reported.
+> Please carefully verify it, as I am not familiar with pageflip code.
+> 
+> Regards
+> Andrzej
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> index 8e38e9f..57fa94d 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> @@ -69,9 +69,10 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+>  		/* wait for the completion of page flip. */
+>  		if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
+>  				!atomic_read(&exynos_crtc->pending_flip),
+> -				HZ/20))
+> +				HZ/20)) {
+>  			atomic_set(&exynos_crtc->pending_flip, 0);
+> -		drm_vblank_off(crtc->dev, exynos_crtc->pipe);
+> +			drm_crtc_vblank_put(crtc);
+> +		}
+>  	}
+>  
+>  	if (manager->ops->dpms)
+> 
