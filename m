@@ -1,89 +1,164 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: fix vblank handling during dpms off
-Date: Thu, 02 Oct 2014 19:52:44 +0900
-Message-ID: <542D2E7C.1020904@samsung.com>
-References: <542B9A0E.7020206@samsung.com>
- <1412151287-12845-1-git-send-email-a.hajda@samsung.com>
- <542D13CC.5000304@samsung.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH] ARM: dts: add board dts file for Exynos3250-based Monk
+ board
+Date: Thu, 2 Oct 2014 12:22:34 +0100
+Message-ID: <20141002112233.GI5788@leverpostej>
+References: <1412211025-3459-1-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <542D13CC.5000304@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:47583 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751159AbaJBLXH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 2 Oct 2014 07:23:07 -0400
+Content-Disposition: inline
+In-Reply-To: <1412211025-3459-1-git-send-email-yj44.cho@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: YoungJun Cho <yj44.cho@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "jh80.chung@samsung.com" <jh80.chung@samsung.com>, "geunsik.lim@samsung.com" <geunsik.lim@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "cw00.choi@samsung.com" <cw00.choi@samsung.com>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>
 
-T24gMjAxNOuFhCAxMOyblCAwMuydvCAxNzo1OCwgSm9vbnlvdW5nIFNoaW0gd3JvdGU6Cj4gSGkg
-QW5kcnplaiwKPiAKPiBPbiAxMC8wMS8yMDE0IDA1OjE0IFBNLCBBbmRyemVqIEhhamRhIHdyb3Rl
-Ogo+PiBUaGUgcGF0Y2ggZGlzYWJsZXMgdmJsYW5rcyBkdXJpbmcgZHBtcyBvZmYgb25seSBpZiBw
-YWdlZmlscCBoYXMKPj4gbm90IGJlZW4gZmluaXNoZWQuIEl0IGFsc28gcmVwbGFjZXMgZHJtX3Zi
-bGFua19vZmYgd2l0aCBkcm1fY3J0Y192YmxhbmtfcHV0Lgo+PiBJdCBmaXhlcyBpc3N1ZSB3aXRo
-IHBhZ2VfZmxpcCBpb2N0bCBub3QgYmVpbmcgYWJsZSB0byBhY3F1aXJlIHZibGFuayBjb3VudGVy
-Lgo+IAo+IFRoaXMgcHJvYmxlbSBpc24ndCByZWxhdGVkIHdpdGggcGFnZWZsaXAsIGl0IGp1c3Qg
-Y2F1c2VzIGZyb20KPiA3ZmZkN2E2ODUxMWM3MTBiODRkYjM1NDhhMTk5N2ZkMjYyNWY1ODBhIGNv
-bW1pdCAoZHJtOiBBbHdheXMgcmVqZWN0Cj4gZHJtX3ZibGFua19nZXQoKSBhZnRlciBkcm1fdmJs
-YW5rX29mZigpKS4KPiAKPiBXZSBuZWVkIHRvIHVzZSBkcm1fdmJsYW5rX29uKCkgYXMgYSBjb3Vu
-dGVycGFydCB0byBkcm1fdmJsYW5rX29mZigpCj4gYWZ0ZXIgdGhlIGNvbW1pdCAuCj4gCj4gSG93
-IGFib3V0IGJlbG93IHBhdGNoPwoKVGhhbmtzIHlvdSBKb29ueW91bmcgYW5kIEFuZHJ6ZWosCgpk
-cm1fdmJsYW5rX29uL29mZigpIGFyZSBsZWdhY3kgYXBpIHNvIGl0IHdvdWxkIGJlIGJldHRlciB0
-byB1c2UKZHJtX3ZibGFua19jcnRjX29uL29mZiBmdW5jdGlvbnMgaW5zdGVhZC4KCkFuZCBkcm1f
-dmJsYW5rX2NydGNfb2ZmKCkgbWFrZXMgc3VyZSB0aGF0IHRoZSBsYXRlc3QgdmJsYW5rIGZyYW1l
-IGNvdW50CmlzIHN0b3JlZCBhbmQgcmVzdG9yZWQgYnkgZHJtX3ZibGFua19jcnRjX29uKCkgYWdh
-aW4uIFNvIG15IG9waW5pb24gaXMsCgpzdGF0aWMgdm9pZCBleHlub3NfZHJtX2NydGNfZHBtcyhz
-dHJ1Y3QgZHJtX2NydGMgKmNydGMsIGludCBtb2RlKQp7Cglbc25pcF0KCglpZiAobW9kZSA+IERS
-TV9NT0RFX0RQTVNfT04pIHsKCQkvKiB3YWl0IGZvciB0aGUgY29tcGxldGlvbiBvZiBwYWdlIGZs
-aXAuICovCgkJaWYgKCF3YWl0X2V2ZW50X3RpbWVvdXQoZXh5bm9zX2NydGMtPnBlbmRpbmdfZmxp
-cF9xdWV1ZSwKCQkJCSFhdG9taWNfcmVhZCgmZXh5bm9zX2NydGMtPnBlbmRpbmdfZmxpcCksCgkJ
-CQlIWi8yMCkpCgkJCWF0b21pY19zZXQoJmV4eW5vc19jcnRjLT5wZW5kaW5nX2ZsaXAsIDApOwoJ
-CWRybV9jcnRjX3ZibGFua19vZmYoY3J0Yyk7CQkvLzwtIHN0b3JlIHRoZSBsYXRlc3QgdmJsYW5r
-IGZyYW1lIGNvdW50LgoJfSBlbHNlIHsKCQlkcm1fY3J0Y192Ymxhbmtfb24oY3J0Yyk7CQkvLzwt
-IHJlc3RvcmUgdGhlIHZibGFuayBmcmFtZSBjb3VudC4KCX0KCglbc25pcF0KfQoKClRlc3RlZCBh
-bmQgd29ya2VkIHdlbGwgd2l0aCBhYm92ZSBwYXRjaC4gSG93IGFib3V0IGl0PwoKVGhhbmtzLApJ
-bmtpIERhZQoKPiAKPj5Gcm9tIDZkZTAxNDczNzQ2YWYyMjVjNjg4ZWU0MzAxMjMwMDFkNTdkOWFm
-MmEgTW9uIFNlcCAxNyAwMDowMDowMCAyMDAxCj4gRnJvbTogSm9vbnlvdW5nIFNoaW0gPGp5MDky
-Mi5zaGltQHNhbXN1bmcuY29tPgo+IERhdGU6IFRodSwgMiBPY3QgMjAxNCAxNzo0ODoyNyArMDkw
-MAo+IFN1YmplY3Q6IFtQQVRDSF0gZHJtL2V4eW5vczogdXNlIGRybV92Ymxhbmtfb24oKQo+IAo+
-IFdlIG5lZWQgdG8gdXNlIGRybV92Ymxhbmtfb24oKSBhcyBhIGNvdW50ZXJwYXJ0IHRvIGRybV92
-Ymxhbmtfb2ZmKCkKPiBhZnRlciB0aGUgY29tbWl0IDdmZmQ3YTY4NTExYyAoImRybTogQWx3YXlz
-IHJlamVjdCBkcm1fdmJsYW5rX2dldCgpCj4gYWZ0ZXIgZHJtX3ZibGFua19vZmYoKSIpLiBJZiBu
-b3QsIGRybV92YmxhbmtfZ2V0KCkgd2lsbCBiZSBmYWlsZWQKPiBhbHdheXMgYWZ0ZXIgZHJtX3Zi
-bGFua19vZmYoKS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNo
-aW1Ac2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9jcnRjLmMgfCA0ICsrKy0KPiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMSBk
-ZWxldGlvbigtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+
-IGluZGV4IDhlMzhlOWYuLmRmYTIwOWEgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2NydGMuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9jcnRjLmMKPiBAQCAtNzEsNyArNzEsNiBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHJt
-X2NydGNfZHBtcyhzdHJ1Y3QgZHJtX2NydGMgKmNydGMsIGludCBtb2RlKQo+ICAJCQkJIWF0b21p
-Y19yZWFkKCZleHlub3NfY3J0Yy0+cGVuZGluZ19mbGlwKSwKPiAgCQkJCUhaLzIwKSkKPiAgCQkJ
-YXRvbWljX3NldCgmZXh5bm9zX2NydGMtPnBlbmRpbmdfZmxpcCwgMCk7Cj4gLQkJZHJtX3ZibGFu
-a19vZmYoY3J0Yy0+ZGV2LCBleHlub3NfY3J0Yy0+cGlwZSk7Cj4gIAl9Cj4gIAo+ICAJaWYgKG1h
-bmFnZXItPm9wcy0+ZHBtcykKPiBAQCAtOTAsNiArODksNyBAQCBzdGF0aWMgdm9pZCBleHlub3Nf
-ZHJtX2NydGNfY29tbWl0KHN0cnVjdCBkcm1fY3J0YyAqY3J0YykKPiAgCXN0cnVjdCBleHlub3Nf
-ZHJtX2NydGMgKmV4eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMoY3J0Yyk7Cj4gIAlzdHJ1Y3Qg
-ZXh5bm9zX2RybV9tYW5hZ2VyICptYW5hZ2VyID0gZXh5bm9zX2NydGMtPm1hbmFnZXI7Cj4gIAo+
-ICsJZHJtX3ZibGFua19vbihjcnRjLT5kZXYsIGV4eW5vc19jcnRjLT5waXBlKTsKPiAgCWV4eW5v
-c19kcm1fY3J0Y19kcG1zKGNydGMsIERSTV9NT0RFX0RQTVNfT04pOwo+ICAKPiAgCWV4eW5vc19w
-bGFuZV9jb21taXQoY3J0Yy0+cHJpbWFyeSk7Cj4gQEAgLTE3NywxMCArMTc3LDEyIEBAIHN0YXRp
-YyBpbnQgZXh5bm9zX2RybV9jcnRjX21vZGVfc2V0X2Jhc2Uoc3RydWN0IGRybV9jcnRjICpjcnRj
-LCBpbnQgeCwgaW50IHksCj4gIAo+ICBzdGF0aWMgdm9pZCBleHlub3NfZHJtX2NydGNfZGlzYWJs
-ZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCj4gIHsKPiArCXN0cnVjdCBleHlub3NfZHJtX2NydGMg
-KmV4eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMoY3J0Yyk7Cj4gIAlzdHJ1Y3QgZHJtX3BsYW5l
-ICpwbGFuZTsKPiAgCWludCByZXQ7Cj4gIAo+ICAJZXh5bm9zX2RybV9jcnRjX2RwbXMoY3J0Yywg
-RFJNX01PREVfRFBNU19PRkYpOwo+ICsJZHJtX3ZibGFua19vZmYoY3J0Yy0+ZGV2LCBleHlub3Nf
-Y3J0Yy0+cGlwZSk7Cj4gIAo+ICAJZHJtX2Zvcl9lYWNoX2xlZ2FjeV9wbGFuZShwbGFuZSwgJmNy
-dGMtPmRldi0+bW9kZV9jb25maWcucGxhbmVfbGlzdCkgewo+ICAJCWlmIChwbGFuZS0+Y3J0YyAh
-PSBjcnRjKQo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-Cmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Thu, Oct 02, 2014 at 01:50:25AM +0100, YoungJun Cho wrote:
+> From: Youngjun Cho <yj44.cho@samsung.com>
+> 
+> This patch adds new board dts file to support Samsung Monk board which is
+> based on Exynos3250 SoC and has different H/W configuration from Rinato.
+> 
+> This patch is based on linux-samsung.git for-next branch and depends on
+> [PATCH 0/2] ARM: dts: Add new board dts file for Exynos3250-based Rinato board[1]
+> 
+> This dts file support following features:
+> - eMMC
+> - Main PMIC (Samsung S2MPS14)
+> - Interface PMIC (Maxim MAX77836, MUIC, fuel-gauge, charger)
+> - RTC of Exynos3250
+> - ADC of Exynos3250 with NTC thermistor
+> - I2S of Exynos3250
+> - TMU of Exynos3250
+> - Secure firmware for Exynos3250 secondary cpu boot
+> - Serial ports of Exynos3250
+> - gpio-key for power key
+> 
+> [1] http://www.spinics.net/lists/arm-kernel/msg366849.html
+> 
+> Signed-off-by: Youngjun Cho <yj44.cho@samsung.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/boot/dts/Makefile            |   3 +-
+>  arch/arm/boot/dts/exynos3250-monk.dts | 592 ++++++++++++++++++++++++++++++++++
+>  2 files changed, 594 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm/boot/dts/exynos3250-monk.dts
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index 5728918..0c8ae64 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -64,7 +64,8 @@ dtb-$(CONFIG_ARCH_BRCMSTB) += \
+>  dtb-$(CONFIG_ARCH_DAVINCI) += da850-enbw-cmc.dtb \
+>         da850-evm.dtb
+>  dtb-$(CONFIG_ARCH_EFM32) += efm32gg-dk3750.dtb
+> -dtb-$(CONFIG_ARCH_EXYNOS) += exynos3250-rinato.dtb \
+> +dtb-$(CONFIG_ARCH_EXYNOS) += exynos3250-monk.dtb \
+> +       exynos3250-rinato.dtb \
+>         exynos4210-origen.dtb \
+>         exynos4210-smdkv310.dtb \
+>         exynos4210-trats.dtb \
+> diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
+> new file mode 100644
+> index 0000000..9e94294
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/exynos3250-monk.dts
+> @@ -0,0 +1,592 @@
+> +/*
+> + * Samsung's Exynos3250 based Monk board device tree source
+> + *
+> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> + *             http://www.samsung.com
+> + *
+> + * Device tree source file for Samsung's Monk board which is based on
+> + * Samsung Exynos3250 SoC.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +/dts-v1/;
+> +#include "exynos3250.dtsi"
+> +#include <dt-bindings/input/input.h>
+> +
+> +/ {
+> +       model = "Samsung Monk board";
+> +       compatible = "samsung,monk", "samsung,exynos3250", "samsung,exynos3";
+> +
+> +       aliases {
+> +               i2c7 = &i2c_max77836;
+> +       };
+> +
+> +       memory {
+> +               reg =  <0x40000000 0x08000000
+> +                       0x48000000 0x08000000
+> +                       0x50000000 0x08000000
+> +                       0x58000000 0x07F00000>;
+
+Nit: please bracket list entries individually.
+
+That said, it looks like this could be coalesced into:
+
+memory@40000000 {
+	reg = <0x40000000 0x1ff00000>;
+};
+
+> +       };
+> +
+> +       chosen {
+> +               bootargs = "console=ttySAC1,115200N8 root=/dev/mmcblk0p15 rootwait earlyprintk panic=5";
+> +       };
+> +
+> +       firmware@0205F000 {
+> +               compatible = "samsung,secure-firmware";
+> +               reg = <0x0205F000 0x1000>;
+> +       } ;
+
+Nit: useless space before the ';'.
+
+> +
+> +       gpio_keys {
+> +               compatible = "gpio-keys";
+> +
+> +               power_key {
+> +                       interrupt-parent = <&gpx2>;
+> +                       interrupts = <7 0>;
+> +                       gpios = <&gpx2 7 1>;
+> +                       linux,code = <KEY_POWER>;
+> +                       label = "power key";
+> +                       debounce-interval = <10>;
+> +                       gpio-key,wakeup;
+> +               };
+> +       };
+> +
+> +       regulators {
+> +               compatible = "simple-bus";
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +
+> +               vemmc_reg: voltage-regulator-0 {
+> +                       compatible = "regulator-fixed";
+> +                       regulator-name = "V_EMMC_2.8V-fixed";
+> +                       regulator-min-microvolt = <2800000>;
+> +                       regulator-max-microvolt = <2800000>;
+> +                       gpio = <&gpk0 2 0>;
+> +                       enable-active-high;
+> +               };
+> +       };
+
+Why not put this directly under the root node? There's no reason to
+group regulators simply because they're regulators, and there's only one
+anyhow.
+
+Mark.
