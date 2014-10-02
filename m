@@ -1,39 +1,139 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 7/7] ARM: multi_v7_defconfig: Enable Maxim 77693 charger
-Date: Thu, 02 Oct 2014 14:22:08 +0200
-Message-ID: <1412252528-30148-8-git-send-email-k.kozlowski@samsung.com>
-References: <1412252528-30148-1-git-send-email-k.kozlowski@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 1/4] PM / Domains: Remove pm_genpd_dev_need_restore() API
+Date: Thu, 2 Oct 2014 15:30:40 +0200
+Message-ID: <CAPDyKFozS+J_sTZykF=9tVJsCByby_BDuQmGiMt-Uw-qC4Tzuw@mail.gmail.com>
+References: <1412174494-15346-1-git-send-email-ulf.hansson@linaro.org>
+	<1412174494-15346-2-git-send-email-ulf.hansson@linaro.org>
+	<542C2D9F.8060005@samsung.com>
+	<CAPDyKFq+9G+n3qaj+Ls9i4sOi_BdOGzk5SypDzEMZJwAJMa97Q@mail.gmail.com>
+	<542D3E45.5020908@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:47470 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751219AbaJBMW1 (ORCPT
+Received: from mail-qc0-f176.google.com ([209.85.216.176]:45499 "EHLO
+	mail-qc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752243AbaJBNal (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Oct 2014 08:22:27 -0400
-In-reply-to: <1412252528-30148-1-git-send-email-k.kozlowski@samsung.com>
+	Thu, 2 Oct 2014 09:30:41 -0400
+Received: by mail-qc0-f176.google.com with SMTP id r5so2075973qcx.35
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Oct 2014 06:30:41 -0700 (PDT)
+In-Reply-To: <542D3E45.5020908@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org, linux-api@vger.kernel.org
-Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun
 
-Enable the max77693 charger driver used on Trats2 board. This allows
-querying the charging status through power supply interface.
+On 2 October 2014 14:00, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+> Hello Ulf,
+>
+> On 02/10/14 11:09, Ulf Hansson wrote:
+>> On 1 October 2014 18:36, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+>>> On 01/10/14 16:41, Ulf Hansson wrote:
+>>>> There are currently no users of this API, let's remove it.
+>>
+>> Hi Sylwester,
+>>
+>> Thanks for your reply!
+>>
+>>> The sad fact is that removal of pm_genpd_dev_need_restore() calls
+>>> from arch/arm/mach-exynos/pm_domains.c introduces regressions in
+>>> multiple exynos drivers (I'm sure it breaks media drivers).
+>>
+>> The fact that you need pm_genpd_dev_need_restore() is really worrying.
+>> That indicates that exynos are suffering from this race condition I am
+>> trying to fix in this patchset.
+>>
+>>> I think before doing such changes all relevant drivers should be
+>>> updated first. I need to take a closer look again, but it seems
+>>> after dropping the pm_genpd_dev_need_restore() calls, client
+>>> driver's runtime_resume() callback is not being called in response
+>>> to first pm_runtime_get(_sync) call, even if a device is runtime
+>>> pm active.
+>
+> Sorry, I meant to say "inactive" here.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Ahh, now I see the approach.
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index a25549d015e8..54367775aade 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -248,6 +248,7 @@ CONFIG_GPIO_TPS6586X=y
- CONFIG_GPIO_TPS65910=y
- CONFIG_BATTERY_SBS=y
- CONFIG_CHARGER_TPS65090=y
-+CONFIG_CHARGER_MAX77693=y
- CONFIG_POWER_RESET_AS3722=y
- CONFIG_POWER_RESET_GPIO=y
- CONFIG_POWER_RESET_SUN6I=y
--- 
-1.9.1
+Correct me if I am wrong, but I think in principle these exynos
+drivers don't use pm_runtime_set_active() during ->probe() and are
+instead relying on CONFIG_PM_RUNTIME to be enabled.
+
+That's not a good behaviour. If these drivers are build without
+CONFIG_PM_RUNTIME - they won't work.
+
+I guess I have pointed out this in earlier discussions around runtime
+PM, I have seen quite some driver's getting their support for runtime
+PM wrong.
+
+>
+>> Why would runtime PM callbacks be invoked when the device are runtime
+>> PM active? That's prevented by the runtime PM core and is the expected
+>> behaviour.
+>>
+>> pm_genpd_dev_need_restore() is not the solution, besides that it gives
+>> you the option to lie about device's runtime PM state to genpd. Thus,
+>> if you are really lucky, that might workaround your issues. :-)
+>
+> Might be, nevertheless so far it more or less worked for us. At least
+> I'm sure without it everything breaks right away.
+
+I see. Obviously we must not break exynos, let's try to figure out the
+best way forward.
+
+>
+>> I will happily help out in fixing drivers for exynos. Would be nice if
+>> you could provide me with a list of which driver/subsystems that seems
+>> broken. HW, wise I have a exynos 5250 and exynos 5422 on my desk, so
+>> those I can test.
+>
+> For exynos5 I would check exynos-gsc and s5p-mfc (see kernel logs below).
+
+Thanks, I will have look and run some tests on exynos 5. Let you know soon.
+
+> I could take care of other, exynos4 drivers. But I believe the fix
+> belongs in the PM core, I doubt we can solve in the driver a problem
+> which only occurs to one instance (first probed) of a device from a set
+> of devices in the power domain.
+>
+>>> More details can be found in commit ebc35c726298ba3fdebba316a
+>>> 'ARM: EXYNOS: register devices in 'need_restore' state for pm_domains'.
+>>>
+>>> The above only happens when devices are added to an inactive power
+>>> domain, then I guess patch 2/4 is also an attempt to address this
+>>> issue ?
+>>
+>> Yes.
+>>
+>> I would really appreciate if you could run a test with the complete
+>> patchset and see if that resolves the issues.
+>
+> Sure, is there a git tree I could fetch all the relevant patches from ?
+> I'm not sure what the base tree for this series, I could only apply
+> first 2 patches from this thread, on top of the generic OF PM domain
+> patches. And that didn't solve issues which are seen in the logs below.
+
+You have two options:
+
+1) Use/build Rafaels tree. Apply my patches on the bleeding edge
+branch.That's also what I use a work base.
+http://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
+
+2) Use/build Stephen Rothwell's linux-next tree. I can confirm the
+patches applies on the master branch as of today.
+http://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+
+I really appreciate your help here, thanks!
+
+>
+> Nevertheless, as Rafael pointed out, enabling all power domains
+> unconditionally seems a step backwards. It would be nice to have
+> resolved the race in a away the power domains remain in state left
+> by the firmware and are being enabled only before any client device
+> actually needs it.
+
+You are right, but I am not sure we can do this in one go - since it
+depends on if we can fix this on PM core of if we need need
+adaptations in drivers/subsystems.
+
+Kind regards
+Uffe
