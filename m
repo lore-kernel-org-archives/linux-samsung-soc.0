@@ -1,166 +1,669 @@
-From: Simon Horman <horms@verge.net.au>
-Subject: Re: [PATCH v2 3/4] PM / Domains: Expect PM domains being powered at
- initialization
-Date: Thu, 2 Oct 2014 08:50:19 +0900
-Message-ID: <20141001235019.GC15551@verge.net.au>
-References: <1412174494-15346-1-git-send-email-ulf.hansson@linaro.org>
- <1412174494-15346-4-git-send-email-ulf.hansson@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: [PATCH] ARM: dts: add board dts file for Exynos3250-based Monk board
+Date: Thu, 02 Oct 2014 09:50:25 +0900
+Message-ID: <1412211025-3459-1-git-send-email-yj44.cho@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from kirsty.vergenet.net ([202.4.237.240]:42233 "EHLO
-	kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752068AbaJAXuY (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:18057 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752009AbaJBAuj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Oct 2014 19:50:24 -0400
-Content-Disposition: inline
-In-Reply-To: <1412174494-15346-4-git-send-email-ulf.hansson@linaro.org>
+	Wed, 1 Oct 2014 20:50:39 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NCS00J12L0DXED0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 02 Oct 2014 09:50:37 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, cw00.choi@samsung.com, jh80.chung@samsung.com, geunsik.lim@samsung.com
 
-On Wed, Oct 01, 2014 at 04:41:33PM +0200, Ulf Hansson wrote:
-> At ->probe() it's common practice for drivers/subsystems to bring their
-> devices to full power and without depending on CONFIG_PM_RUNTIME.
-> 
-> We could also expect that drivers/subsystems requires their device's
-> corresponding PM domains to be powered, to successfully complete a
-> ->probe() sequence.
-> 
-> Align the generic PM domain to the behavior above, by enforcing a PM
-> domain to be powered at initialization.
-> 
-> Previous patch changed the only call of pm_genpd_init() with "true" for
-> the "is_off" parameter into "false". Thus all calls of pm_genpd_init()
-> now uses "false" as the value for "is_off".
-> 
-> To make it clear that genpd currently only supports powered PM domains
-> at init, let's also remove the "is_off" parameter from the API.
-> 
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->  arch/arm/mach-exynos/pm_domains.c   | 2 +-
->  arch/arm/mach-s3c64xx/pm.c          | 4 ++--
->  arch/arm/mach-shmobile/pm-r8a7779.c | 2 +-
->  arch/arm/mach-shmobile/pm-rmobile.c | 2 +-
->  drivers/base/power/domain.c         | 5 ++---
->  include/linux/pm_domain.h           | 4 ++--
->  6 files changed, 9 insertions(+), 10 deletions(-)
+From: Youngjun Cho <yj44.cho@samsung.com>
 
-I am mildly concerned about the potential for conflicts in
-arch/arm/mach-shmobile/. But I think that taking this through Rafael's tree
-is consistent with how we have handled things before.
+This patch adds new board dts file to support Samsung Monk board which is
+based on Exynos3250 SoC and has different H/W configuration from Rinato.
 
-So, providing it can appear in v3.18-rc1, in which case I can
-rebase anything in my tree to avoid conflicts bubling up:
+This patch is based on linux-samsung.git for-next branch and depends on
+[PATCH 0/2] ARM: dts: Add new board dts file for Exynos3250-based Rinato board[1]
 
-Acked-by: Simon Horman <horms+renesas@verge.net.au>
+This dts file support following features:
+- eMMC
+- Main PMIC (Samsung S2MPS14)
+- Interface PMIC (Maxim MAX77836, MUIC, fuel-gauge, charger)
+- RTC of Exynos3250
+- ADC of Exynos3250 with NTC thermistor
+- I2S of Exynos3250
+- TMU of Exynos3250
+- Secure firmware for Exynos3250 secondary cpu boot
+- Serial ports of Exynos3250
+- gpio-key for power key
 
-> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-> index 58e18e9..f2e5096 100644
-> --- a/arch/arm/mach-exynos/pm_domains.c
-> +++ b/arch/arm/mach-exynos/pm_domains.c
-> @@ -158,7 +158,7 @@ no_clk:
->  		if (!(__raw_readl(pd->base + 0x4) & INT_LOCAL_PWR_EN))
->  			exynos_pd_power_on(&pd->pd);
->  
-> -		pm_genpd_init(&pd->pd, NULL, false);
-> +		pm_genpd_init(&pd->pd, NULL);
->  		of_genpd_add_provider_simple(np, &pd->pd);
->  	}
->  
-> diff --git a/arch/arm/mach-s3c64xx/pm.c b/arch/arm/mach-s3c64xx/pm.c
-> index aaf7bea..42dead0 100644
-> --- a/arch/arm/mach-s3c64xx/pm.c
-> +++ b/arch/arm/mach-s3c64xx/pm.c
-> @@ -315,10 +315,10 @@ int __init s3c64xx_pm_init(void)
->  
->  	for (i = 0; i < ARRAY_SIZE(s3c64xx_always_on_pm_domains); i++)
->  		pm_genpd_init(&s3c64xx_always_on_pm_domains[i]->pd,
-> -			      &pm_domain_always_on_gov, false);
-> +			      &pm_domain_always_on_gov);
->  
->  	for (i = 0; i < ARRAY_SIZE(s3c64xx_pm_domains); i++)
-> -		pm_genpd_init(&s3c64xx_pm_domains[i]->pd, NULL, false);
-> +		pm_genpd_init(&s3c64xx_pm_domains[i]->pd, NULL);
->  
->  #ifdef CONFIG_S3C_DEV_FB
->  	if (dev_get_platdata(&s3c_device_fb.dev))
-> diff --git a/arch/arm/mach-shmobile/pm-r8a7779.c b/arch/arm/mach-shmobile/pm-r8a7779.c
-> index 82fe3d7..c20ef44 100644
-> --- a/arch/arm/mach-shmobile/pm-r8a7779.c
-> +++ b/arch/arm/mach-shmobile/pm-r8a7779.c
-> @@ -83,7 +83,7 @@ static void r8a7779_init_pm_domain(struct r8a7779_pm_domain *r8a7779_pd)
->  {
->  	struct generic_pm_domain *genpd = &r8a7779_pd->genpd;
->  
-> -	pm_genpd_init(genpd, NULL, false);
-> +	pm_genpd_init(genpd, NULL);
->  	genpd->dev_ops.stop = pm_clk_suspend;
->  	genpd->dev_ops.start = pm_clk_resume;
->  	genpd->dev_ops.active_wakeup = pd_active_wakeup;
-> diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
-> index 818de2f..e6a0490 100644
-> --- a/arch/arm/mach-shmobile/pm-rmobile.c
-> +++ b/arch/arm/mach-shmobile/pm-rmobile.c
-> @@ -107,7 +107,7 @@ static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
->  	struct generic_pm_domain *genpd = &rmobile_pd->genpd;
->  	struct dev_power_governor *gov = rmobile_pd->gov;
->  
-> -	pm_genpd_init(genpd, gov ? : &simple_qos_governor, false);
-> +	pm_genpd_init(genpd, gov ? : &simple_qos_governor);
->  	genpd->dev_ops.stop		= pm_clk_suspend;
->  	genpd->dev_ops.start		= pm_clk_resume;
->  	genpd->dev_ops.active_wakeup	= rmobile_pd_active_wakeup;
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 36871b3..cfb76e8 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -1836,10 +1836,9 @@ static int pm_genpd_default_restore_state(struct device *dev)
->   * pm_genpd_init - Initialize a generic I/O PM domain object.
->   * @genpd: PM domain object to initialize.
->   * @gov: PM domain governor to associate with the domain (may be NULL).
-> - * @is_off: Initial value of the domain's power_is_off field.
->   */
->  void pm_genpd_init(struct generic_pm_domain *genpd,
-> -		   struct dev_power_governor *gov, bool is_off)
-> +		   struct dev_power_governor *gov)
->  {
->  	if (IS_ERR_OR_NULL(genpd))
->  		return;
-> @@ -1852,7 +1851,7 @@ void pm_genpd_init(struct generic_pm_domain *genpd,
->  	INIT_WORK(&genpd->power_off_work, genpd_power_off_work_fn);
->  	genpd->in_progress = 0;
->  	atomic_set(&genpd->sd_count, 0);
-> -	genpd->status = is_off ? GPD_STATE_POWER_OFF : GPD_STATE_ACTIVE;
-> +	genpd->status = GPD_STATE_ACTIVE;
->  	init_waitqueue_head(&genpd->status_wait_queue);
->  	genpd->poweroff_task = NULL;
->  	genpd->resume_count = 0;
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index a21dfa9..ad4aa87 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -140,7 +140,7 @@ extern int pm_genpd_name_attach_cpuidle(const char *name, int state);
->  extern int pm_genpd_detach_cpuidle(struct generic_pm_domain *genpd);
->  extern int pm_genpd_name_detach_cpuidle(const char *name);
->  extern void pm_genpd_init(struct generic_pm_domain *genpd,
-> -			  struct dev_power_governor *gov, bool is_off);
-> +			  struct dev_power_governor *gov);
->  
->  extern int pm_genpd_poweron(struct generic_pm_domain *genpd);
->  extern int pm_genpd_name_poweron(const char *domain_name);
-> @@ -206,7 +206,7 @@ static inline int pm_genpd_name_detach_cpuidle(const char *name)
->  	return -ENOSYS;
->  }
->  static inline void pm_genpd_init(struct generic_pm_domain *genpd,
-> -				 struct dev_power_governor *gov, bool is_off)
-> +				 struct dev_power_governor *gov)
->  {
->  }
->  static inline int pm_genpd_poweron(struct generic_pm_domain *genpd)
-> -- 
-> 1.9.1
-> 
+[1] http://www.spinics.net/lists/arm-kernel/msg366849.html
+
+Signed-off-by: Youngjun Cho <yj44.cho@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/boot/dts/Makefile            |   3 +-
+ arch/arm/boot/dts/exynos3250-monk.dts | 592 ++++++++++++++++++++++++++++++++++
+ 2 files changed, 594 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/exynos3250-monk.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 5728918..0c8ae64 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -64,7 +64,8 @@ dtb-$(CONFIG_ARCH_BRCMSTB) += \
+ dtb-$(CONFIG_ARCH_DAVINCI) += da850-enbw-cmc.dtb \
+ 	da850-evm.dtb
+ dtb-$(CONFIG_ARCH_EFM32) += efm32gg-dk3750.dtb
+-dtb-$(CONFIG_ARCH_EXYNOS) += exynos3250-rinato.dtb \
++dtb-$(CONFIG_ARCH_EXYNOS) += exynos3250-monk.dtb \
++	exynos3250-rinato.dtb \
+ 	exynos4210-origen.dtb \
+ 	exynos4210-smdkv310.dtb \
+ 	exynos4210-trats.dtb \
+diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
+new file mode 100644
+index 0000000..9e94294
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos3250-monk.dts
+@@ -0,0 +1,592 @@
++/*
++ * Samsung's Exynos3250 based Monk board device tree source
++ *
++ * Copyright (c) 2014 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Device tree source file for Samsung's Monk board which is based on
++ * Samsung Exynos3250 SoC.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++/dts-v1/;
++#include "exynos3250.dtsi"
++#include <dt-bindings/input/input.h>
++
++/ {
++	model = "Samsung Monk board";
++	compatible = "samsung,monk", "samsung,exynos3250", "samsung,exynos3";
++
++	aliases {
++		i2c7 = &i2c_max77836;
++	};
++
++	memory {
++		reg =  <0x40000000 0x08000000
++			0x48000000 0x08000000
++			0x50000000 0x08000000
++			0x58000000 0x07F00000>;
++	};
++
++	chosen {
++		bootargs = "console=ttySAC1,115200N8 root=/dev/mmcblk0p15 rootwait earlyprintk panic=5";
++	};
++
++	firmware@0205F000 {
++		compatible = "samsung,secure-firmware";
++		reg = <0x0205F000 0x1000>;
++	} ;
++
++	gpio_keys {
++		compatible = "gpio-keys";
++
++		power_key {
++			interrupt-parent = <&gpx2>;
++			interrupts = <7 0>;
++			gpios = <&gpx2 7 1>;
++			linux,code = <KEY_POWER>;
++			label = "power key";
++			debounce-interval = <10>;
++			gpio-key,wakeup;
++		};
++	};
++
++	regulators {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		vemmc_reg: voltage-regulator-0 {
++		        compatible = "regulator-fixed";
++			regulator-name = "V_EMMC_2.8V-fixed";
++			regulator-min-microvolt = <2800000>;
++			regulator-max-microvolt = <2800000>;
++			gpio = <&gpk0 2 0>;
++			enable-active-high;
++		};
++	};
++
++	i2c_max77836: i2c-gpio-0 {
++		compatible = "i2c-gpio";
++		gpios = <&gpd0 2 0>, <&gpd0 3 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		max77836: subpmic@25 {
++			compatible = "maxim,max77836";
++			interrupt-parent = <&gpx1>;
++			interrupts = <5 0>;
++			reg = <0x25>;
++			wakeup;
++
++			muic: max77836-muic {
++				compatible = "maxim,max77836-muic";
++			};
++
++			regulators {
++				compatible = "maxim,max77836-regulator";
++				safeout_reg: SAFEOUT {
++					regulator-name = "SAFEOUT";
++				};
++
++				charger_reg: CHARGER {
++					regulator-name = "CHARGER";
++					regulator-min-microamp = <45000>;
++					regulator-max-microamp = <475000>;
++					regulator-boot-on;
++				};
++
++				motor_reg: LDO1 {
++					regulator-name = "MOT_2.7V";
++					regulator-min-microvolt = <1100000>;
++					regulator-max-microvolt = <2700000>;
++				};
++
++				LDO2 {
++					regulator-name = "UNUSED_LDO2";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <3950000>;
++				};
++			};
++
++			charger {
++				compatible = "maxim,max77836-charger";
++
++				maxim,constant-uvolt = <4350000>;
++				maxim,fast-charge-uamp = <225000>;
++				maxim,eoc-uamp = <7500>;
++				maxim,ovp-uvolt = <6500000>;
++			};
++		};
++	};
++};
++
++&adc {
++	vdd-supply = <&ldo3_reg>;
++	status = "okay";
++	assigned-clocks = <&cmu CLK_SCLK_TSADC>;
++	assigned-clock-rates = <6000000>;
++
++	thermistor-ap {
++		compatible = "ntc,ncp15wb473";
++		pullup-uv = <1800000>;
++		pullup-ohm = <100000>;
++		pulldown-ohm = <100000>;
++		io-channels = <&adc 0>;
++	};
++
++	thermistor-battery {
++		compatible = "ntc,ncp15wb473";
++		pullup-uv = <1800000>;
++		pullup-ohm = <100000>;
++		pulldown-ohm = <100000>;
++		io-channels = <&adc 1>;
++	};
++};
++
++&i2c_0 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	samsung,i2c-sda-delay = <100>;
++	samsung,i2c-slave-addr = <0x10>;
++	samsung,i2c-max-bus-freq = <100000>;
++	status = "okay";
++
++	s2mps14_pmic@66 {
++		compatible = "samsung,s2mps14-pmic";
++		interrupt-parent = <&gpx0>;
++		interrupts = <7 0>;
++		reg = <0x66>;
++		wakeup;
++
++		s2mps14_osc: clocks {
++			compatible = "samsung,s2mps14-clk";
++			#clock-cells = <1>;
++			clock-output-names = "s2mps14_ap", "unused",
++				"s2mps14_bt";
++		};
++
++		regulators {
++			ldo1_reg: LDO1 {
++				regulator-name = "VAP_ALIVE_1.0V";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-always-on;
++			};
++
++			ldo2_reg: LDO2 {
++				regulator-name = "VAP_M1_1.2V";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <1200000>;
++				regulator-always-on;
++			};
++
++			ldo3_reg: LDO3 {
++				regulator-name = "VCC_AP_1.8V";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-always-on;
++			};
++
++			ldo4_reg: LDO4 {
++				regulator-name = "VAP_AVDD_PLL1";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-always-on;
++			};
++
++			ldo5_reg: LDO5 {
++				regulator-name = "VAP_PLL_ISO_1.0V";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-always-on;
++			};
++
++			ldo6_reg: LDO6 {
++				regulator-name = "VAP_MIPI_1.0V";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1000000>;
++			};
++
++			ldo7_reg: LDO7 {
++				regulator-name = "VAP_AVDD_1.8V";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				regulator-always-on;
++			};
++
++			ldo8_reg: LDO8 {
++				regulator-name = "VAP_USB_3.0V";
++				regulator-min-microvolt = <3000000>;
++				regulator-max-microvolt = <3000000>;
++				regulator-always-on;
++			};
++
++			ldo9_reg: LDO9 {
++				regulator-name = "V_LPDDR_1.2V";
++				regulator-min-microvolt = <1200000>;
++				regulator-max-microvolt = <1200000>;
++				regulator-always-on;
++			};
++
++			ldo10_reg: LDO10 {
++				regulator-name = "UNUSED_LDO10";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1000000>;
++			};
++
++			ldo11_reg: LDO11 {
++				regulator-name = "V_EMMC_1.8V";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++				samsung,ext-control-gpios = <&gpk0 2 0>;
++			};
++
++			ldo12_reg: LDO12 {
++				regulator-name = "V_EMMC_2.8V";
++				regulator-min-microvolt = <2800000>;
++				regulator-max-microvolt = <2800000>;
++				samsung,ext-control-gpios = <&gpk0 2 0>;
++			};
++
++			ldo13_reg: LDO13 {
++				regulator-name = "VSENSOR_2.85V";
++				regulator-min-microvolt = <2850000>;
++				regulator-max-microvolt = <2850000>;
++				regulator-always-on;
++			};
++
++			ldo14_reg: LDO14 {
++				regulator-name = "UNUSED_LDO14";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++			};
++
++			ldo15_reg: LDO15 {
++				regulator-name = "TSP_AVDD_3.3V";
++				regulator-min-microvolt = <3300000>;
++				regulator-max-microvolt = <3300000>;
++			};
++
++			ldo16_reg: LDO16 {
++				regulator-name = "LCD_VDD_3.3V";
++				regulator-min-microvolt = <3300000>;
++				regulator-max-microvolt = <3300000>;
++			};
++
++			ldo17_reg: LDO17 {
++				regulator-name = "UNUSED_LDO17";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++			};
++
++			ldo18_reg: LDO18 {
++				regulator-name = "UNUSED_LDO18";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++			};
++
++			ldo19_reg: LDO19 {
++				regulator-name = "TSP_VDD_1.8V";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++			};
++
++			ldo20_reg: LDO20 {
++				regulator-name = "LCD_VDD_1.8V";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++			};
++
++			ldo21_reg: LDO21 {
++				regulator-name = "UNUSED_LDO21";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1000000>;
++			};
++
++			ldo22_reg: LDO22 {
++				regulator-name = "UNUSED_LDO22";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1000000>;
++			};
++
++			ldo23_reg: LDO23 {
++				regulator-name = "UNUSED_LDO23";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-always-on;
++			};
++
++			ldo24_reg: LDO24 {
++				regulator-name = "UNUSED_LDO24";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++			};
++
++			ldo25_reg: LDO25 {
++				regulator-name = "UNUSED_LDO25";
++				regulator-min-microvolt = <1800000>;
++				regulator-max-microvolt = <1800000>;
++			};
++
++			buck1_reg: BUCK1 {
++				regulator-name = "VAP_MIF_1.0V";
++				regulator-min-microvolt = <800000>;
++				regulator-max-microvolt = <900000>;
++				regulator-always-on;
++			};
++
++			buck2_reg: BUCK2 {
++				regulator-name = "VAP_ARM_1.0V";
++				regulator-min-microvolt = <850000>;
++				regulator-max-microvolt = <1150000>;
++				regulator-always-on;
++			};
++
++			buck3_reg: BUCK3 {
++				regulator-name = "VAP_INT3D_1.0V";
++				regulator-min-microvolt = <850000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-always-on;
++			};
++
++			buck4_reg: BUCK4 {
++				regulator-name = "VCC_SUB_1.95V";
++				regulator-min-microvolt = <1950000>;
++				regulator-max-microvolt = <1950000>;
++				regulator-always-on;
++			};
++
++			buck5_reg: BUCK5 {
++				regulator-name = "VCC_SUB_1.35V";
++				regulator-min-microvolt = <1350000>;
++				regulator-max-microvolt = <1350000>;
++				regulator-always-on;
++			};
++		};
++	};
++};
++
++&i2c_1 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	samsung,i2c-sda-delay = <100>;
++	samsung,i2c-slave-addr = <0x10>;
++	samsung,i2c-max-bus-freq = <400000>;
++	status = "okay";
++
++	fuelgauge@36 {
++		compatible = "maxim,max77836-battery";
++		interrupt-parent = <&gpx1>;
++		interrupts = <2 8>;
++		reg = <0x36>;
++	};
++};
++
++&i2s2 {
++	status = "okay";
++};
++
++&mshc_0 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	num-slots = <1>;
++	broken-cd;
++	non-removable;
++	cap-mmc-highspeed;
++	desc-num = <4>;
++	mmc-hs200-1_8v;
++	card-detect-delay = <200>;
++	vmmc-supply = <&vemmc_reg>;
++	clock-frequency = <100000000>;
++	clock-freq-min-max = <400000 100000000>;
++	samsung,dw-mshc-ciu-div = <1>;
++	samsung,dw-mshc-sdr-timing = <0 1>;
++	samsung,dw-mshc-ddr-timing = <1 2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd0_cmd &sd0_bus1 &sd0_bus4 &sd0_bus8>;
++	bus-width = <8>;
++	status = "okay";
++};
++
++&serial_0 {
++	assigned-clocks = <&cmu CLK_SCLK_UART0>;
++	assigned-clock-rates = <100000000>;
++	status = "okay";
++};
++
++&serial_1 {
++	status = "okay";
++};
++
++&tmu {
++	vtmu-supply = <&ldo7_reg>;
++	status = "okay";
++};
++
++&rtc {
++	clocks = <&cmu CLK_RTC>, <&s2mps14_osc 0>;
++	clock-names = "rtc", "rtc_src";
++	status = "okay";
++};
++
++&xusbxti {
++	clock-frequency = <24000000>;
++};
++
++&pinctrl_0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&sleep0>;
++
++	sleep0: sleep-state {
++		PIN_SLP(gpa0-0, INPUT, DOWN);
++		PIN_SLP(gpa0-1, INPUT, DOWN);
++		PIN_SLP(gpa0-2, INPUT, DOWN);
++		PIN_SLP(gpa0-3, INPUT, DOWN);
++		PIN_SLP(gpa0-4, INPUT, DOWN);
++		PIN_SLP(gpa0-5, INPUT, DOWN);
++		PIN_SLP(gpa0-6, INPUT, DOWN);
++		PIN_SLP(gpa0-7, INPUT, DOWN);
++
++		PIN_SLP(gpa1-0, INPUT, DOWN);
++		PIN_SLP(gpa1-1, INPUT, DOWN);
++		PIN_SLP(gpa1-2, INPUT, DOWN);
++		PIN_SLP(gpa1-3, INPUT, DOWN);
++		PIN_SLP(gpa1-4, INPUT, DOWN);
++		PIN_SLP(gpa1-5, INPUT, DOWN);
++
++		PIN_SLP(gpb-0, PREV, NONE);
++		PIN_SLP(gpb-1, PREV, NONE);
++		PIN_SLP(gpb-2, PREV, NONE);
++		PIN_SLP(gpb-3, PREV, NONE);
++		PIN_SLP(gpb-4, INPUT, DOWN);
++		PIN_SLP(gpb-5, INPUT, DOWN);
++		PIN_SLP(gpb-6, INPUT, DOWN);
++		PIN_SLP(gpb-7, INPUT, DOWN);
++
++		PIN_SLP(gpc0-0, INPUT, DOWN);
++		PIN_SLP(gpc0-1, INPUT, DOWN);
++		PIN_SLP(gpc0-2, INPUT, DOWN);
++		PIN_SLP(gpc0-3, INPUT, DOWN);
++		PIN_SLP(gpc0-4, INPUT, DOWN);
++
++		PIN_SLP(gpc1-0, INPUT, DOWN);
++		PIN_SLP(gpc1-1, INPUT, DOWN);
++		PIN_SLP(gpc1-2, INPUT, DOWN);
++		PIN_SLP(gpc1-3, INPUT, DOWN);
++		PIN_SLP(gpc1-4, INPUT, DOWN);
++
++		PIN_SLP(gpd0-0, INPUT, DOWN);
++		PIN_SLP(gpd0-1, INPUT, DOWN);
++		PIN_SLP(gpd0-2, INPUT, NONE);
++		PIN_SLP(gpd0-3, INPUT, NONE);
++
++		PIN_SLP(gpd1-0, INPUT, NONE);
++		PIN_SLP(gpd1-1, INPUT, NONE);
++		PIN_SLP(gpd1-2, INPUT, NONE);
++		PIN_SLP(gpd1-3, INPUT, NONE);
++	};
++};
++
++&pinctrl_1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&sleep1>;
++
++	sleep1: sleep-state {
++		PIN_SLP(gpe0-0, PREV, NONE);
++		PIN_SLP(gpe0-1, PREV, NONE);
++		PIN_SLP(gpe0-2, INPUT, DOWN);
++		PIN_SLP(gpe0-3, INPUT, DOWN);
++		PIN_SLP(gpe0-4, PREV, NONE);
++		PIN_SLP(gpe0-5, INPUT, DOWN);
++		PIN_SLP(gpe0-6, INPUT, DOWN);
++		PIN_SLP(gpe0-7, INPUT, DOWN);
++
++		PIN_SLP(gpe1-0, INPUT, DOWN);
++		PIN_SLP(gpe1-1, PREV, NONE);
++		PIN_SLP(gpe1-2, INPUT, DOWN);
++		PIN_SLP(gpe1-3, INPUT, DOWN);
++		PIN_SLP(gpe1-4, INPUT, DOWN);
++		PIN_SLP(gpe1-5, INPUT, DOWN);
++		PIN_SLP(gpe1-6, INPUT, DOWN);
++		PIN_SLP(gpe1-7, INPUT, NONE);
++
++		PIN_SLP(gpe2-0, INPUT, NONE);
++		PIN_SLP(gpe2-1, INPUT, NONE);
++		PIN_SLP(gpe2-2, INPUT, NONE);
++
++		PIN_SLP(gpk0-0, INPUT, DOWN);
++		PIN_SLP(gpk0-1, INPUT, DOWN);
++		PIN_SLP(gpk0-2, OUT0, NONE);
++		PIN_SLP(gpk0-3, INPUT, DOWN);
++		PIN_SLP(gpk0-4, INPUT, DOWN);
++		PIN_SLP(gpk0-5, INPUT, DOWN);
++		PIN_SLP(gpk0-6, INPUT, DOWN);
++		PIN_SLP(gpk0-7, INPUT, DOWN);
++
++		PIN_SLP(gpk1-0, PREV, NONE);
++		PIN_SLP(gpk1-1, PREV, NONE);
++		PIN_SLP(gpk1-2, INPUT, DOWN);
++		PIN_SLP(gpk1-3, PREV, NONE);
++		PIN_SLP(gpk1-4, PREV, NONE);
++		PIN_SLP(gpk1-5, PREV, NONE);
++		PIN_SLP(gpk1-6, PREV, NONE);
++
++		PIN_SLP(gpk2-0, INPUT, DOWN);
++		PIN_SLP(gpk2-1, INPUT, DOWN);
++		PIN_SLP(gpk2-2, INPUT, DOWN);
++		PIN_SLP(gpk2-3, INPUT, DOWN);
++		PIN_SLP(gpk2-4, INPUT, DOWN);
++		PIN_SLP(gpk2-5, INPUT, DOWN);
++		PIN_SLP(gpk2-6, INPUT, DOWN);
++
++		PIN_SLP(gpl0-0, INPUT, DOWN);
++		PIN_SLP(gpl0-1, INPUT, DOWN);
++		PIN_SLP(gpl0-2, INPUT, DOWN);
++		PIN_SLP(gpl0-3, INPUT, DOWN);
++
++		PIN_SLP(gpm0-0, INPUT, DOWN);
++		PIN_SLP(gpm0-1, INPUT, DOWN);
++		PIN_SLP(gpm0-2, INPUT, DOWN);
++		PIN_SLP(gpm0-3, INPUT, DOWN);
++		PIN_SLP(gpm0-4, INPUT, DOWN);
++		PIN_SLP(gpm0-5, INPUT, DOWN);
++		PIN_SLP(gpm0-6, INPUT, DOWN);
++		PIN_SLP(gpm0-7, INPUT, DOWN);
++
++		PIN_SLP(gpm1-0, INPUT, DOWN);
++		PIN_SLP(gpm1-1, INPUT, DOWN);
++		PIN_SLP(gpm1-2, INPUT, DOWN);
++		PIN_SLP(gpm1-3, INPUT, DOWN);
++		PIN_SLP(gpm1-4, INPUT, DOWN);
++		PIN_SLP(gpm1-5, INPUT, DOWN);
++		PIN_SLP(gpm1-6, INPUT, DOWN);
++
++		PIN_SLP(gpm2-0, INPUT, DOWN);
++		PIN_SLP(gpm2-1, INPUT, DOWN);
++		PIN_SLP(gpm2-2, INPUT, DOWN);
++		PIN_SLP(gpm2-3, INPUT, DOWN);
++		PIN_SLP(gpm2-4, INPUT, DOWN);
++
++		PIN_SLP(gpm3-0, INPUT, DOWN);
++		PIN_SLP(gpm3-1, INPUT, DOWN);
++		PIN_SLP(gpm3-2, INPUT, DOWN);
++		PIN_SLP(gpm3-3, INPUT, DOWN);
++		PIN_SLP(gpm3-4, INPUT, DOWN);
++		PIN_SLP(gpm3-5, INPUT, DOWN);
++		PIN_SLP(gpm3-6, INPUT, DOWN);
++		PIN_SLP(gpm3-7, INPUT, DOWN);
++
++		PIN_SLP(gpm4-0, INPUT, DOWN);
++		PIN_SLP(gpm4-1, INPUT, DOWN);
++		PIN_SLP(gpm4-2, INPUT, DOWN);
++		PIN_SLP(gpm4-3, INPUT, DOWN);
++		PIN_SLP(gpm4-4, INPUT, DOWN);
++		PIN_SLP(gpm4-5, INPUT, DOWN);
++		PIN_SLP(gpm4-6, INPUT, DOWN);
++		PIN_SLP(gpm4-7, INPUT, DOWN);
++	};
++};
+-- 
+1.8.0
