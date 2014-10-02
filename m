@@ -1,60 +1,42 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 2/2] drm/exynos: use drm generic mmap interface
-Date: Thu, 02 Oct 2014 19:22:19 +0900
-Message-ID: <542D275B.3080304@samsung.com>
+Subject: Re: [PATCH 1/2] drm/exynos: remove DRM_EXYNOS_GEM_MAP_OFFSET ioctl
+Date: Thu, 02 Oct 2014 19:25:40 +0900
+Message-ID: <542D2824.9020208@samsung.com>
 References: <1410961726-2533-1-git-send-email-inki.dae@samsung.com>
- <1410961726-2533-3-git-send-email-inki.dae@samsung.com>
- <542BFEFE.20708@gmail.com>
+ <1410961726-2533-2-git-send-email-inki.dae@samsung.com>
+ <542C1A16.6030809@gmail.com> <542C9280.9050800@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:27409 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750919AbaJBKW2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Oct 2014 06:22:28 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NCT00GZBBHDFIA0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 02 Oct 2014 19:22:25 +0900 (KST)
-In-reply-to: <542BFEFE.20708@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <542C9280.9050800@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-On 2014=EB=85=84 10=EC=9B=94 01=EC=9D=BC 22:17, Tomasz Figa wrote:
-> Hi Inki,
->=20
-> On 17.09.2014 15:48, Inki Dae wrote:
->> This patch removes DRM_EXYNOS_GEM_MMAP ictrl feature specific
->> to Exynos drm and instead uses drm generic mmap.
->=20
-> It looks like libdrm_exynos is still using DRM_EXYNOS_GEM_MMAP, but t=
-his
-> patch just removes it. This basically means that any application usin=
-g
-> it is now broken. Do you have any plans to fix this?
->=20
-
-Hi Tomasz,
-
-Yes, of course.
-
-We will fix it soon. For this, I mentioned earlier,
-http://web.archiveorange.com/archive/v/hhSc574WhqJAKgdBq7KL
-
-Thanks,
-Inki Dae
-
-> Best regards,
-> Tomasz
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
+T24gMjAxNOuFhCAxMOyblCAwMuydvCAwODo0NywgSm9vbnlvdW5nIFNoaW0gd3JvdGU6Cj4gSGkg
+VG9tYXN6LAo+IAo+IE9uIDEwLzAyLzIwMTQgMTI6MTMgQU0sIFRvbWFzeiBGaWdhIHdyb3RlOgo+
+PiBIaSBJbmtpLAo+Pgo+PiBPbiAxNy4wOS4yMDE0IDE1OjQ4LCBJbmtpIERhZSB3cm90ZToKPj4+
+IFRoaXMgaW50ZXJmYWNlIGFuZCByZWxldmFudCBjb2RlcyBhcmVuJ3QgdXNlZCBhbnltb3JlLgo+
+Pj4KPj4KPj4gSG1tLCBJIG1pZ2h0IGJlIG1pc3Npbmcgc29tZXRoaW5nLCBidXQgYWZ0ZXIgcmVt
+b3ZpbmcgdGhpcyBJT0NUTCwgaG93IGRvCj4+IHdlIG9idGFpbiBhbiBvZmZzZXQgdG8gcGFzcyB0
+byBtbWFwKCk/Cj4gCj4gVGhlcmUgaXMgRFJNX0lPQ1RMX01PREVfTUFQX0RVTUIsIGl0IGNhbiBn
+ZXQgbW1hcCBvZmZzZXQgYmVmb3JlIG1tYXAgYW5kCj4gdGhlIG9mZnNldCBpcyBwYXNzZWQgdmlh
+IG1tYXAuCgpFeGFjdGx5LiBUaGF0IHdpbGwgbGVhZCB1cyB0byBtb3JlIGdlbmVyaWMgd29ybGQu
+CgpUaGFua3MsCklua2kgRGFlCgo+IAo+IFRoYW5rcy4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZy
+b20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNv
+YyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9y
+Zwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jk
+b21vLWluZm8uaHRtbAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
+ZGV2ZWwK
