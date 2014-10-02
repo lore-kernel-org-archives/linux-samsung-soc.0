@@ -1,73 +1,67 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: fix CDCLK handling
-Date: Thu, 2 Oct 2014 18:54:09 +0100
-Message-ID: <20141002175409.GX4273@sirena.org.uk>
-References: <1412095211-4012-1-git-send-email-drake@endlessm.com>
- <542D7A6B.7010000@samsung.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] ARM: dts: fix MMC2 regulators for Exynos5420 Arndale Octa board
+Date: Thu, 2 Oct 2014 20:16:44 +0200
+Message-ID: <CAPDyKFqGS5mRpAJLkmQ3fnGKktLFDEt_pi+uaK-xCUtw1+Duvg@mail.gmail.com>
+References: <2750153.I3nVqzmXTP@amdc1032>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="t54s24TTWYm6oOX+"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:58972 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751971AbaJBRyh (ORCPT
+Received: from mail-qg0-f53.google.com ([209.85.192.53]:60306 "EHLO
+	mail-qg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750998AbaJBSQp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Oct 2014 13:54:37 -0400
-Content-Disposition: inline
-In-Reply-To: <542D7A6B.7010000@samsung.com>
+	Thu, 2 Oct 2014 14:16:45 -0400
+Received: by mail-qg0-f53.google.com with SMTP id a108so2188008qge.26
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Oct 2014 11:16:44 -0700 (PDT)
+In-Reply-To: <2750153.I3nVqzmXTP@amdc1032>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Daniel Drake <drake@endlessm.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Doug Anderson <dianders@google.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, "cpgs ." <cpgs@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, Seung-Won Jeon <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, SUNIL JOSHI <joshi@samsung.com>, PRASHANTH GODREHAL <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Abhilash Kesavan <a.kesavan@samsung.com>
+
+On 2 October 2014 18:10, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+> Regulators for MMC2 (SD card) are PVDD_TFLASH_2V8 (LDO19) for vmmc
+> and PVDD_APIO_MMCOFF_2V8 (LDO13) for vqmmc.  Currently the device
+> tree entry for MMC2 uses PVDD_PRE_1V8 (LDO10) for vmmc and vqmmc is
+> not specified.  Fix it.
+>
+> Without this patch:
+> - "mmc: dw_mmc: use mmc_regulator_get_supply to handle regulators"
+>   patch causes a SD card detection to fail
+> - "mmc: dw_mmc: Support voltage changes" patch causes a boot hang
+>
+> This patch fixes both above problems.
+>
+> Suggested-by: Doug Anderson <dianders@google.com>
+> Cc: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+
+Unless it causes a bunch non-trivial conflicts, I suggest we take this
+through my mmc tree to not break bisectability.
+
+Kind regards
+Uffe
 
 
---t54s24TTWYm6oOX+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Oct 02, 2014 at 06:16:43PM +0200, Sylwester Nawrocki wrote:
-> [dropping unrelated addresses from Cc]
-
-You've dropped Liam who's the other ASoC maintainer.
-
-> Sorry for getting back late to this. Indeed we have a mess here.
-> I mostly tested interaction between two CPU DAIs - the main and the
-> overlay one (which is not supported in mainline yet).
-
-The dual DAIs were supported in mainline when the code was merged...
-
-> > Simplify the situation and solve the bug with the following approach:
-> >  - as before, samsung_i2s_dai_probe() gates CDCLK by default
-> >    (no need for smartq_wm8987 to do this as well)
-> >  - platform drivers can gate/ungate CDCLK as necessary
-> >    (currently only odroidx2 needs to do this)
-> >  - i2s code has no other interaction with CDCLK
-
-> I'm not an ASoC expert, but I'd say it would be better to modify
-> the I2S module so there is no additional callbacks needed in
-> the machine driver. This way all machine drivers using the CDCLK
-> output could be simplified, not mentioning using simple-card.
-> I'm not sure how to do it yet, I'm going to take a look at this
-> over the weekend.
-
-Yes, keeping this in the SoC side drivers seems all round better.
-Perhaps the I2S driver should be exposing CDCLK as a clock via the clock
-API?  Dunno if that'd help or not.  Or refcount.
-
---t54s24TTWYm6oOX+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJULZFAAAoJECTWi3JdVIfQ/oQH/1d8rZ2JpwIRQz0Mdf8DCoDP
-mlrDo4diy4zxtjqkHieJV0xuZqP/ns2gIfr5ksir/CWuAzq3rR6cjFeZx/sr1XB8
-uUHD6Yo6SZYLA53mVmg2SW/pBFoYBschVpv+qJvg6NyQVSftBrA93e8qOjhkoWnA
-lov/1NE4XjY0dkHCmCtxsxQxHCjAEkfXVuPimUCa8YV85ROZ5CLytnt2X0SYmkX2
-w4gz5aqxrwhQHOsIKuqy4FaK1lWNMF04cXTYEW/vy2WJP94FHaglhC8iB9PBv2/1
-Zaj/eNMMOG4+wVJQ0WQgsm9Wug6hEdvFhVNjggM3OomxFg9sdsWYttXQvBdPkwo=
-=IOn6
------END PGP SIGNATURE-----
-
---t54s24TTWYm6oOX+--
+> ---
+>  arch/arm/boot/dts/exynos5420-arndale-octa.dts |    3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> Index: b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+> ===================================================================
+> --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts     2014-10-02 15:44:53.014826886 +0200
+> +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts     2014-10-02 17:35:24.110600398 +0200
+> @@ -74,7 +74,8 @@
+>                 samsung,dw-mshc-ddr-timing = <1 2>;
+>                 pinctrl-names = "default";
+>                 pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+> -               vmmc-supply = <&ldo10_reg>;
+> +               vmmc-supply = <&ldo19_reg>;
+> +               vqmmc-supply = <&ldo13_reg>;
+>
+>                 slot@0 {
+>                         reg = <0>;
+>
