@@ -1,48 +1,89 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/2] drm/exynos: remove DRM_EXYNOS_GEM_MAP_OFFSET ioctl
-Date: Thu, 02 Oct 2014 12:28:25 +0200
-Message-ID: <542D28C9.30809@gmail.com>
-References: <1410961726-2533-1-git-send-email-inki.dae@samsung.com> <1410961726-2533-2-git-send-email-inki.dae@samsung.com> <542C1A16.6030809@gmail.com> <542C9280.9050800@samsung.com> <542D2824.9020208@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: fix vblank handling during dpms off
+Date: Thu, 02 Oct 2014 19:52:44 +0900
+Message-ID: <542D2E7C.1020904@samsung.com>
+References: <542B9A0E.7020206@samsung.com>
+ <1412151287-12845-1-git-send-email-a.hajda@samsung.com>
+ <542D13CC.5000304@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:60568 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750987AbaJBK23 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Oct 2014 06:28:29 -0400
-Received: by mail-wi0-f178.google.com with SMTP id cc10so3490556wib.17
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Oct 2014 03:28:28 -0700 (PDT)
-In-Reply-To: <542D2824.9020208@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <542D13CC.5000304@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-On 02.10.2014 12:25, Inki Dae wrote:
-> On 2014=EB=85=84 10=EC=9B=94 02=EC=9D=BC 08:47, Joonyoung Shim wrote:
->> Hi Tomasz,
->>
->> On 10/02/2014 12:13 AM, Tomasz Figa wrote:
->>> Hi Inki,
->>>
->>> On 17.09.2014 15:48, Inki Dae wrote:
->>>> This interface and relevant codes aren't used anymore.
->>>>
->>>
->>> Hmm, I might be missing something, but after removing this IOCTL, h=
-ow do
->>> we obtain an offset to pass to mmap()?
->>
->> There is DRM_IOCTL_MODE_MAP_DUMB, it can get mmap offset before mmap=
- and
->> the offset is passed via mmap.
->=20
-> Exactly. That will lead us to more generic world.
-
-OK. Thanks Joonyoung, Inki, for quick response. I was confused by name
-of this IOCTL. I'll modify my code to use it.
-
-Best regards,
-Tomasz
+T24gMjAxNOuFhCAxMOyblCAwMuydvCAxNzo1OCwgSm9vbnlvdW5nIFNoaW0gd3JvdGU6Cj4gSGkg
+QW5kcnplaiwKPiAKPiBPbiAxMC8wMS8yMDE0IDA1OjE0IFBNLCBBbmRyemVqIEhhamRhIHdyb3Rl
+Ogo+PiBUaGUgcGF0Y2ggZGlzYWJsZXMgdmJsYW5rcyBkdXJpbmcgZHBtcyBvZmYgb25seSBpZiBw
+YWdlZmlscCBoYXMKPj4gbm90IGJlZW4gZmluaXNoZWQuIEl0IGFsc28gcmVwbGFjZXMgZHJtX3Zi
+bGFua19vZmYgd2l0aCBkcm1fY3J0Y192YmxhbmtfcHV0Lgo+PiBJdCBmaXhlcyBpc3N1ZSB3aXRo
+IHBhZ2VfZmxpcCBpb2N0bCBub3QgYmVpbmcgYWJsZSB0byBhY3F1aXJlIHZibGFuayBjb3VudGVy
+Lgo+IAo+IFRoaXMgcHJvYmxlbSBpc24ndCByZWxhdGVkIHdpdGggcGFnZWZsaXAsIGl0IGp1c3Qg
+Y2F1c2VzIGZyb20KPiA3ZmZkN2E2ODUxMWM3MTBiODRkYjM1NDhhMTk5N2ZkMjYyNWY1ODBhIGNv
+bW1pdCAoZHJtOiBBbHdheXMgcmVqZWN0Cj4gZHJtX3ZibGFua19nZXQoKSBhZnRlciBkcm1fdmJs
+YW5rX29mZigpKS4KPiAKPiBXZSBuZWVkIHRvIHVzZSBkcm1fdmJsYW5rX29uKCkgYXMgYSBjb3Vu
+dGVycGFydCB0byBkcm1fdmJsYW5rX29mZigpCj4gYWZ0ZXIgdGhlIGNvbW1pdCAuCj4gCj4gSG93
+IGFib3V0IGJlbG93IHBhdGNoPwoKVGhhbmtzIHlvdSBKb29ueW91bmcgYW5kIEFuZHJ6ZWosCgpk
+cm1fdmJsYW5rX29uL29mZigpIGFyZSBsZWdhY3kgYXBpIHNvIGl0IHdvdWxkIGJlIGJldHRlciB0
+byB1c2UKZHJtX3ZibGFua19jcnRjX29uL29mZiBmdW5jdGlvbnMgaW5zdGVhZC4KCkFuZCBkcm1f
+dmJsYW5rX2NydGNfb2ZmKCkgbWFrZXMgc3VyZSB0aGF0IHRoZSBsYXRlc3QgdmJsYW5rIGZyYW1l
+IGNvdW50CmlzIHN0b3JlZCBhbmQgcmVzdG9yZWQgYnkgZHJtX3ZibGFua19jcnRjX29uKCkgYWdh
+aW4uIFNvIG15IG9waW5pb24gaXMsCgpzdGF0aWMgdm9pZCBleHlub3NfZHJtX2NydGNfZHBtcyhz
+dHJ1Y3QgZHJtX2NydGMgKmNydGMsIGludCBtb2RlKQp7Cglbc25pcF0KCglpZiAobW9kZSA+IERS
+TV9NT0RFX0RQTVNfT04pIHsKCQkvKiB3YWl0IGZvciB0aGUgY29tcGxldGlvbiBvZiBwYWdlIGZs
+aXAuICovCgkJaWYgKCF3YWl0X2V2ZW50X3RpbWVvdXQoZXh5bm9zX2NydGMtPnBlbmRpbmdfZmxp
+cF9xdWV1ZSwKCQkJCSFhdG9taWNfcmVhZCgmZXh5bm9zX2NydGMtPnBlbmRpbmdfZmxpcCksCgkJ
+CQlIWi8yMCkpCgkJCWF0b21pY19zZXQoJmV4eW5vc19jcnRjLT5wZW5kaW5nX2ZsaXAsIDApOwoJ
+CWRybV9jcnRjX3ZibGFua19vZmYoY3J0Yyk7CQkvLzwtIHN0b3JlIHRoZSBsYXRlc3QgdmJsYW5r
+IGZyYW1lIGNvdW50LgoJfSBlbHNlIHsKCQlkcm1fY3J0Y192Ymxhbmtfb24oY3J0Yyk7CQkvLzwt
+IHJlc3RvcmUgdGhlIHZibGFuayBmcmFtZSBjb3VudC4KCX0KCglbc25pcF0KfQoKClRlc3RlZCBh
+bmQgd29ya2VkIHdlbGwgd2l0aCBhYm92ZSBwYXRjaC4gSG93IGFib3V0IGl0PwoKVGhhbmtzLApJ
+bmtpIERhZQoKPiAKPj5Gcm9tIDZkZTAxNDczNzQ2YWYyMjVjNjg4ZWU0MzAxMjMwMDFkNTdkOWFm
+MmEgTW9uIFNlcCAxNyAwMDowMDowMCAyMDAxCj4gRnJvbTogSm9vbnlvdW5nIFNoaW0gPGp5MDky
+Mi5zaGltQHNhbXN1bmcuY29tPgo+IERhdGU6IFRodSwgMiBPY3QgMjAxNCAxNzo0ODoyNyArMDkw
+MAo+IFN1YmplY3Q6IFtQQVRDSF0gZHJtL2V4eW5vczogdXNlIGRybV92Ymxhbmtfb24oKQo+IAo+
+IFdlIG5lZWQgdG8gdXNlIGRybV92Ymxhbmtfb24oKSBhcyBhIGNvdW50ZXJwYXJ0IHRvIGRybV92
+Ymxhbmtfb2ZmKCkKPiBhZnRlciB0aGUgY29tbWl0IDdmZmQ3YTY4NTExYyAoImRybTogQWx3YXlz
+IHJlamVjdCBkcm1fdmJsYW5rX2dldCgpCj4gYWZ0ZXIgZHJtX3ZibGFua19vZmYoKSIpLiBJZiBu
+b3QsIGRybV92YmxhbmtfZ2V0KCkgd2lsbCBiZSBmYWlsZWQKPiBhbHdheXMgYWZ0ZXIgZHJtX3Zi
+bGFua19vZmYoKS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBKb29ueW91bmcgU2hpbSA8ankwOTIyLnNo
+aW1Ac2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9jcnRjLmMgfCA0ICsrKy0KPiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMSBk
+ZWxldGlvbigtKQo+IAo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwo+
+IGluZGV4IDhlMzhlOWYuLmRmYTIwOWEgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2NydGMuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9jcnRjLmMKPiBAQCAtNzEsNyArNzEsNiBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHJt
+X2NydGNfZHBtcyhzdHJ1Y3QgZHJtX2NydGMgKmNydGMsIGludCBtb2RlKQo+ICAJCQkJIWF0b21p
+Y19yZWFkKCZleHlub3NfY3J0Yy0+cGVuZGluZ19mbGlwKSwKPiAgCQkJCUhaLzIwKSkKPiAgCQkJ
+YXRvbWljX3NldCgmZXh5bm9zX2NydGMtPnBlbmRpbmdfZmxpcCwgMCk7Cj4gLQkJZHJtX3ZibGFu
+a19vZmYoY3J0Yy0+ZGV2LCBleHlub3NfY3J0Yy0+cGlwZSk7Cj4gIAl9Cj4gIAo+ICAJaWYgKG1h
+bmFnZXItPm9wcy0+ZHBtcykKPiBAQCAtOTAsNiArODksNyBAQCBzdGF0aWMgdm9pZCBleHlub3Nf
+ZHJtX2NydGNfY29tbWl0KHN0cnVjdCBkcm1fY3J0YyAqY3J0YykKPiAgCXN0cnVjdCBleHlub3Nf
+ZHJtX2NydGMgKmV4eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMoY3J0Yyk7Cj4gIAlzdHJ1Y3Qg
+ZXh5bm9zX2RybV9tYW5hZ2VyICptYW5hZ2VyID0gZXh5bm9zX2NydGMtPm1hbmFnZXI7Cj4gIAo+
+ICsJZHJtX3ZibGFua19vbihjcnRjLT5kZXYsIGV4eW5vc19jcnRjLT5waXBlKTsKPiAgCWV4eW5v
+c19kcm1fY3J0Y19kcG1zKGNydGMsIERSTV9NT0RFX0RQTVNfT04pOwo+ICAKPiAgCWV4eW5vc19w
+bGFuZV9jb21taXQoY3J0Yy0+cHJpbWFyeSk7Cj4gQEAgLTE3NywxMCArMTc3LDEyIEBAIHN0YXRp
+YyBpbnQgZXh5bm9zX2RybV9jcnRjX21vZGVfc2V0X2Jhc2Uoc3RydWN0IGRybV9jcnRjICpjcnRj
+LCBpbnQgeCwgaW50IHksCj4gIAo+ICBzdGF0aWMgdm9pZCBleHlub3NfZHJtX2NydGNfZGlzYWJs
+ZShzdHJ1Y3QgZHJtX2NydGMgKmNydGMpCj4gIHsKPiArCXN0cnVjdCBleHlub3NfZHJtX2NydGMg
+KmV4eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMoY3J0Yyk7Cj4gIAlzdHJ1Y3QgZHJtX3BsYW5l
+ICpwbGFuZTsKPiAgCWludCByZXQ7Cj4gIAo+ICAJZXh5bm9zX2RybV9jcnRjX2RwbXMoY3J0Yywg
+RFJNX01PREVfRFBNU19PRkYpOwo+ICsJZHJtX3ZibGFua19vZmYoY3J0Yy0+ZGV2LCBleHlub3Nf
+Y3J0Yy0+cGlwZSk7Cj4gIAo+ICAJZHJtX2Zvcl9lYWNoX2xlZ2FjeV9wbGFuZShwbGFuZSwgJmNy
+dGMtPmRldi0+bW9kZV9jb25maWcucGxhbmVfbGlzdCkgewo+ICAJCWlmIChwbGFuZS0+Y3J0YyAh
+PSBjcnRjKQo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+Cmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
