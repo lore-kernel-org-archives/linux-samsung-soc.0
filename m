@@ -1,67 +1,73 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] ARM: dts: fix MMC2 regulators for Exynos5420 Arndale Octa board
-Date: Thu, 2 Oct 2014 20:16:44 +0200
-Message-ID: <CAPDyKFqGS5mRpAJLkmQ3fnGKktLFDEt_pi+uaK-xCUtw1+Duvg@mail.gmail.com>
-References: <2750153.I3nVqzmXTP@amdc1032>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: [PATCH v2 0/5] pinctrl: samsung: Data structure clean-up
+Date: Thu,  2 Oct 2014 20:52:06 +0200
+Message-ID: <1412275931-10807-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f53.google.com ([209.85.192.53]:60306 "EHLO
-	mail-qg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750998AbaJBSQp (ORCPT
+Received: from mail-wg0-f47.google.com ([74.125.82.47]:35821 "EHLO
+	mail-wg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751520AbaJBSwR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Oct 2014 14:16:45 -0400
-Received: by mail-qg0-f53.google.com with SMTP id a108so2188008qge.26
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Oct 2014 11:16:44 -0700 (PDT)
-In-Reply-To: <2750153.I3nVqzmXTP@amdc1032>
+	Thu, 2 Oct 2014 14:52:17 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@google.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, "cpgs ." <cpgs@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, Seung-Won Jeon <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, SUNIL JOSHI <joshi@samsung.com>, PRASHANTH GODREHAL <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Abhilash Kesavan <a.kesavan@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <tomasz.figa@gmail.com>
 
-On 2 October 2014 18:10, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
-> Regulators for MMC2 (SD card) are PVDD_TFLASH_2V8 (LDO19) for vmmc
-> and PVDD_APIO_MMCOFF_2V8 (LDO13) for vqmmc.  Currently the device
-> tree entry for MMC2 uses PVDD_PRE_1V8 (LDO10) for vmmc and vqmmc is
-> not specified.  Fix it.
->
-> Without this patch:
-> - "mmc: dw_mmc: use mmc_regulator_get_supply to handle regulators"
->   patch causes a SD card detection to fail
-> - "mmc: dw_mmc: Support voltage changes" patch causes a boot hang
->
-> This patch fixes both above problems.
->
-> Suggested-by: Doug Anderson <dianders@google.com>
-> Cc: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+This series intends to clean up data structures used by pinctrl-samsung driver.
+More specifically, it separates initial compile time constants from data used
+at runtime, allowing unused variant data to be dropped and selected structures
+constified to improve safety.
 
-Unless it causes a bunch non-trivial conflicts, I suggest we take this
-through my mmc tree to not break bisectability.
+As a side effect, size of vmlinux built from multi_v7_defconfig was reduced
+from:
 
-Kind regards
-Uffe
+ text     data    bss    dec      hex    filename
+ 10296708 1227100 313544 11837352 b49fa8 vmlinux
 
+to:
 
-> ---
->  arch/arm/boot/dts/exynos5420-arndale-octa.dts |    3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> Index: b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
-> ===================================================================
-> --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts     2014-10-02 15:44:53.014826886 +0200
-> +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts     2014-10-02 17:35:24.110600398 +0200
-> @@ -74,7 +74,8 @@
->                 samsung,dw-mshc-ddr-timing = <1 2>;
->                 pinctrl-names = "default";
->                 pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
-> -               vmmc-supply = <&ldo10_reg>;
-> +               vmmc-supply = <&ldo19_reg>;
-> +               vqmmc-supply = <&ldo13_reg>;
->
->                 slot@0 {
->                         reg = <0>;
->
+ text     data    bss    dec      hex    filename
+ 10296740 1176860 313544 11787144 b3db88 vmlinux
+
+and quite a bit of data were moved from normal data sections to .init.data:
+
+pre:
+
+Idx Name          Size      VMA       LMA       File off  Algn
+  3 .rodata       0026c080  c0881000  c0881000  00681000  2**6
+ 23 .init.data    0003ff7c  c0bdb830  c0bdb830  009e3830  2**3
+ 24 .data..percpu 00002100  c0c1c000  c0c1c000  00a24000  2**6
+ 25 .data         000e98e0  c0c20000  c0c20000  00a28000  2**6
+
+post:
+
+Idx Name          Size      VMA       LMA       File off  Algn
+  3 .rodata       0026bf20  c0881000  c0881000  00681000  2**6
+ 23 .init.data    00041bbc  c0bdb830  c0bdb830  009e3830  2**3
+ 24 .data..percpu 00002100  c0c1e000  c0c1e000  00a26000  2**6
+ 25 .data         000db860  c0c22000  c0c22000  00a2a000  2**6
+
+This series should not introduce any functional changes.
+
+Tested on S3C6410-based Mini6410 board booted using device tree, with GPIO
+leds and GPIO keyboard. Compile tested for s3c24xx, exynos, s5pv210.
+
+Changes since v1:
+ - rebased on current devel branch of pinctrl tree.
+
+Tomasz Figa (5):
+  pinctrl: samsung: Make samsung_pinctrl_get_soc_data use ERR_PTR()
+  pinctrl: samsung: Drop unused label field in samsung_pin_ctrl struct
+  pinctrl: samsung: Constify samsung_pin_bank_type struct
+  pinctrl: samsung: Constify samsung_pin_ctrl struct
+  pinctrl: samsung: Separate per-bank init and runtime data
+
+ drivers/pinctrl/samsung/pinctrl-exynos.c  | 111 ++++++++++----------------
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c |  30 +++----
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c |  31 ++++----
+ drivers/pinctrl/samsung/pinctrl-samsung.c | 126 ++++++++++++++++--------------
+ drivers/pinctrl/samsung/pinctrl-samsung.h |  78 ++++++++++++------
+ 5 files changed, 192 insertions(+), 184 deletions(-)
+
+-- 
+2.1.1
