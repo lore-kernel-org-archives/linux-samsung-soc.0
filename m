@@ -1,134 +1,106 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: Re: [PATCH v8 0/2] Adds PMU and S2R support for exynos5420
-Date: Thu, 2 Oct 2014 19:54:03 +0530
-Message-ID: <CAGm_ybhtzubG8PoynhM14DWa8EaPj9ZVvNAbL_rysWGfAn94VA@mail.gmail.com>
-References: <1412074969-12704-1-git-send-email-vikas.sajjan@samsung.com>
-	<CABxcv=kEVma+Ho6PPy+4t+zYH67sAWbbvJvrviPop-MBqktbjw@mail.gmail.com>
-	<CAGm_ybhD0N0r5gj=xAp+ERPq7CjO2d6bDLcPHAoZk1_8+t2Fvw@mail.gmail.com>
-	<CABxcv==aA1Ogi_gQfYXxCg2ApFWQdXJLnqne2K=18nx6Oq_jCw@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 1/4] PM / Domains: Remove pm_genpd_dev_need_restore() API
+Date: Thu, 02 Oct 2014 17:54:13 +0200
+Message-ID: <542D7525.8000804@samsung.com>
+References: <1412174494-15346-1-git-send-email-ulf.hansson@linaro.org>
+ <1412174494-15346-2-git-send-email-ulf.hansson@linaro.org>
+ <542C2D9F.8060005@samsung.com>
+ <CAPDyKFq+9G+n3qaj+Ls9i4sOi_BdOGzk5SypDzEMZJwAJMa97Q@mail.gmail.com>
+ <542D3E45.5020908@samsung.com>
+ <CAPDyKFozS+J_sTZykF=9tVJsCByby_BDuQmGiMt-Uw-qC4Tzuw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f48.google.com ([74.125.82.48]:48260 "EHLO
-	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752257AbaJBOYF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Oct 2014 10:24:05 -0400
-Received: by mail-wg0-f48.google.com with SMTP id n12so3221050wgh.31
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Oct 2014 07:24:03 -0700 (PDT)
-In-Reply-To: <CABxcv==aA1Ogi_gQfYXxCg2ApFWQdXJLnqne2K=18nx6Oq_jCw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <CAPDyKFozS+J_sTZykF=9tVJsCByby_BDuQmGiMt-Uw-qC4Tzuw@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Douglas Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>
 
-Hi Javier,
+On 02/10/14 15:30, Ulf Hansson wrote:
+[...]
+> Correct me if I am wrong, but I think in principle these exynos
+> drivers don't use pm_runtime_set_active() during ->probe() and are
+> instead relying on CONFIG_PM_RUNTIME to be enabled.
 
-On Wed, Oct 1, 2014 at 7:20 PM, Javier Martinez Canillas
-<javier@dowhile0.org> wrote:
-> Hello Vikas,
->
-> On Wed, Oct 1, 2014 at 12:23 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
+Yes, pm_runtime_set_active() is not used in probe(), I believe this
+is not required. In case of those IP blocks there is no use of activating
+them during probe(). Instead we check if PM_RUNTIME is enabled through
+pm_runtime_enabled() helper and enable the device clock(s) if not.
+I agree it all doesn't quite work in current mainline for !PM_RUNTIME,
+since there is nothing ensuring that the power domains are enabled
+in such kernel configuration.
+
+> That's not a good behaviour. If these drivers are build without
+> CONFIG_PM_RUNTIME - they won't work.
+
+They wouldn't similarly work with pm_runtime_set_active() call in probe()
+with CONFIG_PM_RUNTIME disabled, would they ?
+
+> I guess I have pointed out this in earlier discussions around runtime
+> PM, I have seen quite some driver's getting their support for runtime
+> PM wrong.
+> 
+>>> Why would runtime PM callbacks be invoked when the device are runtime
+>>> PM active? That's prevented by the runtime PM core and is the expected
+>>> behaviour.
+>>>
+>>> pm_genpd_dev_need_restore() is not the solution, besides that it gives
+>>> you the option to lie about device's runtime PM state to genpd. Thus,
+>>> if you are really lucky, that might workaround your issues. :-)
 >>
->> My git log looks like below on top of Kukjin's for-next branch,
+>> Might be, nevertheless so far it more or less worked for us. At least
+>> I'm sure without it everything breaks right away.
+> 
+> I see. Obviously we must not break exynos, let's try to figure out the
+> best way forward.
+> 
 >>
->> d861ddd clk: exynos: Add CLK_IGNORE_UNUSED to aclk200_disp1 and aclk300_disp1
->> adc14dc POSTED: ARM: EXYNOS: Use MCPM call-backs to support S2R on Exynos5420
->> d61fc43 ARM: exynos5: Add Suspend-to-RAM support for 5420
->> 3d1d7bd ARM: exynos5: Add PMU support for 5420
->> a8887b3 mfd: syscon: Decouple syscon interface from platform devices
->> 072e2bc ARM: EXYNOS: Move PMU specific definitions from common.h
->> ec2f950 ARM: EXYNOS: Add platform driver support for Exynos PMU
+>>> I will happily help out in fixing drivers for exynos. Would be nice if
+>>> you could provide me with a list of which driver/subsystems that seems
+>>> broken. HW, wise I have a exynos 5250 and exynos 5422 on my desk, so
+>>> those I can test.
 >>
->
-> I tested Kukjin's for-next branch (HEAD in commit a84aaa7) + the
-> patches you mentioned and the system enters in suspend mode but the
-> RTC alarm IRQ does not make it resume. Is the branch you are using to
-> test public so I can give it a try?
->
+>> For exynos5 I would check exynos-gsc and s5p-mfc (see kernel logs below).
+> 
+> Thanks, I will have look and run some tests on exynos 5. Let you know soon.
 
-Not yet, but as I mentioned, I have only above mentioned 7 patches
-atop kukjin's for-next.
-only difference is the patch " ARM: EXYNOS: Use MCPM call-backs to
-support S2R on Exynos5420"
-which I had rebased myself.
+Especially it might be interesting look at gscaler, where there are 
+multiple instances of same device handled by one driver.
 
-I am out of office till 7th October, once I am back, I can send you
-all those 7 patches, config file and S2R log.
+[...]
+>> Sure, is there a git tree I could fetch all the relevant patches from ?
+>> I'm not sure what the base tree for this series, I could only apply
+>> first 2 patches from this thread, on top of the generic OF PM domain
+>> patches. And that didn't solve issues which are seen in the logs below.
+> 
+> You have two options:
+> 
+> 1) Use/build Rafaels tree. Apply my patches on the bleeding edge
+> branch.That's also what I use a work base.
+> http://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
+> 
+> 2) Use/build Stephen Rothwell's linux-next tree. I can confirm the
+> patches applies on the master branch as of today.
+> http://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
 
->> recently I noticed that, without the CLK_IGNORE_UNUSED flag for
->> aclk200_disp1 and aclk300_disp1 CLK,  the system is NOT suspending,
->> which was NOT the case when i had posted my previous revisions.
->>
->
-> I tried both with and without your patch that adds the
-> CLK_IGNORE_UNUSED to aclk200_disp1 and aclk300_disp1 and in both cases
-> it behaves the same, the system seems to go into suspend mode but
-> never resumes:
+Thanks, I will be able to take a look at this the earliest on Monday. 
 
-Can you confirm that the system has really suspended, I mean can you
-measure VDD_EGL or VDD_KFC and check or by any other method you know
-of.
+> I really appreciate your help here, thanks!
+> 
+>> Nevertheless, as Rafael pointed out, enabling all power domains
+>> unconditionally seems a step backwards. It would be nice to have
+>> resolved the race in a away the power domains remain in state left
+>> by the firmware and are being enabled only before any client device
+>> actually needs it.
+> 
+> You are right, but I am not sure we can do this in one go - since it
+> depends on if we can fix this on PM core of if we need need
+> adaptations in drivers/subsystems.
 
->
-> # echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
-> [  105.376596] PM: Syncing filesystems ... done.
-> [  105.383207] Freezing user space processes ... (elapsed 0.001 seconds) done.
-> [  105.388681] Freezing remaining freezable tasks ... (elapsed 0.001
-> seconds) done.
-> [  105.488589] wake enabled for irq 281
-> [  105.491609] wake enabled for irq 280
-> [  105.498102] wake enabled for irq 284
-> [  105.554736] PM: suspend of devices complete after 155.406 msecs
-> [  105.562572] PM: late suspend of devices complete after 3.361 msecs
-> [  105.570389] PM: noirq suspend of devices complete after 3.102 msecs
-> [  105.575185] Disabling non-boot CPUs ...
-> [  105.579706] IRQ153 no longer affine to CPU1
-> [  105.580008] CPU1: shutdown
-> [  105.587230] IRQ154 no longer affine to CPU2
-> [  105.587472] CPU2: shutdown
-> [  105.594953] IRQ155 no longer affine to CPU3
-> [  105.595190] CPU3: shutdown
-> [  105.602464] IRQ160 no longer affine to CPU4
-> [  105.602979] CPU4: shutdown
-> [  105.609996] IRQ161 no longer affine to CPU5
-> [  105.610424] CPU5: shutdown
-> [  105.617116] IRQ162 no longer affine to CPU6
-> [  105.617557] CPU6: shutdown
-> [  105.625163] IRQ163 no longer affine to CPU7
-> [  105.625596] CPU7: shutdown
->
-> I'm testing on a Exynos5420 Peach Pit using exynos_defconfig and
-> disabling CONFIG_BL_SWITCHER as you suggested. My bootargs is:
->
+I see, fortunately the genpd API appears not to be wildly used yet.
 
-I too tested on 5420 based peach-pit board with exynos_defconfig +
-disabled CONFIG_BL_SWITCHER.
-
-It did suspend and resume gracefully.
-
-> console=ttySAC3,115200 debug earlyprintk root=/dev/mmcblk1p2 rootwait
-> rw no_console_suspend
->
-
-looks fine.
-
-> And I'm booting using a chained nv-uboot with built version:
->
-> U-Boot 2013.04-gb98ed09 (Mar 07 2014 - 12:25:37) for Peach
->
-
-I shall update my U-Boot build version, once I am back at office.
-
-
-> I checked that the s3c2410-rtc alarm IRQ is fired correctly by looking
-> at /sys/class/rtc/rtc0/wakealarm and also /proc/interrupts.
->
-> Any ideas before I dig into this?
->
-> Thanks a lot and best regards,
-> Javier
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+Regards,
+Sylwester
