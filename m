@@ -1,139 +1,100 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 1/4] PM / Domains: Remove pm_genpd_dev_need_restore() API
-Date: Thu, 2 Oct 2014 15:30:40 +0200
-Message-ID: <CAPDyKFozS+J_sTZykF=9tVJsCByby_BDuQmGiMt-Uw-qC4Tzuw@mail.gmail.com>
-References: <1412174494-15346-1-git-send-email-ulf.hansson@linaro.org>
-	<1412174494-15346-2-git-send-email-ulf.hansson@linaro.org>
-	<542C2D9F.8060005@samsung.com>
-	<CAPDyKFq+9G+n3qaj+Ls9i4sOi_BdOGzk5SypDzEMZJwAJMa97Q@mail.gmail.com>
-	<542D3E45.5020908@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [GIT PULL 3/3] 3rd Round of Exynos-PM-2 Updates for v3.18
+Date: Thu, 02 Oct 2014 15:35:18 +0200
+Message-ID: <1414810.2h7O5DlLDc@amdc1032>
+References: <54244973.7090204@samsung.com> <1836556.iSSlTrnDdl@amdc1032>
+ <1945452.Fsg7LTeZhk@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f176.google.com ([209.85.216.176]:45499 "EHLO
-	mail-qc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752243AbaJBNal (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:33715 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753200AbaJBNff (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Oct 2014 09:30:41 -0400
-Received: by mail-qc0-f176.google.com with SMTP id r5so2075973qcx.35
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Oct 2014 06:30:41 -0700 (PDT)
-In-Reply-To: <542D3E45.5020908@samsung.com>
+	Thu, 2 Oct 2014 09:35:35 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NCT00IKMKF94060@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 02 Oct 2014 22:35:33 +0900 (KST)
+In-reply-to: <1945452.Fsg7LTeZhk@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On 2 October 2014 14:00, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
-> Hello Ulf,
->
-> On 02/10/14 11:09, Ulf Hansson wrote:
->> On 1 October 2014 18:36, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
->>> On 01/10/14 16:41, Ulf Hansson wrote:
->>>> There are currently no users of this API, let's remove it.
->>
->> Hi Sylwester,
->>
->> Thanks for your reply!
->>
->>> The sad fact is that removal of pm_genpd_dev_need_restore() calls
->>> from arch/arm/mach-exynos/pm_domains.c introduces regressions in
->>> multiple exynos drivers (I'm sure it breaks media drivers).
->>
->> The fact that you need pm_genpd_dev_need_restore() is really worrying.
->> That indicates that exynos are suffering from this race condition I am
->> trying to fix in this patchset.
->>
->>> I think before doing such changes all relevant drivers should be
->>> updated first. I need to take a closer look again, but it seems
->>> after dropping the pm_genpd_dev_need_restore() calls, client
->>> driver's runtime_resume() callback is not being called in response
->>> to first pm_runtime_get(_sync) call, even if a device is runtime
->>> pm active.
->
-> Sorry, I meant to say "inactive" here.
 
-Ahh, now I see the approach.
+Hi,
 
-Correct me if I am wrong, but I think in principle these exynos
-drivers don't use pm_runtime_set_active() during ->probe() and are
-instead relying on CONFIG_PM_RUNTIME to be enabled.
+On Wednesday, October 01, 2014 08:31:47 PM Arnd Bergmann wrote:
+> On Wednesday 01 October 2014 18:49:20 Bartlomiej Zolnierkiewicz wrote:
+> > On Wednesday, October 01, 2014 06:01:29 PM Arnd Bergmann wrote:
+> > > On Thursday 25 September 2014, Kukjin Kim wrote:
+> > > > Exynos 2nd PM related updates for v3.18
+> > > > 
+> > > > - Firmware supporting suspend and resume to excute of low
+> > > >    level operations to enter and leave power mode for exynos
+> > > >    : introduce suspend() and resume() firmware operations
+> > > > 
+> > > > - Fix AFTR mode on boards with secure firmware enabled and
+> > > >    allows exynos cpuidle driver usage on exynos4x12 SoCs
+> > > > 
+> > > > - Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y
+> > > > 
+> > > > - SWRESET is needed to boot secondary CPU on exynos3250
+> > > > 
+> > > 
+> > > I needed another fixup to make this build, but I'm not sure about
+> > > whether this is the right solution.
+> > 
+> > Could you please share the build errors and the used config?
+> 
+> I'm building with an additional series that works around all known
+> build failures in randconfig, so it's possible that the configuration
+> causes other problems in your tree, or that one of my own patches
+> introduces the problem and the exynos tree by itself is fine.
+> 
+> This is the build error I get:
+> 
+> arch/arm/mach-exynos/built-in.o: In function `exynos_suspend':
+> :(.text+0x294): undefined reference to `cpu_suspend'
+> :(.text+0x29c): undefined reference to `cpu_suspend'
+> arch/arm/mach-exynos/built-in.o: In function `skip_cp15':
+> :(.data+0x58): undefined reference to `cpu_resume'
+> arch/arm/mach-exynos/built-in.o: In function `cp15_save_power':
+> :(.data+0x70): undefined reference to `cpu_resume'
+> 
+> The defconfig file is attached, the details don't matter to
+> other readers, except that it has CONFIG_ARM_CPU_SUSPEND
+> disabled, which means that sleep.S can't be linked properly.
 
-That's not a good behaviour. If these drivers are build without
-CONFIG_PM_RUNTIME - they won't work.
+It turned out that the breakage came through Exynos tree.  "ARM:
+EXYNOS: Add support for firmware-assisted suspend/resume" added to
+arch/arm/mach-exynos/firmware.c new references to functions from
+arch/arm/mach-exynos/sleep.S causing the CONFIG_PM_SLEEP=n build
+breakage.  Then "ARM: EXYNOS: Fix build with PM_SLEEP=n and
+ARM_EXYNOS_CPUIDLE=y" tried to fix the CONFIG_PM_SLEEP=n issue by
+always building sleep.S causing in turn the CONFIG_ARM_CPU_SUSPEND=n
+build breakage.  I have not noticed the problem earlier because I
+have overlooked the fact that cpu_suspend() is available only when
+CONFIG_ARM_CPU_SUSPEND=y and in all configs tested by me it was on
+(it gets disabled only when both CONFIG_PM and CONFIG_MCPM are off).
+Sorry for that.
 
-I guess I have pointed out this in earlier discussions around runtime
-PM, I have seen quite some driver's getting their support for runtime
-PM wrong.
+Your patch seems to be a correct fix except that the resume entry
+should use IS_ENABLED(CONFIG_EXYNOS_CPU_SUSPEND) instead of
+IS_ENABLED(CONFIG_PM_SLEEP) as resume firmware operations is also
+used by Exynos cpuidle support.
 
->
->> Why would runtime PM callbacks be invoked when the device are runtime
->> PM active? That's prevented by the runtime PM core and is the expected
->> behaviour.
->>
->> pm_genpd_dev_need_restore() is not the solution, besides that it gives
->> you the option to lie about device's runtime PM state to genpd. Thus,
->> if you are really lucky, that might workaround your issues. :-)
->
-> Might be, nevertheless so far it more or less worked for us. At least
-> I'm sure without it everything breaks right away.
+How should we proceed further to get this tree merged?
 
-I see. Obviously we must not break exynos, let's try to figure out the
-best way forward.
+PS What is interesting in your defconfig is that it has CONFIG_MCPM
+enabled but CONFIG_ARM_CPU_SUSPEND is disabled so there are probably
+some MPCM related changes in your tree.
 
->
->> I will happily help out in fixing drivers for exynos. Would be nice if
->> you could provide me with a list of which driver/subsystems that seems
->> broken. HW, wise I have a exynos 5250 and exynos 5422 on my desk, so
->> those I can test.
->
-> For exynos5 I would check exynos-gsc and s5p-mfc (see kernel logs below).
-
-Thanks, I will have look and run some tests on exynos 5. Let you know soon.
-
-> I could take care of other, exynos4 drivers. But I believe the fix
-> belongs in the PM core, I doubt we can solve in the driver a problem
-> which only occurs to one instance (first probed) of a device from a set
-> of devices in the power domain.
->
->>> More details can be found in commit ebc35c726298ba3fdebba316a
->>> 'ARM: EXYNOS: register devices in 'need_restore' state for pm_domains'.
->>>
->>> The above only happens when devices are added to an inactive power
->>> domain, then I guess patch 2/4 is also an attempt to address this
->>> issue ?
->>
->> Yes.
->>
->> I would really appreciate if you could run a test with the complete
->> patchset and see if that resolves the issues.
->
-> Sure, is there a git tree I could fetch all the relevant patches from ?
-> I'm not sure what the base tree for this series, I could only apply
-> first 2 patches from this thread, on top of the generic OF PM domain
-> patches. And that didn't solve issues which are seen in the logs below.
-
-You have two options:
-
-1) Use/build Rafaels tree. Apply my patches on the bleeding edge
-branch.That's also what I use a work base.
-http://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
-
-2) Use/build Stephen Rothwell's linux-next tree. I can confirm the
-patches applies on the master branch as of today.
-http://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-
-I really appreciate your help here, thanks!
-
->
-> Nevertheless, as Rafael pointed out, enabling all power domains
-> unconditionally seems a step backwards. It would be nice to have
-> resolved the race in a away the power domains remain in state left
-> by the firmware and are being enabled only before any client device
-> actually needs it.
-
-You are right, but I am not sure we can do this in one go - since it
-depends on if we can fix this on PM core of if we need need
-adaptations in drivers/subsystems.
-
-Kind regards
-Uffe
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
