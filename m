@@ -1,187 +1,108 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v8 0/2] Adds PMU and S2R support for exynos5420
-Date: Thu, 2 Oct 2014 18:59:59 +0200
-Message-ID: <CABxcv=mqUwSKX6ZH+gAzYDsm17JWPmLOro7t28Z58ViHFcyTBQ@mail.gmail.com>
-References: <1412074969-12704-1-git-send-email-vikas.sajjan@samsung.com>
-	<CABxcv=kEVma+Ho6PPy+4t+zYH67sAWbbvJvrviPop-MBqktbjw@mail.gmail.com>
-	<CAGm_ybhD0N0r5gj=xAp+ERPq7CjO2d6bDLcPHAoZk1_8+t2Fvw@mail.gmail.com>
-	<CABxcv==aA1Ogi_gQfYXxCg2ApFWQdXJLnqne2K=18nx6Oq_jCw@mail.gmail.com>
-	<CAGm_ybhtzubG8PoynhM14DWa8EaPj9ZVvNAbL_rysWGfAn94VA@mail.gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] ARM: dts: fix MMC2 regulators for Exynos5420 Arndale Octa
+ board
+Date: Thu, 02 Oct 2014 19:24:39 +0200
+Message-ID: <3279284.CeYhVCr5f3@amdc1032>
+References: <2750153.I3nVqzmXTP@amdc1032> <2384118.ElmRrZpdEv@amdc1032>
+ <CAD=FV=X7hStwYj2tOCBKH0ncUmhTeUi8qWZjFGjFaMO8rxiZCA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:57362 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751834AbaJBRAA (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:47772 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751906AbaJBRZB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Oct 2014 13:00:00 -0400
-Received: by mail-wi0-f180.google.com with SMTP id em10so4775406wid.7
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Oct 2014 09:59:59 -0700 (PDT)
-In-Reply-To: <CAGm_ybhtzubG8PoynhM14DWa8EaPj9ZVvNAbL_rysWGfAn94VA@mail.gmail.com>
+	Thu, 2 Oct 2014 13:25:01 -0400
+In-reply-to: <CAD=FV=X7hStwYj2tOCBKH0ncUmhTeUi8qWZjFGjFaMO8rxiZCA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vikas Sajjan <vikas.sajjan@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Douglas Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>
+To: Doug Anderson <dianders@google.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, "cpgs ." <cpgs@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, Seung-Won Jeon <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, SUNIL JOSHI <joshi@samsung.com>, PRASHANTH GODREHAL <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Abhilash Kesavan <a.kesavan@samsung.com>
 
-Hello Vikas,
 
-On Thu, Oct 2, 2014 at 4:24 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
-> Hi Javier,
->
-> On Wed, Oct 1, 2014 at 7:20 PM, Javier Martinez Canillas
-> <javier@dowhile0.org> wrote:
->> Hello Vikas,
->>
->> On Wed, Oct 1, 2014 at 12:23 PM, Vikas Sajjan <vikas.sajjan@samsung.com> wrote:
->>>
->>> My git log looks like below on top of Kukjin's for-next branch,
->>>
->>> d861ddd clk: exynos: Add CLK_IGNORE_UNUSED to aclk200_disp1 and aclk300_disp1
->>> adc14dc POSTED: ARM: EXYNOS: Use MCPM call-backs to support S2R on Exynos5420
->>> d61fc43 ARM: exynos5: Add Suspend-to-RAM support for 5420
->>> 3d1d7bd ARM: exynos5: Add PMU support for 5420
->>> a8887b3 mfd: syscon: Decouple syscon interface from platform devices
->>> 072e2bc ARM: EXYNOS: Move PMU specific definitions from common.h
->>> ec2f950 ARM: EXYNOS: Add platform driver support for Exynos PMU
->>>
->>
->> I tested Kukjin's for-next branch (HEAD in commit a84aaa7) + the
->> patches you mentioned and the system enters in suspend mode but the
->> RTC alarm IRQ does not make it resume. Is the branch you are using to
->> test public so I can give it a try?
->>
->
-> Not yet, but as I mentioned, I have only above mentioned 7 patches
-> atop kukjin's for-next.
-> only difference is the patch " ARM: EXYNOS: Use MCPM call-backs to
-> support S2R on Exynos5420"
-> which I had rebased myself.
->
+Hi,
 
-Yeah, I still don't know why is behaving differently.
+On Thursday, October 02, 2014 09:45:41 AM Doug Anderson wrote:
+> Bartiomiej
+> 
+> On Thu, Oct 2, 2014 at 9:39 AM, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+> > On Thursday, October 02, 2014 09:19:08 AM Doug Anderson wrote:
+> >> Bartiomiej,
+> >>
+> >> On Thu, Oct 2, 2014 at 9:10 AM, Bartlomiej Zolnierkiewicz
+> >> <b.zolnierkie@samsung.com> wrote:
+> >> > Regulators for MMC2 (SD card) are PVDD_TFLASH_2V8 (LDO19) for vmmc
+> >> > and PVDD_APIO_MMCOFF_2V8 (LDO13) for vqmmc.  Currently the device
+> >> > tree entry for MMC2 uses PVDD_PRE_1V8 (LDO10) for vmmc and vqmmc is
+> >> > not specified.  Fix it.
+> >> >
+> >> > Without this patch:
+> >> > - "mmc: dw_mmc: use mmc_regulator_get_supply to handle regulators"
+> >> >   patch causes a SD card detection to fail
+> >> > - "mmc: dw_mmc: Support voltage changes" patch causes a boot hang
+> >> >
+> >> > This patch fixes both above problems.
+> >> >
+> >> > Suggested-by: Doug Anderson <dianders@google.com>
+> >> > Cc: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+> >> > Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> >> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> >> > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> >> > ---
+> >> >  arch/arm/boot/dts/exynos5420-arndale-octa.dts |    3 ++-
+> >> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >> >
+> >> > Index: b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+> >> > ===================================================================
+> >> > --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts     2014-10-02 15:44:53.014826886 +0200
+> >> > +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts     2014-10-02 17:35:24.110600398 +0200
+> >> > @@ -74,7 +74,8 @@
+> >> >                 samsung,dw-mshc-ddr-timing = <1 2>;
+> >> >                 pinctrl-names = "default";
+> >> >                 pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+> >> > -               vmmc-supply = <&ldo10_reg>;
+> >> > +               vmmc-supply = <&ldo19_reg>;
+> >> > +               vqmmc-supply = <&ldo13_reg>;
+> >>
+> >> This looks right to me.  ...but I notice that ldo13 and ldo19 are not
+> >> "always-on" in the DTS.  Are you sure card detect works for you if you
+> >> eject your card and try to put it back in?
+> >>
+> >> ...eventually the "always-on" won't be needed, but for now I think it is...
+> >
+> > Card detection works fine without "always-on".
+> 
+> That's weird.
+> 
+> 1. In the schematics I see XMMC2CDN has an external pullup to PVDD_TFLASH_2V8.
+> 
+> 2. The internal pullup should (I think) be to VDDQ_MMC2 which is
+> PVDD_APIO_MMCOFF_2V8.
+> 
+> 3. In (51da224 mmc: dw_mmc: use mmc_regulator_get_supply to handle
+> regulators) we should be turning off both regulators in
+> "MMC_POWER_OFF".
+> 
+> 4. If I understand correctly MMC_POWER_OFF is called when the card is
+> ejected, which means that both regulators should be off when the card
+> is ejected.
+> 
+> 5. I don't think card detect can work if neither regulator is powered.
+> 
+> 
+> One of the above points must be wrong.  Any idea which one?  Can you
+> check to see if MMC_POWER_OFF is called for you when the card is
+> ejected?  Can you check to see if these regulators are off?
 
-> I am out of office till 7th October, once I am back, I can send you
-> all those 7 patches, config file and S2R log.
->
-
-Ok, thanks a lot.
-
->>> recently I noticed that, without the CLK_IGNORE_UNUSED flag for
->>> aclk200_disp1 and aclk300_disp1 CLK,  the system is NOT suspending,
->>> which was NOT the case when i had posted my previous revisions.
->>>
->>
->> I tried both with and without your patch that adds the
->> CLK_IGNORE_UNUSED to aclk200_disp1 and aclk300_disp1 and in both cases
->> it behaves the same, the system seems to go into suspend mode but
->> never resumes:
->
-> Can you confirm that the system has really suspended, I mean can you
-> measure VDD_EGL or VDD_KFC and check or by any other method you know
-> of.
->
-
-I'll see how I can measure but it seems the system is suspended
-correctly and the problem is on resuming (more on that below).
-
->>
->> # echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
->> [  105.376596] PM: Syncing filesystems ... done.
->> [  105.383207] Freezing user space processes ... (elapsed 0.001 seconds) done.
->> [  105.388681] Freezing remaining freezable tasks ... (elapsed 0.001
->> seconds) done.
->> [  105.488589] wake enabled for irq 281
->> [  105.491609] wake enabled for irq 280
->> [  105.498102] wake enabled for irq 284
->> [  105.554736] PM: suspend of devices complete after 155.406 msecs
->> [  105.562572] PM: late suspend of devices complete after 3.361 msecs
->> [  105.570389] PM: noirq suspend of devices complete after 3.102 msecs
->> [  105.575185] Disabling non-boot CPUs ...
->> [  105.579706] IRQ153 no longer affine to CPU1
->> [  105.580008] CPU1: shutdown
->> [  105.587230] IRQ154 no longer affine to CPU2
->> [  105.587472] CPU2: shutdown
->> [  105.594953] IRQ155 no longer affine to CPU3
->> [  105.595190] CPU3: shutdown
->> [  105.602464] IRQ160 no longer affine to CPU4
->> [  105.602979] CPU4: shutdown
->> [  105.609996] IRQ161 no longer affine to CPU5
->> [  105.610424] CPU5: shutdown
->> [  105.617116] IRQ162 no longer affine to CPU6
->> [  105.617557] CPU6: shutdown
->> [  105.625163] IRQ163 no longer affine to CPU7
->> [  105.625596] CPU7: shutdown
->>
->> I'm testing on a Exynos5420 Peach Pit using exynos_defconfig and
->> disabling CONFIG_BL_SWITCHER as you suggested. My bootargs is:
->>
->
-> I too tested on 5420 based peach-pit board with exynos_defconfig +
-> disabled CONFIG_BL_SWITCHER.
->
-> It did suspend and resume gracefully.
->
-
-I did further testing by enabling some PM debug options
-(CONFIG_PM_DEBUG and  CONFIG_PM_ADVANCED_DEBUG) and tested different
-suspend modes (freezer, devices, processors and core).
-
-With the three first modes, s2r worked correctly but when trying the
-core mode the non-boot CPUs failed to come online again. I tested that
-this works on other Exynos SoCs (5250 and 4412):
-
-# grep -c processor /proc/cpuinfo
-8
-# echo core > /sys/power/pm_test
-# echo mem > /sys/power/state
-...
-Enabling non-boot CPUs ...
-CPU1: failed to come online
-Error taking CPU1 up: -5
-CPU2: failed to come online
-Error taking CPU2 up: -5
-CPU3: failed to come online
-Error taking CPU3 up: -5
-CPU4: failed to come online
-Error taking CPU4 up: -5
-CPU5: failed to come online
-Error taking CPU5 up: -5
-CPU6: failed to come online
-Error taking CPU6 up: -5
-CPU7: failed to come online
-Error taking CPU7 up: -5
-...
-# grep -c processor /proc/cpuinfo
-1
-
-The -5 (-EIO) error is because even though the call to
-exynos_boot_secondary() succeeds in _cpu_up() [0],
-secondary_start_kernel() [1] is never called so the CPU is not marked
-as online nor the cpu_running completion handler is waked up. So
-waiting for it in _cpu_up() times out and cpu_online(cpu) is false.
-
-I still didn't figure out why the secondary CPUs are not jumping into
-their expected entry point so any hints are welcomed.
-
->> console=ttySAC3,115200 debug earlyprintk root=/dev/mmcblk1p2 rootwait
->> rw no_console_suspend
->>
->
-> looks fine.
->
->> And I'm booting using a chained nv-uboot with built version:
->>
->> U-Boot 2013.04-gb98ed09 (Mar 07 2014 - 12:25:37) for Peach
->>
->
-> I shall update my U-Boot build version, once I am back at office.
->
->
-
-Maybe that is the difference in our setups...
+MMC_POWER_OFF is called on card removal and both regulators get disabled
+(I have verified that they are really off with regulator_is_enabled() which
+returns 1 before and 0 after disabling regulator).  It seems that 5. is
+wrong?
 
 Best regards,
-Javier
-
-[0]: http://lxr.free-electrons.com/source/arch/arm/kernel/smp.c#L91
-[1]: http://lxr.free-electrons.com/source/arch/arm/kernel/smp.c#L330
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
