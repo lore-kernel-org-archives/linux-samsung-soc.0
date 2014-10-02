@@ -1,54 +1,61 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH 0/2] ARM: dts: Add new board dts file for Exynos3250-based
- Rinato board
-Date: Thu, 2 Oct 2014 15:58:41 +0900
-Message-ID: <CAH9JG2WptOhTSfgn8Vz5BMHb5-ZgPKwzJsAMv0r8_Nm2JKMWSg@mail.gmail.com>
-References: <1412075245-5763-1-git-send-email-cw00.choi@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 0/5] pinctrl: samsung: Data structure clean-up
+Date: Thu, 2 Oct 2014 09:18:21 +0200
+Message-ID: <CACRpkdY4yXZ4NeCnZkdeBSto6oX2q_svxkr6Six29aKwPm-xjA@mail.gmail.com>
+References: <1411499141-26551-1-git-send-email-tomasz.figa@gmail.com>
+	<CACRpkdZCMD4x+wrvTOrrWK-Dy4_rg6bD2xUAA4jtTGTbT1uDag@mail.gmail.com>
+	<5423C904.60708@gmail.com>
+	<5426B289.7070802@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f49.google.com ([209.85.218.49]:55759 "EHLO
-	mail-oi0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750842AbaJBG6m (ORCPT
+Received: from mail-ig0-f173.google.com ([209.85.213.173]:41425 "EHLO
+	mail-ig0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750954AbaJBHSW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Oct 2014 02:58:42 -0400
-Received: by mail-oi0-f49.google.com with SMTP id e131so1438656oig.36
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Oct 2014 23:58:41 -0700 (PDT)
-In-Reply-To: <1412075245-5763-1-git-send-email-cw00.choi@samsung.com>
+	Thu, 2 Oct 2014 03:18:22 -0400
+Received: by mail-ig0-f173.google.com with SMTP id h18so1589519igc.6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Oct 2014 00:18:22 -0700 (PDT)
+In-Reply-To: <5426B289.7070802@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>
-Cc: arm-linux <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, =?UTF-8?B?7KCV7J6s7ZuI?= <jh80.chung@samsung.com>, geunsik.lim@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, =?UTF-8?B?6rmA7Iq57Jqw?= <sw0312.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-+ ARM maintainers.
+On Sat, Sep 27, 2014 at 2:50 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> On 25.09.2014 09:49, Tomasz Figa wrote:
+>> On 25.09.2014 09:47, Linus Walleij wrote:
+>>> On Tue, Sep 23, 2014 at 9:05 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>>>
+>>>> This series intends to clean up data structures used by pinctrl-samsung driver.
+>>>> More specifically, it separates initial compile time constants from data used
+>>>> at runtime, allowing unused variant data to be dropped and selected structures
+>>>> constified to improve safety.
+>>>
+>>> I like the patch set, tried to apply it but patch 3/5 failed to apply to the
+>>> devel branch for pinctrl.
+>>>
+>>> Can you rebase this on my "devel" branch, include Marek's Tested-by
+>>> tag and resend, and I'll take it for v3.18.
+>>
+>> Sure. Will do that today evening. Probably clashed with some other
+>> changes queued in the meantime.
+>
+> Uhm. I went back home and forgot about this series until now. Sorry.
+>
+> I have rebased it on your "devel" branch, although it seems like this
+> branch is missing [1], which in turn seems to be already present in your
+> "for-next" branch and is going to cause a merge conflict with this
+> series. Should I still proceed with posting the series based on "devel"?
+>
+> [1] f6a8249f9e55d pinctrl: exynos: Lock GPIOs as interrupts when used as
+> EINTs
 
-It's Gear 2 board support.
+Bah I must have accidentally applied the patch to my for-next
+branch instead of devel, and then wiped it out of existence when
+I later reset the for-next branch to devel.
 
-Thank you,
-Kyungmin Park
+Please resend all 5 rebased on devel.
 
-On Tue, Sep 30, 2014 at 8:07 PM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> This patchset adds new board dts file for Samsung Rinato board (Gear 2) which
-> is based on Exynos3250 SoC and adds sleep mode pin configuration using pinctrl
-> subsystem to reduce leakage power-consumption in sleep state.
->
-> This patchset is based on linux-samsung.git (for-next branch).
->
-> Chanwoo Choi (2):
->   ARM: dts: Add board dts file for Exynos3250-based Rinato board
->   ARM: dts: Add sleep mode pin configuration for exynos3250-rinato
->
->  arch/arm/boot/dts/Makefile                |   3 +-
->  arch/arm/boot/dts/exynos3250-pinctrl.dtsi |  16 +
->  arch/arm/boot/dts/exynos3250-rinato.dts   | 595 ++++++++++++++++++++++++++++++
->  3 files changed, 613 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm/boot/dts/exynos3250-rinato.dts
->
-> --
-> 1.8.0
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Yours,
+Linus Walleij
