@@ -1,106 +1,126 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 1/4] PM / Domains: Remove pm_genpd_dev_need_restore() API
-Date: Thu, 02 Oct 2014 17:54:13 +0200
-Message-ID: <542D7525.8000804@samsung.com>
-References: <1412174494-15346-1-git-send-email-ulf.hansson@linaro.org>
- <1412174494-15346-2-git-send-email-ulf.hansson@linaro.org>
- <542C2D9F.8060005@samsung.com>
- <CAPDyKFq+9G+n3qaj+Ls9i4sOi_BdOGzk5SypDzEMZJwAJMa97Q@mail.gmail.com>
- <542D3E45.5020908@samsung.com>
- <CAPDyKFozS+J_sTZykF=9tVJsCByby_BDuQmGiMt-Uw-qC4Tzuw@mail.gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH V2 1/3] mmc: dw_mmc: use mmc_regulator_get_supply to handle
+ regulators
+Date: Thu, 02 Oct 2014 18:06:51 +0200
+Message-ID: <1754745.SCGBco8pNI@amdc1032>
+References: <01.09.14890.83F4B245@epcpsbge5.samsung.com>
+ <1831792.g28ajrp9B5@amdc1032>
+ <CAD=FV=Xcv6E57u=kUj4QSWOpxCwOuJ4UyrFhSg1z0O1zx8nCag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <CAPDyKFozS+J_sTZykF=9tVJsCByby_BDuQmGiMt-Uw-qC4Tzuw@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <CAD=FV=Xcv6E57u=kUj4QSWOpxCwOuJ4UyrFhSg1z0O1zx8nCag@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Doug Anderson <dianders@google.com>
+Cc: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, "cpgs ." <cpgs@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, Seung-Won Jeon <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, SUNIL JOSHI <joshi@samsung.com>, PRASHANTH GODREHAL <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Abhilash Kesavan <a.kesavan@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 02/10/14 15:30, Ulf Hansson wrote:
-[...]
-> Correct me if I am wrong, but I think in principle these exynos
-> drivers don't use pm_runtime_set_active() during ->probe() and are
-> instead relying on CONFIG_PM_RUNTIME to be enabled.
 
-Yes, pm_runtime_set_active() is not used in probe(), I believe this
-is not required. In case of those IP blocks there is no use of activating
-them during probe(). Instead we check if PM_RUNTIME is enabled through
-pm_runtime_enabled() helper and enable the device clock(s) if not.
-I agree it all doesn't quite work in current mainline for !PM_RUNTIME,
-since there is nothing ensuring that the power domains are enabled
-in such kernel configuration.
+Hi,
 
-> That's not a good behaviour. If these drivers are build without
-> CONFIG_PM_RUNTIME - they won't work.
-
-They wouldn't similarly work with pm_runtime_set_active() call in probe()
-with CONFIG_PM_RUNTIME disabled, would they ?
-
-> I guess I have pointed out this in earlier discussions around runtime
-> PM, I have seen quite some driver's getting their support for runtime
-> PM wrong.
+On Wednesday, October 01, 2014 09:04:09 AM Doug Anderson wrote:
+> Hi,
 > 
->>> Why would runtime PM callbacks be invoked when the device are runtime
->>> PM active? That's prevented by the runtime PM core and is the expected
->>> behaviour.
->>>
->>> pm_genpd_dev_need_restore() is not the solution, besides that it gives
->>> you the option to lie about device's runtime PM state to genpd. Thus,
->>> if you are really lucky, that might workaround your issues. :-)
->>
->> Might be, nevertheless so far it more or less worked for us. At least
->> I'm sure without it everything breaks right away.
+> On Wed, Oct 1, 2014 at 7:00 AM, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+> >
+> > Hi,
+> >
+> > On Wednesday, October 01, 2014 12:47:52 AM YUVARAJ CD wrote:
+> >
+> >> Since I am out of station, i dont have an access to my work set up.
+> >> Can you send me the dts entries of sd crad and their corresponding regulator entries?
+> >
+> > From arch/arm/boot/dts/exynos5420-arndale-octa.dts:
+> >
+> > ...
+> >         mmc@12200000 {
+> >                 status = "okay";
+> >                 broken-cd;
+> >                 supports-highspeed;
+> >                 card-detect-delay = <200>;
+> >                 samsung,dw-mshc-ciu-div = <3>;
+> >                 samsung,dw-mshc-sdr-timing = <0 4>;
+> >                 samsung,dw-mshc-ddr-timing = <0 2>;
+> >                 pinctrl-names = "default";
+> >                 pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
+> >                 vmmc-supply = <&ldo10_reg>;
+> >
+> >                 slot@0 {
+> >                         reg = <0>;
+> >                         bus-width = <8>;
+> >                 };
+> >         };
+> >
+> >         mmc@12220000 {
+> >                 status = "okay";
+> >                 supports-highspeed;
+> >                 card-detect-delay = <200>;
+> >                 samsung,dw-mshc-ciu-div = <3>;
+> >                 samsung,dw-mshc-sdr-timing = <2 3>;
+> >                 samsung,dw-mshc-ddr-timing = <1 2>;
+> >                 pinctrl-names = "default";
+> >                 pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+> >                 vmmc-supply = <&ldo10_reg>;
+> >
+> >                 slot@0 {
+> >                         reg = <0>;
+> >                         bus-width = <4>;
+> >                 };
+> >         };
+> > ...
+> >                                 ldo10_reg: LDO10 {
+> >                                         regulator-name = "PVDD_PRE_1V8";
+> >                                         regulator-min-microvolt = <1800000>;
+> >                                         regulator-max-microvolt = <1800000>;
+> >                                         regulator-always-on;
+> >                                 };
 > 
-> I see. Obviously we must not break exynos, let's try to figure out the
-> best way forward.
+> I don't have schematics for Arndale Octa, but the above is really
+> fishy.  "vmmc" shouldn't be 1.8V.  That's the general power signal to
+> MMC and should be 2.7V - 3.6V.  "vqmmc" could be 1.8V in certain
+> situations, but my understanding is that for maximum compatibility it
+> should at least start out identical to "vmmc" (and later go down to
+> 1.7V - 1.95V).
 > 
->>
->>> I will happily help out in fixing drivers for exynos. Would be nice if
->>> you could provide me with a list of which driver/subsystems that seems
->>> broken. HW, wise I have a exynos 5250 and exynos 5422 on my desk, so
->>> those I can test.
->>
->> For exynos5 I would check exynos-gsc and s5p-mfc (see kernel logs below).
+> My first thought would be to just remove the "vmmc-supply" from your
+> DTS.  I think we could land that and pick it back easily.  That will
+> get you something working and won't introduce any regressions because:
+> 1. MMC core will give you a dummy regulator
+> 2. The code will default to assuming that vmmc is 3.3V, which is what
+> it used to do anyway.
+> 3. The only referenced regulator is always on anyway.
 > 
-> Thanks, I will have look and run some tests on exynos 5. Let you know soon.
+> Separately you could specify a proper vmmc and maybe even a vqmmc.
+> 
+> On SMDK5420 I see this for the SD card (mmc2):
+> * vmmc should be "VDD_SD_2V8".  From LDO19.
+> * vqmmc should be "VDDQ_MMC2_AP".  From LDO13.
+> 
+> OK, I dug up the Arndale schematics.  For mmc2:
+> * vmmc should be PVDD_TFLASH_2V8.  That's LDO19.
+> * vqmmc (hooked up to VDDQ_MMC2): PVDD_APIO_MMCOFF_2V8.  LDO13 just like SMDK.
+> 
+> ...sadly it looks like Anrdale has a schematics problem that prevents
+> you from doing UHS.  I see that the data lines are pulled up to
+> PVDD_TFLASH_2V8 (vmmc), not pulled up to PVDD_APIO_MMCOFF_2V8 (vqmmc).
+> I think that means that if you ever lower vqmmc to 1.8V (as needed for
+> UHS) then you'll still be pulling up to 2.8V.  That's not good.  You
+> should probably make sure that both LDO13 and LDO19 are listed as
+> being exactly 2.8V.
+> 
+> 
+> Anyway, the above has (obviously) not been tested and is just based on
+> a casual browsing of schematics.  Please let me know how it goes.
 
-Especially it might be interesting look at gscaler, where there are 
-multiple instances of same device handled by one driver.
+Removing the "vmmc-supply" entry fixes the problem.  Using LDO13 for vmmc
+and LDO19 for vqmmc also works fine.  I'll post a patch fixing the mmc2 DT
+entry to Kukjin in a few minutes.  Thank you for your help.
 
-[...]
->> Sure, is there a git tree I could fetch all the relevant patches from ?
->> I'm not sure what the base tree for this series, I could only apply
->> first 2 patches from this thread, on top of the generic OF PM domain
->> patches. And that didn't solve issues which are seen in the logs below.
-> 
-> You have two options:
-> 
-> 1) Use/build Rafaels tree. Apply my patches on the bleeding edge
-> branch.That's also what I use a work base.
-> http://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
-> 
-> 2) Use/build Stephen Rothwell's linux-next tree. I can confirm the
-> patches applies on the master branch as of today.
-> http://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
 
-Thanks, I will be able to take a look at this the earliest on Monday. 
-
-> I really appreciate your help here, thanks!
-> 
->> Nevertheless, as Rafael pointed out, enabling all power domains
->> unconditionally seems a step backwards. It would be nice to have
->> resolved the race in a away the power domains remain in state left
->> by the firmware and are being enabled only before any client device
->> actually needs it.
-> 
-> You are right, but I am not sure we can do this in one go - since it
-> depends on if we can fix this on PM core of if we need need
-> adaptations in drivers/subsystems.
-
-I see, fortunately the genpd API appears not to be wildly used yet.
-
--- 
-Regards,
-Sylwester
