@@ -1,113 +1,55 @@
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 0/4] PM / Domains: Fix race conditions during boot
-Date: Fri, 3 Oct 2014 11:47:37 +0200
-Message-ID: <CAPDyKFqteXGe0nfZMDcM2v1Z_Q_e+=0t2KD3MjPEJjN6+EzG+g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] PM / Domains: Remove pm_genpd_dev_need_restore() API
+Date: Fri, 3 Oct 2014 12:36:43 +0200
+Message-ID: <CAPDyKFqi=eKYBXSuRPzTZ0vybRfV6oMNt-_vCqT-6+otGiMucQ@mail.gmail.com>
 References: <1412174494-15346-1-git-send-email-ulf.hansson@linaro.org>
-	<7h38b6rm2l.fsf@deeprootsystems.com>
+	<1412174494-15346-2-git-send-email-ulf.hansson@linaro.org>
+	<542C2D9F.8060005@samsung.com>
+	<CAPDyKFq+9G+n3qaj+Ls9i4sOi_BdOGzk5SypDzEMZJwAJMa97Q@mail.gmail.com>
+	<542D3E45.5020908@samsung.com>
+	<CAPDyKFozS+J_sTZykF=9tVJsCByby_BDuQmGiMt-Uw-qC4Tzuw@mail.gmail.com>
+	<542D7525.8000804@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <7h38b6rm2l.fsf@deeprootsystems.com>
+In-Reply-To: <542D7525.8000804@samsung.com>
 Sender: linux-pm-owner@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 3 October 2014 03:14, Kevin Hilman <khilman@kernel.org> wrote:
-> Ulf, Rafael,
+On 2 October 2014 17:54, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+> On 02/10/14 15:30, Ulf Hansson wrote:
+> [...]
+>> Correct me if I am wrong, but I think in principle these exynos
+>> drivers don't use pm_runtime_set_active() during ->probe() and are
+>> instead relying on CONFIG_PM_RUNTIME to be enabled.
 >
-> Ulf Hansson <ulf.hansson@linaro.org> writes:
+> Yes, pm_runtime_set_active() is not used in probe(), I believe this
+> is not required. In case of those IP blocks there is no use of activating
+> them during probe(). Instead we check if PM_RUNTIME is enabled through
+> pm_runtime_enabled() helper and enable the device clock(s) if not.
+> I agree it all doesn't quite work in current mainline for !PM_RUNTIME,
+> since there is nothing ensuring that the power domains are enabled
+> in such kernel configuration.
 >
->> When there are more than one device in a PM domain these will obviously
->> be probed at different times. Depending on timing and the implemented
->> support for runtime PM in a driver/subsystem, genpd may be advised to
->> power off a PM domain after a successful probe sequence.
->>
->> Ideally we should have relied on the driver/subsystem, through runtime
->> PM, to bring their device's PM domain into powered state prior doing
->> probing if such requirement exist.
+>> That's not a good behaviour. If these drivers are build without
+>> CONFIG_PM_RUNTIME - they won't work.
 >
-> I think I've stumbled on a related problem, or maybe the same one.
->
-> Even if platform-specific init code has initialized a device with
-> pm_runtime_set_active(), it seems that the genpd domain can still
-> power off before before all of its devices are probed.
->
-> This is because pm_genpd_poweroff() requires there to be a driver
-> when it's checking if a device is pm_runtime_suspended() which will not
-> be the case if the driver has not been probed yet.
->
-> Consider this case: There are several devices in the domain that haven't
-> been probed yet (dev->driver == NULL), but have been marked with
-> pm_runtime_set_active() + _get_noresume(), so pm_runtime_suspended() == false.
+> They wouldn't similarly work with pm_runtime_set_active() call in probe()
+> with CONFIG_PM_RUNTIME disabled, would they ?
 
-I haven't seen this kind of set up before. Are you invoking
-pm_runtime_enable() here as well?
+Yes they would, although they require some minor additional adaptations.
 
-I am not sure pm_runtime_get_noresume() is a good idea, since that
-will prevent the device from going inactive - even after the driver
-has probed it. Unless the driver do pm_runtime_put_sync twice of
-course. :-)
+Those resources that are enabled from the driver's runtime PM resume
+callback, should also be enabled during ->probe(). The
+pm_runtime_set_active() will then update the state to reflect this.
 
-On the other hand, if you have done pm_runtime_enable() your certainly
-need to prevent the device some going inactive...
-
->
-> Then, one of devices is in the domain is probed, and during the probe it
-> does a _get_sync(), sets some stuff up, and then does _put_sync().
-> After the probe, because of the _put_sync(), the genpd
-> ->runtime_suspend() will be triggered, causing it to attempt a
-> _genpd_poweroff().  Since the rest of the devices in the domain haven't
-> (yet) been probed, their dev->driver pointers are all still NULL, so the
-> pm_runtime_suspended() check will not be attempted for them.
->
-> The result is that the genpd will poweroff after the first device is
-> probed, but before the others have had a chance to probe, which is not
-> exactly desired behavior for a genpd that has been initialized as
-> powered on.
->
-> With the hack below[1], I'm able to avoid that problem, but am not
-> completely sure yet if this is safe in general.
->
-> Rafael, do you remember why that check for dev->driver is needed?
-> Without digging deeper (which I'll do tomorrow), seems to me that
-> checking pm_runtime_suspended() on devices without drivers is a
-> reasonable thing to do since they can be initailzed by platform code
-> before they are probed.   If you think this is OK, I'll cook up a real
-> patch with a changelog.
->
-> Ulf, I'm not sure if this is the same problem you're having, but do you
-> think this would solve your problem if the drivers are properly
-> initialized?
-
-Unfortunately no.
-
-I am using the DT initialization path so all my devices aren't being
-added to the PM domain before drivers starts to probe them.
-
-Instead they are added when each device gets probed, thus the PM
-domain can still power off between devices being probed.
-
->
-> Kevin
->
->
-> [1]
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 568bf3172bef..17b0d9466d98 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -471,7 +471,7 @@ static int pm_genpd_poweroff(struct
-> generic_pm_domain *genpd)
->                 if (stat > PM_QOS_FLAGS_NONE)
->                         return -EBUSY;
->
-> -               if (pdd->dev->driver && (!pm_runtime_suspended(pdd->dev)
-> +               if ((!pm_runtime_suspended(pdd->dev)
->                     || pdd->dev->power.irq_safe))
->                         not_suspended++;
->         }
-> --
+Then, if CONFIG_PM_RUNTIME is enabled - the device will be scheduled
+to go inactive from driver core (pm_request_idle()), after ->probe()
+has completed. Thus saving power if it's unused.
+If CONFIG_PM_RUNTIME isn't enabled - the driver will still be
+functional, since all resources are enabled during ->probe().
 
 Kind regards
 Uffe
