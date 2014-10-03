@@ -1,55 +1,108 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 1/4] PM / Domains: Remove pm_genpd_dev_need_restore() API
-Date: Fri, 3 Oct 2014 12:36:43 +0200
-Message-ID: <CAPDyKFqi=eKYBXSuRPzTZ0vybRfV6oMNt-_vCqT-6+otGiMucQ@mail.gmail.com>
-References: <1412174494-15346-1-git-send-email-ulf.hansson@linaro.org>
-	<1412174494-15346-2-git-send-email-ulf.hansson@linaro.org>
-	<542C2D9F.8060005@samsung.com>
-	<CAPDyKFq+9G+n3qaj+Ls9i4sOi_BdOGzk5SypDzEMZJwAJMa97Q@mail.gmail.com>
-	<542D3E45.5020908@samsung.com>
-	<CAPDyKFozS+J_sTZykF=9tVJsCByby_BDuQmGiMt-Uw-qC4Tzuw@mail.gmail.com>
-	<542D7525.8000804@samsung.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH RFC 0/4] drm/core: restore suspend/resume calbacks in KMS
+ drm drivers
+Date: Fri, 3 Oct 2014 13:39:21 +0200
+Message-ID: <CAKMK7uGec2yV89n-RLsg+HqXoXvXBMBVZ6py3Z7puFe+KR6e7A@mail.gmail.com>
+References: <1412324653-30677-1-git-send-email-a.hajda@samsung.com>
+ <20141003083121.GC16117@phenom.ffwll.local>
+ <542E6F9D.2090005@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <542D7525.8000804@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <542E6F9D.2090005@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "open list:INTEL DRM DRIVERS..." <intel-gfx@lists.freedesktop.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Daniel Vetter <daniel.vetter@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2 October 2014 17:54, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
-> On 02/10/14 15:30, Ulf Hansson wrote:
-> [...]
->> Correct me if I am wrong, but I think in principle these exynos
->> drivers don't use pm_runtime_set_active() during ->probe() and are
->> instead relying on CONFIG_PM_RUNTIME to be enabled.
+On Fri, Oct 3, 2014 at 11:42 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+> On 10/03/2014 10:31 AM, Daniel Vetter wrote:
+>> On Fri, Oct 03, 2014 at 10:24:09AM +0200, Andrzej Hajda wrote:
+>>> The main intent of this patchset is to allow use of suspend/resume drm driver
+>>> callbacks in KMS drivers, as these callbacks seems to me the best place
+>>> to implement suspend/resume functionality in drm driver.
+>>> Implementing this functionality in master component driver PM ops is problematic
+>>> as those callbacks can be called asynchronously regardless of state/existence of
+>>> drm device, thus it would require additional synchronization mechanism.
+>>>
+>>> Callbacks re-enabling requires small changes in i915 and exynos driver.
+>>> The patchset contains also fix of exynos resume callback.
+>> Nack.
+>>
+>> Like completely and totally. The drm core has really no business doing
+>> hardware stuff, which includes runtime pm, system suspend and all that
+>> nonsense. It' an interface between userspace and drivers, with a big
+>> library to back it all up. Everything else just repeats the old midlayer
+>> mistake.
 >
-> Yes, pm_runtime_set_active() is not used in probe(), I believe this
-> is not required. In case of those IP blocks there is no use of activating
-> them during probe(). Instead we check if PM_RUNTIME is enabled through
-> pm_runtime_enabled() helper and enable the device clock(s) if not.
-> I agree it all doesn't quite work in current mainline for !PM_RUNTIME,
-> since there is nothing ensuring that the power domains are enabled
-> in such kernel configuration.
+> Hmm, I have just tried to reuse the existing infrastructure, I did not see
+> any sign "do not touch, this is a mistake". Now I see it, thanks :)
+
+As a rule of thumb, if you see a !DRIVER_MODESET check anywhere, then
+that's a clear sign that you're wandering off the light and into the
+dangerous parts of what drm was like age dark ages ;-)
+
+>> If you driver needs this, do it there. Also, the component framework is
+>> probably the solution you're looking for. And if there are synchronization
+>> issues with that then we need to fix those instead of reinventing yet
+>> another half-assed broken wheel.
 >
->> That's not a good behaviour. If these drivers are build without
->> CONFIG_PM_RUNTIME - they won't work.
+> But this is an issue closely connected with component framework.
+> Component framework separates master component probe and drm device
+> initialization. As a result PM ops which are synchronized with probe
+> (via device_lock)
+> are no more synchronized with drm initialization which is usually called
+> from
+> .bind callback.
+
+Now I'm confused. component->bind and drm initialization is about
+driver load, but all this code here is about system suspend/resume
+really. So I'm rather confused what problem you actually want to fix
+..
+
+>> Aside: With David Herrmann's latest patches to de-midlayer the drm
+>> init/teardown sequence the driver is in full control of when the drm data
+>> structures get allocate, initialized and registered. If you convert to
+>> that plus the component framework I'm pretty sure your problem is solved.
 >
-> They wouldn't similarly work with pm_runtime_set_active() call in probe()
-> with CONFIG_PM_RUNTIME disabled, would they ?
+> I will look closer at it but as I described above it is rather matter of
+> separation
+> of master component and drm device initialization.
+>
+> My idea was to avoid creation of new synchronization mechanism and to
+> reuse the
+> existing ones which seems to fit perfectly to the scenario, but if there
+> is big NO for it
+> another solution should be found.
+>
+> Anyway I guess the problem exists for all drivers having component
+> framework and suspend:
+> exynos, msm and incoming rockchip.
 
-Yes they would, although they require some minor additional adaptations.
+It sounds like the component framework needs to be teached to work
+with system suspend/resume. I guess either we need to have clever
+abuse of deferred probing to make sure that the master device is
+probed first and so in the correct place in the system/resume
+sequence. Or the master framework needs to grow pm_ops itself so that
+the state associated with the logical componentized framework can be
+saved/restored.
 
-Those resources that are enabled from the driver's runtime PM resume
-callback, should also be enabled during ->probe(). The
-pm_runtime_set_active() will then update the state to reflect this.
+So master pm_ops would save/restore kms state, and all the components
+would just save/restore any additional (register, clock, whatever)
+state that each componnent driver would need.
 
-Then, if CONFIG_PM_RUNTIME is enabled - the device will be scheduled
-to go inactive from driver core (pm_request_idle()), after ->probe()
-has completed. Thus saving power if it's unused.
-If CONFIG_PM_RUNTIME isn't enabled - the driver will still be
-functional, since all resources are enabled during ->probe().
-
-Kind regards
-Uffe
+But I'm not really an expert here, so adding more people.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
