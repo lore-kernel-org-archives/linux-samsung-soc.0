@@ -1,7 +1,8 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH RFC 3/4] drm/exynos: remove master component PM callbacks
-Date: Fri, 03 Oct 2014 10:24:12 +0200
-Message-ID: <1412324653-30677-4-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH RFC 4/4] drm/exynos: correct connector->dpms field before
+ resuming
+Date: Fri, 03 Oct 2014 10:24:13 +0200
+Message-ID: <1412324653-30677-5-git-send-email-a.hajda@samsung.com>
 References: <1412324653-30677-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -20,60 +21,33 @@ Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, "open list:INTEL DRM DRIVERS..." <intel-gfx@lists.freedesktop.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel.vetter@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch removes master PM callbacks as their functionality
-is already duplicated by suspend/resume drm callbacks.
+During system suspend after connector switch off its dpms field
+is set to connector previous dpms state. To properly resume dpms field
+should be set to its actual state (off) before resuming to previous dpms state.
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_drv.c | 29 -----------------------------
- 1 file changed, 29 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_drv.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index cf19e60..dca20b15 100644
+index dca20b15..6746c5a 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -342,34 +342,6 @@ static struct drm_driver exynos_drm_driver = {
- 	.minor	= DRIVER_MINOR,
- };
+@@ -191,8 +191,12 @@ static int exynos_drm_resume(struct drm_device *dev)
  
--#ifdef CONFIG_PM_SLEEP
--static int exynos_drm_sys_suspend(struct device *dev)
--{
--	struct drm_device *drm_dev = dev_get_drvdata(dev);
--	pm_message_t message;
--
--	if (pm_runtime_suspended(dev) || !drm_dev)
--		return 0;
--
--	message.event = PM_EVENT_SUSPEND;
--	return exynos_drm_suspend(drm_dev, message);
--}
--
--static int exynos_drm_sys_resume(struct device *dev)
--{
--	struct drm_device *drm_dev = dev_get_drvdata(dev);
--
--	if (pm_runtime_suspended(dev) || !drm_dev)
--		return 0;
--
--	return exynos_drm_resume(drm_dev);
--}
--#endif
--
--static const struct dev_pm_ops exynos_drm_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(exynos_drm_sys_suspend, exynos_drm_sys_resume)
--};
--
- int exynos_drm_component_add(struct device *dev,
- 				enum exynos_drm_device_type dev_type,
- 				enum exynos_drm_output_type out_type)
-@@ -634,7 +606,6 @@ static struct platform_driver exynos_drm_platform_driver = {
- 	.driver	= {
- 		.owner	= THIS_MODULE,
- 		.name	= "exynos-drm",
--		.pm	= &exynos_drm_pm_ops,
- 	},
- };
+ 	drm_modeset_lock_all(dev);
+ 	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
+-		if (connector->funcs->dpms)
+-			connector->funcs->dpms(connector, connector->dpms);
++		if (connector->funcs->dpms) {
++			int old_dpms = connector->dpms;
++
++			connector->dpms = DRM_MODE_DPMS_OFF;
++			connector->funcs->dpms(connector, old_dpms);
++		}
+ 	}
+ 	drm_modeset_unlock_all(dev);
  
 -- 
 1.9.1
