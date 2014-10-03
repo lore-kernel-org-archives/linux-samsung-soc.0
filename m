@@ -1,68 +1,268 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH RFC 0/4] drm/core: restore suspend/resume calbacks in
- KMS drm drivers
-Date: Fri, 3 Oct 2014 16:22:44 +0100
-Message-ID: <20141003152244.GV5182@n2100.arm.linux.org.uk>
-References: <1412324653-30677-1-git-send-email-a.hajda@samsung.com>
- <20141003083121.GC16117@phenom.ffwll.local> <542E6F9D.2090005@samsung.com>
- <CAKMK7uGec2yV89n-RLsg+HqXoXvXBMBVZ6py3Z7puFe+KR6e7A@mail.gmail.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] thermal: exynos: fix IRQ clearing on TMU initialization
+Date: Fri, 03 Oct 2014 18:17:17 +0200
+Message-ID: <1489241.Qb16XOmjOZ@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uGec2yV89n-RLsg+HqXoXvXBMBVZ6py3Z7puFe+KR6e7A@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "open list:INTEL DRM DRIVERS..." <intel-gfx@lists.freedesktop.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Daniel Vetter <daniel.vetter@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:50331 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754142AbaJCQRf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 3 Oct 2014 12:17:35 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Lukasz Majewski <l.majewski@samsung.com>
+Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On Fri, Oct 03, 2014 at 01:39:21PM +0200, Daniel Vetter wrote:
-> On Fri, Oct 3, 2014 at 11:42 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> > But this is an issue closely connected with component framework.
-> > Component framework separates master component probe and drm device
-> > initialization. As a result PM ops which are synchronized with probe
-> > (via device_lock)
-> > are no more synchronized with drm initialization which is usually called
-> > from
-> > .bind callback.
-> 
-> Now I'm confused. component->bind and drm initialization is about
-> driver load, but all this code here is about system suspend/resume
-> really. So I'm rather confused what problem you actually want to fix
-> ..
+* Factor out code for clearing raised IRQs from exynos_tmu_work() to
+  exynos_tmu_clear_irqs().
 
-The component *helper* will disconnect the bind of the master device
-from its probe if the components aren't already known.  If all the
-components are known at the point the master device probes, the
-master device lock will be held (since we'll be operating within the
-master device's probe function.)
+* Add a comment about documentation bugs to exynos_tmu_clear_irqs().
 
-The issue here is that while the master device is being probed, the
-per-device lock is held.  Beneath that lock there are locks in the
-component helper which will be taken, and thus will end up depending
-upon the per-device lock.
+  [ The documentation for Exynos3250, Exynos4412, Exynos5250 and
+    Exynos5260 incorrectly states that INTCLEAR register has
+    a different placing of bits responsible for FALL IRQs than
+    INTSTAT register.  Exynos5420 and Exynos5440 documentation is
+    correct (Exynos4210 doesn't support FALL IRQs at all). ]
 
-This means that we pretty much can not guarantee synchronisation between
-PM on the master device and the component helper calling the bind
-callback - if we tried to take the per-device lock here, we would either
-deadlock, or we would end up with AB-BA lock dependencies.
+* Use exynos_tmu_clear_irqs() in exynos_tmu_initialize() instead
+  of open-coded code trying to clear IRQs according to predefined
+  masks.  After this change exynos_tmu_initialize() just clears
+  IRQs that are raised like it is already done in exynos_tmu_work().
 
-What we /could/ do is expose lock/unlock functions from the component
-helper so that PM implementations can synchronise with binds - or I could
-look at whether we could integrate the component helper into the device
-model.  I suspect the latter would not be met with enthusiasm as it would
-mean adding bloat to the driver core structures, which would not be needed
-in 99% of cases.
+  As a nice side-effect the code now uses the correct offset
+  (16 instead of 12) for bits responsible for clearing FALL IRQs
+  in INTCLEAR register on Exynos3250, Exynos4412 and Exynos5250.
 
+* Remove no longer needed intclr_rise_[mask,shift] and
+  intclr_fall_[mask,shift] fields from struct exynos_tmu_registers.
+
+* Remove no longer needed defines.
+
+This patch has been tested on Exynos4412 and Exynos5420 SoCs.
+
+Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>
+Cc: Zhang Rui <rui.zhang@intel.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/thermal/samsung/exynos_tmu.c      | 29 +++++++++++++++++++++--------
+ drivers/thermal/samsung/exynos_tmu.h      |  8 --------
+ drivers/thermal/samsung/exynos_tmu_data.c | 21 ---------------------
+ drivers/thermal/samsung/exynos_tmu_data.h | 15 ---------------
+ 4 files changed, 21 insertions(+), 52 deletions(-)
+
+diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
+index 092ab69..49c0924 100644
+--- a/drivers/thermal/samsung/exynos_tmu.c
++++ b/drivers/thermal/samsung/exynos_tmu.c
+@@ -122,6 +122,23 @@ static int code_to_temp(struct exynos_tmu_data *data, u8 temp_code)
+ 	return temp;
+ }
+ 
++static void exynos_tmu_clear_irqs(struct exynos_tmu_data *data)
++{
++	const struct exynos_tmu_registers *reg = data->pdata->registers;
++	unsigned int val_irq;
++
++	val_irq = readl(data->base + reg->tmu_intstat);
++	/*
++	 * Clear the interrupts.  Please note that the documentation for
++	 * Exynos3250, Exynos4412, Exynos5250 and Exynos5260 incorrectly
++	 * states that INTCLEAR register has a different placing of bits
++	 * responsible for FALL IRQs than INTSTAT register.  Exynos5420
++	 * and Exynos5440 documentation is correct (Exynos4210 doesn't
++	 * support FALL IRQs at all).
++	 */
++	writel(val_irq, data->base + reg->tmu_intclear);
++}
++
+ static int exynos_tmu_initialize(struct platform_device *pdev)
+ {
+ 	struct exynos_tmu_data *data = platform_get_drvdata(pdev);
+@@ -207,7 +224,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+ 			writeb(pdata->trigger_levels[i], data->base +
+ 			reg->threshold_th0 + i * sizeof(reg->threshold_th0));
+ 
+-		writel(reg->intclr_rise_mask, data->base + reg->tmu_intclear);
++		exynos_tmu_clear_irqs(data);
+ 	} else {
+ 		/* Write temperature code for rising and falling threshold */
+ 		for (i = 0; i < pdata->non_hw_trigger_levels; i++) {
+@@ -228,9 +245,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
+ 		writel(falling_threshold,
+ 				data->base + reg->threshold_th1);
+ 
+-		writel((reg->intclr_rise_mask << reg->intclr_rise_shift) |
+-			(reg->intclr_fall_mask << reg->intclr_fall_shift),
+-				data->base + reg->tmu_intclear);
++		exynos_tmu_clear_irqs(data);
+ 
+ 		/* if last threshold limit is also present */
+ 		i = pdata->max_trigger_level - 1;
+@@ -396,7 +411,7 @@ static void exynos_tmu_work(struct work_struct *work)
+ 			struct exynos_tmu_data, irq_work);
+ 	struct exynos_tmu_platform_data *pdata = data->pdata;
+ 	const struct exynos_tmu_registers *reg = pdata->registers;
+-	unsigned int val_irq, val_type;
++	unsigned int val_type;
+ 
+ 	if (!IS_ERR(data->clk_sec))
+ 		clk_enable(data->clk_sec);
+@@ -414,9 +429,7 @@ static void exynos_tmu_work(struct work_struct *work)
+ 	clk_enable(data->clk);
+ 
+ 	/* TODO: take action based on particular interrupt */
+-	val_irq = readl(data->base + reg->tmu_intstat);
+-	/* clear the interrupts */
+-	writel(val_irq, data->base + reg->tmu_intclear);
++	exynos_tmu_clear_irqs(data);
+ 
+ 	clk_disable(data->clk);
+ 	mutex_unlock(&data->lock);
+diff --git a/drivers/thermal/samsung/exynos_tmu.h b/drivers/thermal/samsung/exynos_tmu.h
+index f67203b..c58c766 100644
+--- a/drivers/thermal/samsung/exynos_tmu.h
++++ b/drivers/thermal/samsung/exynos_tmu.h
+@@ -100,10 +100,6 @@ enum soc_type {
+  * @inten_fall0_shift: shift bits of falling 0 interrupt bits.
+  * @tmu_intstat: Register containing the interrupt status values.
+  * @tmu_intclear: Register for clearing the raised interrupt status.
+- * @intclr_fall_shift: shift bits for interrupt clear fall 0
+- * @intclr_rise_shift: shift bits of all rising interrupt bits.
+- * @intclr_rise_mask: mask bits of all rising interrupt bits.
+- * @intclr_fall_mask: mask bits of all rising interrupt bits.
+  * @emul_con: TMU emulation controller register.
+  * @emul_temp_shift: shift bits of emulation temperature.
+  * @emul_time_shift: shift bits of emulation time.
+@@ -143,10 +139,6 @@ struct exynos_tmu_registers {
+ 	u32	tmu_intstat;
+ 
+ 	u32	tmu_intclear;
+-	u32	intclr_fall_shift;
+-	u32	intclr_rise_shift;
+-	u32	intclr_fall_mask;
+-	u32	intclr_rise_mask;
+ 
+ 	u32	emul_con;
+ 	u32	emul_temp_shift;
+diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
+index 8bae170..2683d28 100644
+--- a/drivers/thermal/samsung/exynos_tmu_data.c
++++ b/drivers/thermal/samsung/exynos_tmu_data.c
+@@ -39,7 +39,6 @@ static const struct exynos_tmu_registers exynos4210_tmu_registers = {
+ 	.inten_rise3_shift = EXYNOS_TMU_INTEN_RISE3_SHIFT,
+ 	.tmu_intstat = EXYNOS_TMU_REG_INTSTAT,
+ 	.tmu_intclear = EXYNOS_TMU_REG_INTCLEAR,
+-	.intclr_rise_mask = EXYNOS4210_TMU_TRIG_LEVEL_MASK,
+ };
+ 
+ struct exynos_tmu_init_data const exynos4210_default_tmu_data = {
+@@ -106,10 +105,6 @@ static const struct exynos_tmu_registers exynos3250_tmu_registers = {
+ 	.inten_fall0_shift = EXYNOS_TMU_INTEN_FALL0_SHIFT,
+ 	.tmu_intstat = EXYNOS_TMU_REG_INTSTAT,
+ 	.tmu_intclear = EXYNOS_TMU_REG_INTCLEAR,
+-	.intclr_fall_shift = EXYNOS_TMU_CLEAR_FALL_INT_SHIFT,
+-	.intclr_rise_shift = EXYNOS_TMU_RISE_INT_SHIFT,
+-	.intclr_rise_mask = EXYNOS_TMU_RISE_INT_MASK,
+-	.intclr_fall_mask = EXYNOS_TMU_FALL_INT_MASK,
+ 	.emul_con = EXYNOS_EMUL_CON,
+ 	.emul_temp_shift = EXYNOS_EMUL_DATA_SHIFT,
+ 	.emul_time_shift = EXYNOS_EMUL_TIME_SHIFT,
+@@ -193,10 +188,6 @@ static const struct exynos_tmu_registers exynos4412_tmu_registers = {
+ 	.inten_fall0_shift = EXYNOS_TMU_INTEN_FALL0_SHIFT,
+ 	.tmu_intstat = EXYNOS_TMU_REG_INTSTAT,
+ 	.tmu_intclear = EXYNOS_TMU_REG_INTCLEAR,
+-	.intclr_fall_shift = EXYNOS_TMU_CLEAR_FALL_INT_SHIFT,
+-	.intclr_rise_shift = EXYNOS_TMU_RISE_INT_SHIFT,
+-	.intclr_rise_mask = EXYNOS_TMU_RISE_INT_MASK,
+-	.intclr_fall_mask = EXYNOS_TMU_FALL_INT_MASK,
+ 	.emul_con = EXYNOS_EMUL_CON,
+ 	.emul_temp_shift = EXYNOS_EMUL_DATA_SHIFT,
+ 	.emul_time_shift = EXYNOS_EMUL_TIME_SHIFT,
+@@ -289,10 +280,6 @@ static const struct exynos_tmu_registers exynos5260_tmu_registers = {
+ 	.inten_fall0_shift = EXYNOS_TMU_INTEN_FALL0_SHIFT,
+ 	.tmu_intstat = EXYNOS5260_TMU_REG_INTSTAT,
+ 	.tmu_intclear = EXYNOS5260_TMU_REG_INTCLEAR,
+-	.intclr_fall_shift = EXYNOS5420_TMU_CLEAR_FALL_INT_SHIFT,
+-	.intclr_rise_shift = EXYNOS_TMU_RISE_INT_SHIFT,
+-	.intclr_rise_mask = EXYNOS5260_TMU_RISE_INT_MASK,
+-	.intclr_fall_mask = EXYNOS5260_TMU_FALL_INT_MASK,
+ 	.emul_con = EXYNOS5260_EMUL_CON,
+ 	.emul_temp_shift = EXYNOS_EMUL_DATA_SHIFT,
+ 	.emul_time_shift = EXYNOS_EMUL_TIME_SHIFT,
+@@ -373,10 +360,6 @@ static const struct exynos_tmu_registers exynos5420_tmu_registers = {
+ 	.inten_fall0_shift = EXYNOS_TMU_INTEN_FALL0_SHIFT,
+ 	.tmu_intstat = EXYNOS_TMU_REG_INTSTAT,
+ 	.tmu_intclear = EXYNOS_TMU_REG_INTCLEAR,
+-	.intclr_fall_shift = EXYNOS5420_TMU_CLEAR_FALL_INT_SHIFT,
+-	.intclr_rise_shift = EXYNOS_TMU_RISE_INT_SHIFT,
+-	.intclr_rise_mask = EXYNOS_TMU_RISE_INT_MASK,
+-	.intclr_fall_mask = EXYNOS_TMU_FALL_INT_MASK,
+ 	.emul_con = EXYNOS_EMUL_CON,
+ 	.emul_temp_shift = EXYNOS_EMUL_DATA_SHIFT,
+ 	.emul_time_shift = EXYNOS_EMUL_TIME_SHIFT,
+@@ -465,10 +448,6 @@ static const struct exynos_tmu_registers exynos5440_tmu_registers = {
+ 	.inten_fall0_shift = EXYNOS5440_TMU_INTEN_FALL0_SHIFT,
+ 	.tmu_intstat = EXYNOS5440_TMU_S0_7_IRQ,
+ 	.tmu_intclear = EXYNOS5440_TMU_S0_7_IRQ,
+-	.intclr_fall_shift = EXYNOS5440_TMU_CLEAR_FALL_INT_SHIFT,
+-	.intclr_rise_shift = EXYNOS5440_TMU_RISE_INT_SHIFT,
+-	.intclr_rise_mask = EXYNOS5440_TMU_RISE_INT_MASK,
+-	.intclr_fall_mask = EXYNOS5440_TMU_FALL_INT_MASK,
+ 	.tmu_irqstatus = EXYNOS5440_TMU_IRQ_STATUS,
+ 	.emul_con = EXYNOS5440_TMU_S0_7_DEBUG,
+ 	.emul_temp_shift = EXYNOS_EMUL_DATA_SHIFT,
+diff --git a/drivers/thermal/samsung/exynos_tmu_data.h b/drivers/thermal/samsung/exynos_tmu_data.h
+index 4b8f33c..65e2ea6 100644
+--- a/drivers/thermal/samsung/exynos_tmu_data.h
++++ b/drivers/thermal/samsung/exynos_tmu_data.h
+@@ -46,8 +46,6 @@
+ #define EXYNOS4210_TMU_REG_THRESHOLD_TEMP	0x44
+ #define EXYNOS4210_TMU_REG_TRIG_LEVEL0	0x50
+ 
+-#define EXYNOS4210_TMU_TRIG_LEVEL_MASK	0x1111
+-
+ /* Exynos5250, Exynos4412, Exynos3250 specific registers */
+ #define EXYNOS_TMU_TRIMINFO_CON2	0x14
+ #define EXYNOS_THD_TEMP_RISE		0x50
+@@ -57,12 +55,6 @@
+ #define EXYNOS_TRIMINFO_RELOAD_ENABLE	1
+ #define EXYNOS_TRIMINFO_25_SHIFT	0
+ #define EXYNOS_TRIMINFO_85_SHIFT	8
+-#define EXYNOS_TMU_RISE_INT_MASK	0x111
+-#define EXYNOS_TMU_RISE_INT_SHIFT	0
+-#define EXYNOS_TMU_FALL_INT_MASK	0x111
+-#define EXYNOS_TMU_CLEAR_FALL_INT_SHIFT	12
+-#define EXYNOS5420_TMU_CLEAR_FALL_INT_SHIFT	16
+-#define EXYNOS5440_TMU_CLEAR_FALL_INT_SHIFT	4
+ #define EXYNOS_TMU_TRIP_MODE_SHIFT	13
+ #define EXYNOS_TMU_TRIP_MODE_MASK	0x7
+ #define EXYNOS_TMU_THERM_TRIP_EN_SHIFT	12
+@@ -87,10 +79,6 @@
+ #define EXYNOS5260_TMU_REG_INTEN		0xC0
+ #define EXYNOS5260_TMU_REG_INTSTAT		0xC4
+ #define EXYNOS5260_TMU_REG_INTCLEAR		0xC8
+-#define EXYNOS5260_TMU_CLEAR_RISE_INT		0x1111
+-#define EXYNOS5260_TMU_CLEAR_FALL_INT		(0x1111 << 16)
+-#define EXYNOS5260_TMU_RISE_INT_MASK		0x1111
+-#define EXYNOS5260_TMU_FALL_INT_MASK		0x1111
+ #define EXYNOS5260_EMUL_CON			0x100
+ 
+ /* Exynos4412 specific */
+@@ -112,9 +100,6 @@
+ #define EXYNOS5440_TMU_IRQ_STATUS		0x000
+ #define EXYNOS5440_TMU_PMIN			0x004
+ 
+-#define EXYNOS5440_TMU_RISE_INT_MASK		0xf
+-#define EXYNOS5440_TMU_RISE_INT_SHIFT		0
+-#define EXYNOS5440_TMU_FALL_INT_MASK		0xf
+ #define EXYNOS5440_TMU_INTEN_RISE0_SHIFT	0
+ #define EXYNOS5440_TMU_INTEN_RISE1_SHIFT	1
+ #define EXYNOS5440_TMU_INTEN_RISE2_SHIFT	2
 -- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+1.8.2.3
