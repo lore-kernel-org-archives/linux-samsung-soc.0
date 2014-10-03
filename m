@@ -1,63 +1,62 @@
 From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 2/2] i2c: exynos5: Add Kconfig dependencies
-Date: Fri, 3 Oct 2014 03:34:23 +0200
-Message-ID: <20141003013423.GJ1323@katana>
+Subject: Re: [PATCH 1/2] i2c: exynos: add support for HSI2C module on Exynos7
+Date: Fri, 3 Oct 2014 03:34:05 +0200
+Message-ID: <20141003013404.GI1323@katana>
 References: <1410859998-29285-1-git-send-email-ch.naveen@samsung.com>
- <1410859998-29285-3-git-send-email-ch.naveen@samsung.com>
+ <1410859998-29285-2-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wRtZRu2mMGBZ6YQ7"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:34860 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752463AbaJCBds (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Oct 2014 21:33:48 -0400
+	protocol="application/pgp-signature"; boundary="16qp2B0xu0fRvRD7"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1410859998-29285-3-git-send-email-ch.naveen@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1410859998-29285-2-git-send-email-ch.naveen@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 Cc: linux-i2c@vger.kernel.org, naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, sjg@chromium.org, grundler@chromium.org, linux-kernel@vger.kernel.org, cpgs@samsung.com, devicetree@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 
---wRtZRu2mMGBZ6YQ7
+--16qp2B0xu0fRvRD7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 16, 2014 at 03:03:18PM +0530, Naveen Krishna Chatradhi wrote:
-> The i2c-exynos5.c driver can be reused for the HSI2C controller
-> on Exynos7 SoCs from Samsung.
+On Tue, Sep 16, 2014 at 03:03:17PM +0530, Naveen Krishna Chatradhi wrote:
+> The HSI2C module on Exynos7 differs in the transfer status
+> bits. Transfer status bits were moved to INT_ENABLE and
+> INT_STATUS registers
 >=20
-> This patch adds the Kconfig dependency to choose i2c-exynos5.c
-> for CONFIG_ARCH_EXYNOS7.
+> This patch adds support for the HSI2C module on Exynos7.
+> 1. Implementes a "hw" field in the variant struct to distinguish
+>    the hardware.
+> 2. Updates the dt-new compatible in dt-binding documenation
 >=20
 > Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Cc: Wolfram Sang <wsa@the-dreams.de>
 
-Folded this one into the previous one.
+Applied to for-next, thanks!
 
 
---wRtZRu2mMGBZ6YQ7
+--16qp2B0xu0fRvRD7
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJULf0fAAoJEBQN5MwUoCm2vCkQAJYQnwhuPCb56462MVMeeLSt
-ropoHhpNP2JKM57YTW1SgKlxv50zzdz0e1rbgPdmsijgNEctyzrbH8QWOrljZeo5
-ue56jDIgrzelyH8B7UUiZwfpeohqNA5CgQ03mYRefbZOtmMqNBlhao6Wfx200kq1
-xDFIvMWohrsiklELK0pnrog6ZYB+EAJXk6gDFCME0xRs4GM9Alxmqadq+1ZtsnV/
-ellOydCXmR8etCx+7OulGAsl2p+eiVvlLvGgRcTMbHP/pPtAVcKCIRRfF5H2c+S6
-XyaoNTK42ZXjpqug9yFLjbESHlmBCoikWTM4Ns6jzkf9/Hqv2QsH7c8GNUnIbLm8
-GeGl26lrH41Yhti0mEwlBEwCRQxY6PVfnepXSj5nV7R/FiNFLUuLUkLdc+yxZrAt
-LY167/abqCt43A+vcO6fwg5bYZmXn7h+RvExZonN8gLtFguvQT8ZruHiZNdjJpGB
-yvVLs4oNhjLZwYrRHVXd3Ql5AWCVhqc+J3J8ZqdqEah6dj493kLWRsX9XSGogl30
-zDCInU4xKqNTEl2kjIgzccW4LsKjRnWN1MIvNLBYvjhC6gybDU3M5GeBIBBditi3
-SVzZZi9RCmzwKu7tM50mQs0chmv7idXqEUACyJC+r3asCjCIUeFlWaK3vdxqVkSU
-wA+r4uEv67Gox3myjm26
-=Qf16
+iQIcBAEBAgAGBQJULf0MAAoJEBQN5MwUoCm2i3YQAIKvm5Upiuz0wPfoJEDKZeIp
+28fXBYMV0DOCZ/Fqf/Rc3soar5knuAMVLNVnjAVuODim6gw34FC9yszFFjYZcmOv
+UlSvsoLGanxyT3+LAyOcKn01LodzmcwPpxeL0Y1fzNPnaRb9N7Lw/6DK6O1sQHfo
+NIpbo4xJzbGlLwdmuYoao7vVIu8oVerC724UqMQ6RSQBX0KzBRWbb6KX6ZtHgX7R
+I2xRFUJ7etYL5x9yIwz2q1LGefXobY1pDpMpLQ+U/5CuyOITVHotQyF5ABZ8k4ro
+fm/sgpL4V6hIymPxwjeZX2unFyTk9Acgr6+Qn9EDWWar9konzdGHvr5HlFaGkqzM
+nFrHiNSSqnaCrbjpJxI6iSz6QcL6SOh8kiXu9Oun8VQwOt3+rGUVD+Bujlgc5jPc
+gZ+hPcy9JhQbd8dDTviXZvBU09FVASE9NHXadj70s68RaikMWXTlvIIq2D12LhCd
+7oKOnZJqIaoIea3Wmrhx3EBdAcqi2SzxCdySExitvsWHR2PTkwcq05itzl5XjUzX
+YrQkMQlFKxAdajA2oJAa0VV9l63daVnNK9gPurIVqlBC1J8H9GYamxOgd5AUvpKD
+Twrfy8gFWoJwIdF6qErReNENF60SK7mYkdcyAC3eUpWpubS5e+lH44KNVfUgwXG2
+Dm2YmKuya+fQLWNdeKVM
+=eX59
 -----END PGP SIGNATURE-----
 
---wRtZRu2mMGBZ6YQ7--
+--16qp2B0xu0fRvRD7--
