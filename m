@@ -1,62 +1,48 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH 1/2] i2c: exynos: add support for HSI2C module on Exynos7
-Date: Fri, 3 Oct 2014 03:34:05 +0200
-Message-ID: <20141003013404.GI1323@katana>
-References: <1410859998-29285-1-git-send-email-ch.naveen@samsung.com>
- <1410859998-29285-2-git-send-email-ch.naveen@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH RFC 0/4] drm/core: restore suspend/resume calbacks in KMS drm
+ drivers
+Date: Fri, 03 Oct 2014 10:24:09 +0200
+Message-ID: <1412324653-30677-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="16qp2B0xu0fRvRD7"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1410859998-29285-2-git-send-email-ch.naveen@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Cc: linux-i2c@vger.kernel.org, naveenkrishna.ch@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, sjg@chromium.org, grundler@chromium.org, linux-kernel@vger.kernel.org, cpgs@samsung.com, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "open list:INTEL DRM DRIVERS..." <intel-gfx@lists.freedesktop.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, Daniel Vetter <daniel.vetter@intel.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+The main intent of this patchset is to allow use of suspend/resume drm driver
+callbacks in KMS drivers, as these callbacks seems to me the best place
+to implement suspend/resume functionality in drm driver.
+Implementing this functionality in master component driver PM ops is problematic
+as those callbacks can be called asynchronously regardless of state/existence of
+drm device, thus it would require additional synchronization mechanism.
 
---16qp2B0xu0fRvRD7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Callbacks re-enabling requires small changes in i915 and exynos driver.
+The patchset contains also fix of exynos resume callback.
 
-On Tue, Sep 16, 2014 at 03:03:17PM +0530, Naveen Krishna Chatradhi wrote:
-> The HSI2C module on Exynos7 differs in the transfer status
-> bits. Transfer status bits were moved to INT_ENABLE and
-> INT_STATUS registers
->=20
-> This patch adds support for the HSI2C module on Exynos7.
-> 1. Implementes a "hw" field in the variant struct to distinguish
->    the hardware.
-> 2. Updates the dt-new compatible in dt-binding documenation
->=20
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> Cc: Wolfram Sang <wsa@the-dreams.de>
-
-Applied to for-next, thanks!
+Regards
+Andrzej
 
 
---16qp2B0xu0fRvRD7
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Andrzej Hajda (4):
+  drm/i915: set PM callbacks only if modeset is turned off
+  drm/core: re-enable suspend/resume callbacks for KMS drivers
+  drm/exynos: remove master component PM callbacks
+  drm/exynos: correct connector->dpms field before resuming
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+ drivers/gpu/drm/drm_sysfs.c             |  2 --
+ drivers/gpu/drm/exynos/exynos_drm_drv.c | 37 ++++++---------------------------
+ drivers/gpu/drm/i915/i915_drv.c         |  6 ++----
+ 3 files changed, 8 insertions(+), 37 deletions(-)
 
-iQIcBAEBAgAGBQJULf0MAAoJEBQN5MwUoCm2i3YQAIKvm5Upiuz0wPfoJEDKZeIp
-28fXBYMV0DOCZ/Fqf/Rc3soar5knuAMVLNVnjAVuODim6gw34FC9yszFFjYZcmOv
-UlSvsoLGanxyT3+LAyOcKn01LodzmcwPpxeL0Y1fzNPnaRb9N7Lw/6DK6O1sQHfo
-NIpbo4xJzbGlLwdmuYoao7vVIu8oVerC724UqMQ6RSQBX0KzBRWbb6KX6ZtHgX7R
-I2xRFUJ7etYL5x9yIwz2q1LGefXobY1pDpMpLQ+U/5CuyOITVHotQyF5ABZ8k4ro
-fm/sgpL4V6hIymPxwjeZX2unFyTk9Acgr6+Qn9EDWWar9konzdGHvr5HlFaGkqzM
-nFrHiNSSqnaCrbjpJxI6iSz6QcL6SOh8kiXu9Oun8VQwOt3+rGUVD+Bujlgc5jPc
-gZ+hPcy9JhQbd8dDTviXZvBU09FVASE9NHXadj70s68RaikMWXTlvIIq2D12LhCd
-7oKOnZJqIaoIea3Wmrhx3EBdAcqi2SzxCdySExitvsWHR2PTkwcq05itzl5XjUzX
-YrQkMQlFKxAdajA2oJAa0VV9l63daVnNK9gPurIVqlBC1J8H9GYamxOgd5AUvpKD
-Twrfy8gFWoJwIdF6qErReNENF60SK7mYkdcyAC3eUpWpubS5e+lH44KNVfUgwXG2
-Dm2YmKuya+fQLWNdeKVM
-=eX59
------END PGP SIGNATURE-----
-
---16qp2B0xu0fRvRD7--
+-- 
+1.9.1
