@@ -1,96 +1,44 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] [media] Remove references to non-existent PLAT_S5P symbol
-Date: Mon, 06 Oct 2014 17:39:07 +0200
-Message-ID: <1412609947-8358-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:14223 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753166AbaJFPj1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Oct 2014 11:39:27 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH] usb: Remove references to non-existent PLAT_S5P symbol
+Date: Mon, 06 Oct 2014 17:47:10 +0200
+Message-ID: <1412610430-8647-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, pebolle@tiscali.nl, jg1.han@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, pebolle@tiscali.nl, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
 The PLAT_S5P Kconfig symbol was removed in commit d78c16ccde96
-("ARM: SAMSUNG: Remove remaining legacy code"). However, there
-are still some references to that symbol left, fix that by
-substituting them with ARCH_S5PV210.
+("ARM: SAMSUNG: Remove remaining legacy code"). There are still
+some references left, fix that by replacing them with ARCH_S5PV210.
 
 Reported-by: Paul Bolle <pebolle@tiscali.nl>
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/media/platform/Kconfig            |    6 +++---
- drivers/media/platform/exynos4-is/Kconfig |    4 ++--
- drivers/media/platform/s5p-tv/Kconfig     |    2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/usb/host/Kconfig |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-index bee9074..3aac88f 100644
---- a/drivers/media/platform/Kconfig
-+++ b/drivers/media/platform/Kconfig
-@@ -166,7 +166,7 @@ config VIDEO_MEM2MEM_DEINTERLACE
- config VIDEO_SAMSUNG_S5P_G2D
- 	tristate "Samsung S5P and EXYNOS4 G2D 2d graphics accelerator driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2
--	depends on PLAT_S5P || ARCH_EXYNOS || COMPILE_TEST
-+	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
- 	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
-@@ -178,7 +178,7 @@ config VIDEO_SAMSUNG_S5P_G2D
- config VIDEO_SAMSUNG_S5P_JPEG
- 	tristate "Samsung S5P/Exynos3250/Exynos4 JPEG codec driver"
- 	depends on VIDEO_DEV && VIDEO_V4L2
--	depends on PLAT_S5P || ARCH_EXYNOS || COMPILE_TEST
-+	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
- 	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	select V4L2_MEM2MEM_DEV
-@@ -189,7 +189,7 @@ config VIDEO_SAMSUNG_S5P_JPEG
- config VIDEO_SAMSUNG_S5P_MFC
- 	tristate "Samsung S5P MFC Video Codec"
- 	depends on VIDEO_DEV && VIDEO_V4L2
--	depends on PLAT_S5P || ARCH_EXYNOS || COMPILE_TEST
-+	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
- 	depends on HAS_DMA
- 	select VIDEOBUF2_DMA_CONTIG
- 	default n
-diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/media/platform/exynos4-is/Kconfig
-index 77c9512..b3b270a 100644
---- a/drivers/media/platform/exynos4-is/Kconfig
-+++ b/drivers/media/platform/exynos4-is/Kconfig
-@@ -2,7 +2,7 @@
- config VIDEO_SAMSUNG_EXYNOS4_IS
- 	bool "Samsung S5P/EXYNOS4 SoC series Camera Subsystem driver"
- 	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
--	depends on (PLAT_S5P || ARCH_EXYNOS || COMPILE_TEST)
-+	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
- 	depends on OF && COMMON_CLK
- 	help
- 	  Say Y here to enable camera host interface devices for
-@@ -57,7 +57,7 @@ endif
+diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+index 82800a7..6f1d48e 100644
+--- a/drivers/usb/host/Kconfig
++++ b/drivers/usb/host/Kconfig
+@@ -220,7 +220,7 @@ config USB_EHCI_SH
  
- config VIDEO_EXYNOS4_FIMC_IS
- 	tristate "EXYNOS4x12 FIMC-IS (Imaging Subsystem) driver"
--	depends on HAS_DMA
-+	depends on HAS_DMA && !ARCH_S5PV210
- 	select VIDEOBUF2_DMA_CONTIG
- 	depends on OF
- 	select FW_LOADER
-diff --git a/drivers/media/platform/s5p-tv/Kconfig b/drivers/media/platform/s5p-tv/Kconfig
-index a9d56f8..beb180e 100644
---- a/drivers/media/platform/s5p-tv/Kconfig
-+++ b/drivers/media/platform/s5p-tv/Kconfig
-@@ -9,7 +9,7 @@
- config VIDEO_SAMSUNG_S5P_TV
- 	bool "Samsung TV driver for S5P platform"
- 	depends on PM_RUNTIME
--	depends on PLAT_S5P || ARCH_EXYNOS || COMPILE_TEST
-+	depends on ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
- 	default n
- 	---help---
- 	  Say Y here to enable selecting the TV output devices for
+ config USB_EHCI_EXYNOS
+        tristate "EHCI support for Samsung S5P/EXYNOS SoC Series"
+-       depends on PLAT_S5P || ARCH_EXYNOS
++       depends on ARCH_S5PV210 || ARCH_EXYNOS
+        help
+ 	Enable support for the Samsung Exynos SOC's on-chip EHCI controller.
+ 
+@@ -527,7 +527,7 @@ config USB_OHCI_SH
+ 
+ config USB_OHCI_EXYNOS
+ 	tristate "OHCI support for Samsung S5P/EXYNOS SoC Series"
+-	depends on PLAT_S5P || ARCH_EXYNOS
++	depends on ARCH_S5PV210 || ARCH_EXYNOS
+ 	help
+ 	 Enable support for the Samsung Exynos SOC's on-chip OHCI controller.
+ 
 -- 
 1.7.9.5
