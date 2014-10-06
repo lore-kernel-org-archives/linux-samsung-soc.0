@@ -1,50 +1,41 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Subject: Re: [PATCH 2/4] [media] exynos4-is: Remove optional dependency on
  PLAT_S5P
-Date: Mon, 06 Oct 2014 16:37:44 +0400
-Message-ID: <54328D18.2000606@cogentembedded.com>
+Date: Mon, 06 Oct 2014 15:05:41 +0200
+Message-ID: <543293A5.1090506@samsung.com>
 References: <1412586485.4054.40.camel@x220>
+ <54328D18.2000606@cogentembedded.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f51.google.com ([209.85.215.51]:43200 "EHLO
-	mail-la0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752119AbaJFMhq (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:27929 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751814AbaJFNFo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Oct 2014 08:37:46 -0400
-Received: by mail-la0-f51.google.com with SMTP id ge10so4213188lab.38
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Oct 2014 05:37:44 -0700 (PDT)
-In-Reply-To: <1412586485.4054.40.camel@x220>
+	Mon, 6 Oct 2014 09:05:44 -0400
+In-reply-to: <54328D18.2000606@cogentembedded.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Valentin Rothberg <valentinrothberg@gmail.com>
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>, Paul Bolle <pebolle@tiscali.nl>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Valentin Rothberg <valentinrothberg@gmail.com>
 
-Hello.
+On 06/10/14 14:37, Sergei Shtylyov wrote:
+>> diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/media/platform/exynos4-is/Kconfig
+>> index 77c951237744..775c3278d0eb 100644
+>> --- a/drivers/media/platform/exynos4-is/Kconfig
+>> +++ b/drivers/media/platform/exynos4-is/Kconfig
+>> @@ -2,7 +2,7 @@
+>>   config VIDEO_SAMSUNG_EXYNOS4_IS
+>>   	bool "Samsung S5P/EXYNOS4 SoC series Camera Subsystem driver"
+>>   	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
+>> -	depends on (PLAT_S5P || ARCH_EXYNOS || COMPILE_TEST)
+>> +	depends on (ARCH_EXYNOS || COMPILE_TEST)
+> 
+>     Perhaps it's time to drop the useless parens?
 
-On 10/6/2014 1:08 PM, Paul Bolle wrote:
+Good point, let me prepare patches to clean that up.
 
-> Commit d78c16ccde96 ("ARM: SAMSUNG: Remove remaining legacy code")
-> removed the Kconfig symbol PLAT_S5P. Remove an optional dependency on
-> that symbol from this Kconfig file too.
-
-> Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
-> ---
->   drivers/media/platform/exynos4-is/Kconfig | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-
-> diff --git a/drivers/media/platform/exynos4-is/Kconfig b/drivers/media/platform/exynos4-is/Kconfig
-> index 77c951237744..775c3278d0eb 100644
-> --- a/drivers/media/platform/exynos4-is/Kconfig
-> +++ b/drivers/media/platform/exynos4-is/Kconfig
-> @@ -2,7 +2,7 @@
->   config VIDEO_SAMSUNG_EXYNOS4_IS
->   	bool "Samsung S5P/EXYNOS4 SoC series Camera Subsystem driver"
->   	depends on VIDEO_V4L2 && VIDEO_V4L2_SUBDEV_API
-> -	depends on (PLAT_S5P || ARCH_EXYNOS || COMPILE_TEST)
-> +	depends on (ARCH_EXYNOS || COMPILE_TEST)
-
-    Perhaps it's time to drop the useless parens?
-
-WBR, Sergei
+--
+Thanks,
+Sylwester
