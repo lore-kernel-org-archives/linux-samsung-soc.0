@@ -1,56 +1,121 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH] usb: ehci/ohci-exynos: Fix of_node_put() for child when getting PHYs
-Date: Mon,  6 Oct 2014 11:51:10 +0530
-Message-ID: <1412576470-23974-1-git-send-email-gautam.vivek@samsung.com>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: exynos5420/arndale-octa: imprecise external aborts on exynos_defconfig
+Date: Mon, 6 Oct 2014 13:25:34 +0530
+Message-ID: <CAJuA9agBGbTSbo_-5_t588Vc4SvEg06wX0=+AQHYVUxeO6e71w@mail.gmail.com>
+References: <CANMBJr41TQx4jVjnOO9WThn=SiZCq12mx1xtGN8_ubzZrO1=YA@mail.gmail.com>
+	<CAJuA9ahkpZ4EJQz4DoAjYzo0OQw5zXLavAVoXRBdgPcm9EUQYA@mail.gmail.com>
+	<7hk351ep8e.fsf@deeprootsystems.com>
+	<11034593.CCZ1LqhX6D@amdc1032>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f42.google.com ([209.85.220.42]:50225 "EHLO
-	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750888AbaJFGVX (ORCPT
+Received: from mail-la0-f41.google.com ([209.85.215.41]:47281 "EHLO
+	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751140AbaJFHzh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Oct 2014 02:21:23 -0400
+	Mon, 6 Oct 2014 03:55:37 -0400
+Received: by mail-la0-f41.google.com with SMTP id pn19so3892384lab.14
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Oct 2014 00:55:35 -0700 (PDT)
+In-Reply-To: <11034593.CCZ1LqhX6D@amdc1032>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, drake@endlessm.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Kevin Hilman <khilman@kernel.org>, Tyler Baker <tyler.baker@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sachin Kamat <sachin.kamat@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On enabling CONFIG_OF_SELFTEST which enables CONFIG_OF_DYNAMIC,
-we found out that while getting PHYs for the controller we were
-doing an extra of_node_put on the child node in our routines -
-exynos_e/ohci_get_phy().
-This child is however already put by of_get_next_available_child()
-which does a of_node_put() on the "prev" node. So there's no point
-in putting the same node again in our routine.
+Hi Bartlomiej,
 
-Reported-by: Daniel Drake <drake@endlessm.com>
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
----
- drivers/usb/host/ehci-exynos.c |    1 -
- drivers/usb/host/ohci-exynos.c |    1 -
- 2 files changed, 2 deletions(-)
+On Tue, Sep 30, 2014 at 11:47 PM, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+>
+> Hi,
+>
+> On Wednesday, September 17, 2014 05:39:29 PM Kevin Hilman wrote:
+>> Thomas Abraham <ta.omasab@gmail.com> writes:
+>>
+>> > On Thu, Sep 11, 2014 at 12:16 AM, Kevin Hilman <khilman@kernel.org> wrote:
+>> >> Tyler Baker <tyler.baker@linaro.org> writes:
+>> >>
+>> >>> Exynos5420-based Arndale octa boards have recently started failing boot
+>> >>> tests due to imprecise external aborts.  This only appears to happen
+>> >>> when using exynos_defconfig and boots fine with multi_v7_defconfig.  The
+>> >>> issue seems to be intermittent, so is not reliably reproducable and
+>> >>> difficult to bisect.  Here are a few boot logs from recent
+>> >>> mainline/linux-next kernels that are failing:
+>> >>
+>> >> FYI, I'm seeing the same periodic aborts.  For example, here's my boot
+>> >> of next-20140910:
+>> >> http://images.armcloud.us/kernel-ci/next/next-20140910/arm-exynos_defconfig/boot-exynos5420-arndale-octa.html
+>> >>
+>> >> However, my userspace is much simpler and doesn't seem to cause a panic,
+>> >> so my boot tests report passing. (I should fixup my scripts so these
+>> >> imprecise aborts are reported as a FAIL.)
+>> >>
+>> >> I'm glad you pointed out that it happens only with exynos_defconfig and
+>> >> not multi_v7_defconfig because I noticed that too.  I haven't had the
+>> >> time to track it any further than that, so maybe the exynos folks can
+>> >> help track it down from here.
+>> >>
+>> >> Thanks for reporting this,
+>> >>
+>> >> Kevin
+>> >
+>> > Hi Tyler, Kevin,
+>> >
+>> > From the bootlog you have shared,
+>> >
+>> > [    1.060016] CPU4: failed to come online
+>> > [    2.070031] CPU5: failed to come online
+>> > [    3.080049] CPU6: failed to come online
+>> > [    4.090066] CPU7: failed to come online
+>> > [    4.090099] Brought up 4 CPUs
+>> > [    4.090109] SMP: Total of 4 processors activated.
+>> > [    4.090119] CPU: WARNING: CPU(s) started in wrong/inconsistent
+>> > modes (primary CPU mode 0x13)
+>> > [    4.090128] CPU: This may indicate a broken bootloader or firmware.
+>> >
+>> > Would it be possible to set max cpus to 1, disable switcher and try
+>
+> Which "max cpus" do you mean?  For NR_CPUS the lower limit is 2.
 
-diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
-index 7189f2e..1b726bf 100644
---- a/drivers/usb/host/ehci-exynos.c
-+++ b/drivers/usb/host/ehci-exynos.c
-@@ -74,7 +74,6 @@ static int exynos_ehci_get_phy(struct device *dev,
- 
- 		phy = devm_of_phy_get(dev, child, NULL);
- 		exynos_ehci->phy[phy_number] = phy;
--		of_node_put(child);
- 		if (IS_ERR(phy)) {
- 			ret = PTR_ERR(phy);
- 			if (ret == -EPROBE_DEFER) {
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-index d28b658..39f366b 100644
---- a/drivers/usb/host/ohci-exynos.c
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -63,7 +63,6 @@ static int exynos_ohci_get_phy(struct device *dev,
- 
- 		phy = devm_of_phy_get(dev, child, NULL);
- 		exynos_ohci->phy[phy_number] = phy;
--		of_node_put(child);
- 		if (IS_ERR(phy)) {
- 			ret = PTR_ERR(phy);
- 			if (ret == -EPROBE_DEFER) {
--- 
-1.7.10.4
+The "maxcpus=1" kernel parameter could be used here. The reason for
+trying with this option was to understand the probable location of
+this imprecise abort (mcpm init or secondary cpu boot).
+
+Thanks,
+Thomas.
+
+>
+>> > again. I don't have a arndale octa board but I have tested mainline
+>> > kernel with smdk5420 board. It boots all eight CPUs, switcher works
+>> > fine and there are no imprecise aborts seen.
+>>
+>> Sorry for the delay, I'm travelling this week.
+>>
+>> FWIW, the same CPU boot failures you hilight above are happening on
+>> multi_v7_defconfig[1] which is not getting the imprecise abort.  This is
+>> only happening on exynos_defconfig[2], so I'm curious why you think the
+>> switcher or NR_CPUS might be the issues.
+>>
+>> Anyways, I narrowed this down a bit and discovered it's
+>> CONFIG_EXYNOS5420_MCPM=y that's the root cause.  If I use
+>> exynos_defconfig and then disable that option, I don't get any more
+>> imprecise aborts.
+>
+> I have exactly the same issue with Exynos5420 Arndale Octa.
+>
+> CONFIG_EXYNOS5420_MCPM was enabled by commit fc3791f3a95d
+> ("ARM: exynos_defconfig: Update exynos_defconfig") which
+> get merged into v3.17-rc1.  It seems that this part of
+> the patch should be reverted for the final v3.17 kernel.
+>
+>> Kevin
+>>
+>> [1] http://images.armcloud.us/kernel-ci/mainline/v3.17-rc5-25-g8ba4caf/arm-multi_v7_defconfig/boot-exynos5420-arndale-octa.html
+>> [2] http://images.armcloud.us/kernel-ci/mainline/v3.17-rc5-25-g8ba4caf/arm-exynos_defconfig/boot-exynos5420-arndale-octa.html
+>
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+>
