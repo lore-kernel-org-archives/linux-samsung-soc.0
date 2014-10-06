@@ -1,78 +1,56 @@
 From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: 3.17-rc6 on ODROID: ERROR: Bad of_node_put() on /ehci@12580000/port@1
-Date: Mon, 6 Oct 2014 10:32:27 +0530
-Message-ID: <CAFp+6iGy4vDGy6JHsy=KbuVF=52YNzszZ6Pe6MX0sRfMWWiS3w@mail.gmail.com>
-References: <CAD8Lp45qyHpHqRnUy4T9Sm8zV4XJBDp=cLYXjtcxmVrS8GSjbg@mail.gmail.com>
-	<CAFp+6iGwB3XuzSuYPzO=5MacPO2LGFDnh9oS5rAL3Ne26wb9Dg@mail.gmail.com>
-	<CAD8Lp46UxTd04fczjm9c1597SBnvR--PUasjBqZwvWU8MKtj8Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Subject: [PATCH] usb: ehci/ohci-exynos: Fix of_node_put() for child when getting PHYs
+Date: Mon,  6 Oct 2014 11:51:10 +0530
+Message-ID: <1412576470-23974-1-git-send-email-gautam.vivek@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f51.google.com ([209.85.216.51]:39953 "EHLO
-	mail-qa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750720AbaJFFC2 (ORCPT
+Received: from mail-pa0-f42.google.com ([209.85.220.42]:50225 "EHLO
+	mail-pa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750888AbaJFGVX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Oct 2014 01:02:28 -0400
-In-Reply-To: <CAD8Lp46UxTd04fczjm9c1597SBnvR--PUasjBqZwvWU8MKtj8Q@mail.gmail.com>
+	Mon, 6 Oct 2014 02:21:23 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, Alan Stern <stern@rowland.harvard.edu>
+To: linux-usb@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, drake@endlessm.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 
-On Wed, Oct 1, 2014 at 8:42 PM, Daniel Drake <drake@endlessm.com> wrote:
-> On Wed, Oct 1, 2014 at 12:36 AM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
->> One reason i doubt why it could be coming is because we are
->> specifically putting the
->> child after doing everything with it.
->>
->> When we are getting the child node using for_each_available_child_of_node(),
->> which calls for of_get_next_available_child(). So of_get_next_available_child()
->> does a of_node_put() on the "prev" node, in case we have siblings to the child.
->>
->> Can you see if the below change helps ?
->>
->> ------------------------------------------------------------------------------------------------------------
->> diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
->> index 7189f2e..1b726bf 100644
->> --- a/drivers/usb/host/ehci-exynos.c
->> +++ b/drivers/usb/host/ehci-exynos.c
->> @@ -74,7 +74,6 @@ static int exynos_ehci_get_phy(struct device *dev,
->>
->>                 phy = devm_of_phy_get(dev, child, NULL);
->>                 exynos_ehci->phy[phy_number] = phy;
->> -               of_node_put(child);
->>                 if (IS_ERR(phy)) {
->>                         ret = PTR_ERR(phy);
->>                         if (ret == -EPROBE_DEFER) {
->> ------------------------------------------------------------------------------------------------------------
->>
->>
->> This is on top of usb-next.
->> If you are testing on rc6 only, then probably you will have to cherrypick two
->> patches each for ehci-exynos and ohci-exynos:
->> usb: host: ehci-exynos: Remove unnecessary usb-phy support
->> usb: host: ohci-exynos: Remove unnecessary usb-phy support
->
-> I made the equivalent change to 3.17-rc7 (right now 3.17 is my main
-> interest), i.e. removed all of_node_put calls from
-> exynos_ehci_get_phy(). Same change is needed in exynos_ohci_get_phy().
-> Now the warnings are gone.
-> BTW, I think the warning only appeared when CONFIG_OF_SELFTEST=y
->
-> I didn't check the implementation details like you did, but I looked
-> at a few other users of for_each_available_child_of_node and it looks
-> like indeed you do not need to call of_node_put() on the children in
-> the normal case, or at least, nobody else does.
+On enabling CONFIG_OF_SELFTEST which enables CONFIG_OF_DYNAMIC,
+we found out that while getting PHYs for the controller we were
+doing an extra of_node_put on the child node in our routines -
+exynos_e/ohci_get_phy().
+This child is however already put by of_get_next_available_child()
+which does a of_node_put() on the "prev" node. So there's no point
+in putting the same node again in our routine.
 
-Yes, i saw the same; and the reason i mentioned above looks like the
-issue with us.
-I will post necessary patches for removing this extra of_node_put()
-from ehci/ohci-exynos
+Reported-by: Daniel Drake <drake@endlessm.com>
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+---
+ drivers/usb/host/ehci-exynos.c |    1 -
+ drivers/usb/host/ohci-exynos.c |    1 -
+ 2 files changed, 2 deletions(-)
 
-
-
+diff --git a/drivers/usb/host/ehci-exynos.c b/drivers/usb/host/ehci-exynos.c
+index 7189f2e..1b726bf 100644
+--- a/drivers/usb/host/ehci-exynos.c
++++ b/drivers/usb/host/ehci-exynos.c
+@@ -74,7 +74,6 @@ static int exynos_ehci_get_phy(struct device *dev,
+ 
+ 		phy = devm_of_phy_get(dev, child, NULL);
+ 		exynos_ehci->phy[phy_number] = phy;
+-		of_node_put(child);
+ 		if (IS_ERR(phy)) {
+ 			ret = PTR_ERR(phy);
+ 			if (ret == -EPROBE_DEFER) {
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index d28b658..39f366b 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -63,7 +63,6 @@ static int exynos_ohci_get_phy(struct device *dev,
+ 
+ 		phy = devm_of_phy_get(dev, child, NULL);
+ 		exynos_ohci->phy[phy_number] = phy;
+-		of_node_put(child);
+ 		if (IS_ERR(phy)) {
+ 			ret = PTR_ERR(phy);
+ 			if (ret == -EPROBE_DEFER) {
 -- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+1.7.10.4
