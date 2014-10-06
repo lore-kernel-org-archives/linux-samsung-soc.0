@@ -1,121 +1,78 @@
-From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: exynos5420/arndale-octa: imprecise external aborts on exynos_defconfig
-Date: Mon, 6 Oct 2014 13:25:34 +0530
-Message-ID: <CAJuA9agBGbTSbo_-5_t588Vc4SvEg06wX0=+AQHYVUxeO6e71w@mail.gmail.com>
-References: <CANMBJr41TQx4jVjnOO9WThn=SiZCq12mx1xtGN8_ubzZrO1=YA@mail.gmail.com>
-	<CAJuA9ahkpZ4EJQz4DoAjYzo0OQw5zXLavAVoXRBdgPcm9EUQYA@mail.gmail.com>
-	<7hk351ep8e.fsf@deeprootsystems.com>
-	<11034593.CCZ1LqhX6D@amdc1032>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v8] ARM: EXYNOS: Use MCPM call-backs to support S2R on Exynos5420
+Date: Mon, 6 Oct 2014 10:15:19 +0200
+Message-ID: <CABxcv==nvb2HtxdEU-WBkXM1sSQVuawjHenZ42D2ZhHzu_VZpQ@mail.gmail.com>
+References: <1412089142-12056-1-git-send-email-a.kesavan@samsung.com>
+	<CAM4voa=oZmqCf5=nD54cbi_fa4iHYh1nvOC0nt9hE=mQmhb3yw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f41.google.com ([209.85.215.41]:47281 "EHLO
-	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751140AbaJFHzh (ORCPT
+Received: from mail-wi0-f179.google.com ([209.85.212.179]:43961 "EHLO
+	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750809AbaJFIPU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Oct 2014 03:55:37 -0400
-Received: by mail-la0-f41.google.com with SMTP id pn19so3892384lab.14
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Oct 2014 00:55:35 -0700 (PDT)
-In-Reply-To: <11034593.CCZ1LqhX6D@amdc1032>
+	Mon, 6 Oct 2014 04:15:20 -0400
+Received: by mail-wi0-f179.google.com with SMTP id d1so3750965wiv.6
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Oct 2014 01:15:19 -0700 (PDT)
+In-Reply-To: <CAM4voa=oZmqCf5=nD54cbi_fa4iHYh1nvOC0nt9hE=mQmhb3yw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Kevin Hilman <khilman@kernel.org>, Tyler Baker <tyler.baker@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sachin Kamat <sachin.kamat@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Bartlomiej,
+Hello Abhilash,
 
-On Tue, Sep 30, 2014 at 11:47 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
+On Mon, Oct 6, 2014 at 5:40 AM, Abhilash Kesavan
+<kesavan.abhilash@gmail.com> wrote:
+> Hi Javier,
 >
-> Hi,
+> [...]
 >
-> On Wednesday, September 17, 2014 05:39:29 PM Kevin Hilman wrote:
->> Thomas Abraham <ta.omasab@gmail.com> writes:
->>
->> > On Thu, Sep 11, 2014 at 12:16 AM, Kevin Hilman <khilman@kernel.org> wrote:
->> >> Tyler Baker <tyler.baker@linaro.org> writes:
->> >>
->> >>> Exynos5420-based Arndale octa boards have recently started failing boot
->> >>> tests due to imprecise external aborts.  This only appears to happen
->> >>> when using exynos_defconfig and boots fine with multi_v7_defconfig.  The
->> >>> issue seems to be intermittent, so is not reliably reproducable and
->> >>> difficult to bisect.  Here are a few boot logs from recent
->> >>> mainline/linux-next kernels that are failing:
->> >>
->> >> FYI, I'm seeing the same periodic aborts.  For example, here's my boot
->> >> of next-20140910:
->> >> http://images.armcloud.us/kernel-ci/next/next-20140910/arm-exynos_defconfig/boot-exynos5420-arndale-octa.html
->> >>
->> >> However, my userspace is much simpler and doesn't seem to cause a panic,
->> >> so my boot tests report passing. (I should fixup my scripts so these
->> >> imprecise aborts are reported as a FAIL.)
->> >>
->> >> I'm glad you pointed out that it happens only with exynos_defconfig and
->> >> not multi_v7_defconfig because I noticed that too.  I haven't had the
->> >> time to track it any further than that, so maybe the exynos folks can
->> >> help track it down from here.
->> >>
->> >> Thanks for reporting this,
->> >>
->> >> Kevin
->> >
->> > Hi Tyler, Kevin,
->> >
->> > From the bootlog you have shared,
->> >
->> > [    1.060016] CPU4: failed to come online
->> > [    2.070031] CPU5: failed to come online
->> > [    3.080049] CPU6: failed to come online
->> > [    4.090066] CPU7: failed to come online
->> > [    4.090099] Brought up 4 CPUs
->> > [    4.090109] SMP: Total of 4 processors activated.
->> > [    4.090119] CPU: WARNING: CPU(s) started in wrong/inconsistent
->> > modes (primary CPU mode 0x13)
->> > [    4.090128] CPU: This may indicate a broken bootloader or firmware.
->> >
->> > Would it be possible to set max cpus to 1, disable switcher and try
+>> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+>> index adb36a8..222aa3c 100644
+>> --- a/arch/arm/mach-exynos/platsmp.c
+>> +++ b/arch/arm/mach-exynos/platsmp.c
+>> @@ -137,6 +137,18 @@ void exynos_cpu_power_down(int cpu)
+>>   */
+>>  void exynos_cpu_power_up(int cpu)
+>>  {
+>> +       if (cpu == 0 && (of_machine_is_compatible("samsung,exynos5420") ||
+>> +               of_machine_is_compatible("samsung,exynos5800"))) {
+>> +               /*
+>> +                * Bypass power down for CPU0 during suspend. Check for
+>> +                * the SYS_PWR_REG value to decide if we are suspending
+>> +                * the system.
+>> +                */
+>> +               int val = __raw_readl(pmu_base_addr +
+>> +                               EXYNOS5_ARM_CORE0_SYS_PWR_REG);
+>> +               if (!(val & S5P_CORE_LOCAL_PWR_EN))
+>> +                       return;
+>> +       }
+>>         pmu_raw_writel(S5P_CORE_LOCAL_PWR_EN,
+>>                         EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+>>  }
 >
-> Which "max cpus" do you mean?  For NR_CPUS the lower limit is 2.
+> The above block of code should be in exynos_cpu_power_down(). Can you
+> re-test s2r after modifying it ? I have to convert a __raw_readl to
+> pmu_raw_readl in this patch as well. Once Vikas re-works the base s2r
+> patch I will re-post a v9.
+>
 
-The "maxcpus=1" kernel parameter could be used here. The reason for
-trying with this option was to understand the probable location of
-this imprecise abort (mcpm init or secondary cpu boot).
+Thanks, for the information but unfortunately even after this change I
+still have the issue reported in [0]. I also removed the lines from
+exynos5420_pm_resume() that you asked Vikash [1].
 
-Thanks,
-Thomas.
+Which __raw_readl() you had to convert? That is only for consistency
+right? Since I see that the __raw_readl() calls are using
+pmu_base_addr + offset so it seems to be correct.
 
->
->> > again. I don't have a arndale octa board but I have tested mainline
->> > kernel with smdk5420 board. It boots all eight CPUs, switcher works
->> > fine and there are no imprecise aborts seen.
->>
->> Sorry for the delay, I'm travelling this week.
->>
->> FWIW, the same CPU boot failures you hilight above are happening on
->> multi_v7_defconfig[1] which is not getting the imprecise abort.  This is
->> only happening on exynos_defconfig[2], so I'm curious why you think the
->> switcher or NR_CPUS might be the issues.
->>
->> Anyways, I narrowed this down a bit and discovered it's
->> CONFIG_EXYNOS5420_MCPM=y that's the root cause.  If I use
->> exynos_defconfig and then disable that option, I don't get any more
->> imprecise aborts.
->
-> I have exactly the same issue with Exynos5420 Arndale Octa.
->
-> CONFIG_EXYNOS5420_MCPM was enabled by commit fc3791f3a95d
-> ("ARM: exynos_defconfig: Update exynos_defconfig") which
-> get merged into v3.17-rc1.  It seems that this part of
-> the patch should be reverted for the final v3.17 kernel.
->
->> Kevin
->>
->> [1] http://images.armcloud.us/kernel-ci/mainline/v3.17-rc5-25-g8ba4caf/arm-multi_v7_defconfig/boot-exynos5420-arndale-octa.html
->> [2] http://images.armcloud.us/kernel-ci/mainline/v3.17-rc5-25-g8ba4caf/arm-exynos_defconfig/boot-exynos5420-arndale-octa.html
->
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
->
+I'll test again once you both re-spin your patches then.
+
+> Regards,
+> Abhilash
+
+Best regards,
+Javier
+
+[0]: http://www.spinics.net/lists/arm-kernel/msg367615.html
+[1]: http://www.spinics.net/lists/linux-samsung-soc/msg37561.html
