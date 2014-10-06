@@ -1,196 +1,115 @@
-From: Shixin Zeng <zeng.shixin@gmail.com>
-Subject: 3.17 fails to boot on Odroid U2 sometimes
-Date: Sun, 5 Oct 2014 16:51:40 -0400
-Message-ID: <CAOay_bwRDkCXwADqxgkFUrvGeZVsu+XWRd97+U04hvovm3z7-w@mail.gmail.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH v8 2/2] ARM: exynos5: Add Suspend-to-RAM support for 5420
+Date: Mon, 6 Oct 2014 09:03:07 +0530
+Message-ID: <CAM4voakE0nkTjdhqLdCgZ_T-MJ-Qs51FHwP1Y8_rNyZ5REZqKA@mail.gmail.com>
+References: <1412074969-12704-1-git-send-email-vikas.sajjan@samsung.com>
+	<1412074969-12704-3-git-send-email-vikas.sajjan@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f175.google.com ([209.85.220.175]:35758 "EHLO
-	mail-vc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751855AbaJEUvk (ORCPT
+Received: from mail-qg0-f52.google.com ([209.85.192.52]:44804 "EHLO
+	mail-qg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751895AbaJFDdI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 5 Oct 2014 16:51:40 -0400
-Received: by mail-vc0-f175.google.com with SMTP id id10so2375869vcb.6
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Oct 2014 13:51:40 -0700 (PDT)
+	Sun, 5 Oct 2014 23:33:08 -0400
+Received: by mail-qg0-f52.google.com with SMTP id q108so3228943qgd.11
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Oct 2014 20:33:07 -0700 (PDT)
+In-Reply-To: <1412074969-12704-3-git-send-email-vikas.sajjan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Vikas Sajjan <vikas.sajjan@samsung.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Vikas Sajjan <sajjan.linux@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Douglas Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, sunil joshi <joshi@samsung.com>
 
-I've run into this problem a few times, but it doesn't happen every
-time. When it happens, booting just hangs with the following messages:
+Hi Vikas,
 
-[  240.302126] INFO: task swapper/0:1 blocked for more than 120 seconds.
-[  240.302937]       Not tainted 3.17.0-rc7-00097-g7b6ea43 #42
-[  240.308514] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-disables this message.
-[  240.316350] swapper/0       D c0703960     0     1      0 0x00000000
-[  240.322667] [<c0703960>] (__schedule) from [<c070413c>]
-(schedule_preempt_disabled+0x14/0x20)
-[  240.331159] [<c070413c>] (schedule_preempt_disabled) from
-[<c0706714>] (__mutex_lock_slowpath+0x190/0x3d4)
-[  240.340782] [<c0706714>] (__mutex_lock_slowpath) from [<c0706964>]
-(mutex_lock+0xc/0x24)
-[  240.348856] [<c0706964>] (mutex_lock) from [<c046a6a4>]
-(regmap_read+0x30/0x60)
-[  240.356135] [<c046a6a4>] (regmap_read) from [<c0599e3c>]
-(max77686_clk_is_prepared+0x20/0x3c)
-[  240.364639] [<c0599e3c>] (max77686_clk_is_prepared) from
-[<c059547c>] (clk_unprepare_unused_subtree+0x68/0xa0)
-[  240.374607] [<c059547c>] (clk_unprepare_unused_subtree) from
-[<c059692c>] (clk_disable_unused+0xa8/0x138)
-[  240.384146] [<c059692c>] (clk_disable_unused) from [<c00088f0>]
-(do_one_initcall+0x8c/0x1c4)
-[  240.392561] [<c00088f0>] (do_one_initcall) from [<c099cd88>]
-(kernel_init_freeable+0x1a0/0x240)
-[  240.401234] [<c099cd88>] (kernel_init_freeable) from [<c06fec08>]
-(kernel_init+0x8/0xe8)
-[  240.409301] [<c06fec08>] (kernel_init) from [<c000e6b8>]
-(ret_from_fork+0x14/0x3c)
-[  240.416830] INFO: task kworker/u8:0:6 blocked for more than 120 seconds.
-[  240.423505]       Not tainted 3.17.0-rc7-00097-g7b6ea43 #42
-[  240.429050] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-disables this message.
-[  240.436858] kworker/u8:0    D c0703960     0     6      2 0x00000000
-[  240.443194] Workqueue: kmmcd mmc_rescan
-[  240.447015] [<c0703960>] (__schedule) from [<c070413c>]
-(schedule_preempt_disabled+0x14/0x20)
-[  240.455520] [<c070413c>] (schedule_preempt_disabled) from
-[<c0706714>] (__mutex_lock_slowpath+0x190/0x3d4)
-[  240.465146] [<c0706714>] (__mutex_lock_slowpath) from [<c0706964>]
-(mutex_lock+0xc/0x24)
-[  240.473215] [<c0706964>] (mutex_lock) from [<c0595880>]
-(clk_prepare_lock+0x88/0xfc)
-[  240.480930] [<c0595880>] (clk_prepare_lock) from [<c05971c8>]
-(clk_unprepare+0x1c/0x2c)
-[  240.488916] [<c05971c8>] (clk_unprepare) from [<c05288cc>]
-(s3c24xx_i2c_xfer+0x170/0x3d4)
-[  240.497063] [<c05288cc>] (s3c24xx_i2c_xfer) from [<c05233f8>]
-(__i2c_transfer+0x78/0x90)
-[  240.505125] [<c05233f8>] (__i2c_transfer) from [<c0523d90>]
-(i2c_transfer+0x94/0xc4)
-[  240.512846] [<c0523d90>] (i2c_transfer) from [<c046ecd4>]
-(regmap_i2c_read+0x48/0x64)
-[  240.520654] [<c046ecd4>] (regmap_i2c_read) from [<c046ab8c>]
-(_regmap_raw_read+0x98/0xf4)
-[  240.528804] [<c046ab8c>] (_regmap_raw_read) from [<c046ac0c>]
-(_regmap_bus_read+0x24/0x5c)
-[  240.537040] [<c046ac0c>] (_regmap_bus_read) from [<c046a5fc>]
-(_regmap_read+0x6c/0xe4)
-[  240.544932] [<c046a5fc>] (_regmap_read) from [<c046a6b4>]
-(regmap_read+0x40/0x60)
-[  240.552391] [<c046a6b4>] (regmap_read) from [<c03e9a04>]
-(regulator_get_voltage_sel_regmap+0x20/0x54)
-[  240.561593] [<c03e9a04>] (regulator_get_voltage_sel_regmap) from
-[<c03e4ec4>] (_regulator_get_voltage+0x20/0xb4)
-[  240.571747] [<c03e4ec4>] (_regulator_get_voltage) from [<c03e4e8c>]
-(regulator_get_voltage+0x1c/0x34)
-[  240.580932] [<c03e4e8c>] (regulator_get_voltage) from [<c0562960>]
-(mmc_regulator_set_ocr+0x44/0x128)
-[  240.590129] [<c0562960>] (mmc_regulator_set_ocr) from [<c057678c>]
-(sdhci_do_set_ios+0x130/0x5fc)
-[  240.598968] [<c057678c>] (sdhci_do_set_ios) from [<c0576c80>]
-(sdhci_set_ios+0x28/0x34)
-[  240.606951] [<c0576c80>] (sdhci_set_ios) from [<c0569f10>]
-(mmc_sd_init_card+0x454/0x664)
-[  240.615097] [<c0569f10>] (mmc_sd_init_card) from [<c056a320>]
-(mmc_attach_sd+0x84/0x150)
-[  240.623161] [<c056a320>] (mmc_attach_sd) from [<c0564a0c>]
-(mmc_rescan+0x2a0/0x308)
-[  240.630796] [<c0564a0c>] (mmc_rescan) from [<c003b1c4>]
-(process_one_work+0x128/0x318)
-[  240.638688] [<c003b1c4>] (process_one_work) from [<c003b998>]
-(worker_thread+0x44/0x4dc)
-[  240.646757] [<c003b998>] (worker_thread) from [<c003fa1c>]
-(kthread+0xd0/0xe8)
-[  240.653958] [<c003fa1c>] (kthread) from [<c000e6b8>]
-(ret_from_fork+0x14/0x3c)
-[  360.657146] INFO: task swapper/0:1 blocked for more than 120 seconds.
-[  360.657952]       Not tainted 3.17.0-rc7-00097-g7b6ea43 #42
-[  360.663526] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-disables this message.
-[  360.671336] swapper/0       D c0703960     0     1      0 0x00000000
-[  360.677679] [<c0703960>] (__schedule) from [<c070413c>]
-(schedule_preempt_disabled+0x14/0x20)
-[  360.686175] [<c070413c>] (schedule_preempt_disabled) from
-[<c0706714>] (__mutex_lock_slowpath+0x190/0x3d4)
-[  360.695796] [<c0706714>] (__mutex_lock_slowpath) from [<c0706964>]
-(mutex_lock+0xc/0x24)
-[  360.703869] [<c0706964>] (mutex_lock) from [<c046a6a4>]
-(regmap_read+0x30/0x60)
-[  360.711149] [<c046a6a4>] (regmap_read) from [<c0599e3c>]
-(max77686_clk_is_prepared+0x20/0x3c)
-[  360.719653] [<c0599e3c>] (max77686_clk_is_prepared) from
-[<c059547c>] (clk_unprepare_unused_subtree+0x68/0xa0)
-[  360.729627] [<c059547c>] (clk_unprepare_unused_subtree) from
-[<c059692c>] (clk_disable_unused+0xa8/0x138)
-[  360.739164] [<c059692c>] (clk_disable_unused) from [<c00088f0>]
-(do_one_initcall+0x8c/0x1c4)
-[  360.747577] [<c00088f0>] (do_one_initcall) from [<c099cd88>]
-(kernel_init_freeable+0x1a0/0x240)
-[  360.756252] [<c099cd88>] (kernel_init_freeable) from [<c06fec08>]
-(kernel_init+0x8/0xe8)
-[  360.764317] [<c06fec08>] (kernel_init) from [<c000e6b8>]
-(ret_from_fork+0x14/0x3c)
-[  360.771852] INFO: task kworker/u8:0:6 blocked for more than 120 seconds.
-[  360.778522]       Not tainted 3.17.0-rc7-00097-g7b6ea43 #42
-[  360.784067] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-disables this message.
-[  360.791876] kworker/u8:0    D c0703960     0     6      2 0x00000000
-[  360.798211] Workqueue: kmmcd mmc_rescan
-[  360.802033] [<c0703960>] (__schedule) from [<c070413c>]
-(schedule_preempt_disabled+0x14/0x20)
-[  360.810537] [<c070413c>] (schedule_preempt_disabled) from
-[<c0706714>] (__mutex_lock_slowpath+0x190/0x3d4)
-[  360.820160] [<c0706714>] (__mutex_lock_slowpath) from [<c0706964>]
-(mutex_lock+0xc/0x24)
-[  360.828233] [<c0706964>] (mutex_lock) from [<c0595880>]
-(clk_prepare_lock+0x88/0xfc)
-[  360.835949] [<c0595880>] (clk_prepare_lock) from [<c05971c8>]
-(clk_unprepare+0x1c/0x2c)
-[  360.843936] [<c05971c8>] (clk_unprepare) from [<c05288cc>]
-(s3c24xx_i2c_xfer+0x170/0x3d4)
-[  360.852079] [<c05288cc>] (s3c24xx_i2c_xfer) from [<c05233f8>]
-(__i2c_transfer+0x78/0x90)
-[  360.860143] [<c05233f8>] (__i2c_transfer) from [<c0523d90>]
-(i2c_transfer+0x94/0xc4)
-[  360.867865] [<c0523d90>] (i2c_transfer) from [<c046ecd4>]
-(regmap_i2c_read+0x48/0x64)
-[  360.875674] [<c046ecd4>] (regmap_i2c_read) from [<c046ab8c>]
-(_regmap_raw_read+0x98/0xf4)
-[  360.883819] [<c046ab8c>] (_regmap_raw_read) from [<c046ac0c>]
-(_regmap_bus_read+0x24/0x5c)
-[  360.892058] [<c046ac0c>] (_regmap_bus_read) from [<c046a5fc>]
-(_regmap_read+0x6c/0xe4)
-[  360.899949] [<c046a5fc>] (_regmap_read) from [<c046a6b4>]
-(regmap_read+0x40/0x60)
-[  360.907409] [<c046a6b4>] (regmap_read) from [<c03e9a04>]
-(regulator_get_voltage_sel_regmap+0x20/0x54)
-[  360.916610] [<c03e9a04>] (regulator_get_voltage_sel_regmap) from
-[<c03e4ec4>] (_regulator_get_voltage+0x20/0xb4)
-[  360.926764] [<c03e4ec4>] (_regulator_get_voltage) from [<c03e4e8c>]
-(regulator_get_voltage+0x1c/0x34)
-[  360.935951] [<c03e4e8c>] (regulator_get_voltage) from [<c0562960>]
-(mmc_regulator_set_ocr+0x44/0x128)
-[  360.945146] [<c0562960>] (mmc_regulator_set_ocr) from [<c057678c>]
-(sdhci_do_set_ios+0x130/0x5fc)
-[  360.953987] [<c057678c>] (sdhci_do_set_ios) from [<c0576c80>]
-(sdhci_set_ios+0x28/0x34)
-[  360.961967] [<c0576c80>] (sdhci_set_ios) from [<c0569f10>]
-(mmc_sd_init_card+0x454/0x664)
-[  360.970114] [<c0569f10>] (mmc_sd_init_card) from [<c056a320>]
-(mmc_attach_sd+0x84/0x150)
-[  360.978179] [<c056a320>] (mmc_attach_sd) from [<c0564a0c>]
-(mmc_rescan+0x2a0/0x308)
-[  360.985813] [<c0564a0c>] (mmc_rescan) from [<c003b1c4>]
-(process_one_work+0x128/0x318)
-[  360.993705] [<c003b1c4>] (process_one_work) from [<c003b998>]
-(worker_thread+0x44/0x4dc)
-[  361.001773] [<c003b998>] (worker_thread) from [<c003fa1c>]
-(kthread+0xd0/0xe8)
-[  361.008977] [<c003fa1c>] (kthread) from [<c000e6b8>]
-(ret_from_fork+0x14/0x3c)
+[...]
 
+> +static void exynos5420_pm_resume(void)
+> +{
+> +       unsigned long tmp;
+> +
+> +       /* Restore the CPU0 low power state register */
+> +       tmp = pmu_raw_readl(EXYNOS5_ARM_CORE0_SYS_PWR_REG);
+> +       pmu_raw_writel(tmp | S5P_CORE_LOCAL_PWR_EN,
+> +                       EXYNOS5_ARM_CORE0_SYS_PWR_REG);
 
-Best Regards
+I think these lines were accidentally added to this patch, please
+remove them. I have a couple of changes to make in my s2r patch which
+I will post once you send a new version.
 
-Shixin Zeng
+Regards,
+Abhilash
+> +
+> +       /* Restore the sysram cpu state register */
+> +       __raw_writel(exynos5420_cpu_state,
+> +               sysram_base_addr + EXYNOS5420_CPU_STATE);
+> +
+> +       pmu_raw_writel(EXYNOS5420_USE_STANDBY_WFI_ALL,
+> +                       S5P_CENTRAL_SEQ_OPTION);
+> +
+> +       if (exynos_pm_central_resume())
+> +               goto early_wakeup;
+> +
+> +       /* For release retention */
+> +       exynos_pm_release_retention();
+> +
+> +       pmu_raw_writel(exynos_pmu_spare3, S5P_PMU_SPARE3);
+> +
+> +       s3c_pm_do_restore_core(exynos_core_save, ARRAY_SIZE(exynos_core_save));
+> +
+> +early_wakeup:
+> +
+> +       tmp = pmu_raw_readl(EXYNOS5420_SFR_AXI_CGDIS1);
+> +       tmp &= ~EXYNOS5420_UFS;
+> +       pmu_raw_writel(tmp, EXYNOS5420_SFR_AXI_CGDIS1);
+> +
+> +       tmp = pmu_raw_readl(EXYNOS5420_FSYS2_OPTION);
+> +       tmp &= ~EXYNOS5420_EMULATION;
+> +       pmu_raw_writel(tmp, EXYNOS5420_FSYS2_OPTION);
+> +
+> +       tmp = pmu_raw_readl(EXYNOS5420_PSGEN_OPTION);
+> +       tmp &= ~EXYNOS5420_EMULATION;
+> +       pmu_raw_writel(tmp, EXYNOS5420_PSGEN_OPTION);
+> +
+> +       /* Clear SLEEP mode set in INFORM1 */
+> +       pmu_raw_writel(0x0, S5P_INFORM1);
+> +}
+> +
+>  /*
+>   * Suspend Ops
+>   */
+> @@ -310,6 +449,16 @@ static const struct exynos_pm_data exynos5250_pm_data = {
+>         .cpu_suspend    = exynos_cpu_suspend,
+>  };
+>
+> +static struct exynos_pm_data exynos5420_pm_data = {
+> +       .wkup_irq       = exynos5250_wkup_irq,
+> +       .wake_disable_mask = (0x7F << 7) | (0x1F << 1),
+> +       .release_ret_regs = exynos5420_release_ret_regs,
+> +       .pm_resume      = exynos5420_pm_resume,
+> +       .pm_suspend     = exynos5420_pm_suspend,
+> +       .pm_prepare     = exynos5420_pm_prepare,
+> +       .cpu_suspend    = exynos5420_cpu_suspend,
+> +};
+> +
+>  static struct of_device_id exynos_pmu_of_device_ids[] = {
+>         {
+>                 .compatible = "samsung,exynos4210-pmu",
+> @@ -323,6 +472,9 @@ static struct of_device_id exynos_pmu_of_device_ids[] = {
+>         }, {
+>                 .compatible = "samsung,exynos5250-pmu",
+>                 .data = &exynos5250_pm_data,
+> +       }, {
+> +               .compatible = "samsung,exynos5420-pmu",
+> +               .data = &exynos5420_pm_data,
+>         },
+>         { /*sentinel*/ },
+>  };
+> --
+> 1.7.9.5
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
