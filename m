@@ -1,145 +1,90 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
- ps8622 DT properties
-Date: Mon, 6 Oct 2014 14:34:00 +0300
-Message-ID: <54327E28.5050400@ti.com>
-References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com> <5419760A.7020908@ti.com> <20140922075424.GB1470@ulmo> <54202C86.3040808@ti.com> <20140923062111.GE30514@ulmo> <54213DAC.5010806@ti.com> <20140923095314.GS30514@ulmo> <542160DF.2040008@ti.com> <20140923145833.GI5982@ulmo> <54228A15.4090901@ti.com> <20140925062324.GB12423@ulmo>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v8] ARM: EXYNOS: Use MCPM call-backs to support S2R on Exynos5420
+Date: Mon, 6 Oct 2014 13:59:24 +0200
+Message-ID: <CABxcv=m4vTgD8a7746NqUUPxBC6mgJpSJudN1RjBGzfJpZkgBQ@mail.gmail.com>
+References: <1412089142-12056-1-git-send-email-a.kesavan@samsung.com>
+	<CAM4voa=oZmqCf5=nD54cbi_fa4iHYh1nvOC0nt9hE=mQmhb3yw@mail.gmail.com>
+	<CABxcv==nvb2HtxdEU-WBkXM1sSQVuawjHenZ42D2ZhHzu_VZpQ@mail.gmail.com>
+	<CAM4voamLVYsJJ=OayDD0+Y4FRBQw6_ksAsJNejwzAhY3r9Dnvw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature";
-	boundary="Vsgu5gVcuVod1RC0aMWa8bJx52IvdqrpU"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:56022 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751488AbaJFLeR (ORCPT
+Received: from mail-wi0-f175.google.com ([209.85.212.175]:55186 "EHLO
+	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751387AbaJFL70 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Oct 2014 07:34:17 -0400
-In-Reply-To: <20140925062324.GB12423@ulmo>
+	Mon, 6 Oct 2014 07:59:26 -0400
+Received: by mail-wi0-f175.google.com with SMTP id d1so4319399wiv.2
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Oct 2014 04:59:24 -0700 (PDT)
+In-Reply-To: <CAM4voamLVYsJJ=OayDD0+Y4FRBQw6_ksAsJNejwzAhY3r9Dnvw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, inki.dae@samsung.com, robdclark@gmail.com, daniel.vetter@ffwll.ch, seanpaul@google.com, ajaynumb@gmail.com, jg1.han@samsung.com, joshi@samsung.com, prashanth.g@samsung.com, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
 
---Vsgu5gVcuVod1RC0aMWa8bJx52IvdqrpU
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: quoted-printable
+Hello Abhilash,
 
-On 25/09/14 09:23, Thierry Reding wrote:
-
-> How are cameras different? The CPU wants to capture video data from the=
-
-> camera, so it needs to go look for a video capture device, which in tur=
-n
-> needs to involve a sensor.
-
-Let's say we have an XXX-to-YYY encoder. We use that encoder to convert
-the SoC's XXX output to YYY, which is then shown on a panel. So, in this
-case, the encoder's DT node will have a "panel" or "output" phandle,
-pointing to the panel.
-
-We then use the exact same encoder in a setup in which we have a camera
-which outputs XXX, which the encoder then converts to YYY, which is then
-captured by the SoC. Here the "output" phandle would point to the SoC.
-
->>> If you go the other way around, how do you detect how things connect?=
-
->>> Where do you get the information about the panel so you can trace bac=
-k
->>> to the origin?
+On Mon, Oct 6, 2014 at 11:08 AM, Abhilash Kesavan
+<kesavan.abhilash@gmail.com> wrote:
+>>>> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+>>>> index adb36a8..222aa3c 100644
+>>>> --- a/arch/arm/mach-exynos/platsmp.c
+>>>> +++ b/arch/arm/mach-exynos/platsmp.c
+>>>> @@ -137,6 +137,18 @@ void exynos_cpu_power_down(int cpu)
+>>>>   */
+>>>>  void exynos_cpu_power_up(int cpu)
+>>>>  {
+>>>> +       if (cpu == 0 && (of_machine_is_compatible("samsung,exynos5420") ||
+>>>> +               of_machine_is_compatible("samsung,exynos5800"))) {
+>>>> +               /*
+>>>> +                * Bypass power down for CPU0 during suspend. Check for
+>>>> +                * the SYS_PWR_REG value to decide if we are suspending
+>>>> +                * the system.
+>>>> +                */
+>>>> +               int val = __raw_readl(pmu_base_addr +
+>>>> +                               EXYNOS5_ARM_CORE0_SYS_PWR_REG);
+>>>> +               if (!(val & S5P_CORE_LOCAL_PWR_EN))
+>>>> +                       return;
+>>>> +       }
+>>>>         pmu_raw_writel(S5P_CORE_LOCAL_PWR_EN,
+>>>>                         EXYNOS_ARM_CORE_CONFIGURATION(cpu));
+>>>>  }
+>>>
+>>> The above block of code should be in exynos_cpu_power_down(). Can you
+>>> re-test s2r after modifying it ? I have to convert a __raw_readl to
+>>> pmu_raw_readl in this patch as well. Once Vikas re-works the base s2r
+>>> patch I will re-post a v9.
+>>>
 >>
->> When the panel driver probes, it registers itself as a panel and gets
->> its video source. Similarly a bridge in between gets its video source,=
+>> Thanks, for the information but unfortunately even after this change I
+>> still have the issue reported in [0]. I also removed the lines from
+>> exynos5420_pm_resume() that you asked Vikash [1].
+>
+> I have just tested this on the 5420 that I have and it resumes fine.
+> The difference could be in the bootloader we are using. I'll send out
+> details of my current setup so that you can cross-check if everything
+> is the same.
 
->> which often would be the SoC, i.e. the origin.
->=20
-> That sounds backwards to me. The device tree serves the purpose of
-> supplementing missing information that can't be probed if hardware is
-> too stupid. I guess that's one of the primary reasons for structuring i=
-t
-> the way we do, from the CPU point of view, because it allows the CPU to=
+Thanks a lot for sending me the patches you are using to test.
 
-> probe via the device tree.
->=20
-> Probing is always done downstream, so you'd start by looking at some
-> type of bus interface and query it for what devices are present on the
-> bus. Take for example PCI: the CPU only needs to know how to access the=
+But after looking at the differences I noticed that your patches are
+not removing the lines that set the CPU0 low power states at the start
+of exynos5420_pm_resume() as you asked Vikas [1] but instead your
+version of this patch does not have the code that does the same
+operation after the early_wakeup label like is made in $subject.
 
-> host bridge and will then probe devices behind each of the ports on tha=
-t
-> bridge. Some of those devices will be bridges, too, so it will continue=
+IOW, this [2] is what I had to change on top of $subject to have s2r
+working. After that change, both suspending to ram and resuming due
+the RTC IRQ alarm being triggered and the core pm_test case works well
+on my Exynos5420 Peach Pit.
 
-> to probe down the hierarchy.
->=20
-> Without DT you don't have a means to know that there was a panel before=
+>
+> Regards,
+> Abhilash
 
-> you've actually gone and probed your whole hierarchy and found a GPU
-> with some sort of output that a panel can be connected to. I think it
-> makes a lot of sense to describe things in the same way in DT.
+Best regards,
+Javier
 
-Maybe I don't quite follow, but it sounds to be you are mixing control
-and data. For control, all you say is true. The CPU probes the devices
-on control busses, either with the aid of HW or the aid of DT, going
-downstream.
-
-But the data paths are a different matter. The CPU/SoC may not even be
-involved in the whole data path. You could have a sensor on the board
-directly connected to a panel. Both are controlled by the CPU, but the
-data path goes from the sensor to the panel (or vice versa). There's no
-way the data paths can be "CPU centric" in that case.
-
-Also, a difference with the data paths compared to control paths is that
-they are not strictly needed for operation. An encoder can generate an
-output without enabling its input (test pattern or maybe blank screen,
-or maybe a screen with company logo). Or an encoder with two inputs
-might only get the second input when the user requests a very high res
-mode. So it is possible that the data paths are lazily initialized.
-
-You do know that there is a panel right after the device is probed
-according to its control bus. It doesn't mean that the data paths are
-there yet. In some cases the user space needs to reconfigure the data
-paths before a panel has an input and can be used to show an image from
-the SoC's display subsystem.
-
-The point here being that the data path bindings don't really relate to
-the probing part. You can probe no matter which way the data path
-bindings go, and no matter if there actually exists (yet) a probed
-device on the other end of a data path phandle.
-
-While I think having video data connections in DT either way, downstream
-or upstream, would work, it has felt most natural for me to have the
-phandles from video sinks to video sources.
-
-The reason for that is that I think the video sink has to be in control
-of its source. It's the sink that tells the source to start or stop or
-reconfigure. So I have had need to get the video source from a video
-sink, but I have never had the need to get the video sinks from video
-sources.
-
- Tomi
-
-
-
---Vsgu5gVcuVod1RC0aMWa8bJx52IvdqrpU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUMn4oAAoJEPo9qoy8lh71fcYP+wef8+dXw68BgGGaYgEj2xXX
-9WqqBX6ReXkWFDYs91EC4ikyetMaYPterMbaZLvaU1yVMMOXZ+W/BcZj0vaORwJT
-LuIJw8hH0shTB3fOn9ivcX8NoczRhsnD0X7HlEGMfQQEn8X082nbGOGQ8ewjyTze
-GjJIbYOxLoTC78O+0ksxa/vjXYhCjHasjPWjyi+eXj0iIaIPBUlZgWxgNUZRZTM3
-GMS97gD7wffm3rCcJb4Jsa0fLEjiQB3k65Qg9+SFQzcm+h6obWgKm1/Xf6ekoG4C
-CT05ST7ab3dG4v+Pvr2TeUG+3MWyk2msVbbGI8HRfMDmrvaZWI2vFWD6mHNWT3cH
-mlMGrdadorDQCbg4p3CaTUdK4Zt7QrWZ17HS1UZnKbGXpcuDOXF5o8wR3AO7e9zX
-XOUx8ihvXIeIfmeoLjFna2NaCtQYgpLF+cYXb8yzNIZ1u1wP5OW2+h3BhYdKAa7T
-TKaVTWNG2ceavy/UlO718xTNrlKSiamdoxaiqAjko8Db+zgJwcMTAKBfuv7u2Qtv
-2Noi8L46WzKmHGDSyvqMYSzXq5nyrqNG+ADthX4P0s74ji1OzfMuaptXypUy+bpQ
-KLbUsck5N7gfUpdHBms5ALZQWtqjhl6ik4R6NVjVT1crK7SzbOuUynRCN2BJaLXN
-ylElYSpCzZ6Uol1DYhd4
-=fWqN
------END PGP SIGNATURE-----
-
---Vsgu5gVcuVod1RC0aMWa8bJx52IvdqrpU--
+[0]: http://www.spinics.net/lists/arm-kernel/msg367615.html
+[1]: http://www.spinics.net/lists/linux-samsung-soc/msg37561.html
+[2]: http://pastebin.com/raw.php?i=XSxJH3Ys
