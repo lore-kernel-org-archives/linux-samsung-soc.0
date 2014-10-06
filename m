@@ -1,56 +1,77 @@
 From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH v8] ARM: EXYNOS: Use MCPM call-backs to support S2R on Exynos5420
-Date: Mon, 6 Oct 2014 09:10:32 +0530
-Message-ID: <CAM4voa=oZmqCf5=nD54cbi_fa4iHYh1nvOC0nt9hE=mQmhb3yw@mail.gmail.com>
-References: <1412089142-12056-1-git-send-email-a.kesavan@samsung.com>
+Subject: Re: [PATCH v4 0/6] Add initial support for pinctrl on Exynos7
+Date: Mon, 6 Oct 2014 09:12:25 +0530
+Message-ID: <CAM4voamZhSzEANSpij6oHjEjouqCL+shxHv11Qb8ZiLG81P37g@mail.gmail.com>
+References: <1412087450-10495-1-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f50.google.com ([209.85.192.50]:38466 "EHLO
-	mail-qg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752123AbaJFDkd (ORCPT
+Received: from mail-qa0-f42.google.com ([209.85.216.42]:32837 "EHLO
+	mail-qa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752365AbaJFDm1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 5 Oct 2014 23:40:33 -0400
-Received: by mail-qg0-f50.google.com with SMTP id q108so3259974qgd.9
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 05 Oct 2014 20:40:32 -0700 (PDT)
-In-Reply-To: <1412089142-12056-1-git-send-email-a.kesavan@samsung.com>
+	Sun, 5 Oct 2014 23:42:27 -0400
+In-Reply-To: <1412087450-10495-1-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Naveen Krishna <naveenkrishna.ch@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, "robh@kernel.org" <robh@kernel.org>, devicetree <devicetree@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
 
-Hi Javier,
+Hi Linus,
 
-[...]
+On Tue, Sep 30, 2014 at 8:00 PM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
+> Changes since v3:
+>         - Changed variable name from exynos_wkup_irq_chip to irq_chip
+>         - Added acked-by tag from Tomasz Figa
+>
+> Changes since v2:
+>         - Added a .irq_chip field to the samsung_pin_bank struct
+>         - Consolidated the wakeup and gpio irqd_ops
+>
+> Changes since v1:
+>         - Marked the newly created irq_chip instances as __initdata
+>         - Used kmemdup to keep a copy of the irq_chip
+>         - Change the pinctrl name from sd0_rdqs to sd0_ds as per UM
+>         - Moved the pinctrl enablement for exynos7 into a separate patch
+>         - Added tested-by and reviewed-by tags from Thomas Abraham
+>
+> Following patches have been tested on linux-next (20140926).
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/
+>
+> Following patches are required for this series:
+> 1) "tty/serial: fix config dependencies for samsung serial"
+>    https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg36208.html
+> 2) "dts, kbuild: Implement support for dtb vendor subdirs" patchset
+>    http://comments.gmane.org/gmane.linux.kbuild.devel/12131
+> 3) "arch: arm64: enable support for Samsung Exynos7 SoC" patchset (v5)
+>    http://www.spinics.net/lists/arm-kernel/msg364014.html
+>
+> Abhilash Kesavan (3):
+>   pinctrl: exynos: Generalize the eint16_31 demux code
+>   pinctrl: exynos: Consolidate irq domain callbacks
+>   pinctrl: exynos: Add irq_chip instance for Exynos7 wakeup interrupts
+>
+> Naveen Krishna Ch (3):
+>   pinctrl: exynos: Add initial driver data for Exynos7
+>   arm64: dts: Add initial pinctrl support to EXYNOS7
+>   arm64: exynos: Enable pinctrl support for Exynos7
+>
+>  .../bindings/pinctrl/samsung-pinctrl.txt           |    3 +
+>  arch/arm64/Kconfig                                 |    2 +
+>  arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    |  560 ++++++++++++++++++++
+>  arch/arm64/boot/dts/exynos/exynos7.dtsi            |   66 +++
+>  drivers/pinctrl/samsung/pinctrl-exynos.c           |  196 +++++--
+>  drivers/pinctrl/samsung/pinctrl-exynos.h           |    3 +
+>  drivers/pinctrl/samsung/pinctrl-samsung.c          |    2 +
+>  drivers/pinctrl/samsung/pinctrl-samsung.h          |    3 +
+>  8 files changed, 799 insertions(+), 36 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
 
-> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-> index adb36a8..222aa3c 100644
-> --- a/arch/arm/mach-exynos/platsmp.c
-> +++ b/arch/arm/mach-exynos/platsmp.c
-> @@ -137,6 +137,18 @@ void exynos_cpu_power_down(int cpu)
->   */
->  void exynos_cpu_power_up(int cpu)
->  {
-> +       if (cpu == 0 && (of_machine_is_compatible("samsung,exynos5420") ||
-> +               of_machine_is_compatible("samsung,exynos5800"))) {
-> +               /*
-> +                * Bypass power down for CPU0 during suspend. Check for
-> +                * the SYS_PWR_REG value to decide if we are suspending
-> +                * the system.
-> +                */
-> +               int val = __raw_readl(pmu_base_addr +
-> +                               EXYNOS5_ARM_CORE0_SYS_PWR_REG);
-> +               if (!(val & S5P_CORE_LOCAL_PWR_EN))
-> +                       return;
-> +       }
->         pmu_raw_writel(S5P_CORE_LOCAL_PWR_EN,
->                         EXYNOS_ARM_CORE_CONFIGURATION(cpu));
->  }
-
-The above block of code should be in exynos_cpu_power_down(). Can you
-re-test s2r after modifying it ? I have to convert a __raw_readl to
-pmu_raw_readl in this patch as well. Once Vikas re-works the base s2r
-patch I will re-post a v9.
+Does this series look OK to you ?
 
 Regards,
 Abhilash
+>
+> --
+> 1.7.9.5
+>
