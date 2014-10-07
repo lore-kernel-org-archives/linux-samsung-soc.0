@@ -1,99 +1,68 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for ps8622 DT properties
-Date: Tue, 07 Oct 2014 10:23:46 +0300
-Message-ID: <5749335.iMpaHR0UO8@avalon>
-References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com> <353158006.4Zqtrv9CtX@avalon> <543390E2.1080108@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v3 0/2] Handle reboot for Exynos SoC via restart_handler
+Date: Tue, 07 Oct 2014 13:23:19 +0530
+Message-ID: <1412668401-21837-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:56266 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751214AbaJGHXj (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:38772 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752784AbaJGH7K (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Oct 2014 03:23:39 -0400
-In-Reply-To: <543390E2.1080108@ti.com>
+	Tue, 7 Oct 2014 03:59:10 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0ND200A7UE6EMK10@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 07 Oct 2014 16:59:02 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Ajay kumar <ajaynumb@gmail.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, InKi Dae <inki.dae@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, vikas.sajjan@samsung.com, linux@roeck-us.net, naushad@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Hi Tomi,
+This patch removes restart hook from machine_desc of Exynos, and moves
+respective code into reboot_notifiers.
+Exynos5440 handles reboot via clock register so let's register a
+restart_handler in Exynos5440 clock driver.
+For rest Exynos SoC, reboot is handled via PMU SWRESET register so
+let's register a restart_handler in PMU driver for handling this.
 
-On Tuesday 07 October 2014 10:06:10 Tomi Valkeinen wrote:
-> On 06/10/14 17:40, Laurent Pinchart wrote:
-> >> But seriously speaking, I was thinking about this. I'd really like to
-> >> have a generic video-mux node, that would still somehow allow us to have
-> >> device specific configurations for the video sources and sinks (which
-> >> the endpoints provide us), without endpoints.
-> >> 
-> >> The reason endpoints don't feel right in this case is that it makes
-> >> sense that the mux has a single input and two outputs, but with
-> >> endpoints we need two endpoints from the bridge (which is still ok), but
-> >> we also need two endpoitns in the mux's input side, which doesn't feel
-> >> right.
-> >> 
-> >> I came up with the following. It's quite ugly, though. I hope someone
-> >> has ideas how it could be done in a neater way:
-> >> 
-> >> bridge1234 {
-> >> 
-> >> 	bridge1234-cfg1: config1 {
-> >> 	
-> >> 		high-voltage;
-> >> 	
-> >> 	};
-> >> 	
-> >> 	bridge1234-cfg2: config2 {
-> >> 	
-> >> 		low-voltage;
-> >> 	
-> >> 	};
-> >> 	
-> >> 	output = <&mux>;
-> >> 
-> >> };
-> >> 
-> >> mux: video-gpio-mux {
-> >> 
-> >> 	gpio = <123>;
-> >> 	
-> >> 	outputs = <&panel1 &panel2>;
-> >> 	input-configs = <&bridge1234-cfg1 &bridge1234-cfg2>;
-> >> 
-> >> };
-> >> 
-> >> panel1: panel-foo {
-> >> 
-> >> };
-> >> 
-> >> panel2: panel-foo {
-> >> 
-> >> };
-> >> 
-> >> So the bridge node has configuration sets. These might be compared to
-> >> pinmux nodes. And the mux has a list of input-configs. When panel1 is to
-> >> be enabled, "bridge1234-cfg1" config becomes active, and the bridge is
-> >> given this configuration.
-> >> 
-> >> I have to say the endpoint system feels cleaner than the above, but
-> >> perhaps it's possible to improve the method above somehow.
-> > 
-> > Isn't it possible for the bridge to compute its configuration at runtime
-> > by querying properties of the downstream video entities ? That would solve
-> > the problem neatly.
-> 
-> You mean the bridge driver would somehow take a peek into panel1 and
-> panel2 nodes, looking for bridge specific properties? Sounds somewhat
-> fragile to me... How would the bridge driver know a property is for the
-> bridge?
+This patch is inspired and dependent on following patch series[1] from
+Geunter Roeck.
 
-No, I mean the bridge driver should call the API provided by the panel objects 
-to get information about the panels, and compute its configuration parameters 
-from those. I'm not sure if that's possible though, it depends on whether the 
-bridge parameters can be computed from information provided by the panel.
+Also this patch is dependent on PMU platform driver patch [2] by me, and
+has been prepared on top of it.
+
+[1]: kernel: Add support for kernel restart handler call chain
+https://lkml.org/lkml/2014/8/19/652
+
+[2]: ARM: Exynos: Convert PMU implementation into a platform driver
+https://lkml.org/lkml/2014/10/6/89
+
+I have tested reboot functionality on Exynos3250 based board, on
+kgene/for-next as well as linux-next's next-20140925 tag.
+
+Patch v2 and related discussion can be found here
+http://www.spinics.net/lists/linux-samsung-soc/msg37457.html
+
+Changes since v2:
+  - Used register_restart_handler instead of register_reboot_notifier.
+  - Updated notifier names and commit message accordingly.
+
+Changes since v1:
+  - Addressed review comments from Tomasz Figa. Removed usage of 
+    local variables where ever unnecessary.
+  - Make reg_base as global in clk-exynos5440.c file, to avoid 
+    iomapping it again in reboot_notifier handler.
+
+Pankaj Dubey (2):
+  clk: samsung: exynos5440: move restart code into clock driver
+  ARM: EXYNOS: PMU: move restart code into pmu driver
+
+ arch/arm/mach-exynos/common.h        |    1 -
+ arch/arm/mach-exynos/exynos.c        |   23 -----------------------
+ arch/arm/mach-exynos/pmu.c           |   24 ++++++++++++++++++++++++
+ drivers/clk/samsung/clk-exynos5440.c |   29 ++++++++++++++++++++++++++++-
+ 4 files changed, 52 insertions(+), 25 deletions(-)
 
 -- 
-Regards,
-
-Laurent Pinchart
+1.7.9.5
