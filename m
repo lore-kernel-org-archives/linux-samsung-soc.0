@@ -1,60 +1,50 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
- ps8622 DT properties
-Date: Tue, 7 Oct 2014 16:06:55 +0530
-Message-ID: <CAEC9eQPq28GFS+1GweECM9QHfCM+LzOL9ySq05i6RfVG6-2ubQ@mail.gmail.com>
-References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
-	<5419760A.7020908@ti.com>
-	<CAEC9eQPn63upE6XEZZtJWGdOAhWWNvU9EhfOXJ=x0i467q+iMQ@mail.gmail.com>
-	<5419B52D.4060107@ti.com>
-	<CAEC9eQO2rfmVEKTCUJk+SpfdeUr81gN3stYV3wE6yR3E=-zonA@mail.gmail.com>
-	<541C279A.2030601@ti.com>
-	<CAEC9eQMQrM289J+ukkshKtTo9dB=G4cvg-4zF6LR6snqE5BL0A@mail.gmail.com>
-	<541C3D95.7080200@ti.com>
-	<CAEC9eQNshrP6wW_9mEDbFR5hRpW6Hy=GBFzV=rf05Wpxz6gtiw@mail.gmail.com>
-	<5433C0CC.5040804@ti.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 0/4] drm/exynos/dsi: remove global display variable
+Date: Tue, 07 Oct 2014 14:01:07 +0200
+Message-ID: <1412683271-15835-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f178.google.com ([209.85.213.178]:43813 "EHLO
-	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752758AbaJGKg4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Oct 2014 06:36:56 -0400
-In-Reply-To: <5433C0CC.5040804@ti.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomi Valkeinen <tomi.valkeinen@ti.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: David Airlie <airlied@linux.ie>, Ajay Kumar <ajaykumar.rs@samsung.com>, InKi Dae <inki.dae@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-On Tue, Oct 7, 2014 at 4:00 PM, Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
-> On 20/09/14 14:22, Ajay kumar wrote:
->
->> Well, I am okay with using video ports to describe the relationship
->> between the encoder, bridge and the panel.
->> But, its just that I need to make use of 2 functions when phandle
->> does it using just one function ;)
->> -        panel_node = of_parse_phandle(dev->of_node, "panel", 0)
->> +       endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
->> +       if (!endpoint)
->> +               return -EPROBE_DEFER;
->> +
->> +       panel_node = of_graph_get_remote_port_parent(endpoint);
->> +       if (!panel_node)
->> +               return -EPROBE_DEFER;
->>
->>
->> If nobody else has objections over using of_graph functions instead
->> of phandles, I can respin this patchset by making use of video ports.
->
-> The discussion did digress somewhat.
->
-> As a clarification, I'm in no way nack'ing this series because it
-> doesn't use the graphs for video connections. I don't see the simple
-> phandle bindings used here as broken as such.
-Well, I am okay with any approach you guys decide on. I desperately want
-this to get this in since it has been floating around for quite sometime.
-The more we drag this, the more rework for me since the number of platforms
-using bridge support is increasing daily!
+Hi Inki,
 
-Ajay
+Many Exynos DRM drivers uses global variables to represent associated devices
+in Exynos DRM internal framework. It is quite confusing, it adds data duplication
+and finally it does not allow to handle more than one device in system.
+It seems better to embed such structures in private context of the device.
+
+The patchset is based on exynos_drm_next plus my patch [1]:
+'drm/exynos: remove explicit encoder/connector de-initialization'.
+
+If the patchset is OK for you I can prepare similar patches for other Exynos DRM components.
+
+[1]: https://lkml.org/lkml/2014/9/22/148
+
+Regards
+Andrzej
+
+
+Andrzej Hajda (4):
+  drm/exynos/dsi: remove global variable exynos_dsi_display
+  drm/exynos/dsi: simplify device pointer evaluation
+  drm/exynos/dsi: remove redundant encoder field
+  drm/exynos/dsi: stop using display->ctx pointer
+
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 96 ++++++++++++++++-----------------
+ 1 file changed, 47 insertions(+), 49 deletions(-)
+
+-- 
+1.9.1
