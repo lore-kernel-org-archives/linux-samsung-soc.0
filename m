@@ -1,97 +1,51 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH] drm/exynos: init vblank with real number of crtcs
-Date: Tue, 07 Oct 2014 14:27:01 +0200
-Message-ID: <5433DC15.5000000@samsung.com>
-References: <1411131440-15395-1-git-send-email-a.hajda@samsung.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v9 1/2] ARM: EXYNOS: Add platform driver support for
+ Exynos PMU
+Date: Tue, 7 Oct 2014 14:29:40 +0200
+Message-ID: <CABxcv=n3M0Td5GoqugSgk5P5juZsCFnuV7dD92WQjaQPpfesmQ@mail.gmail.com>
+References: <1412587602-7763-1-git-send-email-pankaj.dubey@samsung.com>
+	<1412587602-7763-2-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1411131440-15395-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, drake@endlessm.com, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, m.szyprowski@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f48.google.com ([74.125.82.48]:60750 "EHLO
+	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751300AbaJGM3l (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 7 Oct 2014 08:29:41 -0400
+Received: by mail-wg0-f48.google.com with SMTP id k14so7777586wgh.31
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Oct 2014 05:29:40 -0700 (PDT)
+In-Reply-To: <1412587602-7763-2-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: Linux Kernel <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Russell King <linux@arm.linux.org.uk>, Vikas Sajjan <vikas.sajjan@samsung.com>, naushad@samsung.com, thomas.ab@samsung.com
 
-Hi Inki,
+Hello Pankaj,
 
-Gently ping.
-
-Andrzej
-
-
-On 09/19/2014 02:57 PM, Andrzej Hajda wrote:
-> Initialization of vblank with MAX_CRTC caused attempts
-> to disabling vblanks for non-existing crtcs in case
-> drm used fewer crtcs. The patch fixes it.
-> 
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+On Mon, Oct 6, 2014 at 11:26 AM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> This patch modifies Exynos Power Management Unit (PMU) initialization
+> implementation in following way:
+>
+> - Added platform driver support for Exynos PMU IP.
+> - Added platform struct exynos_pmu_data to hold platform specific data.
+> - For each SoC's PMU support now we can add platform data and statically
+>   bind PMU configuration and SoC specific initialization function.
+> - Separate each SoC's PMU initialization function and make it as part of
+>   platform data.
+> - It also removes uses of soc_is_exynosXYZ().
+>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Reviewed-by: Tomasz Figa <t.figa@samsung.com>
 > ---
->  drivers/gpu/drm/exynos/exynos_drm_drv.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> index 9b00e4e..dc4affd 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -94,10 +94,6 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
->  	/* init kms poll for handling hpd */
->  	drm_kms_helper_poll_init(dev);
->  
-> -	ret = drm_vblank_init(dev, MAX_CRTC);
-> -	if (ret)
-> -		goto err_mode_config_cleanup;
-> -
->  	/* setup possible_clones. */
->  	exynos_drm_encoder_setup(dev);
->  
-> @@ -106,22 +102,26 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
->  	/* Try to bind all sub drivers. */
->  	ret = component_bind_all(dev->dev, dev);
->  	if (ret)
-> -		goto err_cleanup_vblank;
-> +		goto err_mode_config_cleanup;
-> +
-> +	ret = drm_vblank_init(dev, dev->mode_config.num_crtc);
-> +	if (ret)
-> +		goto err_unbind_all;
->  
->  	/* Probe non kms sub drivers and virtual display driver. */
->  	ret = exynos_drm_device_subdrv_probe(dev);
->  	if (ret)
-> -		goto err_unbind_all;
-> +		goto err_cleanup_vblank;
->  
->  	/* force connectors detection */
->  	drm_helper_hpd_irq_event(dev);
->  
->  	return 0;
->  
-> -err_unbind_all:
-> -	component_unbind_all(dev->dev, dev);
->  err_cleanup_vblank:
->  	drm_vblank_cleanup(dev);
-> +err_unbind_all:
-> +	component_unbind_all(dev->dev, dev);
->  err_mode_config_cleanup:
->  	drm_mode_config_cleanup(dev);
->  	drm_release_iommu_mapping(dev);
-> @@ -138,8 +138,8 @@ static int exynos_drm_unload(struct drm_device *dev)
->  	exynos_drm_fbdev_fini(dev);
->  	drm_kms_helper_poll_fini(dev);
->  
-> -	component_unbind_all(dev->dev, dev);
->  	drm_vblank_cleanup(dev);
-> +	component_unbind_all(dev->dev, dev);
->  	drm_mode_config_cleanup(dev);
->  	drm_release_iommu_mapping(dev);
->  
-> 
+>  arch/arm/mach-exynos/Kconfig |    1 +
+>  arch/arm/mach-exynos/pmu.c   |  171 +++++++++++++++++++++++++++++++-----------
+>  2 files changed, 130 insertions(+), 42 deletions(-)
+>
+
+Suspend-to-RAM is working on my Exynos5420 Peach Pit Chromebook, so:
+
+Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+
+Best regards,
+Javier
