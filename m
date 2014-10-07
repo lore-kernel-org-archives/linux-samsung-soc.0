@@ -1,80 +1,45 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v3 0/2] Handle reboot for Exynos SoC via restart_handler
-Date: Tue, 7 Oct 2014 09:51:57 -0700
-Message-ID: <20141007165157.GH28835@roeck-us.net>
-References: <1412668401-21837-1-git-send-email-pankaj.dubey@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCHv2 0/2] ARM: dts: Add new board dts file for Exynos3250-based
+ Rinato board
+Date: Wed, 08 Oct 2014 07:45:37 +0900
+Message-ID: <1412721939-10615-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:52080 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753881AbaJGQw2 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:64250 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755383AbaJGWpr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Oct 2014 12:52:28 -0400
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1XbXzv-000FdL-LH
-	for linux-samsung-soc@vger.kernel.org; Tue, 07 Oct 2014 16:52:27 +0000
-Content-Disposition: inline
-In-Reply-To: <1412668401-21837-1-git-send-email-pankaj.dubey@samsung.com>
+	Tue, 7 Oct 2014 18:45:47 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0ND3001GLJ89KM30@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 08 Oct 2014 07:45:45 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, vikas.sajjan@samsung.com, naushad@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net, tomasz.figa@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, geunsik.lim@samsung.com, cw00.choi@samsung.com
 
-On Tue, Oct 07, 2014 at 01:23:19PM +0530, Pankaj Dubey wrote:
-> This patch removes restart hook from machine_desc of Exynos, and moves
-> respective code into reboot_notifiers.
+This patchset adds new board dts file for Samsung Rinato board (Gear 2) which
+is based on Exynos3250 SoC and adds sleep mode pin configuration using pinctrl
+subsystem to reduce leakage power-consumption in sleep state.
 
-Nitpick:
+This patchset is based on linux-samsung.git (for-next branch).
 
-s/reboot_notifiers/restart_notifiers/
+Changes from v1:
+- Remove useless brace
+- Remove unneeded 'regulators' keyword
+- Consolidate memory information in one entry
 
-Guenter
+Chanwoo Choi (2):
+  ARM: dts: Add board dts file for Exynos3250-based Rinato board
+  ARM: dts: Add sleep mode pin configuration for exynos3250-rinato
 
-> Exynos5440 handles reboot via clock register so let's register a
-> restart_handler in Exynos5440 clock driver.
-> For rest Exynos SoC, reboot is handled via PMU SWRESET register so
-> let's register a restart_handler in PMU driver for handling this.
-> 
-> This patch is inspired and dependent on following patch series[1] from
-> Geunter Roeck.
-> 
-> Also this patch is dependent on PMU platform driver patch [2] by me, and
-> has been prepared on top of it.
-> 
-> [1]: kernel: Add support for kernel restart handler call chain
-> https://lkml.org/lkml/2014/8/19/652
-> 
-> [2]: ARM: Exynos: Convert PMU implementation into a platform driver
-> https://lkml.org/lkml/2014/10/6/89
-> 
-> I have tested reboot functionality on Exynos3250 based board, on
-> kgene/for-next as well as linux-next's next-20140925 tag.
-> 
-> Patch v2 and related discussion can be found here
-> http://www.spinics.net/lists/linux-samsung-soc/msg37457.html
-> 
-> Changes since v2:
->   - Used register_restart_handler instead of register_reboot_notifier.
->   - Updated notifier names and commit message accordingly.
-> 
-> Changes since v1:
->   - Addressed review comments from Tomasz Figa. Removed usage of 
->     local variables where ever unnecessary.
->   - Make reg_base as global in clk-exynos5440.c file, to avoid 
->     iomapping it again in reboot_notifier handler.
-> 
-> Pankaj Dubey (2):
->   clk: samsung: exynos5440: move restart code into clock driver
->   ARM: EXYNOS: PMU: move restart code into pmu driver
-> 
->  arch/arm/mach-exynos/common.h        |    1 -
->  arch/arm/mach-exynos/exynos.c        |   23 -----------------------
->  arch/arm/mach-exynos/pmu.c           |   24 ++++++++++++++++++++++++
->  drivers/clk/samsung/clk-exynos5440.c |   29 ++++++++++++++++++++++++++++-
->  4 files changed, 52 insertions(+), 25 deletions(-)
-> 
-> -- 
-> 1.7.9.5
-> 
+ arch/arm/boot/dts/Makefile                |   3 +-
+ arch/arm/boot/dts/exynos3250-pinctrl.dtsi |  16 +
+ arch/arm/boot/dts/exynos3250-rinato.dts   | 586 ++++++++++++++++++++++++++++++
+ 3 files changed, 604 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/exynos3250-rinato.dts
+
+-- 
+1.8.0
