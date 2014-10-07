@@ -1,68 +1,42 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
- ps8622 DT properties
-Date: Tue, 07 Oct 2014 17:49:24 +0300
-Message-ID: <2230493.RvivJykn5T@avalon>
-References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
- <5433C0CC.5040804@ti.com>
- <CAEC9eQPq28GFS+1GweECM9QHfCM+LzOL9ySq05i6RfVG6-2ubQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAEC9eQPq28GFS+1GweECM9QHfCM+LzOL9ySq05i6RfVG6-2ubQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH] drm/exynos: vidi: fix build warning
+Date: Wed, 08 Oct 2014 00:18:34 +0900
+Message-ID: <1412695114-1883-1-git-send-email-inki.dae@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:50066 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753478AbaJGPSh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 7 Oct 2014 11:18:37 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0ND200L6OYIZ4KD0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 08 Oct 2014 00:18:35 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
 
-Hi Ajay,
+encoder object isn't used anymore so remove it.
 
-On Tuesday 07 October 2014 16:06:55 Ajay kumar wrote:
-> On Tue, Oct 7, 2014 at 4:00 PM, Tomi Valkeinen wrote:
-> > On 20/09/14 14:22, Ajay kumar wrote:
-> >> Well, I am okay with using video ports to describe the relationship
-> >> between the encoder, bridge and the panel.
-> >> But, its just that I need to make use of 2 functions when phandle
-> >> does it using just one function ;)
-> >> -        panel_node = of_parse_phandle(dev->of_node, "panel", 0)
-> >> +       endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
-> >> +       if (!endpoint)
-> >> +               return -EPROBE_DEFER;
-> >> +
-> >> +       panel_node = of_graph_get_remote_port_parent(endpoint);
-> >> +       if (!panel_node)
-> >> +               return -EPROBE_DEFER;
-> >> 
-> >> 
-> >> If nobody else has objections over using of_graph functions instead
-> >> of phandles, I can respin this patchset by making use of video ports.
-> > 
-> > The discussion did digress somewhat.
-> > 
-> > As a clarification, I'm in no way nack'ing this series because it
-> > doesn't use the graphs for video connections. I don't see the simple
-> > phandle bindings used here as broken as such.
-> 
-> Well, I am okay with any approach you guys decide on. I desperately want
-> this to get this in since it has been floating around for quite sometime.
-> The more we drag this, the more rework for me since the number of platforms
-> using bridge support is increasing daily!
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-I won't nack this patch either. I'm however concerned that we'll run straight 
-into the wall if we don't come up with an agreement on a standard way to 
-describe connections in DT for display devices, which is why I would prefer 
-the ps8622 bindings to use OF graph to describe connections.
-
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index 9395e85..50faf91 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -630,7 +630,6 @@ static int vidi_remove(struct platform_device *pdev)
+ {
+ 	struct exynos_drm_manager *mgr = platform_get_drvdata(pdev);
+ 	struct vidi_context *ctx = mgr->ctx;
+-	struct drm_encoder *encoder = ctx->encoder;
+ 
+ 	if (ctx->raw_edid != (struct edid *)fake_edid_info) {
+ 		kfree(ctx->raw_edid);
 -- 
-Regards,
-
-Laurent Pinchart
+1.7.9.5
