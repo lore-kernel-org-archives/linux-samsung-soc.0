@@ -1,136 +1,80 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v3 2/2] ARM: EXYNOS: PMU: move restart code into pmu driver
-Date: Tue, 07 Oct 2014 13:23:21 +0530
-Message-ID: <1412668401-21837-3-git-send-email-pankaj.dubey@samsung.com>
-References: <1412668401-21837-1-git-send-email-pankaj.dubey@samsung.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
+ ps8622 DT properties
+Date: Tue, 7 Oct 2014 11:25:56 +0300
+Message-ID: <5433A394.4000406@ti.com>
+References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com> <353158006.4Zqtrv9CtX@avalon> <543390E2.1080108@ti.com> <5749335.iMpaHR0UO8@avalon>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="itQ4forRl4AGIpLGRtkPS6hUU2cfTPp9C"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:38856 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752758AbaJGH7c (ORCPT
+Received: from arroyo.ext.ti.com ([192.94.94.40]:55276 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752758AbaJGI0J (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Oct 2014 03:59:32 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0ND200A9LE76MK10@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 07 Oct 2014 16:59:30 +0900 (KST)
-In-reply-to: <1412668401-21837-1-git-send-email-pankaj.dubey@samsung.com>
+	Tue, 7 Oct 2014 04:26:09 -0400
+In-Reply-To: <5749335.iMpaHR0UO8@avalon>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, vikas.sajjan@samsung.com, linux@roeck-us.net, naushad@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Ajay kumar <ajaynumb@gmail.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, InKi Dae <inki.dae@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-Let's register restart handler from PMU driver for reboot
-functionality. So that we can remove restart hooks from
-machine specific file, and thus moving ahead when PMU moved
-to driver folder, this functionality can be reused for ARM64
-based Exynos SoC's.
+--itQ4forRl4AGIpLGRtkPS6hUU2cfTPp9C
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
- arch/arm/mach-exynos/common.h |    1 -
- arch/arm/mach-exynos/exynos.c |    6 ------
- arch/arm/mach-exynos/pmu.c    |   24 ++++++++++++++++++++++++
- 3 files changed, 24 insertions(+), 7 deletions(-)
+On 07/10/14 10:23, Laurent Pinchart wrote:
 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 9019d86..e8afbe6 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -12,7 +12,6 @@
- #ifndef __ARCH_ARM_MACH_EXYNOS_COMMON_H
- #define __ARCH_ARM_MACH_EXYNOS_COMMON_H
- 
--#include <linux/reboot.h>
- #include <linux/of.h>
- 
- #define EXYNOS3250_SOC_ID	0xE3472000
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index e9ddf69..0e0101b 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -137,11 +137,6 @@ static struct map_desc exynos5_iodesc[] __initdata = {
- 	},
- };
- 
--static void exynos_restart(enum reboot_mode mode, const char *cmd)
--{
--	__raw_writel(0x1, pmu_base_addr + EXYNOS_SWRESET);
--}
--
- static struct platform_device exynos_cpuidle = {
- 	.name              = "exynos_cpuidle",
- #ifdef CONFIG_ARM_EXYNOS_CPUIDLE
-@@ -361,7 +356,6 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
- 	.init_machine	= exynos_dt_machine_init,
- 	.init_late	= exynos_init_late,
- 	.dt_compat	= exynos_dt_compat,
--	.restart	= exynos_restart,
- 	.reserve	= exynos_reserve,
- 	.dt_fixup	= exynos_dt_fixup,
- MACHINE_END
-diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-index 1993e08..0b84998 100644
---- a/arch/arm/mach-exynos/pmu.c
-+++ b/arch/arm/mach-exynos/pmu.c
-@@ -11,7 +11,10 @@
- 
- #include <linux/io.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/platform_device.h>
-+#include <linux/notifier.h>
-+#include <linux/reboot.h>
- 
- #include "exynos-pmu.h"
- #include "regs-pmu.h"
-@@ -439,6 +442,14 @@ static void exynos5250_pmu_init(void)
- 	pmu_raw_writel(value, EXYNOS5_MASK_WDTRESET_REQUEST);
- }
- 
-+static int pmu_restart_notify(struct notifier_block *this,
-+		unsigned long code, void *unused)
-+{
-+	pmu_raw_writel(0x1, EXYNOS_SWRESET);
-+
-+	return NOTIFY_DONE;
-+}
-+
- static const struct exynos_pmu_data exynos4210_pmu_data = {
- 	.pmu_config	= exynos4210_pmu_config,
- };
-@@ -478,11 +489,20 @@ static const struct of_device_id exynos_pmu_of_device_ids[] = {
- 	{ /*sentinel*/ },
- };
- 
-+/*
-+ * Exynos PMU reboot notifier, handles reboot functionality
-+ */
-+static struct notifier_block pmu_restart_handler = {
-+	.notifier_call = pmu_restart_notify,
-+	.priority = 128,
-+};
-+
- static int exynos_pmu_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
- 	struct device *dev = &pdev->dev;
- 	struct resource *res;
-+	int ret;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	pmu_base_addr = devm_ioremap_resource(dev, res);
-@@ -507,6 +527,10 @@ static int exynos_pmu_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, pmu_context);
- 
-+	ret = register_restart_handler(&pmu_restart_handler);
-+	if (ret)
-+		dev_err(dev, "can't register restart handler err=%d\n", ret);
-+
- 	dev_dbg(dev, "Exynos PMU Driver probe done\n");
- 	return 0;
- }
--- 
-1.7.9.5
+>> You mean the bridge driver would somehow take a peek into panel1 and
+>> panel2 nodes, looking for bridge specific properties? Sounds somewhat
+>> fragile to me... How would the bridge driver know a property is for th=
+e
+>> bridge?
+>=20
+> No, I mean the bridge driver should call the API provided by the panel =
+objects=20
+> to get information about the panels, and compute its configuration para=
+meters=20
+> from those. I'm not sure if that's possible though, it depends on wheth=
+er the=20
+> bridge parameters can be computed from information provided by the pane=
+l.
+
+Right. My example tried to show a case where they can't be queried. The
+board or the wiring causes signal degradation, which can be fixed by
+increasing the bridge output voltage slightly.
+
+So it has nothing really to do with the panel, but the board.
+
+I fully admit that it is a purely theoretical case, and I don't have any
+real use cases in mind right now.
+
+ Tomi
+
+
+
+--itQ4forRl4AGIpLGRtkPS6hUU2cfTPp9C
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUM6OUAAoJEPo9qoy8lh71ZkcP/R9y97p/bScA7pAnvaIJAxUO
+5GM2WADTIp6aUJhaXCTyDlYoAOuoWsS+v5l0m+Titvgdw3TAysyBIsYEi4Poa03W
+a1yf67/565W8DIYGWiRaYKNrzZW9a7yn8Wu6mOubxW4hgop1mLrjr0chRMlk0nYj
+eKKPTES4OLBJYILFJ5R/urLON7V0hvdNBnub0NyzxJCobbVlF/jYZ1C3d7TUeu/q
+aOMlILZJlMBJWEEkfq+0pqrOWdUGVu2nm2fuZiZK6TpcMX/OqUdp5k2T9mJY2CzG
+v4Tr81ytKdvqBFc0K/i86sBP0AbKGcSDMqhmqBV89s6LOCeQ+GYLLdVqO5bu5TkH
+K1sF/kMAEKUboFolEBq0+0QOWJG7831xT7uglXrpvChK0QRP9SpUOTeKwCev82/F
+9cKBubRc+vEEYrgOkQ25vtyUN0bnQFwHfCyayKsh2Uvum0ROjfffYOsSLOZThA2d
+dJJqWjGJzWauVZjtIvPHJJ1BARMpLI0U9grzQpjKm07P8evTFK24Mp9BrDOgxwrL
+8vZL7Efw1f6WdXEwVMLmZSDAg7TbpbJAkOMK9mrqwi1c1ZyiF54OwgiiKoCc1q/e
+wyt10h5o1gKl4T2WXwUM8nCQVIope6r2y5Xk3WqF0OxntzjXOkWN0kc3lRGhWzeV
+ezuDLlre58eQ7Fzq79mz
+=BqxK
+-----END PGP SIGNATURE-----
+
+--itQ4forRl4AGIpLGRtkPS6hUU2cfTPp9C--
