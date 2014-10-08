@@ -1,108 +1,42 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: Powering down unused PM domains (was: Re: [PATCH 0/4] PM /
- Domains: Fix race conditions during boot)
-Date: Wed, 8 Oct 2014 14:00:50 +0200
-Message-ID: <CAPDyKFrJ7x-MS79OqxPOUWVearpp6AQP160+9QXnhVXWnH9aWw@mail.gmail.com>
-References: <CAMuHMdUwbOEfLcu_UVKq_iHx5Qzn7ne1+cwt58C0ntTZBf1esg@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] ARM: dts: fix MMC2 regulators for Exynos5420 Arndale Octa board
+Date: Wed, 08 Oct 2014 14:07:48 +0200
+Message-ID: <3871564.7PhRGhHd6U@wuerfel>
+References: <2750153.I3nVqzmXTP@amdc1032> <CAPDyKFqGS5mRpAJLkmQ3fnGKktLFDEt_pi+uaK-xCUtw1+Duvg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f45.google.com ([209.85.192.45]:50831 "EHLO
-	mail-qg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755758AbaJHMAv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Oct 2014 08:00:51 -0400
-Received: by mail-qg0-f45.google.com with SMTP id q107so3334017qgd.32
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Oct 2014 05:00:50 -0700 (PDT)
-In-Reply-To: <CAMuHMdUwbOEfLcu_UVKq_iHx5Qzn7ne1+cwt58C0ntTZBf1esg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <CAPDyKFqGS5mRpAJLkmQ3fnGKktLFDEt_pi+uaK-xCUtw1+Duvg@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@google.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, "cpgs ." <cpgs@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, Seung-Won Jeon <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, SUNIL JOSHI <joshi@samsung.com>, PRASHANTH GODREHAL <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Abhilash Kesavan <a.kesavan@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Linux PM list <linux-pm@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Philipp Zabel <philipp.zabel@gmail.com>, Russell King <linux@arm.linux.org.uk>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 7 October 2014 21:09, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Hi Ulf,
->
-> On Tue, Sep 30, 2014 at 2:43 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->> Instead, let's improve the situation, by preventing genpd from powering
->> off any of the PM domains until late_init. At that point genpd already
->> tries to power off unused PM domains, so it seems like a decent match.
->
-> Note that powering off unused PM domains is currently limited to
-> CONFIG_PM_RUNTIME=y.
-> If CONFIG_PM_RUNTIME is disabled, unused PM domains are not powered down,
-> and may even stay powered-up during system suspend.
+On Thursday 02 October 2014 20:16:44 Ulf Hansson wrote:
+> On 2 October 2014 18:10, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+> > Regulators for MMC2 (SD card) are PVDD_TFLASH_2V8 (LDO19) for vmmc
+> > and PVDD_APIO_MMCOFF_2V8 (LDO13) for vqmmc.  Currently the device
+> > tree entry for MMC2 uses PVDD_PRE_1V8 (LDO10) for vmmc and vqmmc is
+> > not specified.  Fix it.
+> >
+> > Without this patch:
+> > - "mmc: dw_mmc: use mmc_regulator_get_supply to handle regulators"
+> >   patch causes a SD card detection to fail
+> > - "mmc: dw_mmc: Support voltage changes" patch causes a boot hang
+> >
+> > This patch fixes both above problems.
+> >
+> > Suggested-by: Doug Anderson <dianders@google.com>
+> > Cc: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+> > Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> 
+> Unless it causes a bunch non-trivial conflicts, I suggest we take this
+> through my mmc tree to not break bisectability.
 
-Right. That's obviously not an acceptable behaviour, we can do better.
+Have you tried if it conflicts with arm-soc? If not, 
 
->
-> With CONFIG_PM_RUNTIME=y, we have:
->   A1. All PM domains are powered up during initialization.
->   A2. After initialization, all unused PM domains are powered down by the
->       genpd_poweroff_unused() late_initcall.
->       "unused" means PM domains containing no active devices and no active
->       subdomains. I.e. PM domains containing (a) only suspended devices, or
->       (b) no[*] devices at all will be powered down.
->   A3. PM domains will be powered up or down, depending on devices moving from
->       inactive to active state, or vice versa. This includes system suspend,
->       which can be considered some form of devices moving to an inactive
->       state.
->
-> In contrast, with CONFIG_PM_RUNTIME=n, we have:
->   B1. All PM domains are powered up during initialization,
->   B2. After initialization, PM domains just stay powered up,
->   B3. PM domains will be powered down on system suspend, and powered up on
->       system resume, based on the dev_pm_ops of the PM domain each device
->       belongs to.
->
-> While operation A2 is PM domain-centric (it walks the list of genpd domains),
-> A3 and B3 are device-centric (A3 operates on one specific device, B3 walks the
-> list of devices).
-> Hence B3 never touches PM domains that don't contain any devices[*].
-> So these PM domains are kept powered-up if CONFIG_PM_RUNTIME=n, even on
-> system suspend.
->
-> Shouldn't PM domains without devices be powered down at some point?
-> When? In B2, or in B3?
-
-I agree with Rafael and Sylwester, that it would be an advantage if PM
-domains can be initialized in powered off state. Simply because, those
-may then be left in powered off state all the time, if they are
-unused.
-
-That's been my long term approach, but let's see if we can get there
-without the intermediate step proposed in this patchset...
-
-Now, to support the above and to solve the race conditions, we need to
-be able to power up the PM domain, prior probing of a device. I am
-thinking of a solution aimed to affect subsystem level code (buses)
-and not drivers, since we need keep the impact on a reasonable level.
-
-Let's see what I will come up with. I have some ideas that I am trying out...
-
->
-> Thanks for your suggestions!
->
-> [*] It may sound strange to have a PM domain without devices. However, this may
->     happen due to incomplete device trees, or for devices without existing
->     bindings or without Linux support.
-
-I understand.
-
-I guess another valid argument is the kernel configuration. The
-corresponding driver which normally would handle the device may
-intentionally not even been build into the kernel. Certainly we must
-not leave those unused PM domains in powered up state.
-
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> P.S. Will any of you be at ELC-E next week, for further PM domain discussions?
-
-That would have been great, but I won't be there. Unless I schedule a
-last minute trip. :-)
-
-Kind regards
-Uffe
+Acked-by: Arnd Bergmann <arnd@arndb.de>
