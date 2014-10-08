@@ -1,57 +1,81 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 1/5] regulator: of: Add regulator-initial-mode parse support
-Date: Wed, 08 Oct 2014 16:38:53 +0200
-Message-ID: <54354C7D.7090104@collabora.co.uk>
-References: <1412775847-15213-1-git-send-email-javier.martinez@collabora.co.uk> <1412775847-15213-2-git-send-email-javier.martinez@collabora.co.uk> <20141008142511.GA4609@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 5/5] ARM: dts: Add initial regulator mode on exynos Peach
+ boards
+Date: Wed, 8 Oct 2014 15:56:27 +0100
+Message-ID: <20141008145627.GD4609@sirena.org.uk>
+References: <1412775847-15213-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1412775847-15213-6-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="MGdfKiBebYi9ts3p"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:52514 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751280AbaJHOjA (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40835 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753787AbaJHO47 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Oct 2014 10:39:00 -0400
-In-Reply-To: <20141008142511.GA4609@sirena.org.uk>
+	Wed, 8 Oct 2014 10:56:59 -0400
+Content-Disposition: inline
+In-Reply-To: <1412775847-15213-6-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 Cc: Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-Hello Mark,
 
-Thanks for the feedback.
+--MGdfKiBebYi9ts3p
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 10/08/2014 04:25 PM, Mark Brown wrote:
-> On Wed, Oct 08, 2014 at 03:44:03PM +0200, Javier Martinez Canillas wrote:
-> 
->> But currently there isn't a way to do the same with DeviceTrees. Argubly
->> the operating modes are Linux-specific so that information should not be
->> in the DT which should be used to only describe hardware. But regulators
->> having different operating modes is also a hardware property since many
->> PMICs have support to set different modes for their regulators.
-> 
-> That doesn't mean that the definition of those modes is something we can
-> sensibly provide in generic code, especially in a completely
-> undocumented fashion (perhaps you've done that later in the patch series
-> but bisection also applies to reviewability).
-> 
+On Wed, Oct 08, 2014 at 03:44:07PM +0200, Javier Martinez Canillas wrote:
 
-Yes, patch #3 updates the regulator DT binding doc and documents what each
-regulator mode is supposed to be. Basically is just a short description of
-what is already documented in linux/regulator/consumer.h [0].
+> The regulator core now has support to choose a default initial
+> operating mode for regulators from DT. Set the initial opmode
+> for the max77802 PMIC regulators with the same modes that are
+> used in the downstream ChromeOS kernel, in order to allow the
+> system to lower power at suspend time.
 
-If what is enough for you I can reorganize the patch-set so that patch is
-the first one.
+The stated goal of this change doesn't appear to correspond to what it
+actually does.  It's saying that we want to be able to set the regulator
+into low power modes on suspend which is a sensible and useful thing to
+want to do (especially for regulators which don't have physical suspend
+modes which we currently make any effort to handle) but what the change
+actually does is cause us to set the default state of supplies on boot.
 
-As a general question, now that the convention is for DT binding docs to go
-in a separate patch, should the DT documentation be added before or after
-that code using these bindings is added?
+The device tree should describe what it's trying to achieve, otherwise
+even if things happen to work right now it's going to be vulnerable to
+being broken by future kernel changes which take what it's saying at
+face value.
 
-That is something that is not explained in
-Documentation/devicetree/bindings/submitting-patches.txt.
+>  			buck2_reg: BUCK2 {
+> @@ -201,6 +203,7 @@
+>  				regulator-always-on;
+>  				regulator-boot-on;
+>  				regulator-ramp-delay = <12500>;
+> +				regulator-initial-mode = <REGULATOR_MODE_STANDBY>;
+>  			};
 
-Best regards,
-Javier
+This appears to set the supply which is labelled as VDD_ARM into standby
+mode by default (from a first glance the change appears to set all
+supplies into standby mode) and of course we currently have no way of
+changing the mode at runtime in DT systems.  Are you *really* sure this
+is a good idea of which an electrical engineer would approve, CPU cores
+are typically one of the most demanding workloads available for a
+regulator?
 
-[0]: http://lxr.free-electrons.com/source/include/linux/regulator/consumer.h#L40
+--MGdfKiBebYi9ts3p
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUNVCaAAoJECTWi3JdVIfQ6d4H/RKFTlRKARoyK/IaHPdtzVmb
+NVVuEoxCYhVGfO6Cde5ZD8i209nASA+XuREQAg0gOYtTnK3i93W+yXxjV7cpjZtS
+jXoMcM1XADBU+rExtMfAr9R2IWPf6bXkCsmS5MdW5tHziWgmxCtkea+T1wZCQL22
+11SoZMb4GefKzBrsBSDi8TKW1bthbXmaSvqUufUVXuge+zWWf3dUbC2IlSQxErS8
+vUfvvwYjcZQi/CSFEiAN5tkrYQZSC9Hg7S4tZAzK8z+UtYBN5g4d8cey6vz91CVV
+ezyhcd2Jud+I5rs9Z/Eq3j6BHZ3NPxnHqyW5trtAlij8zxZV5nvKj1XaTrIRg0o=
+=8jd7
+-----END PGP SIGNATURE-----
+
+--MGdfKiBebYi9ts3p--
