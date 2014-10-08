@@ -1,87 +1,93 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: Powering down unused PM domains (was: Re: [PATCH 0/4] PM / Domains: Fix race conditions during boot)
-Date: Wed, 08 Oct 2014 15:49:38 +0200
-Message-ID: <4392705.brmbgySLJa@vostro.rjw.lan>
-References: <CAMuHMdUwbOEfLcu_UVKq_iHx5Qzn7ne1+cwt58C0ntTZBf1esg@mail.gmail.com> <CAPDyKFrJ7x-MS79OqxPOUWVearpp6AQP160+9QXnhVXWnH9aWw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:62048 "HELO
-	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1756507AbaJHN3c (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Oct 2014 09:29:32 -0400
-In-Reply-To: <CAPDyKFrJ7x-MS79OqxPOUWVearpp6AQP160+9QXnhVXWnH9aWw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: [PATCH 0/5] regulator: Add support for initial operating modes
+Date: Wed,  8 Oct 2014 15:44:02 +0200
+Message-ID: <1412775847-15213-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Chris Zhong <zyw-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Abhilash Kesavan <kesavan.abhilash-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Linux PM list <linux-pm@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Philipp Zabel <philipp.zabel@gmail.com>, Russell King <linux@arm.linux.org.uk>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On Wednesday, October 08, 2014 02:00:50 PM Ulf Hansson wrote:
-> On 7 October 2014 21:09, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > Hi Ulf,
-> >
-> > On Tue, Sep 30, 2014 at 2:43 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> >> Instead, let's improve the situation, by preventing genpd from powering
-> >> off any of the PM domains until late_init. At that point genpd already
-> >> tries to power off unused PM domains, so it seems like a decent match.
-> >
-> > Note that powering off unused PM domains is currently limited to
-> > CONFIG_PM_RUNTIME=y.
-> > If CONFIG_PM_RUNTIME is disabled, unused PM domains are not powered down,
-> > and may even stay powered-up during system suspend.
-> 
-> Right. That's obviously not an acceptable behaviour, we can do better.
-> 
-> >
-> > With CONFIG_PM_RUNTIME=y, we have:
-> >   A1. All PM domains are powered up during initialization.
-> >   A2. After initialization, all unused PM domains are powered down by the
-> >       genpd_poweroff_unused() late_initcall.
-> >       "unused" means PM domains containing no active devices and no active
-> >       subdomains. I.e. PM domains containing (a) only suspended devices, or
-> >       (b) no[*] devices at all will be powered down.
-> >   A3. PM domains will be powered up or down, depending on devices moving from
-> >       inactive to active state, or vice versa. This includes system suspend,
-> >       which can be considered some form of devices moving to an inactive
-> >       state.
-> >
-> > In contrast, with CONFIG_PM_RUNTIME=n, we have:
-> >   B1. All PM domains are powered up during initialization,
-> >   B2. After initialization, PM domains just stay powered up,
-> >   B3. PM domains will be powered down on system suspend, and powered up on
-> >       system resume, based on the dev_pm_ops of the PM domain each device
-> >       belongs to.
-> >
-> > While operation A2 is PM domain-centric (it walks the list of genpd domains),
-> > A3 and B3 are device-centric (A3 operates on one specific device, B3 walks the
-> > list of devices).
-> > Hence B3 never touches PM domains that don't contain any devices[*].
-> > So these PM domains are kept powered-up if CONFIG_PM_RUNTIME=n, even on
-> > system suspend.
-> >
-> > Shouldn't PM domains without devices be powered down at some point?
-> > When? In B2, or in B3?
-> 
-> I agree with Rafael and Sylwester, that it would be an advantage if PM
-> domains can be initialized in powered off state. Simply because, those
-> may then be left in powered off state all the time, if they are
-> unused.
-> 
-> That's been my long term approach, but let's see if we can get there
-> without the intermediate step proposed in this patchset...
-> 
-> Now, to support the above and to solve the race conditions, we need to
-> be able to power up the PM domain, prior probing of a device. I am
-> thinking of a solution aimed to affect subsystem level code (buses)
-> and not drivers, since we need keep the impact on a reasonable level.
+Hello Mark,
 
-That sounds like a good approach to me.
+This series add support to setup an initial operating mode for regulators.
 
-Also that should work regardless of whether or not the drivers in question
-implement runtime PM callbacks.
+There were previous attempts to solve the same issue by adding DT bindings
+that were driver-specific like Abhilash Kesavan's "Add MAX77686 Operating
+mode support" [0] or Krzysztof Kozlowski's "regulator: s2mps11: Add opmode
+for S2MPS14 regulators" [1] series.
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+But there are many IC with regulators that can be configured with different
+operating modes so this is a problem that has to be solved generically and
+in fact the regulator core already has a .initial_mode field in the struct
+regulation_constraints that is used to call the regulator driver .set_mode
+function handler with an initial mode, when regulator constraints are set.
+
+So with the old days of platform data, board files could fill this but with
+Device Trees is not possible. The same issue happens with suspend states
+since there isn't currently a way to fill this information on DT booting.
+That's why there were also different attempts to solve the suspend states
+issue like [2] and [3]. Chanwoo's series [4] seems to be close to finally
+fix the suspend states issue by filling this data from DT but it does not
+support the initial regulator operating mode so this series do that on top
+of Chanwoo's work.
+
+Possible use cases for default operating mode support in DT are:
+
+a) Boards wants to set different operating modes for regulators in order to
+   lower power at suspend time. For example some SoCs have a dedicated pin
+   that is pulled high during normal operation and is pulled down when the
+   system enters in sleep mode. A PMIC may support automatically disabling
+   a regulator, put it in low power mode or changing the voltage when is
+   signalled by the SoC that has entered in sleep mode. Each regulator could
+   have different constraints so being able to choose the mode is useful.
+
+b) Regulator drivers that read the operating mode from a HW register may be
+   reading OFF if the regulator was disabled and the PMIC is not reset on
+   warm reboot. In this case the .enable function may set OFF as the default
+   mode thus the regulator failing to be enabled. This can be worked around
+   by setting the mode to NORMAL if OFF is read from a hardware register but
+   is more robust to explicitly configure that from the DT.
+
+These patches do not really depend on Chanwoo's series but are based on top
+since both series are complementary to solve the same general issue and to
+avoid merge conflicts. But I can resend to just base on top of the regulator
+for-next branch if that is easier for you.
+
+The series is composed of the following patches:
+
+Javier Martinez Canillas (5):
+  regulator: of: Add regulator-initial-mode parse support
+  regulator: dt-bindings: Add DT include for constants
+  regulator: dt-bindings: Add regulator-initial-mode support
+  regulator: max77802: Add regulator operating mode set support
+  ARM: dts: Add initial regulator mode on exynos Peach boards
+
+ .../devicetree/bindings/regulator/regulator.txt    |  8 ++++++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         | 26 ++++++++++++++++++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          | 26 ++++++++++++++++++
+ drivers/regulator/max77802.c                       | 32 ++++++++++++++++++++++
+ drivers/regulator/of_regulator.c                   |  3 ++
+ include/dt-bindings/regulator/regulator.h          | 16 +++++++++++
+ 6 files changed, 111 insertions(+)
+ create mode 100644 include/dt-bindings/regulator/regulator.h
+
+Patch #1 adds support to set the .initial_mode from DT, patch #2 adds a
+include header to avoid DTS using magic numbers for the regulator modes,
+patch #3 describes the new "regulator-initial-mode" property in the DT
+binding doc, patch #4 adds supports to the max77802 for setting modes
+and finally patch #5 adds the initial regulator modes for the regulators
+in the max77802 PMIC of the Exynos Peach Chromebooks.
+
+Thanks a lot and best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2012/12/10/18
+[1]: https://lkml.org/lkml/2014/2/13/82
+[2]: https://lkml.org/lkml/2012/12/10/434
+[3]: https://lkml.org/lkml/2013/7/25/592
+[4]: https://lkml.org/lkml/2014/7/9/16
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
