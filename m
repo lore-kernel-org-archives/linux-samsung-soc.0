@@ -1,225 +1,149 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv2 2/2] ARM: dts: Add sleep mode pin configuration for
- exynos3250-rinato
-Date: Wed, 08 Oct 2014 07:45:39 +0900
-Message-ID: <1412721939-10615-3-git-send-email-cw00.choi@samsung.com>
-References: <1412721939-10615-1-git-send-email-cw00.choi@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH] ARM: dts: fix MMC2 regulators for Exynos5420 Arndale Octa
+ board
+Date: Wed, 08 Oct 2014 09:19:56 +0900
+Message-ID: <5434832C.1010402@samsung.com>
+References: <2750153.I3nVqzmXTP@amdc1032> <2384118.ElmRrZpdEv@amdc1032>
+ <CAD=FV=X7hStwYj2tOCBKH0ncUmhTeUi8qWZjFGjFaMO8rxiZCA@mail.gmail.com>
+ <3279284.CeYhVCr5f3@amdc1032>
+ <CAD=FV=VrdVs0cBoAZJq_viAfsdZs4ndVW55KanvW01tB6fn8oQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:21880 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755472AbaJGWps (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:19141 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750895AbaJHAT7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Oct 2014 18:45:48 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0ND300AZTJ8A8Q70@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 08 Oct 2014 07:45:47 +0900 (KST)
-In-reply-to: <1412721939-10615-1-git-send-email-cw00.choi@samsung.com>
+	Tue, 7 Oct 2014 20:19:59 -0400
+In-reply-to: <CAD=FV=VrdVs0cBoAZJq_viAfsdZs4ndVW55KanvW01tB6fn8oQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net, tomasz.figa@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, geunsik.lim@samsung.com, cw00.choi@samsung.com
+To: Doug Anderson <dianders@google.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, "cpgs ." <cpgs@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chris Ball <cjb@laptop.org>, Seung-Won Jeon <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, SUNIL JOSHI <joshi@samsung.com>, PRASHANTH GODREHAL <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Abhilash Kesavan <a.kesavan@samsung.com>
 
-This patch add sleep mode pin configuration using pinctrl subsystem
-to reduce leakage power-consumption of gpio pin in sleep state.
+Hi,
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <Kyungmin Park@samsung.com>
----
- arch/arm/boot/dts/exynos3250-pinctrl.dtsi |  16 ++++
- arch/arm/boot/dts/exynos3250-rinato.dts   | 154 ++++++++++++++++++++++++++++++
- 2 files changed, 170 insertions(+)
+On 10/07/2014 01:51 AM, Doug Anderson wrote:
+> Bartlomiej,
+> 
+> On Thu, Oct 2, 2014 at 10:24 AM, Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+>>
+>> Hi,
+>>
+>> On Thursday, October 02, 2014 09:45:41 AM Doug Anderson wrote:
+>>> Bartiomiej
+>>>
+>>> On Thu, Oct 2, 2014 at 9:39 AM, Bartlomiej Zolnierkiewicz
+>>> <b.zolnierkie@samsung.com> wrote:
+>>>> On Thursday, October 02, 2014 09:19:08 AM Doug Anderson wrote:
+>>>>> Bartiomiej,
+>>>>>
+>>>>> On Thu, Oct 2, 2014 at 9:10 AM, Bartlomiej Zolnierkiewicz
+>>>>> <b.zolnierkie@samsung.com> wrote:
+>>>>>> Regulators for MMC2 (SD card) are PVDD_TFLASH_2V8 (LDO19) for vmmc
+>>>>>> and PVDD_APIO_MMCOFF_2V8 (LDO13) for vqmmc.  Currently the device
+>>>>>> tree entry for MMC2 uses PVDD_PRE_1V8 (LDO10) for vmmc and vqmmc is
+>>>>>> not specified.  Fix it.
+>>>>>>
+>>>>>> Without this patch:
+>>>>>> - "mmc: dw_mmc: use mmc_regulator_get_supply to handle regulators"
+>>>>>>   patch causes a SD card detection to fail
+>>>>>> - "mmc: dw_mmc: Support voltage changes" patch causes a boot hang
+>>>>>>
+>>>>>> This patch fixes both above problems.
+>>>>>>
+>>>>>> Suggested-by: Doug Anderson <dianders@google.com>
+>>>>>> Cc: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+>>>>>> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+>>>>>> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+>>>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>>>> ---
+>>>>>>  arch/arm/boot/dts/exynos5420-arndale-octa.dts |    3 ++-
+>>>>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> Index: b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+>>>>>> ===================================================================
+>>>>>> --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts     2014-10-02 15:44:53.014826886 +0200
+>>>>>> +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts     2014-10-02 17:35:24.110600398 +0200
+>>>>>> @@ -74,7 +74,8 @@
+>>>>>>                 samsung,dw-mshc-ddr-timing = <1 2>;
+>>>>>>                 pinctrl-names = "default";
+>>>>>>                 pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
+>>>>>> -               vmmc-supply = <&ldo10_reg>;
+>>>>>> +               vmmc-supply = <&ldo19_reg>;
+>>>>>> +               vqmmc-supply = <&ldo13_reg>;
+>>>>>
+>>>>> This looks right to me.  ...but I notice that ldo13 and ldo19 are not
+>>>>> "always-on" in the DTS.  Are you sure card detect works for you if you
+>>>>> eject your card and try to put it back in?
+>>>>>
+>>>>> ...eventually the "always-on" won't be needed, but for now I think it is...
+>>>>
+>>>> Card detection works fine without "always-on".
+>>>
+>>> That's weird.
+>>>
+>>> 1. In the schematics I see XMMC2CDN has an external pullup to PVDD_TFLASH_2V8.
+>>>
+>>> 2. The internal pullup should (I think) be to VDDQ_MMC2 which is
+>>> PVDD_APIO_MMCOFF_2V8.
+>>>
+>>> 3. In (51da224 mmc: dw_mmc: use mmc_regulator_get_supply to handle
+>>> regulators) we should be turning off both regulators in
+>>> "MMC_POWER_OFF".
+>>>
+>>> 4. If I understand correctly MMC_POWER_OFF is called when the card is
+>>> ejected, which means that both regulators should be off when the card
+>>> is ejected.
+>>>
+>>> 5. I don't think card detect can work if neither regulator is powered.
+>>>
+>>>
+>>> One of the above points must be wrong.  Any idea which one?  Can you
+>>> check to see if MMC_POWER_OFF is called for you when the card is
+>>> ejected?  Can you check to see if these regulators are off?
+>>
+>> MMC_POWER_OFF is called on card removal and both regulators get disabled
+>> (I have verified that they are really off with regulator_is_enabled() which
+>> returns 1 before and 0 after disabling regulator).  It seems that 5. is
+>> wrong?
+> 
+> This really doesn't make a lot of sense to me, so I'm still kinda
+> confused.  If you want to call it good then that's your (and Ulf's)
+> decision, but it's the kind of thing that would keep me up at night.
+> How can this pin be high if all the regulators pulling it up are off?
+> Is there a current leak somewhere and that's why it's working?
+> 
+> How this is supposed to work (as I understand it):
+> 
+> 1. When no card is inserted then this pin is supposed to be pulled up
+> to VDDQ_MMC2.  That could be either an internal or an external pullup.
+> It should be pulled up to VDDQ_MMC2 (as opposed to any other voltage)
+> since the exynos manual documents that this pin lives in the VDDQ_MMC2
+> io domain.  Note that it could be pulled up externally to a different
+> supply than the one going to VDDQ_MMC2, but for correctness it should
+> be the same voltage.
+> 
+> 2. When a card is inserted, the pin will be grounded (AKA this is an
+> open drain pin).
+> 
+> 
+> With your patch, can you probe the pin and see if card detect is high
+> when all the regulators are off?  Any idea how it gets high?  If you
+> turn off the internal pullup is it still high?
 
-diff --git a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-index 47b92c1..5ab81c3 100644
---- a/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/exynos3250-pinctrl.dtsi
-@@ -12,6 +12,22 @@
-  * published by the Free Software Foundation.
- */
- 
-+#define PIN_PULL_NONE		0
-+#define PIN_PULL_DOWN		1
-+#define PIN_PULL_UP		3
-+
-+#define PIN_PDN_OUT0		0
-+#define PIN_PDN_OUT1		1
-+#define PIN_PDN_INPUT		2
-+#define PIN_PDN_PREV		3
-+
-+#define PIN_SLP(_pin, _mode, _pull)				\
-+	_pin {							\
-+		samsung,pins = #_pin;				\
-+		samsung,pin-con-pdn = <PIN_PDN_ ##_mode>;	\
-+		samsung,pin-pud-pdn = <PIN_PULL_ ##_pull>;	\
-+	}
-+
- &pinctrl_0 {
- 	gpa0: gpa0 {
- 		gpio-controller;
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index af75ed7..63861e7 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -430,3 +430,157 @@
- &xusbxti {
- 	clock-frequency = <24000000>;
- };
-+
-+&pinctrl_0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sleep0>;
-+
-+	sleep0: sleep-state {
-+		PIN_SLP(gpa0-0, INPUT, DOWN);
-+		PIN_SLP(gpa0-1, INPUT, DOWN);
-+		PIN_SLP(gpa0-2, INPUT, DOWN);
-+		PIN_SLP(gpa0-3, INPUT, DOWN);
-+		PIN_SLP(gpa0-4, INPUT, DOWN);
-+		PIN_SLP(gpa0-5, INPUT, DOWN);
-+		PIN_SLP(gpa0-6, INPUT, DOWN);
-+		PIN_SLP(gpa0-7, INPUT, DOWN);
-+
-+		PIN_SLP(gpa1-0, INPUT, DOWN);
-+		PIN_SLP(gpa1-1, INPUT, DOWN);
-+		PIN_SLP(gpa1-2, INPUT, DOWN);
-+		PIN_SLP(gpa1-3, INPUT, DOWN);
-+		PIN_SLP(gpa1-4, INPUT, DOWN);
-+		PIN_SLP(gpa1-5, INPUT, DOWN);
-+
-+		PIN_SLP(gpb-0, PREV, NONE);
-+		PIN_SLP(gpb-1, PREV, NONE);
-+		PIN_SLP(gpb-2, PREV, NONE);
-+		PIN_SLP(gpb-3, PREV, NONE);
-+		PIN_SLP(gpb-4, INPUT, DOWN);
-+		PIN_SLP(gpb-5, INPUT, DOWN);
-+		PIN_SLP(gpb-6, INPUT, DOWN);
-+		PIN_SLP(gpb-7, INPUT, DOWN);
-+
-+		PIN_SLP(gpc0-0, INPUT, DOWN);
-+		PIN_SLP(gpc0-1, INPUT, DOWN);
-+		PIN_SLP(gpc0-2, INPUT, DOWN);
-+		PIN_SLP(gpc0-3, INPUT, DOWN);
-+		PIN_SLP(gpc0-4, INPUT, DOWN);
-+
-+		PIN_SLP(gpc1-0, INPUT, DOWN);
-+		PIN_SLP(gpc1-1, INPUT, DOWN);
-+		PIN_SLP(gpc1-2, INPUT, DOWN);
-+		PIN_SLP(gpc1-3, INPUT, DOWN);
-+		PIN_SLP(gpc1-4, INPUT, DOWN);
-+
-+		PIN_SLP(gpd0-0, INPUT, DOWN);
-+		PIN_SLP(gpd0-1, INPUT, DOWN);
-+		PIN_SLP(gpd0-2, INPUT, NONE);
-+		PIN_SLP(gpd0-3, INPUT, NONE);
-+
-+		PIN_SLP(gpd1-0, INPUT, NONE);
-+		PIN_SLP(gpd1-1, INPUT, NONE);
-+		PIN_SLP(gpd1-2, INPUT, NONE);
-+		PIN_SLP(gpd1-3, INPUT, NONE);
-+	};
-+};
-+
-+&pinctrl_1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sleep1>;
-+
-+	sleep1: sleep-state {
-+		PIN_SLP(gpe0-0, PREV, NONE);
-+		PIN_SLP(gpe0-1, PREV, NONE);
-+		PIN_SLP(gpe0-2, INPUT, DOWN);
-+		PIN_SLP(gpe0-3, INPUT, DOWN);
-+		PIN_SLP(gpe0-4, INPUT, DOWN);
-+		PIN_SLP(gpe0-5, INPUT, DOWN);
-+		PIN_SLP(gpe0-6, INPUT, DOWN);
-+		PIN_SLP(gpe0-7, INPUT, DOWN);
-+
-+		PIN_SLP(gpe1-0, INPUT, DOWN);
-+		PIN_SLP(gpe1-1, PREV, NONE);
-+		PIN_SLP(gpe1-2, INPUT, DOWN);
-+		PIN_SLP(gpe1-3, INPUT, DOWN);
-+		PIN_SLP(gpe1-4, INPUT, DOWN);
-+		PIN_SLP(gpe1-5, INPUT, DOWN);
-+		PIN_SLP(gpe1-6, INPUT, DOWN);
-+		PIN_SLP(gpe1-7, INPUT, NONE);
-+
-+		PIN_SLP(gpe2-0, INPUT, NONE);
-+		PIN_SLP(gpe2-1, INPUT, NONE);
-+		PIN_SLP(gpe2-2, INPUT, NONE);
-+
-+		PIN_SLP(gpk0-0, INPUT, DOWN);
-+		PIN_SLP(gpk0-1, INPUT, DOWN);
-+		PIN_SLP(gpk0-2, OUT0, NONE);
-+		PIN_SLP(gpk0-3, INPUT, DOWN);
-+		PIN_SLP(gpk0-4, INPUT, DOWN);
-+		PIN_SLP(gpk0-5, INPUT, DOWN);
-+		PIN_SLP(gpk0-6, INPUT, DOWN);
-+		PIN_SLP(gpk0-7, INPUT, DOWN);
-+
-+		PIN_SLP(gpk1-0, INPUT, DOWN);
-+		PIN_SLP(gpk1-1, INPUT, DOWN);
-+		PIN_SLP(gpk1-2, INPUT, DOWN);
-+		PIN_SLP(gpk1-3, INPUT, DOWN);
-+		PIN_SLP(gpk1-4, INPUT, DOWN);
-+		PIN_SLP(gpk1-5, INPUT, DOWN);
-+		PIN_SLP(gpk1-6, INPUT, DOWN);
-+
-+		PIN_SLP(gpk2-0, INPUT, DOWN);
-+		PIN_SLP(gpk2-1, INPUT, DOWN);
-+		PIN_SLP(gpk2-2, INPUT, DOWN);
-+		PIN_SLP(gpk2-3, INPUT, DOWN);
-+		PIN_SLP(gpk2-4, INPUT, DOWN);
-+		PIN_SLP(gpk2-5, INPUT, DOWN);
-+		PIN_SLP(gpk2-6, INPUT, DOWN);
-+
-+		PIN_SLP(gpl0-0, INPUT, DOWN);
-+		PIN_SLP(gpl0-1, INPUT, DOWN);
-+		PIN_SLP(gpl0-2, INPUT, DOWN);
-+		PIN_SLP(gpl0-3, INPUT, DOWN);
-+
-+		PIN_SLP(gpm0-0, INPUT, DOWN);
-+		PIN_SLP(gpm0-1, INPUT, DOWN);
-+		PIN_SLP(gpm0-2, INPUT, DOWN);
-+		PIN_SLP(gpm0-3, INPUT, DOWN);
-+		PIN_SLP(gpm0-4, INPUT, DOWN);
-+		PIN_SLP(gpm0-5, INPUT, DOWN);
-+		PIN_SLP(gpm0-6, INPUT, DOWN);
-+		PIN_SLP(gpm0-7, INPUT, DOWN);
-+
-+		PIN_SLP(gpm1-0, INPUT, DOWN);
-+		PIN_SLP(gpm1-1, INPUT, DOWN);
-+		PIN_SLP(gpm1-2, INPUT, DOWN);
-+		PIN_SLP(gpm1-3, INPUT, DOWN);
-+		PIN_SLP(gpm1-4, INPUT, DOWN);
-+		PIN_SLP(gpm1-5, INPUT, DOWN);
-+		PIN_SLP(gpm1-6, INPUT, DOWN);
-+
-+		PIN_SLP(gpm2-0, INPUT, DOWN);
-+		PIN_SLP(gpm2-1, INPUT, DOWN);
-+		PIN_SLP(gpm2-2, INPUT, DOWN);
-+		PIN_SLP(gpm2-3, INPUT, DOWN);
-+		PIN_SLP(gpm2-4, INPUT, DOWN);
-+
-+		PIN_SLP(gpm3-0, INPUT, DOWN);
-+		PIN_SLP(gpm3-1, INPUT, DOWN);
-+		PIN_SLP(gpm3-2, INPUT, DOWN);
-+		PIN_SLP(gpm3-3, INPUT, DOWN);
-+		PIN_SLP(gpm3-4, INPUT, DOWN);
-+		PIN_SLP(gpm3-5, INPUT, DOWN);
-+		PIN_SLP(gpm3-6, INPUT, DOWN);
-+		PIN_SLP(gpm3-7, INPUT, DOWN);
-+
-+		PIN_SLP(gpm4-0, INPUT, DOWN);
-+		PIN_SLP(gpm4-1, INPUT, DOWN);
-+		PIN_SLP(gpm4-2, INPUT, DOWN);
-+		PIN_SLP(gpm4-3, INPUT, DOWN);
-+		PIN_SLP(gpm4-4, INPUT, DOWN);
-+		PIN_SLP(gpm4-5, INPUT, DOWN);
-+		PIN_SLP(gpm4-6, INPUT, DOWN);
-+		PIN_SLP(gpm4-7, INPUT, DOWN);
-+	};
-+};
--- 
-1.8.0
+I remembered that I and Doug were discussed for this problem with exynos5420-peach board(?), right?
+Is arndale-octa board the same circuit with peach?
+If it's same, I think Doug's comment is right.
+But if card-detect pis is used with other power, we don't need to consider the VDDQ_MMC2 power domain.
+It needs more information and checks its schematic.
+
+Best Regards,
+Jaehoon Chung
+
+> 
+> 
+> -Doug
+> 
