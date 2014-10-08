@@ -1,77 +1,55 @@
-From: Kevin Hilman <khilman@linaro.org>
-Subject: exynos5422-odroid-xu3: MCPM: only 6 of 8 CPUs coming online
-Date: Wed, 8 Oct 2014 11:58:37 -0700
-Message-ID: <CAGa+x84j02p05uaxYva1FVqJYVeLeLhya13dv-OjB=+TtQCC1Q@mail.gmail.com>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH v9 0/2] Adds PMU and S2R support for exynos5420
+Date: Wed, 08 Oct 2014 16:19:09 -0700
+Message-ID: <7hiojuno9e.fsf@deeprootsystems.com>
+References: <1412673723-15551-1-git-send-email-vikas.sajjan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f179.google.com ([209.85.216.179]:39199 "EHLO
-	mail-qc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751517AbaJHS6i (ORCPT
+Received: from mail.kernel.org ([198.145.19.201]:51380 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754197AbaJHXTM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Oct 2014 14:58:38 -0400
-Received: by mail-qc0-f179.google.com with SMTP id x3so7925547qcv.38
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Oct 2014 11:58:37 -0700 (PDT)
+	Wed, 8 Oct 2014 19:19:12 -0400
+In-Reply-To: <1412673723-15551-1-git-send-email-vikas.sajjan@samsung.com>
+	(Vikas Sajjan's message of "Tue, 7 Oct 2014 15:07:01 +0545")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chander Kashyap <k.chander@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Mauro Ribeiro <mdrjr0@gmail.com>
+To: Vikas Sajjan <vikas.sajjan@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, joshi@samsung.com, sajjan.linux@gmail.com, dianders@chromium.org, olof@lixom.net
 
-Hi Chander, Abhilash,
+Vikas Sajjan <vikas.sajjan@samsung.com> writes:
 
-I'm using the exynos5422 odroid-xu3 and only 6 of 8 cores are coming
-online when using MCPM[1].  All the A15s are booting but only 2 of the
-A7s, one of which is the primary CPU.
+[...]
 
-After booting, if I try to manually bring one of the CPUs online via
-/sys/devices/.../cpuX/online, I hit the BUG() in
-mcpm-exynos.c:exynos_power_up().
+> Tested on Kukjin Kim's tree, for-next branch + 
+> 1] http://www.spinics.net/lists/linux-samsung-soc/msg33750.html
+> 2] https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg37260.html
+> 3] with the CLK_IGNORE_UNUSED flag for aclk200_disp1 CLK
+>
+> on Exynos5420 based chromebook (peach-pit board)
+>
+> Below procedures were followed to test S2R:
+> Procedure A:
+> 	1. make multi_v7_defconfig 
+> 	2  enable MCPM for 5420
+> 	3. enable S3C RTC
+> 	5. echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
+> Procedure B:
+> 	1. make exynos_defconfig 
+> 	4. echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
 
-Any ideas why 2 of the A7s aren't booting up?
+I went tried to this on exynos5800-peach-pi and found first that
+exynos_defonfig is missing the MAX77802 kconfig options for the RTC
+source clock:
+
+CONFIG_REGULATOR_MAX77802=y
+CONFIG_COMMON_CLK_MAX77802=y
+
+With those, rtc0 then comes up, but isn't waking from suspend.  However,
+writing something to rtc0/wakealarm does result in /proc/interrupts
+having an interrupt for the RTC, it's just not waking the system.
+
+Anyone else tried this on 5800/peach-pi?
 
 Kevin
-
-[1]
-[    0.001719] CPU: Testing write buffer coherency: ok
-[    0.002171] CPU0: update cpu_capacity 448
-[    0.002187] CPU0: thread -1, cpu 0, socket 1, mpidr 80000100
-[    0.002429] Setting up static identity map for 0x4046df70 - 0x4046dfc8
-[    0.002732] ARM CCI driver probed
-[    0.002815] exynos_mcpm_usage_count_init: cpu 0 cluster 1
-[    0.003010] Exynos MCPM support installed
-[    0.030310] mcpm_boot_secondary: logical CPU 1 is physical CPU 0 cluster 0
-[    0.030326] exynos_power_up: cpu 0 cluster 0
-[    0.030626] CPU1: Booted secondary processor
-[    0.030686] CPU1: update cpu_capacity 1535
-[    0.030693] CPU1: thread -1, cpu 0, socket 0, mpidr 80000000
-[    0.040314] mcpm_boot_secondary: logical CPU 2 is physical CPU 1 cluster 0
-[    0.040340] exynos_power_up: cpu 1 cluster 0
-[    0.040629] CPU2: Booted secondary processor
-[    0.040672] CPU2: update cpu_capacity 1535
-[    0.040679] CPU2: thread -1, cpu 1, socket 0, mpidr 80000001
-[    0.050321] mcpm_boot_secondary: logical CPU 3 is physical CPU 2 cluster 0
-[    0.050347] exynos_power_up: cpu 2 cluster 0
-[    0.050659] CPU3: Booted secondary processor
-[    0.050703] CPU3: update cpu_capacity 1535
-[    0.050710] CPU3: thread -1, cpu 2, socket 0, mpidr 80000002
-[    0.060316] mcpm_boot_secondary: logical CPU 4 is physical CPU 3 cluster 0
-[    0.060343] exynos_power_up: cpu 3 cluster 0
-[    0.060631] CPU4: Booted secondary processor
-[    0.060675] CPU4: update cpu_capacity 1535
-[    0.060682] CPU4: thread -1, cpu 3, socket 0, mpidr 80000003
-[    0.070316] mcpm_boot_secondary: logical CPU 5 is physical CPU 1 cluster 1
-[    0.070343] exynos_power_up: cpu 1 cluster 1
-[    1.070007] CPU5: failed to come online
-[    1.080322] mcpm_boot_secondary: logical CPU 6 is physical CPU 2 cluster 1
-[    1.080337] exynos_power_up: cpu 2 cluster 1
-[    1.080625] CPU6: Booted secondary processor
-[    1.080691] CPU6: update cpu_capacity 448
-[    1.080699] CPU6: thread -1, cpu 2, socket 1, mpidr 80000102
-[    1.090331] mcpm_boot_secondary: logical CPU 7 is physical CPU 3 cluster 1
-[    1.090356] exynos_power_up: cpu 3 cluster 1
-[    2.090023] CPU7: failed to come online
-[    2.090055] Brought up 6 CPUs
-[    2.090067] SMP: Total of 6 processors activated.
-[    2.090079] CPU: WARNING: CPU(s) started in wrong/inconsistent
-modes (primary CPU mode 0x13)
-[    2.090089] CPU: This may indicate a broken bootloader or firmware.
