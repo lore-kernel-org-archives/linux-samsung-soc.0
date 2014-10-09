@@ -1,69 +1,63 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH 0/3] drm-exynos-dp/phy-exynos-dp: Refactor to use
- pmu-system-controller and dp driver cleanup
-Date: Thu, 9 Oct 2014 15:59:03 +0530
-Message-ID: <CAEC9eQMdL7vAou2Mn6vpxHR=Dd9++dnMoM+Xzk3O_W0F7n1CBQ@mail.gmail.com>
-References: <1410786785-9838-1-git-send-email-gautam.vivek@samsung.com>
- <CAEC9eQPMNcGxUZVAh6ou6a=6V9bAgmwZAn5ra4=EkoosNURWPg@mail.gmail.com>
- <CAFp+6iFeiwhXurrZ+bWz0Ht87SX4gPGkOEipCPHgYS2Z0_hocA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAFp+6iFeiwhXurrZ+bWz0Ht87SX4gPGkOEipCPHgYS2Z0_hocA@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, LKML <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, kishon <kishon@ti.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH 1/3] ARM: exynos_defconfig: Enable Maxim 77836 for Gear2 board
+Date: Thu, 09 Oct 2014 13:32:57 +0200
+Message-ID: <1412854379-18875-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:61988 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751115AbaJILeB (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 9 Oct 2014 07:34:01 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On Thu, Oct 9, 2014 at 3:56 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
-> Ajay,
->
->
-> On Thu, Oct 9, 2014 at 3:48 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
->> Hi,
->>
->> On Mon, Sep 15, 2014 at 6:43 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
->>> These patches are based on 'for-next' branch of kgene's linux-samsung tree.
->>>
->>> Refactoring the exynos-dp-video phy to use pmu-system-controller handle
->>> and access the register using mfd-syscon and regmap.
->>> Simultaneously, removing the support for older dptx-phy, since it's obsolete
->>> now and noone uses it.
->>>
->>> Vivek Gautam (3):
->>>   phy: exynos-dp-video: Use syscon support to control pmu register
->>>   drm/exynos: dp: Remove support for unused dptx-phy
->>>   arm: dts: Exynos5: Use pmu_system_controller phandle for dp phy
->>>
->>>  .../devicetree/bindings/phy/samsung-phy.txt        |    7 +-
->>>  arch/arm/boot/dts/exynos5250.dtsi                  |    2 +-
->>>  arch/arm/boot/dts/exynos5420.dtsi                  |    4 +-
->>>  drivers/gpu/drm/exynos/exynos_dp_core.c            |   58 ++++-----------
->>>  drivers/gpu/drm/exynos/exynos_dp_core.h            |    2 -
->>>  drivers/phy/phy-exynos-dp-video.c                  |   76 ++++++++++++++------
->>>  6 files changed, 75 insertions(+), 74 deletions(-)
->>>
->>> --
->>> 1.7.10.4
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->> I have tested this patchset on exynos5800-peach-pi, and I can see DP
->> display with the above patches.
->
-> we expect "Tested-by", if you have tested please give the same.
-Tested-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+Enable all Maxim 14577 drivers and Maxim 17040 fuel gauge driver to
+support the Maxim 77836 PMIC present on Samsung Rinato board (Gear 2).
 
-Ajay
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/configs/exynos_defconfig | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index b14d8c3f7e12..ce600b654297 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -78,6 +78,8 @@ CONFIG_SPI_S3C64XX=y
+ CONFIG_DEBUG_GPIO=y
+ CONFIG_POWER_SUPPLY=y
+ CONFIG_BATTERY_SBS=y
++CONFIG_BATTERY_MAX17040=y
++CONFIG_CHARGER_MAX14577=y
+ CONFIG_CHARGER_TPS65090=y
+ # CONFIG_HWMON is not set
+ CONFIG_THERMAL=y
+@@ -88,6 +90,7 @@ CONFIG_S3C2410_WATCHDOG=y
+ CONFIG_MFD_CROS_EC=y
+ CONFIG_MFD_CROS_EC_I2C=y
+ CONFIG_MFD_CROS_EC_SPI=y
++CONFIG_MFD_MAX14577=y
+ CONFIG_MFD_MAX77686=y
+ CONFIG_MFD_MAX77693=y
+ CONFIG_MFD_MAX8997=y
+@@ -95,6 +98,7 @@ CONFIG_MFD_SEC_CORE=y
+ CONFIG_MFD_TPS65090=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+ CONFIG_REGULATOR_GPIO=y
++CONFIG_REGULATOR_MAX14577=y
+ CONFIG_REGULATOR_MAX8997=y
+ CONFIG_REGULATOR_MAX77686=y
+ CONFIG_REGULATOR_MAX77693=y
+@@ -140,6 +144,8 @@ CONFIG_PL330_DMA=y
+ CONFIG_COMMON_CLK_MAX77686=y
+ CONFIG_COMMON_CLK_S2MPS11=y
+ CONFIG_EXYNOS_IOMMU=y
++CONFIG_EXTCON=y
++CONFIG_EXTCON_MAX14577=y
+ CONFIG_IIO=y
+ CONFIG_EXYNOS_ADC=y
+ CONFIG_PWM=y
+-- 
+1.9.1
