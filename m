@@ -1,106 +1,126 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [GIT PULL 3/3] 3rd Round of Exynos-PM-2 Updates for v3.18
-Date: Thu, 09 Oct 2014 16:13:27 +0200
-Message-ID: <1989704.ItPj5sfprr@amdc1032>
-References: <54244973.7090204@samsung.com> <1945452.Fsg7LTeZhk@wuerfel>
- <1414810.2h7O5DlLDc@amdc1032>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 5/5] ARM: dts: Add initial regulator mode on exynos Peach
+ boards
+Date: Thu, 09 Oct 2014 16:27:37 +0200
+Message-ID: <54369B59.8000509@collabora.co.uk>
+References: <20141008195112.GI4609@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:55977 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751154AbaJIONz (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:53917 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751315AbaJIO1n (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Oct 2014 10:13:55 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0ND6005ZDKV4WJ70@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 09 Oct 2014 23:13:52 +0900 (KST)
-In-reply-to: <1414810.2h7O5DlLDc@amdc1032>
+	Thu, 9 Oct 2014 10:27:43 -0400
+In-Reply-To: <20141008195112.GI4609@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
+Hello Mark,
 
-Hi,
+On 10/08/2014 09:51 PM, Mark Brown wrote:
+> On Wed, Oct 08, 2014 at 06:25:00PM +0200, Javier Martinez Canillas
+>> What this series tried to solve is when you have to set a opmode on
+>> boot to change how the physical suspend is managed by the PMIC.
+> 
+> Think about the consequences of what's being said here.  The goal is to
+> set the mode in system suspend which will presumably be a minimal power
+> consumption mode where minimal load is expected.  What's being said is
+> that in order to implement this we want to set the default mode used
+> while the system is running to this mode.  This will mean that we'll be
+> in this low power mode while running full speed.  That in turn not only
+> means that the DT says something other than what we're trying to do and
+> hence looks like it's buggy but most likely also means that the system
+> won't run stably under load since the regulators are in power saving
+> mode.
+>
 
-On Thursday, October 02, 2014 03:35:18 PM Bartlomiej Zolnierkiewicz wrote:
-> 
-> Hi,
-> 
-> On Wednesday, October 01, 2014 08:31:47 PM Arnd Bergmann wrote:
-> > On Wednesday 01 October 2014 18:49:20 Bartlomiej Zolnierkiewicz wrote:
-> > > On Wednesday, October 01, 2014 06:01:29 PM Arnd Bergmann wrote:
-> > > > On Thursday 25 September 2014, Kukjin Kim wrote:
-> > > > > Exynos 2nd PM related updates for v3.18
-> > > > > 
-> > > > > - Firmware supporting suspend and resume to excute of low
-> > > > >    level operations to enter and leave power mode for exynos
-> > > > >    : introduce suspend() and resume() firmware operations
-> > > > > 
-> > > > > - Fix AFTR mode on boards with secure firmware enabled and
-> > > > >    allows exynos cpuidle driver usage on exynos4x12 SoCs
-> > > > > 
-> > > > > - Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y
-> > > > > 
-> > > > > - SWRESET is needed to boot secondary CPU on exynos3250
-> > > > > 
-> > > > 
-> > > > I needed another fixup to make this build, but I'm not sure about
-> > > > whether this is the right solution.
-> > > 
-> > > Could you please share the build errors and the used config?
-> > 
-> > I'm building with an additional series that works around all known
-> > build failures in randconfig, so it's possible that the configuration
-> > causes other problems in your tree, or that one of my own patches
-> > introduces the problem and the exynos tree by itself is fine.
-> > 
-> > This is the build error I get:
-> > 
-> > arch/arm/mach-exynos/built-in.o: In function `exynos_suspend':
-> > :(.text+0x294): undefined reference to `cpu_suspend'
-> > :(.text+0x29c): undefined reference to `cpu_suspend'
-> > arch/arm/mach-exynos/built-in.o: In function `skip_cp15':
-> > :(.data+0x58): undefined reference to `cpu_resume'
-> > arch/arm/mach-exynos/built-in.o: In function `cp15_save_power':
-> > :(.data+0x70): undefined reference to `cpu_resume'
-> > 
-> > The defconfig file is attached, the details don't matter to
-> > other readers, except that it has CONFIG_ARM_CPU_SUSPEND
-> > disabled, which means that sleep.S can't be linked properly.
-> 
-> It turned out that the breakage came through Exynos tree.  "ARM:
-> EXYNOS: Add support for firmware-assisted suspend/resume" added to
-> arch/arm/mach-exynos/firmware.c new references to functions from
-> arch/arm/mach-exynos/sleep.S causing the CONFIG_PM_SLEEP=n build
-> breakage.  Then "ARM: EXYNOS: Fix build with PM_SLEEP=n and
-> ARM_EXYNOS_CPUIDLE=y" tried to fix the CONFIG_PM_SLEEP=n issue by
-> always building sleep.S causing in turn the CONFIG_ARM_CPU_SUSPEND=n
-> build breakage.  I have not noticed the problem earlier because I
-> have overlooked the fact that cpu_suspend() is available only when
-> CONFIG_ARM_CPU_SUSPEND=y and in all configs tested by me it was on
-> (it gets disabled only when both CONFIG_PM and CONFIG_MCPM are off).
-> Sorry for that.
-> 
-> Your patch seems to be a correct fix except that the resume entry
-> should use IS_ENABLED(CONFIG_EXYNOS_CPU_SUSPEND) instead of
-> IS_ENABLED(CONFIG_PM_SLEEP) as resume firmware operations is also
-> used by Exynos cpuidle support.
-> 
-> How should we proceed further to get this tree merged?
+No, while system is running the regulator won't be in low power mode even
+after changing the mode. The mode only affects what the PMIC will do with
+the regulator when the system enters to and exit from sleep mode and the
+AP signals the PMIC about it.
 
-ping?  Arnd, Kukjin?
+Maybe you already got it from my previous email but I'll summarize how the
+hardware works just to be sure we are on the same page:
 
-> PS What is interesting in your defconfig is that it has CONFIG_MCPM
-> enabled but CONFIG_ARM_CPU_SUSPEND is disabled so there are probably
-> some MPCM related changes in your tree.
+* The PMIC allows the AP to power up and down voltage rails via a PWRREQ
+  pin to signal when it enters and exit from sleep mode.
+
+* Each regulator control register has a 2-bit field called OPMODE in the
+  data-sheet that allows to set 4 different operating modes. For most
+  regulators, the modes are the following:
+
+  0x0: Output OFF (regardless of PWRREQ)
+  0x1: Output ON/OFF controlled by PWRREQ
+       PWRREQ = HIGH (1): Output ON in Normal Mode
+       PWRREQ = LOW (0): Output OFF
+  0x2: Output ON with Low Power Mode controlled by PWRREQ
+       PWRREQ = HIGH (1): Output ON in Low Power Mode
+       PWRREQ = LOW (0): Output OFF
+  0x3: Output ON in Normal Mode (regardless of PWRREQ)
+
+* Not all regulators have the same modes, for example 0x1 in some LDOs
+  means "Output ON in Low Power Mode regardless of PWRREQ" and so on.
+
+Since PWRREQ is HIGH when the AP is in normal mode, there are only two
+modes that most regulators can be on runtime: ON and OFF.
+ 
+> As has been said previously please try to think about things in terms of
+> abstractions and what the actual goal is, don't try to shoehorn things
+> into places they happen to solve the immediate problem without regard to
+> the bigger picture or comprehensibility.
+>
+
+I could had proposed a DT property that would be specific to the max77802
+regulator driver but instead I really tried to not only care about my
+particular use case and come up with a solution that could be generic and
+useful for others.
+
+As Krzysztof said in other thread, this feature is common to many Maxim
+PMICs and AFAIK the Rockchip RK808 PMIC has a similar feature to choose
+between two modes: Output ON vs Output ON/OFF controlled by a SLEEP pin.
+
+But maybe trying to make it generic was my mistake and a device-specific
+DT binding is the proper solution here...
+ 
+>> > This appears to set the supply which is labelled as VDD_ARM into standby
+>> > mode by default (from a first glance the change appears to set all
+>> > supplies into standby mode) and of course we currently have no way of
+>> > changing the mode at runtime in DT systems.  Are you *really* sure this
+>> > is a good idea of which an electrical engineer would approve, CPU cores
+>> > are typically one of the most demanding workloads available for a
+>> > regulator?
+> 
+>> Well, the standby mode for this regulator is actually:
+> 
+>> Output ON/OFF Controlled by PWRREQ
+>> 	PWRREQ=HIGH (1): Output ON in Normal Mode
+>> 	PWRREQ=LOW (0): Output OFF
+> 
+> This isn't a mode at all.  This is an enable control and hence it
+> should not be implemented as a mode.  It should be adequately documented
+> but for the avoidance of doubt a regulation mode should control the
+> quality and efficiency of regulation, if something can cause the
+> regulator to be disabled (except perhaps as a consequence of handling a
+> failure in regulation) then it shouldn't be a mode.
+> 
+
+I see, I thought that an operating mode could be anything that alter the
+regulator behavior either during runtime or when the system is suspended.
+But under your definition, it is true that most max77802 regulators have
+only two modes: ON and OFF (and some of them have a third Low Power mode).
+
+I think though that a generic way to configure this enable control feature
+is needed. Maybe adding a new pair of .{get,set}_suspend_control function
+pointers to struct regulator_ops and an .initial_suspend_ctrl field to the
+struct regulation_constraints?
+
+That way the core could parse a generic DT property and call the function
+handlers but each driver can document in their own DT bindings what their
+control values are and how those affects the regulators during suspend?
 
 Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Javier
