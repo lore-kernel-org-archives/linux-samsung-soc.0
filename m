@@ -1,47 +1,70 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] ARM: dts: fix MMC2 regulators for Exynos5420 Arndale Octa board
-Date: Thu, 09 Oct 2014 13:41:07 +0200
-Message-ID: <2467727.SEhKNo5MJx@wuerfel>
-References: <2750153.I3nVqzmXTP@amdc1032> <1819182.VPTrtc9d2P@wuerfel> <CAPDyKFoPBep287uAVDQWSXdFz-aoV4VmV7xgP_PEZ-c1q9Oz0w@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Abhilash Kesavan <a.kesavan@samsung.com>
+Subject: [PATCH v5 0/6] Add initial support for pinctrl on Exynos7
+Date: Thu, 09 Oct 2014 19:24:28 +0530
+Message-ID: <1412862874-9335-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.13]:53350 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751312AbaJILlu (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:55977 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751420AbaJINzl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Oct 2014 07:41:50 -0400
-In-Reply-To: <CAPDyKFoPBep287uAVDQWSXdFz-aoV4VmV7xgP_PEZ-c1q9Oz0w@mail.gmail.com>
+	Thu, 9 Oct 2014 09:55:41 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Won Jeon <tgih.jun@samsung.com>, PRASHANTH GODREHAL <prashanth.g@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@google.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, "cpgs ." <cpgs@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, SUNIL JOSHI <joshi@samsung.com>, Chris Ball <cjb@laptop.org>, Sonny Rao <sonnyrao@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: linux-arm-kernel@lists.infradead.org, tomasz.figa@gmail.com, linus.walleij@linaro.org
+Cc: linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, naveenkrishna.ch@gmail.com, robh@kernel.org, devicetree@vger.kernel.org
 
-On Thursday 09 October 2014 10:46:59 Ulf Hansson wrote:
-> On 8 October 2014 20:28, Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Wednesday 08 October 2014 08:29:16 Doug Anderson wrote:
-> >>
-> >> On Wed, Oct 8, 2014 at 8:20 AM, Arnd Bergmann <arnd@arndb.de> wrote:
-> >> > Why does it cause a regression though? Does this mean you are breaking
-> >> > any boot with an old DT file and a new kernel? That would be very
-> >> > bad, the driver is supposed to keep working with an existing dtb.
-> >>
-> >> The old dts file specified completely the wrong regulator.  It
-> >> happened that the old code didn't really care, but when the code was
-> >> fixed to care then things broke.  If we need to keep old dts files
-> >> working then the most sensible place to do it would be in a "fixup old
-> >> broken device trees" stage somewhere in kernel boot.
-> >
-> > Ok, got it. I guess it's better to apply this one first then.
-> >
-> >         Arnd
-> 
-> Thanks for your comments Arnd! I have applied this once to my mmc tree
-> now. Please tell me soon if you want to carry this through arm-soc
-> instead, thus I can drop it.
+Changes since v4:
+	- Rebased over Tomasz Figa's pinctrl clean-up patches[1]
 
-No, please take it yourself, Linus has already taken the arm-soc pull
-requests.
+Changes since v3:
+	- Changed variable name from exynos_wkup_irq_chip to irq_chip
+	- Added acked-by tag from Tomasz Figa
 
-	Arnd
+Changes since v2:
+	- Added a .irq_chip field to the samsung_pin_bank struct
+	- Consolidated the wakeup and gpio irqd_ops
+
+Changes since v1:
+	- Marked the newly created irq_chip instances as __initdata
+	- Used kmemdup to keep a copy of the irq_chip
+	- Change the pinctrl name from sd0_rdqs to sd0_ds as per UM
+	- Moved the pinctrl enablement for exynos7 into a separate patch
+	- Added tested-by and reviewed-by tags from Thomas Abraham
+
+This series has been tested on linux-next (20141008)
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/ with
+the following dependencies and [1].
+ 
+a) Samsung Serial symbol clean-up for exynos7 serial driver enablement (v2)
+   http://www.spinics.net/lists/arm-kernel/msg366947.html
+   http://www.spinics.net/lists/arm-kernel/msg366948.html
+b) "dts, kbuild: Implement support for dtb vendor subdirs" patchset - rebased
+   http://comments.gmane.org/gmane.linux.kbuild.devel/12131
+c) "arch: arm64: enable support for Samsung Exynos7 SoC" patchset (v5) - rebased
+   http://www.spinics.net/lists/arm-kernel/msg364014.html
+
+[1] https://lkml.org/lkml/2014/10/2/476
+
+Abhilash Kesavan (3):
+  pinctrl: exynos: Generalize the eint16_31 demux code
+  pinctrl: exynos: Consolidate irq domain callbacks
+  pinctrl: exynos: Add irq_chip instance for Exynos7 wakeup interrupts
+
+Naveen Krishna Ch (3):
+  pinctrl: exynos: Add initial driver data for Exynos7
+  arm64: dts: Add initial pinctrl support to EXYNOS7
+  arm64: exynos: Enable pinctrl support for Exynos7
+
+ .../bindings/pinctrl/samsung-pinctrl.txt           |    3 +
+ arch/arm64/Kconfig                                 |    2 +
+ arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    |  560 ++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            |   66 +++
+ drivers/pinctrl/samsung/pinctrl-exynos.c           |  188 +++++--
+ drivers/pinctrl/samsung/pinctrl-exynos.h           |    3 +
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |    2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |    3 +
+ 8 files changed, 791 insertions(+), 36 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
+
+-- 
+1.7.9.5
