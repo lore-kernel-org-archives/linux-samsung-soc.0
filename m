@@ -1,53 +1,47 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 3/3] ARM: multi_v7_defconfig: Enable clock and RTC driver for
- S2M and S5M
-Date: Thu, 09 Oct 2014 13:32:59 +0200
-Message-ID: <1412854379-18875-3-git-send-email-k.kozlowski@samsung.com>
-References: <1412854379-18875-1-git-send-email-k.kozlowski@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] ARM: dts: fix MMC2 regulators for Exynos5420 Arndale Octa board
+Date: Thu, 09 Oct 2014 13:41:07 +0200
+Message-ID: <2467727.SEhKNo5MJx@wuerfel>
+References: <2750153.I3nVqzmXTP@amdc1032> <1819182.VPTrtc9d2P@wuerfel> <CAPDyKFoPBep287uAVDQWSXdFz-aoV4VmV7xgP_PEZ-c1q9Oz0w@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:44846 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751190AbaJILeC (ORCPT
+Received: from mout.kundenserver.de ([212.227.17.13]:53350 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751312AbaJILlu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Oct 2014 07:34:02 -0400
-In-reply-to: <1412854379-18875-1-git-send-email-k.kozlowski@samsung.com>
+	Thu, 9 Oct 2014 07:41:50 -0400
+In-Reply-To: <CAPDyKFoPBep287uAVDQWSXdFz-aoV4VmV7xgP_PEZ-c1q9Oz0w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Seung-Won Jeon <tgih.jun@samsung.com>, PRASHANTH GODREHAL <prashanth.g@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@google.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, "cpgs ." <cpgs@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, SUNIL JOSHI <joshi@samsung.com>, Chris Ball <cjb@laptop.org>, Sonny Rao <sonnyrao@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-The multi_v7 config already enables MFD and regulators drivers for
-Samsung's S2MPS11/S2MPS14 and S5M8767. Enable also drivers for the rest
-of these PMICs features: clock and RTC.
+On Thursday 09 October 2014 10:46:59 Ulf Hansson wrote:
+> On 8 October 2014 20:28, Arnd Bergmann <arnd@arndb.de> wrote:
+> > On Wednesday 08 October 2014 08:29:16 Doug Anderson wrote:
+> >>
+> >> On Wed, Oct 8, 2014 at 8:20 AM, Arnd Bergmann <arnd@arndb.de> wrote:
+> >> > Why does it cause a regression though? Does this mean you are breaking
+> >> > any boot with an old DT file and a new kernel? That would be very
+> >> > bad, the driver is supposed to keep working with an existing dtb.
+> >>
+> >> The old dts file specified completely the wrong regulator.  It
+> >> happened that the old code didn't really care, but when the code was
+> >> fixed to care then things broke.  If we need to keep old dts files
+> >> working then the most sensible place to do it would be in a "fixup old
+> >> broken device trees" stage somewhere in kernel boot.
+> >
+> > Ok, got it. I guess it's better to apply this one first then.
+> >
+> >         Arnd
+> 
+> Thanks for your comments Arnd! I have applied this once to my mmc tree
+> now. Please tell me soon if you want to carry this through arm-soc
+> instead, thus I can drop it.
 
-These PMICs are used on Arndale (Exynos 5250 and 5420) and Origen
-(Exynos 4412) evaluation boards, Google Spring, Samsung Gear2 (Exynos
-3250) and some other phones based on Exynos5.
+No, please take it yourself, Linus has already taken the arm-soc pull
+requests.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/configs/multi_v7_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 3d37e9d2914f..1a60a69f26ad 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -391,6 +391,7 @@ CONFIG_RTC_DRV_SUN6I=y
- CONFIG_RTC_DRV_SUNXI=y
- CONFIG_RTC_DRV_MV=y
- CONFIG_RTC_DRV_TEGRA=y
-+CONFIG_RTC_DRV_S5M=y
- CONFIG_DMADEVICES=y
- CONFIG_DW_DMAC=y
- CONFIG_MV_XOR=y
-@@ -414,6 +415,7 @@ CONFIG_NVEC_POWER=y
- CONFIG_NVEC_PAZ00=y
- CONFIG_QCOM_GSBI=y
- CONFIG_COMMON_CLK_QCOM=y
-+CONFIG_COMMON_CLK_S2MPS11=y
- CONFIG_MSM_GCC_8660=y
- CONFIG_MSM_MMCC_8960=y
- CONFIG_MSM_MMCC_8974=y
--- 
-1.9.1
+	Arnd
