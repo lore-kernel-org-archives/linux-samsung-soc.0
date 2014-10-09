@@ -1,110 +1,84 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v9 0/2] Adds PMU and S2R support for exynos5420
-Date: Thu, 9 Oct 2014 11:48:28 +0200
-Message-ID: <CABxcv==V0vR2XXq5cKzbaqkCbtkqKgrhJotdPSM5K0uyNW968w@mail.gmail.com>
-References: <1412673723-15551-1-git-send-email-vikas.sajjan@samsung.com>
-	<7hiojuno9e.fsf@deeprootsystems.com>
-	<CAM4voanoOV44EQveAeikp1P0bXCU8HHdX2XDi3jwLkfQOP0CNQ@mail.gmail.com>
+From: Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH] drm/exynos: fix vblank handling during dpms off
+Date: Thu, 9 Oct 2014 11:58:52 +0200
+Message-ID: <20141009095850.GA3718@ulmo.nvidia.com>
+References: <542B9A0E.7020206@samsung.com>
+ <1412151287-12845-1-git-send-email-a.hajda@samsung.com>
+ <542D13CC.5000304@samsung.com>
+ <542D2E7C.1020904@samsung.com>
+ <542D3C96.7000400@samsung.com>
+ <54362066.9000504@nvidia.com>
+ <20141009085258.GI5182@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="k1lZvvs/B4yU6o8G"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f176.google.com ([209.85.212.176]:63300 "EHLO
-	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750839AbaJIJs3 (ORCPT
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:12824 "EHLO
+	hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751024AbaJIJ7V (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Oct 2014 05:48:29 -0400
-Received: by mail-wi0-f176.google.com with SMTP id hi2so12585092wib.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Oct 2014 02:48:28 -0700 (PDT)
-In-Reply-To: <CAM4voanoOV44EQveAeikp1P0bXCU8HHdX2XDi3jwLkfQOP0CNQ@mail.gmail.com>
+	Thu, 9 Oct 2014 05:59:21 -0400
+In-Reply-To: <20141009085258.GI5182@n2100.arm.linux.org.uk>
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Cc: Kevin Hilman <khilman@kernel.org>, Vikas Sajjan <vikas.sajjan@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 
-Hello Abhilash,
+--k1lZvvs/B4yU6o8G
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 9, 2014 at 4:37 AM, Abhilash Kesavan
-<kesavan.abhilash@gmail.com> wrote:
-> Hi Kevin,
->
-> On Thu, Oct 9, 2014 at 4:49 AM, Kevin Hilman <khilman@kernel.org> wrote:
->> Vikas Sajjan <vikas.sajjan@samsung.com> writes:
->>
->> [...]
->>
->>> Tested on Kukjin Kim's tree, for-next branch +
->>> 1] http://www.spinics.net/lists/linux-samsung-soc/msg33750.html
->>> 2] https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg37260.html
->>> 3] with the CLK_IGNORE_UNUSED flag for aclk200_disp1 CLK
->>>
->>> on Exynos5420 based chromebook (peach-pit board)
->>>
->>> Below procedures were followed to test S2R:
->>> Procedure A:
->>>       1. make multi_v7_defconfig
->>>       2  enable MCPM for 5420
->>>       3. enable S3C RTC
->>>       5. echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
->>> Procedure B:
->>>       1. make exynos_defconfig
->>>       4. echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
->>
->> I went tried to this on exynos5800-peach-pi and found first that
->> exynos_defonfig is missing the MAX77802 kconfig options for the RTC
->> source clock:
->>
->> CONFIG_REGULATOR_MAX77802=y
->> CONFIG_COMMON_CLK_MAX77802=y
->
-> I am using exynos_defconfig (no changes) with the internal SoC RTC
-> which is enabled by default. I did not enable the MAX77802 RTC.
+On Thu, Oct 09, 2014 at 09:52:58AM +0100, Russell King - ARM Linux wrote:
+> On Thu, Oct 09, 2014 at 02:43:02PM +0900, Alexandre Courbot wrote:
+> > But there might be another issue, which is that calls to =20
+> > drm_vblank_get() will return -EINVAL if invoked between drm_blank_off =
+=20
+> > and drm_blank_on. Is this really the desired behavior? Can it at least =
+=20
+> > happen? If so, how are drivers supposed to react to this situation?
+>=20
+> I've not yet seen the commit which causes this problem, but I hope
+> that drm_wait_vblank() isn't affected by this.  In current mainline,
+> drm_vblank_get() is used inside drm_wait_vblank(), which is called as
+> a result of userspace calling DRM_IOCTL_WAIT_VBLANK.
+>=20
+> So, what is the effect of this change on user applications making use
+> of the vblank wait ioctl - and is that change intended?
 
-That is because you probably are using kukjin's for-next branch as a
-base but I had the same issue when testing s2r on linux-next.
+There's no effect on user applications if the driver behaves properly.
+As far as I can tell, every driver that calls drm_vblank_off() but not
+drm_vblank_on() will break. You can easily test this by running libdrm
+modetest -s ... -v, which instead of toggling between the test pattern
+and an all-gray framebuffer will switch to the gray one once and then
+hang.
 
-The problem is that linux-next contains commit 546b117fdf17 ("rtc:
-s3c: add support for RTC of Exynos3250 SoC") that added a required
-"rtc_src" DT property for the Samsung's S3C RTC that is used to
-specify the source clock XrtcXTI.
+I guess that was probably not intended, but according to the new rules
+all these drivers have now become buggy. So before merging this patch I
+think we need to fix existing drivers to avoid regressions.
 
-On Peach boards, the S3C source clock is the max77802 32kHZ AP clock
-so I fixed that with commit 8bd43b6 ("ARM: dts: Add rtc_src clk for
-s3c-rtc on exynos Peach boards") but didn't send a patch to enable the
-max77802 subdevices on exynos_defconfig.
+Thierry
 
-I'll post a patch to enable those config options today and maybe they
-can be considered as -rc material.
+--k1lZvvs/B4yU6o8G
+Content-Type: application/pgp-signature
 
->>
->> With those, rtc0 then comes up, but isn't waking from suspend.  However,
->> writing something to rtc0/wakealarm does result in /proc/interrupts
->> having an interrupt for the RTC, it's just not waking the system.
->>
->> Anyone else tried this on 5800/peach-pi?
->
-> I have tested this on a Peach-Pi and the system is resuming fine. The
-> patches applied on kgene's for-next branch along with the
-> aclk200_disp1 fix are:
-> http://lkml.org/lkml/2014/9/30/156
-> https://lkml.org/lkml/2014/10/6/89
-> http://www.spinics.net/lists/arm-kernel/msg368207.html
-> http://www.spinics.net/lists/linux-samsung-soc/msg37647.html
->
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Kevin, I didn't test it on 5800 peach pi but I did test it on 5420
-peach pit and as Abhilash said, I also needed Vikas patch [0] to flag
-the aclk200_disp1 and aclk300_disp1 clocks as CLK_IGNORE_UNUSED to
-prevent the ccf to disable them. With that patch Suspend-to-Ram worked
-for me and resuming using both the internal S3C RTC and the max77802
-RTC.
+iQIcBAEBAgAGBQJUNlxaAAoJEN0jrNd/PrOhHm0P/idjK6mO0UDq2yjIyuT4mcea
+RHHhgyAY2knxfhkzF13ms4vjr5gHLZmu1G5GOztvk3SEdHSsTwGIxRWtGqUHMEG+
+/NvwxLtx/+kQ57hIAV8uRcZ7m+5wExEkHOseIAcWJedpU0qa80hcCTQjl3/rE4Io
+TbKgj5gJYkWSuKuj9AfwNXb38jpHzxLXMgZ/xcvTzaNvzxtmHlv2utw1RMZzLOV9
+hgG1BeDBs3L2TO5+c93agNVJi4vAyuhL8KtYY0o6wmZVnT4id2Dlf8GdXkmjb2eo
+Kq1xaAyvbx1dj357Ees3q67GztVe3mTTXmoAluMUPLu0x/48/7gppH+3jf/Ci4af
+DUM8mjX43w6EIeJY2KEonhvRLsttef1BfBdpVDRob+s03NKHHDrF690AVrMBCUYj
+TKZ5XYlPszh/SUs3w78J+iEd8dS9ea3Hq/tq3NtbHvIu10ngKrNPA2VnxMlVOlEt
+uDqSD8M+nK19bLqHduBxPmyRe/f/lL4juAS6zIWIuIilFszKpNmsidFqTYX1KzfB
+EKC7o5gZxf3yIhkZybNHOB6B3oq4YIb2bV/OtheF1z0LOatHfJhzBBhy8tQS6W9t
+hFju0qARoe/U84KoOD4BJYe527WYQkxtHUSDZOAxaUHo7d3fSmbtmU+Ve6S4seoR
+1noQAPgpWnHsVCNK+D1J
+=UBQa
+-----END PGP SIGNATURE-----
 
-Also I tested the pm_tests and all of them passed on my peach pit.
-
-On peach pi you shouldn't need the clock patch AFAIU if you enable the
-needed kconfig options to have display working since those clocks are
-used by the display controller so they won't be disabled due unused.
-
-Hope it helps,
-Javier
-
-[0]: http://www.spinics.net/lists/arm-kernel/msg367197.html
+--k1lZvvs/B4yU6o8G--
