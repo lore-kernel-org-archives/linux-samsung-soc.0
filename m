@@ -1,126 +1,108 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 5/5] ARM: dts: Add initial regulator mode on exynos Peach
- boards
-Date: Thu, 09 Oct 2014 16:27:37 +0200
-Message-ID: <54369B59.8000509@collabora.co.uk>
-References: <20141008195112.GI4609@sirena.org.uk>
+Subject: Re: [PATCH 3/5] regulator: dt-bindings: Add regulator-initial-mode
+ support
+Date: Thu, 09 Oct 2014 17:04:35 +0200
+Message-ID: <5436A403.1050109@collabora.co.uk>
+References: <1412775847-15213-1-git-send-email-javier.martinez@collabora.co.uk> <1412775847-15213-4-git-send-email-javier.martinez@collabora.co.uk> <1412844355.1316.15.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:53917 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:53970 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751315AbaJIO1n (ORCPT
+	with ESMTP id S1755785AbaJIPEl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Oct 2014 10:27:43 -0400
-In-Reply-To: <20141008195112.GI4609@sirena.org.uk>
+	Thu, 9 Oct 2014 11:04:41 -0400
+In-Reply-To: <1412844355.1316.15.camel@AMDC1943>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Mark Brown <broonie@kernel.org>, Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-Hello Mark,
+Hello Krzysztof,
 
-On 10/08/2014 09:51 PM, Mark Brown wrote:
-> On Wed, Oct 08, 2014 at 06:25:00PM +0200, Javier Martinez Canillas
->> What this series tried to solve is when you have to set a opmode on
->> boot to change how the physical suspend is managed by the PMIC.
-> 
-> Think about the consequences of what's being said here.  The goal is to
-> set the mode in system suspend which will presumably be a minimal power
-> consumption mode where minimal load is expected.  What's being said is
-> that in order to implement this we want to set the default mode used
-> while the system is running to this mode.  This will mean that we'll be
-> in this low power mode while running full speed.  That in turn not only
-> means that the DT says something other than what we're trying to do and
-> hence looks like it's buggy but most likely also means that the system
-> won't run stably under load since the regulators are in power saving
-> mode.
+Thanks a lot for your feedback.
+
+On 10/09/2014 10:45 AM, Krzysztof Kozlowski wrote:
+> On =C5=9Bro, 2014-10-08 at 15:44 +0200, Javier Martinez Canillas wrot=
+e:
+>> --- a/Documentation/devicetree/bindings/regulator/regulator.txt
+>> +++ b/Documentation/devicetree/bindings/regulator/regulator.txt
+>> @@ -23,6 +23,14 @@ Optional properties:
+>>    state among following defined suspend states:
+>>    <3>: PM_SUSPEND_MEM - Setup regulator according to regulator-stat=
+e-mem
+>>    <4>: PM_SUSPEND_MAX - Setup regulator according to regulator-stat=
+e-disk
+>> +- regulator-initial-mode: initial regulator operating mode. One of =
+following:
+>> +	<1>: REGULATOR_MODE_FAST    - Regulator can handle fast changes.
+>> +	<2>: REGULATOR_MODE_NORMAL  - Normal regulator power supply mode.
+>> +	<4>: REGULATOR_MODE_IDLE    - Regulator runs in a more efficient m=
+ode.
+>> +	<8>: REGULATOR_MODE_STANDBY - Regulator runs in the most efficient=
+ mode.
+>> +  modes are defined in the dt-bindings/regulator/regulator.h header=
+ and can be
+>> +  used in device tree sources files. If no mode is defined, then th=
+e OS will not
+>> +  manage the operating mode and the HW default values will be used =
+instead.
+>>  - regulator-state-mem sub-root node for Suspend-to-RAM mode
+>>    : suspend to memory, the device goes to sleep, but all data store=
+d in memory,
+>>    only some external interrupt can wake the device.
+>=20
+> I agree with the need and the idea of generic bindings for operating
+> modes for regulators. At least for Exynos-based boards the PMICs have
+> quite similar opmodes.
+>=20
+> However the regulator mode from consumer.h (and in above doc) does no=
+t
+> match well with these opmodes. Example is yours patch 4/5:
+>  - idle ("more efficient mode") maps to "low power mode in suspend",
+>  - standby ("the most efficient mode") maps to "OFF in suspend".
+>=20
+> Actually we are not enable "efficient modes" but we configure how the
+> regulator will behave when AP says - I'm suspending.
 >
 
-No, while system is running the regulator won't be in low power mode even
-after changing the mode. The mode only affects what the PMIC will do with
-the regulator when the system enters to and exit from sleep mode and the
-AP signals the PMIC about it.
+Agree, Mark also pointed out that there is a difference between changin=
+g
+how the regulator will behave on runtime vs changing how the regulator
+will behave during system suspend. AFAIU from his explanation, the mode=
+s
+defined in consumer.h only applies to the former and conceptually there
+should be a difference between those two cases even when the Maxim PMIC
+seems to mix it both in the data-sheet and by using the same field.
 
-Maybe you already got it from my previous email but I'll summarize how the
-hardware works just to be sure we are on the same page:
+I answered Mark on patch #5 with a suggestion on how to handle this in
+a generic way to avoid each driver having their own custom DT binding
+and duplicating the parsing code.
 
-* The PMIC allows the AP to power up and down voltage rails via a PWRREQ
-  pin to signal when it enters and exit from sleep mode.
+Could you please answer there with your thoughts?
+=20
+>=20
+> Another issue: is "initial_state" not doing all this already?
+>=20
 
-* Each regulator control register has a 2-bit field called OPMODE in the
-  data-sheet that allows to set 4 different operating modes. For most
-  regulators, the modes are the following:
+One of the options I indeed evaluated was if using initial_state could =
+be
+possible. But currently the .set_suspend_mode function handler is only
+called for the STANDBY, MEM and MAX suspend modes. While is true that t=
+his
+could be extended to also support PM_SUSPEND_ON, I don't think that it
+makes sense conceptually. Since is not the same to set a mode to be use=
+d
+at runtime than setting a mode to be used during suspend.
 
-  0x0: Output OFF (regardless of PWRREQ)
-  0x1: Output ON/OFF controlled by PWRREQ
-       PWRREQ = HIGH (1): Output ON in Normal Mode
-       PWRREQ = LOW (0): Output OFF
-  0x2: Output ON with Low Power Mode controlled by PWRREQ
-       PWRREQ = HIGH (1): Output ON in Low Power Mode
-       PWRREQ = LOW (0): Output OFF
-  0x3: Output ON in Normal Mode (regardless of PWRREQ)
+AFAIU that is the reason why there are separate .set_suspend_mode and
+=2Eset_mode operations and that's why there are both an .initial_state
+and an .initial_mode.
 
-* Not all regulators have the same modes, for example 0x1 in some LDOs
-  means "Output ON in Low Power Mode regardless of PWRREQ" and so on.
-
-Since PWRREQ is HIGH when the AP is in normal mode, there are only two
-modes that most regulators can be on runtime: ON and OFF.
- 
-> As has been said previously please try to think about things in terms of
-> abstractions and what the actual goal is, don't try to shoehorn things
-> into places they happen to solve the immediate problem without regard to
-> the bigger picture or comprehensibility.
+> Best regards,
+> Krzysztof
 >
-
-I could had proposed a DT property that would be specific to the max77802
-regulator driver but instead I really tried to not only care about my
-particular use case and come up with a solution that could be generic and
-useful for others.
-
-As Krzysztof said in other thread, this feature is common to many Maxim
-PMICs and AFAIK the Rockchip RK808 PMIC has a similar feature to choose
-between two modes: Output ON vs Output ON/OFF controlled by a SLEEP pin.
-
-But maybe trying to make it generic was my mistake and a device-specific
-DT binding is the proper solution here...
- 
->> > This appears to set the supply which is labelled as VDD_ARM into standby
->> > mode by default (from a first glance the change appears to set all
->> > supplies into standby mode) and of course we currently have no way of
->> > changing the mode at runtime in DT systems.  Are you *really* sure this
->> > is a good idea of which an electrical engineer would approve, CPU cores
->> > are typically one of the most demanding workloads available for a
->> > regulator?
-> 
->> Well, the standby mode for this regulator is actually:
-> 
->> Output ON/OFF Controlled by PWRREQ
->> 	PWRREQ=HIGH (1): Output ON in Normal Mode
->> 	PWRREQ=LOW (0): Output OFF
-> 
-> This isn't a mode at all.  This is an enable control and hence it
-> should not be implemented as a mode.  It should be adequately documented
-> but for the avoidance of doubt a regulation mode should control the
-> quality and efficiency of regulation, if something can cause the
-> regulator to be disabled (except perhaps as a consequence of handling a
-> failure in regulation) then it shouldn't be a mode.
-> 
-
-I see, I thought that an operating mode could be anything that alter the
-regulator behavior either during runtime or when the system is suspended.
-But under your definition, it is true that most max77802 regulators have
-only two modes: ON and OFF (and some of them have a third Low Power mode).
-
-I think though that a generic way to configure this enable control feature
-is needed. Maybe adding a new pair of .{get,set}_suspend_control function
-pointers to struct regulator_ops and an .initial_suspend_ctrl field to the
-struct regulation_constraints?
-
-That way the core could parse a generic DT property and call the function
-handlers but each driver can document in their own DT bindings what their
-control values are and how those affects the regulators during suspend?
 
 Best regards,
 Javier
