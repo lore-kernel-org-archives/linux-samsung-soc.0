@@ -1,37 +1,110 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] drm/exynos: fix vblank handling during dpms off
-Date: Thu, 9 Oct 2014 09:52:58 +0100
-Message-ID: <20141009085258.GI5182@n2100.arm.linux.org.uk>
-References: <542B9A0E.7020206@samsung.com> <1412151287-12845-1-git-send-email-a.hajda@samsung.com> <542D13CC.5000304@samsung.com> <542D2E7C.1020904@samsung.com> <542D3C96.7000400@samsung.com> <54362066.9000504@nvidia.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v9 0/2] Adds PMU and S2R support for exynos5420
+Date: Thu, 9 Oct 2014 11:48:28 +0200
+Message-ID: <CABxcv==V0vR2XXq5cKzbaqkCbtkqKgrhJotdPSM5K0uyNW968w@mail.gmail.com>
+References: <1412673723-15551-1-git-send-email-vikas.sajjan@samsung.com>
+	<7hiojuno9e.fsf@deeprootsystems.com>
+	<CAM4voanoOV44EQveAeikp1P0bXCU8HHdX2XDi3jwLkfQOP0CNQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:58317 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1750873AbaJIIxO (ORCPT
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:63300 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750839AbaJIJs3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Oct 2014 04:53:14 -0400
-Content-Disposition: inline
-In-Reply-To: <54362066.9000504@nvidia.com>
+	Thu, 9 Oct 2014 05:48:29 -0400
+Received: by mail-wi0-f176.google.com with SMTP id hi2so12585092wib.3
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Oct 2014 02:48:28 -0700 (PDT)
+In-Reply-To: <CAM4voanoOV44EQveAeikp1P0bXCU8HHdX2XDi3jwLkfQOP0CNQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Thierry Reding <treding@nvidia.com>, linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: Kevin Hilman <khilman@kernel.org>, Vikas Sajjan <vikas.sajjan@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-On Thu, Oct 09, 2014 at 02:43:02PM +0900, Alexandre Courbot wrote:
-> But there might be another issue, which is that calls to  
-> drm_vblank_get() will return -EINVAL if invoked between drm_blank_off  
-> and drm_blank_on. Is this really the desired behavior? Can it at least  
-> happen? If so, how are drivers supposed to react to this situation?
+Hello Abhilash,
 
-I've not yet seen the commit which causes this problem, but I hope
-that drm_wait_vblank() isn't affected by this.  In current mainline,
-drm_vblank_get() is used inside drm_wait_vblank(), which is called as
-a result of userspace calling DRM_IOCTL_WAIT_VBLANK.
+On Thu, Oct 9, 2014 at 4:37 AM, Abhilash Kesavan
+<kesavan.abhilash@gmail.com> wrote:
+> Hi Kevin,
+>
+> On Thu, Oct 9, 2014 at 4:49 AM, Kevin Hilman <khilman@kernel.org> wrote:
+>> Vikas Sajjan <vikas.sajjan@samsung.com> writes:
+>>
+>> [...]
+>>
+>>> Tested on Kukjin Kim's tree, for-next branch +
+>>> 1] http://www.spinics.net/lists/linux-samsung-soc/msg33750.html
+>>> 2] https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg37260.html
+>>> 3] with the CLK_IGNORE_UNUSED flag for aclk200_disp1 CLK
+>>>
+>>> on Exynos5420 based chromebook (peach-pit board)
+>>>
+>>> Below procedures were followed to test S2R:
+>>> Procedure A:
+>>>       1. make multi_v7_defconfig
+>>>       2  enable MCPM for 5420
+>>>       3. enable S3C RTC
+>>>       5. echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
+>>> Procedure B:
+>>>       1. make exynos_defconfig
+>>>       4. echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
+>>
+>> I went tried to this on exynos5800-peach-pi and found first that
+>> exynos_defonfig is missing the MAX77802 kconfig options for the RTC
+>> source clock:
+>>
+>> CONFIG_REGULATOR_MAX77802=y
+>> CONFIG_COMMON_CLK_MAX77802=y
+>
+> I am using exynos_defconfig (no changes) with the internal SoC RTC
+> which is enabled by default. I did not enable the MAX77802 RTC.
 
-So, what is the effect of this change on user applications making use
-of the vblank wait ioctl - and is that change intended?
+That is because you probably are using kukjin's for-next branch as a
+base but I had the same issue when testing s2r on linux-next.
 
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+The problem is that linux-next contains commit 546b117fdf17 ("rtc:
+s3c: add support for RTC of Exynos3250 SoC") that added a required
+"rtc_src" DT property for the Samsung's S3C RTC that is used to
+specify the source clock XrtcXTI.
+
+On Peach boards, the S3C source clock is the max77802 32kHZ AP clock
+so I fixed that with commit 8bd43b6 ("ARM: dts: Add rtc_src clk for
+s3c-rtc on exynos Peach boards") but didn't send a patch to enable the
+max77802 subdevices on exynos_defconfig.
+
+I'll post a patch to enable those config options today and maybe they
+can be considered as -rc material.
+
+>>
+>> With those, rtc0 then comes up, but isn't waking from suspend.  However,
+>> writing something to rtc0/wakealarm does result in /proc/interrupts
+>> having an interrupt for the RTC, it's just not waking the system.
+>>
+>> Anyone else tried this on 5800/peach-pi?
+>
+> I have tested this on a Peach-Pi and the system is resuming fine. The
+> patches applied on kgene's for-next branch along with the
+> aclk200_disp1 fix are:
+> http://lkml.org/lkml/2014/9/30/156
+> https://lkml.org/lkml/2014/10/6/89
+> http://www.spinics.net/lists/arm-kernel/msg368207.html
+> http://www.spinics.net/lists/linux-samsung-soc/msg37647.html
+>
+
+Kevin, I didn't test it on 5800 peach pi but I did test it on 5420
+peach pit and as Abhilash said, I also needed Vikas patch [0] to flag
+the aclk200_disp1 and aclk300_disp1 clocks as CLK_IGNORE_UNUSED to
+prevent the ccf to disable them. With that patch Suspend-to-Ram worked
+for me and resuming using both the internal S3C RTC and the max77802
+RTC.
+
+Also I tested the pm_tests and all of them passed on my peach pit.
+
+On peach pi you shouldn't need the clock patch AFAIU if you enable the
+needed kconfig options to have display working since those clocks are
+used by the display controller so they won't be disabled due unused.
+
+Hope it helps,
+Javier
+
+[0]: http://www.spinics.net/lists/arm-kernel/msg367197.html
