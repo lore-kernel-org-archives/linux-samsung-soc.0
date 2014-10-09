@@ -1,71 +1,88 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH v9 0/2] Adds PMU and S2R support for exynos5420
-Date: Thu, 9 Oct 2014 08:07:39 +0530
-Message-ID: <CAM4voanoOV44EQveAeikp1P0bXCU8HHdX2XDi3jwLkfQOP0CNQ@mail.gmail.com>
-References: <1412673723-15551-1-git-send-email-vikas.sajjan@samsung.com>
-	<7hiojuno9e.fsf@deeprootsystems.com>
+From: Abhilash Kesavan <a.kesavan@samsung.com>
+Subject: Re: exynos5422-odroid-xu3: MCPM: only 6 of 8 CPUs coming online
+Date: Thu, 09 Oct 2014 03:06:37 +0000 (GMT)
+Message-ID: <7133556.456161412823997169.JavaMail.weblogic@epml02>
+Reply-To: a.kesavan@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f45.google.com ([209.85.216.45]:57302 "EHLO
-	mail-qa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750922AbaJIChk (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:22636 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752719AbaJIDK3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Oct 2014 22:37:40 -0400
-Received: by mail-qa0-f45.google.com with SMTP id s7so263508qap.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Oct 2014 19:37:39 -0700 (PDT)
-In-Reply-To: <7hiojuno9e.fsf@deeprootsystems.com>
+	Wed, 8 Oct 2014 23:10:29 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0ND500HCWQ5FXUA0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 09 Oct 2014 12:10:27 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Vikas Sajjan <vikas.sajjan@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: Kevin Hilman <khilman@linaro.org>, CHANDER KASHYAP <k.chander@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Mauro Ribeiro <mdrjr0@gmail.com>
 
-Hi Kevin,
-
-On Thu, Oct 9, 2014 at 4:49 AM, Kevin Hilman <khilman@kernel.org> wrote:
-> Vikas Sajjan <vikas.sajjan@samsung.com> writes:
->
-> [...]
->
->> Tested on Kukjin Kim's tree, for-next branch +
->> 1] http://www.spinics.net/lists/linux-samsung-soc/msg33750.html
->> 2] https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg37260.html
->> 3] with the CLK_IGNORE_UNUSED flag for aclk200_disp1 CLK
->>
->> on Exynos5420 based chromebook (peach-pit board)
->>
->> Below procedures were followed to test S2R:
->> Procedure A:
->>       1. make multi_v7_defconfig
->>       2  enable MCPM for 5420
->>       3. enable S3C RTC
->>       5. echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
->> Procedure B:
->>       1. make exynos_defconfig
->>       4. echo +20 > /sys/class/rtc/rtc0/wakealarm && echo mem > /sys/power/state
->
-> I went tried to this on exynos5800-peach-pi and found first that
-> exynos_defonfig is missing the MAX77802 kconfig options for the RTC
-> source clock:
->
-> CONFIG_REGULATOR_MAX77802=y
-> CONFIG_COMMON_CLK_MAX77802=y
-
-I am using exynos_defconfig (no changes) with the internal SoC RTC
-which is enabled by default. I did not enable the MAX77802 RTC.
->
-> With those, rtc0 then comes up, but isn't waking from suspend.  However,
-> writing something to rtc0/wakealarm does result in /proc/interrupts
-> having an interrupt for the RTC, it's just not waking the system.
->
-> Anyone else tried this on 5800/peach-pi?
-
-I have tested this on a Peach-Pi and the system is resuming fine. The
-patches applied on kgene's for-next branch along with the
-aclk200_disp1 fix are:
-http://lkml.org/lkml/2014/9/30/156
-https://lkml.org/lkml/2014/10/6/89
-http://www.spinics.net/lists/arm-kernel/msg368207.html
-http://www.spinics.net/lists/linux-samsung-soc/msg37647.html
-
-Abhilash
+SGkgS2V2aW4sDQoNCkkgaGFkIG5vdGljZWQgYSBzaW1pbGFyIGlzc3VlIHdoZXJlIG9ubHkgNiBj
+b3JlcyB3b3VsZCBjb21lIHVwIGR1cmluZyBkZXZlbG9wbWVudCBvbiA1NDIwLiBUaGlzIHdhcyBi
+ZWNhdXNlIHRoZXJlIHdhcyBhIGNoZWNrIGluIG91ciB1LWJvb3Qgc2Vjb25kYXJ5IGJvb3QtdXAg
+cGF0aCB3aGljaCB3b3VsZCBwdXQgYSBjb3JlIGludG8gV0ZJIGlmIGEgZmxhZyB3YXMgbm90IHBy
+ZXNlbnQgYW5kIGhlbmNlIGZhaWwgdG8gYm9vdC4gSSB3b25kZXIgaWYgaXQgaXMgdGhlIHNhbWUg
+c2l0dWF0aW9uIGluIHlvdXIgY2FzZSB0b28uDQpJcyB0aGUgdS1ib290IGZvciBvZHJvaWQteHUz
+IHB1YmxpY2FsbHkgYXZhaWxhYmxlIG9yIGNhbiB5b3UgY2hlY2sgaWYgdGhlcmUgaXMgYW55IHN1
+Y2ggY29kZSBwcmVzZW50IGluIHlvdXIgc2Vjb25kYXJ5IGJyaW5nLXVwIHBhdGguDQoNClJlZ2Fy
+ZHMsDQpBYmhpbGFzaA0KLS0tLS0tLSBPcmlnaW5hbCBNZXNzYWdlIC0tLS0tLS0NClNlbmRlciA6
+IEtldmluIEhpbG1hbjxraGlsbWFuQGxpbmFyby5vcmc+DQpEYXRlIDogT2N0IDA5LCAyMDE0IDAw
+OjI4IChHTVQrMDU6MzApDQpUaXRsZSA6IGV4eW5vczU0MjItb2Ryb2lkLXh1MzogTUNQTTogb25s
+eSA2IG9mIDggQ1BVcyBjb21pbmcgb25saW5lDQoNCkhpIENoYW5kZXIsIEFiaGlsYXNoLA0KDQpJ
+J20gdXNpbmcgdGhlIGV4eW5vczU0MjIgb2Ryb2lkLXh1MyBhbmQgb25seSA2IG9mIDggY29yZXMg
+YXJlIGNvbWluZw0Kb25saW5lIHdoZW4gdXNpbmcgTUNQTVsxXS4gIEFsbCB0aGUgQTE1cyBhcmUg
+Ym9vdGluZyBidXQgb25seSAyIG9mIHRoZQ0KQTdzLCBvbmUgb2Ygd2hpY2ggaXMgdGhlIHByaW1h
+cnkgQ1BVLg0KDQpBZnRlciBib290aW5nLCBpZiBJIHRyeSB0byBtYW51YWxseSBicmluZyBvbmUg
+b2YgdGhlIENQVXMgb25saW5lIHZpYQ0KL3N5cy9kZXZpY2VzLy4uLi9jcHVYL29ubGluZSwgSSBo
+aXQgdGhlIEJVRygpIGluDQptY3BtLWV4eW5vcy5jOmV4eW5vc19wb3dlcl91cCgpLg0KDQpBbnkg
+aWRlYXMgd2h5IDIgb2YgdGhlIEE3cyBhcmVuJ3QgYm9vdGluZyB1cD8NCg0KS2V2aW4NCg0KWzFd
+DQpbICAgIDAuMDAxNzE5XSBDUFU6IFRlc3Rpbmcgd3JpdGUgYnVmZmVyIGNvaGVyZW5jeTogb2sN
+ClsgICAgMC4wMDIxNzFdIENQVTA6IHVwZGF0ZSBjcHVfY2FwYWNpdHkgNDQ4DQpbICAgIDAuMDAy
+MTg3XSBDUFUwOiB0aHJlYWQgLTEsIGNwdSAwLCBzb2NrZXQgMSwgbXBpZHIgODAwMDAxMDANClsg
+ICAgMC4wMDI0MjldIFNldHRpbmcgdXAgc3RhdGljIGlkZW50aXR5IG1hcCBmb3IgMHg0MDQ2ZGY3
+MCAtIDB4NDA0NmRmYzgNClsgICAgMC4wMDI3MzJdIEFSTSBDQ0kgZHJpdmVyIHByb2JlZA0KWyAg
+ICAwLjAwMjgxNV0gZXh5bm9zX21jcG1fdXNhZ2VfY291bnRfaW5pdDogY3B1IDAgY2x1c3RlciAx
+DQpbICAgIDAuMDAzMDEwXSBFeHlub3MgTUNQTSBzdXBwb3J0IGluc3RhbGxlZA0KWyAgICAwLjAz
+MDMxMF0gbWNwbV9ib290X3NlY29uZGFyeTogbG9naWNhbCBDUFUgMSBpcyBwaHlzaWNhbCBDUFUg
+MCBjbHVzdGVyIDANClsgICAgMC4wMzAzMjZdIGV4eW5vc19wb3dlcl91cDogY3B1IDAgY2x1c3Rl
+ciAwDQpbICAgIDAuMDMwNjI2XSBDUFUxOiBCb290ZWQgc2Vjb25kYXJ5IHByb2Nlc3Nvcg0KWyAg
+ICAwLjAzMDY4Nl0gQ1BVMTogdXBkYXRlIGNwdV9jYXBhY2l0eSAxNTM1DQpbICAgIDAuMDMwNjkz
+XSBDUFUxOiB0aHJlYWQgLTEsIGNwdSAwLCBzb2NrZXQgMCwgbXBpZHIgODAwMDAwMDANClsgICAg
+MC4wNDAzMTRdIG1jcG1fYm9vdF9zZWNvbmRhcnk6IGxvZ2ljYWwgQ1BVIDIgaXMgcGh5c2ljYWwg
+Q1BVIDEgY2x1c3RlciAwDQpbICAgIDAuMDQwMzQwXSBleHlub3NfcG93ZXJfdXA6IGNwdSAxIGNs
+dXN0ZXIgMA0KWyAgICAwLjA0MDYyOV0gQ1BVMjogQm9vdGVkIHNlY29uZGFyeSBwcm9jZXNzb3IN
+ClsgICAgMC4wNDA2NzJdIENQVTI6IHVwZGF0ZSBjcHVfY2FwYWNpdHkgMTUzNQ0KWyAgICAwLjA0
+MDY3OV0gQ1BVMjogdGhyZWFkIC0xLCBjcHUgMSwgc29ja2V0IDAsIG1waWRyIDgwMDAwMDAxDQpb
+ICAgIDAuMDUwMzIxXSBtY3BtX2Jvb3Rfc2Vjb25kYXJ5OiBsb2dpY2FsIENQVSAzIGlzIHBoeXNp
+Y2FsIENQVSAyIGNsdXN0ZXIgMA0KWyAgICAwLjA1MDM0N10gZXh5bm9zX3Bvd2VyX3VwOiBjcHUg
+MiBjbHVzdGVyIDANClsgICAgMC4wNTA2NTldIENQVTM6IEJvb3RlZCBzZWNvbmRhcnkgcHJvY2Vz
+c29yDQpbICAgIDAuMDUwNzAzXSBDUFUzOiB1cGRhdGUgY3B1X2NhcGFjaXR5IDE1MzUNClsgICAg
+MC4wNTA3MTBdIENQVTM6IHRocmVhZCAtMSwgY3B1IDIsIHNvY2tldCAwLCBtcGlkciA4MDAwMDAw
+Mg0KWyAgICAwLjA2MDMxNl0gbWNwbV9ib290X3NlY29uZGFyeTogbG9naWNhbCBDUFUgNCBpcyBw
+aHlzaWNhbCBDUFUgMyBjbHVzdGVyIDANClsgICAgMC4wNjAzNDNdIGV4eW5vc19wb3dlcl91cDog
+Y3B1IDMgY2x1c3RlciAwDQpbICAgIDAuMDYwNjMxXSBDUFU0OiBCb290ZWQgc2Vjb25kYXJ5IHBy
+b2Nlc3Nvcg0KWyAgICAwLjA2MDY3NV0gQ1BVNDogdXBkYXRlIGNwdV9jYXBhY2l0eSAxNTM1DQpb
+ICAgIDAuMDYwNjgyXSBDUFU0OiB0aHJlYWQgLTEsIGNwdSAzLCBzb2NrZXQgMCwgbXBpZHIgODAw
+MDAwMDMNClsgICAgMC4wNzAzMTZdIG1jcG1fYm9vdF9zZWNvbmRhcnk6IGxvZ2ljYWwgQ1BVIDUg
+aXMgcGh5c2ljYWwgQ1BVIDEgY2x1c3RlciAxDQpbICAgIDAuMDcwMzQzXSBleHlub3NfcG93ZXJf
+dXA6IGNwdSAxIGNsdXN0ZXIgMQ0KWyAgICAxLjA3MDAwN10gQ1BVNTogZmFpbGVkIHRvIGNvbWUg
+b25saW5lDQpbICAgIDEuMDgwMzIyXSBtY3BtX2Jvb3Rfc2Vjb25kYXJ5OiBsb2dpY2FsIENQVSA2
+IGlzIHBoeXNpY2FsIENQVSAyIGNsdXN0ZXIgMQ0KWyAgICAxLjA4MDMzN10gZXh5bm9zX3Bvd2Vy
+X3VwOiBjcHUgMiBjbHVzdGVyIDENClsgICAgMS4wODA2MjVdIENQVTY6IEJvb3RlZCBzZWNvbmRh
+cnkgcHJvY2Vzc29yDQpbICAgIDEuMDgwNjkxXSBDUFU2OiB1cGRhdGUgY3B1X2NhcGFjaXR5IDQ0
+OA0KWyAgICAxLjA4MDY5OV0gQ1BVNjogdGhyZWFkIC0xLCBjcHUgMiwgc29ja2V0IDEsIG1waWRy
+IDgwMDAwMTAyDQpbICAgIDEuMDkwMzMxXSBtY3BtX2Jvb3Rfc2Vjb25kYXJ5OiBsb2dpY2FsIENQ
+VSA3IGlzIHBoeXNpY2FsIENQVSAzIGNsdXN0ZXIgMQ0KWyAgICAxLjA5MDM1Nl0gZXh5bm9zX3Bv
+d2VyX3VwOiBjcHUgMyBjbHVzdGVyIDENClsgICAgMi4wOTAwMjNdIENQVTc6IGZhaWxlZCB0byBj
+b21lIG9ubGluZQ0KWyAgICAyLjA5MDA1NV0gQnJvdWdodCB1cCA2IENQVXMNClsgICAgMi4wOTAw
+NjddIFNNUDogVG90YWwgb2YgNiBwcm9jZXNzb3JzIGFjdGl2YXRlZC4NClsgICAgMi4wOTAwNzld
+IENQVTogV0FSTklORzogQ1BVKHMpIHN0YXJ0ZWQgaW4gd3JvbmcvaW5jb25zaXN0ZW50DQptb2Rl
+cyAocHJpbWFyeSBDUFUgbW9kZSAweDEzKQ0KWyAgICAyLjA5MDA4OV0gQ1BVOiBUaGlzIG1heSBp
+bmRpY2F0ZSBhIGJyb2tlbiBib290bG9hZGVyIG9yIGZpcm13YXJlLg==
