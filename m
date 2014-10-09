@@ -1,88 +1,111 @@
-From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: Re: exynos5422-odroid-xu3: MCPM: only 6 of 8 CPUs coming online
-Date: Thu, 09 Oct 2014 03:06:37 +0000 (GMT)
-Message-ID: <7133556.456161412823997169.JavaMail.weblogic@epml02>
-Reply-To: a.kesavan@samsung.com
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: Re: [PATCH] drm/exynos: fix vblank handling during dpms off
+Date: Thu, 9 Oct 2014 14:43:02 +0900
+Message-ID: <54362066.9000504@nvidia.com>
+References: <542B9A0E.7020206@samsung.com> <1412151287-12845-1-git-send-email-a.hajda@samsung.com> <542D13CC.5000304@samsung.com> <542D2E7C.1020904@samsung.com> <542D3C96.7000400@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:22636 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752719AbaJIDK3 (ORCPT
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:11468 "EHLO
+	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750705AbaJIFnd convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Oct 2014 23:10:29 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0ND500HCWQ5FXUA0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 09 Oct 2014 12:10:27 +0900 (KST)
-MIME-version: 1.0
+	Thu, 9 Oct 2014 01:43:33 -0400
+In-Reply-To: <542D3C96.7000400@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@linaro.org>, CHANDER KASHYAP <k.chander@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Mauro Ribeiro <mdrjr0@gmail.com>
+To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Thierry Reding <treding@nvidia.com>
+Cc: linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Russell King <rmk+kernel@arm.linux.org.uk>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 
-SGkgS2V2aW4sDQoNCkkgaGFkIG5vdGljZWQgYSBzaW1pbGFyIGlzc3VlIHdoZXJlIG9ubHkgNiBj
-b3JlcyB3b3VsZCBjb21lIHVwIGR1cmluZyBkZXZlbG9wbWVudCBvbiA1NDIwLiBUaGlzIHdhcyBi
-ZWNhdXNlIHRoZXJlIHdhcyBhIGNoZWNrIGluIG91ciB1LWJvb3Qgc2Vjb25kYXJ5IGJvb3QtdXAg
-cGF0aCB3aGljaCB3b3VsZCBwdXQgYSBjb3JlIGludG8gV0ZJIGlmIGEgZmxhZyB3YXMgbm90IHBy
-ZXNlbnQgYW5kIGhlbmNlIGZhaWwgdG8gYm9vdC4gSSB3b25kZXIgaWYgaXQgaXMgdGhlIHNhbWUg
-c2l0dWF0aW9uIGluIHlvdXIgY2FzZSB0b28uDQpJcyB0aGUgdS1ib290IGZvciBvZHJvaWQteHUz
-IHB1YmxpY2FsbHkgYXZhaWxhYmxlIG9yIGNhbiB5b3UgY2hlY2sgaWYgdGhlcmUgaXMgYW55IHN1
-Y2ggY29kZSBwcmVzZW50IGluIHlvdXIgc2Vjb25kYXJ5IGJyaW5nLXVwIHBhdGguDQoNClJlZ2Fy
-ZHMsDQpBYmhpbGFzaA0KLS0tLS0tLSBPcmlnaW5hbCBNZXNzYWdlIC0tLS0tLS0NClNlbmRlciA6
-IEtldmluIEhpbG1hbjxraGlsbWFuQGxpbmFyby5vcmc+DQpEYXRlIDogT2N0IDA5LCAyMDE0IDAw
-OjI4IChHTVQrMDU6MzApDQpUaXRsZSA6IGV4eW5vczU0MjItb2Ryb2lkLXh1MzogTUNQTTogb25s
-eSA2IG9mIDggQ1BVcyBjb21pbmcgb25saW5lDQoNCkhpIENoYW5kZXIsIEFiaGlsYXNoLA0KDQpJ
-J20gdXNpbmcgdGhlIGV4eW5vczU0MjIgb2Ryb2lkLXh1MyBhbmQgb25seSA2IG9mIDggY29yZXMg
-YXJlIGNvbWluZw0Kb25saW5lIHdoZW4gdXNpbmcgTUNQTVsxXS4gIEFsbCB0aGUgQTE1cyBhcmUg
-Ym9vdGluZyBidXQgb25seSAyIG9mIHRoZQ0KQTdzLCBvbmUgb2Ygd2hpY2ggaXMgdGhlIHByaW1h
-cnkgQ1BVLg0KDQpBZnRlciBib290aW5nLCBpZiBJIHRyeSB0byBtYW51YWxseSBicmluZyBvbmUg
-b2YgdGhlIENQVXMgb25saW5lIHZpYQ0KL3N5cy9kZXZpY2VzLy4uLi9jcHVYL29ubGluZSwgSSBo
-aXQgdGhlIEJVRygpIGluDQptY3BtLWV4eW5vcy5jOmV4eW5vc19wb3dlcl91cCgpLg0KDQpBbnkg
-aWRlYXMgd2h5IDIgb2YgdGhlIEE3cyBhcmVuJ3QgYm9vdGluZyB1cD8NCg0KS2V2aW4NCg0KWzFd
-DQpbICAgIDAuMDAxNzE5XSBDUFU6IFRlc3Rpbmcgd3JpdGUgYnVmZmVyIGNvaGVyZW5jeTogb2sN
-ClsgICAgMC4wMDIxNzFdIENQVTA6IHVwZGF0ZSBjcHVfY2FwYWNpdHkgNDQ4DQpbICAgIDAuMDAy
-MTg3XSBDUFUwOiB0aHJlYWQgLTEsIGNwdSAwLCBzb2NrZXQgMSwgbXBpZHIgODAwMDAxMDANClsg
-ICAgMC4wMDI0MjldIFNldHRpbmcgdXAgc3RhdGljIGlkZW50aXR5IG1hcCBmb3IgMHg0MDQ2ZGY3
-MCAtIDB4NDA0NmRmYzgNClsgICAgMC4wMDI3MzJdIEFSTSBDQ0kgZHJpdmVyIHByb2JlZA0KWyAg
-ICAwLjAwMjgxNV0gZXh5bm9zX21jcG1fdXNhZ2VfY291bnRfaW5pdDogY3B1IDAgY2x1c3RlciAx
-DQpbICAgIDAuMDAzMDEwXSBFeHlub3MgTUNQTSBzdXBwb3J0IGluc3RhbGxlZA0KWyAgICAwLjAz
-MDMxMF0gbWNwbV9ib290X3NlY29uZGFyeTogbG9naWNhbCBDUFUgMSBpcyBwaHlzaWNhbCBDUFUg
-MCBjbHVzdGVyIDANClsgICAgMC4wMzAzMjZdIGV4eW5vc19wb3dlcl91cDogY3B1IDAgY2x1c3Rl
-ciAwDQpbICAgIDAuMDMwNjI2XSBDUFUxOiBCb290ZWQgc2Vjb25kYXJ5IHByb2Nlc3Nvcg0KWyAg
-ICAwLjAzMDY4Nl0gQ1BVMTogdXBkYXRlIGNwdV9jYXBhY2l0eSAxNTM1DQpbICAgIDAuMDMwNjkz
-XSBDUFUxOiB0aHJlYWQgLTEsIGNwdSAwLCBzb2NrZXQgMCwgbXBpZHIgODAwMDAwMDANClsgICAg
-MC4wNDAzMTRdIG1jcG1fYm9vdF9zZWNvbmRhcnk6IGxvZ2ljYWwgQ1BVIDIgaXMgcGh5c2ljYWwg
-Q1BVIDEgY2x1c3RlciAwDQpbICAgIDAuMDQwMzQwXSBleHlub3NfcG93ZXJfdXA6IGNwdSAxIGNs
-dXN0ZXIgMA0KWyAgICAwLjA0MDYyOV0gQ1BVMjogQm9vdGVkIHNlY29uZGFyeSBwcm9jZXNzb3IN
-ClsgICAgMC4wNDA2NzJdIENQVTI6IHVwZGF0ZSBjcHVfY2FwYWNpdHkgMTUzNQ0KWyAgICAwLjA0
-MDY3OV0gQ1BVMjogdGhyZWFkIC0xLCBjcHUgMSwgc29ja2V0IDAsIG1waWRyIDgwMDAwMDAxDQpb
-ICAgIDAuMDUwMzIxXSBtY3BtX2Jvb3Rfc2Vjb25kYXJ5OiBsb2dpY2FsIENQVSAzIGlzIHBoeXNp
-Y2FsIENQVSAyIGNsdXN0ZXIgMA0KWyAgICAwLjA1MDM0N10gZXh5bm9zX3Bvd2VyX3VwOiBjcHUg
-MiBjbHVzdGVyIDANClsgICAgMC4wNTA2NTldIENQVTM6IEJvb3RlZCBzZWNvbmRhcnkgcHJvY2Vz
-c29yDQpbICAgIDAuMDUwNzAzXSBDUFUzOiB1cGRhdGUgY3B1X2NhcGFjaXR5IDE1MzUNClsgICAg
-MC4wNTA3MTBdIENQVTM6IHRocmVhZCAtMSwgY3B1IDIsIHNvY2tldCAwLCBtcGlkciA4MDAwMDAw
-Mg0KWyAgICAwLjA2MDMxNl0gbWNwbV9ib290X3NlY29uZGFyeTogbG9naWNhbCBDUFUgNCBpcyBw
-aHlzaWNhbCBDUFUgMyBjbHVzdGVyIDANClsgICAgMC4wNjAzNDNdIGV4eW5vc19wb3dlcl91cDog
-Y3B1IDMgY2x1c3RlciAwDQpbICAgIDAuMDYwNjMxXSBDUFU0OiBCb290ZWQgc2Vjb25kYXJ5IHBy
-b2Nlc3Nvcg0KWyAgICAwLjA2MDY3NV0gQ1BVNDogdXBkYXRlIGNwdV9jYXBhY2l0eSAxNTM1DQpb
-ICAgIDAuMDYwNjgyXSBDUFU0OiB0aHJlYWQgLTEsIGNwdSAzLCBzb2NrZXQgMCwgbXBpZHIgODAw
-MDAwMDMNClsgICAgMC4wNzAzMTZdIG1jcG1fYm9vdF9zZWNvbmRhcnk6IGxvZ2ljYWwgQ1BVIDUg
-aXMgcGh5c2ljYWwgQ1BVIDEgY2x1c3RlciAxDQpbICAgIDAuMDcwMzQzXSBleHlub3NfcG93ZXJf
-dXA6IGNwdSAxIGNsdXN0ZXIgMQ0KWyAgICAxLjA3MDAwN10gQ1BVNTogZmFpbGVkIHRvIGNvbWUg
-b25saW5lDQpbICAgIDEuMDgwMzIyXSBtY3BtX2Jvb3Rfc2Vjb25kYXJ5OiBsb2dpY2FsIENQVSA2
-IGlzIHBoeXNpY2FsIENQVSAyIGNsdXN0ZXIgMQ0KWyAgICAxLjA4MDMzN10gZXh5bm9zX3Bvd2Vy
-X3VwOiBjcHUgMiBjbHVzdGVyIDENClsgICAgMS4wODA2MjVdIENQVTY6IEJvb3RlZCBzZWNvbmRh
-cnkgcHJvY2Vzc29yDQpbICAgIDEuMDgwNjkxXSBDUFU2OiB1cGRhdGUgY3B1X2NhcGFjaXR5IDQ0
-OA0KWyAgICAxLjA4MDY5OV0gQ1BVNjogdGhyZWFkIC0xLCBjcHUgMiwgc29ja2V0IDEsIG1waWRy
-IDgwMDAwMTAyDQpbICAgIDEuMDkwMzMxXSBtY3BtX2Jvb3Rfc2Vjb25kYXJ5OiBsb2dpY2FsIENQ
-VSA3IGlzIHBoeXNpY2FsIENQVSAzIGNsdXN0ZXIgMQ0KWyAgICAxLjA5MDM1Nl0gZXh5bm9zX3Bv
-d2VyX3VwOiBjcHUgMyBjbHVzdGVyIDENClsgICAgMi4wOTAwMjNdIENQVTc6IGZhaWxlZCB0byBj
-b21lIG9ubGluZQ0KWyAgICAyLjA5MDA1NV0gQnJvdWdodCB1cCA2IENQVXMNClsgICAgMi4wOTAw
-NjddIFNNUDogVG90YWwgb2YgNiBwcm9jZXNzb3JzIGFjdGl2YXRlZC4NClsgICAgMi4wOTAwNzld
-IENQVTogV0FSTklORzogQ1BVKHMpIHN0YXJ0ZWQgaW4gd3JvbmcvaW5jb25zaXN0ZW50DQptb2Rl
-cyAocHJpbWFyeSBDUFUgbW9kZSAweDEzKQ0KWyAgICAyLjA5MDA4OV0gQ1BVOiBUaGlzIG1heSBp
-bmRpY2F0ZSBhIGJyb2tlbiBib290bG9hZGVyIG9yIGZpcm13YXJlLg==
+On 10/02/2014 08:52 PM, Andrzej Hajda wrote:
+> Hi,
+>
+> +CC possible victims
+>
+> On 10/02/2014 12:52 PM, Inki Dae wrote:
+>> On 2014=EB=85=84 10=EC=9B=94 02=EC=9D=BC 17:58, Joonyoung Shim wrote=
+:
+>>> Hi Andrzej,
+>>>
+>>> On 10/01/2014 05:14 PM, Andrzej Hajda wrote:
+>>>> The patch disables vblanks during dpms off only if pagefilp has
+>>>> not been finished. It also replaces drm_vblank_off with drm_crtc_v=
+blank_put.
+>>>> It fixes issue with page_flip ioctl not being able to acquire vbla=
+nk counter.
+>>> This problem isn't related with pageflip, it just causes from
+>>> 7ffd7a68511c710b84db3548a1997fd2625f580a commit (drm: Always reject
+>>> drm_vblank_get() after drm_vblank_off()).
+>>>
+>>> We need to use drm_vblank_on() as a counterpart to drm_vblank_off()
+>>> after the commit .
+>
+> This patch should break also other drivers, it seems at least followi=
+ng
+> drms could be affected:
+> armada, sti, tegra.
+
+Indeed we (tegra) have just been hit by this. The problem seems to come=
+=20
+from the fact that we have been using drm_vblank_pre_modeset,=20
+drm_vblank_post_modeset and drm_vblank_off conjointly. All these=20
+functions depend on the value of vblank->inmodeset, and 7ffd7a68511=20
+increases the vblank reference counter only in drm_vblank_off, which ca=
+n=20
+result in the acquired reference never being released.
+
+The following seems to fix this for Tegra, by stopping using=20
+drm_vblank_pre/post_modeset and relying on drm_vblank_off/on instead:
+
+diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+index b08df07cad47..3955d81236d0 100644
+--- a/drivers/gpu/drm/tegra/dc.c
++++ b/drivers/gpu/drm/tegra/dc.c
+@@ -739,7 +739,6 @@ static const struct drm_crtc_funcs tegra_crtc_funcs=
+ =3D {
+
+  static void tegra_crtc_disable(struct drm_crtc *crtc)
+  {
+-       struct tegra_dc *dc =3D to_tegra_dc(crtc);
+         struct drm_device *drm =3D crtc->dev;
+         struct drm_plane *plane;
+
+@@ -755,7 +754,7 @@ static void tegra_crtc_disable(struct drm_crtc *crt=
+c)
+                 }
+         }
+
+-       drm_vblank_off(drm, dc->pipe);
++       drm_crtc_vblank_off(crtc);
+  }
+
+  static bool tegra_crtc_mode_fixup(struct drm_crtc *crtc,
+@@ -844,7 +843,7 @@ static int tegra_crtc_mode_set(struct drm_crtc *crt=
+c,
+         u32 value;
+         int err;
+
+-       drm_vblank_pre_modeset(crtc->dev, dc->pipe);
++       drm_crtc_vblank_off(crtc);
+
+         err =3D tegra_crtc_setup_clk(crtc, mode);
+         if (err) {
+@@ -946,7 +945,7 @@ static void tegra_crtc_commit(struct drm_crtc *crtc=
+)
+         value =3D GENERAL_ACT_REQ | WIN_A_ACT_REQ;
+         tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
+
+-       drm_vblank_post_modeset(crtc->dev, dc->pipe);
++       drm_crtc_vblank_on(crtc);
+  }
+
+  static void tegra_crtc_load_lut(struct drm_crtc *crtc)
+
+Thierry, does this look ok to you?
+
+But there might be another issue, which is that calls to=20
+drm_vblank_get() will return -EINVAL if invoked between drm_blank_off=20
+and drm_blank_on. Is this really the desired behavior? Can it at least=20
+happen? If so, how are drivers supposed to react to this situation?
