@@ -1,111 +1,88 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH] drm/exynos: fix vblank handling during dpms off
-Date: Thu, 9 Oct 2014 14:43:02 +0900
-Message-ID: <54362066.9000504@nvidia.com>
-References: <542B9A0E.7020206@samsung.com> <1412151287-12845-1-git-send-email-a.hajda@samsung.com> <542D13CC.5000304@samsung.com> <542D2E7C.1020904@samsung.com> <542D3C96.7000400@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 3/5] regulator: dt-bindings: Add regulator-initial-mode
+ support
+Date: Thu, 09 Oct 2014 10:45:55 +0200
+Message-ID: <1412844355.1316.15.camel@AMDC1943>
+References: <1412775847-15213-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1412775847-15213-4-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:11468 "EHLO
-	hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750705AbaJIFnd convert rfc822-to-8bit (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:34661 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753027AbaJIIqA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Oct 2014 01:43:33 -0400
-In-Reply-To: <542D3C96.7000400@samsung.com>
+	Thu, 9 Oct 2014 04:46:00 -0400
+In-reply-to: <1412775847-15213-4-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Thierry Reding <treding@nvidia.com>
-Cc: linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Russell King <rmk+kernel@arm.linux.org.uk>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Mark Brown <broonie@kernel.org>, Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-On 10/02/2014 08:52 PM, Andrzej Hajda wrote:
-> Hi,
->
-> +CC possible victims
->
-> On 10/02/2014 12:52 PM, Inki Dae wrote:
->> On 2014=EB=85=84 10=EC=9B=94 02=EC=9D=BC 17:58, Joonyoung Shim wrote=
-:
->>> Hi Andrzej,
->>>
->>> On 10/01/2014 05:14 PM, Andrzej Hajda wrote:
->>>> The patch disables vblanks during dpms off only if pagefilp has
->>>> not been finished. It also replaces drm_vblank_off with drm_crtc_v=
-blank_put.
->>>> It fixes issue with page_flip ioctl not being able to acquire vbla=
-nk counter.
->>> This problem isn't related with pageflip, it just causes from
->>> 7ffd7a68511c710b84db3548a1997fd2625f580a commit (drm: Always reject
->>> drm_vblank_get() after drm_vblank_off()).
->>>
->>> We need to use drm_vblank_on() as a counterpart to drm_vblank_off()
->>> after the commit .
->
-> This patch should break also other drivers, it seems at least followi=
-ng
-> drms could be affected:
-> armada, sti, tegra.
+On =C5=9Bro, 2014-10-08 at 15:44 +0200, Javier Martinez Canillas wrote:
+> Regulators can run on different operating modes (opmodes). This allow=
+s
+> systems to choose the most efficient opmode for each regulator. The
+> regulator core defines a set of generic modes so each system can defi=
+ne
+> the opmode in these generic terms and drivers are responsible to map =
+the
+> generic modes to the ones supported by each hardware according to the=
+ir
+> data-sheet.
+>=20
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
+=2Euk>
+> ---
+>  Documentation/devicetree/bindings/regulator/regulator.txt | 8 ++++++=
+++
+>  1 file changed, 8 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/regulator/regulator.tx=
+t b/Documentation/devicetree/bindings/regulator/regulator.txt
+> index ccba90b..a9d6767 100644
+> --- a/Documentation/devicetree/bindings/regulator/regulator.txt
+> +++ b/Documentation/devicetree/bindings/regulator/regulator.txt
+> @@ -23,6 +23,14 @@ Optional properties:
+>    state among following defined suspend states:
+>    <3>: PM_SUSPEND_MEM - Setup regulator according to regulator-state=
+-mem
+>    <4>: PM_SUSPEND_MAX - Setup regulator according to regulator-state=
+-disk
+> +- regulator-initial-mode: initial regulator operating mode. One of f=
+ollowing:
+> +	<1>: REGULATOR_MODE_FAST    - Regulator can handle fast changes.
+> +	<2>: REGULATOR_MODE_NORMAL  - Normal regulator power supply mode.
+> +	<4>: REGULATOR_MODE_IDLE    - Regulator runs in a more efficient mo=
+de.
+> +	<8>: REGULATOR_MODE_STANDBY - Regulator runs in the most efficient =
+mode.
+> +  modes are defined in the dt-bindings/regulator/regulator.h header =
+and can be
+> +  used in device tree sources files. If no mode is defined, then the=
+ OS will not
+> +  manage the operating mode and the HW default values will be used i=
+nstead.
+>  - regulator-state-mem sub-root node for Suspend-to-RAM mode
+>    : suspend to memory, the device goes to sleep, but all data stored=
+ in memory,
+>    only some external interrupt can wake the device.
 
-Indeed we (tegra) have just been hit by this. The problem seems to come=
-=20
-from the fact that we have been using drm_vblank_pre_modeset,=20
-drm_vblank_post_modeset and drm_vblank_off conjointly. All these=20
-functions depend on the value of vblank->inmodeset, and 7ffd7a68511=20
-increases the vblank reference counter only in drm_vblank_off, which ca=
-n=20
-result in the acquired reference never being released.
+I agree with the need and the idea of generic bindings for operating
+modes for regulators. At least for Exynos-based boards the PMICs have
+quite similar opmodes.
 
-The following seems to fix this for Tegra, by stopping using=20
-drm_vblank_pre/post_modeset and relying on drm_vblank_off/on instead:
+However the regulator mode from consumer.h (and in above doc) does not
+match well with these opmodes. Example is yours patch 4/5:
+ - idle ("more efficient mode") maps to "low power mode in suspend",
+ - standby ("the most efficient mode") maps to "OFF in suspend".
 
-diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
-index b08df07cad47..3955d81236d0 100644
---- a/drivers/gpu/drm/tegra/dc.c
-+++ b/drivers/gpu/drm/tegra/dc.c
-@@ -739,7 +739,6 @@ static const struct drm_crtc_funcs tegra_crtc_funcs=
- =3D {
+Actually we are not enable "efficient modes" but we configure how the
+regulator will behave when AP says - I'm suspending.
 
-  static void tegra_crtc_disable(struct drm_crtc *crtc)
-  {
--       struct tegra_dc *dc =3D to_tegra_dc(crtc);
-         struct drm_device *drm =3D crtc->dev;
-         struct drm_plane *plane;
 
-@@ -755,7 +754,7 @@ static void tegra_crtc_disable(struct drm_crtc *crt=
-c)
-                 }
-         }
+Another issue: is "initial_state" not doing all this already?
 
--       drm_vblank_off(drm, dc->pipe);
-+       drm_crtc_vblank_off(crtc);
-  }
-
-  static bool tegra_crtc_mode_fixup(struct drm_crtc *crtc,
-@@ -844,7 +843,7 @@ static int tegra_crtc_mode_set(struct drm_crtc *crt=
-c,
-         u32 value;
-         int err;
-
--       drm_vblank_pre_modeset(crtc->dev, dc->pipe);
-+       drm_crtc_vblank_off(crtc);
-
-         err =3D tegra_crtc_setup_clk(crtc, mode);
-         if (err) {
-@@ -946,7 +945,7 @@ static void tegra_crtc_commit(struct drm_crtc *crtc=
-)
-         value =3D GENERAL_ACT_REQ | WIN_A_ACT_REQ;
-         tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
-
--       drm_vblank_post_modeset(crtc->dev, dc->pipe);
-+       drm_crtc_vblank_on(crtc);
-  }
-
-  static void tegra_crtc_load_lut(struct drm_crtc *crtc)
-
-Thierry, does this look ok to you?
-
-But there might be another issue, which is that calls to=20
-drm_vblank_get() will return -EINVAL if invoked between drm_blank_off=20
-and drm_blank_on. Is this really the desired behavior? Can it at least=20
-happen? If so, how are drivers supposed to react to this situation?
+Best regards,
+Krzysztof
