@@ -1,41 +1,37 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] ARM: dts: fix MMC2 regulators for Exynos5420 Arndale Octa board
-Date: Thu, 9 Oct 2014 10:46:59 +0200
-Message-ID: <CAPDyKFoPBep287uAVDQWSXdFz-aoV4VmV7xgP_PEZ-c1q9Oz0w@mail.gmail.com>
-References: <2750153.I3nVqzmXTP@amdc1032>
-	<1998495.eXa2FjeVGo@wuerfel>
-	<CAD=FV=VB_eK9pSmmTBRHoQmkORweHzT-OFaMWA6haFYnQuQaUQ@mail.gmail.com>
-	<1819182.VPTrtc9d2P@wuerfel>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] drm/exynos: fix vblank handling during dpms off
+Date: Thu, 9 Oct 2014 09:52:58 +0100
+Message-ID: <20141009085258.GI5182@n2100.arm.linux.org.uk>
+References: <542B9A0E.7020206@samsung.com> <1412151287-12845-1-git-send-email-a.hajda@samsung.com> <542D13CC.5000304@samsung.com> <542D2E7C.1020904@samsung.com> <542D3C96.7000400@samsung.com> <54362066.9000504@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1819182.VPTrtc9d2P@wuerfel>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Doug Anderson <dianders@google.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, "cpgs ." <cpgs@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>, Seung-Won Jeon <tgih.jun@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, SUNIL JOSHI <joshi@samsung.com>, PRASHANTH GODREHAL <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Abhilash Kesavan <a.kesavan@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:58317 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1750873AbaJIIxO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 9 Oct 2014 04:53:14 -0400
+Content-Disposition: inline
+In-Reply-To: <54362066.9000504@nvidia.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Thierry Reding <treding@nvidia.com>, linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Seung-Woo Kim <sw0312.kim@samsung.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 
-On 8 October 2014 20:28, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wednesday 08 October 2014 08:29:16 Doug Anderson wrote:
->>
->> On Wed, Oct 8, 2014 at 8:20 AM, Arnd Bergmann <arnd@arndb.de> wrote:
->> > Why does it cause a regression though? Does this mean you are breaking
->> > any boot with an old DT file and a new kernel? That would be very
->> > bad, the driver is supposed to keep working with an existing dtb.
->>
->> The old dts file specified completely the wrong regulator.  It
->> happened that the old code didn't really care, but when the code was
->> fixed to care then things broke.  If we need to keep old dts files
->> working then the most sensible place to do it would be in a "fixup old
->> broken device trees" stage somewhere in kernel boot.
->
-> Ok, got it. I guess it's better to apply this one first then.
->
->         Arnd
+On Thu, Oct 09, 2014 at 02:43:02PM +0900, Alexandre Courbot wrote:
+> But there might be another issue, which is that calls to  
+> drm_vblank_get() will return -EINVAL if invoked between drm_blank_off  
+> and drm_blank_on. Is this really the desired behavior? Can it at least  
+> happen? If so, how are drivers supposed to react to this situation?
 
-Thanks for your comments Arnd! I have applied this once to my mmc tree
-now. Please tell me soon if you want to carry this through arm-soc
-instead, thus I can drop it.
+I've not yet seen the commit which causes this problem, but I hope
+that drm_wait_vblank() isn't affected by this.  In current mainline,
+drm_vblank_get() is used inside drm_wait_vblank(), which is called as
+a result of userspace calling DRM_IOCTL_WAIT_VBLANK.
 
-Kind regards
-Uffe
+So, what is the effect of this change on user applications making use
+of the vblank wait ioctl - and is that change intended?
+
+-- 
+FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
+according to speedtest.net.
