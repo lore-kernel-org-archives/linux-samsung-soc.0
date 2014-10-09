@@ -1,149 +1,67 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] drm/exynos: fix vblank handling during dpms off
-Date: Thu, 9 Oct 2014 19:23:52 +0900
-Message-ID: <CAAVeFuLyA_LYrkV77NYNZaL9S-p5oa9-QhQW7qA8ewU6QtgzZA@mail.gmail.com>
-References: <542B9A0E.7020206@samsung.com> <1412151287-12845-1-git-send-email-a.hajda@samsung.com>
- <542D13CC.5000304@samsung.com> <542D2E7C.1020904@samsung.com>
- <542D3C96.7000400@samsung.com> <54362066.9000504@nvidia.com> <20141009100811.GB3718@ulmo.nvidia.com>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: [PATCH 0/3] drm-exynos-dp/phy-exynos-dp: Refactor to use
+ pmu-system-controller and dp driver cleanup
+Date: Thu, 9 Oct 2014 15:56:42 +0530
+Message-ID: <CAFp+6iFeiwhXurrZ+bWz0Ht87SX4gPGkOEipCPHgYS2Z0_hocA@mail.gmail.com>
+References: <1410786785-9838-1-git-send-email-gautam.vivek@samsung.com>
+	<CAEC9eQPMNcGxUZVAh6ou6a=6V9bAgmwZAn5ra4=EkoosNURWPg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f169.google.com ([209.85.213.169]:44745 "EHLO
-	mail-ig0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752853AbaJIKYO convert rfc822-to-8bit (ORCPT
+Received: from mail-qg0-f53.google.com ([209.85.192.53]:48086 "EHLO
+	mail-qg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751065AbaJIK0n (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Oct 2014 06:24:14 -0400
-In-Reply-To: <20141009100811.GB3718@ulmo.nvidia.com>
+	Thu, 9 Oct 2014 06:26:43 -0400
+In-Reply-To: <CAEC9eQPMNcGxUZVAh6ou6a=6V9bAgmwZAn5ra4=EkoosNURWPg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <treding@nvidia.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Seung-Woo Kim <sw0312.kim@samsung.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Russell King <rmk+kernel@arm.linux.org.uk>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: InKi Dae <inki.dae@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Sean Paul <seanpaul@google.com>, kishon <kishon@ti.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-On Thu, Oct 9, 2014 at 7:08 PM, Thierry Reding <treding@nvidia.com> wro=
-te:
-> On Thu, Oct 09, 2014 at 02:43:02PM +0900, Alexandre Courbot wrote:
->> On 10/02/2014 08:52 PM, Andrzej Hajda wrote:
->> >Hi,
->> >
->> >+CC possible victims
->> >
->> >On 10/02/2014 12:52 PM, Inki Dae wrote:
->> >>On 2014=EB=85=84 10=EC=9B=94 02=EC=9D=BC 17:58, Joonyoung Shim wro=
-te:
->> >>>Hi Andrzej,
->> >>>
->> >>>On 10/01/2014 05:14 PM, Andrzej Hajda wrote:
->> >>>>The patch disables vblanks during dpms off only if pagefilp has
->> >>>>not been finished. It also replaces drm_vblank_off with drm_crtc=
-_vblank_put.
->> >>>>It fixes issue with page_flip ioctl not being able to acquire vb=
-lank counter.
->> >>>This problem isn't related with pageflip, it just causes from
->> >>>7ffd7a68511c710b84db3548a1997fd2625f580a commit (drm: Always reje=
-ct
->> >>>drm_vblank_get() after drm_vblank_off()).
->> >>>
->> >>>We need to use drm_vblank_on() as a counterpart to drm_vblank_off=
-()
->> >>>after the commit .
->> >
->> >This patch should break also other drivers, it seems at least follo=
-wing
->> >drms could be affected:
->> >armada, sti, tegra.
->>
->> Indeed we (tegra) have just been hit by this. The problem seems to c=
-ome from
->> the fact that we have been using drm_vblank_pre_modeset,
->> drm_vblank_post_modeset and drm_vblank_off conjointly. All these fun=
-ctions
->> depend on the value of vblank->inmodeset, and 7ffd7a68511 increases =
-the
->> vblank reference counter only in drm_vblank_off, which can result in=
- the
->> acquired reference never being released.
->>
->> The following seems to fix this for Tegra, by stopping using
->> drm_vblank_pre/post_modeset and relying on drm_vblank_off/on instead=
-:
->>
->> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
->> index b08df07cad47..3955d81236d0 100644
->> --- a/drivers/gpu/drm/tegra/dc.c
->> +++ b/drivers/gpu/drm/tegra/dc.c
->> @@ -739,7 +739,6 @@ static const struct drm_crtc_funcs tegra_crtc_fu=
-ncs =3D {
->>
->>  static void tegra_crtc_disable(struct drm_crtc *crtc)
->>  {
->> -       struct tegra_dc *dc =3D to_tegra_dc(crtc);
->>         struct drm_device *drm =3D crtc->dev;
->>         struct drm_plane *plane;
->>
->> @@ -755,7 +754,7 @@ static void tegra_crtc_disable(struct drm_crtc *=
-crtc)
->>                 }
->>         }
->>
->> -       drm_vblank_off(drm, dc->pipe);
->> +       drm_crtc_vblank_off(crtc);
->>  }
->>
->>  static bool tegra_crtc_mode_fixup(struct drm_crtc *crtc,
->> @@ -844,7 +843,7 @@ static int tegra_crtc_mode_set(struct drm_crtc *=
-crtc,
->>         u32 value;
->>         int err;
->>
->> -       drm_vblank_pre_modeset(crtc->dev, dc->pipe);
->> +       drm_crtc_vblank_off(crtc);
->>
->>         err =3D tegra_crtc_setup_clk(crtc, mode);
->>         if (err) {
->> @@ -946,7 +945,7 @@ static void tegra_crtc_commit(struct drm_crtc *c=
-rtc)
->>         value =3D GENERAL_ACT_REQ | WIN_A_ACT_REQ;
->>         tegra_dc_writel(dc, value, DC_CMD_STATE_CONTROL);
->>
->> -       drm_vblank_post_modeset(crtc->dev, dc->pipe);
->> +       drm_crtc_vblank_on(crtc);
->>  }
->>
->>  static void tegra_crtc_load_lut(struct drm_crtc *crtc)
->>
->> Thierry, does this look ok to you?
->
-> Yes, that looks like almost the same patch that I sent out yesterday.
-> The difference is that I didn't replace the drm_vblank_pre_modeset()
-> call with drm_vblank_off() like you did, but rather just dropped the
-> former.
->
-> I /think/ your version is more correct in that regard.
+Ajay,
 
-=46eel free to take that extra line in your patch then. ;)
 
+On Thu, Oct 9, 2014 at 3:48 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
+> Hi,
 >
-> Thierry
+> On Mon, Sep 15, 2014 at 6:43 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+>> These patches are based on 'for-next' branch of kgene's linux-samsung tree.
+>>
+>> Refactoring the exynos-dp-video phy to use pmu-system-controller handle
+>> and access the register using mfd-syscon and regmap.
+>> Simultaneously, removing the support for older dptx-phy, since it's obsolete
+>> now and noone uses it.
+>>
+>> Vivek Gautam (3):
+>>   phy: exynos-dp-video: Use syscon support to control pmu register
+>>   drm/exynos: dp: Remove support for unused dptx-phy
+>>   arm: dts: Exynos5: Use pmu_system_controller phandle for dp phy
+>>
+>>  .../devicetree/bindings/phy/samsung-phy.txt        |    7 +-
+>>  arch/arm/boot/dts/exynos5250.dtsi                  |    2 +-
+>>  arch/arm/boot/dts/exynos5420.dtsi                  |    4 +-
+>>  drivers/gpu/drm/exynos/exynos_dp_core.c            |   58 ++++-----------
+>>  drivers/gpu/drm/exynos/exynos_dp_core.h            |    2 -
+>>  drivers/phy/phy-exynos-dp-video.c                  |   76 ++++++++++++++------
+>>  6 files changed, 75 insertions(+), 74 deletions(-)
+>>
+>> --
+>> 1.7.10.4
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >
->> But there might be another issue, which is that calls to drm_vblank_=
-get()
->> will return -EINVAL if invoked between drm_blank_off and drm_blank_o=
-n. Is
->> this really the desired behavior? Can it at least happen? If so, how=
- are
->> drivers supposed to react to this situation?
->
-> It shouldn't happen. If drm_vblank_off() and drm_vblank_on() are call=
-ed
-> around a modeset they should never conflict with drm_vblank_get(), at
-> least on Tegra, because the modeset and page-flip IOCTLs will be
-> serialized.
+> I have tested this patchset on exynos5800-peach-pi, and I can see DP
+> display with the above patches.
 
-Ok, that's good. I was just wondering whether this case has been though=
-t of.
+we expect "Tested-by", if you have tested please give the same.
 
-Actually, and seeing how drm_vblank_pre/post_modeset() have become
-useless (if not harmful), maybe it would be a good idea to come with a
-fixup patch that gets rid of them altogether and make their callers
-invoke drm_vblank_off/on() instead?
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
