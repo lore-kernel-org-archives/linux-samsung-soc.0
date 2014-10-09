@@ -1,69 +1,70 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 3/5] regulator: dt-bindings: Add regulator-initial-mode
- support
-Date: Thu, 9 Oct 2014 20:01:07 +0100
-Message-ID: <20141009190107.GY4609@sirena.org.uk>
-References: <1412775847-15213-1-git-send-email-javier.martinez@collabora.co.uk>
- <1412775847-15213-4-git-send-email-javier.martinez@collabora.co.uk>
- <1412844355.1316.15.camel@AMDC1943>
- <5436A403.1050109@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 5/5] ARM: dts: Add initial regulator mode on exynos Peach
+ boards
+Date: Thu, 09 Oct 2014 23:40:17 +0200
+Message-ID: <543700C1.7050909@collabora.co.uk>
+References: <20141008195112.GI4609@sirena.org.uk> <54369B59.8000509@collabora.co.uk> <20141009174848.GW4609@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="OvHFI8f/INxOklTC"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:42967 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751002AbaJITBp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Oct 2014 15:01:45 -0400
-Content-Disposition: inline
-In-Reply-To: <5436A403.1050109@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141009174848.GW4609@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
+Hello Mark,
 
---OvHFI8f/INxOklTC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for your feedback.
 
-On Thu, Oct 09, 2014 at 05:04:35PM +0200, Javier Martinez Canillas wrote:
+On 10/09/2014 07:48 PM, Mark Brown wrote:
+> On Thu, Oct 09, 2014 at 04:27:37PM +0200, Javier Martinez Canillas wrote:
+> 
+>> I see, I thought that an operating mode could be anything that alter the
+>> regulator behavior either during runtime or when the system is suspended.
+>> But under your definition, it is true that most max77802 regulators have
+> 
+> It's not just me, it's the code and all the users and documentation...
+> 
 
-> Agree, Mark also pointed out that there is a difference between changing
-> how the regulator will behave on runtime vs changing how the regulator
-> will behave during system suspend. AFAIU from his explanation, the modes
-> defined in consumer.h only applies to the former and conceptually there
-> should be a difference between those two cases even when the Maxim PMIC
-> seems to mix it both in the data-sheet and by using the same field.
+Sorry, I didn't mean that you are not correct but more that I was wrong
+on my assumptions.
 
-No, that's not accurate at all - you're still not getting the concepts
-of modes or suspend handling in the regulator API.  I really think you
-need to take a step back and try to understand what's currently there
-before trying to make changes here.  We've got a set of operations we
-can use to change the regulator configuration, if you look at the
-existing driver interface you'll see that these are matched with
-equivalent operations for setting the behaviour when in suspend
-(including a set_suspend_mode() operation). =20
+>> only two modes: ON and OFF (and some of them have a third Low Power mode).
+> 
+> ...but let's be clear, only "on" (normal) and low power are modes here.
+> Like I keep saying please think things through - if modes also include
+> enable control why would they be treated separately in the API?
+> 
 
-Like I keep saying abstractions are really important to making sure the
-code is maintainable.
+Right, I got confused again by the terminology in the Maxim data-sheet that
+list output OFF as an opmode but I understand that OFF is not a mode and
+that the regulator API treats it separately.
 
---OvHFI8f/INxOklTC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+>> I think though that a generic way to configure this enable control feature
+>> is needed. Maybe adding a new pair of .{get,set}_suspend_control function
+>> pointers to struct regulator_ops and an .initial_suspend_ctrl field to the
+>> struct regulation_constraints?
+> 
+>> That way the core could parse a generic DT property and call the function
+>> handlers but each driver can document in their own DT bindings what their
+>> control values are and how those affects the regulators during suspend?
+> 
+> That maps poorly onto a lot of devices which have control schemes which
+> are more complex than this, for example placing regulators into groups
+> which are then controlled en masse or with internal sequencing options.
+> There's also the general taste thing with an API that basically just
+> consists of passing a random value through - there's a lack of
+> generality there, it wouldn't be possible to write a generic user of the
+> API which is a bit of a warning sign.
+> 
+> If you just care about the specific "this pin controls enable in sleep
+> state" I'd suggest making an interface that very specifically does that.
+> 
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Yes, I'll not try to make it generic and will do something that is specific
+to this device.
 
-iQEcBAEBAgAGBQJUNttyAAoJECTWi3JdVIfQAMkH/iLzHrE2nB3YGtgMgRTOPTqv
-IfQzzjtqLgDTqi7czNSSF6eG5b++gmnHLwacddjmg0HkpWNk3ROsMXdskiUOnhd+
-XO3SVpsCagX4yao9PWPpwVZf6LmqVFhA01lmioBpsK55WZN2ds5Un59MangnCjzT
-FjUfJ3YwKOovWt+wQcElaMnaKQSN3iZOWNEJEHQwmczF+mh7AbgfAUvmhbW4d/RP
-4qCWrQfWAr7qRtPdMaqnaMbKbXmRvorRjGq3KoW0Ew1L2ouJ8Apc0xgkG8sZ7LFV
-clP0rWqZFZ3MP4jhKME2tf//JVECh4U9nkWcUvxtLNnTptihm44jApJnktdm4Ac=
-=pNME
------END PGP SIGNATURE-----
-
---OvHFI8f/INxOklTC--
+Best regards,
+Javier
