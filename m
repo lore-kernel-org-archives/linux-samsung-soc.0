@@ -1,7 +1,7 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 4/4] drm/exynos: correct connector->dpms field before resuming
-Date: Fri, 10 Oct 2014 14:31:56 +0200
-Message-ID: <1412944316-27737-5-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 3/4] drm/exynos: enable vblank after DPMS on
+Date: Fri, 10 Oct 2014 14:31:55 +0200
+Message-ID: <1412944316-27737-4-git-send-email-a.hajda@samsung.com>
 References: <1412944316-27737-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,33 +21,38 @@ To: Inki Dae <inki.dae@samsung.com>
 Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-During system suspend after connector switch off its dpms field
-is set to connector previous dpms state. To properly resume dpms field
-should be set to its actual state (off) before resuming to previous dpms state.
+Before DPMS off driver disables vblank.
+It should be balanced by vblank enable after DPMS on.
+The patch fixes issue with page_flip ioctl not being able
+to acquire vblank counter introduced by patch:
+drm: Always reject drm_vblank_get() after drm_vblank_off()
 
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- drivers/gpu/drm/exynos/exynos_drm_drv.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index ce6c14c..fe250e4 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -194,8 +194,12 @@ static int exynos_drm_resume(struct drm_device *dev)
- 
- 	drm_modeset_lock_all(dev);
- 	list_for_each_entry(connector, &dev->mode_config.connector_list, head) {
--		if (connector->funcs->dpms)
--			connector->funcs->dpms(connector, connector->dpms);
-+		if (connector->funcs->dpms) {
-+			int dpms = connector->dpms;
-+
-+			connector->dpms = DRM_MODE_DPMS_OFF;
-+			connector->funcs->dpms(connector, dpms);
-+		}
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 8e38e9f..45026e6 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -71,13 +71,16 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+ 				!atomic_read(&exynos_crtc->pending_flip),
+ 				HZ/20))
+ 			atomic_set(&exynos_crtc->pending_flip, 0);
+-		drm_vblank_off(crtc->dev, exynos_crtc->pipe);
++		drm_crtc_vblank_off(crtc);
  	}
- 	drm_modeset_unlock_all(dev);
  
+ 	if (manager->ops->dpms)
+ 		manager->ops->dpms(manager, mode);
+ 
+ 	exynos_crtc->dpms = mode;
++
++	if (mode == DRM_MODE_DPMS_ON)
++		drm_crtc_vblank_on(crtc);
+ }
+ 
+ static void exynos_drm_crtc_prepare(struct drm_crtc *crtc)
 -- 
 1.9.1
