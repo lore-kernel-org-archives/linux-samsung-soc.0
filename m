@@ -1,97 +1,82 @@
 From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v9 0/2] Adds PMU and S2R support for exynos5420
-Date: Fri, 10 Oct 2014 13:09:25 +0200
-Message-ID: <CABxcv=kRNgdzqsMFBQ5O7naQP6nOEdEo+QUTEnVqwLP2TC2NrQ@mail.gmail.com>
-References: <1412673723-15551-1-git-send-email-vikas.sajjan@samsung.com>
-	<7hiojuno9e.fsf@deeprootsystems.com>
-	<CAM4voanoOV44EQveAeikp1P0bXCU8HHdX2XDi3jwLkfQOP0CNQ@mail.gmail.com>
-	<CABxcv==V0vR2XXq5cKzbaqkCbtkqKgrhJotdPSM5K0uyNW968w@mail.gmail.com>
-	<7hbnpknc98.fsf@deeprootsystems.com>
-	<7hh9zcluhg.fsf@deeprootsystems.com>
+Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: re-enable USB gadget and
+ max77802 options
+Date: Fri, 10 Oct 2014 14:25:27 +0200
+Message-ID: <CABxcv==bbfoY6=g3P6N2bLw6DqoV8KEpgro5VOdrj6A9OuuTmA@mail.gmail.com>
+References: <1412879767-24326-1-git-send-email-javier.martinez@collabora.co.uk>
+	<7h8ukolsvx.fsf@deeprootsystems.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f176.google.com ([209.85.212.176]:54584 "EHLO
-	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751487AbaJJLJ2 (ORCPT
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:60054 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751043AbaJJMZ3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Oct 2014 07:09:28 -0400
-Received: by mail-wi0-f176.google.com with SMTP id hi2so1670442wib.9
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Oct 2014 04:09:26 -0700 (PDT)
-In-Reply-To: <7hh9zcluhg.fsf@deeprootsystems.com>
+	Fri, 10 Oct 2014 08:25:29 -0400
+Received: by mail-wg0-f44.google.com with SMTP id y10so3712380wgg.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Oct 2014 05:25:27 -0700 (PDT)
+In-Reply-To: <7h8ukolsvx.fsf@deeprootsystems.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kevin Hilman <khilman@kernel.org>
-Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Vikas Sajjan <vikas.sajjan@samsung.com>, Vikas Sajjan <sajjan.linux@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
 Hello Kevin,
 
-On Fri, Oct 10, 2014 at 12:59 AM, Kevin Hilman <khilman@kernel.org> wrote:
-> Kevin Hilman <khilman@kernel.org> writes:
+On Fri, Oct 10, 2014 at 1:34 AM, Kevin Hilman <khilman@kernel.org> wrote:
+> Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
 >
-> [...]
+>> Commit 43eeaa42e03a ("ARM: exynos_defconfig: savedefconfig") removed a
+>> set of Kconfig symbols. For most of them there were no functional change
+>> since are selected by other Kconfig options or were deprecated but some
+>> options are not explicitly selected so they should not had been removed.
+>>
+>> The options that have to be enabled are USB gadget and the MAX77802 PMIC
+>> support which were enabled in commits:
+>>
+>> 508423bebcda ("ARM: exynos_defconfig: enable USB gadget support")
+>> 6e80e3d87549 ("ARM: exynos_defconfig: Enable MAX77802")
+>>
+>> Enable those options to leave the config in the state before the change.
+>>
+>> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 >
->> Trying $SUBJECT series on top of kukjin's for-next is working fine, but
->> I'm still not able to make it work on linux-next, with or without the
->> CLK_IGNORE_UNUSED patch.
+> Acked-by: Kevin Hilman <khilman@linaro.org>
+> Tested-by: Kevin Hilman <khilman@linaro.org>
+
+Thanks for testing.
+
 >
-> Nevermind, turns out I didn't apply the CLK_IGNORE_UNUSED PATCH.  If I
-> actually apply it, I have it working on top of linux-next.  However, it
-> seems to have some issues with the nonboot CPUs resuming:
+> This is needed to get RTC wakeup from suspend working on
+> exynos5800-peach-pi.
+>
+> Note that the s3c-rtc works fine, but the max77802-rtc doesn't seem to
+> work be functional for me:
+>
+> [    2.408178] max77802-rtc max77802-rtc: rtc core: registered max77802-rtc as rtc0
+> [    3.595485] s3c-rtc 101e0000.rtc: rtc core: registered s3c as rtc1
+>
+> root@(none):/# hwclock --rtc /dev/rtc0
+> hwclock: ioctl(RTC_RD_TIME) to /dev/rtc0 to read the time failed:
+> Invalid argument
+> root@(none):/# hwclock --rtc /dev/rtc1
+> Thu Oct  9 23:33:06 2014  -0.111978 seconds
 >
 
-Did you have this issue both on top of kukjin's for-next and
-linux-next or only on the later?
-Could you please share your tree so I can give a try on my each Pit?
+Strange, I don't get that error when testing on my Peach Pit with
+linux-next + $subject
 
-> [   11.319833] Enabling non-boot CPUs ...
-> [   12.319134] CPU1: failed to come online
-> [   12.319235] Error taking CPU1 up: -5
-> [   13.319137] CPU2: failed to come online
-> [   13.319209] Error taking CPU2 up: -5
-> [   14.319133] CPU3: failed to come online
-> [   14.319224] Error taking CPU3 up: -5
->
-> Are you guys seeing all the non-boot CPUs coming up?  They fail to come
-> online, but the /sys/devices/.../cpu?/online reports that they are
-> online, which means the next attempt to hotplug them will probably BUG().
->
+[    2.311591] max77802-rtc max77802-rtc: rtc core: registered
+max77802-rtc as rtc0
+[    3.594438] s3c-rtc 101e0000.rtc: rtc core: registered s3c as rtc1
 
-Maybe a silly question but are you using the last version (v9) [0] of
-Abhilash's "ARM: EXYNOS: Use MCPM call-backs to support S2R on
-Exynos5420" patch?
+# hwclock --rtc /dev/rtc0
+Fri 10 Oct 2014 12:19:23 PM UTC  -0.909103 seconds
+# hwclock --rtc /dev/rtc1
+Fri 10 Oct 2014 12:19:26 PM UTC  -0.719862 seconds
 
-I had the same issue than you when testing with his v8 version because
-there was a mistake on rebasing where the CPU power down logic was in
-exynos_cpu_power_up() instead of exynos_cpu_power_down().
-
-> Also, If I turn off the switcher (enabled by default exynos_defconfig),
-> resume still has problems bringing all the nonboot CPUs online, and then
-> has a bunch of I2C errors[1].
->
-> And one more..., if I try enabling CPUidle[1] with exynos_defconfig, S2R
-> causes a reboot (seems to be on resume.)
->
-
-I didn't try CPUidle and I don't remember seeing the I2C errors but
-maybe I just didn't notice. I'll re-test and see if it behaves the
-same on my Exynos5420 machine.
-
-> Kevin
->
->
-> [1]
-> [   47.644273] cros-ec-spi spi2.0: EC failed to respond in time
-> [   47.648535] cros-ec-spi spi2.0: spi transfer failed: -110
-> [   47.653866] tps65090-charger tps65090-charger: tps65090_charger_isr(): Error in reading reg 0xa
->
-> [2]
-> CONFIG_CPU_IDLE=y
-> CONFIG_ARM_BIG_LITTLE_CPUIDLE=y
-> CONFIG_ARM_EXYNOS_CPUIDLE=n
->
+I'll take a look but if you have a test case that makes it fail
+consistently that would be really helpful.
 
 Best regards,
 Javier
-
-[0]: http://www.spinics.net/lists/linux-samsung-soc/msg37647.html
