@@ -1,58 +1,54 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH 21/21] thermal: exynos: Make Exynos3250 TMU compatible with
- Exynos4412
-Date: Fri, 10 Oct 2014 10:51:18 +0200
-Message-ID: <20141010105118.2f05d40f@amdc2363>
-References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
- <1412872737-624-22-git-send-email-l.majewski@samsung.com>
- <54371B7E.5010600@samsung.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: Powering down unused PM domains (was: Re: [PATCH 0/4] PM /
+ Domains: Fix race conditions during boot)
+Date: Fri, 10 Oct 2014 10:55:29 +0200
+Message-ID: <20141010085529.GA27342@amd>
+References: <CAMuHMdUwbOEfLcu_UVKq_iHx5Qzn7ne1+cwt58C0ntTZBf1esg@mail.gmail.com>
+ <CAPDyKFrJ7x-MS79OqxPOUWVearpp6AQP160+9QXnhVXWnH9aWw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <54371B7E.5010600@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, Linux PM list <linux-pm@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47705 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751774AbaJJIzc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 10 Oct 2014 04:55:32 -0400
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFrJ7x-MS79OqxPOUWVearpp6AQP160+9QXnhVXWnH9aWw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Philipp Zabel <philipp.zabel@gmail.com>, Russell King <linux@arm.linux.org.uk>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-Hi Chanwoo,
+Hi!
 
-> On 10/10/2014 01:38 AM, Lukasz Majewski wrote:
-> > Since both SoCs have the same TMU IP block embedded on them, it is
-> > not necessary to maintain separate compatible entry.
-> > 
-> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > ---
-> >  drivers/thermal/samsung/exynos_tmu.c | 3 ---
-> >  1 file changed, 3 deletions(-)
-> > 
-> > diff --git a/drivers/thermal/samsung/exynos_tmu.c
-> > b/drivers/thermal/samsung/exynos_tmu.c index f1e8c9b..7818e2f 100644
-> > --- a/drivers/thermal/samsung/exynos_tmu.c
-> > +++ b/drivers/thermal/samsung/exynos_tmu.c
-> > @@ -744,9 +744,6 @@ static irqreturn_t exynos_tmu_irq(int irq, void
-> > *id) 
-> >  static const struct of_device_id exynos_tmu_match[] = {
-> >  	{
-> > -		.compatible = "samsung,exynos3250-tmu",
-> > -	},
-> > -	{
+> > While operation A2 is PM domain-centric (it walks the list of genpd domains),
+> > A3 and B3 are device-centric (A3 operates on one specific device, B3 walks the
+> > list of devices).
+> > Hence B3 never touches PM domains that don't contain any devices[*].
+> > So these PM domains are kept powered-up if CONFIG_PM_RUNTIME=n, even on
+> > system suspend.
+> >
+> > Shouldn't PM domains without devices be powered down at some point?
+> > When? In B2, or in B3?
 > 
-> If you want to remove compatible string for Exynos3250,
-> you have to modify it on exynos3250.dtsi.
+> I agree with Rafael and Sylwester, that it would be an advantage if PM
+> domains can be initialized in powered off state. Simply because, those
+> may then be left in powered off state all the time, if they are
+> unused.
+
+Also... powering up all the domains at the same time is quite harsh at
+the battery. Even if they are powered down "soon", it still causes
+spike in current which may trip the battery (especially when battery
+is old and nearly discharged).
+
+> > P.S. Will any of you be at ELC-E next week, for further PM domain discussions?
 > 
+> That would have been great, but I won't be there. Unless I schedule a
+> last minute trip. :-)
 
-Thanks for pointing this out. I've overlooked this dtsi file.
-
-> Thanks,
-> Chanwoo Choi
-
-
-
+I should be there.
+									Pavel
 -- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
