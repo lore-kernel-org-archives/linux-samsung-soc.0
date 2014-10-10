@@ -1,82 +1,65 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: re-enable USB gadget and
- max77802 options
-Date: Fri, 10 Oct 2014 14:25:27 +0200
-Message-ID: <CABxcv==bbfoY6=g3P6N2bLw6DqoV8KEpgro5VOdrj6A9OuuTmA@mail.gmail.com>
-References: <1412879767-24326-1-git-send-email-javier.martinez@collabora.co.uk>
-	<7h8ukolsvx.fsf@deeprootsystems.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 0/4] drm/exynos: misc fixes
+Date: Fri, 10 Oct 2014 14:31:52 +0200
+Message-ID: <1412944316-27737-1-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:60054 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751043AbaJJMZ3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Oct 2014 08:25:29 -0400
-Received: by mail-wg0-f44.google.com with SMTP id y10so3712380wgg.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Oct 2014 05:25:27 -0700 (PDT)
-In-Reply-To: <7h8ukolsvx.fsf@deeprootsystems.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Andrzej Hajda <a.hajda@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Hello Kevin,
+Hi Inki,
 
-On Fri, Oct 10, 2014 at 1:34 AM, Kevin Hilman <khilman@kernel.org> wrote:
-> Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
->
->> Commit 43eeaa42e03a ("ARM: exynos_defconfig: savedefconfig") removed a
->> set of Kconfig symbols. For most of them there were no functional change
->> since are selected by other Kconfig options or were deprecated but some
->> options are not explicitly selected so they should not had been removed.
->>
->> The options that have to be enabled are USB gadget and the MAX77802 PMIC
->> support which were enabled in commits:
->>
->> 508423bebcda ("ARM: exynos_defconfig: enable USB gadget support")
->> 6e80e3d87549 ("ARM: exynos_defconfig: Enable MAX77802")
->>
->> Enable those options to leave the config in the state before the change.
->>
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->
-> Acked-by: Kevin Hilman <khilman@linaro.org>
-> Tested-by: Kevin Hilman <khilman@linaro.org>
+These four independent patches fixes few problems I have encountered recently.
 
-Thanks for testing.
+1st patch is a trivial fix.
 
->
-> This is needed to get RTC wakeup from suspend working on
-> exynos5800-peach-pi.
->
-> Note that the s3c-rtc works fine, but the max77802-rtc doesn't seem to
-> work be functional for me:
->
-> [    2.408178] max77802-rtc max77802-rtc: rtc core: registered max77802-rtc as rtc0
-> [    3.595485] s3c-rtc 101e0000.rtc: rtc core: registered s3c as rtc1
->
-> root@(none):/# hwclock --rtc /dev/rtc0
-> hwclock: ioctl(RTC_RD_TIME) to /dev/rtc0 to read the time failed:
-> Invalid argument
-> root@(none):/# hwclock --rtc /dev/rtc1
-> Thu Oct  9 23:33:06 2014  -0.111978 seconds
->
+2nd patch(kms poll init) fixes old issue, which became more visible after my patch
+'drm/exynos: init vblank with real number of crtcs' - driver tried to handle HPD
+events even if it was not fully initialized, it caused WARNs and app locks.
 
-Strange, I don't get that error when testing on my Peach Pit with
-linux-next + $subject
+Vblank patch is slightly different version of the one proposed in [1]. The only
+difference is that it enables vblank after dpms on, it is neccessary because
+drm_crtc_vblank_on can call drm_vblank_enable which can call exynos_drm_crtc_enable_vblank
+and exynos_drm_crtc_enable_vblank will return error if exynos_crtc->dpms != DRM_MODE_DPMS_ON.
 
-[    2.311591] max77802-rtc max77802-rtc: rtc core: registered
-max77802-rtc as rtc0
-[    3.594438] s3c-rtc 101e0000.rtc: rtc core: registered s3c as rtc1
+DPMS patch was previously sent as a part of other series, but as the series have been dropped
+I have resend it in this patchset.
 
-# hwclock --rtc /dev/rtc0
-Fri 10 Oct 2014 12:19:23 PM UTC  -0.909103 seconds
-# hwclock --rtc /dev/rtc1
-Fri 10 Oct 2014 12:19:26 PM UTC  -0.719862 seconds
+The patchset is based on exynos-drm-next branch plus following patches:
+    drm/exynos: remove explicit encoder/connector de-initialization
+    drm/exynos: init vblank with real number of crtcs
+    drm/exynos: remove ifdeferry from initialization code
 
-I'll take a look but if you have a test case that makes it fail
-consistently that would be really helpful.
 
-Best regards,
-Javier
+It has been tested on trats board.
+
+[1]: https://lkml.org/lkml/2014/10/2/154
+
+Regards
+Andrzej
+
+
+Andrzej Hajda (4):
+  drm/exynos: propagate plane initialization errors
+  drm/exynos: init kms poll at the end of initialization
+  drm/exynos: enable vblank after DPMS on
+  drm/exynos: correct connector->dpms field before resuming
+
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c |  5 ++++-
+ drivers/gpu/drm/exynos/exynos_drm_drv.c  | 27 +++++++++++++++++----------
+ 2 files changed, 21 insertions(+), 11 deletions(-)
+
+-- 
+1.9.1
