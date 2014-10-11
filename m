@@ -1,105 +1,84 @@
-From: Vikas Sajjan <vikas.sajjan@samsung.com>
-Subject: Re: [PATCH v9 0/2] Adds PMU and S2R support for exynos5420
-Date: Sat, 11 Oct 2014 09:49:29 +0545
-Message-ID: <CAGm_ybh2OwKMZKzYF+ar3uvCf-_Khz8F4N6yeYNdk3bRMTRteg@mail.gmail.com>
-References: <1412673723-15551-1-git-send-email-vikas.sajjan@samsung.com>
-	<7hiojuno9e.fsf@deeprootsystems.com>
-	<CAM4voanoOV44EQveAeikp1P0bXCU8HHdX2XDi3jwLkfQOP0CNQ@mail.gmail.com>
-	<CABxcv==V0vR2XXq5cKzbaqkCbtkqKgrhJotdPSM5K0uyNW968w@mail.gmail.com>
-	<7hbnpknc98.fsf@deeprootsystems.com>
-	<7hh9zcluhg.fsf@deeprootsystems.com>
-	<CAM4voak+OKr+Lu58HfJq_JtE-9Buebme7EK3CiViZA1-Pajc7w@mail.gmail.com>
-	<7h8uknk2gm.fsf@deeprootsystems.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 3/4] drm/exynos: enable vblank after DPMS on
+Date: Sat, 11 Oct 2014 20:35:25 +0200
+Message-ID: <20141011183525.GF26941@phenom.ffwll.local>
+References: <1412944316-27737-1-git-send-email-a.hajda@samsung.com>
+ <1412944316-27737-4-git-send-email-a.hajda@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:49124 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750712AbaJKEEb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 11 Oct 2014 00:04:31 -0400
-Received: by mail-wi0-f178.google.com with SMTP id cc10so3644477wib.5
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Oct 2014 21:04:29 -0700 (PDT)
-In-Reply-To: <7h8uknk2gm.fsf@deeprootsystems.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <1412944316-27737-4-git-send-email-a.hajda@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-Hi Kevin,
+On Fri, Oct 10, 2014 at 02:31:55PM +0200, Andrzej Hajda wrote:
+> Before DPMS off driver disables vblank.
+> It should be balanced by vblank enable after DPMS on.
+> The patch fixes issue with page_flip ioctl not being able
+> to acquire vblank counter introduced by patch:
+> drm: Always reject drm_vblank_get() after drm_vblank_off()
+> 
+> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 
-On Sat, Oct 11, 2014 at 3:47 AM, Kevin Hilman <khilman@kernel.org> wrote:
-> Abhilash Kesavan <kesavan.abhilash@gmail.com> writes:
->
->> On Fri, Oct 10, 2014 at 4:29 AM, Kevin Hilman <khilman@kernel.org> wrote:
->>> Kevin Hilman <khilman@kernel.org> writes:
->>>
->>> [...]
->>>
->>>> Trying $SUBJECT series on top of kukjin's for-next is working fine, but
->>>> I'm still not able to make it work on linux-next, with or without the
->>>> CLK_IGNORE_UNUSED patch.
->>>
->>> Nevermind, turns out I didn't apply the CLK_IGNORE_UNUSED PATCH.  If I
->>> actually apply it, I have it working on top of linux-next.  However, it
->>> seems to have some issues with the nonboot CPUs resuming:
->>>
->>> [   11.319833] Enabling non-boot CPUs ...
->>> [   12.319134] CPU1: failed to come online
->>> [   12.319235] Error taking CPU1 up: -5
->>> [   13.319137] CPU2: failed to come online
->>> [   13.319209] Error taking CPU2 up: -5
->>> [   14.319133] CPU3: failed to come online
->>> [   14.319224] Error taking CPU3 up: -5
->>>
->>> Are you guys seeing all the non-boot CPUs coming up?  They fail to come
->>> online, but the /sys/devices/.../cpu?/online reports that they are
->>> online, which means the next attempt to hotplug them will probably BUG().
->>>
->>> Also, If I turn off the switcher (enabled by default exynos_defconfig),
->>> resume still has problems bringing all the nonboot CPUs online, and then
->>> has a bunch of I2C errors[1].
->>>
->>> And one more..., if I try enabling CPUidle[1] with exynos_defconfig, S2R
->>> causes a reboot (seems to be on resume.)
->>
->> I tested S2R on my Peach-Pi (Exynos5800) on linux-next-20141009. My tree has:
->>
->> a57db95 TEMP: Use CLK_IGNORE_UNUSED for aclk200_disp1
->> 18158ac ARM: EXYNOS: Use MCPM call-backs to support S2R on Exynos5420
->
-> I was missing this one.
->
->> d86cb2d ARM: exynos5: Add Suspend-to-RAM support for 5420
->> 93f1b7c ARM: exynos5: Add PMU support for 5420
->> 8dcc2db ARM: EXYNOS: Move PMU specific definitions from common.h
->> 493a16a ARM: EXYNOS: Add platform driver support for Exynos PMU
->> 64e73fb mfd: syscon: Decouple syscon interface from platform devices
->> af7b574 Add linux-next specific files for 20141009
->> 4658bc0 Merge branch 'akpm/master'
->> 9784a19 mm: add strictlimit knob
->>
->> I have tested the following scenarios using exynos_defconfig with
->> CONFIG_COMMON_CLK_MAX77802 enabled:
->>
->> 1) CONFIG_BIG_LITTLE enabled (default in exynos_defconfig)
->> 2) CONFIG_BIG_LITTLE disabled
->> 3) CONFIG_ARM_BIG_LITTLE_CPUIDLE enabled
->>
->> In all 3 cases the secondary cores as well as the system resume fine.
->> Can you please confirm if your kernel has a similar configuration ?
->
-> Adding in the missing dependency above, it's now working for me in all 3
-> scenarios. Looking back at the cover letter, I see it's clearly listed
-> as a dependency.  Sorry, my fault.
->
-> Feel free to add
->
-> Tested-by: Kevin Hilman <khilman@linaro.org>
+Yeah, you should always call vblank_on again when you (re)enable a crtc,
+whether this is through a set_config call or through dpms. This is
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 
-Thanks a lot for testing.
+Sorry that we didn't catch the impact of this additional check on existing
+drivers, I've thought I've reviewed them and checked that they all call
+vblank_on. But I didn't take into account that the codepaths might differ
+for dpms and set_config paths. Otoh most drivers really should implement
+one in terms of the other.
 
->
-> to $SUBJECT series.
->
-> Kevin
+Cheers, Daniel
+
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_crtc.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> index 8e38e9f..45026e6 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> @@ -71,13 +71,16 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
+>  				!atomic_read(&exynos_crtc->pending_flip),
+>  				HZ/20))
+>  			atomic_set(&exynos_crtc->pending_flip, 0);
+> -		drm_vblank_off(crtc->dev, exynos_crtc->pipe);
+> +		drm_crtc_vblank_off(crtc);
+>  	}
+>  
+>  	if (manager->ops->dpms)
+>  		manager->ops->dpms(manager, mode);
+>  
+>  	exynos_crtc->dpms = mode;
+> +
+> +	if (mode == DRM_MODE_DPMS_ON)
+> +		drm_crtc_vblank_on(crtc);
+>  }
+>  
+>  static void exynos_drm_crtc_prepare(struct drm_crtc *crtc)
+> -- 
+> 1.9.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
