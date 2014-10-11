@@ -1,65 +1,105 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH v2 0/3] iio: exynos-adc: use syscon instead of ioremap
-Date: Thu, 09 Oct 2014 21:05:25 +0100
-Message-ID: <5436EA85.90900@kernel.org>
-References: <1410857931-4980-1-git-send-email-ch.naveen@samsung.com> <541EC1C2.6090608@kernel.org>
+From: Vikas Sajjan <vikas.sajjan@samsung.com>
+Subject: Re: [PATCH v9 0/2] Adds PMU and S2R support for exynos5420
+Date: Sat, 11 Oct 2014 09:49:29 +0545
+Message-ID: <CAGm_ybh2OwKMZKzYF+ar3uvCf-_Khz8F4N6yeYNdk3bRMTRteg@mail.gmail.com>
+References: <1412673723-15551-1-git-send-email-vikas.sajjan@samsung.com>
+	<7hiojuno9e.fsf@deeprootsystems.com>
+	<CAM4voanoOV44EQveAeikp1P0bXCU8HHdX2XDi3jwLkfQOP0CNQ@mail.gmail.com>
+	<CABxcv==V0vR2XXq5cKzbaqkCbtkqKgrhJotdPSM5K0uyNW968w@mail.gmail.com>
+	<7hbnpknc98.fsf@deeprootsystems.com>
+	<7hh9zcluhg.fsf@deeprootsystems.com>
+	<CAM4voak+OKr+Lu58HfJq_JtE-9Buebme7EK3CiViZA1-Pajc7w@mail.gmail.com>
+	<7h8uknk2gm.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <541EC1C2.6090608@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cw00.choi@samsung.com, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, cpgs@samsung.com, grundler@chromium.org, Kukjin Kim <kgene.kim@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:49124 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750712AbaJKEEb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 11 Oct 2014 00:04:31 -0400
+Received: by mail-wi0-f178.google.com with SMTP id cc10so3644477wib.5
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Oct 2014 21:04:29 -0700 (PDT)
+In-Reply-To: <7h8uknk2gm.fsf@deeprootsystems.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, sunil joshi <joshi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-On 21/09/14 13:17, Jonathan Cameron wrote:
-> On 16/09/14 09:58, Naveen Krishna Chatradhi wrote:
->> Changes since v1:
->> 1. Rebased on top of togreg branch of IIO git.
+Hi Kevin,
+
+On Sat, Oct 11, 2014 at 3:47 AM, Kevin Hilman <khilman@kernel.org> wrote:
+> Abhilash Kesavan <kesavan.abhilash@gmail.com> writes:
+>
+>> On Fri, Oct 10, 2014 at 4:29 AM, Kevin Hilman <khilman@kernel.org> wrote:
+>>> Kevin Hilman <khilman@kernel.org> writes:
+>>>
+>>> [...]
+>>>
+>>>> Trying $SUBJECT series on top of kukjin's for-next is working fine, but
+>>>> I'm still not able to make it work on linux-next, with or without the
+>>>> CLK_IGNORE_UNUSED patch.
+>>>
+>>> Nevermind, turns out I didn't apply the CLK_IGNORE_UNUSED PATCH.  If I
+>>> actually apply it, I have it working on top of linux-next.  However, it
+>>> seems to have some issues with the nonboot CPUs resuming:
+>>>
+>>> [   11.319833] Enabling non-boot CPUs ...
+>>> [   12.319134] CPU1: failed to come online
+>>> [   12.319235] Error taking CPU1 up: -5
+>>> [   13.319137] CPU2: failed to come online
+>>> [   13.319209] Error taking CPU2 up: -5
+>>> [   14.319133] CPU3: failed to come online
+>>> [   14.319224] Error taking CPU3 up: -5
+>>>
+>>> Are you guys seeing all the non-boot CPUs coming up?  They fail to come
+>>> online, but the /sys/devices/.../cpu?/online reports that they are
+>>> online, which means the next attempt to hotplug them will probably BUG().
+>>>
+>>> Also, If I turn off the switcher (enabled by default exynos_defconfig),
+>>> resume still has problems bringing all the nonboot CPUs online, and then
+>>> has a bunch of I2C errors[1].
+>>>
+>>> And one more..., if I try enabling CPUidle[1] with exynos_defconfig, S2R
+>>> causes a reboot (seems to be on resume.)
 >>
->> This patch set does the following
->> 1. Use the syscon and Regmap API instead of ioremappaing the
->>    ADC_PHY register from PMU.
->> 2. Updates the Documentation in exynos-adc.txt with syscon phandle
->>    for the ADC nodes.
->> 3. Updates the Dts files for Exynos3250, Exynos4x12, Exynos5250,
->>    Exynos5420 with the syscon phandle.
+>> I tested S2R on my Peach-Pi (Exynos5800) on linux-next-20141009. My tree has:
 >>
->> Tested on Exynos5420 based Peach PIT and Exynos5800 based Peach PI
->> by verifying sysfs entries provided by HWMON based NTC thermistors.
+>> a57db95 TEMP: Use CLK_IGNORE_UNUSED for aclk200_disp1
+>> 18158ac ARM: EXYNOS: Use MCPM call-backs to support S2R on Exynos5420
+>
+> I was missing this one.
+>
+>> d86cb2d ARM: exynos5: Add Suspend-to-RAM support for 5420
+>> 93f1b7c ARM: exynos5: Add PMU support for 5420
+>> 8dcc2db ARM: EXYNOS: Move PMU specific definitions from common.h
+>> 493a16a ARM: EXYNOS: Add platform driver support for Exynos PMU
+>> 64e73fb mfd: syscon: Decouple syscon interface from platform devices
+>> af7b574 Add linux-next specific files for 20141009
+>> 4658bc0 Merge branch 'akpm/master'
+>> 9784a19 mm: add strictlimit knob
 >>
->> Tested-By for Exynos3250, Exynos4x12 would be appreciated.
-> Would definitely be good!
-> 
-> The main issue I have with this series is that it breaks backward
-> compatibility with old device trees and newer kernels.
-> 
-> Now I appreciate that sometimes there are reasons to do it but want this
-> to have deeper consideration (and acks to show it) from the Exynos side
-> of things and preferably from the device tree side of things as well.
-> 
-> cc'd Kukjin Kim for the Exynos side of things as the listed Maintainer.
-> 
-> Otherwise, the series looks fine to me.
-Kukjin? Sorry to pester, but this has been sat in my waiting queue for a
-while now.
+>> I have tested the following scenarios using exynos_defconfig with
+>> CONFIG_COMMON_CLK_MAX77802 enabled:
 >>
->> Naveen Krishna Chatradhi (3):
->>   iio: exyno-adc: use syscon for PMU register access
->>   Documentation: dt-bindings: update exynos-adc.txt with syscon handle
->>   ARM: dts: exynos: Add sysreg phandle to ADC node
+>> 1) CONFIG_BIG_LITTLE enabled (default in exynos_defconfig)
+>> 2) CONFIG_BIG_LITTLE disabled
+>> 3) CONFIG_ARM_BIG_LITTLE_CPUIDLE enabled
 >>
->>  .../devicetree/bindings/arm/samsung/exynos-adc.txt |    9 ++++--
->>  arch/arm/boot/dts/exynos3250.dtsi                  |    3 +-
->>  arch/arm/boot/dts/exynos4x12.dtsi                  |    3 +-
->>  arch/arm/boot/dts/exynos5250.dtsi                  |    3 +-
->>  arch/arm/boot/dts/exynos5420.dtsi                  |    3 +-
->>  drivers/iio/adc/exynos_adc.c                       |   30 ++++++++++++++------
->>  6 files changed, 36 insertions(+), 15 deletions(-)
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+>> In all 3 cases the secondary cores as well as the system resume fine.
+>> Can you please confirm if your kernel has a similar configuration ?
+>
+> Adding in the missing dependency above, it's now working for me in all 3
+> scenarios. Looking back at the cover letter, I see it's clearly listed
+> as a dependency.  Sorry, my fault.
+>
+> Feel free to add
+>
+> Tested-by: Kevin Hilman <khilman@linaro.org>
+
+Thanks a lot for testing.
+
+>
+> to $SUBJECT series.
+>
+> Kevin
