@@ -1,60 +1,84 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v3 3/9] amba: Keep PM domain powered during ->probe()
-Date: Mon, 13 Oct 2014 16:02:04 +0200
-Message-ID: <1413208930-26019-4-git-send-email-ulf.hansson@linaro.org>
-References: <1413208930-26019-1-git-send-email-ulf.hansson@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:38005 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754017AbaJMOCg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Oct 2014 10:02:36 -0400
-Received: by mail-wg0-f45.google.com with SMTP id m15so8854292wgh.16
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Oct 2014 07:02:35 -0700 (PDT)
-In-Reply-To: <1413208930-26019-1-git-send-email-ulf.hansson@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v2 1/4] dwc3: exynos: Add support for SCLK present on
+ Exynos7
+Date: Mon, 13 Oct 2014 17:44:09 -0500
+Message-ID: <20141013224409.GB1496@saruman>
+References: <1412677176-3850-1-git-send-email-gautam.vivek@samsung.com>
+ <1412677176-3850-2-git-send-email-gautam.vivek@samsung.com>
+ <00f101cfe6a1$d772c5a0$865850e0$%tikhomirov@samsung.com>
+Reply-To: <balbi@ti.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Bn2rw/3z4jIqBvZU"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <00f101cfe6a1$d772c5a0$865850e0$%tikhomirov@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Anton Tikhomirov <av.tikhomirov@samsung.com>
+Cc: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org, balbi@ti.com, kgene.kim@samsung.com, mark.rutland@arm.com, pawel.moll@arm.com, robh+dt@kernel.org, kishon@ti.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron Lu <aaron.lu@intel.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
 
-To sucessfully probe some devices their corresponding PM domains may
-need to be powered.
+--Bn2rw/3z4jIqBvZU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Use the dev_pm_domain_get|put() APIs, to control the behavior of the PM
-domain.
+Hi,
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/amba/bus.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On Mon, Oct 13, 2014 at 01:54:59PM +0900, Anton Tikhomirov wrote:
+> Hi Vivek,
+>=20
+> > Exynos7 also has a separate special gate clock going to the IP
+> > apart from the usual AHB clock. So add support for the same.
+>=20
+> As we discussed before, Exynos7 SoCs have 7 clocks to be controlled
+> by the driver. Adding only sclk is not enough.=20
+>=20
+> >=20
+> > Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> > ---
+> >  drivers/usb/dwc3/dwc3-exynos.c |   16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> >=20
+> > diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-
+> > exynos.c
+> > index 3951a65..7dc6a98 100644
+> > --- a/drivers/usb/dwc3/dwc3-exynos.c
+> > +++ b/drivers/usb/dwc3/dwc3-exynos.c
+> > @@ -35,6 +35,7 @@ struct dwc3_exynos {
+> >  	struct device		*dev;
+> >=20
+> >  	struct clk		*clk;
+>=20
+> The clock "clk" in Exynos5 just gated all that above 7 clocks, which
+> we should control separately now in Exynos7.
+>=20
 
-diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-index 47bbdc1..a8a8e13 100644
---- a/drivers/amba/bus.c
-+++ b/drivers/amba/bus.c
-@@ -187,8 +187,15 @@ static int amba_probe(struct device *dev)
- 		if (ret == -EPROBE_DEFER)
- 			break;
- 
-+		ret = dev_pm_domain_get(dev->pm_domain);
-+		if (ret) {
-+			dev_pm_domain_detach(dev, true);
-+			break;
-+		}
-+
- 		ret = amba_get_enable_pclk(pcdev);
- 		if (ret) {
-+			dev_pm_domain_put(dev->pm_domain);
- 			dev_pm_domain_detach(dev, true);
- 			break;
- 		}
-@@ -198,6 +205,7 @@ static int amba_probe(struct device *dev)
- 		pm_runtime_enable(dev);
- 
- 		ret = pcdrv->probe(pcdev, id);
-+		dev_pm_domain_put(dev->pm_domain);
- 		if (ret == 0)
- 			break;
- 
--- 
-1.9.1
+should I drop this patch for now ?
+
+--=20
+balbi
+
+--Bn2rw/3z4jIqBvZU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUPFW5AAoJEIaOsuA1yqRE2JAP/jLhi8fw0frOAN+5nxZhVUTi
+ByhmsFu6a7/oaLki/fg1WAz7AdgMH0CJuQZpY3UTlyc+4QUKHz7F/ZUWE49p2NFI
+vwQzYMuWPCh5of6kFMN538d1DbLBSE4JqE0VmP4o8My0zxU96UPABocIA+YTlgmo
+vCK8CPWe6rJ3/Hd78sD16wjANqK86UPGerLMQgIlpDcVTvu9Un8AFE4rumtYR+tF
+PldWc8/tuMp2XO6eV4cTQT/oQD3adBDFDfvBdXZXygmvGOjUVlVdpJ8n+ebwkB1z
+O0k6hfr5thmce3R5QKPLz8EGeg9ukSYgy6EOABoy5Hgo8XAJfMKT9r/7zLU1kdwk
+Y/+dw6Thcnpg2+Y8mpo4XQaaIKNDrDL6wiYGqUm8y03NnKK93wau/tb61NAIZe2m
+QiJvgf0FpvN7Fl2Mu2s2fgMHnYZZgIO/NXJ9V7eEGyyRt2/oucR9hduZ7kU1W2pZ
+dcMHpGG5LgFB2DMiwKdycEbo3JPsIsEJN0iPZ6KRMVKiiCdC7UGk137ZBq3xk8As
+8XEM4e1sdQv8ro/HammIM4mXBRrgLCIzfRk6ZYx3SRVKNPn9GdMEr5MJOmw8av1m
+pecPWxA18bQvuWP3fzBs01sflMSVRgYGboRJNsR3yMIp+XFZysXwoCxZgd3Wsuys
+IJI4eDVoTYvA1EYQOo4C
+=XPMD
+-----END PGP SIGNATURE-----
+
+--Bn2rw/3z4jIqBvZU--
