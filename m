@@ -1,7 +1,7 @@
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v3 5/9] i2c: core: Keep PM domain powered during ->probe()
-Date: Mon, 13 Oct 2014 16:02:06 +0200
-Message-ID: <1413208930-26019-6-git-send-email-ulf.hansson@linaro.org>
+Subject: [PATCH v3 7/9] mmc: core: Attach PM domain prior probing of SDIO func driver
+Date: Mon, 13 Oct 2014 16:02:08 +0200
+Message-ID: <1413208930-26019-8-git-send-email-ulf.hansson@linaro.org>
 References: <1413208930-26019-1-git-send-email-ulf.hansson@linaro.org>
 Return-path: <linux-pm-owner@vger.kernel.org>
 In-Reply-To: <1413208930-26019-1-git-send-email-ulf.hansson@linaro.org>
@@ -10,37 +10,42 @@ To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pa
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron Lu <aaron.lu@intel.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-To sucessfully probe some devices their corresponding PM domains may
-need to be powered.
-
-Use the dev_pm_domain_get|put() APIs, to control the behavior of the PM
-domain.
+Align the behvaior to how other buses are handling attachment of PM
+domains. Additionally, let's add error handling.
 
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
- drivers/i2c/i2c-core.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/mmc/core/sdio_bus.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
-index 2f90ac6..37a52c6 100644
---- a/drivers/i2c/i2c-core.c
-+++ b/drivers/i2c/i2c-core.c
-@@ -646,8 +646,15 @@ static int i2c_device_probe(struct device *dev)
+diff --git a/drivers/mmc/core/sdio_bus.c b/drivers/mmc/core/sdio_bus.c
+index 65cf7a7..ba97779 100644
+--- a/drivers/mmc/core/sdio_bus.c
++++ b/drivers/mmc/core/sdio_bus.c
+@@ -313,13 +313,19 @@ int sdio_add_func(struct sdio_func *func)
+ 	dev_set_name(&func->dev, "%s:%d", mmc_card_id(func->card), func->num);
  
- 	status = dev_pm_domain_attach(&client->dev, true);
- 	if (status != -EPROBE_DEFER) {
-+		status = dev_pm_domain_get(client->dev.pm_domain);
-+		if (status) {
-+			dev_pm_domain_detach(&client->dev, true);
-+			return status;
-+		}
+ 	sdio_acpi_set_handle(func);
 +
- 		status = driver->probe(client, i2c_match_id(driver->id_table,
- 					client));
-+		dev_pm_domain_put(client->dev.pm_domain);
- 		if (status)
- 			dev_pm_domain_detach(&client->dev, true);
++	ret = dev_pm_domain_attach(&func->dev, false);
++	if (ret)
++		return ret;
++
+ 	ret = device_add(&func->dev);
+-	if (ret == 0) {
+-		sdio_func_set_present(func);
+-		dev_pm_domain_attach(&func->dev, false);
++	if (ret) {
++		dev_pm_domain_detach(&func->dev, false);
++		return ret;
  	}
+ 
+-	return ret;
++	sdio_func_set_present(func);
++	return 0;
+ }
+ 
+ /*
 -- 
 1.9.1
 
