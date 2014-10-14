@@ -1,63 +1,43 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: Re: [PATCH v2 1/4] dwc3: exynos: Add support for SCLK present on Exynos7
-Date: Tue, 14 Oct 2014 10:25:00 +0530
-Message-ID: <CAFp+6iEKkHxJNzkf+LOWJHtOhtZMe7HG_Vg97_NLfhJw11SQpA@mail.gmail.com>
-References: <1412677176-3850-1-git-send-email-gautam.vivek@samsung.com>
-	<1412677176-3850-2-git-send-email-gautam.vivek@samsung.com>
-	<00f101cfe6a1$d772c5a0$865850e0$%tikhomirov@samsung.com>
-	<20141013224409.GB1496@saruman>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141013224409.GB1496@saruman>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: Anton Tikhomirov <av.tikhomirov@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, robh+dt <robh+dt@kernel.org>, kishon <kishon@ti.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 0/7] [media] exynos-gsc: Fixup PM support
+Date: Tue, 14 Oct 2014 09:15:33 +0200
+Message-ID: <1413270940-4378-1-git-send-email-ulf.hansson@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f41.google.com ([209.85.215.41]:57577 "EHLO
+	mail-la0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753635AbaJNHPy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 14 Oct 2014 03:15:54 -0400
+Received: by mail-la0-f41.google.com with SMTP id pn19so7970633lab.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Oct 2014 00:15:52 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mauro Carvalho Chehab <m.chehab@samsung.com>, linux-media@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Ulf Hansson <ulf.hansson@linaro.org>
 
-Hi Felipe,
+This patchset fixup the PM support and adds some minor improvements to
+potentially save some more power at runtime PM suspend.
 
+Some background to this patchset, which are related to the generic PM domain:
+http://marc.info/?l=linux-pm&m=141217452218592&w=2
+http://marc.info/?t=141217462200011&r=1&w=2
 
-On Tue, Oct 14, 2014 at 4:14 AM, Felipe Balbi <balbi@ti.com> wrote:
-> Hi,
->
-> On Mon, Oct 13, 2014 at 01:54:59PM +0900, Anton Tikhomirov wrote:
->> Hi Vivek,
->>
->> > Exynos7 also has a separate special gate clock going to the IP
->> > apart from the usual AHB clock. So add support for the same.
->>
->> As we discussed before, Exynos7 SoCs have 7 clocks to be controlled
->> by the driver. Adding only sclk is not enough.
->>
->> >
->> > Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->> > ---
->> >  drivers/usb/dwc3/dwc3-exynos.c |   16 ++++++++++++++++
->> >  1 file changed, 16 insertions(+)
->> >
->> > diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-
->> > exynos.c
->> > index 3951a65..7dc6a98 100644
->> > --- a/drivers/usb/dwc3/dwc3-exynos.c
->> > +++ b/drivers/usb/dwc3/dwc3-exynos.c
->> > @@ -35,6 +35,7 @@ struct dwc3_exynos {
->> >     struct device           *dev;
->> >
->> >     struct clk              *clk;
->>
->> The clock "clk" in Exynos5 just gated all that above 7 clocks, which
->> we should control separately now in Exynos7.
->>
->
-> should I drop this patch for now ?
+The conserns from the above discussions are intended to be solved by a reworked
+approach for the generic PM domain, link below.
+http://marc.info/?l=linux-pm&m=141320895122707&w=2
 
-Yes, better to hold this for some time till we get more clarity
-from our h/w team.
+Ulf Hansson (7):
+  [media] exynos-gsc: Simplify clock management
+  [media] exynos-gsc: Convert gsc_m2m_resume() from int to void
+  [media] exynos-gsc: Make driver functional without CONFIG_PM_RUNTIME
+  [media] exynos-gsc: Make runtime PM callbacks available for CONFIG_PM
+  [media] exynos-gsc: Fixup system PM
+  [media] exynos-gsc: Fixup clock management at ->remove()
+  [media] exynos-gsc: Do full clock gating at runtime PM suspend
 
+ drivers/media/platform/exynos-gsc/gsc-core.c | 127 ++++++++-------------------
+ drivers/media/platform/exynos-gsc/gsc-core.h |   3 -
+ 2 files changed, 36 insertions(+), 94 deletions(-)
 
 -- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+1.9.1
