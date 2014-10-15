@@ -1,40 +1,83 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 2/2] Samsung defconfig updates for v3.18
-Date: Tue, 14 Oct 2014 23:32:39 -0700
-Message-ID: <CAOesGMgRBq93diDmA-21UYkFQTZu+LiF9gV+A==GS5uGW9n-Vg@mail.gmail.com>
-References: <543DB158.7030303@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Chander Kashyap <k.chander@samsung.com>
+Subject: [PATCH] arm64: dts: exynos7: add support for cpuidle core power down
+Date: Wed, 15 Oct 2014 12:05:20 +0530
+Message-ID: <1413354920-20165-1-git-send-email-k.chander@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f182.google.com ([209.85.220.182]:34339 "EHLO
-	mail-vc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751232AbaJOGck (ORCPT
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:45157 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751580AbaJOGfk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Oct 2014 02:32:40 -0400
-Received: by mail-vc0-f182.google.com with SMTP id la4so456312vcb.13
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 14 Oct 2014 23:32:39 -0700 (PDT)
-In-Reply-To: <543DB158.7030303@samsung.com>
+	Wed, 15 Oct 2014 02:35:40 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "arm@kernel.org" <arm@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, daniel.lezcano@linaro.org, lorenzo.pieralisi@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com, rjw@rjwysocki.net, kgene.kim@samsung.com, Chander Kashyap <k.chander@samsung.com>
 
-On Tue, Oct 14, 2014 at 4:27 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> The following changes since commit 7d1311b93e58ed55f3a31cc8f94c4b8fe988a2b9:
->
->   Linux 3.17-rc1 (2014-08-16 10:40:26 -0600)
->
-> are available in the git repository at:
->
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> tags/samsung-defconfig
->
-> for you to fetch changes up to 508423bebcda29eb0ba7c627f895387dad7cdcd6:
->
->   ARM: exynos_defconfig: enable USB gadget support (2014-09-25 18:20:18
-> +0900)
+Exynos7 has core power down state where cores can be powered off independently.
+This patch adds support for this state.
 
-Merged, thanks.
+Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+---
+This patch has following dependencies:
+	- [PATCH v5 0/8] arch: arm64: Enable support for Samsung Exynos7 SoC
+		http://www.spinics.net/lists/linux-samsung-soc/msg37047.html
+	- [PATCH v9 0/8] ARM generic idle states
+		http://permalink.gmane.org/gmane.linux.power-management.general/49224
 
+ arch/arm64/boot/dts/exynos/exynos7.dtsi |   18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
--Olof
+diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+index ce221ac..8e0a034 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+@@ -36,6 +36,7 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a57", "arm,armv8";
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP>;
+ 			reg = <0x0>;
+ 		};
+ 
+@@ -43,6 +44,7 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a57", "arm,armv8";
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP>;
+ 			reg = <0x1>;
+ 		};
+ 
+@@ -50,6 +52,7 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a57", "arm,armv8";
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP>;
+ 			reg = <0x2>;
+ 		};
+ 
+@@ -57,8 +60,23 @@
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a57", "arm,armv8";
+ 			enable-method = "psci";
++			cpu-idle-states = <&CPU_SLEEP>;
+ 			reg = <0x3>;
+ 		};
++
++		idle-states {
++			entry-method = "arm,psci";
++
++			CPU_SLEEP: cpu-sleep {
++				compatible = "arm,idle-state";
++				local-timer-stop;
++				arm,psci-suspend-param = <0x0010000>;
++				entry-latency-us = <20>;
++				exit-latency-us = <150>;
++				min-residency-us = <2100>;
++				status = "enabled";
++			};
++		};
+ 	};
+ 
+ 	psci {
+-- 
+1.7.9.5
