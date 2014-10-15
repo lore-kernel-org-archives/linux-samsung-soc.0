@@ -1,52 +1,98 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH] arm64: dts: exynos7: add support for cpuidle core power
- down
-Date: Wed, 15 Oct 2014 15:07:59 +0100
-Message-ID: <20141015140759.GB26484@red-moon>
-References: <1413354920-20165-1-git-send-email-k.chander@samsung.com>
- <20141015090047.GA26484@red-moon>
- <20141015130218.GB20034@leverpostej>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH v2 1/4] dwc3: exynos: Add support for SCLK present on
+ Exynos7
+Date: Wed, 15 Oct 2014 09:50:31 -0500
+Message-ID: <20141015145031.GA11511@saruman>
+References: <1412677176-3850-1-git-send-email-gautam.vivek@samsung.com>
+ <1412677176-3850-2-git-send-email-gautam.vivek@samsung.com>
+ <00f101cfe6a1$d772c5a0$865850e0$%tikhomirov@samsung.com>
+ <20141013224409.GB1496@saruman>
+ <CAFp+6iEKkHxJNzkf+LOWJHtOhtZMe7HG_Vg97_NLfhJw11SQpA@mail.gmail.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20141015130218.GB20034@leverpostej>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Sender: linux-pm-owner@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Chander Kashyap <k.chander@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, Catalin Marinas <Catalin.Marinas@arm.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>
+In-Reply-To: <CAFp+6iEKkHxJNzkf+LOWJHtOhtZMe7HG_Vg97_NLfhJw11SQpA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: Felipe Balbi <balbi@ti.com>, Anton Tikhomirov <av.tikhomirov@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, robh+dt <robh+dt@kernel.org>, kishon <kishon@ti.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Oct 15, 2014 at 02:02:18PM +0100, Mark Rutland wrote:
-> > > +			CPU_SLEEP: cpu-sleep {
-> > > +				compatible = "arm,idle-state";
-> > > +				local-timer-stop;
-> > > +				arm,psci-suspend-param = <0x0010000>;
-> > > +				entry-latency-us = <20>;
-> > > +				exit-latency-us = <150>;
-> > > +				min-residency-us = <2100>;
-> > > +				status = "enabled";
-> 
-> While status is a relatively standard property, it's absence implies
-> everything is OK. There no need for it here as-is.
-> 
-> Additionally, the canonical value is "okay", not "enabled", so this
-> would fail were we to use of_device_is_available in the idle states
-> parsing.
+--ibTvN161/egqYuK8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Good point. I still want it documented in the bindings, keeping in mind
-your remark above.
+Hi,
 
-> > status ? This is not a documented property. If you need it please explain
-> > why, define its bindings and we can see how to accommodate it.
-> 
-> Do we expect that some idle states won't be available on some boards
-> built from the same platform?
+On Tue, Oct 14, 2014 at 10:25:00AM +0530, Vivek Gautam wrote:
+> Hi Felipe,
+>=20
+>=20
+> On Tue, Oct 14, 2014 at 4:14 AM, Felipe Balbi <balbi@ti.com> wrote:
+> > Hi,
+> >
+> > On Mon, Oct 13, 2014 at 01:54:59PM +0900, Anton Tikhomirov wrote:
+> >> Hi Vivek,
+> >>
+> >> > Exynos7 also has a separate special gate clock going to the IP
+> >> > apart from the usual AHB clock. So add support for the same.
+> >>
+> >> As we discussed before, Exynos7 SoCs have 7 clocks to be controlled
+> >> by the driver. Adding only sclk is not enough.
+> >>
+> >> >
+> >> > Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> >> > ---
+> >> >  drivers/usb/dwc3/dwc3-exynos.c |   16 ++++++++++++++++
+> >> >  1 file changed, 16 insertions(+)
+> >> >
+> >> > diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-
+> >> > exynos.c
+> >> > index 3951a65..7dc6a98 100644
+> >> > --- a/drivers/usb/dwc3/dwc3-exynos.c
+> >> > +++ b/drivers/usb/dwc3/dwc3-exynos.c
+> >> > @@ -35,6 +35,7 @@ struct dwc3_exynos {
+> >> >     struct device           *dev;
+> >> >
+> >> >     struct clk              *clk;
+> >>
+> >> The clock "clk" in Exynos5 just gated all that above 7 clocks, which
+> >> we should control separately now in Exynos7.
+> >>
+> >
+> > should I drop this patch for now ?
+>=20
+> Yes, better to hold this for some time till we get more clarity
+> from our h/w team.
 
-I think it is something we should expect and be able to cope with that.
+now dropped. Please a new one if needed.
 
-I will add status to idle-states bindings updates for this cycle and patch DT
-parsing code accordingly.
+--=20
+balbi
 
-Lorenzo
+--ibTvN161/egqYuK8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUPom3AAoJEIaOsuA1yqREa7wP/Albssa+SpegQ4V4/1z6k/sB
+klRtejJ8nTp0PVhF0R3JIdrMCqlzYgct29hzj1pShFhye9aD9OqZVixETNE2eEif
+FX5JFZ/9XojyqlH4ejliL43pVz8aabG2Bqw6MKv2xgW06tRMM2OeFAubVGFLK+H9
+Ibb+P640tXwpKxa1+Ys1BhJWciGsp9a40JOjMX/k8LD4tDWpErFsvUwlj6qqlNb+
+JOVtLGsku8Fi1ByVFogiqOX2sVzPpm0h5gGrYEK1qm97RKBgWTgZw12dMxWoUXoV
+wUhmutXn+7GPJr/FslTt8v8raKDU+p+g7usHoxh/lgdnhQ6+W4U47Ezth+rfZYwi
+fbbPJIqVRSUml/tmDN42lin5PvO+revYJ1KbycLCTWOUb/18VLGbXkusmy+a3hVl
+k+6SbGNa99NysEAGpGKx6mbzpXOdOqYWfnpP3+i82+NRQslIEWzTs9lGP7cnPG66
+dpPSxEPmT1+MJlGB1uaz3v5/LZkbOrzJAK88aLHg7jMefQAFhJlKq7XhFUhINfdr
+LcLtkwRWI3P6BkcvlKrGAvqU5kWeVS6AsbbqXp6OyQ6WF8Vw9k1aiut3iA0YhP2p
+VaH3mKrcSFHJmVl/sWtP/8eY1Cta0x1CsXWbXHC2K49EigicbPYd3f7o7LxUMoiN
+GL4Zo8Fs7tDtoqLfeQ7l
+=9djE
+-----END PGP SIGNATURE-----
+
+--ibTvN161/egqYuK8--
