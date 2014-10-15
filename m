@@ -1,98 +1,102 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v2 1/4] dwc3: exynos: Add support for SCLK present on
- Exynos7
-Date: Wed, 15 Oct 2014 09:50:31 -0500
-Message-ID: <20141015145031.GA11511@saruman>
-References: <1412677176-3850-1-git-send-email-gautam.vivek@samsung.com>
- <1412677176-3850-2-git-send-email-gautam.vivek@samsung.com>
- <00f101cfe6a1$d772c5a0$865850e0$%tikhomirov@samsung.com>
- <20141013224409.GB1496@saruman>
- <CAFp+6iEKkHxJNzkf+LOWJHtOhtZMe7HG_Vg97_NLfhJw11SQpA@mail.gmail.com>
-Reply-To: <balbi@ti.com>
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH 1/1] ARM: EXYNOS: Call regulator core suspend prepare and
+ finish functions
+Date: Wed, 15 Oct 2014 09:19:52 -0700
+Message-ID: <CAD=FV=VT9RBitk5NoMKBRm=RVoNC4roLFEBLpd_L7Fuvxvs9SQ@mail.gmail.com>
+References: <1413374496-27866-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ibTvN161/egqYuK8"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iEKkHxJNzkf+LOWJHtOhtZMe7HG_Vg97_NLfhJw11SQpA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Felipe Balbi <balbi@ti.com>, Anton Tikhomirov <av.tikhomirov@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, robh+dt <robh+dt@kernel.org>, kishon <kishon@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f175.google.com ([209.85.220.175]:40661 "EHLO
+	mail-vc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751164AbaJOQTx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 15 Oct 2014 12:19:53 -0400
+Received: by mail-vc0-f175.google.com with SMTP id id10so1238336vcb.20
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Oct 2014 09:19:52 -0700 (PDT)
+In-Reply-To: <1413374496-27866-1-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
---ibTvN161/egqYuK8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Javier,
 
-Hi,
+On Wed, Oct 15, 2014 at 5:01 AM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> The regulator framework has a set of helpers functions to be used when
+> the system is entering and leaving from suspend but these are not called
+> on Exynos platforms. This means that the .set_suspend_* function handlers
+> defined in regulator drivers are never called when the system is suspended.
+>
+> Suggested-by: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-On Tue, Oct 14, 2014 at 10:25:00AM +0530, Vivek Gautam wrote:
-> Hi Felipe,
->=20
->=20
-> On Tue, Oct 14, 2014 at 4:14 AM, Felipe Balbi <balbi@ti.com> wrote:
-> > Hi,
-> >
-> > On Mon, Oct 13, 2014 at 01:54:59PM +0900, Anton Tikhomirov wrote:
-> >> Hi Vivek,
-> >>
-> >> > Exynos7 also has a separate special gate clock going to the IP
-> >> > apart from the usual AHB clock. So add support for the same.
-> >>
-> >> As we discussed before, Exynos7 SoCs have 7 clocks to be controlled
-> >> by the driver. Adding only sclk is not enough.
-> >>
-> >> >
-> >> > Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> >> > ---
-> >> >  drivers/usb/dwc3/dwc3-exynos.c |   16 ++++++++++++++++
-> >> >  1 file changed, 16 insertions(+)
-> >> >
-> >> > diff --git a/drivers/usb/dwc3/dwc3-exynos.c b/drivers/usb/dwc3/dwc3-
-> >> > exynos.c
-> >> > index 3951a65..7dc6a98 100644
-> >> > --- a/drivers/usb/dwc3/dwc3-exynos.c
-> >> > +++ b/drivers/usb/dwc3/dwc3-exynos.c
-> >> > @@ -35,6 +35,7 @@ struct dwc3_exynos {
-> >> >     struct device           *dev;
-> >> >
-> >> >     struct clk              *clk;
-> >>
-> >> The clock "clk" in Exynos5 just gated all that above 7 clocks, which
-> >> we should control separately now in Exynos7.
-> >>
-> >
-> > should I drop this patch for now ?
->=20
-> Yes, better to hold this for some time till we get more clarity
-> from our h/w team.
+Could you also add a patch to your series ripping out the call in
+"drivers/mfd/sec-core.c" since it doesn't belong there.  If you don't
+rip that out then it will be called twice on systems with that
+regulator.
 
-now dropped. Please a new one if needed.
 
---=20
-balbi
+> ---
+>  arch/arm/mach-exynos/suspend.c | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+>
+> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+> index f5d9773..5b9c551 100644
+> --- a/arch/arm/mach-exynos/suspend.c
+> +++ b/arch/arm/mach-exynos/suspend.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/io.h>
+>  #include <linux/irqchip/arm-gic.h>
+>  #include <linux/err.h>
+> +#include <linux/regulator/machine.h>
+>
+>  #include <asm/cacheflush.h>
+>  #include <asm/hardware/cache-l2x0.h>
+> @@ -270,14 +271,29 @@ static int exynos_suspend_enter(suspend_state_t state)
+>
+>  static int exynos_suspend_prepare(void)
+>  {
+> +       int ret;
+> +
+>         s3c_pm_check_prepare();
+>
+> +       /*
+> +        * REVISIT: It would be better if struct platform_suspend_ops
+> +        * .prepare handler get the suspend_state_t as a parameter to
+> +        * avoid hard-coding the suspend to mem state. It's safe to do
+> +        * it only because the suspend_valid_only_mem function is the
+> +        * .valid callback used to check if a given state is supported
+> +        * by the platform.
+> +        */
+> +       ret = regulator_suspend_prepare(PM_SUSPEND_MEM);
+> +       if (ret)
+> +               pr_info("Failed to prepare regulators for system suspend\n");
+> +
 
---ibTvN161/egqYuK8
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+nit: can you put this before s3c_pm_check_prepare().  pm_check is
+pretty darn broken and I have a feeling that it will eventually be
+ripped out (or in the very least ported to not be Samsung-specific and
+include all of the "suspend volatile" crud that we have in the
+chromeos-3.8 kernel), but might as well try not to break it further.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Changing the order also has the advantage of making prepare / finish
+opposite orders (good!) and handling the fact that you would call
+s3c_pm_check_prepare() but not s3c_pm_check_cleanup() if
+regulator_suspend_prepare() fails.
 
-iQIcBAEBAgAGBQJUPom3AAoJEIaOsuA1yqREa7wP/Albssa+SpegQ4V4/1z6k/sB
-klRtejJ8nTp0PVhF0R3JIdrMCqlzYgct29hzj1pShFhye9aD9OqZVixETNE2eEif
-FX5JFZ/9XojyqlH4ejliL43pVz8aabG2Bqw6MKv2xgW06tRMM2OeFAubVGFLK+H9
-Ibb+P640tXwpKxa1+Ys1BhJWciGsp9a40JOjMX/k8LD4tDWpErFsvUwlj6qqlNb+
-JOVtLGsku8Fi1ByVFogiqOX2sVzPpm0h5gGrYEK1qm97RKBgWTgZw12dMxWoUXoV
-wUhmutXn+7GPJr/FslTt8v8raKDU+p+g7usHoxh/lgdnhQ6+W4U47Ezth+rfZYwi
-fbbPJIqVRSUml/tmDN42lin5PvO+revYJ1KbycLCTWOUb/18VLGbXkusmy+a3hVl
-k+6SbGNa99NysEAGpGKx6mbzpXOdOqYWfnpP3+i82+NRQslIEWzTs9lGP7cnPG66
-dpPSxEPmT1+MJlGB1uaz3v5/LZkbOrzJAK88aLHg7jMefQAFhJlKq7XhFUhINfdr
-LcLtkwRWI3P6BkcvlKrGAvqU5kWeVS6AsbbqXp6OyQ6WF8Vw9k1aiut3iA0YhP2p
-VaH3mKrcSFHJmVl/sWtP/8eY1Cta0x1CsXWbXHC2K49EigicbPYd3f7o7LxUMoiN
-GL4Zo8Fs7tDtoqLfeQ7l
-=9djE
------END PGP SIGNATURE-----
 
---ibTvN161/egqYuK8--
+>         return 0;
+>  }
+>
+>  static void exynos_suspend_finish(void)
+>  {
+>         s3c_pm_check_cleanup();
+> +       regulator_suspend_finish();
+>  }
+>
+>  static const struct platform_suspend_ops exynos_suspend_ops = {
+> --
+> 2.1.0
+>
