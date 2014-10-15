@@ -1,68 +1,65 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: exynos5422-odroid-xu3: MCPM: only 6 of 8 CPUs coming online
-Date: Wed, 15 Oct 2014 11:35:37 +0000 (UTC)
-Message-ID: <loom.20141015T133306-266@post.gmane.org>
-References: <7133556.456161412823997169.JavaMail.weblogic@epml02> <7hzjd4lxc5.fsf@deeprootsystems.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from plane.gmane.org ([80.91.229.3]:33937 "EHLO plane.gmane.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752440AbaJOLkH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Oct 2014 07:40:07 -0400
-Received: from list by plane.gmane.org with local (Exim 4.69)
-	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
-	id 1XeMvz-0008Ed-Eh
-	for linux-samsung-soc@vger.kernel.org; Wed, 15 Oct 2014 13:40:04 +0200
-Received: from 210.94.41.89 ([210.94.41.89])
-        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Oct 2014 13:40:03 +0200
-Received: from jy0922.shim by 210.94.41.89 with local (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Oct 2014 13:40:03 +0200
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 1/1] ARM: EXYNOS: Call regulator core suspend prepare and finish functions
+Date: Wed, 15 Oct 2014 14:01:36 +0200
+Message-ID: <1413374496-27866-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
 
-Hi,
+The regulator framework has a set of helpers functions to be used when
+the system is entering and leaving from suspend but these are not called
+on Exynos platforms. This means that the .set_suspend_* function handlers
+defined in regulator drivers are never called when the system is suspended.
 
-Kevin Hilman <khilman <at> kernel.org> writes:
+Suggested-by: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
+ arch/arm/mach-exynos/suspend.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-> 
-> Hi Abhilash,
-> 
-> Abhilash Kesavan <a.kesavan <at> samsung.com> writes:
-> 
-> > I had noticed a similar issue where only 6 cores would come up during
-> > development on 5420. This was because there was a check in our u-boot
-> > secondary boot-up path which would put a core into WFI if a flag was
-> > not present and hence fail to boot. I wonder if it is the same
-> > situation in your case too.
-> > Is the u-boot for odroid-xu3 publically available or can you check if
-there is any such code present in your
-> secondary bring-up path.
-> 
-> I'm using the hardkernel u-boot[1], branch: odroidxu3-v2012.07.  I'm
-> currently using the pre-built binaries that are in the
-> sd_fuse/hardkernel directory of that branch, but I can rebuild u-boot if
-> needed.
-> 
-> I'm not very familiar with u-boot, but if f you have some pointers where
-> to start looking in that code, that would be helpful.
-> 
-> Kevin
-> 
-> [1] https://github.com/hardkernel/u-boot.git
-> 
-> 
-
-It seems to need magic code.
-
-Please refer
-https://github.com/abhijeet-dev/linux-samsung/commit
-/553b7f40465ab4fad6c270f289cd4780942f7fae
-
-Thanks.
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index f5d9773..5b9c551 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -20,6 +20,7 @@
+ #include <linux/io.h>
+ #include <linux/irqchip/arm-gic.h>
+ #include <linux/err.h>
++#include <linux/regulator/machine.h>
+ 
+ #include <asm/cacheflush.h>
+ #include <asm/hardware/cache-l2x0.h>
+@@ -270,14 +271,29 @@ static int exynos_suspend_enter(suspend_state_t state)
+ 
+ static int exynos_suspend_prepare(void)
+ {
++	int ret;
++
+ 	s3c_pm_check_prepare();
+ 
++	/*
++	 * REVISIT: It would be better if struct platform_suspend_ops
++	 * .prepare handler get the suspend_state_t as a parameter to
++	 * avoid hard-coding the suspend to mem state. It's safe to do
++	 * it only because the suspend_valid_only_mem function is the
++	 * .valid callback used to check if a given state is supported
++	 * by the platform.
++	 */
++	ret = regulator_suspend_prepare(PM_SUSPEND_MEM);
++	if (ret)
++		pr_info("Failed to prepare regulators for system suspend\n");
++
+ 	return 0;
+ }
+ 
+ static void exynos_suspend_finish(void)
+ {
+ 	s3c_pm_check_cleanup();
++	regulator_suspend_finish();
+ }
+ 
+ static const struct platform_suspend_ops exynos_suspend_ops = {
+-- 
+2.1.0
