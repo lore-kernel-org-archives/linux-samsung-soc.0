@@ -1,80 +1,92 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 6/9] regulator: max77802: Add header for operating modes
-Date: Wed, 15 Oct 2014 18:20:36 +0200
-Message-ID: <1413390039-19364-7-git-send-email-javier.martinez@collabora.co.uk>
-References: <1413390039-19364-1-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH 0/9] Add max77802 regulator operating mode support
+Date: Wed, 15 Oct 2014 18:20:30 +0200
+Message-ID: <1413390039-19364-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1413390039-19364-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Mark Brown <broonie@kernel.org>
 Cc: Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add a header file for the max77802 constants that could be shared between
-the regulator driver and Device Tree source files. Also, remove standby
-and off opmodes since only normal and low power are valid operating modes.
+Hello Mark,
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- drivers/regulator/max77802.c                   |  1 +
- include/dt-bindings/regulator/maxim,max77802.h | 18 ++++++++++++++++++
- include/linux/mfd/max77686.h                   |  7 -------
- 3 files changed, 19 insertions(+), 7 deletions(-)
+This is the second attempt to add operating modes support for the
+regulators in the max77802 PMIC. Instead of trying to come up with
+a generic solution like in the previous attempt [0], I added DT
+properties that are specific to the max77802 PMIC so is documented
+clearly what are the operating modes that each regulator support. The
+series version is not v2 because it's a completely different approach.
+
+There is a "maxim,regulator-initial-mode" property to configure at
+startup the operating mode for the regulators that support changing
+its mode during normal operation and "maxim,regulator-{disk,mem}-mode"
+properties for the regulators that only support changing its operating
+mode when the system enters in a suspend state.
+
+The regulators can be enabled or disabled during suspend by using the
+standard "regulator-{on,off}-in-suspend" properties from Chanwoo Choi's
+regulator suspend state series [1].
+
+I tried to use as much as possible the infrastructure that is already
+provided in the regulator framework by adding the needed handlers for
+the set_suspend_* operations.
+
+Also, the driver still had some assumptions and didn't clearly made a
+distinction between the valid modes (normal and low power) and off which
+is not an operating mode as you explained. So I reworked a bit to better
+treat them separately as is expected by the regulator API.
+
+This series depend on [1] and also patch:
+"ARM: EXYNOS: Call regulator core suspend prepare and finish functions" [2].
+
+Javier Martinez Canillas (9):
+  regulator: max77802: Add .set_suspend_{enable,disable} callbacks
+  regulator: max77802: Add .{get,set}_mode callbacks
+  regulator: max77802: Split regulator operations for BUCKs
+  regulator: max77802: Add set suspend mode for BUCKs and simplify code
+  regulator: max77802: Don't treat OFF as an operating mode
+  regulator: max77802: Add header for operating modes
+  regulator: max77802: Document regulator opmode DT properties
+  regulator: max77802: Parse regulator operating mode properties
+  ARM: dts: Configure regulators for suspend on exynos Peach boards
+
+ .../devicetree/bindings/regulator/max77802.txt     |  45 ++++++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |  81 ++++++++++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |  81 ++++++++++
+ drivers/regulator/max77802.c                       | 168 ++++++++++++++++-----
+ include/dt-bindings/regulator/maxim,max77802.h     |  18 +++
+ include/linux/mfd/max77686.h                       |   7 -
+ 6 files changed, 353 insertions(+), 47 deletions(-)
  create mode 100644 include/dt-bindings/regulator/maxim,max77802.h
 
-diff --git a/drivers/regulator/max77802.c b/drivers/regulator/max77802.c
-index 046b9b7..43e34dd 100644
---- a/drivers/regulator/max77802.c
-+++ b/drivers/regulator/max77802.c
-@@ -33,6 +33,7 @@
- #include <linux/regulator/of_regulator.h>
- #include <linux/mfd/max77686.h>
- #include <linux/mfd/max77686-private.h>
-+#include <dt-bindings/regulator/maxim,max77802.h>
- 
- /* Default ramp delay in case it is not manually set */
- #define MAX77802_RAMP_DELAY		100000		/* uV/us */
-diff --git a/include/dt-bindings/regulator/maxim,max77802.h b/include/dt-bindings/regulator/maxim,max77802.h
-new file mode 100644
-index 0000000..cf28631
---- /dev/null
-+++ b/include/dt-bindings/regulator/maxim,max77802.h
-@@ -0,0 +1,18 @@
-+/*
-+ * Copyright (C) 2014 Google, Inc
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * Device Tree binding constants for the Maxim 77802 PMIC regulators
-+ */
-+
-+#ifndef _DT_BINDINGS_REGULATOR_MAXIM_MAX77802_H
-+#define _DT_BINDINGS_REGULATOR_MAXIM_MAX77802_H
-+
-+/* Regulator operating modes */
-+#define MAX77802_OPMODE_LP	1
-+#define MAX77802_OPMODE_NORMAL	3
-+
-+#endif /* _DT_BINDINGS_REGULATOR_MAXIM_MAX77802_H */
-diff --git a/include/linux/mfd/max77686.h b/include/linux/mfd/max77686.h
-index 7e6dc4b..553f7d0 100644
---- a/include/linux/mfd/max77686.h
-+++ b/include/linux/mfd/max77686.h
-@@ -131,13 +131,6 @@ enum max77686_opmode {
- 	MAX77686_OPMODE_STANDBY,
- };
- 
--enum max77802_opmode {
--	MAX77802_OPMODE_OFF,
--	MAX77802_OPMODE_STANDBY,
--	MAX77802_OPMODE_LP,
--	MAX77802_OPMODE_NORMAL,
--};
--
- struct max77686_opmode_data {
- 	int id;
- 	int mode;
--- 
-2.1.0
+Patch #1 adds handlers for all regulators that can be enabled and disabled
+during suspend
+
+Patch #2 adds a get and set mode function handlers for the regulators whose
+operating mode can be changed at runtime.
+
+Patch #3 split the regulator operations for the BUCK regulators since don't
+have the exact functionality.
+
+Patch #4 add support for changing the operating mode for all regulators that
+support setting a different opmode during suspend.
+
+Patch #5 is a cleanup to not call OFF an operating mode.
+
+Patch #6 adds a header file with the valid operating modes so it can be used
+by Device Tree source files.
+
+Patch #7 extend the max77802 DT binding to include the properties used to
+setup the regulators modes.
+
+Patch #8 adds the support to parse these from the driver.
+
+Patch #9 configures the modes for the max77802 regulators in the Device Tree
+source file of the Peach Chromebooks.
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2014/10/8/331
+[1]: https://lkml.org/lkml/2014/10/10/161
+[2]: https://lkml.org/lkml/2014/10/15/228
