@@ -1,48 +1,37 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 2/9] regulator: max77802: Add .{get,set}_mode callbacks
-Date: Thu, 16 Oct 2014 12:24:35 +0200
-Message-ID: <543F9CE3.7040404@collabora.co.uk>
-References: <1413390039-19364-1-git-send-email-javier.martinez@collabora.co.uk> <1413390039-19364-3-git-send-email-javier.martinez@collabora.co.uk> <20141016083653.GE724@sirena.org.uk>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH v3] ARM: dts: add CPU nodes for Exynos4 SoCs
+Date: Thu, 16 Oct 2014 11:48:59 +0100
+Message-ID: <20141016104859.GA29308@red-moon>
+References: <5230569.XLlNbB5NvF@amdc1032>
+ <018e01cfd885$770dd940$65298bc0$@kernel.org>
+ <20140925081704.GA20841@e102568-lin.cambridge.arm.com>
+ <5423D19B.1040203@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141016083653.GE724@sirena.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from service87.mimecast.com ([91.220.42.44]:56779 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751400AbaJPKsT convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 Oct 2014 06:48:19 -0400
+In-Reply-To: <5423D19B.1040203@samsung.com>
+Content-Disposition: inline
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, Mark Rutland <Mark.Rutland@arm.com>, 'Thomas Abraham' <ta.omasab@gmail.com>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>
 
-Hello Mark,
+On Thu, Sep 25, 2014 at 09:26:03AM +0100, Kukjin Kim wrote:
+> On 09/25/14 17:17, Lorenzo Pieralisi wrote:
+> > [CC'ed Daniel to make him aware this patch goes through your tree]
+> >
+> Thanks and just note the branch  which is including this change actually 
+> v4 is just rebased not v3 will be sent out to arm-soc last tonight or 
+> tomorrow.
 
-Thanks a lot for your feedback.
+What's the plan for patch ? I do not see it upstream and would like
+to rebase the Exynos CPUidle changes on top of it.
 
-On 10/16/2014 10:36 AM, Mark Brown wrote:
-> On Wed, Oct 15, 2014 at 06:20:32PM +0200, Javier Martinez Canillas wrote:
-> 
->> +#define MAX77802_MODE(pval) ((pval == MAX77802_OPMODE_NORMAL) ?	\
->> +			     REGULATOR_MODE_NORMAL : REGULATOR_MODE_STANDBY)
->> +
-> 
-> Make this a static inline function if there's any need for it, this is
-> both more legible and more helpful for the compiler.
-> 
-
-Ok, will change that.
-
->> +	switch (mode) {
->> +	case REGULATOR_MODE_IDLE:
->> +	case REGULATOR_MODE_STANDBY:
->> +		val = MAX77802_OPMODE_LP;	/* ON in Low Power Mode */
->> +		break;
-> 
-> You should never have multiple modes mapping onto a singel value - if
-> the user sets a mode they should find that the device has that mode.
-> 
-
-I see, thanks for the clarification. I think STANDBY better maps the device
-Low Power Mode according the description in include/linux/regulator/consumer.h
-so I'll just make IDLE invalid in v2.
-
-Best regards,
-Javier
+Thanks,
+Lorenzo
