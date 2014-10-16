@@ -1,148 +1,88 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 7/9] usb: dwc2/gadget: use soft disconnect mode for
- implementing pullup control
-Date: Thu, 16 Oct 2014 08:41:20 -0500
-Message-ID: <20141016134120.GJ3480@saruman>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH 8/9] usb: dwc2/gadget: fix calls to phy control functions
+ in suspend/resume code
+Date: Thu, 16 Oct 2014 08:42:40 -0500
+Message-ID: <20141016134240.GK3480@saruman>
 References: <1413464285-24172-1-git-send-email-m.szyprowski@samsung.com>
- <1413464285-24172-8-git-send-email-m.szyprowski@samsung.com>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+ <1413464285-24172-9-git-send-email-m.szyprowski@samsung.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="72k7VsmfIboquFwl"
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="rwbb4r/vLufKlfJs"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:45592 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752249AbaJPNmx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 Oct 2014 09:42:53 -0400
 Content-Disposition: inline
-In-Reply-To: <1413464285-24172-8-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Paul Zimmerman <paulz-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1413464285-24172-9-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Paul Zimmerman <paulz@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
---72k7VsmfIboquFwl
+--rwbb4r/vLufKlfJs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-your subject line is wrong. ->pullup() is already implemented, you're
-moving unnecessary code from ->pullup() to other places.
-
-On Thu, Oct 16, 2014 at 02:58:03PM +0200, Marek Szyprowski wrote:
-> This patch moves PHY enable and disable calls from pullup method to
-> udc_start/stop functions and adds calls to recently introduces soft
-> disconnect mode in pullup method. This improves dwc2 gadget driver
-> compatibility with gadget API requirements (now pullup method really
-> forces soft disconnect mode instead of shutting down the whole hardware)
-> and as a side effect also solves the issue related to limited caller
-> context for PHY related functions (they cannot be called from
-> non-sleeping context).
-
-you're doing two things in one patch. See below
-
-> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+On Thu, Oct 16, 2014 at 02:58:04PM +0200, Marek Szyprowski wrote:
+> This patch moves calls to phy enable/disable out of spinlock protected
+> blocks in device suspend/resume to fix incorrect caller context. Phy
+> related functions must not be called from atomic context.
+>=20
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  drivers/usb/dwc2/gadget.c | 16 +++++++++++++---
->  1 file changed, 13 insertions(+), 3 deletions(-)
+>  drivers/usb/dwc2/gadget.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
 >=20
 > diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-> index d039334967d7..cdf417a7ae63 100644
+> index cdf417a7ae63..052b1a857291 100644
 > --- a/drivers/usb/dwc2/gadget.c
 > +++ b/drivers/usb/dwc2/gadget.c
-> @@ -2883,6 +2883,7 @@ static int s3c_hsotg_udc_start(struct usb_gadget *g=
-adget,
->  			   struct usb_gadget_driver *driver)
->  {
->  	struct s3c_hsotg *hsotg =3D to_hsotg(gadget);
-> +	unsigned long flags;
->  	int ret;
+> @@ -3656,11 +3656,13 @@ static int s3c_hsotg_suspend(struct platform_devi=
+ce *pdev, pm_message_t state)
+>  			 hsotg->driver->driver.name);
 > =20
->  	if (!hsotg) {
-> @@ -2919,7 +2920,15 @@ static int s3c_hsotg_udc_start(struct usb_gadget *=
-gadget,
->  		goto err;
->  	}
-> =20
-> +	s3c_hsotg_phy_enable(hsotg);
-
-you moved phy_enable to udc_start/udc_stop (one patch)
-
-> +
-> +	spin_lock_irqsave(&hsotg->lock, flags);
-> +	s3c_hsotg_init(hsotg);
-> +	s3c_hsotg_core_init_disconnected(hsotg);
-
-you moved core init here (another patch).
-
-> +	spin_unlock_irqrestore(&hsotg->lock, flags);
-> +
->  	dev_info(hsotg->dev, "bound driver %s\n", driver->driver.name);
-> +
->  	return 0;
-> =20
->  err:
-> @@ -2957,6 +2966,8 @@ static int s3c_hsotg_udc_stop(struct usb_gadget *ga=
-dget,
-> =20
+>  	spin_lock_irqsave(&hsotg->lock, flags);
+> +	s3c_hsotg_core_disconnect(hsotg);
+>  	s3c_hsotg_disconnect(hsotg);
+> -	s3c_hsotg_phy_disable(hsotg);
+>  	hsotg->gadget.speed =3D USB_SPEED_UNKNOWN;
 >  	spin_unlock_irqrestore(&hsotg->lock, flags);
 > =20
 > +	s3c_hsotg_phy_disable(hsotg);
-> +
->  	regulator_bulk_disable(ARRAY_SIZE(hsotg->supplies), hsotg->supplies);
-> =20
->  	clk_disable(hsotg->clk);
-> @@ -2990,14 +3001,13 @@ static int s3c_hsotg_pullup(struct usb_gadget *ga=
-dget, int is_on)
->  	dev_dbg(hsotg->dev, "%s: is_on: %d\n", __func__, is_on);
-> =20
->  	spin_lock_irqsave(&hsotg->lock, flags);
-> +
->  	if (is_on) {
-> -		s3c_hsotg_phy_enable(hsotg);
->  		clk_enable(hsotg->clk);
-> -		s3c_hsotg_core_init_disconnected(hsotg);
->  		s3c_hsotg_core_connect(hsotg);
->  	} else {
-> +		s3c_hsotg_core_disconnect(hsotg);
->  		clk_disable(hsotg->clk);
-> -		s3c_hsotg_phy_disable(hsotg);
->  	}
-> =20
->  	hsotg->gadget.speed =3D USB_SPEED_UNKNOWN;
-> --=20
-> 1.9.2
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+this is aching to have a locked version as well as an unlocked version.
+Look at what you do here. There's a minor race when you release that
+spinlock. By the time ->suspend() is called, IRQs are not yet disabled.
 
 --=20
 balbi
 
---72k7VsmfIboquFwl
+--rwbb4r/vLufKlfJs
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJUP8r/AAoJEIaOsuA1yqREpgUP/2gUj1nFwbWUC2h0eFLTMym5
-3aczk8cI9OII6YMnqYQ3IpeEhkxoXV0nzBrNYCfEb0CFlaDvLBnSxs8YoLBy87vu
-tSGh1sgf/IXmownhz/HxUc5qX12LgvAGhXOP+UhgPswCLWfXpYvRAQb2jYf6IPvd
-G0AL6Afa/Mj/q3480chjVBt/nVJC3fl15WK7jVul/g7s2/ZK43IxwCV/Mh9GU0TP
-YNATk8XBGfL6xEWV5cEpVjGb/rVn3EVLwpSBvI/1YWoGdLkyw8G6YbEPAKUYisyw
-o4+ZiD9GA+pECUooO3KIqtxmwDAoeVMv5VqdbjdiCVMiklwmkUKJUBZdQEQhys4Y
-TuTwGSOI1iGS0QaYJE8npNjOtKKz4SigB0L+Pop+0vgCu6yOaOIoG44m6AoN3V5T
-LQASWvUIescJ0XA5ANBmHUwITPB5DmvtIfZaBM8pqNkx9iTvzU0ETkmPpOHCGBfR
-/bSMjo9aKF17tURdT8LxVGGtKi3vTORabR9J/czDmpqb0VnHbAAfzbUSvmJMZrOp
-GzEO5fY5BmSk1sP1P1XBGkjJACXba0Us8yNjG7cS3B5g2Tof157ozdxUe+gA7vgs
-DHwTrVjzCx8A9W54V2MXvHDEX+4H6WuTUF9L2VHH+oOy1LwqPL7691Z8wAakdbgg
-f5qD5J52M5XOF5AuhyLx
-=TlHu
+iQIcBAEBAgAGBQJUP8tQAAoJEIaOsuA1yqRElsAP/0e9QOFR0zwI9RebMP50p3hA
+TUKoZ93YWxZ5XDYaf35rnKdD2V+ybjDRRunSpP8RPtHf2BOsFmLhFmhoGcM3rzWp
+ko1crXROz3oF3gnUSd5riiKcp1ZjlxokLe1mmrUNn06xypL2v+/geCmJNQ7n6ISh
+M7662x7OhNC6qZEGchV8Z4XO+w6ChhdCTTEoHzmLaKAW/AjqeAWMGzZ11F1+ok+Q
+rDAM3y5TThQ9Ogq9Z6nVWmwI2T1dQu2ePllUxudal1BaIUKVGkS1MhWtRlVOyOOp
+3WTLlzRLFTt7sO2BuVpfRt203qfIK6PuEaV+Gc2m221w8NS5zaCmdCIJoT11oZV5
+Yp2WM9tIWHtUVqKbOxT+9xviR1Z8kONKiHo0bnKO0NF+DDk+BJr41J9J8yYnC7ik
+BUkGXX3nrxkZDwObN2KYM+QFyHq4phyIumJn6P9VYYGCwnnlMoC7OJ2D0+O3dBTz
+QenZgrEMWpKRi14k+DeS8kRz12Q0ULlowhTFkIQsAVfXKTFtBcEM6yY1vBrMEKNw
+GpjylbvwCRdBxj8OdKPJpC848fgDD8ZzxyIRn15lCING/W1bxOj+tRfqD2/VBy+5
+U2JkNok9jIJoLs4MFQ0+LVtYmRfprc8j1hBE/uRsMkXzV/IXubs05tQweh8eZ1LB
+oWOI57mEDVidXIAzkotC
+=4K0P
 -----END PGP SIGNATURE-----
 
---72k7VsmfIboquFwl--
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--rwbb4r/vLufKlfJs--
