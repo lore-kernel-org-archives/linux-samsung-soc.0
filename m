@@ -1,36 +1,39 @@
 From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 2/9] usb: dwc2/gadget: fix enumeration issues
-Date: Thu, 16 Oct 2014 08:34:25 -0500
-Message-ID: <20141016133425.GG3480@saruman>
+Subject: Re: [PATCH 3/9] usb: dwc2/gadget: fix support for soft_connect udc
+ framework feature
+Date: Thu, 16 Oct 2014 08:36:10 -0500
+Message-ID: <20141016133610.GH3480@saruman>
 References: <1413464285-24172-1-git-send-email-m.szyprowski@samsung.com>
- <1413464285-24172-3-git-send-email-m.szyprowski@samsung.com>
+ <1413464285-24172-4-git-send-email-m.szyprowski@samsung.com>
 Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="0qt3EE9wi45a2ZFX"
+	protocol="application/pgp-signature"; boundary="2oox5VnwalALFvA7"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:38066 "EHLO comal.ext.ti.com"
+Received: from bear.ext.ti.com ([192.94.94.41]:55338 "EHLO bear.ext.ti.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752296AbaJPNej (ORCPT
+	id S1752035AbaJPNgX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Oct 2014 09:34:39 -0400
+	Thu, 16 Oct 2014 09:36:23 -0400
 Content-Disposition: inline
-In-Reply-To: <1413464285-24172-3-git-send-email-m.szyprowski@samsung.com>
+In-Reply-To: <1413464285-24172-4-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Paul Zimmerman <paulz@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
---0qt3EE9wi45a2ZFX
+--2oox5VnwalALFvA7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 16, 2014 at 02:57:58PM +0200, Marek Szyprowski wrote:
-> Excessive debug messages might cause timing issues that prevent correct
-> usb enumeration. This patch hides information about USB bus reset to let
-> driver enumerate fast enough to avoid making host angry. This fixes
-> endless enumeration and usb reset loop observed with some Linux hosts.
+Hi,
+
+On Thu, Oct 16, 2014 at 02:57:59PM +0200, Marek Szyprowski wrote:
+> Enabling and disabling usb gadget by writing to
+> /sys/class/udc/*hsotg/soft_connect results in calling udc_start/udc_stop
+> functions with the same usb gadget driver, so the driver should not WARN
+> about such case.
 >=20
 > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
@@ -38,44 +41,43 @@ On Thu, Oct 16, 2014 at 02:57:58PM +0200, Marek Szyprowski wrote:
 >  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
 > diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-> index 119c8a3effc2..8870e38c1d82 100644
+> index 8870e38c1d82..37fda4c03397 100644
 > --- a/drivers/usb/dwc2/gadget.c
 > +++ b/drivers/usb/dwc2/gadget.c
-> @@ -2333,7 +2333,7 @@ irq_retry:
+> @@ -2892,7 +2892,7 @@ static int s3c_hsotg_udc_start(struct usb_gadget *g=
+adget,
+>  		return -EINVAL;
+>  	}
 > =20
->  		u32 usb_status =3D readl(hsotg->regs + GOTGCTL);
-> =20
-> -		dev_info(hsotg->dev, "%s: USBRst\n", __func__);
-> +		dev_dbg(hsotg->dev, "%s: USBRst\n", __func__);
+> -	WARN_ON(hsotg->driver);
+> +	WARN_ON(hsotg->driver && hsotg->driver !=3D driver);
 
-considering this is inside an IRQ handler, I'd rather use dev_vdbg() but
-no strong feelings:
-
-Reviewed-by: Felipe Balbi <balbi@ti.com>
+the bug is in your ->udc_stop(). You should clear hsotg->driver to NULL
+there.
 
 --=20
 balbi
 
---0qt3EE9wi45a2ZFX
+--2oox5VnwalALFvA7
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJUP8lhAAoJEIaOsuA1yqREA+oQAKrpbPBroqyjNFk2cCWmvGZT
-WYmu5Ekasyd4pvhZhs/Go9AwQmjgtdTi1xrHkKi6kq+BN8WiRdf/5d3i/Z5V+sNu
-DXB/OPjKS5wc+dceBCHW/7083/y0xRg0C8tyuFRpry7qupzKylIZeojCzRko/dnE
-UX8Y/AkRzJJPwVxvQIuoOWDHqOwzuZKuy48JFZCfFCUCN3AkCU5xyXRLJRPv7t+j
-0lhPktrevJC4a9jOyxAZquFD+8EfnEBkr22Lx7TUtPL2frNz03XoH3O7MHKiDDi3
-i4Srq13gLwf831SsCnVnUHZcX8qA1tiyrhtKmchXZmlOcLSDEac52DLfLnkdYakU
-3T0PRTLfB8sYCHKb6lsOUnbhpQkmQkinASSXF/5qtIrIG8Vw6LBVdrYUBaKsCNEg
-ZEyJn+HKrSResrBNlYeMMFQY0CgIQawAXKd4qk4enw04t/dFIFjpkKOGVbJw00f0
-7LduD9+Df2bEACTvqc3mwd3IRd/j8VybqEoyrH838NQML2ui3Y+ktXqvAidQkeXu
-k7EcTUAPaRkvPkU2YMhf1tgvORXs7pILMwUwy0ptwU8Ki3IyWoMDlMgVCKvPV1I3
-YBGMbqHxCZE2IMcZ8a7YS1b5i7RCecJId+VrGrAn4xqXT88PzlnuPXR4c02S6e/c
-gE+fQNFcgY3T9p/1Jx3K
-=1ISQ
+iQIcBAEBAgAGBQJUP8nKAAoJEIaOsuA1yqREwUUQAJlnXaKqgKl+c1IvnN5UL8NT
+weGlC9Bj3v4iShc+PBQ7gAHV2i4vXs9/0SXPGyuRxFRN2iZ+EsfpAxv6Asqvu0Z0
+YaEr9g/n/WpBOSvTxeFjPwcBTF9pLrBcLysppixoLZQM5zeFkid9OvZdX6XVkZgn
+2Dw4Qa2L/GMewwfqMUdZyEiwdQFubX53Y99YTtXYAXtM7HhKVcLnYKz9zYGSrA7M
+EUdZr/U9PTM3i3twIpC9dEIkhfEYn2uBZ68SmHkYOeSgqmnkG93UenLjiDysUrWx
+lWTk6yXh/7pOxpnASRoU0AVhk6bs91+BIzBdag7GHFiWWQWK23qa4kVrf5nzx3yl
+bnQkZuikBL/89sxTMrp2J1qWCgOlal2xvZbxiFsZeGxP1LbcmzOSA8vi7kajiDrl
+76SEz7q16lBQffYWV77+Cdi7KUsxYFAg390jYZwqWW+id01giF8ve0O2bmZslP7Q
+ZYbgnp2+bbldLY4Sleuz/kSmVjULrWhzlWW0WTJ6Mxlt4ijhfDkPEsgBka45zj0L
+LsNDURaY0jXEISlUMzgazGh6RXygjvsW7KQdHsMFYzTgGTfo2WYrePk3GJ3O+837
+JJO97i4Qv3iyMYuSfZRY0MO9S2gJZ6FMynBYMg0eFLid4pF7SWvYXaN5iCMOGkKt
+BM+wiO3w6RZWE90mFS2I
+=xNJR
 -----END PGP SIGNATURE-----
 
---0qt3EE9wi45a2ZFX--
+--2oox5VnwalALFvA7--
