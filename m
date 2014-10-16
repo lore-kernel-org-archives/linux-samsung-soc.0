@@ -1,99 +1,43 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 6/9] usb: dwc2/gadget: decouple setting soft disconnect from
- s3c_hsotg_core_init
-Date: Thu, 16 Oct 2014 14:58:02 +0200
-Message-ID: <1413464285-24172-7-git-send-email-m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 3/9] usb: dwc2/gadget: fix support for soft_connect udc
+ framework feature
+Date: Thu, 16 Oct 2014 14:57:59 +0200
+Message-ID: <1413464285-24172-4-git-send-email-m.szyprowski@samsung.com>
 References: <1413464285-24172-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1413464285-24172-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Paul Zimmerman <paulz-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:57455 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752020AbaJPM62 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 Oct 2014 08:58:28 -0400
+In-reply-to: <1413464285-24172-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Paul Zimmerman <paulz@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-This patch changes s3c_hsotg_core_init function to leave hardware in
-soft disconnect mode, so the actual moment of coupling the hardware to
-the usb bus can be later controlled by the driver in the more accurate
-way. For this purpose, separate functions for enabling and disabling
-soft disconnect mode have been added.
+Enabling and disabling usb gadget by writing to
+/sys/class/udc/*hsotg/soft_connect results in calling udc_start/udc_stop
+functions with the same usb gadget driver, so the driver should not WARN
+about such case.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/usb/dwc2/gadget.c | 22 +++++++++++++++++-----
- 1 file changed, 17 insertions(+), 5 deletions(-)
+ drivers/usb/dwc2/gadget.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-index 1ba0682fb252..d039334967d7 100644
+index 8870e38c1d82..37fda4c03397 100644
 --- a/drivers/usb/dwc2/gadget.c
 +++ b/drivers/usb/dwc2/gadget.c
-@@ -2124,7 +2124,7 @@ static int s3c_hsotg_corereset(struct s3c_hsotg *hsotg)
-  *
-  * Issue a soft reset to the core, and await the core finishing it.
-  */
--static void s3c_hsotg_core_init(struct s3c_hsotg *hsotg)
-+static void s3c_hsotg_core_init_disconnected(struct s3c_hsotg *hsotg)
- {
- 	s3c_hsotg_corereset(hsotg);
- 
-@@ -2241,14 +2241,23 @@ static void s3c_hsotg_core_init(struct s3c_hsotg *hsotg)
- 		readl(hsotg->regs + DOEPCTL0));
- 
- 	/* clear global NAKs */
--	writel(DCTL_CGOUTNAK | DCTL_CGNPINNAK,
-+	writel(DCTL_CGOUTNAK | DCTL_CGNPINNAK | DCTL_SFTDISCON,
- 	       hsotg->regs + DCTL);
- 
- 	/* must be at-least 3ms to allow bus to see disconnect */
- 	mdelay(3);
- 
- 	hsotg->last_rst = jiffies;
-+}
-+
-+static void s3c_hsotg_core_disconnect(struct s3c_hsotg *hsotg)
-+{
-+	/* set the soft-disconnect bit */
-+	__orr32(hsotg->regs + DCTL, DCTL_SFTDISCON);
-+}
- 
-+static void s3c_hsotg_core_connect(struct s3c_hsotg *hsotg)
-+{
- 	/* remove the soft-disconnect and let's go */
- 	__bic32(hsotg->regs + DCTL, DCTL_SFTDISCON);
- }
-@@ -2348,7 +2357,8 @@ irq_retry:
- 				kill_all_requests(hsotg, &hsotg->eps[0],
- 							  -ECONNRESET, true);
- 
--				s3c_hsotg_core_init(hsotg);
-+				s3c_hsotg_core_init_disconnected(hsotg);
-+				s3c_hsotg_core_connect(hsotg);
- 			}
- 		}
+@@ -2892,7 +2892,7 @@ static int s3c_hsotg_udc_start(struct usb_gadget *gadget,
+ 		return -EINVAL;
  	}
-@@ -2983,7 +2993,8 @@ static int s3c_hsotg_pullup(struct usb_gadget *gadget, int is_on)
- 	if (is_on) {
- 		s3c_hsotg_phy_enable(hsotg);
- 		clk_enable(hsotg->clk);
--		s3c_hsotg_core_init(hsotg);
-+		s3c_hsotg_core_init_disconnected(hsotg);
-+		s3c_hsotg_core_connect(hsotg);
- 	} else {
- 		clk_disable(hsotg->clk);
- 		s3c_hsotg_phy_disable(hsotg);
-@@ -3670,7 +3681,8 @@ static int s3c_hsotg_resume(struct platform_device *pdev)
  
- 	spin_lock_irqsave(&hsotg->lock, flags);
- 	s3c_hsotg_phy_enable(hsotg);
--	s3c_hsotg_core_init(hsotg);
-+	s3c_hsotg_core_init_disconnect(hsotg);
-+	s3c_hsotg_core_connect(hsotg);
- 	spin_unlock_irqrestore(&hsotg->lock, flags);
+-	WARN_ON(hsotg->driver);
++	WARN_ON(hsotg->driver && hsotg->driver != driver);
  
- 	return ret;
+ 	driver->driver.bus = NULL;
+ 	hsotg->driver = driver;
 -- 
 1.9.2
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
