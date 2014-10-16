@@ -1,7 +1,7 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v2 3/7] regulator: max77802: Don't treat OFF as an operating mode
-Date: Thu, 16 Oct 2014 18:48:49 +0200
-Message-ID: <1413478133-2577-4-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v2 5/7] regulator: max77802: Document regulator opmode DT properties
+Date: Thu, 16 Oct 2014 18:48:51 +0200
+Message-ID: <1413478133-2577-6-git-send-email-javier.martinez@collabora.co.uk>
 References: <1413478133-2577-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1413478133-2577-1-git-send-email-javier.martinez@collabora.co.uk>
@@ -10,39 +10,90 @@ To: Mark Brown <broonie@kernel.org>
 Cc: Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The only operating modes that are supported by the regulators in the
-max77802 PMIC are Output ON (normal) and Output On in Low Power Mode.
-OFF was wrongly counted as an operating mode while is only a regulator
-status. Make clear in the code that OFF is not an operating mode.
+Some regulators from the max77802 PMIC support to be configured in one
+of two operating mode: Output ON (normal) and Output On Low Power Mode.
+Not all regulators support these two modes and for some of them, the
+mode can be changed while the system is running in normal operation
+while others only support their mode to be changed on system suspend.
+
+Extend the max77802 PMIC binding adding Device Tree properties so the
+regulators operating modes can be configured.
 
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
 
 Changes since v1: None
 
- drivers/regulator/max77802.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/regulator/max77802.txt     | 45 ++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
 
-diff --git a/drivers/regulator/max77802.c b/drivers/regulator/max77802.c
-index dae2c1a..3abf99d 100644
---- a/drivers/regulator/max77802.c
-+++ b/drivers/regulator/max77802.c
-@@ -49,6 +49,7 @@
- #define MAX77802_RAMP_RATE_MASK_4BIT	0xF0
- #define MAX77802_RAMP_RATE_SHIFT_4BIT	4
+diff --git a/Documentation/devicetree/bindings/regulator/max77802.txt b/Documentation/devicetree/bindings/regulator/max77802.txt
+index 5aeaffc..34812e0 100644
+--- a/Documentation/devicetree/bindings/regulator/max77802.txt
++++ b/Documentation/devicetree/bindings/regulator/max77802.txt
+@@ -25,6 +25,39 @@ with their hardware counterparts as follow. The valid names are:
+ 			example: LDO1, LDO2, LDO35.
+ 	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 10.
+ 			example: BUCK1, BUCK5, BUCK10.
++
++Besides the standard regulator constraints, the max77802 regulator supports
++two different operating modes: Normal and Low Power Mode. Some regulators
++support the modes to be changed at startup or by the consumers during normal
++operation while others only support to change the mode during system suspend.
++The following optional properties can be used to configure the operating modes:
++
++- maxim,regulator-initial-mode: initial operating mode.
++  This property can only be used on regulators that support changing their mode
++  during normal operation. These regulators are LDO1, LDO3, LDO20 and LDO21.
++- maxim,regulator-disk-mode: operating mode for the regulator when the system
++  enters in the Suspend-to-Disk state.
++- maxim,regulator-mem-mode: operating mode for the regulator when the system
++  enters in the Suspend-to-RAM state.
++
++The value for maxim,regulator-[initial,disk,mem]-mode is one of the following:
++	1: Normal regulator voltage output mode.
++	3: Low Power which reduces the quiescent current down to only 1uA
++
++The list of valid modes are defined in the dt-bindings/regulator/regulator.h
++header and can be included by device tree source files. If no mode is defined,
++then the OS will not manage the modes and the HW default values will be used.
++
++The maxim,regulator-[initial,disk,mem]-mode properties can only be used with
++regulators that support changing their mode to Low Power Mode during suspend.
++These regulators are BUCKs 2-4 and LDOs 1-35.
++
++The maxim,regulator-[disk,mem]-mode property only takes effect if the regulator
++has been marked as enabled for the given suspend mode using the standard
++"regulator-on-in-suspend" property. If the regulator has not been explicitly
++enabled or if it was marked as disabled with "regulator-off-in-suspend", then
++setting the operating mode for that state will have no effect.
++
+ Example:
  
-+#define MAX77802_STATUS_OFF		0x0
- #define MAX77802_OFF_PWRREQ		0x1
- #define MAX77802_LP_PWRREQ		0x2
+ 	max77802@09 {
+@@ -36,11 +69,23 @@ Example:
+ 		#size-cells = <0>;
  
-@@ -615,7 +616,7 @@ static int max77802_pmic_probe(struct platform_device *pdev)
- 		 * the hardware reports OFF as the regulator operating mode.
- 		 * Default to operating mode NORMAL in that case.
- 		 */
--		if (val == MAX77802_OPMODE_OFF)
-+		if (val == MAX77802_STATUS_OFF)
- 			max77802->opmode[id] = MAX77802_OPMODE_NORMAL;
- 		else
- 			max77802->opmode[id] = val;
+ 		regulators {
++			ldo1_reg: LDO1 {
++				regulator-name = "vdd_1v0";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1000000>;
++				regulator-always-on;
++				maxim,regulator-initial-mode = <MAX77802_OPMODE_LP>;
++			};
++
+ 			ldo11_reg: LDO11 {
+ 				regulator-name = "vdd_ldo11";
+ 				regulator-min-microvolt = <1900000>;
+ 				regulator-max-microvolt = <1900000>;
+ 				regulator-always-on;
++				maxim,regulator-mem-mode = <MAX77802_OPMODE_LP>;
++				regulator-state-mem {
++					regulator-on-in-suspend;
++				};
+ 			};
+ 
+ 			buck1_reg: BUCK1 {
 -- 
 2.1.0
