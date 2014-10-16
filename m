@@ -1,92 +1,85 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [GIT PULL 2/2] Samsung defconfig updates for v3.18
-Date: Thu, 16 Oct 2014 16:59:35 +0900
-Message-ID: <014e01cfe917$20adbb90$620932b0$@kernel.org>
-References: <543DB158.7030303@samsung.com>
- <CAOesGMgRBq93diDmA-21UYkFQTZu+LiF9gV+A==GS5uGW9n-Vg@mail.gmail.com>
- <1413380267.4565.1.camel@collabora.co.uk>
- <00e601cfe8dc$abf25bb0$03d71310$@kernel.org>
- <CABxcv==HK5F5vv7g7XXBLofTVxx9Q8ZYj6bPfeMS7rWKTMb5pg@mail.gmail.com>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
+ ps8622 DT properties
+Date: Thu, 16 Oct 2014 13:53:38 +0530
+Message-ID: <CAEC9eQMAp-ya0fsGLL+ruGenU2Dr0g03PWuMgWk=2qcCw4YM2g@mail.gmail.com>
+References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
+ <5433C0CC.5040804@ti.com>
+ <CAEC9eQPq28GFS+1GweECM9QHfCM+LzOL9ySq05i6RfVG6-2ubQ@mail.gmail.com>
+ <2230493.RvivJykn5T@avalon> <20141008070918.GA4999@ulmo>
+ <CAEC9eQPn2GAn6nrSvgso2QTXQErtY+8dH5-LbZS9mGTYcYC5Gw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:46310 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751254AbaJPH7i (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Oct 2014 03:59:38 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NDJ00G4027CIP30@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 16 Oct 2014 16:59:36 +0900 (KST)
-In-reply-to: <CABxcv==HK5F5vv7g7XXBLofTVxx9Q8ZYj6bPfeMS7rWKTMb5pg@mail.gmail.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAEC9eQPn2GAn6nrSvgso2QTXQErtY+8dH5-LbZS9mGTYcYC5Gw@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Javier Martinez Canillas' <javier@dowhile0.org>, 'Kukjin Kim' <kgene@kernel.org>, 'Olof Johansson' <olof@lixom.net>, 'Arnd Bergmann' <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Javier Martinez Canillas wrote:
-> 
-> Hello Kukjin,
-> 
-Hi,
+ping!
 
-> On Thu, Oct 16, 2014 at 3:01 AM, Kukjin Kim <kgene@kernel.org> wrote:
-> > Sjoerd Simons wrote:
-> >> > On Tue, 2014-10-14 at 23:32 -0700, Olof Johansson wrote:
-> >> > On Tue, Oct 14, 2014 at 4:27 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> >> > >   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> >> > > tags/samsung-defconfig
-> >> > >
-> >> > > for you to fetch changes up to 508423bebcda29eb0ba7c627f895387dad7cdcd6:
-> >> > >
-> >> > >   ARM: exynos_defconfig: enable USB gadget support (2014-09-25 18:20:18
-> >> > > +0900)
-> >> >
-> >> > Merged, thanks.
-> >>
-> >> Hrm, enabling USB gadget support will actually regress USB on Exynos
-> >> peach boards and Arndale Octa without some of the DT fixes that landed
-> >> in armsoc next/late branch. Specifically:
-> >>
-> >> 5c42acdbffff9bab595482b966b22ab5e2f6f359
-> >> dbb62ef9ade6e92737d3fac199665b8b7c455959
-> >>
-> > Yeah...I've missed it. Sorry.
-> >
-> >> Might be good to cherry-pick those into for-next at this point (they're
-> >> rather trivial)
-> >>
-> > So...Olof, can you please cherry pick them into arm-soc/fixes? Or shall I send
-> > pull-request for them again?
-> >
-> 
-+ Arnd, Olof and regarding MLs
-
-> There are other bugfixes for 3.18 that ended in next/late so it would
-> be good if you do a new pull request to include those as well.
-> 
-> The commits (with hashes from linux-next) are:
-> 
-> 3f3d046 ARM: dts: Remove display timings node from exynos5250-snow
-> dd12ac7 ARM: dts: Fix chip select GPIO on exynos5250-smdk5250
-
-> c04c92e ARM: dts: Add rtc_src clk for s3c-rtc on exynos5250-snow
-> 8bd43b6 ARM: dts: Add rtc_src clk for s3c-rtc on exynos Peach boards
-> 
-I checked its dependent clock patches have been merged into mainline just now.
-As you know, the patches blocked dt patches in this time :( Anyway, I'll try
-to send a pull-request with including above patches tonight.
-
-Thanks for your gentle reminder.
-
-Olof, I think it makes sense because it is related fixes for 3.18 ;)
-
-Sorry for late noise...
-
-Thanks,
-Kukjin
+On Fri, Oct 10, 2014 at 6:33 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
+> On Wed, Oct 8, 2014 at 12:39 PM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+>> On Tue, Oct 07, 2014 at 05:49:24PM +0300, Laurent Pinchart wrote:
+>>> Hi Ajay,
+>>>
+>>> On Tuesday 07 October 2014 16:06:55 Ajay kumar wrote:
+>>> > On Tue, Oct 7, 2014 at 4:00 PM, Tomi Valkeinen wrote:
+>>> > > On 20/09/14 14:22, Ajay kumar wrote:
+>>> > >> Well, I am okay with using video ports to describe the relationship
+>>> > >> between the encoder, bridge and the panel.
+>>> > >> But, its just that I need to make use of 2 functions when phandle
+>>> > >> does it using just one function ;)
+>>> > >> -        panel_node = of_parse_phandle(dev->of_node, "panel", 0)
+>>> > >> +       endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
+>>> > >> +       if (!endpoint)
+>>> > >> +               return -EPROBE_DEFER;
+>>> > >> +
+>>> > >> +       panel_node = of_graph_get_remote_port_parent(endpoint);
+>>> > >> +       if (!panel_node)
+>>> > >> +               return -EPROBE_DEFER;
+>>> > >>
+>>> > >>
+>>> > >> If nobody else has objections over using of_graph functions instead
+>>> > >> of phandles, I can respin this patchset by making use of video ports.
+>>> > >
+>>> > > The discussion did digress somewhat.
+>>> > >
+>>> > > As a clarification, I'm in no way nack'ing this series because it
+>>> > > doesn't use the graphs for video connections. I don't see the simple
+>>> > > phandle bindings used here as broken as such.
+>>> >
+>>> > Well, I am okay with any approach you guys decide on. I desperately want
+>>> > this to get this in since it has been floating around for quite sometime.
+>>> > The more we drag this, the more rework for me since the number of platforms
+>>> > using bridge support is increasing daily!
+>>>
+>>> I won't nack this patch either. I'm however concerned that we'll run straight
+>>> into the wall if we don't come up with an agreement on a standard way to
+>>> describe connections in DT for display devices, which is why I would prefer
+>>> the ps8622 bindings to use OF graph to describe connections.
+>>
+>> I think there's not really an easy way out here. It's pretty bold trying
+>> to come up with a common way to describe bridges when we have only a
+>> single one (and a single use-case at that). The worst that can happen is
+>> that we need to change the binding at some point, in which case we may
+>> have to special-case early drivers, but I really don't think that's as
+>> much of an issue as everybody seems to think.
+>>
+>> This series has been floating around for months because we're being
+>> overly prudent to accept a binding that /may/ turn out to not be generic
+>> enough.
+> Right. It would be great if you guys come to agreement ASAP!
+>
+> Ajay
