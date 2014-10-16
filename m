@@ -1,7 +1,7 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v2 7/7] ARM: dts: Configure regulators for suspend on exynos Peach boards
-Date: Thu, 16 Oct 2014 18:48:53 +0200
-Message-ID: <1413478133-2577-8-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v2 2/7] regulator: max77802: Add set suspend mode for BUCKs and simplify code
+Date: Thu, 16 Oct 2014 18:48:48 +0200
+Message-ID: <1413478133-2577-3-git-send-email-javier.martinez@collabora.co.uk>
 References: <1413478133-2577-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1413478133-2577-1-git-send-email-javier.martinez@collabora.co.uk>
@@ -10,556 +10,215 @@ To: Mark Brown <broonie@kernel.org>
 Cc: Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The regulator core now has support to choose if a regulator
-has to be enabled or disabled during system suspend and also
-the max77802 driver supports changing the regulator operating
-mode during runtime and when the system enters into sleep mode.
+The max77802 PMIC has a special enable pin (PWRREQ) that can be used
+by the Application Processor (AP) to power down and up voltage rails.
 
-To lower power during suspend, configure the regulators state
-using the same configuration found in the ChromeOS 3.8 kernel.
+The max77802 PMIC regulators have 3 different enable control logics.
+Some regulators support to be configured on different operational mode
+during normal operation while others only support to be put in a Low
+Power Mode while the system has entered in sleep mode. Some regulators
+don't even support that configuration. The logics are the following:
+
+Enable Control Logic1 by PWRREQ (BUCK 2-4, LDO2, LDO4-19, LDO22, LDO35)
+-------------------------------
+0: Output OFF
+1: Output ON/OFF (Controlled by PWRREQ)
+     PWRREQ = HIGH (1): Output ON in Normal Mode
+     PWRREQ = LOW (0): Output OFF
+2: Output On with Low Power Mode (Controlled by PWRREQ)
+     PWRREQ = HIGH (1) : Output ON in Normal Mode
+     PWRREQ = LOW (0): Output ON in Low Power Mode
+3: Output ON in Normal Mode
+
+Enable Control Logic2 by PWRREQ (LDO1, LDO20, LDO21)
+-------------------------------
+0: Output ON/OFF by ENx
+1: Output ON in Low Power Mode
+2: Output ON in Low Power Mode (Controlled by PWRREQ)
+   PWRREQ = HIGH (1): Output ON in Normal Mode
+   PWRREQ = LOW (0): Output ON in Low Power Mode
+3: Output ON in Normal Mode
+
+Enable Control Logic3 by PWRREQ (LDO3)
+-------------------------------
+0 or 3: Output ON in Normal Mode
+1: Output ON in Low Power Mode
+2: Output ON in Low Power Mode (Controlled by PWRREQ)
+   PWRREQ = HIGH (1): Output ON in Normal Mode
+   PWRREQ = LOW (0): Output ON in Low Power Mode
+
+The driver only implemented .set_suspend_mode for the LDOs regulators
+but some BUCKs also support to be put in Low Power Mode on system wide
+suspend so they should be supported as well. Two different functions
+were used for the logic 1 and 2 but this is not necessary.
+
+Only normal and Low Power Mode are valid operational modes, OFF is not
+an mode but is a regulator state that is handled by .set_suspend_enable
+ad .set_suspend_disable. So the same .set_suspend_mode function can be
+used by all the regulators that support Output On with Low Power Mode
+by PWRREQ, making much simpler the code to set the suspend mode.
 
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
 
-Changes since v1: None
+Changes since v1:
+ - Don't map both IDLE and STANDBY modes to the hw Low Power Mode.
+   Suggested by Mark Brown.
 
- arch/arm/boot/dts/exynos5420-peach-pit.dts | 81 ++++++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos5800-peach-pi.dts  | 81 ++++++++++++++++++++++++++++++
- 2 files changed, 162 insertions(+)
+ drivers/regulator/max77802.c | 93 ++++++++++++++++++++++----------------------
+ 1 file changed, 46 insertions(+), 47 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos5420-peach-pit.dts b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-index 9a050e1..72d4e14 100644
---- a/arch/arm/boot/dts/exynos5420-peach-pit.dts
-+++ b/arch/arm/boot/dts/exynos5420-peach-pit.dts
-@@ -13,6 +13,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/clock/maxim,max77802.h>
-+#include <dt-bindings/regulator/maxim,max77802.h>
- #include "exynos5420.dtsi"
+diff --git a/drivers/regulator/max77802.c b/drivers/regulator/max77802.c
+index 6eabb95..dae2c1a 100644
+--- a/drivers/regulator/max77802.c
++++ b/drivers/regulator/max77802.c
+@@ -50,6 +50,7 @@
+ #define MAX77802_RAMP_RATE_SHIFT_4BIT	4
  
- / {
-@@ -192,6 +193,9 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-ramp-delay = <12500>;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
+ #define MAX77802_OFF_PWRREQ		0x1
++#define MAX77802_LP_PWRREQ		0x2
  
- 			buck2_reg: BUCK2 {
-@@ -201,6 +205,9 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-ramp-delay = <12500>;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
+ /* MAX77802 has two register formats: 2-bit and 4-bit */
+ static const unsigned int ramp_table_77802_2bit[] = {
+@@ -148,71 +149,68 @@ static unsigned max77802_get_mode(struct regulator_dev *rdev)
+ 	return max77802_map_mode(max77802->opmode[id]);
+ }
  
- 			buck3_reg: BUCK3 {
-@@ -210,6 +217,9 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-ramp-delay = <12500>;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
+-/*
+- * Some LDOs supports LPM-ON/OFF/Normal-ON mode during suspend state
+- * (Enable Control Logic1 by PWRREQ)
++/**
++ * max77802_set_suspend_mode - set regulator opmode when the system is suspended
++ * @rdev: regulator to change mode
++ * @mode: operating mode to be set
++ *
++ * Will set the operating mode for the regulators during system suspend.
++ * This function is valid for the three different enable control logics:
+  *
+- * LDOs 2, 4-19, 22-35.
++ * Enable Control Logic1 by PWRREQ (BUCK 2-4 and LDOs 2, 4-19, 22-35)
++ * Enable Control Logic2 by PWRREQ (LDOs 1, 20, 21)
++ * Enable Control Logic3 by PWRREQ (LDO 3)
+  *
++ * If setting the regulator mode fails, the function only warns but does
++ * not return an error code to avoid the regulator core to stop setting
++ * the operating mode for the remaining regulators.
+  */
+-static int max77802_ldo_set_suspend_mode_logic1(struct regulator_dev *rdev,
+-						unsigned int mode)
++static int max77802_set_suspend_mode(struct regulator_dev *rdev,
++				     unsigned int mode)
+ {
+ 	struct max77802_regulator_prv *max77802 = rdev_get_drvdata(rdev);
+ 	int id = rdev_get_id(rdev);
+ 	unsigned int val;
+ 	int shift = max77802_get_opmode_shift(id);
  
- 			buck4_reg: BUCK4 {
-@@ -219,6 +229,9 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-ramp-delay = <12500>;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
+-	switch (mode) {
+-	case REGULATOR_MODE_IDLE:			/* ON in LP Mode */
+-		val = MAX77802_OPMODE_LP;
+-		break;
+-	case REGULATOR_MODE_NORMAL:			/* ON in Normal Mode */
+-		val = MAX77802_OPMODE_NORMAL;
+-		break;
+-	case REGULATOR_MODE_STANDBY:			/* ON/OFF by PWRREQ */
+-		val = MAX77802_OPMODE_STANDBY;
+-		break;
+-	default:
+-		dev_warn(&rdev->dev, "%s: regulator mode: 0x%x not supported\n",
++	/*
++	 * If the regulator has been disabled for suspend
++	 * then is invalid to try setting a suspend mode.
++	 */
++	if (!max77802->opmode[id] == MAX77802_OFF_PWRREQ) {
++		dev_warn(&rdev->dev, "%s: is disabled, mode: 0x%x not set\n",
+ 			 rdev->desc->name, mode);
+-		return -EINVAL;
++		return 0;
+ 	}
  
- 			buck5_reg: BUCK5 {
-@@ -227,6 +240,9 @@
- 				regulator-max-microvolt = <1200000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
+-	max77802->opmode[id] = val;
+-	return regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
+-				  rdev->desc->enable_mask, val << shift);
+-}
+-
+-/*
+- * Mode 1 (Output[ON/OFF] by PWRREQ) is not supported on some LDOs
+- * (Enable Control Logic2 by PWRREQ)
+- *
+- * LDOs 1, 20, 21, and 3,
+- *
+- */
+-static int max77802_ldo_set_suspend_mode_logic2(struct regulator_dev *rdev,
+-						unsigned int mode)
+-{
+-	struct max77802_regulator_prv *max77802 = rdev_get_drvdata(rdev);
+-	int id = rdev_get_id(rdev);
+-	unsigned int val;
+-	int shift = max77802_get_opmode_shift(id);
+-
+ 	switch (mode) {
+-	case REGULATOR_MODE_IDLE:			/* ON in LP Mode */
+-		val = MAX77802_OPMODE_LP;
+-		break;
+-	case REGULATOR_MODE_NORMAL:			/* ON in Normal Mode */
+-		val = MAX77802_OPMODE_NORMAL;
++	case REGULATOR_MODE_STANDBY:
++		/*
++		 * If the regulator opmode is normal then enable
++		 * ON in Low Power Mode by PWRREQ. If the mode is
++		 * already Low Power then no action is required.
++		 */
++		if (max77802->opmode[id] == MAX77802_OPMODE_NORMAL)
++			val = MAX77802_LP_PWRREQ;
++		else
++			return 0;
+ 		break;
++	case REGULATOR_MODE_NORMAL:
++		/*
++		 * If the regulator operating mode is Low Power then
++		 * normal is not a valid opmode in suspend. If the
++		 * mode is already normal then no action is required.
++		 */
++		if (max77802->opmode[id] == MAX77802_OPMODE_LP)
++			dev_warn(&rdev->dev, "%s: in Low Power: 0x%x invalid\n",
++				 rdev->desc->name, mode);
++		return 0;
+ 	default:
+ 		dev_warn(&rdev->dev, "%s: regulator mode: 0x%x not supported\n",
+ 			 rdev->desc->name, mode);
+ 		return -EINVAL;
+ 	}
  
- 			buck6_reg: BUCK6 {
-@@ -236,6 +252,9 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-ramp-delay = <12500>;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
+-	max77802->opmode[id] = val;
+ 	return regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
+ 				  rdev->desc->enable_mask, val << shift);
+ }
+@@ -297,7 +295,7 @@ static struct regulator_ops max77802_ldo_ops_logic1 = {
+ 	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
+ 	.set_suspend_enable	= max77802_enable,
+ 	.set_suspend_disable	= max77802_set_suspend_disable,
+-	.set_suspend_mode	= max77802_ldo_set_suspend_mode_logic1,
++	.set_suspend_mode	= max77802_set_suspend_mode,
+ };
  
- 			buck7_reg: BUCK7 {
-@@ -244,6 +263,9 @@
- 				regulator-max-microvolt = <1350000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
+ /*
+@@ -314,7 +312,7 @@ static struct regulator_ops max77802_ldo_ops_logic2 = {
+ 	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
+ 	.set_mode		= max77802_set_mode,
+ 	.get_mode		= max77802_get_mode,
+-	.set_suspend_mode	= max77802_ldo_set_suspend_mode_logic2,
++	.set_suspend_mode	= max77802_set_suspend_mode,
+ };
  
- 			buck8_reg: BUCK8 {
-@@ -252,6 +274,9 @@
- 				regulator-max-microvolt = <2850000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
+ /* BUCKS 1, 6 */
+@@ -345,6 +343,7 @@ static struct regulator_ops max77802_buck_234_ops = {
+ 	.set_ramp_delay		= max77802_set_ramp_delay_2bit,
+ 	.set_suspend_enable	= max77802_enable,
+ 	.set_suspend_disable	= max77802_set_suspend_disable,
++	.set_suspend_mode	= max77802_set_suspend_mode,
+ };
  
- 			buck9_reg: BUCK9 {
-@@ -260,6 +285,9 @@
- 				regulator-max-microvolt = <2000000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			buck10_reg: BUCK10 {
-@@ -268,6 +296,9 @@
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo1_reg: LDO1 {
-@@ -275,6 +306,10 @@
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1000000>;
- 				regulator-always-on;
-+				maxim,regulator-mem-mode = <MAX77802_OPMODE_LP>;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo2_reg: LDO2 {
-@@ -288,6 +323,10 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				maxim,regulator-mem-mode = <MAX77802_OPMODE_LP>;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			vqmmc_sdcard: ldo4_reg: LDO4 {
-@@ -295,6 +334,9 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <2800000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo5_reg: LDO5 {
-@@ -302,6 +344,9 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo6_reg: LDO6 {
-@@ -309,6 +354,9 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo7_reg: LDO7 {
-@@ -322,6 +370,9 @@
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1000000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo9_reg: LDO9 {
-@@ -329,6 +380,10 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				maxim,regulator-mem-mode = <MAX77802_OPMODE_LP>;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo10_reg: LDO10 {
-@@ -336,6 +391,9 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo11_reg: LDO11 {
-@@ -343,6 +401,10 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				maxim,regulator-mem-mode = <MAX77802_OPMODE_LP>;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo12_reg: LDO12 {
-@@ -350,6 +412,9 @@
- 				regulator-min-microvolt = <3000000>;
- 				regulator-max-microvolt = <3000000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo13_reg: LDO13 {
-@@ -357,6 +422,10 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				maxim,regulator-mem-mode = <MAX77802_OPMODE_LP>;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo14_reg: LDO14 {
-@@ -364,6 +433,9 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo15_reg: LDO15 {
-@@ -371,6 +443,9 @@
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1000000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo17_reg: LDO17 {
-@@ -378,6 +453,9 @@
- 				regulator-min-microvolt = <900000>;
- 				regulator-max-microvolt = <1400000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo18_reg: LDO18 {
-@@ -451,6 +529,9 @@
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1000000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo32_reg: LDO32 {
-diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-index e8fdda8..f64a7bf 100644
---- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
-+++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
-@@ -13,6 +13,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/clock/maxim,max77802.h>
-+#include <dt-bindings/regulator/maxim,max77802.h>
- #include "exynos5800.dtsi"
- 
- / {
-@@ -191,6 +192,9 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-ramp-delay = <12500>;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck2_reg: BUCK2 {
-@@ -200,6 +204,9 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-ramp-delay = <12500>;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck3_reg: BUCK3 {
-@@ -209,6 +216,9 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-ramp-delay = <12500>;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck4_reg: BUCK4 {
-@@ -218,6 +228,9 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-ramp-delay = <12500>;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck5_reg: BUCK5 {
-@@ -226,6 +239,9 @@
- 				regulator-max-microvolt = <1200000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck6_reg: BUCK6 {
-@@ -235,6 +251,9 @@
- 				regulator-always-on;
- 				regulator-boot-on;
- 				regulator-ramp-delay = <12500>;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck7_reg: BUCK7 {
-@@ -243,6 +262,9 @@
- 				regulator-max-microvolt = <1350000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			buck8_reg: BUCK8 {
-@@ -251,6 +273,9 @@
- 				regulator-max-microvolt = <2850000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			buck9_reg: BUCK9 {
-@@ -259,6 +284,9 @@
- 				regulator-max-microvolt = <2000000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			buck10_reg: BUCK10 {
-@@ -267,6 +295,9 @@
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
- 				regulator-boot-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo1_reg: LDO1 {
-@@ -274,6 +305,10 @@
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1000000>;
- 				regulator-always-on;
-+				maxim,regulator-mem-mode = <MAX77802_OPMODE_LP>;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo2_reg: LDO2 {
-@@ -287,6 +322,10 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				maxim,regulator-mem-mode = <MAX77802_OPMODE_LP>;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			vqmmc_sdcard: ldo4_reg: LDO4 {
-@@ -294,6 +333,9 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <2800000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo5_reg: LDO5 {
-@@ -301,6 +343,9 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo6_reg: LDO6 {
-@@ -308,6 +353,9 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo7_reg: LDO7 {
-@@ -321,6 +369,9 @@
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1000000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo9_reg: LDO9 {
-@@ -328,6 +379,10 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				maxim,regulator-mem-mode = <MAX77802_OPMODE_LP>;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo10_reg: LDO10 {
-@@ -335,6 +390,9 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo11_reg: LDO11 {
-@@ -342,6 +400,10 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				maxim,regulator-mem-mode = <MAX77802_OPMODE_LP>;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo12_reg: LDO12 {
-@@ -349,6 +411,9 @@
- 				regulator-min-microvolt = <3000000>;
- 				regulator-max-microvolt = <3000000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo13_reg: LDO13 {
-@@ -356,6 +421,10 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				maxim,regulator-mem-mode = <MAX77802_OPMODE_LP>;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+				};
- 			};
- 
- 			ldo14_reg: LDO14 {
-@@ -363,6 +432,9 @@
- 				regulator-min-microvolt = <1800000>;
- 				regulator-max-microvolt = <1800000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo15_reg: LDO15 {
-@@ -370,6 +442,9 @@
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1000000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo17_reg: LDO17 {
-@@ -377,6 +452,9 @@
- 				regulator-min-microvolt = <900000>;
- 				regulator-max-microvolt = <1400000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo18_reg: LDO18 {
-@@ -450,6 +528,9 @@
- 				regulator-min-microvolt = <1000000>;
- 				regulator-max-microvolt = <1000000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-off-in-suspend;
-+				};
- 			};
- 
- 			ldo32_reg: LDO32 {
+ /* BUCKs 5, 7-10 */
 -- 
 2.1.0
