@@ -1,39 +1,42 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 4/9] usb: dwc2/gadget: disable phy before turning off power
- regulators
-Date: Thu, 16 Oct 2014 14:58:00 +0200
-Message-ID: <1413464285-24172-5-git-send-email-m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 2/9] usb: dwc2/gadget: fix enumeration issues
+Date: Thu, 16 Oct 2014 14:57:58 +0200
+Message-ID: <1413464285-24172-3-git-send-email-m.szyprowski@samsung.com>
 References: <1413464285-24172-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1413464285-24172-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Paul Zimmerman <paulz-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:54147 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752456AbaJPM6d (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 Oct 2014 08:58:33 -0400
+In-reply-to: <1413464285-24172-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Paul Zimmerman <paulz@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-This patch fixes probe function to match the pattern used elsewhere in
-the driver, where power regulators are turned off as the last element in
-the device shutdown procedure.
+Excessive debug messages might cause timing issues that prevent correct
+usb enumeration. This patch hides information about USB bus reset to let
+driver enumerate fast enough to avoid making host angry. This fixes
+endless enumeration and usb reset loop observed with some Linux hosts.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/usb/dwc2/gadget.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/usb/dwc2/gadget.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-index 37fda4c03397..178a6ea5eef8 100644
+index 119c8a3effc2..8870e38c1d82 100644
 --- a/drivers/usb/dwc2/gadget.c
 +++ b/drivers/usb/dwc2/gadget.c
-@@ -3573,6 +3573,7 @@ static int s3c_hsotg_probe(struct platform_device *pdev)
- 		s3c_hsotg_initep(hsotg, &hsotg->eps[epnum], epnum);
+@@ -2333,7 +2333,7 @@ irq_retry:
  
- 	/* disable power and clock */
-+	s3c_hsotg_phy_disable(hsotg);
+ 		u32 usb_status = readl(hsotg->regs + GOTGCTL);
  
- 	ret = regulator_bulk_disable(ARRAY_SIZE(hsotg->supplies),
- 				    hsotg->supplies);
-@@ -3581,8 +3582,6 @@ static int s3c_hsotg_probe(struct platform_device *pdev)
- 		goto err_ep_mem;
- 	}
+-		dev_info(hsotg->dev, "%s: USBRst\n", __func__);
++		dev_dbg(hsotg->dev, "%s: USBRst\n", __func__);
+ 		dev_dbg(hsotg->dev, "GNPTXSTS=%08x\n",
+ 			readl(hsotg->regs + GNPTXSTS));
  
--	s3c_hsotg_phy_disable(hsotg);
+-- 
+1.9.2
