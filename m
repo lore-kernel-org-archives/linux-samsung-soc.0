@@ -1,7 +1,7 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v2 4/7] regulator: max77802: Add header for operating modes
-Date: Thu, 16 Oct 2014 18:48:50 +0200
-Message-ID: <1413478133-2577-5-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v2 6/7] regulator: max77802: Parse regulator operating mode properties
+Date: Thu, 16 Oct 2014 18:48:52 +0200
+Message-ID: <1413478133-2577-7-git-send-email-javier.martinez@collabora.co.uk>
 References: <1413478133-2577-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1413478133-2577-1-git-send-email-javier.martinez@collabora.co.uk>
@@ -10,74 +10,63 @@ To: Mark Brown <broonie@kernel.org>
 Cc: Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add a header file for the max77802 constants that could be shared between
-the regulator driver and Device Tree source files. Also, remove standby
-and off opmodes since only normal and low power are valid operating modes.
+The max77802 PMIC regulators output can be configured in one of two
+modes: Output ON (normal) and Output ON in Low Power Mode. Some of
+the regulators support their operating mode to be changed on startup
+or by consumers when the system is running while others only support
+their operating mode to be changed while the system has entered in a
+suspend state.
+
+The max77802 PMIC Device Tree binding document a set of properties to
+configure the regulators operating modes from a FDT. This patch parse
+those properties and fills the regulator constraints so the regulator
+core can call the suspend handlers when the system enters into sleep.
 
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
 
-Changes since v1: None
+Changes since v1:
+ - Use the static inline max77802_map_mode() function instead of a macro.
+   Suggested by Mark Brown.
 
- drivers/regulator/max77802.c                   |  1 +
- include/dt-bindings/regulator/maxim,max77802.h | 18 ++++++++++++++++++
- include/linux/mfd/max77686.h                   |  7 -------
- 3 files changed, 19 insertions(+), 7 deletions(-)
- create mode 100644 include/dt-bindings/regulator/maxim,max77802.h
+ drivers/regulator/max77802.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
 diff --git a/drivers/regulator/max77802.c b/drivers/regulator/max77802.c
-index 3abf99d..5839c45 100644
+index 5839c45..e2fbd45 100644
 --- a/drivers/regulator/max77802.c
 +++ b/drivers/regulator/max77802.c
-@@ -33,6 +33,7 @@
- #include <linux/regulator/of_regulator.h>
- #include <linux/mfd/max77686.h>
- #include <linux/mfd/max77686-private.h>
-+#include <dt-bindings/regulator/maxim,max77802.h>
- 
- /* Default ramp delay in case it is not manually set */
- #define MAX77802_RAMP_DELAY		100000		/* uV/us */
-diff --git a/include/dt-bindings/regulator/maxim,max77802.h b/include/dt-bindings/regulator/maxim,max77802.h
-new file mode 100644
-index 0000000..cf28631
---- /dev/null
-+++ b/include/dt-bindings/regulator/maxim,max77802.h
-@@ -0,0 +1,18 @@
-+/*
-+ * Copyright (C) 2014 Google, Inc
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * Device Tree binding constants for the Maxim 77802 PMIC regulators
-+ */
-+
-+#ifndef _DT_BINDINGS_REGULATOR_MAXIM_MAX77802_H
-+#define _DT_BINDINGS_REGULATOR_MAXIM_MAX77802_H
-+
-+/* Regulator operating modes */
-+#define MAX77802_OPMODE_LP	1
-+#define MAX77802_OPMODE_NORMAL	3
-+
-+#endif /* _DT_BINDINGS_REGULATOR_MAXIM_MAX77802_H */
-diff --git a/include/linux/mfd/max77686.h b/include/linux/mfd/max77686.h
-index 7e6dc4b..553f7d0 100644
---- a/include/linux/mfd/max77686.h
-+++ b/include/linux/mfd/max77686.h
-@@ -131,13 +131,6 @@ enum max77686_opmode {
- 	MAX77686_OPMODE_STANDBY,
+@@ -518,6 +518,22 @@ static struct regulator_desc regulators[] = {
  };
  
--enum max77802_opmode {
--	MAX77802_OPMODE_OFF,
--	MAX77802_OPMODE_STANDBY,
--	MAX77802_OPMODE_LP,
--	MAX77802_OPMODE_NORMAL,
--};
--
- struct max77686_opmode_data {
- 	int id;
- 	int mode;
+ #ifdef CONFIG_OF
++
++static void max77802_parse_opmodes(struct device_node *np,
++				   struct regulation_constraints *cons)
++{
++	u32 pval;
++
++	if (!of_property_read_u32(np, "maxim,regulator-initial-mode", &pval))
++		cons->initial_mode = max77802_map_mode(pval);
++
++	if (!of_property_read_u32(np, "maxim,regulator-disk-mode", &pval))
++		cons->state_disk.mode = max77802_map_mode(pval);
++
++	if (!of_property_read_u32(np, "maxim,regulator-mem-mode", &pval))
++		cons->state_mem.mode = max77802_map_mode(pval);
++}
++
+ static int max77802_pmic_dt_parse_pdata(struct platform_device *pdev,
+ 					struct max77686_platform_data *pdata)
+ {
+@@ -555,6 +571,8 @@ static int max77802_pmic_dt_parse_pdata(struct platform_device *pdev,
+ 		rdata[i].initdata = rmatch.init_data;
+ 		rdata[i].of_node = rmatch.of_node;
+ 		rdata[i].id = regulators[i].id;
++		max77802_parse_opmodes(rdata[i].of_node,
++				       &rdata[i].initdata->constraints);
+ 	}
+ 
+ 	pdata->regulators = rdata;
 -- 
 2.1.0
