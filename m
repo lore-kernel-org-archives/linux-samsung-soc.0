@@ -1,75 +1,68 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v2 1/2] Revert "mfd: sec-core: Prepare regulators for suspend state to reduce power-consumption"
-Date: Thu, 16 Oct 2014 12:13:29 +0200
-Message-ID: <1413454410-23396-2-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v2 2/2] ARM: EXYNOS: Call regulator core suspend prepare and finish functions
+Date: Thu, 16 Oct 2014 12:13:30 +0200
+Message-ID: <1413454410-23396-3-git-send-email-javier.martinez@collabora.co.uk>
 References: <1413454410-23396-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:34554 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751490AbaJPKNq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Oct 2014 06:13:46 -0400
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1413454410-23396-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This reverts commit b7cde7078d2344073c310aa65fc2b0a845d2cb5b
-("mfd: sec-core: Prepare regulators for suspend state to reduce power-consumption")
+The regulator framework has a set of helpers functions to be used when
+the system is entering and leaving from suspend but these are not called
+on Exynos platforms. This means that the .set_suspend_* function handlers
+defined by regulator drivers are not called when the system is suspended.
 
-Commit b7cde7078d23 called regulator_suspend_prepare() to prepare the
-regulators for a suspend state. But did it from the device pm suspend
-handler but regulator_suspend_prepare() iterates over all regulators
-and not only the one managed by this device so it doesn't seems to be
-correct to call it from a device driver.
-
-It is better to call the regulator suspend prepare/finish functions
-from platform code instead so this patch reverts the mentioned commit.
+Suggested-by: Doug Anderson <dianders@chromium.org>
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- drivers/mfd/Kconfig    |  1 -
- drivers/mfd/sec-core.c | 10 ----------
- 2 files changed, 11 deletions(-)
+ arch/arm/mach-exynos/suspend.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index 1456ea7..fd8cc4c 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -655,7 +655,6 @@ config MFD_SEC_CORE
- 	select MFD_CORE
- 	select REGMAP_I2C
- 	select REGMAP_IRQ
--	select REGULATOR
- 	help
- 	 Support for the Samsung Electronics MFD series.
- 	 This driver provides common support for accessing the device,
-diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
-index dba7e2b..5993608 100644
---- a/drivers/mfd/sec-core.c
-+++ b/drivers/mfd/sec-core.c
-@@ -31,7 +31,6 @@
- #include <linux/mfd/samsung/s2mpu02.h>
- #include <linux/mfd/samsung/s5m8763.h>
- #include <linux/mfd/samsung/s5m8767.h>
--#include <linux/regulator/machine.h>
- #include <linux/regmap.h>
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index cc8d237..ee9a8e0 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -20,6 +20,7 @@
+ #include <linux/io.h>
+ #include <linux/irqchip/arm-gic.h>
+ #include <linux/err.h>
++#include <linux/regulator/machine.h>
  
- static const struct mfd_cell s5m8751_devs[] = {
-@@ -432,15 +431,6 @@ static int sec_pmic_suspend(struct device *dev)
- 	 */
- 	disable_irq(sec_pmic->irq);
+ #include <asm/cacheflush.h>
+ #include <asm/hardware/cache-l2x0.h>
+@@ -443,6 +444,22 @@ static int exynos_suspend_enter(suspend_state_t state)
  
--	switch (sec_pmic->device_type) {
--	case S2MPS14X:
--	case S2MPU02:
--		regulator_suspend_prepare(PM_SUSPEND_MEM);
--		break;
--	default:
--		break;
--	}
--
+ static int exynos_suspend_prepare(void)
+ {
++	int ret;
++
++	/*
++	 * REVISIT: It would be better if struct platform_suspend_ops
++	 * .prepare handler get the suspend_state_t as a parameter to
++	 * avoid hard-coding the suspend to mem state. It's safe to do
++	 * it now only because the suspend_valid_only_mem function is
++	 * used as the .valid callback used to check if a given state
++	 * is supported by the platform anyways.
++	 */
++	ret = regulator_suspend_prepare(PM_SUSPEND_MEM);
++	if (ret) {
++		pr_err("Failed to prepare regulators for system suspend\n");
++		return ret;
++	}
++
+ 	s3c_pm_check_prepare();
+ 
  	return 0;
+@@ -451,6 +468,7 @@ static int exynos_suspend_prepare(void)
+ static void exynos_suspend_finish(void)
+ {
+ 	s3c_pm_check_cleanup();
++	regulator_suspend_finish();
  }
  
+ static const struct platform_suspend_ops exynos_suspend_ops = {
 -- 
 2.1.0
