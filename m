@@ -1,88 +1,91 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 8/9] usb: dwc2/gadget: fix calls to phy control functions
- in suspend/resume code
-Date: Thu, 16 Oct 2014 08:42:40 -0500
-Message-ID: <20141016134240.GK3480@saruman>
-References: <1413464285-24172-1-git-send-email-m.szyprowski@samsung.com>
- <1413464285-24172-9-git-send-email-m.szyprowski@samsung.com>
-Reply-To: <balbi@ti.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rwbb4r/vLufKlfJs"
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v2 0/7] Add max77802 regulator operating mode support
+Date: Thu, 16 Oct 2014 18:48:46 +0200
+Message-ID: <1413478133-2577-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:45592 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752249AbaJPNmx (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:34955 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751309AbaJPQtx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Oct 2014 09:42:53 -0400
-Content-Disposition: inline
-In-Reply-To: <1413464285-24172-9-git-send-email-m.szyprowski@samsung.com>
+	Thu, 16 Oct 2014 12:49:53 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Paul Zimmerman <paulz@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
---rwbb4r/vLufKlfJs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hello Mark,
 
-Hi,
+This is the second version of the series that adds operating modes
+support for the regulators in the max77802 PMIC. It address issues
+pointed out in "regulator: max77802: Add .{get,set}_mode callbacks"
+and also removes the patches you already picked on the topic branch.
+The first version of the series was [0].
 
-On Thu, Oct 16, 2014 at 02:58:04PM +0200, Marek Szyprowski wrote:
-> This patch moves calls to phy enable/disable out of spinlock protected
-> blocks in device suspend/resume to fix incorrect caller context. Phy
-> related functions must not be called from atomic context.
->=20
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/usb/dwc2/gadget.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-> index cdf417a7ae63..052b1a857291 100644
-> --- a/drivers/usb/dwc2/gadget.c
-> +++ b/drivers/usb/dwc2/gadget.c
-> @@ -3656,11 +3656,13 @@ static int s3c_hsotg_suspend(struct platform_devi=
-ce *pdev, pm_message_t state)
->  			 hsotg->driver->driver.name);
-> =20
->  	spin_lock_irqsave(&hsotg->lock, flags);
-> +	s3c_hsotg_core_disconnect(hsotg);
->  	s3c_hsotg_disconnect(hsotg);
-> -	s3c_hsotg_phy_disable(hsotg);
->  	hsotg->gadget.speed =3D USB_SPEED_UNKNOWN;
->  	spin_unlock_irqrestore(&hsotg->lock, flags);
-> =20
-> +	s3c_hsotg_phy_disable(hsotg);
+The series adds a "maxim,regulator-initial-mode" property to configure
+at startup the operating mode for the regulators that support changing
+its mode during normal operation and "maxim,regulator-{disk,mem}-mode"
+properties for the regulators that only support changing its operating
+mode when the system enters in a suspend state.
 
-this is aching to have a locked version as well as an unlocked version.
-Look at what you do here. There's a minor race when you release that
-spinlock. By the time ->suspend() is called, IRQs are not yet disabled.
+The regulators can be enabled or disabled during suspend by using the
+standard "regulator-{on,off}-in-suspend" properties from Chanwoo Choi's
+regulator suspend state series [1].
 
---=20
-balbi
+I tried to use as much as possible the infrastructure that is already
+provided in the regulator framework by adding the needed handlers for
+the set_suspend_* operations.
 
---rwbb4r/vLufKlfJs
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Also, the driver still had some assumptions and didn't clearly made a
+distinction between the valid modes (normal and low power) and off which
+is not an operating mode as you explained. So I reworked a bit to better
+treat them separately as is expected by the regulator API.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+This series depend on [1] and also v2 of patch:
+"ARM: EXYNOS: Call regulator core suspend prepare and finish functions" [2].
 
-iQIcBAEBAgAGBQJUP8tQAAoJEIaOsuA1yqRElsAP/0e9QOFR0zwI9RebMP50p3hA
-TUKoZ93YWxZ5XDYaf35rnKdD2V+ybjDRRunSpP8RPtHf2BOsFmLhFmhoGcM3rzWp
-ko1crXROz3oF3gnUSd5riiKcp1ZjlxokLe1mmrUNn06xypL2v+/geCmJNQ7n6ISh
-M7662x7OhNC6qZEGchV8Z4XO+w6ChhdCTTEoHzmLaKAW/AjqeAWMGzZ11F1+ok+Q
-rDAM3y5TThQ9Ogq9Z6nVWmwI2T1dQu2ePllUxudal1BaIUKVGkS1MhWtRlVOyOOp
-3WTLlzRLFTt7sO2BuVpfRt203qfIK6PuEaV+Gc2m221w8NS5zaCmdCIJoT11oZV5
-Yp2WM9tIWHtUVqKbOxT+9xviR1Z8kONKiHo0bnKO0NF+DDk+BJr41J9J8yYnC7ik
-BUkGXX3nrxkZDwObN2KYM+QFyHq4phyIumJn6P9VYYGCwnnlMoC7OJ2D0+O3dBTz
-QenZgrEMWpKRi14k+DeS8kRz12Q0ULlowhTFkIQsAVfXKTFtBcEM6yY1vBrMEKNw
-GpjylbvwCRdBxj8OdKPJpC848fgDD8ZzxyIRn15lCING/W1bxOj+tRfqD2/VBy+5
-U2JkNok9jIJoLs4MFQ0+LVtYmRfprc8j1hBE/uRsMkXzV/IXubs05tQweh8eZ1LB
-oWOI57mEDVidXIAzkotC
-=4K0P
------END PGP SIGNATURE-----
+NOTE: Patch #4 touches a header in include/linux/mfd so some coordination
+with the mfd maintainer (added as cc) will be needed.
 
---rwbb4r/vLufKlfJs--
+Javier Martinez Canillas (7):
+  regulator: max77802: Add .{get,set}_mode callbacks
+  regulator: max77802: Add set suspend mode for BUCKs and simplify code
+  regulator: max77802: Don't treat OFF as an operating mode
+  regulator: max77802: Add header for operating modes
+  regulator: max77802: Document regulator opmode DT properties
+  regulator: max77802: Parse regulator operating mode properties
+  ARM: dts: Configure regulators for suspend on exynos Peach boards
+
+ .../devicetree/bindings/regulator/max77802.txt     |  45 ++++++++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |  81 ++++++++++++++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |  81 ++++++++++++++
+ drivers/regulator/max77802.c                       | 122 ++++++++++++++++-----
+ include/dt-bindings/regulator/maxim,max77802.h     |  18 +++
+ include/linux/mfd/max77686.h                       |   7 --
+ 6 files changed, 319 insertions(+), 35 deletions(-)
+ create mode 100644 include/dt-bindings/regulator/maxim,max77802.h
+
+Patch #1 adds a get and set mode function handlers for the regulators whose
+operating mode can be changed at runtime.
+
+Patch #2 adds support for changing the operating mode for all regulators
+that support setting a different opmode during suspend.
+
+Patch #3 is a cleanup to not call OFF an operating mode.
+
+Patch #4 adds a header file with the valid operating modes so it can be used
+by Device Tree source files.
+
+Patch #5 extend the max77802 DT binding to include the properties used to
+setup the regulators modes.
+
+Patch #6 adds the support to parse these from the driver.
+
+Patch #7 configures the modes for the max77802 regulators in the Device Tree
+source file of the Peach Chromebooks.
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2014/10/8/331
+[1]: https://lkml.org/lkml/2014/10/10/161
+[2]: http://www.spinics.net/lists/arm-kernel/msg369923.html
