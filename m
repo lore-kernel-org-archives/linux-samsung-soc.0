@@ -1,37 +1,46 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH v3] ARM: dts: add CPU nodes for Exynos4 SoCs
-Date: Thu, 16 Oct 2014 11:48:59 +0100
-Message-ID: <20141016104859.GA29308@red-moon>
-References: <5230569.XLlNbB5NvF@amdc1032>
- <018e01cfd885$770dd940$65298bc0$@kernel.org>
- <20140925081704.GA20841@e102568-lin.cambridge.arm.com>
- <5423D19B.1040203@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:56779 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751400AbaJPKsT convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Oct 2014 06:48:19 -0400
-In-Reply-To: <5423D19B.1040203@samsung.com>
-Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 1/9] usb: dwc2/gadget: report disconnect event from 'end
+ session' irq
+Date: Thu, 16 Oct 2014 14:57:57 +0200
+Message-ID: <1413464285-24172-2-git-send-email-m.szyprowski@samsung.com>
+References: <1413464285-24172-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1413464285-24172-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Paul Zimmerman <paulz-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, Mark Rutland <Mark.Rutland@arm.com>, 'Thomas Abraham' <ta.omasab@gmail.com>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>
 
-On Thu, Sep 25, 2014 at 09:26:03AM +0100, Kukjin Kim wrote:
-> On 09/25/14 17:17, Lorenzo Pieralisi wrote:
-> > [CC'ed Daniel to make him aware this patch goes through your tree]
-> >
-> Thanks and just note the branch  which is including this change actually 
-> v4 is just rebased not v3 will be sent out to arm-soc last tonight or 
-> tomorrow.
+This patch adds a call to s3c_hsotg_disconnect() from 'end session'
+interrupt to correctly notify gadget subsystem about unplugged usb
+cable.
 
-What's the plan for patch ? I do not see it upstream and would like
-to rebase the Exynos CPUidle changes on top of it.
+Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/usb/dwc2/gadget.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Thanks,
-Lorenzo
+diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
+index 7b5856fadd93..119c8a3effc2 100644
+--- a/drivers/usb/dwc2/gadget.c
++++ b/drivers/usb/dwc2/gadget.c
+@@ -2279,6 +2279,12 @@ irq_retry:
+ 		dev_info(hsotg->dev, "OTGInt: %08x\n", otgint);
+ 
+ 		writel(otgint, hsotg->regs + GOTGINT);
++
++		if (otgint & GOTGINT_SES_END_DET) {
++			if (hsotg->gadget.speed != USB_SPEED_UNKNOWN)
++				s3c_hsotg_disconnect(hsotg);
++			hsotg->gadget.speed = USB_SPEED_UNKNOWN;
++		}
+ 	}
+ 
+ 	if (gintsts & GINTSTS_SESSREQINT) {
+-- 
+1.9.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
