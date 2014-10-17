@@ -1,113 +1,373 @@
 From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH 4/7] clk: samsung: exynos7: add gate clocks for WDT, TMU and PWM blocks
-Date: Fri, 17 Oct 2014 21:41:52 +0530
-Message-ID: <1413562315-12283-5-git-send-email-a.kesavan@samsung.com>
+Subject: [PATCH 6/7] arm64: dts: Add nodes for mmc, i2c, rtc, watchdog on Exynos7
+Date: Fri, 17 Oct 2014 21:41:54 +0530
+Message-ID: <1413562315-12283-7-git-send-email-a.kesavan@samsung.com>
 References: <1413562315-12283-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f44.google.com ([209.85.220.44]:46024 "EHLO
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:52964 "EHLO
 	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752490AbaJQQMZ (ORCPT
+	with ESMTP id S1752490AbaJQQMb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Oct 2014 12:12:25 -0400
+	Fri, 17 Oct 2014 12:12:31 -0400
 In-Reply-To: <1413562315-12283-1-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, tomasz.figa@gmail.com
 
-From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-
-Add clock support for the watchdog timer, pwm timer and thermal
-management unit IPs in Exynos7.
+Add nodes for 3 mmc channels, 12 i2c channels, rtc, and watchdog
+on Exynos7.
 
 Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
 Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 ---
- drivers/clk/samsung/clk-exynos7.c       |   14 ++++++++++++++
- include/dt-bindings/clock/exynos7-clk.h |    9 +++++++--
- 2 files changed, 21 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/exynos/exynos7-espresso.dts |   41 ++++
+ arch/arm64/boot/dts/exynos/exynos7.dtsi         |  256 +++++++++++++++++++++++
+ 2 files changed, 297 insertions(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index 3a30f43..17e5cf4 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -486,9 +486,12 @@ static struct samsung_gate_clock peric0_gate_clks[] __initdata = {
- 		ENABLE_PCLK_PERIC0, 14, 0, 0),
- 	GATE(PCLK_UART0, "pclk_uart0", "mout_aclk_peric0_66_user",
- 		ENABLE_PCLK_PERIC0, 16, 0, 0),
-+	GATE(PCLK_PWM, "pclk_pwm", "mout_aclk_peric0_66_user",
-+		ENABLE_PCLK_PERIC0, 21, 0, 0),
+diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+index e2c8283..d081c26 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
++++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+@@ -18,6 +18,8 @@
  
- 	GATE(SCLK_UART0, "sclk_uart0_user", "mout_sclk_uart0_user",
- 		ENABLE_SCLK_PERIC0, 16, 0, 0),
-+	GATE(SCLK_PWM, "sclk_pwm", "fin_pll", ENABLE_SCLK_PERIC0, 21, 0, 0),
+ 	aliases {
+ 		serial0 = &serial_2;
++		mshc0 = &mmc_0;
++		mshc2 = &mmc_2;
+ 	};
+ 
+ 	chosen {
+@@ -37,3 +39,42 @@
+ &serial_2 {
+ 	status = "okay";
  };
- 
- static struct samsung_cmu_info peric0_cmu_info __initdata = {
-@@ -586,7 +589,9 @@ CLK_OF_DECLARE(exynos7_clk_peric1, "samsung,exynos7-clock-peric1",
- 
- /* Register Offset definitions for CMU_PERIS (0x10040000) */
- #define MUX_SEL_PERIS			0x0200
-+#define ENABLE_PCLK_PERIS		0x0900
- #define ENABLE_PCLK_PERIS_SECURE_CHIPID	0x0910
-+#define ENABLE_SCLK_PERIS		0x0A00
- #define ENABLE_SCLK_PERIS_SECURE_CHIPID	0x0A10
- 
- /* List of parent clocks for Muxes in CMU_PERIS */
-@@ -594,7 +599,9 @@ PNAME(mout_aclk_peris_66_p) = { "fin_pll", "dout_aclk_peris_66" };
- 
- static unsigned long peris_clk_regs[] __initdata = {
- 	MUX_SEL_PERIS,
-+	ENABLE_PCLK_PERIS,
- 	ENABLE_PCLK_PERIS_SECURE_CHIPID,
-+	ENABLE_SCLK_PERIS,
- 	ENABLE_SCLK_PERIS_SECURE_CHIPID,
- };
- 
-@@ -604,10 +611,17 @@ static struct samsung_mux_clock peris_mux_clks[] __initdata = {
- };
- 
- static struct samsung_gate_clock peris_gate_clks[] __initdata = {
-+	GATE(PCLK_WDT, "pclk_wdt", "mout_aclk_peris_66_user",
-+		ENABLE_PCLK_PERIS, 6, 0, 0),
-+	GATE(PCLK_TMU, "pclk_tmu_apbif", "mout_aclk_peris_66_user",
-+		ENABLE_PCLK_PERIS, 10, 0, 0),
 +
- 	GATE(PCLK_CHIPID, "pclk_chipid", "mout_aclk_peris_66_user",
- 		ENABLE_PCLK_PERIS_SECURE_CHIPID, 0, 0, 0),
- 	GATE(SCLK_CHIPID, "sclk_chipid", "fin_pll",
- 		ENABLE_SCLK_PERIS_SECURE_CHIPID, 0, 0, 0),
++&rtc {
++	status = "okay";
++};
 +
-+	GATE(SCLK_TMU, "sclk_tmu", "fin_pll", ENABLE_SCLK_PERIS, 10, 0, 0),
++&watchdog {
++	status = "okay";
++};
++
++&mmc_0 {
++	status = "okay";
++	num-slots = <1>;
++	broken-cd;
++	caps2-mmc-hs200-1_8v;
++	supports-highspeed;
++	non-removable;
++	card-detect-delay = <200>;
++	clock-frequency = <800000000>;
++	samsung,dw-mshc-ciu-div = <3>;
++	samsung,dw-mshc-sdr-timing = <0 4>;
++	samsung,dw-mshc-ddr-timing = <0 2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_qrdy &sd0_bus1 &sd0_bus4 &sd0_bus8>;
++	bus-width = <8>;
++};
++
++&mmc_2 {
++	status = "okay";
++	num-slots = <1>;
++	supports-highspeed;
++	card-detect-delay = <200>;
++	clock-frequency = <400000000>;
++	samsung,dw-mshc-ciu-div = <3>;
++	samsung,dw-mshc-sdr-timing = <2 3>;
++	samsung,dw-mshc-ddr-timing = <1 2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
++	bus-width = <4>;
++};
+diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+index 6db8c78..1300ded 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+@@ -113,6 +113,27 @@
+ 				      "dout_sclk_mfc_pll";
+ 		};
+ 
++		clock_top1: clock-controller@105e0000 {
++			compatible = "samsung,exynos7-clock-top1";
++			reg = <0x105e0000 0xb000>;
++			#clock-cells = <1>;
++			clocks = <&fin_pll>, <&clock_topc DOUT_SCLK_BUS0_PLL>,
++				 <&clock_topc DOUT_SCLK_BUS1_PLL>,
++				 <&clock_topc DOUT_SCLK_CC_PLL>,
++				 <&clock_topc DOUT_SCLK_MFC_PLL>;
++			clock-names = "fin_pll", "dout_sclk_bus0_pll",
++				      "dout_sclk_bus1_pll", "dout_sclk_cc_pll",
++				      "dout_sclk_mfc_pll";
++		};
++
++		clock_ccore: clock-controller@105b0000 {
++			compatible = "samsung,exynos7-clock-ccore";
++			reg = <0x105b0000 0xd00>;
++			#clock-cells = <1>;
++			clocks = <&fin_pll>, <&clock_topc DOUT_ACLK_CCORE_133>;
++			clock-names = "fin_pll", "dout_aclk_ccore_133";
++		};
++
+ 		clock_peric0: clock-controller@13610000 {
+ 			compatible = "samsung,exynos7-clock-peric0";
+ 			reg = <0x13610000 0xd00>;
+@@ -143,6 +164,27 @@
+ 			clock-names = "fin_pll", "dout_aclk_peris_66";
+ 		};
+ 
++		clock_fsys0: clock-controller@10e90000 {
++			compatible = "samsung,exynos7-clock-fsys0";
++			reg = <0x10e90000 0xd00>;
++			#clock-cells = <1>;
++			clocks = <&fin_pll>, <&clock_top1 DOUT_ACLK_FSYS0_200>,
++				 <&clock_top1 DOUT_SCLK_MMC2>;
++			clock-names = "fin_pll", "dout_aclk_fsys0_200",
++				      "dout_sclk_mmc2";
++		};
++
++		clock_fsys1: clock-controller@156e0000 {
++			compatible = "samsung,exynos7-clock-fsys1";
++			reg = <0x156e0000 0xd00>;
++			#clock-cells = <1>;
++			clocks = <&fin_pll>, <&clock_top1 DOUT_ACLK_FSYS1_200>,
++				 <&clock_top1 DOUT_SCLK_MMC0>,
++				 <&clock_top1 DOUT_SCLK_MMC1>;
++			clock-names = "fin_pll", "dout_aclk_fsys1_200",
++				      "dout_sclk_mmc0", "dout_sclk_mmc1";
++		};
++
+ 		serial_0: serial@13630000 {
+ 			compatible = "samsung,exynos4210-uart";
+ 			reg = <0x13630000 0x100>;
+@@ -236,6 +278,162 @@
+ 			interrupts = <0 203 0>;
+ 		};
+ 
++		hsi2c_0: hsi2c@13640000 {
++			compatible = "samsung,exynos7-hsi2c";
++			reg = <0x13640000 0x1000>;
++			interrupts = <0 441 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&hs_i2c0_bus>;
++			clocks = <&clock_peric0 PCLK_HSI2C0>;
++			clock-names = "hsi2c";
++			status = "disabled";
++		};
++
++		hsi2c_1: hsi2c@13650000 {
++			compatible = "samsung,exynos7-hsi2c";
++			reg = <0x13650000 0x1000>;
++			interrupts = <0 442 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&hs_i2c1_bus>;
++			clocks = <&clock_peric0 PCLK_HSI2C1>;
++			clock-names = "hsi2c";
++			status = "disabled";
++		};
++
++		hsi2c_2: hsi2c@14e60000 {
++			compatible = "samsung,exynos7-hsi2c";
++			reg = <0x14e60000 0x1000>;
++			interrupts = <0 459 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&hs_i2c2_bus>;
++			clocks = <&clock_peric1 PCLK_HSI2C2>;
++			clock-names = "hsi2c";
++			status = "disabled";
++		};
++
++		hsi2c_3: hsi2c@14e70000 {
++			compatible = "samsung,exynos7-hsi2c";
++			reg = <0x14e70000 0x1000>;
++			interrupts = <0 460 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&hs_i2c3_bus>;
++			clocks = <&clock_peric1 PCLK_HSI2C3>;
++			clock-names = "hsi2c";
++			status = "disabled";
++		};
++
++		hsi2c_4: hsi2c@13660000 {
++			compatible = "samsung,exynos7-hsi2c";
++			reg = <0x13660000 0x1000>;
++			interrupts = <0 443 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&hs_i2c4_bus>;
++			clocks = <&clock_peric0 PCLK_HSI2C4>;
++			clock-names = "hsi2c";
++			status = "disabled";
++		};
++
++		hsi2c_5: hsi2c@13670000 {
++			compatible = "samsung,exynos7-hsi2c";
++			reg = <0x13670000 0x1000>;
++			interrupts = <0 444 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&hs_i2c5_bus>;
++			clocks = <&clock_peric0 PCLK_HSI2C5>;
++			clock-names = "hsi2c";
++			status = "disabled";
++		};
++
++		hsi2c_6: hsi2c@14e00000 {
++			compatible = "samsung,exynos7-hsi2c";
++			reg = <0x14e00000 0x1000>;
++			interrupts = <0 461 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&hs_i2c6_bus>;
++			clocks = <&clock_peric1 PCLK_HSI2C6>;
++			clock-names = "hsi2c";
++			status = "disabled";
++		};
++
++		hsi2c_7: hsi2c@13e10000 {
++			compatible = "samsung,exynos7-hsi2c";
++			reg = <0x13e10000 0x1000>;
++			interrupts = <0 462 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&hs_i2c7_bus>;
++			clocks = <&clock_peric1 PCLK_HSI2C7>;
++			clock-names = "hsi2c";
++			status = "disabled";
++		};
++
++		hsi2c_8: hsi2c@14e20000 {
++			compatible = "samsung,exynos7-hsi2c";
++			reg = <0x14e20000 0x1000>;
++			interrupts = <0 463 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&hs_i2c8_bus>;
++			clocks = <&clock_peric1 PCLK_HSI2C8>;
++			clock-names = "hsi2c";
++			status = "disabled";
++		};
++
++		hsi2c_9: hsi2c@13680000 {
++			compatible = "samsung,exynos7-hsi2c";
++			reg = <0x13680000 0x1000>;
++			interrupts = <0 445 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&hs_i2c9_bus>;
++			clocks = <&clock_peric0 PCLK_HSI2C9>;
++			clock-names = "hsi2c";
++			status = "disabled";
++		};
++
++		hsi2c_10: hsi2c@13690000 {
++			compatible = "samsung,exynos7-hsi2c";
++			reg = <0x13690000 0x1000>;
++			interrupts = <0 446 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&hs_i2c10_bus>;
++			clocks = <&clock_peric0 PCLK_HSI2C10>;
++			clock-names = "hsi2c";
++			status = "disabled";
++		};
++
++		hsi2c_11: hsi2c@136a0000 {
++			compatible = "samsung,exynos7-hsi2c";
++			reg = <0x136a0000 0x1000>;
++			interrupts = <0 447 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&hs_i2c11_bus>;
++			clocks = <&clock_peric0 PCLK_HSI2C11>;
++			clock-names = "hsi2c";
++			status = "disabled";
++		};
++
+ 		timer {
+ 			compatible = "arm,armv8-timer";
+ 			interrupts = <1 13 0xff01>,
+@@ -248,6 +446,64 @@
+ 			compatible = "samsung,exynos7-pmu", "syscon";
+ 			reg = <0x105c0000 0x5000>;
+ 		};
++
++		rtc: rtc@10590000 {
++			compatible = "samsung,s3c6410-rtc";
++			reg = <0x10590000 0x100>;
++			interrupts = <0 355 0>, <0 356 0>;
++			clocks = <&clock_ccore PCLK_RTC>;
++			clock-names = "rtc";
++			status = "disabled";
++		};
++
++		watchdog: watchdog@101d0000 {
++			compatible = "samsung,exynos7-wdt";
++			reg = <0x101d0000 0x100>;
++			interrupts = <0 110 0>;
++			clocks = <&clock_peris PCLK_WDT>;
++			clock-names = "watchdog";
++			samsung,syscon-phandle = <&pmu_system_controller>;
++			status = "disabled";
++		};
++
++		mmc_0: mmc@15740000 {
++			compatible = "samsung,exynos7-dw-mshc-smu";
++			interrupts = <0 201 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x15740000 0x2000>;
++			clocks = <&clock_fsys1 ACLK_MMC0>,
++				 <&clock_top1 CLK_SCLK_MMC0>;
++			clock-names = "biu", "ciu";
++			fifo-depth = <0x40>;
++			status = "disabled";
++		};
++
++		mmc_1: mmc@15750000 {
++			compatible = "samsung,exynos7-dw-mshc";
++			interrupts = <0 202 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x15750000 0x2000>;
++			clocks = <&clock_fsys1 ACLK_MMC1>,
++				 <&clock_top1 CLK_SCLK_MMC1>;
++			clock-names = "biu", "ciu";
++			fifo-depth = <0x40>;
++			status = "disabled";
++		};
++
++		mmc_2: mmc@15560000 {
++			compatible = "samsung,exynos7-dw-mshc-smu";
++			interrupts = <0 216 0>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0x15560000 0x2000>;
++			clocks = <&clock_fsys0 ACLK_MMC2>,
++				 <&clock_top1 CLK_SCLK_MMC2>;
++			clock-names = "biu", "ciu";
++			fifo-depth = <0x40>;
++			status = "disabled";
++		};
+ 	};
  };
  
- static struct samsung_cmu_info peris_cmu_info __initdata = {
-diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
-index 3227679..28c8aa7 100644
---- a/include/dt-bindings/clock/exynos7-clk.h
-+++ b/include/dt-bindings/clock/exynos7-clk.h
-@@ -53,7 +53,9 @@
- #define PCLK_HSI2C9			7
- #define PCLK_HSI2C10			8
- #define PCLK_HSI2C11			9
--#define PERIC0_NR_CLK			10
-+#define PCLK_PWM			10
-+#define SCLK_PWM			11
-+#define PERIC0_NR_CLK			12
- 
- /* PERIC1 */
- #define PCLK_UART1			1
-@@ -72,7 +74,10 @@
- /* PERIS */
- #define PCLK_CHIPID			1
- #define SCLK_CHIPID			2
--#define PERIS_NR_CLK			3
-+#define PCLK_WDT			3
-+#define PCLK_TMU			4
-+#define SCLK_TMU			5
-+#define PERIS_NR_CLK			6
- 
- /* FSYS0 */
- #define ACLK_MMC2			1
 -- 
 1.7.9.5
