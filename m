@@ -1,57 +1,64 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
 Subject: Re: [GIT PULL 2/2] Samsung defconfig updates for v3.18
-Date: Fri, 17 Oct 2014 08:42:54 +0900
-Message-ID: <544057FE.2070308@samsung.com>
+Date: Fri, 17 Oct 2014 08:16:47 +0200
+Message-ID: <CABxcv=kB5u+VfWcvW2pxPV64d4-q-ey5EDzkfQZVXkq9jzgTUQ@mail.gmail.com>
 References: <543DB158.7030303@samsung.com>
- <CAOesGMgRBq93diDmA-21UYkFQTZu+LiF9gV+A==GS5uGW9n-Vg@mail.gmail.com>
- <1413380267.4565.1.camel@collabora.co.uk>
- <00e601cfe8dc$abf25bb0$03d71310$@kernel.org>
- <CABxcv==HK5F5vv7g7XXBLofTVxx9Q8ZYj6bPfeMS7rWKTMb5pg@mail.gmail.com>
- <014e01cfe917$20adbb90$620932b0$@kernel.org> <54404E1F.7040607@samsung.com>
+	<CAOesGMgRBq93diDmA-21UYkFQTZu+LiF9gV+A==GS5uGW9n-Vg@mail.gmail.com>
+	<1413380267.4565.1.camel@collabora.co.uk>
+	<00e601cfe8dc$abf25bb0$03d71310$@kernel.org>
+	<CABxcv==HK5F5vv7g7XXBLofTVxx9Q8ZYj6bPfeMS7rWKTMb5pg@mail.gmail.com>
+	<014e01cfe917$20adbb90$620932b0$@kernel.org>
+	<54404E1F.7040607@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:49261 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751269AbaJPXm5 (ORCPT
+Received: from mail-wi0-f171.google.com ([209.85.212.171]:52037 "EHLO
+	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750729AbaJQGQt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Oct 2014 19:42:57 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NDK003Y19VIAB30@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 17 Oct 2014 08:42:55 +0900 (KST)
-In-reply-to: <54404E1F.7040607@samsung.com>
+	Fri, 17 Oct 2014 02:16:49 -0400
+Received: by mail-wi0-f171.google.com with SMTP id em10so1136737wid.16
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Oct 2014 23:16:48 -0700 (PDT)
+In-Reply-To: <54404E1F.7040607@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, 'Javier Martinez Canillas' <javier@dowhile0.org>, 'Olof Johansson' <olof@lixom.net>, 'Arnd Bergmann' <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Dear Kukjin,
+Hello Kukjin,
 
-On 10/17/2014 08:00 AM, Kukjin Kim wrote:
+On Fri, Oct 17, 2014 at 1:00 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
 > On 10/16/14 16:59, Kukjin Kim wrote:
+>>
 >> Javier Martinez Canillas wrote:
+>>>
 >>>
 >>> Hello Kukjin,
 >>>
 >> Hi,
 >>
 >>> On Thu, Oct 16, 2014 at 3:01 AM, Kukjin Kim<kgene@kernel.org>  wrote:
+>>>>
 >>>> Sjoerd Simons wrote:
+>>>>>>
 >>>>>> On Tue, 2014-10-14 at 23:32 -0700, Olof Johansson wrote:
->>>>>> On Tue, Oct 14, 2014 at 4:27 PM, Kukjin Kim<kgene.kim@samsung.com>  wrote:
->>>>>>>    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+>>>>>> On Tue, Oct 14, 2014 at 4:27 PM, Kukjin Kim<kgene.kim@samsung.com>
+>>>>>> wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
 >>>>>>> tags/samsung-defconfig
 >>>>>>>
->>>>>>> for you to fetch changes up to 508423bebcda29eb0ba7c627f895387dad7cdcd6:
+>>>>>>> for you to fetch changes up to
+>>>>>>> 508423bebcda29eb0ba7c627f895387dad7cdcd6:
 >>>>>>>
->>>>>>>    ARM: exynos_defconfig: enable USB gadget support (2014-09-25 18:20:18
+>>>>>>>    ARM: exynos_defconfig: enable USB gadget support (2014-09-25
+>>>>>>> 18:20:18
 >>>>>>> +0900)
 >>>>>>
+>>>>>>
 >>>>>> Merged, thanks.
+>>>>>
 >>>>>
 >>>>> Hrm, enabling USB gadget support will actually regress USB on Exynos
 >>>>> peach boards and Arndale Octa without some of the DT fixes that landed
@@ -65,7 +72,8 @@ On 10/17/2014 08:00 AM, Kukjin Kim wrote:
 >>>>> Might be good to cherry-pick those into for-next at this point (they're
 >>>>> rather trivial)
 >>>>>
->>>> So...Olof, can you please cherry pick them into arm-soc/fixes? Or shall I send
+>>>> So...Olof, can you please cherry pick them into arm-soc/fixes? Or shall
+>>>> I send
 >>>> pull-request for them again?
 >>>>
 >>>
@@ -79,66 +87,73 @@ On 10/17/2014 08:00 AM, Kukjin Kim wrote:
 >>> 3f3d046 ARM: dts: Remove display timings node from exynos5250-snow
 >>> dd12ac7 ARM: dts: Fix chip select GPIO on exynos5250-smdk5250
 >>
+>>
 > Above patches are not required because there is no my wrong merge ;)
-> 
+>
+
+Right, for some reason I thought that Andreas' rebased patches ended
+in for-next but now I see that are in next/late as well so yes, those
+patches are not required for 3.18.
+
+Sorry for the noise then, -ETOOMANYBRANCHES
+
 >>> c04c92e ARM: dts: Add rtc_src clk for s3c-rtc on exynos5250-snow
 >>> 8bd43b6 ARM: dts: Add rtc_src clk for s3c-rtc on exynos Peach boards
 >>>
->> I checked its dependent clock patches have been merged into mainline just now.
->> As you know, the patches blocked dt patches in this time :( Anyway, I'll try
+>> I checked its dependent clock patches have been merged into mainline just
+>> now.
+>> As you know, the patches blocked dt patches in this time :( Anyway, I'll
+>> try
 >> to send a pull-request with including above patches tonight.
 >>
 > Hmm...
-> 
+>
 > + Chanwoo
-> 
-> I didn't look at the Chanwoo's patch closely at that time but I think we don't need to register rtc_src clock for all other Samsung stuff if we don't want to gate the clock for rtc driver. So the rtc driver would be fixed like below for all Samsung stuff...
-
-You are right. It is my mistake when sending rtc patchset.
-So, Marek sent a patch[1] to fix this bug as following:
- [1] https://lkml.org/lkml/2014/10/15/605
-  - [PATCH] drivers: rtc: fix s3c-rtc initialization failure without rtc source clock
-
-And then Andrew Morton (akpm@linux-foundation.org) picked up this patch and will apply it on linux-next branch.
-http://ozlabs.org/~akpm/mmots/broken-out/drivers-rtc-fix-s3c-rtc-initialization-failure-without-rtc-source-clock.patch
-
-Best Regards,
-Chanwoo Choi
-
-> 
+>
+> I didn't look at the Chanwoo's patch closely at that time but I think we
+> don't need to register rtc_src clock for all other Samsung stuff if we don't
+> want to gate the clock for rtc driver. So the rtc driver would be fixed like
+> below for all Samsung stuff...
+>
 > diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
 > index a6b1252..84f3cbd 100644
 > --- a/drivers/rtc/rtc-s3c.c
 > +++ b/drivers/rtc/rtc-s3c.c
 > @@ -535,13 +535,14 @@ static int s3c_rtc_probe(struct platform_device *pdev)
->      }
->      clk_prepare_enable(info->rtc_clk);
-> 
-> -    info->rtc_src_clk = devm_clk_get(&pdev->dev, "rtc_src");
-> -    if (IS_ERR(info->rtc_src_clk)) {
-> -        dev_err(&pdev->dev, "failed to find rtc source clock\n");
-> -        return PTR_ERR(info->rtc_src_clk);
-> +    if (info->data->needs_src_clk)
-> +        info->rtc_src_clk = devm_clk_get(&pdev->dev, "rtc_src");
-> +        if (IS_ERR(info->rtc_src_clk)) {
-> +            dev_err(&pdev->dev, "failed to find rtc source clock\n");
-> +            return PTR_ERR(info->rtc_src_clk);
-> +        }
-> +        clk_prepare_enable(info->rtc_src_clk);
->      }
-> -    clk_prepare_enable(info->rtc_src_clk);
+>         }
+>         clk_prepare_enable(info->rtc_clk);
+>
+> -       info->rtc_src_clk = devm_clk_get(&pdev->dev, "rtc_src");
+> -       if (IS_ERR(info->rtc_src_clk)) {
+> -               dev_err(&pdev->dev, "failed to find rtc source clock\n");
+> -               return PTR_ERR(info->rtc_src_clk);
+> +       if (info->data->needs_src_clk)
+> +               info->rtc_src_clk = devm_clk_get(&pdev->dev, "rtc_src");
+> +               if (IS_ERR(info->rtc_src_clk)) {
+> +                       dev_err(&pdev->dev, "failed to find rtc source
+> clock\n");
+> +                       return PTR_ERR(info->rtc_src_clk);
+> +               }
+> +               clk_prepare_enable(info->rtc_src_clk);
+>         }
+> -       clk_prepare_enable(info->rtc_src_clk);
 > -
-> 
->      /* check to see if everything is setup correctly */
->      if (info->data->enable)
-> 
-> 
->> Thanks for your gentle reminder.
->>
->> Olof, I think it makes sense because it is related fixes for 3.18 ;)
->>
->> Sorry for late noise...
->>
->> Thanks,
->> Kukjin
-> 
+>
+>         /* check to see if everything is setup correctly */
+>         if (info->data->enable)
+>
+>
+>
+
+The Snow/Peach rtc_src clk for s3c-rtc patches are still needed on
+those platforms since the S3C RTC uses the Maxim 77802 32kHz AP clock
+as its source clock and this will be disabled by the common clock
+framework if are not used.
+
+In practice, most people using mainline are booting with a U-Boot
+version that passes the clk_ignore_unused parameter to the kernel
+command line so if Marek's patch makes for the 3.18 rc cycle, the
+Snow/Peach rtc_src patches can indeed wait for 3.19.
+
+Best regards,
+Javier
