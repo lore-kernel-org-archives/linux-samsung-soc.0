@@ -1,159 +1,112 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [GIT PULL 2/2] Samsung defconfig updates for v3.18
-Date: Fri, 17 Oct 2014 08:16:47 +0200
-Message-ID: <CABxcv=kB5u+VfWcvW2pxPV64d4-q-ey5EDzkfQZVXkq9jzgTUQ@mail.gmail.com>
-References: <543DB158.7030303@samsung.com>
-	<CAOesGMgRBq93diDmA-21UYkFQTZu+LiF9gV+A==GS5uGW9n-Vg@mail.gmail.com>
-	<1413380267.4565.1.camel@collabora.co.uk>
-	<00e601cfe8dc$abf25bb0$03d71310$@kernel.org>
-	<CABxcv==HK5F5vv7g7XXBLofTVxx9Q8ZYj6bPfeMS7rWKTMb5pg@mail.gmail.com>
-	<014e01cfe917$20adbb90$620932b0$@kernel.org>
-	<54404E1F.7040607@samsung.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 4/7] regulator: max77802: Add header for operating
+ modes
+Date: Fri, 17 Oct 2014 10:04:38 +0200
+Message-ID: <20141017080438.GE22725@lee--X1>
+References: <1413478133-2577-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1413478133-2577-5-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f171.google.com ([209.85.212.171]:52037 "EHLO
-	mail-wi0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750729AbaJQGQt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Oct 2014 02:16:49 -0400
-Received: by mail-wi0-f171.google.com with SMTP id em10so1136737wid.16
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Oct 2014 23:16:48 -0700 (PDT)
-In-Reply-To: <54404E1F.7040607@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1413478133-2577-5-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Chris Zhong <zyw-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Abhilash Kesavan <kesavan.abhilash-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hello Kukjin,
+On Thu, 16 Oct 2014, Javier Martinez Canillas wrote:
 
-On Fri, Oct 17, 2014 at 1:00 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> On 10/16/14 16:59, Kukjin Kim wrote:
->>
->> Javier Martinez Canillas wrote:
->>>
->>>
->>> Hello Kukjin,
->>>
->> Hi,
->>
->>> On Thu, Oct 16, 2014 at 3:01 AM, Kukjin Kim<kgene@kernel.org>  wrote:
->>>>
->>>> Sjoerd Simons wrote:
->>>>>>
->>>>>> On Tue, 2014-10-14 at 23:32 -0700, Olof Johansson wrote:
->>>>>> On Tue, Oct 14, 2014 at 4:27 PM, Kukjin Kim<kgene.kim@samsung.com>
->>>>>> wrote:
->>>>>>>
->>>>>>>
->>>>>>> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
->>>>>>> tags/samsung-defconfig
->>>>>>>
->>>>>>> for you to fetch changes up to
->>>>>>> 508423bebcda29eb0ba7c627f895387dad7cdcd6:
->>>>>>>
->>>>>>>    ARM: exynos_defconfig: enable USB gadget support (2014-09-25
->>>>>>> 18:20:18
->>>>>>> +0900)
->>>>>>
->>>>>>
->>>>>> Merged, thanks.
->>>>>
->>>>>
->>>>> Hrm, enabling USB gadget support will actually regress USB on Exynos
->>>>> peach boards and Arndale Octa without some of the DT fixes that landed
->>>>> in armsoc next/late branch. Specifically:
->>>>>
->>>>> 5c42acdbffff9bab595482b966b22ab5e2f6f359
->>>>> dbb62ef9ade6e92737d3fac199665b8b7c455959
->>>>>
->>>> Yeah...I've missed it. Sorry.
->>>>
->>>>> Might be good to cherry-pick those into for-next at this point (they're
->>>>> rather trivial)
->>>>>
->>>> So...Olof, can you please cherry pick them into arm-soc/fixes? Or shall
->>>> I send
->>>> pull-request for them again?
->>>>
->>>
->> + Arnd, Olof and regarding MLs
->>
->>> There are other bugfixes for 3.18 that ended in next/late so it would
->>> be good if you do a new pull request to include those as well.
->>>
->>> The commits (with hashes from linux-next) are:
->>>
->>> 3f3d046 ARM: dts: Remove display timings node from exynos5250-snow
->>> dd12ac7 ARM: dts: Fix chip select GPIO on exynos5250-smdk5250
->>
->>
-> Above patches are not required because there is no my wrong merge ;)
->
+> Add a header file for the max77802 constants that could be shared bet=
+ween
+> the regulator driver and Device Tree source files. Also, remove stand=
+by
+> and off opmodes since only normal and low power are valid operating m=
+odes.
+>=20
+> Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8rSCDK34cm6iQ@public.gmane.org=
+=2Euk>
+> ---
+>=20
+> Changes since v1: None
+>=20
+>  drivers/regulator/max77802.c                   |  1 +
+>  include/dt-bindings/regulator/maxim,max77802.h | 18 ++++++++++++++++=
+++
+>  include/linux/mfd/max77686.h                   |  7 -------
 
-Right, for some reason I thought that Andreas' rebased patches ended
-in for-next but now I see that are in next/late as well so yes, those
-patches are not required for 3.18.
+Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-Sorry for the noise then, -ETOOMANYBRANCHES
-
->>> c04c92e ARM: dts: Add rtc_src clk for s3c-rtc on exynos5250-snow
->>> 8bd43b6 ARM: dts: Add rtc_src clk for s3c-rtc on exynos Peach boards
->>>
->> I checked its dependent clock patches have been merged into mainline just
->> now.
->> As you know, the patches blocked dt patches in this time :( Anyway, I'll
->> try
->> to send a pull-request with including above patches tonight.
->>
-> Hmm...
->
-> + Chanwoo
->
-> I didn't look at the Chanwoo's patch closely at that time but I think we
-> don't need to register rtc_src clock for all other Samsung stuff if we don't
-> want to gate the clock for rtc driver. So the rtc driver would be fixed like
-> below for all Samsung stuff...
->
-> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-> index a6b1252..84f3cbd 100644
-> --- a/drivers/rtc/rtc-s3c.c
-> +++ b/drivers/rtc/rtc-s3c.c
-> @@ -535,13 +535,14 @@ static int s3c_rtc_probe(struct platform_device *pdev)
->         }
->         clk_prepare_enable(info->rtc_clk);
->
-> -       info->rtc_src_clk = devm_clk_get(&pdev->dev, "rtc_src");
-> -       if (IS_ERR(info->rtc_src_clk)) {
-> -               dev_err(&pdev->dev, "failed to find rtc source clock\n");
-> -               return PTR_ERR(info->rtc_src_clk);
-> +       if (info->data->needs_src_clk)
-> +               info->rtc_src_clk = devm_clk_get(&pdev->dev, "rtc_src");
-> +               if (IS_ERR(info->rtc_src_clk)) {
-> +                       dev_err(&pdev->dev, "failed to find rtc source
-> clock\n");
-> +                       return PTR_ERR(info->rtc_src_clk);
-> +               }
-> +               clk_prepare_enable(info->rtc_src_clk);
->         }
-> -       clk_prepare_enable(info->rtc_src_clk);
+>  3 files changed, 19 insertions(+), 7 deletions(-)
+>  create mode 100644 include/dt-bindings/regulator/maxim,max77802.h
+>=20
+> diff --git a/drivers/regulator/max77802.c b/drivers/regulator/max7780=
+2.c
+> index 3abf99d..5839c45 100644
+> --- a/drivers/regulator/max77802.c
+> +++ b/drivers/regulator/max77802.c
+> @@ -33,6 +33,7 @@
+>  #include <linux/regulator/of_regulator.h>
+>  #include <linux/mfd/max77686.h>
+>  #include <linux/mfd/max77686-private.h>
+> +#include <dt-bindings/regulator/maxim,max77802.h>
+> =20
+>  /* Default ramp delay in case it is not manually set */
+>  #define MAX77802_RAMP_DELAY		100000		/* uV/us */
+> diff --git a/include/dt-bindings/regulator/maxim,max77802.h b/include=
+/dt-bindings/regulator/maxim,max77802.h
+> new file mode 100644
+> index 0000000..cf28631
+> --- /dev/null
+> +++ b/include/dt-bindings/regulator/maxim,max77802.h
+> @@ -0,0 +1,18 @@
+> +/*
+> + * Copyright (C) 2014 Google, Inc
+> + *
+> + * This program is free software; you can redistribute it and/or mod=
+ify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * Device Tree binding constants for the Maxim 77802 PMIC regulators
+> + */
+> +
+> +#ifndef _DT_BINDINGS_REGULATOR_MAXIM_MAX77802_H
+> +#define _DT_BINDINGS_REGULATOR_MAXIM_MAX77802_H
+> +
+> +/* Regulator operating modes */
+> +#define MAX77802_OPMODE_LP	1
+> +#define MAX77802_OPMODE_NORMAL	3
+> +
+> +#endif /* _DT_BINDINGS_REGULATOR_MAXIM_MAX77802_H */
+> diff --git a/include/linux/mfd/max77686.h b/include/linux/mfd/max7768=
+6.h
+> index 7e6dc4b..553f7d0 100644
+> --- a/include/linux/mfd/max77686.h
+> +++ b/include/linux/mfd/max77686.h
+> @@ -131,13 +131,6 @@ enum max77686_opmode {
+>  	MAX77686_OPMODE_STANDBY,
+>  };
+> =20
+> -enum max77802_opmode {
+> -	MAX77802_OPMODE_OFF,
+> -	MAX77802_OPMODE_STANDBY,
+> -	MAX77802_OPMODE_LP,
+> -	MAX77802_OPMODE_NORMAL,
+> -};
 > -
->
->         /* check to see if everything is setup correctly */
->         if (info->data->enable)
->
->
->
+>  struct max77686_opmode_data {
+>  	int id;
+>  	int mode;
 
-The Snow/Peach rtc_src clk for s3c-rtc patches are still needed on
-those platforms since the S3C RTC uses the Maxim 77802 32kHz AP clock
-as its source clock and this will be disabled by the common clock
-framework if are not used.
-
-In practice, most people using mainline are booting with a U-Boot
-version that passes the clk_ignore_unused parameter to the kernel
-command line so if Marek's patch makes for the 3.18 rc cycle, the
-Snow/Peach rtc_src patches can indeed wait for 3.19.
-
-Best regards,
-Javier
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
