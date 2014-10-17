@@ -1,58 +1,61 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 3/9] usb: dwc2/gadget: fix support for soft_connect udc
- framework feature
-Date: Fri, 17 Oct 2014 12:43:48 +0200
-Message-ID: <5440F2E4.3030901@samsung.com>
-References: <1413464285-24172-1-git-send-email-m.szyprowski@samsung.com>
- <1413464285-24172-4-git-send-email-m.szyprowski@samsung.com>
- <20141016133610.GH3480@saruman>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v2 5/7] regulator: max77802: Document regulator opmode DT
+ properties
+Date: Fri, 17 Oct 2014 13:57:01 +0200
+Message-ID: <20141017115701.GE1820@sirena.org.uk>
+References: <1413478133-2577-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1413478133-2577-6-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="//IivP0gvsAy3Can"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:34661 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751632AbaJQKnv (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33083 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751589AbaJQL5j (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Oct 2014 06:43:51 -0400
-In-reply-to: <20141016133610.GH3480@saruman>
+	Fri, 17 Oct 2014 07:57:39 -0400
+Content-Disposition: inline
+In-Reply-To: <1413478133-2577-6-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: balbi@ti.com
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Paul Zimmerman <paulz@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-Hello,
 
-On 2014-10-16 15:36, Felipe Balbi wrote:
-> On Thu, Oct 16, 2014 at 02:57:59PM +0200, Marek Szyprowski wrote:
->> Enabling and disabling usb gadget by writing to
->> /sys/class/udc/*hsotg/soft_connect results in calling udc_start/udc_stop
->> functions with the same usb gadget driver, so the driver should not WARN
->> about such case.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   drivers/usb/dwc2/gadget.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
->> index 8870e38c1d82..37fda4c03397 100644
->> --- a/drivers/usb/dwc2/gadget.c
->> +++ b/drivers/usb/dwc2/gadget.c
->> @@ -2892,7 +2892,7 @@ static int s3c_hsotg_udc_start(struct usb_gadget *gadget,
->>   		return -EINVAL;
->>   	}
->>   
->> -	WARN_ON(hsotg->driver);
->> +	WARN_ON(hsotg->driver && hsotg->driver != driver);
-> the bug is in your ->udc_stop(). You should clear hsotg->driver to NULL
-> there.
+--//IivP0gvsAy3Can
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Ok, I will change udc_stop() to always zero hsotg->driver, like other udc
-drivers. I was a bit confused by the fact that udc core passes driver to
-udc_stop(), when called from soft_connect and NULL on gadget removal.
+On Thu, Oct 16, 2014 at 06:48:51PM +0200, Javier Martinez Canillas wrote:
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+> +- maxim,regulator-initial-mode: initial operating mode.
+> +  This property can only be used on regulators that support changing their mode
+> +  during normal operation. These regulators are LDO1, LDO3, LDO20 and LDO21.
+> +- maxim,regulator-disk-mode: operating mode for the regulator when the system
+> +  enters in the Suspend-to-Disk state.
+> +- maxim,regulator-mem-mode: operating mode for the regulator when the system
+> +  enters in the Suspend-to-RAM state.
+
+This seems pretty ugly since it's not integrated with the suspend state
+binding at all - adding new suspend modes is going to involve changing
+the binding which seems icky.  Adding a standard property to set modes
+doesn't seem so bad, I think a translation function to parse device
+specific mode bindings in properties might be the way forwards.
+
+--//IivP0gvsAy3Can
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUQQQMAAoJECTWi3JdVIfQyy0H/0Abr/wX2dEV8wmMq5CiC7Vg
+nAUMqqmylSuKrATHRJ0+wXmvUYoitcgr23dkuP6w4j322tj/CaMcBy1rZAf2ZqrA
+DeeoyY58el6+4cX54Q6UbpJnzgjsQNVeaBNYQQora160r5rh6A+YvzXQnEP+LNAq
+vgpkFvrgG/mp5BRHo87fDBxL5C1m4zDM3p5BaGf3Myh6bq6x/fEhPFZEg7HHH+G/
+dOwuPNsRGgCV0t4k/+c4BBC3SWLWjP217Ns0fFfTDTygv+50dVQQNc9ssLYR49Xb
+ljLOTpP1g0q0acZBmccGtnPBJNYQshUMi3CvHx8xgMuC9IB50m8MQniHQlvK77A=
+=trBw
+-----END PGP SIGNATURE-----
+
+--//IivP0gvsAy3Can--
