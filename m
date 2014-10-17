@@ -1,61 +1,75 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 5/7] regulator: max77802: Document regulator opmode DT
- properties
-Date: Fri, 17 Oct 2014 13:57:01 +0200
-Message-ID: <20141017115701.GE1820@sirena.org.uk>
-References: <1413478133-2577-1-git-send-email-javier.martinez@collabora.co.uk>
- <1413478133-2577-6-git-send-email-javier.martinez@collabora.co.uk>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: exynos5422-odroid-xu3: MCPM: only 6 of 8 CPUs coming online
+Date: Fri, 17 Oct 2014 05:06:41 -0700
+Message-ID: <CAMAWPa8ANvzaC4EfvRbwCZSya6xt=u6qmvN5cF1jhAROTdW3Pg@mail.gmail.com>
+References: <7133556.456161412823997169.JavaMail.weblogic@epml02>
+	<7hzjd4lxc5.fsf@deeprootsystems.com>
+	<loom.20141015T133306-266@post.gmane.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="//IivP0gvsAy3Can"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33083 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751589AbaJQL5j (ORCPT
+Received: from mail.kernel.org ([198.145.19.201]:52817 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753281AbaJQMGs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Oct 2014 07:57:39 -0400
-Content-Disposition: inline
-In-Reply-To: <1413478133-2577-6-git-send-email-javier.martinez@collabora.co.uk>
+	Fri, 17 Oct 2014 08:06:48 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id C149E201EF
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Oct 2014 12:06:46 +0000 (UTC)
+Received: from mail-lb0-f173.google.com (mail-lb0-f173.google.com [209.85.217.173])
+	(using TLSv1 with cipher AES128-SHA (128/128 bits))
+	(No client certificate requested)
+	by mail.kernel.org (Postfix) with ESMTPSA id 6DCE02010C
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Oct 2014 12:06:45 +0000 (UTC)
+Received: by mail-lb0-f173.google.com with SMTP id 10so551349lbg.4
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 17 Oct 2014 05:06:41 -0700 (PDT)
+In-Reply-To: <loom.20141015T133306-266@post.gmane.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
+On Wed, Oct 15, 2014 at 4:35 AM, Joonyoung Shim <jy0922.shim@samsung.com> wrote:
+> Hi,
+>
+> Kevin Hilman <khilman <at> kernel.org> writes:
+>
+>>
+>> Hi Abhilash,
+>>
+>> Abhilash Kesavan <a.kesavan <at> samsung.com> writes:
+>>
+>> > I had noticed a similar issue where only 6 cores would come up during
+>> > development on 5420. This was because there was a check in our u-boot
+>> > secondary boot-up path which would put a core into WFI if a flag was
+>> > not present and hence fail to boot. I wonder if it is the same
+>> > situation in your case too.
+>> > Is the u-boot for odroid-xu3 publically available or can you check if
+> there is any such code present in your
+>> secondary bring-up path.
+>>
+>> I'm using the hardkernel u-boot[1], branch: odroidxu3-v2012.07.  I'm
+>> currently using the pre-built binaries that are in the
+>> sd_fuse/hardkernel directory of that branch, but I can rebuild u-boot if
+>> needed.
+>>
+>> I'm not very familiar with u-boot, but if f you have some pointers where
+>> to start looking in that code, that would be helpful.
+>>
+>> Kevin
+>>
+>> [1] https://github.com/hardkernel/u-boot.git
+>>
+>>
+>
+> It seems to need magic code.
+>
+> Please refer
+> https://github.com/abhijeet-dev/linux-samsung/commit/553b7f40465ab4fad6c270f289cd4780942f7fae
 
---//IivP0gvsAy3Can
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks, Abhilash had pointed me to the same code, and it works.  But...
 
-On Thu, Oct 16, 2014 at 06:48:51PM +0200, Javier Martinez Canillas wrote:
+Can someone explain this "magic", ideally in the form of a changelog
+and patch submitted upstream?
 
-> +- maxim,regulator-initial-mode: initial operating mode.
-> +  This property can only be used on regulators that support changing their mode
-> +  during normal operation. These regulators are LDO1, LDO3, LDO20 and LDO21.
-> +- maxim,regulator-disk-mode: operating mode for the regulator when the system
-> +  enters in the Suspend-to-Disk state.
-> +- maxim,regulator-mem-mode: operating mode for the regulator when the system
-> +  enters in the Suspend-to-RAM state.
-
-This seems pretty ugly since it's not integrated with the suspend state
-binding at all - adding new suspend modes is going to involve changing
-the binding which seems icky.  Adding a standard property to set modes
-doesn't seem so bad, I think a translation function to parse device
-specific mode bindings in properties might be the way forwards.
-
---//IivP0gvsAy3Can
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUQQQMAAoJECTWi3JdVIfQyy0H/0Abr/wX2dEV8wmMq5CiC7Vg
-nAUMqqmylSuKrATHRJ0+wXmvUYoitcgr23dkuP6w4j322tj/CaMcBy1rZAf2ZqrA
-DeeoyY58el6+4cX54Q6UbpJnzgjsQNVeaBNYQQora160r5rh6A+YvzXQnEP+LNAq
-vgpkFvrgG/mp5BRHo87fDBxL5C1m4zDM3p5BaGf3Myh6bq6x/fEhPFZEg7HHH+G/
-dOwuPNsRGgCV0t4k/+c4BBC3SWLWjP217Ns0fFfTDTygv+50dVQQNc9ssLYR49Xb
-ljLOTpP1g0q0acZBmccGtnPBJNYQshUMi3CvHx8xgMuC9IB50m8MQniHQlvK77A=
-=trBw
------END PGP SIGNATURE-----
-
---//IivP0gvsAy3Can--
+Kevin
