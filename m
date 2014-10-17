@@ -1,113 +1,69 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 3/9] usb: dwc2/gadget: fix support for soft_connect udc
- framework feature
-Date: Fri, 17 Oct 2014 11:02:34 -0500
-Message-ID: <20141017160234.GS26260@saruman>
-References: <1413464285-24172-1-git-send-email-m.szyprowski@samsung.com>
- <1413464285-24172-4-git-send-email-m.szyprowski@samsung.com>
- <20141016133610.GH3480@saruman>
- <5440F2E4.3030901@samsung.com>
- <20141017154435.GP26260@saruman>
- <20141017154630.GQ26260@saruman>
- <20141017154925.GR26260@saruman>
-Reply-To: <balbi@ti.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="H88uUF932U8Oj0a6"
+From: Abhilash Kesavan <a.kesavan@samsung.com>
+Subject: [PATCH 0/7] Add clock and DT support for a few IPs on Exynos7
+Date: Fri, 17 Oct 2014 21:41:48 +0530
+Message-ID: <1413562315-12283-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from devils.ext.ti.com ([198.47.26.153]:32866 "EHLO
-	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751289AbaJQQCt (ORCPT
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:37552 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752490AbaJQQMN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Oct 2014 12:02:49 -0400
-Content-Disposition: inline
-In-Reply-To: <20141017154925.GR26260@saruman>
+	Fri, 17 Oct 2014 12:12:13 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Paul Zimmerman <paulz@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, tomasz.figa@gmail.com
 
---H88uUF932U8Oj0a6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This series adds clock support for I2C, MMC, RTC, Watchdog, TMU and PWM.
+It also adds the device nodes for I2C, RTC, WDT, MMC and PMU.
+The patchset has been tested on linux-next (20141017) on an Exynos7
+Espresso board.
 
-On Fri, Oct 17, 2014 at 10:49:25AM -0500, Felipe Balbi wrote:
-> On Fri, Oct 17, 2014 at 10:46:30AM -0500, Felipe Balbi wrote:
-> > Hi,
-> >=20
-> > On Fri, Oct 17, 2014 at 10:44:35AM -0500, Felipe Balbi wrote:
-> > > On Fri, Oct 17, 2014 at 12:43:48PM +0200, Marek Szyprowski wrote:
-> > > > Hello,
-> > > >=20
-> > > > On 2014-10-16 15:36, Felipe Balbi wrote:
-> > > > >On Thu, Oct 16, 2014 at 02:57:59PM +0200, Marek Szyprowski wrote:
-> > > > >>Enabling and disabling usb gadget by writing to
-> > > > >>/sys/class/udc/*hsotg/soft_connect results in calling udc_start/u=
-dc_stop
-> > > > >>functions with the same usb gadget driver, so the driver should n=
-ot WARN
-> > > > >>about such case.
-> > > > >>
-> > > > >>Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > > > >>---
-> > > > >>  drivers/usb/dwc2/gadget.c | 2 +-
-> > > > >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > >>
-> > > > >>diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-> > > > >>index 8870e38c1d82..37fda4c03397 100644
-> > > > >>--- a/drivers/usb/dwc2/gadget.c
-> > > > >>+++ b/drivers/usb/dwc2/gadget.c
-> > > > >>@@ -2892,7 +2892,7 @@ static int s3c_hsotg_udc_start(struct usb_g=
-adget *gadget,
-> > > > >>  		return -EINVAL;
-> > > > >>  	}
-> > > > >>-	WARN_ON(hsotg->driver);
-> > > > >>+	WARN_ON(hsotg->driver && hsotg->driver !=3D driver);
-> > > > >the bug is in your ->udc_stop(). You should clear hsotg->driver to=
- NULL
-> > > > >there.
-> > > >=20
-> > > > Ok, I will change udc_stop() to always zero hsotg->driver, like oth=
-er udc
-> > > > drivers. I was a bit confused by the fact that udc core passes driv=
-er to
-> > > > udc_stop(), when called from soft_connect and NULL on gadget remova=
-l.
-> > >=20
-> > > That can probably be cleaned up, I'll go have a look on all UDCs and
-> > > make sure I won't break anything.
-> >=20
-> > looks like chipidea is the only one still using that argument, if you
->=20
-> meant dwc2
+Following are the dependencies:
+1) dts, kbuild: Implement support for dtb vendor subdirs" patchset 
+http://comments.gmane.org/gmane.linux.kbuild.devel/12131
+2) arch: arm64: Enable support for Samsung Exynos7 SoC
+http://www.spinics.net/lists/linux-samsung-soc/msg37047.html
+3) Serial clean-up patches for Exynos7
+http://www.spinics.net/lists/arm-kernel/msg367348.html
+http://www.spinics.net/lists/arm-kernel/msg367349.html
+4) Add initial support for pinctrl on Exynos7
+http://www.spinics.net/lists/linux-samsung-soc/msg37708.html
 
-Hmm, there are still a few other gadgets relying on that argument. It'll
-take a little more effort to remove it.
+For testing I have applied the following:
+1) mmc: dw_mmc: Add IDMAC 64-bit address mode support
+http://www.spinics.net/lists/kernel/msg1842300.html
+2) mmc: dw_mmc: Reset DMA before enabling IDMAC
+http://www.gossamer-threads.com/lists/linux/kernel/2021576?page=last
+3) mmc: dw_mmc: exynos: Add support for exynos7
+http://www.spinics.net/lists/linux-mmc/msg28294.html
+4) mfd: sec: add S2MPS15 PMIC support
+https://lkml.org/lkml/2014/10/14/50
+5) drivers: rtc: fix s3c-rtc initialization failure without rtc source clock
+https://lkml.org/lkml/2014/10/15/210
+6) regulator: s2mps11: add support for S2MPS15 regulators
+https://lkml.org/lkml/2014/10/14/52
+7) Regulators dt nodes were added in the espresso dts file and I2C channel 4
+which has the PMIC on it was tested.
 
---=20
-balbi
+Abhilash Kesavan (3):
+  arm64: dts: Add PMU DT node for exynos7 SoC
+  arm64: dts: Add nodes for mmc, i2c, rtc, watchdog on Exynos7
+  arm64: exynos: Enable rtc and watchdog support for Exynos7
 
---H88uUF932U8Oj0a6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Naveen Krishna Ch (4):
+  clk: samsung: exynos7: add clocks for I2C block
+  clk: samsung: exynos7: add clocks for MMC block
+  clk: samsung: exynos7: add clocks for RTC block
+  clk: samsung: exynos7: add gate clocks for WDT, TMU and PWM blocks
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+ .../devicetree/bindings/arm/samsung/pmu.txt        |    1 +
+ .../devicetree/bindings/clock/exynos7-clock.txt    |    4 +
+ arch/arm64/Kconfig                                 |    3 +
+ arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |   41 +++
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            |  261 ++++++++++++++++
+ drivers/clk/samsung/clk-exynos7.c                  |  316 ++++++++++++++++++++
+ include/dt-bindings/clock/exynos7-clk.h            |   60 +++-
+ 7 files changed, 677 insertions(+), 9 deletions(-)
 
-iQIcBAEBAgAGBQJUQT2aAAoJEIaOsuA1yqREMKcQALAW3KZCfJEFa/bBz06bVNa8
-r+Bv3bZV+W//hVtshHVlDdnUHHgPe6k5Splxye0+2PN3W4ArVmDGn907yBJbcH6k
-4o/Z2FsjwCJG4RY90uzLH/OgUgs3E0FJeDbbyoIqSLDnCRiDqxkBr20qd8oz5ZYc
-SaxROLfnaSyXPvJhu1pPOlx/kGZee21MXPYYC2doPYYjbl+YM8u9OT+Wqmr/RBsX
-aUkLBiRfW0Q0AEdrOvLqj3Yz4YNLNZIbnjY7EqAVGDf6VqWdSkqe5uiYpvmgK++U
-ebzgQ802IRdbxGXeEXhiznRvSiSm13/1V9Qde/7RfMnRA8Ynr58ogPYjfngycDrl
-I+Rz1uuhzpykU2Ub/NxHDNxlCjW4lZZV/Atx4xnHbxJXgTKxtfUQ9oUacjLCFTqR
-evl51MHgB0SlGd/nIOLCEke8nAthiRAPydnYyba0plN6GTVr5h95Ww6GvDmfl15T
-OSGVGdryIv2sPAmVJ9m14azZwXM06yZJRFcUO6GpoA0reiYFc91wh4lLWqEicT6s
-aDCfrOEyzkfl1xL3+DybCtW/jKU0zTOiM4BYlJOcmwcUTEJFdtraKCajCFMcD4Dg
-iwg6qI5ZLzOLowPX3BnQIVR+ZmQSfp/VITD4dx5JZiOzWmSJjVkTKTiYwEoAMino
-nAsIqt3Ngpys3eTxEC2N
-=9EvR
------END PGP SIGNATURE-----
-
---H88uUF932U8Oj0a6--
+-- 
+1.7.9.5
