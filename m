@@ -1,112 +1,146 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 4/7] regulator: max77802: Add header for operating
- modes
-Date: Fri, 17 Oct 2014 10:04:38 +0200
-Message-ID: <20141017080438.GE22725@lee--X1>
-References: <1413478133-2577-1-git-send-email-javier.martinez@collabora.co.uk>
- <1413478133-2577-5-git-send-email-javier.martinez@collabora.co.uk>
+From: Chander Kashyap <k.chander@samsung.com>
+Subject: Re: [PATCH] arm64: dts: exynos7: add support for cpuidle core power down
+Date: Fri, 17 Oct 2014 15:13:59 +0530
+Message-ID: <CADWw7Ojgttk3cjaac=GGL1D9pejCJw8sJB2JvPFWtyBh3JHYKA@mail.gmail.com>
+References: <1413354920-20165-1-git-send-email-k.chander@samsung.com>
+	<20141015090047.GA26484@red-moon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1413478133-2577-5-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Chris Zhong <zyw-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Abhilash Kesavan <kesavan.abhilash-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141015090047.GA26484@red-moon>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Chander Kashyap <k.chander@samsung.com>, Mark Rutland <Mark.Rutland@arm.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Catalin Marinas <Catalin.Marinas@arm.com>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, 16 Oct 2014, Javier Martinez Canillas wrote:
+Hi Lorenzo,
 
-> Add a header file for the max77802 constants that could be shared bet=
-ween
-> the regulator driver and Device Tree source files. Also, remove stand=
-by
-> and off opmodes since only normal and low power are valid operating m=
-odes.
->=20
-> Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8rSCDK34cm6iQ@public.gmane.org=
-=2Euk>
-> ---
->=20
-> Changes since v1: None
->=20
->  drivers/regulator/max77802.c                   |  1 +
->  include/dt-bindings/regulator/maxim,max77802.h | 18 ++++++++++++++++=
-++
->  include/linux/mfd/max77686.h                   |  7 -------
+On Wed, Oct 15, 2014 at 2:30 PM, Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+> On Wed, Oct 15, 2014 at 07:35:20AM +0100, Chander Kashyap wrote:
+>> Exynos7 has core power down state where cores can be powered off independently.
+>> This patch adds support for this state.
+>
+> Please tell us more about the idle-state values you are adding, in particular
+> entry, exit latencies and min-residency values.
 
-Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Entry latency: This value is calculated as follows:
 
->  3 files changed, 19 insertions(+), 7 deletions(-)
->  create mode 100644 include/dt-bindings/regulator/maxim,max77802.h
->=20
-> diff --git a/drivers/regulator/max77802.c b/drivers/regulator/max7780=
-2.c
-> index 3abf99d..5839c45 100644
-> --- a/drivers/regulator/max77802.c
-> +++ b/drivers/regulator/max77802.c
-> @@ -33,6 +33,7 @@
->  #include <linux/regulator/of_regulator.h>
->  #include <linux/mfd/max77686.h>
->  #include <linux/mfd/max77686-private.h>
-> +#include <dt-bindings/regulator/maxim,max77802.h>
-> =20
->  /* Default ramp delay in case it is not manually set */
->  #define MAX77802_RAMP_DELAY		100000		/* uV/us */
-> diff --git a/include/dt-bindings/regulator/maxim,max77802.h b/include=
-/dt-bindings/regulator/maxim,max77802.h
-> new file mode 100644
-> index 0000000..cf28631
-> --- /dev/null
-> +++ b/include/dt-bindings/regulator/maxim,max77802.h
-> @@ -0,0 +1,18 @@
-> +/*
-> + * Copyright (C) 2014 Google, Inc
-> + *
-> + * This program is free software; you can redistribute it and/or mod=
-ify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * Device Tree binding constants for the Maxim 77802 PMIC regulators
-> + */
-> +
-> +#ifndef _DT_BINDINGS_REGULATOR_MAXIM_MAX77802_H
-> +#define _DT_BINDINGS_REGULATOR_MAXIM_MAX77802_H
-> +
-> +/* Regulator operating modes */
-> +#define MAX77802_OPMODE_LP	1
-> +#define MAX77802_OPMODE_NORMAL	3
-> +
-> +#endif /* _DT_BINDINGS_REGULATOR_MAXIM_MAX77802_H */
-> diff --git a/include/linux/mfd/max77686.h b/include/linux/mfd/max7768=
-6.h
-> index 7e6dc4b..553f7d0 100644
-> --- a/include/linux/mfd/max77686.h
-> +++ b/include/linux/mfd/max77686.h
-> @@ -131,13 +131,6 @@ enum max77686_opmode {
->  	MAX77686_OPMODE_STANDBY,
->  };
-> =20
-> -enum max77802_opmode {
-> -	MAX77802_OPMODE_OFF,
-> -	MAX77802_OPMODE_STANDBY,
-> -	MAX77802_OPMODE_LP,
-> -	MAX77802_OPMODE_NORMAL,
-> -};
-> -
->  struct max77686_opmode_data {
->  	int id;
->  	int mode;
+On entry to arm64_enter_idle_state:
+timestamp1 = ktimeget();
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+after returning from cpu_suspend()
+
+timestamp2 = ktimeget();
+
+latency = timestamp2-timestamp1;
+
+Cpu is not allowed to enter core powerdown by skipping wfi instruction at end.
+Hence calculated time contains entry time + failure exit time.
+
+
+Regarding
+exit-latency and target-residency time, got these values from HW team.
+
+I am using these as initial values and I will be working on optimizing
+these values with further experiments.
+If you could suggest any formal method of deriving these values, i can
+try those methods as well.
+
+>
+>> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+>> ---
+>> This patch has following dependencies:
+>>       - [PATCH v5 0/8] arch: arm64: Enable support for Samsung Exynos7 SoC
+>>               http://www.spinics.net/lists/linux-samsung-soc/msg37047.html
+>>       - [PATCH v9 0/8] ARM generic idle states
+>>               http://permalink.gmane.org/gmane.linux.power-management.general/49224
+>
+> Series above was merged, so dependency is stale.
+
+i will remove this
+
+>
+>>  arch/arm64/boot/dts/exynos/exynos7.dtsi |   18 ++++++++++++++++++
+>>  1 file changed, 18 insertions(+)dont
+>>
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+>> index ce221ac..8e0a034 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+>> @@ -36,6 +36,7 @@
+>>                       device_type = "cpu";
+>>                       compatible = "arm,cortex-a57", "arm,armv8";
+>>                       enable-method = "psci";
+>> +                     cpu-idle-states = <&CPU_SLEEP>;
+>
+> I would add cpu-idle-states phandle after the reg property, as defined
+> in the idle states bindings.
+
+i will move this after reg property.
+
+>
+>>                       reg = <0x0>;
+>>               };
+>>
+>> @@ -43,6 +44,7 @@
+>>                       device_type = "cpu";
+>>                       compatible = "arm,cortex-a57", "arm,armv8";
+>>                       enable-method = "psci";
+>> +                     cpu-idle-states = <&CPU_SLEEP>;
+>>                       reg = <0x1>;
+>>               };
+>>
+>> @@ -50,6 +52,7 @@
+>>                       device_type = "cpu";
+>>                       compatible = "arm,cortex-a57", "arm,armv8";
+>>                       enable-method = "psci";
+>> +                     cpu-idle-states = <&CPU_SLEEP>;
+>>                       reg = <0x2>;
+>>               };
+>>
+>> @@ -57,8 +60,23 @@
+>>                       device_type = "cpu";
+>>                       compatible = "arm,cortex-a57", "arm,armv8";
+>>                       enable-method = "psci";
+>> +                     cpu-idle-states = <&CPU_SLEEP>;
+>>                       reg = <0x3>;
+>>               };
+>> +
+>> +             idle-states {
+>> +                     entry-method = "arm,psci";
+>> +
+>> +                     CPU_SLEEP: cpu-sleep {
+>> +                             compatible = "arm,idle-state";
+>> +                             local-timer-stop;
+>> +                             arm,psci-suspend-param = <0x0010000>;
+>> +                             entry-latency-us = <20>;
+>> +                             exit-latency-us = <150>;
+>> +                             min-residency-us = <2100>;
+>> +                             status = "enabled";
+>
+> status ? This is not a documented property. If you need it please explain
+> why, define its bindings and we can see how to accommodate it.
+
+I will add okay for status property. As per the bindings posted by you.
+
+regards,
+>
+> Thank you,
+> Lorenzo
+>
+>> +                     };
+>> +             };
+>>       };
+>>
+>>       psci {
+>> --
+>> 1.7.9.5
+>>
+>>
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
