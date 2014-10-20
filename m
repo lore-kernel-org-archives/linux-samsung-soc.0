@@ -1,107 +1,67 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v3 4/5] regulator: max77802: Parse regulator operating mode properties
-Date: Mon, 20 Oct 2014 16:47:51 +0200
-Message-ID: <1413816472-1895-5-git-send-email-javier.martinez@collabora.co.uk>
-References: <1413816472-1895-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL 1/3] 1st Round of Samsung cleanup for v3.19
+Date: Tue, 21 Oct 2014 00:54:14 +0900
+Message-ID: <54453026.7060005@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:39917 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752144AbaJTOsl (ORCPT
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:41919 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751005AbaJTPyV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Oct 2014 10:48:41 -0400
-In-Reply-To: <1413816472-1895-1-git-send-email-javier.martinez@collabora.co.uk>
+	Mon, 20 Oct 2014 11:54:21 -0400
+Received: by mail-pa0-f54.google.com with SMTP id ey11so5484850pad.13
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Oct 2014 08:54:20 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
+Cc: arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-The max77802 PMIC regulators output can be configured in one of two
-modes: Output ON (normal) and Output ON in Low Power Mode. Some of
-the regulators support their operating mode to be changed on startup
-or by consumers when the system is running while others only support
-their operating mode to be changed while the system has entered in a
-suspend state.
+Hi,
 
-The regulator Device Tree binding documents a set of properties to
-configure the regulators operating modes from a FDT. This patch parse
-those properties and fills the regulator constraints so the regulator
-core can call the suspend handlers when the system enters into sleep.
+Here is 1st round of Samsung updates for v3.19 and actually it has been 
+sent out to arm-soc for v3.18 before but as you know missed. I've just 
+rebased the branch on top of v3.18-rc1, please pull.
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
+Thanks,
+Kukjin
 
-Changes since v2:
- - Use the standard suspend states binding instead of custom properties.
-   Suggested by Mark Brown.
+----
 
-Changes since v1:
- - Use the static inline max77802_map_mode() function instead of a macro.
-   Suggested by Mark Brown.
+The following changes since commit f114040e3ea6e07372334ade75d1ee0775c355e1:
 
- drivers/regulator/max77802.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+   Linux 3.18-rc1 (2014-10-19 18:08:38 -0700)
 
-diff --git a/drivers/regulator/max77802.c b/drivers/regulator/max77802.c
-index 5839c45..2cbf980 100644
---- a/drivers/regulator/max77802.c
-+++ b/drivers/regulator/max77802.c
-@@ -518,6 +518,48 @@ static struct regulator_desc regulators[] = {
- };
- 
- #ifdef CONFIG_OF
-+
-+static void max77802_parse_opmodes(struct device_node *np,
-+				   struct regulation_constraints *cons)
-+{
-+	u32 pval;
-+	int i;
-+	char *states[PM_SUSPEND_MAX + 1] = {
-+		[PM_SUSPEND_MEM] = "regulator-state-mem",
-+		[PM_SUSPEND_MAX] = "regulator-state-disk",
-+	};
-+	struct regulator_state *state;
-+	struct device_node *state_np;
-+
-+	if (!of_property_read_u32(np, "regulator-initial-mode", &pval))
-+		cons->initial_mode = max77802_map_mode(pval);
-+
-+	for (i = 0; i < ARRAY_SIZE(states); i++) {
-+		switch (i) {
-+		case PM_SUSPEND_MEM:
-+			state = &cons->state_mem;
-+			break;
-+		case PM_SUSPEND_MAX:
-+			state = &cons->state_disk;
-+			break;
-+		default:
-+			continue;
-+		};
-+
-+		state_np = of_get_child_by_name(np, states[i]);
-+		if (!state_np || !state)
-+			continue;
-+
-+		if (!of_property_read_u32(np, "regulator-mode", &pval))
-+			state->mode = max77802_map_mode(pval);
-+
-+		of_node_put(state_np);
-+
-+		state = NULL;
-+		state_np = NULL;
-+	};
-+}
-+
- static int max77802_pmic_dt_parse_pdata(struct platform_device *pdev,
- 					struct max77686_platform_data *pdata)
- {
-@@ -555,6 +597,8 @@ static int max77802_pmic_dt_parse_pdata(struct platform_device *pdev,
- 		rdata[i].initdata = rmatch.init_data;
- 		rdata[i].of_node = rmatch.of_node;
- 		rdata[i].id = regulators[i].id;
-+		max77802_parse_opmodes(rdata[i].of_node,
-+				       &rdata[i].initdata->constraints);
- 	}
- 
- 	pdata->regulators = rdata;
--- 
-2.1.0
+are available in the git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+tags/samsung-cleanup
+
+for you to fetch changes up to 13cfa6c4f7facfc690ba9e99ec382c151fddaced:
+
+   ARM: EXYNOS: Fix CPU idle clock down after CPU off (2014-10-21 
+00:06:22 +0900)
+
+----------------------------------------------------------------
+Samsung cleanup for v3.19
+
+- Cleanup SMP/hotplug codes from hotplug.c to platsmp.c
+- Remove unneeded __ref annotation for exynos_cpu_die()
+- Fix the way to power down CPU on exynos4 and CPUidle
+   clock down after power down some CPU
+
+----------------------------------------------------------------
+Krzysztof Kozlowski (3):
+       ARM: EXYNOS: Move code from hotplug.c to platsmp.c
+       ARM: EXYNOS: Remove unneeded __ref annotation for cpu_die function
+       ARM: EXYNOS: Fix CPU idle clock down after CPU off
+
+  arch/arm/mach-exynos/Makefile   |   3 --
+  arch/arm/mach-exynos/common.h   |   2 -
+  arch/arm/mach-exynos/hotplug.c  |  91 --------------------------------
+  arch/arm/mach-exynos/platsmp.c  | 113 
+++++++++++++++++++++++++++++++++++++++++
+  arch/arm/mach-exynos/regs-pmu.h |   3 ++
+  5 files changed, 116 insertions(+), 96 deletions(-)
+  delete mode 100644 arch/arm/mach-exynos/hotplug.c
