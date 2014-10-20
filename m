@@ -1,60 +1,73 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v11 0/6] cpufreq: use generic cpufreq drivers for exynos
- platforms
-Date: Mon, 20 Oct 2014 16:18:10 +0200
-Message-ID: <544519A2.8010604@gmail.com>
-References: <1413805281-6269-1-git-send-email-thomas.ab@samsung.com>	<5444F38A.1000101@gmail.com>
- <CAJuA9ajv_e0FriiPL0aHWLv7+AoZAF2E+G-0r6UGC6RzxM_wmA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAJuA9ajv_e0FriiPL0aHWLv7+AoZAF2E+G-0r6UGC6RzxM_wmA@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thomas Abraham <ta.omasab@gmail.com>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v3 0/5] Add max77802 regulator operating mode support
+Date: Mon, 20 Oct 2014 16:47:47 +0200
+Message-ID: <1413816472-1895-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:39889 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751493AbaJTOsd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 20 Oct 2014 10:48:33 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
+Hello Mark,
 
+This is the third version of the series that adds operating modes
+support for the regulators in the max77802 PMIC. This version uses the
+standard regulator suspend states bindings as you suggested and also
+drops the patches already picked by you from the first [0] and second [1]
+version of the series.
 
-On 20.10.2014 13:48, Thomas Abraham wrote:
-> Hi Tomasz,
-> 
-> On Mon, Oct 20, 2014 at 5:05 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
->> On 20.10.2014 13:41, Thomas Abraham wrote:
->>> Changes since v10:
->>> - Rebased on top of v3.18-rc1
->>>
->>> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
->>> drivers and enables the use of cpufreq-dt driver for these platforms. This
->>> series also enables cpufreq support for Exynos5420 using arm_big_little cpufreq
->>> driver.
->>>
->>> This patch series is based and tested on v3.18-rc1 and depends on the patch
->>> - "clk: exynos4: remove duplicate div_core2 divider clock instantiation"
->>>   (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg34859.html)
->>>   This patch has been merged in "arm-soc/samsung/dt3" branch of arm-soc tree.
->>>
->>
->> That patch actually went through clock tree, but it doesn't matter,
->> because AFAIK all the dependencies for this series are already in
->> 3.18-rc1. I'll try to apply it in next days
-> 
-> Thanks. The patch "clk: exynos4: remove duplicate div_core2 divider
-> clock instantiation" is not available in 3.18-rc1. So for testing, I
-> picked this patch from samsung/dt3 branch from arm-soc tree.
+The series adds a "regulator-initial-mode" property to configure at
+startup the operating mode for the regulators that support changing
+its mode during normal operation and a "regulator-mode" property for the
+regulators that supports changing its operating mode when the system
+enters in a suspend state. These properties were originally part of
+Chanwoo Choi's regulator suspend state series [2] but were removed since
+there wasn't a way to define the operatin modes in a generic way.
 
-Hmm? I can see it there:
+In this series, the generic regulator DT binding doc explains that each
+device has to document what their valid operating modes are and the
+driver has to parse those and translate to the standard regulator modes.
 
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/log/drivers/clk/samsung?id=v3.18-rc1
+This series depend on [2] and also v2 of patch:
+"ARM: EXYNOS: Call regulator core suspend prepare and finish functions" [3].
+
+Javier Martinez Canillas (5):
+  regulator: of: Decrement refcount for suspend state nodes
+  regulator: core: Add regulator mode and initial mode properties
+  regulator: max77802: Document regulator operating modes
+  regulator: max77802: Parse regulator operating mode properties
+  ARM: dts: Configure regulators for suspend on exynos Peach boards
+
+ .../devicetree/bindings/regulator/max77802.txt     | 33 +++++++++
+ .../devicetree/bindings/regulator/regulator.txt    | 14 ++++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         | 81 ++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          | 81 ++++++++++++++++++++++
+ drivers/regulator/max77802.c                       | 44 ++++++++++++
+ drivers/regulator/of_regulator.c                   |  1 +
+ 6 files changed, 254 insertions(+)
+
+Patch #1 is a trivial fix to of_get_regulation_constraints() where the
+suspend state device node refcount was not decremented after usage.
+
+Patch #2 adds the regulator-initial-mode and regulator-mode properties to the
+generic regulator suspend state bindings.
+
+Patch #3 documents the valid operating modes for the max77802 regulators.
+
+Patch #4 adds the parse logic to fill the regulation constraints to change the
+regulator operating modes by the core.
+
+Patch #5 configure the regulators operating modes on Exynos Peach Chromebooks.
 
 Best regards,
-Tomasz
+Javier
+
+[0]: https://lkml.org/lkml/2014/10/8/331
+[1]: https://lkml.org/lkml/2014/10/16/504
+[2]: https://lkml.org/lkml/2014/10/10/161
+[3]: http://www.spinics.net/lists/arm-kernel/msg369923.html
