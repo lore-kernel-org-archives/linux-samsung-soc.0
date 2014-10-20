@@ -1,63 +1,63 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH 8/9] usb: dwc2/gadget: fix calls to phy control functions
- in suspend/resume code
-Date: Mon, 20 Oct 2014 12:46:23 +0200
-Message-ID: <5444E7FF.7080809@samsung.com>
-References: <1413464285-24172-1-git-send-email-m.szyprowski@samsung.com>
- <1413464285-24172-9-git-send-email-m.szyprowski@samsung.com>
- <20141016134240.GK3480@saruman>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v3 0/2] serial: samsung: add support for early console
+Date: Mon, 20 Oct 2014 13:28:29 +0200
+Message-ID: <1413804511-32441-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:34024 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753679AbaJTKq0 (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:53262 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752550AbaJTL2m (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Oct 2014 06:46:26 -0400
-In-reply-to: <20141016134240.GK3480@saruman>
+	Mon, 20 Oct 2014 07:28:42 -0400
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NDQ00J0QQOJCA30@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 20 Oct 2014 12:31:31 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: balbi@ti.com
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Paul Zimmerman <paulz@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, thomas.ab@samsung.com, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Rob Herring <robherring2@gmail.com>
 
-Hello,
+This patchset adds support for early console defined in device tree. As
+an example, DTS files for all Exynos4 based machines are updated with
+the correct value for common chosen/sdtout property.
 
-On 2014-10-16 15:42, Felipe Balbi wrote:
-> On Thu, Oct 16, 2014 at 02:58:04PM +0200, Marek Szyprowski wrote:
->> This patch moves calls to phy enable/disable out of spinlock protected
->> blocks in device suspend/resume to fix incorrect caller context. Phy
->> related functions must not be called from atomic context.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   drivers/usb/dwc2/gadget.c | 9 ++++++---
->>   1 file changed, 6 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
->> index cdf417a7ae63..052b1a857291 100644
->> --- a/drivers/usb/dwc2/gadget.c
->> +++ b/drivers/usb/dwc2/gadget.c
->> @@ -3656,11 +3656,13 @@ static int s3c_hsotg_suspend(struct platform_device *pdev, pm_message_t state)
->>   			 hsotg->driver->driver.name);
->>   
->>   	spin_lock_irqsave(&hsotg->lock, flags);
->> +	s3c_hsotg_core_disconnect(hsotg);
->>   	s3c_hsotg_disconnect(hsotg);
->> -	s3c_hsotg_phy_disable(hsotg);
->>   	hsotg->gadget.speed = USB_SPEED_UNKNOWN;
->>   	spin_unlock_irqrestore(&hsotg->lock, flags);
->>   
->> +	s3c_hsotg_phy_disable(hsotg);
-> this is aching to have a locked version as well as an unlocked version.
-> Look at what you do here. There's a minor race when you release that
-> spinlock. By the time ->suspend() is called, IRQs are not yet disabled.
-
-s3c_hsotg_core_disconnect() disconnects the udc hardware from the usb bus, so even
-if the irq comes before s3c_hsotg_phy_disable(), nothing wrong happens, because the
-driver state is already set to disconnected.
+To get it fully functional on ARM architecture, additional improvements
+(support for early_ioremap) are needed in early console code.
 
 Best regards
--- 
-Marek Szyprowski, PhD
+Marek Szyprowski
 Samsung R&D Institute Poland
+
+Change log:
+
+v3:
+- rebased onto v3.18-rc1
+- removed options from documentation (they are not yet supported)
+
+v2: http://www.spinics.net/lists/linux-samsung-soc/msg37278.html
+- added support for command line based initialization
+
+v1: http://www.spinics.net/lists/linux-samsung-soc/msg37094.html
+- initial version
+
+Tomasz Figa (2):
+  serial: samsung: Add support for early console
+  ARM: dts: exynos4: Add stdout-path properties
+
+ Documentation/kernel-parameters.txt             |  12 +++
+ arch/arm/boot/dts/exynos4210-origen.dts         |   1 +
+ arch/arm/boot/dts/exynos4210-smdkv310.dts       |   1 +
+ arch/arm/boot/dts/exynos4210-trats.dts          |   1 +
+ arch/arm/boot/dts/exynos4210-universal_c210.dts |   1 +
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   4 +
+ arch/arm/boot/dts/exynos4412-origen.dts         |   1 +
+ arch/arm/boot/dts/exynos4412-smdk4412.dts       |   1 +
+ arch/arm/boot/dts/exynos4412-tiny4412.dts       |   4 +
+ arch/arm/boot/dts/exynos4412-trats2.dts         |   1 +
+ drivers/tty/serial/Kconfig                      |   1 +
+ drivers/tty/serial/samsung.c                    | 103 ++++++++++++++++++++++++
+ 12 files changed, 131 insertions(+)
+
+-- 
+1.9.2
