@@ -1,57 +1,55 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 2/2] ARM: EXYNOS: Call regulator core suspend prepare
- and finish functions
-Date: Mon, 20 Oct 2014 22:10:54 +0200
-Message-ID: <54456C4E.9090303@collabora.co.uk>
-References: <1413454410-23396-1-git-send-email-javier.martinez@collabora.co.uk> <1413454410-23396-3-git-send-email-javier.martinez@collabora.co.uk> <CAD=FV=UtwNjyx56QtRrEo=jbX_PeMRAYZJVXzxqeS-vs4JyGRg@mail.gmail.com> <54453F2E.1080401@collabora.co.uk> <CAD=FV=WJfjhb9pfNhQwpToddR67NpA+m6kkj5oUVE5ewEhzvVQ@mail.gmail.com> <544567A1.2060006@collabora.co.uk> <20141020195641.GT18557@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v3 0/2] ARM: EXYNOS: Call regulator suspend prepare/finish
+Date: Mon, 20 Oct 2014 23:05:49 +0200
+Message-ID: <1413839151-10875-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:40284 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:40342 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751688AbaJTULE (ORCPT
+	with ESMTP id S1753213AbaJTVGY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Oct 2014 16:11:04 -0400
-In-Reply-To: <20141020195641.GT18557@sirena.org.uk>
+	Mon, 20 Oct 2014 17:06:24 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, Lee Jones <lee.jones@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chris Zhong <zyw@rock-chips.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Hello Mark,
+Hello,
 
-On 10/20/2014 09:56 PM, Mark Brown wrote:
-> On Mon, Oct 20, 2014 at 09:50:57PM +0200, Javier Martinez Canillas wrote:
->> On 10/20/2014 07:36 PM, Doug Anderson wrote:
-> 
->> > I guess I was just trying to follow the suggestion that was in the
->> > regulator code:
->> > http://lxr.free-electrons.com/source/drivers/regulator/core.c#L3699
->> > that says "This will usually be called by machine suspend code prior
->> > to supending."
-> 
->> I see, but still I feel as if it may be a lot of duplication since most
->> platforms will likely want to call the regulator core suspend prepare
-> 
-> Note that architectures are an example of a platform.  It really depends
-> what's responsible for final poweroff, we want this called as late as we
-> possibly can.
-> 
+This series add support for Exynos platforms to prepare regulators for
+system suspend. The regulator core has a set of helpers functions to be
+used when the system is entering and leaving from a suspend state but
+currently there is only one user in mainline.
 
-Got it. Thanks for the explanation.
+This user is drivers/mfd/sec-core.c but it calls regulator_suspend_prepare()
+from within the driver power-management suspend function. This does not
+seems to be correct since the regulator suspend prepare function affects all
+regulators in the system and not only the ones managed by this device.
 
->> and finish functions. Maybe it can be added as a Kconfig option so each
->> platform can choose at the config level if they want those to be called?
-> 
-> No, that's obviously not going to do anything useful for multiplatform.
-> 
+So patch #1 in this series revert the commit that introduced that change and
+patch #2 calls the regulator framework suspend/finish functions from the
+Exynos platform power-management code. The first patch should be queued through
+the mfd tree and the second through the linux-samsung tree.
 
-Ok, then let's keep to do it per-platform as is proposed on $subject for
-Exynos and what Chris proposed for Rockchip in [0] since it seems that's
-the place where these calls belong.
+Changes since v2:
+ - Check for regulator_suspend_finish() return value for an error.
+   Suggested by Doug Anderson.
 
-Best regards,
-Javier
+Changes since v1:
+ - Remove the call to regulator_suspend_prepare() from drivers/mfd/sec-core.c
+   as suggested by Doug Anderson.
+ - Call regulator_suspend_prepare() before s3c_pm_check_prepare() as suggested
+   by Doug Anderson.
+ - Added Lee Jones to cc list since there is a change for the mfd framework.
 
-[0]: http://www.spinics.net/lists/devicetree/msg53640.html
+Javier Martinez Canillas (2):
+  Revert "mfd: sec-core: Prepare regulators for suspend state to reduce
+    power-consumption"
+  ARM: EXYNOS: Call regulator core suspend prepare and finish functions
+
+ arch/arm/mach-exynos/suspend.c | 23 +++++++++++++++++++++++
+ drivers/mfd/Kconfig            |  1 -
+ drivers/mfd/sec-core.c         | 10 ----------
+ 3 files changed, 23 insertions(+), 11 deletions(-)
+
+-- 
+2.1.0
