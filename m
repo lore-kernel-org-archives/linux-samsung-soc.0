@@ -1,50 +1,99 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 00/10] more dwc2/gadget fixes
-Date: Mon, 20 Oct 2014 12:45:30 +0200
-Message-ID: <1413801940-31086-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:54314 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753060AbaJTKpu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Oct 2014 06:45:50 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 06/10] usb: dwc2/gadget: decouple setting soft-disconnect
+ from s3c_hsotg_core_init
+Date: Mon, 20 Oct 2014 12:45:36 +0200
+Message-ID: <1413801940-31086-7-git-send-email-m.szyprowski@samsung.com>
+References: <1413801940-31086-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1413801940-31086-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Paul Zimmerman <paulz-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Felipe Balbi <balbi@ti.com>, Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Paul Zimmerman <paulz@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hi!
+This patch changes s3c_hsotg_core_init function to leave hardware in
+soft disconnect mode, so the moment of coupling the hardware to the usb
+bus can be later controlled by the separate functions for enabling and
+disabling soft disconnect mode. This patch is a preparation to rework
+pullup() method.
 
-This patchset contains a set of fixes to solve vaious minor issues
-related to cable connect/disconnect events, pull-up control,
-soft-disconnect mode, proper usb phy operation and restoring gadget
-state after suspend/resume cycle.
+Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/usb/dwc2/gadget.c | 22 +++++++++++++++++-----
+ 1 file changed, 17 insertions(+), 5 deletions(-)
 
-Changes since v1 (http://www.spinics.net/lists/linux-samsung-soc/msg37842.html):
-- fixed issues spotted by Felipe Balbi
-
-Best regards
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
-Marek Szyprowski (10):
-  usb: dwc2/gadget: report disconnect event from 'end session' irq
-  usb: dwc2/gadget: fix enumeration issues
-  usb: dwc2/gadget: fix gadget unregistration in udc_stop() function
-  usb: dwc2/gadget: disable phy before turning off power regulators
-  usb: dwc2/gadget: move setting last reset time to s3c_hsotg_core_init
-  usb: dwc2/gadget: decouple setting soft-disconnect from
-    s3c_hsotg_core_init
-  usb: dwc2/gadget: move phy control calls out of pullup() method
-  usb: dwc2/gadget: use soft-disconnect udc feature in pullup() method
-  usb: dwc2/gadget: fix calls to phy control functions in suspend/resume
-    code
-  usb: dwc2/gadget: rework suspend/resume code to correctly restore
-    gadget state
-
- drivers/usb/dwc2/core.h   |  4 +-
- drivers/usb/dwc2/gadget.c | 95 ++++++++++++++++++++++++++++++++---------------
- 2 files changed, 69 insertions(+), 30 deletions(-)
-
+diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
+index c1dad46bbbdd..5eb2473031c4 100644
+--- a/drivers/usb/dwc2/gadget.c
++++ b/drivers/usb/dwc2/gadget.c
+@@ -2124,7 +2124,7 @@ static int s3c_hsotg_corereset(struct s3c_hsotg *hsotg)
+  *
+  * Issue a soft reset to the core, and await the core finishing it.
+  */
+-static void s3c_hsotg_core_init(struct s3c_hsotg *hsotg)
++static void s3c_hsotg_core_init_disconnected(struct s3c_hsotg *hsotg)
+ {
+ 	s3c_hsotg_corereset(hsotg);
+ 
+@@ -2241,14 +2241,23 @@ static void s3c_hsotg_core_init(struct s3c_hsotg *hsotg)
+ 		readl(hsotg->regs + DOEPCTL0));
+ 
+ 	/* clear global NAKs */
+-	writel(DCTL_CGOUTNAK | DCTL_CGNPINNAK,
++	writel(DCTL_CGOUTNAK | DCTL_CGNPINNAK | DCTL_SFTDISCON,
+ 	       hsotg->regs + DCTL);
+ 
+ 	/* must be at-least 3ms to allow bus to see disconnect */
+ 	mdelay(3);
+ 
+ 	hsotg->last_rst = jiffies;
++}
++
++static void s3c_hsotg_core_disconnect(struct s3c_hsotg *hsotg)
++{
++	/* set the soft-disconnect bit */
++	__orr32(hsotg->regs + DCTL, DCTL_SFTDISCON);
++}
+ 
++static void s3c_hsotg_core_connect(struct s3c_hsotg *hsotg)
++{
+ 	/* remove the soft-disconnect and let's go */
+ 	__bic32(hsotg->regs + DCTL, DCTL_SFTDISCON);
+ }
+@@ -2348,7 +2357,8 @@ irq_retry:
+ 				kill_all_requests(hsotg, &hsotg->eps[0],
+ 							  -ECONNRESET, true);
+ 
+-				s3c_hsotg_core_init(hsotg);
++				s3c_hsotg_core_init_disconnected(hsotg);
++				s3c_hsotg_core_connect(hsotg);
+ 			}
+ 		}
+ 	}
+@@ -2981,7 +2991,8 @@ static int s3c_hsotg_pullup(struct usb_gadget *gadget, int is_on)
+ 	if (is_on) {
+ 		s3c_hsotg_phy_enable(hsotg);
+ 		clk_enable(hsotg->clk);
+-		s3c_hsotg_core_init(hsotg);
++		s3c_hsotg_core_init_disconnected(hsotg);
++		s3c_hsotg_core_connect(hsotg);
+ 	} else {
+ 		clk_disable(hsotg->clk);
+ 		s3c_hsotg_phy_disable(hsotg);
+@@ -3668,7 +3679,8 @@ static int s3c_hsotg_resume(struct platform_device *pdev)
+ 
+ 	spin_lock_irqsave(&hsotg->lock, flags);
+ 	s3c_hsotg_phy_enable(hsotg);
+-	s3c_hsotg_core_init(hsotg);
++	s3c_hsotg_core_init_disconnected(hsotg);
++	s3c_hsotg_core_connect(hsotg);
+ 	spin_unlock_irqrestore(&hsotg->lock, flags);
+ 
+ 	return ret;
 -- 
 1.9.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
