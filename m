@@ -1,49 +1,86 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v3 2/2] ARM: EXYNOS: Call regulator core suspend prepare
- and finish functions
-Date: Mon, 20 Oct 2014 23:47:40 +0200
-Message-ID: <544582FC.9010005@collabora.co.uk>
-References: <1413839151-10875-1-git-send-email-javier.martinez@collabora.co.uk>	<1413839151-10875-3-git-send-email-javier.martinez@collabora.co.uk> <CAD=FV=XnBWWKbrey1zmxtAzGYviJJad4pWOC4=bbf2e2OBgaeQ@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v3 1/2] Revert
+ "mfd: sec-core: Prepare regulators for suspend state to reduce
+ power-consumption"
+Date: Tue, 21 Oct 2014 08:41:52 +0900
+Message-ID: <54459DC0.4040507@samsung.com>
+References: <1413839151-10875-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1413839151-10875-2-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:40409 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751233AbaJTVrp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Oct 2014 17:47:45 -0400
-In-Reply-To: <CAD=FV=XnBWWKbrey1zmxtAzGYviJJad4pWOC4=bbf2e2OBgaeQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1413839151-10875-2-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hello Doug,
+Hi Javier,
 
-On 10/20/2014 11:40 PM, Doug Anderson wrote:
-> Javier,
+On 10/21/2014 06:05 AM, Javier Martinez Canillas wrote:
+> This reverts commit b7cde7078d2344073c310aa65fc2b0a845d2cb5b
+> ("mfd: sec-core: Prepare regulators for suspend state to reduce power-consumption")
 > 
-> On Mon, Oct 20, 2014 at 2:05 PM, Javier Martinez Canillas
-> <javier.martinez@collabora.co.uk> wrote:
->> The regulator framework has a set of helpers functions to be used when
->> the system is entering and leaving from suspend but these are not called
->> on Exynos platforms. This means that the .set_suspend_* function handlers
->> defined by regulator drivers are not called when the system is suspended.
->>
->> Suggested-by: Doug Anderson <dianders@chromium.org>
->> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> Reviewed-by: Doug Anderson <dianders@chromium.org>
+> Commit b7cde7078d23 called regulator_suspend_prepare() to prepare the
+> regulators for a suspend state. But it did from the device pm suspend
+> handler while the regulator suspend prepare function iterates over all
+> regulators and not only the one managed by this device so it doesn't
+> seems to be correct to call it from within a device driver.
 > 
-> I think you forgot to carry Chanwoo's review:
+> It is better to call the regulator suspend prepare/finish functions
+> from platform code instead so this patch reverts the mentioned commit.
 > 
-> Reviewed-by: Chanwoo Choi<cw00.choi@samsung.com>
+> Suggested-by: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>  drivers/mfd/Kconfig    |  1 -
+>  drivers/mfd/sec-core.c | 10 ----------
+>  2 files changed, 11 deletions(-)
 > 
-> I don't think you've made any changes that would need to invalidate his review.
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 1456ea7..fd8cc4c 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -655,7 +655,6 @@ config MFD_SEC_CORE
+>  	select MFD_CORE
+>  	select REGMAP_I2C
+>  	select REGMAP_IRQ
+> -	select REGULATOR
+>  	help
+>  	 Support for the Samsung Electronics MFD series.
+>  	 This driver provides common support for accessing the device,
+> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+> index dba7e2b..5993608 100644
+> --- a/drivers/mfd/sec-core.c
+> +++ b/drivers/mfd/sec-core.c
+> @@ -31,7 +31,6 @@
+>  #include <linux/mfd/samsung/s2mpu02.h>
+>  #include <linux/mfd/samsung/s5m8763.h>
+>  #include <linux/mfd/samsung/s5m8767.h>
+> -#include <linux/regulator/machine.h>
+>  #include <linux/regmap.h>
+>  
+>  static const struct mfd_cell s5m8751_devs[] = {
+> @@ -432,15 +431,6 @@ static int sec_pmic_suspend(struct device *dev)
+>  	 */
+>  	disable_irq(sec_pmic->irq);
+>  
+> -	switch (sec_pmic->device_type) {
+> -	case S2MPS14X:
+> -	case S2MPU02:
+> -		regulator_suspend_prepare(PM_SUSPEND_MEM);
+> -		break;
+> -	default:
+> -		break;
+> -	}
+> -
+>  	return 0;
+>  }
+>  
 > 
 
-Yes, I forgot to add the tag to my local branch so it was missed when generating
-the patch for the new version, sorry about that...
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Best regards,
-Javier
+Thanks,
+Chanwoo Choi
