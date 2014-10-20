@@ -1,153 +1,195 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 4/5] pinctrl: exynos: Add support for Exynos4415
-Date: Mon, 20 Oct 2014 12:32:14 +0900
-Message-ID: <1413775935-17743-4-git-send-email-cw00.choi@samsung.com>
-References: <1413775749-17539-1-git-send-email-cw00.choi@samsung.com>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: Re: [PATCH 3/7] clk: samsung: exynos7: add clocks for RTC block
+Date: Mon, 20 Oct 2014 15:18:27 +0530
+Message-ID: <CAFp+6iG4Wv6cn6p2sxX1bMJjfkeDrZa_zKjeR7+iWqwN-TkX=Q@mail.gmail.com>
+References: <1413562315-12283-1-git-send-email-a.kesavan@samsung.com>
+	<1413562315-12283-4-git-send-email-a.kesavan@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:34105 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752273AbaJTDci (ORCPT
+Received: from mail-qc0-f175.google.com ([209.85.216.175]:61193 "EHLO
+	mail-qc0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752978AbaJTJs2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 19 Oct 2014 23:32:38 -0400
-In-reply-to: <1413775749-17539-1-git-send-email-cw00.choi@samsung.com>
+	Mon, 20 Oct 2014 05:48:28 -0400
+In-Reply-To: <1413562315-12283-4-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux@arm.linux.org.uk, mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net, tomasz.figa@gmail.com, mturquette@linaro.org, thomas.abraham@linaro.org, linus.walleij@linaro.org, sw0312.kim@samsung.com, kyungmin.park@samsung.com, inki.dae@samsung.com, geunsik.lim@samsung.com, jh80.chung@samsung.com, cw00.choi@samsung.com, jaewon02.kim@samsung.com, ideal.song@samsung.com, yj44.cho@samsung.com
+To: Abhilash Kesavan <a.kesavan@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, catalin.marinas@arm.com, robh@kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>
 
-From: Tomasz Figa <tomasz.figa@gmail.com>
+Hi Abhilash,
 
-The pin controllers of Exynos4415 are similar to Exynos4412, but certain
-differences cause the need to create separate driver data for it. This
-patch adds pin controller and bank descriptor arrays to the driver to
-support the new SoC.
 
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-[cw00.choi: Rebase it on mainline kernel]
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/pinctrl/samsung/pinctrl-exynos.c  | 78 +++++++++++++++++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.c |  2 +
- drivers/pinctrl/samsung/pinctrl-samsung.h |  1 +
- 3 files changed, 81 insertions(+)
+On Fri, Oct 17, 2014 at 9:41 PM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
+> From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+>
+> Add clock support for the RTC block in Exynos7.
+>
+> Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> ---
+>  .../devicetree/bindings/clock/exynos7-clock.txt    |    1 +
+>  drivers/clk/samsung/clk-exynos7.c                  |   54 ++++++++++++++++++++
+>  include/dt-bindings/clock/exynos7-clk.h            |   17 +++---
+>  3 files changed, 66 insertions(+), 6 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/exynos7-clock.txt b/Documentation/devicetree/bindings/clock/exynos7-clock.txt
+> index 4c69b66..aff6fd2 100644
+> --- a/Documentation/devicetree/bindings/clock/exynos7-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/exynos7-clock.txt
+> @@ -28,6 +28,7 @@ Required Properties for Clock Controller:
+>         - "samsung,exynos7-clock-topc"
+>         - "samsung,exynos7-clock-top0"
+>         - "samsung,exynos7-clock-top1"
+> +       - "samsung,exynos7-clock-ccore"
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index d7154ed..065eee0 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -920,6 +920,84 @@ struct samsung_pin_ctrl exynos4x12_pin_ctrl[] = {
- 	},
- };
- 
-+/* pin banks of exynos4415 pin-controller 0 */
-+static struct samsung_pin_bank exynos4415_pin_banks0[] = {
-+	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
-+	EXYNOS_PIN_BANK_EINTG(6, 0x020, "gpa1", 0x04),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpb", 0x08),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x060, "gpc0", 0x0c),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x080, "gpc1", 0x10),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x0A0, "gpd0", 0x14),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x0C0, "gpd1", 0x18),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x180, "gpf0", 0x30),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x1A0, "gpf1", 0x34),
-+	EXYNOS_PIN_BANK_EINTG(1, 0x1C0, "gpf2", 0x38),
-+};
-+
-+/* pin banks of exynos4415 pin-controller 1 */
-+static struct samsung_pin_bank exynos4415_pin_banks1[] = {
-+	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpk0", 0x08),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x060, "gpk1", 0x0c),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x080, "gpk2", 0x10),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x0A0, "gpk3", 0x14),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x0C0, "gpl0", 0x18),
-+	EXYNOS_PIN_BANK_EINTN(6, 0x120, "mp00"),
-+	EXYNOS_PIN_BANK_EINTN(4, 0x140, "mp01"),
-+	EXYNOS_PIN_BANK_EINTN(6, 0x160, "mp02"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0x180, "mp03"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0x1A0, "mp04"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0x1C0, "mp05"),
-+	EXYNOS_PIN_BANK_EINTN(8, 0x1E0, "mp06"),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x260, "gpm0", 0x24),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x280, "gpm1", 0x28),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x2A0, "gpm2", 0x2c),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x2C0, "gpm3", 0x30),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x2E0, "gpm4", 0x34),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08),
-+	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c),
-+};
-+
-+/* pin banks of exynos4415 pin-controller 2 */
-+static struct samsung_pin_bank exynos4415_pin_banks2[] = {
-+	EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz", 0x00),
-+	EXYNOS_PIN_BANK_EINTN(2, 0x000, "etc1"),
-+};
-+
-+/*
-+ * Samsung pinctrl driver data for Exynos4415 SoC. Exynos4415 SoC includes
-+ * three gpio/pin-mux/pinconfig controllers.
-+ */
-+struct samsung_pin_ctrl exynos4415_pin_ctrl[] = {
-+	{
-+		/* pin-controller instance 0 data */
-+		.pin_banks	= exynos4415_pin_banks0,
-+		.nr_banks	= ARRAY_SIZE(exynos4415_pin_banks0),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
-+		.label		= "exynos4415-gpio-ctrl0",
-+	}, {
-+		/* pin-controller instance 1 data */
-+		.pin_banks	= exynos4415_pin_banks1,
-+		.nr_banks	= ARRAY_SIZE(exynos4415_pin_banks1),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.eint_wkup_init = exynos_eint_wkup_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
-+		.label		= "exynos4415-gpio-ctrl1",
-+	}, {
-+		/* pin-controller instance 2 data */
-+		.pin_banks	= exynos4415_pin_banks2,
-+		.nr_banks	= ARRAY_SIZE(exynos4415_pin_banks2),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
-+		.label		= "exynos4415-gpio-ctrl2",
-+	},
-+};
-+
- /* pin banks of exynos5250 pin-controller 0 */
- static struct samsung_pin_bank exynos5250_pin_banks0[] = {
- 	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index b07406d..0397ce5 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -1224,6 +1224,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
- 		.data = (void *)exynos4210_pin_ctrl },
- 	{ .compatible = "samsung,exynos4x12-pinctrl",
- 		.data = (void *)exynos4x12_pin_ctrl },
-+	{ .compatible = "samsung,exynos4415-pinctrl",
-+		.data = (void *)exynos4415_pin_ctrl },
- 	{ .compatible = "samsung,exynos5250-pinctrl",
- 		.data = (void *)exynos5250_pin_ctrl },
- 	{ .compatible = "samsung,exynos5260-pinctrl",
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index 5cedc9d..10b720d 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -239,6 +239,7 @@ struct samsung_pmx_func {
- extern struct samsung_pin_ctrl exynos3250_pin_ctrl[];
- extern struct samsung_pin_ctrl exynos4210_pin_ctrl[];
- extern struct samsung_pin_ctrl exynos4x12_pin_ctrl[];
-+extern struct samsung_pin_ctrl exynos4415_pin_ctrl[];
- extern struct samsung_pin_ctrl exynos5250_pin_ctrl[];
- extern struct samsung_pin_ctrl exynos5260_pin_ctrl[];
- extern struct samsung_pin_ctrl exynos5420_pin_ctrl[];
+just a nit.
+you need to mention the clock sources for this block too, like it's
+there for every other block in this Documentation ?
+
+>         - "samsung,exynos7-clock-peric0"
+>         - "samsung,exynos7-clock-peric1"
+>         - "samsung,exynos7-clock-peris"
+> diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+> index f5e43fa..3a30f43 100644
+> --- a/drivers/clk/samsung/clk-exynos7.c
+> +++ b/drivers/clk/samsung/clk-exynos7.c
+> @@ -29,7 +29,9 @@
+>  #define AUD_PLL_CON0           0x0140
+>  #define MUX_SEL_TOPC0          0x0200
+>  #define MUX_SEL_TOPC1          0x0204
+> +#define MUX_SEL_TOPC2          0x0208
+>  #define MUX_SEL_TOPC3          0x020C
+> +#define DIV_TOPC0              0x0600
+>  #define DIV_TOPC1              0x0604
+>  #define DIV_TOPC3              0x060C
+>
+> @@ -78,7 +80,9 @@ static unsigned long topc_clk_regs[] __initdata = {
+>         AUD_PLL_CON0,
+>         MUX_SEL_TOPC0,
+>         MUX_SEL_TOPC1,
+> +       MUX_SEL_TOPC2,
+>         MUX_SEL_TOPC3,
+> +       DIV_TOPC0,
+>         DIV_TOPC1,
+>         DIV_TOPC3,
+>  };
+> @@ -101,10 +105,15 @@ static struct samsung_mux_clock topc_mux_clks[] __initdata = {
+>         MUX(0, "mout_sclk_bus0_pll_out", mout_sclk_bus0_pll_out_p,
+>                 MUX_SEL_TOPC1, 16, 1),
+>
+> +       MUX(0, "mout_aclk_ccore_133", mout_topc_group2, MUX_SEL_TOPC2, 4, 2),
+> +
+>         MUX(0, "mout_aclk_peris_66", mout_topc_group2, MUX_SEL_TOPC3, 24, 2),
+>  };
+>
+>  static struct samsung_div_clock topc_div_clks[] __initdata = {
+> +       DIV(DOUT_ACLK_CCORE_133, "dout_aclk_ccore_133", "mout_aclk_ccore_133",
+> +               DIV_TOPC0, 4, 4),
+> +
+>         DIV(DOUT_ACLK_PERIS, "dout_aclk_peris_66", "mout_aclk_peris_66",
+>                 DIV_TOPC1, 24, 4),
+>
+> @@ -393,6 +402,51 @@ static void __init exynos7_clk_top1_init(struct device_node *np)
+>  CLK_OF_DECLARE(exynos7_clk_top1, "samsung,exynos7-clock-top1",
+>         exynos7_clk_top1_init);
+>
+> +/* Register Offset definitions for CMU_CCORE (0x105B0000) */
+> +#define MUX_SEL_CCORE                  0x0200
+> +#define DIV_CCORE                      0x0600
+> +#define ENABLE_ACLK_CCORE0             0x0800
+> +#define ENABLE_ACLK_CCORE1             0x0804
+> +#define ENABLE_PCLK_CCORE              0x0900
+> +
+> +/*
+> + * List of parent clocks for Muxes in CMU_CCORE
+> + */
+> +PNAME(mout_aclk_ccore_133_p)   = { "fin_pll", "dout_aclk_ccore_133" };
+> +
+> +static unsigned long ccore_clk_regs[] __initdata = {
+> +       MUX_SEL_CCORE,
+> +       ENABLE_PCLK_CCORE,
+> +};
+> +
+> +static struct samsung_mux_clock ccore_mux_clks[] __initdata = {
+> +       MUX(0, "mout_aclk_ccore_133_user", mout_aclk_ccore_133_p,
+> +               MUX_SEL_CCORE, 1, 1),
+> +};
+> +
+> +static struct samsung_gate_clock ccore_gate_clks[] __initdata = {
+> +       GATE(PCLK_RTC, "pclk_rtc", "mout_aclk_ccore_133_user",
+> +               ENABLE_PCLK_CCORE, 8, 0, 0),
+> +};
+> +
+> +static struct samsung_cmu_info ccore_cmu_info __initdata = {
+> +       .mux_clks               = ccore_mux_clks,
+> +       .nr_mux_clks            = ARRAY_SIZE(ccore_mux_clks),
+> +       .gate_clks              = ccore_gate_clks,
+> +       .nr_gate_clks           = ARRAY_SIZE(ccore_gate_clks),
+> +       .nr_clk_ids             = CCORE_NR_CLK,
+> +       .clk_regs               = ccore_clk_regs,
+> +       .nr_clk_regs            = ARRAY_SIZE(ccore_clk_regs),
+> +};
+> +
+> +static void __init exynos7_clk_ccore_init(struct device_node *np)
+> +{
+> +       samsung_cmu_register_one(np, &ccore_cmu_info);
+> +}
+> +
+> +CLK_OF_DECLARE(exynos7_clk_ccore, "samsung,exynos7-clock-ccore",
+> +       exynos7_clk_ccore_init);
+> +
+>  /* Register Offset definitions for CMU_PERIC0 (0x13610000) */
+>  #define MUX_SEL_PERIC0                 0x0200
+>  #define ENABLE_PCLK_PERIC0             0x0900
+> diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
+> index ff63c4e..3227679 100644
+> --- a/include/dt-bindings/clock/exynos7-clk.h
+> +++ b/include/dt-bindings/clock/exynos7-clk.h
+> @@ -11,12 +11,13 @@
+>  #define _DT_BINDINGS_CLOCK_EXYNOS7_H
+>
+>  /* TOPC */
+> -#define DOUT_ACLK_PERIS                        1
+> -#define DOUT_SCLK_BUS0_PLL             2
+> -#define DOUT_SCLK_BUS1_PLL             3
+> -#define DOUT_SCLK_CC_PLL               4
+> -#define DOUT_SCLK_MFC_PLL              5
+> -#define TOPC_NR_CLK                    6
+> +#define DOUT_ACLK_CCORE_133            1
+> +#define DOUT_ACLK_PERIS                        2
+> +#define DOUT_SCLK_BUS0_PLL             3
+> +#define DOUT_SCLK_BUS1_PLL             4
+> +#define DOUT_SCLK_CC_PLL               5
+> +#define DOUT_SCLK_MFC_PLL              6
+> +#define TOPC_NR_CLK                    7
+>
+>  /* TOP0 */
+>  #define DOUT_ACLK_PERIC1               1
+> @@ -38,6 +39,10 @@
+>  #define CLK_SCLK_MMC0                  8
+>  #define TOP1_NR_CLK                    9
+>
+> +/* CCORE */
+> +#define PCLK_RTC                       1
+> +#define CCORE_NR_CLK                   2
+> +
+>  /* PERIC0 */
+>  #define PCLK_UART0                     1
+>  #define SCLK_UART0                     2
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
 -- 
-1.8.0
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
