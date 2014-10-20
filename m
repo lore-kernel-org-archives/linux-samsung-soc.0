@@ -1,110 +1,102 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 00/33] thermal: exynos: convert the driver to use per-SoC
- type operations
-Date: Mon, 20 Oct 2014 14:47:04 +0200
-Message-ID: <1799007.8fVFUEOU02@amdc1032>
-References: <1411054070-25757-1-git-send-email-b.zolnierkie@samsung.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH v2 1/2] arch: arm: samsung: Clean-up usage of
+ CONFIG_SERIAL_SAMSUNG_UARTS symbol
+Date: Mon, 20 Oct 2014 19:11:50 +0530
+Message-ID: <CAM4voameHriCmmnwNiVGMVK=knYKsqr22iO2xKPWAZugACxD+Q@mail.gmail.com>
+References: <1412181777-6388-1-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1411054070-25757-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f44.google.com ([209.85.192.44]:62612 "EHLO
+	mail-qg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752521AbaJTNlv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 20 Oct 2014 09:41:51 -0400
+Received: by mail-qg0-f44.google.com with SMTP id j5so3485866qga.31
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Oct 2014 06:41:50 -0700 (PDT)
+In-Reply-To: <1412181777-6388-1-git-send-email-a.kesavan@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
 
+Hi Kukjin,
 
-Hi,
+On Wed, Oct 1, 2014 at 10:12 PM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
+> Remove usage of CONFIG_SERIAL_SAMSUNG_UARTS symbol from platform
+> specific code.
+>
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
 
-Eduaro/Amit, any comments on this series?
-Could it be merged for v3.19?
+Can you please pick this up if it looks OK ?
 
-[ Currently this series conflicts with "[PATCH] thermal: exynos: fix IRQ
-  clearing on TMU initialization" patch so I'm planning to refresh it but
-  it would be great to get some feedback first. ]
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
-
-On Thursday, September 18, 2014 05:27:17 PM Bartlomiej Zolnierkiewicz wrote:
-> Hi,
-> 
-> This patch series replaces the hardware registers abstractions in
-> the Exynos thermal driver by the usage of per-SoC type operations.
-> Such solution provides simpler, easier to understand code and
-> allows removal of ~250 LOCs (~11% of the whole source code) from
-> the driver.  Some other driver improvements are now also possible
-> thanks to these changes but are scheduled at later time (like
-> consolidating code for clearing IRQs using INTCLEAR register).
-> 
-> The patchset should not cause any functionality changes.  This
-> means that unless there are some bugs in the patches itself there
-> should be no behavior changes for the driver (this also includes
-> lack of changes in the way hardware is accessed by the driver).
-> 
-> All testing was done on (Exynos4412 SoC based) ODROID U3 board
-> (some additional patches are needed to make the Exynos thermal
-> driver work on this hardware).
-> 
-> Depends on:
-> - 'next' branch of linux-soc-thermal.git kernel tree from Eduardo
-> - [PATCH] thermal: exynos: use correct offset for TMU_CONTROL
->   register on Exynos5260
->   (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg36529.html)
-> 
-> Best regards,
+Abhilash
+> ---
+> Changes in v2:
+>         - Re-ordered the patches
+>         - Added a define for number of uart ports in arch/arm/plat-samsung/init.c
+>         - Removed CONFIG_SERIAL_SAMSUNG #ifdef in arch/arm/plat-samsung/init.c
+>
+> Build tested using s3c2410_defconfig, s3c6400_defconfig, exynos_defconfig
+> and arm64's defconfig with and without the serial driver enabled. Boot tested
+> on Exynos5420 and Exynos7.
+>
+>  arch/arm/mach-s3c64xx/irq-pm.c |    6 +++---
+>  arch/arm/plat-samsung/init.c   |    7 ++-----
+>  2 files changed, 5 insertions(+), 8 deletions(-)
+>
+> diff --git a/arch/arm/mach-s3c64xx/irq-pm.c b/arch/arm/mach-s3c64xx/irq-pm.c
+> index ae4ea76..b20024e 100644
+> --- a/arch/arm/mach-s3c64xx/irq-pm.c
+> +++ b/arch/arm/mach-s3c64xx/irq-pm.c
+> @@ -55,10 +55,10 @@ static struct irq_grp_save {
+>         u32     mask;
+>  } eint_grp_save[5];
+>
+> -#ifndef CONFIG_SERIAL_SAMSUNG_UARTS
+> -#define SERIAL_SAMSUNG_UARTS 0
+> +#ifndef CONFIG_SERIAL_SAMSUNG
+> +#define SERIAL_SAMSUNG_UARTS   0
+>  #else
+> -#define        SERIAL_SAMSUNG_UARTS CONFIG_SERIAL_SAMSUNG_UARTS
+> +#define SERIAL_SAMSUNG_UARTS   4
+>  #endif
+>
+>  static u32 irq_uart_mask[SERIAL_SAMSUNG_UARTS];
+> diff --git a/arch/arm/plat-samsung/init.c b/arch/arm/plat-samsung/init.c
+> index 11fbbc2..6114942 100644
+> --- a/arch/arm/plat-samsung/init.c
+> +++ b/arch/arm/plat-samsung/init.c
+> @@ -92,10 +92,9 @@ void __init s3c24xx_init_clocks(int xtal)
+>  /* uart management */
+>  #if IS_ENABLED(CONFIG_SAMSUNG_ATAGS)
+>  static int nr_uarts __initdata = 0;
+> +#define MAX_UART_PORTS 4
+>
+> -#ifdef CONFIG_SERIAL_SAMSUNG_UARTS
+> -static struct s3c2410_uartcfg uart_cfgs[CONFIG_SERIAL_SAMSUNG_UARTS];
+> -#endif
+> +static struct s3c2410_uartcfg uart_cfgs[MAX_UART_PORTS];
+>
+>  /* s3c24xx_init_uartdevs
+>   *
+> @@ -110,7 +109,6 @@ void __init s3c24xx_init_uartdevs(char *name,
+>                                   struct s3c24xx_uart_resources *res,
+>                                   struct s3c2410_uartcfg *cfg, int no)
+>  {
+> -#ifdef CONFIG_SERIAL_SAMSUNG_UARTS
+>         struct platform_device *platdev;
+>         struct s3c2410_uartcfg *cfgptr = uart_cfgs;
+>         struct s3c24xx_uart_resources *resp;
+> @@ -133,7 +131,6 @@ void __init s3c24xx_init_uartdevs(char *name,
+>         }
+>
+>         nr_uarts = no;
+> -#endif
+>  }
+>
+>  void __init s3c24xx_init_uarts(struct s3c2410_uartcfg *cfg, int no)
 > --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
-> 
-> 
-> Bartlomiej Zolnierkiewicz (33):
->   thermal: exynos: remove needless triminfo_data abstraction
->   thermal: exynos: remove needless tmu_status abstraction
->   thermal: exynos: remove needless threshold_temp abstraction
->   thermal: exynos: remove needless triminfo_ctrl abstraction
->   thermal: exynos: remove needless test_mux_addr_shift abstraction
->   thermal: exynos: remove needless therm_trip_[mode,mask]_shift
->     abstractions
->   thermal: exynos: remove needless therm_trip_en_shift abstraction
->   thermal: exynos: remove needless emul_temp_shift abstraction
->   thermal: exynos: remove needless emul_time_shift abstraction
->   thermal: exynos: replace tmu_irqstatus check by Exynos5440 one
->   thermal: exynos: replace tmu_pmin check by Exynos5440 one
->   thermal: exynos: simplify HW_TRIP level setting
->   thermal: exynos: replace threshold_falling check by Exynos SoC type
->     one
->   thermal: exynos: remove TMU_SUPPORT_READY_STATUS flag
->   thermal: exynos: remove TMU_SUPPORT_TRIM_RELOAD flag
->   thermal: exynos: add sanitize_temp_error() helper
->   thermal: exynos: add get_th_reg() helper
->   thermal: exynos: add ->tmu_initialize method
->   thermal: exynos: add get_con_reg() helper
->   thermal: exynos: add ->tmu_control method
->   thermal: exynos: add ->tmu_read method
->   thermal: exynos: add get_emul_con_reg() helper
->   thermal: exynos: add ->tmu_set_emulation method
->   thermal: exynos: add ->tmu_clear_irqs method
->   thermal: exynos: remove TMU_SUPPORT_FALLING_TRIP flag
->   thermal: exynos: remove TMU_SUPPORT_EMUL_TIME flag
->   thermal: exynos: remove TMU_SUPPORT_EMULATION flag
->   thermal: exynos: remove TMU_SUPPORT_ADDRESS_MULTIPLE flag
->   thermal: exynos: remove TMU_SUPPORT_MULTI_INST flag
->   thermal: exynos: remove test_mux pdata field
->   thermal: exynos: remove SoC type ifdefs
->   thermal: exynos: remove __EXYNOS5420_TMU_DATA macro
->   thermal: exynos: remove exynos_tmu_data.h include
-> 
->  drivers/thermal/samsung/exynos_thermal_common.h |   1 -
->  drivers/thermal/samsung/exynos_tmu.c            | 706 +++++++++++++++++-------
->  drivers/thermal/samsung/exynos_tmu.h            | 131 +----
->  drivers/thermal/samsung/exynos_tmu_data.c       | 260 +--------
->  drivers/thermal/samsung/exynos_tmu_data.h       | 174 ------
->  5 files changed, 509 insertions(+), 763 deletions(-)
->  delete mode 100644 drivers/thermal/samsung/exynos_tmu_data.h
-
+> 1.7.9.5
+>
