@@ -1,67 +1,43 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 07/10] usb: dwc2/gadget: move phy control calls out of
- pullup() method
-Date: Mon, 20 Oct 2014 12:45:37 +0200
-Message-ID: <1413801940-31086-8-git-send-email-m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 02/10] usb: dwc2/gadget: fix enumeration issues
+Date: Mon, 20 Oct 2014 12:45:32 +0200
+Message-ID: <1413801940-31086-3-git-send-email-m.szyprowski@samsung.com>
 References: <1413801940-31086-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:16259 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753522AbaJTKpw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Oct 2014 06:45:52 -0400
-In-reply-to: <1413801940-31086-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1413801940-31086-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Paul Zimmerman <paulz-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Felipe Balbi <balbi@ti.com>, Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Paul Zimmerman <paulz@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-This patch moves phy enable/disable calls from pullup() method to
-udc_start/stop functions. This solves the issue related to limited caller
-context for PHY functions, because they cannot be called from non-sleeping
-context. This is also a preparation for using soft-disconnect feature of
-udc controller in pullup() method.
+Excessive debug messages might cause timing issues that prevent correct
+usb enumeration. This patch hides information about USB bus reset to let
+driver enumerate fast enough to avoid making host angry. This fixes
+endless enumeration and usb reset loop observed with some Linux hosts.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
 ---
- drivers/usb/dwc2/gadget.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/usb/dwc2/gadget.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-index 5eb2473031c4..98adf8d17493 100644
+index 119c8a3effc2..8870e38c1d82 100644
 --- a/drivers/usb/dwc2/gadget.c
 +++ b/drivers/usb/dwc2/gadget.c
-@@ -2919,6 +2919,8 @@ static int s3c_hsotg_udc_start(struct usb_gadget *gadget,
- 		goto err;
- 	}
+@@ -2333,7 +2333,7 @@ irq_retry:
  
-+	s3c_hsotg_phy_enable(hsotg);
-+
- 	dev_info(hsotg->dev, "bound driver %s\n", driver->driver.name);
- 	return 0;
+ 		u32 usb_status = readl(hsotg->regs + GOTGCTL);
  
-@@ -2955,6 +2957,8 @@ static int s3c_hsotg_udc_stop(struct usb_gadget *gadget,
+-		dev_info(hsotg->dev, "%s: USBRst\n", __func__);
++		dev_dbg(hsotg->dev, "%s: USBRst\n", __func__);
+ 		dev_dbg(hsotg->dev, "GNPTXSTS=%08x\n",
+ 			readl(hsotg->regs + GNPTXSTS));
  
- 	spin_unlock_irqrestore(&hsotg->lock, flags);
- 
-+	s3c_hsotg_phy_disable(hsotg);
-+
- 	regulator_bulk_disable(ARRAY_SIZE(hsotg->supplies), hsotg->supplies);
- 
- 	clk_disable(hsotg->clk);
-@@ -2989,13 +2993,11 @@ static int s3c_hsotg_pullup(struct usb_gadget *gadget, int is_on)
- 
- 	spin_lock_irqsave(&hsotg->lock, flags);
- 	if (is_on) {
--		s3c_hsotg_phy_enable(hsotg);
- 		clk_enable(hsotg->clk);
- 		s3c_hsotg_core_init_disconnected(hsotg);
- 		s3c_hsotg_core_connect(hsotg);
- 	} else {
- 		clk_disable(hsotg->clk);
--		s3c_hsotg_phy_disable(hsotg);
- 	}
- 
- 	hsotg->gadget.speed = USB_SPEED_UNKNOWN;
 -- 
 1.9.2
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
