@@ -1,7 +1,7 @@
 From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH v3 02/13] [media] s5p-mfc: Fix REQBUFS(0) for encoder.
-Date: Tue, 21 Oct 2014 16:36:56 +0530
-Message-ID: <1413889627-8431-3-git-send-email-arun.kk@samsung.com>
+Subject: [PATCH v3 03/13] [media] s5p-mfc: clear 'enter_suspend' flag if suspend fails
+Date: Tue, 21 Oct 2014 16:36:57 +0530
+Message-ID: <1413889627-8431-4-git-send-email-arun.kk@samsung.com>
 References: <1413889627-8431-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <1413889627-8431-1-git-send-email-arun.kk@samsung.com>
@@ -10,48 +10,43 @@ To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: k.debski@samsung.com, wuchengli@chromium.org, posciak@chromium.org, arun.m@samsung.com, ihf@chromium.org, prathyush.k@samsung.com, kiran@chromium.org, arunkk.samsung@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Pawel Osciak <posciak@chromium.org>
+From: Prathyush K <prathyush.k@samsung.com>
 
-Handle REQBUFS(0) for CAPTURE queue as well. Also use the proper queue to call
-it on for OUTPUT.
+The enter_suspend flag is set after we enter mfc suspend function but if
+suspend fails after that due to any reason (like hardware timeout etc),
+this flag must be cleared before returning an error. Otherwise, this
+flag never gets cleared and the MFC suspend will always return an error
+on subsequent tries. If clock off fails, disable hw_lock also.
 
-Signed-off-by: Pawel Osciak <posciak@chromium.org>
+Signed-off-by: Prathyush K <prathyush.k@samsung.com>
 Signed-off-by: Kiran AVND <avnd.kiran@samsung.com>
 Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 ---
- drivers/media/platform/s5p-mfc/s5p_mfc_enc.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/media/platform/s5p-mfc/s5p_mfc.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-index 4816f31..6a1c890 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-@@ -1147,6 +1147,11 @@ static int vidioc_reqbufs(struct file *file, void *priv,
- 		(reqbufs->memory != V4L2_MEMORY_USERPTR))
- 		return -EINVAL;
- 	if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
-+		if (reqbufs->count == 0) {
-+			ret = vb2_reqbufs(&ctx->vq_dst, reqbufs);
-+			ctx->capture_state = QUEUE_FREE;
-+			return ret;
-+		}
- 		if (ctx->capture_state != QUEUE_FREE) {
- 			mfc_err("invalid capture state: %d\n",
- 							ctx->capture_state);
-@@ -1168,6 +1173,14 @@ static int vidioc_reqbufs(struct file *file, void *priv,
- 			return -ENOMEM;
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index 165bc86..79c9537 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -1284,11 +1284,17 @@ static int s5p_mfc_suspend(struct device *dev)
+ 			m_dev->int_cond, msecs_to_jiffies(MFC_INT_TIMEOUT));
+ 		if (ret == 0) {
+ 			mfc_err("Waiting for hardware to finish timed out\n");
++			clear_bit(0, &m_dev->enter_suspend);
+ 			return -EIO;
  		}
- 	} else if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
-+		if (reqbufs->count == 0) {
-+			mfc_debug(2, "Freeing buffers\n");
-+			ret = vb2_reqbufs(&ctx->vq_src, reqbufs);
-+			s5p_mfc_hw_call(dev->mfc_ops, release_codec_buffers,
-+					ctx);
-+			ctx->output_state = QUEUE_FREE;
-+			return ret;
-+		}
- 		if (ctx->output_state != QUEUE_FREE) {
- 			mfc_err("invalid output state: %d\n",
- 							ctx->output_state);
+ 	}
+ 
+-	return s5p_mfc_sleep(m_dev);
++	ret = s5p_mfc_sleep(m_dev);
++	if (ret) {
++		clear_bit(0, &m_dev->enter_suspend);
++		clear_bit(0, &m_dev->hw_lock);
++	}
++	return ret;
+ }
+ 
+ static int s5p_mfc_resume(struct device *dev)
 -- 
 1.7.9.5
