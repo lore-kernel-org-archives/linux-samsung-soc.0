@@ -1,716 +1,1697 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH v2 35/47] arm: Register with kernel poweroff handler
-Date: Mon, 20 Oct 2014 21:12:51 -0700
-Message-ID: <1413864783-3271-36-git-send-email-linux@roeck-us.net>
-References: <1413864783-3271-1-git-send-email-linux@roeck-us.net>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1413864783-3271-1-git-send-email-linux@roeck-us.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-pm@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Russell King <linux@arm.linux.org.uk>, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, xen-devel@lists.xenproject.org
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [RFC PATCH] drm/exynos: Add DECON driver
+Date: Tue, 21 Oct 2014 11:11:23 +0530
+Message-ID: <CAEC9eQO+KfqkkG-QMEno_i9UobJup1icHJ1PkGV=kyL3FC6=KA@mail.gmail.com>
+References: <1412945316-26877-1-git-send-email-ajaykumar.rs@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1412945316-26877-1-git-send-email-ajaykumar.rs@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Kukjin Kim <kgene.kim@samsung.com>, Akshu Agrawal <akshu.a@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Register with kernel poweroff handler instead of setting pm_power_off
-directly. Always use register_power_off_handler_simple as there is no
-indication that more than one poweroff handler is registered.
+ping!
 
-If the poweroff handler only resets the system or puts the CPU in sleep mode,
-select the fallback priority to indicate that the poweroff handler is one
-of last resort. If the poweroff handler powers off the system, select the
-default priority.
-
-Cc: Russell King <linux@arm.linux.org.uk>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
-- Use defines to specify poweroff handler priorities
-- Drop changes in arch/arm/mach-at91/setup.c (file removed upstream)
-
- arch/arm/kernel/psci.c                         | 3 ++-
- arch/arm/mach-at91/board-gsia18s.c             | 3 ++-
- arch/arm/mach-bcm/board_bcm2835.c              | 3 ++-
- arch/arm/mach-cns3xxx/cns3420vb.c              | 3 ++-
- arch/arm/mach-cns3xxx/core.c                   | 3 ++-
- arch/arm/mach-highbank/highbank.c              | 3 ++-
- arch/arm/mach-imx/mach-mx31moboard.c           | 3 ++-
- arch/arm/mach-iop32x/em7210.c                  | 3 ++-
- arch/arm/mach-iop32x/glantank.c                | 3 ++-
- arch/arm/mach-iop32x/iq31244.c                 | 3 ++-
- arch/arm/mach-iop32x/n2100.c                   | 3 ++-
- arch/arm/mach-ixp4xx/dsmg600-setup.c           | 3 ++-
- arch/arm/mach-ixp4xx/nas100d-setup.c           | 3 ++-
- arch/arm/mach-ixp4xx/nslu2-setup.c             | 3 ++-
- arch/arm/mach-omap2/board-omap3touchbook.c     | 3 ++-
- arch/arm/mach-orion5x/board-mss2.c             | 3 ++-
- arch/arm/mach-orion5x/dns323-setup.c           | 9 ++++++---
- arch/arm/mach-orion5x/kurobox_pro-setup.c      | 3 ++-
- arch/arm/mach-orion5x/ls-chl-setup.c           | 3 ++-
- arch/arm/mach-orion5x/ls_hgl-setup.c           | 3 ++-
- arch/arm/mach-orion5x/lsmini-setup.c           | 3 ++-
- arch/arm/mach-orion5x/mv2120-setup.c           | 3 ++-
- arch/arm/mach-orion5x/net2big-setup.c          | 3 ++-
- arch/arm/mach-orion5x/terastation_pro2-setup.c | 3 ++-
- arch/arm/mach-orion5x/ts209-setup.c            | 3 ++-
- arch/arm/mach-orion5x/ts409-setup.c            | 3 ++-
- arch/arm/mach-pxa/corgi.c                      | 3 ++-
- arch/arm/mach-pxa/mioa701.c                    | 3 ++-
- arch/arm/mach-pxa/poodle.c                     | 3 ++-
- arch/arm/mach-pxa/spitz.c                      | 3 ++-
- arch/arm/mach-pxa/tosa.c                       | 3 ++-
- arch/arm/mach-pxa/viper.c                      | 3 ++-
- arch/arm/mach-pxa/z2.c                         | 7 ++++---
- arch/arm/mach-pxa/zeus.c                       | 7 ++++---
- arch/arm/mach-s3c24xx/mach-gta02.c             | 3 ++-
- arch/arm/mach-s3c24xx/mach-jive.c              | 3 ++-
- arch/arm/mach-s3c24xx/mach-vr1000.c            | 3 ++-
- arch/arm/mach-s3c64xx/mach-smartq.c            | 3 ++-
- arch/arm/mach-sa1100/generic.c                 | 3 ++-
- arch/arm/mach-sa1100/simpad.c                  | 3 ++-
- arch/arm/mach-u300/regulator.c                 | 3 ++-
- arch/arm/mach-vt8500/vt8500.c                  | 3 ++-
- arch/arm/xen/enlighten.c                       | 3 ++-
- 43 files changed, 94 insertions(+), 49 deletions(-)
-
-diff --git a/arch/arm/kernel/psci.c b/arch/arm/kernel/psci.c
-index f73891b..4917c99 100644
---- a/arch/arm/kernel/psci.c
-+++ b/arch/arm/kernel/psci.c
-@@ -264,7 +264,8 @@ static int psci_0_2_init(struct device_node *np)
- 
- 	arm_pm_restart = psci_sys_reset;
- 
--	pm_power_off = psci_sys_poweroff;
-+	register_power_off_handler_simple(psci_sys_poweroff,
-+					  POWEROFF_PRIORITY_DEFAULT);
- 
- out_put_node:
- 	of_node_put(np);
-diff --git a/arch/arm/mach-at91/board-gsia18s.c b/arch/arm/mach-at91/board-gsia18s.c
-index bf5cc55..cb5d1c3 100644
---- a/arch/arm/mach-at91/board-gsia18s.c
-+++ b/arch/arm/mach-at91/board-gsia18s.c
-@@ -521,7 +521,8 @@ static void gsia18s_power_off(void)
- 
- static int __init gsia18s_power_off_init(void)
- {
--	pm_power_off = gsia18s_power_off;
-+	register_power_off_handler_simple(gsia18s_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- 	return 0;
- }
- 
-diff --git a/arch/arm/mach-bcm/board_bcm2835.c b/arch/arm/mach-bcm/board_bcm2835.c
-index 70f2f39..307ebc1 100644
---- a/arch/arm/mach-bcm/board_bcm2835.c
-+++ b/arch/arm/mach-bcm/board_bcm2835.c
-@@ -111,7 +111,8 @@ static void __init bcm2835_init(void)
- 
- 	bcm2835_setup_restart();
- 	if (wdt_regs)
--		pm_power_off = bcm2835_power_off;
-+		register_power_off_handler_simple(bcm2835_power_off,
-+						  POWEROFF_PRIORITY_FALLBACK);
- 
- 	bcm2835_init_clocks();
- 
-diff --git a/arch/arm/mach-cns3xxx/cns3420vb.c b/arch/arm/mach-cns3xxx/cns3420vb.c
-index 6428bcc7..3f48979 100644
---- a/arch/arm/mach-cns3xxx/cns3420vb.c
-+++ b/arch/arm/mach-cns3xxx/cns3420vb.c
-@@ -224,7 +224,8 @@ static void __init cns3420_init(void)
- 	cns3xxx_ahci_init();
- 	cns3xxx_sdhci_init();
- 
--	pm_power_off = cns3xxx_power_off;
-+	register_power_off_handler_simple(cns3xxx_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- }
- 
- static struct map_desc cns3420_io_desc[] __initdata = {
-diff --git a/arch/arm/mach-cns3xxx/core.c b/arch/arm/mach-cns3xxx/core.c
-index 4e9837d..fc0b9e0 100644
---- a/arch/arm/mach-cns3xxx/core.c
-+++ b/arch/arm/mach-cns3xxx/core.c
-@@ -386,7 +386,8 @@ static void __init cns3xxx_init(void)
- 		cns3xxx_pwr_soft_rst(CNS3XXX_PWR_SOFTWARE_RST(SDIO));
- 	}
- 
--	pm_power_off = cns3xxx_power_off;
-+	register_power_off_handler_simple(cns3xxx_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- 
- 	of_platform_populate(NULL, of_default_bus_match_table,
-                         cns3xxx_auxdata, NULL);
-diff --git a/arch/arm/mach-highbank/highbank.c b/arch/arm/mach-highbank/highbank.c
-index 8c35ae4..87958f9a 100644
---- a/arch/arm/mach-highbank/highbank.c
-+++ b/arch/arm/mach-highbank/highbank.c
-@@ -155,7 +155,8 @@ static void __init highbank_init(void)
- 	sregs_base = of_iomap(np, 0);
- 	WARN_ON(!sregs_base);
- 
--	pm_power_off = highbank_power_off;
-+	register_power_off_handler_simple(highbank_power_off,
-+					  POWEROFF_PRIORITY_FALLBACK);
- 	highbank_pm_init();
- 
- 	bus_register_notifier(&platform_bus_type, &highbank_platform_nb);
-diff --git a/arch/arm/mach-imx/mach-mx31moboard.c b/arch/arm/mach-imx/mach-mx31moboard.c
-index bb6f8a5..736937b 100644
---- a/arch/arm/mach-imx/mach-mx31moboard.c
-+++ b/arch/arm/mach-imx/mach-mx31moboard.c
-@@ -559,7 +559,8 @@ static void __init mx31moboard_init(void)
- 
- 	imx_add_platform_device("imx_mc13783", 0, NULL, 0, NULL, 0);
- 
--	pm_power_off = mx31moboard_poweroff;
-+	register_power_off_handler_simple(mx31moboard_poweroff,
-+					  POWEROFF_PRIORITY_DEFAULT);
- 
- 	switch (mx31moboard_baseboard) {
- 	case MX31NOBOARD:
-diff --git a/arch/arm/mach-iop32x/em7210.c b/arch/arm/mach-iop32x/em7210.c
-index 77e1ff0..8f93266 100644
---- a/arch/arm/mach-iop32x/em7210.c
-+++ b/arch/arm/mach-iop32x/em7210.c
-@@ -201,7 +201,8 @@ static int __init em7210_request_gpios(void)
- 		return 0;
- 	}
- 
--	pm_power_off = em7210_power_off;
-+	register_power_off_handler_simple(em7210_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- 
- 	return 0;
- }
-diff --git a/arch/arm/mach-iop32x/glantank.c b/arch/arm/mach-iop32x/glantank.c
-index 547b234..8d12aa1 100644
---- a/arch/arm/mach-iop32x/glantank.c
-+++ b/arch/arm/mach-iop32x/glantank.c
-@@ -199,7 +199,8 @@ static void __init glantank_init_machine(void)
- 	i2c_register_board_info(0, glantank_i2c_devices,
- 		ARRAY_SIZE(glantank_i2c_devices));
- 
--	pm_power_off = glantank_power_off;
-+	register_power_off_handler_simple(glantank_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- }
- 
- MACHINE_START(GLANTANK, "GLAN Tank")
-diff --git a/arch/arm/mach-iop32x/iq31244.c b/arch/arm/mach-iop32x/iq31244.c
-index 0e1392b..7c09bbe 100644
---- a/arch/arm/mach-iop32x/iq31244.c
-+++ b/arch/arm/mach-iop32x/iq31244.c
-@@ -293,7 +293,8 @@ static void __init iq31244_init_machine(void)
- 	platform_device_register(&iop3xx_dma_1_channel);
- 
- 	if (is_ep80219())
--		pm_power_off = ep80219_power_off;
-+		register_power_off_handler_simple(ep80219_power_off,
-+						  POWEROFF_PRIORITY_DEFAULT);
- 
- 	if (!is_80219())
- 		platform_device_register(&iop3xx_aau_channel);
-diff --git a/arch/arm/mach-iop32x/n2100.c b/arch/arm/mach-iop32x/n2100.c
-index c1cd80e..ee949c5 100644
---- a/arch/arm/mach-iop32x/n2100.c
-+++ b/arch/arm/mach-iop32x/n2100.c
-@@ -356,7 +356,8 @@ static void __init n2100_init_machine(void)
- 	i2c_register_board_info(0, n2100_i2c_devices,
- 		ARRAY_SIZE(n2100_i2c_devices));
- 
--	pm_power_off = n2100_power_off;
-+	register_power_off_handler_simple(n2100_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- }
- 
- MACHINE_START(N2100, "Thecus N2100")
-diff --git a/arch/arm/mach-ixp4xx/dsmg600-setup.c b/arch/arm/mach-ixp4xx/dsmg600-setup.c
-index 43ee06d..ae3dafa 100644
---- a/arch/arm/mach-ixp4xx/dsmg600-setup.c
-+++ b/arch/arm/mach-ixp4xx/dsmg600-setup.c
-@@ -281,7 +281,8 @@ static void __init dsmg600_init(void)
- 
- 	platform_add_devices(dsmg600_devices, ARRAY_SIZE(dsmg600_devices));
- 
--	pm_power_off = dsmg600_power_off;
-+	register_power_off_handler_simple(dsmg600_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- }
- 
- MACHINE_START(DSMG600, "D-Link DSM-G600 RevA")
-diff --git a/arch/arm/mach-ixp4xx/nas100d-setup.c b/arch/arm/mach-ixp4xx/nas100d-setup.c
-index 4e0f762..a8062db 100644
---- a/arch/arm/mach-ixp4xx/nas100d-setup.c
-+++ b/arch/arm/mach-ixp4xx/nas100d-setup.c
-@@ -292,7 +292,8 @@ static void __init nas100d_init(void)
- 
- 	platform_add_devices(nas100d_devices, ARRAY_SIZE(nas100d_devices));
- 
--	pm_power_off = nas100d_power_off;
-+	register_power_off_handler_simple(nas100d_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- 
- 	if (request_irq(gpio_to_irq(NAS100D_RB_GPIO), &nas100d_reset_handler,
- 		IRQF_TRIGGER_LOW, "NAS100D reset button", NULL) < 0) {
-diff --git a/arch/arm/mach-ixp4xx/nslu2-setup.c b/arch/arm/mach-ixp4xx/nslu2-setup.c
-index 88c025f..a95f727 100644
---- a/arch/arm/mach-ixp4xx/nslu2-setup.c
-+++ b/arch/arm/mach-ixp4xx/nslu2-setup.c
-@@ -262,7 +262,8 @@ static void __init nslu2_init(void)
- 
- 	platform_add_devices(nslu2_devices, ARRAY_SIZE(nslu2_devices));
- 
--	pm_power_off = nslu2_power_off;
-+	register_power_off_handler_simple(nslu2_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- 
- 	if (request_irq(gpio_to_irq(NSLU2_RB_GPIO), &nslu2_reset_handler,
- 		IRQF_TRIGGER_LOW, "NSLU2 reset button", NULL) < 0) {
-diff --git a/arch/arm/mach-omap2/board-omap3touchbook.c b/arch/arm/mach-omap2/board-omap3touchbook.c
-index a01993e..22347b8 100644
---- a/arch/arm/mach-omap2/board-omap3touchbook.c
-+++ b/arch/arm/mach-omap2/board-omap3touchbook.c
-@@ -344,7 +344,8 @@ static void __init omap3_touchbook_init(void)
- {
- 	omap3_mux_init(board_mux, OMAP_PACKAGE_CBB);
- 
--	pm_power_off = omap3_touchbook_poweroff;
-+	register_power_off_handler_simple(omap3_touchbook_poweroff,
-+					  POWEROFF_PRIORITY_DEFAULT);
- 
- 	if (system_rev >= 0x20 && system_rev <= 0x34301000) {
- 		omap_mux_init_gpio(23, OMAP_PIN_INPUT);
-diff --git a/arch/arm/mach-orion5x/board-mss2.c b/arch/arm/mach-orion5x/board-mss2.c
-index 66f9c3b..7b46868 100644
---- a/arch/arm/mach-orion5x/board-mss2.c
-+++ b/arch/arm/mach-orion5x/board-mss2.c
-@@ -86,5 +86,6 @@ static void mss2_power_off(void)
- void __init mss2_init(void)
- {
- 	/* register mss2 specific power-off method */
--	pm_power_off = mss2_power_off;
-+	register_power_off_handler_simple(mss2_power_off,
-+					  POWEROFF_PRIORITY_FALLBACK);
- }
-diff --git a/arch/arm/mach-orion5x/dns323-setup.c b/arch/arm/mach-orion5x/dns323-setup.c
-index 09d2a26..979c696 100644
---- a/arch/arm/mach-orion5x/dns323-setup.c
-+++ b/arch/arm/mach-orion5x/dns323-setup.c
-@@ -669,7 +669,8 @@ static void __init dns323_init(void)
- 		if (gpio_request(DNS323_GPIO_POWER_OFF, "POWEROFF") != 0 ||
- 		    gpio_direction_output(DNS323_GPIO_POWER_OFF, 0) != 0)
- 			pr_err("DNS-323: failed to setup power-off GPIO\n");
--		pm_power_off = dns323a_power_off;
-+		register_power_off_handler_simple(dns323a_power_off,
-+						  POWEROFF_PRIORITY_DEFAULT);
- 		break;
- 	case DNS323_REV_B1:
- 		/* 5182 built-in SATA init */
-@@ -686,7 +687,8 @@ static void __init dns323_init(void)
- 		if (gpio_request(DNS323_GPIO_POWER_OFF, "POWEROFF") != 0 ||
- 		    gpio_direction_output(DNS323_GPIO_POWER_OFF, 0) != 0)
- 			pr_err("DNS-323: failed to setup power-off GPIO\n");
--		pm_power_off = dns323b_power_off;
-+		register_power_off_handler_simple(dns323b_power_off,
-+						  POWEROFF_PRIORITY_DEFAULT);
- 		break;
- 	case DNS323_REV_C1:
- 		/* 5182 built-in SATA init */
-@@ -696,7 +698,8 @@ static void __init dns323_init(void)
- 		if (gpio_request(DNS323C_GPIO_POWER_OFF, "POWEROFF") != 0 ||
- 		    gpio_direction_output(DNS323C_GPIO_POWER_OFF, 0) != 0)
- 			pr_err("DNS-323: failed to setup power-off GPIO\n");
--		pm_power_off = dns323c_power_off;
-+		register_power_off_handler_simple(dns323c_power_off,
-+						  POWEROFF_PRIORITY_DEFAULT);
- 
- 		/* Now, -this- should theorically be done by the sata_mv driver
- 		 * once I figure out what's going on there. Maybe the behaviour
-diff --git a/arch/arm/mach-orion5x/kurobox_pro-setup.c b/arch/arm/mach-orion5x/kurobox_pro-setup.c
-index fe6a48a..1004d2ad 100644
---- a/arch/arm/mach-orion5x/kurobox_pro-setup.c
-+++ b/arch/arm/mach-orion5x/kurobox_pro-setup.c
-@@ -376,7 +376,8 @@ static void __init kurobox_pro_init(void)
- 	i2c_register_board_info(0, &kurobox_pro_i2c_rtc, 1);
- 
- 	/* register Kurobox Pro specific power-off method */
--	pm_power_off = kurobox_pro_power_off;
-+	register_power_off_handler_simple(kurobox_pro_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- }
- 
- #ifdef CONFIG_MACH_KUROBOX_PRO
-diff --git a/arch/arm/mach-orion5x/ls-chl-setup.c b/arch/arm/mach-orion5x/ls-chl-setup.c
-index 028ea03..b1e161a 100644
---- a/arch/arm/mach-orion5x/ls-chl-setup.c
-+++ b/arch/arm/mach-orion5x/ls-chl-setup.c
-@@ -312,7 +312,8 @@ static void __init lschl_init(void)
- 	gpio_set_value(LSCHL_GPIO_USB_POWER, 1);
- 
- 	/* register power-off method */
--	pm_power_off = lschl_power_off;
-+	register_power_off_handler_simple(lschl_power_off,
-+					  POWEROFF_PRIORITY_FALLBACK);
- 
- 	pr_info("%s: finished\n", __func__);
- }
-diff --git a/arch/arm/mach-orion5x/ls_hgl-setup.c b/arch/arm/mach-orion5x/ls_hgl-setup.c
-index 32b7129..c77e5a0 100644
---- a/arch/arm/mach-orion5x/ls_hgl-setup.c
-+++ b/arch/arm/mach-orion5x/ls_hgl-setup.c
-@@ -259,7 +259,8 @@ static void __init ls_hgl_init(void)
- 	gpio_set_value(LS_HGL_GPIO_USB_POWER, 1);
- 
- 	/* register power-off method */
--	pm_power_off = ls_hgl_power_off;
-+	register_power_off_handler_simple(ls_hgl_power_off,
-+					  POWEROFF_PRIORITY_FALLBACK);
- 
- 	pr_info("%s: finished\n", __func__);
- }
-diff --git a/arch/arm/mach-orion5x/lsmini-setup.c b/arch/arm/mach-orion5x/lsmini-setup.c
-index a6493e7..9235353 100644
---- a/arch/arm/mach-orion5x/lsmini-setup.c
-+++ b/arch/arm/mach-orion5x/lsmini-setup.c
-@@ -260,7 +260,8 @@ static void __init lsmini_init(void)
- 	gpio_set_value(LSMINI_GPIO_USB_POWER, 1);
- 
- 	/* register power-off method */
--	pm_power_off = lsmini_power_off;
-+	register_power_off_handler_simple(lsmini_power_off,
-+					  POWEROFF_PRIORITY_FALLBACK);
- 
- 	pr_info("%s: finished\n", __func__);
- }
-diff --git a/arch/arm/mach-orion5x/mv2120-setup.c b/arch/arm/mach-orion5x/mv2120-setup.c
-index e032f01..897f1f6 100644
---- a/arch/arm/mach-orion5x/mv2120-setup.c
-+++ b/arch/arm/mach-orion5x/mv2120-setup.c
-@@ -225,7 +225,8 @@ static void __init mv2120_init(void)
- 	if (gpio_request(MV2120_GPIO_POWER_OFF, "POWEROFF") != 0 ||
- 	    gpio_direction_output(MV2120_GPIO_POWER_OFF, 1) != 0)
- 		pr_err("mv2120: failed to setup power-off GPIO\n");
--	pm_power_off = mv2120_power_off;
-+	register_power_off_handler_simple(mv2120_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- }
- 
- /* Warning: HP uses a wrong mach-type (=526) in their bootloader */
-diff --git a/arch/arm/mach-orion5x/net2big-setup.c b/arch/arm/mach-orion5x/net2big-setup.c
-index ba73dc7..f783ad7 100644
---- a/arch/arm/mach-orion5x/net2big-setup.c
-+++ b/arch/arm/mach-orion5x/net2big-setup.c
-@@ -413,7 +413,8 @@ static void __init net2big_init(void)
- 
- 	if (gpio_request(NET2BIG_GPIO_POWER_OFF, "power-off") == 0 &&
- 	    gpio_direction_output(NET2BIG_GPIO_POWER_OFF, 0) == 0)
--		pm_power_off = net2big_power_off;
-+		register_power_off_handler_simple(net2big_power_off,
-+						  POWEROFF_PRIORITY_DEFAULT);
- 	else
- 		pr_err("net2big: failed to configure power-off GPIO\n");
- 
-diff --git a/arch/arm/mach-orion5x/terastation_pro2-setup.c b/arch/arm/mach-orion5x/terastation_pro2-setup.c
-index 1208674..4c16209 100644
---- a/arch/arm/mach-orion5x/terastation_pro2-setup.c
-+++ b/arch/arm/mach-orion5x/terastation_pro2-setup.c
-@@ -353,7 +353,8 @@ static void __init tsp2_init(void)
- 	i2c_register_board_info(0, &tsp2_i2c_rtc, 1);
- 
- 	/* register Terastation Pro II specific power-off method */
--	pm_power_off = tsp2_power_off;
-+	register_power_off_handler_simple(tsp2_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- }
- 
- MACHINE_START(TERASTATION_PRO2, "Buffalo Terastation Pro II/Live")
-diff --git a/arch/arm/mach-orion5x/ts209-setup.c b/arch/arm/mach-orion5x/ts209-setup.c
-index c725b7c..7b46830 100644
---- a/arch/arm/mach-orion5x/ts209-setup.c
-+++ b/arch/arm/mach-orion5x/ts209-setup.c
-@@ -318,7 +318,8 @@ static void __init qnap_ts209_init(void)
- 	i2c_register_board_info(0, &qnap_ts209_i2c_rtc, 1);
- 
- 	/* register tsx09 specific power-off method */
--	pm_power_off = qnap_tsx09_power_off;
-+	register_power_off_handler_simple(qnap_tsx09_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- }
- 
- MACHINE_START(TS209, "QNAP TS-109/TS-209")
-diff --git a/arch/arm/mach-orion5x/ts409-setup.c b/arch/arm/mach-orion5x/ts409-setup.c
-index cf2ab53..d36949a 100644
---- a/arch/arm/mach-orion5x/ts409-setup.c
-+++ b/arch/arm/mach-orion5x/ts409-setup.c
-@@ -307,7 +307,8 @@ static void __init qnap_ts409_init(void)
- 	platform_device_register(&ts409_leds);
- 
- 	/* register tsx09 specific power-off method */
--	pm_power_off = qnap_tsx09_power_off;
-+	register_power_off_handler_simple(qnap_tsx09_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- }
- 
- MACHINE_START(TS409, "QNAP TS-409")
-diff --git a/arch/arm/mach-pxa/corgi.c b/arch/arm/mach-pxa/corgi.c
-index 06022b2..82ef5ad 100644
---- a/arch/arm/mach-pxa/corgi.c
-+++ b/arch/arm/mach-pxa/corgi.c
-@@ -718,7 +718,8 @@ static void corgi_restart(enum reboot_mode mode, const char *cmd)
- 
- static void __init corgi_init(void)
- {
--	pm_power_off = corgi_poweroff;
-+	register_power_off_handler_simple(corgi_poweroff,
-+					  POWEROFF_PRIORITY_FALLBACK);
- 
- 	/* Stop 3.6MHz and drive HIGH to PCMCIA and CS */
- 	PCFR |= PCFR_OPDE;
-diff --git a/arch/arm/mach-pxa/mioa701.c b/arch/arm/mach-pxa/mioa701.c
-index 29997bd..7a29258 100644
---- a/arch/arm/mach-pxa/mioa701.c
-+++ b/arch/arm/mach-pxa/mioa701.c
-@@ -750,7 +750,8 @@ static void __init mioa701_machine_init(void)
- 	pxa_set_keypad_info(&mioa701_keypad_info);
- 	pxa_set_udc_info(&mioa701_udc_info);
- 	pxa_set_ac97_info(&mioa701_ac97_info);
--	pm_power_off = mioa701_poweroff;
-+	register_power_off_handler_simple(mioa701_poweroff,
-+					  POWEROFF_PRIORITY_FALLBACK);
- 	platform_add_devices(devices, ARRAY_SIZE(devices));
- 	gsm_init();
- 
-diff --git a/arch/arm/mach-pxa/poodle.c b/arch/arm/mach-pxa/poodle.c
-index 1319916..867b255 100644
---- a/arch/arm/mach-pxa/poodle.c
-+++ b/arch/arm/mach-pxa/poodle.c
-@@ -432,7 +432,8 @@ static void __init poodle_init(void)
- {
- 	int ret = 0;
- 
--	pm_power_off = poodle_poweroff;
-+	register_power_off_handler_simple(poodle_poweroff,
-+					  POWEROFF_PRIORITY_FALLBACK);
- 
- 	PCFR |= PCFR_OPDE;
- 
-diff --git a/arch/arm/mach-pxa/spitz.c b/arch/arm/mach-pxa/spitz.c
-index 840c3a4..269b74b 100644
---- a/arch/arm/mach-pxa/spitz.c
-+++ b/arch/arm/mach-pxa/spitz.c
-@@ -944,7 +944,8 @@ static void spitz_restart(enum reboot_mode mode, const char *cmd)
- static void __init spitz_init(void)
- {
- 	init_gpio_reset(SPITZ_GPIO_ON_RESET, 1, 0);
--	pm_power_off = spitz_poweroff;
-+	register_power_off_handler_simple(spitz_poweroff,
-+					  POWEROFF_PRIORITY_FALLBACK);
- 
- 	PMCR = 0x00;
- 
-diff --git a/arch/arm/mach-pxa/tosa.c b/arch/arm/mach-pxa/tosa.c
-index c158a6e..8f7fd80 100644
---- a/arch/arm/mach-pxa/tosa.c
-+++ b/arch/arm/mach-pxa/tosa.c
-@@ -940,7 +940,8 @@ static void __init tosa_init(void)
- 
- 	init_gpio_reset(TOSA_GPIO_ON_RESET, 0, 0);
- 
--	pm_power_off = tosa_poweroff;
-+	register_power_off_handler_simple(tosa_poweroff,
-+					  POWEROFF_PRIORITY_FALLBACK);
- 
- 	PCFR |= PCFR_OPDE;
- 
-diff --git a/arch/arm/mach-pxa/viper.c b/arch/arm/mach-pxa/viper.c
-index de3b080..8f8427c 100644
---- a/arch/arm/mach-pxa/viper.c
-+++ b/arch/arm/mach-pxa/viper.c
-@@ -919,7 +919,8 @@ static void __init viper_init(void)
- {
- 	u8 version;
- 
--	pm_power_off = viper_power_off;
-+	register_power_off_handler_simple(viper_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- 
- 	pxa2xx_mfp_config(ARRAY_AND_SIZE(viper_pin_config));
- 
-diff --git a/arch/arm/mach-pxa/z2.c b/arch/arm/mach-pxa/z2.c
-index e1a121b..cefd1bf 100644
---- a/arch/arm/mach-pxa/z2.c
-+++ b/arch/arm/mach-pxa/z2.c
-@@ -693,8 +693,6 @@ static void z2_power_off(void)
- 	pxa27x_set_pwrmode(PWRMODE_DEEPSLEEP);
- 	pxa27x_cpu_pm_enter(PM_SUSPEND_MEM);
- }
--#else
--#define z2_power_off   NULL
- #endif
- 
- /******************************************************************************
-@@ -719,7 +717,10 @@ static void __init z2_init(void)
- 	z2_keys_init();
- 	z2_pmic_init();
- 
--	pm_power_off = z2_power_off;
-+#ifdef CONFIG_PM
-+	register_power_off_handler_simple(z2_power_off,
-+					  POWEROFF_PRIORITY_FALLBACK);
-+#endif
- }
- 
- MACHINE_START(ZIPIT2, "Zipit Z2")
-diff --git a/arch/arm/mach-pxa/zeus.c b/arch/arm/mach-pxa/zeus.c
-index 205f9bf..651d7b9 100644
---- a/arch/arm/mach-pxa/zeus.c
-+++ b/arch/arm/mach-pxa/zeus.c
-@@ -690,8 +690,6 @@ static void zeus_power_off(void)
- 	local_irq_disable();
- 	cpu_suspend(PWRMODE_DEEPSLEEP, pxa27x_finish_suspend);
- }
--#else
--#define zeus_power_off   NULL
- #endif
- 
- #ifdef CONFIG_APM_EMULATION
-@@ -847,7 +845,10 @@ static void __init zeus_init(void)
- 	__raw_writel(msc0, MSC0);
- 	__raw_writel(msc1, MSC1);
- 
--	pm_power_off = zeus_power_off;
-+#ifdef CONFIG_PM
-+	register_power_off_handler_simple(zeus_power_off,
-+					  POWEROFF_PRIORITY_FALLBACK);
-+#endif
- 	zeus_setup_apm();
- 
- 	pxa2xx_mfp_config(ARRAY_AND_SIZE(zeus_pin_config));
-diff --git a/arch/arm/mach-s3c24xx/mach-gta02.c b/arch/arm/mach-s3c24xx/mach-gta02.c
-index 6d1e0b9..d3659ee 100644
---- a/arch/arm/mach-s3c24xx/mach-gta02.c
-+++ b/arch/arm/mach-s3c24xx/mach-gta02.c
-@@ -579,7 +579,8 @@ static void __init gta02_machine_init(void)
- 	i2c_register_board_info(0, gta02_i2c_devs, ARRAY_SIZE(gta02_i2c_devs));
- 
- 	platform_add_devices(gta02_devices, ARRAY_SIZE(gta02_devices));
--	pm_power_off = gta02_poweroff;
-+	register_power_off_handler_simple(gta02_poweroff,
-+					  POWEROFF_PRIORITY_DEFAULT);
- 
- 	regulator_has_full_constraints();
- }
-diff --git a/arch/arm/mach-s3c24xx/mach-jive.c b/arch/arm/mach-s3c24xx/mach-jive.c
-index 7d99fe8..1890fc2 100644
---- a/arch/arm/mach-s3c24xx/mach-jive.c
-+++ b/arch/arm/mach-s3c24xx/mach-jive.c
-@@ -657,7 +657,8 @@ static void __init jive_machine_init(void)
- 	s3c_i2c0_set_platdata(&jive_i2c_cfg);
- 	i2c_register_board_info(0, jive_i2c_devs, ARRAY_SIZE(jive_i2c_devs));
- 
--	pm_power_off = jive_power_off;
-+	register_power_off_handler_simple(jive_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- 
- 	platform_add_devices(jive_devices, ARRAY_SIZE(jive_devices));
- }
-diff --git a/arch/arm/mach-s3c24xx/mach-vr1000.c b/arch/arm/mach-s3c24xx/mach-vr1000.c
-index 89f32bd..8b19864 100644
---- a/arch/arm/mach-s3c24xx/mach-vr1000.c
-+++ b/arch/arm/mach-s3c24xx/mach-vr1000.c
-@@ -306,7 +306,8 @@ static void vr1000_power_off(void)
- 
- static void __init vr1000_map_io(void)
- {
--	pm_power_off = vr1000_power_off;
-+	register_power_off_handler_simple(vr1000_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- 
- 	s3c24xx_init_io(vr1000_iodesc, ARRAY_SIZE(vr1000_iodesc));
- 	s3c24xx_init_uarts(vr1000_uartcfgs, ARRAY_SIZE(vr1000_uartcfgs));
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq.c b/arch/arm/mach-s3c64xx/mach-smartq.c
-index b3d1353..7e62e62 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq.c
-@@ -291,7 +291,8 @@ static int __init smartq_power_off_init(void)
- 	/* leave power on */
- 	gpio_direction_output(S3C64XX_GPK(15), 0);
- 
--	pm_power_off = smartq_power_off;
-+	register_power_off_handler_simple(smartq_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- 
- 	return ret;
- }
-diff --git a/arch/arm/mach-sa1100/generic.c b/arch/arm/mach-sa1100/generic.c
-index d4ea142..23a33d1 100644
---- a/arch/arm/mach-sa1100/generic.c
-+++ b/arch/arm/mach-sa1100/generic.c
-@@ -311,7 +311,8 @@ static struct platform_device *sa11x0_devices[] __initdata = {
- 
- static int __init sa1100_init(void)
- {
--	pm_power_off = sa1100_power_off;
-+	register_power_off_handler_simple(sa1100_power_off,
-+					  POWEROFF_PRIORITY_FALLBACK);
- 	return platform_add_devices(sa11x0_devices, ARRAY_SIZE(sa11x0_devices));
- }
- 
-diff --git a/arch/arm/mach-sa1100/simpad.c b/arch/arm/mach-sa1100/simpad.c
-index 41e476e..4db57cf 100644
---- a/arch/arm/mach-sa1100/simpad.c
-+++ b/arch/arm/mach-sa1100/simpad.c
-@@ -373,7 +373,8 @@ static int __init simpad_init(void)
- 	if (ret)
- 		printk(KERN_WARNING "simpad: Unable to register cs3 GPIO device");
- 
--	pm_power_off = simpad_power_off;
-+	register_power_off_handler_simple(simpad_power_off,
-+					  POWEROFF_PRIORITY_FALLBACK);
- 
- 	sa11x0_ppc_configure_mcp();
- 	sa11x0_register_mtd(&simpad_flash_data, simpad_flash_resources,
-diff --git a/arch/arm/mach-u300/regulator.c b/arch/arm/mach-u300/regulator.c
-index 0493a84..f8c0fe2 100644
---- a/arch/arm/mach-u300/regulator.c
-+++ b/arch/arm/mach-u300/regulator.c
-@@ -98,7 +98,8 @@ static int __init __u300_init_boardpower(struct platform_device *pdev)
- 			   U300_SYSCON_PMCR_DCON_ENABLE, 0);
- 
- 	/* Register globally exported PM poweroff hook */
--	pm_power_off = u300_pm_poweroff;
-+	register_power_off_handler_simple(u300_pm_poweroff,
-+					  POWEROFF_PRIORITY_DEFAULT);
- 
- 	return 0;
- }
-diff --git a/arch/arm/mach-vt8500/vt8500.c b/arch/arm/mach-vt8500/vt8500.c
-index 3bc0dc9..f5b9936 100644
---- a/arch/arm/mach-vt8500/vt8500.c
-+++ b/arch/arm/mach-vt8500/vt8500.c
-@@ -155,7 +155,8 @@ static void __init vt8500_init(void)
- 			pr_err("%s:ioremap(power_off) failed\n", __func__);
- 	}
- 	if (pmc_base)
--		pm_power_off = &vt8500_power_off;
-+		register_power_off_handler_simple(vt8500_power_off,
-+						  POWEROFF_PRIORITY_FALLBACK);
- 	else
- 		pr_err("%s: PMC Hibernation register could not be remapped, not enabling power off!\n", __func__);
- 
-diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
-index 0e15f01..46bd95b 100644
---- a/arch/arm/xen/enlighten.c
-+++ b/arch/arm/xen/enlighten.c
-@@ -336,7 +336,8 @@ static int __init xen_pm_init(void)
- 	if (!xen_domain())
- 		return -ENODEV;
- 
--	pm_power_off = xen_power_off;
-+	register_power_off_handler_simple(xen_power_off,
-+					  POWEROFF_PRIORITY_DEFAULT);
- 	arm_pm_restart = xen_restart;
- 
- 	return 0;
--- 
-1.9.1
+On Fri, Oct 10, 2014 at 6:18 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
+> This series is based on exynos-drm-next branch of Inki Dae's tree at:
+> git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos.git
+>
+> DECON(Display and Enhancement Controller) is the new IP
+> in exynos7 SOC for generating video signals using pixel data.
+>
+> DECON driver can be used to drive 2 different interfaces on Exynos7:
+> DECON-INT(video controller) and DECON-EXT(Mixer for HDMI)
+>
+> The existing FIMD driver code was used as a template to create
+> DECON driver. Only DECON-INT is supported as of now, and
+> DECON-EXT support will be added later.
+>
+> Signed-off-by: Akshu Agrawal <akshu.a@samsung.com>
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> ---
+>  .../devicetree/bindings/video/exynos-decon.txt     |   68 ++
+>  drivers/gpu/drm/exynos/Kconfig                     |   11 +-
+>  drivers/gpu/drm/exynos/Makefile                    |    1 +
+>  drivers/gpu/drm/exynos/exynos_drm_decon.c          | 1086 ++++++++++++++++++++
+>  drivers/gpu/drm/exynos/exynos_drm_drv.c            |   17 +-
+>  drivers/gpu/drm/exynos/exynos_drm_drv.h            |   11 +
+>  include/video/samsung_decon.h                      |  346 +++++++
+>  7 files changed, 1537 insertions(+), 3 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/video/exynos-decon.txt
+>  create mode 100644 drivers/gpu/drm/exynos/exynos_drm_decon.c
+>  create mode 100644 include/video/samsung_decon.h
+>
+> diff --git a/Documentation/devicetree/bindings/video/exynos-decon.txt b/Documentation/devicetree/bindings/video/exynos-decon.txt
+> new file mode 100644
+> index 0000000..e865650
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/video/exynos-decon.txt
+> @@ -0,0 +1,68 @@
+> +Device-Tree bindings for Samsung Exynos7 SoC display controller (DECON)
+> +
+> +DECON (Display and Enhancement Controller) is the Display Controller for the
+> +Exynos7 series of SoCs which transfers the image data from a video memory
+> +buffer to an external LCD interface.
+> +
+> +Required properties:
+> +- compatible: value should be "samsung,exynos7-decon";
+> +
+> +- reg: physical base address and length of the DECON registers set.
+> +
+> +- interrupt-parent: should be the phandle of the decon controller's
+> +               parent interrupt controller.
+> +
+> +- interrupts: should contain a list of all DECON IP block interrupts in the
+> +                order: FIFO Level, VSYNC, LCD_SYSTEM. The interrupt specifier
+> +                format depends on the interrupt controller used.
+> +
+> +- interrupt-names: should contain the interrupt names: "fifo", "vsync",
+> +       "lcd_sys", in the same order as they were listed in the interrupts
+> +        property.
+> +
+> +- pinctrl-0: pin control group to be used for this controller.
+> +
+> +- pinctrl-names: must contain a "default" entry.
+> +
+> +- clocks: must include clock specifiers corresponding to entries in the
+> +         clock-names property.
+> +
+> +- clock-names: list of clock names sorted in the same order as the clocks
+> +               property. Must contain "pclk_decon0", "aclk_decon0",
+> +              "decon0_eclk", "decon0_vclk", "sclk_dsd", aclk_lh_disp0",
+> +              "aclk_disp", "aclk_lh_disp1".
+> +
+> +Optional Properties:
+> +- samsung,power-domain: a phandle to DECON power domain node.
+> +
+> +Example:
+> +
+> +SoC specific DT entry:
+> +
+> +       decon@13930000 {
+> +               compatible = "samsung,exynos7-decon";
+> +               interrupt-parent = <&combiner>;
+> +               reg = <0x13930000 0x1000>;
+> +               interrupt-names = "lcd_sys", "vsync", "fifo";
+> +               interrupts = <0 188 0>, <0 189 0>, <0 190 0>;
+> +               clocks = <&clock_disp PCLK_DECON_INT>,
+> +                        <&clock_disp ACLK_DECON_INT>,
+> +                        <&clock_disp SCLK_DECON_INT_ECLK>,
+> +                        <&clock_disp SCLK_DECON_INT_EXTCLKPLL>,
+> +                        <&clock_disp SCLK_DSD>,
+> +                        <&clock_bus0 ACLK_LH_DISP0>,
+> +                        <&clock_disp ACLK_CP_DISP>,
+> +                        <&clock_bus0 ACLK_LH_DISP1>;
+> +               clock-names = "pclk_decon0", "aclk_decon0", "decon0_eclk",
+> +                               "decon0_vclk", "sclk_dsd", "aclk_lh_disp0",
+> +                               "aclk_disp", "aclk_lh_disp1";
+> +               status = "disabled";
+> +       };
+> +
+> +Board specific DT entry:
+> +
+> +       decon@13930000 {
+> +               pinctrl-0 = <&lcd_clk &pwm1_out>;
+> +               pinctrl-names = "default";
+> +               status = "okay";
+> +       };
+> diff --git a/drivers/gpu/drm/exynos/Kconfig b/drivers/gpu/drm/exynos/Kconfig
+> index fd1c070..89275ea 100644
+> --- a/drivers/gpu/drm/exynos/Kconfig
+> +++ b/drivers/gpu/drm/exynos/Kconfig
+> @@ -31,6 +31,13 @@ config DRM_EXYNOS_FIMD
+>         help
+>           Choose this option if you want to use Exynos FIMD for DRM.
+>
+> +config DRM_EXYNOS_DECON
+> +       bool "Exynos DRM DECON"
+> +       depends on DRM_EXYNOS
+> +       select FB_MODE_HELPERS
+> +       help
+> +         Choose this option if you want to use Exynos DECON for DRM.
+> +
+>  config DRM_EXYNOS_DPI
+>         bool "EXYNOS DRM parallel output support"
+>         depends on DRM_EXYNOS_FIMD
+> @@ -41,7 +48,7 @@ config DRM_EXYNOS_DPI
+>
+>  config DRM_EXYNOS_DSI
+>         bool "EXYNOS DRM MIPI-DSI driver support"
+> -       depends on DRM_EXYNOS_FIMD
+> +       depends on (DRM_EXYNOS_FIMD || DRM_EXYNOS_DECON)
+>         select DRM_MIPI_DSI
+>         select DRM_PANEL
+>         default n
+> @@ -50,7 +57,7 @@ config DRM_EXYNOS_DSI
+>
+>  config DRM_EXYNOS_DP
+>         bool "EXYNOS DRM DP driver support"
+> -       depends on DRM_EXYNOS_FIMD && ARCH_EXYNOS && (DRM_PTN3460=n || DRM_PTN3460=y || DRM_PTN3460=DRM_EXYNOS)
+> +       depends on (DRM_EXYNOS_FIMD || DRM_EXYNOS_DECON) && ARCH_EXYNOS && (DRM_PTN3460=n || DRM_PTN3460=y || DRM_PTN3460=DRM_EXYNOS)
+>         default DRM_EXYNOS
+>         select DRM_PANEL
+>         help
+> diff --git a/drivers/gpu/drm/exynos/Makefile b/drivers/gpu/drm/exynos/Makefile
+> index 33ae365..c3282ac 100644
+> --- a/drivers/gpu/drm/exynos/Makefile
+> +++ b/drivers/gpu/drm/exynos/Makefile
+> @@ -11,6 +11,7 @@ exynosdrm-y := exynos_drm_drv.o exynos_drm_encoder.o \
+>  exynosdrm-$(CONFIG_DRM_EXYNOS_IOMMU) += exynos_drm_iommu.o
+>  exynosdrm-$(CONFIG_DRM_EXYNOS_DMABUF) += exynos_drm_dmabuf.o
+>  exynosdrm-$(CONFIG_DRM_EXYNOS_FIMD)    += exynos_drm_fimd.o
+> +exynosdrm-$(CONFIG_DRM_EXYNOS_DECON)   += exynos_drm_decon.o
+>  exynosdrm-$(CONFIG_DRM_EXYNOS_DPI)     += exynos_drm_dpi.o
+>  exynosdrm-$(CONFIG_DRM_EXYNOS_DSI)     += exynos_drm_dsi.o
+>  exynosdrm-$(CONFIG_DRM_EXYNOS_DP)      += exynos_dp_core.o exynos_dp_reg.o
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_decon.c b/drivers/gpu/drm/exynos/exynos_drm_decon.c
+> new file mode 100644
+> index 0000000..5ac4557
+> --- /dev/null
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_decon.c
+> @@ -0,0 +1,1086 @@
+> +/* exynos_drm_decon.c
+> + *
+> + * Copyright (C) 2014 Samsung Electronics Co.Ltd
+> + * Authors:
+> + *     Akshu Agarwal <akshu.a@samsung.com>
+> + *     Ajay Kumar <ajaykumar.rs@samsung.com>
+> + *
+> + * This program is free software; you can redistribute  it and/or modify it
+> + * under  the terms of  the GNU General  Public License as published by the
+> + * Free Software Foundation;  either version 2 of the  License, or (at your
+> + * option) any later version.
+> + *
+> + */
+> +#include <drm/drmP.h>
+> +#include <drm/exynos_drm.h>
+> +
+> +#include <linux/clk.h>
+> +#include <linux/component.h>
+> +#include <linux/kernel.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +
+> +#include <video/of_display_timing.h>
+> +#include <video/of_videomode.h>
+> +#include <video/samsung_decon.h>
+> +
+> +#include "exynos_drm_crtc.h"
+> +#include "exynos_drm_drv.h"
+> +#include "exynos_drm_fbdev.h"
+> +#include "exynos_drm_iommu.h"
+> +
+> +/*
+> + * DECON stands for Display and Enhancement controller, and
+> + * as a display controller, it transfers contents drawn on memory
+> + * to a LCD Panel through Display Interfaces such as RGB or
+> + * CPU Interface.
+> + */
+> +
+> +#define DECON_DEFAULT_FRAMERATE 60
+> +#define RESET_TIMEOUT 200
+> +#define MIN_FB_WIDTH_FOR_16WORD_BURST 128
+> +
+> +#define WINDOWS_NR     2
+> +
+> +#define get_decon_manager(mgr) platform_get_drvdata(to_platform_device(dev))
+> +
+> +struct decon_win_data {
+> +       unsigned int            ovl_x;
+> +       unsigned int            ovl_y;
+> +       unsigned int            offset_x;
+> +       unsigned int            offset_y;
+> +       unsigned int            ovl_width;
+> +       unsigned int            ovl_height;
+> +       unsigned int            fb_width;
+> +       unsigned int            fb_height;
+> +       unsigned int            bpp;
+> +       unsigned int            pixel_format;
+> +       dma_addr_t              dma_addr;
+> +       bool                    enabled;
+> +       bool                    resume;
+> +};
+> +
+> +struct decon_context {
+> +       struct device                   *dev;
+> +       struct drm_device               *drm_dev;
+> +       struct clk                      *pclk;
+> +       struct clk                      *aclk;
+> +       struct clk                      *eclk;
+> +       struct clk                      *vclk;
+> +       struct clk                      *dsd;
+> +       struct clk                      *lh_disp1;
+> +       struct clk                      *aclk_disp;
+> +       struct clk                      *lh_disp0;
+> +       void __iomem                    *regs;
+> +       struct drm_display_mode         mode;
+> +       struct decon_win_data           win_data[WINDOWS_NR];
+> +       unsigned int                    default_win;
+> +       unsigned long                   irq_flags;
+> +       u32                             vidcon1;
+> +       bool                            suspended;
+> +       int                             pipe;
+> +       wait_queue_head_t               wait_vsync_queue;
+> +       atomic_t                        wait_vsync_event;
+> +
+> +       struct exynos_drm_panel_info panel;
+> +};
+> +
+> +static const struct of_device_id decon_driver_dt_match[] = {
+> +       { .compatible = "samsung,exynos7-decon"},
+> +       {},
+> +};
+> +MODULE_DEVICE_TABLE(of, decon_driver_dt_match);
+> +
+> +static void decon_wait_for_vblank(struct exynos_drm_manager *mgr)
+> +{
+> +       struct decon_context *ctx = mgr->ctx;
+> +
+> +       if (ctx->suspended)
+> +               return;
+> +
+> +       atomic_set(&ctx->wait_vsync_event, 1);
+> +
+> +       /*
+> +        * wait for decon to signal VSYNC interrupt or return after
+> +        * timeout which is set to 50ms (refresh rate of 20).
+> +        */
+> +       if (!wait_event_timeout(ctx->wait_vsync_queue,
+> +                               !atomic_read(&ctx->wait_vsync_event),
+> +                               HZ/20))
+> +               DRM_DEBUG_KMS("vblank wait timed out.\n");
+> +}
+> +
+> +static void decon_clear_channel(struct exynos_drm_manager *mgr)
+> +{
+> +       struct decon_context *ctx = mgr->ctx;
+> +       int win, ch_enabled = 0;
+> +
+> +       DRM_DEBUG_KMS("%s\n", __FILE__);
+> +
+> +       /* Check if any channel is enabled. */
+> +       for (win = 0; win < WINDOWS_NR; win++) {
+> +               u32 val = readl(ctx->regs + WINCON(win));
+> +
+> +               if (val & WINCONx_ENWIN) {
+> +                       val &= ~WINCONx_ENWIN;
+> +                       writel(val, ctx->regs + WINCON(win));
+> +                       ch_enabled = 1;
+> +               }
+> +       }
+> +
+> +       /* Wait for vsync, as disable channel takes effect at next vsync */
+> +       if (ch_enabled) {
+> +               unsigned int state = ctx->suspended;
+> +
+> +               ctx->suspended = 0;
+> +               decon_wait_for_vblank(mgr);
+> +               ctx->suspended = state;
+> +       }
+> +}
+> +
+> +static int decon_mgr_initialize(struct exynos_drm_manager *mgr,
+> +                       struct drm_device *drm_dev)
+> +{
+> +       struct decon_context *ctx = mgr->ctx;
+> +       struct exynos_drm_private *priv = drm_dev->dev_private;
+> +
+> +       mgr->drm_dev = ctx->drm_dev = drm_dev;
+> +       mgr->pipe = ctx->pipe = priv->pipe++;
+> +
+> +       /* attach this sub driver to iommu mapping if supported. */
+> +       if (is_drm_iommu_supported(ctx->drm_dev)) {
+> +               /*
+> +                * If any channel is already active, iommu will throw
+> +                * a PAGE FAULT when enabled. So clear any channel if enabled.
+> +                */
+> +               decon_clear_channel(mgr);
+> +               drm_iommu_attach_device(ctx->drm_dev, ctx->dev);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static void decon_mgr_remove(struct exynos_drm_manager *mgr)
+> +{
+> +       struct decon_context *ctx = mgr->ctx;
+> +
+> +       /* detach this sub driver from iommu mapping if supported. */
+> +       if (is_drm_iommu_supported(ctx->drm_dev))
+> +               drm_iommu_detach_device(ctx->drm_dev, ctx->dev);
+> +}
+> +
+> +static u32 decon_calc_clkdiv(struct decon_context *ctx,
+> +               const struct drm_display_mode *mode)
+> +{
+> +       unsigned long ideal_clk = mode->htotal * mode->vtotal * mode->vrefresh;
+> +       u32 clkdiv;
+> +
+> +       /* Find the clock divider value that gets us closest to ideal_clk */
+> +       clkdiv = DIV_ROUND_UP(clk_get_rate(ctx->vclk), ideal_clk);
+> +
+> +       return (clkdiv < 0x100) ? clkdiv : 0xff;
+> +}
+> +
+> +static bool decon_mode_fixup(struct exynos_drm_manager *mgr,
+> +               const struct drm_display_mode *mode,
+> +               struct drm_display_mode *adjusted_mode)
+> +{
+> +       if (adjusted_mode->vrefresh == 0)
+> +               adjusted_mode->vrefresh = DECON_DEFAULT_FRAMERATE;
+> +
+> +       return true;
+> +}
+> +
+> +static void decon_mode_set(struct exynos_drm_manager *mgr,
+> +               const struct drm_display_mode *in_mode)
+> +{
+> +       struct decon_context *ctx = mgr->ctx;
+> +
+> +       drm_mode_copy(&ctx->mode, in_mode);
+> +}
+> +
+> +static void decon_commit(struct exynos_drm_manager *mgr)
+> +{
+> +       struct decon_context *ctx = mgr->ctx;
+> +       struct drm_display_mode *mode = &ctx->mode;
+> +       u32 val, clkdiv;
+> +       int vsync_len, vbpd, vfpd, hsync_len, hbpd, hfpd;
+> +
+> +       if (ctx->suspended)
+> +               return;
+> +
+> +       /* nothing to do if we haven't set the mode yet */
+> +       if (mode->htotal == 0 || mode->vtotal == 0)
+> +               return;
+> +
+> +      /* setup vertical timing values. */
+> +       vsync_len = mode->crtc_vsync_end - mode->crtc_vsync_start;
+> +       vbpd = mode->crtc_vtotal - mode->crtc_vsync_end;
+> +       vfpd = mode->crtc_vsync_start - mode->crtc_vdisplay;
+> +
+> +       val = VIDTCON0_VBPD(vbpd - 1) | VIDTCON0_VFPD(vfpd - 1);
+> +       writel(val, ctx->regs + VIDTCON0);
+> +
+> +       val = VIDTCON1_VSPW(vsync_len - 1);
+> +       writel(val, ctx->regs + VIDTCON1);
+> +
+> +       /* setup horizontal timing values.  */
+> +       hsync_len = mode->crtc_hsync_end - mode->crtc_hsync_start;
+> +       hbpd = mode->crtc_htotal - mode->crtc_hsync_end;
+> +       hfpd = mode->crtc_hsync_start - mode->crtc_hdisplay;
+> +
+> +       /* setup horizontal timing values.  */
+> +       val = VIDTCON2_HBPD(hbpd - 1) | VIDTCON2_HFPD(hfpd - 1);
+> +       writel(val, ctx->regs + VIDTCON2);
+> +
+> +       val = VIDTCON3_HSPW(hsync_len - 1);
+> +       writel(val, ctx->regs + VIDTCON3);
+> +
+> +       /* setup horizontal and vertical display size. */
+> +       val = VIDTCON4_LINEVAL(mode->vdisplay - 1) |
+> +              VIDTCON4_HOZVAL(mode->hdisplay - 1);
+> +       writel(val, ctx->regs + VIDTCON4);
+> +
+> +       writel(mode->vdisplay - 1, ctx->regs + LINECNT_OP_THRESHOLD);
+> +
+> +       /*
+> +        * fields of register with prefix '_F' would be updated
+> +        * at vsync(same as dma start)
+> +        */
+> +       val = VIDCON0_ENVID | VIDCON0_ENVID_F;
+> +       writel(val, ctx->regs + VIDCON0);
+> +
+> +       clkdiv = decon_calc_clkdiv(ctx, mode);
+> +       if (clkdiv > 1) {
+> +               val = VCLKCON1_CLKVAL_NUM_VCLK(clkdiv - 1);
+> +               writel(val, ctx->regs + VCLKCON1);
+> +               writel(val, ctx->regs + VCLKCON2);
+> +       }
+> +
+> +       val = readl(ctx->regs + DECON_UPDATE);
+> +       val |= DECON_UPDATE_STANDALONE_F;
+> +       writel(val, ctx->regs + DECON_UPDATE);
+> +}
+> +
+> +static int decon_enable_vblank(struct exynos_drm_manager *mgr)
+> +{
+> +       struct decon_context *ctx = mgr->ctx;
+> +       u32 val;
+> +
+> +       if (ctx->suspended)
+> +               return -EPERM;
+> +
+> +       if (!test_and_set_bit(0, &ctx->irq_flags)) {
+> +               val = readl(ctx->regs + VIDINTCON0);
+> +
+> +               val |= VIDINTCON0_INT_ENABLE;
+> +               val |= VIDINTCON0_INT_FRAME;
+> +
+> +               val &= ~VIDINTCON0_FRAMESEL0_MASK;
+> +               val |= VIDINTCON0_FRAMESEL0_VSYNC;
+> +
+> +               writel(val, ctx->regs + VIDINTCON0);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static void decon_disable_vblank(struct exynos_drm_manager *mgr)
+> +{
+> +       struct decon_context *ctx = mgr->ctx;
+> +       u32 val;
+> +
+> +       if (ctx->suspended)
+> +               return;
+> +
+> +       if (test_and_clear_bit(0, &ctx->irq_flags)) {
+> +               val = readl(ctx->regs + VIDINTCON0);
+> +
+> +               val &= ~VIDINTCON0_INT_FRAME;
+> +               val &= ~VIDINTCON0_INT_ENABLE;
+> +
+> +               writel(val, ctx->regs + VIDINTCON0);
+> +       }
+> +}
+> +
+> +static void decon_win_mode_set(struct exynos_drm_manager *mgr,
+> +                       struct exynos_drm_overlay *overlay)
+> +{
+> +       struct decon_context *ctx = mgr->ctx;
+> +       struct decon_win_data *win_data;
+> +       int win, padding;
+> +
+> +       if (!overlay) {
+> +               DRM_ERROR("overlay is NULL\n");
+> +               return;
+> +       }
+> +
+> +       win = overlay->zpos;
+> +       if (win == DEFAULT_ZPOS)
+> +               win = ctx->default_win;
+> +
+> +       if (win < 0 || win >= WINDOWS_NR)
+> +               return;
+> +
+> +
+> +       win_data = &ctx->win_data[win];
+> +
+> +       padding = (overlay->pitch / (overlay->bpp >> 3)) - overlay->fb_width;
+> +       win_data->offset_x = overlay->fb_x;
+> +       win_data->offset_y = overlay->fb_y;
+> +       win_data->fb_width = overlay->fb_width + padding;
+> +       win_data->fb_height = overlay->fb_height;
+> +       win_data->ovl_x = overlay->crtc_x;
+> +       win_data->ovl_y = overlay->crtc_y;
+> +       win_data->ovl_width = overlay->crtc_width;
+> +       win_data->ovl_height = overlay->crtc_height;
+> +       win_data->dma_addr = overlay->dma_addr[0];
+> +       win_data->bpp = overlay->bpp;
+> +       win_data->pixel_format = overlay->pixel_format;
+> +
+> +       DRM_DEBUG_KMS("offset_x = %d, offset_y = %d\n",
+> +                       win_data->offset_x, win_data->offset_y);
+> +       DRM_DEBUG_KMS("ovl_width = %d, ovl_height = %d\n",
+> +                       win_data->ovl_width, win_data->ovl_height);
+> +       DRM_DEBUG_KMS("paddr = 0x%lx\n", (unsigned long)win_data->dma_addr);
+> +       DRM_DEBUG_KMS("fb_width = %d, crtc_width = %d\n",
+> +                       overlay->fb_width, overlay->crtc_width);
+> +}
+> +
+> +static void decon_win_set_pixfmt(struct decon_context *ctx, unsigned int win)
+> +{
+> +       struct decon_win_data *win_data = &ctx->win_data[win];
+> +       unsigned long val;
+> +
+> +       val = readl(ctx->regs + WINCON(win));
+> +       val &= ~WINCONx_BPPMODE_MASK;
+> +
+> +       switch (win_data->pixel_format) {
+> +       case DRM_FORMAT_RGB565:
+> +               val |= WINCONx_BPPMODE_16BPP_565;
+> +               val |= WINCONx_BURSTLEN_16WORD;
+> +               break;
+> +       case DRM_FORMAT_XRGB8888:
+> +               val |= WINCONx_BPPMODE_24BPP_xRGB;
+> +               val |= WINCONx_BURSTLEN_16WORD;
+> +               break;
+> +       case DRM_FORMAT_XBGR8888:
+> +               val |= WINCONx_BPPMODE_24BPP_xBGR;
+> +               val |= WINCONx_BURSTLEN_16WORD;
+> +               break;
+> +       case DRM_FORMAT_RGBX8888:
+> +               val |= WINCONx_BPPMODE_24BPP_RGBx;
+> +               val |= WINCONx_BURSTLEN_16WORD;
+> +               break;
+> +       case DRM_FORMAT_BGRX8888:
+> +               val |= WINCONx_BPPMODE_24BPP_BGRx;
+> +               val |= WINCONx_BURSTLEN_16WORD;
+> +               break;
+> +       case DRM_FORMAT_ARGB8888:
+> +               val |= WINCONx_BPPMODE_32BPP_ARGB | WINCONx_BLD_PIX |
+> +                       WINCONx_ALPHA_SEL;
+> +               val |= WINCONx_BURSTLEN_16WORD;
+> +               break;
+> +       case DRM_FORMAT_ABGR8888:
+> +               val |= WINCONx_BPPMODE_32BPP_ABGR | WINCONx_BLD_PIX |
+> +                       WINCONx_ALPHA_SEL;
+> +               val |= WINCONx_BURSTLEN_16WORD;
+> +               break;
+> +       case DRM_FORMAT_RGBA8888:
+> +               val |= WINCONx_BPPMODE_32BPP_RGBA | WINCONx_BLD_PIX |
+> +                       WINCONx_ALPHA_SEL;
+> +               val |= WINCONx_BURSTLEN_16WORD;
+> +               break;
+> +       case DRM_FORMAT_BGRA8888:
+> +               val |= WINCONx_BPPMODE_32BPP_BGRA | WINCONx_BLD_PIX |
+> +                       WINCONx_ALPHA_SEL;
+> +               val |= WINCONx_BURSTLEN_16WORD;
+> +               break;
+> +       default:
+> +               DRM_DEBUG_KMS("invalid pixel size so using unpacked 24bpp.\n");
+> +
+> +               val |= WINCONx_BPPMODE_24BPP_xRGB;
+> +               val |= WINCONx_BURSTLEN_16WORD;
+> +               break;
+> +       }
+> +
+> +       DRM_DEBUG_KMS("bpp = %d\n", win_data->bpp);
+> +
+> +       /*
+> +        * In case of exynos, setting dma-burst to 16Word causes permanent
+> +        * tearing for very small buffers, e.g. cursor buffer. Burst Mode
+> +        * switching which is based on overlay size is not recommended as
+> +        * overlay size varies alot towards the end of the screen and rapid
+> +        * movement causes unstable DMA which results into iommu crash/tear.
+> +        */
+> +
+> +       if (win_data->fb_width < MIN_FB_WIDTH_FOR_16WORD_BURST) {
+> +               val &= ~WINCONx_BURSTLEN_MASK;
+> +               val |= WINCONx_BURSTLEN_8WORD;
+> +       }
+> +
+> +       writel(val, ctx->regs + WINCON(win));
+> +}
+> +
+> +static void decon_win_set_colkey(struct decon_context *ctx, unsigned int win)
+> +{
+> +       unsigned int keycon0 = 0, keycon1 = 0;
+> +
+> +       keycon0 = ~(WxKEYCON0_KEYBL_EN | WxKEYCON0_KEYEN_F |
+> +                       WxKEYCON0_DIRCON) | WxKEYCON0_COMPKEY(0);
+> +
+> +       keycon1 = WxKEYCON1_COLVAL(0xffffffff);
+> +
+> +       writel(keycon0, ctx->regs + WKEYCON0_BASE(win));
+> +       writel(keycon1, ctx->regs + WKEYCON1_BASE(win));
+> +}
+> +
+> +/**
+> + * shadow_protect_win() - disable updating values from shadow registers at vsync
+> + *
+> + * @win: window to protect registers for
+> + * @protect: 1 to protect (disable updates)
+> + */
+> +static void decon_shadow_protect_win(struct decon_context *ctx,
+> +                                                       int win, bool protect)
+> +{
+> +       u32 reg, bits, val;
+> +
+> +       reg = SHADOWCON;
+> +       bits = SHADOWCON_WINx_PROTECT(win);
+> +
+> +       val = readl(ctx->regs + reg);
+> +       if (protect)
+> +               val |= bits;
+> +       else
+> +               val &= ~bits;
+> +       writel(val, ctx->regs + reg);
+> +}
+> +
+> +static void decon_win_commit(struct exynos_drm_manager *mgr, int zpos)
+> +{
+> +       struct decon_context *ctx = mgr->ctx;
+> +       struct decon_win_data *win_data;
+> +       int win = zpos;
+> +       unsigned long val, alpha, blendeq;
+> +       unsigned int last_x;
+> +       unsigned int last_y;
+> +
+> +       if (ctx->suspended)
+> +               return;
+> +
+> +       if (win == DEFAULT_ZPOS)
+> +               win = ctx->default_win;
+> +
+> +       if (win < 0 || win >= WINDOWS_NR)
+> +               return;
+> +
+> +       win_data = &ctx->win_data[win];
+> +
+> +       /* If suspended, enable this on resume */
+> +       if (ctx->suspended) {
+> +               win_data->resume = true;
+> +               return;
+> +       }
+> +
+> +       /*
+> +        * SHADOWCON/PRTCON register is used for enabling timing.
+> +        *
+> +        * for example, once only width value of a register is set,
+> +        * if the dma is started then decon hardware could malfunction so
+> +        * with protect window setting, the register fields with prefix '_F'
+> +        * wouldn't be updated at vsync also but updated once unprotect window
+> +        * is set.
+> +        */
+> +
+> +       /* protect windows */
+> +       decon_shadow_protect_win(ctx, win, true);
+> +
+> +       /* buffer start address */
+> +       val = (unsigned long)win_data->dma_addr;
+> +       writel(val, ctx->regs + VIDW_BUF_START(win));
+> +
+> +       /* buffer size */
+> +       writel(win_data->fb_width, ctx->regs + VIDW_WHOLE_X(win));
+> +       writel(win_data->fb_height, ctx->regs + VIDW_WHOLE_Y(win));
+> +
+> +       /* offset from the start of the buffer read */
+> +       writel(win_data->offset_x, ctx->regs + VIDW_OFFSET_X(win));
+> +       writel(win_data->offset_y, ctx->regs + VIDW_OFFSET_Y(win));
+> +
+> +       DRM_DEBUG_KMS("start addr = 0x%lx\n",
+> +                       (unsigned long)win_data->dma_addr);
+> +       DRM_DEBUG_KMS("ovl_width = %d, ovl_height = %d\n",
+> +                       win_data->ovl_width, win_data->ovl_height);
+> +
+> +       /* OSD position */
+> +       val = VIDOSDxA_TOPLEFT_X(win_data->ovl_x) |
+> +               VIDOSDxA_TOPLEFT_Y(win_data->ovl_y);
+> +       writel(val, ctx->regs + VIDOSD_A(win));
+> +
+> +       last_x = win_data->ovl_x + win_data->ovl_width;
+> +       if (last_x)
+> +               last_x--;
+> +       last_y = win_data->ovl_y + win_data->ovl_height;
+> +       if (last_y)
+> +               last_y--;
+> +
+> +       val = VIDOSDxB_BOTRIGHT_X(last_x) | VIDOSDxB_BOTRIGHT_Y(last_y);
+> +
+> +       writel(val, ctx->regs + VIDOSD_B(win));
+> +
+> +       DRM_DEBUG_KMS("osd pos: tx = %d, ty = %d, bx = %d, by = %d\n",
+> +                       win_data->ovl_x, win_data->ovl_y, last_x, last_y);
+> +
+> +               /* OSD alpha */
+> +               alpha = VIDOSDxC_ALPHA0_R_F(0x0) |
+> +                               VIDOSDxC_ALPHA0_G_F(0x0) |
+> +                               VIDOSDxC_ALPHA0_B_F(0x0);
+> +
+> +               writel(alpha, ctx->regs + VIDOSD_C(win));
+> +
+> +               alpha = VIDOSDxD_ALPHA1_R_F(0xff) |
+> +                               VIDOSDxD_ALPHA1_G_F(0xff) |
+> +                               VIDOSDxD_ALPHA1_B_F(0xff);
+> +
+> +               writel(alpha, ctx->regs + VIDOSD_D(win));
+> +
+> +       if (win != 0) {
+> +               blendeq = BLENDE_A_FUNC(BLENDE_COEF_ONE) |
+> +                       BLENDE_B_FUNC(BLENDE_COEF_ZERO) |
+> +                       BLENDE_P_FUNC(BLENDE_COEF_ZERO) |
+> +                       BLENDE_Q_FUNC(BLENDE_COEF_ZERO);
+> +
+> +               writel(blendeq, ctx->regs + BLENDE(win - 1));
+> +       }
+> +
+> +       decon_win_set_pixfmt(ctx, win);
+> +
+> +       /* hardware window 0 doesn't support color key. */
+> +       if (win != 0)
+> +               decon_win_set_colkey(ctx, win);
+> +
+> +       /* wincon */
+> +       val = readl(ctx->regs + WINCON(win));
+> +       val |= WINCONx_TRIPLE_BUF_MODE;
+> +       val |= WINCONx_ENWIN;
+> +       writel(val, ctx->regs + WINCON(win));
+> +
+> +       /* Enable DMA channel and unprotect windows */
+> +       decon_shadow_protect_win(ctx, win, false);
+> +
+> +       val = readl(ctx->regs + DECON_UPDATE);
+> +       val |= DECON_UPDATE_STANDALONE_F;
+> +       writel(val, ctx->regs + DECON_UPDATE);
+> +
+> +       win_data->enabled = true;
+> +}
+> +
+> +static void decon_win_disable(struct exynos_drm_manager *mgr, int zpos)
+> +{
+> +       struct decon_context *ctx = mgr->ctx;
+> +       struct decon_win_data *win_data;
+> +       int win = zpos;
+> +       u32 val;
+> +
+> +       if (win == DEFAULT_ZPOS)
+> +               win = ctx->default_win;
+> +
+> +       if (win < 0 || win >= WINDOWS_NR)
+> +               return;
+> +
+> +       win_data = &ctx->win_data[win];
+> +
+> +       if (ctx->suspended) {
+> +               /* do not resume this window*/
+> +               win_data->resume = false;
+> +               return;
+> +       }
+> +
+> +       /* protect windows */
+> +       decon_shadow_protect_win(ctx, win, true);
+> +
+> +       /* wincon */
+> +       val = readl(ctx->regs + WINCON(win));
+> +       val &= ~WINCONx_ENWIN;
+> +       writel(val, ctx->regs + WINCON(win));
+> +
+> +       decon_shadow_protect_win(ctx, win, false);
+> +
+> +       win_data->enabled = false;
+> +}
+> +
+> +static void decon_window_suspend(struct exynos_drm_manager *mgr)
+> +{
+> +       struct decon_context *ctx = mgr->ctx;
+> +       struct decon_win_data *win_data;
+> +       int i;
+> +
+> +       for (i = 0; i < WINDOWS_NR; i++) {
+> +               win_data = &ctx->win_data[i];
+> +               win_data->resume = win_data->enabled;
+> +               if (win_data->enabled)
+> +                       decon_win_disable(mgr, i);
+> +       }
+> +       decon_wait_for_vblank(mgr);
+> +}
+> +
+> +static void decon_window_resume(struct exynos_drm_manager *mgr)
+> +{
+> +       struct decon_context *ctx = mgr->ctx;
+> +       struct decon_win_data *win_data;
+> +       int i;
+> +
+> +       for (i = 0; i < WINDOWS_NR; i++) {
+> +               win_data = &ctx->win_data[i];
+> +               win_data->enabled = win_data->resume;
+> +               win_data->resume = false;
+> +       }
+> +}
+> +
+> +static void decon_apply(struct exynos_drm_manager *mgr)
+> +{
+> +       struct decon_context *ctx = mgr->ctx;
+> +       struct decon_win_data *win_data;
+> +       int i;
+> +
+> +       for (i = 0; i < WINDOWS_NR; i++) {
+> +               win_data = &ctx->win_data[i];
+> +               if (win_data->enabled)
+> +                       decon_win_commit(mgr, i);
+> +               else
+> +                       decon_win_disable(mgr, i);
+> +       }
+> +
+> +       decon_commit(mgr);
+> +}
+> +
+> +static int decon_reg_reset(struct decon_context *ctx)
+> +{
+> +       int tries = RESET_TIMEOUT;
+> +
+> +       writel(VIDCON0_SWRESET, ctx->regs + VIDCON0);
+> +
+> +       while (tries) {
+> +               if (!(readl(ctx->regs + VIDCON0) & VIDCON0_SWRESET))
+> +                       break;
+> +               udelay(10);
+> +               tries--;
+> +       }
+> +
+> +       if (!tries) {
+> +               DRM_ERROR("Failed to reset decon\n");
+> +               return -EBUSY;
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static void decon_cmu_enable(struct decon_context *ctx)
+> +{
+> +       writel(~DECON_CMU_ALL_CLKGATE_ENABLE, ctx->regs + DECON_CMU);
+> +}
+> +
+> +static void decon_blend_alpha_bits(struct decon_context *ctx)
+> +{
+> +       writel(BLENDCON_NEW_8BIT_ALPHA_VALUE, ctx->regs + BLENDCON);
+> +}
+> +
+> +static void decon_set_vidout(struct decon_context *ctx)
+> +{
+> +       writel(VIDOUTCON0_LCD_ON | VIDOUTCON0_RGBIF, ctx->regs + VIDOUTCON0);
+> +}
+> +
+> +static void decon_set_crc(struct decon_context *ctx)
+> +{
+> +       u32 val = readl(ctx->regs + CRCCTRL);
+> +
+> +       writel(val & ~(CRCCTRL_CRCCLKEN | CRCCTRL_CRCEN | CRCCTRL_CRCSTART_F),
+> +                                                       ctx->regs + CRCCTRL);
+> +}
+> +
+> +static void decon_set_clkval(struct decon_context *ctx)
+> +{
+> +       writel(VCLKCON0_CLKVALUP | VCLKCON0_VCLKFREE, ctx->regs + VCLKCON0);
+> +}
+> +
+> +static void decon_set_fixvclk(struct decon_context *ctx)
+> +{
+> +       writel(ctx->vidcon1, ctx->regs + VIDCON1(0));
+> +}
+> +
+> +static int decon_poweron(struct exynos_drm_manager *mgr)
+> +{
+> +       struct decon_context *ctx = mgr->ctx;
+> +       int ret;
+> +
+> +       if (!ctx->suspended)
+> +               return 0;
+> +
+> +       ctx->suspended = false;
+> +
+> +       pm_runtime_get_sync(ctx->dev);
+> +
+> +       ret = clk_prepare_enable(ctx->pclk);
+> +       if (ret < 0) {
+> +               DRM_ERROR("Failed to prepare_enable the pclk [%d]\n", ret);
+> +               goto pclk_err;
+> +       }
+> +
+> +       ret = clk_prepare_enable(ctx->aclk);
+> +       if  (ret < 0) {
+> +               DRM_ERROR("Failed to prepare_enable the aclk [%d]\n", ret);
+> +               goto aclk_err;
+> +       }
+> +
+> +       ret = clk_prepare_enable(ctx->eclk);
+> +       if  (ret < 0) {
+> +               DRM_ERROR("Failed to prepare_enable the eclk [%d]\n", ret);
+> +               goto eclk_err;
+> +       }
+> +
+> +       ret = clk_prepare_enable(ctx->vclk);
+> +       if  (ret < 0) {
+> +               DRM_ERROR("Failed to prepare_enable the vclk [%d]\n", ret);
+> +               goto vclk_err;
+> +       }
+> +
+> +       ret = clk_prepare_enable(ctx->dsd);
+> +       if  (ret < 0) {
+> +               DRM_ERROR("Failed to prepare_enable the dsd [%d]\n", ret);
+> +               goto dsd_err;
+> +       }
+> +
+> +       ret = clk_prepare_enable(ctx->lh_disp1);
+> +       if  (ret < 0) {
+> +               DRM_ERROR("Failed to prepare_enable the lh_disp1 [%d]\n", ret);
+> +               goto lh_disp1_err;
+> +       }
+> +
+> +       ret = clk_prepare_enable(ctx->aclk_disp);
+> +       if  (ret < 0) {
+> +               DRM_ERROR("Failed to prepare_enable the aclk_disp [%d]\n", ret);
+> +               goto aclk_disp_err;
+> +       }
+> +
+> +       ret = clk_prepare_enable(ctx->lh_disp0);
+> +       if  (ret < 0) {
+> +               DRM_ERROR("Failed to prepare_enable the lh_disp0 [%d]\n", ret);
+> +               goto lh_disp0_err;
+> +       }
+> +
+> +       ret = decon_reg_reset(mgr->ctx);
+> +       if  (ret < 0) {
+> +               DRM_ERROR("Failed to reset decon [%d]\n", ret);
+> +               goto lh_disp0_err;
+> +       }
+> +
+> +       decon_cmu_enable(mgr->ctx);
+> +       decon_blend_alpha_bits(mgr->ctx);
+> +       decon_set_vidout(mgr->ctx);
+> +       decon_set_crc(mgr->ctx);
+> +       decon_set_fixvclk(mgr->ctx);
+> +       decon_set_clkval(mgr->ctx);
+> +
+> +       /* if vblank was enabled status, enable it again. */
+> +       if (test_and_clear_bit(0, &ctx->irq_flags)) {
+> +               ret = decon_enable_vblank(mgr);
+> +               if (ret) {
+> +                       DRM_ERROR("Failed to re-enable vblank [%d]\n", ret);
+> +                       goto enable_vblank_err;
+> +               }
+> +       }
+> +
+> +       decon_window_resume(mgr);
+> +
+> +       decon_apply(mgr);
+> +
+> +       return 0;
+> +
+> +enable_vblank_err:
+> +       clk_disable_unprepare(ctx->lh_disp0);
+> +lh_disp0_err:
+> +       clk_disable_unprepare(ctx->aclk_disp);
+> +aclk_disp_err:
+> +       clk_disable_unprepare(ctx->lh_disp1);
+> +lh_disp1_err:
+> +       clk_disable_unprepare(ctx->dsd);
+> +dsd_err:
+> +       clk_disable_unprepare(ctx->vclk);
+> +vclk_err:
+> +       clk_disable_unprepare(ctx->eclk);
+> +eclk_err:
+> +       clk_disable_unprepare(ctx->aclk);
+> +aclk_err:
+> +       clk_disable_unprepare(ctx->pclk);
+> +pclk_err:
+> +       ctx->suspended = true;
+> +       return ret;
+> +}
+> +
+> +static int decon_poweroff(struct exynos_drm_manager *mgr)
+> +{
+> +       struct decon_context *ctx = mgr->ctx;
+> +
+> +       if (ctx->suspended)
+> +               return 0;
+> +
+> +       /*
+> +        * We need to make sure that all windows are disabled before we
+> +        * suspend that connector. Otherwise we might try to scan from
+> +        * a destroyed buffer later.
+> +        */
+> +       decon_window_suspend(mgr);
+> +
+> +       clk_disable_unprepare(ctx->pclk);
+> +       clk_disable_unprepare(ctx->aclk);
+> +       clk_disable_unprepare(ctx->eclk);
+> +       clk_disable_unprepare(ctx->vclk);
+> +       clk_disable_unprepare(ctx->dsd);
+> +       clk_disable_unprepare(ctx->lh_disp1);
+> +       clk_disable_unprepare(ctx->aclk_disp);
+> +       clk_disable_unprepare(ctx->lh_disp0);
+> +
+> +       pm_runtime_put_sync(ctx->dev);
+> +
+> +       ctx->suspended = true;
+> +       return 0;
+> +}
+> +
+> +static void decon_dpms(struct exynos_drm_manager *mgr, int mode)
+> +{
+> +       DRM_DEBUG_KMS("%s, %d\n", __FILE__, mode);
+> +
+> +       switch (mode) {
+> +       case DRM_MODE_DPMS_ON:
+> +               decon_poweron(mgr);
+> +               break;
+> +       case DRM_MODE_DPMS_STANDBY:
+> +       case DRM_MODE_DPMS_SUSPEND:
+> +       case DRM_MODE_DPMS_OFF:
+> +               decon_poweroff(mgr);
+> +               break;
+> +       default:
+> +               DRM_DEBUG_KMS("unspecified mode %d\n", mode);
+> +               break;
+> +       }
+> +}
+> +
+> +static struct exynos_drm_manager_ops decon_manager_ops = {
+> +       .dpms = decon_dpms,
+> +       .mode_fixup = decon_mode_fixup,
+> +       .mode_set = decon_mode_set,
+> +       .commit = decon_commit,
+> +       .enable_vblank = decon_enable_vblank,
+> +       .disable_vblank = decon_disable_vblank,
+> +       .wait_for_vblank = decon_wait_for_vblank,
+> +       .win_mode_set = decon_win_mode_set,
+> +       .win_commit = decon_win_commit,
+> +       .win_disable = decon_win_disable,
+> +};
+> +
+> +static struct exynos_drm_manager decon_manager = {
+> +       .type = EXYNOS_DISPLAY_TYPE_LCD,
+> +       .ops = &decon_manager_ops,
+> +};
+> +
+> +static irqreturn_t decon_irq_handler(int irq, void *dev_id)
+> +{
+> +       struct decon_context *ctx = (struct decon_context *)dev_id;
+> +       u32 val;
+> +
+> +       val = readl(ctx->regs + VIDINTCON1);
+> +
+> +       if (val & VIDINTCON1_INT_FRAME)
+> +               /* VSYNC interrupt */
+> +               writel(VIDINTCON1_INT_FRAME, ctx->regs + VIDINTCON1);
+> +
+> +       /* check the crtc is detached already from encoder */
+> +       if (ctx->pipe < 0 || !ctx->drm_dev)
+> +               goto out;
+> +
+> +       drm_handle_vblank(ctx->drm_dev, ctx->pipe);
+> +       exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
+> +
+> +       /* set wait vsync event to zero and wake up queue. */
+> +       if (atomic_read(&ctx->wait_vsync_event)) {
+> +               atomic_set(&ctx->wait_vsync_event, 0);
+> +               wake_up(&ctx->wait_vsync_queue);
+> +       }
+> +out:
+> +       return IRQ_HANDLED;
+> +}
+> +
+> +static int decon_bind(struct device *dev, struct device *master, void *data)
+> +{
+> +       struct drm_device *drm_dev = data;
+> +
+> +       decon_mgr_initialize(&decon_manager, drm_dev);
+> +       exynos_drm_crtc_create(&decon_manager);
+> +
+> +       return 0;
+> +
+> +}
+> +
+> +static void decon_unbind(struct device *dev, struct device *master,
+> +                       void *data)
+> +{
+> +       struct exynos_drm_manager *mgr = dev_get_drvdata(dev);
+> +
+> +       decon_dpms(mgr, DRM_MODE_DPMS_OFF);
+> +       decon_mgr_remove(mgr);
+> +}
+> +
+> +static const struct component_ops decon_component_ops = {
+> +       .bind   = decon_bind,
+> +       .unbind = decon_unbind,
+> +};
+> +
+> +static int decon_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev = &pdev->dev;
+> +       struct decon_context *ctx;
+> +       struct resource *res;
+> +       int ret = -EINVAL;
+> +
+> +       ret = exynos_drm_component_add(&pdev->dev, EXYNOS_DEVICE_TYPE_CRTC,
+> +                                       decon_manager.type);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (!dev->of_node) {
+> +               ret = -ENODEV;
+> +               goto err_del_component;
+> +       }
+> +
+> +       ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+> +       if (!ctx) {
+> +               ret = -ENOMEM;
+> +               goto err_del_component;
+> +       }
+> +
+> +       ctx->dev = dev;
+> +       ctx->suspended = true;
+> +
+> +       ctx->pclk = devm_clk_get(dev, "pclk_decon0");
+> +       if (IS_ERR(ctx->pclk)) {
+> +               dev_err(dev, "failed to get bus clock\n");
+> +               ret = PTR_ERR(ctx->pclk);
+> +               goto err_del_component;
+> +       }
+> +
+> +       ctx->aclk = devm_clk_get(dev, "aclk_decon0");
+> +       if (IS_ERR(ctx->aclk)) {
+> +               dev_err(dev, "failed to get aclock\n");
+> +               ret = PTR_ERR(ctx->aclk);
+> +               goto err_del_component;
+> +       }
+> +
+> +       ctx->eclk = devm_clk_get(dev, "decon0_eclk");
+> +       if (IS_ERR(ctx->eclk)) {
+> +               dev_err(dev, "failed to get eclock\n");
+> +               ret = PTR_ERR(ctx->eclk);
+> +               goto err_del_component;
+> +       }
+> +
+> +       ctx->vclk = devm_clk_get(dev, "decon0_vclk");
+> +       if (IS_ERR(ctx->vclk)) {
+> +               dev_err(dev, "failed to get vclock\n");
+> +               ret = PTR_ERR(ctx->vclk);
+> +               goto err_del_component;
+> +       }
+> +
+> +       ctx->dsd = devm_clk_get(dev, "sclk_dsd");
+> +       if (IS_ERR(ctx->dsd)) {
+> +               dev_err(dev, "failed to get dsd clock\n");
+> +               ret = PTR_ERR(ctx->dsd);
+> +               goto err_del_component;
+> +       }
+> +
+> +       ctx->lh_disp1 = devm_clk_get(dev, "aclk_lh_disp1");
+> +       if (IS_ERR(ctx->lh_disp1)) {
+> +               dev_err(dev, "failed to get lh_disp1 clock\n");
+> +               ret = PTR_ERR(ctx->lh_disp1);
+> +               goto err_del_component;
+> +       }
+> +
+> +       ctx->aclk_disp = devm_clk_get(dev, "aclk_disp");
+> +       if (IS_ERR(ctx->aclk_disp)) {
+> +               dev_err(dev, "failed to get aclk_disp clock\n");
+> +               ret = PTR_ERR(ctx->aclk_disp);
+> +               goto err_del_component;
+> +       }
+> +
+> +       ctx->lh_disp0 = devm_clk_get(dev, "aclk_lh_disp0");
+> +       if (IS_ERR(ctx->lh_disp0)) {
+> +               dev_err(dev, "failed to get lh_disp0 clock\n");
+> +               ret = PTR_ERR(ctx->lh_disp0);
+> +               goto err_del_component;
+> +       }
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +
+> +       ctx->regs = devm_ioremap_resource(dev, res);
+> +       if (IS_ERR(ctx->regs)) {
+> +               ret = PTR_ERR(ctx->regs);
+> +               goto err_del_component;
+> +       }
+> +
+> +       res = platform_get_resource_byname(pdev, IORESOURCE_IRQ, "vsync");
+> +       if (!res) {
+> +               dev_err(dev, "irq request failed.\n");
+> +               ret = -ENXIO;
+> +               goto err_del_component;
+> +       }
+> +
+> +       ret = devm_request_irq(dev, res->start, decon_irq_handler,
+> +                                                       0, "drm_decon", ctx);
+> +       if (ret) {
+> +               dev_err(dev, "irq request failed.\n");
+> +               goto err_del_component;
+> +       }
+> +
+> +       init_waitqueue_head(&ctx->wait_vsync_queue);
+> +       atomic_set(&ctx->wait_vsync_event, 0);
+> +
+> +       platform_set_drvdata(pdev, &decon_manager);
+> +
+> +       decon_manager.ctx = ctx;
+> +
+> +       pm_runtime_enable(&pdev->dev);
+> +
+> +       ret = component_add(&pdev->dev, &decon_component_ops);
+> +       if (ret)
+> +               goto err_disable_pm_runtime;
+> +
+> +       return ret;
+> +
+> +err_disable_pm_runtime:
+> +       pm_runtime_disable(&pdev->dev);
+> +
+> +err_del_component:
+> +       exynos_drm_component_del(&pdev->dev, EXYNOS_DEVICE_TYPE_CRTC);
+> +       return ret;
+> +}
+> +
+> +static int decon_remove(struct platform_device *pdev)
+> +{
+> +       pm_runtime_disable(&pdev->dev);
+> +
+> +       component_del(&pdev->dev, &decon_component_ops);
+> +       exynos_drm_component_del(&pdev->dev, EXYNOS_DEVICE_TYPE_CRTC);
+> +
+> +       return 0;
+> +}
+> +
+> +struct platform_driver decon_driver = {
+> +       .probe          = decon_probe,
+> +       .remove         = decon_remove,
+> +       .driver         = {
+> +               .name   = "exynos-decon",
+> +               .owner  = THIS_MODULE,
+> +               .of_match_table = decon_driver_dt_match,
+> +       },
+> +};
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> index 443a206..44bdc42 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+> @@ -557,10 +557,16 @@ static int exynos_drm_platform_probe(struct platform_device *pdev)
+>                 return ret;
+>  #endif
+>
+> +#ifdef CONFIG_DRM_EXYNOS_DECON
+> +       ret = platform_driver_register(&decon_driver);
+> +       if (ret < 0)
+> +               goto err_unregister_fimd_drv;
+> +#endif
+> +
+>  #ifdef CONFIG_DRM_EXYNOS_DP
+>         ret = platform_driver_register(&dp_driver);
+>         if (ret < 0)
+> -               goto err_unregister_fimd_drv;
+> +               goto err_unregister_decon_drv;
+>  #endif
+>
+>  #ifdef CONFIG_DRM_EXYNOS_DSI
+> @@ -668,6 +674,11 @@ err_unregister_dp_drv:
+>
+>  #ifdef CONFIG_DRM_EXYNOS_DP
+>         platform_driver_unregister(&dp_driver);
+> +err_unregister_decon_drv:
+> +#endif
+> +
+> +#ifdef CONFIG_DRM_EXYNOS_DECON
+> +       platform_driver_unregister(&decon_driver);
+>  err_unregister_fimd_drv:
+>  #endif
+>
+> @@ -709,6 +720,10 @@ static int exynos_drm_platform_remove(struct platform_device *pdev)
+>         platform_driver_unregister(&fimd_driver);
+>  #endif
+>
+> +#ifdef CONFIG_DRM_EXYNOS_DECON
+> +       platform_driver_unregister(&decon_driver);
+> +#endif
+> +
+>  #ifdef CONFIG_DRM_EXYNOS_DSI
+>         platform_driver_unregister(&dsi_driver);
+>  #endif
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> index d22e640..25f750d 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+> @@ -352,6 +352,16 @@ int exynos_drm_probe_vidi(void);
+>   */
+>  void exynos_drm_remove_vidi(void);
+>
+> +/*
+> + * this function registers exynos drm decon platform device/driver.
+> + */
+> +int exynos_drm_probe_decon(void);
+> +
+> +/*
+> + * this function unregister exynos drm decon platform device/driver.
+> + */
+> +void exynos_drm_remove_decon(void);
+> +
+>  /* This function creates a encoder and a connector, and initializes them. */
+>  int exynos_drm_create_enc_conn(struct drm_device *dev,
+>                                 struct exynos_drm_display *display);
+> @@ -364,6 +374,7 @@ void exynos_drm_component_del(struct device *dev,
+>                                 enum exynos_drm_device_type dev_type);
+>
+>  extern struct platform_driver fimd_driver;
+> +extern struct platform_driver decon_driver;
+>  extern struct platform_driver dp_driver;
+>  extern struct platform_driver dsi_driver;
+>  extern struct platform_driver mixer_driver;
+> diff --git a/include/video/samsung_decon.h b/include/video/samsung_decon.h
+> new file mode 100644
+> index 0000000..8839120
+> --- /dev/null
+> +++ b/include/video/samsung_decon.h
+> @@ -0,0 +1,346 @@
+> +/* include/video/exynos_drm_decon.h
+> + *
+> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> + * Author: Ajay Kumar <ajaykumar.rs@samsung.com>
+> + *
+> + * This program is free software; you can redistribute  it and/or modify it
+> + * under  the terms of  the GNU General  Public License as published by the
+> + * Free Software Foundation;  either version 2 of the  License, or (at your
+> + * option) any later version.
+> + */
+> +
+> +/* VIDCON0 */
+> +#define VIDCON0                                        (0x00)
+> +
+> +#define VIDCON0_SWRESET                                (1 << 28)
+> +#define VIDCON0_DECON_STOP_STATUS              (1 << 2)
+> +#define VIDCON0_ENVID                          (1 << 1)
+> +#define VIDCON0_ENVID_F                                (1 << 0)
+> +
+> +/* VIDOUTCON0 */
+> +#define VIDOUTCON0                             (0x4)
+> +
+> +#define VIDOUTCON0_LCD_ON                      (0x1 << 24)
+> +#define VIDOUTCON0_LCD_OFF                     (0x0 << 24)
+> +#define VIDOUTCON0_IF_SHIFT                    (23)
+> +#define VIDOUTCON0_IF_MASK                     (0x1 << 23)
+> +#define VIDOUTCON0_RGBIF                       (0x0 << 23)
+> +#define VIDOUTCON0_I80IF                       (0x1 << 23)
+> +
+> +/* VIDCON3 */
+> +#define VIDCON3                                        (0x8)
+> +
+> +/* VIDCON4 */
+> +#define VIDCON4                                        (0xC)
+> +#define VIDCON4_FIFOCNT_START_EN               (1 << 0)
+> +
+> +/* VCLKCON0 */
+> +#define VCLKCON0                               0x10
+> +#define VCLKCON0_CLKVALUP                      (1 << 8)
+> +#define VCLKCON0_VCLKFREE                      (1 << 0)
+> +
+> +/* VCLKCON */
+> +#define VCLKCON1                               0x14
+> +#define VCLKCON1_CLKVAL_NUM_VCLK(val)          (((val) & 0xff) << 0)
+> +#define VCLKCON2                               0x18
+> +
+> +/* SHADOWCON */
+> +#define SHADOWCON                              (0x30)
+> +
+> +#define SHADOWCON_WINx_PROTECT(_win)           (1 << (10 + (_win)))
+> +
+> +/* WINCONx */
+> +#define WINCON(_win)                           (0x50 + ((_win) * 4))
+> +
+> +#define WINCONx_BUFSTATUS                      (0x3 << 30)
+> +#define WINCONx_BUFSEL_MASK                    (0x3 << 28)
+> +#define WINCONx_BUFSEL_SHIFT                   (28)
+> +#define WINCONx_TRIPLE_BUF_MODE                        (0x1 << 18)
+> +#define WINCONx_DOUBLE_BUF_MODE                        (0x0 << 18)
+> +#define WINCONx_BURSTLEN_16WORD                        (0x0 << 11)
+> +#define WINCONx_BURSTLEN_8WORD                 (0x1 << 11)
+> +#define WINCONx_BURSTLEN_MASK                  (0x1 << 11)
+> +#define WINCONx_BURSTLEN_SHIFT                 (11)
+> +#define WINCONx_BLD_PLANE                      (0 << 8)
+> +#define WINCONx_BLD_PIX                                (1 << 8)
+> +#define WINCONx_ALPHA_MUL                      (1 << 7)
+> +
+> +#define WINCONx_BPPMODE_MASK                   (0xf << 2)
+> +#define WINCONx_BPPMODE_SHIFT                  (2)
+> +#define WINCONx_BPPMODE_16BPP_565              (0x8 << 2)
+> +#define WINCONx_BPPMODE_24BPP_BGRx             (0x7 << 2)
+> +#define WINCONx_BPPMODE_24BPP_RGBx             (0x6 << 2)
+> +#define WINCONx_BPPMODE_24BPP_xBGR             (0x5 << 2)
+> +#define WINCONx_BPPMODE_24BPP_xRGB             (0x4 << 2)
+> +#define WINCONx_BPPMODE_32BPP_BGRA             (0x3 << 2)
+> +#define WINCONx_BPPMODE_32BPP_RGBA             (0x2 << 2)
+> +#define WINCONx_BPPMODE_32BPP_ABGR             (0x1 << 2)
+> +#define WINCONx_BPPMODE_32BPP_ARGB             (0x0 << 2)
+> +#define WINCONx_ALPHA_SEL                      (1 << 1)
+> +#define WINCONx_ENWIN                          (1 << 0)
+> +
+> +#define WINCON1_ALPHA_MUL_F                    (1 << 7)
+> +#define WINCON2_ALPHA_MUL_F                    (1 << 7)
+> +#define WINCON3_ALPHA_MUL_F                    (1 << 7)
+> +#define WINCON4_ALPHA_MUL_F                    (1 << 7)
+> +
+> +/*  VIDOSDxH: The height for the OSD image(READ ONLY)*/
+> +#define VIDOSD_H(_x)                           (0x80 + ((_x) * 4))
+> +
+> +/* Frame buffer start addresses: VIDWxxADD0n */
+> +#define VIDW_BUF_START(_win)                   (0x80 + ((_win) * 0x10))
+> +#define VIDW_BUF_START1(_win)                  (0x84 + ((_win) * 0x10))
+> +#define VIDW_BUF_START2(_win)                  (0x88 + ((_win) * 0x10))
+> +
+> +#define VIDW_WHOLE_X(_win)                     (0x0130 + ((_win) * 8))
+> +#define VIDW_WHOLE_Y(_win)                     (0x0134 + ((_win) * 8))
+> +#define VIDW_OFFSET_X(_win)                    (0x0170 + ((_win) * 8))
+> +#define VIDW_OFFSET_Y(_win)                    (0x0174 + ((_win) * 8))
+> +#define VIDW_BLKOFFSET(_win)                   (0x01B0 + ((_win) * 4))
+> +#define VIDW_BLKSIZE(win)                      (0x0200 + ((_win) * 4))
+> +
+> +/* Interrupt controls register */
+> +#define VIDINTCON2                             (0x228)
+> +
+> +#define VIDINTCON1_INTEXTRA1_EN                        (1 << 1)
+> +#define VIDINTCON1_INTEXTRA0_EN                        (1 << 0)
+> +
+> +/* Interrupt controls and status register */
+> +#define VIDINTCON3                             (0x22C)
+> +
+> +#define VIDINTCON1_INTEXTRA1_PEND              (1 << 1)
+> +#define VIDINTCON1_INTEXTRA0_PEND              (1 << 0)
+> +
+> +/* VIDOSDxA ~ VIDOSDxE */
+> +#define VIDOSD_BASE                            (0x230)
+> +
+> +#define OSD_STRIDE                             (0x20)
+> +
+> +#define VIDOSD_A(_win)                         (VIDOSD_BASE + \
+> +                                               ((_win) * OSD_STRIDE) + 0x00)
+> +#define VIDOSD_B(_win)                         (VIDOSD_BASE + \
+> +                                               ((_win) * OSD_STRIDE) + 0x04)
+> +#define VIDOSD_C(_win)                         (VIDOSD_BASE + \
+> +                                               ((_win) * OSD_STRIDE) + 0x08)
+> +#define VIDOSD_D(_win)                         (VIDOSD_BASE + \
+> +                                               ((_win) * OSD_STRIDE) + 0x0C)
+> +#define VIDOSD_E(_win)                         (VIDOSD_BASE + \
+> +                                               ((_win) * OSD_STRIDE) + 0x10)
+> +
+> +#define VIDOSDxA_TOPLEFT_X_MASK                        (0x1fff << 13)
+> +#define VIDOSDxA_TOPLEFT_X_SHIFT               (13)
+> +#define VIDOSDxA_TOPLEFT_X_LIMIT               (0x1fff)
+> +#define VIDOSDxA_TOPLEFT_X(_x)                 (((_x) & 0x1fff) << 13)
+> +
+> +#define VIDOSDxA_TOPLEFT_Y_MASK                        (0x1fff << 0)
+> +#define VIDOSDxA_TOPLEFT_Y_SHIFT               (0)
+> +#define VIDOSDxA_TOPLEFT_Y_LIMIT               (0x1fff)
+> +#define VIDOSDxA_TOPLEFT_Y(_x)                 (((_x) & 0x1fff) << 0)
+> +
+> +#define VIDOSDxB_BOTRIGHT_X_MASK               (0x1fff << 13)
+> +#define VIDOSDxB_BOTRIGHT_X_SHIFT              (13)
+> +#define VIDOSDxB_BOTRIGHT_X_LIMIT              (0x1fff)
+> +#define VIDOSDxB_BOTRIGHT_X(_x)                        (((_x) & 0x1fff) << 13)
+> +
+> +#define VIDOSDxB_BOTRIGHT_Y_MASK               (0x1fff << 0)
+> +#define VIDOSDxB_BOTRIGHT_Y_SHIFT              (0)
+> +#define VIDOSDxB_BOTRIGHT_Y_LIMIT              (0x1fff)
+> +#define VIDOSDxB_BOTRIGHT_Y(_x)                        (((_x) & 0x1fff) << 0)
+> +
+> +#define VIDOSDxC_ALPHA0_R_F(_x)                        (((_x) & 0xFF) << 16)
+> +#define VIDOSDxC_ALPHA0_G_F(_x)                        (((_x) & 0xFF) << 8)
+> +#define VIDOSDxC_ALPHA0_B_F(_x)                        (((_x) & 0xFF) << 0)
+> +
+> +#define VIDOSDxD_ALPHA1_R_F(_x)                        (((_x) & 0xFF) << 16)
+> +#define VIDOSDxD_ALPHA1_G_F(_x)                        (((_x) & 0xFF) << 8)
+> +#define VIDOSDxD_ALPHA1_B_F(_x)                        (((_x) & 0xFF) >> 0)
+> +
+> +/* Window MAP (Color map) */
+> +#define WINxMAP(_win)                          (0x340 + ((_win) * 4))
+> +
+> +#define WINxMAP_MAP                            (1 << 24)
+> +#define WINxMAP_MAP_COLOUR_MASK                        (0xffffff << 0)
+> +#define WINxMAP_MAP_COLOUR_SHIFT               (0)
+> +#define WINxMAP_MAP_COLOUR_LIMIT               (0xffffff)
+> +#define WINxMAP_MAP_COLOUR(_x)                 ((_x) << 0)
+> +
+> +/* Window colour-key control registers */
+> +#define WKEYCON                                        (0x370)
+> +
+> +#define WKEYCON0                               (0x00)
+> +#define WKEYCON1                               (0x04)
+> +#define WxKEYCON0_KEYBL_EN                     (1 << 26)
+> +#define WxKEYCON0_KEYEN_F                      (1 << 25)
+> +#define WxKEYCON0_DIRCON                       (1 << 24)
+> +#define WxKEYCON0_COMPKEY_MASK                 (0xffffff << 0)
+> +#define WxKEYCON0_COMPKEY_SHIFT                        (0)
+> +#define WxKEYCON0_COMPKEY_LIMIT                        (0xffffff)
+> +#define WxKEYCON0_COMPKEY(_x)                  ((_x) << 0)
+> +#define WxKEYCON1_COLVAL_MASK                  (0xffffff << 0)
+> +#define WxKEYCON1_COLVAL_SHIFT                 (0)
+> +#define WxKEYCON1_COLVAL_LIMIT                 (0xffffff)
+> +#define WxKEYCON1_COLVAL(_x)                   ((_x) << 0)
+> +
+> +/* color key control register for hardware window 1 ~ 4. */
+> +#define WKEYCON0_BASE(x)               ((WKEYCON + WKEYCON0) + ((x - 1) * 8))
+> +/* color key value register for hardware window 1 ~ 4. */
+> +#define WKEYCON1_BASE(x)               ((WKEYCON + WKEYCON1) + ((x - 1) * 8))
+> +
+> +/* Window KEY Alpha value */
+> +#define WxKEYALPHA(_win)                       (0x3A0 + (((_win) - 1) * 0x4))
+> +
+> +#define Wx_KEYALPHA_R_F_SHIFT                  (16)
+> +#define Wx_KEYALPHA_G_F_SHIFT                  (8)
+> +#define Wx_KEYALPHA_B_F_SHIFT                  (0)
+> +
+> +/* Blending equation */
+> +#define BLENDE(_win)                           (0x03C0 + ((_win) * 4))
+> +#define BLENDE_COEF_ZERO                       0x0
+> +#define BLENDE_COEF_ONE                                0x1
+> +#define BLENDE_COEF_ALPHA_A                    0x2
+> +#define BLENDE_COEF_ONE_MINUS_ALPHA_A          0x3
+> +#define BLENDE_COEF_ALPHA_B                    0x4
+> +#define BLENDE_COEF_ONE_MINUS_ALPHA_B          0x5
+> +#define BLENDE_COEF_ALPHA0                     0x6
+> +#define BLENDE_COEF_A                          0xA
+> +#define BLENDE_COEF_ONE_MINUS_A                        0xB
+> +#define BLENDE_COEF_B                          0xC
+> +#define BLENDE_COEF_ONE_MINUS_B                        0xD
+> +#define BLENDE_Q_FUNC(_v)                      ((_v) << 18)
+> +#define BLENDE_P_FUNC(_v)                      ((_v) << 12)
+> +#define BLENDE_B_FUNC(_v)                      ((_v) << 6)
+> +#define BLENDE_A_FUNC(_v)                      ((_v) << 0)
+> +
+> +/* Blending equation control */
+> +#define BLENDCON                               (0x3D8)
+> +#define BLENDCON_NEW_MASK                      (1 << 0)
+> +#define BLENDCON_NEW_8BIT_ALPHA_VALUE          (1 << 0)
+> +#define BLENDCON_NEW_4BIT_ALPHA_VALUE          (0 << 0)
+> +
+> +/* Interrupt control register */
+> +#define VIDINTCON0                             (0x500)
+> +
+> +#define VIDINTCON0_WAKEUP_MASK                 (0x3f << 26)
+> +#define VIDINTCON0_INTEXTRAEN                  (1 << 21)
+> +
+> +#define VIDINTCON0_FRAMESEL0_SHIFT             (15)
+> +#define VIDINTCON0_FRAMESEL0_MASK              (0x3 << 15)
+> +#define VIDINTCON0_FRAMESEL0_BACKPORCH         (0x0 << 15)
+> +#define VIDINTCON0_FRAMESEL0_VSYNC             (0x1 << 15)
+> +#define VIDINTCON0_FRAMESEL0_ACTIVE            (0x2 << 15)
+> +#define VIDINTCON0_FRAMESEL0_FRONTPORCH                (0x3 << 15)
+> +
+> +#define VIDINTCON0_INT_FRAME                   (1 << 11)
+> +
+> +#define VIDINTCON0_FIFOLEVEL_MASK              (0x7 << 3)
+> +#define VIDINTCON0_FIFOLEVEL_SHIFT             (3)
+> +#define VIDINTCON0_FIFOLEVEL_EMPTY             (0x0 << 3)
+> +#define VIDINTCON0_FIFOLEVEL_TO25PC            (0x1 << 3)
+> +#define VIDINTCON0_FIFOLEVEL_TO50PC            (0x2 << 3)
+> +#define VIDINTCON0_FIFOLEVEL_FULL              (0x4 << 3)
+> +
+> +#define VIDINTCON0_FIFOSEL_MAIN_EN             (1 << 1)
+> +#define VIDINTCON0_INT_FIFO                    (1 << 1)
+> +
+> +#define VIDINTCON0_INT_ENABLE                  (1 << 0)
+> +
+> +/* Interrupt controls and status register */
+> +#define VIDINTCON1                             (0x504)
+> +
+> +#define VIDINTCON1_INT_EXTRA                   (1 << 3)
+> +#define VIDINTCON1_INT_I80                     (1 << 2)
+> +#define VIDINTCON1_INT_FRAME                   (1 << 1)
+> +#define VIDINTCON1_INT_FIFO                    (1 << 0)
+> +
+> +/* VIDCON1 */
+> +#define VIDCON1(_x)                            (0x0600 + ((_x) * 0x50))
+> +#define VIDCON1_LINECNT_GET(_v)                        (((_v) >> 17) & 0x1fff)
+> +#define VIDCON1_VCLK_MASK                      (0x3 << 9)
+> +#define VIDCON1_VCLK_HOLD                      (0x0 << 9)
+> +#define VIDCON1_VCLK_RUN                       (0x1 << 9)
+> +#define VIDCON1_VCLK_RUN_VDEN_DISABLE          (0x3 << 9)
+> +#define VIDCON1_RGB_ORDER_O_MASK               (0x7 << 4)
+> +#define VIDCON1_RGB_ORDER_O_RGB                        (0x0 << 4)
+> +#define VIDCON1_RGB_ORDER_O_GBR                        (0x1 << 4)
+> +#define VIDCON1_RGB_ORDER_O_BRG                        (0x2 << 4)
+> +#define VIDCON1_RGB_ORDER_O_BGR                        (0x4 << 4)
+> +#define VIDCON1_RGB_ORDER_O_RBG                        (0x5 << 4)
+> +#define VIDCON1_RGB_ORDER_O_GRB                        (0x6 << 4)
+> +
+> +/* VIDTCON0 */
+> +#define VIDTCON0                               (0x610)
+> +
+> +#define VIDTCON0_VBPD_MASK                     (0xffff << 16)
+> +#define VIDTCON0_VBPD_SHIFT                    (16)
+> +#define VIDTCON0_VBPD_LIMIT                    (0xffff)
+> +#define VIDTCON0_VBPD(_x)                      ((_x) << 16)
+> +
+> +#define VIDTCON0_VFPD_MASK                     (0xffff << 0)
+> +#define VIDTCON0_VFPD_SHIFT                    (0)
+> +#define VIDTCON0_VFPD_LIMIT                    (0xffff)
+> +#define VIDTCON0_VFPD(_x)                      ((_x) << 0)
+> +
+> +/* VIDTCON1 */
+> +#define VIDTCON1                               (0x614)
+> +
+> +#define VIDTCON1_VSPW_MASK                     (0xffff << 16)
+> +#define VIDTCON1_VSPW_SHIFT                    (16)
+> +#define VIDTCON1_VSPW_LIMIT                    (0xffff)
+> +#define VIDTCON1_VSPW(_x)                      ((_x) << 16)
+> +
+> +/* VIDTCON2 */
+> +#define VIDTCON2                               (0x618)
+> +
+> +#define VIDTCON2_HBPD_MASK                     (0xffff << 16)
+> +#define VIDTCON2_HBPD_SHIFT                    (16)
+> +#define VIDTCON2_HBPD_LIMIT                    (0xffff)
+> +#define VIDTCON2_HBPD(_x)                      ((_x) << 16)
+> +
+> +#define VIDTCON2_HFPD_MASK                     (0xffff << 0)
+> +#define VIDTCON2_HFPD_SHIFT                    (0)
+> +#define VIDTCON2_HFPD_LIMIT                    (0xffff)
+> +#define VIDTCON2_HFPD(_x)                      ((_x) << 0)
+> +
+> +/* VIDTCON3 */
+> +#define VIDTCON3                               (0x61C)
+> +
+> +#define VIDTCON3_HSPW_MASK                     (0xffff << 16)
+> +#define VIDTCON3_HSPW_SHIFT                    (16)
+> +#define VIDTCON3_HSPW_LIMIT                    (0xffff)
+> +#define VIDTCON3_HSPW(_x)                      ((_x) << 16)
+> +
+> +/* VIDTCON4 */
+> +#define VIDTCON4                               (0x620)
+> +
+> +#define VIDTCON4_LINEVAL_MASK                  (0xfff << 16)
+> +#define VIDTCON4_LINEVAL_SHIFT                 (16)
+> +#define VIDTCON4_LINEVAL_LIMIT                 (0xfff)
+> +#define VIDTCON4_LINEVAL(_x)                   (((_x) & 0xfff) << 16)
+> +
+> +#define VIDTCON4_HOZVAL_MASK                   (0xfff << 0)
+> +#define VIDTCON4_HOZVAL_SHIFT                  (0)
+> +#define VIDTCON4_HOZVAL_LIMIT                  (0xfff)
+> +#define VIDTCON4_HOZVAL(_x)                    (((_x) & 0xfff) << 0)
+> +
+> +/* LINECNT OP THRSHOLD*/
+> +#define LINECNT_OP_THRESHOLD                   (0x630)
+> +
+> +/* CRCCTRL */
+> +#define CRCCTRL                                        (0x6C8)
+> +#define CRCCTRL_CRCCLKEN                       (0x1 << 2)
+> +#define CRCCTRL_CRCSTART_F                     (0x1 << 1)
+> +#define CRCCTRL_CRCEN                          (0x1 << 0)
+> +
+> +/* DECON_CMU */
+> +#define DECON_CMU                              (0x704)
+> +
+> +#define DECON_CMU_ALL_CLKGATE_ENABLE           (0x3)
+> +#define DECON_CMU_SE_CLKGATE_ENABLE            (0x1 << 2)
+> +#define DECON_CMU_SFR_CLKGATE_ENABLE           (0x1 << 1)
+> +#define DECON_CMU_MEM_CLKGATE_ENABLE           (0x1 << 0)
+> +
+> +/* DECON_UPDATE */
+> +#define DECON_UPDATE                           (0x710)
+> +
+> +#define DECON_UPDATE_SLAVE_SYNC                        (1 << 4)
+> +#define DECON_UPDATE_STANDALONE_F              (1 << 0)
+> --
+> 1.7.9.5
+>
