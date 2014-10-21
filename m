@@ -1,45 +1,117 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 3/4] mfd/regulator: dt-bindings: max77686: Document
- regulators off in suspend
-Date: Tue, 21 Oct 2014 13:23:16 +0200
-Message-ID: <1413890597-31037-4-git-send-email-k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 2/4] regulator: max77686: Implement suspend disable for some
+ LDOs
+Date: Tue, 21 Oct 2014 13:23:15 +0200
+Message-ID: <1413890597-31037-3-git-send-email-k.kozlowski@samsung.com>
 References: <1413890597-31037-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:28485 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755346AbaJULYC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Oct 2014 07:24:02 -0400
-In-reply-to: <1413890597-31037-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1413890597-31037-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Add information which regulators can be disabled during system suspend.
+Some LDOs of Maxim 77686 PMIC support disabling during system suspend
+(LDO{2,6,7,8,10,11,12,14,15,16}). This was already implemented as part
+of set_suspend_mode function. In that case the mode was one of:
+ - disable,
+ - normal mode,
+ - low power mode.
+However there are no bindings for setting the mode during suspend.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Suggested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Add suspend disable for LDO regulators supporting this to the existing
+max77686_buck_set_suspend_disable() function. This helps reducing
+energy consumption during system sleep.
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- Documentation/devicetree/bindings/mfd/max77686.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/regulator/max77686.c | 33 ++++++++++++++++++++++++++++-----
+ 1 file changed, 28 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Documentation/devicetree/bindings/mfd/max77686.txt
-index 678f3cf0b8f0..75fdfaf41831 100644
---- a/Documentation/devicetree/bindings/mfd/max77686.txt
-+++ b/Documentation/devicetree/bindings/mfd/max77686.txt
-@@ -34,6 +34,12 @@ to get matched with their hardware counterparts as follow:
- 	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 9.
- 			example: BUCK1, BUCK5, BUCK9.
+diff --git a/drivers/regulator/max77686.c b/drivers/regulator/max77686.c
+index cffe0c69d57d..05df72d584bf 100644
+--- a/drivers/regulator/max77686.c
++++ b/drivers/regulator/max77686.c
+@@ -79,17 +79,33 @@ struct max77686_data {
+ };
  
-+  Regulators which can be turned off during system suspend:
-+	-LDOn	:	2, 6-8, 10-12, 14-16,
-+	-BUCKn	:	1-4.
-+  Use standard regulator bindings for it ('regulator-off-in-suspend').
-+
-+
- Example:
+ /* Some BUCKS supports Normal[ON/OFF] mode during suspend */
+-static int max77686_buck_set_suspend_disable(struct regulator_dev *rdev)
++static int max77686_set_suspend_disable(struct regulator_dev *rdev)
+ {
+ 	unsigned int val;
+ 	struct max77686_data *max77686 = rdev_get_drvdata(rdev);
+ 	int ret, id = rdev_get_id(rdev);
  
- 	max77686@09 {
+-	if (id == MAX77686_BUCK1)
++	switch (id) {
++	case MAX77686_BUCK1:
+ 		val = MAX77686_OPMODE_OFF_PWRREQ;
+-	else
++		break;
++	case MAX77686_BUCK2:
++	case MAX77686_BUCK3:
++	case MAX77686_BUCK4:
+ 		val = MAX77686_OPMODE_OFF_PWRREQ
+ 			<< MAX77686_OPMODE_BUCK234_SHIFT;
++		break;
++	case MAX77686_LDO2:
++	case MAX77686_LDO6 ... MAX77686_LDO8:
++	case MAX77686_LDO10 ... MAX77686_LDO12:
++	case MAX77686_LDO14 ... MAX77686_LDO16:
++		val = MAX77686_OPMODE_OFF_PWRREQ << MAX77686_OPMODE_SHIFT;
++		break;
++	default:
++		pr_warn("%s: regulator_suspend_disable not supported\n",
++			rdev->desc->name);
++		return -EINVAL;
++	}
+ 
+ 	ret = regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
+ 				 rdev->desc->enable_mask, val);
+@@ -171,6 +187,9 @@ static int max77686_enable(struct regulator_dev *rdev)
+ {
+ 	struct max77686_data *max77686 = rdev_get_drvdata(rdev);
+ 
++	if (max77686->opmode[rdev_get_id(rdev)] == MAX77686_OPMODE_OFF_PWRREQ)
++		max77686->opmode[rdev_get_id(rdev)] = MAX77686_OPMODE_NORMAL;
++
+ 	return regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
+ 				  rdev->desc->enable_mask,
+ 				  max77686->opmode[rdev_get_id(rdev)]);
+@@ -223,6 +242,8 @@ static struct regulator_ops max77686_ldo_ops = {
+ 	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
+ 	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
+ 	.set_suspend_mode	= max77686_ldo_set_suspend_mode,
++	.set_suspend_disable	= max77686_set_suspend_disable,
++	.set_suspend_enable	= max77686_enable,
+ };
+ 
+ static struct regulator_ops max77686_buck1_ops = {
+@@ -234,7 +255,8 @@ static struct regulator_ops max77686_buck1_ops = {
+ 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
+ 	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
+ 	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
+-	.set_suspend_disable	= max77686_buck_set_suspend_disable,
++	.set_suspend_disable	= max77686_set_suspend_disable,
++	.set_suspend_enable	= max77686_enable,
+ };
+ 
+ static struct regulator_ops max77686_buck_dvs_ops = {
+@@ -247,7 +269,8 @@ static struct regulator_ops max77686_buck_dvs_ops = {
+ 	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
+ 	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
+ 	.set_ramp_delay		= max77686_set_ramp_delay,
+-	.set_suspend_disable	= max77686_buck_set_suspend_disable,
++	.set_suspend_disable	= max77686_set_suspend_disable,
++	.set_suspend_enable	= max77686_enable,
+ };
+ 
+ #define regulator_desc_ldo(num)		{				\
 -- 
 1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
