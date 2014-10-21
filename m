@@ -1,7 +1,7 @@
 From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH v3 11/13] [media] s5p-mfc: Remove unused alloc field from private buffer struct.
-Date: Tue, 21 Oct 2014 16:37:05 +0530
-Message-ID: <1413889627-8431-12-git-send-email-arun.kk@samsung.com>
+Subject: [PATCH v3 12/13] [media] s5p-mfc: fix V4L2_CID_MIN_BUFFERS_FOR_CAPTURE on resolution change.
+Date: Tue, 21 Oct 2014 16:37:06 +0530
+Message-ID: <1413889627-8431-13-git-send-email-arun.kk@samsung.com>
 References: <1413889627-8431-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <1413889627-8431-1-git-send-email-arun.kk@samsung.com>
@@ -12,36 +12,30 @@ List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Pawel Osciak <posciak@chromium.org>
 
-This field is no longer used as MFC driver doesn't use vb2 alloc contexts
-anymore.
+G_CTRL on V4L2_CID_MIN_BUFFERS_FOR_CAPTURE will fail if userspace happens to
+query it after getting a resolution change event and before the codec has
+a chance to parse the header and switch to an initialized state.
 
 Signed-off-by: Pawel Osciak <posciak@chromium.org>
 Signed-off-by: Kiran AVND <avnd.kiran@samsung.com>
 Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 ---
- drivers/media/platform/s5p-mfc/s5p_mfc_common.h |    3 ---
- 1 file changed, 3 deletions(-)
+ drivers/media/platform/s5p-mfc/s5p_mfc_dec.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-index 5b0c334..15f7663 100644
---- a/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-+++ b/drivers/media/platform/s5p-mfc/s5p_mfc_common.h
-@@ -237,8 +237,6 @@ struct s5p_mfc_variant {
- 
- /**
-  * struct s5p_mfc_priv_buf - represents internal used buffer
-- * @alloc:		allocation-specific context for each buffer
-- *			(videobuf2 allocator)
-  * @ofs:		offset of each buffer, will be used for MFC
-  * @virt:		kernel virtual address, only valid when the
-  *			buffer accessed by driver
-@@ -246,7 +244,6 @@ struct s5p_mfc_variant {
-  * @size:		size of the buffer
-  */
- struct s5p_mfc_priv_buf {
--	void		*alloc;
- 	unsigned long	ofs;
- 	void		*virt;
- 	dma_addr_t	dma;
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
+index a98fe02..de90465 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c
+@@ -740,7 +740,8 @@ static int s5p_mfc_dec_g_v_ctrl(struct v4l2_ctrl *ctrl)
+ 		    ctx->state < MFCINST_ABORT) {
+ 			ctrl->val = ctx->pb_count;
+ 			break;
+-		} else if (ctx->state != MFCINST_INIT) {
++		} else if (ctx->state != MFCINST_INIT &&
++				ctx->state != MFCINST_RES_CHANGE_END) {
+ 			v4l2_err(&dev->v4l2_dev, "Decoding not initialised\n");
+ 			return -EINVAL;
+ 		}
 -- 
 1.7.9.5
