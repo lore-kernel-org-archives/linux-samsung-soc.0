@@ -1,7 +1,7 @@
 From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH v3 01/13] [media] s5p-mfc: support MIN_BUFFERS query for encoder
-Date: Tue, 21 Oct 2014 16:36:55 +0530
-Message-ID: <1413889627-8431-2-git-send-email-arun.kk@samsung.com>
+Subject: [PATCH v3 02/13] [media] s5p-mfc: Fix REQBUFS(0) for encoder.
+Date: Tue, 21 Oct 2014 16:36:56 +0530
+Message-ID: <1413889627-8431-3-git-send-email-arun.kk@samsung.com>
 References: <1413889627-8431-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-media-owner@vger.kernel.org>
 In-Reply-To: <1413889627-8431-1-git-send-email-arun.kk@samsung.com>
@@ -10,80 +10,48 @@ To: linux-media@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: k.debski@samsung.com, wuchengli@chromium.org, posciak@chromium.org, arun.m@samsung.com, ihf@chromium.org, prathyush.k@samsung.com, kiran@chromium.org, arunkk.samsung@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Kiran AVND <avnd.kiran@samsung.com>
+From: Pawel Osciak <posciak@chromium.org>
 
-Add V4L2_CID_MIN_BUFFERS_FOR_OUTPUT query for encoder.
-Once mfc encoder state is HEAD_PARSED, which is sequence
-header produced, dpb_count is avaialable. Let user space
-query this value.
+Handle REQBUFS(0) for CAPTURE queue as well. Also use the proper queue to call
+it on for OUTPUT.
 
+Signed-off-by: Pawel Osciak <posciak@chromium.org>
 Signed-off-by: Kiran AVND <avnd.kiran@samsung.com>
 Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 ---
- drivers/media/platform/s5p-mfc/s5p_mfc_enc.c |   42 ++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ drivers/media/platform/s5p-mfc/s5p_mfc_enc.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
 diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-index a904a1c..4816f31 100644
+index 4816f31..6a1c890 100644
 --- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
 +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
-@@ -690,6 +690,16 @@ static struct mfc_control controls[] = {
- 		.step = 1,
- 		.default_value = 0,
- 	},
-+	{
-+		.id = V4L2_CID_MIN_BUFFERS_FOR_OUTPUT,
-+		.type = V4L2_CTRL_TYPE_INTEGER,
-+		.name = "Minimum number of output bufs",
-+		.minimum = 1,
-+		.maximum = 32,
-+		.step = 1,
-+		.default_value = 1,
-+		.is_volatile = 1,
-+	},
- };
- 
- #define NUM_CTRLS ARRAY_SIZE(controls)
-@@ -1624,8 +1634,40 @@ static int s5p_mfc_enc_s_ctrl(struct v4l2_ctrl *ctrl)
- 	return ret;
- }
- 
-+static int s5p_mfc_enc_g_v_ctrl(struct v4l2_ctrl *ctrl)
-+{
-+	struct s5p_mfc_ctx *ctx = ctrl_to_ctx(ctrl);
-+	struct s5p_mfc_dev *dev = ctx->dev;
-+
-+	switch (ctrl->id) {
-+	case V4L2_CID_MIN_BUFFERS_FOR_OUTPUT:
-+		if (ctx->state >= MFCINST_HEAD_PARSED &&
-+		    ctx->state < MFCINST_ABORT) {
-+			ctrl->val = ctx->pb_count;
-+			break;
-+		} else if (ctx->state != MFCINST_INIT) {
-+			v4l2_err(&dev->v4l2_dev, "Encoding not initialised\n");
-+			return -EINVAL;
+@@ -1147,6 +1147,11 @@ static int vidioc_reqbufs(struct file *file, void *priv,
+ 		(reqbufs->memory != V4L2_MEMORY_USERPTR))
+ 		return -EINVAL;
+ 	if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
++		if (reqbufs->count == 0) {
++			ret = vb2_reqbufs(&ctx->vq_dst, reqbufs);
++			ctx->capture_state = QUEUE_FREE;
++			return ret;
 +		}
-+		/* Should wait for the header to be produced */
-+		s5p_mfc_clean_ctx_int_flags(ctx);
-+		s5p_mfc_wait_for_done_ctx(ctx,
-+				S5P_MFC_R2H_CMD_SEQ_DONE_RET, 0);
-+		if (ctx->state >= MFCINST_HEAD_PARSED &&
-+		    ctx->state < MFCINST_ABORT) {
-+			ctrl->val = ctx->pb_count;
-+		} else {
-+			v4l2_err(&dev->v4l2_dev, "Encoding not initialised\n");
-+			return -EINVAL;
+ 		if (ctx->capture_state != QUEUE_FREE) {
+ 			mfc_err("invalid capture state: %d\n",
+ 							ctx->capture_state);
+@@ -1168,6 +1173,14 @@ static int vidioc_reqbufs(struct file *file, void *priv,
+ 			return -ENOMEM;
+ 		}
+ 	} else if (reqbufs->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
++		if (reqbufs->count == 0) {
++			mfc_debug(2, "Freeing buffers\n");
++			ret = vb2_reqbufs(&ctx->vq_src, reqbufs);
++			s5p_mfc_hw_call(dev->mfc_ops, release_codec_buffers,
++					ctx);
++			ctx->output_state = QUEUE_FREE;
++			return ret;
 +		}
-+		break;
-+	}
-+	return 0;
-+}
-+
- static const struct v4l2_ctrl_ops s5p_mfc_enc_ctrl_ops = {
- 	.s_ctrl = s5p_mfc_enc_s_ctrl,
-+	.g_volatile_ctrl = s5p_mfc_enc_g_v_ctrl,
- };
- 
- static int vidioc_s_parm(struct file *file, void *priv,
+ 		if (ctx->output_state != QUEUE_FREE) {
+ 			mfc_err("invalid output state: %d\n",
+ 							ctx->output_state);
 -- 
 1.7.9.5
