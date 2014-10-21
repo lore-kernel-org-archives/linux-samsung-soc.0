@@ -1,197 +1,98 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [GIT PULL 2/3] 1st Round of Samsung PM updates for v3.19
-Date: Tue, 21 Oct 2014 20:42:39 +0900
-Message-ID: <012a01cfed24$20129cd0$6037d670$@kernel.org>
-References: <54453033.6050004@samsung.com> <8519968.z1P556eej9@amdc1032>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 1/2] Revert "mfd: sec-core: Prepare regulators for
+ suspend state to reduce power-consumption"
+Date: Tue, 21 Oct 2014 12:56:09 +0100
+Message-ID: <20141021115609.GA4127@x1>
+References: <1413839151-10875-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1413839151-10875-2-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:34860 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755167AbaJULmp (ORCPT
+Received: from mail-ig0-f182.google.com ([209.85.213.182]:40143 "EHLO
+	mail-ig0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755167AbaJUL4P (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Oct 2014 07:42:45 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NDS007UWLV7BJ10@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 21 Oct 2014 20:42:43 +0900 (KST)
-In-reply-to: <8519968.z1P556eej9@amdc1032>
-Content-language: ko
+	Tue, 21 Oct 2014 07:56:15 -0400
+Received: by mail-ig0-f182.google.com with SMTP id hn15so1126711igb.15
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Oct 2014 04:56:15 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1413839151-10875-2-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, 'Kevin Hilman' <khilman@linaro.org>, arm@kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org
 
-Bartlomiej Zolnierkiewicz wrote:
-> 
-> Hi,
-> 
-Hi,
+On Mon, 20 Oct 2014, Javier Martinez Canillas wrote:
 
-> On Tuesday, October 21, 2014 12:54:27 AM Kukjin Kim wrote:
-> > Hi,
-> >
-> > Same, I've just rebased for Samsung PM updates for v3.19.
-> > Please pull.
-> 
-> Unfortunately this pull request has the same issue that caused Arnd to
-> refuse the pull for v3.18:
-> 
-Oops, I've missed that :(
-
->   https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg37320.html
-> 
-> You can find the fix for the issue at the bottom of this mail.
-> 
-OK, I will fix and send new pull-request soon.
-
-Thanks for your point out.
-
-@ Arnd, Olof, Kevin,
-
-Please kindly ignore this but 1/3 and 3/3 should be fine ;)
-
-- Kukjin
-
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
-> 
-> > Thanks,
-> > Kukjin
-> >
-> > ---
-> >
-> > The following changes since commit f114040e3ea6e07372334ade75d1ee0775c355e1:
-> >
-> >    Linux 3.18-rc1 (2014-10-19 18:08:38 -0700)
-> >
-> > are available in the git repository at:
-> >
-> >    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > tags/samsung-pm
-> >
-> > for you to fetch changes up to b588aaec6d0d846c88bfa2ba95e76147386a4cd6:
-> >
-> >    ARM: EXYNOS: SWRESET is needed to boot secondary CPU on exynos3250
-> > (2014-10-21 00:06:36 +0900)
-> >
-> > ----------------------------------------------------------------
-> > Samsung PM updates for v3.19
-> >
-> > - Refactor the pm code to use DT based lookup instead of
-> >    using "soc_is_exynosxxxx"
-> >
-> > - Firmware supporting suspend and resume to excute of low
-> >    level operations to enter and leave power mode for exynos
-> >    : introduce suspend() and resume() firmware operations
-> >
-> > - Fix AFTR mode on boards with secure firmware enabled and
-> >    allows exynos cpuidle driver usage on exynos4x12 SoCs
-> >
-> > - Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y
-> >
-> > - SWRESET is needed to boot secondary CPU on exynos3250
-> >
-> > ----------------------------------------------------------------
-> > Bartlomiej Zolnierkiewicz (6):
-> >        ARM: EXYNOS: replace EXYNOS_BOOT_VECTOR_* macros by static inlines
-> >        ARM: firmware: add AFTR mode support to firmware do_idle method
-> >        ARM: EXYNOS: add secure firmware support to AFTR mode code
-> >        ARM: EXYNOS: fix register setup for AFTR mode code
-> >        ARM: EXYNOS: allow driver usage on Exynos4x12 SoCs
-> >        ARM: EXYNOS: Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y
-> >
-> > Krzysztof Kozlowski (1):
-> >        ARM: EXYNOS: SWRESET is needed to boot secondary CPU on exynos3250
-> >
-> > Tomasz Figa (2):
-> >        ARM: firmware: Introduce suspend and resume operations
-> >        ARM: EXYNOS: Add support for firmware-assisted suspend/resume
-> >
-> > Vikas Sajjan (2):
-> >        ARM: EXYNOS: Move Disabling of JPEG USE_RETENTION for exynos5250
-> > to pmu.c
-> >        ARM: EXYNOS: Refactor the pm code to use DT based lookup
-> >
-> >   Documentation/arm/firmware.txt         |  28 +--
-> >   arch/arm/include/asm/firmware.h        |  10 +-
-> >   arch/arm/mach-exynos/Kconfig           |   5 +
-> >   arch/arm/mach-exynos/Makefile          |   6 +-
-> >   arch/arm/mach-exynos/common.h          |  13 ++
-> >   arch/arm/mach-exynos/exynos.c          |   5 +-
-> >   arch/arm/mach-exynos/firmware.c        |  65 +++++-
-> >   arch/arm/mach-exynos/platsmp.c         |  23 +++
-> >   arch/arm/mach-exynos/pm.c              | 310 ++++------------------------
-> >   arch/arm/mach-exynos/pmu.c             |   1 +
-> >   arch/arm/mach-exynos/regs-pmu.h        |   3 +
-> >   arch/arm/mach-exynos/sleep.S           |  28 +++
-> >   arch/arm/mach-exynos/smc.h             |   4 +
-> >   arch/arm/mach-exynos/suspend.c         | 356
-> > +++++++++++++++++++++++++++++++++
-> >   arch/arm/mach-tegra/cpuidle-tegra114.c |   2 +-
-> >   arch/arm/plat-samsung/Makefile         |   1 +
-> >   16 files changed, 559 insertions(+), 301 deletions(-)
-> >   create mode 100644 arch/arm/mach-exynos/suspend.c
-> 
-> From: Arnd Bergmann <arnd@arndb.de>
-> Subject: [PATCH] ARM: EXYNOS: Fix build with ARM_CPU_SUSPEND=n
-> 
-> "ARM: EXYNOS: Add support for firmware-assisted suspend/resume" patch
-> added to arch/arm/mach-exynos/firmware.c new references to functions
-> from arch/arm/mach-exynos/sleep.S causing the new CONFIG_PM_SLEEP=n
-> build breakages.  Then "ARM: EXYNOS: Fix build with PM_SLEEP=n and
-> ARM_EXYNOS_CPUIDLE=y" patch tried to fix the CONFIG_PM_SLEEP=n issues
-> by always building sleep.S which caused the CONFIG_ARM_CPU_SUSPEND=n
-> build breakage.  Fix it by building arch/arm/mach-exynos/sleep.o only
-> for CONFIG_EXYNOS_CPU_SUSPEND=y and adding appropriate IS_ENABLED()
-> checks to arch/arm/mach-exynos/firmware.c.
-> 
-> From: Arnd Bergmann <arnd@arndb.de>
-> [b.zolnierkie: fixed ->resume check and added patch description]
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> This reverts commit b7cde7078d2344073c310aa65fc2b0a845d2cb5b
+> ("mfd: sec-core: Prepare regulators for suspend state to reduce power=
+-consumption")
+>=20
+> Commit b7cde7078d23 called regulator_suspend_prepare() to prepare the
+> regulators for a suspend state. But it did from the device pm suspend
+> handler while the regulator suspend prepare function iterates over al=
+l
+> regulators and not only the one managed by this device so it doesn't
+> seems to be correct to call it from within a device driver.
+>=20
+> It is better to call the regulator suspend prepare/finish functions
+> from platform code instead so this patch reverts the mentioned commit=
+=2E
+>=20
+> Suggested-by: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
+=2Euk>
 > ---
->  arch/arm/mach-exynos/Makefile   |    4 ++--
->  arch/arm/mach-exynos/firmware.c |    6 +++---
->  2 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> Index: b/arch/arm/mach-exynos/Makefile
-> ===================================================================
-> --- a/arch/arm/mach-exynos/Makefile	2014-10-07 18:27:43.023737860 +0200
-> +++ b/arch/arm/mach-exynos/Makefile	2014-10-21 13:14:32.827064742 +0200
-> @@ -9,9 +9,9 @@ ccflags-$(CONFIG_ARCH_MULTIPLATFORM) +=
-> 
->  # Core
-> 
-> -obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o sleep.o
-> +obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o
-> 
-> -obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o
-> +obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o sleep.o
->  obj-$(CONFIG_PM_SLEEP)		+= suspend.o
->  obj-$(CONFIG_PM_GENERIC_DOMAINS) += pm_domains.o
-> 
-> Index: b/arch/arm/mach-exynos/firmware.c
-> ===================================================================
-> --- a/arch/arm/mach-exynos/firmware.c	2014-10-07 18:27:43.023737860 +0200
-> +++ b/arch/arm/mach-exynos/firmware.c	2014-10-21 13:14:32.827064742 +0200
-> @@ -129,11 +129,11 @@ static int exynos_resume(void)
+>  drivers/mfd/Kconfig    |  1 -
+>  drivers/mfd/sec-core.c | 10 ----------
+>  2 files changed, 11 deletions(-)
+
+Applied, thanks.
+
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 1456ea7..fd8cc4c 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -655,7 +655,6 @@ config MFD_SEC_CORE
+>  	select MFD_CORE
+>  	select REGMAP_I2C
+>  	select REGMAP_IRQ
+> -	select REGULATOR
+>  	help
+>  	 Support for the Samsung Electronics MFD series.
+>  	 This driver provides common support for accessing the device,
+> diff --git a/drivers/mfd/sec-core.c b/drivers/mfd/sec-core.c
+> index dba7e2b..5993608 100644
+> --- a/drivers/mfd/sec-core.c
+> +++ b/drivers/mfd/sec-core.c
+> @@ -31,7 +31,6 @@
+>  #include <linux/mfd/samsung/s2mpu02.h>
+>  #include <linux/mfd/samsung/s5m8763.h>
+>  #include <linux/mfd/samsung/s5m8767.h>
+> -#include <linux/regulator/machine.h>
+>  #include <linux/regmap.h>
+> =20
+>  static const struct mfd_cell s5m8751_devs[] =3D {
+> @@ -432,15 +431,6 @@ static int sec_pmic_suspend(struct device *dev)
+>  	 */
+>  	disable_irq(sec_pmic->irq);
+> =20
+> -	switch (sec_pmic->device_type) {
+> -	case S2MPS14X:
+> -	case S2MPU02:
+> -		regulator_suspend_prepare(PM_SUSPEND_MEM);
+> -		break;
+> -	default:
+> -		break;
+> -	}
+> -
+>  	return 0;
 >  }
-> 
->  static const struct firmware_ops exynos_firmware_ops = {
-> -	.do_idle		= exynos_do_idle,
-> +	.do_idle		= IS_ENABLED(CONFIG_EXYNOS_CPU_SUSPEND) ? exynos_do_idle : NULL,
->  	.set_cpu_boot_addr	= exynos_set_cpu_boot_addr,
->  	.cpu_boot		= exynos_cpu_boot,
-> -	.suspend		= exynos_suspend,
-> -	.resume			= exynos_resume,
-> +	.suspend		= IS_ENABLED(CONFIG_PM_SLEEP) ? exynos_suspend : NULL,
-> +	.resume			= IS_ENABLED(CONFIG_EXYNOS_CPU_SUSPEND) ? exynos_resume : NULL,
->  };
-> 
->  void __init exynos_firmware_init(void)
+> =20
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
