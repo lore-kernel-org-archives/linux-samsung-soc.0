@@ -1,73 +1,426 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 1/2] regulator: max77686: Implement suspend disable for some
- LDOs
-Date: Tue, 21 Oct 2014 10:25:11 +0200
-Message-ID: <1413879912-26606-2-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH 2/2] ARM: dts: exynos4412-trats: Add suspend configuration for
+ max77686 regulators
+Date: Tue, 21 Oct 2014 10:25:12 +0200
+Message-ID: <1413879912-26606-3-git-send-email-k.kozlowski@samsung.com>
 References: <1413879912-26606-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:36687 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753269AbaJUIZ3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Oct 2014 04:25:29 -0400
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1413879912-26606-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Some LDOs of Maxim 77686 PMIC support disabling during system suspend
-(LDO{2,6,7,8,10,11,12,14,15,16}). This was already implemented as part
-of set_suspend_mode function. In that case the mode was one of:
- - disable,
- - normal mode,
- - low power mode.
-However there are no bindings for setting the mode during suspend.
+Add suspend to RAM configuration for max77686 regulators. Some LDOs and
+bucks are disabled. This reduces energy consumption during S2R,
+approximately from 17 mA to 9 mA.
 
-Implement a set_suspend_disable function for regulators supporting this.
-This helps reducing energy consumption during system sleep.
+Additionally remove old and not supported bindings:
+ - regulator-mem-off
+ - regulator-mem-idle
+ - regulator-mem-on
+The max77686 driver does not parse them and they are not documented
+anywere.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/regulator/max77686.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ arch/arm/boot/dts/exynos4412-trats2.dts | 135 +++++++++++++++++++++++++-------
+ 1 file changed, 105 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/regulator/max77686.c b/drivers/regulator/max77686.c
-index ef1af2debbd2..84603051f24d 100644
---- a/drivers/regulator/max77686.c
-+++ b/drivers/regulator/max77686.c
-@@ -123,6 +123,24 @@ static int max77686_set_suspend_mode(struct regulator_dev *rdev,
- 	return 0;
- }
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index dd9ac66770f7..c2fbee36021a 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -225,7 +225,9 @@
+ 					regulator-min-microvolt = <1000000>;
+ 					regulator-max-microvolt = <1000000>;
+ 					regulator-always-on;
+-					regulator-mem-on;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
  
-+static int max77686_ldo_set_suspend_disable(struct regulator_dev *rdev,
-+				     unsigned int mode)
-+{
-+	unsigned int val;
-+	struct max77686_data *max77686 = rdev_get_drvdata(rdev);
-+	int ret;
-+
-+	val = 0x1 << MAX77686_OPMODE_SHIFT;
-+
-+	ret = regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
-+				 rdev->desc->enable_mask, val);
-+	if (ret)
-+		return ret;
-+
-+	max77686->opmode[rdev_get_id(rdev)] = val;
-+	return 0;
-+}
-+
- /* Some LDOs supports LPM-ON/OFF/Normal-ON mode during suspend state */
- static int max77686_ldo_set_suspend_mode(struct regulator_dev *rdev,
- 				     unsigned int mode)
-@@ -212,6 +230,7 @@ static struct regulator_ops max77686_ldo_ops = {
- 	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
- 	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
- 	.set_suspend_mode	= max77686_ldo_set_suspend_mode,
-+	.set_suspend_disable	= max77686_ldo_set_suspend_disable,
- };
+ 				ldo2_reg: ldo2 {
+@@ -234,7 +236,9 @@
+ 					regulator-min-microvolt = <1200000>;
+ 					regulator-max-microvolt = <1200000>;
+ 					regulator-always-on;
+-					regulator-mem-on;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
  
- static struct regulator_ops max77686_buck1_ops = {
+ 				ldo3_reg: ldo3 {
+@@ -243,7 +247,9 @@
+ 					regulator-min-microvolt = <1800000>;
+ 					regulator-max-microvolt = <1800000>;
+ 					regulator-always-on;
+-					regulator-mem-on;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				ldo4_reg: ldo4 {
+@@ -252,7 +258,9 @@
+ 					regulator-min-microvolt = <2800000>;
+ 					regulator-max-microvolt = <2800000>;
+ 					regulator-always-on;
+-					regulator-mem-on;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				ldo5_reg: ldo5 {
+@@ -261,7 +269,9 @@
+ 					regulator-min-microvolt = <1800000>;
+ 					regulator-max-microvolt = <1800000>;
+ 					regulator-always-on;
+-					regulator-mem-on;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				ldo6_reg: ldo6 {
+@@ -270,7 +280,9 @@
+ 					regulator-min-microvolt = <1000000>;
+ 					regulator-max-microvolt = <1000000>;
+ 					regulator-always-on;
+-					regulator-mem-on;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				ldo7_reg: ldo7 {
+@@ -279,7 +291,9 @@
+ 					regulator-min-microvolt = <1000000>;
+ 					regulator-max-microvolt = <1000000>;
+ 					regulator-always-on;
+-					regulator-mem-on;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				ldo8_reg: ldo8 {
+@@ -287,7 +301,9 @@
+ 					regulator-name = "VMIPI_1.0V";
+ 					regulator-min-microvolt = <1000000>;
+ 					regulator-max-microvolt = <1000000>;
+-					regulator-mem-off;
++					regulator-state-mem {
++						regulator-off-in-suspend;
++					};
+ 				};
+ 
+ 				ldo9_reg: ldo9 {
+@@ -295,7 +311,9 @@
+ 					regulator-name = "CAM_ISP_MIPI_1.2V";
+ 					regulator-min-microvolt = <1200000>;
+ 					regulator-max-microvolt = <1200000>;
+-					regulator-mem-idle;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				ldo10_reg: ldo10 {
+@@ -303,7 +321,9 @@
+ 					regulator-name = "VMIPI_1.8V";
+ 					regulator-min-microvolt = <1800000>;
+ 					regulator-max-microvolt = <1800000>;
+-					regulator-mem-off;
++					regulator-state-mem {
++						regulator-off-in-suspend;
++					};
+ 				};
+ 
+ 				ldo11_reg: ldo11 {
+@@ -312,7 +332,9 @@
+ 					regulator-min-microvolt = <1950000>;
+ 					regulator-max-microvolt = <1950000>;
+ 					regulator-always-on;
+-					regulator-mem-off;
++					regulator-state-mem {
++						regulator-off-in-suspend;
++					};
+ 				};
+ 
+ 				ldo12_reg: ldo12 {
+@@ -320,7 +342,9 @@
+ 					regulator-name = "VUOTG_3.0V";
+ 					regulator-min-microvolt = <3000000>;
+ 					regulator-max-microvolt = <3000000>;
+-					regulator-mem-off;
++					regulator-state-mem {
++						regulator-off-in-suspend;
++					};
+ 				};
+ 
+ 				ldo13_reg: ldo13 {
+@@ -328,7 +352,9 @@
+ 					regulator-name = "NFC_AVDD_1.8V";
+ 					regulator-min-microvolt = <1800000>;
+ 					regulator-max-microvolt = <1800000>;
+-					regulator-mem-idle;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				ldo14_reg: ldo14 {
+@@ -337,7 +363,9 @@
+ 					regulator-min-microvolt = <1950000>;
+ 					regulator-max-microvolt = <1950000>;
+ 					regulator-always-on;
+-					regulator-mem-off;
++					regulator-state-mem {
++						regulator-off-in-suspend;
++					};
+ 				};
+ 
+ 				ldo15_reg: ldo15 {
+@@ -345,7 +373,9 @@
+ 					regulator-name = "VHSIC_1.0V";
+ 					regulator-min-microvolt = <1000000>;
+ 					regulator-max-microvolt = <1000000>;
+-					regulator-mem-off;
++					regulator-state-mem {
++						regulator-off-in-suspend;
++					};
+ 				};
+ 
+ 				ldo16_reg: ldo16 {
+@@ -353,7 +383,9 @@
+ 					regulator-name = "VHSIC_1.8V";
+ 					regulator-min-microvolt = <1800000>;
+ 					regulator-max-microvolt = <1800000>;
+-					regulator-mem-off;
++					regulator-state-mem {
++						regulator-off-in-suspend;
++					};
+ 				};
+ 
+ 				ldo17_reg: ldo17 {
+@@ -361,7 +393,9 @@
+ 					regulator-name = "CAM_SENSOR_CORE_1.2V";
+ 					regulator-min-microvolt = <1200000>;
+ 					regulator-max-microvolt = <1200000>;
+-					regulator-mem-idle;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				ldo18_reg: ldo18 {
+@@ -369,7 +403,9 @@
+ 					regulator-name = "CAM_ISP_SEN_IO_1.8V";
+ 					regulator-min-microvolt = <1800000>;
+ 					regulator-max-microvolt = <1800000>;
+-					regulator-mem-idle;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				ldo19_reg: ldo19 {
+@@ -377,7 +413,9 @@
+ 					regulator-name = "VT_CAM_1.8V";
+ 					regulator-min-microvolt = <1800000>;
+ 					regulator-max-microvolt = <1800000>;
+-					regulator-mem-idle;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				ldo20_reg: ldo20 {
+@@ -385,7 +423,9 @@
+ 					regulator-name = "VDDQ_PRE_1.8V";
+ 					regulator-min-microvolt = <1800000>;
+ 					regulator-max-microvolt = <1800000>;
+-					regulator-mem-idle;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				ldo21_reg: ldo21 {
+@@ -393,7 +433,9 @@
+ 					regulator-name = "VTF_2.8V";
+ 					regulator-min-microvolt = <2800000>;
+ 					regulator-max-microvolt = <2800000>;
+-					regulator-mem-idle;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				ldo22_reg: ldo22 {
+@@ -401,6 +443,9 @@
+ 					regulator-name = "VMEM_VDD_2.8V";
+ 					regulator-min-microvolt = <2800000>;
+ 					regulator-max-microvolt = <2800000>;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				ldo23_reg: ldo23 {
+@@ -408,7 +453,9 @@
+ 					regulator-name = "TSP_AVDD_3.3V";
+ 					regulator-min-microvolt = <3300000>;
+ 					regulator-max-microvolt = <3300000>;
+-					regulator-mem-idle;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				ldo24_reg: ldo24 {
+@@ -416,7 +463,9 @@
+ 					regulator-name = "TSP_VDD_1.8V";
+ 					regulator-min-microvolt = <1800000>;
+ 					regulator-max-microvolt = <1800000>;
+-					regulator-mem-idle;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				ldo25_reg: ldo25 {
+@@ -424,7 +473,9 @@
+ 					regulator-name = "LCD_VCC_3.3V";
+ 					regulator-min-microvolt = <2800000>;
+ 					regulator-max-microvolt = <2800000>;
+-					regulator-mem-idle;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				ldo26_reg: ldo26 {
+@@ -432,7 +483,9 @@
+ 					regulator-name = "MOTOR_VCC_3.0V";
+ 					regulator-min-microvolt = <3000000>;
+ 					regulator-max-microvolt = <3000000>;
+-					regulator-mem-idle;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				buck1_reg: buck1 {
+@@ -442,7 +495,9 @@
+ 					regulator-max-microvolt = <1100000>;
+ 					regulator-always-on;
+ 					regulator-boot-on;
+-					regulator-mem-off;
++					regulator-state-mem {
++						regulator-off-in-suspend;
++					};
+ 				};
+ 
+ 				buck2_reg: buck2 {
+@@ -452,7 +507,9 @@
+ 					regulator-max-microvolt = <1500000>;
+ 					regulator-always-on;
+ 					regulator-boot-on;
+-					regulator-mem-off;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				buck3_reg: buck3 {
+@@ -462,7 +519,9 @@
+ 					regulator-max-microvolt = <1150000>;
+ 					regulator-always-on;
+ 					regulator-boot-on;
+-					regulator-mem-off;
++					regulator-state-mem {
++						regulator-off-in-suspend;
++					};
+ 				};
+ 
+ 				buck4_reg: buck4 {
+@@ -471,7 +530,9 @@
+ 					regulator-min-microvolt = <850000>;
+ 					regulator-max-microvolt = <1150000>;
+ 					regulator-boot-on;
+-					regulator-mem-off;
++					regulator-state-mem {
++						regulator-off-in-suspend;
++					};
+ 				};
+ 
+ 				buck5_reg: buck5 {
+@@ -480,6 +541,9 @@
+ 					regulator-min-microvolt = <1200000>;
+ 					regulator-max-microvolt = <1200000>;
+ 					regulator-always-on;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				buck6_reg: buck6 {
+@@ -488,6 +552,9 @@
+ 					regulator-min-microvolt = <1350000>;
+ 					regulator-max-microvolt = <1350000>;
+ 					regulator-always-on;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				buck7_reg: buck7 {
+@@ -496,6 +563,9 @@
+ 					regulator-min-microvolt = <2000000>;
+ 					regulator-max-microvolt = <2000000>;
+ 					regulator-always-on;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				buck8_reg: buck8 {
+@@ -503,6 +573,9 @@
+ 					regulator-name = "VMEM_VDDF_3.0V";
+ 					regulator-min-microvolt = <2850000>;
+ 					regulator-max-microvolt = <2850000>;
++					regulator-state-mem {
++						regulator-on-in-suspend;
++					};
+ 				};
+ 
+ 				buck9_reg: buck9 {
+@@ -510,7 +583,9 @@
+ 					regulator-name = "CAM_ISP_CORE_1.2V";
+ 					regulator-min-microvolt = <1000000>;
+ 					regulator-max-microvolt = <1200000>;
+-					regulator-mem-off;
++					regulator-state-mem {
++						regulator-off-in-suspend;
++					};
+ 				};
+ 			};
+ 		};
 -- 
 1.9.1
