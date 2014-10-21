@@ -1,60 +1,82 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v2 4/4] ARM: dts: exynos4412-trats: Add suspend
- configuration for max77686 regulators
-Date: Tue, 21 Oct 2014 14:24:58 +0200
-Message-ID: <1413894298.31665.10.camel@AMDC1943>
-References: <1413890597-31037-1-git-send-email-k.kozlowski@samsung.com>
- <1413890597-31037-5-git-send-email-k.kozlowski@samsung.com>
- <54464BC1.40201@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v2 1/4] regulator: max77686: Replace hard-coded opmode
+ values with defines
+Date: Tue, 21 Oct 2014 14:29:25 +0200
+Message-ID: <544651A5.8080601@collabora.co.uk>
+References: <1413890597-31037-1-git-send-email-k.kozlowski@samsung.com> <1413890597-31037-2-git-send-email-k.kozlowski@samsung.com> <54464A37.6060701@collabora.co.uk> <1413894170.31665.9.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:32463 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755191AbaJUMZE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Oct 2014 08:25:04 -0400
-In-reply-to: <54464BC1.40201@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1413894170.31665.9.camel@AMDC1943>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On wto, 2014-10-21 at 14:04 +0200, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On 10/21/2014 01:23 PM, Krzysztof Kozlowski wrote:
-> > Add suspend to RAM configuration for max77686 regulators. Some LDOs and
-> > bucks are disabled. This reduces energy consumption during S2R,
-> > approximately from 17 mA to 9 mA.
-> > 
-> > Additionally remove old and not supported bindings:
-> >  - regulator-mem-off
-> >  - regulator-mem-idle
-> >  - regulator-mem-on
-> > The max77686 driver does not parse them and they are not documented
-> > anywere.
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > ---
-> >  arch/arm/boot/dts/exynos4412-trats2.dts | 72 +++++++++++++++++++--------------
-> >  1 file changed, 42 insertions(+), 30 deletions(-)
-> > 
-> 
-> I'm not familiar with the board but the change looks good to me assuming each
-> regulator is doing the right thing.
-> 
-> I already gave you my Reviewed-by for the previous version but was not carried:
-> 
-> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Hello Krzysztof,
 
-Thanks! I didn't add your review-by-tag because changes in the patch.
+On 10/21/2014 02:22 PM, Krzysztof Kozlowski wrote:
+> On wto, 2014-10-21 at 13:57 +0200, Javier Martinez Canillas wrote:
+>> >  
+>> > +/* On/off controlled by PWRREQ */
+>> > +#define MAX77686_OPMODE_OFF_PWRREQ	0x1
+>> 
+>> Minor nit: maybe this should be called MAX77802_OFF_PWRREQ (without the OPMODE)?
+>> Since afaiu from a conceptual pov the regulators only supports two modes: normal
+>> and low power mode.
+>> 
+>> If a regulator is disabled or put in low power mode by PWRREQ on suspend, then
+>> is not really an operating mode (the regulator output will still be normal until
+>> suspend) but an enable pin to switch a regulator mode automatically by the SoC.
+> 
+> No problem. This is just a define for value used in register. However
+> OPMODE is used in other places in that driver:
+> #define MAX77686_OPMODE_SHIFT   6
+> #define MAX77686_OPMODE_BUCK234_SHIFT   4
+> #define MAX77686_OPMODE_MASK    0x3
+>
+> So this would be a little inconsistent...
+
+Indeed, although I think there is a difference between talking about the OPMODE
+field of the regulators control register (which the shift and mask refer to)
+and the semantics of the value that is written (whether is an mode or an enable
+pin).
+
+But yeah, I agree the Maxim documentation is confusing and confused me too
+before Mark explained to me that only two operating modes exist for this device.
+
+> 
+>> 
+>> > +/*
+>> > + * For some regulators this means:
+>> > + *  - forcing low power mode.
+>> > + *  - low power mode controlled by PWRREQ.
+>> > + */
+>> > +#define MAX77686_OPMODE_LOWPOWER	0x2
+>> 
+>> Can you also add a #define MAX77686_LP_PWRREQ 0x2 and use each one when
+>> appropriate? That will better document when 0x2 means low power by PWRREQ
+>> and when it means change regulator mode to low power.
+> 
+> Actually I made mistake in that comment. The 0x2 means force low power
+> mode only for buck1-4... but there is no set_suspend_mode for these
+> bucks. So this #define has only one semantic value.
+> 
+>> Also, are you sure that forcing low power mode is 0x2 and not 0x1?
+> 
+> You're right, for other LDOs, low power mode may be forced with 0x1. For
+> such regulators the max77686_set_suspend_mode() is used which does not
+> set value 0x1. This means that each define has only one semantic
+> meaning.
+> 
+> I'll re-spin and fix the documentation to reflect both device
+> capabilities and how the driver currently works.
+> 
+> Thanks for pointing this.
+> 
+
+You are welcome.
 
 Best regards,
-Krzysztof
-
-
-> 
-> Best regards,
-> Javier
+Javier 
