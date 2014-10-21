@@ -1,60 +1,157 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH v2 3/4] mfd/regulator: dt-bindings: max77686: Document
- regulators off in suspend
-Date: Tue, 21 Oct 2014 13:06:54 +0100
-Message-ID: <20141021120654.GB4127@x1>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2 1/4] regulator: max77686: Replace hard-coded opmode
+ values with defines
+Date: Tue, 21 Oct 2014 14:22:50 +0200
+Message-ID: <1413894170.31665.9.camel@AMDC1943>
 References: <1413890597-31037-1-git-send-email-k.kozlowski@samsung.com>
- <1413890597-31037-4-git-send-email-k.kozlowski@samsung.com>
+ <1413890597-31037-2-git-send-email-k.kozlowski@samsung.com>
+ <54464A37.6060701@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1413890597-31037-4-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:48327 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932125AbaJUMWz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 21 Oct 2014 08:22:55 -0400
+In-reply-to: <54464A37.6060701@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Tue, 21 Oct 2014, Krzysztof Kozlowski wrote:
+On wto, 2014-10-21 at 13:57 +0200, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
+> 
+> Thanks a lot for the re-spin.
+> 
+> On 10/21/2014 01:23 PM, Krzysztof Kozlowski wrote:
+> > Add defines for regulator operating modes which should be more readable,
+> > especially if one does not have Maxim 77686 datasheet.
+> > 
+> > The patch does not introduce any functional change.
+> > 
+> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> > Suggested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> > ---
+> >  drivers/regulator/max77686.c | 25 ++++++++++++++++++-------
+> >  1 file changed, 18 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/regulator/max77686.c b/drivers/regulator/max77686.c
+> > index ef1af2debbd2..cffe0c69d57d 100644
+> > --- a/drivers/regulator/max77686.c
+> > +++ b/drivers/regulator/max77686.c
+> > @@ -45,6 +45,16 @@
+> >  #define MAX77686_DVS_MINUV	600000
+> >  #define MAX77686_DVS_UVSTEP	12500
+> >  
+> > +/* On/off controlled by PWRREQ */
+> > +#define MAX77686_OPMODE_OFF_PWRREQ	0x1
+> 
+> Minor nit: maybe this should be called MAX77802_OFF_PWRREQ (without the OPMODE)?
+> Since afaiu from a conceptual pov the regulators only supports two modes: normal
+> and low power mode.
+> 
+> If a regulator is disabled or put in low power mode by PWRREQ on suspend, then
+> is not really an operating mode (the regulator output will still be normal until
+> suspend) but an enable pin to switch a regulator mode automatically by the SoC.
 
-> Add information which regulators can be disabled during system suspen=
-d.
->=20
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Suggested-by: Javier Martinez Canillas <javier.martinez@collabora.co.=
-uk>
-> ---
->  Documentation/devicetree/bindings/mfd/max77686.txt | 6 ++++++
->  1 file changed, 6 insertions(+)
+No problem. This is just a define for value used in register. However
+OPMODE is used in other places in that driver:
+#define MAX77686_OPMODE_SHIFT   6
+#define MAX77686_OPMODE_BUCK234_SHIFT   4
+#define MAX77686_OPMODE_MASK    0x3
 
-I don't think this requires a DT Ack.
+So this would be a little inconsistent...
 
-Applied with the extra '\n' removed.
+> 
+> > +/*
+> > + * For some regulators this means:
+> > + *  - forcing low power mode.
+> > + *  - low power mode controlled by PWRREQ.
+> > + */
+> > +#define MAX77686_OPMODE_LOWPOWER	0x2
+> 
+> Can you also add a #define MAX77686_LP_PWRREQ 0x2 and use each one when
+> appropriate? That will better document when 0x2 means low power by PWRREQ
+> and when it means change regulator mode to low power.
 
-> diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Doc=
-umentation/devicetree/bindings/mfd/max77686.txt
-> index 678f3cf0b8f0..75fdfaf41831 100644
-> --- a/Documentation/devicetree/bindings/mfd/max77686.txt
-> +++ b/Documentation/devicetree/bindings/mfd/max77686.txt
-> @@ -34,6 +34,12 @@ to get matched with their hardware counterparts as=
- follow:
->  	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 9.
->  			example: BUCK1, BUCK5, BUCK9.
-> =20
-> +  Regulators which can be turned off during system suspend:
-> +	-LDOn	:	2, 6-8, 10-12, 14-16,
-> +	-BUCKn	:	1-4.
-> +  Use standard regulator bindings for it ('regulator-off-in-suspend'=
-).
-> +
-> +
->  Example:
-> =20
->  	max77686@09 {
+Actually I made mistake in that comment. The 0x2 means force low power
+mode only for buck1-4... but there is no set_suspend_mode for these
+bucks. So this #define has only one semantic value.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+> Also, are you sure that forcing low power mode is 0x2 and not 0x1?
+
+You're right, for other LDOs, low power mode may be forced with 0x1. For
+such regulators the max77686_set_suspend_mode() is used which does not
+set value 0x1. This means that each define has only one semantic
+meaning.
+
+I'll re-spin and fix the documentation to reflect both device
+capabilities and how the driver currently works.
+
+Thanks for pointing this.
+
+> 
+> I'm asking because I see in the max77802 data-sheet that regulators that
+> supports its mode to be low power during runtime are using 0x1:
+> 
+> 01b: Output ON in Low Power Mode
+> 
+> Maybe is different in the max77686 or I misunderstood your comment though...
+> 
+> > +#define MAX77686_OPMODE_NORMAL		0x3
+> > +
+> >  #define MAX77686_OPMODE_SHIFT	6
+> >  #define MAX77686_OPMODE_BUCK234_SHIFT	4
+> >  #define MAX77686_OPMODE_MASK	0x3
+> > @@ -76,9 +86,10 @@ static int max77686_buck_set_suspend_disable(struct regulator_dev *rdev)
+> >  	int ret, id = rdev_get_id(rdev);
+> >  
+> >  	if (id == MAX77686_BUCK1)
+> > -		val = 0x1;
+> > +		val = MAX77686_OPMODE_OFF_PWRREQ;
+> >  	else
+> > -		val = 0x1 << MAX77686_OPMODE_BUCK234_SHIFT;
+> > +		val = MAX77686_OPMODE_OFF_PWRREQ
+> > +			<< MAX77686_OPMODE_BUCK234_SHIFT;
+> >  
+> >  	ret = regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
+> >  				 rdev->desc->enable_mask, val);
+> > @@ -103,10 +114,10 @@ static int max77686_set_suspend_mode(struct regulator_dev *rdev,
+> >  
+> >  	switch (mode) {
+> >  	case REGULATOR_MODE_IDLE:			/* ON in LP Mode */
+> > -		val = 0x2 << MAX77686_OPMODE_SHIFT;
+> > +		val = MAX77686_OPMODE_LOWPOWER << MAX77686_OPMODE_SHIFT;
+> >  		break;
+> >  	case REGULATOR_MODE_NORMAL:			/* ON in Normal Mode */
+> > -		val = 0x3 << MAX77686_OPMODE_SHIFT;
+> > +		val = MAX77686_OPMODE_NORMAL << MAX77686_OPMODE_SHIFT;
+> >  		break;
+> >  	default:
+> >  		pr_warn("%s: regulator_suspend_mode : 0x%x not supported\n",
+> > @@ -133,13 +144,13 @@ static int max77686_ldo_set_suspend_mode(struct regulator_dev *rdev,
+> >  
+> >  	switch (mode) {
+> >  	case REGULATOR_MODE_STANDBY:			/* switch off */
+> > -		val = 0x1 << MAX77686_OPMODE_SHIFT;
+> > +		val = MAX77686_OPMODE_OFF_PWRREQ << MAX77686_OPMODE_SHIFT;
+> >  		break;
+> >  	case REGULATOR_MODE_IDLE:			/* ON in LP Mode */
+> > -		val = 0x2 << MAX77686_OPMODE_SHIFT;
+> > +		val = MAX77686_OPMODE_LOWPOWER << MAX77686_OPMODE_SHIFT;
+> >  		break;
+> >  	case REGULATOR_MODE_NORMAL:			/* ON in Normal Mode */
+> > -		val = 0x3 << MAX77686_OPMODE_SHIFT;
+> > +		val = MAX77686_OPMODE_NORMAL << MAX77686_OPMODE_SHIFT;
+> >  		break;
+> >  	default:
+> >  		pr_warn("%s: regulator_suspend_mode : 0x%x not supported\n",
+> > 
+> 
+> If you do those two changes please feel free to add my Reviewed-by.
+> 
+> Best regards,
+> Javier
