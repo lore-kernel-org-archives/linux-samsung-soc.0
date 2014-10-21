@@ -1,117 +1,180 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 2/4] regulator: max77686: Implement suspend disable for some
- LDOs
-Date: Tue, 21 Oct 2014 13:23:15 +0200
-Message-ID: <1413890597-31037-3-git-send-email-k.kozlowski@samsung.com>
-References: <1413890597-31037-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1413890597-31037-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [GIT PULL 2/3] 1st Round of Samsung PM updates for v3.19
+Date: Tue, 21 Oct 2014 13:26:09 +0200
+Message-ID: <8519968.z1P556eej9@amdc1032>
+References: <54453033.6050004@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:41038 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755280AbaJUL1H (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 21 Oct 2014 07:27:07 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NDS00F7SL4TPJ00@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 21 Oct 2014 20:26:54 +0900 (KST)
+In-reply-to: <54453033.6050004@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Some LDOs of Maxim 77686 PMIC support disabling during system suspend
-(LDO{2,6,7,8,10,11,12,14,15,16}). This was already implemented as part
-of set_suspend_mode function. In that case the mode was one of:
- - disable,
- - normal mode,
- - low power mode.
-However there are no bindings for setting the mode during suspend.
 
-Add suspend disable for LDO regulators supporting this to the existing
-max77686_buck_set_suspend_disable() function. This helps reducing
-energy consumption during system sleep.
+Hi,
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/regulator/max77686.c | 33 ++++++++++++++++++++++++++++-----
- 1 file changed, 28 insertions(+), 5 deletions(-)
+On Tuesday, October 21, 2014 12:54:27 AM Kukjin Kim wrote:
+> Hi,
+> 
+> Same, I've just rebased for Samsung PM updates for v3.19.
+> Please pull.
 
-diff --git a/drivers/regulator/max77686.c b/drivers/regulator/max77686.c
-index cffe0c69d57d..05df72d584bf 100644
---- a/drivers/regulator/max77686.c
-+++ b/drivers/regulator/max77686.c
-@@ -79,17 +79,33 @@ struct max77686_data {
- };
- 
- /* Some BUCKS supports Normal[ON/OFF] mode during suspend */
--static int max77686_buck_set_suspend_disable(struct regulator_dev *rdev)
-+static int max77686_set_suspend_disable(struct regulator_dev *rdev)
- {
- 	unsigned int val;
- 	struct max77686_data *max77686 = rdev_get_drvdata(rdev);
- 	int ret, id = rdev_get_id(rdev);
- 
--	if (id == MAX77686_BUCK1)
-+	switch (id) {
-+	case MAX77686_BUCK1:
- 		val = MAX77686_OPMODE_OFF_PWRREQ;
--	else
-+		break;
-+	case MAX77686_BUCK2:
-+	case MAX77686_BUCK3:
-+	case MAX77686_BUCK4:
- 		val = MAX77686_OPMODE_OFF_PWRREQ
- 			<< MAX77686_OPMODE_BUCK234_SHIFT;
-+		break;
-+	case MAX77686_LDO2:
-+	case MAX77686_LDO6 ... MAX77686_LDO8:
-+	case MAX77686_LDO10 ... MAX77686_LDO12:
-+	case MAX77686_LDO14 ... MAX77686_LDO16:
-+		val = MAX77686_OPMODE_OFF_PWRREQ << MAX77686_OPMODE_SHIFT;
-+		break;
-+	default:
-+		pr_warn("%s: regulator_suspend_disable not supported\n",
-+			rdev->desc->name);
-+		return -EINVAL;
-+	}
- 
- 	ret = regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
- 				 rdev->desc->enable_mask, val);
-@@ -171,6 +187,9 @@ static int max77686_enable(struct regulator_dev *rdev)
- {
- 	struct max77686_data *max77686 = rdev_get_drvdata(rdev);
- 
-+	if (max77686->opmode[rdev_get_id(rdev)] == MAX77686_OPMODE_OFF_PWRREQ)
-+		max77686->opmode[rdev_get_id(rdev)] = MAX77686_OPMODE_NORMAL;
-+
- 	return regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
- 				  rdev->desc->enable_mask,
- 				  max77686->opmode[rdev_get_id(rdev)]);
-@@ -223,6 +242,8 @@ static struct regulator_ops max77686_ldo_ops = {
- 	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
- 	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
- 	.set_suspend_mode	= max77686_ldo_set_suspend_mode,
-+	.set_suspend_disable	= max77686_set_suspend_disable,
-+	.set_suspend_enable	= max77686_enable,
- };
- 
- static struct regulator_ops max77686_buck1_ops = {
-@@ -234,7 +255,8 @@ static struct regulator_ops max77686_buck1_ops = {
- 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
- 	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
- 	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
--	.set_suspend_disable	= max77686_buck_set_suspend_disable,
-+	.set_suspend_disable	= max77686_set_suspend_disable,
-+	.set_suspend_enable	= max77686_enable,
- };
- 
- static struct regulator_ops max77686_buck_dvs_ops = {
-@@ -247,7 +269,8 @@ static struct regulator_ops max77686_buck_dvs_ops = {
- 	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
- 	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
- 	.set_ramp_delay		= max77686_set_ramp_delay,
--	.set_suspend_disable	= max77686_buck_set_suspend_disable,
-+	.set_suspend_disable	= max77686_set_suspend_disable,
-+	.set_suspend_enable	= max77686_enable,
- };
- 
- #define regulator_desc_ldo(num)		{				\
--- 
-1.9.1
+Unfortunately this pull request has the same issue that caused Arnd to
+refuse the pull for v3.18:
 
+  https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg37320.html
+
+You can find the fix for the issue at the bottom of this mail.
+
+Best regards,
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+> Thanks,
+> Kukjin
+> 
+> ---
+> 
+> The following changes since commit f114040e3ea6e07372334ade75d1ee0775c355e1:
+> 
+>    Linux 3.18-rc1 (2014-10-19 18:08:38 -0700)
+> 
+> are available in the git repository at:
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+> tags/samsung-pm
+> 
+> for you to fetch changes up to b588aaec6d0d846c88bfa2ba95e76147386a4cd6:
+> 
+>    ARM: EXYNOS: SWRESET is needed to boot secondary CPU on exynos3250 
+> (2014-10-21 00:06:36 +0900)
+> 
+> ----------------------------------------------------------------
+> Samsung PM updates for v3.19
+> 
+> - Refactor the pm code to use DT based lookup instead of
+>    using "soc_is_exynosxxxx"
+> 
+> - Firmware supporting suspend and resume to excute of low
+>    level operations to enter and leave power mode for exynos
+>    : introduce suspend() and resume() firmware operations
+> 
+> - Fix AFTR mode on boards with secure firmware enabled and
+>    allows exynos cpuidle driver usage on exynos4x12 SoCs
+> 
+> - Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y
+> 
+> - SWRESET is needed to boot secondary CPU on exynos3250
+> 
+> ----------------------------------------------------------------
+> Bartlomiej Zolnierkiewicz (6):
+>        ARM: EXYNOS: replace EXYNOS_BOOT_VECTOR_* macros by static inlines
+>        ARM: firmware: add AFTR mode support to firmware do_idle method
+>        ARM: EXYNOS: add secure firmware support to AFTR mode code
+>        ARM: EXYNOS: fix register setup for AFTR mode code
+>        ARM: EXYNOS: allow driver usage on Exynos4x12 SoCs
+>        ARM: EXYNOS: Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y
+> 
+> Krzysztof Kozlowski (1):
+>        ARM: EXYNOS: SWRESET is needed to boot secondary CPU on exynos3250
+> 
+> Tomasz Figa (2):
+>        ARM: firmware: Introduce suspend and resume operations
+>        ARM: EXYNOS: Add support for firmware-assisted suspend/resume
+> 
+> Vikas Sajjan (2):
+>        ARM: EXYNOS: Move Disabling of JPEG USE_RETENTION for exynos5250 
+> to pmu.c
+>        ARM: EXYNOS: Refactor the pm code to use DT based lookup
+> 
+>   Documentation/arm/firmware.txt         |  28 +--
+>   arch/arm/include/asm/firmware.h        |  10 +-
+>   arch/arm/mach-exynos/Kconfig           |   5 +
+>   arch/arm/mach-exynos/Makefile          |   6 +-
+>   arch/arm/mach-exynos/common.h          |  13 ++
+>   arch/arm/mach-exynos/exynos.c          |   5 +-
+>   arch/arm/mach-exynos/firmware.c        |  65 +++++-
+>   arch/arm/mach-exynos/platsmp.c         |  23 +++
+>   arch/arm/mach-exynos/pm.c              | 310 ++++------------------------
+>   arch/arm/mach-exynos/pmu.c             |   1 +
+>   arch/arm/mach-exynos/regs-pmu.h        |   3 +
+>   arch/arm/mach-exynos/sleep.S           |  28 +++
+>   arch/arm/mach-exynos/smc.h             |   4 +
+>   arch/arm/mach-exynos/suspend.c         | 356 
+> +++++++++++++++++++++++++++++++++
+>   arch/arm/mach-tegra/cpuidle-tegra114.c |   2 +-
+>   arch/arm/plat-samsung/Makefile         |   1 +
+>   16 files changed, 559 insertions(+), 301 deletions(-)
+>   create mode 100644 arch/arm/mach-exynos/suspend.c
+
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] ARM: EXYNOS: Fix build with ARM_CPU_SUSPEND=n
+
+"ARM: EXYNOS: Add support for firmware-assisted suspend/resume" patch
+added to arch/arm/mach-exynos/firmware.c new references to functions
+from arch/arm/mach-exynos/sleep.S causing the new CONFIG_PM_SLEEP=n
+build breakages.  Then "ARM: EXYNOS: Fix build with PM_SLEEP=n and
+ARM_EXYNOS_CPUIDLE=y" patch tried to fix the CONFIG_PM_SLEEP=n issues
+by always building sleep.S which caused the CONFIG_ARM_CPU_SUSPEND=n
+build breakage.  Fix it by building arch/arm/mach-exynos/sleep.o only
+for CONFIG_EXYNOS_CPU_SUSPEND=y and adding appropriate IS_ENABLED()
+checks to arch/arm/mach-exynos/firmware.c.
+
+From: Arnd Bergmann <arnd@arndb.de>
+[b.zolnierkie: fixed ->resume check and added patch description]
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+---
+ arch/arm/mach-exynos/Makefile   |    4 ++--
+ arch/arm/mach-exynos/firmware.c |    6 +++---
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+Index: b/arch/arm/mach-exynos/Makefile
+===================================================================
+--- a/arch/arm/mach-exynos/Makefile	2014-10-07 18:27:43.023737860 +0200
++++ b/arch/arm/mach-exynos/Makefile	2014-10-21 13:14:32.827064742 +0200
+@@ -9,9 +9,9 @@ ccflags-$(CONFIG_ARCH_MULTIPLATFORM) +=
+ 
+ # Core
+ 
+-obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o sleep.o
++obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o
+ 
+-obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o
++obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o sleep.o
+ obj-$(CONFIG_PM_SLEEP)		+= suspend.o
+ obj-$(CONFIG_PM_GENERIC_DOMAINS) += pm_domains.o
+ 
+Index: b/arch/arm/mach-exynos/firmware.c
+===================================================================
+--- a/arch/arm/mach-exynos/firmware.c	2014-10-07 18:27:43.023737860 +0200
++++ b/arch/arm/mach-exynos/firmware.c	2014-10-21 13:14:32.827064742 +0200
+@@ -129,11 +129,11 @@ static int exynos_resume(void)
+ }
+ 
+ static const struct firmware_ops exynos_firmware_ops = {
+-	.do_idle		= exynos_do_idle,
++	.do_idle		= IS_ENABLED(CONFIG_EXYNOS_CPU_SUSPEND) ? exynos_do_idle : NULL,
+ 	.set_cpu_boot_addr	= exynos_set_cpu_boot_addr,
+ 	.cpu_boot		= exynos_cpu_boot,
+-	.suspend		= exynos_suspend,
+-	.resume			= exynos_resume,
++	.suspend		= IS_ENABLED(CONFIG_PM_SLEEP) ? exynos_suspend : NULL,
++	.resume			= IS_ENABLED(CONFIG_EXYNOS_CPU_SUSPEND) ? exynos_resume : NULL,
+ };
+ 
+ void __init exynos_firmware_init(void)
