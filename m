@@ -1,332 +1,149 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH v3 4/4] ARM: dts: exynos4412-trats: Add suspend
- configuration for max77686 regulators
-Date: Wed, 22 Oct 2014 11:57:55 +0900
-Message-ID: <54471D33.8000906@samsung.com>
-References: <1413897595-28752-1-git-send-email-k.kozlowski@samsung.com>
- <1413897595-28752-5-git-send-email-k.kozlowski@samsung.com>
+From: Alban Browaeys <alban.browaeys@gmail.com>
+Subject: Re: [PATCH v2 11/18] iommu: exynos: remove useless
+ device_add/remove callbacks
+Date: Wed, 22 Oct 2014 11:15:00 +0200
+Message-ID: <1413969300.31696.10.camel@gmail.com>
+References: <1410868485-4143-1-git-send-email-m.szyprowski@samsung.com>
+	 <1410868485-4143-12-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1413897595-28752-5-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f41.google.com ([74.125.82.41]:53923 "EHLO
+	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751105AbaJVJPE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Oct 2014 05:15:04 -0400
+Received: by mail-wg0-f41.google.com with SMTP id b13so3149080wgh.0
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Oct 2014 02:15:02 -0700 (PDT)
+In-Reply-To: <1410868485-4143-12-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Krzysztof,
+Le mardi 16 septembre 2014 =C3=A0 13:54 +0200, Marek Szyprowski a =C3=A9=
+crit :
+> The driver doesn't need to do anything important in device add/remove
+> callbacks, because initialization will be done from device-tree speci=
+fic
+> callbacks added later. IOMMU groups created by current code were neve=
+r
+> used.
+>=20
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 10/21/2014 10:19 PM, Krzysztof Kozlowski wrote:
-> Add suspend to RAM configuration for max77686 regulators. Some LDOs and
-> bucks are disabled. This reduces energy consumption during S2R,
-> approximately from 17 mA to 9 mA.
-> 
-> Additionally remove old and not supported bindings:
->  - regulator-mem-off
->  - regulator-mem-idle
->  - regulator-mem-on
-> The max77686 driver does not parse them and they are not documented
-> anywere.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+
+The exyons iommu init fails if those are removed, that is it never reac=
+h
+init_done:
+1. exynos_iommu_setup
+2. - exynos_iommu_init
+3. ---bus_set_iommu
+4. ------ add_iommu_group
+
+that is (4) add_iommu_group returns ENODEV to bus_set_iommu, the latter
+doing so to exynos_iommu_init. Which thus error out before the init_don=
+e
+is set to true.
+
+Mind restoring device_add/remove  is not that easy. Either I did not an=
+d
+modified add_iommu_group to return 0 if add_device was not defined. Thi=
+s
+works.
+Otherwise I did revert this patch but had to also move the iommu_init
+from iommu.c before of_iommu_init in arch/arm/kernel/setup.c (switching
+iommu_init to global namespace in the process). This to avoid use of no=
+t
+yet initialized mutex  iommu_group_mutex and crash that follow suit.
+This mutex is used in iommu_group_add_device called by
+exynos_iommu_add_device.
+
+The logs of the first issue, ie exynos_iommo_init and bus_set_iommu
+returns ENODEV
+
+[    0.602816] exynos_iommu_init: Failed to register exynos-iommu
+driver.
+[    0.603358] platform 13620000.sysmmu: device is not dma coherent
+[    0.603384] platform 13620000.sysmmu: device is not behind an iommu
+[    0.605243] exynos-sysmmu 13620000.sysmmu: genpd_dev_pm_attach()
+failed to find PM domain: -2
+[    0.606399] exynos_iommu_init: Failed to register exynos-iommu
+driver.
+[    0.607263] platform 13630000.sysmmu: device is not dma coherent
+[    0.607290] platform 13630000.sysmmu: device is not behind an iommu
+[    0.609111] exynos-sysmmu 13620000.sysmmu: genpd_dev_pm_attach()
+failed to find PM domain: -2
+[    0.609464] exynos-sysmmu 13620000.sysmmu: Unbalanced
+pm_runtime_enable!
+[    0.609868] exynos-sysmmu 13630000.sysmmu: genpd_dev_pm_attach()
+failed to find PM domain: -2
+(...)
+[    0.946506] platform 10800000.g2d: device is not dma coherent
+[    0.946553] platform 10800000.g2d: device is not behind an iommu
+(...)
+
+
+
+Mind the power domain failure comes from me not finding a way to apply
+the power domain registration this early yet .
+
+
+Best regards,
+Alban Broweys
+
+
 > ---
->  arch/arm/boot/dts/exynos4412-trats2.dts | 72 +++++++++++++++++++--------------
->  1 file changed, 42 insertions(+), 30 deletions(-)
-
-Looks good to me.
-
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
-Thanks,
-Chanwoo Choi
-
-> 
-> diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-> index dd9ac66770f7..8067eb447829 100644
-> --- a/arch/arm/boot/dts/exynos4412-trats2.dts
-> +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-> @@ -225,7 +225,6 @@
->  					regulator-min-microvolt = <1000000>;
->  					regulator-max-microvolt = <1000000>;
->  					regulator-always-on;
-> -					regulator-mem-on;
->  				};
->  
->  				ldo2_reg: ldo2 {
-> @@ -234,7 +233,9 @@
->  					regulator-min-microvolt = <1200000>;
->  					regulator-max-microvolt = <1200000>;
->  					regulator-always-on;
-> -					regulator-mem-on;
-> +					regulator-state-mem {
-> +						regulator-on-in-suspend;
-> +					};
->  				};
->  
->  				ldo3_reg: ldo3 {
-> @@ -243,7 +244,6 @@
->  					regulator-min-microvolt = <1800000>;
->  					regulator-max-microvolt = <1800000>;
->  					regulator-always-on;
-> -					regulator-mem-on;
->  				};
->  
->  				ldo4_reg: ldo4 {
-> @@ -252,7 +252,6 @@
->  					regulator-min-microvolt = <2800000>;
->  					regulator-max-microvolt = <2800000>;
->  					regulator-always-on;
-> -					regulator-mem-on;
->  				};
->  
->  				ldo5_reg: ldo5 {
-> @@ -261,7 +260,6 @@
->  					regulator-min-microvolt = <1800000>;
->  					regulator-max-microvolt = <1800000>;
->  					regulator-always-on;
-> -					regulator-mem-on;
->  				};
->  
->  				ldo6_reg: ldo6 {
-> @@ -270,7 +268,9 @@
->  					regulator-min-microvolt = <1000000>;
->  					regulator-max-microvolt = <1000000>;
->  					regulator-always-on;
-> -					regulator-mem-on;
-> +					regulator-state-mem {
-> +						regulator-on-in-suspend;
-> +					};
->  				};
->  
->  				ldo7_reg: ldo7 {
-> @@ -279,7 +279,9 @@
->  					regulator-min-microvolt = <1000000>;
->  					regulator-max-microvolt = <1000000>;
->  					regulator-always-on;
-> -					regulator-mem-on;
-> +					regulator-state-mem {
-> +						regulator-on-in-suspend;
-> +					};
->  				};
->  
->  				ldo8_reg: ldo8 {
-> @@ -287,7 +289,9 @@
->  					regulator-name = "VMIPI_1.0V";
->  					regulator-min-microvolt = <1000000>;
->  					regulator-max-microvolt = <1000000>;
-> -					regulator-mem-off;
-> +					regulator-state-mem {
-> +						regulator-off-in-suspend;
-> +					};
->  				};
->  
->  				ldo9_reg: ldo9 {
-> @@ -295,7 +299,6 @@
->  					regulator-name = "CAM_ISP_MIPI_1.2V";
->  					regulator-min-microvolt = <1200000>;
->  					regulator-max-microvolt = <1200000>;
-> -					regulator-mem-idle;
->  				};
->  
->  				ldo10_reg: ldo10 {
-> @@ -303,7 +306,9 @@
->  					regulator-name = "VMIPI_1.8V";
->  					regulator-min-microvolt = <1800000>;
->  					regulator-max-microvolt = <1800000>;
-> -					regulator-mem-off;
-> +					regulator-state-mem {
-> +						regulator-off-in-suspend;
-> +					};
->  				};
->  
->  				ldo11_reg: ldo11 {
-> @@ -312,7 +317,9 @@
->  					regulator-min-microvolt = <1950000>;
->  					regulator-max-microvolt = <1950000>;
->  					regulator-always-on;
-> -					regulator-mem-off;
-> +					regulator-state-mem {
-> +						regulator-off-in-suspend;
-> +					};
->  				};
->  
->  				ldo12_reg: ldo12 {
-> @@ -320,7 +327,9 @@
->  					regulator-name = "VUOTG_3.0V";
->  					regulator-min-microvolt = <3000000>;
->  					regulator-max-microvolt = <3000000>;
-> -					regulator-mem-off;
-> +					regulator-state-mem {
-> +						regulator-off-in-suspend;
-> +					};
->  				};
->  
->  				ldo13_reg: ldo13 {
-> @@ -328,7 +337,6 @@
->  					regulator-name = "NFC_AVDD_1.8V";
->  					regulator-min-microvolt = <1800000>;
->  					regulator-max-microvolt = <1800000>;
-> -					regulator-mem-idle;
->  				};
->  
->  				ldo14_reg: ldo14 {
-> @@ -337,7 +345,9 @@
->  					regulator-min-microvolt = <1950000>;
->  					regulator-max-microvolt = <1950000>;
->  					regulator-always-on;
-> -					regulator-mem-off;
-> +					regulator-state-mem {
-> +						regulator-off-in-suspend;
-> +					};
->  				};
->  
->  				ldo15_reg: ldo15 {
-> @@ -345,7 +355,9 @@
->  					regulator-name = "VHSIC_1.0V";
->  					regulator-min-microvolt = <1000000>;
->  					regulator-max-microvolt = <1000000>;
-> -					regulator-mem-off;
-> +					regulator-state-mem {
-> +						regulator-on-in-suspend;
-> +					};
->  				};
->  
->  				ldo16_reg: ldo16 {
-> @@ -353,7 +365,9 @@
->  					regulator-name = "VHSIC_1.8V";
->  					regulator-min-microvolt = <1800000>;
->  					regulator-max-microvolt = <1800000>;
-> -					regulator-mem-off;
-> +					regulator-state-mem {
-> +						regulator-on-in-suspend;
-> +					};
->  				};
->  
->  				ldo17_reg: ldo17 {
-> @@ -361,7 +375,6 @@
->  					regulator-name = "CAM_SENSOR_CORE_1.2V";
->  					regulator-min-microvolt = <1200000>;
->  					regulator-max-microvolt = <1200000>;
-> -					regulator-mem-idle;
->  				};
->  
->  				ldo18_reg: ldo18 {
-> @@ -369,7 +382,6 @@
->  					regulator-name = "CAM_ISP_SEN_IO_1.8V";
->  					regulator-min-microvolt = <1800000>;
->  					regulator-max-microvolt = <1800000>;
-> -					regulator-mem-idle;
->  				};
->  
->  				ldo19_reg: ldo19 {
-> @@ -377,7 +389,6 @@
->  					regulator-name = "VT_CAM_1.8V";
->  					regulator-min-microvolt = <1800000>;
->  					regulator-max-microvolt = <1800000>;
-> -					regulator-mem-idle;
->  				};
->  
->  				ldo20_reg: ldo20 {
-> @@ -385,7 +396,6 @@
->  					regulator-name = "VDDQ_PRE_1.8V";
->  					regulator-min-microvolt = <1800000>;
->  					regulator-max-microvolt = <1800000>;
-> -					regulator-mem-idle;
->  				};
->  
->  				ldo21_reg: ldo21 {
-> @@ -393,7 +403,6 @@
->  					regulator-name = "VTF_2.8V";
->  					regulator-min-microvolt = <2800000>;
->  					regulator-max-microvolt = <2800000>;
-> -					regulator-mem-idle;
->  				};
->  
->  				ldo22_reg: ldo22 {
-> @@ -408,7 +417,6 @@
->  					regulator-name = "TSP_AVDD_3.3V";
->  					regulator-min-microvolt = <3300000>;
->  					regulator-max-microvolt = <3300000>;
-> -					regulator-mem-idle;
->  				};
->  
->  				ldo24_reg: ldo24 {
-> @@ -416,7 +424,6 @@
->  					regulator-name = "TSP_VDD_1.8V";
->  					regulator-min-microvolt = <1800000>;
->  					regulator-max-microvolt = <1800000>;
-> -					regulator-mem-idle;
->  				};
->  
->  				ldo25_reg: ldo25 {
-> @@ -424,7 +431,6 @@
->  					regulator-name = "LCD_VCC_3.3V";
->  					regulator-min-microvolt = <2800000>;
->  					regulator-max-microvolt = <2800000>;
-> -					regulator-mem-idle;
->  				};
->  
->  				ldo26_reg: ldo26 {
-> @@ -432,7 +438,6 @@
->  					regulator-name = "MOTOR_VCC_3.0V";
->  					regulator-min-microvolt = <3000000>;
->  					regulator-max-microvolt = <3000000>;
-> -					regulator-mem-idle;
->  				};
->  
->  				buck1_reg: buck1 {
-> @@ -442,7 +447,9 @@
->  					regulator-max-microvolt = <1100000>;
->  					regulator-always-on;
->  					regulator-boot-on;
-> -					regulator-mem-off;
-> +					regulator-state-mem {
-> +						regulator-off-in-suspend;
-> +					};
->  				};
->  
->  				buck2_reg: buck2 {
-> @@ -452,7 +459,9 @@
->  					regulator-max-microvolt = <1500000>;
->  					regulator-always-on;
->  					regulator-boot-on;
-> -					regulator-mem-off;
-> +					regulator-state-mem {
-> +						regulator-on-in-suspend;
-> +					};
->  				};
->  
->  				buck3_reg: buck3 {
-> @@ -462,7 +471,9 @@
->  					regulator-max-microvolt = <1150000>;
->  					regulator-always-on;
->  					regulator-boot-on;
-> -					regulator-mem-off;
-> +					regulator-state-mem {
-> +						regulator-off-in-suspend;
-> +					};
->  				};
->  
->  				buck4_reg: buck4 {
-> @@ -471,7 +482,9 @@
->  					regulator-min-microvolt = <850000>;
->  					regulator-max-microvolt = <1150000>;
->  					regulator-boot-on;
-> -					regulator-mem-off;
-> +					regulator-state-mem {
-> +						regulator-off-in-suspend;
-> +					};
->  				};
->  
->  				buck5_reg: buck5 {
-> @@ -510,7 +523,6 @@
->  					regulator-name = "CAM_ISP_CORE_1.2V";
->  					regulator-min-microvolt = <1000000>;
->  					regulator-max-microvolt = <1200000>;
-> -					regulator-mem-off;
->  				};
->  			};
->  		};
-> 
+>  drivers/iommu/exynos-iommu.c | 28 ----------------------------
+>  1 file changed, 28 deletions(-)
+>=20
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iomm=
+u.c
+> index b271348a4ec1..1b3f00726cd4 100644
+> --- a/drivers/iommu/exynos-iommu.c
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -1055,32 +1055,6 @@ static phys_addr_t exynos_iommu_iova_to_phys(s=
+truct iommu_domain *domain,
+>  	return phys;
+>  }
+> =20
+> -static int exynos_iommu_add_device(struct device *dev)
+> -{
+> -	struct iommu_group *group;
+> -	int ret;
+> -
+> -	group =3D iommu_group_get(dev);
+> -
+> -	if (!group) {
+> -		group =3D iommu_group_alloc();
+> -		if (IS_ERR(group)) {
+> -			dev_err(dev, "Failed to allocate IOMMU group\n");
+> -			return PTR_ERR(group);
+> -		}
+> -	}
+> -
+> -	ret =3D iommu_group_add_device(group, dev);
+> -	iommu_group_put(group);
+> -
+> -	return ret;
+> -}
+> -
+> -static void exynos_iommu_remove_device(struct device *dev)
+> -{
+> -	iommu_group_remove_device(dev);
+> -}
+> -
+>  static const struct iommu_ops exynos_iommu_ops =3D {
+>  	.domain_init =3D exynos_iommu_domain_init,
+>  	.domain_destroy =3D exynos_iommu_domain_destroy,
+> @@ -1089,8 +1063,6 @@ static const struct iommu_ops exynos_iommu_ops =
+=3D {
+>  	.map =3D exynos_iommu_map,
+>  	.unmap =3D exynos_iommu_unmap,
+>  	.iova_to_phys =3D exynos_iommu_iova_to_phys,
+> -	.add_device =3D exynos_iommu_add_device,
+> -	.remove_device =3D exynos_iommu_remove_device,
+>  	.pgsize_bitmap =3D SECT_SIZE | LPAGE_SIZE | SPAGE_SIZE,
+>  };
+> =20
