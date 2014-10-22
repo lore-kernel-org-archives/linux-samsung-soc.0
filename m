@@ -1,53 +1,52 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 4/5] regulator: max77802: Parse regulator operating
- mode properties
-Date: Wed, 22 Oct 2014 17:48:13 +0100
-Message-ID: <20141022164813.GD2344@sirena.org.uk>
-References: <1413816472-1895-1-git-send-email-javier.martinez@collabora.co.uk>
- <1413816472-1895-5-git-send-email-javier.martinez@collabora.co.uk>
+From: Chirantan Ekbote <chirantan@chromium.org>
+Subject: Re: [PATCH] clocksource: exynos_mct: fix exynos4_mct_write
+Date: Wed, 22 Oct 2014 11:00:46 -0700
+Message-ID: <CAJFHJrofJmmMhZDjJL69Rycu6wR_X9+=kkvDAkKg80Tgv1crBA@mail.gmail.com>
+References: <1413941828-5547-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+	<CAD=FV=WET_mdjaYP330bm2gmEiBY9BsnxMHLO9LMMTtgeHhNCw@mail.gmail.com>
+	<85edb2def0c46ba060b432e773492b51@math.uni-bielefeld.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4AmJdx/+JAF2YHMk"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1413816472-1895-5-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:60992 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754585AbaJVSAr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Oct 2014 14:00:47 -0400
+Received: by mail-oi0-f41.google.com with SMTP id u20so3164732oif.28
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Oct 2014 11:00:47 -0700 (PDT)
+In-Reply-To: <85edb2def0c46ba060b432e773492b51@math.uni-bielefeld.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: Doug Anderson <dianders@chromium.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas P Abraham <thomas.ab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, GP Orcullo <kinsamanka@gmail.com>, Doug Anderson <dianders@google.com>
 
+Hi Tobias,
 
---4AmJdx/+JAF2YHMk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, Oct 22, 2014 at 9:12 AM, Tobias Jakobi
+<tjakobi@math.uni-bielefeld.de> wrote:
+> Hello Doug,
+>
+> I didn't encounter any obvious problems with the MCT. I was made aware of
+> the issue by kinsamanka on the Hardkernel forums, but didn't tell me through
+> which means he/she found it.
+>
 
-On Mon, Oct 20, 2014 at 04:47:51PM +0200, Javier Martinez Canillas wrote:
+Looks like this came up back in February
+(https://lkml.org/lkml/2014/2/4/782) and the reason the code currently
+works is that these values are used for checking the success of the
+write operation.  So in the current code we never check the success of
+the write but it hasn't been a problem because presumably the write is
+almost always successful.
 
-> +	char *states[PM_SUSPEND_MAX + 1] = {
-> +		[PM_SUSPEND_MEM] = "regulator-state-mem",
-> +		[PM_SUSPEND_MAX] = "regulator-state-disk",
-> +	};
+Regardless, I agree with Doug.  We should take this for correctness.
 
-This still has the same problem as your previous patch with things not
-being as joined up with the core as they should be.  What I'd like to
-see is that the code to extract the number for each state is in the core
-and then the drivers just provide a translation function to map from
-this to the internal modes.
+> Concerning testing, I have this running since some weeks on my ODROID-X2
+> (Exynos4412), again, haven't encountered anything 'strange' yet.
+>
+> With best wishes,
+> Tobias
+>
+>
 
---4AmJdx/+JAF2YHMk
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUR9/MAAoJECTWi3JdVIfQ03YH/3062yTpAZtvA+PXjtXdoIx+
-q25+NGfS3pT5MXU9PU5nUSQeJivWIP8oBYtP0LZiGnV6Zog59EHBOnO2u3luk+r4
-AW1boZSsPBos6rmKoG4PDDM4a7uWfk7jOxE9WlIk+G4LNJAgScx4s/8c0cMATBAk
-XhgwAjfQe4BP+tsxQHvCKnCIemU7I4TXvBOnujEB2YxLA5c5O0I2WCOl8YR5AUxg
-THNdRJQbrI3CusFI5+QpqS6dAf9I1DqM2ut4CyBWCEfzjFtu3uwlK0UeLAKnCxKn
-hIq7vR2m59bT/W5YkDwY+IkESg25UXzDcV65DbRVn4XHL95Du2Ebjuxx4xBud3w=
-=SGAV
------END PGP SIGNATURE-----
-
---4AmJdx/+JAF2YHMk--
+Chirantan
