@@ -1,74 +1,47 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH v2 6/7] arm64: dts: Add nodes for mmc, i2c, rtc, watchdog
- on Exynos7
-Date: Wed, 22 Oct 2014 03:05:44 +0530
-Message-ID: <CAGOxZ51UG3XrJ_-TPr+O9BWj0Q_xj+M2VSPOragM8Y5zf0zCVg@mail.gmail.com>
-References: <1413870237-1821-1-git-send-email-a.kesavan@samsung.com>
- <1413870237-1821-7-git-send-email-a.kesavan@samsung.com> <CAGOxZ50=1ebU=8r6S_4rbL=82zb3asFTGEjkzNrJPjTkjEGfXg@mail.gmail.com>
- <544666EF.9000606@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: [PATCH] clocksource: exynos_mct: fix exynos4_mct_write
+Date: Wed, 22 Oct 2014 03:37:08 +0200
+Message-ID: <1413941828-5547-1-git-send-email-tjakobi@math.uni-bielefeld.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f46.google.com ([209.85.213.46]:44151 "EHLO
-	mail-yh0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933613AbaJUVg0 (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:52204 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752810AbaJVBoD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Oct 2014 17:36:26 -0400
-In-Reply-To: <544666EF.9000606@gmail.com>
+	Tue, 21 Oct 2014 21:44:03 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Abhilash Kesavan <a.kesavan@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "catalin.marinas" <catalin.marinas@arm.com>, devicetree@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, robh <robh@kernel.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dianders@chromium.org, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-Hi Tomasz,
+EXYNOS4_MCT_L_MASK is defined as 0xffffff00, so applying this bitmask
+produces a number outside the range 0x00 to 0xff, which always results
+in execution of the default switch statement.
 
-On Tue, Oct 21, 2014 at 7:30 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
-> On 21.10.2014 15:52, Alim Akhtar wrote:
->>> +&mmc_0 {
->>> +       status = "okay";
->>> +       num-slots = <1>;
->>> +       broken-cd;
->>> +       caps2-mmc-hs200-1_8v;
->> Please use mmc_hs200-1_8v instead.
->
-> I guess you mean "mmc-hs200-1_8v" (with a hyphen between mmc and hs200).
->
-Yes, right, that was a typo. Thanks.
->>> +       supports-highspeed;
->> As per synopsys-dw-mshc DT binding documentation, supports-highspeed
->> property is deprecated, so please use common DT binding for this,
->> which is "cap-mmc-highspeed".
->>> +       non-removable;
->>> +       card-detect-delay = <200>;
->>> +       clock-frequency = <800000000>;
->>> +       samsung,dw-mshc-ciu-div = <3>;
->>> +       samsung,dw-mshc-sdr-timing = <0 4>;
->>> +       samsung,dw-mshc-ddr-timing = <0 2>;
->>> +       pinctrl-names = "default";
->>> +       pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_qrdy &sd0_bus1 &sd0_bus4 &sd0_bus8>;
->>> +       bus-width = <8>;
->>> +};
->>> +
->>> +&mmc_2 {
->>> +       status = "okay";
->>> +       num-slots = <1>;
->>> +       supports-highspeed;
->> Here also common DT binding please "cap-sd-highspeed"
->
-> Above you suggest "cap-mmc-highspeed" to replace the same deprecated
-> property, but here "cap-sd-highspeed". What is the rationale behind
-> using only one particular new property and not both for both controllers?
->
-Well, on this particular board dw_mmc channels are dedicated to use
-only one kind of card. e.g. mmc_0 is for eMMC and which is
-non-removable and mmc_2 is for SD cards. Although controller supports
-both the properties on all channel on this SoC.
+Obviously this is wrong and git history shows that the bitmask inversion
+was incorrectly set during a refactoring of the MCT code.
 
-> Best regards,
-> Tomasz
+Fix this by putting the inversion at the correct position again.
 
+Reported-by: GP Orcullo <kinsamanka@gmail.com>
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+---
+ drivers/clocksource/exynos_mct.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 9403061..83564c9 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -97,8 +97,8 @@ static void exynos4_mct_write(unsigned int value, unsigned long offset)
+ 	writel_relaxed(value, reg_base + offset);
+ 
+ 	if (likely(offset >= EXYNOS4_MCT_L_BASE(0))) {
+-		stat_addr = (offset & ~EXYNOS4_MCT_L_MASK) + MCT_L_WSTAT_OFFSET;
+-		switch (offset & EXYNOS4_MCT_L_MASK) {
++		stat_addr = (offset & EXYNOS4_MCT_L_MASK) + MCT_L_WSTAT_OFFSET;
++		switch (offset & ~EXYNOS4_MCT_L_MASK) {
+ 		case MCT_L_TCON_OFFSET:
+ 			mask = 1 << 3;		/* L_TCON write status */
+ 			break;
 -- 
-Regards,
-Alim
+2.0.4
