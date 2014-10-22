@@ -1,58 +1,85 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: RE: [PATCH v2 0/3] Some cleanup for samsung clock
-Date: Wed, 22 Oct 2014 16:04:12 +0530
-Message-ID: <001201cfede3$c462eb90$4d28c2b0$@samsung.com>
-References: <1411976868-22209-1-git-send-email-pankaj.dubey@samsung.com>
+Subject: RE: [PATCH v7] mfd: syscon: Decouple syscon interface from platform
+ devices
+Date: Wed, 22 Oct 2014 16:36:28 +0530
+Message-ID: <001901cfede8$5554cc50$fffe64f0$@samsung.com>
+References: <1412066127-27063-1-git-send-email-pankaj.dubey@samsung.com>
+ <20141007090923.GI25331@lee--X1>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:54262 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932402AbaJVKeQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Oct 2014 06:34:16 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NDU00DI9DD2JE80@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 22 Oct 2014 19:34:14 +0900 (KST)
-In-reply-to: <1411976868-22209-1-git-send-email-pankaj.dubey@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20141007090923.GI25331@lee--X1>
 Content-language: en-us
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Lee Jones' <lee.jones@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, b29396@freescale.com, boris.brezillon@free-electrons.com, tomasz.figa@gmail.com, linux@arm.linux.org.uk, vikas.sajjan@samsung.com, naushad@samsung.com, thomas.ab@samsung.com, kgene.kim@samsung.com, Li.Xiubo@freescale.com, geert+renesas@glider.be, swarren@nvidia.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com
-Cc: kgene.kim@samsung.com, s.nawrocki@samsung.com, mturquette@linaro.org, naushad@samsung.com
 
-Hi Tomasz,
+Hello Lee,
 
-On Monday, September 29, 2014 1:18 PM, Pankaj Dubey wrote,
-> To: linux-arm-kernel@lists.infradead.org;
-linux-samsung-soc@vger.kernel.org
-> Cc: kgene.kim@samsung.com; tomasz.figa@gmail.com; s.nawrocki@samsung.com;
-> mturquette@linaro.org; naushad@samsung.com; Pankaj Dubey
-> Subject: [PATCH v2 0/3] Some cleanup for samsung clock
-> 
-> This patch series does some cleanup of samsung clock files and fixes one
-typo in clk.h
-> 
-> Changes since v1:
->  - Added patch commit message description to patch 1/3 and 2/3.
-> 
-> Pankaj Dubey (3):
->   clk: samsung: Spelling s/bwtween/between/
->   clk: samsung: remove unnecessary CONFIG_OF from clk.c
->   clk: samsung: remove unnecessary inclusion of header files from clk.h
-> 
->  drivers/clk/samsung/clk.c |    5 ++---
->  drivers/clk/samsung/clk.h |    6 +-----
->  2 files changed, 3 insertions(+), 8 deletions(-)
-> 
+On Tuesday, October 07, 2014 2:39 PM, Lee Jones wrote,
+> On Tue, 30 Sep 2014, Pankaj Dubey wrote:
+>=20
+> > Currently a syscon entity can be only registered directly through a
+> > platform device that binds to a dedicated syscon driver. However in
+> > certain use cases it is desirable to make a device used with anothe=
+r
+> > driver a syscon interface provider.
+> >
+> > For example, certain SoCs (e.g. Exynos) contain system controller
+> > blocks which perform various functions such as power domain control=
+,
+> > CPU power management, low power mode control, but in addition conta=
+in
+> > certain IP integration glue, such as various signal masks, coproces=
+sor
+> > power control, etc. In such case, there is a need to have a dedicat=
+ed
+> > driver for such system controller but also share registers with oth=
+er
+> > drivers. The latter is where the syscon interface is helpful.
+> >
+> > In case of DT based platforms, this patch decouples syscon object f=
+rom
+> > syscon platform driver, and allows to create syscon objects first t=
+ime
+> > when it is required by calling of syscon_regmap_lookup_by APIs and
+> > keep a list of such syscon objects along with syscon provider
+> > device_nodes and regmap handles.
+> >
+> > For non-DT based platforms, this patch keeps syscon platform driver
+> > structure so that syscon can be probed and such non-DT based driver=
+s
+> > can use syscon_regmap_lookup_by_pdev API and access regmap handles.
+> > Once all users of "syscon_regmap_lookup_by_pdev" migrated to DT bas=
+ed,
+> > we can completely remove platform driver of syscon, and keep only
+> > helper functions to get regmap handles.
+> >
+> > Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> > Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+> > Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
+> > Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.u=
+k>
+> > Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> > Reviewed-by: Arnd Bergmann <arnd@arndb.de>
+> > Tested-by: Heiko Stuebner <heiko@sntech.de>
+> > Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+>=20
+> Applied for v3.19.
 
-It there are no comments will you please pick up this patch series.
+I can't see this in 3.18-rc1, as this patch is one of dependency for ma=
+ny of Exynos PMU related patches,
+will you please queue this patch for 3.18-rc2, so that already ready to=
+ be in patches having this patch as
+dependency can be taken in.
 
 Thanks,
 Pankaj Dubey
+>=20
 > --
-> 1.7.9.5
+> Lee Jones
+> Linaro STMicroelectronics Landing Team Lead Linaro.org =E2=94=82 Open=
+ source software
+> for ARM SoCs Follow Linaro: Facebook | Twitter | Blog
