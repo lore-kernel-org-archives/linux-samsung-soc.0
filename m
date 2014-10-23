@@ -1,38 +1,54 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 0/3] Some cleanup for samsung clock
-Date: Thu, 23 Oct 2014 19:27:53 +0200
-Message-ID: <54493A99.5000206@samsung.com>
-References: <1411976868-22209-1-git-send-email-pankaj.dubey@samsung.com>
- <001201cfede3$c462eb90$4d28c2b0$@samsung.com>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: exynos5422-odroid-xu3: MCPM: only 6 of 8 CPUs coming online
+Date: Thu, 23 Oct 2014 11:01:05 -0700
+Message-ID: <7h8uk6acny.fsf@deeprootsystems.com>
+References: <7133556.456161412823997169.JavaMail.weblogic@epml02>
+	<7hzjd4lxc5.fsf@deeprootsystems.com>
+	<loom.20141015T133306-266@post.gmane.org>
+	<CAMAWPa8ANvzaC4EfvRbwCZSya6xt=u6qmvN5cF1jhAROTdW3Pg@mail.gmail.com>
+	<54485433.2040008@samsung.com> <54485730.10803@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:44421 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751492AbaJWR2K (ORCPT
+Received: from mail-pd0-f173.google.com ([209.85.192.173]:59049 "EHLO
+	mail-pd0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752865AbaJWSBJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Oct 2014 13:28:10 -0400
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NDW00AQDRBNCL20@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 23 Oct 2014 18:30:59 +0100 (BST)
-In-reply-to: <001201cfede3$c462eb90$4d28c2b0$@samsung.com>
+	Thu, 23 Oct 2014 14:01:09 -0400
+Received: by mail-pd0-f173.google.com with SMTP id v10so1445225pde.18
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Oct 2014 11:01:08 -0700 (PDT)
+In-Reply-To: <54485730.10803@samsung.com> (Joonyoung Shim's message of "Thu,
+	23 Oct 2014 10:17:36 +0900")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com
-Cc: kgene.kim@samsung.com, mturquette@linaro.org, naushad@samsung.com
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, a.kesavan@samsung.com, k.chander@samsung.com, mauro.ribeiro@hardkernel.com, abhijeet@abhijeet-dev.net
 
-Hi Pankaj,
+Joonyoung Shim <jy0922.shim@samsung.com> writes:
 
-On 22/10/14 12:34, Pankaj Dubey wrote:
-> It there are no comments will you please pick up this patch series.
+[...]
 
-I've picked up these patches and I'm planning to send a pull request
-to Mike this week, including any other pending samsung clk patches.
-Tomasz is going to be busy for few days.
+>> One more problem, cpu0 doesn't boot after offline and system is halted.
+>> 
+>> # echo 0 > /sys/devices/system/cpu/cpu0/online
+>> [   28.027852] IRQ152 no longer affine to CPU0
+>> [   28.028087] IRQ256 no longer affine to CPU0
+>> [   28.028344] CPU0: shutdown
+>> # 
+>> # echo 1 > /sys/devices/system/cpu/cpu0/online
+>> 
+>> So, it's failed script[1] to test MCPM functionalities
+>> 
+>> Thanks.
+>> 
+>> [1]: http://www.spinics.net/lists/arm-kernel/msg330946.html
 
---
-Thanks,
-Sylwester
+FYI... this hotplug problem happens with or without the patch to bring
+all 8 CPUs online, so it's not related to that fix.
+
+Also, it only happens with the bL switcher enabled, and not with the
+switcher disabled.  Since the bL switcher is built on top of hotplug,
+I'm not sure if the switcher deals well with CPUs being hotplugged
+without it knowing.
+
+Kevin
