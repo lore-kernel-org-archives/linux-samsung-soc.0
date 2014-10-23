@@ -1,66 +1,63 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: =?iso-8859-1?Q?PROBLEM=3A=A0BUG__appea?=
- =?iso-8859-1?Q?ring_when_tryin?= =?iso-8859-1?Q?g?= to allocate interrupt on
- Exynos MCT after CPU hotplug
-Date: Thu, 23 Oct 2014 15:06:44 +0100
-Message-ID: <20141023140644.GI27405@n2100.arm.linux.org.uk>
-References: <544907D4.1020409@samsung.com>
+From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Subject: Re: [PATCH v2 04/10] usb: dwc2/gadget: disable phy before turning
+ off power regulators
+Date: Thu, 23 Oct 2014 10:01:16 -0500
+Message-ID: <20141023150116.GH13573@saruman>
+References: <1413801940-31086-1-git-send-email-m.szyprowski@samsung.com>
+ <1413801940-31086-5-git-send-email-m.szyprowski@samsung.com>
+Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="CEUtFxTsmBsHRLs3"
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <544907D4.1020409@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marcin Jabrzyk <m.jabrzyk@samsung.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+In-Reply-To: <1413801940-31086-5-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Paul Zimmerman <paulz-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 23, 2014 at 03:51:16PM +0200, Marcin Jabrzyk wrote:
-> [1.] One line summary of the problem: "BUG: sleeping function called from
-> invalid context at mm/slub.c:1250" after CPU hotplug
+--CEUtFxTsmBsHRLs3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm really not surprised.
+On Mon, Oct 20, 2014 at 12:45:34PM +0200, Marek Szyprowski wrote:
+> This patch fixes probe function to match the pattern used elsewhere in
+> the driver, where power regulators are turned off as the last element in
+> the device shutdown procedure.
+>=20
+> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-> When SoC have MCT_INT_SPI interrupt it is being allocated after hotplugging
-> of the CPU, secondary_start_kernel() is sending CPU boot notifications which
-> are send when preemption and interrupts are disabled. Exynos_mct
-> notification handler tries to set up and allocate IRQ for SPI type interrupt
-> for started CPU and then BUG appears.
-> There might be similar problem on qcom-timer I think just after looking on
-> the code.
+Paul, can I have your Acked-by here so I can send this to v3.18-rc1 ?
 
-The CPU notifier is called via notify_cpu_starting(), which is called
-with interrupts disabled, and a reason code of CPU_STARTING.  Interrupts
-at this point /must/ remain disabled.
+--=20
+balbi
 
-The Exynos code then goes on to call exynos4_local_timer_setup() which
-tries to reverse the free_irq() in exynos4_local_timer_stop() by calling
-request_irq().  Calling request_irq() with interrupts off has never been
-permissible.
+--CEUtFxTsmBsHRLs3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-So, this code is wrong today, and it was also wrong when it was written.
-It /couldn't/ have been tested.  It looks like this commit added this
-buggy code:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-commit ee98d27df6827b5ba4bd99cb7d5cb1239b6a1a31
-Author: Stephen Boyd <sboyd@codeaurora.org>
-Date:   Fri Feb 15 16:40:51 2013 -0800
+iQIcBAEBAgAGBQJUSRg8AAoJEIaOsuA1yqREvNEP/14c0qatv9CTdNG3vZplWEvL
+ta9TS1bNqejTxzXBOYY9Q7FGcXh4LZ4ZDeoMJdqqVJwxndqQZX0hxAXIYrA/bSBy
+G/3ACSeN0k+cyL6VK2inRirckY3rocbZhZwWKNyB32TfUsPI6rVzh176rsNJgMqB
+wvue0IplHeTUUKX3ZVELMxVBVbK1iGe+d8gyU1a0K9EBTXX1iMXtDDJz6ySVxlVL
+/riV6oJsQtYyFRcHk5vEuXdE7yQbyOVEtbYuf/sYNub4Wqy3kF81sBJCCft5c8oM
+aV8QikRVNPW3c+okj8akufQfIfEEFsgwbW4CRaR4PA1PpKGKNq/Aaa2JoR6qwE2u
+FkQ1oMOCSy/5OtlzycS5IslXSM5K1U5AKsl0PDBH6COcvyy7Pq30Tu+jxSX1RRWm
+XqI+iaGLMKU8U+fD0/PCPR3/z6R5rFv6cJLwUIQKP8Yd9tWdHKWZZFReKVSObKb7
+WFbnEs+ETIUgBbo8iBYjoaFe0070/Nt9R486jrSxLs2Tbm9tQEOgD0J6CKJNor24
+i/b142MpcyNOcAnhHd8FRi4afzG98QSy0hIvugW2hd80WOuf1DhGNF+S/uoD92V8
+uHTkJoiVunX7Ui6UJfC6E++o6wDRrQVcW31ym3d9o3btkI9ZXrSIuS2cLu9EIdYm
+2cd0D7rnwvfLfaRr8nCG
+=VBNr
+-----END PGP SIGNATURE-----
 
-    ARM: EXYNOS4: Divorce mct from local timer API
-
-    Separate the mct local timers from the local timer API. This will
-    allow us to remove ARM local timer support in the near future and
-    gets us closer to moving this driver to drivers/clocksource.
-
-    Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-    Acked-by: Marc Zyngier <marc.zyngier@arm.com>
-    Cc: Thomas Abraham <thomas.abraham@linaro.org>
-    Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-
-A good question would be: why doesn't this happen at boot time when CPU1
-is first brought up?  The conditions here are no different from hotplugging
-CPU1 back in.  Do you see a similar warning on boot too?
-
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+--CEUtFxTsmBsHRLs3--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
