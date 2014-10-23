@@ -1,70 +1,66 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 11/18] iommu: exynos: remove useless device_add/remove callbacks
-Date: Thu, 23 Oct 2014 16:02:06 +0200
-Message-ID: <1987006.J2W7PED0yz@wuerfel>
-References: <1410868485-4143-1-git-send-email-m.szyprowski@samsung.com> <2779319.yKiT9EDCse@wuerfel> <54477EDA.3060104@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: =?iso-8859-1?Q?PROBLEM=3A=A0BUG__appea?=
+ =?iso-8859-1?Q?ring_when_tryin?= =?iso-8859-1?Q?g?= to allocate interrupt on
+ Exynos MCT after CPU hotplug
+Date: Thu, 23 Oct 2014 15:06:44 +0100
+Message-ID: <20141023140644.GI27405@n2100.arm.linux.org.uk>
+References: <544907D4.1020409@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:57267 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751674AbaJWOCl convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Oct 2014 10:02:41 -0400
-In-Reply-To: <54477EDA.3060104@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <544907D4.1020409@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marcin Jabrzyk <m.jabrzyk@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Gleixner <tglx@linutronix.de>, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, Alban Browaeys <alban.browaeys@gmail.com>, linux-samsung-soc@vger.kernel.org
 
-On Wednesday 22 October 2014 11:54:34 Marek Szyprowski wrote:
-> On 2014-10-22 11:26, Arnd Bergmann wrote:
-> > On Wednesday 22 October 2014 11:15:00 Alban Browaeys wrote:
-> >> Le mardi 16 septembre 2014 =E0 13:54 +0200, Marek Szyprowski a =E9=
-crit :
-> >>> The driver doesn't need to do anything important in device add/re=
-move
-> >>> callbacks, because initialization will be done from device-tree s=
-pecific
-> >>> callbacks added later. IOMMU groups created by current code were =
-never
-> >>> used.
-> >>>
-> >>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >>
-> >> The exyons iommu init fails if those are removed, that is it never=
- reach
-> >> init_done:
-> >> 1. exynos_iommu_setup
-> >> 2. - exynos_iommu_init
-> >> 3. ---bus_set_iommu
-> >> 4. ------ add_iommu_group
-> >>
-> >> that is (4) add_iommu_group returns ENODEV to bus_set_iommu, the l=
-atter
-> >> doing so to exynos_iommu_init. Which thus error out before the ini=
-t_done
-> >> is set to true.
-> > On a related note, I found that the exynos iommu driver does not ch=
-eck
-> > for the presence of an exynos iommu before calling bus_set_iommu,
-> > and this breaks multiplatform kernels.
-> >
-> > Please fix.
->=20
-> For the time being please apply this patch:=20
-> https://lkml.org/lkml/2014/8/5/163
->=20
-> The proper solution will be applied when driver will be adapted to co=
-mmon of
-> iommu support, which is still under discussion.
->=20
+On Thu, Oct 23, 2014 at 03:51:16PM +0200, Marcin Jabrzyk wrote:
+> [1.] One line summary of the problem: "BUG: sleeping function called from
+> invalid context at mm/slub.c:1250" after CPU hotplug
 
-The patch looks good.
+I'm really not surprised.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+> When SoC have MCT_INT_SPI interrupt it is being allocated after hotplugging
+> of the CPU, secondary_start_kernel() is sending CPU boot notifications which
+> are send when preemption and interrupts are disabled. Exynos_mct
+> notification handler tries to set up and allocate IRQ for SPI type interrupt
+> for started CPU and then BUG appears.
+> There might be similar problem on qcom-timer I think just after looking on
+> the code.
 
-Can you send it to the iommu maintainer please?
+The CPU notifier is called via notify_cpu_starting(), which is called
+with interrupts disabled, and a reason code of CPU_STARTING.  Interrupts
+at this point /must/ remain disabled.
 
-	Arnd
+The Exynos code then goes on to call exynos4_local_timer_setup() which
+tries to reverse the free_irq() in exynos4_local_timer_stop() by calling
+request_irq().  Calling request_irq() with interrupts off has never been
+permissible.
+
+So, this code is wrong today, and it was also wrong when it was written.
+It /couldn't/ have been tested.  It looks like this commit added this
+buggy code:
+
+commit ee98d27df6827b5ba4bd99cb7d5cb1239b6a1a31
+Author: Stephen Boyd <sboyd@codeaurora.org>
+Date:   Fri Feb 15 16:40:51 2013 -0800
+
+    ARM: EXYNOS4: Divorce mct from local timer API
+
+    Separate the mct local timers from the local timer API. This will
+    allow us to remove ARM local timer support in the near future and
+    gets us closer to moving this driver to drivers/clocksource.
+
+    Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+    Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+    Cc: Thomas Abraham <thomas.abraham@linaro.org>
+    Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+
+A good question would be: why doesn't this happen at boot time when CPU1
+is first brought up?  The conditions here are no different from hotplugging
+CPU1 back in.  Do you see a similar warning on boot too?
+
+-- 
+FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
+according to speedtest.net.
