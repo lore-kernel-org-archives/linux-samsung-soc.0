@@ -1,64 +1,60 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v2 03/10] usb: dwc2/gadget: fix gadget unregistration in
- udc_stop() function
-Date: Thu, 23 Oct 2014 10:01:33 -0500
-Message-ID: <20141023150132.GI13573@saruman>
-References: <1413801940-31086-1-git-send-email-m.szyprowski@samsung.com>
- <1413801940-31086-4-git-send-email-m.szyprowski@samsung.com>
-Reply-To: <balbi-l0cyMroinI0@public.gmane.org>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: exynos5422-odroid-xu3: MCPM: only 6 of 8 CPUs coming online
+Date: Thu, 23 Oct 2014 08:56:23 -0700
+Message-ID: <7hfveeaifs.fsf@deeprootsystems.com>
+References: <7133556.456161412823997169.JavaMail.weblogic@epml02>
+	<7hzjd4lxc5.fsf@deeprootsystems.com>
+	<loom.20141015T133306-266@post.gmane.org>
+	<CAMAWPa8ANvzaC4EfvRbwCZSya6xt=u6qmvN5cF1jhAROTdW3Pg@mail.gmail.com>
+	<54485433.2040008@samsung.com> <54485730.10803@samsung.com>
+	<CAGc3s_cS4zYUtdB=+8bPh2sa4Exy5guzupu-TvgJ_KmuyGGBPg@mail.gmail.com>
+	<54485B99.2000703@samsung.com>
+	<CAGc3s_e86Lx+pF12osoKoROXq4rUNf_GQtfJ8xB9w-X4pGVOmQ@mail.gmail.com>
+	<54485E99.9020004@samsung.com> <54485FDA.8070508@samsung.com>
+	<CAG30XQJ29cM6=OFh=TTbR2rfWGt3AK1o2=PMqdoq6ejUJtUwGA@mail.gmail.com>
+	<A804D1798D614199AFA7AEDC00248EA9@sisodomain.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tctmm6wHVGT/P6vA"
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1413801940-31086-4-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Paul Zimmerman <paulz-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f177.google.com ([209.85.192.177]:61789 "EHLO
+	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754750AbaJWP41 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Oct 2014 11:56:27 -0400
+Received: by mail-pd0-f177.google.com with SMTP id v10so1244291pde.36
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Oct 2014 08:56:27 -0700 (PDT)
+In-Reply-To: <A804D1798D614199AFA7AEDC00248EA9@sisodomain.com> (Abhilash
+	Kesavan's message of "Thu, 23 Oct 2014 16:59:10 +0530")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Abhilash Kesavan <a.kesavan@samsung.com>
+Cc: Abhijeet Dev <abhijeet@abhijeet-dev.net>, Joonyoung Shim <jy0922.shim@samsung.com>, Mauro Ribeiro <mdrjr0@gmail.com>, linux-samsung-soc@vger.kernel.org, k.chander@samsung.com, Mauro Ribeiro <mauro.ribeiro@hardkernel.com>, kgene.kim@samsung.com, Me2 <kesavan.abhilash@gmail.com>
 
---tctmm6wHVGT/P6vA
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Abhilash Kesavan <a.kesavan@samsung.com> writes:
 
-On Mon, Oct 20, 2014 at 12:45:33PM +0200, Marek Szyprowski wrote:
-> udc_stop() should clear ->driver pointer unconditionally to let the UDC
-> framework to work correctly with both registering/unregistering gadgets
-> and enabling/disabling gadgets by writing to
-> /sys/class/udc/*hsotg/soft_connect interface.
->=20
-> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> The change was based on my reading of the platsmp file of the
+> Odroid-xu3 3.10 kernel and issues experienced previously. From what I
+> understand, the platsmp code in 3.10 kernel is trying to reset the A7s
+> and my change just bypasses the check (no magic here ). The change was
+> only suggested as a workaround to get 8 cores up using MCPM and not an
+> actual fix.  I had explained this in my mail to Kevin. So, if this
+> were to be mainlined we would probably need to use something like
+> exynos_core_restart in mcpm along with the workaround. But, this is
+> all guesswork on my part and someone with knowledge of the 3.10
+> kernel/bootloader needs to comment.
 
-Also here. In fact, this is much more important :-)
+Unfortunately, the harkernel tree git repo doesn't help understand where
+the change came from because an entire v3.10.y based Samsung BSP is
+checked into the tree on top of a v3.8.y kernel in a single commit !!!
 
---=20
-balbi
+Abhilash, in the absence of the original author, could write up a patch
+with your change?
 
---tctmm6wHVGT/P6vA
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Or, if you can help me with a detailed changelog, I can work on the patch.
+I don't have any exynos docs, so it would be good to have a description
+of what reading/writing to that register are actually doing.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Also, can you explain what you meant by using exynos_core_restart?  I
+don't see that function in mainline.
 
-iQIcBAEBAgAGBQJUSRhMAAoJEIaOsuA1yqRE5QsQAK1FXlUXrAeGaq82BBnREtPb
-5lR0GIdfTqPrOvJ1Ubu6OOreCrR9/qij0P2AUgCz9nd2/ddID7lylXKIGgQ43xfc
-3EE4jyALPaAusoAzpO5Go6BsUD+aw2GY+1i998vPPH6x/rQ6FpnFZWfOvgrxSO6a
-bpohsllSbdBcNFNgJPVqWlpipbCFewYI/OcO8OHv2B4Io5yGyONGMkyq/s+iPqic
-Rj0IGjBHsW/padbHbUtwrjVrKKFOtjlbpoxF5mDctGrZgSEdLSkvSECzoX9sYu8k
-jGY7yD2AiaU7UB9jaGKlEU9XUVg//TzB6XGLE980YGFBsuivwRTStcV4hvSsicVa
-bVHtfgiCkFMX2I/6gh3d7XMpYxXDBrfGs1r6MXLmV0HwRHpw/ob3R0K1skgkSqyu
-eCZBX/5BLSJFhh7gcw1m+8X5j9utYovQM+GRSQzvEpN0DRHJ3NJnV9rjGQC+gtUh
-JPTCXEy7e28KjPYIXJK/CpjuANWxG5Z9M2P3kWHvg8/7mSvlOyHUP+qaGYmFMVxq
-Q6BSo0kR51h9rauoec010lBHVEm7q16BKd0bLZso4uW8OsM31rL0lQUksAbZTT8g
-lwfb+5Kz+n6gJOx1qFeeLoO9jl9+fPKo9/P+gDi7yzt92q9LxaDc/NytQKF9+eJ3
-thNmAIQ5+0hyhEJ25E1E
-=DzJQ
------END PGP SIGNATURE-----
-
---tctmm6wHVGT/P6vA--
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Kevin
