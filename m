@@ -1,91 +1,94 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFC 1/2] PM / Domains: Power on domain early during system resume
-Date: Thu, 23 Oct 2014 15:48:09 +0200
-Message-ID: <1414072090-11293-2-git-send-email-k.kozlowski@samsung.com>
-References: <1414072090-11293-1-git-send-email-k.kozlowski@samsung.com>
+From: Marcin Jabrzyk <m.jabrzyk@samsung.com>
+Subject: =?UTF-8?B?UFJPQkxFTTrCoEJVRyAgYXBwZWFyaW5nIHdoZW4gdHJ5aW5nIHRvIGE=?=
+ =?UTF-8?B?bGxvY2F0ZSBpbnRlcnJ1cHQgb24gRXh5bm9zIE1DVCBhZnRlciBDUFUgaG90cGw=?=
+ =?UTF-8?B?dWc=?=
+Date: Thu, 23 Oct 2014 15:51:16 +0200
+Message-ID: <544907D4.1020409@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1414072090-11293-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:19250 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752690AbaJWNvU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Oct 2014 09:51:20 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-When resuming the system the power domain has to be powered on early so
-any runtime PM aware devices could resume.
+[1.] One line summary of the problem: "BUG: sleeping function called 
+from invalid context at mm/slub.c:1250" after CPU hotplug
+[2.] Full description of the problem/report:
 
-This fixes following scenario reproduced on Exynos DRM:
-1. Power domain is off before suspending the system.
-2. System is suspended to RAM.
-3. Resuming starts. The Exynos DRM driver resume callback is called.
-4. The Exynos DRM driver calls drm_helper_resume_force_mode which turns
-   the screen on by calling exynos_dsi_dpms with DRM_MODE_DPMS_ON.
-5. The Exynos DSI driver calls pm_runtime_get. The driver runtime
-   resumes and this should turn LCD power domain on.
-6. Unfortunately the domain cannot be turned on because system resume is
-   in progress and genpd->prepared_count is positive.
+This was tested on Exynos 3250 board with 
+https://lkml.org/lkml/2014/9/24/441 applied. Board is booting to 
+/bin/sh. After executing:
 
-Steps to reproduce:
-1. Add runtime PM to Exynos DSI driver.
-2. Build Exynos DRM/FB without FRAMEBUFFER_CONSOLE.
-3. Enable the connector and screen (e.g. with modeset-vsync application).
-4. echo 3 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
-5. echo mem > /sys/power/state
-6. Resume.
-[   77.712469] PM: early resume of devices complete after 3.854 msecs
-[   77.712739] exynos-dsi 11c80000.dsi: pm_genpd_resume()
-[   77.712758] exynos4-fimc 11800000.fimc: pm_genpd_resume()
-[   77.712774] exynos4-fimc 11810000.fimc: pm_genpd_resume()
-[   77.712787] exynos-drm-fimc 11820000.fimc: pm_genpd_resume()
-[   77.712802] exynos-drm-fimc 11830000.fimc: pm_genpd_resume()
-[   77.712815] s5p-mipi-csis 11880000.csis: pm_genpd_resume()
-[   77.712829] s5p-mipi-csis 11890000.csis: pm_genpd_resume()
-[   77.712843] exynos-fimc-lite 12390000.fimc-lite: pm_genpd_resume()
-[   77.712856] exynos-fimc-lite 123a0000.fimc-lite: pm_genpd_resume()
-[   77.713788] exynos4-fb 11c00000.fimd: pm_genpd_resume()
-[   77.713912] wake disabled for irq 184
-[   77.713923] wake disabled for irq 185
-[   77.714082] wake disabled for irq 173
-[   77.715676] wake disabled for irq 176
-[   77.718540] exynos4-fb 11c00000.fimd: pm_genpd_runtime_resume()
-[   77.718567] exynos4-fb 11c00000.fimd: state restore latency exceeded, new value 1708 ns
-[   77.718636] exynos-dsi 11c80000.dsi: pm_genpd_runtime_resume()
-[   77.892366] exynos-dsi 11c80000.dsi: PLL failed to stabilize
-[   77.892377] exynos-dsi 11c80000.dsi: failed to configure DSI PLL
-[   78.192168] exynos-dsi 11c80000.dsi: timeout waiting for reset
-[   78.211578] exynos-dsi 11c80000.dsi: waiting for bus lanes timed out
-[   78.307173] exynos-dsi 11c80000.dsi: xfer timed out: d1 00 (null)
-[   78.307190] panel_s6e8aa0 11c80000.dsi.0: error -110 reading dcs seq(0xd1)
-[   78.307199] panel_s6e8aa0 11c80000.dsi.0: read id failed
+mount -t sysfs sys /sys && echo 0 > /sys/devices/system/cpu/cpu1/online 
+&& echo 1 > /sys/devices/system/cpu/cpu1/online
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/base/power/domain.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+I'm getting:
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 40bc2f4072cc..4fdfe404a04c 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -179,8 +179,7 @@ static int __pm_genpd_poweron(struct generic_pm_domain *genpd)
- 	}
- 	finish_wait(&genpd->status_wait_queue, &wait);
- 
--	if (genpd->status == GPD_STATE_ACTIVE
--	    || (genpd->prepared_count > 0 && genpd->suspend_power_off))
-+	if (genpd->status == GPD_STATE_ACTIVE)
- 		return 0;
- 
- 	if (genpd->status != GPD_STATE_POWER_OFF) {
--- 
-1.9.1
+[    7.226405] IRQ258 no longer affine to CPU1
+[    7.226629] CPU1: shutdown
+[    7.230037] CPU1: Software reset
+[    7.231822] CPU1: Booted secondary processor
+[    7.231843] BUG: sleeping function called from invalid context at 
+mm/slub.c:1250
+[    7.231850] in_atomic(): 1, irqs_disabled(): 128, pid: 0, name: swapper/1
+[    7.231861] Preemption disabled at:[<  (null)>]   (null)
+[    7.231864]
+[    7.231876] CPU: 1 PID: 0 Comm: swapper/1 Not tainted 3.17.0-dirty #45
+[    7.231914] [<c0013c04>] (unwind_backtrace) from [<c0010eac>] 
+(show_stack+0x10/0x14)
+[    7.231931] [<c0010eac>] (show_stack) from [<c03ffd0c>] 
+(dump_stack+0x70/0xbc)
+[    7.231950] [<c03ffd0c>] (dump_stack) from [<c00b9a20>] 
+(kmem_cache_alloc+0xe8/0x184)
+[    7.231968] [<c00b9a20>] (kmem_cache_alloc) from [<c0059710>] 
+(request_threaded_irq+0x64/0x128)
+[    7.231985] [<c0059710>] (request_threaded_irq) from [<c030ecc8>] 
+(exynos4_local_timer_setup+0xc0/0x13c)
+[    7.232000] [<c030ecc8>] (exynos4_local_timer_setup) from 
+[<c030ede4>] (exynos4_mct_cpu_notify+0x30/0xa8)
+[    7.232016] [<c030ede4>] (exynos4_mct_cpu_notify) from [<c0038540>] 
+(notifier_call_chain+0x44/0x84)
+[    7.232034] [<c0038540>] (notifier_call_chain) from [<c0021144>] 
+(__cpu_notify+0x28/0x44)
+[    7.232049] [<c0021144>] (__cpu_notify) from [<c0012af0>] 
+(secondary_start_kernel+0xe8/0x138)
+[    7.232062] [<c0012af0>] (secondary_start_kernel) from [<400086a4>] 
+(0x400086a4)
+
+The problem is that request_irq is calling allocation with GFP_KERNEL 
+flag in atomic block.
+This bug should be easy observable on any board with 
+"samsung,exynos4210-mct" compatible MCT block.
+
+[4.1.] Kernel version (from /proc/version):
+3.17.0
+[4.2.] Kernel .config file:
+exynos_defconfig + DEBUG_ATOMIC_SLEEP and DEBUG_PREEMPT
+
+[7.] A small shell script or example program which triggers the
+      problem (if possible)
+mount -t sysfs sys /sys && echo 0 > /sys/devices/system/cpu/cpu1/online 
+&& echo 1 > /sys/devices/system/cpu/cpu1/online
+[8.] Environment
+/bin/sh
+
+When SoC have MCT_INT_SPI interrupt it is being allocated after 
+hotplugging of the CPU, secondary_start_kernel() is sending CPU boot 
+notifications which are send when preemption and interrupts are 
+disabled. Exynos_mct notification handler tries to set up and allocate 
+IRQ for SPI type interrupt for started CPU and then BUG appears.
+There might be similar problem on qcom-timer I think just after looking 
+on the code.
+
+Best regards,
+--
+Marcin Jabrzyk
+Samsung R&D Institute Poland
+Samsung Electronics
