@@ -1,63 +1,173 @@
-From: Abhijeet Dev <abhijeet@abhijeet-dev.net>
-Subject: Re: exynos5422-odroid-xu3: MCPM: only 6 of 8 CPUs coming online
-Date: Thu, 23 Oct 2014 08:36:48 +0000 (UTC)
-Message-ID: <loom.20141023T103437-122@post.gmane.org>
-References: <7133556.456161412823997169.JavaMail.weblogic@epml02> <7hzjd4lxc5.fsf@deeprootsystems.com> <loom.20141015T133306-266@post.gmane.org> <CAMAWPa8ANvzaC4EfvRbwCZSya6xt=u6qmvN5cF1jhAROTdW3Pg@mail.gmail.com> <54485433.2040008@samsung.com> <54485730.10803@samsung.com> <CAGc3s_cS4zYUtdB=+8bPh2sa4Exy5guzupu-TvgJ_KmuyGGBPg@mail.gmail.com> <54485B99.2000703@samsung.com> <CAGc3s_e86Lx+pF12osoKoROXq4rUNf_GQtfJ8xB9w-X4pGVOmQ@mail.gmail.com> <54485E99.9020004@samsung.com> <54485FDA.8070508@samsung.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH 00/21] thermal: exynos: Thermal code rework to use device
+ tree
+Date: Thu, 23 Oct 2014 10:50:04 +0200
+Message-ID: <20141023105004.264f596a@amdc2363>
+References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from plane.gmane.org ([80.91.229.3]:45847 "EHLO plane.gmane.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753149AbaJWIuG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Oct 2014 04:50:06 -0400
-Received: from list by plane.gmane.org with local (Exim 4.69)
-	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
-	id 1XhE5s-00067Z-Dx
-	for linux-samsung-soc@vger.kernel.org; Thu, 23 Oct 2014 10:50:04 +0200
-Received: from aer01-mda1-dmz-wsa-6.cisco.com ([173.38.209.11])
-        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Oct 2014 10:50:04 +0200
-Received: from abhijeet by aer01-mda1-dmz-wsa-6.cisco.com with local (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 23 Oct 2014 10:50:04 +0200
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, Linux PM list <linux-pm@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
 
-Joonyoung Shim <jy0922.shim <at> samsung.com> writes:
+Hi Lukasz,
+
+> 1. Introduction
 > 
-> On 10/23/2014 10:49 AM, Joonyoung Shim wrote:
-> > Hi,
-> > 
-> > On 10/23/2014 10:42 AM, Mauro Ribeiro wrote:
-> >> Joonyoung,
-> >>
-> >> Abhilash looks to be the father of it...
-> >> Also I have no idea why I'm appearing as a commiter of that.. as me or
-> >> anyone from Hardkernel doesn't have access to that github account or
-> >> contributed to it.
-> >> I do have a 3.17 branch here locally on my computer but its not public 
-anywhere.
-> > 
-> > You are just author of the patch on github and it was committed to github 
-by Abhilash.
+> Following patches aim to clean up the current implementation of the
+> thermal framework on Exynos devices.
 > 
-> Sorry, not Abhilash, by Abhijeet Dev <abhijeet <at> abhijeet-dev.net>, i 
-don't know who he is.
+> The main goal was to use a generic code for reading thermal
+> configuration (of-thermal.c). Due to that redundant
+> exynos_thermal_common.[h|c] files were removed.
 > 
-I had received it from Mauro. As Mauro mentioned, Abhilash seems to be the 
-father of it - and the patch has to have Samsung origin - one can't dream of 
-such magic :)
+> Around 400 lines of code (LOC) were removed directly by this patch,
+> which is around 20% of the Exynos thermal code base.
+> 
+> This work should NOT bring any functional changes to Exynos thermal 
+> subsystem.
+> 
+> 2. Patch-set structure
+> 
+> This series starts with extending current of-thermal.c implementation
+> with exporting information about trip points and support for setting
+> emulated temperature. Those changes were necessary to reuse this code
+> in Exynos.
+> 
+> Then the cpu_cooling functionality has been preserved to allow cooling
+> devices by reducing operating frequency. Definition of trip points and
+> cpufreq's cooling properties were moved to device tree.
+> 
+> Then the rework of the way in which configuration data is provided to
+> the Exynos thermal subsystem was performed. Now device tree is used
+> for configuration.
+> 
+> Patch series end with removing exynos5250/exynos3250 TMU compatibles.
+> Both SoCs have thermal management unit (TMU) compatible with the one
+> first introduced at Exynos4412.
+> 
+> 3. Dead code removal
+> 
+> Thermal support for some SoCs, previously available in the
+> exynos_tmu_data.c file, was removed since, as of 3.17-rc6, they
+> didn't have TMU bindings.
+> 
+> Moreover, support for cpu_cooling devices was preserved only on those
+> SoCs which had available and working cpufreq driver.
+> 
+> 4. Testing
+> 
+> Test devices:
+> - Exynos4210 - Trats (TMU zone + cpu_cooling)
+> - Exynos4412 - Trats2/Odroid U3 (TMU zone + cpu_cooling)
+> - Exynos5250 - Arndale (TMU zone + cpu_cooling)
+> - Exynos5420 - Arndale-octa (only TMU zones)
+> 
+> Unfortunately, I don't posses Exynos5440 for testing. Its
+> functionality has been preserved in the code, but not tested on the
+> hardware. I would be grateful for help in testing.
+> 
+> 5. Prerequisites:
+> 
+> This work requires following patches developed by Bartlomiej
+> Zolnierkiewicz:
+> 
+> 5.1. [PATCH v3] ARM: dts: add CPU nodes for Exynos4 SoCs
+> http://article.gmane.org/gmane.linux.kernel.samsung-soc/37946/match=patch+v3+arm+dts+add+cpu+nodes+exynos4+socs
+> 
+> 5.2. First thermal clean up patch set (from patch 1 to 33):
+> 
+> [PATCH 00/33] thermal: exynos: convert the driver to use per-SoC type
+> operations
+> http://article.gmane.org/gmane.linux.kernel.samsung-soc/37642/match=patch+00+33+thermal+exynos+convert+driver+use+per+soc+type+operations
+> 
 
-At the moment we can trace it as far as Abhilash - he looks like the person 
-who actually knows this magic:
+Any comments on this patch set (despite the ones from Chanwoo)?
 
-Abhilash(Samsung) -> Kevin -> Mauro -> Abhijeet (Me)
+I'm especially wondering if changes introduced to of-thermal.c file are
+appropriate for mainline.
 
-As I could only trace as far as Mauro earlier, I marked him as the author of 
-this patch. I will change it in the next one. As for the tree on my 
-github account, I maintain it to support various boards on Kukjin's for-next 
-branch on kernel.org.
+> 
+> Lukasz Majewski (21):
+>   thermal: of: Extend of-thermal.c to provide number of trip points
+>   thermal: of: Extend of-thermal.c to provide check if trip point is
+>     enabled
+>   thermal: of: Extend of-thermal.c to provide number of non critical
+>     trip points
+>   thermal: of: Extend current of-thermal.c code to allow setting
+>     emulated temp
+>   thermal: exynos: cosmetic: Correct comment format
+>   thermal: exynos: Provide thermal_exynos.h file to be included in
+>     device tree files
+>   thermal: dts: trats: Enable TMU on the Exynos4210 trats device
+>   thermal: dts: exynos: Adding LD010 regulator node necessary for TMU
+> on Odroid U3 board
+>   thermal: dts: Provide bindings and enable TMU at Exynos4x12 devices
+>   thermal: cpu_cooling: dts: Define device tree bindings for Exynos
+> cpu cooling functionality
+>   thermal: cpu_cooling: Modify exynos thermal code to use device tree
+>     for cpu cooling configuration
+>   thermal: exynos: dts: Add default definition for the TMU sensor
+>   thermal: dts: Default trip points definition for Exynos5420 SoCs
+>   thermal: exynos: dts: Define default thermal-zones for Exynos4
+>   thermal: dts: exynos: Trip points and sensor configuration data for
+>     Exynos5440
+>   thermal: exynos: dts: Provide device tree bindings identical to one
+> in exynos_tmu_data.c
+>   thermal: samsung: core: Exynos TMU rework to use device tree for
+>     configuration
+>   thermal: exynos: Remove exynos_thermal_common.[c|h] files
+>   thermal: exynos: Remove exynos_tmu_data.c file
+>   thermal: exynos: Make Exynos5250 TMU compatible with Exynos4412
+>   thermal: exynos: Make Exynos3250 TMU compatible with Exynos4412
+> 
+>  arch/arm/boot/dts/exynos4-cpu-thermal.dtsi        |  52 +++
+>  arch/arm/boot/dts/exynos4.dtsi                    |   5 +
+>  arch/arm/boot/dts/exynos4210-trats.dts            |  19 +
+>  arch/arm/boot/dts/exynos4210.dtsi                 |  28 +-
+>  arch/arm/boot/dts/exynos4212.dtsi                 |   5 +-
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi   |  27 ++
+>  arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi |  24 ++
+>  arch/arm/boot/dts/exynos4412.dtsi                 |   5 +-
+>  arch/arm/boot/dts/exynos4x12.dtsi                 |  13 +
+>  arch/arm/boot/dts/exynos5250.dtsi                 |  29 +-
+>  arch/arm/boot/dts/exynos5420-trip-points.dtsi     |  35 ++
+>  arch/arm/boot/dts/exynos5420.dtsi                 |  33 ++
+>  arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi |  25 ++
+>  arch/arm/boot/dts/exynos5440-trip-points.dtsi     |  25 ++
+>  arch/arm/boot/dts/exynos5440.dtsi                 |  18 +
+>  drivers/cpufreq/exynos-cpufreq.c                  |  23 +-
+>  drivers/thermal/of-thermal.c                      |  52 ++-
+>  drivers/thermal/samsung/Makefile                  |   2 -
+>  drivers/thermal/samsung/exynos_thermal_common.c   | 430
+> ----------------------
+> drivers/thermal/samsung/exynos_thermal_common.h   | 106 ------
+> drivers/thermal/samsung/exynos_tmu.c              | 283
+> +++++++------- drivers/thermal/samsung/exynos_tmu.h              |
+> 79 +--- drivers/thermal/samsung/exynos_tmu_data.c         | 264
+> ------------- drivers/thermal/thermal_core.h                    |  15
+> + include/dt-bindings/thermal/thermal_exynos.h      |  40 ++
+> include/linux/thermal.h                           |   6 +- 26 files
+> changed, 623 insertions(+), 1020 deletions(-) create mode 100644
+> arch/arm/boot/dts/exynos4-cpu-thermal.dtsi create mode 100644
+> arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi create mode 100644
+> arch/arm/boot/dts/exynos5420-trip-points.dtsi create mode 100644
+> arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi create mode 100644
+> arch/arm/boot/dts/exynos5440-trip-points.dtsi delete mode 100644
+> drivers/thermal/samsung/exynos_thermal_common.c delete mode 100644
+> drivers/thermal/samsung/exynos_thermal_common.h delete mode 100644
+> drivers/thermal/samsung/exynos_tmu_data.c create mode 100644
+> include/dt-bindings/thermal/thermal_exynos.h
+> 
+
+
+-- 
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
