@@ -1,39 +1,43 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v3 4/5] regulator: max77802: Parse regulator operating mode properties
-Date: Thu, 23 Oct 2014 11:28:09 +0200
-Message-ID: <0DA944C5-7A6B-461B-A8E6-D47343D22E0B@collabora.co.uk>
-References: <1413816472-1895-1-git-send-email-javier.martinez@collabora.co.uk> <1413816472-1895-5-git-send-email-javier.martinez@collabora.co.uk> <20141022164813.GD2344@sirena.org.uk>
-Mime-Version: 1.0 (1.0)
-Content-Type: text/plain;
-	charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141022164813.GD2344@sirena.org.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RFC 0/2] PM and DRM: Add runtime PM to Exynos DSI
+Date: Thu, 23 Oct 2014 15:48:08 +0200
+Message-ID: <1414072090-11293-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:40172 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751087AbaJWNsj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Oct 2014 09:48:39 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hello Mark,
+Hi,
 
-> On 22/10/2014, at 18:48, Mark Brown <broonie@kernel.org> wrote:
-> 
->> On Mon, Oct 20, 2014 at 04:47:51PM +0200, Javier Martinez Canillas wrote:
->> 
->> +    char *states[PM_SUSPEND_MAX + 1] = {
->> +        [PM_SUSPEND_MEM] = "regulator-state-mem",
->> +        [PM_SUSPEND_MAX] = "regulator-state-disk",
->> +    };
-> 
-> This still has the same problem as your previous patch with things not
-> being as joined up with the core as they should be.  What I'd like to
-> see is that the code to extract the number for each state is in the core
-> and then the drivers just provide a translation function to map from
-> this to the internal modes.
+The goal of the patch 2 is to add runtime PM to the Exynos DSI driver.
+This allows LCD power domain to be turned off.
 
-Ok, I'll send a new version parsing it in the core and providing a translation function in the driver as you said.
+However after adding this patch an interesing issue came in. The DSI
+driver could not runtime resume during sustem resume because power
+domain was not allowed to power on.
 
-However this is an implementation detail and should not change the DT bindings in the current version. Could you please let me know if you have any issues with the other patches from this series so I can address all of them when doing a re-spin?
+The issue is solved by patch 1.
 
-Thanks a lot and best regards,
-Javier
+Tested on Trats2 board.
+
+Comments are welcomed.
+
+Best regards,
+Krzysztof
+
+Krzysztof Kozlowski (2):
+  PM / Domains: Power on domain early during system resume
+  drm/exynos/dsi: Add runtime PM so LCD power domain could be turned off
+
+ drivers/base/power/domain.c             | 3 +--
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 9 +++++++++
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+
+-- 
+1.9.1
