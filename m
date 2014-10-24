@@ -1,43 +1,40 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 2/5] clk: samsung: exynos4415: Add clocks using common
- clock framework
-Date: Fri, 24 Oct 2014 22:36:19 +0900
-Message-ID: <544A55D3.8000809@samsung.com>
+From: Daniel Drake <drake@endlessm.com>
+Subject: Re: [PATCH 5/5] ARM: dts: Add dts files for Exynos4415 SoC
+Date: Fri, 24 Oct 2014 07:44:21 -0600
+Message-ID: <CAD8Lp45thqGRm-SjFnnht1EGuFYWabG_D9vWUQt+NnCcgVG7bg@mail.gmail.com>
 References: <1413775749-17539-1-git-send-email-cw00.choi@samsung.com>
- <1413775935-17743-2-git-send-email-cw00.choi@samsung.com>
- <CAD8Lp45F_6UWXx0f2xVGZL+Rgemg2fzkYhnfPdaeaiky0rKPgw@mail.gmail.com>
+	<1413775935-17743-5-git-send-email-cw00.choi@samsung.com>
+	<CAD8Lp46Y1WBF2Bq5SKtQDZ4kUb2fDCsbBs1THFWcV=8-OXh_SQ@mail.gmail.com>
+	<544A5578.7030009@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAD8Lp45F_6UWXx0f2xVGZL+Rgemg2fzkYhnfPdaeaiky0rKPgw@mail.gmail.com>
+In-Reply-To: <544A5578.7030009@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Drake <drake@endlessm.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, Russell King <linux@arm.linux.org.uk>, Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, thomas.abraham@linaro.org, Linus Walleij <linus.walleij@linaro.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, InKi Dae <inki.dae@samsung.com>, geunsik.lim@samsung.com, jh80.chung@samsung.com, jaewon02.kim@samsung.com, ideal.song@samsung.com, yj44.cho@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, Russell King <linux@arm.linux.org.uk>, Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, thomas.abraham@linaro.org, Linus Walleij <linus.walleij@linaro.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, InKi Dae <inki.dae@samsung.com>, geunsik.lim@samsung.com, jh80.chung@samsung.com, jaewon02.kim@samsung.com, ideal.song@samsung.com, yj44.cho@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Daniel,
+On Fri, Oct 24, 2014 at 7:34 AM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Well, I also thought about such approach, but there are some fundamental
+> differences:
+> interrupt and clock controllers are completely different. Using a common
+> exynos4.dtsi
+> and overriding them in every node will result in a code, which is a bit hard
+> to follow.
+> IMHO with such differences justifies using separate base dtsi file.
 
-On 10/24/2014 10:18 PM, Daniel Drake wrote:
-> On Sun, Oct 19, 2014 at 9:32 PM, Chanwoo Choi <cw00.choi@samsung.com> wrote:
->> This patch adds the new clock driver of Exynos4415 SoC based on Cortex-A9
->> using common clock framework. The CMU (Clock Management Unit) of Exynos4415
->> controls PLLs(Phase Locked Loops) and generates system clocks for CPU, buses
->> and function clocks for individual IPs.
-> 
-> There seems to be a lot in common here with other exynos4 variants in
-> clk-exynos4.c. Have you considered just adding support for the 4415 in
-> the existing driver?
+For the things that aren't in common, they are already split out into
+soc-specific files for the existing Exynos4 variants. Taking your
+example of the CMU, it already differs in different exynos4 versions
+therefore is not listed in exynos4.dtsi at all.
 
-Yes, It is difficult and to make existing clk-exynos4.c more complicated.
-Exynos4415 has fewer difference from existing clk-exynos4.c and
-different parent source of mux.
+So this argument only seems valid if the differences are really huge,
+or if you are also saying the existing exynos4 dts files are bad?
+Personally I have come to like the current layout, although would
+definitely appreciate the reference-based syntax mentioned by Tomasz,
+and this seems like a good opportunity to at least fix up exynos4.dtsi
+for that.
 
-For exmaple about PLL,
-There are different PLLs between Exynos4412 and Exynos4415.
-- Exynos4412 has APLL, MPLL, EPLL, VPLL.
-- Exynos4415 has APLL, EPLL, G3D_PLL, ISP_PLL, DISP_PLL and MPLL.
-Also, MPLL of Exynos4415 was included in CMU_DMC scope.
-
-Best Regards,
-Chanwoo Choi
+Daniel
