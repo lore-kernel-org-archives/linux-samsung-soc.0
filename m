@@ -1,68 +1,79 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCHv2 1/2] clk: samsung: exynos4415: Add clocks using common
- clock framework
-Date: Fri, 24 Oct 2014 16:17:13 +0200
-Message-ID: <544A5F69.7080406@samsung.com>
-References: <1414148828-23719-1-git-send-email-cw00.choi@samsung.com>
- <1414148828-23719-2-git-send-email-cw00.choi@samsung.com>
- <544A402F.1010207@samsung.com> <544A5D2D.2040501@samsung.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH v5 0/8] arch: arm64: Enable support for Samsung Exynos7 SoC
+Date: Fri, 24 Oct 2014 20:02:58 +0530
+Message-ID: <CAM4voanMX__N6=q8gg1LEGxqGTtByJXPdj+oAucHoyDh5ybaEA@mail.gmail.com>
+References: <1411361228-18279-1-git-send-email-a.kesavan@samsung.com>
+	<541FE357.5090000@gmail.com>
+	<CAM4voa=Hsux0+rccSvDJsNTFakZwuwYwjkDkkNFfndFm03Pn3g@mail.gmail.com>
+	<542AD2AE.6060109@gmail.com>
+	<01a501cfe1e5$759fc8c0$60df5a40$@kernel.org>
+	<CAM4voak5DpRHghgF=EdmPCHeenMFZQeOTsm9QLE1fSXDoM1a+g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:32124 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755488AbaJXORb (ORCPT
+Received: from mail-qa0-f52.google.com ([209.85.216.52]:49478 "EHLO
+	mail-qa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751573AbaJXOdA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Oct 2014 10:17:31 -0400
-In-reply-to: <544A5D2D.2040501@samsung.com>
+	Fri, 24 Oct 2014 10:33:00 -0400
+In-Reply-To: <CAM4voak5DpRHghgF=EdmPCHeenMFZQeOTsm9QLE1fSXDoM1a+g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: tomasz.figa@gmail.com, kgene.kim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, inki.dae@samsung.com, geunsik.lim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, s.nawrocki@samsung.com
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, devicetree <devicetree@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Naveen Krishna <naveenkrishna.ch@gmail.com>
 
-Hi Chanwoo,
++Sylwester
 
-On 24/10/14 16:07, Chanwoo Choi wrote:
-[...]
->> How about prefixing the table names below with "exynos4415", rather than
->> "samsung" ?
-> 
-> 'struct samsung_fixed_factor_clock' is common for Exynos SoC.
-> 
-> Do you means that add 'exynos4415' prefix as following:
-> - fixed_factor_clks -> exynos4415_fixed_factor_clks
-
-Yes, it makes sense IMHO, even though those symbols are static.
-It's done like that in other SoC drivers, e.g. exynos3250.
-
->>> +static struct samsung_fixed_factor_clock fixed_factor_clks[] __initdata = {
+On Wed, Oct 8, 2014 at 11:18 AM, Abhilash Kesavan
+<kesavan.abhilash@gmail.com> wrote:
+> Hi Tomasz,
+>
+> On Tue, Oct 7, 2014 at 9:46 AM, Kukjin Kim <kgene@kernel.org> wrote:
+>> Tomasz Figa wrote:
+>>>
+>>> On 30.09.2014 17:12, Abhilash Kesavan wrote:
+>>> > Hi Tomasz,
+>>> >
+>>> > On Mon, Sep 22, 2014 at 2:22 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+>>> >> Hi Abhilash,
+>>> >>
+>>> >> On 22.09.2014 06:47, Abhilash Kesavan wrote:
+>>> >>> Changes since v4:
+>>> >>> - Fixed comments from Tomasz Figa:
+>>> >>>       - Changed the namespace prefix from exynos to samsung
+>>> >>>       - Defined bindings to take all input clocks
+>>> >>>       - Sorted the Kconfig entries alphabetically in clock Makefile
+>>> >>>       - Used consistent 1 tab line breaks across the clock file
+>>> >>>       - Statically initialized the samsung_cmu_info struct
+>>> >>> - Enabled exynos7 in the arm64 defconfig as per Catalin Marinas' comment.
+>>> >>> - Added Kukjin Kim's ack along with Thomas Abraham's tested and reviewed tags.
+>>> >>>
+>>> >>
+>>> >> The clock patches look good to me, but since they are doing quite a lot
+>>> >> of code moving I'd prefer to take them through clk tree. Based on the
+>>> >> fact that there are no code dependencies between clock patches and
+>>> >> remaining ones and Exynos7 is a new material for 3.18, I'm inclined to
+>>> >> apply them to my tree if nobody minds.
+>>> >
+>>> > Will you be picking up the clock changes soon ?
+>>>
+>>> I'd like to do so. Kukjin, since clock changes are a part of this
+>>> series, might I have your Ack for them to be applied separately?
+>>>
+>> Sure, I'm fine so please go ahead with my ack on the changes.
 >>
->>> +};
->>> +
->>> +static struct samsung_fixed_rate_clock fixed_rate_clks[] __initdata = {
->>> +	FRATE(CLK_SCLK_HDMIPHY, "sclk_hdmiphy", NULL, CLK_IS_ROOT, 27000000),
->>> +};
->>> +
->>> +static struct samsung_mux_clock mux_clks[] __initdata = {
+>> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 >>
->>> +};
->>> +
->>> +static struct samsung_div_clock div_clks[] __initdata = {
->>
->>> +};
->>> +
->>> +static struct samsung_gate_clock gate_clks[] __initdata = {
-> 
-> Do you want to change structure naming as following?
-> fixed_factor_clks -> exynos4415_fixed_factor_clks
-> fixed_rate_clks -> exynos4415_fixed_rate_clks
-> mux_clks -> exynos4415_mux_clks
-> div_clks -> exynos4415_div_clks
-> gate_clks -> exynos4415_gate_clks
+>> Thanks for your asking.
+>
+> Can you please pick up the clock changes now that Kukjin has ack'ed it.
 
-Yes, please.
+Sylwester, you mentioned in another thread that Tomasz might not be
+available for the next few days. Could you please consider applying
+the clock changes in this series to samsung clk-next if they look OK ?
 
--- 
-Thanks,
-Sylwester
+Please take a look at clock changes at
+http://www.spinics.net/lists/arm-kernel/msg370673.html too.
+
+Regards,
+Abhilash
