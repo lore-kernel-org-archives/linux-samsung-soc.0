@@ -1,59 +1,54 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v3 4/5] regulator: max77802: Parse regulator operating
- mode properties
-Date: Fri, 24 Oct 2014 22:02:15 +0100
-Message-ID: <20141024210214.GO3729@sirena.org.uk>
-References: <1413816472-1895-1-git-send-email-javier.martinez@collabora.co.uk>
- <1413816472-1895-5-git-send-email-javier.martinez@collabora.co.uk>
- <20141022164813.GD2344@sirena.org.uk>
- <0DA944C5-7A6B-461B-A8E6-D47343D22E0B@collabora.co.uk>
+From: Paul Zimmerman <Paul.Zimmerman-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>
+Subject: RE: [PATCH v2 02/10] usb: dwc2/gadget: fix enumeration issues
+Date: Sat, 25 Oct 2014 00:21:10 +0000
+Message-ID: <A2CA0424C0A6F04399FB9E1CD98E0304844E5B63@US01WEMBX2.internal.synopsys.com>
+References: <1413801940-31086-1-git-send-email-m.szyprowski@samsung.com>
+ <1413801940-31086-3-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="AA9g+nFNFPYNJKiL"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:46924 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752971AbaJXVCg (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Oct 2014 17:02:36 -0400
-Content-Disposition: inline
-In-Reply-To: <0DA944C5-7A6B-461B-A8E6-D47343D22E0B@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1413801940-31086-3-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Language: en-US
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
 
---AA9g+nFNFPYNJKiL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Thu, Oct 23, 2014 at 11:28:09AM +0200, Javier Martinez Canillas wrote:
+> -----Original Message-----
+> From: Marek Szyprowski [mailto:m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org]
+> Sent: Monday, October 20, 2014 3:46 AM
+> 
+> Excessive debug messages might cause timing issues that prevent correct
+> usb enumeration. This patch hides information about USB bus reset to let
+> driver enumerate fast enough to avoid making host angry. This fixes
+> endless enumeration and usb reset loop observed with some Linux hosts.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Reviewed-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+> ---
+>  drivers/usb/dwc2/gadget.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
+> index 119c8a3effc2..8870e38c1d82 100644
+> --- a/drivers/usb/dwc2/gadget.c
+> +++ b/drivers/usb/dwc2/gadget.c
+> @@ -2333,7 +2333,7 @@ irq_retry:
+> 
+>  		u32 usb_status = readl(hsotg->regs + GOTGCTL);
+> 
+> -		dev_info(hsotg->dev, "%s: USBRst\n", __func__);
+> +		dev_dbg(hsotg->dev, "%s: USBRst\n", __func__);
+>  		dev_dbg(hsotg->dev, "GNPTXSTS=%08x\n",
+>  			readl(hsotg->regs + GNPTXSTS));
+> 
 
-Please fix your mailer to word wrap within paragraphs - you should know
-this by now :/  I've reflowed for legibility.
+Acked-by: Paul Zimmerman <paulz-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>
 
-> However this is an implementation detail and should not change the DT
-> bindings in the current version. Could you please let me know if you
-> have any issues with the other patches from this series so I can
-> address all of them when doing a re-spin?
-
-I can't recall anything but I'm not sure I looked at them in any detail.
-
---AA9g+nFNFPYNJKiL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUSr5WAAoJECTWi3JdVIfQlhMH/2XE67VcrSF7j0bGBNd4hHt+
-WXiySErF4lpTjq8x8RtFnmWYpZevatt/BjltMcIDkajU8WNuR61A6IMtXkYUvtM/
-Tj0aUeHcbrWkkXoNgufLQAF8yeJ0/ziHxikfI3EK8uPmYkECzNjiwrArf6GPDU2R
-CUK/3k7b9qZrOMqNjPpMr+fbtqkhP9nYe7b7Rkw/qkNOoIPk9s9853jbCiaExmPG
-nVs8dwN4XK5coyUfdacgwwZA2apVAnXIik/ye9n7W2qRliCcU44WEH64ZrCozsCf
-czffdAw1zUSZX4Ic9blsXDutZvWrSSRTkbZroIEOwmkwlWsVOte+BgvRooYGlQ8=
-=vEul
------END PGP SIGNATURE-----
-
---AA9g+nFNFPYNJKiL--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
