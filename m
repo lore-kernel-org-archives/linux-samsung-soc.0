@@ -1,73 +1,46 @@
-From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH v2 0/3] iio: exynos-adc: use syscon instead of ioremap
-Date: Sat, 25 Oct 2014 21:15:34 +0100
-Message-ID: <544C04E6.50401@kernel.org>
-References: <1410857931-4980-1-git-send-email-ch.naveen@samsung.com> <541EC1C2.6090608@kernel.org> <5436EA85.90900@kernel.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v3 4/5] regulator: max77802: Parse regulator operating
+ mode properties
+Date: Mon, 27 Oct 2014 00:24:10 +0100
+Message-ID: <544D829A.40407@collabora.co.uk>
+References: <1413816472-1895-1-git-send-email-javier.martinez@collabora.co.uk> <1413816472-1895-5-git-send-email-javier.martinez@collabora.co.uk> <20141022164813.GD2344@sirena.org.uk> <0DA944C5-7A6B-461B-A8E6-D47343D22E0B@collabora.co.uk> <20141024210214.GO3729@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5436EA85.90900@kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cw00.choi@samsung.com, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, cpgs@samsung.com, grundler@chromium.org, Kukjin Kim <kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:56517 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751635AbaJZXYQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 26 Oct 2014 19:24:16 -0400
+In-Reply-To: <20141024210214.GO3729@sirena.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On 09/10/14 21:05, Jonathan Cameron wrote:
-> On 21/09/14 13:17, Jonathan Cameron wrote:
->> On 16/09/14 09:58, Naveen Krishna Chatradhi wrote:
->>> Changes since v1:
->>> 1. Rebased on top of togreg branch of IIO git.
->>>
->>> This patch set does the following
->>> 1. Use the syscon and Regmap API instead of ioremappaing the
->>>    ADC_PHY register from PMU.
->>> 2. Updates the Documentation in exynos-adc.txt with syscon phandle
->>>    for the ADC nodes.
->>> 3. Updates the Dts files for Exynos3250, Exynos4x12, Exynos5250,
->>>    Exynos5420 with the syscon phandle.
->>>
->>> Tested on Exynos5420 based Peach PIT and Exynos5800 based Peach PI
->>> by verifying sysfs entries provided by HWMON based NTC thermistors.
->>>
->>> Tested-By for Exynos3250, Exynos4x12 would be appreciated.
->> Would definitely be good!
->>
->> The main issue I have with this series is that it breaks backward
->> compatibility with old device trees and newer kernels.
->>
->> Now I appreciate that sometimes there are reasons to do it but want this
->> to have deeper consideration (and acks to show it) from the Exynos side
->> of things and preferably from the device tree side of things as well.
->>
->> cc'd Kukjin Kim for the Exynos side of things as the listed Maintainer.
->>
->> Otherwise, the series looks fine to me.
-> Kukjin? Sorry to pester, but this has been sat in my waiting queue for a
-> while now.
-This is still sitting here waiting for those acks from Exynos side of things.
-I'm happy to let this sit indefinitely, but does seem a little silly.
->>>
->>> Naveen Krishna Chatradhi (3):
->>>   iio: exyno-adc: use syscon for PMU register access
->>>   Documentation: dt-bindings: update exynos-adc.txt with syscon handle
->>>   ARM: dts: exynos: Add sysreg phandle to ADC node
->>>
->>>  .../devicetree/bindings/arm/samsung/exynos-adc.txt |    9 ++++--
->>>  arch/arm/boot/dts/exynos3250.dtsi                  |    3 +-
->>>  arch/arm/boot/dts/exynos4x12.dtsi                  |    3 +-
->>>  arch/arm/boot/dts/exynos5250.dtsi                  |    3 +-
->>>  arch/arm/boot/dts/exynos5420.dtsi                  |    3 +-
->>>  drivers/iio/adc/exynos_adc.c                       |   30 ++++++++++++++------
->>>  6 files changed, 36 insertions(+), 15 deletions(-)
->>>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-iio" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Hello Mark,
+
+On 10/24/2014 11:02 PM, Mark Brown wrote:
+> On Thu, Oct 23, 2014 at 11:28:09AM +0200, Javier Martinez Canillas wrote:
 > 
+> Please fix your mailer to word wrap within paragraphs - you should know
+> this by now :/  I've reflowed for legibility.
+> 
+
+Sorry about that, I was on holidays last week and sent you that email from
+my phone. Next time I'll wait until I've access to a mailer that I'm sure
+does the right thing before answering you.
+
+>> However this is an implementation detail and should not change the DT
+>> bindings in the current version. Could you please let me know if you
+>> have any issues with the other patches from this series so I can
+>> address all of them when doing a re-spin?
+> 
+> I can't recall anything but I'm not sure I looked at them in any detail.
+> 
+
+Ok, thanks a lot for the feedback.
+
+Best regards,
+Javier
