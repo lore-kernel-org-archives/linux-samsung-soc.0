@@ -1,324 +1,97 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v5 4/4] ARM: dts: exynos4412-trats: Add suspend configuration
- for max77686 regulators
-Date: Mon, 27 Oct 2014 13:11:50 +0100
-Message-ID: <1414411911-5539-5-git-send-email-k.kozlowski@samsung.com>
-References: <1414411911-5539-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1414411911-5539-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v5 0/4] regulator: max77686/trats2: Disable some regulators in
+ suspend
+Date: Mon, 27 Oct 2014 13:11:46 +0100
+Message-ID: <1414411911-5539-1-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add suspend to RAM configuration for max77686 regulators. Some LDOs and
-bucks are disabled. This reduces energy consumption during S2R,
-approximately from 17 mA to 9 mA.
+Hi,
 
-Additionally remove old and not supported bindings:
- - regulator-mem-off
- - regulator-mem-idle
- - regulator-mem-on
-The max77686 driver does not parse them and they are not documented
-anywere.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Reviewed-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Reviewed-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/boot/dts/exynos4412-trats2.dts | 72 +++++++++++++++++++--------------
- 1 file changed, 42 insertions(+), 30 deletions(-)
+Changes since v4
+================
+1. New patch: 2/4. Store the current value of opmode in
+   non-shifted form. Along with changes in defines used for opmodes
+   this simplifies everything a lot. Suggested by Javier.
+2. Drop Javier's review-by from patch 1 because I changed the
+   defines to cover both LDO and buck at the same time.
+3. Patch 3/4: adding suspend disable is now simpler - just re-use
+   the existing function.
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index dd9ac66770f7..8067eb447829 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -225,7 +225,6 @@
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1000000>;
- 					regulator-always-on;
--					regulator-mem-on;
- 				};
- 
- 				ldo2_reg: ldo2 {
-@@ -234,7 +233,9 @@
- 					regulator-min-microvolt = <1200000>;
- 					regulator-max-microvolt = <1200000>;
- 					regulator-always-on;
--					regulator-mem-on;
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
- 				};
- 
- 				ldo3_reg: ldo3 {
-@@ -243,7 +244,6 @@
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
- 					regulator-always-on;
--					regulator-mem-on;
- 				};
- 
- 				ldo4_reg: ldo4 {
-@@ -252,7 +252,6 @@
- 					regulator-min-microvolt = <2800000>;
- 					regulator-max-microvolt = <2800000>;
- 					regulator-always-on;
--					regulator-mem-on;
- 				};
- 
- 				ldo5_reg: ldo5 {
-@@ -261,7 +260,6 @@
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
- 					regulator-always-on;
--					regulator-mem-on;
- 				};
- 
- 				ldo6_reg: ldo6 {
-@@ -270,7 +268,9 @@
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1000000>;
- 					regulator-always-on;
--					regulator-mem-on;
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
- 				};
- 
- 				ldo7_reg: ldo7 {
-@@ -279,7 +279,9 @@
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1000000>;
- 					regulator-always-on;
--					regulator-mem-on;
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
- 				};
- 
- 				ldo8_reg: ldo8 {
-@@ -287,7 +289,9 @@
- 					regulator-name = "VMIPI_1.0V";
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1000000>;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				ldo9_reg: ldo9 {
-@@ -295,7 +299,6 @@
- 					regulator-name = "CAM_ISP_MIPI_1.2V";
- 					regulator-min-microvolt = <1200000>;
- 					regulator-max-microvolt = <1200000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo10_reg: ldo10 {
-@@ -303,7 +306,9 @@
- 					regulator-name = "VMIPI_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				ldo11_reg: ldo11 {
-@@ -312,7 +317,9 @@
- 					regulator-min-microvolt = <1950000>;
- 					regulator-max-microvolt = <1950000>;
- 					regulator-always-on;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				ldo12_reg: ldo12 {
-@@ -320,7 +327,9 @@
- 					regulator-name = "VUOTG_3.0V";
- 					regulator-min-microvolt = <3000000>;
- 					regulator-max-microvolt = <3000000>;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				ldo13_reg: ldo13 {
-@@ -328,7 +337,6 @@
- 					regulator-name = "NFC_AVDD_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo14_reg: ldo14 {
-@@ -337,7 +345,9 @@
- 					regulator-min-microvolt = <1950000>;
- 					regulator-max-microvolt = <1950000>;
- 					regulator-always-on;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				ldo15_reg: ldo15 {
-@@ -345,7 +355,9 @@
- 					regulator-name = "VHSIC_1.0V";
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1000000>;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
- 				};
- 
- 				ldo16_reg: ldo16 {
-@@ -353,7 +365,9 @@
- 					regulator-name = "VHSIC_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
- 				};
- 
- 				ldo17_reg: ldo17 {
-@@ -361,7 +375,6 @@
- 					regulator-name = "CAM_SENSOR_CORE_1.2V";
- 					regulator-min-microvolt = <1200000>;
- 					regulator-max-microvolt = <1200000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo18_reg: ldo18 {
-@@ -369,7 +382,6 @@
- 					regulator-name = "CAM_ISP_SEN_IO_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo19_reg: ldo19 {
-@@ -377,7 +389,6 @@
- 					regulator-name = "VT_CAM_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo20_reg: ldo20 {
-@@ -385,7 +396,6 @@
- 					regulator-name = "VDDQ_PRE_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo21_reg: ldo21 {
-@@ -393,7 +403,6 @@
- 					regulator-name = "VTF_2.8V";
- 					regulator-min-microvolt = <2800000>;
- 					regulator-max-microvolt = <2800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo22_reg: ldo22 {
-@@ -408,7 +417,6 @@
- 					regulator-name = "TSP_AVDD_3.3V";
- 					regulator-min-microvolt = <3300000>;
- 					regulator-max-microvolt = <3300000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo24_reg: ldo24 {
-@@ -416,7 +424,6 @@
- 					regulator-name = "TSP_VDD_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo25_reg: ldo25 {
-@@ -424,7 +431,6 @@
- 					regulator-name = "LCD_VCC_3.3V";
- 					regulator-min-microvolt = <2800000>;
- 					regulator-max-microvolt = <2800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo26_reg: ldo26 {
-@@ -432,7 +438,6 @@
- 					regulator-name = "MOTOR_VCC_3.0V";
- 					regulator-min-microvolt = <3000000>;
- 					regulator-max-microvolt = <3000000>;
--					regulator-mem-idle;
- 				};
- 
- 				buck1_reg: buck1 {
-@@ -442,7 +447,9 @@
- 					regulator-max-microvolt = <1100000>;
- 					regulator-always-on;
- 					regulator-boot-on;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				buck2_reg: buck2 {
-@@ -452,7 +459,9 @@
- 					regulator-max-microvolt = <1500000>;
- 					regulator-always-on;
- 					regulator-boot-on;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
- 				};
- 
- 				buck3_reg: buck3 {
-@@ -462,7 +471,9 @@
- 					regulator-max-microvolt = <1150000>;
- 					regulator-always-on;
- 					regulator-boot-on;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				buck4_reg: buck4 {
-@@ -471,7 +482,9 @@
- 					regulator-min-microvolt = <850000>;
- 					regulator-max-microvolt = <1150000>;
- 					regulator-boot-on;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				buck5_reg: buck5 {
-@@ -510,7 +523,6 @@
- 					regulator-name = "CAM_ISP_CORE_1.2V";
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1200000>;
--					regulator-mem-off;
- 				};
- 			};
- 		};
+Changes since v3
+================
+1. Dropped patch 3/4 ("mfd/regulator: dt-bindings: max77686: Document
+   regulators off in suspend"), applied by Lee Jones.
+2. Patch 2/3: Fix missing shift when checking if current opmode is
+   equal to off in suspend. The shift is various so I added a simple
+   function max77686_set_opmode_enable(). Dropped Javier's review-by.
+3. Patch 1/3: Add Javier's review-by.
+4. Patch 3/3: Add Chanwoo's review-by.
+
+Changes since v2
+================
+1. Patch 1/4: Fully describe different values used for controlling
+   the regulators (low power modes, enable, disable). Remove "opmode"
+   from new defines. Suggested by Javier.
+2. Patch 2/4: minor nits after changing patch 1.
+3. Add Javier's reviewed-by to 2, 3 and 4 patch.
+4. Patch 3/4 (changes in documentation) should be picked up by Lee
+   Jones but I'm resending it anyway.
+
+Changes since v1
+================
+1. Add patch 1/4 and 3/4.
+2. Patch 2/4: Extend existing set_suspend_disable (for bucks) with
+   LDO support. Implement set_suspend_enable. Suggested by Javier.
+3. Patch 4/4: Add regulator suspend properties only to regulators
+   actually supporting this. Other regulators, not implementing
+   suspend enable/disable, will warn ("VCC_1.8V_IO: No configuration").
+4. Patch 4/4: In suspend enable VHSIC_1.0V and VHSIC_1.8V regulators.
+   Suggested by Chanwoo Choi.
+
+
+Description
+===========
+This patchset makes use of Javier Martinez Cainllas changes [1].
+It allows disabling some of the regulators during suspend to RAM.
+
+Javier's patchset is necessary only to test it.
+
+[1] [PATCH v3 0/2] ARM: EXYNOS: Call regulator suspend prepare/finish
+    https://lkml.org/lkml/2014/10/20/545
+
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (4):
+  regulator: max77686: Replace hard-coded opmode values with defines
+  regulator: max77686: Store opmode non-shifted
+  regulator: max77686: Implement suspend disable for some LDOs
+  ARM: dts: exynos4412-trats: Add suspend configuration for max77686
+    regulators
+
+ arch/arm/boot/dts/exynos4412-trats2.dts | 72 +++++++++++++++++------------
+ drivers/gpu/arm/mali400/ump/arch        |  1 +
+ drivers/regulator/max77686.c            | 81 +++++++++++++++++++++++++--------
+ 3 files changed, 105 insertions(+), 49 deletions(-)
+ create mode 120000 drivers/gpu/arm/mali400/ump/arch
+
 -- 
 1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
