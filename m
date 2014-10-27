@@ -1,46 +1,43 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v3 4/5] regulator: max77802: Parse regulator operating
- mode properties
-Date: Mon, 27 Oct 2014 00:24:10 +0100
-Message-ID: <544D829A.40407@collabora.co.uk>
-References: <1413816472-1895-1-git-send-email-javier.martinez@collabora.co.uk> <1413816472-1895-5-git-send-email-javier.martinez@collabora.co.uk> <20141022164813.GD2344@sirena.org.uk> <0DA944C5-7A6B-461B-A8E6-D47343D22E0B@collabora.co.uk> <20141024210214.GO3729@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCHv3 0/2] clk: samsung: Add clock controller driver for Exynos4415
+ SoC
+Date: Mon, 27 Oct 2014 10:11:56 +0900
+Message-ID: <1414372318-594-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:56517 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751635AbaJZXYQ (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:16903 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751813AbaJ0BMD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 26 Oct 2014 19:24:16 -0400
-In-Reply-To: <20141024210214.GO3729@sirena.org.uk>
+	Sun, 26 Oct 2014 21:12:03 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: s.nawrocki@samsung.com, tomasz.figa@gmail.com
+Cc: kgene.kim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, inki.dae@samsung.com, geunsik.lim@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hello Mark,
+This patch adds new clock controller device driver for Exynos4415 SoC.
 
-On 10/24/2014 11:02 PM, Mark Brown wrote:
-> On Thu, Oct 23, 2014 at 11:28:09AM +0200, Javier Martinez Canillas wrote:
-> 
-> Please fix your mailer to word wrap within paragraphs - you should know
-> this by now :/  I've reflowed for legibility.
-> 
+Changes from v2:
+- Fix issue by checkpatch.pl
+- Add 'exynos4415' prefix to the name of tables/functions/variables
 
-Sorry about that, I was on holidays last week and sent you that email from
-my phone. Next time I'll wait until I've access to a mailer that I'm sure
-does the right thing before answering you.
+Changes from v1:
+- Separate only clock patches from Exynos4415 patchset[1]
+ [1] [PATCH 0/5] Support new Exynos4415 SoC based on Cortex-A9 quad cores
+  : https://lkml.org/lkml/2014/10/19/253
+- Fix string issue on documentation file of Exynos4415 clock controller
 
->> However this is an implementation detail and should not change the DT
->> bindings in the current version. Could you please let me know if you
->> have any issues with the other patches from this series so I can
->> address all of them when doing a re-spin?
-> 
-> I can't recall anything but I'm not sure I looked at them in any detail.
-> 
+Chanwoo Choi (2):
+  clk: samsung: exynos4415: Add clocks using common clock framework
+  clk: samsung: Document binding for Exynos4415 clock controller
 
-Ok, thanks a lot for the feedback.
+ .../devicetree/bindings/clock/exynos4415-clock.txt |   38 +
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos4415.c               | 1142 ++++++++++++++++++++
+ include/dt-bindings/clock/exynos4415.h             |  360 ++++++
+ 4 files changed, 1541 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos4415-clock.txt
+ create mode 100644 drivers/clk/samsung/clk-exynos4415.c
+ create mode 100644 include/dt-bindings/clock/exynos4415.h
 
-Best regards,
-Javier
+-- 
+1.8.5.5
