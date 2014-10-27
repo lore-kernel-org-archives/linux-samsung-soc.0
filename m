@@ -1,44 +1,51 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv2 0/2] Support new Exynos4415 SoC based on Cortex-A9 quad cores
-Date: Mon, 27 Oct 2014 10:35:57 +0900
-Message-ID: <1414373759-4362-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net, tomasz.figa@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, cw00.choi@samsung.com, m.szyprowski@samsung.com, yj44.cho@samsung.com, jaewon02.kim@samsung.com, ideal.song@samsung.com
+From: Krishna Mohan Dani <krishna.md@samsung.com>
+Subject: [PATCH 0/4] Arndale: Adding Sound Machine Driver for ALC5631 Codec
+Date: Mon, 27 Oct 2014 11:41:07 +0530
+Message-ID: <1414390271-25040-1-git-send-email-krishna.md@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:22457 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750965AbaJ0GMD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Oct 2014 02:12:03 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NE300218AK0IV00@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 27 Oct 2014 15:12:00 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com, broonie@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-This patchset support new Exynos4415 Samsung SoC based on Cortex-A9 quad cores.
-Exynos4415 is a System-On-Chip (SoC) that is based on 32-bit RISC processor
-for Smartphone. It is desigend with the 28nm low-power high-K metal gate process
-and provides the best performance features.
+These patches add machine driver to instantiate I2S based realtek's
+ ALC5631 based sound card on Arndale board.
 
-This patchset include some patches such as:
-- Support booting of Exynos4415
-- Supoort uart/mct/adc/gic/i2c/spi/power-domain/pmu/mshc/ehci/ohci/pwm/amba
+There are other variants of Audio Daughter Cards for Arndale
+Board for which support already exists but there is no support for
+Realtek's alc5631 codec based card hence support for ALC5631 based
+machine driver is being added.
 
-Changes from v1:
-- Remove legacy helper function to identify SoC
-- Separate out the clock patches[2] from Exynos4415 patchset[1] and sent it [2]
-- Separate out the pinctrl patch[3] from Exynos4415 patchset[1] and sent it [3]
- [1] [PATCH 0/5] Support new Exynos4415 SoC based on Cortex-A9 quad cores
-     : https://lkml.org/lkml/2014/10/19/253
- [2] [PATCHv3 1/2] clk: samsung: exynos4415: Add clocks using common clock framework
-     : https://lkml.org/lkml/2014/10/26/159
- [3] [PATCHv2] pinctrl: exynos: Add support for Exynos4415
-     : https://lkml.org/lkml/2014/10/26/160
+Most of the code has been pulled from insignal's git for Arndale and
+modified to suit the maintain syntax. Machine driver has been made
+DT compatible.
 
-Chanwoo Choi (2):
-  ARM: EXYNOS: Add EXYNOS4415 SoC ID
-  ARM: dts: Add dts files for Exynos4415 SoC
+Krishna Mohan Dani (4):
+  ASoC: ALC5631: Add device tree binding documentation
+  Sound: Samsung: Add sound card machine driver for Arndale Board
+  Sound: Kconfig: Adding the description of the codec
+  Sound: DT: Adding Device Tree compatibility to Realtek's ALC5631
+    codec driver
 
- arch/arm/boot/dts/exynos4415-pinctrl.dtsi | 613 +++++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos4415.dtsi         | 627 ++++++++++++++++++++++++++++++
- arch/arm/mach-exynos/Kconfig              |   5 +
- arch/arm/mach-exynos/exynos.c             |   2 +
- 4 files changed, 1247 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos4415-pinctrl.dtsi
- create mode 100644 arch/arm/boot/dts/exynos4415.dtsi
+ Documentation/devicetree/bindings/sound/rt5631.txt |   41 +++++
+ sound/soc/codecs/Kconfig                           |    3 +-
+ sound/soc/codecs/rt5631.c                          |   11 ++
+ sound/soc/samsung/Kconfig                          |    6 +
+ sound/soc/samsung/Makefile                         |    2 +
+ sound/soc/samsung/arndale_rt5631.c                 |  167 ++++++++++++++++++++
+ 6 files changed, 229 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/rt5631.txt
+ create mode 100644 sound/soc/samsung/arndale_rt5631.c
 
 -- 
-1.8.5.5
+1.7.9.5
