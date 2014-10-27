@@ -1,60 +1,47 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: exynos5422-odroid-xu3: MCPM: only 6 of 8 CPUs coming online
-Date: Mon, 27 Oct 2014 12:00:28 -0700
-Message-ID: <7hwq7ll4mr.fsf@deeprootsystems.com>
-References: <7133556.456161412823997169.JavaMail.weblogic@epml02>
-	<7hzjd4lxc5.fsf@deeprootsystems.com>
-	<loom.20141015T133306-266@post.gmane.org>
-	<CAMAWPa8ANvzaC4EfvRbwCZSya6xt=u6qmvN5cF1jhAROTdW3Pg@mail.gmail.com>
-	<54485433.2040008@samsung.com> <54485730.10803@samsung.com>
-	<CAGc3s_cS4zYUtdB=+8bPh2sa4Exy5guzupu-TvgJ_KmuyGGBPg@mail.gmail.com>
-	<54485B99.2000703@samsung.com>
-	<CAGc3s_e86Lx+pF12osoKoROXq4rUNf_GQtfJ8xB9w-X4pGVOmQ@mail.gmail.com>
-	<54485E99.9020004@samsung.com> <54485FDA.8070508@samsung.com>
-	<CAG30XQJ29cM6=OFh=TTbR2rfWGt3AK1o2=PMqdoq6ejUJtUwGA@mail.gmail.com>
-	<A804D1798D614199AFA7AEDC00248EA9@sisodomain.com>
-	<7hfveeaifs.fsf@deeprootsystems.com>
-	<CAM4voakn128LmppJeVbtibwJcwa-TQL8KWhsEDb_DXTZECs48Q@mail.gmail.com>
-	<7hk33p8nkn.fsf@deeprootsystems.com>
-	<CAGc3s_dEk6S82JgSbueML8_68-hdEKhLrY1G0k+kcg+YJ77JmQ@mail.gmail.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 1/8] regulator: max77802: Remove support for board files
+Date: Mon, 27 Oct 2014 20:36:18 +0100
+Message-ID: <544E9EB2.2010408@collabora.co.uk>
+References: <1414422226-10948-1-git-send-email-k.kozlowski@samsung.com> <1414422226-10948-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f170.google.com ([209.85.192.170]:64987 "EHLO
-	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751892AbaJ0TAd (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:57767 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752116AbaJ0Tg0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Oct 2014 15:00:33 -0400
-Received: by mail-pd0-f170.google.com with SMTP id z10so6181032pdj.15
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Oct 2014 12:00:32 -0700 (PDT)
-In-Reply-To: <CAGc3s_dEk6S82JgSbueML8_68-hdEKhLrY1G0k+kcg+YJ77JmQ@mail.gmail.com>
-	(Mauro Ribeiro's message of "Sat, 25 Oct 2014 10:47:05 -0200")
+	Mon, 27 Oct 2014 15:36:26 -0400
+In-Reply-To: <1414422226-10948-2-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mauro Ribeiro <mdrjr0@gmail.com>
-Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhijeet Dev <abhijeet@abhijeet-dev.net>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Chander Kashyap <k.chander@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Mauro Ribeiro <mdrjr0@gmail.com> writes:
+Hello Krzysztof,
 
-> As I wrote you previously outside the list this is the commit "ARM:
-> EXYNOS: SWRESET is needed to boot secondary CPU on exynos3250" that I
-> was expecting it to fix XU3 as well and apparently it is..
+On 10/27/2014 04:03 PM, Krzysztof Kozlowski wrote:
+> The driver is used only on Exynos based boards with DTS support.
+> Convert the driver to DTS-only version.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/regulator/max77802.c | 44 +++++++++++++++-----------------------------
+>  1 file changed, 15 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/regulator/max77802.c b/drivers/regulator/max77802.c
+> index 5839c4509e1f..61d03e9f8acf 100644
+> --- a/drivers/regulator/max77802.c
+> +++ b/drivers/regulator/max77802.c
 
-I'm not sure about that, since I haven't been able to get that to work.
+The original ChromeOS max77xxx driver supported both DT and platform data
+configuration and that's why the max77802 driver was not DT-only.
 
-> Next week if everything goes as I plan I'll check if I can use the
-> same code to enable the A7's on XU3 as well.
-> If its possible to use the same code I'll try to upstream this next week.
+But I looked at the ChromeOS kernel now and indeed even in that tree there
+are no board files using the max77802 platform data so I agree that it
+should be removed.
 
-Excellent.  I'd love to see a patch against mainline that using that
-function that works on the XU3.  Note that mainline is using MCPM and
-that patch solves the problem for the older platsmp method.
+Acked-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-> It would be nice if Samsung could tell what in our u-boot (provided by
-> LSI) is needed to be changed as I can just push any changes to our
-> u-boot.
-
-Yes, I completely agree.  This seems to me like a bootloader bug and the
-best solution here would be to have a bootloader fix.
-
-Kevin
+Best regards,
+Javier
