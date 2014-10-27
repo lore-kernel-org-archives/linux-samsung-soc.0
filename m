@@ -1,8 +1,7 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 7/8] mfd/regulator: dt-bindings: max77686: Document gpio
- property
-Date: Mon, 27 Oct 2014 16:03:45 +0100
-Message-ID: <1414422226-10948-8-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH 1/8] regulator: max77802: Remove support for board files
+Date: Mon, 27 Oct 2014 16:03:39 +0100
+Message-ID: <1414422226-10948-2-git-send-email-k.kozlowski@samsung.com>
 References: <1414422226-10948-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1414422226-10948-1-git-send-email-k.kozlowski@samsung.com>
@@ -11,27 +10,122 @@ To: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam
 Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Document usage of gpio property which turns on external control over
-regulator.
+The driver is used only on Exynos based boards with DTS support.
+Convert the driver to DTS-only version.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- Documentation/devicetree/bindings/mfd/max77686.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/regulator/max77802.c | 44 +++++++++++++++-----------------------------
+ 1 file changed, 15 insertions(+), 29 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Documentation/devicetree/bindings/mfd/max77686.txt
-index 75fdfaf41831..e41dfa7e2b90 100644
---- a/Documentation/devicetree/bindings/mfd/max77686.txt
-+++ b/Documentation/devicetree/bindings/mfd/max77686.txt
-@@ -39,6 +39,9 @@ to get matched with their hardware counterparts as follow:
- 	-BUCKn	:	1-4.
-   Use standard regulator bindings for it ('regulator-off-in-suspend').
+diff --git a/drivers/regulator/max77802.c b/drivers/regulator/max77802.c
+index 5839c4509e1f..61d03e9f8acf 100644
+--- a/drivers/regulator/max77802.c
++++ b/drivers/regulator/max77802.c
+@@ -70,6 +70,9 @@ static unsigned int ramp_table_77802_4bit[] = {
+ };
  
-+  Optional properties:
-+  - gpio : GPIO to use for external control. Valid only for LDO20, LDO21,
-+    LDO22, BUCK8 and BUCK9 regulators.
+ struct max77802_regulator_prv {
++	struct max77686_regulator_data *regulators;
++	int num_regulators;
++
+ 	unsigned int opmode[MAX77802_REG_MAX];
+ };
  
- Example:
+@@ -517,9 +520,8 @@ static struct regulator_desc regulators[] = {
+ 	regulator_77802_desc_n_ldo(35, 2, 1),
+ };
  
+-#ifdef CONFIG_OF
+-static int max77802_pmic_dt_parse_pdata(struct platform_device *pdev,
+-					struct max77686_platform_data *pdata)
++static int max77802_pmic_dt_parse(struct platform_device *pdev,
++				struct max77802_regulator_prv *max77802)
+ {
+ 	struct max77686_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+ 	struct device_node *pmic_np, *regulators_np;
+@@ -534,15 +536,15 @@ static int max77802_pmic_dt_parse_pdata(struct platform_device *pdev,
+ 		return -EINVAL;
+ 	}
+ 
+-	pdata->num_regulators = ARRAY_SIZE(regulators);
++	max77802->num_regulators = ARRAY_SIZE(regulators);
+ 	rdata = devm_kzalloc(&pdev->dev, sizeof(*rdata) *
+-			     pdata->num_regulators, GFP_KERNEL);
++			     max77802->num_regulators, GFP_KERNEL);
+ 	if (!rdata) {
+ 		of_node_put(regulators_np);
+ 		return -ENOMEM;
+ 	}
+ 
+-	for (i = 0; i < pdata->num_regulators; i++) {
++	for (i = 0; i < max77802->num_regulators; i++) {
+ 		rmatch.name = regulators[i].name;
+ 		rmatch.init_data = NULL;
+ 		rmatch.of_node = NULL;
+@@ -557,44 +559,28 @@ static int max77802_pmic_dt_parse_pdata(struct platform_device *pdev,
+ 		rdata[i].id = regulators[i].id;
+ 	}
+ 
+-	pdata->regulators = rdata;
++	max77802->regulators = rdata;
+ 	of_node_put(regulators_np);
+ 
+ 	return 0;
+ }
+-#else
+-static int max77802_pmic_dt_parse_pdata(struct platform_device *pdev,
+-					struct max77686_platform_data *pdata)
+-{
+-	return 0;
+-}
+-#endif /* CONFIG_OF */
+ 
+ static int max77802_pmic_probe(struct platform_device *pdev)
+ {
+ 	struct max77686_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+-	struct max77686_platform_data *pdata = dev_get_platdata(iodev->dev);
+ 	struct max77802_regulator_prv *max77802;
+ 	int i, ret = 0, val;
+ 	struct regulator_config config = { };
+ 
+-	/* This is allocated by the MFD driver */
+-	if (!pdata) {
+-		dev_err(&pdev->dev, "no platform data found for regulator\n");
+-		return -ENODEV;
+-	}
+-
+ 	max77802 = devm_kzalloc(&pdev->dev,
+ 				sizeof(struct max77802_regulator_prv),
+ 				GFP_KERNEL);
+ 	if (!max77802)
+ 		return -ENOMEM;
+ 
+-	if (iodev->dev->of_node) {
+-		ret = max77802_pmic_dt_parse_pdata(pdev, pdata);
+-		if (ret)
+-			return ret;
+-	}
++	ret = max77802_pmic_dt_parse(pdev, max77802);
++	if (ret)
++		return ret;
+ 
+ 	config.dev = iodev->dev;
+ 	config.regmap = iodev->regmap;
+@@ -603,11 +589,11 @@ static int max77802_pmic_probe(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < MAX77802_REG_MAX; i++) {
+ 		struct regulator_dev *rdev;
+-		int id = pdata->regulators[i].id;
++		int id = max77802->regulators[i].id;
+ 		int shift = max77802_get_opmode_shift(id);
+ 
+-		config.init_data = pdata->regulators[i].initdata;
+-		config.of_node = pdata->regulators[i].of_node;
++		config.init_data = max77802->regulators[i].initdata;
++		config.of_node = max77802->regulators[i].of_node;
+ 
+ 		ret = regmap_read(iodev->regmap, regulators[i].enable_reg, &val);
+ 		val = val >> shift & MAX77802_OPMODE_MASK;
 -- 
 1.9.1
