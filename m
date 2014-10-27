@@ -1,7 +1,8 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH 1/8] regulator: max77802: Remove support for board files
-Date: Mon, 27 Oct 2014 16:03:39 +0100
-Message-ID: <1414422226-10948-2-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH 8/8] ARM: dts: exynos4412-trats: Switch max77686 regulators to
+ GPIO control
+Date: Mon, 27 Oct 2014 16:03:46 +0100
+Message-ID: <1414422226-10948-9-git-send-email-k.kozlowski@samsung.com>
 References: <1414422226-10948-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1414422226-10948-1-git-send-email-k.kozlowski@samsung.com>
@@ -10,122 +11,101 @@ To: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam
 Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The driver is used only on Exynos based boards with DTS support.
-Convert the driver to DTS-only version.
+Remove fixed regulators (duplicating what max77686 provides) and
+add GPIO control to max77686 regulators.
+
+This gives the system full control over those regulators. Previously
+the state of such regulators was a mixture of what max77686 driver set
+over I2C and what regulator-fixed set through GPIO.
+
+Removal of 'regulator-always-on' from CAM_ISP_CORE_1.2V (buck9) allows
+disabling it when it is not used. Previously this regulator was always
+enabled because its enable state is a OR of:
+ - ENB9 GPIO (turned by regulator-fixed),
+ - BUCK9EN field in BUCK9CTRL register (max77686 through I2C).
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/regulator/max77802.c | 44 +++++++++++++++-----------------------------
- 1 file changed, 15 insertions(+), 29 deletions(-)
+ arch/arm/boot/dts/exynos4412-trats2.dts | 25 +++++--------------------
+ 1 file changed, 5 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/regulator/max77802.c b/drivers/regulator/max77802.c
-index 5839c4509e1f..61d03e9f8acf 100644
---- a/drivers/regulator/max77802.c
-+++ b/drivers/regulator/max77802.c
-@@ -70,6 +70,9 @@ static unsigned int ramp_table_77802_4bit[] = {
- };
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 7a68e0832cd6..ac1baff7130d 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -58,15 +58,6 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  
- struct max77802_regulator_prv {
-+	struct max77686_regulator_data *regulators;
-+	int num_regulators;
-+
- 	unsigned int opmode[MAX77802_REG_MAX];
- };
- 
-@@ -517,9 +520,8 @@ static struct regulator_desc regulators[] = {
- 	regulator_77802_desc_n_ldo(35, 2, 1),
- };
- 
--#ifdef CONFIG_OF
--static int max77802_pmic_dt_parse_pdata(struct platform_device *pdev,
--					struct max77686_platform_data *pdata)
-+static int max77802_pmic_dt_parse(struct platform_device *pdev,
-+				struct max77802_regulator_prv *max77802)
- {
- 	struct max77686_dev *iodev = dev_get_drvdata(pdev->dev.parent);
- 	struct device_node *pmic_np, *regulators_np;
-@@ -534,15 +536,15 @@ static int max77802_pmic_dt_parse_pdata(struct platform_device *pdev,
- 		return -EINVAL;
- 	}
- 
--	pdata->num_regulators = ARRAY_SIZE(regulators);
-+	max77802->num_regulators = ARRAY_SIZE(regulators);
- 	rdata = devm_kzalloc(&pdev->dev, sizeof(*rdata) *
--			     pdata->num_regulators, GFP_KERNEL);
-+			     max77802->num_regulators, GFP_KERNEL);
- 	if (!rdata) {
- 		of_node_put(regulators_np);
- 		return -ENOMEM;
- 	}
- 
--	for (i = 0; i < pdata->num_regulators; i++) {
-+	for (i = 0; i < max77802->num_regulators; i++) {
- 		rmatch.name = regulators[i].name;
- 		rmatch.init_data = NULL;
- 		rmatch.of_node = NULL;
-@@ -557,44 +559,28 @@ static int max77802_pmic_dt_parse_pdata(struct platform_device *pdev,
- 		rdata[i].id = regulators[i].id;
- 	}
- 
--	pdata->regulators = rdata;
-+	max77802->regulators = rdata;
- 	of_node_put(regulators_np);
- 
- 	return 0;
- }
--#else
--static int max77802_pmic_dt_parse_pdata(struct platform_device *pdev,
--					struct max77686_platform_data *pdata)
--{
--	return 0;
--}
--#endif /* CONFIG_OF */
- 
- static int max77802_pmic_probe(struct platform_device *pdev)
- {
- 	struct max77686_dev *iodev = dev_get_drvdata(pdev->dev.parent);
--	struct max77686_platform_data *pdata = dev_get_platdata(iodev->dev);
- 	struct max77802_regulator_prv *max77802;
- 	int i, ret = 0, val;
- 	struct regulator_config config = { };
- 
--	/* This is allocated by the MFD driver */
--	if (!pdata) {
--		dev_err(&pdev->dev, "no platform data found for regulator\n");
--		return -ENODEV;
--	}
+-		vemmc_reg: regulator-0 {
+-			compatible = "regulator-fixed";
+-			regulator-name = "VMEM_VDD_2.8V";
+-			regulator-min-microvolt = <2800000>;
+-			regulator-max-microvolt = <2800000>;
+-			gpio = <&gpk0 2 0>;
+-			enable-active-high;
+-		};
 -
- 	max77802 = devm_kzalloc(&pdev->dev,
- 				sizeof(struct max77802_regulator_prv),
- 				GFP_KERNEL);
- 	if (!max77802)
- 		return -ENOMEM;
+ 		cam_io_reg: voltage-regulator-1 {
+ 			compatible = "regulator-fixed";
+ 			regulator-name = "CAM_SENSOR_A";
+@@ -94,16 +85,6 @@
+ 			enable-active-high;
+ 		};
  
--	if (iodev->dev->of_node) {
--		ret = max77802_pmic_dt_parse_pdata(pdev, pdata);
--		if (ret)
--			return ret;
--	}
-+	ret = max77802_pmic_dt_parse(pdev, max77802);
-+	if (ret)
-+		return ret;
+-		cam_isp_core_reg: voltage-regulator-4 {
+-			compatible = "regulator-fixed";
+-			regulator-name = "CAM_ISP_CORE_1.2V_EN";
+-			regulator-min-microvolt = <1200000>;
+-			regulator-max-microvolt = <1200000>;
+-			gpio = <&gpm0 3 0>;
+-			enable-active-high;
+-			regulator-always-on;
+-		};
+-
+ 		ps_als_reg: voltage-regulator-5 {
+ 			compatible = "regulator-fixed";
+ 			regulator-name = "LED_A_3.0V";
+@@ -405,6 +386,7 @@
+ 					regulator-name = "VTF_2.8V";
+ 					regulator-min-microvolt = <2800000>;
+ 					regulator-max-microvolt = <2800000>;
++					gpio = <&gpy2 0 0>;
+ 				};
  
- 	config.dev = iodev->dev;
- 	config.regmap = iodev->regmap;
-@@ -603,11 +589,11 @@ static int max77802_pmic_probe(struct platform_device *pdev)
+ 				ldo22_reg: ldo22 {
+@@ -412,6 +394,7 @@
+ 					regulator-name = "VMEM_VDD_2.8V";
+ 					regulator-min-microvolt = <2800000>;
+ 					regulator-max-microvolt = <2800000>;
++					gpio = <&gpk0 2 0>;
+ 				};
  
- 	for (i = 0; i < MAX77802_REG_MAX; i++) {
- 		struct regulator_dev *rdev;
--		int id = pdata->regulators[i].id;
-+		int id = max77802->regulators[i].id;
- 		int shift = max77802_get_opmode_shift(id);
+ 				ldo23_reg: ldo23 {
+@@ -518,6 +501,7 @@
+ 					regulator-name = "VMEM_VDDF_3.0V";
+ 					regulator-min-microvolt = <2850000>;
+ 					regulator-max-microvolt = <2850000>;
++					gpio = <&gpk0 2 0>;
+ 				};
  
--		config.init_data = pdata->regulators[i].initdata;
--		config.of_node = pdata->regulators[i].of_node;
-+		config.init_data = max77802->regulators[i].initdata;
-+		config.of_node = max77802->regulators[i].of_node;
- 
- 		ret = regmap_read(iodev->regmap, regulators[i].enable_reg, &val);
- 		val = val >> shift & MAX77802_OPMODE_MASK;
+ 				buck9_reg: buck9 {
+@@ -525,6 +509,7 @@
+ 					regulator-name = "CAM_ISP_CORE_1.2V";
+ 					regulator-min-microvolt = <1000000>;
+ 					regulator-max-microvolt = <1200000>;
++					gpio = <&gpm0 3 0>;
+ 				};
+ 			};
+ 		};
+@@ -591,7 +576,7 @@
+ 		broken-cd;
+ 		non-removable;
+ 		card-detect-delay = <200>;
+-		vmmc-supply = <&vemmc_reg>;
++		vmmc-supply = <&ldo22_reg>;
+ 		clock-frequency = <400000000>;
+ 		samsung,dw-mshc-ciu-div = <0>;
+ 		samsung,dw-mshc-sdr-timing = <2 3>;
 -- 
 1.9.1
