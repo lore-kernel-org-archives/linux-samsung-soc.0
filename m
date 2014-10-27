@@ -1,61 +1,66 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH V7 03/12] drm/bridge: Add helper functions for drm_bridge
-Date: Mon, 27 Oct 2014 23:26:30 +0100
-Message-ID: <CAKMK7uEtNMOTg2j9XYN91_gRWWxHCfnb57HHpsdXki+T-rvwYg@mail.gmail.com>
-References: <1409149783-12416-1-git-send-email-ajaykumar.rs@samsung.com>
- <1409149783-12416-4-git-send-email-ajaykumar.rs@samsung.com>
- <20141027190137.GT26941@phenom.ffwll.local>
- <CAOw6vbLNOqp=X4epwDPb7zT-j2+oUuLoeV2S=x+oGPLQwK+Z7Q@mail.gmail.com>
- <CAKMK7uEch65=ZuaG=4JY2u3S3w5RND+uNc5+qL=tWxDLfEqEwQ@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv4 0/3] ARM: dts: Add new board dts file for
+ Exynos3250-based Rinato board
+Date: Tue, 28 Oct 2014 08:43:49 +0900
+Message-ID: <544ED8B5.3090607@samsung.com>
+References: <1414156362-5752-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAKMK7uEch65=ZuaG=4JY2u3S3w5RND+uNc5+qL=tWxDLfEqEwQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sean Paul <seanpaul@chromium.org>, Thierry Reding <treding@nvidia.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:24750 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752369AbaJ0Xnw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Oct 2014 19:43:52 -0400
+In-reply-to: <1414156362-5752-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net, tomasz.figa@gmail.com, geunsik.lim@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-T24gTW9uLCBPY3QgMjcsIDIwMTQgYXQgMTE6MjAgUE0sIERhbmllbCBWZXR0ZXIgPGRhbmllbEBm
-ZndsbC5jaD4gd3JvdGU6Cj4gT24gTW9uLCBPY3QgMjcsIDIwMTQgYXQgODo1OCBQTSwgU2VhbiBQ
-YXVsIDxzZWFucGF1bEBjaHJvbWl1bS5vcmc+IHdyb3RlOgo+Pj4+IEBAIC02NjAsOCArNjYyLDEx
-IEBAIHN0cnVjdCBkcm1fYnJpZGdlX2Z1bmNzIHsKPj4+PiAgICogQGRyaXZlcl9wcml2YXRlOiBw
-b2ludGVyIHRvIHRoZSBicmlkZ2UgZHJpdmVyJ3MgaW50ZXJuYWwgY29udGV4dAo+Pj4+ICAgKi8K
-Pj4+PiAgc3RydWN0IGRybV9icmlkZ2Ugewo+Pj4+IC0gICAgIHN0cnVjdCBkcm1fZGV2aWNlICpk
-ZXY7Cj4+Pj4gKyAgICAgc3RydWN0IGRldmljZSAqZGV2Owo+Pj4KPj4+IFBsZWFzZSBkb24ndCBy
-ZW5hbWUgdGhlIC0+ZGV2IHBvaW50ZXIgaW50byBkcm0uIEJlY2F1c2UgX2FsbF8gdGhlIG90aGVy
-Cj4+PiBkcm0gc3RydWN0dXJlcyBzdGlsbCBjYWxsIGl0IC0+ZGV2LiBBbHNvLCBjYW4ndCB3ZSB1
-c2Ugc3RydWN0IGRldmljZV9ub2RlCj4+PiBoZXJlIGxpa2Ugd2UgZG8gaW4gdGhlIG9mIGhlbHBl
-cnMgUnVzc2VsbCBhZGRlZD8gU2VlIDdlNDM1YWFkMzgwODMKPj4+Cj4+Cj4+IEkgdGhpbmsgdGhp
-cyBpcyBtb2RlbGVkIGFmdGVyIHRoZSBuYW1pbmcgaW4gZHJtX3BhbmVsLCBGV0lXLiBIb3dldmVy
-LAo+PiBzZWVtcyByZWFzb25hYmxlIHRvIGtlZXAgdGhlIGRldmljZV9ub2RlIGluc3RlYWQuCj4K
-PiBIbSwgaW5kZWVkLiBUYmggSSB2b3RlIHRvIHJlbmFtZSBkcm1fcGFuZWwtPmRybSB0byAtPmRl
-diBhbmQgbGlrZSB3aXRoCj4gZHJtX2NydGMgZHJvcCB0aGUgc3RydWN0IGRldmljZSBhbmQgZ28g
-ZGlyZWN0bHkgdG8gYSBzdHJ1Y3QKPiBkZXZpY2Vfbm9kZS4gU2luY2Ugd2UgZG9uJ3QgcmVhbGx5
-IG5lZWQgdGhlIHN0dXJjdCBkZXZpY2UsIHRoZSBvbmx5Cj4gdGhpbmcgd2UgY2FyZSBhYm91dCBp
-cyB0aGUgb2Zfbm9kZS4gRm9yIGFkZGVkIGJvbnVzIHdyYXAgYW4gI2lmZGVmCj4gQ09ORklHX09G
-IGFyb3VuZCBhbGwgdGhlIHZhcmlvdXMgc3RydWN0IGRldmljZV9ub2RlIGluIGRybV9mb28uaC4K
-PiBTaG91bGQgYmUgYWxsIGZhaXJseSBzaW1wbGUgdG8gcHVsbCBvZmYgd2l0aCBjb2NjaS4KPgo+
-IFRoaWVycnk/CgpMb29raW5nIGF0IHRoZSBvZl9kcm1fZmluZF9wYW5lbCBmdW5jdGlvbiBJIGFj
-dHVhbGx5IHdvbmRlciBob3cgdGhhdAp3b3JrcyAtIHRoZSBkcm1fcGFuZWwgZG9lc24ndCByZWFs
-bHkgbmVlZCB0byBzdGljayBhcm91bmQgYWZhaWNzLgpBZnRlciBhbGwgcGFuZWxfbGlzdCBpcyBn
-bG9iYWwgc28gc29tZSBvdGhlciBkcml2ZXIgY2FuIHVubG9hZC4KUnVzc2VsbCdzIG9mIHN1cHBv
-cnQgZm9yIHBvc3NpYmxlX2NydGNzIGNvZGUgd29ya3MgZGlmZmVyZW50bHkgc2luY2UKaXQgb25s
-eSBsb29rcyBhdCBwZXItZHJtX2RldmljZSBsaXN0cy4KClRoaXMgYnJpZGdlIGNvZGUgaGVyZSB0
-aG91Z2ggc3VmZmVycyBmcm9tIHRoZSBzYW1lLiBTbyB0byBtZSB0aGlzCmxvb2tzIHJhdGhlciBm
-aXNoeS4KCkl0IGRvZXNuJ3QgaGVscCB0aGF0IHdlIGhhdmUgZHJtX29mLltoY10gYXJvdW5kIGJ1
-dCBub3QgYWxsIHRoZSBvZgpjb2RlIGlzIGluIHRoZXJlLiBBZGRpbmcgUnVzc2VsbCB0b28uCi1E
-YW5pZWwKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0
-aW9uCis0MSAoMCkgNzkgMzY1IDU3IDQ4IC0gaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVz
-a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Dear Kukjin,
+
+Did you please pick up this patchset on 3.19 queue?
+
+Best Regards,
+Chanwoo Choi
+
+On 10/24/2014 10:12 PM, Chanwoo Choi wrote:
+> This patchset adds new board dts file for Samsung Rinato board (Gear 2) which
+> is based on Exynos3250 SoC and adds sleep mode pin configuration using pinctrl
+> subsystem to reduce leakage power-consumption in sleep state.
+> 
+> This patchset is based on linux-samsung.git (for-next branch).
+> 
+> Changes from v3:
+> - Fix wrong email address
+> - Remove 'vemmc_reg' fixed regulator and then use 'ldo12_reg' for mshc_0 
+> 
+> Changes from v2:
+> - Separate patch3 from patchset[1] and then this patchset includes patch3.
+>   After applied patch3, the power-consumption of Rinato board is 0.6mA in suspend state.
+>   [1] [PATCHv5 0/3] regulator: of: Add support for parsing regulator suspend state
+>   : https://lkml.org/lkml/2014/10/10/161
+> - Change PDN (Power-down mode) state for GPE0-3 (BT_UART_RTS) because Rinato
+>   board uses UART1 for bluetooth device. BT_UART_RTS pin should be disabled in
+>   suspend state by setting high state of GPE0-3
+> - Turn on always the regulator state of VAP_VMIPI_1.0V because if VAP_VMIPI_1.0V
+>   is off state or would be not controlled by DRM driver, happen imprecise external abort.
+> 
+> Changes from v1:
+> - Remove useless brace
+> - Remove unneeded 'regulators' keyword
+> - Consolidate memory information in one entry
+> 
+> Chanwoo Choi (3):
+>   ARM: dts: Add board dts file for Exynos3250-based Rinato board
+>   ARM: dts: Add sleep mode pin configuration for exynos3250-rinato
+>   ARM: dts: Add sleep mode of regulator for exynos3250-rinato board
+> 
+>  arch/arm/boot/dts/Makefile                |   3 +-
+>  arch/arm/boot/dts/exynos3250-pinctrl.dtsi |  16 +
+>  arch/arm/boot/dts/exynos3250-rinato.dts   | 686 ++++++++++++++++++++++++++++++
+>  3 files changed, 704 insertions(+), 1 deletion(-)
+>  create mode 100644 arch/arm/boot/dts/exynos3250-rinato.dts
+> 
