@@ -1,97 +1,36 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH V7 03/12] drm/bridge: Add helper functions for drm_bridge
-Date: Mon, 27 Oct 2014 15:58:10 -0400
-Message-ID: <CAOw6vbLNOqp=X4epwDPb7zT-j2+oUuLoeV2S=x+oGPLQwK+Z7Q@mail.gmail.com>
-References: <1409149783-12416-1-git-send-email-ajaykumar.rs@samsung.com>
- <1409149783-12416-4-git-send-email-ajaykumar.rs@samsung.com>
- <20141027190137.GT26941@phenom.ffwll.local>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 6/8] regulator: max77686: Add external GPIO control
+Date: Mon, 27 Oct 2014 21:03:06 +0100
+Message-ID: <544EA4FA.6040704@collabora.co.uk>
+References: <1414422226-10948-1-git-send-email-k.kozlowski@samsung.com> <1414422226-10948-7-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20141027190137.GT26941@phenom.ffwll.local>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:57830 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751935AbaJ0UDS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Oct 2014 16:03:18 -0400
+In-Reply-To: <1414422226-10948-7-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-T24gTW9uLCBPY3QgMjcsIDIwMTQgYXQgMzowMSBQTSwgRGFuaWVsIFZldHRlciA8ZGFuaWVsQGZm
-d2xsLmNoPiB3cm90ZToKPiBTbyBkb24ndCBhc2sgd2h5IGJ1dCBJIGFjY2lkZW50YWxseSBlbmRl
-ZCB1cCBpbiBhIGJyYW5jaCBsb29raW5nIGF0IHRoaXMKPiBwYXRjaCBhbmQgZGlkbid0IGxpa2Ug
-aXQuIFNvIHZlcnkgcXVpY2smZ3J1bXB5IHJldmlldy4KPgo+IEZpcnN0LCBwbGVhc2UgbWFrZSB0
-aGUgcGF0Y2ggc3ViamVjdCBtb3JlIGRlc2NyaXB0aXZlOiBJJ2QgZXhwZWN0IGEgaGVscGVyCj4g
-ZnVuY3Rpb24gc2NhZmZvbGRpbmcgbGlrZSB0aGUgdmFyaW91cyBjcnRjL3Byb2JlL2RwIC4uLiBo
-ZWxwZXJzIHdlIGFscmVhZHkKPiBoYXZlLiBZb3UgaW5zdGVhZCBhZGQgY29kZSB0byB1bnRhbmds
-ZSB0aGUgcHJvYmUgb3JkZXJpbmcuIFBsZWFzZSBzYXkgc28uCj4KPiBNb3JlIGNvbW1lbnRzIGJl
-bG93Lgo+Cj4gT24gV2VkLCBBdWcgMjcsIDIwMTQgYXQgMDc6NTk6MzdQTSArMDUzMCwgQWpheSBL
-dW1hciB3cm90ZToKPj4gQSBzZXQgb2YgaGVscGVyIGZ1bmN0aW9ucyBhcmUgZGVmaW5lZCBpbiB0
-aGlzIHBhdGNoIHRvIG1ha2UKPj4gYnJpZGdlIGRyaXZlciBwcm9iZSBpbmRlcGVuZGVudCBvZiB0
-aGUgZHJtIGZsb3cuCj4+Cj4+IFRoZSBicmlkZ2UgZGV2aWNlcyByZWdpc3RlciB0aGVtc2VsdmVz
-IG9uIGEgbG9va3VwIHRhYmxlCj4+IHdoZW4gdGhleSBnZXQgcHJvYmVkIGJ5IGNhbGxpbmcgImRy
-bV9icmlkZ2VfYWRkIi4KPj4KPj4gVGhlIHBhcmVudCBlbmNvZGVyIGRyaXZlciB3YWl0cyB0aWxs
-IHRoZSBicmlkZ2UgaXMgYXZhaWxhYmxlCj4+IGluIHRoZSBsb29rdXAgdGFibGUoYnkgY2FsbGlu
-ZyAib2ZfZHJtX2ZpbmRfYnJpZGdlIikgYW5kIHRoZW4KPj4gY29udGludWVzIHdpdGggaXRzIGlu
-aXRpYWxpemF0aW9uLgo+Pgo+PiBUaGUgZW5jb2RlciBkcml2ZXIgc2hvdWxkIGFsc28gY2FsbCAi
-ZHJtX2JyaWRnZV9hdHRhY2giIHRvIHBhc3MKPj4gb24gdGhlIGRybV9kZXZpY2UsIGVuY29kZXIg
-cG9pbnRlcnMgdG8gdGhlIGJyaWRnZSBvYmplY3QuCj4+Cj4+IGRybV9icmlkZ2VfYXR0YWNoIGlu
-dHVybiBjYWxscyBkcm1fYnJpZGdlX2luaXQgdG8gcmVnaXN0ZXIgaXRzZWxmCj4+IHdpdGggdGhl
-IGRybSBjb3JlLiBMYXRlciwgaXQgY2FsbHMgImJyaWRnZS0+ZnVuY3MtPmF0dGFjaCIgc28gdGhh
-dAo+PiBicmlkZ2UgY2FuIGNvbnRpbnVlIHdpdGggb3RoZXIgaW5pdGlhbGl6YXRpb25zLgo+Pgo+
-PiBTaWduZWQtb2ZmLWJ5OiBBamF5IEt1bWFyIDxhamF5a3VtYXIucnNAc2Ftc3VuZy5jb20+Cj4K
-PiBbc25pcF0KPgo+PiBAQCAtNjYwLDggKzY2MiwxMSBAQCBzdHJ1Y3QgZHJtX2JyaWRnZV9mdW5j
-cyB7Cj4+ICAgKiBAZHJpdmVyX3ByaXZhdGU6IHBvaW50ZXIgdG8gdGhlIGJyaWRnZSBkcml2ZXIn
-cyBpbnRlcm5hbCBjb250ZXh0Cj4+ICAgKi8KPj4gIHN0cnVjdCBkcm1fYnJpZGdlIHsKPj4gLSAg
-ICAgc3RydWN0IGRybV9kZXZpY2UgKmRldjsKPj4gKyAgICAgc3RydWN0IGRldmljZSAqZGV2Owo+
-Cj4gUGxlYXNlIGRvbid0IHJlbmFtZSB0aGUgLT5kZXYgcG9pbnRlciBpbnRvIGRybS4gQmVjYXVz
-ZSBfYWxsXyB0aGUgb3RoZXIKPiBkcm0gc3RydWN0dXJlcyBzdGlsbCBjYWxsIGl0IC0+ZGV2LiBB
-bHNvLCBjYW4ndCB3ZSB1c2Ugc3RydWN0IGRldmljZV9ub2RlCj4gaGVyZSBsaWtlIHdlIGRvIGlu
-IHRoZSBvZiBoZWxwZXJzIFJ1c3NlbGwgYWRkZWQ/IFNlZSA3ZTQzNWFhZDM4MDgzCj4KCkkgdGhp
-bmsgdGhpcyBpcyBtb2RlbGVkIGFmdGVyIHRoZSBuYW1pbmcgaW4gZHJtX3BhbmVsLCBGV0lXLiBI
-b3dldmVyLApzZWVtcyByZWFzb25hYmxlIHRvIGtlZXAgdGhlIGRldmljZV9ub2RlIGluc3RlYWQu
-Cgo+PiArICAgICBzdHJ1Y3QgZHJtX2RldmljZSAqZHJtOwo+PiArICAgICBzdHJ1Y3QgZHJtX2Vu
-Y29kZXIgKmVuY29kZXI7Cj4KPiBUaGlzIGJyZWFrcyBicmlkZ2UtPmJyaWRnZSBjaGFpbmluZyAo
-aWYgd2UgZXZlciBnZXQgdGhlcmUpLiBJdCBzZWVtcwo+IHByZXR0eSBtdWNoIHVudXNlZCBhbnl3
-YXkgZXhjZXB0IGZvciBhbiBFQlVTWSBjaGVjay4gQ2FuJ3QgeW91IHVzZQo+IGJyaWRnZS0+ZGV2
-IGZvciB0aGF0Pwo+CgpZZWFoLCBJJ2QgcHJlZmVyIHRvIHBhc3MgZHJtX2RldmljZSBkaXJlY3Rs
-eSBpbnRvIGRybV9icmlkZ2VfYXR0YWNoCmFuZCBsZWF2ZSBpdCB1cCB0byB0aGUgY2FsbGVyIHRv
-IGVzdGFibGlzaCB0aGUgcHJvcGVyIGNoYWluLgoKPj4gICAgICAgc3RydWN0IGxpc3RfaGVhZCBo
-ZWFkOwo+PiArICAgICBzdHJ1Y3QgbGlzdF9oZWFkIGxpc3Q7Cj4KPiBUaGVzZSBsaXN0cyBuZWVk
-IGJldHRlciBuYW1lcy4gSSBrbm93IHRoYXQgdGhlICJoZWFkIiBpcyByZWFsbHkgYXdmdWwsCj4g
-ZXNwZWNpYWxseSBzaW5jZSBpdCdzIGFjdHVhbGx5IG5vdCB0aGUgaGVhZCBvZiB0aGUgbGlzdCBi
-dXQganVzdCBhbgo+IGVsZW1lbnQuCgpJIHRoaW5rIHdlIGNhbiBqdXN0IHJpcCBicmlkZ2VfbGlz
-dCBvdXQgb2YgbW9kZV9jb25maWcgaWYgd2UncmUgZ29pbmcKdG8ga2VlcCB0cmFjayBvZiBicmlk
-Z2VzIGVsc2V3aGVyZS4gU28gd2UgY2FuIG51a2UgImhlYWQiIGFuZCBrZWVwCiJsaXN0Ii4gVGhp
-cyBhbHNvIG1lYW5zIHRoYXQgYnJpZGdlLT5kZXN0cm95KCkgZ29lcyBhd2F5LCBidXQgdGhhdCdz
-CnByb2JhYmx5IE9rIGlmIGV2ZXJ5dGhpbmcgY29udmVydHMgdG8gdGhlIHN0YW5kYWxvbmUgZHJp
-dmVyIG1vZGVsCndoZXJlIHdlIGhhdmUgZHJpdmVyLT5yZW1vdmUoKQoKU2VhbgoKPj4KPj4gICAg
-ICAgc3RydWN0IGRybV9tb2RlX29iamVjdCBiYXNlOwo+Cj4KPiBBc2lkZTogSSd2ZSBub3RpY2Vk
-IGFsbCB0aGlzIHRyeWluZyB0byB1cGRhdGUgdGhlIGtlcm5lbGRvYyBmb3Igc3RydWN0Cj4gZHJt
-X2JyaWRnZSwgd2hpY2gganVzdCBzaG93ZWQgdGhhdCB0aGlzIHBhdGNoIG1ha2VzIGluY29uc2lz
-dGVudCBjaGFuZ2VzLgo+IFRyeWluZyB0byB3cml0ZSBrZXJuZWxkb2MgaXMgYSByZWFsbHkgZ3Jl
-YXQgd2F5IHRvIGNvbWUgdXAgd2l0aCBiZXR0ZXIKPiBpbnRlcmZhY2VzIGltby4KPgo+IENoZWVy
-cywgRGFuaWVsCj4KPj4KPj4gQEAgLTkwNiw2ICs5MTEsMTEgQEAgZXh0ZXJuIHZvaWQgZHJtX2Nv
-bm5lY3Rvcl9jbGVhbnVwKHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IpOwo+PiAgLyog
-aGVscGVyIHRvIHVucGx1ZyBhbGwgY29ubmVjdG9ycyBmcm9tIHN5c2ZzIGZvciBkZXZpY2UgKi8K
-Pj4gIGV4dGVybiB2b2lkIGRybV9jb25uZWN0b3JfdW5wbHVnX2FsbChzdHJ1Y3QgZHJtX2Rldmlj
-ZSAqZGV2KTsKPj4KPj4gK2V4dGVybiBpbnQgZHJtX2JyaWRnZV9hZGQoc3RydWN0IGRybV9icmlk
-Z2UgKmJyaWRnZSk7Cj4+ICtleHRlcm4gdm9pZCBkcm1fYnJpZGdlX3JlbW92ZShzdHJ1Y3QgZHJt
-X2JyaWRnZSAqYnJpZGdlKTsKPj4gK2V4dGVybiBzdHJ1Y3QgZHJtX2JyaWRnZSAqb2ZfZHJtX2Zp
-bmRfYnJpZGdlKHN0cnVjdCBkZXZpY2Vfbm9kZSAqbnApOwo+PiArZXh0ZXJuIGludCBkcm1fYnJp
-ZGdlX2F0dGFjaChzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlLAo+PiArICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICBzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIpOwo+PiAgZXh0ZXJuIGlu
-dCBkcm1fYnJpZGdlX2luaXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgc3RydWN0IGRybV9icmlk
-Z2UgKmJyaWRnZSk7Cj4+ICBleHRlcm4gdm9pZCBkcm1fYnJpZGdlX2NsZWFudXAoc3RydWN0IGRy
-bV9icmlkZ2UgKmJyaWRnZSk7Cj4+Cj4+IC0tCj4+IDEuNy45LjUKPj4KPgo+IC0tCj4gRGFuaWVs
-IFZldHRlcgo+IFNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgo+ICs0MSAoMCkg
-NzkgMzY1IDU3IDQ4IC0gaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hello Krzysztof,
+
+On 10/27/2014 04:03 PM, Krzysztof Kozlowski wrote:
+> @@ -85,6 +91,9 @@ struct max77686_data {
+>  	struct max77686_regulator_data *regulators;
+>  	int num_regulators;
+>  
+> +	/* Array of size num_regulators with GPIOs for external control. */
+> +	int *ext_control_gpio;
+> +
+
+The integer-based GPIO API is deprecated in favor of the descriptor-based GPIO
+interface (Documentation/gpio/consumer.txt). Could you please use the later?
+
+Best regards,
+Javier
