@@ -1,83 +1,60 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH V7 03/12] drm/bridge: Add helper functions for drm_bridge
-Date: Mon, 27 Oct 2014 20:01:37 +0100
-Message-ID: <20141027190137.GT26941@phenom.ffwll.local>
-References: <1409149783-12416-1-git-send-email-ajaykumar.rs@samsung.com>
- <1409149783-12416-4-git-send-email-ajaykumar.rs@samsung.com>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: exynos5422-odroid-xu3: MCPM: only 6 of 8 CPUs coming online
+Date: Mon, 27 Oct 2014 12:00:28 -0700
+Message-ID: <7hwq7ll4mr.fsf@deeprootsystems.com>
+References: <7133556.456161412823997169.JavaMail.weblogic@epml02>
+	<7hzjd4lxc5.fsf@deeprootsystems.com>
+	<loom.20141015T133306-266@post.gmane.org>
+	<CAMAWPa8ANvzaC4EfvRbwCZSya6xt=u6qmvN5cF1jhAROTdW3Pg@mail.gmail.com>
+	<54485433.2040008@samsung.com> <54485730.10803@samsung.com>
+	<CAGc3s_cS4zYUtdB=+8bPh2sa4Exy5guzupu-TvgJ_KmuyGGBPg@mail.gmail.com>
+	<54485B99.2000703@samsung.com>
+	<CAGc3s_e86Lx+pF12osoKoROXq4rUNf_GQtfJ8xB9w-X4pGVOmQ@mail.gmail.com>
+	<54485E99.9020004@samsung.com> <54485FDA.8070508@samsung.com>
+	<CAG30XQJ29cM6=OFh=TTbR2rfWGt3AK1o2=PMqdoq6ejUJtUwGA@mail.gmail.com>
+	<A804D1798D614199AFA7AEDC00248EA9@sisodomain.com>
+	<7hfveeaifs.fsf@deeprootsystems.com>
+	<CAM4voakn128LmppJeVbtibwJcwa-TQL8KWhsEDb_DXTZECs48Q@mail.gmail.com>
+	<7hk33p8nkn.fsf@deeprootsystems.com>
+	<CAGc3s_dEk6S82JgSbueML8_68-hdEKhLrY1G0k+kcg+YJ77JmQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1409149783-12416-4-git-send-email-ajaykumar.rs@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, seanpaul@google.com, daniel.vetter@ffwll.ch, jg1.han@samsung.com, joshi@samsung.com, dri-devel@lists.freedesktop.org, ajaynumb@gmail.com, prashanth.g@samsung.com
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:64987 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751892AbaJ0TAd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Oct 2014 15:00:33 -0400
+Received: by mail-pd0-f170.google.com with SMTP id z10so6181032pdj.15
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Oct 2014 12:00:32 -0700 (PDT)
+In-Reply-To: <CAGc3s_dEk6S82JgSbueML8_68-hdEKhLrY1G0k+kcg+YJ77JmQ@mail.gmail.com>
+	(Mauro Ribeiro's message of "Sat, 25 Oct 2014 10:47:05 -0200")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mauro Ribeiro <mdrjr0@gmail.com>
+Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhijeet Dev <abhijeet@abhijeet-dev.net>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Chander Kashyap <k.chander@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-U28gZG9uJ3QgYXNrIHdoeSBidXQgSSBhY2NpZGVudGFsbHkgZW5kZWQgdXAgaW4gYSBicmFuY2gg
-bG9va2luZyBhdCB0aGlzCnBhdGNoIGFuZCBkaWRuJ3QgbGlrZSBpdC4gU28gdmVyeSBxdWljayZn
-cnVtcHkgcmV2aWV3LgoKRmlyc3QsIHBsZWFzZSBtYWtlIHRoZSBwYXRjaCBzdWJqZWN0IG1vcmUg
-ZGVzY3JpcHRpdmU6IEknZCBleHBlY3QgYSBoZWxwZXIKZnVuY3Rpb24gc2NhZmZvbGRpbmcgbGlr
-ZSB0aGUgdmFyaW91cyBjcnRjL3Byb2JlL2RwIC4uLiBoZWxwZXJzIHdlIGFscmVhZHkKaGF2ZS4g
-WW91IGluc3RlYWQgYWRkIGNvZGUgdG8gdW50YW5nbGUgdGhlIHByb2JlIG9yZGVyaW5nLiBQbGVh
-c2Ugc2F5IHNvLgoKTW9yZSBjb21tZW50cyBiZWxvdy4KCk9uIFdlZCwgQXVnIDI3LCAyMDE0IGF0
-IDA3OjU5OjM3UE0gKzA1MzAsIEFqYXkgS3VtYXIgd3JvdGU6Cj4gQSBzZXQgb2YgaGVscGVyIGZ1
-bmN0aW9ucyBhcmUgZGVmaW5lZCBpbiB0aGlzIHBhdGNoIHRvIG1ha2UKPiBicmlkZ2UgZHJpdmVy
-IHByb2JlIGluZGVwZW5kZW50IG9mIHRoZSBkcm0gZmxvdy4KPiAKPiBUaGUgYnJpZGdlIGRldmlj
-ZXMgcmVnaXN0ZXIgdGhlbXNlbHZlcyBvbiBhIGxvb2t1cCB0YWJsZQo+IHdoZW4gdGhleSBnZXQg
-cHJvYmVkIGJ5IGNhbGxpbmcgImRybV9icmlkZ2VfYWRkIi4KPiAKPiBUaGUgcGFyZW50IGVuY29k
-ZXIgZHJpdmVyIHdhaXRzIHRpbGwgdGhlIGJyaWRnZSBpcyBhdmFpbGFibGUKPiBpbiB0aGUgbG9v
-a3VwIHRhYmxlKGJ5IGNhbGxpbmcgIm9mX2RybV9maW5kX2JyaWRnZSIpIGFuZCB0aGVuCj4gY29u
-dGludWVzIHdpdGggaXRzIGluaXRpYWxpemF0aW9uLgo+IAo+IFRoZSBlbmNvZGVyIGRyaXZlciBz
-aG91bGQgYWxzbyBjYWxsICJkcm1fYnJpZGdlX2F0dGFjaCIgdG8gcGFzcwo+IG9uIHRoZSBkcm1f
-ZGV2aWNlLCBlbmNvZGVyIHBvaW50ZXJzIHRvIHRoZSBicmlkZ2Ugb2JqZWN0Lgo+IAo+IGRybV9i
-cmlkZ2VfYXR0YWNoIGludHVybiBjYWxscyBkcm1fYnJpZGdlX2luaXQgdG8gcmVnaXN0ZXIgaXRz
-ZWxmCj4gd2l0aCB0aGUgZHJtIGNvcmUuIExhdGVyLCBpdCBjYWxscyAiYnJpZGdlLT5mdW5jcy0+
-YXR0YWNoIiBzbyB0aGF0Cj4gYnJpZGdlIGNhbiBjb250aW51ZSB3aXRoIG90aGVyIGluaXRpYWxp
-emF0aW9ucy4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBBamF5IEt1bWFyIDxhamF5a3VtYXIucnNAc2Ft
-c3VuZy5jb20+Cgpbc25pcF0KCj4gQEAgLTY2MCw4ICs2NjIsMTEgQEAgc3RydWN0IGRybV9icmlk
-Z2VfZnVuY3Mgewo+ICAgKiBAZHJpdmVyX3ByaXZhdGU6IHBvaW50ZXIgdG8gdGhlIGJyaWRnZSBk
-cml2ZXIncyBpbnRlcm5hbCBjb250ZXh0Cj4gICAqLwo+ICBzdHJ1Y3QgZHJtX2JyaWRnZSB7Cj4g
-LQlzdHJ1Y3QgZHJtX2RldmljZSAqZGV2Owo+ICsJc3RydWN0IGRldmljZSAqZGV2OwoKUGxlYXNl
-IGRvbid0IHJlbmFtZSB0aGUgLT5kZXYgcG9pbnRlciBpbnRvIGRybS4gQmVjYXVzZSBfYWxsXyB0
-aGUgb3RoZXIKZHJtIHN0cnVjdHVyZXMgc3RpbGwgY2FsbCBpdCAtPmRldi4gQWxzbywgY2FuJ3Qg
-d2UgdXNlIHN0cnVjdCBkZXZpY2Vfbm9kZQpoZXJlIGxpa2Ugd2UgZG8gaW4gdGhlIG9mIGhlbHBl
-cnMgUnVzc2VsbCBhZGRlZD8gU2VlIDdlNDM1YWFkMzgwODMKCj4gKwlzdHJ1Y3QgZHJtX2Rldmlj
-ZSAqZHJtOwo+ICsJc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyOwoKVGhpcyBicmVha3MgYnJp
-ZGdlLT5icmlkZ2UgY2hhaW5pbmcgKGlmIHdlIGV2ZXIgZ2V0IHRoZXJlKS4gSXQgc2VlbXMKcHJl
-dHR5IG11Y2ggdW51c2VkIGFueXdheSBleGNlcHQgZm9yIGFuIEVCVVNZIGNoZWNrLiBDYW4ndCB5
-b3UgdXNlCmJyaWRnZS0+ZGV2IGZvciB0aGF0PwoKPiAgCXN0cnVjdCBsaXN0X2hlYWQgaGVhZDsK
-PiArCXN0cnVjdCBsaXN0X2hlYWQgbGlzdDsKClRoZXNlIGxpc3RzIG5lZWQgYmV0dGVyIG5hbWVz
-LiBJIGtub3cgdGhhdCB0aGUgImhlYWQiIGlzIHJlYWxseSBhd2Z1bCwKZXNwZWNpYWxseSBzaW5j
-ZSBpdCdzIGFjdHVhbGx5IG5vdCB0aGUgaGVhZCBvZiB0aGUgbGlzdCBidXQganVzdCBhbgplbGVt
-ZW50Lgo+ICAKPiAgCXN0cnVjdCBkcm1fbW9kZV9vYmplY3QgYmFzZTsKCgpBc2lkZTogSSd2ZSBu
-b3RpY2VkIGFsbCB0aGlzIHRyeWluZyB0byB1cGRhdGUgdGhlIGtlcm5lbGRvYyBmb3Igc3RydWN0
-CmRybV9icmlkZ2UsIHdoaWNoIGp1c3Qgc2hvd2VkIHRoYXQgdGhpcyBwYXRjaCBtYWtlcyBpbmNv
-bnNpc3RlbnQgY2hhbmdlcy4KVHJ5aW5nIHRvIHdyaXRlIGtlcm5lbGRvYyBpcyBhIHJlYWxseSBn
-cmVhdCB3YXkgdG8gY29tZSB1cCB3aXRoIGJldHRlcgppbnRlcmZhY2VzIGltby4KCkNoZWVycywg
-RGFuaWVsCgo+ICAKPiBAQCAtOTA2LDYgKzkxMSwxMSBAQCBleHRlcm4gdm9pZCBkcm1fY29ubmVj
-dG9yX2NsZWFudXAoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3Rvcik7Cj4gIC8qIGhlbHBl
-ciB0byB1bnBsdWcgYWxsIGNvbm5lY3RvcnMgZnJvbSBzeXNmcyBmb3IgZGV2aWNlICovCj4gIGV4
-dGVybiB2b2lkIGRybV9jb25uZWN0b3JfdW5wbHVnX2FsbChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2
-KTsKPiAgCj4gK2V4dGVybiBpbnQgZHJtX2JyaWRnZV9hZGQoc3RydWN0IGRybV9icmlkZ2UgKmJy
-aWRnZSk7Cj4gK2V4dGVybiB2b2lkIGRybV9icmlkZ2VfcmVtb3ZlKHN0cnVjdCBkcm1fYnJpZGdl
-ICpicmlkZ2UpOwo+ICtleHRlcm4gc3RydWN0IGRybV9icmlkZ2UgKm9mX2RybV9maW5kX2JyaWRn
-ZShzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wKTsKPiArZXh0ZXJuIGludCBkcm1fYnJpZGdlX2F0dGFj
-aChzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlLAo+ICsJCQkJc3RydWN0IGRybV9lbmNvZGVyICpl
-bmNvZGVyKTsKPiAgZXh0ZXJuIGludCBkcm1fYnJpZGdlX2luaXQoc3RydWN0IGRybV9kZXZpY2Ug
-KmRldiwgc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSk7Cj4gIGV4dGVybiB2b2lkIGRybV9icmlk
-Z2VfY2xlYW51cChzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdlKTsKPiAgCj4gLS0gCj4gMS43Ljku
-NQo+IAoKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0
-aW9uCis0MSAoMCkgNzkgMzY1IDU3IDQ4IC0gaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcg
-bGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVz
-a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Mauro Ribeiro <mdrjr0@gmail.com> writes:
+
+> As I wrote you previously outside the list this is the commit "ARM:
+> EXYNOS: SWRESET is needed to boot secondary CPU on exynos3250" that I
+> was expecting it to fix XU3 as well and apparently it is..
+
+I'm not sure about that, since I haven't been able to get that to work.
+
+> Next week if everything goes as I plan I'll check if I can use the
+> same code to enable the A7's on XU3 as well.
+> If its possible to use the same code I'll try to upstream this next week.
+
+Excellent.  I'd love to see a patch against mainline that using that
+function that works on the XU3.  Note that mainline is using MCPM and
+that patch solves the problem for the older platsmp method.
+
+> It would be nice if Samsung could tell what in our u-boot (provided by
+> LSI) is needed to be changed as I can just push any changes to our
+> u-boot.
+
+Yes, I completely agree.  This seems to me like a bootloader bug and the
+best solution here would be to have a bootloader fix.
+
+Kevin
