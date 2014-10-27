@@ -1,66 +1,78 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 1/1] ARM: exynos_defconfig: Enable max77802 rtc and clock drivers
-Date: Mon, 27 Oct 2014 10:17:20 +0100
-Message-ID: <1414401440-10972-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v4 0/3] regulator: max77686/trats2: Disable some regulators in
+ suspend
+Date: Mon, 27 Oct 2014 10:44:23 +0100
+Message-ID: <1414403066-7872-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:57028 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751149AbaJ0JRc (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:8323 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751060AbaJ0Jos (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Oct 2014 05:17:32 -0400
+	Mon, 27 Oct 2014 05:44:48 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, Kevin Hilman <khilman@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Commit 6e80e3d87549 ("ARM: exynos_defconfig: Enable MAX77802")
-enabled support for the max77802 regulators but the PMIC also
-has a Real-Time-Clock (RTC) and 2-channel 32kHz clock outputs.
+Hi,
 
-Enable the kernel config options to have the drivers for these
-devices built-in since they are present in many Exynos boards.
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Acked-by: Kevin Hilman <khilman@linaro.org>
-Tested-by: Kevin Hilman <khilman@linaro.org>
----
+Changes since v3
+================
+1. Dropped patch 3/4 ("mfd/regulator: dt-bindings: max77686: Document
+   regulators off in suspend"), applied by Lee Jones.
+2. Patch 2/3: Fix missing shift when checking if current opmode is
+   equal to off in suspend. The shift is various so I added a simple
+   function max77686_set_opmode_enable(). Dropped Javier's review-by.
+3. Patch 1/3: Add Javier's review-by.
+4. Patch 3/3: Add Chanwoo's review-by.
 
-This patch supersedes [0] since commit "ARM: exynos_defconfig: savedefconfig"
-is not present in linux-next anymore which disabled among other options, the
-max77802 support.
+Changes since v2
+================
+1. Patch 1/4: Fully describe different values used for controlling
+   the regulators (low power modes, enable, disable). Remove "opmode"
+   from new defines. Suggested by Javier.
+2. Patch 2/4: minor nits after changing patch 1.
+3. Add Javier's reviewed-by to 2, 3 and 4 patch.
+4. Patch 3/4 (changes in documentation) should be picked up by Lee
+   Jones but I'm resending it anyway.
 
-However, support for the max77802 rtc and clocks were not enabled on exynos
-defconfig so $subject is still needed.
+Changes since v1
+================
+1. Add patch 1/4 and 3/4.
+2. Patch 2/4: Extend existing set_suspend_disable (for bucks) with
+   LDO support. Implement set_suspend_enable. Suggested by Javier.
+3. Patch 4/4: Add regulator suspend properties only to regulators
+   actually supporting this. Other regulators, not implementing
+   suspend enable/disable, will warn ("VCC_1.8V_IO: No configuration").
+4. Patch 4/4: In suspend enable VHSIC_1.0V and VHSIC_1.8V regulators.
+   Suggested by Chanwoo Choi.
 
-Kevin, I carried your tags from [0] since $subject enables the options you
-needed to get RTC wakeup from suspend working on exynos5800-peach-pi. Please
-let me know if they no longer applies.
+
+Description
+===========
+This patchset makes use of Javier Martinez Cainllas changes [1].
+It allows disabling some of the regulators during suspend to RAM.
+
+Javier's patchset is necessary only to test it.
+
+[1] [PATCH v3 0/2] ARM: EXYNOS: Call regulator suspend prepare/finish
+    https://lkml.org/lkml/2014/10/20/545
+
 
 Best regards,
-Javier
+Krzysztof
 
-[0]: https://lkml.org/lkml/2014/10/9/413
 
- arch/arm/configs/exynos_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+Krzysztof Kozlowski (3):
+  regulator: max77686: Replace hard-coded opmode values with defines
+  regulator: max77686: Implement suspend disable for some LDOs
+  ARM: dts: exynos4412-trats: Add suspend configuration for max77686
+    regulators
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 72058b8..e21ef83 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -142,11 +142,13 @@ CONFIG_MMC_DW_IDMAC=y
- CONFIG_MMC_DW_EXYNOS=y
- CONFIG_RTC_CLASS=y
- CONFIG_RTC_DRV_MAX77686=y
-+CONFIG_RTC_DRV_MAX77802=y
- CONFIG_RTC_DRV_S5M=y
- CONFIG_RTC_DRV_S3C=y
- CONFIG_DMADEVICES=y
- CONFIG_PL330_DMA=y
- CONFIG_COMMON_CLK_MAX77686=y
-+CONFIG_COMMON_CLK_MAX77802=y
- CONFIG_COMMON_CLK_S2MPS11=y
- CONFIG_EXYNOS_IOMMU=y
- CONFIG_IIO=y
+ arch/arm/boot/dts/exynos4412-trats2.dts |  72 +++++++++++++---------
+ drivers/regulator/max77686.c            | 105 +++++++++++++++++++++++++++-----
+ 2 files changed, 133 insertions(+), 44 deletions(-)
+
 -- 
-2.1.0
+1.9.1
