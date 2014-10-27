@@ -1,122 +1,54 @@
-From: Sean Paul <seanpaul@chromium.org>
-Subject: Re: [PATCH V7 02/12] drm/bridge: do not pass drm_bridge_funcs to
- drm_bridge_init
-Date: Mon, 27 Oct 2014 15:50:27 -0400
-Message-ID: <CAOw6vb+LNmXNXAF2Spe8jin5Nvd2k4zaQXvybDq_zdLPSQqkjA@mail.gmail.com>
-References: <1409149783-12416-1-git-send-email-ajaykumar.rs@samsung.com>
- <1409149783-12416-3-git-send-email-ajaykumar.rs@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 5/8] regulator: max77686: Initialize opmode explicitly
+ to normal mode
+Date: Mon, 27 Oct 2014 20:51:33 +0100
+Message-ID: <544EA245.7010100@collabora.co.uk>
+References: <1414422226-10948-1-git-send-email-k.kozlowski@samsung.com> <1414422226-10948-6-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1409149783-12416-3-git-send-email-ajaykumar.rs@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Ajay kumar <ajaynumb@gmail.com>, Prashanth G <prashanth.g@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:57811 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751858AbaJ0Tvj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Oct 2014 15:51:39 -0400
+In-Reply-To: <1414422226-10948-6-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-T24gV2VkLCBBdWcgMjcsIDIwMTQgYXQgMTA6MjkgQU0sIEFqYXkgS3VtYXIgPGFqYXlrdW1hci5y
-c0BzYW1zdW5nLmNvbT4gd3JvdGU6Cj4gQXNzaWduIHRoZSBwb2ludGVyIHRvIGJyaWRnZSBvcHMg
-c3RydWN0dXJlKGRybV9icmlkZ2VfZnVuY3MpIGluCj4gdGhlIGJyaWRnZSBkcml2ZXIgaXRzZWxm
-LCBpbnN0ZWFkIG9mIHBhc3NpbmcgaXQgdG8gZHJtX2JyaWRnZV9pbml0Lgo+Cj4gVGhpcyB3aWxs
-IGFsbG93IGJyaWRnZSBkcml2ZXIgZGV2ZWxvcGVyIHRvIHBhY2sgYnJpZGdlIHByaXZhdGUKPiBp
-bmZvcm1hdGlvbiBpbnNpZGUgdGhlIGJyaWRnZSBvYmplY3QgYW5kIHBhc3Mgb25seSB0aGUgZHJt
-LXJlbGV2YW50Cj4gaW5mb3JtYXRpb24gdG8gZHJtX2JyaWRnZV9pbml0Lgo+Cj4gU2lnbmVkLW9m
-Zi1ieTogQWpheSBLdW1hciA8YWpheWt1bWFyLnJzQHNhbXN1bmcuY29tPgoKClRoaXMgbWF0Y2hl
-cyBob3cgZHJtX3BhbmVsIHdvcmtzLCB3aGljaCBpdCBsb29rcyBsaWtlIHRoaXMgc2V0IGlzCnRy
-eWluZyB0byBlbXVsYXRlLgoKQWNrZWQtYnk6IFNlYW4gUGF1bCA8c2VhbnBhdWxAY2hyb21pdW0u
-b3JnPgoKCgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3B0bjM0NjAuYyAgICAgICB8
-ICAgIDMgKystCj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Yy5jICAgICAgICAgICAgIHwgICAg
-NSArLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vbXNtL2hkbWkvaGRtaV9icmlkZ2UuYyB8ICAgIDMg
-KystCj4gIGRyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX2hkYS5jICAgICAgICAgIHwgICAgMyArKy0K
-PiAgZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5jICAgICAgICAgfCAgICAzICsrLQo+ICBp
-bmNsdWRlL2RybS9kcm1fY3J0Yy5oICAgICAgICAgICAgICAgICB8ICAgIDMgKy0tCj4gIDYgZmls
-ZXMgY2hhbmdlZCwgMTAgaW5zZXJ0aW9ucygrKSwgMTAgZGVsZXRpb25zKC0pCj4KPiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wdG4zNDYwLmMgYi9kcml2ZXJzL2dwdS9kcm0v
-YnJpZGdlL3B0bjM0NjAuYwo+IGluZGV4IDRkYjM4ZTEuLmEyZGRjOGQgMTAwNjQ0Cj4gLS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9wdG4zNDYwLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0v
-YnJpZGdlL3B0bjM0NjAuYwo+IEBAIC0zMTMsNyArMzEzLDggQEAgaW50IHB0bjM0NjBfaW5pdChz
-dHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIsCj4gICAg
-ICAgICAgICAgICAgIGdvdG8gZXJyOwo+ICAgICAgICAgfQo+Cj4gLSAgICAgICByZXQgPSBkcm1f
-YnJpZGdlX2luaXQoZGV2LCAmcHRuX2JyaWRnZS0+YnJpZGdlLCAmcHRuMzQ2MF9icmlkZ2VfZnVu
-Y3MpOwo+ICsgICAgICAgcHRuX2JyaWRnZS0+YnJpZGdlLmZ1bmNzID0gJnB0bjM0NjBfYnJpZGdl
-X2Z1bmNzOwo+ICsgICAgICAgcmV0ID0gZHJtX2JyaWRnZV9pbml0KGRldiwgJnB0bl9icmlkZ2Ut
-PmJyaWRnZSk7Cj4gICAgICAgICBpZiAocmV0KSB7Cj4gICAgICAgICAgICAgICAgIERSTV9FUlJP
-UigiRmFpbGVkIHRvIGluaXRpYWxpemUgYnJpZGdlIHdpdGggZHJtXG4iKTsKPiAgICAgICAgICAg
-ICAgICAgZ290byBlcnI7Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Yy5j
-IGIvZHJpdmVycy9ncHUvZHJtL2RybV9jcnRjLmMKPiBpbmRleCBmYTJiZTI0Li4yNWY1Y2ZhIDEw
-MDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Yy5jCj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL2RybV9jcnRjLmMKPiBAQCAtMTAyMiw3ICsxMDIyLDYgQEAgRVhQT1JUX1NZTUJPTChk
-cm1fY29ubmVjdG9yX3VucGx1Z19hbGwpOwo+ICAgKiBkcm1fYnJpZGdlX2luaXQgLSBpbml0aWFs
-aXplIGEgZHJtIHRyYW5zY29kZXIvYnJpZGdlCj4gICAqIEBkZXY6IGRybSBkZXZpY2UKPiAgICog
-QGJyaWRnZTogdHJhbnNjb2Rlci9icmlkZ2UgdG8gc2V0IHVwCj4gLSAqIEBmdW5jczogYnJpZGdl
-IGZ1bmN0aW9uIHRhYmxlCj4gICAqCj4gICAqIEluaXRpYWxpc2VzIGEgcHJlYWxsb2NhdGVkIGJy
-aWRnZS4gQnJpZGdlcyBzaG91bGQgYmUKPiAgICogc3ViY2xhc3NlZCBhcyBwYXJ0IG9mIGRyaXZl
-ciBjb25uZWN0b3Igb2JqZWN0cy4KPiBAQCAtMTAzMCw4ICsxMDI5LDcgQEAgRVhQT1JUX1NZTUJP
-TChkcm1fY29ubmVjdG9yX3VucGx1Z19hbGwpOwo+ICAgKiBSZXR1cm5zOgo+ICAgKiBaZXJvIG9u
-IHN1Y2Nlc3MsIGVycm9yIGNvZGUgb24gZmFpbHVyZS4KPiAgICovCj4gLWludCBkcm1fYnJpZGdl
-X2luaXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgc3RydWN0IGRybV9icmlkZ2UgKmJyaWRnZSwK
-PiAtICAgICAgICAgICAgICAgY29uc3Qgc3RydWN0IGRybV9icmlkZ2VfZnVuY3MgKmZ1bmNzKQo+
-ICtpbnQgZHJtX2JyaWRnZV9pbml0KHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHN0cnVjdCBkcm1f
-YnJpZGdlICpicmlkZ2UpCj4gIHsKPiAgICAgICAgIGludCByZXQ7Cj4KPiBAQCAtMTA0Miw3ICsx
-MDQwLDYgQEAgaW50IGRybV9icmlkZ2VfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBzdHJ1
-Y3QgZHJtX2JyaWRnZSAqYnJpZGdlLAo+ICAgICAgICAgICAgICAgICBnb3RvIG91dDsKPgo+ICAg
-ICAgICAgYnJpZGdlLT5kZXYgPSBkZXY7Cj4gLSAgICAgICBicmlkZ2UtPmZ1bmNzID0gZnVuY3M7
-Cj4KPiAgICAgICAgIGxpc3RfYWRkX3RhaWwoJmJyaWRnZS0+aGVhZCwgJmRldi0+bW9kZV9jb25m
-aWcuYnJpZGdlX2xpc3QpOwo+ICAgICAgICAgZGV2LT5tb2RlX2NvbmZpZy5udW1fYnJpZGdlKys7
-Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9tc20vaGRtaS9oZG1pX2JyaWRnZS5jIGIv
-ZHJpdmVycy9ncHUvZHJtL21zbS9oZG1pL2hkbWlfYnJpZGdlLmMKPiBpbmRleCBmNmNmNzQ1Li4w
-MzA5NTM5IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9tc20vaGRtaS9oZG1pX2JyaWRn
-ZS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL21zbS9oZG1pL2hkbWlfYnJpZGdlLmMKPiBAQCAt
-MjIxLDggKzIyMSw5IEBAIHN0cnVjdCBkcm1fYnJpZGdlICpoZG1pX2JyaWRnZV9pbml0KHN0cnVj
-dCBoZG1pICpoZG1pKQo+ICAgICAgICAgaGRtaV9icmlkZ2UtPmhkbWkgPSBoZG1pX3JlZmVyZW5j
-ZShoZG1pKTsKPgo+ICAgICAgICAgYnJpZGdlID0gJmhkbWlfYnJpZGdlLT5iYXNlOwo+ICsgICAg
-ICAgYnJpZGdlLT5mdW5jcyA9ICZoZG1pX2JyaWRnZV9mdW5jczsKPgo+IC0gICAgICAgZHJtX2Jy
-aWRnZV9pbml0KGhkbWktPmRldiwgYnJpZGdlLCAmaGRtaV9icmlkZ2VfZnVuY3MpOwo+ICsgICAg
-ICAgZHJtX2JyaWRnZV9pbml0KGhkbWktPmRldiwgYnJpZGdlKTsKPgo+ICAgICAgICAgcmV0dXJu
-IGJyaWRnZTsKPgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZGEuYyBi
-L2RyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX2hkYS5jCj4gaW5kZXggNzJkOTU3Zi4uYjMzNDRjNyAx
-MDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZGEuYwo+ICsrKyBiL2RyaXZl
-cnMvZ3B1L2RybS9zdGkvc3RpX2hkYS5jCj4gQEAgLTY2NCw3ICs2NjQsOCBAQCBzdGF0aWMgaW50
-IHN0aV9oZGFfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1hc3Rlciwg
-dm9pZCAqZGF0YSkKPiAgICAgICAgICAgICAgICAgcmV0dXJuIC1FTk9NRU07Cj4KPiAgICAgICAg
-IGJyaWRnZS0+ZHJpdmVyX3ByaXZhdGUgPSBoZGE7Cj4gLSAgICAgICBkcm1fYnJpZGdlX2luaXQo
-ZHJtX2RldiwgYnJpZGdlLCAmc3RpX2hkYV9icmlkZ2VfZnVuY3MpOwo+ICsgICAgICAgYnJpZGdl
-LT5mdW5jcyA9ICZzdGlfaGRhX2JyaWRnZV9mdW5jczsKPiArICAgICAgIGRybV9icmlkZ2VfaW5p
-dChkcm1fZGV2LCBicmlkZ2UpOwo+Cj4gICAgICAgICBlbmNvZGVyLT5icmlkZ2UgPSBicmlkZ2U7
-Cj4gICAgICAgICBjb25uZWN0b3ItPmVuY29kZXIgPSBlbmNvZGVyOwo+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZG1pLmMgYi9kcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9o
-ZG1pLmMKPiBpbmRleCAyODRlNTQxLi4zYWQzMTlmIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1
-L2RybS9zdGkvc3RpX2hkbWkuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9zdGkvc3RpX2hkbWku
-Ywo+IEBAIC02MjksNyArNjI5LDggQEAgc3RhdGljIGludCBzdGlfaGRtaV9iaW5kKHN0cnVjdCBk
-ZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFzdGVyLCB2b2lkICpkYXRhKQo+ICAgICAgICAg
-ICAgICAgICByZXR1cm4gLUVOT01FTTsKPgo+ICAgICAgICAgYnJpZGdlLT5kcml2ZXJfcHJpdmF0
-ZSA9IGhkbWk7Cj4gLSAgICAgICBkcm1fYnJpZGdlX2luaXQoZHJtX2RldiwgYnJpZGdlLCAmc3Rp
-X2hkbWlfYnJpZGdlX2Z1bmNzKTsKPiArICAgICAgIGJyaWRnZS0+ZnVuY3MgPSAmc3RpX2hkbWlf
-YnJpZGdlX2Z1bmNzOwo+ICsgICAgICAgZHJtX2JyaWRnZV9pbml0KGRybV9kZXYsIGJyaWRnZSk7
-Cj4KPiAgICAgICAgIGVuY29kZXItPmJyaWRnZSA9IGJyaWRnZTsKPiAgICAgICAgIGNvbm5lY3Rv
-ci0+ZW5jb2RlciA9IGVuY29kZXI7Cj4gZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2RybV9jcnRj
-LmggYi9pbmNsdWRlL2RybS9kcm1fY3J0Yy5oCj4gaW5kZXggZjExMDVkMC4uZjQ4YTQzNiAxMDA2
-NDQKPiAtLS0gYS9pbmNsdWRlL2RybS9kcm1fY3J0Yy5oCj4gKysrIGIvaW5jbHVkZS9kcm0vZHJt
-X2NydGMuaAo+IEBAIC05MDYsOCArOTA2LDcgQEAgZXh0ZXJuIHZvaWQgZHJtX2Nvbm5lY3Rvcl9j
-bGVhbnVwKHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IpOwo+ICAvKiBoZWxwZXIgdG8g
-dW5wbHVnIGFsbCBjb25uZWN0b3JzIGZyb20gc3lzZnMgZm9yIGRldmljZSAqLwo+ICBleHRlcm4g
-dm9pZCBkcm1fY29ubmVjdG9yX3VucGx1Z19hbGwoc3RydWN0IGRybV9kZXZpY2UgKmRldik7Cj4K
-PiAtZXh0ZXJuIGludCBkcm1fYnJpZGdlX2luaXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgc3Ry
-dWN0IGRybV9icmlkZ2UgKmJyaWRnZSwKPiAtICAgICAgICAgICAgICAgICAgICAgICAgICBjb25z
-dCBzdHJ1Y3QgZHJtX2JyaWRnZV9mdW5jcyAqZnVuY3MpOwo+ICtleHRlcm4gaW50IGRybV9icmlk
-Z2VfaW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBzdHJ1Y3QgZHJtX2JyaWRnZSAqYnJpZGdl
-KTsKPiAgZXh0ZXJuIHZvaWQgZHJtX2JyaWRnZV9jbGVhbnVwKHN0cnVjdCBkcm1fYnJpZGdlICpi
-cmlkZ2UpOwo+Cj4gIGV4dGVybiBpbnQgZHJtX2VuY29kZXJfaW5pdChzdHJ1Y3QgZHJtX2Rldmlj
-ZSAqZGV2LAo+IC0tCj4gMS43LjkuNQo+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
-Zm8vZHJpLWRldmVsCg==
+Hello Krzysztof,
+
+On 10/27/2014 04:03 PM, Krzysztof Kozlowski wrote:
+> Minor nit: Initialize the opmode for each regulator to normal mode in a
+> readable explicit way.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Suggested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>  drivers/regulator/max77686.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/regulator/max77686.c b/drivers/regulator/max77686.c
+> index 7930b4f82c0b..e5738c363f07 100644
+> --- a/drivers/regulator/max77686.c
+> +++ b/drivers/regulator/max77686.c
+> @@ -507,8 +507,8 @@ static int max77686_pmic_probe(struct platform_device *pdev)
+>  		config.init_data = max77686->regulators[i].initdata;
+>  		config.of_node = max77686->regulators[i].of_node;
+>  
+> -		max77686->opmode[i] = regulators[i].enable_mask >>
+> -						max77686_get_opmode_shift(i);
+> +		max77686->opmode[i] = MAX77686_NORMAL;
+> +
+>  		rdev = devm_regulator_register(&pdev->dev,
+>  						&regulators[i], &config);
+>  		if (IS_ERR(rdev)) {
+> 
+
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+
+Best regards,
+Javier
