@@ -1,38 +1,62 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCHv3 0/2] clk: samsung: Add clock controller driver for
- Exynos4415 SoC
-Date: Tue, 28 Oct 2014 13:09:59 +0900
-Message-ID: <02dd01cff265$0a846060$1f8d2120$@kernel.org>
-References: <1414372318-594-1-git-send-email-cw00.choi@samsung.com>
- <544E20E3.5030609@samsung.com>
+Subject: RE: [PATCHv2 1/2] ARM: EXYNOS: Add EXYNOS4415 SoC ID
+Date: Tue, 28 Oct 2014 13:28:22 +0900
+Message-ID: <031101cff267$9b8daba0$d2a902e0$@kernel.org>
+References: <1414373759-4362-1-git-send-email-cw00.choi@samsung.com>
+ <1414373759-4362-2-git-send-email-cw00.choi@samsung.com>
+ <02b501cff262$127d44b0$3777ce10$@kernel.org> <544F15F0.9080102@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <544E20E3.5030609@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:31352 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751667AbaJ1E23 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 28 Oct 2014 00:28:29 -0400
+In-reply-to: <544F15F0.9080102@samsung.com>
 Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>
-Cc: tomasz.figa@gmail.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, inki.dae@samsung.com, geunsik.lim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net, tomasz.figa@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, yj44.cho@samsung.com, jaewon02.kim@samsung.com, ideal.song@samsung.com
 
-Sylwester Nawrocki wrote:
+Chanwoo Choi wrote:
 > 
-> On 27/10/14 02:11, Chanwoo Choi wrote:
-> > Chanwoo Choi (2):
-> >   clk: samsung: exynos4415: Add clocks using common clock framework
-> >   clk: samsung: Document binding for Exynos4415 clock controller
+> Dear Kukjin,
 > 
-> Added both to my tree, thanks. In future please put DT binding
-> documentation first in the series, before the actual driver patch.
+
+[...]
+
+> >>
+> >> +config SOC_EXYNOS4415
+> >> +	bool "SAMSUNG EXYNOS4415"
+> >> +	default y
+> >> +	depends on ARCH_EXYNOS4
+> >> +
+> >
+> > I think, this is not required more...
 > 
-Hi Sylwester,
+> But,
+> The clock driver must need to CONFIG_SOC_EXYNOS4415 configuration
+> to build it. The clock driver[1] of exynos4415 used CONFIG_SOC_EXYNOS4415 as following diff:
+>   [1] https://lkml.org/lkml/2014/10/26/159
+> 
+Oh, yes. OK.
 
-Can you please provide a topic branch for clk-exynos4415? Because exynos4415 dt
-file needs inclusion of following header files.
+Thanks for quick reply.
 
-+#include <dt-bindings/clock/exynos4415.h>
-+#include <dt-bindings/clock/exynos-audss-clk.h>
+- Kukjin
 
-Thanks,
-Kukjin
+> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
+> index 8909c93..4561297 100644
+> --- a/drivers/clk/samsung/Makefile
+> +++ b/drivers/clk/samsung/Makefile
+> @@ -5,6 +5,7 @@
+>  obj-$(CONFIG_COMMON_CLK)	+= clk.o clk-pll.o clk-cpu.o
+>  obj-$(CONFIG_SOC_EXYNOS3250)	+= clk-exynos3250.o
+>  obj-$(CONFIG_ARCH_EXYNOS4)	+= clk-exynos4.o
+> +obj-$(CONFIG_SOC_EXYNOS4415)	+= clk-exynos4415.o
+> 
+> Best Regards,
+> Chanwoo Choi
