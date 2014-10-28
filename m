@@ -1,38 +1,36 @@
 From: Kukjin Kim <kgene@kernel.org>
 Subject: RE: [PATCH v9] ARM: EXYNOS: Use MCPM call-backs to support S2R on
  Exynos5420
-Date: Tue, 28 Oct 2014 19:10:57 +0900
-Message-ID: <03ad01cff297$777789e0$66669da0$@kernel.org>
+Date: Tue, 28 Oct 2014 19:12:01 +0900
+Message-ID: <03ae01cff297$9d5dd6f0$d81984d0$@kernel.org>
 References: <1412746892-12329-1-git-send-email-a.kesavan@samsung.com>
- <CABxcv=m0Fq3YZ3kmjjhPaBz5bOSSe1vrmMRQxiWn3Qy4eR8C_w@mail.gmail.com>
+ <CABxcv=kh9F3nNDUFMv9CDCDch+A2wAE+bStegKGVbte9-Yu-wQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:55896 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:56149 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754347AbaJ1KLA (ORCPT
+	with ESMTP id S1754453AbaJ1KMC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Oct 2014 06:11:00 -0400
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
+	Tue, 28 Oct 2014 06:12:02 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
  by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NE500ASBGA9S600@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Oct 2014 19:10:57 +0900 (KST)
-In-reply-to: <CABxcv=m0Fq3YZ3kmjjhPaBz5bOSSe1vrmMRQxiWn3Qy4eR8C_w@mail.gmail.com>
+ with ESMTP id <0NE5002XPGC186C0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 28 Oct 2014 19:12:01 +0900 (KST)
+In-reply-to: <CABxcv=kh9F3nNDUFMv9CDCDch+A2wAE+bStegKGVbte9-Yu-wQ@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Javier Martinez Canillas' <javier@dowhile0.org>
-Cc: 'Abhilash Kesavan' <a.kesavan@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: 'Javier Martinez Canillas' <javier@dowhile0.org>, 'Abhilash Kesavan' <a.kesavan@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
 Javier Martinez Canillas wrote:
 > 
-> Hello Kukjin,
+> Hello Abhilash,
 > 
-Hi,
-
 > On Wed, Oct 8, 2014 at 7:41 AM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
 > > Use the MCPM layer to handle core suspend/resume on Exynos5420.
 > > Also, restore the entry address setup code post-resume.
@@ -71,29 +69,27 @@ Hi,
 > > 1) Decouple syscon interface from platform devices - v7
 > > http://lkml.org/lkml/2014/9/30/156
 > >
-> 
-> This has already been picked by Lee Jones (mfd maintainer) and is
-> shown in linux-next.
-> 
-Sounds good.
-
 > > 2) ARM: Exynos: Convert PMU implementation into a platform driver - v9
 > > https://lkml.org/lkml/2014/10/6/89
 > >
-Yes, as I replied before, I will. BTW I just thought I could take above series
-after merging 1st samsung pull-requests for v3.19 into arm-soc but not yet
-response. OK, it's time to apply it based on my previous pull-request it should
-be fine.
-
 > > 3) Exynos5420 PMU/S2R Series - v9
 > > http://www.spinics.net/lists/arm-kernel/msg368207.html
 > >
-Same as above. I already commented I'll queue.
+> >  arch/arm/mach-exynos/mcpm-exynos.c |   32 +++++++++++++++--------
+> >  arch/arm/mach-exynos/platsmp.c     |   12 +++++++++
+> >  arch/arm/mach-exynos/suspend.c     |   49 ++++++++++++++++++++++++++++++++----
+> >  3 files changed, 78 insertions(+), 15 deletions(-)
 
+[...]
+
+> > --
 > 
-> Now that 1) has been picked, could you please pick 2), 3) and $subject
-> to have S2R working on Exynos5420?
+> Patch looks good to me and also I tested on my Exynos5420 Peach Pit
+> and Suspend-to-Ram and resume is working correctly, so:
 > 
-Thanks for your gentle reminder and I'll do it tonight in my time ;)
+> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> 
+Thanks for your review and test.
 
 - Kukjin
