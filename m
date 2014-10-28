@@ -1,20 +1,21 @@
 From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH v3 2/5] clk: samsung: exynos7: add clocks for MMC block
-Date: Tue, 28 Oct 2014 16:48:52 +0530
-Message-ID: <1414495135-25588-3-git-send-email-a.kesavan@samsung.com>
+Subject: [PATCH v3 4/5] clk: samsung: exynos7: add gate clocks for WDT,
+ TMU and PWM blocks
+Date: Tue, 28 Oct 2014 16:48:54 +0530
+Message-ID: <1414495135-25588-5-git-send-email-a.kesavan@samsung.com>
 References: <1414495135-25588-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:11428 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754328AbaJ1LUm (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:10083 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751030AbaJ1LVj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Oct 2014 07:20:42 -0400
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Tue, 28 Oct 2014 07:21:39 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NE5000B1JIGFH50@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Oct 2014 20:20:40 +0900 (KST)
+ with ESMTP id <0NE500B0IJK15650@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 28 Oct 2014 20:21:37 +0900 (KST)
 In-reply-to: <1414495135-25588-1-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -23,337 +24,97 @@ Cc: linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, Naveen Krishna Ch 
 
 From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
 
-Exynos7 supports 3 MMC channels, add the MMC gate clocks to
-support them.
+Add clock support for the watchdog timer, pwm timer and thermal
+management unit IPs in Exynos7.
 
 Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
 Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 ---
- .../devicetree/bindings/clock/exynos7-clock.txt    |   21 ++
- drivers/clk/samsung/clk-exynos7.c                  |  224 ++++++++++++++++++++
- include/dt-bindings/clock/exynos7-clk.h            |   20 ++
- 3 files changed, 265 insertions(+)
+ drivers/clk/samsung/clk-exynos7.c       |   14 ++++++++++++++
+ include/dt-bindings/clock/exynos7-clk.h |    9 +++++++--
+ 2 files changed, 21 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos7-clock.txt b/Documentation/devicetree/bindings/clock/exynos7-clock.txt
-index 789f761..b29cb50 100644
---- a/Documentation/devicetree/bindings/clock/exynos7-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/exynos7-clock.txt
-@@ -27,9 +27,12 @@ Required Properties for Clock Controller:
- 
- 	- "samsung,exynos7-clock-topc"
- 	- "samsung,exynos7-clock-top0"
-+	- "samsung,exynos7-clock-top1"
- 	- "samsung,exynos7-clock-peric0"
- 	- "samsung,exynos7-clock-peric1"
- 	- "samsung,exynos7-clock-peris"
-+	- "samsung,exynos7-clock-fsys0"
-+	- "samsung,exynos7-clock-fsys1"
- 
-  - reg: physical base address of the controller and the length of
- 	memory mapped region.
-@@ -50,6 +53,13 @@ Input clocks for top0 clock controller:
- 	- dout_sclk_cc_pll
- 	- dout_sclk_mfc_pll
- 
-+Input clocks for top1 clock controller:
-+	- fin_pll
-+	- dout_sclk_bus0_pll
-+	- dout_sclk_bus1_pll
-+	- dout_sclk_cc_pll
-+	- dout_sclk_mfc_pll
-+
- Input clocks for peric0 clock controller:
- 	- fin_pll
- 	- dout_aclk_peric0_66
-@@ -65,3 +75,14 @@ Input clocks for peric1 clock controller:
- Input clocks for peris clock controller:
- 	- fin_pll
- 	- dout_aclk_peris_66
-+
-+Input clocks for fsys0 clock controller:
-+	- fin_pll
-+	- dout_aclk_fsys0_200
-+	- dout_sclk_mmc2
-+
-+Input clocks for fsys1 clock controller:
-+	- fin_pll
-+	- dout_aclk_fsys1_200
-+	- dout_sclk_mmc0
-+	- dout_sclk_mmc1
 diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index c700f65..f5e43fa 100644
+index 3a30f43..17e5cf4 100644
 --- a/drivers/clk/samsung/clk-exynos7.c
 +++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -267,6 +267,132 @@ static void __init exynos7_clk_top0_init(struct device_node *np)
- CLK_OF_DECLARE(exynos7_clk_top0, "samsung,exynos7-clock-top0",
- 	exynos7_clk_top0_init);
+@@ -486,9 +486,12 @@ static struct samsung_gate_clock peric0_gate_clks[] __initdata = {
+ 		ENABLE_PCLK_PERIC0, 14, 0, 0),
+ 	GATE(PCLK_UART0, "pclk_uart0", "mout_aclk_peric0_66_user",
+ 		ENABLE_PCLK_PERIC0, 16, 0, 0),
++	GATE(PCLK_PWM, "pclk_pwm", "mout_aclk_peric0_66_user",
++		ENABLE_PCLK_PERIC0, 21, 0, 0),
  
-+/* Register Offset definitions for CMU_TOP1 (0x105E0000) */
-+#define MUX_SEL_TOP10			0x0200
-+#define MUX_SEL_TOP11			0x0204
-+#define MUX_SEL_TOP13			0x020C
-+#define MUX_SEL_TOP1_FSYS0		0x0224
-+#define MUX_SEL_TOP1_FSYS1		0x0228
-+#define DIV_TOP13			0x060C
-+#define DIV_TOP1_FSYS0			0x0624
-+#define DIV_TOP1_FSYS1			0x0628
-+#define ENABLE_ACLK_TOP13		0x080C
-+#define ENABLE_SCLK_TOP1_FSYS0		0x0A24
-+#define ENABLE_SCLK_TOP1_FSYS1		0x0A28
-+
-+/* List of parent clocks for Muxes in CMU_TOP1 */
-+PNAME(mout_top1_bus0_pll_p)	= { "fin_pll", "dout_sclk_bus0_pll" };
-+PNAME(mout_top1_bus1_pll_p)	= { "fin_pll", "dout_sclk_bus1_pll_b" };
-+PNAME(mout_top1_cc_pll_p)	= { "fin_pll", "dout_sclk_cc_pll_b" };
-+PNAME(mout_top1_mfc_pll_p)	= { "fin_pll", "dout_sclk_mfc_pll_b" };
-+
-+PNAME(mout_top1_half_bus0_pll_p) = {"mout_top1_bus0_pll",
-+	"ffac_top1_bus0_pll_div2"};
-+PNAME(mout_top1_half_bus1_pll_p) = {"mout_top1_bus1_pll",
-+	"ffac_top1_bus1_pll_div2"};
-+PNAME(mout_top1_half_cc_pll_p) = {"mout_top1_cc_pll",
-+	"ffac_top1_cc_pll_div2"};
-+PNAME(mout_top1_half_mfc_pll_p) = {"mout_top1_mfc_pll",
-+	"ffac_top1_mfc_pll_div2"};
-+
-+PNAME(mout_top1_group1) = {"mout_top1_half_bus0_pll",
-+	"mout_top1_half_bus1_pll", "mout_top1_half_cc_pll",
-+	"mout_top1_half_mfc_pll"};
-+
-+static unsigned long top1_clk_regs[] __initdata = {
-+	MUX_SEL_TOP10,
-+	MUX_SEL_TOP11,
-+	MUX_SEL_TOP13,
-+	MUX_SEL_TOP1_FSYS0,
-+	MUX_SEL_TOP1_FSYS1,
-+	DIV_TOP13,
-+	DIV_TOP1_FSYS0,
-+	DIV_TOP1_FSYS1,
-+	ENABLE_ACLK_TOP13,
-+	ENABLE_SCLK_TOP1_FSYS0,
-+	ENABLE_SCLK_TOP1_FSYS1,
-+};
-+
-+static struct samsung_mux_clock top1_mux_clks[] __initdata = {
-+	MUX(0, "mout_top1_mfc_pll", mout_top1_mfc_pll_p, MUX_SEL_TOP10, 4, 1),
-+	MUX(0, "mout_top1_cc_pll", mout_top1_cc_pll_p, MUX_SEL_TOP10, 8, 1),
-+	MUX(0, "mout_top1_bus1_pll", mout_top1_bus1_pll_p,
-+		MUX_SEL_TOP10, 12, 1),
-+	MUX(0, "mout_top1_bus0_pll", mout_top1_bus0_pll_p,
-+		MUX_SEL_TOP10, 16, 1),
-+
-+	MUX(0, "mout_top1_half_mfc_pll", mout_top1_half_mfc_pll_p,
-+		MUX_SEL_TOP11, 4, 1),
-+	MUX(0, "mout_top1_half_cc_pll", mout_top1_half_cc_pll_p,
-+		MUX_SEL_TOP11, 8, 1),
-+	MUX(0, "mout_top1_half_bus1_pll", mout_top1_half_bus1_pll_p,
-+		MUX_SEL_TOP11, 12, 1),
-+	MUX(0, "mout_top1_half_bus0_pll", mout_top1_half_bus0_pll_p,
-+		MUX_SEL_TOP11, 16, 1),
-+
-+	MUX(0, "mout_aclk_fsys1_200", mout_top1_group1, MUX_SEL_TOP13, 24, 2),
-+	MUX(0, "mout_aclk_fsys0_200", mout_top1_group1, MUX_SEL_TOP13, 28, 2),
-+
-+	MUX(0, "mout_sclk_mmc2", mout_top1_group1, MUX_SEL_TOP1_FSYS0, 24, 2),
-+
-+	MUX(0, "mout_sclk_mmc1", mout_top1_group1, MUX_SEL_TOP1_FSYS1, 24, 2),
-+	MUX(0, "mout_sclk_mmc0", mout_top1_group1, MUX_SEL_TOP1_FSYS1, 28, 2),
-+};
-+
-+static struct samsung_div_clock top1_div_clks[] __initdata = {
-+	DIV(DOUT_ACLK_FSYS1_200, "dout_aclk_fsys1_200", "mout_aclk_fsys1_200",
-+		DIV_TOP13, 24, 4),
-+	DIV(DOUT_ACLK_FSYS0_200, "dout_aclk_fsys0_200", "mout_aclk_fsys0_200",
-+		DIV_TOP13, 28, 4),
-+
-+	DIV(DOUT_SCLK_MMC2, "dout_sclk_mmc2", "mout_sclk_mmc2",
-+		DIV_TOP1_FSYS0, 24, 4),
-+
-+	DIV(DOUT_SCLK_MMC1, "dout_sclk_mmc1", "mout_sclk_mmc1",
-+		DIV_TOP1_FSYS1, 24, 4),
-+	DIV(DOUT_SCLK_MMC0, "dout_sclk_mmc0", "mout_sclk_mmc0",
-+		DIV_TOP1_FSYS1, 28, 4),
-+};
-+
-+static struct samsung_gate_clock top1_gate_clks[] __initdata = {
-+	GATE(CLK_SCLK_MMC2, "sclk_mmc2", "dout_sclk_mmc2",
-+		ENABLE_SCLK_TOP1_FSYS0, 24, CLK_SET_RATE_PARENT, 0),
-+
-+	GATE(CLK_SCLK_MMC1, "sclk_mmc1", "dout_sclk_mmc1",
-+		ENABLE_SCLK_TOP1_FSYS1, 24, CLK_SET_RATE_PARENT, 0),
-+	GATE(CLK_SCLK_MMC0, "sclk_mmc0", "dout_sclk_mmc0",
-+		ENABLE_SCLK_TOP1_FSYS1, 28, CLK_SET_RATE_PARENT, 0),
-+};
-+
-+static struct samsung_fixed_factor_clock top1_fixed_factor_clks[] __initdata = {
-+	FFACTOR(0, "ffac_top1_bus0_pll_div2", "mout_top1_bus0_pll", 1, 2, 0),
-+	FFACTOR(0, "ffac_top1_bus1_pll_div2", "mout_top1_bus1_pll", 1, 2, 0),
-+	FFACTOR(0, "ffac_top1_cc_pll_div2", "mout_top1_cc_pll", 1, 2, 0),
-+	FFACTOR(0, "ffac_top1_mfc_pll_div2", "mout_top1_mfc_pll", 1, 2, 0),
-+};
-+
-+static struct samsung_cmu_info top1_cmu_info __initdata = {
-+	.mux_clks		= top1_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(top1_mux_clks),
-+	.div_clks		= top1_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(top1_div_clks),
-+	.gate_clks		= top1_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(top1_gate_clks),
-+	.fixed_factor_clks	= top1_fixed_factor_clks,
-+	.nr_fixed_factor_clks	= ARRAY_SIZE(top1_fixed_factor_clks),
-+	.nr_clk_ids		= TOP1_NR_CLK,
-+	.clk_regs		= top1_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(top1_clk_regs),
-+};
-+
-+static void __init exynos7_clk_top1_init(struct device_node *np)
-+{
-+	samsung_cmu_register_one(np, &top1_cmu_info);
-+}
-+
-+CLK_OF_DECLARE(exynos7_clk_top1, "samsung,exynos7-clock-top1",
-+	exynos7_clk_top1_init);
-+
- /* Register Offset definitions for CMU_PERIC0 (0x13610000) */
- #define MUX_SEL_PERIC0			0x0200
- #define ENABLE_PCLK_PERIC0		0x0900
-@@ -447,3 +573,101 @@ static void __init exynos7_clk_peris_init(struct device_node *np)
+ 	GATE(SCLK_UART0, "sclk_uart0_user", "mout_sclk_uart0_user",
+ 		ENABLE_SCLK_PERIC0, 16, 0, 0),
++	GATE(SCLK_PWM, "sclk_pwm", "fin_pll", ENABLE_SCLK_PERIC0, 21, 0, 0),
+ };
  
- CLK_OF_DECLARE(exynos7_clk_peris, "samsung,exynos7-clock-peris",
- 	exynos7_clk_peris_init);
+ static struct samsung_cmu_info peric0_cmu_info __initdata = {
+@@ -586,7 +589,9 @@ CLK_OF_DECLARE(exynos7_clk_peric1, "samsung,exynos7-clock-peric1",
+ 
+ /* Register Offset definitions for CMU_PERIS (0x10040000) */
+ #define MUX_SEL_PERIS			0x0200
++#define ENABLE_PCLK_PERIS		0x0900
+ #define ENABLE_PCLK_PERIS_SECURE_CHIPID	0x0910
++#define ENABLE_SCLK_PERIS		0x0A00
+ #define ENABLE_SCLK_PERIS_SECURE_CHIPID	0x0A10
+ 
+ /* List of parent clocks for Muxes in CMU_PERIS */
+@@ -594,7 +599,9 @@ PNAME(mout_aclk_peris_66_p) = { "fin_pll", "dout_aclk_peris_66" };
+ 
+ static unsigned long peris_clk_regs[] __initdata = {
+ 	MUX_SEL_PERIS,
++	ENABLE_PCLK_PERIS,
+ 	ENABLE_PCLK_PERIS_SECURE_CHIPID,
++	ENABLE_SCLK_PERIS,
+ 	ENABLE_SCLK_PERIS_SECURE_CHIPID,
+ };
+ 
+@@ -604,10 +611,17 @@ static struct samsung_mux_clock peris_mux_clks[] __initdata = {
+ };
+ 
+ static struct samsung_gate_clock peris_gate_clks[] __initdata = {
++	GATE(PCLK_WDT, "pclk_wdt", "mout_aclk_peris_66_user",
++		ENABLE_PCLK_PERIS, 6, 0, 0),
++	GATE(PCLK_TMU, "pclk_tmu_apbif", "mout_aclk_peris_66_user",
++		ENABLE_PCLK_PERIS, 10, 0, 0),
 +
-+/* Register Offset definitions for CMU_FSYS0 (0x10E90000) */
-+#define MUX_SEL_FSYS00			0x0200
-+#define MUX_SEL_FSYS01			0x0204
-+#define ENABLE_ACLK_FSYS01		0x0804
+ 	GATE(PCLK_CHIPID, "pclk_chipid", "mout_aclk_peris_66_user",
+ 		ENABLE_PCLK_PERIS_SECURE_CHIPID, 0, 0, 0),
+ 	GATE(SCLK_CHIPID, "sclk_chipid", "fin_pll",
+ 		ENABLE_SCLK_PERIS_SECURE_CHIPID, 0, 0, 0),
 +
-+/*
-+ * List of parent clocks for Muxes in CMU_FSYS0
-+ */
-+PNAME(mout_aclk_fsys0_200_p)	= { "fin_pll", "dout_aclk_fsys0_200" };
-+PNAME(mout_sclk_mmc2_p)		= { "fin_pll", "sclk_mmc2" };
-+
-+static unsigned long fsys0_clk_regs[] __initdata = {
-+	MUX_SEL_FSYS00,
-+	MUX_SEL_FSYS01,
-+	ENABLE_ACLK_FSYS01,
-+};
-+
-+static struct samsung_mux_clock fsys0_mux_clks[] __initdata = {
-+	MUX(0, "mout_aclk_fsys0_200_user", mout_aclk_fsys0_200_p,
-+		MUX_SEL_FSYS00, 24, 1),
-+
-+	MUX(0, "mout_sclk_mmc2_user", mout_sclk_mmc2_p, MUX_SEL_FSYS01, 24, 1),
-+};
-+
-+static struct samsung_gate_clock fsys0_gate_clks[] __initdata = {
-+	GATE(ACLK_MMC2, "aclk_mmc2", "mout_aclk_fsys0_200_user",
-+		ENABLE_ACLK_FSYS01, 31, 0, 0),
-+};
-+
-+static struct samsung_cmu_info fsys0_cmu_info __initdata = {
-+	.mux_clks		= fsys0_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(fsys0_mux_clks),
-+	.gate_clks		= fsys0_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(fsys0_gate_clks),
-+	.nr_clk_ids		= TOP1_NR_CLK,
-+	.clk_regs		= fsys0_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(fsys0_clk_regs),
-+};
-+
-+static void __init exynos7_clk_fsys0_init(struct device_node *np)
-+{
-+	samsung_cmu_register_one(np, &fsys0_cmu_info);
-+}
-+
-+CLK_OF_DECLARE(exynos7_clk_fsys0, "samsung,exynos7-clock-fsys0",
-+	exynos7_clk_fsys0_init);
-+
-+/* Register Offset definitions for CMU_FSYS1 (0x156E0000) */
-+#define MUX_SEL_FSYS10			0x0200
-+#define MUX_SEL_FSYS11			0x0204
-+#define ENABLE_ACLK_FSYS1		0x0800
-+
-+/*
-+ * List of parent clocks for Muxes in CMU_FSYS1
-+ */
-+PNAME(mout_aclk_fsys1_200_p)	= { "fin_pll",  "dout_aclk_fsys1_200" };
-+PNAME(mout_sclk_mmc0_p)		= { "fin_pll", "sclk_mmc0" };
-+PNAME(mout_sclk_mmc1_p)		= { "fin_pll", "sclk_mmc1" };
-+
-+static unsigned long fsys1_clk_regs[] __initdata = {
-+	MUX_SEL_FSYS10,
-+	MUX_SEL_FSYS11,
-+	ENABLE_ACLK_FSYS1,
-+};
-+
-+static struct samsung_mux_clock fsys1_mux_clks[] __initdata = {
-+	MUX(0, "mout_aclk_fsys1_200_user", mout_aclk_fsys1_200_p,
-+		MUX_SEL_FSYS10, 28, 1),
-+
-+	MUX(0, "mout_sclk_mmc1_user", mout_sclk_mmc1_p, MUX_SEL_FSYS11, 24, 1),
-+	MUX(0, "mout_sclk_mmc0_user", mout_sclk_mmc0_p, MUX_SEL_FSYS11, 28, 1),
-+};
-+
-+static struct samsung_gate_clock fsys1_gate_clks[] __initdata = {
-+	GATE(ACLK_MMC1, "aclk_mmc1", "mout_aclk_fsys1_200_user",
-+		ENABLE_ACLK_FSYS1, 29, 0, 0),
-+	GATE(ACLK_MMC0, "aclk_mmc0", "mout_aclk_fsys1_200_user",
-+		ENABLE_ACLK_FSYS1, 30, 0, 0),
-+};
-+
-+static struct samsung_cmu_info fsys1_cmu_info __initdata = {
-+	.mux_clks		= fsys1_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(fsys1_mux_clks),
-+	.gate_clks		= fsys1_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(fsys1_gate_clks),
-+	.nr_clk_ids		= TOP1_NR_CLK,
-+	.clk_regs		= fsys1_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(fsys1_clk_regs),
-+};
-+
-+static void __init exynos7_clk_fsys1_init(struct device_node *np)
-+{
-+	samsung_cmu_register_one(np, &fsys1_cmu_info);
-+}
-+
-+CLK_OF_DECLARE(exynos7_clk_fsys1, "samsung,exynos7-clock-fsys1",
-+	exynos7_clk_fsys1_init);
++	GATE(SCLK_TMU, "sclk_tmu", "fin_pll", ENABLE_SCLK_PERIS, 10, 0, 0),
+ };
+ 
+ static struct samsung_cmu_info peris_cmu_info __initdata = {
 diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
-index 6d07b6f..ff63c4e 100644
+index dd89aa0..f255bb7 100644
 --- a/include/dt-bindings/clock/exynos7-clk.h
 +++ b/include/dt-bindings/clock/exynos7-clk.h
-@@ -27,6 +27,17 @@
- #define CLK_SCLK_UART3			6
- #define TOP0_NR_CLK			7
+@@ -53,7 +53,9 @@
+ #define PCLK_HSI2C9			7
+ #define PCLK_HSI2C10			8
+ #define PCLK_HSI2C11			9
+-#define PERIC0_NR_CLK			10
++#define PCLK_PWM			10
++#define SCLK_PWM			11
++#define PERIC0_NR_CLK			12
  
-+/* TOP1 */
-+#define DOUT_ACLK_FSYS1_200		1
-+#define DOUT_ACLK_FSYS0_200		2
-+#define DOUT_SCLK_MMC2			3
-+#define DOUT_SCLK_MMC1			4
-+#define DOUT_SCLK_MMC0			5
-+#define CLK_SCLK_MMC2			6
-+#define CLK_SCLK_MMC1			7
-+#define CLK_SCLK_MMC0			8
-+#define TOP1_NR_CLK			9
-+
- /* PERIC0 */
- #define PCLK_UART0			1
- #define SCLK_UART0			2
-@@ -58,4 +69,13 @@
+ /* PERIC1 */
+ #define PCLK_UART1			1
+@@ -72,7 +74,10 @@
+ /* PERIS */
+ #define PCLK_CHIPID			1
  #define SCLK_CHIPID			2
- #define PERIS_NR_CLK			3
+-#define PERIS_NR_CLK			3
++#define PCLK_WDT			3
++#define PCLK_TMU			4
++#define SCLK_TMU			5
++#define PERIS_NR_CLK			6
  
-+/* FSYS0 */
-+#define ACLK_MMC2			1
-+#define FSYS0_NR_CLK			2
-+
-+/* FSYS1 */
-+#define ACLK_MMC1			1
-+#define ACLK_MMC0			2
-+#define FSYS1_NR_CLK			3
-+
- #endif /* _DT_BINDINGS_CLOCK_EXYNOS7_H */
+ /* FSYS0 */
+ #define ACLK_MMC2			1
 -- 
 1.7.9.5
