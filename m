@@ -1,81 +1,84 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCHv4 0/3] ARM: dts: Add new board dts file for
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv4 0/3] ARM: dts: Add new board dts file for
  Exynos3250-based Rinato board
-Date: Tue, 28 Oct 2014 09:19:14 +0900
-Message-ID: <01b401cff244$d0052610$700f7230$@samsung.com>
+Date: Tue, 28 Oct 2014 09:25:07 +0900
+Message-ID: <544EE263.8080109@samsung.com>
 References: <1414156362-5752-1-git-send-email-cw00.choi@samsung.com>
- <544ED8B5.3090607@samsung.com>
+ <544ED8B5.3090607@samsung.com> <01b401cff244$d0052610$700f7230$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:47852 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752782AbaJ1ATU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Oct 2014 20:19:20 -0400
-In-reply-to: <544ED8B5.3090607@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Chanwoo Choi' <cw00.choi@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <01b401cff244$d0052610$700f7230$@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net, tomasz.figa@gmail.com, geunsik.lim@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, k.kozlowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Chanwoo Choi wrote:
+Dear Kukjin,
+
+On 10/28/2014 09:19 AM, Kukjin Kim wrote:
+> Chanwoo Choi wrote:
+>>
+>> Dear Kukjin,
+>>
+> Hi,
 > 
-> Dear Kukjin,
+>> Did you please pick up this patchset on 3.19 queue?
+>>
+> I'll apply this series once my previous pull-request which has been sent out
+> last week is merged into arm-soc tree.
 > 
-Hi,
-
-> Did you please pick up this patchset on 3.19 queue?
+> If any comments on this series, I'll let you know.
 > 
-I'll apply this series once my previous pull-request which has been sent out
-last week is merged into arm-soc tree.
 
-If any comments on this series, I'll let you know.
+Thanks for applied it.
 
-Thanks,
-Kukjin
+Best Regards,
+Chanwoo Choi
 
-
-> Best Regards,
-> Chanwoo Choi
 > 
-> On 10/24/2014 10:12 PM, Chanwoo Choi wrote:
-> > This patchset adds new board dts file for Samsung Rinato board (Gear 2) which
-> > is based on Exynos3250 SoC and adds sleep mode pin configuration using pinctrl
-> > subsystem to reduce leakage power-consumption in sleep state.
-> >
-> > This patchset is based on linux-samsung.git (for-next branch).
-> >
-> > Changes from v3:
-> > - Fix wrong email address
-> > - Remove 'vemmc_reg' fixed regulator and then use 'ldo12_reg' for mshc_0
-> >
-> > Changes from v2:
-> > - Separate patch3 from patchset[1] and then this patchset includes patch3.
-> >   After applied patch3, the power-consumption of Rinato board is 0.6mA in suspend state.
-> >   [1] [PATCHv5 0/3] regulator: of: Add support for parsing regulator suspend state
-> >   : https://lkml.org/lkml/2014/10/10/161
-> > - Change PDN (Power-down mode) state for GPE0-3 (BT_UART_RTS) because Rinato
-> >   board uses UART1 for bluetooth device. BT_UART_RTS pin should be disabled in
-> >   suspend state by setting high state of GPE0-3
-> > - Turn on always the regulator state of VAP_VMIPI_1.0V because if VAP_VMIPI_1.0V
-> >   is off state or would be not controlled by DRM driver, happen imprecise external abort.
-> >
-> > Changes from v1:
-> > - Remove useless brace
-> > - Remove unneeded 'regulators' keyword
-> > - Consolidate memory information in one entry
-> >
-> > Chanwoo Choi (3):
-> >   ARM: dts: Add board dts file for Exynos3250-based Rinato board
-> >   ARM: dts: Add sleep mode pin configuration for exynos3250-rinato
-> >   ARM: dts: Add sleep mode of regulator for exynos3250-rinato board
-> >
-> >  arch/arm/boot/dts/Makefile                |   3 +-
-> >  arch/arm/boot/dts/exynos3250-pinctrl.dtsi |  16 +
-> >  arch/arm/boot/dts/exynos3250-rinato.dts   | 686 ++++++++++++++++++++++++++++++
-> >  3 files changed, 704 insertions(+), 1 deletion(-)
-> >  create mode 100644 arch/arm/boot/dts/exynos3250-rinato.dts
-> >
+> 
+>> Best Regards,
+>> Chanwoo Choi
+>>
+>> On 10/24/2014 10:12 PM, Chanwoo Choi wrote:
+>>> This patchset adds new board dts file for Samsung Rinato board (Gear 2) which
+>>> is based on Exynos3250 SoC and adds sleep mode pin configuration using pinctrl
+>>> subsystem to reduce leakage power-consumption in sleep state.
+>>>
+>>> This patchset is based on linux-samsung.git (for-next branch).
+>>>
+>>> Changes from v3:
+>>> - Fix wrong email address
+>>> - Remove 'vemmc_reg' fixed regulator and then use 'ldo12_reg' for mshc_0
+>>>
+>>> Changes from v2:
+>>> - Separate patch3 from patchset[1] and then this patchset includes patch3.
+>>>   After applied patch3, the power-consumption of Rinato board is 0.6mA in suspend state.
+>>>   [1] [PATCHv5 0/3] regulator: of: Add support for parsing regulator suspend state
+>>>   : https://lkml.org/lkml/2014/10/10/161
+>>> - Change PDN (Power-down mode) state for GPE0-3 (BT_UART_RTS) because Rinato
+>>>   board uses UART1 for bluetooth device. BT_UART_RTS pin should be disabled in
+>>>   suspend state by setting high state of GPE0-3
+>>> - Turn on always the regulator state of VAP_VMIPI_1.0V because if VAP_VMIPI_1.0V
+>>>   is off state or would be not controlled by DRM driver, happen imprecise external abort.
+>>>
+>>> Changes from v1:
+>>> - Remove useless brace
+>>> - Remove unneeded 'regulators' keyword
+>>> - Consolidate memory information in one entry
+>>>
+>>> Chanwoo Choi (3):
+>>>   ARM: dts: Add board dts file for Exynos3250-based Rinato board
+>>>   ARM: dts: Add sleep mode pin configuration for exynos3250-rinato
+>>>   ARM: dts: Add sleep mode of regulator for exynos3250-rinato board
+>>>
+>>>  arch/arm/boot/dts/Makefile                |   3 +-
+>>>  arch/arm/boot/dts/exynos3250-pinctrl.dtsi |  16 +
+>>>  arch/arm/boot/dts/exynos3250-rinato.dts   | 686 ++++++++++++++++++++++++++++++
+>>>  3 files changed, 704 insertions(+), 1 deletion(-)
+>>>  create mode 100644 arch/arm/boot/dts/exynos3250-rinato.dts
+>>>
+> 
+> 
