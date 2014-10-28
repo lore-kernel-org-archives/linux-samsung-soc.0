@@ -1,64 +1,42 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH 3/8] mfd: max77686/802: Remove support for board files
-Date: Tue, 28 Oct 2014 10:11:08 +0100
-Message-ID: <1414487468.24949.21.camel@AMDC1943>
-References: <1414422226-10948-1-git-send-email-k.kozlowski@samsung.com>
- <1414422226-10948-4-git-send-email-k.kozlowski@samsung.com>
- <544EA178.3090506@collabora.co.uk>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
+ ps8622 DT properties
+Date: Tue, 28 Oct 2014 10:12:16 +0100
+Message-ID: <CABxcv=kNBpNCOM-=PgHcR23eAVuzR8ECROeGxOs-Hk0JCSK1Lw@mail.gmail.com>
+References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
+	<20141008070918.GA4999@ulmo>
+	<CAEC9eQPn2GAn6nrSvgso2QTXQErtY+8dH5-LbZS9mGTYcYC5Gw@mail.gmail.com>
+	<15883554.FBq3UbZUdh@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:14748 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751591AbaJ1JLN (ORCPT
+Received: from mail-wi0-f169.google.com ([209.85.212.169]:42075 "EHLO
+	mail-wi0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753870AbaJ1JMS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Oct 2014 05:11:13 -0400
-In-reply-to: <544EA178.3090506@collabora.co.uk>
+	Tue, 28 Oct 2014 05:12:18 -0400
+Received: by mail-wi0-f169.google.com with SMTP id q5so8130758wiv.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Oct 2014 02:12:16 -0700 (PDT)
+In-Reply-To: <15883554.FBq3UbZUdh@avalon>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Thierry Reding <thierry.reding@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, David Airlie <airlied@linux.ie>, Ajay Kumar <ajaykumar.rs@samsung.com>, InKi Dae <inki.dae@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Clark <robdclark@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Sean Paul <seanpaul@google.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-On pon, 2014-10-27 at 20:48 +0100, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On 10/27/2014 04:03 PM, Krzysztof Kozlowski wrote:
-> > The driver is used only on Exynos based boards with DTS support.
-> > Convert the driver to DTS-only version. This simplifies a little the
-> > code:
-> > 1. No dead (unused) entries in platform_data structure.
-> > 2. More code removed (from all three patches: 34 insertions(+), 107
-> >    deletions).
-> > 3. Regulator driver does not depend on allocated memory
-> >    from MFD driver.
-> > 4. It makes also easier extending the regulator driver
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > ---
-> >  drivers/mfd/max77686.c               | 23 -----------------------
-> >  include/linux/mfd/max77686-private.h |  1 -
-> >  include/linux/mfd/max77686.h         | 22 ----------------------
-> >  3 files changed, 46 deletions(-)
-> > 
-> > diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
-> > index 929795eae9fc..3da237afacde 100644
-> > --- a/drivers/mfd/max77686.c
-> > +++ b/drivers/mfd/max77686.c
-> 
-> As I said in Patch 2/8, I think this driver should depend on OF since
-> is now DT-only. Regulator drivers don't need to do this since they
-> already depend on MFD_MAX77686. With that change feel free to add:
-> 
-> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> 
-> Please also add my Reviewed-by tag to Patch 2/8 since I just noticed
-> that I forgot to add it.
+Hello Ajay,
 
-Thank you, I'll add depends on OF.
+On Thu, Oct 16, 2014 at 11:04 AM, Laurent Pinchart
+<laurent.pinchart@ideasonboard.com> wrote:
+>>
+>> Right. It would be great if you guys come to agreement ASAP!
+>
+> I don't think we'll agree any time soon, so I believe it's up to you to decide
+> which option is best based on all arguments that have been presented.
+>
+
+Did you decide what's the correct approach? I don't have a strong
+opinion, I'm just asking because it would be a pity if your series
+miss another kernel release...
 
 Best regards,
-Krzysztof
-> 
-> Best regards,
-> Javier
+Javier
