@@ -1,69 +1,177 @@
 From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH v3 0/5] Add clock support for a few IPs on Exynos7
-Date: Tue, 28 Oct 2014 16:48:50 +0530
-Message-ID: <1414495135-25588-1-git-send-email-a.kesavan@samsung.com>
+Subject: [PATCH v3 3/5] clk: samsung: exynos7: add clocks for RTC block
+Date: Tue, 28 Oct 2014 16:48:53 +0530
+Message-ID: <1414495135-25588-4-git-send-email-a.kesavan@samsung.com>
+References: <1414495135-25588-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:28927 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:29263 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756975AbaJ1LTh (ORCPT
+	with ESMTP id S1754338AbaJ1LVJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Oct 2014 07:19:37 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
+	Tue, 28 Oct 2014 07:21:09 -0400
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
  by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NE500DCEJGNV870@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Oct 2014 20:19:35 +0900 (KST)
+ with ESMTP id <0NE500DOYJJ8QY70@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 28 Oct 2014 20:21:08 +0900 (KST)
+In-reply-to: <1414495135-25588-1-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com
+Cc: linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
 
-Changes since v2:
-	- Dropped the dts/arm64 changes and only kept the clock patches so that they
-	may be directly applied.
-	- Fixed the clock ordering for DOUT_ACLK_CCORE_133.
-	- Added a patch that adds support for ADC gate clock as part of this series.
+From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
 
-Changes since v1:
-	- Added documentation for input clocks of the newly added CMUs
+Add clock support for the RTC block in Exynos7.
 
-Following are the dependencies:
-1) dts, kbuild: Implement support for dtb vendor subdirs patchset 
-http://comments.gmane.org/gmane.linux.kbuild.devel/12131
-2) arch: arm64: Enable support for Samsung Exynos7 SoC
-http://www.spinics.net/lists/linux-samsung-soc/msg37047.html
-3) Serial clean-up patches for Exynos7
-http://www.spinics.net/lists/arm-kernel/msg367348.html
-http://www.spinics.net/lists/arm-kernel/msg367349.html
-4) Add initial support for pinctrl on Exynos7
-http://www.spinics.net/lists/linux-samsung-soc/msg37708.html
+Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+---
+ .../devicetree/bindings/clock/exynos7-clock.txt    |    5 ++
+ drivers/clk/samsung/clk-exynos7.c                  |   54 ++++++++++++++++++++
+ include/dt-bindings/clock/exynos7-clk.h            |    7 ++-
+ 3 files changed, 65 insertions(+), 1 deletion(-)
 
-For testing I have applied the following:
-1) mmc: dw_mmc: Add IDMAC 64-bit address mode support
-http://www.spinics.net/lists/kernel/msg1842300.html
-2) mfd: sec: add S2MPS15 PMIC support
-https://lkml.org/lkml/2014/10/14/50
-3) regulator: s2mps11: add support for S2MPS15 regulators
-https://lkml.org/lkml/2014/10/14/52
-4) Regulators dt nodes were added in the espresso dts file and I2C channel 4
-which has the PMIC on it was tested.
-5) watchdog: s3c2410_wdt: Fix the mask bit offset for Exynos7
-http://www.spinics.net/lists/linux-watchdog/msg05292.html
-
-Abhilash Kesavan (1):
-  clk: samsung: exynos7: add gate clock for ADC block
-
-Naveen Krishna Ch (4):
-  clk: samsung: exynos7: add clocks for I2C block
-  clk: samsung: exynos7: add clocks for MMC block
-  clk: samsung: exynos7: add clocks for RTC block
-  clk: samsung: exynos7: add gate clocks for WDT, TMU and PWM blocks
-
- .../devicetree/bindings/clock/exynos7-clock.txt    |   26 ++
- drivers/clk/samsung/clk-exynos7.c                  |  318 ++++++++++++++++++++
- include/dt-bindings/clock/exynos7-clk.h            |   51 +++-
- 3 files changed, 391 insertions(+), 4 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/clock/exynos7-clock.txt b/Documentation/devicetree/bindings/clock/exynos7-clock.txt
+index b29cb50..6d3d5f8 100644
+--- a/Documentation/devicetree/bindings/clock/exynos7-clock.txt
++++ b/Documentation/devicetree/bindings/clock/exynos7-clock.txt
+@@ -28,6 +28,7 @@ Required Properties for Clock Controller:
+ 	- "samsung,exynos7-clock-topc"
+ 	- "samsung,exynos7-clock-top0"
+ 	- "samsung,exynos7-clock-top1"
++	- "samsung,exynos7-clock-ccore"
+ 	- "samsung,exynos7-clock-peric0"
+ 	- "samsung,exynos7-clock-peric1"
+ 	- "samsung,exynos7-clock-peris"
+@@ -60,6 +61,10 @@ Input clocks for top1 clock controller:
+ 	- dout_sclk_cc_pll
+ 	- dout_sclk_mfc_pll
+ 
++Input clocks for ccore clock controller:
++	- fin_pll
++	- dout_aclk_ccore_133
++
+ Input clocks for peric0 clock controller:
+ 	- fin_pll
+ 	- dout_aclk_peric0_66
+diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
+index f5e43fa..3a30f43 100644
+--- a/drivers/clk/samsung/clk-exynos7.c
++++ b/drivers/clk/samsung/clk-exynos7.c
+@@ -29,7 +29,9 @@
+ #define AUD_PLL_CON0		0x0140
+ #define MUX_SEL_TOPC0		0x0200
+ #define MUX_SEL_TOPC1		0x0204
++#define MUX_SEL_TOPC2		0x0208
+ #define MUX_SEL_TOPC3		0x020C
++#define DIV_TOPC0		0x0600
+ #define DIV_TOPC1		0x0604
+ #define DIV_TOPC3		0x060C
+ 
+@@ -78,7 +80,9 @@ static unsigned long topc_clk_regs[] __initdata = {
+ 	AUD_PLL_CON0,
+ 	MUX_SEL_TOPC0,
+ 	MUX_SEL_TOPC1,
++	MUX_SEL_TOPC2,
+ 	MUX_SEL_TOPC3,
++	DIV_TOPC0,
+ 	DIV_TOPC1,
+ 	DIV_TOPC3,
+ };
+@@ -101,10 +105,15 @@ static struct samsung_mux_clock topc_mux_clks[] __initdata = {
+ 	MUX(0, "mout_sclk_bus0_pll_out", mout_sclk_bus0_pll_out_p,
+ 		MUX_SEL_TOPC1, 16, 1),
+ 
++	MUX(0, "mout_aclk_ccore_133", mout_topc_group2,	MUX_SEL_TOPC2, 4, 2),
++
+ 	MUX(0, "mout_aclk_peris_66", mout_topc_group2, MUX_SEL_TOPC3, 24, 2),
+ };
+ 
+ static struct samsung_div_clock topc_div_clks[] __initdata = {
++	DIV(DOUT_ACLK_CCORE_133, "dout_aclk_ccore_133", "mout_aclk_ccore_133",
++		DIV_TOPC0, 4, 4),
++
+ 	DIV(DOUT_ACLK_PERIS, "dout_aclk_peris_66", "mout_aclk_peris_66",
+ 		DIV_TOPC1, 24, 4),
+ 
+@@ -393,6 +402,51 @@ static void __init exynos7_clk_top1_init(struct device_node *np)
+ CLK_OF_DECLARE(exynos7_clk_top1, "samsung,exynos7-clock-top1",
+ 	exynos7_clk_top1_init);
+ 
++/* Register Offset definitions for CMU_CCORE (0x105B0000) */
++#define MUX_SEL_CCORE			0x0200
++#define DIV_CCORE			0x0600
++#define ENABLE_ACLK_CCORE0		0x0800
++#define ENABLE_ACLK_CCORE1		0x0804
++#define ENABLE_PCLK_CCORE		0x0900
++
++/*
++ * List of parent clocks for Muxes in CMU_CCORE
++ */
++PNAME(mout_aclk_ccore_133_p)	= { "fin_pll", "dout_aclk_ccore_133" };
++
++static unsigned long ccore_clk_regs[] __initdata = {
++	MUX_SEL_CCORE,
++	ENABLE_PCLK_CCORE,
++};
++
++static struct samsung_mux_clock ccore_mux_clks[] __initdata = {
++	MUX(0, "mout_aclk_ccore_133_user", mout_aclk_ccore_133_p,
++		MUX_SEL_CCORE, 1, 1),
++};
++
++static struct samsung_gate_clock ccore_gate_clks[] __initdata = {
++	GATE(PCLK_RTC, "pclk_rtc", "mout_aclk_ccore_133_user",
++		ENABLE_PCLK_CCORE, 8, 0, 0),
++};
++
++static struct samsung_cmu_info ccore_cmu_info __initdata = {
++	.mux_clks		= ccore_mux_clks,
++	.nr_mux_clks		= ARRAY_SIZE(ccore_mux_clks),
++	.gate_clks		= ccore_gate_clks,
++	.nr_gate_clks		= ARRAY_SIZE(ccore_gate_clks),
++	.nr_clk_ids		= CCORE_NR_CLK,
++	.clk_regs		= ccore_clk_regs,
++	.nr_clk_regs		= ARRAY_SIZE(ccore_clk_regs),
++};
++
++static void __init exynos7_clk_ccore_init(struct device_node *np)
++{
++	samsung_cmu_register_one(np, &ccore_cmu_info);
++}
++
++CLK_OF_DECLARE(exynos7_clk_ccore, "samsung,exynos7-clock-ccore",
++	exynos7_clk_ccore_init);
++
+ /* Register Offset definitions for CMU_PERIC0 (0x13610000) */
+ #define MUX_SEL_PERIC0			0x0200
+ #define ENABLE_PCLK_PERIC0		0x0900
+diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
+index ff63c4e..dd89aa0 100644
+--- a/include/dt-bindings/clock/exynos7-clk.h
++++ b/include/dt-bindings/clock/exynos7-clk.h
+@@ -16,7 +16,8 @@
+ #define DOUT_SCLK_BUS1_PLL		3
+ #define DOUT_SCLK_CC_PLL		4
+ #define DOUT_SCLK_MFC_PLL		5
+-#define TOPC_NR_CLK			6
++#define DOUT_ACLK_CCORE_133		6
++#define TOPC_NR_CLK			7
+ 
+ /* TOP0 */
+ #define DOUT_ACLK_PERIC1		1
+@@ -38,6 +39,10 @@
+ #define CLK_SCLK_MMC0			8
+ #define TOP1_NR_CLK			9
+ 
++/* CCORE */
++#define PCLK_RTC			1
++#define CCORE_NR_CLK			2
++
+ /* PERIC0 */
+ #define PCLK_UART0			1
+ #define SCLK_UART0			2
 -- 
 1.7.9.5
