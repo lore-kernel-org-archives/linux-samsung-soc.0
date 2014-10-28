@@ -1,74 +1,60 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V7 03/12] drm/bridge: Add helper functions for drm_bridge
-Date: Tue, 28 Oct 2014 14:56:33 +0530
-Message-ID: <CAEC9eQPb1Ko5RC3LoKhrbYG6JC4pTsw7jtJJbuONdcJG=ab8yQ@mail.gmail.com>
-References: <1409149783-12416-1-git-send-email-ajaykumar.rs@samsung.com>
- <1409149783-12416-4-git-send-email-ajaykumar.rs@samsung.com>
- <CAOw6vbLKU32yq+z9d6vHv+9MpnXgv9jRq2L-cZ8wdCH5vaVRzQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAOw6vbLKU32yq+z9d6vHv+9MpnXgv9jRq2L-cZ8wdCH5vaVRzQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Sean Paul <seanpaul@chromium.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: fix typo in static struct name
+ "exynos5_list_diable_wfi_wfe"
+Date: Tue, 28 Oct 2014 15:20:32 +0530
+Message-ID: <1414489832-28011-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:14050 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754243AbaJ1J4h (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 28 Oct 2014 05:56:37 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NE500DH2FMBV810@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 28 Oct 2014 18:56:35 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-T24gVHVlLCBPY3QgMjgsIDIwMTQgYXQgMTo0MSBBTSwgU2VhbiBQYXVsIDxzZWFucGF1bEBjaHJv
-bWl1bS5vcmc+IHdyb3RlOgo+IE9uIFdlZCwgQXVnIDI3LCAyMDE0IGF0IDEwOjI5IEFNLCBBamF5
-IEt1bWFyIDxhamF5a3VtYXIucnNAc2Ftc3VuZy5jb20+IHdyb3RlOgo+PiBBIHNldCBvZiBoZWxw
-ZXIgZnVuY3Rpb25zIGFyZSBkZWZpbmVkIGluIHRoaXMgcGF0Y2ggdG8gbWFrZQo+PiBicmlkZ2Ug
-ZHJpdmVyIHByb2JlIGluZGVwZW5kZW50IG9mIHRoZSBkcm0gZmxvdy4KPj4KPj4gVGhlIGJyaWRn
-ZSBkZXZpY2VzIHJlZ2lzdGVyIHRoZW1zZWx2ZXMgb24gYSBsb29rdXAgdGFibGUKPj4gd2hlbiB0
-aGV5IGdldCBwcm9iZWQgYnkgY2FsbGluZyAiZHJtX2JyaWRnZV9hZGQiLgo+Pgo+PiBUaGUgcGFy
-ZW50IGVuY29kZXIgZHJpdmVyIHdhaXRzIHRpbGwgdGhlIGJyaWRnZSBpcyBhdmFpbGFibGUKPj4g
-aW4gdGhlIGxvb2t1cCB0YWJsZShieSBjYWxsaW5nICJvZl9kcm1fZmluZF9icmlkZ2UiKSBhbmQg
-dGhlbgo+PiBjb250aW51ZXMgd2l0aCBpdHMgaW5pdGlhbGl6YXRpb24uCj4+Cj4+IFRoZSBlbmNv
-ZGVyIGRyaXZlciBzaG91bGQgYWxzbyBjYWxsICJkcm1fYnJpZGdlX2F0dGFjaCIgdG8gcGFzcwo+
-PiBvbiB0aGUgZHJtX2RldmljZSwgZW5jb2RlciBwb2ludGVycyB0byB0aGUgYnJpZGdlIG9iamVj
-dC4KPj4KPj4gZHJtX2JyaWRnZV9hdHRhY2ggaW50dXJuIGNhbGxzIGRybV9icmlkZ2VfaW5pdCB0
-byByZWdpc3RlciBpdHNlbGYKPj4gd2l0aCB0aGUgZHJtIGNvcmUuIExhdGVyLCBpdCBjYWxscyAi
-YnJpZGdlLT5mdW5jcy0+YXR0YWNoIiBzbyB0aGF0Cj4+IGJyaWRnZSBjYW4gY29udGludWUgd2l0
-aCBvdGhlciBpbml0aWFsaXphdGlvbnMuCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IEFqYXkgS3VtYXIg
-PGFqYXlrdW1hci5yc0BzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vTWFr
-ZWZpbGUgICAgICAgICAgICAgICB8ICAgIDEgKwo+PiAgZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9L
-Y29uZmlnICAgICAgICAgfCAgIDE1ICsrKystCj4+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2JyaWRn
-ZS5jICAgICAgICAgICB8ICAxMDIgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPj4g
-IGRyaXZlcnMvZ3B1L2RybS9kcm1fY3J0Yy5jICAgICAgICAgICAgIHwgICAgNCArLQo+PiAgZHJp
-dmVycy9ncHUvZHJtL21zbS9oZG1pL2hkbWlfYnJpZGdlLmMgfCAgICA0ICstCj4+ICBpbmNsdWRl
-L2RybS9kcm1fY3J0Yy5oICAgICAgICAgICAgICAgICB8ICAgMTIgKysrLQo+PiAgNiBmaWxlcyBj
-aGFuZ2VkLCAxMzEgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkKPj4gIGNyZWF0ZSBtb2Rl
-IDEwMDY0NCBkcml2ZXJzL2dwdS9kcm0vZHJtX2JyaWRnZS5jCj4+Cj4+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9kcm0vTWFrZWZpbGUgYi9kcml2ZXJzL2dwdS9kcm0vTWFrZWZpbGUKPj4gaW5k
-ZXggNGE1NWQ1OS4uYmRiZmI2ZiAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL01ha2Vm
-aWxlCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9NYWtlZmlsZQo+PiBAQCAtMTksNiArMTksNyBA
-QCBkcm0teSAgICAgICA6PSAgICAgICAgZHJtX2F1dGgubyBkcm1fYnVmZmVyLm8gZHJtX2J1ZnMu
-byBkcm1fY2FjaGUubyBcCj4+ICBkcm0tJChDT05GSUdfQ09NUEFUKSArPSBkcm1faW9jMzIubwo+
-PiAgZHJtLSQoQ09ORklHX0RSTV9HRU1fQ01BX0hFTFBFUikgKz0gZHJtX2dlbV9jbWFfaGVscGVy
-Lm8KPj4gIGRybS0kKENPTkZJR19QQ0kpICs9IGF0aV9wY2lnYXJ0Lm8KPj4gK2RybS0kKENPTkZJ
-R19EUk1fQlJJREdFKSArPSBkcm1fYnJpZGdlLm8KPj4gIGRybS0kKENPTkZJR19EUk1fUEFORUwp
-ICs9IGRybV9wYW5lbC5vCj4+ICBkcm0tJChDT05GSUdfT0YpICs9IGRybV9vZi5vCj4+Cj4+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL0tjb25maWcgYi9kcml2ZXJzL2dwdS9k
-cm0vYnJpZGdlL0tjb25maWcKPj4gaW5kZXggODg0OTIzZi4uNWE4ZTkwNyAxMDA2NDQKPj4gLS0t
-IGEvZHJpdmVycy9ncHUvZHJtL2JyaWRnZS9LY29uZmlnCj4+ICsrKyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9icmlkZ2UvS2NvbmZpZwo+PiBAQCAtMSw1ICsxLDE2IEBACj4+IC1jb25maWcgRFJNX1BUTjM0
-NjAKPj4gLSAgICAgICB0cmlzdGF0ZSAiUFROMzQ2MCBEUC9MVkRTIGJyaWRnZSIKPj4gK2NvbmZp
-ZyBEUk1fQlJJREdFCj4KPiBJJ20gbm90IGNvbnZpbmNlZCB0aGlzIGFkZHMgYW55IHZhbHVlLCB0
-byBiZSBob25lc3QuCkhtbSwgdGhlbiBob3cgdG8gY29tcGlsZSBkcm1fYnJpZGdlLmM/Cgo+IElu
-IGFkZGl0aW9uIHRvCj4gd2hldGhlciBvciBub3QgaXQncyB1c2VmdWwsIGl0IHNlZW1zIGxpa2Ug
-eW91J2QgbmVlZCB0byBzdHViIHRoZQo+IGRybV9icmlkZ2VfKiBmdW5jdGlvbnMgdGhhdCBhcmUg
-ZGVjbGFyZWQgaW4gZHJtX2NydGMuaCBvciBicmVhayB0aGVtCj4gb3V0IGludG8gZHJtX2JyaWRn
-ZS5oLgpXZWxsLCBUaGllcnJ5IG1lbnRpb25lZCBhYm91dCB0aGlzIGxvbmcgYmFjay4gQWdhaW4s
-IHdlIGhhdmUgdGhlCmNvbmZpcm1hdGlvbiBub3chCgpBamF5CltzbmlwXQpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
-CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+This patch fixes a typo in struct named as "exynos5_list_diable_wfi_wfe"
+by making it "exynos5_list_disable_wfi_wfe" which is more meaningful.
+
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+---
+ arch/arm/mach-exynos/pmu.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
+index cfc62e8..e5e1846 100644
+--- a/arch/arm/mach-exynos/pmu.c
++++ b/arch/arm/mach-exynos/pmu.c
+@@ -330,7 +330,7 @@ static unsigned int const exynos5_list_both_cnt_feed[] = {
+ 	EXYNOS5_TOP_PWR_SYSMEM_OPTION,
+ };
+ 
+-static unsigned int const exynos5_list_diable_wfi_wfe[] = {
++static unsigned int const exynos5_list_disable_wfi_wfe[] = {
+ 	EXYNOS5_ARM_CORE1_OPTION,
+ 	EXYNOS5_FSYS_ARM_OPTION,
+ 	EXYNOS5_ISP_ARM_OPTION,
+@@ -361,11 +361,11 @@ static void exynos5_init_pmu(void)
+ 	/*
+ 	 * Disable WFI/WFE on XXX_OPTION
+ 	 */
+-	for (i = 0 ; i < ARRAY_SIZE(exynos5_list_diable_wfi_wfe) ; i++) {
+-		tmp = pmu_raw_readl(exynos5_list_diable_wfi_wfe[i]);
++	for (i = 0 ; i < ARRAY_SIZE(exynos5_list_disable_wfi_wfe) ; i++) {
++		tmp = pmu_raw_readl(exynos5_list_disable_wfi_wfe[i]);
+ 		tmp &= ~(EXYNOS5_OPTION_USE_STANDBYWFE |
+ 			 EXYNOS5_OPTION_USE_STANDBYWFI);
+-		pmu_raw_writel(tmp, exynos5_list_diable_wfi_wfe[i]);
++		pmu_raw_writel(tmp, exynos5_list_disable_wfi_wfe[i]);
+ 	}
+ }
+ 
+-- 
+1.7.9.5
