@@ -1,70 +1,58 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v2] ARM: dts: exynos4412-trats: Add micro SD card SDHCI node
-Date: Tue, 28 Oct 2014 19:57:40 +0900
-Message-ID: <047101cff29d$fdedc880$f9c95980$@kernel.org>
-References: <1414421995-22618-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCHv4 0/2] ARM: EXYNOS: Support new Exynos4415 SoC based on
+ Cortex-A9 quad cores
+Date: Tue, 28 Oct 2014 20:01:44 +0900
+Message-ID: <1414494106-16584-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:65366 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751190AbaJ1K5m (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:25964 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751362AbaJ1LBu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Oct 2014 06:57:42 -0400
-In-reply-to: <1414421995-22618-1-git-send-email-k.kozlowski@samsung.com>
-Content-language: ko
+	Tue, 28 Oct 2014 07:01:50 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
+To: kgene.kim@samsung.com
+Cc: mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net, tomasz.figa@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, cw00.choi@samsung.com, m.szyprowski@samsung.com, yj44.cho@samsung.com, jaewon02.kim@samsung.com, ideal.song@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Krzysztof Kozlowski wrote:
-> 
-Hi,
+This patchset support new Exynos4415 Samsung SoC based on Cortex-A9 quad cores.
+Exynos4415 is a System-On-Chip (SoC) that is based on 32-bit RISC processor
+for Smartphone. It is desigend with the 28nm low-power high-K metal gate
+process and provides the best performance features.
 
-> Add SDHCI node for supporting the micro SD card. On Trats2 board the
-> SDHCI does not use sd2_cd pins (gpk2-2) for card detect but gpx3-4
-> instead.
-> 
-> Power is supplied from LDO21 regulator which in off state is controlled
-> by external GPIO pin.
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> 
-> ---
-> 
-> Changes since v1:
-> 1. Drop FIXME comment (about findings during testing).
-> ---
->  arch/arm/boot/dts/exynos4412-trats2.dts | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-> index a5aa52bba72c..7a68e0832cd6 100644
-> --- a/arch/arm/boot/dts/exynos4412-trats2.dts
-> +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-> @@ -603,6 +603,16 @@
->  		cap-mmc-highspeed;
->  	};
-> 
-> +	sdhci@12530000 {
-> +		bus-width = <4>;
-> +		cd-gpios = <&gpx3 4 0>;
-> +		cd-inverted;
-> +		pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_bus4>;
-> +		pinctrl-names = "default";
-> +		vmmc-supply = <&ldo21_reg>;
-> +		status = "okay";
-> +	};
-> +
->  	serial@13800000 {
->  		status = "okay";
->  	};
-> --
-> 1.9.1
+This patchset include some patches such as:
+- Support booting of Exynos4415
+- Supoort uart/mct/adc/gic/i2c/spi/power-domain/pmu/mshc/ehci/ohci/pwm/amba
 
-Looks good to me, will apply.
+Changes from v3:
+- Remove un-used gpio from exynos4415-pinctrl.dtsi
+- Fix wrong value of CPU nodes
+- Remove fixed-rate-clocks because it has not dependency on SoC
 
-Thanks,
-Kukjin
+Changes from v2:
+- Modify the name of first patch
+
+Changes from v1:
+- Remove legacy helper function to identify SoC
+- Separate out the clock patches[2] from Exynos4415 patchset[1] and sent it [2]
+- Separate out the pinctrl patch[3] from Exynos4415 patchset[1] and sent it [3]
+ [1] [PATCH 0/5] Support new Exynos4415 SoC based on Cortex-A9 quad cores
+ : https://lkml.org/lkml/2014/10/19/253
+ [2] [PATCHv3 1/2] clk: samsung: exynos4415: Add clocks using common clock framework
+ : https://lkml.org/lkml/2014/10/26/159
+ [3] [PATCHv2] pinctrl: exynos: Add support for Exynos4415
+ : https://lkml.org/lkml/2014/10/26/160
+
+Chanwoo Choi (2):
+  ARM: EXYNOS: Add EXYNOS4415 SoC
+  ARM: dts: Add dts files for Exynos4415 SoC
+
+ arch/arm/boot/dts/exynos4415-pinctrl.dtsi | 573 ++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4415.dtsi         | 604 ++++++++++++++++++++++++++++++
+ arch/arm/mach-exynos/Kconfig              |   5 +
+ arch/arm/mach-exynos/exynos.c             |   2 +
+ 4 files changed, 1184 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos4415-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos4415.dtsi
+
+-- 
+1.8.5.5
