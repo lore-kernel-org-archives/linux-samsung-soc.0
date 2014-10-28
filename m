@@ -1,78 +1,171 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v2 0/3] iio: exynos-adc: use syscon instead of ioremap
-Date: Tue, 28 Oct 2014 19:19:22 +0900
-Message-ID: <03d601cff298$a4bacc90$ee3065b0$@kernel.org>
-References: <1410857931-4980-1-git-send-email-ch.naveen@samsung.com>
- <541EC1C2.6090608@kernel.org> <5436EA85.90900@kernel.org>
- <544C04E6.50401@kernel.org>
+Subject: RE: [PATCH v2 2/2] tty: serial: samsung: Clean-up selection of number
+ of available UARTs
+Date: Tue, 28 Oct 2014 19:31:40 +0900
+Message-ID: <041301cff29a$5c9a5fa0$15cf1ee0$@kernel.org>
+References: <1412181777-6388-1-git-send-email-a.kesavan@samsung.com>
+ <1412181777-6388-2-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <544C04E6.50401@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:57693 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752422AbaJ1Kbn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 28 Oct 2014 06:31:43 -0400
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NE500GOQH8T1L00@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 28 Oct 2014 19:31:41 +0900 (KST)
+In-reply-to: <1412181777-6388-2-git-send-email-a.kesavan@samsung.com>
 Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Jonathan Cameron' <jic23@kernel.org>, 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, cw00.choi@samsung.com, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, cpgs@samsung.com, grundler@chromium.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Abhilash Kesavan' <a.kesavan@samsung.com>, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de, tomasz.figa@gmail.com
 
-Jonathan Cameron wrote:
+Abhilash Kesavan wrote:
 > 
-> On 09/10/14 21:05, Jonathan Cameron wrote:
-> > On 21/09/14 13:17, Jonathan Cameron wrote:
-> >> On 16/09/14 09:58, Naveen Krishna Chatradhi wrote:
-> >>> Changes since v1:
-> >>> 1. Rebased on top of togreg branch of IIO git.
-> >>>
-> >>> This patch set does the following
-> >>> 1. Use the syscon and Regmap API instead of ioremappaing the
-> >>>    ADC_PHY register from PMU.
-> >>> 2. Updates the Documentation in exynos-adc.txt with syscon phandle
-> >>>    for the ADC nodes.
-> >>> 3. Updates the Dts files for Exynos3250, Exynos4x12, Exynos5250,
-> >>>    Exynos5420 with the syscon phandle.
-> >>>
-> >>> Tested on Exynos5420 based Peach PIT and Exynos5800 based Peach PI
-> >>> by verifying sysfs entries provided by HWMON based NTC thermistors.
-> >>>
-> >>> Tested-By for Exynos3250, Exynos4x12 would be appreciated.
-> >> Would definitely be good!
-> >>
-> >> The main issue I have with this series is that it breaks backward
-> >> compatibility with old device trees and newer kernels.
-> >>
-> >> Now I appreciate that sometimes there are reasons to do it but want this
-> >> to have deeper consideration (and acks to show it) from the Exynos side
-> >> of things and preferably from the device tree side of things as well.
-> >>
-> >> cc'd Kukjin Kim for the Exynos side of things as the listed Maintainer.
-> >>
-> >> Otherwise, the series looks fine to me.
-> > Kukjin? Sorry to pester, but this has been sat in my waiting queue for a
-> > while now.
-> This is still sitting here waiting for those acks from Exynos side of things.
-> I'm happy to let this sit indefinitely, but does seem a little silly.
-> >>>
+Hi,
 
-Thanks for asking :)
+Sorry for late response.
 
-Since I've missed the patch in my mailbox and just now checked. I'm happy with
-Naveen's dt updates, I'm not sure we can see useless merge conflicts though ;)
-Anyway it should be small, so please feel free to add my ack on the change.
+> Remove symbols SERIAL_SAMSUNG_UARTS_4 and SERIAL_SAMSUNG_UARTS which
+> select the number of UART ports available on the SoC. Replace the usage
+> of SERIAL_SAMSUNG_UARTS in the serial driver with the maximum number of
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+Well, as you know the number of uart ports are different on each Samsung SoCs
+so I don't think just using maximum number of uart ports are possible for new
+exynos7 SoC at this moment.
 
-- Kukjin
+> UART ports possible. Removal of these symbols also helps in Exynos7
+> serial enablement.
+> 
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  drivers/tty/serial/Kconfig   |   16 ----------------
+>  drivers/tty/serial/samsung.c |   11 +++--------
+>  drivers/tty/serial/samsung.h |    5 ++++-
+>  3 files changed, 7 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+> index 81f6ee7..9fc9092 100644
+> --- a/drivers/tty/serial/Kconfig
+> +++ b/drivers/tty/serial/Kconfig
+> @@ -247,22 +247,6 @@ config SERIAL_SAMSUNG
+>  	  provide all of these ports, depending on how the serial port
+>  	  pins are configured.
+> 
+> -config SERIAL_SAMSUNG_UARTS_4
+> -	bool
+> -	depends on PLAT_SAMSUNG
+> -	default y if !(CPU_S3C2410 || CPU_S3C2412 || CPU_S3C2440 || CPU_S3C2442)
+> -	help
+> -	  Internal node for the common case of 4 Samsung compatible UARTs
+> -
+> -config SERIAL_SAMSUNG_UARTS
+> -	int
+> -	depends on PLAT_SAMSUNG
+> -	default 4 if SERIAL_SAMSUNG_UARTS_4 || CPU_S3C2416
+> -	default 3
+> -	help
+> -	  Select the number of available UART ports for the Samsung S3C
+> -	  serial driver
+> -
+>  config SERIAL_SAMSUNG_DEBUG
+>  	bool "Samsung SoC serial debug"
+>  	depends on SERIAL_SAMSUNG && DEBUG_LL
+> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+> index c78f43a..ba04c6d 100644
+> --- a/drivers/tty/serial/samsung.c
+> +++ b/drivers/tty/serial/samsung.c
+> @@ -962,14 +962,14 @@ static struct uart_ops s3c24xx_serial_ops = {
+>  static struct uart_driver s3c24xx_uart_drv = {
+>  	.owner		= THIS_MODULE,
+>  	.driver_name	= "s3c2410_serial",
+> -	.nr		= CONFIG_SERIAL_SAMSUNG_UARTS,
+> +	.nr		= MAX_SAMSUNG_UARTS,
+>  	.cons		= S3C24XX_SERIAL_CONSOLE,
+>  	.dev_name	= S3C24XX_SERIAL_NAME,
+>  	.major		= S3C24XX_SERIAL_MAJOR,
+>  	.minor		= S3C24XX_SERIAL_MINOR,
+>  };
+> 
+> -static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS] = {
+> +static struct s3c24xx_uart_port s3c24xx_serial_ports[MAX_SAMSUNG_UARTS] = {
+>  	[0] = {
+>  		.port = {
+>  			.lock		= __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[0].port.lock),
+> @@ -992,8 +992,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
+>  			.line		= 1,
+>  		}
+>  	},
+> -#if CONFIG_SERIAL_SAMSUNG_UARTS > 2
+> -
+>  	[2] = {
+>  		.port = {
+>  			.lock		= __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[2].port.lock),
+> @@ -1005,8 +1003,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
+>  			.line		= 2,
+>  		}
+>  	},
+> -#endif
+> -#if CONFIG_SERIAL_SAMSUNG_UARTS > 3
+>  	[3] = {
+>  		.port = {
+>  			.lock		= __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[3].port.lock),
+> @@ -1018,7 +1014,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
+>  			.line		= 3,
+>  		}
+>  	}
+> -#endif
+>  };
+> 
+>  /* s3c24xx_serial_resetport
+> @@ -1590,7 +1585,7 @@ s3c24xx_serial_console_setup(struct console *co, char *options)
+> 
+>  	/* is this a valid port */
+> 
+> -	if (co->index == -1 || co->index >= CONFIG_SERIAL_SAMSUNG_UARTS)
+> +	if (co->index == -1 || co->index >= MAX_SAMSUNG_UARTS)
 
-> >>> Naveen Krishna Chatradhi (3):
-> >>>   iio: exyno-adc: use syscon for PMU register access
-> >>>   Documentation: dt-bindings: update exynos-adc.txt with syscon handle
-> >>>   ARM: dts: exynos: Add sysreg phandle to ADC node
-> >>>
-> >>>  .../devicetree/bindings/arm/samsung/exynos-adc.txt |    9 ++++--
-> >>>  arch/arm/boot/dts/exynos3250.dtsi                  |    3 +-
-> >>>  arch/arm/boot/dts/exynos4x12.dtsi                  |    3 +-
-> >>>  arch/arm/boot/dts/exynos5250.dtsi                  |    3 +-
-> >>>  arch/arm/boot/dts/exynos5420.dtsi                  |    3 +-
-> >>>  drivers/iio/adc/exynos_adc.c                       |   30 ++++++++++++++------
-> >>>  6 files changed, 36 insertions(+), 15 deletions(-)
+If we use max number, second condition is not required...
+
+>  		co->index = 0;
+> 
+>  	port = &s3c24xx_serial_ports[co->index].port;
+> diff --git a/drivers/tty/serial/samsung.h b/drivers/tty/serial/samsung.h
+> index eb071dd..484b49e 100644
+> --- a/drivers/tty/serial/samsung.h
+> +++ b/drivers/tty/serial/samsung.h
+> @@ -1,6 +1,9 @@
+>  #ifndef __SAMSUNG_H
+>  #define __SAMSUNG_H
+> 
+> +/* Maximum UART ports available */
+> +#define MAX_SAMSUNG_UARTS       4
+
+If there is a Samsung SoC having 5 UARTS, we need to update?
+
+And hmm...maybe we need to keep the useless array sometimes...
+
+> +
+>  /*
+>   * Driver for Samsung SoC onboard UARTs.
+>   *
+> @@ -38,7 +41,7 @@ struct s3c24xx_uart_info {
+>  struct s3c24xx_serial_drv_data {
+>  	struct s3c24xx_uart_info	*info;
+>  	struct s3c2410_uartcfg		*def_cfg;
+> -	unsigned int			fifosize[CONFIG_SERIAL_SAMSUNG_UARTS];
+> +	unsigned int			fifosize[MAX_SAMSUNG_UARTS];
+>  };
+> 
+>  struct s3c24xx_uart_port {
+> --
+> 1.7.9.5
