@@ -1,86 +1,43 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH 1/1] ARM: exynos_defconfig: Enable max77802 rtc and clock
- drivers
-Date: Tue, 28 Oct 2014 20:06:40 +0900
-Message-ID: <04e101cff29f$4021ea00$c065be00$@kernel.org>
-References: <1414401440-10972-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
+ ps8622 DT properties
+Date: Tue, 28 Oct 2014 16:42:09 +0530
+Message-ID: <CAEC9eQM4dwtuoY64DYgUon=qwm0nNs6L7Rgf0XJH6pSSQfLyHQ@mail.gmail.com>
+References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
+ <20141008070918.GA4999@ulmo>
+ <CAEC9eQPn2GAn6nrSvgso2QTXQErtY+8dH5-LbZS9mGTYcYC5Gw@mail.gmail.com>
+ <15883554.FBq3UbZUdh@avalon>
+ <CABxcv=kNBpNCOM-=PgHcR23eAVuzR8ECROeGxOs-Hk0JCSK1Lw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:63186 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753425AbaJ1LGn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Oct 2014 07:06:43 -0400
-In-reply-to: <1414401440-10972-1-git-send-email-javier.martinez@collabora.co.uk>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CABxcv=kNBpNCOM-=PgHcR23eAVuzR8ECROeGxOs-Hk0JCSK1Lw@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>
-Cc: 'Doug Anderson' <dianders@chromium.org>, 'Kevin Hilman' <khilman@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Javier Martinez Canillas wrote:
-> 
-Hi,
-
-> Commit 6e80e3d87549 ("ARM: exynos_defconfig: Enable MAX77802")
-> enabled support for the max77802 regulators but the PMIC also
-> has a Real-Time-Clock (RTC) and 2-channel 32kHz clock outputs.
-> 
-Yes, right.
-
-> Enable the kernel config options to have the drivers for these
-> devices built-in since they are present in many Exynos boards.
-> 
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> Acked-by: Kevin Hilman <khilman@linaro.org>
-> Tested-by: Kevin Hilman <khilman@linaro.org>
-> ---
-> 
-> This patch supersedes [0] since commit "ARM: exynos_defconfig: savedefconfig"
-> is not present in linux-next anymore which disabled among other options, the
-> max77802 support.
-> 
-Yeah, I talked about savedefconfig with Bart and I decided to revert it at that
-time.
-
-> However, support for the max77802 rtc and clocks were not enabled on exynos
-> defconfig so $subject is still needed.
-> 
-> Kevin, I carried your tags from [0] since $subject enables the options you
-> needed to get RTC wakeup from suspend working on exynos5800-peach-pi. Please
-> let me know if they no longer applies.
-> 
-> Best regards,
-> Javier
-> 
-> [0]: https://lkml.org/lkml/2014/10/9/413
-> 
->  arch/arm/configs/exynos_defconfig | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index 72058b8..e21ef83 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -142,11 +142,13 @@ CONFIG_MMC_DW_IDMAC=y
->  CONFIG_MMC_DW_EXYNOS=y
->  CONFIG_RTC_CLASS=y
->  CONFIG_RTC_DRV_MAX77686=y
-> +CONFIG_RTC_DRV_MAX77802=y
->  CONFIG_RTC_DRV_S5M=y
->  CONFIG_RTC_DRV_S3C=y
->  CONFIG_DMADEVICES=y
->  CONFIG_PL330_DMA=y
->  CONFIG_COMMON_CLK_MAX77686=y
-> +CONFIG_COMMON_CLK_MAX77802=y
->  CONFIG_COMMON_CLK_S2MPS11=y
->  CONFIG_EXYNOS_IOMMU=y
->  CONFIG_IIO=y
-> --
-> 2.1.0
-
-I'll apply this, thanks.
-
-- Kukjin
+T24gVHVlLCBPY3QgMjgsIDIwMTQgYXQgMjo0MiBQTSwgSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFz
+CjxqYXZpZXJAZG93aGlsZTAub3JnPiB3cm90ZToKPiBIZWxsbyBBamF5LAo+Cj4gT24gVGh1LCBP
+Y3QgMTYsIDIwMTQgYXQgMTE6MDQgQU0sIExhdXJlbnQgUGluY2hhcnQKPiA8bGF1cmVudC5waW5j
+aGFydEBpZGVhc29uYm9hcmQuY29tPiB3cm90ZToKPj4+Cj4+PiBSaWdodC4gSXQgd291bGQgYmUg
+Z3JlYXQgaWYgeW91IGd1eXMgY29tZSB0byBhZ3JlZW1lbnQgQVNBUCEKPj4KPj4gSSBkb24ndCB0
+aGluayB3ZSdsbCBhZ3JlZSBhbnkgdGltZSBzb29uLCBzbyBJIGJlbGlldmUgaXQncyB1cCB0byB5
+b3UgdG8gZGVjaWRlCj4+IHdoaWNoIG9wdGlvbiBpcyBiZXN0IGJhc2VkIG9uIGFsbCBhcmd1bWVu
+dHMgdGhhdCBoYXZlIGJlZW4gcHJlc2VudGVkLgo+Pgo+Cj4gRGlkIHlvdSBkZWNpZGUgd2hhdCdz
+IHRoZSBjb3JyZWN0IGFwcHJvYWNoPyBJIGRvbid0IGhhdmUgYSBzdHJvbmcKPiBvcGluaW9uLCBJ
+J20ganVzdCBhc2tpbmcgYmVjYXVzZSBpdCB3b3VsZCBiZSBhIHBpdHkgaWYgeW91ciBzZXJpZXMK
+PiBtaXNzIGFub3RoZXIga2VybmVsIHJlbGVhc2UuLi4KSSB3aWxsIGJlIHVzaW5nIGdyYXBocyBp
+bnN0ZWFkIG9mIHBoYW5kbGVzLCBhbmQgd291bGQgc2VuZCBhIHNlcmllcyBBU0FQLgoKQWpheQpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
+bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3Rz
+LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
