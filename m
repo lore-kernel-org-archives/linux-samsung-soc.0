@@ -1,62 +1,49 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCHv2 1/2] ARM: EXYNOS: Add EXYNOS4415 SoC ID
-Date: Tue, 28 Oct 2014 13:28:22 +0900
-Message-ID: <031101cff267$9b8daba0$d2a902e0$@kernel.org>
-References: <1414373759-4362-1-git-send-email-cw00.choi@samsung.com>
- <1414373759-4362-2-git-send-email-cw00.choi@samsung.com>
- <02b501cff262$127d44b0$3777ce10$@kernel.org> <544F15F0.9080102@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:31352 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751667AbaJ1E23 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Oct 2014 00:28:29 -0400
-In-reply-to: <544F15F0.9080102@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCHv3 0/2] ARM: EXYNOS: Support new Exynos4415 SoC based on
+ Cortex-A9 quad cores
+Date: Tue, 28 Oct 2014 13:46:08 +0900
+Message-ID: <1414471570-5135-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net, tomasz.figa@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, cw00.choi@samsung.com, m.szyprowski@samsung.com, yj44.cho@samsung.com, jaewon02.kim@samsung.com, ideal.song@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net, tomasz.figa@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, yj44.cho@samsung.com, jaewon02.kim@samsung.com, ideal.song@samsung.com
 
-Chanwoo Choi wrote:
-> 
-> Dear Kukjin,
-> 
+This patchset support new Exynos4415 Samsung SoC based on Cortex-A9 quad cores.
+Exynos4415 is a System-On-Chip (SoC) that is based on 32-bit RISC processor
+for Smartphone. It is desigend with the 28nm low-power high-K metal gate
+process
+and provides the best performance features.
 
-[...]
+This patchset include some patches such as:
+- Support booting of Exynos4415
+- Supoort uart/mct/adc/gic/i2c/spi/power-domain/pmu/mshc/ehci/ohci/pwm/amba
 
-> >>
-> >> +config SOC_EXYNOS4415
-> >> +	bool "SAMSUNG EXYNOS4415"
-> >> +	default y
-> >> +	depends on ARCH_EXYNOS4
-> >> +
-> >
-> > I think, this is not required more...
-> 
-> But,
-> The clock driver must need to CONFIG_SOC_EXYNOS4415 configuration
-> to build it. The clock driver[1] of exynos4415 used CONFIG_SOC_EXYNOS4415 as following diff:
->   [1] https://lkml.org/lkml/2014/10/26/159
-> 
-Oh, yes. OK.
+Changes from v2:
+- Modify the name of first patch
 
-Thanks for quick reply.
+Changes from v1:
+- Remove legacy helper function to identify SoC
+- Separate out the clock patches[2] from Exynos4415 patchset[1] and sent it [2]
+- Separate out the pinctrl patch[3] from Exynos4415 patchset[1] and sent it [3]
+ [1] [PATCH 0/5] Support new Exynos4415 SoC based on Cortex-A9 quad cores
+ : https://lkml.org/lkml/2014/10/19/253
+ [2] [PATCHv3 1/2] clk: samsung: exynos4415: Add clocks using common clock framework
+ : https://lkml.org/lkml/2014/10/26/159
+ [3] [PATCHv2] pinctrl: exynos: Add support for Exynos4415
+ : https://lkml.org/lkml/2014/10/26/160
 
-- Kukjin
+Chanwoo Choi (2):
+  ARM: EXYNOS: Add EXYNOS4415 SoC
+  ARM: dts: Add dts files for Exynos4415 SoC
 
-> diff --git a/drivers/clk/samsung/Makefile b/drivers/clk/samsung/Makefile
-> index 8909c93..4561297 100644
-> --- a/drivers/clk/samsung/Makefile
-> +++ b/drivers/clk/samsung/Makefile
-> @@ -5,6 +5,7 @@
->  obj-$(CONFIG_COMMON_CLK)	+= clk.o clk-pll.o clk-cpu.o
->  obj-$(CONFIG_SOC_EXYNOS3250)	+= clk-exynos3250.o
->  obj-$(CONFIG_ARCH_EXYNOS4)	+= clk-exynos4.o
-> +obj-$(CONFIG_SOC_EXYNOS4415)	+= clk-exynos4415.o
-> 
-> Best Regards,
-> Chanwoo Choi
+ arch/arm/boot/dts/exynos4415-pinctrl.dtsi | 613 +++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4415.dtsi         | 627 ++++++++++++++++++++++++++++++
+ arch/arm/mach-exynos/Kconfig              |   5 +
+ arch/arm/mach-exynos/exynos.c             |   2 +
+ 4 files changed, 1247 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos4415-pinctrl.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos4415.dtsi
+
+-- 
+1.8.5.5
