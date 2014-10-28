@@ -1,198 +1,117 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH v2 2/2] tty: serial: samsung: Clean-up selection of number
- of available UARTs
-Date: Tue, 28 Oct 2014 17:56:14 +0530
-Message-ID: <CAM4voakzWhfMc1SyTXs1eOxuvEp_U3qfRLxPAzWzeX54jwadvA@mail.gmail.com>
-References: <1412181777-6388-1-git-send-email-a.kesavan@samsung.com>
-	<1412181777-6388-2-git-send-email-a.kesavan@samsung.com>
-	<041301cff29a$5c9a5fa0$15cf1ee0$@kernel.org>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V7 03/12] drm/bridge: Add helper functions for drm_bridge
+Date: Tue, 28 Oct 2014 17:58:49 +0530
+Message-ID: <CAEC9eQNJb1TgK1ihvzvC0VjSJhm48WaFO5SVigPsqTOurK2UQw@mail.gmail.com>
+References: <1409149783-12416-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1409149783-12416-4-git-send-email-ajaykumar.rs@samsung.com>
+ <20141027190137.GT26941@phenom.ffwll.local>
+ <CAOw6vbLNOqp=X4epwDPb7zT-j2+oUuLoeV2S=x+oGPLQwK+Z7Q@mail.gmail.com>
+ <CAEC9eQPQaYjL3ZxtDZBdKi2z5yANcHQ9s4ikYkxN95K9qvu01Q@mail.gmail.com>
+ <CAKMK7uGoO5TBgLh4HSDjxUM=-WRfsQoDHusLmOYxLio-QBMEPQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f181.google.com ([209.85.216.181]:39129 "EHLO
-	mail-qc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752053AbaJ1M0Q (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Oct 2014 08:26:16 -0400
-Received: by mail-qc0-f181.google.com with SMTP id w7so363844qcr.26
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Oct 2014 05:26:15 -0700 (PDT)
-In-Reply-To: <041301cff29a$5c9a5fa0$15cf1ee0$@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAKMK7uGoO5TBgLh4HSDjxUM=-WRfsQoDHusLmOYxLio-QBMEPQ@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, bhushan.r@samsung.com, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Arnd Bergmann <arnd@arndb.de>
 
-Hi Kukjin
-
-On Tue, Oct 28, 2014 at 4:01 PM, Kukjin Kim <kgene@kernel.org> wrote:
-> Abhilash Kesavan wrote:
->>
-> Hi,
->
-> Sorry for late response.
->
->> Remove symbols SERIAL_SAMSUNG_UARTS_4 and SERIAL_SAMSUNG_UARTS which
->> select the number of UART ports available on the SoC. Replace the usage
->> of SERIAL_SAMSUNG_UARTS in the serial driver with the maximum number of
->
-> Well, as you know the number of uart ports are different on each Samsung SoCs
-> so I don't think just using maximum number of uart ports are possible for new
-> exynos7 SoC at this moment.
-
-Thanks for the review.
-The main reason for me sending this patch was so that we may be able
-to re-use the serial driver on arm64 based Exynos7 too. The two
-symbols mentioned above which depend on PLAT_SAMSUNG prevent this. I
-initially sent a patch which changed the dependency to SERIAL_SAMSUNG
-for these 2 symbols. However, Tomasz suggested that a clean-up of
-these two symbols would be a better option.
-
-Please see the discussion of the previous version here:
-https://lkml.org/lkml/2014/9/29/702
-
-Can you please let me know if the previous version is acceptable ?
-
->
->> UART ports possible. Removal of these symbols also helps in Exynos7
->> serial enablement.
->>
->> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
->> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> ---
->>  drivers/tty/serial/Kconfig   |   16 ----------------
->>  drivers/tty/serial/samsung.c |   11 +++--------
->>  drivers/tty/serial/samsung.h |    5 ++++-
->>  3 files changed, 7 insertions(+), 25 deletions(-)
->>
->> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
->> index 81f6ee7..9fc9092 100644
->> --- a/drivers/tty/serial/Kconfig
->> +++ b/drivers/tty/serial/Kconfig
->> @@ -247,22 +247,6 @@ config SERIAL_SAMSUNG
->>         provide all of these ports, depending on how the serial port
->>         pins are configured.
->>
->> -config SERIAL_SAMSUNG_UARTS_4
->> -     bool
->> -     depends on PLAT_SAMSUNG
->> -     default y if !(CPU_S3C2410 || CPU_S3C2412 || CPU_S3C2440 || CPU_S3C2442)
->> -     help
->> -       Internal node for the common case of 4 Samsung compatible UARTs
->> -
->> -config SERIAL_SAMSUNG_UARTS
->> -     int
->> -     depends on PLAT_SAMSUNG
->> -     default 4 if SERIAL_SAMSUNG_UARTS_4 || CPU_S3C2416
->> -     default 3
->> -     help
->> -       Select the number of available UART ports for the Samsung S3C
->> -       serial driver
->> -
->>  config SERIAL_SAMSUNG_DEBUG
->>       bool "Samsung SoC serial debug"
->>       depends on SERIAL_SAMSUNG && DEBUG_LL
->> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
->> index c78f43a..ba04c6d 100644
->> --- a/drivers/tty/serial/samsung.c
->> +++ b/drivers/tty/serial/samsung.c
->> @@ -962,14 +962,14 @@ static struct uart_ops s3c24xx_serial_ops = {
->>  static struct uart_driver s3c24xx_uart_drv = {
->>       .owner          = THIS_MODULE,
->>       .driver_name    = "s3c2410_serial",
->> -     .nr             = CONFIG_SERIAL_SAMSUNG_UARTS,
->> +     .nr             = MAX_SAMSUNG_UARTS,
->>       .cons           = S3C24XX_SERIAL_CONSOLE,
->>       .dev_name       = S3C24XX_SERIAL_NAME,
->>       .major          = S3C24XX_SERIAL_MAJOR,
->>       .minor          = S3C24XX_SERIAL_MINOR,
->>  };
->>
->> -static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS] = {
->> +static struct s3c24xx_uart_port s3c24xx_serial_ports[MAX_SAMSUNG_UARTS] = {
->>       [0] = {
->>               .port = {
->>                       .lock           = __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[0].port.lock),
->> @@ -992,8 +992,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
->>                       .line           = 1,
->>               }
->>       },
->> -#if CONFIG_SERIAL_SAMSUNG_UARTS > 2
->> -
->>       [2] = {
->>               .port = {
->>                       .lock           = __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[2].port.lock),
->> @@ -1005,8 +1003,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
->>                       .line           = 2,
->>               }
->>       },
->> -#endif
->> -#if CONFIG_SERIAL_SAMSUNG_UARTS > 3
->>       [3] = {
->>               .port = {
->>                       .lock           = __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[3].port.lock),
->> @@ -1018,7 +1014,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
->>                       .line           = 3,
->>               }
->>       }
->> -#endif
->>  };
->>
->>  /* s3c24xx_serial_resetport
->> @@ -1590,7 +1585,7 @@ s3c24xx_serial_console_setup(struct console *co, char *options)
->>
->>       /* is this a valid port */
->>
->> -     if (co->index == -1 || co->index >= CONFIG_SERIAL_SAMSUNG_UARTS)
->> +     if (co->index == -1 || co->index >= MAX_SAMSUNG_UARTS)
->
-> If we use max number, second condition is not required...
->
->>               co->index = 0;
->>
->>       port = &s3c24xx_serial_ports[co->index].port;
->> diff --git a/drivers/tty/serial/samsung.h b/drivers/tty/serial/samsung.h
->> index eb071dd..484b49e 100644
->> --- a/drivers/tty/serial/samsung.h
->> +++ b/drivers/tty/serial/samsung.h
->> @@ -1,6 +1,9 @@
->>  #ifndef __SAMSUNG_H
->>  #define __SAMSUNG_H
->>
->> +/* Maximum UART ports available */
->> +#define MAX_SAMSUNG_UARTS       4
->
-> If there is a Samsung SoC having 5 UARTS, we need to update?
-
-Yes, we would need to update the MAX_SAMSUNG_UARTS define for a newer
-SoC with 5 uart ports but even without this patch we would have to
-modify the SERIAL_SAMSUNG_UARTS symbol to handle 5 ports.
->
-> And hmm...maybe we need to keep the useless array sometimes...
-
-Yes, for the 24xx series with 3 uart ports we would.
-
-Regards,
-Abhilash
->
->> +
->>  /*
->>   * Driver for Samsung SoC onboard UARTs.
->>   *
->> @@ -38,7 +41,7 @@ struct s3c24xx_uart_info {
->>  struct s3c24xx_serial_drv_data {
->>       struct s3c24xx_uart_info        *info;
->>       struct s3c2410_uartcfg          *def_cfg;
->> -     unsigned int                    fifosize[CONFIG_SERIAL_SAMSUNG_UARTS];
->> +     unsigned int                    fifosize[MAX_SAMSUNG_UARTS];
->>  };
->>
->>  struct s3c24xx_uart_port {
->> --
->> 1.7.9.5
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+T24gVHVlLCBPY3QgMjgsIDIwMTQgYXQgMzozMSBQTSwgRGFuaWVsIFZldHRlciA8ZGFuaWVsQGZm
+d2xsLmNoPiB3cm90ZToKPiBPbiBUdWUsIE9jdCAyOCwgMjAxNCBhdCAxMDoyMSBBTSwgQWpheSBr
+dW1hciA8YWpheW51bWJAZ21haWwuY29tPiB3cm90ZToKPj4gSGkgRGFuaWVsIGFuZCBTZWFuLAo+
+Pgo+PiBUaGFua3MgZm9yIHRoZSBjb21tZW50cyEKPj4KPj4gT24gVHVlLCBPY3QgMjgsIDIwMTQg
+YXQgMToyOCBBTSwgU2VhbiBQYXVsIDxzZWFucGF1bEBjaHJvbWl1bS5vcmc+IHdyb3RlOgo+Pj4g
+T24gTW9uLCBPY3QgMjcsIDIwMTQgYXQgMzowMSBQTSwgRGFuaWVsIFZldHRlciA8ZGFuaWVsQGZm
+d2xsLmNoPiB3cm90ZToKPj4+PiBTbyBkb24ndCBhc2sgd2h5IGJ1dCBJIGFjY2lkZW50YWxseSBl
+bmRlZCB1cCBpbiBhIGJyYW5jaCBsb29raW5nIGF0IHRoaXMKPj4+PiBwYXRjaCBhbmQgZGlkbid0
+IGxpa2UgaXQuIFNvIHZlcnkgcXVpY2smZ3J1bXB5IHJldmlldy4KPj4+Pgo+Pj4+IEZpcnN0LCBw
+bGVhc2UgbWFrZSB0aGUgcGF0Y2ggc3ViamVjdCBtb3JlIGRlc2NyaXB0aXZlOiBJJ2QgZXhwZWN0
+IGEgaGVscGVyCj4+Pj4gZnVuY3Rpb24gc2NhZmZvbGRpbmcgbGlrZSB0aGUgdmFyaW91cyBjcnRj
+L3Byb2JlL2RwIC4uLiBoZWxwZXJzIHdlIGFscmVhZHkKPj4+PiBoYXZlLiBZb3UgaW5zdGVhZCBh
+ZGQgY29kZSB0byB1bnRhbmdsZSB0aGUgcHJvYmUgb3JkZXJpbmcuIFBsZWFzZSBzYXkgc28uCj4+
+IFN1cmUuIEkgd2lsbCByZXdvcmQgaXQgcHJvcGVybHkuCj4+Cj4+Pj4gTW9yZSBjb21tZW50cyBi
+ZWxvdy4KPj4+Pgo+Pj4+IE9uIFdlZCwgQXVnIDI3LCAyMDE0IGF0IDA3OjU5OjM3UE0gKzA1MzAs
+IEFqYXkgS3VtYXIgd3JvdGU6Cj4+Pj4+IEEgc2V0IG9mIGhlbHBlciBmdW5jdGlvbnMgYXJlIGRl
+ZmluZWQgaW4gdGhpcyBwYXRjaCB0byBtYWtlCj4+Pj4+IGJyaWRnZSBkcml2ZXIgcHJvYmUgaW5k
+ZXBlbmRlbnQgb2YgdGhlIGRybSBmbG93Lgo+Pj4+Pgo+Pj4+PiBUaGUgYnJpZGdlIGRldmljZXMg
+cmVnaXN0ZXIgdGhlbXNlbHZlcyBvbiBhIGxvb2t1cCB0YWJsZQo+Pj4+PiB3aGVuIHRoZXkgZ2V0
+IHByb2JlZCBieSBjYWxsaW5nICJkcm1fYnJpZGdlX2FkZCIuCj4+Pj4+Cj4+Pj4+IFRoZSBwYXJl
+bnQgZW5jb2RlciBkcml2ZXIgd2FpdHMgdGlsbCB0aGUgYnJpZGdlIGlzIGF2YWlsYWJsZQo+Pj4+
+PiBpbiB0aGUgbG9va3VwIHRhYmxlKGJ5IGNhbGxpbmcgIm9mX2RybV9maW5kX2JyaWRnZSIpIGFu
+ZCB0aGVuCj4+Pj4+IGNvbnRpbnVlcyB3aXRoIGl0cyBpbml0aWFsaXphdGlvbi4KPj4+Pj4KPj4+
+Pj4gVGhlIGVuY29kZXIgZHJpdmVyIHNob3VsZCBhbHNvIGNhbGwgImRybV9icmlkZ2VfYXR0YWNo
+IiB0byBwYXNzCj4+Pj4+IG9uIHRoZSBkcm1fZGV2aWNlLCBlbmNvZGVyIHBvaW50ZXJzIHRvIHRo
+ZSBicmlkZ2Ugb2JqZWN0Lgo+Pj4+Pgo+Pj4+PiBkcm1fYnJpZGdlX2F0dGFjaCBpbnR1cm4gY2Fs
+bHMgZHJtX2JyaWRnZV9pbml0IHRvIHJlZ2lzdGVyIGl0c2VsZgo+Pj4+PiB3aXRoIHRoZSBkcm0g
+Y29yZS4gTGF0ZXIsIGl0IGNhbGxzICJicmlkZ2UtPmZ1bmNzLT5hdHRhY2giIHNvIHRoYXQKPj4+
+Pj4gYnJpZGdlIGNhbiBjb250aW51ZSB3aXRoIG90aGVyIGluaXRpYWxpemF0aW9ucy4KPj4+Pj4K
+Pj4+Pj4gU2lnbmVkLW9mZi1ieTogQWpheSBLdW1hciA8YWpheWt1bWFyLnJzQHNhbXN1bmcuY29t
+Pgo+Pj4+Cj4+Pj4gW3NuaXBdCj4+Pj4KPj4+Pj4gQEAgLTY2MCw4ICs2NjIsMTEgQEAgc3RydWN0
+IGRybV9icmlkZ2VfZnVuY3Mgewo+Pj4+PiAgICogQGRyaXZlcl9wcml2YXRlOiBwb2ludGVyIHRv
+IHRoZSBicmlkZ2UgZHJpdmVyJ3MgaW50ZXJuYWwgY29udGV4dAo+Pj4+PiAgICovCj4+Pj4+ICBz
+dHJ1Y3QgZHJtX2JyaWRnZSB7Cj4+Pj4+IC0gICAgIHN0cnVjdCBkcm1fZGV2aWNlICpkZXY7Cj4+
+Pj4+ICsgICAgIHN0cnVjdCBkZXZpY2UgKmRldjsKPj4+Pgo+Pj4+IFBsZWFzZSBkb24ndCByZW5h
+bWUgdGhlIC0+ZGV2IHBvaW50ZXIgaW50byBkcm0uIEJlY2F1c2UgX2FsbF8gdGhlIG90aGVyCj4+
+Pj4gZHJtIHN0cnVjdHVyZXMgc3RpbGwgY2FsbCBpdCAtPmRldi4gQWxzbywgY2FuJ3Qgd2UgdXNl
+IHN0cnVjdCBkZXZpY2Vfbm9kZQo+Pj4+IGhlcmUgbGlrZSB3ZSBkbyBpbiB0aGUgb2YgaGVscGVy
+cyBSdXNzZWxsIGFkZGVkPyBTZWUgN2U0MzVhYWQzODA4Mwo+Pj4+Cj4+Pgo+Pj4gSSB0aGluayB0
+aGlzIGlzIG1vZGVsZWQgYWZ0ZXIgdGhlIG5hbWluZyBpbiBkcm1fcGFuZWwsCj4+IFJpZ2h0LCBU
+aGUgZW50aXJlIHJld29yayBpcyBiYXNlZCBvbiBob3cgZHJtX3BhbmVsIGZyYW1ld29yayBpcyBz
+dHJ1Y3R1cmVkLgo+Pgo+Pj4gRldJVy4gSG93ZXZlciwKPj4+IHNlZW1zIHJlYXNvbmFibGUgdG8g
+a2VlcCB0aGUgZGV2aWNlX25vZGUgaW5zdGVhZC4KPj4gWWVzLCBpdHMgdmlzaWJsZSB0aGF0IGp1
+c3QgZGV2aWNlX25vZGUgd291bGQgYmUgc3VmZmljaWVudC4KPj4gVGhpcyB3aWxsIHNhdmUgdXMg
+ZnJvbSByZW5hbWluZyBkcm1fZGV2aWNlIGFzIHdlbGwuCj4+Cj4+Pj4+ICsgICAgIHN0cnVjdCBk
+cm1fZGV2aWNlICpkcm07Cj4+Pj4+ICsgICAgIHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlcjsK
+Pj4+Pgo+Pj4+IFRoaXMgYnJlYWtzIGJyaWRnZS0+YnJpZGdlIGNoYWluaW5nIChpZiB3ZSBldmVy
+IGdldCB0aGVyZSkuIEl0IHNlZW1zCj4+Pj4gcHJldHR5IG11Y2ggdW51c2VkIGFueXdheSBleGNl
+cHQgZm9yIGFuIEVCVVNZIGNoZWNrLiBDYW4ndCB5b3UgdXNlCj4+Pj4gYnJpZGdlLT5kZXYgZm9y
+IHRoYXQ/Cj4+Pj4KPj4+Cj4+PiBZZWFoLCBJJ2QgcHJlZmVyIHRvIHBhc3MgZHJtX2RldmljZSBk
+aXJlY3RseSBpbnRvIGRybV9icmlkZ2VfYXR0YWNoCj4+PiBhbmQgbGVhdmUgaXQgdXAgdG8gdGhl
+IGNhbGxlciB0byBlc3RhYmxpc2ggdGhlIHByb3BlciBjaGFpbi4KPj4gT2suIEkgd2lsbCB1c2Ug
+ZHJtX2RldmljZSBwb2ludGVyIGRpcmVjdGx5IGluc3RlYWQgb2YgcGFzc2luZyBlbmNvZGVyIHBv
+aW50ZXIuCj4KPiBIbSwgaWYgeW91IGRvIHRoaXMgY2FuIHlvdSBwbHMgYWxzbyB1cGRhdGUgZHJt
+X3BhbmVsIGFjY29yZGluZ2x5PyBJdAo+IHNob3VsZG4ndCBiZSBhIGxvdCBvZiBmdXp6IGFuZCB3
+b3VsZCBtYWtlIHRoaW5ncyBhcm91bmQgZHJtK2R0IG1vcmUKPiBjb25zaXN0ZW50LgpBcmUgeW91
+IHRhbGtpbmcgYWJvdXQgdXNpbmcgc3RydWN0IGRldmljZV9ub2RlIGluc3RlYWQgb2Ygc3RydWN0
+IGRldmljZT8KSSBndWVzcyB5b3UgaGF2ZSBtaXNwbGFjZWQgdGhlIGNvbW1lbnQgdW5kZXIgdGhl
+IHdyb25nIHNlY3Rpb24hCgo+Pgo+Pj4+PiAgICAgICBzdHJ1Y3QgbGlzdF9oZWFkIGhlYWQ7Cj4+
+Pj4+ICsgICAgIHN0cnVjdCBsaXN0X2hlYWQgbGlzdDsKPj4+Pgo+Pj4+IFRoZXNlIGxpc3RzIG5l
+ZWQgYmV0dGVyIG5hbWVzLiBJIGtub3cgdGhhdCB0aGUgImhlYWQiIGlzIHJlYWxseSBhd2Z1bCwK
+Pj4+PiBlc3BlY2lhbGx5IHNpbmNlIGl0J3MgYWN0dWFsbHkgbm90IHRoZSBoZWFkIG9mIHRoZSBs
+aXN0IGJ1dCBqdXN0IGFuCj4+Pj4gZWxlbWVudC4KPj4+Cj4+PiBJIHRoaW5rIHdlIGNhbiBqdXN0
+IHJpcCBicmlkZ2VfbGlzdCBvdXQgb2YgbW9kZV9jb25maWcgaWYgd2UncmUgZ29pbmcKPj4+IHRv
+IGtlZXAgdHJhY2sgb2YgYnJpZGdlcyBlbHNld2hlcmUuIFNvIHdlIGNhbiBudWtlICJoZWFkIiBh
+bmQga2VlcAo+Pj4gImxpc3QiLiBUaGlzIGFsc28gbWVhbnMgdGhhdCBicmlkZ2UtPmRlc3Ryb3ko
+KSBnb2VzIGF3YXksIGJ1dCB0aGF0J3MKPj4+IHByb2JhYmx5IE9rIGlmIGV2ZXJ5dGhpbmcgY29u
+dmVydHMgdG8gdGhlIHN0YW5kYWxvbmUgZHJpdmVyIG1vZGVsCj4+PiB3aGVyZSB3ZSBoYXZlIGRy
+aXZlci0+cmVtb3ZlKCkKPj4+Cj4+PiBTZWFuCj4+IEdyZWF0ISBUaGllcnJ5IGFjdHVhbGx5IG1l
+bnRpb25lZCBhYm91dCB0aGlzIG9uY2UsIGFuZCB3ZSBoYXZlIHRoZQo+PiBjb25maXJtYXRpb24g
+bm93Lgo+Pgo+Pj4+Pgo+Pj4+PiAgICAgICBzdHJ1Y3QgZHJtX21vZGVfb2JqZWN0IGJhc2U7Cj4+
+Pj4KPj4+Pgo+Pj4+IEFzaWRlOiBJJ3ZlIG5vdGljZWQgYWxsIHRoaXMgdHJ5aW5nIHRvIHVwZGF0
+ZSB0aGUga2VybmVsZG9jIGZvciBzdHJ1Y3QKPj4+PiBkcm1fYnJpZGdlLCB3aGljaCBqdXN0IHNo
+b3dlZCB0aGF0IHRoaXMgcGF0Y2ggbWFrZXMgaW5jb25zaXN0ZW50IGNoYW5nZXMuCj4+Pj4gVHJ5
+aW5nIHRvIHdyaXRlIGtlcm5lbGRvYyBpcyBhIHJlYWxseSBncmVhdCB3YXkgdG8gY29tZSB1cCB3
+aXRoIGJldHRlcgo+Pj4+IGludGVyZmFjZXMgaW1vLgo+Pj4+Cj4+Pj4gQ2hlZXJzLCBEYW5pZWwK
+Pj4gSSBkaW4ndCBnZXQgdGhpcyBhY3R1YWxseS4gWW91IHdhbnQgbWUgdG8gY3JlYXRlIERvYy4u
+L2RybV9icmlkZ2UudHh0Cj4+IG9yIHNvbWV0aGluZyBzaW1pbGFyPwo+Cj4gSWYgeW91IHdhbnQg
+dG8gZG9jdW1lbnQgZHJtX2JyaWRnZSB0aGVuIEkgcmVjb21tZW50IHRvIHNwcmlua2xlIHByb3Bl
+cgo+IGtlcm5lbGRvYyBvdmVyIGRybV9icmlkZ2UuYyBhbmQgcHVsbCBpdCBhbGwgaW50byB0aGUg
+ZHJtIERvY0Jvb2sKPiB0ZW1wbGF0ZS4gVGhhdCB3YXkgYWxsIHRoZSBkcm0gZG9jdW1lbnRhdGlv
+biBpcyBpbiBvbmUgcGxhY2UuIEkndmUKPiBkb25lIHRoYXQgZm9yIGRybV9jcnRjLmggaW4gYW4g
+dW5yZWxhdGVkIHBhdGNoIHNlcmllcyAoYnV0IGJhc2VkIHVwb24KPiBhIGJyYW5jaCB3aXRoIHlv
+dXIgcGF0Y2ggaGVyZSBpbmNsdWRlZCkgYW5kIHRoZXJlJ3Mgc3RydWN0IGRybV9icmlkZ2UqCj4g
+aW4gdGhlcmUuIEhlbmNlIHdoeSBJJ3ZlIG5vdGljZWQuCkNhbiB5b3Ugc2VuZCBhIGxpbmsgZm9y
+IHRoYXQ/CkFuZCwgaXMgdGhlcmUgYW55IHByb2JsZW0gaWYgdGhlIGRvYyBjb21lcyBsYXRlcj8K
+CkFqYXkKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
+LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
