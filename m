@@ -1,46 +1,96 @@
-From: Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH v6 4/7] ARM: l2c: Add support for overriding prefetch
- settings
-Date: Tue, 28 Oct 2014 09:50:13 -0200
-Message-ID: <CAOMZO5Ddp1=4K6qNmLxi-=TKmEFDm5B+7XRLkemrYMCPzZAjJw@mail.gmail.com>
-References: <1414407950-3029-1-git-send-email-m.szyprowski@samsung.com>
- <1414407950-3029-5-git-send-email-m.szyprowski@samsung.com>
- <20141027111404.GW12379@n2100.arm.linux.org.uk>
- <544E2A46.7070106@samsung.com>
- <20141028113531.GZ12379@n2100.arm.linux.org.uk>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 6/8] regulator: max77686: Add external GPIO control
+Date: Tue, 28 Oct 2014 13:11:48 +0100
+Message-ID: <1414498308.24949.32.camel@AMDC1943>
+References: <1414422226-10948-1-git-send-email-k.kozlowski@samsung.com>
+ <1414422226-10948-7-git-send-email-k.kozlowski@samsung.com>
+ <544EA4FA.6040704@collabora.co.uk> <1414486356.24949.19.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20141028113531.GZ12379@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Mark Rutland <mark.rutland@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, Laura Abbott <lauraa@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, loeliger@gmail.com, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Santosh Shilimkar <santosh.shilimkar@ti.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, drake@endlessm.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:48192 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751867AbaJ1MLw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 28 Oct 2014 08:11:52 -0400
+In-reply-to: <1414486356.24949.19.camel@AMDC1943>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Tue, Oct 28, 2014 at 9:35 AM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
+On wto, 2014-10-28 at 09:52 +0100, Krzysztof Kozlowski wrote:
+> On pon, 2014-10-27 at 21:03 +0100, Javier Martinez Canillas wrote:
+> > Hello Krzysztof,
+> > 
+> > On 10/27/2014 04:03 PM, Krzysztof Kozlowski wrote:
+> > > @@ -85,6 +91,9 @@ struct max77686_data {
+> > >  	struct max77686_regulator_data *regulators;
+> > >  	int num_regulators;
+> > >  
+> > > +	/* Array of size num_regulators with GPIOs for external control. */
+> > > +	int *ext_control_gpio;
+> > > +
+> > 
+> > The integer-based GPIO API is deprecated in favor of the descriptor-based GPIO
+> > interface (Documentation/gpio/consumer.txt). Could you please use the later?
+> 
+> Sure, I can. Please have in mind that regulator core still accepts old
+> GPIO so I will have to use desc_to_gpio(). That should work... and
+> should be future-ready.
 
-> Ok.
->
-> I'd ask for one change.  Please make all these messages start with
-> "L2C-310 OF" not "PL310 OF:".  The device is described in ARM
-> documentation as a L2C-310 not PL310.  (Also note the : is dropped
-> too - most of the other messages don't have the : either.)
->
-> The:
->
-> "PL310 OF: cache setting yield illegal associativity
-> PL310 OF: -1073346556 calculated, only 8 and 16 legal"
+It seems I was too hasty... I think usage of the new gpiod API implies
+completely different bindings.
 
-I have sent a patch to address this error message that happens when
-"cache-size" and "cache-sets" properties are not passed in DT:
-http://www.spinics.net/lists/arm-kernel/msg372094.html
+The gpiod_get() gets GPIO from a device level, not from given sub-node
+pointer. This means that you cannot have DTS like this:
+ldo21_reg: ldo21 {
+	regulator-compatible = "LDO21";
+	regulator-name = "VTF_2.8V";
+	regulator-min-microvolt = <2800000>;
+	regulator-max-microvolt = <2800000>;
+	ec-gpio = <&gpy2 0 0>;
+};
+
+ldo22_reg: ldo22 {
+	regulator-compatible = "LDO22";
+	regulator-name = "VMEM_VDD_2.8V";
+	regulator-min-microvolt = <2800000>;
+	regulator-max-microvolt = <2800000>;
+	ec-gpio = <&gpk0 2 0>;
+};
+
+
+I could put GPIOs in device node:
+
+max77686_pmic@09 {
+	compatible = "maxim,max77686";
+	interrupt-parent = <&gpx0>;
+	interrupts = <7 0>;
+	reg = <0x09>;
+	#clock-cells = <1>;
+	ldo21-gpio = <&gpy2 0 0>;
+	ldo22-gpio = <&gpk0 2 0>;
+
+	ldo21_reg: ldo21 {
+		regulator-compatible = "LDO21";
+		regulator-name = "VTF_2.8V";
+		regulator-min-microvolt = <2800000>;
+		regulator-max-microvolt = <2800000>;
+	};
+
+	ldo22_reg: ldo22 {
+		regulator-compatible = "LDO22";
+		regulator-name = "VMEM_VDD_2.8V";
+		regulator-min-microvolt = <2800000>;
+		regulator-max-microvolt = <2800000>;
+	};
+
+This would work but I don't like it. The properties of a regulator are
+above the node configuring that regulator.
+
+Any ideas?
+
+Best regards,
+Krzysztof
