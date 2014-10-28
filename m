@@ -1,43 +1,69 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V7 11/12] Documentation: bridge: Add documentation for
- ps8622 DT properties
-Date: Tue, 28 Oct 2014 16:42:09 +0530
-Message-ID: <CAEC9eQM4dwtuoY64DYgUon=qwm0nNs6L7Rgf0XJH6pSSQfLyHQ@mail.gmail.com>
-References: <1409150399-12534-1-git-send-email-ajaykumar.rs@samsung.com>
- <20141008070918.GA4999@ulmo>
- <CAEC9eQPn2GAn6nrSvgso2QTXQErtY+8dH5-LbZS9mGTYcYC5Gw@mail.gmail.com>
- <15883554.FBq3UbZUdh@avalon>
- <CABxcv=kNBpNCOM-=PgHcR23eAVuzR8ECROeGxOs-Hk0JCSK1Lw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CABxcv=kNBpNCOM-=PgHcR23eAVuzR8ECROeGxOs-Hk0JCSK1Lw@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+From: Abhilash Kesavan <a.kesavan@samsung.com>
+Subject: [PATCH v3 0/5] Add clock support for a few IPs on Exynos7
+Date: Tue, 28 Oct 2014 16:48:50 +0530
+Message-ID: <1414495135-25588-1-git-send-email-a.kesavan@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:28927 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756975AbaJ1LTh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 28 Oct 2014 07:19:37 -0400
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NE500DCEJGNV870@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 28 Oct 2014 20:19:35 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com
 
-T24gVHVlLCBPY3QgMjgsIDIwMTQgYXQgMjo0MiBQTSwgSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFz
-CjxqYXZpZXJAZG93aGlsZTAub3JnPiB3cm90ZToKPiBIZWxsbyBBamF5LAo+Cj4gT24gVGh1LCBP
-Y3QgMTYsIDIwMTQgYXQgMTE6MDQgQU0sIExhdXJlbnQgUGluY2hhcnQKPiA8bGF1cmVudC5waW5j
-aGFydEBpZGVhc29uYm9hcmQuY29tPiB3cm90ZToKPj4+Cj4+PiBSaWdodC4gSXQgd291bGQgYmUg
-Z3JlYXQgaWYgeW91IGd1eXMgY29tZSB0byBhZ3JlZW1lbnQgQVNBUCEKPj4KPj4gSSBkb24ndCB0
-aGluayB3ZSdsbCBhZ3JlZSBhbnkgdGltZSBzb29uLCBzbyBJIGJlbGlldmUgaXQncyB1cCB0byB5
-b3UgdG8gZGVjaWRlCj4+IHdoaWNoIG9wdGlvbiBpcyBiZXN0IGJhc2VkIG9uIGFsbCBhcmd1bWVu
-dHMgdGhhdCBoYXZlIGJlZW4gcHJlc2VudGVkLgo+Pgo+Cj4gRGlkIHlvdSBkZWNpZGUgd2hhdCdz
-IHRoZSBjb3JyZWN0IGFwcHJvYWNoPyBJIGRvbid0IGhhdmUgYSBzdHJvbmcKPiBvcGluaW9uLCBJ
-J20ganVzdCBhc2tpbmcgYmVjYXVzZSBpdCB3b3VsZCBiZSBhIHBpdHkgaWYgeW91ciBzZXJpZXMK
-PiBtaXNzIGFub3RoZXIga2VybmVsIHJlbGVhc2UuLi4KSSB3aWxsIGJlIHVzaW5nIGdyYXBocyBp
-bnN0ZWFkIG9mIHBoYW5kbGVzLCBhbmQgd291bGQgc2VuZCBhIHNlcmllcyBBU0FQLgoKQWpheQpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Changes since v2:
+	- Dropped the dts/arm64 changes and only kept the clock patches so that they
+	may be directly applied.
+	- Fixed the clock ordering for DOUT_ACLK_CCORE_133.
+	- Added a patch that adds support for ADC gate clock as part of this series.
+
+Changes since v1:
+	- Added documentation for input clocks of the newly added CMUs
+
+Following are the dependencies:
+1) dts, kbuild: Implement support for dtb vendor subdirs patchset 
+http://comments.gmane.org/gmane.linux.kbuild.devel/12131
+2) arch: arm64: Enable support for Samsung Exynos7 SoC
+http://www.spinics.net/lists/linux-samsung-soc/msg37047.html
+3) Serial clean-up patches for Exynos7
+http://www.spinics.net/lists/arm-kernel/msg367348.html
+http://www.spinics.net/lists/arm-kernel/msg367349.html
+4) Add initial support for pinctrl on Exynos7
+http://www.spinics.net/lists/linux-samsung-soc/msg37708.html
+
+For testing I have applied the following:
+1) mmc: dw_mmc: Add IDMAC 64-bit address mode support
+http://www.spinics.net/lists/kernel/msg1842300.html
+2) mfd: sec: add S2MPS15 PMIC support
+https://lkml.org/lkml/2014/10/14/50
+3) regulator: s2mps11: add support for S2MPS15 regulators
+https://lkml.org/lkml/2014/10/14/52
+4) Regulators dt nodes were added in the espresso dts file and I2C channel 4
+which has the PMIC on it was tested.
+5) watchdog: s3c2410_wdt: Fix the mask bit offset for Exynos7
+http://www.spinics.net/lists/linux-watchdog/msg05292.html
+
+Abhilash Kesavan (1):
+  clk: samsung: exynos7: add gate clock for ADC block
+
+Naveen Krishna Ch (4):
+  clk: samsung: exynos7: add clocks for I2C block
+  clk: samsung: exynos7: add clocks for MMC block
+  clk: samsung: exynos7: add clocks for RTC block
+  clk: samsung: exynos7: add gate clocks for WDT, TMU and PWM blocks
+
+ .../devicetree/bindings/clock/exynos7-clock.txt    |   26 ++
+ drivers/clk/samsung/clk-exynos7.c                  |  318 ++++++++++++++++++++
+ include/dt-bindings/clock/exynos7-clk.h            |   51 +++-
+ 3 files changed, 391 insertions(+), 4 deletions(-)
+
+-- 
+1.7.9.5
