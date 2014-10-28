@@ -1,49 +1,53 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 4/4] PM / Domains: Let the ->attach_dev() callback return
- an error code
-Date: Tue, 28 Oct 2014 21:31:35 +0100
-Message-ID: <CAMuHMdVn2mfk5v8MQshU0gko+dL9xtCT_zBuqyntHHrmxjwfSA@mail.gmail.com>
-References: <1414507090-516-1-git-send-email-ulf.hansson@linaro.org>
-	<1414507090-516-5-git-send-email-ulf.hansson@linaro.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v5 3/4] regulator: max77686: Add suspend disable for some
+ LDOs
+Date: Tue, 28 Oct 2014 22:31:21 +0000
+Message-ID: <20141028223121.GH18557@sirena.org.uk>
+References: <1414411911-5539-1-git-send-email-k.kozlowski@samsung.com>
+ <1414411911-5539-4-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f173.google.com ([209.85.217.173]:59891 "EHLO
-	mail-lb0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751872AbaJ1Ubh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Oct 2014 16:31:37 -0400
-In-Reply-To: <1414507090-516-5-git-send-email-ulf.hansson@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="waAWgznbqtWOzvJZ"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1414411911-5539-4-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Linux PM list <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>
 
-Hi Ulf, Rafael,
 
-On Tue, Oct 28, 2014 at 3:38 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> Typically an ->attach_dev() callback would fetch some PM resourses.
->
-> Those operations, like for example clk_get() may fail with different
-> errors, including -EPROBE_DEFER. Instead of ignoring these errors and
-> potentially only print an error message, let's propagate them to give
-> callers the option to handle them.
->
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+--waAWgznbqtWOzvJZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Given that several patch series using ->attach_dev() are already floating
-around and will be in -next soon, what is the plan of getting this in?
-Doing it ASAP (in v3.18-rc3)?
-Delaying this to v3.19-rc2, which will require an atomic fixing of its users?
-Any other option?
+On Mon, Oct 27, 2014 at 01:11:49PM +0100, Krzysztof Kozlowski wrote:
 
-Gr{oetje,eeting}s,
+> @@ -247,6 +250,8 @@ static struct regulator_ops max77686_ldo_ops = {
+>  	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
+>  	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
+>  	.set_suspend_mode	= max77686_ldo_set_suspend_mode,
+> +	.set_suspend_disable	= max77686_set_suspend_disable,
+> +	.set_suspend_enable	= max77686_enable,
 
-                        Geert, who's about to resubmit his pm-rmobile patches
+This looks wrong, you're using the regular enable operation as suspend
+enable.  How does that work without disrupting the current runtime
+state?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--waAWgznbqtWOzvJZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUUBk4AAoJECTWi3JdVIfQSJYH/RTYhHzyf/43tuvH9ge6Zqhr
+8D17nEvNtEt6aaRrQ27Xn4eWcghsnCGIHVfm7T5zQRxQZTaK2p6eiHYnO51N86cg
+orx2lmaIhvQvnW2aTFJFMlcc17buBmyT7sNBOUuZA6kHN1eu/IzJL2f62+aspp79
+6gnfejrhgvDNkdCRYpLSJDuBWQCJTVTs/IzBHAfDw+yNvk5PsbKwrU9sXSx2/1+p
+y6q7IWnqDTH6OW/5FSx8pIKQMiY6jLbaZZCl8X/aGk+5UFwo9Qr27q15DkhtGKwI
+FMcatv+CZTtkCn+bG/V9pRbqu2KaY+osBsLP4TTfdXVkTlaTuoW7aGyLYoQj/vk=
+=zgZa
+-----END PGP SIGNATURE-----
+
+--waAWgznbqtWOzvJZ--
