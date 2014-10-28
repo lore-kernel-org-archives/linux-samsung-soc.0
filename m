@@ -1,177 +1,113 @@
 From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH v3 3/5] clk: samsung: exynos7: add clocks for RTC block
-Date: Tue, 28 Oct 2014 16:48:53 +0530
-Message-ID: <1414495135-25588-4-git-send-email-a.kesavan@samsung.com>
+Subject: [PATCH v3 1/5] clk: samsung: exynos7: add clocks for I2C block
+Date: Tue, 28 Oct 2014 16:48:51 +0530
+Message-ID: <1414495135-25588-2-git-send-email-a.kesavan@samsung.com>
 References: <1414495135-25588-1-git-send-email-a.kesavan@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:29263 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754338AbaJ1LVJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Oct 2014 07:21:09 -0400
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NE500DOYJJ8QY70@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Oct 2014 20:21:08 +0900 (KST)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1414495135-25588-1-git-send-email-a.kesavan@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Cc: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
 
-Add clock support for the RTC block in Exynos7.
+Exynos7 supports 12 I2C channels, add the I2C gate clocks to
+support them.
 
 Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
 Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 ---
- .../devicetree/bindings/clock/exynos7-clock.txt    |    5 ++
- drivers/clk/samsung/clk-exynos7.c                  |   54 ++++++++++++++++++++
- include/dt-bindings/clock/exynos7-clk.h            |    7 ++-
- 3 files changed, 65 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos7.c       |   24 ++++++++++++++++++++++++
+ include/dt-bindings/clock/exynos7-clk.h |   16 ++++++++++++++--
+ 2 files changed, 38 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos7-clock.txt b/Documentation/devicetree/bindings/clock/exynos7-clock.txt
-index b29cb50..6d3d5f8 100644
---- a/Documentation/devicetree/bindings/clock/exynos7-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/exynos7-clock.txt
-@@ -28,6 +28,7 @@ Required Properties for Clock Controller:
- 	- "samsung,exynos7-clock-topc"
- 	- "samsung,exynos7-clock-top0"
- 	- "samsung,exynos7-clock-top1"
-+	- "samsung,exynos7-clock-ccore"
- 	- "samsung,exynos7-clock-peric0"
- 	- "samsung,exynos7-clock-peric1"
- 	- "samsung,exynos7-clock-peris"
-@@ -60,6 +61,10 @@ Input clocks for top1 clock controller:
- 	- dout_sclk_cc_pll
- 	- dout_sclk_mfc_pll
- 
-+Input clocks for ccore clock controller:
-+	- fin_pll
-+	- dout_aclk_ccore_133
-+
- Input clocks for peric0 clock controller:
- 	- fin_pll
- 	- dout_aclk_peric0_66
 diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index f5e43fa..3a30f43 100644
+index 54206d4..c700f65 100644
 --- a/drivers/clk/samsung/clk-exynos7.c
 +++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -29,7 +29,9 @@
- #define AUD_PLL_CON0		0x0140
- #define MUX_SEL_TOPC0		0x0200
- #define MUX_SEL_TOPC1		0x0204
-+#define MUX_SEL_TOPC2		0x0208
- #define MUX_SEL_TOPC3		0x020C
-+#define DIV_TOPC0		0x0600
- #define DIV_TOPC1		0x0604
- #define DIV_TOPC3		0x060C
- 
-@@ -78,7 +80,9 @@ static unsigned long topc_clk_regs[] __initdata = {
- 	AUD_PLL_CON0,
- 	MUX_SEL_TOPC0,
- 	MUX_SEL_TOPC1,
-+	MUX_SEL_TOPC2,
- 	MUX_SEL_TOPC3,
-+	DIV_TOPC0,
- 	DIV_TOPC1,
- 	DIV_TOPC3,
- };
-@@ -101,10 +105,15 @@ static struct samsung_mux_clock topc_mux_clks[] __initdata = {
- 	MUX(0, "mout_sclk_bus0_pll_out", mout_sclk_bus0_pll_out_p,
- 		MUX_SEL_TOPC1, 16, 1),
- 
-+	MUX(0, "mout_aclk_ccore_133", mout_topc_group2,	MUX_SEL_TOPC2, 4, 2),
-+
- 	MUX(0, "mout_aclk_peris_66", mout_topc_group2, MUX_SEL_TOPC3, 24, 2),
+@@ -290,6 +290,20 @@ static struct samsung_mux_clock peric0_mux_clks[] __initdata = {
  };
  
- static struct samsung_div_clock topc_div_clks[] __initdata = {
-+	DIV(DOUT_ACLK_CCORE_133, "dout_aclk_ccore_133", "mout_aclk_ccore_133",
-+		DIV_TOPC0, 4, 4),
-+
- 	DIV(DOUT_ACLK_PERIS, "dout_aclk_peris_66", "mout_aclk_peris_66",
- 		DIV_TOPC1, 24, 4),
+ static struct samsung_gate_clock peric0_gate_clks[] __initdata = {
++	GATE(PCLK_HSI2C0, "pclk_hsi2c0", "mout_aclk_peric0_66_user",
++		ENABLE_PCLK_PERIC0, 8, 0, 0),
++	GATE(PCLK_HSI2C1, "pclk_hsi2c1", "mout_aclk_peric0_66_user",
++		ENABLE_PCLK_PERIC0, 9, 0, 0),
++	GATE(PCLK_HSI2C4, "pclk_hsi2c4", "mout_aclk_peric0_66_user",
++		ENABLE_PCLK_PERIC0, 10, 0, 0),
++	GATE(PCLK_HSI2C5, "pclk_hsi2c5", "mout_aclk_peric0_66_user",
++		ENABLE_PCLK_PERIC0, 11, 0, 0),
++	GATE(PCLK_HSI2C9, "pclk_hsi2c9", "mout_aclk_peric0_66_user",
++		ENABLE_PCLK_PERIC0, 12, 0, 0),
++	GATE(PCLK_HSI2C10, "pclk_hsi2c10", "mout_aclk_peric0_66_user",
++		ENABLE_PCLK_PERIC0, 13, 0, 0),
++	GATE(PCLK_HSI2C11, "pclk_hsi2c11", "mout_aclk_peric0_66_user",
++		ENABLE_PCLK_PERIC0, 14, 0, 0),
+ 	GATE(PCLK_UART0, "pclk_uart0", "mout_aclk_peric0_66_user",
+ 		ENABLE_PCLK_PERIC0, 16, 0, 0),
  
-@@ -393,6 +402,51 @@ static void __init exynos7_clk_top1_init(struct device_node *np)
- CLK_OF_DECLARE(exynos7_clk_top1, "samsung,exynos7-clock-top1",
- 	exynos7_clk_top1_init);
+@@ -347,6 +361,16 @@ static struct samsung_mux_clock peric1_mux_clks[] __initdata = {
+ };
  
-+/* Register Offset definitions for CMU_CCORE (0x105B0000) */
-+#define MUX_SEL_CCORE			0x0200
-+#define DIV_CCORE			0x0600
-+#define ENABLE_ACLK_CCORE0		0x0800
-+#define ENABLE_ACLK_CCORE1		0x0804
-+#define ENABLE_PCLK_CCORE		0x0900
-+
-+/*
-+ * List of parent clocks for Muxes in CMU_CCORE
-+ */
-+PNAME(mout_aclk_ccore_133_p)	= { "fin_pll", "dout_aclk_ccore_133" };
-+
-+static unsigned long ccore_clk_regs[] __initdata = {
-+	MUX_SEL_CCORE,
-+	ENABLE_PCLK_CCORE,
-+};
-+
-+static struct samsung_mux_clock ccore_mux_clks[] __initdata = {
-+	MUX(0, "mout_aclk_ccore_133_user", mout_aclk_ccore_133_p,
-+		MUX_SEL_CCORE, 1, 1),
-+};
-+
-+static struct samsung_gate_clock ccore_gate_clks[] __initdata = {
-+	GATE(PCLK_RTC, "pclk_rtc", "mout_aclk_ccore_133_user",
-+		ENABLE_PCLK_CCORE, 8, 0, 0),
-+};
-+
-+static struct samsung_cmu_info ccore_cmu_info __initdata = {
-+	.mux_clks		= ccore_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(ccore_mux_clks),
-+	.gate_clks		= ccore_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(ccore_gate_clks),
-+	.nr_clk_ids		= CCORE_NR_CLK,
-+	.clk_regs		= ccore_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(ccore_clk_regs),
-+};
-+
-+static void __init exynos7_clk_ccore_init(struct device_node *np)
-+{
-+	samsung_cmu_register_one(np, &ccore_cmu_info);
-+}
-+
-+CLK_OF_DECLARE(exynos7_clk_ccore, "samsung,exynos7-clock-ccore",
-+	exynos7_clk_ccore_init);
-+
- /* Register Offset definitions for CMU_PERIC0 (0x13610000) */
- #define MUX_SEL_PERIC0			0x0200
- #define ENABLE_PCLK_PERIC0		0x0900
+ static struct samsung_gate_clock peric1_gate_clks[] __initdata = {
++	GATE(PCLK_HSI2C2, "pclk_hsi2c2", "mout_aclk_peric1_66_user",
++		ENABLE_PCLK_PERIC1, 4, 0, 0),
++	GATE(PCLK_HSI2C3, "pclk_hsi2c3", "mout_aclk_peric1_66_user",
++		ENABLE_PCLK_PERIC1, 5, 0, 0),
++	GATE(PCLK_HSI2C6, "pclk_hsi2c6", "mout_aclk_peric1_66_user",
++		ENABLE_PCLK_PERIC1, 6, 0, 0),
++	GATE(PCLK_HSI2C7, "pclk_hsi2c7", "mout_aclk_peric1_66_user",
++		ENABLE_PCLK_PERIC1, 7, 0, 0),
++	GATE(PCLK_HSI2C8, "pclk_hsi2c8", "mout_aclk_peric1_66_user",
++		ENABLE_PCLK_PERIC1, 8, 0, 0),
+ 	GATE(PCLK_UART1, "pclk_uart1", "mout_aclk_peric1_66_user",
+ 		ENABLE_PCLK_PERIC1, 9, 0, 0),
+ 	GATE(PCLK_UART2, "pclk_uart2", "mout_aclk_peric1_66_user",
 diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
-index ff63c4e..dd89aa0 100644
+index 00fd6de..6d07b6f 100644
 --- a/include/dt-bindings/clock/exynos7-clk.h
 +++ b/include/dt-bindings/clock/exynos7-clk.h
-@@ -16,7 +16,8 @@
- #define DOUT_SCLK_BUS1_PLL		3
- #define DOUT_SCLK_CC_PLL		4
- #define DOUT_SCLK_MFC_PLL		5
--#define TOPC_NR_CLK			6
-+#define DOUT_ACLK_CCORE_133		6
-+#define TOPC_NR_CLK			7
- 
- /* TOP0 */
- #define DOUT_ACLK_PERIC1		1
-@@ -38,6 +39,10 @@
- #define CLK_SCLK_MMC0			8
- #define TOP1_NR_CLK			9
- 
-+/* CCORE */
-+#define PCLK_RTC			1
-+#define CCORE_NR_CLK			2
-+
+@@ -30,7 +30,14 @@
  /* PERIC0 */
  #define PCLK_UART0			1
  #define SCLK_UART0			2
+-#define PERIC0_NR_CLK			3
++#define PCLK_HSI2C0			3
++#define PCLK_HSI2C1			4
++#define PCLK_HSI2C4			5
++#define PCLK_HSI2C5			6
++#define PCLK_HSI2C9			7
++#define PCLK_HSI2C10			8
++#define PCLK_HSI2C11			9
++#define PERIC0_NR_CLK			10
+ 
+ /* PERIC1 */
+ #define PCLK_UART1			1
+@@ -39,7 +46,12 @@
+ #define SCLK_UART1			4
+ #define SCLK_UART2			5
+ #define SCLK_UART3			6
+-#define PERIC1_NR_CLK			7
++#define PCLK_HSI2C2			7
++#define PCLK_HSI2C3			8
++#define PCLK_HSI2C6			9
++#define PCLK_HSI2C7			10
++#define PCLK_HSI2C8			11
++#define PERIC1_NR_CLK			12
+ 
+ /* PERIS */
+ #define PCLK_CHIPID			1
 -- 
 1.7.9.5
