@@ -1,95 +1,78 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v9] ARM: EXYNOS: Use MCPM call-backs to support S2R on
- Exynos5420
-Date: Tue, 28 Oct 2014 19:12:01 +0900
-Message-ID: <03ae01cff297$9d5dd6f0$d81984d0$@kernel.org>
-References: <1412746892-12329-1-git-send-email-a.kesavan@samsung.com>
- <CABxcv=kh9F3nNDUFMv9CDCDch+A2wAE+bStegKGVbte9-Yu-wQ@mail.gmail.com>
+Subject: RE: [PATCH v2 0/3] iio: exynos-adc: use syscon instead of ioremap
+Date: Tue, 28 Oct 2014 19:19:22 +0900
+Message-ID: <03d601cff298$a4bacc90$ee3065b0$@kernel.org>
+References: <1410857931-4980-1-git-send-email-ch.naveen@samsung.com>
+ <541EC1C2.6090608@kernel.org> <5436EA85.90900@kernel.org>
+ <544C04E6.50401@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:56149 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754453AbaJ1KMC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Oct 2014 06:12:02 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NE5002XPGC186C0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Oct 2014 19:12:01 +0900 (KST)
-In-reply-to: <CABxcv=kh9F3nNDUFMv9CDCDch+A2wAE+bStegKGVbte9-Yu-wQ@mail.gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <544C04E6.50401@kernel.org>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: 'Jonathan Cameron' <jic23@kernel.org>, 'Naveen Krishna Chatradhi' <ch.naveen@samsung.com>, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, cw00.choi@samsung.com, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, cpgs@samsung.com, grundler@chromium.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Javier Martinez Canillas' <javier@dowhile0.org>, 'Abhilash Kesavan' <a.kesavan@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Javier Martinez Canillas wrote:
+Jonathan Cameron wrote:
 > 
-> Hello Abhilash,
-> 
-> On Wed, Oct 8, 2014 at 7:41 AM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
-> > Use the MCPM layer to handle core suspend/resume on Exynos5420.
-> > Also, restore the entry address setup code post-resume.
-> >
-> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> > Acked-by: Nicolas Pitre <nico@linaro.org>
-> > ---
-> > Changes in v2:
-> >         - Made use of the MCPM suspend/powered_up call-backs
-> > Changes in v3:
-> >         - Used the residency value to indicate the entered state
-> > Changes in v4:
-> >         - Checked if MCPM has been enabled to prevent build error
-> > Changes in v5:
-> >         - Removed the MCPM flags and just used a local flag to
-> >         indicate that we are suspending.
-> > Changes in v6:
-> >         - Read the SYS_PWR_REG value to decide if we are suspending
-> >         the system.
-> >         - Restore the SYS_PWR_REG value post-resume.
-> >         - Modified the comments to reflect the first change.
-> > Changes in v7:
-> >         - Add the suspend check in exynos_cpu_power_down() rather
-> >         than the MCPM back-end.
-> >         - Clean-up unnecessary changes related to earlier versions.
-> > Changes in v8:
-> >         - Rebased on the latest exynos PMU/PM support patches.
-> > Changes in v9:
-> >         - Fixed rebasing issues in v8
-> >         - Used pmu_raw_readl instead of __raw_readl
-> >
-> > This patch is based on kgene's for-next branch.
-> > http://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/log/?h=for-next
-> >
-> > Here are the dependencies:
-> > 1) Decouple syscon interface from platform devices - v7
-> > http://lkml.org/lkml/2014/9/30/156
-> >
-> > 2) ARM: Exynos: Convert PMU implementation into a platform driver - v9
-> > https://lkml.org/lkml/2014/10/6/89
-> >
-> > 3) Exynos5420 PMU/S2R Series - v9
-> > http://www.spinics.net/lists/arm-kernel/msg368207.html
-> >
-> >  arch/arm/mach-exynos/mcpm-exynos.c |   32 +++++++++++++++--------
-> >  arch/arm/mach-exynos/platsmp.c     |   12 +++++++++
-> >  arch/arm/mach-exynos/suspend.c     |   49 ++++++++++++++++++++++++++++++++----
-> >  3 files changed, 78 insertions(+), 15 deletions(-)
+> On 09/10/14 21:05, Jonathan Cameron wrote:
+> > On 21/09/14 13:17, Jonathan Cameron wrote:
+> >> On 16/09/14 09:58, Naveen Krishna Chatradhi wrote:
+> >>> Changes since v1:
+> >>> 1. Rebased on top of togreg branch of IIO git.
+> >>>
+> >>> This patch set does the following
+> >>> 1. Use the syscon and Regmap API instead of ioremappaing the
+> >>>    ADC_PHY register from PMU.
+> >>> 2. Updates the Documentation in exynos-adc.txt with syscon phandle
+> >>>    for the ADC nodes.
+> >>> 3. Updates the Dts files for Exynos3250, Exynos4x12, Exynos5250,
+> >>>    Exynos5420 with the syscon phandle.
+> >>>
+> >>> Tested on Exynos5420 based Peach PIT and Exynos5800 based Peach PI
+> >>> by verifying sysfs entries provided by HWMON based NTC thermistors.
+> >>>
+> >>> Tested-By for Exynos3250, Exynos4x12 would be appreciated.
+> >> Would definitely be good!
+> >>
+> >> The main issue I have with this series is that it breaks backward
+> >> compatibility with old device trees and newer kernels.
+> >>
+> >> Now I appreciate that sometimes there are reasons to do it but want this
+> >> to have deeper consideration (and acks to show it) from the Exynos side
+> >> of things and preferably from the device tree side of things as well.
+> >>
+> >> cc'd Kukjin Kim for the Exynos side of things as the listed Maintainer.
+> >>
+> >> Otherwise, the series looks fine to me.
+> > Kukjin? Sorry to pester, but this has been sat in my waiting queue for a
+> > while now.
+> This is still sitting here waiting for those acks from Exynos side of things.
+> I'm happy to let this sit indefinitely, but does seem a little silly.
+> >>>
 
-[...]
+Thanks for asking :)
 
-> > --
-> 
-> Patch looks good to me and also I tested on my Exynos5420 Peach Pit
-> and Suspend-to-Ram and resume is working correctly, so:
-> 
-> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> 
-Thanks for your review and test.
+Since I've missed the patch in my mailbox and just now checked. I'm happy with
+Naveen's dt updates, I'm not sure we can see useless merge conflicts though ;)
+Anyway it should be small, so please feel free to add my ack on the change.
+
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
 - Kukjin
+
+> >>> Naveen Krishna Chatradhi (3):
+> >>>   iio: exyno-adc: use syscon for PMU register access
+> >>>   Documentation: dt-bindings: update exynos-adc.txt with syscon handle
+> >>>   ARM: dts: exynos: Add sysreg phandle to ADC node
+> >>>
+> >>>  .../devicetree/bindings/arm/samsung/exynos-adc.txt |    9 ++++--
+> >>>  arch/arm/boot/dts/exynos3250.dtsi                  |    3 +-
+> >>>  arch/arm/boot/dts/exynos4x12.dtsi                  |    3 +-
+> >>>  arch/arm/boot/dts/exynos5250.dtsi                  |    3 +-
+> >>>  arch/arm/boot/dts/exynos5420.dtsi                  |    3 +-
+> >>>  drivers/iio/adc/exynos_adc.c                       |   30 ++++++++++++++------
+> >>>  6 files changed, 36 insertions(+), 15 deletions(-)
