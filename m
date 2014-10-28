@@ -1,117 +1,171 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V7 03/12] drm/bridge: Add helper functions for drm_bridge
-Date: Tue, 28 Oct 2014 17:58:49 +0530
-Message-ID: <CAEC9eQNJb1TgK1ihvzvC0VjSJhm48WaFO5SVigPsqTOurK2UQw@mail.gmail.com>
-References: <1409149783-12416-1-git-send-email-ajaykumar.rs@samsung.com>
- <1409149783-12416-4-git-send-email-ajaykumar.rs@samsung.com>
- <20141027190137.GT26941@phenom.ffwll.local>
- <CAOw6vbLNOqp=X4epwDPb7zT-j2+oUuLoeV2S=x+oGPLQwK+Z7Q@mail.gmail.com>
- <CAEC9eQPQaYjL3ZxtDZBdKi2z5yANcHQ9s4ikYkxN95K9qvu01Q@mail.gmail.com>
- <CAKMK7uGoO5TBgLh4HSDjxUM=-WRfsQoDHusLmOYxLio-QBMEPQ@mail.gmail.com>
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 1/3] iio: exyno-adc: use syscon for PMU register access
+Date: Tue, 28 Oct 2014 18:01:36 +0530
+Message-ID: <CAFp+6iH77ToXfOG1bXpCi60JpuzhhxOqaz99=9v4_9DppkSCNw@mail.gmail.com>
+References: <1410857931-4980-1-git-send-email-ch.naveen@samsung.com>
+	<1410857931-4980-2-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAKMK7uGoO5TBgLh4HSDjxUM=-WRfsQoDHusLmOYxLio-QBMEPQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, bhushan.r@samsung.com, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1410857931-4980-2-git-send-email-ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-iio-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, CPGS <cpgs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, grundler-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, jic23-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gVHVlLCBPY3QgMjgsIDIwMTQgYXQgMzozMSBQTSwgRGFuaWVsIFZldHRlciA8ZGFuaWVsQGZm
-d2xsLmNoPiB3cm90ZToKPiBPbiBUdWUsIE9jdCAyOCwgMjAxNCBhdCAxMDoyMSBBTSwgQWpheSBr
-dW1hciA8YWpheW51bWJAZ21haWwuY29tPiB3cm90ZToKPj4gSGkgRGFuaWVsIGFuZCBTZWFuLAo+
-Pgo+PiBUaGFua3MgZm9yIHRoZSBjb21tZW50cyEKPj4KPj4gT24gVHVlLCBPY3QgMjgsIDIwMTQg
-YXQgMToyOCBBTSwgU2VhbiBQYXVsIDxzZWFucGF1bEBjaHJvbWl1bS5vcmc+IHdyb3RlOgo+Pj4g
-T24gTW9uLCBPY3QgMjcsIDIwMTQgYXQgMzowMSBQTSwgRGFuaWVsIFZldHRlciA8ZGFuaWVsQGZm
-d2xsLmNoPiB3cm90ZToKPj4+PiBTbyBkb24ndCBhc2sgd2h5IGJ1dCBJIGFjY2lkZW50YWxseSBl
-bmRlZCB1cCBpbiBhIGJyYW5jaCBsb29raW5nIGF0IHRoaXMKPj4+PiBwYXRjaCBhbmQgZGlkbid0
-IGxpa2UgaXQuIFNvIHZlcnkgcXVpY2smZ3J1bXB5IHJldmlldy4KPj4+Pgo+Pj4+IEZpcnN0LCBw
-bGVhc2UgbWFrZSB0aGUgcGF0Y2ggc3ViamVjdCBtb3JlIGRlc2NyaXB0aXZlOiBJJ2QgZXhwZWN0
-IGEgaGVscGVyCj4+Pj4gZnVuY3Rpb24gc2NhZmZvbGRpbmcgbGlrZSB0aGUgdmFyaW91cyBjcnRj
-L3Byb2JlL2RwIC4uLiBoZWxwZXJzIHdlIGFscmVhZHkKPj4+PiBoYXZlLiBZb3UgaW5zdGVhZCBh
-ZGQgY29kZSB0byB1bnRhbmdsZSB0aGUgcHJvYmUgb3JkZXJpbmcuIFBsZWFzZSBzYXkgc28uCj4+
-IFN1cmUuIEkgd2lsbCByZXdvcmQgaXQgcHJvcGVybHkuCj4+Cj4+Pj4gTW9yZSBjb21tZW50cyBi
-ZWxvdy4KPj4+Pgo+Pj4+IE9uIFdlZCwgQXVnIDI3LCAyMDE0IGF0IDA3OjU5OjM3UE0gKzA1MzAs
-IEFqYXkgS3VtYXIgd3JvdGU6Cj4+Pj4+IEEgc2V0IG9mIGhlbHBlciBmdW5jdGlvbnMgYXJlIGRl
-ZmluZWQgaW4gdGhpcyBwYXRjaCB0byBtYWtlCj4+Pj4+IGJyaWRnZSBkcml2ZXIgcHJvYmUgaW5k
-ZXBlbmRlbnQgb2YgdGhlIGRybSBmbG93Lgo+Pj4+Pgo+Pj4+PiBUaGUgYnJpZGdlIGRldmljZXMg
-cmVnaXN0ZXIgdGhlbXNlbHZlcyBvbiBhIGxvb2t1cCB0YWJsZQo+Pj4+PiB3aGVuIHRoZXkgZ2V0
-IHByb2JlZCBieSBjYWxsaW5nICJkcm1fYnJpZGdlX2FkZCIuCj4+Pj4+Cj4+Pj4+IFRoZSBwYXJl
-bnQgZW5jb2RlciBkcml2ZXIgd2FpdHMgdGlsbCB0aGUgYnJpZGdlIGlzIGF2YWlsYWJsZQo+Pj4+
-PiBpbiB0aGUgbG9va3VwIHRhYmxlKGJ5IGNhbGxpbmcgIm9mX2RybV9maW5kX2JyaWRnZSIpIGFu
-ZCB0aGVuCj4+Pj4+IGNvbnRpbnVlcyB3aXRoIGl0cyBpbml0aWFsaXphdGlvbi4KPj4+Pj4KPj4+
-Pj4gVGhlIGVuY29kZXIgZHJpdmVyIHNob3VsZCBhbHNvIGNhbGwgImRybV9icmlkZ2VfYXR0YWNo
-IiB0byBwYXNzCj4+Pj4+IG9uIHRoZSBkcm1fZGV2aWNlLCBlbmNvZGVyIHBvaW50ZXJzIHRvIHRo
-ZSBicmlkZ2Ugb2JqZWN0Lgo+Pj4+Pgo+Pj4+PiBkcm1fYnJpZGdlX2F0dGFjaCBpbnR1cm4gY2Fs
-bHMgZHJtX2JyaWRnZV9pbml0IHRvIHJlZ2lzdGVyIGl0c2VsZgo+Pj4+PiB3aXRoIHRoZSBkcm0g
-Y29yZS4gTGF0ZXIsIGl0IGNhbGxzICJicmlkZ2UtPmZ1bmNzLT5hdHRhY2giIHNvIHRoYXQKPj4+
-Pj4gYnJpZGdlIGNhbiBjb250aW51ZSB3aXRoIG90aGVyIGluaXRpYWxpemF0aW9ucy4KPj4+Pj4K
-Pj4+Pj4gU2lnbmVkLW9mZi1ieTogQWpheSBLdW1hciA8YWpheWt1bWFyLnJzQHNhbXN1bmcuY29t
-Pgo+Pj4+Cj4+Pj4gW3NuaXBdCj4+Pj4KPj4+Pj4gQEAgLTY2MCw4ICs2NjIsMTEgQEAgc3RydWN0
-IGRybV9icmlkZ2VfZnVuY3Mgewo+Pj4+PiAgICogQGRyaXZlcl9wcml2YXRlOiBwb2ludGVyIHRv
-IHRoZSBicmlkZ2UgZHJpdmVyJ3MgaW50ZXJuYWwgY29udGV4dAo+Pj4+PiAgICovCj4+Pj4+ICBz
-dHJ1Y3QgZHJtX2JyaWRnZSB7Cj4+Pj4+IC0gICAgIHN0cnVjdCBkcm1fZGV2aWNlICpkZXY7Cj4+
-Pj4+ICsgICAgIHN0cnVjdCBkZXZpY2UgKmRldjsKPj4+Pgo+Pj4+IFBsZWFzZSBkb24ndCByZW5h
-bWUgdGhlIC0+ZGV2IHBvaW50ZXIgaW50byBkcm0uIEJlY2F1c2UgX2FsbF8gdGhlIG90aGVyCj4+
-Pj4gZHJtIHN0cnVjdHVyZXMgc3RpbGwgY2FsbCBpdCAtPmRldi4gQWxzbywgY2FuJ3Qgd2UgdXNl
-IHN0cnVjdCBkZXZpY2Vfbm9kZQo+Pj4+IGhlcmUgbGlrZSB3ZSBkbyBpbiB0aGUgb2YgaGVscGVy
-cyBSdXNzZWxsIGFkZGVkPyBTZWUgN2U0MzVhYWQzODA4Mwo+Pj4+Cj4+Pgo+Pj4gSSB0aGluayB0
-aGlzIGlzIG1vZGVsZWQgYWZ0ZXIgdGhlIG5hbWluZyBpbiBkcm1fcGFuZWwsCj4+IFJpZ2h0LCBU
-aGUgZW50aXJlIHJld29yayBpcyBiYXNlZCBvbiBob3cgZHJtX3BhbmVsIGZyYW1ld29yayBpcyBz
-dHJ1Y3R1cmVkLgo+Pgo+Pj4gRldJVy4gSG93ZXZlciwKPj4+IHNlZW1zIHJlYXNvbmFibGUgdG8g
-a2VlcCB0aGUgZGV2aWNlX25vZGUgaW5zdGVhZC4KPj4gWWVzLCBpdHMgdmlzaWJsZSB0aGF0IGp1
-c3QgZGV2aWNlX25vZGUgd291bGQgYmUgc3VmZmljaWVudC4KPj4gVGhpcyB3aWxsIHNhdmUgdXMg
-ZnJvbSByZW5hbWluZyBkcm1fZGV2aWNlIGFzIHdlbGwuCj4+Cj4+Pj4+ICsgICAgIHN0cnVjdCBk
-cm1fZGV2aWNlICpkcm07Cj4+Pj4+ICsgICAgIHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlcjsK
-Pj4+Pgo+Pj4+IFRoaXMgYnJlYWtzIGJyaWRnZS0+YnJpZGdlIGNoYWluaW5nIChpZiB3ZSBldmVy
-IGdldCB0aGVyZSkuIEl0IHNlZW1zCj4+Pj4gcHJldHR5IG11Y2ggdW51c2VkIGFueXdheSBleGNl
-cHQgZm9yIGFuIEVCVVNZIGNoZWNrLiBDYW4ndCB5b3UgdXNlCj4+Pj4gYnJpZGdlLT5kZXYgZm9y
-IHRoYXQ/Cj4+Pj4KPj4+Cj4+PiBZZWFoLCBJJ2QgcHJlZmVyIHRvIHBhc3MgZHJtX2RldmljZSBk
-aXJlY3RseSBpbnRvIGRybV9icmlkZ2VfYXR0YWNoCj4+PiBhbmQgbGVhdmUgaXQgdXAgdG8gdGhl
-IGNhbGxlciB0byBlc3RhYmxpc2ggdGhlIHByb3BlciBjaGFpbi4KPj4gT2suIEkgd2lsbCB1c2Ug
-ZHJtX2RldmljZSBwb2ludGVyIGRpcmVjdGx5IGluc3RlYWQgb2YgcGFzc2luZyBlbmNvZGVyIHBv
-aW50ZXIuCj4KPiBIbSwgaWYgeW91IGRvIHRoaXMgY2FuIHlvdSBwbHMgYWxzbyB1cGRhdGUgZHJt
-X3BhbmVsIGFjY29yZGluZ2x5PyBJdAo+IHNob3VsZG4ndCBiZSBhIGxvdCBvZiBmdXp6IGFuZCB3
-b3VsZCBtYWtlIHRoaW5ncyBhcm91bmQgZHJtK2R0IG1vcmUKPiBjb25zaXN0ZW50LgpBcmUgeW91
-IHRhbGtpbmcgYWJvdXQgdXNpbmcgc3RydWN0IGRldmljZV9ub2RlIGluc3RlYWQgb2Ygc3RydWN0
-IGRldmljZT8KSSBndWVzcyB5b3UgaGF2ZSBtaXNwbGFjZWQgdGhlIGNvbW1lbnQgdW5kZXIgdGhl
-IHdyb25nIHNlY3Rpb24hCgo+Pgo+Pj4+PiAgICAgICBzdHJ1Y3QgbGlzdF9oZWFkIGhlYWQ7Cj4+
-Pj4+ICsgICAgIHN0cnVjdCBsaXN0X2hlYWQgbGlzdDsKPj4+Pgo+Pj4+IFRoZXNlIGxpc3RzIG5l
-ZWQgYmV0dGVyIG5hbWVzLiBJIGtub3cgdGhhdCB0aGUgImhlYWQiIGlzIHJlYWxseSBhd2Z1bCwK
-Pj4+PiBlc3BlY2lhbGx5IHNpbmNlIGl0J3MgYWN0dWFsbHkgbm90IHRoZSBoZWFkIG9mIHRoZSBs
-aXN0IGJ1dCBqdXN0IGFuCj4+Pj4gZWxlbWVudC4KPj4+Cj4+PiBJIHRoaW5rIHdlIGNhbiBqdXN0
-IHJpcCBicmlkZ2VfbGlzdCBvdXQgb2YgbW9kZV9jb25maWcgaWYgd2UncmUgZ29pbmcKPj4+IHRv
-IGtlZXAgdHJhY2sgb2YgYnJpZGdlcyBlbHNld2hlcmUuIFNvIHdlIGNhbiBudWtlICJoZWFkIiBh
-bmQga2VlcAo+Pj4gImxpc3QiLiBUaGlzIGFsc28gbWVhbnMgdGhhdCBicmlkZ2UtPmRlc3Ryb3ko
-KSBnb2VzIGF3YXksIGJ1dCB0aGF0J3MKPj4+IHByb2JhYmx5IE9rIGlmIGV2ZXJ5dGhpbmcgY29u
-dmVydHMgdG8gdGhlIHN0YW5kYWxvbmUgZHJpdmVyIG1vZGVsCj4+PiB3aGVyZSB3ZSBoYXZlIGRy
-aXZlci0+cmVtb3ZlKCkKPj4+Cj4+PiBTZWFuCj4+IEdyZWF0ISBUaGllcnJ5IGFjdHVhbGx5IG1l
-bnRpb25lZCBhYm91dCB0aGlzIG9uY2UsIGFuZCB3ZSBoYXZlIHRoZQo+PiBjb25maXJtYXRpb24g
-bm93Lgo+Pgo+Pj4+Pgo+Pj4+PiAgICAgICBzdHJ1Y3QgZHJtX21vZGVfb2JqZWN0IGJhc2U7Cj4+
-Pj4KPj4+Pgo+Pj4+IEFzaWRlOiBJJ3ZlIG5vdGljZWQgYWxsIHRoaXMgdHJ5aW5nIHRvIHVwZGF0
-ZSB0aGUga2VybmVsZG9jIGZvciBzdHJ1Y3QKPj4+PiBkcm1fYnJpZGdlLCB3aGljaCBqdXN0IHNo
-b3dlZCB0aGF0IHRoaXMgcGF0Y2ggbWFrZXMgaW5jb25zaXN0ZW50IGNoYW5nZXMuCj4+Pj4gVHJ5
-aW5nIHRvIHdyaXRlIGtlcm5lbGRvYyBpcyBhIHJlYWxseSBncmVhdCB3YXkgdG8gY29tZSB1cCB3
-aXRoIGJldHRlcgo+Pj4+IGludGVyZmFjZXMgaW1vLgo+Pj4+Cj4+Pj4gQ2hlZXJzLCBEYW5pZWwK
-Pj4gSSBkaW4ndCBnZXQgdGhpcyBhY3R1YWxseS4gWW91IHdhbnQgbWUgdG8gY3JlYXRlIERvYy4u
-L2RybV9icmlkZ2UudHh0Cj4+IG9yIHNvbWV0aGluZyBzaW1pbGFyPwo+Cj4gSWYgeW91IHdhbnQg
-dG8gZG9jdW1lbnQgZHJtX2JyaWRnZSB0aGVuIEkgcmVjb21tZW50IHRvIHNwcmlua2xlIHByb3Bl
-cgo+IGtlcm5lbGRvYyBvdmVyIGRybV9icmlkZ2UuYyBhbmQgcHVsbCBpdCBhbGwgaW50byB0aGUg
-ZHJtIERvY0Jvb2sKPiB0ZW1wbGF0ZS4gVGhhdCB3YXkgYWxsIHRoZSBkcm0gZG9jdW1lbnRhdGlv
-biBpcyBpbiBvbmUgcGxhY2UuIEkndmUKPiBkb25lIHRoYXQgZm9yIGRybV9jcnRjLmggaW4gYW4g
-dW5yZWxhdGVkIHBhdGNoIHNlcmllcyAoYnV0IGJhc2VkIHVwb24KPiBhIGJyYW5jaCB3aXRoIHlv
-dXIgcGF0Y2ggaGVyZSBpbmNsdWRlZCkgYW5kIHRoZXJlJ3Mgc3RydWN0IGRybV9icmlkZ2UqCj4g
-aW4gdGhlcmUuIEhlbmNlIHdoeSBJJ3ZlIG5vdGljZWQuCkNhbiB5b3Ugc2VuZCBhIGxpbmsgZm9y
-IHRoYXQ/CkFuZCwgaXMgdGhlcmUgYW55IHByb2JsZW0gaWYgdGhlIGRvYyBjb21lcyBsYXRlcj8K
-CkFqYXkKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
-LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi all,
+
+
+CC'ing Naveen's gmail id, since the Samsung id is invalid now.
+
+
+On Tue, Sep 16, 2014 at 2:28 PM, Naveen Krishna Chatradhi
+<ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> This patch updates the IIO based ADC driver to use syscon and regmap
+> APIs to access and use PMU registers instead of remapping the PMU
+> registers in the driver.
+>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> To: linux-iio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> ---
+> Changes since v1:
+> Rebased on top of togreg branch of IIO git
+
+If the changes look good, then first two patches of this series can be
+picked up ?
+The last dt patch then belongs to samsung tree.
+
+>
+>  drivers/iio/adc/exynos_adc.c |   30 +++++++++++++++++++++---------
+>  1 file changed, 21 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
+> index 43620fd..fe03177 100644
+> --- a/drivers/iio/adc/exynos_adc.c
+> +++ b/drivers/iio/adc/exynos_adc.c
+> @@ -39,6 +39,8 @@
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/machine.h>
+>  #include <linux/iio/driver.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/regmap.h>
+>
+>  /* S3C/EXYNOS4412/5250 ADC_V1 registers definitions */
+>  #define ADC_V1_CON(x)          ((x) + 0x00)
+> @@ -90,11 +92,14 @@
+>
+>  #define EXYNOS_ADC_TIMEOUT     (msecs_to_jiffies(100))
+>
+> +#define EXYNOS_ADCV1_PHY_OFFSET        0x0718
+> +#define EXYNOS_ADCV2_PHY_OFFSET        0x0720
+> +
+>  struct exynos_adc {
+>         struct exynos_adc_data  *data;
+>         struct device           *dev;
+>         void __iomem            *regs;
+> -       void __iomem            *enable_reg;
+> +       struct regmap           *pmu_map;
+>         struct clk              *clk;
+>         struct clk              *sclk;
+>         unsigned int            irq;
+> @@ -110,6 +115,7 @@ struct exynos_adc_data {
+>         int num_channels;
+>         bool needs_sclk;
+>         bool needs_adc_phy;
+> +       int phy_offset;
+>         u32 mask;
+>
+>         void (*init_hw)(struct exynos_adc *info);
+> @@ -183,7 +189,7 @@ static void exynos_adc_v1_init_hw(struct exynos_adc *info)
+>         u32 con1;
+>
+>         if (info->data->needs_adc_phy)
+> -               writel(1, info->enable_reg);
+> +               regmap_write(info->pmu_map, info->data->phy_offset, 1);
+>
+>         /* set default prescaler values and Enable prescaler */
+>         con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
+> @@ -198,7 +204,7 @@ static void exynos_adc_v1_exit_hw(struct exynos_adc *info)
+>         u32 con;
+>
+>         if (info->data->needs_adc_phy)
+> -               writel(0, info->enable_reg);
+> +               regmap_write(info->pmu_map, info->data->phy_offset, 0);
+>
+>         con = readl(ADC_V1_CON(info->regs));
+>         con |= ADC_V1_CON_STANDBY;
+> @@ -225,6 +231,7 @@ static const struct exynos_adc_data exynos_adc_v1_data = {
+>         .num_channels   = MAX_ADC_V1_CHANNELS,
+>         .mask           = ADC_DATX_MASK,        /* 12 bit ADC resolution */
+>         .needs_adc_phy  = true,
+> +       .phy_offset     = EXYNOS_ADCV1_PHY_OFFSET,
+>
+>         .init_hw        = exynos_adc_v1_init_hw,
+>         .exit_hw        = exynos_adc_v1_exit_hw,
+> @@ -314,7 +321,7 @@ static void exynos_adc_v2_init_hw(struct exynos_adc *info)
+>         u32 con1, con2;
+>
+>         if (info->data->needs_adc_phy)
+> -               writel(1, info->enable_reg);
+> +               regmap_write(info->pmu_map, info->data->phy_offset, 1);
+>
+>         con1 = ADC_V2_CON1_SOFT_RESET;
+>         writel(con1, ADC_V2_CON1(info->regs));
+> @@ -332,7 +339,7 @@ static void exynos_adc_v2_exit_hw(struct exynos_adc *info)
+>         u32 con;
+>
+>         if (info->data->needs_adc_phy)
+> -               writel(0, info->enable_reg);
+> +               regmap_write(info->pmu_map, info->data->phy_offset, 0);
+>
+>         con = readl(ADC_V2_CON1(info->regs));
+>         con &= ~ADC_CON_EN_START;
+> @@ -362,6 +369,7 @@ static const struct exynos_adc_data exynos_adc_v2_data = {
+>         .num_channels   = MAX_ADC_V2_CHANNELS,
+>         .mask           = ADC_DATX_MASK, /* 12 bit ADC resolution */
+>         .needs_adc_phy  = true,
+> +       .phy_offset     = EXYNOS_ADCV2_PHY_OFFSET,
+>
+>         .init_hw        = exynos_adc_v2_init_hw,
+>         .exit_hw        = exynos_adc_v2_exit_hw,
+> @@ -374,6 +382,7 @@ static const struct exynos_adc_data exynos3250_adc_data = {
+>         .mask           = ADC_DATX_MASK, /* 12 bit ADC resolution */
+>         .needs_sclk     = true,
+>         .needs_adc_phy  = true,
+> +       .phy_offset     = EXYNOS_ADCV1_PHY_OFFSET,
+>
+>         .init_hw        = exynos_adc_v2_init_hw,
+>         .exit_hw        = exynos_adc_v2_exit_hw,
+> @@ -558,10 +567,13 @@ static int exynos_adc_probe(struct platform_device *pdev)
+>
+>
+>         if (info->data->needs_adc_phy) {
+> -               mem = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> -               info->enable_reg = devm_ioremap_resource(&pdev->dev, mem);
+> -               if (IS_ERR(info->enable_reg))
+> -                       return PTR_ERR(info->enable_reg);
+> +               info->pmu_map = syscon_regmap_lookup_by_phandle(
+> +                                       pdev->dev.of_node,
+> +                                       "samsung,syscon-phandle");
+> +               if (IS_ERR(info->pmu_map)) {
+> +                       dev_err(&pdev->dev, "syscon regmap lookup failed.\n");
+> +                       return PTR_ERR(info->pmu_map);
+> +               }
+>         }
+>
+>         irq = platform_get_irq(pdev, 0);
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
