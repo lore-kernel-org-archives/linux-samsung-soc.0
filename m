@@ -1,128 +1,169 @@
-From: Daniel Vetter <daniel@ffwll.ch>
+From: Sean Paul <seanpaul@chromium.org>
 Subject: Re: [PATCH V7 03/12] drm/bridge: Add helper functions for drm_bridge
-Date: Tue, 28 Oct 2014 15:19:36 +0100
-Message-ID: <CAKMK7uFX7rENLBmwE58rtCBXZ_pSF_uS5Poiuks7xfi+r=e9gw@mail.gmail.com>
+Date: Tue, 28 Oct 2014 10:28:17 -0400
+Message-ID: <CAOw6vbKGgaGHuaabmr+-R1tjPTm_Mg-2VzQxkTBa3iFtwneAsA@mail.gmail.com>
 References: <1409149783-12416-1-git-send-email-ajaykumar.rs@samsung.com>
  <1409149783-12416-4-git-send-email-ajaykumar.rs@samsung.com>
- <20141027190137.GT26941@phenom.ffwll.local>
- <CAOw6vbLNOqp=X4epwDPb7zT-j2+oUuLoeV2S=x+oGPLQwK+Z7Q@mail.gmail.com>
+ <20141027190137.GT26941@phenom.ffwll.local> <CAOw6vbLNOqp=X4epwDPb7zT-j2+oUuLoeV2S=x+oGPLQwK+Z7Q@mail.gmail.com>
  <CAEC9eQPQaYjL3ZxtDZBdKi2z5yANcHQ9s4ikYkxN95K9qvu01Q@mail.gmail.com>
  <CAKMK7uGoO5TBgLh4HSDjxUM=-WRfsQoDHusLmOYxLio-QBMEPQ@mail.gmail.com>
- <CAEC9eQNJb1TgK1ihvzvC0VjSJhm48WaFO5SVigPsqTOurK2UQw@mail.gmail.com>
+ <CAEC9eQNJb1TgK1ihvzvC0VjSJhm48WaFO5SVigPsqTOurK2UQw@mail.gmail.com> <CAKMK7uFX7rENLBmwE58rtCBXZ_pSF_uS5Poiuks7xfi+r=e9gw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAEC9eQNJb1TgK1ihvzvC0VjSJhm48WaFO5SVigPsqTOurK2UQw@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, bhushan.r@samsung.com, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ig0-f174.google.com ([209.85.213.174]:38300 "EHLO
+	mail-ig0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751660AbaJ1O2l (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 28 Oct 2014 10:28:41 -0400
+Received: by mail-ig0-f174.google.com with SMTP id hl2so162389igb.7
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Oct 2014 07:28:40 -0700 (PDT)
+Received: from mail-ie0-f169.google.com (mail-ie0-f169.google.com. [209.85.223.169])
+        by mx.google.com with ESMTPSA id z131sm697649iod.32.2014.10.28.07.28.39
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);
+        Tue, 28 Oct 2014 07:28:39 -0700 (PDT)
+Received: by mail-ie0-f169.google.com with SMTP id tr6so779589ieb.0
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Oct 2014 07:28:39 -0700 (PDT)
+In-Reply-To: <CAKMK7uFX7rENLBmwE58rtCBXZ_pSF_uS5Poiuks7xfi+r=e9gw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: Ajay kumar <ajaynumb@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Rob Clark <robdclark@gmail.com>, Jingoo Han <jg1.han@samsung.com>, Prashanth G <prashanth.g@samsung.com>, bhushan.r@samsung.com
 
-T24gVHVlLCBPY3QgMjgsIDIwMTQgYXQgMToyOCBQTSwgQWpheSBrdW1hciA8YWpheW51bWJAZ21h
-aWwuY29tPiB3cm90ZToKPiBPbiBUdWUsIE9jdCAyOCwgMjAxNCBhdCAzOjMxIFBNLCBEYW5pZWwg
-VmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+IHdyb3RlOgo+PiBPbiBUdWUsIE9jdCAyOCwgMjAxNCBh
-dCAxMDoyMSBBTSwgQWpheSBrdW1hciA8YWpheW51bWJAZ21haWwuY29tPiB3cm90ZToKPj4+IEhp
-IERhbmllbCBhbmQgU2VhbiwKPj4+Cj4+PiBUaGFua3MgZm9yIHRoZSBjb21tZW50cyEKPj4+Cj4+
-PiBPbiBUdWUsIE9jdCAyOCwgMjAxNCBhdCAxOjI4IEFNLCBTZWFuIFBhdWwgPHNlYW5wYXVsQGNo
-cm9taXVtLm9yZz4gd3JvdGU6Cj4+Pj4gT24gTW9uLCBPY3QgMjcsIDIwMTQgYXQgMzowMSBQTSwg
-RGFuaWVsIFZldHRlciA8ZGFuaWVsQGZmd2xsLmNoPiB3cm90ZToKPj4+Pj4gU28gZG9uJ3QgYXNr
-IHdoeSBidXQgSSBhY2NpZGVudGFsbHkgZW5kZWQgdXAgaW4gYSBicmFuY2ggbG9va2luZyBhdCB0
-aGlzCj4+Pj4+IHBhdGNoIGFuZCBkaWRuJ3QgbGlrZSBpdC4gU28gdmVyeSBxdWljayZncnVtcHkg
-cmV2aWV3Lgo+Pj4+Pgo+Pj4+PiBGaXJzdCwgcGxlYXNlIG1ha2UgdGhlIHBhdGNoIHN1YmplY3Qg
-bW9yZSBkZXNjcmlwdGl2ZTogSSdkIGV4cGVjdCBhIGhlbHBlcgo+Pj4+PiBmdW5jdGlvbiBzY2Fm
-Zm9sZGluZyBsaWtlIHRoZSB2YXJpb3VzIGNydGMvcHJvYmUvZHAgLi4uIGhlbHBlcnMgd2UgYWxy
-ZWFkeQo+Pj4+PiBoYXZlLiBZb3UgaW5zdGVhZCBhZGQgY29kZSB0byB1bnRhbmdsZSB0aGUgcHJv
-YmUgb3JkZXJpbmcuIFBsZWFzZSBzYXkgc28uCj4+PiBTdXJlLiBJIHdpbGwgcmV3b3JkIGl0IHBy
-b3Blcmx5Lgo+Pj4KPj4+Pj4gTW9yZSBjb21tZW50cyBiZWxvdy4KPj4+Pj4KPj4+Pj4gT24gV2Vk
-LCBBdWcgMjcsIDIwMTQgYXQgMDc6NTk6MzdQTSArMDUzMCwgQWpheSBLdW1hciB3cm90ZToKPj4+
-Pj4+IEEgc2V0IG9mIGhlbHBlciBmdW5jdGlvbnMgYXJlIGRlZmluZWQgaW4gdGhpcyBwYXRjaCB0
-byBtYWtlCj4+Pj4+PiBicmlkZ2UgZHJpdmVyIHByb2JlIGluZGVwZW5kZW50IG9mIHRoZSBkcm0g
-Zmxvdy4KPj4+Pj4+Cj4+Pj4+PiBUaGUgYnJpZGdlIGRldmljZXMgcmVnaXN0ZXIgdGhlbXNlbHZl
-cyBvbiBhIGxvb2t1cCB0YWJsZQo+Pj4+Pj4gd2hlbiB0aGV5IGdldCBwcm9iZWQgYnkgY2FsbGlu
-ZyAiZHJtX2JyaWRnZV9hZGQiLgo+Pj4+Pj4KPj4+Pj4+IFRoZSBwYXJlbnQgZW5jb2RlciBkcml2
-ZXIgd2FpdHMgdGlsbCB0aGUgYnJpZGdlIGlzIGF2YWlsYWJsZQo+Pj4+Pj4gaW4gdGhlIGxvb2t1
-cCB0YWJsZShieSBjYWxsaW5nICJvZl9kcm1fZmluZF9icmlkZ2UiKSBhbmQgdGhlbgo+Pj4+Pj4g
-Y29udGludWVzIHdpdGggaXRzIGluaXRpYWxpemF0aW9uLgo+Pj4+Pj4KPj4+Pj4+IFRoZSBlbmNv
-ZGVyIGRyaXZlciBzaG91bGQgYWxzbyBjYWxsICJkcm1fYnJpZGdlX2F0dGFjaCIgdG8gcGFzcwo+
-Pj4+Pj4gb24gdGhlIGRybV9kZXZpY2UsIGVuY29kZXIgcG9pbnRlcnMgdG8gdGhlIGJyaWRnZSBv
-YmplY3QuCj4+Pj4+Pgo+Pj4+Pj4gZHJtX2JyaWRnZV9hdHRhY2ggaW50dXJuIGNhbGxzIGRybV9i
-cmlkZ2VfaW5pdCB0byByZWdpc3RlciBpdHNlbGYKPj4+Pj4+IHdpdGggdGhlIGRybSBjb3JlLiBM
-YXRlciwgaXQgY2FsbHMgImJyaWRnZS0+ZnVuY3MtPmF0dGFjaCIgc28gdGhhdAo+Pj4+Pj4gYnJp
-ZGdlIGNhbiBjb250aW51ZSB3aXRoIG90aGVyIGluaXRpYWxpemF0aW9ucy4KPj4+Pj4+Cj4+Pj4+
-PiBTaWduZWQtb2ZmLWJ5OiBBamF5IEt1bWFyIDxhamF5a3VtYXIucnNAc2Ftc3VuZy5jb20+Cj4+
-Pj4+Cj4+Pj4+IFtzbmlwXQo+Pj4+Pgo+Pj4+Pj4gQEAgLTY2MCw4ICs2NjIsMTEgQEAgc3RydWN0
-IGRybV9icmlkZ2VfZnVuY3Mgewo+Pj4+Pj4gICAqIEBkcml2ZXJfcHJpdmF0ZTogcG9pbnRlciB0
-byB0aGUgYnJpZGdlIGRyaXZlcidzIGludGVybmFsIGNvbnRleHQKPj4+Pj4+ICAgKi8KPj4+Pj4+
-ICBzdHJ1Y3QgZHJtX2JyaWRnZSB7Cj4+Pj4+PiAtICAgICBzdHJ1Y3QgZHJtX2RldmljZSAqZGV2
-Owo+Pj4+Pj4gKyAgICAgc3RydWN0IGRldmljZSAqZGV2Owo+Pj4+Pgo+Pj4+PiBQbGVhc2UgZG9u
-J3QgcmVuYW1lIHRoZSAtPmRldiBwb2ludGVyIGludG8gZHJtLiBCZWNhdXNlIF9hbGxfIHRoZSBv
-dGhlcgo+Pj4+PiBkcm0gc3RydWN0dXJlcyBzdGlsbCBjYWxsIGl0IC0+ZGV2LiBBbHNvLCBjYW4n
-dCB3ZSB1c2Ugc3RydWN0IGRldmljZV9ub2RlCj4+Pj4+IGhlcmUgbGlrZSB3ZSBkbyBpbiB0aGUg
-b2YgaGVscGVycyBSdXNzZWxsIGFkZGVkPyBTZWUgN2U0MzVhYWQzODA4Mwo+Pj4+Pgo+Pj4+Cj4+
-Pj4gSSB0aGluayB0aGlzIGlzIG1vZGVsZWQgYWZ0ZXIgdGhlIG5hbWluZyBpbiBkcm1fcGFuZWws
-Cj4+PiBSaWdodCwgVGhlIGVudGlyZSByZXdvcmsgaXMgYmFzZWQgb24gaG93IGRybV9wYW5lbCBm
-cmFtZXdvcmsgaXMgc3RydWN0dXJlZC4KPj4+Cj4+Pj4gRldJVy4gSG93ZXZlciwKPj4+PiBzZWVt
-cyByZWFzb25hYmxlIHRvIGtlZXAgdGhlIGRldmljZV9ub2RlIGluc3RlYWQuCj4+PiBZZXMsIGl0
-cyB2aXNpYmxlIHRoYXQganVzdCBkZXZpY2Vfbm9kZSB3b3VsZCBiZSBzdWZmaWNpZW50Lgo+Pj4g
-VGhpcyB3aWxsIHNhdmUgdXMgZnJvbSByZW5hbWluZyBkcm1fZGV2aWNlIGFzIHdlbGwuCj4+Pgo+
-Pj4+Pj4gKyAgICAgc3RydWN0IGRybV9kZXZpY2UgKmRybTsKPj4+Pj4+ICsgICAgIHN0cnVjdCBk
-cm1fZW5jb2RlciAqZW5jb2RlcjsKPj4+Pj4KPj4+Pj4gVGhpcyBicmVha3MgYnJpZGdlLT5icmlk
-Z2UgY2hhaW5pbmcgKGlmIHdlIGV2ZXIgZ2V0IHRoZXJlKS4gSXQgc2VlbXMKPj4+Pj4gcHJldHR5
-IG11Y2ggdW51c2VkIGFueXdheSBleGNlcHQgZm9yIGFuIEVCVVNZIGNoZWNrLiBDYW4ndCB5b3Ug
-dXNlCj4+Pj4+IGJyaWRnZS0+ZGV2IGZvciB0aGF0Pwo+Pj4+Pgo+Pj4+Cj4+Pj4gWWVhaCwgSSdk
-IHByZWZlciB0byBwYXNzIGRybV9kZXZpY2UgZGlyZWN0bHkgaW50byBkcm1fYnJpZGdlX2F0dGFj
-aAo+Pj4+IGFuZCBsZWF2ZSBpdCB1cCB0byB0aGUgY2FsbGVyIHRvIGVzdGFibGlzaCB0aGUgcHJv
-cGVyIGNoYWluLgo+Pj4gT2suIEkgd2lsbCB1c2UgZHJtX2RldmljZSBwb2ludGVyIGRpcmVjdGx5
-IGluc3RlYWQgb2YgcGFzc2luZyBlbmNvZGVyIHBvaW50ZXIuCj4+Cj4+IEhtLCBpZiB5b3UgZG8g
-dGhpcyBjYW4geW91IHBscyBhbHNvIHVwZGF0ZSBkcm1fcGFuZWwgYWNjb3JkaW5nbHk/IEl0Cj4+
-IHNob3VsZG4ndCBiZSBhIGxvdCBvZiBmdXp6IGFuZCB3b3VsZCBtYWtlIHRoaW5ncyBhcm91bmQg
-ZHJtK2R0IG1vcmUKPj4gY29uc2lzdGVudC4KPiBBcmUgeW91IHRhbGtpbmcgYWJvdXQgdXNpbmcg
-c3RydWN0IGRldmljZV9ub2RlIGluc3RlYWQgb2Ygc3RydWN0IGRldmljZT8KPiBJIGd1ZXNzIHlv
-dSBoYXZlIG1pc3BsYWNlZCB0aGUgY29tbWVudCB1bmRlciB0aGUgd3Jvbmcgc2VjdGlvbiEKClll
-YWgsIHRoYXQgc2hvdWxkIGhhdmUgYmVlbiBvbmUgdXAgOy0pCgo+Pj4+Pj4gICAgICAgc3RydWN0
-IGxpc3RfaGVhZCBoZWFkOwo+Pj4+Pj4gKyAgICAgc3RydWN0IGxpc3RfaGVhZCBsaXN0Owo+Pj4+
-Pgo+Pj4+PiBUaGVzZSBsaXN0cyBuZWVkIGJldHRlciBuYW1lcy4gSSBrbm93IHRoYXQgdGhlICJo
-ZWFkIiBpcyByZWFsbHkgYXdmdWwsCj4+Pj4+IGVzcGVjaWFsbHkgc2luY2UgaXQncyBhY3R1YWxs
-eSBub3QgdGhlIGhlYWQgb2YgdGhlIGxpc3QgYnV0IGp1c3QgYW4KPj4+Pj4gZWxlbWVudC4KPj4+
-Pgo+Pj4+IEkgdGhpbmsgd2UgY2FuIGp1c3QgcmlwIGJyaWRnZV9saXN0IG91dCBvZiBtb2RlX2Nv
-bmZpZyBpZiB3ZSdyZSBnb2luZwo+Pj4+IHRvIGtlZXAgdHJhY2sgb2YgYnJpZGdlcyBlbHNld2hl
-cmUuIFNvIHdlIGNhbiBudWtlICJoZWFkIiBhbmQga2VlcAo+Pj4+ICJsaXN0Ii4gVGhpcyBhbHNv
-IG1lYW5zIHRoYXQgYnJpZGdlLT5kZXN0cm95KCkgZ29lcyBhd2F5LCBidXQgdGhhdCdzCj4+Pj4g
-cHJvYmFibHkgT2sgaWYgZXZlcnl0aGluZyBjb252ZXJ0cyB0byB0aGUgc3RhbmRhbG9uZSBkcml2
-ZXIgbW9kZWwKPj4+PiB3aGVyZSB3ZSBoYXZlIGRyaXZlci0+cmVtb3ZlKCkKPj4+Pgo+Pj4+IFNl
-YW4KPj4+IEdyZWF0ISBUaGllcnJ5IGFjdHVhbGx5IG1lbnRpb25lZCBhYm91dCB0aGlzIG9uY2Us
-IGFuZCB3ZSBoYXZlIHRoZQo+Pj4gY29uZmlybWF0aW9uIG5vdy4KPj4+Cj4+Pj4+Pgo+Pj4+Pj4g
-ICAgICAgc3RydWN0IGRybV9tb2RlX29iamVjdCBiYXNlOwo+Pj4+Pgo+Pj4+Pgo+Pj4+PiBBc2lk
-ZTogSSd2ZSBub3RpY2VkIGFsbCB0aGlzIHRyeWluZyB0byB1cGRhdGUgdGhlIGtlcm5lbGRvYyBm
-b3Igc3RydWN0Cj4+Pj4+IGRybV9icmlkZ2UsIHdoaWNoIGp1c3Qgc2hvd2VkIHRoYXQgdGhpcyBw
-YXRjaCBtYWtlcyBpbmNvbnNpc3RlbnQgY2hhbmdlcy4KPj4+Pj4gVHJ5aW5nIHRvIHdyaXRlIGtl
-cm5lbGRvYyBpcyBhIHJlYWxseSBncmVhdCB3YXkgdG8gY29tZSB1cCB3aXRoIGJldHRlcgo+Pj4+
-PiBpbnRlcmZhY2VzIGltby4KPj4+Pj4KPj4+Pj4gQ2hlZXJzLCBEYW5pZWwKPj4+IEkgZGluJ3Qg
-Z2V0IHRoaXMgYWN0dWFsbHkuIFlvdSB3YW50IG1lIHRvIGNyZWF0ZSBEb2MuLi9kcm1fYnJpZGdl
-LnR4dAo+Pj4gb3Igc29tZXRoaW5nIHNpbWlsYXI/Cj4+Cj4+IElmIHlvdSB3YW50IHRvIGRvY3Vt
-ZW50IGRybV9icmlkZ2UgdGhlbiBJIHJlY29tbWVudCB0byBzcHJpbmtsZSBwcm9wZXIKPj4ga2Vy
-bmVsZG9jIG92ZXIgZHJtX2JyaWRnZS5jIGFuZCBwdWxsIGl0IGFsbCBpbnRvIHRoZSBkcm0gRG9j
-Qm9vawo+PiB0ZW1wbGF0ZS4gVGhhdCB3YXkgYWxsIHRoZSBkcm0gZG9jdW1lbnRhdGlvbiBpcyBp
-biBvbmUgcGxhY2UuIEkndmUKPj4gZG9uZSB0aGF0IGZvciBkcm1fY3J0Yy5oIGluIGFuIHVucmVs
-YXRlZCBwYXRjaCBzZXJpZXMgKGJ1dCBiYXNlZCB1cG9uCj4+IGEgYnJhbmNoIHdpdGggeW91ciBw
-YXRjaCBoZXJlIGluY2x1ZGVkKSBhbmQgdGhlcmUncyBzdHJ1Y3QgZHJtX2JyaWRnZSoKPj4gaW4g
-dGhlcmUuIEhlbmNlIHdoeSBJJ3ZlIG5vdGljZWQuCj4gQ2FuIHlvdSBzZW5kIGEgbGluayBmb3Ig
-dGhhdD8KPiBBbmQsIGlzIHRoZXJlIGFueSBwcm9ibGVtIGlmIHRoZSBkb2MgY29tZXMgbGF0ZXI/
-CgpTaW5jZSBxdWl0ZSBhIHdoaWxlIHdlJ3ZlIGFza2VkIGZvciB0aGUga2VybmVsZG9jIHBvbGlz
-aCBhcyBwYXJ0IG9mCmVhY2ggZHJtIGNvcmUgcGF0Y2ggc2VyaWVzLiBJdCdzIGp1c3QgdGhhdCBk
-cm1fYnJpZGdlL3BhbmVsIGtpbmRhIGhhdmUKZmxvd24gdW5kZXIgdGhlIHJhZGFyIG9mIHRoZSBw
-ZW9wbGUgdXN1YWxseSBhc2tpbmcgZm9yIGRvY3MgOy0pCi1EYW5pZWwKLS0gCkRhbmllbCBWZXR0
-ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCis0MSAoMCkgNzkgMzY1IDU3
-IDQ4IC0gaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwK
+On Tue, Oct 28, 2014 at 10:19 AM, Daniel Vetter <daniel@ffwll.ch> wrote:
+> On Tue, Oct 28, 2014 at 1:28 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
+>> On Tue, Oct 28, 2014 at 3:31 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+>>> On Tue, Oct 28, 2014 at 10:21 AM, Ajay kumar <ajaynumb@gmail.com> wrote:
+>>>> Hi Daniel and Sean,
+>>>>
+>>>> Thanks for the comments!
+>>>>
+>>>> On Tue, Oct 28, 2014 at 1:28 AM, Sean Paul <seanpaul@chromium.org> wrote:
+>>>>> On Mon, Oct 27, 2014 at 3:01 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+>>>>>> So don't ask why but I accidentally ended up in a branch looking at this
+>>>>>> patch and didn't like it. So very quick&grumpy review.
+>>>>>>
+>>>>>> First, please make the patch subject more descriptive: I'd expect a helper
+>>>>>> function scaffolding like the various crtc/probe/dp ... helpers we already
+>>>>>> have. You instead add code to untangle the probe ordering. Please say so.
+>>>> Sure. I will reword it properly.
+>>>>
+>>>>>> More comments below.
+>>>>>>
+>>>>>> On Wed, Aug 27, 2014 at 07:59:37PM +0530, Ajay Kumar wrote:
+>>>>>>> A set of helper functions are defined in this patch to make
+>>>>>>> bridge driver probe independent of the drm flow.
+>>>>>>>
+>>>>>>> The bridge devices register themselves on a lookup table
+>>>>>>> when they get probed by calling "drm_bridge_add".
+>>>>>>>
+>>>>>>> The parent encoder driver waits till the bridge is available
+>>>>>>> in the lookup table(by calling "of_drm_find_bridge") and then
+>>>>>>> continues with its initialization.
+>>>>>>>
+>>>>>>> The encoder driver should also call "drm_bridge_attach" to pass
+>>>>>>> on the drm_device, encoder pointers to the bridge object.
+>>>>>>>
+>>>>>>> drm_bridge_attach inturn calls drm_bridge_init to register itself
+>>>>>>> with the drm core. Later, it calls "bridge->funcs->attach" so that
+>>>>>>> bridge can continue with other initializations.
+>>>>>>>
+>>>>>>> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+>>>>>>
+>>>>>> [snip]
+>>>>>>
+>>>>>>> @@ -660,8 +662,11 @@ struct drm_bridge_funcs {
+>>>>>>>   * @driver_private: pointer to the bridge driver's internal context
+>>>>>>>   */
+>>>>>>>  struct drm_bridge {
+>>>>>>> -     struct drm_device *dev;
+>>>>>>> +     struct device *dev;
+>>>>>>
+>>>>>> Please don't rename the ->dev pointer into drm. Because _all_ the other
+>>>>>> drm structures still call it ->dev. Also, can't we use struct device_node
+>>>>>> here like we do in the of helpers Russell added? See 7e435aad38083
+>>>>>>
+>>>>>
+>>>>> I think this is modeled after the naming in drm_panel,
+>>>> Right, The entire rework is based on how drm_panel framework is structured.
+>>>>
+>>>>> FWIW. However,
+>>>>> seems reasonable to keep the device_node instead.
+>>>> Yes, its visible that just device_node would be sufficient.
+>>>> This will save us from renaming drm_device as well.
+>>>>
+>>>>>>> +     struct drm_device *drm;
+>>>>>>> +     struct drm_encoder *encoder;
+>>>>>>
+>>>>>> This breaks bridge->bridge chaining (if we ever get there). It seems
+>>>>>> pretty much unused anyway except for an EBUSY check. Can't you use
+>>>>>> bridge->dev for that?
+>>>>>>
+>>>>>
+>>>>> Yeah, I'd prefer to pass drm_device directly into drm_bridge_attach
+>>>>> and leave it up to the caller to establish the proper chain.
+>>>> Ok. I will use drm_device pointer directly instead of passing encoder pointer.
+>>>
+>>> Hm, if you do this can you pls also update drm_panel accordingly? It
+>>> shouldn't be a lot of fuzz and would make things around drm+dt more
+>>> consistent.
+>> Are you talking about using struct device_node instead of struct device?
+>> I guess you have misplaced the comment under the wrong section!
+>
+> Yeah, that should have been one up ;-)
+>
+>>>>>>>       struct list_head head;
+>>>>>>> +     struct list_head list;
+>>>>>>
+>>>>>> These lists need better names. I know that the "head" is really awful,
+>>>>>> especially since it's actually not the head of the list but just an
+>>>>>> element.
+>>>>>
+>>>>> I think we can just rip bridge_list out of mode_config if we're going
+>>>>> to keep track of bridges elsewhere. So we can nuke "head" and keep
+>>>>> "list". This also means that bridge->destroy() goes away, but that's
+>>>>> probably Ok if everything converts to the standalone driver model
+>>>>> where we have driver->remove()
+>>>>>
+>>>>> Sean
+>>>> Great! Thierry actually mentioned about this once, and we have the
+>>>> confirmation now.
+>>>>
+>>>>>>>
+>>>>>>>       struct drm_mode_object base;
+>>>>>>
+>>>>>>
+>>>>>> Aside: I've noticed all this trying to update the kerneldoc for struct
+>>>>>> drm_bridge, which just showed that this patch makes inconsistent changes.
+>>>>>> Trying to write kerneldoc is a really great way to come up with better
+>>>>>> interfaces imo.
+>>>>>>
+>>>>>> Cheers, Daniel
+>>>> I din't get this actually. You want me to create Doc../drm_bridge.txt
+>>>> or something similar?
+>>>
+>>> If you want to document drm_bridge then I recomment to sprinkle proper
+>>> kerneldoc over drm_bridge.c and pull it all into the drm DocBook
+>>> template. That way all the drm documentation is in one place. I've
+>>> done that for drm_crtc.h in an unrelated patch series (but based upon
+>>> a branch with your patch here included) and there's struct drm_bridge*
+>>> in there. Hence why I've noticed.
+>> Can you send a link for that?
+>> And, is there any problem if the doc comes later?
+>
+> Since quite a while we've asked for the kerneldoc polish as part of
+> each drm core patch series. It's just that drm_bridge/panel kinda have
+> flown under the radar of the people usually asking for docs ;-)
+
+Heh, sorry about that.
+
+Sean
+
+
+
+> -Daniel
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
