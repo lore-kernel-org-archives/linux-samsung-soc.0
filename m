@@ -1,60 +1,61 @@
-From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH v3 5/5] clk: samsung: exynos7: add gate clock for ADC block
-Date: Tue, 28 Oct 2014 16:48:55 +0530
-Message-ID: <1414495135-25588-6-git-send-email-a.kesavan@samsung.com>
-References: <1414495135-25588-1-git-send-email-a.kesavan@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:10223 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757145AbaJ1LWF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Oct 2014 07:22:05 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NE500AN5JKSS650@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Oct 2014 20:22:04 +0900 (KST)
-In-reply-to: <1414495135-25588-1-git-send-email-a.kesavan@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v6 4/7] ARM: l2c: Add support for overriding prefetch
+	settings
+Date: Tue, 28 Oct 2014 11:35:31 +0000
+Message-ID: <20141028113531.GZ12379@n2100.arm.linux.org.uk>
+References: <1414407950-3029-1-git-send-email-m.szyprowski@samsung.com> <1414407950-3029-5-git-send-email-m.szyprowski@samsung.com> <20141027111404.GW12379@n2100.arm.linux.org.uk> <544E2A46.7070106@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <544E2A46.7070106@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, linux-omap@vger.kernel.org, linus.walleij@linaro.org, santosh.shilimkar@ti.com, tony@atomide.com, drake@endlessm.com, loeliger@gmail.com, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com
 
-Add clock support for the ADC interface in Exynos7.
+On Mon, Oct 27, 2014 at 12:19:34PM +0100, Marek Szyprowski wrote:
+> Hello,
+>
+> On 2014-10-27 12:14, Russell King - ARM Linux wrote:
+>> On Mon, Oct 27, 2014 at 12:05:47PM +0100, Marek Szyprowski wrote:
+>>> From: Tomasz Figa <t.figa@samsung.com>
+>>>
+>>> Firmware on certain boards (e.g. ODROID-U3) can leave incorrect L2C prefetch
+>>> settings configured in registers leading to crashes if L2C is enabled
+>>> without overriding them. This patch introduces bindings to enable
+>>> prefetch settings to be specified from DT and necessary support in the
+>>> driver.
+>>>
+>>> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+>>> [mszyprow: rebased onto v3.18-rc1, added error messages when property value
+>>>   is missing]
+>> Why?  What if the boot loader has already set these up appropriately?  Why
+>> should we force people to list these in the DT?
+>
+> The error message is displayed only when user provided prefetch related
+> properties without any value (empty properties). Something that Mark Rutland
+> requested here: https://lkml.org/lkml/2014/9/24/426 I'm sorry if I didn't
+> describe it clearly enough.
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
----
- drivers/clk/samsung/clk-exynos7.c       |    2 ++
- include/dt-bindings/clock/exynos7-clk.h |    3 ++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+Ok.
 
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index 17e5cf4..ea4483b 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -486,6 +486,8 @@ static struct samsung_gate_clock peric0_gate_clks[] __initdata = {
- 		ENABLE_PCLK_PERIC0, 14, 0, 0),
- 	GATE(PCLK_UART0, "pclk_uart0", "mout_aclk_peric0_66_user",
- 		ENABLE_PCLK_PERIC0, 16, 0, 0),
-+	GATE(PCLK_ADCIF, "pclk_adcif", "mout_aclk_peric0_66_user",
-+		ENABLE_PCLK_PERIC0, 20, 0, 0),
- 	GATE(PCLK_PWM, "pclk_pwm", "mout_aclk_peric0_66_user",
- 		ENABLE_PCLK_PERIC0, 21, 0, 0),
- 
-diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
-index f255bb7..8e4681b0 100644
---- a/include/dt-bindings/clock/exynos7-clk.h
-+++ b/include/dt-bindings/clock/exynos7-clk.h
-@@ -55,7 +55,8 @@
- #define PCLK_HSI2C11			9
- #define PCLK_PWM			10
- #define SCLK_PWM			11
--#define PERIC0_NR_CLK			12
-+#define PCLK_ADCIF			12
-+#define PERIC0_NR_CLK			13
- 
- /* PERIC1 */
- #define PCLK_UART1			1
+I'd ask for one change.  Please make all these messages start with
+"L2C-310 OF" not "PL310 OF:".  The device is described in ARM
+documentation as a L2C-310 not PL310.  (Also note the : is dropped
+too - most of the other messages don't have the : either.)
+
+The:
+
+"PL310 OF: cache setting yield illegal associativity
+PL310 OF: -1073346556 calculated, only 8 and 16 legal"
+
+message could also be changed to something like:
+
+"L2C-310 OF cache associativity %d invalid, only 8 or 16 permitted\n"
+
+Thanks.
+
 -- 
-1.7.9.5
+FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
+according to speedtest.net.
