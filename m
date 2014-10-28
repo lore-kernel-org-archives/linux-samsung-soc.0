@@ -1,86 +1,54 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH v2 3/7] clk: samsung: exynos7: add clocks for RTC block
-Date: Tue, 28 Oct 2014 12:48:48 +0530
-Message-ID: <CAM4voamtQfY2gvtKt3_yg4eVshxswtEaCbp8+n-jWDc3xx2TLA@mail.gmail.com>
-References: <1413870237-1821-1-git-send-email-a.kesavan@samsung.com>
-	<1413870237-1821-4-git-send-email-a.kesavan@samsung.com>
-	<544E736D.1070001@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 2/8] regulator: max77686: Remove support for board files
+Date: Tue, 28 Oct 2014 09:40:50 +0100
+Message-ID: <1414485650.24949.10.camel@AMDC1943>
+References: <1414422226-10948-1-git-send-email-k.kozlowski@samsung.com>
+ <1414422226-10948-3-git-send-email-k.kozlowski@samsung.com>
+ <20141028003709.GL18557@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f46.google.com ([209.85.192.46]:37328 "EHLO
-	mail-qg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752328AbaJ1HSt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Oct 2014 03:18:49 -0400
-In-Reply-To: <544E736D.1070001@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20141028003709.GL18557@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>, devicetree <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "robh@kernel.org" <robh@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-Hello Sylwester,
+On wto, 2014-10-28 at 00:37 +0000, Mark Brown wrote:
+> On Mon, Oct 27, 2014 at 04:03:40PM +0100, Krzysztof Kozlowski wrote:
+> > The driver is used only on Exynos4 based boards with DTS support.
+> > Convert the driver to DTS-only version.
+> 
+> This doesn't seem like a particularly persuasive reason honestly and if
+> you're going to mess around with this stuff please fix it properly...
+> 
+> >  struct max77686_data {
+> > +	struct max77686_regulator_data *regulators;
+> > +	int num_regulators;
+> > +
+> 
+> ...the only reason for this array and the specification of the number of
+> regulators is to make platform data easier to do...
+> 
+> > -	pdata->num_regulators = ARRAY_SIZE(regulators);
+> > +	max77686->num_regulators = ARRAY_SIZE(regulators);
+> 
+> ...and indeed we wind up with a constant here anyway.  At the very least
+> it'd be better to pull the parsing into the registration, right now we
+> have the code still laid out for platform data so it's hard to see it as
+> a win in cleanup terms.  If we're not translating into platform data we
+> shouldn't need to keep this stuff around outside of the probe function.
+> 
+> What would be even better would be to convert to use the standard DT
+> parsing with regulators_node and of_match specified in the descriptor
+> and then delete most of this code entirely.
 
-On Mon, Oct 27, 2014 at 10:01 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> Hi,
->
-> On 21/10/14 07:43, Abhilash Kesavan wrote:
->> From: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
->>
->> Add clock support for the RTC block in Exynos7.
->>
->> Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
->> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
->> ---
->>  .../devicetree/bindings/clock/exynos7-clock.txt    |    5 ++
->>  drivers/clk/samsung/clk-exynos7.c                  |   54 ++++++++++++++++++++
->>  include/dt-bindings/clock/exynos7-clk.h            |   17 +++---
->>  3 files changed, 70 insertions(+), 6 deletions(-)
-> [...]
->> diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
->> index ff63c4e..3227679 100644
->> --- a/include/dt-bindings/clock/exynos7-clk.h
->> +++ b/include/dt-bindings/clock/exynos7-clk.h
->> @@ -11,12 +11,13 @@
->>  #define _DT_BINDINGS_CLOCK_EXYNOS7_H
->>
->>  /* TOPC */
->> -#define DOUT_ACLK_PERIS                      1
->> -#define DOUT_SCLK_BUS0_PLL           2
->> -#define DOUT_SCLK_BUS1_PLL           3
->> -#define DOUT_SCLK_CC_PLL             4
->> -#define DOUT_SCLK_MFC_PLL            5
->> -#define TOPC_NR_CLK                  6
->> +#define DOUT_ACLK_CCORE_133          1
->> +#define DOUT_ACLK_PERIS                      2
->> +#define DOUT_SCLK_BUS0_PLL           3
->> +#define DOUT_SCLK_BUS1_PLL           4
->> +#define DOUT_SCLK_CC_PLL             5
->> +#define DOUT_SCLK_MFC_PLL            6
->> +#define TOPC_NR_CLK                  7
->
-> Please don't do that, don't change the meaning of already defined
-> clock identifiers. We should carefully assign the clock identifiers
-> based on the SoC documentation beforehand, not at will when we see
-> fit for development of the Linux driver. Please either add
-> DOUT_ACLK_CCORE_133 at the end of list or move this change to the
-> first patch in your series adding initial support for Exynos7 SoC.
+You're right, there's a lot to clean in this driver.
 
-Thanks for reviewing this series and picking up the initial patchset.
-I will re-post this patchset with the ccore clock at the end of the
-list. All the future clock id entries will be added at the bottom of
-the list.
+The only caveat is that I can't test the max77802 regulator so I
+refrained from doing intrusive changes to it. I'll try to clean up both
+drivers and make max77802 as RFT.
 
-Regards,
-Abhilash
->
-> --
-> Thanks,
-> Sylwester
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Best regards,
+Krzysztof
