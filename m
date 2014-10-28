@@ -1,162 +1,88 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 2/3 v2] 1st Round of Samsung PM updates for v3.19
-Date: Tue, 28 Oct 2014 11:00:57 +0900
-Message-ID: <021801cff253$0374fe40$0a5efac0$@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCHv2 1/2] ARM: EXYNOS: Add EXYNOS4415 SoC ID
+Date: Tue, 28 Oct 2014 12:48:44 +0900
+Message-ID: <02b501cff262$127d44b0$3777ce10$@kernel.org>
+References: <1414373759-4362-1-git-send-email-cw00.choi@samsung.com>
+ <1414373759-4362-2-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:14970 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752895AbaJ1CA7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Oct 2014 22:00:59 -0400
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NE40033ETLLZ4A0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Oct 2014 11:00:57 +0900 (KST)
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1414373759-4362-2-git-send-email-cw00.choi@samsung.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Chanwoo Choi' <cw00.choi@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mark.rutland@arm.com, jaewon02.kim@samsung.com, arnd@arndb.de, sw0312.kim@samsung.com, tomasz.figa@gmail.com, yj44.cho@samsung.com, inki.dae@samsung.com, kyungmin.park@samsung.com, olof@lixom.net, ideal.song@samsung.com, m.szyprowski@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene@kernel.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 
-Hi,
+Chanwoo Choi wrote:
+> 
+> This patch add Exynos4415's SoC ID.
+> 
+Since the CPU ID has been removed as per comments, need to update the commit
+message accordingly.
 
-I'm sending new pull-request for tags/samsung-pm-v2 instead of tags/samsung-pm.
-Note that just added "fix build with ARM_CPU_SUSPEND=n" from Arnd, please pull.
+> Exynos4415 is based on the 32-bit RISC
+> processor for Smartphone. Exynos4415 uses Cortex A9 quad-cores and has a target
+> speed of 1.6GHz and provides 8.5GB/s memory bandwidth.
+> 
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/Kconfig  | 5 +++++
+>  arch/arm/mach-exynos/exynos.c | 2 ++
+>  2 files changed, 7 insertions(+)
+> 
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 46f3c0d..349c867 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -75,6 +75,11 @@ config SOC_EXYNOS4412
+>  	default y
+>  	depends on ARCH_EXYNOS4
+> 
+> +config SOC_EXYNOS4415
+> +	bool "SAMSUNG EXYNOS4415"
+> +	default y
+> +	depends on ARCH_EXYNOS4
+> +
+
+I think, this is not required more...
 
 Thanks,
 Kukjin
 
-------------
-
-The following changes since commit f114040e3ea6e07372334ade75d1ee0775c355e1:
-
-  Linux 3.18-rc1 (2014-10-19 18:08:38 -0700)
-
-are available in the git repository at:
-
-  http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git tags/samsung-pm-v2
-
-for you to fetch changes up to 5d184e4fb69a9ca64c4ab75c470fd60a2f466160:
-
-  Merge branch 'v3.19-next/pm-samsung-2' into for-next (2014-10-28 08:10:55 +0900)
-
-----------------------------------------------------------------
-
-Samsung PM (v2) updates for v3.19
-
-- added fix build with ARM_CPU_SUSPEND=n based on previous
-  tags/samsung-pm
-
-- Refactor the pm code to use DT based lookup instead of
-  using "soc_is_exynosxxxx"
-
-- Firmware supporting suspend and resume to excute of low
-  level operations to enter and leave power mode for exynos
-  : introduce suspend() and resume() firmware operations
-
-- Fix AFTR mode on boards with secure firmware enabled and
-  allows exynos cpuidle driver usage on exynos4x12 SoCs
-
-- Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y
-
-- SWRESET is needed to boot secondary CPU on exynos3250
-
-----------------------------------------------------------------
-Andreas Faerber (8):
-      ARM: dts: Prepare node labels for exynos5250
-      ARM: dts: Clean up exynos5250-snow
-      ARM: dts: Fill in bootargs for exynos5250-snow
-      ARM: dts: Clean up exynos5250-smdk5250
-      ARM: dts: Clean up exynos5250-arndale
-      ARM: dts: Fix apparent GPIO typo in exynos5250-arndale
-      ARM: dts: Simplify USB3503 on exynos5250-arndale
-      ARM: dts: Add exynos5250-spring device tree
-
-Arnd Bergmann (1):
-      ARM: EXYNOS: Fix build with ARM_CPU_SUSPEND=n
-
-Bartlomiej Zolnierkiewicz (7):
-      ARM: EXYNOS: replace EXYNOS_BOOT_VECTOR_* macros by static inlines
-      ARM: firmware: add AFTR mode support to firmware do_idle method
-      ARM: EXYNOS: add secure firmware support to AFTR mode code
-      ARM: EXYNOS: fix register setup for AFTR mode code
-      ARM: EXYNOS: allow driver usage on Exynos4x12 SoCs
-      ARM: EXYNOS: Fix build with PM_SLEEP=n and ARM_EXYNOS_CPUIDLE=y
-      ARM: dts: add CPU nodes for Exynos4 SoCs
-
-Jacek Anaszewski (1):
-      ARM: dts: add MFC codec device node for exynos3250
-
-Javier Martinez Canillas (2):
-      ARM: dts: Add rtc_src clk for s3c-rtc on exynos Peach boards
-      ARM: dts: Add rtc_src clk for s3c-rtc on exynos5250-snow
-
-Krzysztof Kozlowski (5):
-      ARM: EXYNOS: Move code from hotplug.c to platsmp.c
-      ARM: EXYNOS: Remove unneeded __ref annotation for cpu_die function
-      ARM: EXYNOS: Fix CPU idle clock down after CPU off
-      ARM: EXYNOS: SWRESET is needed to boot secondary CPU on exynos3250
-      ARM: dts: Add Maxim 77693 PMIC to exynos4412-trats2
-
-Kukjin Kim (3):
-      Merge branch 'v3.19-next/pm-samsung' into for-next
-      Merge branch 'v3.19-next/dt-samsung' into for-next
-      Merge branch 'v3.19-next/pm-samsung-2' into for-next
-
-Naveen Krishna Chatradhi (1):
-      ARM: dts: correct the mmc0 capability string for exynos Peach boards
-
-Tomasz Figa (6):
-      ARM: firmware: Introduce suspend and resume operations
-      ARM: EXYNOS: Add support for firmware-assisted suspend/resume
-      ARM: dts: Enable PWM node by default for s3c64xx
-      ARM: dts: Keep eMMC regulators soft-disabled for exynos4412-trats2
-      ARM: dts: Add utility macro to define pin sleep states for exynos4x12-pinctrl
-      ARM: dts: Add sleep mode pin configuration for exynos4412-trats2
-
-Vikas Sajjan (2):
-      ARM: EXYNOS: Move Disabling of JPEG USE_RETENTION for exynos5250 to pmu.c
-      ARM: EXYNOS: Refactor the pm code to use DT based lookup
-
- Documentation/arm/firmware.txt             |  28 +-
- arch/arm/boot/dts/Makefile                 |   1 +
- arch/arm/boot/dts/exynos3250.dtsi          |  10 +
- arch/arm/boot/dts/exynos4210.dtsi          |  17 +
- arch/arm/boot/dts/exynos4212.dtsi          |  17 +
- arch/arm/boot/dts/exynos4412-trats2.dts    | 352 ++++++++++-
- arch/arm/boot/dts/exynos4412.dtsi          |  29 +
- arch/arm/boot/dts/exynos4x12-pinctrl.dtsi  |  16 +
- arch/arm/boot/dts/exynos5250-arndale.dts   | 907 ++++++++++++++---------------
- arch/arm/boot/dts/exynos5250-smdk5250.dts  | 618 ++++++++++----------
- arch/arm/boot/dts/exynos5250-snow.dts      | 266 ++++-----
- arch/arm/boot/dts/exynos5250-spring.dts    | 536 +++++++++++++++++
- arch/arm/boot/dts/exynos5250.dtsi          |  16 +-
- arch/arm/boot/dts/exynos5420-peach-pit.dts |   7 +-
- arch/arm/boot/dts/exynos5800-peach-pi.dts  |   7 +-
- arch/arm/boot/dts/s3c6410-mini6410.dts     |   4 -
- arch/arm/boot/dts/s3c64xx.dtsi             |   1 -
- arch/arm/include/asm/firmware.h            |  10 +-
- arch/arm/mach-exynos/Kconfig               |   5 +
- arch/arm/mach-exynos/Makefile              |   7 +-
- arch/arm/mach-exynos/common.h              |  15 +-
- arch/arm/mach-exynos/exynos.c              |   5 +-
- arch/arm/mach-exynos/firmware.c            |  67 ++-
- arch/arm/mach-exynos/hotplug.c             |  91 ---
- arch/arm/mach-exynos/platsmp.c             | 136 +++++
- arch/arm/mach-exynos/pm.c                  | 310 ++--------
- arch/arm/mach-exynos/pmu.c                 |   1 +
- arch/arm/mach-exynos/regs-pmu.h            |   6 +
- arch/arm/mach-exynos/sleep.S               |  28 +
- arch/arm/mach-exynos/smc.h                 |   4 +
- arch/arm/mach-exynos/suspend.c             | 356 +++++++++++
- arch/arm/mach-tegra/cpuidle-tegra114.c     |   2 +-
- arch/arm/plat-samsung/Makefile             |   1 +
- 33 files changed, 2565 insertions(+), 1311 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos5250-spring.dts
- delete mode 100644 arch/arm/mach-exynos/hotplug.c
- create mode 100644 arch/arm/mach-exynos/suspend.c
+>  config SOC_EXYNOS5250
+>  	bool "SAMSUNG EXYNOS5250"
+>  	default y
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index 1b46460..1da531f 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -252,6 +252,7 @@ static const struct of_device_id exynos_dt_pmu_match[] = {
+>  	{ .compatible = "samsung,exynos4210-pmu" },
+>  	{ .compatible = "samsung,exynos4212-pmu" },
+>  	{ .compatible = "samsung,exynos4412-pmu" },
+> +	{ .compatible = "samsung,exynos4415-pmu" },
+>  	{ .compatible = "samsung,exynos5250-pmu" },
+>  	{ .compatible = "samsung,exynos5260-pmu" },
+>  	{ .compatible = "samsung,exynos5410-pmu" },
+> @@ -359,6 +360,7 @@ static char const *exynos_dt_compat[] __initconst = {
+>  	"samsung,exynos4210",
+>  	"samsung,exynos4212",
+>  	"samsung,exynos4412",
+> +	"samsung,exynos4415",
+>  	"samsung,exynos5",
+>  	"samsung,exynos5250",
+>  	"samsung,exynos5260",
+> --
+> 1.8.5.5
