@@ -1,108 +1,82 @@
-From: Daniel Vetter <daniel@ffwll.ch>
+From: Andrzej Hajda <a.hajda@samsung.com>
 Subject: Re: [PATCH V7 03/12] drm/bridge: Add helper functions for drm_bridge
-Date: Wed, 29 Oct 2014 09:57:02 +0100
-Message-ID: <20141029085702.GP26941@phenom.ffwll.local>
-References: <1409149783-12416-1-git-send-email-ajaykumar.rs@samsung.com>
- <1409149783-12416-4-git-send-email-ajaykumar.rs@samsung.com>
+Date: Wed, 29 Oct 2014 10:09:04 +0100
+Message-ID: <5450AEB0.9070507@samsung.com>
+References: <1409149783-12416-4-git-send-email-ajaykumar.rs@samsung.com>
  <20141027190137.GT26941@phenom.ffwll.local>
  <CAOw6vbLNOqp=X4epwDPb7zT-j2+oUuLoeV2S=x+oGPLQwK+Z7Q@mail.gmail.com>
- <CAKMK7uEch65=ZuaG=4JY2u3S3w5RND+uNc5+qL=tWxDLfEqEwQ@mail.gmail.com>
- <CAKMK7uEtNMOTg2j9XYN91_gRWWxHCfnb57HHpsdXki+T-rvwYg@mail.gmail.com>
- <20141028143548.GB17770@ulmo>
- <20141029074314.GL26941@phenom.ffwll.local>
- <20141029083821.GA27900@ulmo>
+ <CAEC9eQPQaYjL3ZxtDZBdKi2z5yANcHQ9s4ikYkxN95K9qvu01Q@mail.gmail.com>
+ <CAKMK7uGoO5TBgLh4HSDjxUM=-WRfsQoDHusLmOYxLio-QBMEPQ@mail.gmail.com>
+ <CAEC9eQNJb1TgK1ihvzvC0VjSJhm48WaFO5SVigPsqTOurK2UQw@mail.gmail.com>
+ <CAKMK7uFX7rENLBmwE58rtCBXZ_pSF_uS5Poiuks7xfi+r=e9gw@mail.gmail.com>
+ <20141028144126.GC17770@ulmo>
+ <CAEC9eQNqDNS0HgCSCOkVBYzSypHCt+aMxYZaX1vmTr8SKn2cbA@mail.gmail.com>
+ <20141028150532.GF17770@ulmo> <20141029075823.GN26941@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f50.google.com ([74.125.82.50]:64042 "EHLO
-	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753699AbaJ2I4w (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Oct 2014 04:56:52 -0400
-Received: by mail-wg0-f50.google.com with SMTP id z12so1316027wgg.37
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Oct 2014 01:56:51 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20141029083821.GA27900@ulmo>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20141029075823.GN26941@phenom.ffwll.local>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Daniel Vetter <daniel@ffwll.ch>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Ajay kumar <ajaynumb@gmail.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Sean Paul <seanpaul@chromium.org>, Thierry Reding <treding@nvidia.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Rob Clark <robdclark@gmail.com>, Ajay kumar <ajaynumb@gmail.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-On Wed, Oct 29, 2014 at 09:38:23AM +0100, Thierry Reding wrote:
-> On Wed, Oct 29, 2014 at 08:43:14AM +0100, Daniel Vetter wrote:
-> > On Tue, Oct 28, 2014 at 03:35:50PM +0100, Thierry Reding wrote:
-> > > On Mon, Oct 27, 2014 at 11:26:30PM +0100, Daniel Vetter wrote:
-> > > > On Mon, Oct 27, 2014 at 11:20 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
-> > > > > On Mon, Oct 27, 2014 at 8:58 PM, Sean Paul <seanpaul@chromium.org> wrote:
-> > > > >>>> @@ -660,8 +662,11 @@ struct drm_bridge_funcs {
-> > > > >>>>   * @driver_private: pointer to the bridge driver's internal context
-> > > > >>>>   */
-> > > > >>>>  struct drm_bridge {
-> > > > >>>> -     struct drm_device *dev;
-> > > > >>>> +     struct device *dev;
-> > > > >>>
-> > > > >>> Please don't rename the ->dev pointer into drm. Because _all_ the other
-> > > > >>> drm structures still call it ->dev. Also, can't we use struct device_node
-> > > > >>> here like we do in the of helpers Russell added? See 7e435aad38083
-> > > > >>>
-> > > > >>
-> > > > >> I think this is modeled after the naming in drm_panel, FWIW. However,
-> > > > >> seems reasonable to keep the device_node instead.
-> > > > >
-> > > > > Hm, indeed. Tbh I vote to rename drm_panel->drm to ->dev and like with
-> > > > > drm_crtc drop the struct device and go directly to a struct
-> > > > > device_node. Since we don't really need the sturct device, the only
-> > > > > thing we care about is the of_node. For added bonus wrap an #ifdef
-> > > > > CONFIG_OF around all the various struct device_node in drm_foo.h.
-> > > > > Should be all fairly simple to pull off with cocci.
-> > > > >
-> > > > > Thierry?
-> > > > 
-> > > > Looking at the of_drm_find_panel function I actually wonder how that
-> > > > works - the drm_panel doesn't really need to stick around afaics.
-> > > > After all panel_list is global so some other driver can unload.
-> > > > Russell's of support for possible_crtcs code works differently since
-> > > > it only looks at per-drm_device lists.
-> > > 
-> > > I don't understand. Panels are global resources that get registered by
-> > > some driver that isn't tied to the DRM device until attached. It can't
-> > > be in a per-DRM device list, because it's external to the device.
-> > > 
-> > > And yes, they can go away when a driver is unloaded, though it's not the
-> > > typical use-case.
-> > > 
-> > > > This bridge code here though suffers from the same. So to me this
-> > > > looks rather fishy.
-> > > 
-> > > Well, this version of the DRM bridge support was written to be close to
-> > > DRM panel, so it isn't really surprising that it's similar =), but like
-> > > I said, I don't really understand what you think is wrong with it.
-> > 
-> > You have a mutex to protect the global list of bridges/panels. But if you
-> > do a lookup you don't grab a reference count on the panel, so the moment
-> > you drop the list mutex the panel/bridge can go away.
-> > 
-> > Yes usually you don't unload a driver on a soc but soc isn't everything
-> > and designing new stuff to not be hotunplug save isn't great either.
-> 
-> Yeah, I certainly agree that adding proper reference counting would be a
-> good thing. I think perhaps we could just take a reference on the struct
-> device * to prevent it from disappearing.
-> 
-> Although perhaps I misunderstand what you mean by "go away".
-
-I meant the drm_panel/bridge could go away any second, since nothing
-prevents a module unload of the panel/bridge driver. So in theory you
-could get the unregister call right after you've done the lookup. Which
-means the bridge/panel pointer you've just returned is freed memory.
-
-I think we nee try_get_module for the code and kref on the actual data
-structures. That makes the entire thing a bit non-trivial, which is why I
-think it would be better as some generic helper. Which then gets embedded
-or instantiated for specific cases, like dt&drm_panel or dt&drm_bridge. Or
-maybe even acpi&drm_bridge, who knows ;-)
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+T24gMTAvMjkvMjAxNCAwODo1OCBBTSwgRGFuaWVsIFZldHRlciB3cm90ZToKPiBPbiBUdWUsIE9j
+dCAyOCwgMjAxNCBhdCAwNDowNTozNFBNICswMTAwLCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPj4g
+T24gVHVlLCBPY3QgMjgsIDIwMTQgYXQgMDg6MTY6NDRQTSArMDUzMCwgQWpheSBrdW1hciB3cm90
+ZToKPj4+IE9uIFR1ZSwgT2N0IDI4LCAyMDE0IGF0IDg6MTEgUE0sIFRoaWVycnkgUmVkaW5nCj4+
+PiA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29tPiB3cm90ZToKPj4+PiBPbiBUdWUsIE9jdCAyOCwg
+MjAxNCBhdCAwMzoxOTozNlBNICswMTAwLCBEYW5pZWwgVmV0dGVyIHdyb3RlOgo+Pj4+PiBPbiBU
+dWUsIE9jdCAyOCwgMjAxNCBhdCAxOjI4IFBNLCBBamF5IGt1bWFyIDxhamF5bnVtYkBnbWFpbC5j
+b20+IHdyb3RlOgo+Pj4+Pj4gT24gVHVlLCBPY3QgMjgsIDIwMTQgYXQgMzozMSBQTSwgRGFuaWVs
+IFZldHRlciA8ZGFuaWVsQGZmd2xsLmNoPiB3cm90ZToKPj4+PiBbLi4uXQo+Pj4+Pj4+IEhtLCBp
+ZiB5b3UgZG8gdGhpcyBjYW4geW91IHBscyBhbHNvIHVwZGF0ZSBkcm1fcGFuZWwgYWNjb3JkaW5n
+bHk/IEl0Cj4+Pj4+Pj4gc2hvdWxkbid0IGJlIGEgbG90IG9mIGZ1enogYW5kIHdvdWxkIG1ha2Ug
+dGhpbmdzIGFyb3VuZCBkcm0rZHQgbW9yZQo+Pj4+Pj4+IGNvbnNpc3RlbnQuCj4+Pj4+PiBBcmUg
+eW91IHRhbGtpbmcgYWJvdXQgdXNpbmcgc3RydWN0IGRldmljZV9ub2RlIGluc3RlYWQgb2Ygc3Ry
+dWN0IGRldmljZT8KPj4+Pj4+IEkgZ3Vlc3MgeW91IGhhdmUgbWlzcGxhY2VkIHRoZSBjb21tZW50
+IHVuZGVyIHRoZSB3cm9uZyBzZWN0aW9uIQo+Pj4+Pgo+Pj4+PiBZZWFoLCB0aGF0IHNob3VsZCBo
+YXZlIGJlZW4gb25lIHVwIDstKQo+Pj4+Cj4+Pj4gTGlrZSBJIHNhaWQgZWFybGllciwgSSBkb24n
+dCB0aGluayBkcm9wcGluZyBzdHJ1Y3QgZGV2aWNlICogaW4gZmF2b3VyIG9mCj4+Pj4gc3RydWN0
+IGRldmljZV9ub2RlICogaXMgYSBnb29kIGlkZWEuCj4+PiBJIGFtIG5vdCBzdXJlIGFib3V0IGRy
+bV9wYW5lbC4KPj4+IEJ1dCwgSSBhbSBub3QgcmVhbGx5IGRvaW5nIGFueXRoaW5nIHdpdGggdGhl
+IHN0cnVjdCBkZXZpY2UgcG9pbnRlciBpbgo+Pj4gY2FzZSBvZiBicmlkZ2UuCj4+PiBTbywganVz
+dCB3b25kZXJpbmcgaWYgaXQgaXMgcmVhbGx5IG5lZWRlZD8KPj4KPj4gSSB0aGluayBpdCdzIHVz
+ZWZ1bCB0byBoYXZlIGl0IGp1c3QgdG8gc2VuZCB0aGUgcmlnaHQgbWVzc2FnZS4gRFJNIHBhbmVs
+Cj4+IGFuZCBEUk0gYnJpZGdlIGFyZW4ndCBzcGVjaWZpYyB0byBkZXZpY2UgdHJlZS4gVGhleSBh
+cmUgY29tcGxldGVseQo+PiBnZW5lcmljIGFuZCBjYW4gd29yayB3aXRoIGFueSB0eXBlIG9mIGRl
+dmljZSwgd2hldGhlciBpdCB3YXMKPj4gaW5zdGFudGlhdGVkIGZyb20gdGhlIGRldmljZSB0cmVl
+IG9yIHNvbWUgb3RoZXIgaW5mcmFzdHJ1Y3R1cmUuIERyb3BwaW5nCj4+IHN0cnVjdCBkZXZpY2Ug
+KiB3aWxsIG1ha2UgaXQgZWZmZWN0aXZlbHkgdXNlbGVzcyBvbiBhbnl0aGluZyBidXQgRFQuIEkK
+Pj4gZG9uJ3QgdGhpbmsgd2Ugc2hvdWxkIHN0cml2ZSBmb3IgdGhhdCwgZXZlbiBpZiBvbmx5IERU
+LWVuYWJsZWQgcGxhdGZvcm1zCj4+IGN1cnJlbnRseSB1c2UgdGhlbS4KPiAKPiBTZWUgbXkgb3Ro
+ZXIgcmVwbHksIGJ1dCBJIG5vdyB0aGluayB3ZSBzaG91bGQgcHV0IG5laXRoZXIgaW50byBkcm0K
+PiBzdHJ1Y3R1cmVzLiBUaGlzICJmaW5kIG1lIHRoZSBkcml2ZXIgc3RydWN0dXJlcyBmb3IgdGhp
+cyBkZXZpY2UiIHByb2JsZW0KPiBsb29rcyByZWFsbHkgZ2VuZXJpYywgYW5kIGl0IGhhcyBub3Ro
+aW5nIHRvIGRvIHdpdGggdGhlIGRybSBzdHJ1Y3R1cmVzIGFuZAo+IGNvbmNlcHRzIGxpa2UgYnJp
+ZGdlcy9wYW5lbHMgYXQgYWxsLiBJdCBzaG91bGRuJ3QgYmUgaW4gdGhlcmUgYXQgYWxsLgo+IAo+
+IEFkZGluZyBpdCBsb29rcyB2ZXJ5IG11Y2ggbGlrZSByZWludHJvZHVjaW5nIHRoZSBkcm0gbWlk
+bGF5ZXIgdGhhdCB3ZSBqdXN0Cj4gZmluYWxseSBtYWRlIG9ic29sZXRlLCBqdXN0IG5vdCBhdCB0
+aGUgdG9wLWxldmVsIChzdHJ1Y3QgZHJtX2RldmljZSkgYnV0Cj4gYXQgYSBidW5jaCBvZiBsZWFm
+IG5vZGVzLiBJIGV4cGVjdCBhbGwgdGhlIHNhbWUgaXNzdWVzIHRob3VnaC4gQW5kIEknbQo+IGRl
+ZmluaXRlbHkgbm90IGxvb2tpbmcgdG8gZGUtbWlkbGF5ZXIgbW9yZSBzdHVmZiB0aGF0IHdlJ3Jl
+IGp1c3QgYWRkaW5nLgo+IAo+IEltbyB0aGlzIHNob3VsZCBiZSBzb2x2ZWQgYXMgYSBzZXBhcmF0
+ZSBoZWxwZXIgdGhpbmcsIG1heWJlIGluIHRoZSBkcml2ZXIKPiBjb3JlIGFraW4gdG8gdGhlIGNv
+bXBvbmVudCBoZWxwZXJzIGZyb20gUnVzc2VsbC4KPiAtRGFuaWVsCj4gCgpBcyBJIHVuZGVyc3Rh
+bmQgeW91IHdhbnQgc29tZXRoaW5nIGdlbmVyaWMgdG8gbG9vayBmb3IgcGFuZWxzLCBicmlkZ2Vz
+LAp3aGF0ZXZlciBhbmQsIGxpa2UgY29tcG9uZW50cywgaXQgc2hvdWxkIGFsbG93IHRvIHNhZmUg
+aG90IHBsdWcvdW5wbHVnLgpJIGhhdmUgcHJvcG9zZWQgc3VjaCB0aGluZyBmZXcgbW9udGhzIGFn
+byBbMV0uIEhhdmUgeW91IGxvb2tlZCBhdCBpdD8KClsxXTogaHR0cHM6Ly9sa21sLm9yZy9sa21s
+LzIwMTQvNC8zMC8zNDUKClJlZ2FyZHMKQW5kcnplagpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
+aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2RyaS1kZXZlbAo=
