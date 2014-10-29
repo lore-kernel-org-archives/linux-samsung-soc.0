@@ -1,71 +1,63 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH 4/4] PM / Domains: Let the ->attach_dev() callback return
- an error code
-Date: Wed, 29 Oct 2014 11:28:50 +0100
-Message-ID: <CAMuHMdW=+wHuaMiPD1UGbKTorfftUrOm-NO9VK42FfGVkEhKGg@mail.gmail.com>
-References: <1414507090-516-1-git-send-email-ulf.hansson@linaro.org>
-	<1414507090-516-5-git-send-email-ulf.hansson@linaro.org>
-	<CAMuHMdVn2mfk5v8MQshU0gko+dL9xtCT_zBuqyntHHrmxjwfSA@mail.gmail.com>
-	<CAPDyKFpuhXx=G2yOZJK4SiUOh3OV7GzdzwrC8UK4_5et1arCag@mail.gmail.com>
-	<CAMuHMdUgO7cyV+egGJrcxL+Ge5K6tfPgbPwpFrLQrmq2yUQSZw@mail.gmail.com>
-	<CAPDyKFrW2y49kKPeF1dMZO4jLKam8me0RJFNZCE2wukosznNOA@mail.gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v5 3/4] regulator: max77686: Add suspend disable for some
+ LDOs
+Date: Wed, 29 Oct 2014 10:31:40 +0000
+Message-ID: <20141029103140.GY18557@sirena.org.uk>
+References: <1414411911-5539-1-git-send-email-k.kozlowski@samsung.com>
+ <1414411911-5539-4-git-send-email-k.kozlowski@samsung.com>
+ <20141028223121.GH18557@sirena.org.uk>
+ <1414574413.18868.6.camel@AMDC1943>
+ <20141029100142.GR18557@sirena.org.uk>
+ <1414577934.18868.7.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFrW2y49kKPeF1dMZO4jLKam8me0RJFNZCE2wukosznNOA@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Linux PM list <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="xsYrt8mWir//dmFZ"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54996 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932091AbaJ2Kcc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 29 Oct 2014 06:32:32 -0400
+Content-Disposition: inline
+In-Reply-To: <1414577934.18868.7.camel@AMDC1943>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi Ulf,
 
-On Wed, Oct 29, 2014 at 11:14 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>>> Given that several patch series using ->attach_dev() are already floating
->>>> around and will be in -next soon, what is the plan of getting this in?
->>>> Doing it ASAP (in v3.18-rc3)?
->>>> Delaying this to v3.19-rc2, which will require an atomic fixing of its users?
->>>> Any other option?
->>>
->>> I would prefer if we consider 3.18-rc[x|. That's applies also to the
->>> below patchset, which actually fixes an issue. It would simplify the
->>> process of handling other SOC specific patches which adds PM domain
->>> support.
->>>
->>> [PATCH v3 0/9] PM / Domains: Fix race conditions during boot
->>
->> v3.18-rc[x] sounds fine.
->>
->>> Obviously the patches needs to be reviewed, I guess we are still in
->>> the process of doing that.
->>
->> Indeed.
->>
->> Perhaps we can get just the prototype change of ->attach_dev() in first?
->> That leaves some time for reviewing the code changes to actually handle
->> the return value, and unblocks platform patches using ->attach_dev() soon,
->> which are planned to enter in v3.19-rc.
->
-> That's an option.
->
-> On the other hand, that would mean that the errors that the
-> attach_dev() callback would return from you SOC specific code, would
-> just be ignored until v3.19-rc. That's not so good, hiding errors. :-)
+--xsYrt8mWir//dmFZ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The code to handle the return value could still get in in v3.18-rc.
-So the errors would only be unhandled for a short while in -next.
+On Wed, Oct 29, 2014 at 11:18:54AM +0100, Krzysztof Kozlowski wrote:
+> On =C5=9Bro, 2014-10-29 at 10:01 +0000, Mark Brown wrote:
 
-> Let's see what Rafael thinks.
+> > No, this isn't suspend enable control - this is normal, standard enable
+> > control and the device has no suspend enable control.
 
-Right.
+> You mean that for such regulator the driver shouldn't implement
+> suspend_enable()?
 
-Gr{oetje,eeting}s,
+Yes, if there is no separate control of suspend mode in hardware then of
+course the driver shouldn't implement operations for things it doesn't
+have.
 
-                        Geert
+--xsYrt8mWir//dmFZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+iQEcBAEBAgAGBQJUUMILAAoJECTWi3JdVIfQl34IAIU09lINYcxSvqRF0ZWXjFp/
+u7O7oIGMAPbZ5KKfuiDXQB2ia0NvKEQUrZMAfDOcs7tt2ZI6y3p3Q3VM6S0Eo6ac
+zqEObwWNS5wo4GtIJslXDiuutFi8ww82HoWnbT6yjpUlun+fSs/Q/Vs4MQTTJVOJ
+ALn1Z82x0DepYtI1l1BHLCIVrVsMvFcTwPWLwAOXt7+TYQj8BfLrU2YvdDf0XhBA
+y8GFcu8EhW4y3ExPFJDiggNHd/i7R+NZc36pDXEbFt2J0uj9/yr0HQXBJY62+uum
+yQkPfRBv6znlPj5hlheHkD90y8ulYZIoEnFeLF+rq3vuI7Z5XFHxM4PRWWySikE=
+=B9Jq
+-----END PGP SIGNATURE-----
+
+--xsYrt8mWir//dmFZ--
