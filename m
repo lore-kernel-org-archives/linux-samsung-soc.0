@@ -1,52 +1,56 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH 1/4] PM / Domains: Remove reference counting for the generic_pm_domain_data
-Date: Wed, 29 Oct 2014 13:44:24 -0700
-Message-ID: <7hk33i7gif.fsf@deeprootsystems.com>
-References: <1414507090-516-1-git-send-email-ulf.hansson@linaro.org>
-	<1414507090-516-2-git-send-email-ulf.hansson@linaro.org>
+From: cleverness92322@gmail.com
+Subject: Fix Penguin Penalty 17th October2014 ( mail-archive.com )
+Date: Thu, 30 Oct 2014 02:33:00 +0530
+Message-ID: <54515605.692c460a.3043.fffffbd8@mx.google.com>
+Reply-To: sexpert277@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: TEXT/PLAIN; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:57996 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751917AbaJ2Uo2 (ORCPT
+Received: from mail-pa0-f67.google.com ([209.85.220.67]:33391 "EHLO
+	mail-pa0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755513AbaJ2VDC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Oct 2014 16:44:28 -0400
-Received: by mail-pd0-f174.google.com with SMTP id p10so3681732pdj.33
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Oct 2014 13:44:27 -0700 (PDT)
-In-Reply-To: <1414507090-516-2-git-send-email-ulf.hansson@linaro.org> (Ulf
-	Hansson's message of "Tue, 28 Oct 2014 15:38:07 +0100")
+	Wed, 29 Oct 2014 17:03:02 -0400
+Received: by mail-pa0-f67.google.com with SMTP id lj1so2478358pab.2
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Oct 2014 14:03:01 -0700 (PDT)
+Received: from localhost.localdomain ([27.255.203.170])
+        by mx.google.com with ESMTPSA id d9sm5171314pdm.5.2014.10.29.14.03.00
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLSv1 cipher=RC4-SHA bits=128/128);
+        Wed, 29 Oct 2014 14:03:01 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron Lu <aaron.lu@intel.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
 
-Ulf Hansson <ulf.hansson@linaro.org> writes:
+Dear Sir
 
-> The reference counting isn't needed, let's remove it.
+Did your website get hit by Google Penguin update on October 17th 2014?=
+ What basically is Google Penguin Update? It is actually a code name fo=
+r Google algorithm which aims at decreasing your websites search engine=
+ rankings that violate Google=92s guidelines by using black hat SEO tec=
+hniques to rank your webpage by giving number of spammy links to the pa=
+ge.
+=20
+We are one of those few SEO companies that can help you avoid penalties=
+ from Google Updates like Penguin and Panda. Our clients have survived =
+all the previous and present updates with ease. They have never been hi=
+t because we use 100% white hat SEO techniques to rank Webpages.  Simpl=
+e thing that we do to keep websites away from any Penguin or Panda pena=
+lties is follow Google guidelines and we give Google users the best ans=
+wers to their queries.
 
-After reading the commit that added this feature[1], I think this
-changelog needs a more detail explaining why it's not needed anymore.
+If you are looking to increase the quality of your websites and to get =
+more targeted traffic or save your websites from these Google penalties=
+ email us back with your interest.=20
 
-Kevin
+We will be glad to serve you and help you grow your business.
 
-[1]
-commit 1d5fcfec22ce5f69db0d29284d2b65ff8ab1bfaa
-Author: Rafael J. Wysocki <rjw@sisk.pl>
-Date:   Thu Jul 5 22:12:32 2012 +0200
+Regards
 
-    PM / Domains: Add device domain data reference counter
+Vince G
 
-    Add a mechanism for counting references to the
-    struct generic_pm_domain_data object pointed to by
-    dev->power.subsys_data->domain_data if the device in question
-    belongs to a generic PM domain.
-
-    This change is necessary for a subsequent patch making it possible to
-    allocate that object from within pm_genpd_add_callbacks(), so that
-    drivers can attach their PM domain device callbacks to devices before
-    those devices are added to PM domains.
-
-    This patch has been tested on the SH7372 Mackerel board.
-
-    Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
+SEO Manager ( TOB )
+B7 Green Avenue, Amritsar 143001 Punjab
+____________________________
+NO CLICK in the subject to STOP EMAILS
