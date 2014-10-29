@@ -1,93 +1,77 @@
 From: Daniel Vetter <daniel@ffwll.ch>
 Subject: Re: [PATCH V7 03/12] drm/bridge: Add helper functions for drm_bridge
-Date: Wed, 29 Oct 2014 08:51:27 +0100
-Message-ID: <20141029075127.GM26941@phenom.ffwll.local>
-References: <1409149783-12416-1-git-send-email-ajaykumar.rs@samsung.com>
- <1409149783-12416-4-git-send-email-ajaykumar.rs@samsung.com>
+Date: Wed, 29 Oct 2014 08:58:23 +0100
+Message-ID: <20141029075823.GN26941@phenom.ffwll.local>
+References: <1409149783-12416-4-git-send-email-ajaykumar.rs@samsung.com>
  <20141027190137.GT26941@phenom.ffwll.local>
  <CAOw6vbLNOqp=X4epwDPb7zT-j2+oUuLoeV2S=x+oGPLQwK+Z7Q@mail.gmail.com>
- <CAKMK7uEch65=ZuaG=4JY2u3S3w5RND+uNc5+qL=tWxDLfEqEwQ@mail.gmail.com>
- <20141028142946.GA17770@ulmo>
+ <CAEC9eQPQaYjL3ZxtDZBdKi2z5yANcHQ9s4ikYkxN95K9qvu01Q@mail.gmail.com>
+ <CAKMK7uGoO5TBgLh4HSDjxUM=-WRfsQoDHusLmOYxLio-QBMEPQ@mail.gmail.com>
+ <CAEC9eQNJb1TgK1ihvzvC0VjSJhm48WaFO5SVigPsqTOurK2UQw@mail.gmail.com>
+ <CAKMK7uFX7rENLBmwE58rtCBXZ_pSF_uS5Poiuks7xfi+r=e9gw@mail.gmail.com>
+ <20141028144126.GC17770@ulmo>
+ <CAEC9eQNqDNS0HgCSCOkVBYzSypHCt+aMxYZaX1vmTr8SKn2cbA@mail.gmail.com>
+ <20141028150532.GF17770@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f45.google.com ([74.125.82.45]:40798 "EHLO
-	mail-wg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754084AbaJ2HvR (ORCPT
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:58640 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755603AbaJ2H6N (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Oct 2014 03:51:17 -0400
-Received: by mail-wg0-f45.google.com with SMTP id x12so1235430wgg.18
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Oct 2014 00:51:16 -0700 (PDT)
+	Wed, 29 Oct 2014 03:58:13 -0400
+Received: by mail-wi0-f174.google.com with SMTP id d1so899114wiv.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Oct 2014 00:58:11 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <20141028142946.GA17770@ulmo>
+In-Reply-To: <20141028150532.GF17770@ulmo>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Sean Paul <seanpaul@chromium.org>, Thierry Reding <treding@nvidia.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Rob Clark <robdclark@gmail.com>, Ajay kumar <ajaynumb@gmail.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
+Cc: Ajay kumar <ajaynumb@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Sean Paul <seanpaul@chromium.org>, Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Rob Clark <robdclark@gmail.com>, Jingoo Han <jg1.han@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>
 
-On Tue, Oct 28, 2014 at 03:29:47PM +0100, Thierry Reding wrote:
-> On Mon, Oct 27, 2014 at 11:20:31PM +0100, Daniel Vetter wrote:
-> > On Mon, Oct 27, 2014 at 8:58 PM, Sean Paul <seanpaul@chromium.org> wrote:
-> > >>> @@ -660,8 +662,11 @@ struct drm_bridge_funcs {
-> > >>>   * @driver_private: pointer to the bridge driver's internal context
-> > >>>   */
-> > >>>  struct drm_bridge {
-> > >>> -     struct drm_device *dev;
-> > >>> +     struct device *dev;
+On Tue, Oct 28, 2014 at 04:05:34PM +0100, Thierry Reding wrote:
+> On Tue, Oct 28, 2014 at 08:16:44PM +0530, Ajay kumar wrote:
+> > On Tue, Oct 28, 2014 at 8:11 PM, Thierry Reding
+> > <thierry.reding@gmail.com> wrote:
+> > > On Tue, Oct 28, 2014 at 03:19:36PM +0100, Daniel Vetter wrote:
+> > >> On Tue, Oct 28, 2014 at 1:28 PM, Ajay kumar <ajaynumb@gmail.com> wrote:
+> > >> > On Tue, Oct 28, 2014 at 3:31 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+> > > [...]
+> > >> >> Hm, if you do this can you pls also update drm_panel accordingly? It
+> > >> >> shouldn't be a lot of fuzz and would make things around drm+dt more
+> > >> >> consistent.
+> > >> > Are you talking about using struct device_node instead of struct device?
+> > >> > I guess you have misplaced the comment under the wrong section!
 > > >>
-> > >> Please don't rename the ->dev pointer into drm. Because _all_ the other
-> > >> drm structures still call it ->dev. Also, can't we use struct device_node
-> > >> here like we do in the of helpers Russell added? See 7e435aad38083
-> > >>
+> > >> Yeah, that should have been one up ;-)
 > > >
-> > > I think this is modeled after the naming in drm_panel, FWIW. However,
-> > > seems reasonable to keep the device_node instead.
-> > 
-> > Hm, indeed. Tbh I vote to rename drm_panel->drm to ->dev and like with
-> > drm_crtc drop the struct device and go directly to a struct
-> > device_node. Since we don't really need the sturct device, the only
-> > thing we care about is the of_node. For added bonus wrap an #ifdef
-> > CONFIG_OF around all the various struct device_node in drm_foo.h.
-> > Should be all fairly simple to pull off with cocci.
-> > 
-> > Thierry?
+> > > Like I said earlier, I don't think dropping struct device * in favour of
+> > > struct device_node * is a good idea.
+> > I am not sure about drm_panel.
+> > But, I am not really doing anything with the struct device pointer in
+> > case of bridge.
+> > So, just wondering if it is really needed?
 > 
-> The struct device * is in DRM panel because there's nothing device tree
-> specific about the concept. Having a struct device_node * instead would
-> indicate that it can only be used with a device tree, whereas the
-> framework doesn't care the tiniest bit what type of device we have.
-> 
-> While the trend clearly is to use more device tree, I don't think we
-> should make it impossible for anybody else to use these frameworks.
-> 
-> There are other advantages to keeping a struct device *, like having
-> access to the proper device and its name. Also you get access to the
-> device_node * via dev->of_node anyway. I don't see any advantage in
-> switching to just a struct device_node *, only disadvantages.
+> I think it's useful to have it just to send the right message. DRM panel
+> and DRM bridge aren't specific to device tree. They are completely
+> generic and can work with any type of device, whether it was
+> instantiated from the device tree or some other infrastructure. Dropping
+> struct device * will make it effectively useless on anything but DT. I
+> don't think we should strive for that, even if only DT-enabled platforms
+> currently use them.
 
-Well the idea is to make the lookup key specific, and conditional on
-#CONFIG_OF. If there's going to be another neat way to enumerate platform
-devices then I think we should add that, too. Or maybe we should have a
-void *platform_data or so.
+See my other reply, but I now think we should put neither into drm
+structures. This "find me the driver structures for this device" problem
+looks really generic, and it has nothing to do with the drm structures and
+concepts like bridges/panels at all. It shouldn't be in there at all.
 
-The reason I really don't want a struct device * in core drm structures is
-that two releases down the road people will have found tons of really
-great ways to abuse them and re-create a midlayer. DRM core really should
-only care about the sw objects and not be hw specific at all. Heck there's
-not even an requirement to have any piece of actual hw, you could write a
-completely fake drm driver (for e.g. testing like the new v4l driver).
+Adding it looks very much like reintroducing the drm midlayer that we just
+finally made obsolete, just not at the top-level (struct drm_device) but
+at a bunch of leaf nodes. I expect all the same issues though. And I'm
+definitely not looking to de-midlayer more stuff that we're just adding.
 
-Tbh I wonder a bit why we even have this registery embedded into the core
-drm objects. Essentially the only thing you're doing is a list that maps
-some platform specific key onto some subsystem specific driver structure
-or fails the lookup. So instead of putting all these low-level details
-into drm core structures can't we just have a generic hashtable/list for
-this, plus some static inline helpers that cast the void * you get into
-the one you want?
-
-I also get the feeling that this really should be in the driver core (like
-the component helpers), and that we should think a lot harder about
-lifetimes and refcounting (see my other reply on that).
+Imo this should be solved as a separate helper thing, maybe in the driver
+core akin to the component helpers from Russell.
 -Daniel
 -- 
 Daniel Vetter
