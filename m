@@ -1,65 +1,97 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v5 3/4] regulator: max77686: Add suspend disable for some
- LDOs
-Date: Wed, 29 Oct 2014 11:53:38 +0100
-Message-ID: <1414580018.18868.14.camel@AMDC1943>
-References: <1414411911-5539-1-git-send-email-k.kozlowski@samsung.com>
- <1414411911-5539-4-git-send-email-k.kozlowski@samsung.com>
- <20141028223121.GH18557@sirena.org.uk> <1414574413.18868.6.camel@AMDC1943>
- <20141029100142.GR18557@sirena.org.uk> <1414577934.18868.7.camel@AMDC1943>
- <20141029103140.GY18557@sirena.org.uk> <1414579442.18868.13.camel@AMDC1943>
- <5450C6C2.2050506@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <5450C6C2.2050506-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v6 0/3] regulator: max77686/trats2: Disable some regulators in
+ suspend
+Date: Wed, 29 Oct 2014 12:14:51 +0100
+Message-ID: <1414581294-1315-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:17298 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932261AbaJ2LPK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 29 Oct 2014 07:15:10 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On =C5=9Bro, 2014-10-29 at 11:51 +0100, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
->=20
-> On 10/29/2014 11:44 AM, Krzysztof Kozlowski wrote:
-> > On =C5=9Bro, 2014-10-29 at 10:31 +0000, Mark Brown wrote:
-> >> On Wed, Oct 29, 2014 at 11:18:54AM +0100, Krzysztof Kozlowski wrot=
-e:
-> >> > On =C5=9Bro, 2014-10-29 at 10:01 +0000, Mark Brown wrote:
-> >>=20
-> >> > > No, this isn't suspend enable control - this is normal, standa=
-rd enable
-> >> > > control and the device has no suspend enable control.
-> >>=20
-> >> > You mean that for such regulator the driver shouldn't implement
-> >> > suspend_enable()?
-> >>=20
-> >> Yes, if there is no separate control of suspend mode in hardware t=
-hen of
-> >> course the driver shouldn't implement operations for things it doe=
-sn't
-> >> have.
-> >=20
-> > Oh, thanks! I'll send fixed patch.
-> >=20
-> > This means that probably the max77802 ("mirrored" driver) should be
-> > fixed...
-> >=20
->=20
-> Indeed, I had the same confusion that you had. Just to avoid duplicat=
-ing work,
-> do you want me to send a fix or are you going to include one on your =
-series?
+Hi,
 
-I'll send a patch for max77802 also.
+
+Changes since v5
+================
+1. Remove patch 1 and 2 - applied.
+2. Patch 1/3: remove suspend_enable functions (suggested by Mark Brown).
+3. Patch 1/3: Add Javier's reviewed-by.
+4. Add patch 2/3: remove suspend_enable for max77802 also.
+
+Changes since v4
+================
+1. New patch: 2/4. Store the current value of opmode in
+   non-shifted form. Along with changes in defines used for opmodes
+   this simplifies everything a lot. Suggested by Javier.
+2. Drop Javier's review-by from patch 1 because I changed the
+   defines to cover both LDO and buck at the same time.
+3. Patch 3/4: adding suspend disable is now simpler - just re-use
+   the existing function.
+
+Changes since v3
+================
+1. Dropped patch 3/4 ("mfd/regulator: dt-bindings: max77686: Document
+   regulators off in suspend"), applied by Lee Jones.
+2. Patch 2/3: Fix missing shift when checking if current opmode is
+   equal to off in suspend. The shift is various so I added a simple
+   function max77686_set_opmode_enable(). Dropped Javier's review-by.
+3. Patch 1/3: Add Javier's review-by.
+4. Patch 3/3: Add Chanwoo's review-by.
+
+Changes since v2
+================
+1. Patch 1/4: Fully describe different values used for controlling
+   the regulators (low power modes, enable, disable). Remove "opmode"
+   from new defines. Suggested by Javier.
+2. Patch 2/4: minor nits after changing patch 1.
+3. Add Javier's reviewed-by to 2, 3 and 4 patch.
+4. Patch 3/4 (changes in documentation) should be picked up by Lee
+   Jones but I'm resending it anyway.
+
+Changes since v1
+================
+1. Add patch 1/4 and 3/4.
+2. Patch 2/4: Extend existing set_suspend_disable (for bucks) with
+   LDO support. Implement set_suspend_enable. Suggested by Javier.
+3. Patch 4/4: Add regulator suspend properties only to regulators
+   actually supporting this. Other regulators, not implementing
+   suspend enable/disable, will warn ("VCC_1.8V_IO: No configuration").
+4. Patch 4/4: In suspend enable VHSIC_1.0V and VHSIC_1.8V regulators.
+   Suggested by Chanwoo Choi.
+
+
+Description
+===========
+This patchset makes use of Javier Martinez Cainllas changes [1].
+It allows disabling some of the regulators during suspend to RAM.
+
+Javier's patchset is necessary only to test it.
+
+[1] [PATCH v3 0/2] ARM: EXYNOS: Call regulator suspend prepare/finish
+    https://lkml.org/lkml/2014/10/20/545
+
 
 Best regards,
 Krzysztof
 
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Krzysztof Kozlowski (3):
+  regulator: max77686: Add suspend disable for some LDOs
+  regulator: max77802: Remove suspend_enable
+  ARM: dts: exynos4412-trats: Add suspend configuration for max77686
+    regulators
+
+ arch/arm/boot/dts/exynos4412-trats2.dts | 72 +++++++++++++++++++--------------
+ drivers/regulator/max77686.c            | 12 ++++--
+ drivers/regulator/max77802.c            |  4 --
+ 3 files changed, 50 insertions(+), 38 deletions(-)
+
+-- 
+1.9.1
