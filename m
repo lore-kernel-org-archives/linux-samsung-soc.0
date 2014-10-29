@@ -1,97 +1,30 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RFT v2 2/8] regulator: max77802: Remove support for board files
-Date: Thu, 30 Oct 2014 00:41:43 +0100
-Message-ID: <54517B37.9010305@collabora.co.uk>
-References: <1414595206-1437-1-git-send-email-k.kozlowski@samsung.com> <1414595206-1437-3-git-send-email-k.kozlowski@samsung.com>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH 3/4] PM / Domains: Improve error handling while adding/removing devices
+Date: Wed, 29 Oct 2014 16:53:50 -0700
+Message-ID: <7h8ujy5t69.fsf@deeprootsystems.com>
+References: <1414507090-516-1-git-send-email-ulf.hansson@linaro.org>
+	<1414507090-516-4-git-send-email-ulf.hansson@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:60890 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757289AbaJ2Xlv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Oct 2014 19:41:51 -0400
-In-Reply-To: <1414595206-1437-3-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1414507090-516-4-git-send-email-ulf.hansson@linaro.org> (Ulf
+	Hansson's message of "Tue, 28 Oct 2014 15:38:09 +0100")
+Sender: linux-pm-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron Lu <aaron.lu@intel.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hello Krzysztof,
+Ulf Hansson <ulf.hansson@linaro.org> writes:
 
-On 10/29/2014 04:06 PM, Krzysztof Kozlowski wrote:
->  
->  static int max77802_pmic_probe(struct platform_device *pdev)
->  {
->  	struct max77686_dev *iodev = dev_get_drvdata(pdev->dev.parent);
-> -	struct max77686_platform_data *pdata = dev_get_platdata(iodev->dev);
->  	struct max77802_regulator_prv *max77802;
->  	int i, ret = 0, val;
->  	struct regulator_config config = { };
-> -
-> -	/* This is allocated by the MFD driver */
-> -	if (!pdata) {
-> -		dev_err(&pdev->dev, "no platform data found for regulator\n");
-> -		return -ENODEV;
-> -	}
-> +	struct of_regulator_match *rdata;
->  
->  	max77802 = devm_kzalloc(&pdev->dev,
->  				sizeof(struct max77802_regulator_prv),
-> @@ -586,24 +558,29 @@ static int max77802_pmic_probe(struct platform_device *pdev)
->  	if (!max77802)
->  		return -ENOMEM;
->  
-> -	if (iodev->dev->of_node) {
-> -		ret = max77802_pmic_dt_parse_pdata(pdev, pdata);
-> -		if (ret)
-> -			return ret;
-> -	}
-> -
->  	config.dev = iodev->dev;
->  	config.regmap = iodev->regmap;
->  	config.driver_data = max77802;
->  	platform_set_drvdata(pdev, max77802);
->  
-> +	rdata = kzalloc(sizeof(*rdata) * MAX77802_REG_MAX, GFP_KERNEL);
-> +	if (!rdata)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < MAX77802_REG_MAX; i++)
-> +		rdata[i].name = regulators[i].name;
-> +
-> +	ret = max77802_pmic_dt_parse(pdev, rdata);
-> +	if (ret)
-> +		goto out;
-> +
->  	for (i = 0; i < MAX77802_REG_MAX; i++) {
->  		struct regulator_dev *rdev;
-> -		int id = pdata->regulators[i].id;
-> +		int id = regulators[i].id;
->  		int shift = max77802_get_opmode_shift(id);
->  
-> -		config.init_data = pdata->regulators[i].initdata;
-> -		config.of_node = pdata->regulators[i].of_node;
-> +		config.init_data = rdata[i].init_data;
-> +		config.of_node = rdata[i].of_node;
->  
->  		ret = regmap_read(iodev->regmap, regulators[i].enable_reg, &val);
->  		val = val >> shift & MAX77802_OPMODE_MASK;
-> @@ -621,13 +598,17 @@ static int max77802_pmic_probe(struct platform_device *pdev)
->  		rdev = devm_regulator_register(&pdev->dev,
->  					       &regulators[i], &config);
+> To improve error handling while adding/removing devices from their PM
+> domains, we need to restructure the code a bit. Let's do this by moving
+> the device specific parts into a separate function.
+>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Thanks for your patch. It's indeed an improvement over the old code and I can
-test it tomorrow when I've access to my machine with a max77802 PMIC.
+This looks like just restructuring, but with these kinds of patches, its
+hard to be sure that it's just refactoring, with no functional changes,
+so it's nice to be clear in the changelog whether there are (meant to
+be) any functional changes.
 
-However, I don't think this is the change that Mark asked. AFAIU what he wanted
-is to fill the struct regulator_desc .of_match and .regulators_node fields so
-the init_data is extracted by the core on regulator registration.
-
-Look at commits a0c7b164 ("regulator: of: Provide simplified DT parsing method")
-and 93a127b ("regulator: isl9305: Convert to new style DT parsing") to see what
-I'm talking about.
-
-Best regards,
-Javier
+Kevin
