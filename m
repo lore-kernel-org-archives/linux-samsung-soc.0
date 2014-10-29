@@ -1,35 +1,52 @@
 From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [RFC 1/2] PM / Domains: Power on domain early during system resume
-Date: Wed, 29 Oct 2014 10:46:29 -0700
-Message-ID: <7hk33iahvu.fsf@deeprootsystems.com>
-References: <1414072090-11293-1-git-send-email-k.kozlowski@samsung.com>
-	<1414072090-11293-2-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH 1/4] PM / Domains: Remove reference counting for the generic_pm_domain_data
+Date: Wed, 29 Oct 2014 13:44:24 -0700
+Message-ID: <7hk33i7gif.fsf@deeprootsystems.com>
+References: <1414507090-516-1-git-send-email-ulf.hansson@linaro.org>
+	<1414507090-516-2-git-send-email-ulf.hansson@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1414072090-11293-2-git-send-email-k.kozlowski@samsung.com>
-	(Krzysztof Kozlowski's message of "Thu, 23 Oct 2014 15:48:09 +0200")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:57996 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751917AbaJ2Uo2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 29 Oct 2014 16:44:28 -0400
+Received: by mail-pd0-f174.google.com with SMTP id p10so3681732pdj.33
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Oct 2014 13:44:27 -0700 (PDT)
+In-Reply-To: <1414507090-516-2-git-send-email-ulf.hansson@linaro.org> (Ulf
+	Hansson's message of "Tue, 28 Oct 2014 15:38:07 +0100")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron Lu <aaron.lu@intel.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Krzysztof Kozlowski <k.kozlowski@samsung.com> writes:
+Ulf Hansson <ulf.hansson@linaro.org> writes:
 
-> When resuming the system the power domain has to be powered on early so
-> any runtime PM aware devices could resume.
->
-> This fixes following scenario reproduced on Exynos DRM:
-> 1. Power domain is off before suspending the system.
-> 2. System is suspended to RAM.
-> 3. Resuming starts. The Exynos DRM driver resume callback is called.
-> 4. The Exynos DRM driver calls drm_helper_resume_force_mode which turns
->    the screen on by calling exynos_dsi_dpms with DRM_MODE_DPMS_ON.
+> The reference counting isn't needed, let's remove it.
 
-Dumb Q: if the device (and power domain) were off before (and during)
-suspend, why are they being resumed?
-
-Shouldn't the resume path restore things to the same state they were
-before suspend?
+After reading the commit that added this feature[1], I think this
+changelog needs a more detail explaining why it's not needed anymore.
 
 Kevin
+
+[1]
+commit 1d5fcfec22ce5f69db0d29284d2b65ff8ab1bfaa
+Author: Rafael J. Wysocki <rjw@sisk.pl>
+Date:   Thu Jul 5 22:12:32 2012 +0200
+
+    PM / Domains: Add device domain data reference counter
+
+    Add a mechanism for counting references to the
+    struct generic_pm_domain_data object pointed to by
+    dev->power.subsys_data->domain_data if the device in question
+    belongs to a generic PM domain.
+
+    This change is necessary for a subsequent patch making it possible to
+    allocate that object from within pm_genpd_add_callbacks(), so that
+    drivers can attach their PM domain device callbacks to devices before
+    those devices are added to PM domains.
+
+    This patch has been tested on the SH7372 Mackerel board.
+
+    Signed-off-by: Rafael J. Wysocki <rjw@sisk.pl>
