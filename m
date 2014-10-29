@@ -1,51 +1,116 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 5/8] regulator: max77686: Initialize opmode explicitly to
- normal mode
-Date: Wed, 29 Oct 2014 16:06:43 +0100
-Message-ID: <1414595206-1437-6-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v2 8/8] ARM: dts: exynos4412-trats: Switch max77686 regulators
+ to GPIO control
+Date: Wed, 29 Oct 2014 16:06:46 +0100
+Message-ID: <1414595206-1437-9-git-send-email-k.kozlowski@samsung.com>
 References: <1414595206-1437-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:31462 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933724AbaJ2PLH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 29 Oct 2014 11:11:07 -0400
 In-reply-to: <1414595206-1437-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Minor nit: Initialize the opmode for each regulator to normal mode in a
-readable explicit way.
+Remove fixed regulators (duplicating what max77686 provides) and
+add GPIO control to max77686 regulators.
+
+This gives the system full control over those regulators. Previously
+the state of such regulators was a mixture of what max77686 driver set
+over I2C and what regulator-fixed set through GPIO.
+
+Removal of 'regulator-always-on' from CAM_ISP_CORE_1.2V (buck9) allows
+disabling it when it is not used. Previously this regulator was always
+enabled because its enable state is a OR of:
+ - ENB9 GPIO (turned by regulator-fixed),
+ - BUCK9EN field in BUCK9CTRL register (max77686 through I2C).
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Suggested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- drivers/regulator/max77686.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos4412-trats2.dts | 25 +++++--------------------
+ 1 file changed, 5 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/regulator/max77686.c b/drivers/regulator/max77686.c
-index 7ec9b4e5b917..5497e10b9659 100644
---- a/drivers/regulator/max77686.c
-+++ b/drivers/regulator/max77686.c
-@@ -497,8 +497,8 @@ static int max77686_pmic_probe(struct platform_device *pdev)
- 		config.init_data = rdata[i].init_data;
- 		config.of_node = rdata[i].of_node;
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 7a68e0832cd6..ac1baff7130d 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -58,15 +58,6 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  
--		max77686->opmode[id] = regulators[i].enable_mask >>
--						max77686_get_opmode_shift(id);
-+		max77686->opmode[id] = MAX77686_NORMAL;
-+
- 		rdev = devm_regulator_register(&pdev->dev,
- 						&regulators[i], &config);
- 		if (IS_ERR(rdev)) {
+-		vemmc_reg: regulator-0 {
+-			compatible = "regulator-fixed";
+-			regulator-name = "VMEM_VDD_2.8V";
+-			regulator-min-microvolt = <2800000>;
+-			regulator-max-microvolt = <2800000>;
+-			gpio = <&gpk0 2 0>;
+-			enable-active-high;
+-		};
+-
+ 		cam_io_reg: voltage-regulator-1 {
+ 			compatible = "regulator-fixed";
+ 			regulator-name = "CAM_SENSOR_A";
+@@ -94,16 +85,6 @@
+ 			enable-active-high;
+ 		};
+ 
+-		cam_isp_core_reg: voltage-regulator-4 {
+-			compatible = "regulator-fixed";
+-			regulator-name = "CAM_ISP_CORE_1.2V_EN";
+-			regulator-min-microvolt = <1200000>;
+-			regulator-max-microvolt = <1200000>;
+-			gpio = <&gpm0 3 0>;
+-			enable-active-high;
+-			regulator-always-on;
+-		};
+-
+ 		ps_als_reg: voltage-regulator-5 {
+ 			compatible = "regulator-fixed";
+ 			regulator-name = "LED_A_3.0V";
+@@ -405,6 +386,7 @@
+ 					regulator-name = "VTF_2.8V";
+ 					regulator-min-microvolt = <2800000>;
+ 					regulator-max-microvolt = <2800000>;
++					gpio = <&gpy2 0 0>;
+ 				};
+ 
+ 				ldo22_reg: ldo22 {
+@@ -412,6 +394,7 @@
+ 					regulator-name = "VMEM_VDD_2.8V";
+ 					regulator-min-microvolt = <2800000>;
+ 					regulator-max-microvolt = <2800000>;
++					gpio = <&gpk0 2 0>;
+ 				};
+ 
+ 				ldo23_reg: ldo23 {
+@@ -518,6 +501,7 @@
+ 					regulator-name = "VMEM_VDDF_3.0V";
+ 					regulator-min-microvolt = <2850000>;
+ 					regulator-max-microvolt = <2850000>;
++					gpio = <&gpk0 2 0>;
+ 				};
+ 
+ 				buck9_reg: buck9 {
+@@ -525,6 +509,7 @@
+ 					regulator-name = "CAM_ISP_CORE_1.2V";
+ 					regulator-min-microvolt = <1000000>;
+ 					regulator-max-microvolt = <1200000>;
++					gpio = <&gpm0 3 0>;
+ 				};
+ 			};
+ 		};
+@@ -591,7 +576,7 @@
+ 		broken-cd;
+ 		non-removable;
+ 		card-detect-delay = <200>;
+-		vmmc-supply = <&vemmc_reg>;
++		vmmc-supply = <&ldo22_reg>;
+ 		clock-frequency = <400000000>;
+ 		samsung,dw-mshc-ciu-div = <0>;
+ 		samsung,dw-mshc-sdr-timing = <2 3>;
 -- 
 1.9.1
