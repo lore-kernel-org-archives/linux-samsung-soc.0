@@ -1,68 +1,60 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 4/4] PM / Domains: Let the ->attach_dev() callback return
- an error code
-Date: Thu, 30 Oct 2014 12:34:19 +0100
-Message-ID: <CAPDyKFqaZo1mNNO=HVe-6SiCFVqnfZSpJNf=B0SMw6bm9HpaZA@mail.gmail.com>
-References: <1414507090-516-1-git-send-email-ulf.hansson@linaro.org>
-	<1414507090-516-5-git-send-email-ulf.hansson@linaro.org>
-	<CAMuHMdVn2mfk5v8MQshU0gko+dL9xtCT_zBuqyntHHrmxjwfSA@mail.gmail.com>
-	<7h1tpq7fba.fsf@deeprootsystems.com>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [RFT v3 05/14] regulator: max77802: Don't ignore return value
+ of current opmode
+Date: Thu, 30 Oct 2014 12:42:10 +0100
+Message-ID: <54522412.1070808@collabora.co.uk>
+References: <1414668053-31370-1-git-send-email-k.kozlowski@samsung.com> <1414668053-31370-6-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f47.google.com ([209.85.192.47]:53569 "EHLO
-	mail-qg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758939AbaJ3LeU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Oct 2014 07:34:20 -0400
-Received: by mail-qg0-f47.google.com with SMTP id j107so3748294qga.6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Oct 2014 04:34:19 -0700 (PDT)
-In-Reply-To: <7h1tpq7fba.fsf@deeprootsystems.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1414668053-31370-6-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Linux PM list <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chip>
 
-On 29 October 2014 22:10, Kevin Hilman <khilman@kernel.org> wrote:
-> Geert Uytterhoeven <geert@linux-m68k.org> writes:
->
->> Hi Ulf, Rafael,
->>
->> On Tue, Oct 28, 2014 at 3:38 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>> Typically an ->attach_dev() callback would fetch some PM resourses.
->>>
->>> Those operations, like for example clk_get() may fail with different
->>> errors, including -EPROBE_DEFER. Instead of ignoring these errors and
->>> potentially only print an error message, let's propagate them to give
->>> callers the option to handle them.
->>>
->>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->>
->> Given that several patch series using ->attach_dev() are already floating
->> around and will be in -next soon, what is the plan of getting this in?
->
-> Shall we take this as a Reviewed-by or Acked-by for the series?  :)
->
->> Doing it ASAP (in v3.18-rc3)?
->
-> IMO, this isn't at all appropriate for -rc since it's not fixing a
-> regression. Also, this series includes other cleanups that are not
-> really fixes either.  At this point of the -rc cycle, we need to focus
-> only on regression fixes.
->
->> Delaying this to v3.19-rc2, which will require an atomic fixing of its users?
->> Any other option?
->
-> I don't see any users of this in -next yet, so I think doing a simple
-> patch to the prototype and fixing up any users before they hit -next is
-> the right approach.  Errors will be ignored, but that's not change from
-> today. :)
->
-> Then the rest of this cleanup and behavior change stuff can continue to
-> be reviewed and get broader testing before merge.
+Hello Krzysztof,
 
-Okay, I will follow your suggestions and send a patch that only change
-the prototype, intended as a fix for rc[n].
+On 10/30/2014 12:20 PM, Krzysztof Kozlowski wrote:
+> The return value of regmap_read() of current opmode for regulator was
+> silently ignored and whatever happened to be in 'val' variable was used
+> as new opmode. This could lead to using bogus opmode.
+> 
+> Don't ignore what regmap_read() returns. If it fails just fall back to
+> normal opmode.
+> 
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/regulator/max77802.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/regulator/max77802.c b/drivers/regulator/max77802.c
+> index b9958d927297..60daca2028e9 100644
+> --- a/drivers/regulator/max77802.c
+> +++ b/drivers/regulator/max77802.c
+> @@ -606,7 +606,13 @@ static int max77802_pmic_probe(struct platform_device *pdev)
+>  		config.of_node = pdata->regulators[i].of_node;
+>  
+>  		ret = regmap_read(iodev->regmap, regulators[i].enable_reg, &val);
+> -		val = val >> shift & MAX77802_OPMODE_MASK;
+> +		if (ret < 0) {
+> +			dev_warn(&pdev->dev,
+> +				"cannot read current mode for %d\n", i);
+> +			val = MAX77802_OPMODE_NORMAL;
+> +		} else {
+> +			val = val >> shift & MAX77802_OPMODE_MASK;
+> +		}
+>  
+>  		/*
+>  		 * If the regulator is disabled and the system warm rebooted,
+> 
 
-Kind regards
-Uffe
+Reviewed-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+
+Best regards,
+Javier
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
