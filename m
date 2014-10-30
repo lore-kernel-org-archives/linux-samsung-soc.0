@@ -1,140 +1,93 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH 6/8] regulator: max77686: Add external GPIO control
-Date: Thu, 30 Oct 2014 22:56:33 +0900
-Message-ID: <CAAVeFuLncbkNLGxEAj90yMmugRDNjtjeGoV_QYTMDZ7NVMJCmg@mail.gmail.com>
-References: <1414422226-10948-1-git-send-email-k.kozlowski@samsung.com>
- <1414422226-10948-7-git-send-email-k.kozlowski@samsung.com>
- <544EA4FA.6040704@collabora.co.uk> <1414486356.24949.19.camel@AMDC1943>
- <1414498308.24949.32.camel@AMDC1943> <1414579362.18868.11.camel@AMDC1943> <5450C63B.3000602@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [RFT v3 06/14] regulator: max77802: Remove support for board
+ files
+Date: Thu, 30 Oct 2014 15:02:41 +0100
+Message-ID: <54524501.8030604@collabora.co.uk>
+References: <1414668053-31370-1-git-send-email-k.kozlowski@samsung.com> <1414668053-31370-7-git-send-email-k.kozlowski@samsung.com> <54522615.7040002@collabora.co.uk> <1414671037.23399.2.camel@AMDC1943> <54522D2C.9050002@collabora.co.uk> <1414672235.23399.7.camel@AMDC1943> <54523224.3010407@collabora.co.uk> <1414673587.23399.13.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ig0-f178.google.com ([209.85.213.178]:61217 "EHLO
-	mail-ig0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759871AbaJ3N4y (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:33549 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751686AbaJ3OCr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Oct 2014 09:56:54 -0400
-In-Reply-To: <5450C63B.3000602@collabora.co.uk>
+	Thu, 30 Oct 2014 10:02:47 -0400
+In-Reply-To: <1414673587.23399.13.camel@AMDC1943>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi, and thanks for bringing this issue to us!
+Hello Krzysztof,
 
-On Wed, Oct 29, 2014 at 7:49 PM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> [adding Linus and Alexandre to the cc list]
+On 10/30/2014 01:53 PM, Krzysztof Kozlowski wrote:
+> 
+> To me a intuitive structure would be:
+> MFD device
+>   |
+>   - clock device
+>      |
+>      - clock1
+>      - clock2
+>   - regulator device
+>      |
+>      - LDO1
+>      - LDO2
+> etc.
+> 
+> This also maps to structure in DTS. dev_err* messages and any
+> allocations should be done on behalf of regulator device, not parent.
 >
-> Hello Krzysztof,
+> Various drivers do this differently... The wm8* drivers set it mostly to
+> parent (MFD)...
 >
-> On 10/29/2014 11:42 AM, Krzysztof Kozlowski wrote:
->> On wto, 2014-10-28 at 13:11 +0100, Krzysztof Kozlowski wrote:
->>> On wto, 2014-10-28 at 09:52 +0100, Krzysztof Kozlowski wrote:
->>> > On pon, 2014-10-27 at 21:03 +0100, Javier Martinez Canillas wrote:
->>> > > Hello Krzysztof,
->>> > >
->>> > > On 10/27/2014 04:03 PM, Krzysztof Kozlowski wrote:
->>> > > > @@ -85,6 +91,9 @@ struct max77686_data {
->>> > > >        struct max77686_regulator_data *regulators;
->>> > > >        int num_regulators;
->>> > > >
->>> > > > +      /* Array of size num_regulators with GPIOs for external control. */
->>> > > > +      int *ext_control_gpio;
->>> > > > +
->>> > >
->>> > > The integer-based GPIO API is deprecated in favor of the descriptor-based GPIO
->>> > > interface (Documentation/gpio/consumer.txt). Could you please use the later?
->>> >
->>> > Sure, I can. Please have in mind that regulator core still accepts old
->>> > GPIO so I will have to use desc_to_gpio(). That should work... and
->>> > should be future-ready.
->>>
->>> It seems I was too hasty... I think usage of the new gpiod API implies
->>> completely different bindings.
->>>
->>> The gpiod_get() gets GPIO from a device level, not from given sub-node
->>> pointer. This means that you cannot have DTS like this:
->>> ldo21_reg: ldo21 {
->>>      regulator-compatible = "LDO21";
->>>      regulator-name = "VTF_2.8V";
->>>      regulator-min-microvolt = <2800000>;
->>>      regulator-max-microvolt = <2800000>;
->>>      ec-gpio = <&gpy2 0 0>;
->>> };
->>>
->>> ldo22_reg: ldo22 {
->>>      regulator-compatible = "LDO22";
->>>      regulator-name = "VMEM_VDD_2.8V";
->>>      regulator-min-microvolt = <2800000>;
->>>      regulator-max-microvolt = <2800000>;
->>>      ec-gpio = <&gpk0 2 0>;
->>> };
->>>
->>>
->>> I could put GPIOs in device node:
->>>
->>> max77686_pmic@09 {
->>>      compatible = "maxim,max77686";
->>>      interrupt-parent = <&gpx0>;
->>>      interrupts = <7 0>;
->>>      reg = <0x09>;
->>>      #clock-cells = <1>;
->>>      ldo21-gpio = <&gpy2 0 0>;
->>>      ldo22-gpio = <&gpk0 2 0>;
->>>
->>>      ldo21_reg: ldo21 {
->>>              regulator-compatible = "LDO21";
->>>              regulator-name = "VTF_2.8V";
->>>              regulator-min-microvolt = <2800000>;
->>>              regulator-max-microvolt = <2800000>;
->>>      };
->>>
->>>      ldo22_reg: ldo22 {
->>>              regulator-compatible = "LDO22";
->>>              regulator-name = "VMEM_VDD_2.8V";
->>>              regulator-min-microvolt = <2800000>;
->>>              regulator-max-microvolt = <2800000>;
->>>      };
->>>
->>> This would work but I don't like it. The properties of a regulator are
->>> above the node configuring that regulator.
->>>
->>> Any ideas?
->>>
->>
->> Continuing talking to myself... I found another problem - GPIO cannot be
->> requested more than once (-EBUSY). In case of this driver (and board:
->> Trats2) one GPIO is connected to regulators. The legacy GPIO API and
->> regulator core handle this.
->>
->> With new GPIO API I would have to implement some additional steps in
->> such case...
->>
->> So there are 2 issues:
->> 1. Cannot put GPIO property in regulator node.
+> I do not insists, especially because using parent's device would make
+> this driver simpler.
+>
 
-For this problem you will probably want to use the
-dev(m)_get_named_gpiod_from_child() function from the following patch:
+Another reason to set it to the parent is to lookup the regulator input supply
+node. The regulator_register() function does:
 
-https://lkml.org/lkml/2014/10/6/529
+	if (supply) {
+		struct regulator_dev *r;
 
-It should reach -next soon now.
+		r = regulator_dev_lookup(dev, supply, &ret);
 
->> 2. Cannot request some GPIO more than once.
+where dev = config->dev so that will determine on which device node your
+input supplies have to be defined. For example on the Peach Pit DTS has this:
 
-We have been confronted to this problem with the regulator core as well:
+	max77802: max77802-pmic@9 {
+		...
+		inb1-supply = <&tps65090_dcdc2>;
+		...
+		inb10-supply = <&tps65090_dcdc1>;
 
-http://marc.info/?l=linux-arm-kernel&m=140417649119733&w=1
+		inl1-supply = <&buck5_reg>;
+		...
+		inl10-supply = <&buck7_reg>;
+		...
 
-I have a draft patch that allows GPIOs to be requested by several
-clients. What prevented me from submitting it was that I wanted to
-make sure the different requested configurations were compatible, but
-maybe I am overthinking this. There are also a couple of other patches
-that this depends on (like removal of the big descs array), so I don't
-think it will be available too soon, sadly.
+		regulators {
+		...
+		};
+	};
 
-So maybe your best shot for now is to keep using the integer API, as
-much as I hate it. Once we become able to request the same GPIO
-several times, you should be good to switch to descriptors. Sorry this
-has not been done faster.
+which is how most (all?) DTS define the input supplies. If you instead
+do config.dev = &pdev->dev, then the input supplies have to be in the
+"regulators" node which is not the standard AFAICT.
+
+This is not a problem for max77686 because I see that DTS don't define
+the input supplies but I guess that is because the power scheme is not
+completely modeled.
+ 
+> Mark, maybe you could shed light on it?
+> 
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
+
+Best regards,
+Javier
