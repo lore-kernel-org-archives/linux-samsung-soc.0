@@ -1,62 +1,59 @@
-From: Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH] PM / Domains: Change prototype for the ->attach_dev()
- callback
-Date: Thu, 30 Oct 2014 13:28:36 +0100
-Message-ID: <20141030122836.GA4012@amd>
-References: <1414670569-3002-1-git-send-email-ulf.hansson@linaro.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [RFT v3 06/14] regulator: max77802: Remove support for board files
+Date: Thu, 30 Oct 2014 13:30:35 +0100
+Message-ID: <1414672235.23399.7.camel@AMDC1943>
+References: <1414668053-31370-1-git-send-email-k.kozlowski@samsung.com>
+ <1414668053-31370-7-git-send-email-k.kozlowski@samsung.com>
+ <54522615.7040002@collabora.co.uk> <1414671037.23399.2.camel@AMDC1943>
+ <54522D2C.9050002@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:45253 "EHLO
-	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751974AbaJ3M2j (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Oct 2014 08:28:39 -0400
-Content-Disposition: inline
-In-Reply-To: <1414670569-3002-1-git-send-email-ulf.hansson@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <54522D2C.9050002@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron Lu <aaron.lu@intel.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Thu 2014-10-30 13:02:49, Ulf Hansson wrote:
-> Convert the prototype to return and int. This is just an initial step,
-> needed to support error handling.
+On czw, 2014-10-30 at 13:21 +0100, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
 > 
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> On 10/30/2014 01:10 PM, Krzysztof Kozlowski wrote:
+> >> 
+> >> I may be missing something but I don't understand why a compatible string
+> >> for the regulators sub-node is needed. Isn't enough to just fill the
+> >> .regulators_node field in the struct regulator_desc? e.g:
+> >> 
+> >>     .regulators_node = of_match_ptr("regulators") for max77802
+> >>     .regulators_node = of_match_ptr("voltage-regulators") for max77686
+> >> 
+> >> AFAIU this should be enough for the core to extract the init_data and will
+> >> make your change much more simpler and you can drop patches 1-3 and 13-14.
+> >> 
+> >> Or maybe I misread the regulator_of_get_init_data() function?
+> > 
+> > The regulator_of_get_init_data() searches from dev->of_node or its child
+> > node.
+> > 
+> > But dev->of_node is NULL.
+> > 
+> > That's why of_compatible is needed.
+> 
+> Yes but regulator_register() does dev = config->dev and config->dev is set
+> to config.dev = iodev->dev in the driver probe function which is the
+> pdev->dev.parent (the PMIC struct device) that has an associated of_node.
+> 
+> So, regulator_of_get_init_data() will call of_get_child_by_name() passing
+> the PMIC of_node and the sub-node name that contains the regulators. That
+> is, whatever was set in desc->regulators_node and that should be enough.
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+I missed that one in max77802 (in max77686: config.dev = &pdev->dev).
+Now I wonder if it is proper to attach regulators to driver's parent
+device. Consider regulator_register, around line 3640:
+	rdev->dev.parent = dev;
+The parent of regulators will be equal to parent of regulator driver -
+main MFD driver.
 
-
-> ---
-> 
-> This patch is intended as fix for 3.18 rc[n]. Why?
-> 
-> There are other SOC specific patches around that adds genpd support and which
-> implements the ->attach_dev() callback. To prevent having an "atomic" patch
-> during the next release cycle, let's change the prototype now instead.
-> 
-> Further patches will add the actual error handling in genpd and these can then
-> be reviewed and tested thoroughly.
-> 
-> ---
->  include/linux/pm_domain.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 73e938b..d44f071 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -72,7 +72,7 @@ struct generic_pm_domain {
->  	bool max_off_time_changed;
->  	bool cached_power_down_ok;
->  	struct gpd_cpuidle_data *cpuidle_data;
-> -	void (*attach_dev)(struct device *dev);
-> +	int (*attach_dev)(struct device *dev);
->  	void (*detach_dev)(struct device *dev);
->  };
->  
-
--- 
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+Best regards,
+Krzysztof
