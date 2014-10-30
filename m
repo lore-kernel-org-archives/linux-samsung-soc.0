@@ -1,59 +1,51 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v3 11/14] mfd/regulator: dt-bindings: max77686: Document gpio
- properties
-Date: Thu, 30 Oct 2014 12:20:50 +0100
-Message-ID: <1414668053-31370-12-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v3 09/14] regulator: max77686: Initialize opmode explicitly to
+ normal mode
+Date: Thu, 30 Oct 2014 12:20:48 +0100
+Message-ID: <1414668053-31370-10-git-send-email-k.kozlowski@samsung.com>
 References: <1414668053-31370-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1414668053-31370-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Document usage of gpio properties which turn on external/GPIO control
-over regulator.
+Minor nit: Initialize the opmode for each regulator to normal mode in a
+readable explicit way.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Suggested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
- Documentation/devicetree/bindings/mfd/max77686.txt | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/regulator/max77686.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Documentation/devicetree/bindings/mfd/max77686.txt
-index f4010a9f66eb..b8013e69da65 100644
---- a/Documentation/devicetree/bindings/mfd/max77686.txt
-+++ b/Documentation/devicetree/bindings/mfd/max77686.txt
-@@ -22,7 +22,14 @@ Optional node:
-   Required property:
-   - compatible : Must be "maxim,max77686-pmic"
+diff --git a/drivers/regulator/max77686.c b/drivers/regulator/max77686.c
+index ac05b318e405..2c276d147c90 100644
+--- a/drivers/regulator/max77686.c
++++ b/drivers/regulator/max77686.c
+@@ -473,8 +473,8 @@ static int max77686_pmic_probe(struct platform_device *pdev)
+ 		struct regulator_dev *rdev;
+ 		int id = regulators[i].id;
  
--  Optional properties: For each regulator use following format:
-+  Optional properties:
-+  - ldo20-gpio : GPIO to use for LDO20 enable control.
-+  - ldo21-gpio : GPIO to use for LDO21 enable control.
-+  - ldo22-gpio : GPIO to use for LDO22 enable control.
-+  - buck8-gpio : GPIO to use for BUCK8 enable control.
-+  - buck9-gpio : GPIO to use for BUCK9 enable control.
+-		max77686->opmode[id] = regulators[i].enable_mask >>
+-						max77686_get_opmode_shift(id);
++		max77686->opmode[id] = MAX77686_NORMAL;
 +
-+  For each regulator use following format:
- 	regulator_name {
- 		regulator-compatible = LDOn/BUCKn
- 		standard regulator constraints....
-@@ -42,7 +49,6 @@ to get matched with their hardware counterparts as follow:
- 	-BUCKn	:	1-4.
-   Use standard regulator bindings for it ('regulator-off-in-suspend').
- 
--
- Example:
- 
- 	max77686@09 {
-@@ -53,6 +59,7 @@ Example:
- 
- 		voltage-regulators {
- 			compatible = "maxim,max77686-pmic";
-+			ldo21-gpio = <&gpy2 0 GPIO_ACTIVE_HIGH>;
- 
- 			ldo11_reg {
- 				regulator-compatible = "LDO11";
+ 		rdev = devm_regulator_register(&pdev->dev,
+ 						&regulators[i], &config);
+ 		if (IS_ERR(rdev)) {
 -- 
 1.9.1
