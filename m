@@ -1,45 +1,63 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 0/4] drm/exynos/dsi: remove global display variable
-Date: Thu, 30 Oct 2014 13:39:40 +0100
-Message-ID: <5452318C.1030107@samsung.com>
-References: <1412683271-15835-1-git-send-email-a.hajda@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [RFT v3 06/14] regulator: max77802: Remove support for board
+ files
+Date: Thu, 30 Oct 2014 13:42:12 +0100
+Message-ID: <54523224.3010407@collabora.co.uk>
+References: <1414668053-31370-1-git-send-email-k.kozlowski@samsung.com> <1414668053-31370-7-git-send-email-k.kozlowski@samsung.com> <54522615.7040002@collabora.co.uk> <1414671037.23399.2.camel@AMDC1943> <54522D2C.9050002@collabora.co.uk> <1414672235.23399.7.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1412683271-15835-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:33449 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759431AbaJ3MmX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 30 Oct 2014 08:42:23 -0400
+In-Reply-To: <1414672235.23399.7.camel@AMDC1943>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-T24gMTAvMDcvMjAxNCAwMjowMSBQTSwgQW5kcnplaiBIYWpkYSB3cm90ZToKPiBIaSBJbmtpLAo+
-Cj4gTWFueSBFeHlub3MgRFJNIGRyaXZlcnMgdXNlcyBnbG9iYWwgdmFyaWFibGVzIHRvIHJlcHJl
-c2VudCBhc3NvY2lhdGVkIGRldmljZXMKPiBpbiBFeHlub3MgRFJNIGludGVybmFsIGZyYW1ld29y
-ay4gSXQgaXMgcXVpdGUgY29uZnVzaW5nLCBpdCBhZGRzIGRhdGEgZHVwbGljYXRpb24KPiBhbmQg
-ZmluYWxseSBpdCBkb2VzIG5vdCBhbGxvdyB0byBoYW5kbGUgbW9yZSB0aGFuIG9uZSBkZXZpY2Ug
-aW4gc3lzdGVtLgo+IEl0IHNlZW1zIGJldHRlciB0byBlbWJlZCBzdWNoIHN0cnVjdHVyZXMgaW4g
-cHJpdmF0ZSBjb250ZXh0IG9mIHRoZSBkZXZpY2UuCgpHZW50bHkgcGluZy4KClJlZ2FyZHMKQW5k
-cnplagoKPgo+IFRoZSBwYXRjaHNldCBpcyBiYXNlZCBvbiBleHlub3NfZHJtX25leHQgcGx1cyBt
-eSBwYXRjaCBbMV06Cj4gJ2RybS9leHlub3M6IHJlbW92ZSBleHBsaWNpdCBlbmNvZGVyL2Nvbm5l
-Y3RvciBkZS1pbml0aWFsaXphdGlvbicuCj4KPiBJZiB0aGUgcGF0Y2hzZXQgaXMgT0sgZm9yIHlv
-dSBJIGNhbiBwcmVwYXJlIHNpbWlsYXIgcGF0Y2hlcyBmb3Igb3RoZXIgRXh5bm9zIERSTSBjb21w
-b25lbnRzLgo+Cj4gWzFdOiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxNC85LzIyLzE0OAo+Cj4g
-UmVnYXJkcwo+IEFuZHJ6ZWoKPgo+Cj4gQW5kcnplaiBIYWpkYSAoNCk6Cj4gICBkcm0vZXh5bm9z
-L2RzaTogcmVtb3ZlIGdsb2JhbCB2YXJpYWJsZSBleHlub3NfZHNpX2Rpc3BsYXkKPiAgIGRybS9l
-eHlub3MvZHNpOiBzaW1wbGlmeSBkZXZpY2UgcG9pbnRlciBldmFsdWF0aW9uCj4gICBkcm0vZXh5
-bm9zL2RzaTogcmVtb3ZlIHJlZHVuZGFudCBlbmNvZGVyIGZpZWxkCj4gICBkcm0vZXh5bm9zL2Rz
-aTogc3RvcCB1c2luZyBkaXNwbGF5LT5jdHggcG9pbnRlcgo+Cj4gIGRyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9kc2kuYyB8IDk2ICsrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0t
-LS0tLQo+ICAxIGZpbGUgY2hhbmdlZCwgNDcgaW5zZXJ0aW9ucygrKSwgNDkgZGVsZXRpb25zKC0p
-Cj4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
-ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8v
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hello Krzysztof,
+
+On 10/30/2014 01:30 PM, Krzysztof Kozlowski wrote:
+tor_of_get_init_data() function?
+>> > 
+>> > The regulator_of_get_init_data() searches from dev->of_node or its child
+>> > node.
+>> > 
+>> > But dev->of_node is NULL.
+>> > 
+>> > That's why of_compatible is needed.
+>> 
+>> Yes but regulator_register() does dev = config->dev and config->dev is set
+>> to config.dev = iodev->dev in the driver probe function which is the
+>> pdev->dev.parent (the PMIC struct device) that has an associated of_node.
+>> 
+>> So, regulator_of_get_init_data() will call of_get_child_by_name() passing
+>> the PMIC of_node and the sub-node name that contains the regulators. That
+>> is, whatever was set in desc->regulators_node and that should be enough.
+> 
+> I missed that one in max77802 (in max77686: config.dev = &pdev->dev).
+> Now I wonder if it is proper to attach regulators to driver's parent
+> device. Consider regulator_register, around line 3640:
+> 	rdev->dev.parent = dev;
+> The parent of regulators will be equal to parent of regulator driver -
+> main MFD driver.
+>
+
+An early version of the max77802 regulator driver also set config.dev to
+&pdev->dev but then Mark asked me if I was sure that it should not be the
+MFD device instead.
+
+I then read in regulator_register() that the rdev->dev.parent was set
+to the device passed in config.dev as you said so I was convinced that it
+should be the parent device instead.
+
+Please take a look at [0] for that discussion.
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2014/6/17/174
