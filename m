@@ -1,51 +1,81 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH] PM / Domains: Change prototype for the ->attach_dev() callback
-Date: Thu, 30 Oct 2014 13:02:49 +0100
-Message-ID: <1414670569-3002-1-git-send-email-ulf.hansson@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f44.google.com ([209.85.215.44]:56534 "EHLO
-	mail-la0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933039AbaJ3MC7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Oct 2014 08:02:59 -0400
-Received: by mail-la0-f44.google.com with SMTP id gf13so4276663lab.17
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Oct 2014 05:02:57 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [RFT v3 06/14] regulator: max77802: Remove support for board files
+Date: Thu, 30 Oct 2014 13:10:37 +0100
+Message-ID: <1414671037.23399.2.camel@AMDC1943>
+References: <1414668053-31370-1-git-send-email-k.kozlowski@samsung.com>
+ <1414668053-31370-7-git-send-email-k.kozlowski@samsung.com>
+ <54522615.7040002@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <54522615.7040002@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron Lu <aaron.lu@intel.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
 
-Convert the prototype to return and int. This is just an initial step,
-needed to support error handling.
+On czw, 2014-10-30 at 12:50 +0100, Javier Martinez Canillas wrote:
+> Hello Krzysztof,
+> 
+> On 10/30/2014 12:20 PM, Krzysztof Kozlowski wrote:
+> >  static int max77802_pmic_probe(struct platform_device *pdev)
+> >  {
+> >  	struct max77686_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+> > -	struct max77686_platform_data *pdata = dev_get_platdata(iodev->dev);
+> >  	struct max77802_regulator_prv *max77802;
+> > -	int i, ret = 0, val;
+> > +	int i, val;
+> >  	struct regulator_config config = { };
+> >  
+> > -	/* This is allocated by the MFD driver */
+> > -	if (!pdata) {
+> > -		dev_err(&pdev->dev, "no platform data found for regulator\n");
+> > -		return -ENODEV;
+> > -	}
+> > -
+> >  	max77802 = devm_kzalloc(&pdev->dev,
+> >  				sizeof(struct max77802_regulator_prv),
+> >  				GFP_KERNEL);
+> >  	if (!max77802)
+> >  		return -ENOMEM;
+> >  
+> > -	if (iodev->dev->of_node) {
+> > -		ret = max77802_pmic_dt_parse_pdata(pdev, pdata);
+> > -		if (ret)
+> > -			return ret;
+> > +	if (!pdev->dev.of_node) {
+> > +		/*
+> > +		 * Backward DTS compatiblity where regulator driver had not
+> > +		 * a compatible property for itself.
+> > +		 */
+> > +		if (!iodev->dev->of_node) {
+> > +			dev_err(&pdev->dev, "No OF node for driver and its parent\n");
+> > +			return -EINVAL;
+> > +		}
+> > +		pdev->dev.of_node = of_get_child_by_name(iodev->dev->of_node,
+> > +								"regulators");
+> > +		max77802->missing_of_node = true;
+> >  	}
+> 
+> I may be missing something but I don't understand why a compatible string
+> for the regulators sub-node is needed. Isn't enough to just fill the
+> .regulators_node field in the struct regulator_desc? e.g:
+> 
+>     .regulators_node = of_match_ptr("regulators") for max77802
+>     .regulators_node = of_match_ptr("voltage-regulators") for max77686
+> 
+> AFAIU this should be enough for the core to extract the init_data and will
+> make your change much more simpler and you can drop patches 1-3 and 13-14.
+> 
+> Or maybe I misread the regulator_of_get_init_data() function?
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
+The regulator_of_get_init_data() searches from dev->of_node or its child
+node.
 
-This patch is intended as fix for 3.18 rc[n]. Why?
+But dev->of_node is NULL.
 
-There are other SOC specific patches around that adds genpd support and which
-implements the ->attach_dev() callback. To prevent having an "atomic" patch
-during the next release cycle, let's change the prototype now instead.
+That's why of_compatible is needed.
 
-Further patches will add the actual error handling in genpd and these can then
-be reviewed and tested thoroughly.
-
----
- include/linux/pm_domain.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 73e938b..d44f071 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -72,7 +72,7 @@ struct generic_pm_domain {
- 	bool max_off_time_changed;
- 	bool cached_power_down_ok;
- 	struct gpd_cpuidle_data *cpuidle_data;
--	void (*attach_dev)(struct device *dev);
-+	int (*attach_dev)(struct device *dev);
- 	void (*detach_dev)(struct device *dev);
- };
- 
--- 
-1.9.1
+Best regards,
+Krzysztof
