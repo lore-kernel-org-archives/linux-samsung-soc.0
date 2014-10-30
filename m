@@ -1,44 +1,74 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v3 2/2] ARM: EXYNOS: Call regulator core suspend prepare
- and finish functions
-Date: Thu, 30 Oct 2014 11:06:59 +0100
-Message-ID: <CABxcv==YZjO9p3aNyuRpe3DYS+=BcY_N2esuTg0hGASb_b_OdA@mail.gmail.com>
-References: <1413839151-10875-1-git-send-email-javier.martinez@collabora.co.uk>
-	<1413839151-10875-3-git-send-email-javier.martinez@collabora.co.uk>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH V7 03/12] drm/bridge: Add helper functions for drm_bridge
+Date: Thu, 30 Oct 2014 10:09:28 +0000
+Message-ID: <20141030100927.GN27405@n2100.arm.linux.org.uk>
+References: <20141027190137.GT26941@phenom.ffwll.local>
+ <CAOw6vbLNOqp=X4epwDPb7zT-j2+oUuLoeV2S=x+oGPLQwK+Z7Q@mail.gmail.com>
+ <CAKMK7uEch65=ZuaG=4JY2u3S3w5RND+uNc5+qL=tWxDLfEqEwQ@mail.gmail.com>
+ <CAKMK7uEtNMOTg2j9XYN91_gRWWxHCfnb57HHpsdXki+T-rvwYg@mail.gmail.com>
+ <20141028143548.GB17770@ulmo>
+ <20141029074314.GL26941@phenom.ffwll.local>
+ <20141029083821.GA27900@ulmo>
+ <20141029085702.GP26941@phenom.ffwll.local>
+ <20141029091436.GB27900@ulmo> <54520C5E.3020609@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:57447 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758191AbaJ3KHA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Oct 2014 06:07:00 -0400
-Received: by mail-wg0-f42.google.com with SMTP id k14so5247889wgh.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Oct 2014 03:06:59 -0700 (PDT)
-In-Reply-To: <1413839151-10875-3-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <54520C5E.3020609@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Ajay kumar <ajaynumb@gmail.com>, Thierry Reding <treding@nvidia.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Hello Kukjin,
-
-On Mon, Oct 20, 2014 at 11:05 PM, Javier Martinez Canillas
-<javier.martinez@collabora.co.uk> wrote:
-> The regulator framework has a set of helpers functions to be used when
-> the system is entering and leaving from suspend but these are not called
-> on Exynos platforms. This means that the .set_suspend_* function handlers
-> defined by regulator drivers are not called when the system is suspended.
->
-> Suggested-by: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> Reviewed-by: Doug Anderson <dianders@chromium.org>
-> ---
->  arch/arm/mach-exynos/suspend.c | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
->
-
-Any comments on this patch?
-
-Best regards,
-Javier
+T24gVGh1LCBPY3QgMzAsIDIwMTQgYXQgMTE6MDE6MDJBTSArMDEwMCwgQW5kcnplaiBIYWpkYSB3
+cm90ZToKPiBPbiAxMC8yOS8yMDE0IDEwOjE0IEFNLCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPiA+
+IE9uIFdlZCwgT2N0IDI5LCAyMDE0IGF0IDA5OjU3OjAyQU0gKzAxMDAsIERhbmllbCBWZXR0ZXIg
+d3JvdGU6Cj4gPj4gSSB0aGluayB3ZSBuZWUgdHJ5X2dldF9tb2R1bGUgZm9yIHRoZSBjb2RlIGFu
+ZCBrcmVmIG9uIHRoZSBhY3R1YWwgZGF0YQo+ID4+IHN0cnVjdHVyZXMuCj4gPiAKPiA+IEFncmVl
+ZCwgdGhhdCBzaG91bGQgZG8gdGhlIHRyaWNrLiBXZSdkIHByb2JhYmx5IG5lZWQgc29tZSBzb3J0
+IG9mIGxvZ2ljCj4gPiB0byBhbHNvIG1ha2Ugb3BlcmF0aW9ucyByZXR1cm4gc29tZXRoaW5nIGxp
+a2UgLUVOT0RFViB3aGVuIHRoZQo+ID4gdW5kZXJseWluZyBkZXZpY2UgaGFzIGRpc2FwcGVhcmVk
+LiBJIHRoaW5rIERhdmlkIGhhZCBpbnRyb2R1Y2VkCj4gPiBzb21ldGhpbmcgc2ltaWxhciBmb3Ig
+RFJNIGRldmljZSBub3Qgc28gbG9uZyBhZ28/Cj4gCj4gSWYgdGhlIHVuZGVybHlpbmcgZGV2aWNl
+IGRpc2FwcGVhcnMgaXQgd291bGQgYmUgZ29vZCB0byByZWNlaXZlCj4gbm90aWZpY2F0aW9uIGFu
+eXdheSB0byB0cmlnZ2VyIERSTSBIUEQgZXZlbnQuIEFuZCBpZiB3ZSBoYXZlIHRoZQo+IG5vdGlm
+aWNhdGlvbiwgd2UgY2FuIHJlbGVhc2UgcmVmZXJlbmNlcyB0byB0aGUgZGV2aWNlIHNtb290aGx5
+LiBXZSBkbwo+IG5vdCBuZWVkIHRvIHBsYXkgdHJpY2t5IGdhbWVzIHdpdGgga3JlZnMsIHpvbWJp
+ZSBkYXRhIGFuZCBtb2R1bGUKPiByZWZjb3VudGluZy4KCkFueSBzb2x1dGlvbiB3aGljaCB0aGlu
+a3MgaXQgbmVlZHMgdG8gbG9jayBtb2R1bGVzIGludG8gdGhlIGNvcmUgaXMKZnVuZGFtZW50YWxs
+eSBicm9rZW4uICBJdCB0b3RhbGx5IG1pc3NlcyB0aGUgcG9pbnQuCgpXaGlsZSB5b3UgY2FuIGxv
+Y2sgYSBtb2R1bGUgaW50byB0aGUgY29yZSB1c2luZyB0cnlfZ2V0X21vZHVsZSgpLCB0aGF0CmRv
+ZXNuJ3Qgc3RvcCB0aGUgZGV2aWNlIGl0c2VsZiBiZWluZyB1bmJvdW5kIGZyb20gYSBkcml2ZXIu
+ICBTb28gbWFueQpwZW9wbGUgaGF2ZSBmYWxsZW4gaW50byB0aGF0IHRyYXAuICBUaGV5IHdyaXRl
+IHRoZWlyIGRldmljZSBkcml2ZXIsCmFsb25nIHdpdGggc29tZSBraW5kIG9mIGZyYW1ld29yayB3
+aGljaCB0aGV5IG1ha2UgdXNlIHRyeV9nZXRfbW9kdWxlKCkuClRoZXkgdGhpbmsgaXRzIHNhZmUu
+ICBXaGVuIHlvdSB0aGVuIGVjaG8gdGhlIGRldmljZSBuYW1lIGludG8gdGhlCmRyaXZlcidzIHVu
+YmluZCBzeXNmcyBmaWxlLCBhbGwgaGVsbCBicmVha3MgbG9vc2UgYW5kIHRoZSBrZXJuZWwgb29w
+c2VzLgoKdHJ5X2dldF9tb2R1bGUgaXMgL3RvdGFsbHkvIHVzZWxlc3MgZm9yIGVuc3VyaW5nIHRo
+YXQgdGhpbmdzIHN0aWNrIGFyb3VuZC4KClRoZSByZWFsaXR5IGlzIHRoYXQgeW91IGNhbid0IG1h
+a2UgZGV2aWNlcyBzdGljayBhcm91bmQuICBPbmNlIHRoYXQKcmVtb3ZlIGNhbGxiYWNrIGZyb20g
+dGhlIGRyaXZlciBsYXllciBpcyBjYWxsZWQsIHRoYXQncyBpdCwgdGhlIGRldmljZQpfaXNfIGdv
+aW5nIGF3YXkgd2hldGhlciB5b3UgbGlrZSBpdCBvciBub3QuICBZb3UgY2FuJ3Qgc3RvcCBpdC4g
+IEl0J3MKbm8gZ29vZCByZXR1cm5pbmcgLUVCVVNZLCBiZWNhdXNlIHRoZSByZW1vdmUgcmV0dXJu
+IGNvZGUgaXMgaWdub3JlZC4KCldoYXQncyBtb3JlIHNjYXJleSBpcyB3aGVuIHlvdSBjb25zaWRl
+ciB0aGF0IGluIGEgcmVhbCBob3RwbHVnCnNpdHVhdGlvbiwgd2hlbiB0aGUgcmVtb3ZlIGNhbGxi
+YWNrIGlzIGNhbGxlZCwgdGhlIGRldmljZSBoYXMKL2FscmVhZHkvIGdvbmUuCgpTbyBwbGVhc2Us
+IHN0b3AgdGhpbmtpbmcgdGhhdCB0cnlfZ2V0X21vZHVsZSgpIGhhcyBzb21lIG1hZ2ljIHNvbHV0
+aW9uLgpBbnkgInNvbHV0aW9uIiB0byBkZXZpY2UgbGlmZXRpbWVzIHVzaW5nIHRyeV9nZXRfbW9k
+dWxlKCkgdG90YWxseSBtaXNzZXMKdGhlIHByb2JsZW0sIGFuZCBpcyBqdXN0IG1lcmUgb2JmdXNj
+YXRpb24gYW5kIGFjdHVhbGx5IGEgYnVnIGluIGl0c2VsZi4KCi0tIApGVFRDIGJyb2FkYmFuZCBm
+b3IgMC44bWlsZSBsaW5lOiBjdXJyZW50bHkgYXQgOS41TWJwcyBkb3duIDQwMGticHMgdXAKYWNj
+b3JkaW5nIHRvIHNwZWVkdGVzdC5uZXQuCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
+Zm8vZHJpLWRldmVsCg==
