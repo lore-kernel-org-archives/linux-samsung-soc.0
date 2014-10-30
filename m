@@ -1,81 +1,37 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFT v3 06/14] regulator: max77802: Remove support for board files
-Date: Thu, 30 Oct 2014 13:10:37 +0100
-Message-ID: <1414671037.23399.2.camel@AMDC1943>
-References: <1414668053-31370-1-git-send-email-k.kozlowski@samsung.com>
- <1414668053-31370-7-git-send-email-k.kozlowski@samsung.com>
- <54522615.7040002@collabora.co.uk>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH] PM / Domains: Change prototype for the ->attach_dev() callback
+Date: Thu, 30 Oct 2014 13:17:30 +0100
+Message-ID: <CAMuHMdUnb-6zbLBWZa4Zdkqx7PQJLtMPotRNLFY+gRyyyGeX0g@mail.gmail.com>
+References: <1414670569-3002-1-git-send-email-ulf.hansson@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <54522615.7040002@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f47.google.com ([209.85.215.47]:40877 "EHLO
+	mail-la0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758926AbaJ3MRc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 30 Oct 2014 08:17:32 -0400
+In-Reply-To: <1414670569-3002-1-git-send-email-ulf.hansson@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Linux PM list <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>
 
-On czw, 2014-10-30 at 12:50 +0100, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On 10/30/2014 12:20 PM, Krzysztof Kozlowski wrote:
-> >  static int max77802_pmic_probe(struct platform_device *pdev)
-> >  {
-> >  	struct max77686_dev *iodev = dev_get_drvdata(pdev->dev.parent);
-> > -	struct max77686_platform_data *pdata = dev_get_platdata(iodev->dev);
-> >  	struct max77802_regulator_prv *max77802;
-> > -	int i, ret = 0, val;
-> > +	int i, val;
-> >  	struct regulator_config config = { };
-> >  
-> > -	/* This is allocated by the MFD driver */
-> > -	if (!pdata) {
-> > -		dev_err(&pdev->dev, "no platform data found for regulator\n");
-> > -		return -ENODEV;
-> > -	}
-> > -
-> >  	max77802 = devm_kzalloc(&pdev->dev,
-> >  				sizeof(struct max77802_regulator_prv),
-> >  				GFP_KERNEL);
-> >  	if (!max77802)
-> >  		return -ENOMEM;
-> >  
-> > -	if (iodev->dev->of_node) {
-> > -		ret = max77802_pmic_dt_parse_pdata(pdev, pdata);
-> > -		if (ret)
-> > -			return ret;
-> > +	if (!pdev->dev.of_node) {
-> > +		/*
-> > +		 * Backward DTS compatiblity where regulator driver had not
-> > +		 * a compatible property for itself.
-> > +		 */
-> > +		if (!iodev->dev->of_node) {
-> > +			dev_err(&pdev->dev, "No OF node for driver and its parent\n");
-> > +			return -EINVAL;
-> > +		}
-> > +		pdev->dev.of_node = of_get_child_by_name(iodev->dev->of_node,
-> > +								"regulators");
-> > +		max77802->missing_of_node = true;
-> >  	}
-> 
-> I may be missing something but I don't understand why a compatible string
-> for the regulators sub-node is needed. Isn't enough to just fill the
-> .regulators_node field in the struct regulator_desc? e.g:
-> 
->     .regulators_node = of_match_ptr("regulators") for max77802
->     .regulators_node = of_match_ptr("voltage-regulators") for max77686
-> 
-> AFAIU this should be enough for the core to extract the init_data and will
-> make your change much more simpler and you can drop patches 1-3 and 13-14.
-> 
-> Or maybe I misread the regulator_of_get_init_data() function?
+On Thu, Oct 30, 2014 at 1:02 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> Convert the prototype to return and int. This is just an initial step,
+> needed to support error handling.
+>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-The regulator_of_get_init_data() searches from dev->of_node or its child
-node.
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-But dev->of_node is NULL.
+Gr{oetje,eeting}s,
 
-That's why of_compatible is needed.
+                        Geert
 
-Best regards,
-Krzysztof
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
