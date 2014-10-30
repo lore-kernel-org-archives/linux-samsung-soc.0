@@ -1,59 +1,110 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [RFC 1/2] PM / Domains: Power on domain early during system resume
-Date: Thu, 30 Oct 2014 12:01:35 +0100
-Message-ID: <54521A8F.5070808@samsung.com>
-References: <1414072090-11293-1-git-send-email-k.kozlowski@samsung.com>
- <1414072090-11293-2-git-send-email-k.kozlowski@samsung.com>
- <7hk33iahvu.fsf@deeprootsystems.com> <1414654594.5114.8.camel@AMDC1943>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1414654594.5114.8.camel@AMDC1943>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@kernel.org>
-Cc: Len Brown <len.brown@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-pm@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Pavel Machek <pavel@ucw.cz>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v3 00/14] regulator: max77686: Add GPIO control
+Date: Thu, 30 Oct 2014 12:20:39 +0100
+Message-ID: <1414668053-31370-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:59728 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758794AbaJ3LVW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 30 Oct 2014 07:21:22 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-T24gMTAvMzAvMjAxNCAwODozNiBBTSwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToKPiBPbiDF
-m3JvLCAyMDE0LTEwLTI5IGF0IDEwOjQ2IC0wNzAwLCBLZXZpbiBIaWxtYW4gd3JvdGU6Cj4+IEty
-enlzenRvZiBLb3psb3dza2kgPGsua296bG93c2tpQHNhbXN1bmcuY29tPiB3cml0ZXM6Cj4+Cj4+
-PiBXaGVuIHJlc3VtaW5nIHRoZSBzeXN0ZW0gdGhlIHBvd2VyIGRvbWFpbiBoYXMgdG8gYmUgcG93
-ZXJlZCBvbiBlYXJseSBzbwo+Pj4gYW55IHJ1bnRpbWUgUE0gYXdhcmUgZGV2aWNlcyBjb3VsZCBy
-ZXN1bWUuCj4+Pgo+Pj4gVGhpcyBmaXhlcyBmb2xsb3dpbmcgc2NlbmFyaW8gcmVwcm9kdWNlZCBv
-biBFeHlub3MgRFJNOgo+Pj4gMS4gUG93ZXIgZG9tYWluIGlzIG9mZiBiZWZvcmUgc3VzcGVuZGlu
-ZyB0aGUgc3lzdGVtLgo+Pj4gMi4gU3lzdGVtIGlzIHN1c3BlbmRlZCB0byBSQU0uCj4+PiAzLiBS
-ZXN1bWluZyBzdGFydHMuIFRoZSBFeHlub3MgRFJNIGRyaXZlciByZXN1bWUgY2FsbGJhY2sgaXMg
-Y2FsbGVkLgo+Pj4gNC4gVGhlIEV4eW5vcyBEUk0gZHJpdmVyIGNhbGxzIGRybV9oZWxwZXJfcmVz
-dW1lX2ZvcmNlX21vZGUgd2hpY2ggdHVybnMKPj4+ICAgIHRoZSBzY3JlZW4gb24gYnkgY2FsbGlu
-ZyBleHlub3NfZHNpX2RwbXMgd2l0aCBEUk1fTU9ERV9EUE1TX09OLgo+PiBEdW1iIFE6IGlmIHRo
-ZSBkZXZpY2UgKGFuZCBwb3dlciBkb21haW4pIHdlcmUgb2ZmIGJlZm9yZSAoYW5kIGR1cmluZykK
-Pj4gc3VzcGVuZCwgd2h5IGFyZSB0aGV5IGJlaW5nIHJlc3VtZWQ/Cj4+Cj4+IFNob3VsZG4ndCB0
-aGUgcmVzdW1lIHBhdGggcmVzdG9yZSB0aGluZ3MgdG8gdGhlIHNhbWUgc3RhdGUgdGhleSB3ZXJl
-Cj4+IGJlZm9yZSBzdXNwZW5kPwo+IE9uZSBjb3VsZCBleHBlY3QgdGhhdC4uLiBidXQgdGhlIEV4
-eW5vcyBEUk0gZHJpdmVyIGJlaGF2ZXMgZGlmZmVyZW50bHkKPiAoYW5kIHNvbWUgb3RoZXIgZHJp
-dmVycyBhbHNvKS4gSW4gcmVzdW1lIG1ldGhvZCBpdCBjYWxscwo+IGRybV9oZWxwZXJfcmVzdW1l
-X2ZvcmNlX21vZGUoKSB3aGljaCBmb3JjZXMgcmVzdG9yaW5nIG1vZGUgc2V0dGluZwo+IGNvbmZp
-Z3VyYXRpb24uIEFwcGFyZW50bHkgc2V0dGluZyBhIG1vZGUgbmVlZHMgRFBNUyBvbjoKPiBzdGF0
-aWMgdm9pZCBleHlub3NfZHJtX2NydGNfY29tbWl0KHN0cnVjdCBkcm1fY3J0YyAqY3J0YykKPiB7
-Cj4gCS4uLgo+IAlleHlub3NfZHJtX2NydGNfZHBtcyhjcnRjLCBEUk1fTU9ERV9EUE1TX09OKTsK
-PiAJLi4uCj4KPiBUaGUgcHJldmlvdXMgRFBNUyBzdGF0dXMgKHN0YXR1cyBkdXJpbmcgc3VzcGVu
-ZCkgaXMgY29tcGxldGVseSBpZ25vcmVkCj4gaGVyZS4KClN1c3BlbmQgY2FsbGJhY2sgc3dpdGNo
-ZXMgb2ZmIGFsbCBjb25uZWN0b3JzICh0aHVzIGFsbCBvdGhlciBkZXZzIGluCnRoZWlyIHBpcGVs
-aW5lKSBieSBjYWxsaW5nIGRwbXNfb2ZmLAppbiByZXN0b3JlIGNhbGxiYWNrIGFsbCBkZXZzIGFy
-ZSByZXN0b3JlZCB0byB0aGVpciBwcmV2aW91cyBzdGF0ZSBieQpjYWxsaW5nIGFwcHJvcHJpYXRl
-IGRwbXMuClNvIEkgZ3Vlc3MgZHJtX2hlbHBlcl9yZXN1bWVfZm9yY2VfbW9kZSgpIGNhbGwgYXQg
-dGhlIGVuZCBvZiByZXN1bWUgaXMKaW5jb3JyZWN0LgpPbiB0aGUgb3RoZXIgc2lkZSBpdCBpcyBw
-cmVzZW50IGluIG1hbnkgb3RoZXIgZHJpdmVycywgc28gSSBhbSBhbHNvCmxpdHRsZSBiaXQgY29u
-ZnVzZWQuCgpSZWdhcmRzCkFuZHJ6ZWoKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbAo=
+Hi,
+
+
+Patches touching max77802 were not tested on hardware.
+I am kindly asking for testing it because I don't have the board
+with Maxim 77802.
+
+Changes since v2
+================
+Re-work the board file support removal after Javier's comments: use
+new DT style parsing. This imposes a lot of changes.
+1. Add "of_compatible" for regulator drivers.
+2. Provide backward compatibility if such "of_compatible" is not present.
+   The driver will search for regulators node and use it as dev->of_node.
+   Everything should be bisect-friendly.
+3. New patches: 1, 2, 3, 5, 13 and 14.
+4. Because of new style DT parsing it is much easier to put "gpio"
+   properties in regulators top node (not in each regulator).
+   This will be also new-gpio-lib friendly.
+
+Changes since v1
+================
+1. Add patch: 1/8 "regulator: max77686: Consistently index opmode
+   array by rdev id".
+2. Remove patch "regulator: max77686: Make regulator_desc array
+   const" (applied).
+3. Re-work patches removing from regulators board file support (2/8
+   and 3/8). Parse regulators with of_regulator_match() at once, remove
+   num_regulators.
+4. Patch 4/8: Add depends on OF to mfd/Kconfig. Add Javier's
+   reviewed-by.
+5. Patch 5/8: Add Javier's reviewed-by.
+6. Patch 6/8: Add depends on GPIOLIB to regulator/Kconfig. Rename
+   "external control" to "GPIO control" and "ext_control_gpios" to
+   simpler "gpios".
+   I tried to use new GPIO API but it ended with more problems
+   https://lkml.org/lkml/2014/10/29/239
+
+
+Description
+===========
+This patch helps in proper description of max77686 regulators in DTS by
+allowing to control them over GPIO. This allows removal of
+fixed regulators from DTS which duplicate the description of hardware.
+
+The first five patches are cleanups, including board support removal.
+
+The whole patchset should be taken at once.
+
+Patchset is rebased on next-20141023 AND:
+1. ARM: EXYNOS: Call regulator suspend prepare/finish
+   https://lkml.org/lkml/2014/10/20/545
+2. regulator: max77686/trats2: Disable some regulators in suspend
+   https://lkml.org/lkml/2014/10/27/280
+
+
+Best regards,
+Krzysztof
+
+*** BLURB HERE ***
+
+Krzysztof Kozlowski (14):
+  mfd: max77686/802: Map regulator driver to its own of_node
+  mfd/regulator: dt-bindings: max77686: Document of_compatible for
+    regulator
+  regulator: dt-bindings: max77802: Document of_compatible for regulator
+  regulator: max77686: Consistently index opmode array by rdev id
+  regulator: max77802: Don't ignore return value of current opmode
+  regulator: max77802: Remove support for board files
+  regulator: max77686: Remove support for board files
+  mfd: max77686/802: Remove support for board files
+  regulator: max77686: Initialize opmode explicitly to normal mode
+  regulator: max77686: Add GPIO control
+  mfd/regulator: dt-bindings: max77686: Document gpio properties
+  ARM: dts: exynos4412-trats: Switch max77686 regulators to GPIO control
+  ARM: dts: exynos5420-peach: Update to new max77802 regulator
+    compatible
+  ARM: dts: exynos5800-peach: Update to new max77802 regulator
+    compatible
+
+ Documentation/devicetree/bindings/mfd/max77686.txt |  16 +-
+ .../devicetree/bindings/regulator/max77802.txt     |   8 +-
+ arch/arm/boot/dts/exynos4412-trats2.dts            |  28 +---
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |   2 +
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |   2 +
+ drivers/mfd/Kconfig                                |   1 +
+ drivers/mfd/max77686.c                             |  33 +---
+ drivers/regulator/max77686.c                       | 186 +++++++++++++--------
+ drivers/regulator/max77802.c                       | 116 +++++--------
+ include/linux/mfd/max77686-private.h               |   1 -
+ include/linux/mfd/max77686.h                       |  28 ----
+ 11 files changed, 200 insertions(+), 221 deletions(-)
+
+-- 
+1.9.1
