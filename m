@@ -1,144 +1,58 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH 00/33] thermal: exynos: convert the driver to use per-SoC
- type operations
-Date: Wed, 29 Oct 2014 22:44:29 -0400
-Message-ID: <20141030024426.GA29689@developer>
-References: <1411054070-25757-1-git-send-email-b.zolnierkie@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [RFC 1/2] PM / Domains: Power on domain early during system resume
+Date: Thu, 30 Oct 2014 08:36:34 +0100
+Message-ID: <1414654594.5114.8.camel@AMDC1943>
+References: <1414072090-11293-1-git-send-email-k.kozlowski@samsung.com>
+ <1414072090-11293-2-git-send-email-k.kozlowski@samsung.com>
+ <7hk33iahvu.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="r5Pyd7+fXNt84Ff3"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1411054070-25757-1-git-send-email-b.zolnierkie@samsung.com>
+In-reply-to: <7hk33iahvu.fsf@deeprootsystems.com>
 Sender: linux-pm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kevin Hilman <khilman@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
---r5Pyd7+fXNt84Ff3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Bartlomiej,
-
-On Thu, Sep 18, 2014 at 05:27:17PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> Hi,
+On =C5=9Bro, 2014-10-29 at 10:46 -0700, Kevin Hilman wrote:
+> Krzysztof Kozlowski <k.kozlowski@samsung.com> writes:
 >=20
-> This patch series replaces the hardware registers abstractions in
-> the Exynos thermal driver by the usage of per-SoC type operations.
-> Such solution provides simpler, easier to understand code and
-> allows removal of ~250 LOCs (~11% of the whole source code) from
-> the driver.  Some other driver improvements are now also possible
-> thanks to these changes but are scheduled at later time (like
-> consolidating code for clearing IRQs using INTCLEAR register).
+> > When resuming the system the power domain has to be powered on earl=
+y so
+> > any runtime PM aware devices could resume.
+> >
+> > This fixes following scenario reproduced on Exynos DRM:
+> > 1. Power domain is off before suspending the system.
+> > 2. System is suspended to RAM.
+> > 3. Resuming starts. The Exynos DRM driver resume callback is called=
+=2E
+> > 4. The Exynos DRM driver calls drm_helper_resume_force_mode which t=
+urns
+> >    the screen on by calling exynos_dsi_dpms with DRM_MODE_DPMS_ON.
 >=20
-> The patchset should not cause any functionality changes.  This
-> means that unless there are some bugs in the patches itself there
-> should be no behavior changes for the driver (this also includes
-> lack of changes in the way hardware is accessed by the driver).
+> Dumb Q: if the device (and power domain) were off before (and during)
+> suspend, why are they being resumed?
 >=20
-> All testing was done on (Exynos4412 SoC based) ODROID U3 board
-> (some additional patches are needed to make the Exynos thermal
-> driver work on this hardware).
->=20
-> Depends on:
-> - 'next' branch of linux-soc-thermal.git kernel tree from Eduardo
-> - [PATCH] thermal: exynos: use correct offset for TMU_CONTROL
->   register on Exynos5260
->   (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg36529=
-=2Ehtml)
->=20
+> Shouldn't the resume path restore things to the same state they were
+> before suspend?
 
-Could you please refresh this series?
+One could expect that... but the Exynos DRM driver behaves differently
+(and some other drivers also). In resume method it calls
+drm_helper_resume_force_mode() which forces restoring mode setting
+configuration. Apparently setting a mode needs DPMS on:
+static void exynos_drm_crtc_commit(struct drm_crtc *crtc)
+{
+	...
+	exynos_drm_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
+	...
 
-I checked until patch 09, but patch 10 fails to apply:
-patching file drivers/thermal/samsung/exynos_tmu.c
-Hunk #1 succeeded at 414 (offset 15 lines).
-patching file drivers/thermal/samsung/exynos_tmu.h
-Hunk #1 succeeded at 92 with fuzz 2 (offset -4 lines).
-Hunk #2 succeeded at 117 (offset -8 lines).
-patching file drivers/thermal/samsung/exynos_tmu_data.c
-Hunk #1 FAILED at 422.
-1 out of 1 hunk FAILED -- saving rejects to file
-drivers/thermal/samsung/exynos_tmu_data.c.rej
+The previous DPMS status (status during suspend) is completely ignored
+here.
 
-I also have in my local tree the dependency patch you mention above.
+I dunno why... maybe someone from DRM could share some thoughts?
 
-Cheers,
 
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
->=20
->=20
-> Bartlomiej Zolnierkiewicz (33):
->   thermal: exynos: remove needless triminfo_data abstraction
->   thermal: exynos: remove needless tmu_status abstraction
->   thermal: exynos: remove needless threshold_temp abstraction
->   thermal: exynos: remove needless triminfo_ctrl abstraction
->   thermal: exynos: remove needless test_mux_addr_shift abstraction
->   thermal: exynos: remove needless therm_trip_[mode,mask]_shift
->     abstractions
->   thermal: exynos: remove needless therm_trip_en_shift abstraction
->   thermal: exynos: remove needless emul_temp_shift abstraction
->   thermal: exynos: remove needless emul_time_shift abstraction
->   thermal: exynos: replace tmu_irqstatus check by Exynos5440 one
->   thermal: exynos: replace tmu_pmin check by Exynos5440 one
->   thermal: exynos: simplify HW_TRIP level setting
->   thermal: exynos: replace threshold_falling check by Exynos SoC type
->     one
->   thermal: exynos: remove TMU_SUPPORT_READY_STATUS flag
->   thermal: exynos: remove TMU_SUPPORT_TRIM_RELOAD flag
->   thermal: exynos: add sanitize_temp_error() helper
->   thermal: exynos: add get_th_reg() helper
->   thermal: exynos: add ->tmu_initialize method
->   thermal: exynos: add get_con_reg() helper
->   thermal: exynos: add ->tmu_control method
->   thermal: exynos: add ->tmu_read method
->   thermal: exynos: add get_emul_con_reg() helper
->   thermal: exynos: add ->tmu_set_emulation method
->   thermal: exynos: add ->tmu_clear_irqs method
->   thermal: exynos: remove TMU_SUPPORT_FALLING_TRIP flag
->   thermal: exynos: remove TMU_SUPPORT_EMUL_TIME flag
->   thermal: exynos: remove TMU_SUPPORT_EMULATION flag
->   thermal: exynos: remove TMU_SUPPORT_ADDRESS_MULTIPLE flag
->   thermal: exynos: remove TMU_SUPPORT_MULTI_INST flag
->   thermal: exynos: remove test_mux pdata field
->   thermal: exynos: remove SoC type ifdefs
->   thermal: exynos: remove __EXYNOS5420_TMU_DATA macro
->   thermal: exynos: remove exynos_tmu_data.h include
->=20
->  drivers/thermal/samsung/exynos_thermal_common.h |   1 -
->  drivers/thermal/samsung/exynos_tmu.c            | 706 +++++++++++++++++-=
-------
->  drivers/thermal/samsung/exynos_tmu.h            | 131 +----
->  drivers/thermal/samsung/exynos_tmu_data.c       | 260 +--------
->  drivers/thermal/samsung/exynos_tmu_data.h       | 174 ------
->  5 files changed, 509 insertions(+), 763 deletions(-)
->  delete mode 100644 drivers/thermal/samsung/exynos_tmu_data.h
->=20
-> --=20
-> 1.8.2.3
->=20
+Best regards,
+Krzysztof
 
---r5Pyd7+fXNt84Ff3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUUaYCAAoJEMLUO4d9pOJWan4H/2YDAd8+bVQmCWRmwXupVsgV
-uGCnV8TPa0lNxHWj49Kt4eWPKmDdn6v7/0aIAUGiAcUpwEd1+KOC+Lb/46GT5Tmn
-mnBS8F5XARBZZmtQvW3eX9i4xoOYEtfCl35Whuud1rdcsJQbRs8eEgJE9Lq/5k15
-tMvmElmZcJJBufQbJ2aBDoEFAFyajjIm3jzvk4WVuDgJ+0vaGvgdv+f86jui3HMg
-hYArjxrKzxX9Vmc9IREPj0qnSkGBUWVwncppD/PfM4ZMsc4R9zukZr2wcUZaPfvN
-rmrOLLJvSrVbmxjyfNkne7LmaOR4LJwZy9drRTCDiATpK5+hskI6srI+RB9pjMU=
-=gdVE
------END PGP SIGNATURE-----
-
---r5Pyd7+fXNt84Ff3--
