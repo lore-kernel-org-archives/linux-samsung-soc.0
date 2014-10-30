@@ -1,110 +1,41 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v3 00/14] regulator: max77686: Add GPIO control
-Date: Thu, 30 Oct 2014 12:20:39 +0100
-Message-ID: <1414668053-31370-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:59728 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758794AbaJ3LVW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Oct 2014 07:21:22 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v3 14/14] ARM: dts: exynos5800-peach: Update to new max77802
+ regulator compatible
+Date: Thu, 30 Oct 2014 12:20:53 +0100
+Message-ID: <1414668053-31370-15-git-send-email-k.kozlowski@samsung.com>
+References: <1414668053-31370-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1414668053-31370-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hi,
+Update to new bindings for max77802 regulator driver by adding proper
+compatible field for regulators node.
 
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ arch/arm/boot/dts/exynos5800-peach-pi.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Patches touching max77802 were not tested on hardware.
-I am kindly asking for testing it because I don't have the board
-with Maxim 77802.
-
-Changes since v2
-================
-Re-work the board file support removal after Javier's comments: use
-new DT style parsing. This imposes a lot of changes.
-1. Add "of_compatible" for regulator drivers.
-2. Provide backward compatibility if such "of_compatible" is not present.
-   The driver will search for regulators node and use it as dev->of_node.
-   Everything should be bisect-friendly.
-3. New patches: 1, 2, 3, 5, 13 and 14.
-4. Because of new style DT parsing it is much easier to put "gpio"
-   properties in regulators top node (not in each regulator).
-   This will be also new-gpio-lib friendly.
-
-Changes since v1
-================
-1. Add patch: 1/8 "regulator: max77686: Consistently index opmode
-   array by rdev id".
-2. Remove patch "regulator: max77686: Make regulator_desc array
-   const" (applied).
-3. Re-work patches removing from regulators board file support (2/8
-   and 3/8). Parse regulators with of_regulator_match() at once, remove
-   num_regulators.
-4. Patch 4/8: Add depends on OF to mfd/Kconfig. Add Javier's
-   reviewed-by.
-5. Patch 5/8: Add Javier's reviewed-by.
-6. Patch 6/8: Add depends on GPIOLIB to regulator/Kconfig. Rename
-   "external control" to "GPIO control" and "ext_control_gpios" to
-   simpler "gpios".
-   I tried to use new GPIO API but it ended with more problems
-   https://lkml.org/lkml/2014/10/29/239
-
-
-Description
-===========
-This patch helps in proper description of max77686 regulators in DTS by
-allowing to control them over GPIO. This allows removal of
-fixed regulators from DTS which duplicate the description of hardware.
-
-The first five patches are cleanups, including board support removal.
-
-The whole patchset should be taken at once.
-
-Patchset is rebased on next-20141023 AND:
-1. ARM: EXYNOS: Call regulator suspend prepare/finish
-   https://lkml.org/lkml/2014/10/20/545
-2. regulator: max77686/trats2: Disable some regulators in suspend
-   https://lkml.org/lkml/2014/10/27/280
-
-
-Best regards,
-Krzysztof
-
-*** BLURB HERE ***
-
-Krzysztof Kozlowski (14):
-  mfd: max77686/802: Map regulator driver to its own of_node
-  mfd/regulator: dt-bindings: max77686: Document of_compatible for
-    regulator
-  regulator: dt-bindings: max77802: Document of_compatible for regulator
-  regulator: max77686: Consistently index opmode array by rdev id
-  regulator: max77802: Don't ignore return value of current opmode
-  regulator: max77802: Remove support for board files
-  regulator: max77686: Remove support for board files
-  mfd: max77686/802: Remove support for board files
-  regulator: max77686: Initialize opmode explicitly to normal mode
-  regulator: max77686: Add GPIO control
-  mfd/regulator: dt-bindings: max77686: Document gpio properties
-  ARM: dts: exynos4412-trats: Switch max77686 regulators to GPIO control
-  ARM: dts: exynos5420-peach: Update to new max77802 regulator
-    compatible
-  ARM: dts: exynos5800-peach: Update to new max77802 regulator
-    compatible
-
- Documentation/devicetree/bindings/mfd/max77686.txt |  16 +-
- .../devicetree/bindings/regulator/max77802.txt     |   8 +-
- arch/arm/boot/dts/exynos4412-trats2.dts            |  28 +---
- arch/arm/boot/dts/exynos5420-peach-pit.dts         |   2 +
- arch/arm/boot/dts/exynos5800-peach-pi.dts          |   2 +
- drivers/mfd/Kconfig                                |   1 +
- drivers/mfd/max77686.c                             |  33 +---
- drivers/regulator/max77686.c                       | 186 +++++++++++++--------
- drivers/regulator/max77802.c                       | 116 +++++--------
- include/linux/mfd/max77686-private.h               |   1 -
- include/linux/mfd/max77686.h                       |  28 ----
- 11 files changed, 200 insertions(+), 221 deletions(-)
-
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index e8fdda827fc9..689c6bc84fd3 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -184,6 +184,8 @@
+ 		inl10-supply = <&buck7_reg>;
+ 
+ 		regulators {
++			compatible = "maxim,max77802-pmic";
++
+ 			buck1_reg: BUCK1 {
+ 				regulator-name = "vdd_mif";
+ 				regulator-min-microvolt = <800000>;
 -- 
 1.9.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
