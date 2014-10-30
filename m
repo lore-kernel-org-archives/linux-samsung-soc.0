@@ -1,85 +1,50 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFT v3 06/14] regulator: max77802: Remove support for board files
-Date: Thu, 30 Oct 2014 13:53:07 +0100
-Message-ID: <1414673587.23399.13.camel@AMDC1943>
-References: <1414668053-31370-1-git-send-email-k.kozlowski@samsung.com>
- <1414668053-31370-7-git-send-email-k.kozlowski@samsung.com>
- <54522615.7040002@collabora.co.uk> <1414671037.23399.2.camel@AMDC1943>
- <54522D2C.9050002@collabora.co.uk> <1414672235.23399.7.camel@AMDC1943>
- <54523224.3010407@collabora.co.uk>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 0/4] drm/exynos/dsi: remove global display variable
+Date: Thu, 30 Oct 2014 21:59:59 +0900
+Message-ID: <5452364F.2070402@samsung.com>
+References: <1412683271-15835-1-git-send-email-a.hajda@samsung.com>
+ <5452318C.1030107@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <54523224.3010407@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <5452318C.1030107@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On czw, 2014-10-30 at 13:42 +0100, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On 10/30/2014 01:30 PM, Krzysztof Kozlowski wrote:
-> tor_of_get_init_data() function?
-> >> > 
-> >> > The regulator_of_get_init_data() searches from dev->of_node or its child
-> >> > node.
-> >> > 
-> >> > But dev->of_node is NULL.
-> >> > 
-> >> > That's why of_compatible is needed.
-> >> 
-> >> Yes but regulator_register() does dev = config->dev and config->dev is set
-> >> to config.dev = iodev->dev in the driver probe function which is the
-> >> pdev->dev.parent (the PMIC struct device) that has an associated of_node.
-> >> 
-> >> So, regulator_of_get_init_data() will call of_get_child_by_name() passing
-> >> the PMIC of_node and the sub-node name that contains the regulators. That
-> >> is, whatever was set in desc->regulators_node and that should be enough.
-> > 
-> > I missed that one in max77802 (in max77686: config.dev = &pdev->dev).
-> > Now I wonder if it is proper to attach regulators to driver's parent
-> > device. Consider regulator_register, around line 3640:
-> > 	rdev->dev.parent = dev;
-> > The parent of regulators will be equal to parent of regulator driver -
-> > main MFD driver.
-> >
-> 
-> An early version of the max77802 regulator driver also set config.dev to
-> &pdev->dev but then Mark asked me if I was sure that it should not be the
-> MFD device instead.
-> 
-> I then read in regulator_register() that the rdev->dev.parent was set
-> to the device passed in config.dev as you said so I was convinced that it
-> should be the parent device instead.
-> 
-> Please take a look at [0] for that discussion.
-
-To me a intuitive structure would be:
-MFD device
-  |
-  - clock device
-     |
-     - clock1
-     - clock2
-  - regulator device
-     |
-     - LDO1
-     - LDO2
-etc.
-
-This also maps to structure in DTS. dev_err* messages and any
-allocations should be done on behalf of regulator device, not parent.
-
-Various drivers do this differently... The wm8* drivers set it mostly to
-parent (MFD)...
-
-I do not insists, especially because using parent's device would make
-this driver simpler.
-
-Mark, maybe you could shed light on it?
-
-
-Best regards,
-Krzysztof
+T24gMjAxNOuFhCAxMOyblCAzMOydvCAyMTozOSwgQW5kcnplaiBIYWpkYSB3cm90ZToKPiBPbiAx
+MC8wNy8yMDE0IDAyOjAxIFBNLCBBbmRyemVqIEhhamRhIHdyb3RlOgo+PiBIaSBJbmtpLAo+Pgo+
+PiBNYW55IEV4eW5vcyBEUk0gZHJpdmVycyB1c2VzIGdsb2JhbCB2YXJpYWJsZXMgdG8gcmVwcmVz
+ZW50IGFzc29jaWF0ZWQgZGV2aWNlcwo+PiBpbiBFeHlub3MgRFJNIGludGVybmFsIGZyYW1ld29y
+ay4gSXQgaXMgcXVpdGUgY29uZnVzaW5nLCBpdCBhZGRzIGRhdGEgZHVwbGljYXRpb24KPj4gYW5k
+IGZpbmFsbHkgaXQgZG9lcyBub3QgYWxsb3cgdG8gaGFuZGxlIG1vcmUgdGhhbiBvbmUgZGV2aWNl
+IGluIHN5c3RlbS4KPj4gSXQgc2VlbXMgYmV0dGVyIHRvIGVtYmVkIHN1Y2ggc3RydWN0dXJlcyBp
+biBwcml2YXRlIGNvbnRleHQgb2YgdGhlIGRldmljZS4KPiAKPiBHZW50bHkgcGluZy4KClRoaXMg
+cGF0Y2ggc2VyaWVzIGFscmVhZHkgaXMgaW4gZXh5bm9zLWRybS1uZXh0LXRvZG8gYnJhbmNoLiBJ
+IHdpbGwgbW92ZQppdCB0byBleHlub3MtZHJtLW5leHQgYWZ0ZXIgY2hlY2tpbmcuCgpUaGFua3Ms
+Cklua2kgRGFlCgo+IAo+IFJlZ2FyZHMKPiBBbmRyemVqCj4gCj4+Cj4+IFRoZSBwYXRjaHNldCBp
+cyBiYXNlZCBvbiBleHlub3NfZHJtX25leHQgcGx1cyBteSBwYXRjaCBbMV06Cj4+ICdkcm0vZXh5
+bm9zOiByZW1vdmUgZXhwbGljaXQgZW5jb2Rlci9jb25uZWN0b3IgZGUtaW5pdGlhbGl6YXRpb24n
+Lgo+Pgo+PiBJZiB0aGUgcGF0Y2hzZXQgaXMgT0sgZm9yIHlvdSBJIGNhbiBwcmVwYXJlIHNpbWls
+YXIgcGF0Y2hlcyBmb3Igb3RoZXIgRXh5bm9zIERSTSBjb21wb25lbnRzLgo+Pgo+PiBbMV06IGh0
+dHBzOi8vbGttbC5vcmcvbGttbC8yMDE0LzkvMjIvMTQ4Cj4+Cj4+IFJlZ2FyZHMKPj4gQW5kcnpl
+ago+Pgo+Pgo+PiBBbmRyemVqIEhhamRhICg0KToKPj4gICBkcm0vZXh5bm9zL2RzaTogcmVtb3Zl
+IGdsb2JhbCB2YXJpYWJsZSBleHlub3NfZHNpX2Rpc3BsYXkKPj4gICBkcm0vZXh5bm9zL2RzaTog
+c2ltcGxpZnkgZGV2aWNlIHBvaW50ZXIgZXZhbHVhdGlvbgo+PiAgIGRybS9leHlub3MvZHNpOiBy
+ZW1vdmUgcmVkdW5kYW50IGVuY29kZXIgZmllbGQKPj4gICBkcm0vZXh5bm9zL2RzaTogc3RvcCB1
+c2luZyBkaXNwbGF5LT5jdHggcG9pbnRlcgo+Pgo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2RzaS5jIHwgOTYgKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tCj4+
+ICAxIGZpbGUgY2hhbmdlZCwgNDcgaW5zZXJ0aW9ucygrKSwgNDkgZGVsZXRpb25zKC0pCj4+Cj4g
+Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
