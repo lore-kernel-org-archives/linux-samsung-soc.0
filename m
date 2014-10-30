@@ -1,204 +1,116 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v4 2/2] ARM: EXYNOS: Remove i2c sys configuration related code
-Date: Thu, 30 Oct 2014 13:34:30 +0530
-Message-ID: <1414656270-8048-3-git-send-email-pankaj.dubey@samsung.com>
-References: <1414656270-8048-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:43411 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758502AbaJ3ILa (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Oct 2014 04:11:30 -0400
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NE900DHG0351S30@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 30 Oct 2014 17:11:29 +0900 (KST)
-In-reply-to: <1414656270-8048-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [PATCH V7 03/12] drm/bridge: Add helper functions for drm_bridge
+Date: Thu, 30 Oct 2014 11:01:02 +0100
+Message-ID: <54520C5E.3020609@samsung.com>
+References: <1409149783-12416-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1409149783-12416-4-git-send-email-ajaykumar.rs@samsung.com>
+ <20141027190137.GT26941@phenom.ffwll.local>
+ <CAOw6vbLNOqp=X4epwDPb7zT-j2+oUuLoeV2S=x+oGPLQwK+Z7Q@mail.gmail.com>
+ <CAKMK7uEch65=ZuaG=4JY2u3S3w5RND+uNc5+qL=tWxDLfEqEwQ@mail.gmail.com>
+ <CAKMK7uEtNMOTg2j9XYN91_gRWWxHCfnb57HHpsdXki+T-rvwYg@mail.gmail.com>
+ <20141028143548.GB17770@ulmo> <20141029074314.GL26941@phenom.ffwll.local>
+ <20141029083821.GA27900@ulmo> <20141029085702.GP26941@phenom.ffwll.local>
+ <20141029091436.GB27900@ulmo>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20141029091436.GB27900@ulmo>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Ajay kumar <ajaynumb@gmail.com>, Thierry Reding <treding@nvidia.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-As all these code has been moved into i2c driver, now we can
-safely remove them from machine files.
-
-CC: Russell King <linux@arm.linux.org.uk>
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
- arch/arm/mach-exynos/exynos.c           |   39 ++-----------------------------
- arch/arm/mach-exynos/include/mach/map.h |    3 ---
- arch/arm/mach-exynos/pm.c               |    3 ++-
- arch/arm/mach-exynos/regs-sys.h         |   22 -----------------
- arch/arm/mach-exynos/suspend.c          |    7 ------
- 5 files changed, 4 insertions(+), 70 deletions(-)
- delete mode 100644 arch/arm/mach-exynos/regs-sys.h
-
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 46d3134..6787b00 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -27,20 +27,16 @@
- #include <asm/mach/map.h>
- #include <asm/memory.h>
- 
-+#include <mach/map.h>
-+
- #include "common.h"
- #include "mfc.h"
- #include "regs-pmu.h"
--#include "regs-sys.h"
- 
- void __iomem *pmu_base_addr;
- 
- static struct map_desc exynos4_iodesc[] __initdata = {
- 	{
--		.virtual	= (unsigned long)S3C_VA_SYS,
--		.pfn		= __phys_to_pfn(EXYNOS4_PA_SYSCON),
--		.length		= SZ_64K,
--		.type		= MT_DEVICE,
--	}, {
- 		.virtual	= (unsigned long)S3C_VA_TIMER,
- 		.pfn		= __phys_to_pfn(EXYNOS4_PA_TIMER),
- 		.length		= SZ_16K,
-@@ -110,11 +106,6 @@ static struct map_desc exynos4_iodesc[] __initdata = {
- 
- static struct map_desc exynos5_iodesc[] __initdata = {
- 	{
--		.virtual	= (unsigned long)S3C_VA_SYS,
--		.pfn		= __phys_to_pfn(EXYNOS5_PA_SYSCON),
--		.length		= SZ_64K,
--		.type		= MT_DEVICE,
--	}, {
- 		.virtual	= (unsigned long)S3C_VA_TIMER,
- 		.pfn		= __phys_to_pfn(EXYNOS5_PA_TIMER),
- 		.length		= SZ_16K,
-@@ -262,32 +253,6 @@ static void __init exynos_init_irq(void)
- 
- static void __init exynos_dt_machine_init(void)
- {
--	struct device_node *i2c_np;
--	const char *i2c_compat = "samsung,s3c2440-i2c";
--	unsigned int tmp;
--	int id;
--
--	/*
--	 * Exynos5's legacy i2c controller and new high speed i2c
--	 * controller have muxed interrupt sources. By default the
--	 * interrupts for 4-channel HS-I2C controller are enabled.
--	 * If node for first four channels of legacy i2c controller
--	 * are available then re-configure the interrupts via the
--	 * system register.
--	 */
--	if (soc_is_exynos5()) {
--		for_each_compatible_node(i2c_np, NULL, i2c_compat) {
--			if (of_device_is_available(i2c_np)) {
--				id = of_alias_get_id(i2c_np, "i2c");
--				if (id < 4) {
--					tmp = readl(EXYNOS5_SYS_I2C_CFG);
--					writel(tmp & ~(0x1 << id),
--							EXYNOS5_SYS_I2C_CFG);
--				}
--			}
--		}
--	}
--
- 	/*
- 	 * This is called from smp_prepare_cpus if we've built for SMP, but
- 	 * we still need to set it up for PM and firmware ops if not.
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index f0b7e92..6779d73 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -24,9 +24,6 @@
- 
- #define EXYNOS_PA_CHIPID		0x10000000
- 
--#define EXYNOS4_PA_SYSCON		0x10010000
--#define EXYNOS5_PA_SYSCON		0x10050100
--
- #define EXYNOS4_PA_CMU			0x10030000
- #define EXYNOS5_PA_CMU			0x10010000
- 
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 86f3ecd..dfc8594 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -23,12 +23,13 @@
- #include <asm/smp_scu.h>
- #include <asm/suspend.h>
- 
-+#include <mach/map.h>
-+
- #include <plat/pm-common.h>
- 
- #include "common.h"
- #include "exynos-pmu.h"
- #include "regs-pmu.h"
--#include "regs-sys.h"
- 
- static inline void __iomem *exynos_boot_vector_addr(void)
- {
-diff --git a/arch/arm/mach-exynos/regs-sys.h b/arch/arm/mach-exynos/regs-sys.h
-deleted file mode 100644
-index 84332b0..0000000
---- a/arch/arm/mach-exynos/regs-sys.h
-+++ /dev/null
-@@ -1,22 +0,0 @@
--/*
-- * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-- *             http://www.samsung.com
-- *
-- * EXYNOS - system register definition
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_ARCH_REGS_SYS_H
--#define __ASM_ARCH_REGS_SYS_H __FILE__
--
--#include <mach/map.h>
--
--#define S5P_SYSREG(x)                          (S3C_VA_SYS + (x))
--
--/* For EXYNOS5 */
--#define EXYNOS5_SYS_I2C_CFG                    S5P_SYSREG(0x0234)
--
--#endif /* __ASM_ARCH_REGS_SYS_H */
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index 079d999..489e99f 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -32,7 +32,6 @@
- 
- #include "common.h"
- #include "regs-pmu.h"
--#include "regs-sys.h"
- #include "exynos-pmu.h"
- 
- #define S5P_CHECK_SLEEP 0x00000BAD
-@@ -49,10 +48,6 @@ struct exynos_wkup_irq {
- 	u32 mask;
- };
- 
--static struct sleep_save exynos5_sys_save[] = {
--	SAVE_ITEM(EXYNOS5_SYS_I2C_CFG),
--};
--
- static struct sleep_save exynos_core_save[] = {
- 	/* SROM side */
- 	SAVE_ITEM(S5P_SROM_BW),
-@@ -302,8 +297,6 @@ static const struct exynos_pm_data exynos5250_pm_data = {
- 	.wkup_irq	= exynos5250_wkup_irq,
- 	.wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
- 	.release_ret_regs = exynos_release_ret_regs,
--	.extra_save	= exynos5_sys_save,
--	.num_extra_save	= ARRAY_SIZE(exynos5_sys_save),
- 	.pm_suspend	= exynos_pm_suspend,
- 	.pm_resume	= exynos_pm_resume,
- 	.pm_prepare	= exynos_pm_prepare,
--- 
-1.7.9.5
+T24gMTAvMjkvMjAxNCAxMDoxNCBBTSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gT24gV2VkLCBP
+Y3QgMjksIDIwMTQgYXQgMDk6NTc6MDJBTSArMDEwMCwgRGFuaWVsIFZldHRlciB3cm90ZToKPj4g
+T24gV2VkLCBPY3QgMjksIDIwMTQgYXQgMDk6Mzg6MjNBTSArMDEwMCwgVGhpZXJyeSBSZWRpbmcg
+d3JvdGU6Cj4+PiBPbiBXZWQsIE9jdCAyOSwgMjAxNCBhdCAwODo0MzoxNEFNICswMTAwLCBEYW5p
+ZWwgVmV0dGVyIHdyb3RlOgo+Pj4+IE9uIFR1ZSwgT2N0IDI4LCAyMDE0IGF0IDAzOjM1OjUwUE0g
+KzAxMDAsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+Pj4+PiBPbiBNb24sIE9jdCAyNywgMjAxNCBh
+dCAxMToyNjozMFBNICswMTAwLCBEYW5pZWwgVmV0dGVyIHdyb3RlOgo+Pj4+Pj4gT24gTW9uLCBP
+Y3QgMjcsIDIwMTQgYXQgMTE6MjAgUE0sIERhbmllbCBWZXR0ZXIgPGRhbmllbEBmZndsbC5jaD4g
+d3JvdGU6Cj4+Pj4+Pj4gT24gTW9uLCBPY3QgMjcsIDIwMTQgYXQgODo1OCBQTSwgU2VhbiBQYXVs
+IDxzZWFucGF1bEBjaHJvbWl1bS5vcmc+IHdyb3RlOgo+Pj4+Pj4+Pj4+IEBAIC02NjAsOCArNjYy
+LDExIEBAIHN0cnVjdCBkcm1fYnJpZGdlX2Z1bmNzIHsKPj4+Pj4+Pj4+PiAgICogQGRyaXZlcl9w
+cml2YXRlOiBwb2ludGVyIHRvIHRoZSBicmlkZ2UgZHJpdmVyJ3MgaW50ZXJuYWwgY29udGV4dAo+
+Pj4+Pj4+Pj4+ICAgKi8KPj4+Pj4+Pj4+PiAgc3RydWN0IGRybV9icmlkZ2Ugewo+Pj4+Pj4+Pj4+
+IC0gICAgIHN0cnVjdCBkcm1fZGV2aWNlICpkZXY7Cj4+Pj4+Pj4+Pj4gKyAgICAgc3RydWN0IGRl
+dmljZSAqZGV2Owo+Pj4+Pj4+Pj4KPj4+Pj4+Pj4+IFBsZWFzZSBkb24ndCByZW5hbWUgdGhlIC0+
+ZGV2IHBvaW50ZXIgaW50byBkcm0uIEJlY2F1c2UgX2FsbF8gdGhlIG90aGVyCj4+Pj4+Pj4+PiBk
+cm0gc3RydWN0dXJlcyBzdGlsbCBjYWxsIGl0IC0+ZGV2LiBBbHNvLCBjYW4ndCB3ZSB1c2Ugc3Ry
+dWN0IGRldmljZV9ub2RlCj4+Pj4+Pj4+PiBoZXJlIGxpa2Ugd2UgZG8gaW4gdGhlIG9mIGhlbHBl
+cnMgUnVzc2VsbCBhZGRlZD8gU2VlIDdlNDM1YWFkMzgwODMKPj4+Pj4+Pj4+Cj4+Pj4+Pj4+Cj4+
+Pj4+Pj4+IEkgdGhpbmsgdGhpcyBpcyBtb2RlbGVkIGFmdGVyIHRoZSBuYW1pbmcgaW4gZHJtX3Bh
+bmVsLCBGV0lXLiBIb3dldmVyLAo+Pj4+Pj4+PiBzZWVtcyByZWFzb25hYmxlIHRvIGtlZXAgdGhl
+IGRldmljZV9ub2RlIGluc3RlYWQuCj4+Pj4+Pj4KPj4+Pj4+PiBIbSwgaW5kZWVkLiBUYmggSSB2
+b3RlIHRvIHJlbmFtZSBkcm1fcGFuZWwtPmRybSB0byAtPmRldiBhbmQgbGlrZSB3aXRoCj4+Pj4+
+Pj4gZHJtX2NydGMgZHJvcCB0aGUgc3RydWN0IGRldmljZSBhbmQgZ28gZGlyZWN0bHkgdG8gYSBz
+dHJ1Y3QKPj4+Pj4+PiBkZXZpY2Vfbm9kZS4gU2luY2Ugd2UgZG9uJ3QgcmVhbGx5IG5lZWQgdGhl
+IHN0dXJjdCBkZXZpY2UsIHRoZSBvbmx5Cj4+Pj4+Pj4gdGhpbmcgd2UgY2FyZSBhYm91dCBpcyB0
+aGUgb2Zfbm9kZS4gRm9yIGFkZGVkIGJvbnVzIHdyYXAgYW4gI2lmZGVmCj4+Pj4+Pj4gQ09ORklH
+X09GIGFyb3VuZCBhbGwgdGhlIHZhcmlvdXMgc3RydWN0IGRldmljZV9ub2RlIGluIGRybV9mb28u
+aC4KPj4+Pj4+PiBTaG91bGQgYmUgYWxsIGZhaXJseSBzaW1wbGUgdG8gcHVsbCBvZmYgd2l0aCBj
+b2NjaS4KPj4+Pj4+Pgo+Pj4+Pj4+IFRoaWVycnk/Cj4+Pj4+Pgo+Pj4+Pj4gTG9va2luZyBhdCB0
+aGUgb2ZfZHJtX2ZpbmRfcGFuZWwgZnVuY3Rpb24gSSBhY3R1YWxseSB3b25kZXIgaG93IHRoYXQK
+Pj4+Pj4+IHdvcmtzIC0gdGhlIGRybV9wYW5lbCBkb2Vzbid0IHJlYWxseSBuZWVkIHRvIHN0aWNr
+IGFyb3VuZCBhZmFpY3MuCj4+Pj4+PiBBZnRlciBhbGwgcGFuZWxfbGlzdCBpcyBnbG9iYWwgc28g
+c29tZSBvdGhlciBkcml2ZXIgY2FuIHVubG9hZC4KPj4+Pj4+IFJ1c3NlbGwncyBvZiBzdXBwb3J0
+IGZvciBwb3NzaWJsZV9jcnRjcyBjb2RlIHdvcmtzIGRpZmZlcmVudGx5IHNpbmNlCj4+Pj4+PiBp
+dCBvbmx5IGxvb2tzIGF0IHBlci1kcm1fZGV2aWNlIGxpc3RzLgo+Pj4+Pgo+Pj4+PiBJIGRvbid0
+IHVuZGVyc3RhbmQuIFBhbmVscyBhcmUgZ2xvYmFsIHJlc291cmNlcyB0aGF0IGdldCByZWdpc3Rl
+cmVkIGJ5Cj4+Pj4+IHNvbWUgZHJpdmVyIHRoYXQgaXNuJ3QgdGllZCB0byB0aGUgRFJNIGRldmlj
+ZSB1bnRpbCBhdHRhY2hlZC4gSXQgY2FuJ3QKPj4+Pj4gYmUgaW4gYSBwZXItRFJNIGRldmljZSBs
+aXN0LCBiZWNhdXNlIGl0J3MgZXh0ZXJuYWwgdG8gdGhlIGRldmljZS4KPj4+Pj4KPj4+Pj4gQW5k
+IHllcywgdGhleSBjYW4gZ28gYXdheSB3aGVuIGEgZHJpdmVyIGlzIHVubG9hZGVkLCB0aG91Z2gg
+aXQncyBub3QgdGhlCj4+Pj4+IHR5cGljYWwgdXNlLWNhc2UuCj4+Pj4+Cj4+Pj4+PiBUaGlzIGJy
+aWRnZSBjb2RlIGhlcmUgdGhvdWdoIHN1ZmZlcnMgZnJvbSB0aGUgc2FtZS4gU28gdG8gbWUgdGhp
+cwo+Pj4+Pj4gbG9va3MgcmF0aGVyIGZpc2h5Lgo+Pj4+Pgo+Pj4+PiBXZWxsLCB0aGlzIHZlcnNp
+b24gb2YgdGhlIERSTSBicmlkZ2Ugc3VwcG9ydCB3YXMgd3JpdHRlbiB0byBiZSBjbG9zZSB0bwo+
+Pj4+PiBEUk0gcGFuZWwsIHNvIGl0IGlzbid0IHJlYWxseSBzdXJwcmlzaW5nIHRoYXQgaXQncyBz
+aW1pbGFyID0pLCBidXQgbGlrZQo+Pj4+PiBJIHNhaWQsIEkgZG9uJ3QgcmVhbGx5IHVuZGVyc3Rh
+bmQgd2hhdCB5b3UgdGhpbmsgaXMgd3Jvbmcgd2l0aCBpdC4KPj4+Pgo+Pj4+IFlvdSBoYXZlIGEg
+bXV0ZXggdG8gcHJvdGVjdCB0aGUgZ2xvYmFsIGxpc3Qgb2YgYnJpZGdlcy9wYW5lbHMuIEJ1dCBp
+ZiB5b3UKPj4+PiBkbyBhIGxvb2t1cCB5b3UgZG9uJ3QgZ3JhYiBhIHJlZmVyZW5jZSBjb3VudCBv
+biB0aGUgcGFuZWwsIHNvIHRoZSBtb21lbnQKPj4+PiB5b3UgZHJvcCB0aGUgbGlzdCBtdXRleCB0
+aGUgcGFuZWwvYnJpZGdlIGNhbiBnbyBhd2F5Lgo+Pj4+Cj4+Pj4gWWVzIHVzdWFsbHkgeW91IGRv
+bid0IHVubG9hZCBhIGRyaXZlciBvbiBhIHNvYyBidXQgc29jIGlzbid0IGV2ZXJ5dGhpbmcKPj4+
+PiBhbmQgZGVzaWduaW5nIG5ldyBzdHVmZiB0byBub3QgYmUgaG90dW5wbHVnIHNhdmUgaXNuJ3Qg
+Z3JlYXQgZWl0aGVyLgo+Pj4KPj4+IFllYWgsIEkgY2VydGFpbmx5IGFncmVlIHRoYXQgYWRkaW5n
+IHByb3BlciByZWZlcmVuY2UgY291bnRpbmcgd291bGQgYmUgYQo+Pj4gZ29vZCB0aGluZy4gSSB0
+aGluayBwZXJoYXBzIHdlIGNvdWxkIGp1c3QgdGFrZSBhIHJlZmVyZW5jZSBvbiB0aGUgc3RydWN0
+Cj4+PiBkZXZpY2UgKiB0byBwcmV2ZW50IGl0IGZyb20gZGlzYXBwZWFyaW5nLgo+Pj4KPj4+IEFs
+dGhvdWdoIHBlcmhhcHMgSSBtaXN1bmRlcnN0YW5kIHdoYXQgeW91IG1lYW4gYnkgImdvIGF3YXki
+Lgo+Pgo+PiBJIG1lYW50IHRoZSBkcm1fcGFuZWwvYnJpZGdlIGNvdWxkIGdvIGF3YXkgYW55IHNl
+Y29uZCwgc2luY2Ugbm90aGluZwo+PiBwcmV2ZW50cyBhIG1vZHVsZSB1bmxvYWQgb2YgdGhlIHBh
+bmVsL2JyaWRnZSBkcml2ZXIuIFNvIGluIHRoZW9yeSB5b3UKPj4gY291bGQgZ2V0IHRoZSB1bnJl
+Z2lzdGVyIGNhbGwgcmlnaHQgYWZ0ZXIgeW91J3ZlIGRvbmUgdGhlIGxvb2t1cC4gV2hpY2gKPj4g
+bWVhbnMgdGhlIGJyaWRnZS9wYW5lbCBwb2ludGVyIHlvdSd2ZSBqdXN0IHJldHVybmVkIGlzIGZy
+ZWVkIG1lbW9yeS4KPiAKPiBBaCB5ZXMsIEkgc2VlIG5vdy4KPiAKPj4gSSB0aGluayB3ZSBuZWUg
+dHJ5X2dldF9tb2R1bGUgZm9yIHRoZSBjb2RlIGFuZCBrcmVmIG9uIHRoZSBhY3R1YWwgZGF0YQo+
+PiBzdHJ1Y3R1cmVzLgo+IAo+IEFncmVlZCwgdGhhdCBzaG91bGQgZG8gdGhlIHRyaWNrLiBXZSdk
+IHByb2JhYmx5IG5lZWQgc29tZSBzb3J0IG9mIGxvZ2ljCj4gdG8gYWxzbyBtYWtlIG9wZXJhdGlv
+bnMgcmV0dXJuIHNvbWV0aGluZyBsaWtlIC1FTk9ERVYgd2hlbiB0aGUKPiB1bmRlcmx5aW5nIGRl
+dmljZSBoYXMgZGlzYXBwZWFyZWQuIEkgdGhpbmsgRGF2aWQgaGFkIGludHJvZHVjZWQKPiBzb21l
+dGhpbmcgc2ltaWxhciBmb3IgRFJNIGRldmljZSBub3Qgc28gbG9uZyBhZ28/CgpJZiB0aGUgdW5k
+ZXJseWluZyBkZXZpY2UgZGlzYXBwZWFycyBpdCB3b3VsZCBiZSBnb29kIHRvIHJlY2VpdmUKbm90
+aWZpY2F0aW9uIGFueXdheSB0byB0cmlnZ2VyIERSTSBIUEQgZXZlbnQuIEFuZCBpZiB3ZSBoYXZl
+IHRoZQpub3RpZmljYXRpb24sIHdlIGNhbiByZWxlYXNlIHJlZmVyZW5jZXMgdG8gdGhlIGRldmlj
+ZSBzbW9vdGhseS4gV2UgZG8Kbm90IG5lZWQgdG8gcGxheSB0cmlja3kgZ2FtZXMgd2l0aCBrcmVm
+cywgem9tYmllIGRhdGEgYW5kIG1vZHVsZQpyZWZjb3VudGluZy4KT24gdGhlIG90aGVyIHNpZGUg
+Y29tcG9uZW50IGZyYW1ld29yayB1c2VzIG5vdGlmaWNhdGlvbiBjYWxsYmFja3MKYmluZC91bmJp
+bmQgZm9yIG1hc3RlciBhbmQgY29tcG9uZW50cyB0byBzbW9vdGhseSBhdHRhY2gvcmVsZWFzZQpk
+ZXZpY2VzLCB3aHkgc2hvdWxkIGl0IGJlIGRvbmUgZGlmZmVyZW50bHkgaW4gdGhpcyBjYXNlLgoK
+QWdhaW4sIGxvb2sgYXQgaW50ZXJmYWNlX3RyYWNrZXIgWzFdIGl0IGRvZXMgZXhhY3RseSB3aGF0
+IHlvdSBuZWVkLgoKWzFdOiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxNC80LzMwLzM0NQoKUmVn
+YXJkcwpBbmRyemVqCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
