@@ -1,116 +1,44 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH V7 03/12] drm/bridge: Add helper functions for drm_bridge
-Date: Thu, 30 Oct 2014 11:01:02 +0100
-Message-ID: <54520C5E.3020609@samsung.com>
-References: <1409149783-12416-1-git-send-email-ajaykumar.rs@samsung.com>
- <1409149783-12416-4-git-send-email-ajaykumar.rs@samsung.com>
- <20141027190137.GT26941@phenom.ffwll.local>
- <CAOw6vbLNOqp=X4epwDPb7zT-j2+oUuLoeV2S=x+oGPLQwK+Z7Q@mail.gmail.com>
- <CAKMK7uEch65=ZuaG=4JY2u3S3w5RND+uNc5+qL=tWxDLfEqEwQ@mail.gmail.com>
- <CAKMK7uEtNMOTg2j9XYN91_gRWWxHCfnb57HHpsdXki+T-rvwYg@mail.gmail.com>
- <20141028143548.GB17770@ulmo> <20141029074314.GL26941@phenom.ffwll.local>
- <20141029083821.GA27900@ulmo> <20141029085702.GP26941@phenom.ffwll.local>
- <20141029091436.GB27900@ulmo>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v3 2/2] ARM: EXYNOS: Call regulator core suspend prepare
+ and finish functions
+Date: Thu, 30 Oct 2014 11:06:59 +0100
+Message-ID: <CABxcv==YZjO9p3aNyuRpe3DYS+=BcY_N2esuTg0hGASb_b_OdA@mail.gmail.com>
+References: <1413839151-10875-1-git-send-email-javier.martinez@collabora.co.uk>
+	<1413839151-10875-3-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20141029091436.GB27900@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Ajay kumar <ajaynumb@gmail.com>, Thierry Reding <treding@nvidia.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f42.google.com ([74.125.82.42]:57447 "EHLO
+	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758191AbaJ3KHA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 30 Oct 2014 06:07:00 -0400
+Received: by mail-wg0-f42.google.com with SMTP id k14so5247889wgh.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Oct 2014 03:06:59 -0700 (PDT)
+In-Reply-To: <1413839151-10875-3-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Mark Brown <broonie@kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-T24gMTAvMjkvMjAxNCAxMDoxNCBBTSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gT24gV2VkLCBP
-Y3QgMjksIDIwMTQgYXQgMDk6NTc6MDJBTSArMDEwMCwgRGFuaWVsIFZldHRlciB3cm90ZToKPj4g
-T24gV2VkLCBPY3QgMjksIDIwMTQgYXQgMDk6Mzg6MjNBTSArMDEwMCwgVGhpZXJyeSBSZWRpbmcg
-d3JvdGU6Cj4+PiBPbiBXZWQsIE9jdCAyOSwgMjAxNCBhdCAwODo0MzoxNEFNICswMTAwLCBEYW5p
-ZWwgVmV0dGVyIHdyb3RlOgo+Pj4+IE9uIFR1ZSwgT2N0IDI4LCAyMDE0IGF0IDAzOjM1OjUwUE0g
-KzAxMDAsIFRoaWVycnkgUmVkaW5nIHdyb3RlOgo+Pj4+PiBPbiBNb24sIE9jdCAyNywgMjAxNCBh
-dCAxMToyNjozMFBNICswMTAwLCBEYW5pZWwgVmV0dGVyIHdyb3RlOgo+Pj4+Pj4gT24gTW9uLCBP
-Y3QgMjcsIDIwMTQgYXQgMTE6MjAgUE0sIERhbmllbCBWZXR0ZXIgPGRhbmllbEBmZndsbC5jaD4g
-d3JvdGU6Cj4+Pj4+Pj4gT24gTW9uLCBPY3QgMjcsIDIwMTQgYXQgODo1OCBQTSwgU2VhbiBQYXVs
-IDxzZWFucGF1bEBjaHJvbWl1bS5vcmc+IHdyb3RlOgo+Pj4+Pj4+Pj4+IEBAIC02NjAsOCArNjYy
-LDExIEBAIHN0cnVjdCBkcm1fYnJpZGdlX2Z1bmNzIHsKPj4+Pj4+Pj4+PiAgICogQGRyaXZlcl9w
-cml2YXRlOiBwb2ludGVyIHRvIHRoZSBicmlkZ2UgZHJpdmVyJ3MgaW50ZXJuYWwgY29udGV4dAo+
-Pj4+Pj4+Pj4+ICAgKi8KPj4+Pj4+Pj4+PiAgc3RydWN0IGRybV9icmlkZ2Ugewo+Pj4+Pj4+Pj4+
-IC0gICAgIHN0cnVjdCBkcm1fZGV2aWNlICpkZXY7Cj4+Pj4+Pj4+Pj4gKyAgICAgc3RydWN0IGRl
-dmljZSAqZGV2Owo+Pj4+Pj4+Pj4KPj4+Pj4+Pj4+IFBsZWFzZSBkb24ndCByZW5hbWUgdGhlIC0+
-ZGV2IHBvaW50ZXIgaW50byBkcm0uIEJlY2F1c2UgX2FsbF8gdGhlIG90aGVyCj4+Pj4+Pj4+PiBk
-cm0gc3RydWN0dXJlcyBzdGlsbCBjYWxsIGl0IC0+ZGV2LiBBbHNvLCBjYW4ndCB3ZSB1c2Ugc3Ry
-dWN0IGRldmljZV9ub2RlCj4+Pj4+Pj4+PiBoZXJlIGxpa2Ugd2UgZG8gaW4gdGhlIG9mIGhlbHBl
-cnMgUnVzc2VsbCBhZGRlZD8gU2VlIDdlNDM1YWFkMzgwODMKPj4+Pj4+Pj4+Cj4+Pj4+Pj4+Cj4+
-Pj4+Pj4+IEkgdGhpbmsgdGhpcyBpcyBtb2RlbGVkIGFmdGVyIHRoZSBuYW1pbmcgaW4gZHJtX3Bh
-bmVsLCBGV0lXLiBIb3dldmVyLAo+Pj4+Pj4+PiBzZWVtcyByZWFzb25hYmxlIHRvIGtlZXAgdGhl
-IGRldmljZV9ub2RlIGluc3RlYWQuCj4+Pj4+Pj4KPj4+Pj4+PiBIbSwgaW5kZWVkLiBUYmggSSB2
-b3RlIHRvIHJlbmFtZSBkcm1fcGFuZWwtPmRybSB0byAtPmRldiBhbmQgbGlrZSB3aXRoCj4+Pj4+
-Pj4gZHJtX2NydGMgZHJvcCB0aGUgc3RydWN0IGRldmljZSBhbmQgZ28gZGlyZWN0bHkgdG8gYSBz
-dHJ1Y3QKPj4+Pj4+PiBkZXZpY2Vfbm9kZS4gU2luY2Ugd2UgZG9uJ3QgcmVhbGx5IG5lZWQgdGhl
-IHN0dXJjdCBkZXZpY2UsIHRoZSBvbmx5Cj4+Pj4+Pj4gdGhpbmcgd2UgY2FyZSBhYm91dCBpcyB0
-aGUgb2Zfbm9kZS4gRm9yIGFkZGVkIGJvbnVzIHdyYXAgYW4gI2lmZGVmCj4+Pj4+Pj4gQ09ORklH
-X09GIGFyb3VuZCBhbGwgdGhlIHZhcmlvdXMgc3RydWN0IGRldmljZV9ub2RlIGluIGRybV9mb28u
-aC4KPj4+Pj4+PiBTaG91bGQgYmUgYWxsIGZhaXJseSBzaW1wbGUgdG8gcHVsbCBvZmYgd2l0aCBj
-b2NjaS4KPj4+Pj4+Pgo+Pj4+Pj4+IFRoaWVycnk/Cj4+Pj4+Pgo+Pj4+Pj4gTG9va2luZyBhdCB0
-aGUgb2ZfZHJtX2ZpbmRfcGFuZWwgZnVuY3Rpb24gSSBhY3R1YWxseSB3b25kZXIgaG93IHRoYXQK
-Pj4+Pj4+IHdvcmtzIC0gdGhlIGRybV9wYW5lbCBkb2Vzbid0IHJlYWxseSBuZWVkIHRvIHN0aWNr
-IGFyb3VuZCBhZmFpY3MuCj4+Pj4+PiBBZnRlciBhbGwgcGFuZWxfbGlzdCBpcyBnbG9iYWwgc28g
-c29tZSBvdGhlciBkcml2ZXIgY2FuIHVubG9hZC4KPj4+Pj4+IFJ1c3NlbGwncyBvZiBzdXBwb3J0
-IGZvciBwb3NzaWJsZV9jcnRjcyBjb2RlIHdvcmtzIGRpZmZlcmVudGx5IHNpbmNlCj4+Pj4+PiBp
-dCBvbmx5IGxvb2tzIGF0IHBlci1kcm1fZGV2aWNlIGxpc3RzLgo+Pj4+Pgo+Pj4+PiBJIGRvbid0
-IHVuZGVyc3RhbmQuIFBhbmVscyBhcmUgZ2xvYmFsIHJlc291cmNlcyB0aGF0IGdldCByZWdpc3Rl
-cmVkIGJ5Cj4+Pj4+IHNvbWUgZHJpdmVyIHRoYXQgaXNuJ3QgdGllZCB0byB0aGUgRFJNIGRldmlj
-ZSB1bnRpbCBhdHRhY2hlZC4gSXQgY2FuJ3QKPj4+Pj4gYmUgaW4gYSBwZXItRFJNIGRldmljZSBs
-aXN0LCBiZWNhdXNlIGl0J3MgZXh0ZXJuYWwgdG8gdGhlIGRldmljZS4KPj4+Pj4KPj4+Pj4gQW5k
-IHllcywgdGhleSBjYW4gZ28gYXdheSB3aGVuIGEgZHJpdmVyIGlzIHVubG9hZGVkLCB0aG91Z2gg
-aXQncyBub3QgdGhlCj4+Pj4+IHR5cGljYWwgdXNlLWNhc2UuCj4+Pj4+Cj4+Pj4+PiBUaGlzIGJy
-aWRnZSBjb2RlIGhlcmUgdGhvdWdoIHN1ZmZlcnMgZnJvbSB0aGUgc2FtZS4gU28gdG8gbWUgdGhp
-cwo+Pj4+Pj4gbG9va3MgcmF0aGVyIGZpc2h5Lgo+Pj4+Pgo+Pj4+PiBXZWxsLCB0aGlzIHZlcnNp
-b24gb2YgdGhlIERSTSBicmlkZ2Ugc3VwcG9ydCB3YXMgd3JpdHRlbiB0byBiZSBjbG9zZSB0bwo+
-Pj4+PiBEUk0gcGFuZWwsIHNvIGl0IGlzbid0IHJlYWxseSBzdXJwcmlzaW5nIHRoYXQgaXQncyBz
-aW1pbGFyID0pLCBidXQgbGlrZQo+Pj4+PiBJIHNhaWQsIEkgZG9uJ3QgcmVhbGx5IHVuZGVyc3Rh
-bmQgd2hhdCB5b3UgdGhpbmsgaXMgd3Jvbmcgd2l0aCBpdC4KPj4+Pgo+Pj4+IFlvdSBoYXZlIGEg
-bXV0ZXggdG8gcHJvdGVjdCB0aGUgZ2xvYmFsIGxpc3Qgb2YgYnJpZGdlcy9wYW5lbHMuIEJ1dCBp
-ZiB5b3UKPj4+PiBkbyBhIGxvb2t1cCB5b3UgZG9uJ3QgZ3JhYiBhIHJlZmVyZW5jZSBjb3VudCBv
-biB0aGUgcGFuZWwsIHNvIHRoZSBtb21lbnQKPj4+PiB5b3UgZHJvcCB0aGUgbGlzdCBtdXRleCB0
-aGUgcGFuZWwvYnJpZGdlIGNhbiBnbyBhd2F5Lgo+Pj4+Cj4+Pj4gWWVzIHVzdWFsbHkgeW91IGRv
-bid0IHVubG9hZCBhIGRyaXZlciBvbiBhIHNvYyBidXQgc29jIGlzbid0IGV2ZXJ5dGhpbmcKPj4+
-PiBhbmQgZGVzaWduaW5nIG5ldyBzdHVmZiB0byBub3QgYmUgaG90dW5wbHVnIHNhdmUgaXNuJ3Qg
-Z3JlYXQgZWl0aGVyLgo+Pj4KPj4+IFllYWgsIEkgY2VydGFpbmx5IGFncmVlIHRoYXQgYWRkaW5n
-IHByb3BlciByZWZlcmVuY2UgY291bnRpbmcgd291bGQgYmUgYQo+Pj4gZ29vZCB0aGluZy4gSSB0
-aGluayBwZXJoYXBzIHdlIGNvdWxkIGp1c3QgdGFrZSBhIHJlZmVyZW5jZSBvbiB0aGUgc3RydWN0
-Cj4+PiBkZXZpY2UgKiB0byBwcmV2ZW50IGl0IGZyb20gZGlzYXBwZWFyaW5nLgo+Pj4KPj4+IEFs
-dGhvdWdoIHBlcmhhcHMgSSBtaXN1bmRlcnN0YW5kIHdoYXQgeW91IG1lYW4gYnkgImdvIGF3YXki
-Lgo+Pgo+PiBJIG1lYW50IHRoZSBkcm1fcGFuZWwvYnJpZGdlIGNvdWxkIGdvIGF3YXkgYW55IHNl
-Y29uZCwgc2luY2Ugbm90aGluZwo+PiBwcmV2ZW50cyBhIG1vZHVsZSB1bmxvYWQgb2YgdGhlIHBh
-bmVsL2JyaWRnZSBkcml2ZXIuIFNvIGluIHRoZW9yeSB5b3UKPj4gY291bGQgZ2V0IHRoZSB1bnJl
-Z2lzdGVyIGNhbGwgcmlnaHQgYWZ0ZXIgeW91J3ZlIGRvbmUgdGhlIGxvb2t1cC4gV2hpY2gKPj4g
-bWVhbnMgdGhlIGJyaWRnZS9wYW5lbCBwb2ludGVyIHlvdSd2ZSBqdXN0IHJldHVybmVkIGlzIGZy
-ZWVkIG1lbW9yeS4KPiAKPiBBaCB5ZXMsIEkgc2VlIG5vdy4KPiAKPj4gSSB0aGluayB3ZSBuZWUg
-dHJ5X2dldF9tb2R1bGUgZm9yIHRoZSBjb2RlIGFuZCBrcmVmIG9uIHRoZSBhY3R1YWwgZGF0YQo+
-PiBzdHJ1Y3R1cmVzLgo+IAo+IEFncmVlZCwgdGhhdCBzaG91bGQgZG8gdGhlIHRyaWNrLiBXZSdk
-IHByb2JhYmx5IG5lZWQgc29tZSBzb3J0IG9mIGxvZ2ljCj4gdG8gYWxzbyBtYWtlIG9wZXJhdGlv
-bnMgcmV0dXJuIHNvbWV0aGluZyBsaWtlIC1FTk9ERVYgd2hlbiB0aGUKPiB1bmRlcmx5aW5nIGRl
-dmljZSBoYXMgZGlzYXBwZWFyZWQuIEkgdGhpbmsgRGF2aWQgaGFkIGludHJvZHVjZWQKPiBzb21l
-dGhpbmcgc2ltaWxhciBmb3IgRFJNIGRldmljZSBub3Qgc28gbG9uZyBhZ28/CgpJZiB0aGUgdW5k
-ZXJseWluZyBkZXZpY2UgZGlzYXBwZWFycyBpdCB3b3VsZCBiZSBnb29kIHRvIHJlY2VpdmUKbm90
-aWZpY2F0aW9uIGFueXdheSB0byB0cmlnZ2VyIERSTSBIUEQgZXZlbnQuIEFuZCBpZiB3ZSBoYXZl
-IHRoZQpub3RpZmljYXRpb24sIHdlIGNhbiByZWxlYXNlIHJlZmVyZW5jZXMgdG8gdGhlIGRldmlj
-ZSBzbW9vdGhseS4gV2UgZG8Kbm90IG5lZWQgdG8gcGxheSB0cmlja3kgZ2FtZXMgd2l0aCBrcmVm
-cywgem9tYmllIGRhdGEgYW5kIG1vZHVsZQpyZWZjb3VudGluZy4KT24gdGhlIG90aGVyIHNpZGUg
-Y29tcG9uZW50IGZyYW1ld29yayB1c2VzIG5vdGlmaWNhdGlvbiBjYWxsYmFja3MKYmluZC91bmJp
-bmQgZm9yIG1hc3RlciBhbmQgY29tcG9uZW50cyB0byBzbW9vdGhseSBhdHRhY2gvcmVsZWFzZQpk
-ZXZpY2VzLCB3aHkgc2hvdWxkIGl0IGJlIGRvbmUgZGlmZmVyZW50bHkgaW4gdGhpcyBjYXNlLgoK
-QWdhaW4sIGxvb2sgYXQgaW50ZXJmYWNlX3RyYWNrZXIgWzFdIGl0IGRvZXMgZXhhY3RseSB3aGF0
-IHlvdSBuZWVkLgoKWzFdOiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxNC80LzMwLzM0NQoKUmVn
-YXJkcwpBbmRyemVqCgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
-ZWwK
+Hello Kukjin,
+
+On Mon, Oct 20, 2014 at 11:05 PM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> The regulator framework has a set of helpers functions to be used when
+> the system is entering and leaving from suspend but these are not called
+> on Exynos platforms. This means that the .set_suspend_* function handlers
+> defined by regulator drivers are not called when the system is suspended.
+>
+> Suggested-by: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Reviewed-by: Doug Anderson <dianders@chromium.org>
+> ---
+>  arch/arm/mach-exynos/suspend.c | 23 +++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
+>
+
+Any comments on this patch?
+
+Best regards,
+Javier
