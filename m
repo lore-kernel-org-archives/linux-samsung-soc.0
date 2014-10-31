@@ -1,53 +1,99 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ARM: dts: Fix CLK_UART_ISP_SCLK clock assignment in
- exynos4x12.dtsi
-Date: Fri, 31 Oct 2014 14:34:16 +0100
-Message-ID: <1414762456-7203-1-git-send-email-s.nawrocki@samsung.com>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v7 1/2] usb: host: xhci-plat: Get PHYs for xhci's hcds
+Date: Fri, 31 Oct 2014 16:51:10 +0300
+Message-ID: <545393CE.8070102@cogentembedded.com>
+References: <1414761989-21088-1-git-send-email-gautam.vivek@samsung.com> <1414761989-21088-2-git-send-email-gautam.vivek@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:25519 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758302AbaJaNec (ORCPT
+Received: from mail-la0-f45.google.com ([209.85.215.45]:47195 "EHLO
+	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758818AbaJaNvN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 Oct 2014 09:34:32 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NEB00GZB9PID920@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 31 Oct 2014 22:34:30 +0900 (KST)
+	Fri, 31 Oct 2014 09:51:13 -0400
+Received: by mail-la0-f45.google.com with SMTP id pn19so878119lab.18
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Oct 2014 06:51:11 -0700 (PDT)
+In-Reply-To: <1414761989-21088-2-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, gregkh@linuxfoundation.org, kishon@ti.com, balbi@ti.com, stern@rowland.harvard.edu, kgene.kim@samsung.com, heikki.krogerus@linux.intel.com, mathias.nyman@intel.com, jwerner@google.com, jg1.han@samsung.com
 
-Assign proper FIMC-IS UART gate clock in the device DT node and not
-use the SRC_MASK gate. This fixes regression introduced in commit
-a37c82a3b3c0910019abfd22a97be1f ("clk: samsung: exynos4: Remove
-SRC_MASK_ISP gates").
+Hello.
 
-Without this change exynos4 fimc-is driver fails to probe with an
-error log:
+On 10/31/2014 4:26 PM, Vivek Gautam wrote:
 
-[    1.842447] ERROR: could not get clock /camera/fimc-is@12000000:uart(13)
-[    1.848529] exynos4-fimc-is 12000000.fimc-is: failed to get clock: uart
-[    1.855275] exynos4-fimc-is: probe of 12000000.fimc-is failed with error -2
+> The host controller by itself may sometimes need to handle PHY
+> and re-initialize it to re-configure some of the PHY parameters
+> to get full support out of the PHY controller.
+> Therefore, facilitate getting the two possible PHYs, viz.
+> USB 2.0 type (UTMI+) and USB 3.0 type (PIPE3), and initialize them.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- arch/arm/boot/dts/exynos4x12.dtsi |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> ---
+>   drivers/usb/host/xhci-plat.c |   74 ++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 74 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
-index 861bb91..dd98768 100644
---- a/arch/arm/boot/dts/exynos4x12.dtsi
-+++ b/arch/arm/boot/dts/exynos4x12.dtsi
-@@ -224,7 +224,7 @@
- 				 <&clock CLK_DIV_ISP0>,<&clock CLK_DIV_ISP1>,
- 				 <&clock CLK_DIV_MCUISP0>,
- 				 <&clock CLK_DIV_MCUISP1>,
--				 <&clock CLK_SCLK_UART_ISP>,
-+				 <&clock CLK_UART_ISP_SCLK>,
- 				 <&clock CLK_ACLK200>, <&clock CLK_DIV_ACLK200>,
- 				 <&clock CLK_ACLK400_MCUISP>,
- 				 <&clock CLK_DIV_ACLK400_MCUISP>;
--- 
-1.7.9.5
+> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+> index 3d78b0c..5207d5b 100644
+> --- a/drivers/usb/host/xhci-plat.c
+> +++ b/drivers/usb/host/xhci-plat.c
+[...]
+> @@ -129,10 +130,41 @@ static int xhci_plat_probe(struct platform_device *pdev)
+>   			goto put_hcd;
+>   	}
+>
+> +	/* Get possile USB 2.0 type PHY (UTMI+) available with xhci */
+> +	hcd->phy = devm_phy_get(&pdev->dev, "usb2-phy");
+> +	if (IS_ERR(hcd->phy)) {
+> +		ret = PTR_ERR(hcd->phy);
+> +		if (ret == -EPROBE_DEFER) {
+> +			goto disable_clk;
+> +		} else if (ret != -ENOSYS && ret != -ENODEV) {
+
+    Asking to be a *switch* statement instead...
+
+> +			hcd->phy = NULL;
+> +			dev_warn(&pdev->dev,
+> +				 "Error retrieving usb2 phy: %d\n", ret);
+> +		}
+> +	}
+> +
+[...]
+> @@ -158,12 +190,41 @@ static int xhci_plat_probe(struct platform_device *pdev)
+>   	if (HCC_MAX_PSA(xhci->hcc_params) >= 4)
+>   		xhci->shared_hcd->can_do_streams = 1;
+>
+> +	/* Get possile USB 3.0 type PHY (PIPE3) available with xhci */
+> +	xhci->shared_hcd->phy = devm_phy_get(&pdev->dev, "usb3-phy");
+> +	if (IS_ERR(xhci->shared_hcd->phy)) {
+> +		ret = PTR_ERR(xhci->shared_hcd->phy);
+> +		if (ret == -EPROBE_DEFER) {
+> +			goto put_usb3_hcd;
+> +		} else if (ret != -ENOSYS && ret != -ENODEV) {
+
+    Likewise...
+
+> +			xhci->shared_hcd->phy = NULL;
+> +			dev_warn(&pdev->dev,
+> +				 "Error retrieving usb3 phy: %d\n", ret);
+> +		}
+> +	}
+> +
+[...]
+> @@ -204,6 +271,8 @@ static int xhci_plat_suspend(struct device *dev)
+>   	struct usb_hcd	*hcd = dev_get_drvdata(dev);
+>   	struct xhci_hcd	*xhci = hcd_to_xhci(hcd);
+>
+> +	phy_exit(hcd->phy);
+
+    Hm, in the suspend() method?
+
+> +
+>   	return xhci_suspend(xhci);
+>   }
+>
+[...]
+
+WBR, Sergei
