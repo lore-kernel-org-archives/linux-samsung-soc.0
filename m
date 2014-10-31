@@ -1,45 +1,56 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 4/9] drivercore / platform: Keep PM domain powered
- during ->probe()
-Date: Fri, 31 Oct 2014 10:23:00 +0100
-Message-ID: <CAPDyKFpjYkBcW4XMO0CmgOiLux9=iw2=DEHkBG9OVZh5T5CgQg@mail.gmail.com>
-References: <1413208930-26019-1-git-send-email-ulf.hansson@linaro.org>
-	<1413208930-26019-5-git-send-email-ulf.hansson@linaro.org>
-	<7hoast8eu8.fsf@deeprootsystems.com>
-	<20141031000749.GK36444@dtor-ws>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCHv3 0/2] clk: samsung: Add clock controller driver for
+ Exynos4415 SoC
+Date: Fri, 31 Oct 2014 11:03:12 +0100
+Message-ID: <54535E60.4080802@samsung.com>
+References: <1414372318-594-1-git-send-email-cw00.choi@samsung.com>
+ <544E20E3.5030609@samsung.com> <02dd01cff265$0a846060$1f8d2120$@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f48.google.com ([209.85.216.48]:54488 "EHLO
-	mail-qa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752825AbaJaJXA (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:47493 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756003AbaJaKDR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 Oct 2014 05:23:00 -0400
-Received: by mail-qa0-f48.google.com with SMTP id x12so5023711qac.35
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Oct 2014 02:23:00 -0700 (PDT)
-In-Reply-To: <20141031000749.GK36444@dtor-ws>
+	Fri, 31 Oct 2014 06:03:17 -0400
+In-reply-to: <02dd01cff265$0a846060$1f8d2120$@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Kevin Hilman <khilman@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron
+To: Kukjin Kim <kgene@kernel.org>
+Cc: 'Chanwoo Choi' <cw00.choi@samsung.com>, tomasz.figa@gmail.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, inki.dae@samsung.com, geunsik.lim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Mike Turquette <mturquette@linaro.org>
 
-On 31 October 2014 01:07, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-> On Thu, Oct 30, 2014 at 01:47:27PM -0700, Kevin Hilman wrote:
->> Ulf Hansson <ulf.hansson@linaro.org> writes:
+On 28/10/14 05:09, Kukjin Kim wrote:
+> Sylwester Nawrocki wrote:
 >>
->> > To sucessfully probe some devices their corresponding PM domains may
->> > need to be powered.
->>
->> Isn't that what pm_runtime_get*() is supposed to be doing?  Why isn't
->> that working?
->
-> Also, I do not understand why we placing device into a power domain only
-> when we probe it. Why if I unbind device from its driver (or do not have
-> a driver for it) it disappears from its power domain? To me power domain
-> and having driver bound to a device are 2 orthogonal concepts.
+>> On 27/10/14 02:11, Chanwoo Choi wrote:
+>>> Chanwoo Choi (2):
+>>>   clk: samsung: exynos4415: Add clocks using common clock framework
+>>>   clk: samsung: Document binding for Exynos4415 clock controller
+[...]
+> 
+> Can you please provide a topic branch for clk-exynos4415? Because exynos4415 dt
+> file needs inclusion of following header files.
+> 
+> +#include <dt-bindings/clock/exynos4415.h>
+> +#include <dt-bindings/clock/exynos-audss-clk.h>
 
-That's a different discussion, I don't think we want to go there
-within this context.
+Hi Kukjin,
 
-Kind regards
-Uffe
+AFAICS there is more clk patches that will be a dependency for the dts
+changes, for instance recent exynos7 clock controller driver addition.
+Unfortunately the patchset is written so almost every patch touches
+header file at include/dt-bindings/clock/.
+
+I'm inclined to send the collected exynos4415 and exynos7 patches to
+Mike in a pull request and then he could make a topic branch which could
+then be pulled as a dependency for dts.
+
+Alternatively you could use my branch which can be found at:
+git://linuxtv.org/snawrocki/samsung.git for-v3.19-exynos-clk
+
+What would be your preference, Mike ?
+
+-- 
+Regards,
+Sylwester
