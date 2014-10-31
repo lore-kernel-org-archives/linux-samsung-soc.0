@@ -1,47 +1,39 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 5/9] drm/exynos: Replace repeated declarations by #include "exynos_drm_drv.h"
-Date: Fri, 31 Oct 2014 14:17:39 +0000
-Message-ID: <1414765063-30598-5-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 3/9] drm/exynos: remove extra declaration of struct
+ exynos_overlay
+Date: Fri, 31 Oct 2014 14:17:37 +0000
+Message-ID: <1414765063-30598-3-git-send-email-gustavo@padovan.org>
 References: <1414765063-30598-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f41.google.com ([74.125.82.41]:33986 "EHLO
-	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759884AbaJaORs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 Oct 2014 10:17:48 -0400
-Received: by mail-wg0-f41.google.com with SMTP id k14so8074500wgh.0
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Oct 2014 07:17:47 -0700 (PDT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1414765063-30598-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org
 Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-Re-declare struct is not a good practice, let's use the original
-drm and exynos declarations.
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_crtc.h | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.h b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-index 690dcdd..e353d35 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-@@ -15,10 +15,7 @@
- #ifndef _EXYNOS_DRM_CRTC_H_
- #define _EXYNOS_DRM_CRTC_H_
- 
--struct drm_device;
--struct drm_crtc;
--struct exynos_drm_manager;
--struct exynos_drm_overlay;
-+#include "exynos_drm_drv.h"
- 
- int exynos_drm_crtc_create(struct exynos_drm_manager *manager);
- int exynos_drm_crtc_enable_vblank(struct drm_device *dev, int pipe);
--- 
-1.9.3
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+VGhlIHN0cnVjdCBpcyBkZWZpbmVkIGluIHRoZSBzYW1lIGZpbGUsIGRlY2xhcmUgaXQgaGVyZSBp
+cyBqdXN0CnVubmVjZXNzYXJ5CgpTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rh
+dm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2Rydi5oIHwgMSAtCiAxIGZpbGUgY2hhbmdlZCwgMSBkZWxldGlvbigtKQoKZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCBiL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAppbmRleCAzYzgxYzRiLi4zOTA1ZTMw
+IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKKysr
+IGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCkBAIC0zNyw3ICszNyw2
+IEBACiAjZGVmaW5lIHdhaXRfZm9yKENPTkQsIE1TKSBfd2FpdF9mb3IoQ09ORCwgTVMpCiAKIHN0
+cnVjdCBkcm1fZGV2aWNlOwotc3RydWN0IGV4eW5vc19kcm1fb3ZlcmxheTsKIHN0cnVjdCBkcm1f
+Y29ubmVjdG9yOwogCiAvKiBUaGlzIGVudW1lcmF0ZXMgZGV2aWNlIHR5cGUuICovCi0tIAoxLjku
+MwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
+dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9s
+aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
