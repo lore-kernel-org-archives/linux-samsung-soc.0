@@ -1,100 +1,63 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: exynos5420/arndale-octa: imprecise external aborts on exynos_defconfig
-Date: Fri, 31 Oct 2014 10:41:50 -0700
-Message-ID: <CAMAWPa8ofYCWJdzHt3_xM8SskZy09-OYDsRx5JjA5RmADfpcMQ@mail.gmail.com>
-References: <CANMBJr41TQx4jVjnOO9WThn=SiZCq12mx1xtGN8_ubzZrO1=YA@mail.gmail.com>
-	<7h7g1bwbyh.fsf@deeprootsystems.com>
-	<CAJuA9ahkpZ4EJQz4DoAjYzo0OQw5zXLavAVoXRBdgPcm9EUQYA@mail.gmail.com>
-	<7hk351ep8e.fsf@deeprootsystems.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v3 01/14] mfd: max77686/802: Map regulator driver to its
+ own of_node
+Date: Fri, 31 Oct 2014 18:06:32 +0000
+Message-ID: <20141031180632.GO18557@sirena.org.uk>
+References: <1414668053-31370-1-git-send-email-k.kozlowski@samsung.com>
+ <1414668053-31370-2-git-send-email-k.kozlowski@samsung.com>
+ <20141031122330.GP18557@sirena.org.uk>
+ <1414760874.7318.15.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="lv1RQUI4Uowj5McI"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:48672 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752780AbaJaRl6 (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59589 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752117AbaJaSHk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 Oct 2014 13:41:58 -0400
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 0DA582010B
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Oct 2014 17:41:57 +0000 (UTC)
-Received: from mail-la0-f44.google.com (mail-la0-f44.google.com [209.85.215.44])
-	(using TLSv1 with cipher AES128-SHA (128/128 bits))
-	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPSA id BE6072013A
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Oct 2014 17:41:53 +0000 (UTC)
-Received: by mail-la0-f44.google.com with SMTP id gf13so6665543lab.17
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Oct 2014 10:41:50 -0700 (PDT)
-In-Reply-To: <7hk351ep8e.fsf@deeprootsystems.com>
+	Fri, 31 Oct 2014 14:07:40 -0400
+Content-Disposition: inline
+In-Reply-To: <1414760874.7318.15.camel@AMDC1943>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Thomas Abraham <ta.omasab@gmail.com>, Tyler Baker <tyler.baker@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On Wed, Sep 17, 2014 at 5:39 PM, Kevin Hilman <khilman@kernel.org> wrote:
-> Thomas Abraham <ta.omasab@gmail.com> writes:
->
->> On Thu, Sep 11, 2014 at 12:16 AM, Kevin Hilman <khilman@kernel.org> wrote:
->>> Tyler Baker <tyler.baker@linaro.org> writes:
->>>
->>>> Exynos5420-based Arndale octa boards have recently started failing boot
->>>> tests due to imprecise external aborts.  This only appears to happen
->>>> when using exynos_defconfig and boots fine with multi_v7_defconfig.  The
->>>> issue seems to be intermittent, so is not reliably reproducable and
->>>> difficult to bisect.  Here are a few boot logs from recent
->>>> mainline/linux-next kernels that are failing:
->>>
->>> FYI, I'm seeing the same periodic aborts.  For example, here's my boot
->>> of next-20140910:
->>> http://images.armcloud.us/kernel-ci/next/next-20140910/arm-exynos_defconfig/boot-exynos5420-arndale-octa.html
->>>
->>> However, my userspace is much simpler and doesn't seem to cause a panic,
->>> so my boot tests report passing. (I should fixup my scripts so these
->>> imprecise aborts are reported as a FAIL.)
->>>
->>> I'm glad you pointed out that it happens only with exynos_defconfig and
->>> not multi_v7_defconfig because I noticed that too.  I haven't had the
->>> time to track it any further than that, so maybe the exynos folks can
->>> help track it down from here.
->>>
->>> Thanks for reporting this,
->>>
->>> Kevin
->>
->> Hi Tyler, Kevin,
->>
->> From the bootlog you have shared,
->>
->> [    1.060016] CPU4: failed to come online
->> [    2.070031] CPU5: failed to come online
->> [    3.080049] CPU6: failed to come online
->> [    4.090066] CPU7: failed to come online
->> [    4.090099] Brought up 4 CPUs
->> [    4.090109] SMP: Total of 4 processors activated.
->> [    4.090119] CPU: WARNING: CPU(s) started in wrong/inconsistent
->> modes (primary CPU mode 0x13)
->> [    4.090128] CPU: This may indicate a broken bootloader or firmware.
->>
->> Would it be possible to set max cpus to 1, disable switcher and try
->> again. I don't have a arndale octa board but I have tested mainline
->> kernel with smdk5420 board. It boots all eight CPUs, switcher works
->> fine and there are no imprecise aborts seen.
->
-> Sorry for the delay, I'm travelling this week.
->
-> FWIW, the same CPU boot failures you hilight above are happening on
-> multi_v7_defconfig[1] which is not getting the imprecise abort.  This is
-> only happening on exynos_defconfig[2], so I'm curious why you think the
-> switcher or NR_CPUS might be the issues.
->
-> Anyways, I narrowed this down a bit and discovered it's
-> CONFIG_EXYNOS5420_MCPM=y that's the root cause.  If I use
-> exynos_defconfig and then disable that option, I don't get any more
-> imprecise aborts.
 
-These imprecise aborts are still happening, and preventing running
-full userspace.
+--lv1RQUI4Uowj5McI
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm going to send a patch to disable this CONFIG_EXYNOS5420_MCPM until
-someone can figure out what's going on.
+On Fri, Oct 31, 2014 at 02:07:54PM +0100, Krzysztof Kozlowski wrote:
+> On pi=C4=85, 2014-10-31 at 12:23 +0000, Mark Brown wrote:
 
-Kevin
+> > I'm getting very frustrated with what's going on with these drivers,
+> > there seem to be a lot of rather large sets of patches spawning lots of
+> > discussion but also frequent review problems and very little actually
+> > getting merged (look at the set of changes in the past few merge windows
+> > for example).  There's something going wrong here.
+
+> If I over-spammed you, then I am deeply sorry.
+
+It's not just about volume, it's also about the fact that so little of
+the mail around these drivers (not just from you) is translating into
+code that gets merged.
+
+--lv1RQUI4Uowj5McI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUU8+nAAoJECTWi3JdVIfQYSkH/0fJk94SBzZ0eQUotAuideUC
+NDZ+HO0+tR+HPMFuxeAAE1ZsSbWmoopM/v2SZb14ep+0kpyUJes5DuRhUqiq30Dh
+KwN3vouzaiBs13U8Tna0LxIbFR0xUVC8HWCyUASkkXrU3vOPRjKxwg0DkejrzayY
+r8/OJ7k5/dhAEiW4gp5yrgUVyzwVH/DbxaFTZnm8yv7FJAQPXEsL8ZdBm4B/h8GT
+iaMY67RV6luiGgEebXoiCdGbH4fft564obIbTkAbBVGwB68d3cshVJe49Lq7WCrO
+bEiyhk8uw21xQrihWUFwJKHSgxE6Xwa3n3e8DyDGi4422cqQf+mWu+MEbGsooc4=
+=SmBY
+-----END PGP SIGNATURE-----
+
+--lv1RQUI4Uowj5McI--
