@@ -1,209 +1,178 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH v2 2/2] tty: serial: samsung: Clean-up selection of number
- of available UARTs
-Date: Fri, 31 Oct 2014 08:06:02 +0530
-Message-ID: <CAM4voa=0i6WsYn1z9AdeCSPFqdOS35-LX=b-Rc+Npr9dVFD_-w@mail.gmail.com>
-References: <1412181777-6388-1-git-send-email-a.kesavan@samsung.com>
-	<1412181777-6388-2-git-send-email-a.kesavan@samsung.com>
-	<041301cff29a$5c9a5fa0$15cf1ee0$@kernel.org>
-	<CAM4voakzWhfMc1SyTXs1eOxuvEp_U3qfRLxPAzWzeX54jwadvA@mail.gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 6/8] regulator: max77686: Add external GPIO control
+Date: Fri, 31 Oct 2014 12:31:57 +0900
+Message-ID: <CAAVeFuJo1wTyxOo4FEZM3=GTejuSHi+mnr=QV6HUeV5mAOCmqg@mail.gmail.com>
+References: <1414422226-10948-1-git-send-email-k.kozlowski@samsung.com>
+ <1414422226-10948-7-git-send-email-k.kozlowski@samsung.com>
+ <544EA4FA.6040704@collabora.co.uk> <1414486356.24949.19.camel@AMDC1943>
+ <1414498308.24949.32.camel@AMDC1943> <1414579362.18868.11.camel@AMDC1943>
+ <5450C63B.3000602@collabora.co.uk> <CAAVeFuLncbkNLGxEAj90yMmugRDNjtjeGoV_QYTMDZ7NVMJCmg@mail.gmail.com>
+ <1414681386.26703.6.camel@AMDC1943>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:57272 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161558AbaJaCgE (ORCPT
+Received: from mail-ig0-f170.google.com ([209.85.213.170]:57212 "EHLO
+	mail-ig0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750991AbaJaDcS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Oct 2014 22:36:04 -0400
-Received: by mail-vc0-f174.google.com with SMTP id im17so880227vcb.5
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Oct 2014 19:36:02 -0700 (PDT)
-In-Reply-To: <CAM4voakzWhfMc1SyTXs1eOxuvEp_U3qfRLxPAzWzeX54jwadvA@mail.gmail.com>
+	Thu, 30 Oct 2014 23:32:18 -0400
+In-Reply-To: <1414681386.26703.6.camel@AMDC1943>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
 
-Hi Kukjin,
+On Fri, Oct 31, 2014 at 12:03 AM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> On czw, 2014-10-30 at 22:56 +0900, Alexandre Courbot wrote:
+>> Hi, and thanks for bringing this issue to us!
+>>
+>> On Wed, Oct 29, 2014 at 7:49 PM, Javier Martinez Canillas
+>> <javier.martinez@collabora.co.uk> wrote:
+>> > [adding Linus and Alexandre to the cc list]
+>> >
+>> > Hello Krzysztof,
+>> >
+>> > On 10/29/2014 11:42 AM, Krzysztof Kozlowski wrote:
+>> >> On wto, 2014-10-28 at 13:11 +0100, Krzysztof Kozlowski wrote:
+>> >>> On wto, 2014-10-28 at 09:52 +0100, Krzysztof Kozlowski wrote:
+>> >>> > On pon, 2014-10-27 at 21:03 +0100, Javier Martinez Canillas wrote:
+>> >>> > > Hello Krzysztof,
+>> >>> > >
+>> >>> > > On 10/27/2014 04:03 PM, Krzysztof Kozlowski wrote:
+>> >>> > > > @@ -85,6 +91,9 @@ struct max77686_data {
+>> >>> > > >        struct max77686_regulator_data *regulators;
+>> >>> > > >        int num_regulators;
+>> >>> > > >
+>> >>> > > > +      /* Array of size num_regulators with GPIOs for external control. */
+>> >>> > > > +      int *ext_control_gpio;
+>> >>> > > > +
+>> >>> > >
+>> >>> > > The integer-based GPIO API is deprecated in favor of the descriptor-based GPIO
+>> >>> > > interface (Documentation/gpio/consumer.txt). Could you please use the later?
+>> >>> >
+>> >>> > Sure, I can. Please have in mind that regulator core still accepts old
+>> >>> > GPIO so I will have to use desc_to_gpio(). That should work... and
+>> >>> > should be future-ready.
+>> >>>
+>> >>> It seems I was too hasty... I think usage of the new gpiod API implies
+>> >>> completely different bindings.
+>> >>>
+>> >>> The gpiod_get() gets GPIO from a device level, not from given sub-node
+>> >>> pointer. This means that you cannot have DTS like this:
+>> >>> ldo21_reg: ldo21 {
+>> >>>      regulator-compatible = "LDO21";
+>> >>>      regulator-name = "VTF_2.8V";
+>> >>>      regulator-min-microvolt = <2800000>;
+>> >>>      regulator-max-microvolt = <2800000>;
+>> >>>      ec-gpio = <&gpy2 0 0>;
+>> >>> };
+>> >>>
+>> >>> ldo22_reg: ldo22 {
+>> >>>      regulator-compatible = "LDO22";
+>> >>>      regulator-name = "VMEM_VDD_2.8V";
+>> >>>      regulator-min-microvolt = <2800000>;
+>> >>>      regulator-max-microvolt = <2800000>;
+>> >>>      ec-gpio = <&gpk0 2 0>;
+>> >>> };
+>> >>>
+>> >>>
+>> >>> I could put GPIOs in device node:
+>> >>>
+>> >>> max77686_pmic@09 {
+>> >>>      compatible = "maxim,max77686";
+>> >>>      interrupt-parent = <&gpx0>;
+>> >>>      interrupts = <7 0>;
+>> >>>      reg = <0x09>;
+>> >>>      #clock-cells = <1>;
+>> >>>      ldo21-gpio = <&gpy2 0 0>;
+>> >>>      ldo22-gpio = <&gpk0 2 0>;
+>> >>>
+>> >>>      ldo21_reg: ldo21 {
+>> >>>              regulator-compatible = "LDO21";
+>> >>>              regulator-name = "VTF_2.8V";
+>> >>>              regulator-min-microvolt = <2800000>;
+>> >>>              regulator-max-microvolt = <2800000>;
+>> >>>      };
+>> >>>
+>> >>>      ldo22_reg: ldo22 {
+>> >>>              regulator-compatible = "LDO22";
+>> >>>              regulator-name = "VMEM_VDD_2.8V";
+>> >>>              regulator-min-microvolt = <2800000>;
+>> >>>              regulator-max-microvolt = <2800000>;
+>> >>>      };
+>> >>>
+>> >>> This would work but I don't like it. The properties of a regulator are
+>> >>> above the node configuring that regulator.
+>> >>>
+>> >>> Any ideas?
+>> >>>
+>> >>
+>> >> Continuing talking to myself... I found another problem - GPIO cannot be
+>> >> requested more than once (-EBUSY). In case of this driver (and board:
+>> >> Trats2) one GPIO is connected to regulators. The legacy GPIO API and
+>> >> regulator core handle this.
+>> >>
+>> >> With new GPIO API I would have to implement some additional steps in
+>> >> such case...
+>> >>
+>> >> So there are 2 issues:
+>> >> 1. Cannot put GPIO property in regulator node.
+>>
+>> For this problem you will probably want to use the
+>> dev(m)_get_named_gpiod_from_child() function from the following patch:
+>>
+>> https://lkml.org/lkml/2014/10/6/529
+>>
+>> It should reach -next soon now.
+>
+> Thanks! Probably I would switch to "top" level gpios property anyway
+> (other reasons) but it would be valuable in some cases to specify them
+> per child node.
 
-On Tue, Oct 28, 2014 at 5:56 PM, Abhilash Kesavan
-<kesavan.abhilash@gmail.com> wrote:
-> Hi Kukjin
->
-> On Tue, Oct 28, 2014 at 4:01 PM, Kukjin Kim <kgene@kernel.org> wrote:
->> Abhilash Kesavan wrote:
->>>
->> Hi,
->>
->> Sorry for late response.
->>
->>> Remove symbols SERIAL_SAMSUNG_UARTS_4 and SERIAL_SAMSUNG_UARTS which
->>> select the number of UART ports available on the SoC. Replace the usage
->>> of SERIAL_SAMSUNG_UARTS in the serial driver with the maximum number of
->>
->> Well, as you know the number of uart ports are different on each Samsung SoCs
->> so I don't think just using maximum number of uart ports are possible for new
->> exynos7 SoC at this moment.
->
-> Thanks for the review.
-> The main reason for me sending this patch was so that we may be able
-> to re-use the serial driver on arm64 based Exynos7 too. The two
-> symbols mentioned above which depend on PLAT_SAMSUNG prevent this. I
-> initially sent a patch which changed the dependency to SERIAL_SAMSUNG
-> for these 2 symbols. However, Tomasz suggested that a clean-up of
-> these two symbols would be a better option.
->
-> Please see the discussion of the previous version here:
-> https://lkml.org/lkml/2014/9/29/702
->
-> Can you please let me know if the previous version is acceptable ?
+Mmm, but doesn't it make more sense to have them in the child nodes?
+Besides if the bindings of this driver have already been published,
+I'm afraid you will have to maintain backward compability.
 
-Kukjin, can you please indicate the approach you would like me to
-take. Without this serial support is blocked on Exynos7.
+>
+>>
+>> >> 2. Cannot request some GPIO more than once.
+>>
+>> We have been confronted to this problem with the regulator core as well:
+>>
+>> http://marc.info/?l=linux-arm-kernel&m=140417649119733&w=1
+>>
+>> I have a draft patch that allows GPIOs to be requested by several
+>> clients. What prevented me from submitting it was that I wanted to
+>> make sure the different requested configurations were compatible, but
+>> maybe I am overthinking this. There are also a couple of other patches
+>> that this depends on (like removal of the big descs array), so I don't
+>> think it will be available too soon, sadly.
+>
+> Shouldn't be the nature of get()/put() interface to allow multiple
+> requests?
 
-Thanks,
-Abhilash
+Only if it makes sense for the resource to be requested multiple
+times. GPIOs are kind of a difficult case here. Consumers could ask
+for e.g. conflicting directions. But for cases where it should work I
+agree that multiple consumers would be welcome.
+
+> To me it was a kind of intuitive that I could do another
+> devm_gpiod_get() for the same gpio. But then it hit me with EBUSY :).
 >
 >>
->>> UART ports possible. Removal of these symbols also helps in Exynos7
->>> serial enablement.
->>>
->>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
->>> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
->>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>> ---
->>>  drivers/tty/serial/Kconfig   |   16 ----------------
->>>  drivers/tty/serial/samsung.c |   11 +++--------
->>>  drivers/tty/serial/samsung.h |    5 ++++-
->>>  3 files changed, 7 insertions(+), 25 deletions(-)
->>>
->>> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
->>> index 81f6ee7..9fc9092 100644
->>> --- a/drivers/tty/serial/Kconfig
->>> +++ b/drivers/tty/serial/Kconfig
->>> @@ -247,22 +247,6 @@ config SERIAL_SAMSUNG
->>>         provide all of these ports, depending on how the serial port
->>>         pins are configured.
->>>
->>> -config SERIAL_SAMSUNG_UARTS_4
->>> -     bool
->>> -     depends on PLAT_SAMSUNG
->>> -     default y if !(CPU_S3C2410 || CPU_S3C2412 || CPU_S3C2440 || CPU_S3C2442)
->>> -     help
->>> -       Internal node for the common case of 4 Samsung compatible UARTs
->>> -
->>> -config SERIAL_SAMSUNG_UARTS
->>> -     int
->>> -     depends on PLAT_SAMSUNG
->>> -     default 4 if SERIAL_SAMSUNG_UARTS_4 || CPU_S3C2416
->>> -     default 3
->>> -     help
->>> -       Select the number of available UART ports for the Samsung S3C
->>> -       serial driver
->>> -
->>>  config SERIAL_SAMSUNG_DEBUG
->>>       bool "Samsung SoC serial debug"
->>>       depends on SERIAL_SAMSUNG && DEBUG_LL
->>> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
->>> index c78f43a..ba04c6d 100644
->>> --- a/drivers/tty/serial/samsung.c
->>> +++ b/drivers/tty/serial/samsung.c
->>> @@ -962,14 +962,14 @@ static struct uart_ops s3c24xx_serial_ops = {
->>>  static struct uart_driver s3c24xx_uart_drv = {
->>>       .owner          = THIS_MODULE,
->>>       .driver_name    = "s3c2410_serial",
->>> -     .nr             = CONFIG_SERIAL_SAMSUNG_UARTS,
->>> +     .nr             = MAX_SAMSUNG_UARTS,
->>>       .cons           = S3C24XX_SERIAL_CONSOLE,
->>>       .dev_name       = S3C24XX_SERIAL_NAME,
->>>       .major          = S3C24XX_SERIAL_MAJOR,
->>>       .minor          = S3C24XX_SERIAL_MINOR,
->>>  };
->>>
->>> -static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS] = {
->>> +static struct s3c24xx_uart_port s3c24xx_serial_ports[MAX_SAMSUNG_UARTS] = {
->>>       [0] = {
->>>               .port = {
->>>                       .lock           = __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[0].port.lock),
->>> @@ -992,8 +992,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
->>>                       .line           = 1,
->>>               }
->>>       },
->>> -#if CONFIG_SERIAL_SAMSUNG_UARTS > 2
->>> -
->>>       [2] = {
->>>               .port = {
->>>                       .lock           = __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[2].port.lock),
->>> @@ -1005,8 +1003,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
->>>                       .line           = 2,
->>>               }
->>>       },
->>> -#endif
->>> -#if CONFIG_SERIAL_SAMSUNG_UARTS > 3
->>>       [3] = {
->>>               .port = {
->>>                       .lock           = __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[3].port.lock),
->>> @@ -1018,7 +1014,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
->>>                       .line           = 3,
->>>               }
->>>       }
->>> -#endif
->>>  };
->>>
->>>  /* s3c24xx_serial_resetport
->>> @@ -1590,7 +1585,7 @@ s3c24xx_serial_console_setup(struct console *co, char *options)
->>>
->>>       /* is this a valid port */
->>>
->>> -     if (co->index == -1 || co->index >= CONFIG_SERIAL_SAMSUNG_UARTS)
->>> +     if (co->index == -1 || co->index >= MAX_SAMSUNG_UARTS)
->>
->> If we use max number, second condition is not required...
->>
->>>               co->index = 0;
->>>
->>>       port = &s3c24xx_serial_ports[co->index].port;
->>> diff --git a/drivers/tty/serial/samsung.h b/drivers/tty/serial/samsung.h
->>> index eb071dd..484b49e 100644
->>> --- a/drivers/tty/serial/samsung.h
->>> +++ b/drivers/tty/serial/samsung.h
->>> @@ -1,6 +1,9 @@
->>>  #ifndef __SAMSUNG_H
->>>  #define __SAMSUNG_H
->>>
->>> +/* Maximum UART ports available */
->>> +#define MAX_SAMSUNG_UARTS       4
->>
->> If there is a Samsung SoC having 5 UARTS, we need to update?
+>> So maybe your best shot for now is to keep using the integer API, as
+>> much as I hate it. Once we become able to request the same GPIO
+>> several times, you should be good to switch to descriptors. Sorry this
+>> has not been done faster.
 >
-> Yes, we would need to update the MAX_SAMSUNG_UARTS define for a newer
-> SoC with 5 uart ports but even without this patch we would have to
-> modify the SERIAL_SAMSUNG_UARTS symbol to handle 5 ports.
->>
->> And hmm...maybe we need to keep the useless array sometimes...
->
-> Yes, for the 24xx series with 3 uart ports we would.
->
-> Regards,
-> Abhilash
->>
->>> +
->>>  /*
->>>   * Driver for Samsung SoC onboard UARTs.
->>>   *
->>> @@ -38,7 +41,7 @@ struct s3c24xx_uart_info {
->>>  struct s3c24xx_serial_drv_data {
->>>       struct s3c24xx_uart_info        *info;
->>>       struct s3c2410_uartcfg          *def_cfg;
->>> -     unsigned int                    fifosize[CONFIG_SERIAL_SAMSUNG_UARTS];
->>> +     unsigned int                    fifosize[MAX_SAMSUNG_UARTS];
->>>  };
->>>
->>>  struct s3c24xx_uart_port {
->>> --
->>> 1.7.9.5
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> I'll do it legacy way but I'll try to use bindings gpiolib-safe. This
+> way future transition in the driver should not affect bindings.
+
+For DT bindings, please refer to these brand-new instructions:
+
+https://lkml.org/lkml/2014/10/29/98
+
+Personally I think having the GPIO phandle in the child node would
+be the most intuitive. You will also have to use the "-gpios" suffix, no
+"-gpio", if you can still change the bindings.
