@@ -1,59 +1,57 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 6/8] regulator: max77686: Add external GPIO control
-Date: Fri, 31 Oct 2014 11:54:11 +0000
-Message-ID: <20141031115411.GO18557@sirena.org.uk>
-References: <1414486356.24949.19.camel@AMDC1943>
- <1414498308.24949.32.camel@AMDC1943>
- <1414579362.18868.11.camel@AMDC1943>
- <5450C63B.3000602@collabora.co.uk>
- <CAAVeFuLncbkNLGxEAj90yMmugRDNjtjeGoV_QYTMDZ7NVMJCmg@mail.gmail.com>
- <1414681386.26703.6.camel@AMDC1943>
- <CAAVeFuJo1wTyxOo4FEZM3=GTejuSHi+mnr=QV6HUeV5mAOCmqg@mail.gmail.com>
- <1414741898.20071.8.camel@AMDC1943>
- <20141031103217.GJ18557@sirena.org.uk>
- <1414755947.7318.3.camel@AMDC1943>
+Subject: Re: [PATCH v3 01/14] mfd: max77686/802: Map regulator driver to its
+ own of_node
+Date: Fri, 31 Oct 2014 12:23:30 +0000
+Message-ID: <20141031122330.GP18557@sirena.org.uk>
+References: <1414668053-31370-1-git-send-email-k.kozlowski@samsung.com>
+ <1414668053-31370-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rRB5tibFU002dRFk"
+	protocol="application/pgp-signature"; boundary="Z0vT1GPDkB6ir2Vi"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1414755947.7318.3.camel@AMDC1943>
+In-Reply-To: <1414668053-31370-2-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---rRB5tibFU002dRFk
+--Z0vT1GPDkB6ir2Vi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Oct 31, 2014 at 12:45:47PM +0100, Krzysztof Kozlowski wrote:
+On Thu, Oct 30, 2014 at 12:20:40PM +0100, Krzysztof Kozlowski wrote:
+> Add of_compatible fields for max77686 and max77802 regulator drivers.
+> The driver's node should be the same as voltage-regulators node. This
+> simplifies parsing of regulators init data from DTS.
 
-> Then I'll add it.
+No, this is broken.  You're introducing an ABI break that conveys no
+additional information, I can't see any reason why this should make it
+simpler to parse init data (you've certainly not articulated one in the
+changelog here) but even if it did you are changing the ABI incompatibly
+and convenience isn't a good reason to do that.
 
-> Mark, what device should be assigned to "config.dev" during registration
-> of regulators? The regulator driver's device or its parent (MFD main
-> driver)?
+I'm getting very frustrated with what's going on with these drivers,
+there seem to be a lot of rather large sets of patches spawning lots of
+discussion but also frequent review problems and very little actually
+getting merged (look at the set of changes in the past few merge windows
+for example).  There's something going wrong here.
 
-> Various drivers do this differently.
-
-Normally the parent device.
-
---rRB5tibFU002dRFk
+--Z0vT1GPDkB6ir2Vi
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBAgAGBQJUU3hiAAoJECTWi3JdVIfQKAQH/A0korUvhWLnb2phvpqNph0F
-d6U4Y1pdFRoevFYHIzkraoEStE5tjb8T+OHdw1Poq2Tgfvg5sDHknb87kNz6SvGU
-b7f42UbKEnPHsKvEFri3hanS61b1s9XFywZr24iKNtH15n0ixJpqMSvRmQR1HyTy
-C0dOLi27WTHZ183uligg5/7sOjmywqyxrQZUiyImqKE3J5G4Rz4hckXi4kG5149V
-xQE4WleTJbACJmnCyv39ZGgc3zfhzJHEuQJwuUwhnplxS17PUjpI7+7HdnyXDH2D
-i+qJx1iGdkOHBJwBgOnimj8obI3cpBNH+aCPoeIh25YnHr03/98FhpBMDSYp5Q4=
-=CYF1
+iQEcBAEBAgAGBQJUU39BAAoJECTWi3JdVIfQegsH/ROIknnvQNqQ85+IHwXqO3kQ
+8D84z/5A5u0nZRsbhI+veX0eOwfA4251qMEKXI88OMLlrPw2R6y5xAEzsMlH5aVj
+Dm7wjxRjCCR45Uh79eoUsl0uKQYBd5Z4cCJPHcbi8iLWoJbFLMeBZkGJRciXl1p8
+IDtZUWClt2zewNMbH9R/WA/hspCSKRzZrxqPts4tAruENZtCSrkQWAd++eGklTj0
+gX4QhVXdh4qSEZHeI4Dkq1zC4Ar8ZkjkTJ8l+uhey3sTaTtIcXIhCmOwyiVPI4AI
+m+RPe5ujnz11TvYgPW1CDPRiCH5DQVJgOh8dRGb3UvxymbtVk9mD7Cn4AMHzfsk=
+=uY6/
 -----END PGP SIGNATURE-----
 
---rRB5tibFU002dRFk--
+--Z0vT1GPDkB6ir2Vi--
