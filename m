@@ -1,75 +1,240 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v2 01/10] usb: dwc2/gadget: report disconnect event from
- 'end session' irq
-Date: Fri, 31 Oct 2014 08:45:58 +0100
-Message-ID: <54533E36.6070203@samsung.com>
-References: <1413801940-31086-1-git-send-email-m.szyprowski@samsung.com>
- <1413801940-31086-2-git-send-email-m.szyprowski@samsung.com>
- <A2CA0424C0A6F04399FB9E1CD98E0304844E5C19@US01WEMBX2.internal.synopsys.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH 6/8] regulator: max77686: Add external GPIO control
+Date: Fri, 31 Oct 2014 08:51:38 +0100
+Message-ID: <1414741898.20071.8.camel@AMDC1943>
+References: <1414422226-10948-1-git-send-email-k.kozlowski@samsung.com>
+ <1414422226-10948-7-git-send-email-k.kozlowski@samsung.com>
+ <544EA4FA.6040704@collabora.co.uk> <1414486356.24949.19.camel@AMDC1943>
+ <1414498308.24949.32.camel@AMDC1943> <1414579362.18868.11.camel@AMDC1943>
+ <5450C63B.3000602@collabora.co.uk>
+ <CAAVeFuLncbkNLGxEAj90yMmugRDNjtjeGoV_QYTMDZ7NVMJCmg@mail.gmail.com>
+ <1414681386.26703.6.camel@AMDC1943>
+ <CAAVeFuJo1wTyxOo4FEZM3=GTejuSHi+mnr=QV6HUeV5mAOCmqg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <A2CA0424C0A6F04399FB9E1CD98E0304844E5C19-Yu2iAY70zvrYN67daEjeMPufCSb+aD3WLzEdoUbNIic@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Zimmerman <Paul.Zimmerman-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <CAAVeFuJo1wTyxOo4FEZM3=GTejuSHi+mnr=QV6HUeV5mAOCmqg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
+On pi=C4=85, 2014-10-31 at 12:31 +0900, Alexandre Courbot wrote:
+> On Fri, Oct 31, 2014 at 12:03 AM, Krzysztof Kozlowski
+> <k.kozlowski@samsung.com> wrote:
+> > On czw, 2014-10-30 at 22:56 +0900, Alexandre Courbot wrote:
+> >> Hi, and thanks for bringing this issue to us!
+> >>
+> >> On Wed, Oct 29, 2014 at 7:49 PM, Javier Martinez Canillas
+> >> <javier.martinez@collabora.co.uk> wrote:
+> >> > [adding Linus and Alexandre to the cc list]
+> >> >
+> >> > Hello Krzysztof,
+> >> >
+> >> > On 10/29/2014 11:42 AM, Krzysztof Kozlowski wrote:
+> >> >> On wto, 2014-10-28 at 13:11 +0100, Krzysztof Kozlowski wrote:
+> >> >>> On wto, 2014-10-28 at 09:52 +0100, Krzysztof Kozlowski wrote:
+> >> >>> > On pon, 2014-10-27 at 21:03 +0100, Javier Martinez Canillas =
+wrote:
+> >> >>> > > Hello Krzysztof,
+> >> >>> > >
+> >> >>> > > On 10/27/2014 04:03 PM, Krzysztof Kozlowski wrote:
+> >> >>> > > > @@ -85,6 +91,9 @@ struct max77686_data {
+> >> >>> > > >        struct max77686_regulator_data *regulators;
+> >> >>> > > >        int num_regulators;
+> >> >>> > > >
+> >> >>> > > > +      /* Array of size num_regulators with GPIOs for ex=
+ternal control. */
+> >> >>> > > > +      int *ext_control_gpio;
+> >> >>> > > > +
+> >> >>> > >
+> >> >>> > > The integer-based GPIO API is deprecated in favor of the d=
+escriptor-based GPIO
+> >> >>> > > interface (Documentation/gpio/consumer.txt). Could you ple=
+ase use the later?
+> >> >>> >
+> >> >>> > Sure, I can. Please have in mind that regulator core still a=
+ccepts old
+> >> >>> > GPIO so I will have to use desc_to_gpio(). That should work.=
+=2E. and
+> >> >>> > should be future-ready.
+> >> >>>
+> >> >>> It seems I was too hasty... I think usage of the new gpiod API=
+ implies
+> >> >>> completely different bindings.
+> >> >>>
+> >> >>> The gpiod_get() gets GPIO from a device level, not from given =
+sub-node
+> >> >>> pointer. This means that you cannot have DTS like this:
+> >> >>> ldo21_reg: ldo21 {
+> >> >>>      regulator-compatible =3D "LDO21";
+> >> >>>      regulator-name =3D "VTF_2.8V";
+> >> >>>      regulator-min-microvolt =3D <2800000>;
+> >> >>>      regulator-max-microvolt =3D <2800000>;
+> >> >>>      ec-gpio =3D <&gpy2 0 0>;
+> >> >>> };
+> >> >>>
+> >> >>> ldo22_reg: ldo22 {
+> >> >>>      regulator-compatible =3D "LDO22";
+> >> >>>      regulator-name =3D "VMEM_VDD_2.8V";
+> >> >>>      regulator-min-microvolt =3D <2800000>;
+> >> >>>      regulator-max-microvolt =3D <2800000>;
+> >> >>>      ec-gpio =3D <&gpk0 2 0>;
+> >> >>> };
+> >> >>>
+> >> >>>
+> >> >>> I could put GPIOs in device node:
+> >> >>>
+> >> >>> max77686_pmic@09 {
+> >> >>>      compatible =3D "maxim,max77686";
+> >> >>>      interrupt-parent =3D <&gpx0>;
+> >> >>>      interrupts =3D <7 0>;
+> >> >>>      reg =3D <0x09>;
+> >> >>>      #clock-cells =3D <1>;
+> >> >>>      ldo21-gpio =3D <&gpy2 0 0>;
+> >> >>>      ldo22-gpio =3D <&gpk0 2 0>;
+> >> >>>
+> >> >>>      ldo21_reg: ldo21 {
+> >> >>>              regulator-compatible =3D "LDO21";
+> >> >>>              regulator-name =3D "VTF_2.8V";
+> >> >>>              regulator-min-microvolt =3D <2800000>;
+> >> >>>              regulator-max-microvolt =3D <2800000>;
+> >> >>>      };
+> >> >>>
+> >> >>>      ldo22_reg: ldo22 {
+> >> >>>              regulator-compatible =3D "LDO22";
+> >> >>>              regulator-name =3D "VMEM_VDD_2.8V";
+> >> >>>              regulator-min-microvolt =3D <2800000>;
+> >> >>>              regulator-max-microvolt =3D <2800000>;
+> >> >>>      };
+> >> >>>
+> >> >>> This would work but I don't like it. The properties of a regul=
+ator are
+> >> >>> above the node configuring that regulator.
+> >> >>>
+> >> >>> Any ideas?
+> >> >>>
+> >> >>
+> >> >> Continuing talking to myself... I found another problem - GPIO =
+cannot be
+> >> >> requested more than once (-EBUSY). In case of this driver (and =
+board:
+> >> >> Trats2) one GPIO is connected to regulators. The legacy GPIO AP=
+I and
+> >> >> regulator core handle this.
+> >> >>
+> >> >> With new GPIO API I would have to implement some additional ste=
+ps in
+> >> >> such case...
+> >> >>
+> >> >> So there are 2 issues:
+> >> >> 1. Cannot put GPIO property in regulator node.
+> >>
+> >> For this problem you will probably want to use the
+> >> dev(m)_get_named_gpiod_from_child() function from the following pa=
+tch:
+> >>
+> >> https://lkml.org/lkml/2014/10/6/529
+> >>
+> >> It should reach -next soon now.
+> >
+> > Thanks! Probably I would switch to "top" level gpios property anywa=
+y
+> > (other reasons) but it would be valuable in some cases to specify t=
+hem
+> > per child node.
+>=20
+> Mmm, but doesn't it make more sense to have them in the child nodes?
 
-On 2014-10-25 03:23, Paul Zimmerman wrote:
->> From: Marek Szyprowski [mailto:m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org]
->> Sent: Monday, October 20, 2014 3:46 AM
->>
->> This patch adds a call to s3c_hsotg_disconnect() from 'end session'
->> interrupt (GOTGINT_SES_END_DET) to correctly notify gadget subsystem
->> about unplugged usb cable. 'disconnected' interrupt (DISCONNINT) might
->> look a bit more suitable for this event, but it is asserted only in
->> host mode, so in device mode we need to use something else.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> ---
->>   drivers/usb/dwc2/gadget.c | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
->> index 7b5856fadd93..119c8a3effc2 100644
->> --- a/drivers/usb/dwc2/gadget.c
->> +++ b/drivers/usb/dwc2/gadget.c
->> @@ -2279,6 +2279,12 @@ irq_retry:
->>   		dev_info(hsotg->dev, "OTGInt: %08x\n", otgint);
->>
->>   		writel(otgint, hsotg->regs + GOTGINT);
->> +
->> +		if (otgint & GOTGINT_SES_END_DET) {
->> +			if (hsotg->gadget.speed != USB_SPEED_UNKNOWN)
->> +				s3c_hsotg_disconnect(hsotg);
->> +			hsotg->gadget.speed = USB_SPEED_UNKNOWN;
->> +		}
->>   	}
->>
->>   	if (gintsts & GINTSTS_SESSREQINT) {
-> Does this mean we can get rid of the call to s3c_hsotg_disconnect in
-> s3c_hsotg_process_control after a SET_ADDRESS is received? If not,
-> then s3c_hsotg_disconnect will be called twice, once here after the
-> disconnect, and once again after the reconnect and SET_ADDRESS.
+Yes, it makes more sense. Using old way of parsing regulators from DT i=
+t
+was straightforward.
 
-Nope, we cannot get rid of that call, because it is needed got get gadget
-operational when device has been re-enumerated. The simplest way to 
-reproduce
-such case is to connect dwc2 to externally powered hub and then unplug cable
-between hub and usb host. In such case the 'end session' interrupt is not
-asserted, so the additional s3c_hsotg_disconnect() call before setting new
-address is needed. I will rework this patch and add a code to ensures that
-the gadget->disconnect() will be called only once.
+However new DT style parsing (regulator_of_get_init_data()) does the
+basic parsing stuff and this removes a lot of code from driver. The
+driver no longer parses all regulaotrs but the regulator core does it.
+Unfortunately regulator core does not parse custom bindings (like such
+GPIOs) so I would have to iterate once again through all regulators jus=
+t
+to find "gpios" property.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+It is simpler just to do something like (5 regulators can be controlled
+by GPIO):
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+max77686_pmic_dt_parse_gpio_control(struct platform_device *pdev, *gpio=
+)
+{
+  gpio[MAX77686_LDO20] =3D of_get_named_gpio(np, "ldo20-gpios", 0);
+  gpio[MAX77686_LDO21] =3D of_get_named_gpio(np, "ldo21-gpios", 0);
+  gpio[MAX77686_LDO22] =3D of_get_named_gpio(np, "ldo22-gpios", 0);
+  gpio[MAX77686_BUCK8] =3D of_get_named_gpio(np, "buck8-gpios", 0);
+  gpio[MAX77686_BUCK9] =3D of_get_named_gpio(np, "buck9-gpios", 0);
+}
+
+> Besides if the bindings of this driver have already been published,
+> I'm afraid you will have to maintain backward compability.
+
+These are new bindings. Driver exists but I am adding new functionality=
+:
+the "GPIO enable control".
+
+> >>
+> >> >> 2. Cannot request some GPIO more than once.
+> >>
+> >> We have been confronted to this problem with the regulator core as=
+ well:
+> >>
+> >> http://marc.info/?l=3Dlinux-arm-kernel&m=3D140417649119733&w=3D1
+> >>
+> >> I have a draft patch that allows GPIOs to be requested by several
+> >> clients. What prevented me from submitting it was that I wanted to
+> >> make sure the different requested configurations were compatible, =
+but
+> >> maybe I am overthinking this. There are also a couple of other pat=
+ches
+> >> that this depends on (like removal of the big descs array), so I d=
+on't
+> >> think it will be available too soon, sadly.
+> >
+> > Shouldn't be the nature of get()/put() interface to allow multiple
+> > requests?
+>=20
+> Only if it makes sense for the resource to be requested multiple
+> times. GPIOs are kind of a difficult case here. Consumers could ask
+> for e.g. conflicting directions.
+
+Right, I haven't thought about conflicts.
+
+> But for cases where it should work I
+> agree that multiple consumers would be welcome.
+>=20
+> > To me it was a kind of intuitive that I could do another
+> > devm_gpiod_get() for the same gpio. But then it hit me with EBUSY :=
+).
+> >
+> >>
+> >> So maybe your best shot for now is to keep using the integer API, =
+as
+> >> much as I hate it. Once we become able to request the same GPIO
+> >> several times, you should be good to switch to descriptors. Sorry =
+this
+> >> has not been done faster.
+> >
+> > I'll do it legacy way but I'll try to use bindings gpiolib-safe. Th=
+is
+> > way future transition in the driver should not affect bindings.
+>=20
+> For DT bindings, please refer to these brand-new instructions:
+>=20
+> https://lkml.org/lkml/2014/10/29/98
+>=20
+> Personally I think having the GPIO phandle in the child node would
+> be the most intuitive. You will also have to use the "-gpios" suffix,=
+ no
+> "-gpio", if you can still change the bindings.
+
+Thanks! I'll adjust to new style.
+
+Best regards,
+Krzysztof
