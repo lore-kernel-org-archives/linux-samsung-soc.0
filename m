@@ -1,16 +1,16 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 8/9] drm/exynos: update documentation to reflect code changes
-Date: Fri, 31 Oct 2014 14:17:42 +0000
-Message-ID: <1414765063-30598-8-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 5/9] drm/exynos: Replace repeated declarations by #include "exynos_drm_drv.h"
+Date: Fri, 31 Oct 2014 14:17:39 +0000
+Message-ID: <1414765063-30598-5-git-send-email-gustavo@padovan.org>
 References: <1414765063-30598-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:62241 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759483AbaJaORu (ORCPT
+Received: from mail-wg0-f41.google.com ([74.125.82.41]:33986 "EHLO
+	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759884AbaJaORs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 Oct 2014 10:17:50 -0400
-Received: by mail-wg0-f44.google.com with SMTP id x12so6070100wgg.3
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Oct 2014 07:17:49 -0700 (PDT)
+	Fri, 31 Oct 2014 10:17:48 -0400
+Received: by mail-wg0-f41.google.com with SMTP id k14so8074500wgh.0
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Oct 2014 07:17:47 -0700 (PDT)
 In-Reply-To: <1414765063-30598-1-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -19,34 +19,29 @@ Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabor
 
 From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Description of the @create_connector callback was missing,
-and the @manager was no longer needed.
+Re-declare struct is not a good practice, let's use the original
+drm and exynos declarations.
 
 Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 ---
- drivers/gpu/drm/exynos/exynos_drm_drv.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index f77e6aa..e762cbb 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -110,6 +110,7 @@ struct exynos_drm_overlay {
-  * Exynos DRM Display Structure.
-  *	- this structure is common to analog tv, digital tv and lcd panel.
-  *
-+ * @create_connector: initialize and register a new connector
-  * @remove: cleans up the display for removal
-  * @mode_fixup: fix mode data comparing to hw specific display mode.
-  * @mode_set: convert drm_display_mode to hw specific display mode and
-@@ -262,8 +263,6 @@ struct exynos_drm_private {
-  * @dev: pointer to device object for subdrv device driver.
-  * @drm_dev: pointer to drm_device and this pointer would be set
-  *	when sub driver calls exynos_drm_subdrv_register().
-- * @manager: subdrv has its own manager to control a hardware appropriately
-- *     and we can access a hardware drawing on this manager.
-  * @probe: this callback would be called by exynos drm driver after
-  *     subdrv is registered to it.
-  * @remove: this callback is used to release resources created
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.h b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+index 690dcdd..e353d35 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
+@@ -15,10 +15,7 @@
+ #ifndef _EXYNOS_DRM_CRTC_H_
+ #define _EXYNOS_DRM_CRTC_H_
+ 
+-struct drm_device;
+-struct drm_crtc;
+-struct exynos_drm_manager;
+-struct exynos_drm_overlay;
++#include "exynos_drm_drv.h"
+ 
+ int exynos_drm_crtc_create(struct exynos_drm_manager *manager);
+ int exynos_drm_crtc_enable_vblank(struct drm_device *dev, int pipe);
 -- 
 1.9.3
