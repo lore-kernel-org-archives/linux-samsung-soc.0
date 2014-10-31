@@ -1,36 +1,209 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v3 4/9] drivercore / platform: Keep PM domain powered
- during ->probe()
-Date: Thu, 30 Oct 2014 17:07:49 -0700
-Message-ID: <20141031000749.GK36444@dtor-ws>
-References: <1413208930-26019-1-git-send-email-ulf.hansson@linaro.org>
- <1413208930-26019-5-git-send-email-ulf.hansson@linaro.org>
- <7hoast8eu8.fsf@deeprootsystems.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH v2 2/2] tty: serial: samsung: Clean-up selection of number
+ of available UARTs
+Date: Fri, 31 Oct 2014 08:06:02 +0530
+Message-ID: <CAM4voa=0i6WsYn1z9AdeCSPFqdOS35-LX=b-Rc+Npr9dVFD_-w@mail.gmail.com>
+References: <1412181777-6388-1-git-send-email-a.kesavan@samsung.com>
+	<1412181777-6388-2-git-send-email-a.kesavan@samsung.com>
+	<041301cff29a$5c9a5fa0$15cf1ee0$@kernel.org>
+	<CAM4voakzWhfMc1SyTXs1eOxuvEp_U3qfRLxPAzWzeX54jwadvA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <7hoast8eu8.fsf@deeprootsystems.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron Lu <aaron.lu@intel.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:57272 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161558AbaJaCgE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 30 Oct 2014 22:36:04 -0400
+Received: by mail-vc0-f174.google.com with SMTP id im17so880227vcb.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Oct 2014 19:36:02 -0700 (PDT)
+In-Reply-To: <CAM4voakzWhfMc1SyTXs1eOxuvEp_U3qfRLxPAzWzeX54jwadvA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Arnd Bergmann <arnd@arndb.de>
 
-On Thu, Oct 30, 2014 at 01:47:27PM -0700, Kevin Hilman wrote:
-> Ulf Hansson <ulf.hansson@linaro.org> writes:
-> 
-> > To sucessfully probe some devices their corresponding PM domains may
-> > need to be powered.
-> 
-> Isn't that what pm_runtime_get*() is supposed to be doing?  Why isn't
-> that working?
+Hi Kukjin,
 
-Also, I do not understand why we placing device into a power domain only
-when we probe it. Why if I unbind device from its driver (or do not have
-a driver for it) it disappears from its power domain? To me power domain
-and having driver bound to a device are 2 orthogonal concepts.
+On Tue, Oct 28, 2014 at 5:56 PM, Abhilash Kesavan
+<kesavan.abhilash@gmail.com> wrote:
+> Hi Kukjin
+>
+> On Tue, Oct 28, 2014 at 4:01 PM, Kukjin Kim <kgene@kernel.org> wrote:
+>> Abhilash Kesavan wrote:
+>>>
+>> Hi,
+>>
+>> Sorry for late response.
+>>
+>>> Remove symbols SERIAL_SAMSUNG_UARTS_4 and SERIAL_SAMSUNG_UARTS which
+>>> select the number of UART ports available on the SoC. Replace the usage
+>>> of SERIAL_SAMSUNG_UARTS in the serial driver with the maximum number of
+>>
+>> Well, as you know the number of uart ports are different on each Samsung SoCs
+>> so I don't think just using maximum number of uart ports are possible for new
+>> exynos7 SoC at this moment.
+>
+> Thanks for the review.
+> The main reason for me sending this patch was so that we may be able
+> to re-use the serial driver on arm64 based Exynos7 too. The two
+> symbols mentioned above which depend on PLAT_SAMSUNG prevent this. I
+> initially sent a patch which changed the dependency to SERIAL_SAMSUNG
+> for these 2 symbols. However, Tomasz suggested that a clean-up of
+> these two symbols would be a better option.
+>
+> Please see the discussion of the previous version here:
+> https://lkml.org/lkml/2014/9/29/702
+>
+> Can you please let me know if the previous version is acceptable ?
 
-Thanks.
+Kukjin, can you please indicate the approach you would like me to
+take. Without this serial support is blocked on Exynos7.
 
--- 
-Dmitry
+Thanks,
+Abhilash
+>
+>>
+>>> UART ports possible. Removal of these symbols also helps in Exynos7
+>>> serial enablement.
+>>>
+>>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+>>> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
+>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>> ---
+>>>  drivers/tty/serial/Kconfig   |   16 ----------------
+>>>  drivers/tty/serial/samsung.c |   11 +++--------
+>>>  drivers/tty/serial/samsung.h |    5 ++++-
+>>>  3 files changed, 7 insertions(+), 25 deletions(-)
+>>>
+>>> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+>>> index 81f6ee7..9fc9092 100644
+>>> --- a/drivers/tty/serial/Kconfig
+>>> +++ b/drivers/tty/serial/Kconfig
+>>> @@ -247,22 +247,6 @@ config SERIAL_SAMSUNG
+>>>         provide all of these ports, depending on how the serial port
+>>>         pins are configured.
+>>>
+>>> -config SERIAL_SAMSUNG_UARTS_4
+>>> -     bool
+>>> -     depends on PLAT_SAMSUNG
+>>> -     default y if !(CPU_S3C2410 || CPU_S3C2412 || CPU_S3C2440 || CPU_S3C2442)
+>>> -     help
+>>> -       Internal node for the common case of 4 Samsung compatible UARTs
+>>> -
+>>> -config SERIAL_SAMSUNG_UARTS
+>>> -     int
+>>> -     depends on PLAT_SAMSUNG
+>>> -     default 4 if SERIAL_SAMSUNG_UARTS_4 || CPU_S3C2416
+>>> -     default 3
+>>> -     help
+>>> -       Select the number of available UART ports for the Samsung S3C
+>>> -       serial driver
+>>> -
+>>>  config SERIAL_SAMSUNG_DEBUG
+>>>       bool "Samsung SoC serial debug"
+>>>       depends on SERIAL_SAMSUNG && DEBUG_LL
+>>> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+>>> index c78f43a..ba04c6d 100644
+>>> --- a/drivers/tty/serial/samsung.c
+>>> +++ b/drivers/tty/serial/samsung.c
+>>> @@ -962,14 +962,14 @@ static struct uart_ops s3c24xx_serial_ops = {
+>>>  static struct uart_driver s3c24xx_uart_drv = {
+>>>       .owner          = THIS_MODULE,
+>>>       .driver_name    = "s3c2410_serial",
+>>> -     .nr             = CONFIG_SERIAL_SAMSUNG_UARTS,
+>>> +     .nr             = MAX_SAMSUNG_UARTS,
+>>>       .cons           = S3C24XX_SERIAL_CONSOLE,
+>>>       .dev_name       = S3C24XX_SERIAL_NAME,
+>>>       .major          = S3C24XX_SERIAL_MAJOR,
+>>>       .minor          = S3C24XX_SERIAL_MINOR,
+>>>  };
+>>>
+>>> -static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS] = {
+>>> +static struct s3c24xx_uart_port s3c24xx_serial_ports[MAX_SAMSUNG_UARTS] = {
+>>>       [0] = {
+>>>               .port = {
+>>>                       .lock           = __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[0].port.lock),
+>>> @@ -992,8 +992,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
+>>>                       .line           = 1,
+>>>               }
+>>>       },
+>>> -#if CONFIG_SERIAL_SAMSUNG_UARTS > 2
+>>> -
+>>>       [2] = {
+>>>               .port = {
+>>>                       .lock           = __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[2].port.lock),
+>>> @@ -1005,8 +1003,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
+>>>                       .line           = 2,
+>>>               }
+>>>       },
+>>> -#endif
+>>> -#if CONFIG_SERIAL_SAMSUNG_UARTS > 3
+>>>       [3] = {
+>>>               .port = {
+>>>                       .lock           = __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[3].port.lock),
+>>> @@ -1018,7 +1014,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
+>>>                       .line           = 3,
+>>>               }
+>>>       }
+>>> -#endif
+>>>  };
+>>>
+>>>  /* s3c24xx_serial_resetport
+>>> @@ -1590,7 +1585,7 @@ s3c24xx_serial_console_setup(struct console *co, char *options)
+>>>
+>>>       /* is this a valid port */
+>>>
+>>> -     if (co->index == -1 || co->index >= CONFIG_SERIAL_SAMSUNG_UARTS)
+>>> +     if (co->index == -1 || co->index >= MAX_SAMSUNG_UARTS)
+>>
+>> If we use max number, second condition is not required...
+>>
+>>>               co->index = 0;
+>>>
+>>>       port = &s3c24xx_serial_ports[co->index].port;
+>>> diff --git a/drivers/tty/serial/samsung.h b/drivers/tty/serial/samsung.h
+>>> index eb071dd..484b49e 100644
+>>> --- a/drivers/tty/serial/samsung.h
+>>> +++ b/drivers/tty/serial/samsung.h
+>>> @@ -1,6 +1,9 @@
+>>>  #ifndef __SAMSUNG_H
+>>>  #define __SAMSUNG_H
+>>>
+>>> +/* Maximum UART ports available */
+>>> +#define MAX_SAMSUNG_UARTS       4
+>>
+>> If there is a Samsung SoC having 5 UARTS, we need to update?
+>
+> Yes, we would need to update the MAX_SAMSUNG_UARTS define for a newer
+> SoC with 5 uart ports but even without this patch we would have to
+> modify the SERIAL_SAMSUNG_UARTS symbol to handle 5 ports.
+>>
+>> And hmm...maybe we need to keep the useless array sometimes...
+>
+> Yes, for the 24xx series with 3 uart ports we would.
+>
+> Regards,
+> Abhilash
+>>
+>>> +
+>>>  /*
+>>>   * Driver for Samsung SoC onboard UARTs.
+>>>   *
+>>> @@ -38,7 +41,7 @@ struct s3c24xx_uart_info {
+>>>  struct s3c24xx_serial_drv_data {
+>>>       struct s3c24xx_uart_info        *info;
+>>>       struct s3c2410_uartcfg          *def_cfg;
+>>> -     unsigned int                    fifosize[CONFIG_SERIAL_SAMSUNG_UARTS];
+>>> +     unsigned int                    fifosize[MAX_SAMSUNG_UARTS];
+>>>  };
+>>>
+>>>  struct s3c24xx_uart_port {
+>>> --
+>>> 1.7.9.5
+>>
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
