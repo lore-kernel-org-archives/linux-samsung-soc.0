@@ -1,385 +1,53 @@
-From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v7 2/2] phy: exynos5-usbdrd: Calibrate LOS levels for exynos5420/5800
-Date: Fri, 31 Oct 2014 18:56:29 +0530
-Message-ID: <1414761989-21088-3-git-send-email-gautam.vivek@samsung.com>
-References: <1414761989-21088-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1414761989-21088-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, sergei.shtylyov-M4DtvfQ/ZS1MRgGoP+s0PdBPR1lH4CV8@public.gmane.org, jwerner-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] ARM: dts: Fix CLK_UART_ISP_SCLK clock assignment in
+ exynos4x12.dtsi
+Date: Fri, 31 Oct 2014 14:34:16 +0100
+Message-ID: <1414762456-7203-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:25519 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758302AbaJaNec (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 31 Oct 2014 09:34:32 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NEB00GZB9PID920@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 31 Oct 2014 22:34:30 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Adding phy calibration sequence for USB 3.0 DRD PHY present on
-Exynos5420/5800 systems.
-This calibration facilitates setting certain PHY parameters viz.
-the Loss-of-Signal (LOS) Detector Threshold Level, as well as
-Tx-Vboost-Level for Super-Speed operations.
-Additionally we also set proper time to wait for RxDetect measurement,
-for desired PHY reference clock, so as to solve issue with enumeration
-of few USB 3.0 devices, like Samsung SUM-TSB16S 3.0 USB drive
-on the controller.
+Assign proper FIMC-IS UART gate clock in the device DT node and not
+use the SRC_MASK gate. This fixes regression introduced in commit
+a37c82a3b3c0910019abfd22a97be1f ("clk: samsung: exynos4: Remove
+SRC_MASK_ISP gates").
 
-We are using CR_port for this purpose to send required data
-to override the LOS values.
+Without this change exynos4 fimc-is driver fails to probe with an
+error log:
 
-On testing with USB 3.0 devices on USB 3.0 port present on
-SMDK5420, and peach-pit boards should see following message:
-usb 2-1: new SuperSpeed USB device number 2 using xhci-hcd
+[    1.842447] ERROR: could not get clock /camera/fimc-is@12000000:uart(13)
+[    1.848529] exynos4-fimc-is 12000000.fimc-is: failed to get clock: uart
+[    1.855275] exynos4-fimc-is: probe of 12000000.fimc-is failed with error -2
 
-and without this patch, should see below shown message:
-usb 1-1: new high-speed USB device number 2 using xhci-hcd
-
-[Also removed unnecessary extra lines in the register macro definitions]
-
-Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- drivers/phy/phy-exynos5-usbdrd.c |  219 +++++++++++++++++++++++++++++++++++---
- 1 file changed, 203 insertions(+), 16 deletions(-)
+ arch/arm/boot/dts/exynos4x12.dtsi |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/phy/phy-exynos5-usbdrd.c b/drivers/phy/phy-exynos5-usbdrd.c
-index b3ca3bc..1a63634 100644
---- a/drivers/phy/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/phy-exynos5-usbdrd.c
-@@ -37,13 +37,11 @@
- 
- /* EXYNOS5: USB 3.0 DRD PHY registers */
- #define EXYNOS5_DRD_LINKSYSTEM			0x04
--
- #define LINKSYSTEM_FLADJ_MASK			(0x3f << 1)
- #define LINKSYSTEM_FLADJ(_x)			((_x) << 1)
- #define LINKSYSTEM_XHCI_VERSION_CONTROL		BIT(27)
- 
- #define EXYNOS5_DRD_PHYUTMI			0x08
--
- #define PHYUTMI_OTGDISABLE			BIT(6)
- #define PHYUTMI_FORCESUSPEND			BIT(1)
- #define PHYUTMI_FORCESLEEP			BIT(0)
-@@ -51,26 +49,20 @@
- #define EXYNOS5_DRD_PHYPIPE			0x0c
- 
- #define EXYNOS5_DRD_PHYCLKRST			0x10
--
- #define PHYCLKRST_EN_UTMISUSPEND		BIT(31)
--
- #define PHYCLKRST_SSC_REFCLKSEL_MASK		(0xff << 23)
- #define PHYCLKRST_SSC_REFCLKSEL(_x)		((_x) << 23)
--
- #define PHYCLKRST_SSC_RANGE_MASK		(0x03 << 21)
- #define PHYCLKRST_SSC_RANGE(_x)			((_x) << 21)
--
- #define PHYCLKRST_SSC_EN			BIT(20)
- #define PHYCLKRST_REF_SSP_EN			BIT(19)
- #define PHYCLKRST_REF_CLKDIV2			BIT(18)
--
- #define PHYCLKRST_MPLL_MULTIPLIER_MASK		(0x7f << 11)
- #define PHYCLKRST_MPLL_MULTIPLIER_100MHZ_REF	(0x19 << 11)
- #define PHYCLKRST_MPLL_MULTIPLIER_50M_REF	(0x32 << 11)
- #define PHYCLKRST_MPLL_MULTIPLIER_24MHZ_REF	(0x68 << 11)
- #define PHYCLKRST_MPLL_MULTIPLIER_20MHZ_REF	(0x7d << 11)
- #define PHYCLKRST_MPLL_MULTIPLIER_19200KHZ_REF	(0x02 << 11)
--
- #define PHYCLKRST_FSEL_UTMI_MASK		(0x7 << 5)
- #define PHYCLKRST_FSEL_PIPE_MASK		(0x7 << 8)
- #define PHYCLKRST_FSEL(_x)			((_x) << 5)
-@@ -78,46 +70,68 @@
- #define PHYCLKRST_FSEL_PAD_24MHZ		(0x2a << 5)
- #define PHYCLKRST_FSEL_PAD_20MHZ		(0x31 << 5)
- #define PHYCLKRST_FSEL_PAD_19_2MHZ		(0x38 << 5)
--
- #define PHYCLKRST_RETENABLEN			BIT(4)
--
- #define PHYCLKRST_REFCLKSEL_MASK		(0x03 << 2)
- #define PHYCLKRST_REFCLKSEL_PAD_REFCLK		(0x2 << 2)
- #define PHYCLKRST_REFCLKSEL_EXT_REFCLK		(0x3 << 2)
--
- #define PHYCLKRST_PORTRESET			BIT(1)
- #define PHYCLKRST_COMMONONN			BIT(0)
- 
- #define EXYNOS5_DRD_PHYREG0			0x14
-+#define PHYREG0_SSC_REF_CLK_SEL			BIT(21)
-+#define PHYREG0_SSC_RANGE			BIT(20)
-+#define PHYREG0_CR_WRITE			BIT(19)
-+#define PHYREG0_CR_READ				BIT(18)
-+#define PHYREG0_CR_DATA_IN(_x)			((_x) << 2)
-+#define PHYREG0_CR_CAP_DATA			BIT(1)
-+#define PHYREG0_CR_CAP_ADDR			BIT(0)
-+
- #define EXYNOS5_DRD_PHYREG1			0x18
-+#define PHYREG1_CR_DATA_OUT(_x)			((_x) << 1)
-+#define PHYREG1_CR_ACK				BIT(0)
- 
- #define EXYNOS5_DRD_PHYPARAM0			0x1c
--
- #define PHYPARAM0_REF_USE_PAD			BIT(31)
- #define PHYPARAM0_REF_LOSLEVEL_MASK		(0x1f << 26)
- #define PHYPARAM0_REF_LOSLEVEL			(0x9 << 26)
- 
- #define EXYNOS5_DRD_PHYPARAM1			0x20
--
- #define PHYPARAM1_PCS_TXDEEMPH_MASK		(0x1f << 0)
- #define PHYPARAM1_PCS_TXDEEMPH			(0x1c)
- 
- #define EXYNOS5_DRD_PHYTERM			0x24
- 
- #define EXYNOS5_DRD_PHYTEST			0x28
--
- #define PHYTEST_POWERDOWN_SSP			BIT(3)
- #define PHYTEST_POWERDOWN_HSP			BIT(2)
- 
- #define EXYNOS5_DRD_PHYADP			0x2c
- 
- #define EXYNOS5_DRD_PHYUTMICLKSEL		0x30
--
- #define PHYUTMICLKSEL_UTMI_CLKSEL		BIT(2)
- 
- #define EXYNOS5_DRD_PHYRESUME			0x34
- #define EXYNOS5_DRD_LINKPORT			0x44
- 
-+/* USB 3.0 DRD PHY SS Function Control Reg; accessed by CR_PORT */
-+#define EXYNOS5_DRD_PHYSS_LOSLEVEL_OVRD_IN		(0x15)
-+#define LOSLEVEL_OVRD_IN_LOS_BIAS_5420			(0x5 << 13)
-+#define LOSLEVEL_OVRD_IN_LOS_BIAS_DEFAULT		(0x0 << 13)
-+#define LOSLEVEL_OVRD_IN_EN				(0x1 << 10)
-+#define LOSLEVEL_OVRD_IN_LOS_LEVEL_DEFAULT		(0x9 << 0)
-+
-+#define EXYNOS5_DRD_PHYSS_TX_VBOOSTLEVEL_OVRD_IN	(0x12)
-+#define TX_VBOOSTLEVEL_OVRD_IN_VBOOST_5420		(0x5 << 13)
-+#define TX_VBOOSTLEVEL_OVRD_IN_VBOOST_DEFAULT		(0x4 << 13)
-+
-+#define EXYNOS5_DRD_PHYSS_LANE0_TX_DEBUG		(0x1010)
-+#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_19M2_20M		(0x4 << 4)
-+#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_24M		(0x8 << 4)
-+#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_25M_26M		(0x8 << 4)
-+#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_48M_50M_52M	(0x20 << 4)
-+#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_62M5		(0x20 << 4)
-+#define LANE0_TX_DEBUG_RXDET_MEAS_TIME_96M_100M		(0x40 << 4)
-+
- #define KHZ	1000
- #define MHZ	(KHZ * KHZ)
- 
-@@ -135,12 +149,14 @@ struct exynos5_usbdrd_phy_config {
- 	void (*phy_isol)(struct phy_usb_instance *inst, u32 on);
- 	void (*phy_init)(struct exynos5_usbdrd_phy *phy_drd);
- 	unsigned int (*set_refclk)(struct phy_usb_instance *inst);
-+	int (*phy_calibrate)(struct phy_usb_instance *inst);
- };
- 
- struct exynos5_usbdrd_phy_drvdata {
- 	const struct exynos5_usbdrd_phy_config *phy_cfg;
- 	u32 pmu_offset_usbdrd0_phy;
- 	u32 pmu_offset_usbdrd1_phy;
-+	int (*phy_exynos_calibrate)(struct exynos5_usbdrd_phy *phy_drd);
- };
- 
- /**
-@@ -399,9 +415,21 @@ static int exynos5_usbdrd_phy_init(struct phy *phy)
- 	reg &= ~PHYCLKRST_PORTRESET;
- 	writel(reg, phy_drd->reg_phy + EXYNOS5_DRD_PHYCLKRST);
- 
-+	/*
-+	 * Calibrate some of the PHY parameters, using cr_port control
-+	 * register, which are internal to PHY and are not exposed
-+	 * directly to the outside world for configuring.
-+	 */
-+	if (inst->phy_cfg->phy_calibrate) {
-+		ret = inst->phy_cfg->phy_calibrate(inst);
-+		if (ret)
-+			dev_err(phy_drd->dev,
-+				"Exiting init: Failed to calibrate PHY\n");
-+	}
-+
- 	clk_disable_unprepare(phy_drd->clk);
- 
--	return 0;
-+	return ret;
- }
- 
- static int exynos5_usbdrd_phy_exit(struct phy *phy)
-@@ -487,6 +515,163 @@ static int exynos5_usbdrd_phy_power_off(struct phy *phy)
- 	return 0;
- }
- 
-+static int crport_handshake(struct exynos5_usbdrd_phy *phy_drd,
-+						u32 val, u32 cmd)
-+{
-+	u32 usec = 100;
-+	unsigned int result;
-+
-+	writel(val | cmd, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
-+
-+	do {
-+		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
-+		if (result & PHYREG1_CR_ACK)
-+			break;
-+
-+		udelay(1);
-+	} while (usec-- > 0);
-+
-+	if (!usec) {
-+		dev_err(phy_drd->dev,
-+			"CRPORT handshake timeout1 (0x%08x)\n", val);
-+		return -ETIME;
-+	}
-+
-+	usec = 100;
-+
-+	writel(val, phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
-+
-+	do {
-+		result = readl(phy_drd->reg_phy + EXYNOS5_DRD_PHYREG1);
-+		if (!(result & PHYREG1_CR_ACK))
-+			break;
-+
-+		udelay(1);
-+	} while (usec-- > 0);
-+
-+	if (!usec) {
-+		dev_err(phy_drd->dev,
-+			"CRPORT handshake timeout2 (0x%08x)\n", val);
-+		return -ETIME;
-+	}
-+
-+	return 0;
-+}
-+
-+static int crport_ctrl_write(struct exynos5_usbdrd_phy *phy_drd,
-+						u32 addr, u32 data)
-+{
-+	int ret;
-+
-+	/* Write Address */
-+	writel(PHYREG0_CR_DATA_IN(addr),
-+		phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
-+	ret = crport_handshake(phy_drd, PHYREG0_CR_DATA_IN(addr),
-+				PHYREG0_CR_CAP_ADDR);
-+	if (ret)
-+		return ret;
-+
-+	/* Write Data */
-+	writel(PHYREG0_CR_DATA_IN(data),
-+		phy_drd->reg_phy + EXYNOS5_DRD_PHYREG0);
-+	ret = crport_handshake(phy_drd, PHYREG0_CR_DATA_IN(data),
-+				PHYREG0_CR_CAP_DATA);
-+	if (ret)
-+		return ret;
-+
-+	ret = crport_handshake(phy_drd, PHYREG0_CR_DATA_IN(data),
-+				PHYREG0_CR_WRITE);
-+
-+	return ret;
-+}
-+
-+/*
-+ * Calibrate few PHY parameters using CR_PORT register to meet
-+ * SuperSpeed requirements on Exynos5420 and Exynos5800 systems,
-+ * which have 28nm USB 3.0 DRD PHY.
-+ */
-+static void exynos5420_usbdrd_phy_calibrate(struct exynos5_usbdrd_phy *phy_drd)
-+{
-+	unsigned int temp;
-+	int ret = 0;
-+
-+	/*
-+	 * Change los_bias to (0x5) for 28nm PHY from a
-+	 * default value (0x0); los_level is set as default
-+	 * (0x9) as also reflected in los_level[30:26] bits
-+	 * of PHYPARAM0 register.
-+	 */
-+	temp = LOSLEVEL_OVRD_IN_LOS_BIAS_5420 |
-+		LOSLEVEL_OVRD_IN_EN |
-+		LOSLEVEL_OVRD_IN_LOS_LEVEL_DEFAULT;
-+	ret = crport_ctrl_write(phy_drd,
-+				EXYNOS5_DRD_PHYSS_LOSLEVEL_OVRD_IN,
-+				temp);
-+	if (ret) {
-+		dev_err(phy_drd->dev,
-+		 "Failed setting Loss-of-Signal level for SuperSpeed\n");
-+		return ret;
-+	}
-+
-+	/*
-+	 * Set tx_vboost_lvl to (0x5) for 28nm PHY Tuning,
-+	 * to raise Tx signal level from its default value of (0x4)
-+	 */
-+	temp = TX_VBOOSTLEVEL_OVRD_IN_VBOOST_5420;
-+	ret = crport_ctrl_write(phy_drd,
-+				EXYNOS5_DRD_PHYSS_TX_VBOOSTLEVEL_OVRD_IN,
-+				temp);
-+	if (ret) {
-+		dev_err(phy_drd->dev,
-+		 "Failed setting Tx-Vboost-Level for SuperSpeed\n");
-+		return ret;
-+	}
-+
-+	/*
-+	 * Set proper time to wait for RxDetect measurement, for
-+	 * desired reference clock of PHY, by tuning the CR_PORT
-+	 * register LANE0.TX_DEBUG which is internal to PHY.
-+	 * This fixes issue with few USB 3.0 devices, which are
-+	 * not detected (not even generate interrupts on the bus
-+	 * on insertion) without this change.
-+	 * e.g. Samsung SUM-TSB16S 3.0 USB drive.
-+	 */
-+	switch (phy_drd->extrefclk) {
-+	case EXYNOS5_FSEL_50MHZ:
-+		temp = LANE0_TX_DEBUG_RXDET_MEAS_TIME_48M_50M_52M;
-+		break;
-+	case EXYNOS5_FSEL_20MHZ:
-+	case EXYNOS5_FSEL_19MHZ2:
-+		temp = LANE0_TX_DEBUG_RXDET_MEAS_TIME_19M2_20M;
-+		break;
-+	case EXYNOS5_FSEL_24MHZ:
-+	default:
-+		temp = LANE0_TX_DEBUG_RXDET_MEAS_TIME_24M;
-+		break;
-+	}
-+
-+	ret = crport_ctrl_write(phy_drd,
-+				EXYNOS5_DRD_PHYSS_LANE0_TX_DEBUG,
-+				temp);
-+	if (ret)
-+		dev_err(phy_drd->dev,
-+		 "Failed setting RxDetect measurement time for SuperSpeed\n");
-+
-+	return ret;
-+}
-+
-+/* Calibrate PIPE3 PHY settings, if any */
-+static int exynos5_usbdrd_pipe3_calibrate(struct phy_usb_instance *inst)
-+{
-+	struct exynos5_usbdrd_phy *phy_drd = to_usbdrd_phy(inst);
-+
-+	/* Call respective phy_calibrate given by certain platform */
-+	if (phy_drd->drv_data->phy_exynos_calibrate)
-+		return phy_drd->drv_data->phy_exynos_calibrate(phy_drd);
-+
-+	return -ENODEV;
-+}
-+
- static struct phy *exynos5_usbdrd_phy_xlate(struct device *dev,
- 					struct of_phandle_args *args)
- {
-@@ -518,6 +703,7 @@ static const struct exynos5_usbdrd_phy_config phy_cfg_exynos5[] = {
- 		.phy_isol	= exynos5_usbdrd_phy_isol,
- 		.phy_init	= exynos5_usbdrd_pipe3_init,
- 		.set_refclk	= exynos5_usbdrd_pipe3_set_refclk,
-+		.phy_calibrate	= exynos5_usbdrd_pipe3_calibrate,
- 	},
- };
- 
-@@ -525,6 +711,7 @@ static const struct exynos5_usbdrd_phy_drvdata exynos5420_usbdrd_phy = {
- 	.phy_cfg		= phy_cfg_exynos5,
- 	.pmu_offset_usbdrd0_phy	= EXYNOS5_USBDRD_PHY_CONTROL,
- 	.pmu_offset_usbdrd1_phy	= EXYNOS5420_USBDRD1_PHY_CONTROL,
-+	.phy_exynos_calibrate	= exynos5420_usbdrd_phy_calibrate,
- };
- 
- static const struct exynos5_usbdrd_phy_drvdata exynos5250_usbdrd_phy = {
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index 861bb91..dd98768 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -224,7 +224,7 @@
+ 				 <&clock CLK_DIV_ISP0>,<&clock CLK_DIV_ISP1>,
+ 				 <&clock CLK_DIV_MCUISP0>,
+ 				 <&clock CLK_DIV_MCUISP1>,
+-				 <&clock CLK_SCLK_UART_ISP>,
++				 <&clock CLK_UART_ISP_SCLK>,
+ 				 <&clock CLK_ACLK200>, <&clock CLK_DIV_ACLK200>,
+ 				 <&clock CLK_ACLK400_MCUISP>,
+ 				 <&clock CLK_DIV_ACLK400_MCUISP>;
 -- 
-1.7.10.4
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.7.9.5
