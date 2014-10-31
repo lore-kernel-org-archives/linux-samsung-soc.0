@@ -1,98 +1,91 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH V7 03/12] drm/bridge: Add helper functions for drm_bridge
-Date: Fri, 31 Oct 2014 17:03:17 +0100
-Message-ID: <20141031160317.GT26941@phenom.ffwll.local>
-References: <CAOw6vbLNOqp=X4epwDPb7zT-j2+oUuLoeV2S=x+oGPLQwK+Z7Q@mail.gmail.com>
- <CAEC9eQPQaYjL3ZxtDZBdKi2z5yANcHQ9s4ikYkxN95K9qvu01Q@mail.gmail.com>
- <CAKMK7uGoO5TBgLh4HSDjxUM=-WRfsQoDHusLmOYxLio-QBMEPQ@mail.gmail.com>
- <CAEC9eQNJb1TgK1ihvzvC0VjSJhm48WaFO5SVigPsqTOurK2UQw@mail.gmail.com>
- <CAKMK7uFX7rENLBmwE58rtCBXZ_pSF_uS5Poiuks7xfi+r=e9gw@mail.gmail.com>
- <20141028144126.GC17770@ulmo>
- <CAEC9eQNqDNS0HgCSCOkVBYzSypHCt+aMxYZaX1vmTr8SKn2cbA@mail.gmail.com>
- <20141028150532.GF17770@ulmo>
- <20141029075823.GN26941@phenom.ffwll.local>
- <5450AEB0.9070507@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [GIT PULL] Samsung clock changes for 3.19
+Date: Fri, 31 Oct 2014 18:36:39 +0100
+Message-ID: <5453C8A7.6080502@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <5450AEB0.9070507@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Jingoo Han <jg1.han@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, Ajay kumar <ajaynumb@gmail.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:13162 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756620AbaJaRgo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 31 Oct 2014 13:36:44 -0400
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NEB00CXQL205LB0@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 31 Oct 2014 17:39:36 +0000 (GMT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-T24gV2VkLCBPY3QgMjksIDIwMTQgYXQgMTA6MDk6MDRBTSArMDEwMCwgQW5kcnplaiBIYWpkYSB3
-cm90ZToKPiBPbiAxMC8yOS8yMDE0IDA4OjU4IEFNLCBEYW5pZWwgVmV0dGVyIHdyb3RlOgo+ID4g
-T24gVHVlLCBPY3QgMjgsIDIwMTQgYXQgMDQ6MDU6MzRQTSArMDEwMCwgVGhpZXJyeSBSZWRpbmcg
-d3JvdGU6Cj4gPj4gT24gVHVlLCBPY3QgMjgsIDIwMTQgYXQgMDg6MTY6NDRQTSArMDUzMCwgQWph
-eSBrdW1hciB3cm90ZToKPiA+Pj4gT24gVHVlLCBPY3QgMjgsIDIwMTQgYXQgODoxMSBQTSwgVGhp
-ZXJyeSBSZWRpbmcKPiA+Pj4gPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT4gd3JvdGU6Cj4gPj4+
-PiBPbiBUdWUsIE9jdCAyOCwgMjAxNCBhdCAwMzoxOTozNlBNICswMTAwLCBEYW5pZWwgVmV0dGVy
-IHdyb3RlOgo+ID4+Pj4+IE9uIFR1ZSwgT2N0IDI4LCAyMDE0IGF0IDE6MjggUE0sIEFqYXkga3Vt
-YXIgPGFqYXludW1iQGdtYWlsLmNvbT4gd3JvdGU6Cj4gPj4+Pj4+IE9uIFR1ZSwgT2N0IDI4LCAy
-MDE0IGF0IDM6MzEgUE0sIERhbmllbCBWZXR0ZXIgPGRhbmllbEBmZndsbC5jaD4gd3JvdGU6Cj4g
-Pj4+PiBbLi4uXQo+ID4+Pj4+Pj4gSG0sIGlmIHlvdSBkbyB0aGlzIGNhbiB5b3UgcGxzIGFsc28g
-dXBkYXRlIGRybV9wYW5lbCBhY2NvcmRpbmdseT8gSXQKPiA+Pj4+Pj4+IHNob3VsZG4ndCBiZSBh
-IGxvdCBvZiBmdXp6IGFuZCB3b3VsZCBtYWtlIHRoaW5ncyBhcm91bmQgZHJtK2R0IG1vcmUKPiA+
-Pj4+Pj4+IGNvbnNpc3RlbnQuCj4gPj4+Pj4+IEFyZSB5b3UgdGFsa2luZyBhYm91dCB1c2luZyBz
-dHJ1Y3QgZGV2aWNlX25vZGUgaW5zdGVhZCBvZiBzdHJ1Y3QgZGV2aWNlPwo+ID4+Pj4+PiBJIGd1
-ZXNzIHlvdSBoYXZlIG1pc3BsYWNlZCB0aGUgY29tbWVudCB1bmRlciB0aGUgd3Jvbmcgc2VjdGlv
-biEKPiA+Pj4+Pgo+ID4+Pj4+IFllYWgsIHRoYXQgc2hvdWxkIGhhdmUgYmVlbiBvbmUgdXAgOy0p
-Cj4gPj4+Pgo+ID4+Pj4gTGlrZSBJIHNhaWQgZWFybGllciwgSSBkb24ndCB0aGluayBkcm9wcGlu
-ZyBzdHJ1Y3QgZGV2aWNlICogaW4gZmF2b3VyIG9mCj4gPj4+PiBzdHJ1Y3QgZGV2aWNlX25vZGUg
-KiBpcyBhIGdvb2QgaWRlYS4KPiA+Pj4gSSBhbSBub3Qgc3VyZSBhYm91dCBkcm1fcGFuZWwuCj4g
-Pj4+IEJ1dCwgSSBhbSBub3QgcmVhbGx5IGRvaW5nIGFueXRoaW5nIHdpdGggdGhlIHN0cnVjdCBk
-ZXZpY2UgcG9pbnRlciBpbgo+ID4+PiBjYXNlIG9mIGJyaWRnZS4KPiA+Pj4gU28sIGp1c3Qgd29u
-ZGVyaW5nIGlmIGl0IGlzIHJlYWxseSBuZWVkZWQ/Cj4gPj4KPiA+PiBJIHRoaW5rIGl0J3MgdXNl
-ZnVsIHRvIGhhdmUgaXQganVzdCB0byBzZW5kIHRoZSByaWdodCBtZXNzYWdlLiBEUk0gcGFuZWwK
-PiA+PiBhbmQgRFJNIGJyaWRnZSBhcmVuJ3Qgc3BlY2lmaWMgdG8gZGV2aWNlIHRyZWUuIFRoZXkg
-YXJlIGNvbXBsZXRlbHkKPiA+PiBnZW5lcmljIGFuZCBjYW4gd29yayB3aXRoIGFueSB0eXBlIG9m
-IGRldmljZSwgd2hldGhlciBpdCB3YXMKPiA+PiBpbnN0YW50aWF0ZWQgZnJvbSB0aGUgZGV2aWNl
-IHRyZWUgb3Igc29tZSBvdGhlciBpbmZyYXN0cnVjdHVyZS4gRHJvcHBpbmcKPiA+PiBzdHJ1Y3Qg
-ZGV2aWNlICogd2lsbCBtYWtlIGl0IGVmZmVjdGl2ZWx5IHVzZWxlc3Mgb24gYW55dGhpbmcgYnV0
-IERULiBJCj4gPj4gZG9uJ3QgdGhpbmsgd2Ugc2hvdWxkIHN0cml2ZSBmb3IgdGhhdCwgZXZlbiBp
-ZiBvbmx5IERULWVuYWJsZWQgcGxhdGZvcm1zCj4gPj4gY3VycmVudGx5IHVzZSB0aGVtLgo+ID4g
-Cj4gPiBTZWUgbXkgb3RoZXIgcmVwbHksIGJ1dCBJIG5vdyB0aGluayB3ZSBzaG91bGQgcHV0IG5l
-aXRoZXIgaW50byBkcm0KPiA+IHN0cnVjdHVyZXMuIFRoaXMgImZpbmQgbWUgdGhlIGRyaXZlciBz
-dHJ1Y3R1cmVzIGZvciB0aGlzIGRldmljZSIgcHJvYmxlbQo+ID4gbG9va3MgcmVhbGx5IGdlbmVy
-aWMsIGFuZCBpdCBoYXMgbm90aGluZyB0byBkbyB3aXRoIHRoZSBkcm0gc3RydWN0dXJlcyBhbmQK
-PiA+IGNvbmNlcHRzIGxpa2UgYnJpZGdlcy9wYW5lbHMgYXQgYWxsLiBJdCBzaG91bGRuJ3QgYmUg
-aW4gdGhlcmUgYXQgYWxsLgo+ID4gCj4gPiBBZGRpbmcgaXQgbG9va3MgdmVyeSBtdWNoIGxpa2Ug
-cmVpbnRyb2R1Y2luZyB0aGUgZHJtIG1pZGxheWVyIHRoYXQgd2UganVzdAo+ID4gZmluYWxseSBt
-YWRlIG9ic29sZXRlLCBqdXN0IG5vdCBhdCB0aGUgdG9wLWxldmVsIChzdHJ1Y3QgZHJtX2Rldmlj
-ZSkgYnV0Cj4gPiBhdCBhIGJ1bmNoIG9mIGxlYWYgbm9kZXMuIEkgZXhwZWN0IGFsbCB0aGUgc2Ft
-ZSBpc3N1ZXMgdGhvdWdoLiBBbmQgSSdtCj4gPiBkZWZpbml0ZWx5IG5vdCBsb29raW5nIHRvIGRl
-LW1pZGxheWVyIG1vcmUgc3R1ZmYgdGhhdCB3ZSdyZSBqdXN0IGFkZGluZy4KPiA+IAo+ID4gSW1v
-IHRoaXMgc2hvdWxkIGJlIHNvbHZlZCBhcyBhIHNlcGFyYXRlIGhlbHBlciB0aGluZywgbWF5YmUg
-aW4gdGhlIGRyaXZlcgo+ID4gY29yZSBha2luIHRvIHRoZSBjb21wb25lbnQgaGVscGVycyBmcm9t
-IFJ1c3NlbGwuCj4gPiAtRGFuaWVsCj4gPiAKPiAKPiBBcyBJIHVuZGVyc3RhbmQgeW91IHdhbnQg
-c29tZXRoaW5nIGdlbmVyaWMgdG8gbG9vayBmb3IgcGFuZWxzLCBicmlkZ2VzLAo+IHdoYXRldmVy
-IGFuZCwgbGlrZSBjb21wb25lbnRzLCBpdCBzaG91bGQgYWxsb3cgdG8gc2FmZSBob3QgcGx1Zy91
-bnBsdWcuCj4gSSBoYXZlIHByb3Bvc2VkIHN1Y2ggdGhpbmcgZmV3IG1vbnRocyBhZ28gWzFdLiBI
-YXZlIHlvdSBsb29rZWQgYXQgaXQ/Cj4gCj4gWzFdOiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAx
-NC80LzMwLzM0NQoKWWVhaCBJIHRoaW5rIEkndmUgbG9va2VkIGJ1dCB3YXNuJ3QgY29udmluY2Vk
-LiBJIGRvIGFncmVlIHRob3VnaCB0aGF0IHdlCnNob3VsZCBkZWZpbml0ZWx5IGFpbSBmb3Igc29t
-ZXRoaW5nIGluIHRoZSBkcml2ZXIgY29yZS4gU2luY2UgaWYgR3JlZwpkb2Vzbid0IGxpa2UgaXQg
-aXQncyBub3Qgc3VkZGVubHkgYmV0dGVyIGlmIHdlIGp1c3QgaGlkZSBpdCBpbiB0aGUgZHJtCnN1
-YnN5c3RlbS4gVGhpcyByZWFsbHkgc21lbGxzIGxpa2UgYSBnZW5lcmljIGlzc3VlIC0gYWZ0ZXIg
-YWxsIHdlIGFscmVhZHkKaGF2ZSBhIHR3byBpbXBsZW1lbnRhdGlvbnMgd2l0aCBicmlkZ2VzJnBh
-bmVscyBhbHJlYWR5LgoKU28gbWF5YmUgd2UgbmVlZCB0byBhdWdtZW50IHRoZSBjb21wb25lbnQg
-ZnJhbWV3b3JrIHdpdGggdGhlIHBvc3NpYmlsaXR5CnRvIGFkZCBhZGRpdGlvbmFsIGRldmljZXMg
-bGF0ZXIgb24gYXQgcnVudGltZSwgb3Igc29tZXRoaW5nIHNpbWlsYXIuIE5vdApyZWFsbHkgc3Vy
-ZSBzaW5jZSBJIGRvbid0IGhhdmUgYWN0dWFsIHByYWN0aWNlIHdpdGggdGhlc2UgaXNzdWVzIHNp
-bmNlCmk5MTUgZG9lc24ndCAoeWV0KSBoYXZlIHRoZXNlIHByb2JsZW1zLgotRGFuaWVsCi0tIApE
-YW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgorNDEgKDAp
-IDc5IDM2NSA1NyA0OCAtIGh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Mike,
+
+I've collected Exynos clk patches in this pull request, as Tomasz has
+been busy recently. 
+This includes addition of clock controller drivers for Exynos4415 and 
+Exynos7 SoCs and related refactoring of the Samsung common clk API. 
+
+As I mentioned in my other e-mail, it might be sensible to put these 
+patches into a separate topic branch, so Kukjin can pull it as 
+a dependency for the related dts changes.
+
+There are also few Samsung clk cleanup patches not included here,
+I thought I'd send them separately.
+
+The following changes since commit f114040e3ea6e07372334ade75d1ee0775c355e1:
+
+  Linux 3.18-rc1 (2014-10-19 18:08:38 -0700)
+
+are available in the git repository at:
+
+  git://linuxtv.org/snawrocki/samsung.git for-v3.19/exynos-clk
+
+for you to fetch changes up to 932e98224d5602be17ed61d0e057e9326f12b59d:
+
+  clk: samsung: exynos7: add gate clock for ADC block (2014-10-31 10:45:54 +0100)
+
+----------------------------------------------------------------
+Abhilash Kesavan (1):
+      clk: samsung: exynos7: add gate clock for ADC block
+
+Chanwoo Choi (2):
+      clk: samsung: Document binding for Exynos4415 clock controller
+      clk: samsung: exynos4415: Add clocks using common clock framework
+
+Naveen Krishna Ch (8):
+      clk: samsung: add support for 145xx and 1460x PLLs
+      clk: samsung: Factor out the common code to clk.c
+      clk: samsung: Add fixed_factor_clocks field to struct exynos_cmu_info
+      clk: samsung: add initial clock support for Exynos7 SoC
+      clk: samsung: exynos7: add clocks for I2C block
+      clk: samsung: exynos7: add clocks for MMC block
+      clk: samsung: exynos7: add clocks for RTC block
+      clk: samsung: exynos7: add gate clocks for WDT, TMU and PWM blocks
+
+ .../devicetree/bindings/clock/exynos4415-clock.txt |   38 +
+ .../devicetree/bindings/clock/exynos7-clock.txt    |   93 ++
+ drivers/clk/samsung/Makefile                       |    2 +
+ drivers/clk/samsung/clk-exynos4415.c               | 1142 ++++++++++++++++++++
+ drivers/clk/samsung/clk-exynos5260.c               |  185 +---
+ drivers/clk/samsung/clk-exynos7.c                  |  743 +++++++++++++
+ drivers/clk/samsung/clk-pll.c                      |   25 +-
+ drivers/clk/samsung/clk-pll.h                      |    4 +
+ drivers/clk/samsung/clk.c                          |   98 ++
+ drivers/clk/samsung/clk.h                          |   37 +
+ include/dt-bindings/clock/exynos4415.h             |  360 ++++++
+ include/dt-bindings/clock/exynos7-clk.h            |   92 ++
+ 12 files changed, 2655 insertions(+), 164 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos4415-clock.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos7-clock.txt
+ create mode 100644 drivers/clk/samsung/clk-exynos4415.c
+ create mode 100644 drivers/clk/samsung/clk-exynos7.c
+ create mode 100644 include/dt-bindings/clock/exynos4415.h
+ create mode 100644 include/dt-bindings/clock/exynos7-clk.h
+
+
+--
+Regards,
+Sylwester
