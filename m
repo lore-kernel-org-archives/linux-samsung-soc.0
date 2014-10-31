@@ -1,52 +1,55 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v6 1/3] regulator: max77686: Add suspend disable for some
- LDOs
-Date: Fri, 31 Oct 2014 12:43:04 +0000
-Message-ID: <20141031124304.GS18557@sirena.org.uk>
-References: <1414581294-1315-1-git-send-email-k.kozlowski@samsung.com>
- <1414581294-1315-2-git-send-email-k.kozlowski@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v3 01/14] mfd: max77686/802: Map regulator driver to its
+ own of_node
+Date: Fri, 31 Oct 2014 14:07:54 +0100
+Message-ID: <1414760874.7318.15.camel@AMDC1943>
+References: <1414668053-31370-1-git-send-email-k.kozlowski@samsung.com>
+ <1414668053-31370-2-git-send-email-k.kozlowski@samsung.com>
+ <20141031122330.GP18557@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="j7Mt6kSMu9nlWjvx"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59090 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758302AbaJaMn5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 Oct 2014 08:43:57 -0400
-Content-Disposition: inline
-In-Reply-To: <1414581294-1315-2-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20141031122330.GP18557@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Chanwoo Choi <cw00.choi@samsung.com>
 
+On pi=C4=85, 2014-10-31 at 12:23 +0000, Mark Brown wrote:
+> On Thu, Oct 30, 2014 at 12:20:40PM +0100, Krzysztof Kozlowski wrote:
+> > Add of_compatible fields for max77686 and max77802 regulator driver=
+s.
+> > The driver's node should be the same as voltage-regulators node. Th=
+is
+> > simplifies parsing of regulators init data from DTS.
+>=20
+> No, this is broken.  You're introducing an ABI break that conveys no
+> additional information, I can't see any reason why this should make i=
+t
+> simpler to parse init data (you've certainly not articulated one in t=
+he
+> changelog here) but even if it did you are changing the ABI incompati=
+bly
+> and convenience isn't a good reason to do that.
 
---j7Mt6kSMu9nlWjvx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The ABI won't be broken - both drivers would work fine with old and new
+DTB. However I agree that I should justify this more...
 
-On Wed, Oct 29, 2014 at 12:14:52PM +0100, Krzysztof Kozlowski wrote:
-> Some LDOs of Maxim 77686 PMIC support disabling during system suspend
-> (LDO{2,6,7,8,10,11,12,14,15,16}). This was already implemented as part
-> of set_suspend_mode function. In that case the mode was one of:
+Javier and you explained me using parent's device for rdev->dev so I
+think this change won't be needed and I'll just drop it.
 
-Applied, thanks.
+Thank you for feedback.
 
---j7Mt6kSMu9nlWjvx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> I'm getting very frustrated with what's going on with these drivers,
+> there seem to be a lot of rather large sets of patches spawning lots =
+of
+> discussion but also frequent review problems and very little actually
+> getting merged (look at the set of changes in the past few merge wind=
+ows
+> for example).  There's something going wrong here.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+If I over-spammed you, then I am deeply sorry.
 
-iQEcBAEBAgAGBQJUU4PXAAoJECTWi3JdVIfQR1MH/j8yXXZcoXZgVy1hV+alYtAc
-vkFaBdMDXDhzLtYJ2oycj/PIRagMj57v8iniZmaFbUs5IxJ3adyAo6xWivQEN00h
-/3ktpKo0ZEHD+YVWWtuYpd2Cy9CDTXIgDxCCdBYIaFPYLb00I2iikfYLXY298/IP
-7z5Wqn6HMs5JQ85thtATxaJewASjIqesrRbWMbOyluQg1IUrpnvI9pWGsNgnZ5DA
-pks7ZH9S3Gg9lDRSBbMVxhdKg4gYtHkNjFkLCSDnhZJ/X2rlyLc8VDL0f8+Yagp/
-ADTZ/BFwWTYCttsGQYe99p/1OmSm1nDy2i/CxUlc312Eb1t2Gqvnyk46Ul0SA0E=
-=f4RR
------END PGP SIGNATURE-----
-
---j7Mt6kSMu9nlWjvx--
+Best regards,
+Krzysztof
