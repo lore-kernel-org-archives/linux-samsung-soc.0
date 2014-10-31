@@ -1,91 +1,100 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [GIT PULL] Samsung clock changes for 3.19
-Date: Fri, 31 Oct 2014 18:36:39 +0100
-Message-ID: <5453C8A7.6080502@samsung.com>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: exynos5420/arndale-octa: imprecise external aborts on exynos_defconfig
+Date: Fri, 31 Oct 2014 10:41:50 -0700
+Message-ID: <CAMAWPa8ofYCWJdzHt3_xM8SskZy09-OYDsRx5JjA5RmADfpcMQ@mail.gmail.com>
+References: <CANMBJr41TQx4jVjnOO9WThn=SiZCq12mx1xtGN8_ubzZrO1=YA@mail.gmail.com>
+	<7h7g1bwbyh.fsf@deeprootsystems.com>
+	<CAJuA9ahkpZ4EJQz4DoAjYzo0OQw5zXLavAVoXRBdgPcm9EUQYA@mail.gmail.com>
+	<7hk351ep8e.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:13162 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756620AbaJaRgo (ORCPT
+Received: from mail.kernel.org ([198.145.19.201]:48672 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752780AbaJaRl6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 Oct 2014 13:36:44 -0400
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NEB00CXQL205LB0@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 31 Oct 2014 17:39:36 +0000 (GMT)
+	Fri, 31 Oct 2014 13:41:58 -0400
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id 0DA582010B
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Oct 2014 17:41:57 +0000 (UTC)
+Received: from mail-la0-f44.google.com (mail-la0-f44.google.com [209.85.215.44])
+	(using TLSv1 with cipher AES128-SHA (128/128 bits))
+	(No client certificate requested)
+	by mail.kernel.org (Postfix) with ESMTPSA id BE6072013A
+	for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Oct 2014 17:41:53 +0000 (UTC)
+Received: by mail-la0-f44.google.com with SMTP id gf13so6665543lab.17
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Oct 2014 10:41:50 -0700 (PDT)
+In-Reply-To: <7hk351ep8e.fsf@deeprootsystems.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Thomas Abraham <ta.omasab@gmail.com>, Tyler Baker <tyler.baker@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Mike,
+On Wed, Sep 17, 2014 at 5:39 PM, Kevin Hilman <khilman@kernel.org> wrote:
+> Thomas Abraham <ta.omasab@gmail.com> writes:
+>
+>> On Thu, Sep 11, 2014 at 12:16 AM, Kevin Hilman <khilman@kernel.org> wrote:
+>>> Tyler Baker <tyler.baker@linaro.org> writes:
+>>>
+>>>> Exynos5420-based Arndale octa boards have recently started failing boot
+>>>> tests due to imprecise external aborts.  This only appears to happen
+>>>> when using exynos_defconfig and boots fine with multi_v7_defconfig.  The
+>>>> issue seems to be intermittent, so is not reliably reproducable and
+>>>> difficult to bisect.  Here are a few boot logs from recent
+>>>> mainline/linux-next kernels that are failing:
+>>>
+>>> FYI, I'm seeing the same periodic aborts.  For example, here's my boot
+>>> of next-20140910:
+>>> http://images.armcloud.us/kernel-ci/next/next-20140910/arm-exynos_defconfig/boot-exynos5420-arndale-octa.html
+>>>
+>>> However, my userspace is much simpler and doesn't seem to cause a panic,
+>>> so my boot tests report passing. (I should fixup my scripts so these
+>>> imprecise aborts are reported as a FAIL.)
+>>>
+>>> I'm glad you pointed out that it happens only with exynos_defconfig and
+>>> not multi_v7_defconfig because I noticed that too.  I haven't had the
+>>> time to track it any further than that, so maybe the exynos folks can
+>>> help track it down from here.
+>>>
+>>> Thanks for reporting this,
+>>>
+>>> Kevin
+>>
+>> Hi Tyler, Kevin,
+>>
+>> From the bootlog you have shared,
+>>
+>> [    1.060016] CPU4: failed to come online
+>> [    2.070031] CPU5: failed to come online
+>> [    3.080049] CPU6: failed to come online
+>> [    4.090066] CPU7: failed to come online
+>> [    4.090099] Brought up 4 CPUs
+>> [    4.090109] SMP: Total of 4 processors activated.
+>> [    4.090119] CPU: WARNING: CPU(s) started in wrong/inconsistent
+>> modes (primary CPU mode 0x13)
+>> [    4.090128] CPU: This may indicate a broken bootloader or firmware.
+>>
+>> Would it be possible to set max cpus to 1, disable switcher and try
+>> again. I don't have a arndale octa board but I have tested mainline
+>> kernel with smdk5420 board. It boots all eight CPUs, switcher works
+>> fine and there are no imprecise aborts seen.
+>
+> Sorry for the delay, I'm travelling this week.
+>
+> FWIW, the same CPU boot failures you hilight above are happening on
+> multi_v7_defconfig[1] which is not getting the imprecise abort.  This is
+> only happening on exynos_defconfig[2], so I'm curious why you think the
+> switcher or NR_CPUS might be the issues.
+>
+> Anyways, I narrowed this down a bit and discovered it's
+> CONFIG_EXYNOS5420_MCPM=y that's the root cause.  If I use
+> exynos_defconfig and then disable that option, I don't get any more
+> imprecise aborts.
 
-I've collected Exynos clk patches in this pull request, as Tomasz has
-been busy recently. 
-This includes addition of clock controller drivers for Exynos4415 and 
-Exynos7 SoCs and related refactoring of the Samsung common clk API. 
+These imprecise aborts are still happening, and preventing running
+full userspace.
 
-As I mentioned in my other e-mail, it might be sensible to put these 
-patches into a separate topic branch, so Kukjin can pull it as 
-a dependency for the related dts changes.
+I'm going to send a patch to disable this CONFIG_EXYNOS5420_MCPM until
+someone can figure out what's going on.
 
-There are also few Samsung clk cleanup patches not included here,
-I thought I'd send them separately.
-
-The following changes since commit f114040e3ea6e07372334ade75d1ee0775c355e1:
-
-  Linux 3.18-rc1 (2014-10-19 18:08:38 -0700)
-
-are available in the git repository at:
-
-  git://linuxtv.org/snawrocki/samsung.git for-v3.19/exynos-clk
-
-for you to fetch changes up to 932e98224d5602be17ed61d0e057e9326f12b59d:
-
-  clk: samsung: exynos7: add gate clock for ADC block (2014-10-31 10:45:54 +0100)
-
-----------------------------------------------------------------
-Abhilash Kesavan (1):
-      clk: samsung: exynos7: add gate clock for ADC block
-
-Chanwoo Choi (2):
-      clk: samsung: Document binding for Exynos4415 clock controller
-      clk: samsung: exynos4415: Add clocks using common clock framework
-
-Naveen Krishna Ch (8):
-      clk: samsung: add support for 145xx and 1460x PLLs
-      clk: samsung: Factor out the common code to clk.c
-      clk: samsung: Add fixed_factor_clocks field to struct exynos_cmu_info
-      clk: samsung: add initial clock support for Exynos7 SoC
-      clk: samsung: exynos7: add clocks for I2C block
-      clk: samsung: exynos7: add clocks for MMC block
-      clk: samsung: exynos7: add clocks for RTC block
-      clk: samsung: exynos7: add gate clocks for WDT, TMU and PWM blocks
-
- .../devicetree/bindings/clock/exynos4415-clock.txt |   38 +
- .../devicetree/bindings/clock/exynos7-clock.txt    |   93 ++
- drivers/clk/samsung/Makefile                       |    2 +
- drivers/clk/samsung/clk-exynos4415.c               | 1142 ++++++++++++++++++++
- drivers/clk/samsung/clk-exynos5260.c               |  185 +---
- drivers/clk/samsung/clk-exynos7.c                  |  743 +++++++++++++
- drivers/clk/samsung/clk-pll.c                      |   25 +-
- drivers/clk/samsung/clk-pll.h                      |    4 +
- drivers/clk/samsung/clk.c                          |   98 ++
- drivers/clk/samsung/clk.h                          |   37 +
- include/dt-bindings/clock/exynos4415.h             |  360 ++++++
- include/dt-bindings/clock/exynos7-clk.h            |   92 ++
- 12 files changed, 2655 insertions(+), 164 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/exynos4415-clock.txt
- create mode 100644 Documentation/devicetree/bindings/clock/exynos7-clock.txt
- create mode 100644 drivers/clk/samsung/clk-exynos4415.c
- create mode 100644 drivers/clk/samsung/clk-exynos7.c
- create mode 100644 include/dt-bindings/clock/exynos4415.h
- create mode 100644 include/dt-bindings/clock/exynos7-clk.h
-
-
---
-Regards,
-Sylwester
+Kevin
