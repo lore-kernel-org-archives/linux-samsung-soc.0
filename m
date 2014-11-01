@@ -1,102 +1,191 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: pm_runtime_enable() in ->probe() (was: Re: [PATCH v3 0/9] PM / Domains: Fix race conditions during boot)
-Date: Sat, 01 Nov 2014 02:14:14 +0100
-Message-ID: <3099111.MYm8ByzLAF@vostro.rjw.lan>
-References: <1413208930-26019-1-git-send-email-ulf.hansson@linaro.org> <5370046.DXkB0EA6xC@vostro.rjw.lan> <42875843.yieZ2al8Y2@vostro.rjw.lan>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH 6/8] regulator: max77686: Add external GPIO control
+Date: Sat, 1 Nov 2014 14:47:29 +0900
+Message-ID: <CAAVeFuL7XiP3e4+pQt_asL+0f-UpffTvj0Mt=D0TPevW4hT=zA@mail.gmail.com>
+References: <1414422226-10948-1-git-send-email-k.kozlowski@samsung.com>
+ <1414422226-10948-7-git-send-email-k.kozlowski@samsung.com>
+ <544EA4FA.6040704@collabora.co.uk> <1414486356.24949.19.camel@AMDC1943>
+ <1414498308.24949.32.camel@AMDC1943> <1414579362.18868.11.camel@AMDC1943>
+ <5450C63B.3000602@collabora.co.uk> <CAAVeFuLncbkNLGxEAj90yMmugRDNjtjeGoV_QYTMDZ7NVMJCmg@mail.gmail.com>
+ <1414681386.26703.6.camel@AMDC1943> <CAAVeFuJo1wTyxOo4FEZM3=GTejuSHi+mnr=QV6HUeV5mAOCmqg@mail.gmail.com>
+ <1414741898.20071.8.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <42875843.yieZ2al8Y2@vostro.rjw.lan>
-Sender: linux-pm-owner@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>, Alan Stern <stern@rowland.harvard.edu>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron Lu <aaron.lu@intel.com>, Sylwester
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f178.google.com ([209.85.223.178]:54821 "EHLO
+	mail-ie0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751303AbaKAFrv convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 1 Nov 2014 01:47:51 -0400
+In-Reply-To: <1414741898.20071.8.camel@AMDC1943>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Saturday, November 01, 2014 02:08:57 AM Rafael J. Wysocki wrote:
-> On Saturday, November 01, 2014 01:20:38 AM Rafael J. Wysocki wrote:
-> > On Friday, October 31, 2014 10:16:14 AM Ulf Hansson wrote:
-> > > On 24 October 2014 18:12, Kevin Hilman <khilman@kernel.org> wrote:
-> 
-> [cut]
-> 
-> > > 
-> > > 1)
-> > > It's bad practice to use pm_runtime_get_sync() in the ->probe() path,
-> > 
-> > Honestly, I'm no longer amused.
-> > 
-> > > to bring your resources to full power. The consequence would be a
-> > > driver that requires CONFIG_PM_RUNTIME to be even functional, which
-> > > just isn't acceptable.
-> > 
-> > Sorry, but this is utter nonsense.
-> > 
-> > CONFIG_PM_RUNTIME unset means "no runtime PM at all", so all drivers can expect
-> > everything they need to be always on.  If that is not the case, then someone is
-> > doing runtime PM behind the scenes and therefore cheating.  Or in different
-> > words, for CONFIG_PM_RUNTIME unset bus types, platforms etc must ensure that
-> > everything is on from the drivers' perspective.
-> > 
-> > If that is the case, then calling pm_runtime_get_sync() from ->probe
-> > for CONFIG_PM_RUNTIME unset simply doesn't matter.
-> > 
-> > Now, for CONFIG_PM_RUNTIME enabled, if power domains are in use, doing
-> > pm_runtime_get_sync() from ->probe is the only way the driver can ensure
-> > in a non-racy way that the device will be accessible going forward.
-> > 
-> > Why?  Simply because the probing need not happen during system initialization.
-> > It very well may take places when the other devices in the same domain have
-> > beein in use for quite a while and have been using runtime PM (in which
-> > case the domain may go off at any time unless it is explicityly prevented from
-> > doing that).
-> > 
-> > One thing that you may be missing is that, for CONFIG_PM_RUNTIME set,
-> > runtime PM has to be either enabled or disabled for all devices in one
-> > domain (and if it is disabled, then the domain needs to be always on for
-> > all practical purposes).  Otherwise you can't just make all of them happy
-> > at the same time.  The documentation doesn't cover this, because it had been
-> > written before we even started to consider power domains.
-> > 
-> > > Drivers that behaves well within this context, follows the runtime PM
-> > > documentation/recommendation.
-> > 
-> > So please go to Documentation/power/runtime_pm.txt and read it again.  Quote:
-> > 
-> > "If the default initial runtime PM status of the device (i.e. 'suspended')
-> > reflects the actual state of the device, its bus type's or its driver's
-> > ->probe() callback will likely need to wake it up using one of the PM core's
-> > helper functions described in Section 4.  In that case, pm_runtime_resume()
-> > should be used.  Of course, for this purpose the device's runtime PM has to be
-> > enabled earlier by calling pm_runtime_enable()."
-> 
-> All that said there is a logical error related to calling pm_runtime_enable()
-> and its derivatives from ->probe() that I've been overlooking pretty much
-> from the start.
-> 
-> Namely, really_probe() sets dev->driver to drv before calling ->probe()
-> for either the bus type or the driver itself, so if the driver's probe
-> calls pm_runtime_enable(), it will execute the driver's own runtime PM
-> resume callback before the driver can check whether or not it wants to handle
-> the device in the first place.  That doesn't sound quite right to me.
-> 
-> This means we need a different mechanism to ensure that the device will
-> be accessible to the driver and/or the bus type in ->probe().
-> 
-> At one point we had pm_runtime_get_sync() before really_probe() in
-> driver_proble_device() IIRC, but people complained about it, so we dropped it
-> and put a barrier in there instead, but that's not sufficient.
+On Fri, Oct 31, 2014 at 4:51 PM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
+> On pi=C4=85, 2014-10-31 at 12:31 +0900, Alexandre Courbot wrote:
+>> On Fri, Oct 31, 2014 at 12:03 AM, Krzysztof Kozlowski
+>> <k.kozlowski@samsung.com> wrote:
+>> > On czw, 2014-10-30 at 22:56 +0900, Alexandre Courbot wrote:
+>> >> Hi, and thanks for bringing this issue to us!
+>> >>
+>> >> On Wed, Oct 29, 2014 at 7:49 PM, Javier Martinez Canillas
+>> >> <javier.martinez@collabora.co.uk> wrote:
+>> >> > [adding Linus and Alexandre to the cc list]
+>> >> >
+>> >> > Hello Krzysztof,
+>> >> >
+>> >> > On 10/29/2014 11:42 AM, Krzysztof Kozlowski wrote:
+>> >> >> On wto, 2014-10-28 at 13:11 +0100, Krzysztof Kozlowski wrote:
+>> >> >>> On wto, 2014-10-28 at 09:52 +0100, Krzysztof Kozlowski wrote:
+>> >> >>> > On pon, 2014-10-27 at 21:03 +0100, Javier Martinez Canillas=
+ wrote:
+>> >> >>> > > Hello Krzysztof,
+>> >> >>> > >
+>> >> >>> > > On 10/27/2014 04:03 PM, Krzysztof Kozlowski wrote:
+>> >> >>> > > > @@ -85,6 +91,9 @@ struct max77686_data {
+>> >> >>> > > >        struct max77686_regulator_data *regulators;
+>> >> >>> > > >        int num_regulators;
+>> >> >>> > > >
+>> >> >>> > > > +      /* Array of size num_regulators with GPIOs for e=
+xternal control. */
+>> >> >>> > > > +      int *ext_control_gpio;
+>> >> >>> > > > +
+>> >> >>> > >
+>> >> >>> > > The integer-based GPIO API is deprecated in favor of the =
+descriptor-based GPIO
+>> >> >>> > > interface (Documentation/gpio/consumer.txt). Could you pl=
+ease use the later?
+>> >> >>> >
+>> >> >>> > Sure, I can. Please have in mind that regulator core still =
+accepts old
+>> >> >>> > GPIO so I will have to use desc_to_gpio(). That should work=
+=2E.. and
+>> >> >>> > should be future-ready.
+>> >> >>>
+>> >> >>> It seems I was too hasty... I think usage of the new gpiod AP=
+I implies
+>> >> >>> completely different bindings.
+>> >> >>>
+>> >> >>> The gpiod_get() gets GPIO from a device level, not from given=
+ sub-node
+>> >> >>> pointer. This means that you cannot have DTS like this:
+>> >> >>> ldo21_reg: ldo21 {
+>> >> >>>      regulator-compatible =3D "LDO21";
+>> >> >>>      regulator-name =3D "VTF_2.8V";
+>> >> >>>      regulator-min-microvolt =3D <2800000>;
+>> >> >>>      regulator-max-microvolt =3D <2800000>;
+>> >> >>>      ec-gpio =3D <&gpy2 0 0>;
+>> >> >>> };
+>> >> >>>
+>> >> >>> ldo22_reg: ldo22 {
+>> >> >>>      regulator-compatible =3D "LDO22";
+>> >> >>>      regulator-name =3D "VMEM_VDD_2.8V";
+>> >> >>>      regulator-min-microvolt =3D <2800000>;
+>> >> >>>      regulator-max-microvolt =3D <2800000>;
+>> >> >>>      ec-gpio =3D <&gpk0 2 0>;
+>> >> >>> };
+>> >> >>>
+>> >> >>>
+>> >> >>> I could put GPIOs in device node:
+>> >> >>>
+>> >> >>> max77686_pmic@09 {
+>> >> >>>      compatible =3D "maxim,max77686";
+>> >> >>>      interrupt-parent =3D <&gpx0>;
+>> >> >>>      interrupts =3D <7 0>;
+>> >> >>>      reg =3D <0x09>;
+>> >> >>>      #clock-cells =3D <1>;
+>> >> >>>      ldo21-gpio =3D <&gpy2 0 0>;
+>> >> >>>      ldo22-gpio =3D <&gpk0 2 0>;
+>> >> >>>
+>> >> >>>      ldo21_reg: ldo21 {
+>> >> >>>              regulator-compatible =3D "LDO21";
+>> >> >>>              regulator-name =3D "VTF_2.8V";
+>> >> >>>              regulator-min-microvolt =3D <2800000>;
+>> >> >>>              regulator-max-microvolt =3D <2800000>;
+>> >> >>>      };
+>> >> >>>
+>> >> >>>      ldo22_reg: ldo22 {
+>> >> >>>              regulator-compatible =3D "LDO22";
+>> >> >>>              regulator-name =3D "VMEM_VDD_2.8V";
+>> >> >>>              regulator-min-microvolt =3D <2800000>;
+>> >> >>>              regulator-max-microvolt =3D <2800000>;
+>> >> >>>      };
+>> >> >>>
+>> >> >>> This would work but I don't like it. The properties of a regu=
+lator are
+>> >> >>> above the node configuring that regulator.
+>> >> >>>
+>> >> >>> Any ideas?
+>> >> >>>
+>> >> >>
+>> >> >> Continuing talking to myself... I found another problem - GPIO=
+ cannot be
+>> >> >> requested more than once (-EBUSY). In case of this driver (and=
+ board:
+>> >> >> Trats2) one GPIO is connected to regulators. The legacy GPIO A=
+PI and
+>> >> >> regulator core handle this.
+>> >> >>
+>> >> >> With new GPIO API I would have to implement some additional st=
+eps in
+>> >> >> such case...
+>> >> >>
+>> >> >> So there are 2 issues:
+>> >> >> 1. Cannot put GPIO property in regulator node.
+>> >>
+>> >> For this problem you will probably want to use the
+>> >> dev(m)_get_named_gpiod_from_child() function from the following p=
+atch:
+>> >>
+>> >> https://lkml.org/lkml/2014/10/6/529
+>> >>
+>> >> It should reach -next soon now.
+>> >
+>> > Thanks! Probably I would switch to "top" level gpios property anyw=
+ay
+>> > (other reasons) but it would be valuable in some cases to specify =
+them
+>> > per child node.
+>>
+>> Mmm, but doesn't it make more sense to have them in the child nodes?
+>
+> Yes, it makes more sense. Using old way of parsing regulators from DT=
+ it
+> was straightforward.
+>
+> However new DT style parsing (regulator_of_get_init_data()) does the
+> basic parsing stuff and this removes a lot of code from driver. The
+> driver no longer parses all regulaotrs but the regulator core does it=
+=2E
+> Unfortunately regulator core does not parse custom bindings (like suc=
+h
+> GPIOs) so I would have to iterate once again through all regulators j=
+ust
+> to find "gpios" property.
+>
+> It is simpler just to do something like (5 regulators can be controll=
+ed
+> by GPIO):
+>
+> max77686_pmic_dt_parse_gpio_control(struct platform_device *pdev, *gp=
+io)
+> {
+>   gpio[MAX77686_LDO20] =3D of_get_named_gpio(np, "ldo20-gpios", 0);
+>   gpio[MAX77686_LDO21] =3D of_get_named_gpio(np, "ldo21-gpios", 0);
+>   gpio[MAX77686_LDO22] =3D of_get_named_gpio(np, "ldo22-gpios", 0);
+>   gpio[MAX77686_BUCK8] =3D of_get_named_gpio(np, "buck8-gpios", 0);
+>   gpio[MAX77686_BUCK9] =3D of_get_named_gpio(np, "buck9-gpios", 0);
+> }
 
-So we actually had pm_runtime_get_noresume() before the barrier, but then
-we dropped it due to complaints.
-
-> We need to explicitly ensure that the device won't be powered off while
-> ->probe() is in progress *but* we need to avoid calling the driver's runtime
-> PM resume callback before ->probe() returns.
-
-I wonder, then, if we just need to do pm_runtime_get_sync() instead of the
-barrier and then pm_runtime_put() instead of pm_request_idle() in
-driver_probe_device()?
-
-Rafael
-
+It is simpler from the driver's perspective, but if I understand
+correctly DT bindings are not supposed to be adapted to make life
+easier for a particular implementation. If the driver needs to make an
+additional pass into the child nodes, then so be it, as long as the
+nodes describe the hardware accurately and in a way that is easy to
+understand. You can always adapt the driver core to handle your
+use-case better, but once DT bindings are published, they are set in
+stone.
