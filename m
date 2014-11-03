@@ -1,99 +1,43 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v4 10/14] regulator: of: Add support for parsing initial and suspend modes
-Date: Mon,  3 Nov 2014 15:40:45 +0100
-Message-ID: <1415025649-8119-11-git-send-email-javier.martinez@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: [PATCH v4 05/14] regulator: max1586: zero-initialize regulator match table array
+Date: Mon,  3 Nov 2014 15:40:40 +0100
+Message-ID: <1415025649-8119-6-git-send-email-javier.martinez@collabora.co.uk>
 References: <1415025649-8119-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1415025649-8119-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1415025649-8119-1-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Chris Zhong <zyw-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Abhilash Kesavan <kesavan.abhilash-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Some regulators support their operating mode to be changed on startup
-or by consumers when the system is running while others only support
-their operating mode to be changed while the system has entered in a
-suspend state.
+The struct of_regulator_match rmatch[] is declared as a non-static local
+variable so the structure members are not auto-initialized.
 
-The regulator Device Tree binding documents a set of properties to
-configure the regulators operating modes from a FDT. This patch builds
-on (40e20d6 regulator: of: Add support for parsing regulator_state for
-suspend state) and adds support to parse those properties and fill the
-regulator constraints so the regulator core can call the right suspend
-handlers when the system enters into sleep.
+Initialize the array at declaration time to avoid the structure members
+values to be indeterminate and have sane defaults instead.
 
-The modes are defined in the Device Tree using the hardware specific
-modes supported by the regulators. Regulator drivers have to define a
-translation function that is used to map the hardware specific modes
-to the standard ones.
-
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 ---
+ drivers/regulator/max1586.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v4:
- - Parse the properties in the core and map using driver provided functions.
-   Suggested by Mark Brown
-
-Changes in v3:
- - Use the standard suspend states binding instead of custom properties.
-   Suggested by Mark Brown
-
- drivers/regulator/of_regulator.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-index cbc1d71..cd65885 100644
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -25,7 +25,8 @@ static const char *const regulator_states[PM_SUSPEND_MAX + 1] = {
- };
- 
- static void of_get_regulation_constraints(struct device_node *np,
--					struct regulator_init_data **init_data)
-+					struct regulator_init_data **init_data,
-+					const struct regulator_desc *desc)
+diff --git a/drivers/regulator/max1586.c b/drivers/regulator/max1586.c
+index 86db310..d2a8c64 100644
+--- a/drivers/regulator/max1586.c
++++ b/drivers/regulator/max1586.c
+@@ -163,7 +163,7 @@ static int of_get_max1586_platform_data(struct device *dev,
+ 				 struct max1586_platform_data *pdata)
  {
- 	const __be32 *min_uV, *max_uV;
- 	struct regulation_constraints *constraints = &(*init_data)->constraints;
-@@ -81,6 +82,14 @@ static void of_get_regulation_constraints(struct device_node *np,
- 	if (!ret)
- 		constraints->enable_time = pval;
+ 	struct max1586_subdev_data *sub;
+-	struct of_regulator_match rmatch[ARRAY_SIZE(max1586_reg)];
++	struct of_regulator_match rmatch[ARRAY_SIZE(max1586_reg)] = { };
+ 	struct device_node *np = dev->of_node;
+ 	int i, matched;
  
-+	if (!of_property_read_u32(np, "regulator-initial-mode", &pval)) {
-+		if (desc && desc->map_modes)
-+			constraints->initial_mode = desc->map_modes(pval);
-+		else
-+			pr_warn("%s: failed to parse regulator-initial-mode\n",
-+				np->name);
-+	}
-+
- 	for (i = 0; i < ARRAY_SIZE(regulator_states); i++) {
- 		switch (i) {
- 		case PM_SUSPEND_MEM:
-@@ -100,6 +109,15 @@ static void of_get_regulation_constraints(struct device_node *np,
- 		if (!suspend_np || !suspend_state)
- 			continue;
- 
-+		if (!of_property_read_u32(suspend_np, "regulator-mode",
-+					  &pval)) {
-+			if (desc && desc->map_modes)
-+				suspend_state->mode = desc->map_modes(pval);
-+			else
-+				pr_warn("%s: failed to parse regulator-mode\n",
-+					np->name);
-+		}
-+
- 		if (of_property_read_bool(suspend_np,
- 					"regulator-on-in-suspend"))
- 			suspend_state->enabled = true;
-@@ -140,7 +158,7 @@ struct regulator_init_data *of_get_regulator_init_data(struct device *dev,
- 	if (!init_data)
- 		return NULL; /* Out of memory? */
- 
--	of_get_regulation_constraints(node, &init_data);
-+	of_get_regulation_constraints(node, &init_data, desc);
- 	return init_data;
- }
- EXPORT_SYMBOL_GPL(of_get_regulator_init_data);
 -- 
 2.1.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
