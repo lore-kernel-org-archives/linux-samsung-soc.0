@@ -1,256 +1,93 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH 03/12] PM / Domains: Add notifier support for power domain transitions
-Date: Mon, 03 Nov 2014 15:54:05 +0100
-Message-ID: <1651173.5xzCFxz3LI@vostro.rjw.lan>
-References: <1414986790-11940-1-git-send-email-amit.daniel@samsung.com> <1414986790-11940-4-git-send-email-amit.daniel@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1414986790-11940-4-git-send-email-amit.daniel@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kgene.kim@samsung.com, pankaj.dubey@samsung.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Ulf Hansson <ulf.hansson@linaro.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v4 00/14] Add max77802 regulator operating mode support
+Date: Mon,  3 Nov 2014 15:40:35 +0100
+Message-ID: <1415025649-8119-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:38817 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752052AbaKCOmP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 3 Nov 2014 09:42:15 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-CC: Kevin, Ulf, Geert.
+Hello Mark,
 
-On Monday, November 03, 2014 09:23:01 AM Amit Daniel Kachhap wrote:
-> These power domain transition notifiers will assist in carrying
-> out some activity associated with domain power on/off such as
-> some registers which may lose its contents and need save/restore
-> across domain power off/on.
-> 
-> 4 type of notifications are added,
-> GPD_OFF_PRE     - GPD state before power off
-> GPD_OFF_POST    - GPD state after power off
-> GPD_ON_PRE      - GPD state before power off
-> GPD_ON_POST     - GPD state after power off
-> 
-> 3 notfication API's are exported.
-> 1) int genpd_register_notifier(struct notifier_block *nb, char *pd_name);
-> 2) int genpd_unregister_notifier(struct notifier_block *nb, char *pd_name);
-> 3) void genpd_invoke_transition_notifier(struct generic_pm_domain *genpd,
-> 			enum gpd_on_off_state state);
-> 
-> In this approach the notifiers are registered/unregistered with pd name.
-> The actual invoking of the notfiers will be done by the platform implementing
-> power domain enable/disable low level handlers according to the above
-> defined notification types. This approach will considerably reduce the
-> number of call to notifiers as compared to calling always from core
-> powerdomain subsystem.
-> 
-> Also the registered domain's will be managed inside a cache list and not
-> part of the genpd structure. This will help in registration of notifiers from
-> subsystems (such as clock) even when the PD subsystem is still not initialised.
-> This list also filters out the unregistered pd's requesting notification.
-> 
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
->  drivers/base/power/domain.c |  112 ++++++++++++++++++++++++++++++++++++++++++-
->  include/linux/pm_domain.h   |   31 ++++++++++++
->  2 files changed, 142 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 40bc2f4..e05045e 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -46,10 +46,19 @@
->  	__retval;								\
->  })
->  
-> +struct cache_notify_domains {
-> +	char *name;
-> +	/* Node in the cache pm domain name list */
-> +	struct list_head cache_list_node;
-> +};
-> +
->  static LIST_HEAD(gpd_list);
->  static DEFINE_MUTEX(gpd_list_lock);
-> +static LIST_HEAD(domain_notify_list);
-> +static DEFINE_MUTEX(domain_notify_list_lock);
-> +static BLOCKING_NOTIFIER_HEAD(genpd_transition_notifier_list);
->  
-> -static struct generic_pm_domain *pm_genpd_lookup_name(const char *domain_name)
-> +struct generic_pm_domain *pm_genpd_lookup_name(const char *domain_name)
->  {
->  	struct generic_pm_domain *genpd = NULL, *gpd;
->  
-> @@ -66,6 +75,7 @@ static struct generic_pm_domain *pm_genpd_lookup_name(const char *domain_name)
->  	mutex_unlock(&gpd_list_lock);
->  	return genpd;
->  }
-> +EXPORT_SYMBOL_GPL(pm_genpd_lookup_name);
->  
->  struct generic_pm_domain *dev_to_genpd(struct device *dev)
->  {
-> @@ -1908,6 +1918,106 @@ void pm_genpd_init(struct generic_pm_domain *genpd,
->  	mutex_unlock(&gpd_list_lock);
->  }
->  
-> +/**
-> + * genpd_register_notifier - Register a PM domain for future notification.
-> + * @nb: notification block containing notification handle.
-> + * @pd_name: PM domain name.
-> + */
-> +int genpd_register_notifier(struct notifier_block *nb, char *pd_name)
-> +{
-> +	int ret;
-> +	struct cache_notify_domains *entry;
-> +
-> +	if (!pd_name)
-> +		return -EINVAL;
-> +
-> +	/* Search if the pd is already registered */
-> +	mutex_lock(&domain_notify_list_lock);
-> +	list_for_each_entry(entry, &domain_notify_list, cache_list_node) {
-> +		if (!strcmp(entry->name, pd_name))
-> +			break;
-> +	}
-> +	mutex_unlock(&domain_notify_list_lock);
-> +
-> +	if (entry) {
-> +		pr_err("%s: pd already exists\n", __func__);
-> +		return -EINVAL;
-> +	}
-> +
-> +	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-> +	if (!entry)
-> +		return -ENOMEM;
-> +
-> +	entry->name = pd_name;
-> +
-> +	mutex_lock(&domain_notify_list_lock);
-> +	list_add(&entry->cache_list_node, &domain_notify_list);
-> +	mutex_unlock(&domain_notify_list_lock);
-> +	ret = blocking_notifier_chain_register(
-> +				&genpd_transition_notifier_list, nb);
-> +	return ret;
-> +}
-> +
-> +/**
-> + * genpd_unregister_notifier - Un-register a PM domain for future notification.
-> + * @nb: notification block containing notification handle.
-> + * @pd_name: PM domain name.
-> + */
-> +int genpd_unregister_notifier(struct notifier_block *nb, char *pd_name)
-> +{
-> +	int ret;
-> +	struct cache_notify_domains *entry;
-> +
-> +	mutex_lock(&domain_notify_list_lock);
-> +	list_for_each_entry(entry, &domain_notify_list, cache_list_node) {
-> +		if (!strcmp(entry->name, pd_name))
-> +			break;
-> +	}
-> +	if (!entry) {
-> +		mutex_unlock(&domain_notify_list_lock);
-> +		pr_err("%s: Invalid pd name\n", __func__);
-> +		return -EINVAL;
-> +	}
-> +	list_del(&entry->cache_list_node);
-> +	mutex_unlock(&domain_notify_list_lock);
-> +	ret = blocking_notifier_chain_unregister(
-> +				&genpd_transition_notifier_list, nb);
-> +	return ret;
-> +}
-> +
-> +/**
-> + * genpd_invoke_transition_notifier - Calls the matching notification handler.
-> + * @genpd: generic power domain structure.
-> + * @state: can be of type - GPD_OFF_PRE/GPD_OFF_POST/GPD_ON_PRE/GPD_ON_POST.
-> + */
-> +void genpd_invoke_transition_notifier(struct generic_pm_domain *genpd,
-> +			enum gpd_on_off_state state)
-> +{
-> +	struct cache_notify_domains *entry;
-> +
-> +	if (!genpd) {
-> +		pr_err("Invalid genpd parameter\n");
-> +		return;
-> +	}
-> +
-> +	if (state != GPD_OFF_PRE || state != GPD_OFF_POST
-> +			|| state != GPD_ON_PRE || state != GPD_ON_POST) {
-> +		pr_err("Invalid state parameter\n");
-> +		return;
-> +	}
-> +
-> +	mutex_lock(&domain_notify_list_lock);
-> +	list_for_each_entry(entry, &domain_notify_list, cache_list_node) {
-> +		if (!strcmp(entry->name, genpd->name))
-> +			break;
-> +	}
-> +	mutex_unlock(&domain_notify_list_lock);
-> +	if (!entry) /* Simply ignore */
-> +		return;
-> +
-> +	blocking_notifier_call_chain(&genpd_transition_notifier_list, state,
-> +				genpd);
-> +}
->  #ifdef CONFIG_PM_GENERIC_DOMAINS_OF
->  /*
->   * Device Tree based PM domain providers.
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 73e938b..659997f 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -25,6 +25,13 @@ enum gpd_status {
->  	GPD_STATE_POWER_OFF,	/* PM domain is off */
->  };
->  
-> +enum gpd_on_off_state {
-> +	GPD_OFF_PRE = 0,	/* GPD state before power off */
-> +	GPD_OFF_POST,		/* GPD state after power off */
-> +	GPD_ON_PRE,		/* GPD state before power on */
-> +	GPD_ON_POST,		/* GPD state after power on */
-> +};
-> +
->  struct dev_power_governor {
->  	bool (*power_down_ok)(struct dev_pm_domain *domain);
->  	bool (*stop_ok)(struct device *dev);
-> @@ -148,6 +155,12 @@ extern int pm_genpd_name_poweron(const char *domain_name);
->  
->  extern struct dev_power_governor simple_qos_governor;
->  extern struct dev_power_governor pm_domain_always_on_gov;
-> +
-> +struct generic_pm_domain *pm_genpd_lookup_name(const char *domain_name);
-> +int genpd_register_notifier(struct notifier_block *nb, char *pd_name);
-> +int genpd_unregister_notifier(struct notifier_block *nb, char *pd_name);
-> +void genpd_invoke_transition_notifier(struct generic_pm_domain *genpd,
-> +			enum gpd_on_off_state state);
->  #else
->  
->  static inline struct generic_pm_domain_data *dev_gpd_data(struct device *dev)
-> @@ -219,6 +232,24 @@ static inline int pm_genpd_name_poweron(const char *domain_name)
->  {
->  	return -ENOSYS;
->  }
-> +static inline struct
-> +generic_pm_domain *pm_genpd_lookup_name(const char *domain_name)
-> +{
-> +	return NULL;
-> +}
-> +static inline int
-> +genpd_register_notifier(struct notifier_block *nb, char *pd_name)
-> +{
-> +	return 0;
-> +}
-> +static inline int
-> +genpd_unregister_notifier(struct notifier_block *nb, char *pd_name)
-> +{
-> +	return 0;
-> +}
-> +static inline void
-> +genpd_invoke_transition_notifier(struct generic_pm_domain *genpd,
-> +			enum gpd_on_off_state state) { }
->  #define simple_qos_governor NULL
->  #define pm_domain_always_on_gov NULL
->  #endif
-> 
+This is the fourth version of the series that adds operating modes
+support for the regulators in the max77802 PMIC. This version uses
+the standard suspend states bindings and the opmodes are parsed by
+the regulator core while drivers only define a translation function
+to map between hardware specific to standard modes as you suggested.
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+The series adds a "regulator-initial-mode" property to configure at
+startup the operating mode for the regulators that support changing
+its mode during normal operation and a "regulator-mode" property for
+the regulators that supports changing its operating mode when the
+system enters in a suspend state. These properties were originally
+part of Chanwoo Choi's regulator suspend state series [0] but were
+removed since there wasn't a way to define the operating modes in a
+generic way.
+
+In this series, the generic regulator DT binding doc explains that each
+device has to document what their valid operating modes are. Drivers
+must provide a translation function so the core can map the modes.
+
+Since parsing the modes in the core is a very different approach, most
+of the patches are new but those that remains have a changelog.
+
+This series depend on [0] and also v2 of patch:
+"ARM: EXYNOS: Call regulator core suspend prepare and finish functions" [1].
+
+Javier Martinez Canillas (14):
+  regulator: Document binding for initial and suspend modes
+  regulator: Add function to map modes to struct regulator_desc
+  regulator: of: Add regulator desc param to
+    of_get_regulator_init_data()
+  regulator: of: Pass the regulator description in the match table
+  regulator: max1586: zero-initialize regulator match table array
+  regulator: max77686: zero-initialize regulator match table
+  regulator: max77802: zero-initialize regulator match table
+  regulator: max8660: zero-initialize regulator match table array
+  regulator: s2mpa01: zero-initialize regulator match table array
+  regulator: of: Add support for parsing initial and suspend modes
+  regulator: max77802: Document binding for regulator operating modes
+  regulator: max77802: Use unsigned int for modes in max77802_map_mode()
+  regulator: max77802: Set regulator modes translation callback
+  ARM: dts: Configure regulators for suspend on exynos Peach boards
+
+Patch #1 extends the regulator DT binding to document the initial and
+suspend modes properties.
+
+Patch #2 adds a function pointer to the static regulator description
+so drivers can define a callback that does the modes translation.
+
+Patch #3 does some refactoring to pass the regulator descriptor to the
+function extracting the regulator initial data from DT.
+
+Patch #4 adds a pointer to the regulator descriptor in the match table
+so users extracting the init_data from of_regulator_match can also map
+the modes.
+
+Patch #5-#9 are fixes to be sure that all callers are passing an
+initialised match table.
+
+Patch #10 modifies the function that extracts the regulator data from
+DT to parse the initial and suspend modes.
+
+Patch #11 extends the max77802 DT binding to document the valid opmodes
+for the regulators on this device.
+
+Patch #12 change the signature of the function doing the modes mapping
+for the max77802 regulators mode.
+
+Patch #13 set the function handler for the max77802 modes translation.
+
+Patch #14 configure the regulators for the Peach Pit and Pi Chromebooks.
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2014/10/10/161
+[1]: http://www.spinics.net/lists/arm-kernel/msg369923.html
