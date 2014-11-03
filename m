@@ -1,266 +1,63 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 03/12] PM / Domains: Add notifier support for power domain
- transitions
-Date: Mon, 03 Nov 2014 19:21:05 +0100
-Message-ID: <5457C791.1000904@samsung.com>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH 03/12] PM / Domains: Add notifier support for power domain transitions
+Date: Mon, 03 Nov 2014 10:23:05 -0800
+Message-ID: <7hmw88gn3q.fsf@deeprootsystems.com>
 References: <1414986790-11940-1-git-send-email-amit.daniel@samsung.com>
- <1414986790-11940-4-git-send-email-amit.daniel@samsung.com>
+	<1414986790-11940-4-git-send-email-amit.daniel@samsung.com>
+	<1651173.5xzCFxz3LI@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1414986790-11940-4-git-send-email-amit.daniel@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kgene.kim@samsung.com, pankaj.dubey@samsung.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Beata Michalska <b.michalska@samsung.com>
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:50350 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752758AbaKCSXQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 3 Nov 2014 13:23:16 -0500
+Received: by mail-pa0-f47.google.com with SMTP id kx10so12636490pab.20
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Nov 2014 10:23:15 -0800 (PST)
+In-Reply-To: <1651173.5xzCFxz3LI@vostro.rjw.lan> (Rafael J. Wysocki's message
+	of "Mon, 03 Nov 2014 15:54:05 +0100")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kgene.kim@samsung.com, pankaj.dubey@samsung.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Ulf Hansson <ulf.hansson@linaro.org>, mturquette@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 
-Hi,
++Mike Turquette
 
-Cc: Ulf, Kevin, Geert.
+Hi Amit,
 
-On 03/11/14 04:53, Amit Daniel Kachhap wrote:
-> These power domain transition notifiers will assist in carrying
-> out some activity associated with domain power on/off such as
-> some registers which may lose its contents and need save/restore
-> across domain power off/on.
+"Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
 
-Other specific use cases I could add here is gating selected clocks
-to ensure proper signal propagation for devices attached to a power
-domain, e.g. ungating selected clocks before the power domain on and
-restoring them to previous state after the power domain was switched
-on.
+> CC: Kevin, Ulf, Geert.
+>
+> On Monday, November 03, 2014 09:23:01 AM Amit Daniel Kachhap wrote:
+>> These power domain transition notifiers will assist in carrying
+>> out some activity associated with domain power on/off such as
+>> some registers which may lose its contents and need save/restore
+>> across domain power off/on.
 
-> 4 type of notifications are added,
-> GPD_OFF_PRE     - GPD state before power off
-> GPD_OFF_POST    - GPD state after power off
-> GPD_ON_PRE      - GPD state before power off
-> GPD_ON_POST     - GPD state after power off
-> 
-> 3 notfication API's are exported.
-> 1) int genpd_register_notifier(struct notifier_block *nb, char *pd_name);
-> 2) int genpd_unregister_notifier(struct notifier_block *nb, char *pd_name);
-> 3) void genpd_invoke_transition_notifier(struct generic_pm_domain *genpd,
-> 			enum gpd_on_off_state state);
-> 
-> In this approach the notifiers are registered/unregistered with pd name.
-> The actual invoking of the notfiers will be done by the platform implementing
-> power domain enable/disable low level handlers according to the above
-> defined notification types. This approach will considerably reduce the
-> number of call to notifiers as compared to calling always from core
-> powerdomain subsystem.
-> 
-> Also the registered domain's will be managed inside a cache list and not
-> part of the genpd structure. This will help in registration of notifiers from
-> subsystems (such as clock) even when the PD subsystem is still not initialised.
-> This list also filters out the unregistered pd's requesting notification.
+The runtime PM framework already provides callbacks that are useful for
+context save/restore for devices.  Could you please describe in more
+detail which registers in which kind of devices need to be
+saved/restored, and why they cannot be saved/restored using existing
+mechanisms.
 
-This patch is somewhat similar my patch adding power domain state change
-notifications [1].  I have already a reworked version of that patch, with the
-notifier list moved to struct generic_pm_domain and using genpd->lock instead
-of dev->power.lock.  Anyway, while I'd leave the decision about the location
-from where the notifier chains are supposed to be called to the subsystem's
-maintainers preference, I'm rather reluctant to having one global notifiers
-list for all possible power domains and all the notification clients.
-The possibly long list needs to be traversed at each notifier call and it
-seems in your implementation any registered user of the notification gets
-notifications for all possible power domains.
+Personally, I'm uncomfortable with notifiers like this because it
+suggests that underlying frameworks are not doing the right thing, or
+are not being used.  (I also don't like the implementation here where a
+single global notifier list is maintained by the core, but the notifiers
+are actually triggered by SoC specific code.)
 
-[1] https://lkml.org/lkml/2014/8/5/182
+IIUC, the usage in this series seems to be that certain clock related
+registers need to be saved/restored across a power domain transition.
 
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
->  drivers/base/power/domain.c |  112 ++++++++++++++++++++++++++++++++++++++++++-
->  include/linux/pm_domain.h   |   31 ++++++++++++
->  2 files changed, 142 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 40bc2f4..e05045e 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -46,10 +46,19 @@
->  	__retval;								\
->  })
->  
-> +struct cache_notify_domains {
-> +	char *name;
-> +	/* Node in the cache pm domain name list */
-> +	struct list_head cache_list_node;
-> +};
-> +
->  static LIST_HEAD(gpd_list);
->  static DEFINE_MUTEX(gpd_list_lock);
-> +static LIST_HEAD(domain_notify_list);
-> +static DEFINE_MUTEX(domain_notify_list_lock);
-> +static BLOCKING_NOTIFIER_HEAD(genpd_transition_notifier_list);
->  
-> -static struct generic_pm_domain *pm_genpd_lookup_name(const char *domain_name)
-> +struct generic_pm_domain *pm_genpd_lookup_name(const char *domain_name)
->  {
->  	struct generic_pm_domain *genpd = NULL, *gpd;
->  
-> @@ -66,6 +75,7 @@ static struct generic_pm_domain *pm_genpd_lookup_name(const char *domain_name)
->  	mutex_unlock(&gpd_list_lock);
->  	return genpd;
->  }
-> +EXPORT_SYMBOL_GPL(pm_genpd_lookup_name);
->  
->  struct generic_pm_domain *dev_to_genpd(struct device *dev)
->  {
-> @@ -1908,6 +1918,106 @@ void pm_genpd_init(struct generic_pm_domain *genpd,
->  	mutex_unlock(&gpd_list_lock);
->  }
->  
-> +/**
-> + * genpd_register_notifier - Register a PM domain for future notification.
-> + * @nb: notification block containing notification handle.
-> + * @pd_name: PM domain name.
-> + */
-> +int genpd_register_notifier(struct notifier_block *nb, char *pd_name)
-> +{
-> +	int ret;
-> +	struct cache_notify_domains *entry;
-> +
-> +	if (!pd_name)
-> +		return -EINVAL;
-> +
-> +	/* Search if the pd is already registered */
-> +	mutex_lock(&domain_notify_list_lock);
-> +	list_for_each_entry(entry, &domain_notify_list, cache_list_node) {
-> +		if (!strcmp(entry->name, pd_name))
-> +			break;
-> +	}
-> +	mutex_unlock(&domain_notify_list_lock);
-> +
-> +	if (entry) {
-> +		pr_err("%s: pd already exists\n", __func__);
-> +		return -EINVAL;
+Wouldn't an alternative solution be to add a feature to the clock driver
+such that the state of each clock is saved when the clock is disabled,
+and restored when the clock is enabled?   That would allow any clock
+context to survive any power domain transtion also, correct?
 
-I suspect this code doesn't work as expected. 'entry' will be NULL only
-in case of an empty domain_notify_list list. Have you tested multiple
-calls to genpd_register_notifier() ? It looks like only the first call
-would work.
+I have some issues with the implementaion as well, but I think we need
+to first sort out the real need for this before going into those
+details.
 
-> +	}
-> +
-> +	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-> +	if (!entry)
-> +		return -ENOMEM;
-> +
-> +	entry->name = pd_name;
-> +
-> +	mutex_lock(&domain_notify_list_lock);
-> +	list_add(&entry->cache_list_node, &domain_notify_list);
-> +	mutex_unlock(&domain_notify_list_lock);
-> +	ret = blocking_notifier_chain_register(
-> +				&genpd_transition_notifier_list, nb);
-> +	return ret;
-> +}
-> +
-> +/**
-> + * genpd_unregister_notifier - Un-register a PM domain for future notification.
-> + * @nb: notification block containing notification handle.
-> + * @pd_name: PM domain name.
-> + */
-> +int genpd_unregister_notifier(struct notifier_block *nb, char *pd_name)
-> +{
-> +	int ret;
-> +	struct cache_notify_domains *entry;
-> +
-> +	mutex_lock(&domain_notify_list_lock);
-> +	list_for_each_entry(entry, &domain_notify_list, cache_list_node) {
-> +		if (!strcmp(entry->name, pd_name))
-> +			break;
-> +	}
-> +	if (!entry) {
-> +		mutex_unlock(&domain_notify_list_lock);
-> +		pr_err("%s: Invalid pd name\n", __func__);
-> +		return -EINVAL;
-> +	}
-> +	list_del(&entry->cache_list_node);
-
-'entry' will not be NULL even when the requested notification entry
-was not found above. In such case it looks like last entry in the
-domain_notify_list list will be removed, not something we would expect.
-
-> +	mutex_unlock(&domain_notify_list_lock);
-> +	ret = blocking_notifier_chain_unregister(
-> +				&genpd_transition_notifier_list, nb);
-> +	return ret;
-> +}
-> +
-> +/**
-> + * genpd_invoke_transition_notifier - Calls the matching notification handler.
-> + * @genpd: generic power domain structure.
-> + * @state: can be of type - GPD_OFF_PRE/GPD_OFF_POST/GPD_ON_PRE/GPD_ON_POST.
-> + */
-> +void genpd_invoke_transition_notifier(struct generic_pm_domain *genpd,
-> +			enum gpd_on_off_state state)
-> +{
-> +	struct cache_notify_domains *entry;
-> +
-> +	if (!genpd) {
-> +		pr_err("Invalid genpd parameter\n");
-> +		return;
-> +	}
-> +
-> +	if (state != GPD_OFF_PRE || state != GPD_OFF_POST
-> +			|| state != GPD_ON_PRE || state != GPD_ON_POST) {
-> +		pr_err("Invalid state parameter\n");
-> +		return;
-> +	}
-> +
-> +	mutex_lock(&domain_notify_list_lock);
-> +	list_for_each_entry(entry, &domain_notify_list, cache_list_node) {
-> +		if (!strcmp(entry->name, genpd->name))
-> +			break;
-> +	}
-> +	mutex_unlock(&domain_notify_list_lock);
-> +	if (!entry) /* Simply ignore */
-
-Similar issue here, this condition will only be true when the notifications
-list is empty.
-
-> +		return;
-> +
-> +	blocking_notifier_call_chain(&genpd_transition_notifier_list, state,
-> +				genpd);
-
-And finally regardless of to what power domain the notification user has
-registered it will get notification for each possible power domain in
-the system?  Are the notification users supposed to test the 'genpd'
-argument to react on a specific power domain? If so, how? I guess not by
-nother strcmp() ?
-
-> +}
->  #ifdef CONFIG_PM_GENERIC_DOMAINS_OF
->  /*
->   * Device Tree based PM domain providers.
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 73e938b..659997f 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -25,6 +25,13 @@ enum gpd_status {
->  	GPD_STATE_POWER_OFF,	/* PM domain is off */
->  };
->  
-> +enum gpd_on_off_state {
-> +	GPD_OFF_PRE = 0,	/* GPD state before power off */
-
-The assignment is not needed.
-
-> +	GPD_OFF_POST,		/* GPD state after power off */
-> +	GPD_ON_PRE,		/* GPD state before power on */
-> +	GPD_ON_POST,		/* GPD state after power on */
-> +};
-> +
->  struct dev_power_governor {
->  	bool (*power_down_ok)(struct dev_pm_domain *domain);
->  	bool (*stop_ok)(struct device *dev);
-> @@ -148,6 +155,12 @@ extern int pm_genpd_name_poweron(const char *domain_name);
-
---
-Regards,
-Sylwester
+Kevin
