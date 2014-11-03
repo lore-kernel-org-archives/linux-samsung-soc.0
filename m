@@ -1,152 +1,218 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH V7 03/12] drm/bridge: Add helper functions for drm_bridge
-Date: Mon, 3 Nov 2014 09:11:14 +0100
-Message-ID: <20141103081114.GB26941@phenom.ffwll.local>
-References: <1409149783-12416-1-git-send-email-ajaykumar.rs@samsung.com>
- <1409149783-12416-4-git-send-email-ajaykumar.rs@samsung.com>
- <20141027190137.GT26941@phenom.ffwll.local>
- <CAOw6vbLNOqp=X4epwDPb7zT-j2+oUuLoeV2S=x+oGPLQwK+Z7Q@mail.gmail.com>
- <CAKMK7uEch65=ZuaG=4JY2u3S3w5RND+uNc5+qL=tWxDLfEqEwQ@mail.gmail.com>
- <20141028142946.GA17770@ulmo>
- <20141029075127.GM26941@phenom.ffwll.local>
- <20141029091648.GC27900@ulmo>
- <20141031155940.GS26941@phenom.ffwll.local>
- <20141103080602.GB21002@ulmo.nvidia.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH v2 2/2] tty: serial: samsung: Clean-up selection of number
+ of available UARTs
+Date: Mon, 3 Nov 2014 13:51:17 +0530
+Message-ID: <CAM4voamvxxdfXApgUL6xB_8VDwFoFqz5hXKtu4W6aYCmCbs0kg@mail.gmail.com>
+References: <1412181777-6388-1-git-send-email-a.kesavan@samsung.com>
+	<1412181777-6388-2-git-send-email-a.kesavan@samsung.com>
+	<041301cff29a$5c9a5fa0$15cf1ee0$@kernel.org>
+	<CAM4voakzWhfMc1SyTXs1eOxuvEp_U3qfRLxPAzWzeX54jwadvA@mail.gmail.com>
+	<CAM4voa=0i6WsYn1z9AdeCSPFqdOS35-LX=b-Rc+Npr9dVFD_-w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f177.google.com ([209.85.212.177]:65218 "EHLO
-	mail-wi0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750826AbaKCILC (ORCPT
+Received: from mail-qg0-f50.google.com ([209.85.192.50]:39336 "EHLO
+	mail-qg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751187AbaKCIVS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Nov 2014 03:11:02 -0500
-Received: by mail-wi0-f177.google.com with SMTP id ex7so5617213wid.10
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Nov 2014 00:11:00 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <20141103080602.GB21002@ulmo.nvidia.com>
+	Mon, 3 Nov 2014 03:21:18 -0500
+Received: by mail-qg0-f50.google.com with SMTP id a108so8292764qge.37
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Nov 2014 00:21:18 -0800 (PST)
+In-Reply-To: <CAM4voa=0i6WsYn1z9AdeCSPFqdOS35-LX=b-Rc+Npr9dVFD_-w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>, Sean Paul <seanpaul@chromium.org>, Thierry Reding <treding@nvidia.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, dri-devel <dri-devel@lists.freedesktop.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Rob Clark <robdclark@gmail.com>, Ajay kumar <ajaynumb@gmail.com>, Jingoo Han <jg1.han@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>
+To: Kukjin Kim <kgene@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Arnd Bergmann <arnd@arndb.de>
 
-On Mon, Nov 03, 2014 at 09:06:04AM +0100, Thierry Reding wrote:
-> On Fri, Oct 31, 2014 at 04:59:40PM +0100, Daniel Vetter wrote:
-> > On Wed, Oct 29, 2014 at 10:16:49AM +0100, Thierry Reding wrote:
-> > > On Wed, Oct 29, 2014 at 08:51:27AM +0100, Daniel Vetter wrote:
-> > > > On Tue, Oct 28, 2014 at 03:29:47PM +0100, Thierry Reding wrote:
-> > > > > On Mon, Oct 27, 2014 at 11:20:31PM +0100, Daniel Vetter wrote:
-> > > > > > On Mon, Oct 27, 2014 at 8:58 PM, Sean Paul <seanpaul@chromium.org> wrote:
-> > > > > > >>> @@ -660,8 +662,11 @@ struct drm_bridge_funcs {
-> > > > > > >>>   * @driver_private: pointer to the bridge driver's internal context
-> > > > > > >>>   */
-> > > > > > >>>  struct drm_bridge {
-> > > > > > >>> -     struct drm_device *dev;
-> > > > > > >>> +     struct device *dev;
-> > > > > > >>
-> > > > > > >> Please don't rename the ->dev pointer into drm. Because _all_ the other
-> > > > > > >> drm structures still call it ->dev. Also, can't we use struct device_node
-> > > > > > >> here like we do in the of helpers Russell added? See 7e435aad38083
-> > > > > > >>
-> > > > > > >
-> > > > > > > I think this is modeled after the naming in drm_panel, FWIW. However,
-> > > > > > > seems reasonable to keep the device_node instead.
-> > > > > > 
-> > > > > > Hm, indeed. Tbh I vote to rename drm_panel->drm to ->dev and like with
-> > > > > > drm_crtc drop the struct device and go directly to a struct
-> > > > > > device_node. Since we don't really need the sturct device, the only
-> > > > > > thing we care about is the of_node. For added bonus wrap an #ifdef
-> > > > > > CONFIG_OF around all the various struct device_node in drm_foo.h.
-> > > > > > Should be all fairly simple to pull off with cocci.
-> > > > > > 
-> > > > > > Thierry?
-> > > > > 
-> > > > > The struct device * is in DRM panel because there's nothing device tree
-> > > > > specific about the concept. Having a struct device_node * instead would
-> > > > > indicate that it can only be used with a device tree, whereas the
-> > > > > framework doesn't care the tiniest bit what type of device we have.
-> > > > > 
-> > > > > While the trend clearly is to use more device tree, I don't think we
-> > > > > should make it impossible for anybody else to use these frameworks.
-> > > > > 
-> > > > > There are other advantages to keeping a struct device *, like having
-> > > > > access to the proper device and its name. Also you get access to the
-> > > > > device_node * via dev->of_node anyway. I don't see any advantage in
-> > > > > switching to just a struct device_node *, only disadvantages.
-> > > > 
-> > > > Well the idea is to make the lookup key specific, and conditional on
-> > > > #CONFIG_OF. If there's going to be another neat way to enumerate platform
-> > > > devices then I think we should add that, too. Or maybe we should have a
-> > > > void *platform_data or so.
-> > > > 
-> > > > The reason I really don't want a struct device * in core drm structures is
-> > > > that two releases down the road people will have found tons of really
-> > > > great ways to abuse them and re-create a midlayer. DRM core really should
-> > > > only care about the sw objects and not be hw specific at all. Heck there's
-> > > > not even an requirement to have any piece of actual hw, you could write a
-> > > > completely fake drm driver (for e.g. testing like the new v4l driver).
-> > > > 
-> > > > Tbh I wonder a bit why we even have this registery embedded into the core
-> > > > drm objects. Essentially the only thing you're doing is a list that maps
-> > > > some platform specific key onto some subsystem specific driver structure
-> > > > or fails the lookup. So instead of putting all these low-level details
-> > > > into drm core structures can't we just have a generic hashtable/list for
-> > > > this, plus some static inline helpers that cast the void * you get into
-> > > > the one you want?
-> > > > 
-> > > > I also get the feeling that this really should be in the driver core (like
-> > > > the component helpers), and that we should think a lot harder about
-> > > > lifetimes and refcounting (see my other reply on that).
-> > > 
-> > > Yes, that sounds very useful indeed. Also see my reply to yours. =)
-> > 
-> > Just replying here with some of the irc discussions we've had. Since
-> > drm_bridge/panel isn't a core drm interface object exposed to userspace
-> > it's less critical. I still think that wasting a few brain cycles to have
-> > a clear separation between the abstract interface object and how to bind
-> > and unbind the pieces together is worthwhile, even though the cost when
-> > getting it wrong is much less severe than in the case of a mandatory piece
-> > of core infrastructure.
-> > 
-> > I think in general the recent armsoc motivated drm infrastructure lacks a
-> > bit in attention to these details. E.g. the cma helpers are built into the
-> > drm.ko module, but clearly are auxilliary library code. So they should be
-> > pulled out and the headers clean up, so that we have a clear separation
-> > between core and helpers. Otherwise someone will sooner or later screw up
-> > and insert a helper depency into the core, and then we've started with the
-> > midlayer mess. Same goes with drm_bridge/panel, which didn't even bother
-> > to have separate headers from the core modeset header drm_crtc.h.
-> 
-> DRM panel does have a separate header. It's still built into the core
-> DRM module, but using a separate drm-$(CONFIG_DRM_PANEL) += drm_panel.o
-> entry in the makefile. At the time it didn't seem worth to add a
-> completely separate module given the size of the code and the overhead
-> associated with having a separate module.
-> 
-> Do you still want me to split it off into a separate module to clarify
-> that it isn't part of the core?
+Hello Kukjin,
 
-Oh, it doesn't need to be a complete standalone module, smashing it into
-drm_kms_helper is imo totally ok. It's just to make really sure that
-helpers are helpers and there's never a depency from drm.ko to any
-optional helper code. Having a separate module for all the helper code
-helps a lot in ensure that. Also, everything a helper can do, a driver
-should be able to do too. Again a separate helper ensures that you haven't
-missed any EXPORT_SYMBOL. Which should then be a good reminder to update
-the kerneldoc ;-)
+On Fri, Oct 31, 2014 at 8:06 AM, Abhilash Kesavan
+<kesavan.abhilash@gmail.com> wrote:
+> Hi Kukjin,
+>
+> On Tue, Oct 28, 2014 at 5:56 PM, Abhilash Kesavan
+> <kesavan.abhilash@gmail.com> wrote:
+>> Hi Kukjin
+>>
+>> On Tue, Oct 28, 2014 at 4:01 PM, Kukjin Kim <kgene@kernel.org> wrote:
+>>> Abhilash Kesavan wrote:
+>>>>
+>>> Hi,
+>>>
+>>> Sorry for late response.
+>>>
+>>>> Remove symbols SERIAL_SAMSUNG_UARTS_4 and SERIAL_SAMSUNG_UARTS which
+>>>> select the number of UART ports available on the SoC. Replace the usage
+>>>> of SERIAL_SAMSUNG_UARTS in the serial driver with the maximum number of
+>>>
+>>> Well, as you know the number of uart ports are different on each Samsung SoCs
+>>> so I don't think just using maximum number of uart ports are possible for new
+>>> exynos7 SoC at this moment.
+>>
+>> Thanks for the review.
+>> The main reason for me sending this patch was so that we may be able
+>> to re-use the serial driver on arm64 based Exynos7 too. The two
+>> symbols mentioned above which depend on PLAT_SAMSUNG prevent this. I
+>> initially sent a patch which changed the dependency to SERIAL_SAMSUNG
+>> for these 2 symbols. However, Tomasz suggested that a clean-up of
+>> these two symbols would be a better option.
+>>
+>> Please see the discussion of the previous version here:
+>> https://lkml.org/lkml/2014/9/29/702
+>>
+>> Can you please let me know if the previous version is acceptable ?
+>
+> Kukjin, can you please indicate the approach you would like me to
+> take. Without this serial support is blocked on Exynos7.
 
-> > So would be great if someone could invest a bit of time into cleaning this
-> > up. Writing proper api docs also helps a lot with achieving a clean and
-> > sensible split ;-)
-> 
-> There's a bit of API documentation for panels, but I'll see if I can
-> find some time to enhance it.
+Gentle reminder on this.
 
-Imo pulling into the DocBook template is also important, since if you do
-that the 0-day tester will complain if the kerneldoc gets out of sync.
-Which does increases the changes of it staying up-to-date a lot.
-
-Cheers, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+Abhilash
+>
+> Thanks,
+> Abhilash
+>>
+>>>
+>>>> UART ports possible. Removal of these symbols also helps in Exynos7
+>>>> serial enablement.
+>>>>
+>>>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+>>>> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
+>>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>> ---
+>>>>  drivers/tty/serial/Kconfig   |   16 ----------------
+>>>>  drivers/tty/serial/samsung.c |   11 +++--------
+>>>>  drivers/tty/serial/samsung.h |    5 ++++-
+>>>>  3 files changed, 7 insertions(+), 25 deletions(-)
+>>>>
+>>>> diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+>>>> index 81f6ee7..9fc9092 100644
+>>>> --- a/drivers/tty/serial/Kconfig
+>>>> +++ b/drivers/tty/serial/Kconfig
+>>>> @@ -247,22 +247,6 @@ config SERIAL_SAMSUNG
+>>>>         provide all of these ports, depending on how the serial port
+>>>>         pins are configured.
+>>>>
+>>>> -config SERIAL_SAMSUNG_UARTS_4
+>>>> -     bool
+>>>> -     depends on PLAT_SAMSUNG
+>>>> -     default y if !(CPU_S3C2410 || CPU_S3C2412 || CPU_S3C2440 || CPU_S3C2442)
+>>>> -     help
+>>>> -       Internal node for the common case of 4 Samsung compatible UARTs
+>>>> -
+>>>> -config SERIAL_SAMSUNG_UARTS
+>>>> -     int
+>>>> -     depends on PLAT_SAMSUNG
+>>>> -     default 4 if SERIAL_SAMSUNG_UARTS_4 || CPU_S3C2416
+>>>> -     default 3
+>>>> -     help
+>>>> -       Select the number of available UART ports for the Samsung S3C
+>>>> -       serial driver
+>>>> -
+>>>>  config SERIAL_SAMSUNG_DEBUG
+>>>>       bool "Samsung SoC serial debug"
+>>>>       depends on SERIAL_SAMSUNG && DEBUG_LL
+>>>> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+>>>> index c78f43a..ba04c6d 100644
+>>>> --- a/drivers/tty/serial/samsung.c
+>>>> +++ b/drivers/tty/serial/samsung.c
+>>>> @@ -962,14 +962,14 @@ static struct uart_ops s3c24xx_serial_ops = {
+>>>>  static struct uart_driver s3c24xx_uart_drv = {
+>>>>       .owner          = THIS_MODULE,
+>>>>       .driver_name    = "s3c2410_serial",
+>>>> -     .nr             = CONFIG_SERIAL_SAMSUNG_UARTS,
+>>>> +     .nr             = MAX_SAMSUNG_UARTS,
+>>>>       .cons           = S3C24XX_SERIAL_CONSOLE,
+>>>>       .dev_name       = S3C24XX_SERIAL_NAME,
+>>>>       .major          = S3C24XX_SERIAL_MAJOR,
+>>>>       .minor          = S3C24XX_SERIAL_MINOR,
+>>>>  };
+>>>>
+>>>> -static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS] = {
+>>>> +static struct s3c24xx_uart_port s3c24xx_serial_ports[MAX_SAMSUNG_UARTS] = {
+>>>>       [0] = {
+>>>>               .port = {
+>>>>                       .lock           = __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[0].port.lock),
+>>>> @@ -992,8 +992,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
+>>>>                       .line           = 1,
+>>>>               }
+>>>>       },
+>>>> -#if CONFIG_SERIAL_SAMSUNG_UARTS > 2
+>>>> -
+>>>>       [2] = {
+>>>>               .port = {
+>>>>                       .lock           = __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[2].port.lock),
+>>>> @@ -1005,8 +1003,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
+>>>>                       .line           = 2,
+>>>>               }
+>>>>       },
+>>>> -#endif
+>>>> -#if CONFIG_SERIAL_SAMSUNG_UARTS > 3
+>>>>       [3] = {
+>>>>               .port = {
+>>>>                       .lock           = __SPIN_LOCK_UNLOCKED(s3c24xx_serial_ports[3].port.lock),
+>>>> @@ -1018,7 +1014,6 @@ static struct s3c24xx_uart_port s3c24xx_serial_ports[CONFIG_SERIAL_SAMSUNG_UARTS
+>>>>                       .line           = 3,
+>>>>               }
+>>>>       }
+>>>> -#endif
+>>>>  };
+>>>>
+>>>>  /* s3c24xx_serial_resetport
+>>>> @@ -1590,7 +1585,7 @@ s3c24xx_serial_console_setup(struct console *co, char *options)
+>>>>
+>>>>       /* is this a valid port */
+>>>>
+>>>> -     if (co->index == -1 || co->index >= CONFIG_SERIAL_SAMSUNG_UARTS)
+>>>> +     if (co->index == -1 || co->index >= MAX_SAMSUNG_UARTS)
+>>>
+>>> If we use max number, second condition is not required...
+>>>
+>>>>               co->index = 0;
+>>>>
+>>>>       port = &s3c24xx_serial_ports[co->index].port;
+>>>> diff --git a/drivers/tty/serial/samsung.h b/drivers/tty/serial/samsung.h
+>>>> index eb071dd..484b49e 100644
+>>>> --- a/drivers/tty/serial/samsung.h
+>>>> +++ b/drivers/tty/serial/samsung.h
+>>>> @@ -1,6 +1,9 @@
+>>>>  #ifndef __SAMSUNG_H
+>>>>  #define __SAMSUNG_H
+>>>>
+>>>> +/* Maximum UART ports available */
+>>>> +#define MAX_SAMSUNG_UARTS       4
+>>>
+>>> If there is a Samsung SoC having 5 UARTS, we need to update?
+>>
+>> Yes, we would need to update the MAX_SAMSUNG_UARTS define for a newer
+>> SoC with 5 uart ports but even without this patch we would have to
+>> modify the SERIAL_SAMSUNG_UARTS symbol to handle 5 ports.
+>>>
+>>> And hmm...maybe we need to keep the useless array sometimes...
+>>
+>> Yes, for the 24xx series with 3 uart ports we would.
+>>
+>> Regards,
+>> Abhilash
+>>>
+>>>> +
+>>>>  /*
+>>>>   * Driver for Samsung SoC onboard UARTs.
+>>>>   *
+>>>> @@ -38,7 +41,7 @@ struct s3c24xx_uart_info {
+>>>>  struct s3c24xx_serial_drv_data {
+>>>>       struct s3c24xx_uart_info        *info;
+>>>>       struct s3c2410_uartcfg          *def_cfg;
+>>>> -     unsigned int                    fifosize[CONFIG_SERIAL_SAMSUNG_UARTS];
+>>>> +     unsigned int                    fifosize[MAX_SAMSUNG_UARTS];
+>>>>  };
+>>>>
+>>>>  struct s3c24xx_uart_port {
+>>>> --
+>>>> 1.7.9.5
+>>>
+>>>
+>>> _______________________________________________
+>>> linux-arm-kernel mailing list
+>>> linux-arm-kernel@lists.infradead.org
+>>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
