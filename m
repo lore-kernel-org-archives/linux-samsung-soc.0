@@ -1,90 +1,43 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v4 11/14] regulator: max77802: Document binding for regulator operating modes
-Date: Mon,  3 Nov 2014 15:40:46 +0100
-Message-ID: <1415025649-8119-12-git-send-email-javier.martinez@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: [PATCH v4 08/14] regulator: max8660: zero-initialize regulator match table array
+Date: Mon,  3 Nov 2014 15:40:43 +0100
+Message-ID: <1415025649-8119-9-git-send-email-javier.martinez@collabora.co.uk>
 References: <1415025649-8119-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1415025649-8119-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1415025649-8119-1-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Chris Zhong <zyw-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Abhilash Kesavan <kesavan.abhilash-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Some regulators from the max77802 PMIC support to be configured in one
-of two operating mode: Output ON (normal) and Output On Low Power Mode.
-Not all regulators support these two modes and for some of them, the
-mode can be changed while the system is running in normal operation
-while others only support their mode to be changed on system suspend.
+The struct of_regulator_match rmatch[] is declared as a non-static local
+variable so the structure members are not auto-initialized.
 
-Extend the max77802 PMIC bindin by documenting the possible operating
-modes values so the regulators modes can be correctly configured.
+Initialize the array at declaration time to avoid the structure members
+values to be indeterminate and have sane defaults instead.
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 ---
+ drivers/regulator/max8660.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v4: None
-
-Changes in v3:
- - Use the standard suspend states bindings as suggested by Mark Brown.
-
- .../devicetree/bindings/regulator/max77802.txt     | 33 ++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/regulator/max77802.txt b/Documentation/devicetree/bindings/regulator/max77802.txt
-index 5aeaffc..1a78ec2 100644
---- a/Documentation/devicetree/bindings/regulator/max77802.txt
-+++ b/Documentation/devicetree/bindings/regulator/max77802.txt
-@@ -25,6 +25,27 @@ with their hardware counterparts as follow. The valid names are:
- 			example: LDO1, LDO2, LDO35.
- 	-BUCKn 	:	for BUCKs, where n can lie in range 1 to 10.
- 			example: BUCK1, BUCK5, BUCK10.
-+
-+The max77802 regulator supports two different operating modes: Normal and Low
-+Power Mode. Some regulators support the modes to be changed at startup or by
-+the consumers during normal operation while others only support to change the
-+mode during system suspend. The standard regulator suspend states binding can
-+be used to configure the regulator operating mode.
-+
-+The regulators that support the standard "regulator-initial-mode" property,
-+changing their mode during normal operation are: LDOs 1, 3, 20 and 21.
-+
-+The possible values for "regulator-initial-mode" and "regulator-mode" are:
-+	1: Normal regulator voltage output mode.
-+	3: Low Power which reduces the quiescent current down to only 1uA
-+
-+The list of valid modes are defined in the dt-bindings/regulator/regulator.h
-+header and can be included by device tree source files.
-+
-+The standard "regulator-mode" property can only be used for regulators that
-+support changing their mode to Low Power Mode during suspend. These regulators
-+are: BUCKs 2-4 and LDOs 1-35.
-+
- Example:
+diff --git a/drivers/regulator/max8660.c b/drivers/regulator/max8660.c
+index 2fc4111..7eee2ca 100644
+--- a/drivers/regulator/max8660.c
++++ b/drivers/regulator/max8660.c
+@@ -335,7 +335,7 @@ static int max8660_pdata_from_dt(struct device *dev,
+ 	int matched, i;
+ 	struct device_node *np;
+ 	struct max8660_subdev_data *sub;
+-	struct of_regulator_match rmatch[ARRAY_SIZE(max8660_reg)];
++	struct of_regulator_match rmatch[ARRAY_SIZE(max8660_reg)] = { };
  
- 	max77802@09 {
-@@ -36,11 +57,23 @@ Example:
- 		#size-cells = <0>;
- 
- 		regulators {
-+			ldo1_reg: LDO1 {
-+				regulator-name = "vdd_1v0";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1000000>;
-+				regulator-always-on;
-+				regulator-initial-mode = <MAX77802_OPMODE_LP>;
-+			};
-+
- 			ldo11_reg: LDO11 {
- 				regulator-name = "vdd_ldo11";
- 				regulator-min-microvolt = <1900000>;
- 				regulator-max-microvolt = <1900000>;
- 				regulator-always-on;
-+				regulator-state-mem {
-+					regulator-on-in-suspend;
-+					regulator-mode = <MAX77802_OPMODE_LP>;
-+				};
- 			};
- 
- 			buck1_reg: BUCK1 {
+ 	np = of_get_child_by_name(dev->of_node, "regulators");
+ 	if (!np) {
 -- 
 2.1.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
