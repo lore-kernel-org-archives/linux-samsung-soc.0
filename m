@@ -1,67 +1,46 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v4 00/14] Add max77802 regulator operating mode support
-Date: Mon, 3 Nov 2014 15:54:43 +0000
-Message-ID: <20141103155443.GS3815@sirena.org.uk>
+Subject: Re: [PATCH v4 06/14] regulator: max77686: zero-initialize regulator
+ match table
+Date: Mon, 3 Nov 2014 15:55:11 +0000
+Message-ID: <20141103155511.GT3815@sirena.org.uk>
 References: <1415025649-8119-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1415025649-8119-7-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wnBGVoaGQwxWUIo6"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35616 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752252AbaKCP4S (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Nov 2014 10:56:18 -0500
+	protocol="application/pgp-signature"; boundary="JHjDRUnf1JOMxzko"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1415025649-8119-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1415025649-8119-7-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 
---wnBGVoaGQwxWUIo6
+--JHjDRUnf1JOMxzko
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 03, 2014 at 03:40:35PM +0100, Javier Martinez Canillas wrote:
-> Hello Mark,
->=20
-> This is the fourth version of the series that adds operating modes
-> support for the regulators in the max77802 PMIC. This version uses
+On Mon, Nov 03, 2014 at 03:40:41PM +0100, Javier Martinez Canillas wrote:
+> The struct of_regulator_match is declared as a non-static local variable
+> so the structure members are not auto-initialized.
 
-No, it's not.  This is a a patch series doing a whole bunch of different
-things, there's at least bug fixes to existing drivers, new features and
-also this new driver in what I've glanced at so far.  These things
-shouldn't just be being thrown together into a single patch series, and
-the patch series shouldn't then be described as just being what is in
-the end a minor part of the collection.
+Applied, thanks.
 
-Doing this makes things more manageable from the review side, avoids
-pointless dependencies and avoids setting off alarm bells.  My first
-thought when seeing this was "how can a regulator driver be so complex
-as to need 14 patches, there must be something seriously wrong here".
-
-The whole thing about making sure that what you're doing makes sense
-beyond just giving the correct test results also applies to sending the
-patches - think if what's being said to the people reviewing the patches
-is sensible.
-
---wnBGVoaGQwxWUIo6
+--JHjDRUnf1JOMxzko
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBAgAGBQJUV6VCAAoJECTWi3JdVIfQQY8H/1RJ4m2DkloO8XnjbgdOTKam
-ZY+ZuD/3YaCRSFi0/CYXYw4rxg3EbhgORYIMCT2DWo/KyQx3xsbTr+WQ+8Pv6RU8
-4Zyxjf5amaX/WoNZL/gxaCOg04mzhPe/gh/bQb+rFWNoI0rw8g9Ss6sgn5PbZ1kj
-TkJglkG/fI0QXxcoslSK6Noc8f8Zz8onGZHXlrg98rsgmyeoJvxq0ozDoSQ65oLh
-N9stMbtCgCNK8Bf7LaA1GWf40G2Gq1hKe1X24Q620eUharkoBPYdqgI424KhVLtw
-fKzAaavIQ7O5WXSpSmO/d0dk91sJGNlMpZkLlCOzQyCslXpdl9U/dKgjrlq8D1k=
-=eFRu
+iQEcBAEBAgAGBQJUV6VeAAoJECTWi3JdVIfQwgkH/R1YKzdpdreMts6uRLlJEcuq
+tYE1M14nSHoIkp0ujx/98lGC9B3dqda9lr9C+Bjanjb6TBaVwuVDU+1teqagqucU
+rQ7v1+/CyDA9GMETL//KxTMcuVC6MlMwkLzBoJ0kgm2OLr/7SzZ9T0iHPPwi+Csa
+QuQzA2W9F4mSZy2vXZHGNSbjTLlde1HCqygcBkGY/6yEdpi6u4jLi6QzvlYfn1gP
+PhhLM2mFZ4yk9COGmpO7MpCm7T/VV3DWRc3EjuVbof4Ie+SIbMWS5HfeSd9H8GFa
+2NXMRG2RcmetKWUE34tDhFXahpzC1Yyg/zyPTiOmkc6WE1FlkIWvbVcmq+AfBkY=
+=nt98
 -----END PGP SIGNATURE-----
 
---wnBGVoaGQwxWUIo6--
+--JHjDRUnf1JOMxzko--
