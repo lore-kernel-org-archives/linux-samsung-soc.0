@@ -1,44 +1,45 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v4 03/14] regulator: of: Add regulator desc param to of_get_regulator_init_data()
-Date: Mon, 03 Nov 2014 16:48:34 +0100
-Message-ID: <5457A3D2.1090602@collabora.co.uk>
-References: <1415025649-8119-1-git-send-email-javier.martinez@collabora.co.uk> <1415025649-8119-4-git-send-email-javier.martinez@collabora.co.uk> <20141103153303.GQ3815@sirena.org.uk>
+Subject: Re: [PATCH v4 05/14] regulator: max1586: zero-initialize regulator
+ match table array
+Date: Mon, 03 Nov 2014 16:51:28 +0100
+Message-ID: <5457A480.30102@collabora.co.uk>
+References: <1415025649-8119-1-git-send-email-javier.martinez@collabora.co.uk> <1415025649-8119-6-git-send-email-javier.martinez@collabora.co.uk> <20141103154152.GR3815@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:38992 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:39003 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752260AbaKCPsl (ORCPT
+	with ESMTP id S1752272AbaKCPvg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Nov 2014 10:48:41 -0500
-In-Reply-To: <20141103153303.GQ3815@sirena.org.uk>
+	Mon, 3 Nov 2014 10:51:36 -0500
+In-Reply-To: <20141103154152.GR3815@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Mark Brown <broonie@kernel.org>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-On 11/03/2014 04:33 PM, Mark Brown wrote:
-> On Mon, Nov 03, 2014 at 03:40:38PM +0100, Javier Martinez Canillas wrote:
+On 11/03/2014 04:41 PM, Mark Brown wrote:
+> On Mon, Nov 03, 2014 at 03:40:40PM +0100, Javier Martinez Canillas wrote:
+>> The struct of_regulator_match rmatch[] is declared as a non-static local
+>> variable so the structure members are not auto-initialized.
 > 
->>  	for_each_child_of_node(nproot, np) {
->>  		if (!of_node_cmp(np->name, info->desc.name)) {
->>  			config->init_data =
->> -				of_get_regulator_init_data(&pdev->dev, np);
->> +				of_get_regulator_init_data(&pdev->dev, np,
->> +							   NULL);
+> Applied, thanks.
 > 
-> This looks buggy, we're not passing in a descriptor.
+> This is a bug fix not *that* closely related to the rest of the series,
+> if it's being included in a series like this it should've been at the
+> start of the series not after substantial new feature additions so that
+> the fixes don't get ignored due to problems with the features and so
+> that the fixes can be sent to Linus without dependencies.
 > 
 
-The descriptor is only used when extracting the init_data to map the
-modes and since it was not a parameter before, some drivers needs to
-be refactored to pass that information.
+True, I added in the series since of_get_regulation_constraints() checks
+if the struct regulator_desc * pointer is not NULL and so drivers that
+don't initialize the struct of_regulator_match containing that pointer
+will make that check to fail and the pointer be wrongly dereferenced.
 
-I thought that instead of adding intrusive changes in drivers that I
-don't have hw to test, that parameter could be optional so the patch
-that use that information check if the descriptor and the map_modes
-function pointer are not NULL.
+Sorry, next time I'll post fixes separately and make the series depend on
+that instead.
 
 Best regards,
 Javier
