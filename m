@@ -1,64 +1,56 @@
-From: Lee Jones <lee.jones@linaro.org>
-Subject: Re: [PATCH 02/12] drivers: mfd: Add support for Exynos PMU driver
-Date: Mon, 3 Nov 2014 15:26:04 +0000
-Message-ID: <20141103152604.GA10544@x1>
-References: <1414986790-11940-1-git-send-email-amit.daniel@samsung.com>
- <1414986790-11940-3-git-send-email-amit.daniel@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v4 03/14] regulator: of: Add regulator desc param to
+ of_get_regulator_init_data()
+Date: Mon, 3 Nov 2014 15:33:03 +0000
+Message-ID: <20141103153303.GQ3815@sirena.org.uk>
+References: <1415025649-8119-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1415025649-8119-4-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="qnK4RqISe3HuYx1/"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f173.google.com ([209.85.223.173]:44615 "EHLO
-	mail-ie0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752990AbaKCP0L (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35583 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752117AbaKCPeo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Nov 2014 10:26:11 -0500
-Received: by mail-ie0-f173.google.com with SMTP id tr6so5473414ieb.32
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Nov 2014 07:26:10 -0800 (PST)
+	Mon, 3 Nov 2014 10:34:44 -0500
 Content-Disposition: inline
-In-Reply-To: <1414986790-11940-3-git-send-email-amit.daniel@samsung.com>
+In-Reply-To: <1415025649-8119-4-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kgene.kim@samsung.com, pankaj.dubey@samsung.com, Sangbeom Kim <sbkim73@samsung.com>, Samuel Ortiz <sameo@linux.intel.com>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-On Mon, 03 Nov 2014, Amit Daniel Kachhap wrote:
 
-> From: Pankaj Dubey <pankaj.dubey@samsung.com>
->=20
-> This patch moves Exynos PMU driver implementation from "arm/mach-exyn=
-os"
-> to "drivers/mfd". This driver is mainly used for setting misc bits of
-> register from PMU IP of Exynos SoC which will be required to configur=
-e
-> before Suspend/Resume. Currently all these settings are done in
-> "arch/arm/mach-exynos/pmu.c" but moving ahead for ARM64 based SoC sup=
-port,
-> there is a need of DT based implementation of PMU driver.
->=20
-> This driver uses already existing DT binding information.
->=20
-> CC: Sangbeom Kim <sbkim73@samsung.com>
-> CC: Samuel Ortiz <sameo@linux.intel.com>
-> CC: Lee Jones <lee.jones@linaro.org>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
->  arch/arm/mach-exynos/Kconfig                       |    1 +
->  arch/arm/mach-exynos/Makefile                      |    2 +-
->  drivers/mfd/Kconfig                                |    9 +++++++++
->  drivers/mfd/Makefile                               |    1 +
->  .../mach-exynos/pmu.c =3D> drivers/mfd/exynos-pmu.c  |    0
->  5 files changed, 12 insertions(+), 1 deletion(-)
->  rename arch/arm/mach-exynos/pmu.c =3D> drivers/mfd/exynos-pmu.c (100=
-%)
+--qnK4RqISe3HuYx1/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I thought we spoke about this already [1]?  What's changed?
+On Mon, Nov 03, 2014 at 03:40:38PM +0100, Javier Martinez Canillas wrote:
 
-[1] https://lkml.org/lkml/2014/4/29/193
+>  	for_each_child_of_node(nproot, np) {
+>  		if (!of_node_cmp(np->name, info->desc.name)) {
+>  			config->init_data =
+> -				of_get_regulator_init_data(&pdev->dev, np);
+> +				of_get_regulator_init_data(&pdev->dev, np,
+> +							   NULL);
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
+This looks buggy, we're not passing in a descriptor.
+
+--qnK4RqISe3HuYx1/
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUV6AuAAoJECTWi3JdVIfQCmwH/AgbbttynX5wQL+PwQy7+ikW
+5eBVFddcX9UMx/+3NuqH314aI1nXfReiYr7kh2WXDDtNjs+JImV9FInSwmOdZUcL
+IkDPt3PmEy4L671HAKaLm9V1kN1hIE04zny1NPfEz3r/i0f1jfRaDo2AXMwSRvE4
+mPR39+td+dzytss0AhrlAAgMYRsH4FjavyqbyLYtO9lJnJIHQfhCRaXy6rhEXdc4
+G6Dy5ecQ/HXDcimu8aL3bYFu6ptlkeiZS8b82P22K+U5gBduAMBwpTFTw0JzDVwd
+G+a27pEXvNzu52L1erBsLRM6Ujm630yz6jyQlhKnBV9Xxaq6D+CP9X39PZkAkVk=
+=yNTJ
+-----END PGP SIGNATURE-----
+
+--qnK4RqISe3HuYx1/--
