@@ -1,88 +1,56 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH v3 0/9] PM / Domains: Fix race conditions during boot
-Date: Tue, 04 Nov 2014 22:38:35 +0100
-Message-ID: <22485079.KBJFDeZktT@vostro.rjw.lan>
-References: <1413208930-26019-1-git-send-email-ulf.hansson@linaro.org> <CAPDyKFr7fqwb77Xhnwf7ACFX7skrY2O+_-aB1T_yfShDA1jASA@mail.gmail.com> <20141104182920.GB440@dtor-ws>
+From: Julius Werner <jwerner@chromium.org>
+Subject: Re: nv u-boot for spring (was: building nv-uboot for nyan-big.)
+Date: Tue, 4 Nov 2014 14:28:09 -0800
+Message-ID: <CAODwPW_kqV=FVUG6GvV74211juBVCkA8RxrfXZoncRieRn+FZw@mail.gmail.com>
+References: <54575BFE.2010108@synkhronix.com>
+	<54577D88.2070002@suse.de>
+	<CAL1qeaFzYRZHdsgZdwN5LV+OaSAPXgTQ+BRTWdsEurj22qC4Yg@mail.gmail.com>
+	<CAODwPW_ZbCMEwdtuu9gMD_HLQWynC6ZQjno6xVxFMOBuxRzd+A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20141104182920.GB440@dtor-ws>
-Sender: linux-pm-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron Lu <aa>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f176.google.com ([209.85.214.176]:48997 "EHLO
+	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752428AbaKDW2K convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 4 Nov 2014 17:28:10 -0500
+Received: by mail-ob0-f176.google.com with SMTP id va2so11473175obc.7
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Nov 2014 14:28:10 -0800 (PST)
+In-Reply-To: <CAODwPW_ZbCMEwdtuu9gMD_HLQWynC6ZQjno6xVxFMOBuxRzd+A@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Julius Werner <jwerner@chromium.org>
+Cc: Andrew Bresticker <abrestic@chromium.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "S.J.R. van Schaik" <stephan@synkhronix.com>, Dylan Reid <dgreid@chromium.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Tuesday, November 04, 2014 10:29:20 AM Dmitry Torokhov wrote:
-> On Tue, Nov 04, 2014 at 06:01:44PM +0100, Ulf Hansson wrote:
-> > >>
-> > >> Devices that are created while "discoverable buses" are being probed
-> > >> can't be attached to a PM domain before the probing is done, because
-> > >> those simply doesn't exist.
-> > >
-> > > Honestly, I'm not sure what you're talking about.
-> > >
-> > > Devices on a "discoverable* bus (say PCI) are added when the *controller* is
-> > > probed, not when *they* are probed.
-> > 
-> > Okay, so maybe "discoverable buses" isn't the proper term.
-> > 
-> > >
-> > > You very much need to have a struct device registered to be able to call
-> > > really_probe() for it.
-> > 
-> > Yes. But my point is that the struct device may be created dynamically
-> > at some point in time.
-> 
-> And that is fine.
-> 
-> > 
-> > This is how mmc/sd/sdio cards are handled. We don't have the
-> > information about the card and thus not the struct device of it, until
-> > we have detected it. Maybe we could at that point try to add the
-> > device to its PM domain?
-> 
-> Well, I think we need to first define what PM domain they will fall
-> into. Do they have to be in one? The concept of power domain, as far as I
-> understand it, is needed when we need to form relations going outside
-> the standard parent/child relationship. Here we have a controller and
-> then one or more cards in it. To be able to use card you need to power
-> up parent and you can not power down parent until all children are
-> powered down.
-> 
-> But in any case, device discovery and binding them to drivers are 2
-> separate steps. You have a PCI bus. You enumerate it - new PCI devices
-> are created. Some of them may be put in a certain power domain. You then
-> bind drivers to PCI devices (not strictly 'then' but we could implement
-> driver core to postpone binding until current round of enumeration is
-> complete) - and you discover USB controller and maybe i2c controller.
-> Then you bind drivers to them which causes enumeration of the new bus
-> and new devices are created. But in all these cases enumeration and
-> creation of new 'struct device's, and driver binding are logically
-> separate steps.
-> 
-> > 
-> > >
-> > >> Now, I haven't yet seen a demand for such a cases, but it seems wrong
-> > >> to not consider them. The current solution cover these.
-> > >
-> > > Oh dear.  Please rethink this.
-> > 
-> > Currently, dev_pm_domain_attach() is being invoked at the point when a
-> > SDIO card has been found. From sdio_add_func(). How would that be
-> > solved?
-> > 
-> 
-> It is probably the one place where we currently doing it correctly (form
-> logical point of view, not implementation wise - implementation wise in
-> sdio we add device to power domain after calling device_add() which
-> means that probe() could have been called before we added the new device
-> to any power domain).
+...and once more with text/plain. Thanks for always forgetting my
+settings, GMail. -.-
 
-I agree.  Ideally, devices should be added to power (or generally PM) domains
-before registration.  That is, before calling device_add() for them.
-
-That's the first thing to fix here.
-
-Rafael
-
+On Tue, Nov 4, 2014 at 2:26 PM, Julius Werner <jwerner@chromium.org> wrote:
+>>
+>> Unlike the Exynos Chromebooks, the Tegra Chromebooks do not use U-Boot
+>> as their firmware/bootloader - they instead use Coreboot (firmware)
+>> and Depthcharge (bootloader) like the x86 Chromebooks.  You can,
+>> however, update your firmware with U-Boot as a legacy mode (Ctrl+L at
+>> the dev screen) payload - I've added Julius who can provide more
+>> detail about this process.
+>
+>
+> The Tegra Chromebooks (Nyan_Big/Acer and Nyan_Blaze/HP) contain the same "legacy mode" feature as x86 Chromebooks... it essentially just loads and jumps to an unverified binary in the RW_LEGACY section of the firmware flash image (1MB starting at 0x300000 for Tegra, visible via "dump_fmap -h image.bin" in a ChromiumOS developer chroot). However, we did not ship any software in that part of the image (unlike most x86 Chromebooks which ship with SeaBIOS) so you will have to build it yourself.
+>
+> The format used to wrap the blob is a Coreboot File System (CBFS) containing a single file named "payload". You can convert an ELF binary into such a CBFS blob with the cbfstool program bundled with ChromiumOS or upstream coreboot:
+>
+> # All CBFS images need to have a "bootblock", but since this is not a booting image we just need some empty bytes
+> truncate -s 64 bootblock.dummy
+> # -s should specify the size of RW_LEGACY on your Chromebook
+> cbfstool legacy.bin create -s $((1 * 1024 * 1024)) -B bootblock.dummy -m arm
+> cbfstool legacy.bin add-payload -f your_firmware.elf -n payload -c lzma
+> # ...and now do the following on your Chromebook in developer mode to overwrite the legacy section
+> flashrom -w -i RW_LEGACY:legacy.bin
+>
+> The legacy section is not write-protected and not checked by the verified boot mechanism, so you do *not* need to open your Chromebook and remove the write-protect screw for this.
+>
+> I don't know about the state of the upstream "venice2" U-Boot. I do know that the ChromiumOS U-Boot repository has a version for nyan_big and nyan_blaze that will kinda run but has a bunch of issues (I think EC communication and MMC were wonky, and display had never been added at all). It is probably the best place to start. Remember that this will run after coreboot has already initialized most of the system, which may be unexpected for a U-Boot that intended to run right after power-on reset (you may or may not want to skip the SPL in that case). For U-Boot, there is also an additional complexity that it requires a device tree appended to the final raw binary, but cbfstool expects to receive an ELF file... we have a small script in src/third_party/chromiumos-overlay/sys-boot/chromeos-b
+ ootimage/files/build_cb_legacy_uboot.sh to resolve that with some objcopies.
+>
+> We would be very happy if anyone wants to dig into U-Boot and get it working to a point where people could boot ordinary Linux distributions with it on those Chromebooks. We meant to do it ourselves but ran out of time at the end of the project. Let me know if you have any issues getting the legacy firmware mechanism itself to work (that part at least is considered a supported feature).
