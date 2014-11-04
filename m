@@ -1,100 +1,42 @@
-From: "Stam, Michel [FINT]" <M.Stam@fugro.nl>
-Subject: RE: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net on arndale platform
-Date: Tue, 4 Nov 2014 09:19:26 +0100
-Message-ID: <C89EFD3CD56F64468D3D206D683A8D2203985F49@ldam-msx2.fugro-nl.local>
-References: <20141104072236.GA559@afflict.kos.to>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v3 0/9] PM / Domains: Fix race conditions during boot
+Date: Tue, 4 Nov 2014 09:20:44 +0100
+Message-ID: <CAMuHMdVjzRJUL4EL1VbbYdys35f9Jz67_QSPriYnccSOnm1tQw@mail.gmail.com>
+References: <1413208930-26019-1-git-send-email-ulf.hansson@linaro.org>
+	<5370046.DXkB0EA6xC@vostro.rjw.lan>
+	<CAPDyKFo_sxW8bE=C29fyfsqOO0tk_=eYFRkCVFRWc2kUx_bQHA@mail.gmail.com>
+	<2024276.CFr3nVUAlA@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <netdev-owner@vger.kernel.org>
-Content-class: urn:content-classes:message
-In-Reply-To: <20141104072236.GA559@afflict.kos.to>
-Sender: netdev-owner@vger.kernel.org
-To: Riku Voipio <riku.voipio@iki.fi>, davem@davemloft.net
-Cc: linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-la0-f45.google.com ([209.85.215.45]:56082 "EHLO
+	mail-la0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751160AbaKDIUq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 4 Nov 2014 03:20:46 -0500
+In-Reply-To: <2024276.CFr3nVUAlA@vostro.rjw.lan>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun
 
-Hello Riku,
+On Tue, Nov 4, 2014 at 2:43 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> That is quite simple to address, though.  You can register a bus type
+> notifier that will power up the domain on BUS_NOTIFY_ADD_DEVICE events
+> (where the target device belongs to the domain), and do that only for
+> CONFIG_PM_RUNTIME unset (otherwise runtime PM should take care of this).
 
-Interesting, as the commit itself is a revert from a kernel back to 2.6
-somewhere. The problem I had is related to the PHY being reset on
-interface-up, can you confirm that you require this? Reverting this
-breaks ethtool support in turn.
+Registering a bus type notifier (that will be a platform bus notifier,
+right?) will affect
+all platform devices, not only the on-SoC devices.
 
-Kind regards,
+Gr{oetje,eeting}s,
 
-Michel Stam
+                        Geert
 
------Original Message-----
-From: Riku Voipio [mailto:riku.voipio@iki.fi] 
-Sent: Tuesday, November 04, 2014 8:23 AM
-To: davem@davemloft.net; Stam, Michel [FINT]
-Cc: linux-usb@vger.kernel.org; netdev@vger.kernel.org;
-linux-kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org
-Subject: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net on
-arndale platform
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Hi,
-
-With 3.18-rc3, asix on arndale (samsung exynos 5250 based board), fails
-to work. Interface is initialized but network traffic seem not to pass
-through. With kernel IP config the result looks like:
-
-[    3.323275] usb 3-3.2.4: new high-speed USB device number 4 using
-exynos-ehci
-[    3.419151] usb 3-3.2.4: New USB device found, idVendor=0b95,
-idProduct=772a
-[    3.424735] usb 3-3.2.4: New USB device strings: Mfr=1, Product=2,
-SerialNumber=3
-[    3.432196] usb 3-3.2.4: Product: AX88772 
-[    3.436279] usb 3-3.2.4: Manufacturer: ASIX Elec. Corp.
-[    3.441486] usb 3-3.2.4: SerialNumber: 000001
-[    3.447530] asix 3-3.2.4:1.0 (unnamed net_device) (uninitialized):
-invalid hw address, using random
-[    3.764352] asix 3-3.2.4:1.0 eth0: register 'asix' at
-usb-12110000.usb-3.2.4, ASIX AX88772 USB 2.0 Ethernet, de:a2:66:bf:ca:4f
-[    4.488773] asix 3-3.2.4:1.0 eth0: link down
-[    5.690025] asix 3-3.2.4:1.0 eth0: link up, 100Mbps, full-duplex, lpa
-0xC5E1
-[    5.712947] Sending DHCP requests ...... timed out!
-[   83.165303] IP-Config: Retrying forever (NFS root)...
-[   83.170397] asix 3-3.2.4:1.0 eth0: link up, 100Mbps, full-duplex, lpa
-0xC5E1
-[   83.192944] Sending DHCP requests .....
-
-Similar results also with dhclient. Git bisect identified the breaking
-commit as:
-
-commit 3cc81d85ee01e5a0b7ea2f4190e2ed1165f53c31
-Author: Michel Stam <m.stam@fugro.nl>
-Date:   Thu Oct 2 10:22:02 2014 +0200
-
-    asix: Don't reset PHY on if_up for ASIX 88772
-
-Taking 3.18-rc3 and that commit reverted, network works again:
-
-[    3.303500] usb 3-3.2.4: new high-speed USB device number 4 using
-exynos-ehci
-[    3.399375] usb 3-3.2.4: New USB device found, idVendor=0b95,
-idProduct=772a
-[    3.404963] usb 3-3.2.4: New USB device strings: Mfr=1, Product=2,
-SerialNumber=3
-[    3.412424] usb 3-3.2.4: Product: AX88772 
-[    3.416508] usb 3-3.2.4: Manufacturer: ASIX Elec. Corp.
-[    3.421715] usb 3-3.2.4: SerialNumber: 000001
-[    3.427755] asix 3-3.2.4:1.0 (unnamed net_device) (uninitialized):
-invalid hw address, using random
-[    3.744837] asix 3-3.2.4:1.0 eth0: register 'asix' at
-usb-12110000.usb-3.2.4, ASIX AX88772 USB 2.0 Ethernet, 12:59:f1:a8:43:90
-[    7.098998] asix 3-3.2.4:1.0 eth0: link up, 100Mbps, full-duplex, lpa
-0xC5E1
-[    7.118258] Sending DHCP requests ., OK
-[    9.753259] IP-Config: Got DHCP answer from 192.168.1.1, my address
-is 192.168.1.111
-
-There might something wrong on the samsung platform code (I understand
-the USB on arndale is "funny"), but this is still an regression from
-3.17.
-
-Riku
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
