@@ -1,73 +1,88 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v4 02/14] regulator: Add function to map modes to struct
- regulator_desc
-Date: Tue, 04 Nov 2014 11:31:12 +0100
-Message-ID: <1415097072.7941.5.camel@AMDC1943>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v4 10/14] regulator: of: Add support for parsing initial
+ and suspend modes
+Date: Tue, 04 Nov 2014 11:41:17 +0100
+Message-ID: <1415097677.7941.8.camel@AMDC1943>
 References: <1415025649-8119-1-git-send-email-javier.martinez@collabora.co.uk>
- <1415025649-8119-3-git-send-email-javier.martinez@collabora.co.uk>
+ <1415025649-8119-11-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:38674 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752559AbaKDKbQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Nov 2014 05:31:16 -0500
-In-reply-to: <1415025649-8119-3-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1415025649-8119-11-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Chris Zhong <zyw-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Abhilash Kesavan <kesavan.abhilash-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
 On pon, 2014-11-03 at 15:40 +0100, Javier Martinez Canillas wrote:
-> The regulator-initial-mode and regulator-mode DT properties allows to
-> configure the regulator operating modes at startup or when a system
-> enters into a susend state.
+> Some regulators support their operating mode to be changed on startup
+> or by consumers when the system is running while others only support
+> their operating mode to be changed while the system has entered in a
+> suspend state.
 > 
-> But these properties use as valid values the operating modes supported
-> by each device while the core deals with the standard operating modes.
-> So a mapping function is needed to translate from the hardware specific
-> modes to the standard ones.
+> The regulator Device Tree binding documents a set of properties to
+> configure the regulators operating modes from a FDT. This patch builds
+> on (40e20d6 regulator: of: Add support for parsing regulator_state for
+> suspend state) and adds support to parse those properties and fill the
+> regulator constraints so the regulator core can call the right suspend
+> handlers when the system enters into sleep.
 > 
-> This mapping is a non-varying configuration for each regulator, so add
-> a function pointer to struct regulator_desc that will allow drivers to
-> define their callback to do the modes translation.
+> The modes are defined in the Device Tree using the hardware specific
+> modes supported by the regulators. Regulator drivers have to define a
+> translation function that is used to map the hardware specific modes
+> to the standard ones.
 > 
-> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 > ---
->  include/linux/regulator/driver.h | 4 ++++
->  1 file changed, 4 insertions(+)
 > 
-> diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-> index 28da08e..b54d037 100644
-> --- a/include/linux/regulator/driver.h
-> +++ b/include/linux/regulator/driver.h
-> @@ -243,6 +243,8 @@ enum regulator_type {
->   *
->   * @enable_time: Time taken for initial enable of regulator (in uS).
->   * @off_on_delay: guard time (in uS), before re-enabling a regulator
-> + *
-> + * @map_modes: Callback invoked to translate between hardware to standard modes.
-
-Initially I thought it should map from standard to hardware. But then I
-looked at max77802 implementation and it maps from hardware to standard.
-Anyway I got confused (both are "modes" and both unsigned ints).
-
-Could you describe which should be returned?
-
-
->   */
->  struct regulator_desc {
->  	const char *name;
-> @@ -285,6 +287,8 @@ struct regulator_desc {
->  	unsigned int enable_time;
+> Changes in v4:
+>  - Parse the properties in the core and map using driver provided functions.
+>    Suggested by Mark Brown
+> 
+> Changes in v3:
+>  - Use the standard suspend states binding instead of custom properties.
+>    Suggested by Mark Brown
+> 
+>  drivers/regulator/of_regulator.c | 22 ++++++++++++++++++++--
+>  1 file changed, 20 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+> index cbc1d71..cd65885 100644
+> --- a/drivers/regulator/of_regulator.c
+> +++ b/drivers/regulator/of_regulator.c
+> @@ -25,7 +25,8 @@ static const char *const regulator_states[PM_SUSPEND_MAX + 1] = {
+>  };
 >  
->  	unsigned int off_on_delay;
+>  static void of_get_regulation_constraints(struct device_node *np,
+> -					struct regulator_init_data **init_data)
+> +					struct regulator_init_data **init_data,
+> +					const struct regulator_desc *desc)
+>  {
+>  	const __be32 *min_uV, *max_uV;
+>  	struct regulation_constraints *constraints = &(*init_data)->constraints;
+> @@ -81,6 +82,14 @@ static void of_get_regulation_constraints(struct device_node *np,
+>  	if (!ret)
+>  		constraints->enable_time = pval;
+>  
+> +	if (!of_property_read_u32(np, "regulator-initial-mode", &pval)) {
+> +		if (desc && desc->map_modes)
+> +			constraints->initial_mode = desc->map_modes(pval);
+> +		else
+> +			pr_warn("%s: failed to parse regulator-initial-mode\n",
+> +				np->name);
+> +	}
 > +
-> +	unsigned int (*map_modes)(unsigned int mode);
 
-Shouldn't this be in regulator ops?
+Here's a hidden assumption that if driver does not provide map_modes
+then any "regulator-initial-mode" property is not valid. Shouldn't this
+be mentioned somewhere? Maybe in description of map_modes callback?
 
 Best regards,
 Krzysztof
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
