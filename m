@@ -1,105 +1,157 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [RFC 1/2] PM / Domains: Power on domain early during system resume
-Date: Tue, 4 Nov 2014 15:43:24 +0200
-Message-ID: <5458D7FC.2040406@ti.com>
-References: <1414072090-11293-1-git-send-email-k.kozlowski@samsung.com> <1414072090-11293-2-git-send-email-k.kozlowski@samsung.com> <7hk33iahvu.fsf@deeprootsystems.com> <1414654594.5114.8.camel@AMDC1943> <54521A8F.5070808@samsung.com> <7hbnoojm8y.fsf@deeprootsystems.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 0/9] PM / Domains: Fix race conditions during boot
+Date: Tue, 4 Nov 2014 17:42:13 +0100
+Message-ID: <CAPDyKFo-On2MfqHk081o_JZvwbrbi0=n9h6o7A9dJ+X4c8goKg@mail.gmail.com>
+References: <1413208930-26019-1-git-send-email-ulf.hansson@linaro.org>
+	<2024276.CFr3nVUAlA@vostro.rjw.lan>
+	<CAPDyKFp=T8Luomeaoz5Y=eLAuFaOfdb+-aoU3QVnpjoDYVKPjg@mail.gmail.com>
+	<17707586.6KbjDf5Kep@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <7hbnoojm8y.fsf@deeprootsystems.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>
-Cc: Len Brown <len.brown@intel.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-pm@vger.kernel.org, David Airlie <airlied@linux.ie>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Pavel Machek <pavel@ucw.cz>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f176.google.com ([209.85.216.176]:62858 "EHLO
+	mail-qc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750869AbaKDQmO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 4 Nov 2014 11:42:14 -0500
+Received: by mail-qc0-f176.google.com with SMTP id x3so11159230qcv.21
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Nov 2014 08:42:13 -0800 (PST)
+In-Reply-To: <17707586.6KbjDf5Kep@vostro.rjw.lan>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Kevin Hilman <khilman@kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron
 
-On 11/03/2014 06:13 PM, Kevin Hilman wrote:
-> Andrzej Hajda <a.hajda@samsung.com> writes:
->=20
->> On 10/30/2014 08:36 AM, Krzysztof Kozlowski wrote:
->>> On =C5=9Bro, 2014-10-29 at 10:46 -0700, Kevin Hilman wrote:
->>>> Krzysztof Kozlowski <k.kozlowski@samsung.com> writes:
->>>>
->>>>> When resuming the system the power domain has to be powered on ea=
-rly so
->>>>> any runtime PM aware devices could resume.
->>>>>
->>>>> This fixes following scenario reproduced on Exynos DRM:
->>>>> 1. Power domain is off before suspending the system.
->>>>> 2. System is suspended to RAM.
->>>>> 3. Resuming starts. The Exynos DRM driver resume callback is call=
-ed.
->>>>> 4. The Exynos DRM driver calls drm_helper_resume_force_mode which=
- turns
->>>>>     the screen on by calling exynos_dsi_dpms with DRM_MODE_DPMS_O=
-N.
->>>> Dumb Q: if the device (and power domain) were off before (and duri=
-ng)
->>>> suspend, why are they being resumed?
->>>>
->>>> Shouldn't the resume path restore things to the same state they we=
-re
->>>> before suspend?
->>> One could expect that... but the Exynos DRM driver behaves differen=
-tly
->>> (and some other drivers also). In resume method it calls
->>> drm_helper_resume_force_mode() which forces restoring mode setting
->>> configuration. Apparently setting a mode needs DPMS on:
->>> static void exynos_drm_crtc_commit(struct drm_crtc *crtc)
->>> {
->>> 	...
->>> 	exynos_drm_crtc_dpms(crtc, DRM_MODE_DPMS_ON);
->>> 	...
->>>
->>> The previous DPMS status (status during suspend) is completely igno=
-red
->>> here.
+On 4 November 2014 14:51, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> On Tuesday, November 04, 2014 09:54:19 AM Ulf Hansson wrote:
+>> [...]
 >>
->> Suspend callback switches off all connectors (thus all other devs in
->> their pipeline) by calling dpms_off,
->> in restore callback all devs are restored to their previous state by
->> calling appropriate dpms.
->> So I guess drm_helper_resume_force_mode() call at the end of resume =
-is
->> incorrect.
->=20
-> Though I'm not terribly familiar with DRM, it seems incorrect because=
- I
-> expect resume to restore the state of things when suspend happened, n=
-ot
-> forcibly resume everything.
->=20
->> On the other side it is present in many other drivers, so I am also
->> little bit confused.
->=20
-> Many other DRM drivers?  or other drivers too?
+>> > Generally, there are two or even three levels of runtime PM handling,
+>> > driver, (possibly) bus type and (possibly) PM domain (and multiple levels
+>> > of these are possible in principle).  All of them have to be initialized
+>> > at different times.
+>> >
+>> > Quite arguably, the PM domain and/or bus type runtime PM handling should
+>> > be initialized even before registerind the device or during device
+>> > registration.  Doing that later may be too late.  When the device has been
+>> > registered, runtime PM should work to an extent allowing the driver to access
+>> > the device and configure it further after calling pm_runtime_resume().
+>> >
+>> > Of course, if ->probe() is to call pm_runtime_resume() for this purpose,
+>> > it must take the fact that the driver's own ->runtime_resume() may be called
+>> > as a result of this into account.  That's why I'm asking whether or not the
+>> > core should call pm_runtime_resume() before calling really_probe() in a
+>> > followup branch of this thread.
+>>
+>> I am reading the other thread, let's see.
+>>
+>> >
+>> > The driver's own runtime PM handling must be initialized in the driver and
+>> > the only place suitable for that is ->probe().  However, it needs to be done
+>> > *before* the driver's own ->runtime_resume() or ->runtime_suspend() callback
+>> > is executed.  If that is done properly, it should be possible to cover
+>> > both the CONFIG_PM_RUNTIME set/unset cases in that code.
+>> >
+>> > And I wouldn't recommend anyone to do the runtime PM initialization in
+>> > ->runtime_resume() (when it is called for the first time), as that would be
+>> > error prone and fragile.
+>>
+>> Great! That's means we are at least aligned on this topic. :-)
+>>
+>> >
+>> >> The AMBA bus and some of its drivers a good example of how this has
+>> >> been implemented:
+>> >> driver/amba/bus.c
+>> >> drivers/mmc/host/mmci.c
+>> >> drivers/spi/spi-pl022.c
+>> >>
+>> >> This conclusion I have made from this is:
+>> >> - Using pm_runtime_get_sync() during the ->probe() path to explicitly
+>> >> power up a PM domain, is not suitable as the _common_ solution to
+>> >> solve the race condition. It certainly may work for some scenarios,
+>> >> but not for those I am looking at.
+>> >
+>> > I think, however, that it might work if the core calls pm_runtime_get_sync()
+>> > from driver_probe_device().
+>>
+>> Currently this won't work.
+>>
+>> That's because the buses' ->probe() are invoked in this path and they
+>> are doing the attachment of the device to its PM domain.
+>>
+>> In other words, we can't power up the PM domain using
+>> pm_runtime_get_sync(), until the device has been attached to its PM
+>> domain. Right?
+>
+> Yes, but my point was that those bus types might need to be changed.
+>
+> We can't make everyone happy at the same time if their ideas about what to do
+> are different.
 
-If I understand GPD code right :)
-There is "small" problem :( Now if PM domain is OFF before suspend
-- it's prohibited to turn it on during suspending/resuming.
-   commit 596ba34bcd2978ee9823cc1d84df230576f8ffb9
-   PM / Domains: System-wide transitions support for generic domains (v=
-5)
+Urgh. I fail to understand this comment.
 
-But, it is possible to have devices which supports few power states, li=
-ke:
-on, sleep/low power, off (for example OMAP devices and also I saw this
-for some I2C devices - can recollect only that it was some sensor and t=
-ouchscreen).=20
-In normal operational mode Runtime PM switches device between on and sl=
-eep/low power states,
-but during suspend device need to be woken up and reconfigured to off s=
-tate.
+Why do we prefer the pm_runtime_get_sync() solution in favour of this
+pathset's approach?
 
-Also I found, that It looks like due to continuous refactoring the call=
- of
-pm_generic_suspend_noirq(dev) was finally dropped from pm_genpd_suspend=
-_noirq(),
-so .suspend_noirq() callback will never be called for devices from GPD.
+What are the benefit do we get with pm_runtime_get_sync()?
 
-Seems, that is the problem which this patch tries to fix and looks like=
- there are
- will be more such kind of report as GPD is become used widely.
+>
+>>
+>> [...]
+>>
+>> >> For PM domains that are initialized in powered off state, we can't
+>> >> rely on CONFIG_PM_RUNTIME and thus not on pm_runtime_get_sync() to
+>> >> power on these PM domains. We need a different mechanism, which is
+>> >> suggested in this v3 patchset.
+>> >
+>> > That is quite simple to address, though.  You can register a bus type
+>> > notifier that will power up the domain on BUS_NOTIFY_ADD_DEVICE events
+>> > (where the target device belongs to the domain), and do that only for
+>> > CONFIG_PM_RUNTIME unset (otherwise runtime PM should take care of this).
+>>
+>> I guess we could use notifiers, but I am not sure I see any benefit.
+>> The code will be more complex and we need error handling as well.
+>
+> Like "oh, I can't power up this thing, so I should fail ->probe()"?
+>
+> Then your driver would need to depend on the specific knowledge about the
+> given PM domain, I'm afraid.
+>
+> If you want error handling like that, it needs to be handled by the core,
+> so as to avoid calling the bus type's ->probe() as well in that case.
 
-regards,
--grygorii
+Yes, I want this error handling - but I fail to understand why the bus
+can't handle the errors.
+
+If works perfectly in this patchset's approach.
+
+>
+> So to summarize:
+>
+> - Devices need to be added to power domains before really_probe() is called
+>   for them.  Otherwise we'll have ordering problems all over.
+
+What ordering problems?
+
+>
+> - Runtime PM (if compiled in) needs to be enabled for all devices in power
+>   domains by default.  Otherwise devices may lose power as a result for
+>   power management of the other devices in the same domain.
+>
+> - The core should try to power up domains before calling really_probe() both
+>   for CONFIG_PM_RUNTIME set and unset, so ->probe() can always make the
+>   "device is accessible" assumption.
+
+And how exactly will you then power up the PM domain when
+CONFIG_PM_RUNTIME is unset?
+
+>
+> - Bus types may need to do more on top of that in their ->probe(), so the
+>   driver's ->probe() can make that assumption too in all cases.
+>
+> Does that make sense to you?
+
+I working on fully understanding your idea. :-)
+
+Kind regards
+Uffe
