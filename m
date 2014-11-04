@@ -1,96 +1,116 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 0/9] PM / Domains: Fix race conditions during boot
-Date: Tue, 4 Nov 2014 10:24:35 +0100
-Message-ID: <CAPDyKFrMMnOwOHuVcpxBWNARKUsVyq66yuH+=LcS3K7bBiUTVA@mail.gmail.com>
-References: <1413208930-26019-1-git-send-email-ulf.hansson@linaro.org>
-	<5370046.DXkB0EA6xC@vostro.rjw.lan>
-	<CAPDyKFo_sxW8bE=C29fyfsqOO0tk_=eYFRkCVFRWc2kUx_bQHA@mail.gmail.com>
-	<2024276.CFr3nVUAlA@vostro.rjw.lan>
-	<CAPDyKFp=T8Luomeaoz5Y=eLAuFaOfdb+-aoU3QVnpjoDYVKPjg@mail.gmail.com>
-	<20141104090521.GA13219@dtor-glaptop>
+From: Riku Voipio <riku.voipio@iki.fi>
+Subject: Re: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net on
+ arndale platform
+Date: Tue, 4 Nov 2014 11:43:36 +0200
+Message-ID: <20141104094336.GA3145@afflict.kos.to>
+References: <20141104072236.GA559@afflict.kos.to>
+ <C89EFD3CD56F64468D3D206D683A8D2203985F49@ldam-msx2.fugro-nl.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20141104090521.GA13219@dtor-glaptop>
-Sender: linux-pm-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <C89EFD3CD56F64468D3D206D683A8D2203985F49@ldam-msx2.fugro-nl.local>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Stam, Michel [FINT]" <M.Stam@fugro.nl>
+Cc: Riku Voipio <riku.voipio@iki.fi>, davem@davemloft.net, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, ckeepax@opensource.wolfsonmicro.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 4 November 2014 10:05, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-> On Tue, Nov 04, 2014 at 09:54:19AM +0100, Ulf Hansson wrote:
->> [...]
->>
->> > Generally, there are two or even three levels of runtime PM handling,
->> > driver, (possibly) bus type and (possibly) PM domain (and multiple levels
->> > of these are possible in principle).  All of them have to be initialized
->> > at different times.
->> >
->> > Quite arguably, the PM domain and/or bus type runtime PM handling should
->> > be initialized even before registerind the device or during device
->> > registration.  Doing that later may be too late.  When the device has been
->> > registered, runtime PM should work to an extent allowing the driver to access
->> > the device and configure it further after calling pm_runtime_resume().
->> >
->> > Of course, if ->probe() is to call pm_runtime_resume() for this purpose,
->> > it must take the fact that the driver's own ->runtime_resume() may be called
->> > as a result of this into account.  That's why I'm asking whether or not the
->> > core should call pm_runtime_resume() before calling really_probe() in a
->> > followup branch of this thread.
->>
->> I am reading the other thread, let's see.
->>
->> >
->> > The driver's own runtime PM handling must be initialized in the driver and
->> > the only place suitable for that is ->probe().  However, it needs to be done
->> > *before* the driver's own ->runtime_resume() or ->runtime_suspend() callback
->> > is executed.  If that is done properly, it should be possible to cover
->> > both the CONFIG_PM_RUNTIME set/unset cases in that code.
->> >
->> > And I wouldn't recommend anyone to do the runtime PM initialization in
->> > ->runtime_resume() (when it is called for the first time), as that would be
->> > error prone and fragile.
->>
->> Great! That's means we are at least aligned on this topic. :-)
->>
->> >
->> >> The AMBA bus and some of its drivers a good example of how this has
->> >> been implemented:
->> >> driver/amba/bus.c
->> >> drivers/mmc/host/mmci.c
->> >> drivers/spi/spi-pl022.c
->> >>
->> >> This conclusion I have made from this is:
->> >> - Using pm_runtime_get_sync() during the ->probe() path to explicitly
->> >> power up a PM domain, is not suitable as the _common_ solution to
->> >> solve the race condition. It certainly may work for some scenarios,
->> >> but not for those I am looking at.
->> >
->> > I think, however, that it might work if the core calls pm_runtime_get_sync()
->> > from driver_probe_device().
->>
->> Currently this won't work.
->>
->> That's because the buses' ->probe() are invoked in this path and they
->> are doing the attachment of the device to its PM domain.
->>
->> In other words, we can't power up the PM domain using
->> pm_runtime_get_sync(), until the device has been attached to its PM
->> domain. Right?
->
->
-> I think this is one of the issues that we have there. Why do we conflate
-> probing and placing the device into a power domain? The latter should
-> happen when we register the device. The fact that a device was probed
-> and has a driver bound or not bound to it should have no bearing on
-> whether the device is member of power domain or not.
+On Tue, Nov 04, 2014 at 09:19:26AM +0100, Stam, Michel [FINT] wrote:
+> Interesting, as the commit itself is a revert from a kernel back to 2.6
+> somewhere. The problem I had is related to the PHY being reset on
+> interface-up, can you confirm that you require this?
 
-Devices that are created while "discoverable buses" are being probed
-can't be attached to a PM domain before the probing is done, because
-those simply doesn't exist.
+I can't confirm what exactly is needed on arndale. I'm neither expert in 
+USB or ethernet. However, I can confirm that without the PHY reset,
+networking doesn't work on arndale.
 
-Now, I haven't yet seen a demand for such a cases, but it seems wrong
-to not consider them. The current solution cover these.
+I now see someone else has the same problem, adding Charles to CC.
 
-Kind regards
-Uffe
+http://www.spinics.net/lists/linux-usb/msg116656.html
+
+> Reverting this
+> breaks ethtool support in turn.
+
+Fixing a bug (ethtool support) must not cause breakage elsewhere (in
+this case on arndale). This is now a regression of functionality from
+3.17.
+
+I think it would better to revert the change now and with less hurry
+introduce a ethtool fix that doesn't break arndale.
+ 
+> Kind regards,
+> 
+> Michel Stam
+> 
+> -----Original Message-----
+> From: Riku Voipio [mailto:riku.voipio@iki.fi] 
+> Sent: Tuesday, November 04, 2014 8:23 AM
+> To: davem@davemloft.net; Stam, Michel [FINT]
+> Cc: linux-usb@vger.kernel.org; netdev@vger.kernel.org;
+> linux-kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org
+> Subject: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net on
+> arndale platform
+> 
+> Hi,
+> 
+> With 3.18-rc3, asix on arndale (samsung exynos 5250 based board), fails
+> to work. Interface is initialized but network traffic seem not to pass
+> through. With kernel IP config the result looks like:
+> 
+> [    3.323275] usb 3-3.2.4: new high-speed USB device number 4 using
+> exynos-ehci
+> [    3.419151] usb 3-3.2.4: New USB device found, idVendor=0b95,
+> idProduct=772a
+> [    3.424735] usb 3-3.2.4: New USB device strings: Mfr=1, Product=2,
+> SerialNumber=3
+> [    3.432196] usb 3-3.2.4: Product: AX88772 
+> [    3.436279] usb 3-3.2.4: Manufacturer: ASIX Elec. Corp.
+> [    3.441486] usb 3-3.2.4: SerialNumber: 000001
+> [    3.447530] asix 3-3.2.4:1.0 (unnamed net_device) (uninitialized):
+> invalid hw address, using random
+> [    3.764352] asix 3-3.2.4:1.0 eth0: register 'asix' at
+> usb-12110000.usb-3.2.4, ASIX AX88772 USB 2.0 Ethernet, de:a2:66:bf:ca:4f
+> [    4.488773] asix 3-3.2.4:1.0 eth0: link down
+> [    5.690025] asix 3-3.2.4:1.0 eth0: link up, 100Mbps, full-duplex, lpa
+> 0xC5E1
+> [    5.712947] Sending DHCP requests ...... timed out!
+> [   83.165303] IP-Config: Retrying forever (NFS root)...
+> [   83.170397] asix 3-3.2.4:1.0 eth0: link up, 100Mbps, full-duplex, lpa
+> 0xC5E1
+> [   83.192944] Sending DHCP requests .....
+> 
+> Similar results also with dhclient. Git bisect identified the breaking
+> commit as:
+> 
+> commit 3cc81d85ee01e5a0b7ea2f4190e2ed1165f53c31
+> Author: Michel Stam <m.stam@fugro.nl>
+> Date:   Thu Oct 2 10:22:02 2014 +0200
+> 
+>     asix: Don't reset PHY on if_up for ASIX 88772
+> 
+> Taking 3.18-rc3 and that commit reverted, network works again:
+> 
+> [    3.303500] usb 3-3.2.4: new high-speed USB device number 4 using
+> exynos-ehci
+> [    3.399375] usb 3-3.2.4: New USB device found, idVendor=0b95,
+> idProduct=772a
+> [    3.404963] usb 3-3.2.4: New USB device strings: Mfr=1, Product=2,
+> SerialNumber=3
+> [    3.412424] usb 3-3.2.4: Product: AX88772 
+> [    3.416508] usb 3-3.2.4: Manufacturer: ASIX Elec. Corp.
+> [    3.421715] usb 3-3.2.4: SerialNumber: 000001
+> [    3.427755] asix 3-3.2.4:1.0 (unnamed net_device) (uninitialized):
+> invalid hw address, using random
+> [    3.744837] asix 3-3.2.4:1.0 eth0: register 'asix' at
+> usb-12110000.usb-3.2.4, ASIX AX88772 USB 2.0 Ethernet, 12:59:f1:a8:43:90
+> [    7.098998] asix 3-3.2.4:1.0 eth0: link up, 100Mbps, full-duplex, lpa
+> 0xC5E1
+> [    7.118258] Sending DHCP requests ., OK
+> [    9.753259] IP-Config: Got DHCP answer from 192.168.1.1, my address
+> is 192.168.1.111
+> 
+> There might something wrong on the samsung platform code (I understand
+> the USB on arndale is "funny"), but this is still an regression from
+> 3.17.
+> 
+> Riku
