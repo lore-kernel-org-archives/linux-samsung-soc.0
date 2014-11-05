@@ -1,70 +1,54 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
 Subject: [PATCH] drm/exynos: add has_vtsel flag
-Date: Wed, 05 Nov 2014 20:25:26 +0900
-Message-ID: <1415186726-21760-1-git-send-email-jy0922.shim@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:60260 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753520AbaKELZX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Nov 2014 06:25:23 -0500
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NEK009MHD29HO60@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Nov 2014 20:25:21 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Date: Wed, 05 Nov 2014 20:25:59 +0900
+Message-ID: <1415186759-21800-1-git-send-email-jy0922.shim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org
-Cc: inki.dae@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The exynos fimd provides video type selection bits from system register
-but exynos3 series don't has it, so needs has_vtsel flag and we can
-distinguish whether set video type selection bits.
-
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 085b066..1b32771 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -96,6 +96,7 @@ struct fimd_driver_data {
- 	unsigned int has_clksel:1;
- 	unsigned int has_limited_fmt:1;
- 	unsigned int has_vidoutcon:1;
-+	unsigned int has_vtsel:1;
- };
- 
- static struct fimd_driver_data s3c64xx_fimd_driver_data = {
-@@ -118,6 +119,7 @@ static struct fimd_driver_data exynos4_fimd_driver_data = {
- 	.lcdblk_vt_shift = 10,
- 	.lcdblk_bypass_shift = 1,
- 	.has_shadowcon = 1,
-+	.has_vtsel = 1,
- };
- 
- static struct fimd_driver_data exynos5_fimd_driver_data = {
-@@ -127,6 +129,7 @@ static struct fimd_driver_data exynos5_fimd_driver_data = {
- 	.lcdblk_bypass_shift = 15,
- 	.has_shadowcon = 1,
- 	.has_vidoutcon = 1,
-+	.has_vtsel = 1,
- };
- 
- struct fimd_win_data {
-@@ -343,7 +346,8 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
- 		writel(0, timing_base + I80IFCONFBx(0));
- 
- 		/* set video type selection to I80 interface */
--		if (ctx->sysreg && regmap_update_bits(ctx->sysreg,
-+		if (driver_data->has_vtsel && ctx->sysreg &&
-+				regmap_update_bits(ctx->sysreg,
- 					driver_data->lcdblk_offset,
- 					0x3 << driver_data->lcdblk_vt_shift,
- 					0x1 << driver_data->lcdblk_vt_shift)) {
--- 
-1.9.1
+VGhlIGV4eW5vcyBmaW1kIHByb3ZpZGVzIHZpZGVvIHR5cGUgc2VsZWN0aW9uIGJpdHMgZnJvbSBz
+eXN0ZW0gcmVnaXN0ZXIKYnV0IGV4eW5vczMgc2VyaWVzIGRvbid0IGhhcyBpdCwgc28gbmVlZHMg
+aGFzX3Z0c2VsIGZsYWcgYW5kIHdlIGNhbgpkaXN0aW5ndWlzaCB3aGV0aGVyIHNldCB2aWRlbyB0
+eXBlIHNlbGVjdGlvbiBiaXRzLgoKU2lnbmVkLW9mZi1ieTogSm9vbnlvdW5nIFNoaW0gPGp5MDky
+Mi5zaGltQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9maW1kLmMgfCA2ICsrKysrLQogMSBmaWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgMSBk
+ZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9maW1kLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCmluZGV4
+IDA4NWIwNjYuLjFiMzI3NzEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9maW1kLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Zp
+bWQuYwpAQCAtOTYsNiArOTYsNyBAQCBzdHJ1Y3QgZmltZF9kcml2ZXJfZGF0YSB7CiAJdW5zaWdu
+ZWQgaW50IGhhc19jbGtzZWw6MTsKIAl1bnNpZ25lZCBpbnQgaGFzX2xpbWl0ZWRfZm10OjE7CiAJ
+dW5zaWduZWQgaW50IGhhc192aWRvdXRjb246MTsKKwl1bnNpZ25lZCBpbnQgaGFzX3Z0c2VsOjE7
+CiB9OwogCiBzdGF0aWMgc3RydWN0IGZpbWRfZHJpdmVyX2RhdGEgczNjNjR4eF9maW1kX2RyaXZl
+cl9kYXRhID0gewpAQCAtMTE4LDYgKzExOSw3IEBAIHN0YXRpYyBzdHJ1Y3QgZmltZF9kcml2ZXJf
+ZGF0YSBleHlub3M0X2ZpbWRfZHJpdmVyX2RhdGEgPSB7CiAJLmxjZGJsa192dF9zaGlmdCA9IDEw
+LAogCS5sY2RibGtfYnlwYXNzX3NoaWZ0ID0gMSwKIAkuaGFzX3NoYWRvd2NvbiA9IDEsCisJLmhh
+c192dHNlbCA9IDEsCiB9OwogCiBzdGF0aWMgc3RydWN0IGZpbWRfZHJpdmVyX2RhdGEgZXh5bm9z
+NV9maW1kX2RyaXZlcl9kYXRhID0gewpAQCAtMTI3LDYgKzEyOSw3IEBAIHN0YXRpYyBzdHJ1Y3Qg
+ZmltZF9kcml2ZXJfZGF0YSBleHlub3M1X2ZpbWRfZHJpdmVyX2RhdGEgPSB7CiAJLmxjZGJsa19i
+eXBhc3Nfc2hpZnQgPSAxNSwKIAkuaGFzX3NoYWRvd2NvbiA9IDEsCiAJLmhhc192aWRvdXRjb24g
+PSAxLAorCS5oYXNfdnRzZWwgPSAxLAogfTsKIAogc3RydWN0IGZpbWRfd2luX2RhdGEgewpAQCAt
+MzQzLDcgKzM0Niw4IEBAIHN0YXRpYyB2b2lkIGZpbWRfY29tbWl0KHN0cnVjdCBleHlub3NfZHJt
+X21hbmFnZXIgKm1ncikKIAkJd3JpdGVsKDAsIHRpbWluZ19iYXNlICsgSTgwSUZDT05GQngoMCkp
+OwogCiAJCS8qIHNldCB2aWRlbyB0eXBlIHNlbGVjdGlvbiB0byBJODAgaW50ZXJmYWNlICovCi0J
+CWlmIChjdHgtPnN5c3JlZyAmJiByZWdtYXBfdXBkYXRlX2JpdHMoY3R4LT5zeXNyZWcsCisJCWlm
+IChkcml2ZXJfZGF0YS0+aGFzX3Z0c2VsICYmIGN0eC0+c3lzcmVnICYmCisJCQkJcmVnbWFwX3Vw
+ZGF0ZV9iaXRzKGN0eC0+c3lzcmVnLAogCQkJCQlkcml2ZXJfZGF0YS0+bGNkYmxrX29mZnNldCwK
+IAkJCQkJMHgzIDw8IGRyaXZlcl9kYXRhLT5sY2RibGtfdnRfc2hpZnQsCiAJCQkJCTB4MSA8PCBk
+cml2ZXJfZGF0YS0+bGNkYmxrX3Z0X3NoaWZ0KSkgewotLSAKMS45LjEKCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
+ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
