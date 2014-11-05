@@ -1,66 +1,44 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: Add MODULE_DEVICE_TABLE for
-	Snow
-Date: Wed, 5 Nov 2014 17:09:57 +0000
-Message-ID: <20141105170957.GE8509@sirena.org.uk>
-References: <1415205892-5553-1-git-send-email-afaerber@suse.de>
+From: Juergen Borleis <juergen127@kreuzholzen.de>
+Subject: Re: Samsung S3C6410 SoC/devicetree: how to describe RTC interrupts connected to two different interrupt parents?
+Date: Wed, 5 Nov 2014 18:17:47 +0100
+Message-ID: <201411051817.47990.juergen127@kreuzholzen.de>
+References: <201411042104.45632.juergen127@kreuzholzen.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0637669521999875653=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1415205892-5553-1-git-send-email-afaerber@suse.de>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, open list <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.de>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---===============0637669521999875653==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="qFgkTsE6LiHkLPZw"
-Content-Disposition: inline
-
-
---qFgkTsE6LiHkLPZw
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Nov 05, 2014 at 05:44:52PM +0100, Andreas F=E4rber wrote:
-> This enables the snd_soc_snow module to be auto-loaded.
-
-Applied, thanks.
-
---qFgkTsE6LiHkLPZw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUWlnkAAoJECTWi3JdVIfQAxcH/24fJ8D3hNabx766iowaxIr2
-ffBTF7jHgSZ9wQSwmE5PlAuS4Co4sHsWBpPH7Dyes3h4/G54n/ryGPMaDR/Lrzvf
-ZXxy5WIKLbO9g919thZSsmMglugQKFQWasiUZeeT0PWP1sZwptOwJgTVhpF58rtR
-+jfwBE0tn58ppk3tkeav1XFPNwI3tpgGR0w3DwmifS+eXmto24kBXHT7WPCpupqH
-yP3Y+MX/hta2Qv4sZTXqat9yDNuvsUKokjdxQpSETvbgoSgnUItrlI1OusL+5PFU
-h6/3WkGWRGGUlt2AyEl8W3a/JsjYEraTm1FzYG8GzzDg0m4Yfq3YKZB1S5D85oQ=
-=JpWr
------END PGP SIGNATURE-----
-
---qFgkTsE6LiHkLPZw--
-
---===============0637669521999875653==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from www291.your-server.de ([78.46.156.197]:37855 "EHLO
+	www291.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932403AbaKERTJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 5 Nov 2014 12:19:09 -0500
+In-Reply-To: <201411042104.45632.juergen127@kreuzholzen.de>
 Content-Disposition: inline
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
+Myself wrote:
+> the Samsung S3C6410 SoC comes with an RTC with two interrupts connected to
+> two different interrupt controllers.
+>
+> The old platform code uses this resource to describe it:
+>
+> static struct resource s3c_rtc_resource[] = {
+> 	[0] = DEFINE_RES_MEM(S3C24XX_PA_RTC, SZ_256),
+> 	[1] = DEFINE_RES_IRQ(IRQ_RTC),  <-- channel 2 at VIC0
+> 	[2] = DEFINE_RES_IRQ(IRQ_TICK), <-- channel 28 at VIC1
+> };
+>
+> In the devicetree I can define multiple interrupt channels with the
+> keyword 'interrupts' but it seems all of them must share the same interrupt
+> parent defined via 'interrupt-parent'. How to handle the special S3C6410
+> case?
+> The file "Documentation/devicetree/bindings/rtc/s3c-rtc.txt" isn't really
+> helpful.
 
---===============0637669521999875653==--
+Ahh, "interrupts-extended" is the keyword... solved.
+
+jbo
