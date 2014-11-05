@@ -1,91 +1,38 @@
-From: Chander Kashyap <k.chander@samsung.com>
-Subject: [PATCH v4] arm64: dts: exynos7: add support for cpuidle core power down
-Date: Wed,  5 Nov 2014 18:45:31 +0530
-Message-ID: <1415193331-14790-1-git-send-email-k.chander@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 02/12] drivers: mfd: Add support for Exynos PMU driver
+Date: Wed, 05 Nov 2014 14:47:36 +0100
+Message-ID: <545A2A78.5000901@samsung.com>
+References: <1414986790-11940-1-git-send-email-amit.daniel@samsung.com>
+ <1414986790-11940-3-git-send-email-amit.daniel@samsung.com>
+ <20141103152604.GA10544@x1> <002601cff7de$0f8db7e0$2ea927a0$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <002601cff7de$0f8db7e0$2ea927a0$@samsung.com>
 Sender: linux-pm-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, daniel.lezcano@linaro.org, lorenzo.pieralisi@arm.com, catalin.marinas@arm.com, mark.rutland@arm.com, rjw@rjwysocki.net, kgene.kim@samsung.com, Chander Kashyap <k.chander@samsung.com>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, 'Lee Jones' <lee.jones@linaro.org>
+Cc: 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kgene.kim@samsung.com, 'Sangbeom Kim' <sbkim73@samsung.com>, 'Samuel Ortiz' <sameo@linux.intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Exynos7 has core power down state where cores can be powered off independently.
-This patch adds support for this state.
+On 04/11/14 04:18, Pankaj Dubey wrote:
+> 2: Since PM domain relies on PMU registers and does not have 
+> its own DT binding, MFD client and MFD device
+> is most suitable for making this kind of platform drivers.
 
-Entry latency for the core power down is calculated as follows:
-1. Time difference is measured between cpuidle entry and exit.
-2. WFI is skipped for measuring the time.
-3. Select the worst case time in the set of 100000 cpuidle transactions,
-   with varying load.
+We have DT binding for the Exynos power domains:
+Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+In fact the IO memory regions used in the power domain bindings
+fall within the (sparse) PMU registers region.
 
-Exit latency and target residency are supplied as per HW team
+There is also DT binding for the PMU subsystem:
+Documentation/devicetree/bindings/arm/samsung/pmu.txt
 
-Signed-off-by: Chander Kashyap <k.chander@samsung.com>
----
-This patch has following dependencies:
-	- [PATCH v5 0/8] arch: arm64: Enable support for Samsung Exynos7 SoC
-		http://www.spinics.net/lists/linux-samsung-soc/msg37047.html
-Changes in v2:
-	- Moved the cpu-idle-state property after reg property
-	- removed the status property.
+I guess a platform device driver in drivers/power would be a better
+fit than drivers/mfd. I doubt introducing an mfd driver now makes
+much sense, we have already DT bindings for PHYs, the power domains,
+etc.
 
-Changes in v3:
-	- Added the Entry latency calculation in commit message.
-Changes in v4:
-	- Corrected the commit message.
-	- Corrected the entry latency value.
-
- arch/arm64/boot/dts/exynos/exynos7.dtsi |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-index 50ae936..444dde1 100644
---- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-@@ -37,6 +37,7 @@
- 			compatible = "arm,cortex-a57", "arm,armv8";
- 			enable-method = "psci";
- 			reg = <0x0>;
-+			cpu-idle-states = <&CPU_SLEEP>;
- 		};
- 
- 		cpu@1 {
-@@ -44,6 +45,7 @@
- 			compatible = "arm,cortex-a57", "arm,armv8";
- 			enable-method = "psci";
- 			reg = <0x1>;
-+			cpu-idle-states = <&CPU_SLEEP>;
- 		};
- 
- 		cpu@2 {
-@@ -51,6 +53,7 @@
- 			compatible = "arm,cortex-a57", "arm,armv8";
- 			enable-method = "psci";
- 			reg = <0x2>;
-+			cpu-idle-states = <&CPU_SLEEP>;
- 		};
- 
- 		cpu@3 {
-@@ -58,6 +61,20 @@
- 			compatible = "arm,cortex-a57", "arm,armv8";
- 			enable-method = "psci";
- 			reg = <0x3>;
-+			cpu-idle-states = <&CPU_SLEEP>;
-+		};
-+
-+		idle-states {
-+			entry-method = "arm,psci";
-+
-+			CPU_SLEEP: cpu-sleep {
-+				compatible = "arm,idle-state";
-+				local-timer-stop;
-+				arm,psci-suspend-param = <0x0010000>;
-+				entry-latency-us = <34>;
-+				exit-latency-us = <150>;
-+				min-residency-us = <2100>;
-+			};
- 		};
- 	};
- 
--- 
-1.7.9.5
-
+--
+Thanks,
+Sylwester
