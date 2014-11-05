@@ -1,46 +1,66 @@
-From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [PATCH] ASoC: samsung: Add MODULE_DEVICE_TABLE for Snow
-Date: Wed,  5 Nov 2014 17:44:52 +0100
-Message-ID: <1415205892-5553-1-git-send-email-afaerber@suse.de>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: samsung: Add MODULE_DEVICE_TABLE for
+	Snow
+Date: Wed, 5 Nov 2014 17:09:57 +0000
+Message-ID: <20141105170957.GE8509@sirena.org.uk>
+References: <1415205892-5553-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:56822 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754039AbaKEQoZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Nov 2014 11:44:25 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0637669521999875653=="
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <1415205892-5553-1-git-send-email-afaerber@suse.de>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Sangbeom Kim <sbkim73@samsung.com>, open list <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Takashi Iwai <tiwai@suse.de>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sangbeom Kim <sbkim73@samsung.com>, alsa-devel@alsa-project.org
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, open list <linux-kernel@vger.kernel.org>
 
-This enables the snd_soc_snow module to be auto-loaded.
 
-=46ixes: da5993df2374 ("ASoC: samsung: Add sound card driver for Snow b=
-oard")
-Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
----
- Tested using patches for Spring, but should apply to Snow/Peach-pi equ=
-ally.
- Rebased onto sound.git for-next branch.
+--===============0637669521999875653==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="qFgkTsE6LiHkLPZw"
+Content-Disposition: inline
 
- sound/soc/samsung/snow.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/samsung/snow.c b/sound/soc/samsung/snow.c
-index 0acf5d0eed53..72118a77dd5b 100644
---- a/sound/soc/samsung/snow.c
-+++ b/sound/soc/samsung/snow.c
-@@ -110,6 +110,7 @@ static const struct of_device_id snow_of_match[] =3D=
- {
- 	{ .compatible =3D "google,snow-audio-max98095", },
- 	{},
- };
-+MODULE_DEVICE_TABLE(of, snow_of_match);
-=20
- static struct platform_driver snow_driver =3D {
- 	.driver =3D {
---=20
-2.1.2
+--qFgkTsE6LiHkLPZw
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Nov 05, 2014 at 05:44:52PM +0100, Andreas F=E4rber wrote:
+> This enables the snd_soc_snow module to be auto-loaded.
+
+Applied, thanks.
+
+--qFgkTsE6LiHkLPZw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUWlnkAAoJECTWi3JdVIfQAxcH/24fJ8D3hNabx766iowaxIr2
+ffBTF7jHgSZ9wQSwmE5PlAuS4Co4sHsWBpPH7Dyes3h4/G54n/ryGPMaDR/Lrzvf
+ZXxy5WIKLbO9g919thZSsmMglugQKFQWasiUZeeT0PWP1sZwptOwJgTVhpF58rtR
++jfwBE0tn58ppk3tkeav1XFPNwI3tpgGR0w3DwmifS+eXmto24kBXHT7WPCpupqH
+yP3Y+MX/hta2Qv4sZTXqat9yDNuvsUKokjdxQpSETvbgoSgnUItrlI1OusL+5PFU
+h6/3WkGWRGGUlt2AyEl8W3a/JsjYEraTm1FzYG8GzzDg0m4Yfq3YKZB1S5D85oQ=
+=JpWr
+-----END PGP SIGNATURE-----
+
+--qFgkTsE6LiHkLPZw--
+
+--===============0637669521999875653==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============0637669521999875653==--
