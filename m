@@ -1,39 +1,105 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v3] usb: Remove references to non-existent PLAT_S5P symbol
-Date: Wed, 05 Nov 2014 11:23:36 +0100
-Message-ID: <5459FAA8.1060902@samsung.com>
-References: <1412673127-11479-1-git-send-email-s.nawrocki@samsung.com>
- <20141103232438.GA11698@kroah.com> <54591BDF.8060203@samsung.com>
- <1415128864.20372.189.camel@x220> <20141104194221.GB3722@kroah.com>
- <1415130776.20372.194.camel@x220>
+From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Subject: Re: [PATCH v3] arm64: dts: exynos7: add support for cpuidle core
+ power down
+Date: Wed, 5 Nov 2014 11:12:05 +0000
+Message-ID: <20141105111205.GA21258@red-moon>
+References: <1415182536-11613-1-git-send-email-k.chander@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1415130776.20372.194.camel@x220>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Bolle <pebolle@tiscali.nl>, Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, jg1.han@samsung.com, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1415182536-11613-1-git-send-email-k.chander@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Chander Kashyap <k.chander@samsung.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, Catalin Marinas <Catalin.Marinas@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 04/11/14 20:52, Paul Bolle wrote:
-> On Tue, 2014-11-04 at 11:42 -0800, Greg KH wrote:
->> > As it's something that no one seemed to ever need before (i.e. it's not
->> > a regression fix), but it would be a "new feature", I don't think it's
->> > really a stable fix.
->> > 
->> > But feel free to convince me otherwise :)
->
-> Sylwester, was I right in thinking that users of PLAT_S5P, who could set
-> USB_EHCI_EXYNOS or USB_OHCI_EXYNOS pre v3.17, got, well, transferred to
-> ARCH_S5PV210 and lost the ability to set one of those symbols in v3.17?
+On Wed, Nov 05, 2014 at 10:15:36AM +0000, Chander Kashyap wrote:
+> Exynos7 has core power down state where cores can be powered off independently.
+> This patch adds support for this state.
+> 
+> Entry latency for the core power down is calculated as follows:
+> 1. Time difference is measured between cpuidle entry and exit.
+> 2. WFI is skipped measuring the time.
+> 3. The time is averaged out for 100000 cpuidle transactions with varying load.
+- entry-latency-us
+	Usage: Required
+	"Definition: u32 value representing worst case latency in microseconds
+		     required to enter the idle state. ..."
 
-Yes, after commit d78c16ccde96 ("ARM: SAMSUNG: Remove remaining legacy code")
-we lost the ability to enable USB OHCI and EHCI on S5PV210 SoC.
-Thus for those who use the mainline kernel (might be rare) with S5PV210 SoC
-there is obviously a regression in USB subsystem in v3.17.
+Is that an average value in your opinion ? I am being pedantic, I know,
+but we define bindings to be followed, not interpreted.
 
+Thanks,
+Lorenzo
 
--- 
-Regards,
-Sylwester
+> Exit latency and target residency are supplied as per HW team
+> 
+> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+> ---
+> This patch has following dependencies:
+> 	- [PATCH v5 0/8] arch: arm64: Enable support for Samsung Exynos7 SoC
+> 		http://www.spinics.net/lists/linux-samsung-soc/msg37047.html
+> Changes in v2:
+> 	- Moved the cpu-idle-state property after reg property
+> 	- removed the status property.
+> 
+> Changes in v3:
+> 	- Added the Entry latency calculation in commit message.
+> 
+>  arch/arm64/boot/dts/exynos/exynos7.dtsi |   17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> index 50ae936..444dde1 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+> @@ -37,6 +37,7 @@
+>  			compatible = "arm,cortex-a57", "arm,armv8";
+>  			enable-method = "psci";
+>  			reg = <0x0>;
+> +			cpu-idle-states = <&CPU_SLEEP>;
+>  		};
+>  
+>  		cpu@1 {
+> @@ -44,6 +45,7 @@
+>  			compatible = "arm,cortex-a57", "arm,armv8";
+>  			enable-method = "psci";
+>  			reg = <0x1>;
+> +			cpu-idle-states = <&CPU_SLEEP>;
+>  		};
+>  
+>  		cpu@2 {
+> @@ -51,6 +53,7 @@
+>  			compatible = "arm,cortex-a57", "arm,armv8";
+>  			enable-method = "psci";
+>  			reg = <0x2>;
+> +			cpu-idle-states = <&CPU_SLEEP>;
+>  		};
+>  
+>  		cpu@3 {
+> @@ -58,6 +61,20 @@
+>  			compatible = "arm,cortex-a57", "arm,armv8";
+>  			enable-method = "psci";
+>  			reg = <0x3>;
+> +			cpu-idle-states = <&CPU_SLEEP>;
+> +		};
+> +
+> +		idle-states {
+> +			entry-method = "arm,psci";
+> +
+> +			CPU_SLEEP: cpu-sleep {
+> +				compatible = "arm,idle-state";
+> +				local-timer-stop;
+> +				arm,psci-suspend-param = <0x0010000>;
+> +				entry-latency-us = <20>;
+> +				exit-latency-us = <150>;
+> +				min-residency-us = <2100>;
+> +			};
+>  		};
+>  	};
+>  
+> -- 
+> 1.7.9.5
+> 
+> 
