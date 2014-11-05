@@ -1,75 +1,55 @@
 From: "Stam, Michel [FINT]" <M.Stam@fugro.nl>
-Subject: RE: "asix: Don't reset PHY on if_up for ASIX 88772" breaks netonarndale platform
-Date: Wed, 5 Nov 2014 17:17:29 +0100
-Message-ID: <C89EFD3CD56F64468D3D206D683A8D22039FFCF2@ldam-msx2.fugro-nl.local>
-References: <20141104072236.GA559@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D2203985F49@ldam-msx2.fugro-nl.local> <20141104094336.GA3145@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D2203985FA9@ldam-msx2.fugro-nl.local> <20141104200914.GN23178@opensource.wolfsonmicro.com> <C89EFD3CD56F64468D3D206D683A8D22039FFC5F@ldam-msx2.fugro-nl.local> <20141105150258.GR23178@opensource.wolfsonmicro.com>
+Subject: RE: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net onarndale platform
+Date: Wed, 5 Nov 2014 17:21:31 +0100
+Message-ID: <C89EFD3CD56F64468D3D206D683A8D22039FFCF7@ldam-msx2.fugro-nl.local>
+References: <20141104072236.GA559@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D2203985F49@ldam-msx2.fugro-nl.local> <20141104094336.GA3145@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D2203985FA9@ldam-msx2.fugro-nl.local> <20141104200914.GN23178@opensource.wolfsonmicro.com> <C89EFD3CD56F64468D3D206D683A8D22039FFC5F@ldam-msx2.fugro-nl.local> <20141105123937.GA5981@afflict.kos.to>
 Mime-Version: 1.0
 Content-Type: text/plain;
 	charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.eu1.fugro.com ([46.34.88.151]:44027 "EHLO
-	smtp.eu1.fugro.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754035AbaKEQRd convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Nov 2014 11:17:33 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-class: urn:content-classes:message
-In-Reply-To: <20141105150258.GR23178@opensource.wolfsonmicro.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <20141105123937.GA5981@afflict.kos.to>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Riku Voipio <riku.voipio@iki.fi>
+Cc: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, davem@davemloft.net, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: Riku Voipio <riku.voipio@iki.fi>, davem@davemloft.net, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hello Charles,
+Hello Riku,
 
-First of all, my apologies. I manually applied your patch and made a
-mistake; I swapped ax88772_link_reset with ax88772_reset for struct
-driver_info_ax88772_info structure, which caused the software reset
-failures. Blame it on a lack of coffee... Please disregard my previous
-mail.
+I will quickly reply to your message, and reserve any further comments
+for the other thread.
 
-After (correctly) applying the patch I still don't get the desired
-results; see below.
+>My concern is, that none of us with this problem is a linux network
+drivers expert. And no such expert joined the thread to help us. Thus if
+we hurry to have proper fix for 3.18, our fix might easily be really
+wrong.
+>
+>Hence, it would seem safer to revert to 3.17 state before 3.18, so we
+can propose a proper fix for 3.19. At least from our myopic view, having
+no functioning net on arndale is worse than having non-functioning
+ethtool (which doesn't >seem to have bothered people for years).
 
-Test situation:
-ifconfig eth1 down
-ethtool -s advertise 1
-ifconfig eth1 up
-
-Check dmesg, It will report a link down, followed by the new speed,
-which when using advertise 1, should be 10 Mbps/half duplex.
-To make it more interesting, ethtool eth1 reports 10 Mbps/half duplex
-even though the kernel reports 100 Mbps/full duplex.
-
-What does work (but did before this whole situation as well):
-ifconfig eth1 up
-ethtool -s eth1 advertise 1
-
-The interface will now be in 10 Mbps/half duplex, that is, until the
-reset function is called (interface down or otherwise). 
-
-What I do notice, is that dev->mii.advertising follows whatever I set
-with ethtool. I tried writing the ADVERTISE register with the value of
-the dev->mii.advertising variable, but that did not give me the desired
-result either.
+Lets agree to disagree here. Any further comment on this would not be
+productive.
 
 Kind regards,
 
 Michel Stam
 
 -----Original Message-----
-From: Charles Keepax [mailto:ckeepax@opensource.wolfsonmicro.com] 
-Sent: Wednesday, November 05, 2014 16:03 PM
+From: Riku Voipio [mailto:riku.voipio@iki.fi] 
+Sent: Wednesday, November 05, 2014 13:40 PM
 To: Stam, Michel [FINT]
-Cc: Riku Voipio; davem@davemloft.net; linux-usb@vger.kernel.org;
+Cc: Charles Keepax; davem@davemloft.net; linux-usb@vger.kernel.org;
 netdev@vger.kernel.org; linux-kernel@vger.kernel.org;
 linux-samsung-soc@vger.kernel.org
-Subject: Re: "asix: Don't reset PHY on if_up for ASIX 88772" breaks
-netonarndale platform
+Subject: Re: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net
+onarndale platform
+
+Hi Michel,
 
 On Wed, Nov 05, 2014 at 01:04:37PM +0100, Stam, Michel [FINT] wrote:
-> Hello Charles,
-> 
 > After looking around I found the reset value for the 8772 chip, which 
 > seems to be 0x1E1 (ANAR register).
 > 
@@ -77,12 +57,6 @@ On Wed, Nov 05, 2014 at 01:04:37PM +0100, Stam, Michel [FINT] wrote:
 > | ADVERTISE_CSMA.
 > 
 > The register only seems to become 0 if the software reset fails.
-
-Odd it definitely reads back as zero on Arndale. I am guessing that the
-root of the problem here is that for some reason Arndale POR of the
-ethernet is pants and it needs a full software reset before it will work
-and the patch removes the full reset callback.
-
 > 
 > Unfortunately, this is exactly what I get when the patch is applied; 
 > asix 1-2:1.0 eth1: Failed to send software reset: ffffffb5 asix 
@@ -90,77 +64,54 @@ and the patch removes the full reset callback.
 > AX88772 USB 2.0 Ethernet asix 1-2:1.0 eth1: Failed to send software 
 > reset: ffffffb5 asix 1-2:1.0 eth1: link reset failed (-75) usbnet 
 > usb-0000:00:1d.0-2, ASIX AX88772 USB 2.0 Ethernet
-
-Ok so I am guessing you have a value in the register which is neither
-the reset value or 0 and this causing problems later in the reset/on the
-next reset. I do find the naming confusing in the error message there as
-it says link reset failed but the link_reset callback can't fail in the
-driver and I modified the reset callback. But I guess that is just
-oddities of the network stack I am not familiar with.
-
-The other thing that feels odd is (and again apologies as I know next to
-nothing about the networking stack) how come it is unexpected that the
-reset callback destroys the state of the device. Naively I would have
-expected that a reset callback would reset the device back to its
-default state. Here we seem to be trying to avoid that happening.
-
 > 
 > A little while after this its 'Failed to enable software MII access'.
 > The ethernet device fails to see any link or accept any ethtool -s 
 > command.
-> 
+
 > My device has vid:devid 0b95:772a (ASIX Elec. Corp.).
-> 
+
 > Can you tell me what device is on the Andale platform, Charles? Same 
 > vendor/device id?
 
-Yeah mine also idVendor=0b95, idProduct=772a
+Bus 003 Device 004: ID 0b95:772a ASIX Electronics Corp. AX88772A Fast
+Ethernet
 
-Thanks,
-Charles
-
-> 
 > Another thing that bothers me is that dev->mii.advertising seems to 
 > contain the same value, so maybe that can be used instead of a call to
 
 > asix_mdio_read(). Can anyone comment on its purpose? Should it be a 
 > shadow copy of the real register or something?
-> 
+ 
 > Riku, can you test Charles' patch as well?
-> 
-> Kind regards,
-> 
-> Michel Stam
-> 
-> -----Original Message-----
-> From: Charles Keepax [mailto:ckeepax@opensource.wolfsonmicro.com]
-> Sent: Tuesday, November 04, 2014 21:09 PM
-> To: Stam, Michel [FINT]
-> Cc: Riku Voipio; davem@davemloft.net; linux-usb@vger.kernel.org; 
-> netdev@vger.kernel.org; linux-kernel@vger.kernel.org; 
-> linux-samsung-soc@vger.kernel.org
-> Subject: Re: "asix: Don't reset PHY on if_up for ASIX 88772" breaks 
-> net onarndale platform
-> 
-> On Tue, Nov 04, 2014 at 11:23:06AM +0100, Stam, Michel [FINT] wrote:
-> > Hello Riku,
-> > 
-> > >Fixing a bug (ethtool support) must not cause breakage elsewhere 
-> > >(in
-> > this case on arndale). This is now a regression of functionality 
-> > from 3.17.
-> > >
+
+With that patch + revert to ax88772_reset network works. I'm unable to
+get ethtool to work with that patch or with the original 3.17 state of
+asix.
+Once i disable autoneg network doesn't just work. 
+
 > > >I think it would better to revert the change now and with less 
 > > >hurry
 > > introduce a ethtool fix that doesn't break arndale.
-> > 
+
 > > I don't fully agree here;
 > > I would like to point out that this commit is a revert itself. 
 > > Fixing the armdale will then cause breakage in other 
-> > implementations, such as
-> 
-> > ours. Blankly reverting breaks other peoples' implementations.
-> > 
+> > implementations, such as ours. Blankly reverting breaks other
+peoples' implementations.
+
+My concern is, that none of us with this problem is a linux network
+drivers expert. And no such expert joined the thread to help us. Thus if
+we hurry to have proper fix for 3.18, our fix might easily be really
+wrong.
+
+Hence, it would seem safer to revert to 3.17 state before 3.18, so we
+can propose a proper fix for 3.19. At least from our myopic view, having
+no functioning net on arndale is worse than having non-functioning
+ethtool (which doesn't seem to have bothered people for years).
+
+Riku
+
 > > The PHY reset is the thing that breaks ethtool support, so any fix 
 > > that appeases all would have to take existing PHY state into
 account.
