@@ -1,47 +1,46 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v3] usb: Remove references to non-existent PLAT_S5P symbol
-Date: Wed, 5 Nov 2014 08:25:43 -0800
-Message-ID: <20141105162543.GA14075@kroah.com>
-References: <1412673127-11479-1-git-send-email-s.nawrocki@samsung.com>
- <20141103232438.GA11698@kroah.com>
- <54591BDF.8060203@samsung.com>
- <1415128864.20372.189.camel@x220>
- <20141104194221.GB3722@kroah.com>
- <1415130776.20372.194.camel@x220>
- <5459FAA8.1060902@samsung.com>
+From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+Subject: [PATCH] ASoC: samsung: Add MODULE_DEVICE_TABLE for Snow
+Date: Wed,  5 Nov 2014 17:44:52 +0100
+Message-ID: <1415205892-5553-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.linuxfoundation.org ([140.211.169.12]:32815 "EHLO
-	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754602AbaKEQ0y (ORCPT
+Received: from cantor2.suse.de ([195.135.220.15]:56822 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754039AbaKEQoZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Nov 2014 11:26:54 -0500
-Content-Disposition: inline
-In-Reply-To: <5459FAA8.1060902@samsung.com>
+	Wed, 5 Nov 2014 11:44:25 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Paul Bolle <pebolle@tiscali.nl>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, jg1.han@samsung.com, linux-samsung-soc@vger.kernel.org
+To: Sangbeom Kim <sbkim73@samsung.com>, alsa-devel@alsa-project.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, open list <linux-kernel@vger.kernel.org>
 
-On Wed, Nov 05, 2014 at 11:23:36AM +0100, Sylwester Nawrocki wrote:
-> On 04/11/14 20:52, Paul Bolle wrote:
-> > On Tue, 2014-11-04 at 11:42 -0800, Greg KH wrote:
-> >> > As it's something that no one seemed to ever need before (i.e. it's not
-> >> > a regression fix), but it would be a "new feature", I don't think it's
-> >> > really a stable fix.
-> >> > 
-> >> > But feel free to convince me otherwise :)
-> >
-> > Sylwester, was I right in thinking that users of PLAT_S5P, who could set
-> > USB_EHCI_EXYNOS or USB_OHCI_EXYNOS pre v3.17, got, well, transferred to
-> > ARCH_S5PV210 and lost the ability to set one of those symbols in v3.17?
-> 
-> Yes, after commit d78c16ccde96 ("ARM: SAMSUNG: Remove remaining legacy code")
-> we lost the ability to enable USB OHCI and EHCI on S5PV210 SoC.
-> Thus for those who use the mainline kernel (might be rare) with S5PV210 SoC
-> there is obviously a regression in USB subsystem in v3.17.
+This enables the snd_soc_snow module to be auto-loaded.
 
-Ok, I'll add this to 3.17-stable when it hits Linus's tree, thanks.
+=46ixes: da5993df2374 ("ASoC: samsung: Add sound card driver for Snow b=
+oard")
+Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+---
+ Tested using patches for Spring, but should apply to Snow/Peach-pi equ=
+ally.
+ Rebased onto sound.git for-next branch.
 
-greg k-h
+ sound/soc/samsung/snow.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/soc/samsung/snow.c b/sound/soc/samsung/snow.c
+index 0acf5d0eed53..72118a77dd5b 100644
+--- a/sound/soc/samsung/snow.c
++++ b/sound/soc/samsung/snow.c
+@@ -110,6 +110,7 @@ static const struct of_device_id snow_of_match[] =3D=
+ {
+ 	{ .compatible =3D "google,snow-audio-max98095", },
+ 	{},
+ };
++MODULE_DEVICE_TABLE(of, snow_of_match);
+=20
+ static struct platform_driver snow_driver =3D {
+ 	.driver =3D {
+--=20
+2.1.2
