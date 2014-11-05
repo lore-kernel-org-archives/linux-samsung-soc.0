@@ -1,7 +1,7 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
 Subject: [PATCH] drm/exynos: add has_vtsel flag
-Date: Wed, 05 Nov 2014 20:25:59 +0900
-Message-ID: <1415186759-21800-1-git-send-email-jy0922.shim@samsung.com>
+Date: Wed, 05 Nov 2014 20:26:09 +0900
+Message-ID: <1415186769-21847-1-git-send-email-jy0922.shim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
