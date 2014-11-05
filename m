@@ -1,154 +1,81 @@
 From: Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH v2 1/3] iio: exyno-adc: use syscon for PMU register access
-Date: Wed, 05 Nov 2014 15:29:03 +0000
-Message-ID: <545A423F.1040709@kernel.org>
-References: <1410857931-4980-1-git-send-email-ch.naveen@samsung.com> <1410857931-4980-2-git-send-email-ch.naveen@samsung.com>
+Subject: Re: [PATCH v2 2/3] Documentation: dt-bindings: update exynos-adc.txt
+ with syscon handle
+Date: Wed, 05 Nov 2014 15:34:55 +0000
+Message-ID: <545A439F.6080404@kernel.org>
+References: <1410857931-4980-1-git-send-email-ch.naveen@samsung.com> <1410857931-4980-3-git-send-email-ch.naveen@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from saturn.retrosnub.co.uk ([178.18.118.26]:43348 "EHLO
+Received: from saturn.retrosnub.co.uk ([178.18.118.26]:43392 "EHLO
 	saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755266AbaKEP3G (ORCPT
+	with ESMTP id S1754937AbaKEPe6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Nov 2014 10:29:06 -0500
-In-Reply-To: <1410857931-4980-2-git-send-email-ch.naveen@samsung.com>
+	Wed, 5 Nov 2014 10:34:58 -0500
+In-Reply-To: <1410857931-4980-3-git-send-email-ch.naveen@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-iio@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org, cw00.choi@samsung.com, gregkh@linuxfoundation.org, naveenkrishna.ch@gmail.com, lars@metafoo.de, cpgs@samsung.com, grundler@chromium.org
 
 On 16/09/14 09:58, Naveen Krishna Chatradhi wrote:
-> This patch updates the IIO based ADC driver to use syscon and regmap
-> APIs to access and use PMU registers instead of remapping the PMU
-> registers in the driver.
+> This patch updates the DT bindings for ADC in exynos-adc.txt with the
+> syscon phandle to the ADC nodes.
 > 
 > Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> To: linux-iio@vger.kernel.org
-Applied to the togreg branch of iio.git - initially pushed out as testing
-for the autobuilders to play.
+> To: devicetree@vger.kernel.org
+Applied to the togreg branch of iio.git - initially pushed out as testing.
 
-
+Thanks,
 > ---
-> Changes since v1:
-> Rebased on top of togreg branch of IIO git
+>  .../devicetree/bindings/arm/samsung/exynos-adc.txt |    9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
 > 
->  drivers/iio/adc/exynos_adc.c |   30 +++++++++++++++++++++---------
->  1 file changed, 21 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/exynos_adc.c b/drivers/iio/adc/exynos_adc.c
-> index 43620fd..fe03177 100644
-> --- a/drivers/iio/adc/exynos_adc.c
-> +++ b/drivers/iio/adc/exynos_adc.c
-> @@ -39,6 +39,8 @@
->  #include <linux/iio/iio.h>
->  #include <linux/iio/machine.h>
->  #include <linux/iio/driver.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/regmap.h>
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> index 709efaa..c368210 100644
+> --- a/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> +++ b/Documentation/devicetree/bindings/arm/samsung/exynos-adc.txt
+> @@ -43,13 +43,16 @@ Required properties:
+>  				   compatible ADC block)
+>  - vdd-supply		VDD input supply.
 >  
->  /* S3C/EXYNOS4412/5250 ADC_V1 registers definitions */
->  #define ADC_V1_CON(x)		((x) + 0x00)
-> @@ -90,11 +92,14 @@
->  
->  #define EXYNOS_ADC_TIMEOUT	(msecs_to_jiffies(100))
->  
-> +#define EXYNOS_ADCV1_PHY_OFFSET	0x0718
-> +#define EXYNOS_ADCV2_PHY_OFFSET	0x0720
+> +- samsung,syscon-phandle Contains the PMU system controller node
+> +			(To access the ADC_PHY register on Exynos5250/5420/5800/3250)
 > +
->  struct exynos_adc {
->  	struct exynos_adc_data	*data;
->  	struct device		*dev;
->  	void __iomem		*regs;
-> -	void __iomem		*enable_reg;
-> +	struct regmap		*pmu_map;
->  	struct clk		*clk;
->  	struct clk		*sclk;
->  	unsigned int		irq;
-> @@ -110,6 +115,7 @@ struct exynos_adc_data {
->  	int num_channels;
->  	bool needs_sclk;
->  	bool needs_adc_phy;
-> +	int phy_offset;
->  	u32 mask;
+>  Note: child nodes can be added for auto probing from device tree.
 >  
->  	void (*init_hw)(struct exynos_adc *info);
-> @@ -183,7 +189,7 @@ static void exynos_adc_v1_init_hw(struct exynos_adc *info)
->  	u32 con1;
+>  Example: adding device info in dtsi file
 >  
->  	if (info->data->needs_adc_phy)
-> -		writel(1, info->enable_reg);
-> +		regmap_write(info->pmu_map, info->data->phy_offset, 1);
+>  adc: adc@12D10000 {
+>  	compatible = "samsung,exynos-adc-v1";
+> -	reg = <0x12D10000 0x100>, <0x10040718 0x4>;
+> +	reg = <0x12D10000 0x100>;
+>  	interrupts = <0 106 0>;
+>  	#io-channel-cells = <1>;
+>  	io-channel-ranges;
+> @@ -58,13 +61,14 @@ adc: adc@12D10000 {
+>  	clock-names = "adc";
 >  
->  	/* set default prescaler values and Enable prescaler */
->  	con1 =  ADC_V1_CON_PRSCLV(49) | ADC_V1_CON_PRSCEN;
-> @@ -198,7 +204,7 @@ static void exynos_adc_v1_exit_hw(struct exynos_adc *info)
->  	u32 con;
+>  	vdd-supply = <&buck5_reg>;
+> +	samsung,syscon-phandle = <&pmu_system_controller>;
+>  };
 >  
->  	if (info->data->needs_adc_phy)
-> -		writel(0, info->enable_reg);
-> +		regmap_write(info->pmu_map, info->data->phy_offset, 0);
+>  Example: adding device info in dtsi file for Exynos3250 with additional sclk
 >  
->  	con = readl(ADC_V1_CON(info->regs));
->  	con |= ADC_V1_CON_STANDBY;
-> @@ -225,6 +231,7 @@ static const struct exynos_adc_data exynos_adc_v1_data = {
->  	.num_channels	= MAX_ADC_V1_CHANNELS,
->  	.mask		= ADC_DATX_MASK,	/* 12 bit ADC resolution */
->  	.needs_adc_phy	= true,
-> +	.phy_offset	= EXYNOS_ADCV1_PHY_OFFSET,
+>  adc: adc@126C0000 {
+>  	compatible = "samsung,exynos3250-adc", "samsung,exynos-adc-v2;
+> -	reg = <0x126C0000 0x100>, <0x10020718 0x4>;
+> +	reg = <0x126C0000 0x100>;
+>  	interrupts = <0 137 0>;
+>  	#io-channel-cells = <1>;
+>  	io-channel-ranges;
+> @@ -73,6 +77,7 @@ adc: adc@126C0000 {
+>  	clock-names = "adc", "sclk";
 >  
->  	.init_hw	= exynos_adc_v1_init_hw,
->  	.exit_hw	= exynos_adc_v1_exit_hw,
-> @@ -314,7 +321,7 @@ static void exynos_adc_v2_init_hw(struct exynos_adc *info)
->  	u32 con1, con2;
+>  	vdd-supply = <&buck5_reg>;
+> +	samsung,syscon-phandle = <&pmu_system_controller>;
+>  };
 >  
->  	if (info->data->needs_adc_phy)
-> -		writel(1, info->enable_reg);
-> +		regmap_write(info->pmu_map, info->data->phy_offset, 1);
->  
->  	con1 = ADC_V2_CON1_SOFT_RESET;
->  	writel(con1, ADC_V2_CON1(info->regs));
-> @@ -332,7 +339,7 @@ static void exynos_adc_v2_exit_hw(struct exynos_adc *info)
->  	u32 con;
->  
->  	if (info->data->needs_adc_phy)
-> -		writel(0, info->enable_reg);
-> +		regmap_write(info->pmu_map, info->data->phy_offset, 0);
->  
->  	con = readl(ADC_V2_CON1(info->regs));
->  	con &= ~ADC_CON_EN_START;
-> @@ -362,6 +369,7 @@ static const struct exynos_adc_data exynos_adc_v2_data = {
->  	.num_channels	= MAX_ADC_V2_CHANNELS,
->  	.mask		= ADC_DATX_MASK, /* 12 bit ADC resolution */
->  	.needs_adc_phy	= true,
-> +	.phy_offset	= EXYNOS_ADCV2_PHY_OFFSET,
->  
->  	.init_hw	= exynos_adc_v2_init_hw,
->  	.exit_hw	= exynos_adc_v2_exit_hw,
-> @@ -374,6 +382,7 @@ static const struct exynos_adc_data exynos3250_adc_data = {
->  	.mask		= ADC_DATX_MASK, /* 12 bit ADC resolution */
->  	.needs_sclk	= true,
->  	.needs_adc_phy	= true,
-> +	.phy_offset	= EXYNOS_ADCV1_PHY_OFFSET,
->  
->  	.init_hw	= exynos_adc_v2_init_hw,
->  	.exit_hw	= exynos_adc_v2_exit_hw,
-> @@ -558,10 +567,13 @@ static int exynos_adc_probe(struct platform_device *pdev)
->  
->  
->  	if (info->data->needs_adc_phy) {
-> -		mem = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-> -		info->enable_reg = devm_ioremap_resource(&pdev->dev, mem);
-> -		if (IS_ERR(info->enable_reg))
-> -			return PTR_ERR(info->enable_reg);
-> +		info->pmu_map = syscon_regmap_lookup_by_phandle(
-> +					pdev->dev.of_node,
-> +					"samsung,syscon-phandle");
-> +		if (IS_ERR(info->pmu_map)) {
-> +			dev_err(&pdev->dev, "syscon regmap lookup failed.\n");
-> +			return PTR_ERR(info->pmu_map);
-> +		}
->  	}
->  
->  	irq = platform_get_irq(pdev, 0);
+>  Example: Adding child nodes in dts file
 > 
