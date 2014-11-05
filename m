@@ -1,64 +1,53 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [GIT PULL 2/3 v2] 1st Round of Samsung PM updates for v3.19
-Date: Wed, 05 Nov 2014 09:31:49 +0900
-Message-ID: <015101cff88f$e5790880$b06b1980$@kernel.org>
-References: <021801cff253$0374fe40$0a5efac0$@samsung.com>
- <20141104203502.GA3851@quad.lixom.net>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH] PM / Domains: Change prototype for the ->attach_dev()
+ callback
+Date: Tue, 4 Nov 2014 17:33:53 -0800
+Message-ID: <20141105013353.GA19238@dtor-ws>
+References: <1414670569-3002-1-git-send-email-ulf.hansson@linaro.org>
+ <3981560.mBph1QJkfl@vostro.rjw.lan>
+ <7h4mul9ttl.fsf@deeprootsystems.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:16017 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751421AbaKEAbz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Nov 2014 19:31:55 -0500
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NEJ008YZIT5J350@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Nov 2014 09:31:53 +0900 (KST)
-In-reply-to: <20141104203502.GA3851@quad.lixom.net>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <7h4mul9ttl.fsf@deeprootsystems.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Kevin Hilman <khilman@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Ulf Hansson <ulf.hansson@linaro.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron Lu <aaron.lu@intel.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>
-Cc: 'Kukjin Kim' <kgene@kernel.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org
 
-Olof Johansson wrote:
-> On Tue, Oct 28, 2014 at 11:00:57AM +0900, Kukjin Kim wrote:
-> > Hi,
+On Thu, Oct 30, 2014 at 01:38:30PM -0700, Kevin Hilman wrote:
+> "Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
+> 
+> > On Thursday, October 30, 2014 01:02:49 PM Ulf Hansson wrote:
+> >> Convert the prototype to return and int. This is just an initial step,
+> >> needed to support error handling.
+> >> 
+> >> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> 
+> Acked-by: Kevin Hilman <khilman@linaro.org>
+> 
+> >> 
+> >> This patch is intended as fix for 3.18 rc[n]. Why?
+> >> 
+> >> There are other SOC specific patches around that adds genpd support and which
+> >> implements the ->attach_dev() callback. To prevent having an "atomic" patch
+> >> during the next release cycle, let's change the prototype now instead.
+> >> 
+> >> Further patches will add the actual error handling in genpd and these can then
+> >> be reviewed and tested thoroughly.
 > >
-Hi,
+> > So we have no users of ->attach_dev at the moment, right?
+> 
+> Not in mainline, but there are a couple getting ready to hit -next, so
+> we wanted to fix this before they arrive so that adding the error
+> handling will be easier.
 
-> > I'm sending new pull-request for tags/samsung-pm-v2 instead of tags/samsung-pm.
-> > Note that just added "fix build with ARM_CPU_SUSPEND=n" from Arnd, please pull.
-> >
-> > Thanks,
-> > Kukjin
-> 
-> Kukjin,
-> 
-> The history here is somewhat odd. You've merged in cleanup and dt,
-> and two merges of pm (one with just the extra fix from Arnd). Are the
-> merges needed just to avoid merge conflicts? If so, we can resolve that
-> when we merge here, that's not a problem.
-> 
-Oops, probably I did 'checkout for-next' in my tree when I tagged
-tags/samsung-pm-v2 :(
+BTW, while we are at it, can we also pass the domain itself to
+attach_dev() and detach_dev()? If anything it helps with debugging (you
+can print domain name from the callbacks).
 
-> If it's needed because pm doesn't work without the dt branch also being
-> merged in, then this is not sufficient since when bisecting, you might get
-> only the pm branch contents and not the dt contents in some circumstances.
-> 
-> So, please confirm which of the cases it is, and resubmit just the bare
-> pm branch if there are no dependencies.
-> 
-Can you please merge branch v3.19-next/pm-samsung-2 instead?
-If you don't want to merge just branch, I'll re-send with new tag.
+Thanks.
 
-Sorry for the inconvenience.
-
-Thanks,
-Kukjin
+-- 
+Dmitry
