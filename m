@@ -1,105 +1,70 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Subject: Re: [PATCH v3] arm64: dts: exynos7: add support for cpuidle core
- power down
-Date: Wed, 5 Nov 2014 11:12:05 +0000
-Message-ID: <20141105111205.GA21258@red-moon>
-References: <1415182536-11613-1-git-send-email-k.chander@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1415182536-11613-1-git-send-email-k.chander@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Chander Kashyap <k.chander@samsung.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, Catalin Marinas <Catalin.Marinas@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: [PATCH] drm/exynos: add has_vtsel flag
+Date: Wed, 05 Nov 2014 20:25:26 +0900
+Message-ID: <1415186726-21760-1-git-send-email-jy0922.shim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:60260 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753520AbaKELZX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 5 Nov 2014 06:25:23 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NEK009MHD29HO60@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 05 Nov 2014 20:25:21 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: inki.dae@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org
 
-On Wed, Nov 05, 2014 at 10:15:36AM +0000, Chander Kashyap wrote:
-> Exynos7 has core power down state where cores can be powered off independently.
-> This patch adds support for this state.
-> 
-> Entry latency for the core power down is calculated as follows:
-> 1. Time difference is measured between cpuidle entry and exit.
-> 2. WFI is skipped measuring the time.
-> 3. The time is averaged out for 100000 cpuidle transactions with varying load.
-- entry-latency-us
-	Usage: Required
-	"Definition: u32 value representing worst case latency in microseconds
-		     required to enter the idle state. ..."
+The exynos fimd provides video type selection bits from system register
+but exynos3 series don't has it, so needs has_vtsel flag and we can
+distinguish whether set video type selection bits.
 
-Is that an average value in your opinion ? I am being pedantic, I know,
-but we define bindings to be followed, not interpreted.
+Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-Thanks,
-Lorenzo
-
-> Exit latency and target residency are supplied as per HW team
-> 
-> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
-> ---
-> This patch has following dependencies:
-> 	- [PATCH v5 0/8] arch: arm64: Enable support for Samsung Exynos7 SoC
-> 		http://www.spinics.net/lists/linux-samsung-soc/msg37047.html
-> Changes in v2:
-> 	- Moved the cpu-idle-state property after reg property
-> 	- removed the status property.
-> 
-> Changes in v3:
-> 	- Added the Entry latency calculation in commit message.
-> 
->  arch/arm64/boot/dts/exynos/exynos7.dtsi |   17 +++++++++++++++++
->  1 file changed, 17 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> index 50ae936..444dde1 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> @@ -37,6 +37,7 @@
->  			compatible = "arm,cortex-a57", "arm,armv8";
->  			enable-method = "psci";
->  			reg = <0x0>;
-> +			cpu-idle-states = <&CPU_SLEEP>;
->  		};
->  
->  		cpu@1 {
-> @@ -44,6 +45,7 @@
->  			compatible = "arm,cortex-a57", "arm,armv8";
->  			enable-method = "psci";
->  			reg = <0x1>;
-> +			cpu-idle-states = <&CPU_SLEEP>;
->  		};
->  
->  		cpu@2 {
-> @@ -51,6 +53,7 @@
->  			compatible = "arm,cortex-a57", "arm,armv8";
->  			enable-method = "psci";
->  			reg = <0x2>;
-> +			cpu-idle-states = <&CPU_SLEEP>;
->  		};
->  
->  		cpu@3 {
-> @@ -58,6 +61,20 @@
->  			compatible = "arm,cortex-a57", "arm,armv8";
->  			enable-method = "psci";
->  			reg = <0x3>;
-> +			cpu-idle-states = <&CPU_SLEEP>;
-> +		};
-> +
-> +		idle-states {
-> +			entry-method = "arm,psci";
-> +
-> +			CPU_SLEEP: cpu-sleep {
-> +				compatible = "arm,idle-state";
-> +				local-timer-stop;
-> +				arm,psci-suspend-param = <0x0010000>;
-> +				entry-latency-us = <20>;
-> +				exit-latency-us = <150>;
-> +				min-residency-us = <2100>;
-> +			};
->  		};
->  	};
->  
-> -- 
-> 1.7.9.5
-> 
-> 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 085b066..1b32771 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -96,6 +96,7 @@ struct fimd_driver_data {
+ 	unsigned int has_clksel:1;
+ 	unsigned int has_limited_fmt:1;
+ 	unsigned int has_vidoutcon:1;
++	unsigned int has_vtsel:1;
+ };
+ 
+ static struct fimd_driver_data s3c64xx_fimd_driver_data = {
+@@ -118,6 +119,7 @@ static struct fimd_driver_data exynos4_fimd_driver_data = {
+ 	.lcdblk_vt_shift = 10,
+ 	.lcdblk_bypass_shift = 1,
+ 	.has_shadowcon = 1,
++	.has_vtsel = 1,
+ };
+ 
+ static struct fimd_driver_data exynos5_fimd_driver_data = {
+@@ -127,6 +129,7 @@ static struct fimd_driver_data exynos5_fimd_driver_data = {
+ 	.lcdblk_bypass_shift = 15,
+ 	.has_shadowcon = 1,
+ 	.has_vidoutcon = 1,
++	.has_vtsel = 1,
+ };
+ 
+ struct fimd_win_data {
+@@ -343,7 +346,8 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
+ 		writel(0, timing_base + I80IFCONFBx(0));
+ 
+ 		/* set video type selection to I80 interface */
+-		if (ctx->sysreg && regmap_update_bits(ctx->sysreg,
++		if (driver_data->has_vtsel && ctx->sysreg &&
++				regmap_update_bits(ctx->sysreg,
+ 					driver_data->lcdblk_offset,
+ 					0x3 << driver_data->lcdblk_vt_shift,
+ 					0x1 << driver_data->lcdblk_vt_shift)) {
+-- 
+1.9.1
