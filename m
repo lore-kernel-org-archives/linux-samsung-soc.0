@@ -1,56 +1,64 @@
-From: Julius Werner <jwerner@chromium.org>
-Subject: Re: nv u-boot for spring (was: building nv-uboot for nyan-big.)
-Date: Tue, 4 Nov 2014 14:28:09 -0800
-Message-ID: <CAODwPW_kqV=FVUG6GvV74211juBVCkA8RxrfXZoncRieRn+FZw@mail.gmail.com>
-References: <54575BFE.2010108@synkhronix.com>
-	<54577D88.2070002@suse.de>
-	<CAL1qeaFzYRZHdsgZdwN5LV+OaSAPXgTQ+BRTWdsEurj22qC4Yg@mail.gmail.com>
-	<CAODwPW_ZbCMEwdtuu9gMD_HLQWynC6ZQjno6xVxFMOBuxRzd+A@mail.gmail.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [GIT PULL 2/3 v2] 1st Round of Samsung PM updates for v3.19
+Date: Wed, 05 Nov 2014 09:31:49 +0900
+Message-ID: <015101cff88f$e5790880$b06b1980$@kernel.org>
+References: <021801cff253$0374fe40$0a5efac0$@samsung.com>
+ <20141104203502.GA3851@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f176.google.com ([209.85.214.176]:48997 "EHLO
-	mail-ob0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752428AbaKDW2K convert rfc822-to-8bit (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:16017 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751421AbaKEAbz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Nov 2014 17:28:10 -0500
-Received: by mail-ob0-f176.google.com with SMTP id va2so11473175obc.7
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Nov 2014 14:28:10 -0800 (PST)
-In-Reply-To: <CAODwPW_ZbCMEwdtuu9gMD_HLQWynC6ZQjno6xVxFMOBuxRzd+A@mail.gmail.com>
+	Tue, 4 Nov 2014 19:31:55 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NEJ008YZIT5J350@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 05 Nov 2014 09:31:53 +0900 (KST)
+In-reply-to: <20141104203502.GA3851@quad.lixom.net>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Julius Werner <jwerner@chromium.org>
-Cc: Andrew Bresticker <abrestic@chromium.org>, =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, "S.J.R. van Schaik" <stephan@synkhronix.com>, Dylan Reid <dgreid@chromium.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: 'Olof Johansson' <olof@lixom.net>
+Cc: 'Kukjin Kim' <kgene@kernel.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org
 
-...and once more with text/plain. Thanks for always forgetting my
-settings, GMail. -.-
+Olof Johansson wrote:
+> On Tue, Oct 28, 2014 at 11:00:57AM +0900, Kukjin Kim wrote:
+> > Hi,
+> >
+Hi,
 
-On Tue, Nov 4, 2014 at 2:26 PM, Julius Werner <jwerner@chromium.org> wrote:
->>
->> Unlike the Exynos Chromebooks, the Tegra Chromebooks do not use U-Boot
->> as their firmware/bootloader - they instead use Coreboot (firmware)
->> and Depthcharge (bootloader) like the x86 Chromebooks.  You can,
->> however, update your firmware with U-Boot as a legacy mode (Ctrl+L at
->> the dev screen) payload - I've added Julius who can provide more
->> detail about this process.
->
->
-> The Tegra Chromebooks (Nyan_Big/Acer and Nyan_Blaze/HP) contain the same "legacy mode" feature as x86 Chromebooks... it essentially just loads and jumps to an unverified binary in the RW_LEGACY section of the firmware flash image (1MB starting at 0x300000 for Tegra, visible via "dump_fmap -h image.bin" in a ChromiumOS developer chroot). However, we did not ship any software in that part of the image (unlike most x86 Chromebooks which ship with SeaBIOS) so you will have to build it yourself.
->
-> The format used to wrap the blob is a Coreboot File System (CBFS) containing a single file named "payload". You can convert an ELF binary into such a CBFS blob with the cbfstool program bundled with ChromiumOS or upstream coreboot:
->
-> # All CBFS images need to have a "bootblock", but since this is not a booting image we just need some empty bytes
-> truncate -s 64 bootblock.dummy
-> # -s should specify the size of RW_LEGACY on your Chromebook
-> cbfstool legacy.bin create -s $((1 * 1024 * 1024)) -B bootblock.dummy -m arm
-> cbfstool legacy.bin add-payload -f your_firmware.elf -n payload -c lzma
-> # ...and now do the following on your Chromebook in developer mode to overwrite the legacy section
-> flashrom -w -i RW_LEGACY:legacy.bin
->
-> The legacy section is not write-protected and not checked by the verified boot mechanism, so you do *not* need to open your Chromebook and remove the write-protect screw for this.
->
-> I don't know about the state of the upstream "venice2" U-Boot. I do know that the ChromiumOS U-Boot repository has a version for nyan_big and nyan_blaze that will kinda run but has a bunch of issues (I think EC communication and MMC were wonky, and display had never been added at all). It is probably the best place to start. Remember that this will run after coreboot has already initialized most of the system, which may be unexpected for a U-Boot that intended to run right after power-on reset (you may or may not want to skip the SPL in that case). For U-Boot, there is also an additional complexity that it requires a device tree appended to the final raw binary, but cbfstool expects to receive an ELF file... we have a small script in src/third_party/chromiumos-overlay/sys-boot/chromeos-b
- ootimage/files/build_cb_legacy_uboot.sh to resolve that with some objcopies.
->
-> We would be very happy if anyone wants to dig into U-Boot and get it working to a point where people could boot ordinary Linux distributions with it on those Chromebooks. We meant to do it ourselves but ran out of time at the end of the project. Let me know if you have any issues getting the legacy firmware mechanism itself to work (that part at least is considered a supported feature).
+> > I'm sending new pull-request for tags/samsung-pm-v2 instead of tags/samsung-pm.
+> > Note that just added "fix build with ARM_CPU_SUSPEND=n" from Arnd, please pull.
+> >
+> > Thanks,
+> > Kukjin
+> 
+> Kukjin,
+> 
+> The history here is somewhat odd. You've merged in cleanup and dt,
+> and two merges of pm (one with just the extra fix from Arnd). Are the
+> merges needed just to avoid merge conflicts? If so, we can resolve that
+> when we merge here, that's not a problem.
+> 
+Oops, probably I did 'checkout for-next' in my tree when I tagged
+tags/samsung-pm-v2 :(
+
+> If it's needed because pm doesn't work without the dt branch also being
+> merged in, then this is not sufficient since when bisecting, you might get
+> only the pm branch contents and not the dt contents in some circumstances.
+> 
+> So, please confirm which of the cases it is, and resubmit just the bare
+> pm branch if there are no dependencies.
+> 
+Can you please merge branch v3.19-next/pm-samsung-2 instead?
+If you don't want to merge just branch, I'll re-send with new tag.
+
+Sorry for the inconvenience.
+
+Thanks,
+Kukjin
