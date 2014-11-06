@@ -1,58 +1,100 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH 1/9] drm/exynos: remove uneeded declaration of struct
- dma_iommu_mapping
-Date: Thu, 6 Nov 2014 10:38:47 -0200
-Message-ID: <20141106123847.GB30193@joana>
-References: <1414765063-30598-1-git-send-email-gustavo@padovan.org>
+From: "Stam, Michel [FINT]" <M.Stam@fugro.nl>
+Subject: RE: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net on arndale platform
+Date: Thu, 6 Nov 2014 13:39:07 +0100
+Message-ID: <C89EFD3CD56F64468D3D206D683A8D22039FFE16@ldam-msx2.fugro-nl.local>
+References: <20141104072236.GA559@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D2203985F49@ldam-msx2.fugro-nl.local> <20141104094336.GA3145@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D2203985FA9@ldam-msx2.fugro-nl.local> <20141104200914.GN23178@opensource.wolfsonmicro.com> <C89EFD3CD56F64468D3D206D683A8D22039FFC5F@ldam-msx2.fugro-nl.local> <20141105150258.GR23178@opensource.wolfsonmicro.com> <20141106090651.GA19109@afflict.kos.to> <20141106100104.GS23178@opensource.wolfsonmicro.com> <20141106120416.GA20162@afflict.kos.to>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f47.google.com ([209.85.192.47]:52310 "EHLO
-	mail-qg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750963AbaKFMiv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Nov 2014 07:38:51 -0500
-Received: by mail-qg0-f47.google.com with SMTP id j107so624076qga.6
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Nov 2014 04:38:51 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1414765063-30598-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-class: urn:content-classes:message
+In-Reply-To: <20141106120416.GA20162@afflict.kos.to>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Riku Voipio <riku.voipio@iki.fi>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: freddy@asix.com.tw, davem@davemloft.net, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
 
+Hello Riku and Charles,
 
-Hi Inki,
+I tried this with my original patch and the suggested patch applied,
+this seems to work for me too.
 
-Could you please give a review to this series?
+One thing that bothers me, is the suspend / resume situation; usbnet.c
+seems to call the bind( ) on probe( ). Suspend / resume do not seem to
+call bind( ) directly.
 
-Thanks.
+As Riku pointed out, the original patch I reverted was because of
+suspend/resume issues. I wonder if this will still work? 
 
-	Gustavo
+Kind regards,
 
-2014-10-31 Gustavo Padovan <gustavo@padovan.org>:
+Michel Stam
 
-> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+-----Original Message-----
+From: Riku Voipio [mailto:riku.voipio@iki.fi] 
+Sent: Thursday, November 06, 2014 13:04 PM
+To: Charles Keepax
+Cc: Riku Voipio; Stam, Michel [FINT]; freddy@asix.com.tw;
+davem@davemloft.net; linux-usb@vger.kernel.org; netdev@vger.kernel.org;
+linux-kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org
+Subject: Re: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net
+on arndale platform
+
+On Thu, Nov 06, 2014 at 10:01:04AM +0000, Charles Keepax wrote:
+> On Thu, Nov 06, 2014 at 11:06:51AM +0200, Riku Voipio wrote:
+> > The asix on arndale comes semi-configured from u-boot, which I guess
+
+> > is not the state kernel expects it to come in. At least in my case 
+> > where I use tftp from u-boot to load my kernel.
+> > 
+> > So probably the full reset is needed here to make the asix chip come
+
+> > to a truly pristine state.
+> > 
+> > The commit that Michel partially reverted (by returning to use 
+> > ax88772_link_reset instead of ax88772_reset), indicates that a 
+> > strong reset is needed for suspend/resume as well:
+ 
+> Ok I think I have cracked this one. I am pretty sure you are right 
+> that the USB comes to us in a strange state and needs a full reset, 
+> but that only needs to happen once when the driver is bound in. So 
+> there is some code in ax88772_bind that appears to try to reset the 
+> device but does a lot less than ax88772_reset and I think that must be
+
+> the problem. Applying the following on top of the patch we have been 
+> debating I think will make everything work for all of us:
+
+The patch below on top of 3.18-rc3 fixes arndale network for me.
+
+Tested-by: Riku Voipio <riku.voipio@linaro.org>
+
+> --- a/drivers/net/usb/asix_devices.c
+> +++ b/drivers/net/usb/asix_devices.c
+> @@ -465,19 +465,7 @@ static int ax88772_bind(struct usbnet *dev, 
+> struct usb_interface *in
+>                 return ret;
+>         }
 > 
-> It is not even used in this header anymore.
+> -       ret = asix_sw_reset(dev, AX_SWRESET_IPPD | AX_SWRESET_PRL);
+> -       if (ret < 0)
+> -               return ret;
+> -
+> -       msleep(150);
+> -
+> -       ret = asix_sw_reset(dev, AX_SWRESET_CLEAR);
+> -       if (ret < 0)
+> -               return ret;
+> -
+> -       msleep(150);
+> -
+> -       ret = asix_sw_reset(dev, embd_phy ? AX_SWRESET_IPRL :
+AX_SWRESET_PRTE);
+> +       ax88772_reset(dev);
 > 
-> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_iommu.h | 1 -
->  1 file changed, 1 deletion(-)
+> If you guys could test that and let me know how you get on I will send
+
+> in a proper patch if it looks good.
 > 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_iommu.h b/drivers/gpu/drm/exynos/exynos_drm_iommu.h
-> index 72376d4..35d2588 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_iommu.h
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_iommu.h
-> @@ -40,7 +40,6 @@ static inline bool is_drm_iommu_supported(struct drm_device *drm_dev)
->  
->  #else
->  
-> -struct dma_iommu_mapping;
->  static inline int drm_create_iommu_mapping(struct drm_device *drm_dev)
->  {
->  	return 0;
-> -- 
-> 1.9.3
-> 
+> Thanks,
+> Charles
