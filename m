@@ -1,136 +1,77 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] PM / Domains: Change prototype for the ->attach_dev() callback
-Date: Thu, 06 Nov 2014 01:54:36 +0100
-Message-ID: <6900237.LSPrkZ5QMk@vostro.rjw.lan>
-References: <1414670569-3002-1-git-send-email-ulf.hansson@linaro.org> <3267963.fqUYb7m9Rv@vostro.rjw.lan> <7hsihx1bvo.fsf@deeprootsystems.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: RE: [PATCH 02/12] drivers: mfd: Add support for Exynos PMU driver
+Date: Thu, 06 Nov 2014 11:18:48 +0530
+Message-ID: <000601cff985$5b8911f0$129b35d0$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:58641 "HELO
-	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1750915AbaKFAdu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Nov 2014 19:33:50 -0500
-In-Reply-To: <7hsihx1bvo.fsf@deeprootsystems.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-language: en-us
+Sender: linux-pm-owner@vger.kernel.org
+To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Lee Jones' <lee.jones@linaro.org>
+Cc: 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kgene.kim@samsung.com, 'Sangbeom Kim' <sbkim73@samsung.com>, 'Samuel Ortiz' <sameo@linux.intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron Lu <aaron.lu@intel.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Wednesday, November 05, 2014 03:11:23 PM Kevin Hilman wrote:
-> "Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
+On Wednesday, November 05, 2014 7:18 PM, Sylwester Nawrocki wrote:
+> On 04/11/14 04:18, Pankaj Dubey wrote:
+> > 2: Since PM domain relies on PMU registers and does not have its own 
+> > DT binding, MFD client and MFD device is most suitable for making 
+> > this kind of platform drivers.
 > 
-> > On Wednesday, November 05, 2014 02:43:31 PM Kevin Hilman wrote:
-> >> Dmitry Torokhov <dmitry.torokhov@gmail.com> writes:
-> >> 
-> >> > On Thu, Oct 30, 2014 at 01:38:30PM -0700, Kevin Hilman wrote:
-> >> >> "Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
-> >> >> 
-> >> >> > On Thursday, October 30, 2014 01:02:49 PM Ulf Hansson wrote:
-> >> >> >> Convert the prototype to return and int. This is just an initial step,
-> >> >> >> needed to support error handling.
-> >> >> >> 
-> >> >> >> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> >> >> 
-> >> >> Acked-by: Kevin Hilman <khilman@linaro.org>
-> >> >> 
-> >> >> >> 
-> >> >> >> This patch is intended as fix for 3.18 rc[n]. Why?
-> >> >> >> 
-> >> >> >> There are other SOC specific patches around that adds genpd support and which
-> >> >> >> implements the ->attach_dev() callback. To prevent having an "atomic" patch
-> >> >> >> during the next release cycle, let's change the prototype now instead.
-> >> >> >> 
-> >> >> >> Further patches will add the actual error handling in genpd and these can then
-> >> >> >> be reviewed and tested thoroughly.
-> >> >> >
-> >> >> > So we have no users of ->attach_dev at the moment, right?
-> >> >> 
-> >> >> Not in mainline, but there are a couple getting ready to hit -next, so
-> >> >> we wanted to fix this before they arrive so that adding the error
-> >> >> handling will be easier.
-> >> >
-> >> > BTW, while we are at it, can we also pass the domain itself to
-> >> > attach_dev() and detach_dev()? If anything it helps with debugging (you
-> >> > can print domain name from the callbacks).
-> >> 
-> >> Agreed, and it makes it match the other callbacks (power_off, power_on)
-> >> which currently take struct generic_pm_domain *domain.  
-> >> 
-> >> Updated version of $SUBJECT patch below.
-> >
-> > The subject and changelog need to be updated too IMO.
-> >
-> 
-> Right.  Here you go.
-
-I've replaced the Ulf's original with this one, thanks!
-
-> ----- >8 ------
-> From c18a6bf3121979c4102ba4f7edb3ac41e3921fc6 Mon Sep 17 00:00:00 2001
-> From: Ulf Hansson <ulf.hansson@linaro.org>
-> Date: Thu, 30 Oct 2014 13:02:49 +0100
-> Subject: [PATCH] PM / Domains: Change prototype for the attach and detach
->  callbacks
-> 
-> Convert the prototypes to return an int in order to support error
-> handling in these callbacks.
-> 
-> Also, as suggested by Dmitry Torokhov, pass the domain pointer for use
-> inside the callbacks, and so that they match the existing
-> power_on/power_off callbacks which currently take the domain pointer.
-> 
-> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> [khilman: added domain as parameter to callbacks, as suggested by Dmitry]
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Kevin Hilman <khilman@linaro.org>
-> ---
->  drivers/base/power/domain.c | 4 ++--
->  include/linux/pm_domain.h   | 6 ++++--
->  2 files changed, 6 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 40bc2f4072cc..b520687046d4 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -1437,7 +1437,7 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
->  	spin_unlock_irq(&dev->power.lock);
->  
->  	if (genpd->attach_dev)
-> -		genpd->attach_dev(dev);
-> +		genpd->attach_dev(genpd, dev);
->  
->  	mutex_lock(&gpd_data->lock);
->  	gpd_data->base.dev = dev;
-> @@ -1499,7 +1499,7 @@ int pm_genpd_remove_device(struct generic_pm_domain *genpd,
->  	genpd->max_off_time_changed = true;
->  
->  	if (genpd->detach_dev)
-> -		genpd->detach_dev(dev);
-> +		genpd->detach_dev(genpd, dev);
->  
->  	spin_lock_irq(&dev->power.lock);
->  
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 73e938b7e937..b3ed7766a291 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -72,8 +72,10 @@ struct generic_pm_domain {
->  	bool max_off_time_changed;
->  	bool cached_power_down_ok;
->  	struct gpd_cpuidle_data *cpuidle_data;
-> -	void (*attach_dev)(struct device *dev);
-> -	void (*detach_dev)(struct device *dev);
-> +	int (*attach_dev)(struct generic_pm_domain *domain,
-> +			  struct device *dev);
-> +	void (*detach_dev)(struct generic_pm_domain *domain,
-> +			   struct device *dev);
->  };
->  
->  static inline struct generic_pm_domain *pd_to_genpd(struct dev_pm_domain *pd)
+> We have DT binding for the Exynos power domains:
+> Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+> In fact the IO memory regions used in the power domain bindings fall 
+> within the
+> (sparse) PMU registers region.
 > 
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+Correct. But currently there is no platform driver for those DT bindings so we have two options:
+1) Register a new platform driver for each of those DT nodes, which are using a very small subset of PMU register region. And we end up getting platform driver's probe for each pd nodes.
+2) Register an Exynos power domain driver which will be a client driver of main Exynos PMU driver, and will get platform data from it. And in this probe parse all pd device nodes and populate all related information from those nodes into Exynos_pm_domain struct instances and keep list of these instances. Same has been proposed in Amit's patch.
+
+I would prefer second method, as next, we can move pm sleep functionality (which also uses PMU register sets) also into such small mfd client driver. And as far as I know for pm sleep currently there is no DT nodes.
+
+> There is also DT binding for the PMU subsystem:
+> Documentation/devicetree/bindings/arm/samsung/pmu.txt
+
+Yes, and currently I have used same binding to convert PMU implementation into a platform driver [1]. Now what we trying to address is same PMU implementation can be reused for ARM64 based SoC if we have to move it into "drivers/mfd/" or "drivers/power/" or may be "drivers/soc".
+
+[1]: http://www.spinics.net/lists/linux-samsung-soc/msg37572.html
+
+Currently we moved into "drivers/mfd" and patches from Amit shows an use case where power domain implementation has been converted into platform driver, but its probe will be called by MFD subsystem and will not be bind to DT nodes of pd  as it will be a client device to main PMU device. Please check this [2], [3].
+
+[2]: http://www.spinics.net/lists/linux-samsung-soc/msg38446.html
+[3]: http://www.spinics.net/lists/linux-samsung-soc/msg38447.html
+
+> 
+> I guess a platform device driver in drivers/power would be a better 
+> fit than drivers/mfd. I doubt introducing an mfd driver now makes much 
+> sense, we have already DT bindings for PHYs, the power domains, etc.
+> 
+
+The reason behind making it a mfd driver is, to make following design for pm domain and pm sleep functionality.
+			 ----------------------
+			| Exynos - PMU  |
+			| MFD device      |
+			| drivers/mfd/     |
+			------------------------
+				|
+		  -----------------------------------------------
+		|					|
+	  -------------------------------		------------------------------------
+	|  Exynos -pd		      |		|   Exynos - pm-sleep	      |
+	|  PMU's client device	      |		|   PMU's client device      |  
+	| (drivers/soc/samsung/) |		| (drivers/soc/samsung/) |	
+	--------------------------------		---------------------------------
+ 
+As Lee mentioned MFD can be used to register the device ( I am assuming he is referring to use of " mfd_add_devices" from Exynos -PMU driver, to make it a mfd device) but it should be kept outside of "drivers/mfd". I just looked for current users of "mfd_add_devices" but only drivers from "drivers/mfd" only are calling this API, also once we call this API it will become an MFD device then why not keep into "drivers/mfd" or maybe I have little understanding of purpose of "drivers/mfd".
+
+But still if it's OK to register Exynos -PMU as MFD device even if it's not in "drivers/mfd" folder, then I would suggest better to keep it in "drivers/soc/samsung/" as it's very much SoC specific. As "drivers/power" looks like place to keep external power supply drivers such as batteries, AC, USB etc.
+
+Thanks,
+Pankaj Dubey
+
+> --
+> Thanks,
+> Sylwester
+
