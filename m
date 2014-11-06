@@ -1,90 +1,58 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: resolve infinite loop issue on multi-platform
-Date: Thu, 06 Nov 2014 21:32:34 +0900
-Message-ID: <545B6A62.7060305@samsung.com>
-References: <1415269965-427-1-git-send-email-inki.dae@samsung.com>
- <545B656F.40401@samsung.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH 1/9] drm/exynos: remove uneeded declaration of struct
+ dma_iommu_mapping
+Date: Thu, 6 Nov 2014 10:38:47 -0200
+Message-ID: <20141106123847.GB30193@joana>
+References: <1414765063-30598-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <545B656F.40401@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f47.google.com ([209.85.192.47]:52310 "EHLO
+	mail-qg0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750963AbaKFMiv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 6 Nov 2014 07:38:51 -0500
+Received: by mail-qg0-f47.google.com with SMTP id j107so624076qga.6
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Nov 2014 04:38:51 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1414765063-30598-1-git-send-email-gustavo@padovan.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
 
-T24gMjAxNOuFhCAxMeyblCAwNuydvCAyMToxMSwgS3J6eXN6dG9mIEtvesWCb3dza2kgd3JvdGU6
-Cj4gT24gMDYuMTEuMjAxNCAxMTozMiwgSW5raSBEYWUgd3JvdGU6Cj4+IFRoaXMgcGF0Y2ggcmVz
-b2x2ZXMgdGVtcG9yYXJpbHkgaW5maW5pdGUgbG9vcCBpc3N1ZSBpbmN1cnJlZAo+PiB3aGVuIEV4
-eW5vcyBkcm0gZHJpdmVyIGlzIGVuYWJsZWQgYW5kIG11bHRpLXBsYXRmb3JtIGtlcm5lbAo+PiBp
-cyB1c2VkIGJ5IHJlZ2lzdGVyaW5nIEV4eW5vcyBkcm0gZGV2aWNlIG9iamVjdCBvbmx5IGluIGNh
-c2UKPj4gb2YgRXh5bm9zIFNvQy4gU28gdGhpcyBwYXRjaCB3aWxsIGJlIHJlcGxhY2VkIHdpdGgg
-bW9yZSBnZW5lcmljCj4+IHdheSBsYXRlci4KPiAKPiBEb2VzIG5vdCBoZWxwIGZvciBSaW5hdG8g
-Ym9hcmQuCj4gCj4gT24gUmluYXRvOgo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gRmFpbGVk
-IHRvIGZpbmQgUE1VIG5vZGUKPiBSZWdpc3RlcmluZyBTV1AvU1dQQiBlbXVsYXRpb24gaGFuZGxl
-cgo+IG1tYzA6IEJLT1BTX0VOIGJpdCBpcyBub3Qgc2V0Cj4gbW1jX2hvc3QgbW1jMDogQnVzIHNw
-ZWVkIChzbG90IDApID0gMTAwMDAwMDAwSHogKHNsb3QgcmVxIDEwMDAwMDAwMEh6LAo+IGFjdHVh
-bCAxMDAwMDAwMDBIWiBkaXYgPSAwKQo+IGV4eW5vcy1kcm0taXBwIGV4eW5vcy1kcm0taXBwOiBk
-cm0gaXBwIHJlZ2lzdGVyZWQgc3VjY2Vzc2Z1bGx5Lgo+IG1tYzA6IG5ldyBIUzIwMCBNTUMgY2Fy
-ZCBhdCBhZGRyZXNzIDAwMDEKPiBwbGF0Zm9ybSBleHlub3MtZHJtOiBEcml2ZXIgZXh5bm9zLWRy
-bSByZXF1ZXN0cyBwcm9iZSBkZWZlcnJhbAo+IG1tY2JsazA6IG1tYzA6MDAwMSBGNVg1TUEgMy42
-NCBHaUIKPiBtbWNibGswYm9vdDA6IG1tYzA6MDAwMSBGNVg1TUEgcGFydGl0aW9uIDEgNC4wMCBN
-aUIKPiBleHlub3MtZHJtLWlwcCBleHlub3MtZHJtLWlwcDogZHJtIGlwcCByZWdpc3RlcmVkIHN1
-Y2Nlc3NmdWxseS4KPiBtbWNibGswYm9vdDE6IG1tYzA6MDAwMSBGNVg1TUEgcGFydGl0aW9uIDIg
-NC4wMCBNaUIKPiBwbGF0Zm9ybSBleHlub3MtZHJtOiBEcml2ZXIgZXh5bm9zLWRybSByZXF1ZXN0
-cyBwcm9iZSBkZWZlcnJhbAo+IG1tY2JsazBycG1iOiBtbWMwOjAwMDEgRjVYNU1BIHBhcnRpdGlv
-biAzIDUxMiBLaUIKPiBleHlub3MtZHJtLWlwcCBleHlub3MtZHJtLWlwcDogZHJtIGlwcCByZWdp
-c3RlcmVkIHN1Y2Nlc3NmdWxseS4KPiBwbGF0Zm9ybSBleHlub3MtZHJtOiBEcml2ZXIgZXh5bm9z
-LWRybSByZXF1ZXN0cyBwcm9iZSBkZWZlcnJhbAo+ICBtbWNibGswOiBwMSBwMiBwMyBwNCBwNSBw
-NiBwNwo+IGV4eW5vcy1kcm0taXBwIGV4eW5vcy1kcm0taXBwOiBkcm0gaXBwIHJlZ2lzdGVyZWQg
-c3VjY2Vzc2Z1bGx5Lgo+IHBsYXRmb3JtIGV4eW5vcy1kcm06IERyaXZlciBleHlub3MtZHJtIHJl
-cXVlc3RzIHByb2JlIGRlZmVycmFsCj4gZXh5bm9zLWRybS1pcHAgZXh5bm9zLWRybS1pcHA6IGRy
-bSBpcHAgcmVnaXN0ZXJlZCBzdWNjZXNzZnVsbHkuCj4gcGxhdGZvcm0gZXh5bm9zLWRybTogRHJp
-dmVyIGV4eW5vcy1kcm0gcmVxdWVzdHMgcHJvYmUgZGVmZXJyYWwKPiAKPiBhbmQgc28gb24uLi4K
-PiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQoKQ2FuIHlvdSBzaG93IG1lIGNvbXBhdGlibGUgc3Ry
-aW5nIHBsYWNlZCBvbiB0b3Agb2YgZXh5bm9zMzI1MC1yaW5hdG8uZHRzCmZpbGU/IElmIHRoZSBj
-b21wYXRpYmxlIGhhcyAic2Ftc3VuZyxleHlub3MzIiBpdCBzaG91bGQgYmUgbm8gcHJvYmxlbQp3
-aXRoIHRoaXMgcGF0Y2guIEFuZCB0aGUgcmluYXRvIGR0cyBmaWxlIHdlIHBvc3RlZCB0byBtYWlu
-bGluZSBoYXMgdGhlCmNvbXBhdGlibGUgc3RyaW5nLgoKPiAKPiBJIGRvIG5vdCBrbm93IHdoZXRo
-ZXIgaXQgaXMgcmVsYXRlZCBidXQgVHJhdHMyIGJvYXJkIGNhbm5vdCBib290IGR1ZSB0bwo+IGxv
-Y2t1cCBhZnRlcjoKPiBbZHJtXSBJbml0aWFsaXplZCBkcm0gMS4xLjAgMjAwNjA4MTAKPiAod2l0
-aCBvciB3aXRob3V0IHRoZSBwYXRjaCkKPiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxNC8xMS82
-LzEyNQo+IAoKaG1tLi4uIGl0J3Mgc3RyYW5nZSBiZWNhdXNlIG15IHRyYXRzMiBib2FyZCB3b3Jr
-cyB3ZWxsIHdpdGggdGhpcyBwYXRjaC4KV2hpY2gga2VybmVsIGRpZCB5b3UgdGVzdD8gQW5kIGhv
-dyBjYW4gSSByZXByb2R1Y2UgYWJvdmUgbG9ja3VwPwoKVGhhbmtzLApJbmtpIERhZQoKPiBCZXN0
-IHJlZ2FyZHMsCj4gS3J6eXN6dG9mCj4gCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IElua2kgRGFlIDxp
-bmtpLmRhZUBzYW1zdW5nLmNvbT4KPj4gLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19kcm1fZHJ2LmMgfCAgIDEyICsrKysrKysrKysrKwo+PiAgMSBmaWxlIGNoYW5nZWQsIDEy
-IGluc2VydGlvbnMoKykKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
-Ywo+PiBpbmRleCA0NDNhMjA2Li5lY2M4NmFhIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2Rydi5jCj4+IEBAIC03MzQsNiArNzM0LDE4IEBAIHN0YXRpYyBpbnQgZXh5
-bm9zX2RybV9pbml0KHZvaWQpCj4+ICB7Cj4+ICAJaW50IHJldDsKPj4gIAo+PiArCS8qCj4+ICsJ
-ICogUmVnaXN0ZXIgZGV2aWNlIG9iamVjdCBvbmx5IGluIGNhc2Ugb2YgRXh5bm9zIFNvQy4KPj4g
-KwkgKgo+PiArCSAqIEJlbG93IGNvZGVzIHJlc29sdmVzIHRlbXBvcmFyaWx5IGluZmluaXRlIGxv
-b3AgaXNzdWUgaW5jdXJyZWQKPj4gKwkgKiBieSBFeHlub3MgZHJtIGRyaXZlciB3aGVuIHVzaW5n
-IG11bHRpLXBsYXRmb3JtIGtlcm5lbC4KPj4gKwkgKiBTbyB0aGVzZSBjb2RlcyB3aWxsIGJlIHJl
-cGxhY2VkIHdpdGggbW9yZSBnZW5lcmljIHdheSBsYXRlci4KPj4gKwkgKi8KPj4gKwlpZiAoIW9m
-X21hY2hpbmVfaXNfY29tcGF0aWJsZSgic2Ftc3VuZyxleHlub3MzIikgJiYKPj4gKwkJCSFvZl9t
-YWNoaW5lX2lzX2NvbXBhdGlibGUoInNhbXN1bmcsZXh5bm9zNCIpICYmCj4+ICsJCQkhb2ZfbWFj
-aGluZV9pc19jb21wYXRpYmxlKCJzYW1zdW5nLGV4eW5vczUiKSkKPj4gKwkJcmV0dXJuIC1FTk9E
-RVY7Cj4+ICsKPj4gIAlleHlub3NfZHJtX3BkZXYgPSBwbGF0Zm9ybV9kZXZpY2VfcmVnaXN0ZXJf
-c2ltcGxlKCJleHlub3MtZHJtIiwgLTEsCj4+ICAJCQkJCQkJCU5VTEwsIDApOwo+PiAgCWlmIChJ
-U19FUlIoZXh5bm9zX2RybV9wZGV2KSkKPj4KPiAKPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20g
-dGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIg
-aW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+
-IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21v
-LWluZm8uaHRtbAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
-ZWwK
+
+Hi Inki,
+
+Could you please give a review to this series?
+
+Thanks.
+
+	Gustavo
+
+2014-10-31 Gustavo Padovan <gustavo@padovan.org>:
+
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> 
+> It is not even used in this header anymore.
+> 
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_iommu.h | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_iommu.h b/drivers/gpu/drm/exynos/exynos_drm_iommu.h
+> index 72376d4..35d2588 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_iommu.h
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_iommu.h
+> @@ -40,7 +40,6 @@ static inline bool is_drm_iommu_supported(struct drm_device *drm_dev)
+>  
+>  #else
+>  
+> -struct dma_iommu_mapping;
+>  static inline int drm_create_iommu_mapping(struct drm_device *drm_dev)
+>  {
+>  	return 0;
+> -- 
+> 1.9.3
+> 
