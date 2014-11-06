@@ -1,87 +1,39 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH RESEND v3 4/4] Documentation: power: max77693-charger: Document
- exported sysfs entry
-Date: Thu, 06 Nov 2014 16:12:00 +0100
-Message-ID: <1415286720-6358-5-git-send-email-k.kozlowski@samsung.com>
-References: <1415286720-6358-1-git-send-email-k.kozlowski@samsung.com>
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Subject: Re: [PATCH] drm/exynos: resolve infinite loop issue on non
+ multi-platform
+Date: Thu, 06 Nov 2014 15:44:45 +0000
+Message-ID: <545B976D.3000009@gmail.com>
+References: <1415283007-10096-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1415286720-6358-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-api@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1415283007-10096-1-git-send-email-inki.dae@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: "Matwey V. Kornilov" <matwey.kornilov@gmail.com>, linux-samsung-soc@vger.kernel.org, emil.l.velikov@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Document the settings exported by max77693 charger driver through sysfs
-entries:
- - fast_charge_timer
- - top_off_threshold_current
- - top_off_timer
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- Documentation/ABI/testing/sysfs-class-power | 42 +++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
-
-diff --git a/Documentation/ABI/testing/sysfs-class-power b/Documentation/ABI/testing/sysfs-class-power
-index 909e7602c717..369d2a2d7d3e 100644
---- a/Documentation/ABI/testing/sysfs-class-power
-+++ b/Documentation/ABI/testing/sysfs-class-power
-@@ -32,3 +32,45 @@ Description:
- 		Valid values:
- 		- 5, 6 or 7 (hours),
- 		- 0: disabled.
-+
-+What:		/sys/class/power_supply/max77693-charger/device/fast_charge_timer
-+Date:		January 2015
-+KernelVersion:	3.19.0
-+Contact:	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-+Description:
-+		This entry shows and sets the maximum time the max77693
-+		charger operates in fast-charge mode. When the timer expires
-+		the device will terminate fast-charge mode (charging current
-+		will drop to 0 A) and will trigger interrupt.
-+
-+		Valid values:
-+		- 4 - 16 (hours), step by 2 (rounded down)
-+		- 0: disabled.
-+
-+What:		/sys/class/power_supply/max77693-charger/device/top_off_threshold_current
-+Date:		January 2015
-+KernelVersion:	3.19.0
-+Contact:	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-+Description:
-+		This entry shows and sets the charging current threshold for
-+		entering top-off charging mode. When charging current in fast
-+		charge mode drops below this value, the charger will trigger
-+		interrupt and start top-off charging mode.
-+
-+		Valid values:
-+		- 100000 - 200000 (microamps), step by 25000 (rounded down)
-+		- 200000 - 350000 (microamps), step by 50000 (rounded down)
-+		- 0: disabled.
-+
-+What:		/sys/class/power_supply/max77693-charger/device/top_off_timer
-+Date:		January 2015
-+KernelVersion:	3.19.0
-+Contact:	Krzysztof Kozlowski <k.kozlowski@samsung.com>
-+Description:
-+		This entry shows and sets the maximum time the max77693
-+		charger operates in top-off charge mode. When the timer expires
-+		the device will terminate top-off charge mode (charging current
-+		will drop to 0 A) and will trigger interrupt.
-+
-+		Valid values:
-+		- 0 - 70 (minutes), step by 10 (rounded down)
--- 
-1.9.1
+SGkgSW5raSwKCldpdGggYWxsIHJlc3BlY3QsCgpPbiAwNi8xMS8xNCAxNDoxMCwgSW5raSBEYWUg
+d3JvdGU6PiBUaGlzIHBhdGNoIHJlc292bGVzIHRoZSBpbmZpbml0ZQpsb29wIGlzc3VlIGluY3Vy
+cmVkCj4gd2hlbiBFeHlubyBkcm0gZHJpdmVyIGlzIGVuYWJsZWQgYnV0IGFsbCBrbXMgZHJpdmVy
+cwo+IGFyZSBkaXNhYmxlZCBvbiBFeHlub3MgYm9hcmQgYnkgcmV0dXJuaW5nIC1FUFJPQkVfREVG
+RVIKPiBvbmx5IGluIGNhc2UgdGhhdCB0aGVyZSBpcyBrbXMgZGV2aWNlIHJlZ2lzdGVyZWQuCj4g
+CkkgYmVsaWV2ZSBpdCdzIHByZWZlcnJlZCB0byBhZGQgY2hhbmdlbG9nLCB0aGUgb3JpZ2luYWwg
+cmVwb3J0ZXIgKHNvCnRoYXQgdGhleSBjYW4gdGVzdCkgYW5kIHRoZSBidWcgcmVwb3J0IGluIHRo
+ZSBjb21taXQgbWVzc2FnZS4gU29tZXRoaW5nCmxpa2UgdGhlIGZvbGxvd2luZzoKCnYyOgogLSBV
+c2UgZHJtX2NvbXBvbmVudF9saXN0IHRoZSByYXRoZXIgdGhhbiBvZl9tYWNoaW5lX2lzX2NvbXBh
+dGlibGUgdG8KY2hlY2sgZm9yIHByZXNlbmNlIG9mIGFuIEV4eW5vcyBTb0MuCgpDYzogTWF0d2V5
+IFYuIEtvcm5pbG92IDxtYXR3ZXkua29ybmlsb3ZAZ21haWwuY29tPgpSZWZlcmVuY2VzOiBodHRw
+czovL2J1Z3ppbGxhLmtlcm5lbC5vcmcvc2hvd19idWcuY2dpP2lkPTg3NjkxCgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
