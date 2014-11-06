@@ -1,58 +1,47 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] spi: s3c64xx: add support for exynos7 SPI controller
-Date: Thu, 6 Nov 2014 10:26:36 +0000
-Message-ID: <20141106102636.GT8509@sirena.org.uk>
-References: <1415267509-16653-1-git-send-email-padma.v@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH] drm/exynos: resolve infinite loop issue on multi-platform
+Date: Thu, 06 Nov 2014 19:32:45 +0900
+Message-ID: <1415269965-427-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4AfY4lbNVy6SI0IG"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45265 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751210AbaKFK1F (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Nov 2014 05:27:05 -0500
-Content-Disposition: inline
-In-Reply-To: <1415267509-16653-1-git-send-email-padma.v@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.kvr@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
 
-
---4AfY4lbNVy6SI0IG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Nov 06, 2014 at 03:21:49PM +0530, Padmavathi Venna wrote:
-> Exynos7 SPI controller supports only the auto Selection of
-> CS toggle mode and Exynos7 SoC includes six SPI controllers.
-> Add support for these changes in Exynos7 SPI controller driver.
-
-Could you give a bit more detail on what the "auto selection of CS
-toggle mode" is - in the diff it looks like it's not an existing mode.
-I'm a bit worried that it's not going to function well with devices that
-send more than one transfer per message.
-
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-
-It's better if your signoff is using the same e-maill address as=20
-
---4AfY4lbNVy6SI0IG
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUW0zXAAoJECTWi3JdVIfQr/AH/R+QLj3eZH9EE6l3EetEEPO+
-x9GGn7iRKAidcq6tXoy6EKtCC5BGPm0kc2desYgGpVrcBi6ro8OMOjfxy3irtJlq
-yiosuUP9M0pP2DfMeNARPNHyz499AaLSz+/Gr4YZciT0o6/tnqcEpsY0ONILKSnp
-8fex7bA2JuFQObppUzzqHszNuGh4Bl8pkcyFlqeV4vHEEhpWdBc32S9K4cYxWpxp
-B+D4J4OXHaCVIHv286zO8tYADDIy/EvPK8UGdZxa/7cEeVqBDHqXFQiu8n6QamHl
-LXjV7L3GXMdvvPDZf9MmAP/xVdOBHfOTRseR7mjNjs14EYpBj+ezy/f+KwcTTOU=
-=IaZv
------END PGP SIGNATURE-----
-
---4AfY4lbNVy6SI0IG--
+VGhpcyBwYXRjaCByZXNvbHZlcyB0ZW1wb3JhcmlseSBpbmZpbml0ZSBsb29wIGlzc3VlIGluY3Vy
+cmVkCndoZW4gRXh5bm9zIGRybSBkcml2ZXIgaXMgZW5hYmxlZCBhbmQgbXVsdGktcGxhdGZvcm0g
+a2VybmVsCmlzIHVzZWQgYnkgcmVnaXN0ZXJpbmcgRXh5bm9zIGRybSBkZXZpY2Ugb2JqZWN0IG9u
+bHkgaW4gY2FzZQpvZiBFeHlub3MgU29DLiBTbyB0aGlzIHBhdGNoIHdpbGwgYmUgcmVwbGFjZWQg
+d2l0aCBtb3JlIGdlbmVyaWMKd2F5IGxhdGVyLgoKU2lnbmVkLW9mZi1ieTogSW5raSBEYWUgPGlu
+a2kuZGFlQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9kcnYuYyB8ICAgMTIgKysrKysrKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgMTIgaW5zZXJ0aW9u
+cygrKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
+YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwppbmRleCA0NDNhMjA2
+Li5lY2M4NmFhIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+ZHJ2LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCkBAIC03
+MzQsNiArNzM0LDE4IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9pbml0KHZvaWQpCiB7CiAJaW50
+IHJldDsKIAorCS8qCisJICogUmVnaXN0ZXIgZGV2aWNlIG9iamVjdCBvbmx5IGluIGNhc2Ugb2Yg
+RXh5bm9zIFNvQy4KKwkgKgorCSAqIEJlbG93IGNvZGVzIHJlc29sdmVzIHRlbXBvcmFyaWx5IGlu
+ZmluaXRlIGxvb3AgaXNzdWUgaW5jdXJyZWQKKwkgKiBieSBFeHlub3MgZHJtIGRyaXZlciB3aGVu
+IHVzaW5nIG11bHRpLXBsYXRmb3JtIGtlcm5lbC4KKwkgKiBTbyB0aGVzZSBjb2RlcyB3aWxsIGJl
+IHJlcGxhY2VkIHdpdGggbW9yZSBnZW5lcmljIHdheSBsYXRlci4KKwkgKi8KKwlpZiAoIW9mX21h
+Y2hpbmVfaXNfY29tcGF0aWJsZSgic2Ftc3VuZyxleHlub3MzIikgJiYKKwkJCSFvZl9tYWNoaW5l
+X2lzX2NvbXBhdGlibGUoInNhbXN1bmcsZXh5bm9zNCIpICYmCisJCQkhb2ZfbWFjaGluZV9pc19j
+b21wYXRpYmxlKCJzYW1zdW5nLGV4eW5vczUiKSkKKwkJcmV0dXJuIC1FTk9ERVY7CisKIAlleHlu
+b3NfZHJtX3BkZXYgPSBwbGF0Zm9ybV9kZXZpY2VfcmVnaXN0ZXJfc2ltcGxlKCJleHlub3MtZHJt
+IiwgLTEsCiAJCQkJCQkJCU5VTEwsIDApOwogCWlmIChJU19FUlIoZXh5bm9zX2RybV9wZGV2KSkK
+LS0gCjEuNy45LjUKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Cg==
