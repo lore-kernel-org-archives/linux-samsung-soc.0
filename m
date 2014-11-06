@@ -1,88 +1,145 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] drm/panel: simple: Add AUO B116XW03 panel support
-Date: Thu, 6 Nov 2014 10:10:35 +0100
-Message-ID: <20141106091034.GF26297@ulmo>
-References: <1409566202-7946-1-git-send-email-ajaykumar.rs@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0742848459=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1409566202-7946-1-git-send-email-ajaykumar.rs@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay Kumar <ajaykumar.rs@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, seanpaul@google.com, joshi@samsung.com, dri-devel@lists.freedesktop.org, ajaynumb@gmail.com, prashanth.g@samsung.com
+From: Padmavathi Venna <padma.kvr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] spi: s3c64xx: add support for exynos7 SPI controller
+Date: Thu,  6 Nov 2014 15:21:49 +0530
+Message-ID: <1415267509-16653-1-git-send-email-padma.v@samsung.com>
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Exynos7 SPI controller supports only the auto Selection of
+CS toggle mode and Exynos7 SoC includes six SPI controllers.
+Add support for these changes in Exynos7 SPI controller driver.
 
---===============0742848459==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="65ImJOski3p8EhYV"
-Content-Disposition: inline
+Signed-off-by: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ .../devicetree/bindings/spi/spi-samsung.txt        |    2 +-
+ drivers/spi/Kconfig                                |    2 +-
+ drivers/spi/spi-s3c64xx.c                          |   32 ++++++++++++++++---
+ 3 files changed, 29 insertions(+), 7 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+index 1e8a857..6dbdeb3 100644
+--- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
++++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+@@ -9,7 +9,7 @@ Required SoC Specific Properties:
+     - samsung,s3c2443-spi: for s3c2443, s3c2416 and s3c2450 platforms
+     - samsung,s3c6410-spi: for s3c6410 platforms
+     - samsung,s5pv210-spi: for s5pv210 and s5pc110 platforms
+-    - samsung,exynos4210-spi: for exynos4 and exynos5 platforms
++    - samsung,exynos7-spi: for exynos7 platforms
+ 
+ - reg: physical base address of the controller and length of memory mapped
+   region.
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index 84e7c9e..de2d33d 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -444,7 +444,7 @@ config SPI_S3C24XX_FIQ
+ 
+ config SPI_S3C64XX
+ 	tristate "Samsung S3C64XX series type SPI"
+-	depends on PLAT_SAMSUNG
++	depends on (PLAT_SAMSUNG || ARCH_EXYNOS)
+ 	select S3C64XX_PL080 if ARCH_S3C64XX
+ 	help
+ 	  SPI driver for Samsung S3C64XX and newer SoCs.
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 480133e..59e07cf 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -33,8 +33,9 @@
+ 
+ #include <linux/platform_data/spi-s3c64xx.h>
+ 
+-#define MAX_SPI_PORTS		3
++#define MAX_SPI_PORTS		6
+ #define S3C64XX_SPI_QUIRK_POLL		(1 << 0)
++#define S3C64XX_SPI_QUIRK_CS_AUTO	(1 << 1)
+ 
+ /* Registers and bit-fields */
+ 
+@@ -78,6 +79,7 @@
+ 
+ #define S3C64XX_SPI_SLAVE_AUTO			(1<<1)
+ #define S3C64XX_SPI_SLAVE_SIG_INACT		(1<<0)
++#define S3C64XX_SPI_SLAVE_NSC_CNT_2		(2<<4)
+ 
+ #define S3C64XX_SPI_INT_TRAILING_EN		(1<<6)
+ #define S3C64XX_SPI_INT_RX_OVERRUN_EN		(1<<5)
+@@ -717,7 +719,12 @@ static int s3c64xx_spi_transfer_one(struct spi_master *master,
+ 	enable_datapath(sdd, spi, xfer, use_dma);
+ 
+ 	/* Start the signals */
+-	writel(0, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
++	if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
++		writel(0, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
++	else
++		writel(readl(sdd->regs + S3C64XX_SPI_SLAVE_SEL)
++			| S3C64XX_SPI_SLAVE_AUTO | S3C64XX_SPI_SLAVE_NSC_CNT_2,
++			sdd->regs + S3C64XX_SPI_SLAVE_SEL);
+ 
+ 	spin_unlock_irqrestore(&sdd->lock, flags);
+ 
+@@ -866,13 +873,15 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+ 	}
+ 
+ 	pm_runtime_put(&sdd->pdev->dev);
+-	writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
++	if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
++		writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
+ 	return 0;
+ 
+ setup_exit:
+ 	pm_runtime_put(&sdd->pdev->dev);
+ 	/* setup() returns with device de-selected */
+-	writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
++	if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
++		writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
+ 
+ 	if (gpio_is_valid(spi->cs_gpio))
+ 		gpio_free(spi->cs_gpio);
+@@ -946,7 +955,8 @@ static void s3c64xx_spi_hwinit(struct s3c64xx_spi_driver_data *sdd, int channel)
+ 
+ 	sdd->cur_speed = 0;
+ 
+-	writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
++	if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
++		writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
+ 
+ 	/* Disable Interrupts - we use Polling if not DMA mode */
+ 	writel(0, regs + S3C64XX_SPI_INT_EN);
+@@ -1341,6 +1351,15 @@ static struct s3c64xx_spi_port_config exynos5440_spi_port_config = {
+ 	.quirks		= S3C64XX_SPI_QUIRK_POLL,
+ };
+ 
++static struct s3c64xx_spi_port_config exynos7_spi_port_config = {
++	.fifo_lvl_mask	= { 0x1ff, 0x7F, 0x7F, 0x7F, 0x7F, 0x1ff},
++	.rx_lvl_offset	= 15,
++	.tx_st_done	= 25,
++	.high_speed	= true,
++	.clk_from_cmu	= true,
++	.quirks		= S3C64XX_SPI_QUIRK_CS_AUTO,
++};
++
+ static struct platform_device_id s3c64xx_spi_driver_ids[] = {
+ 	{
+ 		.name		= "s3c2443-spi",
+@@ -1374,6 +1393,9 @@ static const struct of_device_id s3c64xx_spi_dt_match[] = {
+ 	{ .compatible = "samsung,exynos5440-spi",
+ 			.data = (void *)&exynos5440_spi_port_config,
+ 	},
++	{ .compatible = "samsung,exynos7-spi",
++			.data = (void *)&exynos7_spi_port_config,
++	},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, s3c64xx_spi_dt_match);
+-- 
+1.7.4.4
 
---65ImJOski3p8EhYV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Sep 01, 2014 at 03:40:02PM +0530, Ajay Kumar wrote:
-> The AUO B116XW03 is a 11.6" HD TFT LCD panel connecting to a LVDS
-> interface and with an integrated LED backlight unit.
->=20
-> This panel is used on the Samsung Chromebook(XE303C12).
->=20
-> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
-> ---
->  .../devicetree/bindings/panel/auo,b116xw03.txt     |    7 ++++++
->  drivers/gpu/drm/panel/panel-simple.c               |   25 ++++++++++++++=
-++++++
->  2 files changed, 32 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/panel/auo,b116xw03.=
-txt
-
-Applied after adding the missing .bpc field in the panel descriptor. I
-set it to 6 according to the datasheet.
-
-Thierry
-
---65ImJOski3p8EhYV
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUWzsKAAoJEN0jrNd/PrOh56YP/2wbdvrBQG4qUai5OuSOpbL/
-M3EYXSklKBH7aG5urF4zKVG2FO3NWBo5jHTFJ4KUVMxRaGbisnF+mBIp8EO/cTUf
-bC5/wxQVpo3hQBV8XhpuOGDCCWuVZ+MmWPYj7uvxU8UlRBEqN+Kgk24mUO7gJghy
-DyhMMSbnXWROrbMA/yIAWjty1VD4O568kHeFDKTb79mDLXHRkA0hmJ/ELJTwlxFU
-mzz7FHTgOEtaZfzgv0elOXOw1awYbwAbJAr4XqrHfaqkxmgE3jIbFT8xphMWkxiH
-+xBeVVrTSFFGZq89a5PuU3srU3+Giz3FzYV8j3q8eeGbY1TBK3xE1gf//hiAd50Y
-mSUiwMNyUuyOBM2+Pcf6YNxIQQTpgCuSKDE+KGGlTXhm1EQ9V8NtGfQMj6CJwGmo
-KWjm1qB1p1BpCQAfDoC9mbtm6FCWFgw9W9nJ5oza1bfE8cyRxUYyKWjTufuV17e1
-R0bj67+4nJR0Neu3nkhbUK6fFZGSq7kuYzjSvbSaygbWxTKzcurwxyjpjzLVFwEg
-48Rrg6dwGYsMNkGQLN/oQ5NsMf4ucgBkKCtcvuMVdJmkzgS04FA0vW9mofbgIJT9
-u2KRiNe8GfA0KMzNUAOUqJ7DdSENJh1CyXXg4kCYiT83OShsFsc2Nyy2+5dph2HP
-O/K0XLQmlPNhQKLcttFM
-=o+nO
------END PGP SIGNATURE-----
-
---65ImJOski3p8EhYV--
-
---===============0742848459==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
-
---===============0742848459==--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
