@@ -1,66 +1,42 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net
-	onarndale platform
-Date: Thu, 6 Nov 2014 14:09:40 +0000
-Message-ID: <20141106140940.GW23178@opensource.wolfsonmicro.com>
-References: <C89EFD3CD56F64468D3D206D683A8D2203985FA9@ldam-msx2.fugro-nl.local> <20141104200914.GN23178@opensource.wolfsonmicro.com> <C89EFD3CD56F64468D3D206D683A8D22039FFC5F@ldam-msx2.fugro-nl.local> <20141105150258.GR23178@opensource.wolfsonmicro.com> <20141106090651.GA19109@afflict.kos.to> <20141106100104.GS23178@opensource.wolfsonmicro.com> <20141106120416.GA20162@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D22039FFE16@ldam-msx2.fugro-nl.local> <20141106124653.GV23178@opensource.wolfsonmicro.com> <C89EFD3CD56F64468D3D206D683A8D22039FFE39@ldam-msx2.fugro-nl.local>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH] drm/exynos: resolve infinite loop issue on non multi-platform
+Date: Thu, 06 Nov 2014 23:10:07 +0900
+Message-ID: <1415283007-10096-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:42330 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750828AbaKFOJm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Nov 2014 09:09:42 -0500
-Content-Disposition: inline
-In-Reply-To: <C89EFD3CD56F64468D3D206D683A8D22039FFE39@ldam-msx2.fugro-nl.local>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Stam, Michel [FINT]" <M.Stam@fugro.nl>
-Cc: Riku Voipio <riku.voipio@iki.fi>, freddy@asix.com.tw, davem@davemloft.net, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On Thu, Nov 06, 2014 at 03:01:56PM +0100, Stam, Michel [FINT] wrote:
-> Hello Charles and Riku,
-> 
-> I've quickly tested this on a 3.10 kernel i had around;
-> I enabled CONFIG_PM, CONFIG_PM_RUNTIME, CONFIG_PM_AUTOSLEEP,
-> CONFIG_SUSPEND, CONFIG_SUSPEND_FREEZER, CONFIG_FREEZER in the kernel (by
-> default they are disabled for our setup, I enabled anything regarded to
-> runtime powermanagement to be sure I would trigger suspend/resume).
-> 
-> Then:
-> cd /sys/bus/usb/devices/1-2/power
-> echo auto > control
-> echo 1 > autosuspend
-> echo 0 > autosuspend_delay_ms
-> echo enabled > wakeup
-> 
-> # make sure there's no processes routing traffic over the eth1 interface
-> 
-> ifconfig eth1 down
-> sleep 4 # sleep some arbitrary long time
-> ifconfig eth1 up
-> 
-> check dmesg; it will reset back to 100 Mbps/full duplex.
-> 
-> This confirms that the suspend / resume does not work well. So long as
-> the suspend is not triggered, it does seem to work, though. I cannot say
-> whether the original issue that triggered this is still around; the ASIX
-> chip setup we use is soldered to the PCB and hooked up to a fixed device
-> on-board. 
-> I also tried to ping the device on the other side of the ASIX chip after
-> the suspend/resume cycle, I could not ping it. I cannot conclusively say
-> that this is due to the ASIX driver, as the device on the other side
-> does not like switching PHY speeds (it may go into a non-responsive
-> state). It is for this reason that we run it at half duplex/ 10Mbps at
-> all times.
-> 
-> As said; we are not using this kind of power management, so it does not
-> raise any issues for us. I am merely pointing out that this may need
-> work (in the future?).
-
-Cool thanks for checking this I will make a note in the commit
-message that suspend/resume might need some more work.
-
-Thanks,
-Charles
+VGhpcyBwYXRjaCByZXNvdmxlcyB0aGUgaW5maW5pdGUgbG9vcCBpc3N1ZSBpbmN1cnJlZAp3aGVu
+IEV4eW5vIGRybSBkcml2ZXIgaXMgZW5hYmxlZCBidXQgYWxsIGttcyBkcml2ZXJzCmFyZSBkaXNh
+YmxlZCBvbiBFeHlub3MgYm9hcmQgYnkgcmV0dXJuaW5nIC1FUFJPQkVfREVGRVIKb25seSBpbiBj
+YXNlIHRoYXQgdGhlcmUgaXMga21zIGRldmljZSByZWdpc3RlcmVkLgoKU2lnbmVkLW9mZi1ieTog
+SW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9kcnYuYyB8ICAgIDYgKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgNiBpbnNl
+cnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2Rydi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCmluZGV4IGVj
+Yzg2YWEuLjE0YzZhZjcgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9kcnYuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMK
+QEAgLTQ4OCw2ICs0ODgsMTIgQEAgc3RhdGljIHN0cnVjdCBjb21wb25lbnRfbWF0Y2ggKmV4eW5v
+c19kcm1fbWF0Y2hfYWRkKHN0cnVjdCBkZXZpY2UgKmRldikKIAogCW11dGV4X2xvY2soJmRybV9j
+b21wb25lbnRfbG9jayk7CiAKKwkvKiBEbyBub3QgcmV0cnkgdG8gcHJvYmUgaWYgdGhlcmUgaXMg
+bm8gYW55IGttcyBkcml2ZXIgcmVnaXRlcmVkLiAqLworCWlmIChsaXN0X2VtcHR5KCZkcm1fY29t
+cG9uZW50X2xpc3QpKSB7CisJCW11dGV4X3VubG9jaygmZHJtX2NvbXBvbmVudF9sb2NrKTsKKwkJ
+cmV0dXJuIEVSUl9QVFIoLUVOT0RFVik7CisJfQorCiAJbGlzdF9mb3JfZWFjaF9lbnRyeShjZGV2
+LCAmZHJtX2NvbXBvbmVudF9saXN0LCBsaXN0KSB7CiAJCS8qCiAJCSAqIEFkZCBjb21wb25lbnRz
+IHRvIG1hc3RlciBvbmx5IGluIGNhc2UgdGhhdCBjcnRjIGFuZAotLSAKMS43LjkuNQoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
