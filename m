@@ -1,145 +1,139 @@
-From: Padmavathi Venna <padma.kvr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] spi: s3c64xx: add support for exynos7 SPI controller
-Date: Thu,  6 Nov 2014 15:21:49 +0530
-Message-ID: <1415267509-16653-1-git-send-email-padma.v@samsung.com>
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] PM / Domains: Change prototype for the ->attach_dev() callback
+Date: Thu, 6 Nov 2014 10:55:12 +0100
+Message-ID: <CAPDyKFraQAGUU+BnwuEL0+HS_g2YfM_cRjHAeg2qrGkqFW=YVA@mail.gmail.com>
+References: <1414670569-3002-1-git-send-email-ulf.hansson@linaro.org>
+	<20141105013353.GA19238@dtor-ws>
+	<7h7fz92rqk.fsf@deeprootsystems.com>
+	<3267963.fqUYb7m9Rv@vostro.rjw.lan>
+	<7hsihx1bvo.fsf@deeprootsystems.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <7hsihx1bvo.fsf@deeprootsystems.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Kevin Hilman <khilman@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Exynos7 SPI controller supports only the auto Selection of
-CS toggle mode and Exynos7 SoC includes six SPI controllers.
-Add support for these changes in Exynos7 SPI controller driver.
+On 6 November 2014 00:11, Kevin Hilman <khilman@kernel.org> wrote:
+> "Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
+>
+>> On Wednesday, November 05, 2014 02:43:31 PM Kevin Hilman wrote:
+>>> Dmitry Torokhov <dmitry.torokhov@gmail.com> writes:
+>>>
+>>> > On Thu, Oct 30, 2014 at 01:38:30PM -0700, Kevin Hilman wrote:
+>>> >> "Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
+>>> >>
+>>> >> > On Thursday, October 30, 2014 01:02:49 PM Ulf Hansson wrote:
+>>> >> >> Convert the prototype to return and int. This is just an initial step,
+>>> >> >> needed to support error handling.
+>>> >> >>
+>>> >> >> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+>>> >>
+>>> >> Acked-by: Kevin Hilman <khilman@linaro.org>
+>>> >>
+>>> >> >>
+>>> >> >> This patch is intended as fix for 3.18 rc[n]. Why?
+>>> >> >>
+>>> >> >> There are other SOC specific patches around that adds genpd support and which
+>>> >> >> implements the ->attach_dev() callback. To prevent having an "atomic" patch
+>>> >> >> during the next release cycle, let's change the prototype now instead.
+>>> >> >>
+>>> >> >> Further patches will add the actual error handling in genpd and these can then
+>>> >> >> be reviewed and tested thoroughly.
+>>> >> >
+>>> >> > So we have no users of ->attach_dev at the moment, right?
+>>> >>
+>>> >> Not in mainline, but there are a couple getting ready to hit -next, so
+>>> >> we wanted to fix this before they arrive so that adding the error
+>>> >> handling will be easier.
+>>> >
+>>> > BTW, while we are at it, can we also pass the domain itself to
+>>> > attach_dev() and detach_dev()? If anything it helps with debugging (you
+>>> > can print domain name from the callbacks).
+>>>
+>>> Agreed, and it makes it match the other callbacks (power_off, power_on)
+>>> which currently take struct generic_pm_domain *domain.
+>>>
+>>> Updated version of $SUBJECT patch below.
+>>
+>> The subject and changelog need to be updated too IMO.
+>>
+>
+> Right.  Here you go.
+>
+> Kevin
 
-Signed-off-by: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- .../devicetree/bindings/spi/spi-samsung.txt        |    2 +-
- drivers/spi/Kconfig                                |    2 +-
- drivers/spi/spi-s3c64xx.c                          |   32 ++++++++++++++++---
- 3 files changed, 29 insertions(+), 7 deletions(-)
+Thanks for helping out Kevin!
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-index 1e8a857..6dbdeb3 100644
---- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-@@ -9,7 +9,7 @@ Required SoC Specific Properties:
-     - samsung,s3c2443-spi: for s3c2443, s3c2416 and s3c2450 platforms
-     - samsung,s3c6410-spi: for s3c6410 platforms
-     - samsung,s5pv210-spi: for s5pv210 and s5pc110 platforms
--    - samsung,exynos4210-spi: for exynos4 and exynos5 platforms
-+    - samsung,exynos7-spi: for exynos7 platforms
- 
- - reg: physical base address of the controller and length of memory mapped
-   region.
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 84e7c9e..de2d33d 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -444,7 +444,7 @@ config SPI_S3C24XX_FIQ
- 
- config SPI_S3C64XX
- 	tristate "Samsung S3C64XX series type SPI"
--	depends on PLAT_SAMSUNG
-+	depends on (PLAT_SAMSUNG || ARCH_EXYNOS)
- 	select S3C64XX_PL080 if ARCH_S3C64XX
- 	help
- 	  SPI driver for Samsung S3C64XX and newer SoCs.
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 480133e..59e07cf 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -33,8 +33,9 @@
- 
- #include <linux/platform_data/spi-s3c64xx.h>
- 
--#define MAX_SPI_PORTS		3
-+#define MAX_SPI_PORTS		6
- #define S3C64XX_SPI_QUIRK_POLL		(1 << 0)
-+#define S3C64XX_SPI_QUIRK_CS_AUTO	(1 << 1)
- 
- /* Registers and bit-fields */
- 
-@@ -78,6 +79,7 @@
- 
- #define S3C64XX_SPI_SLAVE_AUTO			(1<<1)
- #define S3C64XX_SPI_SLAVE_SIG_INACT		(1<<0)
-+#define S3C64XX_SPI_SLAVE_NSC_CNT_2		(2<<4)
- 
- #define S3C64XX_SPI_INT_TRAILING_EN		(1<<6)
- #define S3C64XX_SPI_INT_RX_OVERRUN_EN		(1<<5)
-@@ -717,7 +719,12 @@ static int s3c64xx_spi_transfer_one(struct spi_master *master,
- 	enable_datapath(sdd, spi, xfer, use_dma);
- 
- 	/* Start the signals */
--	writel(0, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
-+	if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
-+		writel(0, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
-+	else
-+		writel(readl(sdd->regs + S3C64XX_SPI_SLAVE_SEL)
-+			| S3C64XX_SPI_SLAVE_AUTO | S3C64XX_SPI_SLAVE_NSC_CNT_2,
-+			sdd->regs + S3C64XX_SPI_SLAVE_SEL);
- 
- 	spin_unlock_irqrestore(&sdd->lock, flags);
- 
-@@ -866,13 +873,15 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
- 	}
- 
- 	pm_runtime_put(&sdd->pdev->dev);
--	writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
-+	if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
-+		writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
- 	return 0;
- 
- setup_exit:
- 	pm_runtime_put(&sdd->pdev->dev);
- 	/* setup() returns with device de-selected */
--	writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
-+	if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
-+		writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
- 
- 	if (gpio_is_valid(spi->cs_gpio))
- 		gpio_free(spi->cs_gpio);
-@@ -946,7 +955,8 @@ static void s3c64xx_spi_hwinit(struct s3c64xx_spi_driver_data *sdd, int channel)
- 
- 	sdd->cur_speed = 0;
- 
--	writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
-+	if (!(sdd->port_conf->quirks & S3C64XX_SPI_QUIRK_CS_AUTO))
-+		writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
- 
- 	/* Disable Interrupts - we use Polling if not DMA mode */
- 	writel(0, regs + S3C64XX_SPI_INT_EN);
-@@ -1341,6 +1351,15 @@ static struct s3c64xx_spi_port_config exynos5440_spi_port_config = {
- 	.quirks		= S3C64XX_SPI_QUIRK_POLL,
- };
- 
-+static struct s3c64xx_spi_port_config exynos7_spi_port_config = {
-+	.fifo_lvl_mask	= { 0x1ff, 0x7F, 0x7F, 0x7F, 0x7F, 0x1ff},
-+	.rx_lvl_offset	= 15,
-+	.tx_st_done	= 25,
-+	.high_speed	= true,
-+	.clk_from_cmu	= true,
-+	.quirks		= S3C64XX_SPI_QUIRK_CS_AUTO,
-+};
-+
- static struct platform_device_id s3c64xx_spi_driver_ids[] = {
- 	{
- 		.name		= "s3c2443-spi",
-@@ -1374,6 +1393,9 @@ static const struct of_device_id s3c64xx_spi_dt_match[] = {
- 	{ .compatible = "samsung,exynos5440-spi",
- 			.data = (void *)&exynos5440_spi_port_config,
- 	},
-+	{ .compatible = "samsung,exynos7-spi",
-+			.data = (void *)&exynos7_spi_port_config,
-+	},
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, s3c64xx_spi_dt_match);
--- 
-1.7.4.4
+Kind regards
+Uffe
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+> ----- >8 ------
+> From c18a6bf3121979c4102ba4f7edb3ac41e3921fc6 Mon Sep 17 00:00:00 2001
+> From: Ulf Hansson <ulf.hansson@linaro.org>
+> Date: Thu, 30 Oct 2014 13:02:49 +0100
+> Subject: [PATCH] PM / Domains: Change prototype for the attach and detach
+>  callbacks
+>
+> Convert the prototypes to return an int in order to support error
+> handling in these callbacks.
+>
+> Also, as suggested by Dmitry Torokhov, pass the domain pointer for use
+> inside the callbacks, and so that they match the existing
+> power_on/power_off callbacks which currently take the domain pointer.
+>
+> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> [khilman: added domain as parameter to callbacks, as suggested by Dmitry]
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Kevin Hilman <khilman@linaro.org>
+> ---
+>  drivers/base/power/domain.c | 4 ++--
+>  include/linux/pm_domain.h   | 6 ++++--
+>  2 files changed, 6 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index 40bc2f4072cc..b520687046d4 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -1437,7 +1437,7 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
+>         spin_unlock_irq(&dev->power.lock);
+>
+>         if (genpd->attach_dev)
+> -               genpd->attach_dev(dev);
+> +               genpd->attach_dev(genpd, dev);
+>
+>         mutex_lock(&gpd_data->lock);
+>         gpd_data->base.dev = dev;
+> @@ -1499,7 +1499,7 @@ int pm_genpd_remove_device(struct generic_pm_domain *genpd,
+>         genpd->max_off_time_changed = true;
+>
+>         if (genpd->detach_dev)
+> -               genpd->detach_dev(dev);
+> +               genpd->detach_dev(genpd, dev);
+>
+>         spin_lock_irq(&dev->power.lock);
+>
+> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+> index 73e938b7e937..b3ed7766a291 100644
+> --- a/include/linux/pm_domain.h
+> +++ b/include/linux/pm_domain.h
+> @@ -72,8 +72,10 @@ struct generic_pm_domain {
+>         bool max_off_time_changed;
+>         bool cached_power_down_ok;
+>         struct gpd_cpuidle_data *cpuidle_data;
+> -       void (*attach_dev)(struct device *dev);
+> -       void (*detach_dev)(struct device *dev);
+> +       int (*attach_dev)(struct generic_pm_domain *domain,
+> +                         struct device *dev);
+> +       void (*detach_dev)(struct generic_pm_domain *domain,
+> +                          struct device *dev);
+>  };
+>
+>  static inline struct generic_pm_domain *pd_to_genpd(struct dev_pm_domain *pd)
+> --
+> 2.1.0
+>
