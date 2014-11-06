@@ -1,139 +1,82 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] PM / Domains: Change prototype for the ->attach_dev() callback
-Date: Thu, 6 Nov 2014 10:55:12 +0100
-Message-ID: <CAPDyKFraQAGUU+BnwuEL0+HS_g2YfM_cRjHAeg2qrGkqFW=YVA@mail.gmail.com>
-References: <1414670569-3002-1-git-send-email-ulf.hansson@linaro.org>
-	<20141105013353.GA19238@dtor-ws>
-	<7h7fz92rqk.fsf@deeprootsystems.com>
-	<3267963.fqUYb7m9Rv@vostro.rjw.lan>
-	<7hsihx1bvo.fsf@deeprootsystems.com>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net on
+	arndale platform
+Date: Thu, 6 Nov 2014 10:01:04 +0000
+Message-ID: <20141106100104.GS23178@opensource.wolfsonmicro.com>
+References: <20141104072236.GA559@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D2203985F49@ldam-msx2.fugro-nl.local> <20141104094336.GA3145@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D2203985FA9@ldam-msx2.fugro-nl.local> <20141104200914.GN23178@opensource.wolfsonmicro.com> <C89EFD3CD56F64468D3D206D683A8D22039FFC5F@ldam-msx2.fugro-nl.local> <20141105150258.GR23178@opensource.wolfsonmicro.com> <20141106090651.GA19109@afflict.kos.to>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <7hsihx1bvo.fsf@deeprootsystems.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <netdev-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20141106090651.GA19109@afflict.kos.to>
+Sender: netdev-owner@vger.kernel.org
+To: Riku Voipio <riku.voipio@iki.fi>
+Cc: "Stam, Michel [FINT]" <M.Stam@fugro.nl>, freddy@asix.com.tw, davem@davemloft.net, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 6 November 2014 00:11, Kevin Hilman <khilman@kernel.org> wrote:
-> "Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
->
->> On Wednesday, November 05, 2014 02:43:31 PM Kevin Hilman wrote:
->>> Dmitry Torokhov <dmitry.torokhov@gmail.com> writes:
->>>
->>> > On Thu, Oct 30, 2014 at 01:38:30PM -0700, Kevin Hilman wrote:
->>> >> "Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
->>> >>
->>> >> > On Thursday, October 30, 2014 01:02:49 PM Ulf Hansson wrote:
->>> >> >> Convert the prototype to return and int. This is just an initial step,
->>> >> >> needed to support error handling.
->>> >> >>
->>> >> >> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->>> >>
->>> >> Acked-by: Kevin Hilman <khilman@linaro.org>
->>> >>
->>> >> >>
->>> >> >> This patch is intended as fix for 3.18 rc[n]. Why?
->>> >> >>
->>> >> >> There are other SOC specific patches around that adds genpd support and which
->>> >> >> implements the ->attach_dev() callback. To prevent having an "atomic" patch
->>> >> >> during the next release cycle, let's change the prototype now instead.
->>> >> >>
->>> >> >> Further patches will add the actual error handling in genpd and these can then
->>> >> >> be reviewed and tested thoroughly.
->>> >> >
->>> >> > So we have no users of ->attach_dev at the moment, right?
->>> >>
->>> >> Not in mainline, but there are a couple getting ready to hit -next, so
->>> >> we wanted to fix this before they arrive so that adding the error
->>> >> handling will be easier.
->>> >
->>> > BTW, while we are at it, can we also pass the domain itself to
->>> > attach_dev() and detach_dev()? If anything it helps with debugging (you
->>> > can print domain name from the callbacks).
->>>
->>> Agreed, and it makes it match the other callbacks (power_off, power_on)
->>> which currently take struct generic_pm_domain *domain.
->>>
->>> Updated version of $SUBJECT patch below.
->>
->> The subject and changelog need to be updated too IMO.
->>
->
-> Right.  Here you go.
->
-> Kevin
+On Thu, Nov 06, 2014 at 11:06:51AM +0200, Riku Voipio wrote:
+> On Wed, Nov 05, 2014 at 03:02:58PM +0000, Charles Keepax wrote:
+> > On Wed, Nov 05, 2014 at 01:04:37PM +0100, Stam, Michel [FINT] wrote:
+> > > Hello Charles,
+> > > 
+> > > After looking around I found the reset value for the 8772 chip, which
+> > > seems to be 0x1E1 (ANAR register).
+> > > 
+> > > This equates to (according to include/uapi/linux/mii.h)
+> > > ADVERTISE_ALL | ADVERTISE_CSMA.
+> > > 
+> > > The register only seems to become 0 if the software reset fails.
+>  
+> > Odd it definitely reads back as zero on Arndale. I am guessing
+> > that the root of the problem here is that for some reason Arndale
+> > POR of the ethernet is pants and it needs a full software reset
+> > before it will work and the patch removes the full reset
+> > callback.
+> 
+> The asix on arndale comes semi-configured from u-boot, which I guess is
+> not the state kernel expects it to come in. At least in my case where
+> I use tftp from u-boot to load my kernel.
+> 
+> So probably the full reset is needed here to make the asix chip come
+> to a truly pristine state.
+> 
+> The commit that Michel partially reverted (by returning to use
+> ax88772_link_reset instead of ax88772_reset), indicates that a strong reset
+> is needed for suspend/resume as well:
 
-Thanks for helping out Kevin!
+Ok I think I have cracked this one. I am pretty sure you are
+right that the USB comes to us in a strange state and needs
+a full reset, but that only needs to happen once when the driver
+is bound in. So there is some code in ax88772_bind that appears
+to try to reset the device but does a lot less than ax88772_reset
+and I think that must be the problem. Applying the following on
+top of the patch we have been debating I think will make
+everything work for all of us:
 
-Kind regards
-Uffe
+--- a/drivers/net/usb/asix_devices.c
++++ b/drivers/net/usb/asix_devices.c
+@@ -465,19 +465,7 @@ static int ax88772_bind(struct usbnet *dev,
+struct usb_interface *in
+                return ret;
+        }
 
->
->
-> ----- >8 ------
-> From c18a6bf3121979c4102ba4f7edb3ac41e3921fc6 Mon Sep 17 00:00:00 2001
-> From: Ulf Hansson <ulf.hansson@linaro.org>
-> Date: Thu, 30 Oct 2014 13:02:49 +0100
-> Subject: [PATCH] PM / Domains: Change prototype for the attach and detach
->  callbacks
->
-> Convert the prototypes to return an int in order to support error
-> handling in these callbacks.
->
-> Also, as suggested by Dmitry Torokhov, pass the domain pointer for use
-> inside the callbacks, and so that they match the existing
-> power_on/power_off callbacks which currently take the domain pointer.
->
-> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> [khilman: added domain as parameter to callbacks, as suggested by Dmitry]
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Kevin Hilman <khilman@linaro.org>
-> ---
->  drivers/base/power/domain.c | 4 ++--
->  include/linux/pm_domain.h   | 6 ++++--
->  2 files changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 40bc2f4072cc..b520687046d4 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -1437,7 +1437,7 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
->         spin_unlock_irq(&dev->power.lock);
->
->         if (genpd->attach_dev)
-> -               genpd->attach_dev(dev);
-> +               genpd->attach_dev(genpd, dev);
->
->         mutex_lock(&gpd_data->lock);
->         gpd_data->base.dev = dev;
-> @@ -1499,7 +1499,7 @@ int pm_genpd_remove_device(struct generic_pm_domain *genpd,
->         genpd->max_off_time_changed = true;
->
->         if (genpd->detach_dev)
-> -               genpd->detach_dev(dev);
-> +               genpd->detach_dev(genpd, dev);
->
->         spin_lock_irq(&dev->power.lock);
->
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 73e938b7e937..b3ed7766a291 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -72,8 +72,10 @@ struct generic_pm_domain {
->         bool max_off_time_changed;
->         bool cached_power_down_ok;
->         struct gpd_cpuidle_data *cpuidle_data;
-> -       void (*attach_dev)(struct device *dev);
-> -       void (*detach_dev)(struct device *dev);
-> +       int (*attach_dev)(struct generic_pm_domain *domain,
-> +                         struct device *dev);
-> +       void (*detach_dev)(struct generic_pm_domain *domain,
-> +                          struct device *dev);
->  };
->
->  static inline struct generic_pm_domain *pd_to_genpd(struct dev_pm_domain *pd)
-> --
-> 2.1.0
->
+-       ret = asix_sw_reset(dev, AX_SWRESET_IPPD | AX_SWRESET_PRL);
+-       if (ret < 0)
+-               return ret;
+-
+-       msleep(150);
+-
+-       ret = asix_sw_reset(dev, AX_SWRESET_CLEAR);
+-       if (ret < 0)
+-               return ret;
+-
+-       msleep(150);
+-
+-       ret = asix_sw_reset(dev, embd_phy ? AX_SWRESET_IPRL : AX_SWRESET_PRTE);
++       ax88772_reset(dev);
+
+If you guys could test that and let me know how you get on I will
+send in a proper patch if it looks good.
+
+Thanks,
+Charles
