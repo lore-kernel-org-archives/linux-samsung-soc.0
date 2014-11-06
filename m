@@ -1,90 +1,94 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos: resolve infinite loop issue on multi-platform
-Date: Thu, 06 Nov 2014 22:44:24 +0900
-Message-ID: <545B7B38.1050407@samsung.com>
-References: <1415269965-427-1-git-send-email-inki.dae@samsung.com>
- <545B656F.40401@samsung.com> <545B6A62.7060305@samsung.com>
- <1415278817.21639.2.camel@AMDC1943>
+From: "Stam, Michel [FINT]" <M.Stam@fugro.nl>
+Subject: RE: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net onarndale platform
+Date: Thu, 6 Nov 2014 15:01:56 +0100
+Message-ID: <C89EFD3CD56F64468D3D206D683A8D22039FFE39@ldam-msx2.fugro-nl.local>
+References: <C89EFD3CD56F64468D3D206D683A8D2203985F49@ldam-msx2.fugro-nl.local> <20141104094336.GA3145@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D2203985FA9@ldam-msx2.fugro-nl.local> <20141104200914.GN23178@opensource.wolfsonmicro.com> <C89EFD3CD56F64468D3D206D683A8D22039FFC5F@ldam-msx2.fugro-nl.local> <20141105150258.GR23178@opensource.wolfsonmicro.com> <20141106090651.GA19109@afflict.kos.to> <20141106100104.GS23178@opensource.wolfsonmicro.com> <20141106120416.GA20162@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D22039FFE16@ldam-msx2.fugro-nl.local> <20141106124653.GV23178@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1415278817.21639.2.camel@AMDC1943>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-class: urn:content-classes:message
+In-Reply-To: <20141106124653.GV23178@opensource.wolfsonmicro.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: Riku Voipio <riku.voipio@iki.fi>, freddy@asix.com.tw, davem@davemloft.net, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNOuFhCAxMeyblCAwNuydvCAyMjowMCwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToK
-PiBPbiBjencsIDIwMTQtMTEtMDYgYXQgMjE6MzIgKzA5MDAsIElua2kgRGFlIHdyb3RlOgo+PiBP
-biAyMDE064WEIDEx7JuUIDA27J28IDIxOjExLCBLcnp5c3p0b2YgS296xYJvd3NraSB3cm90ZToK
-Pj4+IE9uIDA2LjExLjIwMTQgMTE6MzIsIElua2kgRGFlIHdyb3RlOgo+Pj4+IFRoaXMgcGF0Y2gg
-cmVzb2x2ZXMgdGVtcG9yYXJpbHkgaW5maW5pdGUgbG9vcCBpc3N1ZSBpbmN1cnJlZAo+Pj4+IHdo
-ZW4gRXh5bm9zIGRybSBkcml2ZXIgaXMgZW5hYmxlZCBhbmQgbXVsdGktcGxhdGZvcm0ga2VybmVs
-Cj4+Pj4gaXMgdXNlZCBieSByZWdpc3RlcmluZyBFeHlub3MgZHJtIGRldmljZSBvYmplY3Qgb25s
-eSBpbiBjYXNlCj4+Pj4gb2YgRXh5bm9zIFNvQy4gU28gdGhpcyBwYXRjaCB3aWxsIGJlIHJlcGxh
-Y2VkIHdpdGggbW9yZSBnZW5lcmljCj4+Pj4gd2F5IGxhdGVyLgo+Pj4KPj4+IERvZXMgbm90IGhl
-bHAgZm9yIFJpbmF0byBib2FyZC4KPj4+Cj4+PiBPbiBSaW5hdG86Cj4+PiAtLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLQo+Pj4gRmFpbGVkIHRvIGZpbmQgUE1VIG5vZGUKPj4+IFJlZ2lzdGVyaW5nIFNX
-UC9TV1BCIGVtdWxhdGlvbiBoYW5kbGVyCj4+PiBtbWMwOiBCS09QU19FTiBiaXQgaXMgbm90IHNl
-dAo+Pj4gbW1jX2hvc3QgbW1jMDogQnVzIHNwZWVkIChzbG90IDApID0gMTAwMDAwMDAwSHogKHNs
-b3QgcmVxIDEwMDAwMDAwMEh6LAo+Pj4gYWN0dWFsIDEwMDAwMDAwMEhaIGRpdiA9IDApCj4+PiBl
-eHlub3MtZHJtLWlwcCBleHlub3MtZHJtLWlwcDogZHJtIGlwcCByZWdpc3RlcmVkIHN1Y2Nlc3Nm
-dWxseS4KPj4+IG1tYzA6IG5ldyBIUzIwMCBNTUMgY2FyZCBhdCBhZGRyZXNzIDAwMDEKPj4+IHBs
-YXRmb3JtIGV4eW5vcy1kcm06IERyaXZlciBleHlub3MtZHJtIHJlcXVlc3RzIHByb2JlIGRlZmVy
-cmFsCj4+PiBtbWNibGswOiBtbWMwOjAwMDEgRjVYNU1BIDMuNjQgR2lCCj4+PiBtbWNibGswYm9v
-dDA6IG1tYzA6MDAwMSBGNVg1TUEgcGFydGl0aW9uIDEgNC4wMCBNaUIKPj4+IGV4eW5vcy1kcm0t
-aXBwIGV4eW5vcy1kcm0taXBwOiBkcm0gaXBwIHJlZ2lzdGVyZWQgc3VjY2Vzc2Z1bGx5Lgo+Pj4g
-bW1jYmxrMGJvb3QxOiBtbWMwOjAwMDEgRjVYNU1BIHBhcnRpdGlvbiAyIDQuMDAgTWlCCj4+PiBw
-bGF0Zm9ybSBleHlub3MtZHJtOiBEcml2ZXIgZXh5bm9zLWRybSByZXF1ZXN0cyBwcm9iZSBkZWZl
-cnJhbAo+Pj4gbW1jYmxrMHJwbWI6IG1tYzA6MDAwMSBGNVg1TUEgcGFydGl0aW9uIDMgNTEyIEtp
-Qgo+Pj4gZXh5bm9zLWRybS1pcHAgZXh5bm9zLWRybS1pcHA6IGRybSBpcHAgcmVnaXN0ZXJlZCBz
-dWNjZXNzZnVsbHkuCj4+PiBwbGF0Zm9ybSBleHlub3MtZHJtOiBEcml2ZXIgZXh5bm9zLWRybSBy
-ZXF1ZXN0cyBwcm9iZSBkZWZlcnJhbAo+Pj4gIG1tY2JsazA6IHAxIHAyIHAzIHA0IHA1IHA2IHA3
-Cj4+PiBleHlub3MtZHJtLWlwcCBleHlub3MtZHJtLWlwcDogZHJtIGlwcCByZWdpc3RlcmVkIHN1
-Y2Nlc3NmdWxseS4KPj4+IHBsYXRmb3JtIGV4eW5vcy1kcm06IERyaXZlciBleHlub3MtZHJtIHJl
-cXVlc3RzIHByb2JlIGRlZmVycmFsCj4+PiBleHlub3MtZHJtLWlwcCBleHlub3MtZHJtLWlwcDog
-ZHJtIGlwcCByZWdpc3RlcmVkIHN1Y2Nlc3NmdWxseS4KPj4+IHBsYXRmb3JtIGV4eW5vcy1kcm06
-IERyaXZlciBleHlub3MtZHJtIHJlcXVlc3RzIHByb2JlIGRlZmVycmFsCj4+Pgo+Pj4gYW5kIHNv
-IG9uLi4uCj4+PiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+Pgo+PiBDYW4geW91IHNob3cgbWUg
-Y29tcGF0aWJsZSBzdHJpbmcgcGxhY2VkIG9uIHRvcCBvZiBleHlub3MzMjUwLXJpbmF0by5kdHMK
-Pj4gZmlsZT8gSWYgdGhlIGNvbXBhdGlibGUgaGFzICJzYW1zdW5nLGV4eW5vczMiIGl0IHNob3Vs
-ZCBiZSBubyBwcm9ibGVtCj4+IHdpdGggdGhpcyBwYXRjaC4gQW5kIHRoZSByaW5hdG8gZHRzIGZp
-bGUgd2UgcG9zdGVkIHRvIG1haW5saW5lIGhhcyB0aGUKPj4gY29tcGF0aWJsZSBzdHJpbmcuCj4g
-Cj4gbW9kZWwgPSAiU2Ftc3VuZyBSaW5hdG8gYm9hcmQiOwo+IGNvbXBhdGlibGUgPSAic2Ftc3Vu
-ZyxyaW5hdG8tcmV2MDUiLCAic2Ftc3VuZyxleHlub3MzMjUwIiwKPiAic2Ftc3VuZyxleHlub3Mz
-IjsKPiAKPiBUaGUgcHJvYmxlbSBpcyAic2Ftc3VuZyxleHlub3MzIiBiZWNhdXNlIHRoZSBwYXRj
-aCBzb2x2ZXMgb25seSBpc3N1ZSBvbgo+IG11bHRpcGxhdGZvcm0ga2VybmVsIHJ1biBvbiBub24t
-ZXh5bm9zIGJvYXJkLiBJdCBkb2VzIG5vdCBzb2x2ZSB0aGUKPiBwcm9ibGVtIG9uIGV4eW5vcyBi
-b2FyZCB3aXRoIERSTSBlbmFibGVkIGJ1dCB3aXRob3V0IGFsbCBkcml2ZXJzLgo+IAoKUmlnaHQs
-IGlmIHlvdSBkaXNhYmxlZCBhbGwga21zIGRyaXZlcnMgYW5kIGVuYWJsZWQgb25seSBub24ta21z
-IGRyaXZlcnMKdGhlbiB0aGUgaW5maW5pdGUgbG9vcCB3aWxsIG9jY3VyLiBIb3dldmVyLCB0aGlz
-IHNob3VsZCBiZSBoYW5kbGVkIGluCnNlcGFyYXRlZCBpc3N1ZSBiZWNhdXNlIHdpdGhvdXQgdGhp
-cyBwYXRjaCwgc2FtZSBpc3N1ZSB3aWxsIG9jY3VyLgoKPiAKPj4+Cj4+PiBJIGRvIG5vdCBrbm93
-IHdoZXRoZXIgaXQgaXMgcmVsYXRlZCBidXQgVHJhdHMyIGJvYXJkIGNhbm5vdCBib290IGR1ZSB0
-bwo+Pj4gbG9ja3VwIGFmdGVyOgo+Pj4gW2RybV0gSW5pdGlhbGl6ZWQgZHJtIDEuMS4wIDIwMDYw
-ODEwCj4+PiAod2l0aCBvciB3aXRob3V0IHRoZSBwYXRjaCkKPj4+IGh0dHBzOi8vbGttbC5vcmcv
-bGttbC8yMDE0LzExLzYvMTI1Cj4+Pgo+Pgo+PiBobW0uLi4gaXQncyBzdHJhbmdlIGJlY2F1c2Ug
-bXkgdHJhdHMyIGJvYXJkIHdvcmtzIHdlbGwgd2l0aCB0aGlzIHBhdGNoLgo+PiBXaGljaCBrZXJu
-ZWwgZGlkIHlvdSB0ZXN0PyBBbmQgaG93IGNhbiBJIHJlcHJvZHVjZSBhYm92ZSBsb2NrdXA/Cj4g
-Cj4gSnVzdCBib290IHVwIG5leHQtMjAxNDExMHs0NTZ9IHdpdGgga2VybmVsIGNvbmZpZyBhdHRh
-Y2hlZCBpbiBtZW50aW9uZWQKPiBlbWFpbC4KCkl0IGxvb2tzIGxpa2Ugb3RoZXIgaXNzdWUgcmVn
-YXJkbGVzcyBvZiB0aGlzIHBhdGNoLiBJZiB0aGUgYm9hcmQgZHRzCmZpbGUgaW5jbHVkZXMgY29t
-cGF0aWJsZSBzdHJpbmcgdGhhdCBFeHlub3MgZHJtIGRyaXZlciBpcyBjaGVja2luZyB0aGVuCkV4
-eW5vcyBkcm0gZHJpdmVyIGhhcyBubyBhbnkgY2hhbmdlIC0gaGF2aW5nIHNhbWUgbG9naWMuCgpU
-aGFua3MsCklua2kgRGFlCgo+IAo+IEJlc3QgcmVnYXJkcywKPiBLcnp5c3p0b2YKPiAKPiAKPiAK
-PiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1
-YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8g
-bWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6
-Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hello Charles and Riku,
+
+I've quickly tested this on a 3.10 kernel i had around;
+I enabled CONFIG_PM, CONFIG_PM_RUNTIME, CONFIG_PM_AUTOSLEEP,
+CONFIG_SUSPEND, CONFIG_SUSPEND_FREEZER, CONFIG_FREEZER in the kernel (by
+default they are disabled for our setup, I enabled anything regarded to
+runtime powermanagement to be sure I would trigger suspend/resume).
+
+Then:
+cd /sys/bus/usb/devices/1-2/power
+echo auto > control
+echo 1 > autosuspend
+echo 0 > autosuspend_delay_ms
+echo enabled > wakeup
+
+# make sure there's no processes routing traffic over the eth1 interface
+
+ifconfig eth1 down
+sleep 4 # sleep some arbitrary long time
+ifconfig eth1 up
+
+check dmesg; it will reset back to 100 Mbps/full duplex.
+
+This confirms that the suspend / resume does not work well. So long as
+the suspend is not triggered, it does seem to work, though. I cannot say
+whether the original issue that triggered this is still around; the ASIX
+chip setup we use is soldered to the PCB and hooked up to a fixed device
+on-board. 
+I also tried to ping the device on the other side of the ASIX chip after
+the suspend/resume cycle, I could not ping it. I cannot conclusively say
+that this is due to the ASIX driver, as the device on the other side
+does not like switching PHY speeds (it may go into a non-responsive
+state). It is for this reason that we run it at half duplex/ 10Mbps at
+all times.
+
+As said; we are not using this kind of power management, so it does not
+raise any issues for us. I am merely pointing out that this may need
+work (in the future?).
+
+Kind regards,
+
+Michel Stam
+-----Original Message-----
+From: Charles Keepax [mailto:ckeepax@opensource.wolfsonmicro.com] 
+Sent: Thursday, November 06, 2014 13:47 PM
+To: Stam, Michel [FINT]
+Cc: Riku Voipio; freddy@asix.com.tw; davem@davemloft.net;
+linux-usb@vger.kernel.org; netdev@vger.kernel.org;
+linux-kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org
+Subject: Re: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net
+onarndale platform
+
+On Thu, Nov 06, 2014 at 01:39:07PM +0100, Stam, Michel [FINT] wrote:
+> Hello Riku and Charles,
+> 
+> I tried this with my original patch and the suggested patch applied, 
+> this seems to work for me too.
+> 
+> One thing that bothers me, is the suspend / resume situation; usbnet.c
+
+> seems to call the bind( ) on probe( ). Suspend / resume do not seem to
+
+> call bind( ) directly.
+> 
+> As Riku pointed out, the original patch I reverted was because of 
+> suspend/resume issues. I wonder if this will still work?
+
+I seem to remember I had a few issues with Arndale suspend and resume
+last time I tried it anyways, so not sure I will be able to test for
+that. But I will have a go. But in either case I guess a fix for that is
+probably orthogonal to my suggested fix here, as it looks pretty clear
+we intended to fully reset the device in bind and were appartently not
+doing that. So this patch is probably a needed fix anyway. Even if there
+are seperate issues relating to suspend and resume.
+
+Thanks,
+Charles
