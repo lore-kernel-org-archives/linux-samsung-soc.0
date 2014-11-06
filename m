@@ -1,82 +1,58 @@
-From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Subject: Re: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net on
-	arndale platform
-Date: Thu, 6 Nov 2014 10:01:04 +0000
-Message-ID: <20141106100104.GS23178@opensource.wolfsonmicro.com>
-References: <20141104072236.GA559@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D2203985F49@ldam-msx2.fugro-nl.local> <20141104094336.GA3145@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D2203985FA9@ldam-msx2.fugro-nl.local> <20141104200914.GN23178@opensource.wolfsonmicro.com> <C89EFD3CD56F64468D3D206D683A8D22039FFC5F@ldam-msx2.fugro-nl.local> <20141105150258.GR23178@opensource.wolfsonmicro.com> <20141106090651.GA19109@afflict.kos.to>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] spi: s3c64xx: add support for exynos7 SPI controller
+Date: Thu, 6 Nov 2014 10:26:36 +0000
+Message-ID: <20141106102636.GT8509@sirena.org.uk>
+References: <1415267509-16653-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <netdev-owner@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="4AfY4lbNVy6SI0IG"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:45265 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751210AbaKFK1F (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 6 Nov 2014 05:27:05 -0500
 Content-Disposition: inline
-In-Reply-To: <20141106090651.GA19109@afflict.kos.to>
-Sender: netdev-owner@vger.kernel.org
-To: Riku Voipio <riku.voipio@iki.fi>
-Cc: "Stam, Michel [FINT]" <M.Stam@fugro.nl>, freddy@asix.com.tw, davem@davemloft.net, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+In-Reply-To: <1415267509-16653-1-git-send-email-padma.v@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Padmavathi Venna <padma.kvr@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org
 
-On Thu, Nov 06, 2014 at 11:06:51AM +0200, Riku Voipio wrote:
-> On Wed, Nov 05, 2014 at 03:02:58PM +0000, Charles Keepax wrote:
-> > On Wed, Nov 05, 2014 at 01:04:37PM +0100, Stam, Michel [FINT] wrote:
-> > > Hello Charles,
-> > > 
-> > > After looking around I found the reset value for the 8772 chip, which
-> > > seems to be 0x1E1 (ANAR register).
-> > > 
-> > > This equates to (according to include/uapi/linux/mii.h)
-> > > ADVERTISE_ALL | ADVERTISE_CSMA.
-> > > 
-> > > The register only seems to become 0 if the software reset fails.
->  
-> > Odd it definitely reads back as zero on Arndale. I am guessing
-> > that the root of the problem here is that for some reason Arndale
-> > POR of the ethernet is pants and it needs a full software reset
-> > before it will work and the patch removes the full reset
-> > callback.
-> 
-> The asix on arndale comes semi-configured from u-boot, which I guess is
-> not the state kernel expects it to come in. At least in my case where
-> I use tftp from u-boot to load my kernel.
-> 
-> So probably the full reset is needed here to make the asix chip come
-> to a truly pristine state.
-> 
-> The commit that Michel partially reverted (by returning to use
-> ax88772_link_reset instead of ax88772_reset), indicates that a strong reset
-> is needed for suspend/resume as well:
 
-Ok I think I have cracked this one. I am pretty sure you are
-right that the USB comes to us in a strange state and needs
-a full reset, but that only needs to happen once when the driver
-is bound in. So there is some code in ax88772_bind that appears
-to try to reset the device but does a lot less than ax88772_reset
-and I think that must be the problem. Applying the following on
-top of the patch we have been debating I think will make
-everything work for all of us:
+--4AfY4lbNVy6SI0IG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
---- a/drivers/net/usb/asix_devices.c
-+++ b/drivers/net/usb/asix_devices.c
-@@ -465,19 +465,7 @@ static int ax88772_bind(struct usbnet *dev,
-struct usb_interface *in
-                return ret;
-        }
+On Thu, Nov 06, 2014 at 03:21:49PM +0530, Padmavathi Venna wrote:
+> Exynos7 SPI controller supports only the auto Selection of
+> CS toggle mode and Exynos7 SoC includes six SPI controllers.
+> Add support for these changes in Exynos7 SPI controller driver.
 
--       ret = asix_sw_reset(dev, AX_SWRESET_IPPD | AX_SWRESET_PRL);
--       if (ret < 0)
--               return ret;
--
--       msleep(150);
--
--       ret = asix_sw_reset(dev, AX_SWRESET_CLEAR);
--       if (ret < 0)
--               return ret;
--
--       msleep(150);
--
--       ret = asix_sw_reset(dev, embd_phy ? AX_SWRESET_IPRL : AX_SWRESET_PRTE);
-+       ax88772_reset(dev);
+Could you give a bit more detail on what the "auto selection of CS
+toggle mode" is - in the diff it looks like it's not an existing mode.
+I'm a bit worried that it's not going to function well with devices that
+send more than one transfer per message.
 
-If you guys could test that and let me know how you get on I will
-send in a proper patch if it looks good.
+> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 
-Thanks,
-Charles
+It's better if your signoff is using the same e-maill address as=20
+
+--4AfY4lbNVy6SI0IG
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUW0zXAAoJECTWi3JdVIfQr/AH/R+QLj3eZH9EE6l3EetEEPO+
+x9GGn7iRKAidcq6tXoy6EKtCC5BGPm0kc2desYgGpVrcBi6ro8OMOjfxy3irtJlq
+yiosuUP9M0pP2DfMeNARPNHyz499AaLSz+/Gr4YZciT0o6/tnqcEpsY0ONILKSnp
+8fex7bA2JuFQObppUzzqHszNuGh4Bl8pkcyFlqeV4vHEEhpWdBc32S9K4cYxWpxp
+B+D4J4OXHaCVIHv286zO8tYADDIy/EvPK8UGdZxa/7cEeVqBDHqXFQiu8n6QamHl
+LXjV7L3GXMdvvPDZf9MmAP/xVdOBHfOTRseR7mjNjs14EYpBj+ezy/f+KwcTTOU=
+=IaZv
+-----END PGP SIGNATURE-----
+
+--4AfY4lbNVy6SI0IG--
