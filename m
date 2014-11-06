@@ -1,86 +1,88 @@
-From: Riku Voipio <riku.voipio@iki.fi>
-Subject: Re: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net on
- arndale platform
-Date: Thu, 6 Nov 2014 11:06:51 +0200
-Message-ID: <20141106090651.GA19109@afflict.kos.to>
-References: <20141104072236.GA559@afflict.kos.to>
- <C89EFD3CD56F64468D3D206D683A8D2203985F49@ldam-msx2.fugro-nl.local>
- <20141104094336.GA3145@afflict.kos.to>
- <C89EFD3CD56F64468D3D206D683A8D2203985FA9@ldam-msx2.fugro-nl.local>
- <20141104200914.GN23178@opensource.wolfsonmicro.com>
- <C89EFD3CD56F64468D3D206D683A8D22039FFC5F@ldam-msx2.fugro-nl.local>
- <20141105150258.GR23178@opensource.wolfsonmicro.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] drm/panel: simple: Add AUO B116XW03 panel support
+Date: Thu, 6 Nov 2014 10:10:35 +0100
+Message-ID: <20141106091034.GF26297@ulmo>
+References: <1409566202-7946-1-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20141105150258.GR23178@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: "Stam, Michel [FINT]" <M.Stam@fugro.nl>, freddy@asix.com.tw, davem@davemloft.net, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0742848459=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1409566202-7946-1-git-send-email-ajaykumar.rs@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, seanpaul@google.com, joshi@samsung.com, dri-devel@lists.freedesktop.org, ajaynumb@gmail.com, prashanth.g@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Nov 05, 2014 at 03:02:58PM +0000, Charles Keepax wrote:
-> On Wed, Nov 05, 2014 at 01:04:37PM +0100, Stam, Michel [FINT] wrote:
-> > Hello Charles,
-> > 
-> > After looking around I found the reset value for the 8772 chip, which
-> > seems to be 0x1E1 (ANAR register).
-> > 
-> > This equates to (according to include/uapi/linux/mii.h)
-> > ADVERTISE_ALL | ADVERTISE_CSMA.
-> > 
-> > The register only seems to become 0 if the software reset fails.
- 
-> Odd it definitely reads back as zero on Arndale. I am guessing
-> that the root of the problem here is that for some reason Arndale
-> POR of the ethernet is pants and it needs a full software reset
-> before it will work and the patch removes the full reset
-> callback.
 
-The asix on arndale comes semi-configured from u-boot, which I guess is
-not the state kernel expects it to come in. At least in my case where
-I use tftp from u-boot to load my kernel.
+--===============0742848459==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="65ImJOski3p8EhYV"
+Content-Disposition: inline
 
-So probably the full reset is needed here to make the asix chip come
-to a truly pristine state.
 
-The commit that Michel partially reverted (by returning to use
-ax88772_link_reset instead of ax88772_reset), indicates that a strong reset
-is needed for suspend/resume as well:
+--65ImJOski3p8EhYV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-commit 4ad1438f025ed8d1e4e95a796ca7f0ad5a22c378
-Author: Grant Grundler <grundler@chromium.org>
-Date:   Tue Oct 4 09:55:16 2011 +0000
+On Mon, Sep 01, 2014 at 03:40:02PM +0530, Ajay Kumar wrote:
+> The AUO B116XW03 is a 11.6" HD TFT LCD panel connecting to a LVDS
+> interface and with an integrated LED backlight unit.
+>=20
+> This panel is used on the Samsung Chromebook(XE303C12).
+>=20
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> ---
+>  .../devicetree/bindings/panel/auo,b116xw03.txt     |    7 ++++++
+>  drivers/gpu/drm/panel/panel-simple.c               |   25 ++++++++++++++=
+++++++
+>  2 files changed, 32 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/panel/auo,b116xw03.=
+txt
 
-    NET: fix phy init for AX88772 USB ethernet
-        
-    Fix phy initialization for AX88772 (USB 2.0 100BT). Failure
-    was occasionally DHCP wouldn't work after reboot or
-    suspend/resume cycle.
- 
-> > Unfortunately, this is exactly what I get when the patch is applied;
-> > asix 1-2:1.0 eth1: Failed to send software reset: ffffffb5
-> > asix 1-2:1.0 eth1: link reset failed (-75) usbnet usb-0000:00:1d.0-2, 
-> > ASIX AX88772 USB 2.0 Ethernet
-> > asix 1-2:1.0 eth1: Failed to send software reset: ffffffb5
-> > asix 1-2:1.0 eth1: link reset failed (-75) usbnet usb-0000:00:1d.0-2, 
-> > ASIX AX88772 USB 2.0 Ethernet
-> 
-> Ok so I am guessing you have a value in the register which is
-> neither the reset value or 0 and this causing problems later in
-> the reset/on the next reset. I do find the naming confusing in
-> the error message there as it says link reset failed but the
-> link_reset callback can't fail in the driver and I modified the
-> reset callback. But I guess that is just oddities of the network
-> stack I am not familiar with.
-> 
-> The other thing that feels odd is (and again apologies as I know
-> next to nothing about the networking stack) how come it is
-> unexpected that the reset callback destroys the state of the
-> device. Naively I would have expected that a reset callback would
-> reset the device back to its default state. Here we seem to be
-> trying to avoid that happening.
+Applied after adding the missing .bpc field in the panel descriptor. I
+set it to 6 according to the datasheet.
 
-Indeed, it would seems some tracing would be neede to figure out in
-which order the .reset and .link_reset callbacks are being called.
+Thierry
+
+--65ImJOski3p8EhYV
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUWzsKAAoJEN0jrNd/PrOh56YP/2wbdvrBQG4qUai5OuSOpbL/
+M3EYXSklKBH7aG5urF4zKVG2FO3NWBo5jHTFJ4KUVMxRaGbisnF+mBIp8EO/cTUf
+bC5/wxQVpo3hQBV8XhpuOGDCCWuVZ+MmWPYj7uvxU8UlRBEqN+Kgk24mUO7gJghy
+DyhMMSbnXWROrbMA/yIAWjty1VD4O568kHeFDKTb79mDLXHRkA0hmJ/ELJTwlxFU
+mzz7FHTgOEtaZfzgv0elOXOw1awYbwAbJAr4XqrHfaqkxmgE3jIbFT8xphMWkxiH
++xBeVVrTSFFGZq89a5PuU3srU3+Giz3FzYV8j3q8eeGbY1TBK3xE1gf//hiAd50Y
+mSUiwMNyUuyOBM2+Pcf6YNxIQQTpgCuSKDE+KGGlTXhm1EQ9V8NtGfQMj6CJwGmo
+KWjm1qB1p1BpCQAfDoC9mbtm6FCWFgw9W9nJ5oza1bfE8cyRxUYyKWjTufuV17e1
+R0bj67+4nJR0Neu3nkhbUK6fFZGSq7kuYzjSvbSaygbWxTKzcurwxyjpjzLVFwEg
+48Rrg6dwGYsMNkGQLN/oQ5NsMf4ucgBkKCtcvuMVdJmkzgS04FA0vW9mofbgIJT9
+u2KRiNe8GfA0KMzNUAOUqJ7DdSENJh1CyXXg4kCYiT83OShsFsc2Nyy2+5dph2HP
+O/K0XLQmlPNhQKLcttFM
+=o+nO
+-----END PGP SIGNATURE-----
+
+--65ImJOski3p8EhYV--
+
+--===============0742848459==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+--===============0742848459==--
