@@ -1,42 +1,88 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH] drm/exynos: resolve infinite loop issue on non multi-platform
-Date: Thu, 06 Nov 2014 23:10:07 +0900
-Message-ID: <1415283007-10096-1-git-send-email-inki.dae@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH RESEND v3 1/4] devicetree: power/mfd: max77693: Document new
+ bindings for charger
+Date: Thu, 06 Nov 2014 16:11:57 +0100
+Message-ID: <1415286720-6358-2-git-send-email-k.kozlowski@samsung.com>
+References: <1415286720-6358-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:33317 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751095AbaKFPMM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 6 Nov 2014 10:12:12 -0500
+In-reply-to: <1415286720-6358-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Samuel Ortiz <sameo@linux.intel.com>, Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-api@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-VGhpcyBwYXRjaCByZXNvdmxlcyB0aGUgaW5maW5pdGUgbG9vcCBpc3N1ZSBpbmN1cnJlZAp3aGVu
-IEV4eW5vIGRybSBkcml2ZXIgaXMgZW5hYmxlZCBidXQgYWxsIGttcyBkcml2ZXJzCmFyZSBkaXNh
-YmxlZCBvbiBFeHlub3MgYm9hcmQgYnkgcmV0dXJuaW5nIC1FUFJPQkVfREVGRVIKb25seSBpbiBj
-YXNlIHRoYXQgdGhlcmUgaXMga21zIGRldmljZSByZWdpc3RlcmVkLgoKU2lnbmVkLW9mZi1ieTog
-SW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9kcnYuYyB8ICAgIDYgKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgNiBpbnNl
-cnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2Rydi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCmluZGV4IGVj
-Yzg2YWEuLjE0YzZhZjcgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9kcnYuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMK
-QEAgLTQ4OCw2ICs0ODgsMTIgQEAgc3RhdGljIHN0cnVjdCBjb21wb25lbnRfbWF0Y2ggKmV4eW5v
-c19kcm1fbWF0Y2hfYWRkKHN0cnVjdCBkZXZpY2UgKmRldikKIAogCW11dGV4X2xvY2soJmRybV9j
-b21wb25lbnRfbG9jayk7CiAKKwkvKiBEbyBub3QgcmV0cnkgdG8gcHJvYmUgaWYgdGhlcmUgaXMg
-bm8gYW55IGttcyBkcml2ZXIgcmVnaXRlcmVkLiAqLworCWlmIChsaXN0X2VtcHR5KCZkcm1fY29t
-cG9uZW50X2xpc3QpKSB7CisJCW11dGV4X3VubG9jaygmZHJtX2NvbXBvbmVudF9sb2NrKTsKKwkJ
-cmV0dXJuIEVSUl9QVFIoLUVOT0RFVik7CisJfQorCiAJbGlzdF9mb3JfZWFjaF9lbnRyeShjZGV2
-LCAmZHJtX2NvbXBvbmVudF9saXN0LCBsaXN0KSB7CiAJCS8qCiAJCSAqIEFkZCBjb21wb25lbnRz
-IHRvIG1hc3RlciBvbmx5IGluIGNhc2UgdGhhdCBjcnRjIGFuZAotLSAKMS43LjkuNQoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
-bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Document new device tree bindings for Maxim 77693 charger driver.
+
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ Documentation/devicetree/bindings/mfd/max77693.txt | 45 ++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/mfd/max77693.txt b/Documentation/devicetree/bindings/mfd/max77693.txt
+index 01e9f30fe678..38e64405e98d 100644
+--- a/Documentation/devicetree/bindings/mfd/max77693.txt
++++ b/Documentation/devicetree/bindings/mfd/max77693.txt
+@@ -41,6 +41,41 @@ Optional properties:
+ 	 To get more informations, please refer to documentaion.
+ 	[*] refer Documentation/devicetree/bindings/pwm/pwm.txt
+ 
++- charger : Node configuring the charger driver.
++  If present, required properties:
++  - compatible : Must be "maxim,max77693-charger".
++
++  Optional properties (if not set, defaults will be used):
++  - maxim,constant-microvolt : Battery constant voltage in uV. The charger
++    will operate in fast charge constant current mode till battery voltage
++    reaches this level. Then the charger will switch to fast charge constant
++    voltage mode. Also vsys (system voltage) will be set to this value when
++    DC power is supplied but charger is not enabled.
++    Valid values: 3650000 - 4400000, step by 25000 (rounded down)
++    Default: 4200000
++
++  - maxim,min-system-microvolt : Minimal system voltage in uV.
++    Valid values: 3000000 - 3700000, step by 100000 (rounded down)
++    Default: 3600000
++
++  - maxim,thermal-regulation-celsius : Temperature in Celsius for entering
++    high temperature charging mode. If die temperature exceeds this value
++    the charging current will be reduced by 105 mA/Celsius.
++    Valid values: 70, 85, 100, 115
++    Default: 100
++
++  - maxim,battery-overcurrent-microamp : Overcurrent protection threshold
++    in uA (current from battery to system).
++    Valid values: 2000000 - 3500000, step by 250000 (rounded down)
++    Default: 3500000
++
++  - maxim,charge-input-threshold-microvolt : Threshold voltage in uV for
++    triggering input voltage regulation loop. If input voltage decreases
++    below this value, the input current will be reduced to reach the
++    threshold voltage.
++    Valid values: 4300000, 4700000, 4800000, 4900000
++    Default: 4300000
++
+ Example:
+ 	max77693@66 {
+ 		compatible = "maxim,max77693";
+@@ -73,4 +108,14 @@ Example:
+ 			pwms = <&pwm 0 40000 0>;
+ 			pwm-names = "haptic";
+ 		};
++
++		charger {
++			compatible = "maxim,max77693-charger";
++
++			maxim,constant-microvolt = <4200000>;
++			maxim,min-system-microvolt = <3600000>;
++			maxim,thermal-regulation-celsius = <75>;
++			maxim,battery-overcurrent-microamp = <3000000>;
++			maxim,charge-input-threshold-microvolt = <4300000>;
++		};
+ 	};
+-- 
+1.9.1
