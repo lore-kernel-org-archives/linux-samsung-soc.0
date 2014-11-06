@@ -1,185 +1,282 @@
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: Re: [PATCH] drm/exynos: resolve infinite loop issue on non
- multi-platform
-Date: Thu, 06 Nov 2014 18:08:40 +0100
-Message-ID: <1415293720.31102.1.camel@collabora.co.uk>
-References: <1415283007-10096-1-git-send-email-inki.dae@samsung.com>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH] thermal: cpu_cooling: Update always cpufreq policy with
+ thermal constraints
+Date: Thu, 6 Nov 2014 03:49:13 -0400
+Message-ID: <20141106074907.GA8176@developer>
+References: <1415189785-18593-1-git-send-email-yadi.brar@samsung.com>
+ <20141105204638.GB5243@developer>
+ <004c01cff9b0$6b450740$41cf15c0$%brar@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="sha-1"; protocol="application/x-pkcs7-signature";
-	boundary="=-9bkhjQ5p+QvTTP6I2ZIc"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:43105 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752448AbaKFRIo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Nov 2014 12:08:44 -0500
-In-Reply-To: <1415283007-10096-1-git-send-email-inki.dae@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <004c01cff9b0$6b450740$41cf15c0$%brar@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Yadwinder Singh Brar <yadi.brar@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, rui.zhang@intel.com, amit.daniel@samsung.com, viresh.kumar@linaro.org, linux-samsung-soc@vger.kernel.org, yadi.brar01@gmail.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
 
---=-9bkhjQ5p+QvTTP6I2ZIc
-Content-Type: text/plain; charset="UTF-8"
+--pf9I7BMVVzbSWLtt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2014-11-06 at 23:10 +0900, Inki Dae wrote:
-> This patch resovles the infinite loop issue incurred
-> when Exyno drm driver is enabled but all kms drivers
-> are disabled on Exynos board by returning -EPROBE_DEFER
-> only in case that there is kms device registered.
+Hello Yadwinder,
 
-It would be nice if you could explain in the commit message/comment why
-returning -EPROBE_DEFER causes an infinite loop and why it's the wrong
-thing to do in this case?=20
+On Thu, Nov 06, 2014 at 04:26:27PM +0530, Yadwinder Singh Brar wrote:
+> Hello Eduardo Valentin,
+>=20
+> On Thursday, November 06, 2014 2:17 AM, Eduardo Valentin wrote:
+> > Hello Yadwinder,
+> >=20
+> > On Wed, Nov 05, 2014 at 05:46:25PM +0530, Yadwinder Singh Brar wrote:
+> > > Existing code updates cupfreq policy only while executing
+> > > cpufreq_apply_cooling() function (i.e. when notify_device !=3D
+> > NOTIFY_INVALID).
+> >=20
+> > Correct. The case you mention is when we receive a notification from
+> > cpufreq. But also, updates the cpufreq policy when the cooling device
+> > changes state, a call from thermal framework.
+>=20
+> I mentioned thermal framework case only, existing code updates
+> cupfreq policy only when (notify_device !=3D NOTIFY_INVALID),
+> which happens only when notification comes from cpufreq_update_policy
+> while changing cooling device's state(i.e. cpufreq_apply_cooling()).
+> In case of other notifications notify_device is always NOTIFY_INVALID.
 
-Even if you know this probe will never succeed in the future (so
-deferring is actually pointless), deferring really shouldn't trigger
-infinte loops in calling code
+I see your point.
 
 >=20
-> Signed-off-by: Inki Dae <inki.dae@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_drv.c |    6 ++++++
->  1 file changed, 6 insertions(+)
+> >=20
+> > > It doesn't apply constraints when cpufreq policy update happens from
+> > > any other place but it should update the cpufreq policy with thermal
+> > > constraints every time when there is a cpufreq policy update, to keep
+> > > state of cpufreq_cooling_device and max_feq of cpufreq policy in
+> > sync.
+> >=20
+> > I am not sure I follow you here. Can you please elaborate on 'any other
+> > places'? Could you please mention (also in the commit log) what are the
+> > case the current code does not cover? For instance, the
+> > cpufreq_apply_cooling gets called on notification coming from thermal
+> > subsystem, and for changes in cpufreq subsystem,
+> > cpufreq_thermal_notifier is called.
+> >=20
 >=20
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/ex=
-ynos/exynos_drm_drv.c
-> index ecc86aa..14c6af7 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -488,6 +488,12 @@ static struct component_match *exynos_drm_match_add(=
-struct device *dev)
-> =20
->  	mutex_lock(&drm_component_lock);
-> =20
-> +	/* Do not retry to probe if there is no any kms driver regitered. */
-> +	if (list_empty(&drm_component_list)) {
-> +		mutex_unlock(&drm_component_lock);
-> +		return ERR_PTR(-ENODEV);
-> +	}
+> "Other places" mean possible places from where cpufreq_update_policy()
+> can be called at runtime, an instance in present kernel is cpufreq_resume=
+().
+> But since cpufreq_update_policy() is an exposed API, I think
+> for robustness, generic cpu cooling should be able to take care of any
+> possible case(in future as well).
+>=20
+
+OK. I understand now. Can you please improve your commit message by
+adding the descriptions you mentioned here?
+
+> > >
+> > > This patch modifies code to maintain a global cpufreq_dev_list and
+> > get
+> > > corresponding cpufreq_cooling_device for policy's cpu from
+> > > cpufreq_dev_list when there is any policy update.
+> >=20
+> > OK. Please give real examples of when the current code fails to catch
+> > the event.
+> >=20
+>=20
+> While resuming cpufreq updates cpufreq_policy for boot cpu and it
+> restores default policy->usr_policy irrespective of cooling device's
+> cpufreq_state since notification gets missed because (notify_device =3D=3D
+> NOTIFY_INVALID).
+> Another thing, Rather I would say an issue, I observed is that
+> Userspace is able to change max_freq irrespective of cooling
+> device's state, as notification gets missed.
+>
+
+Include also the examples above you gave.
+
+Have you verified if with this patch the issue with userland goes away?
+  =20
+> >=20
+> > BR,
+> >=20
+> > Eduardo Valentin
+> >=20
+> > >
+> > > Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+> > > ---
+> > >  drivers/thermal/cpu_cooling.c |   37 ++++++++++++++++++++-----------
+> > ------
+> > >  1 files changed, 20 insertions(+), 17 deletions(-)
+> > >
+> > > diff --git a/drivers/thermal/cpu_cooling.c
+> > > b/drivers/thermal/cpu_cooling.c index 1ab0018..5546278 100644
+> > > --- a/drivers/thermal/cpu_cooling.c
+> > > +++ b/drivers/thermal/cpu_cooling.c
+> > > @@ -50,15 +50,14 @@ struct cpufreq_cooling_device {
+> > >  	unsigned int cpufreq_state;
+> > >  	unsigned int cpufreq_val;
+> > >  	struct cpumask allowed_cpus;
+> > > +	struct list_head node;
+> > >  };
+> > >  static DEFINE_IDR(cpufreq_idr);
+> > >  static DEFINE_MUTEX(cooling_cpufreq_lock);
+> > >
+> > >  static unsigned int cpufreq_dev_count;
+> > >
+> > > -/* notify_table passes value to the CPUFREQ_ADJUST callback
+> > function.
+> > > */ -#define NOTIFY_INVALID NULL -static struct cpufreq_cooling_device
+> > > *notify_device;
+> > > +static LIST_HEAD(cpufreq_dev_list);
+> > >
+> > >  /**
+> > >   * get_idr - function to get a unique id.
+> > > @@ -287,15 +286,12 @@ static int cpufreq_apply_cooling(struct
+> > > cpufreq_cooling_device *cpufreq_device,
+> > >
+> > >  	cpufreq_device->cpufreq_state =3D cooling_state;
+> > >  	cpufreq_device->cpufreq_val =3D clip_freq;
+> > > -	notify_device =3D cpufreq_device;
+> > >
+> > >  	for_each_cpu(cpuid, mask) {
+> > >  		if (is_cpufreq_valid(cpuid))
+> > >  			cpufreq_update_policy(cpuid);
+> > >  	}
+> > >
+> > > -	notify_device =3D NOTIFY_INVALID;
+> > > -
+> > >  	return 0;
+> > >  }
+> > >
+> > > @@ -316,21 +312,27 @@ static int cpufreq_thermal_notifier(struct
+> > > notifier_block *nb,  {
+> > >  	struct cpufreq_policy *policy =3D data;
+> > >  	unsigned long max_freq =3D 0;
+> > > +	struct cpufreq_cooling_device *cpufreq_dev;
+> > >
+> > > -	if (event !=3D CPUFREQ_ADJUST || notify_device =3D=3D NOTIFY_INVALI=
+D)
+> > > +	if (event !=3D CPUFREQ_ADJUST)
+> > >  		return 0;
+> > >
+> > > -	if (cpumask_test_cpu(policy->cpu, &notify_device->allowed_cpus))
+> > > -		max_freq =3D notify_device->cpufreq_val;
+> > > -	else
+> > > -		return 0;
+> > > +	mutex_lock(&cooling_cpufreq_lock);
+> > > +	list_for_each_entry(cpufreq_dev, &cpufreq_dev_list, node) {
+> > > +		if (!cpumask_test_cpu(policy->cpu,
+> > > +					&cpufreq_dev->allowed_cpus))
+> > > +			continue;
+> > >
+> > > -	/* Never exceed user_policy.max */
+> > > -	if (max_freq > policy->user_policy.max)
+> > > -		max_freq =3D policy->user_policy.max;
+> > > +		max_freq =3D cpufreq_dev->cpufreq_val;
+> > >
+>=20
+> I think I missed to post updated patch,
+> Actually it should be :
+>=20
+> +	if (!cpufreq_dev->cpufreq_val)
+> +		cpufreq_dev->cpufreq_val =3D get_cpu_frequency(
 > +
->  	list_for_each_entry(cdev, &drm_component_list, list) {
->  		/*
->  		 * Add components to master only in case that crtc and
+> cpumask_any(&cpufreq_dev->allowed_cpus),
+> +							cpufreq_dev->state);
+> +	max_freq =3D cpufreq_dev->cpufreq_val;
+>=20
+> I will send another version of patch.
+
+ok.
+
+>=20
+> > > -	if (policy->max !=3D max_freq)
+> > > -		cpufreq_verify_within_limits(policy, 0, max_freq);
+> > > +		/* Never exceed user_policy.max */
+> > > +		if (max_freq > policy->user_policy.max)
+> > > +			max_freq =3D policy->user_policy.max;
+> > > +
+> > > +		if (policy->max !=3D max_freq)
+> > > +			cpufreq_verify_within_limits(policy, 0, max_freq);
+> > > +	}
+> > > +	mutex_unlock(&cooling_cpufreq_lock);
+> >=20
+> > So, the problem is when we have several cpu cooling devices and you
+> > want to search for the real max among the existing cpu cooling devices?
+> >
+
+By max, I meant the maximun constraint (lowest frequency).
+
+>=20
+> Sorry I didn't get your question completely I think.
+> No, above code doesn't find max among existing cooling devices.
+> It simply finds cooling device corresponding to policy's cpu
+> and applies updates policy accordingly.
+
+yeah, that's what it does, but for all matching devices, correct?
+
+well, in fact your code is going through all cpu cooling devices that
+match the cpu ids and applying their max allowed freq, when they differ
+=66rom policy->max. cpufreq_verify_within_limits will update the policy if
+your request is lower than policy max. Then you will, in the end, apply
+the lowest among the existing matching cpu cooling devices.
+
+Which, turns out to be the correct thing to do, since we are not doing
+it per request in single cooling devices.
+
+Can you please also add a comment about this strategy?
 
 
+BR,=20
 
---=-9bkhjQ5p+QvTTP6I2ZIc
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+Eduardo Valentin
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIUzDCCBsIw
-ggWqoAMCAQICEAoE3yF0XU0rjOozcgUAUOkwDQYJKoZIhvcNAQEFBQAwZTELMAkGA1UEBhMCVVMx
-FTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEkMCIGA1UE
-AxMbRGlnaUNlcnQgQXNzdXJlZCBJRCBSb290IENBMB4XDTA2MTExMDAwMDAwMFoXDTIxMTExMDAw
-MDAwMFowYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3
-LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMIIBIjANBgkq
-hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6IItmfnKwkKVpYBzQHDSnlZUXKnE0kEGj8kz/E1FkVyB
-n+0snPgWWd+etSQVwpi5tHdJ3InECtqvy15r7a2wcTHrzzpADEZNk+yLejYIA6sMNP4YSYL+x8cx
-SIB8HqIPkg5QycaH6zY/2DDD/6b3+6LNb3Mj/qxWBZDwMiEWicZwiPkFl32jx0PdAug7Pe2xQaPt
-P77blUjE7h6z8rwMK5nQxl0SQoHhg26Ccz8mSxSQrllmCsSNvtLOBq6thG9IhJtPQLnxTPKvmPv2
-zkBdXPao8S+v7Iki8msYZbHBc63X8djPHgp0XEK4aH631XcKJ1Z8D2KkPzIUYJX9BwSiCQIDAQAB
-o4IDbzCCA2swDgYDVR0PAQH/BAQDAgGGMDsGA1UdJQQ0MDIGCCsGAQUFBwMBBggrBgEFBQcDAgYI
-KwYBBQUHAwMGCCsGAQUFBwMEBggrBgEFBQcDCDCCAcYGA1UdIASCAb0wggG5MIIBtQYLYIZIAYb9
-bAEDAAQwggGkMDoGCCsGAQUFBwIBFi5odHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJl
-cG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUHAgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAA
-dABoAGkAcwAgAEMAZQByAHQAaQBmAGkAYwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAg
-AGEAYwBjAGUAcAB0AGEAbgBjAGUAIABvAGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMA
-UAAvAEMAUABTACAAYQBuAGQAIAB0AGgAZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABB
-AGcAcgBlAGUAbQBlAG4AdAAgAHcAaABpAGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkA
-dAB5ACAAYQBuAGQAIABhAHIAZQAgAGkAbgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBp
-AG4AIABiAHkAIAByAGUAZgBlAHIAZQBuAGMAZQAuMA8GA1UdEwEB/wQFMAMBAf8wfQYIKwYBBQUH
-AQEEcTBvMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wRwYIKwYBBQUHMAKG
-O2h0dHA6Ly93d3cuZGlnaWNlcnQuY29tL0NBQ2VydHMvRGlnaUNlcnRBc3N1cmVkSURSb290Q0Eu
-Y3J0MIGBBgNVHR8EejB4MDqgOKA2hjRodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRB
-c3N1cmVkSURSb290Q0EuY3JsMDqgOKA2hjRodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vRGlnaUNl
-cnRBc3N1cmVkSURSb290Q0EuY3JsMB0GA1UdDgQWBBQVABIrE5iymQftHt+ivlcNK2cCzTAfBgNV
-HSMEGDAWgBRF66Kv9JLLgjEtUYunpyGd823IDzANBgkqhkiG9w0BAQUFAAOCAQEAhGFOQR64dgQq
-tbbvj/JVhbldVv4KmObkvWWKfUAp0/yxXUX9OrgqWzNLJFzNubTkc61hXXatdDOKZtUjr0wfcm5F
-2XVAu6I7z41JL8BBsOIpo1E4Q1CZFKwzBjViiX13qVIH5WwgV7aBum+8s8KU7XYCgNl8zoWoHOzH
-Q0pLsVfPcs7f9SU8yyJP/Z9S0TfLCLs4PuDVPm95Ca1bfDGzdzXD5GP5aAqYB+dGOHeE0j6XvAqg
-qKwlT0RukeHSWq9r7zAcjaNEQrMQiyP61+Y1dDesz+urWB/JiCP/NtQH6jRqR+qdlWyeKU9T7eMr
-lSBOKs+WYHr4LIDwlVLOKZaBYjCCBv8wggXnoAMCAQICEA2fwUKNhvkL8dN88tUFvVwwDQYJKoZI
-hvcNAQEFBQAwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQ
-d3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMB4XDTE0
-MDIxNzAwMDAwMFoXDTE1MDMxMjEyMDAwMFowgaQxCzAJBgNVBAYTAkdCMRcwFQYDVQQIEw5DYW1i
-cmlkZ2VzaGlyZTESMBAGA1UEBxMJQ2FtYnJpZGdlMRYwFAYDVQQKEw1Db2xsYWJvcmEgTHRkMQow
-CAYDVQQLEwExMRYwFAYDVQQDEw1Tam9lcmQgU2ltb25zMSwwKgYJKoZIhvcNAQkBFh1zam9lcmQu
-c2ltb25zQGNvbGxhYm9yYS5jby51azCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAN4Q
-EHeW1NbogMVZpHedG7o509/L4VBhqQd8j8JViWd+yvLlxOBw/gY+7ioHMatrQY2VvY6QOLle2Xqs
-CDvELcXMxwyFpBC0Ia+CVE+5pF+0IMuVkGIL1T8LHeKZYeRP+uFXtmWzas12hsMILNRmK7Q5PACm
-+v/6HFn111hLKkANBtRHIRiDbFQOiluNeR2bq+ck1y2+X//SGumA1XZFdCB/1VcRJXDdFnYdU3j/
-RkoiGggo3MSq3mJ6yV7sqzk04fTLFvfL0KadCMauputeGBybEiFAt6rCm5TkyUqoDOTU07byOEXO
-M32EGeYeV515RzARTpOSE9sdmRq0jNNAqGsCAwEAAaOCA2wwggNoMB8GA1UdIwQYMBaAFBUAEisT
-mLKZB+0e36K+Vw0rZwLNMB0GA1UdDgQWBBRaTG8RXMDSFO5XcrjqYs/YDlmqSDAoBgNVHREEITAf
-gR1zam9lcmQuc2ltb25zQGNvbGxhYm9yYS5jby51azAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMH0GA1UdHwR2MHQwOKA2oDSGMmh0dHA6Ly9jcmwzLmRpZ2lj
-ZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3JsMDigNqA0hjJodHRwOi8vY3JsNC5kaWdp
-Y2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0xLmNybDCCAcUGA1UdIASCAbwwggG4MIIBtAYK
-YIZIAYb9bAQBAjCCAaQwOgYIKwYBBQUHAgEWLmh0dHA6Ly93d3cuZGlnaWNlcnQuY29tL3NzbC1j
-cHMtcmVwb3NpdG9yeS5odG0wggFkBggrBgEFBQcCAjCCAVYeggFSAEEAbgB5ACAAdQBzAGUAIABv
-AGYAIAB0AGgAaQBzACAAQwBlAHIAdABpAGYAaQBjAGEAdABlACAAYwBvAG4AcwB0AGkAdAB1AHQA
-ZQBzACAAYQBjAGMAZQBwAHQAYQBuAGMAZQAgAG8AZgAgAHQAaABlACAARABpAGcAaQBDAGUAcgB0
-ACAAQwBQAC8AQwBQAFMAIABhAG4AZAAgAHQAaABlACAAUgBlAGwAeQBpAG4AZwAgAFAAYQByAHQA
-eQAgAEEAZwByAGUAZQBtAGUAbgB0ACAAdwBoAGkAYwBoACAAbABpAG0AaQB0ACAAbABpAGEAYgBp
-AGwAaQB0AHkAIABhAG4AZAAgAGEAcgBlACAAaQBuAGMAbwByAHAAbwByAGEAdABlAGQAIABoAGUA
-cgBlAGkAbgAgAGIAeQAgAHIAZQBmAGUAcgBlAG4AYwBlAC4wdwYIKwYBBQUHAQEEazBpMCQGCCsG
-AQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQQYIKwYBBQUHMAKGNWh0dHA6Ly9jYWNl
-cnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3J0MAwGA1UdEwEB/wQCMAAw
-DQYJKoZIhvcNAQEFBQADggEBAAc8CwXSms3RbIx+bhxFsGQoN+RpHtjnPvMPPAobv7rxdhQPPz+N
-6h3hpVzegeW2XhyZVC8MT0U6uWXrk+1uQUAXrJEG+W2X8yTEoHDS/SCF/POOsj/ekaDuNE9JJB/9
-cspoa4W+W8pX1sRurBDFHL0DBudUQ1PgvTSLPOHtfKQpu4gRb2u8KpJermp/IvPLImX9xSCbYKQM
-2L0wbpStFIYdyKCKuXuQxOX3BdBKLCFvcIDE6hjj3UpOlThCbeul2Tz5jARCfRK4OUxnXyb/Tp5j
-tshIAa2ZMGaTH9ApeY7P6C2ONF+Mh5yV/raWXOnJ9dEg6/sXcbdiieqzLKYBIgQwggb/MIIF56AD
-AgECAhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBBQUAMGIxCzAJBgNVBAYTAlVTMRUwEwYD
-VQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xITAfBgNVBAMTGERp
-Z2lDZXJ0IEFzc3VyZWQgSUQgQ0EtMTAeFw0xNDAyMTcwMDAwMDBaFw0xNTAzMTIxMjAwMDBaMIGk
-MQswCQYDVQQGEwJHQjEXMBUGA1UECBMOQ2FtYnJpZGdlc2hpcmUxEjAQBgNVBAcTCUNhbWJyaWRn
-ZTEWMBQGA1UEChMNQ29sbGFib3JhIEx0ZDEKMAgGA1UECxMBMTEWMBQGA1UEAxMNU2pvZXJkIFNp
-bW9uczEsMCoGCSqGSIb3DQEJARYdc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28udWswggEiMA0G
-CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDeEBB3ltTW6IDFWaR3nRu6OdPfy+FQYakHfI/CVYln
-fsry5cTgcP4GPu4qBzGra0GNlb2OkDi5Xtl6rAg7xC3FzMcMhaQQtCGvglRPuaRftCDLlZBiC9U/
-Cx3imWHkT/rhV7Zls2rNdobDCCzUZiu0OTwApvr/+hxZ9ddYSypADQbURyEYg2xUDopbjXkdm6vn
-JNctvl//0hrpgNV2RXQgf9VXESVw3RZ2HVN4/0ZKIhoIKNzEqt5iesle7Ks5NOH0yxb3y9CmnQjG
-rqbrXhgcmxIhQLeqwpuU5MlKqAzk1NO28jhFzjN9hBnmHledeUcwEU6TkhPbHZkatIzTQKhrAgMB
-AAGjggNsMIIDaDAfBgNVHSMEGDAWgBQVABIrE5iymQftHt+ivlcNK2cCzTAdBgNVHQ4EFgQUWkxv
-EVzA0hTuV3K46mLP2A5ZqkgwKAYDVR0RBCEwH4Edc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28u
-dWswDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMEBggrBgEFBQcDAjB9BgNVHR8E
-djB0MDigNqA0hjJodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0x
-LmNybDA4oDagNIYyaHR0cDovL2NybDQuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0QXNzdXJlZElEQ0Et
-MS5jcmwwggHFBgNVHSAEggG8MIIBuDCCAbQGCmCGSAGG/WwEAQIwggGkMDoGCCsGAQUFBwIBFi5o
-dHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJlcG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUH
-AgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAAdABoAGkAcwAgAEMAZQByAHQAaQBmAGkA
-YwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAgAGEAYwBjAGUAcAB0AGEAbgBjAGUAIABv
-AGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMAUAAvAEMAUABTACAAYQBuAGQAIAB0AGgA
-ZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABBAGcAcgBlAGUAbQBlAG4AdAAgAHcAaABp
-AGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkAdAB5ACAAYQBuAGQAIABhAHIAZQAgAGkA
-bgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBpAG4AIABiAHkAIAByAGUAZgBlAHIAZQBu
-AGMAZQAuMHcGCCsGAQUFBwEBBGswaTAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQu
-Y29tMEEGCCsGAQUFBzAChjVodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1
-cmVkSURDQS0xLmNydDAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBBQUAA4IBAQAHPAsF0prN0WyM
-fm4cRbBkKDfkaR7Y5z7zDzwKG7+68XYUDz8/jeod4aVc3oHltl4cmVQvDE9FOrll65PtbkFAF6yR
-Bvltl/MkxKBw0v0ghfzzjrI/3pGg7jRPSSQf/XLKaGuFvlvKV9bEbqwQxRy9AwbnVENT4L00izzh
-7XykKbuIEW9rvCqSXq5qfyLzyyJl/cUgm2CkDNi9MG6UrRSGHcigirl7kMTl9wXQSiwhb3CAxOoY
-491KTpU4Qm3rpdk8+YwEQn0SuDlMZ18m/06eY7bISAGtmTBmkx/QKXmOz+gtjjRfjIeclf62llzp
-yfXRIOv7F3G3YonqsyymASIEMYIDEDCCAwwCAQEwdjBiMQswCQYDVQQGEwJVUzEVMBMGA1UEChMM
-RGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSEwHwYDVQQDExhEaWdpQ2Vy
-dCBBc3N1cmVkIElEIENBLTECEA2fwUKNhvkL8dN88tUFvVwwCQYFKw4DAhoFAKCCAW8wGAYJKoZI
-hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTQxMTA2MTcwODQwWjAjBgkqhkiG
-9w0BCQQxFgQUSc8e4CeQn2i/LoeQpe6ygf+Wpl8wgYUGCSsGAQQBgjcQBDF4MHYwYjELMAkGA1UE
-BhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEh
-MB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xAhANn8FCjYb5C/HTfPLVBb1cMIGHBgsq
-hkiG9w0BCRACCzF4oHYwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcG
-A1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0x
-AhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBAQUABIIBALvr/V3c80mqhJtSa2hu0EQR1p1e
-Ku0nBYmdQkLrXWSGt8vCVJSsuB74U3gE3eczTs34O788XDlNiWY4SGek9hqbf1rOwzdozFzwpR2O
-ySiCi0XO7k+Ep2WgAbfvZLCsJzFsCQRoeXOaq37FoL4CRT65zePWCyT1olePB+c4BNHHx5OCjj0I
-lKtv6LdAzLQXVBqbdJe/8pqzdVddvEpqGzvvEwILVC3UmsB8wAY2Gg+j5nLbfB4wmD55ZqW4oIA7
-3oWLiaMknUPc65rDkHsUuAmnMVp7SbtTtzavirpXY4AcLyqQMVuh05s3bzlA7GPdXC13b3ED8uF3
-B2wTJfmRwpkAAAAAAAA=
+>=20
+> Regards,
+> Yadwinder
+> =20
+> > >  	return 0;
+> > >  }
+> > > @@ -486,7 +488,7 @@ __cpufreq_cooling_register(struct device_node
+> > *np,
+> > >  		cpufreq_register_notifier(&thermal_cpufreq_notifier_block,
+> > >  					  CPUFREQ_POLICY_NOTIFIER);
+> > >  	cpufreq_dev_count++;
+> > > -
+> > > +	list_add(&cpufreq_dev->node, &cpufreq_dev_list);
+> > >  	mutex_unlock(&cooling_cpufreq_lock);
+> > >
+> > >  	return cool_dev;
+> > > @@ -549,6 +551,7 @@ void cpufreq_cooling_unregister(struct
+> > > thermal_cooling_device *cdev)
+> > >
+> > >  	cpufreq_dev =3D cdev->devdata;
+> > >  	mutex_lock(&cooling_cpufreq_lock);
+> > > +	list_del(&cpufreq_dev->node);
+> > >  	cpufreq_dev_count--;
+> > >
+> > >  	/* Unregister the notifier for the last cpufreq cooling device */
+> > > --
+> > > 1.7.0.4
+> > >
+>=20
 
+--pf9I7BMVVzbSWLtt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
---=-9bkhjQ5p+QvTTP6I2ZIc--
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUWyeMAAoJEMLUO4d9pOJWZIAH/iCuBYoKxnIo7ppmKc6of9Q7
+Hhcaw6ttXTDQEzuuNsQYTK5jc/5PZu10wvMubR3XL1UCGP/nrbx2dP/2PboeFCtj
+lr44xhIBSrP9MxXyiasBVoa6jafeyCjevPKhCe324Ze/YIDUhDoWjAgubSUgBJKp
+Hx7FK0XDauFG21b1clUpyGOIEliI/x0QAd2+DfZWi3Yedl2ufAbL8Kr/A8AD/Dy0
+BlptPZFwS/L05dFC9D4/KvRddZFQqMGkuVnoukvqbqqzF8+1+TEMFl143EKNRmDC
+/wS++TRfahgCtYy1XCrkU893Imckq76bXHBWyK8/fGjhhLqwbgnWr8gzwYr/q9o=
+=uYlz
+-----END PGP SIGNATURE-----
+
+--pf9I7BMVVzbSWLtt--
