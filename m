@@ -1,84 +1,45 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 1/9] drm/exynos: remove uneeded declaration of struct
- dma_iommu_mapping
-Date: Thu, 06 Nov 2014 21:44:14 +0900
-Message-ID: <545B6D1E.4070104@samsung.com>
-References: <1414765063-30598-1-git-send-email-gustavo@padovan.org>
- <20141106123847.GB30193@joana>
+From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Subject: Re: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net on
+	arndale platform
+Date: Thu, 6 Nov 2014 12:46:53 +0000
+Message-ID: <20141106124653.GV23178@opensource.wolfsonmicro.com>
+References: <C89EFD3CD56F64468D3D206D683A8D2203985F49@ldam-msx2.fugro-nl.local> <20141104094336.GA3145@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D2203985FA9@ldam-msx2.fugro-nl.local> <20141104200914.GN23178@opensource.wolfsonmicro.com> <C89EFD3CD56F64468D3D206D683A8D22039FFC5F@ldam-msx2.fugro-nl.local> <20141105150258.GR23178@opensource.wolfsonmicro.com> <20141106090651.GA19109@afflict.kos.to> <20141106100104.GS23178@opensource.wolfsonmicro.com> <20141106120416.GA20162@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D22039FFE16@ldam-msx2.fugro-nl.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:58368 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751051AbaKFMoQ (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:42089 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751240AbaKFMq4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Nov 2014 07:44:16 -0500
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NEM00BN8BDQ2640@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 06 Nov 2014 21:44:14 +0900 (KST)
-In-reply-to: <20141106123847.GB30193@joana>
+	Thu, 6 Nov 2014 07:46:56 -0500
+Content-Disposition: inline
+In-Reply-To: <C89EFD3CD56F64468D3D206D683A8D22039FFE16@ldam-msx2.fugro-nl.local>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+To: "Stam, Michel [FINT]" <M.Stam@fugro.nl>
+Cc: Riku Voipio <riku.voipio@iki.fi>, freddy@asix.com.tw, davem@davemloft.net, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
+On Thu, Nov 06, 2014 at 01:39:07PM +0100, Stam, Michel [FINT] wrote:
+> Hello Riku and Charles,
+> 
+> I tried this with my original patch and the suggested patch applied,
+> this seems to work for me too.
+> 
+> One thing that bothers me, is the suspend / resume situation; usbnet.c
+> seems to call the bind( ) on probe( ). Suspend / resume do not seem to
+> call bind( ) directly.
+> 
+> As Riku pointed out, the original patch I reverted was because of
+> suspend/resume issues. I wonder if this will still work? 
 
-Hi Gustavo,
-
-On 2014=EB=85=84 11=EC=9B=94 06=EC=9D=BC 21:38, Gustavo Padovan wrote:
->=20
-> Hi Inki,
->=20
-> Could you please give a review to this series?
-
-It looks good to me. This patch series is just cleanup but not test so =
-I
-will merge them next week after testing if there is no any comment.
+I seem to remember I had a few issues with Arndale suspend and
+resume last time I tried it anyways, so not sure I will be able
+to test for that. But I will have a go. But in either case I
+guess a fix for that is probably orthogonal to my suggested fix
+here, as it looks pretty clear we intended to fully reset the
+device in bind and were appartently not doing that. So this
+patch is probably a needed fix anyway. Even if there are
+seperate issues relating to suspend and resume.
 
 Thanks,
-Inki Dae
-
->=20
-> Thanks.
->=20
-> 	Gustavo
->=20
-> 2014-10-31 Gustavo Padovan <gustavo@padovan.org>:
->=20
->> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
->>
->> It is not even used in this header anymore.
->>
->> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
->> ---
->>  drivers/gpu/drm/exynos/exynos_drm_iommu.h | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_iommu.h b/drivers/gpu=
-/drm/exynos/exynos_drm_iommu.h
->> index 72376d4..35d2588 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_iommu.h
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_iommu.h
->> @@ -40,7 +40,6 @@ static inline bool is_drm_iommu_supported(struct d=
-rm_device *drm_dev)
->> =20
->>  #else
->> =20
->> -struct dma_iommu_mapping;
->>  static inline int drm_create_iommu_mapping(struct drm_device *drm_d=
-ev)
->>  {
->>  	return 0;
->> --=20
->> 1.9.3
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
+Charles
