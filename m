@@ -1,100 +1,90 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [PATCH] drm/exynos: resolve infinite loop issue on multi-platform
-Date: Thu, 06 Nov 2014 14:00:17 +0100
-Message-ID: <1415278817.21639.2.camel@AMDC1943>
+Date: Thu, 06 Nov 2014 22:44:24 +0900
+Message-ID: <545B7B38.1050407@samsung.com>
 References: <1415269965-427-1-git-send-email-inki.dae@samsung.com>
  <545B656F.40401@samsung.com> <545B6A62.7060305@samsung.com>
+ <1415278817.21639.2.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:24816 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750926AbaKFNAW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Nov 2014 08:00:22 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NEM002M6C9BA760@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 06 Nov 2014 13:03:11 +0000 (GMT)
-In-reply-to: <545B6A62.7060305@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1415278817.21639.2.camel@AMDC1943>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-On czw, 2014-11-06 at 21:32 +0900, Inki Dae wrote:
-> On 2014=EB=85=84 11=EC=9B=94 06=EC=9D=BC 21:11, Krzysztof Koz=C5=82ow=
-ski wrote:
-> > On 06.11.2014 11:32, Inki Dae wrote:
-> >> This patch resolves temporarily infinite loop issue incurred
-> >> when Exynos drm driver is enabled and multi-platform kernel
-> >> is used by registering Exynos drm device object only in case
-> >> of Exynos SoC. So this patch will be replaced with more generic
-> >> way later.
-> >=20
-> > Does not help for Rinato board.
-> >=20
-> > On Rinato:
-> > -----------------------
-> > Failed to find PMU node
-> > Registering SWP/SWPB emulation handler
-> > mmc0: BKOPS_EN bit is not set
-> > mmc_host mmc0: Bus speed (slot 0) =3D 100000000Hz (slot req 1000000=
-00Hz,
-> > actual 100000000HZ div =3D 0)
-> > exynos-drm-ipp exynos-drm-ipp: drm ipp registered successfully.
-> > mmc0: new HS200 MMC card at address 0001
-> > platform exynos-drm: Driver exynos-drm requests probe deferral
-> > mmcblk0: mmc0:0001 F5X5MA 3.64 GiB
-> > mmcblk0boot0: mmc0:0001 F5X5MA partition 1 4.00 MiB
-> > exynos-drm-ipp exynos-drm-ipp: drm ipp registered successfully.
-> > mmcblk0boot1: mmc0:0001 F5X5MA partition 2 4.00 MiB
-> > platform exynos-drm: Driver exynos-drm requests probe deferral
-> > mmcblk0rpmb: mmc0:0001 F5X5MA partition 3 512 KiB
-> > exynos-drm-ipp exynos-drm-ipp: drm ipp registered successfully.
-> > platform exynos-drm: Driver exynos-drm requests probe deferral
-> >  mmcblk0: p1 p2 p3 p4 p5 p6 p7
-> > exynos-drm-ipp exynos-drm-ipp: drm ipp registered successfully.
-> > platform exynos-drm: Driver exynos-drm requests probe deferral
-> > exynos-drm-ipp exynos-drm-ipp: drm ipp registered successfully.
-> > platform exynos-drm: Driver exynos-drm requests probe deferral
-> >=20
-> > and so on...
-> > -----------------------
->=20
-> Can you show me compatible string placed on top of exynos3250-rinato.=
-dts
-> file? If the compatible has "samsung,exynos3" it should be no problem
-> with this patch. And the rinato dts file we posted to mainline has th=
-e
-> compatible string.
-
-model =3D "Samsung Rinato board";
-compatible =3D "samsung,rinato-rev05", "samsung,exynos3250",
-"samsung,exynos3";
-
-The problem is "samsung,exynos3" because the patch solves only issue on
-multiplatform kernel run on non-exynos board. It does not solve the
-problem on exynos board with DRM enabled but without all drivers.
-
-
-> >=20
-> > I do not know whether it is related but Trats2 board cannot boot du=
-e to
-> > lockup after:
-> > [drm] Initialized drm 1.1.0 20060810
-> > (with or without the patch)
-> > https://lkml.org/lkml/2014/11/6/125
-> >=20
->=20
-> hmm... it's strange because my trats2 board works well with this patc=
-h.
-> Which kernel did you test? And how can I reproduce above lockup?
-
-Just boot up next-2014110{456} with kernel config attached in mentioned
-email.
-
-Best regards,
-Krzysztof
+T24gMjAxNOuFhCAxMeyblCAwNuydvCAyMjowMCwgS3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToK
+PiBPbiBjencsIDIwMTQtMTEtMDYgYXQgMjE6MzIgKzA5MDAsIElua2kgRGFlIHdyb3RlOgo+PiBP
+biAyMDE064WEIDEx7JuUIDA27J28IDIxOjExLCBLcnp5c3p0b2YgS296xYJvd3NraSB3cm90ZToK
+Pj4+IE9uIDA2LjExLjIwMTQgMTE6MzIsIElua2kgRGFlIHdyb3RlOgo+Pj4+IFRoaXMgcGF0Y2gg
+cmVzb2x2ZXMgdGVtcG9yYXJpbHkgaW5maW5pdGUgbG9vcCBpc3N1ZSBpbmN1cnJlZAo+Pj4+IHdo
+ZW4gRXh5bm9zIGRybSBkcml2ZXIgaXMgZW5hYmxlZCBhbmQgbXVsdGktcGxhdGZvcm0ga2VybmVs
+Cj4+Pj4gaXMgdXNlZCBieSByZWdpc3RlcmluZyBFeHlub3MgZHJtIGRldmljZSBvYmplY3Qgb25s
+eSBpbiBjYXNlCj4+Pj4gb2YgRXh5bm9zIFNvQy4gU28gdGhpcyBwYXRjaCB3aWxsIGJlIHJlcGxh
+Y2VkIHdpdGggbW9yZSBnZW5lcmljCj4+Pj4gd2F5IGxhdGVyLgo+Pj4KPj4+IERvZXMgbm90IGhl
+bHAgZm9yIFJpbmF0byBib2FyZC4KPj4+Cj4+PiBPbiBSaW5hdG86Cj4+PiAtLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLQo+Pj4gRmFpbGVkIHRvIGZpbmQgUE1VIG5vZGUKPj4+IFJlZ2lzdGVyaW5nIFNX
+UC9TV1BCIGVtdWxhdGlvbiBoYW5kbGVyCj4+PiBtbWMwOiBCS09QU19FTiBiaXQgaXMgbm90IHNl
+dAo+Pj4gbW1jX2hvc3QgbW1jMDogQnVzIHNwZWVkIChzbG90IDApID0gMTAwMDAwMDAwSHogKHNs
+b3QgcmVxIDEwMDAwMDAwMEh6LAo+Pj4gYWN0dWFsIDEwMDAwMDAwMEhaIGRpdiA9IDApCj4+PiBl
+eHlub3MtZHJtLWlwcCBleHlub3MtZHJtLWlwcDogZHJtIGlwcCByZWdpc3RlcmVkIHN1Y2Nlc3Nm
+dWxseS4KPj4+IG1tYzA6IG5ldyBIUzIwMCBNTUMgY2FyZCBhdCBhZGRyZXNzIDAwMDEKPj4+IHBs
+YXRmb3JtIGV4eW5vcy1kcm06IERyaXZlciBleHlub3MtZHJtIHJlcXVlc3RzIHByb2JlIGRlZmVy
+cmFsCj4+PiBtbWNibGswOiBtbWMwOjAwMDEgRjVYNU1BIDMuNjQgR2lCCj4+PiBtbWNibGswYm9v
+dDA6IG1tYzA6MDAwMSBGNVg1TUEgcGFydGl0aW9uIDEgNC4wMCBNaUIKPj4+IGV4eW5vcy1kcm0t
+aXBwIGV4eW5vcy1kcm0taXBwOiBkcm0gaXBwIHJlZ2lzdGVyZWQgc3VjY2Vzc2Z1bGx5Lgo+Pj4g
+bW1jYmxrMGJvb3QxOiBtbWMwOjAwMDEgRjVYNU1BIHBhcnRpdGlvbiAyIDQuMDAgTWlCCj4+PiBw
+bGF0Zm9ybSBleHlub3MtZHJtOiBEcml2ZXIgZXh5bm9zLWRybSByZXF1ZXN0cyBwcm9iZSBkZWZl
+cnJhbAo+Pj4gbW1jYmxrMHJwbWI6IG1tYzA6MDAwMSBGNVg1TUEgcGFydGl0aW9uIDMgNTEyIEtp
+Qgo+Pj4gZXh5bm9zLWRybS1pcHAgZXh5bm9zLWRybS1pcHA6IGRybSBpcHAgcmVnaXN0ZXJlZCBz
+dWNjZXNzZnVsbHkuCj4+PiBwbGF0Zm9ybSBleHlub3MtZHJtOiBEcml2ZXIgZXh5bm9zLWRybSBy
+ZXF1ZXN0cyBwcm9iZSBkZWZlcnJhbAo+Pj4gIG1tY2JsazA6IHAxIHAyIHAzIHA0IHA1IHA2IHA3
+Cj4+PiBleHlub3MtZHJtLWlwcCBleHlub3MtZHJtLWlwcDogZHJtIGlwcCByZWdpc3RlcmVkIHN1
+Y2Nlc3NmdWxseS4KPj4+IHBsYXRmb3JtIGV4eW5vcy1kcm06IERyaXZlciBleHlub3MtZHJtIHJl
+cXVlc3RzIHByb2JlIGRlZmVycmFsCj4+PiBleHlub3MtZHJtLWlwcCBleHlub3MtZHJtLWlwcDog
+ZHJtIGlwcCByZWdpc3RlcmVkIHN1Y2Nlc3NmdWxseS4KPj4+IHBsYXRmb3JtIGV4eW5vcy1kcm06
+IERyaXZlciBleHlub3MtZHJtIHJlcXVlc3RzIHByb2JlIGRlZmVycmFsCj4+Pgo+Pj4gYW5kIHNv
+IG9uLi4uCj4+PiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+Pgo+PiBDYW4geW91IHNob3cgbWUg
+Y29tcGF0aWJsZSBzdHJpbmcgcGxhY2VkIG9uIHRvcCBvZiBleHlub3MzMjUwLXJpbmF0by5kdHMK
+Pj4gZmlsZT8gSWYgdGhlIGNvbXBhdGlibGUgaGFzICJzYW1zdW5nLGV4eW5vczMiIGl0IHNob3Vs
+ZCBiZSBubyBwcm9ibGVtCj4+IHdpdGggdGhpcyBwYXRjaC4gQW5kIHRoZSByaW5hdG8gZHRzIGZp
+bGUgd2UgcG9zdGVkIHRvIG1haW5saW5lIGhhcyB0aGUKPj4gY29tcGF0aWJsZSBzdHJpbmcuCj4g
+Cj4gbW9kZWwgPSAiU2Ftc3VuZyBSaW5hdG8gYm9hcmQiOwo+IGNvbXBhdGlibGUgPSAic2Ftc3Vu
+ZyxyaW5hdG8tcmV2MDUiLCAic2Ftc3VuZyxleHlub3MzMjUwIiwKPiAic2Ftc3VuZyxleHlub3Mz
+IjsKPiAKPiBUaGUgcHJvYmxlbSBpcyAic2Ftc3VuZyxleHlub3MzIiBiZWNhdXNlIHRoZSBwYXRj
+aCBzb2x2ZXMgb25seSBpc3N1ZSBvbgo+IG11bHRpcGxhdGZvcm0ga2VybmVsIHJ1biBvbiBub24t
+ZXh5bm9zIGJvYXJkLiBJdCBkb2VzIG5vdCBzb2x2ZSB0aGUKPiBwcm9ibGVtIG9uIGV4eW5vcyBi
+b2FyZCB3aXRoIERSTSBlbmFibGVkIGJ1dCB3aXRob3V0IGFsbCBkcml2ZXJzLgo+IAoKUmlnaHQs
+IGlmIHlvdSBkaXNhYmxlZCBhbGwga21zIGRyaXZlcnMgYW5kIGVuYWJsZWQgb25seSBub24ta21z
+IGRyaXZlcnMKdGhlbiB0aGUgaW5maW5pdGUgbG9vcCB3aWxsIG9jY3VyLiBIb3dldmVyLCB0aGlz
+IHNob3VsZCBiZSBoYW5kbGVkIGluCnNlcGFyYXRlZCBpc3N1ZSBiZWNhdXNlIHdpdGhvdXQgdGhp
+cyBwYXRjaCwgc2FtZSBpc3N1ZSB3aWxsIG9jY3VyLgoKPiAKPj4+Cj4+PiBJIGRvIG5vdCBrbm93
+IHdoZXRoZXIgaXQgaXMgcmVsYXRlZCBidXQgVHJhdHMyIGJvYXJkIGNhbm5vdCBib290IGR1ZSB0
+bwo+Pj4gbG9ja3VwIGFmdGVyOgo+Pj4gW2RybV0gSW5pdGlhbGl6ZWQgZHJtIDEuMS4wIDIwMDYw
+ODEwCj4+PiAod2l0aCBvciB3aXRob3V0IHRoZSBwYXRjaCkKPj4+IGh0dHBzOi8vbGttbC5vcmcv
+bGttbC8yMDE0LzExLzYvMTI1Cj4+Pgo+Pgo+PiBobW0uLi4gaXQncyBzdHJhbmdlIGJlY2F1c2Ug
+bXkgdHJhdHMyIGJvYXJkIHdvcmtzIHdlbGwgd2l0aCB0aGlzIHBhdGNoLgo+PiBXaGljaCBrZXJu
+ZWwgZGlkIHlvdSB0ZXN0PyBBbmQgaG93IGNhbiBJIHJlcHJvZHVjZSBhYm92ZSBsb2NrdXA/Cj4g
+Cj4gSnVzdCBib290IHVwIG5leHQtMjAxNDExMHs0NTZ9IHdpdGgga2VybmVsIGNvbmZpZyBhdHRh
+Y2hlZCBpbiBtZW50aW9uZWQKPiBlbWFpbC4KCkl0IGxvb2tzIGxpa2Ugb3RoZXIgaXNzdWUgcmVn
+YXJkbGVzcyBvZiB0aGlzIHBhdGNoLiBJZiB0aGUgYm9hcmQgZHRzCmZpbGUgaW5jbHVkZXMgY29t
+cGF0aWJsZSBzdHJpbmcgdGhhdCBFeHlub3MgZHJtIGRyaXZlciBpcyBjaGVja2luZyB0aGVuCkV4
+eW5vcyBkcm0gZHJpdmVyIGhhcyBubyBhbnkgY2hhbmdlIC0gaGF2aW5nIHNhbWUgbG9naWMuCgpU
+aGFua3MsCklua2kgRGFlCgo+IAo+IEJlc3QgcmVnYXJkcywKPiBLcnp5c3p0b2YKPiAKPiAKPiAK
+PiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1
+YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8g
+bWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6
+Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+IAoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
