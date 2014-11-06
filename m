@@ -1,100 +1,84 @@
-From: "Stam, Michel [FINT]" <M.Stam@fugro.nl>
-Subject: RE: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net on arndale platform
-Date: Thu, 6 Nov 2014 13:39:07 +0100
-Message-ID: <C89EFD3CD56F64468D3D206D683A8D22039FFE16@ldam-msx2.fugro-nl.local>
-References: <20141104072236.GA559@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D2203985F49@ldam-msx2.fugro-nl.local> <20141104094336.GA3145@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D2203985FA9@ldam-msx2.fugro-nl.local> <20141104200914.GN23178@opensource.wolfsonmicro.com> <C89EFD3CD56F64468D3D206D683A8D22039FFC5F@ldam-msx2.fugro-nl.local> <20141105150258.GR23178@opensource.wolfsonmicro.com> <20141106090651.GA19109@afflict.kos.to> <20141106100104.GS23178@opensource.wolfsonmicro.com> <20141106120416.GA20162@afflict.kos.to>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 1/9] drm/exynos: remove uneeded declaration of struct
+ dma_iommu_mapping
+Date: Thu, 06 Nov 2014 21:44:14 +0900
+Message-ID: <545B6D1E.4070104@samsung.com>
+References: <1414765063-30598-1-git-send-email-gustavo@padovan.org>
+ <20141106123847.GB30193@joana>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-class: urn:content-classes:message
-In-Reply-To: <20141106120416.GA20162@afflict.kos.to>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Riku Voipio <riku.voipio@iki.fi>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: freddy@asix.com.tw, davem@davemloft.net, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:58368 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751051AbaKFMoQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 6 Nov 2014 07:44:16 -0500
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NEM00BN8BDQ2640@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 06 Nov 2014 21:44:14 +0900 (KST)
+In-reply-to: <20141106123847.GB30193@joana>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-Hello Riku and Charles,
 
-I tried this with my original patch and the suggested patch applied,
-this seems to work for me too.
+Hi Gustavo,
 
-One thing that bothers me, is the suspend / resume situation; usbnet.c
-seems to call the bind( ) on probe( ). Suspend / resume do not seem to
-call bind( ) directly.
+On 2014=EB=85=84 11=EC=9B=94 06=EC=9D=BC 21:38, Gustavo Padovan wrote:
+>=20
+> Hi Inki,
+>=20
+> Could you please give a review to this series?
 
-As Riku pointed out, the original patch I reverted was because of
-suspend/resume issues. I wonder if this will still work? 
+It looks good to me. This patch series is just cleanup but not test so =
+I
+will merge them next week after testing if there is no any comment.
 
-Kind regards,
+Thanks,
+Inki Dae
 
-Michel Stam
-
------Original Message-----
-From: Riku Voipio [mailto:riku.voipio@iki.fi] 
-Sent: Thursday, November 06, 2014 13:04 PM
-To: Charles Keepax
-Cc: Riku Voipio; Stam, Michel [FINT]; freddy@asix.com.tw;
-davem@davemloft.net; linux-usb@vger.kernel.org; netdev@vger.kernel.org;
-linux-kernel@vger.kernel.org; linux-samsung-soc@vger.kernel.org
-Subject: Re: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net
-on arndale platform
-
-On Thu, Nov 06, 2014 at 10:01:04AM +0000, Charles Keepax wrote:
-> On Thu, Nov 06, 2014 at 11:06:51AM +0200, Riku Voipio wrote:
-> > The asix on arndale comes semi-configured from u-boot, which I guess
-
-> > is not the state kernel expects it to come in. At least in my case 
-> > where I use tftp from u-boot to load my kernel.
-> > 
-> > So probably the full reset is needed here to make the asix chip come
-
-> > to a truly pristine state.
-> > 
-> > The commit that Michel partially reverted (by returning to use 
-> > ax88772_link_reset instead of ax88772_reset), indicates that a 
-> > strong reset is needed for suspend/resume as well:
- 
-> Ok I think I have cracked this one. I am pretty sure you are right 
-> that the USB comes to us in a strange state and needs a full reset, 
-> but that only needs to happen once when the driver is bound in. So 
-> there is some code in ax88772_bind that appears to try to reset the 
-> device but does a lot less than ax88772_reset and I think that must be
-
-> the problem. Applying the following on top of the patch we have been 
-> debating I think will make everything work for all of us:
-
-The patch below on top of 3.18-rc3 fixes arndale network for me.
-
-Tested-by: Riku Voipio <riku.voipio@linaro.org>
-
-> --- a/drivers/net/usb/asix_devices.c
-> +++ b/drivers/net/usb/asix_devices.c
-> @@ -465,19 +465,7 @@ static int ax88772_bind(struct usbnet *dev, 
-> struct usb_interface *in
->                 return ret;
->         }
-> 
-> -       ret = asix_sw_reset(dev, AX_SWRESET_IPPD | AX_SWRESET_PRL);
-> -       if (ret < 0)
-> -               return ret;
-> -
-> -       msleep(150);
-> -
-> -       ret = asix_sw_reset(dev, AX_SWRESET_CLEAR);
-> -       if (ret < 0)
-> -               return ret;
-> -
-> -       msleep(150);
-> -
-> -       ret = asix_sw_reset(dev, embd_phy ? AX_SWRESET_IPRL :
-AX_SWRESET_PRTE);
-> +       ax88772_reset(dev);
-> 
-> If you guys could test that and let me know how you get on I will send
-
-> in a proper patch if it looks good.
-> 
-> Thanks,
-> Charles
+>=20
+> Thanks.
+>=20
+> 	Gustavo
+>=20
+> 2014-10-31 Gustavo Padovan <gustavo@padovan.org>:
+>=20
+>> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+>>
+>> It is not even used in this header anymore.
+>>
+>> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_drm_iommu.h | 1 -
+>>  1 file changed, 1 deletion(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_drm_iommu.h b/drivers/gpu=
+/drm/exynos/exynos_drm_iommu.h
+>> index 72376d4..35d2588 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_drm_iommu.h
+>> +++ b/drivers/gpu/drm/exynos/exynos_drm_iommu.h
+>> @@ -40,7 +40,6 @@ static inline bool is_drm_iommu_supported(struct d=
+rm_device *drm_dev)
+>> =20
+>>  #else
+>> =20
+>> -struct dma_iommu_mapping;
+>>  static inline int drm_create_iommu_mapping(struct drm_device *drm_d=
+ev)
+>>  {
+>>  	return 0;
+>> --=20
+>> 1.9.3
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
