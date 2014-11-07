@@ -1,185 +1,83 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH 04/21] thermal: of: Extend current of-thermal.c code to
- allow setting emulated temp
-Date: Fri, 07 Nov 2014 12:20:35 +0100
-Message-ID: <20141107122035.2973ad20@amdc2363>
-References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
- <1412872737-624-5-git-send-email-l.majewski@samsung.com>
- <20141107014448.GE10180@developer>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: resolve infinite loop issue on non
+ multi-platform
+Date: Fri, 07 Nov 2014 20:27:45 +0900
+Message-ID: <545CACB1.4000502@samsung.com>
+References: <1415283007-10096-1-git-send-email-inki.dae@samsung.com>
+ <545C8302.30701@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:28843 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751579AbaKGLUs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Nov 2014 06:20:48 -0500
-In-reply-to: <20141107014448.GE10180@developer>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <545C8302.30701@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, Linux PM list <linux-pm@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi Eduardo,
-
-> Hello,
-> 
-> On Thu, Oct 09, 2014 at 06:38:40PM +0200, Lukasz Majewski wrote:
-> > Before this change it was only possible to set get_temp() and
-> > get_trend() methods to be used in the common code handling passing
-> > parameters via device tree to "cpu-thermal" CPU thermal zone device.
-> > 
-> > Now it is possible to also set emulated value of temperature for
-> > debug purposes.
-> > 
-> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > ---
-> >  drivers/thermal/of-thermal.c | 25 ++++++++++++++++++++++---
-> >  include/linux/thermal.h      |  6 ++++--
-> >  2 files changed, 26 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/thermal/of-thermal.c
-> > b/drivers/thermal/of-thermal.c index cd74e64..f206375 100644
-> > --- a/drivers/thermal/of-thermal.c
-> > +++ b/drivers/thermal/of-thermal.c
-> > @@ -98,10 +98,22 @@ struct __thermal_zone {
-> >  	void *sensor_data;
-> >  	int (*get_temp)(void *, long *);
-> >  	int (*get_trend)(void *, long *);
-> > +	int (*set_emul_temp)(void *, unsigned long);
-> >  };
-> >  
-> >  /***   DT thermal zone device callbacks   ***/
-> >  
-> > +static int of_thermal_set_emul_temp(struct thermal_zone_device *tz,
-> > +				    unsigned long temp)
-> > +{
-> > +	struct __thermal_zone *data = tz->devdata;
-> > +
-> > +	if (!data->set_emul_temp)
-> > +		return -EINVAL;
-> > +
-> > +	return data->set_emul_temp(data->sensor_data, temp);
-> > +}
-> > +
-> >  static int of_thermal_get_temp(struct thermal_zone_device *tz,
-> >  			       unsigned long *temp)
-> >  {
-> > @@ -352,7 +364,8 @@ static struct thermal_zone_device *
-> >  thermal_zone_of_add_sensor(struct device_node *zone,
-> >  			   struct device_node *sensor, void *data,
-> >  			   int (*get_temp)(void *, long *),
-> > -			   int (*get_trend)(void *, long *))
-> > +			   int (*get_trend)(void *, long *),
-> > +			   int (*set_emul_temp)(void *, unsigned
-> > long))
-> 
-> Thanks for improving the API. However, looking at what is above, it
-> starts to be pretty ugly. And for sure, this is not the last callback
-> to be added.
-
-Presumably there would be some more callbacks.
-
-> I believe it is time to add a .ops in the of-thermal.
-> While in here, do you mind adding the .ops in a separated patch, then
-> add the .set_emul_temp in the .ops field?
-
-I will add an option to pass .ops with thermal_zone_of_add_sensor().
-
-I'm only concerned a bit about testing other users of of-thermal. 
-I have only beaglebone black (BBB) for testing, which on-soc bandgap
-thermal sensor is very inaccurate and hence not supported even at BBB
-github linux kernel repository (v3.14).
-
-Because of above I would need your support for testing.
-
-> 
-> >  {
-> >  	struct thermal_zone_device *tzd;
-> >  	struct __thermal_zone *tz;
-> > @@ -366,10 +379,12 @@ thermal_zone_of_add_sensor(struct device_node
-> > *zone, mutex_lock(&tzd->lock);
-> >  	tz->get_temp = get_temp;
-> >  	tz->get_trend = get_trend;
-> > +	tz->set_emul_temp = set_emul_temp;
-> >  	tz->sensor_data = data;
-> >  
-> >  	tzd->ops->get_temp = of_thermal_get_temp;
-> >  	tzd->ops->get_trend = of_thermal_get_trend;
-> > +	tzd->ops->set_emul_temp = of_thermal_set_emul_temp;
-> >  	mutex_unlock(&tzd->lock);
-> >  
-> >  	return tzd;
-> > @@ -411,7 +426,8 @@ thermal_zone_of_add_sensor(struct device_node
-> > *zone, struct thermal_zone_device *
-> >  thermal_zone_of_sensor_register(struct device *dev, int sensor_id,
-> >  				void *data, int (*get_temp)(void
-> > *, long *),
-> > -				int (*get_trend)(void *, long *))
-> > +				int (*get_trend)(void *, long *),
-> > +				int (*set_emul_temp)(void *,
-> > unsigned long)) {
-> >  	struct device_node *np, *child, *sensor_np;
-> >  
-> > @@ -453,7 +469,8 @@ thermal_zone_of_sensor_register(struct device
-> > *dev, int sensor_id, return thermal_zone_of_add_sensor(child,
-> > sensor_np, data,
-> >  							  get_temp,
-> > -
-> > get_trend);
-> > +
-> > get_trend,
-> > +
-> > set_emul_temp); }
-> >  	}
-> >  	of_node_put(np);
-> > @@ -494,9 +511,11 @@ void thermal_zone_of_sensor_unregister(struct
-> > device *dev, mutex_lock(&tzd->lock);
-> >  	tzd->ops->get_temp = NULL;
-> >  	tzd->ops->get_trend = NULL;
-> > +	tzd->ops->set_emul_temp = NULL;
-> >  
-> >  	tz->get_temp = NULL;
-> >  	tz->get_trend = NULL;
-> > +	tz->set_emul_temp = NULL;
-> >  	tz->sensor_data = NULL;
-> >  	mutex_unlock(&tzd->lock);
-> >  }
-> > diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-> > index 0305cde..36010e9 100644
-> > --- a/include/linux/thermal.h
-> > +++ b/include/linux/thermal.h
-> > @@ -290,14 +290,16 @@ struct thermal_genl_event {
-> >  struct thermal_zone_device *
-> >  thermal_zone_of_sensor_register(struct device *dev, int id,
-> >  				void *data, int (*get_temp)(void
-> > *, long *),
-> > -				int (*get_trend)(void *, long *));
-> > +				int (*get_trend)(void *, long *),
-> > +				int (*set_emul_temp)(void *,
-> > unsigned long)); void thermal_zone_of_sensor_unregister(struct
-> > device *dev, struct thermal_zone_device *tz);
-> >  #else
-> >  static inline struct thermal_zone_device *
-> >  thermal_zone_of_sensor_register(struct device *dev, int id,
-> >  				void *data, int (*get_temp)(void
-> > *, long *),
-> > -				int (*get_trend)(void *, long *))
-> > +				int (*get_trend)(void *, long *),
-> > +				int (*set_emul_temp)(void *,
-> > unsigned long)) {
-> >  	return NULL;
-> >  }
-> > -- 
-> > 2.0.0.rc2
-> > 
-
-
-
--- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+T24gMjAxNOuFhCAxMeyblCAwN+ydvCAxNzoyOSwgQW5kcnplaiBIYWpkYSB3cm90ZToKPiBPbiAx
+MS8wNi8yMDE0IDAzOjEwIFBNLCBJbmtpIERhZSB3cm90ZToKPj4gVGhpcyBwYXRjaCByZXNvdmxl
+cyB0aGUgaW5maW5pdGUgbG9vcCBpc3N1ZSBpbmN1cnJlZAo+PiB3aGVuIEV4eW5vIGRybSBkcml2
+ZXIgaXMgZW5hYmxlZCBidXQgYWxsIGttcyBkcml2ZXJzCj4+IGFyZSBkaXNhYmxlZCBvbiBFeHlu
+b3MgYm9hcmQgYnkgcmV0dXJuaW5nIC1FUFJPQkVfREVGRVIKPj4gb25seSBpbiBjYXNlIHRoYXQg
+dGhlcmUgaXMga21zIGRldmljZSByZWdpc3RlcmVkLgo+IAo+IFRoZXJlIGFyZSBtYW55IGRpZmZl
+cmVudCBjYXNlcyBpdCBjYW4gc3RpbGwgZmFpbDoKPiAtIHRoZXJlIGFyZSBubyBtYXRjaGluZyBk
+ZXZpY2Ugbm9kZXMgaW4gRFQsCgpXaXRoIHRoaXMgcGF0Y2gsIC1FTk9ERVYgd291bGQgYmUgcmV0
+dXJuZWQgaW5zdGVhZCBvZiAtRVBST0JFX0RFRkVSIGluCmFib3ZlIGNhc2UuIFNvIGl0IHNob3Vs
+ZCBiZSBubyBwcm9ibGVtLgoKPiAtIHNvbWUgZGV2aWNlcyBhcmUgcHJlc2VudCBpbiBEVCwgc29t
+ZSBkcml2ZXJzIGFyZSBlbmFibGVkLAo+IGJ1dCB0aGV5IGRvIG5vdCBtYXRjaCwKClJpZ2h0LgoK
+PiAtIGV2ZW4gaWYgdGhlcmUgZXhpc3RzIHNvbWUgcGFpcnMgZGV2aWNlX25vZGUtZHJpdmVyIGl0
+IGNhbiBmYWlsIC0KPiBleHlub3NfZHJtX21hdGNoX2FkZCByZXF1aXJlcyBoaWdoZXIgbGV2ZWwg
+bWF0Y2hlcyAtIGV2ZXJ5IGNydGMgc2hvdWxkCj4gaGF2ZSBtYXRjaGluZyBlbmNvZGVyLgoKQWxz
+byByaWdodC4KCj4gCj4gSSB0aGluayBldmVuIHN1cGVyLW5vZGUgd2lsbCBub3Qgc29sdmUgYWxs
+IHRoZXNlIGlzc3Vlcy4KPiAKCldpdGggdGhlIHN1cGVyIGRldmljZSBub2RlLCBteSBpbnRlbnRp
+b24gaXMgdGhhdCB3ZSBjYW4gcmVtb3ZlCnVubmVjZXNzYXJ5IGV4Y2VwdGlvbiBjb2RlcyBsaWtl
+IG9mX21hY2hpbmVfaXNfY29tcGF0aWJsZSBmdW5jdGlvbnMuIFNvCnRoZSB1c2Ugb2YgdGhlIHN1
+cGVyIGRldmljZSBub2RlIHdvdWxkbid0IGJlIHJlbGV2YW50IHRvIHRoaXMgaXNzdWUuCgo+IFRo
+ZSByZWFsIHByb2JsZW0gaGVyZSBpcyB0aGF0IGR1cmluZyBwcm9iZSBvZiBleHlub3NfZHJtIGlw
+cCBkcml2ZXIgaXMKPiBzdWNjZXNzZnVsbHkgcHJvYmVkIGFuZCBhZnRlciB0aGF0IGV4eW5vc19k
+cm0gcHJvYmUgZmFpbHMsIHdoaWNoIGNhdXNlcwo+IGFsc28gcmVtb3ZpbmcgaXBwLCBhbnl3YXkg
+c3VjY2Vzc2Z1bCBpcHAgcHJvYmUgdHJpZ2dlcnMgd2hvbGUgcmUtcHJvYmUKPiBtZWNoYW5pc20g
+YWdhaW4uIEl0IGNyZWF0ZXMgaW5maW5pdGUgbG9vcC4KClRoZSBwcm9ibGVtIGlzIG5vdCBiZWNh
+dXNlIG9mIG9ubHkgSVBQIGRyaXZlci4gSW4gYWxsIGNhc2VzIHRoYXQgbm9uIGttcwpkcml2ZXJz
+IGFyZSBlbmFibGVkIGFuZCB0aGV5IGFyZSBwcm9iZWQuCgo+IAo+IEkgdGhpbmsgbW92aW5nIGV4
+eW5vc19wbGF0Zm9ybV9kZXZpY2VfaXBwX3JlZ2lzdGVyIGFmdGVyCj4gY29tcG9uZW50X21hc3Rl
+cl9hZGRfd2l0aF9tYXRjaCBzaG91bGQgc29sdmUgc29tZSBvZiB0aGUgaXNzdWUsCgpnMmQgYWxz
+byBzaG91bGQgYmUgbW92ZWQuCgo+IGJ1dCBJIGd1ZXNzIGl0IGNvdWxkIGNyZWF0ZSBuZXcgb25l
+cywgb3IgbWF5YmUgbm90LCBuZWVkcyBjaGVja2luZy4KPiAKPiBPbiB0aGUgb3RoZXIgc2lkZSBJ
+IHdvbmRlciBpZiB3ZSByZWFsbHkgbmVlZCB0byBoYXZlIGlwcCBkZXZpY2UgYXQgYWxsLAo+IHJl
+cGxhY2luZyBpdCB3aXRoIGhlbHBlcnMgb2YgZXh5bm9zX2RybSBzaG91bGQgYmUgcG9zc2libGUs
+IEkgZ3Vlc3MuCj4gCgpBZ3JlZS4gSSBhbHNvIHRoaW5rIHRoYXQgd2UgZG9uJ3QgcmVhbGx5IG5l
+ZWQgSVBQIGRyaXZlci4gSW5zdGVhZCwgd2UKY2FuIHJlZ2lzdGVyIHBvc3QgcHJvY2Vzc29yIGRy
+aXZlcnMgLSBmaW1jLCByb3RhdG9yLCBhbmQgZ3NjYWxlciAtCmRpcmVjdGx5IHdpdGhvdXQgSVBQ
+IGRyaXZlciBsaWtlIGcyZCBkaWQuCgpUaGFua3MsCklua2kgRGFlCgo+IFJlZ2FyZHMKPiBBbmRy
+emVqCj4gCj4+Cj4+IFNpZ25lZC1vZmYtYnk6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNv
+bT4KPj4gLS0tCj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgfCAg
+ICA2ICsrKysrKwo+PiAgMSBmaWxlIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKQo+Pgo+PiBkaWZm
+IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIGIvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCj4+IGluZGV4IGVjYzg2YWEuLjE0YzZh
+ZjcgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYu
+Ywo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKPj4gQEAg
+LTQ4OCw2ICs0ODgsMTIgQEAgc3RhdGljIHN0cnVjdCBjb21wb25lbnRfbWF0Y2ggKmV4eW5vc19k
+cm1fbWF0Y2hfYWRkKHN0cnVjdCBkZXZpY2UgKmRldikKPj4gIAo+PiAgCW11dGV4X2xvY2soJmRy
+bV9jb21wb25lbnRfbG9jayk7Cj4+ICAKPj4gKwkvKiBEbyBub3QgcmV0cnkgdG8gcHJvYmUgaWYg
+dGhlcmUgaXMgbm8gYW55IGttcyBkcml2ZXIgcmVnaXRlcmVkLiAqLwo+PiArCWlmIChsaXN0X2Vt
+cHR5KCZkcm1fY29tcG9uZW50X2xpc3QpKSB7Cj4+ICsJCW11dGV4X3VubG9jaygmZHJtX2NvbXBv
+bmVudF9sb2NrKTsKPj4gKwkJcmV0dXJuIEVSUl9QVFIoLUVOT0RFVik7Cj4+ICsJfQo+PiArCj4+
+ICAJbGlzdF9mb3JfZWFjaF9lbnRyeShjZGV2LCAmZHJtX2NvbXBvbmVudF9saXN0LCBsaXN0KSB7
+Cj4+ICAJCS8qCj4+ICAJCSAqIEFkZCBjb21wb25lbnRzIHRvIG1hc3RlciBvbmx5IGluIGNhc2Ug
+dGhhdCBjcnRjIGFuZAo+Pgo+IAo+IAo+IC0tCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxp
+c3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+IHRo
+ZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnCj4gTW9yZSBt
+YWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5o
+dG1sCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
+cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
