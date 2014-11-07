@@ -1,137 +1,105 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v2 1/4] PM / Domains: Remove pm_genpd_dev_need_restore() API
-Date: Thu, 6 Nov 2014 20:05:26 +0100
-Message-ID: <CAPDyKFqR6Pu++pGmQ2EM-RvHE4ueeB32OSE_spE+qq3SzH7kQQ@mail.gmail.com>
-References: <1412174494-15346-1-git-send-email-ulf.hansson@linaro.org>
-	<1412174494-15346-2-git-send-email-ulf.hansson@linaro.org>
-	<542C2D9F.8060005@samsung.com>
-	<CAPDyKFq+9G+n3qaj+Ls9i4sOi_BdOGzk5SypDzEMZJwAJMa97Q@mail.gmail.com>
-	<542D3E45.5020908@samsung.com>
-	<CAPDyKFozS+J_sTZykF=9tVJsCByby_BDuQmGiMt-Uw-qC4Tzuw@mail.gmail.com>
-	<542D7525.8000804@samsung.com>
-	<CAPDyKFqi=eKYBXSuRPzTZ0vybRfV6oMNt-_vCqT-6+otGiMucQ@mail.gmail.com>
-	<545B9A6D.5060206@samsung.com>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH 01/21] thermal: of: Extend of-thermal.c to provide number
+ of trip points
+Date: Thu, 6 Nov 2014 21:34:07 -0400
+Message-ID: <20141107013405.GB10180@developer>
+References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
+ <1412872737-624-2-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="wzJLGUyc3ArbnUjN"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f176.google.com ([209.85.216.176]:58686 "EHLO
+Received: from mail-qc0-f176.google.com ([209.85.216.176]:35706 "EHLO
 	mail-qc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751051AbaKFTF2 (ORCPT
+	with ESMTP id S1750926AbaKGBeT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Nov 2014 14:05:28 -0500
-Received: by mail-qc0-f176.google.com with SMTP id x3so1322212qcv.7
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Nov 2014 11:05:27 -0800 (PST)
-In-Reply-To: <545B9A6D.5060206@samsung.com>
+	Thu, 6 Nov 2014 20:34:19 -0500
+Content-Disposition: inline
+In-Reply-To: <1412872737-624-2-git-send-email-l.majewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, Linux PM list <linux-pm@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-[...]
 
->>
->> Yes they would, although they require some minor additional adaptations.
->>
->> Those resources that are enabled from the driver's runtime PM resume
->> callback, should also be enabled during ->probe(). The
->> pm_runtime_set_active() will then update the state to reflect this.
->>
->> Then, if CONFIG_PM_RUNTIME is enabled - the device will be scheduled
->> to go inactive from driver core (pm_request_idle()), after ->probe()
->> has completed. Thus saving power if it's unused.
->> If CONFIG_PM_RUNTIME isn't enabled - the driver will still be
->> functional, since all resources are enabled during ->probe().
->
-> OK, I suspected you also assumed enabling relevant resources, so the PM
-> state matches the hardware state.
->
-> Sorry for getting back late to this, now there is a regression on
-> Exynos seen in multiple drivers, i.e. affecting all the media and
-> video devices.  Is this patch series going to be merged for v3.18 as
-> a regression fix ? If so I would need to update remaining drivers to
-> enable clocks and use pm_runtime_set_active() in probe().
+--wzJLGUyc3ArbnUjN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Urgh!!! Let's see how we can work this out. I will be helping out and
-give this the highest prio!
+Hello Lukasz,
 
-I did post a patchset for exynos 5 media gsc driver, I guess you have
-seen it!? Now, that doesn't help us much but still.
-https://www.mail-archive.com/linux-media@vger.kernel.org/msg80592.html
+On Thu, Oct 09, 2014 at 06:38:37PM +0200, Lukasz Majewski wrote:
+> This patch extends the of-thermal.c to provide information about number of
+> available trip points.
+>=20
+> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> ---
+>  drivers/thermal/of-thermal.c   | 6 ++++++
+>  drivers/thermal/thermal_core.h | 5 +++++
+>  2 files changed, 11 insertions(+)
+>=20
+> diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
+> index f8eb625..b2390d9 100644
+> --- a/drivers/thermal/of-thermal.c
+> +++ b/drivers/thermal/of-thermal.c
+> @@ -113,6 +113,12 @@ static int of_thermal_get_temp(struct thermal_zone_d=
+evice *tz,
+>  	return data->get_temp(data->sensor_data, temp);
+>  }
+> =20
+> +int of_thermal_get_ntrips(struct thermal_zone_device *tz)
+> +{
+> +	struct __thermal_zone *data =3D tz->devdata;
+> +	return data->ntrips;
+> +}
 
->
-> I can see two options to fix bugs which appeared in Exynos after
-> merging the patch series switching to the OF generic power domain API:
->
-> 1. merge this series and update the affected drivers for v3.18,
+I am not against this addition. I just request you to document it
+accordingly.
 
-This version is superseded by a v3. That takes a more solid approach
-on how to power on the PM domain from the bus' ->probe(). It's being
-discussed currently.
+> +
+>  static int of_thermal_get_trend(struct thermal_zone_device *tz, int trip,
+>  				enum thermal_trend *trend)
+>  {
+> diff --git a/drivers/thermal/thermal_core.h b/drivers/thermal/thermal_cor=
+e.h
+> index 3db339f..587ca5c 100644
+> --- a/drivers/thermal/thermal_core.h
+> +++ b/drivers/thermal/thermal_core.h
+> @@ -81,9 +81,14 @@ static inline void thermal_gov_user_space_unregister(v=
+oid) {}
+>  #ifdef CONFIG_THERMAL_OF
+>  int of_parse_thermal_zones(void);
+>  void of_thermal_destroy_zones(void);
+> +int of_thermal_get_ntrips(struct thermal_zone_device *);
+>  #else
+>  static inline int of_parse_thermal_zones(void) { return 0; }
+>  static inline void of_thermal_destroy_zones(void) { }
+> +static inline int of_thermal_get_ntrips(struct thermal_zone_device *)
+> +{
+> +	return 0;
+> +}
+>  #endif
+> =20
+>  #endif /* __THERMAL_CORE_H__ */
+> --=20
+> 2.0.0.rc2
+>=20
 
-[PATCH v3 0/9] PM / Domains: Fix race conditions during boot
+--wzJLGUyc3ArbnUjN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-You should be on cc-list of that.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
->
-> 2. revert for now to the previous behaviour, doing something as
->    the patch below.
->
-> 1. seems only a partial solution, since the regression remains for the
-> loadable modules which are loaded after late_initcall().  At that point
-> power domain may be disabled and the driver attempting to access
-> the hardware will hand the system.
+iQEcBAEBAgAGBQJUXCGFAAoJEMLUO4d9pOJWvWgH/0wTXCMz5Dz1Cghr9LauQ9iF
+X7I0n7+vZdpj/d6LmHFZEan+fRpSpvrlFbbc6mQXZz8sYEvWVqUSlRgcPJ8zjUB0
+wNROGNzI2Gxi6CSWWgat/rElsedXYSPb0K5EXGCI2cSmZBzYrAYI1N6hQWyyFl/k
+j8qJB8mZS94nK+ToXPlr6TmU6ovQU+gWPUxtqWa86NGhMEGcG0iQkO6XVVk3vjjy
+FLT1vBwR3ZRzdS/aI7WXlNwQMUEo624PvqcGIsaTlDoVWaW8QYT9T4LP9+C2tUPO
+UiK82Il/dIRt10eRzfAWof4jS9Vzm43Z4di/8FKjsDT3xp6dlxzPBfFWrpH+OQw=
+=hqwO
+-----END PGP SIGNATURE-----
 
-That was a limitation which is fixed in v3. I have tested loading
-modules and it works nicely.
-
->
-> It's also a bit not clear to me why there is an assumption that when
-> a power domain is initially enabled all its corresponding devices are
-> already also fully activated ?
-
-That's a very good question! I think the assumption is wrong!
-
-Somehow we need to decouple that dependency. To me, typically the
-"need_restore" flag should reflect the current runtime PM status of
-the device, which isn't the case right now.
-
-In the v3 version of this patchset, the PM domain will be powered on
-from the bus's ->probe(), which also means the "need_restore" flag
-will initially always be set to "false" once the device are being
-probed by the driver.
-
-That means, those drivers not invoking pm_runtime_set_active() and
-manually enable clk/resources during ->probe(), but instead relies on
-pm_runtime_get_sync() - will _not_ work. As you stated above for some
-of the Exynos drivers.
-
-Even if it's likely that most of these Exynos drivers should be using
-pm_runtime_set_active() during ->probe(), the key-problem lies in
-genpd's wrong assumption about the device's runtime PM status, which
-is stored in the "need restore" flag.
-
-If we would fix the issue in genpd for the need_restore flag, that
-should solve the regression for Exynos, don't you think?
-
-I will immediately start working on a patch on genpd, which tries this
-approach, I will keep you posted.
-
->
-> int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
->                           struct gpd_timing_data *td)
-> {
->         ...
->         gpd_data->need_restore = genpd->status == GPD_STATE_POWER_OFF;
->         ...
-> }
->
-> It seems correct to me to have initially the power domain enabled and some
-> devices inactive, e.g. if device's driver manages its clocks and didn't
-> turn them on yet.
-
-As stated, I fully agree!
-
-[...]
-
-Kind regards
-Uffe
+--wzJLGUyc3ArbnUjN--
