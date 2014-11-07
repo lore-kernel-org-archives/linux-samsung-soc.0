@@ -1,53 +1,168 @@
-From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH 4/4] ARM: dts: add mipi dsi device node to exynos4415.dtsi
-Date: Fri, 07 Nov 2014 15:12:27 +0900
-Message-ID: <1415340747-27904-5-git-send-email-yj44.cho@samsung.com>
-References: <1415340747-27904-1-git-send-email-yj44.cho@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv2] pinctrl: exynos: Add support for Exynos4415
+Date: Fri, 07 Nov 2014 15:23:40 +0900
+Message-ID: <545C656C.2040306@samsung.com>
+References: <1414372878-3737-1-git-send-email-cw00.choi@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:45741 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751513AbaKGGMf (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:48121 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751553AbaKGGXn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Nov 2014 01:12:35 -0500
-In-reply-to: <1415340747-27904-1-git-send-email-yj44.cho@samsung.com>
+	Fri, 7 Nov 2014 01:23:43 -0500
+In-reply-to: <1414372878-3737-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, mark.rutland@arm.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, robh+dt@kernel.org, galak@codeaurora.org, kyungmin.park@samsung.com, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com, cw00.choi@samsung.com, kgene.kim@samsung.com
+To: linus.walleij@linaro.org
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, tomasz.figa@gmail.com, thomas.abraham@linaro.org, kgene.kim@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch adds mipi dsi device node to exynos4415.dtsi.
+Dear Linus,
 
-Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/boot/dts/exynos4415.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Could you please review this patch?
 
-diff --git a/arch/arm/boot/dts/exynos4415.dtsi b/arch/arm/boot/dts/exynos4415.dtsi
-index 30acb3a..6105236 100644
---- a/arch/arm/boot/dts/exynos4415.dtsi
-+++ b/arch/arm/boot/dts/exynos4415.dtsi
-@@ -246,6 +246,21 @@
- 			status = "disabled";
- 		};
- 
-+		dsi_0: dsi@11C80000 {
-+			compatible = "samsung,exynos4415-mipi-dsi";
-+			reg = <0x11C80000 0x10000>;
-+			interrupts = <0 83 0>;
-+			samsung,phy-type = <0>;
-+			samsung,power-domain = <&pd_lcd0>;
-+			phys = <&mipi_phy 1>;
-+			phy-names = "dsim";
-+			clocks = <&cmu CLK_DSIM0>, <&cmu CLK_SCLK_MIPI0>;
-+			clock-names = "bus_clk", "pll_clk";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		hsotg: hsotg@12480000 {
- 			compatible = "samsung,s3c6400-hsotg";
- 			reg = <0x12480000 0x20000>;
--- 
-1.9.0
+Best Regards,
+Chanwoo Choi
+
+On 10/27/2014 10:21 AM, Chanwoo Choi wrote:
+> From: Tomasz Figa <tomasz.figa@gmail.com>
+> 
+> The pin controllers of Exynos4415 are similar to Exynos4412, but certain
+> differences cause the need to create separate driver data for it. This
+> patch adds pin controller and bank descriptor arrays to the driver to
+> support the new SoC.
+> 
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Thomas Abraham <thomas.abraham@linaro.org>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+> [cw00.choi: Rebase it on mainline kernel]
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+> Changes from v1:
+> - Separate only pinctrl patch from Exynos4415 patchset[1]
+>  [1] [PATCH 0/5] Support new Exynos4415 SoC based on Cortex-A9 quad cores
+>   : https://lkml.org/lkml/2014/10/19/253
+> 
+> drivers/pinctrl/samsung/pinctrl-exynos.c  | 78 +++++++++++++++++++++++++++++++
+>  drivers/pinctrl/samsung/pinctrl-samsung.c |  2 +
+>  drivers/pinctrl/samsung/pinctrl-samsung.h |  1 +
+>  3 files changed, 81 insertions(+)
+> 
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> index d7154ed..065eee0 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> @@ -920,6 +920,84 @@ struct samsung_pin_ctrl exynos4x12_pin_ctrl[] = {
+>  	},
+>  };
+>  
+> +/* pin banks of exynos4415 pin-controller 0 */
+> +static struct samsung_pin_bank exynos4415_pin_banks0[] = {
+> +	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
+> +	EXYNOS_PIN_BANK_EINTG(6, 0x020, "gpa1", 0x04),
+> +	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpb", 0x08),
+> +	EXYNOS_PIN_BANK_EINTG(5, 0x060, "gpc0", 0x0c),
+> +	EXYNOS_PIN_BANK_EINTG(5, 0x080, "gpc1", 0x10),
+> +	EXYNOS_PIN_BANK_EINTG(4, 0x0A0, "gpd0", 0x14),
+> +	EXYNOS_PIN_BANK_EINTG(4, 0x0C0, "gpd1", 0x18),
+> +	EXYNOS_PIN_BANK_EINTG(8, 0x180, "gpf0", 0x30),
+> +	EXYNOS_PIN_BANK_EINTG(8, 0x1A0, "gpf1", 0x34),
+> +	EXYNOS_PIN_BANK_EINTG(1, 0x1C0, "gpf2", 0x38),
+> +};
+> +
+> +/* pin banks of exynos4415 pin-controller 1 */
+> +static struct samsung_pin_bank exynos4415_pin_banks1[] = {
+> +	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpk0", 0x08),
+> +	EXYNOS_PIN_BANK_EINTG(7, 0x060, "gpk1", 0x0c),
+> +	EXYNOS_PIN_BANK_EINTG(7, 0x080, "gpk2", 0x10),
+> +	EXYNOS_PIN_BANK_EINTG(7, 0x0A0, "gpk3", 0x14),
+> +	EXYNOS_PIN_BANK_EINTG(4, 0x0C0, "gpl0", 0x18),
+> +	EXYNOS_PIN_BANK_EINTN(6, 0x120, "mp00"),
+> +	EXYNOS_PIN_BANK_EINTN(4, 0x140, "mp01"),
+> +	EXYNOS_PIN_BANK_EINTN(6, 0x160, "mp02"),
+> +	EXYNOS_PIN_BANK_EINTN(8, 0x180, "mp03"),
+> +	EXYNOS_PIN_BANK_EINTN(8, 0x1A0, "mp04"),
+> +	EXYNOS_PIN_BANK_EINTN(8, 0x1C0, "mp05"),
+> +	EXYNOS_PIN_BANK_EINTN(8, 0x1E0, "mp06"),
+> +	EXYNOS_PIN_BANK_EINTG(8, 0x260, "gpm0", 0x24),
+> +	EXYNOS_PIN_BANK_EINTG(7, 0x280, "gpm1", 0x28),
+> +	EXYNOS_PIN_BANK_EINTG(5, 0x2A0, "gpm2", 0x2c),
+> +	EXYNOS_PIN_BANK_EINTG(8, 0x2C0, "gpm3", 0x30),
+> +	EXYNOS_PIN_BANK_EINTG(8, 0x2E0, "gpm4", 0x34),
+> +	EXYNOS_PIN_BANK_EINTW(8, 0xC00, "gpx0", 0x00),
+> +	EXYNOS_PIN_BANK_EINTW(8, 0xC20, "gpx1", 0x04),
+> +	EXYNOS_PIN_BANK_EINTW(8, 0xC40, "gpx2", 0x08),
+> +	EXYNOS_PIN_BANK_EINTW(8, 0xC60, "gpx3", 0x0c),
+> +};
+> +
+> +/* pin banks of exynos4415 pin-controller 2 */
+> +static struct samsung_pin_bank exynos4415_pin_banks2[] = {
+> +	EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz", 0x00),
+> +	EXYNOS_PIN_BANK_EINTN(2, 0x000, "etc1"),
+> +};
+> +
+> +/*
+> + * Samsung pinctrl driver data for Exynos4415 SoC. Exynos4415 SoC includes
+> + * three gpio/pin-mux/pinconfig controllers.
+> + */
+> +struct samsung_pin_ctrl exynos4415_pin_ctrl[] = {
+> +	{
+> +		/* pin-controller instance 0 data */
+> +		.pin_banks	= exynos4415_pin_banks0,
+> +		.nr_banks	= ARRAY_SIZE(exynos4415_pin_banks0),
+> +		.eint_gpio_init = exynos_eint_gpio_init,
+> +		.suspend	= exynos_pinctrl_suspend,
+> +		.resume		= exynos_pinctrl_resume,
+> +		.label		= "exynos4415-gpio-ctrl0",
+> +	}, {
+> +		/* pin-controller instance 1 data */
+> +		.pin_banks	= exynos4415_pin_banks1,
+> +		.nr_banks	= ARRAY_SIZE(exynos4415_pin_banks1),
+> +		.eint_gpio_init = exynos_eint_gpio_init,
+> +		.eint_wkup_init = exynos_eint_wkup_init,
+> +		.suspend	= exynos_pinctrl_suspend,
+> +		.resume		= exynos_pinctrl_resume,
+> +		.label		= "exynos4415-gpio-ctrl1",
+> +	}, {
+> +		/* pin-controller instance 2 data */
+> +		.pin_banks	= exynos4415_pin_banks2,
+> +		.nr_banks	= ARRAY_SIZE(exynos4415_pin_banks2),
+> +		.eint_gpio_init = exynos_eint_gpio_init,
+> +		.suspend	= exynos_pinctrl_suspend,
+> +		.resume		= exynos_pinctrl_resume,
+> +		.label		= "exynos4415-gpio-ctrl2",
+> +	},
+> +};
+> +
+>  /* pin banks of exynos5250 pin-controller 0 */
+>  static struct samsung_pin_bank exynos5250_pin_banks0[] = {
+>  	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0", 0x00),
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> index 2d37c8f..d9b3e0c 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+> @@ -1218,6 +1218,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
+>  		.data = (void *)exynos4210_pin_ctrl },
+>  	{ .compatible = "samsung,exynos4x12-pinctrl",
+>  		.data = (void *)exynos4x12_pin_ctrl },
+> +	{ .compatible = "samsung,exynos4415-pinctrl",
+> +		.data = (void *)exynos4415_pin_ctrl },
+>  	{ .compatible = "samsung,exynos5250-pinctrl",
+>  		.data = (void *)exynos5250_pin_ctrl },
+>  	{ .compatible = "samsung,exynos5260-pinctrl",
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
+> index 5cedc9d..10b720d 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.h
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+> @@ -239,6 +239,7 @@ struct samsung_pmx_func {
+>  extern struct samsung_pin_ctrl exynos3250_pin_ctrl[];
+>  extern struct samsung_pin_ctrl exynos4210_pin_ctrl[];
+>  extern struct samsung_pin_ctrl exynos4x12_pin_ctrl[];
+> +extern struct samsung_pin_ctrl exynos4415_pin_ctrl[];
+>  extern struct samsung_pin_ctrl exynos5250_pin_ctrl[];
+>  extern struct samsung_pin_ctrl exynos5260_pin_ctrl[];
+>  extern struct samsung_pin_ctrl exynos5420_pin_ctrl[];
+> 
