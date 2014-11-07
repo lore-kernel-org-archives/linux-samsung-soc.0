@@ -1,83 +1,185 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH] drm/exynos: resolve infinite loop issue on non
- multi-platform
-Date: Fri, 07 Nov 2014 12:11:24 +0100
-Message-ID: <545CA8DC.3070400@samsung.com>
-References: <1415283007-10096-1-git-send-email-inki.dae@samsung.com>
- <1415293720.31102.1.camel@collabora.co.uk>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH 04/21] thermal: of: Extend current of-thermal.c code to
+ allow setting emulated temp
+Date: Fri, 07 Nov 2014 12:20:35 +0100
+Message-ID: <20141107122035.2973ad20@amdc2363>
+References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
+ <1412872737-624-5-git-send-email-l.majewski@samsung.com>
+ <20141107014448.GE10180@developer>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:26503 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751454AbaKGLLb (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:28843 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751579AbaKGLUs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Nov 2014 06:11:31 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NEO00NQV1VS4700@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Nov 2014 11:14:16 +0000 (GMT)
-In-reply-to: <1415293720.31102.1.camel@collabora.co.uk>
+	Fri, 7 Nov 2014 06:20:48 -0500
+In-reply-to: <20141107014448.GE10180@developer>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>
-Cc: airlied@linux.ie, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, Linux PM list <linux-pm@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-On 11/06/2014 06:08 PM, Sjoerd Simons wrote:
-> On Thu, 2014-11-06 at 23:10 +0900, Inki Dae wrote:
->> This patch resovles the infinite loop issue incurred
->> when Exyno drm driver is enabled but all kms drivers
->> are disabled on Exynos board by returning -EPROBE_DEFER
->> only in case that there is kms device registered.
+Hi Eduardo,
+
+> Hello,
 > 
-> It would be nice if you could explain in the commit message/comment why
-> returning -EPROBE_DEFER causes an infinite loop and why it's the wrong
-> thing to do in this case? 
+> On Thu, Oct 09, 2014 at 06:38:40PM +0200, Lukasz Majewski wrote:
+> > Before this change it was only possible to set get_temp() and
+> > get_trend() methods to be used in the common code handling passing
+> > parameters via device tree to "cpu-thermal" CPU thermal zone device.
+> > 
+> > Now it is possible to also set emulated value of temperature for
+> > debug purposes.
+> > 
+> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> > ---
+> >  drivers/thermal/of-thermal.c | 25 ++++++++++++++++++++++---
+> >  include/linux/thermal.h      |  6 ++++--
+> >  2 files changed, 26 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/thermal/of-thermal.c
+> > b/drivers/thermal/of-thermal.c index cd74e64..f206375 100644
+> > --- a/drivers/thermal/of-thermal.c
+> > +++ b/drivers/thermal/of-thermal.c
+> > @@ -98,10 +98,22 @@ struct __thermal_zone {
+> >  	void *sensor_data;
+> >  	int (*get_temp)(void *, long *);
+> >  	int (*get_trend)(void *, long *);
+> > +	int (*set_emul_temp)(void *, unsigned long);
+> >  };
+> >  
+> >  /***   DT thermal zone device callbacks   ***/
+> >  
+> > +static int of_thermal_set_emul_temp(struct thermal_zone_device *tz,
+> > +				    unsigned long temp)
+> > +{
+> > +	struct __thermal_zone *data = tz->devdata;
+> > +
+> > +	if (!data->set_emul_temp)
+> > +		return -EINVAL;
+> > +
+> > +	return data->set_emul_temp(data->sensor_data, temp);
+> > +}
+> > +
+> >  static int of_thermal_get_temp(struct thermal_zone_device *tz,
+> >  			       unsigned long *temp)
+> >  {
+> > @@ -352,7 +364,8 @@ static struct thermal_zone_device *
+> >  thermal_zone_of_add_sensor(struct device_node *zone,
+> >  			   struct device_node *sensor, void *data,
+> >  			   int (*get_temp)(void *, long *),
+> > -			   int (*get_trend)(void *, long *))
+> > +			   int (*get_trend)(void *, long *),
+> > +			   int (*set_emul_temp)(void *, unsigned
+> > long))
 > 
-> Even if you know this probe will never succeed in the future (so
-> deferring is actually pointless), deferring really shouldn't trigger
-> infinte loops in calling code
+> Thanks for improving the API. However, looking at what is above, it
+> starts to be pretty ugly. And for sure, this is not the last callback
+> to be added.
+
+Presumably there would be some more callbacks.
+
+> I believe it is time to add a .ops in the of-thermal.
+> While in here, do you mind adding the .ops in a separated patch, then
+> add the .set_emul_temp in the .ops field?
+
+I will add an option to pass .ops with thermal_zone_of_add_sensor().
+
+I'm only concerned a bit about testing other users of of-thermal. 
+I have only beaglebone black (BBB) for testing, which on-soc bandgap
+thermal sensor is very inaccurate and hence not supported even at BBB
+github linux kernel repository (v3.14).
+
+Because of above I would need your support for testing.
+
 > 
+> >  {
+> >  	struct thermal_zone_device *tzd;
+> >  	struct __thermal_zone *tz;
+> > @@ -366,10 +379,12 @@ thermal_zone_of_add_sensor(struct device_node
+> > *zone, mutex_lock(&tzd->lock);
+> >  	tz->get_temp = get_temp;
+> >  	tz->get_trend = get_trend;
+> > +	tz->set_emul_temp = set_emul_temp;
+> >  	tz->sensor_data = data;
+> >  
+> >  	tzd->ops->get_temp = of_thermal_get_temp;
+> >  	tzd->ops->get_trend = of_thermal_get_trend;
+> > +	tzd->ops->set_emul_temp = of_thermal_set_emul_temp;
+> >  	mutex_unlock(&tzd->lock);
+> >  
+> >  	return tzd;
+> > @@ -411,7 +426,8 @@ thermal_zone_of_add_sensor(struct device_node
+> > *zone, struct thermal_zone_device *
+> >  thermal_zone_of_sensor_register(struct device *dev, int sensor_id,
+> >  				void *data, int (*get_temp)(void
+> > *, long *),
+> > -				int (*get_trend)(void *, long *))
+> > +				int (*get_trend)(void *, long *),
+> > +				int (*set_emul_temp)(void *,
+> > unsigned long)) {
+> >  	struct device_node *np, *child, *sensor_np;
+> >  
+> > @@ -453,7 +469,8 @@ thermal_zone_of_sensor_register(struct device
+> > *dev, int sensor_id, return thermal_zone_of_add_sensor(child,
+> > sensor_np, data,
+> >  							  get_temp,
+> > -
+> > get_trend);
+> > +
+> > get_trend,
+> > +
+> > set_emul_temp); }
+> >  	}
+> >  	of_node_put(np);
+> > @@ -494,9 +511,11 @@ void thermal_zone_of_sensor_unregister(struct
+> > device *dev, mutex_lock(&tzd->lock);
+> >  	tzd->ops->get_temp = NULL;
+> >  	tzd->ops->get_trend = NULL;
+> > +	tzd->ops->set_emul_temp = NULL;
+> >  
+> >  	tz->get_temp = NULL;
+> >  	tz->get_trend = NULL;
+> > +	tz->set_emul_temp = NULL;
+> >  	tz->sensor_data = NULL;
+> >  	mutex_unlock(&tzd->lock);
+> >  }
+> > diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+> > index 0305cde..36010e9 100644
+> > --- a/include/linux/thermal.h
+> > +++ b/include/linux/thermal.h
+> > @@ -290,14 +290,16 @@ struct thermal_genl_event {
+> >  struct thermal_zone_device *
+> >  thermal_zone_of_sensor_register(struct device *dev, int id,
+> >  				void *data, int (*get_temp)(void
+> > *, long *),
+> > -				int (*get_trend)(void *, long *));
+> > +				int (*get_trend)(void *, long *),
+> > +				int (*set_emul_temp)(void *,
+> > unsigned long)); void thermal_zone_of_sensor_unregister(struct
+> > device *dev, struct thermal_zone_device *tz);
+> >  #else
+> >  static inline struct thermal_zone_device *
+> >  thermal_zone_of_sensor_register(struct device *dev, int id,
+> >  				void *data, int (*get_temp)(void
+> > *, long *),
+> > -				int (*get_trend)(void *, long *))
+> > +				int (*get_trend)(void *, long *),
+> > +				int (*set_emul_temp)(void *,
+> > unsigned long)) {
+> >  	return NULL;
+> >  }
+> > -- 
+> > 2.0.0.rc2
+> > 
 
-+CC: Grant and Greg
-
-It seems to be partly an issue with deferred probing. I guess it affects
-all drivers which in their probe can cause successful probe of
-sub-driver/sub-device, and after that the main driver defers probing,
-unwinding changes including removal of sub-driver/sub-device. Driver
-core incorrectly re-triggers probing in this case.
-
-In this particular case it could be fixed in exynos_drm driver I guess,
-but maybe it would be good to fix deferred probing, if possible.
-
-Regards
-Andrzej
 
 
->>
->> Signed-off-by: Inki Dae <inki.dae@samsung.com>
->> ---
->>  drivers/gpu/drm/exynos/exynos_drm_drv.c |    6 ++++++
->>  1 file changed, 6 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
->> index ecc86aa..14c6af7 100644
->> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
->> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
->> @@ -488,6 +488,12 @@ static struct component_match *exynos_drm_match_add(struct device *dev)
->>  
->>  	mutex_lock(&drm_component_lock);
->>  
->> +	/* Do not retry to probe if there is no any kms driver regitered. */
->> +	if (list_empty(&drm_component_list)) {
->> +		mutex_unlock(&drm_component_lock);
->> +		return ERR_PTR(-ENODEV);
->> +	}
->> +
->>  	list_for_each_entry(cdev, &drm_component_list, list) {
->>  		/*
->>  		 * Add components to master only in case that crtc and
-> 
-> 
+-- 
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
