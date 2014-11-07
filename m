@@ -1,122 +1,110 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH] thermal: exynos: use correct offset for TMU_CONTROL
- register on Exynos5260
-Date: Fri, 7 Nov 2014 14:59:51 -0400
-Message-ID: <20141107185949.GA27266@developer>
-References: <1594947.1Ri7fFnV5h@amdc1032>
- <17456984.pRSEMqiSfL@amdc1032>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH] PM / Domains: Fix initial default state of the need_restore flag
+Date: Fri, 07 Nov 2014 11:47:53 -0800
+Message-ID: <7hr3xerdw6.fsf@deeprootsystems.com>
+References: <1415366847-4807-1-git-send-email-ulf.hansson@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <17456984.pRSEMqiSfL@amdc1032>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:64463 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753163AbaKGTr5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Nov 2014 14:47:57 -0500
+Received: by mail-pa0-f52.google.com with SMTP id fa1so4146108pad.11
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Nov 2014 11:47:56 -0800 (PST)
+In-Reply-To: <1415366847-4807-1-git-send-email-ulf.hansson@linaro.org> (Ulf
+	Hansson's message of "Fri, 7 Nov 2014 14:27:27 +0100")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron Lu <aaron.lu@intel.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
+Ulf Hansson <ulf.hansson@linaro.org> writes:
 
---GvXjxJ+pjyke8COw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> The initial state of the device's need_restore flag should'nt depend on
+> the current state of the PM domain. For example it should be perfectly
+> valid to attach an inactive device to a powered PM domain.
+>
+> The pm_genpd_dev_need_restore() API allow us to update the need_restore
+> flag to somewhat cope with such scenarios. Typically that should have
+> been done from drivers/buses ->probe() since it's those that put the
+> requirements on the value of the need_restore flag.
+>
+> Until recently, the Exynos SOCs were the only user of the
+> pm_genpd_dev_need_restore() API, though invoking it from a centralized
+> location while adding devices to their PM domains.
+>
+> Due to that Exynos now have swithed to the generic OF-based PM domain
+> look-up, it's no longer possible to invoke the API from a centralized
+> location. The reason is because devices are now added to their PM
+> domains during the probe sequence.
+>
+> Commit "ARM: exynos: Move to generic PM domain DT bindings"
+> did the switch for Exynos to the generic OF-based PM domain look-up,
+> but it also removed the call to pm_genpd_dev_need_restore(). This
+> caused a regression for some of the Exynos drivers.
+>
+> To handle things more properly in the generic PM domain, let's change
+> the default initial value of the need_restore flag to reflect that the
+> state is unknown. As soon as some of the runtime PM callbacks gets
+> invoked, update the initial value accordingly.
+>
+> Moreover, since the generic PM domain is verifying that all device's
+> are both runtime PM enabled and suspended, using pm_runtime_suspended()
+> while pm_genpd_poweroff() is invoked from the scheduled work, we can be
+> sure of that the PM domain won't be powering off while having active
+> devices.
+>
+> Do note that, the generic PM domain can still only know about active
+> devices which has been activated through invoking its runtime PM resume
+> callback. In other words, buses/drivers using pm_runtime_set_active()
+> during ->probe() will still suffer from a race condition, potentially
+> probing a device without having its PM domain being powered. That issue
+> will have to be solved using a different approach.
+>
+> This a log from the boot regression for Exynos5, which is being fixed in
+> this patch.
+>
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 308 at ../drivers/clk/clk.c:851 clk_disable+0x24/0x30()
+> Modules linked in:
+> CPU: 0 PID: 308 Comm: kworker/0:1 Not tainted 3.18.0-rc3-00569-gbd9449f-dirty #10
+> Workqueue: pm pm_runtime_work
+> [<c0013c64>] (unwind_backtrace) from [<c0010dec>] (show_stack+0x10/0x14)
+> [<c0010dec>] (show_stack) from [<c03ee4cc>] (dump_stack+0x70/0xbc)
+> [<c03ee4cc>] (dump_stack) from [<c0020d34>] (warn_slowpath_common+0x64/0x88)
+> [<c0020d34>] (warn_slowpath_common) from [<c0020d74>] (warn_slowpath_null+0x1c/0x24)
+> [<c0020d74>] (warn_slowpath_null) from [<c03107b0>] (clk_disable+0x24/0x30)
+> [<c03107b0>] (clk_disable) from [<c02cc834>] (gsc_runtime_suspend+0x128/0x160)
+> [<c02cc834>] (gsc_runtime_suspend) from [<c0249024>] (pm_generic_runtime_suspend+0x2c/0x38)
+> [<c0249024>] (pm_generic_runtime_suspend) from [<c024f44c>] (pm_genpd_default_save_state+0x2c/0x8c)
+> [<c024f44c>] (pm_genpd_default_save_state) from [<c024ff2c>] (pm_genpd_poweroff+0x224/0x3ec)
+> [<c024ff2c>] (pm_genpd_poweroff) from [<c02501b4>] (pm_genpd_runtime_suspend+0x9c/0xcc)
+> [<c02501b4>] (pm_genpd_runtime_suspend) from [<c024a4f8>] (__rpm_callback+0x2c/0x60)
+> [<c024a4f8>] (__rpm_callback) from [<c024a54c>] (rpm_callback+0x20/0x74)
+> [<c024a54c>] (rpm_callback) from [<c024a930>] (rpm_suspend+0xd4/0x43c)
+> [<c024a930>] (rpm_suspend) from [<c024bbcc>] (pm_runtime_work+0x80/0x90)
+> [<c024bbcc>] (pm_runtime_work) from [<c0032a9c>] (process_one_work+0x12c/0x314)
+> [<c0032a9c>] (process_one_work) from [<c0032cf4>] (worker_thread+0x3c/0x4b0)
+> [<c0032cf4>] (worker_thread) from [<c003747c>] (kthread+0xcc/0xe8)
+> [<c003747c>] (kthread) from [<c000e738>] (ret_from_fork+0x14/0x3c)
+> ---[ end trace 40cd58bcd6988f12 ]---
+>
+> Fixes: a4a8c2c4962bb655 (ARM: exynos: Move to generic PM domain DT bindings)
+> Reported-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Hi Bartlomiej,
+Reviewed-by: Kevin Hilman <khilman@linaro.org>
 
-On Mon, Oct 20, 2014 at 02:41:07PM +0200, Bartlomiej Zolnierkiewicz wrote:
->=20
-> Hi,
->=20
-> Eduardo, could you please merge this patch?
->=20
+And looks like we need this for v3.18-rc since it does fix the
+regression.
 
-I queued this in my -fixes branch. It should appear also in linux-next.
+A minor nit: you add a few new multi-line comment blocks which should
+have a new empty line before them, but currently they're right up
+against the previous code.  Please add a blank line for separation and
+to be consisitent with the rest of the file.
 
-Can you please refresh your patch series
-https://lkml.org/lkml/2014/9/18/305
+Thanks,
 
-based on my tree? Looks like something may be missing, as could not get
-all patches applied cleanly.
-
-Thanks
-
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
->=20
-> On Thursday, September 11, 2014 03:00:49 PM Bartlomiej Zolnierkiewicz wro=
-te:
-> > In exynos5260_tmu_registers tmu_ctrl entry is erroneously
-> > assigned twice.  The second assignment (to EXYNOS_TMU_REG_CONTROL1
-> > define which represents 0x24 value) overrides the first one
-> > (to EXYNOS_TMU_REG_CONTROL define which represents 0x20 value)
-> > which results in the wrong (according to the Exynos5260 SoC
-> > documentation that I have) offset being used for TMU_CONTROL
-> > register.  Fix it by removing the wrong assignment and then
-> > remove no longer used EXYNOS_TMU_REG_CONTROL1 define.
-> >=20
-> > Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> > Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> > Cc: Lukasz Majewski <l.majewski@samsung.com>
-> > Cc: Eduardo Valentin <edubezval@gmail.com>
-> > Cc: Zhang Rui <rui.zhang@intel.com>
-> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> >  drivers/thermal/samsung/exynos_tmu_data.c |    1 -
-> >  drivers/thermal/samsung/exynos_tmu_data.h |    1 -
-> >  2 files changed, 2 deletions(-)
-> >=20
-> > Index: b/drivers/thermal/samsung/exynos_tmu_data.c
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- a/drivers/thermal/samsung/exynos_tmu_data.c	2014-09-11 14:41:12.567=
-347442 +0200
-> > +++ b/drivers/thermal/samsung/exynos_tmu_data.c	2014-09-11 14:43:00.211=
-350284 +0200
-> > @@ -273,7 +273,6 @@ struct exynos_tmu_init_data const exynos
-> >  static const struct exynos_tmu_registers exynos5260_tmu_registers =3D {
-> >  	.triminfo_data =3D EXYNOS_TMU_REG_TRIMINFO,
-> >  	.tmu_ctrl =3D EXYNOS_TMU_REG_CONTROL,
-> > -	.tmu_ctrl =3D EXYNOS_TMU_REG_CONTROL1,
-> >  	.therm_trip_mode_shift =3D EXYNOS_TMU_TRIP_MODE_SHIFT,
-> >  	.therm_trip_mode_mask =3D EXYNOS_TMU_TRIP_MODE_MASK,
-> >  	.therm_trip_en_shift =3D EXYNOS_TMU_THERM_TRIP_EN_SHIFT,
-> > Index: b/drivers/thermal/samsung/exynos_tmu_data.h
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > --- a/drivers/thermal/samsung/exynos_tmu_data.h	2014-09-11 14:41:12.243=
-347433 +0200
-> > +++ b/drivers/thermal/samsung/exynos_tmu_data.h	2014-09-11 14:43:36.167=
-351233 +0200
-> > @@ -83,7 +83,6 @@
-> >  #define EXYNOS_MAX_TRIGGER_PER_REG	4
-> > =20
-> >  /* Exynos5260 specific */
-> > -#define EXYNOS_TMU_REG_CONTROL1			0x24
-> >  #define EXYNOS5260_TMU_REG_INTEN		0xC0
-> >  #define EXYNOS5260_TMU_REG_INTSTAT		0xC4
-> >  #define EXYNOS5260_TMU_REG_INTCLEAR		0xC8
-
---GvXjxJ+pjyke8COw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUXRaeAAoJEMLUO4d9pOJW/AgIAJUePDVsqlCXHkboVJ0SFE04
-ZB04qQdWYaRIoDI/4pXB34X4eo2C/+wlF1hN2egLhiZTvyy7ykfSmvD4tcEP3hWz
-yzEKuGcAAQVIvKnZAFVbRtAQN/OLEHIlKsLPANbfGbWfF8VpWE3pAN/GKsog3xwh
-jV251sDYf6kam1pHceby5TXqbALq4PugLdPFym+oYR2BbGPmiPdwa+TSIR2Wn2Kh
-uhZKsQoocJ7ZVQsVRW41XtRZ+UyYJ+3yyKRD+8SQUBkmcmlkrA12l7MA5b/zhm7K
-9I+eo2e6viipmYRLgBkhSI6TpxrEmXXNmrCNTtAxxh0dDx+9VG6T9Mf/yv0i5Mg=
-=MrCn
------END PGP SIGNATURE-----
-
---GvXjxJ+pjyke8COw--
+Kevin
