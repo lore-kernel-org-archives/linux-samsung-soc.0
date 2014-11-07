@@ -1,79 +1,126 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 1/2] ARM: EXYNOS: apply S5P_CENTRAL_SEQ_OPTION fix only when
- necessary
-Date: Fri, 07 Nov 2014 19:00:50 +0100
-Message-ID: <1415383252-20118-2-git-send-email-b.zolnierkie@samsung.com>
-References: <1415383252-20118-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1415383252-20118-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Colin Cross <ccross@google.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH 03/12] PM / Domains: Add notifier support for power domain transitions
+Date: Fri, 07 Nov 2014 10:45:20 -0800
+Message-ID: <7h8ujmsvcv.fsf@deeprootsystems.com>
+References: <1414986790-11940-1-git-send-email-amit.daniel@samsung.com>
+	<1414986790-11940-4-git-send-email-amit.daniel@samsung.com>
+	<1651173.5xzCFxz3LI@vostro.rjw.lan>
+	<7hmw88gn3q.fsf@deeprootsystems.com>
+	<CADGdYn5Prbbe6Rz=OfVMXm3dinCPrE-N0fn23dMMhZb8GzXm-Q@mail.gmail.com>
+	<5458B1FA.7050401@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:52504 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751793AbaKGSpX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Nov 2014 13:45:23 -0500
+Received: by mail-pd0-f175.google.com with SMTP id y13so3821086pdi.20
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Nov 2014 10:45:23 -0800 (PST)
+In-Reply-To: <5458B1FA.7050401@samsung.com> (Sylwester Nawrocki's message of
+	"Tue, 04 Nov 2014 12:01:14 +0100")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: amit daniel kachhap <amit.daniel@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, pankaj.dubey@samsung.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, LAK <linux-arm-kernel@lists.infradead.org>
 
-Commit c2dd114d2486 ("ARM: EXYNOS: fix register setup for AFTR mode
-code") added S5P_CENTRAL_SEQ_OPTION register setup fix for all
-Exynos SoCs to AFTR mode code-path.  It turned out that for coupled
-cpuidle AFTR mode on Exynos4210 (added by the next patch) applying
-this fix causes lockup so enable it in the AFTR mode code-path only
-on SoCs that require it (in the suspend code-path it can be always
-applied like it was before commit c2dd114d2486).
+Sylwester Nawrocki <s.nawrocki@samsung.com> writes:
 
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Colin Cross <ccross@google.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/pm.c      | 11 +++++++----
- arch/arm/mach-exynos/suspend.c |  4 ++++
- 2 files changed, 11 insertions(+), 4 deletions(-)
+> On 04/11/14 07:44, amit daniel kachhap wrote:
+>> On Mon, Nov 3, 2014 at 11:53 PM, Kevin Hilman <khilman@kernel.org> wrote:
+>>> "Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
+>>>> On Monday, November 03, 2014 09:23:01 AM Amit Daniel Kachhap wrote:
+>>>>> These power domain transition notifiers will assist in carrying
+>>>>> out some activity associated with domain power on/off such as
+>>>>> some registers which may lose its contents and need save/restore
+>>>>> across domain power off/on.
+>>>
+>>> The runtime PM framework already provides callbacks that are useful for
+>>> context save/restore for devices.  Could you please describe in more
+>>> detail which registers in which kind of devices need to be
+>>> saved/restored, and why they cannot be saved/restored using existing
+>>> mechanisms.
+>>
+>> Basically the requirement is mandated by exynos7 manual. It tells that
+>> before turning off the power domain, some clock registers need to saved
+>> and should be restored just after turning the power domain. These clock
+>> registers are not necessarily gate clocks but could be mux clocks etc.
+>> The driver may not have all information of these clocks also. I suppose
+>> these are Soc specific changes but drivers should work across Socs.
+>> This behavior is almost similar to suspend/resume case where a whole
+>> list of clock registers are saved/restored.
+>
+> Indeed, the somehow complicated power domain power on/off sequences
+> are SoC specific.  They involve not only groups of clocks (usually
+> gate, mux clock registers of all devices in a power domain) but also
+> SoC-specific PMU (Power Management Unit) registers.
+> I assume it would be inappropriate to push such details to device 
+> drivers.  Moreover, a device driver could not be even loaded.
+>
+> Since the clocks' state is already maintained by clk driver we came 
+> up with an idea of having generic calls from power domain driver back 
+> to the clock controller driver.
 
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 4f10fa6..4b36ab5 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -96,10 +96,6 @@ void exynos_pm_central_suspend(void)
- 	tmp = pmu_raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
- 	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
- 	pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
--
--	/* Setting SEQ_OPTION register */
--	pmu_raw_writel(S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0,
--		       S5P_CENTRAL_SEQ_OPTION);
- }
- 
- int exynos_pm_central_resume(void)
-@@ -163,6 +159,13 @@ void exynos_enter_aftr(void)
- 
- 	exynos_pm_central_suspend();
- 
-+	if (of_machine_is_compatible("samsung,exynos4212") ||
-+	    of_machine_is_compatible("samsung,exynos4412")) {
-+		/* Setting SEQ_OPTION register */
-+		pmu_raw_writel(S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0,
-+			       S5P_CENTRAL_SEQ_OPTION);
-+	}
-+
- 	cpu_suspend(0, exynos_aftr_finisher);
- 
- 	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9) {
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index f5d9773..ec6b04d 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -178,6 +178,10 @@ static int exynos_pm_suspend(void)
- {
- 	exynos_pm_central_suspend();
- 
-+	/* Setting SEQ_OPTION register */
-+	pmu_raw_writel(S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0,
-+		       S5P_CENTRAL_SEQ_OPTION);
-+
- 	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9)
- 		exynos_cpu_save_register();
- 
--- 
-1.8.2.3
+For the clock tree, it still seems to me that this is better handled in
+the SoC clock driver.  For example, when a power domain is about to be
+gated, all the devices in that domain are runtime suspended, and
+presumably all of their gate clocks are disabled.  Now, doesn't the
+clock driver know the clock tree parent-child hierarchy and shouldn't it
+be capable of saving the state of parent clocks (like mux clocks) etc?
+
+Stated diffrently, it still seems to me like we're pushing functionality
+in PM core notifiers that should be the responsibility of subsystem
+drivers. 
+
+> It might not to be the prettiest solution, nevertheless I couldn't come 
+> up with a better one which would satisfy all the requirements.  The power
+> domain should only be provided for use with all the clk/PMU sequences 
+> handling in place.
+>
+> Clocks need to also be touched before a power domain switch on or off,
+> so attaching the clock controller to some power domain wouldn't help,
+> unless we modify/add to existing power domain related callbacks for 
+> devices.  Another issue is the clock controller device would need to 
+> be attached to multiple power domains, and for each power domain the 
+> power on/off sequence is usually slightly different.
+>
+> There are also hierarchical power domains where each: the master and
+> the sub-domain need they own sequence and device usually is attached
+> only to a sub-domain.  
+>
+>> Even earlier post by Sylwester (https://lkml.org/lkml/2014/8/5/182) 
+>> also points to the need of this feature.
+>>>
+>>> Personally, I'm uncomfortable with notifiers like this because it
+>>> suggests that underlying frameworks are not doing the right thing, or
+>>> are not being used.  (I also don't like the implementation here where a
+>>> single global notifier list is maintained by the core, but the notifiers
+>>> are actually triggered by SoC specific code.)
+>>
+>> Yes right the global notifier block can be moved to per genpd structure.
+>> Also SoC trigger can be moved to core files.
+>>>
+>>> IIUC, the usage in this series seems to be that certain clock related
+>>> registers need to be saved/restored across a power domain transition.
+>>>
+>>> Wouldn't an alternative solution be to add a feature to the clock driver
+>>> such that the state of each clock is saved when the clock is disabled,
+>>> and restored when the clock is enabled?   That would allow any clock
+>>> context to survive any power domain transtion also, correct?
+>>
+>> I also thought about same. But the trigger point for this would be
+>> driver calling clk disable/enable and not the power domain. so this 
+>> will lead to lot of save/restore for each power domain child.
+>
+> Even though we would have saved/restored at that points still the power
+> domain driver would need to enforce some specific clock/PMU registers 
+> state before/after a power domain state transition. And this is what I 
+> found difficult with the existing APIs.
+
+This is what I'm not understanding.
+
+Why can't the power domain driver's power_on/power_off callback just
+call the PMU APIs and/or the clk_enable/_disable calls it needs?
+
+Kevin
