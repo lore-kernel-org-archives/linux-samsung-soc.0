@@ -1,65 +1,44 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH 1/4] drm/exynos: dsi: support Exynos4415 SoC
-Date: Fri, 07 Nov 2014 15:12:24 +0900
-Message-ID: <1415340747-27904-2-git-send-email-yj44.cho@samsung.com>
+Subject: [PATCH 3/4] ARM: dts: add fimd device node to exynos4415.dtsi
+Date: Fri, 07 Nov 2014 15:12:26 +0900
+Message-ID: <1415340747-27904-4-git-send-email-yj44.cho@samsung.com>
 References: <1415340747-27904-1-git-send-email-yj44.cho@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:45485 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751059AbaKGGMd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Nov 2014 01:12:33 -0500
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1415340747-27904-1-git-send-email-yj44.cho@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, mark.rutland@arm.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, robh+dt@kernel.org, galak@codeaurora.org, kyungmin.park@samsung.com, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com, cw00.choi@samsung.com, kgene.kim@samsung.com
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, cw00.choi@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch supports Exynos4415 SoC.
-
-Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- Documentation/devicetree/bindings/video/exynos_dsim.txt | 1 +
- drivers/gpu/drm/exynos/exynos_drm_dsi.c                 | 7 +++++++
- 2 files changed, 8 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/video/exynos_dsim.txt b/Documentation/devicetree/bindings/video/exynos_dsim.txt
-index e74243b..ca2b4aa 100644
---- a/Documentation/devicetree/bindings/video/exynos_dsim.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_dsim.txt
-@@ -4,6 +4,7 @@ Required properties:
-   - compatible: value should be one of the following
- 		"samsung,exynos3250-mipi-dsi" /* for Exynos3250/3472 SoCs */
- 		"samsung,exynos4210-mipi-dsi" /* for Exynos4 SoCs */
-+		"samsung,exynos4415-mipi-dsi" /* for Exynos4415 SoC */
- 		"samsung,exynos5410-mipi-dsi" /* for Exynos5410/5420/5440 SoCs */
-   - reg: physical base address and length of the registers set for the device
-   - interrupts: should contain DSI interrupt
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index acf7e9e..ff17c6e 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -316,6 +316,11 @@ static struct exynos_dsi_driver_data exynos4_dsi_driver_data = {
- 	.has_clklane_stop = 1,
- };
- 
-+static struct exynos_dsi_driver_data exynos4415_dsi_driver_data = {
-+	.plltmr_reg = 0x58,
-+	.has_clklane_stop = 1,
-+};
-+
- static struct exynos_dsi_driver_data exynos5_dsi_driver_data = {
- 	.plltmr_reg = 0x58,
- };
-@@ -325,6 +330,8 @@ static struct of_device_id exynos_dsi_of_match[] = {
- 	  .data = &exynos3_dsi_driver_data },
- 	{ .compatible = "samsung,exynos4210-mipi-dsi",
- 	  .data = &exynos4_dsi_driver_data },
-+	{ .compatible = "samsung,exynos4415-mipi-dsi",
-+	  .data = &exynos4415_dsi_driver_data },
- 	{ .compatible = "samsung,exynos5410-mipi-dsi",
- 	  .data = &exynos5_dsi_driver_data },
- 	{ }
--- 
-1.9.0
+VGhpcyBwYXRjaCBhZGRzIGZpbWQgZGV2aWNlIG5vZGUgdG8gZXh5bm9zNDQxNS5kdHNpLgoKU2ln
+bmVkLW9mZi1ieTogWW91bmdKdW4gQ2hvIDx5ajQ0LmNob0BzYW1zdW5nLmNvbT4KQWNrZWQtYnk6
+IEt5dW5nbWluIFBhcmsgPGt5dW5nbWluLnBhcmtAc2Ftc3VuZy5jb20+Ci0tLQogYXJjaC9hcm0v
+Ym9vdC9kdHMvZXh5bm9zNDQxNS5kdHNpIHwgMTIgKysrKysrKysrKysrCiAxIGZpbGUgY2hhbmdl
+ZCwgMTIgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5v
+czQ0MTUuZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQ0MTUuZHRzaQppbmRleCBjMWM5
+YjM3Li4zMGFjYjNhIDEwMDY0NAotLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M0NDE1LmR0
+c2kKKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNDQxNS5kdHNpCkBAIC0yMzQsNiArMjM0
+LDE4IEBACiAJCQlpbnRlcnJ1cHRzID0gPDAgMjQwIDA+OwogCQl9OwogCisJCWZpbWQ6IGZpbWRA
+MTFDMDAwMDAgeworCQkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczQ0MTUtZmltZCI7CisJ
+CQlyZWcgPSA8MHgxMUMwMDAwMCAweDMwMDAwPjsKKwkJCWludGVycnVwdC1uYW1lcyA9ICJmaWZv
+IiwgInZzeW5jIiwgImxjZF9zeXMiOworCQkJaW50ZXJydXB0cyA9IDwwIDg0IDA+LCA8MCA4NSAw
+PiwgPDAgODYgMD47CisJCQljbG9ja3MgPSA8JmNtdSBDTEtfU0NMS19GSU1EMD4sIDwmY211IENM
+S19GSU1EMD47CisJCQljbG9jay1uYW1lcyA9ICJzY2xrX2ZpbWQiLCAiZmltZCI7CisJCQlzYW1z
+dW5nLHBvd2VyLWRvbWFpbiA9IDwmcGRfbGNkMD47CisJCQlzYW1zdW5nLHN5c3JlZyA9IDwmc3lz
+cmVnX3N5c3RlbV9jb250cm9sbGVyPjsKKwkJCXN0YXR1cyA9ICJkaXNhYmxlZCI7CisJCX07CisK
+IAkJaHNvdGc6IGhzb3RnQDEyNDgwMDAwIHsKIAkJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxzM2M2
+NDAwLWhzb3RnIjsKIAkJCXJlZyA9IDwweDEyNDgwMDAwIDB4MjAwMDA+OwotLSAKMS45LjAKCl9f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBt
+YWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
