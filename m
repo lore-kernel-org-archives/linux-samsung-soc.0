@@ -1,50 +1,66 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 0/2] DRM: Add runtime PM to Exynos DSI
-Date: Fri, 07 Nov 2014 14:53:57 +0100
-Message-ID: <1415368439-23642-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:17574 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751425AbaKGNyP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Nov 2014 08:54:15 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 2/2] drm/exynos/dsi: Add runtime PM so LCD power domain
+ could be turned off
+Date: Fri, 07 Nov 2014 14:53:59 +0100
+Message-ID: <1415368439-23642-3-git-send-email-k.kozlowski@samsung.com>
+References: <1415368439-23642-1-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1415368439-23642-1-git-send-email-k.kozlowski@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Kevin Hilman <khilman@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kevin Hilman <khilman@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-Changes since v1
-================
-1. Replace patch 1 changing PM core with fix only for DRM exynos driver.
-
-Description
-===========
-The goal of the patch 2 is to add runtime PM to the Exynos DSI driver.
-This allows LCD power domain to be turned off.
-
-However after adding this patch an interesing issue came in. The DSI
-driver could not runtime resume during sustem resume because power
-domain was not allowed to power on.
-
-The issue is solved by patch 1.
-
-Tested on Trats2 board.
-
-Comments are welcomed.
-
-Best regards,
-Krzysztof
-
-
-Krzysztof Kozlowski (2):
-  drm/exynos: Fix DSI resuming fail because power domain being off
-  drm/exynos/dsi: Add runtime PM so LCD power domain could be turned off
-
- drivers/gpu/drm/exynos/exynos_drm_drv.c | 2 --
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 9 +++++++++
- 2 files changed, 9 insertions(+), 2 deletions(-)
-
--- 
-1.9.1
+QWRkIHJ1bnRpbWUgUG93ZXIgTWFuYWdlbWVudCB0byB0aGUgRXh5bm9zIERTSSBkcml2ZXIgc28g
+dGhlIExDRCBwb3dlcgpkb21haW4gY291bGQgYmUgdHVybmVkIG9mZi4KClRoaXMgc2xpZ2h0bHkg
+cmVkdWNlcyB0aGUgZW5lcmd5IGNvbnN1bXB0aW9uIHdoZW4gc2NyZWVuIGlzIGNvbXBsZXRlbHkK
+dHVybmVkIG9mZi4gT24gVHJhdHMyIGJvYXJkIHdoZW4gdGhlIHN5c3RlbSB3YXMgaWRsZSB0aGUg
+ZW5lcmd5CmNvbnN1bXB0aW9uIGRyb3BwZWQgYnkgMSUgKGZyb20gOTIuMiBtQSB0byA5MS4xIG1B
+KS4KCkJlZm9yZSB0aGUgcGF0Y2g6CiQgY2F0IGNhdCAvc3lzL2tlcm5lbC9kZWJ1Zy9wbV9nZW5w
+ZC9wbV9nZW5wZF9zdW1tYXJ5CmxjZDAtcG93ZXItZG9tYWluICAgICAgICAgICAgICAgb24KICAg
+IC9kZXZpY2VzLzExYzAwMDAwLmZpbWQgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdXNw
+ZW5kZWQKICAgIC9kZXZpY2VzLzExYzgwMDAwLmRzaSAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICB1bnN1cHBvcnRlZAoKQWZ0ZXIgYXBwbHlpbmcgdGhlIHBhdGNoOgpsY2QwLXBvd2VyLWRv
+bWFpbiAgICAgICAgICAgICAgIG9mZgogICAgL2RldmljZXMvMTFjMDAwMDAuZmltZCAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIHN1c3BlbmRlZAogICAgL2RldmljZXMvMTFjODAwMDAuZHNp
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN1c3BlbmRlZAoKU2lnbmVkLW9mZi1ieTog
+S3J6eXN6dG9mIEtvemxvd3NraSA8ay5rb3psb3dza2lAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jIHwgOSArKysrKysrKysKIDEgZmlsZSBj
+aGFuZ2VkLCA5IGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZHNpLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+ZHNpLmMKaW5kZXggMjQ3NDFkODc1OGU4Li4xOWVkMzZkMmQ1NTcgMTAwNjQ0Ci0tLSBhL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYworKysgYi9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKQEAgLTIxLDYgKzIxLDcgQEAKICNpbmNsdWRlIDxsaW51
+eC9vZl9kZXZpY2UuaD4KICNpbmNsdWRlIDxsaW51eC9vZl9ncGlvLmg+CiAjaW5jbHVkZSA8bGlu
+dXgvcGh5L3BoeS5oPgorI2luY2x1ZGUgPGxpbnV4L3BtX3J1bnRpbWUuaD4KICNpbmNsdWRlIDxs
+aW51eC9yZWd1bGF0b3IvY29uc3VtZXIuaD4KICNpbmNsdWRlIDxsaW51eC9jb21wb25lbnQuaD4K
+IApAQCAtMTM1Niw2ICsxMzU3LDggQEAgc3RhdGljIGludCBleHlub3NfZHNpX2VuYWJsZShzdHJ1
+Y3QgZXh5bm9zX2RzaSAqZHNpKQogCWlmIChkc2ktPnN0YXRlICYgRFNJTV9TVEFURV9FTkFCTEVE
+KQogCQlyZXR1cm4gMDsKIAorCXBtX3J1bnRpbWVfZ2V0X3N5bmMoZHNpLT5kZXYpOworCiAJcmV0
+ID0gZXh5bm9zX2RzaV9wb3dlcm9uKGRzaSk7CiAJaWYgKHJldCA8IDApCiAJCXJldHVybiByZXQ7
+CkBAIC0xMzkyLDYgKzEzOTUsOCBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHNpX2Rpc2FibGUoc3Ry
+dWN0IGV4eW5vc19kc2kgKmRzaSkKIAlkcm1fcGFuZWxfdW5wcmVwYXJlKGRzaS0+cGFuZWwpOwog
+CWV4eW5vc19kc2lfcG93ZXJvZmYoZHNpKTsKIAorCXBtX3J1bnRpbWVfcHV0X3N5bmMoZHNpLT5k
+ZXYpOworCiAJZHNpLT5zdGF0ZSAmPSB+RFNJTV9TVEFURV9FTkFCTEVEOwogfQogCkBAIC0xNzcy
+LDYgKzE3NzcsOCBAQCBzdGF0aWMgaW50IGV4eW5vc19kc2lfcHJvYmUoc3RydWN0IHBsYXRmb3Jt
+X2RldmljZSAqcGRldikKIAlpZiAocmV0KQogCQlnb3RvIGVycl9kZWxfY29tcG9uZW50OwogCisJ
+cG1fcnVudGltZV9lbmFibGUoJnBkZXYtPmRldik7CisKIAlyZXR1cm4gcmV0OwogCiBlcnJfZGVs
+X2NvbXBvbmVudDoKQEAgLTE3ODEsNiArMTc4OCw4IEBAIGVycl9kZWxfY29tcG9uZW50OgogCiBz
+dGF0aWMgaW50IGV4eW5vc19kc2lfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYp
+CiB7CisJcG1fcnVudGltZV9kaXNhYmxlKCZwZGV2LT5kZXYpOworCiAJY29tcG9uZW50X2RlbCgm
+cGRldi0+ZGV2LCAmZXh5bm9zX2RzaV9jb21wb25lbnRfb3BzKTsKIAlleHlub3NfZHJtX2NvbXBv
+bmVudF9kZWwoJnBkZXYtPmRldiwgRVhZTk9TX0RFVklDRV9UWVBFX0NPTk5FQ1RPUik7CiAKLS0g
+CjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
+cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
