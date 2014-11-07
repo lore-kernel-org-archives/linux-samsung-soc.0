@@ -1,140 +1,61 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH 03/21] thermal: of: Extend of-thermal.c to provide number
- of non critical trip points
-Date: Fri, 07 Nov 2014 11:05:51 +0100
-Message-ID: <20141107110551.5316836f@amdc2363>
-References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
- <1412872737-624-4-git-send-email-l.majewski@samsung.com>
- <20141107014152.GD10180@developer>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] spi: s3c64xx: add support for exynos7 SPI controller
+Date: Fri, 7 Nov 2014 10:13:10 +0000
+Message-ID: <20141107101310.GA8509@sirena.org.uk>
+References: <1415267509-16653-1-git-send-email-padma.v@samsung.com>
+ <20141106102636.GT8509@sirena.org.uk>
+ <CAAgF-BfGwcNzMx0meFVkJqNMTbQ4_PP1PZ3i6edOm6U3bc26_Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="BqH9fKuTou9vMXa4"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:45537 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751660AbaKGKGW (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48021 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751141AbaKGKOM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Nov 2014 05:06:22 -0500
-In-reply-to: <20141107014152.GD10180@developer>
+	Fri, 7 Nov 2014 05:14:12 -0500
+Content-Disposition: inline
+In-Reply-To: <CAAgF-BfGwcNzMx0meFVkJqNMTbQ4_PP1PZ3i6edOm6U3bc26_Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Linux PM list <linux-pm@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>, linux-arm-kernel@lists.infradead.org
-
-Hi Eduardo,
-
-> On Thu, Oct 09, 2014 at 06:38:39PM +0200, Lukasz Majewski wrote:
-> > This patch extends the of-thermal.c to provide information about
-> > number of available non critical (i.e. non HW) trip points in the
-> > system.
-> > 
-> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > ---
-> >  drivers/thermal/of-thermal.c   | 12 ++++++++++++
-> >  drivers/thermal/thermal_core.h |  5 +++++
-> >  2 files changed, 17 insertions(+)
-> > 
-> > diff --git a/drivers/thermal/of-thermal.c
-> > b/drivers/thermal/of-thermal.c index 23c8d6c..cd74e64 100644
-> > --- a/drivers/thermal/of-thermal.c
-> > +++ b/drivers/thermal/of-thermal.c
-> > @@ -128,6 +128,18 @@ int of_thermal_is_trip_en(struct
-> > thermal_zone_device *tz, int trip) return 1;
-> >  }
-> >  
-> > +int of_thermal_get_non_crit_ntrips(struct thermal_zone_device *tz)
-> > +{
-> > +	struct __thermal_zone *data = tz->devdata;
-> > +	int i;
-> > +
-> > +	for (i = 0; i < data->ntrips; i++)
-> > +		if (data->trips[i].type != THERMAL_TRIP_CRITICAL)
-> > +			continue;
-> > +
-> > +	return --i;
-> > +}
-> > +
-> 
-> 
-> 
-> I am not against this addition. But looks like we start to spread some
-> specific APIs that may not be used to other drivers.
-
-Why do you think that this is a specific API? In the thermal OF we can
-define trip point as "active", "passive", "hot" and "critical".
-
-With the first three we can handle them and properly react. For the last
-one SoC's PMU will power down the board.
-
-Do you know if any board (e.g. from TI) is NOT supposed to shut down
-when "critical" temperature is passed?
-
-The real problem here is the accessibility to __thermal_trip and
-__thermal_bind arrays.
-
-Use case:
-In the Exynos driver we do need to initialize TMU registers with
-threshold temperatures.
-The temperature is read via tz->ops->get_trip_temp() [1] (from
-of-thermal.c).
-Unfortunately, the current API is not exporting the number of
-non-critical trip points to know how many times call [1].
-Of course we could by hand instantiate [1] n times, but this looks for
-me a bit clumsy.
-
-Additionally, we now have implicit assumption about the order of defined
-temperatures for trip points, but I think this is not a big issue.
-
-> Maybe having a
-> single API to provide a read-only copy the list / array of trips might
-> be a better approach. I will think of a better way.
-
-Definitely. Exporting available trip points is crucial.
-
-> 
-> I also request you to document it accordingly.
-
-Ok, I will do that.
-
-> 
-> 
-> >  static int of_thermal_get_trend(struct thermal_zone_device *tz,
-> > int trip, enum thermal_trend *trend)
-> >  {
-> > diff --git a/drivers/thermal/thermal_core.h
-> > b/drivers/thermal/thermal_core.h index ed8ff05..334a7be 100644
-> > --- a/drivers/thermal/thermal_core.h
-> > +++ b/drivers/thermal/thermal_core.h
-> > @@ -83,6 +83,7 @@ int of_parse_thermal_zones(void);
-> >  void of_thermal_destroy_zones(void);
-> >  int of_thermal_get_ntrips(struct thermal_zone_device *);
-> >  int of_thermal_is_trip_en(struct thermal_zone_device *, int);
-> > +int of_thermal_get_non_crit_ntrips(struct thermal_zone_device *);
-> >  #else
-> >  static inline int of_parse_thermal_zones(void) { return 0; }
-> >  static inline void of_thermal_destroy_zones(void) { }
-> > @@ -94,6 +95,10 @@ int of_thermal_is_trip_en(struct
-> > thermal_zone_device *, int) {
-> >  	return 0;
-> >  }
-> > +int of_thermal_get_non_crit_ntrips(struct thermal_zone_device *)
-> here, it is supposed to be static inline.
-> 
-> > +{
-> > +	return 0;
-> > +}
-> >  #endif
-> >  
-> >  #endif /* __THERMAL_CORE_H__ */
-> > -- 
-> > 2.0.0.rc2
-> > 
+To: Padma Venkat <padma.kvr@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 
 
+--BqH9fKuTou9vMXa4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-Best regards,
+On Fri, Nov 07, 2014 at 02:01:57PM +0530, Padma Venkat wrote:
 
-Lukasz Majewski
+> CS can also be controlled automatically by setting AUTO_N_MANUAL to 1
+> in CS_CFG. When it is auto CS automatically toggles between packet to
+> packet. NCS_TIME_COUNT in CS_CFG controls the inactive period. The
+> driver by default uses manual mode. But on exynos7 the manual mode is
+> removed.
 
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+OK, but what's a packet here?
+
+> I tested the driver with wm5110 codec.
+
+Did you try firmware downloads or something else that generates multiple
+transfers in a message?  Normal register writes will use a single
+transfer so I'd expect them to just work.
+
+--BqH9fKuTou9vMXa4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUXJs2AAoJECTWi3JdVIfQZ8UH/jVxyhU2pvbWKIMBLcRa0BVE
+upCzn9UOpe1r6NF6eC4FlRV9DkVjlWTBfC3ZfKT1LCD+ZfWysOT58G2U1sA69ObY
+DTmTlQazFIFYGYzjSHLDs50OnVGRBlUA/kwJeMbcOiAtbG7YmdqWECLI1c/uF6FV
+BhkUa6EXUzmgpasTfmGTKRJQzrBwGM6vjeCufr2ObAvEG1AWH3PGByPcHIXKqjbl
+euEl9HsF+mXo60jU4zRbm2uaJNke3oMPNhYHV3DQJxoPX0meJ6jGdP9KgoVgatQY
+QRaUSQjlEYmqSN1vTsj6rtx7qB007B7sBzHQqlKXOOFolz6IzKsCKCbzh8PbEDs=
+=jv0k
+-----END PGP SIGNATURE-----
+
+--BqH9fKuTou9vMXa4--
