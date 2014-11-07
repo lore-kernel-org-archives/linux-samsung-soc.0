@@ -1,59 +1,192 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v5 2/5] regulator: Add function to map modes to struct
- regulator_desc
-Date: Fri, 7 Nov 2014 15:54:00 +0000
-Message-ID: <20141107155400.GU8509@sirena.org.uk>
-References: <1415365205-27630-1-git-send-email-javier.martinez@collabora.co.uk>
- <1415365205-27630-3-git-send-email-javier.martinez@collabora.co.uk>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH 03/21] thermal: of: Extend of-thermal.c to provide number
+ of non critical trip points
+Date: Fri, 7 Nov 2014 12:06:32 -0400
+Message-ID: <20141107160630.GA23549@developer>
+References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
+ <1412872737-624-4-git-send-email-l.majewski@samsung.com>
+ <20141107014152.GD10180@developer>
+ <20141107110551.5316836f@amdc2363>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="XzDp6KY4NBYgEz60"
+	protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49487 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751480AbaKGPzx (ORCPT
+Received: from mail-qa0-f46.google.com ([209.85.216.46]:54745 "EHLO
+	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751322AbaKGQGp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Nov 2014 10:55:53 -0500
+	Fri, 7 Nov 2014 11:06:45 -0500
 Content-Disposition: inline
-In-Reply-To: <1415365205-27630-3-git-send-email-javier.martinez@collabora.co.uk>
+In-Reply-To: <20141107110551.5316836f@amdc2363>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Linux PM list <linux-pm@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>, linux-arm-kernel@lists.infradead.org
 
 
---XzDp6KY4NBYgEz60
+--wRRV7LY7NUeQGEoC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 07, 2014 at 02:00:02PM +0100, Javier Martinez Canillas wrote:
 
-> + * @map_modes: Callback invoked to translate from hardware to standard modes.
-> + *             The function returns the standard REGULATOR_MODE that maps to
-> + *             the hardware specific mode passed as an argument.
+Hello Lukasz,
 
-of_map_mode - it's only one mode and this is mapping to/from DT.
+On Fri, Nov 07, 2014 at 11:05:51AM +0100, Lukasz Majewski wrote:
+> Hi Eduardo,
+>=20
+> > On Thu, Oct 09, 2014 at 06:38:39PM +0200, Lukasz Majewski wrote:
+> > > This patch extends the of-thermal.c to provide information about
+> > > number of available non critical (i.e. non HW) trip points in the
+> > > system.
+> > >=20
+> > > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> > > ---
+> > >  drivers/thermal/of-thermal.c   | 12 ++++++++++++
+> > >  drivers/thermal/thermal_core.h |  5 +++++
+> > >  2 files changed, 17 insertions(+)
+> > >=20
+> > > diff --git a/drivers/thermal/of-thermal.c
+> > > b/drivers/thermal/of-thermal.c index 23c8d6c..cd74e64 100644
+> > > --- a/drivers/thermal/of-thermal.c
+> > > +++ b/drivers/thermal/of-thermal.c
+> > > @@ -128,6 +128,18 @@ int of_thermal_is_trip_en(struct
+> > > thermal_zone_device *tz, int trip) return 1;
+> > >  }
+> > > =20
+> > > +int of_thermal_get_non_crit_ntrips(struct thermal_zone_device *tz)
+> > > +{
+> > > +	struct __thermal_zone *data =3D tz->devdata;
+> > > +	int i;
+> > > +
+> > > +	for (i =3D 0; i < data->ntrips; i++)
+> > > +		if (data->trips[i].type !=3D THERMAL_TRIP_CRITICAL)
+> > > +			continue;
+> > > +
+> > > +	return --i;
+> > > +}
+> > > +
+> >=20
+> >=20
+> >=20
+> > I am not against this addition. But looks like we start to spread some
+> > specific APIs that may not be used to other drivers.
+>=20
+> Why do you think that this is a specific API? In the thermal OF we can
+> define trip point as "active", "passive", "hot" and "critical".
+>=20
+> With the first three we can handle them and properly react. For the last
+> one SoC's PMU will power down the board.
+>=20
+> Do you know if any board (e.g. from TI) is NOT supposed to shut down
+> when "critical" temperature is passed?
+>=20
 
-> + *             If the callback is not defined, the "regulator-initial-mode"
-> + *             and suspend states "regulator-mode" properties won't be parsed.
+So, my point is not really about the usage of trip points. It is just
+that the of-thermal  API will grow with in a wide way with specific
+functions to check some property on the trip point array. And not all
+drivers may be using these function, e.g. the above proposal.
 
-Just remove this, it's pretty obvious at best and going to bit rot at
-worst.
+> The real problem here is the accessibility to __thermal_trip and
+> __thermal_bind arrays.
+>=20
+> Use case:
+> In the Exynos driver we do need to initialize TMU registers with
+> threshold temperatures.
+> The temperature is read via tz->ops->get_trip_temp() [1] (from
+> of-thermal.c).
+> Unfortunately, the current API is not exporting the number of
+> non-critical trip points to know how many times call [1].
+> Of course we could by hand instantiate [1] n times, but this looks for
+> me a bit clumsy.
 
---XzDp6KY4NBYgEz60
+
+I understand your use case. My point was simply that this use case may
+be specific to your driver (or few drivers).
+>=20
+> Additionally, we now have implicit assumption about the order of defined
+> temperatures for trip points, but I think this is not a big issue.
+>=20
+> > Maybe having a
+> > single API to provide a read-only copy the list / array of trips might
+> > be a better approach. I will think of a better way.
+>=20
+> Definitely. Exporting available trip points is crucial.
+>=20
+
+Yeah, I think it is the best thing to do. Share a read-only array / copy
+of the needed data, and then drivers would check what ever property they
+need from the array. Just make sure you document that this is a
+read-only array (i.e. any possible change they do, won't affect the
+original array).
+
+> >=20
+> > I also request you to document it accordingly.
+>=20
+> Ok, I will do that.
+
+Cool!
+
+
+
+>=20
+> >=20
+> >=20
+> > >  static int of_thermal_get_trend(struct thermal_zone_device *tz,
+> > > int trip, enum thermal_trend *trend)
+> > >  {
+> > > diff --git a/drivers/thermal/thermal_core.h
+> > > b/drivers/thermal/thermal_core.h index ed8ff05..334a7be 100644
+> > > --- a/drivers/thermal/thermal_core.h
+> > > +++ b/drivers/thermal/thermal_core.h
+> > > @@ -83,6 +83,7 @@ int of_parse_thermal_zones(void);
+> > >  void of_thermal_destroy_zones(void);
+> > >  int of_thermal_get_ntrips(struct thermal_zone_device *);
+> > >  int of_thermal_is_trip_en(struct thermal_zone_device *, int);
+> > > +int of_thermal_get_non_crit_ntrips(struct thermal_zone_device *);
+> > >  #else
+> > >  static inline int of_parse_thermal_zones(void) { return 0; }
+> > >  static inline void of_thermal_destroy_zones(void) { }
+> > > @@ -94,6 +95,10 @@ int of_thermal_is_trip_en(struct
+> > > thermal_zone_device *, int) {
+> > >  	return 0;
+> > >  }
+> > > +int of_thermal_get_non_crit_ntrips(struct thermal_zone_device *)
+> > here, it is supposed to be static inline.
+> >=20
+> > > +{
+> > > +	return 0;
+> > > +}
+> > >  #endif
+> > > =20
+> > >  #endif /* __THERMAL_CORE_H__ */
+> > > --=20
+> > > 2.0.0.rc2
+> > >=20
+>=20
+>=20
+>=20
+> --=20
+> Best regards,
+>=20
+> Lukasz Majewski
+>=20
+> Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+
+--wRRV7LY7NUeQGEoC
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBAgAGBQJUXOsXAAoJECTWi3JdVIfQiSgH/j18Lc0MhLd2Aqc2JZgxUV2M
-/dBt3zXiUGo46nRN1FozITuUSKxCmbzMI/Cwp+fyY2IrGuJ9hbOn1Si0iSeop548
-8DxkPx0Kp2sFR5yujEQK38Nq5irq72eLzEkE9GUAXIMcQi2vV+QySr0kxn4+pj7z
-illyWKK1JWfy878SV/GYaBA9Oc26jREN4jSaWYNxcF11JXTSZ2P8yOKcvYXpO1c8
-qCgK5okIpY+IYxl+3ZYbQROvX7QbhkD/Sqf0G/aUutArUJVDl78o66KrIi66vCTw
-5/QS2ggcb7YUmb6MWKAYkEDVZfLVEsIwHgGayRwDMXxcz2QOLI2PJscJv53GVb0=
-=5Yn1
+iQEcBAEBAgAGBQJUXO38AAoJEMLUO4d9pOJW340IAJ3XdZUVp2QIKN73ATrMMJc7
+UAU+KVyYuw8G+STErnnbOp0l8zrMs19PrGplwqAWqJWO3PL9J1VtkrI7tePzQBkO
+Sv6A48TqkdnHtFbUD2ox7hodQNEPTssNVywmRGL1rNhlirmQqTl09EyNMazcI9kS
+iFJWdv/i9HW4cZXBOVfdPNPGHd77L1rT6CzpkaP1I9+GV5dpzc5yRPjiqL8dMs6G
+IsY8m+NiC95FzwJOn4MgtbxwamAdwaip8F/uED8eEs4QRpW+JSZGdpWWCO5cQxY2
+pIoxB5ht7OXEL/tQPA8A2JHcMor3gKV9uRCIof7QrQii3IvCpgaTbZ5GpjvFDQg=
+=hdQa
 -----END PGP SIGNATURE-----
 
---XzDp6KY4NBYgEz60--
+--wRRV7LY7NUeQGEoC--
