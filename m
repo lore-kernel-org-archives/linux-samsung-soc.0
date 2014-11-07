@@ -1,42 +1,85 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v5 1/5] regulator: Document binding for initial and suspend
- modes
-Date: Fri, 07 Nov 2014 17:19:40 +0100
-Message-ID: <545CF11C.3000706@collabora.co.uk>
-References: <1415365205-27630-1-git-send-email-javier.martinez@collabora.co.uk> <1415365205-27630-2-git-send-email-javier.martinez@collabora.co.uk> <20141107145806.GQ8509@sirena.org.uk> <545CE75C.8000408@collabora.co.uk> <20141107161029.GV8509@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v5 3/5] regulator: of: Add regulator desc param to
+ of_get_regulator_init_data()
+Date: Fri, 7 Nov 2014 15:07:43 +0000
+Message-ID: <20141107150743.GR8509@sirena.org.uk>
+References: <1415365205-27630-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1415365205-27630-4-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ji10MhcQ4llII8Lj"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:44492 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751437AbaKGQTq (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49661 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751313AbaKGQV2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Nov 2014 11:19:46 -0500
-In-Reply-To: <20141107161029.GV8509@sirena.org.uk>
+	Fri, 7 Nov 2014 11:21:28 -0500
+Content-Disposition: inline
+In-Reply-To: <1415365205-27630-4-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-Hello Mark,
 
-On 11/07/2014 05:10 PM, Mark Brown wrote:
-> 
-> You're also saying that the OS won't manage the mode here, that's a step
-> further.
->
+--ji10MhcQ4llII8Lj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I see
- 
->> So should I just explain what each property is about without trying to make
->> assumptions about the limitations that different devices could have and let
->> each device DT binding to specify those?
-> 
-> More towards that direction, yes.  Don't overspecify.
-> 
+On Fri, Nov 07, 2014 at 02:00:03PM +0100, Javier Martinez Canillas wrote:
 
-Got it, thanks a lot for your valuable feedback.
+> -	initdata =3D of_get_regulator_init_data(dev, np);
+>  	sreg =3D devm_kzalloc(dev, sizeof(*sreg), GFP_KERNEL);
+>  	if (!sreg)
+>  		return -ENOMEM;
+> -	sreg->initdata =3D initdata;
+>  	sreg->name =3D of_get_property(np, "regulator-name", NULL);
+>  	rdesc =3D &sreg->rdesc;
+> +	initdata =3D of_get_regulator_init_data(dev, np, rdesc);
+> +	sreg->initdata =3D initdata;
+>  	rdesc->name =3D sreg->name;
+>  	rdesc->type =3D REGULATOR_VOLTAGE;
+>  	rdesc->owner =3D THIS_MODULE;
 
-Best regards,
-Javier
+This is using the regulator descriptor before it is initialized which
+doesn't seem ideal...
+
+> +++ b/include/linux/regulator/of_regulator.h
+> @@ -6,6 +6,8 @@
+>  #ifndef __LINUX_OF_REG_H
+>  #define __LINUX_OF_REG_H
+> =20
+> +#include <linux/regulator/driver.h>
+> +
+>  struct of_regulator_match {
+>  	const char *name;
+>  	void *driver_data;
+> @@ -16,14 +18,16 @@ struct of_regulator_match {
+>  #if defined(CONFIG_OF)
+>  extern struct regulator_init_data
+>  	*of_get_regulator_init_data(struct device *dev,
+> -				    struct device_node *node);
+> +				    struct device_node *node,
+> +				    const struct regulator_desc *desc);
+
+This is just adding the include to get the declaration of regulator_desc
+as far as I can see, add a forward declaration of it instead.
+
+--ji10MhcQ4llII8Lj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUXOA+AAoJECTWi3JdVIfQym0H/A0rtJd8H5YsHQ7oraSjw6d3
+A2sqYgqaQgLMQEebo0uv4LNEsWyAjAU2T5nEMqPNl7r0aJN9TgJyLPGinwFtghW6
+HiM+7qsXrtteJ/NwATIcg/kVjlMSxW/8pO515jxBSWMogOflO2W8ySwjpR1/COTj
+mw0OKgzmt4b2by90nutp4RrwNC2lDLMRjuTw9SnK+zDuUGhSqKQMvDTw3rtiqNWT
+CVZNu8QkcAll0qEPK7/sEYl001GVjV+lV4RtdaMhjZCRZWXoyfgbBJNUGxwrWMy4
+zj0vYyb7bpqyM9/C5ZCAAFxKkhgevVAPNmNcanDApAqK0d1yIXwS/yuWn1cbzwI=
+=f0Zj
+-----END PGP SIGNATURE-----
+
+--ji10MhcQ4llII8Lj--
