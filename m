@@ -1,41 +1,59 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH v5 3/5] regulator: of: Add regulator desc param to of_get_regulator_init_data()
-Date: Fri, 07 Nov 2014 16:49:49 +0100
-Message-ID: <545CEA1D.2020109@collabora.co.uk>
-References: <1415365205-27630-1-git-send-email-javier.martinez@collabora.co.uk> <1415365205-27630-4-git-send-email-javier.martinez@collabora.co.uk> <20141107150743.GR8509@sirena.org.uk>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v5 2/5] regulator: Add function to map modes to struct
+ regulator_desc
+Date: Fri, 7 Nov 2014 15:54:00 +0000
+Message-ID: <20141107155400.GU8509@sirena.org.uk>
+References: <1415365205-27630-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1415365205-27630-3-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20141107150743.GR8509-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Chris Zhong <zyw-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Abhilash Kesavan <kesavan.abhilash-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="XzDp6KY4NBYgEz60"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49487 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751480AbaKGPzx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Nov 2014 10:55:53 -0500
+Content-Disposition: inline
+In-Reply-To: <1415365205-27630-3-git-send-email-javier.martinez@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-Hello Mark,
 
-On 11/07/2014 04:07 PM, Mark Brown wrote:
-> 
-> This is using the regulator descriptor before it is initialized which
-> doesn't seem ideal...
->
+--XzDp6KY4NBYgEz60
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-You are right, even if most of them are not used currently, that may
-change in the future so is safer to use it after all fields have been
-initialized. I'll double check all drivers to be sure that's the case.
+On Fri, Nov 07, 2014 at 02:00:02PM +0100, Javier Martinez Canillas wrote:
 
-> 
-> This is just adding the include to get the declaration of regulator_desc
-> as far as I can see, add a forward declaration of it instead.
-> 
+> + * @map_modes: Callback invoked to translate from hardware to standard modes.
+> + *             The function returns the standard REGULATOR_MODE that maps to
+> + *             the hardware specific mode passed as an argument.
 
-Perfect, I didn't know what you would prefer. I'll change it in the
-next version.
+of_map_mode - it's only one mode and this is mapping to/from DT.
 
-Best regards,
-Javier
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> + *             If the callback is not defined, the "regulator-initial-mode"
+> + *             and suspend states "regulator-mode" properties won't be parsed.
+
+Just remove this, it's pretty obvious at best and going to bit rot at
+worst.
+
+--XzDp6KY4NBYgEz60
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUXOsXAAoJECTWi3JdVIfQiSgH/j18Lc0MhLd2Aqc2JZgxUV2M
+/dBt3zXiUGo46nRN1FozITuUSKxCmbzMI/Cwp+fyY2IrGuJ9hbOn1Si0iSeop548
+8DxkPx0Kp2sFR5yujEQK38Nq5irq72eLzEkE9GUAXIMcQi2vV+QySr0kxn4+pj7z
+illyWKK1JWfy878SV/GYaBA9Oc26jREN4jSaWYNxcF11JXTSZ2P8yOKcvYXpO1c8
+qCgK5okIpY+IYxl+3ZYbQROvX7QbhkD/Sqf0G/aUutArUJVDl78o66KrIi66vCTw
+5/QS2ggcb7YUmb6MWKAYkEDVZfLVEsIwHgGayRwDMXxcz2QOLI2PJscJv53GVb0=
+=5Yn1
+-----END PGP SIGNATURE-----
+
+--XzDp6KY4NBYgEz60--
