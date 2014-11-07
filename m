@@ -1,80 +1,101 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Fix booting on Rinato market device
-Date: Fri, 07 Nov 2014 12:59:24 +0100
-Message-ID: <1415361564.31102.2.camel@AMDC1943>
-References: <1415360662-30390-1-git-send-email-k.kozlowski@samsung.com>
- <545CB220.9030007@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <545CB220.9030007@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, BartlomiejZolnierkiewicz <b.zolnierkie@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [PATCH] drm/exynos: fix possible infinite loop issue
+Date: Fri, 07 Nov 2014 21:49:40 +0900
+Message-ID: <1415364581-14646-1-git-send-email-inki.dae@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:64520 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751763AbaKGMtn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Nov 2014 07:49:43 -0500
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NEO00MZN6ATZ600@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 07 Nov 2014 21:49:41 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: airlied@linux.ie, dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
 
-On pi=C4=85, 2014-11-07 at 20:50 +0900, Chanwoo Choi wrote:
-> Hi Krzysztof,
->=20
-> On 11/07/2014 08:44 PM, Krzysztof Kozlowski wrote:
-> > The bootloader on market Rinato (Gear 2) device checks for revision=
- in
-> > compatible field of DTB. If it is not present or lower than require=
-d
-> > then booting fails with: "Could not do normal boot. (no DTB found)"=
-=2E
-> >=20
-> > Log of bootloader in case of failure:
-> > h/w: revision  =3D 0x06
-> > h/w: schematic =3D SM-R380_Rev0.5_Final_0205
-> > date =3D 2000/01/01 12:00:21 (UTC)
-> > cmu_div:4, div:5, src_clk:800000000, pixel_clk:31860720
-> > load_kernel: loading boot image from 57344.. (BOOT)
-> > load_kernel: found zImage, size: 0x3267e8
-> > 0xbc Error!
-> > Verify_Binary_Signature: failed.
-> > pit_check_signature (BOOT) invalid.
-> > load_kernel: found custom kernel (ret:-2147483647)
-> >  No need to update kernel type.
-> > Detected board: samsung,rinato-rev06
-> > Could not do normal boot. (no DTB found)
-> > : Entering usb mode for SM-R380_EUR_XX (65535)..
-> >=20
-> > Add a "rev06" suffix to compatible to satisfy the bootloader.
-> >=20
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > ---
-> >  arch/arm/boot/dts/exynos3250-rinato.dts | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boo=
-t/dts/exynos3250-rinato.dts
-> > index 84380fa13e37..f72ba0a1d915 100644
-> > --- a/arch/arm/boot/dts/exynos3250-rinato.dts
-> > +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-> > @@ -18,7 +18,8 @@
-> > =20
-> >  / {
-> >  	model =3D "Samsung Rinato board";
-> > -	compatible =3D "samsung,rinato", "samsung,exynos3250", "samsung,e=
-xynos3";
-> > +	compatible =3D "samsung,rinato", "samsung,rinato-rev06",
-> > +			"samsung,exynos3250", "samsung,exynos3";
->=20
-> I think it is wrong. The released bootloader from Samsung is not u-bo=
-ot.
-> Instead, you have to update u-boot to support Exynos3250-basd Rinato =
-board.
+This patch fixes possible infinite loop issue by postponing
+registration to non kms drivers after component_master_add_with_match
+call, which can be incurred in all cases that non kms driver is probed
+and then component bind is failed
 
-The bootloader on device also was not a u-boot. So the fix is for nativ=
-e
-bootloader delivered on device.
+This patch should be applied on top of below patches,
+	http://comments.gmane.org/gmane.comp.video.dri.devel/117740
+	http://www.spinics.net/lists/linux-samsung-soc/msg38624.html
 
-I do not insist that this is proper fix. It was just needed to boot the
-device with custom kernel.
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.c |   31 +++++++++++++++----------------
+ 1 file changed, 15 insertions(+), 16 deletions(-)
 
-Anyway, thanks for comments!
-
-Best regards,
-Krzysztof
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 14c6af7..e80a8db 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -584,10 +584,21 @@ static int exynos_drm_platform_probe(struct platform_device *pdev)
+ 		goto err_unregister_mixer_drv;
+ #endif
+ 
++	match = exynos_drm_match_add(&pdev->dev);
++	if (IS_ERR(match)) {
++		ret = PTR_ERR(match);
++		goto err_unregister_hdmi_drv;
++	}
++
++	ret = component_master_add_with_match(&pdev->dev, &exynos_drm_ops,
++						match);
++	if (ret < 0)
++		goto err_unregister_hdmi_drv;
++
+ #ifdef CONFIG_DRM_EXYNOS_G2D
+ 	ret = platform_driver_register(&g2d_driver);
+ 	if (ret < 0)
+-		goto err_unregister_hdmi_drv;
++		goto err_del_component_master;
+ #endif
+ 
+ #ifdef CONFIG_DRM_EXYNOS_FIMC
+@@ -618,23 +629,9 @@ static int exynos_drm_platform_probe(struct platform_device *pdev)
+ 		goto err_unregister_ipp_drv;
+ #endif
+ 
+-	match = exynos_drm_match_add(&pdev->dev);
+-	if (IS_ERR(match)) {
+-		ret = PTR_ERR(match);
+-		goto err_unregister_resources;
+-	}
+-
+-	ret = component_master_add_with_match(&pdev->dev, &exynos_drm_ops,
+-						match);
+-	if (ret < 0)
+-		goto err_unregister_resources;
+-
+ 	return ret;
+ 
+-err_unregister_resources:
+-
+ #ifdef CONFIG_DRM_EXYNOS_IPP
+-	exynos_platform_device_ipp_unregister();
+ err_unregister_ipp_drv:
+ 	platform_driver_unregister(&ipp_driver);
+ err_unregister_gsc_drv:
+@@ -657,9 +654,11 @@ err_unregister_g2d_drv:
+ 
+ #ifdef CONFIG_DRM_EXYNOS_G2D
+ 	platform_driver_unregister(&g2d_driver);
+-err_unregister_hdmi_drv:
++err_del_component_master:
+ #endif
++	component_master_del(&pdev->dev, &exynos_drm_ops);
+ 
++err_unregister_hdmi_drv:
+ #ifdef CONFIG_DRM_EXYNOS_HDMI
+ 	platform_driver_unregister(&hdmi_driver);
+ err_unregister_mixer_drv:
+-- 
+1.7.9.5
