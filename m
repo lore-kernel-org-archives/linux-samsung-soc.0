@@ -1,192 +1,114 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH 03/21] thermal: of: Extend of-thermal.c to provide number
- of non critical trip points
-Date: Fri, 7 Nov 2014 12:06:32 -0400
-Message-ID: <20141107160630.GA23549@developer>
-References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
- <1412872737-624-4-git-send-email-l.majewski@samsung.com>
- <20141107014152.GD10180@developer>
- <20141107110551.5316836f@amdc2363>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 1/5] regulator: Document binding for initial and
+ suspend modes
+Date: Fri, 7 Nov 2014 16:10:29 +0000
+Message-ID: <20141107161029.GV8509@sirena.org.uk>
+References: <1415365205-27630-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1415365205-27630-2-git-send-email-javier.martinez@collabora.co.uk>
+ <20141107145806.GQ8509@sirena.org.uk>
+ <545CE75C.8000408@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f46.google.com ([209.85.216.46]:54745 "EHLO
-	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751322AbaKGQGp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Nov 2014 11:06:45 -0500
+	protocol="application/pgp-signature"; boundary="06t+fwoZeTwcpCmx"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20141107110551.5316836f@amdc2363>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <545CE75C.8000408-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Chris Zhong <zyw-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Abhilash Kesavan <kesavan.abhilash-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Linux PM list <linux-pm@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>, linux-arm-kernel@lists.infradead.org
 
 
---wRRV7LY7NUeQGEoC
+--06t+fwoZeTwcpCmx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
+On Fri, Nov 07, 2014 at 04:38:04PM +0100, Javier Martinez Canillas wrote:
+> On 11/07/2014 03:58 PM, Mark Brown wrote:
+> > On Fri, Nov 07, 2014 at 02:00:01PM +0100, Javier Martinez Canillas wrote:
 
-Hello Lukasz,
+> >> +	  The "regulator-mode" property only takes effect if the regulator is
+> >> +	  enabled for the given suspend state using "regulator-on-in-suspend".
 
-On Fri, Nov 07, 2014 at 11:05:51AM +0100, Lukasz Majewski wrote:
-> Hi Eduardo,
->=20
-> > On Thu, Oct 09, 2014 at 06:38:39PM +0200, Lukasz Majewski wrote:
-> > > This patch extends the of-thermal.c to provide information about
-> > > number of available non critical (i.e. non HW) trip points in the
-> > > system.
-> > >=20
-> > > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > > ---
-> > >  drivers/thermal/of-thermal.c   | 12 ++++++++++++
-> > >  drivers/thermal/thermal_core.h |  5 +++++
-> > >  2 files changed, 17 insertions(+)
-> > >=20
-> > > diff --git a/drivers/thermal/of-thermal.c
-> > > b/drivers/thermal/of-thermal.c index 23c8d6c..cd74e64 100644
-> > > --- a/drivers/thermal/of-thermal.c
-> > > +++ b/drivers/thermal/of-thermal.c
-> > > @@ -128,6 +128,18 @@ int of_thermal_is_trip_en(struct
-> > > thermal_zone_device *tz, int trip) return 1;
-> > >  }
-> > > =20
-> > > +int of_thermal_get_non_crit_ntrips(struct thermal_zone_device *tz)
-> > > +{
-> > > +	struct __thermal_zone *data =3D tz->devdata;
-> > > +	int i;
-> > > +
-> > > +	for (i =3D 0; i < data->ntrips; i++)
-> > > +		if (data->trips[i].type !=3D THERMAL_TRIP_CRITICAL)
-> > > +			continue;
-> > > +
-> > > +	return --i;
-> > > +}
-> > > +
-> >=20
-> >=20
-> >=20
-> > I am not against this addition. But looks like we start to spread some
-> > specific APIs that may not be used to other drivers.
->=20
-> Why do you think that this is a specific API? In the thermal OF we can
-> define trip point as "active", "passive", "hot" and "critical".
->=20
-> With the first three we can handle them and properly react. For the last
-> one SoC's PMU will power down the board.
->=20
-> Do you know if any board (e.g. from TI) is NOT supposed to shut down
-> when "critical" temperature is passed?
->=20
+> > Why?
 
-So, my point is not really about the usage of trip points. It is just
-that the of-thermal  API will grow with in a wide way with specific
-functions to check some property on the trip point array. And not all
-drivers may be using these function, e.g. the above proposal.
+> I saw that the regulator core only call the .set_suspend_mode callback if
+> the regulator is either enabled or disabled explicitly...
 
-> The real problem here is the accessibility to __thermal_trip and
-> __thermal_bind arrays.
->=20
-> Use case:
-> In the Exynos driver we do need to initialize TMU registers with
-> threshold temperatures.
-> The temperature is read via tz->ops->get_trip_temp() [1] (from
-> of-thermal.c).
-> Unfortunately, the current API is not exporting the number of
-> non-critical trip points to know how many times call [1].
-> Of course we could by hand instantiate [1] n times, but this looks for
-> me a bit clumsy.
+That's the current implementation.  Why are you adding it to a
+specification?
 
+> static int suspend_set_state(struct regulator_dev *rdev,
+> 	struct regulator_state *rstate)
+> {
+> 	....
+> 	/* If we have no suspend mode configration don't set anything;
+> 	 * only warn if the driver implements set_suspend_voltage or
+> 	 * set_suspend_mode callback.
+> 	 */
+> 	if (!rstate->enabled && !rstate->disabled) {
 
-I understand your use case. My point was simply that this use case may
-be specific to your driver (or few drivers).
->=20
-> Additionally, we now have implicit assumption about the order of defined
-> temperatures for trip points, but I think this is not a big issue.
->=20
-> > Maybe having a
-> > single API to provide a read-only copy the list / array of trips might
-> > be a better approach. I will think of a better way.
->=20
-> Definitely. Exporting available trip points is crucial.
->=20
+For example why couldn't these get set by reading the current state?
 
-Yeah, I think it is the best thing to do. Share a read-only array / copy
-of the needed data, and then drivers would check what ever property they
-need from the array. Just make sure you document that this is a
-read-only array (i.e. any possible change they do, won't affect the
-original array).
+> >> +	  If the regulator has not been explicitly disabled for the given state
+> >> +	  with "regulator-off-in-suspend", then setting the operating mode
+> >> +	  will also have no effect.
 
-> >=20
-> > I also request you to document it accordingly.
->=20
-> Ok, I will do that.
+> > This seems surprising, I'd expect mode setting to be paid attention to
+> > even if the regulator is off - we may add other ways to control the
+> > enable state in suspend for example.
 
-Cool!
+> ...and I thought that setting a mode if the regulator was disabled in suspend
+> was not a possible configuration, that's why I documented that.
 
+Like I say this is at the very least making it impossible for us to in
+future add other ways of setting if the regulator is enabled or disabled
+in suspend.
 
+> I know that there is both a .set_suspend_disable and .set_suspend_mode but
+> at least in the hardware that I'm interested in (max77802), the same hw
+> register is used for setting a suspend mode and disable on suspend.
 
->=20
-> >=20
-> >=20
-> > >  static int of_thermal_get_trend(struct thermal_zone_device *tz,
-> > > int trip, enum thermal_trend *trend)
-> > >  {
-> > > diff --git a/drivers/thermal/thermal_core.h
-> > > b/drivers/thermal/thermal_core.h index ed8ff05..334a7be 100644
-> > > --- a/drivers/thermal/thermal_core.h
-> > > +++ b/drivers/thermal/thermal_core.h
-> > > @@ -83,6 +83,7 @@ int of_parse_thermal_zones(void);
-> > >  void of_thermal_destroy_zones(void);
-> > >  int of_thermal_get_ntrips(struct thermal_zone_device *);
-> > >  int of_thermal_is_trip_en(struct thermal_zone_device *, int);
-> > > +int of_thermal_get_non_crit_ntrips(struct thermal_zone_device *);
-> > >  #else
-> > >  static inline int of_parse_thermal_zones(void) { return 0; }
-> > >  static inline void of_thermal_destroy_zones(void) { }
-> > > @@ -94,6 +95,10 @@ int of_thermal_is_trip_en(struct
-> > > thermal_zone_device *, int) {
-> > >  	return 0;
-> > >  }
-> > > +int of_thermal_get_non_crit_ntrips(struct thermal_zone_device *)
-> > here, it is supposed to be static inline.
-> >=20
-> > > +{
-> > > +	return 0;
-> > > +}
-> > >  #endif
-> > > =20
-> > >  #endif /* __THERMAL_CORE_H__ */
-> > > --=20
-> > > 2.0.0.rc2
-> > >=20
->=20
->=20
->=20
-> --=20
-> Best regards,
->=20
-> Lukasz Majewski
->=20
-> Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+That's your device, other hardware exists which uses seprate bitfields.
 
---wRRV7LY7NUeQGEoC
+> >> +If no mode is defined, then the OS will not manage the modes and the hardware
+> >> +default values will be used instead.
+
+> > Again that seems surprising, it precludes any future changes and isn't
+> > going to be true for devices where we can't read the current state.
+
+> I saw that you asked Chanwoo on an early version of his suspend states
+> series, to point out that in the absence of a initial state, the state is
+> the hardware default [0] so I thought that it should be the case for the
+> regulator suspend mode too.
+
+You're also saying that the OS won't manage the mode here, that's a step
+further.
+
+> So should I just explain what each property is about without trying to make
+> assumptions about the limitations that different devices could have and let
+> each device DT binding to specify those?
+
+More towards that direction, yes.  Don't overspecify.
+
+--06t+fwoZeTwcpCmx
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBAgAGBQJUXO38AAoJEMLUO4d9pOJW340IAJ3XdZUVp2QIKN73ATrMMJc7
-UAU+KVyYuw8G+STErnnbOp0l8zrMs19PrGplwqAWqJWO3PL9J1VtkrI7tePzQBkO
-Sv6A48TqkdnHtFbUD2ox7hodQNEPTssNVywmRGL1rNhlirmQqTl09EyNMazcI9kS
-iFJWdv/i9HW4cZXBOVfdPNPGHd77L1rT6CzpkaP1I9+GV5dpzc5yRPjiqL8dMs6G
-IsY8m+NiC95FzwJOn4MgtbxwamAdwaip8F/uED8eEs4QRpW+JSZGdpWWCO5cQxY2
-pIoxB5ht7OXEL/tQPA8A2JHcMor3gKV9uRCIof7QrQii3IvCpgaTbZ5GpjvFDQg=
-=hdQa
+iQEcBAEBAgAGBQJUXO70AAoJECTWi3JdVIfQkWwH+wWbLyMybuTtE00j09Kr+8sA
+gekLlYsUTanL6W9sGG1OuZ+aFVJCwH9EgN8GCexhsvKACFxiRRfrNdB2jO+zBsrV
+UVi5HXjDfEZQVj3JzWGFV7f0nJS4HL7Dk1ILYynXKLxVRfBGLyCknJMs9Bv4iYR9
+s5/HbKQ1naBn1BT7G3rexcC1ADO2tvX1By7QGOf+9UsZ0JJqp0h0iX1yN23Ach+c
+Yw82T2MEdx2XuMNVt/k9ttQf+F6OJFtWncXKA6F5L2ID2aJsoaaaFXwiDZebuyv7
+07CDoh+AoS5TriHMkEpRXxnibje/bZ+bRbtk96M+nlc/zrJFmcimQZL31fBjmFc=
+=6mSe
 -----END PGP SIGNATURE-----
 
---wRRV7LY7NUeQGEoC--
+--06t+fwoZeTwcpCmx--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
