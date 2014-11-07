@@ -1,72 +1,43 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v5 3/5] regulator: of: Add regulator desc param to of_get_regulator_init_data()
-Date: Fri, 07 Nov 2014 17:11:49 +0100
-Message-ID: <545CEF45.1000503@collabora.co.uk>
-References: <1415365205-27630-1-git-send-email-javier.martinez@collabora.co.uk> <1415365205-27630-4-git-send-email-javier.martinez@collabora.co.uk> <1415373792.31102.27.camel@AMDC1943>
+From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [PATCH v5 5/5] regulator: of: Add support for parsing initial
+ and suspend modes
+Date: Fri, 07 Nov 2014 17:15:38 +0100
+Message-ID: <545CF02A.9060500@collabora.co.uk>
+References: <1415365205-27630-1-git-send-email-javier.martinez@collabora.co.uk> <1415365205-27630-6-git-send-email-javier.martinez@collabora.co.uk> <20141107154743.GT8509@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:44465 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752115AbaKGQLy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Nov 2014 11:11:54 -0500
-In-Reply-To: <1415373792.31102.27.camel@AMDC1943>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20141107154743.GT8509-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Chris Zhong <zyw-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Abhilash Kesavan <kesavan.abhilash-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Mark Brown <broonie@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-Hello Krzysztof,
+On 11/07/2014 04:47 PM, Mark Brown wrote:
+> On Fri, Nov 07, 2014 at 02:00:05PM +0100, Javier Martinez Canillas wrote:
+> 
+>> +	if (!of_property_read_u32(np, "regulator-initial-mode", &pval)) {
+>> +		if (desc && desc->map_modes)
+>> +			constraints->initial_mode = desc->map_modes(pval);
+>> +		else
+>> +			pr_warn("%s: failed to parse regulator-initial-mode\n",
+>> +				np->name);
+>> +	}
+> 
+> This is ignoring any error return from map_modes(), it's possible the DT
+> might have an invalid value.  The error message could also use some
+> improvement, it's more that the kernel doesn't understand how to parse
+> it even if it is valid.
+> 
 
-On 11/07/2014 04:23 PM, Krzysztof Kozlowski wrote:
->>  
->>  static struct fan53555_platform_data *fan53555_parse_dt(struct device *dev,
->> -							struct device_node *np)
->> +						struct device_node *np,
->> +						struct regulator_desc *desc)
-> 
-> Not a const? Why not?
->
-
-Right, I removed all your other mentions to the same issue but I'll double
-check all the drivers to be sure that use const.
- 
->>  {
->>  	struct fan53555_platform_data *pdata;
->>  	int ret;
->> @@ -312,7 +313,7 @@ static struct fan53555_platform_data *fan53555_parse_dt(struct device *dev,
->>  	if (!pdata)
->>  		return NULL;
->>  
->> -	pdata->regulator = of_get_regulator_init_data(dev, np);
->> +	pdata->regulator = of_get_regulator_init_data(dev, np, desc);
-> 
-> Desc would be always NULL here which is safe (check in patch 5/5) but if
-> someone puts "regulator-initial-mode" in DTS then this will always print
-> warning. Just wonder - is it actually what you wanted?
-> 
-> This applies also for tps51632 and tps62360.
->
-
-In an early version of the series I just passed NULL for all drivers but
-Mark said that is more future proof to pass the descriptor and I agree.
-
-I guess I should just remove the warning and only show an error if the
-descriptor is not NULL and also the map mode function is defined but
-the callback returns an error.
- 
-> (...)
-> 
-> Rest looks fine.
->
-
-Thanks a lot for the review.
- 
-> Krzysztof
-> 
-> 
+Right, as I mentioned to Krzysztof in a previous email, I'll remove the
+warning message and add an error message instead if the map mode callback
+function fails and also show the error code as you suggest.
 
 Best regards,
 Javier
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
