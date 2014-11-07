@@ -1,101 +1,97 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH] drm/exynos: fix possible infinite loop issue
-Date: Fri, 07 Nov 2014 21:49:40 +0900
-Message-ID: <1415364581-14646-1-git-send-email-inki.dae@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v5 0/5] regulator: of: Add initial and suspend modes support
+Date: Fri,  7 Nov 2014 14:00:00 +0100
+Message-ID: <1415365205-27630-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:64520 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751763AbaKGMtn (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:44206 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751547AbaKGNAY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Nov 2014 07:49:43 -0500
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NEO00MZN6ATZ600@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Nov 2014 21:49:41 +0900 (KST)
+	Fri, 7 Nov 2014 08:00:24 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: airlied@linux.ie, dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-This patch fixes possible infinite loop issue by postponing
-registration to non kms drivers after component_master_add_with_match
-call, which can be incurred in all cases that non kms driver is probed
-and then component bind is failed
+Hello Mark,
 
-This patch should be applied on top of below patches,
-	http://comments.gmane.org/gmane.comp.video.dri.devel/117740
-	http://www.spinics.net/lists/linux-samsung-soc/msg38624.html
+This is the fifth version of the series that adds regulator initial
+and suspend operating modes support. It relies on the existing work
+that added suspend states bindings. The opmodes are parsed by the
+regulator core and drivers should only define a translation function
+to map between hardware specific to standard modes.
 
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_drv.c |   31 +++++++++++++++----------------
- 1 file changed, 15 insertions(+), 16 deletions(-)
+The series adds a "regulator-initial-mode" property to configure at
+startup, the operating mode for the regulators that support changing
+its mode during normal operation and a "regulator-mode" property for
+the regulators that supports changing its operating mode when the
+system enters in a suspend state. These properties were originally
+part of Chanwoo Choi's regulator suspend state series [0] but were
+removed since there wasn't a way to define the operating modes in a
+generic way.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index 14c6af7..e80a8db 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -584,10 +584,21 @@ static int exynos_drm_platform_probe(struct platform_device *pdev)
- 		goto err_unregister_mixer_drv;
- #endif
- 
-+	match = exynos_drm_match_add(&pdev->dev);
-+	if (IS_ERR(match)) {
-+		ret = PTR_ERR(match);
-+		goto err_unregister_hdmi_drv;
-+	}
-+
-+	ret = component_master_add_with_match(&pdev->dev, &exynos_drm_ops,
-+						match);
-+	if (ret < 0)
-+		goto err_unregister_hdmi_drv;
-+
- #ifdef CONFIG_DRM_EXYNOS_G2D
- 	ret = platform_driver_register(&g2d_driver);
- 	if (ret < 0)
--		goto err_unregister_hdmi_drv;
-+		goto err_del_component_master;
- #endif
- 
- #ifdef CONFIG_DRM_EXYNOS_FIMC
-@@ -618,23 +629,9 @@ static int exynos_drm_platform_probe(struct platform_device *pdev)
- 		goto err_unregister_ipp_drv;
- #endif
- 
--	match = exynos_drm_match_add(&pdev->dev);
--	if (IS_ERR(match)) {
--		ret = PTR_ERR(match);
--		goto err_unregister_resources;
--	}
--
--	ret = component_master_add_with_match(&pdev->dev, &exynos_drm_ops,
--						match);
--	if (ret < 0)
--		goto err_unregister_resources;
--
- 	return ret;
- 
--err_unregister_resources:
--
- #ifdef CONFIG_DRM_EXYNOS_IPP
--	exynos_platform_device_ipp_unregister();
- err_unregister_ipp_drv:
- 	platform_driver_unregister(&ipp_driver);
- err_unregister_gsc_drv:
-@@ -657,9 +654,11 @@ err_unregister_g2d_drv:
- 
- #ifdef CONFIG_DRM_EXYNOS_G2D
- 	platform_driver_unregister(&g2d_driver);
--err_unregister_hdmi_drv:
-+err_del_component_master:
- #endif
-+	component_master_del(&pdev->dev, &exynos_drm_ops);
- 
-+err_unregister_hdmi_drv:
- #ifdef CONFIG_DRM_EXYNOS_HDMI
- 	platform_driver_unregister(&hdmi_driver);
- err_unregister_mixer_drv:
--- 
-1.7.9.5
+The generic regulator DT binding doc explains that each device has
+to document what their valid operating modes are and drivers must
+add a translation function so the core knows how to map the opmodes.
+
+Older versions of this series were meant to add initial and suspend
+modes for the max77802 regulator driver but the feedback was that
+this should had been done in a generic way. The latest version was
+"[PATCH v4 00/14] Add Maxim 77802 PMIC support" [1] but that series
+mixed core changes, bugfixes and new driver features.
+
+This series instead contains only the patches that add the support
+to the regulator core and drivers are only modified when a function
+signature is changed to maintain git bisect-ability.
+
+If the patches are merged, following series will change the drivers
+using of_regulator_match() to pass the regulator description in the
+match table and another series will add the new opmode feature in
+the max77802 regulator driver.
+
+The series is composed of the following patches:
+
+Javier Martinez Canillas (5):
+  regulator: Document binding for initial and suspend modes
+  regulator: Add function to map modes to struct regulator_desc
+  regulator: of: Add regulator desc param to
+    of_get_regulator_init_data()
+  regulator: of: Pass the regulator description in the match table
+  regulator: of: Add support for parsing initial and suspend modes
+
+ .../devicetree/bindings/regulator/regulator.txt    | 14 ++++++++++
+ drivers/regulator/88pm8607.c                       |  3 +-
+ drivers/regulator/anatop-regulator.c               |  4 +--
+ drivers/regulator/arizona-ldo1.c                   |  8 ++++--
+ drivers/regulator/arizona-micsupp.c                |  8 ++++--
+ drivers/regulator/da9052-regulator.c               |  3 +-
+ drivers/regulator/da9210-regulator.c               |  2 +-
+ drivers/regulator/fan53555.c                       | 17 ++++++------
+ drivers/regulator/fixed.c                          | 18 ++++++------
+ drivers/regulator/gpio-regulator.c                 | 18 ++++++------
+ drivers/regulator/max8952.c                        |  2 +-
+ drivers/regulator/max8973-regulator.c              |  3 +-
+ drivers/regulator/max8997.c                        |  3 +-
+ drivers/regulator/max8998.c                        |  5 ++--
+ drivers/regulator/mc13xxx-regulator-core.c         |  3 +-
+ drivers/regulator/of_regulator.c                   | 32 ++++++++++++++++++----
+ drivers/regulator/pwm-regulator.c                  |  3 +-
+ drivers/regulator/qcom_rpm-regulator.c             |  9 +++---
+ drivers/regulator/s5m8767.c                        |  3 +-
+ drivers/regulator/sky81452-regulator.c             |  2 +-
+ drivers/regulator/stw481x-vmmc.c                   |  3 +-
+ drivers/regulator/ti-abb-regulator.c               |  3 +-
+ drivers/regulator/tps51632-regulator.c             | 16 ++++++-----
+ drivers/regulator/tps62360-regulator.c             | 17 +++++++-----
+ drivers/regulator/tps65218-regulator.c             |  3 +-
+ drivers/regulator/twl-regulator.c                  |  3 +-
+ drivers/regulator/vexpress.c                       |  3 +-
+ include/linux/regulator/driver.h                   |  8 ++++++
+ include/linux/regulator/of_regulator.h             |  9 ++++--
+ 29 files changed, 151 insertions(+), 74 deletions(-)
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2014/10/10/161
+[1]: https://lkml.org/lkml/2014/6/25/668
