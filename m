@@ -1,136 +1,88 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH] PM / Domains: Fix initial default state of the need_restore flag
-Date: Fri, 07 Nov 2014 14:26:22 -0800
-Message-ID: <7hioiqr6k1.fsf@deeprootsystems.com>
-References: <1415366847-4807-1-git-send-email-ulf.hansson@linaro.org>
-	<7hr3xerdw6.fsf@deeprootsystems.com> <20141107215751.GA4439@dtor-ws>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 03/21] thermal: of: Extend of-thermal.c to provide number
+ of non critical trip points
+Date: Fri, 7 Nov 2014 15:04:11 -0800
+Message-ID: <CAKdAkRRnWu3fCdviQyByCAjCDqUX-3_CWhKpYH65YnqmXH1b4Q@mail.gmail.com>
+References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
+	<1412872737-624-4-git-send-email-l.majewski@samsung.com>
+	<20141107014152.GD10180@developer>
+	<20141107110551.5316836f@amdc2363>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:41921 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752470AbaKGW0Z (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Nov 2014 17:26:25 -0500
-Received: by mail-pd0-f175.google.com with SMTP id y13so4126315pdi.34
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Nov 2014 14:26:25 -0800 (PST)
-In-Reply-To: <20141107215751.GA4439@dtor-ws> (Dmitry Torokhov's message of
-	"Fri, 7 Nov 2014 13:57:51 -0800")
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20141107110551.5316836f@amdc2363>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Linux PM list <linux-pm@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron Lu <aaron.lu@intel.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Dmitry Torokhov <dmitry.torokhov@gmail.com> writes:
+Hi Lukasz,
 
-> On Fri, Nov 07, 2014 at 11:47:53AM -0800, Kevin Hilman wrote:
->> Ulf Hansson <ulf.hansson@linaro.org> writes:
->> 
->> > The initial state of the device's need_restore flag should'nt depend on
->> > the current state of the PM domain. For example it should be perfectly
->> > valid to attach an inactive device to a powered PM domain.
->> >
->> > The pm_genpd_dev_need_restore() API allow us to update the need_restore
->> > flag to somewhat cope with such scenarios. Typically that should have
->> > been done from drivers/buses ->probe() since it's those that put the
->> > requirements on the value of the need_restore flag.
->> >
->> > Until recently, the Exynos SOCs were the only user of the
->> > pm_genpd_dev_need_restore() API, though invoking it from a centralized
->> > location while adding devices to their PM domains.
->> >
->> > Due to that Exynos now have swithed to the generic OF-based PM domain
->> > look-up, it's no longer possible to invoke the API from a centralized
->> > location. The reason is because devices are now added to their PM
->> > domains during the probe sequence.
->> >
->> > Commit "ARM: exynos: Move to generic PM domain DT bindings"
->> > did the switch for Exynos to the generic OF-based PM domain look-up,
->> > but it also removed the call to pm_genpd_dev_need_restore(). This
->> > caused a regression for some of the Exynos drivers.
->> >
->> > To handle things more properly in the generic PM domain, let's change
->> > the default initial value of the need_restore flag to reflect that the
->> > state is unknown. As soon as some of the runtime PM callbacks gets
->> > invoked, update the initial value accordingly.
->> >
->> > Moreover, since the generic PM domain is verifying that all device's
->> > are both runtime PM enabled and suspended, using pm_runtime_suspended()
->> > while pm_genpd_poweroff() is invoked from the scheduled work, we can be
->> > sure of that the PM domain won't be powering off while having active
->> > devices.
->> >
->> > Do note that, the generic PM domain can still only know about active
->> > devices which has been activated through invoking its runtime PM resume
->> > callback. In other words, buses/drivers using pm_runtime_set_active()
->> > during ->probe() will still suffer from a race condition, potentially
->> > probing a device without having its PM domain being powered. That issue
->> > will have to be solved using a different approach.
->> >
->> > This a log from the boot regression for Exynos5, which is being fixed in
->> > this patch.
->> >
->> > ------------[ cut here ]------------
->> > WARNING: CPU: 0 PID: 308 at ../drivers/clk/clk.c:851 clk_disable+0x24/0x30()
->> > Modules linked in:
->> > CPU: 0 PID: 308 Comm: kworker/0:1 Not tainted 3.18.0-rc3-00569-gbd9449f-dirty #10
->> > Workqueue: pm pm_runtime_work
->> > [<c0013c64>] (unwind_backtrace) from [<c0010dec>] (show_stack+0x10/0x14)
->> > [<c0010dec>] (show_stack) from [<c03ee4cc>] (dump_stack+0x70/0xbc)
->> > [<c03ee4cc>] (dump_stack) from [<c0020d34>] (warn_slowpath_common+0x64/0x88)
->> > [<c0020d34>] (warn_slowpath_common) from [<c0020d74>] (warn_slowpath_null+0x1c/0x24)
->> > [<c0020d74>] (warn_slowpath_null) from [<c03107b0>] (clk_disable+0x24/0x30)
->> > [<c03107b0>] (clk_disable) from [<c02cc834>] (gsc_runtime_suspend+0x128/0x160)
->> > [<c02cc834>] (gsc_runtime_suspend) from [<c0249024>] (pm_generic_runtime_suspend+0x2c/0x38)
->> > [<c0249024>] (pm_generic_runtime_suspend) from [<c024f44c>] (pm_genpd_default_save_state+0x2c/0x8c)
->> > [<c024f44c>] (pm_genpd_default_save_state) from [<c024ff2c>] (pm_genpd_poweroff+0x224/0x3ec)
->> > [<c024ff2c>] (pm_genpd_poweroff) from [<c02501b4>] (pm_genpd_runtime_suspend+0x9c/0xcc)
->> > [<c02501b4>] (pm_genpd_runtime_suspend) from [<c024a4f8>] (__rpm_callback+0x2c/0x60)
->> > [<c024a4f8>] (__rpm_callback) from [<c024a54c>] (rpm_callback+0x20/0x74)
->> > [<c024a54c>] (rpm_callback) from [<c024a930>] (rpm_suspend+0xd4/0x43c)
->> > [<c024a930>] (rpm_suspend) from [<c024bbcc>] (pm_runtime_work+0x80/0x90)
->> > [<c024bbcc>] (pm_runtime_work) from [<c0032a9c>] (process_one_work+0x12c/0x314)
->> > [<c0032a9c>] (process_one_work) from [<c0032cf4>] (worker_thread+0x3c/0x4b0)
->> > [<c0032cf4>] (worker_thread) from [<c003747c>] (kthread+0xcc/0xe8)
->> > [<c003747c>] (kthread) from [<c000e738>] (ret_from_fork+0x14/0x3c)
->> > ---[ end trace 40cd58bcd6988f12 ]---
->> >
->> > Fixes: a4a8c2c4962bb655 (ARM: exynos: Move to generic PM domain DT bindings)
->> > Reported-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->> 
->> Reviewed-by: Kevin Hilman <khilman@linaro.org>
->> 
->> And looks like we need this for v3.18-rc since it does fix the
->> regression.
+On Fri, Nov 7, 2014 at 2:05 AM, Lukasz Majewski <l.majewski@samsung.com> wrote:
+> Hi Eduardo,
 >
-> I guess we do need it for 3.18, but when we are talking about 3.19,
-> before we make any more changes can we outline how power domains are
-> supposed to work?
-
-Yes, I agree, we have some things to sort out for v3.19, but as this one
-is a regression fix, I think it needs to be in v3.18-rc.
-
-Kevin
-
-> 1. How do we attach a device to power domain? Right now it seems that
-> individual buses are responsible for attaching their devices to power
-> domains. Should we move it into driver core (device_pm_add?) so that
-> device starts its life in its proper power domain?
+>> On Thu, Oct 09, 2014 at 06:38:39PM +0200, Lukasz Majewski wrote:
+>> > This patch extends the of-thermal.c to provide information about
+>> > number of available non critical (i.e. non HW) trip points in the
+>> > system.
+>> >
+>> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+>> > ---
+>> >  drivers/thermal/of-thermal.c   | 12 ++++++++++++
+>> >  drivers/thermal/thermal_core.h |  5 +++++
+>> >  2 files changed, 17 insertions(+)
+>> >
+>> > diff --git a/drivers/thermal/of-thermal.c
+>> > b/drivers/thermal/of-thermal.c index 23c8d6c..cd74e64 100644
+>> > --- a/drivers/thermal/of-thermal.c
+>> > +++ b/drivers/thermal/of-thermal.c
+>> > @@ -128,6 +128,18 @@ int of_thermal_is_trip_en(struct
+>> > thermal_zone_device *tz, int trip) return 1;
+>> >  }
+>> >
+>> > +int of_thermal_get_non_crit_ntrips(struct thermal_zone_device *tz)
+>> > +{
+>> > +   struct __thermal_zone *data = tz->devdata;
+>> > +   int i;
+>> > +
+>> > +   for (i = 0; i < data->ntrips; i++)
+>> > +           if (data->trips[i].type != THERMAL_TRIP_CRITICAL)
+>> > +                   continue;
+>> > +
+>> > +   return --i;
+>> > +}
+>> > +
+>>
+>>
+>>
+>> I am not against this addition. But looks like we start to spread some
+>> specific APIs that may not be used to other drivers.
 >
-> 2. When do we power up the devices (and the domains)? Right now devices
-> in ACPI power domain are powered when they are attached to the power
-> domain (which coincides with probing), but generic power domains do not
-> do that. Can we add a separate API to explicitly power up the device (and
-> its domain if it is powered down) and do it again, either in device core
-> or in individual buses. This way, regardless of runtime PM or not, we
-> will have devices powered on when driver tries to bind to them. If
-> binding fails we can power down the device.
+> Why do you think that this is a specific API? In the thermal OF we can
+> define trip point as "active", "passive", "hot" and "critical".
 >
-> I've heard there is a concern about power domain bouncing up and down
-> during probing. Is it really a concern? Would not we run into the same
-> issues past booting up with aggressive PM policy? Anyway, we could
-> probably work around this by refusing to actually power down the domains
-> until we are done booting, similarly to who genpd_poweroff_unused works.
+> With the first three we can handle them and properly react. For the last
+> one SoC's PMU will power down the board.
 >
-> Thanks.
+> Do you know if any board (e.g. from TI) is NOT supposed to shut down
+> when "critical" temperature is passed?
+>
+> The real problem here is the accessibility to __thermal_trip and
+> __thermal_bind arrays.
+>
+> Use case:
+> In the Exynos driver we do need to initialize TMU registers with
+> threshold temperatures.
+
+Is this indeed plural or you want to program the next trip point as your
+alarm temperature? If so, there was another patch floating around adding
+set_trips() callback that would get passed in the low and high trip points for
+the current temperature reading and you can use that data to program
+alarms. Rockchip thermal driver uses it.
+
+https://lkml.org/lkml/2014/6/27/76
+
+Thanks.
+
+-- 
+Dmitry
