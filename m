@@ -1,175 +1,70 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH 04/21] thermal: of: Extend current of-thermal.c code to
- allow setting emulated temp
-Date: Thu, 6 Nov 2014 21:44:50 -0400
-Message-ID: <20141107014448.GE10180@developer>
-References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
- <1412872737-624-5-git-send-email-l.majewski@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="WBsA/oQW3eTA3LlM"
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1412872737-624-5-git-send-email-l.majewski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, Linux PM list <linux-pm@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+From: Abhilash Kesavan <a.kesavan@samsung.com>
+Subject: [PATCH v6 0/7] Enable support for Samsung Exynos7 SoC
+Date: Fri, 07 Nov 2014 10:50:48 +0530
+Message-ID: <1415337655-31003-1-git-send-email-a.kesavan@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:34006 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751689AbaKGFVD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Nov 2014 00:21:03 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, olof@lixom.net, arnd@arndb.de, tomasz.figa@gmail.com, kesavan.abhilash@gmail.com
 
+Exynos7 is a System-On-Chip that is based on 64-bit ARMv8 RISC processor
+(Cortex-A57). This patchset adds arch/device tree support for Exynos7.
 
---WBsA/oQW3eTA3LlM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+These were originally part of 2 patchsets[1][2] adding support for Exynos7.
+The clock and pinctrl patches are going through the respective maintainer's
+tree; hence the remaining dt related patches have been consolidated and are
+being posted here as a separate series.
 
-Hello,
+This patchset has build dependencies on the following patches:
+a] "[GIT PULL] Samsung clock changes for 3.19" - specifically the clock dt
+   bindings header.
+   http://comments.gmane.org/gmane.linux.kernel.samsung-soc/39142
+b] "tty: serial: samsung: Clean-up selection of number of available UARTs"
+   http://www.spinics.net/lists/linux-samsung-soc/msg37418.html
+c] "dts, kbuild: Implement support for dtb vendor subdirs"(merged in linux-next)
+   https://lkml.org/lkml/2014/10/21/654
 
-On Thu, Oct 09, 2014 at 06:38:40PM +0200, Lukasz Majewski wrote:
-> Before this change it was only possible to set get_temp() and get_trend()
-> methods to be used in the common code handling passing parameters via
-> device tree to "cpu-thermal" CPU thermal zone device.
->=20
-> Now it is possible to also set emulated value of temperature for debug
-> purposes.
->=20
-> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> ---
->  drivers/thermal/of-thermal.c | 25 ++++++++++++++++++++++---
->  include/linux/thermal.h      |  6 ++++--
->  2 files changed, 26 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
-> index cd74e64..f206375 100644
-> --- a/drivers/thermal/of-thermal.c
-> +++ b/drivers/thermal/of-thermal.c
-> @@ -98,10 +98,22 @@ struct __thermal_zone {
->  	void *sensor_data;
->  	int (*get_temp)(void *, long *);
->  	int (*get_trend)(void *, long *);
-> +	int (*set_emul_temp)(void *, unsigned long);
->  };
-> =20
->  /***   DT thermal zone device callbacks   ***/
-> =20
-> +static int of_thermal_set_emul_temp(struct thermal_zone_device *tz,
-> +				    unsigned long temp)
-> +{
-> +	struct __thermal_zone *data =3D tz->devdata;
-> +
-> +	if (!data->set_emul_temp)
-> +		return -EINVAL;
-> +
-> +	return data->set_emul_temp(data->sensor_data, temp);
-> +}
-> +
->  static int of_thermal_get_temp(struct thermal_zone_device *tz,
->  			       unsigned long *temp)
->  {
-> @@ -352,7 +364,8 @@ static struct thermal_zone_device *
->  thermal_zone_of_add_sensor(struct device_node *zone,
->  			   struct device_node *sensor, void *data,
->  			   int (*get_temp)(void *, long *),
-> -			   int (*get_trend)(void *, long *))
-> +			   int (*get_trend)(void *, long *),
-> +			   int (*set_emul_temp)(void *, unsigned long))
+[1] arch: arm64: Enable support for Samsung Exynos7 SoC
+http://www.spinics.net/lists/linux-samsung-soc/msg37047.html
+[2] Add clock and DT support for a few IPs on Exynos7
+http://www.spinics.net/lists/linux-samsung-soc/msg37973.html
 
-Thanks for improving the API. However, looking at what is above, it
-starts to be pretty ugly. And for sure, this is not the last callback to
-be added. I believe it is time to add a .ops in the of-thermal. While in
-here, do you mind adding the .ops in a separated patch, then add the
-=2Eset_emul_temp in the .ops field?
+Abhilash Kesavan (2):
+  arm64: dts: Add PMU DT node for exynos7 SoC
+  arm64: dts: Add nodes for mmc, i2c, rtc, watchdog, adc on Exynos7
 
->  {
->  	struct thermal_zone_device *tzd;
->  	struct __thermal_zone *tz;
-> @@ -366,10 +379,12 @@ thermal_zone_of_add_sensor(struct device_node *zone,
->  	mutex_lock(&tzd->lock);
->  	tz->get_temp =3D get_temp;
->  	tz->get_trend =3D get_trend;
-> +	tz->set_emul_temp =3D set_emul_temp;
->  	tz->sensor_data =3D data;
-> =20
->  	tzd->ops->get_temp =3D of_thermal_get_temp;
->  	tzd->ops->get_trend =3D of_thermal_get_trend;
-> +	tzd->ops->set_emul_temp =3D of_thermal_set_emul_temp;
->  	mutex_unlock(&tzd->lock);
-> =20
->  	return tzd;
-> @@ -411,7 +426,8 @@ thermal_zone_of_add_sensor(struct device_node *zone,
->  struct thermal_zone_device *
->  thermal_zone_of_sensor_register(struct device *dev, int sensor_id,
->  				void *data, int (*get_temp)(void *, long *),
-> -				int (*get_trend)(void *, long *))
-> +				int (*get_trend)(void *, long *),
-> +				int (*set_emul_temp)(void *, unsigned long))
->  {
->  	struct device_node *np, *child, *sensor_np;
-> =20
-> @@ -453,7 +469,8 @@ thermal_zone_of_sensor_register(struct device *dev, i=
-nt sensor_id,
->  			return thermal_zone_of_add_sensor(child, sensor_np,
->  							  data,
->  							  get_temp,
-> -							  get_trend);
-> +							  get_trend,
-> +							  set_emul_temp);
->  		}
->  	}
->  	of_node_put(np);
-> @@ -494,9 +511,11 @@ void thermal_zone_of_sensor_unregister(struct device=
- *dev,
->  	mutex_lock(&tzd->lock);
->  	tzd->ops->get_temp =3D NULL;
->  	tzd->ops->get_trend =3D NULL;
-> +	tzd->ops->set_emul_temp =3D NULL;
-> =20
->  	tz->get_temp =3D NULL;
->  	tz->get_trend =3D NULL;
-> +	tz->set_emul_temp =3D NULL;
->  	tz->sensor_data =3D NULL;
->  	mutex_unlock(&tzd->lock);
->  }
-> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-> index 0305cde..36010e9 100644
-> --- a/include/linux/thermal.h
-> +++ b/include/linux/thermal.h
-> @@ -290,14 +290,16 @@ struct thermal_genl_event {
->  struct thermal_zone_device *
->  thermal_zone_of_sensor_register(struct device *dev, int id,
->  				void *data, int (*get_temp)(void *, long *),
-> -				int (*get_trend)(void *, long *));
-> +				int (*get_trend)(void *, long *),
-> +				int (*set_emul_temp)(void *, unsigned long));
->  void thermal_zone_of_sensor_unregister(struct device *dev,
->  				       struct thermal_zone_device *tz);
->  #else
->  static inline struct thermal_zone_device *
->  thermal_zone_of_sensor_register(struct device *dev, int id,
->  				void *data, int (*get_temp)(void *, long *),
-> -				int (*get_trend)(void *, long *))
-> +				int (*get_trend)(void *, long *),
-> +				int (*set_emul_temp)(void *, unsigned long))
->  {
->  	return NULL;
->  }
-> --=20
-> 2.0.0.rc2
->=20
+Alim Akhtar (2):
+  arm64: exynos7: Enable ARMv8 based Exynos7 (SoC) support
+  arm64: Enable Exynos7 SOC in the defconfig
 
---WBsA/oQW3eTA3LlM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Naveen Krishna Ch (2):
+  arm64: dts: Add initial device tree support for EXYNOS7
+  arm64: dts: Add initial pinctrl support to EXYNOS7
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Pankaj Dubey (1):
+  arm64: dts: add <dt-bindings/> symlink
 
-iQEcBAEBAgAGBQJUXCQHAAoJEMLUO4d9pOJWd1wH/0lDK/luDWZa/Bus/0f56mbL
-mGYmdI389qmCvg+PjpL1F1JUcYLpfAirFrSmL6fEE+yU/nVYXAxDmp/Sa56pqMve
-scOnR0dBzhetlA5xzcIyPPgMOJIu6+OmIIY5UplCqOZjrHrADrOu6MFNjQpdI0Ch
-sJNA1LYV6ORQjpEh5859/1YbxDbi9KIKb6FbSdhQYPidVZSkcZXhlIfbA8T4+6P/
-vatQncJIV6sA3GfBmLpwejCuUL7JeGj5ULwSyK2eOiE3gU1j+0JXtFs6Xb/nCyN3
-Q//lttVPAO9jfYWY2/ZfFNJOR8LjskF4OsSh36b0QLawqCj+h7Yw3GjlfWGrH1k=
-=OEu5
------END PGP SIGNATURE-----
+ .../devicetree/bindings/arm/samsung/pmu.txt        |    1 +
+ arch/arm64/Kconfig                                 |   17 +
+ arch/arm64/boot/dts/Makefile                       |    1 +
+ arch/arm64/boot/dts/exynos/Makefile                |    5 +
+ arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |   84 +++
+ arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    |  588 ++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            |  530 ++++++++++++++++++
+ arch/arm64/boot/dts/include/dt-bindings            |    1 +
+ arch/arm64/configs/defconfig                       |    4 +
+ 9 files changed, 1231 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/Makefile
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7.dtsi
+ create mode 120000 arch/arm64/boot/dts/include/dt-bindings
 
---WBsA/oQW3eTA3LlM--
+-- 
+1.7.9.5
