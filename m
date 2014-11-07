@@ -1,66 +1,68 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 2/2] drm/exynos/dsi: Add runtime PM so LCD power domain
- could be turned off
-Date: Fri, 07 Nov 2014 14:53:59 +0100
-Message-ID: <1415368439-23642-3-git-send-email-k.kozlowski@samsung.com>
-References: <1415368439-23642-1-git-send-email-k.kozlowski@samsung.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 1/5] regulator: Document binding for initial and
+ suspend modes
+Date: Fri, 7 Nov 2014 14:58:06 +0000
+Message-ID: <20141107145806.GQ8509@sirena.org.uk>
+References: <1415365205-27630-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1415365205-27630-2-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1415368439-23642-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kevin Hilman <khilman@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="d6yp3DxVbLZXge6e"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1415365205-27630-2-git-send-email-javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Chris Zhong <zyw-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Abhilash Kesavan <kesavan.abhilash-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-QWRkIHJ1bnRpbWUgUG93ZXIgTWFuYWdlbWVudCB0byB0aGUgRXh5bm9zIERTSSBkcml2ZXIgc28g
-dGhlIExDRCBwb3dlcgpkb21haW4gY291bGQgYmUgdHVybmVkIG9mZi4KClRoaXMgc2xpZ2h0bHkg
-cmVkdWNlcyB0aGUgZW5lcmd5IGNvbnN1bXB0aW9uIHdoZW4gc2NyZWVuIGlzIGNvbXBsZXRlbHkK
-dHVybmVkIG9mZi4gT24gVHJhdHMyIGJvYXJkIHdoZW4gdGhlIHN5c3RlbSB3YXMgaWRsZSB0aGUg
-ZW5lcmd5CmNvbnN1bXB0aW9uIGRyb3BwZWQgYnkgMSUgKGZyb20gOTIuMiBtQSB0byA5MS4xIG1B
-KS4KCkJlZm9yZSB0aGUgcGF0Y2g6CiQgY2F0IGNhdCAvc3lzL2tlcm5lbC9kZWJ1Zy9wbV9nZW5w
-ZC9wbV9nZW5wZF9zdW1tYXJ5CmxjZDAtcG93ZXItZG9tYWluICAgICAgICAgICAgICAgb24KICAg
-IC9kZXZpY2VzLzExYzAwMDAwLmZpbWQgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdXNw
-ZW5kZWQKICAgIC9kZXZpY2VzLzExYzgwMDAwLmRzaSAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICB1bnN1cHBvcnRlZAoKQWZ0ZXIgYXBwbHlpbmcgdGhlIHBhdGNoOgpsY2QwLXBvd2VyLWRv
-bWFpbiAgICAgICAgICAgICAgIG9mZgogICAgL2RldmljZXMvMTFjMDAwMDAuZmltZCAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIHN1c3BlbmRlZAogICAgL2RldmljZXMvMTFjODAwMDAuZHNp
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHN1c3BlbmRlZAoKU2lnbmVkLW9mZi1ieTog
-S3J6eXN6dG9mIEtvemxvd3NraSA8ay5rb3psb3dza2lAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jIHwgOSArKysrKysrKysKIDEgZmlsZSBj
-aGFuZ2VkLCA5IGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fZHNpLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
-ZHNpLmMKaW5kZXggMjQ3NDFkODc1OGU4Li4xOWVkMzZkMmQ1NTcgMTAwNjQ0Ci0tLSBhL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYworKysgYi9kcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKQEAgLTIxLDYgKzIxLDcgQEAKICNpbmNsdWRlIDxsaW51
-eC9vZl9kZXZpY2UuaD4KICNpbmNsdWRlIDxsaW51eC9vZl9ncGlvLmg+CiAjaW5jbHVkZSA8bGlu
-dXgvcGh5L3BoeS5oPgorI2luY2x1ZGUgPGxpbnV4L3BtX3J1bnRpbWUuaD4KICNpbmNsdWRlIDxs
-aW51eC9yZWd1bGF0b3IvY29uc3VtZXIuaD4KICNpbmNsdWRlIDxsaW51eC9jb21wb25lbnQuaD4K
-IApAQCAtMTM1Niw2ICsxMzU3LDggQEAgc3RhdGljIGludCBleHlub3NfZHNpX2VuYWJsZShzdHJ1
-Y3QgZXh5bm9zX2RzaSAqZHNpKQogCWlmIChkc2ktPnN0YXRlICYgRFNJTV9TVEFURV9FTkFCTEVE
-KQogCQlyZXR1cm4gMDsKIAorCXBtX3J1bnRpbWVfZ2V0X3N5bmMoZHNpLT5kZXYpOworCiAJcmV0
-ID0gZXh5bm9zX2RzaV9wb3dlcm9uKGRzaSk7CiAJaWYgKHJldCA8IDApCiAJCXJldHVybiByZXQ7
-CkBAIC0xMzkyLDYgKzEzOTUsOCBAQCBzdGF0aWMgdm9pZCBleHlub3NfZHNpX2Rpc2FibGUoc3Ry
-dWN0IGV4eW5vc19kc2kgKmRzaSkKIAlkcm1fcGFuZWxfdW5wcmVwYXJlKGRzaS0+cGFuZWwpOwog
-CWV4eW5vc19kc2lfcG93ZXJvZmYoZHNpKTsKIAorCXBtX3J1bnRpbWVfcHV0X3N5bmMoZHNpLT5k
-ZXYpOworCiAJZHNpLT5zdGF0ZSAmPSB+RFNJTV9TVEFURV9FTkFCTEVEOwogfQogCkBAIC0xNzcy
-LDYgKzE3NzcsOCBAQCBzdGF0aWMgaW50IGV4eW5vc19kc2lfcHJvYmUoc3RydWN0IHBsYXRmb3Jt
-X2RldmljZSAqcGRldikKIAlpZiAocmV0KQogCQlnb3RvIGVycl9kZWxfY29tcG9uZW50OwogCisJ
-cG1fcnVudGltZV9lbmFibGUoJnBkZXYtPmRldik7CisKIAlyZXR1cm4gcmV0OwogCiBlcnJfZGVs
-X2NvbXBvbmVudDoKQEAgLTE3ODEsNiArMTc4OCw4IEBAIGVycl9kZWxfY29tcG9uZW50OgogCiBz
-dGF0aWMgaW50IGV4eW5vc19kc2lfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYp
-CiB7CisJcG1fcnVudGltZV9kaXNhYmxlKCZwZGV2LT5kZXYpOworCiAJY29tcG9uZW50X2RlbCgm
-cGRldi0+ZGV2LCAmZXh5bm9zX2RzaV9jb21wb25lbnRfb3BzKTsKIAlleHlub3NfZHJtX2NvbXBv
-bmVudF9kZWwoJnBkZXYtPmRldiwgRVhZTk9TX0RFVklDRV9UWVBFX0NPTk5FQ1RPUik7CiAKLS0g
-CjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+--d6yp3DxVbLZXge6e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Nov 07, 2014 at 02:00:01PM +0100, Javier Martinez Canillas wrote:
+
+> +	  The "regulator-mode" property only takes effect if the regulator is
+> +	  enabled for the given suspend state using "regulator-on-in-suspend".
+
+Why?
+
+> +	  If the regulator has not been explicitly disabled for the given state
+> +	  with "regulator-off-in-suspend", then setting the operating mode
+> +	  will also have no effect.
+
+This seems surprising, I'd expect mode setting to be paid attention to
+even if the regulator is off - we may add other ways to control the
+enable state in suspend for example.
+
+> +- regulator-initial-mode: initial operating mode. The set of possible operating
+> +  modes is the same used for the regulator-mode property and the device binding
+> +  documentation explains which property each regulator supports.
+> +If no mode is defined, then the OS will not manage the modes and the hardware
+> +default values will be used instead.
+
+Again that seems surprising, it precludes any future changes and isn't
+going to be true for devices where we can't read the current state.
+
+--d6yp3DxVbLZXge6e
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUXN3+AAoJECTWi3JdVIfQ1CEH+wVIAHIeDVtR3iEK1BH1GdzP
+K6IqQUcMQ2z6/OZgW3FNSArPj6AoGGsWPwlGDYbI/j0pbuo4ufYcZqKLeJmo9iOX
+ohGmkmAjqb68EtLlsDghOm1110JXBwr0qqmkFAlawvKT6eZYWnlJs1nyGoyakO/2
+isq7C3qxYVzMP1hgOhs2A8LL804kACmd/K7t4eoZJk12KwGi6m/NLM6LOrGunMnF
+BUaSZGih9SeqXwxnVcQiHhOUJU8ikcS4p2c8305Qdmmmd9fU/ElLLYbfiU12IEOj
+Yzpm9d2v/RqVslJC0bBf14HXAPJzxVngS3ZS3cVWhDcsJFVaAWXRuNsmmUZjueo=
+=jVnK
+-----END PGP SIGNATURE-----
+
+--d6yp3DxVbLZXge6e--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
