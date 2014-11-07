@@ -1,146 +1,86 @@
-From: Yadwinder Singh Brar <yadi.brar@samsung.com>
-Subject: [PATCH v2] thermal: cpu_cooling: Update always cpufreq policy with
- thermal constraints
-Date: Fri, 07 Nov 2014 19:12:29 +0530
-Message-ID: <1415367749-1747-1-git-send-email-yadi.brar@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:41263 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751724AbaKGNnX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Nov 2014 08:43:23 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2 1/2] drm/exynos: Fix DSI resuming fail because power domain
+ being off
+Date: Fri, 07 Nov 2014 14:53:58 +0100
+Message-ID: <1415368439-23642-2-git-send-email-k.kozlowski@samsung.com>
+References: <1415368439-23642-1-git-send-email-k.kozlowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1415368439-23642-1-git-send-email-k.kozlowski@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kevin Hilman <khilman@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: rui.zhang@intel.com, edubezval@gmail.com, amit.daniel@samsung.com, viresh.kumar@linaro.org, linux-samsung-soc@vger.kernel.org, yadi.brar01@gmail.com, Yadwinder Singh Brar <yadi.brar@samsung.com>
 
-Existing code updates cupfreq policy only while executing
-cpufreq_apply_cooling() function (i.e. when notify_device != NOTIFY_INVALID).
-It doesn't apply constraints when cpufreq policy update happens from any other
-place but it should update the cpufreq policy with thermal constraints every
-time when there is a cpufreq policy update, to keep state of
-cpufreq_cooling_device and max_feq of cpufreq policy in sync. For instance
-while resuming cpufreq updates cpufreq_policy and it restores default
-policy->usr_policy values irrespective of cooling device's cpufreq_state since
-notification gets missed because (notify_device == NOTIFY_INVALID).
-Another problem, is that userspace is able to change max_freq irrespective of
-cooling device's state, as notification gets missed.
-
-This patch modifies code to maintain a global cpufreq_dev_list and applies
-constraints of all matching cooling devices for policy's cpu when there is any
-policy update(ends up applying the lowest max_freq among the matching cpu
-cooling devices).
-
-This patch also removes redundant check (max_freq > policy->user_policy.max),
-as cpufreq framework takes care of user_policy constraints already where ever
-required, otherwise its causing an issue while increasing max_freq in normal
-scenerio as it restores max_freq with policy->user_policy.max which is old
-(smaller) value.
-
-Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
----
-
-changes since v1:
-- Updated commit message as suggested by Eduardo Valentin
-- fixed an issue in incresing value of scaling_max_freq from sysfs after
-  decreasing it once in normal thermal conditions also.
-
----
- drivers/thermal/cpu_cooling.c |   37 +++++++++++++++++++++----------------
- 1 files changed, 21 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
-index 1ab0018..ad09e51 100644
---- a/drivers/thermal/cpu_cooling.c
-+++ b/drivers/thermal/cpu_cooling.c
-@@ -50,15 +50,14 @@ struct cpufreq_cooling_device {
- 	unsigned int cpufreq_state;
- 	unsigned int cpufreq_val;
- 	struct cpumask allowed_cpus;
-+	struct list_head node;
- };
- static DEFINE_IDR(cpufreq_idr);
- static DEFINE_MUTEX(cooling_cpufreq_lock);
- 
- static unsigned int cpufreq_dev_count;
- 
--/* notify_table passes value to the CPUFREQ_ADJUST callback function. */
--#define NOTIFY_INVALID NULL
--static struct cpufreq_cooling_device *notify_device;
-+static LIST_HEAD(cpufreq_dev_list);
- 
- /**
-  * get_idr - function to get a unique id.
-@@ -287,15 +286,12 @@ static int cpufreq_apply_cooling(struct cpufreq_cooling_device *cpufreq_device,
- 
- 	cpufreq_device->cpufreq_state = cooling_state;
- 	cpufreq_device->cpufreq_val = clip_freq;
--	notify_device = cpufreq_device;
- 
- 	for_each_cpu(cpuid, mask) {
- 		if (is_cpufreq_valid(cpuid))
- 			cpufreq_update_policy(cpuid);
- 	}
- 
--	notify_device = NOTIFY_INVALID;
--
- 	return 0;
- }
- 
-@@ -316,21 +312,28 @@ static int cpufreq_thermal_notifier(struct notifier_block *nb,
- {
- 	struct cpufreq_policy *policy = data;
- 	unsigned long max_freq = 0;
-+	struct cpufreq_cooling_device *cpufreq_dev;
- 
--	if (event != CPUFREQ_ADJUST || notify_device == NOTIFY_INVALID)
-+	if (event != CPUFREQ_ADJUST)
- 		return 0;
- 
--	if (cpumask_test_cpu(policy->cpu, &notify_device->allowed_cpus))
--		max_freq = notify_device->cpufreq_val;
--	else
--		return 0;
-+	mutex_lock(&cooling_cpufreq_lock);
-+	list_for_each_entry(cpufreq_dev, &cpufreq_dev_list, node) {
-+		if (!cpumask_test_cpu(policy->cpu,
-+					&cpufreq_dev->allowed_cpus))
-+			continue;
-+
-+		if (!cpufreq_dev->cpufreq_val)
-+			cpufreq_dev->cpufreq_val = get_cpu_frequency(
-+					cpumask_any(&cpufreq_dev->allowed_cpus),
-+					cpufreq_dev->cpufreq_state);
- 
--	/* Never exceed user_policy.max */
--	if (max_freq > policy->user_policy.max)
--		max_freq = policy->user_policy.max;
-+		max_freq = cpufreq_dev->cpufreq_val;
- 
--	if (policy->max != max_freq)
--		cpufreq_verify_within_limits(policy, 0, max_freq);
-+		if (policy->max != max_freq)
-+			cpufreq_verify_within_limits(policy, 0, max_freq);
-+	}
-+	mutex_unlock(&cooling_cpufreq_lock);
- 
- 	return 0;
- }
-@@ -486,6 +489,7 @@ __cpufreq_cooling_register(struct device_node *np,
- 		cpufreq_register_notifier(&thermal_cpufreq_notifier_block,
- 					  CPUFREQ_POLICY_NOTIFIER);
- 	cpufreq_dev_count++;
-+	list_add(&cpufreq_dev->node, &cpufreq_dev_list);
- 
- 	mutex_unlock(&cooling_cpufreq_lock);
- 
-@@ -549,6 +553,7 @@ void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev)
- 
- 	cpufreq_dev = cdev->devdata;
- 	mutex_lock(&cooling_cpufreq_lock);
-+	list_del(&cpufreq_dev->node);
- 	cpufreq_dev_count--;
- 
- 	/* Unregister the notifier for the last cpufreq cooling device */
--- 
-1.7.0.4
+RHVyaW5nIHN5c3RlbSByZXN1bWUgZnJvbSBzdXNwZW5kIHRvIFJBTSB0aGUgRXh5bm9zIERSTSBk
+cml2ZXIgZm9yY2VkCkNSVEMgbW9kZSB0aHVzIHR1cm5pbmcgZGlzcGxheSBvbiAoRFBNU19PTiku
+IFRoaXMgbGVhZCB0byBydW50aW1lIHJlc3VtaW5nCm9mIERTSSB3aGljaCBmYWlsZWQgYmVjYXVz
+ZSB3aG9sZSBMQ0QgcG93ZXIgZG9tYWluIHdhcyBvZmYgYW5kIGl0IHdhcwpub3QgYWxsb3dlZCB0
+byB0dXJuIG9uIGJlY2F1c2Ugb2Ygc3lzdGVtIHJlc3VtZSBpbiBwcm9ncmVzcy4KCkZvcmNpbmcg
+bW9kZSBzaG91bGQgbm90IGJlIG5lZWRlZCBhbmQgcmVtb3ZpbmcgaXQgc29sdmVzIHRoaXMgcGFy
+dGljdWxhcgpwcm9ibGVtLgoKVGhpcyBuZWNlc3NhcnkgZml4IGZvciBmb2xsb3dpbmcgc2NlbmFy
+aW8gcmVwcm9kdWNlZCBvbiBFeHlub3MgRFJNOgoxLiBQb3dlciBkb21haW4gaXMgb2ZmIGJlZm9y
+ZSBzdXNwZW5kaW5nIHRoZSBzeXN0ZW0uCjIuIFN5c3RlbSBpcyBzdXNwZW5kZWQgdG8gUkFNLgoz
+LiBSZXN1bWluZyBzdGFydHMuIFRoZSBFeHlub3MgRFJNIGRyaXZlciByZXN1bWUgY2FsbGJhY2sg
+aXMgY2FsbGVkLgo0LiBUaGUgRXh5bm9zIERSTSBkcml2ZXIgY2FsbHMgZHJtX2hlbHBlcl9yZXN1
+bWVfZm9yY2VfbW9kZSgpIHdoaWNoIHR1cm5zCiAgIG9uIHRoZSBzY3JlZW4gYnkgY2FsbGluZyBl
+eHlub3NfZHNpX2RwbXMgd2l0aCBEUk1fTU9ERV9EUE1TX09OLgo1LiBUaGUgRXh5bm9zIERTSSBk
+cml2ZXIgY2FsbHMgcG1fcnVudGltZV9nZXQuIFRoZSBkcml2ZXIgcnVudGltZQogICByZXN1bWVz
+IGFuZCB0aGlzIHNob3VsZCB0dXJuIExDRCBwb3dlciBkb21haW4gb24uCjYuIFVuZm9ydHVuYXRl
+bHkgdGhlIGRvbWFpbiBjYW5ub3QgYmUgdHVybmVkIG9uIGJlY2F1c2Ugc3lzdGVtIHJlc3VtZSBp
+cwogICBpbiBwcm9ncmVzcyBhbmQgZ2VucGQtPnByZXBhcmVkX2NvdW50IGlzIHBvc2l0aXZlLgoK
+U3RlcHMgdG8gcmVwcm9kdWNlOgoxLiBBZGQgcnVudGltZSBQTSB0byBFeHlub3MgRFNJIGRyaXZl
+ci4KMi4gQnVpbGQgRXh5bm9zIERSTS9GQiB3aXRob3V0IEZSQU1FQlVGRkVSX0NPTlNPTEUuCjMu
+IEVuYWJsZSB0aGUgY29ubmVjdG9yIGFuZCBzY3JlZW4gKGUuZy4gd2l0aCBtb2Rlc2V0LXZzeW5j
+KS4KNC4gZWNobyAzID4gL3N5cy9kZXZpY2VzL3BsYXRmb3JtL2V4eW5vcy1kcm0vZ3JhcGhpY3Mv
+ZmIwL2JsYW5rCjUuIGVjaG8gbWVtID4gL3N5cy9wb3dlci9zdGF0ZQo2LiBSZXN1bWUuClsgICA3
+Ny43MTI0NjldIFBNOiBlYXJseSByZXN1bWUgb2YgZGV2aWNlcyBjb21wbGV0ZSBhZnRlciAzLjg1
+NCBtc2VjcwpbICAgNzcuNzEyNzM5XSBleHlub3MtZHNpIDExYzgwMDAwLmRzaTogcG1fZ2VucGRf
+cmVzdW1lKCkKWyAgIDc3LjcxMjc1OF0gZXh5bm9zNC1maW1jIDExODAwMDAwLmZpbWM6IHBtX2dl
+bnBkX3Jlc3VtZSgpClsgICA3Ny43MTI3NzRdIGV4eW5vczQtZmltYyAxMTgxMDAwMC5maW1jOiBw
+bV9nZW5wZF9yZXN1bWUoKQpbICAgNzcuNzEyNzg3XSBleHlub3MtZHJtLWZpbWMgMTE4MjAwMDAu
+ZmltYzogcG1fZ2VucGRfcmVzdW1lKCkKWyAgIDc3LjcxMjgwMl0gZXh5bm9zLWRybS1maW1jIDEx
+ODMwMDAwLmZpbWM6IHBtX2dlbnBkX3Jlc3VtZSgpClsgICA3Ny43MTI4MTVdIHM1cC1taXBpLWNz
+aXMgMTE4ODAwMDAuY3NpczogcG1fZ2VucGRfcmVzdW1lKCkKWyAgIDc3LjcxMjgyOV0gczVwLW1p
+cGktY3NpcyAxMTg5MDAwMC5jc2lzOiBwbV9nZW5wZF9yZXN1bWUoKQpbICAgNzcuNzEyODQzXSBl
+eHlub3MtZmltYy1saXRlIDEyMzkwMDAwLmZpbWMtbGl0ZTogcG1fZ2VucGRfcmVzdW1lKCkKWyAg
+IDc3LjcxMjg1Nl0gZXh5bm9zLWZpbWMtbGl0ZSAxMjNhMDAwMC5maW1jLWxpdGU6IHBtX2dlbnBk
+X3Jlc3VtZSgpClsgICA3Ny43MTM3ODhdIGV4eW5vczQtZmIgMTFjMDAwMDAuZmltZDogcG1fZ2Vu
+cGRfcmVzdW1lKCkKWyAgIDc3LjcxMzkxMl0gd2FrZSBkaXNhYmxlZCBmb3IgaXJxIDE4NApbICAg
+NzcuNzEzOTIzXSB3YWtlIGRpc2FibGVkIGZvciBpcnEgMTg1ClsgICA3Ny43MTQwODJdIHdha2Ug
+ZGlzYWJsZWQgZm9yIGlycSAxNzMKWyAgIDc3LjcxNTY3Nl0gd2FrZSBkaXNhYmxlZCBmb3IgaXJx
+IDE3NgpbICAgNzcuNzE4NTQwXSBleHlub3M0LWZiIDExYzAwMDAwLmZpbWQ6IHBtX2dlbnBkX3J1
+bnRpbWVfcmVzdW1lKCkKWyAgIDc3LjcxODU2N10gZXh5bm9zNC1mYiAxMWMwMDAwMC5maW1kOiBz
+dGF0ZSByZXN0b3JlIGxhdGVuY3kgZXhjZWVkZWQsIG5ldyB2YWx1ZSAxNzA4IG5zClsgICA3Ny43
+MTg2MzZdIGV4eW5vcy1kc2kgMTFjODAwMDAuZHNpOiBwbV9nZW5wZF9ydW50aW1lX3Jlc3VtZSgp
+ClsgICA3Ny44OTIzNjZdIGV4eW5vcy1kc2kgMTFjODAwMDAuZHNpOiBQTEwgZmFpbGVkIHRvIHN0
+YWJpbGl6ZQpbICAgNzcuODkyMzc3XSBleHlub3MtZHNpIDExYzgwMDAwLmRzaTogZmFpbGVkIHRv
+IGNvbmZpZ3VyZSBEU0kgUExMClsgICA3OC4xOTIxNjhdIGV4eW5vcy1kc2kgMTFjODAwMDAuZHNp
+OiB0aW1lb3V0IHdhaXRpbmcgZm9yIHJlc2V0ClsgICA3OC4yMTE1NzhdIGV4eW5vcy1kc2kgMTFj
+ODAwMDAuZHNpOiB3YWl0aW5nIGZvciBidXMgbGFuZXMgdGltZWQgb3V0ClsgICA3OC4zMDcxNzNd
+IGV4eW5vcy1kc2kgMTFjODAwMDAuZHNpOiB4ZmVyIHRpbWVkIG91dDogZDEgMDAgKG51bGwpClsg
+ICA3OC4zMDcxOTBdIHBhbmVsX3M2ZThhYTAgMTFjODAwMDAuZHNpLjA6IGVycm9yIC0xMTAgcmVh
+ZGluZyBkY3Mgc2VxKDB4ZDEpClsgICA3OC4zMDcxOTldIHBhbmVsX3M2ZThhYTAgMTFjODAwMDAu
+ZHNpLjA6IHJlYWQgaWQgZmFpbGVkCgpTaWduZWQtb2ZmLWJ5OiBLcnp5c3p0b2YgS296bG93c2tp
+IDxrLmtvemxvd3NraUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZHJ2LmMgfCAyIC0tCiAxIGZpbGUgY2hhbmdlZCwgMiBkZWxldGlvbnMoLSkKCmRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgYi9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKaW5kZXggZDMyMTY1YTdmODYyLi44
+ZjcxMTBjOWQyMWYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9kcnYuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKQEAg
+LTIwMCw4ICsyMDAsNiBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1fcmVzdW1lKHN0cnVjdCBkcm1f
+ZGV2aWNlICpkZXYpCiAJfQogCWRybV9tb2Rlc2V0X3VubG9ja19hbGwoZGV2KTsKIAotCWRybV9o
+ZWxwZXJfcmVzdW1lX2ZvcmNlX21vZGUoZGV2KTsKLQogCXJldHVybiAwOwogfQogCi0tIAoxLjku
+MQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRl
+dmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9s
+aXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
