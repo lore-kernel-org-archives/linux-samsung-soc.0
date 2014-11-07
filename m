@@ -1,68 +1,220 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v5 1/5] regulator: Document binding for initial and suspend modes
-Date: Fri,  7 Nov 2014 14:00:01 +0100
-Message-ID: <1415365205-27630-2-git-send-email-javier.martinez@collabora.co.uk>
-References: <1415365205-27630-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1415365205-27630-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH] PM / Domains: Fix initial default state of the need_restore flag
+Date: Fri,  7 Nov 2014 14:27:27 +0100
+Message-ID: <1415366847-4807-1-git-send-email-ulf.hansson@linaro.org>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron Lu <aaron.lu@intel.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Some regulators can run on different operating modes (opmodes). This
-allows systems to choose the most efficient opmode for each regulator.
+The initial state of the device's need_restore flag should'nt depend on
+the current state of the PM domain. For example it should be perfectly
+valid to attach an inactive device to a powered PM domain.
 
-This patch builds on top of (291d761 regulator: Document binding for
-regulator suspend state for PM state) adding a regulator-initial-mode
-DT property to configure at startup the operating mode for regulators
-that support changing its mode during normal operation and a property
-regulator-mode to be used in the regulator-state-[mem/disk] nodes for
-regulators that supports changing its operating mode when the system
-enters in a suspend state.
+The pm_genpd_dev_need_restore() API allow us to update the need_restore
+flag to somewhat cope with such scenarios. Typically that should have
+been done from drivers/buses ->probe() since it's those that put the
+requirements on the value of the need_restore flag.
 
-The set of possible modes that a regulator can operate depends on the
-hardware capabilities so a list of generic operating modes can't be
-provided. Instead, each hardware binding should define the list of
-valid operating modes for the regulators found on that device.
+Until recently, the Exynos SOCs were the only user of the
+pm_genpd_dev_need_restore() API, though invoking it from a centralized
+location while adding devices to their PM domains.
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Due to that Exynos now have swithed to the generic OF-based PM domain
+look-up, it's no longer possible to invoke the API from a centralized
+location. The reason is because devices are now added to their PM
+domains during the probe sequence.
+
+Commit "ARM: exynos: Move to generic PM domain DT bindings"
+did the switch for Exynos to the generic OF-based PM domain look-up,
+but it also removed the call to pm_genpd_dev_need_restore(). This
+caused a regression for some of the Exynos drivers.
+
+To handle things more properly in the generic PM domain, let's change
+the default initial value of the need_restore flag to reflect that the
+state is unknown. As soon as some of the runtime PM callbacks gets
+invoked, update the initial value accordingly.
+
+Moreover, since the generic PM domain is verifying that all device's
+are both runtime PM enabled and suspended, using pm_runtime_suspended()
+while pm_genpd_poweroff() is invoked from the scheduled work, we can be
+sure of that the PM domain won't be powering off while having active
+devices.
+
+Do note that, the generic PM domain can still only know about active
+devices which has been activated through invoking its runtime PM resume
+callback. In other words, buses/drivers using pm_runtime_set_active()
+during ->probe() will still suffer from a race condition, potentially
+probing a device without having its PM domain being powered. That issue
+will have to be solved using a different approach.
+
+This a log from the boot regression for Exynos5, which is being fixed in
+this patch.
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 308 at ../drivers/clk/clk.c:851 clk_disable+0x24/0x30()
+Modules linked in:
+CPU: 0 PID: 308 Comm: kworker/0:1 Not tainted 3.18.0-rc3-00569-gbd9449f-dirty #10
+Workqueue: pm pm_runtime_work
+[<c0013c64>] (unwind_backtrace) from [<c0010dec>] (show_stack+0x10/0x14)
+[<c0010dec>] (show_stack) from [<c03ee4cc>] (dump_stack+0x70/0xbc)
+[<c03ee4cc>] (dump_stack) from [<c0020d34>] (warn_slowpath_common+0x64/0x88)
+[<c0020d34>] (warn_slowpath_common) from [<c0020d74>] (warn_slowpath_null+0x1c/0x24)
+[<c0020d74>] (warn_slowpath_null) from [<c03107b0>] (clk_disable+0x24/0x30)
+[<c03107b0>] (clk_disable) from [<c02cc834>] (gsc_runtime_suspend+0x128/0x160)
+[<c02cc834>] (gsc_runtime_suspend) from [<c0249024>] (pm_generic_runtime_suspend+0x2c/0x38)
+[<c0249024>] (pm_generic_runtime_suspend) from [<c024f44c>] (pm_genpd_default_save_state+0x2c/0x8c)
+[<c024f44c>] (pm_genpd_default_save_state) from [<c024ff2c>] (pm_genpd_poweroff+0x224/0x3ec)
+[<c024ff2c>] (pm_genpd_poweroff) from [<c02501b4>] (pm_genpd_runtime_suspend+0x9c/0xcc)
+[<c02501b4>] (pm_genpd_runtime_suspend) from [<c024a4f8>] (__rpm_callback+0x2c/0x60)
+[<c024a4f8>] (__rpm_callback) from [<c024a54c>] (rpm_callback+0x20/0x74)
+[<c024a54c>] (rpm_callback) from [<c024a930>] (rpm_suspend+0xd4/0x43c)
+[<c024a930>] (rpm_suspend) from [<c024bbcc>] (pm_runtime_work+0x80/0x90)
+[<c024bbcc>] (pm_runtime_work) from [<c0032a9c>] (process_one_work+0x12c/0x314)
+[<c0032a9c>] (process_one_work) from [<c0032cf4>] (worker_thread+0x3c/0x4b0)
+[<c0032cf4>] (worker_thread) from [<c003747c>] (kthread+0xcc/0xe8)
+[<c003747c>] (kthread) from [<c000e738>] (ret_from_fork+0x14/0x3c)
+---[ end trace 40cd58bcd6988f12 ]---
+
+Fixes: a4a8c2c4962bb655 (ARM: exynos: Move to generic PM domain DT bindings)
+Reported-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
 
-Changes in v5: None
+This patch is intended as fix for 3.18 rc[n] due to the regression for Exynos
+SOCs.
 
-Changes in v4: None
+I would also like to call for help in getting this thoroughly tested.
 
-Changes in v3:
- - Rebased on top of regulator suspend voltage series
+I have tested this on Arndale Dual, Exynos 5250. According the log attached in
+the commit message as well.
 
- Documentation/devicetree/bindings/regulator/regulator.txt | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+I have tested this on UX500, which support for the generic PM domain is about
+to be queued for 3.19. Since UX500 uses the AMBA bus/drivers, which uses
+pm_runtime_set_active() instead of pm_runtime_get_sync() during ->probe(), I
+could also verify that this behavior is maintained.
 
-diff --git a/Documentation/devicetree/bindings/regulator/regulator.txt b/Documentation/devicetree/bindings/regulator/regulator.txt
-index 4e7ed76..3fffa3b 100644
---- a/Documentation/devicetree/bindings/regulator/regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/regulator.txt
-@@ -30,6 +30,20 @@ Optional properties:
- 	- regulator-off-in-suspend: regulator should be off in suspend state.
- 	- regulator-suspend-microvolt: regulator should be set to this voltage
- 	  in suspend.
-+	- regulator-mode: operating mode in the given suspend state.
-+	  The set of possible operating modes depends on the capabilities of
-+	  every hardware so the valid modes are documented on each regulator
-+	  device tree binding document.
-+	  The "regulator-mode" property only takes effect if the regulator is
-+	  enabled for the given suspend state using "regulator-on-in-suspend".
-+	  If the regulator has not been explicitly disabled for the given state
-+	  with "regulator-off-in-suspend", then setting the operating mode
-+	  will also have no effect.
-+- regulator-initial-mode: initial operating mode. The set of possible operating
-+  modes is the same used for the regulator-mode property and the device binding
-+  documentation explains which property each regulator supports.
-+If no mode is defined, then the OS will not manage the modes and the hardware
-+default values will be used instead.
+Finally I have also tested this patchset on UX500 and using the below patchset
+to make sure the approach is suitable long term wise as well.
+[PATCH v3 0/9] PM / Domains: Fix race conditions during boot
+http://www.spinics.net/lists/arm-kernel/msg369409.html
+
+---
+ drivers/base/power/domain.c | 38 +++++++++++++++++++++++++++++++-------
+ include/linux/pm_domain.h   |  2 +-
+ 2 files changed, 32 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index b520687..a9523a3 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -361,9 +361,19 @@ static int __pm_genpd_save_device(struct pm_domain_data *pdd,
+ 	struct device *dev = pdd->dev;
+ 	int ret = 0;
  
- Deprecated properties:
- - regulator-compatible: If a regulator chip contains multiple
+-	if (gpd_data->need_restore)
++	if (gpd_data->need_restore == 1)
+ 		return 0;
+ 
++	/*
++	 * If the value of the need_restore flag is still unknown at this point,
++	 * we trust that pm_genpd_poweroff() has verified that the device is
++	 * already runtime PM suspended.
++	 */
++	if (gpd_data->need_restore == -1) {
++		gpd_data->need_restore = 1;
++		return 0;
++	}
++
+ 	mutex_unlock(&genpd->lock);
+ 
+ 	genpd_start_dev(genpd, dev);
+@@ -373,7 +383,7 @@ static int __pm_genpd_save_device(struct pm_domain_data *pdd,
+ 	mutex_lock(&genpd->lock);
+ 
+ 	if (!ret)
+-		gpd_data->need_restore = true;
++		gpd_data->need_restore = 1;
+ 
+ 	return ret;
+ }
+@@ -389,13 +399,17 @@ static void __pm_genpd_restore_device(struct pm_domain_data *pdd,
+ {
+ 	struct generic_pm_domain_data *gpd_data = to_gpd_data(pdd);
+ 	struct device *dev = pdd->dev;
+-	bool need_restore = gpd_data->need_restore;
++	int need_restore = gpd_data->need_restore;
+ 
+-	gpd_data->need_restore = false;
++	gpd_data->need_restore = 0;
+ 	mutex_unlock(&genpd->lock);
+ 
+ 	genpd_start_dev(genpd, dev);
+-	if (need_restore)
++	/*
++	 * Make sure to also restore those devices which we until now, didn't
++	 * know the state for.
++	 */
++	if (need_restore != 0)
+ 		genpd_restore_dev(genpd, dev);
+ 
+ 	mutex_lock(&genpd->lock);
+@@ -603,6 +617,7 @@ static void genpd_power_off_work_fn(struct work_struct *work)
+ static int pm_genpd_runtime_suspend(struct device *dev)
+ {
+ 	struct generic_pm_domain *genpd;
++	struct generic_pm_domain_data *gpd_data;
+ 	bool (*stop_ok)(struct device *__dev);
+ 	int ret;
+ 
+@@ -628,6 +643,15 @@ static int pm_genpd_runtime_suspend(struct device *dev)
+ 		return 0;
+ 
+ 	mutex_lock(&genpd->lock);
++	/*
++	 * If we have an unknown state of the need_restore flag, it means none
++	 * of the runtime PM callbacks has been invoked yet. Let's update the
++	 * flag to reflect that the current state is active.
++	 */
++	gpd_data = to_gpd_data(dev->power.subsys_data->domain_data);
++	if (gpd_data->need_restore == -1)
++		gpd_data->need_restore = 0;
++
+ 	genpd->in_progress++;
+ 	pm_genpd_poweroff(genpd);
+ 	genpd->in_progress--;
+@@ -1442,7 +1466,7 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
+ 	mutex_lock(&gpd_data->lock);
+ 	gpd_data->base.dev = dev;
+ 	list_add_tail(&gpd_data->base.list_node, &genpd->dev_list);
+-	gpd_data->need_restore = genpd->status == GPD_STATE_POWER_OFF;
++	gpd_data->need_restore = -1;
+ 	gpd_data->td.constraint_changed = true;
+ 	gpd_data->td.effective_constraint_ns = -1;
+ 	mutex_unlock(&gpd_data->lock);
+@@ -1546,7 +1570,7 @@ void pm_genpd_dev_need_restore(struct device *dev, bool val)
+ 
+ 	psd = dev_to_psd(dev);
+ 	if (psd && psd->domain_data)
+-		to_gpd_data(psd->domain_data)->need_restore = val;
++		to_gpd_data(psd->domain_data)->need_restore = val ? 1 : 0;
+ 
+ 	spin_unlock_irqrestore(&dev->power.lock, flags);
+ }
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index b3ed776..2e0e06d 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -106,7 +106,7 @@ struct generic_pm_domain_data {
+ 	struct notifier_block nb;
+ 	struct mutex lock;
+ 	unsigned int refcount;
+-	bool need_restore;
++	int need_restore;
+ };
+ 
+ #ifdef CONFIG_PM_GENERIC_DOMAINS
 -- 
-2.1.0
+1.9.1
+
