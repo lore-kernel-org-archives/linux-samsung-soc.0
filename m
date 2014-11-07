@@ -1,61 +1,50 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] spi: s3c64xx: add support for exynos7 SPI controller
-Date: Fri, 7 Nov 2014 10:13:10 +0000
-Message-ID: <20141107101310.GA8509@sirena.org.uk>
-References: <1415267509-16653-1-git-send-email-padma.v@samsung.com>
- <20141106102636.GT8509@sirena.org.uk>
- <CAAgF-BfGwcNzMx0meFVkJqNMTbQ4_PP1PZ3i6edOm6U3bc26_Q@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ASoC: Samsung: Add quirk for internal DMA
+Date: Fri, 7 Nov 2014 10:38:23 +0000
+Message-ID: <20141107103823.GE8509@sirena.org.uk>
+References: <1415343280-18916-1-git-send-email-padma.v@samsung.com>
+ <1415343280-18916-2-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="BqH9fKuTou9vMXa4"
+	protocol="application/pgp-signature"; boundary="pCBpnpYZ3zWUlzNh"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48021 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:48202 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751141AbaKGKOM (ORCPT
+	with ESMTP id S1751262AbaKGKii (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Nov 2014 05:14:12 -0500
+	Fri, 7 Nov 2014 05:38:38 -0500
 Content-Disposition: inline
-In-Reply-To: <CAAgF-BfGwcNzMx0meFVkJqNMTbQ4_PP1PZ3i6edOm6U3bc26_Q@mail.gmail.com>
+In-Reply-To: <1415343280-18916-2-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: padma.kvr@gmail.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, sbkim73@samsung.com, kgene.kim@samsung.com
 
 
---BqH9fKuTou9vMXa4
+--pCBpnpYZ3zWUlzNh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Nov 07, 2014 at 02:01:57PM +0530, Padma Venkat wrote:
+On Fri, Nov 07, 2014 at 12:24:39PM +0530, Padmavathi Venna wrote:
+> Internal DMA is available only on some of Samsung platforms.
+> So added a quirk for the same and made it optional.
 
-> CS can also be controlled automatically by setting AUTO_N_MANUAL to 1
-> in CS_CFG. When it is auto CS automatically toggles between packet to
-> packet. NCS_TIME_COUNT in CS_CFG controls the inactive period. The
-> driver by default uses manual mode. But on exynos7 the manual mode is
-> removed.
+Applied, thanks.
 
-OK, but what's a packet here?
-
-> I tested the driver with wm5110 codec.
-
-Did you try firmware downloads or something else that generates multiple
-transfers in a message?  Normal register writes will use a single
-transfer so I'd expect them to just work.
-
---BqH9fKuTou9vMXa4
+--pCBpnpYZ3zWUlzNh
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBAgAGBQJUXJs2AAoJECTWi3JdVIfQZ8UH/jVxyhU2pvbWKIMBLcRa0BVE
-upCzn9UOpe1r6NF6eC4FlRV9DkVjlWTBfC3ZfKT1LCD+ZfWysOT58G2U1sA69ObY
-DTmTlQazFIFYGYzjSHLDs50OnVGRBlUA/kwJeMbcOiAtbG7YmdqWECLI1c/uF6FV
-BhkUa6EXUzmgpasTfmGTKRJQzrBwGM6vjeCufr2ObAvEG1AWH3PGByPcHIXKqjbl
-euEl9HsF+mXo60jU4zRbm2uaJNke3oMPNhYHV3DQJxoPX0meJ6jGdP9KgoVgatQY
-QRaUSQjlEYmqSN1vTsj6rtx7qB007B7sBzHQqlKXOOFolz6IzKsCKCbzh8PbEDs=
-=jv0k
+iQEcBAEBAgAGBQJUXKEeAAoJECTWi3JdVIfQhgMH/iWlCR1Hmwb+C6hai2n6Ytqr
+vxvpLl6SAO7oahXa4aOczkLkJPYPR0yxBmgJjCdcLgqgJvWAKnOUIwCl+jhFEi6p
+dMQCRPHniDpiAP1V+NPEB2v3h4tNdusc/Y+92uytupKQzrSm3i1Q16cz/GXYQpcj
+o7ht33/S3tZwVivF/5xXfqZoi1YdfUZsOOtELB2yyUY+TakpYtPa0y980qLjz2hq
+EpTWL2TheHlKH7kh9HG1UoxadrCN0M0+GRn++98YkUP0vTz1ftgVxtaVakacqJ5y
++2dYGLtctM4rkpocKMDbYmA/l8EDliPSZYwVSeoMGWci/67chzwINES7VmjA/MM=
+=h+bA
 -----END PGP SIGNATURE-----
 
---BqH9fKuTou9vMXa4--
+--pCBpnpYZ3zWUlzNh--
