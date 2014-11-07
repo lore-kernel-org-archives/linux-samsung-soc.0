@@ -1,62 +1,53 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH 2/4] drm/exynos: fimd: support Exynos4415 SoC
-Date: Fri, 07 Nov 2014 15:12:25 +0900
-Message-ID: <1415340747-27904-3-git-send-email-yj44.cho@samsung.com>
+Subject: [PATCH 4/4] ARM: dts: add mipi dsi device node to exynos4415.dtsi
+Date: Fri, 07 Nov 2014 15:12:27 +0900
+Message-ID: <1415340747-27904-5-git-send-email-yj44.cho@samsung.com>
 References: <1415340747-27904-1-git-send-email-yj44.cho@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:45741 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751513AbaKGGMf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Nov 2014 01:12:35 -0500
 In-reply-to: <1415340747-27904-1-git-send-email-yj44.cho@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, cw00.choi@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, mark.rutland@arm.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, robh+dt@kernel.org, galak@codeaurora.org, kyungmin.park@samsung.com, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com, cw00.choi@samsung.com, kgene.kim@samsung.com
 
-VGhpcyBwYXRjaCBzdXBwb3J0cyBFeHlub3M0NDE1IFNvQy4KClNpZ25lZC1vZmYtYnk6IFlvdW5n
-SnVuIENobyA8eWo0NC5jaG9Ac2Ftc3VuZy5jb20+CkFja2VkLWJ5OiBLeXVuZ21pbiBQYXJrIDxr
-eXVuZ21pbi5wYXJrQHNhbXN1bmcuY29tPgotLS0KIERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy92aWRlby9zYW1zdW5nLWZpbWQudHh0IHwgIDEgKwogZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2ZpbWQuYyAgICAgICAgICAgICAgICAgfCAxMSArKysrKysrKysrKwog
-MiBmaWxlcyBjaGFuZ2VkLCAxMiBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRh
-dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3ZpZGVvL3NhbXN1bmctZmltZC50eHQgYi9Eb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdmlkZW8vc2Ftc3VuZy1maW1kLnR4dAppbmRleCA0
-ZTZjNzdjLi5jZjFhZjYzIDEwMDY0NAotLS0gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvdmlkZW8vc2Ftc3VuZy1maW1kLnR4dAorKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRy
-ZWUvYmluZGluZ3MvdmlkZW8vc2Ftc3VuZy1maW1kLnR4dApAQCAtMTEsNiArMTEsNyBAQCBSZXF1
-aXJlZCBwcm9wZXJ0aWVzOgogCQkic2Ftc3VuZyxzNXB2MjEwLWZpbWQiOyAvKiBmb3IgUzVQVjIx
-MCBTb0MgKi8KIAkJInNhbXN1bmcsZXh5bm9zMzI1MC1maW1kIjsgLyogZm9yIEV4eW5vczMyNTAv
-MzQ3MiBTb0NzICovCiAJCSJzYW1zdW5nLGV4eW5vczQyMTAtZmltZCI7IC8qIGZvciBFeHlub3M0
-IFNvQ3MgKi8KKwkJInNhbXN1bmcsZXh5bm9zNDQxNS1maW1kIjsgLyogZm9yIEV4eW5vczQ0MTUg
-U29DICovCiAJCSJzYW1zdW5nLGV4eW5vczUyNTAtZmltZCI7IC8qIGZvciBFeHlub3M1IFNvQ3Mg
-Ki8KIAogLSByZWc6IHBoeXNpY2FsIGJhc2UgYWRkcmVzcyBhbmQgbGVuZ3RoIG9mIHRoZSBGSU1E
-IHJlZ2lzdGVycyBzZXQuCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZmltZC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwpp
-bmRleCAwODViMDY2Li41ZGZiYmRiIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fZmltZC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9maW1kLmMKQEAgLTEyMCw2ICsxMjAsMTUgQEAgc3RhdGljIHN0cnVjdCBmaW1kX2RyaXZlcl9k
-YXRhIGV4eW5vczRfZmltZF9kcml2ZXJfZGF0YSA9IHsKIAkuaGFzX3NoYWRvd2NvbiA9IDEsCiB9
-OwogCitzdGF0aWMgc3RydWN0IGZpbWRfZHJpdmVyX2RhdGEgZXh5bm9zNDQxNV9maW1kX2RyaXZl
-cl9kYXRhID0geworCS50aW1pbmdfYmFzZSA9IDB4MjAwMDAsCisJLmxjZGJsa19vZmZzZXQgPSAw
-eDIxMCwKKwkubGNkYmxrX3Z0X3NoaWZ0ID0gMTAsCisJLmxjZGJsa19ieXBhc3Nfc2hpZnQgPSAx
-LAorCS5oYXNfc2hhZG93Y29uID0gMSwKKwkuaGFzX3ZpZG91dGNvbiA9IDEsCit9OworCiBzdGF0
-aWMgc3RydWN0IGZpbWRfZHJpdmVyX2RhdGEgZXh5bm9zNV9maW1kX2RyaXZlcl9kYXRhID0gewog
-CS50aW1pbmdfYmFzZSA9IDB4MjAwMDAsCiAJLmxjZGJsa19vZmZzZXQgPSAweDIxNCwKQEAgLTE4
-MCw2ICsxODksOCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBmaW1kX2RyaXZl
-cl9kdF9tYXRjaFtdID0gewogCSAgLmRhdGEgPSAmZXh5bm9zM19maW1kX2RyaXZlcl9kYXRhIH0s
-CiAJeyAuY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vczQyMTAtZmltZCIsCiAJICAuZGF0YSA9
-ICZleHlub3M0X2ZpbWRfZHJpdmVyX2RhdGEgfSwKKwl7IC5jb21wYXRpYmxlID0gInNhbXN1bmcs
-ZXh5bm9zNDQxNS1maW1kIiwKKwkgIC5kYXRhID0gJmV4eW5vczQ0MTVfZmltZF9kcml2ZXJfZGF0
-YSB9LAogCXsgLmNvbXBhdGlibGUgPSAic2Ftc3VuZyxleHlub3M1MjUwLWZpbWQiLAogCSAgLmRh
-dGEgPSAmZXh5bm9zNV9maW1kX2RyaXZlcl9kYXRhIH0sCiAJe30sCi0tIAoxLjkuMAoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
-bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVl
-ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+This patch adds mipi dsi device node to exynos4415.dtsi.
+
+Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/boot/dts/exynos4415.dtsi | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/arch/arm/boot/dts/exynos4415.dtsi b/arch/arm/boot/dts/exynos4415.dtsi
+index 30acb3a..6105236 100644
+--- a/arch/arm/boot/dts/exynos4415.dtsi
++++ b/arch/arm/boot/dts/exynos4415.dtsi
+@@ -246,6 +246,21 @@
+ 			status = "disabled";
+ 		};
+ 
++		dsi_0: dsi@11C80000 {
++			compatible = "samsung,exynos4415-mipi-dsi";
++			reg = <0x11C80000 0x10000>;
++			interrupts = <0 83 0>;
++			samsung,phy-type = <0>;
++			samsung,power-domain = <&pd_lcd0>;
++			phys = <&mipi_phy 1>;
++			phy-names = "dsim";
++			clocks = <&cmu CLK_DSIM0>, <&cmu CLK_SCLK_MIPI0>;
++			clock-names = "bus_clk", "pll_clk";
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		hsotg: hsotg@12480000 {
+ 			compatible = "samsung,s3c6400-hsotg";
+ 			reg = <0x12480000 0x20000>;
+-- 
+1.9.0
