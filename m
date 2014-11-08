@@ -1,87 +1,77 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH] ARM: dts: Fix booting on Rinato market device
-Date: Sat, 08 Nov 2014 19:16:54 +0900
-Message-ID: <004701cffb3d$1edef9e0$5c9ceda0$@kernel.org>
-References: <1415360662-30390-1-git-send-email-k.kozlowski@samsung.com>
- <545CB220.9030007@samsung.com> <1415361564.31102.2.camel@AMDC1943>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1415361564.31102.2.camel@AMDC1943>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>
-Cc: 'Ben Dooks' <ben-linux@fluff.org>, 'Rob Herring' <robh+dt@kernel.org>, 'Pawel Moll' <pawel.moll@arm.com>, 'Mark Rutland' <mark.rutland@arm.com>, 'Ian Campbell' <ijc+devicetree@hellion.org.uk>, 'Kumar Gala' <galak@codeaurora.org>, 'Russell King' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'BartlomiejZolnierkiewicz' <b.zolnierkie@samsung.com>
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Subject: [PATCH v2 0/6] exynos: Move pmu driver to driver/soc folder and add
+ exynos7 support
+Date: Sat, 08 Nov 2014 18:46:35 +0530
+Message-ID: <1415452601-13078-1-git-send-email-amit.daniel@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:41176 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753714AbaKHNWk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 8 Nov 2014 08:22:40 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, lee.jones@linaro.org, Amit Daniel Kachhap <amit.daniel@samsung.com>
 
-Krzysztof Kozlowski wrote:
->=20
-> On pi=C4=85, 2014-11-07 at 20:50 +0900, Chanwoo Choi wrote:
-> > Hi Krzysztof,
-> >
-> > On 11/07/2014 08:44 PM, Krzysztof Kozlowski wrote:
-> > > The bootloader on market Rinato (Gear 2) device checks for revisi=
-on in
-> > > compatible field of DTB. If it is not present or lower than requi=
-red
-> > > then booting fails with: "Could not do normal boot. (no DTB found=
-)".
-> > >
-> > > Log of bootloader in case of failure:
-> > > h/w: revision  =3D 0x06
-> > > h/w: schematic =3D SM-R380_Rev0.5_Final_0205
-> > > date =3D 2000/01/01 12:00:21 (UTC)
-> > > cmu_div:4, div:5, src_clk:800000000, pixel_clk:31860720
-> > > load_kernel: loading boot image from 57344.. (BOOT)
-> > > load_kernel: found zImage, size: 0x3267e8
-> > > 0xbc Error!
-> > > Verify_Binary_Signature: failed.
-> > > pit_check_signature (BOOT) invalid.
-> > > load_kernel: found custom kernel (ret:-2147483647)
-> > >  No need to update kernel type.
-> > > Detected board: samsung,rinato-rev06
-> > > Could not do normal boot. (no DTB found)
-> > > : Entering usb mode for SM-R380_EUR_XX (65535)..
-> > >
-> > > Add a "rev06" suffix to compatible to satisfy the bootloader.
-> > >
-> > > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > > ---
-> > >  arch/arm/boot/dts/exynos3250-rinato.dts | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/b=
-oot/dts/exynos3250-rinato.dts
-> > > index 84380fa13e37..f72ba0a1d915 100644
-> > > --- a/arch/arm/boot/dts/exynos3250-rinato.dts
-> > > +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-> > > @@ -18,7 +18,8 @@
-> > >
-> > >  / {
-> > >  	model =3D "Samsung Rinato board";
-> > > -	compatible =3D "samsung,rinato", "samsung,exynos3250", "samsung=
-,exynos3";
-> > > +	compatible =3D "samsung,rinato", "samsung,rinato-rev06",
-> > > +			"samsung,exynos3250", "samsung,exynos3";
-> >
-> > I think it is wrong. The released bootloader from Samsung is not u-=
-boot.
-> > Instead, you have to update u-boot to support Exynos3250-basd Rinat=
-o board.
->=20
-> The bootloader on device also was not a u-boot. So the fix is for nat=
-ive
-> bootloader delivered on device.
->=20
-> I do not insist that this is proper fix. It was just needed to boot t=
-he
-> device with custom kernel.
->=20
-> Anyway, thanks for comments!
->=20
-Hi Krzysztof and Chanwoo,
+This patch series[1 - 6] performs,
 
-So, we don=E2=80=99t need this to fix the problem Krzysztof said? OK.
+1) Moves pmu driver to driver/soc/samsung folder. Some discussion happened about
+   this in the v1 version. Finally adding it in driver/soc folder as it too SoC
+   specific and not a general driver. Entire discussion can be found here (A).
+2) Registers this driver as MFD client driver. This will be used by clients like exynos pm
+   sleep and pm domain driver.
+3) Add exynos7 PMU support.
 
-- Kukjin
+Changes from V1:
+* Move pmu driver in driver/soc/samsung folder
+* Removed the power domain features. They will posted as a separate series.
+* Added exynos7 PMU support.
+* Link to v1 can be found here (B)
+
+This patch has dependency on following patches posted earlier by Pankaj (C),
+which is accepted by maintainer.
+
+Patch 6 was earlier posted by Abhilash (D) which has been reposted here with some
+extra changes.
+
+This complete patch series is rebased on linux-next.
+
+(A) - http://www.spinics.net/lists/linux-samsung-soc/msg38444.html
+(B) - http://www.spinics.net/lists/linux-samsung-soc/msg38442.html
+(C) - https://lkml.org/lkml/2014/10/6/581
+(D) - http://www.spinics.net/lists/arm-kernel/msg358230.html 
+
+Amit Daniel Kachhap (6):
+  ARM: EXYNOS: Move pmu specific header files under "linux/soc/samsung"
+  drivers: soc: Add support for Exynos PMU driver
+  drivers: soc: samsung: Fix a spelling mistake
+  soc: samsung: exynos-pmu: Register exynos-pmu driver as a mfd driver
+  driver: soc: exynos-pmu: Add an API to be called after wakeup
+  drivers: soc: samsung: Add support for Exynos7 pmu
+
+ .../devicetree/bindings/arm/samsung/pmu.txt        |    1 +
+ arch/arm/mach-exynos/Makefile                      |    2 +-
+ arch/arm/mach-exynos/exynos.c                      |    2 +-
+ arch/arm/mach-exynos/mcpm-exynos.c                 |    2 +-
+ arch/arm/mach-exynos/platsmp.c                     |    2 +-
+ arch/arm/mach-exynos/pm.c                          |    4 +-
+ arch/arm/mach-exynos/regs-pmu.h                    |  335 -----------
+ arch/arm/mach-exynos/suspend.c                     |    3 +-
+ drivers/soc/Kconfig                                |    1 +
+ drivers/soc/Makefile                               |    1 +
+ drivers/soc/samsung/Kconfig                        |   19 +
+ drivers/soc/samsung/Makefile                       |    1 +
+ .../pmu.c => drivers/soc/samsung/exynos-pmu.c      |  471 ++++++++++++++-
+ .../linux/soc/samsung}/exynos-pmu.h                |    6 +
+ include/linux/soc/samsung/exynos-regs-pmu.h        |  608 ++++++++++++++++++++
+ 15 files changed, 1109 insertions(+), 349 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/regs-pmu.h
+ create mode 100644 drivers/soc/samsung/Kconfig
+ create mode 100644 drivers/soc/samsung/Makefile
+ rename arch/arm/mach-exynos/pmu.c => drivers/soc/samsung/exynos-pmu.c (50%)
+ rename {arch/arm/mach-exynos => include/linux/soc/samsung}/exynos-pmu.h (78%)
+ create mode 100644 include/linux/soc/samsung/exynos-regs-pmu.h
+
+-- 
+1.7.9.5
