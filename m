@@ -1,69 +1,106 @@
 From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH v2 5/6] driver: soc: exynos-pmu: Add an API to be called after
- wakeup
-Date: Sat, 08 Nov 2014 18:46:40 +0530
-Message-ID: <1415452601-13078-6-git-send-email-amit.daniel@samsung.com>
+Subject: [PATCH v2 2/6] drivers: soc: Add support for Exynos PMU driver
+Date: Sat, 08 Nov 2014 18:46:37 +0530
+Message-ID: <1415452601-13078-3-git-send-email-amit.daniel@samsung.com>
 References: <1415452601-13078-1-git-send-email-amit.daniel@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:41180 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753812AbaKHNWq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 8 Nov 2014 08:22:46 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1415452601-13078-1-git-send-email-amit.daniel@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, lee.jones@linaro.org, Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: kgene.kim@samsung.com, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, lee.jones@linaro.org, Amit Daniel Kachhap <amit.daniel@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds an API exynos_sys_powerup_conf to be called
-after system sleep wakeup. This is similar to currently existing API
-exynos_sys_powerdown_conf.
+This patch moves Exynos PMU driver implementation from "arm/mach-exynos"
+to "drivers/soc/samsung". This driver is mainly used for setting misc bits of
+register from PMU IP of Exynos SoC which will be required to configure
+before Suspend/Resume. Currently all these settings are done in
+"arch/arm/mach-exynos/pmu.c" but moving ahead for ARM64 based SoC
+support,there is a need of DT based implementation of PMU driver.
 
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+This driver uses already existing DT binding information.
+
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
 ---
- drivers/soc/samsung/exynos-pmu.c       |    9 +++++++++
- include/linux/soc/samsung/exynos-pmu.h |    1 +
- 2 files changed, 10 insertions(+)
+ arch/arm/mach-exynos/Makefile                      |    2 +-
+ drivers/soc/Kconfig                                |    1 +
+ drivers/soc/Makefile                               |    1 +
+ drivers/soc/samsung/Kconfig                        |   19 +++++++++++++++++++
+ drivers/soc/samsung/Makefile                       |    1 +
+ .../pmu.c => drivers/soc/samsung/exynos-pmu.c      |    0
+ 6 files changed, 23 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/soc/samsung/Kconfig
+ create mode 100644 drivers/soc/samsung/Makefile
+ rename arch/arm/mach-exynos/pmu.c => drivers/soc/samsung/exynos-pmu.c (100%)
 
-diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-index 4a5eb50..a73c1ea 100644
---- a/drivers/soc/samsung/exynos-pmu.c
-+++ b/drivers/soc/samsung/exynos-pmu.c
-@@ -34,6 +34,7 @@ struct exynos_pmu_data {
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index bcefb54..b91b382 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -9,7 +9,7 @@ ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/$(src)/include -I$(srctree)
  
- 	void (*pmu_init)(void);
- 	void (*powerdown_conf)(enum sys_powerdown);
-+	void (*powerup_conf)(enum sys_powerdown);
- };
+ # Core
  
- struct exynos_pmu_context {
-@@ -430,6 +431,14 @@ void exynos_sys_powerdown_conf(enum sys_powerdown mode)
- 	}
- }
+-obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o
++obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o exynos-smc.o firmware.o
  
-+void exynos_sys_powerup_conf(enum sys_powerdown mode)
-+{
-+	const struct exynos_pmu_data *pmu_data = pmu_context->pmu_data;
+ obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o sleep.o
+ obj-$(CONFIG_PM_SLEEP)		+= suspend.o
+diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+index 76d6bd4..90f33b9 100644
+--- a/drivers/soc/Kconfig
++++ b/drivers/soc/Kconfig
+@@ -3,5 +3,6 @@ menu "SOC (System On Chip) specific Drivers"
+ source "drivers/soc/qcom/Kconfig"
+ source "drivers/soc/ti/Kconfig"
+ source "drivers/soc/versatile/Kconfig"
++source "drivers/soc/samsung/Kconfig"
+ 
+ endmenu
+diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+index 063113d..44d220d 100644
+--- a/drivers/soc/Makefile
++++ b/drivers/soc/Makefile
+@@ -6,3 +6,4 @@ obj-$(CONFIG_ARCH_QCOM)		+= qcom/
+ obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
+ obj-$(CONFIG_SOC_TI)		+= ti/
+ obj-$(CONFIG_PLAT_VERSATILE)	+= versatile/
++obj-$(CONFIG_ARCH_EXYNOS)	+= samsung/
+diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+new file mode 100644
+index 0000000..beb6dfc
+--- /dev/null
++++ b/drivers/soc/samsung/Kconfig
+@@ -0,0 +1,19 @@
++#
++# SAMSUNG SOC drivers
++#
++menuconfig SOC_SAMSUNG
++	bool "Samsung SOC drivers support"
 +
-+	if (pmu_data->powerup_conf)
-+		pmu_data->powerup_conf(mode);
-+}
++if SOC_SAMSUNG
 +
- static void exynos5250_pmu_init(void)
- {
- 	unsigned int value;
-diff --git a/include/linux/soc/samsung/exynos-pmu.h b/include/linux/soc/samsung/exynos-pmu.h
-index d2f4083..9a4b833 100644
---- a/include/linux/soc/samsung/exynos-pmu.h
-+++ b/include/linux/soc/samsung/exynos-pmu.h
-@@ -25,5 +25,6 @@ struct pmu_dev_client_data {
- };
- 
- extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
-+extern void exynos_sys_powerup_conf(enum sys_powerdown mode);
- 
- #endif /* __EXYNOS_PMU_H */
++config MFD_EXYNOS_PMU
++	tristate "Support Exynos Power Management Unit"
++	depends on ARM || ARM64
++	default y
++	help
++	  Exynos SoC have Power Management Unit (PMU) which controls power and
++	  operation state of Exynos SoC in two different ways. This driver
++	  provides implementation of PMU driver and provides basic functionality
++	  required during these operation state.
++
++endif #SOC_SAMSUNG
+diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+new file mode 100644
+index 0000000..9d30f61
+--- /dev/null
++++ b/drivers/soc/samsung/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_MFD_EXYNOS_PMU)	+= exynos-pmu.o
+diff --git a/arch/arm/mach-exynos/pmu.c b/drivers/soc/samsung/exynos-pmu.c
+similarity index 100%
+rename from arch/arm/mach-exynos/pmu.c
+rename to drivers/soc/samsung/exynos-pmu.c
 -- 
 1.7.9.5
