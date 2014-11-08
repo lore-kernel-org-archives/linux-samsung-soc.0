@@ -1,71 +1,82 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v2 1/1] ARM: exynos_defconfig: Enable options for display
- panel support
-Date: Sat, 08 Nov 2014 18:46:43 +0900
-Message-ID: <000d01cffb38$e90e42c0$bb2ac840$@kernel.org>
-References: <1408956336-17376-1-git-send-email-javier.martinez@collabora.co.uk>
- <CABxcv=m-aNVcUU2C8LosCECxq1yZo2C3zfA2xe6z7jF8tFPsnw@mail.gmail.com>
+Subject: RE: [PATCH] ARM: exynos_defconfig: disable CONFIG_EXYNOS5420_MCPM; not
+ stable
+Date: Sat, 08 Nov 2014 18:50:04 +0900
+Message-ID: <000e01cffb39$5ef0a2d0$1cd1e870$@kernel.org>
+References: <1414796382-5447-1-git-send-email-khilman@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:28443 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753444AbaKHJqt (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:30471 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753576AbaKHJuG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 8 Nov 2014 04:46:49 -0500
-In-reply-to: <CABxcv=m-aNVcUU2C8LosCECxq1yZo2C3zfA2xe6z7jF8tFPsnw@mail.gmail.com>
+	Sat, 8 Nov 2014 04:50:06 -0500
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NEP009EASNGET00@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 08 Nov 2014 18:50:04 +0900 (KST)
+In-reply-to: <1414796382-5447-1-git-send-email-khilman@kernel.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Javier Martinez Canillas' <javier@dowhile0.org>
-Cc: 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Doug Anderson' <dianders@chromium.org>, 'Olof Johansson' <olof@lixom.net>, 'Kevin Hilman' <khilman@linaro.org>, =?UTF-8?Q?'Andreas_F=C3=A4rber'?= <afaerber@suse.de>, 'Ajay Kumar' <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Linux Kernel' <linux-kernel@vger.kernel.org>
+To: 'Kevin Hilman' <khilman@kernel.org>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, 'Kevin Hilman' <khilman@linaro.org>, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Sachin Kamat' <sachin.kamat@samsung.com>, 'Doug Anderson' <dianders@chromium.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Tushar Behera' <tushar.behera@linaro.org>
 
-Javier Martinez Canillas wrote:
+Kevin Hilman wrote:
 > 
-> Hello Kukjin,
+> From: Kevin Hilman <khilman@linaro.org>
 > 
-Hi,
+> The option CONFIG_EXYNOS5420_MCPM is causing imprecise external aborts
+> during boot testing, causing various userspace startup failures.
+> 
+> Disable until it has gotten more testing.
+> 
+> Cc: Kukjin Kim <kgene.kim@samsung.com>,
+> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+> Cc: Sachin Kamat <sachin.kamat@samsung.com>,
+> Cc: Doug Anderson <dianders@chromium.org>,
+> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+> Cc: Tushar Behera <tushar.behera@linaro.org>,
+> Cc: stable@vger.kernel.org # v3.17+
+> Signed-off-by: Kevin Hilman <khilman@linaro.org>
+> ---
+> This has been reported by a few people[1], but not investigated or fixed, so it's
+> time to disable this feature until it can be fixed.
+> 
+Hi Kevin,
 
-> On Mon, Aug 25, 2014 at 10:45 AM, Javier Martinez Canillas
-> <javier.martinez@collabora.co.uk> wrote:
-> > Many Exynos devices have a display panel. Most of them just have
-> > a simple panel while others have more complex configurations that
-> > requires an embedded DisplayPort (eDP) to LVDS bridges.
-> >
-> > This patch enables the following features to be built in the kernel
-> > image to suport both setups:
-> >
-> > - Direct Rendering Manager (DRM)
-> > - DRM bridge registration and lookup framework
-> > - Parade ps8622/ps8625 eDP/LVDS bridge
-> > - NXP ptn3460 eDP/LVDS bridge
-> > - Exynos Fully Interactive Mobile Display controller (FIMD)
-> > - Panel registration and lookup framework
-> > - Simple panels
-> > - Backlight & LCD device support
-> >
-> > Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> > Tested-by: Kevin Hilman <khilman@linaro.org>
-> > ---
-> 
-> This patch is needed to have display working on many Exynos boards.
-> 
-OK, I'll apply this into samsung tree in this weekend.
+Yeah I agree with your opinion.
 
-Thanks for your gentle reminder.
+But as you can see my tree, I've queued regarding mcpm patches for 3.19 will
+be shown in -next in this weekend. Anyway let me apply this into -fixes and
+then let's enable after test its functionality in -next in a couple of days.
 
-- Kukjin
+Thanks,
+Kukjin
 
-> $subject enables the config option for the ps8622/ps8625 eDP/LVDS
-> bridge driver but this has not landed in mainline yet. Ajay will
-> re-spin a new revision of his series that adds this driver though,
-> after addressing some issues pointed out on a previous version.
+
+> [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2014-September/288344.html
 > 
-> The Kconfig symbol name (DRM_PS8622) won't change though so maybe is
-> not crazy to pick the patch as is since CONFIG_DRM_PS8622 will have to
-> be enabled later when the bridge driver lands. Or do you want me to
-> re-spin $subject removing that option?
+>  arch/arm/configs/exynos_defconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Best regards,
-> Javier
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index 72058b8a6f4d..a250dcbf34cd 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -10,7 +10,7 @@ CONFIG_MODULE_UNLOAD=y
+>  CONFIG_PARTITION_ADVANCED=y
+>  CONFIG_ARCH_EXYNOS=y
+>  CONFIG_ARCH_EXYNOS3=y
+> -CONFIG_EXYNOS5420_MCPM=y
+> +CONFIG_EXYNOS5420_MCPM=n
+>  CONFIG_SMP=y
+>  CONFIG_BIG_LITTLE=y
+>  CONFIG_BL_SWITCHER=y
+> --
+> 2.1.0
