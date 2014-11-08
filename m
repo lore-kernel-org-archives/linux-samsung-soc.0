@@ -1,8 +1,7 @@
 From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH v2 4/6] soc: samsung: exynos-pmu: Register exynos-pmu driver as
- a mfd driver
-Date: Sat, 08 Nov 2014 18:46:39 +0530
-Message-ID: <1415452601-13078-5-git-send-email-amit.daniel@samsung.com>
+Subject: [PATCH v2 3/6] drivers: soc: samsung: Fix a spelling mistake
+Date: Sat, 08 Nov 2014 18:46:38 +0530
+Message-ID: <1415452601-13078-4-git-send-email-amit.daniel@samsung.com>
 References: <1415452601-13078-1-git-send-email-amit.daniel@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1415452601-13078-1-git-send-email-amit.daniel@samsung.com>
@@ -11,98 +10,41 @@ To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: kgene.kim@samsung.com, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, lee.jones@linaro.org, Amit Daniel Kachhap <amit.daniel@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This can be used later to probe and configure PMU client drivers
-like pm domain, pm sleep etc. A global structure pmu_dev_client_data is
-created to pass exynos-pmu platform data to all the clients. Currently
-the data passed is register base addresses.
-Although the exynos-pmu driver also provides the sysreg interfaces to
-provide register base addresses but this is costlier than readl/writel,
-so both the interfaces are provided to mfd based exynos-pmu client
-drivers.
+This patches changes the name of exynos5_list_diable_wfi_wfe to
+exynos5_list_disable_wfi_wfe.
 
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
 ---
- drivers/soc/samsung/exynos-pmu.c       |   24 ++++++++++++++++++++++++
- include/linux/soc/samsung/exynos-pmu.h |    5 +++++
- 2 files changed, 29 insertions(+)
+ drivers/soc/samsung/exynos-pmu.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-index 3832cda..4a5eb50 100644
+index 35774e8..3832cda 100644
 --- a/drivers/soc/samsung/exynos-pmu.c
 +++ b/drivers/soc/samsung/exynos-pmu.c
-@@ -12,11 +12,17 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/mfd/core.h>
- #include <linux/soc/samsung/exynos-regs-pmu.h>
- #include <linux/soc/samsung/exynos-pmu.h>
- 
- #define PMU_TABLE_END	(-1U)
- 
-+enum pmu_mfd_list {
-+	MFD_POWER_DOMAIN,
-+	MFD_MAX,
-+};
-+
- struct exynos_pmu_conf {
- 	unsigned int offset;
- 	unsigned int val[NUM_SYS_POWERDOWN];
-@@ -33,6 +39,8 @@ struct exynos_pmu_data {
- struct exynos_pmu_context {
- 	struct device *dev;
- 	const struct exynos_pmu_data *pmu_data;
-+	struct mfd_cell cells[MFD_MAX];
-+	struct pmu_dev_client_data mfd_data;
+@@ -361,7 +361,7 @@ static unsigned int const exynos5_list_both_cnt_feed[] = {
+ 	EXYNOS5_TOP_PWR_SYSMEM_OPTION,
  };
  
- static void __iomem *pmu_base_addr;
-@@ -482,6 +490,8 @@ static int exynos_pmu_probe(struct platform_device *pdev)
- 	const struct of_device_id *match;
- 	struct device *dev = &pdev->dev;
- 	struct resource *res;
-+	struct mfd_cell *cell;
-+	int ret;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	pmu_base_addr = devm_ioremap_resource(dev, res);
-@@ -506,6 +516,20 @@ static int exynos_pmu_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, pmu_context);
- 
-+	/* Initialize and invoke mfd clients */
-+	cell = &pmu_context->cells[MFD_POWER_DOMAIN];
-+	cell->name = "exynos-pmu-sleep";
-+	pmu_context->mfd_data.mem_base_addr = pmu_base_addr;
-+	pmu_context->mfd_data.mem_size = resource_size(res);
-+	cell->platform_data = &pmu_context->mfd_data;
-+	cell->pdata_size = sizeof(pmu_context->mfd_data);
-+	ret = mfd_add_devices(&pdev->dev, pdev->id, pmu_context->cells, MFD_MAX,
-+				NULL, 0, NULL);
-+	if (ret) {
-+		dev_err(&pdev->dev, "fail to register client devices\n");
-+		return ret;
-+	}
-+
- 	dev_dbg(dev, "Exynos PMU Driver probe done\n");
- 	return 0;
+-static unsigned int const exynos5_list_diable_wfi_wfe[] = {
++static unsigned int const exynos5_list_disable_wfi_wfe[] = {
+ 	EXYNOS5_ARM_CORE1_OPTION,
+ 	EXYNOS5_FSYS_ARM_OPTION,
+ 	EXYNOS5_ISP_ARM_OPTION,
+@@ -392,11 +392,11 @@ static void exynos5_powerdown_conf(enum sys_powerdown mode)
+ 	/*
+ 	 * Disable WFI/WFE on XXX_OPTION
+ 	 */
+-	for (i = 0; i < ARRAY_SIZE(exynos5_list_diable_wfi_wfe); i++) {
+-		tmp = pmu_raw_readl(exynos5_list_diable_wfi_wfe[i]);
++	for (i = 0; i < ARRAY_SIZE(exynos5_list_disable_wfi_wfe); i++) {
++		tmp = pmu_raw_readl(exynos5_list_disable_wfi_wfe[i]);
+ 		tmp &= ~(EXYNOS5_OPTION_USE_STANDBYWFE |
+ 			 EXYNOS5_OPTION_USE_STANDBYWFI);
+-		pmu_raw_writel(tmp, exynos5_list_diable_wfi_wfe[i]);
++		pmu_raw_writel(tmp, exynos5_list_disable_wfi_wfe[i]);
+ 	}
  }
-diff --git a/include/linux/soc/samsung/exynos-pmu.h b/include/linux/soc/samsung/exynos-pmu.h
-index a2ab0d5..d2f4083 100644
---- a/include/linux/soc/samsung/exynos-pmu.h
-+++ b/include/linux/soc/samsung/exynos-pmu.h
-@@ -19,6 +19,11 @@ enum sys_powerdown {
- 	NUM_SYS_POWERDOWN,
- };
  
-+struct pmu_dev_client_data {
-+	void __iomem *mem_base_addr;
-+	unsigned int mem_size;
-+};
-+
- extern void exynos_sys_powerdown_conf(enum sys_powerdown mode);
- 
- #endif /* __EXYNOS_PMU_H */
 -- 
 1.7.9.5
