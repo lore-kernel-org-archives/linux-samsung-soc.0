@@ -1,170 +1,76 @@
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH v2 1/6] ARM: EXYNOS: Move pmu specific header files under
- "linux/soc/samsung"
-Date: Sat, 08 Nov 2014 18:46:36 +0530
-Message-ID: <1415452601-13078-2-git-send-email-amit.daniel@samsung.com>
-References: <1415452601-13078-1-git-send-email-amit.daniel@samsung.com>
+From: Pankaj Dubey <dubepankaj1980@gmail.com>
+Subject: Re: [PATCH v2 3/6] drivers: soc: samsung: Fix a spelling mistake
+Date: Sat, 8 Nov 2014 21:26:33 +0530
+Message-ID: <CAGcde9Fctk+XBxLV4VbevU4W7EYW+-it+T3qn3wg=v=b5ykJzA@mail.gmail.com>
+References: <1415452601-13078-1-git-send-email-amit.daniel@samsung.com> <1415452601-13078-4-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1415452601-13078-1-git-send-email-amit.daniel@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>, linux-kernel@vger.kernel.org, Amit Daniel Kachhap <amit.daniel@samsung.com>, s.nawrocki@samsung.com, lee.jones@linaro.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:64161 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753793AbaKHP4y (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 8 Nov 2014 10:56:54 -0500
+In-Reply-To: <1415452601-13078-4-git-send-email-amit.daniel@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, lee.jones@linaro.org, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com
 
-Moving Exynos PMU specific header file into "include/linux/soc/samsung"
-thus updated affected files under "mach-exynos" to use new location of
-these header files.
+Hi Amit,
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
----
- arch/arm/mach-exynos/exynos.c                      |    2 +-
- arch/arm/mach-exynos/mcpm-exynos.c                 |    2 +-
- arch/arm/mach-exynos/platsmp.c                     |    2 +-
- arch/arm/mach-exynos/pm.c                          |    4 ++--
- arch/arm/mach-exynos/pmu.c                         |    5 ++---
- arch/arm/mach-exynos/suspend.c                     |    3 ++-
- .../linux/soc/samsung}/exynos-pmu.h                |    0
- .../linux/soc/samsung/exynos-regs-pmu.h            |    0
- 8 files changed, 9 insertions(+), 9 deletions(-)
- rename {arch/arm/mach-exynos => include/linux/soc/samsung}/exynos-pmu.h (100%)
- rename arch/arm/mach-exynos/regs-pmu.h => include/linux/soc/samsung/exynos-regs-pmu.h (100%)
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index a487e59..1be9e82 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -20,6 +20,7 @@
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
- #include <linux/irqchip.h>
-+#include <linux/soc/samsung/exynos-regs-pmu.h>
- 
- #include <asm/cacheflush.h>
- #include <asm/hardware/cache-l2x0.h>
-@@ -29,7 +30,6 @@
- 
- #include "common.h"
- #include "mfc.h"
--#include "regs-pmu.h"
- #include "regs-sys.h"
- 
- void __iomem *pmu_base_addr;
-diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
-index dc9a764..f283bfd 100644
---- a/arch/arm/mach-exynos/mcpm-exynos.c
-+++ b/arch/arm/mach-exynos/mcpm-exynos.c
-@@ -15,12 +15,12 @@
- #include <linux/delay.h>
- #include <linux/io.h>
- #include <linux/of_address.h>
-+#include <linux/soc/samsung/exynos-regs-pmu.h>
- 
- #include <asm/cputype.h>
- #include <asm/cp15.h>
- #include <asm/mcpm.h>
- 
--#include "regs-pmu.h"
- #include "common.h"
- 
- #define EXYNOS5420_CPUS_PER_CLUSTER	4
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index adb36a8..a4c9d39 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -20,6 +20,7 @@
- #include <linux/smp.h>
- #include <linux/io.h>
- #include <linux/of_address.h>
-+#include <linux/soc/samsung/exynos-regs-pmu.h>
- 
- #include <asm/cacheflush.h>
- #include <asm/cp15.h>
-@@ -30,7 +31,6 @@
- #include <mach/map.h>
- 
- #include "common.h"
--#include "regs-pmu.h"
- 
- extern void exynos4_secondary_startup(void);
- 
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 86f3ecd..1a981e0 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -18,6 +18,8 @@
- #include <linux/cpu_pm.h>
- #include <linux/io.h>
- #include <linux/err.h>
-+#include <linux/soc/samsung/exynos-regs-pmu.h>
-+#include <linux/soc/samsung/exynos-pmu.h>
- 
- #include <asm/firmware.h>
- #include <asm/smp_scu.h>
-@@ -26,8 +28,6 @@
- #include <plat/pm-common.h>
- 
- #include "common.h"
--#include "exynos-pmu.h"
--#include "regs-pmu.h"
- #include "regs-sys.h"
- 
- static inline void __iomem *exynos_boot_vector_addr(void)
-diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-index 1993e08..35774e8 100644
---- a/arch/arm/mach-exynos/pmu.c
-+++ b/arch/arm/mach-exynos/pmu.c
-@@ -12,9 +12,8 @@
- #include <linux/io.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
--
--#include "exynos-pmu.h"
--#include "regs-pmu.h"
-+#include <linux/soc/samsung/exynos-regs-pmu.h>
-+#include <linux/soc/samsung/exynos-pmu.h>
- 
- #define PMU_TABLE_END	(-1U)
- 
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index f5d9773..6dba9bf 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -20,6 +20,8 @@
- #include <linux/io.h>
- #include <linux/irqchip/arm-gic.h>
- #include <linux/err.h>
-+#include <linux/soc/samsung/exynos-regs-pmu.h>
-+#include <linux/soc/samsung/exynos-pmu.h>
- 
- #include <asm/cacheflush.h>
- #include <asm/hardware/cache-l2x0.h>
-@@ -31,7 +33,6 @@
- #include <plat/regs-srom.h>
- 
- #include "common.h"
--#include "regs-pmu.h"
- #include "regs-sys.h"
- 
- #define S5P_CHECK_SLEEP 0x00000BAD
-diff --git a/arch/arm/mach-exynos/exynos-pmu.h b/include/linux/soc/samsung/exynos-pmu.h
-similarity index 100%
-rename from arch/arm/mach-exynos/exynos-pmu.h
-rename to include/linux/soc/samsung/exynos-pmu.h
-diff --git a/arch/arm/mach-exynos/regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
-similarity index 100%
-rename from arch/arm/mach-exynos/regs-pmu.h
-rename to include/linux/soc/samsung/exynos-regs-pmu.h
--- 
-1.7.9.5
+On 8 November 2014 18:46, Amit Daniel Kachhap <amit.daniel@samsung.com> wrote:
+> This patches changes the name of exynos5_list_diable_wfi_wfe to
+> exynos5_list_disable_wfi_wfe.
+>
+
+Same change I have posted earlier [1] and Kukjin has taken same in his for-next.
+
+1: http://www.spinics.net/lists/arm-kernel/msg372742.html
+
+Thanks,
+Pankaj Dubey
+
+
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+> ---
+>  drivers/soc/samsung/exynos-pmu.c |    8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
+> index 35774e8..3832cda 100644
+> --- a/drivers/soc/samsung/exynos-pmu.c
+> +++ b/drivers/soc/samsung/exynos-pmu.c
+> @@ -361,7 +361,7 @@ static unsigned int const exynos5_list_both_cnt_feed[] = {
+>         EXYNOS5_TOP_PWR_SYSMEM_OPTION,
+>  };
+>
+> -static unsigned int const exynos5_list_diable_wfi_wfe[] = {
+> +static unsigned int const exynos5_list_disable_wfi_wfe[] = {
+>         EXYNOS5_ARM_CORE1_OPTION,
+>         EXYNOS5_FSYS_ARM_OPTION,
+>         EXYNOS5_ISP_ARM_OPTION,
+> @@ -392,11 +392,11 @@ static void exynos5_powerdown_conf(enum sys_powerdown mode)
+>         /*
+>          * Disable WFI/WFE on XXX_OPTION
+>          */
+> -       for (i = 0; i < ARRAY_SIZE(exynos5_list_diable_wfi_wfe); i++) {
+> -               tmp = pmu_raw_readl(exynos5_list_diable_wfi_wfe[i]);
+> +       for (i = 0; i < ARRAY_SIZE(exynos5_list_disable_wfi_wfe); i++) {
+> +               tmp = pmu_raw_readl(exynos5_list_disable_wfi_wfe[i]);
+>                 tmp &= ~(EXYNOS5_OPTION_USE_STANDBYWFE |
+>                          EXYNOS5_OPTION_USE_STANDBYWFI);
+> -               pmu_raw_writel(tmp, exynos5_list_diable_wfi_wfe[i]);
+> +               pmu_raw_writel(tmp, exynos5_list_disable_wfi_wfe[i]);
+>         }
+>  }
+>
+> --
+> 1.7.9.5
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
