@@ -1,74 +1,87 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [GIT PULL 2/3 v2] 1st Round of Samsung PM updates for v3.19
-Date: Sun, 09 Nov 2014 13:45:44 +0900
-Message-ID: <008201cffbd8$05e03080$11a09180$@kernel.org>
-References: <021801cff253$0374fe40$0a5efac0$@samsung.com>
- <20141104203502.GA3851@quad.lixom.net>
- <015101cff88f$e5790880$b06b1980$@kernel.org>
- <20141109000500.GA11947@quad.lixom.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Samsung pinctrl patches for v3.19
+Date: Sun,  9 Nov 2014 23:25:50 +0900
+Message-ID: <1415543150-3493-1-git-send-email-tomasz.figa@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:35433 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751263AbaKIEpq (ORCPT
+Received: from mail-ie0-f176.google.com ([209.85.223.176]:62795 "EHLO
+	mail-ie0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751728AbaKIOZ7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 8 Nov 2014 23:45:46 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NER00KED988DQ90@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sun, 09 Nov 2014 13:45:45 +0900 (KST)
-In-reply-to: <20141109000500.GA11947@quad.lixom.net>
-Content-language: ko
+	Sun, 9 Nov 2014 09:25:59 -0500
+Received: by mail-ie0-f176.google.com with SMTP id rd18so7588949iec.7
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Nov 2014 06:25:58 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>, 'Kukjin Kim' <kgene@kernel.org>
-Cc: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>
 
-Olof Johansson wrote:
-> 
-> On Wed, Nov 05, 2014 at 09:31:49AM +0900, Kukjin Kim wrote:
-> > Olof Johansson wrote:
-> > > On Tue, Oct 28, 2014 at 11:00:57AM +0900, Kukjin Kim wrote:
-> > > > Hi,
-> > > >
-> > Hi,
-> >
-> > > > I'm sending new pull-request for tags/samsung-pm-v2 instead of tags/samsung-pm.
-> > > > Note that just added "fix build with ARM_CPU_SUSPEND=n" from Arnd, please pull.
-> > > >
-> > > > Thanks,
-> > > > Kukjin
-> > >
-> > > Kukjin,
-> > >
-> > > The history here is somewhat odd. You've merged in cleanup and dt,
-> > > and two merges of pm (one with just the extra fix from Arnd). Are the
-> > > merges needed just to avoid merge conflicts? If so, we can resolve that
-> > > when we merge here, that's not a problem.
-> > >
-> > Oops, probably I did 'checkout for-next' in my tree when I tagged
-> > tags/samsung-pm-v2 :(
-> >
-> > > If it's needed because pm doesn't work without the dt branch also being
-> > > merged in, then this is not sufficient since when bisecting, you might get
-> > > only the pm branch contents and not the dt contents in some circumstances.
-> > >
-> > > So, please confirm which of the cases it is, and resubmit just the bare
-> > > pm branch if there are no dependencies.
-> > >
-> > Can you please merge branch v3.19-next/pm-samsung-2 instead?
-> > If you don't want to merge just branch, I'll re-send with new tag.
-> >
-> > Sorry for the inconvenience.
-> 
-> Hi,
-> 
-> I've merged the branch into next/soc now.
-> 
-Thank you so much :)
+Hi Linus,
 
-- Kukjin
+Please consider the following pull request containing queued changes for
+pinctrl-samsung driver. I'm sorry for all the delays in handling this. Things
+should get better from now on, though.
+
+Best regards,
+Tomasz
+
+-----------------------------------------------------------------
+
+The following changes since commit 6e08d6bbebebcf70f982d7190c4b6dc456cedd57:
+
+  pinctrl: Add Intel Cherryview/Braswell pin controller support (2014-11-04 11:21:02 +0100)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tfiga/samsung-pinctrl.git tags/for_3.19/samsung-pinctrl
+
+for you to fetch changes up to 2891ba2906b6d2fd453042f410a11e6fc3edc37d:
+
+  pinctrl: exynos: Add support for Exynos4415 (2014-11-09 22:28:07 +0900)
+
+----------------------------------------------------------------
+Samsung pinctrl patches for v3.19
+
+1) pinctrl-samsung data structure clean-up
+
+8100cf4 pinctrl: samsung: Separate per-bank init and runtime data
+1bf00d7 pinctrl: samsung: Constify samsung_pin_ctrl struct
+94ce944 pinctrl: samsung: Constify samsung_pin_bank_type struct
+e06deff pinctrl: samsung: Drop unused label field in samsung_pin_ctrl struct
+8799327 pinctrl: samsung: Make samsung_pinctrl_get_soc_data use ERR_PTR()
+
+2) pinctrl-samsung Exynos7 support
+
+50cea0c pinctrl: exynos: Add initial driver data for Exynos7
+14c255d pinctrl: exynos: Add irq_chip instance for Exynos7 wakeup interrupts
+6f5e41b pinctrl: exynos: Consolidate irq domain callbacks
+0d3d30d pinctrl: exynos: Generalize the eint16_31 demux code
+
+3) pinctrl-samsung Exynos4415 support
+
+2891ba2 pinctrl: exynos: Add support for Exynos4415
+
+----------------------------------------------------------------
+Abhilash Kesavan (3):
+      pinctrl: exynos: Generalize the eint16_31 demux code
+      pinctrl: exynos: Consolidate irq domain callbacks
+      pinctrl: exynos: Add irq_chip instance for Exynos7 wakeup interrupts
+
+Naveen Krishna Ch (1):
+      pinctrl: exynos: Add initial driver data for Exynos7
+
+Tomasz Figa (6):
+      pinctrl: samsung: Make samsung_pinctrl_get_soc_data use ERR_PTR()
+      pinctrl: samsung: Drop unused label field in samsung_pin_ctrl struct
+      pinctrl: samsung: Constify samsung_pin_bank_type struct
+      pinctrl: samsung: Constify samsung_pin_ctrl struct
+      pinctrl: samsung: Separate per-bank init and runtime data
+      pinctrl: exynos: Add support for Exynos4415
+
+ .../bindings/pinctrl/samsung-pinctrl.txt           |   3 +
+ drivers/pinctrl/samsung/pinctrl-exynos.c           | 376 +++++++++++++++------
+ drivers/pinctrl/samsung/pinctrl-exynos.h           |   3 +
+ drivers/pinctrl/samsung/pinctrl-s3c24xx.c          |  30 +-
+ drivers/pinctrl/samsung/pinctrl-s3c64xx.c          |  31 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.c          | 131 +++----
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |  82 +++--
+ 7 files changed, 435 insertions(+), 221 deletions(-)
