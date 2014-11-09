@@ -1,397 +1,64 @@
 From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH v7 5/7] arm64: dts: Add nodes for mmc, i2c, rtc, watchdog, adc on Exynos7
-Date: Sun,  9 Nov 2014 09:50:32 +0530
-Message-ID: <1415506834-8180-6-git-send-email-a.kesavan@samsung.com>
+Subject: [PATCH v7 6/7] arm64: exynos7: Enable ARMv8 based Exynos7 (SoC) support
+Date: Sun,  9 Nov 2014 09:50:33 +0530
+Message-ID: <1415506834-8180-7-git-send-email-a.kesavan@samsung.com>
 References: <1415506834-8180-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f182.google.com ([209.85.192.182]:52745 "EHLO
-	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751263AbaKIEVL (ORCPT
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:62616 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751263AbaKIEVQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 8 Nov 2014 23:21:11 -0500
+	Sat, 8 Nov 2014 23:21:16 -0500
 In-Reply-To: <1415506834-8180-1-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, catalin.marinas@arm.com, robh@kernel.org, devicetree@vger.kernel.org, olof@lixom.net, arnd@arndb.de, tomasz.figa@gmail.com, kesavan.abhilash@gmail.com, lorenzo.pieralisi@arm.com
 
-Add nodes for 3 mmc channels, 12 i2c channels, rtc, watchdog and adc
-on Exynos7.
+From: Alim Akhtar <alim.akhtar@samsung.com>
 
+This patch adds the necessary Kconfig entries to enable
+support for the ARMv8 based Exynos7 SoC. It also enables
+RTC, WDT and Pinctrl for Exynos7.
+
+Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
 Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
 Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Reviewed-by: Thomas Abraham <thomas.ab@samsung.com>
+Tested-by: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
 ---
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts |  45 ++++
- arch/arm64/boot/dts/exynos/exynos7.dtsi         | 276 ++++++++++++++++++++++++
- 2 files changed, 321 insertions(+)
+ arch/arm64/Kconfig | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-index e2c8283..5424cc4 100644
---- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-@@ -18,6 +18,8 @@
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index 66b0b51..2b5e0b0 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -143,6 +143,23 @@ source "kernel/Kconfig.freezer"
  
- 	aliases {
- 		serial0 = &serial_2;
-+		mshc0 = &mmc_0;
-+		mshc2 = &mmc_2;
- 	};
+ menu "Platform selection"
  
- 	chosen {
-@@ -37,3 +39,46 @@
- &serial_2 {
- 	status = "okay";
- };
++config ARCH_EXYNOS
++	bool
++	help
++	  This enables support for Samsung Exynos SoC family
 +
-+&rtc {
-+	status = "okay";
-+};
++config ARCH_EXYNOS7
++	bool "ARMv8 based Samsung Exynos7"
++	select ARCH_EXYNOS
++	select COMMON_CLK_SAMSUNG
++	select HAVE_S3C2410_WATCHDOG if WATCHDOG
++	select HAVE_S3C_RTC if RTC_CLASS
++	select PINCTRL
++	select PINCTRL_EXYNOS
 +
-+&watchdog {
-+	status = "okay";
-+};
++	help
++	  This enables support for Samsung Exynos7 SoC family
 +
-+&adc {
-+	status = "okay";
-+};
-+
-+&mmc_0 {
-+	status = "okay";
-+	num-slots = <1>;
-+	broken-cd;
-+	cap-mmc-highspeed;
-+	non-removable;
-+	card-detect-delay = <200>;
-+	clock-frequency = <800000000>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <0 2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_qrdy &sd0_bus1 &sd0_bus4 &sd0_bus8>;
-+	bus-width = <8>;
-+};
-+
-+&mmc_2 {
-+	status = "okay";
-+	num-slots = <1>;
-+	cap-sd-highspeed;
-+	card-detect-delay = <200>;
-+	clock-frequency = <400000000>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <2 3>;
-+	samsung,dw-mshc-ddr-timing = <1 2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus1 &sd2_bus4>;
-+	bus-width = <4>;
-+	disable-wp;
-+};
-diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-index 8aab9f9..d7a37c3 100644
---- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-+++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-@@ -113,6 +113,27 @@
- 				      "dout_sclk_mfc_pll";
- 		};
- 
-+		clock_top1: clock-controller@105e0000 {
-+			compatible = "samsung,exynos7-clock-top1";
-+			reg = <0x105e0000 0xb000>;
-+			#clock-cells = <1>;
-+			clocks = <&fin_pll>, <&clock_topc DOUT_SCLK_BUS0_PLL>,
-+				 <&clock_topc DOUT_SCLK_BUS1_PLL>,
-+				 <&clock_topc DOUT_SCLK_CC_PLL>,
-+				 <&clock_topc DOUT_SCLK_MFC_PLL>;
-+			clock-names = "fin_pll", "dout_sclk_bus0_pll",
-+				      "dout_sclk_bus1_pll", "dout_sclk_cc_pll",
-+				      "dout_sclk_mfc_pll";
-+		};
-+
-+		clock_ccore: clock-controller@105b0000 {
-+			compatible = "samsung,exynos7-clock-ccore";
-+			reg = <0x105b0000 0xd00>;
-+			#clock-cells = <1>;
-+			clocks = <&fin_pll>, <&clock_topc DOUT_ACLK_CCORE_133>;
-+			clock-names = "fin_pll", "dout_aclk_ccore_133";
-+		};
-+
- 		clock_peric0: clock-controller@13610000 {
- 			compatible = "samsung,exynos7-clock-peric0";
- 			reg = <0x13610000 0xd00>;
-@@ -143,6 +164,27 @@
- 			clock-names = "fin_pll", "dout_aclk_peris_66";
- 		};
- 
-+		clock_fsys0: clock-controller@10e90000 {
-+			compatible = "samsung,exynos7-clock-fsys0";
-+			reg = <0x10e90000 0xd00>;
-+			#clock-cells = <1>;
-+			clocks = <&fin_pll>, <&clock_top1 DOUT_ACLK_FSYS0_200>,
-+				 <&clock_top1 DOUT_SCLK_MMC2>;
-+			clock-names = "fin_pll", "dout_aclk_fsys0_200",
-+				      "dout_sclk_mmc2";
-+		};
-+
-+		clock_fsys1: clock-controller@156e0000 {
-+			compatible = "samsung,exynos7-clock-fsys1";
-+			reg = <0x156e0000 0xd00>;
-+			#clock-cells = <1>;
-+			clocks = <&fin_pll>, <&clock_top1 DOUT_ACLK_FSYS1_200>,
-+				 <&clock_top1 DOUT_SCLK_MMC0>,
-+				 <&clock_top1 DOUT_SCLK_MMC1>;
-+			clock-names = "fin_pll", "dout_aclk_fsys1_200",
-+				      "dout_sclk_mmc0", "dout_sclk_mmc1";
-+		};
-+
- 		serial_0: serial@13630000 {
- 			compatible = "samsung,exynos4210-uart";
- 			reg = <0x13630000 0x100>;
-@@ -236,6 +278,162 @@
- 			interrupts = <0 203 0>;
- 		};
- 
-+		hsi2c_0: hsi2c@13640000 {
-+			compatible = "samsung,exynos7-hsi2c";
-+			reg = <0x13640000 0x1000>;
-+			interrupts = <0 441 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&hs_i2c0_bus>;
-+			clocks = <&clock_peric0 PCLK_HSI2C0>;
-+			clock-names = "hsi2c";
-+			status = "disabled";
-+		};
-+
-+		hsi2c_1: hsi2c@13650000 {
-+			compatible = "samsung,exynos7-hsi2c";
-+			reg = <0x13650000 0x1000>;
-+			interrupts = <0 442 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&hs_i2c1_bus>;
-+			clocks = <&clock_peric0 PCLK_HSI2C1>;
-+			clock-names = "hsi2c";
-+			status = "disabled";
-+		};
-+
-+		hsi2c_2: hsi2c@14e60000 {
-+			compatible = "samsung,exynos7-hsi2c";
-+			reg = <0x14e60000 0x1000>;
-+			interrupts = <0 459 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&hs_i2c2_bus>;
-+			clocks = <&clock_peric1 PCLK_HSI2C2>;
-+			clock-names = "hsi2c";
-+			status = "disabled";
-+		};
-+
-+		hsi2c_3: hsi2c@14e70000 {
-+			compatible = "samsung,exynos7-hsi2c";
-+			reg = <0x14e70000 0x1000>;
-+			interrupts = <0 460 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&hs_i2c3_bus>;
-+			clocks = <&clock_peric1 PCLK_HSI2C3>;
-+			clock-names = "hsi2c";
-+			status = "disabled";
-+		};
-+
-+		hsi2c_4: hsi2c@13660000 {
-+			compatible = "samsung,exynos7-hsi2c";
-+			reg = <0x13660000 0x1000>;
-+			interrupts = <0 443 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&hs_i2c4_bus>;
-+			clocks = <&clock_peric0 PCLK_HSI2C4>;
-+			clock-names = "hsi2c";
-+			status = "disabled";
-+		};
-+
-+		hsi2c_5: hsi2c@13670000 {
-+			compatible = "samsung,exynos7-hsi2c";
-+			reg = <0x13670000 0x1000>;
-+			interrupts = <0 444 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&hs_i2c5_bus>;
-+			clocks = <&clock_peric0 PCLK_HSI2C5>;
-+			clock-names = "hsi2c";
-+			status = "disabled";
-+		};
-+
-+		hsi2c_6: hsi2c@14e00000 {
-+			compatible = "samsung,exynos7-hsi2c";
-+			reg = <0x14e00000 0x1000>;
-+			interrupts = <0 461 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&hs_i2c6_bus>;
-+			clocks = <&clock_peric1 PCLK_HSI2C6>;
-+			clock-names = "hsi2c";
-+			status = "disabled";
-+		};
-+
-+		hsi2c_7: hsi2c@13e10000 {
-+			compatible = "samsung,exynos7-hsi2c";
-+			reg = <0x13e10000 0x1000>;
-+			interrupts = <0 462 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&hs_i2c7_bus>;
-+			clocks = <&clock_peric1 PCLK_HSI2C7>;
-+			clock-names = "hsi2c";
-+			status = "disabled";
-+		};
-+
-+		hsi2c_8: hsi2c@14e20000 {
-+			compatible = "samsung,exynos7-hsi2c";
-+			reg = <0x14e20000 0x1000>;
-+			interrupts = <0 463 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&hs_i2c8_bus>;
-+			clocks = <&clock_peric1 PCLK_HSI2C8>;
-+			clock-names = "hsi2c";
-+			status = "disabled";
-+		};
-+
-+		hsi2c_9: hsi2c@13680000 {
-+			compatible = "samsung,exynos7-hsi2c";
-+			reg = <0x13680000 0x1000>;
-+			interrupts = <0 445 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&hs_i2c9_bus>;
-+			clocks = <&clock_peric0 PCLK_HSI2C9>;
-+			clock-names = "hsi2c";
-+			status = "disabled";
-+		};
-+
-+		hsi2c_10: hsi2c@13690000 {
-+			compatible = "samsung,exynos7-hsi2c";
-+			reg = <0x13690000 0x1000>;
-+			interrupts = <0 446 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&hs_i2c10_bus>;
-+			clocks = <&clock_peric0 PCLK_HSI2C10>;
-+			clock-names = "hsi2c";
-+			status = "disabled";
-+		};
-+
-+		hsi2c_11: hsi2c@136a0000 {
-+			compatible = "samsung,exynos7-hsi2c";
-+			reg = <0x136a0000 0x1000>;
-+			interrupts = <0 447 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&hs_i2c11_bus>;
-+			clocks = <&clock_peric0 PCLK_HSI2C11>;
-+			clock-names = "hsi2c";
-+			status = "disabled";
-+		};
-+
- 		timer {
- 			compatible = "arm,armv8-timer";
- 			interrupts = <1 13 0xff01>,
-@@ -248,6 +446,84 @@
- 			compatible = "samsung,exynos7-pmu", "syscon";
- 			reg = <0x105c0000 0x5000>;
- 		};
-+
-+		rtc: rtc@10590000 {
-+			compatible = "samsung,s3c6410-rtc";
-+			reg = <0x10590000 0x100>;
-+			interrupts = <0 355 0>, <0 356 0>;
-+			clocks = <&clock_ccore PCLK_RTC>;
-+			clock-names = "rtc";
-+			status = "disabled";
-+		};
-+
-+		watchdog: watchdog@101d0000 {
-+			compatible = "samsung,exynos7-wdt";
-+			reg = <0x101d0000 0x100>;
-+			interrupts = <0 110 0>;
-+			clocks = <&clock_peris PCLK_WDT>;
-+			clock-names = "watchdog";
-+			samsung,syscon-phandle = <&pmu_system_controller>;
-+			status = "disabled";
-+		};
-+
-+		mmc_0: mmc@15740000 {
-+			compatible = "samsung,exynos7-dw-mshc-smu";
-+			interrupts = <0 201 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x15740000 0x2000>;
-+			clocks = <&clock_fsys1 ACLK_MMC0>,
-+				 <&clock_top1 CLK_SCLK_MMC0>;
-+			clock-names = "biu", "ciu";
-+			fifo-depth = <0x40>;
-+			status = "disabled";
-+		};
-+
-+		mmc_1: mmc@15750000 {
-+			compatible = "samsung,exynos7-dw-mshc";
-+			interrupts = <0 202 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x15750000 0x2000>;
-+			clocks = <&clock_fsys1 ACLK_MMC1>,
-+				 <&clock_top1 CLK_SCLK_MMC1>;
-+			clock-names = "biu", "ciu";
-+			fifo-depth = <0x40>;
-+			status = "disabled";
-+		};
-+
-+		mmc_2: mmc@15560000 {
-+			compatible = "samsung,exynos7-dw-mshc-smu";
-+			interrupts = <0 216 0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0x15560000 0x2000>;
-+			clocks = <&clock_fsys0 ACLK_MMC2>,
-+				 <&clock_top1 CLK_SCLK_MMC2>;
-+			clock-names = "biu", "ciu";
-+			fifo-depth = <0x40>;
-+			status = "disabled";
-+		};
-+
-+		adc: adc@13620000 {
-+			compatible = "samsung,exynos7-adc";
-+			reg = <0x13620000 0x100>;
-+			interrupts = <0 448 0>;
-+			clocks = <&clock_peric0 PCLK_ADCIF>;
-+			clock-names = "adc";
-+			#io-channel-cells = <1>;
-+			io-channel-ranges;
-+			status = "disabled";
-+		};
-+
-+		pwm: pwm@136c0000 {
-+			compatible = "samsung,exynos4210-pwm";
-+			reg = <0x136c0000 0x100>;
-+			samsung,pwm-outputs = <0>, <1>, <2>, <3>;
-+			#pwm-cells = <3>;
-+			clocks = <&clock_peric0 PCLK_PWM>;
-+			clock-names = "timers";
-+		};
- 	};
- };
- 
+ config ARCH_THUNDER
+ 	bool "Cavium Inc. Thunder SoC Family"
+ 	help
 -- 
 2.1.0
