@@ -1,55 +1,65 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] i2c: exynos5: use proper errno for timeout
-Date: Sat, 8 Nov 2014 18:55:02 +0100
-Message-ID: <20141108175501.GC4900@katana>
-References: <1412337438-8223-1-git-send-email-wsa@the-dreams.de>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 2/3 v2] 1st Round of Samsung PM updates for v3.19
+Date: Sat, 8 Nov 2014 16:05:00 -0800
+Message-ID: <20141109000500.GA11947@quad.lixom.net>
+References: <021801cff253$0374fe40$0a5efac0$@samsung.com>
+ <20141104203502.GA3851@quad.lixom.net>
+ <015101cff88f$e5790880$b06b1980$@kernel.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="iFRdW5/EC4oqxDHL"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from sauhun.de ([89.238.76.85]:36918 "EHLO pokefinder.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753864AbaKHRxv (ORCPT
+Received: from mail-pd0-f180.google.com ([209.85.192.180]:40620 "EHLO
+	mail-pd0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752682AbaKIAFD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 8 Nov 2014 12:53:51 -0500
+	Sat, 8 Nov 2014 19:05:03 -0500
+Received: by mail-pd0-f180.google.com with SMTP id ft15so5514511pdb.39
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 08 Nov 2014 16:05:02 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <1412337438-8223-1-git-send-email-wsa@the-dreams.de>
+In-Reply-To: <015101cff88f$e5790880$b06b1980$@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-i2c@vger.kernel.org
-Cc: naveenkrishna.ch@gmail.com, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, linux-samsung-soc@vger.kernel.org, arm@kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kevin Hilman' <khilman@linaro.org>, linux-arm-kernel@lists.infradead.org
+
+On Wed, Nov 05, 2014 at 09:31:49AM +0900, Kukjin Kim wrote:
+> Olof Johansson wrote:
+> > On Tue, Oct 28, 2014 at 11:00:57AM +0900, Kukjin Kim wrote:
+> > > Hi,
+> > >
+> Hi,
+> 
+> > > I'm sending new pull-request for tags/samsung-pm-v2 instead of tags/samsung-pm.
+> > > Note that just added "fix build with ARM_CPU_SUSPEND=n" from Arnd, please pull.
+> > >
+> > > Thanks,
+> > > Kukjin
+> > 
+> > Kukjin,
+> > 
+> > The history here is somewhat odd. You've merged in cleanup and dt,
+> > and two merges of pm (one with just the extra fix from Arnd). Are the
+> > merges needed just to avoid merge conflicts? If so, we can resolve that
+> > when we merge here, that's not a problem.
+> > 
+> Oops, probably I did 'checkout for-next' in my tree when I tagged
+> tags/samsung-pm-v2 :(
+> 
+> > If it's needed because pm doesn't work without the dt branch also being
+> > merged in, then this is not sufficient since when bisecting, you might get
+> > only the pm branch contents and not the dt contents in some circumstances.
+> > 
+> > So, please confirm which of the cases it is, and resubmit just the bare
+> > pm branch if there are no dependencies.
+> > 
+> Can you please merge branch v3.19-next/pm-samsung-2 instead?
+> If you don't want to merge just branch, I'll re-send with new tag.
+> 
+> Sorry for the inconvenience.
+
+Hi,
+
+I've merged the branch into next/soc now.
 
 
---iFRdW5/EC4oqxDHL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Oct 03, 2014 at 01:57:14PM +0200, Wolfram Sang wrote:
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-
-Applied to for-next, thanks!
-
-
---iFRdW5/EC4oqxDHL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUXlj1AAoJEBQN5MwUoCm2390QAJfwekoG7AI5xcM8hjtK616n
-KIHKV+C3mnGeHOdvabn0nfCV2ErSyLlwHX4qdP+iV7Bfk2xlhS+5jr/oukmNycq3
-FbO245Fga29YIXorTcfOb1f8/rBv5h9IhQMSj5fOboyWnBZT6kCpSgJuZRZM260y
-0yWuEiaDOALoebpGRGx1bY2xPZGH/ulqWHpjFOinob947lrIsMMZHBusrFv3/qxc
-Wipyi6og3actWFTV8QV2lOAggzaet21IOiI4c6c5kN+aFPsXn3UUDdGtS7lmM0qu
-bWi1/GNJ4zzMOuXO/Iz/4f7j+bPwcWIPPcQCfrXQpPSiqUpReK5JGCcifApujuoO
-d8ZFLz9WN20YKY7Gc2rruWTFXYZSFTYPQ7UE0e1W8NR1b1ZarBQXcMS9qtRLwY3m
-XswJYcjSeb037uhMEBtdruWuQD56GgfRE0MsZfbQbM9lRoXbfdJytEgTwtKI8lFk
-741M33Z3RstNWKWBXf3i2l8w4INRphCO0QZXyshYpaPRqxBta2KPKOlcQcREnceH
-05Kdyg/ycU4KWqx83nsE6I6zaDN1D/D6cAEwOp9JOT8+Vd5UKFSgcWrJHng25BwX
-PgrdyHJTMagSBXvpkAR0sLA7aPK1grVEmKNSaJBQCQOz/BKmOmqfBorzX5u+dW7e
-zZKtEMPzzYGjaJ+itmTL
-=SWYk
------END PGP SIGNATURE-----
-
---iFRdW5/EC4oqxDHL--
+-Olof
