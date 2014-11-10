@@ -1,66 +1,58 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH] ARM: exynos_defconfig: disable CONFIG_EXYNOS5420_MCPM; not stable
-Date: Mon, 10 Nov 2014 11:35:23 -0800
-Message-ID: <7hegtaq26c.fsf@deeprootsystems.com>
-References: <1414796382-5447-1-git-send-email-khilman@kernel.org>
-	<000e01cffb39$5ef0a2d0$1cd1e870$@kernel.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] PM / Domains: Fix initial default state of the
+ need_restore flag
+Date: Mon, 10 Nov 2014 19:39:31 +0000
+Message-ID: <20141110193931.GN3815@sirena.org.uk>
+References: <1415366847-4807-1-git-send-email-ulf.hansson@linaro.org>
+ <7hr3xerdw6.fsf@deeprootsystems.com>
+ <20141107215751.GA4439@dtor-ws>
+ <CAPDyKFot-LZjazq190cY3-tawB_-ukdsmrLcD3vtidLvX68FOg@mail.gmail.com>
+ <20141110183224.GA5626@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="PrbR2RMKSe7tzlp9"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:56646 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751203AbaKJTf1 (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57835 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751385AbaKJTlN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Nov 2014 14:35:27 -0500
-Received: by mail-pa0-f41.google.com with SMTP id rd3so8960827pab.0
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Nov 2014 11:35:26 -0800 (PST)
-In-Reply-To: <000e01cffb39$5ef0a2d0$1cd1e870$@kernel.org> (Kukjin Kim's
-	message of "Sat, 08 Nov 2014 18:50:04 +0900")
+	Mon, 10 Nov 2014 14:41:13 -0500
+Content-Disposition: inline
+In-Reply-To: <20141110183224.GA5626@dtor-ws>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Sachin Kamat' <sachin.kamat@samsung.com>, 'Doug Anderson' <dianders@chromium.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Tushar Behera' <tushar.behera@linaro.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaro
 
-Kukjin Kim <kgene@kernel.org> writes:
 
-> Kevin Hilman wrote:
->> 
->> From: Kevin Hilman <khilman@linaro.org>
->> 
->> The option CONFIG_EXYNOS5420_MCPM is causing imprecise external aborts
->> during boot testing, causing various userspace startup failures.
->> 
->> Disable until it has gotten more testing.
->> 
->> Cc: Kukjin Kim <kgene.kim@samsung.com>,
->> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
->> Cc: Sachin Kamat <sachin.kamat@samsung.com>,
->> Cc: Doug Anderson <dianders@chromium.org>,
->> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
->> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
->> Cc: Tushar Behera <tushar.behera@linaro.org>,
->> Cc: stable@vger.kernel.org # v3.17+
->> Signed-off-by: Kevin Hilman <khilman@linaro.org>
->> ---
->> This has been reported by a few people[1], but not investigated or fixed, so it's
->> time to disable this feature until it can be fixed.
->> 
-> Hi Kevin,
->
-> Yeah I agree with your opinion.
->
-> But as you can see my tree, I've queued regarding mcpm patches for 3.19 will
-> be shown in -next in this weekend. 
+--PrbR2RMKSe7tzlp9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Which of the recently queued patches are expected to address the
-imprecise abort issue?  I'd be happy to test them out.  
+On Mon, Nov 10, 2014 at 10:32:24AM -0800, Dmitry Torokhov wrote:
 
-> Anyway let me apply this into -fixes and
-> then let's enable after test its functionality in -next in a couple of days.
+> - I do not see why sirincling platform specific code around i2c, spi,
+>   etc bus code (which is not platform-specific) is OK, but a no-no for
+>   the driver ocre.
 
-Yes, I think this needs to be applied until these aborts are understood
-and fixed.
+sirincling?  In the case of I2C and SPI the buses don't define any sort
+of power management or power domain so any management is going to be
+device or system specific.
 
-Thanks,
+--PrbR2RMKSe7tzlp9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Kevin
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUYRRyAAoJECTWi3JdVIfQSV4H/03djnyX8cEbZgLueUjpEZmq
+/wqWq1iEWdh9gD/kc7TT/44U2f940mDZcArfTw//TQ7TgZ16+ZvOFJ1uGPjVbIy6
+ofXKasafjlgL4UAGDTB6X077vPbPSFT4UimHuIyQ2T1iEJYVV32oIm4EtbNDkoF4
+lP4JzboxWM6JYKMHqmTX17ZJ/F00SDWn6k2dWM0CdYWAGvn44qsPnZKLnnzjWrqh
+9nLXTPHRshoZ7LrgxBpg/NOoTgmCCFyOCkXEXcN6YepAxqFhb9SzIkje8Mvx9dO9
+iwfo3BAi1D0uS+XcDAnpSeYvvOVR/JPfx/luLpT/Cfx7w8MEtgna0RwsXiX7DrI=
+=MpIf
+-----END PGP SIGNATURE-----
+
+--PrbR2RMKSe7tzlp9--
