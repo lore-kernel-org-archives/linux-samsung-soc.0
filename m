@@ -1,58 +1,33 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] PM / Domains: Fix initial default state of the
- need_restore flag
-Date: Mon, 10 Nov 2014 19:39:31 +0000
-Message-ID: <20141110193931.GN3815@sirena.org.uk>
-References: <1415366847-4807-1-git-send-email-ulf.hansson@linaro.org>
- <7hr3xerdw6.fsf@deeprootsystems.com>
- <20141107215751.GA4439@dtor-ws>
- <CAPDyKFot-LZjazq190cY3-tawB_-ukdsmrLcD3vtidLvX68FOg@mail.gmail.com>
- <20141110183224.GA5626@dtor-ws>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH] PM / Domains: Fix initial default state of the need_restore flag
+Date: Mon, 10 Nov 2014 12:33:15 -0800
+Message-ID: <F09FA55F-7246-4E9F-B54D-7CB984E10161@gmail.com>
+References: <1415366847-4807-1-git-send-email-ulf.hansson@linaro.org> <7hr3xerdw6.fsf@deeprootsystems.com> <20141107215751.GA4439@dtor-ws> <CAPDyKFot-LZjazq190cY3-tawB_-ukdsmrLcD3vtidLvX68FOg@mail.gmail.com> <20141110183224.GA5626@dtor-ws> <20141110193931.GN3815@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="PrbR2RMKSe7tzlp9"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:57835 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751385AbaKJTlN (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Nov 2014 14:41:13 -0500
-Content-Disposition: inline
-In-Reply-To: <20141110183224.GA5626@dtor-ws>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Content-Type: text/plain;
+ charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20141110193931.GN3815@sirena.org.uk>
+Sender: linux-pm-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
 Cc: Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaro
+List-Id: linux-samsung-soc@vger.kernel.org
+
+On November 10, 2014 11:39:31 AM PST, Mark Brown <broonie@kernel.org> wrote:
+>On Mon, Nov 10, 2014 at 10:32:24AM -0800, Dmitry Torokhov wrote:
+>
+>> - I do not see why sirincling platform specific code around i2c, spi,
+>>   etc bus code (which is not platform-specific) is OK, but a no-no
+>for
+>>   the driver ocre.
+>
+>sirincling?
+
+Sorry, I was going for "sprinkling" but failed spectacularly.
 
 
---PrbR2RMKSe7tzlp9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks.
 
-On Mon, Nov 10, 2014 at 10:32:24AM -0800, Dmitry Torokhov wrote:
-
-> - I do not see why sirincling platform specific code around i2c, spi,
->   etc bus code (which is not platform-specific) is OK, but a no-no for
->   the driver ocre.
-
-sirincling?  In the case of I2C and SPI the buses don't define any sort
-of power management or power domain so any management is going to be
-device or system specific.
-
---PrbR2RMKSe7tzlp9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUYRRyAAoJECTWi3JdVIfQSV4H/03djnyX8cEbZgLueUjpEZmq
-/wqWq1iEWdh9gD/kc7TT/44U2f940mDZcArfTw//TQ7TgZ16+ZvOFJ1uGPjVbIy6
-ofXKasafjlgL4UAGDTB6X077vPbPSFT4UimHuIyQ2T1iEJYVV32oIm4EtbNDkoF4
-lP4JzboxWM6JYKMHqmTX17ZJ/F00SDWn6k2dWM0CdYWAGvn44qsPnZKLnnzjWrqh
-9nLXTPHRshoZ7LrgxBpg/NOoTgmCCFyOCkXEXcN6YepAxqFhb9SzIkje8Mvx9dO9
-iwfo3BAi1D0uS+XcDAnpSeYvvOVR/JPfx/luLpT/Cfx7w8MEtgna0RwsXiX7DrI=
-=MpIf
------END PGP SIGNATURE-----
-
---PrbR2RMKSe7tzlp9--
+-- 
+Dmitry
