@@ -1,90 +1,50 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: RE: [PATCH v3 0/2] Handle reboot for Exynos SoC via restart_handler
-Date: Mon, 10 Nov 2014 16:58:17 +0530
-Message-ID: <000f01cffcd9$9f5dc860$de195920$@samsung.com>
-References: <1412668401-21837-1-git-send-email-pankaj.dubey@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/4] ASoC: ALC5631: Add device tree binding documentation
+Date: Mon, 10 Nov 2014 13:37:08 +0000
+Message-ID: <20141110133708.GQ3815@sirena.org.uk>
+References: <1415606519-30744-1-git-send-email-krishna.md@samsung.com>
+ <1415606519-30744-2-git-send-email-krishna.md@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="NhX0wRdIbCNyp82h"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:38098 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751837AbaKJL3b (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56238 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752689AbaKJNil (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Nov 2014 06:29:31 -0500
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NET009GAML56PC0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 10 Nov 2014 20:29:29 +0900 (KST)
-In-reply-to: <1412668401-21837-1-git-send-email-pankaj.dubey@samsung.com>
-Content-language: en-us
+	Mon, 10 Nov 2014 08:38:41 -0500
+Content-Disposition: inline
+In-Reply-To: <1415606519-30744-2-git-send-email-krishna.md@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: tomasz.figa@gmail.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, vikas.sajjan@samsung.com, linux@roeck-us.net, naushad@samsung.com
+To: Krishna Mohan Dani <krishna.md@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, kgene.kim@samsung.com
 
-Hi Kukjin,
 
-On Tuesday, October 07, 2014 1:23 PM, Pankaj Dubey wrote:
-> Subject: [PATCH v3 0/2] Handle reboot for Exynos SoC via restart_handler
-> 
-> This patch removes restart hook from machine_desc of Exynos, and moves
-respective
-> code into reboot_notifiers.
-> Exynos5440 handles reboot via clock register so let's register a
-restart_handler in
-> Exynos5440 clock driver.
-> For rest Exynos SoC, reboot is handled via PMU SWRESET register so let's
-register a
-> restart_handler in PMU driver for handling this.
-> 
-> This patch is inspired and dependent on following patch series[1] from
-Geunter
-> Roeck.
-> 
-> Also this patch is dependent on PMU platform driver patch [2] by me, and
-has been
-> prepared on top of it.
-> 
-> [1]: kernel: Add support for kernel restart handler call chain
-> https://lkml.org/lkml/2014/8/19/652
-> 
-> [2]: ARM: Exynos: Convert PMU implementation into a platform driver
-> https://lkml.org/lkml/2014/10/6/89
-> 
-> I have tested reboot functionality on Exynos3250 based board, on
-kgene/for-next as
-> well as linux-next's next-20140925 tag.
-> 
-> Patch v2 and related discussion can be found here
-> http://www.spinics.net/lists/linux-samsung-soc/msg37457.html
-> 
-> Changes since v2:
->   - Used register_restart_handler instead of register_reboot_notifier.
->   - Updated notifier names and commit message accordingly.
-> 
-> Changes since v1:
->   - Addressed review comments from Tomasz Figa. Removed usage of
->     local variables where ever unnecessary.
->   - Make reg_base as global in clk-exynos5440.c file, to avoid
->     iomapping it again in reboot_notifier handler.
-> 
-> Pankaj Dubey (2):
->   clk: samsung: exynos5440: move restart code into clock driver
->   ARM: EXYNOS: PMU: move restart code into pmu driver
-> 
->  arch/arm/mach-exynos/common.h        |    1 -
->  arch/arm/mach-exynos/exynos.c        |   23 -----------------------
->  arch/arm/mach-exynos/pmu.c           |   24
-> ++++++++++++++++++++++++
->  drivers/clk/samsung/clk-exynos5440.c |   29
-> ++++++++++++++++++++++++++++-
->  4 files changed, 52 insertions(+), 25 deletions(-)
-> 
+--NhX0wRdIbCNyp82h
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Will you please look into this patch series? 
+On Mon, Nov 10, 2014 at 01:31:56PM +0530, Krishna Mohan Dani wrote:
+> Document the device tree binding for the ALC5631 codec and update vendor
+> specific prefix for the Realtek.
 
-> --
-> 1.7.9.5
+This driver isn't in mainline, you need to submit the driver.
+
+--NhX0wRdIbCNyp82h
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUYL+DAAoJECTWi3JdVIfQXuYH/24EGqQwlKFtJwy0fRwjpe1M
+y1buHS4Ff3Gom8iflQBFPViH2v6nN74Zr7NqnyQC6FCLOtQjcNR9uDXVjvL+bq1F
+trZhZdPo9GVxaPUiji9qfqIQnU/tYtpFNLKzcT3/f4/Q8cOu3UYxghqqglqEPkFr
+83ns3SwLftsE6L6LMqMKvWASZH19NEkhYXtaNBI/8nDOYcHot0bWT9kP1YHkDnKZ
+d7f/0jcs40TFfUeToamrWu4Accx9+aRhyLHEndInEsXvGNURfh5sAIcFjjHse8Qe
+iWASDTjoxjQfu7t6gx3i9Rz35rWDlJ+XSlnJGirUyJCFhkJACxCdBuQTmwwMpmY=
+=U2ZB
+-----END PGP SIGNATURE-----
+
+--NhX0wRdIbCNyp82h--
