@@ -1,7 +1,7 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH v6 4/5] regulator: of: Pass the regulator description in the match table
-Date: Mon, 10 Nov 2014 14:43:54 +0100
-Message-ID: <1415627035-3088-5-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH v6 1/5] regulator: Document binding for initial and suspend modes
+Date: Mon, 10 Nov 2014 14:43:51 +0100
+Message-ID: <1415627035-3088-2-git-send-email-javier.martinez@collabora.co.uk>
 References: <1415627035-3088-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1415627035-3088-1-git-send-email-javier.martinez@collabora.co.uk>
@@ -10,54 +10,56 @@ To: Mark Brown <broonie@kernel.org>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Drivers can use the of_regulator_match() function to parse the regulator
-init_data from DT. A match table is used to specify the name of the node
-containing the regulators, the device node and to return the init_data
-to the caller.
+Some regulators can run on different operating modes (opmodes). This
+allows systems to choose the most efficient opmode for each regulator.
 
-But also the static regulator descriptor is needed to correctly extract
-some DT properties like the regulator initial and suspend modes. Use the
-match table to pass that information.
+This patch builds on top of (291d761 regulator: Document binding for
+regulator suspend state for PM state) adding a regulator-initial-mode
+DT property to configure at startup the operating mode for regulators
+that support changing its mode during normal operation and a property
+regulator-mode to be used in the regulator-state-[mem/disk] nodes for
+regulators that supports changing its operating mode when the system
+enters in a suspend state.
+
+The set of possible modes that a regulator can operate depends on the
+hardware capabilities so a list of generic operating modes can't be
+provided. Instead, each hardware binding should define the list of
+valid operating modes for the regulators found on that device.
 
 Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 ---
 
-This patch only adds the struct regulator_desc pointer to the struct
-of_regulator_match and does not fill this in all the the drivers to
-keep the series short. A following series will change all regulator
-drivers to be sure that all of them pass it to of_regulator_match().
+Changes in v6:
+ - Remove assumptions about implementation details and don't overspecify.
+   Suggested by Mark Brown.
 
-Changes in v6: None
+Changes in v5: None
 
- drivers/regulator/of_regulator.c       | 3 ++-
- include/linux/regulator/of_regulator.h | 1 +
- 2 files changed, 3 insertions(+), 1 deletion(-)
+Changes in v4: None
 
-diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-index 945486f..cbc1d71 100644
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -221,7 +221,8 @@ int of_regulator_match(struct device *dev, struct device_node *node,
- 				continue;
+Changes in v3:
+ - Rebased on top of regulator suspend voltage series
+
+ Documentation/devicetree/bindings/regulator/regulator.txt | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/regulator/regulator.txt b/Documentation/devicetree/bindings/regulator/regulator.txt
+index 4e7ed76..abb26b5 100644
+--- a/Documentation/devicetree/bindings/regulator/regulator.txt
++++ b/Documentation/devicetree/bindings/regulator/regulator.txt
+@@ -30,6 +30,13 @@ Optional properties:
+ 	- regulator-off-in-suspend: regulator should be off in suspend state.
+ 	- regulator-suspend-microvolt: regulator should be set to this voltage
+ 	  in suspend.
++	- regulator-mode: operating mode in the given suspend state.
++	  The set of possible operating modes depends on the capabilities of
++	  every hardware so the valid modes are documented on each regulator
++	  device tree binding document.
++- regulator-initial-mode: initial operating mode. The set of possible operating
++  modes depends on the capabilities of every hardware so each device binding
++  documentation explains which values the regulator supports.
  
- 			match->init_data =
--				of_get_regulator_init_data(dev, child, NULL);
-+				of_get_regulator_init_data(dev, child,
-+							   match->desc);
- 			if (!match->init_data) {
- 				dev_err(dev,
- 					"failed to parse DT for regulator %s\n",
-diff --git a/include/linux/regulator/of_regulator.h b/include/linux/regulator/of_regulator.h
-index 8d1d136..763953f 100644
---- a/include/linux/regulator/of_regulator.h
-+++ b/include/linux/regulator/of_regulator.h
-@@ -13,6 +13,7 @@ struct of_regulator_match {
- 	void *driver_data;
- 	struct regulator_init_data *init_data;
- 	struct device_node *of_node;
-+	const struct regulator_desc *desc;
- };
- 
- #if defined(CONFIG_OF)
+ Deprecated properties:
+ - regulator-compatible: If a regulator chip contains multiple
 -- 
 2.1.0
