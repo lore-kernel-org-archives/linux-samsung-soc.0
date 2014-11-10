@@ -1,456 +1,457 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: Re: [PATCH 2/2] cpuidle: exynos: add coupled cpuidle support for
- Exynos4210
-Date: Sun, 09 Nov 2014 16:57:51 +0100
-Message-ID: <545F8EFF.7030704@linaro.org>
-References: <1415383252-20118-1-git-send-email-b.zolnierkie@samsung.com> <1415383252-20118-3-git-send-email-b.zolnierkie@samsung.com>
+From: Cho KyongHo <pullip.cho@samsung.com>
+Subject: RE: [BUG 3.18-rc3] kernel BUG at drivers/iommu/exynos-iommu.c:481!
+Date: Mon, 10 Nov 2014 09:13:57 +0900
+Message-ID: <009001cffc7b$3bf20f10$b3d62d30$@samsung.com>
+References: <20141105210906.GA30193@joana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1415383252-20118-3-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Colin Cross <ccross@google.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:54123 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751431AbaKJAOL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 9 Nov 2014 19:14:11 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NES0000ORBFRD00@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 10 Nov 2014 09:14:03 +0900 (KST)
+In-reply-to: <20141105210906.GA30193@joana>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Gustavo Padovan' <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org
+Cc: 'Shaik Ameer Basha' <shaik.ameer@samsung.com>
 
-On 11/07/2014 07:00 PM, Bartlomiej Zolnierkiewicz wrote:
-> The following patch adds coupled cpuidle support for Exynos4210 to
-> an existing cpuidle-exynos driver.  As a result it enables AFTR mode
-> to be used by default on Exynos4210 without the need to hot unplug
-> CPU1 first.
->
-> The patch is heavily based on earlier cpuidle-exynos4210 driver from
-> Daniel Lezcano:
->
-> http://www.spinics.net/lists/linux-samsung-soc/msg28134.html
->
-> Changes from Daniel's code include:
-> - porting code to current kernels
-> - fixing it to work on my setup (by using S5P_INFORM register
->    instead of S5P_VA_SYSRAM one on Revison 1.1 and retrying poking
->    CPU1 out of the BOOT ROM if necessary)
-> - fixing rare lockup caused by waiting for CPU1 to get stuck in
->    the BOOT ROM (CPU hotplug code in arch/arm/mach-exynos/platsmp.c
->    doesn't require this and works fine)
-> - moving Exynos specific code to arch/arm/mach-exynos/pm.c
-> - using cpu_boot_reg_base() helper instead of BOOT_VECTOR macro
-> - using exynos_cpu_*() helpers instead of accessing registers
->    directly
-> - using arch_send_wakeup_ipi_mask() instead of dsb_sev()
->    (this matches CPU hotplug code in arch/arm/mach-exynos/platsmp.c)
+Hi.
 
-I am curious. You experienced very rare hangs after running the tests a=
-=20
-few hours, right ? Is the SEV replaced by the IPI solving the issue ? I=
-f=20
-yes, how did you catch it ?
+Thank you for reporting.
 
->- integrating separate exynos4210-cpuidle driver into existing
->    exynos-cpuidle one
->
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Colin Cross <ccross@google.com>
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+We will solve that problem as soon as possible!
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Regards,
 
-A few comments below:
+KyongHo
 
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->   arch/arm/mach-exynos/common.h                |   4 +
->   arch/arm/mach-exynos/exynos.c                |   4 +
->   arch/arm/mach-exynos/platsmp.c               |   2 +-
->   arch/arm/mach-exynos/pm.c                    | 122 ++++++++++++++++=
-+++++++++++
->   drivers/cpuidle/Kconfig.arm                  |   1 +
->   drivers/cpuidle/cpuidle-exynos.c             |  62 ++++++++++++--
->   include/linux/platform_data/cpuidle-exynos.h |  20 +++++
->   7 files changed, 209 insertions(+), 6 deletions(-)
->   create mode 100644 include/linux/platform_data/cpuidle-exynos.h
->
-> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/com=
-mon.h
-> index d4d09bc..f208a60 100644
-> --- a/arch/arm/mach-exynos/common.h
-> +++ b/arch/arm/mach-exynos/common.h
-> @@ -14,6 +14,7 @@
->
->   #include <linux/reboot.h>
->   #include <linux/of.h>
-> +#include <linux/platform_data/cpuidle-exynos.h>
->
->   #define EXYNOS3250_SOC_ID	0xE3472000
->   #define EXYNOS3_SOC_MASK	0xFFFFF000
-> @@ -168,8 +169,11 @@ extern void exynos_pm_central_suspend(void);
->   extern int exynos_pm_central_resume(void);
->   extern void exynos_enter_aftr(void);
->
-> +extern struct cpuidle_exynos_data cpuidle_coupled_exynos_data;
-> +
->   extern void s5p_init_cpu(void __iomem *cpuid_addr);
->   extern unsigned int samsung_rev(void);
-> +extern void __iomem *cpu_boot_reg_base(void);
->
->   static inline void pmu_raw_writel(u32 val, u32 offset)
->   {
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exy=
-nos.c
-> index a487e59..4f4eb9e 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -317,6 +317,10 @@ static void __init exynos_dt_machine_init(void)
->   	if (!IS_ENABLED(CONFIG_SMP))
->   		exynos_sysram_init();
->
-> +#ifdef CONFIG_ARM_EXYNOS_CPUIDLE
-> +	if (of_machine_is_compatible("samsung,exynos4210"))
-> +		exynos_cpuidle.dev.platform_data =3D &cpuidle_coupled_exynos_data;
-> +#endif
+-----Original Message-----
+From: Gustavo Padovan [mailto:gustavo@padovan.org] 
+Sent: Thursday, November 06, 2014 6:09 AM
+To: linux-samsung-soc@vger.kernel.org
+Cc: Cho KyongHo; Shaik Ameer Basha
+Subject: [BUG 3.18-rc3] kernel BUG at drivers/iommu/exynos-iommu.c:481!
 
-You should not add those #ifdef.
+Hi,
 
->   	if (of_machine_is_compatible("samsung,exynos4210") ||
->   	    of_machine_is_compatible("samsung,exynos4212") ||
->   	    (of_machine_is_compatible("samsung,exynos4412") &&
-> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/pl=
-atsmp.c
-> index adb36a8..0e3ffc9 100644
-> --- a/arch/arm/mach-exynos/platsmp.c
-> +++ b/arch/arm/mach-exynos/platsmp.c
-> @@ -182,7 +182,7 @@ int exynos_cluster_power_state(int cluster)
->   		S5P_CORE_LOCAL_PWR_EN);
->   }
->
-> -static inline void __iomem *cpu_boot_reg_base(void)
-> +void __iomem *cpu_boot_reg_base(void)
->   {
->   	if (soc_is_exynos4210() && samsung_rev() =3D=3D EXYNOS4210_REV_1_1=
-)
->   		return pmu_base_addr + S5P_INFORM5;
-> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> index 4b36ab5..44cc08a 100644
-> --- a/arch/arm/mach-exynos/pm.c
-> +++ b/arch/arm/mach-exynos/pm.c
-> @@ -178,3 +178,125 @@ void exynos_enter_aftr(void)
->
->   	cpu_pm_exit();
->   }
-> +
-> +static atomic_t cpu1_wakeup =3D ATOMIC_INIT(0);
-> +
-> +static int exynos_cpu0_enter_aftr(void)
-> +{
-> +	int ret =3D -1;
-> +
-> +	/*
-> +	 * If the other cpu is powered on, we have to power it off, because
-> +	 * the AFTR state won't work otherwise
-> +	 */
-> +	if (cpu_online(1)) {
-> +		/*
-> +		 * We reach a sync point with the coupled idle state, we know
-> +		 * the other cpu will power down itself or will abort the
-> +		 * sequence, let's wait for one of these to happen
-> +		 */
-> +		while (exynos_cpu_power_state(1)) {
-> +			/*
-> +			 * The other cpu may skip idle and boot back
-> +			 * up again
-> +			 */
-> +			if (atomic_read(&cpu1_wakeup))
-> +				goto abort;
-> +
-> +			/*
-> +			 * The other cpu may bounce through idle and
-> +			 * boot back up again, getting stuck in the
-> +			 * boot rom code
-> +			 */
-> +			if (__raw_readl(cpu_boot_reg_base()) =3D=3D 0)
-> +				goto abort;
-> +
-> +			cpu_relax();
-> +		}
-> +	}
-> +
-> +	exynos_enter_aftr();
-> +	ret =3D 0;
-> +
-> +abort:
-> +	if (cpu_online(1)) {
-> +		/*
-> +		 * Set the boot vector to something non-zero
-> +		 */
-> +		__raw_writel(virt_to_phys(exynos_cpu_resume),
-> +			     cpu_boot_reg_base());
-> +		dsb();
-> +
-> +		/*
-> +		 * Turn on cpu1 and wait for it to be on
-> +		 */
-> +		exynos_cpu_power_up(1);
-> +		while (exynos_cpu_power_state(1) !=3D S5P_CORE_LOCAL_PWR_EN)
-> +			cpu_relax();
-> +
-> +		while (!atomic_read(&cpu1_wakeup)) {
-> +			/*
-> +			 * Poke cpu1 out of the boot rom
-> +			 */
-> +			__raw_writel(virt_to_phys(exynos_cpu_resume),
-> +				     cpu_boot_reg_base());
-> +
-> +			arch_send_wakeup_ipi_mask(cpumask_of(1));
-> +		}
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int exynos_wfi_finisher(unsigned long flags)
-> +{
-> +	cpu_do_idle();
-> +
-> +	return -1;
-> +}
-> +
-> +static int exynos_cpu1_powerdown(void)
-> +{
-> +	int ret =3D -1;
-> +
-> +	/*
-> +	 * Idle sequence for cpu1
-> +	 */
-> +	if (cpu_pm_enter())
-> +		goto cpu1_aborted;
-> +
-> +	/*
-> +	 * Turn off cpu 1
-> +	 */
-> +	exynos_cpu_power_down(1);
-> +
-> +	ret =3D cpu_suspend(0, exynos_wfi_finisher);
-> +
-> +	cpu_pm_exit();
-> +
-> +cpu1_aborted:
-> +	dsb();
-> +	/*
-> +	 * Notify cpu 0 that cpu 1 is awake
-> +	 */
-> +	atomic_set(&cpu1_wakeup, 1);
-> +
-> +	return ret;
-> +}
-> +
-> +static void exynos_pre_enter_aftr(void)
-> +{
-> +	__raw_writel(virt_to_phys(exynos_cpu_resume), cpu_boot_reg_base());
-> +}
-> +
-> +static void exynos_post_enter_aftr(void)
-> +{
-> +	atomic_set(&cpu1_wakeup, 0);
-> +}
-> +
-> +struct cpuidle_exynos_data cpuidle_coupled_exynos_data =3D {
-> +	.cpu0_enter_aftr		=3D exynos_cpu0_enter_aftr,
-> +	.cpu1_powerdown		=3D exynos_cpu1_powerdown,
-> +	.pre_enter_aftr		=3D exynos_pre_enter_aftr,
-> +	.post_enter_aftr		=3D exynos_post_enter_aftr,
-> +};
-> diff --git a/drivers/cpuidle/Kconfig.arm b/drivers/cpuidle/Kconfig.ar=
-m
-> index 8c16ab2..8e07c94 100644
-> --- a/drivers/cpuidle/Kconfig.arm
-> +++ b/drivers/cpuidle/Kconfig.arm
-> @@ -55,6 +55,7 @@ config ARM_AT91_CPUIDLE
->   config ARM_EXYNOS_CPUIDLE
->   	bool "Cpu Idle Driver for the Exynos processors"
->   	depends on ARCH_EXYNOS
-> +	select ARCH_NEEDS_CPU_IDLE_COUPLED if SMP
->   	help
->   	  Select this to enable cpuidle for Exynos processors
->
-> diff --git a/drivers/cpuidle/cpuidle-exynos.c b/drivers/cpuidle/cpuid=
-le-exynos.c
-> index ba9b34b..4700d5d 100644
-> --- a/drivers/cpuidle/cpuidle-exynos.c
-> +++ b/drivers/cpuidle/cpuidle-exynos.c
-> @@ -1,8 +1,11 @@
-> -/* linux/arch/arm/mach-exynos/cpuidle.c
-> - *
-> - * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-> +/*
-> + * Copyright (c) 2011-2014 Samsung Electronics Co., Ltd.
->    *		http://www.samsung.com
->    *
-> + * Coupled cpuidle support based on the work of:
-> + *	Colin Cross <ccross@android.com>
-> + *	Daniel Lezcano <daniel.lezcano@linaro.org>
-> + *
->    * This program is free software; you can redistribute it and/or mo=
-dify
->    * it under the terms of the GNU General Public License version 2 a=
-s
->    * published by the Free Software Foundation.
-> @@ -13,13 +16,49 @@
->   #include <linux/export.h>
->   #include <linux/module.h>
->   #include <linux/platform_device.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_data/cpuidle-exynos.h>
->
->   #include <asm/proc-fns.h>
->   #include <asm/suspend.h>
->   #include <asm/cpuidle.h>
->
-> +static atomic_t exynos_idle_barrier;
-> +
-> +static struct cpuidle_exynos_data *exynos_cpuidle_pdata;
->   static void (*exynos_enter_aftr)(void);
->
-> +static int exynos_enter_coupled_lowpower(struct cpuidle_device *dev,
-> +					 struct cpuidle_driver *drv,
-> +					 int index)
-> +{
-> +	int ret;
-> +
-> +	exynos_cpuidle_pdata->pre_enter_aftr();
-> +
-> +	/*
-> +	 * Waiting all cpus to reach this point at the same moment
-> +	 */
-> +	cpuidle_coupled_parallel_barrier(dev, &exynos_idle_barrier);
-> +
-> +	/*
-> +	 * Both cpus will reach this point at the same time
-> +	 */
-> +	ret =3D dev->cpu ? exynos_cpuidle_pdata->cpu1_powerdown()
-> +		       : exynos_cpuidle_pdata->cpu0_enter_aftr();
-> +	if (ret)
-> +		index =3D ret;
-> +
-> +	/*
-> +	 * Waiting all cpus to finish the power sequence before going furth=
-er
-> +	 */
-> +	cpuidle_coupled_parallel_barrier(dev, &exynos_idle_barrier);
-> +
-> +	exynos_cpuidle_pdata->post_enter_aftr();
-> +
-> +	return index;
-> +}
-> +
->   static int exynos_enter_lowpower(struct cpuidle_device *dev,
->   				struct cpuidle_driver *drv,
->   				int index)
-> @@ -58,11 +97,24 @@ static struct cpuidle_driver exynos_idle_driver =3D=
- {
->
->   static int exynos_cpuidle_probe(struct platform_device *pdev)
->   {
-> +	const struct cpumask *coupled_cpus =3D NULL;
->   	int ret;
->
-> -	exynos_enter_aftr =3D (void *)(pdev->dev.platform_data);
-> +	if (of_machine_is_compatible("samsung,exynos4210")) {
-> +		exynos_cpuidle_pdata =3D pdev->dev.platform_data;
-> +
-> +		exynos_idle_driver.states[1].enter =3D
-> +						exynos_enter_coupled_lowpower;
-> +		exynos_idle_driver.states[1].exit_latency =3D 5000;
-> +		exynos_idle_driver.states[1].target_residency =3D 10000;
-> +		exynos_idle_driver.states[1].flags |=3D CPUIDLE_FLAG_COUPLED |
-> +						      CPUIDLE_FLAG_TIMER_STOP;
+I'm seeing the following bug running the current linus tree of today, it
+seems this was introduced by the following commit:
 
-I tried to remove those dynamic state allocation everywhere in the=20
-different drivers. I would prefer to have another cpuidle_driver to be=20
-registered with its states instead of overwriting the existing idle sta=
-te.
+commit 6b21a5db36427d54a94091fc26b5890c3d6a8af3
+Author: Cho KyongHo <pullip.cho@samsung.com>
+Date:   Mon May 12 11:45:02 2014 +0530
 
-struct cpuidle_driver exynos4210_idle_driver =3D {
-	.name =3D "exynos4210_idle",
-	.owner =3D THIS_MODULE,
-	.states =3D {
-		[0] =3D ARM_CPUIDLE_WFI_STATE,
-                 [1] =3D {
-                         .enter =3D exynos_enter_coupled_lowpower,
-                         .exit_latency =3D 5000,
-                         .target_residency =3D 10000,
-			.flags =3D CPUIDLE_FLAG_TIME_VALID |
-				CPUIDLE_FLAG_COUPLED |
-				CPUIDLE_FLAG_TIMER_STOP,
-                         .name =3D "C1",
-                         .desc =3D "ARM power down",
-                 },
-	}
-};
+    iommu/exynos: Support for device tree
+    
+    This commit adds device tree support for System MMU.
+    
+    Also, system mmu handling is improved. Previously, an IOMMU domain is
+    bound to a System MMU which is not correct. This patch binds an IOMMU
+    domain with the master device of a System MMU.
+    
+    Signed-off-by: Cho KyongHo <pullip.cho@samsung.com>
+    Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+    Signed-off-by: Joerg Roedel <jroedel@suse.de>
 
 
-and then:
+It is failing on a BUG_ON(!has_sysmmu(dev));
 
-if (of_machine_is_compatible("samsung,exynos4210")) {
-	...
-	ret =3D cpuidle_register(&exynos4210_idle_driver,
-				cpu_online_mask);
-	...
-}
-=2E..
-
-If we can reuse this mechanism, which I believe it is possible to, for=20
-4420 and 5250. Then we will be able to refactor this out again.
-
-> +
-> +		coupled_cpus =3D cpu_possible_mask;
-> +	} else
-> +		exynos_enter_aftr =3D (void *)(pdev->dev.platform_data);
->
-> -	ret =3D cpuidle_register(&exynos_idle_driver, NULL);
-> +	ret =3D cpuidle_register(&exynos_idle_driver, coupled_cpus);
->   	if (ret) {
->   		dev_err(&pdev->dev, "failed to register cpuidle driver\n");
->   		return ret;
-> diff --git a/include/linux/platform_data/cpuidle-exynos.h b/include/l=
-inux/platform_data/cpuidle-exynos.h
-> new file mode 100644
-> index 0000000..bfa40e4
-> --- /dev/null
-> +++ b/include/linux/platform_data/cpuidle-exynos.h
-> @@ -0,0 +1,20 @@
-> +/*
-> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-> + *              http://www.samsung.com
-> + *
-> + * This program is free software; you can redistribute it and/or mod=
-ify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#ifndef __CPUIDLE_EXYNOS_H
-> +#define __CPUIDLE_EXYNOS_H
-> +
-> +struct cpuidle_exynos_data {
-> +	int (*cpu0_enter_aftr)(void);
-> +	int (*cpu1_powerdown)(void);
-> +	void (*pre_enter_aftr)(void);
-> +	void (*post_enter_aftr)(void);
-> +};
-> +
-> +#endif
->
+	Gustavo
 
 
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+[    3.188618] ------------[ cut here ]------------
+[    3.188622] kernel BUG at drivers/iommu/exynos-iommu.c:481!
+[    3.188626] Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+[    3.188633] Modules linked in:
+[    3.188639] CPU: 0 PID: 18 Comm: kworker/u4:1 Not tainted
+3.18.0-rc3-00061-ga1cff6e #3
+[    3.188650] Workqueue: deferwq deferred_probe_work_func
+[    3.188654] task: ee09bc00 ti: ee110000 task.ti: ee110000
+[    3.188661] PC is at __exynos_sysmmu_enable+0x174/0x180
+[    3.188665] LR is at exynos_iommu_attach_device+0x44/0xb0
+[    3.188670] pc : [<c0380024>]    lr : [<c0380074>]    psr: 60000193
+[    3.188670] sp : ee111d00  ip : 00000000  fp : 6d444000
+[    3.188674] r10: ed488080  r9 : a0000113  r8 : ed4880d0
+[    3.188678] r7 : ee194e10  r6 : ee194e10  r5 : ed488080  r4 : 00000000
+[    3.188683] r3 : 6d444000  r2 : ed488080  r1 : 6d444000  r0 : ee194e10
+[    3.188687] Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment
+kernel
+[    3.188691] Control: 10c5387d  Table: 4000406a  DAC: 00000015
+[    3.188695] Process kworker/u4:1 (pid: 18, stack limit = 0xee110240)
+[    3.188699] Stack: (0xee111d00 to 0xee112000)
+[    3.188705] 1d00: 6d444000 ed4880c0 ed488080 00000000 ee194e10 ed4880d0
+a0000113 00000001
+[    3.188710] 1d20: 00000000 c0380074 ed81d410 6d444000 ed488000 ee194e10
+ed81d410 eda54400
+[    3.188715] 1d40: c0668444 ed81d410 00000001 c037e28c ed4885d0 c0016624
+ed4885d0 ee194e10
+[    3.188719] 1d60: ee24a010 ed81d410 eda54400 c026c310 00000001 00000005
+ed81d410 c026e0d0
+[    3.188724] 1d80: c026dfc0 ed8dc840 ee3fe480 ed48cf80 eda54400 00000001
+c0692738 00000003
+[    3.188729] 1da0: ee00fc00 c0285678 eda54400 eda54400 eda54400 00000000
+ed48cf80 ed8dcbd0
+[    3.188733] 1dc0: ed48c500 c0268908 eda54400 00000000 00000000 c02551e8
+ee24a000 eda54400
+[    3.188738] 1de0: c0691a30 c0256e68 ed48c580 c028c408 ed8dc840 ed8dcbf0
+ed8dcbf0 00000004
+[    3.188743] 1e00: ed8dc840 c0285960 ed8dc840 c06930e0 ed48c500 c048c964
+c06922a0 c0285b48
+[    3.188748] 1e20: 00000000 ee217a10 ee01f810 00000000 ee217a00 c0277cfc
+00002003 c05aecf4
+[    3.188753] 1e40: ee01f810 ed9828c0 00000000 0000000c fffffffe ee217a10
+fffffdfb c06926d4
+[    3.188757] 1e60: 00000001 00000000 00000000 c028ac84 c028ac3c ee217a10
+c06e5774 00000000
+[    3.188762] 1e80: c06926d4 c0289838 00000000 ee217a10 c02899e8 ee110000
+ed93a900 c0287fdc
+[    3.188767] 1ea0: ee005298 ee176ec4 ee217a10 ee217a44 c06932c0 c02896f4
+ee217a10 ee217a10
+[    3.188772] 1ec0: c06932c0 c0288e4c ee217a10 c0693240 c0693218 c0289220
+ee0f2880 c0693268
+[    3.188776] 1ee0: ee00fc00 c0032c38 ee00fc00 c065f5c0 c065f5c0 c065f5c0
+00000001 ee00fc20
+[    3.188781] 1f00: ee110000 ee110000 ee0f2898 ee0f2880 ee00fc00 00000088
+ee00fc00 c0032e90
+[    3.188786] 1f20: ee110000 ee00fc54 00000000 ee051b80 00000000 ee0f2880
+c0032e54 00000000
+[    3.188791] 1f40: 00000000 00000000 00000000 c0037630 00000000 00000000
+00000000 ee0f2880
+[    3.188795] 1f60: 00000000 00000000 dead4ead ffffffff ffffffff ee111f74
+ee111f74 00000000
+[    3.188800] 1f80: 00000000 dead4ead ffffffff ffffffff ee111f90 ee111f90
+ee111fac ee051b80
+[    3.188805] 1fa0: c0037564 00000000 00000000 c000e878 00000000 00000000
+00000000 00000000
+[    3.188809] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000
+00000000 00000000
+[    3.188814] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+00000000 00000000
+[    3.188824] [<c0380024>] (__exynos_sysmmu_enable) from [<c0380074>]
+(exynos_iommu_attach_device+0x44/0xb0)
+[    3.188830] [<c0380074>] (exynos_iommu_attach_device) from [<c037e28c>]
+(iommu_attach_device+0x18/0x24)
+[    3.188839] [<c037e28c>] (iommu_attach_device) from [<c0016624>]
+(arm_iommu_attach_device+0x18/0xa0)
+[    3.188849] [<c0016624>] (arm_iommu_attach_device) from [<c026c310>]
+(drm_iommu_attach_device+0x4c/0xc8)
+[    3.188857] [<c026c310>] (drm_iommu_attach_device) from [<c026e0d0>]
+(fimd_bind+0x110/0x17c)
+[    3.188866] [<c026e0d0>] (fimd_bind) from [<c0285678>]
+(component_bind_all+0xb0/0x1cc)
+[    3.188873] [<c0285678>] (component_bind_all) from [<c0268908>]
+(exynos_drm_load+0x98/0x148)
+[    3.188882] [<c0268908>] (exynos_drm_load) from [<c02551e8>]
+(drm_dev_register+0xa0/0x100)
+[    3.188890] [<c02551e8>] (drm_dev_register) from [<c0256e68>]
+(drm_platform_init+0x40/0xd0)
+[    3.188898] [<c0256e68>] (drm_platform_init) from [<c0285960>]
+(try_to_bring_up_master.part.2+0xc8/0x104)
+[    3.188905] [<c0285960>] (try_to_bring_up_master.part.2) from
+[<c0285b48>]
+(component_add+0x84/0xec)
+[    3.188912] [<c0285b48>] (component_add) from [<c0277cfc>]
+(hdmi_probe+0x4cc/0x684)
+[    3.188919] [<c0277cfc>] (hdmi_probe) from [<c028ac84>]
+(platform_drv_probe+0x48/0xa4)
+[    3.188926] [<c028ac84>] (platform_drv_probe) from [<c0289838>]
+(driver_probe_device+0x10c/0x22c)
+[    3.188933] [<c0289838>] (driver_probe_device) from [<c0287fdc>]
+(bus_for_each_drv+0x44/0x8c)
+[    3.188940] [<c0287fdc>] (bus_for_each_drv) from [<c02896f4>]
+(device_attach+0x70/0x88)
+[    3.188946] [<c02896f4>] (device_attach) from [<c0288e4c>]
+(bus_probe_device+0x84/0xa8)
+[    3.188952] [<c0288e4c>] (bus_probe_device) from [<c0289220>]
+(deferred_probe_work_func+0x5c/0x88)
+[    3.188960] [<c0289220>] (deferred_probe_work_func) from [<c0032c38>]
+(process_one_work+0x12c/0x314)
+[    3.188967] [<c0032c38>] (process_one_work) from [<c0032e90>]
+(worker_thread+0x3c/0x4b0)
+[    3.188975] [<c0032e90>] (worker_thread) from [<c0037630>]
+(kthread+0xcc/0xe8)
+[    3.188983] [<c0037630>] (kthread) from [<c000e878>]
+(ret_from_fork+0x14/0x3c)
+[    3.188990] Code: e3403110 11a02001 01a02003 eaffffe4 (e7f001f2)
+[    3.188996] ---[ end trace 3a0df6418f18791c ]---
+[    3.189003] note: kworker/u4:1[18] exited with preempt_count 1
+[    3.189046] Unable to handle kernel paging request at virtual address
+ffffffe0
+[    3.189049] pgd = c0004000
+[    3.189060] [ffffffe0] *pgd=6f7fd821, *pte=00000000, *ppte=00000000
+[    3.189065] Internal error: Oops: 17 [#2] PREEMPT SMP ARM
+[    3.189071] Modules linked in:
+[    3.189076] CPU: 0 PID: 18 Comm: kworker/u4:1 Tainted: G      D
+3.18.0-rc3-00061-ga1cff6e #3
+[    3.189084] task: ee09bc00 ti: ee110000 task.ti: ee110000
+[    3.189089] PC is at kthread_data+0x4/0xc
+[    3.189093] LR is at wq_worker_sleeping+0xc/0xd0
+[    3.189098] pc : [<c0037ba0>]    lr : [<c0033b58>]    psr: 20000193
+[    3.189098] sp : ee111b60  ip : 00000800  fp : ee111b9c
+[    3.189101] r10: ee7b85c0  r9 : ee09bc00  r8 : c06687d0
+[    3.189105] r7 : ee110000  r6 : c065f5c0  r5 : ee09be7c  r4 : 00000000
+[    3.189109] r3 : 00000000  r2 : 00000000  r1 : 00000000  r0 : ee09bc00
+[    3.189113] Flags: nzCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM  Segment
+user
+[    3.189117] Control: 10c5387d  Table: 4000406a  DAC: 00000015
+[    3.189121] Process kworker/u4:1 (pid: 18, stack limit = 0xee110240)
+[    3.189124] Stack: (0xee111b60 to 0xee112000)
+[    3.189129] 1b60: 00000000 c04578c0 ee13dd20 c065f5c0 c065f5c0 c065f5c0
+00000000 00000001
+[    3.189135] 1b80: ee09bbf8 ee09bc00 ee09bbf8 ee110000 ee00e400 ee09bdf8
+ee09bdf8 c0022e30
+[    3.189139] 1ba0: ee111bb0 00000001 ee09bc00 ee09be40 ee111bb0 ee111bb0
+00000001 c066bf90
+[    3.189144] 1bc0: c06a8644 0000000b c055dc6c 00000000 ee110000 60000193
+ee09bc00 c0011134
+[    3.189149] 1be0: ee110240 0000000b ee111cb8 00000004 c066bfa4 e7f001f2
+ee111cb8 c0380024
+[    3.189153] 1c00: c0011aac 00000000 6d444000 c0008320 00000006 00000002
+00000004 00000000
+[    3.189159] 1c20: 00030001 c0380024 00000141 00000000 00000000 c0460b28
+00000000 00000001
+[    3.189164] 1c40: 000280d0 fffffffe 00000000 c06a7fcc 00020805 00000000
+ee09bc48 ee7b8618
+[    3.189168] 1c60: 2ac8f691 00000001 2e159000 ee09bc00 ee09bc48 00000000
+ee09be78 00000000
+[    3.189173] 1c80: ee7b85c0 c06687d0 00000001 ee7b8618 c000997c ffffffff
+00000000 c0380028
+[    3.189178] 1ca0: 00000000 c0011e58 00000000 e7100000 ee110000 c0011aac
+ee194e10 6d444000
+[    3.189182] 1cc0: ed488080 6d444000 00000000 ed488080 ee194e10 ee194e10
+ed4880d0 a0000113
+[    3.189187] 1ce0: ed488080 6d444000 00000000 ee111d00 c0380074 c0380024
+60000193 ffffffff
+[    3.189192] 1d00: 6d444000 ed4880c0 ed488080 00000000 ee194e10 ed4880d0
+a0000113 00000001
+[    3.189197] 1d20: 00000000 c0380074 ed81d410 6d444000 ed488000 ee194e10
+ed81d410 eda54400
+[    3.189202] 1d40: c0668444 ed81d410 00000001 c037e28c ed4885d0 c0016624
+ed4885d0 ee194e10
+[    3.189206] 1d60: ee24a010 ed81d410 eda54400 c026c310 00000001 00000005
+ed81d410 c026e0d0
+[    3.189211] 1d80: c026dfc0 ed8dc840 ee3fe480 ed48cf80 eda54400 00000001
+c0692738 00000003
+[    3.189216] 1da0: ee00fc00 c0285678 eda54400 eda54400 eda54400 00000000
+ed48cf80 ed8dcbd0
+[    3.189219] 1dc0: ed48c500 c0268908 eda54400 00000000 00000000 c02551e8
+ee24a000 eda54400
+[    3.189222] 1de0: c0691a30 c0256e68 ed48c580 c028c408 ed8dc840 ed8dcbf0
+ed8dcbf0 00000004
+[    3.189225] 1e00: ed8dc840 c0285960 ed8dc840 c06930e0 ed48c500 c048c964
+c06922a0 c0285b48
+[    3.189229] 1e20: 00000000 ee217a10 ee01f810 00000000 ee217a00 c0277cfc
+00002003 c05aecf4
+[    3.189232] 1e40: ee01f810 ed9828c0 00000000 0000000c fffffffe ee217a10
+fffffdfb c06926d4
+[    3.189236] 1e60: 00000001 00000000 00000000 c028ac84 c028ac3c ee217a10
+c06e5774 00000000
+[    3.189239] 1e80: c06926d4 c0289838 00000000 ee217a10 c02899e8 ee110000
+ed93a900 c0287fdc
+[    3.189243] 1ea0: ee005298 ee176ec4 ee217a10 ee217a44 c06932c0 c02896f4
+ee217a10 ee217a10
+[    3.189246] 1ec0: c06932c0 c0288e4c ee217a10 c0693240 c0693218 c0289220
+ee0f2880 c0693268
+[    3.189250] 1ee0: ee00fc00 c0032c38 ee00fc00 c065f5c0 c065f5c0 c065f5c0
+00000001 ee00fc20
+[    3.189254] 1f00: ee110000 ee110000 ee0f2898 ee0f2880 ee00fc00 00000088
+ee00fc00 c0032e90
+[    3.189257] 1f20: ee110000 ee00fc54 00000000 ee051b80 00000000 ee0f2880
+c0032e54 00000000
+[    3.189260] 1f40: 00000000 00000000 00000000 c0037630 00000000 00000000
+00000000 ee0f2880
+[    3.189264] 1f60: 00000000 00000000 dead4ead ffffffff ffffffff ee111f74
+ee111f74 00000001
+[    3.189268] 1f80: 00010001 dead4ead ffffffff ffffffff ee111f90 ee111f90
+ee111fac ee051b80
+[    3.189271] 1fa0: c0037564 00000000 00000000 c000e878 00000000 00000000
+00000000 00000000
+[    3.189274] 1fc0: 00000000 00000000 00000000 00000000 00000000 00000000
+00000000 00000000
+[    3.189278] 1fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+00000000 00000000
+[    3.189283] [<c0037ba0>] (kthread_data) from [<c0033b58>]
+(wq_worker_sleeping+0xc/0xd0)
+[    3.189290] [<c0033b58>] (wq_worker_sleeping) from [<c04578c0>]
+(__schedule+0x300/0x4d4)
+[    3.189298] [<c04578c0>] (__schedule) from [<c0022e30>]
+(do_exit+0x5a8/0x8b0)
+[    3.189306] [<c0022e30>] (do_exit) from [<c0011134>] (die+0x204/0x2cc)
+[    3.189311] [<c0011134>] (die) from [<c0008320>]
+(do_undefinstr+0x9c/0x1cc)
+[    3.189318] [<c0008320>] (do_undefinstr) from [<c0011aac>]
+(__und_svc_finish+0x0/0x34)
+[    3.189320] Exception stack(0xee111cb8 to 0xee111d00)
+[    3.189323] 1ca0:
+ee194e10 6d444000
+[    3.189326] 1cc0: ed488080 6d444000 00000000 ed488080 ee194e10 ee194e10
+ed4880d0 a0000113
+[    3.189330] 1ce0: ed488080 6d444000 00000000 ee111d00 c0380074 c0380024
+60000193 ffffffff
+[    3.189336] [<c0011aac>] (__und_svc_finish) from [<c0380024>]
+(__exynos_sysmmu_enable+0x174/0x180)
+[    3.189341] [<c0380024>] (__exynos_sysmmu_enable) from [<c0380074>]
+(exynos_iommu_attach_device+0x44/0xb0)
+[    3.189346] [<c0380074>] (exynos_iommu_attach_device) from [<c037e28c>]
+(iommu_attach_device+0x18/0x24)
+[    3.189351] [<c037e28c>] (iommu_attach_device) from [<c0016624>]
+(arm_iommu_attach_device+0x18/0xa0)
+[    3.189357] [<c0016624>] (arm_iommu_attach_device) from [<c026c310>]
+(drm_iommu_attach_device+0x4c/0xc8)
+[    3.189362] [<c026c310>] (drm_iommu_attach_device) from [<c026e0d0>]
+(fimd_bind+0x110/0x17c)
+[    3.189369] [<c026e0d0>] (fimd_bind) from [<c0285678>]
+(component_bind_all+0xb0/0x1cc)
+[    3.189374] [<c0285678>] (component_bind_all) from [<c0268908>]
+(exynos_drm_load+0x98/0x148)
+[    3.189380] [<c0268908>] (exynos_drm_load) from [<c02551e8>]
+(drm_dev_register+0xa0/0x100)
+[    3.189386] [<c02551e8>] (drm_dev_register) from [<c0256e68>]
+(drm_platform_init+0x40/0xd0)
+[    3.189392] [<c0256e68>] (drm_platform_init) from [<c0285960>]
+(try_to_bring_up_master.part.2+0xc8/0x104)
+[    3.189398] [<c0285960>] (try_to_bring_up_master.part.2) from
+[<c0285b48>]
+(component_add+0x84/0xec)
+[    3.189403] [<c0285b48>] (component_add) from [<c0277cfc>]
+(hdmi_probe+0x4cc/0x684)
+[    3.189408] [<c0277cfc>] (hdmi_probe) from [<c028ac84>]
+(platform_drv_probe+0x48/0xa4)
+[    3.189414] [<c028ac84>] (platform_drv_probe) from [<c0289838>]
+(driver_probe_device+0x10c/0x22c)
+[    3.189418] [<c0289838>] (driver_probe_device) from [<c0287fdc>]
+(bus_for_each_drv+0x44/0x8c)
+[    3.189423] [<c0287fdc>] (bus_for_each_drv) from [<c02896f4>]
+(device_attach+0x70/0x88)
+[    3.189427] [<c02896f4>] (device_attach) from [<c0288e4c>]
+(bus_probe_device+0x84/0xa8)
+[    3.189432] [<c0288e4c>] (bus_probe_device) from [<c0289220>]
+(deferred_probe_work_func+0x5c/0x88)
+[    3.189437] [<c0289220>] (deferred_probe_work_func) from [<c0032c38>]
+(process_one_work+0x12c/0x314)
+[    3.189442] [<c0032c38>] (process_one_work) from [<c0032e90>]
+(worker_thread+0x3c/0x4b0)
+[    3.189448] [<c0032e90>] (worker_thread) from [<c0037630>]
+(kthread+0xcc/0xe8)
+[    3.189454] [<c0037630>] (kthread) from [<c000e878>]
+(ret_from_fork+0x14/0x3c)
+[    3.189458] Code: e5130028 e7e00150 e12fff1e e5903250 (e5130020)
+[    3.189461] ---[ end trace 3a0df6418f18791d ]---
+[    3.189463] Fixing recursive fault but reboot is needed!
+[    5.815351] BUG: spinlock lockup suspected on CPU#0, kworker/u4:1/18
+[    5.822758]  lock: 0xee7b85c0, .magic: dead4ead, .owner: kworker/u4:1/18,
+.owner_cpu: 0
+[    5.831792] CPU: 0 PID: 18 Comm: kworker/u4:1 Tainted: G      D
+3.18.0-rc3-00061-ga1cff6e #3
+[    5.841895] [<c0013dcc>] (unwind_backtrace) from [<c0010f2c>]
+(show_stack+0x10/0x14)
+[    5.850724] [<c0010f2c>] (show_stack) from [<c0456b00>]
+(dump_stack+0x70/0xbc)
+[    5.859036] [<c0456b00>] (dump_stack) from [<c0051c8c>]
+(do_raw_spin_lock+0x120/0x1a0)
+[    5.868047] [<c0051c8c>] (do_raw_spin_lock) from [<c0457644>]
+(__schedule+0x84/0x4d4)
+[    5.876941] [<c0457644>] (__schedule) from [<c00230fc>]
+(do_exit+0x874/0x8b0)
+[    5.885146] [<c00230fc>] (do_exit) from [<c0011134>] (die+0x204/0x2cc)
+[    5.892760] [<c0011134>] (die) from [<c0454058>]
+(__do_kernel_fault.part.8+0x54/0x74)
+[    5.901672] [<c0454058>] (__do_kernel_fault.part.8) from [<c001774c>]
+(do_page_fault+0x158/0x274)
+[    5.911679] [<c001774c>] (do_page_fault) from [<c0008520>]
+(do_DataAbort+0x34/0x9c)
+[    5.920445] [<c0008520>] (do_DataAbort) from [<c0011998>]
+(__dabt_svc+0x38/0x60)
+[    5.928970] Exception stack(0xee111b18 to 0xee111b60)
+[    5.935092] 1b00:
+ee09bc00 00000000
+[    5.944354] 1b20: 00000000 00000000 00000000 ee09be7c c065f5c0 ee110000
+c06687d0 ee09bc00
+[    5.953623] 1b40: ee7b85c0 ee111b9c 00000800 ee111b60 c0033b58 c0037ba0
+20000193 ffffffff
+[    5.962887] [<c0011998>] (__dabt_svc) from [<c0037ba0>]
+(kthread_data+0x4/0xc)
+[    5.971218] [<c0037ba0>] (kthread_data) from [<c0033b58>]
+(wq_worker_sleeping+0xc/0xd0)
+[    5.980330] [<c0033b58>] (wq_worker_sleeping) from [<c04578c0>]
+(__schedule+0x300/0x4d4)
+[    5.989571] [<c04578c0>] (__schedule) from [<c0022e30>]
+(do_exit+0x5a8/0x8b0)
+[    5.997815] [<c0022e30>] (do_exit) from [<c0011134>] (die+0x204/0x2cc)
+[    6.005472] [<c0011134>] (die) from [<c0008320>]
+(do_undefinstr+0x9c/0x1cc)
+[    6.013506] [<c0008320>] (do_undefinstr) from [<c0011aac>]
+(__und_svc_finish+0x0/0x34)
+[    6.022533] Exception stack(0xee111cb8 to 0xee111d00)
+[    6.028652] 1ca0:
+ee194e10 6d444000
+[    6.037877] 1cc0: ed488080 6d444000 00000000 ed488080 ee194e10 ee194e10
+ed4880d0 a0000113
+[    6.047114] 1ce0: ed488080 6d444000 00000000 ee111d00 c0380074 c0380024
+60000193 ffffffff
+[    6.056345] [<c0011aac>] (__und_svc_finish) from [<c0380024>]
+(__exynos_sysmmu_enable+0x174/0x180)
+[    6.066388] [<c0380024>] (__exynos_sysmmu_enable) from [<c0380074>]
+(exynos_iommu_attach_device+0x44/0xb0)
+[    6.077160] [<c0380074>] (exynos_iommu_attach_device) from [<c037e28c>]
+(iommu_attach_device+0x18/0x24)
+[    6.087645] [<c037e28c>] (iommu_attach_device) from [<c0016624>]
+(arm_iommu_attach_device+0x18/0xa0)
+[    6.097913] [<c0016624>] (arm_iommu_attach_device) from [<c026c310>]
+(drm_iommu_attach_device+0x4c/0xc8)
+[    6.108563] [<c026c310>] (drm_iommu_attach_device) from [<c026e0d0>]
+(fimd_bind+0x110/0x17c)
+[    6.118146] [<c026e0d0>] (fimd_bind) from [<c0285678>]
+(component_bind_all+0xb0/0x1cc)
+[    6.127209] [<c0285678>] (component_bind_all) from [<c0268908>]
+(exynos_drm_load+0x98/0x148)
+[    6.136805] [<c0268908>] (exynos_drm_load) from [<c02551e8>]
+(drm_dev_register+0xa0/0x100)
+[    6.146226] [<c02551e8>] (drm_dev_register) from [<c0256e68>]
+(drm_platform_init+0x40/0xd0)
+[    6.155703] [<c0256e68>] (drm_platform_init) from [<c0285960>]
+(try_to_bring_up_master.part.2+0xc8/0x104)
+[    6.166395] [<c0285960>] (try_to_bring_up_master.part.2) from
+[<c0285b48>]
+(component_add+0x84/0xec)
+[    6.176686] [<c0285b48>] (component_add) from [<c0277cfc>]
+(hdmi_probe+0x4cc/0x684)
+[    6.185450] [<c0277cfc>] (hdmi_probe) from [<c028ac84>]
+(platform_drv_probe+0x48/0xa4)
+[    6.194503] [<c028ac84>] (platform_drv_probe) from [<c0289838>]
+(driver_probe_device+0x10c/0x22c)
+[    6.204473] [<c0289838>] (driver_probe_device) from [<c0287fdc>]
+(bus_for_each_drv+0x44/0x8c)
+[    6.214115] [<c0287fdc>] (bus_for_each_drv) from [<c02896f4>]
+(device_attach+0x70/0x88)
+[    6.223258] [<c02896f4>] (device_attach) from [<c0288e4c>]
+(bus_probe_device+0x84/0xa8)
+[    6.232415] [<c0288e4c>] (bus_probe_device) from [<c0289220>]
+(deferred_probe_work_func+0x5c/0x88)
+[    6.242589] [<c0289220>] (deferred_probe_work_func) from [<c0032c38>]
+(process_one_work+0x12c/0x314)
+[    6.252957] [<c0032c38>] (process_one_work) from [<c0032e90>]
+(worker_thread+0x3c/0x4b0)
+[    6.262278] [<c0032e90>] (worker_thread) from [<c0037630>]
+(kthread+0xcc/0xe8)
+[    6.270717] [<c0037630>] (kthread) from [<c000e878>]
+(ret_from_fork+0x14/0x3c)
+[    9.643855] s3c-i2c 12ca0000.i2c: timeout waiting for bus idle
+[    9.650898] tps65090-charger tps65090-charger: tps65090_charger_isr():
+Error in reading reg 0xa
+[   16.663852] s3c-i2c 12ca0000.i2c: timeout waiting for bus idle
+[   16.670945] tps65090-charger tps65090-charger: tps65090_charger_isr():
+Error in reading reg 0xa
+[   23.683856] s3c-i2c 12ca0000.i2c: timeout waiting for bus idle
+[   23.691001] tps65090-charger tps65090-charger: tps65090_charger_isr():
+Error in reading reg 0xa
