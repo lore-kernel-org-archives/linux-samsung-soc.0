@@ -1,50 +1,85 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH] spi: s3c64xx: add support for exynos7 SPI controller
-Date: Mon, 10 Nov 2014 10:20:27 +0530
-Message-ID: <CAAgF-Bd=S7-PoA7GZoy87W9Dem3OXVhc1tL-eyWEAHvF0LPTKQ@mail.gmail.com>
-References: <1415267509-16653-1-git-send-email-padma.v@samsung.com>
-	<20141106102636.GT8509@sirena.org.uk>
-	<CAAgF-BfGwcNzMx0meFVkJqNMTbQ4_PP1PZ3i6edOm6U3bc26_Q@mail.gmail.com>
-	<20141107101310.GA8509@sirena.org.uk>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH v2 3/6] drivers: soc: samsung: Fix a spelling mistake
+Date: Mon, 10 Nov 2014 10:29:14 +0530
+Message-ID: <CADGdYn5VL6aXwU4-Hmf__Ox9T964bDf3WwhdJn0Aiatz8zWKbA@mail.gmail.com>
+References: <1415452601-13078-1-git-send-email-amit.daniel@samsung.com>
+	<1415452601-13078-4-git-send-email-amit.daniel@samsung.com>
+	<CAGcde9Fctk+XBxLV4VbevU4W7EYW+-it+T3qn3wg=v=b5ykJzA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f175.google.com ([209.85.160.175]:63201 "EHLO
-	mail-yk0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751225AbaKJEu3 (ORCPT
+Received: from mail-yh0-f42.google.com ([209.85.213.42]:32809 "EHLO
+	mail-yh0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751604AbaKJE7P (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 Nov 2014 23:50:29 -0500
-In-Reply-To: <20141107101310.GA8509@sirena.org.uk>
+	Sun, 9 Nov 2014 23:59:15 -0500
+In-Reply-To: <CAGcde9Fctk+XBxLV4VbevU4W7EYW+-it+T3qn3wg=v=b5ykJzA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+To: Pankaj Dubey <dubepankaj1980@gmail.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Lee Jones <lee.jones@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hi Mark,
-
-On 11/7/14, Mark Brown <broonie@kernel.org> wrote:
-> On Fri, Nov 07, 2014 at 02:01:57PM +0530, Padma Venkat wrote:
+On Sat, Nov 8, 2014 at 9:26 PM, Pankaj Dubey <dubepankaj1980@gmail.com> wrote:
+> Hi Amit,
 >
->> CS can also be controlled automatically by setting AUTO_N_MANUAL to 1
->> in CS_CFG. When it is auto CS automatically toggles between packet to
->> packet. NCS_TIME_COUNT in CS_CFG controls the inactive period. The
->> driver by default uses manual mode. But on exynos7 the manual mode is
->> removed.
 >
-> OK, but what's a packet here?
-
-Packet is either 1 byte or 4 bytes size depends on width of the SPI channel.
-
+> On 8 November 2014 18:46, Amit Daniel Kachhap <amit.daniel@samsung.com> wrote:
+>> This patches changes the name of exynos5_list_diable_wfi_wfe to
+>> exynos5_list_disable_wfi_wfe.
+>>
 >
->> I tested the driver with wm5110 codec.
+> Same change I have posted earlier [1] and Kukjin has taken same in his for-next.
 >
-> Did you try firmware downloads or something else that generates multiple
-> transfers in a message?  Normal register writes will use a single
-> transfer so I'd expect them to just work.
+> 1: http://www.spinics.net/lists/arm-kernel/msg372742.html
+ok but this patch is still not visible in linux-next. I will rebase my
+v3 patch series against Kukjin for-next
 >
-
-OK. I don't have provision to test on this board. I will try to test
-on older boards by disabling manual mode.
-
-Thanks
-padma
+> Thanks,
+> Pankaj Dubey
+>
+>
+>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>> ---
+>>  drivers/soc/samsung/exynos-pmu.c |    8 ++++----
+>>  1 file changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
+>> index 35774e8..3832cda 100644
+>> --- a/drivers/soc/samsung/exynos-pmu.c
+>> +++ b/drivers/soc/samsung/exynos-pmu.c
+>> @@ -361,7 +361,7 @@ static unsigned int const exynos5_list_both_cnt_feed[] = {
+>>         EXYNOS5_TOP_PWR_SYSMEM_OPTION,
+>>  };
+>>
+>> -static unsigned int const exynos5_list_diable_wfi_wfe[] = {
+>> +static unsigned int const exynos5_list_disable_wfi_wfe[] = {
+>>         EXYNOS5_ARM_CORE1_OPTION,
+>>         EXYNOS5_FSYS_ARM_OPTION,
+>>         EXYNOS5_ISP_ARM_OPTION,
+>> @@ -392,11 +392,11 @@ static void exynos5_powerdown_conf(enum sys_powerdown mode)
+>>         /*
+>>          * Disable WFI/WFE on XXX_OPTION
+>>          */
+>> -       for (i = 0; i < ARRAY_SIZE(exynos5_list_diable_wfi_wfe); i++) {
+>> -               tmp = pmu_raw_readl(exynos5_list_diable_wfi_wfe[i]);
+>> +       for (i = 0; i < ARRAY_SIZE(exynos5_list_disable_wfi_wfe); i++) {
+>> +               tmp = pmu_raw_readl(exynos5_list_disable_wfi_wfe[i]);
+>>                 tmp &= ~(EXYNOS5_OPTION_USE_STANDBYWFE |
+>>                          EXYNOS5_OPTION_USE_STANDBYWFI);
+>> -               pmu_raw_writel(tmp, exynos5_list_diable_wfi_wfe[i]);
+>> +               pmu_raw_writel(tmp, exynos5_list_disable_wfi_wfe[i]);
+>>         }
+>>  }
+>>
+>> --
+>> 1.7.9.5
+>>
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
