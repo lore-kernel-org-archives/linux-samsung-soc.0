@@ -1,50 +1,86 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 1/4] ASoC: ALC5631: Add device tree binding documentation
-Date: Mon, 10 Nov 2014 13:37:08 +0000
-Message-ID: <20141110133708.GQ3815@sirena.org.uk>
-References: <1415606519-30744-1-git-send-email-krishna.md@samsung.com>
- <1415606519-30744-2-git-send-email-krishna.md@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="NhX0wRdIbCNyp82h"
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH v6 0/5] regulator: of: Add initial and suspend modes support
+Date: Mon, 10 Nov 2014 14:43:50 +0100
+Message-ID: <1415627035-3088-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:56238 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752689AbaKJNil (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:48059 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752532AbaKJNoH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Nov 2014 08:38:41 -0500
-Content-Disposition: inline
-In-Reply-To: <1415606519-30744-2-git-send-email-krishna.md@samsung.com>
+	Mon, 10 Nov 2014 08:44:07 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krishna Mohan Dani <krishna.md@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, kgene.kim@samsung.com
+To: Mark Brown <broonie@kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
+Hello Mark,
 
---NhX0wRdIbCNyp82h
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This is the sixth version of the series that adds regulator initial
+and suspend operating modes support. It relies on the existing work
+that added suspend states bindings. The opmodes are parsed by the
+regulator core and drivers should only define a translation function
+to map between hardware specific to standard modes.
 
-On Mon, Nov 10, 2014 at 01:31:56PM +0530, Krishna Mohan Dani wrote:
-> Document the device tree binding for the ALC5631 codec and update vendor
-> specific prefix for the Realtek.
+The series adds a "regulator-initial-mode" property to configure at
+startup, the operating mode for the regulators that support changing
+its mode during normal operation and a "regulator-mode" property for
+the regulators that supports changing its operating mode when the
+system enters in a suspend state. These properties were originally
+part of Chanwoo Choi's regulator suspend state series [0] but were
+removed since there wasn't a way to define the operating modes in a
+generic way.
 
-This driver isn't in mainline, you need to submit the driver.
+The generic regulator DT binding doc explains that each device has
+to document what their valid operating modes are and drivers must
+add a translation function so the core knows how to map the opmodes.
 
---NhX0wRdIbCNyp82h
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+If the patches are merged, following series will change the drivers
+using of_regulator_match() to pass the regulator description in the
+match table and another series will add the new opmode feature to
+the max77802 regulator driver.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+The series is composed of the following patches:
 
-iQEcBAEBAgAGBQJUYL+DAAoJECTWi3JdVIfQXuYH/24EGqQwlKFtJwy0fRwjpe1M
-y1buHS4Ff3Gom8iflQBFPViH2v6nN74Zr7NqnyQC6FCLOtQjcNR9uDXVjvL+bq1F
-trZhZdPo9GVxaPUiji9qfqIQnU/tYtpFNLKzcT3/f4/Q8cOu3UYxghqqglqEPkFr
-83ns3SwLftsE6L6LMqMKvWASZH19NEkhYXtaNBI/8nDOYcHot0bWT9kP1YHkDnKZ
-d7f/0jcs40TFfUeToamrWu4Accx9+aRhyLHEndInEsXvGNURfh5sAIcFjjHse8Qe
-iWASDTjoxjQfu7t6gx3i9Rz35rWDlJ+XSlnJGirUyJCFhkJACxCdBuQTmwwMpmY=
-=U2ZB
------END PGP SIGNATURE-----
+Javier Martinez Canillas (5):
+  regulator: Document binding for initial and suspend modes
+  regulator: Add mode mapping function to struct regulator_desc
+  regulator: of: Add regulator desc param to
+    of_get_regulator_init_data()
+  regulator: of: Pass the regulator description in the match table
+  regulator: of: Add support for parsing initial and suspend modes
 
---NhX0wRdIbCNyp82h--
+ .../devicetree/bindings/regulator/regulator.txt    |  7 ++++
+ drivers/regulator/88pm8607.c                       |  3 +-
+ drivers/regulator/anatop-regulator.c               |  5 ++-
+ drivers/regulator/arizona-ldo1.c                   |  8 ++--
+ drivers/regulator/arizona-micsupp.c                |  8 ++--
+ drivers/regulator/da9052-regulator.c               |  3 +-
+ drivers/regulator/da9210-regulator.c               |  2 +-
+ drivers/regulator/fan53555.c                       | 17 +++++----
+ drivers/regulator/fixed.c                          | 19 ++++++----
+ drivers/regulator/gpio-regulator.c                 | 18 +++++----
+ drivers/regulator/max8952.c                        |  2 +-
+ drivers/regulator/max8973-regulator.c              |  3 +-
+ drivers/regulator/max8997.c                        |  3 +-
+ drivers/regulator/max8998.c                        |  5 ++-
+ drivers/regulator/mc13xxx-regulator-core.c         |  3 +-
+ drivers/regulator/of_regulator.c                   | 43 +++++++++++++++++++---
+ drivers/regulator/pwm-regulator.c                  |  3 +-
+ drivers/regulator/qcom_rpm-regulator.c             |  9 +++--
+ drivers/regulator/s5m8767.c                        |  3 +-
+ drivers/regulator/sky81452-regulator.c             |  2 +-
+ drivers/regulator/stw481x-vmmc.c                   |  3 +-
+ drivers/regulator/ti-abb-regulator.c               |  3 +-
+ drivers/regulator/tps51632-regulator.c             | 43 ++++++++++++----------
+ drivers/regulator/tps62360-regulator.c             | 31 +++++++++-------
+ drivers/regulator/tps65218-regulator.c             |  3 +-
+ drivers/regulator/twl-regulator.c                  |  3 +-
+ drivers/regulator/vexpress.c                       |  3 +-
+ include/linux/regulator/driver.h                   |  4 ++
+ include/linux/regulator/of_regulator.h             |  9 ++++-
+ 29 files changed, 174 insertions(+), 94 deletions(-)
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2014/10/10/161
