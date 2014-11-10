@@ -1,81 +1,66 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] PM / Domains: Fix initial default state of the
- need_restore flag
-Date: Mon, 10 Nov 2014 10:32:24 -0800
-Message-ID: <20141110183224.GA5626@dtor-ws>
-References: <1415366847-4807-1-git-send-email-ulf.hansson@linaro.org>
- <7hr3xerdw6.fsf@deeprootsystems.com>
- <20141107215751.GA4439@dtor-ws>
- <CAPDyKFot-LZjazq190cY3-tawB_-ukdsmrLcD3vtidLvX68FOg@mail.gmail.com>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH] ARM: exynos_defconfig: disable CONFIG_EXYNOS5420_MCPM; not stable
+Date: Mon, 10 Nov 2014 11:35:23 -0800
+Message-ID: <7hegtaq26c.fsf@deeprootsystems.com>
+References: <1414796382-5447-1-git-send-email-khilman@kernel.org>
+	<000e01cffb39$5ef0a2d0$1cd1e870$@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f174.google.com ([209.85.223.174]:48741 "EHLO
-	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752024AbaKJSca (ORCPT
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:56646 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751203AbaKJTf1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Nov 2014 13:32:30 -0500
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFot-LZjazq190cY3-tawB_-ukdsmrLcD3vtidLvX68FOg@mail.gmail.com>
+	Mon, 10 Nov 2014 14:35:27 -0500
+Received: by mail-pa0-f41.google.com with SMTP id rd3so8960827pab.0
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Nov 2014 11:35:26 -0800 (PST)
+In-Reply-To: <000e01cffb39$5ef0a2d0$1cd1e870$@kernel.org> (Kukjin Kim's
+	message of "Sat, 08 Nov 2014 18:50:04 +0900")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Kevin Hilman <khilman@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Sachin Kamat' <sachin.kamat@samsung.com>, 'Doug Anderson' <dianders@chromium.org>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, 'Tushar Behera' <tushar.behera@linaro.org>
 
-On Mon, Nov 10, 2014 at 04:18:50PM +0100, Ulf Hansson wrote:
-> [...]
-> 
-> > I guess we do need it for 3.18, but when we are talking about 3.19,
-> > before we make any more changes can we outline how power domains are
-> > supposed to work?
-> >
-> > 1. How do we attach a device to power domain? Right now it seems that
-> > individual buses are responsible for attaching their devices to power
-> > domains. Should we move it into driver core (device_pm_add?) so that
-> > device starts its life in its proper power domain?
-> 
-> That was the initial approach.
-> 
-> To my understanding, Rafael's primary reason for not accepting that
-> was that it's not common, but it's platform-specific.
-> http://marc.info/?l=linux-pm&m=140243462304669&w=2
+Kukjin Kim <kgene@kernel.org> writes:
 
-I am not sure I agree with Rafael there:
+> Kevin Hilman wrote:
+>> 
+>> From: Kevin Hilman <khilman@linaro.org>
+>> 
+>> The option CONFIG_EXYNOS5420_MCPM is causing imprecise external aborts
+>> during boot testing, causing various userspace startup failures.
+>> 
+>> Disable until it has gotten more testing.
+>> 
+>> Cc: Kukjin Kim <kgene.kim@samsung.com>,
+>> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+>> Cc: Sachin Kamat <sachin.kamat@samsung.com>,
+>> Cc: Doug Anderson <dianders@chromium.org>,
+>> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+>> Cc: Tushar Behera <tushar.behera@linaro.org>,
+>> Cc: stable@vger.kernel.org # v3.17+
+>> Signed-off-by: Kevin Hilman <khilman@linaro.org>
+>> ---
+>> This has been reported by a few people[1], but not investigated or fixed, so it's
+>> time to disable this feature until it can be fixed.
+>> 
+> Hi Kevin,
+>
+> Yeah I agree with your opinion.
+>
+> But as you can see my tree, I've queued regarding mcpm patches for 3.19 will
+> be shown in -next in this weekend. 
 
- - when we are talking about the latest incarnation of power domains it
-   is not really platform specific anymore (as it was when we were
-   dealing with ACPI only case);
+Which of the recently queued patches are expected to address the
+imprecise abort issue?  I'd be happy to test them out.  
 
-- I do not see why sirincling platform specific code around i2c, spi,
-  etc bus code (which is not platform-specific) is OK, but a no-no for
-  the driver ocre.
+> Anyway let me apply this into -fixes and
+> then let's enable after test its functionality in -next in a couple of days.
 
-> 
-> Now, even if we would reconsider doing as you propose, what would the
-> actual benefit be? Obviously, we would get less amount of code to
-> maintain, which is one reason, but are there more?
+Yes, I think this needs to be applied until these aborts are understood
+and fixed.
 
-I think so - you would have complete picture of your power domain,
-including data exposed in debugfs, etc.
+Thanks,
 
-> 
-> >
-> > 2. When do we power up the devices (and the domains)? Right now devices
-> > in ACPI power domain are powered when they are attached to the power
-> > domain (which coincides with probing), but generic power domains do not
-> > do that. Can we add a separate API to explicitly power up the device (and
-> > its domain if it is powered down) and do it again, either in device core
-> > or in individual buses. This way, regardless of runtime PM or not, we
-> > will have devices powered on when driver tries to bind to them. If
-> > binding fails we can power down the device.
-> 
-> Isn't that exactly what I implemented in [1], what am I missing?
-
-Hm, OK. I guess the title of the patch series thrown me off because as
-far as I am concerned it is not a race, we simply were not powering the
-domain properly for probing.
-
-Thanks.
-
--- 
-Dmitry
+Kevin
