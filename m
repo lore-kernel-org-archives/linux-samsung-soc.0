@@ -1,83 +1,37 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] PM / Domains: Fix initial default state of the
- need_restore flag
-Date: Mon, 10 Nov 2014 16:18:50 +0100
-Message-ID: <CAPDyKFot-LZjazq190cY3-tawB_-ukdsmrLcD3vtidLvX68FOg@mail.gmail.com>
-References: <1415366847-4807-1-git-send-email-ulf.hansson@linaro.org>
-	<7hr3xerdw6.fsf@deeprootsystems.com>
-	<20141107215751.GA4439@dtor-ws>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: Samsung pinctrl patches for v3.19
+Date: Mon, 10 Nov 2014 18:55:54 +0100
+Message-ID: <CACRpkdYCgNm6rfzqrLPvyvS5BtPu8E+SKvMHveOB7fdrCQUhiQ@mail.gmail.com>
+References: <1415543150-3493-1-git-send-email-tomasz.figa@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f43.google.com ([209.85.216.43]:36849 "EHLO
-	mail-qa0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752967AbaKJPSv (ORCPT
+Received: from mail-ie0-f181.google.com ([209.85.223.181]:32860 "EHLO
+	mail-ie0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753493AbaKJRzz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Nov 2014 10:18:51 -0500
-Received: by mail-qa0-f43.google.com with SMTP id j7so5452773qaq.16
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Nov 2014 07:18:51 -0800 (PST)
-In-Reply-To: <20141107215751.GA4439@dtor-ws>
+	Mon, 10 Nov 2014 12:55:55 -0500
+Received: by mail-ie0-f181.google.com with SMTP id rp18so9701024iec.40
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Nov 2014 09:55:55 -0800 (PST)
+In-Reply-To: <1415543150-3493-1-git-send-email-tomasz.figa@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Kevin Hilman <khilman@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaron
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-[...]
+On Sun, Nov 9, 2014 at 3:25 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
 
-> I guess we do need it for 3.18, but when we are talking about 3.19,
-> before we make any more changes can we outline how power domains are
-> supposed to work?
->
-> 1. How do we attach a device to power domain? Right now it seems that
-> individual buses are responsible for attaching their devices to power
-> domains. Should we move it into driver core (device_pm_add?) so that
-> device starts its life in its proper power domain?
+> Please consider the following pull request containing queued changes for
+> pinctrl-samsung driver.
 
-That was the initial approach.
+Thanks, pulled!
 
-To my understanding, Rafael's primary reason for not accepting that
-was that it's not common, but it's platform-specific.
-http://marc.info/?l=linux-pm&m=140243462304669&w=2
+> I'm sorry for all the delays in handling this. Things
+> should get better from now on, though.
 
-Now, even if we would reconsider doing as you propose, what would the
-actual benefit be? Obviously, we would get less amount of code to
-maintain, which is one reason, but are there more?
+IIUC you are a hobbyist maintainer now, and then I will tolerate a
+*lot* more than this, that is one of the privileges that comes with
+that role, haha :D
 
->
-> 2. When do we power up the devices (and the domains)? Right now devices
-> in ACPI power domain are powered when they are attached to the power
-> domain (which coincides with probing), but generic power domains do not
-> do that. Can we add a separate API to explicitly power up the device (and
-> its domain if it is powered down) and do it again, either in device core
-> or in individual buses. This way, regardless of runtime PM or not, we
-> will have devices powered on when driver tries to bind to them. If
-> binding fails we can power down the device.
-
-Isn't that exactly what I implemented in [1], what am I missing?
-
->
-> I've heard there is a concern about power domain bouncing up and down
-> during probing. Is it really a concern? Would not we run into the same
-> issues past booting up with aggressive PM policy? Anyway, we could
-> probably work around this by refusing to actually power down the domains
-> until we are done booting, similarly to who genpd_poweroff_unused works.
-
-I haven't heard about this kind of issues, but I think your approach
-seems reasonable.
-
-Currently, I think we should focus on solving the problem in [1].
-Those drivers/subsystems that use pm_runtime_set_active() during
-->probe() are broken in this regards.
-
-Now, if we move the attachment of devices to their PM domains from
-buses into driver core, that could simplify [1]. Still, only if we
-also decide to power on PM domains from driver core, else it wouldn't
-matter much I think.
-
-
-[1]
-[PATCH v3 0/9] PM / Domains: Fix race conditions during boot
-http://marc.info/?t=141320907000003&r=1&w=2
-
-Kind regards
-Uffe
+Yours,
+Linus Walleij
