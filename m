@@ -1,72 +1,99 @@
-From: Varka Bhadram <varkabhadram@gmail.com>
-Subject: Re: [PATCH] mtd: remove .owner field for driver using module_platform_driver
-Date: Tue, 11 Nov 2014 16:09:29 +0530
-Message-ID: <5461E761.5090702@gmail.com>
-References: <1415701649-25915-1-git-send-email-sanjeev_sharma@mentor.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v3 0/9] PM / Domains: Fix race conditions during boot
+Date: Tue, 11 Nov 2014 12:05:46 +0100
+Message-ID: <CAPDyKFpgYiRuW0cbpW_ZnZU-bRqvuqzfW+QfkbUTiYVEpE1ZLA@mail.gmail.com>
+References: <1413208930-26019-1-git-send-email-ulf.hansson@linaro.org>
+	<2024276.CFr3nVUAlA@vostro.rjw.lan>
+	<CAPDyKFp=T8Luomeaoz5Y=eLAuFaOfdb+-aoU3QVnpjoDYVKPjg@mail.gmail.com>
+	<17707586.6KbjDf5Kep@vostro.rjw.lan>
+	<CAPDyKFo-On2MfqHk081o_JZvwbrbi0=n9h6o7A9dJ+X4c8goKg@mail.gmail.com>
+	<545D0074.7060205@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:50656 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752993AbaKKKmy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Nov 2014 05:42:54 -0500
-In-Reply-To: <1415701649-25915-1-git-send-email-sanjeev_sharma@mentor.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <545D0074.7060205@ti.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Pavel Machek <pavel@ucw.cz>, Geert Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@the-dreams.de>, Tomasz Figa <tomasz.figa@gmail.com>, Philipp Zabel <philipp.zabel@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Kevin Hilman <khilman@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Alan Stern <stern@rowland.harvard.edu>, Jack Dai <jack.dai@rock-chips.com>, Len Brown <len.brown@intel.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Jinkun Hong <jinkun.hong@rock-chips.com>, Mark Brown <broonie@kernel.org>, Ben Dooks <ben-linux@fluff.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Aaron Lu <aaron.lu@intel.com>, Greg
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sanjeev Sharma <sanjeev_sharma@mentor.com>, dwmw2@infradead.org, computersforpeace@gmail.com, mcuos.com@gmail.com, ben-linux@fluff.org
-Cc: gregkh@linuxfoundation.org, linux-mtd@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hi Sanjeev Sharma,
+[...]
 
-On 11/11/2014 03:57 PM, Sanjeev Sharma wrote:
-> This patch removes the .owner field for drivers which use the
-> platform_driver_register api because this is overriden in
-> _platform_driver_register.
+> 2) There are no requirements for arch/platforms/drivers to work in both cases
+> CONFIG_PM_RUNTIME=y/n. But they must be built without errors/warning for both
+> cases.
+
+For cross SoC drivers this statement is not correct! Driver _must_
+support the various combinations of CONFIG_PM*.
+
+Therefore, I think it's better to strive towards a common solution and
+to get the building blocks in place.
+
 >
-> Signed-off-by: Sanjeev Sharma <Sanjeev_Sharma@mentor.com>
-> ---
->   drivers/mtd/nand/ams-delta.c     | 1 -
->   drivers/mtd/nand/atmel_nand.c    | 2 --
->   drivers/mtd/nand/au1550nd.c      | 1 -
->   drivers/mtd/nand/bf5xx_nand.c    | 1 -
->   drivers/mtd/nand/davinci_nand.c  | 1 -
->   drivers/mtd/nand/denali_dt.c     | 1 -
->   drivers/mtd/nand/docg4.c         | 1 -
->   drivers/mtd/nand/fsl_elbc_nand.c | 1 -
->   drivers/mtd/nand/fsl_ifc_nand.c  | 1 -
->   drivers/mtd/nand/fsl_upm.c       | 1 -
->   drivers/mtd/nand/fsmc_nand.c     | 1 -
->   drivers/mtd/nand/gpio.c          | 1 -
->   drivers/mtd/nand/jz4740_nand.c   | 1 -
->   drivers/mtd/nand/lpc32xx_mlc.c   | 1 -
->   drivers/mtd/nand/lpc32xx_slc.c   | 1 -
->   drivers/mtd/nand/mpc5121_nfc.c   | 1 -
->   drivers/mtd/nand/mxc_nand.c      | 1 -
->   drivers/mtd/nand/ndfc.c          | 1 -
->   drivers/mtd/nand/nuc900_nand.c   | 1 -
->   drivers/mtd/nand/omap2.c         | 1 -
->   drivers/mtd/nand/omap_elm.c      | 1 -
->   drivers/mtd/nand/orion_nand.c    | 1 -
->   drivers/mtd/nand/pasemi_nand.c   | 1 -
->   drivers/mtd/nand/plat_nand.c     | 1 -
->   drivers/mtd/nand/s3c2410.c       | 1 -
->   drivers/mtd/nand/sh_flctl.c      | 1 -
->   drivers/mtd/nand/sharpsl.c       | 1 -
->   drivers/mtd/nand/socrates_nand.c | 1 -
->   drivers/mtd/nand/tmio_nand.c     | 1 -
->   drivers/mtd/nand/txx9ndfmc.c     | 1 -
->   30 files changed, 31 deletions(-)
+> For example, for Keystone 2 only CONFIG_PM_RUNTIME=y is going to be supported
+> and if some one decided to disable it - it can be perfectly done from sys_fs/
+> user space.
 
-This removal of .owner field should be done for all the platform drivers which are using
-module_platform_driver().
+I can't see why the sysfs option to disable runtime PM should affect
+this discussion. That's done at runtime and after the device has been
+probed.
 
-Wolfram Sang <wsa@the-dreams.de> working on this change on the all the drivers. Please see [1].
+>
+> 3) pm_runtime_get_sync()(or similar) is good not only because i's waking up device, but also
+> because:
+> - it can wake up chain of devices (dev->parent->parent->...)
 
+That's right. But that's not what this patchset aims to do.
 
-[1]:https://git.kernel.org/cgit/linux/kernel/git/wsa/linux.git/log/?h=platform/remove_owner
+I realize that the header of the cover letter isn't describing the
+problem I am trying to solve very well. I guess the below header would
+have been better:
 
--- 
-Thanks and Regards,
-Varka Bhadram.
+"PM / Domains: Power up PM domains prior drivers starts to probe their devices"
+
+> - it can wake up power domain
+
+Yes, but it requires CONFIG_PM_RUNTIME to be set.
+
+Thus, to solve the problem during driver ->probe() we need another
+solution which don't require CONFIG_PM_RUNTIME to be set. As this
+patchset proposes.
+
+> - it connects device to domain/class/type/bus and so allow to add additional PM layer on top
+>   of Platform bus (for example arch/arm/mach-omap2/omap_device.c).
+>
+> So, it will do all needed things, and if it doesn't that problem is in platfrom/bus/driver
+> code and not in Runtime PM.
+> if pm_runtime_get_sync() will be dropped - than all above will need to be implemented
+> around the ->probe().
+
+I am not sure what you mean about dropping pm_runtime_get_sync()? All
+I am saying is that we can't use it to power on PM domains during the
+probe sequence.
+
+Of course, you may still use pm_runtime_get_sync() from anywhere it's
+needed, to for example handle device's parent/child relationships.
+
+>
+> 4) I've copied here comment from Rafael:
+>  >>>> Of course, if ->probe() is to call pm_runtime_resume() for this purpose,
+>  >>>> it must take the fact that the driver's own ->runtime_resume() may be called
+>  >>>> as a result of this into account.
+>  Agree, that's a little bit annoying, but we are living with that for more then
+>  5 years already (I'm 3 years) - so, I am, as driver developer, expecting above behavior
+>  (just walk through the drivers and you will see how many drivers expecting the same).
+>
+> So, any volunteers to check and fix ~500 drivers.
+
+We don't have to change these drivers. An certainly they are not 500. :-)
+
+They will still work as is!
+
+Though we need this fix to comply with them, which is supposed to go
+in for 3.18 rc[n].
+"PM / Domains: Fix initial default state of the need_restore flag"
+
+[...]
+
+Kind regards
+Uffe
