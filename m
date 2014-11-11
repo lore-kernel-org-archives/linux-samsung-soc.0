@@ -1,33 +1,135 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] PM / Domains: Fix initial default state of the need_restore flag
-Date: Mon, 10 Nov 2014 12:33:15 -0800
-Message-ID: <F09FA55F-7246-4E9F-B54D-7CB984E10161@gmail.com>
-References: <1415366847-4807-1-git-send-email-ulf.hansson@linaro.org> <7hr3xerdw6.fsf@deeprootsystems.com> <20141107215751.GA4439@dtor-ws> <CAPDyKFot-LZjazq190cY3-tawB_-ukdsmrLcD3vtidLvX68FOg@mail.gmail.com> <20141110183224.GA5626@dtor-ws> <20141110193931.GN3815@sirena.org.uk>
+From: Chander Kashyap <k.chander@samsung.com>
+Subject: Re: [PATCH v4] arm64: dts: exynos7: add support for cpuidle core
+ power down
+Date: Tue, 11 Nov 2014 10:46:53 +0530
+Message-ID: <CADWw7Oh_A9PTHKLDNKHBwAvS5pNe34CqZusQ9WxKCZo_YjO=4A@mail.gmail.com>
+References: <1415193331-14790-1-git-send-email-k.chander@samsung.com>
+	<20141107115845.GA2062@red-moon>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=UTF-8
-Content-Transfer-Encoding: 8bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20141110193931.GN3815@sirena.org.uk>
-Sender: linux-pm-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Jack Dai <jack.dai@rock-chips.com>, Jinkun Hong <jinkun.hong@rock-chips.com>, Aaro
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141107115845.GA2062@red-moon>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Chander Kashyap <k.chander@samsung.com>, Mark Rutland <Mark.Rutland@arm.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Catalin Marinas <Catalin.Marinas@arm.com>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "rjw@rjwysocki.net" <rjw@rjwysocki.net>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On November 10, 2014 11:39:31 AM PST, Mark Brown <broonie@kernel.org> wrote:
->On Mon, Nov 10, 2014 at 10:32:24AM -0800, Dmitry Torokhov wrote:
+On Fri, Nov 7, 2014 at 5:28 PM, Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+> On Wed, Nov 05, 2014 at 01:15:31PM +0000, Chander Kashyap wrote:
+>> Exynos7 has core power down state where cores can be powered off independently.
 >
->> - I do not see why sirincling platform specific code around i2c, spi,
->>   etc bus code (which is not platform-specific) is OK, but a no-no
->for
->>   the driver ocre.
+> "...has a core power down idle state..."
 >
->sirincling?
+>> This patch adds support for this state.
+>
+> "...for this idle state."
+>
+>> Entry latency for the core power down is calculated as follows:
+>> 1. Time difference is measured between cpuidle entry and exit.
+>> 2. WFI is skipped for measuring the time.
+>> 3. Select the worst case time in the set of 100000 cpuidle transactions,
+>>    with varying load.
+>>
+>> Exit latency and target residency are supplied as per HW team
+>
+> "Exit latency and min residency values are supplied by the HW team."
+>
+> Target residency is a kernel naming scheme, non-existent in the idle state
+> bindings.
+>
+> Please take time to write proper commit logs, thanks.
+>
+>> Signed-off-by: Chander Kashyap <k.chander@samsung.com>
+>> ---
+>> This patch has following dependencies:
+>>       - [PATCH v5 0/8] arch: arm64: Enable support for Samsung Exynos7 SoC
+>>               http://www.spinics.net/lists/linux-samsung-soc/msg37047.html
+>> Changes in v2:
+>>       - Moved the cpu-idle-state property after reg property
+>>       - removed the status property.
+>>
+>> Changes in v3:
+>>       - Added the Entry latency calculation in commit message.
+>> Changes in v4:
+>>       - Corrected the commit message.
+>>       - Corrected the entry latency value.
+>>
+>>  arch/arm64/boot/dts/exynos/exynos7.dtsi |   17 +++++++++++++++++
+>>  1 file changed, 17 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+>> index 50ae936..444dde1 100644
+>> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
+>> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+>> @@ -37,6 +37,7 @@
+>>                       compatible = "arm,cortex-a57", "arm,armv8";
+>>                       enable-method = "psci";
+>
+> enable-method should be after reg, it is not an ordering issues added
+> by this patch but I still do not like that.
 
-Sorry, I was going for "sprinkling" but failed spectacularly.
+This is being taken care in new patch for Exynos7 support.
 
+>
+> Other than that, please take some time to rewrite the commit log and
+> ask to fix the ordering above, you can add my:
+>
 
-Thanks.
+Yes i will change as suggested.
 
--- 
-Dmitry
+Thanks for the review.
+
+> Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+>
+>>                       reg = <0x0>;
+>> +                     cpu-idle-states = <&CPU_SLEEP>;
+>>               };
+>>
+>>               cpu@1 {
+>> @@ -44,6 +45,7 @@
+>>                       compatible = "arm,cortex-a57", "arm,armv8";
+>>                       enable-method = "psci";
+>>                       reg = <0x1>;
+>> +                     cpu-idle-states = <&CPU_SLEEP>;
+>>               };
+>>
+>>               cpu@2 {
+>> @@ -51,6 +53,7 @@
+>>                       compatible = "arm,cortex-a57", "arm,armv8";
+>>                       enable-method = "psci";
+>>                       reg = <0x2>;
+>> +                     cpu-idle-states = <&CPU_SLEEP>;
+>>               };
+>>
+>>               cpu@3 {
+>> @@ -58,6 +61,20 @@
+>>                       compatible = "arm,cortex-a57", "arm,armv8";
+>>                       enable-method = "psci";
+>>                       reg = <0x3>;
+>> +                     cpu-idle-states = <&CPU_SLEEP>;
+>> +             };
+>> +
+>> +             idle-states {
+>> +                     entry-method = "arm,psci";
+>> +
+>> +                     CPU_SLEEP: cpu-sleep {
+>> +                             compatible = "arm,idle-state";
+>> +                             local-timer-stop;
+>> +                             arm,psci-suspend-param = <0x0010000>;
+>> +                             entry-latency-us = <34>;
+>> +                             exit-latency-us = <150>;
+>> +                             min-residency-us = <2100>;
+>> +                     };
+>>               };
+>>       };
+>>
+>> --
+>> 1.7.9.5
+>>
+>>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
