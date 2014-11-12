@@ -1,26 +1,44 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 0/2] ARM: dts: Fix the number of DMA channels for Exynos3250/4
-Date: Wed, 12 Nov 2014 11:41:06 +0900
-Message-ID: <1415760068-765-1-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 2/2] ARM: dts: Fix the number of DMA channels for Exynos4
+Date: Wed, 12 Nov 2014 11:41:08 +0900
+Message-ID: <1415760068-765-3-git-send-email-cw00.choi@samsung.com>
+References: <1415760068-765-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1415760068-765-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: ben-linux@fluff.org, kyungmin.park@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch fix minor issuse to correct the number of DMA channels for
-Exynos3250 and Exynos4 series. The PL330 DMA of Exynos3250/Exynos4 support
-16 channels simultaneously but, PL330 DMA driver don't use 'dma-channels'
-property directly. This patchset fix the correct information
-of Exynos3250/Exynos4's PL330 DMA simply.
+This patch fix the numer for DMA channels for Exynos4210/Exynos4212/Exynos4412
+because DMA controller of Exynos4 series can support 16 channels simultaneously.
 
-Chanwoo Choi (2):
-  ARM: dts: Fix the number of DMA channels for Exynos3250
-  ARM: dts: Fix the number of DMA channels for Exynos4
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ arch/arm/boot/dts/exynos4.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
- arch/arm/boot/dts/exynos3250.dtsi | 4 ++--
- arch/arm/boot/dts/exynos4.dtsi    | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
-
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index e0278ec..3b2c3dd 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -606,7 +606,7 @@
+ 			clocks = <&clock CLK_PDMA0>;
+ 			clock-names = "apb_pclk";
+ 			#dma-cells = <1>;
+-			#dma-channels = <8>;
++			#dma-channels = <16>;
+ 			#dma-requests = <32>;
+ 		};
+ 
+@@ -617,7 +617,7 @@
+ 			clocks = <&clock CLK_PDMA1>;
+ 			clock-names = "apb_pclk";
+ 			#dma-cells = <1>;
+-			#dma-channels = <8>;
++			#dma-channels = <16>;
+ 			#dma-requests = <32>;
+ 		};
+ 
 -- 
 1.8.5.5
