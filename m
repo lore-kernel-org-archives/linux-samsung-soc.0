@@ -1,68 +1,100 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: Samsung/S3C6410/Mini6410: how to handle NAND's "clock off"
-Date: Tue, 11 Nov 2014 19:42:26 +0100
-Message-ID: <20141111184226.GH27002@pengutronix.de>
-References: <201411111910.34231.juergen@kreuzholzen.de>
+From: Ben Hutchings <ben@decadent.org.uk>
+Subject: Re: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net on
+ arndale platform
+Date: Wed, 12 Nov 2014 00:23:22 +0000
+Message-ID: <1415751802.3398.107.camel@decadent.org.uk>
+References: <20141104072236.GA559@afflict.kos.to>
+	 <C89EFD3CD56F64468D3D206D683A8D2203985F49@ldam-msx2.fugro-nl.local>
+	 <20141104094336.GA3145@afflict.kos.to>
+	 <C89EFD3CD56F64468D3D206D683A8D2203985FA9@ldam-msx2.fugro-nl.local>
+	 <20141104200914.GN23178@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:58222 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751184AbaKKSmq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Nov 2014 13:42:46 -0500
-Content-Disposition: inline
-In-Reply-To: <201411111910.34231.juergen@kreuzholzen.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-AIfNf5xTiBlgC4y0RSEY"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20141104200914.GN23178@opensource.wolfsonmicro.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+Cc: "Stam, Michel [FINT]" <M.Stam@fugro.nl>, Riku Voipio <riku.voipio@iki.fi>, davem@davemloft.net, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Juergen Borleis <juergen@kreuzholzen.de>
-Cc: linux-arm-kernel@lists.infradead.org, Brian Norris <computersforpeace@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>, Ben Dooks <ben-linux@fluff.org>
 
-On Tue, Nov 11, 2014 at 07:10:33PM +0100, Juergen Borleis wrote:
-> Hi,
->=20
-> the S3C2410 NAND driver [1] can still be used for NANDs attached to a=
-n S3C6410
-> SoC. But this driver has a "nice" feature called "clock off" to save =
-some
-> power while not in use. I tried it here on my Mini6410 platform and i=
-t freezes
-> the system.
->=20
-> The clock tree is somehow:
->=20
-> [...]
->   hclk                      4            4   133000000          0 0
->      hclk_mfc               0            0   133000000          0 0
->      hclk_mem0              2            2   133000000          0 0
->         mem0_srom           0            0   133000000          0 0
->         mem0_nfcon          1            1   133000000          0 0
->         mem0_onenand0       0            0   133000000          0 0
->         mem0_onenand1       0            0   133000000          0 0
->         mem0_cfcon          0            0   133000000          0 0
-> [...]
->=20
-> On the Mini6410 the "mem0_nfcon" clock is the only single user of the
-> "hclk_mem0". And this clock is required to keep the access to the ext=
-ernal
-> network device enabled. When the NAND driver disables its clock "mem0=
-_nfcon",
-> the "hclk_mem0" gets also disabled because there is no consumer anymo=
-re. The
-> next time the network driver tries to access its device, the SoC free=
-zes.
-Sounds like the network driver should hold a reference to hclk_mem0. I
-assume the system uses a device tree? This is the dm9000 driver? It
-doesn't seem to use clk stuff, but it should be possible to add an
-optional clk entry.
 
-Best regards
-Uwe
+--=-AIfNf5xTiBlgC4y0RSEY
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, 2014-11-04 at 20:09 +0000, Charles Keepax wrote:
+> On Tue, Nov 04, 2014 at 11:23:06AM +0100, Stam, Michel [FINT] wrote:
+> > Hello Riku,
+> >=20
+> > >Fixing a bug (ethtool support) must not cause breakage elsewhere (in
+> > this case on arndale). This is now a regression of functionality from
+> > 3.17.
+> > >
+> > >I think it would better to revert the change now and with less hurry
+> > introduce a ethtool fix that doesn't break arndale.
+> >=20
+> > I don't fully agree here;=20
+> > I would like to point out that this commit is a revert itself. Fixing
+> > the armdale will then cause breakage in other implementations, such as
+> > ours. Blankly reverting breaks other peoples' implementations.
+> >=20
+> > The PHY reset is the thing that breaks ethtool support, so any fix that
+> > appeases all would have to take existing PHY state into account.=20
+[...]
+> --- a/drivers/net/usb/asix_devices.c
+> +++ b/drivers/net/usb/asix_devices.c
+> @@ -299,6 +299,7 @@ static int ax88772_reset(struct usbnet *dev)
+>  {
+>         struct asix_data *data =3D (struct asix_data *)&dev->data;
+>         int ret, embd_phy;
+> +       int reg;
+>         u16 rx_ctl;
+>=20
+>         ret =3D asix_write_gpio(dev,
+> @@ -359,8 +360,10 @@ static int ax88772_reset(struct usbnet *dev)
+>         msleep(150);
+>=20
+>         asix_mdio_write(dev->net, dev->mii.phy_id, MII_BMCR, BMCR_RESET);
+> -       asix_mdio_write(dev->net, dev->mii.phy_id, MII_ADVERTISE,
+> -                       ADVERTISE_ALL | ADVERTISE_CSMA);
+> +       reg =3D asix_mdio_read(dev->net, dev->mii.phy_id, MII_ADVERTISE);
+> +       if (!reg)
+> +               reg =3D ADVERTISE_ALL | ADVERTISE_CSMA;
+> +       asix_mdio_write(dev->net, dev->mii.phy_id, MII_ADVERTISE, reg);
+[...]
+
+Why is there no sleep after setting the RESET bit?  Doesn't that make
+the following register writes unreliable?
+
+Ben.
 
 --=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+Ben Hutchings
+Experience is directly proportional to the value of equipment destroyed.
+                                                         - Carolyn Scheppne=
+r
+
+--=-AIfNf5xTiBlgC4y0RSEY
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIVAwUAVGKof+e/yOyVhhEJAQpNmA//YzP85bqno+y9Phv7nG3/6nobdFZ14xRa
+2QqMNOfITadD1HEwmcRMgoyF4h8M3Wg4RVDKgFyyZcYGvSEXXvFw857X3yWG/WYv
+LkHOdPWAtiFQBsJAzruRRwGaGhaG/IRKQFlSiIJZLRT4rVtrbpAdG3dPGmZvUjZV
+WZx9ca2u5hy9gDWh6gc/AvoUDOcDZchMi4caYZrTH1q3RDui9Lp5PVkTZ8oqqa/p
+Fa3awiqqIhhRDhTZltNrUxOh9llmlWC/q4sq+0PYu1uBozrkvzpLgsVqckECsTIl
+cDfUiEKKaUVV6Y0AUbatJjx7oQcG2YFTyPhr1M76DT6TKdrL2WzemBNieouuqHbu
+YT7pUWkCvt9avwDw3sJ/djkjottW2zhj8WWj1O6+O6evJP4rn5FkqXKdWQzyQyJv
+UOYcQFQI04NJyrHKmc/uCcjt3zhX5/kOjZNdEAYXbWxmnFJMQEQWX4FiBViEY5Z4
+AdqGhiAgm088aIEqg4fkJLUYxNnt9tkFXYfOUrK/fTIMc5pnfNuyabwMhEXbrvSz
+w/5XF0p9eoYNwIWsX52I+sXfmwx/mt0FcxhGEn5uH2hOTEE28pSwexSv0V5tN8rw
+msaCkSQD/X4+7UG6M6PzV+fFb1VtKz0Y/wtA4f1Tl/58VG5heAZttoeccjBW1zg2
+EPmFxUZ98t4=
+=Atva
+-----END PGP SIGNATURE-----
+
+--=-AIfNf5xTiBlgC4y0RSEY--
