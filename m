@@ -1,147 +1,110 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH 2/2] cpuidle: exynos: add coupled cpuidle support for
- Exynos4210
-Date: Wed, 12 Nov 2014 19:41:46 +0100
-Message-ID: <4297709.zGrpcvcSeS@amdc1032>
-References: <1415383252-20118-1-git-send-email-b.zolnierkie@samsung.com>
- <3813280.9hNcruz8Q6@amdc1032> <54638E28.6050304@linaro.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 2/4 V2] ASoC: Samsung: Add arndale_rt5631 machine driver
+Date: Wed, 12 Nov 2014 22:29:02 +0000
+Message-ID: <20141112222902.GV3815@sirena.org.uk>
+References: <1415781339-16089-1-git-send-email-krishna.md@samsung.com>
+ <1415781339-16089-3-git-send-email-krishna.md@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <54638E28.6050304@linaro.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Colin Cross <ccross@google.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, Lukasz Majewski <l.majewski@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="KMpoMTeiOjOCaFAr"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35560 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752195AbaKLWaZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 12 Nov 2014 17:30:25 -0500
+Content-Disposition: inline
+In-Reply-To: <1415781339-16089-3-git-send-email-krishna.md@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krishna Mohan Dani <krishna.md@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, kgene.kim@samsung.com
 
 
-Hi,
+--KMpoMTeiOjOCaFAr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wednesday, November 12, 2014 05:43:20 PM Daniel Lezcano wrote:
-> On 11/12/2014 04:13 PM, Bartlomiej Zolnierkiewicz wrote:
-> >
-> 
-> Hi Bartlomiej,
-> 
-> [ cut ]
-> 
-> >>> - using arch_send_wakeup_ipi_mask() instead of dsb_sev()
-> >>>     (this matches CPU hotplug code in arch/arm/mach-exynos/platsmp.c)
-> >>
-> >> I am curious. You experienced very rare hangs after running the tests a
-> >> few hours, right ? Is the SEV replaced by the IPI solving the issue ? If
-> >> yes, how did you catch it ?
-> >
-> > Rare hangs showed up after about 30-40 minutes of testing with the attached
-> > app and script (running of "./cpuidle_state1_test.sh script 2 500" has never
-> > completed on the umodified driver).
-> >
-> > The problem turned out to be in the following loop waiting for CPU1 to get
-> > stuck in the BOOT ROM:
-> >
-> > 		/*
-> > 		 * Wait for cpu1 to get stuck in the boot rom
-> > 		 */
-> > 		while ((__raw_readl(BOOT_VECTOR) != 0) &&
-> > 		       !atomic_read(&cpu1_wakeup))
-> > 			cpu_relax();
-> >
-> > [ Removal of the loop fixed the problem. ]
-> 
-> Just for my personal information, do you know why ?
+On Wed, Nov 12, 2014 at 02:05:37PM +0530, Krishna Mohan Dani wrote:
 
-Unfortunately no.  I just suspect that sometimes the BOOT_VECTOR register
-is not zeroed (or is zeroed and then overwritten) because of the bug in
-the firmware.
+> +	bfs = 32;
+> +
+> +	rfs = 256;
+> +
+> +	rclk = params_rate(params) * rfs;
+> +
+> +	psr = 4;
+> +
+> +	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_CDCLK,
+> +					0, SND_SOC_CLOCK_OUT);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_RCLKSRC_0,
+> +					0, SND_SOC_CLOCK_OUT);
+> +
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = snd_soc_dai_set_sysclk(codec_dai, 0, rclk, SND_SOC_CLOCK_OUT);
+> +	if (ret < 0)
+> +		return ret;
 
-> [ cut ]
-> 
-> >>> +#ifdef CONFIG_ARM_EXYNOS_CPUIDLE
-> >>> +	if (of_machine_is_compatible("samsung,exynos4210"))
-> >>> +		exynos_cpuidle.dev.platform_data = &cpuidle_coupled_exynos_data;
-> >>> +#endif
-> >>
-> >> You should not add those #ifdef.
-> >
-> > Without those #ifdef I get:
-> >
-> >    LD      init/built-in.o
-> > arch/arm/mach-exynos/built-in.o: In function `exynos_dt_machine_init':
-> > /home/bzolnier/sam/linux-sprc/arch/arm/mach-exynos/exynos.c:334: undefined reference to `cpuidle_coupled_exynos_data'
-> > make: *** [vmlinux] Error 1
-> >
-> > when CONFIG_EXYNOS_CPU_SUSPEND is disabled.
-> 
-> Here, we are introducing some dependencies I tried to drop in the 
-> different drivers.
-> 
-> I looked more closely at the code and especially the 
-> 'cpuidle_coupled_exynos_data'. I don't think it is worth to have it 
-> because it adds more complexity and you have to define this structure to 
-> be visible from the drivers/cpuidle files.
-> 
-> I suggest you create an simple function in "pm.c"
-> 
-> int exynos_coupled_aftr(int cpu)
-> {
-> 	pre_enter...
-> 
-> 	if (!cpu)
-> 		cpu0_enter_aftr()
-> 	else
-> 		cpu1_powerdown()
-> 
-> 	post_enter...
-> }
-> 
-> and in the cpuidle driver itself, you just use the already existing 
-> anonymous callback 'exynos_enter_aftr' (and mutate it to conform the 
-> parameters).
-> 
-> You won't have to share any structure between the arch code and the 
-> cpuidle driver.
+Would it make more sense to push the rate configuration into the I2S
+controller driver, it doesn't look very board specific?  Ideally the I2S
+driver would be smart enough by default to be used with the simple-card
+driver.
 
-The reason why the separate callbacks are needed is that the cpuidle
-driver code uses coupled cpuidle barriers (I cannot move them to pm.c):
+> +static int arndale_alc5631_init_paiftx(struct snd_soc_pcm_runtime *rtd)
+> +{
+> +	struct snd_soc_codec *codec = rtd->codec;
+> +	struct snd_soc_dapm_context *dapm = &codec->dapm;
+> +
+> +	snd_soc_dapm_sync(dapm);
+> +
+> +	return 0;
+> +}
 
-+static int exynos_enter_coupled_lowpower(struct cpuidle_device *dev,
-+					 struct cpuidle_driver *drv,
-+					 int index)
-+{
-+	int ret;
-+
-+	exynos_cpuidle_pdata->pre_enter_aftr();
-+
-+	/*
-+	 * Waiting all cpus to reach this point at the same moment
-+	 */
-+	cpuidle_coupled_parallel_barrier(dev, &exynos_idle_barrier);
-+
-+	/*
-+	 * Both cpus will reach this point at the same time
-+	 */
-+	ret = dev->cpu ? exynos_cpuidle_pdata->cpu1_powerdown()
-+		       : exynos_cpuidle_pdata->cpu0_enter_aftr();
-+	if (ret)
-+		index = ret;
-+
-+	/*
-+	 * Waiting all cpus to finish the power sequence before going further
-+	 */
-+	cpuidle_coupled_parallel_barrier(dev, &exynos_idle_barrier);
-+
-+	exynos_cpuidle_pdata->post_enter_aftr();
-+
-+	return index;
-+}
+This does nothing and can be removed.
 
-Could you please explain how the proposed pm.c::exynos_coupled_aftr()
-would operate without these barriers?
+> +static struct snd_soc_card arndale = {
+> +	.name = "Arndale-I2S",
+> +	.dai_link = arndale_dai,
+> +	.num_links = ARRAY_SIZE(arndale_dai),
+> +};
 
-Best regards,
---
-Bartlomiej Zolnierkiewicz
-Samsung R&D Institute Poland
-Samsung Electronics
+Please give the card a more specific name like "Arndale RT5631" and
+similarly update the symbol names, there are other modules for the
+Arndale board.
 
+> +	ret = snd_soc_register_card(card);
+
+devm_snd_soc_register_card().
+
+> +
+> +	if (ret)
+
+Extra blank line here after the function call.
+
+> +MODULE_AUTHOR("Claude <claude@insignal.co.kr>");
+
+You're saying Claude is the author but there is no signoff from him.  It
+is very important to get signoffs from all authors.
+
+--KMpoMTeiOjOCaFAr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUY98tAAoJECTWi3JdVIfQKiQH/Awi1KKuDbU0zg7keeJb9xiF
+f5zKuWNm2d9orglu2XZe/Zc26d/fJ2APXlirOZrBsM2AvHeJm+uj1pwRYIE7VxBe
+wiCdUtqRYoovm3rAhoYYJWyN8PTtU4sG03Q72rI69iz5zE4g7WpPPbf0F8iBUaHO
+X+YAk2WRrsAiAIux8fQ2UyKcfW4bWc8riw0BukrbTZdwn8gwP60NzEBoNvxwlwKm
+DaoIwdN0RQDjv/A3whnbr25drH4kqPAyMjuHt2ACdzS8kqBP7xBEWtopTZLnf4IQ
+p8u9c39Wo76xg+QxPslXGkHGKlnZrqleRcHGxnShbfQsj6ynJZ8TK8uekLsFEgA=
+=j4qV
+-----END PGP SIGNATURE-----
+
+--KMpoMTeiOjOCaFAr--
