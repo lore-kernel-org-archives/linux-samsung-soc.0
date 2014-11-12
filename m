@@ -1,169 +1,185 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH v3 1/2] drm/exynos: dp: Remove support for unused dptx-phy
-Date: Wed, 12 Nov 2014 18:41:03 +0900
-Message-ID: <000001cffe5c$c69fc700$53df5500$%han@samsung.com>
-References: <CAFp+6iEZDdFp14LfPWRM7QXxbYV=LrVChsj5gj_BBHR1rBX+QA@mail.gmail.com>
- <1415784480-20435-1-git-send-email-gautam.vivek@samsung.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH 03/21] thermal: of: Extend of-thermal.c to provide number
+ of non critical trip points
+Date: Wed, 12 Nov 2014 10:42:41 +0100
+Message-ID: <20141112104241.50f644a4@amdc2363>
+References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
+ <1412872737-624-4-git-send-email-l.majewski@samsung.com>
+ <20141107014152.GD10180@developer> <20141107110551.5316836f@amdc2363>
+ <20141107160630.GA23549@developer>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1415784480-20435-1-git-send-email-gautam.vivek@samsung.com>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: 'Vivek Gautam' <gautamvivek1987@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, seanpaul@google.com, ajaykumar.rs@samsung.com, 'Vivek Gautam' <gautam.vivek@samsung.com>, 'Inki Dae' <inki.dae@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:30186 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751826AbaKLJmw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 12 Nov 2014 04:42:52 -0500
+In-reply-to: <20141107160630.GA23549@developer>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Linux PM list <linux-pm@vger.kernel.org>, Lukasz Majewski <l.majewski@majess.pl>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Wednesday, November 12, 2014 6:28 PM, Vivek Gautam wrote:
+Hi Eduardo,
+
 > 
-> Now that we have moved to generic phy based bindings,
-> we don't need to have any code related to older dptx-phy.
-> Nobody is using this dptx-phy anymore, so removing the
-> same.
+> Hello Lukasz,
 > 
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> Cc: Inki Dae <inki.dae@samsung.com>
-> Cc: Jingoo Han <jg1.han@samsung.com>
+> On Fri, Nov 07, 2014 at 11:05:51AM +0100, Lukasz Majewski wrote:
+> > Hi Eduardo,
+> > 
+> > > On Thu, Oct 09, 2014 at 06:38:39PM +0200, Lukasz Majewski wrote:
+> > > > This patch extends the of-thermal.c to provide information about
+> > > > number of available non critical (i.e. non HW) trip points in
+> > > > the system.
+> > > > 
+> > > > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> > > > ---
+> > > >  drivers/thermal/of-thermal.c   | 12 ++++++++++++
+> > > >  drivers/thermal/thermal_core.h |  5 +++++
+> > > >  2 files changed, 17 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/thermal/of-thermal.c
+> > > > b/drivers/thermal/of-thermal.c index 23c8d6c..cd74e64 100644
+> > > > --- a/drivers/thermal/of-thermal.c
+> > > > +++ b/drivers/thermal/of-thermal.c
+> > > > @@ -128,6 +128,18 @@ int of_thermal_is_trip_en(struct
+> > > > thermal_zone_device *tz, int trip) return 1;
+> > > >  }
+> > > >  
+> > > > +int of_thermal_get_non_crit_ntrips(struct thermal_zone_device
+> > > > *tz) +{
+> > > > +	struct __thermal_zone *data = tz->devdata;
+> > > > +	int i;
+> > > > +
+> > > > +	for (i = 0; i < data->ntrips; i++)
+> > > > +		if (data->trips[i].type !=
+> > > > THERMAL_TRIP_CRITICAL)
+> > > > +			continue;
+> > > > +
+> > > > +	return --i;
+> > > > +}
+> > > > +
+> > > 
+> > > 
+> > > 
+> > > I am not against this addition. But looks like we start to spread
+> > > some specific APIs that may not be used to other drivers.
+> > 
+> > Why do you think that this is a specific API? In the thermal OF we
+> > can define trip point as "active", "passive", "hot" and "critical".
+> > 
+> > With the first three we can handle them and properly react. For the
+> > last one SoC's PMU will power down the board.
+> > 
+> > Do you know if any board (e.g. from TI) is NOT supposed to shut down
+> > when "critical" temperature is passed?
+> > 
+> 
+> So, my point is not really about the usage of trip points. It is just
+> that the of-thermal  API will grow with in a wide way with specific
+> functions to check some property on the trip point array. And not all
+> drivers may be using these function, e.g. the above proposal.
+> 
+> > The real problem here is the accessibility to __thermal_trip and
+> > __thermal_bind arrays.
+> > 
+> > Use case:
+> > In the Exynos driver we do need to initialize TMU registers with
+> > threshold temperatures.
+> > The temperature is read via tz->ops->get_trip_temp() [1] (from
+> > of-thermal.c).
+> > Unfortunately, the current API is not exporting the number of
+> > non-critical trip points to know how many times call [1].
+> > Of course we could by hand instantiate [1] n times, but this looks
+> > for me a bit clumsy.
+> 
+> 
+> I understand your use case. My point was simply that this use case may
+> be specific to your driver (or few drivers).
+> > 
+> > Additionally, we now have implicit assumption about the order of
+> > defined temperatures for trip points, but I think this is not a big
+> > issue.
+> > 
+> > > Maybe having a
+> > > single API to provide a read-only copy the list / array of trips
+> > > might be a better approach. I will think of a better way.
+> > 
+> > Definitely. Exporting available trip points is crucial.
+> > 
+> 
+> Yeah, I think it is the best thing to do. Share a read-only array /
+> copy of the needed data, and then drivers would check what ever
+> property they need from the array. Just make sure you document that
+> this is a read-only array (i.e. any possible change they do, won't
+> affect the original array).
 
-Acked-by: Jingoo Han <jg1.han@samsung.com>
+So I assume that you don't mind that I will prepare such of-thermal.c
+modification?
 
+> 
+> > > 
+> > > I also request you to document it accordingly.
+> > 
+> > Ok, I will do that.
+> 
+> Cool!
+> 
+> 
+> 
+> > 
+> > > 
+> > > 
+> > > >  static int of_thermal_get_trend(struct thermal_zone_device *tz,
+> > > > int trip, enum thermal_trend *trend)
+> > > >  {
+> > > > diff --git a/drivers/thermal/thermal_core.h
+> > > > b/drivers/thermal/thermal_core.h index ed8ff05..334a7be 100644
+> > > > --- a/drivers/thermal/thermal_core.h
+> > > > +++ b/drivers/thermal/thermal_core.h
+> > > > @@ -83,6 +83,7 @@ int of_parse_thermal_zones(void);
+> > > >  void of_thermal_destroy_zones(void);
+> > > >  int of_thermal_get_ntrips(struct thermal_zone_device *);
+> > > >  int of_thermal_is_trip_en(struct thermal_zone_device *, int);
+> > > > +int of_thermal_get_non_crit_ntrips(struct thermal_zone_device
+> > > > *); #else
+> > > >  static inline int of_parse_thermal_zones(void) { return 0; }
+> > > >  static inline void of_thermal_destroy_zones(void) { }
+> > > > @@ -94,6 +95,10 @@ int of_thermal_is_trip_en(struct
+> > > > thermal_zone_device *, int) {
+> > > >  	return 0;
+> > > >  }
+> > > > +int of_thermal_get_non_crit_ntrips(struct thermal_zone_device
+> > > > *)
+> > > here, it is supposed to be static inline.
+> > > 
+> > > > +{
+> > > > +	return 0;
+> > > > +}
+> > > >  #endif
+> > > >  
+> > > >  #endif /* __THERMAL_CORE_H__ */
+> > > > -- 
+> > > > 2.0.0.rc2
+> > > > 
+> > 
+> > 
+> > 
+> > -- 
+> > Best regards,
+> > 
+> > Lukasz Majewski
+> > 
+> > Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+
+
+
+-- 
 Best regards,
-Jingoo Han
 
-> ---
-> 
-> Changes from V2:
->  - Moved devm_phy_get() call out of exynos_dp_dt_parse_phydata() to
->    exynos_dp_bind() function and,
->    removed exynos_dp_dt_parse_phydata() function, since it was only
->    getting the PHY.
-> 
-> Changes from V1:
->  - Reworked error handling in exynos_dp_dt_parse_phydata() as commented
->    by Inki.
-> 
->  drivers/gpu/drm/exynos/exynos_dp_core.c |   74 +++++++------------------------
->  drivers/gpu/drm/exynos/exynos_dp_core.h |    2 -
->  2 files changed, 17 insertions(+), 59 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-> index cd50ece..dbe9add 100644
-> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-> @@ -1052,28 +1052,14 @@ static int exynos_dp_create_connector(struct exynos_drm_display *display,
-> 
->  static void exynos_dp_phy_init(struct exynos_dp_device *dp)
->  {
-> -	if (dp->phy) {
-> +	if (dp->phy)
->  		phy_power_on(dp->phy);
-> -	} else if (dp->phy_addr) {
-> -		u32 reg;
-> -
-> -		reg = __raw_readl(dp->phy_addr);
-> -		reg |= dp->enable_mask;
-> -		__raw_writel(reg, dp->phy_addr);
-> -	}
->  }
-> 
->  static void exynos_dp_phy_exit(struct exynos_dp_device *dp)
->  {
-> -	if (dp->phy) {
-> +	if (dp->phy)
->  		phy_power_off(dp->phy);
-> -	} else if (dp->phy_addr) {
-> -		u32 reg;
-> -
-> -		reg = __raw_readl(dp->phy_addr);
-> -		reg &= ~(dp->enable_mask);
-> -		__raw_writel(reg, dp->phy_addr);
-> -	}
->  }
-> 
->  static void exynos_dp_poweron(struct exynos_drm_display *display)
-> @@ -1210,44 +1196,6 @@ static struct video_info *exynos_dp_dt_parse_pdata(struct device *dev)
->  	return dp_video_config;
->  }
-> 
-> -static int exynos_dp_dt_parse_phydata(struct exynos_dp_device *dp)
-> -{
-> -	struct device_node *dp_phy_node = of_node_get(dp->dev->of_node);
-> -	u32 phy_base;
-> -	int ret = 0;
-> -
-> -	dp_phy_node = of_find_node_by_name(dp_phy_node, "dptx-phy");
-> -	if (!dp_phy_node) {
-> -		dp->phy = devm_phy_get(dp->dev, "dp");
-> -		return PTR_ERR_OR_ZERO(dp->phy);
-> -	}
-> -
-> -	if (of_property_read_u32(dp_phy_node, "reg", &phy_base)) {
-> -		dev_err(dp->dev, "failed to get reg for dptx-phy\n");
-> -		ret = -EINVAL;
-> -		goto err;
-> -	}
-> -
-> -	if (of_property_read_u32(dp_phy_node, "samsung,enable-mask",
-> -				&dp->enable_mask)) {
-> -		dev_err(dp->dev, "failed to get enable-mask for dptx-phy\n");
-> -		ret = -EINVAL;
-> -		goto err;
-> -	}
-> -
-> -	dp->phy_addr = ioremap(phy_base, SZ_4);
-> -	if (!dp->phy_addr) {
-> -		dev_err(dp->dev, "failed to ioremap dp-phy\n");
-> -		ret = -ENOMEM;
-> -		goto err;
-> -	}
-> -
-> -err:
-> -	of_node_put(dp_phy_node);
-> -
-> -	return ret;
-> -}
-> -
->  static int exynos_dp_dt_parse_panel(struct exynos_dp_device *dp)
->  {
->  	int ret;
-> @@ -1277,9 +1225,21 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
->  	if (IS_ERR(dp->video_info))
->  		return PTR_ERR(dp->video_info);
-> 
-> -	ret = exynos_dp_dt_parse_phydata(dp);
-> -	if (ret)
-> -		return ret;
-> +	dp->phy = devm_phy_get(dp->dev, "dp");
-> +	if (IS_ERR(dp->phy)) {
-> +		dev_err(dp->dev, "no DP phy configured\n");
-> +		ret = PTR_ERR(dp->phy);
-> +		if (ret) {
-> +			/*
-> +			 * phy itself is not enabled, so we can move forward
-> +			 * assigning NULL to phy pointer.
-> +			 */
-> +			if (ret == -ENOSYS || ret == -ENODEV)
-> +				dp->phy = NULL;
-> +			else
-> +				return ret;
-> +		}
-> +	}
-> 
->  	if (!dp->panel) {
->  		ret = exynos_dp_dt_parse_panel(dp);
-> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.h b/drivers/gpu/drm/exynos/exynos_dp_core.h
-> index a1aee69..6426201 100644
-> --- a/drivers/gpu/drm/exynos/exynos_dp_core.h
-> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.h
-> @@ -153,8 +153,6 @@ struct exynos_dp_device {
->  	struct clk		*clock;
->  	unsigned int		irq;
->  	void __iomem		*reg_base;
-> -	void __iomem		*phy_addr;
-> -	unsigned int		enable_mask;
-> 
->  	struct video_info	*video_info;
->  	struct link_train	link_train;
-> --
-> 1.7.10.4
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
