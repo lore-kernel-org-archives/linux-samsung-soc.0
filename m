@@ -1,366 +1,313 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] mmc: dw_mmc: exynos: Add support for exynos7
-Date: Wed, 12 Nov 2014 09:16:08 +0100
-Message-ID: <CAPDyKFpSJsMr=OozqGjhqa6ERGR8ptLiG=z_n=HDOOsGnxWvMg@mail.gmail.com>
-References: <1409231933-14796-1-git-send-email-yuvaraj.cd@samsung.com>
-	<54005990.8070306@samsung.com>
-	<CAM4voan4ih-dD1qm85CQP9Yd0fo8xDbf7WyMdPFyHse9qO9=JA@mail.gmail.com>
-	<CAFp+6iFFq0SBwbd1m5yKK04=FVPtxZHvh+q_WSOPmriv=Uk0YQ@mail.gmail.com>
-	<CAFp+6iFYF+pp01WtcWPnqZ1PkPp8Td0Stuii67kX4cGjV4ojnw@mail.gmail.com>
-	<CAGOxZ529mpKrJAT8HSGucVdYpWPM833VO-PNord71-bDOt+G-w@mail.gmail.com>
-	<5462BAAE.9060208@samsung.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH v2 1/2] drm/exynos: dp: Remove support for unused dptx-phy
+Date: Wed, 12 Nov 2014 13:55:49 +0530
+Message-ID: <CAFp+6iEZDdFp14LfPWRM7QXxbYV=LrVChsj5gj_BBHR1rBX+QA@mail.gmail.com>
+References: <1414675442-3471-1-git-send-email-gautam.vivek@samsung.com>
+	<000001cffe2e$5f83fd30$1e8bf790$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f45.google.com ([209.85.216.45]:51364 "EHLO
-	mail-qa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751948AbaKLIQJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Nov 2014 03:16:09 -0500
-Received: by mail-qa0-f45.google.com with SMTP id dc16so8059325qab.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Nov 2014 00:16:08 -0800 (PST)
-In-Reply-To: <5462BAAE.9060208@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <000001cffe2e$5f83fd30$1e8bf790$%han@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, Inki Dae <inki.dae@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Cc: Alim Akhtar <alim.akhtar@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>, Prabu Thangamuthu <prabu.t@synopsys.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Doug Anderson <dianders@google.com>, Tomasz Figa <tomasz.figa@gmail.com>, Douglas Anderson <dianders@chromium.org>, Chris Ball <cjb@laptop.org>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Sonny Rao <sonnyrao@chromium.org>, Kukjin Kim <kgene.kim@samsung.com>, sunil joshi <joshi@samsung.com>, Prashanth G <prashanth.g@samsung.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, CPGS <cpgs@samsung.com>
 
-On 12 November 2014 02:41, Jaehoon Chung <jh80.chung@samsung.com> wrote:
-> Hi, Alim.
+On Wed, Nov 12, 2014 at 9:38 AM, Jingoo Han <jg1.han@samsung.com> wrote:
+> On Thursday, October 30, 2014 10:24 PM, Vivek Gautam wrote:
+>>
+>> Now that we have moved to generic phy based bindings,
+>> we don't need to have any code related to older dptx-phy.
+>> Nobody is using this dptx-phy anymore, so removing the
+>> same.
 >
-> I have also tested this patch with my board.
-> It's working fine. Looks good to me.
+> Right, older dptx-phy was replaced long time ago.
+> However, it was not removed for DT compatibility.
+> I think that now these old DT properties can be removed.
 >
-> Dear, Ulf.
->
-> Could you merge this patch at your repository?
->
-> Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
+> I added some comments below.
 
-Thanks! Applied for next.
-
-Kind regards
-Uffe
+Thanks Jingoo for reviewing.
 
 >
-> Best Regards,
-> Jaehoon Chung
+>>
+>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>> Cc: Inki Dae <inki.dae@samsung.com>
+>> Cc: Jingoo Han <jg1.han@samsung.com>
+>> ---
+>>
+>> Changes from V1:
+>>  - Reworked error handling in exynos_dp_dt_parse_phydata() as commented
+>>    by Inki.
+>>
+>>  drivers/gpu/drm/exynos/exynos_dp_core.c |   67 ++++++++-----------------------
+>>  drivers/gpu/drm/exynos/exynos_dp_core.h |    2 -
+>>  2 files changed, 17 insertions(+), 52 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+>> index cd50ece..206163b 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+>> @@ -1052,28 +1052,14 @@ static int exynos_dp_create_connector(struct exynos_drm_display *display,
+>>
+>>  static void exynos_dp_phy_init(struct exynos_dp_device *dp)
+>>  {
+>> -     if (dp->phy) {
+>> +     if (dp->phy)
+>>               phy_power_on(dp->phy);
+>> -     } else if (dp->phy_addr) {
+>> -             u32 reg;
+>> -
+>> -             reg = __raw_readl(dp->phy_addr);
+>> -             reg |= dp->enable_mask;
+>> -             __raw_writel(reg, dp->phy_addr);
+>> -     }
+>>  }
+>>
+>>  static void exynos_dp_phy_exit(struct exynos_dp_device *dp)
+>>  {
+>> -     if (dp->phy) {
+>> +     if (dp->phy)
+>>               phy_power_off(dp->phy);
+>> -     } else if (dp->phy_addr) {
+>> -             u32 reg;
+>> -
+>> -             reg = __raw_readl(dp->phy_addr);
+>> -             reg &= ~(dp->enable_mask);
+>> -             __raw_writel(reg, dp->phy_addr);
+>> -     }
+>>  }
+>>
+>>  static void exynos_dp_poweron(struct exynos_drm_display *display)
+>> @@ -1212,40 +1198,13 @@ static struct video_info *exynos_dp_dt_parse_pdata(struct device *dev)
+>>
+>>  static int exynos_dp_dt_parse_phydata(struct exynos_dp_device *dp)
+>>  {
+>> -     struct device_node *dp_phy_node = of_node_get(dp->dev->of_node);
+>> -     u32 phy_base;
+>> -     int ret = 0;
+>> -
+>> -     dp_phy_node = of_find_node_by_name(dp_phy_node, "dptx-phy");
+>> -     if (!dp_phy_node) {
+>> -             dp->phy = devm_phy_get(dp->dev, "dp");
+>> -             return PTR_ERR_OR_ZERO(dp->phy);
+>> -     }
+>> -
+>> -     if (of_property_read_u32(dp_phy_node, "reg", &phy_base)) {
+>> -             dev_err(dp->dev, "failed to get reg for dptx-phy\n");
+>> -             ret = -EINVAL;
+>> -             goto err;
+>> -     }
+>> -
+>> -     if (of_property_read_u32(dp_phy_node, "samsung,enable-mask",
+>> -                             &dp->enable_mask)) {
+>> -             dev_err(dp->dev, "failed to get enable-mask for dptx-phy\n");
+>> -             ret = -EINVAL;
+>> -             goto err;
+>> -     }
+>> -
+>> -     dp->phy_addr = ioremap(phy_base, SZ_4);
+>> -     if (!dp->phy_addr) {
+>> -             dev_err(dp->dev, "failed to ioremap dp-phy\n");
+>> -             ret = -ENOMEM;
+>> -             goto err;
+>> +     dp->phy = devm_phy_get(dp->dev, "dp");
+>> +     if (IS_ERR(dp->phy)) {
+>> +             dev_err(dp->dev, "no DP phy configured\n");
+>> +             return PTR_ERR(dp->phy);
+>>       }
+>>
+>> -err:
+>> -     of_node_put(dp_phy_node);
+>> -
+>> -     return ret;
+>> +     return 0;
+>>  }
+>>
+>>  static int exynos_dp_dt_parse_panel(struct exynos_dp_device *dp)
+>> @@ -1278,8 +1237,16 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+>>               return PTR_ERR(dp->video_info);
+>>
+>>       ret = exynos_dp_dt_parse_phydata(dp);
 >
-> On 11/11/2014 11:14 PM, Alim Akhtar wrote:
->> Hi Jaehoon,
->> As 64bit dependent patch for dw_mmc is already merged.
->> Do you have any comments on this patch?
+> In your patch, exynos_dp_dt_parse_phydata() calls only devm_phy_get().
+> Then, how about calling devm_phy_get() directly and removing
+> exynos_dp_dt_parse_phydata()? It looks simpler.
+
+Right, makes sense. Will send quick rework for this.
+Then you can give your Reviewed-by. ;-)
+
+[snip]
+
+
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
+
+On Wed, Nov 12, 2014 at 9:38 AM, Jingoo Han <jg1.han@samsung.com> wrote:
+> On Thursday, October 30, 2014 10:24 PM, Vivek Gautam wrote:
 >>
->> This patch still apply cleanly on ulf's next and v3.18-rc4 kernel.
->>
->> Regards,
->> Alim
->>
->> On Tue, Oct 21, 2014 at 1:50 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
->>> On Tue, Oct 21, 2014 at 1:47 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
->>>
->>> Corrected Tomasz's mail id, as the earlier samsung one is not valid now.
->>> Also giving a Tested-by
->>>
->>>> On Mon, Sep 1, 2014 at 11:14 AM, Abhilash Kesavan
->>>> <kesavan.abhilash@gmail.com> wrote:
->>>>> Hi Jaehoon,
->>>>>
->>>>> +Prabu Thangamuthu
->>>>>
->>>>> On Fri, Aug 29, 2014 at 4:14 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
->>>>>> Hi, Abhilash.
->>>>>>
->>>>>> On 08/28/2014 10:18 PM, Yuvaraj Kumar C D wrote:
->>>>>>> From: Abhilash Kesavan <a.kesavan@samsung.com>
->>>>>>>
->>>>>>> The Exynos7 has a DWMMC controller (v2.70a) which is different from
->>>>>>> prior versions. This patch adds new compatible strings for exynos7.
->>>>>>> This patch also fixes the CLKSEL register offset on exynos7.
->>>>>>
->>>>>> If support the 64bit, dw-mmc.c need to modify.(according to v2.70, some offset is changed for 64-bit address)
->>>>>> But i didn't see any patches at mailing.
->>>>>> Do you have the plan which send patch of dw-mmc.c?
->>>>>
->>>>> We are using a rebased version of
->>>>> http://www.spinics.net/lists/linux-mmc/msg21742.html to handle the
->>>>> dwmmc side changes. We should have mentioned this dependency as the
->>>>> patch is required for proper functioning of dwmmc on Exynos7.
->>>>> Stress tests are on-going with that patch and once it looks good, we
->>>>> will post our results so that the original patch may be taken forward.
->>>>>
->>>>> Regards,
->>>>> Abhilash
->>>>>>
->>>>>> Best Regards,
->>>>>> Jaehoon Chung
->>>>>>>
->>>>>>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
->>>>>>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
->>>>>>> ---
->>>>
->>>> I have tested this patch following set of patches:
->>>>
->>>> On Exynos7 support side:
->>>> 1) dts, kbuild: Implement support for dtb vendor subdirs" patchset
->>>> http://comments.gmane.org/gmane.linux.kbuild.devel/12131
->>>> 2) arch: arm64: Enable support for Samsung Exynos7 SoC  (V5)
->>>> http://www.spinics.net/lists/linux-samsung-soc/msg37047.html
->>>> 3) Serial clean-up patches for Exynos7
->>>> http://www.spinics.net/lists/arm-kernel/msg367348.html
->>>> http://www.spinics.net/lists/arm-kernel/msg367349.html
->>>> 4) Add initial support for pinctrl on Exynos7  (V5)
->>>> http://www.spinics.net/lists/linux-samsung-soc/msg37708.html
->>>>
->>>> On MMC side:
->>>> 1) mmc: dw_mmc: Add IDMAC 64-bit address mode support  (V7)
->>>> https://lkml.org/lkml/2014/10/20/58
->>>> 2) mmc: dw_mmc: Reset DMA before enabling IDMAC  (V2)
->>>> http://www.gossamer-threads.com/lists/linux/kernel/2028229
->>>>
->>>> eMMC and SD are running fine on Exynos7.
->>>
->>> Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
->>>
->>>>
->>>> If this change looks good, then we can take it in.
->>>>
->>>>>>>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    4 +
->>>>>>>  drivers/mmc/host/dw_mmc-exynos.c                   |   91 +++++++++++++++++---
->>>>>>>  2 files changed, 82 insertions(+), 13 deletions(-)
->>>>>>>
->>>>>>> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
->>>>>>> index 6cd3525..ee4fc05 100644
->>>>>>> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
->>>>>>> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
->>>>>>> @@ -18,6 +18,10 @@ Required Properties:
->>>>>>>         specific extensions.
->>>>>>>       - "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
->>>>>>>         specific extensions.
->>>>>>> +     - "samsung,exynos7-dw-mshc": for controllers with Samsung Exynos7
->>>>>>> +       specific extensions.
->>>>>>> +     - "samsung,exynos7-dw-mshc-smu": for controllers with Samsung Exynos7
->>>>>>> +       specific extensions having an SMU.
->>>>>>>
->>>>>>>  * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
->>>>>>>    unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
->>>>>>> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
->>>>>>> index 0fbc53a..509365c 100644
->>>>>>> --- a/drivers/mmc/host/dw_mmc-exynos.c
->>>>>>> +++ b/drivers/mmc/host/dw_mmc-exynos.c
->>>>>>> @@ -25,6 +25,7 @@
->>>>>>>  #define NUM_PINS(x)                  (x + 2)
->>>>>>>
->>>>>>>  #define SDMMC_CLKSEL                 0x09C
->>>>>>> +#define SDMMC_CLKSEL64                       0x0A8
->>>>>>>  #define SDMMC_CLKSEL_CCLK_SAMPLE(x)  (((x) & 7) << 0)
->>>>>>>  #define SDMMC_CLKSEL_CCLK_DRIVE(x)   (((x) & 7) << 16)
->>>>>>>  #define SDMMC_CLKSEL_CCLK_DIVIDER(x) (((x) & 7) << 24)
->>>>>>> @@ -65,6 +66,8 @@ enum dw_mci_exynos_type {
->>>>>>>       DW_MCI_TYPE_EXYNOS5250,
->>>>>>>       DW_MCI_TYPE_EXYNOS5420,
->>>>>>>       DW_MCI_TYPE_EXYNOS5420_SMU,
->>>>>>> +     DW_MCI_TYPE_EXYNOS7,
->>>>>>> +     DW_MCI_TYPE_EXYNOS7_SMU,
->>>>>>>  };
->>>>>>>
->>>>>>>  /* Exynos implementation specific driver private data */
->>>>>>> @@ -95,6 +98,12 @@ static struct dw_mci_exynos_compatible {
->>>>>>>       }, {
->>>>>>>               .compatible     = "samsung,exynos5420-dw-mshc-smu",
->>>>>>>               .ctrl_type      = DW_MCI_TYPE_EXYNOS5420_SMU,
->>>>>>> +     }, {
->>>>>>> +             .compatible     = "samsung,exynos7-dw-mshc",
->>>>>>> +             .ctrl_type      = DW_MCI_TYPE_EXYNOS7,
->>>>>>> +     }, {
->>>>>>> +             .compatible     = "samsung,exynos7-dw-mshc-smu",
->>>>>>> +             .ctrl_type      = DW_MCI_TYPE_EXYNOS7_SMU,
->>>>>>>       },
->>>>>>>  };
->>>>>>>
->>>>>>> @@ -102,7 +111,8 @@ static int dw_mci_exynos_priv_init(struct dw_mci *host)
->>>>>>>  {
->>>>>>>       struct dw_mci_exynos_priv_data *priv = host->priv;
->>>>>>>
->>>>>>> -     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS5420_SMU) {
->>>>>>> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS5420_SMU ||
->>>>>>> +             priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU) {
->>>>>>>               mci_writel(host, MPSBEGIN0, 0);
->>>>>>>               mci_writel(host, MPSEND0, DWMCI_BLOCK_NUM);
->>>>>>>               mci_writel(host, MPSCTRL0, DWMCI_MPSCTRL_SECURE_WRITE_BIT |
->>>>>>> @@ -153,11 +163,22 @@ static int dw_mci_exynos_resume(struct device *dev)
->>>>>>>  static int dw_mci_exynos_resume_noirq(struct device *dev)
->>>>>>>  {
->>>>>>>       struct dw_mci *host = dev_get_drvdata(dev);
->>>>>>> +     struct dw_mci_exynos_priv_data *priv = host->priv;
->>>>>>>       u32 clksel;
->>>>>>>
->>>>>>> -     clksel = mci_readl(host, CLKSEL);
->>>>>>> -     if (clksel & SDMMC_CLKSEL_WAKEUP_INT)
->>>>>>> -             mci_writel(host, CLKSEL, clksel);
->>>>>>> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
->>>>>>> +             priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
->>>>>>> +             clksel = mci_readl(host, CLKSEL64);
->>>>>>> +     else
->>>>>>> +             clksel = mci_readl(host, CLKSEL);
->>>>>>> +
->>>>>>> +     if (clksel & SDMMC_CLKSEL_WAKEUP_INT) {
->>>>>>> +             if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
->>>>>>> +                     priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
->>>>>>> +                     mci_writel(host, CLKSEL64, clksel);
->>>>>>> +             else
->>>>>>> +                     mci_writel(host, CLKSEL, clksel);
->>>>>>> +     }
->>>>>>>
->>>>>>>       return 0;
->>>>>>>  }
->>>>>>> @@ -169,6 +190,7 @@ static int dw_mci_exynos_resume_noirq(struct device *dev)
->>>>>>>
->>>>>>>  static void dw_mci_exynos_prepare_command(struct dw_mci *host, u32 *cmdr)
->>>>>>>  {
->>>>>>> +     struct dw_mci_exynos_priv_data *priv = host->priv;
->>>>>>>       /*
->>>>>>>        * Exynos4412 and Exynos5250 extends the use of CMD register with the
->>>>>>>        * use of bit 29 (which is reserved on standard MSHC controllers) for
->>>>>>> @@ -176,8 +198,14 @@ static void dw_mci_exynos_prepare_command(struct dw_mci *host, u32 *cmdr)
->>>>>>>        * HOLD register should be bypassed in case there is no phase shift
->>>>>>>        * applied on CMD/DATA that is sent to the card.
->>>>>>>        */
->>>>>>> -     if (SDMMC_CLKSEL_GET_DRV_WD3(mci_readl(host, CLKSEL)))
->>>>>>> -             *cmdr |= SDMMC_CMD_USE_HOLD_REG;
->>>>>>> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
->>>>>>> +             priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU) {
->>>>>>> +             if (SDMMC_CLKSEL_GET_DRV_WD3(mci_readl(host, CLKSEL64)))
->>>>>>> +                     *cmdr |= SDMMC_CMD_USE_HOLD_REG;
->>>>>>> +      } else {
->>>>>>> +             if (SDMMC_CLKSEL_GET_DRV_WD3(mci_readl(host, CLKSEL)))
->>>>>>> +                     *cmdr |= SDMMC_CMD_USE_HOLD_REG;
->>>>>>> +     }
->>>>>>>  }
->>>>>>>
->>>>>>>  static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
->>>>>>> @@ -188,12 +216,20 @@ static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
->>>>>>>       u8 div = priv->ciu_div + 1;
->>>>>>>
->>>>>>>       if (ios->timing == MMC_TIMING_MMC_DDR52) {
->>>>>>> -             mci_writel(host, CLKSEL, priv->ddr_timing);
->>>>>>> +             if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
->>>>>>> +                     priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
->>>>>>> +                     mci_writel(host, CLKSEL64, priv->ddr_timing);
->>>>>>> +             else
->>>>>>> +                     mci_writel(host, CLKSEL, priv->ddr_timing);
->>>>>>>               /* Should be double rate for DDR mode */
->>>>>>>               if (ios->bus_width == MMC_BUS_WIDTH_8)
->>>>>>>                       wanted <<= 1;
->>>>>>>       } else {
->>>>>>> -             mci_writel(host, CLKSEL, priv->sdr_timing);
->>>>>>> +             if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
->>>>>>> +                     priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
->>>>>>> +                     mci_writel(host, CLKSEL64, priv->sdr_timing);
->>>>>>> +             else
->>>>>>> +                     mci_writel(host, CLKSEL, priv->sdr_timing);
->>>>>>>       }
->>>>>>>
->>>>>>>       /* Don't care if wanted clock is zero */
->>>>>>> @@ -265,26 +301,51 @@ static int dw_mci_exynos_parse_dt(struct dw_mci *host)
->>>>>>>
->>>>>>>  static inline u8 dw_mci_exynos_get_clksmpl(struct dw_mci *host)
->>>>>>>  {
->>>>>>> -     return SDMMC_CLKSEL_CCLK_SAMPLE(mci_readl(host, CLKSEL));
->>>>>>> +     struct dw_mci_exynos_priv_data *priv = host->priv;
->>>>>>> +
->>>>>>> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
->>>>>>> +             priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
->>>>>>> +             return SDMMC_CLKSEL_CCLK_SAMPLE(mci_readl(host, CLKSEL64));
->>>>>>> +     else
->>>>>>> +             return SDMMC_CLKSEL_CCLK_SAMPLE(mci_readl(host, CLKSEL));
->>>>>>>  }
->>>>>>>
->>>>>>>  static inline void dw_mci_exynos_set_clksmpl(struct dw_mci *host, u8 sample)
->>>>>>>  {
->>>>>>>       u32 clksel;
->>>>>>> -     clksel = mci_readl(host, CLKSEL);
->>>>>>> +     struct dw_mci_exynos_priv_data *priv = host->priv;
->>>>>>> +
->>>>>>> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
->>>>>>> +             priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
->>>>>>> +             clksel = mci_readl(host, CLKSEL64);
->>>>>>> +     else
->>>>>>> +             clksel = mci_readl(host, CLKSEL);
->>>>>>>       clksel = (clksel & ~0x7) | SDMMC_CLKSEL_CCLK_SAMPLE(sample);
->>>>>>> -     mci_writel(host, CLKSEL, clksel);
->>>>>>> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
->>>>>>> +             priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
->>>>>>> +             mci_writel(host, CLKSEL64, clksel);
->>>>>>> +     else
->>>>>>> +             mci_writel(host, CLKSEL, clksel);
->>>>>>>  }
->>>>>>>
->>>>>>>  static inline u8 dw_mci_exynos_move_next_clksmpl(struct dw_mci *host)
->>>>>>>  {
->>>>>>> +     struct dw_mci_exynos_priv_data *priv = host->priv;
->>>>>>>       u32 clksel;
->>>>>>>       u8 sample;
->>>>>>>
->>>>>>> -     clksel = mci_readl(host, CLKSEL);
->>>>>>> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
->>>>>>> +             priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
->>>>>>> +             clksel = mci_readl(host, CLKSEL64);
->>>>>>> +     else
->>>>>>> +             clksel = mci_readl(host, CLKSEL);
->>>>>>>       sample = (clksel + 1) & 0x7;
->>>>>>>       clksel = (clksel & ~0x7) | sample;
->>>>>>> -     mci_writel(host, CLKSEL, clksel);
->>>>>>> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
->>>>>>> +             priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
->>>>>>> +             mci_writel(host, CLKSEL64, clksel);
->>>>>>> +     else
->>>>>>> +             mci_writel(host, CLKSEL, clksel);
->>>>>>>       return sample;
->>>>>>>  }
->>>>>>>
->>>>>>> @@ -411,6 +472,10 @@ static const struct of_device_id dw_mci_exynos_match[] = {
->>>>>>>                       .data = &exynos_drv_data, },
->>>>>>>       { .compatible = "samsung,exynos5420-dw-mshc-smu",
->>>>>>>                       .data = &exynos_drv_data, },
->>>>>>> +     { .compatible = "samsung,exynos7-dw-mshc",
->>>>>>> +                     .data = &exynos_drv_data, },
->>>>>>> +     { .compatible = "samsung,exynos7-dw-mshc-smu",
->>>>>>> +                     .data = &exynos_drv_data, },
->>>>>>>       {},
->>>>>>>  };
->>>>>>>  MODULE_DEVICE_TABLE(of, dw_mci_exynos_match);
->>>>>>>
->>>>>>
->>>>>> --
->>>>>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
->>>>>> the body of a message to majordomo@vger.kernel.org
->>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>> --
->>>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>>>> the body of a message to majordomo@vger.kernel.org
->>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>>
->>>>
->>>>
->>>> --
->>>> Best Regards
->>>> Vivek Gautam
->>>> Samsung R&D Institute, Bangalore
->>>> India
->>>
->>>
->>>
->>> --
->>> Best Regards
->>> Vivek Gautam
->>> Samsung R&D Institute, Bangalore
->>> India
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->>
->>
+>> Now that we have moved to generic phy based bindings,
+>> we don't need to have any code related to older dptx-phy.
+>> Nobody is using this dptx-phy anymore, so removing the
+>> same.
 >
+> Right, older dptx-phy was replaced long time ago.
+> However, it was not removed for DT compatibility.
+> I think that now these old DT properties can be removed.
+>
+> I added some comments below.
+>
+>>
+>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>> Cc: Inki Dae <inki.dae@samsung.com>
+>> Cc: Jingoo Han <jg1.han@samsung.com>
+>> ---
+>>
+>> Changes from V1:
+>>  - Reworked error handling in exynos_dp_dt_parse_phydata() as commented
+>>    by Inki.
+>>
+>>  drivers/gpu/drm/exynos/exynos_dp_core.c |   67 ++++++++-----------------------
+>>  drivers/gpu/drm/exynos/exynos_dp_core.h |    2 -
+>>  2 files changed, 17 insertions(+), 52 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+>> index cd50ece..206163b 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+>> @@ -1052,28 +1052,14 @@ static int exynos_dp_create_connector(struct exynos_drm_display *display,
+>>
+>>  static void exynos_dp_phy_init(struct exynos_dp_device *dp)
+>>  {
+>> -     if (dp->phy) {
+>> +     if (dp->phy)
+>>               phy_power_on(dp->phy);
+>> -     } else if (dp->phy_addr) {
+>> -             u32 reg;
+>> -
+>> -             reg = __raw_readl(dp->phy_addr);
+>> -             reg |= dp->enable_mask;
+>> -             __raw_writel(reg, dp->phy_addr);
+>> -     }
+>>  }
+>>
+>>  static void exynos_dp_phy_exit(struct exynos_dp_device *dp)
+>>  {
+>> -     if (dp->phy) {
+>> +     if (dp->phy)
+>>               phy_power_off(dp->phy);
+>> -     } else if (dp->phy_addr) {
+>> -             u32 reg;
+>> -
+>> -             reg = __raw_readl(dp->phy_addr);
+>> -             reg &= ~(dp->enable_mask);
+>> -             __raw_writel(reg, dp->phy_addr);
+>> -     }
+>>  }
+>>
+>>  static void exynos_dp_poweron(struct exynos_drm_display *display)
+>> @@ -1212,40 +1198,13 @@ static struct video_info *exynos_dp_dt_parse_pdata(struct device *dev)
+>>
+>>  static int exynos_dp_dt_parse_phydata(struct exynos_dp_device *dp)
+>>  {
+>> -     struct device_node *dp_phy_node = of_node_get(dp->dev->of_node);
+>> -     u32 phy_base;
+>> -     int ret = 0;
+>> -
+>> -     dp_phy_node = of_find_node_by_name(dp_phy_node, "dptx-phy");
+>> -     if (!dp_phy_node) {
+>> -             dp->phy = devm_phy_get(dp->dev, "dp");
+>> -             return PTR_ERR_OR_ZERO(dp->phy);
+>> -     }
+>> -
+>> -     if (of_property_read_u32(dp_phy_node, "reg", &phy_base)) {
+>> -             dev_err(dp->dev, "failed to get reg for dptx-phy\n");
+>> -             ret = -EINVAL;
+>> -             goto err;
+>> -     }
+>> -
+>> -     if (of_property_read_u32(dp_phy_node, "samsung,enable-mask",
+>> -                             &dp->enable_mask)) {
+>> -             dev_err(dp->dev, "failed to get enable-mask for dptx-phy\n");
+>> -             ret = -EINVAL;
+>> -             goto err;
+>> -     }
+>> -
+>> -     dp->phy_addr = ioremap(phy_base, SZ_4);
+>> -     if (!dp->phy_addr) {
+>> -             dev_err(dp->dev, "failed to ioremap dp-phy\n");
+>> -             ret = -ENOMEM;
+>> -             goto err;
+>> +     dp->phy = devm_phy_get(dp->dev, "dp");
+>> +     if (IS_ERR(dp->phy)) {
+>> +             dev_err(dp->dev, "no DP phy configured\n");
+>> +             return PTR_ERR(dp->phy);
+>>       }
+>>
+>> -err:
+>> -     of_node_put(dp_phy_node);
+>> -
+>> -     return ret;
+>> +     return 0;
+>>  }
+>>
+>>  static int exynos_dp_dt_parse_panel(struct exynos_dp_device *dp)
+>> @@ -1278,8 +1237,16 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
+>>               return PTR_ERR(dp->video_info);
+>>
+>>       ret = exynos_dp_dt_parse_phydata(dp);
+>
+> In your patch, exynos_dp_dt_parse_phydata() calls only devm_phy_get().
+> Then, how about calling devm_phy_get() directly and removing
+> exynos_dp_dt_parse_phydata()? It looks simpler.
+>
+> Best regards,
+> Jingoo Han
+>
+>> -     if (ret)
+>> -             return ret;
+>> +     if (ret) {
+>> +             /*
+>> +              * phy itself is not enabled, so we can move forward
+>> +              * assigning NULL to phy pointer.
+>> +              */
+>> +             if (ret == -ENOSYS || ret == -ENODEV)
+>> +                     dp->phy = NULL;
+>> +             else
+>> +                     return ret;
+>> +     }
+>>
+>>       if (!dp->panel) {
+>>               ret = exynos_dp_dt_parse_panel(dp);
+>> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.h b/drivers/gpu/drm/exynos/exynos_dp_core.h
+>> index a1aee69..6426201 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_dp_core.h
+>> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.h
+>> @@ -153,8 +153,6 @@ struct exynos_dp_device {
+>>       struct clk              *clock;
+>>       unsigned int            irq;
+>>       void __iomem            *reg_base;
+>> -     void __iomem            *phy_addr;
+>> -     unsigned int            enable_mask;
+>>
+>>       struct video_info       *video_info;
+>>       struct link_train       link_train;
+>> --
+>> 1.7.10.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
