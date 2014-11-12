@@ -1,30 +1,55 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv2 0/2] ARM: dts: Fix the number of DMA channels for Exynos3250/4
-Date: Wed, 12 Nov 2014 11:50:27 +0900
-Message-ID: <1415760629-1531-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCHv2 1/2] ARM: dts: Fix the number of DMA channels for Exynos3250
+Date: Wed, 12 Nov 2014 11:50:28 +0900
+Message-ID: <1415760629-1531-2-git-send-email-cw00.choi@samsung.com>
+References: <1415760629-1531-1-git-send-email-cw00.choi@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1415760629-1531-1-git-send-email-cw00.choi@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: kgene.kim@samsung.com
-Cc: ben-linux@fluff.org, kyungmin.park@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, cw00.choi@samsung.com, kyungmin.park@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch fix minor issuse to correct the number of DMA channels for
-Exynos3250 and Exynos4 series. The PL330 DMA of Exynos3250/Exynos4 support
-16 channels simultaneously but, PL330 DMA driver don't use 'dma-channels'
-property directly. This patchset fix the correct information
-of Exynos3250/Exynos4's PL330 DMA simply.
+This patch fix the numer for DMA channels for Exynos3250 because DMA controller
+of Exynos3250 can support 16 channels simultaneously.
 
-Changes from v1:
-- Fix the nubmer for DMA channesl for Exynos4415
-
-Chanwoo Choi (2):
-  ARM: dts: Fix the number of DMA channels for Exynos3250
-  ARM: dts: Fix the number of DMA channels for Exynos4
-
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
  arch/arm/boot/dts/exynos3250.dtsi | 4 ++--
- arch/arm/boot/dts/exynos4.dtsi    | 4 ++--
- arch/arm/boot/dts/exynos4415.dtsi | 4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 242ddda..5c14e3e 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -292,7 +292,7 @@
+ 				clocks = <&cmu CLK_PDMA0>;
+ 				clock-names = "apb_pclk";
+ 				#dma-cells = <1>;
+-				#dma-channels = <8>;
++				#dma-channels = <16>;
+ 				#dma-requests = <32>;
+ 			};
+ 
+@@ -303,7 +303,7 @@
+ 				clocks = <&cmu CLK_PDMA1>;
+ 				clock-names = "apb_pclk";
+ 				#dma-cells = <1>;
+-				#dma-channels = <8>;
++				#dma-channels = <16;
+ 				#dma-requests = <32>;
+ 			};
+ 		};
 -- 
 1.8.5.5
