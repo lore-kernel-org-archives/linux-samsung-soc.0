@@ -1,47 +1,59 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv2 0/2] ARM: dts: Fix the number of DMA channels for
- Exynos3250/4
-Date: Wed, 12 Nov 2014 14:38:22 +0900
-Message-ID: <5462F24E.7030100@samsung.com>
-References: <1415760629-1531-1-git-send-email-cw00.choi@samsung.com>
+From: Amit Kucheria <amit.kucheria@linaro.org>
+Subject: Re: [PATCH v11 4/6] ARM: Exynos: switch to using generic cpufreq
+ driver for Exynos4210/5250/5420
+Date: Wed, 12 Nov 2014 11:33:53 +0530
+Message-ID: <CAHLCerPKv=NsLNZvwo-vhDwkved5+O4a40LvrP_7j30KjeKqUQ@mail.gmail.com>
+References: <1413805281-6269-1-git-send-email-thomas.ab@samsung.com>
+	<1413805281-6269-2-git-send-email-thomas.ab@samsung.com>
+	<1413805281-6269-3-git-send-email-thomas.ab@samsung.com>
+	<1413805281-6269-4-git-send-email-thomas.ab@samsung.com>
+	<1413805281-6269-5-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:45511 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752202AbaKLFi0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Nov 2014 00:38:26 -0500
-In-reply-to: <1415760629-1531-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1413805281-6269-5-git-send-email-thomas.ab@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Thomas Abraham <thomas.ab@samsung.com>
+Cc: Linux PM list <linux-pm@vger.kernel.org>, lakml <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Mike Turquette <mturquette@linaro.org>, kgene.kim@samsung.com, tomasz.figa@gmail.com, l.majewski@samsung.com, Viresh Kumar <viresh.kumar@linaro.org>, heiko@sntech.de, cw00.choi@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, ben-linux@fluff.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Dear Kukjin,
+Hi Thomas,
 
-Please ignore this patchset because this patchset are wrong.
+On Mon, Oct 20, 2014 at 5:11 PM, Thomas Abraham <thomas.ab@samsung.com> wrote:
+> The new CPU clock type allows the use of generic CPUfreq drivers. So for
+> Exynos4210/5250, switch to using generic cpufreq driver. For Exynos5420,
+> which did not have CPUfreq driver support, enable the use of generic
+> CPUfreq driver.
+>
+> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Tested-by: Chander Kashyap <k.chander@samsung.com>
+> ---
+>  arch/arm/mach-exynos/exynos.c |   24 +++++++++++++++++++++++-
+>  1 files changed, 23 insertions(+), 1 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index 6b283eb..a1be294 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -282,6 +282,28 @@ static void __init exynos_init_irq(void)
+>         exynos_map_pmu();
+>  }
+>
+> +static const struct of_device_id exynos_cpufreq_matches[] = {
+> +       { .compatible = "samsung,exynos5420", .data = "arm-bL-cpufreq-dt" },
 
-Best Regards,
-Chanwoo Choi
+While you're at it, can you add this to so we don't have to patch
+kernels for the Chromebook2 and Odroid-XU3?
 
-On 11/12/2014 11:50 AM, Chanwoo Choi wrote:
-> This patch fix minor issuse to correct the number of DMA channels for
-> Exynos3250 and Exynos4 series. The PL330 DMA of Exynos3250/Exynos4 support
-> 16 channels simultaneously but, PL330 DMA driver don't use 'dma-channels'
-> property directly. This patchset fix the correct information
-> of Exynos3250/Exynos4's PL330 DMA simply.
-> 
-> Changes from v1:
-> - Fix the nubmer for DMA channesl for Exynos4415
-> 
-> Chanwoo Choi (2):
->   ARM: dts: Fix the number of DMA channels for Exynos3250
->   ARM: dts: Fix the number of DMA channels for Exynos4
-> 
->  arch/arm/boot/dts/exynos3250.dtsi | 4 ++--
->  arch/arm/boot/dts/exynos4.dtsi    | 4 ++--
->  arch/arm/boot/dts/exynos4415.dtsi | 4 ++--
->  3 files changed, 6 insertions(+), 6 deletions(-)
-> 
+      { .compatible = "samsung,exynos5422", .data = "arm-bL-cpufreq-dt" },
+      { .compatible = "samsung,exynos5800", .data = "arm-bL-cpufreq-dt" },
+
+
+> +       { .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
+> +       { .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
+> +       { .compatible = "samsung,exynos5440", .data = "exynos5440-cpufreq" },
+> +       { /* sentinel */ }
