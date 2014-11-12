@@ -1,100 +1,359 @@
-From: Ben Hutchings <ben@decadent.org.uk>
-Subject: Re: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net on
- arndale platform
-Date: Wed, 12 Nov 2014 00:23:22 +0000
-Message-ID: <1415751802.3398.107.camel@decadent.org.uk>
-References: <20141104072236.GA559@afflict.kos.to>
-	 <C89EFD3CD56F64468D3D206D683A8D2203985F49@ldam-msx2.fugro-nl.local>
-	 <20141104094336.GA3145@afflict.kos.to>
-	 <C89EFD3CD56F64468D3D206D683A8D2203985FA9@ldam-msx2.fugro-nl.local>
-	 <20141104200914.GN23178@opensource.wolfsonmicro.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH] mmc: dw_mmc: exynos: Add support for exynos7
+Date: Wed, 12 Nov 2014 10:41:02 +0900
+Message-ID: <5462BAAE.9060208@samsung.com>
+References: <1409231933-14796-1-git-send-email-yuvaraj.cd@samsung.com>
+ <54005990.8070306@samsung.com>
+ <CAM4voan4ih-dD1qm85CQP9Yd0fo8xDbf7WyMdPFyHse9qO9=JA@mail.gmail.com>
+ <CAFp+6iFFq0SBwbd1m5yKK04=FVPtxZHvh+q_WSOPmriv=Uk0YQ@mail.gmail.com>
+ <CAFp+6iFYF+pp01WtcWPnqZ1PkPp8Td0Stuii67kX4cGjV4ojnw@mail.gmail.com>
+ <CAGOxZ529mpKrJAT8HSGucVdYpWPM833VO-PNord71-bDOt+G-w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-AIfNf5xTiBlgC4y0RSEY"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20141104200914.GN23178@opensource.wolfsonmicro.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: "Stam, Michel [FINT]" <M.Stam@fugro.nl>, Riku Voipio <riku.voipio@iki.fi>, davem@davemloft.net, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <CAGOxZ529mpKrJAT8HSGucVdYpWPM833VO-PNord71-bDOt+G-w@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Alim Akhtar <alim.akhtar@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>
+Cc: Douglas Anderson <dianders@chromium.org>, Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, sunil joshi <joshi@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, Prashanth G <prashanth.g@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@google.com>, Kukjin Kim <kgene.kim@samsung.com>, Yuvaraj Kumar C D <yuvaraj.cd@gmail.com>, Prabu Thangamuthu <prabu.t@synopsys.com>, ALIM AKHTAR <alim.akhtar@samsung.com>, CPGS <cpgs@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Chris Ball <cjb@laptop.org>, Sonny Rao <sonnyrao@chromium.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hi, Alim.
 
---=-AIfNf5xTiBlgC4y0RSEY
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+I have also tested this patch with my board.
+It's working fine. Looks good to me.
 
-On Tue, 2014-11-04 at 20:09 +0000, Charles Keepax wrote:
-> On Tue, Nov 04, 2014 at 11:23:06AM +0100, Stam, Michel [FINT] wrote:
-> > Hello Riku,
-> >=20
-> > >Fixing a bug (ethtool support) must not cause breakage elsewhere (in
-> > this case on arndale). This is now a regression of functionality from
-> > 3.17.
-> > >
-> > >I think it would better to revert the change now and with less hurry
-> > introduce a ethtool fix that doesn't break arndale.
-> >=20
-> > I don't fully agree here;=20
-> > I would like to point out that this commit is a revert itself. Fixing
-> > the armdale will then cause breakage in other implementations, such as
-> > ours. Blankly reverting breaks other peoples' implementations.
-> >=20
-> > The PHY reset is the thing that breaks ethtool support, so any fix that
-> > appeases all would have to take existing PHY state into account.=20
-[...]
-> --- a/drivers/net/usb/asix_devices.c
-> +++ b/drivers/net/usb/asix_devices.c
-> @@ -299,6 +299,7 @@ static int ax88772_reset(struct usbnet *dev)
->  {
->         struct asix_data *data =3D (struct asix_data *)&dev->data;
->         int ret, embd_phy;
-> +       int reg;
->         u16 rx_ctl;
->=20
->         ret =3D asix_write_gpio(dev,
-> @@ -359,8 +360,10 @@ static int ax88772_reset(struct usbnet *dev)
->         msleep(150);
->=20
->         asix_mdio_write(dev->net, dev->mii.phy_id, MII_BMCR, BMCR_RESET);
-> -       asix_mdio_write(dev->net, dev->mii.phy_id, MII_ADVERTISE,
-> -                       ADVERTISE_ALL | ADVERTISE_CSMA);
-> +       reg =3D asix_mdio_read(dev->net, dev->mii.phy_id, MII_ADVERTISE);
-> +       if (!reg)
-> +               reg =3D ADVERTISE_ALL | ADVERTISE_CSMA;
-> +       asix_mdio_write(dev->net, dev->mii.phy_id, MII_ADVERTISE, reg);
-[...]
+Dear, Ulf.
 
-Why is there no sleep after setting the RESET bit?  Doesn't that make
-the following register writes unreliable?
+Could you merge this patch at your repository?
 
-Ben.
+Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
 
---=20
-Ben Hutchings
-Experience is directly proportional to the value of equipment destroyed.
-                                                         - Carolyn Scheppne=
-r
+Best Regards,
+Jaehoon Chung
 
---=-AIfNf5xTiBlgC4y0RSEY
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIVAwUAVGKof+e/yOyVhhEJAQpNmA//YzP85bqno+y9Phv7nG3/6nobdFZ14xRa
-2QqMNOfITadD1HEwmcRMgoyF4h8M3Wg4RVDKgFyyZcYGvSEXXvFw857X3yWG/WYv
-LkHOdPWAtiFQBsJAzruRRwGaGhaG/IRKQFlSiIJZLRT4rVtrbpAdG3dPGmZvUjZV
-WZx9ca2u5hy9gDWh6gc/AvoUDOcDZchMi4caYZrTH1q3RDui9Lp5PVkTZ8oqqa/p
-Fa3awiqqIhhRDhTZltNrUxOh9llmlWC/q4sq+0PYu1uBozrkvzpLgsVqckECsTIl
-cDfUiEKKaUVV6Y0AUbatJjx7oQcG2YFTyPhr1M76DT6TKdrL2WzemBNieouuqHbu
-YT7pUWkCvt9avwDw3sJ/djkjottW2zhj8WWj1O6+O6evJP4rn5FkqXKdWQzyQyJv
-UOYcQFQI04NJyrHKmc/uCcjt3zhX5/kOjZNdEAYXbWxmnFJMQEQWX4FiBViEY5Z4
-AdqGhiAgm088aIEqg4fkJLUYxNnt9tkFXYfOUrK/fTIMc5pnfNuyabwMhEXbrvSz
-w/5XF0p9eoYNwIWsX52I+sXfmwx/mt0FcxhGEn5uH2hOTEE28pSwexSv0V5tN8rw
-msaCkSQD/X4+7UG6M6PzV+fFb1VtKz0Y/wtA4f1Tl/58VG5heAZttoeccjBW1zg2
-EPmFxUZ98t4=
-=Atva
------END PGP SIGNATURE-----
-
---=-AIfNf5xTiBlgC4y0RSEY--
+On 11/11/2014 11:14 PM, Alim Akhtar wrote:
+> Hi Jaehoon,
+> As 64bit dependent patch for dw_mmc is already merged.
+> Do you have any comments on this patch?
+> 
+> This patch still apply cleanly on ulf's next and v3.18-rc4 kernel.
+> 
+> Regards,
+> Alim
+> 
+> On Tue, Oct 21, 2014 at 1:50 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+>> On Tue, Oct 21, 2014 at 1:47 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+>>
+>> Corrected Tomasz's mail id, as the earlier samsung one is not valid now.
+>> Also giving a Tested-by
+>>
+>>> On Mon, Sep 1, 2014 at 11:14 AM, Abhilash Kesavan
+>>> <kesavan.abhilash@gmail.com> wrote:
+>>>> Hi Jaehoon,
+>>>>
+>>>> +Prabu Thangamuthu
+>>>>
+>>>> On Fri, Aug 29, 2014 at 4:14 PM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>>>>> Hi, Abhilash.
+>>>>>
+>>>>> On 08/28/2014 10:18 PM, Yuvaraj Kumar C D wrote:
+>>>>>> From: Abhilash Kesavan <a.kesavan@samsung.com>
+>>>>>>
+>>>>>> The Exynos7 has a DWMMC controller (v2.70a) which is different from
+>>>>>> prior versions. This patch adds new compatible strings for exynos7.
+>>>>>> This patch also fixes the CLKSEL register offset on exynos7.
+>>>>>
+>>>>> If support the 64bit, dw-mmc.c need to modify.(according to v2.70, some offset is changed for 64-bit address)
+>>>>> But i didn't see any patches at mailing.
+>>>>> Do you have the plan which send patch of dw-mmc.c?
+>>>>
+>>>> We are using a rebased version of
+>>>> http://www.spinics.net/lists/linux-mmc/msg21742.html to handle the
+>>>> dwmmc side changes. We should have mentioned this dependency as the
+>>>> patch is required for proper functioning of dwmmc on Exynos7.
+>>>> Stress tests are on-going with that patch and once it looks good, we
+>>>> will post our results so that the original patch may be taken forward.
+>>>>
+>>>> Regards,
+>>>> Abhilash
+>>>>>
+>>>>> Best Regards,
+>>>>> Jaehoon Chung
+>>>>>>
+>>>>>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+>>>>>> Signed-off-by: Yuvaraj Kumar C D <yuvaraj.cd@samsung.com>
+>>>>>> ---
+>>>
+>>> I have tested this patch following set of patches:
+>>>
+>>> On Exynos7 support side:
+>>> 1) dts, kbuild: Implement support for dtb vendor subdirs" patchset
+>>> http://comments.gmane.org/gmane.linux.kbuild.devel/12131
+>>> 2) arch: arm64: Enable support for Samsung Exynos7 SoC  (V5)
+>>> http://www.spinics.net/lists/linux-samsung-soc/msg37047.html
+>>> 3) Serial clean-up patches for Exynos7
+>>> http://www.spinics.net/lists/arm-kernel/msg367348.html
+>>> http://www.spinics.net/lists/arm-kernel/msg367349.html
+>>> 4) Add initial support for pinctrl on Exynos7  (V5)
+>>> http://www.spinics.net/lists/linux-samsung-soc/msg37708.html
+>>>
+>>> On MMC side:
+>>> 1) mmc: dw_mmc: Add IDMAC 64-bit address mode support  (V7)
+>>> https://lkml.org/lkml/2014/10/20/58
+>>> 2) mmc: dw_mmc: Reset DMA before enabling IDMAC  (V2)
+>>> http://www.gossamer-threads.com/lists/linux/kernel/2028229
+>>>
+>>> eMMC and SD are running fine on Exynos7.
+>>
+>> Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
+>>
+>>>
+>>> If this change looks good, then we can take it in.
+>>>
+>>>>>>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    4 +
+>>>>>>  drivers/mmc/host/dw_mmc-exynos.c                   |   91 +++++++++++++++++---
+>>>>>>  2 files changed, 82 insertions(+), 13 deletions(-)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>>>>>> index 6cd3525..ee4fc05 100644
+>>>>>> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>>>>>> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>>>>>> @@ -18,6 +18,10 @@ Required Properties:
+>>>>>>         specific extensions.
+>>>>>>       - "samsung,exynos5420-dw-mshc": for controllers with Samsung Exynos5420
+>>>>>>         specific extensions.
+>>>>>> +     - "samsung,exynos7-dw-mshc": for controllers with Samsung Exynos7
+>>>>>> +       specific extensions.
+>>>>>> +     - "samsung,exynos7-dw-mshc-smu": for controllers with Samsung Exynos7
+>>>>>> +       specific extensions having an SMU.
+>>>>>>
+>>>>>>  * samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
+>>>>>>    unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
+>>>>>> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+>>>>>> index 0fbc53a..509365c 100644
+>>>>>> --- a/drivers/mmc/host/dw_mmc-exynos.c
+>>>>>> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+>>>>>> @@ -25,6 +25,7 @@
+>>>>>>  #define NUM_PINS(x)                  (x + 2)
+>>>>>>
+>>>>>>  #define SDMMC_CLKSEL                 0x09C
+>>>>>> +#define SDMMC_CLKSEL64                       0x0A8
+>>>>>>  #define SDMMC_CLKSEL_CCLK_SAMPLE(x)  (((x) & 7) << 0)
+>>>>>>  #define SDMMC_CLKSEL_CCLK_DRIVE(x)   (((x) & 7) << 16)
+>>>>>>  #define SDMMC_CLKSEL_CCLK_DIVIDER(x) (((x) & 7) << 24)
+>>>>>> @@ -65,6 +66,8 @@ enum dw_mci_exynos_type {
+>>>>>>       DW_MCI_TYPE_EXYNOS5250,
+>>>>>>       DW_MCI_TYPE_EXYNOS5420,
+>>>>>>       DW_MCI_TYPE_EXYNOS5420_SMU,
+>>>>>> +     DW_MCI_TYPE_EXYNOS7,
+>>>>>> +     DW_MCI_TYPE_EXYNOS7_SMU,
+>>>>>>  };
+>>>>>>
+>>>>>>  /* Exynos implementation specific driver private data */
+>>>>>> @@ -95,6 +98,12 @@ static struct dw_mci_exynos_compatible {
+>>>>>>       }, {
+>>>>>>               .compatible     = "samsung,exynos5420-dw-mshc-smu",
+>>>>>>               .ctrl_type      = DW_MCI_TYPE_EXYNOS5420_SMU,
+>>>>>> +     }, {
+>>>>>> +             .compatible     = "samsung,exynos7-dw-mshc",
+>>>>>> +             .ctrl_type      = DW_MCI_TYPE_EXYNOS7,
+>>>>>> +     }, {
+>>>>>> +             .compatible     = "samsung,exynos7-dw-mshc-smu",
+>>>>>> +             .ctrl_type      = DW_MCI_TYPE_EXYNOS7_SMU,
+>>>>>>       },
+>>>>>>  };
+>>>>>>
+>>>>>> @@ -102,7 +111,8 @@ static int dw_mci_exynos_priv_init(struct dw_mci *host)
+>>>>>>  {
+>>>>>>       struct dw_mci_exynos_priv_data *priv = host->priv;
+>>>>>>
+>>>>>> -     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS5420_SMU) {
+>>>>>> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS5420_SMU ||
+>>>>>> +             priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU) {
+>>>>>>               mci_writel(host, MPSBEGIN0, 0);
+>>>>>>               mci_writel(host, MPSEND0, DWMCI_BLOCK_NUM);
+>>>>>>               mci_writel(host, MPSCTRL0, DWMCI_MPSCTRL_SECURE_WRITE_BIT |
+>>>>>> @@ -153,11 +163,22 @@ static int dw_mci_exynos_resume(struct device *dev)
+>>>>>>  static int dw_mci_exynos_resume_noirq(struct device *dev)
+>>>>>>  {
+>>>>>>       struct dw_mci *host = dev_get_drvdata(dev);
+>>>>>> +     struct dw_mci_exynos_priv_data *priv = host->priv;
+>>>>>>       u32 clksel;
+>>>>>>
+>>>>>> -     clksel = mci_readl(host, CLKSEL);
+>>>>>> -     if (clksel & SDMMC_CLKSEL_WAKEUP_INT)
+>>>>>> -             mci_writel(host, CLKSEL, clksel);
+>>>>>> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+>>>>>> +             priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+>>>>>> +             clksel = mci_readl(host, CLKSEL64);
+>>>>>> +     else
+>>>>>> +             clksel = mci_readl(host, CLKSEL);
+>>>>>> +
+>>>>>> +     if (clksel & SDMMC_CLKSEL_WAKEUP_INT) {
+>>>>>> +             if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+>>>>>> +                     priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+>>>>>> +                     mci_writel(host, CLKSEL64, clksel);
+>>>>>> +             else
+>>>>>> +                     mci_writel(host, CLKSEL, clksel);
+>>>>>> +     }
+>>>>>>
+>>>>>>       return 0;
+>>>>>>  }
+>>>>>> @@ -169,6 +190,7 @@ static int dw_mci_exynos_resume_noirq(struct device *dev)
+>>>>>>
+>>>>>>  static void dw_mci_exynos_prepare_command(struct dw_mci *host, u32 *cmdr)
+>>>>>>  {
+>>>>>> +     struct dw_mci_exynos_priv_data *priv = host->priv;
+>>>>>>       /*
+>>>>>>        * Exynos4412 and Exynos5250 extends the use of CMD register with the
+>>>>>>        * use of bit 29 (which is reserved on standard MSHC controllers) for
+>>>>>> @@ -176,8 +198,14 @@ static void dw_mci_exynos_prepare_command(struct dw_mci *host, u32 *cmdr)
+>>>>>>        * HOLD register should be bypassed in case there is no phase shift
+>>>>>>        * applied on CMD/DATA that is sent to the card.
+>>>>>>        */
+>>>>>> -     if (SDMMC_CLKSEL_GET_DRV_WD3(mci_readl(host, CLKSEL)))
+>>>>>> -             *cmdr |= SDMMC_CMD_USE_HOLD_REG;
+>>>>>> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+>>>>>> +             priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU) {
+>>>>>> +             if (SDMMC_CLKSEL_GET_DRV_WD3(mci_readl(host, CLKSEL64)))
+>>>>>> +                     *cmdr |= SDMMC_CMD_USE_HOLD_REG;
+>>>>>> +      } else {
+>>>>>> +             if (SDMMC_CLKSEL_GET_DRV_WD3(mci_readl(host, CLKSEL)))
+>>>>>> +                     *cmdr |= SDMMC_CMD_USE_HOLD_REG;
+>>>>>> +     }
+>>>>>>  }
+>>>>>>
+>>>>>>  static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+>>>>>> @@ -188,12 +216,20 @@ static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+>>>>>>       u8 div = priv->ciu_div + 1;
+>>>>>>
+>>>>>>       if (ios->timing == MMC_TIMING_MMC_DDR52) {
+>>>>>> -             mci_writel(host, CLKSEL, priv->ddr_timing);
+>>>>>> +             if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+>>>>>> +                     priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+>>>>>> +                     mci_writel(host, CLKSEL64, priv->ddr_timing);
+>>>>>> +             else
+>>>>>> +                     mci_writel(host, CLKSEL, priv->ddr_timing);
+>>>>>>               /* Should be double rate for DDR mode */
+>>>>>>               if (ios->bus_width == MMC_BUS_WIDTH_8)
+>>>>>>                       wanted <<= 1;
+>>>>>>       } else {
+>>>>>> -             mci_writel(host, CLKSEL, priv->sdr_timing);
+>>>>>> +             if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+>>>>>> +                     priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+>>>>>> +                     mci_writel(host, CLKSEL64, priv->sdr_timing);
+>>>>>> +             else
+>>>>>> +                     mci_writel(host, CLKSEL, priv->sdr_timing);
+>>>>>>       }
+>>>>>>
+>>>>>>       /* Don't care if wanted clock is zero */
+>>>>>> @@ -265,26 +301,51 @@ static int dw_mci_exynos_parse_dt(struct dw_mci *host)
+>>>>>>
+>>>>>>  static inline u8 dw_mci_exynos_get_clksmpl(struct dw_mci *host)
+>>>>>>  {
+>>>>>> -     return SDMMC_CLKSEL_CCLK_SAMPLE(mci_readl(host, CLKSEL));
+>>>>>> +     struct dw_mci_exynos_priv_data *priv = host->priv;
+>>>>>> +
+>>>>>> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+>>>>>> +             priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+>>>>>> +             return SDMMC_CLKSEL_CCLK_SAMPLE(mci_readl(host, CLKSEL64));
+>>>>>> +     else
+>>>>>> +             return SDMMC_CLKSEL_CCLK_SAMPLE(mci_readl(host, CLKSEL));
+>>>>>>  }
+>>>>>>
+>>>>>>  static inline void dw_mci_exynos_set_clksmpl(struct dw_mci *host, u8 sample)
+>>>>>>  {
+>>>>>>       u32 clksel;
+>>>>>> -     clksel = mci_readl(host, CLKSEL);
+>>>>>> +     struct dw_mci_exynos_priv_data *priv = host->priv;
+>>>>>> +
+>>>>>> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+>>>>>> +             priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+>>>>>> +             clksel = mci_readl(host, CLKSEL64);
+>>>>>> +     else
+>>>>>> +             clksel = mci_readl(host, CLKSEL);
+>>>>>>       clksel = (clksel & ~0x7) | SDMMC_CLKSEL_CCLK_SAMPLE(sample);
+>>>>>> -     mci_writel(host, CLKSEL, clksel);
+>>>>>> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+>>>>>> +             priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+>>>>>> +             mci_writel(host, CLKSEL64, clksel);
+>>>>>> +     else
+>>>>>> +             mci_writel(host, CLKSEL, clksel);
+>>>>>>  }
+>>>>>>
+>>>>>>  static inline u8 dw_mci_exynos_move_next_clksmpl(struct dw_mci *host)
+>>>>>>  {
+>>>>>> +     struct dw_mci_exynos_priv_data *priv = host->priv;
+>>>>>>       u32 clksel;
+>>>>>>       u8 sample;
+>>>>>>
+>>>>>> -     clksel = mci_readl(host, CLKSEL);
+>>>>>> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+>>>>>> +             priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+>>>>>> +             clksel = mci_readl(host, CLKSEL64);
+>>>>>> +     else
+>>>>>> +             clksel = mci_readl(host, CLKSEL);
+>>>>>>       sample = (clksel + 1) & 0x7;
+>>>>>>       clksel = (clksel & ~0x7) | sample;
+>>>>>> -     mci_writel(host, CLKSEL, clksel);
+>>>>>> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+>>>>>> +             priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+>>>>>> +             mci_writel(host, CLKSEL64, clksel);
+>>>>>> +     else
+>>>>>> +             mci_writel(host, CLKSEL, clksel);
+>>>>>>       return sample;
+>>>>>>  }
+>>>>>>
+>>>>>> @@ -411,6 +472,10 @@ static const struct of_device_id dw_mci_exynos_match[] = {
+>>>>>>                       .data = &exynos_drv_data, },
+>>>>>>       { .compatible = "samsung,exynos5420-dw-mshc-smu",
+>>>>>>                       .data = &exynos_drv_data, },
+>>>>>> +     { .compatible = "samsung,exynos7-dw-mshc",
+>>>>>> +                     .data = &exynos_drv_data, },
+>>>>>> +     { .compatible = "samsung,exynos7-dw-mshc-smu",
+>>>>>> +                     .data = &exynos_drv_data, },
+>>>>>>       {},
+>>>>>>  };
+>>>>>>  MODULE_DEVICE_TABLE(of, dw_mci_exynos_match);
+>>>>>>
+>>>>>
+>>>>> --
+>>>>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+>>>>> the body of a message to majordomo@vger.kernel.org
+>>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>> --
+>>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>>>> the body of a message to majordomo@vger.kernel.org
+>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>>
+>>>
+>>>
+>>> --
+>>> Best Regards
+>>> Vivek Gautam
+>>> Samsung R&D Institute, Bangalore
+>>> India
+>>
+>>
+>>
+>> --
+>> Best Regards
+>> Vivek Gautam
+>> Samsung R&D Institute, Bangalore
+>> India
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> 
+> 
