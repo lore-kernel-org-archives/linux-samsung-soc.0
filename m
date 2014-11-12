@@ -1,33 +1,52 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 1/2] ARM: dts: Fix the number of DMA channels for Exynos3250
-Date: Wed, 12 Nov 2014 11:41:07 +0900
-Message-ID: <1415760068-765-2-git-send-email-cw00.choi@samsung.com>
-References: <1415760068-765-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:51235 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755220AbaKLClQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Nov 2014 21:41:16 -0500
-In-reply-to: <1415760068-765-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCHv2 2/2] ARM: dts: Fix the number of DMA channels for Exynos4
+Date: Wed, 12 Nov 2014 11:50:29 +0900
+Message-ID: <1415760629-1531-3-git-send-email-cw00.choi@samsung.com>
+References: <1415760629-1531-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1415760629-1531-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: ben-linux@fluff.org, kyungmin.park@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch fix the numer for DMA channels for Exynos3250 because DMA controller
-of Exynos3250 can support 16 channels simultaneously.
+This patch fix the numer for DMA channels for Exynos4210/Exynos4212/Exynos4412
+/Exynos4415 because DMA controller of Exynos4 series can support 16 channels
+simultaneously.
 
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- arch/arm/boot/dts/exynos3250.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/exynos4.dtsi    | 4 ++--
+ arch/arm/boot/dts/exynos4415.dtsi | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 242ddda..5c14e3e 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -292,7 +292,7 @@
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index e0278ec..3b2c3dd 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -606,7 +606,7 @@
+ 			clocks = <&clock CLK_PDMA0>;
+ 			clock-names = "apb_pclk";
+ 			#dma-cells = <1>;
+-			#dma-channels = <8>;
++			#dma-channels = <16>;
+ 			#dma-requests = <32>;
+ 		};
+ 
+@@ -617,7 +617,7 @@
+ 			clocks = <&clock CLK_PDMA1>;
+ 			clock-names = "apb_pclk";
+ 			#dma-cells = <1>;
+-			#dma-channels = <8>;
++			#dma-channels = <16>;
+ 			#dma-requests = <32>;
+ 		};
+ 
+diff --git a/arch/arm/boot/dts/exynos4415.dtsi b/arch/arm/boot/dts/exynos4415.dtsi
+index c1c9b37..a097332 100644
+--- a/arch/arm/boot/dts/exynos4415.dtsi
++++ b/arch/arm/boot/dts/exynos4415.dtsi
+@@ -348,7 +348,7 @@
  				clocks = <&cmu CLK_PDMA0>;
  				clock-names = "apb_pclk";
  				#dma-cells = <1>;
@@ -36,12 +55,12 @@ index 242ddda..5c14e3e 100644
  				#dma-requests = <32>;
  			};
  
-@@ -303,7 +303,7 @@
+@@ -359,7 +359,7 @@
  				clocks = <&cmu CLK_PDMA1>;
  				clock-names = "apb_pclk";
  				#dma-cells = <1>;
 -				#dma-channels = <8>;
-+				#dma-channels = <16;
++				#dma-channels = <16>;
  				#dma-requests = <32>;
  			};
  		};
