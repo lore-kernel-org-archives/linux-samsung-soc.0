@@ -1,81 +1,95 @@
-From: "Stam, Michel [FINT]" <M.Stam@fugro.nl>
-Subject: RE: "asix: Don't reset PHY on if_up for ASIX 88772" breaks net on arndale platform
-Date: Wed, 12 Nov 2014 10:49:36 +0100
-Message-ID: <C89EFD3CD56F64468D3D206D683A8D2203A003FE@ldam-msx2.fugro-nl.local>
-References: <20141104072236.GA559@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D2203985F49@ldam-msx2.fugro-nl.local> <20141104094336.GA3145@afflict.kos.to> <C89EFD3CD56F64468D3D206D683A8D2203985FA9@ldam-msx2.fugro-nl.local> <20141104200914.GN23178@opensource.wolfsonmicro.com> <1415751802.3398.107.camel@decadent.org.uk>
+From: Juergen Borleis <jbe@pengutronix.de>
+Subject: Re: Samsung/S3C6410/Mini6410: how to handle NAND's "clock off"
+Date: Wed, 12 Nov 2014 13:00:27 +0100
+Message-ID: <201411121300.30286.jbe@pengutronix.de>
+References: <201411111910.34231.juergen@kreuzholzen.de> <20141111184226.GH27002@pengutronix.de> <20141112091458.GM27002@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.eu2.fugro.com ([46.34.88.152]:50222 "EHLO
-	smtp.eu2.fugro.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751904AbaKLJtl (ORCPT
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:55151 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752231AbaKLL7t convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Nov 2014 04:49:41 -0500
-Content-class: urn:content-classes:message
-In-Reply-To: <1415751802.3398.107.camel@decadent.org.uk>
+	Wed, 12 Nov 2014 06:59:49 -0500
+In-Reply-To: <20141112091458.GM27002@pengutronix.de>
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Hutchings <ben@decadent.org.uk>, Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-Cc: Riku Voipio <riku.voipio@iki.fi>, davem@davemloft.net, linux-usb@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Uwe =?iso-8859-1?q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Juergen Borleis <juergen@kreuzholzen.de>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Grant Likely <grant.likely@linaro.org>, Brian Norris <computersforpeace@gmail.com>, David Woodhouse <dwmw2@infradead.org>
 
-SGVsbG8gQmVuLA0KDQpSZWdhcmRpbmcgdGhlIGNvZGUgc25pcHBldDsNCg0KR29vZCBxdWVzdGlv
-biwgVGhlIG9yaWdpbmFsIGNvZGUgZGlkbid0IGRvIHRoaXMgZWl0aGVyLCB3aGljaCBpcyB3aHkg
-SSBsZWZ0IGl0IGFzIGl0IGlzLiBJdCBjb3VsZCBjYXVzZSB1bmRlc2lyYWJsZSBiZWhhdmlvdXIs
-IGFncmVlZC4NCg0KQWZ0ZXIgYSBxdWljayBkcml2ZXIgZXhhbWluYXRpb246IEkgZG8gc2VlIHRo
-YXQgYXNpeF9zZXRfc3dfbWlpIGFuZCBhc2l4X3NldF9od19taWkgYXJlIGNhbGxlZCBwcmlvciB0
-byB0aGUgYWN0dWFsIHdyaXRlIChhc2l4X21kaW9fd3JpdGUpLCBpdCBtYXkgYmUgdGhhdCB0aGlz
-IHRha2VzIGNhcmUgb2YgZW5zdXJpbmcgZGF0YSBpcyB3cml0dGVuIHRvIHRoZSBjaGlwLCBhcyBh
-c2l4X3dyaXRlX2NtZCB3YWl0cyBmb3IgdXNibmV0X3dyaXRlX2NtZCB0byBzZW5kIChhbmQgYWNr
-bm93bGVkZ2UpIGEgVVNCIENPTlRST0wgTVNHLiBBIGxvY2sgdG8gdGhlIHBoeSBpcyBoZWxkIGR1
-cmluZyB0aGlzIHRpbWUuDQoNCklmIEkgcmVjYWxsIG15IFVTQiBrbm93bGVkZ2UsIGNvbnRyb2wg
-bWVzc2FnZXMgYXJlIGFja25vd2xlZGdlZCwgd2hpY2ggd291bGQgZW5zdXJlIGRhdGEgaXMgd3Jp
-dHRlbiB0byB0aGUgY2hpcC4gV2hldGhlciB0aGUgQVNJWCByZXF1aXJlcyBmdXJ0aGVyIGRlbGF5
-IEkgd291bGQgbm90IGtub3cuIEkgd291bGQgaGF2ZSB0byBkaXZlIGRlZXBlciBpbnRvIHRoZSB0
-aW1pbmdzIG9mIHRoZSBBU0lYIGNoaXAgYW5kIHRoZSBkcml2ZXIgYmVoYXZpb3VyIHRvIHNlZSBp
-ZiB0aGF0IHdvdWxkIGJlIHRoZSBjYXNlLg0KDQpLaW5kIHJlZ2FyZHMsDQoNCk1pY2hlbCBTdGFt
-DQotLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogQmVuIEh1dGNoaW5ncyBbbWFpbHRv
-OmJlbkBkZWNhZGVudC5vcmcudWtdIA0KU2VudDogV2VkbmVzZGF5LCBOb3ZlbWJlciAxMiwgMjAx
-NCAxOjIzIEFNDQpUbzogQ2hhcmxlcyBLZWVwYXgNCkNjOiBTdGFtLCBNaWNoZWwgW0ZJTlRdOyBS
-aWt1IFZvaXBpbzsgZGF2ZW1AZGF2ZW1sb2Z0Lm5ldDsgbGludXgtdXNiQHZnZXIua2VybmVsLm9y
-ZzsgbmV0ZGV2QHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsg
-bGludXgtc2Ftc3VuZy1zb2NAdmdlci5rZXJuZWwub3JnDQpTdWJqZWN0OiBSZTogImFzaXg6IERv
-bid0IHJlc2V0IFBIWSBvbiBpZl91cCBmb3IgQVNJWCA4ODc3MiIgYnJlYWtzIG5ldCBvbiBhcm5k
-YWxlIHBsYXRmb3JtDQoNCk9uIFR1ZSwgMjAxNC0xMS0wNCBhdCAyMDowOSArMDAwMCwgQ2hhcmxl
-cyBLZWVwYXggd3JvdGU6DQo+IE9uIFR1ZSwgTm92IDA0LCAyMDE0IGF0IDExOjIzOjA2QU0gKzAx
-MDAsIFN0YW0sIE1pY2hlbCBbRklOVF0gd3JvdGU6DQo+ID4gSGVsbG8gUmlrdSwNCj4gPiANCj4g
-PiA+Rml4aW5nIGEgYnVnIChldGh0b29sIHN1cHBvcnQpIG11c3Qgbm90IGNhdXNlIGJyZWFrYWdl
-IGVsc2V3aGVyZSANCj4gPiA+KGluDQo+ID4gdGhpcyBjYXNlIG9uIGFybmRhbGUpLiBUaGlzIGlz
-IG5vdyBhIHJlZ3Jlc3Npb24gb2YgZnVuY3Rpb25hbGl0eSANCj4gPiBmcm9tIDMuMTcuDQo+ID4g
-Pg0KPiA+ID5JIHRoaW5rIGl0IHdvdWxkIGJldHRlciB0byByZXZlcnQgdGhlIGNoYW5nZSBub3cg
-YW5kIHdpdGggbGVzcyANCj4gPiA+aHVycnkNCj4gPiBpbnRyb2R1Y2UgYSBldGh0b29sIGZpeCB0
-aGF0IGRvZXNuJ3QgYnJlYWsgYXJuZGFsZS4NCj4gPiANCj4gPiBJIGRvbid0IGZ1bGx5IGFncmVl
-IGhlcmU7DQo+ID4gSSB3b3VsZCBsaWtlIHRvIHBvaW50IG91dCB0aGF0IHRoaXMgY29tbWl0IGlz
-IGEgcmV2ZXJ0IGl0c2VsZi4gDQo+ID4gRml4aW5nIHRoZSBhcm1kYWxlIHdpbGwgdGhlbiBjYXVz
-ZSBicmVha2FnZSBpbiBvdGhlciANCj4gPiBpbXBsZW1lbnRhdGlvbnMsIHN1Y2ggYXMgb3Vycy4g
-QmxhbmtseSByZXZlcnRpbmcgYnJlYWtzIG90aGVyIHBlb3BsZXMnIGltcGxlbWVudGF0aW9ucy4N
-Cj4gPiANCj4gPiBUaGUgUEhZIHJlc2V0IGlzIHRoZSB0aGluZyB0aGF0IGJyZWFrcyBldGh0b29s
-IHN1cHBvcnQsIHNvIGFueSBmaXggDQo+ID4gdGhhdCBhcHBlYXNlcyBhbGwgd291bGQgaGF2ZSB0
-byB0YWtlIGV4aXN0aW5nIFBIWSBzdGF0ZSBpbnRvIGFjY291bnQuDQpbLi4uXQ0KPiAtLS0gYS9k
-cml2ZXJzL25ldC91c2IvYXNpeF9kZXZpY2VzLmMNCj4gKysrIGIvZHJpdmVycy9uZXQvdXNiL2Fz
-aXhfZGV2aWNlcy5jDQo+IEBAIC0yOTksNiArMjk5LDcgQEAgc3RhdGljIGludCBheDg4NzcyX3Jl
-c2V0KHN0cnVjdCB1c2JuZXQgKmRldikgIHsNCj4gICAgICAgICBzdHJ1Y3QgYXNpeF9kYXRhICpk
-YXRhID0gKHN0cnVjdCBhc2l4X2RhdGEgKikmZGV2LT5kYXRhOw0KPiAgICAgICAgIGludCByZXQs
-IGVtYmRfcGh5Ow0KPiArICAgICAgIGludCByZWc7DQo+ICAgICAgICAgdTE2IHJ4X2N0bDsNCj4g
-DQo+ICAgICAgICAgcmV0ID0gYXNpeF93cml0ZV9ncGlvKGRldiwNCj4gQEAgLTM1OSw4ICszNjAs
-MTAgQEAgc3RhdGljIGludCBheDg4NzcyX3Jlc2V0KHN0cnVjdCB1c2JuZXQgKmRldikNCj4gICAg
-ICAgICBtc2xlZXAoMTUwKTsNCj4gDQo+ICAgICAgICAgYXNpeF9tZGlvX3dyaXRlKGRldi0+bmV0
-LCBkZXYtPm1paS5waHlfaWQsIE1JSV9CTUNSLCBCTUNSX1JFU0VUKTsNCj4gLSAgICAgICBhc2l4
-X21kaW9fd3JpdGUoZGV2LT5uZXQsIGRldi0+bWlpLnBoeV9pZCwgTUlJX0FEVkVSVElTRSwNCj4g
-LSAgICAgICAgICAgICAgICAgICAgICAgQURWRVJUSVNFX0FMTCB8IEFEVkVSVElTRV9DU01BKTsN
-Cj4gKyAgICAgICByZWcgPSBhc2l4X21kaW9fcmVhZChkZXYtPm5ldCwgZGV2LT5taWkucGh5X2lk
-LCBNSUlfQURWRVJUSVNFKTsNCj4gKyAgICAgICBpZiAoIXJlZykNCj4gKyAgICAgICAgICAgICAg
-IHJlZyA9IEFEVkVSVElTRV9BTEwgfCBBRFZFUlRJU0VfQ1NNQTsNCj4gKyAgICAgICBhc2l4X21k
-aW9fd3JpdGUoZGV2LT5uZXQsIGRldi0+bWlpLnBoeV9pZCwgTUlJX0FEVkVSVElTRSwgDQo+ICsg
-cmVnKTsNClsuLi5dDQoNCldoeSBpcyB0aGVyZSBubyBzbGVlcCBhZnRlciBzZXR0aW5nIHRoZSBS
-RVNFVCBiaXQ/ICBEb2Vzbid0IHRoYXQgbWFrZSB0aGUgZm9sbG93aW5nIHJlZ2lzdGVyIHdyaXRl
-cyB1bnJlbGlhYmxlPw0KDQpCZW4uDQoNCi0tDQpCZW4gSHV0Y2hpbmdzDQpFeHBlcmllbmNlIGlz
-IGRpcmVjdGx5IHByb3BvcnRpb25hbCB0byB0aGUgdmFsdWUgb2YgZXF1aXBtZW50IGRlc3Ryb3ll
-ZC4NCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIC0gQ2Fyb2x5biBTY2hlcHBuZXINCg==
+
+On Wednesday 12 November 2014 10:14:58 Uwe Kleine-K=F6nig wrote:
+> Hello again,
+>
+> [extending audience a bit]
+>
+> On Tue, Nov 11, 2014 at 07:42:26PM +0100, Uwe Kleine-K=F6nig wrote:
+> > On Tue, Nov 11, 2014 at 07:10:33PM +0100, Juergen Borleis wrote:
+> > > Hi,
+> > >
+> > > the S3C2410 NAND driver [1] can still be used for NANDs attached =
+to an
+> > > S3C6410 SoC. But this driver has a "nice" feature called "clock o=
+ff" to
+> > > save some power while not in use. I tried it here on my Mini6410
+> > > platform and it freezes the system.
+> > >
+> > > The clock tree is somehow:
+> > >
+> > > [...]
+> > >   hclk                      4            4   133000000          0=
+ 0
+> > >      hclk_mfc               0            0   133000000          0=
+ 0
+> > >      hclk_mem0              2            2   133000000          0=
+ 0
+> > >         mem0_srom           0            0   133000000          0=
+ 0
+> > >         mem0_nfcon          1            1   133000000          0=
+ 0
+> > >         mem0_onenand0       0            0   133000000          0=
+ 0
+> > >         mem0_onenand1       0            0   133000000          0=
+ 0
+> > >         mem0_cfcon          0            0   133000000          0=
+ 0
+> > > [...]
+> > >
+> > > On the Mini6410 the "mem0_nfcon" clock is the only single user of=
+ the
+> > > "hclk_mem0". And this clock is required to keep the access to the
+> > > external network device enabled. When the NAND driver disables it=
+s
+> > > clock "mem0_nfcon", the "hclk_mem0" gets also disabled because th=
+ere is
+> > > no consumer anymore. The next time the network driver tries to ac=
+cess
+> > > its device, the SoC freezes.
+> >
+> > Sounds like the network driver should hold a reference to hclk_mem0=
+=2E
+>
+> After talking to J=FCrgen by phone, the solution that the dm9000 driv=
+er
+> should handle the clock sounds wrong. The clk in question is needed b=
+y
+> the SoC to operate the bus the dm9000 is connected to. So I think the
+> right approach would include
+
+I think we need the same here for the S3C6410 SoC, like the imx-weim dr=
+iver is=20
+for i.MX SoCs.
+
+jbe
+
+--=20
+Pengutronix e.K. =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0| Juergen Borleis =A0 =A0 =A0 =A0 =A0 =A0 |
+Industrial Linux Solutions               =A0 =A0 =A0| Phone: +49-5121-2=
+06917-5128 |
+Peiner Str. 6-8, 31137 Hildesheim, Germany =A0 =A0| Fax: =A0 +49-5121-2=
+06917-5555 |
+Amtsgericht Hildesheim, HRA 2686 =A0 =A0 =A0 =A0 =A0 =A0 =A0| http://ww=
+w.pengutronix.de/ =A0|
