@@ -1,68 +1,30 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv2 2/2] ARM: dts: Fix the number of DMA channels for Exynos4
-Date: Wed, 12 Nov 2014 11:50:29 +0900
-Message-ID: <1415760629-1531-3-git-send-email-cw00.choi@samsung.com>
-References: <1415760629-1531-1-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCHv2 0/2] ARM: dts: Fix the number of DMA channels for Exynos3250/4
+Date: Wed, 12 Nov 2014 11:50:27 +0900
+Message-ID: <1415760629-1531-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1415760629-1531-1-git-send-email-cw00.choi@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: ben-linux@fluff.org, kyungmin.park@samsung.com, cw00.choi@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch fix the numer for DMA channels for Exynos4210/Exynos4212/Exynos4412
-/Exynos4415 because DMA controller of Exynos4 series can support 16 channels
-simultaneously.
+This patch fix minor issuse to correct the number of DMA channels for
+Exynos3250 and Exynos4 series. The PL330 DMA of Exynos3250/Exynos4 support
+16 channels simultaneously but, PL330 DMA driver don't use 'dma-channels'
+property directly. This patchset fix the correct information
+of Exynos3250/Exynos4's PL330 DMA simply.
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
+Changes from v1:
+- Fix the nubmer for DMA channesl for Exynos4415
+
+Chanwoo Choi (2):
+  ARM: dts: Fix the number of DMA channels for Exynos3250
+  ARM: dts: Fix the number of DMA channels for Exynos4
+
+ arch/arm/boot/dts/exynos3250.dtsi | 4 ++--
  arch/arm/boot/dts/exynos4.dtsi    | 4 ++--
  arch/arm/boot/dts/exynos4415.dtsi | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ 3 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index e0278ec..3b2c3dd 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -606,7 +606,7 @@
- 			clocks = <&clock CLK_PDMA0>;
- 			clock-names = "apb_pclk";
- 			#dma-cells = <1>;
--			#dma-channels = <8>;
-+			#dma-channels = <16>;
- 			#dma-requests = <32>;
- 		};
- 
-@@ -617,7 +617,7 @@
- 			clocks = <&clock CLK_PDMA1>;
- 			clock-names = "apb_pclk";
- 			#dma-cells = <1>;
--			#dma-channels = <8>;
-+			#dma-channels = <16>;
- 			#dma-requests = <32>;
- 		};
- 
-diff --git a/arch/arm/boot/dts/exynos4415.dtsi b/arch/arm/boot/dts/exynos4415.dtsi
-index c1c9b37..a097332 100644
---- a/arch/arm/boot/dts/exynos4415.dtsi
-+++ b/arch/arm/boot/dts/exynos4415.dtsi
-@@ -348,7 +348,7 @@
- 				clocks = <&cmu CLK_PDMA0>;
- 				clock-names = "apb_pclk";
- 				#dma-cells = <1>;
--				#dma-channels = <8>;
-+				#dma-channels = <16>;
- 				#dma-requests = <32>;
- 			};
- 
-@@ -359,7 +359,7 @@
- 				clocks = <&cmu CLK_PDMA1>;
- 				clock-names = "apb_pclk";
- 				#dma-cells = <1>;
--				#dma-channels = <8>;
-+				#dma-channels = <16>;
- 				#dma-requests = <32>;
- 			};
- 		};
 -- 
 1.8.5.5
