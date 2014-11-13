@@ -1,117 +1,40 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v3] usb: dwc2/gadget: report disconnect event from 'end
- session' irq
-Date: Thu, 13 Nov 2014 14:39:34 +0100
-Message-ID: <5464B496.9010000@samsung.com>
-References: <1413801940-31086-2-git-send-email-m.szyprowski@samsung.com>
- <1414742668-4107-1-git-send-email-m.szyprowski@samsung.com>
- <A2CA0424C0A6F04399FB9E1CD98E0304844E7F53@US01WEMBX2.internal.synopsys.com>
+From: Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH v3 0/9] PM / Domains: Fix race conditions during boot
+Date: Thu, 13 Nov 2014 15:05:12 +0100
+Message-ID: <20141113140512.GB18995@amd>
+References: <1413208930-26019-1-git-send-email-ulf.hansson@linaro.org>
+ <2024276.CFr3nVUAlA@vostro.rjw.lan>
+ <CAPDyKFp=T8Luomeaoz5Y=eLAuFaOfdb+-aoU3QVnpjoDYVKPjg@mail.gmail.com>
+ <17707586.6KbjDf5Kep@vostro.rjw.lan>
+ <CAPDyKFo-On2MfqHk081o_JZvwbrbi0=n9h6o7A9dJ+X4c8goKg@mail.gmail.com>
+ <545D0074.7060205@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:28488 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932978AbaKMNji (ORCPT
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59402 "EHLO
+	atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933074AbaKMOFO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Nov 2014 08:39:38 -0500
-In-reply-to: <A2CA0424C0A6F04399FB9E1CD98E0304844E7F53@US01WEMBX2.internal.synopsys.com>
+	Thu, 13 Nov 2014 09:05:14 -0500
+Content-Disposition: inline
+In-Reply-To: <545D0074.7060205@ti.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Paul Zimmerman <Paul.Zimmerman@synopsys.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Felipe Balbi <balbi@ti.com>
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Geert Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@the-dreams.de>, Tomasz Figa <tomasz.figa@gmail.com>, Philipp Zabel <philipp.zabel@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Kevin Hilman <khilman@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Alan Stern <stern@rowland.harvard.edu>, Jack Dai <jack.dai@rock-chips.com>, Len Brown <len.brown@intel.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Jinkun Hong <jinkun.hong@rock-chips.com>, Mark Brown <broonie@kernel.org>, Ben Dooks <ben-linux@fluff.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Aaron Lu <aaron.lu@intel.com>, Greg
 
-Hello,
+Hi!
 
-On 2014-10-31 19:15, Paul Zimmerman wrote:
->> From: Marek Szyprowski [mailto:m.szyprowski@samsung.com]
->> Sent: Friday, October 31, 2014 1:04 AM
->> To: linux-usb@vger.kernel.org; linux-samsung-soc@vger.kernel.org
->> Cc: Marek Szyprowski; Kyungmin Park; Robert Baldyga; Paul Zimmerman; Krzysztof Kozlowski; Felipe Balbi
->> Subject: [PATCH v3] usb: dwc2/gadget: report disconnect event from 'end session' irq
->>
->> This patch adds a call to s3c_hsotg_disconnect() from 'end session'
->> interrupt (GOTGINT_SES_END_DET) to correctly notify gadget subsystem
->> about unplugged usb cable. 'disconnected' interrupt (DISCONNINT) might
->> look a bit more suitable for this event, but it is asserted only in
->> host mode, so in device mode we need to use something else.
->>
->> Additional check has been added in s3c_hsotg_disconnect() function
->> to ensure that the event is reported only once after successful device
->> enumeration.
->>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> ---
->>   drivers/usb/dwc2/core.h   |  1 +
->>   drivers/usb/dwc2/gadget.c | 10 ++++++++++
->>   2 files changed, 11 insertions(+)
->>
->> diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
->> index 55c90c53f2d6..b42df32e7737 100644
->> --- a/drivers/usb/dwc2/core.h
->> +++ b/drivers/usb/dwc2/core.h
->> @@ -212,6 +212,7 @@ struct s3c_hsotg {
->>   	struct usb_gadget       gadget;
->>   	unsigned int            setup;
->>   	unsigned long           last_rst;
->> +	unsigned int		address;
->>   	struct s3c_hsotg_ep     *eps;
->>   };
->>
->> diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
->> index fcd2bb55ccca..6304efba11aa 100644
->> --- a/drivers/usb/dwc2/gadget.c
->> +++ b/drivers/usb/dwc2/gadget.c
->> @@ -1114,6 +1114,7 @@ static void s3c_hsotg_process_control(struct s3c_hsotg *hsotg,
->>   				 DCFG_DEVADDR_SHIFT) & DCFG_DEVADDR_MASK;
->>   			writel(dcfg, hsotg->regs + DCFG);
->>
->> +			hsotg->address = ctrl->wValue;
->>   			dev_info(hsotg->dev, "new address %d\n", ctrl->wValue);
->>
->>   			ret = s3c_hsotg_send_reply(hsotg, ep0, NULL, 0);
->> @@ -2031,6 +2032,10 @@ static void s3c_hsotg_disconnect(struct s3c_hsotg *hsotg)
->>   {
->>   	unsigned ep;
->>
->> +	if (!hsotg->address)
->> +		return;
->> +
->> +	hsotg->address = 0;
->>   	for (ep = 0; ep < hsotg->num_of_eps; ep++)
->>   		kill_all_requests(hsotg, &hsotg->eps[ep], -ESHUTDOWN, true);
->>
->> @@ -2290,6 +2295,11 @@ irq_retry:
->>   		dev_info(hsotg->dev, "OTGInt: %08x\n", otgint);
->>
->>   		writel(otgint, hsotg->regs + GOTGINT);
->> +
->> +		if (otgint & GOTGINT_SES_END_DET) {
->> +			s3c_hsotg_disconnect(hsotg);
->> +			hsotg->gadget.speed = USB_SPEED_UNKNOWN;
->> +		}
->>   	}
->>
->>   	if (gintsts & GINTSTS_SESSREQINT) {
-> I don't think this is right. The host can send control requests to
-> the device before it sends a SetAddress to change from the default
-> address of 0. So if a GOTGINT_SES_END_DET happens before the
-> SetAddress, it will be ignored.
->
-> Or am I missing something?
+> 2) There are no requirements for arch/platforms/drivers to work in both cases
+> CONFIG_PM_RUNTIME=y/n. But they must be built without errors/warning for both
+> cases.
 
-Well, right. However before finishing enumeration (setting the address) 
-host usually
-only retrieves some usb descriptors what doesn't change the state of the 
-gadget.
-Right now we always reported 'disconnected' event before setting the new 
-address,
-what is a bit overkill (in some cases gadget driver got this even more 
-than once).
-The above code handles all cases correctly and reports disconnect event 
-only once.
+I don't think where you got that. They are config options, they should
+work.
 
-Best regards
+It is prefer not to compile than to compile but not work.
+									Pavel
+
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
