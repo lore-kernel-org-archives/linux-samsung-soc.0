@@ -1,50 +1,95 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 0/4] drm/exynos/dsi: remove global display variable
-Date: Thu, 13 Nov 2014 15:14:22 +0100
-Message-ID: <5464BCBE.1090001@samsung.com>
-References: <1412683271-15835-1-git-send-email-a.hajda@samsung.com>
- <546470BC.4020104@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <546470BC.4020104@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, open list <linux-kernel@vger.kernel.org>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, Kyungmin Park <kyungmin.park@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2 00/33] thermal: exynos: convert the driver to use per-SoC
+ type operations
+Date: Thu, 13 Nov 2014 16:00:55 +0100
+Message-ID: <1415890888-8881-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:50216 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751636AbaKMPBy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 13 Nov 2014 10:01:54 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
 
-T24gMTEvMTMvMjAxNCAwOTo1MCBBTSwgSW5raSBEYWUgd3JvdGU6Cj4gT24gMjAxNOuFhCAxMOyb
-lCAwN+ydvCAyMTowMSwgQW5kcnplaiBIYWpkYSB3cm90ZToKPj4gSGkgSW5raSwKPj4KPj4gTWFu
-eSBFeHlub3MgRFJNIGRyaXZlcnMgdXNlcyBnbG9iYWwgdmFyaWFibGVzIHRvIHJlcHJlc2VudCBh
-c3NvY2lhdGVkIGRldmljZXMKPj4gaW4gRXh5bm9zIERSTSBpbnRlcm5hbCBmcmFtZXdvcmsuIEl0
-IGlzIHF1aXRlIGNvbmZ1c2luZywgaXQgYWRkcyBkYXRhIGR1cGxpY2F0aW9uCj4+IGFuZCBmaW5h
-bGx5IGl0IGRvZXMgbm90IGFsbG93IHRvIGhhbmRsZSBtb3JlIHRoYW4gb25lIGRldmljZSBpbiBz
-eXN0ZW0uCj4+IEl0IHNlZW1zIGJldHRlciB0byBlbWJlZCBzdWNoIHN0cnVjdHVyZXMgaW4gcHJp
-dmF0ZSBjb250ZXh0IG9mIHRoZSBkZXZpY2UuCj4+Cj4+IFRoZSBwYXRjaHNldCBpcyBiYXNlZCBv
-biBleHlub3NfZHJtX25leHQgcGx1cyBteSBwYXRjaCBbMV06Cj4+ICdkcm0vZXh5bm9zOiByZW1v
-dmUgZXhwbGljaXQgZW5jb2Rlci9jb25uZWN0b3IgZGUtaW5pdGlhbGl6YXRpb24nLgo+Pgo+PiBJ
-ZiB0aGUgcGF0Y2hzZXQgaXMgT0sgZm9yIHlvdSBJIGNhbiBwcmVwYXJlIHNpbWlsYXIgcGF0Y2hl
-cyBmb3Igb3RoZXIgRXh5bm9zIERSTSBjb21wb25lbnRzLgo+IFNvcnJ5IGZvciBsYXRlLiBBcHBs
-aWVkLiBDYW4geW91IHByZXBhcmUgc2ltaWxhciBwYXRjaGVzIGZvciBvdGhlcj8gSWYKPiBzbywg
-SSdkIGhhcHB5LgoKQmVnaW5uaW5nIG9mIHRoZSBuZXh0IHdlZWsgaXMgT0s/CgpSZWdhcmRzCkFu
-ZHJ6ZWoKCj4KPiBUaGFua3MsCj4gSW5raSBEYWUKPgo+PiBbMV06IGh0dHBzOi8vbGttbC5vcmcv
-bGttbC8yMDE0LzkvMjIvMTQ4Cj4+Cj4+IFJlZ2FyZHMKPj4gQW5kcnplago+Pgo+Pgo+PiBBbmRy
-emVqIEhhamRhICg0KToKPj4gICBkcm0vZXh5bm9zL2RzaTogcmVtb3ZlIGdsb2JhbCB2YXJpYWJs
-ZSBleHlub3NfZHNpX2Rpc3BsYXkKPj4gICBkcm0vZXh5bm9zL2RzaTogc2ltcGxpZnkgZGV2aWNl
-IHBvaW50ZXIgZXZhbHVhdGlvbgo+PiAgIGRybS9leHlub3MvZHNpOiByZW1vdmUgcmVkdW5kYW50
-IGVuY29kZXIgZmllbGQKPj4gICBkcm0vZXh5bm9zL2RzaTogc3RvcCB1c2luZyBkaXNwbGF5LT5j
-dHggcG9pbnRlcgo+Pgo+PiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5j
-IHwgOTYgKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tCj4+ICAxIGZpbGUgY2hhbmdl
-ZCwgNDcgaW5zZXJ0aW9ucygrKSwgNDkgZGVsZXRpb25zKC0pCj4+Cj4KCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
-ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi,
+
+This patch series replaces the hardware registers abstractions in
+the Exynos thermal driver by the usage of per-SoC type operations.
+Such solution provides simpler, easier to understand code and
+allows removal of ~250 LOCs (~11% of the whole source code) from
+the driver.  Some other driver improvements are now also possible
+thanks to these changes but are scheduled at later time (like
+consolidating code for clearing IRQs using INTCLEAR register).
+
+The patchset should not cause any functionality changes.  This
+means that unless there are some bugs in the patches itself there
+should be no behavior changes for the driver (this also includes
+lack of changes in the way hardware is accessed by the driver).
+
+All testing was done on (Exynos4412 SoC based) ODROID U3 board
+(some additional patches are needed to make the Exynos thermal
+driver work on this hardware).
+
+Depends on:
+- 'next' branch of linux-soc-thermal.git kernel tree from Eduardo
+
+Changes since v1 (https://lkml.org/lkml/2014/9/18/305):
+- rebased on top of the current linux-soc-thermal kernel
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (33):
+  thermal: exynos: remove needless triminfo_data abstraction
+  thermal: exynos: remove needless tmu_status abstraction
+  thermal: exynos: remove needless threshold_temp abstraction
+  thermal: exynos: remove needless triminfo_ctrl abstraction
+  thermal: exynos: remove needless test_mux_addr_shift abstraction
+  thermal: exynos: remove needless therm_trip_[mode,mask]_shift
+    abstractions
+  thermal: exynos: remove needless therm_trip_en_shift abstraction
+  thermal: exynos: remove needless emul_temp_shift abstraction
+  thermal: exynos: remove needless emul_time_shift abstraction
+  thermal: exynos: replace tmu_irqstatus check by Exynos5440 one
+  thermal: exynos: replace tmu_pmin check by Exynos5440 one
+  thermal: exynos: simplify HW_TRIP level setting
+  thermal: exynos: replace threshold_falling check by Exynos SoC type
+    one
+  thermal: exynos: remove TMU_SUPPORT_READY_STATUS flag
+  thermal: exynos: remove TMU_SUPPORT_TRIM_RELOAD flag
+  thermal: exynos: add sanitize_temp_error() helper
+  thermal: exynos: add get_th_reg() helper
+  thermal: exynos: add ->tmu_initialize method
+  thermal: exynos: add get_con_reg() helper
+  thermal: exynos: add ->tmu_control method
+  thermal: exynos: add ->tmu_read method
+  thermal: exynos: add get_emul_con_reg() helper
+  thermal: exynos: add ->tmu_set_emulation method
+  thermal: exynos: add ->tmu_clear_irqs method
+  thermal: exynos: remove TMU_SUPPORT_FALLING_TRIP flag
+  thermal: exynos: remove TMU_SUPPORT_EMUL_TIME flag
+  thermal: exynos: remove TMU_SUPPORT_EMULATION flag
+  thermal: exynos: remove TMU_SUPPORT_ADDRESS_MULTIPLE flag
+  thermal: exynos: remove TMU_SUPPORT_MULTI_INST flag
+  thermal: exynos: remove test_mux pdata field
+  thermal: exynos: remove SoC type ifdefs
+  thermal: exynos: remove __EXYNOS5420_TMU_DATA macro
+  thermal: exynos: remove exynos_tmu_data.h include
+
+ drivers/thermal/samsung/exynos_thermal_common.h |   1 -
+ drivers/thermal/samsung/exynos_tmu.c            | 692 ++++++++++++++++--------
+ drivers/thermal/samsung/exynos_tmu.h            | 123 +----
+ drivers/thermal/samsung/exynos_tmu_data.c       | 239 +-------
+ drivers/thermal/samsung/exynos_tmu_data.h       | 159 ------
+ 5 files changed, 485 insertions(+), 729 deletions(-)
+ delete mode 100644 drivers/thermal/samsung/exynos_tmu_data.h
+
+-- 
+1.8.2.3
