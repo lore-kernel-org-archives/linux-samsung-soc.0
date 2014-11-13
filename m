@@ -1,71 +1,32 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 1/2] drm/exynos: fix null pointer dereference issue
-Date: Thu, 13 Nov 2014 16:50:08 +0900
-Message-ID: <1415865009-15979-2-git-send-email-inki.dae@samsung.com>
-References: <1415865009-15979-1-git-send-email-inki.dae@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v3 2/2] ARM: EXYNOS: Call regulator core suspend prepare
+ and finish functions
+Date: Thu, 13 Nov 2014 09:36:11 +0100
+Message-ID: <54646D7B.2060608@collabora.co.uk>
+References: <1413839151-10875-1-git-send-email-javier.martinez@collabora.co.uk> <1413839151-10875-3-git-send-email-javier.martinez@collabora.co.uk> <CABxcv==YZjO9p3aNyuRpe3DYS+=BcY_N2esuTg0hGASb_b_OdA@mail.gmail.com> <CABxcv=mMqh5UD0_Wz3rNaFbZD3BH_2Z+7srzccd=-5_ndo_a1Q@mail.gmail.com> <CAOesGMjKP6Yg-M_7Zy5bbEJ7QD7fQ27Bopd6yD3M=r=4SArR6w@mail.gmail.com> <546413A7.1050803@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1415865009-15979-1-git-send-email-inki.dae@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:51706 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751013AbaKMIgW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 13 Nov 2014 03:36:22 -0500
+In-Reply-To: <546413A7.1050803@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>
+Cc: Javier Martinez Canillas <javier@dowhile0.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Mark Brown <broonie@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-VGhpcyBwYXRjaCBmaXhlcyBudWxsIHBvaW50ZXIgZGVyZWZlcmVuY2UgaXNzdWUgaW5jdXJyZWQK
-d2hlbiBpcHAgZHJpdmVyIGlzIGVuYWJsZWQgYW5kIEV4eW5vcyBkcm0gZHJpdmVyIGlzIGNsb3Nl
-ZC4KCk5vbiBrbXMgZHJpdmVyIHNob3VsZCByZWdpc3RlciBpdHMgb3duIHN1YiBkcml2ZXIgdG8g
-c2V0dXAgbmVjZXNzYXJ5CnJlc291cmNlcywgd2hpY2ggaXMgZG9uZSBieSBsb2FkKCkuIFNvIG51
-bGwgcG9pbnRlciBkZXJlZmVyZW5jZQpvY2N1cnMgd2hlbiBpcHAgZHJpdmVyIGlzIGVuYWJsZWQg
-YW5kIEV4eW5vcyBkcm0gZHJpdmVyIGlzIGNsb3NlZApiZWNhdXNlIGlwcCBjb3JlIGRldmljZSBp
-cyByZWdpc3RlcmVkIGFmdGVyIGNvbXBvbmVudF9tYXN0ZXJfYWRkX3dpdGhfbWF0Y2gKY2FsbC4K
-ClRoaXMgcGF0Y2ggbWFrZXMgZXh5bm9zX2RybV9kZXZpY2Vfc3ViZHJ2X3Byb2JlKCkgdG8gYmUg
-Y2FsbGVkIGFmdGVyIGFsbCBub24Ka21zIGRyaXZlcnMgYXJlIHJlZ2lzdGVyZWQuCgpTaWduZWQt
-b2ZmLWJ5OiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIHwgICAxOCArKysrKysrKystLS0tLS0tLS0KIDEg
-ZmlsZSBjaGFuZ2VkLCA5IGluc2VydGlvbnMoKyksIDkgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIGIvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCmluZGV4IGU1YzRjNmMuLmYwYmNkYzYgMTAwNjQ0
-Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYworKysgYi9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKQEAgLTEwOCwxMSArMTA4LDYgQEAg
-c3RhdGljIGludCBleHlub3NfZHJtX2xvYWQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgdW5zaWdu
-ZWQgbG9uZyBmbGFncykKIAlpZiAocmV0KQogCQlnb3RvIGVycl91bmJpbmRfYWxsOwogCi0JLyog
-UHJvYmUgbm9uIGttcyBzdWIgZHJpdmVycyBhbmQgdmlydHVhbCBkaXNwbGF5IGRyaXZlci4gKi8K
-LQlyZXQgPSBleHlub3NfZHJtX2RldmljZV9zdWJkcnZfcHJvYmUoZGV2KTsKLQlpZiAocmV0KQot
-CQlnb3RvIGVycl9jbGVhbnVwX3ZibGFuazsKLQogCS8qCiAJICogZW5hYmxlIGRybSBpcnEgbW9k
-ZS4KIAkgKiAtIHdpdGggaXJxX2VuYWJsZWQgPSB0cnVlLCB3ZSBjYW4gdXNlIHRoZSB2Ymxhbmsg
-ZmVhdHVyZS4KQEAgLTEzOCw4ICsxMzMsNiBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1fbG9hZChz
-dHJ1Y3QgZHJtX2RldmljZSAqZGV2LCB1bnNpZ25lZCBsb25nIGZsYWdzKQogCiAJcmV0dXJuIDA7
-CiAKLWVycl9jbGVhbnVwX3ZibGFuazoKLQlkcm1fdmJsYW5rX2NsZWFudXAoZGV2KTsKIGVycl91
-bmJpbmRfYWxsOgogCWNvbXBvbmVudF91bmJpbmRfYWxsKGRldi0+ZGV2LCBkZXYpOwogZXJyX21v
-ZGVfY29uZmlnX2NsZWFudXA6CkBAIC0xNTMsOCArMTQ2LDYgQEAgZXJyX2ZyZWVfcHJpdmF0ZToK
-IAogc3RhdGljIGludCBleHlub3NfZHJtX3VubG9hZChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KQog
-ewotCWV4eW5vc19kcm1fZGV2aWNlX3N1YmRydl9yZW1vdmUoZGV2KTsKLQogCWV4eW5vc19kcm1f
-ZmJkZXZfZmluaShkZXYpOwogCWRybV9rbXNfaGVscGVyX3BvbGxfZmluaShkZXYpOwogCkBAIC02
-MzYsOSArNjI3LDE2IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2RybV9wbGF0Zm9ybV9wcm9iZShzdHJ1
-Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCQlnb3RvIGVycl91bnJlZ2lzdGVyX2lwcF9kcnY7
-CiAjZW5kaWYKIAorCS8qIFByb2JlIG5vbiBrbXMgc3ViIGRyaXZlcnMgYW5kIHZpcnR1YWwgZGlz
-cGxheSBkcml2ZXIuICovCisJcmV0ID0gZXh5bm9zX2RybV9kZXZpY2Vfc3ViZHJ2X3Byb2JlKHBs
-YXRmb3JtX2dldF9kcnZkYXRhKHBkZXYpKTsKKwlpZiAocmV0KQorCQlnb3RvIGVycl91bnJlZ2lz
-dGVyX3Jlc291cmNlczsKKwogCXJldHVybiByZXQ7CiAKK2Vycl91bnJlZ2lzdGVyX3Jlc291cmNl
-czoKICNpZmRlZiBDT05GSUdfRFJNX0VYWU5PU19JUFAKKwlleHlub3NfcGxhdGZvcm1fZGV2aWNl
-X2lwcF91bnJlZ2lzdGVyKCk7CiBlcnJfdW5yZWdpc3Rlcl9pcHBfZHJ2OgogCXBsYXRmb3JtX2Ry
-aXZlcl91bnJlZ2lzdGVyKCZpcHBfZHJpdmVyKTsKIGVycl91bnJlZ2lzdGVyX2dzY19kcnY6CkBA
-IC02OTEsNiArNjg5LDggQEAgZXJyX3VucmVnaXN0ZXJfZmltZF9kcnY6CiAKIHN0YXRpYyBpbnQg
-ZXh5bm9zX2RybV9wbGF0Zm9ybV9yZW1vdmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikK
-IHsKKwlleHlub3NfZHJtX2RldmljZV9zdWJkcnZfcmVtb3ZlKHBsYXRmb3JtX2dldF9kcnZkYXRh
-KHBkZXYpKTsKKwogI2lmZGVmIENPTkZJR19EUk1fRVhZTk9TX0lQUAogCWV4eW5vc19wbGF0Zm9y
-bV9kZXZpY2VfaXBwX3VucmVnaXN0ZXIoKTsKIAlwbGF0Zm9ybV9kcml2ZXJfdW5yZWdpc3Rlcigm
-aXBwX2RyaXZlcik7Ci0tIAoxLjcuOS41CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbAo=
+Hello Kukjin,
+
+On 11/13/2014 03:12 AM, Kukjin Kim wrote:
+>>
+> Oh, sorry. I'm here and applying this patch into samsung tree.
+> 
+
+Great, thanks a lot!
+
+Best regards,
+Javier
