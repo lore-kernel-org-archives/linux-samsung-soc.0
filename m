@@ -1,98 +1,56 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH v2 0/6] exynos: Move pmu driver to driver/soc folder and
- add exynos7 support
-Date: Thu, 13 Nov 2014 14:26:23 +0530
-Message-ID: <CADGdYn46=X1FS7TWp=qCDsm3J9Xg=pEZb945X8tfwc0k6thfvQ@mail.gmail.com>
-References: <1415452601-13078-1-git-send-email-amit.daniel@samsung.com>
+From: D Krishna Mohan <krishna.md@samsung.com>
+Subject: Re: [PATCH 2/4 V2] ASoC: Samsung: Add arndale_rt5631 machine driver
+Date: Thu, 13 Nov 2014 15:45:57 +0530
+Message-ID: <A1C3160B59C9424AB8F073F7A67DB325@sisodomain.com>
+References: <1415781339-16089-1-git-send-email-krishna.md@samsung.com>
+ <1415781339-16089-3-git-send-email-krishna.md@samsung.com>
+ <20141112222902.GV3815@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; format=flowed; charset=iso-8859-1; reply-type=original
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f51.google.com ([209.85.213.51]:40144 "EHLO
-	mail-yh0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753849AbaKMI4Y (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:21595 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932222AbaKMKQ0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Nov 2014 03:56:24 -0500
-In-Reply-To: <1415452601-13078-1-git-send-email-amit.daniel@samsung.com>
+	Thu, 13 Nov 2014 05:16:26 -0500
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NEZ0013837D2070@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 13 Nov 2014 19:16:25 +0900 (KST)
+In-reply-to: <20141112222902.GV3815@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lee Jones <lee.jones@linaro.org>, Amit Daniel Kachhap <amit.daniel@samsung.com>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, kgene.kim@samsung.com
 
-On Sat, Nov 8, 2014 at 6:46 PM, Amit Daniel Kachhap
-<amit.daniel@samsung.com> wrote:
-> This patch series[1 - 6] performs,
->
-> 1) Moves pmu driver to driver/soc/samsung folder. Some discussion happened about
->    this in the v1 version. Finally adding it in driver/soc folder as it too SoC
->    specific and not a general driver. Entire discussion can be found here (A).
-> 2) Registers this driver as MFD client driver. This will be used by clients like exynos pm
->    sleep and pm domain driver.
-> 3) Add exynos7 PMU support.
->
-> Changes from V1:
-> * Move pmu driver in driver/soc/samsung folder
-> * Removed the power domain features. They will posted as a separate series.
-> * Added exynos7 PMU support.
-> * Link to v1 can be found here (B)
->
-> This patch has dependency on following patches posted earlier by Pankaj (C),
-> which is accepted by maintainer.
->
-> Patch 6 was earlier posted by Abhilash (D) which has been reposted here with some
-> extra changes.
->
-> This complete patch series is rebased on linux-next.
->
-> (A) - http://www.spinics.net/lists/linux-samsung-soc/msg38444.html
-> (B) - http://www.spinics.net/lists/linux-samsung-soc/msg38442.html
-> (C) - https://lkml.org/lkml/2014/10/6/581
-> (D) - http://www.spinics.net/lists/arm-kernel/msg358230.html
->
-> Amit Daniel Kachhap (6):
->   ARM: EXYNOS: Move pmu specific header files under "linux/soc/samsung"
->   drivers: soc: Add support for Exynos PMU driver
->   drivers: soc: samsung: Fix a spelling mistake
->   soc: samsung: exynos-pmu: Register exynos-pmu driver as a mfd driver
->   driver: soc: exynos-pmu: Add an API to be called after wakeup
->   drivers: soc: samsung: Add support for Exynos7 pmu
->
->  .../devicetree/bindings/arm/samsung/pmu.txt        |    1 +
->  arch/arm/mach-exynos/Makefile                      |    2 +-
->  arch/arm/mach-exynos/exynos.c                      |    2 +-
->  arch/arm/mach-exynos/mcpm-exynos.c                 |    2 +-
->  arch/arm/mach-exynos/platsmp.c                     |    2 +-
->  arch/arm/mach-exynos/pm.c                          |    4 +-
->  arch/arm/mach-exynos/regs-pmu.h                    |  335 -----------
->  arch/arm/mach-exynos/suspend.c                     |    3 +-
->  drivers/soc/Kconfig                                |    1 +
->  drivers/soc/Makefile                               |    1 +
->  drivers/soc/samsung/Kconfig                        |   19 +
->  drivers/soc/samsung/Makefile                       |    1 +
->  .../pmu.c => drivers/soc/samsung/exynos-pmu.c      |  471 ++++++++++++++-
 
-Hi Olof/Kukjin,
 
-I am not sure that driver/soc/samsung/* shall go in whose tree.
-I am preparing the next version so if any comment from your side
-please let me know.
+--------------------------------------------------
+From: "Mark Brown" <broonie@kernel.org>
+Sent: Thursday, November 13, 2014 3:59 AM
+To: "Krishna Mohan Dani" <krishna.md@samsung.com>
+Cc: <linux-samsung-soc@vger.kernel.org>; 
+<linux-arm-kernel@lists.infradead.org>; <alsa-devel@alsa-project.org>; 
+<kgene.kim@samsung.com>
+Subject: Re: [PATCH 2/4 V2] ASoC: Samsung: Add arndale_rt5631 machine driver
 
-Regards,
-Amit
 
->  .../linux/soc/samsung}/exynos-pmu.h                |    6 +
->  include/linux/soc/samsung/exynos-regs-pmu.h        |  608 ++++++++++++++++++++
->  15 files changed, 1109 insertions(+), 349 deletions(-)
->  delete mode 100644 arch/arm/mach-exynos/regs-pmu.h
->  create mode 100644 drivers/soc/samsung/Kconfig
->  create mode 100644 drivers/soc/samsung/Makefile
->  rename arch/arm/mach-exynos/pmu.c => drivers/soc/samsung/exynos-pmu.c (50%)
->  rename {arch/arm/mach-exynos => include/linux/soc/samsung}/exynos-pmu.h (78%)
->  create mode 100644 include/linux/soc/samsung/exynos-regs-pmu.h
->
-> --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> +static struct snd_soc_card arndale = {
+>> +	.name = "Arndale-I2S",
+>> +	.dai_link = arndale_dai,
+>> +	.num_links = ARRAY_SIZE(arndale_dai),
+>> +};
+
+>Please give the card a more specific name like "Arndale RT5631" and
+>similarly update the symbol names, there are other modules for the
+>Arndale board.
+
+Ok I changed the name from "Arndale-I2S" to "Arndale-RT5631".
+>From the rest of the comment what I understand is you want me to change the 
+names of struct snd_soc_dai_link and struct snd_soc_card.
+Am that right? and/or do you want me to change the names whereever it sounds 
+like generic and make it specific for arndale - rt5631 pair?
+ 
