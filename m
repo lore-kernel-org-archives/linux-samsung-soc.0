@@ -1,103 +1,117 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v8 5/7] ARM: EXYNOS: Add .write_sec outer cache callback for
- L2C-310
-Date: Thu, 13 Nov 2014 14:18:12 +0100
-Message-ID: <1415884694-5868-6-git-send-email-m.szyprowski@samsung.com>
-References: <1415884694-5868-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1415884694-5868-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, linux-omap@vger.kernel.org, linus.walleij@linaro.org, tony@atomide.com, drake@endlessm.com, loeliger@gmail.com, Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v3] usb: dwc2/gadget: report disconnect event from 'end
+ session' irq
+Date: Thu, 13 Nov 2014 14:39:34 +0100
+Message-ID: <5464B496.9010000@samsung.com>
+References: <1413801940-31086-2-git-send-email-m.szyprowski@samsung.com>
+ <1414742668-4107-1-git-send-email-m.szyprowski@samsung.com>
+ <A2CA0424C0A6F04399FB9E1CD98E0304844E7F53@US01WEMBX2.internal.synopsys.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:28488 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932978AbaKMNji (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 13 Nov 2014 08:39:38 -0500
+In-reply-to: <A2CA0424C0A6F04399FB9E1CD98E0304844E7F53@US01WEMBX2.internal.synopsys.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Paul Zimmerman <Paul.Zimmerman@synopsys.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Felipe Balbi <balbi@ti.com>
 
-From: Tomasz Figa <t.figa@samsung.com>
+Hello,
 
-Exynos4 SoCs equipped with an L2C-310 cache controller and running under
-secure firmware require certain registers of aforementioned IP to be
-accessed only from secure mode. This means that SMC calls are required
-for certain register writes. To handle this, an implementation of
-.write_sec and .configure callbacks is provided by this patch.
+On 2014-10-31 19:15, Paul Zimmerman wrote:
+>> From: Marek Szyprowski [mailto:m.szyprowski@samsung.com]
+>> Sent: Friday, October 31, 2014 1:04 AM
+>> To: linux-usb@vger.kernel.org; linux-samsung-soc@vger.kernel.org
+>> Cc: Marek Szyprowski; Kyungmin Park; Robert Baldyga; Paul Zimmerman; Krzysztof Kozlowski; Felipe Balbi
+>> Subject: [PATCH v3] usb: dwc2/gadget: report disconnect event from 'end session' irq
+>>
+>> This patch adds a call to s3c_hsotg_disconnect() from 'end session'
+>> interrupt (GOTGINT_SES_END_DET) to correctly notify gadget subsystem
+>> about unplugged usb cable. 'disconnected' interrupt (DISCONNINT) might
+>> look a bit more suitable for this event, but it is asserted only in
+>> host mode, so in device mode we need to use something else.
+>>
+>> Additional check has been added in s3c_hsotg_disconnect() function
+>> to ensure that the event is reported only once after successful device
+>> enumeration.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   drivers/usb/dwc2/core.h   |  1 +
+>>   drivers/usb/dwc2/gadget.c | 10 ++++++++++
+>>   2 files changed, 11 insertions(+)
+>>
+>> diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
+>> index 55c90c53f2d6..b42df32e7737 100644
+>> --- a/drivers/usb/dwc2/core.h
+>> +++ b/drivers/usb/dwc2/core.h
+>> @@ -212,6 +212,7 @@ struct s3c_hsotg {
+>>   	struct usb_gadget       gadget;
+>>   	unsigned int            setup;
+>>   	unsigned long           last_rst;
+>> +	unsigned int		address;
+>>   	struct s3c_hsotg_ep     *eps;
+>>   };
+>>
+>> diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
+>> index fcd2bb55ccca..6304efba11aa 100644
+>> --- a/drivers/usb/dwc2/gadget.c
+>> +++ b/drivers/usb/dwc2/gadget.c
+>> @@ -1114,6 +1114,7 @@ static void s3c_hsotg_process_control(struct s3c_hsotg *hsotg,
+>>   				 DCFG_DEVADDR_SHIFT) & DCFG_DEVADDR_MASK;
+>>   			writel(dcfg, hsotg->regs + DCFG);
+>>
+>> +			hsotg->address = ctrl->wValue;
+>>   			dev_info(hsotg->dev, "new address %d\n", ctrl->wValue);
+>>
+>>   			ret = s3c_hsotg_send_reply(hsotg, ep0, NULL, 0);
+>> @@ -2031,6 +2032,10 @@ static void s3c_hsotg_disconnect(struct s3c_hsotg *hsotg)
+>>   {
+>>   	unsigned ep;
+>>
+>> +	if (!hsotg->address)
+>> +		return;
+>> +
+>> +	hsotg->address = 0;
+>>   	for (ep = 0; ep < hsotg->num_of_eps; ep++)
+>>   		kill_all_requests(hsotg, &hsotg->eps[ep], -ESHUTDOWN, true);
+>>
+>> @@ -2290,6 +2295,11 @@ irq_retry:
+>>   		dev_info(hsotg->dev, "OTGInt: %08x\n", otgint);
+>>
+>>   		writel(otgint, hsotg->regs + GOTGINT);
+>> +
+>> +		if (otgint & GOTGINT_SES_END_DET) {
+>> +			s3c_hsotg_disconnect(hsotg);
+>> +			hsotg->gadget.speed = USB_SPEED_UNKNOWN;
+>> +		}
+>>   	}
+>>
+>>   	if (gintsts & GINTSTS_SESSREQINT) {
+> I don't think this is right. The host can send control requests to
+> the device before it sends a SetAddress to change from the default
+> address of 0. So if a GOTGINT_SES_END_DET happens before the
+> SetAddress, it will be ignored.
+>
+> Or am I missing something?
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-[added comment and reworked unconditional call to SMC_CMD_L2X0INVALL]
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/mach-exynos/firmware.c | 50 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 50 insertions(+)
+Well, right. However before finishing enumeration (setting the address) 
+host usually
+only retrieves some usb descriptors what doesn't change the state of the 
+gadget.
+Right now we always reported 'disconnected' event before setting the new 
+address,
+what is a bit overkill (in some cases gadget driver got this even more 
+than once).
+The above code handles all cases correctly and reports disconnect event 
+only once.
 
-diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
-index 766f57d2f029..dc5ae53aa317 100644
---- a/arch/arm/mach-exynos/firmware.c
-+++ b/arch/arm/mach-exynos/firmware.c
-@@ -17,6 +17,7 @@
- #include <asm/cacheflush.h>
- #include <asm/cputype.h>
- #include <asm/firmware.h>
-+#include <asm/hardware/cache-l2x0.h>
- #include <asm/suspend.h>
- 
- #include <mach/map.h>
-@@ -136,6 +137,43 @@ static const struct firmware_ops exynos_firmware_ops = {
- 	.resume			= IS_ENABLED(CONFIG_EXYNOS_CPU_SUSPEND) ? exynos_resume : NULL,
- };
- 
-+static void exynos_l2_write_sec(unsigned long val, unsigned reg)
-+{
-+	static int l2cache_enabled;
-+
-+	switch (reg) {
-+	case L2X0_CTRL:
-+		if (val & L2X0_CTRL_EN) {
-+			/*
-+			 * Before the cache can be enabled, due to firmware
-+			 * design, SMC_CMD_L2X0INVALL must be called.
-+			 */
-+			if (!l2cache_enabled) {
-+				exynos_smc(SMC_CMD_L2X0INVALL, 0, 0, 0);
-+				l2cache_enabled = 1;
-+			}
-+		} else {
-+			l2cache_enabled = 0;
-+		}
-+		exynos_smc(SMC_CMD_L2X0CTRL, val, 0, 0);
-+		break;
-+
-+	case L2X0_DEBUG_CTRL:
-+		exynos_smc(SMC_CMD_L2X0DEBUG, val, 0, 0);
-+		break;
-+
-+	default:
-+		WARN_ONCE(1, "%s: ignoring write to reg 0x%x\n", __func__, reg);
-+	}
-+}
-+
-+static void exynos_l2_configure(const struct l2x0_regs *regs)
-+{
-+	exynos_smc(SMC_CMD_L2X0SETUP1, regs->tag_latency, regs->data_latency,
-+			regs->prefetch_ctrl);
-+	exynos_smc(SMC_CMD_L2X0SETUP2, regs->pwr_ctrl, regs->aux_ctrl, 0);
-+}
-+
- void __init exynos_firmware_init(void)
- {
- 	struct device_node *nd;
-@@ -155,4 +193,16 @@ void __init exynos_firmware_init(void)
- 	pr_info("Running under secure firmware.\n");
- 
- 	register_firmware_ops(&exynos_firmware_ops);
-+
-+	/*
-+	 * Exynos 4 SoCs (based on Cortex A9 and equipped with L2C-310),
-+	 * running under secure firmware, require certain registers of L2
-+	 * cache controller to be written in secure mode. Here .write_sec
-+	 * callback is provided to perform necessary SMC calls.
-+	 */
-+	if (IS_ENABLED(CONFIG_CACHE_L2X0)
-+	    && read_cpuid_part() == ARM_CPU_PART_CORTEX_A9) {
-+		outer_cache.write_sec = exynos_l2_write_sec;
-+		outer_cache.configure = exynos_l2_configure;
-+	}
- }
+Best regards
 -- 
-1.9.2
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
