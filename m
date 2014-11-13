@@ -1,41 +1,42 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Enable max77802 rtc and clock drivers
-Date: Thu, 13 Nov 2014 09:45:09 +0100
-Message-ID: <CABxcv=kaOa1+6a1n_+GjoH=PgG=LzAnXLU7U_E5NvYYP-0WedA@mail.gmail.com>
-References: <1414401440-10972-1-git-send-email-javier.martinez@collabora.co.uk>
-	<04e101cff29f$4021ea00$c065be00$@kernel.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 1/9] drm/exynos: remove uneeded declaration of struct
+ dma_iommu_mapping
+Date: Thu, 13 Nov 2014 17:45:12 +0900
+Message-ID: <54646F98.4010601@samsung.com>
+References: <1414765063-30598-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f175.google.com ([209.85.212.175]:40291 "EHLO
-	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932097AbaKMIpK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Nov 2014 03:45:10 -0500
-Received: by mail-wi0-f175.google.com with SMTP id l15so3543072wiw.14
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Nov 2014 00:45:09 -0800 (PST)
-In-Reply-To: <04e101cff29f$4021ea00$c065be00$@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1414765063-30598-1-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Kevin Hilman <khilman@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Linux Kernel <linux-kernel@vger.kernel.org>
 
-Hello Kukjin,
-
-On Tue, Oct 28, 2014 at 12:06 PM, Kukjin Kim <kgene@kernel.org> wrote:
-> Javier Martinez Canillas wrote:
->> Commit 6e80e3d87549 ("ARM: exynos_defconfig: Enable MAX77802")
->> enabled support for the max77802 regulators but the PMIC also
->> has a Real-Time-Clock (RTC) and 2-channel 32kHz clock outputs.
->>
->
-> I'll apply this, thanks.
->
-> - Kukjin
->
-
-You say that you will apply this patch but I can't find it in any of
-your branches.
-
-Best regards,
-Javier
+T24gMjAxNOuFhCAxMOyblCAzMeydvCAyMzoxNywgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZy
+b206IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAK
+PiBJdCBpcyBub3QgZXZlbiB1c2VkIGluIHRoaXMgaGVhZGVyIGFueW1vcmUuCgpBbGwgcGF0Y2hl
+cywgQXBwbGllZC4KClRoYW5rcywKSW5raSBEYWUKCgo+IAo+IFNpZ25lZC1vZmYtYnk6IEd1c3Rh
+dm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPiAtLS0KPiAgZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lvbW11LmggfCAxIC0KPiAgMSBmaWxlIGNo
+YW5nZWQsIDEgZGVsZXRpb24oLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2lvbW11LmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1faW9tbXUuaAo+IGluZGV4IDcyMzc2ZDQuLjM1ZDI1ODggMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2lvbW11LmgKPiArKysgYi9kcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1faW9tbXUuaAo+IEBAIC00MCw3ICs0MCw2IEBAIHN0YXRpYyBp
+bmxpbmUgYm9vbCBpc19kcm1faW9tbXVfc3VwcG9ydGVkKHN0cnVjdCBkcm1fZGV2aWNlICpkcm1f
+ZGV2KQo+ICAKPiAgI2Vsc2UKPiAgCj4gLXN0cnVjdCBkbWFfaW9tbXVfbWFwcGluZzsKPiAgc3Rh
+dGljIGlubGluZSBpbnQgZHJtX2NyZWF0ZV9pb21tdV9tYXBwaW5nKHN0cnVjdCBkcm1fZGV2aWNl
+ICpkcm1fZGV2KQo+ICB7Cj4gIAlyZXR1cm4gMDsKPiAKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
+YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
