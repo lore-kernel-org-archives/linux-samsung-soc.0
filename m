@@ -1,54 +1,103 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 4/4 V2] ASoC: rt5631: Adding Device Tree compatibility to
- Realtek's ALC5631 codec driver
-Date: Wed, 12 Nov 2014 22:29:54 +0000
-Message-ID: <20141112222954.GW3815@sirena.org.uk>
-References: <1415781339-16089-1-git-send-email-krishna.md@samsung.com>
- <1415781339-16089-5-git-send-email-krishna.md@samsung.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH v3 0/9] PM / Domains: Fix race conditions during boot
+Date: Thu, 13 Nov 2014 03:07:11 +0100
+Message-ID: <7390758.7nHkBpm2Zh@vostro.rjw.lan>
+References: <1413208930-26019-1-git-send-email-ulf.hansson@linaro.org> <CAPDyKFo-On2MfqHk081o_JZvwbrbi0=n9h6o7A9dJ+X4c8goKg@mail.gmail.com> <545D0074.7060205@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="mszkcu/oHwKbXhjW"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:35567 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752168AbaKLWbQ (ORCPT
+Received: from v094114.home.net.pl ([79.96.170.134]:57606 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753456AbaKMBqP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Nov 2014 17:31:16 -0500
-Content-Disposition: inline
-In-Reply-To: <1415781339-16089-5-git-send-email-krishna.md@samsung.com>
+	Wed, 12 Nov 2014 20:46:15 -0500
+In-Reply-To: <545D0074.7060205@ti.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krishna Mohan Dani <krishna.md@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, kgene.kim@samsung.com
+To: Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Pavel Machek <pavel@ucw.cz>, Geert Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@the-dreams.de>, Tomasz Figa <tomasz.figa@gmail.com>, Philipp Zabel <philipp.zabel@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>, Kevin Hilman <khilman@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Alan Stern <stern@rowland.harvard.edu>, Jack Dai <jack.dai@rock-chips.com>, Len Brown <len.brown@intel.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Jinkun Hong <jinkun.hong@rock-chips.com>, Mark Brown <broonie@kernel.org>, Ben Dooks <ben-linux@fluff.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Aaron Lu <aaron.lu@intel.com>
 
+On Friday, November 07, 2014 07:25:08 PM Grygorii Strashko wrote:
 
---mszkcu/oHwKbXhjW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[cut]
 
-On Wed, Nov 12, 2014 at 02:05:39PM +0530, Krishna Mohan Dani wrote:
+> 
+> 4) I've copied here comment from Rafael:
+>  >>>> Of course, if ->probe() is to call pm_runtime_resume() for this purpose,
+>  >>>> it must take the fact that the driver's own ->runtime_resume() may be called
+>  >>>> as a result of this into account.
+>  Agree, that's a little bit annoying, but we are living with that for more then
+>  5 years already (I'm 3 years) - so, I am, as driver developer, expecting above behavior
+>  (just walk through the drivers and you will see how many drivers expecting the same).
+> 
+> So, any volunteers to check and fix ~500 drivers.
 
-> +#ifdef CONFIG_OF
-> +		.of_match_table = of_match_ptr(rt5631_i2c_dt_ids),
-> +#endif
+Where did you get that number from?
 
-This is OK apart from this - you don't need the CONFIG_OF around
-of_match_ptr().
+Also please note that some bus types don't have this problem by design (e.g. PCI,
+as pointed to by Alan).
 
---mszkcu/oHwKbXhjW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+[cut]
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+> > 
+> >>
+> >> - Runtime PM (if compiled in) needs to be enabled for all devices in power
+> >>    domains by default.  Otherwise devices may lose power as a result for
+> >>    power management of the other devices in the same domain.
+> 
+> It should prevent enabling/disabling of RPM from sys_fs too.
 
-iQEcBAEBAgAGBQJUY99hAAoJECTWi3JdVIfQFFgH/jkDfXzxGO1LjVXeGKj5VBR2
-79DZQdAivzeX/IOk46phdxgQlCRPAaaqAKrDK19riMKUrpS8e9yCFPPcg7q52cVq
-5mOfYD/HLHKezisFGuHYlpRl9NYIysbKi5N7CiCoh6qlzQ3TELGq2jDibJnySgHq
-rDbipkGBk/F+lx5kwoQBFEpXjNGye1eBSTBeUw2SiRicebjucMpkt/QZR468hfxl
-2b52ClQuiG/QtXh0w//k4hcjCfi5uizfkaLB4INN0qrwpu518UUhwHGxRlB+jW/t
-WaAu6ufJMK5UQG+bebVZeI3zUlAxc2o1y7lwiyB17lWK4JDiMmtUW7CL/w2K1i8=
-=t/zC
------END PGP SIGNATURE-----
+It looks like you're confusing disable/enable with auto/on.  These are different
+things.
 
---mszkcu/oHwKbXhjW--
+> >>
+> >> - The core should try to power up domains before calling really_probe() both
+> >>    for CONFIG_PM_RUNTIME set and unset, so ->probe() can always make the
+> >>    "device is accessible" assumption.
+> 
+> Here I'm still think that pm_runtime_get_sync() (or similar) API should work.
+> Another way, PM domain should decide what to do when the first device attached to it
+> - power up and stay powered on for example
+>  (It will work if devices are attached before ->probe();
+>   it will not work if devices will be attached once they've been created, but this is different
+>   question)
+
+The PM domain itself can't do that.  The only place that has enough knowledge
+is the code that enumerates devices (DT, ACPI or board-specific).
+
+> > 
+> > And how exactly will you then power up the PM domain when
+> > CONFIG_PM_RUNTIME is unset?
+> > 
+> >>
+> >> - Bus types may need to do more on top of that in their ->probe(), so the
+> >>    driver's ->probe() can make that assumption too in all cases.
+> >>
+> >> Does that make sense to you?
+> > 
+> 
+> I would like to take the liberty to add a couple of points from me:
+>  - it seems reasonable to have ability to disable Runtime PM globally from sys_fs:
+>    once disabled - "get" should power on device, "put" should do nothing all the
+>    time except when ->remove() is called.
+
+This is how the "power/control" file works and you can easily have this by writing
+"on" to that file for every device.
+
+>  
+>  - It might be reasonable to add API like pm_runtime_probe_getXXX() which will do
+>    everything what standard pm_runtime_get_sync() is doing with one exception:
+>    it will not call driver's .runtime_resume() callback.
+
+Use case?
+
+>  - Just opinion. For GPD, It looks like integration/design problem and may be
+>    it shouldn't be integrated with Runtime PM through dev_pm_ops. Instead, it
+>    might be better to invoke it directly from  RPM core.
+
+That I can't parse really, sorry.
+
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
