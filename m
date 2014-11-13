@@ -1,19 +1,19 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 5/7] ARM: dts: exynos4412-odroid: enable hdmi support
-Date: Thu, 13 Nov 2014 17:23:03 +0100
-Message-ID: <1415895785-26892-6-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 3/7] ARM: dts: exynos4: add hdmi related nodes
+Date: Thu, 13 Nov 2014 17:23:01 +0100
+Message-ID: <1415895785-26892-4-git-send-email-a.hajda@samsung.com>
 References: <1415895785-26892-1-git-send-email-a.hajda@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:17822 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933484AbaKMQYB (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:56800 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933311AbaKMQX6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Nov 2014 11:24:01 -0500
+	Thu, 13 Nov 2014 11:23:58 -0500
 Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
+ by mailout3.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NEZ005PQKCN8R80@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 13 Nov 2014 16:26:47 +0000 (GMT)
+ 17 2011)) with ESMTP id <0NEZ001P8KCOD180@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 13 Nov 2014 16:26:49 +0000 (GMT)
 In-reply-to: <1415895785-26892-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -22,79 +22,114 @@ Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.c
 
 From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-This patch adds nodes specific to Exynos4412 based Odroid X/X2/U2/U3
-boards required for enabling HDMI display.
+This patch adds entries for HDMI, Mixer and i2c with hdmi-phy modules
+found in Exynos 4210 and 4x12 SoCs.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 44 +++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ arch/arm/boot/dts/exynos4.dtsi    | 40 +++++++++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4210.dtsi |  8 ++++++++
+ arch/arm/boot/dts/exynos4x12.dtsi | 11 +++++++++++
+ 3 files changed, 59 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index c697ff0..4ebb557 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -205,6 +205,20 @@
- 					regulator-always-on;
- 				};
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index e0278ec..4ed5868 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -38,6 +38,7 @@
+ 		i2c5 = &i2c_5;
+ 		i2c6 = &i2c_6;
+ 		i2c7 = &i2c_7;
++		i2c8 = &i2c_8;
+ 		csis0 = &csis_0;
+ 		csis1 = &csis_1;
+ 		fimc0 = &fimc_0;
+@@ -537,6 +538,22 @@
+ 		status = "disabled";
+ 	};
  
-+				ldo8_reg: ldo@8 {
-+					regulator-compatible = "LDO8";
-+					regulator-name = "VDD10_HDMI_1.0V";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+				};
++	i2c_8: i2c@138E0000 {
++		#address-cells = <1>;
++		#size-cells = <0>;
++		compatible = "samsung,s3c2440-hdmiphy-i2c";
++		reg = <0x138E0000 0x100>;
++		interrupts = <0 93 0>;
++		clocks = <&clock CLK_I2C_HDMI>;
++		clock-names = "i2c";
++		status = "disabled";
 +
-+				ldo10_reg: ldo@10 {
-+					regulator-compatible = "LDO10";
-+					regulator-name = "VDDQ_MIPIHSI_1.8V";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+				};
++		hdmi_i2c_phy: hdmiphy@38 {
++			compatible = "exynos4210-hdmiphy";
++			reg = <0x38>;
++		};
++	};
 +
- 				ldo11_reg: LDO11 {
- 					regulator-name = "VDD18_ABB1_1.8V";
- 					regulator-min-microvolt = <1800000>;
-@@ -363,6 +377,31 @@
- 	ehci: ehci@12580000 {
- 		status = "okay";
+ 	spi_0: spi@13920000 {
+ 		compatible = "samsung,exynos4210-spi";
+ 		reg = <0x13920000 0x100>;
+@@ -645,4 +662,27 @@
+ 		samsung,sysreg = <&sys_reg>;
+ 		status = "disabled";
+ 	};
++
++	hdmi: hdmi@12D00000 {
++		compatible = "samsung,exynos4210-hdmi";
++		reg = <0x12D00000 0x70000>;
++		interrupts = <0 92 0>;
++		clock-names = "hdmi", "sclk_hdmi", "sclk_pixel", "sclk_hdmiphy",
++			"mout_hdmi";
++		clocks = <&clock CLK_HDMI>, <&clock CLK_SCLK_HDMI>,
++			<&clock CLK_SCLK_PIXEL>, <&clock CLK_SCLK_HDMIPHY>,
++			<&clock CLK_MOUT_HDMI>;
++		phy = <&hdmi_i2c_phy>;
++		samsung,power-domain = <&pd_tv>;
++		samsung,syscon-phandle = <&pmu_system_controller>;
++		status = "disabled";
++	};
++
++	mixer: mixer@12C10000 {
++		compatible = "samsung,exynos4210-mixer";
++		interrupts = <0 91 0>;
++		reg = <0x12C10000 0x2100>, <0x12c00000 0x300>;
++		samsung,power-domain = <&pd_tv>;
++		status = "disabled";
++	};
+ };
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index 807bb5b..1c97784 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -175,4 +175,12 @@
+ 			samsung,lcd-wb;
+ 		};
  	};
 +
 +	mixer: mixer@12C10000 {
-+		status = "okay";
-+	};
-+
-+	hdmi@12D00000 {
-+		hpd-gpio = <&gpx3 7 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&hdmi_hpd>;
-+		vdd-supply = <&ldo8_reg>;
-+		vdd_osc-supply = <&ldo10_reg>;
-+		vdd_pll-supply = <&ldo8_reg>;
-+		ddc = <&hdmi_ddc>;
-+		status = "okay";
-+	};
-+
-+	hdmi_ddc: i2c@13880000 {
-+		status = "okay";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c2_bus>;
-+	};
-+
-+	i2c@138E0000 {
-+		status = "okay";
++		clock-names = "mixer", "sclk_hdmi", "vp", "mout_mixer",
++			"sclk_mixer";
++		clocks = <&clock CLK_MIXER>, <&clock CLK_SCLK_HDMI>,
++			<&clock CLK_VP>, <&clock CLK_MOUT_MIXER>,
++			<&clock CLK_SCLK_MIXER>;
 +	};
  };
- 
- &pinctrl_1 {
-@@ -377,4 +416,9 @@
- 		samsung,pin-pud = <0>;
- 		samsung,pin-drv = <0>;
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index 861bb91..d6789a0 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -271,4 +271,15 @@
+ 		compatible = "samsung,exynos4x12-usb2-phy";
+ 		samsung,sysreg-phandle = <&sys_reg>;
  	};
 +
-+	hdmi_hpd: hdmi-hpd {
-+		samsung,pins = "gpx3-7";
-+		samsung,pin-pud = <1>;
++	hdmi: hdmi@12D00000 {
++		compatible = "samsung,exynos4212-hdmi";
++	};
++
++	mixer: mixer@12C10000 {
++		compatible = "samsung,exynos4212-mixer";
++		clock-names = "mixer", "sclk_hdmi", "vp";
++		clocks = <&clock CLK_MIXER>, <&clock CLK_SCLK_HDMI>,
++			<&clock CLK_VP>;
 +	};
  };
 -- 
