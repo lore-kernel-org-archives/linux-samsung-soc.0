@@ -1,119 +1,53 @@
-From: Paul Zimmerman <Paul.Zimmerman@synopsys.com>
-Subject: RE: [PATCH v3 1/2] usb: dwc2/gadget: add mutex to serialize
- init/deinit calls
-Date: Thu, 13 Nov 2014 20:55:28 +0000
-Message-ID: <A2CA0424C0A6F04399FB9E1CD98E0304844EB636@US01WEMBX2.internal.synopsys.com>
-References: <54535F82.7020406@samsung.com>
- <1414750354-19571-1-git-send-email-m.szyprowski@samsung.com>
- <A2CA0424C0A6F04399FB9E1CD98E0304844E7FDD@US01WEMBX2.internal.synopsys.com>
- <5464CBA5.9050702@samsung.com>
+From: Tyler Baker <tyler.baker@linaro.org>
+Subject: exynos5250/arndale: failed to set cpu voltage
+Date: Thu, 13 Nov 2014 14:00:21 -0800
+Message-ID: <CANMBJr4ZgEZDAtdfuLhCXppCGHnHhgmT1aFUi+=kJb2PdkqhGg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:53731 "EHLO
-	smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932767AbaKMUza (ORCPT
+Received: from mail-wg0-f50.google.com ([74.125.82.50]:46563 "EHLO
+	mail-wg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964802AbaKMWAX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Nov 2014 15:55:30 -0500
-In-Reply-To: <5464CBA5.9050702@samsung.com>
-Content-Language: en-US
+	Thu, 13 Nov 2014 17:00:23 -0500
+Received: by mail-wg0-f50.google.com with SMTP id z12so17826473wgg.9
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Nov 2014 14:00:21 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Felipe Balbi <balbi@ti.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com
 
-PiBGcm9tOiBNYXJlayBTenlwcm93c2tpIFttYWlsdG86bS5zenlwcm93c2tpQHNhbXN1bmcuY29t
-XQ0KPiBTZW50OiBUaHVyc2RheSwgTm92ZW1iZXIgMTMsIDIwMTQgNzoxOCBBTQ0KPiANCj4gT24g
-MjAxNC0xMC0zMSAxOTo0NiwgUGF1bCBaaW1tZXJtYW4gd3JvdGU6DQo+ID4+IEZyb206IE1hcmVr
-IFN6eXByb3dza2kgW21haWx0bzptLnN6eXByb3dza2lAc2Ftc3VuZy5jb21dDQo+ID4+IFNlbnQ6
-IEZyaWRheSwgT2N0b2JlciAzMSwgMjAxNCAzOjEzIEFNDQo+ID4+DQo+ID4+IFRoaXMgcGF0Y2gg
-YWRkcyBtdXRleCwgd2hpY2ggcHJvdGVjdHMgaW5pdGlhbGl6YXRpb24gYW5kDQo+ID4+IGRlaW5p
-dGlhbGl6YXRpb24gcHJvY2VkdXJlcyBhZ2FpbnN0IHN1c3BlbmQvcmVzdW1lIG1ldGhvZHMuDQo+
-ID4+DQo+ID4+IFNpZ25lZC1vZmYtYnk6IE1hcmVrIFN6eXByb3dza2kgPG0uc3p5cHJvd3NraUBz
-YW1zdW5nLmNvbT4NCj4gPj4gLS0tDQo+ID4+ICAgZHJpdmVycy91c2IvZHdjMi9jb3JlLmggICB8
-ICAxICsNCj4gPj4gICBkcml2ZXJzL3VzYi9kd2MyL2dhZGdldC5jIHwgMjAgKysrKysrKysrKysr
-KysrKysrKysNCj4gPj4gICAyIGZpbGVzIGNoYW5nZWQsIDIxIGluc2VydGlvbnMoKykNCj4gPj4N
-Cj4gPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdXNiL2R3YzIvY29yZS5oIGIvZHJpdmVycy91c2Iv
-ZHdjMi9jb3JlLmgNCj4gPj4gaW5kZXggOWY3N2I0ZDFjNWZmLi41ODczMmE5YTAwMTkgMTAwNjQ0
-DQo+ID4+IC0tLSBhL2RyaXZlcnMvdXNiL2R3YzIvY29yZS5oDQo+ID4+ICsrKyBiL2RyaXZlcnMv
-dXNiL2R3YzIvY29yZS5oDQo+ID4+IEBAIC0xODcsNiArMTg3LDcgQEAgc3RydWN0IHMzY19oc290
-ZyB7DQo+ID4+ICAgCXN0cnVjdCBzM2NfaHNvdGdfcGxhdCAgICAqcGxhdDsNCj4gPj4NCj4gPj4g
-ICAJc3BpbmxvY2tfdCAgICAgICAgICAgICAgbG9jazsNCj4gPj4gKwlzdHJ1Y3QgbXV0ZXgJCWlu
-aXRfbXV0ZXg7DQo+ID4+DQo+ID4+ICAgCXZvaWQgX19pb21lbSAgICAgICAgICAgICpyZWdzOw0K
-PiA+PiAgIAlpbnQgICAgICAgICAgICAgICAgICAgICBpcnE7DQo+ID4+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL3VzYi9kd2MyL2dhZGdldC5jIGIvZHJpdmVycy91c2IvZHdjMi9nYWRnZXQuYw0KPiA+
-PiBpbmRleCBkOGRkYTM5YzllMTYuLmEyZTQyNzJhOTA0ZSAxMDA2NDQNCj4gPj4gLS0tIGEvZHJp
-dmVycy91c2IvZHdjMi9nYWRnZXQuYw0KPiA+PiArKysgYi9kcml2ZXJzL3VzYi9kd2MyL2dhZGdl
-dC5jDQo+ID4+IEBAIC0yMSw2ICsyMSw3IEBADQo+ID4+ICAgI2luY2x1ZGUgPGxpbnV4L3BsYXRm
-b3JtX2RldmljZS5oPg0KPiA+PiAgICNpbmNsdWRlIDxsaW51eC9kbWEtbWFwcGluZy5oPg0KPiA+
-PiAgICNpbmNsdWRlIDxsaW51eC9kZWJ1Z2ZzLmg+DQo+ID4+ICsjaW5jbHVkZSA8bGludXgvbXV0
-ZXguaD4NCj4gPj4gICAjaW5jbHVkZSA8bGludXgvc2VxX2ZpbGUuaD4NCj4gPj4gICAjaW5jbHVk
-ZSA8bGludXgvZGVsYXkuaD4NCj4gPj4gICAjaW5jbHVkZSA8bGludXgvaW8uaD4NCj4gPj4gQEAg
-LTI5MDgsNiArMjkwOSw3IEBAIHN0YXRpYyBpbnQgczNjX2hzb3RnX3VkY19zdGFydChzdHJ1Y3Qg
-dXNiX2dhZGdldCAqZ2FkZ2V0LA0KPiA+PiAgIAkJcmV0dXJuIC1FSU5WQUw7DQo+ID4+ICAgCX0N
-Cj4gPj4NCj4gPj4gKwltdXRleF9sb2NrKCZoc290Zy0+aW5pdF9tdXRleCk7DQo+ID4+ICAgCVdB
-Uk5fT04oaHNvdGctPmRyaXZlcik7DQo+ID4+DQo+ID4+ICAgCWRyaXZlci0+ZHJpdmVyLmJ1cyA9
-IE5VTEw7DQo+ID4+IEBAIC0yOTMzLDkgKzI5MzUsMTIgQEAgc3RhdGljIGludCBzM2NfaHNvdGdf
-dWRjX3N0YXJ0KHN0cnVjdCB1c2JfZ2FkZ2V0ICpnYWRnZXQsDQo+ID4+DQo+ID4+ICAgCWRldl9p
-bmZvKGhzb3RnLT5kZXYsICJib3VuZCBkcml2ZXIgJXNcbiIsIGRyaXZlci0+ZHJpdmVyLm5hbWUp
-Ow0KPiA+Pg0KPiA+PiArCW11dGV4X3VubG9jaygmaHNvdGctPmluaXRfbXV0ZXgpOw0KPiA+PiAr
-DQo+ID4+ICAgCXJldHVybiAwOw0KPiA+Pg0KPiA+PiAgIGVycjoNCj4gPj4gKwltdXRleF91bmxv
-Y2soJmhzb3RnLT5pbml0X211dGV4KTsNCj4gPj4gICAJaHNvdGctPmRyaXZlciA9IE5VTEw7DQo+
-ID4+ICAgCXJldHVybiByZXQ7DQo+ID4+ICAgfQ0KPiA+PiBAQCAtMjk1Nyw2ICsyOTYyLDggQEAg
-c3RhdGljIGludCBzM2NfaHNvdGdfdWRjX3N0b3Aoc3RydWN0IHVzYl9nYWRnZXQgKmdhZGdldCwN
-Cj4gPj4gICAJaWYgKCFoc290ZykNCj4gPj4gICAJCXJldHVybiAtRU5PREVWOw0KPiA+Pg0KPiA+
-PiArCW11dGV4X2xvY2soJmhzb3RnLT5pbml0X211dGV4KTsNCj4gPj4gKw0KPiA+PiAgIAkvKiBh
-bGwgZW5kcG9pbnRzIHNob3VsZCBiZSBzaHV0ZG93biAqLw0KPiA+PiAgIAlmb3IgKGVwID0gMTsg
-ZXAgPCBoc290Zy0+bnVtX29mX2VwczsgZXArKykNCj4gPj4gICAJCXMzY19oc290Z19lcF9kaXNh
-YmxlKCZoc290Zy0+ZXBzW2VwXS5lcCk7DQo+ID4+IEBAIC0yOTc0LDYgKzI5ODEsOCBAQCBzdGF0
-aWMgaW50IHMzY19oc290Z191ZGNfc3RvcChzdHJ1Y3QgdXNiX2dhZGdldCAqZ2FkZ2V0LA0KPiA+
-Pg0KPiA+PiAgIAljbGtfZGlzYWJsZShoc290Zy0+Y2xrKTsNCj4gPj4NCj4gPj4gKwltdXRleF91
-bmxvY2soJmhzb3RnLT5pbml0X211dGV4KTsNCj4gPj4gKw0KPiA+PiAgIAlyZXR1cm4gMDsNCj4g
-Pj4gICB9DQo+ID4+DQo+ID4+IEBAIC0zMDAyLDYgKzMwMTEsNyBAQCBzdGF0aWMgaW50IHMzY19o
-c290Z19wdWxsdXAoc3RydWN0IHVzYl9nYWRnZXQgKmdhZGdldCwgaW50IGlzX29uKQ0KPiA+Pg0K
-PiA+PiAgIAlkZXZfZGJnKGhzb3RnLT5kZXYsICIlczogaXNfb246ICVkXG4iLCBfX2Z1bmNfXywg
-aXNfb24pOw0KPiA+Pg0KPiA+PiArCW11dGV4X2xvY2soJmhzb3RnLT5pbml0X211dGV4KTsNCj4g
-Pj4gICAJc3Bpbl9sb2NrX2lycXNhdmUoJmhzb3RnLT5sb2NrLCBmbGFncyk7DQo+ID4+ICAgCWlm
-IChpc19vbikgew0KPiA+PiAgIAkJY2xrX2VuYWJsZShoc290Zy0+Y2xrKTsNCj4gPj4gQEAgLTMw
-MTMsNiArMzAyMyw3IEBAIHN0YXRpYyBpbnQgczNjX2hzb3RnX3B1bGx1cChzdHJ1Y3QgdXNiX2dh
-ZGdldCAqZ2FkZ2V0LCBpbnQgaXNfb24pDQo+ID4+DQo+ID4+ICAgCWhzb3RnLT5nYWRnZXQuc3Bl
-ZWQgPSBVU0JfU1BFRURfVU5LTk9XTjsNCj4gPj4gICAJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgm
-aHNvdGctPmxvY2ssIGZsYWdzKTsNCj4gPj4gKwltdXRleF91bmxvY2soJmhzb3RnLT5pbml0X211
-dGV4KTsNCj4gPj4NCj4gPj4gICAJcmV0dXJuIDA7DQo+ID4+ICAgfQ0KPiA+PiBAQCAtMzUwNyw2
-ICszNTE4LDcgQEAgc3RhdGljIGludCBzM2NfaHNvdGdfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2Rl
-dmljZSAqcGRldikNCj4gPj4gICAJfQ0KPiA+Pg0KPiA+PiAgIAlzcGluX2xvY2tfaW5pdCgmaHNv
-dGctPmxvY2spOw0KPiA+PiArCW11dGV4X2luaXQoJmhzb3RnLT5pbml0X211dGV4KTsNCj4gPj4N
-Cj4gPj4gICAJaHNvdGctPmlycSA9IHJldDsNCj4gPj4NCj4gPj4gQEAgLTM2NTIsNiArMzY2NCw4
-IEBAIHN0YXRpYyBpbnQgczNjX2hzb3RnX3N1c3BlbmQoc3RydWN0IHBsYXRmb3JtX2RldmljZSAq
-cGRldiwgcG1fbWVzc2FnZV90DQo+IHN0YXRlKQ0KPiA+PiAgIAl1bnNpZ25lZCBsb25nIGZsYWdz
-Ow0KPiA+PiAgIAlpbnQgcmV0ID0gMDsNCj4gPj4NCj4gPj4gKwltdXRleF9sb2NrKCZoc290Zy0+
-aW5pdF9tdXRleCk7DQo+ID4+ICsNCj4gPj4gICAJaWYgKGhzb3RnLT5kcml2ZXIpDQo+ID4+ICAg
-CQlkZXZfaW5mbyhoc290Zy0+ZGV2LCAic3VzcGVuZGluZyB1c2IgZ2FkZ2V0ICVzXG4iLA0KPiA+
-PiAgIAkJCSBoc290Zy0+ZHJpdmVyLT5kcml2ZXIubmFtZSk7DQo+ID4+IEBAIC0zNjc0LDYgKzM2
-ODgsOCBAQCBzdGF0aWMgaW50IHMzY19oc290Z19zdXNwZW5kKHN0cnVjdCBwbGF0Zm9ybV9kZXZp
-Y2UgKnBkZXYsIHBtX21lc3NhZ2VfdA0KPiBzdGF0ZSkNCj4gPj4gICAJCWNsa19kaXNhYmxlKGhz
-b3RnLT5jbGspOw0KPiA+PiAgIAl9DQo+ID4+DQo+ID4+ICsJbXV0ZXhfdW5sb2NrKCZoc290Zy0+
-aW5pdF9tdXRleCk7DQo+ID4+ICsNCj4gPj4gICAJcmV0dXJuIHJldDsNCj4gPj4gICB9DQo+ID4+
-DQo+ID4+IEBAIC0zNjgzLDcgKzM2OTksOSBAQCBzdGF0aWMgaW50IHMzY19oc290Z19yZXN1bWUo
-c3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gPj4gICAJdW5zaWduZWQgbG9uZyBmbGFn
-czsNCj4gPj4gICAJaW50IHJldCA9IDA7DQo+ID4+DQo+ID4+ICsJbXV0ZXhfbG9jaygmaHNvdGct
-PmluaXRfbXV0ZXgpOw0KPiA+PiAgIAlpZiAoaHNvdGctPmRyaXZlcikgew0KPiA+PiArDQo+ID4+
-ICAgCQlkZXZfaW5mbyhoc290Zy0+ZGV2LCAicmVzdW1pbmcgdXNiIGdhZGdldCAlc1xuIiwNCj4g
-Pj4gICAJCQkgaHNvdGctPmRyaXZlci0+ZHJpdmVyLm5hbWUpOw0KPiA+Pg0KPiA+PiBAQCAtMzY5
-OSw2ICszNzE3LDggQEAgc3RhdGljIGludCBzM2NfaHNvdGdfcmVzdW1lKHN0cnVjdCBwbGF0Zm9y
-bV9kZXZpY2UgKnBkZXYpDQo+ID4+ICAgCXMzY19oc290Z19jb3JlX2Nvbm5lY3QoaHNvdGcpOw0K
-PiA+PiAgIAlzcGluX3VubG9ja19pcnFyZXN0b3JlKCZoc290Zy0+bG9jaywgZmxhZ3MpOw0KPiA+
-Pg0KPiA+PiArCW11dGV4X3VubG9jaygmaHNvdGctPmluaXRfbXV0ZXgpOw0KPiA+PiArDQo+ID4+
-ICAgCXJldHVybiByZXQ7DQo+ID4+ICAgfQ0KPiA+Pg0KPiA+IEhtbS4gSSBjYW4ndCBmaW5kIGFu
-eSBvdGhlciBVREMgZHJpdmVyIHRoYXQgdXNlcyBhIG11dGV4IGluIGl0cw0KPiA+IHN1c3BlbmQv
-cmVzdW1lIGZ1bmN0aW9ucy4gQ2FuIHlvdSBleHBsYWluIHdoeSB0aGlzIGlzIG5lZWRlZCBvbmx5
-DQo+ID4gZm9yIGR3YzI/DQo+IA0KPiBJJ3ZlIHBvc3RlZCB0aGlzIHZlcnNpb24gYmVjYXVzZSBJ
-IHRob3VnaHQgeW91IHdlcmUgbm90IGNvbnZpbmNlZCB0aGF0DQo+IHRoZSBwYXRjaA0KPiAidXNi
-OiBkd2MyL2dhZGdldDogcmV3b3JrIHN1c3BlbmQvcmVzdW1lIGNvZGUgdG8gY29ycmVjdGx5IHJl
-c3RvcmUNCj4gZ2FkZ2V0IHN0YXRlIg0KPiBjYW4gYWRkIGNvZGUgZm9yIGluaXRpYWxpemF0aW9u
-IGFuZCBkZWluaXRpYWxpemF0aW9uIGluIHN1c3BlbmQvcmVzdW1lDQo+IHBhdGhzLg0KDQpNeSBw
-cm9ibGVtIHdpdGggdGhhdCBwYXRjaCB3YXMgdGhhdCB5b3Ugd2VyZSBjaGVja2luZyB0aGUgLT5l
-bmFibGVkDQpmbGFnIG91dHNpZGUgb2YgdGhlIHNwaW5sb2NrLiBUbyBhZGRyZXNzIHRoYXQsIHlv
-dSBvbmx5IG5lZWQgdG8gbW92ZQ0KdGhlIGNoZWNrIGluc2lkZSBvZiB0aGUgc3BpbmxvY2suIEkg
-ZG9uJ3Qgc2VlIHdoeSBhIG11dGV4IGlzIG5lZWRlZC4NCg0KLS0gDQpQYXVsDQoNCg==
+In recent upstream kernels, exynos5420-based arndale boards have been
+producing boot-time errors due to the fact they failed to set the cpu
+voltage. These message flood the serial console even after userspace
+has been loaded, yielding the console unusable without forcing a lower
+log level. These errors are produced _only_ with the
+multi_v7_defconfig and they are _not_ present
+with exynos_defconfig. Here are some recent boot logs showing the boot errors:
+
+mainline/v3.18-rc4-65-g2c54396:
+    multi_v7_defconfig:
+        http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc4-65-g2c54396/arm-multi_v7_defconfig/boot-exynos5250-arndale.html
+    exynos_defconfig:
+        http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc4-65-g2c54396/arm-exynos_defconfig/boot-exynos5250-arndale.html
+
+next/next-20141113:
+    multi_v7_defconfig:
+        http://storage.armcloud.us/kernel-ci/next/next-20141113/arm-multi_v7_defconfig/boot-exynos5250-arndale.html
+    exynos_defconfig:
+        http://storage.armcloud.us/kernel-ci/next/next-20141113/arm-exynos_defconfig/boot-exynos5250-arndale.html
+
+arm-soc/v3.18-rc4-185-gbfcf8f9:
+    multi_v7_defconfig:
+        http://storage.armcloud.us/kernel-ci/arm-soc/v3.18-rc4-185-gbfcf8f9/arm-multi_v7_defconfig/boot-exynos5250-arndale.html
+    exynos_defconfig:
+        http://storage.armcloud.us/kernel-ci/arm-soc/v3.18-rc4-185-gbfcf8f9/arm-exynos_defconfig/boot-exynos5250-arndale.html
+
+Cheers,
+
+-- 
+Tyler Baker
+Tech Lead, LAVA
+Linaro.org | Open source software for ARM SoCs
+Follow Linaro: http://www.facebook.com/pages/Linaro
+http://twitter.com/#!/linaroorg - http://www.linaro.org/linaro-blog
