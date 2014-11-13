@@ -1,56 +1,46 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v3 2/2] ARM: EXYNOS: Call regulator core suspend prepare
- and finish functions
-Date: Thu, 13 Nov 2014 11:12:55 +0900
-Message-ID: <546413A7.1050803@samsung.com>
-References: <1413839151-10875-1-git-send-email-javier.martinez@collabora.co.uk> <1413839151-10875-3-git-send-email-javier.martinez@collabora.co.uk> <CABxcv==YZjO9p3aNyuRpe3DYS+=BcY_N2esuTg0hGASb_b_OdA@mail.gmail.com> <CABxcv=mMqh5UD0_Wz3rNaFbZD3BH_2Z+7srzccd=-5_ndo_a1Q@mail.gmail.com> <CAOesGMjKP6Yg-M_7Zy5bbEJ7QD7fQ27Bopd6yD3M=r=4SArR6w@mail.gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 1/9] drm/exynos: remove uneeded declaration of struct
+ dma_iommu_mapping
+Date: Thu, 13 Nov 2014 11:22:46 +0900
+Message-ID: <546415F6.1090503@samsung.com>
+References: <1414765063-30598-1-git-send-email-gustavo@padovan.org>
+ <20141106123847.GB30193@joana> <545B6D1E.4070104@samsung.com>
+ <20141112141319.GE1974@joana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f177.google.com ([209.85.192.177]:37739 "EHLO
-	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753395AbaKMCNE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Nov 2014 21:13:04 -0500
-In-Reply-To: <CAOesGMjKP6Yg-M_7Zy5bbEJ7QD7fQ27Bopd6yD3M=r=4SArR6w@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20141112141319.GE1974@joana>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Javier Martinez Canillas <javier@dowhile0.org>, Kukjin Kim <kgene.kim@samsung.com>, Linux Kernel <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Doug Anderson <dianders@chromium.org>, Chanwoo Choi <cw00.choi@samsung.com>, Mark Brown <broonie@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On 11/13/14 02:02, Olof Johansson wrote:
-> On Tue, Nov 11, 2014 at 2:23 AM, Javier Martinez Canillas
-> <javier@dowhile0.org>  wrote:
->> Hello Kukjin,
->>
->> On Thu, Oct 30, 2014 at 11:06 AM, Javier Martinez Canillas
->> <javier@dowhile0.org>  wrote:
->>> Hello Kukjin,
->>>
->>> On Mon, Oct 20, 2014 at 11:05 PM, Javier Martinez Canillas
->>> <javier.martinez@collabora.co.uk>  wrote:
->>>> The regulator framework has a set of helpers functions to be used when
->>>> the system is entering and leaving from suspend but these are not called
->>>> on Exynos platforms. This means that the .set_suspend_* function handlers
->>>> defined by regulator drivers are not called when the system is suspended.
->>>>
->>>> Suggested-by: Doug Anderson<dianders@chromium.org>
->>>> Signed-off-by: Javier Martinez Canillas<javier.martinez@collabora.co.uk>
->>>> Reviewed-by: Doug Anderson<dianders@chromium.org>
->>>> ---
->>>>   arch/arm/mach-exynos/suspend.c | 23 +++++++++++++++++++++++
->>>>   1 file changed, 23 insertions(+)
->>>>
->>>
->>> Any comments on this patch?
->>>
->>
->> Just a gentle reminder about this patch.
->
-> Kukjin, should I just apply this directly since you seem to be busy?
->
-Oh, sorry. I'm here and applying this patch into samsung tree.
-
-Thanks,
-Kukjin
+ClNvcnJ5IGZvciBsYXRlLgoKSSBzdGFydGVkIHRvIHRlc3QgYW5kIG1pZ3JhdGUgdGhlbSB0byBl
+eHlub3MtZHJtLW5leHQgeWVzdGVyZGF5LiBTbyBJCmd1ZXNzIHRoYXQgeW91IGNhbiBzZWUgeW91
+ciBwYXRjaCBzZXJpZXMgb24gZXh5bm9zLWRybS1uZXh0IHRvZGF5IG5pZ2h0Cm9yIHRvbW9ycm93
+LgoKVGhhbmtzLApJbmtpIERhZQoKT24gMjAxNOuFhCAxMeyblCAxMuydvCAyMzoxMywgR3VzdGF2
+byBQYWRvdmFuIHdyb3RlOgo+IEhpIElua2ksCj4gCj4gMjAxNC0xMS0wNiBJbmtpIERhZSA8aW5r
+aS5kYWVAc2Ftc3VuZy5jb20+Ogo+IAo+Pgo+PiBIaSBHdXN0YXZvLAo+Pgo+PiBPbiAyMDE064WE
+IDEx7JuUIDA27J28IDIxOjM4LCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4+Pgo+Pj4gSGkgSW5r
+aSwKPj4+Cj4+PiBDb3VsZCB5b3UgcGxlYXNlIGdpdmUgYSByZXZpZXcgdG8gdGhpcyBzZXJpZXM/
+Cj4+Cj4+IEl0IGxvb2tzIGdvb2QgdG8gbWUuIFRoaXMgcGF0Y2ggc2VyaWVzIGlzIGp1c3QgY2xl
+YW51cCBidXQgbm90IHRlc3Qgc28gSQo+PiB3aWxsIG1lcmdlIHRoZW0gbmV4dCB3ZWVrIGFmdGVy
+IHRlc3RpbmcgaWYgdGhlcmUgaXMgbm8gYW55IGNvbW1lbnQuCj4gCj4gSXMgdGhlcmUgYW55IGNv
+bW1lbnRzIG9uIHRoaXMgc2VyaWVzIG9yIGFyZSB0aGUgcGF0Y2hlcyByZWFkeSB0byBiZSBtZXJn
+ZWQ/Cj4gCj4gVGhhbmtzCj4gCj4gCUd1c3Rhdm8KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20g
+dGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIg
+aW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZwo+
+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21v
+LWluZm8uaHRtbAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2
+ZWwK
