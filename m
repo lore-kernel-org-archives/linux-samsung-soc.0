@@ -1,48 +1,51 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 4/7] ARM: dts: exynos4: add dependency between TV and LCD0
- power domains
-Date: Thu, 13 Nov 2014 17:23:02 +0100
-Message-ID: <1415895785-26892-5-git-send-email-a.hajda@samsung.com>
-References: <1415895785-26892-1-git-send-email-a.hajda@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/4 V3] ASoC: ALC5631/RT5631: Add device tree binding
+ documentation
+Date: Thu, 13 Nov 2014 18:10:02 +0000
+Message-ID: <20141113181002.GM3815@sirena.org.uk>
+References: <1415880864-2246-1-git-send-email-krishna.md@samsung.com>
+ <1415880864-2246-2-git-send-email-krishna.md@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Ilv8fkVKIf9WdNeE"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:38316 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933482AbaKMQX7 (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36893 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932610AbaKMSLe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Nov 2014 11:23:59 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NEZ00MZZKCJ6X80@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 13 Nov 2014 16:26:43 +0000 (GMT)
-In-reply-to: <1415895785-26892-1-git-send-email-a.hajda@samsung.com>
+	Thu, 13 Nov 2014 13:11:34 -0500
+Content-Disposition: inline
+In-Reply-To: <1415880864-2246-2-git-send-email-krishna.md@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>
+To: Krishna Mohan Dani <krishna.md@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, kgene.kim@samsung.com
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-TV Mixer needs both TV and LCD0 domains enabled to be fully operational.
-This dependency is modelled by making TV power domains a sub-domain of
-LCD0 power domain.
+--Ilv8fkVKIf9WdNeE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/boot/dts/exynos4.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+On Thu, Nov 13, 2014 at 05:44:21PM +0530, Krishna Mohan Dani wrote:
+> Document the device tree binding for the ALC5631 codec and update vendor
+> specific prefix for the Realtek.
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 4ed5868..c728004 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -97,6 +97,7 @@
- 	pd_tv: tv-power-domain@10023C20 {
- 		compatible = "samsung,exynos4210-pd";
- 		reg = <0x10023C20 0x20>;
-+		power-domain-master = <&pd_lcd0>;
- 	};
- 
- 	pd_cam: cam-power-domain@10023C00 {
--- 
-1.9.1
+Applied, thanks.
+
+--Ilv8fkVKIf9WdNeE
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUZPP5AAoJECTWi3JdVIfQ6hQH/0CPjqaMkczAitsPH3+nrbpe
+2mHARQy8bC1G3d01Jfh9U1q62wAUKxzVvkYFalKltlVzYV9TK9MqkpF27qnJ5M1m
+prIhDgheP5X4iUDI8YX4AggL8jA7zgC0UGl93ACJcoX8tXExCVM34tw/uA8xCv4x
+W4RsfBvmXfcLgcagpPNuHywUaz8Xizz0YVvuUrLSnVHOR9F6pYB8UjrSd3Ctel7m
+4cwb5P3KTXgNY2AguBnmZfiOcRBItEMAD19npu1q32l9nxV3xitgDDD6XqWlVHF1
+ubzLK5CVBJvE97VyOfedduL+IGn82nd0dsjo32EI9gx+2UaKzwZeN955h5rLQ9k=
+=zLiT
+-----END PGP SIGNATURE-----
+
+--Ilv8fkVKIf9WdNeE--
