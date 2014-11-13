@@ -1,106 +1,177 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] thermal: exynos: use correct offset for TMU_CONTROL
- register on Exynos5260
-Date: Thu, 13 Nov 2014 16:15:18 +0100
-Message-ID: <10653155.va3UnGOxba@amdc1032>
-References: <1594947.1Ri7fFnV5h@amdc1032> <17456984.pRSEMqiSfL@amdc1032>
- <20141107185949.GA27266@developer>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v3 1/2] usb: dwc2/gadget: add mutex to serialize
+ init/deinit calls
+Date: Thu, 13 Nov 2014 16:17:57 +0100
+Message-ID: <5464CBA5.9050702@samsung.com>
+References: <54535F82.7020406@samsung.com>
+ <1414750354-19571-1-git-send-email-m.szyprowski@samsung.com>
+ <A2CA0424C0A6F04399FB9E1CD98E0304844E7FDD@US01WEMBX2.internal.synopsys.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20141107185949.GA27266@developer>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <A2CA0424C0A6F04399FB9E1CD98E0304844E7FDD-Yu2iAY70zvrYN67daEjeMPufCSb+aD3WLzEdoUbNIic@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Zimmerman <Paul.Zimmerman-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+Hello,
 
-Hi,
+On 2014-10-31 19:46, Paul Zimmerman wrote:
+>> From: Marek Szyprowski [mailto:m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org]
+>> Sent: Friday, October 31, 2014 3:13 AM
+>>
+>> This patch adds mutex, which protects initialization and
+>> deinitialization procedures against suspend/resume methods.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> ---
+>>   drivers/usb/dwc2/core.h   |  1 +
+>>   drivers/usb/dwc2/gadget.c | 20 ++++++++++++++++++++
+>>   2 files changed, 21 insertions(+)
+>>
+>> diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
+>> index 9f77b4d1c5ff..58732a9a0019 100644
+>> --- a/drivers/usb/dwc2/core.h
+>> +++ b/drivers/usb/dwc2/core.h
+>> @@ -187,6 +187,7 @@ struct s3c_hsotg {
+>>   	struct s3c_hsotg_plat    *plat;
+>>
+>>   	spinlock_t              lock;
+>> +	struct mutex		init_mutex;
+>>
+>>   	void __iomem            *regs;
+>>   	int                     irq;
+>> diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
+>> index d8dda39c9e16..a2e4272a904e 100644
+>> --- a/drivers/usb/dwc2/gadget.c
+>> +++ b/drivers/usb/dwc2/gadget.c
+>> @@ -21,6 +21,7 @@
+>>   #include <linux/platform_device.h>
+>>   #include <linux/dma-mapping.h>
+>>   #include <linux/debugfs.h>
+>> +#include <linux/mutex.h>
+>>   #include <linux/seq_file.h>
+>>   #include <linux/delay.h>
+>>   #include <linux/io.h>
+>> @@ -2908,6 +2909,7 @@ static int s3c_hsotg_udc_start(struct usb_gadget *gadget,
+>>   		return -EINVAL;
+>>   	}
+>>
+>> +	mutex_lock(&hsotg->init_mutex);
+>>   	WARN_ON(hsotg->driver);
+>>
+>>   	driver->driver.bus = NULL;
+>> @@ -2933,9 +2935,12 @@ static int s3c_hsotg_udc_start(struct usb_gadget *gadget,
+>>
+>>   	dev_info(hsotg->dev, "bound driver %s\n", driver->driver.name);
+>>
+>> +	mutex_unlock(&hsotg->init_mutex);
+>> +
+>>   	return 0;
+>>
+>>   err:
+>> +	mutex_unlock(&hsotg->init_mutex);
+>>   	hsotg->driver = NULL;
+>>   	return ret;
+>>   }
+>> @@ -2957,6 +2962,8 @@ static int s3c_hsotg_udc_stop(struct usb_gadget *gadget,
+>>   	if (!hsotg)
+>>   		return -ENODEV;
+>>
+>> +	mutex_lock(&hsotg->init_mutex);
+>> +
+>>   	/* all endpoints should be shutdown */
+>>   	for (ep = 1; ep < hsotg->num_of_eps; ep++)
+>>   		s3c_hsotg_ep_disable(&hsotg->eps[ep].ep);
+>> @@ -2974,6 +2981,8 @@ static int s3c_hsotg_udc_stop(struct usb_gadget *gadget,
+>>
+>>   	clk_disable(hsotg->clk);
+>>
+>> +	mutex_unlock(&hsotg->init_mutex);
+>> +
+>>   	return 0;
+>>   }
+>>
+>> @@ -3002,6 +3011,7 @@ static int s3c_hsotg_pullup(struct usb_gadget *gadget, int is_on)
+>>
+>>   	dev_dbg(hsotg->dev, "%s: is_on: %d\n", __func__, is_on);
+>>
+>> +	mutex_lock(&hsotg->init_mutex);
+>>   	spin_lock_irqsave(&hsotg->lock, flags);
+>>   	if (is_on) {
+>>   		clk_enable(hsotg->clk);
+>> @@ -3013,6 +3023,7 @@ static int s3c_hsotg_pullup(struct usb_gadget *gadget, int is_on)
+>>
+>>   	hsotg->gadget.speed = USB_SPEED_UNKNOWN;
+>>   	spin_unlock_irqrestore(&hsotg->lock, flags);
+>> +	mutex_unlock(&hsotg->init_mutex);
+>>
+>>   	return 0;
+>>   }
+>> @@ -3507,6 +3518,7 @@ static int s3c_hsotg_probe(struct platform_device *pdev)
+>>   	}
+>>
+>>   	spin_lock_init(&hsotg->lock);
+>> +	mutex_init(&hsotg->init_mutex);
+>>
+>>   	hsotg->irq = ret;
+>>
+>> @@ -3652,6 +3664,8 @@ static int s3c_hsotg_suspend(struct platform_device *pdev, pm_message_t state)
+>>   	unsigned long flags;
+>>   	int ret = 0;
+>>
+>> +	mutex_lock(&hsotg->init_mutex);
+>> +
+>>   	if (hsotg->driver)
+>>   		dev_info(hsotg->dev, "suspending usb gadget %s\n",
+>>   			 hsotg->driver->driver.name);
+>> @@ -3674,6 +3688,8 @@ static int s3c_hsotg_suspend(struct platform_device *pdev, pm_message_t state)
+>>   		clk_disable(hsotg->clk);
+>>   	}
+>>
+>> +	mutex_unlock(&hsotg->init_mutex);
+>> +
+>>   	return ret;
+>>   }
+>>
+>> @@ -3683,7 +3699,9 @@ static int s3c_hsotg_resume(struct platform_device *pdev)
+>>   	unsigned long flags;
+>>   	int ret = 0;
+>>
+>> +	mutex_lock(&hsotg->init_mutex);
+>>   	if (hsotg->driver) {
+>> +
+>>   		dev_info(hsotg->dev, "resuming usb gadget %s\n",
+>>   			 hsotg->driver->driver.name);
+>>
+>> @@ -3699,6 +3717,8 @@ static int s3c_hsotg_resume(struct platform_device *pdev)
+>>   	s3c_hsotg_core_connect(hsotg);
+>>   	spin_unlock_irqrestore(&hsotg->lock, flags);
+>>
+>> +	mutex_unlock(&hsotg->init_mutex);
+>> +
+>>   	return ret;
+>>   }
+>>
+> Hmm. I can't find any other UDC driver that uses a mutex in its
+> suspend/resume functions. Can you explain why this is needed only
+> for dwc2?
 
-On Friday, November 07, 2014 02:59:51 PM Eduardo Valentin wrote:
-> Hi Bartlomiej,
-> 
-> On Mon, Oct 20, 2014 at 02:41:07PM +0200, Bartlomiej Zolnierkiewicz wrote:
-> > 
-> > Hi,
-> > 
-> > Eduardo, could you please merge this patch?
-> > 
-> 
-> I queued this in my -fixes branch. It should appear also in linux-next.
+I've posted this version because I thought you were not convinced that 
+the patch
+"usb: dwc2/gadget: rework suspend/resume code to correctly restore 
+gadget state"
+can add code for initialization and deinitialization in suspend/resume 
+paths.
 
-Thanks!
-
-> Can you please refresh your patch series
-> https://lkml.org/lkml/2014/9/18/305
-> 
-> based on my tree? Looks like something may be missing, as could not get
-> all patches applied cleanly.
-
-Done:
-
-  http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg38717.html
-
-Sorry for the delay.
-
-Best regards,
---
-Bartlomiej Zolnierkiewicz
+Best regards
+-- 
+Marek Szyprowski, PhD
 Samsung R&D Institute Poland
-Samsung Electronics
 
-> Thanks
-> 
-> > Best regards,
-> > --
-> > Bartlomiej Zolnierkiewicz
-> > Samsung R&D Institute Poland
-> > Samsung Electronics
-> > 
-> > On Thursday, September 11, 2014 03:00:49 PM Bartlomiej Zolnierkiewicz wrote:
-> > > In exynos5260_tmu_registers tmu_ctrl entry is erroneously
-> > > assigned twice.  The second assignment (to EXYNOS_TMU_REG_CONTROL1
-> > > define which represents 0x24 value) overrides the first one
-> > > (to EXYNOS_TMU_REG_CONTROL define which represents 0x20 value)
-> > > which results in the wrong (according to the Exynos5260 SoC
-> > > documentation that I have) offset being used for TMU_CONTROL
-> > > register.  Fix it by removing the wrong assignment and then
-> > > remove no longer used EXYNOS_TMU_REG_CONTROL1 define.
-> > > 
-> > > Cc: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> > > Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> > > Cc: Lukasz Majewski <l.majewski@samsung.com>
-> > > Cc: Eduardo Valentin <edubezval@gmail.com>
-> > > Cc: Zhang Rui <rui.zhang@intel.com>
-> > > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > > ---
-> > >  drivers/thermal/samsung/exynos_tmu_data.c |    1 -
-> > >  drivers/thermal/samsung/exynos_tmu_data.h |    1 -
-> > >  2 files changed, 2 deletions(-)
-> > > 
-> > > Index: b/drivers/thermal/samsung/exynos_tmu_data.c
-> > > ===================================================================
-> > > --- a/drivers/thermal/samsung/exynos_tmu_data.c	2014-09-11 14:41:12.567347442 +0200
-> > > +++ b/drivers/thermal/samsung/exynos_tmu_data.c	2014-09-11 14:43:00.211350284 +0200
-> > > @@ -273,7 +273,6 @@ struct exynos_tmu_init_data const exynos
-> > >  static const struct exynos_tmu_registers exynos5260_tmu_registers = {
-> > >  	.triminfo_data = EXYNOS_TMU_REG_TRIMINFO,
-> > >  	.tmu_ctrl = EXYNOS_TMU_REG_CONTROL,
-> > > -	.tmu_ctrl = EXYNOS_TMU_REG_CONTROL1,
-> > >  	.therm_trip_mode_shift = EXYNOS_TMU_TRIP_MODE_SHIFT,
-> > >  	.therm_trip_mode_mask = EXYNOS_TMU_TRIP_MODE_MASK,
-> > >  	.therm_trip_en_shift = EXYNOS_TMU_THERM_TRIP_EN_SHIFT,
-> > > Index: b/drivers/thermal/samsung/exynos_tmu_data.h
-> > > ===================================================================
-> > > --- a/drivers/thermal/samsung/exynos_tmu_data.h	2014-09-11 14:41:12.243347433 +0200
-> > > +++ b/drivers/thermal/samsung/exynos_tmu_data.h	2014-09-11 14:43:36.167351233 +0200
-> > > @@ -83,7 +83,6 @@
-> > >  #define EXYNOS_MAX_TRIGGER_PER_REG	4
-> > >  
-> > >  /* Exynos5260 specific */
-> > > -#define EXYNOS_TMU_REG_CONTROL1			0x24
-> > >  #define EXYNOS5260_TMU_REG_INTEN		0xC0
-> > >  #define EXYNOS5260_TMU_REG_INTSTAT		0xC4
-> > >  #define EXYNOS5260_TMU_REG_INTCLEAR		0xC8
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
