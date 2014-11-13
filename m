@@ -1,81 +1,66 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 1/4] drm/exynos: dsi: support Exynos4415 SoC
-Date: Thu, 13 Nov 2014 17:42:43 +0900
-Message-ID: <54646F03.7000605@samsung.com>
+Subject: Re: [PATCH 2/4] drm/exynos: fimd: support Exynos4415 SoC
+Date: Thu, 13 Nov 2014 17:42:56 +0900
+Message-ID: <54646F10.6080809@samsung.com>
 References: <1415340747-27904-1-git-send-email-yj44.cho@samsung.com>
- <1415340747-27904-2-git-send-email-yj44.cho@samsung.com>
+ <1415340747-27904-3-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:60335 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751120AbaKMImq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Nov 2014 03:42:46 -0500
-In-reply-to: <1415340747-27904-2-git-send-email-yj44.cho@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1415340747-27904-3-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: YoungJun Cho <yj44.cho@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, mark.rutland@arm.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, robh+dt@kernel.org, galak@codeaurora.org, kyungmin.park@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com, cw00.choi@samsung.com, kgene.kim@samsung.com
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com, cw00.choi@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2014=EB=85=84 11=EC=9B=94 07=EC=9D=BC 15:12, YoungJun Cho wrote:
-> This patch supports Exynos4415 SoC.
->=20
-
-Applied.
-
-Thanks,
-Inki Dae
-
-> Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  Documentation/devicetree/bindings/video/exynos_dsim.txt | 1 +
->  drivers/gpu/drm/exynos/exynos_drm_dsi.c                 | 7 +++++++
->  2 files changed, 8 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/video/exynos_dsim.txt =
-b/Documentation/devicetree/bindings/video/exynos_dsim.txt
-> index e74243b..ca2b4aa 100644
-> --- a/Documentation/devicetree/bindings/video/exynos_dsim.txt
-> +++ b/Documentation/devicetree/bindings/video/exynos_dsim.txt
-> @@ -4,6 +4,7 @@ Required properties:
->    - compatible: value should be one of the following
->  		"samsung,exynos3250-mipi-dsi" /* for Exynos3250/3472 SoCs */
->  		"samsung,exynos4210-mipi-dsi" /* for Exynos4 SoCs */
-> +		"samsung,exynos4415-mipi-dsi" /* for Exynos4415 SoC */
->  		"samsung,exynos5410-mipi-dsi" /* for Exynos5410/5420/5440 SoCs */
->    - reg: physical base address and length of the registers set for t=
-he device
->    - interrupts: should contain DSI interrupt
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/dr=
-m/exynos/exynos_drm_dsi.c
-> index acf7e9e..ff17c6e 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-> @@ -316,6 +316,11 @@ static struct exynos_dsi_driver_data exynos4_dsi=
-_driver_data =3D {
->  	.has_clklane_stop =3D 1,
->  };
-> =20
-> +static struct exynos_dsi_driver_data exynos4415_dsi_driver_data =3D =
-{
-> +	.plltmr_reg =3D 0x58,
-> +	.has_clklane_stop =3D 1,
-> +};
-> +
->  static struct exynos_dsi_driver_data exynos5_dsi_driver_data =3D {
->  	.plltmr_reg =3D 0x58,
->  };
-> @@ -325,6 +330,8 @@ static struct of_device_id exynos_dsi_of_match[] =
-=3D {
->  	  .data =3D &exynos3_dsi_driver_data },
->  	{ .compatible =3D "samsung,exynos4210-mipi-dsi",
->  	  .data =3D &exynos4_dsi_driver_data },
-> +	{ .compatible =3D "samsung,exynos4415-mipi-dsi",
-> +	  .data =3D &exynos4415_dsi_driver_data },
->  	{ .compatible =3D "samsung,exynos5410-mipi-dsi",
->  	  .data =3D &exynos5_dsi_driver_data },
->  	{ }
->=20
+T24gMjAxNOuFhCAxMeyblCAwN+ydvCAxNToxMiwgWW91bmdKdW4gQ2hvIHdyb3RlOgo+IFRoaXMg
+cGF0Y2ggc3VwcG9ydHMgRXh5bm9zNDQxNSBTb0MuCgpBcHBsaWVkLgoKVGhhbmtzLApJbmtpIERh
+ZQoKPiAKPiBTaWduZWQtb2ZmLWJ5OiBZb3VuZ0p1biBDaG8gPHlqNDQuY2hvQHNhbXN1bmcuY29t
+Pgo+IEFja2VkLWJ5OiBLeXVuZ21pbiBQYXJrIDxreXVuZ21pbi5wYXJrQHNhbXN1bmcuY29tPgo+
+IC0tLQo+ICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvdmlkZW8vc2Ftc3VuZy1m
+aW1kLnR4dCB8ICAxICsKPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQu
+YyAgICAgICAgICAgICAgICAgfCAxMSArKysrKysrKysrKwo+ICAyIGZpbGVzIGNoYW5nZWQsIDEy
+IGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
+L2JpbmRpbmdzL3ZpZGVvL3NhbXN1bmctZmltZC50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRy
+ZWUvYmluZGluZ3MvdmlkZW8vc2Ftc3VuZy1maW1kLnR4dAo+IGluZGV4IDRlNmM3N2MuLmNmMWFm
+NjMgMTAwNjQ0Cj4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3ZpZGVv
+L3NhbXN1bmctZmltZC50eHQKPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
+Z3MvdmlkZW8vc2Ftc3VuZy1maW1kLnR4dAo+IEBAIC0xMSw2ICsxMSw3IEBAIFJlcXVpcmVkIHBy
+b3BlcnRpZXM6Cj4gIAkJInNhbXN1bmcsczVwdjIxMC1maW1kIjsgLyogZm9yIFM1UFYyMTAgU29D
+ICovCj4gIAkJInNhbXN1bmcsZXh5bm9zMzI1MC1maW1kIjsgLyogZm9yIEV4eW5vczMyNTAvMzQ3
+MiBTb0NzICovCj4gIAkJInNhbXN1bmcsZXh5bm9zNDIxMC1maW1kIjsgLyogZm9yIEV4eW5vczQg
+U29DcyAqLwo+ICsJCSJzYW1zdW5nLGV4eW5vczQ0MTUtZmltZCI7IC8qIGZvciBFeHlub3M0NDE1
+IFNvQyAqLwo+ICAJCSJzYW1zdW5nLGV4eW5vczUyNTAtZmltZCI7IC8qIGZvciBFeHlub3M1IFNv
+Q3MgKi8KPiAgCj4gIC0gcmVnOiBwaHlzaWNhbCBiYXNlIGFkZHJlc3MgYW5kIGxlbmd0aCBvZiB0
+aGUgRklNRCByZWdpc3RlcnMgc2V0Lgo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZmltZC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2ZpbWQuYwo+IGluZGV4IDA4NWIwNjYuLjVkZmJiZGIgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9maW1kLmMKPiBAQCAtMTIwLDYgKzEyMCwxNSBAQCBzdGF0aWMgc3Ry
+dWN0IGZpbWRfZHJpdmVyX2RhdGEgZXh5bm9zNF9maW1kX2RyaXZlcl9kYXRhID0gewo+ICAJLmhh
+c19zaGFkb3djb24gPSAxLAo+ICB9Owo+ICAKPiArc3RhdGljIHN0cnVjdCBmaW1kX2RyaXZlcl9k
+YXRhIGV4eW5vczQ0MTVfZmltZF9kcml2ZXJfZGF0YSA9IHsKPiArCS50aW1pbmdfYmFzZSA9IDB4
+MjAwMDAsCj4gKwkubGNkYmxrX29mZnNldCA9IDB4MjEwLAo+ICsJLmxjZGJsa192dF9zaGlmdCA9
+IDEwLAo+ICsJLmxjZGJsa19ieXBhc3Nfc2hpZnQgPSAxLAo+ICsJLmhhc19zaGFkb3djb24gPSAx
+LAo+ICsJLmhhc192aWRvdXRjb24gPSAxLAo+ICt9Owo+ICsKPiAgc3RhdGljIHN0cnVjdCBmaW1k
+X2RyaXZlcl9kYXRhIGV4eW5vczVfZmltZF9kcml2ZXJfZGF0YSA9IHsKPiAgCS50aW1pbmdfYmFz
+ZSA9IDB4MjAwMDAsCj4gIAkubGNkYmxrX29mZnNldCA9IDB4MjE0LAo+IEBAIC0xODAsNiArMTg5
+LDggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBvZl9kZXZpY2VfaWQgZmltZF9kcml2ZXJfZHRfbWF0
+Y2hbXSA9IHsKPiAgCSAgLmRhdGEgPSAmZXh5bm9zM19maW1kX2RyaXZlcl9kYXRhIH0sCj4gIAl7
+IC5jb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNDIxMC1maW1kIiwKPiAgCSAgLmRhdGEgPSAm
+ZXh5bm9zNF9maW1kX2RyaXZlcl9kYXRhIH0sCj4gKwl7IC5jb21wYXRpYmxlID0gInNhbXN1bmcs
+ZXh5bm9zNDQxNS1maW1kIiwKPiArCSAgLmRhdGEgPSAmZXh5bm9zNDQxNV9maW1kX2RyaXZlcl9k
+YXRhIH0sCj4gIAl7IC5jb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNTI1MC1maW1kIiwKPiAg
+CSAgLmRhdGEgPSAmZXh5bm9zNV9maW1kX2RyaXZlcl9kYXRhIH0sCj4gIAl7fSwKPiAKCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
