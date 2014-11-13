@@ -1,57 +1,47 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 0/7] Enable HDMI support on Exynos platforms
-Date: Thu, 13 Nov 2014 17:22:58 +0100
-Message-ID: <1415895785-26892-1-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 1/7] clk: samsung: exynos4: set parent of mixer gate clock to
+ hdmi
+Date: Thu, 13 Nov 2014 17:22:59 +0100
+Message-ID: <1415895785-26892-2-git-send-email-a.hajda@samsung.com>
+References: <1415895785-26892-1-git-send-email-a.hajda@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:17806 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933311AbaKMQXr (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:38310 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933311AbaKMQXx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Nov 2014 11:23:47 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
+	Thu, 13 Nov 2014 11:23:53 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NEZ003ZLKC83180@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 13 Nov 2014 16:26:32 +0000 (GMT)
+ 17 2011)) with ESMTP id <0NEZ00MVPKCCF580@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 13 Nov 2014 16:26:37 +0000 (GMT)
+In-reply-to: <1415895785-26892-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>
 
-This set of patches enables HDMI support for two Exynos based platforms:
-UniversalC210 and Odroid.
-Beside DTS changes patchset adds parent domain support for Exynos PM domains
-and small but critical change in mixer clock. For details see individual patches.
+This dependency is not clearly documented, but it seems
+mixer gate clock is not working without hdmi clock.
+It causes system hangs during mixer access with disabled hdmi.
 
-The patchset is based on v3.18-rc4.
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos4.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards
-Andrzej
-
-
-Andrzej Hajda (2):
-  clk: samsung: exynos4: set parent of mixer gate clock to hdmi
-  ARM: dts: exynos5250: add display power domain
-
-Marek Szyprowski (4):
-  ARM: Exynos: add support for sub-power domains
-  ARM: dts: exynos4: add hdmi related nodes
-  ARM: dts: exynos4: add dependency between TV and LCD0 power domains
-  ARM: dts: exynos4412-odroid: enable hdmi support
-
-Tomasz Stanislawski (1):
-  ARM: dts: exynos4210-universal_c210: enable hdmi support
-
- .../bindings/arm/exynos/power_domain.txt           |  2 +
- arch/arm/boot/dts/exynos4.dtsi                     | 41 ++++++++++++++++
- arch/arm/boot/dts/exynos4210-universal_c210.dts    | 57 ++++++++++++++++++++++
- arch/arm/boot/dts/exynos4210.dtsi                  |  8 +++
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi    | 44 +++++++++++++++++
- arch/arm/boot/dts/exynos4x12.dtsi                  | 11 +++++
- arch/arm/boot/dts/exynos5250.dtsi                  |  9 ++++
- arch/arm/mach-exynos/pm_domains.c                  |  9 +++-
- drivers/clk/samsung/clk-exynos4.c                  |  2 +-
- 9 files changed, 181 insertions(+), 2 deletions(-)
-
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 940f028..770a6d4 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -875,7 +875,7 @@ static struct samsung_gate_clock exynos4_gate_clks[] __initdata = {
+ 	GATE(CLK_SCLK_AUDIO1, "sclk_audio1", "div_audio1", SRC_MASK_PERIL1, 0,
+ 			CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_VP, "vp", "aclk160", GATE_IP_TV, 0, 0, 0),
+-	GATE(CLK_MIXER, "mixer", "aclk160", GATE_IP_TV, 1, 0, 0),
++	GATE(CLK_MIXER, "mixer", "hdmi", GATE_IP_TV, 1, 0, 0),
+ 	GATE(CLK_HDMI, "hdmi", "aclk160", GATE_IP_TV, 3, 0, 0),
+ 	GATE(CLK_PWM, "pwm", "aclk100", GATE_IP_PERIL, 24, 0, 0),
+ 	GATE(CLK_SDMMC4, "sdmmc4", "aclk133", GATE_IP_FSYS, 9, 0, 0),
 -- 
 1.9.1
