@@ -1,100 +1,98 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v3 RESEND 1/2] drm/exynos: dp: Remove support for unused
- dptx-phy
-Date: Thu, 13 Nov 2014 17:51:10 +0900
-Message-ID: <546470FE.90008@samsung.com>
-References: <000001cffe5c3df5500$%han@samsung.com>
- <1415785330-28123-1-git-send-email-gautam.vivek@samsung.com>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH v2 0/6] exynos: Move pmu driver to driver/soc folder and
+ add exynos7 support
+Date: Thu, 13 Nov 2014 14:26:23 +0530
+Message-ID: <CADGdYn46=X1FS7TWp=qCDsm3J9Xg=pEZb945X8tfwc0k6thfvQ@mail.gmail.com>
+References: <1415452601-13078-1-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1415785330-28123-1-git-send-email-gautam.vivek@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: kgene.kim@samsung.com, seanpaul@google.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, "cpgs ." <cpgs@samsung.com>, ajaykumar.rs@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yh0-f51.google.com ([209.85.213.51]:40144 "EHLO
+	mail-yh0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753849AbaKMI4Y (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 13 Nov 2014 03:56:24 -0500
+In-Reply-To: <1415452601-13078-1-git-send-email-amit.daniel@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Lee Jones <lee.jones@linaro.org>, Amit Daniel Kachhap <amit.daniel@samsung.com>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-T24gMjAxNOuFhCAxMeyblCAxMuydvCAxODo0MiwgVml2ZWsgR2F1dGFtIHdyb3RlOgo+IE5vdyB0
-aGF0IHdlIGhhdmUgbW92ZWQgdG8gZ2VuZXJpYyBwaHkgYmFzZWQgYmluZGluZ3MsCj4gd2UgZG9u
-J3QgbmVlZCB0byBoYXZlIGFueSBjb2RlIHJlbGF0ZWQgdG8gb2xkZXIgZHB0eC1waHkuCj4gTm9i
-b2R5IGlzIHVzaW5nIHRoaXMgZHB0eC1waHkgYW55bW9yZSwgc28gcmVtb3ZpbmcgdGhlCj4gc2Ft
-ZS4KCkFwcGxpZWQuCgpUaGFua3MsCklua2kgRGFlCgo+IAo+IFNpZ25lZC1vZmYtYnk6IFZpdmVr
-IEdhdXRhbSA8Z2F1dGFtLnZpdmVrQHNhbXN1bmcuY29tPgo+IEFja2VkLWJ5OiBKaW5nb28gSGFu
-IDxqZzEuaGFuQHNhbXN1bmcuY29tPgo+IENjOiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5j
-b20+Cj4gLS0tCj4gCj4gUHJvYmxlbSB3aXRoIG15IG1haWwgY2xpZW50IGNhdXNlZCBjaGFuZ2Ug
-aW4gYXV0aG9yJ3MgbWFpbCBpZC4KPiBTbyByZXNlbmRpbmcgaXQgd2l0aCBhdXRob3JzaGlwIHVu
-ZGVyIG15IFNhbXN1bmcgaWQuCj4gCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Rw
-X2NvcmUuYyB8ICAgNzQgKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+ICBkcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmggfCAgICAyIC0KPiAgMiBmaWxlcyBjaGFu
-Z2VkLCAxNyBpbnNlcnRpb25zKCspLCA1OSBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jIGIvZHJpdmVycy9ncHUvZHJt
-L2V4eW5vcy9leHlub3NfZHBfY29yZS5jCj4gaW5kZXggY2Q1MGVjZS4uZGJlOWFkZCAxMDA2NDQK
-PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmMKPiArKysgYi9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmMKPiBAQCAtMTA1MiwyOCArMTA1
-MiwxNCBAQCBzdGF0aWMgaW50IGV4eW5vc19kcF9jcmVhdGVfY29ubmVjdG9yKHN0cnVjdCBleHlu
-b3NfZHJtX2Rpc3BsYXkgKmRpc3BsYXksCj4gIAo+ICBzdGF0aWMgdm9pZCBleHlub3NfZHBfcGh5
-X2luaXQoc3RydWN0IGV4eW5vc19kcF9kZXZpY2UgKmRwKQo+ICB7Cj4gLQlpZiAoZHAtPnBoeSkg
-ewo+ICsJaWYgKGRwLT5waHkpCj4gIAkJcGh5X3Bvd2VyX29uKGRwLT5waHkpOwo+IC0JfSBlbHNl
-IGlmIChkcC0+cGh5X2FkZHIpIHsKPiAtCQl1MzIgcmVnOwo+IC0KPiAtCQlyZWcgPSBfX3Jhd19y
-ZWFkbChkcC0+cGh5X2FkZHIpOwo+IC0JCXJlZyB8PSBkcC0+ZW5hYmxlX21hc2s7Cj4gLQkJX19y
-YXdfd3JpdGVsKHJlZywgZHAtPnBoeV9hZGRyKTsKPiAtCX0KPiAgfQo+ICAKPiAgc3RhdGljIHZv
-aWQgZXh5bm9zX2RwX3BoeV9leGl0KHN0cnVjdCBleHlub3NfZHBfZGV2aWNlICpkcCkKPiAgewo+
-IC0JaWYgKGRwLT5waHkpIHsKPiArCWlmIChkcC0+cGh5KQo+ICAJCXBoeV9wb3dlcl9vZmYoZHAt
-PnBoeSk7Cj4gLQl9IGVsc2UgaWYgKGRwLT5waHlfYWRkcikgewo+IC0JCXUzMiByZWc7Cj4gLQo+
-IC0JCXJlZyA9IF9fcmF3X3JlYWRsKGRwLT5waHlfYWRkcik7Cj4gLQkJcmVnICY9IH4oZHAtPmVu
-YWJsZV9tYXNrKTsKPiAtCQlfX3Jhd193cml0ZWwocmVnLCBkcC0+cGh5X2FkZHIpOwo+IC0JfQo+
-ICB9Cj4gIAo+ICBzdGF0aWMgdm9pZCBleHlub3NfZHBfcG93ZXJvbihzdHJ1Y3QgZXh5bm9zX2Ry
-bV9kaXNwbGF5ICpkaXNwbGF5KQo+IEBAIC0xMjEwLDQ0ICsxMTk2LDYgQEAgc3RhdGljIHN0cnVj
-dCB2aWRlb19pbmZvICpleHlub3NfZHBfZHRfcGFyc2VfcGRhdGEoc3RydWN0IGRldmljZSAqZGV2
-KQo+ICAJcmV0dXJuIGRwX3ZpZGVvX2NvbmZpZzsKPiAgfQo+ICAKPiAtc3RhdGljIGludCBleHlu
-b3NfZHBfZHRfcGFyc2VfcGh5ZGF0YShzdHJ1Y3QgZXh5bm9zX2RwX2RldmljZSAqZHApCj4gLXsK
-PiAtCXN0cnVjdCBkZXZpY2Vfbm9kZSAqZHBfcGh5X25vZGUgPSBvZl9ub2RlX2dldChkcC0+ZGV2
-LT5vZl9ub2RlKTsKPiAtCXUzMiBwaHlfYmFzZTsKPiAtCWludCByZXQgPSAwOwo+IC0KPiAtCWRw
-X3BoeV9ub2RlID0gb2ZfZmluZF9ub2RlX2J5X25hbWUoZHBfcGh5X25vZGUsICJkcHR4LXBoeSIp
-Owo+IC0JaWYgKCFkcF9waHlfbm9kZSkgewo+IC0JCWRwLT5waHkgPSBkZXZtX3BoeV9nZXQoZHAt
-PmRldiwgImRwIik7Cj4gLQkJcmV0dXJuIFBUUl9FUlJfT1JfWkVSTyhkcC0+cGh5KTsKPiAtCX0K
-PiAtCj4gLQlpZiAob2ZfcHJvcGVydHlfcmVhZF91MzIoZHBfcGh5X25vZGUsICJyZWciLCAmcGh5
-X2Jhc2UpKSB7Cj4gLQkJZGV2X2VycihkcC0+ZGV2LCAiZmFpbGVkIHRvIGdldCByZWcgZm9yIGRw
-dHgtcGh5XG4iKTsKPiAtCQlyZXQgPSAtRUlOVkFMOwo+IC0JCWdvdG8gZXJyOwo+IC0JfQo+IC0K
-PiAtCWlmIChvZl9wcm9wZXJ0eV9yZWFkX3UzMihkcF9waHlfbm9kZSwgInNhbXN1bmcsZW5hYmxl
-LW1hc2siLAo+IC0JCQkJJmRwLT5lbmFibGVfbWFzaykpIHsKPiAtCQlkZXZfZXJyKGRwLT5kZXYs
-ICJmYWlsZWQgdG8gZ2V0IGVuYWJsZS1tYXNrIGZvciBkcHR4LXBoeVxuIik7Cj4gLQkJcmV0ID0g
-LUVJTlZBTDsKPiAtCQlnb3RvIGVycjsKPiAtCX0KPiAtCj4gLQlkcC0+cGh5X2FkZHIgPSBpb3Jl
-bWFwKHBoeV9iYXNlLCBTWl80KTsKPiAtCWlmICghZHAtPnBoeV9hZGRyKSB7Cj4gLQkJZGV2X2Vy
-cihkcC0+ZGV2LCAiZmFpbGVkIHRvIGlvcmVtYXAgZHAtcGh5XG4iKTsKPiAtCQlyZXQgPSAtRU5P
-TUVNOwo+IC0JCWdvdG8gZXJyOwo+IC0JfQo+IC0KPiAtZXJyOgo+IC0Jb2Zfbm9kZV9wdXQoZHBf
-cGh5X25vZGUpOwo+IC0KPiAtCXJldHVybiByZXQ7Cj4gLX0KPiAtCj4gIHN0YXRpYyBpbnQgZXh5
-bm9zX2RwX2R0X3BhcnNlX3BhbmVsKHN0cnVjdCBleHlub3NfZHBfZGV2aWNlICpkcCkKPiAgewo+
-ICAJaW50IHJldDsKPiBAQCAtMTI3Nyw5ICsxMjI1LDIxIEBAIHN0YXRpYyBpbnQgZXh5bm9zX2Rw
-X2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICptYXN0ZXIsIHZvaWQgKmRh
-dGEpCj4gIAlpZiAoSVNfRVJSKGRwLT52aWRlb19pbmZvKSkKPiAgCQlyZXR1cm4gUFRSX0VSUihk
-cC0+dmlkZW9faW5mbyk7Cj4gIAo+IC0JcmV0ID0gZXh5bm9zX2RwX2R0X3BhcnNlX3BoeWRhdGEo
-ZHApOwo+IC0JaWYgKHJldCkKPiAtCQlyZXR1cm4gcmV0Owo+ICsJZHAtPnBoeSA9IGRldm1fcGh5
-X2dldChkcC0+ZGV2LCAiZHAiKTsKPiArCWlmIChJU19FUlIoZHAtPnBoeSkpIHsKPiArCQlkZXZf
-ZXJyKGRwLT5kZXYsICJubyBEUCBwaHkgY29uZmlndXJlZFxuIik7Cj4gKwkJcmV0ID0gUFRSX0VS
-UihkcC0+cGh5KTsKPiArCQlpZiAocmV0KSB7Cj4gKwkJCS8qCj4gKwkJCSAqIHBoeSBpdHNlbGYg
-aXMgbm90IGVuYWJsZWQsIHNvIHdlIGNhbiBtb3ZlIGZvcndhcmQKPiArCQkJICogYXNzaWduaW5n
-IE5VTEwgdG8gcGh5IHBvaW50ZXIuCj4gKwkJCSAqLwo+ICsJCQlpZiAocmV0ID09IC1FTk9TWVMg
-fHwgcmV0ID09IC1FTk9ERVYpCj4gKwkJCQlkcC0+cGh5ID0gTlVMTDsKPiArCQkJZWxzZQo+ICsJ
-CQkJcmV0dXJuIHJldDsKPiArCQl9Cj4gKwl9Cj4gIAo+ICAJaWYgKCFkcC0+cGFuZWwpIHsKPiAg
-CQlyZXQgPSBleHlub3NfZHBfZHRfcGFyc2VfcGFuZWwoZHApOwo+IGRpZmYgLS1naXQgYS9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcF9jb3JlLmgKPiBpbmRleCBhMWFlZTY5Li42NDI2MjAxIDEwMDY0NAo+IC0t
-LSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuaAo+ICsrKyBiL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuaAo+IEBAIC0xNTMsOCArMTUzLDYgQEAg
-c3RydWN0IGV4eW5vc19kcF9kZXZpY2Ugewo+ICAJc3RydWN0IGNsawkJKmNsb2NrOwo+ICAJdW5z
-aWduZWQgaW50CQlpcnE7Cj4gIAl2b2lkIF9faW9tZW0JCSpyZWdfYmFzZTsKPiAtCXZvaWQgX19p
-b21lbQkJKnBoeV9hZGRyOwo+IC0JdW5zaWduZWQgaW50CQllbmFibGVfbWFzazsKPiAgCj4gIAlz
-dHJ1Y3QgdmlkZW9faW5mbwkqdmlkZW9faW5mbzsKPiAgCXN0cnVjdCBsaW5rX3RyYWluCWxpbmtf
-dHJhaW47Cj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
-aHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Sat, Nov 8, 2014 at 6:46 PM, Amit Daniel Kachhap
+<amit.daniel@samsung.com> wrote:
+> This patch series[1 - 6] performs,
+>
+> 1) Moves pmu driver to driver/soc/samsung folder. Some discussion happened about
+>    this in the v1 version. Finally adding it in driver/soc folder as it too SoC
+>    specific and not a general driver. Entire discussion can be found here (A).
+> 2) Registers this driver as MFD client driver. This will be used by clients like exynos pm
+>    sleep and pm domain driver.
+> 3) Add exynos7 PMU support.
+>
+> Changes from V1:
+> * Move pmu driver in driver/soc/samsung folder
+> * Removed the power domain features. They will posted as a separate series.
+> * Added exynos7 PMU support.
+> * Link to v1 can be found here (B)
+>
+> This patch has dependency on following patches posted earlier by Pankaj (C),
+> which is accepted by maintainer.
+>
+> Patch 6 was earlier posted by Abhilash (D) which has been reposted here with some
+> extra changes.
+>
+> This complete patch series is rebased on linux-next.
+>
+> (A) - http://www.spinics.net/lists/linux-samsung-soc/msg38444.html
+> (B) - http://www.spinics.net/lists/linux-samsung-soc/msg38442.html
+> (C) - https://lkml.org/lkml/2014/10/6/581
+> (D) - http://www.spinics.net/lists/arm-kernel/msg358230.html
+>
+> Amit Daniel Kachhap (6):
+>   ARM: EXYNOS: Move pmu specific header files under "linux/soc/samsung"
+>   drivers: soc: Add support for Exynos PMU driver
+>   drivers: soc: samsung: Fix a spelling mistake
+>   soc: samsung: exynos-pmu: Register exynos-pmu driver as a mfd driver
+>   driver: soc: exynos-pmu: Add an API to be called after wakeup
+>   drivers: soc: samsung: Add support for Exynos7 pmu
+>
+>  .../devicetree/bindings/arm/samsung/pmu.txt        |    1 +
+>  arch/arm/mach-exynos/Makefile                      |    2 +-
+>  arch/arm/mach-exynos/exynos.c                      |    2 +-
+>  arch/arm/mach-exynos/mcpm-exynos.c                 |    2 +-
+>  arch/arm/mach-exynos/platsmp.c                     |    2 +-
+>  arch/arm/mach-exynos/pm.c                          |    4 +-
+>  arch/arm/mach-exynos/regs-pmu.h                    |  335 -----------
+>  arch/arm/mach-exynos/suspend.c                     |    3 +-
+>  drivers/soc/Kconfig                                |    1 +
+>  drivers/soc/Makefile                               |    1 +
+>  drivers/soc/samsung/Kconfig                        |   19 +
+>  drivers/soc/samsung/Makefile                       |    1 +
+>  .../pmu.c => drivers/soc/samsung/exynos-pmu.c      |  471 ++++++++++++++-
+
+Hi Olof/Kukjin,
+
+I am not sure that driver/soc/samsung/* shall go in whose tree.
+I am preparing the next version so if any comment from your side
+please let me know.
+
+Regards,
+Amit
+
+>  .../linux/soc/samsung}/exynos-pmu.h                |    6 +
+>  include/linux/soc/samsung/exynos-regs-pmu.h        |  608 ++++++++++++++++++++
+>  15 files changed, 1109 insertions(+), 349 deletions(-)
+>  delete mode 100644 arch/arm/mach-exynos/regs-pmu.h
+>  create mode 100644 drivers/soc/samsung/Kconfig
+>  create mode 100644 drivers/soc/samsung/Makefile
+>  rename arch/arm/mach-exynos/pmu.c => drivers/soc/samsung/exynos-pmu.c (50%)
+>  rename {arch/arm/mach-exynos => include/linux/soc/samsung}/exynos-pmu.h (78%)
+>  create mode 100644 include/linux/soc/samsung/exynos-regs-pmu.h
+>
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
