@@ -1,130 +1,60 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v3] usb: dwc2/gadget: report disconnect event from 'end
- session' irq
-Date: Fri, 14 Nov 2014 11:31:57 +0100
-Message-ID: <5465DA1D.1070007@samsung.com>
-References: <1413801940-31086-2-git-send-email-m.szyprowski@samsung.com>
- <1414742668-4107-1-git-send-email-m.szyprowski@samsung.com>
- <A2CA0424C0A6F04399FB9E1CD98E0304844E7F53@US01WEMBX2.internal.synopsys.com>
- <5464B496.9010000@samsung.com>
- <A2CA0424C0A6F04399FB9E1CD98E0304844EB622@US01WEMBX2.internal.synopsys.com>
+From: Padma Venkat <padma.kvr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] spi: s3c64xx: add support for exynos7 SPI controller
+Date: Fri, 14 Nov 2014 16:46:06 +0530
+Message-ID: <CAAgF-BcARoRZv=BPqQWyp6rJQQ=CE0FEUz_2vgQSpeZyLwbkBw@mail.gmail.com>
+References: <1415267509-16653-1-git-send-email-padma.v@samsung.com>
+	<20141106102636.GT8509@sirena.org.uk>
+	<CAAgF-BfGwcNzMx0meFVkJqNMTbQ4_PP1PZ3i6edOm6U3bc26_Q@mail.gmail.com>
+	<20141107101310.GA8509@sirena.org.uk>
+	<CAAgF-Bd=S7-PoA7GZoy87W9Dem3OXVhc1tL-eyWEAHvF0LPTKQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:42714 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755064AbaKNKcB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Nov 2014 05:32:01 -0500
-In-reply-to: <A2CA0424C0A6F04399FB9E1CD98E0304844EB622@US01WEMBX2.internal.synopsys.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAAgF-Bd=S7-PoA7GZoy87W9Dem3OXVhc1tL-eyWEAHvF0LPTKQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Paul Zimmerman <Paul.Zimmerman@synopsys.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Felipe Balbi <balbi@ti.com>
 
+Hi Mark,
 
-On 2014-11-13 21:50, Paul Zimmerman wrote:
->> From: Marek Szyprowski [mailto:m.szyprowski@samsung.com]
->> Sent: Thursday, November 13, 2014 5:40 AM
+On 11/10/14, Padma Venkat <padma.kvr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Hi Mark,
+>
+> On 11/7/14, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+>> On Fri, Nov 07, 2014 at 02:01:57PM +0530, Padma Venkat wrote:
 >>
->> On 2014-10-31 19:15, Paul Zimmerman wrote:
->>>> From: Marek Szyprowski [mailto:m.szyprowski@samsung.com]
->>>> Sent: Friday, October 31, 2014 1:04 AM
->>>> To: linux-usb@vger.kernel.org; linux-samsung-soc@vger.kernel.org
->>>> Cc: Marek Szyprowski; Kyungmin Park; Robert Baldyga; Paul Zimmerman; Krzysztof Kozlowski; Felipe
->> Balbi
->>>> Subject: [PATCH v3] usb: dwc2/gadget: report disconnect event from 'end session' irq
->>>>
->>>> This patch adds a call to s3c_hsotg_disconnect() from 'end session'
->>>> interrupt (GOTGINT_SES_END_DET) to correctly notify gadget subsystem
->>>> about unplugged usb cable. 'disconnected' interrupt (DISCONNINT) might
->>>> look a bit more suitable for this event, but it is asserted only in
->>>> host mode, so in device mode we need to use something else.
->>>>
->>>> Additional check has been added in s3c_hsotg_disconnect() function
->>>> to ensure that the event is reported only once after successful device
->>>> enumeration.
->>>>
->>>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->>>> ---
->>>>    drivers/usb/dwc2/core.h   |  1 +
->>>>    drivers/usb/dwc2/gadget.c | 10 ++++++++++
->>>>    2 files changed, 11 insertions(+)
->>>>
->>>> diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
->>>> index 55c90c53f2d6..b42df32e7737 100644
->>>> --- a/drivers/usb/dwc2/core.h
->>>> +++ b/drivers/usb/dwc2/core.h
->>>> @@ -212,6 +212,7 @@ struct s3c_hsotg {
->>>>    	struct usb_gadget       gadget;
->>>>    	unsigned int            setup;
->>>>    	unsigned long           last_rst;
->>>> +	unsigned int		address;
->>>>    	struct s3c_hsotg_ep     *eps;
->>>>    };
->>>>
->>>> diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
->>>> index fcd2bb55ccca..6304efba11aa 100644
->>>> --- a/drivers/usb/dwc2/gadget.c
->>>> +++ b/drivers/usb/dwc2/gadget.c
->>>> @@ -1114,6 +1114,7 @@ static void s3c_hsotg_process_control(struct s3c_hsotg *hsotg,
->>>>    				 DCFG_DEVADDR_SHIFT) & DCFG_DEVADDR_MASK;
->>>>    			writel(dcfg, hsotg->regs + DCFG);
->>>>
->>>> +			hsotg->address = ctrl->wValue;
->>>>    			dev_info(hsotg->dev, "new address %d\n", ctrl->wValue);
->>>>
->>>>    			ret = s3c_hsotg_send_reply(hsotg, ep0, NULL, 0);
->>>> @@ -2031,6 +2032,10 @@ static void s3c_hsotg_disconnect(struct s3c_hsotg *hsotg)
->>>>    {
->>>>    	unsigned ep;
->>>>
->>>> +	if (!hsotg->address)
->>>> +		return;
->>>> +
->>>> +	hsotg->address = 0;
->>>>    	for (ep = 0; ep < hsotg->num_of_eps; ep++)
->>>>    		kill_all_requests(hsotg, &hsotg->eps[ep], -ESHUTDOWN, true);
->>>>
->>>> @@ -2290,6 +2295,11 @@ irq_retry:
->>>>    		dev_info(hsotg->dev, "OTGInt: %08x\n", otgint);
->>>>
->>>>    		writel(otgint, hsotg->regs + GOTGINT);
->>>> +
->>>> +		if (otgint & GOTGINT_SES_END_DET) {
->>>> +			s3c_hsotg_disconnect(hsotg);
->>>> +			hsotg->gadget.speed = USB_SPEED_UNKNOWN;
->>>> +		}
->>>>    	}
->>>>
->>>>    	if (gintsts & GINTSTS_SESSREQINT) {
->>> I don't think this is right. The host can send control requests to
->>> the device before it sends a SetAddress to change from the default
->>> address of 0. So if a GOTGINT_SES_END_DET happens before the
->>> SetAddress, it will be ignored.
->>>
->>> Or am I missing something?
->> Well, right. However before finishing enumeration (setting the address)
->> host usually
->> only retrieves some usb descriptors what doesn't change the state of the
->> gadget.
->> Right now we always reported 'disconnected' event before setting the new
->> address,
->> what is a bit overkill (in some cases gadget driver got this even more
->> than once).
->> The above code handles all cases correctly and reports disconnect event
->> only once.
-> Well, if the disconnect happens before the SetAddress, the disconnect
-> won't be reported at all. Unless I'm reading the code wrong.
+>>> CS can also be controlled automatically by setting AUTO_N_MANUAL to 1
+>>> in CS_CFG. When it is auto CS automatically toggles between packet to
+>>> packet. NCS_TIME_COUNT in CS_CFG controls the inactive period. The
+>>> driver by default uses manual mode. But on exynos7 the manual mode is
+>>> removed.
+>>
+>> OK, but what's a packet here?
+>
+> Packet is either 1 byte or 4 bytes size depends on width of the SPI
+> channel.
+>
+>>
+>>> I tested the driver with wm5110 codec.
+>>
+>> Did you try firmware downloads or something else that generates multiple
+>> transfers in a message?  Normal register writes will use a single
+>> transfer so I'd expect them to just work.
+>>
+>
+> OK. I don't have provision to test on this board. I will try to test
+> on older boards by disabling manual mode.
+>
 
-Right, although this is not really an issue for any gadget driver. 
-However if you
-prefer to report disconnect event more than once, I'm okay and I will 
-remove the
-check based on the device address.
+I tested on exynos5420 peach-pit by enabling auto mode. I used dd
+command to read 1MB data from spi flash and I compared the result with
+manual mode. Both are same.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+> Thanks
+> padma
+>
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
