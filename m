@@ -1,42 +1,83 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: [PATCH 2/2] drm/exynos: use irq_flags instead of triggering
-Date: Fri, 14 Nov 2014 11:36:04 +0900
-Message-ID: <1415932564-16463-3-git-send-email-jy0922.shim@samsung.com>
-References: <1415932564-16463-1-git-send-email-jy0922.shim@samsung.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: exynos5250/arndale: failed to set cpu voltage
+Date: Fri, 14 Nov 2014 08:20:12 +0530
+Message-ID: <CAM4voamPyTpv5TPtN1Z=ZL3Qmy806qFxrAaU0kiqJmV56cyJiw@mail.gmail.com>
+References: <CANMBJr4ZgEZDAtdfuLhCXppCGHnHhgmT1aFUi+=kJb2PdkqhGg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1415932564-16463-1-git-send-email-jy0922.shim@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f177.google.com ([209.85.216.177]:45880 "EHLO
+	mail-qc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933524AbaKNCuN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 13 Nov 2014 21:50:13 -0500
+Received: by mail-qc0-f177.google.com with SMTP id l6so12243938qcy.36
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Nov 2014 18:50:12 -0800 (PST)
+In-Reply-To: <CANMBJr4ZgEZDAtdfuLhCXppCGHnHhgmT1aFUi+=kJb2PdkqhGg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Tyler Baker <tyler.baker@linaro.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-VGhlIGRybV9oYW5kbGVfdmJsYW5rIHNob3VsZCBiZSBjYWxsZWQgd2hlbmV2ZXIgYmUgdnN5bmMs
-IHRlIGludGVycnVwdAptZWFucyB2c3luYyBvbiBpODAgaW50ZXJmYWNlLgoKU2lnbmVkLW9mZi1i
-eTogSm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcuY29tPgotLS0KQmFzZWQgb24g
-bGFzdGVzdCBleHlub3MtZHJtLW5leHQgYnJhbmNoIGFuZCBwYXRjaCBvZiBZb3VuZ2p1biBDaG8K
-KCJkcm0vZXh5bm9zOiBmaW1kOiBtb3ZlIGhhbmRsZSB2YmxhbmsgcG9zaXRpb24gaW4gVEUgaGFu
-ZGxlciIpLgoKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgfCAyICst
-CiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1n
-aXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIGIvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwppbmRleCAwMzNiMThiLi41Y2M1N2Y3IDEw
-MDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCisrKyBi
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKQEAgLTk4NCw3ICs5ODQs
-NyBAQCBzdGF0aWMgdm9pZCBmaW1kX3RlX2hhbmRsZXIoc3RydWN0IGV4eW5vc19kcm1fbWFuYWdl
-ciAqbWdyKQogCQl3YWtlX3VwKCZjdHgtPndhaXRfdnN5bmNfcXVldWUpOwogCX0KIAotCWlmICgh
-YXRvbWljX3JlYWQoJmN0eC0+dHJpZ2dlcmluZykpCisJaWYgKHRlc3RfYml0KDAsICZjdHgtPmly
-cV9mbGFncykpCiAJCWRybV9oYW5kbGVfdmJsYW5rKGN0eC0+ZHJtX2RldiwgY3R4LT5waXBlKTsK
-IH0KIAotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+Hello Tyler,
+
+On Fri, Nov 14, 2014 at 3:30 AM, Tyler Baker <tyler.baker@linaro.org> wrote:
+> In recent upstream kernels, exynos5420-based arndale boards have been
+
+Boot logs are only for 5250, typo ?
+
+> producing boot-time errors due to the fact they failed to set the cpu
+> voltage. These message flood the serial console even after userspace
+> has been loaded, yielding the console unusable without forcing a lower
+> log level. These errors are produced _only_ with the
+> multi_v7_defconfig and they are _not_ present
+> with exynos_defconfig. Here are some recent boot logs showing the boot errors:
+>
+> mainline/v3.18-rc4-65-g2c54396:
+>     multi_v7_defconfig:
+>         http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc4-65-g2c54396/arm-multi_v7_defconfig/boot-exynos5250-arndale.html
+>     exynos_defconfig:
+>         http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc4-65-g2c54396/arm-exynos_defconfig/boot-exynos5250-arndale.html
+
+>From the boot logs it appears that the S5M8767 regulator does not get
+probed with multi_v7_defconfig and you get the following messages:
+
+[    1.147412] deviceless supply vdd_arm not found, using dummy regulator
+[    1.152669] exynos-cpufreq exynos-cpufreq: failed to set cpu
+voltage to 1300000
+[    1.159771] cpufreq: __target_index: Failed to change cpu frequency: -22
+
+Both multi_v7_defconfig and exynos_defconfig have the S5M8767
+regulator enabled. However multi_v7_defconfig does not have the S3C
+I2C controller enabled while exynos_defconfig does.
+Can you re-check after enabling CONFIG_I2C_S3C2410 ?
+
+Regards,
+Abhilash
+
+>
+> next/next-20141113:
+>     multi_v7_defconfig:
+>         http://storage.armcloud.us/kernel-ci/next/next-20141113/arm-multi_v7_defconfig/boot-exynos5250-arndale.html
+>     exynos_defconfig:
+>         http://storage.armcloud.us/kernel-ci/next/next-20141113/arm-exynos_defconfig/boot-exynos5250-arndale.html
+>
+> arm-soc/v3.18-rc4-185-gbfcf8f9:
+>     multi_v7_defconfig:
+>         http://storage.armcloud.us/kernel-ci/arm-soc/v3.18-rc4-185-gbfcf8f9/arm-multi_v7_defconfig/boot-exynos5250-arndale.html
+>     exynos_defconfig:
+>         http://storage.armcloud.us/kernel-ci/arm-soc/v3.18-rc4-185-gbfcf8f9/arm-exynos_defconfig/boot-exynos5250-arndale.html
+>
+> Cheers,
+>
+> --
+> Tyler Baker
+> Tech Lead, LAVA
+> Linaro.org | Open source software for ARM SoCs
+> Follow Linaro: http://www.facebook.com/pages/Linaro
+> http://twitter.com/#!/linaroorg - http://www.linaro.org/linaro-blog
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
