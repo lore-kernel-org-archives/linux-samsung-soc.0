@@ -1,110 +1,99 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2 1/2] drm/exynos: Fix DSI resuming fail because power
- domain being off
-Date: Fri, 14 Nov 2014 11:56:24 +0900
-Message-ID: <54656F58.6030706@samsung.com>
-References: <1415368439-23642-1-git-send-email-k.kozlowski@samsung.com>
- <1415368439-23642-2-git-send-email-k.kozlowski@samsung.com>
+Subject: Re: [PATCH v2] drm/exynos: add has_vtsel flag
+Date: Fri, 14 Nov 2014 11:56:45 +0900
+Message-ID: <54656F6D.1040108@samsung.com>
+References: <1415932564-16463-1-git-send-email-jy0922.shim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:62521 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933665AbaKNC40 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:65121 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933665AbaKNC4r (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Nov 2014 21:56:26 -0500
-In-reply-to: <1415368439-23642-2-git-send-email-k.kozlowski@samsung.com>
+	Thu, 13 Nov 2014 21:56:47 -0500
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NF0004MFDIMC8B0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 14 Nov 2014 11:56:46 +0900 (KST)
+In-reply-to: <1415932564-16463-1-git-send-email-jy0922.shim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Kevin Hilman <khilman@kernel.org>
+To: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, yj44.cho@samsung.com
 
-On 2014=EB=85=84 11=EC=9B=94 07=EC=9D=BC 22:53, Krzysztof Kozlowski wro=
-te:
-> During system resume from suspend to RAM the Exynos DRM driver forced
-> CRTC mode thus turning display on (DPMS_ON). This lead to runtime res=
-uming
-> of DSI which failed because whole LCD power domain was off and it was
-> not allowed to turn on because of system resume in progress.
->=20
-> Forcing mode should not be needed and removing it solves this particu=
-lar
-> problem.
+On 2014=EB=85=84 11=EC=9B=94 14=EC=9D=BC 11:36, Joonyoung Shim wrote:
+> The exynos fimd provides video type selection bits from system regist=
+er
+> but exynos3 series don't has it, so needs has_vtsel flag and we can
+> distinguish whether set video type selection bits.
 
-only this patch, Applied.
+Applied.
 
 Thanks,
 Inki Dae
 
 >=20
-> This necessary fix for following scenario reproduced on Exynos DRM:
-> 1. Power domain is off before suspending the system.
-> 2. System is suspended to RAM.
-> 3. Resuming starts. The Exynos DRM driver resume callback is called.
-> 4. The Exynos DRM driver calls drm_helper_resume_force_mode() which t=
-urns
->    on the screen by calling exynos_dsi_dpms with DRM_MODE_DPMS_ON.
-> 5. The Exynos DSI driver calls pm_runtime_get. The driver runtime
->    resumes and this should turn LCD power domain on.
-> 6. Unfortunately the domain cannot be turned on because system resume=
- is
->    in progress and genpd->prepared_count is positive.
->=20
-> Steps to reproduce:
-> 1. Add runtime PM to Exynos DSI driver.
-> 2. Build Exynos DRM/FB without FRAMEBUFFER_CONSOLE.
-> 3. Enable the connector and screen (e.g. with modeset-vsync).
-> 4. echo 3 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
-> 5. echo mem > /sys/power/state
-> 6. Resume.
-> [   77.712469] PM: early resume of devices complete after 3.854 msecs
-> [   77.712739] exynos-dsi 11c80000.dsi: pm_genpd_resume()
-> [   77.712758] exynos4-fimc 11800000.fimc: pm_genpd_resume()
-> [   77.712774] exynos4-fimc 11810000.fimc: pm_genpd_resume()
-> [   77.712787] exynos-drm-fimc 11820000.fimc: pm_genpd_resume()
-> [   77.712802] exynos-drm-fimc 11830000.fimc: pm_genpd_resume()
-> [   77.712815] s5p-mipi-csis 11880000.csis: pm_genpd_resume()
-> [   77.712829] s5p-mipi-csis 11890000.csis: pm_genpd_resume()
-> [   77.712843] exynos-fimc-lite 12390000.fimc-lite: pm_genpd_resume()
-> [   77.712856] exynos-fimc-lite 123a0000.fimc-lite: pm_genpd_resume()
-> [   77.713788] exynos4-fb 11c00000.fimd: pm_genpd_resume()
-> [   77.713912] wake disabled for irq 184
-> [   77.713923] wake disabled for irq 185
-> [   77.714082] wake disabled for irq 173
-> [   77.715676] wake disabled for irq 176
-> [   77.718540] exynos4-fb 11c00000.fimd: pm_genpd_runtime_resume()
-> [   77.718567] exynos4-fb 11c00000.fimd: state restore latency exceed=
-ed, new value 1708 ns
-> [   77.718636] exynos-dsi 11c80000.dsi: pm_genpd_runtime_resume()
-> [   77.892366] exynos-dsi 11c80000.dsi: PLL failed to stabilize
-> [   77.892377] exynos-dsi 11c80000.dsi: failed to configure DSI PLL
-> [   78.192168] exynos-dsi 11c80000.dsi: timeout waiting for reset
-> [   78.211578] exynos-dsi 11c80000.dsi: waiting for bus lanes timed o=
-ut
-> [   78.307173] exynos-dsi 11c80000.dsi: xfer timed out: d1 00 (null)
-> [   78.307190] panel_s6e8aa0 11c80000.dsi.0: error -110 reading dcs s=
-eq(0xd1)
-> [   78.307199] panel_s6e8aa0 11c80000.dsi.0: read id failed
->=20
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
 > ---
->  drivers/gpu/drm/exynos/exynos_drm_drv.c | 2 --
->  1 file changed, 2 deletions(-)
+> Changelog from v1:
+> - rebase on latest exynos-drm-next branch
+> - add has_vtsel for exynos4415
 >=20
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/dr=
-m/exynos/exynos_drm_drv.c
-> index d32165a7f862..8f7110c9d21f 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -200,8 +200,6 @@ static int exynos_drm_resume(struct drm_device *d=
-ev)
->  	}
->  	drm_modeset_unlock_all(dev);
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/d=
+rm/exynos/exynos_drm_fimd.c
+> index 5cc57f7..93b263e 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -96,6 +96,7 @@ struct fimd_driver_data {
+>  	unsigned int has_clksel:1;
+>  	unsigned int has_limited_fmt:1;
+>  	unsigned int has_vidoutcon:1;
+> +	unsigned int has_vtsel:1;
+>  };
 > =20
-> -	drm_helper_resume_force_mode(dev);
-> -
->  	return 0;
->  }
+>  static struct fimd_driver_data s3c64xx_fimd_driver_data =3D {
+> @@ -118,6 +119,7 @@ static struct fimd_driver_data exynos4_fimd_drive=
+r_data =3D {
+>  	.lcdblk_vt_shift =3D 10,
+>  	.lcdblk_bypass_shift =3D 1,
+>  	.has_shadowcon =3D 1,
+> +	.has_vtsel =3D 1,
+>  };
 > =20
+>  static struct fimd_driver_data exynos4415_fimd_driver_data =3D {
+> @@ -127,6 +129,7 @@ static struct fimd_driver_data exynos4415_fimd_dr=
+iver_data =3D {
+>  	.lcdblk_bypass_shift =3D 1,
+>  	.has_shadowcon =3D 1,
+>  	.has_vidoutcon =3D 1,
+> +	.has_vtsel =3D 1,
+>  };
+> =20
+>  static struct fimd_driver_data exynos5_fimd_driver_data =3D {
+> @@ -136,6 +139,7 @@ static struct fimd_driver_data exynos5_fimd_drive=
+r_data =3D {
+>  	.lcdblk_bypass_shift =3D 15,
+>  	.has_shadowcon =3D 1,
+>  	.has_vidoutcon =3D 1,
+> +	.has_vtsel =3D 1,
+>  };
+> =20
+>  struct fimd_win_data {
+> @@ -354,7 +358,8 @@ static void fimd_commit(struct exynos_drm_manager=
+ *mgr)
+>  		writel(0, timing_base + I80IFCONFBx(0));
+> =20
+>  		/* set video type selection to I80 interface */
+> -		if (ctx->sysreg && regmap_update_bits(ctx->sysreg,
+> +		if (driver_data->has_vtsel && ctx->sysreg &&
+> +				regmap_update_bits(ctx->sysreg,
+>  					driver_data->lcdblk_offset,
+>  					0x3 << driver_data->lcdblk_vt_shift,
+>  					0x1 << driver_data->lcdblk_vt_shift)) {
 >=20
