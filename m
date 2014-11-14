@@ -1,98 +1,120 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v4] usb: dwc2/gadget: rework disconnect event handling
-Date: Fri, 14 Nov 2014 13:20:07 +0100
-Message-ID: <1415967607-6174-1-git-send-email-m.szyprowski@samsung.com>
-References: <5465EEF3.7060902@samsung.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <5465EEF3.7060902-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Paul Zimmerman <paulz-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v8 0/7] Enable L2 cache support on Exynos4210/4x12 SoCs
+Date: Fri, 14 Nov 2014 15:11:58 +0100
+Message-ID: <54660DAE.9090601@samsung.com>
+References: <1415884694-5868-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:40722 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754801AbaKNOMD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 14 Nov 2014 09:12:03 -0500
+In-reply-to: <1415884694-5868-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, lauraa@codeaurora.org, linux-omap@vger.kernel.org, linus.walleij@linaro.org, tony@atomide.com, drake@endlessm.com, loeliger@gmail.com, Mark Rutland <mark.rutland@arm.com>
 
-This patch adds a call to s3c_hsotg_disconnect() from 'end session'
-interrupt (GOTGINT_SES_END_DET) to correctly notify gadget subsystem
-about unplugged usb cable. DISCONNINT interrupt cannot be used for this
-purpose, because it is asserted only in host mode.
+Hello,
 
-To avoid reporting disconnect event more than once, a disconnect call has
-been moved from USB_REQ_SET_ADDRESS handling function to SESSREQINT
-interrupt. This way driver ensures that disconnect event is reported
-either when usb cable is unplugged or every time the host starts a new
-session.
+On 2014-11-13 14:18, Marek Szyprowski wrote:
+> This is an updated patchset, which intends to add support for L2 cache
+> on Exynos4 SoCs on boards running under secure firmware, which requires
+> certain initialization steps to be done with help of firmware, as
+> selected registers are writable only from secure mode.
+>
+> First four patches extend existing support for secure write in L2C driver
+> to account for design of secure firmware running on Exynos. Namely:
+>   1) direct read access to certain registers is needed on Exynos, because
+>      secure firmware calls set several registers at once,
+>   2) not all boards are running secure firmware, so .write_sec callback
+>      needs to be installed in Exynos firmware ops initialization code,
+>   3) write access to {DATA,TAG}_LATENCY_CTRL registers fron non-secure world
+>      is not allowed and so must use l2c_write_sec as well,
+>   4) on certain boards, default value of prefetch register is incorrect
+>      and must be overridden at L2C initialization.
+> For boards running with firmware that provides access to individual
+> L2C registers this series should introduce no functional changes. However
+> since the driver is widely used on other platforms I'd like to kindly ask
+> any interested people for testing.
+>
+> Further three patches add implementation of .write_sec and .configure
+> callbacks for Exynos secure firmware and necessary DT nodes to enable
+> L2 cache.
+>
+> Changes in this version tested on Exynos4412-based TRATS2 and OdroidU3+
+> boards (both with secure firmware). There should be no functional change
+> for Exynos boards running without secure firmware. I do not have access
+> to affected non-Exynos boards, so I could not test on them.
+>
+>
+> Depends on:
+>   - [PATCH v3 0/5] Firmware-assisted suspend/resume of Exynos SoCs
+>     (https://lkml.org/lkml/2014/8/26/445)
+>     available in samsung/pm2 branch in
+>     git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git
+>   - L2C patches merged to v3.18-rc3
 
-Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- drivers/usb/dwc2/core.h   |  1 +
- drivers/usb/dwc2/gadget.c | 13 +++++++++++--
- 2 files changed, 12 insertions(+), 2 deletions(-)
+I assume that after all comments from previous versions, no more changes 
+are needed
+to this patchset and I would really like to have it queued to v3.19.
 
-diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
-index 55c90c53f2d6..78b9090ebf71 100644
---- a/drivers/usb/dwc2/core.h
-+++ b/drivers/usb/dwc2/core.h
-@@ -210,6 +210,7 @@ struct s3c_hsotg {
- 	u8                      ctrl_buff[8];
- 
- 	struct usb_gadget       gadget;
-+	unsigned int		session:1;
- 	unsigned int            setup;
- 	unsigned long           last_rst;
- 	struct s3c_hsotg_ep     *eps;
-diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-index fcd2bb55ccca..c7f68dc1cf6b 100644
---- a/drivers/usb/dwc2/gadget.c
-+++ b/drivers/usb/dwc2/gadget.c
-@@ -1029,7 +1029,6 @@ static int s3c_hsotg_process_req_feature(struct s3c_hsotg *hsotg,
- }
- 
- static void s3c_hsotg_enqueue_setup(struct s3c_hsotg *hsotg);
--static void s3c_hsotg_disconnect(struct s3c_hsotg *hsotg);
- 
- /**
-  * s3c_hsotg_stall_ep0 - stall ep0
-@@ -1107,7 +1106,6 @@ static void s3c_hsotg_process_control(struct s3c_hsotg *hsotg,
- 	if ((ctrl->bRequestType & USB_TYPE_MASK) == USB_TYPE_STANDARD) {
- 		switch (ctrl->bRequest) {
- 		case USB_REQ_SET_ADDRESS:
--			s3c_hsotg_disconnect(hsotg);
- 			dcfg = readl(hsotg->regs + DCFG);
- 			dcfg &= ~DCFG_DEVADDR_MASK;
- 			dcfg |= (le16_to_cpu(ctrl->wValue) <<
-@@ -2031,6 +2029,10 @@ static void s3c_hsotg_disconnect(struct s3c_hsotg *hsotg)
- {
- 	unsigned ep;
- 
-+	if (!hsotg->session)
-+		return;
-+
-+	hsotg->session = 0;
- 	for (ep = 0; ep < hsotg->num_of_eps; ep++)
- 		kill_all_requests(hsotg, &hsotg->eps[ep], -ESHUTDOWN, true);
- 
-@@ -2290,11 +2292,18 @@ irq_retry:
- 		dev_info(hsotg->dev, "OTGInt: %08x\n", otgint);
- 
- 		writel(otgint, hsotg->regs + GOTGINT);
-+
-+		if (otgint & GOTGINT_SES_END_DET) {
-+			s3c_hsotg_disconnect(hsotg);
-+			hsotg->gadget.speed = USB_SPEED_UNKNOWN;
-+		}
- 	}
- 
- 	if (gintsts & GINTSTS_SESSREQINT) {
- 		dev_dbg(hsotg->dev, "%s: SessReqInt\n", __func__);
- 		writel(GINTSTS_SESSREQINT, hsotg->regs + GINTSTS);
-+		s3c_hsotg_disconnect(hsotg);
-+		hsotg->session = 1;
- 	}
- 
- 	if (gintsts & GINTSTS_ENUMDONE) {
+Arnd, Olof: could you take this patchset thought arm-soc tree? It already
+contains all dependencies.
+
+Kukjin: could you ack this patchset?
+
+> Changelog:
+> Changes since v7:
+> (https://lkml.org/lkml/2014/10/29/158)
+> - rebased onto arm-soc/for-next kernel tree (depends on patches merged to
+>    v3.18-rc3 and arm-soc/samsung/pm2 branch)
+> - removed 'ARM: l2c: unify L2C-310 OF initialization error messages' patch
+>    (no longer needed)
+>
+> Changes since v6:
+> (https://lkml.org/lkml/2014/10/27/233)
+> - changed PL310 to L2C-310 prefix in error messages
+> - added patch shortening the error message about incorrect associativity
+>
+> Changes since v5:
+> (https://lkml.org/lkml/2014/9/24/364)
+> - rebased onto v3.18-rc2
+> - added error message about missing properties values
+>
+> Changes since v4:
+> (https://lkml.org/lkml/2014/8/26/461)
+>   - rewrote the code accessing l2x0_saved_regs from assembly code
+>   - added comment and reworked unconditional call to SMC_CMD_L2X0INVALL
+>
+>
+> Patch summary:
+>
+> Tomasz Figa (7):
+>    ARM: l2c: Refactor the driver to use commit-like interface
+>    ARM: l2c: Add interface to ask hypervisor to configure L2C
+>    ARM: l2c: Get outer cache .write_sec callback from mach_desc only if
+>      not NULL
+>    ARM: l2c: Add support for overriding prefetch settings
+>    ARM: EXYNOS: Add .write_sec outer cache callback for L2C-310
+>    ARM: EXYNOS: Add support for non-secure L2X0 resume
+>    ARM: dts: exynos4: Add nodes for L2 cache controller
+>
+>   Documentation/devicetree/bindings/arm/l2cc.txt |  10 +
+>   arch/arm/boot/dts/exynos4210.dtsi              |   9 +
+>   arch/arm/boot/dts/exynos4x12.dtsi              |  14 ++
+>   arch/arm/include/asm/outercache.h              |   3 +
+>   arch/arm/kernel/irq.c                          |   3 +-
+>   arch/arm/mach-exynos/firmware.c                |  50 +++++
+>   arch/arm/mach-exynos/sleep.S                   |  46 +++++
+>   arch/arm/mm/cache-l2x0.c                       | 270 ++++++++++++++++---------
+>   8 files changed, 309 insertions(+), 96 deletions(-)
+>
+
+Best regards
 -- 
-1.9.2
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
