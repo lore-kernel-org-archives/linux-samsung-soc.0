@@ -1,83 +1,122 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: exynos5250/arndale: failed to set cpu voltage
-Date: Fri, 14 Nov 2014 08:20:12 +0530
-Message-ID: <CAM4voamPyTpv5TPtN1Z=ZL3Qmy806qFxrAaU0kiqJmV56cyJiw@mail.gmail.com>
-References: <CANMBJr4ZgEZDAtdfuLhCXppCGHnHhgmT1aFUi+=kJb2PdkqhGg@mail.gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH v2 2/2] drm/exynos/dsi: Add runtime PM so LCD power domain
+ could be turned off
+Date: Fri, 14 Nov 2014 11:53:14 +0900
+Message-ID: <54656E9A.8040702@samsung.com>
+References: <1415368439-23642-1-git-send-email-k.kozlowski@samsung.com>
+ <1415368439-23642-3-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f177.google.com ([209.85.216.177]:45880 "EHLO
-	mail-qc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933524AbaKNCuN (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:22679 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933080AbaKNCxR convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Nov 2014 21:50:13 -0500
-Received: by mail-qc0-f177.google.com with SMTP id l6so12243938qcy.36
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Nov 2014 18:50:12 -0800 (PST)
-In-Reply-To: <CANMBJr4ZgEZDAtdfuLhCXppCGHnHhgmT1aFUi+=kJb2PdkqhGg@mail.gmail.com>
+	Thu, 13 Nov 2014 21:53:17 -0500
+In-reply-to: <1415368439-23642-3-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tyler Baker <tyler.baker@linaro.org>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Kevin Hilman <khilman@kernel.org>
 
-Hello Tyler,
+On 2014=EB=85=84 11=EC=9B=94 07=EC=9D=BC 22:53, Krzysztof Kozlowski wro=
+te:
+> Add runtime Power Management to the Exynos DSI driver so the LCD powe=
+r
+> domain could be turned off.
+>=20
+> This slightly reduces the energy consumption when screen is completel=
+y
+> turned off. On Trats2 board when the system was idle the energy
+> consumption dropped by 1% (from 92.2 mA to 91.1 mA).
+>=20
+> Before the patch:
+> $ cat cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
+> lcd0-power-domain               on
+>     /devices/11c00000.fimd                              suspended
+>     /devices/11c80000.dsi                               unsupported
+>=20
+> After applying the patch:
+> lcd0-power-domain               off
+>     /devices/11c00000.fimd                              suspended
+>     /devices/11c80000.dsi                               suspended
 
-On Fri, Nov 14, 2014 at 3:30 AM, Tyler Baker <tyler.baker@linaro.org> wrote:
-> In recent upstream kernels, exynos5420-based arndale boards have been
+Reasonable but this patch incurs page flip test timeout like below,
+# modetest -v -s 15@12:720x1280
+trying to open device 'i915'...failed.
+trying to open device 'radeon'...failed.
+trying to open device 'nouveau'...failed.
+trying to open device 'vmwgfx'...failed.
+trying to open device 'omapdrm'...failed.
+trying to open device 'exynos'...success.
+setting mode 720x1280-0Hz@XR24 on connectors 15, crtc 12
+select timed out or error (ret 0)
 
-Boot logs are only for 5250, typo ?
+I'm not sure why this issue is incurred with this patch even through
+this patch is reasonable and correct. So we need more checking.
 
-> producing boot-time errors due to the fact they failed to set the cpu
-> voltage. These message flood the serial console even after userspace
-> has been loaded, yielding the console unusable without forcing a lower
-> log level. These errors are produced _only_ with the
-> multi_v7_defconfig and they are _not_ present
-> with exynos_defconfig. Here are some recent boot logs showing the boot errors:
->
-> mainline/v3.18-rc4-65-g2c54396:
->     multi_v7_defconfig:
->         http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc4-65-g2c54396/arm-multi_v7_defconfig/boot-exynos5250-arndale.html
->     exynos_defconfig:
->         http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc4-65-g2c54396/arm-exynos_defconfig/boot-exynos5250-arndale.html
+P.S. I tested it on exynos-drm-next and m0 board.
 
->From the boot logs it appears that the S5M8767 regulator does not get
-probed with multi_v7_defconfig and you get the following messages:
+Thanks,
+Inki Dae
 
-[    1.147412] deviceless supply vdd_arm not found, using dummy regulator
-[    1.152669] exynos-cpufreq exynos-cpufreq: failed to set cpu
-voltage to 1300000
-[    1.159771] cpufreq: __target_index: Failed to change cpu frequency: -22
-
-Both multi_v7_defconfig and exynos_defconfig have the S5M8767
-regulator enabled. However multi_v7_defconfig does not have the S3C
-I2C controller enabled while exynos_defconfig does.
-Can you re-check after enabling CONFIG_I2C_S3C2410 ?
-
-Regards,
-Abhilash
-
->
-> next/next-20141113:
->     multi_v7_defconfig:
->         http://storage.armcloud.us/kernel-ci/next/next-20141113/arm-multi_v7_defconfig/boot-exynos5250-arndale.html
->     exynos_defconfig:
->         http://storage.armcloud.us/kernel-ci/next/next-20141113/arm-exynos_defconfig/boot-exynos5250-arndale.html
->
-> arm-soc/v3.18-rc4-185-gbfcf8f9:
->     multi_v7_defconfig:
->         http://storage.armcloud.us/kernel-ci/arm-soc/v3.18-rc4-185-gbfcf8f9/arm-multi_v7_defconfig/boot-exynos5250-arndale.html
->     exynos_defconfig:
->         http://storage.armcloud.us/kernel-ci/arm-soc/v3.18-rc4-185-gbfcf8f9/arm-exynos_defconfig/boot-exynos5250-arndale.html
->
-> Cheers,
->
-> --
-> Tyler Baker
-> Tech Lead, LAVA
-> Linaro.org | Open source software for ARM SoCs
-> Follow Linaro: http://www.facebook.com/pages/Linaro
-> http://twitter.com/#!/linaroorg - http://www.linaro.org/linaro-blog
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>=20
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/dr=
+m/exynos/exynos_drm_dsi.c
+> index 24741d8758e8..19ed36d2d557 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+> @@ -21,6 +21,7 @@
+>  #include <linux/of_device.h>
+>  #include <linux/of_gpio.h>
+>  #include <linux/phy/phy.h>
+> +#include <linux/pm_runtime.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/component.h>
+> =20
+> @@ -1356,6 +1357,8 @@ static int exynos_dsi_enable(struct exynos_dsi =
+*dsi)
+>  	if (dsi->state & DSIM_STATE_ENABLED)
+>  		return 0;
+> =20
+> +	pm_runtime_get_sync(dsi->dev);
+> +
+>  	ret =3D exynos_dsi_poweron(dsi);
+>  	if (ret < 0)
+>  		return ret;
+> @@ -1392,6 +1395,8 @@ static void exynos_dsi_disable(struct exynos_ds=
+i *dsi)
+>  	drm_panel_unprepare(dsi->panel);
+>  	exynos_dsi_poweroff(dsi);
+> =20
+> +	pm_runtime_put_sync(dsi->dev);
+> +
+>  	dsi->state &=3D ~DSIM_STATE_ENABLED;
+>  }
+> =20
+> @@ -1772,6 +1777,8 @@ static int exynos_dsi_probe(struct platform_dev=
+ice *pdev)
+>  	if (ret)
+>  		goto err_del_component;
+> =20
+> +	pm_runtime_enable(&pdev->dev);
+> +
+>  	return ret;
+> =20
+>  err_del_component:
+> @@ -1781,6 +1788,8 @@ err_del_component:
+> =20
+>  static int exynos_dsi_remove(struct platform_device *pdev)
+>  {
+> +	pm_runtime_disable(&pdev->dev);
+> +
+>  	component_del(&pdev->dev, &exynos_dsi_component_ops);
+>  	exynos_drm_component_del(&pdev->dev, EXYNOS_DEVICE_TYPE_CONNECTOR);
+> =20
+>=20
