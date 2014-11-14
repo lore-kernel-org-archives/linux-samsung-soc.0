@@ -1,60 +1,48 @@
-From: Padma Venkat <padma.kvr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] spi: s3c64xx: add support for exynos7 SPI controller
-Date: Fri, 14 Nov 2014 16:46:06 +0530
-Message-ID: <CAAgF-BcARoRZv=BPqQWyp6rJQQ=CE0FEUz_2vgQSpeZyLwbkBw@mail.gmail.com>
-References: <1415267509-16653-1-git-send-email-padma.v@samsung.com>
-	<20141106102636.GT8509@sirena.org.uk>
-	<CAAgF-BfGwcNzMx0meFVkJqNMTbQ4_PP1PZ3i6edOm6U3bc26_Q@mail.gmail.com>
-	<20141107101310.GA8509@sirena.org.uk>
-	<CAAgF-Bd=S7-PoA7GZoy87W9Dem3OXVhc1tL-eyWEAHvF0LPTKQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAgF-Bd=S7-PoA7GZoy87W9Dem3OXVhc1tL-eyWEAHvF0LPTKQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] ARM: exynos_defconfig: Use 16 minors per MMC block device
+Date: Fri, 14 Nov 2014 12:58:37 +0100
+Message-ID: <1415966317-11170-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:29913 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933262AbaKNL6r (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 14 Nov 2014 06:58:47 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Hi Mark,
+16 minors per MMC block device are required to boot Rinato (Gear 2)
+board because up to 15 partitions are used.
 
-On 11/10/14, Padma Venkat <padma.kvr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Hi Mark,
->
-> On 11/7/14, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
->> On Fri, Nov 07, 2014 at 02:01:57PM +0530, Padma Venkat wrote:
->>
->>> CS can also be controlled automatically by setting AUTO_N_MANUAL to 1
->>> in CS_CFG. When it is auto CS automatically toggles between packet to
->>> packet. NCS_TIME_COUNT in CS_CFG controls the inactive period. The
->>> driver by default uses manual mode. But on exynos7 the manual mode is
->>> removed.
->>
->> OK, but what's a packet here?
->
-> Packet is either 1 byte or 4 bytes size depends on width of the SPI
-> channel.
->
->>
->>> I tested the driver with wm5110 codec.
->>
->> Did you try firmware downloads or something else that generates multiple
->> transfers in a message?  Normal register writes will use a single
->> transfer so I'd expect them to just work.
->>
->
-> OK. I don't have provision to test on this board. I will try to test
-> on older boards by disabling manual mode.
->
+With default 8 minors booting failed with:
+[    1.329092] mmcblk0: mmc0:0001 F5X5MA 3.64 GiB
+[    1.329448] mmcblk0boot0: mmc0:0001 F5X5MA partition 1 4.00 MiB
+[    1.329627] mmcblk0boot1: mmc0:0001 F5X5MA partition 2 4.00 MiB
+[    1.329808] mmcblk0rpmb: mmc0:0001 F5X5MA partition 3 512 KiB
+[    1.335717]  mmcblk0: p1 p2 p3 p4 p5 p6 p7
+[    1.436553] Waiting for root device /dev/mmcblk0p15...
 
-I tested on exynos5420 peach-pit by enabling auto mode. I used dd
-command to read 1MB data from spi flash and I compared the result with
-manual mode. Both are same.
+while the correct list of partitions on mmcblk0 for Gear 2 is:
+[    1.436651]  mmcblk0: p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15
 
-> Thanks
-> padma
->
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/configs/exynos_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 72058b8a6f4d..aa32931bdd30 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -134,6 +134,7 @@ CONFIG_USB_STORAGE=y
+ CONFIG_USB_DWC3=y
+ CONFIG_USB_HSIC_USB3503=y
+ CONFIG_MMC=y
++CONFIG_MMC_BLOCK_MINORS=16
+ CONFIG_MMC_SDHCI=y
+ CONFIG_MMC_SDHCI_S3C=y
+ CONFIG_MMC_SDHCI_S3C_DMA=y
+-- 
+1.9.1
