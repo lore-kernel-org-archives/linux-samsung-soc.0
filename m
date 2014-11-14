@@ -1,82 +1,52 @@
 From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: [PATCH v2] drm/exynos: add has_vtsel flag
-Date: Fri, 14 Nov 2014 11:36:02 +0900
-Message-ID: <1415932564-16463-1-git-send-email-jy0922.shim@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:57976 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934582AbaKNCgK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Nov 2014 21:36:10 -0500
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NF0007LGCK49J10@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 Nov 2014 11:36:04 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 1/2] drm/exynos: move triggering checking
+Date: Fri, 14 Nov 2014 11:36:03 +0900
+Message-ID: <1415932564-16463-2-git-send-email-jy0922.shim@samsung.com>
+References: <1415932564-16463-1-git-send-email-jy0922.shim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1415932564-16463-1-git-send-email-jy0922.shim@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, sw0312.kim@samsung.com, yj44.cho@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The exynos fimd provides video type selection bits from system register
-but exynos3 series don't has it, so needs has_vtsel flag and we can
-distinguish whether set video type selection bits.
-
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
----
-Changelog from v1:
-- rebase on latest exynos-drm-next branch
-- add has_vtsel for exynos4415
-
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 5cc57f7..93b263e 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -96,6 +96,7 @@ struct fimd_driver_data {
- 	unsigned int has_clksel:1;
- 	unsigned int has_limited_fmt:1;
- 	unsigned int has_vidoutcon:1;
-+	unsigned int has_vtsel:1;
- };
- 
- static struct fimd_driver_data s3c64xx_fimd_driver_data = {
-@@ -118,6 +119,7 @@ static struct fimd_driver_data exynos4_fimd_driver_data = {
- 	.lcdblk_vt_shift = 10,
- 	.lcdblk_bypass_shift = 1,
- 	.has_shadowcon = 1,
-+	.has_vtsel = 1,
- };
- 
- static struct fimd_driver_data exynos4415_fimd_driver_data = {
-@@ -127,6 +129,7 @@ static struct fimd_driver_data exynos4415_fimd_driver_data = {
- 	.lcdblk_bypass_shift = 1,
- 	.has_shadowcon = 1,
- 	.has_vidoutcon = 1,
-+	.has_vtsel = 1,
- };
- 
- static struct fimd_driver_data exynos5_fimd_driver_data = {
-@@ -136,6 +139,7 @@ static struct fimd_driver_data exynos5_fimd_driver_data = {
- 	.lcdblk_bypass_shift = 15,
- 	.has_shadowcon = 1,
- 	.has_vidoutcon = 1,
-+	.has_vtsel = 1,
- };
- 
- struct fimd_win_data {
-@@ -354,7 +358,8 @@ static void fimd_commit(struct exynos_drm_manager *mgr)
- 		writel(0, timing_base + I80IFCONFBx(0));
- 
- 		/* set video type selection to I80 interface */
--		if (ctx->sysreg && regmap_update_bits(ctx->sysreg,
-+		if (driver_data->has_vtsel && ctx->sysreg &&
-+				regmap_update_bits(ctx->sysreg,
- 					driver_data->lcdblk_offset,
- 					0x3 << driver_data->lcdblk_vt_shift,
- 					0x1 << driver_data->lcdblk_vt_shift)) {
--- 
-1.9.1
+SXQncyBiZXR0ZXIgdG8gYmUgY2hlY2tpbmcgd2hldGhlciB0cmlnZ2VycmluZyBpbiBmaW1kX3Ry
+aWdnZXIgZnVuY3Rpb24uCkFsc28gaXQgd2lsbCByZXR1cm4gaWYgaW4gdHJpZ2dlcnJpbmcgb24g
+ZmltZF90ZV9oYW5kbGVyLCB0aGVuIGl0IGNhbid0CmV4ZWN1dGUgcmVtYWluIGNvZGVzLgoKU2ln
+bmVkLW9mZi1ieTogSm9vbnlvdW5nIFNoaW0gPGp5MDkyMi5zaGltQHNhbXN1bmcuY29tPgotLS0K
+QmFzZWQgb24gbGFzdGVzdCBleHlub3MtZHJtLW5leHQgYnJhbmNoLgoKIGRyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgfCAxNCArKysrKysrLS0tLS0tLQogMSBmaWxlIGNo
+YW5nZWQsIDcgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2ZpbWQuYwppbmRleCA3NTkzZjYyLi4wMzNiMThiIDEwMDY0NAotLS0g
+YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCisrKyBiL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKQEAgLTk0NCw2ICs5NDQsMTMgQEAgc3Rh
+dGljIHZvaWQgZmltZF90cmlnZ2VyKHN0cnVjdCBkZXZpY2UgKmRldikKIAl2b2lkICp0aW1pbmdf
+YmFzZSA9IGN0eC0+cmVncyArIGRyaXZlcl9kYXRhLT50aW1pbmdfYmFzZTsKIAl1MzIgcmVnOwog
+CisJIC8qCisJICogU2tpcHMgdG8gdHJpZ2dlciBpZiBpbiB0cmlnZ2VyaW5nIHN0YXRlLCBiZWNh
+dXNlIG11bHRpcGxlIHRyaWdnZXJpbmcKKwkgKiByZXF1ZXN0cyBjYW4gY2F1c2UgcGFuZWwgcmVz
+ZXQuCisJICovCisJaWYgKGF0b21pY19yZWFkKCZjdHgtPnRyaWdnZXJpbmcpKQorCQlyZXR1cm47
+CisKIAlhdG9taWNfc2V0KCZjdHgtPnRyaWdnZXJpbmcsIDEpOwogCiAJcmVnID0gcmVhZGwoY3R4
+LT5yZWdzICsgVklESU5UQ09OMCk7CkBAIC05NjQsMTMgKzk3MSw2IEBAIHN0YXRpYyB2b2lkIGZp
+bWRfdGVfaGFuZGxlcihzdHJ1Y3QgZXh5bm9zX2RybV9tYW5hZ2VyICptZ3IpCiAJaWYgKGN0eC0+
+cGlwZSA8IDAgfHwgIWN0eC0+ZHJtX2RldikKIAkJcmV0dXJuOwogCi0JIC8qCi0JICogU2tpcHMg
+dG8gdHJpZ2dlciBpZiBpbiB0cmlnZ2VyaW5nIHN0YXRlLCBiZWNhdXNlIG11bHRpcGxlIHRyaWdn
+ZXJpbmcKLQkgKiByZXF1ZXN0cyBjYW4gY2F1c2UgcGFuZWwgcmVzZXQuCi0JICovCi0JaWYgKGF0
+b21pY19yZWFkKCZjdHgtPnRyaWdnZXJpbmcpKQotCQlyZXR1cm47Ci0KIAkvKgogCSAqIElmIHRo
+ZXJlIGlzIGEgcGFnZSBmbGlwIHJlcXVlc3QsIHRyaWdnZXJzIGFuZCBoYW5kbGVzIHRoZSBwYWdl
+IGZsaXAKIAkgKiBldmVudCBzbyB0aGF0IGN1cnJlbnQgZmIgY2FuIGJlIHVwZGF0ZWQgaW50byBw
+YW5lbCBHUkFNLgotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
