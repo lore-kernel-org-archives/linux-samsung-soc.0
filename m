@@ -1,102 +1,48 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [PATCH v2 5/5] ARM: dts: exynos4412-trats2: Enable TMU support at
- Trats2
-Date: Fri, 14 Nov 2014 10:26:03 +0100
-Message-ID: <20141114102603.2b15d1f8@amdc2363>
-References: <1380010102-25817-1-git-send-email-l.majewski@samsung.com>
- <1381300194-13134-1-git-send-email-l.majewski@samsung.com>
- <1381300194-13134-6-git-send-email-l.majewski@samsung.com>
- <20131015082935.3d33eee7@amdc308.digital.local>
- <20131127081242.0591f911@amdc308.digital.local>
- <004d01ceeb64$da648200$8f2d8600$@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:52657 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754547AbaKNJ0Q (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Nov 2014 04:26:16 -0500
-In-reply-to: <004d01ceeb64$da648200$8f2d8600$@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [RESEND PATCH 1/2] ARM: dts: exynos4x12: Device tree node definition
+ for TMU on Exynos4x12
+Date: Fri, 14 Nov 2014 11:03:24 +0100
+Message-ID: <1415959405-14157-1-git-send-email-l.majewski@samsung.com>
+References: <1381300194-13134-5-git-send-email-l.majewski@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1381300194-13134-5-git-send-email-l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org
-Cc: 'Linux PM list' <linux-pm@vger.kernel.org>, 'Lukasz Majewski' <l.majewski@majess.pl>, 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hi Kukjin,
+The TMU device tree node definition for Exynos4x12 family of SoCs.
 
-> Lukasz Majewski wrote:
-> > 
-> > Hi Kukjin,
-> > 
-> > > Hi Kukjin,
-> > >
-> > > > This patch enables support for TMU at Exynos4412 based Trats2
-> > > > board.
-> > > >
-> > > > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > > > Reviewed-by: Bartlomiej Zolnierkiewicz
-> > > > <b.zolnierkie@samsung.com> Reviewed-by: Tomasz Figa
-> > > > <t.figa@samsung.com>
-> > > >
-> > > > ---
-> > > > Changes for v2:
-> > > > - None
-> > > >
-> > > >  arch/arm/boot/dts/exynos4412-trats2.dts |    5 +++++
-> > > >  1 file changed, 5 insertions(+)
-> > > >
-> > > > diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts
-> > > > b/arch/arm/boot/dts/exynos4412-trats2.dts index fb7b9ae..57136f8
-> > > > 100644 --- a/arch/arm/boot/dts/exynos4412-trats2.dts
-> > > > +++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-> > > > @@ -467,6 +467,11 @@
-> > > >  		status = "okay";
-> > > >  	};
-> > > >
-> > > > +	tmu@100C0000 {
-> > > > +		vtmu-supply = <&ldo10_reg>;
-> > > > +		status = "okay";
-> > > > +	};
-> > > > +
-> > > >  	i2c_ak8975: i2c-gpio-0 {
-> > > >  		compatible = "i2c-gpio";
-> > > >  		gpios = <&gpy2 4 0>, <&gpy2 5 0>;
-> > >
-> > > Can you pull this DT node definition for TMU (as a fix to v3.12)?
-> > >
-> > > It is crucial for Exynos4412. Other patches from this patch set
-> > > were already pulled as v3.12 fixes.
-> > >
-> > 
-> > Kukjin, could you pull this patch?
-> > 
-> Applied, thanks.
+Signed-off-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ arch/arm/boot/dts/exynos4x12.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-It is strange, but it seems like this patch hasn't found its way to
-mainline (3.18-rc3).
-
-This patch should be applied with the following one:
-"[PATCH v2 4/5] ARM: dts: exynos4x12: Device tree node definition for
-TMU on Exynos4x12"
-
-Anyway, I will resend them. If possible, please add them to your tree
-ASAP.
-
-> Kukjin
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-
-
-
+diff --git a/arch/arm/boot/dts/exynos4x12.dtsi b/arch/arm/boot/dts/exynos4x12.dtsi
+index 861bb91..2e9f1f7 100644
+--- a/arch/arm/boot/dts/exynos4x12.dtsi
++++ b/arch/arm/boot/dts/exynos4x12.dtsi
+@@ -271,4 +271,14 @@
+ 		compatible = "samsung,exynos4x12-usb2-phy";
+ 		samsung,sysreg-phandle = <&sys_reg>;
+ 	};
++
++	tmu@100C0000 {
++		compatible = "samsung,exynos4412-tmu";
++		interrupt-parent = <&combiner>;
++		interrupts = <2 4>;
++		reg = <0x100C0000 0x100>;
++		clocks = <&clock 383>;
++		clock-names = "tmu_apbif";
++		status = "disabled";
++	};
+ };
 -- 
-Best regards,
+2.0.0.rc2
 
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
