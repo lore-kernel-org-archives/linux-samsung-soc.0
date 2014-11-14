@@ -1,86 +1,50 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] PM / Domains: Change prototype for the ->attach_dev() callback
-Date: Fri, 14 Nov 2014 09:17:40 +0100
-Message-ID: <CAMuHMdWR=o+JAN=ogbqeUR+8Ye=VG+Dri+D0Nmhd5mruYEzUtA@mail.gmail.com>
-References: <1414670569-3002-1-git-send-email-ulf.hansson@linaro.org>
-	<3267963.fqUYb7m9Rv@vostro.rjw.lan>
-	<7hsihx1bvo.fsf@deeprootsystems.com>
-	<6900237.LSPrkZ5QMk@vostro.rjw.lan>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 3/4] ARM: dts: add fimd device node to exynos4415.dtsi
+Date: Fri, 14 Nov 2014 17:24:33 +0900
+Message-ID: <5465BC41.6060501@samsung.com>
+References: <1415340747-27904-1-git-send-email-yj44.cho@samsung.com>
+ <1415340747-27904-4-git-send-email-yj44.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <6900237.LSPrkZ5QMk@vostro.rjw.lan>
-Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Kevin Hilman <khilman@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Linux PM list <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Jack Dai <jack.dai@rock-chips.com>, Ji
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1415340747-27904-4-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: YoungJun Cho <yj44.cho@samsung.com>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sw0312.kim@samsung.com, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com, cw00.choi@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Rafael,
-
-On Thu, Nov 6, 2014 at 1:54 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> On Wednesday, November 05, 2014 03:11:23 PM Kevin Hilman wrote:
->> "Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
->> > On Wednesday, November 05, 2014 02:43:31 PM Kevin Hilman wrote:
->> >> Dmitry Torokhov <dmitry.torokhov@gmail.com> writes:
->> >> > On Thu, Oct 30, 2014 at 01:38:30PM -0700, Kevin Hilman wrote:
->> >> >> "Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
->> >> >> > On Thursday, October 30, 2014 01:02:49 PM Ulf Hansson wrote:
->> >> >> >> Convert the prototype to return and int. This is just an initial step,
->> >> >> >> needed to support error handling.
->> >> >> >>
->> >> >> >> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->> >> >>
->> >> >> Acked-by: Kevin Hilman <khilman@linaro.org>
->> >> >>
->> >> >> >> This patch is intended as fix for 3.18 rc[n]. Why?
->> >> >> >>
->> >> >> >> There are other SOC specific patches around that adds genpd support and which
->> >> >> >> implements the ->attach_dev() callback. To prevent having an "atomic" patch
->> >> >> >> during the next release cycle, let's change the prototype now instead.
->> >> >> >>
->> >> >> >> Further patches will add the actual error handling in genpd and these can then
->> >> >> >> be reviewed and tested thoroughly.
->> >> >> >
->> >> >> > So we have no users of ->attach_dev at the moment, right?
->> >> >>
->> >> >> Not in mainline, but there are a couple getting ready to hit -next, so
->> >> >> we wanted to fix this before they arrive so that adding the error
->> >> >> handling will be easier.
->> >> >
->> >> > BTW, while we are at it, can we also pass the domain itself to
->> >> > attach_dev() and detach_dev()? If anything it helps with debugging (you
->> >> > can print domain name from the callbacks).
->> >>
->> >> Agreed, and it makes it match the other callbacks (power_off, power_on)
->> >> which currently take struct generic_pm_domain *domain.
->> >>
->> >> Updated version of $SUBJECT patch below.
->> >
->> > The subject and changelog need to be updated too IMO.
->> >
->>
->> Right.  Here you go.
->
-> I've replaced the Ulf's original with this one, thanks!
-
-When do you plan to send a pull request for this to Linus?
-
-There are PM domain drivers blocked on entering -next due to this
-dependency. As they have to pass through arm-soc first, and the arm-soc
-merge window will close soon, time is running out.
-
-Alternatively, you could provide an immutable branch containing this fix
-to unblock dependents.
-
-Thanks for your understanding.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+T24gMjAxNOuFhCAxMeyblCAwN+ydvCAxNToxMiwgWW91bmdKdW4gQ2hvIHdyb3RlOgo+IFRoaXMg
+cGF0Y2ggYWRkcyBmaW1kIGRldmljZSBub2RlIHRvIGV4eW5vczQ0MTUuZHRzaS4KPiAKCkhpIEt1
+a2ppbiwKCkNvdWxkIHlvdSBtZXJnZSBwYXRjaCAzIGFuZCA0IHRvIHlvdXIgdHJlZT8gVGhlc2Ug
+YXJlIGR0IHBhcnQgZm9yCkV4eW5vczQ0MTUgZHJtIHN1cHBvcnQuIEZvciBkcm0gcGF0Y2hlcywg
+SSBhbHJlYWR5IG1lcmdlZCB0aGVtLgoKVGhhbmtzLApJbmtpIERhZQoKCj4gU2lnbmVkLW9mZi1i
+eTogWW91bmdKdW4gQ2hvIDx5ajQ0LmNob0BzYW1zdW5nLmNvbT4KPiBBY2tlZC1ieTogS3l1bmdt
+aW4gUGFyayA8a3l1bmdtaW4ucGFya0BzYW1zdW5nLmNvbT4KPiAtLS0KPiAgYXJjaC9hcm0vYm9v
+dC9kdHMvZXh5bm9zNDQxNS5kdHNpIHwgMTIgKysrKysrKysrKysrCj4gIDEgZmlsZSBjaGFuZ2Vk
+LCAxMiBpbnNlcnRpb25zKCspCj4gCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4
+eW5vczQ0MTUuZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQ0MTUuZHRzaQo+IGluZGV4
+IGMxYzliMzcuLjMwYWNiM2EgMTAwNjQ0Cj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9z
+NDQxNS5kdHNpCj4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNDQxNS5kdHNpCj4gQEAg
+LTIzNCw2ICsyMzQsMTggQEAKPiAgCQkJaW50ZXJydXB0cyA9IDwwIDI0MCAwPjsKPiAgCQl9Owo+
+ICAKPiArCQlmaW1kOiBmaW1kQDExQzAwMDAwIHsKPiArCQkJY29tcGF0aWJsZSA9ICJzYW1zdW5n
+LGV4eW5vczQ0MTUtZmltZCI7Cj4gKwkJCXJlZyA9IDwweDExQzAwMDAwIDB4MzAwMDA+Owo+ICsJ
+CQlpbnRlcnJ1cHQtbmFtZXMgPSAiZmlmbyIsICJ2c3luYyIsICJsY2Rfc3lzIjsKPiArCQkJaW50
+ZXJydXB0cyA9IDwwIDg0IDA+LCA8MCA4NSAwPiwgPDAgODYgMD47Cj4gKwkJCWNsb2NrcyA9IDwm
+Y211IENMS19TQ0xLX0ZJTUQwPiwgPCZjbXUgQ0xLX0ZJTUQwPjsKPiArCQkJY2xvY2stbmFtZXMg
+PSAic2Nsa19maW1kIiwgImZpbWQiOwo+ICsJCQlzYW1zdW5nLHBvd2VyLWRvbWFpbiA9IDwmcGRf
+bGNkMD47Cj4gKwkJCXNhbXN1bmcsc3lzcmVnID0gPCZzeXNyZWdfc3lzdGVtX2NvbnRyb2xsZXI+
+Owo+ICsJCQlzdGF0dXMgPSAiZGlzYWJsZWQiOwo+ICsJCX07Cj4gKwo+ICAJCWhzb3RnOiBoc290
+Z0AxMjQ4MDAwMCB7Cj4gIAkJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxzM2M2NDAwLWhzb3RnIjsK
+PiAgCQkJcmVnID0gPDB4MTI0ODAwMDAgMHgyMDAwMD47Cj4gCgpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
+ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
+YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
