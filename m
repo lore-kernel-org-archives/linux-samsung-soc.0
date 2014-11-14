@@ -1,142 +1,54 @@
-From: Paul Zimmerman <Paul.Zimmerman@synopsys.com>
-Subject: RE: [PATCH v3 1/2] usb: dwc2/gadget: add mutex to serialize
- init/deinit calls
-Date: Fri, 14 Nov 2014 19:43:23 +0000
-Message-ID: <A2CA0424C0A6F04399FB9E1CD98E0304844EBC36@US01WEMBX2.internal.synopsys.com>
-References: <54535F82.7020406@samsung.com>
- <1414750354-19571-1-git-send-email-m.szyprowski@samsung.com>
- <A2CA0424C0A6F04399FB9E1CD98E0304844E7FDD@US01WEMBX2.internal.synopsys.com>
- <5464CBA5.9050702@samsung.com>
- <A2CA0424C0A6F04399FB9E1CD98E0304844EB636@US01WEMBX2.internal.synopsys.com>
- <5465C91C.7050409@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Subject: [PATCH] ARM: dts: Explicitly set dr_mode on exynos5250-snow
+Date: Fri, 14 Nov 2014 20:46:19 +0100
+Message-ID: <1415994379-29165-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:41599 "EHLO
-	smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1161586AbaKNTn1 (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:53671 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1161184AbaKNTqz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Nov 2014 14:43:27 -0500
-In-Reply-To: <5465C91C.7050409@samsung.com>
-Content-Language: en-US
+	Fri, 14 Nov 2014 14:46:55 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>, Marek Szyprowski <m.szyprowski@samsung.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
-PiBGcm9tOiBNYXJlayBTenlwcm93c2tpIFttYWlsdG86bS5zenlwcm93c2tpQHNhbXN1bmcuY29t
-XQ0KPiBTZW50OiBGcmlkYXksIE5vdmVtYmVyIDE0LCAyMDE0IDE6MTkgQU0NCj4gDQo+IE9uIDIw
-MTQtMTEtMTMgMjE6NTUsIFBhdWwgWmltbWVybWFuIHdyb3RlOg0KPiA+PiBGcm9tOiBNYXJlayBT
-enlwcm93c2tpIFttYWlsdG86bS5zenlwcm93c2tpQHNhbXN1bmcuY29tXQ0KPiA+PiBTZW50OiBU
-aHVyc2RheSwgTm92ZW1iZXIgMTMsIDIwMTQgNzoxOCBBTQ0KPiA+Pg0KPiA+PiBPbiAyMDE0LTEw
-LTMxIDE5OjQ2LCBQYXVsIFppbW1lcm1hbiB3cm90ZToNCj4gPj4+PiBGcm9tOiBNYXJlayBTenlw
-cm93c2tpIFttYWlsdG86bS5zenlwcm93c2tpQHNhbXN1bmcuY29tXQ0KPiA+Pj4+IFNlbnQ6IEZy
-aWRheSwgT2N0b2JlciAzMSwgMjAxNCAzOjEzIEFNDQo+ID4+Pj4NCj4gPj4+PiBUaGlzIHBhdGNo
-IGFkZHMgbXV0ZXgsIHdoaWNoIHByb3RlY3RzIGluaXRpYWxpemF0aW9uIGFuZA0KPiA+Pj4+IGRl
-aW5pdGlhbGl6YXRpb24gcHJvY2VkdXJlcyBhZ2FpbnN0IHN1c3BlbmQvcmVzdW1lIG1ldGhvZHMu
-DQo+ID4+Pj4NCj4gPj4+PiBTaWduZWQtb2ZmLWJ5OiBNYXJlayBTenlwcm93c2tpIDxtLnN6eXBy
-b3dza2lAc2Ftc3VuZy5jb20+DQo+ID4+Pj4gLS0tDQo+ID4+Pj4gICAgZHJpdmVycy91c2IvZHdj
-Mi9jb3JlLmggICB8ICAxICsNCj4gPj4+PiAgICBkcml2ZXJzL3VzYi9kd2MyL2dhZGdldC5jIHwg
-MjAgKysrKysrKysrKysrKysrKysrKysNCj4gPj4+PiAgICAyIGZpbGVzIGNoYW5nZWQsIDIxIGlu
-c2VydGlvbnMoKykNCj4gPj4+Pg0KPiA+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3VzYi9kd2My
-L2NvcmUuaCBiL2RyaXZlcnMvdXNiL2R3YzIvY29yZS5oDQo+ID4+Pj4gaW5kZXggOWY3N2I0ZDFj
-NWZmLi41ODczMmE5YTAwMTkgMTAwNjQ0DQo+ID4+Pj4gLS0tIGEvZHJpdmVycy91c2IvZHdjMi9j
-b3JlLmgNCj4gPj4+PiArKysgYi9kcml2ZXJzL3VzYi9kd2MyL2NvcmUuaA0KPiA+Pj4+IEBAIC0x
-ODcsNiArMTg3LDcgQEAgc3RydWN0IHMzY19oc290ZyB7DQo+ID4+Pj4gICAgCXN0cnVjdCBzM2Nf
-aHNvdGdfcGxhdCAgICAqcGxhdDsNCj4gPj4+Pg0KPiA+Pj4+ICAgIAlzcGlubG9ja190ICAgICAg
-ICAgICAgICBsb2NrOw0KPiA+Pj4+ICsJc3RydWN0IG11dGV4CQlpbml0X211dGV4Ow0KPiA+Pj4+
-DQo+ID4+Pj4gICAgCXZvaWQgX19pb21lbSAgICAgICAgICAgICpyZWdzOw0KPiA+Pj4+ICAgIAlp
-bnQgICAgICAgICAgICAgICAgICAgICBpcnE7DQo+ID4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-dXNiL2R3YzIvZ2FkZ2V0LmMgYi9kcml2ZXJzL3VzYi9kd2MyL2dhZGdldC5jDQo+ID4+Pj4gaW5k
-ZXggZDhkZGEzOWM5ZTE2Li5hMmU0MjcyYTkwNGUgMTAwNjQ0DQo+ID4+Pj4gLS0tIGEvZHJpdmVy
-cy91c2IvZHdjMi9nYWRnZXQuYw0KPiA+Pj4+ICsrKyBiL2RyaXZlcnMvdXNiL2R3YzIvZ2FkZ2V0
-LmMNCj4gPj4+PiBAQCAtMjEsNiArMjEsNyBAQA0KPiA+Pj4+ICAgICNpbmNsdWRlIDxsaW51eC9w
-bGF0Zm9ybV9kZXZpY2UuaD4NCj4gPj4+PiAgICAjaW5jbHVkZSA8bGludXgvZG1hLW1hcHBpbmcu
-aD4NCj4gPj4+PiAgICAjaW5jbHVkZSA8bGludXgvZGVidWdmcy5oPg0KPiA+Pj4+ICsjaW5jbHVk
-ZSA8bGludXgvbXV0ZXguaD4NCj4gPj4+PiAgICAjaW5jbHVkZSA8bGludXgvc2VxX2ZpbGUuaD4N
-Cj4gPj4+PiAgICAjaW5jbHVkZSA8bGludXgvZGVsYXkuaD4NCj4gPj4+PiAgICAjaW5jbHVkZSA8
-bGludXgvaW8uaD4NCj4gPj4+PiBAQCAtMjkwOCw2ICsyOTA5LDcgQEAgc3RhdGljIGludCBzM2Nf
-aHNvdGdfdWRjX3N0YXJ0KHN0cnVjdCB1c2JfZ2FkZ2V0ICpnYWRnZXQsDQo+ID4+Pj4gICAgCQly
-ZXR1cm4gLUVJTlZBTDsNCj4gPj4+PiAgICAJfQ0KPiA+Pj4+DQo+ID4+Pj4gKwltdXRleF9sb2Nr
-KCZoc290Zy0+aW5pdF9tdXRleCk7DQo+ID4+Pj4gICAgCVdBUk5fT04oaHNvdGctPmRyaXZlcik7
-DQo+ID4+Pj4NCj4gPj4+PiAgICAJZHJpdmVyLT5kcml2ZXIuYnVzID0gTlVMTDsNCj4gPj4+PiBA
-QCAtMjkzMyw5ICsyOTM1LDEyIEBAIHN0YXRpYyBpbnQgczNjX2hzb3RnX3VkY19zdGFydChzdHJ1
-Y3QgdXNiX2dhZGdldCAqZ2FkZ2V0LA0KPiA+Pj4+DQo+ID4+Pj4gICAgCWRldl9pbmZvKGhzb3Rn
-LT5kZXYsICJib3VuZCBkcml2ZXIgJXNcbiIsIGRyaXZlci0+ZHJpdmVyLm5hbWUpOw0KPiA+Pj4+
-DQo+ID4+Pj4gKwltdXRleF91bmxvY2soJmhzb3RnLT5pbml0X211dGV4KTsNCj4gPj4+PiArDQo+
-ID4+Pj4gICAgCXJldHVybiAwOw0KPiA+Pj4+DQo+ID4+Pj4gICAgZXJyOg0KPiA+Pj4+ICsJbXV0
-ZXhfdW5sb2NrKCZoc290Zy0+aW5pdF9tdXRleCk7DQo+ID4+Pj4gICAgCWhzb3RnLT5kcml2ZXIg
-PSBOVUxMOw0KPiA+Pj4+ICAgIAlyZXR1cm4gcmV0Ow0KPiA+Pj4+ICAgIH0NCj4gPj4+PiBAQCAt
-Mjk1Nyw2ICsyOTYyLDggQEAgc3RhdGljIGludCBzM2NfaHNvdGdfdWRjX3N0b3Aoc3RydWN0IHVz
-Yl9nYWRnZXQgKmdhZGdldCwNCj4gPj4+PiAgICAJaWYgKCFoc290ZykNCj4gPj4+PiAgICAJCXJl
-dHVybiAtRU5PREVWOw0KPiA+Pj4+DQo+ID4+Pj4gKwltdXRleF9sb2NrKCZoc290Zy0+aW5pdF9t
-dXRleCk7DQo+ID4+Pj4gKw0KPiA+Pj4+ICAgIAkvKiBhbGwgZW5kcG9pbnRzIHNob3VsZCBiZSBz
-aHV0ZG93biAqLw0KPiA+Pj4+ICAgIAlmb3IgKGVwID0gMTsgZXAgPCBoc290Zy0+bnVtX29mX2Vw
-czsgZXArKykNCj4gPj4+PiAgICAJCXMzY19oc290Z19lcF9kaXNhYmxlKCZoc290Zy0+ZXBzW2Vw
-XS5lcCk7DQo+ID4+Pj4gQEAgLTI5NzQsNiArMjk4MSw4IEBAIHN0YXRpYyBpbnQgczNjX2hzb3Rn
-X3VkY19zdG9wKHN0cnVjdCB1c2JfZ2FkZ2V0ICpnYWRnZXQsDQo+ID4+Pj4NCj4gPj4+PiAgICAJ
-Y2xrX2Rpc2FibGUoaHNvdGctPmNsayk7DQo+ID4+Pj4NCj4gPj4+PiArCW11dGV4X3VubG9jaygm
-aHNvdGctPmluaXRfbXV0ZXgpOw0KPiA+Pj4+ICsNCj4gPj4+PiAgICAJcmV0dXJuIDA7DQo+ID4+
-Pj4gICAgfQ0KPiA+Pj4+DQo+ID4+Pj4gQEAgLTMwMDIsNiArMzAxMSw3IEBAIHN0YXRpYyBpbnQg
-czNjX2hzb3RnX3B1bGx1cChzdHJ1Y3QgdXNiX2dhZGdldCAqZ2FkZ2V0LCBpbnQgaXNfb24pDQo+
-ID4+Pj4NCj4gPj4+PiAgICAJZGV2X2RiZyhoc290Zy0+ZGV2LCAiJXM6IGlzX29uOiAlZFxuIiwg
-X19mdW5jX18sIGlzX29uKTsNCj4gPj4+Pg0KPiA+Pj4+ICsJbXV0ZXhfbG9jaygmaHNvdGctPmlu
-aXRfbXV0ZXgpOw0KPiA+Pj4+ICAgIAlzcGluX2xvY2tfaXJxc2F2ZSgmaHNvdGctPmxvY2ssIGZs
-YWdzKTsNCj4gPj4+PiAgICAJaWYgKGlzX29uKSB7DQo+ID4+Pj4gICAgCQljbGtfZW5hYmxlKGhz
-b3RnLT5jbGspOw0KPiA+Pj4+IEBAIC0zMDEzLDYgKzMwMjMsNyBAQCBzdGF0aWMgaW50IHMzY19o
-c290Z19wdWxsdXAoc3RydWN0IHVzYl9nYWRnZXQgKmdhZGdldCwgaW50IGlzX29uKQ0KPiA+Pj4+
-DQo+ID4+Pj4gICAgCWhzb3RnLT5nYWRnZXQuc3BlZWQgPSBVU0JfU1BFRURfVU5LTk9XTjsNCj4g
-Pj4+PiAgICAJc3Bpbl91bmxvY2tfaXJxcmVzdG9yZSgmaHNvdGctPmxvY2ssIGZsYWdzKTsNCj4g
-Pj4+PiArCW11dGV4X3VubG9jaygmaHNvdGctPmluaXRfbXV0ZXgpOw0KPiA+Pj4+DQo+ID4+Pj4g
-ICAgCXJldHVybiAwOw0KPiA+Pj4+ICAgIH0NCj4gPj4+PiBAQCAtMzUwNyw2ICszNTE4LDcgQEAg
-c3RhdGljIGludCBzM2NfaHNvdGdfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikN
-Cj4gPj4+PiAgICAJfQ0KPiA+Pj4+DQo+ID4+Pj4gICAgCXNwaW5fbG9ja19pbml0KCZoc290Zy0+
-bG9jayk7DQo+ID4+Pj4gKwltdXRleF9pbml0KCZoc290Zy0+aW5pdF9tdXRleCk7DQo+ID4+Pj4N
-Cj4gPj4+PiAgICAJaHNvdGctPmlycSA9IHJldDsNCj4gPj4+Pg0KPiA+Pj4+IEBAIC0zNjUyLDYg
-KzM2NjQsOCBAQCBzdGF0aWMgaW50IHMzY19oc290Z19zdXNwZW5kKHN0cnVjdCBwbGF0Zm9ybV9k
-ZXZpY2UgKnBkZXYsIHBtX21lc3NhZ2VfdA0KPiA+PiBzdGF0ZSkNCj4gPj4+PiAgICAJdW5zaWdu
-ZWQgbG9uZyBmbGFnczsNCj4gPj4+PiAgICAJaW50IHJldCA9IDA7DQo+ID4+Pj4NCj4gPj4+PiAr
-CW11dGV4X2xvY2soJmhzb3RnLT5pbml0X211dGV4KTsNCj4gPj4+PiArDQo+ID4+Pj4gICAgCWlm
-IChoc290Zy0+ZHJpdmVyKQ0KPiA+Pj4+ICAgIAkJZGV2X2luZm8oaHNvdGctPmRldiwgInN1c3Bl
-bmRpbmcgdXNiIGdhZGdldCAlc1xuIiwNCj4gPj4+PiAgICAJCQkgaHNvdGctPmRyaXZlci0+ZHJp
-dmVyLm5hbWUpOw0KPiA+Pj4+IEBAIC0zNjc0LDYgKzM2ODgsOCBAQCBzdGF0aWMgaW50IHMzY19o
-c290Z19zdXNwZW5kKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYsIHBtX21lc3NhZ2VfdA0K
-PiA+PiBzdGF0ZSkNCj4gPj4+PiAgICAJCWNsa19kaXNhYmxlKGhzb3RnLT5jbGspOw0KPiA+Pj4+
-ICAgIAl9DQo+ID4+Pj4NCj4gPj4+PiArCW11dGV4X3VubG9jaygmaHNvdGctPmluaXRfbXV0ZXgp
-Ow0KPiA+Pj4+ICsNCj4gPj4+PiAgICAJcmV0dXJuIHJldDsNCj4gPj4+PiAgICB9DQo+ID4+Pj4N
-Cj4gPj4+PiBAQCAtMzY4Myw3ICszNjk5LDkgQEAgc3RhdGljIGludCBzM2NfaHNvdGdfcmVzdW1l
-KHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+ID4+Pj4gICAgCXVuc2lnbmVkIGxvbmcg
-ZmxhZ3M7DQo+ID4+Pj4gICAgCWludCByZXQgPSAwOw0KPiA+Pj4+DQo+ID4+Pj4gKwltdXRleF9s
-b2NrKCZoc290Zy0+aW5pdF9tdXRleCk7DQo+ID4+Pj4gICAgCWlmIChoc290Zy0+ZHJpdmVyKSB7
-DQo+ID4+Pj4gKw0KPiA+Pj4+ICAgIAkJZGV2X2luZm8oaHNvdGctPmRldiwgInJlc3VtaW5nIHVz
-YiBnYWRnZXQgJXNcbiIsDQo+ID4+Pj4gICAgCQkJIGhzb3RnLT5kcml2ZXItPmRyaXZlci5uYW1l
-KTsNCj4gPj4+Pg0KPiA+Pj4+IEBAIC0zNjk5LDYgKzM3MTcsOCBAQCBzdGF0aWMgaW50IHMzY19o
-c290Z19yZXN1bWUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gPj4+PiAgICAJczNj
-X2hzb3RnX2NvcmVfY29ubmVjdChoc290Zyk7DQo+ID4+Pj4gICAgCXNwaW5fdW5sb2NrX2lycXJl
-c3RvcmUoJmhzb3RnLT5sb2NrLCBmbGFncyk7DQo+ID4+Pj4NCj4gPj4+PiArCW11dGV4X3VubG9j
-aygmaHNvdGctPmluaXRfbXV0ZXgpOw0KPiA+Pj4+ICsNCj4gPj4+PiAgICAJcmV0dXJuIHJldDsN
-Cj4gPj4+PiAgICB9DQo+ID4+Pj4NCj4gPj4+IEhtbS4gSSBjYW4ndCBmaW5kIGFueSBvdGhlciBV
-REMgZHJpdmVyIHRoYXQgdXNlcyBhIG11dGV4IGluIGl0cw0KPiA+Pj4gc3VzcGVuZC9yZXN1bWUg
-ZnVuY3Rpb25zLiBDYW4geW91IGV4cGxhaW4gd2h5IHRoaXMgaXMgbmVlZGVkIG9ubHkNCj4gPj4+
-IGZvciBkd2MyPw0KPiA+PiBJJ3ZlIHBvc3RlZCB0aGlzIHZlcnNpb24gYmVjYXVzZSBJIHRob3Vn
-aHQgeW91IHdlcmUgbm90IGNvbnZpbmNlZCB0aGF0DQo+ID4+IHRoZSBwYXRjaA0KPiA+PiAidXNi
-OiBkd2MyL2dhZGdldDogcmV3b3JrIHN1c3BlbmQvcmVzdW1lIGNvZGUgdG8gY29ycmVjdGx5IHJl
-c3RvcmUNCj4gPj4gZ2FkZ2V0IHN0YXRlIg0KPiA+PiBjYW4gYWRkIGNvZGUgZm9yIGluaXRpYWxp
-emF0aW9uIGFuZCBkZWluaXRpYWxpemF0aW9uIGluIHN1c3BlbmQvcmVzdW1lDQo+ID4+IHBhdGhz
-Lg0KPiA+IE15IHByb2JsZW0gd2l0aCB0aGF0IHBhdGNoIHdhcyB0aGF0IHlvdSB3ZXJlIGNoZWNr
-aW5nIHRoZSAtPmVuYWJsZWQNCj4gPiBmbGFnIG91dHNpZGUgb2YgdGhlIHNwaW5sb2NrLiBUbyBh
-ZGRyZXNzIHRoYXQsIHlvdSBvbmx5IG5lZWQgdG8gbW92ZQ0KPiA+IHRoZSBjaGVjayBpbnNpZGUg
-b2YgdGhlIHNwaW5sb2NrLiBJIGRvbid0IHNlZSB3aHkgYSBtdXRleCBpcyBuZWVkZWQuDQo+IA0K
-PiBJdCBpcyBub3QgdGhhdCBzaW1wbGUuIEkgY2FuIGFkZCBzcGluX2xvY2soKSBiZWZvcmUgY2hl
-Y2tpbmcgZW5hYmxlZCwNCj4gYnV0IHRoZW4NCj4gSSB3b3VsZCBuZWVkIHRvIHNwaW5fdW5sb2Nr
-KCkgdG8gY2FsbCByZWd1bGF0b3JfYnVsa19lbmFibGUoKSBhbmQNCj4gcGh5X2VuYWJsZSgpLA0K
-PiBiZWNhdXNlIGJvdGggY2Fubm90IGJlIGNhbGxlZCBmcm9tIGF0b21pYyBjb250ZXh0LiBUaGlz
-IG1lYW5zIHRoYXQgdGhlDQo+IHNwaW5sb2NrDQo+IGluIHN1Y2ggY2FzZSB3aWxsIG5vdCBwcm90
-ZWN0IGFueXRoaW5nIGFuZCBpcyBzaW1wbHkgdXNlbGVzcy4NCg0KQWgsIE9LLiBTbyB5b3UncmUg
-dXNpbmcgdGhlIG11dGV4IGluc3RlYWQgb2YgdGhlIC0+ZW5hYmxlZCBmbGFnIHRoYXQgeW91DQpw
-cm9wb3NlZCBpbiB0aGUgInJld29yayBzdXNwZW5kL3Jlc3VtZSBjb2RlIiBwYXRjaC4gU28gdGhp
-cyBwYXRjaCBpcyBhDQpyZXBsYWNlbWVudCBmb3IgdGhhdCBvbmUuIFNvbWVob3cgSSB3YXMgdGhp
-bmtpbmcgdGhpcyBwYXRjaCB3YXMgb24gdG9wDQpvZiB0aGF0IG9uZS4NCg0KU28gSSBndWVzcyB0
-aGlzIGlzIE9LLCBidXQgSSB3b3VsZCBsaWtlIHRvIGdldCBGZWxpcGUncyBvcGluaW9uIGFib3V0
-DQppdCBiZWZvcmUgd2UgYXBwbHkgdGhpcy4NCg0KRmVsaXBlPw0KDQotLSANClBhdWwNCg0K
+Explicitly set the dr_mode for the dwc3 controller on the
+Snow board to host mode. This is required to ensure the
+controller is initialized in the right mode if the kernel is
+build with USB gadget support.
+
+Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+---
+ arch/arm/boot/dts/exynos5250-snow.dts | 4 ++++
+ arch/arm/boot/dts/exynos5250.dtsi     | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index e51fcef..60429ad 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -624,4 +624,8 @@
+ 	num-cs = <1>;
+ };
+ 
++&usbdrd_dwc3 {
++	dr_mode = "host";
++};
++
+ #include "cros-ec-keyboard.dtsi"
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index f21b9aa..d55c1a2 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -555,7 +555,7 @@
+ 		#size-cells = <1>;
+ 		ranges;
+ 
+-		dwc3 {
++		usbdrd_dwc3: dwc3 {
+ 			compatible = "synopsys,dwc3";
+ 			reg = <0x12000000 0x10000>;
+ 			interrupts = <0 72 0>;
+-- 
+2.1.3
