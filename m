@@ -1,153 +1,49 @@
 From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V8 05/14] drm/exynos: dp: support drm_bridge
-Date: Sat, 15 Nov 2014 15:25:00 +0530
-Message-ID: <1416045309-13359-6-git-send-email-ajaykumar.rs@samsung.com>
+Subject: [PATCH V8 07/14] drm/bridge: ptn3460: probe connector at the end of
+ bridge attach
+Date: Sat, 15 Nov 2014 15:25:02 +0530
+Message-ID: <1416045309-13359-8-git-send-email-ajaykumar.rs@samsung.com>
 References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:44640 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752097AbaKOKBo (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:28096 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752412AbaKOKBu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 15 Nov 2014 05:01:44 -0500
+	Sat, 15 Nov 2014 05:01:50 -0500
 In-reply-to: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: inki.dae@samsung.com, kgene.kim@samsung.com, seanpaul@google.com, thierry.reding@gmail.com, daniel.vetter@ffwll.ch, ajaynumb@gmail.com, bhushan.r@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Modify driver to support drm_bridge.
+Force bridge connector detection at the end of the bridge attach.
+This is needed to detect the bridge connector early.
 
 Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 ---
- .../devicetree/bindings/video/exynos_dp.txt        |   12 +++++++
- drivers/gpu/drm/exynos/exynos_dp_core.c            |   37 ++++++++++++++++----
- drivers/gpu/drm/exynos/exynos_dp_core.h            |    1 +
- 3 files changed, 44 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/bridge/ptn3460.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
-index 53dbccf..7a3a9cd 100644
---- a/Documentation/devicetree/bindings/video/exynos_dp.txt
-+++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
-@@ -66,6 +66,10 @@ Optional properties for dp-controller:
- 		Hotplug detect GPIO.
- 			Indicates which GPIO should be used for hotplug
- 			detection
-+	-video interfaces: Device node can contain video interface port
-+			    nodes according to [1].
-+
-+[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
- 
- Example:
- 
-@@ -105,4 +109,12 @@ Board Specific portion:
- 				vsync-len = <6>;
- 			};
- 		};
-+
-+		ports {
-+			port@0 {
-+				dp_out: endpoint {
-+					remote-endpoint = <&bridge_in>;
-+				};
-+			};
-+		};
- 	};
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-index 5025b70..d30c748 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-@@ -18,6 +18,7 @@
- #include <linux/interrupt.h>
- #include <linux/of.h>
- #include <linux/of_gpio.h>
-+#include <linux/of_graph.h>
- #include <linux/gpio.h>
- #include <linux/component.h>
- #include <linux/phy/phy.h>
-@@ -989,9 +990,19 @@ static struct drm_connector_helper_funcs exynos_dp_connector_helper_funcs = {
- };
- 
- /* returns the number of bridges attached */
--static int exynos_drm_attach_lcd_bridge(struct drm_device *dev,
-+static int exynos_drm_attach_lcd_bridge(struct exynos_dp_device *dp,
- 		struct drm_encoder *encoder)
- {
-+	int ret;
-+
-+	encoder->bridge = dp->bridge;
-+	dp->bridge->encoder = encoder;
-+	ret = drm_bridge_attach(encoder->dev, dp->bridge);
-+	if (ret) {
-+		DRM_ERROR("Failed to attach bridge to drm\n");
-+		return ret;
-+	}
-+
- 	return 0;
- }
- 
-@@ -1005,9 +1016,11 @@ static int exynos_dp_create_connector(struct exynos_drm_display *display,
- 	dp->encoder = encoder;
- 
- 	/* Pre-empt DP connector creation if there's a bridge */
--	ret = exynos_drm_attach_lcd_bridge(dp->drm_dev, encoder);
--	if (ret)
--		return 0;
-+	if (dp->bridge) {
-+		ret = exynos_drm_attach_lcd_bridge(dp, encoder);
-+		if (!ret)
-+			return 0;
-+	}
- 
- 	connector->polled = DRM_CONNECTOR_POLL_HPD;
- 
-@@ -1259,7 +1272,7 @@ static int exynos_dp_bind(struct device *dev, struct device *master, void *data)
- 	if (ret)
- 		return ret;
- 
--	if (!dp->panel) {
-+	if (!dp->panel && !dp->bridge) {
- 		ret = exynos_dp_dt_parse_panel(dp);
- 		if (ret)
- 			return ret;
-@@ -1345,7 +1358,7 @@ static const struct component_ops exynos_dp_ops = {
- static int exynos_dp_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	struct device_node *panel_node;
-+	struct device_node *panel_node, *bridge_node, *endpoint;
- 	struct exynos_dp_device *dp;
- 	int ret;
- 
-@@ -1367,6 +1380,18 @@ static int exynos_dp_probe(struct platform_device *pdev)
- 			return -EPROBE_DEFER;
+diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridge/ptn3460.c
+index e6d5ae7..9f800a1 100644
+--- a/drivers/gpu/drm/bridge/ptn3460.c
++++ b/drivers/gpu/drm/bridge/ptn3460.c
+@@ -281,6 +281,7 @@ int ptn3460_bridge_attach(struct drm_bridge *bridge)
+ 		return -ENODEV;
  	}
  
-+	endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
-+	if (endpoint) {
-+		bridge_node = of_graph_get_remote_port_parent(endpoint);
-+		if (bridge_node) {
-+			dp->bridge = of_drm_find_bridge(bridge_node);
-+			of_node_put(bridge_node);
-+			if (!dp->bridge)
-+				return -EPROBE_DEFER;
-+		} else
-+			return -EPROBE_DEFER;
-+	}
-+
- 	exynos_dp_display.ctx = dp;
++	ptn_bridge->connector.polled = DRM_CONNECTOR_POLL_HPD;
+ 	ret = drm_connector_init(bridge->dev, &ptn_bridge->connector,
+ 			&ptn3460_connector_funcs, DRM_MODE_CONNECTOR_LVDS);
+ 	if (ret) {
+@@ -296,6 +297,8 @@ int ptn3460_bridge_attach(struct drm_bridge *bridge)
+ 	if (ptn_bridge->panel)
+ 		drm_panel_attach(ptn_bridge->panel, &ptn_bridge->connector);
  
- 	ret = component_add(&pdev->dev, &exynos_dp_ops);
-diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.h b/drivers/gpu/drm/exynos/exynos_dp_core.h
-index a1aee69..3b0ba93 100644
---- a/drivers/gpu/drm/exynos/exynos_dp_core.h
-+++ b/drivers/gpu/drm/exynos/exynos_dp_core.h
-@@ -150,6 +150,7 @@ struct exynos_dp_device {
- 	struct drm_connector	connector;
- 	struct drm_encoder	*encoder;
- 	struct drm_panel	*panel;
-+	struct drm_bridge	*bridge;
- 	struct clk		*clock;
- 	unsigned int		irq;
- 	void __iomem		*reg_base;
++	drm_helper_hpd_irq_event(ptn_bridge->connector.dev);
++
+ 	return ret;
+ }
+ 
 -- 
 1.7.9.5
