@@ -1,49 +1,106 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH] PM / Domains: Change prototype for the ->attach_dev() callback
-Date: Sat, 15 Nov 2014 12:32:00 +0100
-Message-ID: <CAMuHMdXHhcvar2RWVVXKwvqr1dbTnnZqbBYic53U3E8-EkcAjw@mail.gmail.com>
-References: <1414670569-3002-1-git-send-email-ulf.hansson@linaro.org>
-	<3267963.fqUYb7m9Rv@vostro.rjw.lan>
-	<7hsihx1bvo.fsf@deeprootsystems.com>
-	<1442757.2EcII903db@vostro.rjw.lan>
+From: Tyler Baker <tyler.baker@linaro.org>
+Subject: Re: exynos5250/arndale: failed to set cpu voltage
+Date: Sat, 15 Nov 2014 10:42:57 -0800
+Message-ID: <CANMBJr5nLOJ4O=+TLMO9uryH79nBQwQKZu_nmRaPne9DE3GvWw@mail.gmail.com>
+References: <CANMBJr4ZgEZDAtdfuLhCXppCGHnHhgmT1aFUi+=kJb2PdkqhGg@mail.gmail.com>
+	<CAM4voamPyTpv5TPtN1Z=ZL3Qmy806qFxrAaU0kiqJmV56cyJiw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1442757.2EcII903db@vostro.rjw.lan>
-Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Kevin Hilman <khilman@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Linux PM list <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Philipp Zabel <philipp.zabel@gmail.com>, Mark Brown <broonie@kernel.org>, Wolfram Sang <wsa@the-dreams.de>, Russell King <linux@arm.linux.org.uk>, Jack Dai <jack.dai@rock-chips.com>, Ji
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:56728 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754379AbaKOSm7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 15 Nov 2014 13:42:59 -0500
+Received: by mail-wi0-f180.google.com with SMTP id hi2so5530021wib.7
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Nov 2014 10:42:58 -0800 (PST)
+In-Reply-To: <CAM4voamPyTpv5TPtN1Z=ZL3Qmy806qFxrAaU0kiqJmV56cyJiw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-Hi Rafael,
+Hi Abhilash,
 
-On Sat, Nov 15, 2014 at 12:48 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->> Subject: [PATCH] PM / Domains: Change prototype for the attach and detach
->>  callbacks
->>
->> Convert the prototypes to return an int in order to support error
->> handling in these callbacks.
->>
->> Also, as suggested by Dmitry Torokhov, pass the domain pointer for use
->> inside the callbacks, and so that they match the existing
->> power_on/power_off callbacks which currently take the domain pointer.
->>
->> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
->> [khilman: added domain as parameter to callbacks, as suggested by Dmitry]
->> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->> Signed-off-by: Kevin Hilman <khilman@linaro.org>
+On 13 November 2014 18:50, Abhilash Kesavan <kesavan.abhilash@gmail.com> wrote:
+> Hello Tyler,
 >
-> That's in the Linus' tree now.
+> On Fri, Nov 14, 2014 at 3:30 AM, Tyler Baker <tyler.baker@linaro.org> wrote:
+>> In recent upstream kernels, exynos5420-based arndale boards have been
+>
+> Boot logs are only for 5250, typo ?
 
-Thank you very much.
+Apologies, this is a typo. Should have been 5250 as you mentioned.
 
-Gr{oetje,eeting}s,
+>
+>> producing boot-time errors due to the fact they failed to set the cpu
+>> voltage. These message flood the serial console even after userspace
+>> has been loaded, yielding the console unusable without forcing a lower
+>> log level. These errors are produced _only_ with the
+>> multi_v7_defconfig and they are _not_ present
+>> with exynos_defconfig. Here are some recent boot logs showing the boot errors:
+>>
+>> mainline/v3.18-rc4-65-g2c54396:
+>>     multi_v7_defconfig:
+>>         http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc4-65-g2c54396/arm-multi_v7_defconfig/boot-exynos5250-arndale.html
+>>     exynos_defconfig:
+>>         http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc4-65-g2c54396/arm-exynos_defconfig/boot-exynos5250-arndale.html
+>
+> From the boot logs it appears that the S5M8767 regulator does not get
+> probed with multi_v7_defconfig and you get the following messages:
+>
+> [    1.147412] deviceless supply vdd_arm not found, using dummy regulator
+> [    1.152669] exynos-cpufreq exynos-cpufreq: failed to set cpu
+> voltage to 1300000
+> [    1.159771] cpufreq: __target_index: Failed to change cpu frequency: -22
+>
+> Both multi_v7_defconfig and exynos_defconfig have the S5M8767
+> regulator enabled. However multi_v7_defconfig does not have the S3C
+> I2C controller enabled while exynos_defconfig does.
+> Can you re-check after enabling CONFIG_I2C_S3C2410 ?
 
-                        Geert
+I have retested my two arndale boards with
+multi_v7_defconfg+CONFIG_I2C_S3C2410=y on mainline, next, and arm-soc.
+Enabling S3C I2C controller does resolve the issue I have reported
+above. It seems reasonable to patch the multi_v7_defconfig to enable
+this option by default, thoughts?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+>
+> Regards,
+> Abhilash
+>
+>>
+>> next/next-20141113:
+>>     multi_v7_defconfig:
+>>         http://storage.armcloud.us/kernel-ci/next/next-20141113/arm-multi_v7_defconfig/boot-exynos5250-arndale.html
+>>     exynos_defconfig:
+>>         http://storage.armcloud.us/kernel-ci/next/next-20141113/arm-exynos_defconfig/boot-exynos5250-arndale.html
+>>
+>> arm-soc/v3.18-rc4-185-gbfcf8f9:
+>>     multi_v7_defconfig:
+>>         http://storage.armcloud.us/kernel-ci/arm-soc/v3.18-rc4-185-gbfcf8f9/arm-multi_v7_defconfig/boot-exynos5250-arndale.html
+>>     exynos_defconfig:
+>>         http://storage.armcloud.us/kernel-ci/arm-soc/v3.18-rc4-185-gbfcf8f9/arm-exynos_defconfig/boot-exynos5250-arndale.html
+>>
+>> Cheers,
+>>
+>> --
+>> Tyler Baker
+>> Tech Lead, LAVA
+>> Linaro.org | Open source software for ARM SoCs
+>> Follow Linaro: http://www.facebook.com/pages/Linaro
+>> http://twitter.com/#!/linaroorg - http://www.linaro.org/linaro-blog
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Cheers,
+
+-- 
+Tyler Baker
+Tech Lead, LAVA
+Linaro.org | Open source software for ARM SoCs
+Follow Linaro: http://www.facebook.com/pages/Linaro
+http://twitter.com/#!/linaroorg - http://www.linaro.org/linaro-blog
