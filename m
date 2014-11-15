@@ -1,174 +1,120 @@
 From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V8 08/14] drm/bridge: ptn3460: use gpiod interface
-Date: Sat, 15 Nov 2014 15:25:03 +0530
-Message-ID: <1416045309-13359-9-git-send-email-ajaykumar.rs@samsung.com>
+Subject: [PATCH V8 09/14] Documentation: drm: bridge: move to video/bridge
+Date: Sat, 15 Nov 2014 15:25:04 +0530
+Message-ID: <1416045309-13359-10-git-send-email-ajaykumar.rs@samsung.com>
 References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:44657 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:44668 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752412AbaKOKBw (ORCPT
+	with ESMTP id S1752412AbaKOKB7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 15 Nov 2014 05:01:52 -0500
+	Sat, 15 Nov 2014 05:01:59 -0500
 In-reply-to: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: inki.dae@samsung.com, kgene.kim@samsung.com, seanpaul@google.com, thierry.reding@gmail.com, daniel.vetter@ffwll.ch, ajaynumb@gmail.com, bhushan.r@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Modify driver to support gpiod interface.
+Move drm/bridge documentation to video/bridge.
+Also, add proper documentation for gpios used by ptn3460.
 
 Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 ---
- drivers/gpu/drm/bridge/ptn3460.c |   88 ++++++++++++++++----------------------
- 1 file changed, 36 insertions(+), 52 deletions(-)
+ .../devicetree/bindings/drm/bridge/ptn3460.txt     |   39 --------------------
+ .../devicetree/bindings/video/bridge/ptn3460.txt   |   39 ++++++++++++++++++++
+ 2 files changed, 39 insertions(+), 39 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/drm/bridge/ptn3460.txt
+ create mode 100644 Documentation/devicetree/bindings/video/bridge/ptn3460.txt
 
-diff --git a/drivers/gpu/drm/bridge/ptn3460.c b/drivers/gpu/drm/bridge/ptn3460.c
-index 9f800a1..826833e 100644
---- a/drivers/gpu/drm/bridge/ptn3460.c
-+++ b/drivers/gpu/drm/bridge/ptn3460.c
-@@ -42,8 +42,8 @@ struct ptn3460_bridge {
- 	struct drm_bridge bridge;
- 	struct edid *edid;
- 	struct drm_panel *panel;
--	int gpio_pd_n;
--	int gpio_rst_n;
-+	struct gpio_desc *gpio_pd_n;
-+	struct gpio_desc *gpio_rst_n;
- 	u32 edid_emulation;
- 	bool enabled;
- };
-@@ -132,14 +132,11 @@ static void ptn3460_pre_enable(struct drm_bridge *bridge)
- 	if (ptn_bridge->enabled)
- 		return;
- 
--	if (gpio_is_valid(ptn_bridge->gpio_pd_n))
--		gpio_set_value(ptn_bridge->gpio_pd_n, 1);
-+	gpiod_set_value(ptn_bridge->gpio_pd_n, 1);
- 
--	if (gpio_is_valid(ptn_bridge->gpio_rst_n)) {
--		gpio_set_value(ptn_bridge->gpio_rst_n, 0);
--		usleep_range(10, 20);
--		gpio_set_value(ptn_bridge->gpio_rst_n, 1);
--	}
-+	gpiod_set_value(ptn_bridge->gpio_rst_n, 0);
-+	usleep_range(10, 20);
-+	gpiod_set_value(ptn_bridge->gpio_rst_n, 1);
- 
- 	if (drm_panel_prepare(ptn_bridge->panel)) {
- 		DRM_ERROR("failed to prepare panel\n");
-@@ -184,11 +181,8 @@ static void ptn3460_disable(struct drm_bridge *bridge)
- 		return;
- 	}
- 
--	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
--		gpio_set_value(ptn_bridge->gpio_rst_n, 1);
+diff --git a/Documentation/devicetree/bindings/drm/bridge/ptn3460.txt b/Documentation/devicetree/bindings/drm/bridge/ptn3460.txt
+deleted file mode 100644
+index 663fe6c..0000000
+--- a/Documentation/devicetree/bindings/drm/bridge/ptn3460.txt
++++ /dev/null
+@@ -1,39 +0,0 @@
+-ptn3460 bridge bindings
 -
--	if (gpio_is_valid(ptn_bridge->gpio_pd_n))
--		gpio_set_value(ptn_bridge->gpio_pd_n, 0);
-+	gpiod_set_value(ptn_bridge->gpio_rst_n, 1);
-+	gpiod_set_value(ptn_bridge->gpio_pd_n, 0);
- }
- 
- static void ptn3460_post_disable(struct drm_bridge *bridge)
-@@ -335,39 +329,41 @@ static int ptn3460_probe(struct i2c_client *client,
- 	}
- 
- 	ptn_bridge->client = client;
--	ptn_bridge->gpio_pd_n = of_get_named_gpio(dev->of_node,
--							"powerdown-gpio", 0);
--	if (gpio_is_valid(ptn_bridge->gpio_pd_n)) {
--		ret = gpio_request_one(ptn_bridge->gpio_pd_n,
--				GPIOF_OUT_INIT_HIGH, "PTN3460_PD_N");
--		if (ret) {
--			dev_err(dev, "Request powerdown-gpio failed (%d)\n",
--									ret);
--			return ret;
--		}
+-Required properties:
+-	- compatible: "nxp,ptn3460"
+-	- reg: i2c address of the bridge
+-	- powerdown-gpio: OF device-tree gpio specification
+-	- reset-gpio: OF device-tree gpio specification
+-	- edid-emulation: The EDID emulation entry to use
+-		+-------+------------+------------------+
+-		| Value | Resolution | Description      |
+-		|   0   |  1024x768  | NXP Generic      |
+-		|   1   |  1920x1080 | NXP Generic      |
+-		|   2   |  1920x1080 | NXP Generic      |
+-		|   3   |  1600x900  | Samsung LTM200KT |
+-		|   4   |  1920x1080 | Samsung LTM230HT |
+-		|   5   |  1366x768  | NXP Generic      |
+-		|   6   |  1600x900  | ChiMei M215HGE   |
+-		+-------+------------+------------------+
+-
+-	- video interfaces: Device node can contain video interface port
+-			    nodes for panel according to [1].
+-
+-[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
+-
+-Example:
+-	lvds-bridge@20 {
+-		compatible = "nxp,ptn3460";
+-		reg = <0x20>;
+-		powerdown-gpio = <&gpy2 5 1 0 0>;
+-		reset-gpio = <&gpx1 5 1 0 0>;
+-		edid-emulation = <5>;
+-		ports {
+-			port@0 {
+-				bridge_out: endpoint {
+-					remote-endpoint = <&panel_in>;
+-				};
+-			};
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/video/bridge/ptn3460.txt b/Documentation/devicetree/bindings/video/bridge/ptn3460.txt
+new file mode 100644
+index 0000000..361971b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/video/bridge/ptn3460.txt
+@@ -0,0 +1,39 @@
++ptn3460 bridge bindings
 +
-+	ptn_bridge->gpio_pd_n = devm_gpiod_get(&client->dev, "powerdown");
-+	if (IS_ERR(ptn_bridge->gpio_pd_n)) {
-+		ret = PTR_ERR(ptn_bridge->gpio_pd_n);
-+		dev_err(dev, "cannot get gpio_pd_n %d\n", ret);
-+		return ret;
- 	}
- 
--	ptn_bridge->gpio_rst_n = of_get_named_gpio(dev->of_node,
--							"reset-gpio", 0);
--	if (gpio_is_valid(ptn_bridge->gpio_rst_n)) {
--		/*
--		 * Request the reset pin low to avoid the bridge being
--		 * initialized prematurely
--		 */
--		ret = gpio_request_one(ptn_bridge->gpio_rst_n,
--				GPIOF_OUT_INIT_LOW, "PTN3460_RST_N");
--		if (ret) {
--			dev_err(dev, "Request reset-gpio failed (%d)\n", ret);
--			gpio_free(ptn_bridge->gpio_pd_n);
--			return ret;
--		}
-+	ret = gpiod_direction_output(ptn_bridge->gpio_pd_n, 1);
-+	if (ret) {
-+		DRM_ERROR("cannot configure gpio_pd_n\n");
-+		return ret;
-+	}
++Required properties:
++	- compatible: "nxp,ptn3460"
++	- reg: i2c address of the bridge
++	- powerdown-gpio: OF device-tree gpio specification  for PD_N pin.
++	- reset-gpio: OF device-tree gpio specification for RST_N pin.
++	- edid-emulation: The EDID emulation entry to use
++		+-------+------------+------------------+
++		| Value | Resolution | Description      |
++		|   0   |  1024x768  | NXP Generic      |
++		|   1   |  1920x1080 | NXP Generic      |
++		|   2   |  1920x1080 | NXP Generic      |
++		|   3   |  1600x900  | Samsung LTM200KT |
++		|   4   |  1920x1080 | Samsung LTM230HT |
++		|   5   |  1366x768  | NXP Generic      |
++		|   6   |  1600x900  | ChiMei M215HGE   |
++		+-------+------------+------------------+
 +
-+	ptn_bridge->gpio_rst_n = devm_gpiod_get(&client->dev, "reset");
-+	if (IS_ERR(ptn_bridge->gpio_rst_n)) {
-+		ret = PTR_ERR(ptn_bridge->gpio_rst_n);
-+		DRM_ERROR("cannot get gpio_rst_n %d\n", ret);
-+		return ret;
-+	}
-+	/*
-+	 * Request the reset pin low to avoid the bridge being
-+	 * initialized prematurely
-+	 */
-+	ret = gpiod_direction_output(ptn_bridge->gpio_rst_n, 0);
-+	if (ret) {
-+		DRM_ERROR("cannot configure gpio_rst_n\n");
-+		return ret;
- 	}
- 
- 	ret = of_property_read_u32(dev->of_node, "edid-emulation",
- 			&ptn_bridge->edid_emulation);
- 	if (ret) {
- 		dev_err(dev, "Can't read EDID emulation value\n");
--		goto err;
-+		return ret;
- 	}
- 
- 	ptn_bridge->bridge.funcs = &ptn3460_bridge_funcs;
-@@ -375,19 +371,12 @@ static int ptn3460_probe(struct i2c_client *client,
- 	ret = drm_bridge_add(&ptn_bridge->bridge);
- 	if (ret) {
- 		DRM_ERROR("Failed to add bridge\n");
--		goto err;
-+		return ret;
- 	}
- 
- 	i2c_set_clientdata(client, ptn_bridge);
- 
- 	return 0;
--
--err:
--	if (gpio_is_valid(ptn_bridge->gpio_pd_n))
--		gpio_free(ptn_bridge->gpio_pd_n);
--	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
--		gpio_free(ptn_bridge->gpio_rst_n);
--	return ret;
- }
- 
- static int ptn3460_remove(struct i2c_client *client)
-@@ -396,11 +385,6 @@ static int ptn3460_remove(struct i2c_client *client)
- 
- 	drm_bridge_remove(&ptn_bridge->bridge);
- 
--	if (gpio_is_valid(ptn_bridge->gpio_pd_n))
--		gpio_free(ptn_bridge->gpio_pd_n);
--	if (gpio_is_valid(ptn_bridge->gpio_rst_n))
--		gpio_free(ptn_bridge->gpio_rst_n);
--
- 	return 0;
- }
- 
++	- video interfaces: Device node can contain video interface port
++			    nodes for panel according to [1].
++
++[1]: Documentation/devicetree/bindings/media/video-interfaces.txt
++
++Example:
++	lvds-bridge@20 {
++		compatible = "nxp,ptn3460";
++		reg = <0x20>;
++		powerdown-gpio = <&gpy2 5 1 0 0>;
++		reset-gpio = <&gpx1 5 1 0 0>;
++		edid-emulation = <5>;
++		ports {
++			port@0 {
++				bridge_out: endpoint {
++					remote-endpoint = <&panel_in>;
++				};
++			};
++		};
++	};
 -- 
 1.7.9.5
