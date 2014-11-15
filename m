@@ -1,106 +1,174 @@
-From: Tyler Baker <tyler.baker@linaro.org>
-Subject: Re: exynos5250/arndale: failed to set cpu voltage
-Date: Sat, 15 Nov 2014 10:42:57 -0800
-Message-ID: <CANMBJr5nLOJ4O=+TLMO9uryH79nBQwQKZu_nmRaPne9DE3GvWw@mail.gmail.com>
-References: <CANMBJr4ZgEZDAtdfuLhCXppCGHnHhgmT1aFUi+=kJb2PdkqhGg@mail.gmail.com>
-	<CAM4voamPyTpv5TPtN1Z=ZL3Qmy806qFxrAaU0kiqJmV56cyJiw@mail.gmail.com>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v2 00/33] thermal: exynos: convert the driver to use
+ per-SoC type operations
+Date: Sat, 15 Nov 2014 14:47:23 -0400
+Message-ID: <20141115184720.GA5722@developer>
+References: <1415890888-8881-1-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f180.google.com ([209.85.212.180]:56728 "EHLO
-	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754379AbaKOSm7 (ORCPT
+Received: from mail-vc0-f180.google.com ([209.85.220.180]:53663 "EHLO
+	mail-vc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754672AbaKOX6V (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 15 Nov 2014 13:42:59 -0500
-Received: by mail-wi0-f180.google.com with SMTP id hi2so5530021wib.7
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 15 Nov 2014 10:42:58 -0800 (PST)
-In-Reply-To: <CAM4voamPyTpv5TPtN1Z=ZL3Qmy806qFxrAaU0kiqJmV56cyJiw@mail.gmail.com>
+	Sat, 15 Nov 2014 18:58:21 -0500
+Content-Disposition: inline
+In-Reply-To: <1415890888-8881-1-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Abhilash,
 
-On 13 November 2014 18:50, Abhilash Kesavan <kesavan.abhilash@gmail.com> wrote:
-> Hello Tyler,
->
-> On Fri, Nov 14, 2014 at 3:30 AM, Tyler Baker <tyler.baker@linaro.org> wrote:
->> In recent upstream kernels, exynos5420-based arndale boards have been
->
-> Boot logs are only for 5250, typo ?
+--SLDf9lqlvOQaIe6s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Apologies, this is a typo. Should have been 5250 as you mentioned.
 
->
->> producing boot-time errors due to the fact they failed to set the cpu
->> voltage. These message flood the serial console even after userspace
->> has been loaded, yielding the console unusable without forcing a lower
->> log level. These errors are produced _only_ with the
->> multi_v7_defconfig and they are _not_ present
->> with exynos_defconfig. Here are some recent boot logs showing the boot errors:
->>
->> mainline/v3.18-rc4-65-g2c54396:
->>     multi_v7_defconfig:
->>         http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc4-65-g2c54396/arm-multi_v7_defconfig/boot-exynos5250-arndale.html
->>     exynos_defconfig:
->>         http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc4-65-g2c54396/arm-exynos_defconfig/boot-exynos5250-arndale.html
->
-> From the boot logs it appears that the S5M8767 regulator does not get
-> probed with multi_v7_defconfig and you get the following messages:
->
-> [    1.147412] deviceless supply vdd_arm not found, using dummy regulator
-> [    1.152669] exynos-cpufreq exynos-cpufreq: failed to set cpu
-> voltage to 1300000
-> [    1.159771] cpufreq: __target_index: Failed to change cpu frequency: -22
->
-> Both multi_v7_defconfig and exynos_defconfig have the S5M8767
-> regulator enabled. However multi_v7_defconfig does not have the S3C
-> I2C controller enabled while exynos_defconfig does.
-> Can you re-check after enabling CONFIG_I2C_S3C2410 ?
+Hello Bartlomiej,
 
-I have retested my two arndale boards with
-multi_v7_defconfg+CONFIG_I2C_S3C2410=y on mainline, next, and arm-soc.
-Enabling S3C I2C controller does resolve the issue I have reported
-above. It seems reasonable to patch the multi_v7_defconfig to enable
-this option by default, thoughts?
 
->
-> Regards,
-> Abhilash
->
->>
->> next/next-20141113:
->>     multi_v7_defconfig:
->>         http://storage.armcloud.us/kernel-ci/next/next-20141113/arm-multi_v7_defconfig/boot-exynos5250-arndale.html
->>     exynos_defconfig:
->>         http://storage.armcloud.us/kernel-ci/next/next-20141113/arm-exynos_defconfig/boot-exynos5250-arndale.html
->>
->> arm-soc/v3.18-rc4-185-gbfcf8f9:
->>     multi_v7_defconfig:
->>         http://storage.armcloud.us/kernel-ci/arm-soc/v3.18-rc4-185-gbfcf8f9/arm-multi_v7_defconfig/boot-exynos5250-arndale.html
->>     exynos_defconfig:
->>         http://storage.armcloud.us/kernel-ci/arm-soc/v3.18-rc4-185-gbfcf8f9/arm-exynos_defconfig/boot-exynos5250-arndale.html
->>
->> Cheers,
->>
->> --
->> Tyler Baker
->> Tech Lead, LAVA
->> Linaro.org | Open source software for ARM SoCs
->> Follow Linaro: http://www.facebook.com/pages/Linaro
->> http://twitter.com/#!/linaroorg - http://www.linaro.org/linaro-blog
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+On Thu, Nov 13, 2014 at 04:00:55PM +0100, Bartlomiej Zolnierkiewicz wrote:
+> Hi,
+>=20
+> This patch series replaces the hardware registers abstractions in
+> the Exynos thermal driver by the usage of per-SoC type operations.
 
-Cheers,
+Good! I think the driver is a bit confusing because it has two ways of
+checking features: soc based and feature flag based. Thus, removing one
+is a good step.
 
--- 
-Tyler Baker
-Tech Lead, LAVA
-Linaro.org | Open source software for ARM SoCs
-Follow Linaro: http://www.facebook.com/pages/Linaro
-http://twitter.com/#!/linaroorg - http://www.linaro.org/linaro-blog
+> Such solution provides simpler, easier to understand code and
+
+Well, that is arguable. IMO, the feature based solution is naturally
+easier to understand as while reading the code, you think about the
+feature not about chip / IP/ SoC versions. Besides, having soc based
+approach spreads many if's in your code base.
+
+Anyways, so far no one working in the Exynos code base has nacked your
+proposal. Apart from that, the issue I had with it, as I mentioned, was
+the fact that it currently has two ways of representing / checking
+features. That is for sure the major issue.
+
+> allows removal of ~250 LOCs (~11% of the whole source code) from
+> the driver.  Some other driver improvements are now also possible
+> thanks to these changes but are scheduled at later time (like
+> consolidating code for clearing IRQs using INTCLEAR register).
+>=20
+
+I am not sure I get your point here. I understand you are basing new
+changes in the code on top of this series, but I don't see how this
+refactoring could enable other feature implementions.
+
+
+> The patchset should not cause any functionality changes.  This
+> means that unless there are some bugs in the patches itself there
+> should be no behavior changes for the driver (this also includes
+> lack of changes in the way hardware is accessed by the driver).
+>=20
+> All testing was done on (Exynos4412 SoC based) ODROID U3 board
+> (some additional patches are needed to make the Exynos thermal
+> driver work on this hardware).
+
+Is it possible to spread testing here? I would like to have coverage for
+all supported chip versions. The reasoning is because the driver
+supports more than Exynos4412, and the amount of changes are
+considerably big.
+
+One thing I can do is to start testing in linux-next on this code. Thus,
+I can merge it in my -next branch (which includes my -linus and -fixes
+branches). But so far, it would not be queued.
+
+My proposal is that these changes will be sent only for the 3.19 merge
+window though. For 3.18 -rc's I believe it is too late. However,
+to get it into 3.19, I request you to provide the testing in all
+supported chips, as I mentioned. Do you think it is doable before Linus
+opens 3.19 merge window?
+
+
+>=20
+> Depends on:
+> - 'next' branch of linux-soc-thermal.git kernel tree from Eduardo
+>=20
+
+Thanks for attending my request.
+
+> Changes since v1 (https://lkml.org/lkml/2014/9/18/305):
+> - rebased on top of the current linux-soc-thermal kernel
+>=20
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+>=20
+>=20
+> Bartlomiej Zolnierkiewicz (33):
+>   thermal: exynos: remove needless triminfo_data abstraction
+>   thermal: exynos: remove needless tmu_status abstraction
+>   thermal: exynos: remove needless threshold_temp abstraction
+>   thermal: exynos: remove needless triminfo_ctrl abstraction
+>   thermal: exynos: remove needless test_mux_addr_shift abstraction
+>   thermal: exynos: remove needless therm_trip_[mode,mask]_shift
+>     abstractions
+>   thermal: exynos: remove needless therm_trip_en_shift abstraction
+>   thermal: exynos: remove needless emul_temp_shift abstraction
+>   thermal: exynos: remove needless emul_time_shift abstraction
+>   thermal: exynos: replace tmu_irqstatus check by Exynos5440 one
+>   thermal: exynos: replace tmu_pmin check by Exynos5440 one
+>   thermal: exynos: simplify HW_TRIP level setting
+>   thermal: exynos: replace threshold_falling check by Exynos SoC type
+>     one
+>   thermal: exynos: remove TMU_SUPPORT_READY_STATUS flag
+>   thermal: exynos: remove TMU_SUPPORT_TRIM_RELOAD flag
+>   thermal: exynos: add sanitize_temp_error() helper
+>   thermal: exynos: add get_th_reg() helper
+>   thermal: exynos: add ->tmu_initialize method
+>   thermal: exynos: add get_con_reg() helper
+>   thermal: exynos: add ->tmu_control method
+>   thermal: exynos: add ->tmu_read method
+>   thermal: exynos: add get_emul_con_reg() helper
+>   thermal: exynos: add ->tmu_set_emulation method
+>   thermal: exynos: add ->tmu_clear_irqs method
+>   thermal: exynos: remove TMU_SUPPORT_FALLING_TRIP flag
+>   thermal: exynos: remove TMU_SUPPORT_EMUL_TIME flag
+>   thermal: exynos: remove TMU_SUPPORT_EMULATION flag
+>   thermal: exynos: remove TMU_SUPPORT_ADDRESS_MULTIPLE flag
+>   thermal: exynos: remove TMU_SUPPORT_MULTI_INST flag
+>   thermal: exynos: remove test_mux pdata field
+>   thermal: exynos: remove SoC type ifdefs
+>   thermal: exynos: remove __EXYNOS5420_TMU_DATA macro
+>   thermal: exynos: remove exynos_tmu_data.h include
+>=20
+>  drivers/thermal/samsung/exynos_thermal_common.h |   1 -
+>  drivers/thermal/samsung/exynos_tmu.c            | 692 ++++++++++++++++--=
+------
+>  drivers/thermal/samsung/exynos_tmu.h            | 123 +----
+>  drivers/thermal/samsung/exynos_tmu_data.c       | 239 +-------
+>  drivers/thermal/samsung/exynos_tmu_data.h       | 159 ------
+>  5 files changed, 485 insertions(+), 729 deletions(-)
+>  delete mode 100644 drivers/thermal/samsung/exynos_tmu_data.h
+>=20
+> --=20
+> 1.8.2.3
+>=20
+
+--SLDf9lqlvOQaIe6s
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUZ5+sAAoJEMLUO4d9pOJWMYAH/0l9vwYy997jjJh6gEZmy7dZ
+rQKJCWmsjdL13LRD/k0GiF/lep90UZg/9/SFaPMcN/0nZQgs75ZuFEFdL02Z77Yy
+J00F+rBzUMZBEe5ymsUOf07fObSydI2PZTlZT6xpcftchJespogZkSQVpzJoa0lM
+M2VvVQiIx3hNWMI4k/45opY1LnjnkGeQrXBZooxZ82l7NjjBZ3znbyPwvlmQZVSP
+8vLacm2fNZseGEp3YEpQREkNVckNBpiPXG8abrjE5BqKTaorPg2e94+pm4yzQbVa
+LwJJYFh8ZgBL/NEgmT0g0hgsXNJzPbGYm6aIpnkbTAimr13XGMvQHBG0am0HsyM=
+=0qD+
+-----END PGP SIGNATURE-----
+
+--SLDf9lqlvOQaIe6s--
