@@ -1,65 +1,66 @@
 From: juergen@kreuzholzen.de
 Subject: (unknown)
-Date: Sun, 16 Nov 2014 18:29:35 +0100
-Message-ID: <E1Xq3dn-0006lG-62@sslproxy02.your-server.de>
+Date: Sun, 16 Nov 2014 18:29:36 +0100
+Message-ID: <E1Xq3dn-0006lG-VG@sslproxy02.your-server.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from www291.your-server.de ([78.46.156.197]:51629 "EHLO
+Received: from www291.your-server.de ([78.46.156.197]:51631 "EHLO
 	www291.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755372AbaKPR3l (ORCPT
+	with ESMTP id S1755359AbaKPR3l (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Sun, 16 Nov 2014 12:29:41 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
->From 6b429d8fd28c6ebd6600a120ccba5cafd6bd07e4 Mon Sep 17 00:00:00 2001
-Message-Id: <cover.1416158605.git.juergen@kreuzholzen.de>
+>From 37a8cf1ed215f68517eae2818be35df042b7e2d0 Mon Sep 17 00:00:00 2001
+Message-Id: <37a8cf1ed215f68517eae2818be35df042b7e2d0.1416158605.git.juergen@kreuzholzen.de>
+In-Reply-To: <cover.1416158605.git.juergen@kreuzholzen.de>
+References: <cover.1416158605.git.juergen@kreuzholzen.de>
 From: Juergen Borleis <juergen@kreuzholzen.de>
-Date: Sun, 16 Nov 2014 18:23:25 +0100
-Subject: [RFC][PATCH 0/8] ARM/Samsung/S3C64XX add more features for devicetree configuration
+Date: Sun, 9 Nov 2014 19:55:08 +0100
+Subject: [PATCH 3/8] ARM/DTS/S3C64XX: add RTC device
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Signed-off-by: Juergen Borleis <juergen@kreuzholzen.de>
+---
+ arch/arm/boot/dts/s3c6410.dtsi | 4 ++++
+ arch/arm/boot/dts/s3c64xx.dtsi | 9 +++++++++
+ 2 files changed, 13 insertions(+)
 
-following some trivial changes to make some already existing devices work again
-for S3C6410 based systems which are now use devicetrees for their configuration.
-
-Less trivial is the addition of the USB 2.0 phy driver for this SoC. The
-S5P210's USB 2.0 phy is nearly the same, but only nearly. The S3C6410's unit
-needs external power supplies to be switched on in order to make the phy work.
-At least the Mini6410 platform makes use of it (don't know what the other
-platforms do). So I added a gpio regulator to the driver. There seems already
-one which can be used in the devicetree, but since this phy provides two phys
-(one for the OTG and a second one for the OHCI) using the generic supply spits
-out runtime error messages because it tries to create two instances of the same
-name in one directory. Is there a better solution than touching the
-phy-samsung-usb2.c's samsung_usb2_phy_probe function?
-
-jbe
-
-Juergen Borleis (8):
-  ARM/Mini6410: enable watchdog support
-  ARM/DTS/S3C64XX: add syscon driver
-  ARM/DTS/S3C64XX: add RTC device
-  ARM/Mini6410: enable real time clock support
-  Samsung/S3C6410/OTG-phy: add S3C6410 support
-  ARM/DTS/S3C64XX: add an OTG phy driver for the S3C6410 SoC
-  ARM/DTS/S3C64XX: add OHCI support
-  ARM/Mini6410: enable USB OHCI support
-
- .../devicetree/bindings/phy/samsung-phy.txt        |   2 +
- arch/arm/boot/dts/s3c6410-mini6410.dts             |  58 ++++
- arch/arm/boot/dts/s3c6410.dtsi                     |   8 +
- arch/arm/boot/dts/s3c64xx.dtsi                     |  40 +++
- arch/arm/mach-s3c64xx/Kconfig                      |   1 +
- drivers/phy/Kconfig                                |   9 +
- drivers/phy/Makefile                               |   1 +
- drivers/phy/phy-s3c6410-usb2.c                     | 346 +++++++++++++++++++++
- drivers/phy/phy-samsung-usb2.c                     |  12 +
- drivers/phy/phy-samsung-usb2.h                     |   3 +
- drivers/usb/host/Kconfig                           |   2 +-
- 11 files changed, 481 insertions(+), 1 deletion(-)
- create mode 100644 drivers/phy/phy-s3c6410-usb2.c
-
+diff --git a/arch/arm/boot/dts/s3c6410.dtsi b/arch/arm/boot/dts/s3c6410.dtsi
+index eb4226b..3c35c94 100644
+--- a/arch/arm/boot/dts/s3c6410.dtsi
++++ b/arch/arm/boot/dts/s3c6410.dtsi
+@@ -36,6 +36,10 @@
+ 	valid-wakeup-mask = <0x53020000>;
+ };
+ 
++&rtc {
++	compatible = "samsung,s3c6410-rtc";
++};
++
+ &soc {
+ 	clocks: clock-controller@7e00f000 {
+ 		compatible = "samsung,s3c6410-clock";
+diff --git a/arch/arm/boot/dts/s3c64xx.dtsi b/arch/arm/boot/dts/s3c64xx.dtsi
+index 5efeb1f..48de957 100644
+--- a/arch/arm/boot/dts/s3c64xx.dtsi
++++ b/arch/arm/boot/dts/s3c64xx.dtsi
+@@ -103,6 +103,15 @@
+ 			status = "disabled";
+ 		};
+ 
++		rtc: rtc@7e005000 {
++			compatible = "samsung,s3c6400-rtc";
++			reg = <0x7e005000 0x1000>;
++			interrupts-extended = <&vic1 28>, <&vic0 2>;
++			clock-names = "rtc";
++			clocks = <&clocks PCLK_RTC>;
++			status = "disabled";
++		};
++
+ 		pmu_syscon: systemc@7e00f000 {
+ 			compatible = "samsung,s3c6400-syscon", "syscon";
+ 			reg = <0x7e00f000 0x1000>;
 -- 
 1.8.1
