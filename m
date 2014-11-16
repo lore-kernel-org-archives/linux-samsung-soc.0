@@ -1,49 +1,47 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH] ARM: dts: Explicitly set dr_mode on exynos5250-snow
-Date: Sun, 16 Nov 2014 10:17:14 +0900
-Message-ID: <00ee01d0013b$0f4ac140$2de043c0$@kernel.org>
-References: <1415994379-29165-1-git-send-email-sjoerd.simons@collabora.co.uk>
- <CABxcv=k6rkatN0NSq-gkGA+ZS1chS-bcXu=Nxk+Uf=WuPrKR5w@mail.gmail.com>
+Subject: RE: [PATCH v8 0/7] Enable L2 cache support on Exynos4210/4x12 SoCs
+Date: Sun, 16 Nov 2014 10:20:01 +0900
+Message-ID: <00ef01d0013b$716f1d30$544d5790$@kernel.org>
+References: <1415884694-5868-1-git-send-email-m.szyprowski@samsung.com>
+ <54660DAE.9090601@samsung.com> <2593372.vOeyyAKq5M@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:63333 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754768AbaKPBRT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 15 Nov 2014 20:17:19 -0500
-In-reply-to: <CABxcv=k6rkatN0NSq-gkGA+ZS1chS-bcXu=Nxk+Uf=WuPrKR5w@mail.gmail.com>
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-reply-to: <2593372.vOeyyAKq5M@wuerfel>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-omap-owner@vger.kernel.org
+To: 'Arnd Bergmann' <arnd@arndb.de>, 'Marek Szyprowski' <m.szyprowski@samsung.com>
+Cc: 'Olof Johansson' <olof@lixom.net>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, lauraa@codeaurora.org, linux-omap@vger.kernel.org, linus.walleij@linaro.org, tony@atomide.com, drake@endlessm.com, loeliger@gmail.com, 'Mark Rutland' <mark.rutland@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Javier Martinez Canillas' <javier@dowhile0.org>, 'Sjoerd Simons' <sjoerd.simons@collabora.co.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 
-Javier Martinez Canillas wrote:
+Arnd Bergmann wrote:
 > 
-> Hello Sjoerd,
+> On Friday 14 November 2014 15:11:58 Marek Szyprowski wrote:
+> >
+> > I assume that after all comments from previous versions, no more changes
+> > are needed
+> > to this patchset and I would really like to have it queued to v3.19.
+> >
+> > Arnd, Olof: could you take this patchset thought arm-soc tree? It already
+> > contains all dependencies.
+> >
+> > Kukjin: could you ack this patchset?
 > 
-Hi,
+> I'd rather see this merged through Russell's tree, as most of the patches
+> are for core code, and only three are for the platform.
+> 
+> For the exynos patches:
+> 
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> 
+I'm also fine on this series for the exynos stuff:
 
-> On Fri, Nov 14, 2014 at 8:46 PM, Sjoerd Simons
-> <sjoerd.simons@collabora.co.uk> wrote:
-> > Explicitly set the dr_mode for the dwc3 controller on the
-> > Snow board to host mode. This is required to ensure the
-> > controller is initialized in the right mode if the kernel is
-> > build with USB gadget support.
-> 
-> The patch looks good to me.
-> 
-> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> 
-> Kukjin,
-> 
-> I think $subject is -rc material since this issue is seen after commit
-> 508423b ("ARM: exynos_defconfig: enable USB gadget support") which
-> landed in 3.18.
-> 
-Yeah, you're right. I'll queue this into -fixes for 3.18.
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+
+And agree with Arnd's suggestion to handle in rmk tree.
+(I think seems this has no dependency with samsung tree)
 
 Thanks,
 Kukjin
+
