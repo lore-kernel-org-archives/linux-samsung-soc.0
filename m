@@ -1,111 +1,62 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH v7 0/7] Enable support for Samsung Exynos7 SoC
-Date: Sun, 16 Nov 2014 16:01:15 +0900
-Message-ID: <000e01d0016b$1eef44b0$5ccdce10$@kernel.org>
-References: <1415506834-8180-1-git-send-email-a.kesavan@samsung.com>
- <CAM4voanLYH+aEhKq_P+pTde5XL4dS0ZjvXta-2U4k0CdV6vYKQ@mail.gmail.com>
- <CAM4voa=DT80ceZf3P8g5+80hoBKQrviSCHcc1qj--RLJkFxbyQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: juergen@kreuzholzen.de
+Subject: (unknown)
+Date: Sun, 16 Nov 2014 18:29:35 +0100
+Message-ID: <E1Xq3dn-0006lG-NW@sslproxy02.your-server.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:16311 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751656AbaKPHBV (ORCPT
+Received: from www291.your-server.de ([78.46.156.197]:51624 "EHLO
+	www291.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755221AbaKPR3l (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 16 Nov 2014 02:01:21 -0500
-In-reply-to: <CAM4voa=DT80ceZf3P8g5+80hoBKQrviSCHcc1qj--RLJkFxbyQ@mail.gmail.com>
-Content-language: ko
+	Sun, 16 Nov 2014 12:29:41 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Abhilash Kesavan' <kesavan.abhilash@gmail.com>, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>, 'Olof Johansson' <olof@lixom.net>, 'Arnd Bergmann' <arnd@arndb.de>
-Cc: 'devicetree' <devicetree@vger.kernel.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, robh@kernel.org, 'Catalin Marinas' <catalin.marinas@arm.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Lorenzo Pieralisi' <lorenzo.pieralisi@arm.com>
 
-Abhilash Kesavan wrote:
-> 
-> Hi Olof and Arnd
-> 
-Hi
+>From 4a92cd8e4a9ee34466c3abb23a3d76fdfd484169 Mon Sep 17 00:00:00 2001
+Message-Id: <4a92cd8e4a9ee34466c3abb23a3d76fdfd484169.1416158605.git.juergen@kreuzholzen.de>
+In-Reply-To: <cover.1416158605.git.juergen@kreuzholzen.de>
+References: <cover.1416158605.git.juergen@kreuzholzen.de>
+From: Juergen Borleis <juergen@kreuzholzen.de>
+Date: Sun, 9 Nov 2014 19:50:50 +0100
+Subject: [PATCH 2/8] ARM/DTS/S3C64XX: add syscon driver
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
 
-> On Tue, Nov 11, 2014 at 7:59 PM, Abhilash Kesavan
-> <kesavan.abhilash@gmail.com> wrote:
-> > Hello Olof and Arnd,
-> >
-> > On Sun, Nov 9, 2014 at 9:50 AM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
-> >> These were originally part of 2 patchsets[1][2] adding support for Exynos7.
-> >>  The clock and pinctrl patches are going through the respective maintainer's
-> >> tree; hence the remaining dt related patches have been consolidated and are
-> >> being posted here as a separate series.
-> >>
-> >> This patchset has build dependencies on the following patches:
-> >> a] "[GIT PULL] Samsung clock changes for 3.19" - specifically the clock dt
-> >>    bindings header.
-> >>    http://comments.gmane.org/gmane.linux.kernel.samsung-soc/39142
-> >> b] "tty: serial: samsung: Clean-up selection of number of available UARTs"
-> >>    http://www.spinics.net/lists/linux-samsung-soc/msg37418.html
-> >> c] "dts, kbuild: Implement support for dtb vendor subdirs"(merged in linux-next)
-> >>    https://lkml.org/lkml/2014/10/21/654
-> >>
-> >> [1] arch: arm64: Enable support for Samsung Exynos7 SoC
-> >> http://www.spinics.net/lists/linux-samsung-soc/msg37047.html
-> >> [2] Add clock and DT support for a few IPs on Exynos7
-> >> http://www.spinics.net/lists/linux-samsung-soc/msg37973.html
-> >>
-> >> Changes since v6:
-> >>         - Fixed the platform ordering (exynos before thunder) in Kconfig file.
-> >>         - Fixed the ordering of reg and enable-method properties in cpu node
-> >>         as per Lorenzo Pieralisi's comment.
-> >
-> >
-> > Do you have any comments on this patchset ?
-> 
-> A gentle reminder regarding this patch set. Kindly review.
-> 
-As I commented before, looks good to me, so shall I queue this in samsung tree
-with dependencies such as clock stuff? I'm happy with either way samsung tree
-or arm-soc tree directly though.
+Some devices are controlled in one central unit: the syscon
 
-Thanks,
-Kukjin
+Signed-off-by: Juergen Borleis <juergen@kreuzholzen.de>
+---
+ arch/arm/boot/dts/s3c64xx.dtsi | 6 ++++++
+ arch/arm/mach-s3c64xx/Kconfig  | 1 +
+ 2 files changed, 7 insertions(+)
 
-> Abhilash
-> >>
-> >> Abhilash Kesavan (2):
-> >>   arm64: dts: Add PMU DT node for exynos7 SoC
-> >>   arm64: dts: Add nodes for mmc, i2c, rtc, watchdog, adc on Exynos7
-> >>
-> >> Alim Akhtar (2):
-> >>   arm64: exynos7: Enable ARMv8 based Exynos7 (SoC) support
-> >>   arm64: Enable Exynos7 SOC in the defconfig
-> >>
-> >> Naveen Krishna Ch (2):
-> >>   arm64: dts: Add initial device tree support for EXYNOS7
-> >>   arm64: dts: Add initial pinctrl support to EXYNOS7
-> >>
-> >> Pankaj Dubey (1):
-> >>   arm64: dts: add <dt-bindings/> symlink
-> >>
-> >>  .../devicetree/bindings/arm/samsung/pmu.txt        |   1 +
-> >>  arch/arm64/Kconfig                                 |  17 +
-> >>  arch/arm64/boot/dts/Makefile                       |   1 +
-> >>  arch/arm64/boot/dts/exynos/Makefile                |   5 +
-> >>  arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |  84 +++
-> >>  arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    | 588 +++++++++++++++++++++
-> >>  arch/arm64/boot/dts/exynos/exynos7.dtsi            | 530 +++++++++++++++++++
-> >>  arch/arm64/boot/dts/include/dt-bindings            |   1 +
-> >>  arch/arm64/configs/defconfig                       |   4 +
-> >>  9 files changed, 1231 insertions(+)
-> >>  create mode 100644 arch/arm64/boot/dts/exynos/Makefile
-> >>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-> >>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
-> >>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7.dtsi
-> >>  create mode 120000 arch/arm64/boot/dts/include/dt-bindings
-> >>
-> >> --
-> >> 2.1.0
-> >>
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/arch/arm/boot/dts/s3c64xx.dtsi b/arch/arm/boot/dts/s3c64xx.dtsi
+index ff5bdaa..5efeb1f 100644
+--- a/arch/arm/boot/dts/s3c64xx.dtsi
++++ b/arch/arm/boot/dts/s3c64xx.dtsi
+@@ -103,6 +103,12 @@
+ 			status = "disabled";
+ 		};
+ 
++		pmu_syscon: systemc@7e00f000 {
++			compatible = "samsung,s3c6400-syscon", "syscon";
++			reg = <0x7e00f000 0x1000>;
++			status = "okay";
++		};
++
+ 		i2c0: i2c@7f004000 {
+ 			compatible = "samsung,s3c2440-i2c";
+ 			reg = <0x7f004000 0x1000>;
+diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
+index 26ca242..d5c0812 100644
+--- a/arch/arm/mach-s3c64xx/Kconfig
++++ b/arch/arm/mach-s3c64xx/Kconfig
+@@ -303,6 +303,7 @@ config MACH_S3C64XX_DT
+ 	select PINCTRL
+ 	select PINCTRL_S3C64XX
+ 	select USE_OF
++	select MFD_SYSCON
+ 	help
+ 	  Machine support for Samsung S3C6400/S3C6410 machines with Device Tree
+ 	  enabled.
+-- 
+1.8.1
