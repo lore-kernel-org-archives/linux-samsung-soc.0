@@ -1,69 +1,150 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH v7 1/2] usb: host: xhci-plat: Get PHYs for xhci's hcds
-Date: Mon, 17 Nov 2014 19:16:36 +0300
-Message-ID: <546A1F64.7000209@cogentembedded.com>
-References: <1414761989-21088-1-git-send-email-gautam.vivek@samsung.com>	<1414761989-21088-2-git-send-email-gautam.vivek@samsung.com>	<545393CE.8070102@cogentembedded.com> <CAFp+6iG37uE1uB5Z8B-hM3nKyBeR6Vxb-YKegd7MrRB3wuA9xw@mail.gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v4 2/2] ARM: EXYNOS: PMU: move restart code into pmu
+ driver
+Date: Mon, 17 Nov 2014 08:41:16 -0800
+Message-ID: <20141117164116.GA28915@roeck-us.net>
+References: <1416223273-1279-1-git-send-email-pankaj.dubey@samsung.com>
+ <1416223273-1279-3-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f179.google.com ([209.85.217.179]:58982 "EHLO
-	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750944AbaKQQQk (ORCPT
+Received: from bh-25.webhostbox.net ([208.91.199.152]:56250 "EHLO
+	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751464AbaKQQmF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Nov 2014 11:16:40 -0500
-Received: by mail-lb0-f179.google.com with SMTP id l4so16283386lbv.38
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Nov 2014 08:16:38 -0800 (PST)
-In-Reply-To: <CAFp+6iG37uE1uB5Z8B-hM3nKyBeR6Vxb-YKegd7MrRB3wuA9xw@mail.gmail.com>
+	Mon, 17 Nov 2014 11:42:05 -0500
+Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
+	(envelope-from <linux@roeck-us.net>)
+	id 1XqPN9-0029OP-Ks
+	for linux-samsung-soc@vger.kernel.org; Mon, 17 Nov 2014 16:41:51 +0000
+Content-Disposition: inline
+In-Reply-To: <1416223273-1279-3-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautamvivek1987@gmail.com>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg KH <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Felipe Balbi <balbi@ti.com>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Julius Werner <jwerner@google.com>, Jingoo Han <jg1.han@samsung.com>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, linux@arm.linux.org.uk, thomas.ab@samsung.com
 
-Hello.
+On Mon, Nov 17, 2014 at 04:51:13PM +0530, Pankaj Dubey wrote:
+> Let's register restart handler from PMU driver for reboot
+> functionality. So that we can remove restart hooks from
+> machine specific file, and thus moving ahead when PMU moved
+> to driver folder, this functionality can be reused for ARM64
+> based Exynos SoC's.
+> 
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  arch/arm/mach-exynos/common.h |    1 -
+>  arch/arm/mach-exynos/exynos.c |    6 ------
+>  arch/arm/mach-exynos/pmu.c    |   23 +++++++++++++++++++++++
+>  3 files changed, 23 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+> index 431be1b..865f878 100644
+> --- a/arch/arm/mach-exynos/common.h
+> +++ b/arch/arm/mach-exynos/common.h
+> @@ -12,7 +12,6 @@
+>  #ifndef __ARCH_ARM_MACH_EXYNOS_COMMON_H
+>  #define __ARCH_ARM_MACH_EXYNOS_COMMON_H
+>  
+> -#include <linux/reboot.h>
+>  #include <linux/of.h>
+>  
+>  #define EXYNOS3250_SOC_ID	0xE3472000
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index 8f995b7..c13d083 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -87,11 +87,6 @@ static struct map_desc exynos5_iodesc[] __initdata = {
+>  	},
+>  };
+>  
+> -static void exynos_restart(enum reboot_mode mode, const char *cmd)
+> -{
+> -	__raw_writel(0x1, pmu_base_addr + EXYNOS_SWRESET);
+> -}
+> -
+>  static struct platform_device exynos_cpuidle = {
+>  	.name              = "exynos_cpuidle",
+>  #ifdef CONFIG_ARM_EXYNOS_CPUIDLE
+> @@ -316,7 +311,6 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
+>  	.init_machine	= exynos_dt_machine_init,
+>  	.init_late	= exynos_init_late,
+>  	.dt_compat	= exynos_dt_compat,
+> -	.restart	= exynos_restart,
+>  	.reserve	= exynos_reserve,
+>  	.dt_fixup	= exynos_dt_fixup,
+>  MACHINE_END
+> diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
+> index 6c8a76d..35f4062 100644
+> --- a/arch/arm/mach-exynos/pmu.c
+> +++ b/arch/arm/mach-exynos/pmu.c
+> @@ -11,8 +11,11 @@
+>  
+>  #include <linux/io.h>
+>  #include <linux/of.h>
+> +#include <linux/of_address.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/delay.h>
+> +#include <linux/notifier.h>
+> +#include <linux/reboot.h>
+>  
+>  
+>  #include "exynos-pmu.h"
+> @@ -716,6 +719,13 @@ static void exynos5420_pmu_init(void)
+>  	pr_info("EXYNOS5420 PMU initialized\n");
+>  }
+>  
+> +static int pmu_restart_notify(struct notifier_block *this,
+> +		unsigned long code, void *unused)
+> +{
+> +	pmu_raw_writel(0x1, EXYNOS_SWRESET);
+> +
+> +	return NOTIFY_DONE;
+> +}
+>  
+>  static const struct exynos_pmu_data exynos4210_pmu_data = {
+>  	.pmu_config	= exynos4210_pmu_config,
+> @@ -765,11 +775,20 @@ static const struct of_device_id exynos_pmu_of_device_ids[] = {
+>  	{ /*sentinel*/ },
+>  };
+>  
+> +/*
+> + * Exynos PMU reboot notifier, handles reboot functionality
 
-On 11/17/2014 9:36 AM, Vivek Gautam wrote:
+restart, really.
 
->>> The host controller by itself may sometimes need to handle PHY
->>> and re-initialize it to re-configure some of the PHY parameters
->>> to get full support out of the PHY controller.
->>> Therefore, facilitate getting the two possible PHYs, viz.
->>> USB 2.0 type (UTMI+) and USB 3.0 type (PIPE3), and initialize them.
+> + */
+> +static struct notifier_block pmu_restart_handler = {
+> +	.notifier_call = pmu_restart_notify,
+> +	.priority = 128,
+> +};
+> +
+>  static int exynos_pmu_probe(struct platform_device *pdev)
+>  {
+>  	const struct of_device_id *match;
+>  	struct device *dev = &pdev->dev;
+>  	struct resource *res;
+> +	int ret;
+>  
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>  	pmu_base_addr = devm_ioremap_resource(dev, res);
+> @@ -794,6 +813,10 @@ static int exynos_pmu_probe(struct platform_device *pdev)
+>  
+>  	platform_set_drvdata(pdev, pmu_context);
+>  
+> +	ret = register_restart_handler(&pmu_restart_handler);
+> +	if (ret)
+> +		dev_err(dev, "can't register restart handler err=%d\n", ret);
+> +
 
->>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->>> ---
->>>    drivers/usb/host/xhci-plat.c |   74
->>> ++++++++++++++++++++++++++++++++++++++++++
->>>    1 file changed, 74 insertions(+)
+dev_warn might be more appropriate, since you ignore the error.
+But that is a nitpick, really, as well as the above.
 
->>> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
->>> index 3d78b0c..5207d5b 100644
->>> --- a/drivers/usb/host/xhci-plat.c
->>> +++ b/drivers/usb/host/xhci-plat.c
-[...]
->>> @@ -204,6 +271,8 @@ static int xhci_plat_suspend(struct device *dev)
->>>          struct usb_hcd  *hcd = dev_get_drvdata(dev);
->>>          struct xhci_hcd *xhci = hcd_to_xhci(hcd);
->>>
->>> +       phy_exit(hcd->phy);
+Acked-by: Guenter Roeck <linux@roeck-us.net>
 
->>     Hm, in the suspend() method?
-
-> phy_exit() should eventually be suspending the PHY and put it to
-> low power state.
-
-    I thought it's a role that the power_off() mothod should play, considering 
-that the power_on() method gets called after the init() method....
-
-> phy_init() in resume() will then take up the task of activating the
-> PHY again.
-
-> phy_power_on() and phy_power_off() are called at xhci_probe() and remove() time.
-
-    Of course.
-
-> Does this makes sense ?
-
-    Not much, really.
-
-WBR, Sergei
+>  	dev_dbg(dev, "Exynos PMU Driver probe done\n");
+>  	return 0;
+>  }
+> -- 
+> 1.7.9.5
+> 
