@@ -1,143 +1,67 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v4 1/2] clk: samsung: exynos5440: move restart code into
- clock driver
-Date: Mon, 17 Nov 2014 08:45:37 -0800
-Message-ID: <20141117164537.GB28915@roeck-us.net>
-References: <1416223273-1279-1-git-send-email-pankaj.dubey@samsung.com>
- <1416223273-1279-2-git-send-email-pankaj.dubey@samsung.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] PM / Domains: Power on the PM domain right after attach
+ completes
+Date: Mon, 17 Nov 2014 18:54:44 +0200
+Message-ID: <546A2854.3020204@ti.com>
+References: <1416237550-31092-1-git-send-email-ulf.hansson@linaro.org> <20141117153257.GS4042@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:56599 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751435AbaKQQqF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Nov 2014 11:46:05 -0500
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1XqPRF-002EeG-G6
-	for linux-samsung-soc@vger.kernel.org; Mon, 17 Nov 2014 16:46:05 +0000
-Content-Disposition: inline
-In-Reply-To: <1416223273-1279-2-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20141117153257.GS4042@n2100.arm.linux.org.uk>
+Sender: linux-pm-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Len Brown <len.brown@intel.com>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-pm@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@linaro.org>, Pavel Machek <pavel@ucw.cz>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Mon, Nov 17, 2014 at 04:51:12PM +0530, Pankaj Dubey wrote:
-> Let's register restart handler for Exynos5440 from it's clock driver
-> for reboot functionality. So that we can cleanup restart hooks from
-> machine specific file.
+Hi Russell,
+
+On 11/17/2014 05:32 PM, Russell King - ARM Linux wrote:
+> On Mon, Nov 17, 2014 at 04:19:10PM +0100, Ulf Hansson wrote:
+>> The amba bus, amba drivers and a vast amount of platform drivers which
+>> enables runtime PM, don't invoke a pm_runtime_get_sync() while probing
+>> their devices.
+>>
+>> Instead, once they have turned on their PM resourses during ->probe()
+>> and are ready to handle I/O, these invokes pm_runtime_set_active() to
+>> synchronize its state towards the runtime PM core.
 > 
-> CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> CC: Tomasz Figa <tomasz.figa@gmail.com>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-
-reboot->restart, and consider using pr_warn instead of pr_err.
-
-Since those are nitpicks
-
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-
-> ---
->  arch/arm/mach-exynos/exynos.c        |   19 +------------------
->  drivers/clk/samsung/clk-exynos5440.c |   29 ++++++++++++++++++++++++++++-
->  2 files changed, 29 insertions(+), 19 deletions(-)
+> The above is misleading for amba.  The code sequence is:
 > 
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index 8f638ad..8f995b7 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -89,24 +89,7 @@ static struct map_desc exynos5_iodesc[] __initdata = {
->  
->  static void exynos_restart(enum reboot_mode mode, const char *cmd)
->  {
-> -	struct device_node *np;
-> -	u32 val = 0x1;
-> -	void __iomem *addr = pmu_base_addr + EXYNOS_SWRESET;
-> -
-> -	if (of_machine_is_compatible("samsung,exynos5440")) {
-> -		u32 status;
-> -		np = of_find_compatible_node(NULL, NULL, "samsung,exynos5440-clock");
-> -
-> -		addr = of_iomap(np, 0) + 0xbc;
-> -		status = __raw_readl(addr);
-> -
-> -		addr = of_iomap(np, 0) + 0xcc;
-> -		val = __raw_readl(addr);
-> -
-> -		val = (val & 0xffff0000) | (status & 0xffff);
-> -	}
-> -
-> -	__raw_writel(val, addr);
-> +	__raw_writel(0x1, pmu_base_addr + EXYNOS_SWRESET);
->  }
->  
->  static struct platform_device exynos_cpuidle = {
-> diff --git a/drivers/clk/samsung/clk-exynos5440.c b/drivers/clk/samsung/clk-exynos5440.c
-> index 00d1d00..f43b925 100644
-> --- a/drivers/clk/samsung/clk-exynos5440.c
-> +++ b/drivers/clk/samsung/clk-exynos5440.c
-> @@ -15,6 +15,8 @@
->  #include <linux/clk-provider.h>
->  #include <linux/of.h>
->  #include <linux/of_address.h>
-> +#include <linux/notifier.h>
-> +#include <linux/reboot.h>
->  
->  #include "clk.h"
->  #include "clk-pll.h"
-> @@ -23,6 +25,8 @@
->  #define CPU_CLK_STATUS		0xfc
->  #define MISC_DOUT1		0x558
->  
-> +static void __iomem *reg_base;
-> +
->  /* parent clock name list */
->  PNAME(mout_armclk_p)	= { "cplla", "cpllb" };
->  PNAME(mout_spi_p)	= { "div125", "div200" };
-> @@ -89,10 +93,30 @@ static const struct of_device_id ext_clk_match[] __initconst = {
->  	{},
->  };
->  
-> +static int exynos5440_clk_restart_notify(struct notifier_block *this,
-> +		unsigned long code, void *unused)
-> +{
-> +	u32 val, status;
-> +
-> +	status = readl_relaxed(reg_base + 0xbc);
-> +	val = readl_relaxed(reg_base + 0xcc);
-> +	val = (val & 0xffff0000) | (status & 0xffff);
-> +	writel_relaxed(val, reg_base + 0xcc);
-> +
-> +	return NOTIFY_DONE;
-> +}
-> +
-> +/*
-> + * Exynos5440 Clock reboot notifier, handles reboot functionality
-> + */
-> +static struct notifier_block exynos5440_clk_restart_handler = {
-> +	.notifier_call = exynos5440_clk_restart_notify,
-> +	.priority = 128,
-> +};
-> +
->  /* register exynos5440 clocks */
->  static void __init exynos5440_clk_init(struct device_node *np)
->  {
-> -	void __iomem *reg_base;
->  	struct samsung_clk_provider *ctx;
->  
->  	reg_base = of_iomap(np, 0);
-> @@ -125,6 +149,9 @@ static void __init exynos5440_clk_init(struct device_node *np)
->  
->  	samsung_clk_of_add_provider(np, ctx);
->  
-> +	if (register_restart_handler(&exynos5440_clk_restart_handler))
-> +		pr_err("exynos5440 clock can't register restart handler\n");
-> +
->  	pr_info("Exynos5440: arm_clk = %ldHz\n", _get_rate("arm_clk"));
->  	pr_info("exynos5440 clock initialization complete\n");
->  }
-> -- 
-> 1.7.9.5
+>                  pm_runtime_get_noresume(dev);
+>                  pm_runtime_set_active(dev);
+>                  pm_runtime_enable(dev);
 > 
+>                  ret = pcdrv->probe(pcdev, id);
+> 
+> AMBA drivers should never call pm_runtime_set_active(), as the runtime PM
+> state has already been initialised by the bus code.  Platform drivers are
+> different; the platform code provides zero help for runtime PM.
+> 
+> The sequence used by AMBA bus code is the sequence which was used by PCI
+> (as per commit f3ec4f87d607) at the time the runtime PM support was
+> written for AMBA.  PCI assumes that unbound devices are already powered
+> up, and as far as I'm aware, that's also true of AMBA devices as well.
+> I have yet to have access to a platform where this isn't true, neither
+> has anyone reported that such a platform exists.
+> 
+
+I'd be very appreciated if you would be able to clarify one point to me as
+I'm not familiar with amba hw?
+
+I've found at least 2 AMBA drivers where secondary clock is used 
+to enable/disable device in addition to "apb_pclk":
+ - drivers/mmc/host/mmci.c 
+ - drivers/spi/spi-pl022.c
+So, form the code point of view, the assumption that "unbound AMBA devices are
+already powered up" is not always true. And "apb_pclk" is just an interface clock
+in such cases. 
+>From another side above statement is true for mailbox/pl320-ipc.c which seems like
+is simple device.
+Am I wrong?
+
+Thanks in advance. 
+
+regards,
+-grygorii
+
