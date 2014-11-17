@@ -1,56 +1,69 @@
-From: astound57510@gmail.com
-Subject: Fix Penguin Penalty 17th October2014 ( mail-archive.com )
-Date: Mon, 17 Nov 2014 13:30:43 +0530
-Message-ID: <5469ab2b.89de420a.1831.ffffd622@mx.google.com>
-Reply-To: seo.expert388@yahoo.com
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH 00/14] drm/exynos: embed exynos-drm framework objects into
+ driver private context
+Date: Mon, 17 Nov 2014 09:54:13 +0100
+Message-ID: <1416214467-6179-1-git-send-email-a.hajda@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f196.google.com ([209.85.192.196]:51583 "EHLO
-	mail-pd0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751597AbaKQIAo (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:35019 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751435AbaKQIyx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Nov 2014 03:00:44 -0500
-Received: by mail-pd0-f196.google.com with SMTP id r10so9570183pdi.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Nov 2014 00:00:44 -0800 (PST)
-Received: from localhost.localdomain ([202.164.40.59])
-        by mx.google.com with ESMTPSA id qm9sm4831990pac.14.2014.11.17.00.00.42
-        for <linux-samsung-soc@vger.kernel.org>
-        (version=TLSv1 cipher=RC4-SHA bits=128/128);
-        Mon, 17 Nov 2014 00:00:43 -0800 (PST)
+	Mon, 17 Nov 2014 03:54:53 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NF600MH8E897I40@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 Nov 2014 08:57:45 +0000 (GMT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
 
-Dear Sir
+Hi Inki,
 
-Did your website get hit by Google Penguin update on October 17th 2014?=
- What basically is Google Penguin Update? It is actually a code name fo=
-r Google algorithm which aims at decreasing your websites search engine=
- rankings that violate Google=92s guidelines by using black hat SEO tec=
-hniques to rank your webpage by giving number of spammy links to the pa=
-ge.
-=20
-We are one of those few SEO companies that can help you avoid penalties=
- from Google Updates like Penguin and Panda. Our clients have survived =
-all the previous and present updates with ease. They have never been hi=
-t because we use 100% white hat SEO techniques to rank Webpages.  Simpl=
-e thing that we do to keep websites away from any Penguin or Panda pena=
-lties is follow Google guidelines and we give Google users the best ans=
-wers to their queries.
+This patchset embed all remaining exynos_drm framework objects into driver private
+context, thanks to this global variables can be removed and the code can be simplified.
+It continues refactoring started by dsi related patchset [1].
 
-If you are looking to increase the quality of your websites and to get =
-more targeted traffic or save your websites from these Google penalties=
- email us back with your interest.=20
+I have tested it on trats and universal boards with following pipelines:
+- fimd - dpi,
+- fimd - dsi,
+- mixer - hdmi.
 
-We will be glad to serve you and help you grow your business.
+The patchset is based on exynos-drm-next-todo + hdmi fixes patchset [2].
+
+[1]: http://permalink.gmane.org/gmane.comp.video.dri.devel/115960
+[2]: http://permalink.gmane.org/gmane.comp.video.dri.devel/118257
 
 Regards
+Andrzej
 
-Vince G
 
-SEO Manager ( TOB )
-B7 Green Avenue, Amritsar 143001 Punjab
-____________________________
-NO CLICK in the subject to STOP EMAILS
+Andrzej Hajda (14):
+  drm/exynos/mixer: embed manager into private context
+  drm/exynos/mixer: stop using manager->ctx pointer
+  drm/exynos/vidi: embed manager into private context
+  drm/exynos/vidi: stop using manager->ctx pointer
+  drm/exynos/fimd: embed manager into private context
+  drm/exynos/fimd: stop using manager->ctx pointer
+  drm/exynos/hdmi: embed display into private context
+  drm/exynos/hdmi: stop using display->ctx pointer
+  drm/exynos/vidi: embed display into private context
+  drm/exynos/vidi: stop using display->ctx pointer
+  drm/exynos/dp: embed display into private context
+  drm/exynos/dp: stop using display->ctx pointer
+  drm/exynos/dpi: embed display into private context
+  drm/exynos/dpi: stop using display->ctx pointer
+
+ drivers/gpu/drm/exynos/exynos_dp_core.c  |  58 ++++++++--------
+ drivers/gpu/drm/exynos/exynos_dp_core.h  |   3 +
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c  |  42 ++++++------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h  |   4 +-
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 102 +++++++++++++--------------
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c |  89 ++++++++++++------------
+ drivers/gpu/drm/exynos/exynos_hdmi.c     |  65 ++++++++----------
+ drivers/gpu/drm/exynos/exynos_mixer.c    | 114 +++++++++++++++----------------
+ 8 files changed, 236 insertions(+), 241 deletions(-)
+
+-- 
+1.9.1
