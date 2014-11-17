@@ -1,65 +1,40 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] PM / Domains: Power on the PM domain right after attach completes
-Date: Tue, 18 Nov 2014 00:28:26 +0100
-Message-ID: <9731926.0Og5ZNPBtE@vostro.rjw.lan>
-References: <20141117220238.GE5258@dtor-ws> <Pine.LNX.4.44L0.1411171708010.4838-100000@iolanthe.rowland.org> <20141117221700.GA2049@dtor-ws>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: exynos boot falures in linux-next
+Date: Tue, 18 Nov 2014 00:25:10 +0100
+Message-ID: <546A83D6.9060504@collabora.co.uk>
+References: <E1XqKYI-0000pQ-4b@ip-10-35-177-41.ec2.internal>	<7hoas54y7k.fsf@deeprootsystems.com> <7hlhn9zcse.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:54781 "HELO
-	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1753106AbaKQXHY (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:57533 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751515AbaKQXZV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Nov 2014 18:07:24 -0500
-In-Reply-To: <20141117221700.GA2049@dtor-ws>
+	Mon, 17 Nov 2014 18:25:21 -0500
+In-Reply-To: <7hlhn9zcse.fsf@deeprootsystems.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Kevin Hilman <khilman@deeprootsystems.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 
-On Monday, November 17, 2014 02:17:00 PM Dmitry Torokhov wrote:
-> On Mon, Nov 17, 2014 at 05:12:35PM -0500, Alan Stern wrote:
-> > On Mon, 17 Nov 2014, Dmitry Torokhov wrote:
-> > 
-> > > > >  Except buses
-> > > > > usually call pm_generic_runtime_resume() which ends up fetching driver's
-> > > > > callbacks. Maybe pm_generic_runtime_*() need be a bit smarter?
-> > > > 
-> > > > No, the bus subsystem needs to be smarter.  It shouldn't call 
-> > > > pm_generic_runtime_resume() if the driver hasn't been probed yet, or if 
-> > > > the driver has already been unbound from the device.
-> > > 
-> > > But that code wold be exactly the same for all buses, right? So why
-> > > can't pm_generic_runtime_resume() be smarter?
-> > 
-> > It would not be the same for all buses.  Each bus will have its own way 
-> > of recognizing whether or not a driver has been probed (i.e., by 
-> > checking some field in the bus-specific part of the device structure).
-> > 
-> > > However, is it allowed to call pm_runtime_get_sync() on devices that
-> > > didn't issue pm_runtime_enable()?
-> > 
-> > Yes.  But the bus has to issue pm_runtime_enable() before probing the 
-> > driver, because the driver will expect runtime PM to work properly 
-> > while its probe routine runs.  For example, the probe routine might 
-> > want to leave the device in a runtime-suspended state.  It can't do 
-> > that if the device isn't enabled for runtime PM.
+Hello Kevin,
+
+On 11/17/2014 11:24 PM, Kevin Hilman wrote:
 > 
-> That means that runtime PM will be enabled for all devices on given bus
-> while up till now drivers were deciding if their devices should be
-> runtime-pm-managed or not.
+> As might have been expected, reverting the change that enables the
+> DRM/display options in exynos_defconfig fixes the problem.
+> 
+> Kevin
+>
 
-That's not the case for PCI drivers.
+I'm sorry for causing a boot failure but when I first posted that patch,
+the Exynos DRM driver was working correctly (at least on the Exynos boards
+I've access to) so it seems the regression was introduced while the patch
+was posted but not yet picked.
 
-> I do not think we are quite ready for this.
+I'm not sure what is the correct step in this case but I'm OK with
+reverting the patch until the Exynos DRM driver bug is fixed.
 
-We have to do that if power domains are in use, however, because if at least
-one device in a power domain in enabled for runtime PM, that will affect the
-other devices in that domain.
-
-We could make a rule to keep a domail always up if at least one device in it
-has runtime PM disabled, but that is equivalent to enabling runtime PM for
-that device, powering the domain up and bumping up the device's usage counter.
-
-Rafael
+Best regards,
+Javier
