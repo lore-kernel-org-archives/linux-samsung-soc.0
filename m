@@ -1,181 +1,79 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 05/14] drm/exynos/fimd: embed manager into private context
-Date: Mon, 17 Nov 2014 09:54:18 +0100
-Message-ID: <1416214467-6179-6-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 08/14] drm/exynos/hdmi: stop using display->ctx pointer
+Date: Mon, 17 Nov 2014 09:54:21 +0100
+Message-ID: <1416214467-6179-9-git-send-email-a.hajda@samsung.com>
 References: <1416214467-6179-1-git-send-email-a.hajda@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:35040 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751668AbaKQIzE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Nov 2014 03:55:04 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NF600GL1E8K7E40@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Nov 2014 08:57:56 +0000 (GMT)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1416214467-6179-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-exynos_drm_manager is used by internal Exynos DRM framework for
-representing crtc. As it should be mapped 1:1 to fimd private context
-it seems more reasonable to embed it directly in that context.
-As a result further code simplification will be possible.
-Moreover it will be possible to handle multiple FIMD devices in the system.
-
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 62 ++++++++++++++------------------
- 1 file changed, 26 insertions(+), 36 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index c949099..6cda128 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -89,8 +89,6 @@
- /* FIMD has totally five hardware windows. */
- #define WINDOWS_NR	5
- 
--#define get_fimd_manager(mgr)	platform_get_drvdata(to_platform_device(dev))
--
- struct fimd_driver_data {
- 	unsigned int timing_base;
- 	unsigned int lcdblk_offset;
-@@ -151,6 +149,7 @@ struct fimd_win_data {
- };
- 
- struct fimd_context {
-+	struct exynos_drm_manager	manager;
- 	struct device			*dev;
- 	struct drm_device		*drm_dev;
- 	struct clk			*bus_clk;
-@@ -952,8 +951,7 @@ static void fimd_dpms(struct exynos_drm_manager *mgr, int mode)
- 
- static void fimd_trigger(struct device *dev)
- {
--	struct exynos_drm_manager *mgr = get_fimd_manager(dev);
--	struct fimd_context *ctx = mgr->ctx;
-+	struct fimd_context *ctx = dev_get_drvdata(dev);
- 	struct fimd_driver_data *driver_data = ctx->driver_data;
- 	void *timing_base = ctx->regs + driver_data->timing_base;
- 	u32 reg;
-@@ -1019,11 +1017,6 @@ static struct exynos_drm_manager_ops fimd_manager_ops = {
- 	.te_handler = fimd_te_handler,
- };
- 
--static struct exynos_drm_manager fimd_manager = {
--	.type = EXYNOS_DISPLAY_TYPE_LCD,
--	.ops = &fimd_manager_ops,
--};
--
- static irqreturn_t fimd_irq_handler(int irq, void *dev_id)
- {
- 	struct fimd_context *ctx = (struct fimd_context *)dev_id;
-@@ -1059,11 +1052,11 @@ out:
- 
- static int fimd_bind(struct device *dev, struct device *master, void *data)
- {
--	struct fimd_context *ctx = fimd_manager.ctx;
-+	struct fimd_context *ctx = dev_get_drvdata(dev);
- 	struct drm_device *drm_dev = data;
- 
--	fimd_mgr_initialize(&fimd_manager, drm_dev);
--	exynos_drm_crtc_create(&fimd_manager);
-+	fimd_mgr_initialize(&ctx->manager, drm_dev);
-+	exynos_drm_crtc_create(&ctx->manager);
- 	if (ctx->display)
- 		exynos_drm_create_enc_conn(drm_dev, ctx->display);
- 
-@@ -1074,15 +1067,14 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
- static void fimd_unbind(struct device *dev, struct device *master,
- 			void *data)
- {
--	struct exynos_drm_manager *mgr = dev_get_drvdata(dev);
--	struct fimd_context *ctx = fimd_manager.ctx;
-+	struct fimd_context *ctx = dev_get_drvdata(dev);
- 
--	fimd_dpms(mgr, DRM_MODE_DPMS_OFF);
-+	fimd_dpms(&ctx->manager, DRM_MODE_DPMS_OFF);
- 
- 	if (ctx->display)
- 		exynos_dpi_remove(dev);
- 
--	fimd_mgr_remove(mgr);
-+	fimd_mgr_remove(&ctx->manager);
- }
- 
- static const struct component_ops fimd_component_ops = {
-@@ -1098,21 +1090,20 @@ static int fimd_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	int ret = -EINVAL;
- 
--	ret = exynos_drm_component_add(&pdev->dev, EXYNOS_DEVICE_TYPE_CRTC,
--					fimd_manager.type);
--	if (ret)
--		return ret;
--
--	if (!dev->of_node) {
--		ret = -ENODEV;
--		goto err_del_component;
--	}
-+	if (!dev->of_node)
-+		return -ENODEV;
- 
- 	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
--	if (!ctx) {
--		ret = -ENOMEM;
--		goto err_del_component;
--	}
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	ctx->manager.type = EXYNOS_DISPLAY_TYPE_LCD;
-+	ctx->manager.ops = &fimd_manager_ops;
-+
-+	ret = exynos_drm_component_add(dev, EXYNOS_DEVICE_TYPE_CRTC,
-+				       ctx->manager.type);
-+	if (ret)
-+		return ret;
- 
- 	ctx->dev = dev;
- 	ctx->suspended = true;
-@@ -1200,28 +1191,27 @@ static int fimd_probe(struct platform_device *pdev)
- 
- 	init_waitqueue_head(&ctx->wait_vsync_queue);
- 	atomic_set(&ctx->wait_vsync_event, 0);
-+	ctx->manager.ctx = ctx;
- 
--	platform_set_drvdata(pdev, &fimd_manager);
--
--	fimd_manager.ctx = ctx;
-+	platform_set_drvdata(pdev, ctx);
- 
- 	ctx->display = exynos_dpi_probe(dev);
- 	if (IS_ERR(ctx->display))
- 		return PTR_ERR(ctx->display);
- 
--	pm_runtime_enable(&pdev->dev);
-+	pm_runtime_enable(dev);
- 
--	ret = component_add(&pdev->dev, &fimd_component_ops);
-+	ret = component_add(dev, &fimd_component_ops);
- 	if (ret)
- 		goto err_disable_pm_runtime;
- 
- 	return ret;
- 
- err_disable_pm_runtime:
--	pm_runtime_disable(&pdev->dev);
-+	pm_runtime_disable(dev);
- 
- err_del_component:
--	exynos_drm_component_del(&pdev->dev, EXYNOS_DEVICE_TYPE_CRTC);
-+	exynos_drm_component_del(dev, EXYNOS_DEVICE_TYPE_CRTC);
- 	return ret;
- }
- 
--- 
-1.9.1
+VGhlIHBhdGNoIHJlcGxhY2VzIGFjY2Vzc2VzIHRvIGRpc3BsYXktPmN0eCBwb2ludGVyIGJ5IGNv
+bnRhaW5lcl9vZgpjb25zdHJ1Y3QuIEl0IHdpbGwgYWxsb3cgdG8gcmVtb3ZlIGN0eCBmaWVsZCBp
+biB0aGUgZnV0dXJlLgoKU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1z
+dW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgfCAxOCAr
+KysrKysrKysrKy0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAxMSBpbnNlcnRpb25zKCspLCA3IGRl
+bGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hk
+bWkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwppbmRleCBmOGVkMTIz
+Li4zN2JiNDIzIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1p
+LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCkBAIC0yMTMsNiAr
+MjEzLDExIEBAIHN0cnVjdCBoZG1pX2NvbnRleHQgewogCWVudW0gaGRtaV90eXBlCQkJdHlwZTsK
+IH07CiAKK3N0YXRpYyBpbmxpbmUgc3RydWN0IGhkbWlfY29udGV4dCAqZGlzcGxheV90b19oZG1p
+KHN0cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkgKmQpCit7CisJcmV0dXJuIGNvbnRhaW5lcl9vZihk
+LCBzdHJ1Y3QgaGRtaV9jb250ZXh0LCBkaXNwbGF5KTsKK30KKwogc3RydWN0IGhkbWlwaHlfY29u
+ZmlnIHsKIAlpbnQgcGl4ZWxfY2xvY2s7CiAJdTggY29uZlszMl07CkBAIC0xMTI4LDcgKzExMzMs
+NyBAQCBzdGF0aWMgc3RydWN0IGRybV9jb25uZWN0b3JfaGVscGVyX2Z1bmNzIGhkbWlfY29ubmVj
+dG9yX2hlbHBlcl9mdW5jcyA9IHsKIHN0YXRpYyBpbnQgaGRtaV9jcmVhdGVfY29ubmVjdG9yKHN0
+cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkgKmRpc3BsYXksCiAJCQlzdHJ1Y3QgZHJtX2VuY29kZXIg
+KmVuY29kZXIpCiB7Ci0Jc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEgPSBkaXNwbGF5LT5jdHg7
+CisJc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEgPSBkaXNwbGF5X3RvX2hkbWkoZGlzcGxheSk7
+CiAJc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvciA9ICZoZGF0YS0+Y29ubmVjdG9yOwog
+CWludCByZXQ7CiAKQEAgLTIwMDUsNyArMjAxMCw3IEBAIHN0YXRpYyB2b2lkIGhkbWlfdjE0X21v
+ZGVfc2V0KHN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhLAogc3RhdGljIHZvaWQgaGRtaV9tb2Rl
+X3NldChzdHJ1Y3QgZXh5bm9zX2RybV9kaXNwbGF5ICpkaXNwbGF5LAogCQkJc3RydWN0IGRybV9k
+aXNwbGF5X21vZGUgKm1vZGUpCiB7Ci0Jc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEgPSBkaXNw
+bGF5LT5jdHg7CisJc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGEgPSBkaXNwbGF5X3RvX2hkbWko
+ZGlzcGxheSk7CiAJc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm0gPSBtb2RlOwogCiAJRFJNX0RF
+QlVHX0tNUygieHJlcz0lZCwgeXJlcz0lZCwgcmVmcmVzaD0lZCwgaW50bD0lc1xuIiwKQEAgLTIw
+MjQsNyArMjAyOSw3IEBAIHN0YXRpYyB2b2lkIGhkbWlfbW9kZV9zZXQoc3RydWN0IGV4eW5vc19k
+cm1fZGlzcGxheSAqZGlzcGxheSwKIAogc3RhdGljIHZvaWQgaGRtaV9jb21taXQoc3RydWN0IGV4
+eW5vc19kcm1fZGlzcGxheSAqZGlzcGxheSkKIHsKLQlzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0
+YSA9IGRpc3BsYXktPmN0eDsKKwlzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSA9IGRpc3BsYXlf
+dG9faGRtaShkaXNwbGF5KTsKIAogCW11dGV4X2xvY2soJmhkYXRhLT5oZG1pX211dGV4KTsKIAlp
+ZiAoIWhkYXRhLT5wb3dlcmVkKSB7CkBAIC0yMDM4LDcgKzIwNDMsNyBAQCBzdGF0aWMgdm9pZCBo
+ZG1pX2NvbW1pdChzdHJ1Y3QgZXh5bm9zX2RybV9kaXNwbGF5ICpkaXNwbGF5KQogCiBzdGF0aWMg
+dm9pZCBoZG1pX3Bvd2Vyb24oc3RydWN0IGV4eW5vc19kcm1fZGlzcGxheSAqZGlzcGxheSkKIHsK
+LQlzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0YSA9IGRpc3BsYXktPmN0eDsKKwlzdHJ1Y3QgaGRt
+aV9jb250ZXh0ICpoZGF0YSA9IGRpc3BsYXlfdG9faGRtaShkaXNwbGF5KTsKIAlzdHJ1Y3QgaGRt
+aV9yZXNvdXJjZXMgKnJlcyA9ICZoZGF0YS0+cmVzOwogCiAJbXV0ZXhfbG9jaygmaGRhdGEtPmhk
+bWlfbXV0ZXgpOwpAQCAtMjA2OSw3ICsyMDc0LDcgQEAgc3RhdGljIHZvaWQgaGRtaV9wb3dlcm9u
+KHN0cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkgKmRpc3BsYXkpCiAKIHN0YXRpYyB2b2lkIGhkbWlf
+cG93ZXJvZmYoc3RydWN0IGV4eW5vc19kcm1fZGlzcGxheSAqZGlzcGxheSkKIHsKLQlzdHJ1Y3Qg
+aGRtaV9jb250ZXh0ICpoZGF0YSA9IGRpc3BsYXktPmN0eDsKKwlzdHJ1Y3QgaGRtaV9jb250ZXh0
+ICpoZGF0YSA9IGRpc3BsYXlfdG9faGRtaShkaXNwbGF5KTsKIAlzdHJ1Y3QgaGRtaV9yZXNvdXJj
+ZXMgKnJlcyA9ICZoZGF0YS0+cmVzOwogCiAJbXV0ZXhfbG9jaygmaGRhdGEtPmhkbWlfbXV0ZXgp
+OwpAQCAtMjEwNCw3ICsyMTA5LDcgQEAgb3V0OgogCiBzdGF0aWMgdm9pZCBoZG1pX2RwbXMoc3Ry
+dWN0IGV4eW5vc19kcm1fZGlzcGxheSAqZGlzcGxheSwgaW50IG1vZGUpCiB7Ci0Jc3RydWN0IGhk
+bWlfY29udGV4dCAqaGRhdGEgPSBkaXNwbGF5LT5jdHg7CisJc3RydWN0IGhkbWlfY29udGV4dCAq
+aGRhdGEgPSBkaXNwbGF5X3RvX2hkbWkoZGlzcGxheSk7CiAJc3RydWN0IGRybV9lbmNvZGVyICpl
+bmNvZGVyID0gaGRhdGEtPmVuY29kZXI7CiAJc3RydWN0IGRybV9jcnRjICpjcnRjID0gZW5jb2Rl
+ci0+Y3J0YzsKIAlzdHJ1Y3QgZHJtX2NydGNfaGVscGVyX2Z1bmNzICpmdW5jcyA9IE5VTEw7CkBA
+IC0yNDgxLDcgKzI0ODYsNiBAQCBvdXRfZ2V0X3BoeV9wb3J0OgogCX0KIAogCXBtX3J1bnRpbWVf
+ZW5hYmxlKGRldik7Ci0JaGRhdGEtPmRpc3BsYXkuY3R4ID0gaGRhdGE7CiAKIAlyZXQgPSBjb21w
+b25lbnRfYWRkKCZwZGV2LT5kZXYsICZoZG1pX2NvbXBvbmVudF9vcHMpOwogCWlmIChyZXQpCi0t
+IAoxLjkuMQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
