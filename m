@@ -1,47 +1,61 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH 6/9] drm/exynos: fimd: add triggering unset routine in
- fimd_trigger()
-Date: Mon, 17 Nov 2014 22:00:13 +0900
-Message-ID: <1416229216-32018-7-git-send-email-yj44.cho@samsung.com>
+Subject: [PATCH 8/9] drm/exynos: dsi: move TE irq handler registration position
+Date: Mon, 17 Nov 2014 22:00:15 +0900
+Message-ID: <1416229216-32018-9-git-send-email-yj44.cho@samsung.com>
 References: <1416229216-32018-1-git-send-email-yj44.cho@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:35157 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751623AbaKQNA3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 17 Nov 2014 08:00:29 -0500
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NF6002WGPGLK410@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 Nov 2014 22:00:21 +0900 (KST)
 In-reply-to: <1416229216-32018-1-git-send-email-yj44.cho@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com
 
-VGhlcmUgaXMgYSBjYXNlIGxpa2Ugc2V0IGNvbmZpZyB3aGljaCByZXF1aXJlcyB0cmlnZ2VyaW5n
-CmJ1dCB2YmxhbmsgaXMgbm90IGVuYWJsZWQgeWV0LgpTbyB0cmlnZ2VyaW5nIHVuc2V0IHJvdXRp
-bmUgaXMgcmVxdWlyZWQgdG8gZXhpdCBmcm9tCnRyaWdnZXJpbmcgbW9kZS4KClNpZ25lZC1vZmYt
-Ynk6IFlvdW5nSnVuIENobyA8eWo0NC5jaG9Ac2Ftc3VuZy5jb20+CkFja2VkLWJ5OiBJbmtpIERh
-ZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+CkFja2VkLWJ5OiBLeXVuZ21pbiBQYXJrIDxreXVuZ21p
-bi5wYXJrQHNhbXN1bmcuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9maW1kLmMgfCA3ICsrKysrKysKIDEgZmlsZSBjaGFuZ2VkLCA3IGluc2VydGlvbnMoKykKCmRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIGIvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwppbmRleCAzYzYzMjM3Li5lNDg4
-YjgwIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5j
-CisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKQEAgLTk4NCw2
-ICs5ODQsMTMgQEAgc3RhdGljIHZvaWQgZmltZF90cmlnZ2VyKHN0cnVjdCBkZXZpY2UgKmRldikK
-IAlyZWcgPSByZWFkbCh0aW1pbmdfYmFzZSArIFRSSUdDT04pOwogCXJlZyB8PSAoVFJHTU9ERV9J
-ODBfUkdCX0VOQUJMRV9JODAgfCBTV1RSR0NNRF9JODBfUkdCX0VOQUJMRSk7CiAJd3JpdGVsKHJl
-ZywgdGltaW5nX2Jhc2UgKyBUUklHQ09OKTsKKworCS8qCisJICogRXhpdHMgdHJpZ2dlcmluZyBt
-b2RlIGlmIHZibGFuayBpcyBub3QgZW5hYmxlZCB5ZXQsIGJlY2F1c2Ugd2hlbiB0aGUKKwkgKiBW
-SURJTlRDT04wIHJlZ2lzdGVyIGlzIG5vdCBzZXQsIGl0IGNhbiBub3QgZXhpdCBmcm9tIHRyaWdn
-ZXJpbmcgbW9kZS4KKwkgKi8KKwlpZiAoIXRlc3RfYml0KDAsICZjdHgtPmlycV9mbGFncykpCisJ
-CWF0b21pY19zZXQoJmN0eC0+dHJpZ2dlcmluZywgMCk7CiB9CiAKIHN0YXRpYyB2b2lkIGZpbWRf
-dGVfaGFuZGxlcihzdHJ1Y3QgZXh5bm9zX2RybV9tYW5hZ2VyICptZ3IpCi0tIAoxLjkuMAoKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+The drm_helper_hpd_irq_event() does dpms control and
+the panel is initialized and displayed on by it.
+So the exynos_dsi_te_irq_handler() should be registered
+beforehand.
+
+Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 66d427e..6fe6486 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1207,9 +1207,6 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+ 	dsi->mode_flags = device->mode_flags;
+ 	dsi->panel_node = device->dev.of_node;
+ 
+-	if (dsi->connector.dev)
+-		drm_helper_hpd_irq_event(dsi->connector.dev);
+-
+ 	/*
+ 	 * This is a temporary solution and should be made by more generic way.
+ 	 *
+@@ -1223,6 +1220,9 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
+ 			return ret;
+ 	}
+ 
++	if (dsi->connector.dev)
++		drm_helper_hpd_irq_event(dsi->connector.dev);
++
+ 	return 0;
+ }
+ 
+-- 
+1.9.0
