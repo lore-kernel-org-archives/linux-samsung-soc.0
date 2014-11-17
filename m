@@ -1,37 +1,36 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH] PM / Domains: Power on the PM domain right after attach completes
-Date: Mon, 17 Nov 2014 10:28:56 -0800
-Message-ID: <7hd28l3clz.fsf@deeprootsystems.com>
-References: <1416237550-31092-1-git-send-email-ulf.hansson@linaro.org>
+From: Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH RESEND] serial: samsung: Fix serial config dependencies
+ for exynos7
+Date: Mon, 17 Nov 2014 10:59:26 -0800
+Message-ID: <20141117185925.GB14558@kroah.com>
+References: <1416199491-4841-1-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1416237550-31092-1-git-send-email-ulf.hansson@linaro.org> (Ulf
-	Hansson's message of "Mon, 17 Nov 2014 16:19:10 +0100")
-Sender: linux-pm-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1416199491-4841-1-git-send-email-a.kesavan@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Abhilash Kesavan <a.kesavan@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de, jslaby@suse.cz
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Ulf Hansson <ulf.hansson@linaro.org> writes:
-
-> The amba bus, amba drivers and a vast amount of platform drivers which
-> enables runtime PM, don't invoke a pm_runtime_get_sync() while probing
-> their devices.
->
-> Instead, once they have turned on their PM resourses during ->probe()
-> and are ready to handle I/O, these invokes pm_runtime_set_active() to
-> synchronize its state towards the runtime PM core.
->
-> From a runtime PM point of view this behavior is perfectly acceptable,
-
-In the context of PM domains that can be dynamically powered on/off, I'm
-not so sure it's perfectly acceptable anymore.
-
-Why doesn't the bus do a _get_sync() instead of a _get_noresume()
-followed by a _set_active().  
-
-By using the _get_noresume() you're bypassing the paths that would bring
-up your PM domain.
-
-Kevin
+On Mon, Nov 17, 2014 at 10:14:51AM +0530, Abhilash Kesavan wrote:
+> From: Pankaj Dubey <pankaj.dubey@samsung.com>
+> 
+> Exynos7 has a similar serial controller to that present in older Samsung
+> SoCs. To re-use the existing serial driver on Exynos7 we need to have
+> SERIAL_SAMSUNG_UARTS_4 and SERIAL_SAMSUNG_UARTS selected. This is not
+> possible because these symbols are dependent on PLAT_SAMSUNG which is
+> not present for the ARMv8 based exynos7.
+> 
+> Change the dependency of these symbols from PLAT_SAMSUNG to the serial
+> driver thus making it available on exynos7. As the existing platform
+> specific code making use of these symbols is related to uart driver this
+> change in dependency should not cause any issues.
+> 
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
