@@ -1,90 +1,83 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 07/14] drm/exynos/hdmi: embed display into private context
-Date: Mon, 17 Nov 2014 09:54:20 +0100
-Message-ID: <1416214467-6179-8-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH 09/14] drm/exynos/vidi: embed display into private context
+Date: Mon, 17 Nov 2014 09:54:22 +0100
+Message-ID: <1416214467-6179-10-git-send-email-a.hajda@samsung.com>
 References: <1416214467-6179-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:50260 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751668AbaKQIzL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 17 Nov 2014 03:55:11 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NF600GO5E8LBZ40@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 Nov 2014 08:57:57 +0000 (GMT)
 In-reply-to: <1416214467-6179-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>
 
-ZXh5bm9zX2RybV9kaXNwbGF5IGlzIHVzZWQgYnkgaW50ZXJuYWwgRXh5bm9zIERSTSBmcmFtZXdv
-cmsgZm9yCnJlcHJlc2VudGluZyBlbmNvZGVyOmNvbm5lY3RvciBwYWlyLiBBcyBpdCBzaG91bGQg
-YmUgbWFwcGVkIDE6MSB0byBoZG1pCnByaXZhdGUgY29udGV4dCBpdCBzZWVtcyBtb3JlIHJlYXNv
-bmFibGUgdG8gZW1iZWQgaXQgZGlyZWN0bHkgaW4gdGhhdCBjb250ZXh0LgpBcyBhIHJlc3VsdCBm
-dXJ0aGVyIGNvZGUgc2ltcGxpZmljYXRpb24gd2lsbCBiZSBwb3NzaWJsZS4KTW9yZW92ZXIgaXQg
-d2lsbCBiZSBwb3NzaWJsZSB0byBoYW5kbGUgbXVsdGlwbGUgaGRtaSBkZXZpY2VzIGluIHRoZSBz
-eXN0ZW0uCgpTaWduZWQtb2ZmLWJ5OiBBbmRyemVqIEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29t
-PgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyB8IDQ5ICsrKysrKysr
-KysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDIwIGluc2VydGlv
-bnMoKyksIDI5IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2hkbWkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwpp
-bmRleCA2NWEyMjg1Li5mOGVkMTIzIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19oZG1pLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5j
-CkBAIC00OSw3ICs0OSw2IEBACiAjaW5jbHVkZSA8bGludXgvZ3Bpby5oPgogI2luY2x1ZGUgPG1l
-ZGlhL3M1cF9oZG1pLmg+CiAKLSNkZWZpbmUgZ2V0X2hkbWlfZGlzcGxheShkZXYpCXBsYXRmb3Jt
-X2dldF9kcnZkYXRhKHRvX3BsYXRmb3JtX2RldmljZShkZXYpKQogI2RlZmluZSBjdHhfZnJvbV9j
-b25uZWN0b3IoYykJY29udGFpbmVyX29mKGMsIHN0cnVjdCBoZG1pX2NvbnRleHQsIGNvbm5lY3Rv
-cikKIAogI2RlZmluZSBIT1RQTFVHX0RFQk9VTkNFX01TCQkxMTAwCkBAIC0xODIsNiArMTgxLDcg
-QEAgc3RydWN0IGhkbWlfY29uZl9yZWdzIHsKIH07CiAKIHN0cnVjdCBoZG1pX2NvbnRleHQgewor
-CXN0cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkJZGlzcGxheTsKIAlzdHJ1Y3QgZGV2aWNlCQkJKmRl
-djsKIAlzdHJ1Y3QgZHJtX2RldmljZQkJKmRybV9kZXY7CiAJc3RydWN0IGRybV9jb25uZWN0b3IJ
-CWNvbm5lY3RvcjsKQEAgLTIxNDgsMTEgKzIxNDgsNiBAQCBzdGF0aWMgc3RydWN0IGV4eW5vc19k
-cm1fZGlzcGxheV9vcHMgaGRtaV9kaXNwbGF5X29wcyA9IHsKIAkuY29tbWl0CQk9IGhkbWlfY29t
-bWl0LAogfTsKIAotc3RhdGljIHN0cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkgaGRtaV9kaXNwbGF5
-ID0gewotCS50eXBlID0gRVhZTk9TX0RJU1BMQVlfVFlQRV9IRE1JLAotCS5vcHMgPSAmaGRtaV9k
-aXNwbGF5X29wcywKLX07Ci0KIHN0YXRpYyB2b2lkIGhkbWlfaG90cGx1Z193b3JrX2Z1bmMoc3Ry
-dWN0IHdvcmtfc3RydWN0ICp3b3JrKQogewogCXN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRhOwpA
-QCAtMjMwNywxMiArMjMwMiwxMSBAQCBNT0RVTEVfREVWSUNFX1RBQkxFIChvZiwgaGRtaV9tYXRj
-aF90eXBlcyk7CiBzdGF0aWMgaW50IGhkbWlfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVj
-dCBkZXZpY2UgKm1hc3Rlciwgdm9pZCAqZGF0YSkKIHsKIAlzdHJ1Y3QgZHJtX2RldmljZSAqZHJt
-X2RldiA9IGRhdGE7Ci0Jc3RydWN0IGhkbWlfY29udGV4dCAqaGRhdGE7CisJc3RydWN0IGhkbWlf
-Y29udGV4dCAqaGRhdGEgPSBkZXZfZ2V0X2RydmRhdGEoZGV2KTsKIAotCWhkYXRhID0gaGRtaV9k
-aXNwbGF5LmN0eDsKIAloZGF0YS0+ZHJtX2RldiA9IGRybV9kZXY7CiAKLQlyZXR1cm4gZXh5bm9z
-X2RybV9jcmVhdGVfZW5jX2Nvbm4oZHJtX2RldiwgJmhkbWlfZGlzcGxheSk7CisJcmV0dXJuIGV4
-eW5vc19kcm1fY3JlYXRlX2VuY19jb25uKGRybV9kZXYsICZoZGF0YS0+ZGlzcGxheSk7CiB9CiAK
-IHN0YXRpYyB2b2lkIGhkbWlfdW5iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmlj
-ZSAqbWFzdGVyLCB2b2lkICpkYXRhKQpAQCAtMjM1NCwzMSArMjM0OCwyOCBAQCBzdGF0aWMgaW50
-IGhkbWlfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAlzdHJ1Y3QgcmVzb3Vy
-Y2UgKnJlczsKIAlpbnQgcmV0OwogCi0JcmV0ID0gZXh5bm9zX2RybV9jb21wb25lbnRfYWRkKCZw
-ZGV2LT5kZXYsIEVYWU5PU19ERVZJQ0VfVFlQRV9DT05ORUNUT1IsCi0JCQkJCWhkbWlfZGlzcGxh
-eS50eXBlKTsKLQlpZiAocmV0KQotCQlyZXR1cm4gcmV0OwotCi0JaWYgKCFkZXYtPm9mX25vZGUp
-IHsKLQkJcmV0ID0gLUVOT0RFVjsKLQkJZ290byBlcnJfZGVsX2NvbXBvbmVudDsKLQl9CisJaWYg
-KCFkZXYtPm9mX25vZGUpCisJCXJldHVybiAtRU5PREVWOwogCiAJcGRhdGEgPSBkcm1faGRtaV9k
-dF9wYXJzZV9wZGF0YShkZXYpOwotCWlmICghcGRhdGEpIHsKLQkJcmV0ID0gLUVJTlZBTDsKLQkJ
-Z290byBlcnJfZGVsX2NvbXBvbmVudDsKLQl9CisJaWYgKCFwZGF0YSkKKwkJcmV0dXJuIC1FSU5W
-QUw7CiAKIAloZGF0YSA9IGRldm1fa3phbGxvYyhkZXYsIHNpemVvZihzdHJ1Y3QgaGRtaV9jb250
-ZXh0KSwgR0ZQX0tFUk5FTCk7Ci0JaWYgKCFoZGF0YSkgewotCQlyZXQgPSAtRU5PTUVNOwotCQln
-b3RvIGVycl9kZWxfY29tcG9uZW50OwotCX0KKwlpZiAoIWhkYXRhKQorCQlyZXR1cm4gLUVOT01F
-TTsKKworCWhkYXRhLT5kaXNwbGF5LnR5cGUgPSBFWFlOT1NfRElTUExBWV9UWVBFX0hETUk7CisJ
-aGRhdGEtPmRpc3BsYXkub3BzID0gJmhkbWlfZGlzcGxheV9vcHM7CisKKwlyZXQgPSBleHlub3Nf
-ZHJtX2NvbXBvbmVudF9hZGQoJnBkZXYtPmRldiwgRVhZTk9TX0RFVklDRV9UWVBFX0NPTk5FQ1RP
-UiwKKwkJCQkJaGRhdGEtPmRpc3BsYXkudHlwZSk7CisJaWYgKHJldCkKKwkJcmV0dXJuIHJldDsK
-IAogCW11dGV4X2luaXQoJmhkYXRhLT5oZG1pX211dGV4KTsKIAotCXBsYXRmb3JtX3NldF9kcnZk
-YXRhKHBkZXYsICZoZG1pX2Rpc3BsYXkpOworCXBsYXRmb3JtX3NldF9kcnZkYXRhKHBkZXYsIGhk
-YXRhKTsKIAogCW1hdGNoID0gb2ZfbWF0Y2hfbm9kZShoZG1pX21hdGNoX3R5cGVzLCBkZXYtPm9m
-X25vZGUpOwogCWlmICghbWF0Y2gpIHsKQEAgLTI0OTAsNyArMjQ4MSw3IEBAIG91dF9nZXRfcGh5
-X3BvcnQ6CiAJfQogCiAJcG1fcnVudGltZV9lbmFibGUoZGV2KTsKLQloZG1pX2Rpc3BsYXkuY3R4
-ID0gaGRhdGE7CisJaGRhdGEtPmRpc3BsYXkuY3R4ID0gaGRhdGE7CiAKIAlyZXQgPSBjb21wb25l
-bnRfYWRkKCZwZGV2LT5kZXYsICZoZG1pX2NvbXBvbmVudF9vcHMpOwogCWlmIChyZXQpCkBAIC0y
-NTE1LDcgKzI1MDYsNyBAQCBlcnJfZGVsX2NvbXBvbmVudDoKIAogc3RhdGljIGludCBoZG1pX3Jl
-bW92ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogewotCXN0cnVjdCBoZG1pX2NvbnRl
-eHQgKmhkYXRhID0gaGRtaV9kaXNwbGF5LmN0eDsKKwlzdHJ1Y3QgaGRtaV9jb250ZXh0ICpoZGF0
-YSA9IHBsYXRmb3JtX2dldF9kcnZkYXRhKHBkZXYpOwogCiAJY2FuY2VsX2RlbGF5ZWRfd29ya19z
-eW5jKCZoZGF0YS0+aG90cGx1Z193b3JrKTsKIAotLSAKMS45LjEKCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
-LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+exynos_drm_display is used by internal Exynos DRM framework for
+representing encoder:connector pair. As it should be mapped 1:1 to vidi
+private context it seems more reasonable to embed it directly in that context.
+As a result further code simplification will be possible.
+Moreover it will be possible to handle multiple vidi devices in the system.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index f048a90..f58dd52 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -47,6 +47,7 @@ struct vidi_win_data {
+ 
+ struct vidi_context {
+ 	struct exynos_drm_manager	manager;
++	struct exynos_drm_display	display;
+ 	struct drm_device		*drm_dev;
+ 	struct drm_crtc			*crtc;
+ 	struct drm_encoder		*encoder;
+@@ -554,11 +555,6 @@ static struct exynos_drm_display_ops vidi_display_ops = {
+ 	.create_connector = vidi_create_connector,
+ };
+ 
+-static struct exynos_drm_display vidi_display = {
+-	.type = EXYNOS_DISPLAY_TYPE_VIDI,
+-	.ops = &vidi_display_ops,
+-};
+-
+ static int vidi_subdrv_probe(struct drm_device *drm_dev, struct device *dev)
+ {
+ 	struct vidi_context *ctx = dev_get_drvdata(dev);
+@@ -573,7 +569,7 @@ static int vidi_subdrv_probe(struct drm_device *drm_dev, struct device *dev)
+ 		return ret;
+ 	}
+ 
+-	ret = exynos_drm_create_enc_conn(drm_dev, &vidi_display);
++	ret = exynos_drm_create_enc_conn(drm_dev, &ctx->display);
+ 	if (ret) {
+ 		crtc->funcs->destroy(crtc);
+ 		DRM_ERROR("failed to create encoder and connector.\n");
+@@ -595,11 +591,13 @@ static int vidi_probe(struct platform_device *pdev)
+ 
+ 	ctx->manager.type = EXYNOS_DISPLAY_TYPE_VIDI;
+ 	ctx->manager.ops = &vidi_manager_ops;
++	ctx->display.type = EXYNOS_DISPLAY_TYPE_VIDI;
++	ctx->display.ops = &vidi_display_ops;
+ 	ctx->default_win = 0;
+ 
+ 	INIT_WORK(&ctx->work, vidi_fake_vblank_handler);
+ 
+-	vidi_display.ctx = ctx;
++	ctx->display.ctx = ctx;
+ 
+ 	mutex_init(&ctx->lock);
+ 
+-- 
+1.9.1
