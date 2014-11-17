@@ -1,34 +1,37 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 3/3] ARM: exynos_defconfig: Enable user mode SPI device support
-Date: Mon, 17 Nov 2014 18:43:04 +0100
-Message-ID: <1416246184-29071-4-git-send-email-javier.martinez@collabora.co.uk>
-References: <1416246184-29071-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1416246184-29071-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH] PM / Domains: Power on the PM domain right after attach completes
+Date: Mon, 17 Nov 2014 10:28:56 -0800
+Message-ID: <7hd28l3clz.fsf@deeprootsystems.com>
+References: <1416237550-31092-1-git-send-email-ulf.hansson@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1416237550-31092-1-git-send-email-ulf.hansson@linaro.org> (Ulf
+	Hansson's message of "Mon, 17 Nov 2014 16:19:10 +0100")
+Sender: linux-pm-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Some Exynos boards have SPI devices such as flash memories that can be
-accessed from user-space. Enable support for the SPI usermode interface.
+Ulf Hansson <ulf.hansson@linaro.org> writes:
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- arch/arm/configs/exynos_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+> The amba bus, amba drivers and a vast amount of platform drivers which
+> enables runtime PM, don't invoke a pm_runtime_get_sync() while probing
+> their devices.
+>
+> Instead, once they have turned on their PM resourses during ->probe()
+> and are ready to handle I/O, these invokes pm_runtime_set_active() to
+> synchronize its state towards the runtime PM core.
+>
+> From a runtime PM point of view this behavior is perfectly acceptable,
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index da7e9cf..5de8b58 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -80,6 +80,7 @@ CONFIG_I2C_CROS_EC_TUNNEL=y
- CONFIG_SPI=y
- CONFIG_SPI_S3C64XX=y
- CONFIG_I2C_S3C2410=y
-+CONFIG_SPI_SPIDEV=y
- CONFIG_DEBUG_GPIO=y
- CONFIG_POWER_SUPPLY=y
- CONFIG_BATTERY_SBS=y
--- 
-2.1.0
+In the context of PM domains that can be dynamically powered on/off, I'm
+not so sure it's perfectly acceptable anymore.
+
+Why doesn't the bus do a _get_sync() instead of a _get_noresume()
+followed by a _set_active().  
+
+By using the _get_noresume() you're bypassing the paths that would bring
+up your PM domain.
+
+Kevin
