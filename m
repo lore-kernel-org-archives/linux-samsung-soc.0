@@ -1,57 +1,69 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: exynos boot falures in linux-next (was: next boot: 94 boots: 79 pass, 13 fail, 2 untried (next-20141117))
-Date: Mon, 17 Nov 2014 07:57:03 -0800
-Message-ID: <7hoas54y7k.fsf@deeprootsystems.com>
-References: <E1XqKYI-0000pQ-4b@ip-10-35-177-41.ec2.internal>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v7 1/2] usb: host: xhci-plat: Get PHYs for xhci's hcds
+Date: Mon, 17 Nov 2014 19:16:36 +0300
+Message-ID: <546A1F64.7000209@cogentembedded.com>
+References: <1414761989-21088-1-git-send-email-gautam.vivek@samsung.com>	<1414761989-21088-2-git-send-email-gautam.vivek@samsung.com>	<545393CE.8070102@cogentembedded.com> <CAFp+6iG37uE1uB5Z8B-hM3nKyBeR6Vxb-YKegd7MrRB3wuA9xw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f49.google.com ([209.85.220.49]:43555 "EHLO
-	mail-pa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751260AbaKQP5G (ORCPT
+Received: from mail-lb0-f179.google.com ([209.85.217.179]:58982 "EHLO
+	mail-lb0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750944AbaKQQQk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Nov 2014 10:57:06 -0500
-Received: by mail-pa0-f49.google.com with SMTP id eu11so729155pac.36
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Nov 2014 07:57:06 -0800 (PST)
-In-Reply-To: <E1XqKYI-0000pQ-4b@ip-10-35-177-41.ec2.internal> (Kevin's boot
-	bot's message of "Mon, 17 Nov 2014 11:33:02 +0000")
+	Mon, 17 Nov 2014 11:16:40 -0500
+Received: by mail-lb0-f179.google.com with SMTP id l4so16283386lbv.38
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Nov 2014 08:16:38 -0800 (PST)
+In-Reply-To: <CAFp+6iG37uE1uB5Z8B-hM3nKyBeR6Vxb-YKegd7MrRB3wuA9xw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+To: Vivek Gautam <gautamvivek1987@gmail.com>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg KH <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Felipe Balbi <balbi@ti.com>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Julius Werner <jwerner@google.com>, Jingoo Han <jg1.han@samsung.com>
 
-FYI...
+Hello.
 
-Various new exynos5 boot failures starting next-20141117.  Looking in
-the boot logs, the boot stops during DRM initialization.
+On 11/17/2014 9:36 AM, Vivek Gautam wrote:
 
-Note that the boot failures are only on exynos_defconfig, and not
-multi_v7_defconfig.
+>>> The host controller by itself may sometimes need to handle PHY
+>>> and re-initialize it to re-configure some of the PHY parameters
+>>> to get full support out of the PHY controller.
+>>> Therefore, facilitate getting the two possible PHYs, viz.
+>>> USB 2.0 type (UTMI+) and USB 3.0 type (PIPE3), and initialize them.
 
-Excerpt from boot report below, or recent exynos boots can also be
-explored here:
+>>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>>> ---
+>>>    drivers/usb/host/xhci-plat.c |   74
+>>> ++++++++++++++++++++++++++++++++++++++++++
+>>>    1 file changed, 74 insertions(+)
 
-   http://status.armcloud.us/boot/?exynos
-
-Kevin
-
-
-Kevin's boot bot <khilman@kernel.org> writes:
-
-> Full Build report: http://status.armcloud.us/build/next/kernel/next-20141117/
-> Full Boot report:  http://status.armcloud.us/boot/all/job/next/kernel/next-20141117/
->
-> Tree/Branch: next
-> Git describe: next-20141117
->
-> Failed boot tests
-> =================
-
+>>> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+>>> index 3d78b0c..5207d5b 100644
+>>> --- a/drivers/usb/host/xhci-plat.c
+>>> +++ b/drivers/usb/host/xhci-plat.c
 [...]
+>>> @@ -204,6 +271,8 @@ static int xhci_plat_suspend(struct device *dev)
+>>>          struct usb_hcd  *hcd = dev_get_drvdata(dev);
+>>>          struct xhci_hcd *xhci = hcd_to_xhci(hcd);
+>>>
+>>> +       phy_exit(hcd->phy);
 
->            exynos5422-odroid-xu3:     FAIL:    arm-exynos_defconfig
->                                       http://storage.armcloud.us/kernel-ci/next/next-20141117/arm-exynos_defconfig/boot-exynos5422-odroid-xu3.html
->               exynos5250-arndale:     FAIL:    arm-exynos_defconfig
->                                       http://storage.armcloud.us/kernel-ci/next/next-20141117/arm-exynos_defconfig/boot-exynos5250-arndale.html
->              exynos5800-peach-pi:     FAIL:    arm-exynos_defconfig
->                                       http://storage.armcloud.us/kernel-ci/next/next-20141117/arm-exynos_defconfig/boot-exynos5800-peach-pi.html
+>>     Hm, in the suspend() method?
+
+> phy_exit() should eventually be suspending the PHY and put it to
+> low power state.
+
+    I thought it's a role that the power_off() mothod should play, considering 
+that the power_on() method gets called after the init() method....
+
+> phy_init() in resume() will then take up the task of activating the
+> PHY again.
+
+> phy_power_on() and phy_power_off() are called at xhci_probe() and remove() time.
+
+    Of course.
+
+> Does this makes sense ?
+
+    Not much, really.
+
+WBR, Sergei
