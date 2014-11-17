@@ -1,56 +1,58 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: rt5631: Fixing compilation warning when DT is
- disabled
-Date: Mon, 17 Nov 2014 14:52:30 +0000
-Message-ID: <20141117145230.GD2722@sirena.org.uk>
-References: <1416232589-31319-1-git-send-email-krishna.md@samsung.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] ASoC: samsung-i2s: Add 192kHz config option
+Date: Mon, 17 Nov 2014 14:57:17 +0000
+Message-ID: <20141117145717.GE2722@sirena.org.uk>
+References: <1416221874-22092-1-git-send-email-rf@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="U58U7wle/RT11wuz"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43403 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752797AbaKQOwn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Nov 2014 09:52:43 -0500
+	protocol="application/pgp-signature"; boundary="1C2QhcYtVTlNtC1j"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1416232589-31319-1-git-send-email-krishna.md@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1416221874-22092-1-git-send-email-rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Richard Fitzgerald <rf-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-l3A5Bk7waGM@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, sbkim73-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ckeepax-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krishna Mohan Dani <krishna.md@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, kgene.kim@samsung.com, Claude Youn <claude.youn@gmail.com>
 
 
---U58U7wle/RT11wuz
+--1C2QhcYtVTlNtC1j
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 17, 2014 at 07:26:29PM +0530, Krishna Mohan Dani wrote:
-> Fixes the following compilation warning:
-> Warning: 'rt5631_i2c_dt_ids' defined but not used - when DT is not used.
->=20
-> Signed-off-by: Claude Youn <claude.youn@gmail.com>
-> Signed-off-by: Krishna Mohan Dani <krishna.md@samsung.com>
+On Mon, Nov 17, 2014 at 10:57:54AM +0000, Richard Fitzgerald wrote:
+> Adds QUIRK_SUPPORTS_192KHZ to allow 192kHz rate
+> to be selected for hardware that supports it.
 
-Applied, thanks.  It's really weird that such a trivial patch would have
-multiple authors, if you're forwarding on a patch from someone else
-please preserve their authorship as well as signoff.
+> +- samsung,supports-192khz: specify this (without a value) if you want to allow
+> +    192000 sample rate over the I2S link.
 
---U58U7wle/RT11wuz
+Two things here.  One is that the first half is a funny way of saying
+"boolean property" (the other standard idiom is "present if...").  The
+other is that "if you want to allow" suggests that this is a bit of
+runtime configuration (which shouldn't be in device tree at all).  If
+there's a quirk here it should be a fixed property of the hardware, if
+this is a system integration choice then it should at most be specified
+in the machine driver and the I2S controller should just advertise
+whatever it's physically capable of.
+
+--1C2QhcYtVTlNtC1j
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBAgAGBQJUagutAAoJECTWi3JdVIfQ9NEH/1eISb+Hgyz0y3r+PIIhn+LE
-wkmzOmGuNTLNtDbnjf9BEaqjEB6cCGLLvUeQ4Feqxk1kiMcgJUjVrC/uTufX/dcs
-mwhhBCdi84j1jN5iHk8/Ya3wWJP/vkfJ0gNPAYCCPf6dKzvtvdNwroaDWaXKjAf7
-BJFy0aOS8s3OILjWZMegpqP0tJG1IlOIgMmZVSkHM3McAPHKELKLgdS45A52nkqp
-2Ch/qDS6TpeSrx0NZ91iXSxnOoLQUDeE+u5/R3racPKoxzrCgI3kxvXKoxXXSjmw
-hjhOgBPy0FmOxajFNzLe4f9B3nUKKTwwdXPXYfPWtdH8mnEDsAv82Du8KCnRuzw=
-=H6dT
+iQEcBAEBAgAGBQJUagzMAAoJECTWi3JdVIfQDl4H/0sMrAOagfVTHzLUgaXfmG1L
+wtZnJo0MuhJW3QBKEh9W4vSsebAWBtFfBfGtaCElwBskwQo3Ty8Y6IxkauZRXx9y
+DEMDI1x65RX7zQtYHbJhVvQi3vP/OxbFBu6KpGlChHRhQV/QDHOzq5AE5fqLzzPv
+32ZrmB3h/6UsI58gx04MShrJQf4nUDEugadH7RS5nstb8sEi4/fadi1oT00vIltW
+rtTjAU0sJd7YKGmrPUy2g7fjlvr8I8MpyCI1UGI1brTbnvceWqCQfL9oS2XOR/54
+aPv4CdCsddblAEXj53Itac/N713LB/2kbYWF8+iPVXXYHJ511uRTwp2mRMTsre0=
+=5YU/
 -----END PGP SIGNATURE-----
 
---U58U7wle/RT11wuz--
+--1C2QhcYtVTlNtC1j--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
