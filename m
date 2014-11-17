@@ -1,59 +1,108 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH 10/14] drm/exynos/vidi: stop using display->ctx pointer
-Date: Mon, 17 Nov 2014 09:54:23 +0100
-Message-ID: <1416214467-6179-11-git-send-email-a.hajda@samsung.com>
-References: <1416214467-6179-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1416214467-6179-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:DRM DRIVERS FOR E..." <dri-devel@lists.freedesktop.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v5] usb: dwc2/gadget: rework disconnect event handling
+Date: Mon, 17 Nov 2014 09:59:42 +0100
+Message-ID: <1416214782-13911-1-git-send-email-m.szyprowski@samsung.com>
+References: <54699561.5040303@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:34397 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751464AbaKQI7n (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 17 Nov 2014 03:59:43 -0500
+In-reply-to: <54699561.5040303@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Paul Zimmerman <paulz@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Felipe Balbi <balbi@ti.com>
 
-VGhlIHBhdGNoIHJlcGxhY2VzIGFjY2Vzc2VzIHRvIGRpc3BsYXktPmN0eCBwb2ludGVyIGJ5IGNv
-bnRhaW5lcl9vZgpjb25zdHJ1Y3QuIEl0IHdpbGwgYWxsb3cgdG8gcmVtb3ZlIGN0eCBmaWVsZCBp
-biB0aGUgZnV0dXJlLgoKU2lnbmVkLW9mZi1ieTogQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1z
-dW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jIHwg
-MTEgKysrKysrKy0tLS0KIDEgZmlsZSBjaGFuZ2VkLCA3IGluc2VydGlvbnMoKyksIDQgZGVsZXRp
-b25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3Zp
-ZGkuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMKaW5kZXggZjU4
-ZGQ1Mi4uM2I2ZmRkNiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
-ZHJtX3ZpZGkuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5j
-CkBAIC03Miw2ICs3MiwxMSBAQCBzdGF0aWMgaW5saW5lIHN0cnVjdCB2aWRpX2NvbnRleHQgKm1h
-bmFnZXJfdG9fdmlkaShzdHJ1Y3QgZXh5bm9zX2RybV9tYW5hZ2VyICptKQogCXJldHVybiBjb250
-YWluZXJfb2YobSwgc3RydWN0IHZpZGlfY29udGV4dCwgbWFuYWdlcik7CiB9CiAKK3N0YXRpYyBp
-bmxpbmUgc3RydWN0IHZpZGlfY29udGV4dCAqZGlzcGxheV90b192aWRpKHN0cnVjdCBleHlub3Nf
-ZHJtX2Rpc3BsYXkgKmQpCit7CisJcmV0dXJuIGNvbnRhaW5lcl9vZihkLCBzdHJ1Y3QgdmlkaV9j
-b250ZXh0LCBkaXNwbGF5KTsKK30KKwogc3RhdGljIGNvbnN0IGNoYXIgZmFrZV9lZGlkX2luZm9b
-XSA9IHsKIAkweDAwLCAweGZmLCAweGZmLCAweGZmLCAweGZmLCAweGZmLCAweGZmLCAweDAwLCAw
-eDRjLCAweDJkLCAweDA1LCAweDA1LAogCTB4MDAsIDB4MDAsIDB4MDAsIDB4MDAsIDB4MzAsIDB4
-MTIsIDB4MDEsIDB4MDMsIDB4ODAsIDB4MTAsIDB4MDksIDB4NzgsCkBAIC00MTksNyArNDI0LDcg
-QEAgaW50IHZpZGlfY29ubmVjdGlvbl9pb2N0bChzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2Rldiwg
-dm9pZCAqZGF0YSwKIAkJZGlzcGxheSA9IGV4eW5vc19kcm1fZ2V0X2Rpc3BsYXkoZW5jb2Rlcik7
-CiAKIAkJaWYgKGRpc3BsYXktPnR5cGUgPT0gRVhZTk9TX0RJU1BMQVlfVFlQRV9WSURJKSB7Ci0J
-CQljdHggPSBkaXNwbGF5LT5jdHg7CisJCQljdHggPSBkaXNwbGF5X3RvX3ZpZGkoZGlzcGxheSk7
-CiAJCQlicmVhazsKIAkJfQogCX0KQEAgLTUyOSw3ICs1MzQsNyBAQCBzdGF0aWMgc3RydWN0IGRy
-bV9jb25uZWN0b3JfaGVscGVyX2Z1bmNzIHZpZGlfY29ubmVjdG9yX2hlbHBlcl9mdW5jcyA9IHsK
-IHN0YXRpYyBpbnQgdmlkaV9jcmVhdGVfY29ubmVjdG9yKHN0cnVjdCBleHlub3NfZHJtX2Rpc3Bs
-YXkgKmRpc3BsYXksCiAJCQkJc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyKQogewotCXN0cnVj
-dCB2aWRpX2NvbnRleHQgKmN0eCA9IGRpc3BsYXktPmN0eDsKKwlzdHJ1Y3QgdmlkaV9jb250ZXh0
-ICpjdHggPSBkaXNwbGF5X3RvX3ZpZGkoZGlzcGxheSk7CiAJc3RydWN0IGRybV9jb25uZWN0b3Ig
-KmNvbm5lY3RvciA9ICZjdHgtPmNvbm5lY3RvcjsKIAlpbnQgcmV0OwogCkBAIC01OTcsOCArNjAy
-LDYgQEAgc3RhdGljIGludCB2aWRpX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYp
-CiAKIAlJTklUX1dPUksoJmN0eC0+d29yaywgdmlkaV9mYWtlX3ZibGFua19oYW5kbGVyKTsKIAot
-CWN0eC0+ZGlzcGxheS5jdHggPSBjdHg7Ci0KIAltdXRleF9pbml0KCZjdHgtPmxvY2spOwogCiAJ
-cGxhdGZvcm1fc2V0X2RydmRhdGEocGRldiwgY3R4KTsKLS0gCjEuOS4xCgpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
-CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+This patch adds a call to s3c_hsotg_disconnect() from 'end session'
+interrupt (GOTGINT_SES_END_DET) to correctly notify gadget subsystem
+about unplugged usb cable. DISCONNINT interrupt cannot be used for this
+purpose, because it is asserted only in host mode.
+
+To avoid reporting disconnect event more than once, a disconnect call has
+been moved from USB_REQ_SET_ADDRESS handling function to SESSREQINT
+interrupt. This way driver ensures that disconnect event is reported
+either when usb cable is unplugged or every time the host starts a new
+session. To handle devices which has been synthesized without
+SRP support, connected state is set in ENUMDONE interrupt.
+
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/usb/dwc2/core.h   |  1 +
+ drivers/usb/dwc2/gadget.c | 16 ++++++++++++++--
+ 2 files changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
+index 55c90c53f2d6..e54c3c50cd48 100644
+--- a/drivers/usb/dwc2/core.h
++++ b/drivers/usb/dwc2/core.h
+@@ -210,6 +210,7 @@ struct s3c_hsotg {
+ 	u8                      ctrl_buff[8];
+ 
+ 	struct usb_gadget       gadget;
++	unsigned int		connected:1;
+ 	unsigned int            setup;
+ 	unsigned long           last_rst;
+ 	struct s3c_hsotg_ep     *eps;
+diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
+index fcd2bb55ccca..89b1bea50ee3 100644
+--- a/drivers/usb/dwc2/gadget.c
++++ b/drivers/usb/dwc2/gadget.c
+@@ -1029,7 +1029,6 @@ static int s3c_hsotg_process_req_feature(struct s3c_hsotg *hsotg,
+ }
+ 
+ static void s3c_hsotg_enqueue_setup(struct s3c_hsotg *hsotg);
+-static void s3c_hsotg_disconnect(struct s3c_hsotg *hsotg);
+ 
+ /**
+  * s3c_hsotg_stall_ep0 - stall ep0
+@@ -1107,7 +1106,6 @@ static void s3c_hsotg_process_control(struct s3c_hsotg *hsotg,
+ 	if ((ctrl->bRequestType & USB_TYPE_MASK) == USB_TYPE_STANDARD) {
+ 		switch (ctrl->bRequest) {
+ 		case USB_REQ_SET_ADDRESS:
+-			s3c_hsotg_disconnect(hsotg);
+ 			dcfg = readl(hsotg->regs + DCFG);
+ 			dcfg &= ~DCFG_DEVADDR_MASK;
+ 			dcfg |= (le16_to_cpu(ctrl->wValue) <<
+@@ -2031,6 +2029,10 @@ static void s3c_hsotg_disconnect(struct s3c_hsotg *hsotg)
+ {
+ 	unsigned ep;
+ 
++	if (!hsotg->connected)
++		return;
++
++	hsotg->connected = 0;
+ 	for (ep = 0; ep < hsotg->num_of_eps; ep++)
+ 		kill_all_requests(hsotg, &hsotg->eps[ep], -ESHUTDOWN, true);
+ 
+@@ -2290,17 +2292,27 @@ irq_retry:
+ 		dev_info(hsotg->dev, "OTGInt: %08x\n", otgint);
+ 
+ 		writel(otgint, hsotg->regs + GOTGINT);
++
++		if (otgint & GOTGINT_SES_END_DET) {
++			s3c_hsotg_disconnect(hsotg);
++			hsotg->gadget.speed = USB_SPEED_UNKNOWN;
++		}
+ 	}
+ 
+ 	if (gintsts & GINTSTS_SESSREQINT) {
+ 		dev_dbg(hsotg->dev, "%s: SessReqInt\n", __func__);
+ 		writel(GINTSTS_SESSREQINT, hsotg->regs + GINTSTS);
++		/*
++		 * Report disconnect if there is any previous session established
++		 */
++		s3c_hsotg_disconnect(hsotg);
+ 	}
+ 
+ 	if (gintsts & GINTSTS_ENUMDONE) {
+ 		writel(GINTSTS_ENUMDONE, hsotg->regs + GINTSTS);
+ 
+ 		s3c_hsotg_irq_enumdone(hsotg);
++		hsotg->connected = 1;
+ 	}
+ 
+ 	if (gintsts & GINTSTS_CONIDSTSCHNG) {
+-- 
+1.9.2
