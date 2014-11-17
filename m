@@ -1,66 +1,51 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 Subject: Re: [PATCH] PM / Domains: Power on the PM domain right after attach
  completes
-Date: Mon, 17 Nov 2014 11:17:55 -0800
-Message-ID: <20141117191755.GA5258@dtor-ws>
-References: <7hd28l3clz.fsf@deeprootsystems.com>
- <Pine.LNX.4.44L0.1411171400540.885-100000@iolanthe.rowland.org>
+Date: Mon, 17 Nov 2014 14:54:53 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.1411171447390.851-100000@iolanthe.rowland.org>
+References: <20141117191755.GA5258@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1411171400540.885-100000@iolanthe.rowland.org>
+In-Reply-To: <20141117191755.GA5258@dtor-ws>
 Sender: linux-pm-owner@vger.kernel.org
-To: Alan Stern <stern@rowland.harvard.edu>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Cc: Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Mon, 17 Nov 2014, Dmitry Torokhov wrote:
 
+> > For devices that aren't part of a power domain, things are simpler.
+> > The bus does _get_noresume() to make sure the device won't be runtime
+> > suspended while the probe routine is running.  It doesn't do
+> > _get_sync(), because that would end up calling the driver's
+> > runtime_resume routine before the driver was bound to the device.  (The
+> > bus could prevent that from happening by taking special precautions,
+> > like PCI does, but in general it's a nuisance.)
+> 
+> That's why I think we need some new call that would mean "make sure the
+> device is powered" which would properly handle power domain and bus, but
+> ignore all driver stuff since it may not be initialized yet. And similar
+> call for asking to put device and maybe domain in powered down state in
+> case probing failed.
 
-On Mon, Nov 17, 2014 at 11:06 AM, Alan Stern <stern@rowland.harvard.edu> wrote:
-> On Mon, 17 Nov 2014, Kevin Hilman wrote:
->
->> Ulf Hansson <ulf.hansson@linaro.org> writes:
->>
->> > The amba bus, amba drivers and a vast amount of platform drivers which
->> > enables runtime PM, don't invoke a pm_runtime_get_sync() while probing
->> > their devices.
->> >
->> > Instead, once they have turned on their PM resourses during ->probe()
->> > and are ready to handle I/O, these invokes pm_runtime_set_active() to
->> > synchronize its state towards the runtime PM core.
->> >
->> > From a runtime PM point of view this behavior is perfectly acceptable,
->>
->> In the context of PM domains that can be dynamically powered on/off, I'm
->> not so sure it's perfectly acceptable anymore.
->>
->> Why doesn't the bus do a _get_sync() instead of a _get_noresume()
->> followed by a _set_active().
->>
->> By using the _get_noresume() you're bypassing the paths that would bring
->> up your PM domain.
->
-> This probably comes about because devices that are part of a power
-> domain need special treatment.  Before the driver's probe routine gets
-> called, the bus ought to resume the entire power domain.  For that,
-> some sort of _get_sync() is needed.
->
-> For devices that aren't part of a power domain, things are simpler.
-> The bus does _get_noresume() to make sure the device won't be runtime
-> suspended while the probe routine is running.  It doesn't do
-> _get_sync(), because that would end up calling the driver's
-> runtime_resume routine before the driver was bound to the device.  (The
-> bus could prevent that from happening by taking special precautions,
-> like PCI does, but in general it's a nuisance.)
+I can't imagine how such a call would work.
 
-That's why I think we need some new call that would mean "make sure the
-device is powered" which would properly handle power domain and bus, but
-ignore all driver stuff since it may not be initialized yet. And similar
-call for asking to put device and maybe domain in powered down state in
-case probing failed.
+The PM core invokes the subsystem's runtime_suspend/resume callback, 
+and then the subsystem's routine is responsible for invoking the 
+driver's callback (or _not_ invoking it, in this case).
 
-Thanks.
+Thus, the PM core has no way to tell the subsystem's callback not to
+invoke the driver's routine, and adding a new runtime PM call wouldn't
+change that.  You'd have to add a new pair of callbacks instead, which 
+IMO would be a tremendous waste.
 
--- 
-Dmitry
+Furthermore, the subsystem already _knows_ when the driver gets probed, 
+because probing works in the same sort of way: The subsystem's probe 
+routine gets invoked, and it is responsible for invoking the driver's 
+probe routine.  Therefore the PM core doesn't _need_ to provide this 
+extra information to the subsystem.  Rather, the subsystem just needs 
+to keep track of the information it already has available.
+
+Alan Stern
+
