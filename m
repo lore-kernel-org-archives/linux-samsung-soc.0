@@ -1,108 +1,73 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v5] usb: dwc2/gadget: rework disconnect event handling
-Date: Mon, 17 Nov 2014 09:59:42 +0100
-Message-ID: <1416214782-13911-1-git-send-email-m.szyprowski@samsung.com>
-References: <54699561.5040303@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:34397 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751464AbaKQI7n (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Nov 2014 03:59:43 -0500
-In-reply-to: <54699561.5040303@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
+Subject: [PATCH] ASoC: samsung-i2s: Add 192kHz config option
+Date: Mon, 17 Nov 2014 10:57:54 +0000
+Message-ID: <1416221874-22092-1-git-send-email-rf@opensource.wolfsonmicro.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, ben-linux@fluff.org, kgene.kim@samsung.com, broonie@kernel.org
+Cc: perex@perex.cz, tiwai@suse.de, galak@codeaurora.org, sbkim73@samsung.com, lgirdwood@gmail.com, ckeepax@opensource.wolfsonmicro.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Paul Zimmerman <paulz@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Felipe Balbi <balbi@ti.com>
 
-This patch adds a call to s3c_hsotg_disconnect() from 'end session'
-interrupt (GOTGINT_SES_END_DET) to correctly notify gadget subsystem
-about unplugged usb cable. DISCONNINT interrupt cannot be used for this
-purpose, because it is asserted only in host mode.
+Adds QUIRK_SUPPORTS_192KHZ to allow 192kHz rate
+to be selected for hardware that supports it.
 
-To avoid reporting disconnect event more than once, a disconnect call has
-been moved from USB_REQ_SET_ADDRESS handling function to SESSREQINT
-interrupt. This way driver ensures that disconnect event is reported
-either when usb cable is unplugged or every time the host starts a new
-session. To handle devices which has been synthesized without
-SRP support, connected state is set in ENUMDONE interrupt.
-
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
 ---
- drivers/usb/dwc2/core.h   |  1 +
- drivers/usb/dwc2/gadget.c | 16 ++++++++++++++--
- 2 files changed, 15 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/sound/samsung-i2s.txt      |    2 ++
+ include/linux/platform_data/asoc-s3c.h             |    1 +
+ sound/soc/samsung/i2s.c                            |    8 ++++++++
+ 3 files changed, 11 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
-index 55c90c53f2d6..e54c3c50cd48 100644
---- a/drivers/usb/dwc2/core.h
-+++ b/drivers/usb/dwc2/core.h
-@@ -210,6 +210,7 @@ struct s3c_hsotg {
- 	u8                      ctrl_buff[8];
+diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.txt b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
+index d188296..c3f3950 100644
+--- a/Documentation/devicetree/bindings/sound/samsung-i2s.txt
++++ b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
+@@ -40,6 +40,8 @@ Optional SoC Specific Properties:
+   sub system(used in secondary sound source).
+ - pinctrl-0: Should specify pin control groups used for this controller.
+ - pinctrl-names: Should contain only one value - "default".
++- samsung,supports-192khz: specify this (without a value) if you want to allow
++    192000 sample rate over the I2S link.
  
- 	struct usb_gadget       gadget;
-+	unsigned int		connected:1;
- 	unsigned int            setup;
- 	unsigned long           last_rst;
- 	struct s3c_hsotg_ep     *eps;
-diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-index fcd2bb55ccca..89b1bea50ee3 100644
---- a/drivers/usb/dwc2/gadget.c
-+++ b/drivers/usb/dwc2/gadget.c
-@@ -1029,7 +1029,6 @@ static int s3c_hsotg_process_req_feature(struct s3c_hsotg *hsotg,
- }
+ Example:
  
- static void s3c_hsotg_enqueue_setup(struct s3c_hsotg *hsotg);
--static void s3c_hsotg_disconnect(struct s3c_hsotg *hsotg);
- 
- /**
-  * s3c_hsotg_stall_ep0 - stall ep0
-@@ -1107,7 +1106,6 @@ static void s3c_hsotg_process_control(struct s3c_hsotg *hsotg,
- 	if ((ctrl->bRequestType & USB_TYPE_MASK) == USB_TYPE_STANDARD) {
- 		switch (ctrl->bRequest) {
- 		case USB_REQ_SET_ADDRESS:
--			s3c_hsotg_disconnect(hsotg);
- 			dcfg = readl(hsotg->regs + DCFG);
- 			dcfg &= ~DCFG_DEVADDR_MASK;
- 			dcfg |= (le16_to_cpu(ctrl->wValue) <<
-@@ -2031,6 +2029,10 @@ static void s3c_hsotg_disconnect(struct s3c_hsotg *hsotg)
- {
- 	unsigned ep;
- 
-+	if (!hsotg->connected)
-+		return;
+diff --git a/include/linux/platform_data/asoc-s3c.h b/include/linux/platform_data/asoc-s3c.h
+index 5e0bc77..6d0702d 100644
+--- a/include/linux/platform_data/asoc-s3c.h
++++ b/include/linux/platform_data/asoc-s3c.h
+@@ -28,6 +28,7 @@ struct samsung_i2s {
+ #define QUIRK_NEED_RSTCLR	(1 << 3)
+ #define QUIRK_SUPPORTS_TDM	(1 << 4)
+ #define QUIRK_SUPPORTS_IDMA	(1 << 5)
++#define QUIRK_SUPPORTS_192KHZ	(1 << 6)
+ 	/* Quirks of the I2S controller */
+ 	u32 quirks;
+ 	dma_addr_t idma_addr;
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 947352d..f688e89 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -1219,6 +1219,9 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 						"specified");
+ 			}
+ 		}
 +
-+	hsotg->connected = 0;
- 	for (ep = 0; ep < hsotg->num_of_eps; ep++)
- 		kill_all_requests(hsotg, &hsotg->eps[ep], -ESHUTDOWN, true);
++		if (of_find_property(np, "samsung,supports-192khz", NULL))
++			quirks |= QUIRK_SUPPORTS_192KHZ;
+ 	}
  
-@@ -2290,17 +2292,27 @@ irq_retry:
- 		dev_info(hsotg->dev, "OTGInt: %08x\n", otgint);
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -1247,6 +1250,11 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 	if (quirks & QUIRK_PRI_6CHAN)
+ 		pri_dai->i2s_dai_drv.playback.channels_max = 6;
  
- 		writel(otgint, hsotg->regs + GOTGINT);
++	if (quirks & QUIRK_SUPPORTS_192KHZ) {
++		pri_dai->i2s_dai_drv.playback.rates |= SNDRV_PCM_RATE_192000;
++		pri_dai->i2s_dai_drv.capture.rates |= SNDRV_PCM_RATE_192000;
++	}
 +
-+		if (otgint & GOTGINT_SES_END_DET) {
-+			s3c_hsotg_disconnect(hsotg);
-+			hsotg->gadget.speed = USB_SPEED_UNKNOWN;
-+		}
- 	}
- 
- 	if (gintsts & GINTSTS_SESSREQINT) {
- 		dev_dbg(hsotg->dev, "%s: SessReqInt\n", __func__);
- 		writel(GINTSTS_SESSREQINT, hsotg->regs + GINTSTS);
-+		/*
-+		 * Report disconnect if there is any previous session established
-+		 */
-+		s3c_hsotg_disconnect(hsotg);
- 	}
- 
- 	if (gintsts & GINTSTS_ENUMDONE) {
- 		writel(GINTSTS_ENUMDONE, hsotg->regs + GINTSTS);
- 
- 		s3c_hsotg_irq_enumdone(hsotg);
-+		hsotg->connected = 1;
- 	}
- 
- 	if (gintsts & GINTSTS_CONIDSTSCHNG) {
+ 	if (quirks & QUIRK_SEC_DAI) {
+ 		sec_dai = i2s_alloc_dai(pdev, true);
+ 		if (!sec_dai) {
 -- 
-1.9.2
+1.7.2.5
