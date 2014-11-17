@@ -1,82 +1,53 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] PM / Domains: Power on the PM domain right after attach
- completes
-Date: Mon, 17 Nov 2014 17:07:28 +0000
-Message-ID: <20141117170728.GX4042@n2100.arm.linux.org.uk>
-References: <1416237550-31092-1-git-send-email-ulf.hansson@linaro.org>
- <20141117153257.GS4042@n2100.arm.linux.org.uk>
- <546A2854.3020204@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH 0/3] ARM: dts: Add spidev nodes for Exynos Chromebooks
+Date: Mon, 17 Nov 2014 18:43:01 +0100
+Message-ID: <1416246184-29071-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:43459 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751224AbaKQRHm (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:57211 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750946AbaKQRng (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Nov 2014 12:07:42 -0500
-Content-Disposition: inline
-In-Reply-To: <546A2854.3020204@ti.com>
+	Mon, 17 Nov 2014 12:43:36 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Len Brown <len.brown@intel.com>, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-pm@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@linaro.org>, Pavel Machek <pavel@ucw.cz>, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>, Simon Glass <sjg@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-On Mon, Nov 17, 2014 at 06:54:44PM +0200, Grygorii Strashko wrote:
-> I'd be very appreciated if you would be able to clarify one point to me as
-> I'm not familiar with amba hw?
-> 
-> I've found at least 2 AMBA drivers where secondary clock is used 
-> to enable/disable device in addition to "apb_pclk":
->  - drivers/mmc/host/mmci.c 
->  - drivers/spi/spi-pl022.c
-> So, form the code point of view, the assumption that "unbound AMBA
-> devices are already powered up" is not always true. And "apb_pclk"
-> is just an interface clock in such cases. 
+Exynos Snow and Peach Pit/Pi Chromebooks have a serial dataflash that
+is accessed through SPI. This series add spidev nodes in the Device
+Tree source files so the flash can be accessed from user-space.
 
-Right, what we're talking about here is that the device is accessible
-to the CPU - that it is powered up and the bus clock to it is running,
-so that accesses to the device will not cause a bus fault.
+The series is composed of the following patches taken from the ChromeOS tree:
 
-It does not mean that the external interface to the outside world is
-functional - for example, there's no suggestion that the clock to the
-SD/MMC card attached to MMCI would be running, or that the SD/MMC card
-itself would be powered up, and the same goes for the clocks supplied
-as functional clocks.  The driver is expected to manage these clocks
-(see below.)
+Doug Anderson (1):
+  ARM: dts: Add spidev registration to exynos5250-snow
 
-How this all works in the AMBA context is:
+Javier Martinez Canillas (1):
+  ARM: exynos_defconfig: Enable user mode SPI device support
 
-- we ensure that the apb_pclk is running by getting it, preparing and
-  enabling it.
+Simon Glass (1):
+  ARM: dts: Add SPI flash node for Peach boards
 
-- the bus code calls pm_runtime_get_noresume() which increments the
-  usage counter without calling the (as yet not bound) driver.
+ arch/arm/boot/dts/exynos5250-snow.dts      | 20 ++++++++++++++++++++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts | 26 ++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  | 26 ++++++++++++++++++++++++++
+ arch/arm/configs/exynos_defconfig          |  1 +
+ 4 files changed, 73 insertions(+)
 
-- if a PM domain is attached to the device, it should already be active
-  and powered up.
+Patch #1 adds the spidev node for the Snow Chromebook, patch #2
+adds the spidev node for Peach Chromebooks and peach #3 enables
+support for the user mode SPI device driver.
 
-- the device is marked active (as it should now be powered and bus-clocked.)
+The series were tested on Snow and Peach using:
 
-- runtime PM is enabled.
+$ flashrom -p linux_spi:dev=/dev/spidev1.0 --get-size
+$ flashrom -p linux_spi:dev=/dev/spidev1.0 --flash-name
 
-At this point, the device must be accessible to the CPU.
+and verify that the flash can be accessed
 
-- the driver probe function is called, and it can go around getting any
-  additional clocks it needs, and enabling or disabling them as it
-  requires.  (For example, in the case of MMCI, a card may not be inserted
-  in the slot, so the driver may decide to keep the functional MMCICLK
-  disabled.)
+$ set_gbb_flags 0x39
 
-- if the driver wishes to take part in runtime PM, it calls pm_runtime_put()
-  or an equivalent function.  This balances the pm_runtime_get_noresume()
-  above, and allows the runtime PM infrastructure to consider the device
-  idle, and a candidate for runtime suspend.
+and verify that the GBB flags could be written.
 
-Should the device runtime suspend, it's up to the driver to deal with the
-functional clocks it is managing, because only it knows whether it kept
-those clocks running, and disabling an already disabled clock is not
-permitted.
-
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+Best regards,
+Javier
