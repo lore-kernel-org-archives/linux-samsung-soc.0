@@ -1,136 +1,104 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v4 2/2] ARM: EXYNOS: PMU: move restart code into pmu driver
-Date: Mon, 17 Nov 2014 16:51:13 +0530
-Message-ID: <1416223273-1279-3-git-send-email-pankaj.dubey@samsung.com>
-References: <1416223273-1279-1-git-send-email-pankaj.dubey@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v9 0/7] Enable L2 cache support on Exynos4210/4x12 SoCs
+Date: Mon, 17 Nov 2014 12:47:54 +0100
+Message-ID: <1416224881-4227-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:27081 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752485AbaKQL3q (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:46723 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751712AbaKQLsJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Nov 2014 06:29:46 -0500
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NF600BLSL9L8NC0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Nov 2014 20:29:45 +0900 (KST)
-In-reply-to: <1416223273-1279-1-git-send-email-pankaj.dubey@samsung.com>
+	Mon, 17 Nov 2014 06:48:09 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, linux@roeck-us.net, Pankaj Dubey <pankaj.dubey@samsung.com>
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, linux-omap@vger.kernel.org, linus.walleij@linaro.org, tony@atomide.com, drake@endlessm.com, loeliger@gmail.com, Mark Rutland <mark.rutland@arm.com>
 
-Let's register restart handler from PMU driver for reboot
-functionality. So that we can remove restart hooks from
-machine specific file, and thus moving ahead when PMU moved
-to driver folder, this functionality can be reused for ARM64
-based Exynos SoC's.
+This is an updated patchset, which intends to add support for L2 cache
+on Exynos4 SoCs on boards running under secure firmware, which requires
+certain initialization steps to be done with help of firmware, as
+selected registers are writable only from secure mode.
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
- arch/arm/mach-exynos/common.h |    1 -
- arch/arm/mach-exynos/exynos.c |    6 ------
- arch/arm/mach-exynos/pmu.c    |   23 +++++++++++++++++++++++
- 3 files changed, 23 insertions(+), 7 deletions(-)
+First four patches extend existing support for secure write in L2C driver
+to account for design of secure firmware running on Exynos. Namely:
+ 1) direct read access to certain registers is needed on Exynos, because
+    secure firmware calls set several registers at once,
+ 2) not all boards are running secure firmware, so .write_sec callback
+    needs to be installed in Exynos firmware ops initialization code,
+ 3) write access to {DATA,TAG}_LATENCY_CTRL registers fron non-secure world
+    is not allowed and so must use l2c_write_sec as well,
+ 4) on certain boards, default value of prefetch register is incorrect
+    and must be overridden at L2C initialization.
+For boards running with firmware that provides access to individual
+L2C registers this series should introduce no functional changes. However
+since the driver is widely used on other platforms I'd like to kindly ask
+any interested people for testing.
 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 431be1b..865f878 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -12,7 +12,6 @@
- #ifndef __ARCH_ARM_MACH_EXYNOS_COMMON_H
- #define __ARCH_ARM_MACH_EXYNOS_COMMON_H
- 
--#include <linux/reboot.h>
- #include <linux/of.h>
- 
- #define EXYNOS3250_SOC_ID	0xE3472000
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 8f995b7..c13d083 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -87,11 +87,6 @@ static struct map_desc exynos5_iodesc[] __initdata = {
- 	},
- };
- 
--static void exynos_restart(enum reboot_mode mode, const char *cmd)
--{
--	__raw_writel(0x1, pmu_base_addr + EXYNOS_SWRESET);
--}
--
- static struct platform_device exynos_cpuidle = {
- 	.name              = "exynos_cpuidle",
- #ifdef CONFIG_ARM_EXYNOS_CPUIDLE
-@@ -316,7 +311,6 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
- 	.init_machine	= exynos_dt_machine_init,
- 	.init_late	= exynos_init_late,
- 	.dt_compat	= exynos_dt_compat,
--	.restart	= exynos_restart,
- 	.reserve	= exynos_reserve,
- 	.dt_fixup	= exynos_dt_fixup,
- MACHINE_END
-diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-index 6c8a76d..35f4062 100644
---- a/arch/arm/mach-exynos/pmu.c
-+++ b/arch/arm/mach-exynos/pmu.c
-@@ -11,8 +11,11 @@
- 
- #include <linux/io.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/platform_device.h>
- #include <linux/delay.h>
-+#include <linux/notifier.h>
-+#include <linux/reboot.h>
- 
- 
- #include "exynos-pmu.h"
-@@ -716,6 +719,13 @@ static void exynos5420_pmu_init(void)
- 	pr_info("EXYNOS5420 PMU initialized\n");
- }
- 
-+static int pmu_restart_notify(struct notifier_block *this,
-+		unsigned long code, void *unused)
-+{
-+	pmu_raw_writel(0x1, EXYNOS_SWRESET);
-+
-+	return NOTIFY_DONE;
-+}
- 
- static const struct exynos_pmu_data exynos4210_pmu_data = {
- 	.pmu_config	= exynos4210_pmu_config,
-@@ -765,11 +775,20 @@ static const struct of_device_id exynos_pmu_of_device_ids[] = {
- 	{ /*sentinel*/ },
- };
- 
-+/*
-+ * Exynos PMU reboot notifier, handles reboot functionality
-+ */
-+static struct notifier_block pmu_restart_handler = {
-+	.notifier_call = pmu_restart_notify,
-+	.priority = 128,
-+};
-+
- static int exynos_pmu_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
- 	struct device *dev = &pdev->dev;
- 	struct resource *res;
-+	int ret;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	pmu_base_addr = devm_ioremap_resource(dev, res);
-@@ -794,6 +813,10 @@ static int exynos_pmu_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, pmu_context);
- 
-+	ret = register_restart_handler(&pmu_restart_handler);
-+	if (ret)
-+		dev_err(dev, "can't register restart handler err=%d\n", ret);
-+
- 	dev_dbg(dev, "Exynos PMU Driver probe done\n");
- 	return 0;
- }
+Further three patches add implementation of .write_sec and .configure
+callbacks for Exynos secure firmware and necessary DT nodes to enable
+L2 cache.
+
+Changes in this version tested on Exynos4412-based TRATS2 and OdroidU3+
+boards (both with secure firmware). There should be no functional change
+for Exynos boards running without secure firmware. I do not have access
+to affected non-Exynos boards, so I could not test on them.
+
+Depends on:
+- v3.18-rc3
+
+Changelog:
+
+Changes since v8:
+(http://lkml.org/lkml/2014/11/13/263)
+- Rebased onto vanilla v3.18-rc3 and added required includes, which were
+  previously added by other patches
+- Added Acked-by tags for Exynos part
+
+Changes since v7:
+(https://lkml.org/lkml/2014/10/29/158)
+- rebased onto arm-soc/for-next kernel tree (depends on patches merged to
+  v3.18-rc3 and arm-soc/samsung/pm2 branch)
+- removed 'ARM: l2c: unify L2C-310 OF initialization error messages' patch
+  (no longer needed)
+
+Changes since v6:
+(https://lkml.org/lkml/2014/10/27/233)
+- changed PL310 to L2C-310 prefix in error messages
+- added patch shortening the error message about incorrect associativity
+
+Changes since v5:
+(https://lkml.org/lkml/2014/9/24/364)
+- rebased onto v3.18-rc2
+- added error message about missing properties values
+
+Changes since v4:
+(https://lkml.org/lkml/2014/8/26/461)
+ - rewrote the code accessing l2x0_saved_regs from assembly code
+ - added comment and reworked unconditional call to SMC_CMD_L2X0INVALL
+
+
+Patch summary:
+
+Tomasz Figa (7):
+  ARM: l2c: Refactor the driver to use commit-like interface
+  ARM: l2c: Add interface to ask hypervisor to configure L2C
+  ARM: l2c: Get outer cache .write_sec callback from mach_desc only if
+    not NULL
+  ARM: l2c: Add support for overriding prefetch settings
+  ARM: EXYNOS: Add .write_sec outer cache callback for L2C-310
+  ARM: EXYNOS: Add support for non-secure L2X0 resume
+  ARM: dts: exynos4: Add nodes for L2 cache controller
+
+ Documentation/devicetree/bindings/arm/l2cc.txt |  10 +
+ arch/arm/boot/dts/exynos4210.dtsi              |   9 +
+ arch/arm/boot/dts/exynos4x12.dtsi              |  14 ++
+ arch/arm/include/asm/outercache.h              |   3 +
+ arch/arm/kernel/irq.c                          |   3 +-
+ arch/arm/mach-exynos/Makefile                  |   1 +
+ arch/arm/mach-exynos/firmware.c                |  51 +++++
+ arch/arm/mach-exynos/sleep.S                   |  48 +++++
+ arch/arm/mach-exynos/smc.h                     |   4 +
+ arch/arm/mm/cache-l2x0.c                       | 270 ++++++++++++++++---------
+ 10 files changed, 317 insertions(+), 96 deletions(-)
+
 -- 
-1.7.9.5
+1.9.2
