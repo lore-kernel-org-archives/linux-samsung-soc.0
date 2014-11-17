@@ -1,73 +1,69 @@
-From: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
-Subject: [PATCH] ASoC: samsung-i2s: Add 192kHz config option
-Date: Mon, 17 Nov 2014 10:57:54 +0000
-Message-ID: <1416221874-22092-1-git-send-email-rf@opensource.wolfsonmicro.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, ben-linux@fluff.org, kgene.kim@samsung.com, broonie@kernel.org
-Cc: perex@perex.cz, tiwai@suse.de, galak@codeaurora.org, sbkim73@samsung.com, lgirdwood@gmail.com, ckeepax@opensource.wolfsonmicro.com, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v4 0/2] Handle reboot for Exynos SoC via restart_handler
+Date: Mon, 17 Nov 2014 16:51:11 +0530
+Message-ID: <1416223273-1279-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:33256 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752078AbaKQL2M (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 17 Nov 2014 06:28:12 -0500
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NF6009G7L6YSB80@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 Nov 2014 20:28:10 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, linux@roeck-us.net, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Adds QUIRK_SUPPORTS_192KHZ to allow 192kHz rate
-to be selected for hardware that supports it.
+This patch removes restart hook from machine_desc of Exynos, and moves
+respective code into restart_notifiers.
+Exynos5440 handles reboot via clock register so let's register a
+restart_handler in Exynos5440 clock driver.
+For rest Exynos SoC, reboot is handled via PMU SWRESET register so
+let's register a restart_handler in PMU driver for handling this.
 
-Signed-off-by: Richard Fitzgerald <rf@opensource.wolfsonmicro.com>
----
- .../devicetree/bindings/sound/samsung-i2s.txt      |    2 ++
- include/linux/platform_data/asoc-s3c.h             |    1 +
- sound/soc/samsung/i2s.c                            |    8 ++++++++
- 3 files changed, 11 insertions(+), 0 deletions(-)
+This patch is inspired and dependent on following patch series[1] from
+Geunter Roeck.
 
-diff --git a/Documentation/devicetree/bindings/sound/samsung-i2s.txt b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
-index d188296..c3f3950 100644
---- a/Documentation/devicetree/bindings/sound/samsung-i2s.txt
-+++ b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
-@@ -40,6 +40,8 @@ Optional SoC Specific Properties:
-   sub system(used in secondary sound source).
- - pinctrl-0: Should specify pin control groups used for this controller.
- - pinctrl-names: Should contain only one value - "default".
-+- samsung,supports-192khz: specify this (without a value) if you want to allow
-+    192000 sample rate over the I2S link.
- 
- Example:
- 
-diff --git a/include/linux/platform_data/asoc-s3c.h b/include/linux/platform_data/asoc-s3c.h
-index 5e0bc77..6d0702d 100644
---- a/include/linux/platform_data/asoc-s3c.h
-+++ b/include/linux/platform_data/asoc-s3c.h
-@@ -28,6 +28,7 @@ struct samsung_i2s {
- #define QUIRK_NEED_RSTCLR	(1 << 3)
- #define QUIRK_SUPPORTS_TDM	(1 << 4)
- #define QUIRK_SUPPORTS_IDMA	(1 << 5)
-+#define QUIRK_SUPPORTS_192KHZ	(1 << 6)
- 	/* Quirks of the I2S controller */
- 	u32 quirks;
- 	dma_addr_t idma_addr;
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 947352d..f688e89 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -1219,6 +1219,9 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 						"specified");
- 			}
- 		}
-+
-+		if (of_find_property(np, "samsung,supports-192khz", NULL))
-+			quirks |= QUIRK_SUPPORTS_192KHZ;
- 	}
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -1247,6 +1250,11 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 	if (quirks & QUIRK_PRI_6CHAN)
- 		pri_dai->i2s_dai_drv.playback.channels_max = 6;
- 
-+	if (quirks & QUIRK_SUPPORTS_192KHZ) {
-+		pri_dai->i2s_dai_drv.playback.rates |= SNDRV_PCM_RATE_192000;
-+		pri_dai->i2s_dai_drv.capture.rates |= SNDRV_PCM_RATE_192000;
-+	}
-+
- 	if (quirks & QUIRK_SEC_DAI) {
- 		sec_dai = i2s_alloc_dai(pdev, true);
- 		if (!sec_dai) {
+[1]: kernel: Add support for kernel restart handler call chain
+https://lkml.org/lkml/2014/8/19/652
+
+I have tested reboot functionality on Exynos3250 based board, on
+kgene/for-next as well as linux-next's next-20141114 tag.
+
+Patch v3 and related discussion can be found here
+http://www.spinics.net/lists/linux-samsung-soc/msg37600.html
+
+Changes since v3:
+  - As v2 is causing conflict after recent changes in kgene/for-next,
+    rebased on top of kgene/for-next dated 2014-11-13.
+  - Removed dependency patch list from cover-letter as all dependencies 
+    are merged into kgene/for-next.
+
+Changes since v2:
+  - Used register_restart_handler instead of register_reboot_notifier.
+  - Updated notifier names and commit message accordingly.
+
+Changes since v1:
+  - Addressed review comments from Tomasz Figa. Removed usage of 
+    local variables where ever unnecessary.
+  - Make reg_base as global in clk-exynos5440.c file, to avoid 
+    iomapping it again in reboot_notifier handler.
+
+
+Pankaj Dubey (2):
+  clk: samsung: exynos5440: move restart code into clock driver
+  ARM: EXYNOS: PMU: move restart code into pmu driver
+
+ arch/arm/mach-exynos/common.h        |    1 -
+ arch/arm/mach-exynos/exynos.c        |   23 -----------------------
+ arch/arm/mach-exynos/pmu.c           |   23 +++++++++++++++++++++++
+ drivers/clk/samsung/clk-exynos5440.c |   29 ++++++++++++++++++++++++++++-
+ 4 files changed, 51 insertions(+), 25 deletions(-)
+
 -- 
-1.7.2.5
+1.7.9.5
