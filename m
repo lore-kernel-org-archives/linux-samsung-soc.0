@@ -1,55 +1,56 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v9 3/7] ARM: l2c: Get outer cache .write_sec callback from
- mach_desc only if not NULL
-Date: Mon, 17 Nov 2014 12:48:25 +0100
-Message-ID: <1416224909-4290-4-git-send-email-m.szyprowski@samsung.com>
-References: <1416224909-4290-1-git-send-email-m.szyprowski@samsung.com>
+From: Paolo Pisati <p.pisati@gmail.com>
+Subject: 3.19/for-next: peachpi: phy failures
+Date: Mon, 17 Nov 2014 13:09:42 +0100
+Message-ID: <20141117120942.GC9844@luxor.wired.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1416224909-4290-1-git-send-email-m.szyprowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, tony@atomide.com, linus.walleij@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, drake@endlessm.com, loeliger@gmail.com, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, lauraa@codeaurora.org, linux-omap@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f179.google.com ([209.85.212.179]:39049 "EHLO
+	mail-wi0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751644AbaKQMJs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 17 Nov 2014 07:09:48 -0500
+Received: by mail-wi0-f179.google.com with SMTP id ex7so8828596wid.6
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Nov 2014 04:09:46 -0800 (PST)
+Received: from gmail.com (2-230-238-136.ip204.fastwebnet.it. [2.230.238.136])
+        by mx.google.com with ESMTPSA id mw7sm15002648wib.14.2014.11.17.04.09.45
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLSv1.2 cipher=RC4-SHA bits=128/128);
+        Mon, 17 Nov 2014 04:09:45 -0800 (PST)
+Content-Disposition: inline
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-From: Tomasz Figa <t.figa@samsung.com>
+Today's 3.19/for-next regressed on usb (and display panel too) on my samsung
+chromebook2 peach pi.
 
-Certain platforms (i.e. Exynos) might need to set .write_sec callback
-from firmware initialization which is happenning in .init_early callback
-of machine descriptor. However current code will overwrite the pointer
-with whatever is present in machine descriptor, even though it can be
-already set earlier. This patch fixes this by making the assignment
-conditional, depending on whether current .write_sec callback is NULL.
+Blindly typing i was able to login and get a dmesg, and this is the relevant
+part:
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/kernel/irq.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+...
+[    0.195049] exynos-dp-video-phy 10040728.video-phy: Failed to lookup PMU regmap
+[    0.195304] exynos-mipi-video-phy 10040714.video-phy: can't request region for resource [mem 0x10040714-0x1004071f]
+[    0.195327] exynos-mipi-video-phy: probe of 10040714.video-phy failed with error -16
+[    0.195807] samsung-usb2-phy 12130000.phy: Failed to map PMU registers (via syscon)
+[    0.195836] platform 12130000.phy: Driver samsung-usb2-phy requests probe deferral
+[    0.196095] exynos5_usb3drd_phy 12100000.phy: Failed to lookup PMU regmap
+[    0.196124] platform 12100000.phy: Driver exynos5_usb3drd_phy requests probe deferral
+[    0.196196] exynos5_usb3drd_phy 12500000.phy: Failed to lookup PMU regmap
+[    0.196222] platform 12500000.phy: Driver exynos5_usb3drd_phy requests probe deferral
+...
 
-diff --git a/arch/arm/kernel/irq.c b/arch/arm/kernel/irq.c
-index 7c81ec428b9b..5acb8aef6f2d 100644
---- a/arch/arm/kernel/irq.c
-+++ b/arch/arm/kernel/irq.c
-@@ -108,7 +108,8 @@ void __init init_IRQ(void)
- 
- 	if (IS_ENABLED(CONFIG_OF) && IS_ENABLED(CONFIG_CACHE_L2X0) &&
- 	    (machine_desc->l2c_aux_mask || machine_desc->l2c_aux_val)) {
--		outer_cache.write_sec = machine_desc->l2c_write_sec;
-+		if (!outer_cache.write_sec)
-+			outer_cache.write_sec = machine_desc->l2c_write_sec;
- 		ret = l2x0_of_init(machine_desc->l2c_aux_val,
- 				   machine_desc->l2c_aux_mask);
- 		if (ret)
+the funny thing is that usb has always worked fine for me on 318rc4, plus adding
+those patches:
+
+d10d142 arm: dts: Exynos5: Use pmu_system_controller phandle for dp phy
+92dcb9d drm/exynos: dp: Remove support for unused dptx-phy
+ddda2b6 ARM: exynos_defconfig: Enable options for display panel support
+
+i got the display to work too (albeit only for fb support, drm
+wasn't working yet - that's why i was trying the for-next branch).
+
+Any idea? Has anyone tested for-next on this chromebook?
 -- 
-1.9.2
+bye,
+p.
