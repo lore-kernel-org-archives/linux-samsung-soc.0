@@ -1,93 +1,65 @@
-From: Kevin Hilman <khilman@deeprootsystems.com>
-Subject: Re: exynos boot falures in linux-next
-Date: Mon, 17 Nov 2014 14:24:01 -0800
-Message-ID: <7hlhn9zcse.fsf@deeprootsystems.com>
-References: <E1XqKYI-0000pQ-4b@ip-10-35-177-41.ec2.internal>
-	<7hoas54y7k.fsf@deeprootsystems.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] PM / Domains: Power on the PM domain right after attach completes
+Date: Tue, 18 Nov 2014 00:28:26 +0100
+Message-ID: <9731926.0Og5ZNPBtE@vostro.rjw.lan>
+References: <20141117220238.GE5258@dtor-ws> <Pine.LNX.4.44L0.1411171708010.4838-100000@iolanthe.rowland.org> <20141117221700.GA2049@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:34265 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751791AbaKQWYF (ORCPT
+Received: from v094114.home.net.pl ([79.96.170.134]:54781 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1753106AbaKQXHY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Nov 2014 17:24:05 -0500
-Received: by mail-pa0-f51.google.com with SMTP id ey11so6314032pad.38
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Nov 2014 14:24:04 -0800 (PST)
-In-Reply-To: <7hoas54y7k.fsf@deeprootsystems.com> (Kevin Hilman's message of
-	"Mon, 17 Nov 2014 07:57:03 -0800")
+	Mon, 17 Nov 2014 18:07:24 -0500
+In-Reply-To: <20141117221700.GA2049@dtor-ws>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Kevin Hilman <khilman@kernel.org> writes:
+On Monday, November 17, 2014 02:17:00 PM Dmitry Torokhov wrote:
+> On Mon, Nov 17, 2014 at 05:12:35PM -0500, Alan Stern wrote:
+> > On Mon, 17 Nov 2014, Dmitry Torokhov wrote:
+> > 
+> > > > >  Except buses
+> > > > > usually call pm_generic_runtime_resume() which ends up fetching driver's
+> > > > > callbacks. Maybe pm_generic_runtime_*() need be a bit smarter?
+> > > > 
+> > > > No, the bus subsystem needs to be smarter.  It shouldn't call 
+> > > > pm_generic_runtime_resume() if the driver hasn't been probed yet, or if 
+> > > > the driver has already been unbound from the device.
+> > > 
+> > > But that code wold be exactly the same for all buses, right? So why
+> > > can't pm_generic_runtime_resume() be smarter?
+> > 
+> > It would not be the same for all buses.  Each bus will have its own way 
+> > of recognizing whether or not a driver has been probed (i.e., by 
+> > checking some field in the bus-specific part of the device structure).
+> > 
+> > > However, is it allowed to call pm_runtime_get_sync() on devices that
+> > > didn't issue pm_runtime_enable()?
+> > 
+> > Yes.  But the bus has to issue pm_runtime_enable() before probing the 
+> > driver, because the driver will expect runtime PM to work properly 
+> > while its probe routine runs.  For example, the probe routine might 
+> > want to leave the device in a runtime-suspended state.  It can't do 
+> > that if the device isn't enabled for runtime PM.
+> 
+> That means that runtime PM will be enabled for all devices on given bus
+> while up till now drivers were deciding if their devices should be
+> runtime-pm-managed or not.
 
-> FYI...
->
-> Various new exynos5 boot failures starting next-20141117.  Looking in
-> the boot logs, the boot stops during DRM initialization.
->
-> Note that the boot failures are only on exynos_defconfig, and not
-> multi_v7_defconfig.
+That's not the case for PCI drivers.
 
-As might have been expected, reverting the change that enables the
-DRM/display options in exynos_defconfig fixes the problem.
+> I do not think we are quite ready for this.
 
-Kevin
+We have to do that if power domains are in use, however, because if at least
+one device in a power domain in enabled for runtime PM, that will affect the
+other devices in that domain.
 
-> Excerpt from boot report below, or recent exynos boots can also be
-> explored here:
->
->    http://status.armcloud.us/boot/?exynos
->
-> Kevin
->
->
-> Kevin's boot bot <khilman@kernel.org> writes:
->
->> Full Build report: http://status.armcloud.us/build/next/kernel/next-20141117/
->> Full Boot report:  http://status.armcloud.us/boot/all/job/next/kernel/next-20141117/
->>
->> Tree/Branch: next
->> Git describe: next-20141117
->>
->> Failed boot tests
->> =================
->
-> [...]
->
->>            exynos5422-odroid-xu3:     FAIL:    arm-exynos_defconfig
->>                                       http://storage.armcloud.us/kernel-ci/next/next-20141117/arm-exynos_defconfig/boot-exynos5422-odroid-xu3.html
->>               exynos5250-arndale:     FAIL:    arm-exynos_defconfig
->>                                       http://storage.armcloud.us/kernel-ci/next/next-20141117/arm-exynos_defconfig/boot-exynos5250-arndale.html
->>              exynos5800-peach-pi:     FAIL:    arm-exynos_defconfig
->>                                       http://storage.armcloud.us/kernel-ci/next/next-20141117/arm-exynos_defconfig/boot-exynos5800-peach-pi.html
+We could make a rule to keep a domail always up if at least one device in it
+has runtime PM disabled, but that is equivalent to enabling runtime PM for
+that device, powering the domain up and bumping up the device's usage counter.
 
-[1]
-commit 0ef76aea7a344ac520b02822a8080797fa06124c
-Author: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Date:   Thu Nov 13 11:51:42 2014 +0900
-
-    ARM: exynos_defconfig: Enable options for display panel support
-
-    Many Exynos devices have a display panel. Most of them just have
-    a simple panel while others have more complex configurations that
-    requires an embedded DisplayPort (eDP) to LVDS bridges.
-
-    This patch enables the following features to be built in the kernel
-    image to support both setups:
-
-    - Direct Rendering Manager (DRM)
-    - DRM bridge registration and lookup framework
-    - Parade ps8622/ps8625 eDP/LVDS bridge
-    - NXP ptn3460 eDP/LVDS bridge
-    - Exynos Fully Interactive Mobile Display controller (FIMD)
-    - Panel registration and lookup framework
-    - Simple panels
-    - Backlight & LCD device support
-
-    Signed-off-by: Javier Martinez Canillas
-    <javier.martinez@collabora.co.uk>
-    Tested-by: Kevin Hilman <khilman@linaro.org>
-    Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Rafael
