@@ -1,61 +1,67 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH 8/9] drm/exynos: dsi: move TE irq handler registration position
-Date: Mon, 17 Nov 2014 22:00:15 +0900
-Message-ID: <1416229216-32018-9-git-send-email-yj44.cho@samsung.com>
+Subject: [PATCH 3/9] drm/exynos: fimd: add fimd_enable_video_output() to
+ cleanup
+Date: Mon, 17 Nov 2014 22:00:10 +0900
+Message-ID: <1416229216-32018-4-git-send-email-yj44.cho@samsung.com>
 References: <1416229216-32018-1-git-send-email-yj44.cho@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:35157 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751623AbaKQNA3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Nov 2014 08:00:29 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NF6002WGPGLK410@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Nov 2014 22:00:21 +0900 (KST)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-reply-to: <1416229216-32018-1-git-send-email-yj44.cho@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The drm_helper_hpd_irq_event() does dpms control and
-the panel is initialized and displayed on by it.
-So the exynos_dsi_te_irq_handler() should be registered
-beforehand.
-
-Signed-off-by: YoungJun Cho <yj44.cho@samsung.com>
-Acked-by: Inki Dae <inki.dae@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_dsi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-index 66d427e..6fe6486 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
-@@ -1207,9 +1207,6 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
- 	dsi->mode_flags = device->mode_flags;
- 	dsi->panel_node = device->dev.of_node;
- 
--	if (dsi->connector.dev)
--		drm_helper_hpd_irq_event(dsi->connector.dev);
--
- 	/*
- 	 * This is a temporary solution and should be made by more generic way.
- 	 *
-@@ -1223,6 +1220,9 @@ static int exynos_dsi_host_attach(struct mipi_dsi_host *host,
- 			return ret;
- 	}
- 
-+	if (dsi->connector.dev)
-+		drm_helper_hpd_irq_event(dsi->connector.dev);
-+
- 	return 0;
- }
- 
--- 
-1.9.0
+VGhpcyBiaXQgaXMgdXNlZCBmb3IgdmlkZW8gb3V0cHV0IGFuZCBsb2dpYyBzaWduYWwgY29udHJv
+bC4KU28gaXQgaXMgYmV0dGVyIGZvciByZWFkYWJpbGl0eS4KClNpZ25lZC1vZmYtYnk6IFlvdW5n
+SnVuIENobyA8eWo0NC5jaG9Ac2Ftc3VuZy5jb20+CkFja2VkLWJ5OiBJbmtpIERhZSA8aW5raS5k
+YWVAc2Ftc3VuZy5jb20+CkFja2VkLWJ5OiBLeXVuZ21pbiBQYXJrIDxreXVuZ21pbi5wYXJrQHNh
+bXN1bmcuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMg
+fCAyNyArKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAxNiBpbnNl
+cnRpb25zKCspLCAxMSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+ZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2ZpbWQuYwppbmRleCA3N2JhOTYxLi41Y2ZkMjUxIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9maW1kLmMKQEAgLTIyOSw2ICsyMjksMTkgQEAgc3RhdGljIHZvaWQgZmlt
+ZF93YWl0X2Zvcl92Ymxhbmsoc3RydWN0IGV4eW5vc19kcm1fbWFuYWdlciAqbWdyKQogCQlEUk1f
+REVCVUdfS01TKCJ2Ymxhbmsgd2FpdCB0aW1lZCBvdXQuXG4iKTsKIH0KIAorc3RhdGljIHZvaWQg
+ZmltZF9lbmFibGVfdmlkZW9fb3V0cHV0KHN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCwgaW50IHdp
+biwKKwkJCQkJYm9vbCBlbmFibGUpCit7CisJdTMyIHZhbCA9IHJlYWRsKGN0eC0+cmVncyArIFdJ
+TkNPTih3aW4pKTsKKworCWlmIChlbmFibGUpCisJCXZhbCB8PSBXSU5DT054X0VOV0lOOworCWVs
+c2UKKwkJdmFsICY9IH5XSU5DT054X0VOV0lOOworCisJd3JpdGVsKHZhbCwgY3R4LT5yZWdzICsg
+V0lOQ09OKHdpbikpOworfQorCiBzdGF0aWMgdm9pZCBmaW1kX2NsZWFyX2NoYW5uZWwoc3RydWN0
+IGV4eW5vc19kcm1fbWFuYWdlciAqbWdyKQogewogCXN0cnVjdCBmaW1kX2NvbnRleHQgKmN0eCA9
+IG1nci0+Y3R4OwpAQCAtMjQxLDkgKzI1NCw3IEBAIHN0YXRpYyB2b2lkIGZpbWRfY2xlYXJfY2hh
+bm5lbChzdHJ1Y3QgZXh5bm9zX2RybV9tYW5hZ2VyICptZ3IpCiAJCXUzMiB2YWwgPSByZWFkbChj
+dHgtPnJlZ3MgKyBXSU5DT04od2luKSk7CiAKIAkJaWYgKHZhbCAmIFdJTkNPTnhfRU5XSU4pIHsK
+LQkJCS8qIHdpbmNvbiAqLwotCQkJdmFsICY9IH5XSU5DT054X0VOV0lOOwotCQkJd3JpdGVsKHZh
+bCwgY3R4LT5yZWdzICsgV0lOQ09OKHdpbikpOworCQkJZmltZF9lbmFibGVfdmlkZW9fb3V0cHV0
+KGN0eCwgd2luLCBmYWxzZSk7CiAKIAkJCS8qIHVucHJvdGVjdCB3aW5kb3dzICovCiAJCQlpZiAo
+Y3R4LT5kcml2ZXJfZGF0YS0+aGFzX3NoYWRvd2NvbikgewpAQCAtNzQ2LDEwICs3NTcsNyBAQCBz
+dGF0aWMgdm9pZCBmaW1kX3dpbl9jb21taXQoc3RydWN0IGV4eW5vc19kcm1fbWFuYWdlciAqbWdy
+LCBpbnQgenBvcykKIAlpZiAod2luICE9IDApCiAJCWZpbWRfd2luX3NldF9jb2xrZXkoY3R4LCB3
+aW4pOwogCi0JLyogd2luY29uICovCi0JdmFsID0gcmVhZGwoY3R4LT5yZWdzICsgV0lOQ09OKHdp
+bikpOwotCXZhbCB8PSBXSU5DT054X0VOV0lOOwotCXdyaXRlbCh2YWwsIGN0eC0+cmVncyArIFdJ
+TkNPTih3aW4pKTsKKwlmaW1kX2VuYWJsZV92aWRlb19vdXRwdXQoY3R4LCB3aW4sIHRydWUpOwog
+CiAJaWYgKGN0eC0+ZHJpdmVyX2RhdGEtPmhhc19zaGFkb3djb24pIHsKIAkJdmFsID0gcmVhZGwo
+Y3R4LT5yZWdzICsgU0hBRE9XQ09OKTsKQEAgLTc5MCwxMCArNzk4LDcgQEAgc3RhdGljIHZvaWQg
+ZmltZF93aW5fZGlzYWJsZShzdHJ1Y3QgZXh5bm9zX2RybV9tYW5hZ2VyICptZ3IsIGludCB6cG9z
+KQogCS8qIHByb3RlY3Qgd2luZG93cyAqLwogCWZpbWRfc2hhZG93X3Byb3RlY3Rfd2luKGN0eCwg
+d2luLCB0cnVlKTsKIAotCS8qIHdpbmNvbiAqLwotCXZhbCA9IHJlYWRsKGN0eC0+cmVncyArIFdJ
+TkNPTih3aW4pKTsKLQl2YWwgJj0gfldJTkNPTnhfRU5XSU47Ci0Jd3JpdGVsKHZhbCwgY3R4LT5y
+ZWdzICsgV0lOQ09OKHdpbikpOworCWZpbWRfZW5hYmxlX3ZpZGVvX291dHB1dChjdHgsIHdpbiwg
+ZmFsc2UpOwogCiAJLyogdW5wcm90ZWN0IHdpbmRvd3MgKi8KIAlpZiAoY3R4LT5kcml2ZXJfZGF0
+YS0+aGFzX3NoYWRvd2NvbikgewotLSAKMS45LjAKCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vZHJpLWRldmVsCg==
