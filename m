@@ -1,61 +1,92 @@
 From: YoungJun Cho <yj44.cho@samsung.com>
-Subject: [PATCH v2 0/9] drm/exynos: modify LCD I80 interface display
-Date: Mon, 17 Nov 2014 22:00:07 +0900
-Message-ID: <1416229216-32018-1-git-send-email-yj44.cho@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:35157 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750944AbaKQNAW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Nov 2014 08:00:22 -0500
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NF6002WCPGKK410@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Nov 2014 22:00:20 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 5/9] drm/exynos: fimd: modify I80 i/f irq relevant routine
+Date: Mon, 17 Nov 2014 22:00:12 +0900
+Message-ID: <1416229216-32018-6-git-send-email-yj44.cho@samsung.com>
+References: <1416229216-32018-1-git-send-email-yj44.cho@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1416229216-32018-1-git-send-email-yj44.cho@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, jy0922.shim@samsung.com, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, a.hajda@samsung.com, kyungmin.park@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-This series modifies LCD I80 interface display for Exynos DRM driver
-to make it similar with Video(RGB) interface.
-Some patches in v1 are applied already and these are modified as Inki's
-comments.
-And Joonyoung's patches are also included for merge convenience.
-
-This is based on exynos-drm-next branch.
-
-The previous patches,
-v1: http://www.spinics.net/lists/dri-devel/msg69159.html
-
-Changelog v2:
-- Splits patches into single feature. (commented by Inki)
-
-I welcome any comments.
-
-Thank you.
-Best regards YJ
-
-Joonyoung Shim (2):
-  drm/exynos: move triggering checking
-  drm/exynos: use irq_flags instead of triggering
-
-YoungJun Cho (7):
-  drm/exynos: fimd: move shadow unprotection position
-  drm/exynos: fimd: add fimd_enable_video_output() to cleanup
-  drm/exynos: fimd: add fimd_enable_shadow_channel_path() to cleanup
-  drm/exynos: fimd: modify I80 i/f irq relevant routine
-  drm/exynos: fimd: add triggering unset routine in fimd_trigger()
-  drm/exynos: dsi: move TE irq handler registration position
-  drm/exynos: dsi: set TE GPIO IRQ status as IRQ_NOAUTOEN
-
- drivers/gpu/drm/exynos/exynos_drm_dsi.c  |  19 ++---
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 135 ++++++++++++++++++-------------
- 2 files changed, 85 insertions(+), 69 deletions(-)
-
--- 
-1.9.0
+Rm9yIHRoZSBJODAgaW50ZXJmYWNlLCB0aGUgdmlkZW8gaW50ZXJydXB0IHBlbmRpbmcgcmVnaXN0
+ZXIoVklESU5UQ09OMSkKc2hvdWxkIGJlIGhhbmRsZWQgaW4gZmltZF9pcnFfaGFuZGxlcigpIGFu
+ZCB0aGUgdmlkZW8gaW50ZXJydXB0IGNvbnRyb2wKcmVnaXN0ZXIoVklESU5UQ09OMCkgc2hvdWxk
+IGJlIGhhbmRsZWQgaW4gZmltZF9lbmFibGVfdmJsYW5rKCkgYW5kCmZpbWRfZGlzYWJsZV92Ymxh
+bmsoKSBsaWtlIFJHQiBpbnRlcmZhY2UuClNvIHRoaXMgcGF0Y2ggbW92ZXMgZWFjaCBzZXQgLyB1
+bnNldCByb3V0aW5lcyBpbnRvIHByb3BlciBwb3NpdGlvbnMuCgpTaWduZWQtb2ZmLWJ5OiBZb3Vu
+Z0p1biBDaG8gPHlqNDQuY2hvQHNhbXN1bmcuY29tPgpBY2tlZC1ieTogSW5raSBEYWUgPGlua2ku
+ZGFlQHNhbXN1bmcuY29tPgpBY2tlZC1ieTogS3l1bmdtaW4gUGFyayA8a3l1bmdtaW4ucGFya0Bz
+YW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5j
+IHwgNTMgKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAy
+NyBpbnNlcnRpb25zKCspLCAyNiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2ZpbWQuYwppbmRleCBmZDdiNDY5Li4zYzYzMjM3IDEwMDY0NAotLS0gYS9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCisrKyBiL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKQEAgLTQ2OSwxMiArNDY5LDE5IEBAIHN0YXRpYyBp
+bnQgZmltZF9lbmFibGVfdmJsYW5rKHN0cnVjdCBleHlub3NfZHJtX21hbmFnZXIgKm1ncikKIAkJ
+dmFsID0gcmVhZGwoY3R4LT5yZWdzICsgVklESU5UQ09OMCk7CiAKIAkJdmFsIHw9IFZJRElOVENP
+TjBfSU5UX0VOQUJMRTsKLQkJdmFsIHw9IFZJRElOVENPTjBfSU5UX0ZSQU1FOwogCi0JCXZhbCAm
+PSB+VklESU5UQ09OMF9GUkFNRVNFTDBfTUFTSzsKLQkJdmFsIHw9IFZJRElOVENPTjBfRlJBTUVT
+RUwwX1ZTWU5DOwotCQl2YWwgJj0gflZJRElOVENPTjBfRlJBTUVTRUwxX01BU0s7Ci0JCXZhbCB8
+PSBWSURJTlRDT04wX0ZSQU1FU0VMMV9OT05FOworCQlpZiAoY3R4LT5pODBfaWYpIHsKKwkJCXZh
+bCB8PSBWSURJTlRDT04wX0lOVF9JODBJRkRPTkU7CisJCQl2YWwgfD0gVklESU5UQ09OMF9JTlRf
+U1lTTUFJTkNPTjsKKwkJCXZhbCAmPSB+VklESU5UQ09OMF9JTlRfU1lTU1VCQ09OOworCQl9IGVs
+c2UgeworCQkJdmFsIHw9IFZJRElOVENPTjBfSU5UX0ZSQU1FOworCisJCQl2YWwgJj0gflZJRElO
+VENPTjBfRlJBTUVTRUwwX01BU0s7CisJCQl2YWwgfD0gVklESU5UQ09OMF9GUkFNRVNFTDBfVlNZ
+TkM7CisJCQl2YWwgJj0gflZJRElOVENPTjBfRlJBTUVTRUwxX01BU0s7CisJCQl2YWwgfD0gVklE
+SU5UQ09OMF9GUkFNRVNFTDFfTk9ORTsKKwkJfQogCiAJCXdyaXRlbCh2YWwsIGN0eC0+cmVncyAr
+IFZJRElOVENPTjApOwogCX0KQEAgLTQ5Myw5ICs1MDAsMTUgQEAgc3RhdGljIHZvaWQgZmltZF9k
+aXNhYmxlX3ZibGFuayhzdHJ1Y3QgZXh5bm9zX2RybV9tYW5hZ2VyICptZ3IpCiAJaWYgKHRlc3Rf
+YW5kX2NsZWFyX2JpdCgwLCAmY3R4LT5pcnFfZmxhZ3MpKSB7CiAJCXZhbCA9IHJlYWRsKGN0eC0+
+cmVncyArIFZJRElOVENPTjApOwogCi0JCXZhbCAmPSB+VklESU5UQ09OMF9JTlRfRlJBTUU7CiAJ
+CXZhbCAmPSB+VklESU5UQ09OMF9JTlRfRU5BQkxFOwogCisJCWlmIChjdHgtPmk4MF9pZikgewor
+CQkJdmFsICY9IH5WSURJTlRDT04wX0lOVF9JODBJRkRPTkU7CisJCQl2YWwgJj0gflZJRElOVENP
+TjBfSU5UX1NZU01BSU5DT047CisJCQl2YWwgJj0gflZJRElOVENPTjBfSU5UX1NZU1NVQkNPTjsK
+KwkJfSBlbHNlCisJCQl2YWwgJj0gflZJRElOVENPTjBfSU5UX0ZSQU1FOworCiAJCXdyaXRlbCh2
+YWwsIGN0eC0+cmVncyArIFZJRElOVENPTjApOwogCX0KIH0KQEAgLTk1OSwxOSArOTcyLDE1IEBA
+IHN0YXRpYyB2b2lkIGZpbWRfdHJpZ2dlcihzdHJ1Y3QgZGV2aWNlICpkZXYpCiAJdTMyIHJlZzsK
+IAogCSAvKgotCSAqIFNraXBzIHRvIHRyaWdnZXIgaWYgaW4gdHJpZ2dlcmluZyBzdGF0ZSwgYmVj
+YXVzZSBtdWx0aXBsZSB0cmlnZ2VyaW5nCi0JICogcmVxdWVzdHMgY2FuIGNhdXNlIHBhbmVsIHJl
+c2V0LgotCSAqLworCSAgKiBTa2lwcyB0cmlnZ2VyaW5nIGlmIGluIHRyaWdnZXJpbmcgc3RhdGUs
+IGJlY2F1c2UgbXVsdGlwbGUgdHJpZ2dlcmluZworCSAgKiByZXF1ZXN0cyBjYW4gY2F1c2UgcGFu
+ZWwgcmVzZXQuCisJICAqLwogCWlmIChhdG9taWNfcmVhZCgmY3R4LT50cmlnZ2VyaW5nKSkKIAkJ
+cmV0dXJuOwogCisJLyogRW50ZXJzIHRyaWdnZXJpbmcgbW9kZSAqLwogCWF0b21pY19zZXQoJmN0
+eC0+dHJpZ2dlcmluZywgMSk7CiAKLQlyZWcgPSByZWFkbChjdHgtPnJlZ3MgKyBWSURJTlRDT04w
+KTsKLQlyZWcgfD0gKFZJRElOVENPTjBfSU5UX0VOQUJMRSB8IFZJRElOVENPTjBfSU5UX0k4MElG
+RE9ORSB8Ci0JCQkJCQlWSURJTlRDT04wX0lOVF9TWVNNQUlOQ09OKTsKLQl3cml0ZWwocmVnLCBj
+dHgtPnJlZ3MgKyBWSURJTlRDT04wKTsKLQogCXJlZyA9IHJlYWRsKHRpbWluZ19iYXNlICsgVFJJ
+R0NPTik7CiAJcmVnIHw9IChUUkdNT0RFX0k4MF9SR0JfRU5BQkxFX0k4MCB8IFNXVFJHQ01EX0k4
+MF9SR0JfRU5BQkxFKTsKIAl3cml0ZWwocmVnLCB0aW1pbmdfYmFzZSArIFRSSUdDT04pOwpAQCAt
+MTAzNiwyMSArMTA0NSwxMyBAQCBzdGF0aWMgaXJxcmV0dXJuX3QgZmltZF9pcnFfaGFuZGxlcihp
+bnQgaXJxLCB2b2lkICpkZXZfaWQpCiAJaWYgKGN0eC0+cGlwZSA8IDAgfHwgIWN0eC0+ZHJtX2Rl
+dikKIAkJZ290byBvdXQ7CiAKLQlpZiAoY3R4LT5pODBfaWYpIHsKLQkJLyogdW5zZXQgSTgwIGZy
+YW1lIGRvbmUgaW50ZXJydXB0ICovCi0JCXZhbCA9IHJlYWRsKGN0eC0+cmVncyArIFZJRElOVENP
+TjApOwotCQl2YWwgJj0gfihWSURJTlRDT04wX0lOVF9JODBJRkRPTkUgfCBWSURJTlRDT04wX0lO
+VF9TWVNNQUlOQ09OKTsKLQkJd3JpdGVsKHZhbCwgY3R4LT5yZWdzICsgVklESU5UQ09OMCk7CisJ
+ZHJtX2hhbmRsZV92YmxhbmsoY3R4LT5kcm1fZGV2LCBjdHgtPnBpcGUpOworCWV4eW5vc19kcm1f
+Y3J0Y19maW5pc2hfcGFnZWZsaXAoY3R4LT5kcm1fZGV2LCBjdHgtPnBpcGUpOwogCi0JCS8qIGV4
+aXQgdHJpZ2dlcmluZyBtb2RlICovCisJaWYgKGN0eC0+aTgwX2lmKSB7CisJCS8qIEV4aXRzIHRy
+aWdnZXJpbmcgbW9kZSAqLwogCQlhdG9taWNfc2V0KCZjdHgtPnRyaWdnZXJpbmcsIDApOwotCi0J
+CWRybV9oYW5kbGVfdmJsYW5rKGN0eC0+ZHJtX2RldiwgY3R4LT5waXBlKTsKLQkJZXh5bm9zX2Ry
+bV9jcnRjX2ZpbmlzaF9wYWdlZmxpcChjdHgtPmRybV9kZXYsIGN0eC0+cGlwZSk7CiAJfSBlbHNl
+IHsKLQkJZHJtX2hhbmRsZV92YmxhbmsoY3R4LT5kcm1fZGV2LCBjdHgtPnBpcGUpOwotCQlleHlu
+b3NfZHJtX2NydGNfZmluaXNoX3BhZ2VmbGlwKGN0eC0+ZHJtX2RldiwgY3R4LT5waXBlKTsKLQog
+CQkvKiBzZXQgd2FpdCB2c3luYyBldmVudCB0byB6ZXJvIGFuZCB3YWtlIHVwIHF1ZXVlLiAqLwog
+CQlpZiAoYXRvbWljX3JlYWQoJmN0eC0+d2FpdF92c3luY19ldmVudCkpIHsKIAkJCWF0b21pY19z
+ZXQoJmN0eC0+d2FpdF92c3luY19ldmVudCwgMCk7Ci0tIAoxLjkuMAoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
