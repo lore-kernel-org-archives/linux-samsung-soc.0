@@ -1,78 +1,93 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: RE: [PATCH v4 2/2] ARM: EXYNOS: PMU: move restart code into pmu driver
-Date: Tue, 18 Nov 2014 16:20:40 +0530
-Message-ID: <000001d0031d$96c32250$c44966f0$@samsung.com>
-References: <1416223273-1279-1-git-send-email-pankaj.dubey@samsung.com>
- <1416223273-1279-3-git-send-email-pankaj.dubey@samsung.com>
- <20141117164116.GA28915@roeck-us.net>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [BUG] blocked task after exynos_drm_init
+Date: Tue, 18 Nov 2014 19:52:56 +0900
+Message-ID: <546B2508.8070409@samsung.com>
+References: <1415264811.27478.4.camel@AMDC1943> <546B228E.6030500@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:18852 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753434AbaKRKug (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Nov 2014 05:50:36 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NF800627E4AE8B0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 18 Nov 2014 19:50:34 +0900 (KST)
-In-reply-to: <20141117164116.GA28915@roeck-us.net>
-Content-language: en-us
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <546B228E.6030500@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Guenter Roeck' <linux@roeck-us.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, linux@arm.linux.org.uk, thomas.ab@samsung.com
 
-On Monday, November 17, 2014 10:11 PM, Guenter Roeck wrote:
-> On Mon, Nov 17, 2014 at 04:51:13PM +0530, Pankaj Dubey wrote:
-> >
-> > +/*
-> > + * Exynos PMU reboot notifier, handles reboot functionality
-> 
-> restart, really.
-> 
-> > + */
-> > +static struct notifier_block pmu_restart_handler = {
-> > +	.notifier_call = pmu_restart_notify,
-> > +	.priority = 128,
-> > +};
-> > +
-> >  static int exynos_pmu_probe(struct platform_device *pdev)  {
-> >  	const struct of_device_id *match;
-> >  	struct device *dev = &pdev->dev;
-> >  	struct resource *res;
-> > +	int ret;
-> >
-> >  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> >  	pmu_base_addr = devm_ioremap_resource(dev, res); @@ -794,6 +813,10
-> > @@ static int exynos_pmu_probe(struct platform_device *pdev)
-> >
-> >  	platform_set_drvdata(pdev, pmu_context);
-> >
-> > +	ret = register_restart_handler(&pmu_restart_handler);
-> > +	if (ret)
-> > +		dev_err(dev, "can't register restart handler err=%d\n",
-ret);
-> > +
-> 
-> dev_warn might be more appropriate, since you ignore the error.
-> But that is a nitpick, really, as well as the above.
-> 
-> Acked-by: Guenter Roeck <linux@roeck-us.net>
-> 
-
-Thanks for review. I will update both patches as per your review comments.
-
-Thanks,
-Pankaj Dubey
-
-> >  	dev_dbg(dev, "Exynos PMU Driver probe done\n");
-> >  	return 0;
-> >  }
-> > --
-> > 1.7.9.5
-> >
+T24gMjAxNOuFhCAxMeyblCAxOOydvCAxOTo0MiwgQW5kcnplaiBIYWpkYSB3cm90ZToKPiBPbiAx
+MS8wNi8yMDE0IDEwOjA2IEFNLCBLcnp5c3p0b2YgS296bG93c2tpIHdyb3RlOgo+PiBIaSwKPj4K
+Pj4gT24gbGFzdCBuZXh0IChuZXh0LTIwMTQxMTA0LCBuZXh0LTIwMTQxMTA1KSBib290aW5nIGxv
+Y2tzIGFmdGVyCj4+IGluaXRpYWxpemluZyBFeHlub3MgRFJNIChUcmF0czIgYm9hcmQpOgo+Pgo+
+PiBbICAgIDIuMDI4MjgzXSBbZHJtXSBJbml0aWFsaXplZCBkcm0gMS4xLjAgMjAwNjA4MTAKPj4g
+WyAgMjQwLjUwNTc5NV0gSU5GTzogdGFzayBzd2FwcGVyLzA6MSBibG9ja2VkIGZvciBtb3JlIHRo
+YW4gMTIwIHNlY29uZHMuCj4+IFsgIDI0MC41MTA4MjVdICAgICAgIE5vdCB0YWludGVkIDMuMTgu
+MC1yYzMtbmV4dC0yMDE0MTEwNSAjNzk0Cj4+IFsgIDI0MC41MTY0MThdICJlY2hvIDAgPiAvcHJv
+Yy9zeXMva2VybmVsL2h1bmdfdGFza190aW1lb3V0X3NlY3MiIGRpc2FibGVzIHRoaXMgbWVzc2Fn
+ZS4KPj4gWyAgMjQwLjUyNDE3M10gc3dhcHBlci8wICAgICAgIEQgYzA1MjUzNGMgICAgIDAgICAg
+IDEgICAgICAwIDB4MDAwMDAwMDAKPj4gWyAgMjQwLjUzMDUyN10gWzxjMDUyNTM0Yz5dIChfX3Nj
+aGVkdWxlKSBmcm9tIFs8YzA1MjViMzQ+XSAoc2NoZWR1bGVfcHJlZW1wdF9kaXNhYmxlZCsweDE0
+LzB4MjApCj4+IFsgIDI0MC41MzkwMzBdIFs8YzA1MjViMzQ+XSAoc2NoZWR1bGVfcHJlZW1wdF9k
+aXNhYmxlZCkgZnJvbSBbPGMwNTI2ZDQ0Pl0gKG11dGV4X2xvY2tfbmVzdGVkKzB4MWM0LzB4NDY0
+KQo+PiBbICAyNDAuNTQ4MzIwXSBbPGMwNTI2ZDQ0Pl0gKG11dGV4X2xvY2tfbmVzdGVkKSBmcm9t
+IFs8YzAyYmU5MDg+XSAoX19kcml2ZXJfYXR0YWNoKzB4NDgvMHg5OCkKPj4gWyAgMjQwLjU1NjU2
+Ml0gWzxjMDJiZTkwOD5dIChfX2RyaXZlcl9hdHRhY2gpIGZyb20gWzxjMDJiY2MwMD5dIChidXNf
+Zm9yX2VhY2hfZGV2KzB4NTQvMHg4OCkKPj4gWyAgMjQwLjU2NDcxN10gWzxjMDJiY2MwMD5dIChi
+dXNfZm9yX2VhY2hfZGV2KSBmcm9tIFs8YzAyYmRjZTA+XSAoYnVzX2FkZF9kcml2ZXIrMHhlNC8w
+eDIwMCkKPj4gWyAgMjQwLjU3Mjg3Nl0gWzxjMDJiZGNlMD5dIChidXNfYWRkX2RyaXZlcikgZnJv
+bSBbPGMwMmJlZjk0Pl0gKGRyaXZlcl9yZWdpc3RlcisweDc4LzB4ZjQpCj4+IFsgIDI0MC41ODA4
+NjRdIFs8YzAyYmVmOTQ+XSAoZHJpdmVyX3JlZ2lzdGVyKSBmcm9tIFs8YzAyOWU5OWM+XSAoZXh5
+bm9zX2RybV9wbGF0Zm9ybV9wcm9iZSsweDM0LzB4MjM0KQo+PiBbICAyNDAuNTg5ODkwXSBbPGMw
+MjllOTljPl0gKGV4eW5vc19kcm1fcGxhdGZvcm1fcHJvYmUpIGZyb20gWzxjMDJiZmNmMD5dIChw
+bGF0Zm9ybV9kcnZfcHJvYmUrMHg0OC8weGE0KQo+PiBbICAyNDAuNTk5MDkwXSBbPGMwMmJmY2Yw
+Pl0gKHBsYXRmb3JtX2Rydl9wcm9iZSkgZnJvbSBbPGMwMmJlNjgwPl0gKGRyaXZlcl9wcm9iZV9k
+ZXZpY2UrMHgxM2MvMHgzN2MpCj4+IFsgIDI0MC42MDc5NDBdIFs8YzAyYmU2ODA+XSAoZHJpdmVy
+X3Byb2JlX2RldmljZSkgZnJvbSBbPGMwMmJlOTU0Pl0gKF9fZHJpdmVyX2F0dGFjaCsweDk0LzB4
+OTgpCj4+IFsgIDI0MC42MTYzNjBdIFs8YzAyYmU5NTQ+XSAoX19kcml2ZXJfYXR0YWNoKSBmcm9t
+IFs8YzAyYmNjMDA+XSAoYnVzX2Zvcl9lYWNoX2RldisweDU0LzB4ODgpCj4+IFsgIDI0MC42MjQ1
+MTddIFs8YzAyYmNjMDA+XSAoYnVzX2Zvcl9lYWNoX2RldikgZnJvbSBbPGMwMmJkY2UwPl0gKGJ1
+c19hZGRfZHJpdmVyKzB4ZTQvMHgyMDApCj4+IFsgIDI0MC42MzI2NzldIFs8YzAyYmRjZTA+XSAo
+YnVzX2FkZF9kcml2ZXIpIGZyb20gWzxjMDJiZWY5ND5dIChkcml2ZXJfcmVnaXN0ZXIrMHg3OC8w
+eGY0KQo+PiBbICAyNDAuNjQwNjY3XSBbPGMwMmJlZjk0Pl0gKGRyaXZlcl9yZWdpc3RlcikgZnJv
+bSBbPGMwMjllOTM4Pl0gKGV4eW5vc19kcm1faW5pdCsweDcwLzB4YTApCj4+IFsgIDI0MC42NDg3
+MzldIFs8YzAyOWU5Mzg+XSAoZXh5bm9zX2RybV9pbml0KSBmcm9tIFs8YzAwMDg5YjA+XSAoZG9f
+b25lX2luaXRjYWxsKzB4YWMvMHgxZjApCj4+IFsgIDI0MC42NTY5MTRdIFs8YzAwMDg5YjA+XSAo
+ZG9fb25lX2luaXRjYWxsKSBmcm9tIFs8YzA3NGJkOTA+XSAoa2VybmVsX2luaXRfZnJlZWFibGUr
+MHgxMGMvMHgxZDgpCj4+IFsgIDI0MC42NjU1OTFdIFs8YzA3NGJkOTA+XSAoa2VybmVsX2luaXRf
+ZnJlZWFibGUpIGZyb20gWzxjMDUxZWFiYz5dIChrZXJuZWxfaW5pdCsweDgvMHhlYykKPj4gWyAg
+MjQwLjY3MzY2MV0gWzxjMDUxZWFiYz5dIChrZXJuZWxfaW5pdCkgZnJvbSBbPGMwMDBmMjY4Pl0g
+KHJldF9mcm9tX2ZvcmsrMHgxNC8weDJjKQo+PiBbICAyNDAuNjgxMTk2XSAzIGxvY2tzIGhlbGQg
+Ynkgc3dhcHBlci8wLzE6Cj4+IFsgIDI0MC42ODUwOTFdICAjMDogICgmZGV2LT5tdXRleCl7Li4u
+Li4ufSwgYXQ6IFs8YzAyYmU5MDg+XSBfX2RyaXZlcl9hdHRhY2grMHg0OC8weDk4Cj4+IFsgIDI0
+MC42OTI3MzJdICAjMTogICgmZGV2LT5tdXRleCl7Li4uLi4ufSwgYXQ6IFs8YzAyYmU5MTg+XSBf
+X2RyaXZlcl9hdHRhY2grMHg1OC8weDk4Cj4+IFsgIDI0MC43MDAzNjddICAjMjogICgmZGV2LT5t
+dXRleCl7Li4uLi4ufSwgYXQ6IFs8YzAyYmU5MDg+XSBfX2RyaXZlcl9hdHRhY2grMHg0OC8weDk4
+Cj4gCj4gCj4gVGhpcyBpcyBjYXVzZWQgYnkgcGF0Y2ggbW92aW5nIHBsYXRmb3JtIGRldmljZXMg
+dG8KPiAvc3lzL2RldmljZXMvcGxhdGZvcm1bMV0uIFNpbmNlIHRoaXMgcGF0Y2ggcmVnaXN0ZXJp
+bmcgcGxhdGZvcm0KPiBkcml2ZXJzL2RldmljZXMgaW4gcHJvYmUgb2YgcGxhdGZvcm0gZGV2aWNl
+IGNhdXNlcyBkZWFkbG9ja3MuIEkgZ3Vlc3MKPiBub3cgYWxsIGRyaXZlciByZWdpc3RyYXRpb24g
+c2hvdWxkIGJlIG1vdmVkIHRvIGV4eW5vc19kcm1faW5pdCBhbmQgaXQKPiBzZWVtcyBiZXR0ZXIg
+bG9jYXRpb24gZm9yIGl0IElNSE8uCgpUaGFua3MuIEl0IG1pZ2h0IGJlIGEgY2hhbmNlIHRoYXQg
+d2UgY291bGQgc2VwYXJhdGUgc3ViIGRyaXZlcnMgb2YKRXh5bm9zIGRybSBpbnRvIGluZGVwZW5k
+ZW50IG1vZHVsZXMgc28gdGhhdCB0aGV5IGNhbiBiZSBjYWxsZWQKaW5kZXBlbmRlbnRseSBiZWNh
+dXNlIGlmIHdlIG1vdmUgdGhlbSB0byBleHlub3NfZHJtX2luaXQgdGhlbiB0aGUKZGVmZXJyZWQg
+cHJvYmUgd291bGRuJ3Qgd29yayBjb3JyZWN0bHkuCgpUaGFua3MsCklua2kgRGFlCgo+IAo+IFJl
+Z2FyZHMKPiBBbmRyemVqCj4gCj4gWzFdOiBodHRwOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2Rl
+dmljZXRyZWUvbXNnNTYxMDEuaHRtbAo+IAo+IAo+IAo+Pgo+PiBGdWxsIGRtZXNnIGFuZCBjb25m
+aWcgYXR0YWNoZWQuCj4+Cj4+IEJlc3QgcmVnYXJkcywKPj4gS3J6eXN6dG9mCj4+Cj4+Cj4+Cj4+
+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4+IGRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKPj4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+PiBo
+dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCj4+
+Cj4gCj4gCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGlu
+ZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNz
+YWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0
+ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiAKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
