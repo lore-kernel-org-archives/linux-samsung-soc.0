@@ -1,58 +1,54 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH] drm/exynos: fix infinite loop issue incurred by no pair
-Date: Tue, 18 Nov 2014 12:20:32 +0900
-Message-ID: <1416280832-24609-1-git-send-email-inki.dae@samsung.com>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: exynos boot falures in linux-next
+Date: Mon, 17 Nov 2014 19:49:09 -0800
+Message-ID: <7hfvdhyxqi.fsf@deeprootsystems.com>
+References: <E1XqKYI-0000pQ-4b@ip-10-35-177-41.ec2.internal>
+	<7hoas54y7k.fsf@deeprootsystems.com>
+	<7hlhn9zcse.fsf@deeprootsystems.com>
+	<546A83D6.9060504@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: khilman@deeprootsystems.com, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:57461 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751213AbaKRDtM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 17 Nov 2014 22:49:12 -0500
+Received: by mail-pa0-f44.google.com with SMTP id et14so8891468pad.3
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Nov 2014 19:49:11 -0800 (PST)
+In-Reply-To: <546A83D6.9060504@collabora.co.uk> (Javier Martinez Canillas's
+	message of "Tue, 18 Nov 2014 00:25:10 +0100")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 
-VGhpcyBwYXRjaCBmaXhlcyBhIGluZmluaXRlIGxvb3AgaXNzdWUgaW5jdXJyZWQgd2hlbgppdCBk
-b2Vzbid0IGhhdmUgYSBwYWlyIG9mIGNydGMgYW5kIGNvbm5lY3RvciBkcml2ZXJzLAp3aGljaCB3
-YXMgcmVwb3J0ZWQgYnkgS2V2aW4gSGlsbWFuIGxpa2UgYmVsb3csCiAgICAgIGh0dHA6Ly93d3cu
-c3Bpbmljcy5uZXQvbGlzdHMvbGludXgtc2Ftc3VuZy1zb2MvbXNnMzkwNTAuaHRtbAoKY2Rldi0+
-Y29ubl9kZXYgY291bGQgYmUgTlVMTCBieSBleHlub3NfZHJtX2NvbXBvbmVudF9kZWwgY2FsbCBp
-biBjYXNlCnRoYXQgY29ubmVjdG9yIGRyaXZlciBpcyBmYWlsZWQgd2hpbGUgcHJvYmluZyBhZnRl
-ciBjb21wb21lbnRzIHRvIGNydGMKYW5kIGNvbm5lY3RvciBkcml2ZXJzIGFyZSBhZGRlZCB0byBz
-cGVjaWZpYyBkcm1fY29tcG9tZW50X2xpc3QuCkluIHRoaXMgY2FzZSwgZXh5bm9zX2RybV9tYXRj
-aF9hZGQgcmV0dXJucyAtRVBST0JFX0RFRkVSIGVycm9yIGFuZApFeHlub3MgZHJtIGRyaXZlciB3
-aWxsIHRyeSB0aGUgZGVmZXJlZCBwcm9iZSBvdmVyIGFuZCBvdmVyIGFnYWluLgoKVGhpcyBwYXRj
-aCBtYWtlcyB0aGUgZGVmZXJyZWQgcHJvYmUgaXMgdHJpZWQgdXAgdG8gMyB0aW1lcyBpbiBtYXhp
-bXVtLgpIb3dldmVyLCB0aGlzIGlzIGNvbnNpZGVyZWQgb25seSBmb3IgRXh5bm9zIGRybSBzbyBJ
-IHRoaW5rIG90aGVyIFNvQwpkcml2ZXJzIGNvdWxkIGFsc28gcHJvZHVjZSBzYW1lIGlzc3VlLiBU
-aGVyZWZvcmUsIHRoZSBiZXN0IHdheSB0byByZXNvbHZlCnRoaXMgaXNzdWUsIGluZmluaXRlIGxv
-b3AgaW5jdXJyZWQgYnkgZGVmZXJlZCBwcm9iZSwgd291bGQgYmUgdGhhdCBkZCBjb3JlCmlzIGZp
-eGVkIHVwIGNvcnJyZWN0bHkuCgpTaWduZWQtb2ZmLWJ5OiBJbmtpIERhZSA8aW5raS5kYWVAc2Ft
-c3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIHwg
-ICAgOCArKysrKysrKwogMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwppbmRleCBlYWIxMmYwLi40ZDg0ZjNhIDEwMDY0
-NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKKysrIGIvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCkBAIC0zOCw2ICszOCw4IEBACiAj
-ZGVmaW5lIERSSVZFUl9NQUpPUgkxCiAjZGVmaW5lIERSSVZFUl9NSU5PUgkwCiAKKyNkZWZpbmUg
-TUFYX1RSWV9QUk9CRV9ERUZFUgkzCisKIHN0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpl
-eHlub3NfZHJtX3BkZXY7CiAKIHN0YXRpYyBERUZJTkVfTVVURVgoZHJtX2NvbXBvbmVudF9sb2Nr
-KTsKQEAgLTQ4MSw2ICs0ODMsNyBAQCBzdGF0aWMgc3RydWN0IGNvbXBvbmVudF9tYXRjaCAqZXh5
-bm9zX2RybV9tYXRjaF9hZGQoc3RydWN0IGRldmljZSAqZGV2KQogCXN0cnVjdCBjb21wb25lbnRf
-bWF0Y2ggKm1hdGNoID0gTlVMTDsKIAlzdHJ1Y3QgY29tcG9uZW50X2RldiAqY2RldjsKIAl1bnNp
-Z25lZCBpbnQgYXR0YWNoX2NudCA9IDA7CisJc3RhdGljIHVuc2lnbmVkIGludCB0cnlfcHJvYmVf
-ZGVmZXI7CiAKIAltdXRleF9sb2NrKCZkcm1fY29tcG9uZW50X2xvY2spOwogCkBAIC01MjcsNiAr
-NTMwLDExIEBAIG91dF9sb2NrOgogCiAJbXV0ZXhfdW5sb2NrKCZkcm1fY29tcG9uZW50X2xvY2sp
-OwogCisJaWYgKCsrdHJ5X3Byb2JlX2RlZmVyID4gTUFYX1RSWV9QUk9CRV9ERUZFUikgeworCQl0
-cnlfcHJvYmVfZGVmZXIgPSAwOworCQlyZXR1cm4gRVJSX1BUUigtRU5PREVWKTsKKwl9CisKIAly
-ZXR1cm4gYXR0YWNoX2NudCA/IG1hdGNoIDogRVJSX1BUUigtRVBST0JFX0RFRkVSKTsKIH0KIAot
-LSAKMS43LjkuNQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-Cmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
+
+> Hello Kevin,
+>
+> On 11/17/2014 11:24 PM, Kevin Hilman wrote:
+>> 
+>> As might have been expected, reverting the change that enables the
+>> DRM/display options in exynos_defconfig fixes the problem.
+>> 
+>> Kevin
+>>
+>
+> I'm sorry for causing a boot failure but when I first posted that patch,
+> the Exynos DRM driver was working correctly (at least on the Exynos boards
+> I've access to) 
+
+Yeah, I tested it at the time as well, so I know it was working.
+
+> so it seems the regression was introduced while the patch
+> was posted but not yet picked.
+>
+> I'm not sure what is the correct step in this case but I'm OK with
+> reverting the patch until the Exynos DRM driver bug is fixed.
+
+I didn't have time to dig, but I'd rather someone track down the DRM
+problem and fix that, since it was known to be working. I'm guessing
+it's something simple that can be fixed before the merge window opens.
+
+Kevin
