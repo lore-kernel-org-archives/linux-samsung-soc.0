@@ -1,63 +1,43 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [RFC PATCH 0/3] drm/exynos: add full modularity support to sub drivers
-Date: Wed, 19 Nov 2014 00:26:41 +0900
-Message-ID: <1416324404-28153-1-git-send-email-inki.dae@samsung.com>
+From: Alan Stern <stern@rowland.harvard.edu>
+Subject: Re: [PATCH] PM / Domains: Power on the PM domain right after attach
+ completes
+Date: Tue, 18 Nov 2014 11:13:28 -0500 (EST)
+Message-ID: <Pine.LNX.4.44L0.1411181110500.1500-100000@iolanthe.rowland.org>
+References: <20141117221700.GA2049@dtor-ws>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:13145 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757204AbaKRP0r (ORCPT
+Received: from iolanthe.rowland.org ([192.131.102.54]:34847 "HELO
+	iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1755997AbaKRQN3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Nov 2014 10:26:47 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NF8006PPQWLBU00@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 19 Nov 2014 00:26:45 +0900 (KST)
+	Tue, 18 Nov 2014 11:13:29 -0500
+In-Reply-To: <20141117221700.GA2049@dtor-ws>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi all,
+On Mon, 17 Nov 2014, Dmitry Torokhov wrote:
 
-   This patch set adds full modularity to sub drivers, kms and
-   non kms drivers.
+> > > However, is it allowed to call pm_runtime_get_sync() on devices that
+> > > didn't issue pm_runtime_enable()?
+> > 
+> > Yes.  But the bus has to issue pm_runtime_enable() before probing the 
+> > driver, because the driver will expect runtime PM to work properly 
+> > while its probe routine runs.  For example, the probe routine might 
+> > want to leave the device in a runtime-suspended state.  It can't do 
+> > that if the device isn't enabled for runtime PM.
+> 
+> That means that runtime PM will be enabled for all devices on given bus
+> while up till now drivers were deciding if their devices should be
+> runtime-pm-managed or not. I do not think we are quite ready for this.
 
-   For this, this patch sets consists into three patches.
-   first patch modularizes kms drivers, second patch for non
-   kms drivers, and third patch for vidi driver.
+It's up to both the bus _and_ the driver to make this decision.
 
-   I hope we could resolve infinite loop issue and kernel lockup
-   reported by other people. This patch set is RFC so there might
-   be my missing points. Welcome to any comments.
+If a driver is completely runtime-PM-unaware then it will never
+decrement the device's usage counter (which was incremented when the
+bus called _get_noresume()), and therefore the device will never be
+runtime-suspended.
 
-   This patch set is based on top of exynos-drm-next branch.
-
-   Thanks,
-   Inki Dae
-
-Inki Dae (3):
-  drm/exynos: make kms drivers to be independent modules
-  drm/exynos: make non kms drivers to be indenpendent modules
-  drm/exynos: make vidi driver to be independent module
-
- drivers/gpu/drm/exynos/Kconfig              |    8 +-
- drivers/gpu/drm/exynos/exynos_dp_core.c     |   13 +++
- drivers/gpu/drm/exynos/exynos_drm_core.c    |  166 +++++++++++++++++++++++----
- drivers/gpu/drm/exynos/exynos_drm_drv.c     |  105 +----------------
- drivers/gpu/drm/exynos/exynos_drm_drv.h     |   42 ++-----
- drivers/gpu/drm/exynos/exynos_drm_dsi.c     |   13 +++
- drivers/gpu/drm/exynos/exynos_drm_fimc.c    |   13 +++
- drivers/gpu/drm/exynos/exynos_drm_fimd.c    |   13 +++
- drivers/gpu/drm/exynos/exynos_drm_g2d.c     |   34 ++++++
- drivers/gpu/drm/exynos/exynos_drm_gsc.c     |   12 ++
- drivers/gpu/drm/exynos/exynos_drm_ipp.c     |   39 ++++++-
- drivers/gpu/drm/exynos/exynos_drm_rotator.c |   13 +++
- drivers/gpu/drm/exynos/exynos_drm_vidi.c    |   81 ++++++++-----
- drivers/gpu/drm/exynos/exynos_hdmi.c        |   13 +++
- drivers/gpu/drm/exynos/exynos_mixer.c       |   13 +++
- 15 files changed, 391 insertions(+), 187 deletions(-)
-
--- 
-1.7.9.5
+Alan Stern
