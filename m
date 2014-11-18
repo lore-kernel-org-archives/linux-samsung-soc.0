@@ -1,58 +1,84 @@
-From: Tyler Baker <tyler.baker@linaro.org>
-Subject: [PATCH] ARM: multi_v7_defconfig: fix failure setting CPU voltage by enabling dependent I2C controller
-Date: Tue, 18 Nov 2014 11:10:53 -0800
-Message-ID: <1416337853-1558-1-git-send-email-tyler.baker@linaro.org>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] PM / Domains: Power on the PM domain right after attach completes
+Date: Tue, 18 Nov 2014 21:14:56 +0100
+Message-ID: <4282972.midaRTeXMU@vostro.rjw.lan>
+References: <20141118171831.GC3003@dtor-ws> <Pine.LNX.4.44L0.1411181234210.892-100000@iolanthe.rowland.org> <20141118175515.GD3003@dtor-ws>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f176.google.com ([209.85.192.176]:33553 "EHLO
-	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755051AbaKRTLZ (ORCPT
+Received: from v094114.home.net.pl ([79.96.170.134]:64609 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754307AbaKRTxx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Nov 2014 14:11:25 -0500
-Received: by mail-pd0-f176.google.com with SMTP id y10so4578543pdj.35
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Nov 2014 11:11:25 -0800 (PST)
+	Tue, 18 Nov 2014 14:53:53 -0500
+In-Reply-To: <20141118175515.GD3003@dtor-ws>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, arm@kernel.org
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Tyler Baker <tyler.baker@linaro.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-This patch fixes a long standing issue introduced during the 3.16 merge window.
-Shortly after the merge, exynos5250-based arndale boards began to produce the 
-following errors:
+On Tuesday, November 18, 2014 09:55:15 AM Dmitry Torokhov wrote:
+> On Tue, Nov 18, 2014 at 12:44:22PM -0500, Alan Stern wrote:
+> > On Tue, 18 Nov 2014, Dmitry Torokhov wrote:
+> > 
+> > > OK. Another question then: pm_runtime_get_noresume() does literally this:
+> > > 
+> > > 	atomic_inc(&dev->power.usage_count);
+> > > 
+> > > So who is responsible for actually waking up parent device and/or power
+> > > domain? Is it simply missing because we did not really have PM domains
+> > > before?
+> > 
+> > Ths bus is responsible for making sure that all the standard resources
+> > are available -- that is, all the resources that would be needed by a
+> > normal device on that bus.  Anything beyond that (such as
+> > special-purpose clocks) has to be set up by the driver.
+> > 
+> > Thus the bus would insure that the device was powered, its parent was
+> > resumed, and the usual clock inputs were enabled.  And of course, one
+> > mechanism for doing this is to runtime-resume the power domain.
+> 
+> This does not sound like anything bus-specific. Can we move powering on
+> the domain before probing into the driver core, similarly to the default
+> pin selection by pinctrl?
 
-kern.err kernel:  exynos-cpufreq exynos-cpufreq: failed to set cpu voltage
-kern.err kernel:  cpufreq: __target_index: Failed to change cpu frequency: -22
+We could do that for genpd if devices were added to domains before registering
+(those devices).  Otherwise, there's no guarantee that all has been set up yet.
 
-Further analysis revealed that the S5M8767 voltage regulator used on the 
-exynos5250-based arndale board utilizes the S3C2410 I2C controller. If the 
-S3C2410 I2C controller driver is not enabled, the S5M8767 voltage regulator 
-fails to probe. Therefore a dependency exists between these two drivers. 
-In the exynos_defconfig both CONFIG_REGULATOR_S5M8767 and CONFIG_I2C_S3C2410 
-options are enabled, and no errors are produced. However, in the 
-multi_v7_defconfig only the CONFIG_REGULATOR_S5M8767 option is enabled and the 
-errors are present. So let's enable the CONFIG_I2C_S3C2410 option in the 
-multi_v7_defconfig to allow the S5M8767 voltage regulator to probe.
+Note that this would only be the case for genpd, not for the ACPI PM domain
+in particular, for example.  The reason why is that the ACPI PM domain cannot
+be used along with bus types that provide non-trivial PM callbacks, so pretty
+much the bus type's ->probe needs to decide whether or not to use it.
 
-Signed-off-by: Tyler Baker <tyler.baker@linaro.org>
----
-This issue was reported [1]. I've also confirmed this fix on two different 
-arndale boards.
+> I do not see why we want to have every
+> individual bus to implement this. I guess right now we can't because we
+> assign the domain to device in individual bus's probe function, but I do
+> not think this is proper place for that either: bus and pm domain are
+> orthogonal concepts IMO.
 
-[1] https://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg38765.html
+For genpd, yes.  Not necessarily for other types of PM domains.  [A "PM domain"
+is just an override for bus type PM callbacks in general, genpd is only one
+use case here.]
 
- arch/arm/configs/multi_v7_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+I think that the the general DT bindings for genpd are the source of the whole
+complication here.  Before, devices were added to domains in the board-specific
+code before registration, but now that can be done automatically if the
+appropriate bindings are present in the DT.
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 3487046..9d7a32f 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -217,6 +217,7 @@ CONFIG_I2C_CADENCE=y
- CONFIG_I2C_DESIGNWARE_PLATFORM=y
- CONFIG_I2C_EXYNOS5=y
- CONFIG_I2C_MV64XXX=y
-+CONFIG_I2C_S3C2410=y
- CONFIG_I2C_SIRF=y
- CONFIG_I2C_TEGRA=y
- CONFIG_I2C_ST=y
--- 
-2.1.3
+> > Often the bus doesn't have to do anything special to resume the
+> > device's parent.  This is because the device gets probed when it is
+> > registered, which happens when it is discovered, and the discovery is
+> > done by the parent's driver as part of its normal activity.  Since the
+> > parent has to be powered up to carry out this normal activity, nothing 
+> > more is needed.
+> 
+> I think this only true for buses that support discovery.
+
+It may not be the case for the platform bus type or other "root kind" bus
+types where devices may not have a functional parent.  Otherwise it usually
+is the case.
+
+Anyway, that really depends on the bus type.
+
+Rafael
