@@ -1,161 +1,97 @@
-From: Paul Zimmerman <Paul.Zimmerman-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>
-Subject: RE: [PATCH v3 1/2] usb: dwc2/gadget: add mutex to serialize
- init/deinit calls
-Date: Tue, 18 Nov 2014 21:00:18 +0000
-Message-ID: <A2CA0424C0A6F04399FB9E1CD98E0304844ED98E@US01WEMBX2.internal.synopsys.com>
-References: <54535F82.7020406@samsung.com>
- <1414750354-19571-1-git-send-email-m.szyprowski@samsung.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH] PM / Domains: Power on the PM domain right after attach
+ completes
+Date: Tue, 18 Nov 2014 13:02:29 -0800
+Message-ID: <20141118210229.GI3003@dtor-ws>
+References: <20141118171831.GC3003@dtor-ws>
+ <20141118200438.GG3003@dtor-ws>
+ <2754178.FqqgMV0o1J@vostro.rjw.lan>
+ <2942471.O5C3bMgcxl@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1414750354-19571-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Content-Language: en-US
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <2942471.O5C3bMgcxl@vostro.rjw.lan>
+Sender: linux-pm-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Alan Stern <stern@rowland.harvard.edu>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-> From: Marek Szyprowski [mailto:m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org]
-> Sent: Friday, October 31, 2014 3:13 AM
+On Tue, Nov 18, 2014 at 10:17:46PM +0100, Rafael J. Wysocki wrote:
+> On Tuesday, November 18, 2014 10:03:18 PM Rafael J. Wysocki wrote:
+> > On Tuesday, November 18, 2014 12:04:38 PM Dmitry Torokhov wrote:
+> > > On Tue, Nov 18, 2014 at 09:14:56PM +0100, Rafael J. Wysocki wrote:
+> > > > On Tuesday, November 18, 2014 09:55:15 AM Dmitry Torokhov wrote:
+> > > > > On Tue, Nov 18, 2014 at 12:44:22PM -0500, Alan Stern wrote:
+> > > > > > On Tue, 18 Nov 2014, Dmitry Torokhov wrote:
+> > > > > > 
+> > > > > > > OK. Another question then: pm_runtime_get_noresume() does literally this:
+> > > > > > > 
+> > > > > > > 	atomic_inc(&dev->power.usage_count);
+> > > > > > > 
+> > > > > > > So who is responsible for actually waking up parent device and/or power
+> > > > > > > domain? Is it simply missing because we did not really have PM domains
+> > > > > > > before?
+> > > > > > 
+> > > > > > Ths bus is responsible for making sure that all the standard resources
+> > > > > > are available -- that is, all the resources that would be needed by a
+> > > > > > normal device on that bus.  Anything beyond that (such as
+> > > > > > special-purpose clocks) has to be set up by the driver.
+> > > > > > 
+> > > > > > Thus the bus would insure that the device was powered, its parent was
+> > > > > > resumed, and the usual clock inputs were enabled.  And of course, one
+> > > > > > mechanism for doing this is to runtime-resume the power domain.
+> > > > > 
+> > > > > This does not sound like anything bus-specific. Can we move powering on
+> > > > > the domain before probing into the driver core, similarly to the default
+> > > > > pin selection by pinctrl?
+> > > > 
+> > > > We could do that for genpd if devices were added to domains before registering
+> > > > (those devices).  Otherwise, there's no guarantee that all has been set up yet.
+> > > > 
+> > > > Note that this would only be the case for genpd, not for the ACPI PM domain
+> > > > in particular, for example.  The reason why is that the ACPI PM domain cannot
+> > > > be used along with bus types that provide non-trivial PM callbacks, so pretty
+> > > > much the bus type's ->probe needs to decide whether or not to use it.
+> > > 
+> > > In genpd code there is a notion of providers that match devices and
+> > > domains. Can we do the same for ACPI and stuff all that knowledge into
+> > > it's "provider"?
+> > 
+> > It is in ACPI like that too, but not in the form of the ACPI PM domain.
+> > 
+> > > IOW why ACPI is that special?
+> > 
+> > The ACPI PM domain is there specifically for bus types that don't provide
+> > non-trivial PM callbacks to avoid duplication of code (if it didn't exist,
+> > all of the bus types in question would need to provide callbacks with
+> > optional ACPI handling in them).  That's all about it.
+> > 
+> > And there are bus types that provide non-trivial PM callbacks *and* use
+> > ACPI in them, like PCI, and that is more interleaved with the native PM
+> > in there.  For those bus types we can't add devices to the ACPI PM domain
+> > just because they have ACPI companion objects.
+> > 
+> > I'm not really sure why it is important here, though.  We're talking about
+> > genpd, aren't we?
+> > 
+> > I just wanted to indicate that the PM domains concept is not only about
+> > handling power domains and not all of its use cases can be shoehorned into
+> > the same scheme.
 > 
-> This patch adds mutex, which protects initialization and
-> deinitialization procedures against suspend/resume methods.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/usb/dwc2/core.h   |  1 +
->  drivers/usb/dwc2/gadget.c | 20 ++++++++++++++++++++
->  2 files changed, 21 insertions(+)
-> 
-> diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
-> index 9f77b4d1c5ff..58732a9a0019 100644
-> --- a/drivers/usb/dwc2/core.h
-> +++ b/drivers/usb/dwc2/core.h
-> @@ -187,6 +187,7 @@ struct s3c_hsotg {
->  	struct s3c_hsotg_plat    *plat;
-> 
->  	spinlock_t              lock;
-> +	struct mutex		init_mutex;
-> 
->  	void __iomem            *regs;
->  	int                     irq;
-> diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-> index d8dda39c9e16..a2e4272a904e 100644
-> --- a/drivers/usb/dwc2/gadget.c
-> +++ b/drivers/usb/dwc2/gadget.c
-> @@ -21,6 +21,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/debugfs.h>
-> +#include <linux/mutex.h>
->  #include <linux/seq_file.h>
->  #include <linux/delay.h>
->  #include <linux/io.h>
-> @@ -2908,6 +2909,7 @@ static int s3c_hsotg_udc_start(struct usb_gadget *gadget,
->  		return -EINVAL;
->  	}
-> 
-> +	mutex_lock(&hsotg->init_mutex);
->  	WARN_ON(hsotg->driver);
-> 
->  	driver->driver.bus = NULL;
-> @@ -2933,9 +2935,12 @@ static int s3c_hsotg_udc_start(struct usb_gadget *gadget,
-> 
->  	dev_info(hsotg->dev, "bound driver %s\n", driver->driver.name);
-> 
-> +	mutex_unlock(&hsotg->init_mutex);
-> +
->  	return 0;
-> 
->  err:
-> +	mutex_unlock(&hsotg->init_mutex);
->  	hsotg->driver = NULL;
->  	return ret;
->  }
-> @@ -2957,6 +2962,8 @@ static int s3c_hsotg_udc_stop(struct usb_gadget *gadget,
->  	if (!hsotg)
->  		return -ENODEV;
-> 
-> +	mutex_lock(&hsotg->init_mutex);
-> +
->  	/* all endpoints should be shutdown */
->  	for (ep = 1; ep < hsotg->num_of_eps; ep++)
->  		s3c_hsotg_ep_disable(&hsotg->eps[ep].ep);
-> @@ -2974,6 +2981,8 @@ static int s3c_hsotg_udc_stop(struct usb_gadget *gadget,
-> 
->  	clk_disable(hsotg->clk);
-> 
-> +	mutex_unlock(&hsotg->init_mutex);
-> +
->  	return 0;
->  }
-> 
-> @@ -3002,6 +3011,7 @@ static int s3c_hsotg_pullup(struct usb_gadget *gadget, int is_on)
-> 
->  	dev_dbg(hsotg->dev, "%s: is_on: %d\n", __func__, is_on);
-> 
-> +	mutex_lock(&hsotg->init_mutex);
->  	spin_lock_irqsave(&hsotg->lock, flags);
->  	if (is_on) {
->  		clk_enable(hsotg->clk);
-> @@ -3013,6 +3023,7 @@ static int s3c_hsotg_pullup(struct usb_gadget *gadget, int is_on)
-> 
->  	hsotg->gadget.speed = USB_SPEED_UNKNOWN;
->  	spin_unlock_irqrestore(&hsotg->lock, flags);
-> +	mutex_unlock(&hsotg->init_mutex);
-> 
->  	return 0;
->  }
-> @@ -3507,6 +3518,7 @@ static int s3c_hsotg_probe(struct platform_device *pdev)
->  	}
-> 
->  	spin_lock_init(&hsotg->lock);
-> +	mutex_init(&hsotg->init_mutex);
-> 
->  	hsotg->irq = ret;
-> 
-> @@ -3652,6 +3664,8 @@ static int s3c_hsotg_suspend(struct platform_device *pdev, pm_message_t state)
->  	unsigned long flags;
->  	int ret = 0;
-> 
-> +	mutex_lock(&hsotg->init_mutex);
-> +
->  	if (hsotg->driver)
->  		dev_info(hsotg->dev, "suspending usb gadget %s\n",
->  			 hsotg->driver->driver.name);
-> @@ -3674,6 +3688,8 @@ static int s3c_hsotg_suspend(struct platform_device *pdev, pm_message_t state)
->  		clk_disable(hsotg->clk);
->  	}
-> 
-> +	mutex_unlock(&hsotg->init_mutex);
-> +
->  	return ret;
->  }
-> 
-> @@ -3683,7 +3699,9 @@ static int s3c_hsotg_resume(struct platform_device *pdev)
->  	unsigned long flags;
->  	int ret = 0;
-> 
-> +	mutex_lock(&hsotg->init_mutex);
->  	if (hsotg->driver) {
-> +
->  		dev_info(hsotg->dev, "resuming usb gadget %s\n",
->  			 hsotg->driver->driver.name);
-> 
-> @@ -3699,6 +3717,8 @@ static int s3c_hsotg_resume(struct platform_device *pdev)
->  	s3c_hsotg_core_connect(hsotg);
->  	spin_unlock_irqrestore(&hsotg->lock, flags);
-> 
-> +	mutex_unlock(&hsotg->init_mutex);
-> +
->  	return ret;
->  }
-> 
+> And by the way, things worked just fine for the ACPI PM domain before commit
+> 46420dd73b80 (PM / Domains: Add APIs to attach/detach a PM domain for a device)
+> which put the ACPI PM domain and genpd into one bag, which was a mistake,
+> because they are different things.
+>
 
-Acked-by: Paul Zimmerman <paulz-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>
+Can we maybe settle on the naming then so that we do not mix them up in
+the future? For me PM domain is group of devices that share certain
+power constraints so that they have to be powered up and down together.
+Is this definition is not correct (for genpd at least)? And what is the
+proper definition for ACPI PM domain?
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks.
+
+-- 
+Dmitry
