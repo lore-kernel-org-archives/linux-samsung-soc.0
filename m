@@ -1,116 +1,97 @@
-From: Paul Zimmerman <Paul.Zimmerman-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>
-Subject: RE: [PATCH v5] usb: dwc2/gadget: rework disconnect event handling
-Date: Tue, 18 Nov 2014 20:56:00 +0000
-Message-ID: <A2CA0424C0A6F04399FB9E1CD98E0304844ED975@US01WEMBX2.internal.synopsys.com>
-References: <54699561.5040303@samsung.com>
- <1416214782-13911-1-git-send-email-m.szyprowski@samsung.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] PM / Domains: Power on the PM domain right after attach completes
+Date: Tue, 18 Nov 2014 22:17:46 +0100
+Message-ID: <2942471.O5C3bMgcxl@vostro.rjw.lan>
+References: <20141118171831.GC3003@dtor-ws> <20141118200438.GG3003@dtor-ws> <2754178.FqqgMV0o1J@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1416214782-13911-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Content-Language: en-US
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from v094114.home.net.pl ([79.96.170.134]:64163 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S932175AbaKRU4l (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 18 Nov 2014 15:56:41 -0500
+In-Reply-To: <2754178.FqqgMV0o1J@vostro.rjw.lan>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Alan Stern <stern@rowland.harvard.edu>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-> From: Marek Szyprowski [mailto:m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org]
-> Sent: Monday, November 17, 2014 1:00 AM
+On Tuesday, November 18, 2014 10:03:18 PM Rafael J. Wysocki wrote:
+> On Tuesday, November 18, 2014 12:04:38 PM Dmitry Torokhov wrote:
+> > On Tue, Nov 18, 2014 at 09:14:56PM +0100, Rafael J. Wysocki wrote:
+> > > On Tuesday, November 18, 2014 09:55:15 AM Dmitry Torokhov wrote:
+> > > > On Tue, Nov 18, 2014 at 12:44:22PM -0500, Alan Stern wrote:
+> > > > > On Tue, 18 Nov 2014, Dmitry Torokhov wrote:
+> > > > > 
+> > > > > > OK. Another question then: pm_runtime_get_noresume() does literally this:
+> > > > > > 
+> > > > > > 	atomic_inc(&dev->power.usage_count);
+> > > > > > 
+> > > > > > So who is responsible for actually waking up parent device and/or power
+> > > > > > domain? Is it simply missing because we did not really have PM domains
+> > > > > > before?
+> > > > > 
+> > > > > Ths bus is responsible for making sure that all the standard resources
+> > > > > are available -- that is, all the resources that would be needed by a
+> > > > > normal device on that bus.  Anything beyond that (such as
+> > > > > special-purpose clocks) has to be set up by the driver.
+> > > > > 
+> > > > > Thus the bus would insure that the device was powered, its parent was
+> > > > > resumed, and the usual clock inputs were enabled.  And of course, one
+> > > > > mechanism for doing this is to runtime-resume the power domain.
+> > > > 
+> > > > This does not sound like anything bus-specific. Can we move powering on
+> > > > the domain before probing into the driver core, similarly to the default
+> > > > pin selection by pinctrl?
+> > > 
+> > > We could do that for genpd if devices were added to domains before registering
+> > > (those devices).  Otherwise, there's no guarantee that all has been set up yet.
+> > > 
+> > > Note that this would only be the case for genpd, not for the ACPI PM domain
+> > > in particular, for example.  The reason why is that the ACPI PM domain cannot
+> > > be used along with bus types that provide non-trivial PM callbacks, so pretty
+> > > much the bus type's ->probe needs to decide whether or not to use it.
+> > 
+> > In genpd code there is a notion of providers that match devices and
+> > domains. Can we do the same for ACPI and stuff all that knowledge into
+> > it's "provider"?
 > 
-> This patch adds a call to s3c_hsotg_disconnect() from 'end session'
-> interrupt (GOTGINT_SES_END_DET) to correctly notify gadget subsystem
-> about unplugged usb cable. DISCONNINT interrupt cannot be used for this
-> purpose, because it is asserted only in host mode.
+> It is in ACPI like that too, but not in the form of the ACPI PM domain.
 > 
-> To avoid reporting disconnect event more than once, a disconnect call has
-> been moved from USB_REQ_SET_ADDRESS handling function to SESSREQINT
-> interrupt. This way driver ensures that disconnect event is reported
-> either when usb cable is unplugged or every time the host starts a new
-> session. To handle devices which has been synthesized without
-> SRP support, connected state is set in ENUMDONE interrupt.
+> > IOW why ACPI is that special?
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->  drivers/usb/dwc2/core.h   |  1 +
->  drivers/usb/dwc2/gadget.c | 16 ++++++++++++++--
->  2 files changed, 15 insertions(+), 2 deletions(-)
+> The ACPI PM domain is there specifically for bus types that don't provide
+> non-trivial PM callbacks to avoid duplication of code (if it didn't exist,
+> all of the bus types in question would need to provide callbacks with
+> optional ACPI handling in them).  That's all about it.
 > 
-> diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
-> index 55c90c53f2d6..e54c3c50cd48 100644
-> --- a/drivers/usb/dwc2/core.h
-> +++ b/drivers/usb/dwc2/core.h
-> @@ -210,6 +210,7 @@ struct s3c_hsotg {
->  	u8                      ctrl_buff[8];
+> And there are bus types that provide non-trivial PM callbacks *and* use
+> ACPI in them, like PCI, and that is more interleaved with the native PM
+> in there.  For those bus types we can't add devices to the ACPI PM domain
+> just because they have ACPI companion objects.
 > 
->  	struct usb_gadget       gadget;
-> +	unsigned int		connected:1;
->  	unsigned int            setup;
->  	unsigned long           last_rst;
->  	struct s3c_hsotg_ep     *eps;
-> diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-> index fcd2bb55ccca..89b1bea50ee3 100644
-> --- a/drivers/usb/dwc2/gadget.c
-> +++ b/drivers/usb/dwc2/gadget.c
-> @@ -1029,7 +1029,6 @@ static int s3c_hsotg_process_req_feature(struct s3c_hsotg *hsotg,
->  }
+> I'm not really sure why it is important here, though.  We're talking about
+> genpd, aren't we?
 > 
->  static void s3c_hsotg_enqueue_setup(struct s3c_hsotg *hsotg);
-> -static void s3c_hsotg_disconnect(struct s3c_hsotg *hsotg);
-> 
->  /**
->   * s3c_hsotg_stall_ep0 - stall ep0
-> @@ -1107,7 +1106,6 @@ static void s3c_hsotg_process_control(struct s3c_hsotg *hsotg,
->  	if ((ctrl->bRequestType & USB_TYPE_MASK) == USB_TYPE_STANDARD) {
->  		switch (ctrl->bRequest) {
->  		case USB_REQ_SET_ADDRESS:
-> -			s3c_hsotg_disconnect(hsotg);
->  			dcfg = readl(hsotg->regs + DCFG);
->  			dcfg &= ~DCFG_DEVADDR_MASK;
->  			dcfg |= (le16_to_cpu(ctrl->wValue) <<
-> @@ -2031,6 +2029,10 @@ static void s3c_hsotg_disconnect(struct s3c_hsotg *hsotg)
->  {
->  	unsigned ep;
-> 
-> +	if (!hsotg->connected)
-> +		return;
-> +
-> +	hsotg->connected = 0;
->  	for (ep = 0; ep < hsotg->num_of_eps; ep++)
->  		kill_all_requests(hsotg, &hsotg->eps[ep], -ESHUTDOWN, true);
-> 
-> @@ -2290,17 +2292,27 @@ irq_retry:
->  		dev_info(hsotg->dev, "OTGInt: %08x\n", otgint);
-> 
->  		writel(otgint, hsotg->regs + GOTGINT);
-> +
-> +		if (otgint & GOTGINT_SES_END_DET) {
-> +			s3c_hsotg_disconnect(hsotg);
-> +			hsotg->gadget.speed = USB_SPEED_UNKNOWN;
-> +		}
->  	}
-> 
->  	if (gintsts & GINTSTS_SESSREQINT) {
->  		dev_dbg(hsotg->dev, "%s: SessReqInt\n", __func__);
->  		writel(GINTSTS_SESSREQINT, hsotg->regs + GINTSTS);
-> +		/*
-> +		 * Report disconnect if there is any previous session established
-> +		 */
-> +		s3c_hsotg_disconnect(hsotg);
->  	}
-> 
->  	if (gintsts & GINTSTS_ENUMDONE) {
->  		writel(GINTSTS_ENUMDONE, hsotg->regs + GINTSTS);
-> 
->  		s3c_hsotg_irq_enumdone(hsotg);
-> +		hsotg->connected = 1;
->  	}
-> 
->  	if (gintsts & GINTSTS_CONIDSTSCHNG) {
+> I just wanted to indicate that the PM domains concept is not only about
+> handling power domains and not all of its use cases can be shoehorned into
+> the same scheme.
 
-Acked-by: Paul Zimmerman <paulz-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>
+And by the way, things worked just fine for the ACPI PM domain before commit
+46420dd73b80 (PM / Domains: Add APIs to attach/detach a PM domain for a device)
+which put the ACPI PM domain and genpd into one bag, which was a mistake,
+because they are different things.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Moreover, commit 207f1a2d294e (amba: Add support for attach/detach of PM
+domains) is outright buggy, because the AMBA bus type provides its own
+non-trivial PM callbacks, so using the ACPI PM domain with it is not
+correct.
+
+Grumble.
+
+It looks like we need to untangle these things again and start over from square
+one.
+
+Rafael
