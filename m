@@ -1,37 +1,142 @@
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Subject: [PATCH] media: exynos-gsc: fix build warning
-Date: Tue, 18 Nov 2014 10:57:48 +0000
-Message-ID: <1416308268-22957-1-git-send-email-prabhakar.csengg@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, LMML <linux-media@vger.kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
+Subject: Re: [BUG] blocked task after exynos_drm_init
+Date: Tue, 18 Nov 2014 12:04:20 +0100
+Message-ID: <546B27B4.4040808@samsung.com>
+References: <1415264811.27478.4.camel@AMDC1943> <546B228E.6030500@samsung.com>
+ <546B2508.8070409@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:13509 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752006AbaKRLEZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 18 Nov 2014 06:04:25 -0500
+In-reply-to: <546B2508.8070409@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-this patch fixes following build warning:
+On 11/18/2014 11:52 AM, Inki Dae wrote:
+> On 2014=EB=85=84 11=EC=9B=94 18=EC=9D=BC 19:42, Andrzej Hajda wrote:
+>> On 11/06/2014 10:06 AM, Krzysztof Kozlowski wrote:
+>>> Hi,
+>>>
+>>> On last next (next-20141104, next-20141105) booting locks after
+>>> initializing Exynos DRM (Trats2 board):
+>>>
+>>> [    2.028283] [drm] Initialized drm 1.1.0 20060810
+>>> [  240.505795] INFO: task swapper/0:1 blocked for more than 120 sec=
+onds.
+>>> [  240.510825]       Not tainted 3.18.0-rc3-next-20141105 #794
+>>> [  240.516418] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" d=
+isables this message.
+>>> [  240.524173] swapper/0       D c052534c     0     1      0 0x0000=
+0000
+>>> [  240.530527] [<c052534c>] (__schedule) from [<c0525b34>] (schedul=
+e_preempt_disabled+0x14/0x20)
+>>> [  240.539030] [<c0525b34>] (schedule_preempt_disabled) from [<c052=
+6d44>] (mutex_lock_nested+0x1c4/0x464)
+>>> [  240.548320] [<c0526d44>] (mutex_lock_nested) from [<c02be908>] (=
+__driver_attach+0x48/0x98)
+>>> [  240.556562] [<c02be908>] (__driver_attach) from [<c02bcc00>] (bu=
+s_for_each_dev+0x54/0x88)
+>>> [  240.564717] [<c02bcc00>] (bus_for_each_dev) from [<c02bdce0>] (b=
+us_add_driver+0xe4/0x200)
+>>> [  240.572876] [<c02bdce0>] (bus_add_driver) from [<c02bef94>] (dri=
+ver_register+0x78/0xf4)
+>>> [  240.580864] [<c02bef94>] (driver_register) from [<c029e99c>] (ex=
+ynos_drm_platform_probe+0x34/0x234)
+>>> [  240.589890] [<c029e99c>] (exynos_drm_platform_probe) from [<c02b=
+fcf0>] (platform_drv_probe+0x48/0xa4)
+>>> [  240.599090] [<c02bfcf0>] (platform_drv_probe) from [<c02be680>] =
+(driver_probe_device+0x13c/0x37c)
+>>> [  240.607940] [<c02be680>] (driver_probe_device) from [<c02be954>]=
+ (__driver_attach+0x94/0x98)
+>>> [  240.616360] [<c02be954>] (__driver_attach) from [<c02bcc00>] (bu=
+s_for_each_dev+0x54/0x88)
+>>> [  240.624517] [<c02bcc00>] (bus_for_each_dev) from [<c02bdce0>] (b=
+us_add_driver+0xe4/0x200)
+>>> [  240.632679] [<c02bdce0>] (bus_add_driver) from [<c02bef94>] (dri=
+ver_register+0x78/0xf4)
+>>> [  240.640667] [<c02bef94>] (driver_register) from [<c029e938>] (ex=
+ynos_drm_init+0x70/0xa0)
+>>> [  240.648739] [<c029e938>] (exynos_drm_init) from [<c00089b0>] (do=
+_one_initcall+0xac/0x1f0)
+>>> [  240.656914] [<c00089b0>] (do_one_initcall) from [<c074bd90>] (ke=
+rnel_init_freeable+0x10c/0x1d8)
+>>> [  240.665591] [<c074bd90>] (kernel_init_freeable) from [<c051eabc>=
+] (kernel_init+0x8/0xec)
+>>> [  240.673661] [<c051eabc>] (kernel_init) from [<c000f268>] (ret_fr=
+om_fork+0x14/0x2c)
+>>> [  240.681196] 3 locks held by swapper/0/1:
+>>> [  240.685091]  #0:  (&dev->mutex){......}, at: [<c02be908>] __driv=
+er_attach+0x48/0x98
+>>> [  240.692732]  #1:  (&dev->mutex){......}, at: [<c02be918>] __driv=
+er_attach+0x58/0x98
+>>> [  240.700367]  #2:  (&dev->mutex){......}, at: [<c02be908>] __driv=
+er_attach+0x48/0x98
+>>
+>>
+>> This is caused by patch moving platform devices to
+>> /sys/devices/platform[1]. Since this patch registering platform
+>> drivers/devices in probe of platform device causes deadlocks. I gues=
+s
+>> now all driver registration should be moved to exynos_drm_init and i=
+t
+>> seems better location for it IMHO.
+>=20
+> Thanks. It might be a chance that we could separate sub drivers of
+> Exynos drm into independent modules so that they can be called
+> independently because if we move them to exynos_drm_init then the
+> deferred probe wouldn't work correctly.
 
-gsc-core.c:350:17: warning: 'low_plane' may be used uninitialized
-gsc-core.c:371:31: warning: 'high_plane' may be used uninitialized
+=46or full separation of sub-drivers component matching code should be
+fixed first. Now it usually works because components are probed before
+exynos_drm_match_add and this is because components are probed during
+sub-driver registrations.
 
-Signed-off-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
----
- drivers/media/platform/exynos-gsc/gsc-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Regards
+Andrzej
 
-diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
-index 91d226b..6c71b17 100644
---- a/drivers/media/platform/exynos-gsc/gsc-core.c
-+++ b/drivers/media/platform/exynos-gsc/gsc-core.c
-@@ -347,8 +347,8 @@ void gsc_set_prefbuf(struct gsc_dev *gsc, struct gsc_frame *frm)
- 		s_chk_addr = frm->addr.cb;
- 		s_chk_len = frm->payload[1];
- 	} else if (frm->fmt->num_planes == 3) {
--		u32 low_addr, low_plane, mid_addr, mid_plane;
--		u32 high_addr, high_plane;
-+		u32 low_addr, low_plane = 0, mid_addr, mid_plane;
-+		u32 high_addr, high_plane = 0;
- 		u32 t_min, t_max;
- 
- 		t_min = min3(frm->addr.y, frm->addr.cb, frm->addr.cr);
--- 
-1.9.1
+>=20
+> Thanks,
+> Inki Dae
+>=20
+>>
+>> Regards
+>> Andrzej
+>>
+>> [1]: http://www.spinics.net/lists/devicetree/msg56101.html
+>>
+>>
+>>
+>>>
+>>> Full dmesg and config attached.
+>>>
+>>> Best regards,
+>>> Krzysztof
+>>>
+>>>
+>>>
+>>> _______________________________________________
+>>> dri-devel mailing list
+>>> dri-devel@lists.freedesktop.org
+>>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>>
+>>
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-sams=
+ung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
+>=20
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>=20
