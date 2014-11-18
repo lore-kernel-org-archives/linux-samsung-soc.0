@@ -1,98 +1,51 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v5 1/2] clk: samsung: exynos5440: move restart code into
- clock driver
-Date: Tue, 18 Nov 2014 16:17:07 +0100
-Message-ID: <546B62F3.3030807@samsung.com>
+Subject: Re: [PATCH v5 2/2] ARM: EXYNOS: PMU: move restart code into pmu driver
+Date: Tue, 18 Nov 2014 16:19:49 +0100
+Message-ID: <546B6395.8020403@samsung.com>
 References: <1416307650-15162-1-git-send-email-pankaj.dubey@samsung.com>
- <1416307650-15162-2-git-send-email-pankaj.dubey@samsung.com>
+ <1416307650-15162-3-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:49769 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932269AbaKRPRO (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:64332 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933750AbaKRPT4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Nov 2014 10:17:14 -0500
+	Tue, 18 Nov 2014 10:19:56 -0500
 Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
+ by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NF800453QLH0Y00@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 18 Nov 2014 15:20:05 +0000 (GMT)
-In-reply-to: <1416307650-15162-2-git-send-email-pankaj.dubey@samsung.com>
+ 17 2011)) with ESMTP id <0NF8004EWQPSD200@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 Nov 2014 15:22:40 +0000 (GMT)
+In-reply-to: <1416307650-15162-3-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Pankaj Dubey <pankaj.dubey@samsung.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, linux@roeck-us.net
 
 On 18/11/14 11:47, Pankaj Dubey wrote:
-> Let's register restart handler for Exynos5440 from it's clock driver
-> for restart functionality. So that we can cleanup restart hooks from
-> machine specific file.
-> 
-> CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> CC: Tomasz Figa <tomasz.figa@gmail.com>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Acked-by: Guenter Roeck <linux@roeck-us.net>
+> diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
+> index 6c8a76d..e4c3512 100644
+> --- a/arch/arm/mach-exynos/pmu.c
+> +++ b/arch/arm/mach-exynos/pmu.c
+> @@ -11,8 +11,11 @@
 
-The patch looks good to me.
-
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
-Just one comment below.
-
-> ---
->  arch/arm/mach-exynos/exynos.c        |   19 +------------------
->  drivers/clk/samsung/clk-exynos5440.c |   29 ++++++++++++++++++++++++++++-
->  2 files changed, 29 insertions(+), 19 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index 8f638ad..8f995b7 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -89,24 +89,7 @@ static struct map_desc exynos5_iodesc[] __initdata = {
->  
->  static void exynos_restart(enum reboot_mode mode, const char *cmd)
->  {
-> -	struct device_node *np;
-> -	u32 val = 0x1;
-> -	void __iomem *addr = pmu_base_addr + EXYNOS_SWRESET;
-> -
-> -	if (of_machine_is_compatible("samsung,exynos5440")) {
-> -		u32 status;
-> -		np = of_find_compatible_node(NULL, NULL, "samsung,exynos5440-clock");
-> -
-> -		addr = of_iomap(np, 0) + 0xbc;
-> -		status = __raw_readl(addr);
-> -
-> -		addr = of_iomap(np, 0) + 0xcc;
-> -		val = __raw_readl(addr);
-> -
-> -		val = (val & 0xffff0000) | (status & 0xffff);
-> -	}
-> -
-> -	__raw_writel(val, addr);
-> +	__raw_writel(0x1, pmu_base_addr + EXYNOS_SWRESET);
+> @@ -716,6 +719,13 @@ static void exynos5420_pmu_init(void)
+>  	pr_info("EXYNOS5420 PMU initialized\n");
 >  }
 >  
-
-> +static int exynos5440_clk_restart_notify(struct notifier_block *this,
+> +static int pmu_restart_notify(struct notifier_block *this,
 > +		unsigned long code, void *unused)
 > +{
-> +	u32 val, status;
-> +
-> +	status = readl_relaxed(reg_base + 0xbc);
-> +	val = readl_relaxed(reg_base + 0xcc);
-> +	val = (val & 0xffff0000) | (status & 0xffff);
-> +	writel_relaxed(val, reg_base + 0xcc);
+> +	pmu_raw_writel(0x1, EXYNOS_SWRESET);
 
-Can we have macro definitions for these 0xcc, 0xbc address offsets ?
-I must say I couldn't find them documented in any Exynos datasheet
-I've got though.
+Is it also valid on exynos5440 ? Doesn't it cause any harm there ?
+Perhaps we could add a comment saying it has not effect on that SoC ?
 
 > +	return NOTIFY_DONE;
 > +}
 
 --
-Regards,
+Thanks,
 Sylwester
