@@ -1,81 +1,105 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [BUG] blocked task after exynos_drm_init
-Date: Tue, 18 Nov 2014 11:42:22 +0100
-Message-ID: <546B228E.6030500@samsung.com>
-References: <1415264811.27478.4.camel@AMDC1943>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH] drm/exynos: fix infinite loop issue incurred by no pair
+Date: Tue, 18 Nov 2014 19:45:03 +0900
+Message-ID: <546B232F.6060209@samsung.com>
+References: <1416280832-24609-1-git-send-email-inki.dae@samsung.com>
+ <1416297489.2480.5.camel@collabora.co.uk> <546B0169.4010602@samsung.com>
+ <CABxcv=kPShghFWcy_M9FxZ0m3aYghkLVex857YpCWuiM+tSp3w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:12104 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752715AbaKRKm1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Nov 2014 05:42:27 -0500
-In-reply-to: <1415264811.27478.4.camel@AMDC1943>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <CABxcv=kPShghFWcy_M9FxZ0m3aYghkLVex857YpCWuiM+tSp3w@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Kevin Hilman <khilman@deeprootsystems.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 
-On 11/06/2014 10:06 AM, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> On last next (next-20141104, next-20141105) booting locks after
-> initializing Exynos DRM (Trats2 board):
-> 
-> [    2.028283] [drm] Initialized drm 1.1.0 20060810
-> [  240.505795] INFO: task swapper/0:1 blocked for more than 120 seconds.
-> [  240.510825]       Not tainted 3.18.0-rc3-next-20141105 #794
-> [  240.516418] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> [  240.524173] swapper/0       D c052534c     0     1      0 0x00000000
-> [  240.530527] [<c052534c>] (__schedule) from [<c0525b34>] (schedule_preempt_disabled+0x14/0x20)
-> [  240.539030] [<c0525b34>] (schedule_preempt_disabled) from [<c0526d44>] (mutex_lock_nested+0x1c4/0x464)
-> [  240.548320] [<c0526d44>] (mutex_lock_nested) from [<c02be908>] (__driver_attach+0x48/0x98)
-> [  240.556562] [<c02be908>] (__driver_attach) from [<c02bcc00>] (bus_for_each_dev+0x54/0x88)
-> [  240.564717] [<c02bcc00>] (bus_for_each_dev) from [<c02bdce0>] (bus_add_driver+0xe4/0x200)
-> [  240.572876] [<c02bdce0>] (bus_add_driver) from [<c02bef94>] (driver_register+0x78/0xf4)
-> [  240.580864] [<c02bef94>] (driver_register) from [<c029e99c>] (exynos_drm_platform_probe+0x34/0x234)
-> [  240.589890] [<c029e99c>] (exynos_drm_platform_probe) from [<c02bfcf0>] (platform_drv_probe+0x48/0xa4)
-> [  240.599090] [<c02bfcf0>] (platform_drv_probe) from [<c02be680>] (driver_probe_device+0x13c/0x37c)
-> [  240.607940] [<c02be680>] (driver_probe_device) from [<c02be954>] (__driver_attach+0x94/0x98)
-> [  240.616360] [<c02be954>] (__driver_attach) from [<c02bcc00>] (bus_for_each_dev+0x54/0x88)
-> [  240.624517] [<c02bcc00>] (bus_for_each_dev) from [<c02bdce0>] (bus_add_driver+0xe4/0x200)
-> [  240.632679] [<c02bdce0>] (bus_add_driver) from [<c02bef94>] (driver_register+0x78/0xf4)
-> [  240.640667] [<c02bef94>] (driver_register) from [<c029e938>] (exynos_drm_init+0x70/0xa0)
-> [  240.648739] [<c029e938>] (exynos_drm_init) from [<c00089b0>] (do_one_initcall+0xac/0x1f0)
-> [  240.656914] [<c00089b0>] (do_one_initcall) from [<c074bd90>] (kernel_init_freeable+0x10c/0x1d8)
-> [  240.665591] [<c074bd90>] (kernel_init_freeable) from [<c051eabc>] (kernel_init+0x8/0xec)
-> [  240.673661] [<c051eabc>] (kernel_init) from [<c000f268>] (ret_from_fork+0x14/0x2c)
-> [  240.681196] 3 locks held by swapper/0/1:
-> [  240.685091]  #0:  (&dev->mutex){......}, at: [<c02be908>] __driver_attach+0x48/0x98
-> [  240.692732]  #1:  (&dev->mutex){......}, at: [<c02be918>] __driver_attach+0x58/0x98
-> [  240.700367]  #2:  (&dev->mutex){......}, at: [<c02be908>] __driver_attach+0x48/0x98
-
-
-This is caused by patch moving platform devices to
-/sys/devices/platform[1]. Since this patch registering platform
-drivers/devices in probe of platform device causes deadlocks. I guess
-now all driver registration should be moved to exynos_drm_init and it
-seems better location for it IMHO.
-
-Regards
-Andrzej
-
-[1]: http://www.spinics.net/lists/devicetree/msg56101.html
-
-
-
-> 
-> Full dmesg and config attached.
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
+T24gMjAxNOuFhCAxMeyblCAxOOydvCAxOToyMywgSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzIHdy
+b3RlOgo+IEhlbGxvIElua2ksCj4gCj4+IFJpZ2h0LCBidXQgYXQgbGVhc3QsIHdlIGNvdWxkIGF2
+b2lkIGtlcm5lbCBib290aW5nIGZhaWx1cmUgd2hpY2ggaXMgdmVyeQo+PiBjcml0aWNhbC4gUGxl
+YXNlIGtub3cgdGhhdCB0aGlzIHBhdGNoIGlzIHRlbXBvcmFyeSB0byBhdm9pZCB0aGUga2VybmVs
+Cj4+IGJvb3RpbmcgZmFpbHVyZSBhbHRob3VnaCBkZWZlcnJlZCBwcm9iZSByZXF1ZXN0IG9mIEV4
+eW5vcyBkcm0gY291bGQgYmUKPj4gYnJva2VuLiBGb3IgdGhpcywgSSB3aWxsIGxvb2sgaW50byBk
+ZCBjb3JlIHRvIGZpbmQgb3V0IG1vcmUgZ2VuZXJpYyB3YXk6Cj4+IEkgc3VzcGVjdCB0aGF0IHRo
+aXMgbWlnaHQgYmUgaW5jdXJyZWQgaW4gY2FzZSB0aGF0IGEgZHJpdmVyIGlzIHByb2JlZCBpbgo+
+PiBwcm9iZSBjb250ZXh0IG9mIG90aGVyIGRyaXZlciBvciBpdCBtaWdodCBiZSByZWFsbHkgZGQg
+Y29yZSBidWcuCj4+Cj4gCj4gSSBnYXZlIGEgdHJ5IHRvIHlvdXIgcGF0Y2ggb24gdG9wIG9mIHRv
+ZGF5J3MgbGludXgtbmV4dCBhbmQgSSBzdGlsbAo+IHNlZSB0aGUgc2FtZSBib290IGZhaWx1cmUg
+cmVwb3J0ZWQgYnkgS2V2aW4gb24gYSBFeHlub3M1NDIwIFBlYWNoIFBpdAo+IHNvICRzdWJqZWN0
+IGRvZXMgbm90IGZpeCB0aGUgaXNzdWUuIFRoZSBib290IG1lc3NhZ2UgaXMgWzBdIGZ5aS4KPiAK
+PiBCeSBkaWdnaW5nIGEgYml0IEkgbm90aWNlZCB0aGF0IHRoaXMgaGFwcGVucyB3aGVuIHRoZQo+
+IGV4eW5vc19kcm1fcGxhdGZvcm1fcHJvYmUoKSBjYWxscyBwbGF0Zm9ybV9kcml2ZXJfcmVnaXN0
+ZXIoKSB0bwo+IHJlZ2lzdGVyIHRoZSBFeHlub3MgZmltZCBwbGF0Zm9ybSBkcml2ZXIuIFRoZSBw
+cm9ibGVtIGlzIHRoYXQgaW4KPiBfX2RyaXZlcl9hdHRhY2goKSB0aGUgY2FsbCB0byBkZXZpY2Vf
+bG9jayhkZXYtPnBhcmVudCkgbmV2ZXIgcmV0dXJucwo+IGFuZCB0aGUgdGhyZWFkIHNsZWVwcyBm
+b3JldmVyIHdhaXRpbmcgZm9yIHRoZSBkZXZpY2UgcGFyZW50IG11dGV4IHRvCj4gYmUgcmVsZWFz
+ZWQuCj4gCj4gRG8geW91IGhhdmUgYW55IGlkZWFzIHdoeSB0aGlzIGNvdWxkIGhhcHBlbj8KCkFz
+IEkgbWVudGlvbmVkIGFib3ZlLCBJIGd1ZXNzIHRoaXMgaXNzdWUgY291bGQgYmUgaW5jdXJyZWQg
+d2hlbiBhIGRyaXZlcgppcyBwcm9iZWQgaW4gcHJvYmUgY29udGV4dCBvZiBvdGhlciBkcml2ZXIu
+IEFjdHVhbGx5LCB3ZSBoYWQgZmFjZWQgd2l0aApzYW1lIGlzc3VlIGJ1dCB3ZSBjb3VsZG4ndCBz
+ZWUgdGhpcyBpc3N1ZSBhbnltb3JlIGZvciBzb21lIHRpbWUuIEFueXdheSwKd2UgbmVlZCBtb3Jl
+IGNoZWNraW5nLgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiBJZiBJIG1vZGlmeSBfX2RyaXZlcl9h
+dHRhY2goKSB0byBvbmx5IGdyYWIgdGhlIGRldmljZSBsb2NrIGFuZCBub3QgaXRzCj4gcGFyZW50
+IGxvY2ssIHRoZW4gdGhlIHRocmVhZCBpcyBhYmxlIHRvIGhvbGQgaXRzIG93biBtdXRleCBhbmQg
+dGhlCj4gcGxhdGZvcm0gZHJpdmVyIHJlZ2lzdHJhdGlvbiBzdWNjZWVkcyBidXQgdGhlbiBJIHNl
+ZSB0aGUgaW5maW5pdGUgbG9vcAo+IHRoYXQgd2FzIHJlcG9ydGVkIGJlZm9yZSBhbmQgdGhlIHdv
+cmthcm91bmQgaW4gJHN1YmplY3QgaW5kZWVkIGF2b2lkcwo+IHRvIGhhcHBlbi4KPiAKPiBTbyB3
+ZSBoYXZlIHR3byBpc3N1ZXMgaGVyZSBhbmQgeW91ciBwYXRjaCBpcyBvbmx5IGEgd29ya2Fyb3Vu
+ZCBmb3IgdGhlIGxhdGVyLgo+IAo+IEJlc3QgcmVnYXJkcywKPiBKYXZpZXIKPiAKPiBbMF06Cj4g
+WyAgICAxLjMyNDA5MV0gW2RybV0gSW5pdGlhbGl6ZWQgZHJtIDEuMS4wIDIwMDYwODEwCj4gWyAg
+MjQwLjE1ODY2NV0gcmFuZG9tOiBub25ibG9ja2luZyBwb29sIGlzIGluaXRpYWxpemVkCj4gWyAg
+MjQwLjE2MjIwMl0gSU5GTzogdGFzayBzd2FwcGVyLzA6MSBibG9ja2VkIGZvciBtb3JlIHRoYW4g
+MTIwIHNlY29uZHMuCj4gWyAgMjQwLjE2ODQ5M10gICAgICAgTm90IHRhaW50ZWQgMy4xOC4wLXJj
+NC1uZXh0LTIwMTQxMTE3LTAwMDAxLWc4NTQ2NmY5ICMyMgo+IFsgIDI0MC4xNzUyNTZdICJlY2hv
+IDAgPiAvcHJvYy9zeXMva2VybmVsL2h1bmdfdGFza190aW1lb3V0X3NlY3MiCj4gZGlzYWJsZXMg
+dGhpcyBtZXNzYWdlLgo+IFsgIDI0MC4xODMwNjRdIHN3YXBwZXIvMCAgICAgICBEIGMwNDViYjAw
+ICAgICAwICAgICAxICAgICAgMCAweDAwMDAwMDAwCj4gWyAgMjQwLjE4OTQxMF0gWzxjMDQ1YmIw
+MD5dIChfX3NjaGVkdWxlKSBmcm9tIFs8YzA0NWMyMzA+XQo+IChzY2hlZHVsZV9wcmVlbXB0X2Rp
+c2FibGVkKzB4MTQvMHgyMCkKPiBbICAyNDAuMTk3OTA0XSBbPGMwNDVjMjMwPl0gKHNjaGVkdWxl
+X3ByZWVtcHRfZGlzYWJsZWQpIGZyb20KPiBbPGMwNDVlOTk4Pl0gKF9fbXV0ZXhfbG9ja19zbG93
+cGF0aCsweDE5Yy8weDNmNCkKPiBbICAyNDAuMjA3NTMxXSBbPGMwNDVlOTk4Pl0gKF9fbXV0ZXhf
+bG9ja19zbG93cGF0aCkgZnJvbSBbPGMwNDVlYmZjPl0KPiAobXV0ZXhfbG9jaysweGMvMHgyNCkK
+PiBbICAyNDAuMjE1NTk5XSBbPGMwNDVlYmZjPl0gKG11dGV4X2xvY2spIGZyb20gWzxjMDI4MTcx
+OD5dCj4gKF9fZHJpdmVyX2F0dGFjaCsweDQ0LzB4OTApCj4gWyAgMjQwLjIyMzIzOV0gWzxjMDI4
+MTcxOD5dIChfX2RyaXZlcl9hdHRhY2gpIGZyb20gWzxjMDI3ZmYzMD5dCj4gKGJ1c19mb3JfZWFj
+aF9kZXYrMHg1NC8weDg4KQo+IFsgIDI0MC4yMzEzODddIFs8YzAyN2ZmMzA+XSAoYnVzX2Zvcl9l
+YWNoX2RldikgZnJvbSBbPGMwMjgwZGEwPl0KPiAoYnVzX2FkZF9kcml2ZXIrMHhkOC8weDFjYykK
+PiBbICAyNDAuMjM5NTQxXSBbPGMwMjgwZGEwPl0gKGJ1c19hZGRfZHJpdmVyKSBmcm9tIFs8YzAy
+ODFkODA+XQo+IChkcml2ZXJfcmVnaXN0ZXIrMHg3OC8weGY0KQo+IFsgIDI0MC4yNDc1MjNdIFs8
+YzAyODFkODA+XSAoZHJpdmVyX3JlZ2lzdGVyKSBmcm9tIFs8YzAyNzQzMjQ+XQo+IChleHlub3Nf
+ZHJtX3BsYXRmb3JtX3Byb2JlKzB4MzQvMHgxODgpCj4gWyAgMjQwLjI1NjU0Nl0gWzxjMDI3NDMy
+ND5dIChleHlub3NfZHJtX3BsYXRmb3JtX3Byb2JlKSBmcm9tCj4gWzxjMDI4MjlkOD5dIChwbGF0
+Zm9ybV9kcnZfcHJvYmUrMHg0OC8weDk4KQo+IFsgIDI0MC4yNjU3MzldIFs8YzAyODI5ZDg+XSAo
+cGxhdGZvcm1fZHJ2X3Byb2JlKSBmcm9tIFs8YzAyODE1YjQ+XQo+IChkcml2ZXJfcHJvYmVfZGV2
+aWNlKzB4MTE0LzB4MjM0KQo+IFsgIDI0MC4yNzQ1ODhdIFs8YzAyODE1YjQ+XSAoZHJpdmVyX3By
+b2JlX2RldmljZSkgZnJvbSBbPGMwMjgxNzYwPl0KPiAoX19kcml2ZXJfYXR0YWNoKzB4OGMvMHg5
+MCkKPiBbICAyNDAuMjgzMDAzXSBbPGMwMjgxNzYwPl0gKF9fZHJpdmVyX2F0dGFjaCkgZnJvbSBb
+PGMwMjdmZjMwPl0KPiAoYnVzX2Zvcl9lYWNoX2RldisweDU0LzB4ODgpCj4gWyAgMjQwLjI5MTE1
+OF0gWzxjMDI3ZmYzMD5dIChidXNfZm9yX2VhY2hfZGV2KSBmcm9tIFs8YzAyODBkYTA+XQo+IChi
+dXNfYWRkX2RyaXZlcisweGQ4LzB4MWNjKQo+IFsgIDI0MC4yOTkzMTFdIFs8YzAyODBkYTA+XSAo
+YnVzX2FkZF9kcml2ZXIpIGZyb20gWzxjMDI4MWQ4MD5dCj4gKGRyaXZlcl9yZWdpc3RlcisweDc4
+LzB4ZjQpCj4gWyAgMjQwLjMwNzI5M10gWzxjMDI4MWQ4MD5dIChkcml2ZXJfcmVnaXN0ZXIpIGZy
+b20gWzxjMDI3NDJhND5dCj4gKGV4eW5vc19kcm1faW5pdCsweDg0LzB4ZDApCj4gWyAgMjQwLjMx
+NTM2Ml0gWzxjMDI3NDJhND5dIChleHlub3NfZHJtX2luaXQpIGZyb20gWzxjMDAwODk0ND5dCj4g
+KGRvX29uZV9pbml0Y2FsbCsweDgwLzB4MWQwKQo+IFsgIDI0MC4zMjM1MjFdIFs8YzAwMDg5NDQ+
+XSAoZG9fb25lX2luaXRjYWxsKSBmcm9tIFs8YzA2MjRkM2M+XQo+IChrZXJuZWxfaW5pdF9mcmVl
+YWJsZSsweDEwOC8weDFkNCkKPiBbICAyNDAuMzMyMTkxXSBbPGMwNjI0ZDNjPl0gKGtlcm5lbF9p
+bml0X2ZyZWVhYmxlKSBmcm9tIFs8YzA0NTcyMjQ+XQo+IChrZXJuZWxfaW5pdCsweDgvMHhlNCkK
+PiBbICAyNDAuMzQwMjYxXSBbPGMwNDU3MjI0Pl0gKGtlcm5lbF9pbml0KSBmcm9tIFs8YzAwMGU2
+Mzg+XQo+IChyZXRfZnJvbV9mb3JrKzB4MTQvMHgzYykKPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZy
+b20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNv
+YyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9y
+Zwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jk
+b21vLWluZm8uaHRtbAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
+ZGV2ZWwK
