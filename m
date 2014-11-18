@@ -1,57 +1,98 @@
-From: Yadwinder Singh Brar <yadi.brar@samsung.com>
-Subject: [PATCH 2/2] ARM: dts: Add missing irq pinctrl for max77686 on smdk5250
-Date: Tue, 18 Nov 2014 17:38:29 +0530
-Message-ID: <1416312509-11530-2-git-send-email-yadi.brar@samsung.com>
-References: <1416312509-11530-1-git-send-email-yadi.brar@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:55383 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753266AbaKRMKS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Nov 2014 07:10:18 -0500
-In-reply-to: <1416312509-11530-1-git-send-email-yadi.brar@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH v7 1/2] usb: host: xhci-plat: Get PHYs for xhci's hcds
+Date: Tue, 18 Nov 2014 17:50:19 +0530
+Message-ID: <CAFp+6iHVWuiTfc4n8LeYkYhmMXA76kEs3xcH1WbrAr468MFe2A@mail.gmail.com>
+References: <1414761989-21088-1-git-send-email-gautam.vivek@samsung.com>
+	<1414761989-21088-2-git-send-email-gautam.vivek@samsung.com>
+	<545393CE.8070102@cogentembedded.com>
+	<CAFp+6iG37uE1uB5Z8B-hM3nKyBeR6Vxb-YKegd7MrRB3wuA9xw@mail.gmail.com>
+	<546A1F64.7000209@cogentembedded.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <546A1F64.7000209@cogentembedded.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Greg KH <gregkh@linuxfoundation.org>, kishon <kishon@ti.com>, Felipe Balbi <balbi@ti.com>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, Mathias Nyman <mathias.nyman@intel.com>, Julius Werner <jwerner@google.com>, Jingoo Han <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: robh+dt@kernel.org, kgene.kim@samsung.com, yadi.brar01@gmail.com, Yadwinder Singh Brar <yadi.brar@samsung.com>
 
-This patch adds pinctrl configuration for using configuring gpx3-2 as an
-external interrupt from max77686. Though max77686 RTC is enabled and gets
-probed by default, it doesnt work as its unable to get interrupt.
+On Mon, Nov 17, 2014 at 9:46 PM, Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> Hello.
+>
+> On 11/17/2014 9:36 AM, Vivek Gautam wrote:
+>
+>>>> The host controller by itself may sometimes need to handle PHY
+>>>> and re-initialize it to re-configure some of the PHY parameters
+>>>> to get full support out of the PHY controller.
+>>>> Therefore, facilitate getting the two possible PHYs, viz.
+>>>> USB 2.0 type (UTMI+) and USB 3.0 type (PIPE3), and initialize them.
+>
+>
+>>>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>>>> ---
+>>>>    drivers/usb/host/xhci-plat.c |   74
+>>>> ++++++++++++++++++++++++++++++++++++++++++
+>>>>    1 file changed, 74 insertions(+)
+>
+>
+>>>> diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
+>>>> index 3d78b0c..5207d5b 100644
+>>>> --- a/drivers/usb/host/xhci-plat.c
+>>>> +++ b/drivers/usb/host/xhci-plat.c
+>
+> [...]
+>>>>
+>>>> @@ -204,6 +271,8 @@ static int xhci_plat_suspend(struct device *dev)
+>>>>          struct usb_hcd  *hcd = dev_get_drvdata(dev);
+>>>>          struct xhci_hcd *xhci = hcd_to_xhci(hcd);
+>>>>
+>>>> +       phy_exit(hcd->phy);
+>
+>
+>>>     Hm, in the suspend() method?
+>
+>
+>> phy_exit() should eventually be suspending the PHY and put it to
+>> low power state.
+>
+>
+>    I thought it's a role that the power_off() mothod should play,
+> considering that the power_on() method gets called after the init()
+> method....
 
-This patch makes max77686 RTC work and also configures it as wakeup source.
+phy_power_off() should be cutting the clocks and power from PHY
+completely, no ?
+In that case one may not be able to wakeup the system from USB.
 
-Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
----
- arch/arm/boot/dts/exynos5250-smdk5250.dts |   12 ++++++++++++
- 1 files changed, 12 insertions(+), 0 deletions(-)
+So phy_exit() gets the responsibility to put the PHY into low power state.
 
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 95b5b51..19cd918 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -131,6 +131,9 @@
- 		reg = <0x09>;
- 		interrupt-parent = <&gpx3>;
- 		interrupts = <2 IRQ_TYPE_NONE>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&max77686_irq>;
-+		wakeup-source;
- 
- 		voltage-regulators {
- 			ldo1_reg: LDO1 {
-@@ -411,3 +414,12 @@
- 		};
- 	};
- };
-+
-+&pinctrl_0 {
-+	max77686_irq: max77686-irq {
-+		samsung,pins = "gpx3-2";
-+		samsung,pin-function = <0xf>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
+Ccing Kishon also to get his opinion on actual role of the two callbacks -
+phy_init/exit() and phy_power_on/off().
+
+>
+>> phy_init() in resume() will then take up the task of activating the
+>> PHY again.
+>
+>
+>> phy_power_on() and phy_power_off() are called at xhci_probe() and remove()
+>> time.
+>
+>
+>    Of course.
+>
+>> Does this makes sense ?
+>
+>
+>    Not much, really.
+>
+> WBR, Sergei
+>
+
+
+
 -- 
-1.7.0.4
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
