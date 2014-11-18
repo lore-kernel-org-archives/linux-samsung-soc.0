@@ -1,105 +1,118 @@
-From: Inki Dae <inki.dae@samsung.com>
+From: Andrzej Hajda <a.hajda@samsung.com>
 Subject: Re: [PATCH] drm/exynos: fix infinite loop issue incurred by no pair
-Date: Tue, 18 Nov 2014 19:45:03 +0900
-Message-ID: <546B232F.6060209@samsung.com>
+Date: Tue, 18 Nov 2014 11:48:12 +0100
+Message-ID: <546B23EC.3070601@samsung.com>
 References: <1416280832-24609-1-git-send-email-inki.dae@samsung.com>
  <1416297489.2480.5.camel@collabora.co.uk> <546B0169.4010602@samsung.com>
  <CABxcv=kPShghFWcy_M9FxZ0m3aYghkLVex857YpCWuiM+tSp3w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:12464 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752006AbaKRKsR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 18 Nov 2014 05:48:17 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NF800ACPE4ZEW60@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 Nov 2014 10:50:59 +0000 (GMT)
 In-reply-to: <CABxcv=kPShghFWcy_M9FxZ0m3aYghkLVex857YpCWuiM+tSp3w@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Kevin Hilman <khilman@deeprootsystems.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier@dowhile0.org>, Inki Dae <inki.dae@samsung.com>
+Cc: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, David Airlie <airlied@linux.ie>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>
 
-T24gMjAxNOuFhCAxMeyblCAxOOydvCAxOToyMywgSmF2aWVyIE1hcnRpbmV6IENhbmlsbGFzIHdy
-b3RlOgo+IEhlbGxvIElua2ksCj4gCj4+IFJpZ2h0LCBidXQgYXQgbGVhc3QsIHdlIGNvdWxkIGF2
-b2lkIGtlcm5lbCBib290aW5nIGZhaWx1cmUgd2hpY2ggaXMgdmVyeQo+PiBjcml0aWNhbC4gUGxl
-YXNlIGtub3cgdGhhdCB0aGlzIHBhdGNoIGlzIHRlbXBvcmFyeSB0byBhdm9pZCB0aGUga2VybmVs
-Cj4+IGJvb3RpbmcgZmFpbHVyZSBhbHRob3VnaCBkZWZlcnJlZCBwcm9iZSByZXF1ZXN0IG9mIEV4
-eW5vcyBkcm0gY291bGQgYmUKPj4gYnJva2VuLiBGb3IgdGhpcywgSSB3aWxsIGxvb2sgaW50byBk
-ZCBjb3JlIHRvIGZpbmQgb3V0IG1vcmUgZ2VuZXJpYyB3YXk6Cj4+IEkgc3VzcGVjdCB0aGF0IHRo
-aXMgbWlnaHQgYmUgaW5jdXJyZWQgaW4gY2FzZSB0aGF0IGEgZHJpdmVyIGlzIHByb2JlZCBpbgo+
-PiBwcm9iZSBjb250ZXh0IG9mIG90aGVyIGRyaXZlciBvciBpdCBtaWdodCBiZSByZWFsbHkgZGQg
-Y29yZSBidWcuCj4+Cj4gCj4gSSBnYXZlIGEgdHJ5IHRvIHlvdXIgcGF0Y2ggb24gdG9wIG9mIHRv
-ZGF5J3MgbGludXgtbmV4dCBhbmQgSSBzdGlsbAo+IHNlZSB0aGUgc2FtZSBib290IGZhaWx1cmUg
-cmVwb3J0ZWQgYnkgS2V2aW4gb24gYSBFeHlub3M1NDIwIFBlYWNoIFBpdAo+IHNvICRzdWJqZWN0
-IGRvZXMgbm90IGZpeCB0aGUgaXNzdWUuIFRoZSBib290IG1lc3NhZ2UgaXMgWzBdIGZ5aS4KPiAK
-PiBCeSBkaWdnaW5nIGEgYml0IEkgbm90aWNlZCB0aGF0IHRoaXMgaGFwcGVucyB3aGVuIHRoZQo+
-IGV4eW5vc19kcm1fcGxhdGZvcm1fcHJvYmUoKSBjYWxscyBwbGF0Zm9ybV9kcml2ZXJfcmVnaXN0
-ZXIoKSB0bwo+IHJlZ2lzdGVyIHRoZSBFeHlub3MgZmltZCBwbGF0Zm9ybSBkcml2ZXIuIFRoZSBw
-cm9ibGVtIGlzIHRoYXQgaW4KPiBfX2RyaXZlcl9hdHRhY2goKSB0aGUgY2FsbCB0byBkZXZpY2Vf
-bG9jayhkZXYtPnBhcmVudCkgbmV2ZXIgcmV0dXJucwo+IGFuZCB0aGUgdGhyZWFkIHNsZWVwcyBm
-b3JldmVyIHdhaXRpbmcgZm9yIHRoZSBkZXZpY2UgcGFyZW50IG11dGV4IHRvCj4gYmUgcmVsZWFz
-ZWQuCj4gCj4gRG8geW91IGhhdmUgYW55IGlkZWFzIHdoeSB0aGlzIGNvdWxkIGhhcHBlbj8KCkFz
-IEkgbWVudGlvbmVkIGFib3ZlLCBJIGd1ZXNzIHRoaXMgaXNzdWUgY291bGQgYmUgaW5jdXJyZWQg
-d2hlbiBhIGRyaXZlcgppcyBwcm9iZWQgaW4gcHJvYmUgY29udGV4dCBvZiBvdGhlciBkcml2ZXIu
-IEFjdHVhbGx5LCB3ZSBoYWQgZmFjZWQgd2l0aApzYW1lIGlzc3VlIGJ1dCB3ZSBjb3VsZG4ndCBz
-ZWUgdGhpcyBpc3N1ZSBhbnltb3JlIGZvciBzb21lIHRpbWUuIEFueXdheSwKd2UgbmVlZCBtb3Jl
-IGNoZWNraW5nLgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiBJZiBJIG1vZGlmeSBfX2RyaXZlcl9h
-dHRhY2goKSB0byBvbmx5IGdyYWIgdGhlIGRldmljZSBsb2NrIGFuZCBub3QgaXRzCj4gcGFyZW50
-IGxvY2ssIHRoZW4gdGhlIHRocmVhZCBpcyBhYmxlIHRvIGhvbGQgaXRzIG93biBtdXRleCBhbmQg
-dGhlCj4gcGxhdGZvcm0gZHJpdmVyIHJlZ2lzdHJhdGlvbiBzdWNjZWVkcyBidXQgdGhlbiBJIHNl
-ZSB0aGUgaW5maW5pdGUgbG9vcAo+IHRoYXQgd2FzIHJlcG9ydGVkIGJlZm9yZSBhbmQgdGhlIHdv
-cmthcm91bmQgaW4gJHN1YmplY3QgaW5kZWVkIGF2b2lkcwo+IHRvIGhhcHBlbi4KPiAKPiBTbyB3
-ZSBoYXZlIHR3byBpc3N1ZXMgaGVyZSBhbmQgeW91ciBwYXRjaCBpcyBvbmx5IGEgd29ya2Fyb3Vu
-ZCBmb3IgdGhlIGxhdGVyLgo+IAo+IEJlc3QgcmVnYXJkcywKPiBKYXZpZXIKPiAKPiBbMF06Cj4g
-WyAgICAxLjMyNDA5MV0gW2RybV0gSW5pdGlhbGl6ZWQgZHJtIDEuMS4wIDIwMDYwODEwCj4gWyAg
-MjQwLjE1ODY2NV0gcmFuZG9tOiBub25ibG9ja2luZyBwb29sIGlzIGluaXRpYWxpemVkCj4gWyAg
-MjQwLjE2MjIwMl0gSU5GTzogdGFzayBzd2FwcGVyLzA6MSBibG9ja2VkIGZvciBtb3JlIHRoYW4g
-MTIwIHNlY29uZHMuCj4gWyAgMjQwLjE2ODQ5M10gICAgICAgTm90IHRhaW50ZWQgMy4xOC4wLXJj
-NC1uZXh0LTIwMTQxMTE3LTAwMDAxLWc4NTQ2NmY5ICMyMgo+IFsgIDI0MC4xNzUyNTZdICJlY2hv
-IDAgPiAvcHJvYy9zeXMva2VybmVsL2h1bmdfdGFza190aW1lb3V0X3NlY3MiCj4gZGlzYWJsZXMg
-dGhpcyBtZXNzYWdlLgo+IFsgIDI0MC4xODMwNjRdIHN3YXBwZXIvMCAgICAgICBEIGMwNDViYjAw
-ICAgICAwICAgICAxICAgICAgMCAweDAwMDAwMDAwCj4gWyAgMjQwLjE4OTQxMF0gWzxjMDQ1YmIw
-MD5dIChfX3NjaGVkdWxlKSBmcm9tIFs8YzA0NWMyMzA+XQo+IChzY2hlZHVsZV9wcmVlbXB0X2Rp
-c2FibGVkKzB4MTQvMHgyMCkKPiBbICAyNDAuMTk3OTA0XSBbPGMwNDVjMjMwPl0gKHNjaGVkdWxl
-X3ByZWVtcHRfZGlzYWJsZWQpIGZyb20KPiBbPGMwNDVlOTk4Pl0gKF9fbXV0ZXhfbG9ja19zbG93
-cGF0aCsweDE5Yy8weDNmNCkKPiBbICAyNDAuMjA3NTMxXSBbPGMwNDVlOTk4Pl0gKF9fbXV0ZXhf
-bG9ja19zbG93cGF0aCkgZnJvbSBbPGMwNDVlYmZjPl0KPiAobXV0ZXhfbG9jaysweGMvMHgyNCkK
-PiBbICAyNDAuMjE1NTk5XSBbPGMwNDVlYmZjPl0gKG11dGV4X2xvY2spIGZyb20gWzxjMDI4MTcx
-OD5dCj4gKF9fZHJpdmVyX2F0dGFjaCsweDQ0LzB4OTApCj4gWyAgMjQwLjIyMzIzOV0gWzxjMDI4
-MTcxOD5dIChfX2RyaXZlcl9hdHRhY2gpIGZyb20gWzxjMDI3ZmYzMD5dCj4gKGJ1c19mb3JfZWFj
-aF9kZXYrMHg1NC8weDg4KQo+IFsgIDI0MC4yMzEzODddIFs8YzAyN2ZmMzA+XSAoYnVzX2Zvcl9l
-YWNoX2RldikgZnJvbSBbPGMwMjgwZGEwPl0KPiAoYnVzX2FkZF9kcml2ZXIrMHhkOC8weDFjYykK
-PiBbICAyNDAuMjM5NTQxXSBbPGMwMjgwZGEwPl0gKGJ1c19hZGRfZHJpdmVyKSBmcm9tIFs8YzAy
-ODFkODA+XQo+IChkcml2ZXJfcmVnaXN0ZXIrMHg3OC8weGY0KQo+IFsgIDI0MC4yNDc1MjNdIFs8
-YzAyODFkODA+XSAoZHJpdmVyX3JlZ2lzdGVyKSBmcm9tIFs8YzAyNzQzMjQ+XQo+IChleHlub3Nf
-ZHJtX3BsYXRmb3JtX3Byb2JlKzB4MzQvMHgxODgpCj4gWyAgMjQwLjI1NjU0Nl0gWzxjMDI3NDMy
-ND5dIChleHlub3NfZHJtX3BsYXRmb3JtX3Byb2JlKSBmcm9tCj4gWzxjMDI4MjlkOD5dIChwbGF0
-Zm9ybV9kcnZfcHJvYmUrMHg0OC8weDk4KQo+IFsgIDI0MC4yNjU3MzldIFs8YzAyODI5ZDg+XSAo
-cGxhdGZvcm1fZHJ2X3Byb2JlKSBmcm9tIFs8YzAyODE1YjQ+XQo+IChkcml2ZXJfcHJvYmVfZGV2
-aWNlKzB4MTE0LzB4MjM0KQo+IFsgIDI0MC4yNzQ1ODhdIFs8YzAyODE1YjQ+XSAoZHJpdmVyX3By
-b2JlX2RldmljZSkgZnJvbSBbPGMwMjgxNzYwPl0KPiAoX19kcml2ZXJfYXR0YWNoKzB4OGMvMHg5
-MCkKPiBbICAyNDAuMjgzMDAzXSBbPGMwMjgxNzYwPl0gKF9fZHJpdmVyX2F0dGFjaCkgZnJvbSBb
-PGMwMjdmZjMwPl0KPiAoYnVzX2Zvcl9lYWNoX2RldisweDU0LzB4ODgpCj4gWyAgMjQwLjI5MTE1
-OF0gWzxjMDI3ZmYzMD5dIChidXNfZm9yX2VhY2hfZGV2KSBmcm9tIFs8YzAyODBkYTA+XQo+IChi
-dXNfYWRkX2RyaXZlcisweGQ4LzB4MWNjKQo+IFsgIDI0MC4yOTkzMTFdIFs8YzAyODBkYTA+XSAo
-YnVzX2FkZF9kcml2ZXIpIGZyb20gWzxjMDI4MWQ4MD5dCj4gKGRyaXZlcl9yZWdpc3RlcisweDc4
-LzB4ZjQpCj4gWyAgMjQwLjMwNzI5M10gWzxjMDI4MWQ4MD5dIChkcml2ZXJfcmVnaXN0ZXIpIGZy
-b20gWzxjMDI3NDJhND5dCj4gKGV4eW5vc19kcm1faW5pdCsweDg0LzB4ZDApCj4gWyAgMjQwLjMx
-NTM2Ml0gWzxjMDI3NDJhND5dIChleHlub3NfZHJtX2luaXQpIGZyb20gWzxjMDAwODk0ND5dCj4g
-KGRvX29uZV9pbml0Y2FsbCsweDgwLzB4MWQwKQo+IFsgIDI0MC4zMjM1MjFdIFs8YzAwMDg5NDQ+
-XSAoZG9fb25lX2luaXRjYWxsKSBmcm9tIFs8YzA2MjRkM2M+XQo+IChrZXJuZWxfaW5pdF9mcmVl
-YWJsZSsweDEwOC8weDFkNCkKPiBbICAyNDAuMzMyMTkxXSBbPGMwNjI0ZDNjPl0gKGtlcm5lbF9p
-bml0X2ZyZWVhYmxlKSBmcm9tIFs8YzA0NTcyMjQ+XQo+IChrZXJuZWxfaW5pdCsweDgvMHhlNCkK
-PiBbICAyNDAuMzQwMjYxXSBbPGMwNDU3MjI0Pl0gKGtlcm5lbF9pbml0KSBmcm9tIFs8YzAwMGU2
-Mzg+XQo+IChyZXRfZnJvbV9mb3JrKzB4MTQvMHgzYykKPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZy
-b20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNv
-YyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9y
-Zwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jk
-b21vLWluZm8uaHRtbAo+IAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+On 11/18/2014 11:23 AM, Javier Martinez Canillas wrote:
+> Hello Inki,
+> 
+>> Right, but at least, we could avoid kernel booting failure which is very
+>> critical. Please know that this patch is temporary to avoid the kernel
+>> booting failure although deferred probe request of Exynos drm could be
+>> broken. For this, I will look into dd core to find out more generic way:
+>> I suspect that this might be incurred in case that a driver is probed in
+>> probe context of other driver or it might be really dd core bug.
+>>
+> 
+> I gave a try to your patch on top of today's linux-next and I still
+> see the same boot failure reported by Kevin on a Exynos5420 Peach Pit
+> so $subject does not fix the issue. The boot message is [0] fyi.
+> 
+> By digging a bit I noticed that this happens when the
+> exynos_drm_platform_probe() calls platform_driver_register() to
+> register the Exynos fimd platform driver. The problem is that in
+> __driver_attach() the call to device_lock(dev->parent) never returns
+> and the thread sleeps forever waiting for the device parent mutex to
+> be released.
+> 
+> Do you have any ideas why this could happen?
+> 
+> If I modify __driver_attach() to only grab the device lock and not its
+> parent lock, then the thread is able to hold its own mutex and the
+> platform driver registration succeeds but then I see the infinite loop
+> that was reported before and the workaround in $subject indeed avoids
+> to happen.
+> 
+> So we have two issues here and your patch is only a workaround for the later.
+
+This is the same issue Krzysztof reported two weeks ago and I answered
+him with my diagnosis[1].
+
+[1]: http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/39804
+
+Regards
+Andrzej
+
+> 
+> Best regards,
+> Javier
+> 
+> [0]:
+> [    1.324091] [drm] Initialized drm 1.1.0 20060810
+> [  240.158665] random: nonblocking pool is initialized
+> [  240.162202] INFO: task swapper/0:1 blocked for more than 120 seconds.
+> [  240.168493]       Not tainted 3.18.0-rc4-next-20141117-00001-g85466f9 #22
+> [  240.175256] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+> disables this message.
+> [  240.183064] swapper/0       D c045bb00     0     1      0 0x00000000
+> [  240.189410] [<c045bb00>] (__schedule) from [<c045c230>]
+> (schedule_preempt_disabled+0x14/0x20)
+> [  240.197904] [<c045c230>] (schedule_preempt_disabled) from
+> [<c045e998>] (__mutex_lock_slowpath+0x19c/0x3f4)
+> [  240.207531] [<c045e998>] (__mutex_lock_slowpath) from [<c045ebfc>]
+> (mutex_lock+0xc/0x24)
+> [  240.215599] [<c045ebfc>] (mutex_lock) from [<c0281718>]
+> (__driver_attach+0x44/0x90)
+> [  240.223239] [<c0281718>] (__driver_attach) from [<c027ff30>]
+> (bus_for_each_dev+0x54/0x88)
+> [  240.231387] [<c027ff30>] (bus_for_each_dev) from [<c0280da0>]
+> (bus_add_driver+0xd8/0x1cc)
+> [  240.239541] [<c0280da0>] (bus_add_driver) from [<c0281d80>]
+> (driver_register+0x78/0xf4)
+> [  240.247523] [<c0281d80>] (driver_register) from [<c0274324>]
+> (exynos_drm_platform_probe+0x34/0x188)
+> [  240.256546] [<c0274324>] (exynos_drm_platform_probe) from
+> [<c02829d8>] (platform_drv_probe+0x48/0x98)
+> [  240.265739] [<c02829d8>] (platform_drv_probe) from [<c02815b4>]
+> (driver_probe_device+0x114/0x234)
+> [  240.274588] [<c02815b4>] (driver_probe_device) from [<c0281760>]
+> (__driver_attach+0x8c/0x90)
+> [  240.283003] [<c0281760>] (__driver_attach) from [<c027ff30>]
+> (bus_for_each_dev+0x54/0x88)
+> [  240.291158] [<c027ff30>] (bus_for_each_dev) from [<c0280da0>]
+> (bus_add_driver+0xd8/0x1cc)
+> [  240.299311] [<c0280da0>] (bus_add_driver) from [<c0281d80>]
+> (driver_register+0x78/0xf4)
+> [  240.307293] [<c0281d80>] (driver_register) from [<c02742a4>]
+> (exynos_drm_init+0x84/0xd0)
+> [  240.315362] [<c02742a4>] (exynos_drm_init) from [<c0008944>]
+> (do_one_initcall+0x80/0x1d0)
+> [  240.323521] [<c0008944>] (do_one_initcall) from [<c0624d3c>]
+> (kernel_init_freeable+0x108/0x1d4)
+> [  240.332191] [<c0624d3c>] (kernel_init_freeable) from [<c0457224>]
+> (kernel_init+0x8/0xe4)
+> [  240.340261] [<c0457224>] (kernel_init) from [<c000e638>]
+> (ret_from_fork+0x14/0x3c)
+> 
