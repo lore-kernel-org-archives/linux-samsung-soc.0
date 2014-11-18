@@ -1,93 +1,44 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [BUG] blocked task after exynos_drm_init
-Date: Tue, 18 Nov 2014 19:52:56 +0900
-Message-ID: <546B2508.8070409@samsung.com>
-References: <1415264811.27478.4.camel@AMDC1943> <546B228E.6030500@samsung.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH] drm/exynos: fix infinite loop issue incurred by no pair
+Date: Tue, 18 Nov 2014 11:53:42 +0100
+Message-ID: <CABxcv=kBH5LsOKxLYKvwH747fEuembbHOA4mbke_VrJa19m+dA@mail.gmail.com>
+References: <1416280832-24609-1-git-send-email-inki.dae@samsung.com>
+	<1416297489.2480.5.camel@collabora.co.uk>
+	<546B0169.4010602@samsung.com>
+	<CABxcv=kPShghFWcy_M9FxZ0m3aYghkLVex857YpCWuiM+tSp3w@mail.gmail.com>
+	<546B23EC.3070601@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <546B228E.6030500@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f173.google.com ([209.85.212.173]:51651 "EHLO
+	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752715AbaKRKxn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 18 Nov 2014 05:53:43 -0500
+Received: by mail-wi0-f173.google.com with SMTP id r20so1371206wiv.6
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Nov 2014 02:53:42 -0800 (PST)
+In-Reply-To: <546B23EC.3070601@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: Inki Dae <inki.dae@samsung.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, David Airlie <airlied@linux.ie>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>
 
-T24gMjAxNOuFhCAxMeyblCAxOOydvCAxOTo0MiwgQW5kcnplaiBIYWpkYSB3cm90ZToKPiBPbiAx
-MS8wNi8yMDE0IDEwOjA2IEFNLCBLcnp5c3p0b2YgS296bG93c2tpIHdyb3RlOgo+PiBIaSwKPj4K
-Pj4gT24gbGFzdCBuZXh0IChuZXh0LTIwMTQxMTA0LCBuZXh0LTIwMTQxMTA1KSBib290aW5nIGxv
-Y2tzIGFmdGVyCj4+IGluaXRpYWxpemluZyBFeHlub3MgRFJNIChUcmF0czIgYm9hcmQpOgo+Pgo+
-PiBbICAgIDIuMDI4MjgzXSBbZHJtXSBJbml0aWFsaXplZCBkcm0gMS4xLjAgMjAwNjA4MTAKPj4g
-WyAgMjQwLjUwNTc5NV0gSU5GTzogdGFzayBzd2FwcGVyLzA6MSBibG9ja2VkIGZvciBtb3JlIHRo
-YW4gMTIwIHNlY29uZHMuCj4+IFsgIDI0MC41MTA4MjVdICAgICAgIE5vdCB0YWludGVkIDMuMTgu
-MC1yYzMtbmV4dC0yMDE0MTEwNSAjNzk0Cj4+IFsgIDI0MC41MTY0MThdICJlY2hvIDAgPiAvcHJv
-Yy9zeXMva2VybmVsL2h1bmdfdGFza190aW1lb3V0X3NlY3MiIGRpc2FibGVzIHRoaXMgbWVzc2Fn
-ZS4KPj4gWyAgMjQwLjUyNDE3M10gc3dhcHBlci8wICAgICAgIEQgYzA1MjUzNGMgICAgIDAgICAg
-IDEgICAgICAwIDB4MDAwMDAwMDAKPj4gWyAgMjQwLjUzMDUyN10gWzxjMDUyNTM0Yz5dIChfX3Nj
-aGVkdWxlKSBmcm9tIFs8YzA1MjViMzQ+XSAoc2NoZWR1bGVfcHJlZW1wdF9kaXNhYmxlZCsweDE0
-LzB4MjApCj4+IFsgIDI0MC41MzkwMzBdIFs8YzA1MjViMzQ+XSAoc2NoZWR1bGVfcHJlZW1wdF9k
-aXNhYmxlZCkgZnJvbSBbPGMwNTI2ZDQ0Pl0gKG11dGV4X2xvY2tfbmVzdGVkKzB4MWM0LzB4NDY0
-KQo+PiBbICAyNDAuNTQ4MzIwXSBbPGMwNTI2ZDQ0Pl0gKG11dGV4X2xvY2tfbmVzdGVkKSBmcm9t
-IFs8YzAyYmU5MDg+XSAoX19kcml2ZXJfYXR0YWNoKzB4NDgvMHg5OCkKPj4gWyAgMjQwLjU1NjU2
-Ml0gWzxjMDJiZTkwOD5dIChfX2RyaXZlcl9hdHRhY2gpIGZyb20gWzxjMDJiY2MwMD5dIChidXNf
-Zm9yX2VhY2hfZGV2KzB4NTQvMHg4OCkKPj4gWyAgMjQwLjU2NDcxN10gWzxjMDJiY2MwMD5dIChi
-dXNfZm9yX2VhY2hfZGV2KSBmcm9tIFs8YzAyYmRjZTA+XSAoYnVzX2FkZF9kcml2ZXIrMHhlNC8w
-eDIwMCkKPj4gWyAgMjQwLjU3Mjg3Nl0gWzxjMDJiZGNlMD5dIChidXNfYWRkX2RyaXZlcikgZnJv
-bSBbPGMwMmJlZjk0Pl0gKGRyaXZlcl9yZWdpc3RlcisweDc4LzB4ZjQpCj4+IFsgIDI0MC41ODA4
-NjRdIFs8YzAyYmVmOTQ+XSAoZHJpdmVyX3JlZ2lzdGVyKSBmcm9tIFs8YzAyOWU5OWM+XSAoZXh5
-bm9zX2RybV9wbGF0Zm9ybV9wcm9iZSsweDM0LzB4MjM0KQo+PiBbICAyNDAuNTg5ODkwXSBbPGMw
-MjllOTljPl0gKGV4eW5vc19kcm1fcGxhdGZvcm1fcHJvYmUpIGZyb20gWzxjMDJiZmNmMD5dIChw
-bGF0Zm9ybV9kcnZfcHJvYmUrMHg0OC8weGE0KQo+PiBbICAyNDAuNTk5MDkwXSBbPGMwMmJmY2Yw
-Pl0gKHBsYXRmb3JtX2Rydl9wcm9iZSkgZnJvbSBbPGMwMmJlNjgwPl0gKGRyaXZlcl9wcm9iZV9k
-ZXZpY2UrMHgxM2MvMHgzN2MpCj4+IFsgIDI0MC42MDc5NDBdIFs8YzAyYmU2ODA+XSAoZHJpdmVy
-X3Byb2JlX2RldmljZSkgZnJvbSBbPGMwMmJlOTU0Pl0gKF9fZHJpdmVyX2F0dGFjaCsweDk0LzB4
-OTgpCj4+IFsgIDI0MC42MTYzNjBdIFs8YzAyYmU5NTQ+XSAoX19kcml2ZXJfYXR0YWNoKSBmcm9t
-IFs8YzAyYmNjMDA+XSAoYnVzX2Zvcl9lYWNoX2RldisweDU0LzB4ODgpCj4+IFsgIDI0MC42MjQ1
-MTddIFs8YzAyYmNjMDA+XSAoYnVzX2Zvcl9lYWNoX2RldikgZnJvbSBbPGMwMmJkY2UwPl0gKGJ1
-c19hZGRfZHJpdmVyKzB4ZTQvMHgyMDApCj4+IFsgIDI0MC42MzI2NzldIFs8YzAyYmRjZTA+XSAo
-YnVzX2FkZF9kcml2ZXIpIGZyb20gWzxjMDJiZWY5ND5dIChkcml2ZXJfcmVnaXN0ZXIrMHg3OC8w
-eGY0KQo+PiBbICAyNDAuNjQwNjY3XSBbPGMwMmJlZjk0Pl0gKGRyaXZlcl9yZWdpc3RlcikgZnJv
-bSBbPGMwMjllOTM4Pl0gKGV4eW5vc19kcm1faW5pdCsweDcwLzB4YTApCj4+IFsgIDI0MC42NDg3
-MzldIFs8YzAyOWU5Mzg+XSAoZXh5bm9zX2RybV9pbml0KSBmcm9tIFs8YzAwMDg5YjA+XSAoZG9f
-b25lX2luaXRjYWxsKzB4YWMvMHgxZjApCj4+IFsgIDI0MC42NTY5MTRdIFs8YzAwMDg5YjA+XSAo
-ZG9fb25lX2luaXRjYWxsKSBmcm9tIFs8YzA3NGJkOTA+XSAoa2VybmVsX2luaXRfZnJlZWFibGUr
-MHgxMGMvMHgxZDgpCj4+IFsgIDI0MC42NjU1OTFdIFs8YzA3NGJkOTA+XSAoa2VybmVsX2luaXRf
-ZnJlZWFibGUpIGZyb20gWzxjMDUxZWFiYz5dIChrZXJuZWxfaW5pdCsweDgvMHhlYykKPj4gWyAg
-MjQwLjY3MzY2MV0gWzxjMDUxZWFiYz5dIChrZXJuZWxfaW5pdCkgZnJvbSBbPGMwMDBmMjY4Pl0g
-KHJldF9mcm9tX2ZvcmsrMHgxNC8weDJjKQo+PiBbICAyNDAuNjgxMTk2XSAzIGxvY2tzIGhlbGQg
-Ynkgc3dhcHBlci8wLzE6Cj4+IFsgIDI0MC42ODUwOTFdICAjMDogICgmZGV2LT5tdXRleCl7Li4u
-Li4ufSwgYXQ6IFs8YzAyYmU5MDg+XSBfX2RyaXZlcl9hdHRhY2grMHg0OC8weDk4Cj4+IFsgIDI0
-MC42OTI3MzJdICAjMTogICgmZGV2LT5tdXRleCl7Li4uLi4ufSwgYXQ6IFs8YzAyYmU5MTg+XSBf
-X2RyaXZlcl9hdHRhY2grMHg1OC8weDk4Cj4+IFsgIDI0MC43MDAzNjddICAjMjogICgmZGV2LT5t
-dXRleCl7Li4uLi4ufSwgYXQ6IFs8YzAyYmU5MDg+XSBfX2RyaXZlcl9hdHRhY2grMHg0OC8weDk4
-Cj4gCj4gCj4gVGhpcyBpcyBjYXVzZWQgYnkgcGF0Y2ggbW92aW5nIHBsYXRmb3JtIGRldmljZXMg
-dG8KPiAvc3lzL2RldmljZXMvcGxhdGZvcm1bMV0uIFNpbmNlIHRoaXMgcGF0Y2ggcmVnaXN0ZXJp
-bmcgcGxhdGZvcm0KPiBkcml2ZXJzL2RldmljZXMgaW4gcHJvYmUgb2YgcGxhdGZvcm0gZGV2aWNl
-IGNhdXNlcyBkZWFkbG9ja3MuIEkgZ3Vlc3MKPiBub3cgYWxsIGRyaXZlciByZWdpc3RyYXRpb24g
-c2hvdWxkIGJlIG1vdmVkIHRvIGV4eW5vc19kcm1faW5pdCBhbmQgaXQKPiBzZWVtcyBiZXR0ZXIg
-bG9jYXRpb24gZm9yIGl0IElNSE8uCgpUaGFua3MuIEl0IG1pZ2h0IGJlIGEgY2hhbmNlIHRoYXQg
-d2UgY291bGQgc2VwYXJhdGUgc3ViIGRyaXZlcnMgb2YKRXh5bm9zIGRybSBpbnRvIGluZGVwZW5k
-ZW50IG1vZHVsZXMgc28gdGhhdCB0aGV5IGNhbiBiZSBjYWxsZWQKaW5kZXBlbmRlbnRseSBiZWNh
-dXNlIGlmIHdlIG1vdmUgdGhlbSB0byBleHlub3NfZHJtX2luaXQgdGhlbiB0aGUKZGVmZXJyZWQg
-cHJvYmUgd291bGRuJ3Qgd29yayBjb3JyZWN0bHkuCgpUaGFua3MsCklua2kgRGFlCgo+IAo+IFJl
-Z2FyZHMKPiBBbmRyemVqCj4gCj4gWzFdOiBodHRwOi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2Rl
-dmljZXRyZWUvbXNnNTYxMDEuaHRtbAo+IAo+IAo+IAo+Pgo+PiBGdWxsIGRtZXNnIGFuZCBjb25m
-aWcgYXR0YWNoZWQuCj4+Cj4+IEJlc3QgcmVnYXJkcywKPj4gS3J6eXN6dG9mCj4+Cj4+Cj4+Cj4+
-IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4+IGRyaS1k
-ZXZlbCBtYWlsaW5nIGxpc3QKPj4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+PiBo
-dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCj4+
-Cj4gCj4gCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGlu
-ZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNz
-YWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0
-ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiAKCl9fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
-IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hello Andrzej,
+
+On Tue, Nov 18, 2014 at 11:48 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
+>> So we have two issues here and your patch is only a workaround for the later.
+>
+> This is the same issue Krzysztof reported two weeks ago and I answered
+> him with my diagnosis[1].
+>
+> [1]: http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/39804
+>
+
+Great, thanks a lot for finding the cause of this issue!
+
+> Regards
+> Andrzej
+>
+
+Best regards,
+Javier
