@@ -1,44 +1,73 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH] drm/exynos: fix infinite loop issue incurred by no pair
-Date: Tue, 18 Nov 2014 11:53:42 +0100
-Message-ID: <CABxcv=kBH5LsOKxLYKvwH747fEuembbHOA4mbke_VrJa19m+dA@mail.gmail.com>
-References: <1416280832-24609-1-git-send-email-inki.dae@samsung.com>
-	<1416297489.2480.5.camel@collabora.co.uk>
-	<546B0169.4010602@samsung.com>
-	<CABxcv=kPShghFWcy_M9FxZ0m3aYghkLVex857YpCWuiM+tSp3w@mail.gmail.com>
-	<546B23EC.3070601@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v5 0/2] Handle reboot for Exynos SoC via restart_handler
+Date: Tue, 18 Nov 2014 16:17:28 +0530
+Message-ID: <1416307650-15162-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f173.google.com ([209.85.212.173]:51651 "EHLO
-	mail-wi0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752715AbaKRKxn (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:61820 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752632AbaKRKyl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Nov 2014 05:53:43 -0500
-Received: by mail-wi0-f173.google.com with SMTP id r20so1371206wiv.6
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Nov 2014 02:53:42 -0800 (PST)
-In-Reply-To: <546B23EC.3070601@samsung.com>
+	Tue, 18 Nov 2014 05:54:41 -0500
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NF800G4CEAOMA70@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 Nov 2014 19:54:24 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: Inki Dae <inki.dae@samsung.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, David Airlie <airlied@linux.ie>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, linux@roeck-us.net, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Hello Andrzej,
+This patch removes restart hook from machine_desc of Exynos, and moves
+respective code into restart_notifiers.
+Exynos5440 handles reboot via clock register so let's register a
+restart_handler in Exynos5440 clock driver.
+For rest Exynos SoC, reboot is handled via PMU SWRESET register so
+let's register a restart_handler in PMU driver for handling this.
 
-On Tue, Nov 18, 2014 at 11:48 AM, Andrzej Hajda <a.hajda@samsung.com> wrote:
->> So we have two issues here and your patch is only a workaround for the later.
->
-> This is the same issue Krzysztof reported two weeks ago and I answered
-> him with my diagnosis[1].
->
-> [1]: http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/39804
->
+This patch is inspired and dependent on following patch series[1] from
+Geunter Roeck.
 
-Great, thanks a lot for finding the cause of this issue!
+[1]: kernel: Add support for kernel restart handler call chain
+https://lkml.org/lkml/2014/8/19/652
 
-> Regards
-> Andrzej
->
+I have tested reboot functionality on Exynos3250 based board, on
+kgene/for-next as well as linux-next's next-20141114 tag.
 
-Best regards,
-Javier
+Patch v3 and related discussion can be found here
+http://www.spinics.net/lists/linux-samsung-soc/msg37600.html
+
+Changes since v4:
+  - Addressed review comments from Geunter Roeck.
+  - Added Geunter Roeck's Acked-by tag.
+
+Changes since v3:
+  - As v2 is causing conflict after recent changes in kgene/for-next,
+    rebased on top of kgene/for-next dated 2014-11-13.
+  - Removed dependency patch list from cover-letter as all dependencies 
+    are merged into kgene/for-next.
+
+Changes since v2:
+  - Used register_restart_handler instead of register_reboot_notifier.
+  - Updated notifier names and commit message accordingly.
+
+Changes since v1:
+  - Addressed review comments from Tomasz Figa. Removed usage of 
+    local variables where ever unnecessary.
+  - Make reg_base as global in clk-exynos5440.c file, to avoid 
+    iomapping it again in reboot_notifier handler.
+
+
+Pankaj Dubey (2):
+  clk: samsung: exynos5440: move restart code into clock driver
+  ARM: EXYNOS: PMU: move restart code into pmu driver
+
+ arch/arm/mach-exynos/common.h        |    1 -
+ arch/arm/mach-exynos/exynos.c        |   23 -----------------------
+ arch/arm/mach-exynos/pmu.c           |   23 +++++++++++++++++++++++
+ drivers/clk/samsung/clk-exynos5440.c |   29 ++++++++++++++++++++++++++++-
+ 4 files changed, 51 insertions(+), 25 deletions(-)
+
+-- 
+1.7.9.5
