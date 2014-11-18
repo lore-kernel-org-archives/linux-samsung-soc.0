@@ -1,137 +1,37 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v5 2/2] ARM: EXYNOS: PMU: move restart code into pmu driver
-Date: Tue, 18 Nov 2014 16:17:30 +0530
-Message-ID: <1416307650-15162-3-git-send-email-pankaj.dubey@samsung.com>
-References: <1416307650-15162-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:46583 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751699AbaKRKzv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Nov 2014 05:55:51 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NF80059QED1AB60@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 18 Nov 2014 19:55:49 +0900 (KST)
-In-reply-to: <1416307650-15162-1-git-send-email-pankaj.dubey@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Subject: [PATCH] media: exynos-gsc: fix build warning
+Date: Tue, 18 Nov 2014 10:57:48 +0000
+Message-ID: <1416308268-22957-1-git-send-email-prabhakar.csengg@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, LMML <linux-media@vger.kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, linux@roeck-us.net, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Let's register restart handler from PMU driver for restart
-functionality. So that we can remove restart hooks from
-machine specific file, and thus moving ahead when PMU moved
-to driver folder, this functionality can be reused for ARM64
-based Exynos SoC's.
+this patch fixes following build warning:
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Acked-by: Guenter Roeck <linux@roeck-us.net>
+gsc-core.c:350:17: warning: 'low_plane' may be used uninitialized
+gsc-core.c:371:31: warning: 'high_plane' may be used uninitialized
+
+Signed-off-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
 ---
- arch/arm/mach-exynos/common.h |    1 -
- arch/arm/mach-exynos/exynos.c |    6 ------
- arch/arm/mach-exynos/pmu.c    |   23 +++++++++++++++++++++++
- 3 files changed, 23 insertions(+), 7 deletions(-)
+ drivers/media/platform/exynos-gsc/gsc-core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index 431be1b..865f878 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -12,7 +12,6 @@
- #ifndef __ARCH_ARM_MACH_EXYNOS_COMMON_H
- #define __ARCH_ARM_MACH_EXYNOS_COMMON_H
+diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+index 91d226b..6c71b17 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-core.c
++++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+@@ -347,8 +347,8 @@ void gsc_set_prefbuf(struct gsc_dev *gsc, struct gsc_frame *frm)
+ 		s_chk_addr = frm->addr.cb;
+ 		s_chk_len = frm->payload[1];
+ 	} else if (frm->fmt->num_planes == 3) {
+-		u32 low_addr, low_plane, mid_addr, mid_plane;
+-		u32 high_addr, high_plane;
++		u32 low_addr, low_plane = 0, mid_addr, mid_plane;
++		u32 high_addr, high_plane = 0;
+ 		u32 t_min, t_max;
  
--#include <linux/reboot.h>
- #include <linux/of.h>
- 
- #define EXYNOS3250_SOC_ID	0xE3472000
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 8f995b7..c13d083 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -87,11 +87,6 @@ static struct map_desc exynos5_iodesc[] __initdata = {
- 	},
- };
- 
--static void exynos_restart(enum reboot_mode mode, const char *cmd)
--{
--	__raw_writel(0x1, pmu_base_addr + EXYNOS_SWRESET);
--}
--
- static struct platform_device exynos_cpuidle = {
- 	.name              = "exynos_cpuidle",
- #ifdef CONFIG_ARM_EXYNOS_CPUIDLE
-@@ -316,7 +311,6 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
- 	.init_machine	= exynos_dt_machine_init,
- 	.init_late	= exynos_init_late,
- 	.dt_compat	= exynos_dt_compat,
--	.restart	= exynos_restart,
- 	.reserve	= exynos_reserve,
- 	.dt_fixup	= exynos_dt_fixup,
- MACHINE_END
-diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-index 6c8a76d..e4c3512 100644
---- a/arch/arm/mach-exynos/pmu.c
-+++ b/arch/arm/mach-exynos/pmu.c
-@@ -11,8 +11,11 @@
- 
- #include <linux/io.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/platform_device.h>
- #include <linux/delay.h>
-+#include <linux/notifier.h>
-+#include <linux/reboot.h>
- 
- 
- #include "exynos-pmu.h"
-@@ -716,6 +719,13 @@ static void exynos5420_pmu_init(void)
- 	pr_info("EXYNOS5420 PMU initialized\n");
- }
- 
-+static int pmu_restart_notify(struct notifier_block *this,
-+		unsigned long code, void *unused)
-+{
-+	pmu_raw_writel(0x1, EXYNOS_SWRESET);
-+
-+	return NOTIFY_DONE;
-+}
- 
- static const struct exynos_pmu_data exynos4210_pmu_data = {
- 	.pmu_config	= exynos4210_pmu_config,
-@@ -765,11 +775,20 @@ static const struct of_device_id exynos_pmu_of_device_ids[] = {
- 	{ /*sentinel*/ },
- };
- 
-+/*
-+ * Exynos PMU restart notifier, handles restart functionality
-+ */
-+static struct notifier_block pmu_restart_handler = {
-+	.notifier_call = pmu_restart_notify,
-+	.priority = 128,
-+};
-+
- static int exynos_pmu_probe(struct platform_device *pdev)
- {
- 	const struct of_device_id *match;
- 	struct device *dev = &pdev->dev;
- 	struct resource *res;
-+	int ret;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	pmu_base_addr = devm_ioremap_resource(dev, res);
-@@ -794,6 +813,10 @@ static int exynos_pmu_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, pmu_context);
- 
-+	ret = register_restart_handler(&pmu_restart_handler);
-+	if (ret)
-+		dev_warn(dev, "can't register restart handler err=%d\n", ret);
-+
- 	dev_dbg(dev, "Exynos PMU Driver probe done\n");
- 	return 0;
- }
+ 		t_min = min3(frm->addr.y, frm->addr.cb, frm->addr.cr);
 -- 
-1.7.9.5
+1.9.1
