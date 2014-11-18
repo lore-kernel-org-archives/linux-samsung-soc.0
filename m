@@ -1,148 +1,651 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [RFC PATCH 3/3] drm/exynos: make vidi driver to be independent module
-Date: Wed, 19 Nov 2014 00:26:44 +0900
-Message-ID: <1416324404-28153-4-git-send-email-inki.dae@samsung.com>
+Subject: [RFC PATCH 2/3] drm/exynos: make non kms drivers to be indenpendent
+ modules
+Date: Wed, 19 Nov 2014 00:26:43 +0900
+Message-ID: <1416324404-28153-3-git-send-email-inki.dae@samsung.com>
 References: <1416324404-28153-1-git-send-email-inki.dae@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:26693 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757214AbaKRP0t (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 18 Nov 2014 10:26:49 -0500
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NF8001LVQWM0920@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 19 Nov 2014 00:26:46 +0900 (KST)
 In-reply-to: <1416324404-28153-1-git-send-email-inki.dae@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
 
-VGhpcyBwYXRjaCBtYWtlcyB2aWRpIGRyaXZlciB0byBiZSBpbmRlcGVuZGVudCBtb2R1bGUuCkZv
-ciB0aGlzLCBpdCByZW1vdmVzIHJlZ2lzdGVyIGNvZGVzIHRvIHZpZGkgZHJpdmVyCmZyb20gZXh5
-bm9zX2RybV9kcnYgbW9kdWxlIGFuZCBhZGRzIG1vZHVsZV9pbml0L2V4aXQKZm9yIHZpZGkgZHJp
-dmVyIHNvIHRoYXQgdGhpcyBkcml2ZXIgY2FuIGJlIGNhbGxlZAppbmRlcGVuZGVudGx5LgoKSW4g
-YWRkaXRpb24sIHRoaXMgcGF0Y2ggYWRkcyBjb21wb25lbnQgc3VwcG9ydAp0byB2aWRpIGRyaXZl
-ciwgd2hpY2ggaXMgcmVxdWlyZWQgZm9yIG1vZHVsYXJpdHkuCgpTaWduZWQtb2ZmLWJ5OiBJbmtp
-IERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2Rydi5jICB8ICAgMTIgKy0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9kcnYuaCAgfCAgICA5IC0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV92aWRpLmMgfCAgIDgxICsrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLQogMyBmaWxl
-cyBjaGFuZ2VkLCA1NCBpbnNlcnRpb25zKCspLCA0OCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgYi9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKaW5kZXggN2YxMTg2ZS4uM2FjMzliNiAxMDA2NDQK
-LS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCisrKyBiL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwpAQCAtNjA4LDE5ICs2MDgsMTIgQEAg
-c3RhdGljIGludCBleHlub3NfZHJtX2luaXQodm9pZCkKIAlpZiAoSVNfRVJSKGV4eW5vc19kcm1f
-cGRldikpCiAJCXJldHVybiBQVFJfRVJSKGV4eW5vc19kcm1fcGRldik7CiAKLQlyZXQgPSBleHlu
-b3NfZHJtX3Byb2JlX3ZpZGkoKTsKLQlpZiAocmV0IDwgMCkKLQkJZ290byBlcnJfdW5yZWdpc3Rl
-cl9wZDsKLQogCXJldCA9IHBsYXRmb3JtX2RyaXZlcl9yZWdpc3RlcigmZXh5bm9zX2RybV9wbGF0
-Zm9ybV9kcml2ZXIpOwogCWlmIChyZXQpCi0JCWdvdG8gZXJyX3JlbW92ZV92aWRpOworCQlnb3Rv
-IGVycl91bnJlZ2lzdGVyX3BkOwogCiAJcmV0dXJuIDA7CiAKLWVycl9yZW1vdmVfdmlkaToKLQll
-eHlub3NfZHJtX3JlbW92ZV92aWRpKCk7Ci0KIGVycl91bnJlZ2lzdGVyX3BkOgogCXBsYXRmb3Jt
-X2RldmljZV91bnJlZ2lzdGVyKGV4eW5vc19kcm1fcGRldik7CiAKQEAgLTYzMCw5ICs2MjMsNiBA
-QCBlcnJfdW5yZWdpc3Rlcl9wZDoKIHN0YXRpYyB2b2lkIGV4eW5vc19kcm1fZXhpdCh2b2lkKQog
-ewogCXBsYXRmb3JtX2RyaXZlcl91bnJlZ2lzdGVyKCZleHlub3NfZHJtX3BsYXRmb3JtX2RyaXZl
-cik7Ci0KLQlleHlub3NfZHJtX3JlbW92ZV92aWRpKCk7Ci0KIAlwbGF0Zm9ybV9kZXZpY2VfdW5y
-ZWdpc3RlcihleHlub3NfZHJtX3BkZXYpOwogfQogCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZHJ2LmgKaW5kZXggNWIzMzA1Yy4uN2MyYmEwNiAxMDA2NDQKLS0tIGEvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RybV9kcnYuaApAQCAtMzEwLDE0ICszMTAsNiBAQCBleHlub3NfZHBpX3Byb2Jl
-KHN0cnVjdCBkZXZpY2UgKmRldikgeyByZXR1cm4gTlVMTDsgfQogc3RhdGljIGlubGluZSBpbnQg
-ZXh5bm9zX2RwaV9yZW1vdmUoc3RydWN0IGRldmljZSAqZGV2KSB7IHJldHVybiAwOyB9CiAjZW5k
-aWYKIAotI2lmZGVmIENPTkZJR19EUk1fRVhZTk9TX1ZJREkKLWludCBleHlub3NfZHJtX3Byb2Jl
-X3ZpZGkodm9pZCk7Ci12b2lkIGV4eW5vc19kcm1fcmVtb3ZlX3ZpZGkodm9pZCk7Ci0jZWxzZQot
-c3RhdGljIGlubGluZSBpbnQgZXh5bm9zX2RybV9wcm9iZV92aWRpKHZvaWQpIHsgcmV0dXJuIDA7
-IH0KLXN0YXRpYyBpbmxpbmUgdm9pZCBleHlub3NfZHJtX3JlbW92ZV92aWRpKHZvaWQpIHt9Ci0j
-ZW5kaWYKLQogLyogVGhpcyBmdW5jdGlvbiBjcmVhdGVzIGEgZW5jb2RlciBhbmQgYSBjb25uZWN0
-b3IsIGFuZCBpbml0aWFsaXplcyB0aGVtLiAqLwogaW50IGV4eW5vc19kcm1fY3JlYXRlX2VuY19j
-b25uKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCiAJCQkJc3RydWN0IGV4eW5vc19kcm1fZGlzcGxh
-eSAqZGlzcGxheSk7CkBAIC0zMzMsNSArMzI1LDQgQEAgZXh0ZXJuIGludCBleHlub3NfZHJtX25v
-bl9rbXNfcmVnaXN0ZXIodW5zaWduZWQgaW50IGRldmljZV90eXBlKTsKIGV4dGVybiB2b2lkIGV4
-eW5vc19kcm1fbm9uX2ttc191bnJlZ2lzdGVyKHVuc2lnbmVkIGludCBkZXZpY2VfdHlwZSk7CiAK
-IGV4dGVybiBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIGV4eW5vc19kcm1fY29tbW9uX2hkbWlfZHJp
-dmVyOwotZXh0ZXJuIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgdmlkaV9kcml2ZXI7CiAjZW5kaWYK
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMgYi9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jCmluZGV4IDUwZmFmOTEuLmUx
-MTUzYWEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRp
-LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYwpAQCAtMTQs
-NiArMTQsNyBAQAogCiAjaW5jbHVkZSA8bGludXgva2VybmVsLmg+CiAjaW5jbHVkZSA8bGludXgv
-cGxhdGZvcm1fZGV2aWNlLmg+CisjaW5jbHVkZSA8bGludXgvY29tcG9uZW50Lmg+CiAKICNpbmNs
-dWRlIDxkcm0vZXh5bm9zX2RybS5oPgogCkBAIC00OCwxMCArNDksMTAgQEAgc3RydWN0IHZpZGlf
-d2luX2RhdGEgewogCiBzdHJ1Y3QgdmlkaV9jb250ZXh0IHsKIAlzdHJ1Y3QgZHJtX2RldmljZQkJ
-KmRybV9kZXY7CisJc3RydWN0IHBsYXRmb3JtX2RldmljZQkJKnBkZXY7CiAJc3RydWN0IGRybV9j
-cnRjCQkJKmNydGM7CiAJc3RydWN0IGRybV9lbmNvZGVyCQkqZW5jb2RlcjsKIAlzdHJ1Y3QgZHJt
-X2Nvbm5lY3RvcgkJY29ubmVjdG9yOwotCXN0cnVjdCBleHlub3NfZHJtX3N1YmRydglzdWJkcnY7
-CiAJc3RydWN0IHZpZGlfd2luX2RhdGEJCXdpbl9kYXRhW1dJTkRPV1NfTlJdOwogCXN0cnVjdCBl
-ZGlkCQkJKnJhd19lZGlkOwogCXVuc2lnbmVkIGludAkJCWNsa2RpdjsKQEAgLTU2MSwxNCArNTYy
-LDEzIEBAIHN0YXRpYyBzdHJ1Y3QgZXh5bm9zX2RybV9kaXNwbGF5IHZpZGlfZGlzcGxheSA9IHsK
-IAkub3BzID0gJnZpZGlfZGlzcGxheV9vcHMsCiB9OwogCi1zdGF0aWMgaW50IHZpZGlfc3ViZHJ2
-X3Byb2JlKHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2LCBzdHJ1Y3QgZGV2aWNlICpkZXYpCitz
-dGF0aWMgaW50IHZpZGlfYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1h
-c3Rlciwgdm9pZCAqZGF0YSkKIHsKLQlzdHJ1Y3QgZXh5bm9zX2RybV9tYW5hZ2VyICptZ3IgPSBn
-ZXRfdmlkaV9tZ3IoZGV2KTsKLQlzdHJ1Y3QgdmlkaV9jb250ZXh0ICpjdHggPSBtZ3ItPmN0eDsK
-LQlzdHJ1Y3QgZHJtX2NydGMgKmNydGMgPSBjdHgtPmNydGM7CisJc3RydWN0IGRybV9jcnRjICpj
-cnRjID0gdmlkaV9tYW5hZ2VyLmNydGM7CisJc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXYgPSBk
-YXRhOwogCWludCByZXQ7CiAKLQl2aWRpX21ncl9pbml0aWFsaXplKG1nciwgZHJtX2Rldik7CisJ
-dmlkaV9tZ3JfaW5pdGlhbGl6ZSgmdmlkaV9tYW5hZ2VyLCBkcm1fZGV2KTsKIAogCXJldCA9IGV4
-eW5vc19kcm1fY3J0Y19jcmVhdGUoJnZpZGlfbWFuYWdlcik7CiAJaWYgKHJldCkgewpAQCAtNTg2
-LDIwICs1ODYsNDIgQEAgc3RhdGljIGludCB2aWRpX3N1YmRydl9wcm9iZShzdHJ1Y3QgZHJtX2Rl
-dmljZSAqZHJtX2Rldiwgc3RydWN0IGRldmljZSAqZGV2KQogCXJldHVybiAwOwogfQogCitzdGF0
-aWMgdm9pZCB2aWRpX3VuYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHN0cnVjdCBkZXZpY2UgKm1h
-c3RlciwKKwkJCXZvaWQgKmRhdGEpCit7Cit9CisKK3N0YXRpYyBjb25zdCBzdHJ1Y3QgY29tcG9u
-ZW50X29wcyB2aWRpX2NvbXBvbmVudF9vcHMgPSB7CisJLmJpbmQJPSB2aWRpX2JpbmQsCisJLnVu
-YmluZCA9IHZpZGlfdW5iaW5kLAorfTsKKwogc3RhdGljIGludCB2aWRpX3Byb2JlKHN0cnVjdCBw
-bGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiB7Ci0Jc3RydWN0IGV4eW5vc19kcm1fc3ViZHJ2ICpzdWJk
-cnY7CiAJc3RydWN0IHZpZGlfY29udGV4dCAqY3R4OwogCWludCByZXQ7CiAKKwlyZXQgPSBleHlu
-b3NfZHJtX2NvbXBvbmVudF9hZGQoJnBkZXYtPmRldiwgRVhZTk9TX0RFVklDRV9UWVBFX0NSVEMs
-CisJCQkJCXZpZGlfbWFuYWdlci50eXBlKTsKKwlpZiAocmV0KQorCQlyZXR1cm4gcmV0OworCisJ
-cmV0ID0gZXh5bm9zX2RybV9jb21wb25lbnRfYWRkKCZwZGV2LT5kZXYsIEVYWU5PU19ERVZJQ0Vf
-VFlQRV9DT05ORUNUT1IsCisJCQkJCXZpZGlfZGlzcGxheS50eXBlKTsKKwlpZiAocmV0KQorCQln
-b3RvIGVycl9kZWxfY3J0Y19jb21wb25lbnQ7CisKIAljdHggPSBkZXZtX2t6YWxsb2MoJnBkZXYt
-PmRldiwgc2l6ZW9mKCpjdHgpLCBHRlBfS0VSTkVMKTsKLQlpZiAoIWN0eCkKLQkJcmV0dXJuIC1F
-Tk9NRU07CisJaWYgKCFjdHgpIHsKKwkJcmV0ID0gLUVOT01FTTsKKwkJZ290byBlcnJfZGVsX2Nv
-bm5fY29tcG9uZW50OworCX0KIAogCWN0eC0+ZGVmYXVsdF93aW4gPSAwOwogCiAJSU5JVF9XT1JL
-KCZjdHgtPndvcmssIHZpZGlfZmFrZV92YmxhbmtfaGFuZGxlcik7CiAKKwljdHgtPnBkZXYgPSBw
-ZGV2OwogCXZpZGlfbWFuYWdlci5jdHggPSBjdHg7CiAJdmlkaV9kaXNwbGF5LmN0eCA9IGN0eDsK
-IApAQCAtNjA3LDIzICs2MjksMjEgQEAgc3RhdGljIGludCB2aWRpX3Byb2JlKHN0cnVjdCBwbGF0
-Zm9ybV9kZXZpY2UgKnBkZXYpCiAKIAlwbGF0Zm9ybV9zZXRfZHJ2ZGF0YShwZGV2LCAmdmlkaV9t
-YW5hZ2VyKTsKIAotCXN1YmRydiA9ICZjdHgtPnN1YmRydjsKLQlzdWJkcnYtPmRldiA9ICZwZGV2
-LT5kZXY7Ci0Jc3ViZHJ2LT5wcm9iZSA9IHZpZGlfc3ViZHJ2X3Byb2JlOwotCi0JcmV0ID0gZXh5
-bm9zX2RybV9zdWJkcnZfcmVnaXN0ZXIoc3ViZHJ2KTsKLQlpZiAocmV0IDwgMCkgewotCQlkZXZf
-ZXJyKCZwZGV2LT5kZXYsICJmYWlsZWQgdG8gcmVnaXN0ZXIgZHJtIHZpZGkgZGV2aWNlXG4iKTsK
-LQkJcmV0dXJuIHJldDsKLQl9Ci0KIAlyZXQgPSBkZXZpY2VfY3JlYXRlX2ZpbGUoJnBkZXYtPmRl
-diwgJmRldl9hdHRyX2Nvbm5lY3Rpb24pOwotCWlmIChyZXQgPCAwKSB7Ci0JCWV4eW5vc19kcm1f
-c3ViZHJ2X3VucmVnaXN0ZXIoc3ViZHJ2KTsKKwlpZiAocmV0IDwgMCkKIAkJRFJNX0lORk8oImZh
-aWxlZCB0byBjcmVhdGUgY29ubmVjdGlvbiBzeXNmcy5cbiIpOwotCX0KIAotCXJldHVybiAwOwor
-CXJldCA9IGNvbXBvbmVudF9hZGQoJnBkZXYtPmRldiwgJnZpZGlfY29tcG9uZW50X29wcyk7CisJ
-aWYgKHJldCkKKwkJZ290byBlcnJfZGVsX2Nvbm5fY29tcG9uZW50OworCisJcmV0dXJuIHJldDsK
-KworZXJyX2RlbF9jb25uX2NvbXBvbmVudDoKKwlleHlub3NfZHJtX2NvbXBvbmVudF9kZWwoJnBk
-ZXYtPmRldiwgRVhZTk9TX0RFVklDRV9UWVBFX0NPTk5FQ1RPUik7CitlcnJfZGVsX2NydGNfY29t
-cG9uZW50OgorCWV4eW5vc19kcm1fY29tcG9uZW50X2RlbCgmcGRldi0+ZGV2LCBFWFlOT1NfREVW
-SUNFX1RZUEVfQ1JUQyk7CisJcmV0dXJuIHJldDsKIH0KIAogc3RhdGljIGludCB2aWRpX3JlbW92
-ZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQpAQCAtNjM4LDYgKzY1OCwxMCBAQCBzdGF0
-aWMgaW50IHZpZGlfcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAJCXJldHVy
-biAtRUlOVkFMOwogCX0KIAorCWNvbXBvbmVudF9kZWwoJnBkZXYtPmRldiwgJnZpZGlfY29tcG9u
-ZW50X29wcyk7CisJZXh5bm9zX2RybV9jb21wb25lbnRfZGVsKCZwZGV2LT5kZXYsIEVYWU5PU19E
-RVZJQ0VfVFlQRV9DT05ORUNUT1IpOworCWV4eW5vc19kcm1fY29tcG9uZW50X2RlbCgmcGRldi0+
-ZGV2LCBFWFlOT1NfREVWSUNFX1RZUEVfQ1JUQyk7CisKIAlyZXR1cm4gMDsKIH0KIApAQCAtNjUw
-LDcgKzY3NCw3IEBAIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgdmlkaV9kcml2ZXIgPSB7CiAJfSwK
-IH07CiAKLWludCBleHlub3NfZHJtX3Byb2JlX3ZpZGkodm9pZCkKK3N0YXRpYyBpbnQgZXh5bm9z
-X2RybV92aWRpX2luaXQodm9pZCkKIHsKIAlzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2Owog
-CWludCByZXQ7CkBAIC02NjgsMTIgKzY5MiwxMyBAQCBpbnQgZXh5bm9zX2RybV9wcm9iZV92aWRp
-KHZvaWQpCiAJcmV0dXJuIHJldDsKIH0KIAotdm9pZCBleHlub3NfZHJtX3JlbW92ZV92aWRpKHZv
-aWQpCit2b2lkIGV4eW5vc19kcm1fdmlkaV9leGl0KHZvaWQpCiB7CiAJc3RydWN0IHZpZGlfY29u
-dGV4dCAqY3R4ID0gdmlkaV9tYW5hZ2VyLmN0eDsKLQlzdHJ1Y3QgZXh5bm9zX2RybV9zdWJkcnYg
-KnN1YmRydiA9ICZjdHgtPnN1YmRydjsKLQlzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2ID0g
-dG9fcGxhdGZvcm1fZGV2aWNlKHN1YmRydi0+ZGV2KTsKIAogCXBsYXRmb3JtX2RyaXZlcl91bnJl
-Z2lzdGVyKCZ2aWRpX2RyaXZlcik7Ci0JcGxhdGZvcm1fZGV2aWNlX3VucmVnaXN0ZXIocGRldik7
-CisJcGxhdGZvcm1fZGV2aWNlX3VucmVnaXN0ZXIoY3R4LT5wZGV2KTsKIH0KKworbW9kdWxlX2lu
-aXQoZXh5bm9zX2RybV92aWRpX2luaXQpOworbW9kdWxlX2V4aXQoZXh5bm9zX2RybV92aWRpX2V4
-aXQpOwotLSAKMS43LjkuNQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+This patch makes non kms drivers to be independent modules.
+For this, it removes all register codes to non kms drivers
+from exynos_drm_drv module and adds module_init/exit
+for each non kms driver so that each non kms driver can be
+called independently.
+
+In addition, this patch adds non kms register/unregister functions
+to exynos_drm_core module and also modifies existing codes relevant
+to sub driver.
+
+The idea is that non kms driver is registered by entry point,
+module_init, of each non kms driver and sets its own sub driver
+to registered non kms driver object when the sub driver is probed.
+For this, this patch adds a new structure, exynos_drm_non_kms_dev,
+to exynos_drm_core module.
+
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_core.c    |  166 +++++++++++++++++++++++----
+ drivers/gpu/drm/exynos/exynos_drm_drv.c     |   50 +-------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h     |   28 ++---
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c    |   13 +++
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c     |   34 ++++++
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c     |   12 ++
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c     |   39 ++++++-
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c |   13 +++
+ 8 files changed, 265 insertions(+), 90 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_core.c b/drivers/gpu/drm/exynos/exynos_drm_core.c
+index 4c9f972..2ce63bc 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_core.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_core.c
+@@ -19,6 +19,13 @@
+ #include "exynos_drm_fbdev.h"
+ 
+ static LIST_HEAD(exynos_drm_subdrv_list);
++DEFINE_MUTEX(list_lock);
++
++struct exynos_drm_non_kms_dev {
++	struct list_head list;
++	struct exynos_drm_subdrv *subdrv;
++	unsigned int device_type;
++};
+ 
+ int exynos_drm_create_enc_conn(struct drm_device *dev,
+ 					struct exynos_drm_display *display)
+@@ -55,12 +62,66 @@ err_destroy_encoder:
+ 	return ret;
+ }
+ 
++int exynos_drm_non_kms_register(unsigned int device_type)
++{
++	struct exynos_drm_non_kms_dev *dev;
++
++	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
++	if (!dev)
++		return -ENOMEM;
++
++	dev->device_type = device_type;
++
++	mutex_lock(&list_lock);
++	list_add_tail(&dev->list, &exynos_drm_subdrv_list);
++	mutex_unlock(&list_lock);
++
++	return 0;
++}
++
++void exynos_drm_non_kms_unregister(unsigned int device_type)
++{
++	struct exynos_drm_non_kms_dev *dev, *next;
++
++	mutex_lock(&list_lock);
++	list_for_each_entry_safe(dev, next, &exynos_drm_subdrv_list, list) {
++		mutex_unlock(&list_lock);
++		if (dev->device_type == device_type) {
++			list_del_init(&dev->list);
++			kfree(dev);
++			mutex_lock(&list_lock);
++			break;
++		}
++		mutex_lock(&list_lock);
++	}
++	mutex_unlock(&list_lock);
++}
++
+ int exynos_drm_subdrv_register(struct exynos_drm_subdrv *subdrv)
+ {
++	struct exynos_drm_non_kms_dev *dev;
++
+ 	if (!subdrv)
+ 		return -EINVAL;
+ 
+-	list_add_tail(&subdrv->list, &exynos_drm_subdrv_list);
++	mutex_lock(&list_lock);
++	if (list_empty(&exynos_drm_subdrv_list)) {
++		mutex_unlock(&list_lock);
++		return -ENODEV;
++	}
++	mutex_unlock(&list_lock);
++
++	mutex_lock(&list_lock);
++	list_for_each_entry(dev, &exynos_drm_subdrv_list, list) {
++		mutex_unlock(&list_lock);
++		if (dev->device_type == subdrv->device_type) {
++			dev->subdrv = subdrv;
++			mutex_lock(&list_lock);
++			break;
++		}
++		mutex_lock(&list_lock);
++	}
++	mutex_unlock(&list_lock);
+ 
+ 	return 0;
+ }
+@@ -68,94 +129,151 @@ EXPORT_SYMBOL_GPL(exynos_drm_subdrv_register);
+ 
+ int exynos_drm_subdrv_unregister(struct exynos_drm_subdrv *subdrv)
+ {
++	struct exynos_drm_non_kms_dev *dev;
++
+ 	if (!subdrv)
+ 		return -EINVAL;
+ 
+-	list_del(&subdrv->list);
++	mutex_lock(&list_lock);
++	list_for_each_entry(dev, &exynos_drm_subdrv_list, list) {
++		mutex_unlock(&list_lock);
++		if (dev->device_type == subdrv->device_type) {
++			dev->subdrv = NULL;
++			break;
++		}
++		mutex_lock(&list_lock);
++	}
++	mutex_unlock(&list_lock);
+ 
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(exynos_drm_subdrv_unregister);
+ 
+-int exynos_drm_device_subdrv_probe(struct drm_device *dev)
++int exynos_drm_device_subdrv_probe(struct drm_device *drm_dev)
+ {
+-	struct exynos_drm_subdrv *subdrv, *n;
++	struct exynos_drm_non_kms_dev *dev, *n;
+ 	int err;
+ 
+-	if (!dev)
++	if (!drm_dev)
+ 		return -EINVAL;
+ 
+-	list_for_each_entry_safe(subdrv, n, &exynos_drm_subdrv_list, list) {
++	mutex_lock(&list_lock);
++	if (list_empty(&exynos_drm_subdrv_list)) {
++		mutex_unlock(&list_lock);
++		return -EPROBE_DEFER;
++	}
++
++	list_for_each_entry(dev, &exynos_drm_subdrv_list, list) {
++		mutex_unlock(&list_lock);
++
++		/* Retry to probe if there is sub driver not registered yet. */
++		if (!dev->subdrv) {
++			return -EPROBE_DEFER;
++		}
++		mutex_lock(&list_lock);
++	}
++
++	list_for_each_entry_safe(dev, n, &exynos_drm_subdrv_list, list) {
++		struct exynos_drm_subdrv *subdrv = dev->subdrv;
++
++		mutex_unlock(&list_lock);
+ 		if (subdrv->probe) {
+-			subdrv->drm_dev = dev;
++			subdrv->drm_dev = drm_dev;
+ 
+ 			/*
+ 			 * this probe callback would be called by sub driver
+ 			 * after setting of all resources to this sub driver,
+ 			 * such as clock, irq and register map are done.
+ 			 */
+-			err = subdrv->probe(dev, subdrv->dev);
++			err = subdrv->probe(drm_dev, subdrv->dev);
+ 			if (err) {
+ 				DRM_DEBUG("exynos drm subdrv probe failed.\n");
+-				list_del(&subdrv->list);
++				list_del_init(&dev->list);
++				mutex_lock(&list_lock);
+ 				continue;
+ 			}
+ 		}
++		mutex_lock(&list_lock);
+ 	}
++	mutex_unlock(&list_lock);
+ 
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(exynos_drm_device_subdrv_probe);
+ 
+-int exynos_drm_device_subdrv_remove(struct drm_device *dev)
++int exynos_drm_device_subdrv_remove(struct drm_device *drm_dev)
+ {
+-	struct exynos_drm_subdrv *subdrv;
++	struct exynos_drm_non_kms_dev *dev;
+ 
+-	if (!dev) {
++	if (!drm_dev) {
+ 		WARN(1, "Unexpected drm device unregister!\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	list_for_each_entry(subdrv, &exynos_drm_subdrv_list, list) {
++	mutex_lock(&list_lock);
++	list_for_each_entry(dev, &exynos_drm_subdrv_list, list) {
++		struct exynos_drm_subdrv *subdrv = dev->subdrv;
++
++		mutex_unlock(&list_lock);
+ 		if (subdrv->remove)
+-			subdrv->remove(dev, subdrv->dev);
++			subdrv->remove(drm_dev, subdrv->dev);
++		mutex_lock(&list_lock);
+ 	}
++	mutex_unlock(&list_lock);
+ 
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(exynos_drm_device_subdrv_remove);
+ 
+-int exynos_drm_subdrv_open(struct drm_device *dev, struct drm_file *file)
++int exynos_drm_subdrv_open(struct drm_device *drm_dev, struct drm_file *file)
+ {
+-	struct exynos_drm_subdrv *subdrv;
++	struct exynos_drm_non_kms_dev *dev;
+ 	int ret;
+ 
+-	list_for_each_entry(subdrv, &exynos_drm_subdrv_list, list) {
++	mutex_lock(&list_lock);
++	list_for_each_entry(dev, &exynos_drm_subdrv_list, list) {
++		struct exynos_drm_subdrv *subdrv = dev->subdrv;
++
++		mutex_unlock(&list_lock);
+ 		if (subdrv->open) {
+-			ret = subdrv->open(dev, subdrv->dev, file);
++			ret = subdrv->open(drm_dev, subdrv->dev, file);
+ 			if (ret)
+ 				goto err;
+ 		}
++		mutex_lock(&list_lock);
+ 	}
++	mutex_unlock(&list_lock);
+ 
+ 	return 0;
+ 
+ err:
+-	list_for_each_entry_reverse(subdrv, &subdrv->list, list) {
++	mutex_lock(&list_lock);
++	list_for_each_entry_reverse(dev, &exynos_drm_subdrv_list, list) {
++		struct exynos_drm_subdrv *subdrv = dev->subdrv;
++
++		mutex_unlock(&list_lock);
+ 		if (subdrv->close)
+-			subdrv->close(dev, subdrv->dev, file);
++			subdrv->close(drm_dev, subdrv->dev, file);
++		mutex_lock(&list_lock);
+ 	}
++	mutex_lock(&list_lock);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(exynos_drm_subdrv_open);
+ 
+-void exynos_drm_subdrv_close(struct drm_device *dev, struct drm_file *file)
++void exynos_drm_subdrv_close(struct drm_device *drm_dev, struct drm_file *file)
+ {
+-	struct exynos_drm_subdrv *subdrv;
++	struct exynos_drm_non_kms_dev *dev;
++
++	mutex_lock(&list_lock);
++	list_for_each_entry(dev, &exynos_drm_subdrv_list, list) {
++		struct exynos_drm_subdrv *subdrv = dev->subdrv;
+ 
+-	list_for_each_entry(subdrv, &exynos_drm_subdrv_list, list) {
++		mutex_unlock(&list_lock);
+ 		if (subdrv->close)
+-			subdrv->close(dev, subdrv->dev, file);
++			subdrv->close(drm_dev, subdrv->dev, file);
++		mutex_lock(&list_lock);
+ 	}
++	mutex_unlock(&list_lock);
+ }
+ EXPORT_SYMBOL_GPL(exynos_drm_subdrv_close);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index 02d4772..7f1186e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -539,28 +539,10 @@ static const struct component_master_ops exynos_drm_ops = {
+ 	.unbind		= exynos_drm_unbind,
+ };
+ 
+-static struct platform_driver *const exynos_drm_non_kms_drivers[] = {
+-#ifdef CONFIG_DRM_EXYNOS_G2D
+-	&g2d_driver,
+-#endif
+-#ifdef CONFIG_DRM_EXYNOS_FIMC
+-	&fimc_driver,
+-#endif
+-#ifdef CONFIG_DRM_EXYNOS_ROTATOR
+-	&rotator_driver,
+-#endif
+-#ifdef CONFIG_DRM_EXYNOS_GSC
+-	&gsc_driver,
+-#endif
+-#ifdef CONFIG_DRM_EXYNOS_IPP
+-	&ipp_driver,
+-#endif
+-};
+-
+ static int exynos_drm_platform_probe(struct platform_device *pdev)
+ {
+ 	struct component_match *match;
+-	int ret, i, j;
++	int ret;
+ 
+ 	pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+ 	exynos_drm_driver.num_ioctls = ARRAY_SIZE(exynos_ioctls);
+@@ -574,31 +556,13 @@ static int exynos_drm_platform_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	for (j = 0; j < ARRAY_SIZE(exynos_drm_non_kms_drivers); ++j) {
+-		ret = platform_driver_register(exynos_drm_non_kms_drivers[j]);
+-		if (ret < 0)
+-			goto err_del_component_master;
+-	}
+-
+-	ret = exynos_platform_device_ipp_register();
+-	if (ret < 0)
+-		goto err_unregister_non_kms_drivers;
+-
+ 	/* Probe non kms sub drivers and virtual display driver. */
+ 	ret = exynos_drm_device_subdrv_probe(platform_get_drvdata(pdev));
+ 	if (ret)
+-		goto err_unregister_resources;
++		goto err_del_component_master;
+ 
+ 	return ret;
+ 
+-err_unregister_resources:
+-#ifdef CONFIG_DRM_EXYNOS_IPP
+-	exynos_platform_device_ipp_unregister();
+-#endif
+-err_unregister_non_kms_drivers:
+-	while (--j >= 0)
+-		platform_driver_unregister(exynos_drm_non_kms_drivers[j]);
+-
+ err_del_component_master:
+ 	component_master_del(&pdev->dev, &exynos_drm_ops);
+ 
+@@ -607,17 +571,7 @@ err_del_component_master:
+ 
+ static int exynos_drm_platform_remove(struct platform_device *pdev)
+ {
+-	int i;
+-
+ 	exynos_drm_device_subdrv_remove(platform_get_drvdata(pdev));
+-
+-#ifdef CONFIG_DRM_EXYNOS_IPP
+-	exynos_platform_device_ipp_unregister();
+-#endif
+-
+-	for (i = ARRAY_SIZE(exynos_drm_non_kms_drivers) - 1; i >= 0; --i)
+-		platform_driver_unregister(exynos_drm_non_kms_drivers[i]);
+-
+ 	component_master_del(&pdev->dev, &exynos_drm_ops);
+ 
+ 	return 0;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 352a9f9..5b3305c 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -41,6 +41,13 @@ enum exynos_drm_output_type {
+ 	EXYNOS_DISPLAY_TYPE_VIDI,
+ };
+ 
++/* This enumerates non kms device type. */
++enum exynos_drm_non_kms_type {
++	EXYNOS_DRM_NON_KMS_NONE,
++	EXYNOS_DRM_NON_KMS_G2D,
++	EXYNOS_DRM_NON_KMS_IPP,
++};
++
+ /*
+  * Exynos drm common overlay structure.
+  *
+@@ -259,10 +266,10 @@ struct exynos_drm_private {
+ /*
+  * Exynos drm sub driver structure.
+  *
+- * @list: sub driver has its own list object to register to exynos drm driver.
+  * @dev: pointer to device object for subdrv device driver.
+  * @drm_dev: pointer to drm_device and this pointer would be set
+  *	when sub driver calls exynos_drm_subdrv_register().
++ * @device_type: non kms device type.
+  * @probe: this callback would be called by exynos drm driver after
+  *     subdrv is registered to it.
+  * @remove: this callback is used to release resources created
+@@ -271,9 +278,9 @@ struct exynos_drm_private {
+  * @close: this would be called with drm device file close.
+  */
+ struct exynos_drm_subdrv {
+-	struct list_head list;
+ 	struct device *dev;
+ 	struct drm_device *drm_dev;
++	unsigned int device_type;
+ 
+ 	int (*probe)(struct drm_device *drm_dev, struct device *dev);
+ 	void (*remove)(struct drm_device *drm_dev, struct device *dev);
+@@ -294,15 +301,6 @@ int exynos_drm_device_subdrv_remove(struct drm_device *dev);
+ int exynos_drm_subdrv_open(struct drm_device *dev, struct drm_file *file);
+ void exynos_drm_subdrv_close(struct drm_device *dev, struct drm_file *file);
+ 
+-#ifdef CONFIG_DRM_EXYNOS_IPP
+-int exynos_platform_device_ipp_register(void);
+-void exynos_platform_device_ipp_unregister(void);
+-#else
+-static inline int exynos_platform_device_ipp_register(void) { return 0; }
+-static inline void exynos_platform_device_ipp_unregister(void) {}
+-#endif
+-
+-
+ #ifdef CONFIG_DRM_EXYNOS_DPI
+ struct exynos_drm_display * exynos_dpi_probe(struct device *dev);
+ int exynos_dpi_remove(struct device *dev);
+@@ -331,11 +329,9 @@ int exynos_drm_component_add(struct device *dev,
+ void exynos_drm_component_del(struct device *dev,
+ 				enum exynos_drm_device_type dev_type);
+ 
++extern int exynos_drm_non_kms_register(unsigned int device_type);
++extern void exynos_drm_non_kms_unregister(unsigned int device_type);
++
+ extern struct platform_driver exynos_drm_common_hdmi_driver;
+ extern struct platform_driver vidi_driver;
+-extern struct platform_driver g2d_driver;
+-extern struct platform_driver fimc_driver;
+-extern struct platform_driver rotator_driver;
+-extern struct platform_driver gsc_driver;
+-extern struct platform_driver ipp_driver;
+ #endif
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimc.c b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+index 68d38eb..05000ee 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+@@ -1860,3 +1860,16 @@ struct platform_driver fimc_driver = {
+ 	},
+ };
+ 
++static int fimc_driver_init(void)
++{
++	return platform_driver_register(&fimc_driver);
++}
++
++static void fimc_driver_exit(void)
++{
++	platform_driver_unregister(&fimc_driver);
++}
++
++module_init(fimc_driver_init);
++module_exit(fimc_driver_exit);
++
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_g2d.c b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+index 6ff8599..fa37603 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_g2d.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+@@ -1464,6 +1464,7 @@ static int g2d_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, g2d);
+ 
+ 	subdrv = &g2d->subdrv;
++	subdrv->device_type = EXYNOS_DRM_NON_KMS_G2D;
+ 	subdrv->dev = dev;
+ 	subdrv->probe = g2d_subdrv_probe;
+ 	subdrv->remove = g2d_subdrv_remove;
+@@ -1585,3 +1586,36 @@ struct platform_driver g2d_driver = {
+ 		.of_match_table = exynos_g2d_match,
+ 	},
+ };
++
++static int exynos_g2d_init(void)
++{
++	int ret;
++
++	/*
++	 * Register non kms driver only in case that g2d device node exists
++	 * and the device node is enabled.
++	 *
++	 * TODO. this code should be replaced with super device node.
++	 */
++	if (!of_machine_is_compatible("samsung,exynos5250-g2d") &&
++			!of_machine_is_compatible("samsung,exynos4212-g2d"))
++		return -ENODEV;
++
++	ret = exynos_drm_non_kms_register(EXYNOS_DRM_NON_KMS_G2D);
++	if (ret)
++		return ret;
++
++	ret = platform_driver_register(&g2d_driver);
++	if (ret)
++		exynos_drm_non_kms_unregister(EXYNOS_DRM_NON_KMS_G2D);
++
++	return ret;
++}
++
++static void exynos_g2d_exit(void)
++{
++	platform_driver_unregister(&g2d_driver);
++}
++
++module_init(exynos_g2d_init);
++module_exit(exynos_g2d_exit);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_gsc.c b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+index c6a013f..0cbed55 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_gsc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+@@ -1799,3 +1799,15 @@ struct platform_driver gsc_driver = {
+ 	},
+ };
+ 
++static int gsc_driver_init(void)
++{
++	return platform_driver_register(&gsc_driver);
++}
++
++static void gsc_driver_exit(void)
++{
++	platform_driver_unregister(&gsc_driver);
++}
++
++module_init(gsc_driver_init);
++module_exit(gsc_driver_exit);
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+index 00d74b1..559ee65 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
+@@ -102,7 +102,7 @@ static LIST_HEAD(exynos_drm_ippdrv_list);
+ static DEFINE_MUTEX(exynos_drm_ippdrv_lock);
+ static BLOCKING_NOTIFIER_HEAD(exynos_drm_ippnb_list);
+ 
+-int exynos_platform_device_ipp_register(void)
++static int exynos_platform_device_ipp_register(void)
+ {
+ 	struct platform_device *pdev;
+ 
+@@ -118,7 +118,7 @@ int exynos_platform_device_ipp_register(void)
+ 	return 0;
+ }
+ 
+-void exynos_platform_device_ipp_unregister(void)
++static void exynos_platform_device_ipp_unregister(void)
+ {
+ 	if (exynos_drm_ipp_pdev) {
+ 		platform_device_unregister(exynos_drm_ipp_pdev);
+@@ -1718,6 +1718,7 @@ static int ipp_probe(struct platform_device *pdev)
+ 
+ 	/* set sub driver informations */
+ 	subdrv = &ctx->subdrv;
++	subdrv->device_type = EXYNOS_DRM_NON_KMS_IPP;
+ 	subdrv->dev = dev;
+ 	subdrv->probe = ipp_subdrv_probe;
+ 	subdrv->remove = ipp_subdrv_remove;
+@@ -1773,3 +1774,37 @@ struct platform_driver ipp_driver = {
+ 	},
+ };
+ 
++static int ipp_driver_init(void)
++{
++	int ret;
++
++	ret = exynos_drm_non_kms_register(EXYNOS_DRM_NON_KMS_IPP);
++	if (ret)
++		return ret;
++
++	ret = exynos_platform_device_ipp_register();
++	if (ret)
++		goto err_unregister_non_kms;
++
++	ret = platform_driver_register(&ipp_driver);
++	if (ret)
++		goto err_unregister_ipp_device;
++
++	return ret;
++
++err_unregister_ipp_device:
++	exynos_platform_device_ipp_unregister();
++err_unregister_non_kms:
++	exynos_drm_non_kms_unregister(EXYNOS_DRM_NON_KMS_IPP);
++
++	return ret;
++}
++
++static void ipp_driver_exit(void)
++{
++	platform_driver_unregister(&ipp_driver);
++}
++
++module_init(ipp_driver_init);
++module_exit(ipp_driver_exit);
++
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_rotator.c b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+index b6a37d4..ffa0166 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_rotator.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+@@ -854,3 +854,16 @@ struct platform_driver rotator_driver = {
+ 		.of_match_table = exynos_rotator_match,
+ 	},
+ };
++
++static int rotator_driver_init(void)
++{
++	return platform_driver_register(&rotator_driver);
++}
++
++static void rotator_driver_exit(void)
++{
++	platform_driver_unregister(&rotator_driver);
++}
++
++module_init(rotator_driver_init);
++module_exit(rotator_driver_exit);
+-- 
+1.7.9.5
