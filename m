@@ -1,220 +1,177 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH 04/21] thermal: of: Extend current of-thermal.c code to
- allow setting emulated temp
-Date: Tue, 18 Nov 2014 11:23:29 -0400
-Message-ID: <20141118152327.GB18674@developer>
-References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
- <1412872737-624-5-git-send-email-l.majewski@samsung.com>
- <20141107014448.GE10180@developer>
- <20141107122035.2973ad20@amdc2363>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [RFC PATCH 1/3] drm/exynos: make kms drivers to be independent modules
+Date: Wed, 19 Nov 2014 00:26:42 +0900
+Message-ID: <1416324404-28153-2-git-send-email-inki.dae@samsung.com>
+References: <1416324404-28153-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="yEPQxsgoJgBvi8ip"
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20141107122035.2973ad20@amdc2363>
-Sender: linux-pm-owner@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Zhang Rui <rui.zhang@intel.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, Linux PM list <linux-pm@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1416324404-28153-1-git-send-email-inki.dae@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-
---yEPQxsgoJgBvi8ip
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Lukasz,
-
-
-On Fri, Nov 07, 2014 at 12:20:35PM +0100, Lukasz Majewski wrote:
-> Hi Eduardo,
->=20
-> > Hello,
-> >=20
-> > On Thu, Oct 09, 2014 at 06:38:40PM +0200, Lukasz Majewski wrote:
-> > > Before this change it was only possible to set get_temp() and
-> > > get_trend() methods to be used in the common code handling passing
-> > > parameters via device tree to "cpu-thermal" CPU thermal zone device.
-> > >=20
-> > > Now it is possible to also set emulated value of temperature for
-> > > debug purposes.
-> > >=20
-> > > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > > ---
-> > >  drivers/thermal/of-thermal.c | 25 ++++++++++++++++++++++---
-> > >  include/linux/thermal.h      |  6 ++++--
-> > >  2 files changed, 26 insertions(+), 5 deletions(-)
-> > >=20
-> > > diff --git a/drivers/thermal/of-thermal.c
-> > > b/drivers/thermal/of-thermal.c index cd74e64..f206375 100644
-> > > --- a/drivers/thermal/of-thermal.c
-> > > +++ b/drivers/thermal/of-thermal.c
-> > > @@ -98,10 +98,22 @@ struct __thermal_zone {
-> > >  	void *sensor_data;
-> > >  	int (*get_temp)(void *, long *);
-> > >  	int (*get_trend)(void *, long *);
-> > > +	int (*set_emul_temp)(void *, unsigned long);
-> > >  };
-> > > =20
-> > >  /***   DT thermal zone device callbacks   ***/
-> > > =20
-> > > +static int of_thermal_set_emul_temp(struct thermal_zone_device *tz,
-> > > +				    unsigned long temp)
-> > > +{
-> > > +	struct __thermal_zone *data =3D tz->devdata;
-> > > +
-> > > +	if (!data->set_emul_temp)
-> > > +		return -EINVAL;
-> > > +
-> > > +	return data->set_emul_temp(data->sensor_data, temp);
-> > > +}
-> > > +
-> > >  static int of_thermal_get_temp(struct thermal_zone_device *tz,
-> > >  			       unsigned long *temp)
-> > >  {
-> > > @@ -352,7 +364,8 @@ static struct thermal_zone_device *
-> > >  thermal_zone_of_add_sensor(struct device_node *zone,
-> > >  			   struct device_node *sensor, void *data,
-> > >  			   int (*get_temp)(void *, long *),
-> > > -			   int (*get_trend)(void *, long *))
-> > > +			   int (*get_trend)(void *, long *),
-> > > +			   int (*set_emul_temp)(void *, unsigned
-> > > long))
-> >=20
-> > Thanks for improving the API. However, looking at what is above, it
-> > starts to be pretty ugly. And for sure, this is not the last callback
-> > to be added.
->=20
-> Presumably there would be some more callbacks.
->=20
-> > I believe it is time to add a .ops in the of-thermal.
-> > While in here, do you mind adding the .ops in a separated patch, then
-> > add the .set_emul_temp in the .ops field?
->=20
-> I will add an option to pass .ops with thermal_zone_of_add_sensor().
->=20
-> I'm only concerned a bit about testing other users of of-thermal.=20
-> I have only beaglebone black (BBB) for testing, which on-soc bandgap
-> thermal sensor is very inaccurate and hence not supported even at BBB
-> github linux kernel repository (v3.14).
->=20
-> Because of above I would need your support for testing.
->=20
-
-I did the .ops part that is required for your patch:
-https://patchwork.kernel.org/patch/5329801/
-
-As you already reviewed it. Do you mind refreshing your series on top of
-it?
-
-Cheers,
-
-
-> >=20
-> > >  {
-> > >  	struct thermal_zone_device *tzd;
-> > >  	struct __thermal_zone *tz;
-> > > @@ -366,10 +379,12 @@ thermal_zone_of_add_sensor(struct device_node
-> > > *zone, mutex_lock(&tzd->lock);
-> > >  	tz->get_temp =3D get_temp;
-> > >  	tz->get_trend =3D get_trend;
-> > > +	tz->set_emul_temp =3D set_emul_temp;
-> > >  	tz->sensor_data =3D data;
-> > > =20
-> > >  	tzd->ops->get_temp =3D of_thermal_get_temp;
-> > >  	tzd->ops->get_trend =3D of_thermal_get_trend;
-> > > +	tzd->ops->set_emul_temp =3D of_thermal_set_emul_temp;
-> > >  	mutex_unlock(&tzd->lock);
-> > > =20
-> > >  	return tzd;
-> > > @@ -411,7 +426,8 @@ thermal_zone_of_add_sensor(struct device_node
-> > > *zone, struct thermal_zone_device *
-> > >  thermal_zone_of_sensor_register(struct device *dev, int sensor_id,
-> > >  				void *data, int (*get_temp)(void
-> > > *, long *),
-> > > -				int (*get_trend)(void *, long *))
-> > > +				int (*get_trend)(void *, long *),
-> > > +				int (*set_emul_temp)(void *,
-> > > unsigned long)) {
-> > >  	struct device_node *np, *child, *sensor_np;
-> > > =20
-> > > @@ -453,7 +469,8 @@ thermal_zone_of_sensor_register(struct device
-> > > *dev, int sensor_id, return thermal_zone_of_add_sensor(child,
-> > > sensor_np, data,
-> > >  							  get_temp,
-> > > -
-> > > get_trend);
-> > > +
-> > > get_trend,
-> > > +
-> > > set_emul_temp); }
-> > >  	}
-> > >  	of_node_put(np);
-> > > @@ -494,9 +511,11 @@ void thermal_zone_of_sensor_unregister(struct
-> > > device *dev, mutex_lock(&tzd->lock);
-> > >  	tzd->ops->get_temp =3D NULL;
-> > >  	tzd->ops->get_trend =3D NULL;
-> > > +	tzd->ops->set_emul_temp =3D NULL;
-> > > =20
-> > >  	tz->get_temp =3D NULL;
-> > >  	tz->get_trend =3D NULL;
-> > > +	tz->set_emul_temp =3D NULL;
-> > >  	tz->sensor_data =3D NULL;
-> > >  	mutex_unlock(&tzd->lock);
-> > >  }
-> > > diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-> > > index 0305cde..36010e9 100644
-> > > --- a/include/linux/thermal.h
-> > > +++ b/include/linux/thermal.h
-> > > @@ -290,14 +290,16 @@ struct thermal_genl_event {
-> > >  struct thermal_zone_device *
-> > >  thermal_zone_of_sensor_register(struct device *dev, int id,
-> > >  				void *data, int (*get_temp)(void
-> > > *, long *),
-> > > -				int (*get_trend)(void *, long *));
-> > > +				int (*get_trend)(void *, long *),
-> > > +				int (*set_emul_temp)(void *,
-> > > unsigned long)); void thermal_zone_of_sensor_unregister(struct
-> > > device *dev, struct thermal_zone_device *tz);
-> > >  #else
-> > >  static inline struct thermal_zone_device *
-> > >  thermal_zone_of_sensor_register(struct device *dev, int id,
-> > >  				void *data, int (*get_temp)(void
-> > > *, long *),
-> > > -				int (*get_trend)(void *, long *))
-> > > +				int (*get_trend)(void *, long *),
-> > > +				int (*set_emul_temp)(void *,
-> > > unsigned long)) {
-> > >  	return NULL;
-> > >  }
-> > > --=20
-> > > 2.0.0.rc2
-> > >=20
->=20
->=20
->=20
-> --=20
-> Best regards,
->=20
-> Lukasz Majewski
->=20
-> Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
-
---yEPQxsgoJgBvi8ip
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUa2RlAAoJEMLUO4d9pOJWUoIH/3t+oN9xb9nDHSqfcd/ejmTy
-8R7FQ53X3zKPwPB9EZ4k7SSJ3IvrxgGtXf3v4H5ZgU6psIUP9uCLQZ4jOddCdtos
-FmhlKh0NikPJ2E0xkbepZfLfsgp1Suqhxkm1uehyj/n+xNWzP74FiNuT6Dqed4VE
-m8dGj+RyZt66PtAZfmyKY4am28VFJsaWb4CdCVvvEqFNaKKZ/xJj8qrV/Nhpk8lV
-tt+FQoiOgSCdh9JB6sWioEg13r0qJ4GpLkG3NbyaWWcOi3JHHl3usfgAFIgRHj14
-QxFJYiKzDXlj9Xv/EosN731J3VEvVUMB9OChe/vOW+OlF74krCpF/D6Htqggki4=
-=bA99
------END PGP SIGNATURE-----
-
---yEPQxsgoJgBvi8ip--
+VGhpcyBwYXRjaCBtYWtlcyBrbXMgZHJpdmVycyB0byBiZSBpbmRlcGVuZGVudCBtb2R1bGVzLgpG
+b3IgdGhpcywgaXQgcmVtb3ZlcyBhbGwgcmVnaXN0ZXIgY29kZXMgdG8ga21zIGRyaXZlcnMKZnJv
+bSBleHlub3NfZHJtX2RydiBtb2R1bGUgYW5kIGFkZHMgbW9kdWxlX2luaXQvZXhpdApmb3IgZWFj
+aCBrbXMgZHJpdmVyIHNvIHRoYXQgZWFjaCBrbXMgZHJpdmVyIGNhbiBiZQpjYWxsZWQgaW5kZXBl
+bmRlbnRseS4KClNpZ25lZC1vZmYtYnk6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4K
+LS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcgICAgICAgICAgIHwgICAgOCArKyst
+LS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyAgfCAgIDEzICsrKysr
+KysrKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jICB8ICAgNDMgKysr
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fZHJ2LmggIHwgICAgNSAtLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZHNpLmMgIHwgICAxMyArKysrKysrKysKIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9maW1kLmMgfCAgIDEzICsrKysrKysrKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfaGRtaS5jICAgICB8ICAgMTMgKysrKysrKysrCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19taXhlci5jICAgIHwgICAxMyArKysrKysrKysKIDggZmlsZXMgY2hhbmdlZCwgNzIgaW5z
+ZXJ0aW9ucygrKSwgNDkgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9LY29uZmlnIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9LY29uZmlnCmluZGV4IDdm
+OWY2ZjkuLjNkNWZhNjkgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvS2NvbmZp
+ZworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL0tjb25maWcKQEAgLTI1LDcgKzI1LDcgQEAg
+Y29uZmlnIERSTV9FWFlOT1NfRE1BQlVGCiAJICBDaG9vc2UgdGhpcyBvcHRpb24gaWYgeW91IHdh
+bnQgdG8gdXNlIERNQUJVRiBmZWF0dXJlIGZvciBEUk0uCiAKIGNvbmZpZyBEUk1fRVhZTk9TX0ZJ
+TUQKLQlib29sICJFeHlub3MgRFJNIEZJTUQiCisJdHJpc3RhdGUgIkV4eW5vcyBEUk0gRklNRCIK
+IAlkZXBlbmRzIG9uIERSTV9FWFlOT1MgJiYgIUZCX1MzQwogCXNlbGVjdCBGQl9NT0RFX0hFTFBF
+UlMKIAlzZWxlY3QgTUZEX1NZU0NPTgpAQCAtNDEsNyArNDEsNyBAQCBjb25maWcgRFJNX0VYWU5P
+U19EUEkKIAkgIFRoaXMgZW5hYmxlcyBzdXBwb3J0IGZvciBFeHlub3MgcGFyYWxsZWwgb3V0cHV0
+LgogCiBjb25maWcgRFJNX0VYWU5PU19EU0kKLQlib29sICJFWFlOT1MgRFJNIE1JUEktRFNJIGRy
+aXZlciBzdXBwb3J0IgorCXRyaXN0YXRlICJFWFlOT1MgRFJNIE1JUEktRFNJIGRyaXZlciBzdXBw
+b3J0IgogCWRlcGVuZHMgb24gRFJNX0VYWU5PU19GSU1ECiAJc2VsZWN0IERSTV9NSVBJX0RTSQog
+CXNlbGVjdCBEUk1fUEFORUwKQEAgLTUwLDcgKzUwLDcgQEAgY29uZmlnIERSTV9FWFlOT1NfRFNJ
+CiAJICBUaGlzIGVuYWJsZXMgc3VwcG9ydCBmb3IgRXh5bm9zIE1JUEktRFNJIGRldmljZS4KIAog
+Y29uZmlnIERSTV9FWFlOT1NfRFAKLQlib29sICJFWFlOT1MgRFJNIERQIGRyaXZlciBzdXBwb3J0
+IgorCXRyaXN0YXRlICJFWFlOT1MgRFJNIERQIGRyaXZlciBzdXBwb3J0IgogCWRlcGVuZHMgb24g
+RFJNX0VYWU5PU19GSU1EICYmIEFSQ0hfRVhZTk9TICYmIChEUk1fUFROMzQ2MD1uIHx8IERSTV9Q
+VE4zNDYwPXkgfHwgRFJNX1BUTjM0NjA9RFJNX0VYWU5PUykKIAlkZWZhdWx0IERSTV9FWFlOT1MK
+IAlzZWxlY3QgRFJNX1BBTkVMCkBAIC01OCw3ICs1OCw3IEBAIGNvbmZpZyBEUk1fRVhZTk9TX0RQ
+CiAJICBUaGlzIGVuYWJsZXMgc3VwcG9ydCBmb3IgRFAgZGV2aWNlLgogCiBjb25maWcgRFJNX0VY
+WU5PU19IRE1JCi0JYm9vbCAiRXh5bm9zIERSTSBIRE1JIgorCXRyaXN0YXRlICJFeHlub3MgRFJN
+IEhETUkiCiAJZGVwZW5kcyBvbiBEUk1fRVhZTk9TICYmICFWSURFT19TQU1TVU5HX1M1UF9UVgog
+CWhlbHAKIAkgIENob29zZSB0aGlzIG9wdGlvbiBpZiB5b3Ugd2FudCB0byB1c2UgRXh5bm9zIEhE
+TUkgZm9yIERSTS4KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Rw
+X2NvcmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYwppbmRleCBl
+ZDgxOGI5Li5iMDhkOTdiIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcF9jb3JlLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5j
+CkBAIC0xNDA4LDYgKzE0MDgsMTkgQEAgc3RydWN0IHBsYXRmb3JtX2RyaXZlciBkcF9kcml2ZXIg
+PSB7CiAJfSwKIH07CiAKK3N0YXRpYyBpbnQgZXh5bm9zX2RwX2luaXQodm9pZCkKK3sKKwlyZXR1
+cm4gcGxhdGZvcm1fZHJpdmVyX3JlZ2lzdGVyKCZkcF9kcml2ZXIpOworfQorCitzdGF0aWMgdm9p
+ZCBleHlub3NfZHBfZXhpdCh2b2lkKQoreworCXBsYXRmb3JtX2RyaXZlcl91bnJlZ2lzdGVyKCZk
+cF9kcml2ZXIpOworfQorCittb2R1bGVfaW5pdChleHlub3NfZHBfaW5pdCk7Cittb2R1bGVfZXhp
+dChleHlub3NfZHBfZXhpdCk7CisKIE1PRFVMRV9BVVRIT1IoIkppbmdvbyBIYW4gPGpnMS5oYW5A
+c2Ftc3VuZy5jb20+Iik7CiBNT0RVTEVfREVTQ1JJUFRJT04oIlNhbXN1bmcgU29DIERQIERyaXZl
+ciIpOwogTU9EVUxFX0xJQ0VOU0UoIkdQTCB2MiIpOwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2Rydi5jCmluZGV4IGVhYjEyZjAuLjAyZDQ3NzIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZHJ2LmMKQEAgLTQ4NCwxMiArNDg0LDYgQEAgc3RhdGljIHN0cnVjdCBj
+b21wb25lbnRfbWF0Y2ggKmV4eW5vc19kcm1fbWF0Y2hfYWRkKHN0cnVjdCBkZXZpY2UgKmRldikK
+IAogCW11dGV4X2xvY2soJmRybV9jb21wb25lbnRfbG9jayk7CiAKLQkvKiBEbyBub3QgcmV0cnkg
+dG8gcHJvYmUgaWYgdGhlcmUgaXMgbm8gYW55IGttcyBkcml2ZXIgcmVnaXRlcmVkLiAqLwotCWlm
+IChsaXN0X2VtcHR5KCZkcm1fY29tcG9uZW50X2xpc3QpKSB7Ci0JCW11dGV4X3VubG9jaygmZHJt
+X2NvbXBvbmVudF9sb2NrKTsKLQkJcmV0dXJuIEVSUl9QVFIoLUVOT0RFVik7Ci0JfQotCiAJbGlz
+dF9mb3JfZWFjaF9lbnRyeShjZGV2LCAmZHJtX2NvbXBvbmVudF9saXN0LCBsaXN0KSB7CiAJCS8q
+CiAJCSAqIEFkZCBjb21wb25lbnRzIHRvIG1hc3RlciBvbmx5IGluIGNhc2UgdGhhdCBjcnRjIGFu
+ZApAQCAtNTQ1LDIyICs1MzksNiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGNvbXBvbmVudF9tYXN0
+ZXJfb3BzIGV4eW5vc19kcm1fb3BzID0gewogCS51bmJpbmQJCT0gZXh5bm9zX2RybV91bmJpbmQs
+CiB9OwogCi1zdGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciAqY29uc3QgZXh5bm9zX2RybV9r
+bXNfZHJpdmVyc1tdID0gewotI2lmZGVmIENPTkZJR19EUk1fRVhZTk9TX0ZJTUQKLQkmZmltZF9k
+cml2ZXIsCi0jZW5kaWYKLSNpZmRlZiBDT05GSUdfRFJNX0VYWU5PU19EUAotCSZkcF9kcml2ZXIs
+Ci0jZW5kaWYKLSNpZmRlZiBDT05GSUdfRFJNX0VYWU5PU19EU0kKLQkmZHNpX2RyaXZlciwKLSNl
+bmRpZgotI2lmZGVmIENPTkZJR19EUk1fRVhZTk9TX0hETUkKLQkmbWl4ZXJfZHJpdmVyLAotCSZo
+ZG1pX2RyaXZlciwKLSNlbmRpZgotfTsKLQogc3RhdGljIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIg
+KmNvbnN0IGV4eW5vc19kcm1fbm9uX2ttc19kcml2ZXJzW10gPSB7CiAjaWZkZWYgQ09ORklHX0RS
+TV9FWFlOT1NfRzJECiAJJmcyZF9kcml2ZXIsCkBAIC01ODcsMjIgKzU2NSwxNCBAQCBzdGF0aWMg
+aW50IGV4eW5vc19kcm1fcGxhdGZvcm1fcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRl
+dikKIAlwZGV2LT5kZXYuY29oZXJlbnRfZG1hX21hc2sgPSBETUFfQklUX01BU0soMzIpOwogCWV4
+eW5vc19kcm1fZHJpdmVyLm51bV9pb2N0bHMgPSBBUlJBWV9TSVpFKGV4eW5vc19pb2N0bHMpOwog
+Ci0JZm9yIChpID0gMDsgaSA8IEFSUkFZX1NJWkUoZXh5bm9zX2RybV9rbXNfZHJpdmVycyk7ICsr
+aSkgewotCQlyZXQgPSBwbGF0Zm9ybV9kcml2ZXJfcmVnaXN0ZXIoZXh5bm9zX2RybV9rbXNfZHJp
+dmVyc1tpXSk7Ci0JCWlmIChyZXQgPCAwKQotCQkJZ290byBlcnJfdW5yZWdpc3Rlcl9rbXNfZHJp
+dmVyczsKLQl9Ci0KIAltYXRjaCA9IGV4eW5vc19kcm1fbWF0Y2hfYWRkKCZwZGV2LT5kZXYpOwot
+CWlmIChJU19FUlIobWF0Y2gpKSB7Ci0JCXJldCA9IFBUUl9FUlIobWF0Y2gpOwotCQlnb3RvIGVy
+cl91bnJlZ2lzdGVyX2ttc19kcml2ZXJzOwotCX0KKwlpZiAoSVNfRVJSKG1hdGNoKSkKKwkJcmV0
+dXJuIFBUUl9FUlIobWF0Y2gpOwogCiAJcmV0ID0gY29tcG9uZW50X21hc3Rlcl9hZGRfd2l0aF9t
+YXRjaCgmcGRldi0+ZGV2LCAmZXh5bm9zX2RybV9vcHMsCiAJCQkJCQltYXRjaCk7CiAJaWYgKHJl
+dCA8IDApCi0JCWdvdG8gZXJyX3VucmVnaXN0ZXJfa21zX2RyaXZlcnM7CisJCXJldHVybiByZXQ7
+CiAKIAlmb3IgKGogPSAwOyBqIDwgQVJSQVlfU0laRShleHlub3NfZHJtX25vbl9rbXNfZHJpdmVy
+cyk7ICsraikgewogCQlyZXQgPSBwbGF0Zm9ybV9kcml2ZXJfcmVnaXN0ZXIoZXh5bm9zX2RybV9u
+b25fa21zX2RyaXZlcnNbal0pOwpAQCAtNjMyLDEwICs2MDIsNiBAQCBlcnJfdW5yZWdpc3Rlcl9u
+b25fa21zX2RyaXZlcnM6CiBlcnJfZGVsX2NvbXBvbmVudF9tYXN0ZXI6CiAJY29tcG9uZW50X21h
+c3Rlcl9kZWwoJnBkZXYtPmRldiwgJmV4eW5vc19kcm1fb3BzKTsKIAotZXJyX3VucmVnaXN0ZXJf
+a21zX2RyaXZlcnM6Ci0Jd2hpbGUgKC0taSA+PSAwKQotCQlwbGF0Zm9ybV9kcml2ZXJfdW5yZWdp
+c3RlcihleHlub3NfZHJtX2ttc19kcml2ZXJzW2ldKTsKLQogCXJldHVybiByZXQ7CiB9CiAKQEAg
+LTY1NCw5ICs2MjAsNiBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1fcGxhdGZvcm1fcmVtb3ZlKHN0
+cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCiAKIAljb21wb25lbnRfbWFzdGVyX2RlbCgmcGRl
+di0+ZGV2LCAmZXh5bm9zX2RybV9vcHMpOwogCi0JZm9yIChpID0gQVJSQVlfU0laRShleHlub3Nf
+ZHJtX2ttc19kcml2ZXJzKSAtIDE7IGkgPj0gMDsgLS1pKQotCQlwbGF0Zm9ybV9kcml2ZXJfdW5y
+ZWdpc3RlcihleHlub3NfZHJtX2ttc19kcml2ZXJzW2ldKTsKLQogCXJldHVybiAwOwogfQogCmRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggYi9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKaW5kZXggMjYyYTQ1OS4uMzUyYTlm
+OSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCisr
+KyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaApAQCAtMzMxLDExICsz
+MzEsNiBAQCBpbnQgZXh5bm9zX2RybV9jb21wb25lbnRfYWRkKHN0cnVjdCBkZXZpY2UgKmRldiwK
+IHZvaWQgZXh5bm9zX2RybV9jb21wb25lbnRfZGVsKHN0cnVjdCBkZXZpY2UgKmRldiwKIAkJCQll
+bnVtIGV4eW5vc19kcm1fZGV2aWNlX3R5cGUgZGV2X3R5cGUpOwogCi1leHRlcm4gc3RydWN0IHBs
+YXRmb3JtX2RyaXZlciBmaW1kX2RyaXZlcjsKLWV4dGVybiBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVy
+IGRwX2RyaXZlcjsKLWV4dGVybiBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIGRzaV9kcml2ZXI7Ci1l
+eHRlcm4gc3RydWN0IHBsYXRmb3JtX2RyaXZlciBtaXhlcl9kcml2ZXI7Ci1leHRlcm4gc3RydWN0
+IHBsYXRmb3JtX2RyaXZlciBoZG1pX2RyaXZlcjsKIGV4dGVybiBzdHJ1Y3QgcGxhdGZvcm1fZHJp
+dmVyIGV4eW5vc19kcm1fY29tbW9uX2hkbWlfZHJpdmVyOwogZXh0ZXJuIHN0cnVjdCBwbGF0Zm9y
+bV9kcml2ZXIgdmlkaV9kcml2ZXI7CiBleHRlcm4gc3RydWN0IHBsYXRmb3JtX2RyaXZlciBnMmRf
+ZHJpdmVyOwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rz
+aS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCmluZGV4IDY2ZDQy
+N2UuLmViYzMzODMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9kc2kuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMKQEAg
+LTE3OTksNiArMTc5OSwxOSBAQCBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIGRzaV9kcml2ZXIgPSB7
+CiAJfSwKIH07CiAKK3N0YXRpYyBpbnQgZXh5bm9zX2RzaV9kcml2ZXJfaW5pdCh2b2lkKQorewor
+CXJldHVybiBwbGF0Zm9ybV9kcml2ZXJfcmVnaXN0ZXIoJmRzaV9kcml2ZXIpOworfQorCitzdGF0
+aWMgdm9pZCBleHlub3NfZHNpX2RyaXZlcl9leGl0KHZvaWQpCit7CisJcGxhdGZvcm1fZHJpdmVy
+X3VucmVnaXN0ZXIoJmRzaV9kcml2ZXIpOworfQorCittb2R1bGVfaW5pdChleHlub3NfZHNpX2Ry
+aXZlcl9pbml0KTsKK21vZHVsZV9leGl0KGV4eW5vc19kc2lfZHJpdmVyX2V4aXQpOworCiBNT0RV
+TEVfQVVUSE9SKCJUb21hc3ogRmlnYSA8dC5maWdhQHNhbXN1bmcuY29tPiIpOwogTU9EVUxFX0FV
+VEhPUigiQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4iKTsKIE1PRFVMRV9ERVND
+UklQVElPTigiU2Ftc3VuZyBTb0MgTUlQSSBEU0kgTWFzdGVyIik7CmRpZmYgLS1naXQgYS9kcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2ZpbWQuYwppbmRleCAwNjczYTM5Li5lZWQ1MWM2IDEwMDY0NAotLS0g
+YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCisrKyBiL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKQEAgLTEyNDAsMyArMTI0MCwxNiBAQCBz
+dHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIGZpbWRfZHJpdmVyID0gewogCQkub2ZfbWF0Y2hfdGFibGUg
+PSBmaW1kX2RyaXZlcl9kdF9tYXRjaCwKIAl9LAogfTsKKworc3RhdGljIGludCBleHlub3NfZHJt
+X2ZpbWRfaW5pdCh2b2lkKQoreworCXJldHVybiBwbGF0Zm9ybV9kcml2ZXJfcmVnaXN0ZXIoJmZp
+bWRfZHJpdmVyKTsKK30KKworc3RhdGljIHZvaWQgZXh5bm9zX2RybV9maW1kX2V4aXQodm9pZCkK
+K3sKKwlwbGF0Zm9ybV9kcml2ZXJfdW5yZWdpc3RlcigmZmltZF9kcml2ZXIpOworfQorCittb2R1
+bGVfaW5pdChleHlub3NfZHJtX2ZpbWRfaW5pdCk7Cittb2R1bGVfZXhpdChleHlub3NfZHJtX2Zp
+bWRfZXhpdCk7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1p
+LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMKaW5kZXggNTYzYTE5ZS4u
+ODMxOThmNyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5j
+CisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwpAQCAtMjUzNywzICsy
+NTM3LDE2IEBAIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgaGRtaV9kcml2ZXIgPSB7CiAJCS5vZl9t
+YXRjaF90YWJsZSA9IGhkbWlfbWF0Y2hfdHlwZXMsCiAJfSwKIH07CisKK3N0YXRpYyBpbnQgaGRt
+aV9pbml0KHZvaWQpCit7CisJcmV0dXJuIHBsYXRmb3JtX2RyaXZlcl9yZWdpc3RlcigmaGRtaV9k
+cml2ZXIpOworfQorCitzdGF0aWMgdm9pZCBoZG1pX2V4aXQodm9pZCkKK3sKKwlwbGF0Zm9ybV9k
+cml2ZXJfdW5yZWdpc3RlcigmaGRtaV9kcml2ZXIpOworfQorCittb2R1bGVfaW5pdChoZG1pX2lu
+aXQpOworbW9kdWxlX2V4aXQoaGRtaV9leGl0KTsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX21peGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19t
+aXhlci5jCmluZGV4IGE0MWM4NGUuLjRkODEyZjEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX21peGVyLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfbWl4ZXIuYwpAQCAtMTM0OSwzICsxMzQ5LDE2IEBAIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIg
+bWl4ZXJfZHJpdmVyID0gewogCS5yZW1vdmUgPSBtaXhlcl9yZW1vdmUsCiAJLmlkX3RhYmxlCT0g
+bWl4ZXJfZHJpdmVyX3R5cGVzLAogfTsKKworc3RhdGljIGludCBtaXhlcl9pbml0KHZvaWQpCit7
+CisJcmV0dXJuIHBsYXRmb3JtX2RyaXZlcl9yZWdpc3RlcigmbWl4ZXJfZHJpdmVyKTsKK30KKwor
+c3RhdGljIHZvaWQgbWl4ZXJfZXhpdCh2b2lkKQoreworCXBsYXRmb3JtX2RyaXZlcl91bnJlZ2lz
+dGVyKCZtaXhlcl9kcml2ZXIpOworfQorCittb2R1bGVfaW5pdChtaXhlcl9pbml0KTsKK21vZHVs
+ZV9leGl0KG1peGVyX2V4aXQpOwotLSAKMS43LjkuNQoKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
+bi9saXN0aW5mby9kcmktZGV2ZWwK
