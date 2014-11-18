@@ -1,72 +1,55 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] PM / Domains: Power on the PM domain right after attach
- completes
-Date: Tue, 18 Nov 2014 09:55:15 -0800
-Message-ID: <20141118175515.GD3003@dtor-ws>
-References: <20141118171831.GC3003@dtor-ws>
- <Pine.LNX.4.44L0.1411181234210.892-100000@iolanthe.rowland.org>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [RFC PATCH 1/1] drm/exynos: Move platform drivers registration to module init
+Date: Tue, 18 Nov 2014 10:41:44 -0800
+Message-ID: <7hh9xwxsev.fsf@deeprootsystems.com>
+References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f175.google.com ([209.85.223.175]:45588 "EHLO
-	mail-ie0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753627AbaKRRzU (ORCPT
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:64114 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753848AbaKRSlr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Nov 2014 12:55:20 -0500
-Content-Disposition: inline
-In-Reply-To: <Pine.LNX.4.44L0.1411181234210.892-100000@iolanthe.rowland.org>
+	Tue, 18 Nov 2014 13:41:47 -0500
+Received: by mail-pd0-f174.google.com with SMTP id w10so5102173pde.33
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Nov 2014 10:41:47 -0800 (PST)
+In-Reply-To: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk>
+	(Javier Martinez Canillas's message of "Tue, 18 Nov 2014 14:53:41
+	+0100")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-On Tue, Nov 18, 2014 at 12:44:22PM -0500, Alan Stern wrote:
-> On Tue, 18 Nov 2014, Dmitry Torokhov wrote:
-> 
-> > OK. Another question then: pm_runtime_get_noresume() does literally this:
-> > 
-> > 	atomic_inc(&dev->power.usage_count);
-> > 
-> > So who is responsible for actually waking up parent device and/or power
-> > domain? Is it simply missing because we did not really have PM domains
-> > before?
-> 
-> Ths bus is responsible for making sure that all the standard resources
-> are available -- that is, all the resources that would be needed by a
-> normal device on that bus.  Anything beyond that (such as
-> special-purpose clocks) has to be set up by the driver.
-> 
-> Thus the bus would insure that the device was powered, its parent was
-> resumed, and the usual clock inputs were enabled.  And of course, one
-> mechanism for doing this is to runtime-resume the power domain.
+Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
 
-This does not sound like anything bus-specific. Can we move powering on
-the domain before probing into the driver core, similarly to the default
-pin selection by pinctrl? I do not see why we want to have every
-individual bus to implement this. I guess right now we can't because we
-assign the domain to device in individual bus's probe function, but I do
-not think this is proper place for that either: bus and pm domain are
-orthogonal concepts IMO.
-
-> 
-> Often the bus doesn't have to do anything special to resume the
-> device's parent.  This is because the device gets probed when it is
-> registered, which happens when it is discovered, and the discovery is
-> done by the parent's driver as part of its normal activity.  Since the
-> parent has to be powered up to carry out this normal activity, nothing 
-> more is needed.
-
-I think this only true for buses that support discovery.
-
-> 
-> (Of course, devices can get probed at other times too, not just when
-> they are discovered.  For example, a device might get probed when a
-> driver module is loaded, and that can occur at any time.  So in general
-> it might indeed be necessary for the bus to wake up the parent before
-> calling the driver's probe routine.)
+> The Exynos DRM driver register its sub-devices platform drivers in
+> the probe function but after commit 43c0767 ("of/platform: Move
+> platform devices under /sys/devices/platform"), this is causing
+> a deadlock in __driver_attach(). Fix this by moving the platform
+> drivers registration to exynos_drm_init().
 >
+> Suggested-by: Andrzej Hajda <a.hajda@samsung.com>
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> ---
+>
+> This issue was reported by both Krzysztof Kozlowski [0] and Kevin Hilman [1].
+>
+> Inki Dae said that he will fix it property by separating the Exynos DRM
+> driver in different sub-modules but I post this patch as RFC anyways so
+> others can test if this fixes their boot issue.
 
-Thanks.
+It fixes the DRM deadlock, issue for me on exynos5800-peach-pi, but then
+it proceeds to panic in the workqueue code called by the asoc max98090
+codec[1].
 
--- 
-Dmitry
+If I then disable CONFIG_SND_SOC_SNOW, I can get it to boot to a shell,
+but I still don't have display output.
+
+Is anyone at Samsung testing linux-next?  If so, on what platforms?  It
+would really be nice if your linux-next work was tested on these
+publically-available 542x/5800 platforms (peach-pi, peach-pit,
+odroid-xu3) which would also allow lots of others to help you test and
+validate.
+
+Kevin
