@@ -1,73 +1,58 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: exynos boot falures in linux-next
-Date: Tue, 18 Nov 2014 11:30:18 +0900
-Message-ID: <546AAF3A.5090604@samsung.com>
-References: <E1XqKYI-0000pQ-4b@ip-10-35-177-41.ec2.internal>
- <7hoas54y7k.fsf@deeprootsystems.com> <7hlhn9zcse.fsf@deeprootsystems.com>
- <546A83D6.9060504@collabora.co.uk>
+Subject: [PATCH] drm/exynos: fix infinite loop issue incurred by no pair
+Date: Tue, 18 Nov 2014 12:20:32 +0900
+Message-ID: <1416280832-24609-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:23162 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752045AbaKRCa0 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Nov 2014 21:30:26 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NF7009J1QYJ3J70@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 18 Nov 2014 11:30:19 +0900 (KST)
-In-reply-to: <546A83D6.9060504@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: khilman@deeprootsystems.com, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kevin Hilman <khilman@deeprootsystems.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kernel-build-reports@lists.linaro.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 
-Hello all,
-
-On 2014=EB=85=84 11=EC=9B=94 18=EC=9D=BC 08:25, Javier Martinez Canilla=
-s wrote:
-> Hello Kevin,
->=20
-> On 11/17/2014 11:24 PM, Kevin Hilman wrote:
->>
->> As might have been expected, reverting the change that enables the
->> DRM/display options in exynos_defconfig fixes the problem.
->>
->> Kevin
->>
->=20
-> I'm sorry for causing a boot failure but when I first posted that pat=
-ch,
-> the Exynos DRM driver was working correctly (at least on the Exynos b=
-oards
-> I've access to) so it seems the regression was introduced while the p=
-atch
-> was posted but not yet picked.
->=20
-> I'm not sure what is the correct step in this case but I'm OK with
-> reverting the patch until the Exynos DRM driver bug is fixed.
-
-I found out a bug of Exynos DRM, which is infinite loop issue incurred
-by -EPROBE_DEFER. I thought that we resolved this issue with some fixup=
-s
-but not yet. The problem is because -EPROBE_DEFER is returned in case o=
-f
-adding a component of a crtc device but one of a connector device. I
-will fix it up soon.
-
-Thanks for report,
-Inki Dae
-
->=20
-> Best regards,
-> Javier
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
+VGhpcyBwYXRjaCBmaXhlcyBhIGluZmluaXRlIGxvb3AgaXNzdWUgaW5jdXJyZWQgd2hlbgppdCBk
+b2Vzbid0IGhhdmUgYSBwYWlyIG9mIGNydGMgYW5kIGNvbm5lY3RvciBkcml2ZXJzLAp3aGljaCB3
+YXMgcmVwb3J0ZWQgYnkgS2V2aW4gSGlsbWFuIGxpa2UgYmVsb3csCiAgICAgIGh0dHA6Ly93d3cu
+c3Bpbmljcy5uZXQvbGlzdHMvbGludXgtc2Ftc3VuZy1zb2MvbXNnMzkwNTAuaHRtbAoKY2Rldi0+
+Y29ubl9kZXYgY291bGQgYmUgTlVMTCBieSBleHlub3NfZHJtX2NvbXBvbmVudF9kZWwgY2FsbCBp
+biBjYXNlCnRoYXQgY29ubmVjdG9yIGRyaXZlciBpcyBmYWlsZWQgd2hpbGUgcHJvYmluZyBhZnRl
+ciBjb21wb21lbnRzIHRvIGNydGMKYW5kIGNvbm5lY3RvciBkcml2ZXJzIGFyZSBhZGRlZCB0byBz
+cGVjaWZpYyBkcm1fY29tcG9tZW50X2xpc3QuCkluIHRoaXMgY2FzZSwgZXh5bm9zX2RybV9tYXRj
+aF9hZGQgcmV0dXJucyAtRVBST0JFX0RFRkVSIGVycm9yIGFuZApFeHlub3MgZHJtIGRyaXZlciB3
+aWxsIHRyeSB0aGUgZGVmZXJlZCBwcm9iZSBvdmVyIGFuZCBvdmVyIGFnYWluLgoKVGhpcyBwYXRj
+aCBtYWtlcyB0aGUgZGVmZXJyZWQgcHJvYmUgaXMgdHJpZWQgdXAgdG8gMyB0aW1lcyBpbiBtYXhp
+bXVtLgpIb3dldmVyLCB0aGlzIGlzIGNvbnNpZGVyZWQgb25seSBmb3IgRXh5bm9zIGRybSBzbyBJ
+IHRoaW5rIG90aGVyIFNvQwpkcml2ZXJzIGNvdWxkIGFsc28gcHJvZHVjZSBzYW1lIGlzc3VlLiBU
+aGVyZWZvcmUsIHRoZSBiZXN0IHdheSB0byByZXNvbHZlCnRoaXMgaXNzdWUsIGluZmluaXRlIGxv
+b3AgaW5jdXJyZWQgYnkgZGVmZXJlZCBwcm9iZSwgd291bGQgYmUgdGhhdCBkZCBjb3JlCmlzIGZp
+eGVkIHVwIGNvcnJyZWN0bHkuCgpTaWduZWQtb2ZmLWJ5OiBJbmtpIERhZSA8aW5raS5kYWVAc2Ft
+c3VuZy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIHwg
+ICAgOCArKysrKysrKwogMSBmaWxlIGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyBiL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwppbmRleCBlYWIxMmYwLi40ZDg0ZjNhIDEwMDY0
+NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKKysrIGIvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCkBAIC0zOCw2ICszOCw4IEBACiAj
+ZGVmaW5lIERSSVZFUl9NQUpPUgkxCiAjZGVmaW5lIERSSVZFUl9NSU5PUgkwCiAKKyNkZWZpbmUg
+TUFYX1RSWV9QUk9CRV9ERUZFUgkzCisKIHN0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpl
+eHlub3NfZHJtX3BkZXY7CiAKIHN0YXRpYyBERUZJTkVfTVVURVgoZHJtX2NvbXBvbmVudF9sb2Nr
+KTsKQEAgLTQ4MSw2ICs0ODMsNyBAQCBzdGF0aWMgc3RydWN0IGNvbXBvbmVudF9tYXRjaCAqZXh5
+bm9zX2RybV9tYXRjaF9hZGQoc3RydWN0IGRldmljZSAqZGV2KQogCXN0cnVjdCBjb21wb25lbnRf
+bWF0Y2ggKm1hdGNoID0gTlVMTDsKIAlzdHJ1Y3QgY29tcG9uZW50X2RldiAqY2RldjsKIAl1bnNp
+Z25lZCBpbnQgYXR0YWNoX2NudCA9IDA7CisJc3RhdGljIHVuc2lnbmVkIGludCB0cnlfcHJvYmVf
+ZGVmZXI7CiAKIAltdXRleF9sb2NrKCZkcm1fY29tcG9uZW50X2xvY2spOwogCkBAIC01MjcsNiAr
+NTMwLDExIEBAIG91dF9sb2NrOgogCiAJbXV0ZXhfdW5sb2NrKCZkcm1fY29tcG9uZW50X2xvY2sp
+OwogCisJaWYgKCsrdHJ5X3Byb2JlX2RlZmVyID4gTUFYX1RSWV9QUk9CRV9ERUZFUikgeworCQl0
+cnlfcHJvYmVfZGVmZXIgPSAwOworCQlyZXR1cm4gRVJSX1BUUigtRU5PREVWKTsKKwl9CisKIAly
+ZXR1cm4gYXR0YWNoX2NudCA/IG1hdGNoIDogRVJSX1BUUigtRVBST0JFX0RFRkVSKTsKIH0KIAot
+LSAKMS43LjkuNQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+Cmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
