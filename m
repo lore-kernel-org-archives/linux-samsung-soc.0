@@ -1,46 +1,145 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/1] ARM: exynos_defconfig: Enable max77802 rtc and clock
- drivers
-Date: Wed, 19 Nov 2014 17:09:29 +0900
-Message-ID: <546C5039.10107@samsung.com>
-References: <1414401440-10972-1-git-send-email-javier.martinez@collabora.co.uk> <04e101cff29f$4021ea00$c065be00$@kernel.org> <CABxcv=kaOa1+6a1n_+GjoH=PgG=LzAnXLU7U_E5NvYYP-0WedA@mail.gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: add board dts file for Exynos3250-based
+ Monk board
+Date: Wed, 19 Nov 2014 17:16:13 +0900
+Message-ID: <546C51CD.5010108@samsung.com>
+References: <20141002112233.GI5788@leverpostej> <1412734265-6259-1-git-send-email-yj44.cho@samsung.com> <546AE8EC.9010708@samsung.com> <546C4AF9.2060306@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f47.google.com ([209.85.220.47]:61201 "EHLO
-	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932160AbaKSIJg (ORCPT
+Received: from mail-pd0-f177.google.com ([209.85.192.177]:61787 "EHLO
+	mail-pd0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754978AbaKSIQW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Nov 2014 03:09:36 -0500
-In-Reply-To: <CABxcv=kaOa1+6a1n_+GjoH=PgG=LzAnXLU7U_E5NvYYP-0WedA@mail.gmail.com>
+	Wed, 19 Nov 2014 03:16:22 -0500
+Received: by mail-pd0-f177.google.com with SMTP id ft15so104370pdb.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2014 00:16:22 -0800 (PST)
+In-Reply-To: <546C4AF9.2060306@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Doug Anderson <dianders@chromium.org>, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, YoungJun Cho <yj44.cho@samsung.com>, mark.rutland@arm.com, jh80.chung@samsung.com, geunsik.lim@samsung.com, arnd@arndb.de, sw0312.kim@samsung.com, tomasz.figa@gmail.com, inki.dae@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, olof@lixom.net, linux-arm-kernel@lists.infradead.org
 
-On 11/13/14 17:45, Javier Martinez Canillas wrote:
-> Hello Kukjin,
+On 11/19/14 16:47, Kukjin Kim wrote:
+> On 11/18/14 15:36, Chanwoo Choi wrote:
+>> Dear Kukjin,
+>>
+> Hi,
 > 
-Hi Javier,
-
-> On Tue, Oct 28, 2014 at 12:06 PM, Kukjin Kim <kgene@kernel.org> wrote:
->> Javier Martinez Canillas wrote:
->>> Commit 6e80e3d87549 ("ARM: exynos_defconfig: Enable MAX77802")
->>> enabled support for the max77802 regulators but the PMIC also
->>> has a Real-Time-Clock (RTC) and 2-channel 32kHz clock outputs.
+>> Could you please review or pick this patchset?
+>>
+>> Best Regards,
+>> Chanwoo Choi
+>>
+>> On 10/08/2014 11:11 AM, YoungJun Cho wrote:
+>>> From: Youngjun Cho <yj44.cho@samsung.com>
 >>>
->>
->> I'll apply this, thanks.
->>
->> - Kukjin
->>
+>>> This patch adds new board dts file to support Samsung Monk board which is
+>>> based on Exynos3250 SoC and has different H/W configuration from Rinato.
+>>>
+>>> This patch is based on linux-samsung.git for-next branch and depends on
+>>> [PATCHv2 0/2] ARM: dts: Add new board dts file for Exynos3250-based Rinato board
+>>>
+>>> Changes from v1:
+>>> - The 'memory' entries coalesce into one entry
+>>> - Removes useless space
+>>> - Puts voltage-regulator-0 under the root node
+>>>
+>>> This dts file support following features:
+>>> - eMMC
+>>> - Main PMIC (Samsung S2MPS14)
+>>> - Interface PMIC (Maxim MAX77836, MUIC, fuel-gauge, charger)
+>>> - RTC of Exynos3250
+>>> - ADC of Exynos3250 with NTC thermistor
+>>> - I2S of Exynos3250
+>>> - TMU of Exynos3250
+>>> - Secure firmware for Exynos3250 secondary cpu boot
+>>> - Serial ports of Exynos3250
+>>> - gpio-key for power key
+>>>
+>>> Signed-off-by: Youngjun Cho <yj44.cho@samsung.com>
+>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>> Signed-off-by: Inki Dae <inki.dae@samsung.com>
+>>> Signed-off-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+>>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> ---
+>>>  arch/arm/boot/dts/Makefile            |   3 +-
+>>>  arch/arm/boot/dts/exynos3250-monk.dts | 583 ++++++++++++++++++++++++++++++++++
+>>>  2 files changed, 585 insertions(+), 1 deletion(-)
+>>>  create mode 100644 arch/arm/boot/dts/exynos3250-monk.dts
+>>>
+>>> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+>>> index 5728918..0c8ae64 100644
+>>> --- a/arch/arm/boot/dts/Makefile
+>>> +++ b/arch/arm/boot/dts/Makefile
+>>> @@ -64,7 +64,8 @@ dtb-$(CONFIG_ARCH_BRCMSTB) += \
+>>>  dtb-$(CONFIG_ARCH_DAVINCI) += da850-enbw-cmc.dtb \
+>>>  	da850-evm.dtb
+>>>  dtb-$(CONFIG_ARCH_EFM32) += efm32gg-dk3750.dtb
+>>> -dtb-$(CONFIG_ARCH_EXYNOS) += exynos3250-rinato.dtb \
+>>> +dtb-$(CONFIG_ARCH_EXYNOS) += exynos3250-monk.dtb \
+>>> +	exynos3250-rinato.dtb \
+>>>  	exynos4210-origen.dtb \
+>>>  	exynos4210-smdkv310.dtb \
+>>>  	exynos4210-trats.dtb \
+>>> diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
+>>> new file mode 100644
+>>> index 0000000..615672f
+>>> --- /dev/null
+>>> +++ b/arch/arm/boot/dts/exynos3250-monk.dts
+>>> @@ -0,0 +1,583 @@
+>>> +/*
+>>> + * Samsung's Exynos3250 based Monk board device tree source
+>>> + *
+>>> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+>>> + *		http://www.samsung.com
+>>> + *
+>>> + * Device tree source file for Samsung's Monk board which is based on
+>>> + * Samsung Exynos3250 SoC.
+>>> + *
+>>> + * This program is free software; you can redistribute it and/or modify
+>>> + * it under the terms of the GNU General Public License version 2 as
+>>> + * published by the Free Software Foundation.
+>>> + */
+>>> +
+>>> +/dts-v1/;
+>>> +#include "exynos3250.dtsi"
+>>> +#include <dt-bindings/input/input.h>
+>>> +
+>>> +/ {
+>>> +	model = "Samsung Monk board";
+>>> +	compatible = "samsung,monk", "samsung,exynos3250", "samsung,exynos3";
+>>> +
+>>> +	aliases {
+>>> +		i2c7 = &i2c_max77836;
+>>> +	};
+>>> +
+>>> +	memory {
+>>> +		reg =  <0x40000000 0x1ff00000>;
+>>> +	};
+>>> +
+>>> +	chosen {
+>>> +		bootargs = "console=ttySAC1,115200N8 root=/dev/mmcblk0p15 rootwait earlyprintk panic=5";
 > 
-> You say that you will apply this patch but I can't find it in any of
-> your branches.
+> Actually, the bootargs can be supplied from bootloader and can be
+> removed from here and it's a recent requirement from mailinglist. But
+> I've already applied similar one in rinato.dts. So please cleanup them
+> together later...? :)
 > 
-Sorry for missing the patch in my tree. You can see it in a couple of
-mins ;)
+> [snip]
+> 
+> Will apply, thanks.
+> 
+> - Kukjin
+
+I think, you need adding board file description in the Doc?
+
+WARNING: DT compatible string "samsung,monk" appears un-documented --
+check ./Documentation/devicetree/bindings/
+#79: FILE: arch/arm/boot/dts/exynos3250-monk.dts:21:
++	compatible = "samsung,monk", "samsung,exynos3250", "samsung,exynos3";
 
 Thanks,
 Kukjin
