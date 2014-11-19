@@ -1,64 +1,63 @@
-From: =?windows-1252?Q?Andreas_F=E4rber?= <afaerber@suse.de>
-Subject: Re: [PATCH V8 00/14] drm/exynos: few patches to enhance bridge chip
- support
-Date: Wed, 19 Nov 2014 17:44:14 +0100
-Message-ID: <546CC8DE.3050208@suse.de>
-References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com> <CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com> <546C646C.4060303@collabora.co.uk> <20141119105527.GA5396@luxor.wired.org> <546C7D15.10605@collabora.co.uk> <20141119162224.GB5396@luxor.wired.org> <546CC546.5090900@collabora.co.uk>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [RFC PATCH 1/1] drm/exynos: Move platform drivers registration
+ to module init
+Date: Wed, 19 Nov 2014 17:52:08 +0100
+Message-ID: <546CCAB8.9050402@collabora.co.uk>
+References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk> <7hh9xwxsev.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:33311 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752950AbaKSQoS (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:59986 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755565AbaKSQwO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Nov 2014 11:44:18 -0500
-In-Reply-To: <546CC546.5090900@collabora.co.uk>
+	Wed, 19 Nov 2014 11:52:14 -0500
+In-Reply-To: <7hh9xwxsev.fsf@deeprootsystems.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Paolo Pisati <p.pisati@gmail.com>, Ajay kumar <ajaynumb@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Sean Paul <seanpaul@google.com>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, gustavo Padovan <gustavo.padovan@collabora.co.uk>
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Paolo Pisati <p.pisati@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>
 
-Am 19.11.2014 um 17:28 schrieb Javier Martinez Canillas:
-> On 11/19/2014 05:22 PM, Paolo Pisati wrote:
->> On Wed, Nov 19, 2014 at 12:20:53PM +0100, Javier Martinez Canillas w=
-rote:
->>>
->>> If someone else is interested, I've pushed a branch [0] with 3.18-r=
-c5 + all
->>> the needed patches.
->>>
->>> Ajay, feel free to add to your series:
->>>
->>> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.u=
-k>
->>>
->>> Best regards,
->>> Javier
->>>
->>> [0]: git://git.collabora.co.uk/git/user/javier/linux.git wip/exynos=
-/dp-integ
->>
->> doesn't peach pi require the same dts modification as peach pit/snow=
-?
->>
->=20
-> No, because the Peach Pit and Snow have an eDP to LVDS bridge chip bu=
-t the
-> Peach Pi does not have a bridge. Ajay's series is to add DRM bridge s=
-upport
-> to Exynos Display Port driver and so is only relevant to Snow and Pit=
-=2E
+[adding Paolo and Vivek as cc]
 
-=2E.. and to Spring.
+Hello,
 
-So, what's the timing here - is this series headed for 3.20 now or 3.19=
-?
+On 11/18/2014 07:41 PM, Kevin Hilman wrote:
+> 
+> It fixes the DRM deadlock, issue for me on exynos5800-peach-pi, but then
+> it proceeds to panic in the workqueue code called by the asoc max98090
+> codec[1].
+> 
+> If I then disable CONFIG_SND_SOC_SNOW, I can get it to boot to a shell,
+> but I still don't have display output.
+> 
 
-Regards,
-Andreas
+Paolo Pisati pointed out in another thread that he needed the patch
+"[PATCH v2 2/2] arm: dts: Exynos5: Use pmu_system_controller phandle for dp phy"
+is also needed to get display working for exynos on linux-next.
 
---=20
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 21284 AG N=FCrn=
-berg
+I've pinged Kukjin to apply this as a -rc fix since is needed after
+a5ec598 ("phy: exynos-dp-video: Use syscon support to control pmu register")
+landed in 3.18 which broke the Exynos Display Port PHY:
+
+exynos-dp-video-phy 10040728.video-phy: Failed to lookup PMU regmap
+
+I've an Exynos5800 Peach Pi now so I wanted to test display on it. Just $subject
+and [0] should be enough to have display working on Peach Pi with linux-next but
+it fails to me with:
+
+exynos-mipi-video-phy 10040714.video-phy: can't request region for resource [mem 0x10040714-0x1004071f]
+
+The same issue was reported by Paolo a couple of days ago [1].
+
+Vivek,
+
+Any idea what could cause this regression on linux-next? As reported by Paolo this
+works well for me in 3.18-rc5.
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2014/10/30/394
+[1]: http://www.spinics.net/lists/linux-samsung-soc/msg39032.html
