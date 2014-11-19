@@ -1,44 +1,51 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 3/3] ARM: shmobile: Convert to genpd flags for PM clocks for R-mobile
-Date: Wed, 19 Nov 2014 15:00:38 +0100
-Message-ID: <1416405638-18812-4-git-send-email-ulf.hansson@linaro.org>
-References: <1416405638-18812-1-git-send-email-ulf.hansson@linaro.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v5 2/2] ARM: EXYNOS: PMU: move restart code into pmu driver
+Date: Wed, 19 Nov 2014 15:26:23 +0100
+Message-ID: <546CA88F.5010406@samsung.com>
+References: <1416307650-15162-1-git-send-email-pankaj.dubey@samsung.com>
+ <1416307650-15162-3-git-send-email-pankaj.dubey@samsung.com>
+ <546B6395.8020403@samsung.com> <000801d003a7$404882a0$c0d987e0$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:47440 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751747AbaKSOAz (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:17656 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752950AbaKSO02 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Nov 2014 09:00:55 -0500
-Received: by mail-la0-f48.google.com with SMTP id s18so535546lam.21
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2014 06:00:54 -0800 (PST)
-In-Reply-To: <1416405638-18812-1-git-send-email-ulf.hansson@linaro.org>
+	Wed, 19 Nov 2014 09:26:28 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout4.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NFA00462IWLEAA0@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 19 Nov 2014 14:29:09 +0000 (GMT)
+In-reply-to: <000801d003a7$404882a0$c0d987e0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Arnd Bergmann <arnd@arndb.de>, Ulf Hansson <ulf.hansson@linaro.org>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, linux@roeck-us.net
 
-Instead of using the dev_ops ->stop|start() callbacks for genpd, let's
-convert to use genpd's flag field and set it to PM_DOMAIN_PM_CLK.
+On 19/11/14 04:16, Pankaj Dubey wrote:
+>>> > > +static int pmu_restart_notify(struct notifier_block *this,
+>>> > > +		unsigned long code, void *unused)
+>>> > > +{
+>>> > > +	pmu_raw_writel(0x1, EXYNOS_SWRESET);
+>> > 
+>> > Is it also valid on exynos5440 ? Doesn't it cause any harm there ?
+>> > Perhaps we could add a comment saying it has not effect on that SoC ?
+>> > 
+> Seeing original code from exynos.c (restart hook) I can say it's not valid
+> for exynos5440.
+> But it should not cause any harm as of now, because for exynos54440 PMU will
+> not be probed.
+> If in future support for exynos5440 PMU gets added, that time one may need
+> to consider this
+> point. This will be applicable for any SoC which does not have same register
+> for restart.
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- arch/arm/mach-shmobile/pm-rmobile.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+OK, I wasn't aware PMU driver won't be probed for exynos5440 at all.
+Anyway, I hope we can get someone testing the patch set on exynos5440.
 
-diff --git a/arch/arm/mach-shmobile/pm-rmobile.c b/arch/arm/mach-shmobile/pm-rmobile.c
-index 717e641..42af9bd 100644
---- a/arch/arm/mach-shmobile/pm-rmobile.c
-+++ b/arch/arm/mach-shmobile/pm-rmobile.c
-@@ -106,9 +106,8 @@ static void rmobile_init_pm_domain(struct rmobile_pm_domain *rmobile_pd)
- 	struct generic_pm_domain *genpd = &rmobile_pd->genpd;
- 	struct dev_power_governor *gov = rmobile_pd->gov;
- 
-+	genpd->flags = PM_DOMAIN_PM_CLK;
- 	pm_genpd_init(genpd, gov ? : &simple_qos_governor, false);
--	genpd->dev_ops.stop		= pm_clk_suspend;
--	genpd->dev_ops.start		= pm_clk_resume;
- 	genpd->dev_ops.active_wakeup	= rmobile_pd_active_wakeup;
- 	genpd->power_off		= rmobile_pd_power_down;
- 	genpd->power_on			= rmobile_pd_power_up;
--- 
-1.9.1
+--
+Regards,
+Sylwester
