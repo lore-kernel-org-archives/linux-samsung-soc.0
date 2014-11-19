@@ -1,57 +1,47 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: RE: [PATCH v4] ARM: EXYNOS: add Exynos3250 PMU support
-Date: Wed, 19 Nov 2014 16:54:10 +0530
-Message-ID: <000a01d003eb$79fe9630$6dfbc290$@samsung.com>
-References: <1908469.QaqIJlesoD@amdc1032>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v2 2/2] arm: dts: Exynos5: Use pmu_system_controller
+ phandle for dp phy
+Date: Wed, 19 Nov 2014 12:36:11 +0100
+Message-ID: <CABxcv=mams-iVBvACLZ-=Ozcs3KcHSEvxAsRSSV-eKaSnrcXSA@mail.gmail.com>
+References: <1414675442-3471-1-git-send-email-gautam.vivek@samsung.com>
+	<1414675442-3471-2-git-send-email-gautam.vivek@samsung.com>
+	<000101cffe30$155793a0$4006bae0$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:58544 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751204AbaKSLYe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Nov 2014 06:24:34 -0500
-In-reply-to: <1908469.QaqIJlesoD@amdc1032>
-Content-language: en-us
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <000101cffe30$155793a0$4006bae0$%han@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene@kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Vikas Sajjan' <vikas.sajjan@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-On Tuesday, November 18, 2014 11:05 PM, Bartlomiej Zolnierkiewicz Wrote:
-> This patch prepares the PMU code for the future:
-> - suspend/resume (S2R) support
-> - cpuidle AFTR/W-AFTR modes support
-> on Exynos3250.
-> 
-> Cc: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Cc: Vikas Sajjan <vikas.sajjan@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+[adding Kukjin to cc list]
 
-Other than one small nitpick patch looks fine to me. Tested on Exynos3250
-based
-Espresso board and kernel booted fine.
+Hello Vivek,
 
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+On Wed, Nov 12, 2014 at 5:21 AM, Jingoo Han <jg1.han@samsung.com> wrote:
+> On Thursday, October 30, 2014 10:24 PM, Vivek Gautam wrote:
+>>
+>> DP PHY now require pmu-system-controller to handle PMU register
+>> to control PHY's power isolation. Adding the same to dp-phy
+>> node.
+>>
+>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>> Cc: Jingoo Han <jg1.han@samsung.com>
+>
+> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+>
 
-> 
-> +static void exynos3250_pmu_init(void)
-> +{
-> +	unsigned int value;
-> +
-> +	/*
-> +	 * To prevent form issuing new bus request form L2 memory system
+Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-typo: %s/form/from
+Kukjin,
 
-> +	 * If core status is power down, should be set '1' to L2 power down
-> +	 */
+This patch is -rc material and is needed to have display working in
+3.18 again since commit a5ec598 ("phy: exynos-dp-video: Use syscon
+support to control pmu register") landed in 3.18 and broke the Exynos
+Display Port PHY:
 
-Thanks,
-Pankaj Dubey
+exynos-dp-video-phy 10040728.video-phy: Failed to lookup PMU regmap
 
-> --
-> 1.8.2.3
+Best regards,
+Javier
