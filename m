@@ -1,80 +1,42 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 19/19] iommu: exynos: add callback for initializing devices
- from device tree
-Date: Wed, 19 Nov 2014 12:15:48 +0100
-Message-ID: <1416395748-10731-20-git-send-email-m.szyprowski@samsung.com>
-References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH V8 00/14] drm/exynos: few patches to enhance bridge chip
+ support
+Date: Wed, 19 Nov 2014 12:20:53 +0100
+Message-ID: <546C7D15.10605@collabora.co.uk>
+References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com> <CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com> <546C646C.4060303@collabora.co.uk> <20141119105527.GA5396@luxor.wired.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:61932 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754356AbaKSLQi (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:59624 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750960AbaKSLVF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Nov 2014 06:16:38 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NFA004RWA49XL40@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 19 Nov 2014 11:19:22 +0000 (GMT)
-In-reply-to: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com>
+	Wed, 19 Nov 2014 06:21:05 -0500
+In-Reply-To: <20141119105527.GA5396@luxor.wired.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh@kernel.org>, Will Deacon <will.deacon@arm.com>, David Wodhouse <dwmw2@infradead.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Paolo Pisati <p.pisati@gmail.com>
+Cc: Ajay kumar <ajaynumb@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Sean Paul <seanpaul@google.com>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-This patch adds implementation of of_xlate callback, which prepares
-masters device for attaching to IOMMU. This callback is called during
-creating devices from device tree.
+Hello Paolo,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/iommu/exynos-iommu.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+On 11/19/2014 11:55 AM, Paolo Pisati wrote:
+> to get a working framebuffer out of linus 318rc4 on my peach pi, i had
+> to cherry pick these 3 patches:
+> 
+> arm: dts: Exynos5: Use pmu_system_controller phandle for dp phy
 
-diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-index 88f9afe641a0..213db88ca52c 100644
---- a/drivers/iommu/exynos-iommu.c
-+++ b/drivers/iommu/exynos-iommu.c
-@@ -1078,6 +1078,33 @@ static phys_addr_t exynos_iommu_iova_to_phys(struct iommu_domain *iommu_domain,
- 	return phys;
- }
- 
-+static int exynos_iommu_of_xlate(struct device *dev,
-+				 struct of_phandle_args *spec)
-+{
-+	struct exynos_iommu_owner *owner = dev->archdata.iommu;
-+	struct platform_device *sysmmu = of_find_device_by_node(spec->np);
-+	struct sysmmu_drvdata *data;
-+
-+	if (!sysmmu)
-+		return -ENODEV;
-+
-+	data = platform_get_drvdata(sysmmu);
-+	if (!data)
-+		return -ENODEV;
-+
-+	if (!owner) {
-+		owner = kzalloc(sizeof(*owner), GFP_KERNEL);
-+		if (!owner)
-+			return -ENOMEM;
-+
-+		INIT_LIST_HEAD(&owner->clients);
-+		dev->archdata.iommu = owner;
-+	}
-+
-+	list_add_tail(&data->owner_node, &owner->clients);
-+	return 0;
-+}
-+
- static const struct iommu_ops exynos_iommu_ops = {
- 	.domain_init = exynos_iommu_domain_init,
- 	.domain_destroy = exynos_iommu_domain_destroy,
-@@ -1087,6 +1114,7 @@ static const struct iommu_ops exynos_iommu_ops = {
- 	.unmap = exynos_iommu_unmap,
- 	.iova_to_phys = exynos_iommu_iova_to_phys,
- 	.pgsize_bitmap = SECT_SIZE | LPAGE_SIZE | SPAGE_SIZE,
-+	.of_xlate = exynos_iommu_of_xlate,
- };
- 
- static int init_done;
--- 
-1.9.2
+I was missing this patch, I've display working now. Thanks for the pointer!
+
+If someone else is interested, I've pushed a branch [0] with 3.18-rc5 + all
+the needed patches.
+
+Ajay, feel free to add to your series:
+
+Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+
+Best regards,
+Javier
+
+[0]: git://git.collabora.co.uk/git/user/javier/linux.git wip/exynos/dp-integ
