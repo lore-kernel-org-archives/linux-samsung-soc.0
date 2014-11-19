@@ -1,51 +1,40 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ASoC: samsung: Fix IISMOD setting in i2s_set_sysclk()
-Date: Wed, 19 Nov 2014 19:11:04 +0100
-Message-ID: <1416420664-20952-1-git-send-email-s.nawrocki@samsung.com>
+From: Kevin Hilman <khilman@deeprootsystems.com>
+Subject: screen blank causing lockup in exynos-reference/exynos5-v3.18-rc2
+Date: Wed, 19 Nov 2014 10:56:58 -0800
+Message-ID: <CAMAWPa8kzouNypE=eT79TO6P8OPUc_FfsVGhC+4oOCGHor3MuA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:49200 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755100AbaKSSLT (ORCPT
+Received: from mail-wi0-f174.google.com ([209.85.212.174]:64710 "EHLO
+	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752736AbaKSS5A (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Nov 2014 13:11:19 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NFA0050ZT6TV310@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Nov 2014 03:11:17 +0900 (KST)
+	Wed, 19 Nov 2014 13:57:00 -0500
+Received: by mail-wi0-f174.google.com with SMTP id h11so6413917wiw.13
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2014 10:56:59 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: broonie@kernel.org
-Cc: sbkim73@samsung.com, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Padmavathi Venna <padma.v@samsung.com>
+To: Ajay Kumar <ajaykumar.rs@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Inki Dae <inki.dae@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Amit Kucheria <amit.kucheria@linaro.org>
 
-In the i2s_set_sysclk() callback we are currently clearing all bits
-of the IISMOD register when clk_id is SAMSUNG_I2S_CDCLK and dir
-is SND_SOC_CLOCK_OUT. It's due to an incorrect mask used for the AND
-operation and breaks the I2S interface operation when we attempt to
-use the CDCLK output clock.
+As I'm hunting around trying to figure out how to make exynos-drm work
+with v3.18 or linux-next, I noticed there was an exynos5-v3.18-rc2
+branch in the exynos-reference tree[1], so I gave that a spin on my
+exynos5800-peach-pi.
 
-It fixes commit a5a56871f804edac93a53b5e871c0e9818fb9033
-("ASoC: samsung: add support for exynos7 I2S controller") and restores
-sound support for Odroid X2/U3.
+It seemed to work OK, but I noticed that as soon as the screen blanked
+after timeout, typing on the serial console would still work, but any
+typing on the keyboard caused a silent lockup, with no output on the
+serial console.
 
-Cc: Padmavathi Venna <padma.v@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- sound/soc/samsung/i2s.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I was able to easily reproduce this by doing
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 947352d..8db8c66 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -494,7 +494,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
- 		if (dir == SND_SOC_CLOCK_IN)
- 			mod |= 1 << i2s_regs->cdclkcon_off;
- 		else
--			mod &= 0 << i2s_regs->cdclkcon_off;
-+			mod &= ~(1 << i2s_regs->cdclkcon_off);
- 
- 		i2s->rfs = rfs;
- 		break;
--- 
-1.7.9.5
+  # echo 3 > /sys/class/graphics/fb0/blank
+
+on the serial console, verifying I could still type on the serial
+console. Then, touch any key on the physical keyboard and then I can
+no longer type on the serial console, ping the target, etc.
+
+Kevin
+
+[1] https://github.com/exynos-reference/kernel.git
