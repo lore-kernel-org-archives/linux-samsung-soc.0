@@ -1,63 +1,31 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RFC PATCH 1/1] drm/exynos: Move platform drivers registration
- to module init
-Date: Wed, 19 Nov 2014 17:52:08 +0100
-Message-ID: <546CCAB8.9050402@collabora.co.uk>
-References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk> <7hh9xwxsev.fsf@deeprootsystems.com>
+Subject: Re: [PATCH 1/4] ARM: dts: Add usb3503 pinctrl to exynos5250-spring
+Date: Wed, 19 Nov 2014 17:59:53 +0100
+Message-ID: <546CCC89.1040502@collabora.co.uk>
+References: <1416412585-10809-1-git-send-email-afaerber@suse.de> <1416412585-10809-2-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:59986 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755565AbaKSQwO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Nov 2014 11:52:14 -0500
-In-Reply-To: <7hh9xwxsev.fsf@deeprootsystems.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1416412585-10809-2-git-send-email-afaerber@suse.de>
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, open list <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Paolo Pisati <p.pisati@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>
 
-[adding Paolo and Vivek as cc]
+Hello Andreas,
 
-Hello,
+On 11/19/2014 04:56 PM, Andreas F=C3=A4rber wrote:
+> Reported-by: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
 
-On 11/18/2014 07:41 PM, Kevin Hilman wrote:
-> 
-> It fixes the DRM deadlock, issue for me on exynos5800-peach-pi, but then
-> it proceeds to panic in the workqueue code called by the asoc max98090
-> codec[1].
-> 
-> If I then disable CONFIG_SND_SOC_SNOW, I can get it to boot to a shell,
-> but I still don't have display output.
-> 
+Even though the patch is simple and is true that the subject explains
+the change, I think that is always good to have a commit message anyway=
+s.
 
-Paolo Pisati pointed out in another thread that he needed the patch
-"[PATCH v2 2/2] arm: dts: Exynos5: Use pmu_system_controller phandle for dp phy"
-is also needed to get display working for exynos on linux-next.
+Patch looks good to me though:
 
-I've pinged Kukjin to apply this as a -rc fix since is needed after
-a5ec598 ("phy: exynos-dp-video: Use syscon support to control pmu register")
-landed in 3.18 which broke the Exynos Display Port PHY:
-
-exynos-dp-video-phy 10040728.video-phy: Failed to lookup PMU regmap
-
-I've an Exynos5800 Peach Pi now so I wanted to test display on it. Just $subject
-and [0] should be enough to have display working on Peach Pi with linux-next but
-it fails to me with:
-
-exynos-mipi-video-phy 10040714.video-phy: can't request region for resource [mem 0x10040714-0x1004071f]
-
-The same issue was reported by Paolo a couple of days ago [1].
-
-Vivek,
-
-Any idea what could cause this regression on linux-next? As reported by Paolo this
-works well for me in 3.18-rc5.
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
 Best regards,
 Javier
-
-[0]: https://lkml.org/lkml/2014/10/30/394
-[1]: http://www.spinics.net/lists/linux-samsung-soc/msg39032.html
