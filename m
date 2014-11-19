@@ -1,55 +1,40 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] ARM: dts: Specify Odroid X2/U3 audio clock parents and
- rates
-Date: Wed, 19 Nov 2014 16:40:57 +0100
-Message-ID: <546CBA09.8070308@samsung.com>
-References: <1410360223-18363-1-git-send-email-s.nawrocki@samsung.com>
- <5432C5C5.7020206@samsung.com> <007701cfe1d1$3f4c1940$bde44bc0$@kernel.org>
+From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+Subject: [PATCH 0/4] ARM: dts: exynos: Second round of Spring support
+Date: Wed, 19 Nov 2014 16:56:20 +0100
+Message-ID: <1416412585-10809-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:41179 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753534AbaKSPlB (ORCPT
+Received: from cantor2.suse.de ([195.135.220.15]:60226 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754350AbaKSP4D (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Nov 2014 10:41:01 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NFA00LPZMD34FB0@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 19 Nov 2014 15:43:51 +0000 (GMT)
-In-reply-to: <007701cfe1d1$3f4c1940$bde44bc0$@kernel.org>
+	Wed, 19 Nov 2014 10:56:03 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 
-On 07/10/14 03:51, Kukjin Kim wrote:
->> > On 10/09/14 16:43, Sylwester Nawrocki wrote:
->>> > > This ensures the core and the audio subsystem clocks are configured
->>> > > properly, as expected by the sound machine driver. These bits are
->>> > > missing to obtain proper audio sample rates in kernel v3.17, where
->>> > > audio support for Odroid X2/U3 was first added.
->>> > >
->>> > > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->>> > > ---
->>> > > It would be good to have it applied as a fix for v3.17.
->> > 
->> > Anything happened to this patch ? I can't see it neither in Linus' nor
->> > -next tree. And we are already at 3.18 merge window.
->> > 
-> Hi Sylwester,
-> 
-> Sorry about that. I'll queue this one into fixes for -3.18 and stable maybe
-> +3.17 only if stable-3.17 is available...
+Hello,
 
-Kukjin,
+=46ollowing the initial merge of the HP Chromebook 11 device tree,
+here's a few follow-ups. A sound series is prepared separately.
 
-You didn't forget about this patch, did you ?
-It's been over 2 months since I've sent it and sound on Odroid X2/U3
-is still broken as it was then. Please send the patch upstream.
+Regards,
+Andreas
 
---
-Thanks,
-Sylwester
+
+Andreas F=C3=A4rber (4):
+  ARM: dts: Add usb3503 pinctrl to exynos5250-spring
+  ARM: dts: Add temperature sensor to exynos5250-spring
+  ARM: exynos_defconfig: Enable LM90 driver
+  ARM: dts: Add trackpad to exynos5250-spring
+
+ arch/arm/boot/dts/exynos5250-spring.dts | 30 +++++++++++++++++++++++++=
++++++
+ arch/arm/configs/exynos_defconfig       |  3 ++-
+ 2 files changed, 32 insertions(+), 1 deletion(-)
+
+--=20
+2.1.2
