@@ -1,40 +1,48 @@
-From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
-Subject: [PATCH 3/4] ARM: exynos_defconfig: Enable LM90 driver
-Date: Wed, 19 Nov 2014 16:56:23 +0100
-Message-ID: <1416412585-10809-4-git-send-email-afaerber@suse.de>
-References: <1416412585-10809-1-git-send-email-afaerber@suse.de>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH 0/3] PM / Domains: Add initial PM clock support to genpd
+Date: Wed, 19 Nov 2014 17:07:52 +0100
+Message-ID: <CAMuHMdUKWNSTYCAcusOpk31=Y6g5-SqKck5HaHZvgBOaYQrK3w@mail.gmail.com>
+References: <1416405638-18812-1-git-send-email-ulf.hansson@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1416412585-10809-1-git-send-email-afaerber@suse.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Tomasz Figa <t.figa@samsung.com>, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tushar Behera <tushar.behera@linaro.org>, open list <linux-kernel@vger.kernel.org>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1416405638-18812-1-git-send-email-ulf.hansson@linaro.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Linux PM list <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-multi_v7_defconfig has it as Y already, so build it in here, too, for
-consistency, and therefore build in HWMON as well.
+Hi Ulf,
 
-Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
----
- arch/arm/configs/exynos_defconfig | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On Wed, Nov 19, 2014 at 3:00 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> It's quite common for PM domains to use PM clocks. Typically from SOC specific
+> code, the per device PM clock list is created and pm_clk_suspend|resume() are
+> invoked to handle clock gating/ungating.
+>
+> A step towards consolidation is to integrate PM clock support into genpd, which
+> is what this patchset does.
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exyno=
-s_defconfig
-index 8dfa7d312f51..2d7d2027aeb9 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -84,7 +84,8 @@ CONFIG_DEBUG_GPIO=3Dy
- CONFIG_POWER_SUPPLY=3Dy
- CONFIG_BATTERY_SBS=3Dy
- CONFIG_CHARGER_TPS65090=3Dy
--# CONFIG_HWMON is not set
-+CONFIG_HWMON=3Dy
-+CONFIG_SENSORS_LM90=3Dy
- CONFIG_THERMAL=3Dy
- CONFIG_EXYNOS_THERMAL=3Dy
- CONFIG_EXYNOS_THERMAL_CORE=3Dy
---=20
-2.1.2
+Thanks, this sounds like a good idea.
+
+> In this initial step, the calls to the pm_clk_suspend|resume() are handled
+> within genpd, but the per device PM clock list still needs to be created from
+> SOC specific code. It seems reasonable to have gendp to handle that as well, but
+
+s/gendp/genpd/
+
+> that left to future patchsets to address.
+
+If/when genpd will handle the clock creation, perhaps the flag can just
+be replaced by a pointer to a list of clocks?
+Or do you have other uses in mind for adding the flags field now?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
