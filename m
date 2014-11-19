@@ -1,69 +1,68 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH v11 4/6] ARM: Exynos: switch to using generic cpufreq
- driver for Exynos4210/5250/5420
-Date: Wed, 19 Nov 2014 19:28:33 +0000
-Message-ID: <546CEF61.4050105@arm.com>
-References: <1413805281-6269-1-git-send-email-thomas.ab@samsung.com> <1413805281-6269-2-git-send-email-thomas.ab@samsung.com> <1413805281-6269-3-git-send-email-thomas.ab@samsung.com> <1413805281-6269-4-git-send-email-thomas.ab@samsung.com> <1413805281-6269-5-git-send-email-thomas.ab@samsung.com>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [RFC PATCH 1/1] drm/exynos: Move platform drivers registration to module init
+Date: Wed, 19 Nov 2014 11:52:50 -0800
+Message-ID: <7hbno3ufvx.fsf@deeprootsystems.com>
+References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk>
+	<7hh9xwxsev.fsf@deeprootsystems.com>
+	<546CCAB8.9050402@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:54135 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755265AbaKST2N convert rfc822-to-8bit (ORCPT
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:59580 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755182AbaKSTwx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Nov 2014 14:28:13 -0500
-In-Reply-To: <1413805281-6269-5-git-send-email-thomas.ab@samsung.com>
+	Wed, 19 Nov 2014 14:52:53 -0500
+Received: by mail-pa0-f52.google.com with SMTP id eu11so903272pac.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2014 11:52:53 -0800 (PST)
+In-Reply-To: <546CCAB8.9050402@collabora.co.uk> (Javier Martinez Canillas's
+	message of "Wed, 19 Nov 2014 17:52:08 +0100")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, "l.majewski@samsung.com" <l.majewski@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "mturquette@linaro.org" <mturquette@linaro.org>, "heiko@sntech.de" <heiko@sntech.de>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, "cw00.choi@samsung.com" <cw00.choi@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, Paolo Pisati <p.pisati@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>
 
+Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
 
-
-On 20/10/14 12:41, Thomas Abraham wrote:
-> The new CPU clock type allows the use of generic CPUfreq drivers. So for
-> Exynos4210/5250, switch to using generic cpufreq driver. For Exynos5420,
-> which did not have CPUfreq driver support, enable the use of generic
-> CPUfreq driver.
+> [adding Paolo and Vivek as cc]
 >
-> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
-> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> Tested-by: Chander Kashyap <k.chander@samsung.com>
-> ---
->   arch/arm/mach-exynos/exynos.c |   24 +++++++++++++++++++++++-
->   1 files changed, 23 insertions(+), 1 deletions(-)
+> Hello,
 >
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index 6b283eb..a1be294 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -282,6 +282,28 @@ static void __init exynos_init_irq(void)
->   	exynos_map_pmu();
->   }
+> On 11/18/2014 07:41 PM, Kevin Hilman wrote:
+>> 
+>> It fixes the DRM deadlock, issue for me on exynos5800-peach-pi, but then
+>> it proceeds to panic in the workqueue code called by the asoc max98090
+>> codec[1].
+>> 
+>> If I then disable CONFIG_SND_SOC_SNOW, I can get it to boot to a shell,
+>> but I still don't have display output.
+>> 
 >
-> +static const struct of_device_id exynos_cpufreq_matches[] = {
-> +	{ .compatible = "samsung,exynos5420", .data = "arm-bL-cpufreq-dt" },
+> Paolo Pisati pointed out in another thread that he needed the patch
+> "[PATCH v2 2/2] arm: dts: Exynos5: Use pmu_system_controller phandle for dp phy"
+> is also needed to get display working for exynos on linux-next.
+>
+> I've pinged Kukjin to apply this as a -rc fix since is needed after
+> a5ec598 ("phy: exynos-dp-video: Use syscon support to control pmu register")
+> landed in 3.18 which broke the Exynos Display Port PHY:
+>
+> exynos-dp-video-phy 10040728.video-phy: Failed to lookup PMU regmap
+>
+> I've an Exynos5800 Peach Pi now so I wanted to test display on it. Just $subject
+> and [0] should be enough to have display working on Peach Pi 
 
-Sorry for raising this issue always with Exynos cpufreq drivers. IMO the
-bindings for "arm-bL-cpufreq-dt" is broken. Currently no one is using it
-and it's better to fix it before we have a real user of it.
+Yes, with those two patches, peach-pi display working on v3.18-rc5 for me.
 
-If you look at the binding document for it[1], it has a fixme which
-shouldn't have been there at first place. It assumes the ordering of
-CPU's specified in the DT and the logical index allocation to them.
+> with linux-next but
+> it fails to me with:
+>
+> exynos-mipi-video-phy 10040714.video-phy: can't request region for resource [mem 0x10040714-0x1004071f]
+>
+> The same issue was reported by Paolo a couple of days ago [1].
 
-It even breaks for hotplug especially if you hotplug-in back in
-different order. We can work around that probably, but it's better to
-fix the binding. I failed to grab much attention in my previous attempts
-to address this[2]. Viresh also started a discussion more recently[3].
+For me, with linux-next, I'm still getting the DRM deadlock.  Trying
+your patch that moves things to module_init gets past the deadlock, but
+still doesn't boot unless I disable CONFIG_SND_SOC_SNOW.  Doing that I
+see the same video-phy error though.
 
-Regards,
-Sudeep
-
-[1] Documentation/devicetree/bindings/cpufreq/arm_big_little_dt.txt
-[2] http://www.spinics.net/lists/arm-kernel/msg303977.html
-[3] https://lkml.org/lkml/2014/6/25/152
+Kevin
