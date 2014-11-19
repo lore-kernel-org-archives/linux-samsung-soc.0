@@ -1,64 +1,49 @@
-From: Ajay kumar <ajaynumb@gmail.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 Subject: Re: [PATCH V8 00/14] drm/exynos: few patches to enhance bridge chip
  support
-Date: Wed, 19 Nov 2014 15:08:59 +0530
-Message-ID: <CAEC9eQPz_7QeL7EDorb-OxiTjcb1tVUDbEbzbER4Yu2wSNNaxQ@mail.gmail.com>
-References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com>
- <CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com>
- <546C646C.4060303@collabora.co.uk>
+Date: Wed, 19 Nov 2014 10:51:49 +0100
+Message-ID: <546C6835.7040802@collabora.co.uk>
+References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com>	<CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com>	<546C646C.4060303@collabora.co.uk> <CAEC9eQPz_7QeL7EDorb-OxiTjcb1tVUDbEbzbER4Yu2wSNNaxQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <546C646C.4060303@collabora.co.uk>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, gustavo Padovan <gustavo.padovan@collabora.co.uk>, Daniel Vetter <daniel.vetter@ffwll.ch>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kukjin Kim <kgene.kim@samsung.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:59493 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753542AbaKSJv4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Nov 2014 04:51:56 -0500
+In-Reply-To: <CAEC9eQPz_7QeL7EDorb-OxiTjcb1tVUDbEbzbER4Yu2wSNNaxQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ajay kumar <ajaynumb@gmail.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Sean Paul <seanpaul@google.com>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-SGkgSmF2aWVyLAoKSW4gdGhlIGNvdmVyIGxldHRlciwgSSBoYXZlIG1lbnRpb25lZCB0aGF0IGl0
-IGlzIHRlc3RlZCBvbiBMaW51cyB0cmVlOgoKIlRoaXMgc2VyaWVzIGlzIGJhc2VkIG9uIG1hc3Rl
-ciBicmFuY2ggb2YgTGludXMgdHJlZSBhdDoKZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9s
-aW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdCIKCktpbmRseSB0ZXN0IHRoZSBwYXRj
-aGVzIHdpdGggdGhhdC4KCkFqYXkKCk9uIFdlZCwgTm92IDE5LCAyMDE0IGF0IDM6MDUgUE0sIEph
-dmllciBNYXJ0aW5leiBDYW5pbGxhcwo8amF2aWVyLm1hcnRpbmV6QGNvbGxhYm9yYS5jby51az4g
-d3JvdGU6Cj4gSGVsbG8gQWpheSwKPgo+IE9uIDExLzE4LzIwMTQgMDc6MjAgQU0sIEFqYXkga3Vt
-YXIgd3JvdGU6Cj4+IE9uIFNhdCwgTm92IDE1LCAyMDE0IGF0IDM6MjQgUE0sIEFqYXkgS3VtYXIg
-PGFqYXlrdW1hci5yc0BzYW1zdW5nLmNvbT4gd3JvdGU6Cj4+PiBUaGlzIHNlcmllcyBpcyBiYXNl
-ZCBvbiBtYXN0ZXIgYnJhbmNoIG9mIExpbnVzIHRyZWUgYXQ6Cj4+PiBnaXQ6Ly9naXQua2VybmVs
-Lm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0Cj4KPiBJIGFw
-cGxpZWQgeW91ciBzZXJpZXMgb24gdG9wIG9mIDMuMTgtcmM1ICsgbGludXgtbmV4dCdzIGNvbW1p
-dDoKPgo+IDBlZjc2YWUgKCJBUk06IGV4eW5vc19kZWZjb25maWc6IEVuYWJsZSBvcHRpb25zIGZv
-ciBkaXNwbGF5IHBhbmVsIHN1cHBvcnQiKS4KPgo+IEkgdGhpbmsgeW91IHNob3VsZCBoYWQgbWVu
-dGlvbmVkIHdoYXQgb3RoZXIgcGF0Y2hlcyBhcmUgbmVlZGVkIGFzIGEKPiBkZXBlbmRlbmN5IHNp
-bmNlIEkgc3BlbnQgcXVpdGUgYSBiaXQgb2YgdGltZSBmaWd1cmluZyBvdXQgd2h5IHRoZQo+IHBz
-ODYyMiBicmlkZ2UgZHJpdmVyIHByb2JlIHdhcyBhbHdheXMgZGVmZXJyZWQgZHVlIG9mX2RybV9m
-aW5kX3BhbmVsKCkKPiBmYWlsaW5nIGFuZCB0aGVuIEkgbm90aWNlZCB0aGF0IGEgcGF0Y2ggZnJv
-bSBsaW51eC1uZXh0IHdhcyBuZWVkZWQ6Cj4KPiBlMzVlMzA1ICgiZHJtL3BhbmVsOiBzaW1wbGU6
-IEFkZCBBVU8gQjExNlhXMDMgcGFuZWwgc3VwcG9ydCIpCj4KPiBXaXRoIHRoYXQgY29tbWl0IHRo
-ZSBwczg2MjIgZHJtIGJyaWRnZSBkcml2ZXIgcHJvYmUgc3VjY2VlZCBidXQgSSBzdGlsbAo+IGRv
-bid0IGhhdmUgZGlzcGxheSB3b3JraW5nIG9uIGFuIEV4eW5vczUyNDAgUGVhY2ggUGl0LCB0aGUg
-a2VybmVsIGxvZyBzaG93czoKPgo+IHBsYXRmb3JtIDE0NWIwMDAwLmRwLWNvbnRyb2xsZXI6IERy
-aXZlciBleHlub3MtZHAgcmVxdWVzdHMgcHJvYmUgZGVmZXJyYWwKPiBleHlub3MtZHJtIGV4eW5v
-cy1kcm06IGJvdW5kIDE0NDAwMDAwLmZpbWQgKG9wcyBmaW1kX2NvbXBvbmVudF9vcHMpCj4gZXh5
-bm9zLWRybSBleHlub3MtZHJtOiBmYWlsZWQgdG8gYmluZCAxNDViMDAwMC5kcC1jb250cm9sbGVy
-IChvcHMgZXh5bm9zX2RwX29wcyk6IC01MTcKPiBleHlub3MtZHJtIGV4eW5vcy1kcm06IG1hc3Rl
-ciBiaW5kIGZhaWxlZDogLTUxNwo+IHBsYXRmb3JtIDE0NWIwMDAwLmRwLWNvbnRyb2xsZXI6IERy
-aXZlciBleHlub3MtZHAgcmVxdWVzdHMgcHJvYmUgZGVmZXJyYWwKPgo+IEFueSBpZGVhIHdoYXQg
-ZWxzZSBJIGNvdWxkIGJlIG1pc3NpbmcgaGVyZT8KPgo+IFlvdXIgcGF0Y2hlcyBkb24ndCBhcHBs
-eSBjbGVhbmx5IGluIGxpbnV4LW5leHQgYnR3LCBhbHRob3VnaCB0aGUgYXJlIG1hbnkKPiBpc3N1
-ZXMgd2l0aCB0aGUgRXh5bm9zIERSTSBjdXJyZW50bHkgaW4gbGludXgtbmV4dCBhbnl3YXlzIHNv
-IHByb2JhYmx5IHVzaW5nCj4gMy4xOC1yYyBhcyBhIGJhc2UgbWFrZXMgbW9yZSBzZW5zZSBmb3Ig
-bm93IHVudGlsIGFsbCB0aG9zZSB0aGluZ3MgZ2V0IGZpeGVkCj4gYnV0IHlvdSBzaG91bGQgcmVi
-YXNlIHNvIHRoZXkgY2FuIGJlIHBpY2tlZC4KPgo+IEJlc3QgcmVnYXJkcywKPiBKYXZpZXIKX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1h
-aWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hello Ajay,
+
+On 11/19/2014 10:38 AM, Ajay kumar wrote:
+> Hi Javier,
+> 
+> In the cover letter, I have mentioned that it is tested on Linus tree:
+> 
+> "This series is based on master branch of Linus tree at:
+> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git"
+> 
+> Kindly test the patches with that.
+> 
+
+That's what I did... Linus' master branch is a moving target and if you
+look at his current HEAD, it is commit fc14f9c1 ("Linux 3.18-rc5") but
+as I said before, at least two patches that are needed didn't land in
+Linus' tree yet. These are:
+
+0ef76ae ("ARM: exynos_defconfig: Enable options for display panel support")
+e35e305 ("drm/panel: simple: Add AUO B116XW03 panel support")
+
+IOW, linux.git master branch + this series is not enough to have display
+working AFAICT so I was wondering if I'm missing something else.
+
+Do you have a public tree somewhere with the branch you are using to test?
+
+Best regards,
+Javier
