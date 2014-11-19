@@ -1,47 +1,46 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v2 2/2] arm: dts: Exynos5: Use pmu_system_controller
- phandle for dp phy
-Date: Wed, 19 Nov 2014 12:36:11 +0100
-Message-ID: <CABxcv=mams-iVBvACLZ-=Ozcs3KcHSEvxAsRSSV-eKaSnrcXSA@mail.gmail.com>
-References: <1414675442-3471-1-git-send-email-gautam.vivek@samsung.com>
-	<1414675442-3471-2-git-send-email-gautam.vivek@samsung.com>
-	<000101cffe30$155793a0$4006bae0$%han@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <000101cffe30$155793a0$4006bae0$%han@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene@kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] ARM: dts: exynos4: add missing clock to MFC device
+Date: Wed, 19 Nov 2014 12:43:56 +0100
+Message-ID: <1416397436-13503-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:25386 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750759AbaKSLoM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Nov 2014 06:44:12 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NFA00JKZBEERH50@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 19 Nov 2014 11:47:02 +0000 (GMT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-[adding Kukjin to cc list]
+sclk_mfc is required for MFC device since commit
+0c2272170d78f826f6e97f99fb8a67fc17feef07 ("media: s5p-mfc: rename
+special clock to sclk_mfc"), so add it to exynos4 dts.
 
-Hello Vivek,
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos4.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-On Wed, Nov 12, 2014 at 5:21 AM, Jingoo Han <jg1.han@samsung.com> wrote:
-> On Thursday, October 30, 2014 10:24 PM, Vivek Gautam wrote:
->>
->> DP PHY now require pmu-system-controller to handle PMU register
->> to control PHY's power isolation. Adding the same to dp-phy
->> node.
->>
->> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->> Cc: Jingoo Han <jg1.han@samsung.com>
->
-> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
->
-
-Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-
-Kukjin,
-
-This patch is -rc material and is needed to have display working in
-3.18 again since commit a5ec598 ("phy: exynos-dp-video: Use syscon
-support to control pmu register") landed in 3.18 and broke the Exynos
-Display Port PHY:
-
-exynos-dp-video-phy 10040728.video-phy: Failed to lookup PMU regmap
-
-Best regards,
-Javier
+diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
+index 0b5e46cd449f..c790a746b9c8 100644
+--- a/arch/arm/boot/dts/exynos4.dtsi
++++ b/arch/arm/boot/dts/exynos4.dtsi
+@@ -398,8 +398,8 @@
+ 		reg = <0x13400000 0x10000>;
+ 		interrupts = <0 94 0>;
+ 		samsung,power-domain = <&pd_mfc>;
+-		clocks = <&clock CLK_MFC>;
+-		clock-names = "mfc";
++		clocks = <&clock CLK_MFC>, <&clock CLK_SCLK_MFC>;
++		clock-names = "mfc", "sclk_mfc";
+ 		status = "disabled";
+ 		iommus = <&sysmmu_mfc_l>, <&sysmmu_mfc_r>;
+ 		iommu-names = "left", "right";
+-- 
+1.9.2
