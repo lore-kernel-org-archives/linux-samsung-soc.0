@@ -1,55 +1,41 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/4 V3] ASoC: Samsung: Add arndale_rt5631 machine driver
-Date: Wed, 19 Nov 2014 17:51:54 +0000
-Message-ID: <20141119175154.GI22111@sirena.org.uk>
-References: <1415880864-2246-1-git-send-email-krishna.md@samsung.com>
- <1415880864-2246-3-git-send-email-krishna.md@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH 1/3] ARM: dts: Add SPI flash node for Peach boards
+Date: Wed, 19 Nov 2014 18:59:31 +0100
+Message-ID: <546CDA83.5060002@collabora.co.uk>
+References: <1416246184-29071-1-git-send-email-javier.martinez@collabora.co.uk> <1416246184-29071-2-git-send-email-javier.martinez@collabora.co.uk> <CAD=FV=Xkei_wxa3jWb8bPvuynbSyq4o=ezjVD0+e04aOPCAM+Q@mail.gmail.com> <546C6BD2.4020802@collabora.co.uk> <CAD=FV=XpweHvcTsVTMBkv9g4+GxoO8WdngGhfVj0QnOwq3ASdQ@mail.gmail.com> <20141119174709.GF22111@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="mu9njEoJVcULXJK5"
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54421 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755888AbaKSRwI (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:60112 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756388AbaKSR7m (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Nov 2014 12:52:08 -0500
-Content-Disposition: inline
-In-Reply-To: <1415880864-2246-3-git-send-email-krishna.md@samsung.com>
+	Wed, 19 Nov 2014 12:59:42 -0500
+In-Reply-To: <20141119174709.GF22111@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krishna Mohan Dani <krishna.md@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, kgene.kim@samsung.com, Claude Youn <claude.youn@gmail.com>
+To: Mark Brown <broonie@kernel.org>, Doug Anderson <dianders@chromium.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Simon Glass <sjg@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
+Hello Mark,
 
---mu9njEoJVcULXJK5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 11/19/2014 06:47 PM, Mark Brown wrote:
+> These are bugs.  The device tree should describe the hardware, spidev is
+> a Linux implementation detail.  Provide a compatible string for the
+> device that is there just as you would for any other device.
+>
 
-On Thu, Nov 13, 2014 at 05:44:22PM +0530, Krishna Mohan Dani wrote:
+Thanks a lot for your explanation.
+ 
+>> OK.  Please don't take my comments as a NAK on this patch.  I should
+>> have done the same grep myself before sending--sorry.  I just
+>> remembered the old conversation and looked for that instead.
+> 
+> Please take this as one.
+> 
 
-> Signed-off-by: Krishna Mohan Dani <krishna.md@samsung.com>
-> ---
->  sound/soc/samsung/Kconfig          |    6 ++
->  sound/soc/samsung/Makefile         |    2 +
->  sound/soc/samsung/arndale_rt5631.c |  150 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 158 insertions(+)
+Ok
 
-This is fine but it is missing a binding document, please add one.
-
---mu9njEoJVcULXJK5
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUbNi6AAoJECTWi3JdVIfQ2NEH/37mmpxTvTXTW+uD8knAg4em
-C7e9lptsBKYEHErl2SqfYVbobFC/GbJydOtrzneaUDGvmkRz8SITrM72GyudyV0P
-MazV3tAYV1q7Rq5885rPQD+DPKduF67fbaj5YX8edech/flLPBDl+0umVmE0I6q/
-kvPbA1JKz95hxHsgOvt+myoxAgY1z61HJ9G0xV/4Xp1PP/q/s2cYsP8y2GK8ppZ0
-dGSsqWIEKzt1wglyq8jXsDo3xBLPmhcqV7hgHuB7FVLOvYMAwJU1jAELk/aEaYDR
-thow9116iZ4MS1y68atOtzwU1EV+CFz04VGzdJ+5cwOyoHAEiRSHsK5WK/CFzA8=
-=jA/T
------END PGP SIGNATURE-----
-
---mu9njEoJVcULXJK5--
+Best regards,
+Javier
