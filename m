@@ -1,108 +1,69 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [GIT PULL] Samsung clock changes for 3.19
-Date: Wed, 19 Nov 2014 11:27:25 -0800
-Message-ID: <20141119192725.25314.53729@quantum>
-References: <5453C8A7.6080502@samsung.com> <546C457C.6030901@samsung.com>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH v11 4/6] ARM: Exynos: switch to using generic cpufreq
+ driver for Exynos4210/5250/5420
+Date: Wed, 19 Nov 2014 19:28:33 +0000
+Message-ID: <546CEF61.4050105@arm.com>
+References: <1413805281-6269-1-git-send-email-thomas.ab@samsung.com> <1413805281-6269-2-git-send-email-thomas.ab@samsung.com> <1413805281-6269-3-git-send-email-thomas.ab@samsung.com> <1413805281-6269-4-git-send-email-thomas.ab@samsung.com> <1413805281-6269-5-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:60387 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755867AbaKST1b convert rfc822-to-8bit (ORCPT
+Received: from service87.mimecast.com ([91.220.42.44]:54135 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755265AbaKST2N convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Nov 2014 14:27:31 -0500
-Received: by mail-pa0-f46.google.com with SMTP id lj1so847108pab.33
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2014 11:27:30 -0800 (PST)
-In-Reply-To: <546C457C.6030901@samsung.com>
+	Wed, 19 Nov 2014 14:28:13 -0500
+In-Reply-To: <1413805281-6269-5-git-send-email-thomas.ab@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Thomas Abraham <thomas.ab@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, "l.majewski@samsung.com" <l.majewski@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "mturquette@linaro.org" <mturquette@linaro.org>, "heiko@sntech.de" <heiko@sntech.de>, "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, "cw00.choi@samsung.com" <cw00.choi@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Quoting Kukjin Kim (2014-11-18 23:23:40)
-> On 11/01/14 02:36, Sylwester Nawrocki wrote:
-> > Hi Mike,
-> > 
-> Hi Mike,
-> 
-> > I've collected Exynos clk patches in this pull request, as Tomasz has
-> > been busy recently. 
-> > This includes addition of clock controller drivers for Exynos4415 and 
-> > Exynos7 SoCs and related refactoring of the Samsung common clk API. 
-> > 
-> > As I mentioned in my other e-mail, it might be sensible to put these 
-> > patches into a separate topic branch, so Kukjin can pull it as 
-> > a dependency for the related dts changes.
-> > 
-> As Sylwester suggested, can you please provide a topic branch for
-> samsung tree so that I can apply regarding DT changes such as exynos
-> 4415 and exynos7...
 
-A topic branch already exists:
 
-git://linuxtv.org/snawrocki/samsung.git for-v3.19/exynos-clk
+On 20/10/14 12:41, Thomas Abraham wrote:
+> The new CPU clock type allows the use of generic CPUfreq drivers. So for
+> Exynos4210/5250, switch to using generic cpufreq driver. For Exynos5420,
+> which did not have CPUfreq driver support, enable the use of generic
+> CPUfreq driver.
+>
+> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
+> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Tested-by: Chander Kashyap <k.chander@samsung.com>
+> ---
+>   arch/arm/mach-exynos/exynos.c |   24 +++++++++++++++++++++++-
+>   1 files changed, 23 insertions(+), 1 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index 6b283eb..a1be294 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -282,6 +282,28 @@ static void __init exynos_init_irq(void)
+>   	exynos_map_pmu();
+>   }
+>
+> +static const struct of_device_id exynos_cpufreq_matches[] = {
+> +	{ .compatible = "samsung,exynos5420", .data = "arm-bL-cpufreq-dt" },
 
-;-)
+Sorry for raising this issue always with Exynos cpufreq drivers. IMO the
+bindings for "arm-bL-cpufreq-dt" is broken. Currently no one is using it
+and it's better to fix it before we have a real user of it.
 
-I've pulled that into clk-next towards 3.19. Please pull the same branch
-into the samsung tree as a dependency.
+If you look at the binding document for it[1], it has a fixme which
+shouldn't have been there at first place. It assumes the ordering of
+CPU's specified in the DT and the logical index allocation to them.
 
-Thanks,
-Mike
+It even breaks for hotplug especially if you hotplug-in back in
+different order. We can work around that probably, but it's better to
+fix the binding. I failed to grab much attention in my previous attempts
+to address this[2]. Viresh also started a discussion more recently[3].
 
-> 
-> - Kukjin
-> 
-> > There are also few Samsung clk cleanup patches not included here,
-> > I thought I'd send them separately.
-> > 
-> > The following changes since commit f114040e3ea6e07372334ade75d1ee0775c355e1:
-> > 
-> >   Linux 3.18-rc1 (2014-10-19 18:08:38 -0700)
-> > 
-> > are available in the git repository at:
-> > 
-> >   git://linuxtv.org/snawrocki/samsung.git for-v3.19/exynos-clk
-> > 
-> > for you to fetch changes up to 932e98224d5602be17ed61d0e057e9326f12b59d:
-> > 
-> >   clk: samsung: exynos7: add gate clock for ADC block (2014-10-31 10:45:54 +0100)
-> > 
-> > ----------------------------------------------------------------
-> > Abhilash Kesavan (1):
-> >       clk: samsung: exynos7: add gate clock for ADC block
-> > 
-> > Chanwoo Choi (2):
-> >       clk: samsung: Document binding for Exynos4415 clock controller
-> >       clk: samsung: exynos4415: Add clocks using common clock framework
-> > 
-> > Naveen Krishna Ch (8):
-> >       clk: samsung: add support for 145xx and 1460x PLLs
-> >       clk: samsung: Factor out the common code to clk.c
-> >       clk: samsung: Add fixed_factor_clocks field to struct exynos_cmu_info
-> >       clk: samsung: add initial clock support for Exynos7 SoC
-> >       clk: samsung: exynos7: add clocks for I2C block
-> >       clk: samsung: exynos7: add clocks for MMC block
-> >       clk: samsung: exynos7: add clocks for RTC block
-> >       clk: samsung: exynos7: add gate clocks for WDT, TMU and PWM blocks
-> > 
-> >  .../devicetree/bindings/clock/exynos4415-clock.txt |   38 +
-> >  .../devicetree/bindings/clock/exynos7-clock.txt    |   93 ++
-> >  drivers/clk/samsung/Makefile                       |    2 +
-> >  drivers/clk/samsung/clk-exynos4415.c               | 1142 ++++++++++++++++++++
-> >  drivers/clk/samsung/clk-exynos5260.c               |  185 +---
-> >  drivers/clk/samsung/clk-exynos7.c                  |  743 +++++++++++++
-> >  drivers/clk/samsung/clk-pll.c                      |   25 +-
-> >  drivers/clk/samsung/clk-pll.h                      |    4 +
-> >  drivers/clk/samsung/clk.c                          |   98 ++
-> >  drivers/clk/samsung/clk.h                          |   37 +
-> >  include/dt-bindings/clock/exynos4415.h             |  360 ++++++
-> >  include/dt-bindings/clock/exynos7-clk.h            |   92 ++
-> >  12 files changed, 2655 insertions(+), 164 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/exynos4415-clock.txt
-> >  create mode 100644 Documentation/devicetree/bindings/clock/exynos7-clock.txt
-> >  create mode 100644 drivers/clk/samsung/clk-exynos4415.c
-> >  create mode 100644 drivers/clk/samsung/clk-exynos7.c
-> >  create mode 100644 include/dt-bindings/clock/exynos4415.h
-> >  create mode 100644 include/dt-bindings/clock/exynos7-clk.h
+Regards,
+Sudeep
+
+[1] Documentation/devicetree/bindings/cpufreq/arm_big_little_dt.txt
+[2] http://www.spinics.net/lists/arm-kernel/msg303977.html
+[3] https://lkml.org/lkml/2014/6/25/152
