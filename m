@@ -1,57 +1,69 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: fix failure setting CPU voltage by enabling dependent I2C controller
-Date: Wed, 19 Nov 2014 09:40:07 -0800
-Message-ID: <7hbno3w0lk.fsf@deeprootsystems.com>
-References: <1416337853-1558-1-git-send-email-tyler.baker@linaro.org>
-	<546C4BA1.6090701@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 1/3] ARM: dts: Add SPI flash node for Peach boards
+Date: Wed, 19 Nov 2014 17:47:09 +0000
+Message-ID: <20141119174709.GF22111@sirena.org.uk>
+References: <1416246184-29071-1-git-send-email-javier.martinez@collabora.co.uk>
+ <1416246184-29071-2-git-send-email-javier.martinez@collabora.co.uk>
+ <CAD=FV=Xkei_wxa3jWb8bPvuynbSyq4o=ezjVD0+e04aOPCAM+Q@mail.gmail.com>
+ <546C6BD2.4020802@collabora.co.uk>
+ <CAD=FV=XpweHvcTsVTMBkv9g4+GxoO8WdngGhfVj0QnOwq3ASdQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="K/+MhuhYzqQJJ3Xj"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:61057 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753829AbaKSRkL (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:54401 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755772AbaKSRrj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Nov 2014 12:40:11 -0500
-Received: by mail-pa0-f52.google.com with SMTP id eu11so662176pac.39
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2014 09:40:10 -0800 (PST)
-In-Reply-To: <546C4BA1.6090701@samsung.com> (Kukjin Kim's message of "Wed, 19
-	Nov 2014 16:49:53 +0900")
+	Wed, 19 Nov 2014 12:47:39 -0500
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=XpweHvcTsVTMBkv9g4+GxoO8WdngGhfVj0QnOwq3ASdQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tyler Baker <tyler.baker@linaro.org>, linux-arm-kernel@lists.infradead.org, arm@kernel.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Simon Glass <sjg@chromium.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Kukjin Kim <kgene.kim@samsung.com> writes:
 
-> On 11/19/14 04:10, Tyler Baker wrote:
->
-> Hi,
->
-> + Arnd, Olof and Kevin
->
->> This patch fixes a long standing issue introduced during the 3.16 merge window.
->> Shortly after the merge, exynos5250-based arndale boards began to produce the 
->> following errors:
->> 
->> kern.err kernel:  exynos-cpufreq exynos-cpufreq: failed to set cpu voltage
->> kern.err kernel:  cpufreq: __target_index: Failed to change cpu frequency: -22
->> 
->> Further analysis revealed that the S5M8767 voltage regulator used on the 
->> exynos5250-based arndale board utilizes the S3C2410 I2C controller. If the 
->> S3C2410 I2C controller driver is not enabled, the S5M8767 voltage regulator 
->> fails to probe. Therefore a dependency exists between these two drivers. 
->> In the exynos_defconfig both CONFIG_REGULATOR_S5M8767 and CONFIG_I2C_S3C2410 
->> options are enabled, and no errors are produced. However, in the 
->> multi_v7_defconfig only the CONFIG_REGULATOR_S5M8767 option is enabled and the 
->> errors are present. So let's enable the CONFIG_I2C_S3C2410 option in the 
->> multi_v7_defconfig to allow the S5M8767 voltage regulator to probe.
->> 
->> Signed-off-by: Tyler Baker <tyler.baker@linaro.org>
->
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+--K/+MhuhYzqQJJ3Xj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Applied to arm-soc/fixes, which is merged into arm-soc/for-next.
+On Wed, Nov 19, 2014 at 09:19:13AM -0800, Doug Anderson wrote:
 
-Thanks,
+Please stop CCing my work address for upstream things.
 
-Kevin
+> On Wed, Nov 19, 2014 at 2:07 AM, Javier Martinez Canillas
+
+> > I see, I thought that it was a common practice in the mainline kernel
+> > too since I saw that many board DTS currently have a spidev node:
+
+> > $ git grep 'compatible = "spidev"' arch/arm/boot/dts/ | wc -l
+> > 19
+
+These are bugs.  The device tree should describe the hardware, spidev is
+a Linux implementation detail.  Provide a compatible string for the
+device that is there just as you would for any other device.
+
+> OK.  Please don't take my comments as a NAK on this patch.  I should
+> have done the same grep myself before sending--sorry.  I just
+> remembered the old conversation and looked for that instead.
+
+Please take this as one.
+
+--K/+MhuhYzqQJJ3Xj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUbNeYAAoJECTWi3JdVIfQo4EH/RcaunwCOce7Jj1PrrMI8VnO
+VUJP08dSxzrNLrr158YGR4H2/Sc/P37f5X3e5I57cy7LXDRFV+rQMOCMiccWQ/b8
+PyR9o6NBqIspwY2WHCE39EuExK5DYD8OD6lYzq4IXI5/g4UXHV+cvqAeIsVNqT3v
+9SC0EvVaNxWyh9tJ5iIHi43myNfKnM3m5y/uyywuCJiKDfLsZgpkHSBqxynSvPae
+YhT1fcNCIjV90oGWNTQjXjVQ8CgITaV9RHIw4JoG0Y89Sxs+lbdkJP51aCNpMBr+
+PregHOYkJu4CYCd84S12EHp0uXRuEJpwr+480FTYlEb8ew6aGFQvImdp3hRwbDA=
+=rTzA
+-----END PGP SIGNATURE-----
+
+--K/+MhuhYzqQJJ3Xj--
