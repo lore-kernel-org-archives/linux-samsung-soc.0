@@ -1,49 +1,48 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH V8 00/14] drm/exynos: few patches to enhance bridge chip
- support
-Date: Wed, 19 Nov 2014 10:51:49 +0100
-Message-ID: <546C6835.7040802@collabora.co.uk>
-References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com>	<CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com>	<546C646C.4060303@collabora.co.uk> <CAEC9eQPz_7QeL7EDorb-OxiTjcb1tVUDbEbzbER4Yu2wSNNaxQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ARM: dts: Add SPI flash node for Peach boards
+Date: Wed, 19 Nov 2014 11:07:14 +0100
+Message-ID: <546C6BD2.4020802@collabora.co.uk>
+References: <1416246184-29071-1-git-send-email-javier.martinez@collabora.co.uk>	<1416246184-29071-2-git-send-email-javier.martinez@collabora.co.uk> <CAD=FV=Xkei_wxa3jWb8bPvuynbSyq4o=ezjVD0+e04aOPCAM+Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:59493 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:59518 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753542AbaKSJv4 (ORCPT
+	with ESMTP id S1755126AbaKSKHW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Nov 2014 04:51:56 -0500
-In-Reply-To: <CAEC9eQPz_7QeL7EDorb-OxiTjcb1tVUDbEbzbER4Yu2wSNNaxQ@mail.gmail.com>
+	Wed, 19 Nov 2014 05:07:22 -0500
+In-Reply-To: <CAD=FV=Xkei_wxa3jWb8bPvuynbSyq4o=ezjVD0+e04aOPCAM+Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Sean Paul <seanpaul@google.com>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, gustavo Padovan <gustavo.padovan@collabora.co.uk>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Simon Glass <sjg@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Tomasz Figa <tomasz.figa@gmail.com>, Mark Brown <broonie@linaro.org>
 
-Hello Ajay,
+Hello Doug,
 
-On 11/19/2014 10:38 AM, Ajay kumar wrote:
-> Hi Javier,
+Thanks for your feedback.
+
+On 11/18/2014 06:50 PM, Doug Anderson wrote:
+> This is common practice in the Chrome OS tree, but we've gotten
+> pushback from upstream questioning about whether "spidev" is really a
+> physical device.  See:
 > 
-> In the cover letter, I have mentioned that it is tested on Linus tree:
-> 
-> "This series is based on master branch of Linus tree at:
-> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git"
-> 
-> Kindly test the patches with that.
+> http://www.spinics.net/lists/linux-samsung-soc/msg29563.html
 > 
 
-That's what I did... Linus' master branch is a moving target and if you
-look at his current HEAD, it is commit fc14f9c1 ("Linux 3.18-rc5") but
-as I said before, at least two patches that are needed didn't land in
-Linus' tree yet. These are:
+I see, I thought that it was a common practice in the mainline kernel
+too since I saw that many board DTS currently have a spidev node:
 
-0ef76ae ("ARM: exynos_defconfig: Enable options for display panel support")
-e35e305 ("drm/panel: simple: Add AUO B116XW03 panel support")
+$ git grep 'compatible = "spidev"' arch/arm/boot/dts/ | wc -l
+19
 
-IOW, linux.git master branch + this series is not enough to have display
-working AFAICT so I was wondering if I'm missing something else.
+> 
+> I don't really have an answer for something better to do here but I
+> figured I'd at least bring up the point.
+> 
 
-Do you have a public tree somewhere with the branch you are using to test?
+I wonder how the spidev user-space interface is supposed to be used
+when booting with Device Trees.
 
 Best regards,
 Javier
