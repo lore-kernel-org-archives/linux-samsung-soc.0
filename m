@@ -1,68 +1,96 @@
-From: Paolo Pisati <p.pisati@gmail.com>
-Subject: Re: [PATCH V8 00/14] drm/exynos: few patches to enhance bridge chip
- support
-Date: Wed, 19 Nov 2014 11:55:27 +0100
-Message-ID: <20141119105527.GA5396@luxor.wired.org>
-References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com>
- <CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com>
- <546C646C.4060303@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v3 00/19] Exynos SYSMMU (IOMMU) integration with DT and
+ DMA-mapping subsystem
+Date: Wed, 19 Nov 2014 12:15:29 +0100
+Message-ID: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f48.google.com ([74.125.82.48]:51950 "EHLO
-	mail-wg0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754949AbaKSKzb (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:24992 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750757AbaKSLQX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Nov 2014 05:55:31 -0500
-Content-Disposition: inline
-In-Reply-To: <546C646C.4060303@collabora.co.uk>
+	Wed, 19 Nov 2014 06:16:23 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout1.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NFA00LO4A43IR40@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 19 Nov 2014 11:19:15 +0000 (GMT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Ajay kumar <ajaynumb@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Sean Paul <seanpaul@google.com>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, gustavo Padovan <gustavo.padovan@collabora.co.uk>
+To: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh@kernel.org>, Will Deacon <will.deacon@arm.com>, David Wodhouse <dwmw2@infradead.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On Wed, Nov 19, 2014 at 10:35:40AM +0100, Javier Martinez Canillas wrote:
-> Hello Ajay,
-> 
-> On 11/18/2014 07:20 AM, Ajay kumar wrote:
-> > On Sat, Nov 15, 2014 at 3:24 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
-> >> This series is based on master branch of Linus tree at:
-> >> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-> 
-> I applied your series on top of 3.18-rc5 + linux-next's commit:
-> 
-> 0ef76ae ("ARM: exynos_defconfig: Enable options for display panel support").
-> 
-> I think you should had mentioned what other patches are needed as a
-> dependency since I spent quite a bit of time figuring out why the
-> ps8622 bridge driver probe was always deferred due of_drm_find_panel()
-> failing and then I noticed that a patch from linux-next was needed:
-> 
-> e35e305 ("drm/panel: simple: Add AUO B116XW03 panel support")
-> 
-> With that commit the ps8622 drm bridge driver probe succeed but I still
-> don't have display working on an Exynos5240 Peach Pit, the kernel log shows:
-> 
-> platform 145b0000.dp-controller: Driver exynos-dp requests probe deferral
-> exynos-drm exynos-drm: bound 14400000.fimd (ops fimd_component_ops)
-> exynos-drm exynos-drm: failed to bind 145b0000.dp-controller (ops exynos_dp_ops): -517
-> exynos-drm exynos-drm: master bind failed: -517
-> platform 145b0000.dp-controller: Driver exynos-dp requests probe deferral
+Hello Everyone,
 
-do you have this in your dmesg?
+This is another attempt to finally make Exynos SYSMMU driver fully
+integrated with DMA-mapping subsystem. The main change from previous
+version is a rebase onto latest "automatic DMA configuration for IOMMU
+masters" patches from Will Deacon.
 
-...
-exynos-dp-video-phy 10040728.video-phy: Failed to lookup PMU regmap
-...
+This patchset demonstrates that Will's proposal works fine and
+significantly simplifies the driver code.
 
-to get a working framebuffer out of linus 318rc4 on my peach pi, i had
-to cherry pick these 3 patches:
+Best regards
+Marek Szyprowski
+Samsung R&D Institute Poland
 
-arm: dts: Exynos5: Use pmu_system_controller phandle for dp phy
-drm/exynos: dp: Remove support for unused dptx-phy
-ARM: exynos_defconfig: Enable options for display panel support
 
-Check if you have those.
+Changelog:
+v3:
+- rebased onto "[RFC PATCH v4 0/8] Introduce automatic DMA
+  configuration for IOMMU masters"
+- added some minor fixes for iommu and dma-mapping frameworks
+
+v2: http://thread.gmane.org/gmane.linux.kernel.iommu/6472/
+- rebased onto "[RFC PATCH v3 0/7] Introduce automatic DMA
+  configuration for IOMMU masters" patches:
+  http://www.spinics.net/lists/arm-kernel/msg362076.html
+- changed initialization from bus notifiers to DT related callbacks
+- removed support for separate IO address spaces - this will be
+  discussed separately after the basic support gets merged
+- removed support for power domain notifier-based runtime power
+  management - this also will be discussed separately later
+
+v1: https://lkml.org/lkml/2014/8/5/183
+- initial version, feature complete, completely rewrote integration
+  approach
+
+
+Patch summary:
+
+Marek Szyprowski (19):
+  iommu: fix const qualifier in of_iommu_set_ops
+  iommu: fix initialization without 'add_device' callback
+  arm: dma-mapping: add missing check for iommu
+  drm: exynos: detach from default dma-mapping domain on init
+  arm: exynos: pm_domains: add support for devices registered before
+    arch_initcall
+  ARM: dts: exynos4: add sysmmu nodes
+  iommu: exynos: don't read version register on every tlb operation
+  iommu: exynos: remove unused functions
+  iommu: exynos: remove useless spinlock
+  iommu: exynos: refactor function parameters to simplify code
+  iommu: exynos: remove unused functions, part 2
+  iommu: exynos: remove useless device_add/remove callbacks
+  iommu: exynos: add support for binding more than one sysmmu to master
+    device
+  iommu: exynos: add support for runtime_pm
+  iommu: exynos: rename variables to reflect their purpose
+  iommu: exynos: document internal structures
+  iommu: exynos: remove excessive includes and sort others
+    alphabetically
+  iommu: exynos: init from dt-specific callback instead of initcall
+  iommu: exynos: add callback for initializing devices from device tree
+
+ arch/arm/boot/dts/exynos4.dtsi            | 117 +++++++
+ arch/arm/boot/dts/exynos4210.dtsi         |  23 ++
+ arch/arm/boot/dts/exynos4x12.dtsi         |  82 +++++
+ arch/arm/mach-exynos/pm_domains.c         |   9 +-
+ arch/arm/mm/dma-mapping.c                 |   2 +-
+ drivers/gpu/drm/exynos/exynos_drm_iommu.c |   3 +
+ drivers/iommu/exynos-iommu.c              | 490 ++++++++++++++----------------
+ drivers/iommu/iommu.c                     |   2 +-
+ include/linux/of_iommu.h                  |   4 +-
+ 9 files changed, 459 insertions(+), 273 deletions(-)
+
 -- 
-bye,
-p.
+1.9.2
