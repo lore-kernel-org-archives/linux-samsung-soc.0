@@ -1,38 +1,67 @@
-From: Tobias Jakobi <liquid.acid@gmx.net>
-Subject: Re: [PATCH 2/2] drm/exynos: use drm generic mmap interface
-Date: Wed, 19 Nov 2014 03:32:48 +0100
-Message-ID: <546C0150.3030909@gmx.net>
-References: <1410961726-2533-1-git-send-email-inki.dae@samsung.com> <1410961726-2533-3-git-send-email-inki.dae@samsung.com> <542BFEFE.20708@gmail.com> <542D275B.3080304@samsung.com> <546BC3A6.1090304@gmx.net> <546BFAA7.1030605@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: RE: [PATCH v5 2/2] ARM: EXYNOS: PMU: move restart code into pmu driver
+Date: Wed, 19 Nov 2014 08:46:20 +0530
+Message-ID: <000801d003a7$404882a0$c0d987e0$@samsung.com>
+References: <1416307650-15162-1-git-send-email-pankaj.dubey@samsung.com>
+ <1416307650-15162-3-git-send-email-pankaj.dubey@samsung.com>
+ <546B6395.8020403@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.gmx.net ([212.227.17.20]:62268 "EHLO mout.gmx.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753796AbaKSCdH (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:13138 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753851AbaKSDQJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Nov 2014 21:33:07 -0500
-In-Reply-To: <546BFAA7.1030605@samsung.com>
+	Tue, 18 Nov 2014 22:16:09 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NF900H96NQPK0A0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 19 Nov 2014 12:16:01 +0900 (KST)
+In-reply-to: <546B6395.8020403@samsung.com>
+Content-language: en-us
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
+To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, linux@roeck-us.net
 
-Inki Dae wrote:
->>
->> Hello,
->>
->> it looks like libdrm git master is still using the EXYNOS_GEM_MMAP ioctl
->> that was removed by this patch. Is there any news on the patches for libdrm?
+On Tuesday, November 18, 2014 8:50 PM, Sylwester Nawrocki Wrote:
+> On 18/11/14 11:47, Pankaj Dubey wrote:
+> > diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
+> > index 6c8a76d..e4c3512 100644
+> > --- a/arch/arm/mach-exynos/pmu.c
+> > +++ b/arch/arm/mach-exynos/pmu.c
+> > @@ -11,8 +11,11 @@
 > 
-> The patch set already was posted. You can refer to below link,
-> 	http://www.spinics.net/lists/dri-devel/msg70737.html
+> > @@ -716,6 +719,13 @@ static void exynos5420_pmu_init(void)
+> >  	pr_info("EXYNOS5420 PMU initialized\n");  }
+> >
+> > +static int pmu_restart_notify(struct notifier_block *this,
+> > +		unsigned long code, void *unused)
+> > +{
+> > +	pmu_raw_writel(0x1, EXYNOS_SWRESET);
 > 
+> Is it also valid on exynos5440 ? Doesn't it cause any harm there ?
+> Perhaps we could add a comment saying it has not effect on that SoC ?
+> 
+
+Seeing original code from exynos.c (restart hook) I can say it's not valid
+for exynos5440.
+But it should not cause any harm as of now, because for exynos54440 PMU will
+not be probed.
+If in future support for exynos5440 PMU gets added, that time one may need
+to consider this
+point. This will be applicable for any SoC which does not have same register
+for restart.
+
+Thanks,
+Pankaj Dubey
+
+> > +	return NOTIFY_DONE;
+> > +}
+> 
+> --
 > Thanks,
-> Inki Dae
-> 
-
-Looks like I missed that, thanks for the heads up!
-
-With best wishes,
-Tobias
+> Sylwester
