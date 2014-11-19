@@ -1,45 +1,32 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: exynos boot falures in linux-next
-Date: Wed, 19 Nov 2014 18:06:55 +0100
-Message-ID: <546CCE2F.8030108@collabora.co.uk>
-References: <E1XqKYI-0000pQ-4b@ip-10-35-177-41.ec2.internal>	<7hoas54y7k.fsf@deeprootsystems.com>	<7hlhn9zcse.fsf@deeprootsystems.com>	<546A83D6.9060504@collabora.co.uk>	<7hfvdhyxqi.fsf@deeprootsystems.com> <CAMAWPa8D-oRp2yC=n+Rgw_wtwV4+Go0OQi62y3iGRYxi0sow+g@mail.gmail.com>
+Subject: Re: [PATCH 2/4] ARM: dts: Add temperature sensor to exynos5250-spring
+Date: Wed, 19 Nov 2014 18:11:15 +0100
+Message-ID: <546CCF33.9040503@collabora.co.uk>
+References: <1416412585-10809-1-git-send-email-afaerber@suse.de> <1416412585-10809-3-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:60014 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:60033 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753980AbaKSRHC (ORCPT
+	with ESMTP id S1753980AbaKSRLZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Nov 2014 12:07:02 -0500
-In-Reply-To: <CAMAWPa8D-oRp2yC=n+Rgw_wtwV4+Go0OQi62y3iGRYxi0sow+g@mail.gmail.com>
+	Wed, 19 Nov 2014 12:11:25 -0500
+In-Reply-To: <1416412585-10809-3-git-send-email-afaerber@suse.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, kernel-build-reports@lists.linaro.org, Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Vincent Palatin <vpalatin@chromium.org>, Doug Anderson <dianders@chromium.org>, Tomasz Figa <t.figa@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, open list <linux-kernel@vger.kernel.org>
 
-Hello Kevin,
+Hello Andreas,
 
-On 11/19/2014 06:01 PM, Kevin Hilman wrote:
->>>
->>> I'm not sure what is the correct step in this case but I'm OK with
->>> reverting the patch until the Exynos DRM driver bug is fixed.
->>
->> I didn't have time to dig, but I'd rather someone track down the DRM
->> problem and fix that, since it was known to be working. I'm guessing
->> it's something simple that can be fixed before the merge window opens.
-> 
-> OK, so this DRM problem is turning out to be non-trivial, so I think
-> the defconfig patch should be reverted until the DRM issue is sorted
-> out.
-> 
-> Otherwise, we risk having boot failures in linux-next which may be
-> hiding other problems.
-> 
-> Kevin
-> 
+On 11/19/2014 04:56 PM, Andreas F=C3=A4rber wrote:
+> Spotted in the Chrome OS 3.8 based device tree.
+> Needs CONFIG_SENSORS_LM90.
+>=20
+> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
 
-Agreed with the config revert, so many issues with Exynos DRM in linux-next :(
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
 Best regards,
 Javier
