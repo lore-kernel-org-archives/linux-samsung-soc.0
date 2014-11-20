@@ -1,75 +1,77 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [alsa-devel] [PATCH] ASoC: samsung: ASoC: samsung: Fix IISMOD
- setting in i2s_set_sysclk()
-Date: Thu, 20 Nov 2014 11:44:33 +0100
-Message-ID: <546DC611.8090806@samsung.com>
-References: <1416477797-27332-1-git-send-email-padma.v@samsung.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH 1/1] [media] platform: Deletion of unnecessary checks before
+ two function calls
+Date: Thu, 20 Nov 2014 11:50:32 +0100
+Message-ID: <546DC778.8050204@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:28692 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750979AbaKTKoh (ORCPT
+Received: from mout.web.de ([212.227.15.4]:63539 "EHLO mout.web.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750949AbaKTKuz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Nov 2014 05:44:37 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NFC00ALZ3AY2Q10@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Nov 2014 10:47:22 +0000 (GMT)
-In-reply-to: <1416477797-27332-1-git-send-email-padma.v@samsung.com>
+	Thu, 20 Nov 2014 05:50:55 -0500
+In-Reply-To: <5317A59D.4@users.sourceforge.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>, alsa-devel@alsa-project.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, sbkim73@samsung.com, kgene.kim@samsung.com, broonie@kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 
-On 20/11/14 11:03, Padmavathi Venna wrote:
-> In the i2s_set_sysclk() callback we are currently clearing all bits
-> of the IISMOD register in i2s_set_sysclk. It's due to an incorrect
-> mask used for the AND operation which is introduced in commit
-> a5a56871f804edac93a53b5e871c0e9818fb9033 (ASoC: samsung:
-> add support for exynos7 I2S controller) and also adds the missing
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 20 Nov 2014 11:44:20 +0100
 
-The patch looks good to me, I'd just write about the missing break
-in a separate sentence, i.e. s/and also adds/. Also add/
+The functions i2c_put_adapter() and release_firmware() test whether their
+argument is NULL and then return immediately. Thus the test around the call
+is not needed.
 
-> break statement.
-> 
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> ---
->  sound/soc/samsung/i2s.c |    5 +++--
->  1 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-> index 0df6547..e1ace52 100644
-> --- a/sound/soc/samsung/i2s.c
-> +++ b/sound/soc/samsung/i2s.c
-> @@ -494,7 +494,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
->  		if (dir == SND_SOC_CLOCK_IN)
->  			mod |= 1 << i2s_regs->cdclkcon_off;
->  		else
-> -			mod &= 0 << i2s_regs->cdclkcon_off;
-> +			mod &= ~(1 << i2s_regs->cdclkcon_off);
->  
->  		i2s->rfs = rfs;
->  		break;
-> @@ -551,10 +551,11 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
->  		}
->  
->  		if (clk_id == 0)
-> -			mod &= 0 << i2s_regs->rclksrc_off;
-> +			mod &= ~(1 << i2s_regs->rclksrc_off);
->  		else
->  			mod |= 1 << i2s_regs->rclksrc_off;
->  
-> +		break;
->  	default:
->  		dev_err(&i2s->pdev->dev, "We don't serve that!\n");
->  		return -EINVAL;
+This issue was detected by using the Coccinelle software.
 
---
-Regards,
-Sylwester
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/media/platform/exynos4-is/fimc-is.c   | 6 ++----
+ drivers/media/platform/s3c-camif/camif-core.c | 3 +--
+ 2 files changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
+index 5476dce..a1db27b 100644
+--- a/drivers/media/platform/exynos4-is/fimc-is.c
++++ b/drivers/media/platform/exynos4-is/fimc-is.c
+@@ -428,8 +428,7 @@ static void fimc_is_load_firmware(const struct firmware *fw, void *context)
+ 	 * needed around for copying to the IS working memory every
+ 	 * time before the Cortex-A5 is restarted.
+ 	 */
+-	if (is->fw.f_w)
+-		release_firmware(is->fw.f_w);
++	release_firmware(is->fw.f_w);
+ 	is->fw.f_w = fw;
+ done:
+ 	mutex_unlock(&is->lock);
+@@ -937,8 +936,7 @@ static int fimc_is_remove(struct platform_device *pdev)
+ 	vb2_dma_contig_cleanup_ctx(is->alloc_ctx);
+ 	fimc_is_put_clocks(is);
+ 	fimc_is_debugfs_remove(is);
+-	if (is->fw.f_w)
+-		release_firmware(is->fw.f_w);
++	release_firmware(is->fw.f_w);
+ 	fimc_is_free_cpu_memory(is);
+ 
+ 	return 0;
+diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
+index b385747..3b09b5b 100644
+--- a/drivers/media/platform/s3c-camif/camif-core.c
++++ b/drivers/media/platform/s3c-camif/camif-core.c
+@@ -256,8 +256,7 @@ static void camif_unregister_sensor(struct camif_dev *camif)
+ 	v4l2_device_unregister_subdev(sd);
+ 	camif->sensor.sd = NULL;
+ 	i2c_unregister_device(client);
+-	if (adapter)
+-		i2c_put_adapter(adapter);
++	i2c_put_adapter(adapter);
+ }
+ 
+ static int camif_create_media_links(struct camif_dev *camif)
+-- 
+2.1.3
