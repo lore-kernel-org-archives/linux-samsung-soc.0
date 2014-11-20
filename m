@@ -1,91 +1,53 @@
-From: Paolo Pisati <p.pisati@gmail.com>
-Subject: Re: [RFC PATCH 1/1] drm/exynos: Move platform drivers registration
- to module init
-Date: Fri, 21 Nov 2014 00:49:53 +0100
-Message-ID: <20141120234953.GA4010@luxor.wired.org>
-References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk>
- <7hh9xwxsev.fsf@deeprootsystems.com>
- <546CCAB8.9050402@collabora.co.uk>
- <CAFp+6iFbxWoh4h0ZpY=JQO4rjLss2kpj-nZM7KGiJ_F4AZ2W=g@mail.gmail.com>
- <7hppchsu29.fsf@deeprootsystems.com>
- <546E293D.9000300@collabora.co.uk>
- <7hbno1spdt.fsf@deeprootsystems.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH 1/3] drm/exynos: free DP if probe fails to find a panel or
+ bridge
+Date: Thu, 20 Nov 2014 21:54:22 -0200
+Message-ID: <1416527664-10553-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:50028 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756624AbaKTXt4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Nov 2014 18:49:56 -0500
-Received: by mail-wi0-f182.google.com with SMTP id h11so7072836wiw.15
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Nov 2014 15:49:55 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <7hbno1spdt.fsf@deeprootsystems.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Vivek Gautam <gautamvivek1987@gmail.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Paolo Pisati <p.pisati@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>
 
-On Thu, Nov 20, 2014 at 10:22:54AM -0800, Kevin Hilman wrote:
-> Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
-> 
-> > Hello,
-> >
-> > For completeness I'll comment what we talked with Kevin on IRC
-> > since probably this is the same issue that Paolo is facing.
-> >
-> > On 11/20/2014 05:41 PM, Kevin Hilman wrote:
-> >> Peach # setenv preboot "usb start; sleep 1"setenv bootargs
-> >> console=tty1 console=ttySAC3,115200 debug earlyprintk rw
-> >> root=/dev/mmcblk1p3 rootwait rootfstype=ext3
-> >
-> > My kernel command line is almost the same with the difference that I'm using
-> > clk_ignore_unused and I just checked that not passing that parameter, makes
-> > linux-next to hang showing the same output log that Kevin reported.
-> 
-> Ah!  Good find.  I confirm that adding clk_ignore_unused is getting me
-> booting again, but of course that is just masking a problem, so I hope
-> someone can shed light on which clock isn't being correctly managed.
-> 
-> Might I also suggest that folks have their default command-line to *not*
-> use clk_ignore_unused, since it's primary job is to workaround clock
-> bugs.
-
-i'm testing kgene/for-next (not linux-next), with:
-
-flag@peachpi:~/linux$ cat /proc/cmdline
-console=tty1 console=ttySAC3,115200 debug earlyprintk rw rootwait
-root=/dev/mmcblk1p3
-
-adding clk_ignore_unused didn't make any difference: it hangs on boot
-showing a black screen with backlight on.
-
-vanilla kgene/for-next as of today:
-
-7552917 Revert "ARM: exynos_defconfig: Enable options for display panel support"
-ff0391a Merge branch 'v3.19-samsung-defconfig' into for-next
-26c6283 Merge branch 'v3.18-samsung-fixes' into for-next
-cf864fd Merge branch 'v3.18-samsung-defconfig' into for-next
-98b6380 ARM: exynos_defconfig: Enable max77802 rtc and clock drivers
-839275c ARM: exynos_defconfig: Use 16 minors per MMC block device
-0526f27 ARM: dts: Explicitly set dr_mode on exynos5250-snow
-fc14f9c Linux 3.18-rc5
-...
-
-plus
-
-5e1e068 arm: dts: Exynos5: Use pmu_system_controller phandle for dp phy
-36d908e drm/exynos: dp: Remove support for unused dptx-phy
-624bff2 POSTED: mfd: syscon: Decouple syscon interface from syscon devices
-68944e3 Revert "Revert "ARM: exynos_defconfig: Enable options for display panel
-support""
-
-vanilla exynos_defconfig with SND_SOC_SNOW disabled.
-
-I should probably try linux-next at this point, but i wonder if people who
-reported kgene/for-next working were testing with a vanilla exynos_defconfig on
-a peach pi.
--- 
-bye,
-p.
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+RFAgd2FzIGxlYWtlZCBldmVyeXRpbWUgZnVuY3Rpb24gcmV0dXJucyBFUFJPQkVfREVGRVIsIGZy
+ZWUgaXQgYmVmb3JlCnJldHVybmluZy4KClNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8
+Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcF9jb3JlLmMgfCAyMSArKysrKysrKysrKysrKystLS0tLS0KIDEgZmlsZSBj
+aGFuZ2VkLCAxNSBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RwX2NvcmUuYwppbmRleCA4NTc2MmNmLi42ZmQ0YTQ2IDEwMDY0NAotLS0g
+YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmMKKysrIGIvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jCkBAIC0xMzM2LDggKzEzMzYsMTAgQEAgc3Rh
+dGljIGludCBleHlub3NfZHBfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAlp
+ZiAocGFuZWxfbm9kZSkgewogCQlkcC0+cGFuZWwgPSBvZl9kcm1fZmluZF9wYW5lbChwYW5lbF9u
+b2RlKTsKIAkJb2Zfbm9kZV9wdXQocGFuZWxfbm9kZSk7Ci0JCWlmICghZHAtPnBhbmVsKQotCQkJ
+cmV0dXJuIC1FUFJPQkVfREVGRVI7CisJCWlmICghZHAtPnBhbmVsKSB7CisJCQlyZXQgPSAtRVBS
+T0JFX0RFRkVSOworCQkJZ290byBmcmVlX2RwOworCQl9CiAJfQogCiAJZW5kcG9pbnQgPSBvZl9n
+cmFwaF9nZXRfbmV4dF9lbmRwb2ludChkZXYtPm9mX25vZGUsIE5VTEwpOwpAQCAtMTM0NiwxMCAr
+MTM0OCwxNCBAQCBzdGF0aWMgaW50IGV4eW5vc19kcF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2
+aWNlICpwZGV2KQogCQlpZiAoYnJpZGdlX25vZGUpIHsKIAkJCWRwLT5icmlkZ2UgPSBvZl9kcm1f
+ZmluZF9icmlkZ2UoYnJpZGdlX25vZGUpOwogCQkJb2Zfbm9kZV9wdXQoYnJpZGdlX25vZGUpOwot
+CQkJaWYgKCFkcC0+YnJpZGdlKQotCQkJCXJldHVybiAtRVBST0JFX0RFRkVSOwotCQl9IGVsc2UK
+LQkJCXJldHVybiAtRVBST0JFX0RFRkVSOworCQkJaWYgKCFkcC0+YnJpZGdlKSB7CisJCQkJcmV0
+ID0gLUVQUk9CRV9ERUZFUjsKKwkJCQlnb3RvIGZyZWVfZHA7CisJCQl9CisJCX0gZWxzZSB7CisJ
+CQlyZXQgPSAtRVBST0JFX0RFRkVSOworCQkJZ290byBmcmVlX2RwOworCQl9CiAJfQogCiAJZXh5
+bm9zX2RwX2Rpc3BsYXkuY3R4ID0gZHA7CkBAIC0xMzU5LDYgKzEzNjUsOSBAQCBzdGF0aWMgaW50
+IGV4eW5vc19kcF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCQlleHlub3Nf
+ZHJtX2NvbXBvbmVudF9kZWwoJnBkZXYtPmRldiwKIAkJCQkJCUVYWU5PU19ERVZJQ0VfVFlQRV9D
+T05ORUNUT1IpOwogCitmcmVlX2RwOgorCWRldm1fa2ZyZWUoZGV2LCBkcCk7CisKIAlyZXR1cm4g
+cmV0OwogfQogCi0tIAoxLjkuMwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
+cmktZGV2ZWwK
