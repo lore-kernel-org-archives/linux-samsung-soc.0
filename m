@@ -1,47 +1,75 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v3 2/5] drivers: soc: Add support for Exynos PMU driver
-Date: Thu, 20 Nov 2014 10:03:29 +0000
-Message-ID: <20141120100328.GO4042@n2100.arm.linux.org.uk>
-References: <1416461968-2057-1-git-send-email-amit.daniel@samsung.com>
- <1416461968-2057-3-git-send-email-amit.daniel@samsung.com>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [alsa-devel] [PATCH] ASoC: samsung: In the i2s_set_sysclk()
+ callback we are currently clearing all bits of the IISMOD register in
+ i2s_set_sysclk. It's due to an incorrect mask used for the AND operation
+ which is introduced in commit a5a56871f804edac93a53b5e871c0e9818fb9033 (ASoC:
+ samsung: add support for exynos7 I2S controller) and also adds the missing
+ break statement.
+Date: Thu, 20 Nov 2014 15:38:51 +0530
+Message-ID: <CAAgF-BfwGsn6HbJWH8uE48F2VWAYnAkv8=kGPkqCEWKaBM6=GQ@mail.gmail.com>
+References: <1416476977-20118-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1416461968-2057-3-git-send-email-amit.daniel@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com, kgene.kim@samsung.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f173.google.com ([209.85.160.173]:50534 "EHLO
+	mail-yk0-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757203AbaKTKIw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Nov 2014 05:08:52 -0500
+Received: by mail-yk0-f173.google.com with SMTP id 19so1133734ykq.32
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Nov 2014 02:08:51 -0800 (PST)
+In-Reply-To: <1416476977-20118-1-git-send-email-padma.v@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, sbkim73@samsung.com, kgene.kim@samsung.com, broonie@kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Thu, Nov 20, 2014 at 11:09:25AM +0530, Amit Daniel Kachhap wrote:
-> diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
-> index 063113d..44d220d 100644
-> --- a/drivers/soc/Makefile
-> +++ b/drivers/soc/Makefile
-> @@ -6,3 +6,4 @@ obj-$(CONFIG_ARCH_QCOM)		+= qcom/
->  obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
->  obj-$(CONFIG_SOC_TI)		+= ti/
->  obj-$(CONFIG_PLAT_VERSATILE)	+= versatile/
-> +obj-$(CONFIG_ARCH_EXYNOS)	+= samsung/
+Hi,
 
-Is ARCH_EXYNOS appropriate here, or is your new SOC_SAMSUNG better?
+On 11/20/14, Padmavathi Venna <padma.v@samsung.com> wrote:
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+> ---
+>  sound/soc/samsung/i2s.c |    5 +++--
+>  1 files changed, 3 insertions(+), 2 deletions(-)
+>
+> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+> index 0df6547..e1ace52 100644
+> --- a/sound/soc/samsung/i2s.c
+> +++ b/sound/soc/samsung/i2s.c
+> @@ -494,7 +494,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+>  		if (dir == SND_SOC_CLOCK_IN)
+>  			mod |= 1 << i2s_regs->cdclkcon_off;
+>  		else
+> -			mod &= 0 << i2s_regs->cdclkcon_off;
+> +			mod &= ~(1 << i2s_regs->cdclkcon_off);
+>
+>  		i2s->rfs = rfs;
+>  		break;
+> @@ -551,10 +551,11 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+>  		}
+>
+>  		if (clk_id == 0)
+> -			mod &= 0 << i2s_regs->rclksrc_off;
+> +			mod &= ~(1 << i2s_regs->rclksrc_off);
+>  		else
+>  			mod |= 1 << i2s_regs->rclksrc_off;
+>
+> +		break;
+>  	default:
+>  		dev_err(&i2s->pdev->dev, "We don't serve that!\n");
+>  		return -EINVAL;
+> --
+> 1.7.4.4
+>
 
-> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
-> new file mode 100644
-> index 0000000..a424ebc
-> --- /dev/null
-> +++ b/drivers/soc/samsung/Kconfig
-> @@ -0,0 +1,20 @@
-> +#
-> +# SAMSUNG SOC drivers
-> +#
-> +menuconfig SOC_SAMSUNG
-> +	bool "Samsung SOC drivers support"
+Please ignore this patch as subject line is not proper.
 
-If you intend to select SOC_SAMSUNG, is there any point in making this
-a user-visible symbol?
-
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+Thanks
+Padma
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
+>
