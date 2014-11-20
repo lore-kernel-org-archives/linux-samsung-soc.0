@@ -1,36 +1,62 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 4/4] ARM: EXYNOS: cpuidle: allow driver usage on Exynos3250 SoC
-Date: Thu, 20 Nov 2014 16:11:49 +0100
-Message-ID: <1416496309-27602-5-git-send-email-b.zolnierkie@samsung.com>
-References: <1416496309-27602-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1416496309-27602-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [RFC PATCH 1/1] drm/exynos: Move platform drivers registration
+ to module init
+Date: Thu, 20 Nov 2014 16:26:46 +0100
+Message-ID: <546E0836.8000604@collabora.co.uk>
+References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk> <546DF598.6030701@samsung.com> <546DFA97.1030006@collabora.co.uk> <546E0364.9000009@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:33129 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751103AbaKTP0v (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Nov 2014 10:26:51 -0500
+In-Reply-To: <546E0364.9000009@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Kevin Hilman <khilman@linaro.org>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-Register cpuidle platform device on Exynos3250 SoC allowing EXYNOS
-cpuidle driver usage on this SoC.
+Hello Inki,
 
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/exynos.c | 1 +
- 1 file changed, 1 insertion(+)
+On 11/20/2014 04:06 PM, Inki Dae wrote:
+>> BTW, it would be great if exynos-drm-next is pulled in linux-next. That is
+>> what most people use to test integration issues so you can catch earlier any
+>> regression that may arise.
+>> 
+>> You have to email Stephen Rothwell <sfr@canb.auug.org.au> and point to your
+>> tree and branch and he will be able to add it to linux-next.
+> 
+> Thanks for information. Actually, I received a similar email privately
+> before. However, exynos-drm-next should go to drm-next first and than to
+> mainline by Dave who is DRM subsystem maintainer. I think all vendor
+> specific drm drivers would need to be checked by drm subsystem
+> maintainer because these changes might be affect drm subsystem or other
+> vendor specific drm drivers before go to mainline.
+>
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 847cd0a..6efdbbe 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -297,6 +297,7 @@ static void __init exynos_dt_machine_init(void)
- 	    of_machine_is_compatible("samsung,exynos4212") ||
- 	    (of_machine_is_compatible("samsung,exynos4412") &&
- 	     of_machine_is_compatible("samsung,trats2")) ||
-+	    of_machine_is_compatible("samsung,exynos3250") ||
- 	    of_machine_is_compatible("samsung,exynos5250"))
- 		platform_device_register(&exynos_cpuidle);
+This is orthogonal to the normal upstreaming path. linux-next is an integration
+tree that is created daily. So all the remote branches are merged and a git tag
+published. The branch does not get rebased and history is not preserved between
+two published linux-next tags.
+
+This is just to test the integration of different subsystems to be sure that a
+commit in one tree does not cause a regression in another one so issues can be
+spot earlier. For example in the case of $subject, a change in the OF caused a
+regression in the Exynos DRM driver.
  
--- 
-1.8.2.3
+> If needed, I will make a new branch, which is based on top of linux-next
+> so other people can check their systems.
+>
+
+You don't really need another branch, git will take care of merge everything
+in linux-next :)
+ 
+> Thanks,
+> Inki Dae
+> 
+
+Best regards,
+Javier
