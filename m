@@ -1,53 +1,75 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [RFC PATCH v3 4/4] drm/exynos: clean up machine compatible string
- check
-Date: Thu, 20 Nov 2014 19:24:48 +0900
-Message-ID: <1416479088-29371-5-git-send-email-inki.dae@samsung.com>
-References: <1416479088-29371-1-git-send-email-inki.dae@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [alsa-devel] [PATCH] ASoC: samsung: ASoC: samsung: Fix IISMOD
+ setting in i2s_set_sysclk()
+Date: Thu, 20 Nov 2014 11:44:33 +0100
+Message-ID: <546DC611.8090806@samsung.com>
+References: <1416477797-27332-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1416479088-29371-1-git-send-email-inki.dae@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:28692 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750979AbaKTKoh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Nov 2014 05:44:37 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NFC00ALZ3AY2Q10@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Nov 2014 10:47:22 +0000 (GMT)
+In-reply-to: <1416477797-27332-1-git-send-email-padma.v@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Padmavathi Venna <padma.v@samsung.com>, alsa-devel@alsa-project.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, sbkim73@samsung.com, kgene.kim@samsung.com, broonie@kernel.org
 
-VXNlICdmb3InIHN0YXRlbWFudCBpbnN0ZWFkIG9mIGhhcmQtY29kZWQgJ2lmJyBzdGF0ZW1lbnQu
-CgpDaGFuZ2Vsb2cgdjM6Ci0gbm9uZQoKQ2hhbmdlbG9nIHYyOgotIG5vbmUKClNpZ25lZC1vZmYt
-Ynk6IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0v
-ZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgfCAgIDIwICsrKysrKysrKysrKysrKystLS0tCiAxIGZp
-bGUgY2hhbmdlZCwgMTYgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMgYi9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKaW5kZXggM2FjMzliNi4uNDU3OTE4NiAxMDA2NDQK
-LS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCisrKyBiL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwpAQCAtNTg3LDkgKzU4NywxNiBAQCBz
-dGF0aWMgc3RydWN0IHBsYXRmb3JtX2RyaXZlciBleHlub3NfZHJtX3BsYXRmb3JtX2RyaXZlciA9
-IHsKIAl9LAogfTsKIAorc3RhdGljIGNvbnN0IGNoYXIgKiBjb25zdCBzdHJpbmdzW10gPSB7CisJ
-InNhbXN1bmcsZXh5bm9zMyIsCisJInNhbXN1bmcsZXh5bm9zNCIsCisJInNhbXN1bmcsZXh5bm9z
-NSIsCit9OworCiBzdGF0aWMgaW50IGV4eW5vc19kcm1faW5pdCh2b2lkKQogewotCWludCByZXQ7
-CisJYm9vbCBpc19leHlub3MgPSBmYWxzZTsKKwlpbnQgcmV0LCBpOwogCiAJLyoKIAkgKiBSZWdp
-c3RlciBkZXZpY2Ugb2JqZWN0IG9ubHkgaW4gY2FzZSBvZiBFeHlub3MgU29DLgpAQCAtNTk4LDkg
-KzYwNSwxNCBAQCBzdGF0aWMgaW50IGV4eW5vc19kcm1faW5pdCh2b2lkKQogCSAqIGJ5IEV4eW5v
-cyBkcm0gZHJpdmVyIHdoZW4gdXNpbmcgbXVsdGktcGxhdGZvcm0ga2VybmVsLgogCSAqIFNvIHRo
-ZXNlIGNvZGVzIHdpbGwgYmUgcmVwbGFjZWQgd2l0aCBtb3JlIGdlbmVyaWMgd2F5IGxhdGVyLgog
-CSAqLwotCWlmICghb2ZfbWFjaGluZV9pc19jb21wYXRpYmxlKCJzYW1zdW5nLGV4eW5vczMiKSAm
-JgotCQkJIW9mX21hY2hpbmVfaXNfY29tcGF0aWJsZSgic2Ftc3VuZyxleHlub3M0IikgJiYKLQkJ
-CSFvZl9tYWNoaW5lX2lzX2NvbXBhdGlibGUoInNhbXN1bmcsZXh5bm9zNSIpKQorCWZvciAoaSA9
-IDA7IGkgPCBBUlJBWV9TSVpFKHN0cmluZ3MpOyBpKyspIHsKKwkJaWYgKG9mX21hY2hpbmVfaXNf
-Y29tcGF0aWJsZShzdHJpbmdzW2ldKSkgeworCQkJaXNfZXh5bm9zID0gdHJ1ZTsKKwkJCWJyZWFr
-OworCQl9CisJfQorCisJaWYgKCFpc19leHlub3MpCiAJCXJldHVybiAtRU5PREVWOwogCiAJZXh5
-bm9zX2RybV9wZGV2ID0gcGxhdGZvcm1fZGV2aWNlX3JlZ2lzdGVyX3NpbXBsZSgiZXh5bm9zLWRy
-bSIsIC0xLAotLSAKMS43LjkuNQoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
-cmktZGV2ZWwK
+On 20/11/14 11:03, Padmavathi Venna wrote:
+> In the i2s_set_sysclk() callback we are currently clearing all bits
+> of the IISMOD register in i2s_set_sysclk. It's due to an incorrect
+> mask used for the AND operation which is introduced in commit
+> a5a56871f804edac93a53b5e871c0e9818fb9033 (ASoC: samsung:
+> add support for exynos7 I2S controller) and also adds the missing
+
+The patch looks good to me, I'd just write about the missing break
+in a separate sentence, i.e. s/and also adds/. Also add/
+
+> break statement.
+> 
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+> ---
+>  sound/soc/samsung/i2s.c |    5 +++--
+>  1 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+> index 0df6547..e1ace52 100644
+> --- a/sound/soc/samsung/i2s.c
+> +++ b/sound/soc/samsung/i2s.c
+> @@ -494,7 +494,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+>  		if (dir == SND_SOC_CLOCK_IN)
+>  			mod |= 1 << i2s_regs->cdclkcon_off;
+>  		else
+> -			mod &= 0 << i2s_regs->cdclkcon_off;
+> +			mod &= ~(1 << i2s_regs->cdclkcon_off);
+>  
+>  		i2s->rfs = rfs;
+>  		break;
+> @@ -551,10 +551,11 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+>  		}
+>  
+>  		if (clk_id == 0)
+> -			mod &= 0 << i2s_regs->rclksrc_off;
+> +			mod &= ~(1 << i2s_regs->rclksrc_off);
+>  		else
+>  			mod |= 1 << i2s_regs->rclksrc_off;
+>  
+> +		break;
+>  	default:
+>  		dev_err(&i2s->pdev->dev, "We don't serve that!\n");
+>  		return -EINVAL;
+
+--
+Regards,
+Sylwester
