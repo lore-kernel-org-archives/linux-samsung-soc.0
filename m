@@ -1,362 +1,194 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH 1/2] Input: add regulator haptic driver
-Date: Thu, 20 Nov 2014 20:03:29 +0530
-Message-ID: <CAGcde9HNGDbm8sNHjyJ-PW75o0eaH1w6KtsOsQx6kDjVqxch5Q@mail.gmail.com>
-References: <1416490300-28865-1-git-send-email-jaewon02.kim@samsung.com> <1416490300-28865-2-git-send-email-jaewon02.kim@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [RFC PATCH v3 1/4] drm/exynos: make kms drivers to be independent
+ drivers
+Date: Thu, 20 Nov 2014 23:37:51 +0900
+Message-ID: <546DFCBF.4040500@samsung.com>
+References: <1416479088-29371-1-git-send-email-inki.dae@samsung.com>
+ <1416479088-29371-2-git-send-email-inki.dae@samsung.com>
+ <546DEA66.8010605@samsung.com> <546DF329.20201@samsung.com>
+ <546DF973.5050809@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f41.google.com ([74.125.82.41]:48096 "EHLO
-	mail-wg0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755887AbaKTOdv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Nov 2014 09:33:51 -0500
-In-Reply-To: <1416490300-28865-2-git-send-email-jaewon02.kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <546DF973.5050809@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaewon Kim <jaewon02.kim@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Hyunhee Kim <hyunhee.kim@samsung.com>
 
-Hi Jaewon,
-
-On 20 November 2014 19:01, Jaewon Kim <jaewon02.kim@samsung.com> wrote:
-> This patch adds support for haptic driver controlled by
-> voltage of regulator. And this driver support for
-> Force Feedback interface from input framework
->
-> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
-> Signed-off-by: Hyunhee Kim <hyunhee.kim@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  .../devicetree/bindings/input/regulator-haptic.txt |   24 ++
->  drivers/input/misc/Kconfig                         |   11 +
->  drivers/input/misc/Makefile                        |    1 +
->  drivers/input/misc/regulator-haptic.c              |  241 ++++++++++++++++++++
->  4 files changed, 277 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/regulator-haptic.txt
->  create mode 100644 drivers/input/misc/regulator-haptic.c
->
-> diff --git a/Documentation/devicetree/bindings/input/regulator-haptic.txt b/Documentation/devicetree/bindings/input/regulator-haptic.txt
-> new file mode 100644
-> index 0000000..9f60e17
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/regulator-haptic.txt
-> @@ -0,0 +1,24 @@
-> +* Requlator Haptic Device Tree Bindings
-> +
-> +The regulator haptic driver controlled by voltage of regulator.
-> +This driver implemented via Force Feedback interface.
-> +
-> +Required Properties:
-> + - compatible : Should be "regulator-haptic"
-> + - haptic-supply : Power supply for the haptic motor.
-> +       [*] refer Documentation/devicetree/bindings/regulator/regulator.txt
-> +
-> + - max-microvolt : The maximum voltage value supplied to haptic motor.
-> +               [The unit of the voltage is a micro]
-> +
-> + - min-microvolt : The minimum voltage value in which haptic motor reacts.
-> +               [The unit of the voltage is a micro]
-> +
-> +Example:
-> +
-> +       regulator-haptic {
-> +               compatible = "regulator-haptic";
-> +               haptic-supply = <&motor_regulator>;
-> +               max-microvolt = <2700000>;
-> +               min-microvolt = <1100000>;
-> +       };
-> diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
-> index 23297ab..e5e556d 100644
-> --- a/drivers/input/misc/Kconfig
-> +++ b/drivers/input/misc/Kconfig
-> @@ -394,6 +394,17 @@ config INPUT_CM109
->           To compile this driver as a module, choose M here: the module will be
->           called cm109.
->
-> +config INPUT_REGULATOR_HAPTIC
-> +       tristate "regulator haptics support"
-> +       select INPUT_FF_MEMLESS
-> +       help
-> +         This option enables device driver support for the haptic controlled
-> +         by regulator. This driver supports ff-memless interface
-> +         from input framework.
-> +
-> +         To compile this driver as a module, choose M here: the
-> +         module will be called regulator-haptic.
-> +
->  config INPUT_RETU_PWRBUTTON
->         tristate "Retu Power button Driver"
->         depends on MFD_RETU
-> diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
-> index 19c7603..1f135af 100644
-> --- a/drivers/input/misc/Makefile
-> +++ b/drivers/input/misc/Makefile
-> @@ -53,6 +53,7 @@ obj-$(CONFIG_INPUT_PMIC8XXX_PWRKEY)   += pmic8xxx-pwrkey.o
->  obj-$(CONFIG_INPUT_POWERMATE)          += powermate.o
->  obj-$(CONFIG_INPUT_PWM_BEEPER)         += pwm-beeper.o
->  obj-$(CONFIG_INPUT_RB532_BUTTON)       += rb532_button.o
-> +obj-$(CONFIG_INPUT_REGULATOR_HAPTIC)   += regulator-haptic.o
->  obj-$(CONFIG_INPUT_RETU_PWRBUTTON)     += retu-pwrbutton.o
->  obj-$(CONFIG_INPUT_GPIO_ROTARY_ENCODER)        += rotary_encoder.o
->  obj-$(CONFIG_INPUT_SGI_BTNS)           += sgi_btns.o
-> diff --git a/drivers/input/misc/regulator-haptic.c b/drivers/input/misc/regulator-haptic.c
-> new file mode 100644
-> index 0000000..1a83ecb
-> --- /dev/null
-> +++ b/drivers/input/misc/regulator-haptic.c
-> @@ -0,0 +1,241 @@
-> +/*
-> + * Regulator haptic driver
-> + *
-> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-> + * Author: Jaewon Kim <jaewon02.kim@samsung.com>
-> + * Author: Hyunhee Kim <hyunhee.kim@samsung.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/input.h>
-> +#include <linux/slab.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/of.h>
-> +
-> +#define MAX_MAGNITUDE_SHIFT    16
-> +
-> +struct regulator_haptic {
-> +       struct device *dev;
-> +       struct input_dev *input_dev;
-> +       struct regulator *regulator;
-> +       struct work_struct work;
-> +
-> +       bool enabled;
-> +       bool suspend_state;
-> +       unsigned int max_volt;
-> +       unsigned int min_volt;
-> +       unsigned int intensity;
-> +       unsigned int magnitude;
-> +};
-> +
-> +static void regulator_haptic_enable(struct regulator_haptic *haptic)
-> +{
-> +       int error;
-> +
-> +       if (haptic->enabled)
-> +               return;
-> +
-> +       error = regulator_enable(haptic->regulator);
-> +       if (error) {
-> +               dev_err(haptic->dev, "cannot enable regulator\n");
-> +               return;
-> +       }
-> +
-> +       haptic->enabled = true;
-> +}
-> +
-> +static void regulator_haptic_disable(struct regulator_haptic *haptic)
-> +{
-> +       int error;
-> +
-> +       if (!haptic->enabled)
-> +               return;
-> +
-> +       error = regulator_disable(haptic->regulator);
-> +       if (error) {
-> +               dev_err(haptic->dev, "cannot disable regulator\n");
-> +               return;
-> +       }
-> +
-> +       haptic->enabled = false;
-> +}
-> +
-> +static void regulator_haptic_work(struct work_struct *work)
-> +{
-> +       struct regulator_haptic *haptic = container_of(work,
-> +                                       struct regulator_haptic, work);
-> +       int error;
-> +
-> +       error = regulator_set_voltage(haptic->regulator,
-> +                       haptic->intensity + haptic->min_volt, haptic->max_volt);
-> +       if (error) {
-> +               dev_err(haptic->dev, "cannot set regulator voltage\n");
-> +               return;
-> +       }
-> +
-> +       if (haptic->magnitude)
-> +               regulator_haptic_enable(haptic);
-> +       else
-> +               regulator_haptic_disable(haptic);
-> +}
-> +
-> +static int regulator_haptic_play_effect(struct input_dev *input, void *data,
-> +                                       struct ff_effect *effect)
-> +{
-> +       struct regulator_haptic *haptic = input_get_drvdata(input);
-> +       u64 volt_mag_multi;
-> +
-> +       haptic->magnitude = effect->u.rumble.strong_magnitude;
-> +       if (!haptic->magnitude)
-> +               haptic->magnitude = effect->u.rumble.weak_magnitude;
-> +
-> +
-> +       volt_mag_multi = (u64)(haptic->max_volt - haptic->min_volt) *
-> +                                       haptic->magnitude;
-> +       haptic->intensity = (unsigned int)(volt_mag_multi >>
-> +                                       MAX_MAGNITUDE_SHIFT);
-> +
-> +       schedule_work(&haptic->work);
-> +
-> +       return 0;
-> +}
-> +
-> +static void regulator_haptic_close(struct input_dev *input)
-> +{
-> +       struct regulator_haptic *haptic = input_get_drvdata(input);
-> +
-> +       cancel_work_sync(&haptic->work);
-> +       regulator_haptic_disable(haptic);
-> +}
-> +
-> +static int regulator_haptic_parse_dt(struct regulator_haptic *haptic)
-> +{
-> +       struct device_node *node = haptic->dev->of_node;
-> +       int error;
-> +
-> +       error = of_property_read_u32(node, "max-microvolt", &haptic->max_volt);
-> +       if (error) {
-> +               dev_err(haptic->dev, "cannot parse max-microvolt\n");
-> +               return error;
-> +       }
-> +
-> +       error = of_property_read_u32(node, "min-microvolt", &haptic->min_volt);
-> +       if (error) {
-> +               dev_err(haptic->dev, "cannot parse min-microvolt\n");
-> +               return error;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int regulator_haptic_probe(struct platform_device *pdev)
-> +{
-> +       struct regulator_haptic *haptic;
-> +       struct input_dev *input_dev;
-> +       int error;
-> +
-> +       haptic = devm_kzalloc(&pdev->dev, sizeof(*haptic), GFP_KERNEL);
-> +       if (!haptic)
-> +               return -ENOMEM;
-> +
-> +       haptic->dev = &pdev->dev;
-> +       haptic->enabled = false;
-> +       haptic->suspend_state = false;
-> +       INIT_WORK(&haptic->work, regulator_haptic_work);
-> +
-> +       error = regulator_haptic_parse_dt(haptic);
-> +       if (error) {
-> +               dev_err(&pdev->dev, "failed to parse device tree\n");
-> +               return error;
-> +       }
-> +
-> +       haptic->regulator = devm_regulator_get(&pdev->dev, "haptic");
-> +       if (IS_ERR(haptic->regulator)) {
-> +               dev_err(&pdev->dev, "failed to get regulator\n");
-> +               return PTR_ERR(haptic->regulator);
-> +       }
-> +
-> +       input_dev = devm_input_allocate_device(&pdev->dev);
-> +       if (!input_dev)
-> +               return  -ENOMEM;
-> +
-> +       haptic->input_dev = input_dev;
-> +       haptic->input_dev->name = "regulator-haptic";
-> +       haptic->input_dev->dev.parent = &pdev->dev;
-> +       haptic->input_dev->close = regulator_haptic_close;
-> +       input_set_drvdata(haptic->input_dev, haptic);
-> +       input_set_capability(haptic->input_dev, EV_FF, FF_RUMBLE);
-> +
-> +       error = input_ff_create_memless(input_dev, NULL,
-> +                             regulator_haptic_play_effect);
-> +       if (error) {
-> +               dev_err(&pdev->dev, "failed to create force-feedback\n");
-> +               return error;
-> +       }
-> +
-> +       error = input_register_device(haptic->input_dev);
-> +       if (error) {
-> +               dev_err(&pdev->dev, "failed to register input device\n");
-> +               return error;
-> +       }
-> +
-> +       platform_set_drvdata(pdev, haptic);
-> +
-> +       return 0;
-> +}
-> +
-> +static int __maybe_unused regulator_haptic_suspend(struct device *dev)
-> +{
-> +       struct platform_device *pdev = to_platform_device(dev);
-> +       struct regulator_haptic *haptic = platform_get_drvdata(pdev);
-> +
-> +       if (haptic->enabled) {
-> +               regulator_haptic_disable(haptic);
-> +               haptic->suspend_state = true;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static int __maybe_unused regulator_haptic_resume(struct device *dev)
-> +{
-> +       struct platform_device *pdev = to_platform_device(dev);
-> +       struct regulator_haptic *haptic = platform_get_drvdata(pdev);
-> +
-> +       if (haptic->enabled) {
-> +               regulator_haptic_enable(haptic);
-> +               haptic->suspend_state = false;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static SIMPLE_DEV_PM_OPS(regulator_haptic_pm_ops,
-> +               regulator_haptic_suspend, regulator_haptic_resume);
-> +
-> +static struct of_device_id regulator_haptic_dt_match[] = {
-> +       { .compatible = "regulator-haptic" },
-> +       {},
-> +};
-> +
-> +static struct platform_driver regulator_haptic_driver = {
-> +       .probe          = regulator_haptic_probe,
-> +       .driver         = {
-> +               .name           = "regulator-haptic",
-> +               .owner          = THIS_MODULE,
-
-.owner is no more required for drivers using module_platform_driver()
-
-Thanks,
-Pankaj Dubey
-
-> +               .of_match_table = regulator_haptic_dt_match,
-> +               .pm             = &regulator_haptic_pm_ops,
-> +       },
-> +};
-> +module_platform_driver(regulator_haptic_driver);
-> +
-> +MODULE_AUTHOR("Jaewon Kim <jaewon02.kim@samsung.com>");
-> +MODULE_AUTHOR("Hyunhee Kim <hyunhee.kim@samsung.com>");
-> +MODULE_ALIAS("platform:regulator-haptic");
-> +MODULE_DESCRIPTION("Regulator haptic driver");
-> +MODULE_LICENSE("GPL");
-> --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gMjAxNOuFhCAxMeyblCAyMOydvCAyMzoyMywgQW5kcnplaiBIYWpkYSB3cm90ZToKPiBPbiAx
+MS8yMC8yMDE0IDAyOjU2IFBNLCBJbmtpIERhZSB3cm90ZToKPj4gT24gMjAxNOuFhCAxMeyblCAy
+MOydvCAyMjoxOSwgQW5kcnplaiBIYWpkYSB3cm90ZToKPj4+IE9uIDExLzIwLzIwMTQgMTE6MjQg
+QU0sIElua2kgRGFlIHdyb3RlOgo+Pj4+IFRoaXMgcGF0Y2ggbWFrZXMga21zIGRyaXZlcnMgdG8g
+YmUgaW5kZXBlbmRlbnQgZHJpdmVycy4KPj4+PiBGb3IgdGhpcywgaXQgcmVtb3ZlcyBhbGwgcmVn
+aXN0ZXIgY29kZXMgdG8ga21zIGRyaXZlcnMKPj4+PiBmcm9tIGV4eW5vc19kcm1fZHJ2IG1vZHVs
+ZSBhbmQgYWRkcyBtb2R1bGVfaW5pdC9leGl0Cj4+Pj4gZm9yIGVhY2gga21zIGRyaXZlciBzbyB0
+aGF0IGVhY2gga21zIGRyaXZlciBjYW4gYmUKPj4+PiBjYWxsZWQgaW5kZXBlbmRlbnRseS4KPj4+
+Pgo+Pj4+IENoYW5nZWxvZyB2MzoKPj4+PiAtIFVzZSBtb2R1bGVfcGxhdGZvcm1fZHJpdmVyIG1h
+Y3JvIGluc3RlYWQgbW9kdWxlX2luaXQvZXhpdC4KPj4+PiAtIENvbmZpZ3VyZSBhbGwga21zIGRy
+aXZlcnMgdG8gYmUgYnVpbHQgaW4ga2VybmVsIGltYWdlLgo+Pj4+Cj4+Pj4gQ2hhbmdlbG9nIHYy
+Ogo+Pj4+IC0gbm9uZQo+Pj4+Cj4+Pj4gU2lnbmVkLW9mZi1ieTogSW5raSBEYWUgPGlua2kuZGFl
+QHNhbXN1bmcuY29tPgo+Pj4+IC0tLQo+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcF9jb3JlLmMgIHwgICAgMiArKwo+Pj4+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fZHJ2LmMgIHwgICA0MyArKystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KPj4+PiAg
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oICB8ICAgIDUgLS0tLQo+Pj4+
+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgIHwgICAgMiArKwo+Pj4+
+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIHwgICAgMiArKwo+Pj4+
+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgICAgIHwgICAgMiArKwo+Pj4+
+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jICAgIHwgICAgMiArKwo+Pj4+
+ICA3IGZpbGVzIGNoYW5nZWQsIDEzIGluc2VydGlvbnMoKyksIDQ1IGRlbGV0aW9ucygtKQo+Pj4+
+Cj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUu
+YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYwo+Pj4+IGluZGV4IGVk
+ODE4YjkuLjMwZWJmNWQgMTAwNjQ0Cj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHBfY29yZS5jCj4+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHBfY29yZS5jCj4+Pj4gQEAgLTE0MDgsNiArMTQwOCw4IEBAIHN0cnVjdCBwbGF0Zm9ybV9kcml2
+ZXIgZHBfZHJpdmVyID0gewo+Pj4+ICAJfSwKPj4+PiAgfTsKPj4+PiAgCj4+Pj4gK21vZHVsZV9w
+bGF0Zm9ybV9kcml2ZXIoZHBfZHJpdmVyKTsKPj4+Cj4+PiBJZiB5b3UgdHJ5IHRvIGJ1aWxkIGV4
+eW5vc2RybSBhcyBtb2R1bGUgeW91IHdpbGwgcmVjZWl2ZSBlcnJvcnMgZHVlIHRvCj4+PiBtdWx0
+aXBsZSBkZWZpbml0aW9ucyBvZiBpbml0X21vZHVsZSwgaWUgbW9kdWxlX2luaXQvbW9kdWxlXypf
+ZHJpdmVyCj4+PiBtYWNyb3MgY2FuIGJlIHVzZWQgb25jZSBwZXIgbW9kdWxlLgo+Pgo+PiBBaCwg
+cmlnaHQuIHdlIGhhZCBldmVyIHRyaWVkIHNhbWUgd2F5IGJlZm9yZSBidXQgZmFpbGVkIGluIHNh
+bWUgcHJvYmxlbS4KPj4gSSBkaWRuJ3QgcmVhbGl6ZSB0aGF0LiBBbnl3YXksIEkgd2lsbCB0cnkg
+dG8gZmluZCBvdXQgYSBiZXR0ZXIgd2F5LiBJJ2QKPj4gcmVhbGx5IGxpa2UgdG8gcmVtb3ZlIGFs
+bCByZWdpc3RlciBjb2RlcyBvZiBzdWIgZHJpdmVycyBmcm9tCj4+IGV4eW5vc19kcm1fZHJ2IHNv
+bWVob3cuCj4gCj4gSSBoYXZlIHByb3Bvc2VkIG9uY2Ugc29sdXRpb24gd2l0aCBzcGFyc2UgYXJy
+YXlzLCB1c2luZyBsaW5rZXIgc2NyaXB0cwo+IFsxXS4gU29tZXRoaW5nIHNpbWlsYXIgaXMgdXNl
+ZCB3aXRoIGNsb2NrIGNvbnRyb2xsZXJzIGFzIEkgcmVtZW1iZXIuCj4gSSBkbyBub3Qgc2VlIG90
+aGVyIHBvc3NpYmlsaXRpZXMgdG8gZnVsbHkgc2VwYXJhdGUgY29tcG9uZW50cyBvZgo+IGV4eW5v
+c19kcm1fZHJ2Lgo+IAo+IFsxXTogaHR0cDovL3Blcm1hbGluay5nbWFuZS5vcmcvZ21hbmUuY29t
+cC52aWRlby5kcmkuZGV2ZWwvMTAzODE2Cj4gCgpJIGtub3cgdGhpcyBwYXRjaC4gSSB3YXNuJ3Qg
+c3VyZSB0aGF0IHRoZSB1c2Ugb2YgdGhlIHByaXZhdGUgbGlua2VyCnNlY3Rpb24gaXMgcmVhc29u
+YWJsZSBhbmQgb3ZlcnVzZSBpdC4gQWN0dWFsbHksIE1yLiBQYXJrIG9wcG9zZWQgdGhpcwp3YXku
+IEl0IG1pZ2h0IGJlIGEgZ29vZCBpZGVhIGlmIG5vIHByb2JsZW0gZm9yIGRldmljZSBkcml2ZXJz
+IHVzZSB0aGUKcHJpdmF0ZSBsaW5rZXIgc2VjdGlvbi4gSXMgdGhlcmUgYW55IGRldmljZSBkcml2
+ZXIgdXNpbmcgdGhlIHByaXZhdGUKbGlua2VyIHNlY3Rpb24/CgpUaGFua3MsCklua2kgRGFlCgo+
+IFJlZ2FyZHMKPiBBbmRyemVqCj4gCj4+Cj4+Pgo+Pj4gQW55d2F5IEkgYW0gYWZyYWlkIGV4eW5v
+c2RybSBzZWVtcyB0byBiZSBzdGlsbCBmcmFnaWxlIHRvIG9yZGVyIG9mCj4+PiBzdWNjZXNzZnVs
+IHByb2JlcyBvZiB0aGVpciBjb21wb25lbnRzLgo+Pj4gSXQgY2FuIGJlIGVhc2lseSBvYnNlcnZl
+ZCBvbiB0aGUgc3lzdGVtIHdpdGggdHdvIGRpc3BsYXkgcGlwZWxpbmVzIHdpdGgKPj4+IG9uZSBv
+ZiB0aGVtIHByb2JlIGRlZmVycmluZy4gRm9yIGV4YW1wbGUgdW5pdmVyc2FsIHdpdGggZmltZC9k
+cGkgKyB2aWRpOgo+Pj4gMS4gZmltZCBkZWZlcnMgcHJvYmUgYmVjYXVzZSBwYW5lbCBpcyBub3Qg
+eWV0IHByb2JlZC4KPj4+IDIuIHZpZGkgcHJvYmVzIG9rLgo+Pj4gMy4gZHJtZGV2IGlzIGluaXRp
+YWxpemVkLgo+Pj4gNC4gZmltZCBwcm9iZXMgb2ssIGJ1dCBpdCBpcyB0b28gbGF0ZSEhIQo+Pj4K
+Pj4+IFNvIHlvdSBjYW4gcmVwcm9kdWNlIHRoZSBzY2VuYXJpbyBvbiBhbnkgdGFyZ2V0IHdoZW4g
+b25lIG9mIHRoZQo+Pj4gY29tcG9uZW50cyBkZWZlcnMgYW5kIHZpZGkgaXMgcHJlc2VudCAodmlk
+aSBuZXZlciBkZWZlcnMgSSBzdXBwb3NlKS4KPj4KPj4gVGhhbmtzIGZvciBjaGVja2luZywKPj4g
+SW5raSBEYWUKPj4KPj4+Cj4+PiBSZWdhcmRzCj4+PiBBbmRyemVqCj4+Pgo+Pj4+ICsKPj4+PiAg
+TU9EVUxFX0FVVEhPUigiSmluZ29vIEhhbiA8amcxLmhhbkBzYW1zdW5nLmNvbT4iKTsKPj4+PiAg
+TU9EVUxFX0RFU0NSSVBUSU9OKCJTYW1zdW5nIFNvQyBEUCBEcml2ZXIiKTsKPj4+PiAgTU9EVUxF
+X0xJQ0VOU0UoIkdQTCB2MiIpOwo+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fZHJ2LmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+ZHJ2LmMKPj4+PiBpbmRleCBlYWIxMmYwLi4wMmQ0NzcyIDEwMDY0NAo+Pj4+IC0tLSBhL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwo+Pj4+ICsrKyBiL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYwo+Pj4+IEBAIC00ODQsMTIgKzQ4NCw2IEBAIHN0
+YXRpYyBzdHJ1Y3QgY29tcG9uZW50X21hdGNoICpleHlub3NfZHJtX21hdGNoX2FkZChzdHJ1Y3Qg
+ZGV2aWNlICpkZXYpCj4+Pj4gIAo+Pj4+ICAJbXV0ZXhfbG9jaygmZHJtX2NvbXBvbmVudF9sb2Nr
+KTsKPj4+PiAgCj4+Pj4gLQkvKiBEbyBub3QgcmV0cnkgdG8gcHJvYmUgaWYgdGhlcmUgaXMgbm8g
+YW55IGttcyBkcml2ZXIgcmVnaXRlcmVkLiAqLwo+Pj4+IC0JaWYgKGxpc3RfZW1wdHkoJmRybV9j
+b21wb25lbnRfbGlzdCkpIHsKPj4+PiAtCQltdXRleF91bmxvY2soJmRybV9jb21wb25lbnRfbG9j
+ayk7Cj4+Pj4gLQkJcmV0dXJuIEVSUl9QVFIoLUVOT0RFVik7Cj4+Pj4gLQl9Cj4+Pj4gLQo+Pj4+
+ICAJbGlzdF9mb3JfZWFjaF9lbnRyeShjZGV2LCAmZHJtX2NvbXBvbmVudF9saXN0LCBsaXN0KSB7
+Cj4+Pj4gIAkJLyoKPj4+PiAgCQkgKiBBZGQgY29tcG9uZW50cyB0byBtYXN0ZXIgb25seSBpbiBj
+YXNlIHRoYXQgY3J0YyBhbmQKPj4+PiBAQCAtNTQ1LDIyICs1MzksNiBAQCBzdGF0aWMgY29uc3Qg
+c3RydWN0IGNvbXBvbmVudF9tYXN0ZXJfb3BzIGV4eW5vc19kcm1fb3BzID0gewo+Pj4+ICAJLnVu
+YmluZAkJPSBleHlub3NfZHJtX3VuYmluZCwKPj4+PiAgfTsKPj4+PiAgCj4+Pj4gLXN0YXRpYyBz
+dHJ1Y3QgcGxhdGZvcm1fZHJpdmVyICpjb25zdCBleHlub3NfZHJtX2ttc19kcml2ZXJzW10gPSB7
+Cj4+Pj4gLSNpZmRlZiBDT05GSUdfRFJNX0VYWU5PU19GSU1ECj4+Pj4gLQkmZmltZF9kcml2ZXIs
+Cj4+Pj4gLSNlbmRpZgo+Pj4+IC0jaWZkZWYgQ09ORklHX0RSTV9FWFlOT1NfRFAKPj4+PiAtCSZk
+cF9kcml2ZXIsCj4+Pj4gLSNlbmRpZgo+Pj4+IC0jaWZkZWYgQ09ORklHX0RSTV9FWFlOT1NfRFNJ
+Cj4+Pj4gLQkmZHNpX2RyaXZlciwKPj4+PiAtI2VuZGlmCj4+Pj4gLSNpZmRlZiBDT05GSUdfRFJN
+X0VYWU5PU19IRE1JCj4+Pj4gLQkmbWl4ZXJfZHJpdmVyLAo+Pj4+IC0JJmhkbWlfZHJpdmVyLAo+
+Pj4+IC0jZW5kaWYKPj4+PiAtfTsKPj4+PiAtCj4+Pj4gIHN0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1f
+ZHJpdmVyICpjb25zdCBleHlub3NfZHJtX25vbl9rbXNfZHJpdmVyc1tdID0gewo+Pj4+ICAjaWZk
+ZWYgQ09ORklHX0RSTV9FWFlOT1NfRzJECj4+Pj4gIAkmZzJkX2RyaXZlciwKPj4+PiBAQCAtNTg3
+LDIyICs1NjUsMTQgQEAgc3RhdGljIGludCBleHlub3NfZHJtX3BsYXRmb3JtX3Byb2JlKHN0cnVj
+dCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4+Pj4gIAlwZGV2LT5kZXYuY29oZXJlbnRfZG1hX21h
+c2sgPSBETUFfQklUX01BU0soMzIpOwo+Pj4+ICAJZXh5bm9zX2RybV9kcml2ZXIubnVtX2lvY3Rs
+cyA9IEFSUkFZX1NJWkUoZXh5bm9zX2lvY3Rscyk7Cj4+Pj4gIAo+Pj4+IC0JZm9yIChpID0gMDsg
+aSA8IEFSUkFZX1NJWkUoZXh5bm9zX2RybV9rbXNfZHJpdmVycyk7ICsraSkgewo+Pj4+IC0JCXJl
+dCA9IHBsYXRmb3JtX2RyaXZlcl9yZWdpc3RlcihleHlub3NfZHJtX2ttc19kcml2ZXJzW2ldKTsK
+Pj4+PiAtCQlpZiAocmV0IDwgMCkKPj4+PiAtCQkJZ290byBlcnJfdW5yZWdpc3Rlcl9rbXNfZHJp
+dmVyczsKPj4+PiAtCX0KPj4+PiAtCj4+Pj4gIAltYXRjaCA9IGV4eW5vc19kcm1fbWF0Y2hfYWRk
+KCZwZGV2LT5kZXYpOwo+Pj4+IC0JaWYgKElTX0VSUihtYXRjaCkpIHsKPj4+PiAtCQlyZXQgPSBQ
+VFJfRVJSKG1hdGNoKTsKPj4+PiAtCQlnb3RvIGVycl91bnJlZ2lzdGVyX2ttc19kcml2ZXJzOwo+
+Pj4+IC0JfQo+Pj4+ICsJaWYgKElTX0VSUihtYXRjaCkpCj4+Pj4gKwkJcmV0dXJuIFBUUl9FUlIo
+bWF0Y2gpOwo+Pj4+ICAKPj4+PiAgCXJldCA9IGNvbXBvbmVudF9tYXN0ZXJfYWRkX3dpdGhfbWF0
+Y2goJnBkZXYtPmRldiwgJmV4eW5vc19kcm1fb3BzLAo+Pj4+ICAJCQkJCQltYXRjaCk7Cj4+Pj4g
+IAlpZiAocmV0IDwgMCkKPj4+PiAtCQlnb3RvIGVycl91bnJlZ2lzdGVyX2ttc19kcml2ZXJzOwo+
+Pj4+ICsJCXJldHVybiByZXQ7Cj4+Pj4gIAo+Pj4+ICAJZm9yIChqID0gMDsgaiA8IEFSUkFZX1NJ
+WkUoZXh5bm9zX2RybV9ub25fa21zX2RyaXZlcnMpOyArK2opIHsKPj4+PiAgCQlyZXQgPSBwbGF0
+Zm9ybV9kcml2ZXJfcmVnaXN0ZXIoZXh5bm9zX2RybV9ub25fa21zX2RyaXZlcnNbal0pOwo+Pj4+
+IEBAIC02MzIsMTAgKzYwMiw2IEBAIGVycl91bnJlZ2lzdGVyX25vbl9rbXNfZHJpdmVyczoKPj4+
+PiAgZXJyX2RlbF9jb21wb25lbnRfbWFzdGVyOgo+Pj4+ICAJY29tcG9uZW50X21hc3Rlcl9kZWwo
+JnBkZXYtPmRldiwgJmV4eW5vc19kcm1fb3BzKTsKPj4+PiAgCj4+Pj4gLWVycl91bnJlZ2lzdGVy
+X2ttc19kcml2ZXJzOgo+Pj4+IC0Jd2hpbGUgKC0taSA+PSAwKQo+Pj4+IC0JCXBsYXRmb3JtX2Ry
+aXZlcl91bnJlZ2lzdGVyKGV4eW5vc19kcm1fa21zX2RyaXZlcnNbaV0pOwo+Pj4+IC0KPj4+PiAg
+CXJldHVybiByZXQ7Cj4+Pj4gIH0KPj4+PiAgCj4+Pj4gQEAgLTY1NCw5ICs2MjAsNiBAQCBzdGF0
+aWMgaW50IGV4eW5vc19kcm1fcGxhdGZvcm1fcmVtb3ZlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2Ug
+KnBkZXYpCj4+Pj4gIAo+Pj4+ICAJY29tcG9uZW50X21hc3Rlcl9kZWwoJnBkZXYtPmRldiwgJmV4
+eW5vc19kcm1fb3BzKTsKPj4+PiAgCj4+Pj4gLQlmb3IgKGkgPSBBUlJBWV9TSVpFKGV4eW5vc19k
+cm1fa21zX2RyaXZlcnMpIC0gMTsgaSA+PSAwOyAtLWkpCj4+Pj4gLQkJcGxhdGZvcm1fZHJpdmVy
+X3VucmVnaXN0ZXIoZXh5bm9zX2RybV9rbXNfZHJpdmVyc1tpXSk7Cj4+Pj4gLQo+Pj4+ICAJcmV0
+dXJuIDA7Cj4+Pj4gIH0KPj4+PiAgCj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9kcnYuaCBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9kcnYuaAo+Pj4+IGluZGV4IDI2MmE0NTkuLjM1MmE5ZjkgMTAwNjQ0Cj4+Pj4gLS0tIGEvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4+Pj4gKysrIGIvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCj4+Pj4gQEAgLTMzMSwxMSArMzMxLDYgQEAg
+aW50IGV4eW5vc19kcm1fY29tcG9uZW50X2FkZChzdHJ1Y3QgZGV2aWNlICpkZXYsCj4+Pj4gIHZv
+aWQgZXh5bm9zX2RybV9jb21wb25lbnRfZGVsKHN0cnVjdCBkZXZpY2UgKmRldiwKPj4+PiAgCQkJ
+CWVudW0gZXh5bm9zX2RybV9kZXZpY2VfdHlwZSBkZXZfdHlwZSk7Cj4+Pj4gIAo+Pj4+IC1leHRl
+cm4gc3RydWN0IHBsYXRmb3JtX2RyaXZlciBmaW1kX2RyaXZlcjsKPj4+PiAtZXh0ZXJuIHN0cnVj
+dCBwbGF0Zm9ybV9kcml2ZXIgZHBfZHJpdmVyOwo+Pj4+IC1leHRlcm4gc3RydWN0IHBsYXRmb3Jt
+X2RyaXZlciBkc2lfZHJpdmVyOwo+Pj4+IC1leHRlcm4gc3RydWN0IHBsYXRmb3JtX2RyaXZlciBt
+aXhlcl9kcml2ZXI7Cj4+Pj4gLWV4dGVybiBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIGhkbWlfZHJp
+dmVyOwo+Pj4+ICBleHRlcm4gc3RydWN0IHBsYXRmb3JtX2RyaXZlciBleHlub3NfZHJtX2NvbW1v
+bl9oZG1pX2RyaXZlcjsKPj4+PiAgZXh0ZXJuIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgdmlkaV9k
+cml2ZXI7Cj4+Pj4gIGV4dGVybiBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIGcyZF9kcml2ZXI7Cj4+
+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyBi
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwo+Pj4+IGluZGV4IDY2ZDQy
+N2UuLjZlMzRlZDUgMTAwNjQ0Cj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2RzaS5jCj4+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2RzaS5jCj4+Pj4gQEAgLTE3OTksNiArMTc5OSw4IEBAIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIg
+ZHNpX2RyaXZlciA9IHsKPj4+PiAgCX0sCj4+Pj4gIH07Cj4+Pj4gIAo+Pj4+ICttb2R1bGVfcGxh
+dGZvcm1fZHJpdmVyKGRzaV9kcml2ZXIpOwo+Pj4+ICsKPj4+PiAgTU9EVUxFX0FVVEhPUigiVG9t
+YXN6IEZpZ2EgPHQuZmlnYUBzYW1zdW5nLmNvbT4iKTsKPj4+PiAgTU9EVUxFX0FVVEhPUigiQW5k
+cnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4iKTsKPj4+PiAgTU9EVUxFX0RFU0NSSVBU
+SU9OKCJTYW1zdW5nIFNvQyBNSVBJIERTSSBNYXN0ZXIiKTsKPj4+PiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyBiL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9maW1kLmMKPj4+PiBpbmRleCAwNjczYTM5Li4zZTQ3NjI1IDEwMDY0
+NAo+Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKPj4+
+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCj4+Pj4gQEAg
+LTEyNDAsMyArMTI0MCw1IEBAIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgZmltZF9kcml2ZXIgPSB7
+Cj4+Pj4gIAkJLm9mX21hdGNoX3RhYmxlID0gZmltZF9kcml2ZXJfZHRfbWF0Y2gsCj4+Pj4gIAl9
+LAo+Pj4+ICB9Owo+Pj4+ICsKPj4+PiArbW9kdWxlX3BsYXRmb3JtX2RyaXZlcihmaW1kX2RyaXZl
+cik7Cj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWku
+YyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYwo+Pj4+IGluZGV4IDU2M2Ex
+OWUuLmQ5YmZiMzMgMTAwNjQ0Cj4+Pj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfaGRtaS5jCj4+Pj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5j
+Cj4+Pj4gQEAgLTI1MzcsMyArMjUzNyw1IEBAIHN0cnVjdCBwbGF0Zm9ybV9kcml2ZXIgaGRtaV9k
+cml2ZXIgPSB7Cj4+Pj4gIAkJLm9mX21hdGNoX3RhYmxlID0gaGRtaV9tYXRjaF90eXBlcywKPj4+
+PiAgCX0sCj4+Pj4gIH07Cj4+Pj4gKwo+Pj4+ICttb2R1bGVfcGxhdGZvcm1fZHJpdmVyKGhkbWlf
+ZHJpdmVyKTsKPj4+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+bWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4+PiBpbmRl
+eCBhNDFjODRlLi41OTljMGNjIDEwMDY0NAo+Pj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX21peGVyLmMKPj4+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19taXhlci5jCj4+Pj4gQEAgLTEzNDksMyArMTM0OSw1IEBAIHN0cnVjdCBwbGF0Zm9ybV9kcml2
+ZXIgbWl4ZXJfZHJpdmVyID0gewo+Pj4+ICAJLnJlbW92ZSA9IG1peGVyX3JlbW92ZSwKPj4+PiAg
+CS5pZF90YWJsZQk9IG1peGVyX2RyaXZlcl90eXBlcywKPj4+PiAgfTsKPj4+PiArCj4+Pj4gK21v
+ZHVsZV9wbGF0Zm9ybV9kcml2ZXIobWl4ZXJfZHJpdmVyKTsKPj4+Pgo+Pj4KPj4+Cj4+PiAtLQo+
+Pj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2Ny
+aWJlIGxpbnV4LXNhbXN1bmctc29jIiBpbgo+Pj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1h
+am9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPj4+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6
+Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAo+Pj4KPj4KPiAKPiAKCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
