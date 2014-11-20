@@ -1,43 +1,44 @@
-From: Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH 1/2] ARM: dts: add pwm node for exynos4412-trats2
-Date: Thu, 20 Nov 2014 23:26:15 +0900
-Message-ID: <1416493576-10129-1-git-send-email-jaewon02.kim@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [RFC PATCH 1/1] drm/exynos: Move platform drivers registration
+ to module init
+Date: Thu, 20 Nov 2014 15:28:39 +0100
+Message-ID: <546DFA97.1030006@collabora.co.uk>
+References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk> <546DF598.6030701@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:61872 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756592AbaKTO01 (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:33051 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751103AbaKTO2p (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Nov 2014 09:26:27 -0500
+	Thu, 20 Nov 2014 09:28:45 -0500
+In-Reply-To: <546DF598.6030701@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Jaewon Kim <jaewon02.kim@samsung.com>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Kevin Hilman <khilman@linaro.org>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-This patch add PWM(Pulse Width Modulation) node and
-handle to use pwm property.
+Hello Inki,
 
-Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
----
- arch/arm/boot/dts/exynos4412-trats2.dts |    7 +++++++
- 1 file changed, 7 insertions(+)
+On 11/20/2014 03:07 PM, Inki Dae wrote:
+> Could you re-base this patch on top of exynos-drm-next? I tried to
+> separate sub drivers into independent drivers but it seems that we need
+> more times. So I will merge your patch.
+> 
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 8ee20bd..72462e8 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -636,6 +636,13 @@
- 		};
- 	};
- 
-+	pwm: pwm@139D0000 {
-+		pinctrl-0 = <&pwm0_out>;
-+		pinctrl-names = "default";
-+		samsung,pwm-outputs = <0>;
-+		status = "okay";
-+	};
-+
- 	dsi_0: dsi@11C80000 {
- 		vddcore-supply = <&ldo8_reg>;
- 		vddio-supply = <&ldo10_reg>;
--- 
-1.7.9.5
+Sure, I'll rebase on top of exynos-drm-next and re-post so you can apply it.
+
+BTW, it would be great if exynos-drm-next is pulled in linux-next. That is
+what most people use to test integration issues so you can catch earlier any
+regression that may arise.
+
+You have to email Stephen Rothwell <sfr@canb.auug.org.au> and point to your
+tree and branch and he will be able to add it to linux-next.
+
+> Thanks,
+> Inki Dae
+> 
+
+Best regards,
+Javier
