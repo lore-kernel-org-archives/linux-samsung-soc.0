@@ -1,52 +1,150 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [RFC PATCH 1/1] drm/exynos: Move platform drivers registration to
- module init
-Date: Fri, 21 Nov 2014 00:06:12 +0900
-Message-ID: <546E0364.9000009@samsung.com>
-References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk>
- <546DF598.6030701@samsung.com> <546DFA97.1030006@collabora.co.uk>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH] PM / Domains: Power on the PM domain right after attach
+ completes
+Date: Thu, 20 Nov 2014 17:06:30 +0200
+Message-ID: <546E0376.3030300@ti.com>
+References: <20141117220238.GE5258@dtor-ws>	<1787068.2MCH8czsD4@vostro.rjw.lan>	<CAPDyKFoMftvKs8tyBaYCu1zTK_JYiXeXMiq86OrwAAHZoRO_Pw@mail.gmail.com>	<3492523.qBADTmdTqo@vostro.rjw.lan>	<CAPDyKFoiEMO5E3nMJDZkFkuio-5sh99m55k-yM=fuqrHUXbhZw@mail.gmail.com>	<546DDBCF.205@ti.com> <CAPDyKFrssg8wTr7e+EDrrgvHCndq8hcoNJb8TQGc_tt4ePpdEw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <546DFA97.1030006@collabora.co.uk>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@linaro.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from arroyo.ext.ti.com ([192.94.94.40]:44059 "EHLO arroyo.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756063AbaKTPHU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Nov 2014 10:07:20 -0500
+In-Reply-To: <CAPDyKFrssg8wTr7e+EDrrgvHCndq8hcoNJb8TQGc_tt4ePpdEw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kevin Hilman <khilman@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, Pavel Machek <pavel@ucw.cz>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-SGkgSmF2aWVyLAoKT24gMjAxNOuFhCAxMeyblCAyMOydvCAyMzoyOCwgSmF2aWVyIE1hcnRpbmV6
-IENhbmlsbGFzIHdyb3RlOgo+IEhlbGxvIElua2ksCj4gCj4gT24gMTEvMjAvMjAxNCAwMzowNyBQ
-TSwgSW5raSBEYWUgd3JvdGU6Cj4+IENvdWxkIHlvdSByZS1iYXNlIHRoaXMgcGF0Y2ggb24gdG9w
-IG9mIGV4eW5vcy1kcm0tbmV4dD8gSSB0cmllZCB0bwo+PiBzZXBhcmF0ZSBzdWIgZHJpdmVycyBp
-bnRvIGluZGVwZW5kZW50IGRyaXZlcnMgYnV0IGl0IHNlZW1zIHRoYXQgd2UgbmVlZAo+PiBtb3Jl
-IHRpbWVzLiBTbyBJIHdpbGwgbWVyZ2UgeW91ciBwYXRjaC4KPj4KPiAKPiBTdXJlLCBJJ2xsIHJl
-YmFzZSBvbiB0b3Agb2YgZXh5bm9zLWRybS1uZXh0IGFuZCByZS1wb3N0IHNvIHlvdSBjYW4gYXBw
-bHkgaXQuCj4gCj4gQlRXLCBpdCB3b3VsZCBiZSBncmVhdCBpZiBleHlub3MtZHJtLW5leHQgaXMg
-cHVsbGVkIGluIGxpbnV4LW5leHQuIFRoYXQgaXMKPiB3aGF0IG1vc3QgcGVvcGxlIHVzZSB0byB0
-ZXN0IGludGVncmF0aW9uIGlzc3VlcyBzbyB5b3UgY2FuIGNhdGNoIGVhcmxpZXIgYW55Cj4gcmVn
-cmVzc2lvbiB0aGF0IG1heSBhcmlzZS4KPiAKPiBZb3UgaGF2ZSB0byBlbWFpbCBTdGVwaGVuIFJv
-dGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4gYW5kIHBvaW50IHRvIHlvdXIKPiB0cmVlIGFu
-ZCBicmFuY2ggYW5kIGhlIHdpbGwgYmUgYWJsZSB0byBhZGQgaXQgdG8gbGludXgtbmV4dC4KClRo
-YW5rcyBmb3IgaW5mb3JtYXRpb24uIEFjdHVhbGx5LCBJIHJlY2VpdmVkIGEgc2ltaWxhciBlbWFp
-bCBwcml2YXRlbHkKYmVmb3JlLiBIb3dldmVyLCBleHlub3MtZHJtLW5leHQgc2hvdWxkIGdvIHRv
-IGRybS1uZXh0IGZpcnN0IGFuZCB0aGFuIHRvCm1haW5saW5lIGJ5IERhdmUgd2hvIGlzIERSTSBz
-dWJzeXN0ZW0gbWFpbnRhaW5lci4gSSB0aGluayBhbGwgdmVuZG9yCnNwZWNpZmljIGRybSBkcml2
-ZXJzIHdvdWxkIG5lZWQgdG8gYmUgY2hlY2tlZCBieSBkcm0gc3Vic3lzdGVtCm1haW50YWluZXIg
-YmVjYXVzZSB0aGVzZSBjaGFuZ2VzIG1pZ2h0IGJlIGFmZmVjdCBkcm0gc3Vic3lzdGVtIG9yIG90
-aGVyCnZlbmRvciBzcGVjaWZpYyBkcm0gZHJpdmVycyBiZWZvcmUgZ28gdG8gbWFpbmxpbmUuCgpJ
-ZiBuZWVkZWQsIEkgd2lsbCBtYWtlIGEgbmV3IGJyYW5jaCwgd2hpY2ggaXMgYmFzZWQgb24gdG9w
-IG9mIGxpbnV4LW5leHQKc28gb3RoZXIgcGVvcGxlIGNhbiBjaGVjayB0aGVpciBzeXN0ZW1zLgoK
-VGhhbmtzLApJbmtpIERhZQoKPiAKPj4gVGhhbmtzLAo+PiBJbmtpIERhZQo+Pgo+IAo+IEJlc3Qg
-cmVnYXJkcywKPiBKYXZpZXIKPiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
-ZHJpLWRldmVsCg==
+On 11/20/2014 03:01 PM, Ulf Hansson wrote:
+> On 20 November 2014 13:17, Grygorii Strashko <grygorii.strashko@ti.co=
+m> wrote:
+>> On 11/19/2014 10:54 AM, Ulf Hansson wrote:
+>>> [...]
+>>>
+>>>>>
+>>>>> Scenario 5), a platform driver with/without runtime PM callbacks.
+>>>>> ->probe()
+>>>>> - do some initialization
+>>>>> - may fetch handles to runtime PM resources
+>>>>> - pm_runtime_enable()
+>>>>
+>>>> Well, and now how the driver knows if the device is "on" before ac=
+cessing it?
+>>>
+>>> In this case the driver don't need to access the device during
+>>> ->probe(). That's postponed until sometime later.
+>>>
+>>>>
+>>>>> Note 1)
+>>>>> Scenario 1) and 2), both relies on the approach to power on the P=
+M
+>>>>> domain by using pm_runtime_get_sync(). That approach didn't work =
+when
+>>>>> CONFIG_PM_RUNTIME was unset, but we recently decided to fixed tha=
+t by
+>>>>> the below patch, so that's good!
+>>>>> "[PATCH] PM / domains: Kconfig: always enable PM_RUNTIME when gen=
+pd enabled"
+>>>>>
+>>>>> Note 2)
+>>>>> Scenario 3) and 4) use the same principles for managing runtime P=
+M.
+>>>>> These scenarios needs a way to power on the generic PM domain pri=
+or
+>>>>> probing the device. The call to pm_runtime_set_active(), prevents=
+ an
+>>>>> already powered PM domain from power off until after probe, but t=
+hat's
+>>>>> not enough.
+>>>>>
+>>>>> Note 3)
+>>>>> The $subject patch, tried to address the issues for scenario 3) a=
+nd
+>>>>> 4). It does so, but will affect scenario 5) which was working nic=
+ely
+>>>>> before. In scenario 5), the $subject patch will cause the generic=
+ PM
+>>>>> domain to potentially stay powered after ->probe() even if the de=
+vice
+>>>>> is runtime PM suspended.
+>>>>
+>>>> Why would it?  If the device is runtime-suspended, the domain will=
+ know
+>>>> that, because its callbacks will be used for that.  At least, that=
+'s
+>>>> what I'd expect to happen, so is there a problem here?
+>>>
+>>> Genpd do knows about the device but it doesn=E2=80=99t get a "notif=
+ication" to
+>>> power off. There are no issues whatsoever for driver.
+>>>
+>>> This is a somewhat special case. Let's go through an example.
+>>>
+>>> 1. The PM domain is initially in powered off state.
+>>> 2. The bus ->probe() invokes dev_pm_domain_attach() and then the PM
+>>> domain gets attached to the device.
+>>> 3. $subject patch causes the PM domain to power on.
+>>> 4. A driver ->probe() sequence start, following the Scenario 5).
+>>> 5. The device is initially in runtime PM suspended state and it wil=
+l
+>>> remain so during ->probe().
+>>> 6. The pm_request_idle() invoked after really_probe() in driver cor=
+e,
+>>> won't trigger a runtime PM suspend callback to be invoked. In other
+>>> words, genpd don't get a "notification" that it may power off.
+>>>
+>>> In this state, genpd will either power off from the late_initcall,
+>>> genpd_poweroff_unused() (depending on when the driver was probed) o=
+r
+>>> wait until some device's runtime PM suspend callback is invoked at =
+any
+>>> later point.
+>>
+>> if I understand things right (thanks to Russell), the Power domain m=
+ay not
+>>   be powered off not only in above case, but also in some cases when
+>> driver is unloaded.
+>>
+>> AMBA bus for example:
+>> static int amba_remove(struct device *dev)
+>> {
+>>          pm_runtime_get_sync(dev); <---------- GPD=3Don, dev is acti=
+ve, usage_count >=3D 1
+>>          ret =3D drv->remove(pcdev); <----------- GPD=3Don, should d=
+o balancing put() to compensate all get() made by driver, usage_count =3D=
+=3D 1
+>>                                    <----------- GPD=3Don, should do =
+balancing get() to compensate put() in probe, usage_count =3D=3D 2
+>>          pm_runtime_put_noidle(dev); <---------- GPD=3Don, dev is ac=
+tive, usage_count =3D=3D 1
+>>
+>>          /* Undo the runtime PM settings in amba_probe() */
+>>          pm_runtime_disable(dev);  <---------- GPD=3Don, dev is acti=
+ve, usage_count =3D=3D 1
+>>          pm_runtime_set_suspended(dev); <---------- GPD=3Don, dev is=
+ suspended, usage_count =3D=3D 1
+>>          pm_runtime_put_noidle(dev); <---------- GPD=3Don, dev is su=
+spended, usage_count =3D=3D 0
+>>
+>>          amba_put_disable_pclk(pcdev);
+>>          dev_pm_domain_detach(dev, true); <---------- GPD=3Don, dev =
+is suspended, usage_count =3D=3D 0
+>
+> For the generic OF-based PM domain look-up case:
+> ->dev_pm_domain_detach()
+>      ->genpd_dev_pm_detach() - to remove the device from the PM domai=
+n.
+>         ->genpd_queue_power_off_work() - to power off unused PM domai=
+ns.
+>
+> That does the trick, right!?
+
+True. Thanks a lot for pointing me on right place.
+
+regards,
+-grygorii
