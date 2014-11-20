@@ -1,64 +1,57 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH v11 4/6] ARM: Exynos: switch to using generic cpufreq
- driver for Exynos4210/5250/5420
-Date: Thu, 20 Nov 2014 09:18:14 +0530
-Message-ID: <CAKohponEHqHYCLibVc8OHN49+4YW5qw89ny4ycTBL1xN-p9qtA@mail.gmail.com>
-References: <1413805281-6269-1-git-send-email-thomas.ab@samsung.com>
-	<1413805281-6269-2-git-send-email-thomas.ab@samsung.com>
-	<1413805281-6269-3-git-send-email-thomas.ab@samsung.com>
-	<1413805281-6269-4-git-send-email-thomas.ab@samsung.com>
-	<1413805281-6269-5-git-send-email-thomas.ab@samsung.com>
-	<546CEF61.4050105@arm.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [1/2] ARM: dts: Fix bootup issue on smdk5250
+Date: Thu, 20 Nov 2014 09:31:37 +0530
+Message-ID: <546D67A1.1080804@samsung.com>
+References: <1416312509-11530-1-git-send-email-yadi.brar@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f175.google.com ([209.85.214.175]:54328 "EHLO
-	mail-ob0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753096AbaKTDsP (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:11572 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754023AbaKTEB5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Nov 2014 22:48:15 -0500
-Received: by mail-ob0-f175.google.com with SMTP id wp4so1630146obc.34
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2014 19:48:15 -0800 (PST)
-In-Reply-To: <546CEF61.4050105@arm.com>
+	Wed, 19 Nov 2014 23:01:57 -0500
+In-reply-to: <1416312509-11530-1-git-send-email-yadi.brar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Thomas Abraham <thomas.ab@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "l.majewski@samsung.com" <l.majewski@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "mturquette@linaro.org" <mturquette@linaro.org>, "heiko@sntech.de" <heiko@sntech.de>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, "cw00.choi@samsung.com" <cw00.choi@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Yadwinder Singh Brar <yadi.brar@samsung.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: robh+dt@kernel.org, kgene.kim@samsung.com, yadi.brar01@gmail.com
 
-Oh, you are still alive? I thought you were about to get married :)
-Just kidding !!
+Hi,
 
-On 20 November 2014 00:58, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> Sorry for raising this issue always with Exynos cpufreq drivers. IMO the
-> bindings for "arm-bL-cpufreq-dt" is broken. Currently no one is using it
-> and it's better to fix it before we have a real user of it.
+On Tuesday 18 November 2014 05:38 PM, Yadwinder Singh Brar wrote:
+> With default config on smdk5250 latest tree throws below message :
+>
+> [    2.226049] thermal thermal_zone0: critical temperature reached(224 C),shutting down
+> [    2.227840] reboot: Failed to start orderly shutdown: forcing the issue
+>
+> and hangs randomly because it reads wrong temperature value.
+>
+> I can't figure out any direct relation between LDO10 and TMU from board
+> schematics which I have. So making LDO10 always-on to fix issue for now.
+>
+> Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+>
 
-Hmm, yeah if we can. I haven't found a easy way to go ahead and then
-got caught in other activities.
+Tested this on SMDK5250 board, system boot is fine now, hence
 
-> If you look at the binding document for it[1], it has a fixme which
-> shouldn't have been there at first place. It assumes the ordering of
-> CPU's specified in the DT and the logical index allocation to them.
+Tested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Ok, I believe the FIXME is a bit outdated. From the code I can see only
-this limitation.
-
-- For every cluster, the cpu which boots up first should carry the OPPs.
-Otherwise there is no restriction on ordering of CPUs.
-
-- I believe CPUs boot in the order they are present in DT except for the
-boot CPU. So, the first node for every cluster should have it.
-
-Correct ? Then we can update the fixme.
-
-> It even breaks for hotplug especially if you hotplug-in back in
-> different order.
-
-Hmm, I never thought about it. But yes the CPU with the OPPs should
-be the first one to come back.
-
-> We can work around that probably, but it's better to
-> fix the binding. I failed to grab much attention in my previous attempts
-> to address this[2]. Viresh also started a discussion more recently[3].
-
-They are just stuck and went nowhere :(
+> ---
+> arch/arm/boot/dts/exynos5250-smdk5250.dts |    1 +
+>   1 files changed, 1 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> index bc27cc2..95b5b51 100644
+> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> @@ -190,6 +190,7 @@
+>   				regulator-name = "P1.8V_LDO_OUT10";
+>   				regulator-min-microvolt = <1800000>;
+>   				regulator-max-microvolt = <1800000>;
+> +				regulator-always-on;
+>   			};
+>
+>   			ldo11_reg: LDO11 {
+>
