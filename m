@@ -1,60 +1,94 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 1/3] drm/exynos: revert fixes for the infinite loop issue
-Date: Thu, 20 Nov 2014 21:42:54 -0200
-Message-ID: <1416526976-9467-2-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 2/3] Revert "drm/exynos: fix null pointer dereference issue"
+Date: Thu, 20 Nov 2014 21:42:55 -0200
+Message-ID: <1416526976-9467-3-git-send-email-gustavo@padovan.org>
 References: <1416526976-9467-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f46.google.com ([209.85.216.46]:35235 "EHLO
+	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756600AbaKTXnI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Nov 2014 18:43:08 -0500
+Received: by mail-qa0-f46.google.com with SMTP id u7so2701065qaz.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Nov 2014 15:43:08 -0800 (PST)
 In-Reply-To: <1416526976-9467-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-VGhpcyByZXZlcnRzIGNvbW1pdCAwNmEyZjVjMmM0ZTBjYjRmZjM4Y2EzNzY5YWUxZjgxY2MyZDAz
-MGNmIGFuZApmN2MyZjM2ZjQzOTVmMTJkOGVjYjI1YzI4ZWU4OGVjODdiNDU3MDg5LgoKVGhlc2Ug
-dHdvIHBhdGNoZXMgd2VyZSB0cnlpbmcgdG8gZml4IGFuIGlzc3VlIHRoYXQgd2FzIGNhdXNpbmcg
-YW4KaW5maW5pdGUgbG9vcCBhdCB0aGUgbG9hZCBvZiB0aGUgZXh5bm9zLWRybSBidXQgdGhleSB3
-ZXJlIG5vdCB0YWNrbGluZyB0aGUKc291cmNlIG9mIHRoZSBwcm9ibGVtLgoKQSBuZXcgcGF0Y2gg
-dGhhdCBtb3ZlIHRoZSBwbGF0Zm9ybSBkcml2ZXIgcmVnaXN0cmF0aW9uIGV4eW5vc19kcm1faW5p
-dCgpCmZvbGxvd3MgdGhpcyByZXZlcnQgYW5kIGZpeCB0aGUgaXNzdWUgcHJvcGVybHkuCgpTaWdu
-ZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28u
-dWs+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIHwgMTggLS0t
-LS0tLS0tLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTggZGVsZXRpb25zKC0pCgpkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jIGIvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5jCmluZGV4IGVhYjEyZjAuLmI5NGM5ZDEgMTAw
-NjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYworKysgYi9k
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmMKQEAgLTQ4NCwxMiArNDg0LDYg
-QEAgc3RhdGljIHN0cnVjdCBjb21wb25lbnRfbWF0Y2ggKmV4eW5vc19kcm1fbWF0Y2hfYWRkKHN0
-cnVjdCBkZXZpY2UgKmRldikKIAogCW11dGV4X2xvY2soJmRybV9jb21wb25lbnRfbG9jayk7CiAK
-LQkvKiBEbyBub3QgcmV0cnkgdG8gcHJvYmUgaWYgdGhlcmUgaXMgbm8gYW55IGttcyBkcml2ZXIg
-cmVnaXRlcmVkLiAqLwotCWlmIChsaXN0X2VtcHR5KCZkcm1fY29tcG9uZW50X2xpc3QpKSB7Ci0J
-CW11dGV4X3VubG9jaygmZHJtX2NvbXBvbmVudF9sb2NrKTsKLQkJcmV0dXJuIEVSUl9QVFIoLUVO
-T0RFVik7Ci0JfQotCiAJbGlzdF9mb3JfZWFjaF9lbnRyeShjZGV2LCAmZHJtX2NvbXBvbmVudF9s
-aXN0LCBsaXN0KSB7CiAJCS8qCiAJCSAqIEFkZCBjb21wb25lbnRzIHRvIG1hc3RlciBvbmx5IGlu
-IGNhc2UgdGhhdCBjcnRjIGFuZApAQCAtNjc0LDE4ICs2NjgsNiBAQCBzdGF0aWMgaW50IGV4eW5v
-c19kcm1faW5pdCh2b2lkKQogewogCWludCByZXQ7CiAKLQkvKgotCSAqIFJlZ2lzdGVyIGRldmlj
-ZSBvYmplY3Qgb25seSBpbiBjYXNlIG9mIEV4eW5vcyBTb0MuCi0JICoKLQkgKiBCZWxvdyBjb2Rl
-cyByZXNvbHZlcyB0ZW1wb3JhcmlseSBpbmZpbml0ZSBsb29wIGlzc3VlIGluY3VycmVkCi0JICog
-YnkgRXh5bm9zIGRybSBkcml2ZXIgd2hlbiB1c2luZyBtdWx0aS1wbGF0Zm9ybSBrZXJuZWwuCi0J
-ICogU28gdGhlc2UgY29kZXMgd2lsbCBiZSByZXBsYWNlZCB3aXRoIG1vcmUgZ2VuZXJpYyB3YXkg
-bGF0ZXIuCi0JICovCi0JaWYgKCFvZl9tYWNoaW5lX2lzX2NvbXBhdGlibGUoInNhbXN1bmcsZXh5
-bm9zMyIpICYmCi0JCQkhb2ZfbWFjaGluZV9pc19jb21wYXRpYmxlKCJzYW1zdW5nLGV4eW5vczQi
-KSAmJgotCQkJIW9mX21hY2hpbmVfaXNfY29tcGF0aWJsZSgic2Ftc3VuZyxleHlub3M1IikpCi0J
-CXJldHVybiAtRU5PREVWOwotCiAJZXh5bm9zX2RybV9wZGV2ID0gcGxhdGZvcm1fZGV2aWNlX3Jl
-Z2lzdGVyX3NpbXBsZSgiZXh5bm9zLWRybSIsIC0xLAogCQkJCQkJCQlOVUxMLCAwKTsKIAlpZiAo
-SVNfRVJSKGV4eW5vc19kcm1fcGRldikpCi0tIAoxLjkuMwoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+This reverts commit cea24824ab432f8acabb254d6805e9aa756de6af.
+
+Moving subdriver probe to exynos_drm_platform_probe() was making
+exynos_drm_device_subdrv_probe() fail because the platform data wasn't set
+yet. It only gets set in exynos_drm_load.
+
+We need to find a smarter way to fix this issue.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos_drm_drv.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+index b94c9d1..91891cf 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
+@@ -108,6 +108,11 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
+ 	if (ret)
+ 		goto err_unbind_all;
+ 
++	/* Probe non kms sub drivers and virtual display driver. */
++	ret = exynos_drm_device_subdrv_probe(dev);
++	if (ret)
++		goto err_cleanup_vblank;
++
+ 	/*
+ 	 * enable drm irq mode.
+ 	 * - with irq_enabled = true, we can use the vblank feature.
+@@ -133,6 +138,8 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
+ 
+ 	return 0;
+ 
++err_cleanup_vblank:
++	drm_vblank_cleanup(dev);
+ err_unbind_all:
+ 	component_unbind_all(dev->dev, dev);
+ err_mode_config_cleanup:
+@@ -146,6 +153,8 @@ err_free_private:
+ 
+ static int exynos_drm_unload(struct drm_device *dev)
+ {
++	exynos_drm_device_subdrv_remove(dev);
++
+ 	exynos_drm_fbdev_fini(dev);
+ 	drm_kms_helper_poll_fini(dev);
+ 
+@@ -608,14 +617,8 @@ static int exynos_drm_platform_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		goto err_unregister_non_kms_drivers;
+ 
+-	/* Probe non kms sub drivers and virtual display driver. */
+-	ret = exynos_drm_device_subdrv_probe(platform_get_drvdata(pdev));
+-	if (ret)
+-		goto err_unregister_resources;
+-
+ 	return ret;
+ 
+-err_unregister_resources:
+ #ifdef CONFIG_DRM_EXYNOS_IPP
+ 	exynos_platform_device_ipp_unregister();
+ #endif
+@@ -637,8 +640,6 @@ static int exynos_drm_platform_remove(struct platform_device *pdev)
+ {
+ 	int i;
+ 
+-	exynos_drm_device_subdrv_remove(platform_get_drvdata(pdev));
+-
+ #ifdef CONFIG_DRM_EXYNOS_IPP
+ 	exynos_platform_device_ipp_unregister();
+ #endif
+-- 
+1.9.3
