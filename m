@@ -1,74 +1,228 @@
-From: Paolo Pisati <p.pisati@gmail.com>
-Subject: Re: [RFC PATCH 1/1] drm/exynos: Move platform drivers registration
- to module init
-Date: Thu, 20 Nov 2014 16:57:51 +0100
-Message-ID: <20141120155751.GA5981@luxor.wired.org>
-References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk>
- <7hh9xwxsev.fsf@deeprootsystems.com>
- <546CCAB8.9050402@collabora.co.uk>
- <CAFp+6iFbxWoh4h0ZpY=JQO4rjLss2kpj-nZM7KGiJ_F4AZ2W=g@mail.gmail.com>
- <CAFp+6iEgBYP3cgThss8U1wS=O-rapnQz_akD+y9zR7JtWhhKTg@mail.gmail.com>
- <546DAA23.9070204@collabora.co.uk>
- <CAFp+6iFCLfSECHZ21Ho8-+USie3pmtqZwh7x2ULqdNjGXGX1pw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH] ARM: dts: Specify default clocks for Exynos4 camera devices
+Date: Thu, 20 Nov 2014 17:14:59 +0100
+Message-ID: <1416500099-19656-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f42.google.com ([74.125.82.42]:49644 "EHLO
-	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751406AbaKTP55 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:31451 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755212AbaKTQPN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Nov 2014 10:57:57 -0500
-Received: by mail-wg0-f42.google.com with SMTP id z12so4140473wgg.15
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Nov 2014 07:57:53 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iFCLfSECHZ21Ho8-+USie3pmtqZwh7x2ULqdNjGXGX1pw@mail.gmail.com>
+	Thu, 20 Nov 2014 11:15:13 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NFC00D6TIHBL600@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 21 Nov 2014 01:15:11 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautamvivek1987@gmail.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kevin Hilman <khilman@kernel.org>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Paolo Pisati <p.pisati@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>
+To: kgene@kernel.org
+Cc: drake@endlessm.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Thu, Nov 20, 2014 at 03:22:23PM +0530, Vivek Gautam wrote:
->
-> On linux-samsung tree the only patch that's missing apart from dptx-phy patches
-> is the syscon patch from Pankaj Dubey:
-> b784b98 mfd: syscon: Decouple syscon interface from platform devices
-> 
-> So with below git hash, linux-samsung/for-next display works fine along with
-> other devices that request PMU system controller :
-> 
-> 7bd219e drm/exynos: dp: Remove support for unused dptx-phy
-> e8f21fd arm: dts: Exynos5: Use pmu_system_controller phandle for dp phy
-> 7099bde Revert "Revert "ARM: exynos_defconfig: Enable options for
-> display panel support""
-> 713a994 mfd: syscon: Decouple syscon interface from platform devices
-> 7552917 Revert "ARM: exynos_defconfig: Enable options for display
-> panel support"             /* This is Kukjin's for-next today */
-> ff0391a Merge branch 'v3.19-samsung-defconfig' into for-next
-> 26c6283 Merge branch 'v3.18-samsung-fixes' into for-next
-> cf864fd Merge branch 'v3.18-samsung-defconfig' into for-next
-> 98b6380 ARM: exynos_defconfig: Enable max77802 rtc and clock drivers
-> 839275c ARM: exynos_defconfig: Use 16 minors per MMC block device
-> 0526f27 ARM: dts: Explicitly set dr_mode on exynos5250-snow
-> fc14f9c Linux 3.18-rc5
+Specify the default mux and divider clocks in device tree
+to ensure the FIMC devices on Trats, Trats2, Universal_c210
+and Odroid X2/U3 boards are clocked from recommended clock
+source and with maximum supported frequency.
+For Trats2 also the MIPI-CSIS and the camera sensor clocks
+are configured, the 'clock-frequency' property is deprecated
+in favour of 'assigned-clock-rates' property.
 
-are you using a clean exynos_defconfig?
-don't you need Javier's "drm/exynos: Move platform drivers registration to
-module init" patch too?
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ arch/arm/boot/dts/exynos4210-trats.dts          |   16 ++++++++++++
+ arch/arm/boot/dts/exynos4210-universal_c210.dts |   16 ++++++++++++
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   16 ++++++++++++
+ arch/arm/boot/dts/exynos4412-trats2.dts         |   32 ++++++++++++++++++++---
+ 4 files changed, 77 insertions(+), 3 deletions(-)
 
-kgene/for-next at:
-
-7552917 Revert "ARM: exynos_defconfig: Enable options for display panel support"
-
-plus:
-
-5e1e068 arm: dts: Exynos5: Use pmu_system_controller phandle for dp phy
-36d908e drm/exynos: dp: Remove support for unused dptx-phy
-624bff2 POSTED: mfd: syscon: Decouple syscon interface from syscon devices
-68944e3 Revert "Revert "ARM: exynos_defconfig: Enable options for display panel support""
-
-hangs with a black screen (albeit backlight seems to be on) on boot.
-I'm betting on Javier's patch at this point (i even tried disabling SND_SOC_SNOW
-but that didn't help).
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+index f516da9..7208362 100644
+--- a/arch/arm/boot/dts/exynos4210-trats.dts
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -431,18 +431,34 @@
+ 
+ 		fimc_0: fimc@11800000 {
+ 			status = "okay";
++			assigned-clocks = <&clock CLK_MOUT_FIMC0>,
++					<&clock CLK_SCLK_FIMC0>;
++			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
++			assigned-clock-rates = <0>, <160000000>;
+ 		};
+ 
+ 		fimc_1: fimc@11810000 {
+ 			status = "okay";
++			assigned-clocks = <&clock CLK_MOUT_FIMC1>,
++					<&clock CLK_SCLK_FIMC1>;
++			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
++			assigned-clock-rates = <0>, <160000000>;
+ 		};
+ 
+ 		fimc_2: fimc@11820000 {
+ 			status = "okay";
++			assigned-clocks = <&clock CLK_MOUT_FIMC2>,
++					<&clock CLK_SCLK_FIMC2>;
++			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
++			assigned-clock-rates = <0>, <160000000>;
+ 		};
+ 
+ 		fimc_3: fimc@11830000 {
+ 			status = "okay";
++			assigned-clocks = <&clock CLK_MOUT_FIMC3>,
++					<&clock CLK_SCLK_FIMC3>;
++			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
++			assigned-clock-rates = <0>, <160000000>;
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+index d50eb3a..aaf0cae 100644
+--- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
++++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
+@@ -473,18 +473,34 @@
+ 
+ 		fimc_0: fimc@11800000 {
+ 			status = "okay";
++			assigned-clocks = <&clock CLK_MOUT_FIMC0>,
++					<&clock CLK_SCLK_FIMC0>;
++			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
++			assigned-clock-rates = <0>, <160000000>;
+ 		};
+ 
+ 		fimc_1: fimc@11810000 {
+ 			status = "okay";
++			assigned-clocks = <&clock CLK_MOUT_FIMC1>,
++					<&clock CLK_SCLK_FIMC1>;
++			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
++			assigned-clock-rates = <0>, <160000000>;
+ 		};
+ 
+ 		fimc_2: fimc@11820000 {
+ 			status = "okay";
++			assigned-clocks = <&clock CLK_MOUT_FIMC2>,
++					<&clock CLK_SCLK_FIMC2>;
++			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
++			assigned-clock-rates = <0>, <160000000>;
+ 		};
+ 
+ 		fimc_3: fimc@11830000 {
+ 			status = "okay";
++			assigned-clocks = <&clock CLK_MOUT_FIMC3>,
++					<&clock CLK_SCLK_FIMC3>;
++			assigned-clock-parents = <&clock CLK_SCLK_MPLL>;
++			assigned-clock-rates = <0>, <160000000>;
+ 		};
+ 	};
+ };
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index c697ff0..adf1331 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -82,18 +82,34 @@
+ 
+ 		fimc_0: fimc@11800000 {
+ 			status = "okay";
++			assigned-clocks = <&clock CLK_MOUT_FIMC0>,
++					<&clock CLK_SCLK_FIMC0>;
++			assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
++			assigned-clock-rates = <0>, <176000000>;
+ 		};
+ 
+ 		fimc_1: fimc@11810000 {
+ 			status = "okay";
++			assigned-clocks = <&clock CLK_MOUT_FIMC1>,
++					<&clock CLK_SCLK_FIMC1>;
++			assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
++			assigned-clock-rates = <0>, <176000000>;
+ 		};
+ 
+ 		fimc_2: fimc@11820000 {
+ 			status = "okay";
++			assigned-clocks = <&clock CLK_MOUT_FIMC2>,
++					<&clock CLK_SCLK_FIMC2>;
++			assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
++			assigned-clock-rates = <0>, <176000000>;
+ 		};
+ 
+ 		fimc_3: fimc@11830000 {
+ 			status = "okay";
++			assigned-clocks = <&clock CLK_MOUT_FIMC3>,
++					<&clock CLK_SCLK_FIMC3>;
++			assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
++			assigned-clock-rates = <0>, <176000000>;
+ 		};
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 8ee20bd..08bc948 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -701,28 +701,51 @@
+ 		pinctrl-0 = <&cam_port_a_clk_active &cam_port_b_clk_active>;
+ 		pinctrl-names = "default";
+ 		status = "okay";
++		assigned-clocks = <&clock CLK_MOUT_CAM0>,
++				  <&clock CLK_MOUT_CAM1>;
++		assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>,
++				         <&clock CLK_MOUT_MPLL_USER_T>;
+ 
+ 		fimc_0: fimc@11800000 {
+ 			status = "okay";
++			assigned-clocks = <&clock CLK_MOUT_FIMC0>,
++					<&clock CLK_SCLK_FIMC0>;
++			assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
++			assigned-clock-rates = <0>, <176000000>;
+ 		};
+ 
+ 		fimc_1: fimc@11810000 {
+ 			status = "okay";
++			assigned-clocks = <&clock CLK_MOUT_FIMC1>,
++					<&clock CLK_SCLK_FIMC1>;
++			assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
++			assigned-clock-rates = <0>, <176000000>;
+ 		};
+ 
+ 		fimc_2: fimc@11820000 {
+ 			status = "okay";
++			assigned-clocks = <&clock CLK_MOUT_FIMC2>,
++					<&clock CLK_SCLK_FIMC2>;
++			assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
++			assigned-clock-rates = <0>, <176000000>;
+ 		};
+ 
+ 		fimc_3: fimc@11830000 {
+ 			status = "okay";
++			assigned-clocks = <&clock CLK_MOUT_FIMC3>,
++					<&clock CLK_SCLK_FIMC3>;
++			assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
++			assigned-clock-rates = <0>, <176000000>;
+ 		};
+ 
+ 		csis_0: csis@11880000 {
+ 			status = "okay";
+ 			vddcore-supply = <&ldo8_reg>;
+ 			vddio-supply = <&ldo10_reg>;
+-			clock-frequency = <176000000>;
++			assigned-clocks = <&clock CLK_MOUT_CSIS0>,
++					<&clock CLK_SCLK_CSIS0>;
++			assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
++			assigned-clock-rates = <0>, <176000000>;
+ 
+ 			/* Camera C (3) MIPI CSI-2 (CSIS0) */
+ 			port@3 {
+@@ -736,10 +759,13 @@
+ 		};
+ 
+ 		csis_1: csis@11890000 {
++			status = "okay";
+ 			vddcore-supply = <&ldo8_reg>;
+ 			vddio-supply = <&ldo10_reg>;
+-			clock-frequency = <160000000>;
+-			status = "okay";
++			assigned-clocks = <&clock CLK_MOUT_CSIS1>,
++					<&clock CLK_SCLK_CSIS1>;
++			assigned-clock-parents = <&clock CLK_MOUT_MPLL_USER_T>;
++			assigned-clock-rates = <0>, <176000000>;
+ 
+ 			/* Camera D (4) MIPI CSI-2 (CSIS1) */
+ 			port@4 {
 -- 
-bye,
-p.
+1.7.9.5
