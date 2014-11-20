@@ -1,71 +1,100 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [alsa-devel] [PATCH] ASoC: samsung: Fix IISMOD setting in i2s_set_sysclk()
-Date: Thu, 20 Nov 2014 12:34:51 +0530
-Message-ID: <CAAgF-BemHSdcmzkqOUX+JNMLu0-GXs0EGm8YWHt+CBRP8Wa5DA@mail.gmail.com>
-References: <1416420664-20952-1-git-send-email-s.nawrocki@samsung.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [RFC PATCH 1/1] drm/exynos: Move platform drivers registration to
+ module init
+Date: Thu, 20 Nov 2014 12:36:02 +0530
+Message-ID: <CAFp+6iFbxWoh4h0ZpY=JQO4rjLss2kpj-nZM7KGiJ_F4AZ2W=g@mail.gmail.com>
+References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk>
+	<7hh9xwxsev.fsf@deeprootsystems.com>
+	<546CCAB8.9050402@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f52.google.com ([209.85.213.52]:46109 "EHLO
-	mail-yh0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750838AbaKTHEv (ORCPT
+Received: from mail-qg0-f44.google.com ([209.85.192.44]:65517 "EHLO
+	mail-qg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751045AbaKTHGE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Nov 2014 02:04:51 -0500
-Received: by mail-yh0-f52.google.com with SMTP id z6so1055924yhz.25
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2014 23:04:51 -0800 (PST)
-In-Reply-To: <1416420664-20952-1-git-send-email-s.nawrocki@samsung.com>
+	Thu, 20 Nov 2014 02:06:04 -0500
+Received: by mail-qg0-f44.google.com with SMTP id z60so1723319qgd.3
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Nov 2014 23:06:03 -0800 (PST)
+In-Reply-To: <546CCAB8.9050402@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: broonie@kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Padmavathi Venna <padma.v@samsung.com>, sbkim73@samsung.com, linux-arm-kernel@lists.infradead.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kevin Hilman <khilman@kernel.org>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Paolo Pisati <p.pisati@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>
 
-Hi Sylwester,
+Hi Javier, Kevin,
 
-On 11/19/14, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
-> In the i2s_set_sysclk() callback we are currently clearing all bits
-> of the IISMOD register when clk_id is SAMSUNG_I2S_CDCLK and dir
-> is SND_SOC_CLOCK_OUT. It's due to an incorrect mask used for the AND
-> operation and breaks the I2S interface operation when we attempt to
-> use the CDCLK output clock.
+
+
+On Wed, Nov 19, 2014 at 10:22 PM, Javier Martinez Canillas
+<javier.martinez@collabora.co.uk> wrote:
+> [adding Paolo and Vivek as cc]
 >
-> It fixes commit a5a56871f804edac93a53b5e871c0e9818fb9033
-> ("ASoC: samsung: add support for exynos7 I2S controller") and restores
-> sound support for Odroid X2/U3.
+> Hello,
 >
-> Cc: Padmavathi Venna <padma.v@samsung.com>
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  sound/soc/samsung/i2s.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> On 11/18/2014 07:41 PM, Kevin Hilman wrote:
+>>
+>> It fixes the DRM deadlock, issue for me on exynos5800-peach-pi, but then
+>> it proceeds to panic in the workqueue code called by the asoc max98090
+>> codec[1].
+>>
+>> If I then disable CONFIG_SND_SOC_SNOW, I can get it to boot to a shell,
+>> but I still don't have display output.
+>>
 >
-> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-> index 947352d..8db8c66 100644
-> --- a/sound/soc/samsung/i2s.c
-> +++ b/sound/soc/samsung/i2s.c
-> @@ -494,7 +494,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
->  		if (dir == SND_SOC_CLOCK_IN)
->  			mod |= 1 << i2s_regs->cdclkcon_off;
->  		else
-> -			mod &= 0 << i2s_regs->cdclkcon_off;
-> +			mod &= ~(1 << i2s_regs->cdclkcon_off);
+> Paolo Pisati pointed out in another thread that he needed the patch
+> "[PATCH v2 2/2] arm: dts: Exynos5: Use pmu_system_controller phandle for dp phy"
+> is also needed to get display working for exynos on linux-next.
+>
+> I've pinged Kukjin to apply this as a -rc fix since is needed after
+> a5ec598 ("phy: exynos-dp-video: Use syscon support to control pmu register")
+> landed in 3.18 which broke the Exynos Display Port PHY:
+>
+> exynos-dp-video-phy 10040728.video-phy: Failed to lookup PMU regmap
+>
+> I've an Exynos5800 Peach Pi now so I wanted to test display on it. Just $subject
+> and [0] should be enough to have display working on Peach Pi with linux-next but
+> it fails to me with:
+>
+> exynos-mipi-video-phy 10040714.video-phy: can't request region for resource [mem 0x10040714-0x1004071f]
+>
+> The same issue was reported by Paolo a couple of days ago [1].
+>
+> Vivek,
+>
+> Any idea what could cause this regression on linux-next? As reported by Paolo this
+> works well for me in 3.18-rc5.
 
-Thanks for pointing this. In my local machine it was properly done but
-while rebasing on linux-next I did some mistake. There is one more
-place in set_sysclk which need to be corrected here
-mod &= 0 << i2s_regs->rclksrc_off
-can you include this change also in your patch or should I post a new
-patch for all?
+I tested linux-next on Exynos5800 peach-pi board with linux-next and and the two
+patches $Subject and [0].
 
-Thanks
-Padma
+Below is my git hash:
+4d9e6ee drm/exynos: Move platform drivers registration to module init
+4545ed4 POSTED: arm: dts: Exynos5: Use pmu_system_controller phandle for dp phy
+36391a5 Add linux-next specific files for 20141119
+9b1ced1 Merge branch 'akpm/master'
+282497e mm: add strictlimit knob
 
->  		i2s->rfs = rfs;
->  		break;
+With this display works for me.
+Without $Subject patch i get lookup in drm.
+
+Javier can you tell me your git hash. Was it on yesterday's linux-next ?
+
+>
+> Best regards,
+> Javier
+>
+> [0]: https://lkml.org/lkml/2014/10/30/394
+> [1]: http://www.spinics.net/lists/linux-samsung-soc/msg39032.html
 > --
-> 1.7.9.5
->
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
->
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
