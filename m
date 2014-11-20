@@ -1,150 +1,398 @@
-From: Grygorii Strashko <grygorii.strashko@ti.com>
-Subject: Re: [PATCH] PM / Domains: Power on the PM domain right after attach
- completes
-Date: Thu, 20 Nov 2014 17:06:30 +0200
-Message-ID: <546E0376.3030300@ti.com>
-References: <20141117220238.GE5258@dtor-ws>	<1787068.2MCH8czsD4@vostro.rjw.lan>	<CAPDyKFoMftvKs8tyBaYCu1zTK_JYiXeXMiq86OrwAAHZoRO_Pw@mail.gmail.com>	<3492523.qBADTmdTqo@vostro.rjw.lan>	<CAPDyKFoiEMO5E3nMJDZkFkuio-5sh99m55k-yM=fuqrHUXbhZw@mail.gmail.com>	<546DDBCF.205@ti.com> <CAPDyKFrssg8wTr7e+EDrrgvHCndq8hcoNJb8TQGc_tt4ePpdEw@mail.gmail.com>
+From: Dan Murphy <dmurphy@ti.com>
+Subject: Re: [PATCH 1/2] Input: add regulator haptic driver
+Date: Thu, 20 Nov 2014 09:09:44 -0600
+Message-ID: <546E0438.90808@ti.com>
+References: <1416490300-28865-1-git-send-email-jaewon02.kim@samsung.com> <1416490300-28865-2-git-send-email-jaewon02.kim@samsung.com> <CAGcde9HNGDbm8sNHjyJ-PW75o0eaH1w6KtsOsQx6kDjVqxch5Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:44059 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756063AbaKTPHU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Nov 2014 10:07:20 -0500
-In-Reply-To: <CAPDyKFrssg8wTr7e+EDrrgvHCndq8hcoNJb8TQGc_tt4ePpdEw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <CAGcde9HNGDbm8sNHjyJ-PW75o0eaH1w6KtsOsQx6kDjVqxch5Q@mail.gmail.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>, Jaewon Kim <jaewon02.kim@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Hyunhee Kim <hyunhee.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kevin Hilman <khilman@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, Pavel Machek <pavel@ucw.cz>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 11/20/2014 03:01 PM, Ulf Hansson wrote:
-> On 20 November 2014 13:17, Grygorii Strashko <grygorii.strashko@ti.co=
-m> wrote:
->> On 11/19/2014 10:54 AM, Ulf Hansson wrote:
->>> [...]
->>>
->>>>>
->>>>> Scenario 5), a platform driver with/without runtime PM callbacks.
->>>>> ->probe()
->>>>> - do some initialization
->>>>> - may fetch handles to runtime PM resources
->>>>> - pm_runtime_enable()
->>>>
->>>> Well, and now how the driver knows if the device is "on" before ac=
-cessing it?
->>>
->>> In this case the driver don't need to access the device during
->>> ->probe(). That's postponed until sometime later.
->>>
->>>>
->>>>> Note 1)
->>>>> Scenario 1) and 2), both relies on the approach to power on the P=
-M
->>>>> domain by using pm_runtime_get_sync(). That approach didn't work =
-when
->>>>> CONFIG_PM_RUNTIME was unset, but we recently decided to fixed tha=
-t by
->>>>> the below patch, so that's good!
->>>>> "[PATCH] PM / domains: Kconfig: always enable PM_RUNTIME when gen=
-pd enabled"
->>>>>
->>>>> Note 2)
->>>>> Scenario 3) and 4) use the same principles for managing runtime P=
-M.
->>>>> These scenarios needs a way to power on the generic PM domain pri=
-or
->>>>> probing the device. The call to pm_runtime_set_active(), prevents=
- an
->>>>> already powered PM domain from power off until after probe, but t=
-hat's
->>>>> not enough.
->>>>>
->>>>> Note 3)
->>>>> The $subject patch, tried to address the issues for scenario 3) a=
-nd
->>>>> 4). It does so, but will affect scenario 5) which was working nic=
-ely
->>>>> before. In scenario 5), the $subject patch will cause the generic=
- PM
->>>>> domain to potentially stay powered after ->probe() even if the de=
-vice
->>>>> is runtime PM suspended.
->>>>
->>>> Why would it?  If the device is runtime-suspended, the domain will=
- know
->>>> that, because its callbacks will be used for that.  At least, that=
-'s
->>>> what I'd expect to happen, so is there a problem here?
->>>
->>> Genpd do knows about the device but it doesn=E2=80=99t get a "notif=
-ication" to
->>> power off. There are no issues whatsoever for driver.
->>>
->>> This is a somewhat special case. Let's go through an example.
->>>
->>> 1. The PM domain is initially in powered off state.
->>> 2. The bus ->probe() invokes dev_pm_domain_attach() and then the PM
->>> domain gets attached to the device.
->>> 3. $subject patch causes the PM domain to power on.
->>> 4. A driver ->probe() sequence start, following the Scenario 5).
->>> 5. The device is initially in runtime PM suspended state and it wil=
-l
->>> remain so during ->probe().
->>> 6. The pm_request_idle() invoked after really_probe() in driver cor=
-e,
->>> won't trigger a runtime PM suspend callback to be invoked. In other
->>> words, genpd don't get a "notification" that it may power off.
->>>
->>> In this state, genpd will either power off from the late_initcall,
->>> genpd_poweroff_unused() (depending on when the driver was probed) o=
-r
->>> wait until some device's runtime PM suspend callback is invoked at =
-any
->>> later point.
->>
->> if I understand things right (thanks to Russell), the Power domain m=
-ay not
->>   be powered off not only in above case, but also in some cases when
->> driver is unloaded.
->>
->> AMBA bus for example:
->> static int amba_remove(struct device *dev)
->> {
->>          pm_runtime_get_sync(dev); <---------- GPD=3Don, dev is acti=
-ve, usage_count >=3D 1
->>          ret =3D drv->remove(pcdev); <----------- GPD=3Don, should d=
-o balancing put() to compensate all get() made by driver, usage_count =3D=
-=3D 1
->>                                    <----------- GPD=3Don, should do =
-balancing get() to compensate put() in probe, usage_count =3D=3D 2
->>          pm_runtime_put_noidle(dev); <---------- GPD=3Don, dev is ac=
-tive, usage_count =3D=3D 1
->>
->>          /* Undo the runtime PM settings in amba_probe() */
->>          pm_runtime_disable(dev);  <---------- GPD=3Don, dev is acti=
-ve, usage_count =3D=3D 1
->>          pm_runtime_set_suspended(dev); <---------- GPD=3Don, dev is=
- suspended, usage_count =3D=3D 1
->>          pm_runtime_put_noidle(dev); <---------- GPD=3Don, dev is su=
-spended, usage_count =3D=3D 0
->>
->>          amba_put_disable_pclk(pcdev);
->>          dev_pm_domain_detach(dev, true); <---------- GPD=3Don, dev =
-is suspended, usage_count =3D=3D 0
+Hi
+
+On 11/20/2014 08:33 AM, Pankaj Dubey wrote:
+> Hi Jaewon,
 >
-> For the generic OF-based PM domain look-up case:
-> ->dev_pm_domain_detach()
->      ->genpd_dev_pm_detach() - to remove the device from the PM domai=
-n.
->         ->genpd_queue_power_off_work() - to power off unused PM domai=
-ns.
+> On 20 November 2014 19:01, Jaewon Kim <jaewon02.kim@samsung.com> wrote:
+>> This patch adds support for haptic driver controlled by
+>> voltage of regulator. And this driver support for
+>> Force Feedback interface from input framework
+>>
+>> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+>> Signed-off-by: Hyunhee Kim <hyunhee.kim@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>  .../devicetree/bindings/input/regulator-haptic.txt |   24 ++
+>>  drivers/input/misc/Kconfig                         |   11 +
+>>  drivers/input/misc/Makefile                        |    1 +
+>>  drivers/input/misc/regulator-haptic.c              |  241 ++++++++++++++++++++
+>>  4 files changed, 277 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/input/regulator-haptic.txt
+>>  create mode 100644 drivers/input/misc/regulator-haptic.c
+>>
+>> diff --git a/Documentation/devicetree/bindings/input/regulator-haptic.txt b/Documentation/devicetree/bindings/input/regulator-haptic.txt
+>> new file mode 100644
+>> index 0000000..9f60e17
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/input/regulator-haptic.txt
+>> @@ -0,0 +1,24 @@
+>> +* Requlator Haptic Device Tree Bindings
+>> +
+>> +The regulator haptic driver controlled by voltage of regulator.
+>> +This driver implemented via Force Feedback interface.
+>> +
+>> +Required Properties:
+>> + - compatible : Should be "regulator-haptic"
+>> + - haptic-supply : Power supply for the haptic motor.
+>> +       [*] refer Documentation/devicetree/bindings/regulator/regulator.txt
+>> +
+>> + - max-microvolt : The maximum voltage value supplied to haptic motor.
+>> +               [The unit of the voltage is a micro]
+>> +
+>> + - min-microvolt : The minimum voltage value in which haptic motor reacts.
+>> +               [The unit of the voltage is a micro]
+>> +
+>> +Example:
+>> +
+>> +       regulator-haptic {
+
+Should this be more about the function and not the driver name?
+Somehting like
+
+haptics {
+
+>> +               compatible = "regulator-haptic";
+>> +               haptic-supply = <&motor_regulator>;
+>> +               max-microvolt = <2700000>;
+>> +               min-microvolt = <1100000>;
+>> +       };
+>> diff --git a/drivers/input/misc/Kconfig b/drivers/input/misc/Kconfig
+>> index 23297ab..e5e556d 100644
+>> --- a/drivers/input/misc/Kconfig
+>> +++ b/drivers/input/misc/Kconfig
+>> @@ -394,6 +394,17 @@ config INPUT_CM109
+>>           To compile this driver as a module, choose M here: the module will be
+>>           called cm109.
+>>
+>> +config INPUT_REGULATOR_HAPTIC
+>> +       tristate "regulator haptics support"
+>> +       select INPUT_FF_MEMLESS
+>> +       help
+>> +         This option enables device driver support for the haptic controlled
+>> +         by regulator. This driver supports ff-memless interface
+>> +         from input framework.
+>> +
+>> +         To compile this driver as a module, choose M here: the
+>> +         module will be called regulator-haptic.
+>> +
+>>  config INPUT_RETU_PWRBUTTON
+>>         tristate "Retu Power button Driver"
+>>         depends on MFD_RETU
+>> diff --git a/drivers/input/misc/Makefile b/drivers/input/misc/Makefile
+>> index 19c7603..1f135af 100644
+>> --- a/drivers/input/misc/Makefile
+>> +++ b/drivers/input/misc/Makefile
+>> @@ -53,6 +53,7 @@ obj-$(CONFIG_INPUT_PMIC8XXX_PWRKEY)   += pmic8xxx-pwrkey.o
+>>  obj-$(CONFIG_INPUT_POWERMATE)          += powermate.o
+>>  obj-$(CONFIG_INPUT_PWM_BEEPER)         += pwm-beeper.o
+>>  obj-$(CONFIG_INPUT_RB532_BUTTON)       += rb532_button.o
+>> +obj-$(CONFIG_INPUT_REGULATOR_HAPTIC)   += regulator-haptic.o
+>>  obj-$(CONFIG_INPUT_RETU_PWRBUTTON)     += retu-pwrbutton.o
+>>  obj-$(CONFIG_INPUT_GPIO_ROTARY_ENCODER)        += rotary_encoder.o
+>>  obj-$(CONFIG_INPUT_SGI_BTNS)           += sgi_btns.o
+>> diff --git a/drivers/input/misc/regulator-haptic.c b/drivers/input/misc/regulator-haptic.c
+>> new file mode 100644
+>> index 0000000..1a83ecb
+>> --- /dev/null
+>> +++ b/drivers/input/misc/regulator-haptic.c
+>> @@ -0,0 +1,241 @@
+>> +/*
+>> + * Regulator haptic driver
+>> + *
+>> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+>> + * Author: Jaewon Kim <jaewon02.kim@samsung.com>
+>> + * Author: Hyunhee Kim <hyunhee.kim@samsung.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +#include <linux/module.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/input.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/regulator/consumer.h>
+>> +#include <linux/of.h>
+>> +
+>> +#define MAX_MAGNITUDE_SHIFT    16
+>> +
+>> +struct regulator_haptic {
+>> +       struct device *dev;
+>> +       struct input_dev *input_dev;
+>> +       struct regulator *regulator;
+>> +       struct work_struct work;
+>> +
+>> +       bool enabled;
+>> +       bool suspend_state;
+
+I don't understand what you are tracking here.  You only set it and unset
+this value but never do any checking
+
+>> +       unsigned int max_volt;
+>> +       unsigned int min_volt;
+>> +       unsigned int intensity;
+>> +       unsigned int magnitude;
+>> +};
+>> +
+>> +static void regulator_haptic_enable(struct regulator_haptic *haptic)
+>> +{
+>> +       int error;
+>> +
+>> +       if (haptic->enabled)
+>> +               return;
+>> +
+>> +       error = regulator_enable(haptic->regulator);
+>> +       if (error) {
+>> +               dev_err(haptic->dev, "cannot enable regulator\n");
+>> +               return;
+>> +       }
+>> +
+>> +       haptic->enabled = true;
+>> +}
+>> +
+>> +static void regulator_haptic_disable(struct regulator_haptic *haptic)
+>> +{
+>> +       int error;
+>> +
+>> +       if (!haptic->enabled)
+>> +               return;
+>> +
+>> +       error = regulator_disable(haptic->regulator);
+>> +       if (error) {
+>> +               dev_err(haptic->dev, "cannot disable regulator\n");
+>> +               return;
+>> +       }
+>> +
+>> +       haptic->enabled = false;
+>> +}
+
+Can the enable/disable just be one function with an argument?
+Then you can centralize the check and reduce the code footprint.
+
+>> +
+>> +static void regulator_haptic_work(struct work_struct *work)
+>> +{
+>> +       struct regulator_haptic *haptic = container_of(work,
+>> +                                       struct regulator_haptic, work);
+>> +       int error;
+>> +
+>> +       error = regulator_set_voltage(haptic->regulator,
+>> +                       haptic->intensity + haptic->min_volt, haptic->max_volt);
+>> +       if (error) {
+>> +               dev_err(haptic->dev, "cannot set regulator voltage\n");
+>> +               return;
+>> +       }
+>> +
+>> +       if (haptic->magnitude)
+>> +               regulator_haptic_enable(haptic);
+>> +       else
+>> +               regulator_haptic_disable(haptic);
+>> +}
+>> +
+>> +static int regulator_haptic_play_effect(struct input_dev *input, void *data,
+>> +                                       struct ff_effect *effect)
+>> +{
+>> +       struct regulator_haptic *haptic = input_get_drvdata(input);
+>> +       u64 volt_mag_multi;
+>> +
+>> +       haptic->magnitude = effect->u.rumble.strong_magnitude;
+>> +       if (!haptic->magnitude)
+>> +               haptic->magnitude = effect->u.rumble.weak_magnitude;
+>> +
+>> +
+>> +       volt_mag_multi = (u64)(haptic->max_volt - haptic->min_volt) *
+>> +                                       haptic->magnitude;
+>> +       haptic->intensity = (unsigned int)(volt_mag_multi >>
+>> +                                       MAX_MAGNITUDE_SHIFT);
+>> +
+>> +       schedule_work(&haptic->work);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static void regulator_haptic_close(struct input_dev *input)
+>> +{
+>> +       struct regulator_haptic *haptic = input_get_drvdata(input);
+>> +
+>> +       cancel_work_sync(&haptic->work);
+>> +       regulator_haptic_disable(haptic);
+>> +}
+>> +
+>> +static int regulator_haptic_parse_dt(struct regulator_haptic *haptic)
+>> +{
+>> +       struct device_node *node = haptic->dev->of_node;
+>> +       int error;
+>> +
+>> +       error = of_property_read_u32(node, "max-microvolt", &haptic->max_volt);
+>> +       if (error) {
+>> +               dev_err(haptic->dev, "cannot parse max-microvolt\n");
+>> +               return error;
+>> +       }
+>> +
+>> +       error = of_property_read_u32(node, "min-microvolt", &haptic->min_volt);
+>> +       if (error) {
+>> +               dev_err(haptic->dev, "cannot parse min-microvolt\n");
+>> +               return error;
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int regulator_haptic_probe(struct platform_device *pdev)
+>> +{
+>> +       struct regulator_haptic *haptic;
+>> +       struct input_dev *input_dev;
+>> +       int error;
+>> +
+>> +       haptic = devm_kzalloc(&pdev->dev, sizeof(*haptic), GFP_KERNEL);
+>> +       if (!haptic)
+>> +               return -ENOMEM;
+>> +
+>> +       haptic->dev = &pdev->dev;
+>> +       haptic->enabled = false;
+>> +       haptic->suspend_state = false;
+>> +       INIT_WORK(&haptic->work, regulator_haptic_work);
+>> +
+>> +       error = regulator_haptic_parse_dt(haptic);
+
+Do you need platform data support for platforms that do not currently support
+dt?
+
+>> +       if (error) {
+>> +               dev_err(&pdev->dev, "failed to parse device tree\n");
+>> +               return error;
+>> +       }
+>> +
+>> +       haptic->regulator = devm_regulator_get(&pdev->dev, "haptic");
+>> +       if (IS_ERR(haptic->regulator)) {
+>> +               dev_err(&pdev->dev, "failed to get regulator\n");
+>> +               return PTR_ERR(haptic->regulator);
+>> +       }
+>> +
+>> +       input_dev = devm_input_allocate_device(&pdev->dev);
+>> +       if (!input_dev)
+>> +               return  -ENOMEM;
+>> +
+>> +       haptic->input_dev = input_dev;
+>> +       haptic->input_dev->name = "regulator-haptic";
+>> +       haptic->input_dev->dev.parent = &pdev->dev;
+>> +       haptic->input_dev->close = regulator_haptic_close;
+>> +       input_set_drvdata(haptic->input_dev, haptic);
+>> +       input_set_capability(haptic->input_dev, EV_FF, FF_RUMBLE);
+>> +
+>> +       error = input_ff_create_memless(input_dev, NULL,
+>> +                             regulator_haptic_play_effect);
+>> +       if (error) {
+>> +               dev_err(&pdev->dev, "failed to create force-feedback\n");
+>> +               return error;
+>> +       }
+>> +
+>> +       error = input_register_device(haptic->input_dev);
+>> +       if (error) {
+>> +               dev_err(&pdev->dev, "failed to register input device\n");
+>> +               return error;
+>> +       }
+>> +
+>> +       platform_set_drvdata(pdev, haptic);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int __maybe_unused regulator_haptic_suspend(struct device *dev)
+>> +{
+>> +       struct platform_device *pdev = to_platform_device(dev);
+>> +       struct regulator_haptic *haptic = platform_get_drvdata(pdev);
+>> +
+>> +       if (haptic->enabled) {
+>> +               regulator_haptic_disable(haptic);
+>> +               haptic->suspend_state = true;
+
+
+
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int __maybe_unused regulator_haptic_resume(struct device *dev)
+>> +{
+>> +       struct platform_device *pdev = to_platform_device(dev);
+>> +       struct regulator_haptic *haptic = platform_get_drvdata(pdev);
+>> +
+>> +       if (haptic->enabled) {
+>> +               regulator_haptic_enable(haptic);
+
+We enable the regulator when we do the haptics work if magnitude is > 0.
+And during suspend haptic->enabled may get set to false if it is true
+so wouldn't haptic->enabled always be false here?
+
+Plus do we want to continue the haptic response when coming out of suspend state?
+
+>> +               haptic->suspend_state = false;
+>> +       }
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static SIMPLE_DEV_PM_OPS(regulator_haptic_pm_ops,
+>> +               regulator_haptic_suspend, regulator_haptic_resume);
+>> +
+>> +static struct of_device_id regulator_haptic_dt_match[] = {
+>> +       { .compatible = "regulator-haptic" },
+>> +       {},
+>> +};
+>> +
+>> +static struct platform_driver regulator_haptic_driver = {
+>> +       .probe          = regulator_haptic_probe,
+>> +       .driver         = {
+>> +               .name           = "regulator-haptic",
+>> +               .owner          = THIS_MODULE,
+> .owner is no more required for drivers using module_platform_driver()
 >
-> That does the trick, right!?
+> Thanks,
+> Pankaj Dubey
+>
+>> +               .of_match_table = regulator_haptic_dt_match,
+>> +               .pm             = &regulator_haptic_pm_ops,
+>> +       },
+>> +};
+>> +module_platform_driver(regulator_haptic_driver);
+>> +
+>> +MODULE_AUTHOR("Jaewon Kim <jaewon02.kim@samsung.com>");
+>> +MODULE_AUTHOR("Hyunhee Kim <hyunhee.kim@samsung.com>");
+>> +MODULE_ALIAS("platform:regulator-haptic");
+>> +MODULE_DESCRIPTION("Regulator haptic driver");
+>> +MODULE_LICENSE("GPL");
+>> --
+>> 1.7.9.5
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-input" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-True. Thanks a lot for pointing me on right place.
 
-regards,
--grygorii
+-- 
+------------------
+Dan Murphy
+
