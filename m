@@ -1,50 +1,61 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 0/3] PM / Domains: Add initial PM clock support to genpd
-Date: Thu, 20 Nov 2014 11:23:28 +0100
-Message-ID: <CAPDyKFp=+e_C8c_9-syYEw7wNom3KgdOaNnGSUk+f52xSohqNg@mail.gmail.com>
-References: <1416405638-18812-1-git-send-email-ulf.hansson@linaro.org>
-	<7hk32qu2w3.fsf@deeprootsystems.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [RFC PATCH v3 0/4] separeate sub drivers into independent drivers
+Date: Thu, 20 Nov 2014 19:24:44 +0900
+Message-ID: <1416479088-29371-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <7hk32qu2w3.fsf@deeprootsystems.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 20 November 2014 01:33, Kevin Hilman <khilman@kernel.org> wrote:
-> Ulf Hansson <ulf.hansson@linaro.org> writes:
->
->> It's quite common for PM domains to use PM clocks. Typically from SOC specific
->> code, the per device PM clock list is created and pm_clk_suspend|resume() are
->> invoked to handle clock gating/ungating.
->>
->> A step towards consolidation is to integrate PM clock support into genpd, which
->> is what this patchset does.
->>
->> In this initial step, the calls to the pm_clk_suspend|resume() are handled
->> within genpd, but the per device PM clock list still needs to be created from
->> SOC specific code. It seems reasonable to have gendp to handle that as well, but
->> that left to future patchsets to address.
->
-> I think we need to get rid of the SoC specific code already.  For
-> example, we're already seeing SoCs where the arm32 core is being
-> replaced by an arm64 core but the other IPs, and power-domain logic is
-> staying more or less the same.
->
->> It's not every users of genpd that are keen on using PM clocks thus we need
->> to provide this a configuration option for genpd.
->
-> Or more likely, probably some compatible string, or property in the
-> domain node.  Grygorii, Arnd and myself were discussing this elsewhere
-> in the context of the TI Keystone2 PM domain support[1].
-
-Thanks for pointing that out. It was actually the reason to why I
-posted this patchset now, I have been keeping the patches locally in
-my tree for too long. :-)
-
-Let me comment of that thread, instead of here.
-
-Kind regards
-Uffe
+SGkgYWxsLAoKICAgVGhpcyBwYXRjaCBzZXQgc2VwYXJlYXRlcyBzdWIgZHJpdmVycyBpbnRvIGlu
+ZGVwZW5kZW50IGRyaXZlcnMuCgogICBwYXRjaCAxLzQ6CiAgIC0gbWFrZSBhbGwga21zIGRyaXZl
+cnMgLSBmaW1kLCBoZG1pLCBkcCBhbmQgZHNpIC0gdG8gYmUgaW5kZXBlbmRlbnQKICAgICBkcml2
+ZXJzLgoKICAgcGF0Y2ggMi80OgogICAtIG1ha2UgYWxsIG5vbiBrbXMgZHJpdmVycyAtIGcyZCBh
+bmQgaXBwIC0gdG8gYmUgaW5kZXBlbmRlbnQgZHJpdmVycy4KCiAgIHBhdGNoIDMvNDoKICAgLSBt
+YWtlIHZpZGkgZHJpdmVyIHRvIGJlIGluZGVwZW5kZW50IGRyaXZlci4KCiAgIHBhdGNoIDQvNDoK
+ICAgLSBqdXN0IGNsZWFuIHVwIGNvZGVzIGZvciBjaGVja2luZyBpZiBpdCdzIEV4eW5vcyBTb0Mu
+CgogICBUaGlzIHBhdGNoIHNlcmllcyBoYWQgYmVlbiBwb3N0ZWQgbGlrZSBiZWxvdyB3aXRoIGRp
+ZmZlcmVudCBzdWJqZWN0LAogICB2MTogaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0cy9saW51
+eC1zYW1zdW5nLXNvYy9tc2czOTExNi5odG1sCiAgIHYyOiBodHRwOi8vd3d3LnNwaW5pY3MubmV0
+L2xpc3RzL2xpbnV4LXNhbXN1bmctc29jL21zZzM5MTQ1Lmh0bWwsCiAgICAgICBhbmQgb25seSBv
+bmUgbW9kaWZpZWQgcGF0Y2ggd2FzIHBvc3RlZC4KCiAgIERSTSBkcml2ZXIgc2hvdWxkIGJlIHNp
+bmdsZSBkcml2ZXIgc28gaXQncyBub3QgcmVhc29uYWJsZSBmb3Igc3ViCiAgIGRyaXZlcnMgdG8g
+YmUgYnVpbHQgYXMgaW5kZXBlbmRlbnQgbW9kdWxlcy4gU28gSSBjaGFuZ2VkIHByZXZpb3VzCiAg
+IHN1YmplY3RzIHRvIG5ldyBvbmVzIGJ5IHJldmVydGluZyBleGlzdGluZyBLY29uZmlnLgogICBX
+aXRoIHRoaXMgY2hhbmdlLCBhbGwgc3ViIGRyaXZlcnMgd2lsbCBiZSBidWlsdC1pbiBrZXJuZWwg
+aW1hZ2UuCgogICBUaGFua3MsCiAgIElua2kgRGFlCgpJbmtpIERhZSAoNCk6CiAgZHJtL2V4eW5v
+czogbWFrZSBrbXMgZHJpdmVycyB0byBiZSBpbmRlcGVuZGVudCBkcml2ZXJzCiAgZHJtL2V4eW5v
+czogbWFrZSBub24ga21zIGRyaXZlcnMgdG8gYmUgaW5kZW5wZW5kZW50IGRyaXZlcnMKICBkcm0v
+ZXh5bm9zOiBtYWtlIHZpZGkgZHJpdmVyIHRvIGJlIGluZGVwZW5kZW50IGRyaXZlcgogIGRybS9l
+eHlub3M6IGNsZWFuIHVwIG1hY2hpbmUgY29tcGF0aWJsZSBzdHJpbmcgY2hlY2sKCiBkcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcF9jb3JlLmMgICAgIHwgICAgMiArCiBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY29yZS5jICAgIHwgIDE2NCArKysrKysrKysrKysrKysr
+KysrKysrKy0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuYyAgICAg
+fCAgMTI1ICsrKystLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fZHJ2LmggICAgIHwgICA0MiArKy0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fZHNpLmMgICAgIHwgICAgMiArCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19kcm1fZmltYy5jICAgIHwgICAgMSArCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
+cm1fZmltZC5jICAgIHwgICAgMiArCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1f
+ZzJkLmMgICAgIHwgICA0OCArKysrKysrKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX2dzYy5jICAgICB8ICAgIDEgKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2lwcC5jICAgICB8ICAgMzkgKysrKysrLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3Nf
+ZHJtX3JvdGF0b3IuYyB8ICAgIDIgKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X3ZpZGkuYyAgICB8ICAgODEgKysrKysrKystLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfaGRtaS5jICAgICAgICB8ICAgIDIgKwogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfbWl4ZXIuYyAgICAgICB8ICAgIDIgKwogMTQgZmlsZXMgY2hhbmdlZCwgMzI2IGluc2VydGlv
+bnMoKyksIDE4NyBkZWxldGlvbnMoLSkKCi0tIAoxLjcuOS41CgpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
+ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
+YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
