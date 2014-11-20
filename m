@@ -1,77 +1,107 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH 1/1] [media] platform: Deletion of unnecessary checks before
- two function calls
-Date: Thu, 20 Nov 2014 11:50:32 +0100
-Message-ID: <546DC778.8050204@users.sourceforge.net>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH 1/3] PM / Domains: Initial PM clock support for genpd
+Date: Thu, 20 Nov 2014 12:53:31 +0100
+Message-ID: <CAPDyKFoL-bv1+xon-BK9yt_QMp2tdBNQME-4iaaUff=a2U5oSw@mail.gmail.com>
+References: <1416405638-18812-1-git-send-email-ulf.hansson@linaro.org>
+	<1416405638-18812-2-git-send-email-ulf.hansson@linaro.org>
+	<20141119172501.GA37989@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.4]:63539 "EHLO mout.web.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750949AbaKTKuz (ORCPT
+Received: from mail-qg0-f52.google.com ([209.85.192.52]:53597 "EHLO
+	mail-qg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750885AbaKTLxc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Nov 2014 05:50:55 -0500
-In-Reply-To: <5317A59D.4@users.sourceforge.net>
+	Thu, 20 Nov 2014 06:53:32 -0500
+Received: by mail-qg0-f52.google.com with SMTP id a108so1883115qge.39
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Nov 2014 03:53:31 -0800 (PST)
+In-Reply-To: <20141119172501.GA37989@dtor-ws>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@arm.linux.org.uk>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Arnd Bergmann <arnd@arndb.de>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 20 Nov 2014 11:44:20 +0100
+On 19 November 2014 18:25, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+> On Wed, Nov 19, 2014 at 03:00:36PM +0100, Ulf Hansson wrote:
+>> It's quite common for PM domains to use PM clocks. Typically from SOC
+>> specific code, the per device PM clock list is created and
+>> pm_clk_suspend|resume() are invoked to handle clock gating/ungating.
+>>
+>> A step towards consolidation is to integrate PM clock support into
+>> genpd, which is what this patch does.
+>>
+>> In this initial step, the calls to the pm_clk_suspend|resume() are
+>> handled within genpd, but the per device PM clock list still needs to
+>> be created from SOC specific code. It seems reasonable to have gendp to
+>> handle that as well, but that left to future patches to address.
+>>
+>> It's not every users of genpd that are keen on using PM clocks thus we
+>> need to provide this a configuration option for genpd. Therefore let's
+>> add flag field in the genpd struct to keep this information and define
+>> a new PM_DOMAIN_PM_CLK bit can then be set at initialization.
+>>
+>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+>> ---
+>>  drivers/base/power/domain.c | 7 +++++++
+>>  include/linux/pm_domain.h   | 3 +++
+>>  2 files changed, 10 insertions(+)
+>>
+>> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+>> index 3989eb6..42e328c 100644
+>> --- a/drivers/base/power/domain.c
+>> +++ b/drivers/base/power/domain.c
+>> @@ -12,6 +12,7 @@
+>>  #include <linux/pm_runtime.h>
+>>  #include <linux/pm_domain.h>
+>>  #include <linux/pm_qos.h>
+>> +#include <linux/pm_clock.h>
+>>  #include <linux/slab.h>
+>>  #include <linux/err.h>
+>>  #include <linux/sched.h>
+>> @@ -1948,6 +1949,12 @@ void pm_genpd_init(struct generic_pm_domain *genpd,
+>>       genpd->domain.ops.complete = pm_genpd_complete;
+>>       genpd->dev_ops.save_state = pm_genpd_default_save_state;
+>>       genpd->dev_ops.restore_state = pm_genpd_default_restore_state;
+>> +
+>> +     if (genpd->flags & PM_DOMAIN_PM_CLK) {
+>> +             genpd->dev_ops.stop = pm_clk_suspend;
+>> +             genpd->dev_ops.start = pm_clk_suspend;
+>
+> The 2nd one is wrong.
 
-The functions i2c_put_adapter() and release_firmware() test whether their
-argument is NULL and then return immediately. Thus the test around the call
-is not needed.
+Huh, thanks for spotting this.
 
-This issue was detected by using the Coccinelle software.
+>
+>> +     }
+>> +
+>>       mutex_lock(&gpd_list_lock);
+>>       list_add(&genpd->gpd_list_node, &gpd_list);
+>>       mutex_unlock(&gpd_list_lock);
+>> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+>> index 9d254e2..44c6931 100644
+>> --- a/include/linux/pm_domain.h
+>> +++ b/include/linux/pm_domain.h
+>> @@ -14,6 +14,7 @@
+>>  #include <linux/pm.h>
+>>  #include <linux/err.h>
+>>  #include <linux/of.h>
+>> +#include <linux/bitops.h>
+>>  #include <linux/notifier.h>
+>>  #include <linux/cpuidle.h>
+>>
+>> @@ -76,6 +77,8 @@ struct generic_pm_domain {
+>>                         struct device *dev);
+>>       void (*detach_dev)(struct generic_pm_domain *domain,
+>>                          struct device *dev);
+>> +     unsigned int flags;             /* Bit field of configs for genpd */
+>> +#define PM_DOMAIN_PM_CLK     BIT(0)  /* PM domain use PM clk */
+>
+> s/use/uses ?
+>
+> Are you planning on adding a separate flag for collecting clocks from OF
+> on attach/detach?
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/media/platform/exynos4-is/fimc-is.c   | 6 ++----
- drivers/media/platform/s3c-camif/camif-core.c | 3 +--
- 2 files changed, 3 insertions(+), 6 deletions(-)
+Yes, I am thinking on that approach. Do you have any suggestions around this?
 
-diff --git a/drivers/media/platform/exynos4-is/fimc-is.c b/drivers/media/platform/exynos4-is/fimc-is.c
-index 5476dce..a1db27b 100644
---- a/drivers/media/platform/exynos4-is/fimc-is.c
-+++ b/drivers/media/platform/exynos4-is/fimc-is.c
-@@ -428,8 +428,7 @@ static void fimc_is_load_firmware(const struct firmware *fw, void *context)
- 	 * needed around for copying to the IS working memory every
- 	 * time before the Cortex-A5 is restarted.
- 	 */
--	if (is->fw.f_w)
--		release_firmware(is->fw.f_w);
-+	release_firmware(is->fw.f_w);
- 	is->fw.f_w = fw;
- done:
- 	mutex_unlock(&is->lock);
-@@ -937,8 +936,7 @@ static int fimc_is_remove(struct platform_device *pdev)
- 	vb2_dma_contig_cleanup_ctx(is->alloc_ctx);
- 	fimc_is_put_clocks(is);
- 	fimc_is_debugfs_remove(is);
--	if (is->fw.f_w)
--		release_firmware(is->fw.f_w);
-+	release_firmware(is->fw.f_w);
- 	fimc_is_free_cpu_memory(is);
- 
- 	return 0;
-diff --git a/drivers/media/platform/s3c-camif/camif-core.c b/drivers/media/platform/s3c-camif/camif-core.c
-index b385747..3b09b5b 100644
---- a/drivers/media/platform/s3c-camif/camif-core.c
-+++ b/drivers/media/platform/s3c-camif/camif-core.c
-@@ -256,8 +256,7 @@ static void camif_unregister_sensor(struct camif_dev *camif)
- 	v4l2_device_unregister_subdev(sd);
- 	camif->sensor.sd = NULL;
- 	i2c_unregister_device(client);
--	if (adapter)
--		i2c_put_adapter(adapter);
-+	i2c_put_adapter(adapter);
- }
- 
- static int camif_create_media_links(struct camif_dev *camif)
--- 
-2.1.3
+Kind regards
+Uffe
