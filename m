@@ -1,42 +1,54 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH v2] serial: samsung: Fix serial config dependencies for
- exynos7
-Date: Sat, 22 Nov 2014 00:11:15 +0900
-Message-ID: <546F5613.1020208@kernel.org>
-References: <1416199491-4841-1-git-send-email-a.kesavan@samsung.com> <1416383812-714-1-git-send-email-a.kesavan@samsung.com>
+Subject: Re: [GIT PULL] Samsung clock changes for 3.19
+Date: Sat, 22 Nov 2014 00:19:16 +0900
+Message-ID: <546F57F4.7070400@kernel.org>
+References: <5453C8A7.6080502@samsung.com> <546C457C.6030901@samsung.com> <20141119192725.25314.53729@quantum>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1416383812-714-1-git-send-email-a.kesavan@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Abhilash Kesavan <a.kesavan@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org, jslaby@suse.cz, kesavan.abhilash@gmail.com, Pankaj Dubey <pankaj.dubey@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.19.201]:42982 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755232AbaKUPTY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 21 Nov 2014 10:19:24 -0500
+In-Reply-To: <20141119192725.25314.53729@quantum>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 11/19/14 16:56, Abhilash Kesavan wrote:
-> From: Pankaj Dubey <pankaj.dubey@samsung.com>
+On 11/20/14 04:27, Mike Turquette wrote:
+> Quoting Kukjin Kim (2014-11-18 23:23:40)
+>> On 11/01/14 02:36, Sylwester Nawrocki wrote:
+>>> Hi Mike,
+>>>
+>> Hi Mike,
+>>
+>>> I've collected Exynos clk patches in this pull request, as Tomasz has
+>>> been busy recently. 
+>>> This includes addition of clock controller drivers for Exynos4415 and 
+>>> Exynos7 SoCs and related refactoring of the Samsung common clk API. 
+>>>
+>>> As I mentioned in my other e-mail, it might be sensible to put these 
+>>> patches into a separate topic branch, so Kukjin can pull it as 
+>>> a dependency for the related dts changes.
+>>>
+>> As Sylwester suggested, can you please provide a topic branch for
+>> samsung tree so that I can apply regarding DT changes such as exynos
+>> 4415 and exynos7...
 > 
-> Exynos7 has a similar serial controller to that present in older Samsung
-> SoCs. To re-use the existing serial driver on Exynos7 we need to have
-> SERIAL_SAMSUNG_UARTS_4 and SERIAL_SAMSUNG_UARTS selected. This is not
-> possible because these symbols are dependent on PLAT_SAMSUNG which is
-> not present for the ARMv8 based exynos7.
+> A topic branch already exists:
 > 
-> Change the dependency of these symbols from PLAT_SAMSUNG to the serial
-> driver thus making it available on exynos7. As the existing platform
-> specific code making use of these symbols is related to uart driver this
-> change in dependency should not cause any issues.
+> git://linuxtv.org/snawrocki/samsung.git for-v3.19/exynos-clk
 > 
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
-> Changes in v2:
-> 	- Added Greg's ack and Kukjin Kim as a recepient
+> ;-)
+> 
+> I've pulled that into clk-next towards 3.19. Please pull the same branch
+> into the samsung tree as a dependency.
+> 
 
-Applied, thanks.
+Thanks, I've merged the branch into samsung tree. Please make sure the
+branch will not be rebased :)
 
 - Kukjin
