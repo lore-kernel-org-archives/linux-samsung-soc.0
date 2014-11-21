@@ -1,144 +1,159 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 1/2] drm/exynos: fix null pointer dereference issue
-Date: Fri, 21 Nov 2014 11:11:41 +0900
-Message-ID: <546E9F5D.1060203@samsung.com>
-References: <1415865009-15979-1-git-send-email-inki.dae@samsung.com>
- <1415865009-15979-2-git-send-email-inki.dae@samsung.com>
- <20141120231219.GA3123@joana>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH v5 2/2] ARM: EXYNOS: PMU: move restart code into pmu driver
+Date: Fri, 21 Nov 2014 09:58:51 +0530
+Message-ID: <CAFp+6iHz=1Jug7F_LgohcVLfXzsG2FGvck7_jPx+txZkOpLbqA@mail.gmail.com>
+References: <1416307650-15162-1-git-send-email-pankaj.dubey@samsung.com>
+	<1416307650-15162-3-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <20141120231219.GA3123@joana>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f171.google.com ([209.85.216.171]:40562 "EHLO
+	mail-qc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757407AbaKUE2w (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Nov 2014 23:28:52 -0500
+Received: by mail-qc0-f171.google.com with SMTP id r5so3245481qcx.16
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Nov 2014 20:28:51 -0800 (PST)
+In-Reply-To: <1416307650-15162-3-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Abraham <thomas.ab@samsung.com>, linux@roeck-us.net
 
-T24gMjAxNOuFhCAxMeyblCAyMeydvCAwODoxMiwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IDIw
-MTQtMTEtMTMgSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPjoKPiAKPj4gVGhpcyBwYXRj
-aCBmaXhlcyBudWxsIHBvaW50ZXIgZGVyZWZlcmVuY2UgaXNzdWUgaW5jdXJyZWQKPj4gd2hlbiBp
-cHAgZHJpdmVyIGlzIGVuYWJsZWQgYW5kIEV4eW5vcyBkcm0gZHJpdmVyIGlzIGNsb3NlZC4KPj4K
-Pj4gTm9uIGttcyBkcml2ZXIgc2hvdWxkIHJlZ2lzdGVyIGl0cyBvd24gc3ViIGRyaXZlciB0byBz
-ZXR1cCBuZWNlc3NhcnkKPj4gcmVzb3VyY2VzLCB3aGljaCBpcyBkb25lIGJ5IGxvYWQoKS4gU28g
-bnVsbCBwb2ludGVyIGRlcmVmZXJlbmNlCj4+IG9jY3VycyB3aGVuIGlwcCBkcml2ZXIgaXMgZW5h
-YmxlZCBhbmQgRXh5bm9zIGRybSBkcml2ZXIgaXMgY2xvc2VkCj4+IGJlY2F1c2UgaXBwIGNvcmUg
-ZGV2aWNlIGlzIHJlZ2lzdGVyZWQgYWZ0ZXIgY29tcG9uZW50X21hc3Rlcl9hZGRfd2l0aF9tYXRj
-aAo+PiBjYWxsLgo+Pgo+PiBUaGlzIHBhdGNoIG1ha2VzIGV4eW5vc19kcm1fZGV2aWNlX3N1YmRy
-dl9wcm9iZSgpIHRvIGJlIGNhbGxlZCBhZnRlciBhbGwgbm9uCj4+IGttcyBkcml2ZXJzIGFyZSBy
-ZWdpc3RlcmVkLgo+IAo+IFRoaXMgcGF0Y2ggaXMgYnJlYWtpbmcgZXh5bm9zIGluaXRpYWxpemF0
-aW9uLCBleHlub3NfZHJtX2RldmljZV9zdWJkcnZfcHJvYmUoKQo+IG5lZWRzIHRoZSBkcnZkYXRh
-IGJ1dCBpdCBpcyBzdGlsbCBOVUxMIGF0IHRoaXMgcG9pbnQgd2hpY2ggbWFrZSB0aGUgd2hvbGUK
-PiBleHlub3MgaW5pdCBmYWlscy4gVGhlIGRydmRhdGEgaXMgb25seSBzZXQgaW4gZXh5bm9zX2Ry
-bV9sb2FkKCkgc28gd2UgbmVlZAo+IGNhbGwgZXh5bm9zX2RybV9kZXZpY2Vfc3ViZHJ2X3Byb2Jl
-KCkgYWZ0ZXIgdGhhdC4KClRoZXJlIG1pZ2h0IGJlIG15IG1pc3NpbmcgcG9pbnQgYnV0IHdpdGgg
-dGhpcyBwYXRjaCwKZXh5bm9zX2RybV9kZXZpY2Vfc3ViZHJ2X3Byb2JlKCkgd2lsbCBiZSBjYWxs
-ZWQgYWZ0ZXIgZXh5bm9zX2RybV9sb2FkKCkKY2FsbCBiZWNhdXNlIGFsbCBrbXMgZHJpdmVycyBh
-cmUgcHJvYmVkIGJlZm9yZQpjb21wb25lbnRfbWFzdGVyX2FkZF93aXRoX21hdGNoIGNhbGwgc28g
-ZXh5bm9zX2RybV9sb2FkKCkgbXVzdCBiZSBjYWxsZWQKYnkgY29tcG9uZW50X21hc3Rlcl9hZGRf
-d2l0aF9tYXRjaCBmdW5jdGlvbiBiZWZvcmUKZXh5bm9zX2RybV9kZXZpY2Vfc3ViZHJ2X3Byb2Jl
-IGNhbGwuCgpTbyBjb3VsZCB5b3Ugc2hvdyBtZSB0aGUgZXJyb3IgbWVzc2FnZXMgeW91IGZhY2Vk
-IHdpdGg/IFRoZXJlIG1pZ2h0IGJlIGEKY29ybmVyIGNhc2UgSSBtaXNzZWQuCgo+IAo+IERvIHlv
-dSBoYXZlIHRoZSBjcmFzaCBvdXRwdXQgZm9yIHRoaXM/IFdoYXQgaXMgdGhlIGlzc3VlIHlvdSBh
-cmUgZml4aW5nPwoKT2ssIGJlbG93IGlzIHRoZSBlcnJvciBtZXNzYWdlcywKIyBtb2RldGVzdApb
-ICAgIDUuNjUzMjkxXSAtLS0tLS0tLS0tLS1bIGN1dCBoZXJlIF0tLS0tLS0tLS0tLS0KWyAgICA1
-LjY1NjQ2OV0gV0FSTklORzogQ1BVOiAyIFBJRDogMTQwNCBhdCBrZXJuZWwvbG9ja2luZy9tdXRl
-eC5jOjUxMQpfX211dGV4X2xvY2tfc2xvd3BhdGgrMHgzZDQvMHgzZDgoKQpbICAgIDUuNjY1ODE2
-XSBERUJVR19MT0NLU19XQVJOX09OKGwtPm1hZ2ljICE9IGwpClsgICAgNS42NzAwNjldIE1vZHVs
-ZXMgbGlua2VkIGluOgpbICAgIDUuNjczMjg2XSBDUFU6IDIgUElEOiAxNDA0IENvbW06IG1vZGV0
-ZXN0IE5vdCB0YWludGVkCjMuMTguMC1yYzMtMTQ2Nzc1LWdiY2ZlZjk3ICMxMTQ5ClsgICAgNS42
-ODEzODldIFs8YzAwMTQ0MDA+XSAodW53aW5kX2JhY2t0cmFjZSkgZnJvbSBbPGMwMDExNTcwPl0K
-KHNob3dfc3RhY2srMHgxMC8weDE0KQpbICAgIDUuNjg5MDkwXSBbPGMwMDExNTcwPl0gKHNob3df
-c3RhY2spIGZyb20gWzxjMDQ3NDA2MD5dCihkdW1wX3N0YWNrKzB4ODQvMHhjNCkKWyAgICA1LjY5
-NjMwNF0gWzxjMDQ3NDA2MD5dIChkdW1wX3N0YWNrKSBmcm9tIFs8YzAwMjE5MTg+XQood2Fybl9z
-bG93cGF0aF9jb21tb24rMHg2Yy8weDg4KQpbICAgIDUuNzA0MzY0XSBbPGMwMDIxOTE4Pl0gKHdh
-cm5fc2xvd3BhdGhfY29tbW9uKSBmcm9tIFs8YzAwMjE5NjQ+XQood2Fybl9zbG93cGF0aF9mbXQr
-MHgzMC8weDQwKQpbICAgIDUuNzEzMDQ3XSBbPGMwMDIxOTY0Pl0gKHdhcm5fc2xvd3BhdGhfZm10
-KSBmcm9tIFs8YzA0NzdhNGM+XQooX19tdXRleF9sb2NrX3Nsb3dwYXRoKzB4M2Q0LzB4M2Q4KQpb
-ICAgIDUuNzIxOTg0XSBbPGMwNDc3YTRjPl0gKF9fbXV0ZXhfbG9ja19zbG93cGF0aCkgZnJvbSBb
-PGMwNDc3YTVjPl0KKG11dGV4X2xvY2srMHhjLzB4MjQpClsgICAgNS43MzAwNjldIFs8YzA0Nzdh
-NWM+XSAobXV0ZXhfbG9jaykgZnJvbSBbPGMwMjhlNmZjPl0KKGlwcF9zdWJkcnZfY2xvc2UrMHg0
-Yy8weDEzYykKWyAgICA1LjczNzg4MV0gWzxjMDI4ZTZmYz5dIChpcHBfc3ViZHJ2X2Nsb3NlKSBm
-cm9tIFs8YzAyN2E1MWM+XQooZXh5bm9zX2RybV9zdWJkcnZfY2xvc2UrMHgzYy8weDRjKQpbICAg
-IDUuNzQ2NzMxXSBbPGMwMjdhNTFjPl0gKGV4eW5vc19kcm1fc3ViZHJ2X2Nsb3NlKSBmcm9tIFs8
-YzAyNWVhZGM+XQooZHJtX3JlbGVhc2UrMHg5NC8weDRjOCkKWyAgICA1Ljc1NTIyOF0gWzxjMDI1
-ZWFkYz5dIChkcm1fcmVsZWFzZSkgZnJvbSBbPGMwMGNiZGQ0Pl0KKF9fZnB1dCsweDgwLzB4MWM4
-KQpbICAgIDUuNzYyMjY4XSBbPGMwMGNiZGQ0Pl0gKF9fZnB1dCkgZnJvbSBbPGMwMDM3ODQwPl0K
-KHRhc2tfd29ya19ydW4rMHhhYy8weGU0KQpbICAgIDUuNzY5MzgyXSBbPGMwMDM3ODQwPl0gKHRh
-c2tfd29ya19ydW4pIGZyb20gWzxjMDAxMTBmOD5dCihkb193b3JrX3BlbmRpbmcrMHg5NC8weGI0
-KQpbICAgIDUuNzc3Mjc1XSBbPGMwMDExMGY4Pl0gKGRvX3dvcmtfcGVuZGluZykgZnJvbSBbPGMw
-MDBlNmUwPl0KKHdvcmtfcGVuZGluZysweGMvMHgyMCkKWyAgICA1Ljc4NDk5NF0gLS0tWyBlbmQg
-dHJhY2UgYmI0OGE0MWFlODlkMWYyNSBdLS0tClsgICAgNS43ODk1OThdIFVuYWJsZSB0byBoYW5k
-bGUga2VybmVsIE5VTEwgcG9pbnRlciBkZXJlZmVyZW5jZSBhdAp2aXJ0dWFsIGFkZHJlc3MgMDAw
-MDAwMDAKWyAgICA1Ljc5NzY2NF0gcGdkID0gZWUzYjgwMDAKWyAgICA1LjgwMDM1NF0gWzAwMDAw
-MDAwXSAqcGdkPTZlMzY2ODMxLCAqcHRlPTAwMDAwMDAwLCAqcHB0ZT0wMDAwMDAwMApbICAgIDUu
-ODA2NjEwXSBJbnRlcm5hbCBlcnJvcjogT29wczogODE3IFsjMV0gUFJFRU1QVCBTTVAgQVJNClsg
-ICAgNS44MTIwNzRdIE1vZHVsZXMgbGlua2VkIGluOgpbICAgIDUuODE1MTE3XSBDUFU6IDIgUElE
-OiAxNDA0IENvbW06IG1vZGV0ZXN0IFRhaW50ZWQ6IEcgICAgICAgIFcKMy4xOC4wLXJjMy0xNDY3
-NzUtZ2JjZmVmOTcgIzExNDkKWyAgICA1LjgyNDMxNF0gdGFzazogZWVhOTA4MDAgdGk6IGVlMzNj
-MDAwIHRhc2sudGk6IGVlMzNjMDAwClsgICAgNS44Mjk3MDRdIFBDIGlzIGF0IF9fbXV0ZXhfbG9j
-a19zbG93cGF0aCsweGY0LzB4M2Q4ClsgICAgNS44MzQ3MzBdIExSIGlzIGF0IF9fbXV0ZXhfbG9j
-a19zbG93cGF0aCsweGRjLzB4M2Q4ClsgICAgNS44Mzk3NjVdIHBjIDogWzxjMDQ3Nzc2Yz5dICAg
-IGxyIDogWzxjMDQ3Nzc1ND5dICAgIHBzcjogODAwMDAwOTMKWyAgICA1LjgzOTc2NV0gc3AgOiBl
-ZTMzZGU4OCAgaXAgOiBlZTMzZGU5OCAgZnAgOiBjMDZjYjgxNApbICAgIDUuODUxMjIwXSByMTA6
-IGVlMGY1ODU0ICByOSA6IGMwNzAwNzg0ICByOCA6IGVlYTkwODAwClsgICAgNS44NTY0MjldIHI3
-IDogZWUzM2MwMDggIHI2IDogNjAwMDAwMTMgIHI1IDogZWUwZjU4NDQgIHI0IDogZWUwZjU4NDAK
-WyAgICA1Ljg2MjkzOF0gcjMgOiAwMDAwMDAwMCAgcjIgOiAwMDAwMDAwMCAgcjEgOiBlZTMzZGU4
-OCAgcjAgOiBlZTBmNTg0MApbICAgIDUuODY5NDUxXSBGbGFnczogTnpjdiAgSVJRcyBvZmYgIEZJ
-UXMgb24gIE1vZGUgU1ZDXzMyICBJU0EgQVJNClNlZ21lbnQgdXNlcgpbICAgIDUuODc2NjU0XSBD
-b250cm9sOiAxMGM1Mzg3ZCAgVGFibGU6IDZlM2I4MDRhICBEQUM6IDAwMDAwMDE1ClsgICAgNS44
-ODIzODNdIFByb2Nlc3MgbW9kZXRlc3QgKHBpZDogMTQwNCwgc3RhY2sgbGltaXQgPSAweGVlMzNj
-MjQwKQpbICAgIDUuODg4NTQ0XSBTdGFjazogKDB4ZWUzM2RlODggdG8gMHhlZTMzZTAwMCkKWyAg
-ICA1Ljg5Mjg4OF0gZGU4MDogICAgICAgICAgICAgICAgICAgZWUwZjU4NTQgMDAwMDAwMDAgMTEx
-MTExMTEKZWUzM2RlODggMDAwMWQwMzAgZWUwZjU4NDAKWyAgICA1LjkwMTA0OF0gZGVhMDogYzA2
-YjFkOTQgZWUwZjU4MTAgYzA3MDVlNGMgZWUwZWViMDAgMDAwMDAwMDAKZWUwZjU4NDAgZWUwZjU4
-MTAgYzA0NzdhNWMKWyAgICA1LjkwOTIwN10gZGVjMDogZWViNGE1MTAgYzAyOGU2ZmMgZWUxNGE0
-MzQgZWViNGE1MTAgYzA2YjJmZTQKZWUxNGE0MDAgZWUzM2MwMDAgZWViNGE1MTAKWyAgICA1Ljkx
-NzM2Nl0gZGVlMDogYzA2YjFkOTQgZWUwZWViMDAgZWUxNGE0MDAgZWUxNGE0MzQgMDAwMDAwMDgK
-ZWUwZWVhMDggMDAwMDAwMDAgYzAyN2E1MWMKWyAgICA1LjkyNTUyNV0gZGYwMDogYzA3MDVlNGMg
-ZWUwZWViMDAgZWUwZWVhMDAgZWUxNGE0MDAgZWUxNGE0MzQKYzAyNWVhZGMgZWUwZWVhMDggMDAw
-MDAwMDEKWyAgICA1LjkzMzY4NF0gZGYyMDogZWViY2UwMDAgMDAwMDAwMDAgMDAwMDAwMDAgMDAw
-MDAwMDAgMDAwMDAwMjEKZWUwZWVhMDAgZWUzMzU0ZTAgMDAwMDAwMDAKWyAgICA1Ljk0MTg0M10g
-ZGY0MDogZWUzMmEyNTAgZWU3MTE0MjggMDAwMDAwMDggZWUwZWVhMDggMDAwMDAwMDAKYzAwY2Jk
-ZDQgMDAwMDAwMDAgMDAwMDAwMDAKWyAgICA1Ljk1MDAwMl0gZGY2MDogZWVhOTBiNGMgMDAwMDAw
-MDAgYzA2Y2E2MDQgZWVhOTA4MDAgYzAwMGU4MjQKZWUzM2MwMDAgMDAwMDAwMDAgYzAwMzc4NDAK
-WyAgICA1Ljk1ODE2MV0gZGY4MDogZWUzM2MwMTggYzAwMGU4MjQgZWUzM2RmYjAgZWUzM2MwMDAg
-YzAwMGU4MjQKYzAwMTEwZjggMDAwMDAwMDMgMDAwMDAwMDEKWyAgICA1Ljk2NjMyMF0gZGZhMDog
-YmVmZjBhNGMgMDAwMDAwMDYgYzAwMGU4MjQgYzAwMGU2ZTAgMDAwMDAwMDAKMDAwMWQwMDAgMDAw
-MDAwMDMgMDAwMWQwMDAKWyAgICA1Ljk3NDQ3OV0gZGZjMDogMDAwMDAwMDMgMDAwMDAwMDEgYmVm
-ZjBhNGMgMDAwMDAwMDYgMDAwMDAwMDAKMDAwMDAwMDAgMDAwMDAwMDAgMDAwMDAwMDAKWyAgICA1
-Ljk4MjYzOV0gZGZlMDogMDAwMDAwMDAgYmVmZjA5YTQgYjZmNzQyNTcgYjZlZWY2MjYgNDAwMDAw
-MzAKMDAwMDAwMDMgMDAwMDAwMDAgMDAwMDAwMDAKWyAgICA1Ljk5MDgwN10gWzxjMDQ3Nzc2Yz5d
-IChfX211dGV4X2xvY2tfc2xvd3BhdGgpIGZyb20gWzxjMDQ3N2E1Yz5dCihtdXRleF9sb2NrKzB4
-Yy8weDI0KQpbICAgIDUuOTk4ODgzXSBbPGMwNDc3YTVjPl0gKG11dGV4X2xvY2spIGZyb20gWzxj
-MDI4ZTZmYz5dCihpcHBfc3ViZHJ2X2Nsb3NlKzB4NGMvMHgxM2MpClsgICAgNi4wMDY2OTNdIFs8
-YzAyOGU2ZmM+XSAoaXBwX3N1YmRydl9jbG9zZSkgZnJvbSBbPGMwMjdhNTFjPl0KKGV4eW5vc19k
-cm1fc3ViZHJ2X2Nsb3NlKzB4M2MvMHg0YykKWyAgICA2LjAxNTU0Nl0gWzxjMDI3YTUxYz5dIChl
-eHlub3NfZHJtX3N1YmRydl9jbG9zZSkgZnJvbSBbPGMwMjVlYWRjPl0KKGRybV9yZWxlYXNlKzB4
-OTQvMHg0YzgpClsgICAgNi4wMjQwNDddIFs8YzAyNWVhZGM+XSAoZHJtX3JlbGVhc2UpIGZyb20g
-WzxjMDBjYmRkND5dCihfX2ZwdXQrMHg4MC8weDFjOCkKWyAgICA2LjAzMTA4Ml0gWzxjMDBjYmRk
-ND5dIChfX2ZwdXQpIGZyb20gWzxjMDAzNzg0MD5dCih0YXNrX3dvcmtfcnVuKzB4YWMvMHhlNCkK
-WyAgICA2LjAzODIwMF0gWzxjMDAzNzg0MD5dICh0YXNrX3dvcmtfcnVuKSBmcm9tIFs8YzAwMTEw
-Zjg+XQooZG9fd29ya19wZW5kaW5nKzB4OTQvMHhiNCkKWyAgICA2LjA0NjA5NF0gWzxjMDAxMTBm
-OD5dIChkb193b3JrX3BlbmRpbmcpIGZyb20gWzxjMDAwZTZlMD5dCih3b3JrX3BlbmRpbmcrMHhj
-LzB4MjApClsgICAgNi4wNTM4MTZdIENvZGU6IGUyODRhMDE0IGU1ODRkMDE4IGU1OGRhMDAwIGU1
-OGQzMDA0IChlNTgzZDAwMCkKWyAgICA2LjA1OTg5Ml0gLS0tWyBlbmQgdHJhY2UgYmI0OGE0MWFl
-ODlkMWYyNiBdLS0tCgpUaGFua3MsCklua2kgRGFlCgo+IFVzdWFsbHkgeW91IHNob3VsZCBhZGQg
-dGhpcyBraW5kIG9mIGluZm9ybWF0aW9uIHRvIHlvdSBjb21taXQgbWVzc2FnZSwgaXQKPiBoZWxw
-cyB1cyB1bmRlcnN0YW5kIHdoYXQgeW91IGFyZSBmaXhpbmcsIHNwZWNpYWxseSBpbiBjYXNlcyB3
-aGVuIGEgcmVncmVzc2lvbgo+IGlzIGludHJvZHVjZWQsIGxpa2UgdGhpcyBwYXRjaCBmb3IgZXhh
-bXBsZQo+IAo+IAlHdXN0YXZvCj4gLS0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDog
-c2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluCj4gdGhlIGJv
-ZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9y
-ZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwK
-PiAKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
-ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8v
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hi Pankaj,
+
+
+On Tue, Nov 18, 2014 at 4:17 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> Let's register restart handler from PMU driver for restart
+> functionality. So that we can remove restart hooks from
+> machine specific file, and thus moving ahead when PMU moved
+> to driver folder, this functionality can be reused for ARM64
+> based Exynos SoC's.
+>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Acked-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+
+Tested on Exynos5800 peach-pi board with linux-samsung/for-next.
+Reboot works as expected mutiple times.
+
+Tested-by: Vivek Gautam <gautam.vivek@samsung.com>
+
+>  arch/arm/mach-exynos/common.h |    1 -
+>  arch/arm/mach-exynos/exynos.c |    6 ------
+>  arch/arm/mach-exynos/pmu.c    |   23 +++++++++++++++++++++++
+>  3 files changed, 23 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+> index 431be1b..865f878 100644
+> --- a/arch/arm/mach-exynos/common.h
+> +++ b/arch/arm/mach-exynos/common.h
+> @@ -12,7 +12,6 @@
+>  #ifndef __ARCH_ARM_MACH_EXYNOS_COMMON_H
+>  #define __ARCH_ARM_MACH_EXYNOS_COMMON_H
+>
+> -#include <linux/reboot.h>
+>  #include <linux/of.h>
+>
+>  #define EXYNOS3250_SOC_ID      0xE3472000
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index 8f995b7..c13d083 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -87,11 +87,6 @@ static struct map_desc exynos5_iodesc[] __initdata = {
+>         },
+>  };
+>
+> -static void exynos_restart(enum reboot_mode mode, const char *cmd)
+> -{
+> -       __raw_writel(0x1, pmu_base_addr + EXYNOS_SWRESET);
+> -}
+> -
+>  static struct platform_device exynos_cpuidle = {
+>         .name              = "exynos_cpuidle",
+>  #ifdef CONFIG_ARM_EXYNOS_CPUIDLE
+> @@ -316,7 +311,6 @@ DT_MACHINE_START(EXYNOS_DT, "SAMSUNG EXYNOS (Flattened Device Tree)")
+>         .init_machine   = exynos_dt_machine_init,
+>         .init_late      = exynos_init_late,
+>         .dt_compat      = exynos_dt_compat,
+> -       .restart        = exynos_restart,
+>         .reserve        = exynos_reserve,
+>         .dt_fixup       = exynos_dt_fixup,
+>  MACHINE_END
+> diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
+> index 6c8a76d..e4c3512 100644
+> --- a/arch/arm/mach-exynos/pmu.c
+> +++ b/arch/arm/mach-exynos/pmu.c
+> @@ -11,8 +11,11 @@
+>
+>  #include <linux/io.h>
+>  #include <linux/of.h>
+> +#include <linux/of_address.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/delay.h>
+> +#include <linux/notifier.h>
+> +#include <linux/reboot.h>
+>
+>
+>  #include "exynos-pmu.h"
+> @@ -716,6 +719,13 @@ static void exynos5420_pmu_init(void)
+>         pr_info("EXYNOS5420 PMU initialized\n");
+>  }
+>
+> +static int pmu_restart_notify(struct notifier_block *this,
+> +               unsigned long code, void *unused)
+> +{
+> +       pmu_raw_writel(0x1, EXYNOS_SWRESET);
+> +
+> +       return NOTIFY_DONE;
+> +}
+>
+>  static const struct exynos_pmu_data exynos4210_pmu_data = {
+>         .pmu_config     = exynos4210_pmu_config,
+> @@ -765,11 +775,20 @@ static const struct of_device_id exynos_pmu_of_device_ids[] = {
+>         { /*sentinel*/ },
+>  };
+>
+> +/*
+> + * Exynos PMU restart notifier, handles restart functionality
+> + */
+> +static struct notifier_block pmu_restart_handler = {
+> +       .notifier_call = pmu_restart_notify,
+> +       .priority = 128,
+> +};
+> +
+>  static int exynos_pmu_probe(struct platform_device *pdev)
+>  {
+>         const struct of_device_id *match;
+>         struct device *dev = &pdev->dev;
+>         struct resource *res;
+> +       int ret;
+>
+>         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>         pmu_base_addr = devm_ioremap_resource(dev, res);
+> @@ -794,6 +813,10 @@ static int exynos_pmu_probe(struct platform_device *pdev)
+>
+>         platform_set_drvdata(pdev, pmu_context);
+>
+> +       ret = register_restart_handler(&pmu_restart_handler);
+> +       if (ret)
+> +               dev_warn(dev, "can't register restart handler err=%d\n", ret);
+> +
+>         dev_dbg(dev, "Exynos PMU Driver probe done\n");
+>         return 0;
+>  }
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
