@@ -1,38 +1,65 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: Re: thermal: Exynos: Deletion of unnecessary checks before two function
- calls
-Date: Fri, 21 Nov 2014 14:25:45 +0100
-Message-ID: <546F3D59.2060504@users.sourceforge.net>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net> <546F1017.5080403@users.sourceforge.net> <alpine.DEB.2.10.1411211116580.2554@hadrien>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.web.de ([212.227.15.14]:51217 "EHLO mout.web.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755232AbaKUN0O (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Nov 2014 08:26:14 -0500
-In-Reply-To: <alpine.DEB.2.10.1411211116580.2554@hadrien>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 00/11] Exynos7: Adding USB 3.0 support
+Date: Fri, 21 Nov 2014 19:05:43 +0530
+Message-ID: <1416576954-11997-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org
+Cc: linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 
->>  	for (i = 0; i < th_zone->cool_dev_size; i++) {
->> -		if (th_zone->cool_dev[i])
->> -			cpufreq_cooling_unregister(th_zone->cool_dev[i]);
->> +		cpufreq_cooling_unregister(th_zone->cool_dev[i]);
->>  	}
-> 
-> Now you have unnecessary {}
+The series has dependency on
+a) "[PATCH v7 0/7] Enable support for Samsung Exynos7 SoC"
+   http://www.spinics.net/lists/linux-samsung-soc/msg38734.html
+b) "[GIT PULL] Samsung clock changes for 3.19" - specifically the clock dt
+   bindings header.
+   http://comments.gmane.org/gmane.linux.kernel.samsung-soc/39142
+c) "tty: serial: samsung: Clean-up selection of number of available UARTs"
+   http://www.spinics.net/lists/linux-samsung-soc/msg37418.html
+d) "dts, kbuild: Implement support for dtb vendor subdirs"(merged in linux-next)
+   https://lkml.org/lkml/2014/10/21/654
+e) "Samsung pinctrl patches for v3.19"
+   http://www.spinics.net/lists/linux-samsung-soc/msg38744.html
 
-How are the chances that your source code transformation tool
-can also consider the deletion of curly brackets in such an use case?
+Tested on Exynos7-espresso board with 3.18-rc5 and above dependencies.
 
-Can any more pretty-printing rules be integrated from a specific
-coding style configuration?
+Clubbing the pinctrl, clk, and usb driver changes alongwith the dt changes
+together in this series only so as to avoid having 'n' number of dependencies.
 
-Regards,
-Markus
+The USB driver patches in this series were part of [1] sent earlier.
+[1] [PATCH v2 0/4] usb: dwc3/phy-exynos5-usbdrd: Extend support to Exynos7
+    https://lkml.org/lkml/2014/10/7/191
+
+Vivek Gautam (11):
+  pinctrl: exynos: Add BUS1 pin controller for exynos7
+  dwc3: exynos: Remove local variable for clock from probe
+  dwc3: exynos: Add provision for suspend clock
+  dwc3: exynos: Add provision for AXI UpScaler clock on exynos7
+  phy: exynos5-usbdrd: Add pipe-clk, utmi-clk and itp-clk support
+  phy: exynos5-usbdrd: Add facility for VBUS-BOOST-5V supply
+  phy: exynos7-usbdrd: Update dependency for ARCH_EXYNOS
+  clk: exynos7: Add required clock tree for USB
+  arm64: exynos: Add bus1 pinctrl node on exynos7
+  arm64: dts: Enable USB 3.0 controller on exynos7
+  arm64: dts: exynos7-espresso: Add regulators for Vbus and Vbus-Boost
+
+ .../devicetree/bindings/phy/samsung-phy.txt        |    6 +
+ .../devicetree/bindings/usb/exynos-usb.txt         |    6 +-
+ arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |   43 +++++++
+ arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    |   26 ++++
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            |   42 ++++++
+ drivers/clk/samsung/clk-exynos7.c                  |   64 +++++++++
+ drivers/phy/Kconfig                                |    2 +-
+ drivers/phy/phy-exynos5-usbdrd.c                   |  136 +++++++++++++++++---
+ drivers/pinctrl/samsung/pinctrl-exynos.c           |   12 ++
+ drivers/usb/dwc3/dwc3-exynos.c                     |   39 +++++-
+ include/dt-bindings/clock/exynos7-clk.h            |    9 +-
+ 11 files changed, 354 insertions(+), 31 deletions(-)
+
+-- 
+1.7.10.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
