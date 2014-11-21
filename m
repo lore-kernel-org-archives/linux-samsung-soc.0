@@ -1,86 +1,61 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: Peach Pi/Pit boot failures in linux-next  (was Re: [RFC PATCH 1/1] drm/exynos: Move platform drivers registration to module init)
-Date: Fri, 21 Nov 2014 08:38:52 -0800
-Message-ID: <7hzjbko6eb.fsf@deeprootsystems.com>
-References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk>
-	<7hh9xwxsev.fsf@deeprootsystems.com>
-	<546CCAB8.9050402@collabora.co.uk>
-	<CAFp+6iFbxWoh4h0ZpY=JQO4rjLss2kpj-nZM7KGiJ_F4AZ2W=g@mail.gmail.com>
-	<7hppchsu29.fsf@deeprootsystems.com>
-	<546E293D.9000300@collabora.co.uk>
-	<7hbno1spdt.fsf@deeprootsystems.com>
-	<546F3837.5020706@collabora.co.uk>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v4 1/2] i2c: s3c2410: Handle i2c sys_cfg register in i2c
+ driver
+Date: Fri, 21 Nov 2014 17:47:26 +0100
+Message-ID: <20141121164726.GA1426@katana>
+References: <1414656270-8048-1-git-send-email-pankaj.dubey@samsung.com>
+ <1414656270-8048-2-git-send-email-pankaj.dubey@samsung.com>
+ <20141121072545.GG1480@katana>
+ <546F1140.4050709@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:58756 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758835AbaKUQi4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Nov 2014 11:38:56 -0500
-Received: by mail-pd0-f174.google.com with SMTP id w10so5608381pde.33
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Nov 2014 08:38:55 -0800 (PST)
-In-Reply-To: <546F3837.5020706@collabora.co.uk> (Javier Martinez Canillas's
-	message of "Fri, 21 Nov 2014 14:03:51 +0100")
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
+Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <546F1140.4050709@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, Rob Herring <robh+dt@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kukjin Kim <kgene@kernel.org>, Vivek Gautam <gautamvivek1987@gmail.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Paolo Pisati <p.pisati@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>
 
-Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
 
-> [adding Kukjin as cc and dropping dri-devel]
->
-> Hello Kevin,
->
-> On 11/20/2014 07:22 PM, Kevin Hilman wrote:
->>> My kernel command line is almost the same with the difference that
->>> I'm using clk_ignore_unused and I just checked that not passing
->>> that parameter, makes linux-next to hang showing the same output
->>> log that Kevin reported.
->> 
->> Ah!  Good find.  I confirm that adding clk_ignore_unused is getting
->> me booting again, but of course that is just masking a problem, so I
->> hope someone can shed light on which clock isn't being correctly
->> managed.
->> 
->
-> True, I'm renaming the thread subject to track these issues separately
-> of the original Exynos DRM bug since these are unrelated.
->
-> So, I see two different boot failures on the Peach Pi[t] Chromebooks:
->
-> 1) next20141121 boot fails due snd-soc-snow
->
-> Disabling CONFIG_SND_SOC_SNOW makes the boot to got a little further
-> but still fails with the second issue:
->
-> 2) next20141121 boot hangs if unused clocks are disabled.
->
-> I tried to root cause these two issues but didn't see anything evident
-> so I'll find a last known good commit and bisect. If anyone has an
-> idea of the possible causes for these issues that would be appreciated.
+--u3/rZRmxL6MmkK24
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-FWIW, in addition to the failures on 5800/peach-pi, I'm also seeing boot
-failures in next-20141121 on the exynos5420-arndale-octa[1].  Adding
-clk_ignore_unused gets things booting there as well.
 
-What's interesting is that my exynos5422-odroid-xu3 is booting fine as
-well as the exynos5420-arndale and the exynos5410-odroid-xu (shown as
-exynos5410-smdk5410)
+> >I usually don't take DTS patches. They should go via arm-soc. Please say
+> >so if there are reasons I should take them.
+>=20
+> I CC'ed to you because same patch contains changes in i2c driver.
 
-Whatever the issue, it definietly seems like a problem that was came
-through a driver/subsystem tree because that these boards are all
-booting fine with Kukjin's for-next, arm-soc/for-next and
-mainline/v3.18-rc5 (all with just plain exynos_defconfig, and without
-clk_ignore_unused.)  For example, just looking at peach-pi across all
-these trees[2], you can see that it's only failing in linux-next.
+Yes, those should absolutely go via my I2C tree. You need to make a
+seperate patch out of the dts changes which then also should go via
+samsung-soc, unless Kukjin says he really wants to go the via I2C. But I
+guess the latter will just create merge conflicts.
 
-Kevin
 
-[1] http://status.armcloud.us/boot/?next-2014112?&exynos
-[2] http://status.armcloud.us/boot/?exynos5800-peach-pi
+--u3/rZRmxL6MmkK24
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-NOTE: the exynos5422-odroid-xu3 is shown as exynos5420-smdk5420 since
-      that's the DTS being used, and exynos5410-odroid-xu is shown as
-      exynos5410-smdk5410, again due to the DTS being used.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUb2ydAAoJEBQN5MwUoCm2CuIP/0EDmy1XbiZ8nKtZZ51gE6Wn
+cXFcyI4V1NUKdXmQwDMrkzhZgUx4cam4cHyex3qcYXdC0dp6p5tgM+A9BPfBLTUD
+8CUBP+M9gV+UHOYWxF5w+O/uRGV5UyjuNf9iH66uDHpG0dzebnrj+XuN1+yE9Ett
+zLG1/i3UyDuFNbRKBBfEanBnqXzONreWWZYa9cX3JREDz4R4pVcqqRfPM46CJX00
+6T5CgTbh2+pWsdPfMMQeLe2YSkYu2BgFgak6MN7uOjSBNhr74oK+qTkhXBuoVN58
+AHbsOYOEDEqpkbxqYRr+LK5G/916dD6awgXxdprveeNL5AWeOEvdxN2Kbr6TfbA6
+PrhklVw0UQvFNY/qAWp76pR7EtBEw8IGygYp9W3XweUtw2KnvcptdXqU6xwCGt5K
+NGnlbtNTSP6yF1VqJbGtrgx0oBP9qK3OI8oD7ZE9oeUaub/sVN8/U1YpvVOFyX1q
+9wN6aznawsGguc9CxesC+qu2F3La58BzFT+rSyRCTMH/dlJ1/qamUjhqca/MeZef
+pRwZp/7z92NnWZ8v5f5E+FFkxZ9JT6ojD4k+3/0T40frqS5jT/5UiiKw3CYYG6UY
+AHPE8T0yp68v69fA2eOuLKu8NV9yHKQAVPPG+kznwz67x3XE1zOBX429A/f7Nqgb
+1CVNTC5UWoC4tp3tXfhR
+=/0Y7
+-----END PGP SIGNATURE-----
+
+--u3/rZRmxL6MmkK24--
