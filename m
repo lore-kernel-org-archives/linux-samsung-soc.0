@@ -1,93 +1,76 @@
-From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v4 1/2] i2c: s3c2410: Handle i2c sys_cfg register in i2c
- driver
-Date: Fri, 21 Nov 2014 15:47:36 +0530
-Message-ID: <546F1140.4050709@samsung.com>
-References: <1414656270-8048-1-git-send-email-pankaj.dubey@samsung.com>
- <1414656270-8048-2-git-send-email-pankaj.dubey@samsung.com>
- <20141121072545.GG1480@katana>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20141121072545.GG1480@katana>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v5 0/2] Move i2c sys_cfg register configuration to i2c driver
+Date: Fri, 21 Nov 2014 15:52:01 +0530
+Message-ID: <1416565323-24899-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:37052 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750734AbaKUK2s (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 21 Nov 2014 05:28:48 -0500
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NFD00BF8X3X14B0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 21 Nov 2014 19:28:45 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-On Friday 21 November 2014 12:55 PM, Wolfram Sang wrote:
-> On Thu, Oct 30, 2014 at 01:34:29PM +0530, Pankaj Dubey wrote:
->> Let's handle i2c interrupt re-configuration in i2c driver. This will
->> help us in removing some soc specific checks from machine files and
->> will help in removing static iomapping of SYS register in exynos.c
->>
->> Since only Exynos5250, and Exynos5420 has i2c nodes in DT, added syscon
->> based phandle to i2c device nodes of respective SoC DT files.
->>
->> Also handle saving and restoring of SYS_I2C_CFG register during
->> suspend and resume of i2c driver.
->>
->> CC: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->> CC: Randy Dunlap <rdunlap-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
->> CC: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
->> CC: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
->> CC: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> CC: linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> CC: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> ---
->>   .../devicetree/bindings/i2c/i2c-s3c2410.txt        |    1 +
->>   arch/arm/boot/dts/exynos5250.dtsi                  |    4 +++
->>   arch/arm/boot/dts/exynos5420.dtsi                  |    4 +++
->
-> I usually don't take DTS patches. They should go via arm-soc. Please say
-> so if there are reasons I should take them.
+This patch series is moving i2c sys_cfg register configuration settings from
+mach-exynos to i2c driver. It will help in removing soc_is_exynos kind of
+macro usage from mach-exynos also it will help in removing static mapping of
+SYS registers.
 
-I CC'ed to you because same patch contains changes in i2c driver.
-I am not very sure via which tree this should go. May be I can ask 
-samsung SoC maintainer Kukjin to look into this, as patch 2/2 has 
-changes in mach-exynos which should go via Kukjin's tree.
+This series is based on latest kgene/for-next.
 
->
->> @@ -1084,6 +1092,23 @@ s3c24xx_i2c_parse_dt(struct device_node *np, struct s3c24xx_i2c *i2c)
->>   	of_property_read_u32(np, "samsung,i2c-slave-addr", &pdata->slave_addr);
->>   	of_property_read_u32(np, "samsung,i2c-max-bus-freq",
->>   				(u32 *)&pdata->frequency);
->> +	/*
->> +	 * Exynos5's legacy i2c controller and new high speed i2c
->> +	 * controller have muxed interrupt sources. By default the
->> +	 * interrupts for 4-channel HS-I2C controller are enabled.
->> +	 * If node for first four channels of legacy i2c controller
->
-> s/node/nodes/
+Revision V4 of these patches can related discussion can be found here.
 
-OK.
+http://www.spinics.net/lists/linux-samsung-soc/msg38342.html
 
->
->> +	 * are available then re-configure the interrupts via the
->> +	 * system register.
->> +	 */
->> +	id = of_alias_get_id(np, "i2c");
->> +	i2c->sysreg = syscon_regmap_lookup_by_phandle(np,
->> +			"samsung,sysreg-phandle");
->> +	if (IS_ERR(i2c->sysreg)) {
->> +		/* As this is not compulsory do not return error */
->> +		pr_info("i2c-%d skipping re-configuration of interrutps\n", id);
->
-> I'd say drop this message. If you want to keep it, it should be dev_dbg.
+Changes since v4:
+ - Rebased on latest kgene/for-next (SHA-ID: 7552917ad948acad6c689d49604f93f725145173)
+ - Addressed Wolfram Sang's review comments.
 
-OK.
+Change since v3:
+ - Rebased on latest kgene/for-next (SHA-ID: 2b5fa1d5dabb9af8f2da4f380bea8684f9b96f59)
+ - This series consist of only two patches from v3 [1] (v3[1/6] and v3[2/6]).
+ - Addressed Tomasz Figa and Wolfram Sang's comments.
+ - Updated i2c DT binding information.
 
->
->> +		return;
->> +	}
->> +	regmap_update_bits(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, BIT(id), 0);
->>   }
->
-> Rest looks good, thanks!
+Changes since v2:
+ - Reorganized patches as suggested by Tomasz Figa.
+ - Addressed review comments of Tomasz Figa in i2c-s3c2410.c file.
 
-Thanks for review.
+Changes since v1:
+ - Added patch to move i2c interrupt re-configuration code from exynos.c
+   to i2c driver, as suggested by Arnd.
+ - After above patch only user of SYS_I2C_CFG register is pm.c so moving
+   save/restore of this register also into i2c driver.
+ - Spiltted up exynos4 and exynos5 machine descriptors to get rid from
+   soc_is_exynos4/exynos5 kind of macros, as suggested by Arnd.
+ - Changed location of chipid driver to "drivers/soc".
+ - Added drivers/base/soc.c provided infrastructure to make SoC specific 
+   information avaible to user space via sysfs entry, as suggested by Arnd.
 
-Pankaj Dubey
->
+
+Pankaj Dubey (2):
+  i2c: s3c2410: Handle i2c sys_cfg register in i2c driver
+  ARM: EXYNOS: Remove i2c sys configuration related code
+
+ .../devicetree/bindings/i2c/i2c-s3c2410.txt        |    1 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |    4 ++
+ arch/arm/boot/dts/exynos5420.dtsi                  |    4 ++
+ arch/arm/mach-exynos/exynos.c                      |   39 +-------------------
+ arch/arm/mach-exynos/include/mach/map.h            |    3 --
+ arch/arm/mach-exynos/pm.c                          |    3 +-
+ arch/arm/mach-exynos/regs-sys.h                    |   22 -----------
+ arch/arm/mach-exynos/suspend.c                     |    7 ----
+ drivers/i2c/busses/i2c-s3c2410.c                   |   29 +++++++++++++++
+ 9 files changed, 42 insertions(+), 70 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/regs-sys.h
+
+-- 
+1.7.9.5
