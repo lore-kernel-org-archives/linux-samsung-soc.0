@@ -1,79 +1,57 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: [GIT PULL 5/5] Samsung exynos updates for v3.19
-Date: Fri, 21 Nov 2014 23:16:27 +0900
-Message-ID: <546F493B.50605@kernel.org>
+From: Thomas Abraham <ta.omasab@gmail.com>
+Subject: Re: [PATCH v11 4/6] ARM: Exynos: switch to using generic cpufreq
+ driver for Exynos4210/5250/5420
+Date: Fri, 21 Nov 2014 23:31:20 +0900
+Message-ID: <CAJuA9agpbDZrtmiQYexuAcS5GZeeB2YY22HTFQRPxnA+CLWb3Q@mail.gmail.com>
+References: <1413805281-6269-1-git-send-email-thomas.ab@samsung.com>
+	<1413805281-6269-2-git-send-email-thomas.ab@samsung.com>
+	<1413805281-6269-3-git-send-email-thomas.ab@samsung.com>
+	<1413805281-6269-4-git-send-email-thomas.ab@samsung.com>
+	<1413805281-6269-5-git-send-email-thomas.ab@samsung.com>
+	<CAMAWPa_V2rO9Ymezf0xPqeQNykCFq9QwLsNOG3EgPZfP-8MRBQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:39533 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758271AbaKUOQc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Nov 2014 09:16:32 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAMAWPa_V2rO9Ymezf0xPqeQNykCFq9QwLsNOG3EgPZfP-8MRBQ@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
-Cc: arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-The following changes since commit b5d841a2bfce65881d518e3c27437c530460f1c4:
+Hi Kevin,
 
-  Merge branch 'v3.19-next/non-critical-fixes' into
-v3.19-next/mach-exynos (2014-11-21 22:49:27 +0900)
+On Thu, Nov 20, 2014 at 2:30 AM, Kevin Hilman <khilman@kernel.org> wrote:
+> Hi Thomas,
+>
+> On Mon, Oct 20, 2014 at 4:41 AM, Thomas Abraham <thomas.ab@samsung.com> wrote:
+>> The new CPU clock type allows the use of generic CPUfreq drivers. So for
+>> Exynos4210/5250, switch to using generic cpufreq driver. For Exynos5420,
+>> which did not have CPUfreq driver support, enable the use of generic
+>> CPUfreq driver.
+>>
+>> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
+>> Cc: Kukjin Kim <kgene.kim@samsung.com>
+>> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
+>> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
+>> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> Tested-by: Chander Kashyap <k.chander@samsung.com>
+>
+> What's the status of the exynos5 CPUfreq support for upstream?  This
+> was pretty broadly reviewed and tested, but I still don't see this
+> either in linux-next or Kukjin's for-next.
 
-are available in the git repository at:
+The rebased version of the patches have been posted [1]. My apologies
+for the delay in following up on this patch series.
 
+Thanks,
+Thomas.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-tags/samsung-exynos-v3.19
+[1] http://www.spinics.net/lists/arm-kernel/msg380011.html
 
-for you to fetch changes up to c645a598f99768e6cc82129081458dfdd0c273b7:
-
-  ARM: EXYNOS: Call regulator core suspend prepare and finish functions
-(2014-11-21 22:49:47 +0900)
-
-----------------------------------------------------------------
-Samsung exynos updates in arch/arm/mach-exynos/ for v3.19
-
-- add SOC_EXYNOS4415 config to be used in audio driver
-- add support platform driver for exynos PMU
-- move PMU specific definitions from common.h to exynos-pmu.h
-- for exynos5420, add support PMU and Suspend-to-RAM
-  use MCPM call backs and call regulator core suspend prepare
-  and finish functions
-
-NOTE:
-including v3.19-next/non-critical-fixes, v3.19-next/cleanup-samsung
-and v3.19-next/pm-samsung-2 branches
-
-----------------------------------------------------------------
-Abhilash Kesavan (2):
-      ARM: EXYNOS: Add PMU support for exynos5420
-      ARM: EXYNOS: Use MCPM call-backs to support S2R on exynos5420
-
-Chanwoo Choi (1):
-      ARM: EXYNOS: Add support for exynos4415 SoC
-
-Javier Martinez Canillas (1):
-      ARM: EXYNOS: Call regulator core suspend prepare and finish functions
-
-Pankaj Dubey (2):
-      ARM: EXYNOS: Add platform driver support for Exynos PMU
-      ARM: EXYNOS: Move PMU specific definitions from common.h
-
-Vikas Sajjan (1):
-      ARM: EXYNOS: Add Suspend-to-RAM support for exynos5420
-
- arch/arm/mach-exynos/Kconfig       |   6 +
- arch/arm/mach-exynos/common.h      |  17 --
- arch/arm/mach-exynos/exynos-pmu.h  |  24 ++
- arch/arm/mach-exynos/exynos.c      |   2 +
- arch/arm/mach-exynos/mcpm-exynos.c |  32 ++-
- arch/arm/mach-exynos/platsmp.c     |  12 +
- arch/arm/mach-exynos/pm.c          |   1 +
- arch/arm/mach-exynos/pmu.c         | 478
-+++++++++++++++++++++++++++++++++----
- arch/arm/mach-exynos/regs-pmu.h    | 227 ++++++++++++++++++
- arch/arm/mach-exynos/suspend.c     | 220 ++++++++++++++++-
- 10 files changed, 944 insertions(+), 75 deletions(-)
- create mode 100644 arch/arm/mach-exynos/exynos-pmu.h
+>
+> Kevin
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
