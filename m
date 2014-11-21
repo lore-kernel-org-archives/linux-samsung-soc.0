@@ -1,75 +1,40 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v5 1/2] clk: samsung: exynos5440: move restart code into
- clock driver
-Date: Fri, 21 Nov 2014 16:00:14 +0530
-Message-ID: <546F1436.4020101@samsung.com>
-References: <1416307650-15162-1-git-send-email-pankaj.dubey@samsung.com>
- <1416307650-15162-2-git-send-email-pankaj.dubey@samsung.com>
- <546B62F3.3030807@samsung.com> <000901d003aa$3490e8a0$9db2b9e0$@samsung.com>
- <546E2968.1070800@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [RFC PATCH 1/1] drm/exynos: Move platform drivers registration
+ to module init
+Date: Fri, 21 Nov 2014 12:19:30 +0100
+Message-ID: <546F1FC2.8060905@collabora.co.uk>
+References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk>	<546DF598.6030701@samsung.com>	<546DFA97.1030006@collabora.co.uk>	<546E0364.9000009@samsung.com>	<546E0836.8000604@collabora.co.uk> <CAAQKjZOGn5+tvLWmBi2QU47+h3-AYCpk8XRQWrJeQL=5Oga2aQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:59970 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752403AbaKUKax (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:34242 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750734AbaKULTh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Nov 2014 05:30:53 -0500
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NFD003Z4X7F7L10@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 21 Nov 2014 19:30:51 +0900 (KST)
-In-reply-to: <546E2968.1070800@samsung.com>
+	Fri, 21 Nov 2014 06:19:37 -0500
+In-Reply-To: <CAAQKjZOGn5+tvLWmBi2QU47+h3-AYCpk8XRQWrJeQL=5Oga2aQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, linux@roeck-us.net, Mike Turquette <mturquette@linaro.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Kevin Hilman <khilman@linaro.org>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-Hi Kukjin,
+Hello Inki,
 
-On Thursday 20 November 2014 11:18 PM, Sylwester Nawrocki wrote:
-> On 19/11/14 04:37, Pankaj Dubey wrote:
->>>>
->>>>>> +static int exynos5440_clk_restart_notify(struct notifier_block *this,
->>>>>> +		unsigned long code, void *unused)
->>>>>> +{
->>>>>> +	u32 val, status;
->>>>>> +
->>>>>> +	status = readl_relaxed(reg_base + 0xbc);
->>>>>> +	val = readl_relaxed(reg_base + 0xcc);
->>>>>> +	val = (val & 0xffff0000) | (status & 0xffff);
->>>>>> +	writel_relaxed(val, reg_base + 0xcc);
->>>>
->>>> Can we have macro definitions for these 0xcc, 0xbc address offsets ?
->>>> I must say I couldn't find them documented in any Exynos datasheet I've
->> got though.
->>>>
->>
->> I also wished this, but I could not find them documented.
->> So I tried to keep logic of original code as it is, just changed location.
->> I would also like to mention that I have not tested this on exynos5440 as I
->> do not have
->> one with me. I believe if it was working at its original place in
->> exynos_restart it should work
->> here also. Other patch (2/2) I have verified on Exynos3250 board and its
->> working well.
->
-> I think it's best to merge both patches in that series through
-> the arm-soc tree, since applying them not in order may cause some
-> breakage. Thus I'd let Kukjin take this patch set into his tree.
->
-> For both patches:
-> Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->
+On 11/20/2014 06:01 PM, Inki Dae wrote:
+> Ah, sorry. There was my misunderstanding. drm-next already is merged
+> to linux-next so I think we can do the integration test if
+> exynos-drm-next is merged to drm-next earlier. Anyway, I will try to
+> consider your opinion.
+> 
 
-Will you please take this series into your tree.
+Cool, having exynos-drm-next in linux-next will be very useful indeed.
 
-Thanks,
-Pankaj Dubey
-> --
-> Thanks,
-> Sylwester
->
+BTW, I didn't have time to forward port $subject yesterday but Gustavo
+did and posted a series [0] that supersedes $subjects and also solves
+other issues. It would be great if you can take a loot to those patches.
+
+Best regards,
+Javier
+
+[0]: http://www.spinics.net/lists/linux-samsung-soc/msg39306.html
