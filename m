@@ -1,54 +1,55 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [GIT PULL] Samsung clock changes for 3.19
-Date: Sat, 22 Nov 2014 00:19:16 +0900
-Message-ID: <546F57F4.7070400@kernel.org>
-References: <5453C8A7.6080502@samsung.com> <546C457C.6030901@samsung.com> <20141119192725.25314.53729@quantum>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH v2] thermal: Exynos: Deletion of unnecessary checks before
+ two function calls
+Date: Fri, 21 Nov 2014 17:17:26 +0100
+Message-ID: <546F6596.6010103@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
+ urceforge.net> <546F1017.5080403@users.sourceforge.net> <alpine.DEB.2.10.1411211116580.2554@hadrien>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:42982 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755232AbaKUPTY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Nov 2014 10:19:24 -0500
-In-Reply-To: <20141119192725.25314.53729@quantum>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <alpine.DEB.2.10.1411211116580.2554@hadrien>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 11/20/14 04:27, Mike Turquette wrote:
-> Quoting Kukjin Kim (2014-11-18 23:23:40)
->> On 11/01/14 02:36, Sylwester Nawrocki wrote:
->>> Hi Mike,
->>>
->> Hi Mike,
->>
->>> I've collected Exynos clk patches in this pull request, as Tomasz has
->>> been busy recently. 
->>> This includes addition of clock controller drivers for Exynos4415 and 
->>> Exynos7 SoCs and related refactoring of the Samsung common clk API. 
->>>
->>> As I mentioned in my other e-mail, it might be sensible to put these 
->>> patches into a separate topic branch, so Kukjin can pull it as 
->>> a dependency for the related dts changes.
->>>
->> As Sylwester suggested, can you please provide a topic branch for
->> samsung tree so that I can apply regarding DT changes such as exynos
->> 4415 and exynos7...
-> 
-> A topic branch already exists:
-> 
-> git://linuxtv.org/snawrocki/samsung.git for-v3.19/exynos-clk
-> 
-> ;-)
-> 
-> I've pulled that into clk-next towards 3.19. Please pull the same branch
-> into the samsung tree as a dependency.
-> 
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Fri, 21 Nov 2014 17:11:49 +0100
 
-Thanks, I've merged the branch into samsung tree. Please make sure the
-branch will not be rebased :)
+The functions cpufreq_cooling_unregister() and thermal_zone_device_unregister()
+test whether their argument is NULL and then return immediately.
+Thus the test around the call is not needed.
 
-- Kukjin
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+---
+ drivers/thermal/samsung/exynos_thermal_common.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/thermal/samsung/exynos_thermal_common.c b/drivers/thermal/samsung/exynos_thermal_common.c
+index 3f5ad25..b6be572 100644
+--- a/drivers/thermal/samsung/exynos_thermal_common.c
++++ b/drivers/thermal/samsung/exynos_thermal_common.c
+@@ -417,13 +417,10 @@ void exynos_unregister_thermal(struct thermal_sensor_conf *sensor_conf)
+ 
+ 	th_zone = sensor_conf->pzone_data;
+ 
+-	if (th_zone->therm_dev)
+-		thermal_zone_device_unregister(th_zone->therm_dev);
++	thermal_zone_device_unregister(th_zone->therm_dev);
+ 
+-	for (i = 0; i < th_zone->cool_dev_size; i++) {
+-		if (th_zone->cool_dev[i])
+-			cpufreq_cooling_unregister(th_zone->cool_dev[i]);
+-	}
++	for (i = 0; i < th_zone->cool_dev_size; ++i)
++		cpufreq_cooling_unregister(th_zone->cool_dev[i]);
+ 
+ 	dev_info(sensor_conf->dev,
+ 		"Exynos: Kernel Thermal management unregistered\n");
+-- 
+2.1.3
+
