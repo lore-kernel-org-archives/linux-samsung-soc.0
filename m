@@ -1,93 +1,122 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH 11/11] arm64: dts: exynos7-espresso: Add regulators for Vbus
- and Vbus-Boost
-Date: Fri, 21 Nov 2014 19:05:54 +0530
-Message-ID: <1416576954-11997-12-git-send-email-gautam.vivek@samsung.com>
-References: <1416576954-11997-1-git-send-email-gautam.vivek@samsung.com>
+From: =?ISO-8859-15?Q?Andreas_F=E4rber?= <afaerber@suse.de>
+Subject: Re: [PATCH v12 3/6] ARM: dts: Exynos: add CPU OPP and regulator supply
+ property
+Date: Fri, 21 Nov 2014 15:11:11 +0100
+Message-ID: <546F47FF.2030608@suse.de>
+References: <1416576682-5255-1-git-send-email-thomas.ab@samsung.com> <1416576682-5255-2-git-send-email-thomas.ab@samsung.com> <1416576682-5255-3-git-send-email-thomas.ab@samsung.com> <1416576682-5255-4-git-send-email-thomas.ab@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:56642 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755555AbaKUNyh (ORCPT
+Received: from cantor2.suse.de ([195.135.220.15]:54211 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755254AbaKUOLQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Nov 2014 08:54:37 -0500
-In-reply-to: <1416576954-11997-1-git-send-email-gautam.vivek@samsung.com>
+	Fri, 21 Nov 2014 09:11:16 -0500
+In-Reply-To: <1416576682-5255-4-git-send-email-thomas.ab@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, balbi@ti.com, kishon@ti.com
-Cc: linux-omap@vger.kernel.org, gregkh@linuxfoundation.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com, robh+dt@kernel.org, stern@rowland.harvard.edu, kgene.kim@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
+To: Doug Anderson <dianders@chromium.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, l.majewski@samsung.com, viresh.kumar@linaro.org, heiko@sntech.de, cw00.choi@samsung.com, khilman@linaro.org, Sachin Kamat <sachin.kamat@linaro.org>
 
-Adding fixed voltage regulators for Vbus and Vbus-boost required
-by USB 3.0 DRD controller on Exynos7-espresso board.
+Javier, Doug,
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
----
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts |   43 +++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
+Am 21.11.2014 um 14:31 schrieb Thomas Abraham:
+> diff --git a/arch/arm/boot/dts/exynos5250-arndale.dts b/arch/arm/boot=
+/dts/exynos5250-arndale.dts
+> index 3acd97e..da2b3e1 100644
+> --- a/arch/arm/boot/dts/exynos5250-arndale.dts
+> +++ b/arch/arm/boot/dts/exynos5250-arndale.dts
+> @@ -563,3 +563,7 @@
+>  		};
+>  	};
+>  };
+> +
+> +&cpu0 {
+> +	cpu0-supply =3D <&buck2_reg>;
+> +};
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boo=
+t/dts/exynos5250-smdk5250.dts
+> index 6a0f4c0..0eedb88 100644
+> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> @@ -406,3 +406,7 @@
+>  		};
+>  	};
+>  };
+> +
+> +&cpu0 {
+> +	cpu0-supply =3D <&buck2_reg>;
+> +};
+> diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dt=
+s/exynos5250-snow.dts
+> index e51fcef..865f68a 100644
+> --- a/arch/arm/boot/dts/exynos5250-snow.dts
+> +++ b/arch/arm/boot/dts/exynos5250-snow.dts
+> @@ -345,6 +345,10 @@
+>  	};
+>  };
+> =20
+> +&cpu0 {
+> +	cpu0-supply =3D <&buck2_reg>;
+> +};
+> +
+>  &i2c_0 {
+>  	status =3D "okay";
+>  	samsung,i2c-sda-delay =3D <100>;
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-index 5424cc4..2dedd5e 100644
---- a/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-+++ b/arch/arm64/boot/dts/exynos/exynos7-espresso.dts
-@@ -30,6 +30,28 @@
- 		device_type = "memory";
- 		reg = <0x0 0x40000000 0x0 0xC0000000>;
- 	};
-+
-+	usb30_vbus_reg: regulator-usb30 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VBUS_5V";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gph1 1 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usb30_vbus_en>;
-+		enable-active-high;
-+	};
-+
-+	usb3drd_vboost_5v: regulator-usb3drd-vboost {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VUSB_VBUS_5V";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gpf4 1 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usb3drd_vboost_en>;
-+		enable-active-high;
-+	};
- };
- 
- &fin_pll {
-@@ -40,6 +62,22 @@
- 	status = "okay";
- };
- 
-+&pinctrl_bus1 {
-+	usb30_vbus_en: usb30-vbus-en {
-+		samsung,pins = "gph1-1";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
-+	usb3drd_vboost_en: usb3drd-vboost-en {
-+		samsung,pins = "gpf4-1";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
-+
- &rtc {
- 	status = "okay";
- };
-@@ -82,3 +120,8 @@
- 	bus-width = <4>;
- 	disable-wp;
- };
-+
-+&usbdrd_phy {
-+	vbus-supply = <&usb30_vbus_reg>;
-+	vbus-boost-supply = <&usb3drd_vboost_5v>;
-+};
--- 
-1.7.10.4
+Not sure whether I've asked before... Do you know what needs to be
+specified for exynos5250-spring.dts, which has in the meantime landed i=
+n
+kgene/for-next?
+
+Regards,
+Andreas
+
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/ex=
+ynos5250.dtsi
+> index f21b9aa..d4b418e 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -58,11 +58,34 @@
+>  		#address-cells =3D <1>;
+>  		#size-cells =3D <0>;
+> =20
+> -		cpu@0 {
+> +		cpu0: cpu@0 {
+>  			device_type =3D "cpu";
+>  			compatible =3D "arm,cortex-a15";
+>  			reg =3D <0>;
+>  			clock-frequency =3D <1700000000>;
+> +
+> +			clocks =3D <&clock CLK_ARM_CLK>;
+> +			clock-names =3D "cpu";
+> +			clock-latency =3D <140000>;
+> +
+> +			operating-points =3D <
+> +				1700000 1300000
+> +				1600000 1250000
+> +				1500000 1225000
+> +				1400000 1200000
+> +				1300000 1150000
+> +				1200000 1125000
+> +				1100000 1100000
+> +				1000000 1075000
+> +				 900000 1050000
+> +				 800000 1025000
+> +				 700000 1012500
+> +				 600000 1000000
+> +				 500000  975000
+> +				 400000  950000
+> +				 300000  937500
+> +				 200000  925000
+> +			>;
+>  		};
+>  		cpu@1 {
+>  			device_type =3D "cpu";
+[snip]
+
+--=20
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=F6rffer; HRB 21284 AG N=FCrn=
+berg
