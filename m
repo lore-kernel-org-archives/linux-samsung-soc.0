@@ -1,55 +1,86 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: [PATCH v2] thermal: Exynos: Deletion of unnecessary checks before
- two function calls
-Date: Fri, 21 Nov 2014 17:17:26 +0100
-Message-ID: <546F6596.6010103@users.sourceforge.net>
-References: <5307CAA2.8060406@users.sourceforge.net> <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6> <530A086E.8010901@users.sourceforge.net> <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6> <530A72AA.3000601@users.sourceforge.net> <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6> <530B5FB6.6010207@users.sourceforge.net> <alpine.DEB.2.10.1402241710370.2074@hadrien> <530C5E18.1020800@users.sourceforge.net> <alpine.DEB.2.10.1402251014170.2080@hadrien> <530CD2C4.4050903@users.sourceforge.net> <alpine.DEB.2.10.1402251840450.7035@hadrien> <530CF8FF.8080600@users.sourceforge.net> <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6> <530DD06F.4090703@users.sourceforge.net> <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6> <5317A59D.4@users.so
- urceforge.net> <546F1017.5080403@users.sourceforge.net> <alpine.DEB.2.10.1411211116580.2554@hadrien>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: Peach Pi/Pit boot failures in linux-next  (was Re: [RFC PATCH 1/1] drm/exynos: Move platform drivers registration to module init)
+Date: Fri, 21 Nov 2014 08:38:52 -0800
+Message-ID: <7hzjbko6eb.fsf@deeprootsystems.com>
+References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk>
+	<7hh9xwxsev.fsf@deeprootsystems.com>
+	<546CCAB8.9050402@collabora.co.uk>
+	<CAFp+6iFbxWoh4h0ZpY=JQO4rjLss2kpj-nZM7KGiJ_F4AZ2W=g@mail.gmail.com>
+	<7hppchsu29.fsf@deeprootsystems.com>
+	<546E293D.9000300@collabora.co.uk>
+	<7hbno1spdt.fsf@deeprootsystems.com>
+	<546F3837.5020706@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <alpine.DEB.2.10.1411211116580.2554@hadrien>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Zhang Rui <rui.zhang@intel.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:58756 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758835AbaKUQi4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 21 Nov 2014 11:38:56 -0500
+Received: by mail-pd0-f174.google.com with SMTP id w10so5608381pde.33
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Nov 2014 08:38:55 -0800 (PST)
+In-Reply-To: <546F3837.5020706@collabora.co.uk> (Javier Martinez Canillas's
+	message of "Fri, 21 Nov 2014 14:03:51 +0100")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene@kernel.org>, Vivek Gautam <gautamvivek1987@gmail.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Paolo Pisati <p.pisati@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Fri, 21 Nov 2014 17:11:49 +0100
+Javier Martinez Canillas <javier.martinez@collabora.co.uk> writes:
 
-The functions cpufreq_cooling_unregister() and thermal_zone_device_unregister()
-test whether their argument is NULL and then return immediately.
-Thus the test around the call is not needed.
+> [adding Kukjin as cc and dropping dri-devel]
+>
+> Hello Kevin,
+>
+> On 11/20/2014 07:22 PM, Kevin Hilman wrote:
+>>> My kernel command line is almost the same with the difference that
+>>> I'm using clk_ignore_unused and I just checked that not passing
+>>> that parameter, makes linux-next to hang showing the same output
+>>> log that Kevin reported.
+>> 
+>> Ah!  Good find.  I confirm that adding clk_ignore_unused is getting
+>> me booting again, but of course that is just masking a problem, so I
+>> hope someone can shed light on which clock isn't being correctly
+>> managed.
+>> 
+>
+> True, I'm renaming the thread subject to track these issues separately
+> of the original Exynos DRM bug since these are unrelated.
+>
+> So, I see two different boot failures on the Peach Pi[t] Chromebooks:
+>
+> 1) next20141121 boot fails due snd-soc-snow
+>
+> Disabling CONFIG_SND_SOC_SNOW makes the boot to got a little further
+> but still fails with the second issue:
+>
+> 2) next20141121 boot hangs if unused clocks are disabled.
+>
+> I tried to root cause these two issues but didn't see anything evident
+> so I'll find a last known good commit and bisect. If anyone has an
+> idea of the possible causes for these issues that would be appreciated.
 
-This issue was detected by using the Coccinelle software.
+FWIW, in addition to the failures on 5800/peach-pi, I'm also seeing boot
+failures in next-20141121 on the exynos5420-arndale-octa[1].  Adding
+clk_ignore_unused gets things booting there as well.
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
----
- drivers/thermal/samsung/exynos_thermal_common.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+What's interesting is that my exynos5422-odroid-xu3 is booting fine as
+well as the exynos5420-arndale and the exynos5410-odroid-xu (shown as
+exynos5410-smdk5410)
 
-diff --git a/drivers/thermal/samsung/exynos_thermal_common.c b/drivers/thermal/samsung/exynos_thermal_common.c
-index 3f5ad25..b6be572 100644
---- a/drivers/thermal/samsung/exynos_thermal_common.c
-+++ b/drivers/thermal/samsung/exynos_thermal_common.c
-@@ -417,13 +417,10 @@ void exynos_unregister_thermal(struct thermal_sensor_conf *sensor_conf)
- 
- 	th_zone = sensor_conf->pzone_data;
- 
--	if (th_zone->therm_dev)
--		thermal_zone_device_unregister(th_zone->therm_dev);
-+	thermal_zone_device_unregister(th_zone->therm_dev);
- 
--	for (i = 0; i < th_zone->cool_dev_size; i++) {
--		if (th_zone->cool_dev[i])
--			cpufreq_cooling_unregister(th_zone->cool_dev[i]);
--	}
-+	for (i = 0; i < th_zone->cool_dev_size; ++i)
-+		cpufreq_cooling_unregister(th_zone->cool_dev[i]);
- 
- 	dev_info(sensor_conf->dev,
- 		"Exynos: Kernel Thermal management unregistered\n");
--- 
-2.1.3
+Whatever the issue, it definietly seems like a problem that was came
+through a driver/subsystem tree because that these boards are all
+booting fine with Kukjin's for-next, arm-soc/for-next and
+mainline/v3.18-rc5 (all with just plain exynos_defconfig, and without
+clk_ignore_unused.)  For example, just looking at peach-pi across all
+these trees[2], you can see that it's only failing in linux-next.
 
+Kevin
+
+[1] http://status.armcloud.us/boot/?next-2014112?&exynos
+[2] http://status.armcloud.us/boot/?exynos5800-peach-pi
+
+NOTE: the exynos5422-odroid-xu3 is shown as exynos5420-smdk5420 since
+      that's the DTS being used, and exynos5410-odroid-xu is shown as
+      exynos5410-smdk5410, again due to the DTS being used.
