@@ -1,74 +1,54 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH 1/3] drm/exynos: free DP if probe fails to find a panel or
- bridge
-Date: Fri, 21 Nov 2014 23:10:03 +0530
-Message-ID: <CAEC9eQOfOo--vck78fJ4DGGD_Lwf9Lu+u7KgFSOuMZjih+WQTQ@mail.gmail.com>
-References: <1416527664-10553-1-git-send-email-gustavo@padovan.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: samsung: ASoC: samsung: Fix IISMOD setting in
+ i2s_set_sysclk()
+Date: Fri, 21 Nov 2014 18:08:29 +0000
+Message-ID: <20141121180829.GV3815@sirena.org.uk>
+References: <1416477797-27332-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1416527664-10553-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, InKi Dae <inki.dae@samsung.com>, Jingoo Han <jg1.han@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="U9vhhefU4FbM2lKk"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33961 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750939AbaKUSKN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 21 Nov 2014 13:10:13 -0500
+Content-Disposition: inline
+In-Reply-To: <1416477797-27332-1-git-send-email-padma.v@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, kgene.kim@samsung.com, sbkim73@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-SGkgR3VzdGF2bywKCgpPbiBGcmksIE5vdiAyMSwgMjAxNCBhdCA1OjI0IEFNLCBHdXN0YXZvIFBh
-ZG92YW4gPGd1c3Rhdm9AcGFkb3Zhbi5vcmc+IHdyb3RlOgo+IEZyb206IEd1c3Rhdm8gUGFkb3Zh
-biA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KPgo+IERQIHdhcyBsZWFrZWQgZXZl
-cnl0aW1lIGZ1bmN0aW9uIHJldHVybnMgRVBST0JFX0RFRkVSLCBmcmVlIGl0IGJlZm9yZQo+IHJl
-dHVybmluZy4KPgo+IFNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRv
-dmFuQGNvbGxhYm9yYS5jby51az4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfZHBfY29yZS5jIHwgMjEgKysrKysrKysrKysrKysrLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2Vk
-LCAxNSBpbnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQo+Cj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RwX2NvcmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
-b3MvZXh5bm9zX2RwX2NvcmUuYwo+IGluZGV4IDg1NzYyY2YuLjZmZDRhNDYgMTAwNjQ0Cj4gLS0t
-IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jCj4gKysrIGIvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHBfY29yZS5jCj4gQEAgLTEzMzYsOCArMTMzNiwxMCBA
-QCBzdGF0aWMgaW50IGV4eW5vc19kcF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2
-KQo+ICAgICAgICAgaWYgKHBhbmVsX25vZGUpIHsKPiAgICAgICAgICAgICAgICAgZHAtPnBhbmVs
-ID0gb2ZfZHJtX2ZpbmRfcGFuZWwocGFuZWxfbm9kZSk7Cj4gICAgICAgICAgICAgICAgIG9mX25v
-ZGVfcHV0KHBhbmVsX25vZGUpOwo+IC0gICAgICAgICAgICAgICBpZiAoIWRwLT5wYW5lbCkKPiAt
-ICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gLUVQUk9CRV9ERUZFUjsKPiArICAgICAgICAg
-ICAgICAgaWYgKCFkcC0+cGFuZWwpIHsKPiArICAgICAgICAgICAgICAgICAgICAgICByZXQgPSAt
-RVBST0JFX0RFRkVSOwo+ICsgICAgICAgICAgICAgICAgICAgICAgIGdvdG8gZnJlZV9kcDsKPiAr
-ICAgICAgICAgICAgICAgfQo+ICAgICAgICAgfQo+Cj4gICAgICAgICBlbmRwb2ludCA9IG9mX2dy
-YXBoX2dldF9uZXh0X2VuZHBvaW50KGRldi0+b2Zfbm9kZSwgTlVMTCk7Cj4gQEAgLTEzNDYsMTAg
-KzEzNDgsMTQgQEAgc3RhdGljIGludCBleHlub3NfZHBfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2Rl
-dmljZSAqcGRldikKPiAgICAgICAgICAgICAgICAgaWYgKGJyaWRnZV9ub2RlKSB7Cj4gICAgICAg
-ICAgICAgICAgICAgICAgICAgZHAtPmJyaWRnZSA9IG9mX2RybV9maW5kX2JyaWRnZShicmlkZ2Vf
-bm9kZSk7Cj4gICAgICAgICAgICAgICAgICAgICAgICAgb2Zfbm9kZV9wdXQoYnJpZGdlX25vZGUp
-Owo+IC0gICAgICAgICAgICAgICAgICAgICAgIGlmICghZHAtPmJyaWRnZSkKPiAtICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIHJldHVybiAtRVBST0JFX0RFRkVSOwo+IC0gICAgICAgICAg
-ICAgICB9IGVsc2UKPiAtICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gLUVQUk9CRV9ERUZF
-UjsKPiArICAgICAgICAgICAgICAgICAgICAgICBpZiAoIWRwLT5icmlkZ2UpIHsKPiArICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIHJldCA9IC1FUFJPQkVfREVGRVI7Cj4gKyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICBnb3RvIGZyZWVfZHA7Cj4gKyAgICAgICAgICAgICAgICAg
-ICAgICAgfQo+ICsgICAgICAgICAgICAgICB9IGVsc2Ugewo+ICsgICAgICAgICAgICAgICAgICAg
-ICAgIHJldCA9IC1FUFJPQkVfREVGRVI7Cj4gKyAgICAgICAgICAgICAgICAgICAgICAgZ290byBm
-cmVlX2RwOwo+ICsgICAgICAgICAgICAgICB9Cj4gICAgICAgICB9Cj4KPiAgICAgICAgIGV4eW5v
-c19kcF9kaXNwbGF5LmN0eCA9IGRwOwo+IEBAIC0xMzU5LDYgKzEzNjUsOSBAQCBzdGF0aWMgaW50
-IGV4eW5vc19kcF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAgICAgICAg
-ICAgICAgICBleHlub3NfZHJtX2NvbXBvbmVudF9kZWwoJnBkZXYtPmRldiwKPiAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBFWFlOT1NfREVWSUNFX1RZUEVf
-Q09OTkVDVE9SKTsKPgo+ICtmcmVlX2RwOgo+ICsgICAgICAgZGV2bV9rZnJlZShkZXYsIGRwKTsK
-SSBndWVzcyB0aGUgZHJpdmVyIGNvcmUgdGFrZXMgY2FyZSBvZiBmcmVlaW5nIHRoZSBkZXZtIG1l
-bW9yeSB3aGVuIHRoZQpwcm9iZSBmYWlscz8KV2lsbCBpdCBub3QgaGFwcGVuIGR1cmluZyBQUk9C
-RV9ERUZFUj8KCklua2kvSmluZ29vIC0gSXMgdGhpcyBjaGFuZ2UgcmVhbGx5IG5lY2Vzc2FyeT8K
-CkFqYXkKCj4gICAgICAgICByZXR1cm4gcmV0Owo+ICB9Cj4KPiAtLQo+IDEuOS4zCj4KPiAtLQo+
-IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmli
-ZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jk
-b21vQHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2Vy
-Lmtlcm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbApfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+--U9vhhefU4FbM2lKk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Nov 20, 2014 at 03:33:17PM +0530, Padmavathi Venna wrote:
+> In the i2s_set_sysclk() callback we are currently clearing all bits
+> of the IISMOD register in i2s_set_sysclk. It's due to an incorrect
+> mask used for the AND operation which is introduced in commit
+> a5a56871f804edac93a53b5e871c0e9818fb9033 (ASoC: samsung:
+> add support for exynos7 I2S controller) and also adds the missing
+> break statement.
+
+Applied, thanks.
+
+--U9vhhefU4FbM2lKk
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUb3+cAAoJECTWi3JdVIfQCCcH/i/wftWMkSdzY+5rK2yCyrg8
+RJ7XMLXS6I/MKDhhKIskJowXxy425deShcOyq7ZJGoeSoXoq6Wx9g8dotyi/0bNb
+/Y3gPTbGaD6wPcyp4ec+g8QXtjRlPIo/mKAnR63fYOJykws2nFmRhLKsxVTe/Plj
+jVdM2whZHngKfhiNdQhaUvjGJzX0ioHpbQpeKi+i21WjxY/QjpbVIWiVWfJyPkim
+rgm41/i/z6kAo3aEXAhL0+E82AzFIr3H9iafDbhhJIevdx0p4IKWbztmDLKxTqpJ
+4uApmFxVIXzxz+AEhyXgz4cOvcv+N6f2RnUNb/nMF+dloQGCK8IXWTPKqfgYfjQ=
+=4pvT
+-----END PGP SIGNATURE-----
+
+--U9vhhefU4FbM2lKk--
