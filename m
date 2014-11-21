@@ -1,54 +1,38 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: samsung: ASoC: samsung: Fix IISMOD setting in
- i2s_set_sysclk()
-Date: Fri, 21 Nov 2014 18:08:29 +0000
-Message-ID: <20141121180829.GV3815@sirena.org.uk>
-References: <1416477797-27332-1-git-send-email-padma.v@samsung.com>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: screen blank causing lockup in exynos-reference/exynos5-v3.18-rc2
+Date: Fri, 21 Nov 2014 11:23:18 -0800
+Message-ID: <7h4mtsnys9.fsf@deeprootsystems.com>
+References: <8C.59.15273.8FB5F645@epcpsbgx1.samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="U9vhhefU4FbM2lKk"
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:33961 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750939AbaKUSKN (ORCPT
+Received: from mail-pd0-f181.google.com ([209.85.192.181]:45013 "EHLO
+	mail-pd0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751791AbaKUTXV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Nov 2014 13:10:13 -0500
-Content-Disposition: inline
-In-Reply-To: <1416477797-27332-1-git-send-email-padma.v@samsung.com>
+	Fri, 21 Nov 2014 14:23:21 -0500
+Received: by mail-pd0-f181.google.com with SMTP id z10so5915835pdj.12
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Nov 2014 11:23:21 -0800 (PST)
+In-Reply-To: <8C.59.15273.8FB5F645@epcpsbgx1.samsung.com> (AJAY KUMAR
+	RAMAKRISHNA SHYMALAMMA's message of "Fri, 21 Nov 2014 15:36:24 +0000
+	(GMT)")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, kgene.kim@samsung.com, sbkim73@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: ajaykumar.rs@samsung.com
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>, In-Ki Dae <inki.dae@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Amit Kucheria <amit.kucheria@linaro.org>, "bhushan.r@samsung.com" <bhushan.r@samsung.com>
 
+Hi Ajay,
 
---U9vhhefU4FbM2lKk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com> writes:
 
-On Thu, Nov 20, 2014 at 03:33:17PM +0530, Padmavathi Venna wrote:
-> In the i2s_set_sysclk() callback we are currently clearing all bits
-> of the IISMOD register in i2s_set_sysclk. It's due to an incorrect
-> mask used for the AND operation which is introduced in commit
-> a5a56871f804edac93a53b5e871c0e9818fb9033 (ASoC: samsung:
-> add support for exynos7 I2S controller) and also adds the missing
-> break statement.
+> I tried to reproduce the issue which you reported,
+>
+> but I am sorry I am not able to reproduce it.
+>
+> I tried with my patches for DRM on top of Linux-next.
 
-Applied, thanks.
+I don't see the issue on linux-next either.  As I mentioned in the
+original post, I only see it on the v3.18 branch in the exynos-reference
+tree.
 
---U9vhhefU4FbM2lKk
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUb3+cAAoJECTWi3JdVIfQCCcH/i/wftWMkSdzY+5rK2yCyrg8
-RJ7XMLXS6I/MKDhhKIskJowXxy425deShcOyq7ZJGoeSoXoq6Wx9g8dotyi/0bNb
-/Y3gPTbGaD6wPcyp4ec+g8QXtjRlPIo/mKAnR63fYOJykws2nFmRhLKsxVTe/Plj
-jVdM2whZHngKfhiNdQhaUvjGJzX0ioHpbQpeKi+i21WjxY/QjpbVIWiVWfJyPkim
-rgm41/i/z6kAo3aEXAhL0+E82AzFIr3H9iafDbhhJIevdx0p4IKWbztmDLKxTqpJ
-4uApmFxVIXzxz+AEhyXgz4cOvcv+N6f2RnUNb/nMF+dloQGCK8IXWTPKqfgYfjQ=
-=4pvT
------END PGP SIGNATURE-----
-
---U9vhhefU4FbM2lKk--
+Kevin
