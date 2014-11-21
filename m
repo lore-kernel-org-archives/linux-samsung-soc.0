@@ -1,67 +1,75 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH 1/2] drm/exynos: fix null pointer dereference issue
-Date: Fri, 21 Nov 2014 12:41:11 -0200
-Message-ID: <20141121144111.GC3123@joana>
-References: <1415865009-15979-1-git-send-email-inki.dae@samsung.com>
- <1415865009-15979-2-git-send-email-inki.dae@samsung.com>
- <20141120231219.GA3123@joana> <546E9F5D.1060203@samsung.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH 00/11] Exynos7: Adding USB 3.0 support
+Date: Fri, 21 Nov 2014 09:11:30 -0600
+Message-ID: <20141121151130.GD7508@saruman>
+References: <1416576954-11997-1-git-send-email-gautam.vivek@samsung.com>
+Reply-To: <balbi@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ZJcv+A0YCCLh2VIg"
+Return-path: <linux-omap-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <546E9F5D.1060203@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+In-Reply-To: <1416576954-11997-1-git-send-email-gautam.vivek@samsung.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, balbi@ti.com, kishon@ti.com, linux-omap@vger.kernel.org, gregkh@linuxfoundation.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com, robh+dt@kernel.org, stern@rowland.harvard.edu, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-MjAxNC0xMS0yMSBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+OgoKPiBPbiAyMDE064WE
-IDEx7JuUIDIx7J28IDA4OjEyLCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gPiAyMDE0LTExLTEz
-IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT46Cj4gPiAKPiA+PiBUaGlzIHBhdGNoIGZp
-eGVzIG51bGwgcG9pbnRlciBkZXJlZmVyZW5jZSBpc3N1ZSBpbmN1cnJlZAo+ID4+IHdoZW4gaXBw
-IGRyaXZlciBpcyBlbmFibGVkIGFuZCBFeHlub3MgZHJtIGRyaXZlciBpcyBjbG9zZWQuCj4gPj4K
-PiA+PiBOb24ga21zIGRyaXZlciBzaG91bGQgcmVnaXN0ZXIgaXRzIG93biBzdWIgZHJpdmVyIHRv
-IHNldHVwIG5lY2Vzc2FyeQo+ID4+IHJlc291cmNlcywgd2hpY2ggaXMgZG9uZSBieSBsb2FkKCku
-IFNvIG51bGwgcG9pbnRlciBkZXJlZmVyZW5jZQo+ID4+IG9jY3VycyB3aGVuIGlwcCBkcml2ZXIg
-aXMgZW5hYmxlZCBhbmQgRXh5bm9zIGRybSBkcml2ZXIgaXMgY2xvc2VkCj4gPj4gYmVjYXVzZSBp
-cHAgY29yZSBkZXZpY2UgaXMgcmVnaXN0ZXJlZCBhZnRlciBjb21wb25lbnRfbWFzdGVyX2FkZF93
-aXRoX21hdGNoCj4gPj4gY2FsbC4KPiA+Pgo+ID4+IFRoaXMgcGF0Y2ggbWFrZXMgZXh5bm9zX2Ry
-bV9kZXZpY2Vfc3ViZHJ2X3Byb2JlKCkgdG8gYmUgY2FsbGVkIGFmdGVyIGFsbCBub24KPiA+PiBr
-bXMgZHJpdmVycyBhcmUgcmVnaXN0ZXJlZC4KPiA+IAo+ID4gVGhpcyBwYXRjaCBpcyBicmVha2lu
-ZyBleHlub3MgaW5pdGlhbGl6YXRpb24sIGV4eW5vc19kcm1fZGV2aWNlX3N1YmRydl9wcm9iZSgp
-Cj4gPiBuZWVkcyB0aGUgZHJ2ZGF0YSBidXQgaXQgaXMgc3RpbGwgTlVMTCBhdCB0aGlzIHBvaW50
-IHdoaWNoIG1ha2UgdGhlIHdob2xlCj4gPiBleHlub3MgaW5pdCBmYWlscy4gVGhlIGRydmRhdGEg
-aXMgb25seSBzZXQgaW4gZXh5bm9zX2RybV9sb2FkKCkgc28gd2UgbmVlZAo+ID4gY2FsbCBleHlu
-b3NfZHJtX2RldmljZV9zdWJkcnZfcHJvYmUoKSBhZnRlciB0aGF0Lgo+IAo+IFRoZXJlIG1pZ2h0
-IGJlIG15IG1pc3NpbmcgcG9pbnQgYnV0IHdpdGggdGhpcyBwYXRjaCwKPiBleHlub3NfZHJtX2Rl
-dmljZV9zdWJkcnZfcHJvYmUoKSB3aWxsIGJlIGNhbGxlZCBhZnRlciBleHlub3NfZHJtX2xvYWQo
-KQo+IGNhbGwgYmVjYXVzZSBhbGwga21zIGRyaXZlcnMgYXJlIHByb2JlZCBiZWZvcmUKPiBjb21w
-b25lbnRfbWFzdGVyX2FkZF93aXRoX21hdGNoIGNhbGwgc28gZXh5bm9zX2RybV9sb2FkKCkgbXVz
-dCBiZSBjYWxsZWQKPiBieSBjb21wb25lbnRfbWFzdGVyX2FkZF93aXRoX21hdGNoIGZ1bmN0aW9u
-IGJlZm9yZQo+IGV4eW5vc19kcm1fZGV2aWNlX3N1YmRydl9wcm9iZSBjYWxsLgo+IAo+IFNvIGNv
-dWxkIHlvdSBzaG93IG1lIHRoZSBlcnJvciBtZXNzYWdlcyB5b3UgZmFjZWQgd2l0aD8gVGhlcmUg
-bWlnaHQgYmUgYQo+IGNvcm5lciBjYXNlIEkgbWlzc2VkLgoKSSd2ZSBhZGRlZCBzb21lIGRlYnVn
-IG91dHB1dCB0byBpdC4gSXQgZmFpbHMgb24KZXh5bm9zX2RybV9kZXZpY2Vfc3ViZHJ2X3Byb2Jl
-KCkgYmVjYXVzZSB0aGUgZHJ2ZGF0YSBpcyBOVUxMLiBJJ3ZlIGFkZGVkIGRlYnVnCm91dHB1dCB0
-byBleHlub3NfZHJtX2xvYWQoKSBhbmQgYXMgeW91IGNhbiBzZWUgaXQgZG9lc24ndCBnZXQgY2Fs
-bGVkIGJlZm9yZQpzdWJkcnZfcHJvYmUoKS4gSSdtIHRlc3RpbmcgdGhpcyBvbiBzbm93LgoKWyAg
-ICAxLjc2NzgzNV0gW2RybV0gSW5pdGlhbGl6ZWQgZHJtIDEuMS4wIDIwMDYwODEwClsgICAgMS43
-NzExMjBdIFtkcm06ZXh5bm9zX2RybV9pbml0XSAKWyAgICAxLjc3NDc3NF0gW2RybTpleHlub3Nf
-ZHJtX3BsYXRmb3JtX3Byb2JlXSAKWyAgICAxLjc3ODc2MF0gcGxhdGZvcm0gZXh5bm9zLWRybTog
-RHJpdmVyIGV4eW5vcy1kcm0gcmVxdWVzdHMgcHJvYmUgZGVmZXJyYWwKWyAgICAxLjc4NjE3OF0g
-cGxhdGZvcm0gMTQ1YjAwMDAuZHAtY29udHJvbGxlcjogRHJpdmVyIGV4eW5vcy1kcCByZXF1ZXN0
-cwpwcm9iZSBkZWZlcnJhbApbICAgIDEuNzk0Mzc0XSBleHlub3MtZHJtLWlwcCBleHlub3MtZHJt
-LWlwcDogZHJtIGlwcCByZWdpc3RlcmVkIHN1Y2Nlc3NmdWxseS4KWyAgICAxLjgwMDM3Ml0gW2Ry
-bTpleHlub3NfZHJtX2RldmljZV9zdWJkcnZfcHJvYmVdIGRldiAgIChudWxsKQoKCglHdXN0YXZv
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+--ZJcv+A0YCCLh2VIg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Nov 21, 2014 at 07:05:43PM +0530, Vivek Gautam wrote:
+> The series has dependency on
+> a) "[PATCH v7 0/7] Enable support for Samsung Exynos7 SoC"
+>    http://www.spinics.net/lists/linux-samsung-soc/msg38734.html
+> b) "[GIT PULL] Samsung clock changes for 3.19" - specifically the clock dt
+>    bindings header.
+>    http://comments.gmane.org/gmane.linux.kernel.samsung-soc/39142
+> c) "tty: serial: samsung: Clean-up selection of number of available UARTs"
+>    http://www.spinics.net/lists/linux-samsung-soc/msg37418.html
+> d) "dts, kbuild: Implement support for dtb vendor subdirs"(merged in linu=
+x-next)
+>    https://lkml.org/lkml/2014/10/21/654
+> e) "Samsung pinctrl patches for v3.19"
+>    http://www.spinics.net/lists/linux-samsung-soc/msg38744.html
+>=20
+> Tested on Exynos7-espresso board with 3.18-rc5 and above dependencies.
+>=20
+> Clubbing the pinctrl, clk, and usb driver changes alongwith the dt changes
+> together in this series only so as to avoid having 'n' number of dependen=
+cies.
+>=20
+> The USB driver patches in this series were part of [1] sent earlier.
+> [1] [PATCH v2 0/4] usb: dwc3/phy-exynos5-usbdrd: Extend support to Exynos7
+>     https://lkml.org/lkml/2014/10/7/191
+
+I took dwc3 driver patches.
+
+--=20
+balbi
+
+--ZJcv+A0YCCLh2VIg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUb1YiAAoJEIaOsuA1yqREyl4P/0fQmqSnGXnX25uUiNXcnFLL
+TtQthuYr674d0JJ+wNi9uaONTWpZKnr20JLNvV9gkFt/yh2w6N6GFBwvhVGLqTMn
+wkjccayRKHVM/c5Zr8z/+sQQeEPpXXGKOSC8lLZ5nv3FQWL43lkNflFog+Ej6dGy
+cMT43xzBGLoAxwdSh8JdU6uryDqv05i7viekAo/VSy09xFRbabgf5WIXsMjjZinn
+2Cf7ITObEn/G1uSfMBnRc/quyTIgXmt/g2WDUsxyAwn97glNYTYNPwa42X+YRMIU
+2lOu8Ux7/5gkEBsDhV76RsRUEkgwdyeLaD1zivBmOG7Y3UVyfupyRJ/aH3L2epYr
+AgfEC83+B09fz3sTCOusuzn1tJcC35eQ3dm5ahJrAXXhoOtK6lJheEzy7C88m78L
+zxKqnS0Wx3VKr1LSfGcTQ+MEw02JXQvTJGgVhoFhStXy0igVhBROeWocFjD6Y+Gf
+Jha9o4WBMKxOMkJd5qpTGH5WdY/BzcLpsvsDwXF+vPoXNZjjVnJ8syRzDp6S5zNO
+jqp7xfri3pnQ0aVXYWf1aRf9BpoMSfrkIUohxWNcZNLfxBnu5TVtxpAmCqwfq2xQ
+dKwJxOw7bkj9Uo6SeIZ/qTcUHgVtiVXwJOi/jxKSrc8L7gDSRmW+tKhq+9YZyCRK
+s4+xieUDSvlVd5OJgaI+
+=RxWf
+-----END PGP SIGNATURE-----
+
+--ZJcv+A0YCCLh2VIg--
