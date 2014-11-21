@@ -1,82 +1,45 @@
-From: Thomas Abraham <thomas.ab@samsung.com>
-Subject: [PATCH v12 4/6] ARM: Exynos: switch to using generic cpufreq driver
- for Exynos4210/5250/5420
-Date: Fri, 21 Nov 2014 19:01:20 +0530
-Message-ID: <1416576682-5255-5-git-send-email-thomas.ab@samsung.com>
-References: <1416576682-5255-1-git-send-email-thomas.ab@samsung.com>
- <1416576682-5255-2-git-send-email-thomas.ab@samsung.com>
- <1416576682-5255-3-git-send-email-thomas.ab@samsung.com>
- <1416576682-5255-4-git-send-email-thomas.ab@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: [GIT PULL 1/2] Samsung fixes for v3.18
+Date: Fri, 21 Nov 2014 22:23:38 +0900
+Message-ID: <546F3CDA.6000908@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:42205 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755463AbaKUNXM (ORCPT
+Received: from mail.kernel.org ([198.145.19.201]:35915 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755232AbaKUNXo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Nov 2014 08:23:12 -0500
-In-reply-to: <1416576682-5255-4-git-send-email-thomas.ab@samsung.com>
+	Fri, 21 Nov 2014 08:23:44 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, l.majewski@samsung.com, viresh.kumar@linaro.org, thomas.ab@samsung.com, heiko@sntech.de, cw00.choi@samsung.com, khilman@linaro.org
+To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
+Cc: arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-The new CPU clock type allows the use of generic CPUfreq drivers. So for
-Exynos4210/5250, switch to using generic cpufreq driver. For Exynos5420,
-which did not have CPUfreq driver support, enable the use of generic
-CPUfreq driver.
+The following changes since commit fc14f9c1272f62c3e8d01300f52467c0d9af50f9:
 
-Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
-Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
-Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Tested-by: Chander Kashyap <k.chander@samsung.com>
----
- arch/arm/mach-exynos/exynos.c |   26 +++++++++++++++++++++++++-
- 1 files changed, 25 insertions(+), 1 deletions(-)
+  Linux 3.18-rc5 (2014-11-16 16:36:20 -0800)
 
-diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-index 6b283eb..402a2ae 100644
---- a/arch/arm/mach-exynos/exynos.c
-+++ b/arch/arm/mach-exynos/exynos.c
-@@ -282,6 +282,30 @@ static void __init exynos_init_irq(void)
- 	exynos_map_pmu();
- }
- 
-+static const struct of_device_id exynos_cpufreq_matches[] = {
-+	{ .compatible = "samsung,exynos5420", .data = "arm-bL-cpufreq-dt" },
-+	{ .compatible = "samsung,exynos5422", .data = "arm-bL-cpufreq-dt" },
-+	{ .compatible = "samsung,exynos5800", .data = "arm-bL-cpufreq-dt" },
-+	{ .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
-+	{ .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
-+	{ .compatible = "samsung,exynos5440", .data = "exynos5440-cpufreq" },
-+	{ /* sentinel */ }
-+};
-+
-+static void __init exynos_cpufreq_init(void)
-+{
-+	struct device_node *root = of_find_node_by_path("/");
-+	const struct of_device_id *match;
-+
-+	match = of_match_node(exynos_cpufreq_matches, root);
-+	if (!match) {
-+		platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
-+		return;
-+	}
-+
-+	platform_device_register_simple(match->data, -1, NULL, 0);
-+}
-+
- static void __init exynos_dt_machine_init(void)
- {
- 	struct device_node *i2c_np;
-@@ -321,7 +345,7 @@ static void __init exynos_dt_machine_init(void)
- 			of_machine_is_compatible("samsung,exynos5250"))
- 		platform_device_register(&exynos_cpuidle);
- 
--	platform_device_register_simple("exynos-cpufreq", -1, NULL, 0);
-+	exynos_cpufreq_init();
- 
- 	of_platform_populate(NULL, of_default_bus_match_table, NULL, NULL);
- }
--- 
-1.6.6.rc2
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+tags/samsung-fixes-v3.18
+
+for you to fetch changes up to 0526f276f94758245ac5886604fe8c805c1b6d2c:
+
+  ARM: dts: Explicitly set dr_mode on exynos5250-snow (2014-11-19
+16:52:15 +0900)
+
+----------------------------------------------------------------
+Samsung fixes for v3.18
+
+- explicitly set dr_mode on exynos5250-snow
+  this is required when kernel is built with USB gadget support.
+
+----------------------------------------------------------------
+Sjoerd Simons (1):
+      ARM: dts: Explicitly set dr_mode on exynos5250-snow
+
+ arch/arm/boot/dts/exynos5250-snow.dts | 4 ++++
+ arch/arm/boot/dts/exynos5250.dtsi     | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
