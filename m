@@ -1,64 +1,64 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH v3 2/5] drivers: soc: Add support for Exynos PMU driver
-Date: Fri, 21 Nov 2014 11:56:07 +0530
-Message-ID: <CADGdYn6dQp2LtuQj5-ma18C-i4J4k0Cw5ZOrhfi7Lb_3Wzaung@mail.gmail.com>
-References: <1416461968-2057-1-git-send-email-amit.daniel@samsung.com>
-	<1416461968-2057-3-git-send-email-amit.daniel@samsung.com>
-	<20141120100328.GO4042@n2100.arm.linux.org.uk>
+From: Padma Venkat <padma.kvr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] spi: s3c64xx: add support for exynos7 SPI controller
+Date: Fri, 21 Nov 2014 12:38:38 +0530
+Message-ID: <CAAgF-BfOUSTNX=ieLihAXVXuwd3NzPHG3FpmhqZwnpQpeveDig@mail.gmail.com>
+References: <1415267509-16653-1-git-send-email-padma.v@samsung.com>
+	<20141106102636.GT8509@sirena.org.uk>
+	<CAAgF-BfGwcNzMx0meFVkJqNMTbQ4_PP1PZ3i6edOm6U3bc26_Q@mail.gmail.com>
+	<20141107101310.GA8509@sirena.org.uk>
+	<CAAgF-Bd=S7-PoA7GZoy87W9Dem3OXVhc1tL-eyWEAHvF0LPTKQ@mail.gmail.com>
+	<CAAgF-BcARoRZv=BPqQWyp6rJQQ=CE0FEUz_2vgQSpeZyLwbkBw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f50.google.com ([209.85.213.50]:39981 "EHLO
-	mail-yh0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750803AbaKUG0I (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Nov 2014 01:26:08 -0500
-In-Reply-To: <20141120100328.GO4042@n2100.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAAgF-BcARoRZv=BPqQWyp6rJQQ=CE0FEUz_2vgQSpeZyLwbkBw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On Thu, Nov 20, 2014 at 3:33 PM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-> On Thu, Nov 20, 2014 at 11:09:25AM +0530, Amit Daniel Kachhap wrote:
->> diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
->> index 063113d..44d220d 100644
->> --- a/drivers/soc/Makefile
->> +++ b/drivers/soc/Makefile
->> @@ -6,3 +6,4 @@ obj-$(CONFIG_ARCH_QCOM)               += qcom/
->>  obj-$(CONFIG_ARCH_TEGRA)     += tegra/
->>  obj-$(CONFIG_SOC_TI)         += ti/
->>  obj-$(CONFIG_PLAT_VERSATILE) += versatile/
->> +obj-$(CONFIG_ARCH_EXYNOS)    += samsung/
->
-> Is ARCH_EXYNOS appropriate here, or is your new SOC_SAMSUNG better?
-yes, SOC_SAMSUNG is more appropriate.
->
->> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
->> new file mode 100644
->> index 0000000..a424ebc
->> --- /dev/null
->> +++ b/drivers/soc/samsung/Kconfig
->> @@ -0,0 +1,20 @@
->> +#
->> +# SAMSUNG SOC drivers
->> +#
->> +menuconfig SOC_SAMSUNG
->> +     bool "Samsung SOC drivers support"
->
-> If you intend to select SOC_SAMSUNG, is there any point in making this
-> a user-visible symbol?
-Agreed, only menu "Samsung SOC drivers support" will be fine.
+Hi Mark,
 
-Regards,
-Amit
+>>>> CS can also be controlled automatically by setting AUTO_N_MANUAL to 1
+>>>> in CS_CFG. When it is auto CS automatically toggles between packet to
+>>>> packet. NCS_TIME_COUNT in CS_CFG controls the inactive period. The
+>>>> driver by default uses manual mode. But on exynos7 the manual mode is
+>>>> removed.
+>>>
+>>> OK, but what's a packet here?
+>>
+>> Packet is either 1 byte or 4 bytes size depends on width of the SPI
+>> channel.
+>>
+>>>
+>>>> I tested the driver with wm5110 codec.
+>>>
+>>> Did you try firmware downloads or something else that generates multiple
+>>> transfers in a message?  Normal register writes will use a single
+>>> transfer so I'd expect them to just work.
+>>>
+>>
+>> OK. I don't have provision to test on this board. I will try to test
+>> on older boards by disabling manual mode.
+>>
 >
-> --
-> FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-> according to speedtest.net.
+> I tested on exynos5420 peach-pit by enabling auto mode. I used dd
+> command to read 1MB data from spi flash and I compared the result with
+> manual mode. Both are same.
+
+I also tested this patch with Javier Martinez Canillas patches for
+enabling spidev nodes from
+http://www.spinics.net/lists/linux-samsung-soc/msg39057.html.
+
+I read 4MB flashdata from spi by enabling auto mode and compared the
+result. They look same.
+
 >
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>> Thanks
+>> padma
+>>
+>
+--
+To unsubscribe from this list: send the line "unsubscribe linux-spi" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
