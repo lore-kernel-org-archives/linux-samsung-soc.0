@@ -1,67 +1,67 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Peach Pi/Pit boot failures in linux-next  (was Re: [RFC PATCH 1/1]
- drm/exynos: Move platform drivers registration to module init)
-Date: Fri, 21 Nov 2014 14:03:51 +0100
-Message-ID: <546F3837.5020706@collabora.co.uk>
-References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk>	<7hh9xwxsev.fsf@deeprootsystems.com>	<546CCAB8.9050402@collabora.co.uk>	<CAFp+6iFbxWoh4h0ZpY=JQO4rjLss2kpj-nZM7KGiJ_F4AZ2W=g@mail.gmail.com>	<7hppchsu29.fsf@deeprootsystems.com>	<546E293D.9000300@collabora.co.uk> <7hbno1spdt.fsf@deeprootsystems.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Thomas Abraham <thomas.ab@samsung.com>
+Subject: [PATCH v12 0/6] cpufreq: use generic cpufreq drivers for exynos
+ platforms
+Date: Fri, 21 Nov 2014 19:01:16 +0530
+Message-ID: <1416576682-5255-1-git-send-email-thomas.ab@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:34348 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755095AbaKUNEE (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:41946 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758332AbaKUNTJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Nov 2014 08:04:04 -0500
-In-Reply-To: <7hbno1spdt.fsf@deeprootsystems.com>
+	Fri, 21 Nov 2014 08:19:09 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Vivek Gautam <gautamvivek1987@gmail.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Paolo Pisati <p.pisati@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>
+To: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, l.majewski@samsung.com, viresh.kumar@linaro.org, thomas.ab@samsung.com, heiko@sntech.de, cw00.choi@samsung.com, khilman@linaro.org
 
-[adding Kukjin as cc and dropping dri-devel]
+Changes since v11:
+- Rebased on top of git://linuxtv.org/snawrocki/samsung.git for-v3.19-exynos-clk
 
-Hello Kevin,
+This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
+drivers and enables the use of cpufreq-dt driver for these platforms. This
+series also enables cpufreq support for Exynos5420 using arm_big_little cpufreq
+driver.
 
-On 11/20/2014 07:22 PM, Kevin Hilman wrote:
->> My kernel command line is almost the same with the difference that
->> I'm using clk_ignore_unused and I just checked that not passing
->> that parameter, makes linux-next to hang showing the same output
->> log that Kevin reported.
-> 
-> Ah!  Good find.  I confirm that adding clk_ignore_unused is getting
-> me booting again, but of course that is just masking a problem, so I
-> hope someone can shed light on which clock isn't being correctly
-> managed.
-> 
+This series is based on the following branch.
+git://linuxtv.org/snawrocki/samsung.git for-v3.19-exynos-clk
 
-True, I'm renaming the thread subject to track these issues separately
-of the original Exynos DRM bug since these are unrelated.
+This series depends on the following patch which can be picked from
+git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git samsung/dt
+e540920cf21c (ARM: dts: add CPU nodes for Exynos4 SoCs).
 
-So, I see two different boot failures on the Peach Pi[t] Chromebooks:
+This patch series has been tested on Exynos4210/5250/5420 based boards.
+Tomasz Figa had plans to take this in the Samsung clock tree for v3.19
+(http://www.spinics.net/lists/linux-samsung-soc/msg37933.html).
+Sylwester, could you consider to merge this in your tree?
 
-1) next20141121 boot fails due snd-soc-snow
+Thomas Abraham (6):
+  clk: samsung: add infrastructure to register cpu clocks
+  clk: samsung: add cpu clock configuration data and instantiate cpu clock
+  ARM: dts: Exynos: add CPU OPP and regulator supply property
+  ARM: Exynos: switch to using generic cpufreq driver for Exynos4210/5250/5420
+  cpufreq: exynos: remove exynos4210/5250 specific cpufreq driver support
+  clk: samsung: remove unused clock aliases and update clock flags
 
-Disabling CONFIG_SND_SOC_SNOW makes the boot to got a little further
-but still fails with the second issue:
-
-2) next20141121 boot hangs if unused clocks are disabled.
-
-I tried to root cause these two issues but didn't see anything evident
-so I'll find a last known good commit and bisect. If anyone has an
-idea of the possible causes for these issues that would be appreciated.
- 
-> Might I also suggest that folks have their default command-line to
-> *not* use clk_ignore_unused, since it's primary job is to workaround
-> clock bugs.
-> 
-
-Agreed, I disabled now as well to catch regressions early. I carried
-those parameters from Snow since I needed clk_ignore_unused to have
-simplefb working on that machine.
-
-> Kevin
-> 
-
-Best regards,
-Javier
+ arch/arm/boot/dts/exynos4210-origen.dts         |    4 +
+ arch/arm/boot/dts/exynos4210-trats.dts          |    4 +
+ arch/arm/boot/dts/exynos4210-universal_c210.dts |    4 +
+ arch/arm/boot/dts/exynos4210.dtsi               |   14 ++-
+ arch/arm/boot/dts/exynos5250-arndale.dts        |    4 +
+ arch/arm/boot/dts/exynos5250-smdk5250.dts       |    4 +
+ arch/arm/boot/dts/exynos5250-snow.dts           |    4 +
+ arch/arm/boot/dts/exynos5250.dtsi               |   25 +++-
+ arch/arm/boot/dts/exynos5420.dtsi               |   38 ++++
+ arch/arm/mach-exynos/exynos.c                   |   26 +++-
+ drivers/clk/samsung/Makefile                    |    2 +-
+ drivers/clk/samsung/clk-exynos4.c               |   63 +++++---
+ drivers/clk/samsung/clk-exynos5250.c            |   44 ++++-
+ drivers/clk/samsung/clk-exynos5420.c            |   72 +++++++-
+ drivers/cpufreq/Kconfig.arm                     |   22 ---
+ drivers/cpufreq/Makefile                        |    2 -
+ drivers/cpufreq/exynos4210-cpufreq.c            |  184 --------------------
+ drivers/cpufreq/exynos5250-cpufreq.c            |  210 -----------------------
+ include/dt-bindings/clock/exynos5250.h          |    1 +
+ include/dt-bindings/clock/exynos5420.h          |    2 +
+ 20 files changed, 266 insertions(+), 463 deletions(-)
+ delete mode 100644 drivers/cpufreq/exynos4210-cpufreq.c
+ delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
