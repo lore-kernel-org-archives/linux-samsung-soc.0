@@ -1,75 +1,42 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH 00/11] Exynos7: Adding USB 3.0 support
-Date: Fri, 21 Nov 2014 09:11:30 -0600
-Message-ID: <20141121151130.GD7508@saruman>
-References: <1416576954-11997-1-git-send-email-gautam.vivek@samsung.com>
-Reply-To: <balbi@ti.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: Re: [PATCH v2] serial: samsung: Fix serial config dependencies for
+ exynos7
+Date: Sat, 22 Nov 2014 00:11:15 +0900
+Message-ID: <546F5613.1020208@kernel.org>
+References: <1416199491-4841-1-git-send-email-a.kesavan@samsung.com> <1416383812-714-1-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ZJcv+A0YCCLh2VIg"
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1416576954-11997-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, balbi@ti.com, kishon@ti.com, linux-omap@vger.kernel.org, gregkh@linuxfoundation.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com, robh+dt@kernel.org, stern@rowland.harvard.edu, kgene.kim@samsung.com
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1416383812-714-1-git-send-email-a.kesavan@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Abhilash Kesavan <a.kesavan@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org, jslaby@suse.cz, kesavan.abhilash@gmail.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
---ZJcv+A0YCCLh2VIg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 11/19/14 16:56, Abhilash Kesavan wrote:
+> From: Pankaj Dubey <pankaj.dubey@samsung.com>
+> 
+> Exynos7 has a similar serial controller to that present in older Samsung
+> SoCs. To re-use the existing serial driver on Exynos7 we need to have
+> SERIAL_SAMSUNG_UARTS_4 and SERIAL_SAMSUNG_UARTS selected. This is not
+> possible because these symbols are dependent on PLAT_SAMSUNG which is
+> not present for the ARMv8 based exynos7.
+> 
+> Change the dependency of these symbols from PLAT_SAMSUNG to the serial
+> driver thus making it available on exynos7. As the existing platform
+> specific code making use of these symbols is related to uart driver this
+> change in dependency should not cause any issues.
+> 
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+> Changes in v2:
+> 	- Added Greg's ack and Kukjin Kim as a recepient
 
-On Fri, Nov 21, 2014 at 07:05:43PM +0530, Vivek Gautam wrote:
-> The series has dependency on
-> a) "[PATCH v7 0/7] Enable support for Samsung Exynos7 SoC"
->    http://www.spinics.net/lists/linux-samsung-soc/msg38734.html
-> b) "[GIT PULL] Samsung clock changes for 3.19" - specifically the clock dt
->    bindings header.
->    http://comments.gmane.org/gmane.linux.kernel.samsung-soc/39142
-> c) "tty: serial: samsung: Clean-up selection of number of available UARTs"
->    http://www.spinics.net/lists/linux-samsung-soc/msg37418.html
-> d) "dts, kbuild: Implement support for dtb vendor subdirs"(merged in linu=
-x-next)
->    https://lkml.org/lkml/2014/10/21/654
-> e) "Samsung pinctrl patches for v3.19"
->    http://www.spinics.net/lists/linux-samsung-soc/msg38744.html
->=20
-> Tested on Exynos7-espresso board with 3.18-rc5 and above dependencies.
->=20
-> Clubbing the pinctrl, clk, and usb driver changes alongwith the dt changes
-> together in this series only so as to avoid having 'n' number of dependen=
-cies.
->=20
-> The USB driver patches in this series were part of [1] sent earlier.
-> [1] [PATCH v2 0/4] usb: dwc3/phy-exynos5-usbdrd: Extend support to Exynos7
->     https://lkml.org/lkml/2014/10/7/191
+Applied, thanks.
 
-I took dwc3 driver patches.
-
---=20
-balbi
-
---ZJcv+A0YCCLh2VIg
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJUb1YiAAoJEIaOsuA1yqREyl4P/0fQmqSnGXnX25uUiNXcnFLL
-TtQthuYr674d0JJ+wNi9uaONTWpZKnr20JLNvV9gkFt/yh2w6N6GFBwvhVGLqTMn
-wkjccayRKHVM/c5Zr8z/+sQQeEPpXXGKOSC8lLZ5nv3FQWL43lkNflFog+Ej6dGy
-cMT43xzBGLoAxwdSh8JdU6uryDqv05i7viekAo/VSy09xFRbabgf5WIXsMjjZinn
-2Cf7ITObEn/G1uSfMBnRc/quyTIgXmt/g2WDUsxyAwn97glNYTYNPwa42X+YRMIU
-2lOu8Ux7/5gkEBsDhV76RsRUEkgwdyeLaD1zivBmOG7Y3UVyfupyRJ/aH3L2epYr
-AgfEC83+B09fz3sTCOusuzn1tJcC35eQ3dm5ahJrAXXhoOtK6lJheEzy7C88m78L
-zxKqnS0Wx3VKr1LSfGcTQ+MEw02JXQvTJGgVhoFhStXy0igVhBROeWocFjD6Y+Gf
-Jha9o4WBMKxOMkJd5qpTGH5WdY/BzcLpsvsDwXF+vPoXNZjjVnJ8syRzDp6S5zNO
-jqp7xfri3pnQ0aVXYWf1aRf9BpoMSfrkIUohxWNcZNLfxBnu5TVtxpAmCqwfq2xQ
-dKwJxOw7bkj9Uo6SeIZ/qTcUHgVtiVXwJOi/jxKSrc8L7gDSRmW+tKhq+9YZyCRK
-s4+xieUDSvlVd5OJgaI+
-=RxWf
------END PGP SIGNATURE-----
-
---ZJcv+A0YCCLh2VIg--
+- Kukjin
