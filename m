@@ -1,85 +1,67 @@
-From: Thomas Abraham <ta.omasab@gmail.com>
-Subject: Re: [PATCH v11 4/6] ARM: Exynos: switch to using generic cpufreq
- driver for Exynos4210/5250/5420
-Date: Fri, 21 Nov 2014 23:32:54 +0900
-Message-ID: <CAJuA9agU6A4OZ2_9ER2d5oxLAmEr=zq2c-Z3ij8AvPZYNafJRw@mail.gmail.com>
-References: <1413805281-6269-1-git-send-email-thomas.ab@samsung.com>
- <1413805281-6269-2-git-send-email-thomas.ab@samsung.com>
- <1413805281-6269-3-git-send-email-thomas.ab@samsung.com>
- <1413805281-6269-4-git-send-email-thomas.ab@samsung.com>
- <1413805281-6269-5-git-send-email-thomas.ab@samsung.com>
- <CAHLCerPKv=NsLNZvwo-vhDwkved5+O4a40LvrP_7j30KjeKqUQ@mail.gmail.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH 1/2] drm/exynos: fix null pointer dereference issue
+Date: Fri, 21 Nov 2014 12:41:11 -0200
+Message-ID: <20141121144111.GC3123@joana>
+References: <1415865009-15979-1-git-send-email-inki.dae@samsung.com>
+ <1415865009-15979-2-git-send-email-inki.dae@samsung.com>
+ <20141120231219.GA3123@joana> <546E9F5D.1060203@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAHLCerPKv=NsLNZvwo-vhDwkved5+O4a40LvrP_7j30KjeKqUQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Amit Kucheria <amit.kucheria@linaro.org>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Linux PM list <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Chanwoo Choi <cw00.choi@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, lakml <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <546E9F5D.1060203@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Amit,
-
-On Wed, Nov 12, 2014 at 3:03 PM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
-> Hi Thomas,
->
-> On Mon, Oct 20, 2014 at 5:11 PM, Thomas Abraham <thomas.ab@samsung.com> wrote:
->> The new CPU clock type allows the use of generic CPUfreq drivers. So for
->> Exynos4210/5250, switch to using generic cpufreq driver. For Exynos5420,
->> which did not have CPUfreq driver support, enable the use of generic
->> CPUfreq driver.
->>
->> Suggested-by: Tomasz Figa <tomasz.figa@gmail.com>
->> Cc: Kukjin Kim <kgene.kim@samsung.com>
->> Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
->> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
->> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->> Tested-by: Chander Kashyap <k.chander@samsung.com>
->> ---
->>  arch/arm/mach-exynos/exynos.c |   24 +++++++++++++++++++++++-
->>  1 files changed, 23 insertions(+), 1 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
->> index 6b283eb..a1be294 100644
->> --- a/arch/arm/mach-exynos/exynos.c
->> +++ b/arch/arm/mach-exynos/exynos.c
->> @@ -282,6 +282,28 @@ static void __init exynos_init_irq(void)
->>         exynos_map_pmu();
->>  }
->>
->> +static const struct of_device_id exynos_cpufreq_matches[] = {
->> +       { .compatible = "samsung,exynos5420", .data = "arm-bL-cpufreq-dt" },
->
-> While you're at it, can you add this to so we don't have to patch
-> kernels for the Chromebook2 and Odroid-XU3?
->
->       { .compatible = "samsung,exynos5422", .data = "arm-bL-cpufreq-dt" },
->       { .compatible = "samsung,exynos5800", .data = "arm-bL-cpufreq-dt" },
->
-
-Okay, I this has been included in the updated patches [1]
-
-[1] http://www.spinics.net/lists/arm-kernel/msg380011.html
-
-Thanks,
-Thomas.
-
->
->> +       { .compatible = "samsung,exynos5250", .data = "cpufreq-dt" },
->> +       { .compatible = "samsung,exynos4210", .data = "cpufreq-dt" },
->> +       { .compatible = "samsung,exynos5440", .data = "exynos5440-cpufreq" },
->> +       { /* sentinel */ }
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+MjAxNC0xMS0yMSBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+OgoKPiBPbiAyMDE064WE
+IDEx7JuUIDIx7J28IDA4OjEyLCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gPiAyMDE0LTExLTEz
+IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT46Cj4gPiAKPiA+PiBUaGlzIHBhdGNoIGZp
+eGVzIG51bGwgcG9pbnRlciBkZXJlZmVyZW5jZSBpc3N1ZSBpbmN1cnJlZAo+ID4+IHdoZW4gaXBw
+IGRyaXZlciBpcyBlbmFibGVkIGFuZCBFeHlub3MgZHJtIGRyaXZlciBpcyBjbG9zZWQuCj4gPj4K
+PiA+PiBOb24ga21zIGRyaXZlciBzaG91bGQgcmVnaXN0ZXIgaXRzIG93biBzdWIgZHJpdmVyIHRv
+IHNldHVwIG5lY2Vzc2FyeQo+ID4+IHJlc291cmNlcywgd2hpY2ggaXMgZG9uZSBieSBsb2FkKCku
+IFNvIG51bGwgcG9pbnRlciBkZXJlZmVyZW5jZQo+ID4+IG9jY3VycyB3aGVuIGlwcCBkcml2ZXIg
+aXMgZW5hYmxlZCBhbmQgRXh5bm9zIGRybSBkcml2ZXIgaXMgY2xvc2VkCj4gPj4gYmVjYXVzZSBp
+cHAgY29yZSBkZXZpY2UgaXMgcmVnaXN0ZXJlZCBhZnRlciBjb21wb25lbnRfbWFzdGVyX2FkZF93
+aXRoX21hdGNoCj4gPj4gY2FsbC4KPiA+Pgo+ID4+IFRoaXMgcGF0Y2ggbWFrZXMgZXh5bm9zX2Ry
+bV9kZXZpY2Vfc3ViZHJ2X3Byb2JlKCkgdG8gYmUgY2FsbGVkIGFmdGVyIGFsbCBub24KPiA+PiBr
+bXMgZHJpdmVycyBhcmUgcmVnaXN0ZXJlZC4KPiA+IAo+ID4gVGhpcyBwYXRjaCBpcyBicmVha2lu
+ZyBleHlub3MgaW5pdGlhbGl6YXRpb24sIGV4eW5vc19kcm1fZGV2aWNlX3N1YmRydl9wcm9iZSgp
+Cj4gPiBuZWVkcyB0aGUgZHJ2ZGF0YSBidXQgaXQgaXMgc3RpbGwgTlVMTCBhdCB0aGlzIHBvaW50
+IHdoaWNoIG1ha2UgdGhlIHdob2xlCj4gPiBleHlub3MgaW5pdCBmYWlscy4gVGhlIGRydmRhdGEg
+aXMgb25seSBzZXQgaW4gZXh5bm9zX2RybV9sb2FkKCkgc28gd2UgbmVlZAo+ID4gY2FsbCBleHlu
+b3NfZHJtX2RldmljZV9zdWJkcnZfcHJvYmUoKSBhZnRlciB0aGF0Lgo+IAo+IFRoZXJlIG1pZ2h0
+IGJlIG15IG1pc3NpbmcgcG9pbnQgYnV0IHdpdGggdGhpcyBwYXRjaCwKPiBleHlub3NfZHJtX2Rl
+dmljZV9zdWJkcnZfcHJvYmUoKSB3aWxsIGJlIGNhbGxlZCBhZnRlciBleHlub3NfZHJtX2xvYWQo
+KQo+IGNhbGwgYmVjYXVzZSBhbGwga21zIGRyaXZlcnMgYXJlIHByb2JlZCBiZWZvcmUKPiBjb21w
+b25lbnRfbWFzdGVyX2FkZF93aXRoX21hdGNoIGNhbGwgc28gZXh5bm9zX2RybV9sb2FkKCkgbXVz
+dCBiZSBjYWxsZWQKPiBieSBjb21wb25lbnRfbWFzdGVyX2FkZF93aXRoX21hdGNoIGZ1bmN0aW9u
+IGJlZm9yZQo+IGV4eW5vc19kcm1fZGV2aWNlX3N1YmRydl9wcm9iZSBjYWxsLgo+IAo+IFNvIGNv
+dWxkIHlvdSBzaG93IG1lIHRoZSBlcnJvciBtZXNzYWdlcyB5b3UgZmFjZWQgd2l0aD8gVGhlcmUg
+bWlnaHQgYmUgYQo+IGNvcm5lciBjYXNlIEkgbWlzc2VkLgoKSSd2ZSBhZGRlZCBzb21lIGRlYnVn
+IG91dHB1dCB0byBpdC4gSXQgZmFpbHMgb24KZXh5bm9zX2RybV9kZXZpY2Vfc3ViZHJ2X3Byb2Jl
+KCkgYmVjYXVzZSB0aGUgZHJ2ZGF0YSBpcyBOVUxMLiBJJ3ZlIGFkZGVkIGRlYnVnCm91dHB1dCB0
+byBleHlub3NfZHJtX2xvYWQoKSBhbmQgYXMgeW91IGNhbiBzZWUgaXQgZG9lc24ndCBnZXQgY2Fs
+bGVkIGJlZm9yZQpzdWJkcnZfcHJvYmUoKS4gSSdtIHRlc3RpbmcgdGhpcyBvbiBzbm93LgoKWyAg
+ICAxLjc2NzgzNV0gW2RybV0gSW5pdGlhbGl6ZWQgZHJtIDEuMS4wIDIwMDYwODEwClsgICAgMS43
+NzExMjBdIFtkcm06ZXh5bm9zX2RybV9pbml0XSAKWyAgICAxLjc3NDc3NF0gW2RybTpleHlub3Nf
+ZHJtX3BsYXRmb3JtX3Byb2JlXSAKWyAgICAxLjc3ODc2MF0gcGxhdGZvcm0gZXh5bm9zLWRybTog
+RHJpdmVyIGV4eW5vcy1kcm0gcmVxdWVzdHMgcHJvYmUgZGVmZXJyYWwKWyAgICAxLjc4NjE3OF0g
+cGxhdGZvcm0gMTQ1YjAwMDAuZHAtY29udHJvbGxlcjogRHJpdmVyIGV4eW5vcy1kcCByZXF1ZXN0
+cwpwcm9iZSBkZWZlcnJhbApbICAgIDEuNzk0Mzc0XSBleHlub3MtZHJtLWlwcCBleHlub3MtZHJt
+LWlwcDogZHJtIGlwcCByZWdpc3RlcmVkIHN1Y2Nlc3NmdWxseS4KWyAgICAxLjgwMDM3Ml0gW2Ry
+bTpleHlub3NfZHJtX2RldmljZV9zdWJkcnZfcHJvYmVdIGRldiAgIChudWxsKQoKCglHdXN0YXZv
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
