@@ -1,168 +1,141 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v6 2/3] usb: dwc2/gadget: add mutex to serialize init/deinit
- calls
-Date: Fri, 21 Nov 2014 15:14:48 +0100
-Message-ID: <1416579289-31939-2-git-send-email-m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v6 3/3] usb: dwc2/gadget: rework suspend/resume code to
+ correctly restore gadget state
+Date: Fri, 21 Nov 2014 15:14:49 +0100
+Message-ID: <1416579289-31939-3-git-send-email-m.szyprowski@samsung.com>
 References: <1416579289-31939-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1416579289-31939-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Robert Baldyga <r.baldyga-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Paul Zimmerman <paulz-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:15284 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755232AbaKUOO7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 21 Nov 2014 09:14:59 -0500
+In-reply-to: <1416579289-31939-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Paul Zimmerman <paulz@synopsys.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Felipe Balbi <balbi@ti.com>
 
-This patch adds mutex, which protects initialization and
-deinitialization procedures against suspend/resume methods. This mutex
-will be needed by the updated suspend/resume calls, which tracks gadget
-state.
+Suspend/resume code assumed that the gadget was always started and
+enabled to connect to usb bus. This means that the actual state of the
+gadget (started/stopped or connected/disconnected) was not correctly
+preserved on suspend/resume cycle. This patch fixes this issue.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Acked-by: Paul Zimmerman <paulz-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- drivers/usb/dwc2/core.h     |  1 +
- drivers/usb/dwc2/gadget.c   | 19 +++++++++++++++++++
- drivers/usb/dwc2/platform.c |  2 ++
- 3 files changed, 22 insertions(+)
+Since hsotg->driver is always set in udc_start and cleared in udc_stop,
+it has been also used to track if gadget has been start (in previous
+version a 'enabled' bool entry was used for this purpose). Because
+'connected' bool entry has been used to track usb cable connection
+state, to aboid confusion, I reused 'enable' bool entry to track
+soft-disconnect mode.
+---
+ drivers/usb/dwc2/core.h   |  3 ++-
+ drivers/usb/dwc2/gadget.c | 39 ++++++++++++++++++++++-----------------
+ 2 files changed, 24 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
-index 2cb0ac31ae86..6b197550c133 100644
+index 6b197550c133..7a70a1349334 100644
 --- a/drivers/usb/dwc2/core.h
 +++ b/drivers/usb/dwc2/core.h
-@@ -576,6 +576,7 @@ struct dwc2_hsotg {
- 	struct regulator_bulk_data supplies[ARRAY_SIZE(s3c_hsotg_supply_names)];
+@@ -688,8 +688,9 @@ struct dwc2_hsotg {
+ 	u8 ctrl_buff[8];
  
- 	spinlock_t lock;
-+	struct mutex init_mutex;
- 	void *priv;
- 	int     irq;
- 	struct clk *clk;
+ 	struct usb_gadget gadget;
++	unsigned int enabled:1;
+ 	unsigned int connected:1;
+-	unsigned int setup;
++	unsigned int setup:1;
+ 	unsigned long last_rst;
+ 	struct s3c_hsotg_ep *eps;
+ #endif /* CONFIG_USB_DWC2_PERIPHERAL || CONFIG_USB_DWC2_DUAL_ROLE */
 diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
-index c0673ad4c4ad..baba8a862826 100644
+index baba8a862826..1ecc5ac16244 100644
 --- a/drivers/usb/dwc2/gadget.c
 +++ b/drivers/usb/dwc2/gadget.c
-@@ -21,6 +21,7 @@
- #include <linux/platform_device.h>
- #include <linux/dma-mapping.h>
- #include <linux/debugfs.h>
-+#include <linux/mutex.h>
- #include <linux/seq_file.h>
- #include <linux/delay.h>
- #include <linux/io.h>
-@@ -2866,6 +2867,7 @@ static int s3c_hsotg_udc_start(struct usb_gadget *gadget,
- 		return -EINVAL;
- 	}
- 
-+	mutex_lock(&hsotg->init_mutex);
- 	WARN_ON(hsotg->driver);
- 
- 	driver->driver.bus = NULL;
-@@ -2891,9 +2893,12 @@ static int s3c_hsotg_udc_start(struct usb_gadget *gadget,
+@@ -2889,6 +2889,7 @@ static int s3c_hsotg_udc_start(struct usb_gadget *gadget,
+ 	spin_lock_irqsave(&hsotg->lock, flags);
+ 	s3c_hsotg_init(hsotg);
+ 	s3c_hsotg_core_init_disconnected(hsotg);
++	hsotg->enabled = 0;
+ 	spin_unlock_irqrestore(&hsotg->lock, flags);
  
  	dev_info(hsotg->dev, "bound driver %s\n", driver->driver.name);
+@@ -2929,6 +2930,7 @@ static int s3c_hsotg_udc_stop(struct usb_gadget *gadget)
  
-+	mutex_unlock(&hsotg->init_mutex);
-+
- 	return 0;
- 
- err:
-+	mutex_unlock(&hsotg->init_mutex);
  	hsotg->driver = NULL;
- 	return ret;
- }
-@@ -2914,6 +2919,8 @@ static int s3c_hsotg_udc_stop(struct usb_gadget *gadget)
- 	if (!hsotg)
- 		return -ENODEV;
+ 	hsotg->gadget.speed = USB_SPEED_UNKNOWN;
++	hsotg->enabled = 0;
  
-+	mutex_lock(&hsotg->init_mutex);
-+
- 	/* all endpoints should be shutdown */
- 	for (ep = 1; ep < hsotg->num_of_eps; ep++)
- 		s3c_hsotg_ep_disable(&hsotg->eps[ep].ep);
-@@ -2931,6 +2938,8 @@ static int s3c_hsotg_udc_stop(struct usb_gadget *gadget)
+ 	spin_unlock_irqrestore(&hsotg->lock, flags);
  
- 	clk_disable(hsotg->clk);
- 
-+	mutex_unlock(&hsotg->init_mutex);
-+
- 	return 0;
- }
- 
-@@ -2959,6 +2968,7 @@ static int s3c_hsotg_pullup(struct usb_gadget *gadget, int is_on)
- 
- 	dev_dbg(hsotg->dev, "%s: is_on: %d\n", __func__, is_on);
- 
-+	mutex_lock(&hsotg->init_mutex);
+@@ -2972,9 +2974,11 @@ static int s3c_hsotg_pullup(struct usb_gadget *gadget, int is_on)
  	spin_lock_irqsave(&hsotg->lock, flags);
  	if (is_on) {
  		clk_enable(hsotg->clk);
-@@ -2970,6 +2980,7 @@ static int s3c_hsotg_pullup(struct usb_gadget *gadget, int is_on)
- 
- 	hsotg->gadget.speed = USB_SPEED_UNKNOWN;
- 	spin_unlock_irqrestore(&hsotg->lock, flags);
-+	mutex_unlock(&hsotg->init_mutex);
- 
- 	return 0;
- }
-@@ -3572,6 +3583,8 @@ int s3c_hsotg_suspend(struct dwc2_hsotg *hsotg)
- 	unsigned long flags;
- 	int ret = 0;
- 
-+	mutex_lock(&hsotg->init_mutex);
-+
- 	if (hsotg->driver)
- 		dev_info(hsotg->dev, "suspending usb gadget %s\n",
- 			 hsotg->driver->driver.name);
-@@ -3594,6 +3607,8 @@ int s3c_hsotg_suspend(struct dwc2_hsotg *hsotg)
++		hsotg->enabled = 1;
+ 		s3c_hsotg_core_connect(hsotg);
+ 	} else {
+ 		s3c_hsotg_core_disconnect(hsotg);
++		hsotg->enabled = 0;
  		clk_disable(hsotg->clk);
  	}
  
-+	mutex_unlock(&hsotg->init_mutex);
-+
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(s3c_hsotg_suspend);
-@@ -3603,6 +3618,8 @@ int s3c_hsotg_resume(struct dwc2_hsotg *hsotg)
- 	unsigned long flags;
- 	int ret = 0;
+@@ -3585,20 +3589,21 @@ int s3c_hsotg_suspend(struct dwc2_hsotg *hsotg)
  
-+	mutex_lock(&hsotg->init_mutex);
+ 	mutex_lock(&hsotg->init_mutex);
+ 
+-	if (hsotg->driver)
++	if (hsotg->driver) {
++		int ep;
 +
- 	if (hsotg->driver) {
- 		dev_info(hsotg->dev, "resuming usb gadget %s\n",
+ 		dev_info(hsotg->dev, "suspending usb gadget %s\n",
  			 hsotg->driver->driver.name);
-@@ -3619,6 +3636,8 @@ int s3c_hsotg_resume(struct dwc2_hsotg *hsotg)
- 	s3c_hsotg_core_connect(hsotg);
- 	spin_unlock_irqrestore(&hsotg->lock, flags);
  
-+	mutex_unlock(&hsotg->init_mutex);
-+
+-	spin_lock_irqsave(&hsotg->lock, flags);
+-	s3c_hsotg_core_disconnect(hsotg);
+-	s3c_hsotg_disconnect(hsotg);
+-	hsotg->gadget.speed = USB_SPEED_UNKNOWN;
+-	spin_unlock_irqrestore(&hsotg->lock, flags);
++		spin_lock_irqsave(&hsotg->lock, flags);
++		if (hsotg->enabled)
++			s3c_hsotg_core_disconnect(hsotg);
++		s3c_hsotg_disconnect(hsotg);
++		hsotg->gadget.speed = USB_SPEED_UNKNOWN;
++		spin_unlock_irqrestore(&hsotg->lock, flags);
+ 
+-	s3c_hsotg_phy_disable(hsotg);
++		s3c_hsotg_phy_disable(hsotg);
+ 
+-	if (hsotg->driver) {
+-		int ep;
+ 		for (ep = 0; ep < hsotg->num_of_eps; ep++)
+ 			s3c_hsotg_ep_disable(&hsotg->eps[ep].ep);
+ 
+@@ -3626,16 +3631,16 @@ int s3c_hsotg_resume(struct dwc2_hsotg *hsotg)
+ 
+ 		clk_enable(hsotg->clk);
+ 		ret = regulator_bulk_enable(ARRAY_SIZE(hsotg->supplies),
+-				      hsotg->supplies);
+-	}
+-
+-	s3c_hsotg_phy_enable(hsotg);
++					    hsotg->supplies);
+ 
+-	spin_lock_irqsave(&hsotg->lock, flags);
+-	s3c_hsotg_core_init_disconnected(hsotg);
+-	s3c_hsotg_core_connect(hsotg);
+-	spin_unlock_irqrestore(&hsotg->lock, flags);
++		s3c_hsotg_phy_enable(hsotg);
+ 
++		spin_lock_irqsave(&hsotg->lock, flags);
++		s3c_hsotg_core_init_disconnected(hsotg);
++		if (hsotg->enabled)
++			s3c_hsotg_core_connect(hsotg);
++		spin_unlock_irqrestore(&hsotg->lock, flags);
++	}
+ 	mutex_unlock(&hsotg->init_mutex);
+ 
  	return ret;
- }
- EXPORT_SYMBOL_GPL(s3c_hsotg_resume);
-diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c
-index 57eb8a3e022b..ec5658ac52ba 100644
---- a/drivers/usb/dwc2/platform.c
-+++ b/drivers/usb/dwc2/platform.c
-@@ -40,6 +40,7 @@
- #include <linux/device.h>
- #include <linux/dma-mapping.h>
- #include <linux/of_device.h>
-+#include <linux/mutex.h>
- #include <linux/platform_device.h>
- 
- #include <linux/usb/of.h>
-@@ -212,6 +213,7 @@ static int dwc2_driver_probe(struct platform_device *dev)
- 	hsotg->dr_mode = of_usb_get_dr_mode(dev->dev.of_node);
- 
- 	spin_lock_init(&hsotg->lock);
-+	mutex_init(&hsotg->init_mutex);
- 	retval = dwc2_gadget_init(hsotg, irq);
- 	if (retval)
- 		return retval;
 -- 
 1.9.2
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
