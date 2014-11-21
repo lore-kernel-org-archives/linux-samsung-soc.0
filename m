@@ -1,64 +1,111 @@
-From: Padma Venkat <padma.kvr-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] spi: s3c64xx: add support for exynos7 SPI controller
-Date: Fri, 21 Nov 2014 12:38:38 +0530
-Message-ID: <CAAgF-BfOUSTNX=ieLihAXVXuwd3NzPHG3FpmhqZwnpQpeveDig@mail.gmail.com>
-References: <1415267509-16653-1-git-send-email-padma.v@samsung.com>
-	<20141106102636.GT8509@sirena.org.uk>
-	<CAAgF-BfGwcNzMx0meFVkJqNMTbQ4_PP1PZ3i6edOm6U3bc26_Q@mail.gmail.com>
-	<20141107101310.GA8509@sirena.org.uk>
-	<CAAgF-Bd=S7-PoA7GZoy87W9Dem3OXVhc1tL-eyWEAHvF0LPTKQ@mail.gmail.com>
-	<CAAgF-BcARoRZv=BPqQWyp6rJQQ=CE0FEUz_2vgQSpeZyLwbkBw@mail.gmail.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v4 1/2] i2c: s3c2410: Handle i2c sys_cfg register in i2c
+ driver
+Date: Fri, 21 Nov 2014 08:25:45 +0100
+Message-ID: <20141121072545.GG1480@katana>
+References: <1414656270-8048-1-git-send-email-pankaj.dubey@samsung.com>
+ <1414656270-8048-2-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAgF-BcARoRZv=BPqQWyp6rJQQ=CE0FEUz_2vgQSpeZyLwbkBw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="yQbNiKLmgenwUfTN"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from sauhun.de ([89.238.76.85]:49119 "EHLO pokefinder.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750876AbaKUHY2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 21 Nov 2014 02:24:28 -0500
+Content-Disposition: inline
+In-Reply-To: <1414656270-8048-2-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, thomas.ab@samsung.com, Rob Herring <robh+dt@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org, linux-i2c@vger.kernel.org
 
-Hi Mark,
 
->>>> CS can also be controlled automatically by setting AUTO_N_MANUAL to 1
->>>> in CS_CFG. When it is auto CS automatically toggles between packet to
->>>> packet. NCS_TIME_COUNT in CS_CFG controls the inactive period. The
->>>> driver by default uses manual mode. But on exynos7 the manual mode is
->>>> removed.
->>>
->>> OK, but what's a packet here?
->>
->> Packet is either 1 byte or 4 bytes size depends on width of the SPI
->> channel.
->>
->>>
->>>> I tested the driver with wm5110 codec.
->>>
->>> Did you try firmware downloads or something else that generates multiple
->>> transfers in a message?  Normal register writes will use a single
->>> transfer so I'd expect them to just work.
->>>
->>
->> OK. I don't have provision to test on this board. I will try to test
->> on older boards by disabling manual mode.
->>
->
-> I tested on exynos5420 peach-pit by enabling auto mode. I used dd
-> command to read 1MB data from spi flash and I compared the result with
-> manual mode. Both are same.
+--yQbNiKLmgenwUfTN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I also tested this patch with Javier Martinez Canillas patches for
-enabling spidev nodes from
-http://www.spinics.net/lists/linux-samsung-soc/msg39057.html.
+On Thu, Oct 30, 2014 at 01:34:29PM +0530, Pankaj Dubey wrote:
+> Let's handle i2c interrupt re-configuration in i2c driver. This will
+> help us in removing some soc specific checks from machine files and
+> will help in removing static iomapping of SYS register in exynos.c
+>=20
+> Since only Exynos5250, and Exynos5420 has i2c nodes in DT, added syscon
+> based phandle to i2c device nodes of respective SoC DT files.
+>=20
+> Also handle saving and restoring of SYS_I2C_CFG register during
+> suspend and resume of i2c driver.
+>=20
+> CC: Rob Herring <robh+dt@kernel.org>
+> CC: Randy Dunlap <rdunlap@infradead.org>
+> CC: Wolfram Sang <wsa@the-dreams.de>
+> CC: Russell King <linux@arm.linux.org.uk>
+> CC: devicetree@vger.kernel.org
+> CC: linux-doc@vger.kernel.org
+> CC: linux-i2c@vger.kernel.org
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+>  .../devicetree/bindings/i2c/i2c-s3c2410.txt        |    1 +
+>  arch/arm/boot/dts/exynos5250.dtsi                  |    4 +++
+>  arch/arm/boot/dts/exynos5420.dtsi                  |    4 +++
 
-I read 4MB flashdata from spi by enabling auto mode and compared the
-result. They look same.
+I usually don't take DTS patches. They should go via arm-soc. Please say
+so if there are reasons I should take them.
 
->
->> Thanks
->> padma
->>
->
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> @@ -1084,6 +1092,23 @@ s3c24xx_i2c_parse_dt(struct device_node *np, struc=
+t s3c24xx_i2c *i2c)
+>  	of_property_read_u32(np, "samsung,i2c-slave-addr", &pdata->slave_addr);
+>  	of_property_read_u32(np, "samsung,i2c-max-bus-freq",
+>  				(u32 *)&pdata->frequency);
+> +	/*
+> +	 * Exynos5's legacy i2c controller and new high speed i2c
+> +	 * controller have muxed interrupt sources. By default the
+> +	 * interrupts for 4-channel HS-I2C controller are enabled.
+> +	 * If node for first four channels of legacy i2c controller
+
+s/node/nodes/
+
+> +	 * are available then re-configure the interrupts via the
+> +	 * system register.
+> +	 */
+> +	id =3D of_alias_get_id(np, "i2c");
+> +	i2c->sysreg =3D syscon_regmap_lookup_by_phandle(np,
+> +			"samsung,sysreg-phandle");
+> +	if (IS_ERR(i2c->sysreg)) {
+> +		/* As this is not compulsory do not return error */
+> +		pr_info("i2c-%d skipping re-configuration of interrutps\n", id);
+
+I'd say drop this message. If you want to keep it, it should be dev_dbg.
+
+> +		return;
+> +	}
+> +	regmap_update_bits(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, BIT(id), 0);
+>  }
+
+Rest looks good, thanks!
+
+--yQbNiKLmgenwUfTN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUbuj5AAoJEBQN5MwUoCm2hTsP/Az5+KkwKMv2AxxdjTHgErj3
+XGj9YmSGR3ISb8e3E+JBbWBlPxyYXdQgncO1+2uSqJPD7WGsE9r2/klSX8l7XKOF
++wek+ic9f0qzO+R+CnoYF1t54OtG7NLQBztSj7DXU5LpFc8amAmNqUAEoO/LK0W+
+dsgk+eOub6AZW6Tl33VKiDviWim+KutfHT7CAduRFcWAnAiAZU4Wx6cDLzGR0qMa
+3H4etNn0IX6m6suB0I9G7dC0qnw3BpsF8851kY5e5xTEieMubv7S9vrpp9rEkSB6
+4olSfTRNc/NZkh++XO95RqQMqAjkOtIRECMmUOhCNHSt8jVF5/juKp3spDFeOdvM
+PKN+qy/V1710UWykuYEqwPWxtpdiZ7gVOFh6A47cxBjyHP2wW3PWOIKsAwz4pjPr
+dAjZG40tpCmXtRuQcionSfeXtWLmOFBZMUCZMo/vH+K29esL2RMNkJYsQ2uyNvkx
+EP/ozVNj9H28WM/aOWBk+kMMOBJycUZ2MiH6H68ya7DOs/u2e8WMvb7ZzD0OPUlY
+uM4jg3z3Mom3BBwluMYqCzLSAbZnDaQQNMWrhb57RV0pQ6GEPelmkzZGi47lJ3QN
+9AQOl3HmKVeh4SZeg5vBOVIEcV1x8xeE9hx3u3dsYJ8Q/Sxqf2NHKRg9rbyXlZDs
+oTPciS5BQDe1p0JXQlvT
+=QkRc
+-----END PGP SIGNATURE-----
+
+--yQbNiKLmgenwUfTN--
