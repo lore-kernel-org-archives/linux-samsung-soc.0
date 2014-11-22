@@ -1,49 +1,91 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH] ARM: dts: exynos4: add missing clock to MFC device
-Date: Sat, 22 Nov 2014 23:42:18 +0900
-Message-ID: <5470A0CA.8090705@kernel.org>
-References: <1416397436-13503-1-git-send-email-m.szyprowski@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 1/3] drm/exynos: free DP if probe fails to find a panel or bridge
+Date: Sat, 22 Nov 2014 23:56:34 +0900
+Message-ID: <CAAQKjZPgYbwchnHNEEmjL7eWVGU3_NAHZBvB1Los1d-reyNg6g@mail.gmail.com>
+References: <1416527664-10553-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:58381 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750716AbaKVOmW (ORCPT
+Received: from mail-la0-f54.google.com ([209.85.215.54]:61429 "EHLO
+	mail-la0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750757AbaKVO4g (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 22 Nov 2014 09:42:22 -0500
-In-Reply-To: <1416397436-13503-1-git-send-email-m.szyprowski@samsung.com>
+	Sat, 22 Nov 2014 09:56:36 -0500
+Received: by mail-la0-f54.google.com with SMTP id gf13so5710811lab.27
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Nov 2014 06:56:34 -0800 (PST)
+In-Reply-To: <1416527664-10553-1-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kamil Debski <k.debski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 
-On 11/19/14 20:43, Marek Szyprowski wrote:
-> sclk_mfc is required for MFC device since commit
-> 0c2272170d78f826f6e97f99fb8a67fc17feef07 ("media: s5p-mfc: rename
-> special clock to sclk_mfc"), so add it to exynos4 dts.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+2014-11-21 8:54 GMT+09:00 Gustavo Padovan <gustavo@padovan.org>:
+> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+>
+> DP was leaked everytime function returns EPROBE_DEFER, free it before
+> returning.
+
+It seems that you misunderstood devm_* api.
+
+Thanks,
+Inki Dae
+
+>
+> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 > ---
->  arch/arm/boot/dts/exynos4.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-> index 0b5e46cd449f..c790a746b9c8 100644
-> --- a/arch/arm/boot/dts/exynos4.dtsi
-> +++ b/arch/arm/boot/dts/exynos4.dtsi
-> @@ -398,8 +398,8 @@
->  		reg = <0x13400000 0x10000>;
->  		interrupts = <0 94 0>;
->  		samsung,power-domain = <&pd_mfc>;
-> -		clocks = <&clock CLK_MFC>;
-> -		clock-names = "mfc";
-> +		clocks = <&clock CLK_MFC>, <&clock CLK_SCLK_MFC>;
-> +		clock-names = "mfc", "sclk_mfc";
->  		status = "disabled";
->  		iommus = <&sysmmu_mfc_l>, <&sysmmu_mfc_r>;
->  		iommu-names = "left", "right";
-
-Applied, thanks.
-
-- Kukjin
+>  drivers/gpu/drm/exynos/exynos_dp_core.c | 21 +++++++++++++++------
+>  1 file changed, 15 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> index 85762cf..6fd4a46 100644
+> --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+> +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> @@ -1336,8 +1336,10 @@ static int exynos_dp_probe(struct platform_device *pdev)
+>         if (panel_node) {
+>                 dp->panel = of_drm_find_panel(panel_node);
+>                 of_node_put(panel_node);
+> -               if (!dp->panel)
+> -                       return -EPROBE_DEFER;
+> +               if (!dp->panel) {
+> +                       ret = -EPROBE_DEFER;
+> +                       goto free_dp;
+> +               }
+>         }
+>
+>         endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
+> @@ -1346,10 +1348,14 @@ static int exynos_dp_probe(struct platform_device *pdev)
+>                 if (bridge_node) {
+>                         dp->bridge = of_drm_find_bridge(bridge_node);
+>                         of_node_put(bridge_node);
+> -                       if (!dp->bridge)
+> -                               return -EPROBE_DEFER;
+> -               } else
+> -                       return -EPROBE_DEFER;
+> +                       if (!dp->bridge) {
+> +                               ret = -EPROBE_DEFER;
+> +                               goto free_dp;
+> +                       }
+> +               } else {
+> +                       ret = -EPROBE_DEFER;
+> +                       goto free_dp;
+> +               }
+>         }
+>
+>         exynos_dp_display.ctx = dp;
+> @@ -1359,6 +1365,9 @@ static int exynos_dp_probe(struct platform_device *pdev)
+>                 exynos_drm_component_del(&pdev->dev,
+>                                                 EXYNOS_DEVICE_TYPE_CONNECTOR);
+>
+> +free_dp:
+> +       devm_kfree(dev, dp);
+> +
+>         return ret;
+>  }
+>
+> --
+> 1.9.3
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
