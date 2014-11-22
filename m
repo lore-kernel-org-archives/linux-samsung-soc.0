@@ -1,91 +1,80 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: Peach Pi/Pit boot failures in linux-next  (was Re: [RFC PATCH
- 1/1] drm/exynos: Move platform drivers registration to module init)
-Date: Sat, 22 Nov 2014 11:21:56 +0100
-Message-ID: <547063C4.9030607@samsung.com>
-References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk>	<7hh9xwxsev.fsf@deeprootsystems.com>	<546CCAB8.9050402@collabora.co.uk>	<CAFp+6iFbxWoh4h0ZpY=JQO4rjLss2kpj-nZM7KGiJ_F4AZ2W=g@mail.gmail.com>	<7hppchsu29.fsf@deeprootsystems.com>	<546E293D.9000300@collabora.co.uk>	<7hbno1spdt.fsf@deeprootsystems.com>	<546F3837.5020706@collabora.co.uk> <7hzjbko6eb.fsf@deeprootsystems.com> <546FA53D.2060807@collabora.co.uk>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH 01/11] pinctrl: exynos: Add BUS1 pin controller for exynos7
+Date: Sat, 22 Nov 2014 19:07:35 +0530
+Message-ID: <CAGOxZ53d_Vk1cF8Y2LNgMNeuCFeQJKmHQeN19pO5HfAdp4hx8A@mail.gmail.com>
+References: <1416576954-11997-1-git-send-email-gautam.vivek@samsung.com> <1416576954-11997-2-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f52.google.com ([74.125.82.52]:59775 "EHLO
-	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751019AbaKVKWH (ORCPT
+Received: from mail-yk0-f179.google.com ([209.85.160.179]:50668 "EHLO
+	mail-yk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750708AbaKVNiQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 22 Nov 2014 05:22:07 -0500
-Received: by mail-wg0-f52.google.com with SMTP id a1so8493019wgh.39
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Nov 2014 02:22:06 -0800 (PST)
-In-Reply-To: <546FA53D.2060807@collabora.co.uk>
+	Sat, 22 Nov 2014 08:38:16 -0500
+In-Reply-To: <1416576954-11997-2-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kevin Hilman <khilman@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Vivek Gautam <gautamvivek1987@gmail.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Paolo Pisati <p.pisati@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, balbi@ti.com, kishon@ti.com, linux-omap@vger.kernel.org, gregkh@linuxfoundation.org, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, robh+dt@kernel.org, stern@rowland.harvard.edu, Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
 
-W dniu 21.11.2014 o 21:49, Javier Martinez Canillas pisze:
-> Hello Kevin,
->
-> On 11/21/2014 05:38 PM, Kevin Hilman wrote:
->>> So, I see two different boot failures on the Peach Pi[t] Chromebooks:
->>>
->>> 1) next20141121 boot fails due snd-soc-snow
->>>
->>> Disabling CONFIG_SND_SOC_SNOW makes the boot to got a little further
->>> but still fails with the second issue:
->>>
->>> 2) next20141121 boot hangs if unused clocks are disabled.
->>>
->>> I tried to root cause these two issues but didn't see anything evident
->>> so I'll find a last known good commit and bisect. If anyone has an
->>> idea of the possible causes for these issues that would be appreciated.
->>
->> FWIW, in addition to the failures on 5800/peach-pi, I'm also seeing boot
->> failures in next-20141121 on the exynos5420-arndale-octa[1].  Adding
->> clk_ignore_unused gets things booting there as well.
->>
->> What's interesting is that my exynos5422-odroid-xu3 is booting fine as
->> well as the exynos5420-arndale and the exynos5410-odroid-xu (shown as
->> exynos5410-smdk5410)
->>
->> Whatever the issue, it definietly seems like a problem that was came
->> through a driver/subsystem tree because that these boards are all
->> booting fine with Kukjin's for-next, arm-soc/for-next and
->> mainline/v3.18-rc5 (all with just plain exynos_defconfig, and without
->> clk_ignore_unused.)  For example, just looking at peach-pi across all
->> these trees[2], you can see that it's only failing in linux-next.
->>
->
-> By bisecting I found that the commit introducing both regressions is:
->
-> ae43b32 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power Management support v12")
->
-> By reverting ae43b32, next-20141121 boots with both CONFIG_SND_SOC_SNOW=y
-> and *without* clk_ignore_unused.
->
-> Krzysztof,
->
-> I see you are the author of the patch, maybe you can take a look why this
-> is causing regressions in some Exynos boards?
+Hi Vivek,
 
-Oh crap... I'll look at it on Monday. However I don't have Peach Pi so any 
-information would be useful. Can you post dmesg and your config? (is it 
-exynos_defconfig?)
+On Fri, Nov 21, 2014 at 7:05 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+> USB and Power regulator on Exynos7 require gpios available
+> in BUS1 pin controller block.
+> So adding the BUS1 pinctrl support.
+>
+> Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> ---
+>  drivers/pinctrl/samsung/pinctrl-exynos.c |   12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> index d5d4cfc..caca5b5 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> @@ -1300,6 +1300,13 @@ static const struct samsung_pin_bank_data exynos7_pin_banks7[] __initconst = {
+>         EXYNOS_PIN_BANK_EINTG(8, 0x060, "gpr3", 0x0c),
+>  };
+>
+> +/* pin banks of exynos7 pin-controller - BUS1 */
+> +static const struct samsung_pin_bank_data exynos7_pin_banks8[] __initconst = {
+> +       EXYNOS_PIN_BANK_EINTG(8, 0x020, "gpf0", 0x00),
+> +       EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpf4", 0x10),
+> +       EXYNOS_PIN_BANK_EINTG(6, 0x120, "gph1", 0x20),
+> +};
+> +
+Looks like you are just trying to touch pin banks only related to USB
+stuffs, but as this patch does not have any dependencies on other
+patches in this series, will you consider adding other pin banks of
+BUS1, just for completeness of BUS1 pin-controller.
 
-Additionally can you boot the board with DMATEST enabled (without reverting 
-my commit so probably with clk_ignore_unsed and with SND_SNOW disabled) and 
-run dmatest on all channels? Something like:
-   echo 2000 > /sys/module/dmatest/parameters/timeout
-   echo 2 > /sys/module/dmatest/parameters/iterations
-   for i in `ls /sys/class/dma/`
-   do
-     echo $i > /sys/module/dmatest/parameters/channel
-     echo 1 > /sys/module/dmatest/parameters/run
-   done
+>  const struct samsung_pin_ctrl exynos7_pin_ctrl[] __initconst = {
+>         {
+>                 /* pin-controller instance 0 Alive data */
+> @@ -1342,5 +1349,10 @@ const struct samsung_pin_ctrl exynos7_pin_ctrl[] __initconst = {
+>                 .pin_banks      = exynos7_pin_banks7,
+>                 .nr_banks       = ARRAY_SIZE(exynos7_pin_banks7),
+>                 .eint_gpio_init = exynos_eint_gpio_init,
+> +       }, {
+> +               /* pin-controller instance 8 BUS1 data */
+> +               .pin_banks      = exynos7_pin_banks8,
+> +               .nr_banks       = ARRAY_SIZE(exynos7_pin_banks8),
+> +               .eint_gpio_init = exynos_eint_gpio_init,
+>         },
+>  };
+> --
+> 1.7.10.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-... and post these results also.
 
-I will test it on Arndale Octa, maybe the cause is the same. Unfortunately 
-it seems Arndale Octa does not have any sound enabled in DTS so it may be 
-hard to test I2S bus (which is used by audio).
 
-Best regards,
-Krzysztof
+-- 
+Regards,
+Alim
