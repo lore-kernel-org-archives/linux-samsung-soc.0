@@ -1,54 +1,106 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH 00/11] Exynos7: Adding USB 3.0 support
-Date: Sun, 23 Nov 2014 00:12:05 +0900
-Message-ID: <5470A7C5.1070302@kernel.org>
-References: <1416576954-11997-1-git-send-email-gautam.vivek@samsung.com> <20141121151130.GD7508@saruman> <54704BF0.1000903@ti.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH 1/2] drm/exynos: fix null pointer dereference issue
+Date: Sun, 23 Nov 2014 00:28:24 +0900
+Message-ID: <CAAQKjZMA=_VNzMvnPNkQ2r_s+zHVLiHuDTdqWcJMAAJqNopKjQ@mail.gmail.com>
+References: <1415865009-15979-1-git-send-email-inki.dae@samsung.com>
+	<1415865009-15979-2-git-send-email-inki.dae@samsung.com>
+	<20141120231219.GA3123@joana>
+	<546E9F5D.1060203@samsung.com>
+	<20141121144111.GC3123@joana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=EUC-KR
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:59038 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750757AbaKVPML (ORCPT
+Received: from mail-la0-f43.google.com ([209.85.215.43]:33323 "EHLO
+	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751915AbaKVP2Z convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 22 Nov 2014 10:12:11 -0500
-In-Reply-To: <54704BF0.1000903@ti.com>
+	Sat, 22 Nov 2014 10:28:25 -0500
+Received: by mail-la0-f43.google.com with SMTP id q1so5753780lam.16
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Nov 2014 07:28:24 -0800 (PST)
+In-Reply-To: <20141121144111.GC3123@joana>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: balbi@ti.com, Vivek Gautam <gautam.vivek@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, gregkh@linuxfoundation.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com, robh+dt@kernel.org, stern@rowland.harvard.edu, kgene.kim@samsung.com
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On 11/22/14 17:40, Kishon Vijay Abraham I wrote:
-> 
-> On Friday 21 November 2014 08:41 PM, Felipe Balbi wrote:
->> On Fri, Nov 21, 2014 at 07:05:43PM +0530, Vivek Gautam wrote:
->>> The series has dependency on
->>> a) "[PATCH v7 0/7] Enable support for Samsung Exynos7 SoC"
->>>    http://www.spinics.net/lists/linux-samsung-soc/msg38734.html
->>> b) "[GIT PULL] Samsung clock changes for 3.19" - specifically the clock dt
->>>    bindings header.
->>>    http://comments.gmane.org/gmane.linux.kernel.samsung-soc/39142
->>> c) "tty: serial: samsung: Clean-up selection of number of available UARTs"
->>>    http://www.spinics.net/lists/linux-samsung-soc/msg37418.html
->>> d) "dts, kbuild: Implement support for dtb vendor subdirs"(merged in linux-next)
->>>    https://lkml.org/lkml/2014/10/21/654
->>> e) "Samsung pinctrl patches for v3.19"
->>>    http://www.spinics.net/lists/linux-samsung-soc/msg38744.html
->>>
->>> Tested on Exynos7-espresso board with 3.18-rc5 and above dependencies.
->>>
->>> Clubbing the pinctrl, clk, and usb driver changes alongwith the dt changes
->>> together in this series only so as to avoid having 'n' number of dependencies.
->>>
->>> The USB driver patches in this series were part of [1] sent earlier.
->>> [1] [PATCH v2 0/4] usb: dwc3/phy-exynos5-usbdrd: Extend support to Exynos7
->>>     https://lkml.org/lkml/2014/10/7/191
+2014-11-21 23:41 GMT+09:00 Gustavo Padovan <gustavo@padovan.org>:
+> 2014-11-21 Inki Dae <inki.dae@samsung.com>:
+>
+>> On 2014=B3=E2 11=BF=F9 21=C0=CF 08:12, Gustavo Padovan wrote:
+>> > 2014-11-13 Inki Dae <inki.dae@samsung.com>:
+>> >
+>> >> This patch fixes null pointer dereference issue incurred
+>> >> when ipp driver is enabled and Exynos drm driver is closed.
+>> >>
+>> >> Non kms driver should register its own sub driver to setup necess=
+ary
+>> >> resources, which is done by load(). So null pointer dereference
+>> >> occurs when ipp driver is enabled and Exynos drm driver is closed
+>> >> because ipp core device is registered after component_master_add_=
+with_match
+>> >> call.
+>> >>
+>> >> This patch makes exynos_drm_device_subdrv_probe() to be called af=
+ter all non
+>> >> kms drivers are registered.
+>> >
+>> > This patch is breaking exynos initialization, exynos_drm_device_su=
+bdrv_probe()
+>> > needs the drvdata but it is still NULL at this point which make th=
+e whole
+>> > exynos init fails. The drvdata is only set in exynos_drm_load() so=
+ we need
+>> > call exynos_drm_device_subdrv_probe() after that.
 >>
->> I took dwc3 driver patches.
-> 
-> I took the phy patches.
-> 
-I'll take DT changes once exynos7 is landing into samsung tree :)
+>> There might be my missing point but with this patch,
+>> exynos_drm_device_subdrv_probe() will be called after exynos_drm_loa=
+d()
+>> call because all kms drivers are probed before
+>> component_master_add_with_match call so exynos_drm_load() must be ca=
+lled
+>> by component_master_add_with_match function before
+>> exynos_drm_device_subdrv_probe call.
+>>
+>> So could you show me the error messages you faced with? There might =
+be a
+>> corner case I missed.
+>
+> I've added some debug output to it. It fails on
+> exynos_drm_device_subdrv_probe() because the drvdata is NULL. I've ad=
+ded debug
+> output to exynos_drm_load() and as you can see it doesn't get called =
+before
+> subdrv_probe(). I'm testing this on snow.
+>
+> [    1.767835] [drm] Initialized drm 1.1.0 20060810
+> [    1.771120] [drm:exynos_drm_init]
+> [    1.774774] [drm:exynos_drm_platform_probe]
+> [    1.778760] platform exynos-drm: Driver exynos-drm requests probe =
+deferral
+> [    1.786178] platform 145b0000.dp-controller: Driver exynos-dp requ=
+ests
+> probe deferral
+> [    1.794374] exynos-drm-ipp exynos-drm-ipp: drm ipp registered succ=
+essfully.
+> [    1.800372] [drm:exynos_drm_device_subdrv_probe] dev   (null)
+>
+
+Still strange to me. I'd like to reproduce this error because it's
+impossible that exynos_drm_device_subdrv_probe is called without load
+call.
+even If error, this patch must be no problem so in this case, we would
+need check if there might be something we missed about component
+binding not this patch.
+So can you let me know where the git repository is and which defconfig
+file did you tested?
 
 Thanks,
-Kukjin
+Inki Dae
+
+>
+>         Gustavo
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
