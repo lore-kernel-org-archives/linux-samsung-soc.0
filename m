@@ -1,87 +1,52 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 1/2] drm/exynos: fix null pointer dereference issue
-Date: Sun, 23 Nov 2014 00:40:11 +0900
-Message-ID: <CAAQKjZM7txg7-efPJ_uGLAoE=ONrdAvDmL-fgv35AX=1YSrPag@mail.gmail.com>
-References: <1415865009-15979-1-git-send-email-inki.dae@samsung.com>
- <1415865009-15979-2-git-send-email-inki.dae@samsung.com>
- <20141120231219.GA3123@joana> <546E9F5D.1060203@samsung.com>
- <20141121144111.GC3123@joana>
- <CAAQKjZMA=_VNzMvnPNkQ2r_s+zHVLiHuDTdqWcJMAAJqNopKjQ@mail.gmail.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH v2 2/2] arm: dts: Exynos5: Use pmu_system_controller
+ phandle for dp phy
+Date: Sat, 22 Nov 2014 19:56:17 +0100
+Message-ID: <CABxcv=m7_m=Y=Mr+0tm+-i=0_e2SU_FC3SDmRTSdkpi--GQtxQ@mail.gmail.com>
+References: <1414675442-3471-1-git-send-email-gautam.vivek@samsung.com>
+	<1414675442-3471-2-git-send-email-gautam.vivek@samsung.com>
+	<000101cffe30$155793a0$4006bae0$%han@samsung.com>
+	<CABxcv=mams-iVBvACLZ-=Ozcs3KcHSEvxAsRSSV-eKaSnrcXSA@mail.gmail.com>
+	<CAFp+6iEnTbXAUUYMU-bP27f4=X0pEtgmURAwKfRrqDQE4tRpKQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAAQKjZMA=_VNzMvnPNkQ2r_s+zHVLiHuDTdqWcJMAAJqNopKjQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f176.google.com ([209.85.212.176]:47841 "EHLO
+	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751000AbaKVS4S (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 22 Nov 2014 13:56:18 -0500
+Received: by mail-wi0-f176.google.com with SMTP id ex7so2184436wid.9
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Nov 2014 10:56:17 -0800 (PST)
+In-Reply-To: <CAFp+6iEnTbXAUUYMU-bP27f4=X0pEtgmURAwKfRrqDQE4tRpKQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vivek Gautam <gautamvivek1987@gmail.com>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene@kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-MjAxNC0xMS0yMyAwOjI4IEdNVCswOTowMCBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+
-Ogo+IDIwMTQtMTEtMjEgMjM6NDEgR01UKzA5OjAwIEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2b0Bw
-YWRvdmFuLm9yZz46Cj4+IDIwMTQtMTEtMjEgSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29t
-PjoKPj4KPj4+IE9uIDIwMTTrhYQgMTHsm5QgMjHsnbwgMDg6MTIsIEd1c3Rhdm8gUGFkb3ZhbiB3
-cm90ZToKPj4+ID4gMjAxNC0xMS0xMyBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Ogo+
-Pj4gPgo+Pj4gPj4gVGhpcyBwYXRjaCBmaXhlcyBudWxsIHBvaW50ZXIgZGVyZWZlcmVuY2UgaXNz
-dWUgaW5jdXJyZWQKPj4+ID4+IHdoZW4gaXBwIGRyaXZlciBpcyBlbmFibGVkIGFuZCBFeHlub3Mg
-ZHJtIGRyaXZlciBpcyBjbG9zZWQuCj4+PiA+Pgo+Pj4gPj4gTm9uIGttcyBkcml2ZXIgc2hvdWxk
-IHJlZ2lzdGVyIGl0cyBvd24gc3ViIGRyaXZlciB0byBzZXR1cCBuZWNlc3NhcnkKPj4+ID4+IHJl
-c291cmNlcywgd2hpY2ggaXMgZG9uZSBieSBsb2FkKCkuIFNvIG51bGwgcG9pbnRlciBkZXJlZmVy
-ZW5jZQo+Pj4gPj4gb2NjdXJzIHdoZW4gaXBwIGRyaXZlciBpcyBlbmFibGVkIGFuZCBFeHlub3Mg
-ZHJtIGRyaXZlciBpcyBjbG9zZWQKPj4+ID4+IGJlY2F1c2UgaXBwIGNvcmUgZGV2aWNlIGlzIHJl
-Z2lzdGVyZWQgYWZ0ZXIgY29tcG9uZW50X21hc3Rlcl9hZGRfd2l0aF9tYXRjaAo+Pj4gPj4gY2Fs
-bC4KPj4+ID4+Cj4+PiA+PiBUaGlzIHBhdGNoIG1ha2VzIGV4eW5vc19kcm1fZGV2aWNlX3N1YmRy
-dl9wcm9iZSgpIHRvIGJlIGNhbGxlZCBhZnRlciBhbGwgbm9uCj4+PiA+PiBrbXMgZHJpdmVycyBh
-cmUgcmVnaXN0ZXJlZC4KPj4+ID4KPj4+ID4gVGhpcyBwYXRjaCBpcyBicmVha2luZyBleHlub3Mg
-aW5pdGlhbGl6YXRpb24sIGV4eW5vc19kcm1fZGV2aWNlX3N1YmRydl9wcm9iZSgpCj4+PiA+IG5l
-ZWRzIHRoZSBkcnZkYXRhIGJ1dCBpdCBpcyBzdGlsbCBOVUxMIGF0IHRoaXMgcG9pbnQgd2hpY2gg
-bWFrZSB0aGUgd2hvbGUKPj4+ID4gZXh5bm9zIGluaXQgZmFpbHMuIFRoZSBkcnZkYXRhIGlzIG9u
-bHkgc2V0IGluIGV4eW5vc19kcm1fbG9hZCgpIHNvIHdlIG5lZWQKPj4+ID4gY2FsbCBleHlub3Nf
-ZHJtX2RldmljZV9zdWJkcnZfcHJvYmUoKSBhZnRlciB0aGF0Lgo+Pj4KPj4+IFRoZXJlIG1pZ2h0
-IGJlIG15IG1pc3NpbmcgcG9pbnQgYnV0IHdpdGggdGhpcyBwYXRjaCwKPj4+IGV4eW5vc19kcm1f
-ZGV2aWNlX3N1YmRydl9wcm9iZSgpIHdpbGwgYmUgY2FsbGVkIGFmdGVyIGV4eW5vc19kcm1fbG9h
-ZCgpCj4+PiBjYWxsIGJlY2F1c2UgYWxsIGttcyBkcml2ZXJzIGFyZSBwcm9iZWQgYmVmb3JlCj4+
-PiBjb21wb25lbnRfbWFzdGVyX2FkZF93aXRoX21hdGNoIGNhbGwgc28gZXh5bm9zX2RybV9sb2Fk
-KCkgbXVzdCBiZSBjYWxsZWQKPj4+IGJ5IGNvbXBvbmVudF9tYXN0ZXJfYWRkX3dpdGhfbWF0Y2gg
-ZnVuY3Rpb24gYmVmb3JlCj4+PiBleHlub3NfZHJtX2RldmljZV9zdWJkcnZfcHJvYmUgY2FsbC4K
-Pj4+Cj4+PiBTbyBjb3VsZCB5b3Ugc2hvdyBtZSB0aGUgZXJyb3IgbWVzc2FnZXMgeW91IGZhY2Vk
-IHdpdGg/IFRoZXJlIG1pZ2h0IGJlIGEKPj4+IGNvcm5lciBjYXNlIEkgbWlzc2VkLgo+Pgo+PiBJ
-J3ZlIGFkZGVkIHNvbWUgZGVidWcgb3V0cHV0IHRvIGl0LiBJdCBmYWlscyBvbgo+PiBleHlub3Nf
-ZHJtX2RldmljZV9zdWJkcnZfcHJvYmUoKSBiZWNhdXNlIHRoZSBkcnZkYXRhIGlzIE5VTEwuIEkn
-dmUgYWRkZWQgZGVidWcKPj4gb3V0cHV0IHRvIGV4eW5vc19kcm1fbG9hZCgpIGFuZCBhcyB5b3Ug
-Y2FuIHNlZSBpdCBkb2Vzbid0IGdldCBjYWxsZWQgYmVmb3JlCj4+IHN1YmRydl9wcm9iZSgpLiBJ
-J20gdGVzdGluZyB0aGlzIG9uIHNub3cuCj4+Cj4+IFsgICAgMS43Njc4MzVdIFtkcm1dIEluaXRp
-YWxpemVkIGRybSAxLjEuMCAyMDA2MDgxMAo+PiBbICAgIDEuNzcxMTIwXSBbZHJtOmV4eW5vc19k
-cm1faW5pdF0KPj4gWyAgICAxLjc3NDc3NF0gW2RybTpleHlub3NfZHJtX3BsYXRmb3JtX3Byb2Jl
-XQo+PiBbICAgIDEuNzc4NzYwXSBwbGF0Zm9ybSBleHlub3MtZHJtOiBEcml2ZXIgZXh5bm9zLWRy
-bSByZXF1ZXN0cyBwcm9iZSBkZWZlcnJhbAo+PiBbICAgIDEuNzg2MTc4XSBwbGF0Zm9ybSAxNDVi
-MDAwMC5kcC1jb250cm9sbGVyOiBEcml2ZXIgZXh5bm9zLWRwIHJlcXVlc3RzCj4+IHByb2JlIGRl
-ZmVycmFsCj4+IFsgICAgMS43OTQzNzRdIGV4eW5vcy1kcm0taXBwIGV4eW5vcy1kcm0taXBwOiBk
-cm0gaXBwIHJlZ2lzdGVyZWQgc3VjY2Vzc2Z1bGx5Lgo+PiBbICAgIDEuODAwMzcyXSBbZHJtOmV4
-eW5vc19kcm1fZGV2aWNlX3N1YmRydl9wcm9iZV0gZGV2ICAgKG51bGwpCj4+Cj4KPiBTdGlsbCBz
-dHJhbmdlIHRvIG1lLiBJJ2QgbGlrZSB0byByZXByb2R1Y2UgdGhpcyBlcnJvciBiZWNhdXNlIGl0
-J3MKPiBpbXBvc3NpYmxlIHRoYXQgZXh5bm9zX2RybV9kZXZpY2Vfc3ViZHJ2X3Byb2JlIGlzIGNh
-bGxlZCB3aXRob3V0IGxvYWQKPiBjYWxsLgo+IGV2ZW4gSWYgZXJyb3IsIHRoaXMgcGF0Y2ggbXVz
-dCBiZSBubyBwcm9ibGVtIHNvIGluIHRoaXMgY2FzZSwgd2Ugd291bGQKPiBuZWVkIGNoZWNrIGlm
-IHRoZXJlIG1pZ2h0IGJlIHNvbWV0aGluZyB3ZSBtaXNzZWQgYWJvdXQgY29tcG9uZW50Cj4gYmlu
-ZGluZyBub3QgdGhpcyBwYXRjaC4KCkJ1dCBpdCdzIGJldHRlciB0byBjYWxsIGV4eW5vc19kcm1f
-ZGV2aWNlX3N1YmRydl9wcm9iZSgpIGluIGxvYWQoKQpsaWtlIGJlZm9yZSBiZWNhdXNlIHdlIHNo
-b3VsZCBtb3ZlIGFsbCByZWdpc3RlciBjb2RlcyBvZiBzdWIgZHJpdmVycwppbnRvIGluaXQoKSBm
-b3IgdGhlIG1lYW50aW1lLiBTbyBsZXQncyBqdXN0IHJldmVydCBpdC4KClRoYW5rcywKSW5raSBE
-YWUKCj4gU28gY2FuIHlvdSBsZXQgbWUga25vdyB3aGVyZSB0aGUgZ2l0IHJlcG9zaXRvcnkgaXMg
-YW5kIHdoaWNoIGRlZmNvbmZpZwo+IGZpbGUgZGlkIHlvdSB0ZXN0ZWQ/Cj4KPiBUaGFua3MsCj4g
-SW5raSBEYWUKPgo+Pgo+PiAgICAgICAgIEd1c3Rhdm8KPj4gX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KPj4gZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+PiBk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4+IGh0dHA6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwKX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
-bi9saXN0aW5mby9kcmktZGV2ZWwK
+Hello Vivek
+
+On Wed, Nov 19, 2014 at 1:03 PM, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
+>>
+>> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>
+> Thanks for testing.
+>
+
+You are welcome
+
+>>
+>> Kukjin,
+>
+> Sorry for not adding Kukjin to the list and thereby for the delay
+> about this patch.
+>
+
+No worries but I'm not sure if Kukjin is aware of this patch. I see he
+has been applying other patches but didn't pick $subject.
+
+Maybe you can resend it to Kukjin just to be sure he will have it in
+his mailbox?
+
+Best regards,
+Javier
