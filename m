@@ -1,52 +1,56 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: [PATCH v2 2/2] arm: dts: Exynos5: Use pmu_system_controller
- phandle for dp phy
-Date: Sat, 22 Nov 2014 19:56:17 +0100
-Message-ID: <CABxcv=m7_m=Y=Mr+0tm+-i=0_e2SU_FC3SDmRTSdkpi--GQtxQ@mail.gmail.com>
-References: <1414675442-3471-1-git-send-email-gautam.vivek@samsung.com>
-	<1414675442-3471-2-git-send-email-gautam.vivek@samsung.com>
-	<000101cffe30$155793a0$4006bae0$%han@samsung.com>
-	<CABxcv=mams-iVBvACLZ-=Ozcs3KcHSEvxAsRSSV-eKaSnrcXSA@mail.gmail.com>
-	<CAFp+6iEnTbXAUUYMU-bP27f4=X0pEtgmURAwKfRrqDQE4tRpKQ@mail.gmail.com>
+From: =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+Subject: [PATCH v2 0/5] ARM: EXYNOS: ODROID-XU DT and LEDs
+Date: Sat, 22 Nov 2014 21:26:19 +0100
+Message-ID: <1416687984-3546-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f176.google.com ([209.85.212.176]:47841 "EHLO
-	mail-wi0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751000AbaKVS4S (ORCPT
+Received: from cantor2.suse.de ([195.135.220.15]:46893 "EHLO mx2.suse.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751575AbaKVU0g (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 22 Nov 2014 13:56:18 -0500
-Received: by mail-wi0-f176.google.com with SMTP id ex7so2184436wid.9
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Nov 2014 10:56:17 -0800 (PST)
-In-Reply-To: <CAFp+6iEnTbXAUUYMU-bP27f4=X0pEtgmURAwKfRrqDQE4tRpKQ@mail.gmail.com>
+	Sat, 22 Nov 2014 15:26:36 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautamvivek1987@gmail.com>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene@kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, =?UTF-8?q?=EA=B9=80=ED=95=99=EC=A3=BC?= <ruppi.kim@hardkernel.com>, Humberto Naves <hsnaves@gmail.com>, Jan Kiszka <jan.kiszka@siemens.com>, Johann Pfefferl <johann.pfefferl@siemens.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
 
-Hello Vivek
+Hello,
 
-On Wed, Nov 19, 2014 at 1:03 PM, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
->>
->> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->
-> Thanks for testing.
->
+This series adds a dedicated ODROID-XU device tree and enhances it with=
+=20
+LED configuration, to match the downstream 3.14 based behavior.
 
-You are welcome
+Regards,
+Andreas
 
->>
->> Kukjin,
->
-> Sorry for not adding Kukjin to the list and thereby for the delay
-> about this patch.
->
+v1 -> v2:
+* Inserted needed Sobs from Hakjoo Kim
+* Rebased pinctrl (.svc, .{g,w}eint_{con,mask,pend} fields dropped)
 
-No worries but I'm not sure if Kukjin is aware of this patch. I see he
-has been applying other patches but didn't pick $subject.
+Andreas F=C3=A4rber (3):
+  ARM: dts: exynos5410: Clean up SMDK5410 indentation
+  ARM: dts: exynos5410: Prepare ODROID-XU device tree
+  ARM: dts: exynos5410: Add ODROID-XU LEDs
 
-Maybe you can resend it to Kukjin just to be sure he will have it in
-his mailbox?
+Hakjoo Kim (2):
+  pinctrl: exynos: add exynos5410 SoC specific data
+  ARM: dts: add pinctrl support to Exynos5410
 
-Best regards,
-Javier
+ .../bindings/pinctrl/samsung-pinctrl.txt           |   1 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/exynos5410-odroidxu.dts          | 103 ++++++
+ arch/arm/boot/dts/exynos5410-pinctrl.dtsi          | 406 +++++++++++++=
+++++++++
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          |   6 +-
+ arch/arm/boot/dts/exynos5410.dtsi                  |  30 ++
+ drivers/pinctrl/samsung/pinctrl-exynos.c           | 126 +++++++
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |   2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |   1 +
+ 9 files changed, 673 insertions(+), 3 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos5410-odroidxu.dts
+ create mode 100644 arch/arm/boot/dts/exynos5410-pinctrl.dtsi
+
+--=20
+2.1.2
