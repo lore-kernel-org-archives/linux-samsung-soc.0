@@ -1,106 +1,87 @@
 From: Inki Dae <inki.dae@samsung.com>
 Subject: Re: [PATCH 1/2] drm/exynos: fix null pointer dereference issue
-Date: Sun, 23 Nov 2014 00:28:24 +0900
-Message-ID: <CAAQKjZMA=_VNzMvnPNkQ2r_s+zHVLiHuDTdqWcJMAAJqNopKjQ@mail.gmail.com>
+Date: Sun, 23 Nov 2014 00:40:11 +0900
+Message-ID: <CAAQKjZM7txg7-efPJ_uGLAoE=ONrdAvDmL-fgv35AX=1YSrPag@mail.gmail.com>
 References: <1415865009-15979-1-git-send-email-inki.dae@samsung.com>
-	<1415865009-15979-2-git-send-email-inki.dae@samsung.com>
-	<20141120231219.GA3123@joana>
-	<546E9F5D.1060203@samsung.com>
-	<20141121144111.GC3123@joana>
+ <1415865009-15979-2-git-send-email-inki.dae@samsung.com>
+ <20141120231219.GA3123@joana> <546E9F5D.1060203@samsung.com>
+ <20141121144111.GC3123@joana>
+ <CAAQKjZMA=_VNzMvnPNkQ2r_s+zHVLiHuDTdqWcJMAAJqNopKjQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=EUC-KR
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f43.google.com ([209.85.215.43]:33323 "EHLO
-	mail-la0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751915AbaKVP2Z convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 22 Nov 2014 10:28:25 -0500
-Received: by mail-la0-f43.google.com with SMTP id q1so5753780lam.16
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Nov 2014 07:28:24 -0800 (PST)
-In-Reply-To: <20141121144111.GC3123@joana>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAAQKjZMA=_VNzMvnPNkQ2r_s+zHVLiHuDTdqWcJMAAJqNopKjQ@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Gustavo Padovan <gustavo@padovan.org>
 Cc: a.hajda@samsung.com, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-2014-11-21 23:41 GMT+09:00 Gustavo Padovan <gustavo@padovan.org>:
-> 2014-11-21 Inki Dae <inki.dae@samsung.com>:
->
->> On 2014=B3=E2 11=BF=F9 21=C0=CF 08:12, Gustavo Padovan wrote:
->> > 2014-11-13 Inki Dae <inki.dae@samsung.com>:
->> >
->> >> This patch fixes null pointer dereference issue incurred
->> >> when ipp driver is enabled and Exynos drm driver is closed.
->> >>
->> >> Non kms driver should register its own sub driver to setup necess=
-ary
->> >> resources, which is done by load(). So null pointer dereference
->> >> occurs when ipp driver is enabled and Exynos drm driver is closed
->> >> because ipp core device is registered after component_master_add_=
-with_match
->> >> call.
->> >>
->> >> This patch makes exynos_drm_device_subdrv_probe() to be called af=
-ter all non
->> >> kms drivers are registered.
->> >
->> > This patch is breaking exynos initialization, exynos_drm_device_su=
-bdrv_probe()
->> > needs the drvdata but it is still NULL at this point which make th=
-e whole
->> > exynos init fails. The drvdata is only set in exynos_drm_load() so=
- we need
->> > call exynos_drm_device_subdrv_probe() after that.
->>
->> There might be my missing point but with this patch,
->> exynos_drm_device_subdrv_probe() will be called after exynos_drm_loa=
-d()
->> call because all kms drivers are probed before
->> component_master_add_with_match call so exynos_drm_load() must be ca=
-lled
->> by component_master_add_with_match function before
->> exynos_drm_device_subdrv_probe call.
->>
->> So could you show me the error messages you faced with? There might =
-be a
->> corner case I missed.
->
-> I've added some debug output to it. It fails on
-> exynos_drm_device_subdrv_probe() because the drvdata is NULL. I've ad=
-ded debug
-> output to exynos_drm_load() and as you can see it doesn't get called =
-before
-> subdrv_probe(). I'm testing this on snow.
->
-> [    1.767835] [drm] Initialized drm 1.1.0 20060810
-> [    1.771120] [drm:exynos_drm_init]
-> [    1.774774] [drm:exynos_drm_platform_probe]
-> [    1.778760] platform exynos-drm: Driver exynos-drm requests probe =
-deferral
-> [    1.786178] platform 145b0000.dp-controller: Driver exynos-dp requ=
-ests
-> probe deferral
-> [    1.794374] exynos-drm-ipp exynos-drm-ipp: drm ipp registered succ=
-essfully.
-> [    1.800372] [drm:exynos_drm_device_subdrv_probe] dev   (null)
->
-
-Still strange to me. I'd like to reproduce this error because it's
-impossible that exynos_drm_device_subdrv_probe is called without load
-call.
-even If error, this patch must be no problem so in this case, we would
-need check if there might be something we missed about component
-binding not this patch.
-So can you let me know where the git repository is and which defconfig
-file did you tested?
-
-Thanks,
-Inki Dae
-
->
->         Gustavo
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+MjAxNC0xMS0yMyAwOjI4IEdNVCswOTowMCBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+
+Ogo+IDIwMTQtMTEtMjEgMjM6NDEgR01UKzA5OjAwIEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2b0Bw
+YWRvdmFuLm9yZz46Cj4+IDIwMTQtMTEtMjEgSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29t
+PjoKPj4KPj4+IE9uIDIwMTTrhYQgMTHsm5QgMjHsnbwgMDg6MTIsIEd1c3Rhdm8gUGFkb3ZhbiB3
+cm90ZToKPj4+ID4gMjAxNC0xMS0xMyBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Ogo+
+Pj4gPgo+Pj4gPj4gVGhpcyBwYXRjaCBmaXhlcyBudWxsIHBvaW50ZXIgZGVyZWZlcmVuY2UgaXNz
+dWUgaW5jdXJyZWQKPj4+ID4+IHdoZW4gaXBwIGRyaXZlciBpcyBlbmFibGVkIGFuZCBFeHlub3Mg
+ZHJtIGRyaXZlciBpcyBjbG9zZWQuCj4+PiA+Pgo+Pj4gPj4gTm9uIGttcyBkcml2ZXIgc2hvdWxk
+IHJlZ2lzdGVyIGl0cyBvd24gc3ViIGRyaXZlciB0byBzZXR1cCBuZWNlc3NhcnkKPj4+ID4+IHJl
+c291cmNlcywgd2hpY2ggaXMgZG9uZSBieSBsb2FkKCkuIFNvIG51bGwgcG9pbnRlciBkZXJlZmVy
+ZW5jZQo+Pj4gPj4gb2NjdXJzIHdoZW4gaXBwIGRyaXZlciBpcyBlbmFibGVkIGFuZCBFeHlub3Mg
+ZHJtIGRyaXZlciBpcyBjbG9zZWQKPj4+ID4+IGJlY2F1c2UgaXBwIGNvcmUgZGV2aWNlIGlzIHJl
+Z2lzdGVyZWQgYWZ0ZXIgY29tcG9uZW50X21hc3Rlcl9hZGRfd2l0aF9tYXRjaAo+Pj4gPj4gY2Fs
+bC4KPj4+ID4+Cj4+PiA+PiBUaGlzIHBhdGNoIG1ha2VzIGV4eW5vc19kcm1fZGV2aWNlX3N1YmRy
+dl9wcm9iZSgpIHRvIGJlIGNhbGxlZCBhZnRlciBhbGwgbm9uCj4+PiA+PiBrbXMgZHJpdmVycyBh
+cmUgcmVnaXN0ZXJlZC4KPj4+ID4KPj4+ID4gVGhpcyBwYXRjaCBpcyBicmVha2luZyBleHlub3Mg
+aW5pdGlhbGl6YXRpb24sIGV4eW5vc19kcm1fZGV2aWNlX3N1YmRydl9wcm9iZSgpCj4+PiA+IG5l
+ZWRzIHRoZSBkcnZkYXRhIGJ1dCBpdCBpcyBzdGlsbCBOVUxMIGF0IHRoaXMgcG9pbnQgd2hpY2gg
+bWFrZSB0aGUgd2hvbGUKPj4+ID4gZXh5bm9zIGluaXQgZmFpbHMuIFRoZSBkcnZkYXRhIGlzIG9u
+bHkgc2V0IGluIGV4eW5vc19kcm1fbG9hZCgpIHNvIHdlIG5lZWQKPj4+ID4gY2FsbCBleHlub3Nf
+ZHJtX2RldmljZV9zdWJkcnZfcHJvYmUoKSBhZnRlciB0aGF0Lgo+Pj4KPj4+IFRoZXJlIG1pZ2h0
+IGJlIG15IG1pc3NpbmcgcG9pbnQgYnV0IHdpdGggdGhpcyBwYXRjaCwKPj4+IGV4eW5vc19kcm1f
+ZGV2aWNlX3N1YmRydl9wcm9iZSgpIHdpbGwgYmUgY2FsbGVkIGFmdGVyIGV4eW5vc19kcm1fbG9h
+ZCgpCj4+PiBjYWxsIGJlY2F1c2UgYWxsIGttcyBkcml2ZXJzIGFyZSBwcm9iZWQgYmVmb3JlCj4+
+PiBjb21wb25lbnRfbWFzdGVyX2FkZF93aXRoX21hdGNoIGNhbGwgc28gZXh5bm9zX2RybV9sb2Fk
+KCkgbXVzdCBiZSBjYWxsZWQKPj4+IGJ5IGNvbXBvbmVudF9tYXN0ZXJfYWRkX3dpdGhfbWF0Y2gg
+ZnVuY3Rpb24gYmVmb3JlCj4+PiBleHlub3NfZHJtX2RldmljZV9zdWJkcnZfcHJvYmUgY2FsbC4K
+Pj4+Cj4+PiBTbyBjb3VsZCB5b3Ugc2hvdyBtZSB0aGUgZXJyb3IgbWVzc2FnZXMgeW91IGZhY2Vk
+IHdpdGg/IFRoZXJlIG1pZ2h0IGJlIGEKPj4+IGNvcm5lciBjYXNlIEkgbWlzc2VkLgo+Pgo+PiBJ
+J3ZlIGFkZGVkIHNvbWUgZGVidWcgb3V0cHV0IHRvIGl0LiBJdCBmYWlscyBvbgo+PiBleHlub3Nf
+ZHJtX2RldmljZV9zdWJkcnZfcHJvYmUoKSBiZWNhdXNlIHRoZSBkcnZkYXRhIGlzIE5VTEwuIEkn
+dmUgYWRkZWQgZGVidWcKPj4gb3V0cHV0IHRvIGV4eW5vc19kcm1fbG9hZCgpIGFuZCBhcyB5b3Ug
+Y2FuIHNlZSBpdCBkb2Vzbid0IGdldCBjYWxsZWQgYmVmb3JlCj4+IHN1YmRydl9wcm9iZSgpLiBJ
+J20gdGVzdGluZyB0aGlzIG9uIHNub3cuCj4+Cj4+IFsgICAgMS43Njc4MzVdIFtkcm1dIEluaXRp
+YWxpemVkIGRybSAxLjEuMCAyMDA2MDgxMAo+PiBbICAgIDEuNzcxMTIwXSBbZHJtOmV4eW5vc19k
+cm1faW5pdF0KPj4gWyAgICAxLjc3NDc3NF0gW2RybTpleHlub3NfZHJtX3BsYXRmb3JtX3Byb2Jl
+XQo+PiBbICAgIDEuNzc4NzYwXSBwbGF0Zm9ybSBleHlub3MtZHJtOiBEcml2ZXIgZXh5bm9zLWRy
+bSByZXF1ZXN0cyBwcm9iZSBkZWZlcnJhbAo+PiBbICAgIDEuNzg2MTc4XSBwbGF0Zm9ybSAxNDVi
+MDAwMC5kcC1jb250cm9sbGVyOiBEcml2ZXIgZXh5bm9zLWRwIHJlcXVlc3RzCj4+IHByb2JlIGRl
+ZmVycmFsCj4+IFsgICAgMS43OTQzNzRdIGV4eW5vcy1kcm0taXBwIGV4eW5vcy1kcm0taXBwOiBk
+cm0gaXBwIHJlZ2lzdGVyZWQgc3VjY2Vzc2Z1bGx5Lgo+PiBbICAgIDEuODAwMzcyXSBbZHJtOmV4
+eW5vc19kcm1fZGV2aWNlX3N1YmRydl9wcm9iZV0gZGV2ICAgKG51bGwpCj4+Cj4KPiBTdGlsbCBz
+dHJhbmdlIHRvIG1lLiBJJ2QgbGlrZSB0byByZXByb2R1Y2UgdGhpcyBlcnJvciBiZWNhdXNlIGl0
+J3MKPiBpbXBvc3NpYmxlIHRoYXQgZXh5bm9zX2RybV9kZXZpY2Vfc3ViZHJ2X3Byb2JlIGlzIGNh
+bGxlZCB3aXRob3V0IGxvYWQKPiBjYWxsLgo+IGV2ZW4gSWYgZXJyb3IsIHRoaXMgcGF0Y2ggbXVz
+dCBiZSBubyBwcm9ibGVtIHNvIGluIHRoaXMgY2FzZSwgd2Ugd291bGQKPiBuZWVkIGNoZWNrIGlm
+IHRoZXJlIG1pZ2h0IGJlIHNvbWV0aGluZyB3ZSBtaXNzZWQgYWJvdXQgY29tcG9uZW50Cj4gYmlu
+ZGluZyBub3QgdGhpcyBwYXRjaC4KCkJ1dCBpdCdzIGJldHRlciB0byBjYWxsIGV4eW5vc19kcm1f
+ZGV2aWNlX3N1YmRydl9wcm9iZSgpIGluIGxvYWQoKQpsaWtlIGJlZm9yZSBiZWNhdXNlIHdlIHNo
+b3VsZCBtb3ZlIGFsbCByZWdpc3RlciBjb2RlcyBvZiBzdWIgZHJpdmVycwppbnRvIGluaXQoKSBm
+b3IgdGhlIG1lYW50aW1lLiBTbyBsZXQncyBqdXN0IHJldmVydCBpdC4KClRoYW5rcywKSW5raSBE
+YWUKCj4gU28gY2FuIHlvdSBsZXQgbWUga25vdyB3aGVyZSB0aGUgZ2l0IHJlcG9zaXRvcnkgaXMg
+YW5kIHdoaWNoIGRlZmNvbmZpZwo+IGZpbGUgZGlkIHlvdSB0ZXN0ZWQ/Cj4KPiBUaGFua3MsCj4g
+SW5raSBEYWUKPgo+Pgo+PiAgICAgICAgIEd1c3Rhdm8KPj4gX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KPj4gZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+PiBk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4+IGh0dHA6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwKX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxA
+bGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1h
+bi9saXN0aW5mby9kcmktZGV2ZWwK
