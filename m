@@ -1,72 +1,52 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [1/2] ARM: dts: Fix bootup issue on smdk5250
-Date: Sat, 22 Nov 2014 12:25:49 +0900
-Message-ID: <038501d00604$034a9640$09dfc2c0$@kernel.org>
-References: <1416312509-11530-1-git-send-email-yadi.brar@samsung.com>
- <546D67A1.1080804@samsung.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH 00/11] Exynos7: Adding USB 3.0 support
+Date: Sat, 22 Nov 2014 14:10:16 +0530
+Message-ID: <54704BF0.1000903@ti.com>
+References: <1416576954-11997-1-git-send-email-gautam.vivek@samsung.com> <20141121151130.GD7508@saruman>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:62531 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751418AbaKVD0J (ORCPT
+Received: from devils.ext.ti.com ([198.47.26.153]:57886 "EHLO
+	devils.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751435AbaKVIka (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Nov 2014 22:26:09 -0500
-In-reply-to: <546D67A1.1080804@samsung.com>
-Content-language: ko
+	Sat, 22 Nov 2014 03:40:30 -0500
+In-Reply-To: <20141121151130.GD7508@saruman>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Pankaj Dubey' <pankaj.dubey@samsung.com>, 'Yadwinder Singh Brar' <yadi.brar@samsung.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: robh+dt@kernel.org, yadi.brar01@gmail.com
+To: balbi@ti.com, Vivek Gautam <gautam.vivek@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, gregkh@linuxfoundation.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com, robh+dt@kernel.org, stern@rowland.harvard.edu, kgene.kim@samsung.com
 
-Pankaj Dubey wrote:
-> 
-> Hi,
-> 
-Hi,
 
-Yadwinder, please don't miss [PATCH 1/2] in subject, so that my e-mail client
-can't filter wrong ;)
 
-> On Tuesday 18 November 2014 05:38 PM, Yadwinder Singh Brar wrote:
-> > With default config on smdk5250 latest tree throws below message :
-> >
-> > [    2.226049] thermal thermal_zone0: critical temperature reached(224 C),shutting down
-> > [    2.227840] reboot: Failed to start orderly shutdown: forcing the issue
-> >
-> > and hangs randomly because it reads wrong temperature value.
-> >
-> > I can't figure out any direct relation between LDO10 and TMU from board
-> > schematics which I have. So making LDO10 always-on to fix issue for now.
-> >
-Hmm...strange, I also can't see any relations now...but I need to contact to
-hardware guy before applying this, this fixes the problem though.
+On Friday 21 November 2014 08:41 PM, Felipe Balbi wrote:
+> On Fri, Nov 21, 2014 at 07:05:43PM +0530, Vivek Gautam wrote:
+>> The series has dependency on
+>> a) "[PATCH v7 0/7] Enable support for Samsung Exynos7 SoC"
+>>    http://www.spinics.net/lists/linux-samsung-soc/msg38734.html
+>> b) "[GIT PULL] Samsung clock changes for 3.19" - specifically the clock dt
+>>    bindings header.
+>>    http://comments.gmane.org/gmane.linux.kernel.samsung-soc/39142
+>> c) "tty: serial: samsung: Clean-up selection of number of available UARTs"
+>>    http://www.spinics.net/lists/linux-samsung-soc/msg37418.html
+>> d) "dts, kbuild: Implement support for dtb vendor subdirs"(merged in linux-next)
+>>    https://lkml.org/lkml/2014/10/21/654
+>> e) "Samsung pinctrl patches for v3.19"
+>>    http://www.spinics.net/lists/linux-samsung-soc/msg38744.html
+>>
+>> Tested on Exynos7-espresso board with 3.18-rc5 and above dependencies.
+>>
+>> Clubbing the pinctrl, clk, and usb driver changes alongwith the dt changes
+>> together in this series only so as to avoid having 'n' number of dependencies.
+>>
+>> The USB driver patches in this series were part of [1] sent earlier.
+>> [1] [PATCH v2 0/4] usb: dwc3/phy-exynos5-usbdrd: Extend support to Exynos7
+>>     https://lkml.org/lkml/2014/10/7/191
+> 
+> I took dwc3 driver patches.
 
-Thanks,
-Kukjin
+I took the phy patches.
 
-> > Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
-> >
-> 
-> Tested this on SMDK5250 board, system boot is fine now, hence
-> 
-> Tested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> 
-> > ---
-> > arch/arm/boot/dts/exynos5250-smdk5250.dts |    1 +
-> >   1 files changed, 1 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> > index bc27cc2..95b5b51 100644
-> > --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> > +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> > @@ -190,6 +190,7 @@
-> >   				regulator-name = "P1.8V_LDO_OUT10";
-> >   				regulator-min-microvolt = <1800000>;
-> >   				regulator-max-microvolt = <1800000>;
-> > +				regulator-always-on;
-> >   			};
-> >
-> >   			ldo11_reg: LDO11 {
-> >
+Thanks
+Kishon
