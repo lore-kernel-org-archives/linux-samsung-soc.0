@@ -1,110 +1,171 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 1/3] drm/exynos: free DP if probe fails to find a panel or
- bridge
-Date: Sun, 23 Nov 2014 18:22:46 +0900
-Message-ID: <001501d006ff$0b32a540$2197efc0$%han@samsung.com>
-References: <1416527664-10553-1-git-send-email-gustavo@padovan.org>
- <CAEC9eQOfOo--vck78fJ4DGGD_Lwf9Lu+u7KgFSOuMZjih+WQTQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Subject: [PATCH 0/5] fix error return code
+Date: Sun, 23 Nov 2014 14:11:13 +0100
+Message-ID: <1416748278-22881-1-git-send-email-Julia.Lawall@lip6.fr>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:20567 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751383AbaKWJVo (ORCPT
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:33680 "EHLO
+	mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751014AbaKWNQj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 23 Nov 2014 04:21:44 -0500
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NFH00D7OJC6C700@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sun, 23 Nov 2014 18:21:42 +0900 (KST)
-In-reply-to: <CAEC9eQOfOo--vck78fJ4DGGD_Lwf9Lu+u7KgFSOuMZjih+WQTQ@mail.gmail.com>
-Content-language: ko
+	Sun, 23 Nov 2014 08:16:39 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Ajay kumar' <ajaynumb@gmail.com>, 'Gustavo Padovan' <gustavo@padovan.org>, 'InKi Dae' <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, 'Gustavo Padovan' <gustavo.padovan@collabora.co.uk>, 'Jingoo Han' <jg1.han@samsung.com>
+To: linux-sh@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, MPT-FusionLinux.pdl@avagotech.com, linux-scsi@vger.kernel.org, linux-pcmcia@lists.infradead.org
 
-On Saturday, November 22, 2014 2:40 AM, Ajay kumar wrote:
-> 
-> On Fri, Nov 21, 2014 at 5:24 AM, Gustavo Padovan <gustavo@padovan.org> wrote:
-> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> >
-> > DP was leaked everytime function returns EPROBE_DEFER, free it before
-> > returning.
-> >
-> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> > ---
-> >  drivers/gpu/drm/exynos/exynos_dp_core.c | 21 +++++++++++++++------
-> >  1 file changed, 15 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-> > index 85762cf..6fd4a46 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-> > @@ -1336,8 +1336,10 @@ static int exynos_dp_probe(struct platform_device *pdev)
-> >         if (panel_node) {
-> >                 dp->panel = of_drm_find_panel(panel_node);
-> >                 of_node_put(panel_node);
-> > -               if (!dp->panel)
-> > -                       return -EPROBE_DEFER;
-> > +               if (!dp->panel) {
-> > +                       ret = -EPROBE_DEFER;
-> > +                       goto free_dp;
-> > +               }
-> >         }
-> >
-> >         endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
-> > @@ -1346,10 +1348,14 @@ static int exynos_dp_probe(struct platform_device *pdev)
-> >                 if (bridge_node) {
-> >                         dp->bridge = of_drm_find_bridge(bridge_node);
-> >                         of_node_put(bridge_node);
-> > -                       if (!dp->bridge)
-> > -                               return -EPROBE_DEFER;
-> > -               } else
-> > -                       return -EPROBE_DEFER;
-> > +                       if (!dp->bridge) {
-> > +                               ret = -EPROBE_DEFER;
-> > +                               goto free_dp;
-> > +                       }
-> > +               } else {
-> > +                       ret = -EPROBE_DEFER;
-> > +                       goto free_dp;
-> > +               }
-> >         }
-> >
-> >         exynos_dp_display.ctx = dp;
-> > @@ -1359,6 +1365,9 @@ static int exynos_dp_probe(struct platform_device *pdev)
-> >                 exynos_drm_component_del(&pdev->dev,
-> >                                                 EXYNOS_DEVICE_TYPE_CONNECTOR);
-> >
-> > +free_dp:
-> > +       devm_kfree(dev, dp);
-> I guess the driver core takes care of freeing the devm memory when the
-> probe fails?
-> Will it not happen during PROBE_DEFER?
-> 
-> Inki/Jingoo - Is this change really necessary?
+The complate semantic patch that finds this problem is as follows:
+(http://coccinelle.lip6.fr/)
 
-As far as I know, this devm_kfree() in unnecessary,
-even though PROBE_DEFER is returned.
-If I am wrong, please let me know. Thanks.
+// <smpl>
+@ok exists@
+identifier f,ret,i;
+expression e;
+constant c;
+@@
 
-Best regards,
-Jingoo Han
+// identify a function that returns a negative return value at least once.
+f(...) {
+... when any
+(
+return -c@i;
+|
+ret = -c@i;
+... when != ret = e
+return ret;
+|
+if (ret < 0) { ... return ret; }
+)
+... when any
+}
 
-> 
-> Ajay
-> 
-> >         return ret;
-> >  }
-> >
-> > --
-> > 1.9.3
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+@r exists@
+identifier ret,ok.f,fn;
+expression e1,e2,e3,e4,e5,e6,x;
+statement S,S1;
+position p1,p2,p3;
+@@
+
+// identify a case where the return variable is set to a non-negative value
+// and then returned in error-handling code
+f(...) {
+... when any
+(
+if@p1 (\(ret < 0\|ret != 0\))
+ { ... return ret; }
+|
+ret@p1 = 0
+)
+... when != \(ret = e1\|ret++\|ret--\|ret+=e1\|ret-=e1\)
+    when != &ret
+    when any
+(
+ if (<+... ret = e5 ...+>) S1
+|
+ if (<+... &ret ...+>) S1
+|
+if@p2(<+...x = fn(...)...+>)
+ {
+  ... when != ret = e6
+      when forall
+ return@p3 ret;
+}
+|
+break;
+|
+x = fn(...)
+... when != \(ret = e4\|ret++\|ret--\|ret+=e4\|ret-=e4\)
+    when != &ret
+(
+ if (<+... ret = e3 ...+>) S
+|
+ if (<+... &ret ...+>) S
+|
+if@p2(<+...\(x != 0\|x < 0\|x == NULL\|IS_ERR(x)\)...+>)
+ {
+  ... when != ret = e2
+      when forall
+ return@p3 ret;
+}
+)
+)
+... when any
+}
+
+@printer depends on r@
+position p;
+identifier ok.f,pr;
+constant char [] c;
+@@
+
+f(...) { <...pr@p(...,c,...)...> }
+
+@bad0 exists@
+identifier r.ret,ok.f,g != {ERR_PTR,IS_ERR};
+position p != printer.p;
+@@
+
+f(...) { ... when any
+g@p(...,ret,...)
+... when any
+ }
+
+@bad depends on !bad0 exists@
+position r.p1,r.p2;
+statement S1,S2;
+identifier r.ret;
+expression e1;
+@@
+
+// ignore the above if there is some path where the variable is set to
+// something else
+(
+if@p1 (\(ret < 0\|ret != 0\)) S1
+|
+ret@p1 = 0
+)
+... when any
+ \(ret = e1\|ret++\|ret--\|ret+=e1\|ret-=e1\|&ret\)
+... when any
+if@p2(...) S2
+
+@bad1 depends on !bad0 && !bad exists@
+position r.p2;
+statement S2;
+identifier r.ret;
+expression e1;
+constant c;
+@@
+
+ret = -c
+... when != \(ret = e1\|ret++\|ret--\|ret+=e1\|ret-=e1\)
+    when != &ret
+    when any
+if@p2(...) S2
+
+@bad2 depends on !bad0 && !bad && !bad1 exists@
+position r.p1,r.p2;
+identifier r.ret;
+expression e1;
+statement S2;
+constant c;
+@@
+
+// likewise ignore it if there has been an intervening return
+ret@p1 = 0
+... when != if (...) { ... ret = e1 ... return ret; }
+    when != if (...) { ... return -c; }
+    when any
+if@p2(...) S2
+
+
+@script:python depends on !bad0 && !bad && !bad1 && !bad2@
+p1 << r.p1;
+p2 << r.p2;
+p3 << r.p3;
+@@
+
+cocci.print_main("",p1)
+cocci.print_secs("",p2)
+cocci.print_secs("",p3)
+
+// </smpl>
