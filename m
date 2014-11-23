@@ -1,94 +1,110 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [PATCH v2 5/5] ARM: dts: exynos5410: Add ODROID-XU LEDs
-Date: Sun, 23 Nov 2014 02:31:31 +0100
-Message-ID: <547138F3.3040502@suse.de>
-References: <1416687984-3546-1-git-send-email-afaerber@suse.de> <1416687984-3546-6-git-send-email-afaerber@suse.de>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH 1/3] drm/exynos: free DP if probe fails to find a panel or
+ bridge
+Date: Sun, 23 Nov 2014 18:22:46 +0900
+Message-ID: <001501d006ff$0b32a540$2197efc0$%han@samsung.com>
+References: <1416527664-10553-1-git-send-email-gustavo@padovan.org>
+ <CAEC9eQOfOo--vck78fJ4DGGD_Lwf9Lu+u7KgFSOuMZjih+WQTQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:48974 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752838AbaKWBbi (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:20567 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751383AbaKWJVo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 22 Nov 2014 20:31:38 -0500
-In-Reply-To: <1416687984-3546-6-git-send-email-afaerber@suse.de>
+	Sun, 23 Nov 2014 04:21:44 -0500
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NFH00D7OJC6C700@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sun, 23 Nov 2014 18:21:42 +0900 (KST)
+In-reply-to: <CAEC9eQOfOo--vck78fJ4DGGD_Lwf9Lu+u7KgFSOuMZjih+WQTQ@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?B?6rmA7ZWZ7KO8?= <ruppi.kim@hardkernel.com>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Humberto Naves <hsnaves@gmail.com>, Jan Kiszka <jan.kiszka@siemens.com>, Johann Pfefferl <johann.pfefferl@siemens.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>
+To: 'Ajay kumar' <ajaynumb@gmail.com>, 'Gustavo Padovan' <gustavo@padovan.org>, 'InKi Dae' <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, 'Gustavo Padovan' <gustavo.padovan@collabora.co.uk>, 'Jingoo Han' <jg1.han@samsung.com>
 
-Hello Hakjoo,
+On Saturday, November 22, 2014 2:40 AM, Ajay kumar wrote:
+> 
+> On Fri, Nov 21, 2014 at 5:24 AM, Gustavo Padovan <gustavo@padovan.org> wrote:
+> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> >
+> > DP was leaked everytime function returns EPROBE_DEFER, free it before
+> > returning.
+> >
+> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> > ---
+> >  drivers/gpu/drm/exynos/exynos_dp_core.c | 21 +++++++++++++++------
+> >  1 file changed, 15 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> > index 85762cf..6fd4a46 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> > @@ -1336,8 +1336,10 @@ static int exynos_dp_probe(struct platform_device *pdev)
+> >         if (panel_node) {
+> >                 dp->panel = of_drm_find_panel(panel_node);
+> >                 of_node_put(panel_node);
+> > -               if (!dp->panel)
+> > -                       return -EPROBE_DEFER;
+> > +               if (!dp->panel) {
+> > +                       ret = -EPROBE_DEFER;
+> > +                       goto free_dp;
+> > +               }
+> >         }
+> >
+> >         endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
+> > @@ -1346,10 +1348,14 @@ static int exynos_dp_probe(struct platform_device *pdev)
+> >                 if (bridge_node) {
+> >                         dp->bridge = of_drm_find_bridge(bridge_node);
+> >                         of_node_put(bridge_node);
+> > -                       if (!dp->bridge)
+> > -                               return -EPROBE_DEFER;
+> > -               } else
+> > -                       return -EPROBE_DEFER;
+> > +                       if (!dp->bridge) {
+> > +                               ret = -EPROBE_DEFER;
+> > +                               goto free_dp;
+> > +                       }
+> > +               } else {
+> > +                       ret = -EPROBE_DEFER;
+> > +                       goto free_dp;
+> > +               }
+> >         }
+> >
+> >         exynos_dp_display.ctx = dp;
+> > @@ -1359,6 +1365,9 @@ static int exynos_dp_probe(struct platform_device *pdev)
+> >                 exynos_drm_component_del(&pdev->dev,
+> >                                                 EXYNOS_DEVICE_TYPE_CONNECTOR);
+> >
+> > +free_dp:
+> > +       devm_kfree(dev, dp);
+> I guess the driver core takes care of freeing the devm memory when the
+> probe fails?
+> Will it not happen during PROBE_DEFER?
+> 
+> Inki/Jingoo - Is this change really necessary?
 
-Am 22.11.2014 um 21:26 schrieb Andreas F=C3=A4rber:
-> Signed-off-by: Hakjoo Kim <ruppi.kim@hardkernel.com>
+As far as I know, this devm_kfree() in unnecessary,
+even though PROBE_DEFER is returned.
+If I am wrong, please let me know. Thanks.
 
-Sorry, I was too quick here: Only the previous two patches got signed
-off by you, plus the last one on your 3.14 branch. Are you able to sign
-off all patches authored by you there? (An email reply indicating the
-Signed-off-by should do, if updating the branch is too much work.)
+Best regards,
+Jingoo Han
 
-Thanks,
-Andreas
-
-> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
-> ---
-> v1 -> v2:
-> * Filled in Sob from Hakjoo Kim
->=20
->  arch/arm/boot/dts/exynos5410-odroidxu.dts | 25 +++++++++++++++++++++=
-++++
->  1 file changed, 25 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/exynos5410-odroidxu.dts b/arch/arm/boo=
-t/dts/exynos5410-odroidxu.dts
-> index 97310bb727e2..b02cd3ab7b38 100644
-> --- a/arch/arm/boot/dts/exynos5410-odroidxu.dts
-> +++ b/arch/arm/boot/dts/exynos5410-odroidxu.dts
-> @@ -15,6 +15,7 @@
-> =20
->  /dts-v1/;
->  #include "exynos5410.dtsi"
-> +#include <dt-bindings/gpio/gpio.h>
->  / {
->  	model =3D "ODROID-XU based on EXYNOS5410";
->  	compatible =3D "hardkernel,odroid-xu", "samsung,exynos5410", "samsu=
-ng,exynos5";
-> @@ -39,6 +40,30 @@
->  		reg =3D <0x02037000 0x1000>;
->  	};
-> =20
-> +	leds {
-> +		compatible =3D "gpio-leds";
-> +
-> +		blue {
-> +			label =3D "blue:heartbeat";
-> +			gpios =3D <&gpb2 2 GPIO_ACTIVE_HIGH>;
-> +			default-state =3D "off";
-> +			linux,default-trigger =3D "heartbeat";
-> +		};
-> +
-> +		green {
-> +			label =3D "green:activity";
-> +			gpios =3D <&gpb2 1 GPIO_ACTIVE_HIGH>;
-> +			default-state =3D "off";
-> +			linux,default-trigger =3D "mmc0";
-> +		};
-> +
-> +		red {
-> +			label =3D "red:activity";
-> +			gpios =3D <&gpx2 3 GPIO_ACTIVE_HIGH>;
-> +			default-state =3D "off";
-> +			linux,default-trigger =3D "mmc1";
-> +		};
-> +	};
->  };
-> =20
->  &mmc_0 {
->=20
-
-
---=20
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 21284 AG N=C3=
-=BCrnberg
+> 
+> Ajay
+> 
+> >         return ret;
+> >  }
+> >
+> > --
+> > 1.9.3
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
