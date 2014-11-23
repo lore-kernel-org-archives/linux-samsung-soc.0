@@ -1,71 +1,42 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH 2/5] drm/exynos/ipp: fix error return code
-Date: Sun, 23 Nov 2014 14:11:15 +0100
-Message-ID: <1416748278-22881-3-git-send-email-Julia.Lawall@lip6.fr>
-References: <1416748278-22881-1-git-send-email-Julia.Lawall@lip6.fr>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1416748278-22881-1-git-send-email-Julia.Lawall@lip6.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: kernel-janitors@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Subject: Re: [PATCH v2 4/5] ARM: dts: add pinctrl support to Exynos5410
+Date: Sun, 23 Nov 2014 18:18:54 +0100
+Message-ID: <547216FE.3010900@suse.de>
+References: <1416687984-3546-1-git-send-email-afaerber@suse.de> <1416687984-3546-5-git-send-email-afaerber@suse.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1416687984-3546-5-git-send-email-afaerber-l3A5Bk7waGM@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, =?UTF-8?B?6rmA7ZWZ7KO8?= <ruppi.kim-vC+yAUbXFBlQ0OI7PeSoCw@public.gmane.org>, Humberto Naves <hsnaves-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>, Johann Pfefferl <johann.pfefferl-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "OPEN FIRMWARE AND..." <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Am 22.11.2014 um 21:26 schrieb Andreas F=C3=A4rber:
+> From: Hakjoo Kim <ruppi.kim-vC+yAUbXFBlQ0OI7PeSoCw@public.gmane.org>
+>=20
+> Add the required pin configuration support to Exynos5410 using pinctr=
+l
+> interface.
+>=20
+> Signed-off-by: Hakjoo Kim <ruppi.kim-vC+yAUbXFBlQ0OI7PeSoCw@public.gmane.org>
+> [AF: Rebased, style changes]
+> Signed-off-by: Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
+> ---
+> v1 -> v2:
+> * Filled in Sob from Hakjoo Kim
 
-Propagate the returned error code on failure.
+Missed one review comment from the RFC, v3 coming up.
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Andreas
 
-// <smpl>
-@@
-identifier ret; expression e1,e2;
-@@
-(
-if (\(ret < 0\|ret != 0\))
- { ... return ret; }
-|
-ret = 0
-)
-... when != ret = e1
-    when != &ret
-*if(...)
-{
-  ... when != ret = e2
-      when forall
- return ret;
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/gpu/drm/exynos/exynos_drm_ipp.c |    3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_ipp.c b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-index 00d74b1..d5ad17d 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_ipp.c
-@@ -426,18 +426,21 @@ int exynos_drm_ipp_set_property(struct drm_device *drm_dev, void *data,
- 	c_node->start_work = ipp_create_cmd_work();
- 	if (IS_ERR(c_node->start_work)) {
- 		DRM_ERROR("failed to create start work.\n");
-+		ret = PTR_ERR(c_node->start_work);
- 		goto err_remove_id;
- 	}
- 
- 	c_node->stop_work = ipp_create_cmd_work();
- 	if (IS_ERR(c_node->stop_work)) {
- 		DRM_ERROR("failed to create stop work.\n");
-+		ret = PTR_ERR(c_node->stop_work);
- 		goto err_free_start;
- 	}
- 
- 	c_node->event_work = ipp_create_event_work();
- 	if (IS_ERR(c_node->event_work)) {
- 		DRM_ERROR("failed to create event work.\n");
-+		ret = PTR_ERR(c_node->event_work);
- 		goto err_free_stop;
- 	}
- 
+--=20
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
+GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 21284 AG N=C3=
+=BCrnberg
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
