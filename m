@@ -1,52 +1,39 @@
-From: D Krishna Mohan <krishna.md@samsung.com>
-Subject: Re: [PATCH 2/4 V3] ASoC: Samsung: Add arndale_rt5631 machine driver
-Date: Mon, 24 Nov 2014 12:25:14 +0530
-Message-ID: <77483D66251948E89F52C86B58891F8A@sisodomain.com>
-References: <1415880864-2246-1-git-send-email-krishna.md@samsung.com>
- <1415880864-2246-3-git-send-email-krishna.md@samsung.com>
- <20141119175154.GI22111@sirena.org.uk>
+From: Devarsh Thakkar <devarsh.thakkar@sibridgetech.com>
+Subject: Arndale Octa  application on top of SPL not working
+Date: Mon, 24 Nov 2014 12:41:19 +0530
+Message-ID: <1416813079.4431.9.camel@devarsh.sibshivalik.com>
 Mime-Version: 1.0
-Content-Type: text/plain; format=flowed; charset=iso-8859-1; reply-type=original
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:19425 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750975AbaKXGzM (ORCPT
+Received: from mail-pd0-f171.google.com ([209.85.192.171]:59588 "EHLO
+	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751434AbaKXHLk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 01:55:12 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NFJ00L1277YH9E0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 24 Nov 2014 15:55:10 +0900 (KST)
-In-reply-to: <20141119175154.GI22111@sirena.org.uk>
+	Mon, 24 Nov 2014 02:11:40 -0500
+Received: by mail-pd0-f171.google.com with SMTP id y13so1188602pdi.30
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 23 Nov 2014 23:11:40 -0800 (PST)
+Received: from [192.168.1.70] ([202.131.115.146])
+        by mx.google.com with ESMTPSA id fn5sm9399442pdb.55.2014.11.23.23.11.38
+        for <linux-samsung-soc@vger.kernel.org>
+        (version=TLSv1 cipher=ECDHE-RSA-RC4-SHA bits=128/128);
+        Sun, 23 Nov 2014 23:11:39 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, kgene.kim@samsung.com, Claude Youn <claude.youn@gmail.com>
+To: linux-samsung-soc@vger.kernel.org
 
-machine DT binding file added and patch sent.
+Hi,
 
--Krishna
---------------------------------------------------
-From: "Mark Brown" <broonie@kernel.org>
-Sent: Wednesday, November 19, 2014 11:21 PM
-To: "Krishna Mohan Dani" <krishna.md@samsung.com>
-Cc: <linux-samsung-soc@vger.kernel.org>; 
-<linux-arm-kernel@lists.infradead.org>; <alsa-devel@alsa-project.org>; 
-<kgene.kim@samsung.com>; "Claude Youn" <claude.youn@gmail.com>
-Subject: Re: [PATCH 2/4 V3] ASoC: Samsung: Add arndale_rt5631 machine driver
+Using Arndale Octa board from samsung ,Iam trying to develop an
+application myapp which will be run on top of bl2 (SPL). I create my own
+function(board_init_f()) for basic initialization (taking reference from
+uboot),which includes UART configuration.After compiling my code I am
+not getting any data over UART. 
+When I replace u-boot.bin with my_app.bin it doesn't work.
+But When I called my_app from u-boot.bin it works fine.
 
-On Thu, Nov 13, 2014 at 05:44:22PM +0530, Krishna Mohan Dani wrote:
+I am trying to load my_app.bin from SPL then it doesn't work 
+What could be the problem? Please suggest if I am missing anything.
 
-> Signed-off-by: Krishna Mohan Dani <krishna.md@samsung.com>
-> ---
->  sound/soc/samsung/Kconfig          |    6 ++
->  sound/soc/samsung/Makefile         |    2 +
->  sound/soc/samsung/arndale_rt5631.c |  150 
-> ++++++++++++++++++++++++++++++++++++
->  3 files changed, 158 insertions(+)
-
-This is fine but it is missing a binding document, please add one.
- 
+Thanks,
+Devarsh
