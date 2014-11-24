@@ -1,100 +1,74 @@
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-Subject: Re: [PATCH 1/3] drm/exynos: free DP if probe fails to find a panel
- or bridge
-Date: Mon, 24 Nov 2014 11:02:34 -0200
-Message-ID: <20141124130234.GA1777@joana>
-References: <1416527664-10553-1-git-send-email-gustavo@padovan.org>
- <CAAQKjZPgYbwchnHNEEmjL7eWVGU3_NAHZBvB1Los1d-reyNg6g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH V2 1/2] pinctrl: exynos: Add BUS1 pin controller for exynos7
+Date: Mon, 24 Nov 2014 18:32:57 +0530
+Message-ID: <1416834177-11170-1-git-send-email-gautam.vivek@samsung.com>
+References: <CAFp+6iF-N63YSsdv2a6=MYp_mD=eQY_Oi8=9JVNU5dG0BA7YGQ@mail.gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:38252 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752483AbaKXNCl (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:13253 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751269AbaKXNKD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 08:02:41 -0500
-Content-Disposition: inline
-In-Reply-To: <CAAQKjZPgYbwchnHNEEmjL7eWVGU3_NAHZBvB1Los1d-reyNg6g@mail.gmail.com>
+	Mon, 24 Nov 2014 08:10:03 -0500
+In-reply-to: <CAFp+6iF-N63YSsdv2a6=MYp_mD=eQY_Oi8=9JVNU5dG0BA7YGQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, robh+dt@kernel.org, kgene@kernel.org, alim.akhtar@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
 
-2014-11-22 Inki Dae <inki.dae@samsung.com>:
+USB and Power regulator on Exynos7 require gpios available
+in BUS1 pin controller block.
+So adding the BUS1 pinctrl support.
 
-> 2014-11-21 8:54 GMT+09:00 Gustavo Padovan <gustavo@padovan.org>:
-> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> >
-> > DP was leaked everytime function returns EPROBE_DEFER, free it before
-> > returning.
-> 
-> It seems that you misunderstood devm_* api.
+Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+---
 
-Yeah, I though it would only free memory at unload of the module but it also
-free it when the probe fails.
+This patch was part of series:
+"[PATCH 00/11] Exynos7: Adding USB 3.0 support"
+ https://lkml.org/lkml/2014/11/21/247
 
-> 
-> Thanks,
-> Inki Dae
-> 
-> >
-> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> > ---
-> >  drivers/gpu/drm/exynos/exynos_dp_core.c | 21 +++++++++++++++------
-> >  1 file changed, 15 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
-> > index 85762cf..6fd4a46 100644
-> > --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
-> > +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
-> > @@ -1336,8 +1336,10 @@ static int exynos_dp_probe(struct platform_device *pdev)
-> >         if (panel_node) {
-> >                 dp->panel = of_drm_find_panel(panel_node);
-> >                 of_node_put(panel_node);
-> > -               if (!dp->panel)
-> > -                       return -EPROBE_DEFER;
-> > +               if (!dp->panel) {
-> > +                       ret = -EPROBE_DEFER;
-> > +                       goto free_dp;
-> > +               }
-> >         }
-> >
-> >         endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
-> > @@ -1346,10 +1348,14 @@ static int exynos_dp_probe(struct platform_device *pdev)
-> >                 if (bridge_node) {
-> >                         dp->bridge = of_drm_find_bridge(bridge_node);
-> >                         of_node_put(bridge_node);
-> > -                       if (!dp->bridge)
-> > -                               return -EPROBE_DEFER;
-> > -               } else
-> > -                       return -EPROBE_DEFER;
-> > +                       if (!dp->bridge) {
-> > +                               ret = -EPROBE_DEFER;
-> > +                               goto free_dp;
-> > +                       }
-> > +               } else {
-> > +                       ret = -EPROBE_DEFER;
-> > +                       goto free_dp;
-> > +               }
-> >         }
-> >
-> >         exynos_dp_display.ctx = dp;
-> > @@ -1359,6 +1365,9 @@ static int exynos_dp_probe(struct platform_device *pdev)
-> >                 exynos_drm_component_del(&pdev->dev,
-> >                                                 EXYNOS_DEVICE_TYPE_CONNECTOR);
-> >
-> > +free_dp:
-> > +       devm_kfree(dev, dp);
-> > +
-> >         return ret;
-> >  }
-> >
-> > --
-> > 1.9.3
-> >
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > http://lists.freedesktop.org/mailman/listinfo/dri-devel
+Changes since V1:
+ - Added support for all pin banks which are part of BUS1 pin controller.
 
-	Gustavo
+ drivers/pinctrl/samsung/pinctrl-exynos.c |   19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index d5d4cfc..44e60dc 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -1300,6 +1300,20 @@ static const struct samsung_pin_bank_data exynos7_pin_banks7[] __initconst = {
+ 	EXYNOS_PIN_BANK_EINTG(8, 0x060, "gpr3", 0x0c),
+ };
+ 
++/* pin banks of exynos7 pin-controller - BUS1 */
++static const struct samsung_pin_bank_data exynos7_pin_banks8[] __initconst = {
++	EXYNOS_PIN_BANK_EINTG(8, 0x020, "gpf0", 0x00),
++	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpf1", 0x04),
++	EXYNOS_PIN_BANK_EINTG(4, 0x060, "gpf2", 0x08),
++	EXYNOS_PIN_BANK_EINTG(5, 0x080, "gpf3", 0x0c),
++	EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpf4", 0x10),
++	EXYNOS_PIN_BANK_EINTG(8, 0x0c0, "gpf5", 0x14),
++	EXYNOS_PIN_BANK_EINTG(5, 0x0e0, "gpg1", 0x18),
++	EXYNOS_PIN_BANK_EINTG(5, 0x100, "gpg2", 0x1c),
++	EXYNOS_PIN_BANK_EINTG(6, 0x120, "gph1", 0x20),
++	EXYNOS_PIN_BANK_EINTG(3, 0x140, "gpv6", 0x24),
++};
++
+ const struct samsung_pin_ctrl exynos7_pin_ctrl[] __initconst = {
+ 	{
+ 		/* pin-controller instance 0 Alive data */
+@@ -1342,5 +1356,10 @@ const struct samsung_pin_ctrl exynos7_pin_ctrl[] __initconst = {
+ 		.pin_banks	= exynos7_pin_banks7,
+ 		.nr_banks	= ARRAY_SIZE(exynos7_pin_banks7),
+ 		.eint_gpio_init = exynos_eint_gpio_init,
++	}, {
++		/* pin-controller instance 8 BUS1 data */
++		.pin_banks	= exynos7_pin_banks8,
++		.nr_banks	= ARRAY_SIZE(exynos7_pin_banks8),
++		.eint_gpio_init = exynos_eint_gpio_init,
+ 	},
+ };
+-- 
+1.7.10.4
