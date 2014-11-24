@@ -1,66 +1,54 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv3 1/3] ARM: exynos: Add Exynos-based boards compatible string
- and description
-Date: Mon, 24 Nov 2014 19:57:48 +0900
-Message-ID: <1416826670-29438-2-git-send-email-cw00.choi@samsung.com>
-References: <1416826670-29438-1-git-send-email-cw00.choi@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: rt5631: Fixing compilation warning when DT is
+ disabled
+Date: Mon, 24 Nov 2014 11:05:39 +0000
+Message-ID: <20141124110539.GA7712@sirena.org.uk>
+References: <1416232589-31319-1-git-send-email-krishna.md@samsung.com>
+ <20141117155617.GJ27002@pengutronix.de>
+ <C8902B5E8A6B4B63A3B9A732345B33AD@sisodomain.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1416826670-29438-1-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: kgene.kim@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com
-Cc: inki.dae@samsung.com, geunsik.lim@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, jh80.chung@samsung.com, cw00.choi@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="gBBFr7Ir9EOA20Yy"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36671 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750940AbaKXLHk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 24 Nov 2014 06:07:40 -0500
+Content-Disposition: inline
+In-Reply-To: <C8902B5E8A6B4B63A3B9A732345B33AD@sisodomain.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: D Krishna Mohan <krishna.md@samsung.com>
+Cc: =?iso-8859-1?Q?UweKleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, kgene.kim@samsung.com, Claude Youn <claude.youn@gmail.com>
 
-This patch adds the missing compatible/description of Exynos-based boards
-to remove following build warning.
 
-	WARNING: DT compatible string "samsung,..." appears un-documented --
-	check ./Documentation/devicetree/bindings/
+--gBBFr7Ir9EOA20Yy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- .../devicetree/bindings/arm/samsung-boards.txt         | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+On Mon, Nov 24, 2014 at 12:48:31PM +0530, D Krishna Mohan wrote:
+> Attaching the patch with changes suggested by Uwe. Though there is another
+> patch which I submitted, but I leave it to Mark Brown as to which patch to
+> pick.
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung-boards.txt
-index 2168ed3..1f8287e 100644
---- a/Documentation/devicetree/bindings/arm/samsung-boards.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung-boards.txt
-@@ -1,11 +1,19 @@
--* Samsung's Exynos4210 based SMDKV310 evaluation board
--
--SMDKV310 evaluation board is based on Samsung's Exynos4210 SoC.
-+* Samsung's Exynos SoC based boards
- 
- Required root node properties:
-     - compatible = should be one or more of the following.
--        (a) "samsung,smdkv310" - for Samsung's SMDKV310 eval board.
--        (b) "samsung,exynos4210"  - for boards based on Exynos4210 SoC.
-+	- "samsung,rinato"	- for Exynos3250-based Samsung Gear2 board.
-+	- "samsung,smdkv310"	- for Exynos4210-based Samsung SMDKV310 eval board.
-+	- "samsung,trats"	- for Exynos4210-based Tizen Reference board.
-+	- "samsung,universal_c210" - for Exynos4210-based Samsung board.
-+	- "samsung,smdk4412",	- for Exynos4412-based Samsung SMDK4412 eval board.
-+	- "samsung,trats2"	- for Exynos4412-based Tizen Reference board.
-+	- "samsung,smdk5250"	- for Exynos5250-based Samsung SMDK5250 eval board.
-+	- "samsung,xyref5260"	- for Exynos5260-based Samsung board.
-+	- "samsung,smdk5410"	- for Exynos5410-based Samsung SMDK5410 eval board.
-+	- "samsung,smdk5420"	- for Exynos5420-based Samsung SMDK5420 eval board.
-+	- "samsung,sd5v1"	- for Exynos5440-based Samsung board.
-+	- "samsung,ssdk5440"	- for Exynos5440-based Samsung board.
- 
- Optional:
-     - firmware node, specifying presence and type of secure firmware:
--- 
-1.8.5.5
+Please send patches in the format covered in SubmittingPatches, the
+tools can't apply this.
+
+--gBBFr7Ir9EOA20Yy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUcxECAAoJECTWi3JdVIfQ36MH/2Y0eOdcnSUuB24hE7BBQA8I
+hLAkah0CPWb5/Gv6mJxDxEHynGFOsroWP9vNIRodJBD3R5IKrxdXQgCBPnUq3qnb
+FSzwKvwfXCFqSgEWNSR3wzltlADyFGM00bm2E4uSB/Ytdm5vHdHCIfeHF5RjzFml
+x9E3F/qgjt6lyBEAodbbE4itEu8iC9zmTcHgDUp0qX9F3VDBEwttFnxlaZLHkT4Y
+/rbEJbbjvSMzomyZfwyu55k1WA71H2kpXqBa4KPJMK7/2WniE5PYmSaHCCBQzJ7W
+kd5CIP+6p9aQQ8uDPEBz4gSyLmIlRbSIdYm81RUcAbqZRJDQFvEkksmmjyWqikA=
+=FCZ0
+-----END PGP SIGNATURE-----
+
+--gBBFr7Ir9EOA20Yy--
