@@ -1,50 +1,42 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: Arndale: Add machine device tree binding
- documentation for Arndale board
-Date: Mon, 24 Nov 2014 17:09:52 +0000
-Message-ID: <20141124170952.GG7712@sirena.org.uk>
-References: <1416811911-21026-1-git-send-email-krishna.md@samsung.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH] drm/exynos: Fix exynos_dpi_remove() parameter
+Date: Mon, 24 Nov 2014 15:19:49 -0200
+Message-ID: <1416849589-11766-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="APlYHCtpeOhspHkB"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36956 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750966AbaKXRMI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 12:12:08 -0500
-Content-Disposition: inline
-In-Reply-To: <1416811911-21026-1-git-send-email-krishna.md@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krishna Mohan Dani <krishna.md@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, kgene.kim@samsung.com
 
-
---APlYHCtpeOhspHkB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Nov 24, 2014 at 12:21:51PM +0530, Krishna Mohan Dani wrote:
-> Document the device tree binding for the Arndale board based machine driver.
-
-This is adding binding documentation but I'm not seeing the matching
-driver - please send the two together.
-
---APlYHCtpeOhspHkB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUc2ZfAAoJECTWi3JdVIfQ8SAH/2L3D8VxRP1GQNA/kDfXmy/B
-zgBgRc9aFgtZGoEZnTmDiMW1CM9MgmkLo1Tv7d/q3rFslI4M6JPqVXDXQ8qoocgt
-dZTt5wYCEtxX5VhaGTNjepAu97q7J022NFq2k9R4dSKOzR1ssUEBPfO2GLwJ2kqZ
-xjA6HwGyRQEaOT2/9VNNpwCOxYcc7o3t6Ldi3BJjh6RszIv5xKO0ZVxGSm9/7Ej6
-ZaP11/Py32+6tTMMUlh5PfbjoDmYM751xtzzjL3akKOYorB8iqYtEM1ZscvPoIR4
-2Dzw4XReVu3qjl+EQYpqNMTxeUVRy12xBE2/hYbn46WZkutTFmUNXZDpmAHnpRQ=
-=s091
------END PGP SIGNATURE-----
-
---APlYHCtpeOhspHkB--
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+ZXh5bm9zX2RwaV9yZW1vdmUoKSBzaG91bGQgcmVjZWl2ZSBhIGV4eW5vc19kcm1fZGlzcGxheSBi
+dXQgd2hlbgpEUk1fRVhZTk9TX0RQSSB3YXMgZGlzYWJsZWQgaXQgd2FzIHJlY2VpdmluZyBhIHN0
+cnVjdCBkZXZpY2UgcmVzdWx0aW5nIGluCmlhIGNvbXBpbGVyIHdhcm5pbmcuCgpTaWduZWQtb2Zm
+LWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Ci0t
+LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oIHwgNSArKysrLQogMSBm
+aWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCBiL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAppbmRleCAyZTRlOTFiLi4yZTUwNjM0IDEwMDY0NAot
+LS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKKysrIGIvZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCkBAIC0zMDcsNyArMzA3LDEwIEBAIGlu
+dCBleHlub3NfZHBpX3JlbW92ZShzdHJ1Y3QgZXh5bm9zX2RybV9kaXNwbGF5ICpkaXNwbGF5KTsK
+ICNlbHNlCiBzdGF0aWMgaW5saW5lIHN0cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkgKgogZXh5bm9z
+X2RwaV9wcm9iZShzdHJ1Y3QgZGV2aWNlICpkZXYpIHsgcmV0dXJuIE5VTEw7IH0KLXN0YXRpYyBp
+bmxpbmUgaW50IGV4eW5vc19kcGlfcmVtb3ZlKHN0cnVjdCBkZXZpY2UgKmRldikgeyByZXR1cm4g
+MDsgfQorc3RhdGljIGlubGluZSBpbnQgZXh5bm9zX2RwaV9yZW1vdmUoc3RydWN0IGV4eW5vc19k
+cm1fZGlzcGxheSAqZGlzcGxheSkKK3sKKwlyZXR1cm4gMDsKK30KICNlbmRpZgogCiAjaWZkZWYg
+Q09ORklHX0RSTV9FWFlOT1NfVklESQotLSAKMS45LjMKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
+YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
