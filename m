@@ -1,19 +1,19 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH RESEND 2/7] ARM: Exynos: add support for sub-power domains
-Date: Mon, 24 Nov 2014 08:30:51 +0100
-Message-ID: <1416814256-24288-3-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH RESEND 5/7] ARM: dts: exynos4412-odroid: enable hdmi support
+Date: Mon, 24 Nov 2014 08:30:54 +0100
+Message-ID: <1416814256-24288-6-git-send-email-a.hajda@samsung.com>
 References: <1416814256-24288-1-git-send-email-a.hajda@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:10840 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752652AbaKXHbo (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:8934 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752652AbaKXHbq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 02:31:44 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
+	Mon, 24 Nov 2014 02:31:46 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NFJ00KXC91NV970@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 24 Nov 2014 07:34:35 +0000 (GMT)
+ 17 2011)) with ESMTP id <0NFJ00K1B91O6Z80@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 24 Nov 2014 07:34:36 +0000 (GMT)
 In-reply-to: <1416814256-24288-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -22,57 +22,81 @@ Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, 
 
 From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-This patch adds support for making one power domain a sub-domain of
-other domain. This is useful for modeling power dependences for devices
-like TV Mixer or Camera ISP, which needs to have more than one power
-domain enabled to be operational.
+This patch adds nodes specific to Exynos4412 based Odroid X/X2/U2/U3
+boards required for enabling HDMI display.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- Documentation/devicetree/bindings/arm/exynos/power_domain.txt | 2 ++
- arch/arm/mach-exynos/pm_domains.c                             | 9 ++++++++-
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 44 +++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-index abde1ea..cad9476 100644
---- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-+++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-@@ -22,6 +22,8 @@ Optional Properties:
- 	- pclkN, clkN: Pairs of parent of input clock and input clock to the
- 		devices in this power domain. Maximum of 4 pairs (N = 0 to 3)
- 		are supported currently.
-+- power-domain-master: phandle to a master power domain that the given domain
-+		       is a part of
+diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+index c697ff0..4ebb557 100644
+--- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
++++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
+@@ -205,6 +205,20 @@
+ 					regulator-always-on;
+ 				};
  
- Node of a device using power domains must have a samsung,power-domain property
- defined with a phandle to respective power domain.
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 20f2671..373ac62 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -108,7 +108,7 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
- static __init int exynos4_pm_init_power_domain(void)
- {
- 	struct platform_device *pdev;
--	struct device_node *np;
-+	struct device_node *np, *master_np;
- 
- 	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
- 		struct exynos_pm_domain *pd;
-@@ -159,6 +159,13 @@ no_clk:
- 
- 		pm_genpd_init(&pd->pd, NULL, !on);
- 		of_genpd_add_provider_simple(np, &pd->pd);
++				ldo8_reg: ldo@8 {
++					regulator-compatible = "LDO8";
++					regulator-name = "VDD10_HDMI_1.0V";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++				};
 +
-+		/* make master and slave hierarchy */
-+		master_np = of_parse_phandle(np, "power-domain-master", 0);
-+		if (master_np) {
-+			pm_genpd_add_subdomain_names(master_np->name, np->name);
-+			of_node_put(master_np);
-+		}
- 	}
++				ldo10_reg: ldo@10 {
++					regulator-compatible = "LDO10";
++					regulator-name = "VDDQ_MIPIHSI_1.8V";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++				};
++
+ 				ldo11_reg: LDO11 {
+ 					regulator-name = "VDD18_ABB1_1.8V";
+ 					regulator-min-microvolt = <1800000>;
+@@ -363,6 +377,31 @@
+ 	ehci: ehci@12580000 {
+ 		status = "okay";
+ 	};
++
++	mixer: mixer@12C10000 {
++		status = "okay";
++	};
++
++	hdmi@12D00000 {
++		hpd-gpio = <&gpx3 7 0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&hdmi_hpd>;
++		vdd-supply = <&ldo8_reg>;
++		vdd_osc-supply = <&ldo10_reg>;
++		vdd_pll-supply = <&ldo8_reg>;
++		ddc = <&hdmi_ddc>;
++		status = "okay";
++	};
++
++	hdmi_ddc: i2c@13880000 {
++		status = "okay";
++		pinctrl-names = "default";
++		pinctrl-0 = <&i2c2_bus>;
++	};
++
++	i2c@138E0000 {
++		status = "okay";
++	};
+ };
  
- 	return 0;
+ &pinctrl_1 {
+@@ -377,4 +416,9 @@
+ 		samsung,pin-pud = <0>;
+ 		samsung,pin-drv = <0>;
+ 	};
++
++	hdmi_hpd: hdmi-hpd {
++		samsung,pins = "gpx3-7";
++		samsung,pin-pud = <1>;
++	};
+ };
 -- 
 1.9.1
