@@ -1,74 +1,115 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH V2 1/2] pinctrl: exynos: Add BUS1 pin controller for exynos7
-Date: Mon, 24 Nov 2014 18:32:57 +0530
-Message-ID: <1416834177-11170-1-git-send-email-gautam.vivek@samsung.com>
-References: <CAFp+6iF-N63YSsdv2a6=MYp_mD=eQY_Oi8=9JVNU5dG0BA7YGQ@mail.gmail.com>
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Subject: [PATCH RFC v2 01/12] arm: exynos: Add platform driver support for
+ power domain driver
+Date: Mon, 24 Nov 2014 18:34:05 +0530
+Message-ID: <1416834256-11225-1-git-send-email-amit.daniel@samsung.com>
+References: <1416833572-6880-1-git-send-email-amit.daniel@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:13253 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751269AbaKXNKD (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:27553 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753154AbaKXNLo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 08:10:03 -0500
-In-reply-to: <CAFp+6iF-N63YSsdv2a6=MYp_mD=eQY_Oi8=9JVNU5dG0BA7YGQ@mail.gmail.com>
+	Mon, 24 Nov 2014 08:11:44 -0500
+In-reply-to: <1416833572-6880-1-git-send-email-amit.daniel@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, robh+dt@kernel.org, kgene@kernel.org, alim.akhtar@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, pankaj.dubey@samsung.com, ulf.hansson@linaro.org, khilman@kernel.org, linux-pm@vger.kernel.org, geert@linux-m68k.org, rjw@rjwysocki.net, devicetree@vger.kernel.org, Amit Daniel Kachhap <amit.daniel@samsung.com>
 
-USB and Power regulator on Exynos7 require gpios available
-in BUS1 pin controller block.
-So adding the BUS1 pinctrl support.
+This patch modifies Exynos Power Domain driver initialization
+implementation in following way:
 
-Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
+   - Added platform driver support and probe function where Exynos PM
+     Domain driver will finally register itself as MFD PMU client driver.
+     In this way,all the Exynos power domains are probed once and registered
+     with the power domain subsystem.
+   - Existing DT bindings are used.
+
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
 ---
+ arch/arm/mach-exynos/pm_domains.c |   40 +++++++++++++++++++++++--------------
+ 1 file changed, 25 insertions(+), 15 deletions(-)
 
-This patch was part of series:
-"[PATCH 00/11] Exynos7: Adding USB 3.0 support"
- https://lkml.org/lkml/2014/11/21/247
-
-Changes since V1:
- - Added support for all pin banks which are part of BUS1 pin controller.
-
- drivers/pinctrl/samsung/pinctrl-exynos.c |   19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index d5d4cfc..44e60dc 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -1300,6 +1300,20 @@ static const struct samsung_pin_bank_data exynos7_pin_banks7[] __initconst = {
- 	EXYNOS_PIN_BANK_EINTG(8, 0x060, "gpr3", 0x0c),
- };
+diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+index 20f2671..5cb5440 100644
+--- a/arch/arm/mach-exynos/pm_domains.c
++++ b/arch/arm/mach-exynos/pm_domains.c
+@@ -105,25 +105,17 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
+ 	return exynos_pd_power(domain, false);
+ }
  
-+/* pin banks of exynos7 pin-controller - BUS1 */
-+static const struct samsung_pin_bank_data exynos7_pin_banks8[] __initconst = {
-+	EXYNOS_PIN_BANK_EINTG(8, 0x020, "gpf0", 0x00),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpf1", 0x04),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x060, "gpf2", 0x08),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x080, "gpf3", 0x0c),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpf4", 0x10),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x0c0, "gpf5", 0x14),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x0e0, "gpg1", 0x18),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x100, "gpg2", 0x1c),
-+	EXYNOS_PIN_BANK_EINTG(6, 0x120, "gph1", 0x20),
-+	EXYNOS_PIN_BANK_EINTG(3, 0x140, "gpv6", 0x24),
+-static __init int exynos4_pm_init_power_domain(void)
++static int exynos_power_domain_probe(struct platform_device *pdev)
+ {
+-	struct platform_device *pdev;
+ 	struct device_node *np;
+ 
+ 	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
+ 		struct exynos_pm_domain *pd;
+ 		int on, i;
+-		struct device *dev;
+ 
+-		pdev = of_find_device_by_node(np);
+-		dev = &pdev->dev;
+-
+-		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
+-		if (!pd) {
+-			pr_err("%s: failed to allocate memory for domain\n",
+-					__func__);
++		pd = devm_kzalloc(&pdev->dev, sizeof(*pd), GFP_KERNEL);
++		if (!pd)
+ 			return -ENOMEM;
+-		}
+ 
+ 		pd->pd.name = kstrdup(np->name, GFP_KERNEL);
+ 		pd->name = pd->pd.name;
+@@ -131,7 +123,7 @@ static __init int exynos4_pm_init_power_domain(void)
+ 		pd->pd.power_off = exynos_pd_power_off;
+ 		pd->pd.power_on = exynos_pd_power_on;
+ 
+-		pd->oscclk = clk_get(dev, "oscclk");
++		pd->oscclk = of_clk_get_by_name(np, "oscclk");
+ 		if (IS_ERR(pd->oscclk))
+ 			goto no_clk;
+ 
+@@ -139,11 +131,11 @@ static __init int exynos4_pm_init_power_domain(void)
+ 			char clk_name[8];
+ 
+ 			snprintf(clk_name, sizeof(clk_name), "clk%d", i);
+-			pd->clk[i] = clk_get(dev, clk_name);
++			pd->clk[i] = of_clk_get_by_name(np, clk_name);
+ 			if (IS_ERR(pd->clk[i]))
+ 				break;
+ 			snprintf(clk_name, sizeof(clk_name), "pclk%d", i);
+-			pd->pclk[i] = clk_get(dev, clk_name);
++			pd->pclk[i] = of_clk_get_by_name(np, clk_name);
+ 			if (IS_ERR(pd->pclk[i])) {
+ 				clk_put(pd->clk[i]);
+ 				pd->clk[i] = ERR_PTR(-EINVAL);
+@@ -163,4 +155,22 @@ no_clk:
+ 
+ 	return 0;
+ }
+-arch_initcall(exynos4_pm_init_power_domain);
++
++static const struct platform_device_id exynos_power_domain_id[] = {
++	{ "exynos-pmu-pd"},
++	{ },
 +};
 +
- const struct samsung_pin_ctrl exynos7_pin_ctrl[] __initconst = {
- 	{
- 		/* pin-controller instance 0 Alive data */
-@@ -1342,5 +1356,10 @@ const struct samsung_pin_ctrl exynos7_pin_ctrl[] __initconst = {
- 		.pin_banks	= exynos7_pin_banks7,
- 		.nr_banks	= ARRAY_SIZE(exynos7_pin_banks7),
- 		.eint_gpio_init = exynos_eint_gpio_init,
-+	}, {
-+		/* pin-controller instance 8 BUS1 data */
-+		.pin_banks	= exynos7_pin_banks8,
-+		.nr_banks	= ARRAY_SIZE(exynos7_pin_banks8),
-+		.eint_gpio_init = exynos_eint_gpio_init,
- 	},
- };
++static struct platform_driver exynos_power_domain_driver = {
++	.driver  = {
++		.name   = "exynos-pd",
++	},
++	.probe = exynos_power_domain_probe,
++	.id_table = exynos_power_domain_id,
++};
++
++static int __init exynos_power_domain_init(void)
++{
++	return platform_driver_register(&exynos_power_domain_driver);
++}
++postcore_initcall(exynos_power_domain_init);
 -- 
-1.7.10.4
+1.7.9.5
