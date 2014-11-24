@@ -1,39 +1,81 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RFC 0/2] Fix Arndale Octa/Peach Pi boot on Audio subsystem clocks
-Date: Mon, 24 Nov 2014 18:28:48 +0100
-Message-ID: <54736AD0.4070909@collabora.co.uk>
-References: <1416842312-4405-1-git-send-email-k.kozlowski@samsung.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH 0/4] removal of extra abstraction layers
+Date: Mon, 24 Nov 2014 16:21:02 -0200
+Message-ID: <1416853266-10584-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:38562 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752436AbaKXR26 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 12:28:58 -0500
-In-Reply-To: <1416842312-4405-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>
 
-Hello Krzysztof,
-
-On 11/24/2014 04:18 PM, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> 
-> This is initial idea to solve dependency between AudioSS clocks
-> and main clock controller on Exynos platform.
-> 
-> This solves boot failure of Peach Pi/Pit and Arndale Octa [1].
-> 
-
-I tested this series on an Exynos5420 Peach Pit but I still
-have the boot hang so it doesn't solve the issue on this board.
-
-I'm using linux-next + your patches with exynos_defconfig and
-without the clk_ignore_unused command line parameter.
-
-Best regards,
-Javier
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+SGkgSW5raSwgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKSW4gdGhpcyBz
+ZXJpZXMgSSd2ZSByZW1vdmVkIHNvbWUgbGV2ZWwgb2YgaW5kaXJlY3Rpb24gZnJvbSB0aGUgZXh5
+bm9zX2RybV9jb2RlLiAKVGhlcmUgdHdvIG1vdmVzIGluIHRoZXNlIHBhdGNoZXMsIGZpcnN0IHdl
+IHJlbW92ZSBhbGwgZXh5bm9zX2RybV9jcnRjX3BsYW5lXyooKSAKd3JhcHBlcnMgYW5kIGNhbGwg
+dGhlIG1hbmFnZXIgc3BlY2lmaWMgZnVuY3Rpb25zIGRpcmVjdGx5LiBUaGUgb3RoZXIgY2hhbmdl
+IGlzICAKdGhlIHJlbW92YWwgb2Ygc3RydWN0IGV4eW5vc19kcm1fb3ZlcmxheSgpLiBJbiBteSB1
+bmRlcnN0YW5kaW5nIHRoZSBvdmVybGF5ICAgICAKc3RydWN0IHdhcyBqdXN0IHN0b3JpbmcgcGxh
+bmUgZGF0YSBpbiBhIDE6MSByZWxhdGlvbnNoaXAgc28gaXQgbWFkZSBzZW5zZSB0byAgICAKbWVy
+Z2UgaXRzIGZpZWxkcyBpbiBzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSBhbmQgcmVtb3ZlIGFub3Ro
+ZXIgYWJzdHJhY3Rpb24gZnJvbSAKdGhlIGRyaXZlci4gICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAKTmV4dCBzdGVwczogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAKRHVyaW5nIG91ciBpbml0aWFsIGludmVzdGlnYXRpb24gb24gdGhlIEV4eW5vcyBEUk0gZHJp
+dmVyIHdlJ3ZlIHNwb3RlZCBhIGZldyAgICAKYWJzdHJhY3Rpb25zIHRoYXQgY291bGQgYmUgcmVt
+b3ZlZCB0byBnZXQgYSBtb3JlIGNsZWFuIGFuZCBsZXNzIGFic3RyYWN0IGNvZGUuICAKICAgICAg
+ICAtIHN0cnVjdCBleHlub3NfZHJtX21hbmFnZXI6IHRoaXMgaXMganVzdCBhIGhlbHBlciBvZiAg
+ICAgICAgICAgICAgICAgICAKICAgICAgICBzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjLCAgSSBzdWdn
+ZXN0IHdlIGNvdWxkIG1lcmdlIHRoZW0gYm90aC4gICAgICAgICAgICAKICAgICAgICAtIHN0cnVj
+dCAqX3dpbl9kYXRhOiBNb3N0IG9mIHRoZSBzaGFyZSBjb21tb24gZmllbGRzIGFuZCBjb3VsZCBi
+ZSBtZXJnZWQKICAgICAgICBpbnQgc3RydWN0IGV4eW5vc19kcm1fcGxhbmUuICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAtIHNvbWUgbW9yZSBmdW5j
+dGlvbiB3cmFwcGVyIGNhbiBiZSByZW1vdmVkIGFzIHdlbGwuICAgICAgICAgICAgICAgICAgICAK
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAKQWZ0ZXIgdGhlc2UgY2hhbmdlcyBpbnRlYWQgb2YgbG9v
+a2luZyB0byBtYW5hZ2VyIGFuZCB3aW5fZGF0YSB3ZSB3aWxsIGxvb2sgaW50byAKY3J0YyBhbmQg
+cGxhbmVzLiBUaGUgbmV3IG5hbWVzIGdpdmUgdXMgbW9yZSBjbHVlIGFib3V0IHdoYXQgYSBwaWVj
+ZSBvZiBjb2RlIGlzICAKZG9pbmcgc2luY2UgdGhleSBhcmUgYWxyZWFkeSBkZWZpbmVkIGFuZCB1
+c2VkIGJ5IHRoZSB3aG9sZSBEUk0gZWNvc3N5dGVtLiAgICAgICAKICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAKV2hhdCB5b3VyIHRob3VnaHRzIG9uIHRoaXM/IEkndmUgc2VlbiB0aGF0IHlvdSBwdXNo
+ZWQgc29tZSBwYXRjaGVzIHRvIHJlbW92ZSAgICAKc3RhdGljIHVzYWdlIG9mIG1hbmFnZXJzIHNv
+IEkgd291bGQgbGlrZSB0byBjaGVjayB3aXRoIHlvdSB3aGljaCBkaXJlY3Rpb24gYXJlICAKeW91
+IHBsYW5uaW5nIHRvIGdvIHdpdGggdGhpcy4gSSd2ZSBkb25lIHNvbWUgY29kZVswXSBhcm91bmQg
+dGhpcyBidXQgbm93IGl0ICAgICAKbmVlZHMgYSByZWJhc2UgYWdhaW5zdCB5b3UgZXh5bm9zLWRy
+bS1uZXh0LiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAKWzBdIGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJuZWwv
+Z2l0L3BhZG92YW4vZHJtLWV4eW5vcy5naXQvbG9nLz9oPWNsZWFudXAKCkd1c3Rhdm8gUGFkb3Zh
+biAoNCk6CiAgZHJtL2V4eW5vczogbW92ZSB0b19leHlub3NfY3J0YygpIG1hY3JvIHRvIG1haW4g
+aGVhZGVyCiAgZHJtL2V4eW5vczogZXhwb3NlIHN0cnVjdCBleHlub3NfZHJtX2NydGMKICBkcm0v
+ZXh5bm9zOiByZW1vdmUgZXh5bm9zX2RybV9jcnRjX3BsYW5lXyogd3JhcHBlcnMKICBkcm0vZXh5
+bm9zOiByZW1vdmUgc3RydWN0IGV4eW5vc19kcm1fb3ZlcmxheQoKIGRyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9jcnRjLmMgIHwgNjYgLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5oICB8ICAyICstCiBkcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmggICB8IDQzICsrKysrKysrKysrKystCiBkcml2
+ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jICB8IDQ0ICsrKysrKystLS0tLS0t
+CiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUuYyB8IDk2ICsrKysrKysr
+KysrKysrKy0tLS0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV92aWRpLmMgIHwgMzggKysrKysrLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19taXhlci5jICAgICB8IDUwICsrKysrKysrLS0tLS0tLS0KIDcgZmlsZXMgY2hhbmdlZCwgMTU2
+IGluc2VydGlvbnMoKyksIDE4MyBkZWxldGlvbnMoLSkKCi0tIAoxLjkuMwoKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
+dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
