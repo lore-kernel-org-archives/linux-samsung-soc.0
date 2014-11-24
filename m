@@ -1,48 +1,115 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH] drm/exynos: fix exynos_drm_component_del
-Date: Mon, 24 Nov 2014 17:10:05 +0900
-Message-ID: <1416816605-2264-1-git-send-email-inki.dae@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:46955 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752751AbaKXIKI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 03:10:08 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NFJ00IFSAOU9580@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 24 Nov 2014 17:10:06 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v6]  i2c: s3c2410: Handle i2c sys_cfg register in i2c driver
+Date: Mon, 24 Nov 2014 14:03:38 +0530
+Message-ID: <1416818018-6684-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org
-Cc: airlied@linux.ie, linux-samsung-soc@vger.kernel.org, Inki Dae <inki.dae@samsung.com>
 
-This patch resolves the issue that component object isn't removed
-correctly.
+Let's handle i2c interrupt re-configuration in i2c driver. This will
+help us in removing some soc specific checks from machine files and
+will help in removing static iomapping of SYS register in exynos.c
 
-A given component object couldn't be placed to head of drm_component_list
-so all component objects added to the drm_component_list should be checked
-to remove the given component object.
+Also handle saving and restoring of SYS_I2C_CFG register during
+suspend and resume of i2c driver.
 
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
+CC: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+CC: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/gpu/drm/exynos/exynos_drm_drv.c |    2 --
- 1 file changed, 2 deletions(-)
+This patch is created from following patch series V5(1/2).
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index c5cb8b6..0e4813b 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -473,8 +473,6 @@ void exynos_drm_component_del(struct device *dev,
- 			list_del(&cdev->list);
- 			kfree(cdev);
- 		}
--
--		break;
- 	}
+https://patchwork.kernel.org/patch/5354131/
+
+DT and machine (mach-exynos) changes will be posted separately. 
+
+
+ drivers/i2c/busses/i2c-s3c2410.c |   29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 6524477..09a6bac 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -35,6 +35,8 @@
+ #include <linux/of.h>
+ #include <linux/of_gpio.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/mfd/syscon.h>
++#include <linux/regmap.h>
  
- 	mutex_unlock(&drm_component_lock);
+ #include <asm/irq.h>
+ 
+@@ -87,6 +89,9 @@
+ /* Max time to wait for bus to become idle after a xfer (in us) */
+ #define S3C2410_IDLE_TIMEOUT	5000
+ 
++/* Exynos5 Sysreg offset */
++#define EXYNOS5_SYS_I2C_CFG	0x0234
++
+ /* i2c controller state */
+ enum s3c24xx_i2c_state {
+ 	STATE_IDLE,
+@@ -123,6 +128,8 @@ struct s3c24xx_i2c {
+ #if defined(CONFIG_ARM_S3C24XX_CPUFREQ)
+ 	struct notifier_block	freq_transition;
+ #endif
++	struct regmap		*sysreg;
++	unsigned int		sys_i2c_cfg;
+ };
+ 
+ static struct platform_device_id s3c24xx_driver_ids[] = {
+@@ -1071,6 +1078,7 @@ static void
+ s3c24xx_i2c_parse_dt(struct device_node *np, struct s3c24xx_i2c *i2c)
+ {
+ 	struct s3c2410_platform_i2c *pdata = i2c->pdata;
++	int id;
+ 
+ 	if (!np)
+ 		return;
+@@ -1080,6 +1088,21 @@ s3c24xx_i2c_parse_dt(struct device_node *np, struct s3c24xx_i2c *i2c)
+ 	of_property_read_u32(np, "samsung,i2c-slave-addr", &pdata->slave_addr);
+ 	of_property_read_u32(np, "samsung,i2c-max-bus-freq",
+ 				(u32 *)&pdata->frequency);
++	/*
++	 * Exynos5's legacy i2c controller and new high speed i2c
++	 * controller have muxed interrupt sources. By default the
++	 * interrupts for 4-channel HS-I2C controller are enabled.
++	 * If nodes for first four channels of legacy i2c controller
++	 * are available then re-configure the interrupts via the
++	 * system register.
++	 */
++	id = of_alias_get_id(np, "i2c");
++	i2c->sysreg = syscon_regmap_lookup_by_phandle(np,
++			"samsung,sysreg-phandle");
++	if (IS_ERR(i2c->sysreg))
++		return;
++
++	regmap_update_bits(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, BIT(id), 0);
+ }
+ #else
+ static void
+@@ -1260,6 +1283,9 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
+ 
+ 	i2c->suspended = 1;
+ 
++	if (!IS_ERR(i2c->sysreg))
++		regmap_read(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, &i2c->sys_i2c_cfg);
++
+ 	return 0;
+ }
+ 
+@@ -1268,6 +1294,9 @@ static int s3c24xx_i2c_resume_noirq(struct device *dev)
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
+ 
++	if (!IS_ERR(i2c->sysreg))
++		regmap_write(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, i2c->sys_i2c_cfg);
++
+ 	clk_prepare_enable(i2c->clk);
+ 	s3c24xx_i2c_init(i2c);
+ 	clk_disable_unprepare(i2c->clk);
 -- 
 1.7.9.5
