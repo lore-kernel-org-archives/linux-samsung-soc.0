@@ -1,98 +1,89 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [RESEND PATCH 1/2] ARM: dts: exynos4x12: Device tree node
- definition for TMU on Exynos4x12
-Date: Mon, 24 Nov 2014 09:49:26 +0100
-Message-ID: <20141124094926.04ffacfd@amdc2363>
-References: <1416474343-1283-1-git-send-email-l.majewski@samsung.com>
- <035001d005fd$7abac670$70305350$@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v6 0/2] Remove i2c sys_cfg register configuration from
+ mach-exynos
+Date: Mon, 24 Nov 2014 14:17:45 +0530
+Message-ID: <1416818867-29156-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:56511 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750985AbaKXItg (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:62784 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751125AbaKXIz0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 03:49:36 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NFJ00I1ECIMM1C0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 24 Nov 2014 17:49:34 +0900 (KST)
-In-reply-to: <035001d005fd$7abac670$70305350$@kernel.org>
+	Mon, 24 Nov 2014 03:55:26 -0500
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NFJ00L71CSDFRE0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 24 Nov 2014 17:55:25 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, linux-arm-kernel@lists.infradead.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, tomasz.figa@gmail.com, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Hi Kukjin,
+This patch series is removing i2c sys_cfg register configuration settings from
+mach-exynos. All such configuration can be done into i2c driver.
+So added new property to hold phandle of SYSREG into i2c device nodes.
+This will help in removing static mapping of SYS registers.
 
-> Lukasz Majewski wrote:
-> > 
-> + Bart, Tomasz and MLs
-> 
-> Hi Lukasz,
-> 
-> Please post including MLs, even resending.
-> 
-> Will apply for v3.19, and just note that you asked me to apply this
-> for 3.18 in personal talk but I couldn't see any requirements for
-> fixes-3.18. If I'm missing something, please let me know.
+This series is based on latest kgene/for-next. 
 
-The thing is that by default Exynos 4412 (trats2) can run with modified
-cpufreq to support SW governed overclocking (BOOST).
+This patch series requires following change in i2c driver which has been separated
+from this patch series and posted separately here [1]
 
-To provide safe BOOST operation, TMU (thermal) _must_ be configured.
-Configuration is not possible when trats2 DTS lacks of those patches.
+https://patchwork.kernel.org/patch/5363981/
 
-So, yes there is a requirement to add those patches to v3.18 (if not
-possible please add it to v3.19).
+Revision V5 of these patches can related discussion can be found here.
 
-> 
-> Thanks,
-> Kukjin
-> 
-> > The TMU device tree node definition for Exynos4x12 family of SoCs.
-> > 
-> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> > Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
-> > ---
-> >  arch/arm/boot/dts/exynos4x12.dtsi | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> > 
-> > diff --git a/arch/arm/boot/dts/exynos4x12.dtsi
-> > b/arch/arm/boot/dts/exynos4x12.dtsi index 861bb91..2e9f1f7 100644
-> > --- a/arch/arm/boot/dts/exynos4x12.dtsi
-> > +++ b/arch/arm/boot/dts/exynos4x12.dtsi
-> > @@ -271,4 +271,14 @@
-> >  		compatible = "samsung,exynos4x12-usb2-phy";
-> >  		samsung,sysreg-phandle = <&sys_reg>;
-> >  	};
-> > +
-> > +	tmu@100C0000 {
-> > +		compatible = "samsung,exynos4412-tmu";
-> > +		interrupt-parent = <&combiner>;
-> > +		interrupts = <2 4>;
-> > +		reg = <0x100C0000 0x100>;
-> > +		clocks = <&clock 383>;
-> > +		clock-names = "tmu_apbif";
-> > +		status = "disabled";
-> > +	};
-> >  };
-> > --
-> > 2.0.0.rc2
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+http://www.spinics.net/lists/linux-samsung-soc/msg39326.html
 
+This patch and patch [1] has been tested on kgene/for-next for S2R on Exynos5250 based
+SMDK5250 board and it's working well.
+
+
+Changes since v5:
+ - Rebased on latest kgene/for-next (SHA-ID: 4059421c38d24f2f7e06778c8ee6da4ca9abb4b7)
+ - Separated changes in i2c-s3c2410.c file and posted as separate patch.
+
+Changes since v4:
+ - Rebased on latest kgene/for-next (SHA-ID: 7552917ad948acad6c689d49604f93f725145173)
+ - Addressed Wolfram Sang's review comments.
+
+Change since v3:
+ - Rebased on latest kgene/for-next (SHA-ID: 2b5fa1d5dabb9af8f2da4f380bea8684f9b96f59)
+ - This series consist of only two patches from v3 [1] (v3[1/6] and v3[2/6]).
+ - Addressed Tomasz Figa and Wolfram Sang's comments.
+ - Updated i2c DT binding information.
+
+Changes since v2:
+ - Reorganized patches as suggested by Tomasz Figa.
+ - Addressed review comments of Tomasz Figa in i2c-s3c2410.c file.
+
+Changes since v1:
+ - Added patch to move i2c interrupt re-configuration code from exynos.c
+   to i2c driver, as suggested by Arnd.
+ - After above patch only user of SYS_I2C_CFG register is pm.c so moving
+   save/restore of this register also into i2c driver.
+ - Spiltted up exynos4 and exynos5 machine descriptors to get rid from
+   soc_is_exynos4/exynos5 kind of macros, as suggested by Arnd.
+ - Changed location of chipid driver to "drivers/soc".
+ - Added drivers/base/soc.c provided infrastructure to make SoC specific 
+   information avaible to user space via sysfs entry, as suggested by Arnd.
+
+
+Pankaj Dubey (2):
+  i2c: s3c2410: add Sysreg phandle to i2c device nodes
+  ARM: EXYNOS: Remove i2c sys configuration related code
+
+ .../devicetree/bindings/i2c/i2c-s3c2410.txt        |    1 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |    4 ++
+ arch/arm/boot/dts/exynos5420.dtsi                  |    4 ++
+ arch/arm/mach-exynos/exynos.c                      |   39 +-------------------
+ arch/arm/mach-exynos/include/mach/map.h            |    3 --
+ arch/arm/mach-exynos/pm.c                          |    3 +-
+ arch/arm/mach-exynos/regs-sys.h                    |   22 -----------
+ arch/arm/mach-exynos/suspend.c                     |    7 ----
+ 8 files changed, 13 insertions(+), 70 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/regs-sys.h
 
 -- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+1.7.9.5
