@@ -1,89 +1,100 @@
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH RFC v2 00/12] soc: samsung: Modify and enhance power domain
- driver
-Date: Mon, 24 Nov 2014 18:22:40 +0530
-Message-ID: <1416833572-6880-1-git-send-email-amit.daniel@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, pankaj.dubey@samsung.com, ulf.hansson@linaro.org, khilman@kernel.org, linux-pm@vger.kernel.org, geert@linux-m68k.org, rjw@rjwysocki.net, devicetree@vger.kernel.org, Amit Daniel Kachhap <amit.daniel@samsung.com>
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Subject: Re: [PATCH 1/3] drm/exynos: free DP if probe fails to find a panel
+ or bridge
+Date: Mon, 24 Nov 2014 11:02:34 -0200
+Message-ID: <20141124130234.GA1777@joana>
+References: <1416527664-10553-1-git-send-email-gustavo@padovan.org>
+ <CAAQKjZPgYbwchnHNEEmjL7eWVGU3_NAHZBvB1Los1d-reyNg6g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:38252 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752483AbaKXNCl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 24 Nov 2014 08:02:41 -0500
+Content-Disposition: inline
+In-Reply-To: <CAAQKjZPgYbwchnHNEEmjL7eWVGU3_NAHZBvB1Los1d-reyNg6g@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Gustavo Padovan <gustavo@padovan.org>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-Posting this series as RFC to get more clarity as lot of power domain related
-discussion is happening in mailing lists.
+2014-11-22 Inki Dae <inki.dae@samsung.com>:
 
-This patch series[1 - 12] performs several implementations as listed below,
+> 2014-11-21 8:54 GMT+09:00 Gustavo Padovan <gustavo@padovan.org>:
+> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> >
+> > DP was leaked everytime function returns EPROBE_DEFER, free it before
+> > returning.
+> 
+> It seems that you misunderstood devm_* api.
 
-1) Converts power domain driver to platform driver.
-2) Registers this driver as MFD client driver.
-3) Moves them into driver/soc/samsung folder.
-4) Add parent power domain parsing code.
-5) Updates the reparenting feature to make it more generic.
-6) A feature to turn clocks on during pm domain off/on. There can be
-   different set of clocks to be turned on. The patches in Rafael's tree allows
-   a single list only.
-7) Code added to preserve the clocks rates during power domain on/off
-   sequence.
-8) Restructured the exynos PD on/off handlers and added exynos7 support.
+Yeah, I though it would only free memory at unload of the module but it also
+free it when the probe fails.
 
-The power domain DT node may look something like,
+> 
+> Thanks,
+> Inki Dae
+> 
+> >
+> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> > ---
+> >  drivers/gpu/drm/exynos/exynos_dp_core.c | 21 +++++++++++++++------
+> >  1 file changed, 15 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/exynos/exynos_dp_core.c b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> > index 85762cf..6fd4a46 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_dp_core.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_dp_core.c
+> > @@ -1336,8 +1336,10 @@ static int exynos_dp_probe(struct platform_device *pdev)
+> >         if (panel_node) {
+> >                 dp->panel = of_drm_find_panel(panel_node);
+> >                 of_node_put(panel_node);
+> > -               if (!dp->panel)
+> > -                       return -EPROBE_DEFER;
+> > +               if (!dp->panel) {
+> > +                       ret = -EPROBE_DEFER;
+> > +                       goto free_dp;
+> > +               }
+> >         }
+> >
+> >         endpoint = of_graph_get_next_endpoint(dev->of_node, NULL);
+> > @@ -1346,10 +1348,14 @@ static int exynos_dp_probe(struct platform_device *pdev)
+> >                 if (bridge_node) {
+> >                         dp->bridge = of_drm_find_bridge(bridge_node);
+> >                         of_node_put(bridge_node);
+> > -                       if (!dp->bridge)
+> > -                               return -EPROBE_DEFER;
+> > -               } else
+> > -                       return -EPROBE_DEFER;
+> > +                       if (!dp->bridge) {
+> > +                               ret = -EPROBE_DEFER;
+> > +                               goto free_dp;
+> > +                       }
+> > +               } else {
+> > +                       ret = -EPROBE_DEFER;
+> > +                       goto free_dp;
+> > +               }
+> >         }
+> >
+> >         exynos_dp_display.ctx = dp;
+> > @@ -1359,6 +1365,9 @@ static int exynos_dp_probe(struct platform_device *pdev)
+> >                 exynos_drm_component_del(&pdev->dev,
+> >                                                 EXYNOS_DEVICE_TYPE_CONNECTOR);
+> >
+> > +free_dp:
+> > +       devm_kfree(dev, dp);
+> > +
+> >         return ret;
+> >  }
+> >
+> > --
+> > 1.9.3
+> >
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel@lists.freedesktop.org
+> > http://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-mfc_pd: power-domain@10044060 {
-	compatible = "samsung,exynos4210-pd", "samsung,exynos7-pd-mfc";
-	reg = <0x10044060 0x20>;
-	pd-parent-clock-names = "tclk0", "pclk0", "clk0";
-	pd-parent-clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_SW_ACLK333>,
-		<&clock CLK_MOUT_USER_ACLK333>;
-	pd-on-en-clock-names = "clk0", "clk1";
-	pd-on-en-clocks = <&clock CLK_IP1>, <&clock CLK_IP2>,
-	pd-off-en-clock-names = "clk0", "clk1", "clk3";
-	pd-off-en-clocks = <&clock CLK_IP1>, <&clock CLK_IP2>, <&clock CLK_IP3>;
-	pd-rate-clock-names = "clk0", "clk1";
-	pd-rate-clocks = <&clock CLK_IP1>, <&clock CLK_IP2>,
-	parents = <&pd_top>;
-	#power-domain-cells = <0>;
-};
-
-Changes from v1:
-* Removed PM domain notifier features.
-* Removed clock save/restore through those notifiers.
-* link for v1 is http://www.spinics.net/lists/linux-samsung-soc/msg38442.html.
-
-This patch series depends on exynos pmu patches posted earlier.
-http://lkml.org/lkml/2014/11/23/221
-
-Amit Daniel Kachhap (12):
-  arm: exynos: Add platform driver support for power domain driver
-  soc: exynos: Move exynos power domain file to driver/soc/samsung
-    folder
-  soc: samsung: exynos-pmu: Register exynos pd driver as a mfd client
-  soc: samsung: Re-structure PMU driver to create pd on/off handlers
-  soc: samsung: pm_domain: Use unique compatible name for power domain
-  driver: soc: exynos-pmu: Add exynos7 power domain on/off ops
-  PM / Domains: export pm_genpd_lookup_name
-  soc: samsung: pm_domain: Add support for parent power domain
-  drivers: soc: pm_domain: Modify the parent clocks bindings
-  drivers: soc: samsung: Add support for clock enabling in power domain
-  drivers: soc: samsung: Add support for clock rate save/restore in
-    power domain
-  arm64: Kconfig: Enable PM_GENERIC_DOMAINS for exynos7
-
- .../bindings/arm/exynos/power_domain.txt           |   45 +-
- arch/arm/mach-exynos/Makefile                      |    1 -
- arch/arm/mach-exynos/pm_domains.c                  |  166 -------
- arch/arm64/Kconfig                                 |    1 +
- drivers/base/power/domain.c                        |    3 +-
- drivers/soc/samsung/Kconfig                        |    9 +
- drivers/soc/samsung/Makefile                       |    3 +-
- drivers/soc/samsung/exynos-pmu.c                   |  185 +++++++
- drivers/soc/samsung/pm_domains.c                   |  510 ++++++++++++++++++++
- include/linux/pm_domain.h                          |    7 +
- include/linux/soc/samsung/exynos-pmu.h             |   15 +
- include/linux/soc/samsung/exynos-regs-pmu.h        |   26 +
- 12 files changed, 794 insertions(+), 177 deletions(-)
- delete mode 100644 arch/arm/mach-exynos/pm_domains.c
- create mode 100644 drivers/soc/samsung/pm_domains.c
-
--- 
-1.7.9.5
-
+	Gustavo
