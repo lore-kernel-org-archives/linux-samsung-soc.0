@@ -1,115 +1,98 @@
-From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v6]  i2c: s3c2410: Handle i2c sys_cfg register in i2c driver
-Date: Mon, 24 Nov 2014 14:03:38 +0530
-Message-ID: <1416818018-6684-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [RESEND PATCH 1/2] ARM: dts: exynos4x12: Device tree node
+ definition for TMU on Exynos4x12
+Date: Mon, 24 Nov 2014 09:49:26 +0100
+Message-ID: <20141124094926.04ffacfd@amdc2363>
+References: <1416474343-1283-1-git-send-email-l.majewski@samsung.com>
+ <035001d005fd$7abac670$70305350$@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:56511 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750985AbaKXItg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 24 Nov 2014 03:49:36 -0500
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NFJ00I1ECIMM1C0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 24 Nov 2014 17:49:34 +0900 (KST)
+In-reply-to: <035001d005fd$7abac670$70305350$@kernel.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, linux-arm-kernel@lists.infradead.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Let's handle i2c interrupt re-configuration in i2c driver. This will
-help us in removing some soc specific checks from machine files and
-will help in removing static iomapping of SYS register in exynos.c
+Hi Kukjin,
 
-Also handle saving and restoring of SYS_I2C_CFG register during
-suspend and resume of i2c driver.
+> Lukasz Majewski wrote:
+> > 
+> + Bart, Tomasz and MLs
+> 
+> Hi Lukasz,
+> 
+> Please post including MLs, even resending.
+> 
+> Will apply for v3.19, and just note that you asked me to apply this
+> for 3.18 in personal talk but I couldn't see any requirements for
+> fixes-3.18. If I'm missing something, please let me know.
 
-CC: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-CC: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
-This patch is created from following patch series V5(1/2).
+The thing is that by default Exynos 4412 (trats2) can run with modified
+cpufreq to support SW governed overclocking (BOOST).
 
-https://patchwork.kernel.org/patch/5354131/
+To provide safe BOOST operation, TMU (thermal) _must_ be configured.
+Configuration is not possible when trats2 DTS lacks of those patches.
 
-DT and machine (mach-exynos) changes will be posted separately. 
+So, yes there is a requirement to add those patches to v3.18 (if not
+possible please add it to v3.19).
+
+> 
+> Thanks,
+> Kukjin
+> 
+> > The TMU device tree node definition for Exynos4x12 family of SoCs.
+> > 
+> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> > Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
+> > ---
+> >  arch/arm/boot/dts/exynos4x12.dtsi | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/arch/arm/boot/dts/exynos4x12.dtsi
+> > b/arch/arm/boot/dts/exynos4x12.dtsi index 861bb91..2e9f1f7 100644
+> > --- a/arch/arm/boot/dts/exynos4x12.dtsi
+> > +++ b/arch/arm/boot/dts/exynos4x12.dtsi
+> > @@ -271,4 +271,14 @@
+> >  		compatible = "samsung,exynos4x12-usb2-phy";
+> >  		samsung,sysreg-phandle = <&sys_reg>;
+> >  	};
+> > +
+> > +	tmu@100C0000 {
+> > +		compatible = "samsung,exynos4412-tmu";
+> > +		interrupt-parent = <&combiner>;
+> > +		interrupts = <2 4>;
+> > +		reg = <0x100C0000 0x100>;
+> > +		clocks = <&clock 383>;
+> > +		clock-names = "tmu_apbif";
+> > +		status = "disabled";
+> > +	};
+> >  };
+> > --
+> > 2.0.0.rc2
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
 
- drivers/i2c/busses/i2c-s3c2410.c |   29 +++++++++++++++++++++++++++++
- 1 file changed, 29 insertions(+)
-
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 6524477..09a6bac 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -35,6 +35,8 @@
- #include <linux/of.h>
- #include <linux/of_gpio.h>
- #include <linux/pinctrl/consumer.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
- 
- #include <asm/irq.h>
- 
-@@ -87,6 +89,9 @@
- /* Max time to wait for bus to become idle after a xfer (in us) */
- #define S3C2410_IDLE_TIMEOUT	5000
- 
-+/* Exynos5 Sysreg offset */
-+#define EXYNOS5_SYS_I2C_CFG	0x0234
-+
- /* i2c controller state */
- enum s3c24xx_i2c_state {
- 	STATE_IDLE,
-@@ -123,6 +128,8 @@ struct s3c24xx_i2c {
- #if defined(CONFIG_ARM_S3C24XX_CPUFREQ)
- 	struct notifier_block	freq_transition;
- #endif
-+	struct regmap		*sysreg;
-+	unsigned int		sys_i2c_cfg;
- };
- 
- static struct platform_device_id s3c24xx_driver_ids[] = {
-@@ -1071,6 +1078,7 @@ static void
- s3c24xx_i2c_parse_dt(struct device_node *np, struct s3c24xx_i2c *i2c)
- {
- 	struct s3c2410_platform_i2c *pdata = i2c->pdata;
-+	int id;
- 
- 	if (!np)
- 		return;
-@@ -1080,6 +1088,21 @@ s3c24xx_i2c_parse_dt(struct device_node *np, struct s3c24xx_i2c *i2c)
- 	of_property_read_u32(np, "samsung,i2c-slave-addr", &pdata->slave_addr);
- 	of_property_read_u32(np, "samsung,i2c-max-bus-freq",
- 				(u32 *)&pdata->frequency);
-+	/*
-+	 * Exynos5's legacy i2c controller and new high speed i2c
-+	 * controller have muxed interrupt sources. By default the
-+	 * interrupts for 4-channel HS-I2C controller are enabled.
-+	 * If nodes for first four channels of legacy i2c controller
-+	 * are available then re-configure the interrupts via the
-+	 * system register.
-+	 */
-+	id = of_alias_get_id(np, "i2c");
-+	i2c->sysreg = syscon_regmap_lookup_by_phandle(np,
-+			"samsung,sysreg-phandle");
-+	if (IS_ERR(i2c->sysreg))
-+		return;
-+
-+	regmap_update_bits(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, BIT(id), 0);
- }
- #else
- static void
-@@ -1260,6 +1283,9 @@ static int s3c24xx_i2c_suspend_noirq(struct device *dev)
- 
- 	i2c->suspended = 1;
- 
-+	if (!IS_ERR(i2c->sysreg))
-+		regmap_read(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, &i2c->sys_i2c_cfg);
-+
- 	return 0;
- }
- 
-@@ -1268,6 +1294,9 @@ static int s3c24xx_i2c_resume_noirq(struct device *dev)
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
- 
-+	if (!IS_ERR(i2c->sysreg))
-+		regmap_write(i2c->sysreg, EXYNOS5_SYS_I2C_CFG, i2c->sys_i2c_cfg);
-+
- 	clk_prepare_enable(i2c->clk);
- 	s3c24xx_i2c_init(i2c);
- 	clk_disable_unprepare(i2c->clk);
 -- 
-1.7.9.5
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
