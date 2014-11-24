@@ -1,54 +1,40 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v12 0/6] cpufreq: use generic cpufreq drivers for exynos
- platforms
-Date: Mon, 24 Nov 2014 16:14:17 +0100
-Message-ID: <54734B49.9050109@samsung.com>
-References: <1416576682-5255-1-git-send-email-thomas.ab@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:42338 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751215AbaKXPO0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 10:14:26 -0500
-In-reply-to: <1416576682-5255-1-git-send-email-thomas.ab@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RFC 0/2] Fix Arndale Octa/Peach Pi boot on Audio subsystem clocks
+Date: Mon, 24 Nov 2014 16:18:30 +0100
+Message-ID: <1416842312-4405-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>, mturquette@linaro.org, kgene.kim@samsung.com
-Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, l.majewski@samsung.com, viresh.kumar@linaro.org, heiko@sntech.de, cw00.choi@samsung.com, khilman@linaro.org, Kukjin Kim <kgene@kernel.org>
 
-Hi All,
+Hi,
 
-On 21/11/14 14:31, Thomas Abraham wrote:
-> Changes since v11:
-> - Rebased on top of git://linuxtv.org/snawrocki/samsung.git for-v3.19-exynos-clk
-> 
-> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
-> drivers and enables the use of cpufreq-dt driver for these platforms. This
-> series also enables cpufreq support for Exynos5420 using arm_big_little cpufreq
-> driver.
-> 
-> This series is based on the following branch.
-> git://linuxtv.org/snawrocki/samsung.git for-v3.19-exynos-clk
-> 
-> This series depends on the following patch which can be picked from
-> git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git samsung/dt
-> e540920cf21c (ARM: dts: add CPU nodes for Exynos4 SoCs).
-> 
-> This patch series has been tested on Exynos4210/5250/5420 based boards.
-> Tomasz Figa had plans to take this in the Samsung clock tree for v3.19
-> (http://www.spinics.net/lists/linux-samsung-soc/msg37933.html).
-> Sylwester, could you consider to merge this in your tree?
 
-This patch series has already conflicts in arch/arm/boot/dts/ with
-the arm-soc tree. It touches quite many files at arch/arm. Perhaps
-we could still have it merged through Kukjin's and arm-soc tree ?
+This is initial idea to solve dependency between AudioSS clocks
+and main clock controller on Exynos platform.
 
-Feel free to add for the whole series:
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+This solves boot failure of Peach Pi/Pit and Arndale Octa [1].
+
+It is only RFC/proof of concept because I would like to hear whether
+this is good direction to solve this particular issue (especially that
+it touches main clk api).
+
+
+[1] http://www.spinics.net/lists/linux-samsung-soc/msg39331.html
+
+Best regards,
+Krzysztof Kozlowski
+
+
+Krzysztof Kozlowski (2):
+  clk: Allow overriding generic ops for clocks
+  clk: samsung: Fix clock disable failure because domain being gated
+
+ drivers/clk/clk-gate.c                 | 16 ++++++--
+ drivers/clk/samsung/clk-exynos-audss.c | 69 +++++++++++++++++++++++++++-------
+ include/linux/clk-provider.h           |  5 +++
+ 3 files changed, 74 insertions(+), 16 deletions(-)
 
 -- 
-Thanks,
-Sylwester
+1.9.1
