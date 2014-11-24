@@ -1,129 +1,54 @@
-From: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>
-Subject: Re: [RFC PATCH 1/1] drm/exynos: Move platform drivers registration
- to module init
-Date: Mon, 24 Nov 2014 16:05:42 +0100
-Message-ID: <54734946.7090509@suse.de>
-References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk>	<7hh9xwxsev.fsf@deeprootsystems.com>	<546CCAB8.9050402@collabora.co.uk>	<CAFp+6iFbxWoh4h0ZpY=JQO4rjLss2kpj-nZM7KGiJ_F4AZ2W=g@mail.gmail.com>	<7hppchsu29.fsf@deeprootsystems.com>	<546E293D.9000300@collabora.co.uk>	<7hbno1spdt.fsf@deeprootsystems.com>	<20141120234953.GA4010@luxor.wired.org>	<546F22F0.5060204@suse.de> <CAEC9eQPaZ7FJj00DtZHuNSY7HkqvGAZzN1oX=pf7dwsuEw7qUA@mail.gmail.com> <546FA71C.8050804@collabora.co.uk> <547302E0.4000609@collabora.co.uk>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v12 0/6] cpufreq: use generic cpufreq drivers for exynos
+ platforms
+Date: Mon, 24 Nov 2014 16:14:17 +0100
+Message-ID: <54734B49.9050109@samsung.com>
+References: <1416576682-5255-1-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:47028 "EHLO mx2.suse.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750733AbaKXPFr (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:42338 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751215AbaKXPO0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 10:05:47 -0500
-In-Reply-To: <547302E0.4000609@collabora.co.uk>
+	Mon, 24 Nov 2014 10:14:26 -0500
+In-reply-to: <1416576682-5255-1-git-send-email-thomas.ab@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Ajay kumar <ajaynumb@gmail.com>
-Cc: Paolo Pisati <p.pisati@gmail.com>, Kevin Hilman <khilman@kernel.org>, Vivek Gautam <gautamvivek1987@gmail.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>
+To: Thomas Abraham <thomas.ab@samsung.com>, mturquette@linaro.org, kgene.kim@samsung.com
+Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, l.majewski@samsung.com, viresh.kumar@linaro.org, heiko@sntech.de, cw00.choi@samsung.com, khilman@linaro.org, Kukjin Kim <kgene@kernel.org>
 
-Hi,
+Hi All,
 
-Am 24.11.2014 um 11:05 schrieb Javier Martinez Canillas:
-> On 11/21/2014 09:57 PM, Javier Martinez Canillas wrote:
->> On 11/21/2014 06:32 PM, Ajay kumar wrote:
->>> I have rebased my bridge series on top of linux-next.
->>>
->>> This is my git log:
->>> 4b38a6f Revert "Revert "ARM: exynos_defconfig: Enable options for
->>> display panel support""
->>> 6fb39a7 ARM: dts: peach-pit: represent the connection between bridg=
-e
->>> and panel using videoport and endpoints
->>> aee649c ARM: dts: snow: represent the connection between bridge and
->>> panel using videoport and endpoints
->>> 5b76d8d drm/bridge: Add i2c based driver for ps8622/ps8625 bridge
->>> 581257f Documentation: bridge: Add documentation for ps8622 DT prop=
-erties
->>> 178e8b9 Documentation: devicetree: Add vendor prefix for parade
->>> 0ceea75 Documentation: drm: bridge: move to video/bridge
->>> f143e2e drm/bridge: ptn3460: use gpiod interface
->>> 2d5cb9d drm/bridge: ptn3460: probe connector at the end of bridge a=
-ttach
->>> 32ac563 drm/bridge: ptn3460: support drm_panel
->>> 91c6c30 drm/exynos: dp: support drm_bridge
->>> 7eea7eb drm/bridge: ptn3460: Convert to i2c driver model
->>> 602f343 drm/bridge: make bridge registration independent of drm flo=
-w
->>> 14c7143 drm/bridge: do not pass drm_bridge_funcs to drm_bridge_init
->>> 2c01ac4 drm/bridge: ptn3460: Few trivial cleanups
->>> 7415f6c arm: dts: Exynos5: Use pmu_system_controller phandle for dp=
- phy
->>> 28655d1 drm/exynos: Move platform drivers registration to module in=
-it
->>> ed6778a Add linux-next specific files for 20141121
->>>
->>> I have attached the rebased patches as well.
->>> I tested it on snow, peach_pit and peach_pi without *clk_ignore_unu=
-sed*.
->>> Display is totally fine with exynos_defconfig (booting is fine even
->>> with CONFIG_SND_SOC_SNOW=3Dy)
->>
->> Thanks for forward porting your patches to linux-next. Unfortunately=
- I
->> won't have time to test them until Monday but I wonder why you didn'=
-t
->> have the boot issues that we have with next-20141121.
->=20
-> I tested your ToT patches on top of next-20141121, this is my git log=
-:
->=20
-> 93fe3d7 Revert "Revert "ARM: exynos_defconfig: Enable options for dis=
-play panel support""
-> 552f74e ARM: dts: peach-pit: represent the connection between bridge =
-and panel using videoport and endpoints
-> dbbc293 ARM: dts: snow: represent the connection between bridge and p=
-anel using videoport and endpoints
-> d8687f8 drm/bridge: Add i2c based driver for ps8622/ps8625 bridge
-> f29a649 Documentation: bridge: Add documentation for ps8622 DT proper=
-ties
-> 6ade887 Documentation: devicetree: Add vendor prefix for parade
-> d81c42d Documentation: drm: bridge: move to video/bridge
-> 50b9828 drm/bridge: ptn3460: use gpiod interface
-> 1274c56 drm/bridge: ptn3460: probe connector at the end of bridge att=
-ach
-> f3cf063 drm/bridge: ptn3460: support drm_panel
-> cab682b drm/exynos: dp: support drm_bridge
-> 6e78916 drm/bridge: ptn3460: Convert to i2c driver model
-> 93f4b5f drm/bridge: make bridge registration independent of drm flow
-> 81a038f drm/bridge: do not pass drm_bridge_funcs to drm_bridge_init
-> eb6996e drm/bridge: ptn3460: Few trivial cleanups
-> c41fa5d arm: dts: Exynos5: Use pmu_system_controller phandle for dp p=
-hy
-> 51b2c75 drm/exynos: Move platform drivers registration to module init
-> ed6778a Add linux-next specific files for 20141121
-> =20
->> I found that the commit ae43b32 ("ARM: 8202/1: dmaengine: pl330: Add
->> runtime Power Management support v12") had to be reverted in order t=
-o
->> boot linux-next.
->>
->=20
-> Display works but I needed to revert the mentioned commit, otherwise
-> the boot hangs as reported before. I'm using exynos_defconfig and thi=
-s
-> kernel command line:
->=20
-> console=3DttySAC3,115200N8 debug earlyprintk root=3D/dev/mmcblk1p2 ro=
-otwait rw
+On 21/11/14 14:31, Thomas Abraham wrote:
+> Changes since v11:
+> - Rebased on top of git://linuxtv.org/snawrocki/samsung.git for-v3.19-exynos-clk
+> 
+> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
+> drivers and enables the use of cpufreq-dt driver for these platforms. This
+> series also enables cpufreq support for Exynos5420 using arm_big_little cpufreq
+> driver.
+> 
+> This series is based on the following branch.
+> git://linuxtv.org/snawrocki/samsung.git for-v3.19-exynos-clk
+> 
+> This series depends on the following patch which can be picked from
+> git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git samsung/dt
+> e540920cf21c (ARM: dts: add CPU nodes for Exynos4 SoCs).
+> 
+> This patch series has been tested on Exynos4210/5250/5420 based boards.
+> Tomasz Figa had plans to take this in the Samsung clock tree for v3.19
+> (http://www.spinics.net/lists/linux-samsung-soc/msg37933.html).
+> Sylwester, could you consider to merge this in your tree?
 
-I tested Spring with next-20141124, and finally got it to work! :)
-Thanks a lot, Ajay and Javier!
+This patch series has already conflicts in arch/arm/boot/dts/ with
+the arm-soc tree. It touches quite many files at arch/arm. Perhaps
+we could still have it merged through Kukjin's and arm-soc tree ?
 
-To be on the safe side, I reverted the patch pointed out by Javier and
-was still using clk_ignore_unused.
+Feel free to add for the whole series:
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Ajay, note that your rebased Snow patch has the last hunk indented one
-level too deep.
-
-I'll post a cleaned-up bridge patch for Spring later.
-
-Cheers,
-Andreas
-
---=20
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Jeff Hawn, Jennifer Guild, Felix Imend=C3=B6rffer; HRB 21284 AG N=C3=
-=BCrnberg
+-- 
+Thanks,
+Sylwester
