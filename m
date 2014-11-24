@@ -1,59 +1,45 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: Peach Pi/Pit boot failures in linux-next  (was Re: [RFC PATCH 1/1]
- drm/exynos: Move platform drivers registration to module init)
-Date: Mon, 24 Nov 2014 12:12:05 +0100
-Message-ID: <1416827525.5023.10.camel@AMDC1943>
-References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk>
- <7hh9xwxsev.fsf@deeprootsystems.com> <546CCAB8.9050402@collabora.co.uk>
- <CAFp+6iFbxWoh4h0ZpY=JQO4rjLss2kpj-nZM7KGiJ_F4AZ2W=g@mail.gmail.com>
- <7hppchsu29.fsf@deeprootsystems.com> <546E293D.9000300@collabora.co.uk>
- <7hbno1spdt.fsf@deeprootsystems.com> <546F3837.5020706@collabora.co.uk>
- <7hzjbko6eb.fsf@deeprootsystems.com> <546FA53D.2060807@collabora.co.uk>
- <547063C4.9030607@samsung.com> <5472FC7F.6090508@collabora.co.uk>
- <1416824001.5023.7.camel@AMDC1943> <54731183.7090307@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Krishna Mohan Dani <krishna.md@samsung.com>
+Subject: [PATCH] ASoC: rt5631: Fixing compilation warning when DT is disabled
+Date: Mon, 24 Nov 2014 16:52:42 +0530
+Message-ID: <1416828162-8216-1-git-send-email-krishna.md@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:26254 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750759AbaKXLMJ (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:26012 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751012AbaKXLXN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 06:12:09 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NFJ007UDJ905D30@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 24 Nov 2014 11:15:00 +0000 (GMT)
-In-reply-to: <54731183.7090307@collabora.co.uk>
+	Mon, 24 Nov 2014 06:23:13 -0500
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NFJ004GAJMNSM90@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 24 Nov 2014 20:23:11 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kevin Hilman <khilman@kernel.org>, Kukjin Kim <kgene@kernel.org>, Vivek Gautam <gautamvivek1987@gmail.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Paolo Pisati <p.pisati@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
+Cc: kgene.kim@samsung.com, broonie@kernel.org, Claude Youn <claude.youn@gmail.com>
 
-On pon, 2014-11-24 at 12:07 +0100, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On 11/24/2014 11:13 AM, Krzysztof Kozlowski wrote:
-> >> Ok, please let me know if you need anything else from me.
-> > 
-> > Thanks! I replied before seeing your response. Anyway the dmatests are
-> > the same I got on Arndale Octa.
-> > 
-> > It seems that mau_epll has to be enabled... or something is wrong with
-> > clock hierarchy.
-> >
-> 
-> Another strange thing is that the problem does not happen for some people
-> using the same board, kernel and config options. For example Vivek and Ajay
-> report that they can't reproduce the issue on a Peach Pi using next-20141121
-> and exynos_defconfig without using clk_ignore_unused.
+Fixes the following compilation warning:
+Warning: 'rt5631_i2c_dt_ids' defined but not used - when DT is not used.
 
-Maybe they have different bootloader which messes here by enabling some
-clock?
+Signed-off-by: Claude Youn <claude.youn@gmail.com>
+Signed-off-by: Krishna Mohan Dani <krishna.md@samsung.com>
+---
+ sound/soc/codecs/rt5631.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Anyway it is reproducible on at least some Arndale Octa (Kevin's and
-mine) and Peach Pi boards (yours).
-
-Best regards,
-Krzysztof
+diff --git a/sound/soc/codecs/rt5631.c b/sound/soc/codecs/rt5631.c
+index 3b7d5e4..5c65915 100644
+--- a/sound/soc/codecs/rt5631.c
++++ b/sound/soc/codecs/rt5631.c
+@@ -1691,7 +1691,7 @@ static const struct i2c_device_id rt5631_i2c_id[] = {
+ };
+ MODULE_DEVICE_TABLE(i2c, rt5631_i2c_id);
+ 
+-static struct of_device_id rt5631_i2c_dt_ids[] = {
++static struct of_device_id rt5631_i2c_dt_ids[] __maybe_unused = {
+ 	{ .compatible = "realtek,rt5631"},
+ 	{ .compatible = "realtek,alc5631"},
+ 	{ }
+-- 
+1.7.9.5
