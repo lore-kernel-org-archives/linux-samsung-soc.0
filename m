@@ -1,42 +1,39 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH] drm/exynos: Fix exynos_dpi_remove() parameter
-Date: Mon, 24 Nov 2014 15:19:49 -0200
-Message-ID: <1416849589-11766-1-git-send-email-gustavo@padovan.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [RFC 0/2] Fix Arndale Octa/Peach Pi boot on Audio subsystem clocks
+Date: Mon, 24 Nov 2014 18:28:48 +0100
+Message-ID: <54736AD0.4070909@collabora.co.uk>
+References: <1416842312-4405-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:38562 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752436AbaKXR26 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 24 Nov 2014 12:28:58 -0500
+In-Reply-To: <1416842312-4405-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-ZXh5bm9zX2RwaV9yZW1vdmUoKSBzaG91bGQgcmVjZWl2ZSBhIGV4eW5vc19kcm1fZGlzcGxheSBi
-dXQgd2hlbgpEUk1fRVhZTk9TX0RQSSB3YXMgZGlzYWJsZWQgaXQgd2FzIHJlY2VpdmluZyBhIHN0
-cnVjdCBkZXZpY2UgcmVzdWx0aW5nIGluCmlhIGNvbXBpbGVyIHdhcm5pbmcuCgpTaWduZWQtb2Zm
-LWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Ci0t
-LQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oIHwgNSArKysrLQogMSBm
-aWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBh
-L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCBiL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAppbmRleCAyZTRlOTFiLi4yZTUwNjM0IDEwMDY0NAot
-LS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKKysrIGIvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oCkBAIC0zMDcsNyArMzA3LDEwIEBAIGlu
-dCBleHlub3NfZHBpX3JlbW92ZShzdHJ1Y3QgZXh5bm9zX2RybV9kaXNwbGF5ICpkaXNwbGF5KTsK
-ICNlbHNlCiBzdGF0aWMgaW5saW5lIHN0cnVjdCBleHlub3NfZHJtX2Rpc3BsYXkgKgogZXh5bm9z
-X2RwaV9wcm9iZShzdHJ1Y3QgZGV2aWNlICpkZXYpIHsgcmV0dXJuIE5VTEw7IH0KLXN0YXRpYyBp
-bmxpbmUgaW50IGV4eW5vc19kcGlfcmVtb3ZlKHN0cnVjdCBkZXZpY2UgKmRldikgeyByZXR1cm4g
-MDsgfQorc3RhdGljIGlubGluZSBpbnQgZXh5bm9zX2RwaV9yZW1vdmUoc3RydWN0IGV4eW5vc19k
-cm1fZGlzcGxheSAqZGlzcGxheSkKK3sKKwlyZXR1cm4gMDsKK30KICNlbmRpZgogCiAjaWZkZWYg
-Q09ORklHX0RSTV9FWFlOT1NfVklESQotLSAKMS45LjMKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Hello Krzysztof,
+
+On 11/24/2014 04:18 PM, Krzysztof Kozlowski wrote:
+> Hi,
+> 
+> 
+> This is initial idea to solve dependency between AudioSS clocks
+> and main clock controller on Exynos platform.
+> 
+> This solves boot failure of Peach Pi/Pit and Arndale Octa [1].
+> 
+
+I tested this series on an Exynos5420 Peach Pit but I still
+have the boot hang so it doesn't solve the issue on this board.
+
+I'm using linux-next + your patches with exynos_defconfig and
+without the clk_ignore_unused command line parameter.
+
+Best regards,
+Javier
