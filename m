@@ -1,54 +1,40 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] ASoC: rt5631: Fixing compilation warning when DT is
- disabled
-Date: Mon, 24 Nov 2014 11:05:39 +0000
-Message-ID: <20141124110539.GA7712@sirena.org.uk>
-References: <1416232589-31319-1-git-send-email-krishna.md@samsung.com>
- <20141117155617.GJ27002@pengutronix.de>
- <C8902B5E8A6B4B63A3B9A732345B33AD@sisodomain.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: Peach Pi/Pit boot failures in linux-next  (was Re: [RFC PATCH
+ 1/1] drm/exynos: Move platform drivers registration to module init)
+Date: Mon, 24 Nov 2014 12:07:47 +0100
+Message-ID: <54731183.7090307@collabora.co.uk>
+References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk> <7hh9xwxsev.fsf@deeprootsystems.com> <546CCAB8.9050402@collabora.co.uk> <CAFp+6iFbxWoh4h0ZpY=JQO4rjLss2kpj-nZM7KGiJ_F4AZ2W=g@mail.gmail.com> <7hppchsu29.fsf@deeprootsystems.com> <546E293D.9000300@collabora.co.uk> <7hbno1spdt.fsf@deeprootsystems.com> <546F3837.5020706@collabora.co.uk> <7hzjbko6eb.fsf@deeprootsystems.com> <546FA53D.2060807@collabora.co.uk> <547063C4.9030607@samsung.com> <5472FC7F.6090508@collabora.co.uk> <1416824001.5023.7.camel@AMDC1943>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gBBFr7Ir9EOA20Yy"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36671 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750940AbaKXLHk (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:38093 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750782AbaKXLHx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 06:07:40 -0500
-Content-Disposition: inline
-In-Reply-To: <C8902B5E8A6B4B63A3B9A732345B33AD@sisodomain.com>
+	Mon, 24 Nov 2014 06:07:53 -0500
+In-Reply-To: <1416824001.5023.7.camel@AMDC1943>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: D Krishna Mohan <krishna.md@samsung.com>
-Cc: =?iso-8859-1?Q?UweKleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, kgene.kim@samsung.com, Claude Youn <claude.youn@gmail.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kevin Hilman <khilman@kernel.org>, Kukjin Kim <kgene@kernel.org>, Vivek Gautam <gautamvivek1987@gmail.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Paolo Pisati <p.pisati@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>
 
+Hello Krzysztof,
 
---gBBFr7Ir9EOA20Yy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On 11/24/2014 11:13 AM, Krzysztof Kozlowski wrote:
+>> Ok, please let me know if you need anything else from me.
+> 
+> Thanks! I replied before seeing your response. Anyway the dmatests are
+> the same I got on Arndale Octa.
+> 
+> It seems that mau_epll has to be enabled... or something is wrong with
+> clock hierarchy.
+>
 
-On Mon, Nov 24, 2014 at 12:48:31PM +0530, D Krishna Mohan wrote:
-> Attaching the patch with changes suggested by Uwe. Though there is another
-> patch which I submitted, but I leave it to Mark Brown as to which patch to
-> pick.
+Another strange thing is that the problem does not happen for some people
+using the same board, kernel and config options. For example Vivek and Ajay
+report that they can't reproduce the issue on a Peach Pi using next-20141121
+and exynos_defconfig without using clk_ignore_unused.
 
-Please send patches in the format covered in SubmittingPatches, the
-tools can't apply this.
-
---gBBFr7Ir9EOA20Yy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUcxECAAoJECTWi3JdVIfQ36MH/2Y0eOdcnSUuB24hE7BBQA8I
-hLAkah0CPWb5/Gv6mJxDxEHynGFOsroWP9vNIRodJBD3R5IKrxdXQgCBPnUq3qnb
-FSzwKvwfXCFqSgEWNSR3wzltlADyFGM00bm2E4uSB/Ytdm5vHdHCIfeHF5RjzFml
-x9E3F/qgjt6lyBEAodbbE4itEu8iC9zmTcHgDUp0qX9F3VDBEwttFnxlaZLHkT4Y
-/rbEJbbjvSMzomyZfwyu55k1WA71H2kpXqBa4KPJMK7/2WniE5PYmSaHCCBQzJ7W
-kd5CIP+6p9aQQ8uDPEBz4gSyLmIlRbSIdYm81RUcAbqZRJDQFvEkksmmjyWqikA=
-=FCZ0
------END PGP SIGNATURE-----
-
---gBBFr7Ir9EOA20Yy--
+Best regards,
+Javier
