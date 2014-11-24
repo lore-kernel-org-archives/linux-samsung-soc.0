@@ -1,93 +1,105 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: Peach Pi/Pit boot failures in linux-next  (was Re: [RFC PATCH 1/1]
- drm/exynos: Move platform drivers registration to module init)
-Date: Mon, 24 Nov 2014 11:13:21 +0100
-Message-ID: <1416824001.5023.7.camel@AMDC1943>
-References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk>
- <7hh9xwxsev.fsf@deeprootsystems.com> <546CCAB8.9050402@collabora.co.uk>
- <CAFp+6iFbxWoh4h0ZpY=JQO4rjLss2kpj-nZM7KGiJ_F4AZ2W=g@mail.gmail.com>
- <7hppchsu29.fsf@deeprootsystems.com> <546E293D.9000300@collabora.co.uk>
- <7hbno1spdt.fsf@deeprootsystems.com> <546F3837.5020706@collabora.co.uk>
- <7hzjbko6eb.fsf@deeprootsystems.com> <546FA53D.2060807@collabora.co.uk>
- <547063C4.9030607@samsung.com> <5472FC7F.6090508@collabora.co.uk>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V2 RESEND] arm: dts: Exynos5: Use pmu_system_controller
+ phandle for dp phy
+Date: Mon, 24 Nov 2014 11:32:52 +0100
+Message-ID: <20141124103249.GA26217@ulmo.nvidia.com>
+References: <1416807683-2257-1-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:20249 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750813AbaKXKN0 (ORCPT
+Received: from mail-pa0-f50.google.com ([209.85.220.50]:35150 "EHLO
+	mail-pa0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750954AbaKXKc7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 05:13:26 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NFJ0069FGJ30N20@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 24 Nov 2014 10:16:15 +0000 (GMT)
-In-reply-to: <5472FC7F.6090508@collabora.co.uk>
+	Mon, 24 Nov 2014 05:32:59 -0500
+Content-Disposition: inline
+In-Reply-To: <1416807683-2257-1-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kevin Hilman <khilman@kernel.org>, Kukjin Kim <kgene@kernel.org>, Vivek Gautam <gautamvivek1987@gmail.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Paolo Pisati <p.pisati@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>
+To: Vivek Gautam <gautam.vivek@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kgene.kim@samsung.com, dri-devel@lists.freedesktop.org, javier.martinez@collabora.co.uk, jg1.han@samsung.com, ajaykumar.rs@samsung.com, Kukjin Kim <kgene@kernel.org>
 
-On pon, 2014-11-24 at 10:38 +0100, Javier Martinez Canillas wrote:
-> Hell Krzysztof,
-> 
-> On 11/22/2014 11:21 AM, Krzysztof Kozlowski wrote:
-> >>
-> >> By bisecting I found that the commit introducing both regressions is:
-> >>
-> >> ae43b32 ("ARM: 8202/1: dmaengine: pl330: Add runtime Power Management support v12")
-> >>
-> >> By reverting ae43b32, next-20141121 boots with both CONFIG_SND_SOC_SNOW=y
-> >> and *without* clk_ignore_unused.
-> >>
-> >> Krzysztof,
-> >>
-> >> I see you are the author of the patch, maybe you can take a look why this
-> >> is causing regressions in some Exynos boards?
-> > 
-> > Oh crap... I'll look at it on Monday. However I don't have Peach Pi so any 
-> > information would be useful. Can you post dmesg and your config? (is it 
-> > exynos_defconfig?)
-> >
-> 
-> Yes, I'm using exynos_defconfig. I'm testing with latest linux-next, HEAD:
-> 
-> commit ed6778a ("Add linux-next specific files for 20141121")
-> 
-> The boot log of the hang in the Exynos5420 Peach Pit is sent as an
-> attachment. CONFIG_SND_SOC_SNOW was enabled and without clk_ignore_unused.
-> 
-> > Additionally can you boot the board with DMATEST enabled (without reverting 
-> > my commit so probably with clk_ignore_unsed and with SND_SNOW disabled) and 
-> > run dmatest on all channels? Something like:
-> >    echo 2000 > /sys/module/dmatest/parameters/timeout
-> >    echo 2 > /sys/module/dmatest/parameters/iterations
-> >    for i in `ls /sys/class/dma/`
-> >    do
-> >      echo $i > /sys/module/dmatest/parameters/channel
-> >      echo 1 > /sys/module/dmatest/parameters/run
-> >    done
-> > 
-> > ... and post these results also.
-> >
-> 
-> I'm attaching the log of the tests as well. To run the test
-> CONFIG_SND_SOC_SNOW was disabled and booted with clk_ignore_unused.
->  
-> > I will test it on Arndale Octa, maybe the cause is the same. Unfortunately 
-> > it seems Arndale Octa does not have any sound enabled in DTS so it may be 
-> > hard to test I2S bus (which is used by audio).
-> >
-> 
-> Ok, please let me know if you need anything else from me.
 
-Thanks! I replied before seeing your response. Anyway the dmatests are
-the same I got on Arndale Octa.
+--ew6BAiZeqk4r7MaW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It seems that mau_epll has to be enabled... or something is wrong with
-clock hierarchy.
+On Mon, Nov 24, 2014 at 11:11:23AM +0530, Vivek Gautam wrote:
+> DP PHY now require pmu-system-controller to handle PMU register
+> to control PHY's power isolation. Adding the same to dp-phy
+> node.
+>=20
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> ---
+>  arch/arm/boot/dts/exynos5250.dtsi |    2 +-
+>  arch/arm/boot/dts/exynos5420.dtsi |    4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos=
+5250.dtsi
+> index 0a588b4..bebd099 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -732,7 +732,7 @@
+> =20
+>  	dp_phy: video-phy@10040720 {
+>  		compatible =3D "samsung,exynos5250-dp-video-phy";
+> -		reg =3D <0x10040720 4>;
+> +		samsung,pmu-syscon =3D <&pmu_system_controller>;
+>  		#phy-cells =3D <0>;
+>  	};
+> =20
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos=
+5420.dtsi
+> index 8617a03..1353a09 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -503,8 +503,8 @@
+>  	};
+> =20
+>  	dp_phy: video-phy@10040728 {
+> -		compatible =3D "samsung,exynos5250-dp-video-phy";
+> -		reg =3D <0x10040728 4>;
+> +		compatible =3D "samsung,exynos5420-dp-video-phy";
+> +		samsung,pmu-syscon =3D <&pmu_system_controller>;
+>  		#phy-cells =3D <0>;
+>  	};
+> =20
 
-Best regards,
-Krzysztof
+It seems like these nodes have been in the Linux tree since 3.12 and
+3.17, respectively and these changes break backwards-compatibility. Has
+anyone thought about the possible consequences?
+
+Although, looking more closely it seems like this isn't the first time
+that backwards-compatibility was broken in these files, so perhaps
+nobody cares...
+
+Thierry
+
+--ew6BAiZeqk4r7MaW
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUcwlRAAoJEN0jrNd/PrOhrXkQAJfG+54ckAxuZgIx2hUuIvVk
+xGz7wC26FeexLtVt27p/Q+KPxqutwW0YKf8mNUKSpogmbQ5CFdojrpv/V268dWpP
+wTEDPXu1EftLNT/NvSsimu5kOsZC/6447DQfmI39m/V3+dubodKOG76iRLbicGXY
+l6xzTseCJUd47iM87aiSfUA0R3Gtr/GWpyn7/Q7Jx6PKOq3z2cucERxCK84CaQ37
+60qbY5eKhkIfFs8c5Zrvo7gYD/GZn5wcV6l9RjBfIOrHvM+fVWQxps4UGQonPvNr
+hG+8mRwxJrq13Jx5feeu1pE+Byxa9S43yJwo6nXkxJO/ddHE3rzQqXfQHc2jRFNx
+7eD26kpLoOPSnKA5tPKExU5/P16YUPigmN1XWTuqs4bs5vcs6MGK6y2n4sDWukPu
+6jzRJB8DmBwm9wAwk6LsL//ccHg1OJ5sLQx4ASo2uYmZHDIBjvQlpp/mkU0zqkJD
+yhGiWsV3fEznPyZTtwAeOPWN/Kbmr4RQQEwl/OyXjeyd1iWpgfnybJSpKFqcQi8U
+IVpz4EWy1CFzimVb2sawHtHlw/zaUxfzqHlMln0Qn0xJcghTYev1jwjSfwLxZGNI
+0HzadBNOIyj0re7DcxXWF4dD4JkwUehqNZpppbiA3W/bKULwvdIIJVOIal4j4U4f
+1xCFAuUr7ZPIuA9KyiFz
+=rAYB
+-----END PGP SIGNATURE-----
+
+--ew6BAiZeqk4r7MaW--
