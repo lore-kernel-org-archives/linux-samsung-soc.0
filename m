@@ -1,67 +1,57 @@
 From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: screen blank causing lockup in exynos-reference/exynos5-v3.18-rc2
-Date: Mon, 24 Nov 2014 14:57:08 +0530
-Message-ID: <CAFp+6iFAHz7iMboC1xfF8KKMkeHGZDhUXx_9obW0nTPgKwBR1g@mail.gmail.com>
-References: <8C.59.15273.8FB5F645@epcpsbgx1.samsung.com>
-	<7h4mtsnys9.fsf@deeprootsystems.com>
+Subject: Re: [PATCH v2 2/2] arm: dts: Exynos5: Use pmu_system_controller
+ phandle for dp phy
+Date: Mon, 24 Nov 2014 14:58:03 +0530
+Message-ID: <CAFp+6iHALherA8JF75qcAgvr-W7tGLSpMhL96QNhpnb_xTWc0w@mail.gmail.com>
+References: <1414675442-3471-1-git-send-email-gautam.vivek@samsung.com>
+	<1414675442-3471-2-git-send-email-gautam.vivek@samsung.com>
+	<000101cffe30$155793a0$4006bae0$%han@samsung.com>
+	<CABxcv=mams-iVBvACLZ-=Ozcs3KcHSEvxAsRSSV-eKaSnrcXSA@mail.gmail.com>
+	<CAFp+6iEnTbXAUUYMU-bP27f4=X0pEtgmURAwKfRrqDQE4tRpKQ@mail.gmail.com>
+	<CABxcv=m7_m=Y=Mr+0tm+-i=0_e2SU_FC3SDmRTSdkpi--GQtxQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f172.google.com ([209.85.216.172]:43743 "EHLO
-	mail-qc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750759AbaKXJ1J (ORCPT
+Received: from mail-qa0-f41.google.com ([209.85.216.41]:33768 "EHLO
+	mail-qa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750759AbaKXJ2E (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 04:27:09 -0500
-Received: by mail-qc0-f172.google.com with SMTP id m20so6610333qcx.3
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2014 01:27:08 -0800 (PST)
-In-Reply-To: <7h4mtsnys9.fsf@deeprootsystems.com>
+	Mon, 24 Nov 2014 04:28:04 -0500
+In-Reply-To: <CABxcv=m7_m=Y=Mr+0tm+-i=0_e2SU_FC3SDmRTSdkpi--GQtxQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, PANKAJ KUMAR DUBEY <pankaj.dubey@samsung.com>, In-Ki Dae <inki.dae@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Amit Kucheria <amit.kucheria@linaro.org>, "bhushan.r@samsung.com" <bhushan.r@samsung.com>
+To: Javier Martinez Canillas <javier@dowhile0.org>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene@kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Hi Kevin,
-
-
-On Sat, Nov 22, 2014 at 12:53 AM, Kevin Hilman <khilman@kernel.org> wrote:
-> Hi Ajay,
+On Sun, Nov 23, 2014 at 12:26 AM, Javier Martinez Canillas
+<javier@dowhile0.org> wrote:
+> Hello Vivek
 >
-> AJAY KUMAR RAMAKRISHNA SHYMALAMMA <ajaykumar.rs@samsung.com> writes:
->
->> I tried to reproduce the issue which you reported,
+> On Wed, Nov 19, 2014 at 1:03 PM, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
+>>>
+>>> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 >>
->> but I am sorry I am not able to reproduce it.
+>> Thanks for testing.
 >>
->> I tried with my patches for DRM on top of Linux-next.
 >
-> I don't see the issue on linux-next either.  As I mentioned in the
-> original post, I only see it on the v3.18 branch in the exynos-reference
-> tree.
+> You are welcome
+>
+>>>
+>>> Kukjin,
+>>
+>> Sorry for not adding Kukjin to the list and thereby for the delay
+>> about this patch.
+>>
+>
+> No worries but I'm not sure if Kukjin is aware of this patch. I see he
+> has been applying other patches but didn't pick $subject.
+Right,
 
-While checking the issue along with Ajay on "exynos5-v3.18-rc2" branch
-on exynos-reference
-tree, we found out the culprit to be FIMD-SYSMMU.
-The IOMMU on exynos systems is still WIP, and that's the reason it is
-disabled in
-exynos_defconfig too.
-So we have a small workaround in this branch to stop using FIMD-SYSMMUs.
+>
+> Maybe you can resend it to Kukjin just to be sure he will have it in
+> his mailbox?
 
-Now, at the bootup time things are OK, since the FIMD-SMMU clocks
-(CLK_SMMU_FIMD**)
-are still available. But after bootup all unused clocks are disabled
-(since we don't want to
-use clk_ignore_unused in boot arguments), and the consequent blanking-unblanking
-causes the system to hang.
-
-So we have pushed a patch on the same branch "exynos5-v3.18-rc2" which sets
-CLK_IGNORE_UNUSED flag for these SMMU_FIMD** clocks.
-
-This fixes the issue of hang what we were seeing.
-
-There's another branch "exynos5-v3.18-rc5" available, and we have
-pushed the same patch
-on that branch too.
-Please test on your side, and do let us know if things are working fine for you.
+Posted a RESEND version of this patch. Thanks again for noticing.
 
 
 
