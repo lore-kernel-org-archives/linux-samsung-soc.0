@@ -1,117 +1,97 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 2/4] drm/exynos: expose struct exynos_drm_crtc
-Date: Mon, 24 Nov 2014 16:21:04 -0200
-Message-ID: <1416853266-10584-3-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 3/4] drm/exynos: remove exynos_drm_crtc_plane_* wrappers
+Date: Mon, 24 Nov 2014 16:21:05 -0200
+Message-ID: <1416853266-10584-4-git-send-email-gustavo@padovan.org>
 References: <1416853266-10584-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f171.google.com ([209.85.216.171]:43769 "EHLO
-	mail-qc0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751537AbaKXSVS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 13:21:18 -0500
-Received: by mail-qc0-f171.google.com with SMTP id r5so7370318qcx.30
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2014 10:21:17 -0800 (PST)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1416853266-10584-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-Let other pieces of the driver access struct exynos_drm_crtc as well.
-
-struct exynos_drm_manager will be merged into struct exynos_drm_crtc, in
-the sense we will move all its members to exynos_drm_crtc, so to start
-this conversion exynos_drm_crtc need to be exposed as well.
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 30 ------------------------------
- drivers/gpu/drm/exynos/exynos_drm_drv.h  | 30 ++++++++++++++++++++++++++++++
- 2 files changed, 30 insertions(+), 30 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index c8a3169..e74b6fe 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -20,36 +20,6 @@
- #include "exynos_drm_encoder.h"
- #include "exynos_drm_plane.h"
- 
--enum exynos_crtc_mode {
--	CRTC_MODE_NORMAL,	/* normal mode */
--	CRTC_MODE_BLANK,	/* The private plane of crtc is blank */
--};
--
--/*
-- * Exynos specific crtc structure.
-- *
-- * @drm_crtc: crtc object.
-- * @manager: the manager associated with this crtc
-- * @pipe: a crtc index created at load() with a new crtc object creation
-- *	and the crtc object would be set to private->crtc array
-- *	to get a crtc object corresponding to this pipe from private->crtc
-- *	array when irq interrupt occurred. the reason of using this pipe is that
-- *	drm framework doesn't support multiple irq yet.
-- *	we can refer to the crtc to current hardware interrupt occurred through
-- *	this pipe value.
-- * @dpms: store the crtc dpms value
-- * @mode: store the crtc mode value
-- */
--struct exynos_drm_crtc {
--	struct drm_crtc			drm_crtc;
--	struct exynos_drm_manager	*manager;
--	unsigned int			pipe;
--	unsigned int			dpms;
--	enum exynos_crtc_mode		mode;
--	wait_queue_head_t		pending_flip_queue;
--	atomic_t			pending_flip;
--};
--
- static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
- {
- 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 9e14ae6f..ffef077 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -215,6 +215,36 @@ struct exynos_drm_manager {
- 	struct exynos_drm_manager_ops *ops;
- };
- 
-+enum exynos_crtc_mode {
-+	CRTC_MODE_NORMAL,	/* normal mode */
-+	CRTC_MODE_BLANK,	/* The private plane of crtc is blank */
-+};
-+
-+/*
-+ * Exynos specific crtc structure.
-+ *
-+ * @drm_crtc: crtc object.
-+ * @manager: the manager associated with this crtc
-+ * @pipe: a crtc index created at load() with a new crtc object creation
-+ *	and the crtc object would be set to private->crtc array
-+ *	to get a crtc object corresponding to this pipe from private->crtc
-+ *	array when irq interrupt occurred. the reason of using this pipe is that
-+ *	drm framework doesn't support multiple irq yet.
-+ *	we can refer to the crtc to current hardware interrupt occurred through
-+ *	this pipe value.
-+ * @dpms: store the crtc dpms value
-+ * @mode: store the crtc mode value
-+ */
-+struct exynos_drm_crtc {
-+	struct drm_crtc			drm_crtc;
-+	struct exynos_drm_manager	*manager;
-+	unsigned int			pipe;
-+	unsigned int			dpms;
-+	enum exynos_crtc_mode		mode;
-+	wait_queue_head_t		pending_flip_queue;
-+	atomic_t			pending_flip;
-+};
-+
- struct exynos_drm_g2d_private {
- 	struct device		*dev;
- 	struct list_head	inuse_cmdlist;
--- 
-1.9.3
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+VGhpcyBmdW5jdGlvbnMgd2VyZSBkb2luZyBub3RoaW5nIGJ1dCBjYWxsaW5nIGEgbWFuYWdlciBv
+cCBmdW5jdGlvbiwKc28gcmVtb3ZlIHRoZW0gYW5kIGNhbGwgdGhlIG1hbmFnZXIgZGlyZWN0bHku
+CgpTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJv
+cmEuY28udWs+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyAg
+fCAzMyAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5
+bm9zL2V4eW5vc19kcm1fcGxhbmUuYyB8IDE5ICsrKysrKysrKysrKysrLS0tLQogMiBmaWxlcyBj
+aGFuZ2VkLCAxNSBpbnNlcnRpb25zKCspLCAzNyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9k
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUvZHJt
+L2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwppbmRleCBlNzRiNmZlLi4xM2M3YmE1IDEwMDY0NAot
+LS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCisrKyBiL2RyaXZl
+cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKQEAgLTQxMCwzOSArNDEwLDYgQEAg
+dm9pZCBleHlub3NfZHJtX2NydGNfZmluaXNoX3BhZ2VmbGlwKHN0cnVjdCBkcm1fZGV2aWNlICpk
+ZXYsIGludCBwaXBlKQogCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJmRldi0+ZXZlbnRfbG9jaywg
+ZmxhZ3MpOwogfQogCi12b2lkIGV4eW5vc19kcm1fY3J0Y19wbGFuZV9tb2RlX3NldChzdHJ1Y3Qg
+ZHJtX2NydGMgKmNydGMsCi0JCQlzdHJ1Y3QgZXh5bm9zX2RybV9vdmVybGF5ICpvdmVybGF5KQot
+ewotCXN0cnVjdCBleHlub3NfZHJtX21hbmFnZXIgKm1hbmFnZXIgPSB0b19leHlub3NfY3J0Yyhj
+cnRjKS0+bWFuYWdlcjsKLQotCWlmIChtYW5hZ2VyLT5vcHMtPndpbl9tb2RlX3NldCkKLQkJbWFu
+YWdlci0+b3BzLT53aW5fbW9kZV9zZXQobWFuYWdlciwgb3ZlcmxheSk7Ci19Ci0KLXZvaWQgZXh5
+bm9zX2RybV9jcnRjX3BsYW5lX2NvbW1pdChzdHJ1Y3QgZHJtX2NydGMgKmNydGMsIGludCB6cG9z
+KQotewotCXN0cnVjdCBleHlub3NfZHJtX21hbmFnZXIgKm1hbmFnZXIgPSB0b19leHlub3NfY3J0
+YyhjcnRjKS0+bWFuYWdlcjsKLQotCWlmIChtYW5hZ2VyLT5vcHMtPndpbl9jb21taXQpCi0JCW1h
+bmFnZXItPm9wcy0+d2luX2NvbW1pdChtYW5hZ2VyLCB6cG9zKTsKLX0KLQotdm9pZCBleHlub3Nf
+ZHJtX2NydGNfcGxhbmVfZW5hYmxlKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywgaW50IHpwb3MpCi17
+Ci0Jc3RydWN0IGV4eW5vc19kcm1fbWFuYWdlciAqbWFuYWdlciA9IHRvX2V4eW5vc19jcnRjKGNy
+dGMpLT5tYW5hZ2VyOwotCi0JaWYgKG1hbmFnZXItPm9wcy0+d2luX2VuYWJsZSkKLQkJbWFuYWdl
+ci0+b3BzLT53aW5fZW5hYmxlKG1hbmFnZXIsIHpwb3MpOwotfQotCi12b2lkIGV4eW5vc19kcm1f
+Y3J0Y19wbGFuZV9kaXNhYmxlKHN0cnVjdCBkcm1fY3J0YyAqY3J0YywgaW50IHpwb3MpCi17Ci0J
+c3RydWN0IGV4eW5vc19kcm1fbWFuYWdlciAqbWFuYWdlciA9IHRvX2V4eW5vc19jcnRjKGNydGMp
+LT5tYW5hZ2VyOwotCi0JaWYgKG1hbmFnZXItPm9wcy0+d2luX2Rpc2FibGUpCi0JCW1hbmFnZXIt
+Pm9wcy0+d2luX2Rpc2FibGUobWFuYWdlciwgenBvcyk7Ci19Ci0KIHZvaWQgZXh5bm9zX2RybV9j
+cnRjX2NvbXBsZXRlX3NjYW5vdXQoc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIpCiB7CiAJc3Ry
+dWN0IGV4eW5vc19kcm1fbWFuYWdlciAqbWFuYWdlcjsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX3BsYW5lLmMKaW5kZXggYzcwNDVhNjYuLjdkNzY4NjEgMTAwNjQ0Ci0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCisrKyBiL2RyaXZlcnMvZ3B1
+L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCkBAIC03Niw2ICs3Niw3IEBAIGludCBleHlu
+b3NfcGxhbmVfbW9kZV9zZXQoc3RydWN0IGRybV9wbGFuZSAqcGxhbmUsIHN0cnVjdCBkcm1fY3J0
+YyAqY3J0YywKIAkJCSAgdWludDMyX3Qgc3JjX3csIHVpbnQzMl90IHNyY19oKQogewogCXN0cnVj
+dCBleHlub3NfcGxhbmUgKmV4eW5vc19wbGFuZSA9IHRvX2V4eW5vc19wbGFuZShwbGFuZSk7CisJ
+c3RydWN0IGV4eW5vc19kcm1fbWFuYWdlciAqbWFuYWdlciA9IHRvX2V4eW5vc19jcnRjKGNydGMp
+LT5tYW5hZ2VyOwogCXN0cnVjdCBleHlub3NfZHJtX292ZXJsYXkgKm92ZXJsYXkgPSAmZXh5bm9z
+X3BsYW5lLT5vdmVybGF5OwogCXVuc2lnbmVkIGludCBhY3R1YWxfdzsKIAl1bnNpZ25lZCBpbnQg
+YWN0dWFsX2g7CkBAIC0xNDEsNyArMTQyLDggQEAgaW50IGV4eW5vc19wbGFuZV9tb2RlX3NldChz
+dHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwgc3RydWN0IGRybV9jcnRjICpjcnRjLAogCiAJcGxhbmUt
+PmNydGMgPSBjcnRjOwogCi0JZXh5bm9zX2RybV9jcnRjX3BsYW5lX21vZGVfc2V0KGNydGMsIG92
+ZXJsYXkpOworCWlmIChtYW5hZ2VyLT5vcHMtPndpbl9tb2RlX3NldCkKKwkJbWFuYWdlci0+b3Bz
+LT53aW5fbW9kZV9zZXQobWFuYWdlciwgb3ZlcmxheSk7CiAKIAlyZXR1cm4gMDsKIH0KQEAgLTE1
+MCwyNiArMTUyLDM1IEBAIHZvaWQgZXh5bm9zX3BsYW5lX2NvbW1pdChzdHJ1Y3QgZHJtX3BsYW5l
+ICpwbGFuZSkKIHsKIAlzdHJ1Y3QgZXh5bm9zX3BsYW5lICpleHlub3NfcGxhbmUgPSB0b19leHlu
+b3NfcGxhbmUocGxhbmUpOwogCXN0cnVjdCBleHlub3NfZHJtX292ZXJsYXkgKm92ZXJsYXkgPSAm
+ZXh5bm9zX3BsYW5lLT5vdmVybGF5OworCXN0cnVjdCBleHlub3NfZHJtX21hbmFnZXIgKm1hbmFn
+ZXIgPSB0b19leHlub3NfY3J0YyhwbGFuZS0+Y3J0YyktPm1hbmFnZXI7CiAKLQlleHlub3NfZHJt
+X2NydGNfcGxhbmVfY29tbWl0KHBsYW5lLT5jcnRjLCBvdmVybGF5LT56cG9zKTsKKwlpZiAobWFu
+YWdlci0+b3BzLT53aW5fY29tbWl0KQorCQltYW5hZ2VyLT5vcHMtPndpbl9jb21taXQobWFuYWdl
+ciwgb3ZlcmxheS0+enBvcyk7CiB9CiAKIHZvaWQgZXh5bm9zX3BsYW5lX2RwbXMoc3RydWN0IGRy
+bV9wbGFuZSAqcGxhbmUsIGludCBtb2RlKQogewogCXN0cnVjdCBleHlub3NfcGxhbmUgKmV4eW5v
+c19wbGFuZSA9IHRvX2V4eW5vc19wbGFuZShwbGFuZSk7CiAJc3RydWN0IGV4eW5vc19kcm1fb3Zl
+cmxheSAqb3ZlcmxheSA9ICZleHlub3NfcGxhbmUtPm92ZXJsYXk7CisJc3RydWN0IGV4eW5vc19k
+cm1fbWFuYWdlciAqbWFuYWdlcjsKIAogCWlmIChtb2RlID09IERSTV9NT0RFX0RQTVNfT04pIHsK
+IAkJaWYgKGV4eW5vc19wbGFuZS0+ZW5hYmxlZCkKIAkJCXJldHVybjsKIAotCQlleHlub3NfZHJt
+X2NydGNfcGxhbmVfZW5hYmxlKHBsYW5lLT5jcnRjLCBvdmVybGF5LT56cG9zKTsKKwkJbWFuYWdl
+ciA9IHRvX2V4eW5vc19jcnRjKHBsYW5lLT5jcnRjKS0+bWFuYWdlcjsKKwkJaWYgKG1hbmFnZXIt
+Pm9wcy0+d2luX2VuYWJsZSkKKwkJCW1hbmFnZXItPm9wcy0+d2luX2VuYWJsZShtYW5hZ2VyLCBv
+dmVybGF5LT56cG9zKTsKKwogCQlleHlub3NfcGxhbmUtPmVuYWJsZWQgPSB0cnVlOwogCX0gZWxz
+ZSB7CiAJCWlmICghZXh5bm9zX3BsYW5lLT5lbmFibGVkKQogCQkJcmV0dXJuOwogCi0JCWV4eW5v
+c19kcm1fY3J0Y19wbGFuZV9kaXNhYmxlKHBsYW5lLT5jcnRjLCBvdmVybGF5LT56cG9zKTsKKwkJ
+bWFuYWdlciA9IHRvX2V4eW5vc19jcnRjKHBsYW5lLT5jcnRjKS0+bWFuYWdlcjsKKwkJaWYgKG1h
+bmFnZXItPm9wcy0+d2luX2Rpc2FibGUpCisJCQltYW5hZ2VyLT5vcHMtPndpbl9kaXNhYmxlKG1h
+bmFnZXIsIG92ZXJsYXktPnpwb3MpOworCiAJCWV4eW5vc19wbGFuZS0+ZW5hYmxlZCA9IGZhbHNl
+OwogCX0KIH0KLS0gCjEuOS4zCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
+aS1kZXZlbAo=
