@@ -1,105 +1,79 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [PATCH RESEND 6/7] ARM: dts: exynos4210-universal_c210: enable hdmi
- support
-Date: Mon, 24 Nov 2014 08:36:15 +0100
-Message-ID: <1416814575-24609-1-git-send-email-a.hajda@samsung.com>
+Subject: [PATCH RESEND 7/7] ARM: dts: exynos5250: add display power domain
+Date: Mon, 24 Nov 2014 08:36:38 +0100
+Message-ID: <1416814598-24658-1-git-send-email-a.hajda@samsung.com>
 References: <1416814256-24288-1-git-send-email-a.hajda@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:47099 "EHLO
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:47113 "EHLO
 	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752520AbaKXHge (ORCPT
+	with ESMTP id S1752106AbaKXHgu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 02:36:34 -0500
+	Mon, 24 Nov 2014 02:36:50 -0500
 Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
  by mailout4.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NFJ00L5999H9C80@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 24 Nov 2014 07:39:17 +0000 (GMT)
+ 17 2011)) with ESMTP id <0NFJ00L4Y99X8U80@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 24 Nov 2014 07:39:33 +0000 (GMT)
 In-reply-to: <1416814256-24288-1-git-send-email-a.hajda@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>
 
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+The patch adds domain definition and references to it in appropriate devices.
 
-This patch adds configuration of hw modules required to enable HDMI
-support on Universal C210 board.
-
-Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 ---
- arch/arm/boot/dts/exynos4210-universal_c210.dts | 57 +++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+ arch/arm/boot/dts/exynos5250.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4210-universal_c210.dts b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-index d50eb3a..069b2e2 100644
---- a/arch/arm/boot/dts/exynos4210-universal_c210.dts
-+++ b/arch/arm/boot/dts/exynos4210-universal_c210.dts
-@@ -487,6 +487,63 @@
- 			status = "okay";
- 		};
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index f21b9aa..4fed676 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -100,6 +100,11 @@
+ 		reg = <0x10044040 0x20>;
  	};
-+
-+	hdmi_en: voltage-regulator-hdmi-5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "HDMI_5V";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gpe0 1 0>;
-+		enable-active-high;
-+	};
-+
-+	hdmi_ddc: i2c-ddc {
-+		compatible = "i2c-gpio";
-+		gpios = <&gpe4 2 0 &gpe4 3 0>;
-+		i2c-gpio,delay-us = <100>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		pinctrl-0 = <&i2c_ddc_bus>;
-+		pinctrl-names = "default";
-+		status = "okay";
-+	};
-+
-+	mixer@12C10000 {
-+		status = "okay";
-+	};
-+
-+	hdmi@12D00000 {
-+		hpd-gpio = <&gpx3 7 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&hdmi_hpd>;
-+		hdmi-en-supply = <&hdmi_en>;
-+		vdd-supply = <&ldo3_reg>;
-+		vdd_osc-supply = <&ldo4_reg>;
-+		vdd_pll-supply = <&ldo3_reg>;
-+		ddc = <&hdmi_ddc>;
-+		status = "okay";
-+	};
-+
-+	i2c@138E0000 {
-+		status = "okay";
-+	};
-+};
-+
-+&pinctrl_1 {
-+	hdmi_hpd: hdmi-hpd {
-+		samsung,pins = "gpx3-7";
-+		samsung,pin-pud = <0>;
-+	};
-+};
-+
-+&pinctrl_0 {
-+	i2c_ddc_bus: i2c-ddc-bus {
-+		samsung,pins = "gpe4-2", "gpe4-3";
-+		samsung,pin-function = <2>;
-+		samsung,pin-pud = <3>;
-+		samsung,pin-drv = <0>;
-+	};
- };
  
- &mdma1 {
++	pd_disp1: disp1-power-domain@100440A0 {
++		compatible = "samsung,exynos4210-pd";
++		reg = <0x100440A0 0x20>;
++	};
++
+ 	clock: clock-controller@10010000 {
+ 		compatible = "samsung,exynos5250-clock";
+ 		reg = <0x10010000 0x30000>;
+@@ -713,6 +718,7 @@
+ 	hdmi {
+ 		compatible = "samsung,exynos4212-hdmi";
+ 		reg = <0x14530000 0x70000>;
++		samsung,power-domain = <&pd_disp1>;
+ 		interrupts = <0 95 0>;
+ 		clocks = <&clock CLK_HDMI>, <&clock CLK_SCLK_HDMI>,
+ 			 <&clock CLK_SCLK_PIXEL>, <&clock CLK_SCLK_HDMIPHY>,
+@@ -725,6 +731,7 @@
+ 	mixer {
+ 		compatible = "samsung,exynos5250-mixer";
+ 		reg = <0x14450000 0x10000>;
++		samsung,power-domain = <&pd_disp1>;
+ 		interrupts = <0 94 0>;
+ 		clocks = <&clock CLK_MIXER>, <&clock CLK_SCLK_HDMI>;
+ 		clock-names = "mixer", "sclk_hdmi";
+@@ -737,6 +744,7 @@
+ 	};
+ 
+ 	dp-controller@145B0000 {
++		samsung,power-domain = <&pd_disp1>;
+ 		clocks = <&clock CLK_DP>;
+ 		clock-names = "dp";
+ 		phys = <&dp_phy>;
+@@ -744,6 +752,7 @@
+ 	};
+ 
+ 	fimd@14400000 {
++		samsung,power-domain = <&pd_disp1>;
+ 		clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
+ 		clock-names = "sclk_fimd", "fimd";
+ 	};
 -- 
 1.9.1
