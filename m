@@ -1,39 +1,127 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH] drm/exynos: avoid leak if exynos_dpi_probe() fails
-Date: Mon, 24 Nov 2014 16:23:30 -0200
-Message-ID: <1416853410-11369-1-git-send-email-gustavo@padovan.org>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH v12 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
+Date: Mon, 24 Nov 2014 10:58:16 -0800
+Message-ID: <7hioi4l92v.fsf@deeprootsystems.com>
+References: <1416576682-5255-1-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1416576682-5255-1-git-send-email-thomas.ab@samsung.com> (Thomas
+	Abraham's message of "Fri, 21 Nov 2014 19:01:16 +0530")
+Sender: linux-pm-owner@vger.kernel.org
+To: Thomas Abraham <thomas.ab@samsung.com>
+Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, l.majewski@samsung.com, viresh.kumar@linaro.org, heiko@sntech.de, cw00.choi@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-VGhlIGNvbXBvbmVudCBtdXN0IGJlIGRlbGV0ZWQgaWYgdGhlIHByb2JlIGZhaWxzLgoKU2lnbmVk
-LW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVr
-PgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgfCA2ICsrKyst
-LQogMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKCmRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIGIvZHJpdmVy
-cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwppbmRleCAxYmY1MmFiLi5hYmQyY2E5
-IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCisr
-KyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKQEAgLTEyMTUsOCAr
-MTIxNSwxMCBAQCBzdGF0aWMgaW50IGZpbWRfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAq
-cGRldikKIAlwbGF0Zm9ybV9zZXRfZHJ2ZGF0YShwZGV2LCBjdHgpOwogCiAJY3R4LT5kaXNwbGF5
-ID0gZXh5bm9zX2RwaV9wcm9iZShkZXYpOwotCWlmIChJU19FUlIoY3R4LT5kaXNwbGF5KSkKLQkJ
-cmV0dXJuIFBUUl9FUlIoY3R4LT5kaXNwbGF5KTsKKwlpZiAoSVNfRVJSKGN0eC0+ZGlzcGxheSkp
-IHsKKwkJcmV0ID0gUFRSX0VSUihjdHgtPmRpc3BsYXkpOworCQlnb3RvIGVycl9kZWxfY29tcG9u
-ZW50OworCX0KIAogCXBtX3J1bnRpbWVfZW5hYmxlKGRldik7CiAKLS0gCjEuOS4zCgpfX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
-ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVk
-ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Thomas,
+
+Thomas Abraham <thomas.ab@samsung.com> writes:
+
+> Changes since v11:
+> - Rebased on top of git://linuxtv.org/snawrocki/samsung.git for-v3.19-exynos-clk
+
+Thanks for rebasing/reposting.
+
+> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
+> drivers and enables the use of cpufreq-dt driver for these platforms. This
+> series also enables cpufreq support for Exynos5420 using arm_big_little cpufreq
+> driver.
+>
+> This series is based on the following branch.
+> git://linuxtv.org/snawrocki/samsung.git for-v3.19-exynos-clk
+>
+> This series depends on the following patch which can be picked from
+> git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git samsung/dt
+> e540920cf21c (ARM: dts: add CPU nodes for Exynos4 SoCs).
+>
+> This patch series has been tested on Exynos4210/5250/5420 based boards.
+> Tomasz Figa had plans to take this in the Samsung clock tree for v3.19
+> (http://www.spinics.net/lists/linux-samsung-soc/msg37933.html).
+> Sylwester, could you consider to merge this in your tree?
+
+I tested this on exynos5800-peach-pi, and noticed a few things.
+
+First, since voltage scaling is not currently supported, the CPU cluster
+regulators (vdd_arm, and vdd_kfc) have to be set at sufficietnly high
+voltage to support all the OPPs, otherwise things will likely hang.  I
+think you should include something like the patch below[1] in this
+series as well.
+
+Second, as with earlier versions of this series, I'm still seeing lots
+of "wait_until_divider_stable: timeout in divider stablization" messages
+coming out when running powertop.
+
+Speaking of powertop, in the "frequency stats" tab, I'm not seeing 0%
+time spent in all the P-states, so not sure what's going on there.  The
+stats/time_in_state sysfs files under cpufreq seem to show the right
+values, so I'm not sure what's going on with powertop there.
+
+Kevin
+
+[1]
+diff --git a/arch/arm/boot/dts/exynos5800-peach-pi.dts
+b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+index e8fdda827fc9..5160735aad3b 100644
+--- a/arch/arm/boot/dts/exynos5800-peach-pi.dts
++++ b/arch/arm/boot/dts/exynos5800-peach-pi.dts
+@@ -195,8 +195,8 @@
+
+                        buck2_reg: BUCK2 {
+                                regulator-name = "vdd_arm";
+-                               regulator-min-microvolt = <800000>;
+-                               regulator-max-microvolt = <1500000>;
++                               regulator-min-microvolt = <1250000>;
++                               regulator-max-microvolt = <1250000>;
+                                regulator-always-on;
+                                regulator-boot-on;
+                                regulator-ramp-delay = <12500>;
+@@ -230,8 +230,8 @@
+
+                        buck6_reg: BUCK6 {
+                                regulator-name = "vdd_kfc";
+-                               regulator-min-microvolt = <800000>;
+-                               regulator-max-microvolt = <1500000>;
++                               regulator-min-microvolt = <1275000>;
++                               regulator-max-microvolt = <1275000>;
+                                regulator-always-on;
+                                regulator-boot-on;
+                                regulator-ramp-delay = <12500>;
+
+
+
+> Thomas Abraham (6):
+>   clk: samsung: add infrastructure to register cpu clocks
+>   clk: samsung: add cpu clock configuration data and instantiate cpu clock
+>   ARM: dts: Exynos: add CPU OPP and regulator supply property
+>   ARM: Exynos: switch to using generic cpufreq driver for Exynos4210/5250/5420
+>   cpufreq: exynos: remove exynos4210/5250 specific cpufreq driver support
+>   clk: samsung: remove unused clock aliases and update clock flags
+>
+>  arch/arm/boot/dts/exynos4210-origen.dts         |    4 +
+>  arch/arm/boot/dts/exynos4210-trats.dts          |    4 +
+>  arch/arm/boot/dts/exynos4210-universal_c210.dts |    4 +
+>  arch/arm/boot/dts/exynos4210.dtsi               |   14 ++-
+>  arch/arm/boot/dts/exynos5250-arndale.dts        |    4 +
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts       |    4 +
+>  arch/arm/boot/dts/exynos5250-snow.dts           |    4 +
+>  arch/arm/boot/dts/exynos5250.dtsi               |   25 +++-
+>  arch/arm/boot/dts/exynos5420.dtsi               |   38 ++++
+>  arch/arm/mach-exynos/exynos.c                   |   26 +++-
+>  drivers/clk/samsung/Makefile                    |    2 +-
+>  drivers/clk/samsung/clk-exynos4.c               |   63 +++++---
+>  drivers/clk/samsung/clk-exynos5250.c            |   44 ++++-
+>  drivers/clk/samsung/clk-exynos5420.c            |   72 +++++++-
+>  drivers/cpufreq/Kconfig.arm                     |   22 ---
+>  drivers/cpufreq/Makefile                        |    2 -
+>  drivers/cpufreq/exynos4210-cpufreq.c            |  184 --------------------
+>  drivers/cpufreq/exynos5250-cpufreq.c            |  210 -----------------------
+>  include/dt-bindings/clock/exynos5250.h          |    1 +
+>  include/dt-bindings/clock/exynos5420.h          |    2 +
+>  20 files changed, 266 insertions(+), 463 deletions(-)
+>  delete mode 100644 drivers/cpufreq/exynos4210-cpufreq.c
+>  delete mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
