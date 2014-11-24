@@ -1,101 +1,86 @@
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH RFC v2 10/12] drivers: soc: samsung: Add support for clock
- enabling in power domain
-Date: Mon, 24 Nov 2014 18:34:14 +0530
-Message-ID: <1416834256-11225-10-git-send-email-amit.daniel@samsung.com>
+From: Amit Daniel Kachhap <amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH RFC v2 11/12] drivers: soc: samsung: Add support for clock rate
+ save/restore in power domain
+Date: Mon, 24 Nov 2014 18:34:15 +0530
+Message-ID: <1416834256-11225-11-git-send-email-amit.daniel@samsung.com>
 References: <1416833572-6880-1-git-send-email-amit.daniel@samsung.com>
  <1416834256-11225-1-git-send-email-amit.daniel@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1416834256-11225-1-git-send-email-amit.daniel@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, pankaj.dubey@samsung.com, ulf.hansson@linaro.org, khilman@kernel.org, linux-pm@vger.kernel.org, geert@linux-m68k.org, rjw@rjwysocki.net, devicetree@vger.kernel.org, Amit Daniel Kachhap <amit.daniel@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1416834256-11225-1-git-send-email-amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org, rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Amit Daniel Kachhap <amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-While turning power domain to on/off, some clocks need to be enabled
-in the Exynos7 SOC. This patch adds the framework for enabling those
-clocks before on/off and restoring it back after the operation. Also
-these list of clocks may be different for on/off operation so not using
-the generic pm domain suspend/resume interface.
+While turning power domain to on/off, some clocks rates might change and
+need to be saved/restored in the Exynos7 SOC. This patch adds the
+framework for saving those clocks before power off and restoring it back
+after power on operation.
 
-Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Signed-off-by: Amit Daniel Kachhap <amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- .../bindings/arm/exynos/power_domain.txt           |   12 ++
- drivers/soc/samsung/pm_domains.c                   |  138 +++++++++++++++++++-
- 2 files changed, 146 insertions(+), 4 deletions(-)
+ .../bindings/arm/exynos/power_domain.txt           |    7 ++
+ drivers/soc/samsung/pm_domains.c                   |   74 ++++++++++++++++++++
+ 2 files changed, 81 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-index 8d913b9..c48769e 100644
+index c48769e..97fec1b 100644
 --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
 +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-@@ -24,6 +24,14 @@ Optional Properties:
- 	- pclkN, clkN: Pairs of parent of input clock and input clock to the
- 	devices in this power domain.
- 	Maximum of 10 sets (N = 0 to 9) are supported.
-+- pd-on-en-clocks: List of clock handles. These clocks are required to enabled
-+	before turning on a power domain.
-+- pd-on-en-clock-names: clocks can be specified as,
-+	- clkN: N can vary between 0-30.
-+- pd-off-en-clocks: List of clock handles. These clocks are required to enabled
-+	before turning off a power domain.
-+- pd-off-en-clock-names: clocks can be specified as,
+@@ -32,6 +32,11 @@ Optional Properties:
+ 	before turning off a power domain.
+ - pd-off-en-clock-names: clocks can be specified as,
+ 	- clkN: N can vary between 0-30.
++- pd-rate-clocks: List of clock handles. The rates of these clocks are required
++	to be saved before turning off a power domain and restoring after turning
++	on a power domain.
++- pd-rate-clock-names: clocks can be specified as,
 +	- clkN: N can vary between 0-30.
  - parents: phandle of parent power domains.
  
  Node of a device using power domains must have a samsung,power-domain property
-@@ -43,6 +51,10 @@ Example:
- 		pd-parent-clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_SW_ACLK333>,
- 			<&clock CLK_MOUT_USER_ACLK333>;
- 		pd-parent-clock-names = "tclk0", "pclk0", "clk0";
-+		pd-on-en-clocks = <&clock CLK_IP1>, <&clock CLK_IP2>,
-+		pd-on-en-clock-names = "clk0", "clk1";
-+		pd-off-en-clocks = <&clock CLK_IP1>, <&clock CLK_IP2>,
-+		pd-off-en-clock-names = "clk0", "clk1";
+@@ -55,6 +60,8 @@ Example:
+ 		pd-on-en-clock-names = "clk0", "clk1";
+ 		pd-off-en-clocks = <&clock CLK_IP1>, <&clock CLK_IP2>,
+ 		pd-off-en-clock-names = "clk0", "clk1";
++		pd-rate-clocks = <&clock CLK_IP3>, <&clock CLK_IP4>,
++		pd-rate-clock-names = "clk0", "clk1";
  		#power-domain-cells = <0>;
  	};
  
 diff --git a/drivers/soc/samsung/pm_domains.c b/drivers/soc/samsung/pm_domains.c
-index 96196f8..5407eb7 100644
+index 5407eb7..a235277 100644
 --- a/drivers/soc/samsung/pm_domains.c
 +++ b/drivers/soc/samsung/pm_domains.c
-@@ -18,6 +18,7 @@
- #include <linux/slab.h>
- #include <linux/pm_domain.h>
- #include <linux/clk.h>
-+#include <linux/clk-provider.h>
- #include <linux/delay.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
-@@ -29,6 +30,12 @@
+@@ -36,6 +36,12 @@ struct clk_enable_list {
+ 	unsigned int en_status;
+ };
  
- static struct exynos_pmu_pd_ops *pd_ops;
- 
-+struct clk_enable_list {
++struct clk_rate_list {
 +	struct clk **clks;
++	unsigned int *rates;
 +	unsigned int count;
-+	unsigned int en_status;
 +};
 +
  struct clk_parent_list {
  	struct clk **clks;
  	struct clk **parent_clks;
-@@ -44,6 +51,8 @@ struct exynos_pm_domain {
- 	char const *name;
- 	bool is_off;
+@@ -53,6 +59,7 @@ struct exynos_pm_domain {
  	struct generic_pm_domain pd;
-+	struct clk_enable_list *clk_pd_on;
-+	struct clk_enable_list *clk_pd_off;
+ 	struct clk_enable_list *clk_pd_on;
+ 	struct clk_enable_list *clk_pd_off;
++	struct clk_rate_list *clk_rate;
  	struct clk_parent_list *clk_parent;
  };
  
-@@ -72,6 +81,55 @@ static struct clk *exynos_pd_clk_get(struct device_node *np,
- 	return clk;
+@@ -198,6 +205,49 @@ static int pd_init_parent_clocks(struct platform_device *pdev,
+ 	return 0;
  }
  
-+static int pd_init_enable_clocks(struct platform_device *pdev,
-+		struct device_node *np, bool on, struct exynos_pm_domain *pd)
++static int pd_init_rate_clocks(struct platform_device *pdev,
++		struct device_node *np, struct exynos_pm_domain *pd)
 +{
-+	struct clk_enable_list *list;
++	struct clk_rate_list *list;
 +	char propname[32], clk_name[8];
 +	int count, i;
 +	struct clk *clk = ERR_PTR(-ENOENT);
@@ -104,13 +89,8 @@ index 96196f8..5407eb7 100644
 +	if (!list)
 +		return -ENOMEM;
 +
-+	if (on) {
-+		pd->clk_pd_on = list;
-+		snprintf(propname, sizeof(propname), "pd-on-en-clock-names");
-+	} else {
-+		pd->clk_pd_off = list;
-+		snprintf(propname, sizeof(propname), "pd-off-en-clock-names");
-+	}
++	pd->clk_rate = list;
++	snprintf(propname, sizeof(propname), "pd-rate-clock-names");
 +
 +	count = of_property_count_strings(np, propname);
 +	if (!count || count > MAX_CLK_PER_DOMAIN)
@@ -122,156 +102,90 @@ index 96196f8..5407eb7 100644
 +	if (!list->clks)
 +		return -ENOMEM;
 +
-+	if (on)
-+		snprintf(propname, sizeof(propname), "pd-on-en");
-+	else
-+		snprintf(propname, sizeof(propname), "pd-off-en");
++	list->rates = devm_kzalloc(&pdev->dev, sizeof(list->rates) * count,
++				GFP_KERNEL);
++	if (!list->rates)
++		return -ENOMEM;
 +
 +	for (i = 0; i < count; i++) {
 +		snprintf(clk_name, sizeof(clk_name), "clk%d", i);
-+		clk = exynos_pd_clk_get(np, propname, clk_name);
++		clk = exynos_pd_clk_get(np, "pd-rate", clk_name);
 +		if (IS_ERR(clk)) {
 +			dev_err(&pdev->dev, "%s clock not found\n", clk_name);
 +			return -EINVAL;
 +		}
 +		list->clks[i] = clk;
 +	}
-+	dev_info(&pdev->dev, "pd %s enable clocks initialised\n",
-+				on ? "on" : "off");
++	dev_info(&pdev->dev, "pd rate clocks initialised\n");
 +	return 0;
 +}
 +
- static int pd_init_parent_clocks(struct platform_device *pdev,
- 		struct device_node *np, struct exynos_pm_domain *pd)
+ static void exynos_pd_poweron_prepare(struct exynos_pm_domain *pd)
  {
-@@ -140,25 +198,67 @@ static int pd_init_parent_clocks(struct platform_device *pdev,
- 	return 0;
- }
- 
-+static void exynos_pd_poweron_prepare(struct exynos_pm_domain *pd)
-+{
-+	struct clk_enable_list *en_list;
-+	int i;
-+
-+	en_list = pd->clk_pd_on;
-+	if (!en_list)
-+		return;
-+
-+	/* Enable the necessary clocks not enabled and update the status */
-+	for (i = 0; i < en_list->count; i++) {
-+		if (__clk_is_enabled(en_list->clks[i]))
-+			continue;
-+		clk_enable(en_list->clks[i]);
-+		en_list->en_status |= (1 << i);
-+	}
-+}
-+
- static void exynos_pd_post_poweron(struct exynos_pm_domain *pd)
+ 	struct clk_enable_list *en_list;
+@@ -220,6 +270,7 @@ static void exynos_pd_post_poweron(struct exynos_pm_domain *pd)
  {
  	struct clk_parent_list *p_list;
-+	struct clk_enable_list *en_list;
+ 	struct clk_enable_list *en_list;
++	struct clk_rate_list *rt_list;
  	int i;
  
  	p_list = pd->clk_parent;
--	if (!p_list)
-+	if (p_list) {
-+		/* Set the parents clocks correctly */
-+		for (i = 0; i < p_list->count; i++)
-+			clk_set_parent(p_list->clks[i], p_list->parent_clks[i]);
+@@ -229,6 +280,17 @@ static void exynos_pd_post_poweron(struct exynos_pm_domain *pd)
+ 			clk_set_parent(p_list->clks[i], p_list->parent_clks[i]);
+ 	}
+ 
++	rt_list = pd->clk_rate;
++	if (rt_list) {
++		/* restore the rate from the rate clock list */
++		for (i = 0; i < rt_list->count; i++) {
++			if (!rt_list->rates[i])
++				continue;
++			clk_set_rate(rt_list->clks[i], rt_list->rates[i]);
++			rt_list->rates[i] = 0;
++		}
 +	}
 +
-+	en_list = pd->clk_pd_on;
-+	if (!en_list)
+ 	en_list = pd->clk_pd_on;
+ 	if (!en_list)
  		return;
- 
--	/* Set the parents clocks correctly */
--	for (i = 0; i < p_list->count; i++)
--		clk_set_parent(p_list->clks[i], p_list->parent_clks[i]);
-+	/* Disable the clocks enabled during power off preperation */
-+	for (i = 0; i < en_list->count; i++) {
-+		if (!(en_list->en_status & (1 << i)))
-+			continue;
-+		clk_disable(en_list->clks[i]);
-+		en_list->en_status &= ~(1 << i);
-+	}
- }
- 
- static void exynos_pd_poweroff_prepare(struct exynos_pm_domain *pd)
+@@ -246,6 +308,7 @@ static void exynos_pd_poweroff_prepare(struct exynos_pm_domain *pd)
  {
  	struct clk_parent_list *p_list;
-+	struct clk_enable_list *en_list;
+ 	struct clk_enable_list *en_list;
++	struct clk_rate_list *rt_list;
  	int i;
  
-+	en_list = pd->clk_pd_off;
-+	if (en_list) {
-+		/* Enable the clocks not enabled and update the status */
-+		for (i = 0; i < en_list->count; i++) {
-+			if (__clk_is_enabled(en_list->clks[i]))
-+				continue;
-+			clk_enable(en_list->clks[i]);
-+			en_list->en_status |= (1 << i);
-+		}
+ 	en_list = pd->clk_pd_off;
+@@ -259,6 +322,13 @@ static void exynos_pd_poweroff_prepare(struct exynos_pm_domain *pd)
+ 		}
+ 	}
+ 
++	rt_list = pd->clk_rate;
++	if (rt_list) {
++		/* save the rate from the rate clock list */
++		for (i = 0; i < rt_list->count; i++)
++			rt_list->rates[i] = clk_get_rate(rt_list->clks[i]);
 +	}
 +
  	p_list = pd->clk_parent;
  	if (!p_list)
  		return;
-@@ -168,12 +268,31 @@ static void exynos_pd_poweroff_prepare(struct exynos_pm_domain *pd)
- 		clk_set_parent(p_list->clks[i], p_list->trans_clks[i]);
- }
- 
-+static void exynos_pd_post_poweroff(struct exynos_pm_domain *pd)
-+{
-+	struct clk_enable_list *en_list;
-+	int i;
-+
-+	en_list = pd->clk_pd_off;
-+	if (!en_list)
-+		return;
-+
-+	/* Disable the clocks enabled during power off preperation */
-+	for (i = 0; i < en_list->count; i++) {
-+		if (!(en_list->en_status & (1 << i)))
-+			continue;
-+		clk_disable(en_list->clks[i]);
-+		en_list->en_status &= ~(1 << i);
-+	}
-+}
-+
- static int exynos_pd_power_on(struct generic_pm_domain *domain)
- {
- 	int ret = 0;
- 	struct exynos_pm_domain *pd;
- 
- 	pd = container_of(domain, struct exynos_pm_domain, pd);
-+	exynos_pd_poweron_prepare(pd);
- 	ret = pd_ops->pd_on(domain->name, pd->base);
- 	if (ret)
- 		return ret;
-@@ -189,6 +308,9 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
- 	pd = container_of(domain, struct exynos_pm_domain, pd);
- 	exynos_pd_poweroff_prepare(pd);
- 	ret = pd_ops->pd_off(domain->name, pd->base);
-+	if (ret)
-+		return ret;
-+	exynos_pd_post_poweroff(pd);
- 	return ret;
- }
- 
-@@ -232,6 +354,14 @@ static int exynos_power_domain_probe(struct platform_device *pdev)
- 		pd->pd.power_off = exynos_pd_power_off;
- 		pd->pd.power_on = exynos_pd_power_on;
- 
-+		if (of_find_property(np, "pd-on-en-clocks", NULL))
-+			if (pd_init_enable_clocks(pdev, np, true, pd))
-+				return -EINVAL;
-+
-+		if (of_find_property(np, "pd-off-en-clocks", NULL))
-+			if (pd_init_enable_clocks(pdev, np, false, pd))
-+				return -EINVAL;
-+
- 		if (of_find_property(np, "pd-parent-clocks", NULL))
+@@ -366,6 +436,10 @@ static int exynos_power_domain_probe(struct platform_device *pdev)
  			if (pd_init_parent_clocks(pdev, np, pd))
  				return -EINVAL;
+ 
++		if (of_find_property(np, "pd-rate-clocks", NULL))
++			if (pd_init_rate_clocks(pdev, np, pd))
++				return -EINVAL;
++
+ 		on = pd_ops->pd_status(pd->base);
+ 
+ 		pm_genpd_init(&pd->pd, NULL, !on);
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
