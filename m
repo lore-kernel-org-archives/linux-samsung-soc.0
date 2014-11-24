@@ -1,84 +1,89 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH V2 RESEND] arm: dts: Exynos5: Use pmu_system_controller
- phandle for dp phy
-Date: Mon, 24 Nov 2014 13:43:06 +0100
-Message-ID: <547327DA.9090605@collabora.co.uk>
-References: <1416807683-2257-1-git-send-email-gautam.vivek@samsung.com>	<20141124103249.GA26217@ulmo.nvidia.com>	<CAFp+6iE22FnHeXJZQyhytzGDNfnP4sdnYZuyFtmfzP_JVTVNPQ@mail.gmail.com>	<20141124105656.GA32478@ulmo.nvidia.com> <CAFp+6iFgXFL8=jvrdw4Z+vfPSzWO9FYxAHMD1Tr9wD0Sy=gHMg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:38215 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751329AbaKXMnP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 07:43:15 -0500
-In-Reply-To: <CAFp+6iFgXFL8=jvrdw4Z+vfPSzWO9FYxAHMD1Tr9wD0Sy=gHMg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Subject: [PATCH RFC v2 00/12] soc: samsung: Modify and enhance power domain
+ driver
+Date: Mon, 24 Nov 2014 18:22:40 +0530
+Message-ID: <1416833572-6880-1-git-send-email-amit.daniel@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, linux-kernel@vger.kernel.org, s.nawrocki@samsung.com, pankaj.dubey@samsung.com, ulf.hansson@linaro.org, khilman@kernel.org, linux-pm@vger.kernel.org, geert@linux-m68k.org, rjw@rjwysocki.net, devicetree@vger.kernel.org, Amit Daniel Kachhap <amit.daniel@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautamvivek1987@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Jingoo Han <jg1.han@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, Kukjin Kim <kgene@kernel.org>
 
-Hello Vivek, Thierry,
+Posting this series as RFC to get more clarity as lot of power domain related
+discussion is happening in mailing lists.
 
-On 11/24/2014 12:29 PM, Vivek Gautam wrote:
->> Yes. Back at the time a decision was made that device trees need to be
->> stable ABI because eventually they'd be shipped with the device rather
->> than the distribution. As such it may not at all be possible to update
->> them (they could be in some sort of ROM).
->>
->> For that reason new kernels need to keep working with old DTBs unless an
->> argument can be made that would justify breaking things. I don't think I
->> have ever seen anyone win such an argument.
+This patch series[1 - 12] performs several implementations as listed below,
 
-Although uncommon, there are cases when breaking a DT backward compatibility
-could make sense IMHO. For example the DT binding for the SPI controller
-found on Samsung SoCs (s3c64xx) used a custom binding to specify the chip
-select (CS) line. Later the binding was changed in mainline breaking backward
-compatibility and the breakage was not noticed in a year even when the change
-not only broke backward compatibility but also was wrong.
+1) Converts power domain driver to platform driver.
+2) Registers this driver as MFD client driver.
+3) Moves them into driver/soc/samsung folder.
+4) Add parent power domain parsing code.
+5) Updates the reparenting feature to make it more generic.
+6) A feature to turn clocks on during pm domain off/on. There can be
+   different set of clocks to be turned on. The patches in Rafael's tree allows
+   a single list only.
+7) Code added to preserve the clocks rates during power domain on/off
+   sequence.
+8) Restructured the exynos PD on/off handlers and added exynos7 support.
 
-So the options were to a) keep the buggy DT which also broke backward compact,
-b) revert to the old binding breaking any DTS that were added the last year,
-c) break backward compatibility again but take the opportunity to fix the
-binding for good by dropping device specific bindings and use standard ones.
+The power domain DT node may look something like,
 
-At the end it was decided that c) was the least bad option and was made in
-commit 306972c ("spi: s3c64xx: use the generic SPI "cs-gpios" property").
+mfc_pd: power-domain@10044060 {
+	compatible = "samsung,exynos4210-pd", "samsung,exynos7-pd-mfc";
+	reg = <0x10044060 0x20>;
+	pd-parent-clock-names = "tclk0", "pclk0", "clk0";
+	pd-parent-clocks = <&clock CLK_FIN_PLL>, <&clock CLK_MOUT_SW_ACLK333>,
+		<&clock CLK_MOUT_USER_ACLK333>;
+	pd-on-en-clock-names = "clk0", "clk1";
+	pd-on-en-clocks = <&clock CLK_IP1>, <&clock CLK_IP2>,
+	pd-off-en-clock-names = "clk0", "clk1", "clk3";
+	pd-off-en-clocks = <&clock CLK_IP1>, <&clock CLK_IP2>, <&clock CLK_IP3>;
+	pd-rate-clock-names = "clk0", "clk1";
+	pd-rate-clocks = <&clock CLK_IP1>, <&clock CLK_IP2>,
+	parents = <&pd_top>;
+	#power-domain-cells = <0>;
+};
 
->> One of the rare exceptions
->> that I know of is if you can prove that a given hardware block has never
->> been used in an upstream kernel, then changing the DTB in backwards-
->> incompatible ways would be okay because you wouldn't be breaking things
->> for existing users.
-> 
-> I am pretty sure about the Chrome devices (which have not been
-> upgraded to any kernel after
-> 3.8).
-> Probably Javier may have better knowledge.
-> 
+Changes from v1:
+* Removed PM domain notifier features.
+* Removed clock save/restore through those notifiers.
+* link for v1 is http://www.spinics.net/lists/linux-samsung-soc/msg38442.html.
 
-Correct. The Exynos based Chromebooks are using a 3.8 kernel and the FDT
-shipped can't be used with a mainline kernel since it used out-of-tree
-drivers whose DT bindings were changed during review to upstream inclusion.
+This patch series depends on exynos pmu patches posted earlier.
+http://lkml.org/lkml/2014/11/23/221
 
-Also, the stock boot-loader loads a FIT image which has a kernel and FDT
-bundled in the same image so in that case the FDT has to be shipped with
-the Linux kernel anyways.
+Amit Daniel Kachhap (12):
+  arm: exynos: Add platform driver support for power domain driver
+  soc: exynos: Move exynos power domain file to driver/soc/samsung
+    folder
+  soc: samsung: exynos-pmu: Register exynos pd driver as a mfd client
+  soc: samsung: Re-structure PMU driver to create pd on/off handlers
+  soc: samsung: pm_domain: Use unique compatible name for power domain
+  driver: soc: exynos-pmu: Add exynos7 power domain on/off ops
+  PM / Domains: export pm_genpd_lookup_name
+  soc: samsung: pm_domain: Add support for parent power domain
+  drivers: soc: pm_domain: Modify the parent clocks bindings
+  drivers: soc: samsung: Add support for clock enabling in power domain
+  drivers: soc: samsung: Add support for clock rate save/restore in
+    power domain
+  arm64: Kconfig: Enable PM_GENERIC_DOMAINS for exynos7
 
-> Javier, is there any other device using upstream kernel post 3.12 (any
-> arndale octa based) ?
-> 
+ .../bindings/arm/exynos/power_domain.txt           |   45 +-
+ arch/arm/mach-exynos/Makefile                      |    1 -
+ arch/arm/mach-exynos/pm_domains.c                  |  166 -------
+ arch/arm64/Kconfig                                 |    1 +
+ drivers/base/power/domain.c                        |    3 +-
+ drivers/soc/samsung/Kconfig                        |    9 +
+ drivers/soc/samsung/Makefile                       |    3 +-
+ drivers/soc/samsung/exynos-pmu.c                   |  185 +++++++
+ drivers/soc/samsung/pm_domains.c                   |  510 ++++++++++++++++++++
+ include/linux/pm_domain.h                          |    7 +
+ include/linux/soc/samsung/exynos-pmu.h             |   15 +
+ include/linux/soc/samsung/exynos-regs-pmu.h        |   26 +
+ 12 files changed, 794 insertions(+), 177 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/pm_domains.c
+ create mode 100644 drivers/soc/samsung/pm_domains.c
 
-Sorry, I don't know if there are other Exynos devices using a more recent
-kernel but AFAICT the DT binding for the Exynos Display Port was changed
-recently (v3.17) in a non-backward compatible way with commit 5f1dcd8
-("drm/exynos: dp: Modify driver to support drm_panel"). So anyone using a
-more recent kernel will have to update the FDT to have display working.
+-- 
+1.7.9.5
 
-Also display does not work for many Exynos5 devices that have an eDP to LVDS
-bridge chip for example so I think is safe to assume that anything related
-to the Exynos DP (like the DP PHY) would still not have a stable DT binding.
-
-Best regards,
-Javier
