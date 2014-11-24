@@ -1,67 +1,59 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH 01/11] pinctrl: exynos: Add BUS1 pin controller for exynos7
-Date: Mon, 24 Nov 2014 10:30:19 +0530
-Message-ID: <CAFp+6iF-N63YSsdv2a6=MYp_mD=eQY_Oi8=9JVNU5dG0BA7YGQ@mail.gmail.com>
-References: <1416576954-11997-1-git-send-email-gautam.vivek@samsung.com>
-	<1416576954-11997-2-git-send-email-gautam.vivek@samsung.com>
-	<CAGOxZ53d_Vk1cF8Y2LNgMNeuCFeQJKmHQeN19pO5HfAdp4hx8A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGOxZ53d_Vk1cF8Y2LNgMNeuCFeQJKmHQeN19pO5HfAdp4hx8A@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@gmail.com>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, kishon <kishon@ti.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, robh+dt <robh+dt@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH V2 RESEND] arm: dts: Exynos5: Use pmu_system_controller phandle
+ for dp phy
+Date: Mon, 24 Nov 2014 11:11:23 +0530
+Message-ID: <1416807683-2257-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Alim,
+DP PHY now require pmu-system-controller to handle PMU register
+to control PHY's power isolation. Adding the same to dp-phy
+node.
 
+Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Reviewed-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Tested-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+---
+ arch/arm/boot/dts/exynos5250.dtsi |    2 +-
+ arch/arm/boot/dts/exynos5420.dtsi |    4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-On Sat, Nov 22, 2014 at 7:07 PM, Alim Akhtar <alim.akhtar@gmail.com> wrote:
-> Hi Vivek,
->
-> On Fri, Nov 21, 2014 at 7:05 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
->> USB and Power regulator on Exynos7 require gpios available
->> in BUS1 pin controller block.
->> So adding the BUS1 pinctrl support.
->>
->> Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
->> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> ---
->>  drivers/pinctrl/samsung/pinctrl-exynos.c |   12 ++++++++++++
->>  1 file changed, 12 insertions(+)
->>
->> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
->> index d5d4cfc..caca5b5 100644
->> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
->> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
->> @@ -1300,6 +1300,13 @@ static const struct samsung_pin_bank_data exynos7_pin_banks7[] __initconst = {
->>         EXYNOS_PIN_BANK_EINTG(8, 0x060, "gpr3", 0x0c),
->>  };
->>
->> +/* pin banks of exynos7 pin-controller - BUS1 */
->> +static const struct samsung_pin_bank_data exynos7_pin_banks8[] __initconst = {
->> +       EXYNOS_PIN_BANK_EINTG(8, 0x020, "gpf0", 0x00),
->> +       EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpf4", 0x10),
->> +       EXYNOS_PIN_BANK_EINTG(6, 0x120, "gph1", 0x20),
->> +};
->> +
-> Looks like you are just trying to touch pin banks only related to USB
-> stuffs, but as this patch does not have any dependencies on other
-> patches in this series, will you consider adding other pin banks of
-> BUS1, just for completeness of BUS1 pin-controller.
-
-True, this just touches the USB related pinctrl.
-Will add the rest pin banks of BUS1 for completeness.
-Thanks for pointing out. :-)
-
-[snip]
-
-
-
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 0a588b4..bebd099 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -732,7 +732,7 @@
+ 
+ 	dp_phy: video-phy@10040720 {
+ 		compatible = "samsung,exynos5250-dp-video-phy";
+-		reg = <0x10040720 4>;
++		samsung,pmu-syscon = <&pmu_system_controller>;
+ 		#phy-cells = <0>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 8617a03..1353a09 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -503,8 +503,8 @@
+ 	};
+ 
+ 	dp_phy: video-phy@10040728 {
+-		compatible = "samsung,exynos5250-dp-video-phy";
+-		reg = <0x10040728 4>;
++		compatible = "samsung,exynos5420-dp-video-phy";
++		samsung,pmu-syscon = <&pmu_system_controller>;
+ 		#phy-cells = <0>;
+ 	};
+ 
 -- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+1.7.10.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
