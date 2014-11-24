@@ -1,7 +1,7 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: drm/exynos: vidi: add component support
-Date: Mon, 24 Nov 2014 18:05:05 +0900
-Message-ID: <1416819905-7992-1-git-send-email-inki.dae@samsung.com>
+Subject: [PATCH] drm/exynos: vidi: add component support
+Date: Mon, 24 Nov 2014 18:05:34 +0900
+Message-ID: <1416819934-8046-1-git-send-email-inki.dae@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
