@@ -1,43 +1,66 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv3 3/3] ARM: dts: Remove unused command line from
- Exynos3250-based Rinato board
-Date: Mon, 24 Nov 2014 19:57:50 +0900
-Message-ID: <1416826670-29438-4-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCHv3 1/3] ARM: exynos: Add Exynos-based boards compatible string
+ and description
+Date: Mon, 24 Nov 2014 19:57:48 +0900
+Message-ID: <1416826670-29438-2-git-send-email-cw00.choi@samsung.com>
 References: <1416826670-29438-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:22552 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753526AbaKXK56 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 05:57:58 -0500
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1416826670-29438-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: kgene.kim@samsung.com, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com
-Cc: jh80.chung@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, yj44.cho@samsung.com, geunsik.lim@samsung.com, kyungmin.park@samsung.com, cw00.choi@samsung.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: inki.dae@samsung.com, geunsik.lim@samsung.com, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, sw0312.kim@samsung.com, linux-kernel@vger.kernel.org, yj44.cho@samsung.com, jh80.chung@samsung.com, cw00.choi@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch removes unused dt node of command line from Exynos3250-based
-Rinato board because kernel use the command line from bootloader.
+This patch adds the missing compatible/description of Exynos-based boards
+to remove following build warning.
+
+	WARNING: DT compatible string "samsung,..." appears un-documented --
+	check ./Documentation/devicetree/bindings/
 
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- arch/arm/boot/dts/exynos3250-rinato.dts | 4 ----
- 1 file changed, 4 deletions(-)
+ .../devicetree/bindings/arm/samsung-boards.txt         | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index 84380fa..80aa8b4 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -28,10 +28,6 @@
- 		reg =  <0x40000000 0x1ff00000>;
- 	};
- 
--	chosen {
--		bootargs = "console=ttySAC1,115200N8 root=/dev/mmcblk0p15 rootwait earlyprintk panic=5";
--	};
+diff --git a/Documentation/devicetree/bindings/arm/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung-boards.txt
+index 2168ed3..1f8287e 100644
+--- a/Documentation/devicetree/bindings/arm/samsung-boards.txt
++++ b/Documentation/devicetree/bindings/arm/samsung-boards.txt
+@@ -1,11 +1,19 @@
+-* Samsung's Exynos4210 based SMDKV310 evaluation board
 -
- 	firmware@0205F000 {
- 		compatible = "samsung,secure-firmware";
- 		reg = <0x0205F000 0x1000>;
+-SMDKV310 evaluation board is based on Samsung's Exynos4210 SoC.
++* Samsung's Exynos SoC based boards
+ 
+ Required root node properties:
+     - compatible = should be one or more of the following.
+-        (a) "samsung,smdkv310" - for Samsung's SMDKV310 eval board.
+-        (b) "samsung,exynos4210"  - for boards based on Exynos4210 SoC.
++	- "samsung,rinato"	- for Exynos3250-based Samsung Gear2 board.
++	- "samsung,smdkv310"	- for Exynos4210-based Samsung SMDKV310 eval board.
++	- "samsung,trats"	- for Exynos4210-based Tizen Reference board.
++	- "samsung,universal_c210" - for Exynos4210-based Samsung board.
++	- "samsung,smdk4412",	- for Exynos4412-based Samsung SMDK4412 eval board.
++	- "samsung,trats2"	- for Exynos4412-based Tizen Reference board.
++	- "samsung,smdk5250"	- for Exynos5250-based Samsung SMDK5250 eval board.
++	- "samsung,xyref5260"	- for Exynos5260-based Samsung board.
++	- "samsung,smdk5410"	- for Exynos5410-based Samsung SMDK5410 eval board.
++	- "samsung,smdk5420"	- for Exynos5420-based Samsung SMDK5420 eval board.
++	- "samsung,sd5v1"	- for Exynos5440-based Samsung board.
++	- "samsung,ssdk5440"	- for Exynos5440-based Samsung board.
+ 
+ Optional:
+     - firmware node, specifying presence and type of secure firmware:
 -- 
 1.8.5.5
