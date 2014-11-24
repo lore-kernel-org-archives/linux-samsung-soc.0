@@ -1,62 +1,61 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH v2 2/2] arm: dts: Exynos5: Use pmu_system_controller
- phandle for dp phy
-Date: Mon, 24 Nov 2014 14:58:03 +0530
-Message-ID: <CAFp+6iHALherA8JF75qcAgvr-W7tGLSpMhL96QNhpnb_xTWc0w@mail.gmail.com>
-References: <1414675442-3471-1-git-send-email-gautam.vivek@samsung.com>
-	<1414675442-3471-2-git-send-email-gautam.vivek@samsung.com>
-	<000101cffe30$155793a0$4006bae0$%han@samsung.com>
-	<CABxcv=mams-iVBvACLZ-=Ozcs3KcHSEvxAsRSSV-eKaSnrcXSA@mail.gmail.com>
-	<CAFp+6iEnTbXAUUYMU-bP27f4=X0pEtgmURAwKfRrqDQE4tRpKQ@mail.gmail.com>
-	<CABxcv=m7_m=Y=Mr+0tm+-i=0_e2SU_FC3SDmRTSdkpi--GQtxQ@mail.gmail.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH v6]  i2c: s3c2410: Handle i2c sys_cfg register in i2c
+ driver
+Date: Mon, 24 Nov 2014 10:38:27 +0100
+Message-ID: <20141124093827.GC3733@katana>
+References: <1416818018-6684-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f41.google.com ([209.85.216.41]:33768 "EHLO
-	mail-qa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750759AbaKXJ2E (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 04:28:04 -0500
-In-Reply-To: <CABxcv=m7_m=Y=Mr+0tm+-i=0_e2SU_FC3SDmRTSdkpi--GQtxQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rQ2U398070+RC21q"
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1416818018-6684-1-git-send-email-pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, Jingoo Han <jg1.han@samsung.com>, Kukjin Kim <kgene@kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Ajay Kumar <ajaykumar.rs@samsung.com>
-
-On Sun, Nov 23, 2014 at 12:26 AM, Javier Martinez Canillas
-<javier@dowhile0.org> wrote:
-> Hello Vivek
->
-> On Wed, Nov 19, 2014 at 1:03 PM, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
->>>
->>> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
->>
->> Thanks for testing.
->>
->
-> You are welcome
->
->>>
->>> Kukjin,
->>
->> Sorry for not adding Kukjin to the list and thereby for the delay
->> about this patch.
->>
->
-> No worries but I'm not sure if Kukjin is aware of this patch. I see he
-> has been applying other patches but didn't pick $subject.
-Right,
-
->
-> Maybe you can resend it to Kukjin just to be sure he will have it in
-> his mailbox?
-
-Posted a RESEND version of this patch. Thanks again for noticing.
 
 
+--rQ2U398070+RC21q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+On Mon, Nov 24, 2014 at 02:03:38PM +0530, Pankaj Dubey wrote:
+> Let's handle i2c interrupt re-configuration in i2c driver. This will
+> help us in removing some soc specific checks from machine files and
+> will help in removing static iomapping of SYS register in exynos.c
+>=20
+> Also handle saving and restoring of SYS_I2C_CFG register during
+> suspend and resume of i2c driver.
+>=20
+> CC: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+> CC: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Signed-off-by: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+
+Applied to for-next, thanks!
+
+
+--rQ2U398070+RC21q
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUcvyTAAoJEBQN5MwUoCm25tkP/RrOeNzBdZNJ22GIwJEN1Son
+6CHIcUr6mjsnLFDzvxfzI+nnaSS1ewKLyFNG5JzsCEQ1Ui/SpN1cUjvuGsVF6BRw
+FGCr6tYI7xW7EwZgKgPs5Yv8biqzJ8M0f736ToP+zDC4WRm1etwdipy9gAlcHGOP
+sDHCts5CZvVK915H7bp8abv1G1yrM3ONmshZWXsE8ICeMLj5x5TK0cey/WDN0iSn
+/vmMW4mIshc4++qygdLnSz7mSRl01+fOzC52jv2O9mgAfeFUJB3TFPvJs/FgrVne
+XRGKsH+/WTZz6nZ3wj/w2C3TFlbwu9aJYGeMl28WWHd8T9QB+iPLhhKMMQX1WMfu
+YqqRMb/m4vxNCNXpM7crkUVXQxMz0DRRCtdwCyrbx1FTr1LA9xhhDRgTsgay/e5C
+Bm00UWhWGMA2TF5iMoyi/KDnvSHAMBq7m9DM5Hn0+np73TIasMa7GJNidhfnLBub
+I4C/GWFjV4Alqfv+YnaBlOMUpFKRLNXznUCPQvTagEUG0UVzMI71YgZwFaSAVjhm
+q0f3cNFIv8KvZwLXoB/6iq/dYTUkaKOnQ1OSHHhItR4AT9O+QFpPvGtHjA0osgay
+1kpaKcxVf/Xhf2PgGfgtTuv2fTk6qDyt7c9ORI/dmmF8ZpQtjlKnoezaDn1aMLjW
+/flGf4Xc6tF9anFV38A1
+=MZIY
+-----END PGP SIGNATURE-----
+
+--rQ2U398070+RC21q--
