@@ -1,108 +1,55 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFC 0/2] Fix Arndale Octa/Peach Pi boot on Audio subsystem clocks
-Date: Tue, 25 Nov 2014 10:22:55 +0100
-Message-ID: <1416907375.5023.54.camel@AMDC1943>
-References: <1416842312-4405-1-git-send-email-k.kozlowski@samsung.com>
- <54736AD0.4070909@collabora.co.uk>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH v11 4/6] ARM: Exynos: switch to using generic cpufreq
+ driver for Exynos4210/5250/5420
+Date: Tue, 25 Nov 2014 16:32:10 +0530
+Message-ID: <CAKohpo=CovQ0h_7yyhPg2AVrC+SDZm3+N-_WNWZXfowKFNdrDw@mail.gmail.com>
+References: <1413805281-6269-1-git-send-email-thomas.ab@samsung.com>
+	<1413805281-6269-2-git-send-email-thomas.ab@samsung.com>
+	<1413805281-6269-3-git-send-email-thomas.ab@samsung.com>
+	<1413805281-6269-4-git-send-email-thomas.ab@samsung.com>
+	<1413805281-6269-5-git-send-email-thomas.ab@samsung.com>
+	<546CEF61.4050105@arm.com>
+	<CAKohponEHqHYCLibVc8OHN49+4YW5qw89ny4ycTBL1xN-p9qtA@mail.gmail.com>
+	<5473364C.3010102@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:52723 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750760AbaKYJXA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Nov 2014 04:23:00 -0500
-In-reply-to: <54736AD0.4070909@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <5473364C.3010102@arm.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Thomas Abraham <thomas.ab@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "l.majewski@samsung.com" <l.majewski@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "mturquette@linaro.org" <mturquette@linaro.org>, "heiko@sntech.de" <heiko@sntech.de>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, "cw00.choi@samsung.com" <cw00.choi@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>
 
-On pon, 2014-11-24 at 18:28 +0100, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On 11/24/2014 04:18 PM, Krzysztof Kozlowski wrote:
-> > Hi,
-> > 
-> > 
-> > This is initial idea to solve dependency between AudioSS clocks
-> > and main clock controller on Exynos platform.
-> > 
-> > This solves boot failure of Peach Pi/Pit and Arndale Octa [1].
-> > 
-> 
-> I tested this series on an Exynos5420 Peach Pit but I still
-> have the boot hang so it doesn't solve the issue on this board.
-> 
-> I'm using linux-next + your patches with exynos_defconfig and
-> without the clk_ignore_unused command line parameter.
+On 24 November 2014 at 19:14, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> On 20/11/14 03:48, Viresh Kumar wrote:
+>> - I believe CPUs boot in the order they are present in DT except for the
+>> boot CPU. So, the first node for every cluster should have it.
+>>
+>> Correct ? Then we can update the fixme.
+>>
+>
+> No, I disagree as you trying to implicitly depend on the logic Linux uses to
+> assign logical index. It can be changed any time, and depending
+> on it might break things in future which can't be fixed easily later
+> especially if it's DT related.
 
-Hmmm, that's strange. I've looked again at your dmesg and it is little
-different than mine (when system fails).
-1. Does your PMIC come up? In your dmesg:
-[    2.687297] max77802-pmic max77802-pmic: regulator init failed for 0
-[    2.693539] platform max77802-pmic: Driver max77802-pmic requests probe deferral
+Yeah, correct.
 
-2. In my case booting fails just after disabling unused clocks which is
-quite early, my dmesg:
-[   11.700074] input: gpio_keys as /devices/platform/gpio_keys/input/input0
-[   11.704282] s3c-rtc 101e0000.rtc: setting system clock to 2029-01-11 19:19:17 UTC (1862853557)
-[   11.770602] mmcblk0: mmc0:0001 M8G1WA 7.28 GiB
-[   11.776201] mmcblk0boot0: mmc0:0001 M8G1WA partition 1 2.00 MiB
-[   11.780968] mmcblk0boot1: mmc0:0001 M8G1WA partition 2 2.00 MiB
-[   11.786823] mmcblk0rpmb: mmc0:0001 M8G1WA partition 3 128 KiB
-[   11.793815]  mmcblk0: p1 p2 p3 p4
-[   11.824165] PVDD_G3D_1V0: disabling
-[   11.830833] PVDD_G3DS_1V0: disabling
-[   11.837771] PVDD_HSIC_1V8: disabling
-[   11.841172] PVDD_ABB_1V8: disabling
-[   11.844866] PVDD_ANAIP_1V8: disabling
-[   11.847157] usb 5-1.4: new high-speed USB device number 3 using exynos-ehci
-[   11.848778] PVDD
+>> Hmm, I never thought about it. But yes the CPU with the OPPs should
+>> be the first one to come back.
+>>
+>
+> How can you assume that ? I can write a simple test which hot-plugs out
+> all the CPUs in the (esp. multi-cluster) system in ascending order of
+> logical index and hot-plug back in descending order. Then the above
+> logic fails.
 
-In your case you have a gap here:
-[    3.624142] platform 12d10000.adc: Driver exynos-adc requests probe deferral
-[   24.188722] random: nonblocking pool is initialized
+What I said is: Yes the CPU with the OPPs should be the first one to come
+back, if this has to work correctly. Otherwise it will break..
 
-Could you try my patches once again but this time with enabled:
-DEBUG_EXYNOS_UART
-EARLY_PRINTK
-DEBUG_S3C_UART3
-DEBUG_LL
+And you repeated the same :)
 
-and with following change:
+> The platforms needing it have to get involved in such discussions to
+> make any progress.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 4896ae9e23da..316856e55784 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -478,7 +478,9 @@ static void clk_disable_unused_subtree(struct clk *clk)
-         * sequence.  call .disable_unused if available, otherwise fall
-         * back to .disable
-         */
-+       pr_err("clk: checking %s\n", clk->name);
-        if (__clk_is_enabled(clk)) {
-+               pr_err("clk: enabled %s, disabling\n", clk->name);
-                if (clk->ops->disable_unused)
-                        clk->ops->disable_unused(clk->hw);
-                else if (clk->ops->disable)
-
-Without my patch the boot hangs:
-[   12.230666] clk: checking dout_unipro
-[   12.234304] clk: checking mout_unipro
-[   12.237913] clk: checking sclk_usbd300
-[   12.241638] clk: enabled sclk_usbd300, disabling
-[   12.246264] clk: checking dout_usbd300
-[   12.249992] clk: checking sclk_usbd301
-[   12.253683] clk: enabled sclk_usbd301, disabling
-[   12.258309] clk: checking dout_usbd301
-[   12.262007] clk: checking sclk_maudio0
-[   12.265728] clk: enabled sclk_maudio0, disabling
-[   12.270355] clk: checking pcm_bus
-
-because audss seems to be gated so kernel cannot access status of
-pcm_bus clock.
-
-Best regards,
-Krzysztof
+Yes there were people involved. I hope I cc'd you as well...
