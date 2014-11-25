@@ -1,90 +1,148 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFC 2/2] clk: samsung: Fix clock disable failure because domain
- being gated
-Date: Tue, 25 Nov 2014 13:19:05 +0100
-Message-ID: <1416917945.29431.6.camel@AMDC1943>
-References: <1416842312-4405-1-git-send-email-k.kozlowski@samsung.com>
- <1416842312-4405-3-git-send-email-k.kozlowski@samsung.com>
- <CA+Ln22FTJ8AwNOq+jrA6dK=4ziGFwFT+Ofjr2zE4z=8B4f3QJw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Inki Dae <inki.dae@samsung.com>
+Subject: [GIT PULL] exynos-drm-next
+Date: Tue, 25 Nov 2014 21:41:07 +0900
+Message-ID: <1416919267-23540-1-git-send-email-inki.dae@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:26182 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750984AbaKYMTJ (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:48540 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752919AbaKYMlJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Nov 2014 07:19:09 -0500
-In-reply-to: <CA+Ln22FTJ8AwNOq+jrA6dK=4ziGFwFT+Ofjr2zE4z=8B4f3QJw@mail.gmail.com>
+	Tue, 25 Nov 2014 07:41:09 -0500
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NFL008XRHWJITA0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 25 Nov 2014 21:41:07 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>
+To: airlied@linux.ie
+Cc: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org
 
-On wto, 2014-11-25 at 20:35 +0900, Tomasz Figa wrote:
-> Hi Krzysztof,
-> 
-> Please see my comments inline.
-> 
-> 2014-11-25 0:18 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com>:
-> > +static int audss_clk_gate_enable(struct clk_hw *hw)
-> > +{
-> > +       int ret;
-> > +
-> > +       if (!IS_ERR(pll_in))
-> > +               clk_prepare_enable(pll_in);
-> 
-> Calling clk_prepare_enable() from enable() callback doesn't look like
-> a good idea, because enabling is not supposed to sleep, while
-> preparing might do so.
+Hi Dave,
 
-Right.
+   Add Exynos4415 SoC support, some fixups and cleanups.
+   
+   Summary:
+   - Resolve kernel lockup issue incurred by probe request in probe context.
+     . For this, it moves all register codes of sub drivers into init function
+       and adds component binding support for vidi driver.
+   - Add Exynos4415 SoC support.
+   - Make each manager and display object to be embedded
+     in each driver context.
+   - Fix and clean up FIMD and MIPI-DSI drivers.
+   - Clean up unnecesary or wrong descriptions.
+   - And trivial cleanups.
 
-> I guess you have to pre-prepare this clock in probe and then only call
-> enable here.
+   Please kindly let me know if there is my missing point.
 
-Yes, the prepare won't have any negative effect on energy usage anyway.
+Thanks,
+Inki Dae
 
-> 
-> > +       ret = clk_gate_ops.enable(hw);
-> > +       if (!IS_ERR(pll_in))
-> > +               clk_disable_unprepare(pll_in);
-> > +
-> > +       return ret;
-> > +}
-> 
-> [snip]
-> 
-> > +/* TODO: Also mux and div */
-> > +const struct clk_ops audss_clk_gate_ops = {
-> 
-> nit: static const probably?
 
-Yes.
+The following changes since commit ed1e8777a56f3523712506d608a29f57ed37b613:
 
-> 
-> > +       .enable = audss_clk_gate_enable,
-> > +       .disable = audss_clk_gate_disable,
-> > +       .is_enabled = audss_clk_gate_is_enabled,
-> > +};
-> 
-> As for the approach itself, maybe you should simply register fully
-> custom clocks with clk_register(), without altering
-> clk_register_gate() at all and simply calling gate ops whenever
-> necessary? I don't know, just a loose idea.
+  Merge branch 'drm-next-3.19' of git://people.freedesktop.org/~agd5f/linux into drm-next (2014-11-21 12:17:43 +1000)
 
-Initially that seemed to me the simplest way to encapsulate gate_ops
-calls. However in that approach I should also change clk_register_mux
-and clk_register_divider... which complicates this patch and maybe your
-idea will be simpler overall.
+are available in the git repository at:
 
-> By the way, this issue could be probably solved by integrating generic
-> clocks with regmap API, since regmap-mmio can automatically control a
-> clock.
 
-Indeed but this looks like much bigger task.
+  git://git.kernel.org/pub/scm/linux/kernel/git/daeinki/drm-exynos exynos-drm-next
 
-Anyway thanks for feedback. I'll prepare another version.
+for you to fetch changes up to 5baf5d44fbcde002d7f3f8148e69305f520770dd:
 
-Best regards,
-Krzysztof
+  drm/exynos: avoid leak if exynos_dpi_probe() fails (2014-11-25 11:58:43 +0900)
+
+----------------------------------------------------------------
+Andrzej Hajda (19):
+      drm/exynos: remove ifdeferry from initialization code
+      drm/exynos: dsi: remove global variable exynos_dsi_display
+      drm/exynos: dsi: simplify device pointer evaluation
+      drm/exynos: dsi: remove redundant encoder field
+      drm/exynos: dsi: stop using display->ctx pointer
+      drm/exynos/mixer: embed manager into private context
+      drm/exynos/mixer: stop using manager->ctx pointer
+      drm/exynos/vidi: embed manager into private context
+      drm/exynos/vidi: stop using manager->ctx pointer
+      drm/exynos/fimd: embed manager into private context
+      drm/exynos/fimd: stop using manager->ctx pointer
+      drm/exynos/hdmi: embed display into private context
+      drm/exynos/hdmi: stop using display->ctx pointer
+      drm/exynos/vidi: embed display into private context
+      drm/exynos/vidi: stop using display->ctx pointer
+      drm/exynos/dp: embed display into private context
+      drm/exynos/dp: stop using display->ctx pointer
+      drm/exynos/dpi: embed display into private context
+      drm/exynos/dpi: stop using display->ctx pointer
+
+Gustavo Padovan (13):
+      drm/exynos: remove uneeded declaration of struct dma_iommu_mapping
+      drm/exynos: remove extra declaration of struct exynos_drm_manager
+      drm/exynos: remove extra declaration of struct exynos_overlay
+      drm/exynos: Replace repeated declaration by include <drm/drmP.h>
+      drm/exynos: Replace repeated declarations by #include "exynos_drm_drv.h"
+      drm/exynos: remove unused wait_for macro
+      drm/exynos: Save up space using bool var as bitfields
+      drm/exynos: update documentation to reflect code changes
+      drm/exynos: remove leftover hdmi function declarations
+      Revert "drm/exynos: fix null pointer dereference issue"
+      drm/exynos: move Exynos platform drivers registration to init
+      drm/exynos: Fix exynos_dpi_remove() parameter
+      drm/exynos: avoid leak if exynos_dpi_probe() fails
+
+Inki Dae (8):
+      drm/exynos: resolve infinite loop issue on multi-platform
+      drm/exynos: resolve infinite loop issue on non multi-platform
+      drm/exynos: g2d: fix null pointer dereference
+      drm/exynos: fix possible infinite loop issue
+      drm/exynos: fix null pointer dereference issue
+      drm/exynos: clean up machine compatible string check
+      drm/exynos: fix exynos_drm_component_del
+      drm/exynos: vidi: add component support
+
+Joonyoung Shim (3):
+      drm/exynos: add has_vtsel flag
+      drm/exynos: move triggering checking
+      drm/exynos: use irq_flags instead of triggering
+
+Julia Lawall (1):
+      drm/exynos/ipp: fix error return code
+
+Krzysztof Kozlowski (1):
+      drm/exynos: Fix DSI resuming fail because power domain being off
+
+Vivek Gautam (1):
+      drm/exynos: dp: Remove support for unused dptx-phy
+
+YoungJun Cho (12):
+      drm/exynos: dsi: support Exynos4415 SoC
+      drm/exynos: fimd: support Exynos4415 SoC
+      drm/exynos: fimd: remove unnecessary waiting vblank routine
+      drm/exynos: fimd: move handle vblank position in TE handler
+      drm/exynos: dsi: move DSIM_STATE_ENABLED set position
+      drm/exynos: fimd: move shadow unprotection position
+      drm/exynos: fimd: add fimd_enable_video_output() to cleanup
+      drm/exynos: fimd: add fimd_enable_shadow_channel_path() to cleanup
+      drm/exynos: fimd: modify I80 i/f irq relevant routine
+      drm/exynos: fimd: add triggering unset routine in fimd_trigger()
+      drm/exynos: dsi: move TE irq handler registration position
+      drm/exynos: dsi: set TE GPIO IRQ status as IRQ_NOAUTOEN
+
+ .../devicetree/bindings/video/exynos_dsim.txt      |    1 +
+ .../devicetree/bindings/video/samsung-fimd.txt     |    1 +
+ drivers/gpu/drm/exynos/exynos_dp_core.c            |  132 ++++------
+ drivers/gpu/drm/exynos/exynos_dp_core.h            |    5 +-
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h           |    5 +-
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c            |   42 ++--
+ drivers/gpu/drm/exynos/exynos_drm_drv.c            |  257 ++++++++-----------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h            |   83 ++----
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c            |  127 +++++-----
+ drivers/gpu/drm/exynos/exynos_drm_encoder.h        |    2 -
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c           |  266 +++++++++++---------
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c            |    9 +-
+ drivers/gpu/drm/exynos/exynos_drm_iommu.h          |    1 -
+ drivers/gpu/drm/exynos/exynos_drm_ipp.c            |    3 +
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c           |  150 ++++++-----
+ drivers/gpu/drm/exynos/exynos_hdmi.c               |   65 +++--
+ drivers/gpu/drm/exynos/exynos_mixer.c              |  126 +++++-----
+ 17 files changed, 609 insertions(+), 666 deletions(-)
