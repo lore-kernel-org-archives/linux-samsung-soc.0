@@ -1,147 +1,157 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH] ARM: exynos_defconfig: disable CONFIG_EXYNOS5420_MCPM;
- not stable
-Date: Mon, 24 Nov 2014 19:20:21 -0800
-Message-ID: <CAMAWPa-qk0DEmPNz5LZgJq9AuGhRxuY00XwxtEikt_vh-iozVg@mail.gmail.com>
-References: <1414796382-5447-1-git-send-email-khilman@kernel.org>
-	<000e01cffb39$5ef0a2d0$1cd1e870$@kernel.org>
-	<7hegtaq26c.fsf@deeprootsystems.com>
-	<CAMAWPa-mLAFL7v8hHA5R-eBzpMFK-E-xcvjoV8Bn6tTwgP53Uw@mail.gmail.com>
-	<CAOesGMhvTDN4J6AdUDHKV0Sp4NT6a4QEMUDWOayQqhhD+C4acw@mail.gmail.com>
-	<CAMAWPa-sz5jT9izEONVZR2Z4mzuivKaNHSgyR+eP13tWZ84hYw@mail.gmail.com>
-	<CAOesGMgSkJ8xkBgN7OpuDzT=ehaAd6kvbx5_tC50x78pvpkTwg@mail.gmail.com>
-	<CAOesGMh-7md4PdQX1Wvk0jO+87j+fxSvBnVD_osjNd2zQ4L43w@mail.gmail.com>
-	<044101d00852$3f421420$bdc63c60$@kernel.org>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [RFC PATCH 1/1] drm/exynos: Move platform drivers registration to
+ module init
+Date: Tue, 25 Nov 2014 11:05:49 +0530
+Message-ID: <CAEC9eQNF_fvy0Z7PCzF7KgDx-augq-URrGQiw5-VKMcHxDDbOg@mail.gmail.com>
+References: <1416318821-7925-1-git-send-email-javier.martinez@collabora.co.uk>
+	<7hh9xwxsev.fsf@deeprootsystems.com>
+	<546CCAB8.9050402@collabora.co.uk>
+	<CAFp+6iFbxWoh4h0ZpY=JQO4rjLss2kpj-nZM7KGiJ_F4AZ2W=g@mail.gmail.com>
+	<7hppchsu29.fsf@deeprootsystems.com>
+	<546E293D.9000300@collabora.co.uk>
+	<7hbno1spdt.fsf@deeprootsystems.com>
+	<20141120234953.GA4010@luxor.wired.org>
+	<546F22F0.5060204@suse.de>
+	<CAEC9eQPaZ7FJj00DtZHuNSY7HkqvGAZzN1oX=pf7dwsuEw7qUA@mail.gmail.com>
+	<546FA71C.8050804@collabora.co.uk>
+	<547302E0.4000609@collabora.co.uk>
+	<54734946.7090509@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:54467 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750770AbaKYDU2 (ORCPT
+Received: from mail-ie0-f177.google.com ([209.85.223.177]:54585 "EHLO
+	mail-ie0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751810AbaKYFfu convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 22:20:28 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id BACB52021F
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2014 03:20:26 +0000 (UTC)
-Received: from mail-wi0-f173.google.com (mail-wi0-f173.google.com [209.85.212.173])
-	(using TLSv1 with cipher AES128-SHA (128/128 bits))
-	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPSA id DE7F0201DD
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2014 03:20:22 +0000 (UTC)
-Received: by mail-wi0-f173.google.com with SMTP id r20so7737657wiv.6
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2014 19:20:21 -0800 (PST)
-In-Reply-To: <044101d00852$3f421420$bdc63c60$@kernel.org>
+	Tue, 25 Nov 2014 00:35:50 -0500
+Received: by mail-ie0-f177.google.com with SMTP id rd18so10308542iec.22
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2014 21:35:50 -0800 (PST)
+In-Reply-To: <54734946.7090509@suse.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Paolo Pisati <p.pisati@gmail.com>, Kevin Hilman <khilman@kernel.org>, Vivek Gautam <gautamvivek1987@gmail.com>, Inki Dae <inki.dae@samsung.com>, Andrzej Hajda <a.hajda@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>
 
-On Mon, Nov 24, 2014 at 5:50 PM, Kukjin Kim <kgene@kernel.org> wrote:
-> Olof Johansson wrote:
+Hi Andreas,
+
+On Mon, Nov 24, 2014 at 8:35 PM, Andreas F=C3=A4rber <afaerber@suse.de>=
+ wrote:
+> Hi,
+>
+> Am 24.11.2014 um 11:05 schrieb Javier Martinez Canillas:
+>> On 11/21/2014 09:57 PM, Javier Martinez Canillas wrote:
+>>> On 11/21/2014 06:32 PM, Ajay kumar wrote:
+>>>> I have rebased my bridge series on top of linux-next.
+>>>>
+>>>> This is my git log:
+>>>> 4b38a6f Revert "Revert "ARM: exynos_defconfig: Enable options for
+>>>> display panel support""
+>>>> 6fb39a7 ARM: dts: peach-pit: represent the connection between brid=
+ge
+>>>> and panel using videoport and endpoints
+>>>> aee649c ARM: dts: snow: represent the connection between bridge an=
+d
+>>>> panel using videoport and endpoints
+>>>> 5b76d8d drm/bridge: Add i2c based driver for ps8622/ps8625 bridge
+>>>> 581257f Documentation: bridge: Add documentation for ps8622 DT pro=
+perties
+>>>> 178e8b9 Documentation: devicetree: Add vendor prefix for parade
+>>>> 0ceea75 Documentation: drm: bridge: move to video/bridge
+>>>> f143e2e drm/bridge: ptn3460: use gpiod interface
+>>>> 2d5cb9d drm/bridge: ptn3460: probe connector at the end of bridge =
+attach
+>>>> 32ac563 drm/bridge: ptn3460: support drm_panel
+>>>> 91c6c30 drm/exynos: dp: support drm_bridge
+>>>> 7eea7eb drm/bridge: ptn3460: Convert to i2c driver model
+>>>> 602f343 drm/bridge: make bridge registration independent of drm fl=
+ow
+>>>> 14c7143 drm/bridge: do not pass drm_bridge_funcs to drm_bridge_ini=
+t
+>>>> 2c01ac4 drm/bridge: ptn3460: Few trivial cleanups
+>>>> 7415f6c arm: dts: Exynos5: Use pmu_system_controller phandle for d=
+p phy
+>>>> 28655d1 drm/exynos: Move platform drivers registration to module i=
+nit
+>>>> ed6778a Add linux-next specific files for 20141121
+>>>>
+>>>> I have attached the rebased patches as well.
+>>>> I tested it on snow, peach_pit and peach_pi without *clk_ignore_un=
+used*.
+>>>> Display is totally fine with exynos_defconfig (booting is fine eve=
+n
+>>>> with CONFIG_SND_SOC_SNOW=3Dy)
+>>>
+>>> Thanks for forward porting your patches to linux-next. Unfortunatel=
+y I
+>>> won't have time to test them until Monday but I wonder why you didn=
+'t
+>>> have the boot issues that we have with next-20141121.
 >>
->> On Mon, Nov 24, 2014 at 5:37 PM, Olof Johansson <olof@lixom.net> wrote:
->> > On Mon, Nov 24, 2014 at 5:35 PM, Kevin Hilman <khilman@kernel.org> wrote:
->> >> On Mon, Nov 24, 2014 at 4:25 PM, Olof Johansson <olof@lixom.net> wrote:
->> >>> On Mon, Nov 24, 2014 at 11:51 AM, Kevin Hilman <khilman@kernel.org> wrote:
->> >>>> Kukjin,
->> >>>>
->> >>>> On Mon, Nov 10, 2014 at 11:35 AM, Kevin Hilman <khilman@kernel.org> wrote:
->> >>>>> Kukjin Kim <kgene@kernel.org> writes:
->> >>>>>
->> >>>>>> Kevin Hilman wrote:
->> >>>>>>>
->> >>>>>>> From: Kevin Hilman <khilman@linaro.org>
->> >>>>>>>
->> >>>>>>> The option CONFIG_EXYNOS5420_MCPM is causing imprecise external aborts
->> >>>>>>> during boot testing, causing various userspace startup failures.
->> >>>>>>>
->> >>>>>>> Disable until it has gotten more testing.
->> >>>>>>>
->> >>>>>>> Cc: Kukjin Kim <kgene.kim@samsung.com>,
->> >>>>>>> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
->> >>>>>>> Cc: Sachin Kamat <sachin.kamat@samsung.com>,
->> >>>>>>> Cc: Doug Anderson <dianders@chromium.org>,
->> >>>>>>> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
->> >>>>>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
->> >>>>>>> Cc: Tushar Behera <tushar.behera@linaro.org>,
->> >>>>>>> Cc: stable@vger.kernel.org # v3.17+
->> >>>>>>> Signed-off-by: Kevin Hilman <khilman@linaro.org>
->> >>>>>>> ---
->> >>>>>>> This has been reported by a few people[1], but not investigated or fixed, so it's
->> >>>>>>> time to disable this feature until it can be fixed.
->> >>>>>>>
->> >>>>>> Hi Kevin,
->> >>>>>>
->> >>>>>> Yeah I agree with your opinion.
->> >>>>>>
->> >>>>>> But as you can see my tree, I've queued regarding mcpm patches for 3.19 will
->> >>>>>> be shown in -next in this weekend.
->> >>>>>
->> >>>>> Which of the recently queued patches are expected to address the
->> >>>>> imprecise abort issue?  I'd be happy to test them out.
->> >>>>
->> >>>> Exynos5 MCPM is still broken in linux-next and still causing an imprecise abort.
->> >>>>
->> >>>> What is the status of $SUBJECT patch?
->> >>>>
->> >>>>>> Anyway let me apply this into -fixes and
->> >>>>>> then let's enable after test its functionality in -next in a couple of days.
->> >>>>>
->> >>>>> Yes, I think this needs to be applied until these aborts are understood
->> >>>>> and fixed.
->> >>>>
->> >>>> Is anyone at Samsung actually looking into these MCPM issues?
->> >>>
->> >>> Hi Kevin,
->> >>>
->> >>> What hardware are you having problems with? 5420 or 5422/5800?
->> >>
->> >> Yes.  :)
->> >>
->> >> exynos5420-arndale-octa:
->> >> http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc6/arm-exynos_defconfig/boot-exynos5420-
->> arndale-octa.html
->> >> exynos5422-odroid-xu3:
->> >> http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc6/arm-exynos_defconfig/boot-exynos5422-
->> odroid-xu3.html
->> >>
->> >> My boot tests seem to pass fine because I have such a minimal
->> >> userspace, but Tyler Baker reported that with a "real" userspace, he
->> >> can't boot to a shell:
->> >>
->> >>   http://lists.infradead.org/pipermail/linux-arm-kernel/2014-September/286203.html
->> >
-> Hmm...his report was in Sep...I think it should be fine with current -next?
+>> I tested your ToT patches on top of next-20141121, this is my git lo=
+g:
+>>
+>> 93fe3d7 Revert "Revert "ARM: exynos_defconfig: Enable options for di=
+splay panel support""
+>> 552f74e ARM: dts: peach-pit: represent the connection between bridge=
+ and panel using videoport and endpoints
+>> dbbc293 ARM: dts: snow: represent the connection between bridge and =
+panel using videoport and endpoints
+>> d8687f8 drm/bridge: Add i2c based driver for ps8622/ps8625 bridge
+>> f29a649 Documentation: bridge: Add documentation for ps8622 DT prope=
+rties
+>> 6ade887 Documentation: devicetree: Add vendor prefix for parade
+>> d81c42d Documentation: drm: bridge: move to video/bridge
+>> 50b9828 drm/bridge: ptn3460: use gpiod interface
+>> 1274c56 drm/bridge: ptn3460: probe connector at the end of bridge at=
+tach
+>> f3cf063 drm/bridge: ptn3460: support drm_panel
+>> cab682b drm/exynos: dp: support drm_bridge
+>> 6e78916 drm/bridge: ptn3460: Convert to i2c driver model
+>> 93f4b5f drm/bridge: make bridge registration independent of drm flow
+>> 81a038f drm/bridge: do not pass drm_bridge_funcs to drm_bridge_init
+>> eb6996e drm/bridge: ptn3460: Few trivial cleanups
+>> c41fa5d arm: dts: Exynos5: Use pmu_system_controller phandle for dp =
+phy
+>> 51b2c75 drm/exynos: Move platform drivers registration to module ini=
+t
+>> ed6778a Add linux-next specific files for 20141121
+>>
+>>> I found that the commit ae43b32 ("ARM: 8202/1: dmaengine: pl330: Ad=
+d
+>>> runtime Power Management support v12") had to be reverted in order =
+to
+>>> boot linux-next.
+>>>
+>>
+>> Display works but I needed to revert the mentioned commit, otherwise
+>> the boot hangs as reported before. I'm using exynos_defconfig and th=
+is
+>> kernel command line:
+>>
+>> console=3DttySAC3,115200N8 debug earlyprintk root=3D/dev/mmcblk1p2 r=
+ootwait rw
+>
+> I tested Spring with next-20141124, and finally got it to work! :)
+That's great to hear!
 
-No, it is still broken in linux-next (as I stated above.)
+> Thanks a lot, Ajay and Javier!
+>
+> To be on the safe side, I reverted the patch pointed out by Javier an=
+d
+> was still using clk_ignore_unused.
+>
+> Ajay, note that your rebased Snow patch has the last hunk indented on=
+e
+> level too deep.
+Ahh, right. I just saw that. I am not sure if these patches go in just
+like this,
+or I need to rebase on top of kukjin's for-next or some other branch/tr=
+ee!
+Will take care of this, then.
 
-Moreover, earlier in this thread you mentioned you were merging some
-MCPM patches that should address this, but did not respond when I
-asked which patches you thing should address this issue
+>
+> I'll post a cleaned-up bridge patch for Spring later.
+Ok, AFAIK, peach_pit DT properties can be reused.
 
-> To be honest, since I don't have the exynos5420 arndale, chromebook...but smdk
-> which has different bootloader, I couldn't test it...I'll try to make a test
-> farm like you guys...
-
-Do you have some colleagues with any other 542x hardware?  I had
-assumed that linux-next was being better tested on the publicaly
-available, and widely available boards like odroid-xu3 and
-Chromebook2, but I've come to realize the hard way that that is not
-the case.  You mention your board has a different bootloader.  Do you
-suspect there's a bootloader issue on these other platforms?  If so,
-could you elaborate on possible fixes?  I'm more than willing to test
-any proposed fixes, but I'm not familiar enough yet with these SoCs to
-figure out the underlying issues alone.
-
-Until you have a working board farm, you could start having a closer
-look at the boot logs we're already producing.  Admittedly linux-next
-broken in many ways besides this one for exynos currently, but it has
-been having these imprecise aborts well before the other recent
-issues.
-
-Also, It's very possible that this issue is not even MCPM related at
-all, and MCPM is just uncovering a previously hidden bug.  It would be
-very helpful if people more familiar with this hardware and SoC would
-investigate bug reports like these.
-
-Kevin
+Ajay
