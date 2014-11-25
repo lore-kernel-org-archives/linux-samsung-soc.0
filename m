@@ -1,125 +1,67 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH] drm/exynos/fimd: only finish pageflip if START == START_S
-Date: Tue, 25 Nov 2014 16:12:25 -0200
-Message-ID: <1416939145-5618-1-git-send-email-gustavo@padovan.org>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH v12 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
+Date: Tue, 25 Nov 2014 11:57:47 -0800
+Message-ID: <CAMAWPa87AFhtFaCo3RSY_qD+1DSmvhU8idOLvYwadkk5GLwaOQ@mail.gmail.com>
+References: <1416576682-5255-1-git-send-email-thomas.ab@samsung.com>
+	<7hioi4l92v.fsf@deeprootsystems.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f42.google.com ([209.85.192.42]:54685 "EHLO
-	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750882AbaKYSMc (ORCPT
+Received: from mail.kernel.org ([198.145.19.201]:33192 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750809AbaKYT6F (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Nov 2014 13:12:32 -0500
-Received: by mail-qg0-f42.google.com with SMTP id z107so859295qgd.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2014 10:12:31 -0800 (PST)
+	Tue, 25 Nov 2014 14:58:05 -0500
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id D223F2011B
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2014 19:57:59 +0000 (UTC)
+Received: from mail-wg0-f45.google.com (mail-wg0-f45.google.com [74.125.82.45])
+	(using TLSv1 with cipher AES128-SHA (128/128 bits))
+	(No client certificate requested)
+	by mail.kernel.org (Postfix) with ESMTPSA id 2BB4E201FA
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2014 19:57:49 +0000 (UTC)
+Received: by mail-wg0-f45.google.com with SMTP id b13so1849002wgh.4
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2014 11:57:47 -0800 (PST)
+In-Reply-To: <7hioi4l92v.fsf@deeprootsystems.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Daniel Kurtz <djkurtz@chromium.org>
+To: Thomas Abraham <thomas.ab@samsung.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>
 
-From: Daniel Kurtz <djkurtz@chromium.org>
+Hi Thomas,
 
-A framebuffer gets committed to FIMD's default window like this:
- exynos_drm_crtc_update()
-  exynos_plane_commit()
-   fimd_win_commit()
+On Mon, Nov 24, 2014 at 10:58 AM, Kevin Hilman <khilman@kernel.org> wrote:
 
-fimd_win_commit() programs BUF_START[0].  At each vblank, FIMD hardware
-copies the value from BUF_START to BUF_START_S (BUF_START's shadow
-register), starts scanning out from BUF_START_S, and asserts its irq.
+[...]
 
-This irq is handled by fimd_irq_handler(), which calls
-exynos_drm_crtc_finish_pageflip() to free the old buffer that FIMD just
-finished scanning out, and potentially commit the next pending flip.
+> Second, as with earlier versions of this series, I'm still seeing lots
+> of "wait_until_divider_stable: timeout in divider stablization" messages
+> coming out when running powertop.
 
-There is a race, however, if fimd_win_commit() programs BUF_START(0)
-between the actual vblank irq, and its corresponding fimd_irq_handler().
+I found a simpler way to reproduce these messages.  If I simply use
+the userspace governor and cycle through all the A7 OPPs, I'll hit
+this message (script below[1]).  Note that I'm also using my DTS
+change that fixes the vdd_arm and vdd_kfc voltages to a voltage that
+is high enough for all the OPPs.
 
- => FIMD vblank: BUF_START_S[0] := BUF_START[0], and irq asserted
- | => fimd_win_commit(0) writes new BUF_START[0]
- |    exynos_drm_crtc_try_do_flip() marks exynos_fb as prepared
- => fimd_irq_handler()
-    exynos_drm_crtc_finish_pageflip() sees prepared exynos_fb,
-         and unmaps "old" fb
- ==> but, since BUF_START_S[0] still points to that "old" fb...
- ==> FIMD iommu fault
+Kevin
 
-This patch ensures that fimd_irq_handler() only calls
-exynos_drm_crtc_finish_pageflip() if any previously scheduled flip
-has really completed.
+[1]
+#!/bin/sh
+cpu=cpu4
+reg_name=vdd_kfc
+cpu_reg=$(dirname `find /sys/class/regulator/regulator.*/ -name name
+-exec grep -l $reg_name {} \;`)
+echo $cpu_reg
 
-This works because exynos_drm_crtc's flip fifo ensures that
-fimd_win_commit() is never called more than once per
-exynos_drm_crtc_finish_pageflip().
-
-Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 26 ++++++++++++++++++++++++++
- include/video/samsung_fimd.h             |  1 +
- 2 files changed, 27 insertions(+)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index e5810d1..afb0586 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -55,6 +55,7 @@
- #define VIDOSD_D(win)		(VIDOSD_BASE + 0x0C + (win) * 16)
- 
- #define VIDWx_BUF_START(win, buf)	(VIDW_BUF_START(buf) + (win) * 8)
-+#define VIDWx_BUF_START_S(win, buf)     (VIDW_BUF_START_S(buf) + (win) * 8)
- #define VIDWx_BUF_END(win, buf)		(VIDW_BUF_END(buf) + (win) * 8)
- #define VIDWx_BUF_SIZE(win, buf)	(VIDW_BUF_SIZE(buf) + (win) * 4)
- 
-@@ -1039,6 +1040,7 @@ static irqreturn_t fimd_irq_handler(int irq, void *dev_id)
- {
- 	struct fimd_context *ctx = (struct fimd_context *)dev_id;
- 	u32 val, clear_bit;
-+	u32 start, start_s;
- 
- 	val = readl(ctx->regs + VIDINTCON1);
- 
-@@ -1066,6 +1068,30 @@ static irqreturn_t fimd_irq_handler(int irq, void *dev_id)
- 		}
- 	}
- 
-+	/*
-+	 * Ensure finish_pageflip is called iff a pending flip has completed.
-+	 * This works around a race between a page_flip request and the latency
-+	 * between vblank interrupt and this irq_handler:
-+	 *   => FIMD vblank: BUF_START_S[0] := BUF_START[0], and asserts irq
-+	 *   | => fimd_win_commit(0) writes new BUF_START[0]
-+	 *   |    exynos_drm_crtc_try_do_flip() marks exynos_fb as prepared
-+	 *   => fimd_irq_handler()
-+	 *       exynos_drm_crtc_finish_pageflip() sees prepared exynos_fb,
-+	 *           and unmaps "old" fb
-+	 *   ==> but, since BUF_START_S[0] still points to that "old" fb...
-+	 *   ==> FIMD iommu fault
-+	 */
-+	start = readl(ctx->regs + VIDWx_BUF_START(0, 0));
-+	start_s = readl(ctx->regs + VIDWx_BUF_START_S(0, 0));
-+	if (start == start_s)
-+		exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
-+
-+	/* set wait vsync event to zero and wake up queue. */
-+	if (atomic_read(&ctx->wait_vsync_event)) {
-+		atomic_set(&ctx->wait_vsync_event, 0);
-+		wake_up(&ctx->wait_vsync_queue);
-+	}
-+
- out:
- 	return IRQ_HANDLED;
- }
-diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
-index a20e4a3..f81d081 100644
---- a/include/video/samsung_fimd.h
-+++ b/include/video/samsung_fimd.h
-@@ -291,6 +291,7 @@
- 
- /* Video buffer addresses */
- #define VIDW_BUF_START(_buff)			(0xA0 + ((_buff) * 8))
-+#define VIDW_BUF_START_S(_buff)                 (0x40A0 + ((_buff) * 8))
- #define VIDW_BUF_START1(_buff)			(0xA4 + ((_buff) * 8))
- #define VIDW_BUF_END(_buff)			(0xD0 + ((_buff) * 8))
- #define VIDW_BUF_END1(_buff)			(0xD4 + ((_buff) * 8))
--- 
-1.9.3
+# Cycle through frequencies (and check voltage)
+cd /sys/devices/system/cpu/$cpu/cpufreq
+echo userspace > scaling_governor
+for freq in `cat scaling_available_frequencies`; do
+  echo ${freq} > scaling_setspeed
+  echo -n "current freq: "
+  cat scaling_cur_freq
+  echo -n "current voltage: "
+  cat ${cpu_reg}/microvolts
+  sleep 1
+done
