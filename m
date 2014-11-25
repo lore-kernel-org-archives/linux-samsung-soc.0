@@ -1,129 +1,128 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFC 1/2] clk: Allow overriding generic ops for clocks
-Date: Tue, 25 Nov 2014 09:10:50 +0100
-Message-ID: <1416903050.5023.28.camel@AMDC1943>
-References: <1416842312-4405-1-git-send-email-k.kozlowski@samsung.com>
- <1416842312-4405-2-git-send-email-k.kozlowski@samsung.com>
- <20141125013450.12298.96117@quantum>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH v4 0/5] exynos: Move pmu driver to driver/soc folder and
+ add exynos7 support
+Date: Tue, 25 Nov 2014 13:46:54 +0530
+Message-ID: <CADGdYn4itcB-PHqZZUoR9Xdf17MXgo0LzbPXj0fuU_GL5bqDEw@mail.gmail.com>
+References: <1416794775-1605-1-git-send-email-amit.daniel@samsung.com>
+	<36336460.BrNftCFaUT@amdc1032>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <20141125013450.12298.96117@quantum>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yk0-f174.google.com ([209.85.160.174]:42311 "EHLO
+	mail-yk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751028AbaKYIQz (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 25 Nov 2014 03:16:55 -0500
+In-Reply-To: <36336460.BrNftCFaUT@amdc1032>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: LAK <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>
 
-On pon, 2014-11-24 at 17:34 -0800, Mike Turquette wrote:
-> Quoting Krzysztof Kozlowski (2014-11-24 07:18:31)
-> > For clocks depending on some other clock domain one may want to perform
-> > specific ops before actual enable/disable of gate clock. Allow such case
-> > by accepting supplied ops in new exported function:
-> > clk_register_gate_ops().
-> 
-> If you are not going to use the gate_ops, why use the gate clock at all?
-> You can create a platform-specific clock type which uses the ops you
-> specify.
+On Mon, Nov 24, 2014 at 6:50 PM, Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+>
+> Hi,
+>
+> On Monday, November 24, 2014 07:36:10 AM Amit Daniel Kachhap wrote:
+>> This patch series [1 - 5] performs,
+>>
+>> 1) Moves pmu driver to driver/soc/samsung folder. This is needed as exynos7 is
+>>    an arm64 based platform and hence PMU driver should be in driver folder.
+>>    Some discussion happened about this in the v1 version. Finally adding it in
+>>    driver/soc folder as it too SoC specific and not a general driver.
+>>    Entire discussion can be found here (A).
+>> 2) Add exynos7 PMU support.
+>
+> Some months ago (when the work on moving PMU driver out of mach-exynos
+> started) I asked how much code would be shared between arm32 and arm64
+> SoCs.  Now it seems that the code in question is minimal so I still
+> wonder whether it is really worth to have a common driver (please note
+> that in case of arm32 kernel all arm64 PMU code is just a dead code,
+> similarly for arm64 kernel and arm32 PMU code).  Would it be possible
+> to do the analysis of the additional source code needed vs saved code
+> in the resulting binary for the case of having separate drivers?
+yes your suggestion is good. It may done by keeping the data pmu_config[]
+arrays in .h file under CONFIG_ARM(or CONFIG_ARM64) and NULL for non required
+platforms. Keep them in 2 separate files may be confusing.
 
-Actually I want to use gate_ops (and as much as possible from current
-code) but I need to encapsulate gate_ops calls in other enable/disable
-of other clock. In 2nd patch:
- 
-+static int audss_clk_gate_enable(struct clk_hw *hw)
-+{
-+       int ret;
-+
-+       if (!IS_ERR(pll_in))
-+               clk_prepare_enable(pll_in);
-+       ret = clk_gate_ops.enable(hw);
-+       if (!IS_ERR(pll_in))
-+               clk_disable_unprepare(pll_in);
-+
-+       return ret;
-+}
+>
+> Could you also please take a look into fixing patch #4 to be compatible
+> with http://lkml.iu.edu/hypermail/linux/kernel/1407.1/00298.html ?
+This patch makes sense. Thanks for pointing out.
+> (It seems that just adding separate struct exynos_pmu_conf_extra for
+> ->pmu_config_extra shold be okay.)
+Yes right struct exynos_pmu_conf_extra should work for exynos7.
 
-Other idea is to add some kind of dependency between clocks... but
-wait... there is already parent-child dependency. However these audss
-clocks need two parents :) 
+I think both of the above optimizations may go as a separate patch.
 
-Best regards,
-Krzysztof
-
-> 
-> Regards,
-> Mike
-> 
-> > 
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> > ---
-> >  drivers/clk/clk-gate.c       | 16 +++++++++++++---
-> >  include/linux/clk-provider.h |  5 +++++
-> >  2 files changed, 18 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-> > index 51fd87fb7ba6..51802af2d9e7 100644
-> > --- a/drivers/clk/clk-gate.c
-> > +++ b/drivers/clk/clk-gate.c
-> > @@ -117,11 +117,12 @@ EXPORT_SYMBOL_GPL(clk_gate_ops);
-> >   * @bit_idx: which bit in the register controls gating of this clock
-> >   * @clk_gate_flags: gate-specific flags for this clock
-> >   * @lock: shared register lock for this clock
-> > + * @ops: clk_ops to use for this clock
-> >   */
-> > -struct clk *clk_register_gate(struct device *dev, const char *name,
-> > +struct clk *clk_register_gate_ops(struct device *dev, const char *name,
-> >                 const char *parent_name, unsigned long flags,
-> >                 void __iomem *reg, u8 bit_idx,
-> > -               u8 clk_gate_flags, spinlock_t *lock)
-> > +               u8 clk_gate_flags, spinlock_t *lock, const struct clk_ops *ops)
-> >  {
-> >         struct clk_gate *gate;
-> >         struct clk *clk;
-> > @@ -142,7 +143,7 @@ struct clk *clk_register_gate(struct device *dev, const char *name,
-> >         }
-> >  
-> >         init.name = name;
-> > -       init.ops = &clk_gate_ops;
-> > +       init.ops = ops;
-> >         init.flags = flags | CLK_IS_BASIC;
-> >         init.parent_names = (parent_name ? &parent_name: NULL);
-> >         init.num_parents = (parent_name ? 1 : 0);
-> > @@ -161,4 +162,13 @@ struct clk *clk_register_gate(struct device *dev, const char *name,
-> >  
-> >         return clk;
-> >  }
-> > +EXPORT_SYMBOL_GPL(clk_register_gate_ops);
-> > +
-> > +struct clk *clk_register_gate(struct device *dev, const char *name,
-> > +               const char *parent_name, unsigned long flags,
-> > +               void __iomem *reg, u8 bit_idx,
-> > +               u8 clk_gate_flags, spinlock_t *lock)
-> > +{
-> > +       return clk_register_gate_ops(dev, name, parent_name, flags, reg, bit_idx, clk_gate_flags, lock, &clk_gate_ops);
-> > +}
-> >  EXPORT_SYMBOL_GPL(clk_register_gate);
-> > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> > index be21af149f11..6cfc77a9f339 100644
-> > --- a/include/linux/clk-provider.h
-> > +++ b/include/linux/clk-provider.h
-> > @@ -290,11 +290,16 @@ struct clk_gate {
-> >  #define CLK_GATE_HIWORD_MASK           BIT(1)
-> >  
-> >  extern const struct clk_ops clk_gate_ops;
-> > +struct clk *clk_register_gate_ops(struct device *dev, const char *name,
-> > +               const char *parent_name, unsigned long flags,
-> > +               void __iomem *reg, u8 bit_idx,
-> > +               u8 clk_gate_flags, spinlock_t *lock, const struct clk_ops *ops);
-> >  struct clk *clk_register_gate(struct device *dev, const char *name,
-> >                 const char *parent_name, unsigned long flags,
-> >                 void __iomem *reg, u8 bit_idx,
-> >                 u8 clk_gate_flags, spinlock_t *lock);
-> >  
-> > +
-> >  struct clk_div_table {
-> >         unsigned int    val;
-> >         unsigned int    div;
-> > -- 
-> > 1.9.1
-> > 
+Regards,
+Amit D
+>
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung R&D Institute Poland
+> Samsung Electronics
+>
+>> 3) Enables the driver for 32bit arm exynos platforms.
+>>
+>> Changes from V3:
+>> * Fixed Kconfig as per Russell feedback
+>> * Rebased the series against Pankaj SoC restart consolidation patches (D) as per
+>>   Kukjin request.
+>> * Link to V3 can be found here (C)
+>>
+>> Changes from V2:
+>> * Added review comment changes suggested by Pankaj.
+>> * Removed mfd client support in this patch series. This will be added later in
+>>   the power domain patch series.
+>> * Link to V2 can be found here (B)
+>>
+>> Changes from V1:
+>> * Move pmu driver in driver/soc/samsung folder
+>> * Removed the power domain features. They will posted as a separate series.
+>> * Added exynos7 PMU support.
+>> * Link to v1 can be found here (A)
+>>
+>> This complete patch series is rebased on Kukjin for-next tree.
+>>
+>> (A) - http://www.spinics.net/lists/linux-samsung-soc/msg38442.html
+>> (B) - http://www.spinics.net/lists/arm-kernel/msg375910.html
+>> (C) - http://www.spinics.net/lists/linux-samsung-soc/msg39237.html
+>> (D) - http://www.spinics.net/lists/linux-samsung-soc/msg39095.html
+>>
+>> Amit Daniel Kachhap (5):
+>>   ARM: EXYNOS: Move pmu specific header files under "linux/soc/samsung"
+>>   drivers: soc: Add support for Exynos PMU driver
+>>   driver: soc: exynos-pmu: Add an API to be called after wakeup
+>>   drivers: soc: exynos-pmu: Add support for Exynos7
+>>   arm: exynos: Select SOC_SAMSUNG config option
+>>
+>>  .../devicetree/bindings/arm/samsung/pmu.txt        |    1 +
+>>  arch/arm/mach-exynos/Kconfig                       |    1 +
+>>  arch/arm/mach-exynos/Makefile                      |    2 +-
+>>  arch/arm/mach-exynos/exynos.c                      |    2 +-
+>>  arch/arm/mach-exynos/mcpm-exynos.c                 |    2 +-
+>>  arch/arm/mach-exynos/platsmp.c                     |    2 +-
+>>  arch/arm/mach-exynos/pm.c                          |    4 +-
+>>  arch/arm/mach-exynos/suspend.c                     |    4 +-
+>>  drivers/soc/Kconfig                                |    1 +
+>>  drivers/soc/Makefile                               |    1 +
+>>  drivers/soc/samsung/Kconfig                        |   20 +
+>>  drivers/soc/samsung/Makefile                       |    1 +
+>>  .../pmu.c => drivers/soc/samsung/exynos-pmu.c      |  442 +++++++++++++++++++-
+>>  .../linux/soc/samsung}/exynos-pmu.h                |    1 +
+>>  .../linux/soc/samsung/exynos-regs-pmu.h            |  273 ++++++++++++
+>>  15 files changed, 744 insertions(+), 13 deletions(-)
+>>  create mode 100644 drivers/soc/samsung/Kconfig
+>>  create mode 100644 drivers/soc/samsung/Makefile
+>>  rename arch/arm/mach-exynos/pmu.c => drivers/soc/samsung/exynos-pmu.c (64%)
+>>  rename {arch/arm/mach-exynos => include/linux/soc/samsung}/exynos-pmu.h (89%)
+>>  rename arch/arm/mach-exynos/regs-pmu.h => include/linux/soc/samsung/exynos-regs-pmu.h (63%)
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
