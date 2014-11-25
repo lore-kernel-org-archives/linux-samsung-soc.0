@@ -1,53 +1,116 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFC 0/2] Fix Arndale Octa/Peach Pi boot on Audio subsystem clocks
-Date: Tue, 25 Nov 2014 15:54:52 +0100
-Message-ID: <1416927292.26128.8.camel@AMDC1943>
-References: <1416842312-4405-1-git-send-email-k.kozlowski@samsung.com>
- <54736AD0.4070909@collabora.co.uk> <1416907375.5023.54.camel@AMDC1943>
- <547485F5.50600@collabora.co.uk> <1416925325.26128.6.camel@AMDC1943>
- <547497B2.3010907@collabora.co.uk>
+From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Subject: Re: [PATCH] media: exynos-gsc: fix build warning
+Date: Tue, 25 Nov 2014 13:04:16 -0200
+Message-ID: <20141125130416.457e48b0@recife.lan>
+References: <1416308268-22957-1-git-send-email-prabhakar.csengg@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <547497B2.3010907@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from lists.s-osg.org ([54.187.51.154]:60558 "EHLO lists.s-osg.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750782AbaKYPEX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 25 Nov 2014 10:04:23 -0500
+In-Reply-To: <1416308268-22957-1-git-send-email-prabhakar.csengg@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On wto, 2014-11-25 at 15:52 +0100, Javier Martinez Canillas wrote:
-> Hello Krzysztof,
-> 
-> On 11/25/2014 03:22 PM, Krzysztof Kozlowski wrote:
-> >> Any ideas?
-> > 
-> > Yes, I got. On Peach board the i2s0 is enabled in DTS. Probing it could
-> > fail because it relies on enabling audss clocks (which cannot be
-> > accessed).
-> > 
-> > I reproduced another hang on Arndale Octa after enabling i2s0 in DTS.
-> > Maybe that is the cause also on Peach.
-> > 
-> 
-> You are correct, if I disable i2s0 then I see the logs from
-> clk_disable_unused_subtree() and boot hangs when accessing the adma clock:
-> 
-> clk: checking dout_fimd1
-> clk: checking mout_fimd1_final
-> clk: checking mout_fimd1
-> clk: checking mout_sclk_rpll
-> clk: checking fout_rpll
-> clk: checking adma
-> 
-> With i2s0 disabled, your series are indeed enough to make it boot again but
-> as you said enabling i2s0 in the DTS makes it hang even with your patches.
-> 
-> Thanks a lot for digging into this!
+Em Tue, 18 Nov 2014 10:57:48 +0000
+"Lad, Prabhakar" <prabhakar.csengg@gmail.com> escreveu:
 
-My patch only fixed the gate clocks but it didn't touched div and mux.
-I'll prepare a v2 of it (I got some feedback) which I hope will fix both
-cases: i2s and disabling unused clocks.
+> this patch fixes following build warning:
+> 
+> gsc-core.c:350:17: warning: 'low_plane' may be used uninitialized
+> gsc-core.c:371:31: warning: 'high_plane' may be used uninitialized
+> 
+> Signed-off-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+> ---
+>  drivers/media/platform/exynos-gsc/gsc-core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+> index 91d226b..6c71b17 100644
+> --- a/drivers/media/platform/exynos-gsc/gsc-core.c
+> +++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+> @@ -347,8 +347,8 @@ void gsc_set_prefbuf(struct gsc_dev *gsc, struct gsc_frame *frm)
+>  		s_chk_addr = frm->addr.cb;
+>  		s_chk_len = frm->payload[1];
+>  	} else if (frm->fmt->num_planes == 3) {
+> -		u32 low_addr, low_plane, mid_addr, mid_plane;
+> -		u32 high_addr, high_plane;
+> +		u32 low_addr, low_plane = 0, mid_addr, mid_plane;
+> +		u32 high_addr, high_plane = 0;
+>  		u32 t_min, t_max;
+>  
+>  		t_min = min3(frm->addr.y, frm->addr.cb, frm->addr.cr);
 
-Best regards,
-Krzysztof
+Actually, this just hides the error, without fixing.
+
+If the address is not found, a real error occurs, and the address
+is also invalid.
+
+So, I think that the enclosed patch will be doing a better job fixing it.
+
+Still, the entire code seems mostly useless on my eyes, as this function
+seems to be used only for debugging purposes, and errors there aren't
+actually handled properly.
+
+
+[PATCH] [media] exynos-gsc: fix build warning
+
+Fixes following build warnings:
+
+gsc-core.c:350:17: warning: 'low_plane' may be used uninitialized
+gsc-core.c:371:31: warning: 'high_plane' may be used uninitialized
+
+Reported-by: Prabhakar Lad <prabhakar.csengg@gmail.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+
+diff --git a/drivers/media/platform/exynos-gsc/gsc-core.c b/drivers/media/platform/exynos-gsc/gsc-core.c
+index 91d226b8fe5c..3062e9fac6da 100644
+--- a/drivers/media/platform/exynos-gsc/gsc-core.c
++++ b/drivers/media/platform/exynos-gsc/gsc-core.c
+@@ -319,21 +319,22 @@ int gsc_enum_fmt_mplane(struct v4l2_fmtdesc *f)
+ 	return 0;
+ }
+ 
+-static u32 get_plane_info(struct gsc_frame *frm, u32 addr, u32 *index)
++static int get_plane_info(struct gsc_frame *frm, u32 addr, u32 *index, u32 *ret_addr)
+ {
+ 	if (frm->addr.y == addr) {
+ 		*index = 0;
+-		return frm->addr.y;
++		*ret_addr = frm->addr.y;
+ 	} else if (frm->addr.cb == addr) {
+ 		*index = 1;
+-		return frm->addr.cb;
++		*ret_addr = frm->addr.cb;
+ 	} else if (frm->addr.cr == addr) {
+ 		*index = 2;
+-		return frm->addr.cr;
++		*ret_addr = frm->addr.cr;
+ 	} else {
+ 		pr_err("Plane address is wrong");
+ 		return -EINVAL;
+ 	}
++	return 0;
+ }
+ 
+ void gsc_set_prefbuf(struct gsc_dev *gsc, struct gsc_frame *frm)
+@@ -352,9 +353,11 @@ void gsc_set_prefbuf(struct gsc_dev *gsc, struct gsc_frame *frm)
+ 		u32 t_min, t_max;
+ 
+ 		t_min = min3(frm->addr.y, frm->addr.cb, frm->addr.cr);
+-		low_addr = get_plane_info(frm, t_min, &low_plane);
++		if (get_plane_info(frm, t_min, &low_plane, &low_addr))
++			return;
+ 		t_max = max3(frm->addr.y, frm->addr.cb, frm->addr.cr);
+-		high_addr = get_plane_info(frm, t_max, &high_plane);
++		if (get_plane_info(frm, t_max, &high_plane, &high_addr))
++			return;
+ 
+ 		mid_plane = 3 - (low_plane + high_plane);
+ 		if (mid_plane == 0)
