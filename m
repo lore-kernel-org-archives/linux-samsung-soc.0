@@ -1,207 +1,98 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH] ARM: exynos_defconfig: disable CONFIG_EXYNOS5420_MCPM;
- not stable
-Date: Tue, 25 Nov 2014 11:31:18 +0530
-Message-ID: <CAM4voa==Ram0xXTL=SnKktyRt7VFphQxBJgcf9Yi9Zio0QctHw@mail.gmail.com>
-References: <1414796382-5447-1-git-send-email-khilman@kernel.org>
-	<000e01cffb39$5ef0a2d0$1cd1e870$@kernel.org>
-	<7hegtaq26c.fsf@deeprootsystems.com>
-	<CAMAWPa-mLAFL7v8hHA5R-eBzpMFK-E-xcvjoV8Bn6tTwgP53Uw@mail.gmail.com>
-	<CAOesGMhvTDN4J6AdUDHKV0Sp4NT6a4QEMUDWOayQqhhD+C4acw@mail.gmail.com>
-	<CAMAWPa-sz5jT9izEONVZR2Z4mzuivKaNHSgyR+eP13tWZ84hYw@mail.gmail.com>
-	<CAOesGMgSkJ8xkBgN7OpuDzT=ehaAd6kvbx5_tC50x78pvpkTwg@mail.gmail.com>
-	<CAOesGMh-7md4PdQX1Wvk0jO+87j+fxSvBnVD_osjNd2zQ4L43w@mail.gmail.com>
-	<044101d00852$3f421420$bdc63c60$@kernel.org>
-	<CAMAWPa-qk0DEmPNz5LZgJq9AuGhRxuY00XwxtEikt_vh-iozVg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Kevin Hilman <khilman@kernel.org>
+Subject: [RFC] ARM: exynos: MCPM: [is this a] fix for secondary boot on 5422?
+Date: Mon, 24 Nov 2014 22:21:50 -0800
+Message-ID: <1416896510-24612-1-git-send-email-khilman@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f50.google.com ([209.85.192.50]:56971 "EHLO
-	mail-qg0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750841AbaKYGBU (ORCPT
+Received: from mail.kernel.org ([198.145.19.201]:59421 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751935AbaKYGVy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Nov 2014 01:01:20 -0500
-Received: by mail-qg0-f50.google.com with SMTP id i50so4669606qgf.37
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2014 22:01:18 -0800 (PST)
-In-Reply-To: <CAMAWPa-qk0DEmPNz5LZgJq9AuGhRxuY00XwxtEikt_vh-iozVg@mail.gmail.com>
+	Tue, 25 Nov 2014 01:21:54 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, Olof Johansson <olof@lixom.net>, Mauro Ribeiro <mauro.ribeiro@hardkernel.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Doug Anderson <dianders@chromium.org>, Nicolas Pitre <nicolas.pitre@linaro.org>
 
-Hello Kevin,
+From: Kevin Hilman <khilman@linaro.org>
 
-On Tue, Nov 25, 2014 at 8:50 AM, Kevin Hilman <khilman@kernel.org> wrote:
-> On Mon, Nov 24, 2014 at 5:50 PM, Kukjin Kim <kgene@kernel.org> wrote:
->> Olof Johansson wrote:
->>>
->>> On Mon, Nov 24, 2014 at 5:37 PM, Olof Johansson <olof@lixom.net> wrote:
->>> > On Mon, Nov 24, 2014 at 5:35 PM, Kevin Hilman <khilman@kernel.org> wrote:
->>> >> On Mon, Nov 24, 2014 at 4:25 PM, Olof Johansson <olof@lixom.net> wrote:
->>> >>> On Mon, Nov 24, 2014 at 11:51 AM, Kevin Hilman <khilman@kernel.org> wrote:
->>> >>>> Kukjin,
->>> >>>>
->>> >>>> On Mon, Nov 10, 2014 at 11:35 AM, Kevin Hilman <khilman@kernel.org> wrote:
->>> >>>>> Kukjin Kim <kgene@kernel.org> writes:
->>> >>>>>
->>> >>>>>> Kevin Hilman wrote:
->>> >>>>>>>
->>> >>>>>>> From: Kevin Hilman <khilman@linaro.org>
->>> >>>>>>>
->>> >>>>>>> The option CONFIG_EXYNOS5420_MCPM is causing imprecise external aborts
->>> >>>>>>> during boot testing, causing various userspace startup failures.
->>> >>>>>>>
->>> >>>>>>> Disable until it has gotten more testing.
->>> >>>>>>>
->>> >>>>>>> Cc: Kukjin Kim <kgene.kim@samsung.com>,
->>> >>>>>>> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
->>> >>>>>>> Cc: Sachin Kamat <sachin.kamat@samsung.com>,
->>> >>>>>>> Cc: Doug Anderson <dianders@chromium.org>,
->>> >>>>>>> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
->>> >>>>>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
->>> >>>>>>> Cc: Tushar Behera <tushar.behera@linaro.org>,
->>> >>>>>>> Cc: stable@vger.kernel.org # v3.17+
->>> >>>>>>> Signed-off-by: Kevin Hilman <khilman@linaro.org>
->>> >>>>>>> ---
->>> >>>>>>> This has been reported by a few people[1], but not investigated or fixed, so it's
->>> >>>>>>> time to disable this feature until it can be fixed.
->>> >>>>>>>
->>> >>>>>> Hi Kevin,
->>> >>>>>>
->>> >>>>>> Yeah I agree with your opinion.
->>> >>>>>>
->>> >>>>>> But as you can see my tree, I've queued regarding mcpm patches for 3.19 will
->>> >>>>>> be shown in -next in this weekend.
->>> >>>>>
->>> >>>>> Which of the recently queued patches are expected to address the
->>> >>>>> imprecise abort issue?  I'd be happy to test them out.
->>> >>>>
->>> >>>> Exynos5 MCPM is still broken in linux-next and still causing an imprecise abort.
->>> >>>>
->>> >>>> What is the status of $SUBJECT patch?
->>> >>>>
->>> >>>>>> Anyway let me apply this into -fixes and
->>> >>>>>> then let's enable after test its functionality in -next in a couple of days.
->>> >>>>>
->>> >>>>> Yes, I think this needs to be applied until these aborts are understood
->>> >>>>> and fixed.
->>> >>>>
->>> >>>> Is anyone at Samsung actually looking into these MCPM issues?
->>> >>>
->>> >>> Hi Kevin,
->>> >>>
->>> >>> What hardware are you having problems with? 5420 or 5422/5800?
->>> >>
->>> >> Yes.  :)
->>> >>
->>> >> exynos5420-arndale-octa:
->>> >> http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc6/arm-exynos_defconfig/boot-exynos5420-
->>> arndale-octa.html
->>> >> exynos5422-odroid-xu3:
->>> >> http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc6/arm-exynos_defconfig/boot-exynos5422-
->>> odroid-xu3.html
->>> >>
->>> >> My boot tests seem to pass fine because I have such a minimal
->>> >> userspace, but Tyler Baker reported that with a "real" userspace, he
->>> >> can't boot to a shell:
->>> >>
->>> >>   http://lists.infradead.org/pipermail/linux-arm-kernel/2014-September/286203.html
->>> >
->> Hmm...his report was in Sep...I think it should be fine with current -next?
->
-> No, it is still broken in linux-next (as I stated above.)
->
-> Moreover, earlier in this thread you mentioned you were merging some
-> MCPM patches that should address this, but did not respond when I
-> asked which patches you thing should address this issue
->
->> To be honest, since I don't have the exynos5420 arndale, chromebook...but smdk
->> which has different bootloader, I couldn't test it...I'll try to make a test
->> farm like you guys...
->
-> Do you have some colleagues with any other 542x hardware?  I had
-> assumed that linux-next was being better tested on the publicaly
-> available, and widely available boards like odroid-xu3 and
-> Chromebook2, but I've come to realize the hard way that that is not
+Using the current exynos_defconfig on the exynos5422-odroid-xu3, only
+6 of 8 CPUs come online with MCPM boot.  CPU0 is an A7, CPUs 1-4 are
+A15s and CPU5-7 are the other A7s, but with the current code, CPUs 5
+and 7 do not boot:
 
-Are you seeing this on Chromebook2 (Peach-Pi 5800) too ?
+   [...]
+   Exynos MCPM support installed
+   CPU1: update cpu_capacity 1535
+   CPU1: thread -1, cpu 0, socket 0, mpidr 80000000
+   CPU2: update cpu_capacity 1535
+   CPU2: thread -1, cpu 1, socket 0, mpidr 80000001
+   CPU3: update cpu_capacity 1535
+   CPU3: thread -1, cpu 2, socket 0, mpidr 80000002
+   CPU4: update cpu_capacity 1535
+   CPU4: thread -1, cpu 3, socket 0, mpidr 80000003
+   CPU5: failed to come online
+   CPU6: update cpu_capacity 448
+   CPU6: thread -1, cpu 2, socket 1, mpidr 80000102
+   CPU7: failed to come online
+   Brought up 6 CPUs
+   CPU: WARNING: CPU(s) started in wrong/inconsistent modes
+   (primary CPU mode 0x13)
+   CPU: This may indicate a broken bootloader or firmware.
 
-> the case.  You mention your board has a different bootloader.  Do you
-> suspect there's a bootloader issue on these other platforms?  If so,
-> could you elaborate on possible fixes?  I'm more than willing to test
-> any proposed fixes, but I'm not familiar enough yet with these SoCs to
-> figure out the underlying issues alone.
->
-> Until you have a working board farm, you could start having a closer
-> look at the boot logs we're already producing.  Admittedly linux-next
-> broken in many ways besides this one for exynos currently, but it has
-> been having these imprecise aborts well before the other recent
-> issues.
->
-> Also, It's very possible that this issue is not even MCPM related at
-> all, and MCPM is just uncovering a previously hidden bug.  It would be
-> very helpful if people more familiar with this hardware and SoC would
-> investigate bug reports like these.
+Thanks to a tip from Abhilash, this patch gets all 8 CPUs booting
+again, but the warning about CPUs started in inconsistent modes
+remains.  Also, not being terribly familiar with Exynos internals,
+it's not at all obvious to me why this register write (done for *all*
+secondaries) makes things work works for the 2 secondary CPUs that
+didn't come online.  It's also not obvious whether this is the right
+general fix, since it doesn't seem to be needed on other 542x or 5800
+platforms.
 
-The 3 boards I have access to (SMDK5420, Chromebook Peach-Pi and
-Chromebook Peach-Pit) work fine with MCPM enabled. I am not sure why
-it is failing only on the above mentioned boards as there is nothing
-specific to them in the MCPM back-end.
+I suspect the "right" fix is in the bootloader someplace, but not
+knowing this hardware well, I'm not sure if the fix is in u-boot
+proper, or somewhere in the binary blobs (bl1/bl2/tz) that start
+before u-boot.  The u-boot I'm using is from the hardkernel u-boot
+repo[1], and I'd welcome any suggestions to try.  I'm able to rebuild
+my own u-boot from there, but only have binaries for bl1/bl2/tz.
 
-I assume that when you default to platsmp (on disabling MCPM), the
-non-working boards boot all cores upto userspace without any issues ?
-
-Based on the timeline (problems started about 2.5 months back), there
-have only been a couple of changes in the 5420 MCPM back-end. Could
-you revert the following commits and check if things improve.
-
-20fe6f9 ARM: EXYNOS: Support cluster power off on exynos5420/5800
-fbb0499 ARM: 8083/1: exynos: activate the CCI on boot CPU/cluster
-using the MCPM loopback
-
-These might not revert cleanly, so instead of the above you could also
-comment the following 2 lines:
+[1] branch "odroidxu3-v2012.07" of: https://github.com/hardkernel/u-boot.git
 
 
-diff --git a/arch/arm/mach-exynos/mcpm-exynos.c
-b/arch/arm/mach-exynos/mcpm-exynos.c
-index dc9a764..9a07188 100644
+Cc: Mauro Ribeiro <mauro.ribeiro@hardkernel.com>
+Cc: Abhilash Kesavan <a.kesavan@samsung.com>,
+Cc: Andrew Bresticker <abrestic@chromium.org>
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>
+Signed-off-by: Kevin Hilman <khilman@linaro.org>
+---
+ arch/arm/mach-exynos/mcpm-exynos.c | 2 ++
+ arch/arm/mach-exynos/regs-pmu.h    | 1 +
+ 2 files changed, 3 insertions(+)
+
+diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
+index b0d3c2e876fb..612a770d5284 100644
 --- a/arch/arm/mach-exynos/mcpm-exynos.c
 +++ b/arch/arm/mach-exynos/mcpm-exynos.c
-@@ -152,7 +152,7 @@ static void exynos_power_down(void)
-                exynos_cpu_power_down(cpunr);
-
-                if (exynos_cluster_unused(cluster)) {
--                       exynos_cluster_power_down(cluster);
-+                       //exynos_cluster_power_down(cluster);
-                        last_man = true;
-                }
-        } else if (cpu_use_count[cpu][cluster] == 1) {
-@@ -356,8 +356,8 @@ static int __init exynos_mcpm_init(void)
-        ret = mcpm_platform_register(&exynos_power_ops);
-        if (!ret)
-                ret = mcpm_sync_init(exynos_pm_power_up_setup);
--       if (!ret)
--               ret = mcpm_loopback(exynos_cache_off); /* turn on the CCI */
-+       //if (!ret)
-+               //ret = mcpm_loopback(exynos_cache_off); /* turn on the CCI */
-        if (ret) {
-                iounmap(ns_sram_base_addr);
-                return ret;
-
-
-
-If you still get aborts then I suspect that the problem is with the
-bootloader configuration but am not sure. I am OK with disabling
-5420_MCPM in the default configuration in such a case. This would
-however mean that S2R also stops working by default on 5420.
-
-Regards,
-Abhilash
->
-> Kevin
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+@@ -88,6 +88,8 @@ static int exynos_power_up(unsigned int cpu, unsigned int cluster)
+ 		cluster >= EXYNOS5420_NR_CLUSTERS)
+ 		return -EINVAL;
+ 
++	pmu_raw_writel(0x1, S5P_PMU_SPARE2);
++
+ 	/*
+ 	 * Since this is called with IRQs enabled, and no arch_spin_lock_irq
+ 	 * variant exists, we need to disable IRQs manually here.
+diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+index b5f4406fc1b5..70d9eb5a4fcc 100644
+--- a/arch/arm/mach-exynos/regs-pmu.h
++++ b/arch/arm/mach-exynos/regs-pmu.h
+@@ -49,6 +49,7 @@
+ #define S5P_INFORM5				0x0814
+ #define S5P_INFORM6				0x0818
+ #define S5P_INFORM7				0x081C
++#define S5P_PMU_SPARE2				0x0908
+ #define S5P_PMU_SPARE3				0x090C
+ 
+ #define EXYNOS_IROM_DATA2			0x0988
+-- 
+2.1.3
