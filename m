@@ -1,30 +1,69 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [RFC 0/2] Fix Arndale Octa/Peach Pi boot on Audio subsystem clocks
-Date: Tue, 25 Nov 2014 16:13:04 +0100
-Message-ID: <54749C80.3050702@collabora.co.uk>
-References: <1416842312-4405-1-git-send-email-k.kozlowski@samsung.com> <54736AD0.4070909@collabora.co.uk> <1416907375.5023.54.camel@AMDC1943> <547485F5.50600@collabora.co.uk> <1416925325.26128.6.camel@AMDC1943> <547497B2.3010907@collabora.co.uk> <1416927292.26128.8.camel@AMDC1943>
+From: Prabhakar Lad <prabhakar.csengg@gmail.com>
+Subject: Re: [PATCH] media: exynos-gsc: fix build warning
+Date: Tue, 25 Nov 2014 15:18:34 +0000
+Message-ID: <CA+V-a8sgWarzFQvoHhe2uxQDJ1bZ5PM4x03wss1k5vuuuvfT0Q@mail.gmail.com>
+References: <1416308268-22957-1-git-send-email-prabhakar.csengg@gmail.com> <20141125130416.457e48b0@recife.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1416927292.26128.8.camel@AMDC1943>
+In-Reply-To: <20141125130416.457e48b0@recife.lan>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>
+To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Krzysztof,
+Hi Mauro,
 
-On 11/25/2014 03:54 PM, Krzysztof Kozlowski wrote:
-> 
-> My patch only fixed the gate clocks but it didn't touched div and mux.
-> I'll prepare a v2 of it (I got some feedback) which I hope will fix both
-> cases: i2s and disabling unused clocks.
+On Tue, Nov 25, 2014 at 3:04 PM, Mauro Carvalho Chehab
+<mchehab@osg.samsung.com> wrote:
+> Em Tue, 18 Nov 2014 10:57:48 +0000
+[Snip]
 >
+> -static u32 get_plane_info(struct gsc_frame *frm, u32 addr, u32 *index)
+> +static int get_plane_info(struct gsc_frame *frm, u32 addr, u32 *index, u32 *ret_addr)
+>  {
+>         if (frm->addr.y == addr) {
+>                 *index = 0;
+> -               return frm->addr.y;
+> +               *ret_addr = frm->addr.y;
+>         } else if (frm->addr.cb == addr) {
+>                 *index = 1;
+> -               return frm->addr.cb;
+> +               *ret_addr = frm->addr.cb;
+>         } else if (frm->addr.cr == addr) {
+>                 *index = 2;
+> -               return frm->addr.cr;
+> +               *ret_addr = frm->addr.cr;
+>         } else {
+>                 pr_err("Plane address is wrong");
+>                 return -EINVAL;
+>         }
+> +       return 0;
+the control wont reach here! may be you can remove the complete else
+part outside ?
 
-Perfect, I will gladly test on Peach boards once you post it.
+with that change,
 
-Thanks a lot for your help.
+Reported-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
+Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
 
-Best regards,
-Javier
+Thanks,
+--Prabhakar Lad
+
+>  }
+>
+>  void gsc_set_prefbuf(struct gsc_dev *gsc, struct gsc_frame *frm)
+> @@ -352,9 +353,11 @@ void gsc_set_prefbuf(struct gsc_dev *gsc, struct gsc_frame *frm)
+>                 u32 t_min, t_max;
+>
+>                 t_min = min3(frm->addr.y, frm->addr.cb, frm->addr.cr);
+> -               low_addr = get_plane_info(frm, t_min, &low_plane);
+> +               if (get_plane_info(frm, t_min, &low_plane, &low_addr))
+> +                       return;
+>                 t_max = max3(frm->addr.y, frm->addr.cb, frm->addr.cr);
+> -               high_addr = get_plane_info(frm, t_max, &high_plane);
+> +               if (get_plane_info(frm, t_max, &high_plane, &high_addr))
+> +                       return;
+>
+>                 mid_plane = 3 - (low_plane + high_plane);
+>                 if (mid_plane == 0)
