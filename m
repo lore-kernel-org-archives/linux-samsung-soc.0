@@ -1,80 +1,97 @@
-From: George Cherian <george.cherian@ti.com>
-Subject: [PATCH 07/19] usb: host: xhci: Adapt xhci to use usb drd library
-Date: Tue, 25 Nov 2014 18:41:43 +0530
-Message-ID: <1416921115-10467-8-git-send-email-george.cherian@ti.com>
-References: <1416921115-10467-1-git-send-email-george.cherian@ti.com>
+From: Yadwinder Singh Brar <yadi.brar@samsung.com>
+Subject: RE: [1/2] ARM: dts: Fix bootup issue on smdk5250
+Date: Tue, 25 Nov 2014 18:46:17 +0530
+Message-ID: <002601d008b2$1a0f5e00$4e2e1a00$%brar@samsung.com>
+References: <1416312509-11530-1-git-send-email-yadi.brar@samsung.com>
+ <546D67A1.1080804@samsung.com> <038501d00604$034a9640$09dfc2c0$@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1416921115-10467-1-git-send-email-george.cherian@ti.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-usb@vger.kernel.org
-Cc: mark.rutland@arm.com, George Cherian <george.cherian@ti.com>, kgene.kim@samsung.com, linux@arm.linux.org.uk, ben-linux@fluff.org, mathias.nyman@intel.com, ijc+devicetree@hellion.org.uk, tony@atomide.com, gregkh@linuxfoundation.org, sojka@merica.cz, balbi@ti.com, robh+dt@kernel.org, pawel.moll@arm.com, peter.chen@freescale.com, bcousson@baylibre.com, galak@codeaurora.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:52315 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751189AbaKYNQN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 25 Nov 2014 08:16:13 -0500
+In-reply-to: <038501d00604$034a9640$09dfc2c0$@kernel.org>
+Content-language: en-us
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Kukjin Kim' <kgene@kernel.org>, 'Pankaj Dubey' <pankaj.dubey@samsung.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: robh+dt@kernel.org, yadi.brar01@gmail.com
 
-Adapt the xhci-plat driver  to use drd library functions.
-In prepration to support DRD on dwc3.
+Hi Kukjin,
 
-Signed-off-by: George Cherian <george.cherian@ti.com>
----
- drivers/usb/host/xhci-plat.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> Subject: RE: [1/2] ARM: dts: Fix bootup issue on smdk5250
+> 
+> Pankaj Dubey wrote:
+> >
+> > Hi,
+> >
+> Hi,
+> 
+> Yadwinder, please don't miss [PATCH 1/2] in subject, so that my e-mail
+> client can't filter wrong ;)
+> 
 
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index d8d024d..fbbbd59 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -17,6 +17,8 @@
- #include <linux/of.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-+#include <linux/usb/otg.h>
-+#include <linux/usb/drd.h>
- #include <linux/usb/xhci_pdriver.h>
- 
- #include "xhci.h"
-@@ -78,6 +80,7 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 	struct resource         *res;
- 	struct usb_hcd		*hcd;
- 	struct clk              *clk;
-+	struct usb_drd_host	*drd_host;
- 	int			ret;
- 	int			irq;
- 
-@@ -169,6 +172,17 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto put_usb3_hcd;
- 
-+	drd_host = kzalloc(sizeof(*drd_host), GFP_KERNEL);
-+	if (!drd_host)
-+		return -ENOMEM;
-+
-+	drd_host->main_hcd = xhci->main_hcd;
-+	drd_host->shared_hcd = xhci->shared_hcd;
-+	drd_host->hcd_irq = irq;
-+	drd_host->host_setup = NULL;
-+
-+	usb_drd_register_hcd(pdev->dev.parent, drd_host);
-+
- 	return 0;
- 
- put_usb3_hcd:
-@@ -200,6 +214,7 @@ static int xhci_plat_remove(struct platform_device *dev)
- 	if (!IS_ERR(clk))
- 		clk_disable_unprepare(clk);
- 	usb_put_hcd(hcd);
-+	usb_drd_unregister_hcd(dev->dev.parent);
- 	kfree(xhci);
- 
- 	return 0;
--- 
-1.8.3.1
+Sure, but I think your mail client had played some trick, as patches
+were posted with [PATCH */2] prefix.
+
+> > On Tuesday 18 November 2014 05:38 PM, Yadwinder Singh Brar wrote:
+> > > With default config on smdk5250 latest tree throws below message :
+> > >
+> > > [    2.226049] thermal thermal_zone0: critical temperature
+> reached(224 C),shutting down
+> > > [    2.227840] reboot: Failed to start orderly shutdown: forcing
+> the issue
+> > >
+> > > and hangs randomly because it reads wrong temperature value.
+> > >
+> > > I can't figure out any direct relation between LDO10 and TMU from
+> > > board schematics which I have. So making LDO10 always-on to fix
+> issue for now.
+> > >
+> Hmm...strange, I also can't see any relations now...but I need to
+> contact to hardware guy before applying this, this fixes the problem
+> though.
+> 
+
+Ok, sure it will be good know actual relation from hardware guy.
+
+Meanwhile can we get another patch[1] merged which was posted along
+with patch just because both patches were on same file. Otherwise
+there is no dependency between them and can be applied independently.
+
+Best Regards,
+Yadwinder
+
+[1] : http://www.spinics.net/lists/linux-samsung-soc/msg39107.html
+
+> Thanks,
+> Kukjin
+> 
+> > > Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+> > >
+> >
+> > Tested this on SMDK5250 board, system boot is fine now, hence
+> >
+> > Tested-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> >
+> > > ---
+> > > arch/arm/boot/dts/exynos5250-smdk5250.dts |    1 +
+> > >   1 files changed, 1 insertions(+), 0 deletions(-)
+> > >
+> > > diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> > > b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> > > index bc27cc2..95b5b51 100644
+> > > --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> > > +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> > > @@ -190,6 +190,7 @@
+> > >   				regulator-name = "P1.8V_LDO_OUT10";
+> > >   				regulator-min-microvolt = <1800000>;
+> > >   				regulator-max-microvolt = <1800000>;
+> > > +				regulator-always-on;
+> > >   			};
+> > >
+> > >   			ldo11_reg: LDO11 {
+> > >
