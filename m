@@ -1,81 +1,51 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] ARM: exynos_defconfig: disable CONFIG_EXYNOS5420_MCPM;
- not stable
-Date: Mon, 24 Nov 2014 16:25:18 -0800
-Message-ID: <CAOesGMhvTDN4J6AdUDHKV0Sp4NT6a4QEMUDWOayQqhhD+C4acw@mail.gmail.com>
-References: <1414796382-5447-1-git-send-email-khilman@kernel.org>
-	<000e01cffb39$5ef0a2d0$1cd1e870$@kernel.org>
-	<7hegtaq26c.fsf@deeprootsystems.com>
-	<CAMAWPa-mLAFL7v8hHA5R-eBzpMFK-E-xcvjoV8Bn6tTwgP53Uw@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH v2 2/2] ARM: dts: Add regulator-haptic device node for
+ exynos3250-rinato
+Date: Tue, 25 Nov 2014 10:02:42 +0900
+Message-ID: <5473D532.10206@samsung.com>
+References: <1416840651-17141-1-git-send-email-jaewon02.kim@samsung.com>
+ <1416840651-17141-3-git-send-email-jaewon02.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f176.google.com ([209.85.220.176]:55388 "EHLO
-	mail-vc0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750784AbaKYAZT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 19:25:19 -0500
-Received: by mail-vc0-f176.google.com with SMTP id hq12so1636272vcb.7
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2014 16:25:19 -0800 (PST)
-In-Reply-To: <CAMAWPa-mLAFL7v8hHA5R-eBzpMFK-E-xcvjoV8Bn6tTwgP53Uw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-input-owner@vger.kernel.org>
+In-reply-to: <1416840651-17141-3-git-send-email-jaewon02.kim@samsung.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Jaewon Kim <jaewon02.kim@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Dan Murphy <dmurphy@ti.com>, Hyunhee Kim <hyunhee.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-On Mon, Nov 24, 2014 at 11:51 AM, Kevin Hilman <khilman@kernel.org> wrote:
-> Kukjin,
->
-> On Mon, Nov 10, 2014 at 11:35 AM, Kevin Hilman <khilman@kernel.org> wrote:
->> Kukjin Kim <kgene@kernel.org> writes:
->>
->>> Kevin Hilman wrote:
->>>>
->>>> From: Kevin Hilman <khilman@linaro.org>
->>>>
->>>> The option CONFIG_EXYNOS5420_MCPM is causing imprecise external aborts
->>>> during boot testing, causing various userspace startup failures.
->>>>
->>>> Disable until it has gotten more testing.
->>>>
->>>> Cc: Kukjin Kim <kgene.kim@samsung.com>,
->>>> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
->>>> Cc: Sachin Kamat <sachin.kamat@samsung.com>,
->>>> Cc: Doug Anderson <dianders@chromium.org>,
->>>> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
->>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
->>>> Cc: Tushar Behera <tushar.behera@linaro.org>,
->>>> Cc: stable@vger.kernel.org # v3.17+
->>>> Signed-off-by: Kevin Hilman <khilman@linaro.org>
->>>> ---
->>>> This has been reported by a few people[1], but not investigated or fixed, so it's
->>>> time to disable this feature until it can be fixed.
->>>>
->>> Hi Kevin,
->>>
->>> Yeah I agree with your opinion.
->>>
->>> But as you can see my tree, I've queued regarding mcpm patches for 3.19 will
->>> be shown in -next in this weekend.
->>
->> Which of the recently queued patches are expected to address the
->> imprecise abort issue?  I'd be happy to test them out.
->
-> Exynos5 MCPM is still broken in linux-next and still causing an imprecise abort.
->
-> What is the status of $SUBJECT patch?
->
->>> Anyway let me apply this into -fixes and
->>> then let's enable after test its functionality in -next in a couple of days.
->>
->> Yes, I think this needs to be applied until these aborts are understood
->> and fixed.
->
-> Is anyone at Samsung actually looking into these MCPM issues?
+On 11/24/2014 11:50 PM, Jaewon Kim wrote:
+> This patch adds regulator-haptic device node controlled by regulator.
+> 
+> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos3250-rinato.dts |    7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
+> index 84380fa..da03005 100644
+> --- a/arch/arm/boot/dts/exynos3250-rinato.dts
+> +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+> @@ -104,6 +104,13 @@
+>  			};
+>  		};
+>  	};
+> +
+> +	haptics {
+> +		compatible = "regulator-haptic";
+> +		haptic-supply = <&motor_reg>;
+> +		min-microvolt = <1100000>;
+> +		max-microvolt = <2700000>;
+> +	};
+>  };
+>  
+>  &adc {
+> 
 
-Hi Kevin,
+Looks good to me.
 
-What hardware are you having problems with? 5420 or 5422/5800?
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-
--Olof
+Thanks,
+Chanwoo Choi
