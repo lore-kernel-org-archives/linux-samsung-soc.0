@@ -1,126 +1,51 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH] ARM: exynos_defconfig: disable CONFIG_EXYNOS5420_MCPM;
- not stable
-Date: Mon, 24 Nov 2014 18:13:33 -0800
-Message-ID: <CAMAWPa8yhfwPaEr=XG5d=JZyTgUfNXMdQ3mFeHvs0x-wVO9p0A@mail.gmail.com>
-References: <1414796382-5447-1-git-send-email-khilman@kernel.org>
-	<000e01cffb39$5ef0a2d0$1cd1e870$@kernel.org>
-	<7hegtaq26c.fsf@deeprootsystems.com>
-	<CAMAWPa-mLAFL7v8hHA5R-eBzpMFK-E-xcvjoV8Bn6tTwgP53Uw@mail.gmail.com>
-	<CAOesGMhvTDN4J6AdUDHKV0Sp4NT6a4QEMUDWOayQqhhD+C4acw@mail.gmail.com>
-	<CAMAWPa-sz5jT9izEONVZR2Z4mzuivKaNHSgyR+eP13tWZ84hYw@mail.gmail.com>
-	<CAOesGMgSkJ8xkBgN7OpuDzT=ehaAd6kvbx5_tC50x78pvpkTwg@mail.gmail.com>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH] spi: s3c64xx: add support for exynos7 SPI controller
+Date: Tue, 25 Nov 2014 08:37:33 +0530
+Message-ID: <CAAgF-Bca7_TGW_rJo5ywLLX6hzDxESd4PAeuwyCf9hE1q3QP6Q@mail.gmail.com>
+References: <1415267509-16653-1-git-send-email-padma.v@samsung.com>
+	<20141106102636.GT8509@sirena.org.uk>
+	<CAAgF-BfGwcNzMx0meFVkJqNMTbQ4_PP1PZ3i6edOm6U3bc26_Q@mail.gmail.com>
+	<20141107101310.GA8509@sirena.org.uk>
+	<CAAgF-Bd=S7-PoA7GZoy87W9Dem3OXVhc1tL-eyWEAHvF0LPTKQ@mail.gmail.com>
+	<CAAgF-BcARoRZv=BPqQWyp6rJQQ=CE0FEUz_2vgQSpeZyLwbkBw@mail.gmail.com>
+	<CAAgF-BfOUSTNX=ieLihAXVXuwd3NzPHG3FpmhqZwnpQpeveDig@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:53015 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751636AbaKYCNk (ORCPT
+Received: from mail-yh0-f45.google.com ([209.85.213.45]:53795 "EHLO
+	mail-yh0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750784AbaKYDHe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Nov 2014 21:13:40 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id AECBF2021F
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2014 02:13:38 +0000 (UTC)
-Received: from mail-wi0-f172.google.com (mail-wi0-f172.google.com [209.85.212.172])
-	(using TLSv1 with cipher AES128-SHA (128/128 bits))
-	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPSA id 336A3201D3
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2014 02:13:35 +0000 (UTC)
-Received: by mail-wi0-f172.google.com with SMTP id n3so7654638wiv.5
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2014 18:13:33 -0800 (PST)
-In-Reply-To: <CAOesGMgSkJ8xkBgN7OpuDzT=ehaAd6kvbx5_tC50x78pvpkTwg@mail.gmail.com>
+	Mon, 24 Nov 2014 22:07:34 -0500
+In-Reply-To: <CAAgF-BfOUSTNX=ieLihAXVXuwd3NzPHG3FpmhqZwnpQpeveDig@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Kevin Hilman <khilman@kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-spi@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
 
-On Mon, Nov 24, 2014 at 5:37 PM, Olof Johansson <olof@lixom.net> wrote:
-> On Mon, Nov 24, 2014 at 5:35 PM, Kevin Hilman <khilman@kernel.org> wrote:
->> On Mon, Nov 24, 2014 at 4:25 PM, Olof Johansson <olof@lixom.net> wrote:
->>> On Mon, Nov 24, 2014 at 11:51 AM, Kevin Hilman <khilman@kernel.org> wrote:
->>>> Kukjin,
->>>>
->>>> On Mon, Nov 10, 2014 at 11:35 AM, Kevin Hilman <khilman@kernel.org> wrote:
->>>>> Kukjin Kim <kgene@kernel.org> writes:
->>>>>
->>>>>> Kevin Hilman wrote:
->>>>>>>
->>>>>>> From: Kevin Hilman <khilman@linaro.org>
->>>>>>>
->>>>>>> The option CONFIG_EXYNOS5420_MCPM is causing imprecise external aborts
->>>>>>> during boot testing, causing various userspace startup failures.
->>>>>>>
->>>>>>> Disable until it has gotten more testing.
->>>>>>>
->>>>>>> Cc: Kukjin Kim <kgene.kim@samsung.com>,
->>>>>>> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
->>>>>>> Cc: Sachin Kamat <sachin.kamat@samsung.com>,
->>>>>>> Cc: Doug Anderson <dianders@chromium.org>,
->>>>>>> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
->>>>>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
->>>>>>> Cc: Tushar Behera <tushar.behera@linaro.org>,
->>>>>>> Cc: stable@vger.kernel.org # v3.17+
->>>>>>> Signed-off-by: Kevin Hilman <khilman@linaro.org>
->>>>>>> ---
->>>>>>> This has been reported by a few people[1], but not investigated or fixed, so it's
->>>>>>> time to disable this feature until it can be fixed.
->>>>>>>
->>>>>> Hi Kevin,
->>>>>>
->>>>>> Yeah I agree with your opinion.
->>>>>>
->>>>>> But as you can see my tree, I've queued regarding mcpm patches for 3.19 will
->>>>>> be shown in -next in this weekend.
->>>>>
->>>>> Which of the recently queued patches are expected to address the
->>>>> imprecise abort issue?  I'd be happy to test them out.
->>>>
->>>> Exynos5 MCPM is still broken in linux-next and still causing an imprecise abort.
->>>>
->>>> What is the status of $SUBJECT patch?
->>>>
->>>>>> Anyway let me apply this into -fixes and
->>>>>> then let's enable after test its functionality in -next in a couple of days.
->>>>>
->>>>> Yes, I think this needs to be applied until these aborts are understood
->>>>> and fixed.
->>>>
->>>> Is anyone at Samsung actually looking into these MCPM issues?
+Hi Mark,
+
+>>> OK. I don't have provision to test on this board. I will try to test
+>>> on older boards by disabling manual mode.
 >>>
->>> Hi Kevin,
+>>
+>> I tested on exynos5420 peach-pit by enabling auto mode. I used dd
+>> command to read 1MB data from spi flash and I compared the result with
+>> manual mode. Both are same.
+>
+> I also tested this patch with Javier Martinez Canillas patches for
+> enabling spidev nodes from
+> http://www.spinics.net/lists/linux-samsung-soc/msg39057.html.
+>
+> I read 4MB flashdata from spi by enabling auto mode and compared the
+> result. They look same.
+
+Do want some extra tests need to be done for this patch or is it okey?
+
+>
+>>
+>>> Thanks
+>>> padma
 >>>
->>> What hardware are you having problems with? 5420 or 5422/5800?
 >>
->> Yes.  :)
->>
->> exynos5420-arndale-octa:
->> http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc6/arm-exynos_defconfig/boot-exynos5420-arndale-octa.html
->> exynos5422-odroid-xu3:
->> http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc6/arm-exynos_defconfig/boot-exynos5422-odroid-xu3.html
->>
->> My boot tests seem to pass fine because I have such a minimal
->> userspace, but Tyler Baker reported that with a "real" userspace, he
->> can't boot to a shell:
->>
->>   http://lists.infradead.org/pipermail/linux-arm-kernel/2014-September/286203.html
 >
-> I'm not surprised that 5420 has issues, but I have not seen any
-> external aborts on neither Chromebook that I have in my farm.
->
-> Sounds like the secondary cpus should be disabled on those device
-> trees instead, doesn't it?
-
-That's possible.
-
-Unfortunately, I've gotten very little support from Samsung on this
-and it was originally reported 2.5 months ago[2], so I think that the
-5420 MCPM should be disabled until they can propose the right fix, and
-actually test it.
-
-Also, I tried disabling some CPUs at boot time, but the
-exynos5422-odroid-xu3 wont' even boot with nr_cpus=1 or 4 (or anything
-less than 8)
-
-Kevin
-
-[1]  http://lists.infradead.org/pipermail/linux-arm-kernel/2014-September/286203.html
