@@ -1,128 +1,237 @@
 From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH v4 0/5] exynos: Move pmu driver to driver/soc folder and
- add exynos7 support
-Date: Tue, 25 Nov 2014 13:46:54 +0530
-Message-ID: <CADGdYn4itcB-PHqZZUoR9Xdf17MXgo0LzbPXj0fuU_GL5bqDEw@mail.gmail.com>
-References: <1416794775-1605-1-git-send-email-amit.daniel@samsung.com>
-	<36336460.BrNftCFaUT@amdc1032>
+Subject: Re: [PATCH RFC v2 06/12] driver: soc: exynos-pmu: Add exynos7 power
+ domain on/off ops
+Date: Tue, 25 Nov 2014 14:03:16 +0530
+Message-ID: <CADGdYn43Up6D8EaXUr6ogki3tBMuS3WK7xXqbgjp8t4d8dQfqQ@mail.gmail.com>
+References: <1416833572-6880-1-git-send-email-amit.daniel@samsung.com>
+	<1416834256-11225-1-git-send-email-amit.daniel@samsung.com>
+	<1416834256-11225-6-git-send-email-amit.daniel@samsung.com>
+	<CAPDyKFpGjeWx8LkhN9BRLEczGSehXQBAB7A_M1DtCFN9tZOtYg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f174.google.com ([209.85.160.174]:42311 "EHLO
-	mail-yk0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751028AbaKYIQz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Nov 2014 03:16:55 -0500
-In-Reply-To: <36336460.BrNftCFaUT@amdc1032>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAPDyKFpGjeWx8LkhN9BRLEczGSehXQBAB7A_M1DtCFN9tZOtYg@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Kevin Hilman <khilman@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: LAK <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <linux@arm.linux.org.uk>
 
-On Mon, Nov 24, 2014 at 6:50 PM, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
->
-> Hi,
->
-> On Monday, November 24, 2014 07:36:10 AM Amit Daniel Kachhap wrote:
->> This patch series [1 - 5] performs,
+On Tue, Nov 25, 2014 at 1:00 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 24 November 2014 at 14:04, Amit Daniel Kachhap
+> <amit.daniel@samsung.com> wrote:
+>> This patch uses the restructuring done in PD handlers and adds PD
+>> on/off/status handlers for exynos7. In this SoC, some extra settings
+>> need to be done prior to turning on/off power domains. Some of those
+>> settings are also different from different power domains so is uses
+>> the power domain compatible name feature to distinguish between power
+>> domains.
 >>
->> 1) Moves pmu driver to driver/soc/samsung folder. This is needed as exynos7 is
->>    an arm64 based platform and hence PMU driver should be in driver folder.
->>    Some discussion happened about this in the v1 version. Finally adding it in
->>    driver/soc folder as it too SoC specific and not a general driver.
->>    Entire discussion can be found here (A).
->> 2) Add exynos7 PMU support.
+>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>> ---
+>>  drivers/soc/samsung/exynos-pmu.c            |  105 +++++++++++++++++++++++++++
+>>  include/linux/soc/samsung/exynos-regs-pmu.h |   17 +++++
+>>  2 files changed, 122 insertions(+)
+>>
+>> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
+>> index e690f65..b9631d5 100644
+>> --- a/drivers/soc/samsung/exynos-pmu.c
+>> +++ b/drivers/soc/samsung/exynos-pmu.c
+>> @@ -1202,6 +1202,104 @@ static void exynos7_pmu_init(void)
+>>         }
+>>  }
+>>
+>> +static int exynos7_pd_extraconf_base(const char *pd_name)
+>> +{
+>> +       if (!pd_name)
+>> +               return -EINVAL;
+>> +
+>> +       if (!strcmp("samsung,exynos7-pd-mfc", pd_name))
+>> +               return EXYNOS7_CLKRUN_CMU_MFC_SYS_PWR_REG;
+>> +       else if (!strcmp("samsung,exynos7-pd-hevc", pd_name))
+>> +               return EXYNOS7_CLKRUN_CMU_HEVC_SYS_PWR_REG;
+>> +       else if (!strcmp("samsung,exynos7-pd-mscl", pd_name))
+>> +               return EXYNOS7_CLKRUN_CMU_MSCL_SYS_PWR_REG;
+>> +       else if (!strcmp("samsung,exynos7-pd-g2d", pd_name))
+>> +               return EXYNOS7_CLKRUN_CMU_G2D_SYS_PWR_REG;
+>> +       else if (!strcmp("samsung,exynos7-pd-fsys0", pd_name))
+>> +               return EXYNOS7_CLKRUN_CMU_FSYS0_SYS_PWR_REG;
+>> +       else if (!strcmp("samsung,exynos7-pd-fsys1", pd_name))
+>> +               return EXYNOS7_CLKRUN_CMU_FSYS1_SYS_PWR_REG;
+>> +       else if (!strcmp("samsung,exynos7-pd-aud", pd_name))
+>> +               return EXYNOS7_CLKRUN_CMU_AUD_SYS_PWR_REG;
+>> +       else if (!strcmp("samsung,exynos7-pd-disp", pd_name))
+>> +               return EXYNOS7_CLKRUN_CMU_DISP_SYS_PWR_REG;
+>> +       else if (!strcmp("samsung,exynos7-pd-vpp", pd_name))
+>> +               return EXYNOS7_CLKRUN_CMU_VPP_SYS_PWR_REG;
+>> +       else if (!strcmp("samsung,exynos7-pd-vpp", pd_name))
+>> +               return EXYNOS7_CLKRUN_CMU_VPP_SYS_PWR_REG;
+>> +       else if (!strcmp("samsung,exynos7-pd-isp0", pd_name))
+>> +               return EXYNOS7_CLKRUN_CMU_ISP0_SYS_PWR_REG;
+>> +       else if (!strcmp("samsung,exynos7-pd-isp1", pd_name))
+>> +               return EXYNOS7_CLKRUN_CMU_ISP1_SYS_PWR_REG;
+>> +       else if (!strcmp("samsung,exynos7-pd-cam0", pd_name))
+>> +               return EXYNOS7_CLKRUN_CMU_CAM0_SYS_PWR_REG;
+>> +       else if (!strcmp("samsung,exynos7-pd-cam1", pd_name))
+>> +               return EXYNOS7_CLKRUN_CMU_CAM1_SYS_PWR_REG;
+>> +       else if (!strcmp("samsung,exynos7-pd-g3d", pd_name))
+>> +               return EXYNOS7_CLKRUN_CMU_CAM1_SYS_PWR_REG;
 >
-> Some months ago (when the work on moving PMU driver out of mach-exynos
-> started) I asked how much code would be shared between arm32 and arm64
-> SoCs.  Now it seems that the code in question is minimal so I still
-> wonder whether it is really worth to have a common driver (please note
-> that in case of arm32 kernel all arm64 PMU code is just a dead code,
-> similarly for arm64 kernel and arm32 PMU code).  Would it be possible
-> to do the analysis of the additional source code needed vs saved code
-> in the resulting binary for the case of having separate drivers?
-yes your suggestion is good. It may done by keeping the data pmu_config[]
-arrays in .h file under CONFIG_ARM(or CONFIG_ARM64) and NULL for non required
-platforms. Keep them in 2 separate files may be confusing.
-
+> I think we should move away from using strings to find a matching PM
+> domain. Instead we should use a enum/define pointing to the PM domain
+> in an array of PM domains, or similar.
+Thanks for looking into the series.
+Here pd names are compatible string from the pd DT nodes. I think
+compatible names are
+used in many places like searching for platform data in DT based probe etc.
+yes enum can also be used to locate the PM domain. Will check.
 >
-> Could you also please take a look into fixing patch #4 to be compatible
-> with http://lkml.iu.edu/hypermail/linux/kernel/1407.1/00298.html ?
-This patch makes sense. Thanks for pointing out.
-> (It seems that just adding separate struct exynos_pmu_conf_extra for
-> ->pmu_config_extra shold be okay.)
-Yes right struct exynos_pmu_conf_extra should work for exynos7.
-
-I think both of the above optimizations may go as a separate patch.
-
-Regards,
-Amit D
+> The UX500 SOC initial support for PM domains is queued for 3.19 and is
+> currently available in linux-next. You may want to get some
+> inspiration from that approach.
+ok will check them.
 >
-> Best regards,
+>> +
+>> +       pr_err("%s: Unsupported power domain\n", pd_name);
+>> +       return 0;
+>> +}
+>> +
+>> +static int exynos7_pd_powerdown(const char *pd_name, void __iomem *pd_addr)
+>> +{
+>
+> Considering the suggestion above and to move away from using strings
+> like this; this function could take a pointer to the PM domain instead
+> of a string and the __iomem, right!?
+Actually in our case there are 2 files, pm-domain.c and exynos-pmu.c.
+I thought of abstracting out generic PD related stuffs from
+exynos-pmu.c file so this function
+takes these type of arguments.
+>
+>> +       int off_base = exynos7_pd_extraconf_base(pd_name);
+>> +
+>> +       if (!off_base)
+>> +               return -EINVAL;
+>> +
+>> +       /* Initialise the pd extraconf registers */
+>> +       pmu_raw_writel(0, off_base + EXYNOS7_CLKRUN_CMU_PD_SYS_PWR_REG);
+>> +       pmu_raw_writel(0, off_base + EXYNOS7_CLKSTOP_CMU_PD_SYS_PWR_REG);
+>> +       pmu_raw_writel(0, off_base + EXYNOS7_DISABLE_PLL_CMU_PD_SYS_PWR_REG);
+>> +       pmu_raw_writel(0, off_base + EXYNOS7_RESET_LOGIC_PD_SYS_PWR_REG);
+>> +       pmu_raw_writel(0, off_base + EXYNOS7_MEMORY_PD_SYS_PWR_REG);
+>> +       pmu_raw_writel(0, off_base + EXYNOS7_RESET_CMU_PD_SYS_PWR_REG);
+>> +
+>> +       if (!strcmp("samsung,exynos7-pd-fsys0", pd_name) ||
+>> +                       !strcmp("samsung,exynos7-pd-fsys1", pd_name))
+>> +               pmu_raw_writel(1,
+>> +                               off_base + EXYNOS7_RESET_SLEEP_PD_SYS_PWR_REG);
+>> +
+>> +       if (!strcmp("samsung,exynos7-pd-aud", pd_name)) {
+>> +               pmu_raw_writel(0, EXYNOS7_PAD_RETENTION_AUD_SYS_PWR_REG);
+>> +               pmu_raw_writel(0, EXYNOS7_GPIO_MODE_AUD_SYS_PWR_REG);
+>> +       }
+>> +
+>> +       writel_relaxed((EXYNOS7_USE_PROLONGED_LOGIC_RESET |
+>> +                       EXYNOS7_USE_SC_FEEDBACK), pd_addr + EXYNOS_PD_OPTION);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int exynos7_pd_poweron(const char *pd_name, void __iomem *pd_addr)
+>> +{
+>> +       if (exynos7_pd_powerdown(pd_name, pd_addr))
+>> +               return -EINVAL;
+>> +
+>> +       return __exynos_pd_poweron_off(true, pd_name, pd_addr,
+>> +                       EXYNOS7_INT_LOCAL_PWR_EN);
+>> +}
+>> +
+>> +static int exynos7_pd_poweroff(const char *pd_name, void __iomem *pd_addr)
+>> +{
+>> +       if (exynos7_pd_powerdown(pd_name, pd_addr))
+>> +               return -EINVAL;
+>> +
+>> +       return __exynos_pd_poweron_off(false, pd_name, pd_addr,
+>> +                       EXYNOS7_INT_LOCAL_PWR_EN);
+>> +}
+>> +
+>> +static bool exynos7_pd_status(void __iomem *pd_addr)
+>> +{
+>> +       unsigned int val;
+>> +
+>> +       val = readl_relaxed(pd_addr + EXYNOS_PD_STATUS) &
+>> +                               EXYNOS7_INT_LOCAL_PWR_EN;
+>> +       return  val ? true : false;
+>> +}
+>> +
+>>  static struct exynos_pmu_pd_ops exynos_pd_ops = {
+>>         .pd_on          = exynos_pd_poweron,
+>>         .pd_off         = exynos_pd_poweroff,
+>> @@ -1238,12 +1336,19 @@ static struct exynos_pmu_data exynos5420_pmu_data = {
+>>         .pd_ops         = &exynos_pd_ops,
+>>  };
+>>
+>> +static struct exynos_pmu_pd_ops exynos7_pd_ops = {
+>> +       .pd_on          = exynos7_pd_poweron,
+>> +       .pd_off         = exynos7_pd_poweroff,
+>> +       .pd_status      = exynos7_pd_status,
+>> +};
+>> +
+>>  static const struct exynos_pmu_data exynos7_pmu_data = {
+>>         .pmu_config             = exynos7_pmu_config,
+>>         .pmu_init               = exynos7_pmu_init,
+>>         .pmu_config_extra       = exynos7_pmu_config_extra,
+>>         .powerdown_conf         = exynos7_powerdown_conf,
+>>         .powerup_conf           = exynos7_powerup_conf,
+>> +       .pd_ops                 = &exynos7_pd_ops,
+>>  };
+>>
+>>  /*
+>> diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
+>> index c61f91a..520595f 100644
+>> --- a/include/linux/soc/samsung/exynos-regs-pmu.h
+>> +++ b/include/linux/soc/samsung/exynos-regs-pmu.h
+>> @@ -680,6 +680,8 @@ static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
+>>  #define EXYNOS7_VPP_SYS_PWR_REG                                        (0x1438)
+>>  #define EXYNOS7_CLKRUN_CMU_AUD_SYS_PWR_REG                     (0x1440)
+>>  #define EXYNOS7_CLKRUN_CMU_BUS0_SYS_PWR_REG                    (0x1444)
+>> +#define EXYNOS7_CLKRUN_CMU_CAM0_SYS_PWR_REG                    (0x1448)
+>> +#define EXYNOS7_CLKRUN_CMU_CAM1_SYS_PWR_REG                    (0x144C)
+>>  #define EXYNOS7_CLKRUN_CMU_DISP_SYS_PWR_REG                    (0x1450)
+>>  #define EXYNOS7_CLKRUN_CMU_FSYS0_SYS_PWR_REG                   (0x1454)
+>>  #define EXYNOS7_CLKRUN_CMU_FSYS1_SYS_PWR_REG                   (0x1458)
+>> @@ -824,6 +826,7 @@ static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
+>>  #define EXYNOS7_USE_STANDBYWFI                                 (0x1 << 16)
+>>  #define EXYNOS7_USE_SC_FEEDBACK                                        (0x1 << 1)
+>>  #define EXYNOS7_USE_SC_COUNTER                                 (0x1 << 0)
+>> +#define EXYNOS7_USE_PROLONGED_LOGIC_RESET                      (0x1 << 8)
+>>
+>>  /* EXYNOS7_PAD_RETENTION_AUD_OPTION */
+>>  #define PAD_INITIATE_WAKEUP                                    (0x1 << 28)
+>> @@ -841,4 +844,18 @@ static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
+>>
+>>  #define EXYNOS7_CORE_ARMCLK_STOPCTRL           (0x1000)
+>>
+>> +#define EXYNOS7_INT_LOCAL_PWR_EN               0xF
+>> +
+>> +/*
+>> + * Power domain register offsets from the EXYNOS7
+>> + * CLKRUN_CMU_HEVC_SYS_PWR_REG configuration register.
+>> + */
+>> +#define EXYNOS7_CLKRUN_CMU_PD_SYS_PWR_REG      (0x0)
+>> +#define EXYNOS7_CLKSTOP_CMU_PD_SYS_PWR_REG     (0x40)
+>> +#define EXYNOS7_DISABLE_PLL_CMU_PD_SYS_PWR_REG (0x80)
+>> +#define EXYNOS7_RESET_LOGIC_PD_SYS_PWR_REG     (0xC0)
+>> +#define EXYNOS7_MEMORY_PD_SYS_PWR_REG          (0x100)
+>> +#define EXYNOS7_RESET_CMU_PD_SYS_PWR_REG       (0x140)
+>> +#define EXYNOS7_RESET_SLEEP_PD_SYS_PWR_REG     (0x180)
+>> +
+>>  #endif /* __ASM_ARCH_REGS_PMU_H */
+>> --
+>> 1.7.9.5
+>>
+>
+> Kind regards
+> Uffe
 > --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
->
->> 3) Enables the driver for 32bit arm exynos platforms.
->>
->> Changes from V3:
->> * Fixed Kconfig as per Russell feedback
->> * Rebased the series against Pankaj SoC restart consolidation patches (D) as per
->>   Kukjin request.
->> * Link to V3 can be found here (C)
->>
->> Changes from V2:
->> * Added review comment changes suggested by Pankaj.
->> * Removed mfd client support in this patch series. This will be added later in
->>   the power domain patch series.
->> * Link to V2 can be found here (B)
->>
->> Changes from V1:
->> * Move pmu driver in driver/soc/samsung folder
->> * Removed the power domain features. They will posted as a separate series.
->> * Added exynos7 PMU support.
->> * Link to v1 can be found here (A)
->>
->> This complete patch series is rebased on Kukjin for-next tree.
->>
->> (A) - http://www.spinics.net/lists/linux-samsung-soc/msg38442.html
->> (B) - http://www.spinics.net/lists/arm-kernel/msg375910.html
->> (C) - http://www.spinics.net/lists/linux-samsung-soc/msg39237.html
->> (D) - http://www.spinics.net/lists/linux-samsung-soc/msg39095.html
->>
->> Amit Daniel Kachhap (5):
->>   ARM: EXYNOS: Move pmu specific header files under "linux/soc/samsung"
->>   drivers: soc: Add support for Exynos PMU driver
->>   driver: soc: exynos-pmu: Add an API to be called after wakeup
->>   drivers: soc: exynos-pmu: Add support for Exynos7
->>   arm: exynos: Select SOC_SAMSUNG config option
->>
->>  .../devicetree/bindings/arm/samsung/pmu.txt        |    1 +
->>  arch/arm/mach-exynos/Kconfig                       |    1 +
->>  arch/arm/mach-exynos/Makefile                      |    2 +-
->>  arch/arm/mach-exynos/exynos.c                      |    2 +-
->>  arch/arm/mach-exynos/mcpm-exynos.c                 |    2 +-
->>  arch/arm/mach-exynos/platsmp.c                     |    2 +-
->>  arch/arm/mach-exynos/pm.c                          |    4 +-
->>  arch/arm/mach-exynos/suspend.c                     |    4 +-
->>  drivers/soc/Kconfig                                |    1 +
->>  drivers/soc/Makefile                               |    1 +
->>  drivers/soc/samsung/Kconfig                        |   20 +
->>  drivers/soc/samsung/Makefile                       |    1 +
->>  .../pmu.c => drivers/soc/samsung/exynos-pmu.c      |  442 +++++++++++++++++++-
->>  .../linux/soc/samsung}/exynos-pmu.h                |    1 +
->>  .../linux/soc/samsung/exynos-regs-pmu.h            |  273 ++++++++++++
->>  15 files changed, 744 insertions(+), 13 deletions(-)
->>  create mode 100644 drivers/soc/samsung/Kconfig
->>  create mode 100644 drivers/soc/samsung/Makefile
->>  rename arch/arm/mach-exynos/pmu.c => drivers/soc/samsung/exynos-pmu.c (64%)
->>  rename {arch/arm/mach-exynos => include/linux/soc/samsung}/exynos-pmu.h (89%)
->>  rename arch/arm/mach-exynos/regs-pmu.h => include/linux/soc/samsung/exynos-regs-pmu.h (63%)
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
