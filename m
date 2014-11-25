@@ -1,84 +1,126 @@
-From: amit daniel kachhap <amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH RFC v2 08/12] soc: samsung: pm_domain: Add support for
- parent power domain
-Date: Tue, 25 Nov 2014 14:27:58 +0530
-Message-ID: <CADGdYn4Vi2wV1y3Y0cTbPL0cFR2EEV7jT=82fHNYu+=xwZ7mBA@mail.gmail.com>
-References: <1416833572-6880-1-git-send-email-amit.daniel@samsung.com>
-	<1416834256-11225-1-git-send-email-amit.daniel@samsung.com>
-	<1416834256-11225-8-git-send-email-amit.daniel@samsung.com>
-	<CAPDyKFoBnViXQF=wDYp0x4gaOO4ht3a8KBeY6=k6_Zkkav28pQ@mail.gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] ARM: exynos_defconfig: disable CONFIG_EXYNOS5420_MCPM; not
+ stable
+Date: Tue, 25 Nov 2014 10:07:13 +0100
+Message-ID: <1416906433.5023.46.camel@AMDC1943>
+References: <1414796382-5447-1-git-send-email-khilman@kernel.org>
+ <000e01cffb39$5ef0a2d0$1cd1e870$@kernel.org>
+ <7hegtaq26c.fsf@deeprootsystems.com>
+ <CAMAWPa-mLAFL7v8hHA5R-eBzpMFK-E-xcvjoV8Bn6tTwgP53Uw@mail.gmail.com>
+ <CAOesGMhvTDN4J6AdUDHKV0Sp4NT6a4QEMUDWOayQqhhD+C4acw@mail.gmail.com>
+ <CAMAWPa-sz5jT9izEONVZR2Z4mzuivKaNHSgyR+eP13tWZ84hYw@mail.gmail.com>
+ <CAOesGMgSkJ8xkBgN7OpuDzT=ehaAd6kvbx5_tC50x78pvpkTwg@mail.gmail.com>
+ <CAOesGMh-7md4PdQX1Wvk0jO+87j+fxSvBnVD_osjNd2zQ4L43w@mail.gmail.com>
+ <044101d00852$3f421420$bdc63c60$@kernel.org>
+ <CAMAWPa-qk0DEmPNz5LZgJq9AuGhRxuY00XwxtEikt_vh-iozVg@mail.gmail.com>
+ <1416905253.5023.42.camel@AMDC1943>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPDyKFoBnViXQF=wDYp0x4gaOO4ht3a8KBeY6=k6_Zkkav28pQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:28581 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752054AbaKYJHR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 25 Nov 2014 04:07:17 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NFL00I9784PFC00@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 25 Nov 2014 09:10:01 +0000 (GMT)
+In-reply-to: <1416905253.5023.42.camel@AMDC1943>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Tue, Nov 25, 2014 at 1:29 PM, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On 24 November 2014 at 14:04, Amit Daniel Kachhap
-> <amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> This patch adds supports for parent power domain. This will ensure
->> invoking of parent/child power domain on/off in a correct sequence.
->> In exynos7 SOC's, power domain controllers have parent and child
->> hierarchy.
->>
->> Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Signed-off-by: Amit Daniel Kachhap <amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> ---
->>  .../bindings/arm/exynos/power_domain.txt           |    2 +
->>  drivers/soc/samsung/pm_domains.c                   |   43 +++++++++++++++++++-
->>  2 files changed, 44 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
->> index 00ebda1..0160bdc 100644
->> --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
->> +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
->> @@ -24,6 +24,7 @@ Optional Properties:
->>         - pclkN, clkN: Pairs of parent of input clock and input clock to the
->>                 devices in this power domain. Maximum of 4 pairs (N = 0 to 3)
->>                 are supported currently.
->> +- parents: phandle of parent power domains.
->>
->>  Node of a device using power domains must have a samsung,power-domain property
->>  defined with a phandle to respective power domain.
->> @@ -48,6 +49,7 @@ Example:
->>         mfc_pd: power-domain@10044060 {
->>                 compatible = "samsung,exynos4210-pd", "samsung,exynos7-pd-mfc";
->>                 reg = <0x10044060 0x20>;
->> +               parents = <&pd_top>;
->>                 #power-domain-cells = <0>;
->>         };
->
-> This seems like a good and generic approach to describe that a PM
-> domain could have a parent. I would suggest to rename it, such it
-> reflects its a PM domain binding though.
-I am not sure if this is generic. I guess PD's represented like below
-are more generic.
-PD1 {
-        PD2 {
-                PD3 {
-                };
-        };
-};
+On wto, 2014-11-25 at 09:47 +0100, Krzysztof Kozlowski wrote:
+> On pon, 2014-11-24 at 19:20 -0800, Kevin Hilman wrote:
+> > On Mon, Nov 24, 2014 at 5:50 PM, Kukjin Kim <kgene@kernel.org> wrote:
+> > > Olof Johansson wrote:
+> > >>
+> > >> On Mon, Nov 24, 2014 at 5:37 PM, Olof Johansson <olof@lixom.net> wrote:
+> > >> > On Mon, Nov 24, 2014 at 5:35 PM, Kevin Hilman <khilman@kernel.org> wrote:
+> > >> >> On Mon, Nov 24, 2014 at 4:25 PM, Olof Johansson <olof@lixom.net> wrote:
+> > >> >>> On Mon, Nov 24, 2014 at 11:51 AM, Kevin Hilman <khilman@kernel.org> wrote:
+> > >> >>>>
+> > >> >>>> Is anyone at Samsung actually looking into these MCPM issues?
+> > >> >>>
+> > >> >>> Hi Kevin,
+> > >> >>>
+> > >> >>> What hardware are you having problems with? 5420 or 5422/5800?
+> > >> >>
+> > >> >> Yes.  :)
+> > >> >>
+> > >> >> exynos5420-arndale-octa:
+> > >> >> http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc6/arm-exynos_defconfig/boot-exynos5420-
+> > >> arndale-octa.html
+> > >> >> exynos5422-odroid-xu3:
+> > >> >> http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc6/arm-exynos_defconfig/boot-exynos5422-
+> > >> odroid-xu3.html
+> > >> >>
+> > >> >> My boot tests seem to pass fine because I have such a minimal
+> > >> >> userspace, but Tyler Baker reported that with a "real" userspace, he
+> > >> >> can't boot to a shell:
+> > >> >>
+> > >> >>   http://lists.infradead.org/pipermail/linux-arm-kernel/2014-September/286203.html
+> > >> >
+> > > Hmm...his report was in Sep...I think it should be fine with current -next?
+> > 
+> > No, it is still broken in linux-next (as I stated above.)
+> > 
+> > Moreover, earlier in this thread you mentioned you were merging some
+> > MCPM patches that should address this, but did not respond when I
+> > asked which patches you thing should address this issue
+> > 
+> > > To be honest, since I don't have the exynos5420 arndale, chromebook...but smdk
+> > > which has different bootloader, I couldn't test it...I'll try to make a test
+> > > farm like you guys...
+> > 
+> > Do you have some colleagues with any other 542x hardware?  I had
+> > assumed that linux-next was being better tested on the publicaly
+> > available, and widely available boards like odroid-xu3 and
+> > Chromebook2, but I've come to realize the hard way that that is not
+> > the case.  You mention your board has a different bootloader.  Do you
+> > suspect there's a bootloader issue on these other platforms?  If so,
+> > could you elaborate on possible fixes?  I'm more than willing to test
+> > any proposed fixes, but I'm not familiar enough yet with these SoCs to
+> > figure out the underlying issues alone.
+> > 
+> > Until you have a working board farm, you could start having a closer
+> > look at the boot logs we're already producing.  Admittedly linux-next
+> > broken in many ways besides this one for exynos currently, but it has
+> > been having these imprecise aborts well before the other recent
+> > issues.
+> > 
+> > Also, It's very possible that this issue is not even MCPM related at
+> > all, and MCPM is just uncovering a previously hidden bug.  It would be
+> > very helpful if people more familiar with this hardware and SoC would
+> > investigate bug reports like these.
+> 
+> Interesting thing can be found in exynos5420.dtsi:
+> mdma1: mdma@11C10000 {
+> 	...
+> 	/*
+> 	 * MDMA1 can support both secure and non-secure
+> 	 * AXI transactions. When this is enabled in the kernel
+> 	 * for boards that run in secure mode, we are getting
+> 	 * imprecise external aborts causing the kernel to oops.
+> 	 */
+> 	status = "disabled";
+> };
+> 
+> I am booting Arndale Octa on some other config and exynos. However with
+> or without MCPM the imprecise aborts are still present (but not fatal,
+> shell comes up).
+> 
+> My board boots also under secure firmware (I am using Linaro's ubuntu
+> image). Maybe that is the cause?
 
->
-> So, maybe we can add this as a common DT binding for the generic PM
-> domain instead of having it as Exynos specific?
-Yes sure.
+One update: some fatal imprecise aborts (hanging boot) happen also on
+exynos_defconfig without MCPM. It looks random... one boot fails, next
+succeeds (however also with "imprecise external abort" message but shell
+comes up).
 
-Regards,
-Amit D
->
-> Kind regards
-> Uffe
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Best regards,
+Krzysztof
