@@ -1,98 +1,225 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: [RFC] ARM: exynos: MCPM: [is this a] fix for secondary boot on 5422?
-Date: Mon, 24 Nov 2014 22:21:50 -0800
-Message-ID: <1416896510-24612-1-git-send-email-khilman@kernel.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:59421 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751935AbaKYGVy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Nov 2014 01:21:54 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH RFC v2 06/12] driver: soc: exynos-pmu: Add exynos7 power
+ domain on/off ops
+Date: Tue, 25 Nov 2014 08:30:24 +0100
+Message-ID: <CAPDyKFpGjeWx8LkhN9BRLEczGSehXQBAB7A_M1DtCFN9tZOtYg@mail.gmail.com>
+References: <1416833572-6880-1-git-send-email-amit.daniel@samsung.com>
+	<1416834256-11225-1-git-send-email-amit.daniel@samsung.com>
+	<1416834256-11225-6-git-send-email-amit.daniel@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1416834256-11225-6-git-send-email-amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Amit Daniel Kachhap <amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, Olof Johansson <olof@lixom.net>, Mauro Ribeiro <mauro.ribeiro@hardkernel.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Andrew Bresticker <abrestic@chromium.org>, Doug Anderson <dianders@chromium.org>, Nicolas Pitre <nicolas.pitre@linaro.org>
 
-From: Kevin Hilman <khilman@linaro.org>
+On 24 November 2014 at 14:04, Amit Daniel Kachhap
+<amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> This patch uses the restructuring done in PD handlers and adds PD
+> on/off/status handlers for exynos7. In this SoC, some extra settings
+> need to be done prior to turning on/off power domains. Some of those
+> settings are also different from different power domains so is uses
+> the power domain compatible name feature to distinguish between power
+> domains.
+>
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  drivers/soc/samsung/exynos-pmu.c            |  105 +++++++++++++++++++++++++++
+>  include/linux/soc/samsung/exynos-regs-pmu.h |   17 +++++
+>  2 files changed, 122 insertions(+)
+>
+> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
+> index e690f65..b9631d5 100644
+> --- a/drivers/soc/samsung/exynos-pmu.c
+> +++ b/drivers/soc/samsung/exynos-pmu.c
+> @@ -1202,6 +1202,104 @@ static void exynos7_pmu_init(void)
+>         }
+>  }
+>
+> +static int exynos7_pd_extraconf_base(const char *pd_name)
+> +{
+> +       if (!pd_name)
+> +               return -EINVAL;
+> +
+> +       if (!strcmp("samsung,exynos7-pd-mfc", pd_name))
+> +               return EXYNOS7_CLKRUN_CMU_MFC_SYS_PWR_REG;
+> +       else if (!strcmp("samsung,exynos7-pd-hevc", pd_name))
+> +               return EXYNOS7_CLKRUN_CMU_HEVC_SYS_PWR_REG;
+> +       else if (!strcmp("samsung,exynos7-pd-mscl", pd_name))
+> +               return EXYNOS7_CLKRUN_CMU_MSCL_SYS_PWR_REG;
+> +       else if (!strcmp("samsung,exynos7-pd-g2d", pd_name))
+> +               return EXYNOS7_CLKRUN_CMU_G2D_SYS_PWR_REG;
+> +       else if (!strcmp("samsung,exynos7-pd-fsys0", pd_name))
+> +               return EXYNOS7_CLKRUN_CMU_FSYS0_SYS_PWR_REG;
+> +       else if (!strcmp("samsung,exynos7-pd-fsys1", pd_name))
+> +               return EXYNOS7_CLKRUN_CMU_FSYS1_SYS_PWR_REG;
+> +       else if (!strcmp("samsung,exynos7-pd-aud", pd_name))
+> +               return EXYNOS7_CLKRUN_CMU_AUD_SYS_PWR_REG;
+> +       else if (!strcmp("samsung,exynos7-pd-disp", pd_name))
+> +               return EXYNOS7_CLKRUN_CMU_DISP_SYS_PWR_REG;
+> +       else if (!strcmp("samsung,exynos7-pd-vpp", pd_name))
+> +               return EXYNOS7_CLKRUN_CMU_VPP_SYS_PWR_REG;
+> +       else if (!strcmp("samsung,exynos7-pd-vpp", pd_name))
+> +               return EXYNOS7_CLKRUN_CMU_VPP_SYS_PWR_REG;
+> +       else if (!strcmp("samsung,exynos7-pd-isp0", pd_name))
+> +               return EXYNOS7_CLKRUN_CMU_ISP0_SYS_PWR_REG;
+> +       else if (!strcmp("samsung,exynos7-pd-isp1", pd_name))
+> +               return EXYNOS7_CLKRUN_CMU_ISP1_SYS_PWR_REG;
+> +       else if (!strcmp("samsung,exynos7-pd-cam0", pd_name))
+> +               return EXYNOS7_CLKRUN_CMU_CAM0_SYS_PWR_REG;
+> +       else if (!strcmp("samsung,exynos7-pd-cam1", pd_name))
+> +               return EXYNOS7_CLKRUN_CMU_CAM1_SYS_PWR_REG;
+> +       else if (!strcmp("samsung,exynos7-pd-g3d", pd_name))
+> +               return EXYNOS7_CLKRUN_CMU_CAM1_SYS_PWR_REG;
 
-Using the current exynos_defconfig on the exynos5422-odroid-xu3, only
-6 of 8 CPUs come online with MCPM boot.  CPU0 is an A7, CPUs 1-4 are
-A15s and CPU5-7 are the other A7s, but with the current code, CPUs 5
-and 7 do not boot:
+I think we should move away from using strings to find a matching PM
+domain. Instead we should use a enum/define pointing to the PM domain
+in an array of PM domains, or similar.
 
-   [...]
-   Exynos MCPM support installed
-   CPU1: update cpu_capacity 1535
-   CPU1: thread -1, cpu 0, socket 0, mpidr 80000000
-   CPU2: update cpu_capacity 1535
-   CPU2: thread -1, cpu 1, socket 0, mpidr 80000001
-   CPU3: update cpu_capacity 1535
-   CPU3: thread -1, cpu 2, socket 0, mpidr 80000002
-   CPU4: update cpu_capacity 1535
-   CPU4: thread -1, cpu 3, socket 0, mpidr 80000003
-   CPU5: failed to come online
-   CPU6: update cpu_capacity 448
-   CPU6: thread -1, cpu 2, socket 1, mpidr 80000102
-   CPU7: failed to come online
-   Brought up 6 CPUs
-   CPU: WARNING: CPU(s) started in wrong/inconsistent modes
-   (primary CPU mode 0x13)
-   CPU: This may indicate a broken bootloader or firmware.
+The UX500 SOC initial support for PM domains is queued for 3.19 and is
+currently available in linux-next. You may want to get some
+inspiration from that approach.
 
-Thanks to a tip from Abhilash, this patch gets all 8 CPUs booting
-again, but the warning about CPUs started in inconsistent modes
-remains.  Also, not being terribly familiar with Exynos internals,
-it's not at all obvious to me why this register write (done for *all*
-secondaries) makes things work works for the 2 secondary CPUs that
-didn't come online.  It's also not obvious whether this is the right
-general fix, since it doesn't seem to be needed on other 542x or 5800
-platforms.
+> +
+> +       pr_err("%s: Unsupported power domain\n", pd_name);
+> +       return 0;
+> +}
+> +
+> +static int exynos7_pd_powerdown(const char *pd_name, void __iomem *pd_addr)
+> +{
 
-I suspect the "right" fix is in the bootloader someplace, but not
-knowing this hardware well, I'm not sure if the fix is in u-boot
-proper, or somewhere in the binary blobs (bl1/bl2/tz) that start
-before u-boot.  The u-boot I'm using is from the hardkernel u-boot
-repo[1], and I'd welcome any suggestions to try.  I'm able to rebuild
-my own u-boot from there, but only have binaries for bl1/bl2/tz.
+Considering the suggestion above and to move away from using strings
+like this; this function could take a pointer to the PM domain instead
+of a string and the __iomem, right!?
 
-[1] branch "odroidxu3-v2012.07" of: https://github.com/hardkernel/u-boot.git
+> +       int off_base = exynos7_pd_extraconf_base(pd_name);
+> +
+> +       if (!off_base)
+> +               return -EINVAL;
+> +
+> +       /* Initialise the pd extraconf registers */
+> +       pmu_raw_writel(0, off_base + EXYNOS7_CLKRUN_CMU_PD_SYS_PWR_REG);
+> +       pmu_raw_writel(0, off_base + EXYNOS7_CLKSTOP_CMU_PD_SYS_PWR_REG);
+> +       pmu_raw_writel(0, off_base + EXYNOS7_DISABLE_PLL_CMU_PD_SYS_PWR_REG);
+> +       pmu_raw_writel(0, off_base + EXYNOS7_RESET_LOGIC_PD_SYS_PWR_REG);
+> +       pmu_raw_writel(0, off_base + EXYNOS7_MEMORY_PD_SYS_PWR_REG);
+> +       pmu_raw_writel(0, off_base + EXYNOS7_RESET_CMU_PD_SYS_PWR_REG);
+> +
+> +       if (!strcmp("samsung,exynos7-pd-fsys0", pd_name) ||
+> +                       !strcmp("samsung,exynos7-pd-fsys1", pd_name))
+> +               pmu_raw_writel(1,
+> +                               off_base + EXYNOS7_RESET_SLEEP_PD_SYS_PWR_REG);
+> +
+> +       if (!strcmp("samsung,exynos7-pd-aud", pd_name)) {
+> +               pmu_raw_writel(0, EXYNOS7_PAD_RETENTION_AUD_SYS_PWR_REG);
+> +               pmu_raw_writel(0, EXYNOS7_GPIO_MODE_AUD_SYS_PWR_REG);
+> +       }
+> +
+> +       writel_relaxed((EXYNOS7_USE_PROLONGED_LOGIC_RESET |
+> +                       EXYNOS7_USE_SC_FEEDBACK), pd_addr + EXYNOS_PD_OPTION);
+> +
+> +       return 0;
+> +}
+> +
+> +static int exynos7_pd_poweron(const char *pd_name, void __iomem *pd_addr)
+> +{
+> +       if (exynos7_pd_powerdown(pd_name, pd_addr))
+> +               return -EINVAL;
+> +
+> +       return __exynos_pd_poweron_off(true, pd_name, pd_addr,
+> +                       EXYNOS7_INT_LOCAL_PWR_EN);
+> +}
+> +
+> +static int exynos7_pd_poweroff(const char *pd_name, void __iomem *pd_addr)
+> +{
+> +       if (exynos7_pd_powerdown(pd_name, pd_addr))
+> +               return -EINVAL;
+> +
+> +       return __exynos_pd_poweron_off(false, pd_name, pd_addr,
+> +                       EXYNOS7_INT_LOCAL_PWR_EN);
+> +}
+> +
+> +static bool exynos7_pd_status(void __iomem *pd_addr)
+> +{
+> +       unsigned int val;
+> +
+> +       val = readl_relaxed(pd_addr + EXYNOS_PD_STATUS) &
+> +                               EXYNOS7_INT_LOCAL_PWR_EN;
+> +       return  val ? true : false;
+> +}
+> +
+>  static struct exynos_pmu_pd_ops exynos_pd_ops = {
+>         .pd_on          = exynos_pd_poweron,
+>         .pd_off         = exynos_pd_poweroff,
+> @@ -1238,12 +1336,19 @@ static struct exynos_pmu_data exynos5420_pmu_data = {
+>         .pd_ops         = &exynos_pd_ops,
+>  };
+>
+> +static struct exynos_pmu_pd_ops exynos7_pd_ops = {
+> +       .pd_on          = exynos7_pd_poweron,
+> +       .pd_off         = exynos7_pd_poweroff,
+> +       .pd_status      = exynos7_pd_status,
+> +};
+> +
+>  static const struct exynos_pmu_data exynos7_pmu_data = {
+>         .pmu_config             = exynos7_pmu_config,
+>         .pmu_init               = exynos7_pmu_init,
+>         .pmu_config_extra       = exynos7_pmu_config_extra,
+>         .powerdown_conf         = exynos7_powerdown_conf,
+>         .powerup_conf           = exynos7_powerup_conf,
+> +       .pd_ops                 = &exynos7_pd_ops,
+>  };
+>
+>  /*
+> diff --git a/include/linux/soc/samsung/exynos-regs-pmu.h b/include/linux/soc/samsung/exynos-regs-pmu.h
+> index c61f91a..520595f 100644
+> --- a/include/linux/soc/samsung/exynos-regs-pmu.h
+> +++ b/include/linux/soc/samsung/exynos-regs-pmu.h
+> @@ -680,6 +680,8 @@ static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
+>  #define EXYNOS7_VPP_SYS_PWR_REG                                        (0x1438)
+>  #define EXYNOS7_CLKRUN_CMU_AUD_SYS_PWR_REG                     (0x1440)
+>  #define EXYNOS7_CLKRUN_CMU_BUS0_SYS_PWR_REG                    (0x1444)
+> +#define EXYNOS7_CLKRUN_CMU_CAM0_SYS_PWR_REG                    (0x1448)
+> +#define EXYNOS7_CLKRUN_CMU_CAM1_SYS_PWR_REG                    (0x144C)
+>  #define EXYNOS7_CLKRUN_CMU_DISP_SYS_PWR_REG                    (0x1450)
+>  #define EXYNOS7_CLKRUN_CMU_FSYS0_SYS_PWR_REG                   (0x1454)
+>  #define EXYNOS7_CLKRUN_CMU_FSYS1_SYS_PWR_REG                   (0x1458)
+> @@ -824,6 +826,7 @@ static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
+>  #define EXYNOS7_USE_STANDBYWFI                                 (0x1 << 16)
+>  #define EXYNOS7_USE_SC_FEEDBACK                                        (0x1 << 1)
+>  #define EXYNOS7_USE_SC_COUNTER                                 (0x1 << 0)
+> +#define EXYNOS7_USE_PROLONGED_LOGIC_RESET                      (0x1 << 8)
+>
+>  /* EXYNOS7_PAD_RETENTION_AUD_OPTION */
+>  #define PAD_INITIATE_WAKEUP                                    (0x1 << 28)
+> @@ -841,4 +844,18 @@ static inline unsigned int exynos_pmu_cpunr(unsigned int mpidr)
+>
+>  #define EXYNOS7_CORE_ARMCLK_STOPCTRL           (0x1000)
+>
+> +#define EXYNOS7_INT_LOCAL_PWR_EN               0xF
+> +
+> +/*
+> + * Power domain register offsets from the EXYNOS7
+> + * CLKRUN_CMU_HEVC_SYS_PWR_REG configuration register.
+> + */
+> +#define EXYNOS7_CLKRUN_CMU_PD_SYS_PWR_REG      (0x0)
+> +#define EXYNOS7_CLKSTOP_CMU_PD_SYS_PWR_REG     (0x40)
+> +#define EXYNOS7_DISABLE_PLL_CMU_PD_SYS_PWR_REG (0x80)
+> +#define EXYNOS7_RESET_LOGIC_PD_SYS_PWR_REG     (0xC0)
+> +#define EXYNOS7_MEMORY_PD_SYS_PWR_REG          (0x100)
+> +#define EXYNOS7_RESET_CMU_PD_SYS_PWR_REG       (0x140)
+> +#define EXYNOS7_RESET_SLEEP_PD_SYS_PWR_REG     (0x180)
+> +
+>  #endif /* __ASM_ARCH_REGS_PMU_H */
+> --
+> 1.7.9.5
+>
 
-
-Cc: Mauro Ribeiro <mauro.ribeiro@hardkernel.com>
-Cc: Abhilash Kesavan <a.kesavan@samsung.com>,
-Cc: Andrew Bresticker <abrestic@chromium.org>
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Nicolas Pitre <nicolas.pitre@linaro.org>
-Signed-off-by: Kevin Hilman <khilman@linaro.org>
----
- arch/arm/mach-exynos/mcpm-exynos.c | 2 ++
- arch/arm/mach-exynos/regs-pmu.h    | 1 +
- 2 files changed, 3 insertions(+)
-
-diff --git a/arch/arm/mach-exynos/mcpm-exynos.c b/arch/arm/mach-exynos/mcpm-exynos.c
-index b0d3c2e876fb..612a770d5284 100644
---- a/arch/arm/mach-exynos/mcpm-exynos.c
-+++ b/arch/arm/mach-exynos/mcpm-exynos.c
-@@ -88,6 +88,8 @@ static int exynos_power_up(unsigned int cpu, unsigned int cluster)
- 		cluster >= EXYNOS5420_NR_CLUSTERS)
- 		return -EINVAL;
- 
-+	pmu_raw_writel(0x1, S5P_PMU_SPARE2);
-+
- 	/*
- 	 * Since this is called with IRQs enabled, and no arch_spin_lock_irq
- 	 * variant exists, we need to disable IRQs manually here.
-diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-index b5f4406fc1b5..70d9eb5a4fcc 100644
---- a/arch/arm/mach-exynos/regs-pmu.h
-+++ b/arch/arm/mach-exynos/regs-pmu.h
-@@ -49,6 +49,7 @@
- #define S5P_INFORM5				0x0814
- #define S5P_INFORM6				0x0818
- #define S5P_INFORM7				0x081C
-+#define S5P_PMU_SPARE2				0x0908
- #define S5P_PMU_SPARE3				0x090C
- 
- #define EXYNOS_IROM_DATA2			0x0988
--- 
-2.1.3
+Kind regards
+Uffe
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
