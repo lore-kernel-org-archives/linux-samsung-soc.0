@@ -1,102 +1,103 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [RFC 1/2] clk: Allow overriding generic ops for clocks
-Date: Mon, 24 Nov 2014 17:34:50 -0800
-Message-ID: <20141125013450.12298.96117@quantum>
-References: <1416842312-4405-1-git-send-email-k.kozlowski@samsung.com>
- <1416842312-4405-2-git-send-email-k.kozlowski@samsung.com>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH] ARM: exynos_defconfig: disable CONFIG_EXYNOS5420_MCPM;
+ not stable
+Date: Mon, 24 Nov 2014 17:35:25 -0800
+Message-ID: <CAMAWPa-sz5jT9izEONVZR2Z4mzuivKaNHSgyR+eP13tWZ84hYw@mail.gmail.com>
+References: <1414796382-5447-1-git-send-email-khilman@kernel.org>
+	<000e01cffb39$5ef0a2d0$1cd1e870$@kernel.org>
+	<7hegtaq26c.fsf@deeprootsystems.com>
+	<CAMAWPa-mLAFL7v8hHA5R-eBzpMFK-E-xcvjoV8Bn6tTwgP53Uw@mail.gmail.com>
+	<CAOesGMhvTDN4J6AdUDHKV0Sp4NT6a4QEMUDWOayQqhhD+C4acw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1416842312-4405-2-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.19.201]:52006 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751316AbaKYBfb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 24 Nov 2014 20:35:31 -0500
+Received: from mail.kernel.org (localhost [127.0.0.1])
+	by mail.kernel.org (Postfix) with ESMTP id C0C202024D
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2014 01:35:29 +0000 (UTC)
+Received: from mail-wg0-f53.google.com (mail-wg0-f53.google.com [74.125.82.53])
+	(using TLSv1 with cipher AES128-SHA (128/128 bits))
+	(No client certificate requested)
+	by mail.kernel.org (Postfix) with ESMTPSA id 93FD820212
+	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2014 01:35:27 +0000 (UTC)
+Received: by mail-wg0-f53.google.com with SMTP id l18so13970374wgh.12
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Nov 2014 17:35:25 -0800 (PST)
+In-Reply-To: <CAOesGMhvTDN4J6AdUDHKV0Sp4NT6a4QEMUDWOayQqhhD+C4acw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Kevin Hilman <khilman@kernel.org>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Quoting Krzysztof Kozlowski (2014-11-24 07:18:31)
-> For clocks depending on some other clock domain one may want to perform
-> specific ops before actual enable/disable of gate clock. Allow such case
-> by accepting supplied ops in new exported function:
-> clk_register_gate_ops().
+On Mon, Nov 24, 2014 at 4:25 PM, Olof Johansson <olof@lixom.net> wrote:
+> On Mon, Nov 24, 2014 at 11:51 AM, Kevin Hilman <khilman@kernel.org> wrote:
+>> Kukjin,
+>>
+>> On Mon, Nov 10, 2014 at 11:35 AM, Kevin Hilman <khilman@kernel.org> wrote:
+>>> Kukjin Kim <kgene@kernel.org> writes:
+>>>
+>>>> Kevin Hilman wrote:
+>>>>>
+>>>>> From: Kevin Hilman <khilman@linaro.org>
+>>>>>
+>>>>> The option CONFIG_EXYNOS5420_MCPM is causing imprecise external aborts
+>>>>> during boot testing, causing various userspace startup failures.
+>>>>>
+>>>>> Disable until it has gotten more testing.
+>>>>>
+>>>>> Cc: Kukjin Kim <kgene.kim@samsung.com>,
+>>>>> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>,
+>>>>> Cc: Sachin Kamat <sachin.kamat@samsung.com>,
+>>>>> Cc: Doug Anderson <dianders@chromium.org>,
+>>>>> Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+>>>>> Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>,
+>>>>> Cc: Tushar Behera <tushar.behera@linaro.org>,
+>>>>> Cc: stable@vger.kernel.org # v3.17+
+>>>>> Signed-off-by: Kevin Hilman <khilman@linaro.org>
+>>>>> ---
+>>>>> This has been reported by a few people[1], but not investigated or fixed, so it's
+>>>>> time to disable this feature until it can be fixed.
+>>>>>
+>>>> Hi Kevin,
+>>>>
+>>>> Yeah I agree with your opinion.
+>>>>
+>>>> But as you can see my tree, I've queued regarding mcpm patches for 3.19 will
+>>>> be shown in -next in this weekend.
+>>>
+>>> Which of the recently queued patches are expected to address the
+>>> imprecise abort issue?  I'd be happy to test them out.
+>>
+>> Exynos5 MCPM is still broken in linux-next and still causing an imprecise abort.
+>>
+>> What is the status of $SUBJECT patch?
+>>
+>>>> Anyway let me apply this into -fixes and
+>>>> then let's enable after test its functionality in -next in a couple of days.
+>>>
+>>> Yes, I think this needs to be applied until these aborts are understood
+>>> and fixed.
+>>
+>> Is anyone at Samsung actually looking into these MCPM issues?
+>
+> Hi Kevin,
+>
+> What hardware are you having problems with? 5420 or 5422/5800?
 
-If you are not going to use the gate_ops, why use the gate clock at all?
-You can create a platform-specific clock type which uses the ops you
-specify.
+Yes.  :)
 
-Regards,
-Mike
+exynos5420-arndale-octa:
+http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc6/arm-exynos_defconfig/boot-exynos5420-arndale-octa.html
+exynos5422-odroid-xu3:
+http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc6/arm-exynos_defconfig/boot-exynos5422-odroid-xu3.html
 
-> 
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> ---
->  drivers/clk/clk-gate.c       | 16 +++++++++++++---
->  include/linux/clk-provider.h |  5 +++++
->  2 files changed, 18 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-> index 51fd87fb7ba6..51802af2d9e7 100644
-> --- a/drivers/clk/clk-gate.c
-> +++ b/drivers/clk/clk-gate.c
-> @@ -117,11 +117,12 @@ EXPORT_SYMBOL_GPL(clk_gate_ops);
->   * @bit_idx: which bit in the register controls gating of this clock
->   * @clk_gate_flags: gate-specific flags for this clock
->   * @lock: shared register lock for this clock
-> + * @ops: clk_ops to use for this clock
->   */
-> -struct clk *clk_register_gate(struct device *dev, const char *name,
-> +struct clk *clk_register_gate_ops(struct device *dev, const char *name,
->                 const char *parent_name, unsigned long flags,
->                 void __iomem *reg, u8 bit_idx,
-> -               u8 clk_gate_flags, spinlock_t *lock)
-> +               u8 clk_gate_flags, spinlock_t *lock, const struct clk_ops *ops)
->  {
->         struct clk_gate *gate;
->         struct clk *clk;
-> @@ -142,7 +143,7 @@ struct clk *clk_register_gate(struct device *dev, const char *name,
->         }
->  
->         init.name = name;
-> -       init.ops = &clk_gate_ops;
-> +       init.ops = ops;
->         init.flags = flags | CLK_IS_BASIC;
->         init.parent_names = (parent_name ? &parent_name: NULL);
->         init.num_parents = (parent_name ? 1 : 0);
-> @@ -161,4 +162,13 @@ struct clk *clk_register_gate(struct device *dev, const char *name,
->  
->         return clk;
->  }
-> +EXPORT_SYMBOL_GPL(clk_register_gate_ops);
-> +
-> +struct clk *clk_register_gate(struct device *dev, const char *name,
-> +               const char *parent_name, unsigned long flags,
-> +               void __iomem *reg, u8 bit_idx,
-> +               u8 clk_gate_flags, spinlock_t *lock)
-> +{
-> +       return clk_register_gate_ops(dev, name, parent_name, flags, reg, bit_idx, clk_gate_flags, lock, &clk_gate_ops);
-> +}
->  EXPORT_SYMBOL_GPL(clk_register_gate);
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index be21af149f11..6cfc77a9f339 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -290,11 +290,16 @@ struct clk_gate {
->  #define CLK_GATE_HIWORD_MASK           BIT(1)
->  
->  extern const struct clk_ops clk_gate_ops;
-> +struct clk *clk_register_gate_ops(struct device *dev, const char *name,
-> +               const char *parent_name, unsigned long flags,
-> +               void __iomem *reg, u8 bit_idx,
-> +               u8 clk_gate_flags, spinlock_t *lock, const struct clk_ops *ops);
->  struct clk *clk_register_gate(struct device *dev, const char *name,
->                 const char *parent_name, unsigned long flags,
->                 void __iomem *reg, u8 bit_idx,
->                 u8 clk_gate_flags, spinlock_t *lock);
->  
-> +
->  struct clk_div_table {
->         unsigned int    val;
->         unsigned int    div;
-> -- 
-> 1.9.1
-> 
+My boot tests seem to pass fine because I have such a minimal
+userspace, but Tyler Baker reported that with a "real" userspace, he
+can't boot to a shell:
+
+  http://lists.infradead.org/pipermail/linux-arm-kernel/2014-September/286203.html
+
+Kevin
