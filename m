@@ -1,79 +1,125 @@
-From: Prabhakar Lad <prabhakar.csengg@gmail.com>
-Subject: Re: [PATCH] media: exynos-gsc: fix build warning
-Date: Tue, 25 Nov 2014 15:21:21 +0000
-Message-ID: <CA+V-a8vz2dPwotm24GOX+Ut6uyp81dFrqsZJeBBkL1Ykfd+9kA@mail.gmail.com>
-References: <1416308268-22957-1-git-send-email-prabhakar.csengg@gmail.com>
- <20141125130416.457e48b0@recife.lan> <CA+V-a8sgWarzFQvoHhe2uxQDJ1bZ5PM4x03wss1k5vuuuvfT0Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CA+V-a8sgWarzFQvoHhe2uxQDJ1bZ5PM4x03wss1k5vuuuvfT0Q@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, LMML <linux-media@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH] drm/exynos/fimd: only finish pageflip if START == START_S
+Date: Tue, 25 Nov 2014 16:12:25 -0200
+Message-ID: <1416939145-5618-1-git-send-email-gustavo@padovan.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f42.google.com ([209.85.192.42]:54685 "EHLO
+	mail-qg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750882AbaKYSMc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 25 Nov 2014 13:12:32 -0500
+Received: by mail-qg0-f42.google.com with SMTP id z107so859295qgd.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2014 10:12:31 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Daniel Kurtz <djkurtz@chromium.org>
 
-Hi,
+From: Daniel Kurtz <djkurtz@chromium.org>
 
-On Tue, Nov 25, 2014 at 3:18 PM, Prabhakar Lad
-<prabhakar.csengg@gmail.com> wrote:
-> Hi Mauro,
->
-> On Tue, Nov 25, 2014 at 3:04 PM, Mauro Carvalho Chehab
-> <mchehab@osg.samsung.com> wrote:
->> Em Tue, 18 Nov 2014 10:57:48 +0000
-> [Snip]
->>
->> -static u32 get_plane_info(struct gsc_frame *frm, u32 addr, u32 *index)
->> +static int get_plane_info(struct gsc_frame *frm, u32 addr, u32 *index, u32 *ret_addr)
->>  {
->>         if (frm->addr.y == addr) {
->>                 *index = 0;
->> -               return frm->addr.y;
->> +               *ret_addr = frm->addr.y;
->>         } else if (frm->addr.cb == addr) {
->>                 *index = 1;
->> -               return frm->addr.cb;
->> +               *ret_addr = frm->addr.cb;
->>         } else if (frm->addr.cr == addr) {
->>                 *index = 2;
->> -               return frm->addr.cr;
->> +               *ret_addr = frm->addr.cr;
->>         } else {
->>                 pr_err("Plane address is wrong");
->>                 return -EINVAL;
->>         }
->> +       return 0;
-> the control wont reach here! may be you can remove the complete else
-> part outside ?
->
-Ah my bad :(, I missread 'ret_addr' to return.
+A framebuffer gets committed to FIMD's default window like this:
+ exynos_drm_crtc_update()
+  exynos_plane_commit()
+   fimd_win_commit()
 
-Thanks,
---Prabhakar Lad
+fimd_win_commit() programs BUF_START[0].  At each vblank, FIMD hardware
+copies the value from BUF_START to BUF_START_S (BUF_START's shadow
+register), starts scanning out from BUF_START_S, and asserts its irq.
 
-> with that change,
->
-> Reported-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
-> Acked-by: Lad, Prabhakar <prabhakar.csengg@gmail.com>
->
-> Thanks,
-> --Prabhakar Lad
->
->>  }
->>
->>  void gsc_set_prefbuf(struct gsc_dev *gsc, struct gsc_frame *frm)
->> @@ -352,9 +353,11 @@ void gsc_set_prefbuf(struct gsc_dev *gsc, struct gsc_frame *frm)
->>                 u32 t_min, t_max;
->>
->>                 t_min = min3(frm->addr.y, frm->addr.cb, frm->addr.cr);
->> -               low_addr = get_plane_info(frm, t_min, &low_plane);
->> +               if (get_plane_info(frm, t_min, &low_plane, &low_addr))
->> +                       return;
->>                 t_max = max3(frm->addr.y, frm->addr.cb, frm->addr.cr);
->> -               high_addr = get_plane_info(frm, t_max, &high_plane);
->> +               if (get_plane_info(frm, t_max, &high_plane, &high_addr))
->> +                       return;
->>
->>                 mid_plane = 3 - (low_plane + high_plane);
->>                 if (mid_plane == 0)
+This irq is handled by fimd_irq_handler(), which calls
+exynos_drm_crtc_finish_pageflip() to free the old buffer that FIMD just
+finished scanning out, and potentially commit the next pending flip.
+
+There is a race, however, if fimd_win_commit() programs BUF_START(0)
+between the actual vblank irq, and its corresponding fimd_irq_handler().
+
+ => FIMD vblank: BUF_START_S[0] := BUF_START[0], and irq asserted
+ | => fimd_win_commit(0) writes new BUF_START[0]
+ |    exynos_drm_crtc_try_do_flip() marks exynos_fb as prepared
+ => fimd_irq_handler()
+    exynos_drm_crtc_finish_pageflip() sees prepared exynos_fb,
+         and unmaps "old" fb
+ ==> but, since BUF_START_S[0] still points to that "old" fb...
+ ==> FIMD iommu fault
+
+This patch ensures that fimd_irq_handler() only calls
+exynos_drm_crtc_finish_pageflip() if any previously scheduled flip
+has really completed.
+
+This works because exynos_drm_crtc's flip fifo ensures that
+fimd_win_commit() is never called more than once per
+exynos_drm_crtc_finish_pageflip().
+
+Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
+Reviewed-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 26 ++++++++++++++++++++++++++
+ include/video/samsung_fimd.h             |  1 +
+ 2 files changed, 27 insertions(+)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index e5810d1..afb0586 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -55,6 +55,7 @@
+ #define VIDOSD_D(win)		(VIDOSD_BASE + 0x0C + (win) * 16)
+ 
+ #define VIDWx_BUF_START(win, buf)	(VIDW_BUF_START(buf) + (win) * 8)
++#define VIDWx_BUF_START_S(win, buf)     (VIDW_BUF_START_S(buf) + (win) * 8)
+ #define VIDWx_BUF_END(win, buf)		(VIDW_BUF_END(buf) + (win) * 8)
+ #define VIDWx_BUF_SIZE(win, buf)	(VIDW_BUF_SIZE(buf) + (win) * 4)
+ 
+@@ -1039,6 +1040,7 @@ static irqreturn_t fimd_irq_handler(int irq, void *dev_id)
+ {
+ 	struct fimd_context *ctx = (struct fimd_context *)dev_id;
+ 	u32 val, clear_bit;
++	u32 start, start_s;
+ 
+ 	val = readl(ctx->regs + VIDINTCON1);
+ 
+@@ -1066,6 +1068,30 @@ static irqreturn_t fimd_irq_handler(int irq, void *dev_id)
+ 		}
+ 	}
+ 
++	/*
++	 * Ensure finish_pageflip is called iff a pending flip has completed.
++	 * This works around a race between a page_flip request and the latency
++	 * between vblank interrupt and this irq_handler:
++	 *   => FIMD vblank: BUF_START_S[0] := BUF_START[0], and asserts irq
++	 *   | => fimd_win_commit(0) writes new BUF_START[0]
++	 *   |    exynos_drm_crtc_try_do_flip() marks exynos_fb as prepared
++	 *   => fimd_irq_handler()
++	 *       exynos_drm_crtc_finish_pageflip() sees prepared exynos_fb,
++	 *           and unmaps "old" fb
++	 *   ==> but, since BUF_START_S[0] still points to that "old" fb...
++	 *   ==> FIMD iommu fault
++	 */
++	start = readl(ctx->regs + VIDWx_BUF_START(0, 0));
++	start_s = readl(ctx->regs + VIDWx_BUF_START_S(0, 0));
++	if (start == start_s)
++		exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
++
++	/* set wait vsync event to zero and wake up queue. */
++	if (atomic_read(&ctx->wait_vsync_event)) {
++		atomic_set(&ctx->wait_vsync_event, 0);
++		wake_up(&ctx->wait_vsync_queue);
++	}
++
+ out:
+ 	return IRQ_HANDLED;
+ }
+diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
+index a20e4a3..f81d081 100644
+--- a/include/video/samsung_fimd.h
++++ b/include/video/samsung_fimd.h
+@@ -291,6 +291,7 @@
+ 
+ /* Video buffer addresses */
+ #define VIDW_BUF_START(_buff)			(0xA0 + ((_buff) * 8))
++#define VIDW_BUF_START_S(_buff)                 (0x40A0 + ((_buff) * 8))
+ #define VIDW_BUF_START1(_buff)			(0xA4 + ((_buff) * 8))
+ #define VIDW_BUF_END(_buff)			(0xD0 + ((_buff) * 8))
+ #define VIDW_BUF_END1(_buff)			(0xD4 + ((_buff) * 8))
+-- 
+1.9.3
