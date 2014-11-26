@@ -1,16 +1,16 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 4/6] drm/exynos: move 'type' from manager to crtc struct
-Date: Wed, 26 Nov 2014 19:09:03 -0200
-Message-ID: <1417036145-11017-5-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 5/6] drm/exynos: remove drm_dev from struct exynos_drm_manager
+Date: Wed, 26 Nov 2014 19:09:04 -0200
+Message-ID: <1417036145-11017-6-git-send-email-gustavo@padovan.org>
 References: <1417036145-11017-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f52.google.com ([209.85.192.52]:39588 "EHLO
-	mail-qg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751028AbaKZVJ2 (ORCPT
+Received: from mail-qa0-f49.google.com ([209.85.216.49]:45931 "EHLO
+	mail-qa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751028AbaKZVJb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Nov 2014 16:09:28 -0500
-Received: by mail-qg0-f52.google.com with SMTP id a108so2621687qge.39
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2014 13:09:27 -0800 (PST)
+	Wed, 26 Nov 2014 16:09:31 -0500
+Received: by mail-qa0-f49.google.com with SMTP id s7so2441019qap.8
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2014 13:09:30 -0800 (PST)
 In-Reply-To: <1417036145-11017-1-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -19,188 +19,149 @@ Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Gustavo Padovan <gust
 
 From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-'type' is now part of the struct exynos_drm_crtc. This is just another
-step in the struct exynos_drm_manager removal.
+manager-drm_dev is only accessed by exynos_drm_crtc_create() so this patch
+pass drm_dev as argument on exynos_drm_crtc_create() and remove it from
+struct exynos_drm_manager.
 
 Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 ---
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 6 ++++--
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 9 +++++----
  drivers/gpu/drm/exynos/exynos_drm_crtc.h | 3 ++-
- drivers/gpu/drm/exynos/exynos_drm_drv.h  | 4 ++--
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 6 +++---
- drivers/gpu/drm/exynos/exynos_drm_vidi.c | 6 +++---
- drivers/gpu/drm/exynos/exynos_mixer.c    | 6 +++---
- 6 files changed, 17 insertions(+), 14 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_drv.h  | 1 -
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 4 ++--
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c | 4 ++--
+ drivers/gpu/drm/exynos/exynos_mixer.c    | 4 ++--
+ 6 files changed, 13 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 0fe981b..224b9af 100644
+index 224b9af..1eb5750 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -299,7 +299,8 @@ static void exynos_drm_crtc_attach_mode_property(struct drm_crtc *crtc)
+@@ -299,12 +299,13 @@ static void exynos_drm_crtc_attach_mode_property(struct drm_crtc *crtc)
  	drm_object_attach_property(&crtc->base, prop, 0);
  }
  
--int exynos_drm_crtc_create(struct exynos_drm_manager *manager, int pipe)
-+int exynos_drm_crtc_create(struct exynos_drm_manager *manager, int pipe,
-+			   enum exynos_drm_output_type type)
+-int exynos_drm_crtc_create(struct exynos_drm_manager *manager, int pipe,
++int exynos_drm_crtc_create(struct exynos_drm_manager *manager,
++			   struct drm_device *drm_dev, int pipe,
+ 			   enum exynos_drm_output_type type)
  {
  	struct exynos_drm_crtc *exynos_crtc;
  	struct drm_plane *plane;
-@@ -317,6 +318,7 @@ int exynos_drm_crtc_create(struct exynos_drm_manager *manager, int pipe)
- 	exynos_crtc->dpms = DRM_MODE_DPMS_OFF;
+-	struct exynos_drm_private *private = manager->drm_dev->dev_private;
++	struct exynos_drm_private *private = drm_dev->dev_private;
+ 	struct drm_crtc *crtc;
+ 	int ret;
+ 
+@@ -319,7 +320,7 @@ int exynos_drm_crtc_create(struct exynos_drm_manager *manager, int pipe,
  	exynos_crtc->manager = manager;
  	exynos_crtc->pipe = pipe;
-+	exynos_crtc->type = type;
- 	plane = exynos_plane_init(manager->drm_dev, 1 << pipe,
+ 	exynos_crtc->type = type;
+-	plane = exynos_plane_init(manager->drm_dev, 1 << pipe,
++	plane = exynos_plane_init(drm_dev, 1 << pipe,
  				  DRM_PLANE_TYPE_PRIMARY);
  	if (IS_ERR(plane)) {
-@@ -435,7 +437,7 @@ int exynos_drm_crtc_get_pipe_from_type(struct drm_device *drm_dev,
- 		struct exynos_drm_crtc *exynos_crtc;
+ 		ret = PTR_ERR(plane);
+@@ -331,7 +332,7 @@ int exynos_drm_crtc_create(struct exynos_drm_manager *manager, int pipe,
  
- 		exynos_crtc = to_exynos_crtc(crtc);
--		if (exynos_crtc->manager->type == out_type)
-+		if (exynos_crtc->type == out_type)
- 			return exynos_crtc->pipe;
- 	}
+ 	private->crtc[pipe] = crtc;
  
+-	ret = drm_crtc_init_with_planes(manager->drm_dev, crtc, plane, NULL,
++	ret = drm_crtc_init_with_planes(drm_dev, crtc, plane, NULL,
+ 					&exynos_crtc_funcs);
+ 	if (ret < 0)
+ 		goto err_crtc;
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.h b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-index f1bee84..a705941 100644
+index a705941..d7690e9 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.h
 +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
 @@ -17,7 +17,8 @@
  
  #include "exynos_drm_drv.h"
  
--int exynos_drm_crtc_create(struct exynos_drm_manager *manager, int pipe);
-+int exynos_drm_crtc_create(struct exynos_drm_manager *manager, int pipe,
-+			   enum exynos_drm_output_type type);
+-int exynos_drm_crtc_create(struct exynos_drm_manager *manager, int pipe,
++int exynos_drm_crtc_create(struct exynos_drm_manager *manager,
++			   struct drm_device *drm_dev, int pipe,
+ 			   enum exynos_drm_output_type type);
  int exynos_drm_crtc_enable_vblank(struct drm_device *dev, int pipe);
  void exynos_drm_crtc_disable_vblank(struct drm_device *dev, int pipe);
- void exynos_drm_crtc_finish_pageflip(struct drm_device *dev, int pipe);
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 1d024c0..a3ae95f 100644
+index a3ae95f..2d801a8 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
 +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -204,7 +204,6 @@ struct exynos_drm_manager_ops {
-  * Exynos drm common manager structure, maps 1:1 with a crtc
-  *
-  * @list: the list entry for this manager
-- * @type: one of EXYNOS_DISPLAY_TYPE_LCD and HDMI.
-  * @drm_dev: pointer to the drm device
-  * @crtc: crtc object.
-  * @ops: pointer to callbacks for exynos drm specific functionality
-@@ -212,7 +211,6 @@ struct exynos_drm_manager_ops {
+@@ -211,7 +211,6 @@ struct exynos_drm_manager_ops {
   */
  struct exynos_drm_manager {
  	struct list_head list;
--	enum exynos_drm_output_type type;
- 	struct drm_device *drm_dev;
+-	struct drm_device *drm_dev;
  	struct drm_crtc *crtc;
  	struct exynos_drm_manager_ops *ops;
-@@ -228,6 +226,7 @@ enum exynos_crtc_mode {
-  *
-  * @base: crtc object.
-  * @manager: the manager associated with this crtc
-+ * @type: one of EXYNOS_DISPLAY_TYPE_LCD and HDMI.
-  * @pipe: a crtc index created at load() with a new crtc object creation
-  *	and the crtc object would be set to private->crtc array
-  *	to get a crtc object corresponding to this pipe from private->crtc
-@@ -241,6 +240,7 @@ enum exynos_crtc_mode {
- struct exynos_drm_crtc {
- 	struct drm_crtc			base;
- 	struct exynos_drm_manager	*manager;
-+	enum exynos_drm_output_type	type;
- 	unsigned int			pipe;
- 	unsigned int			dpms;
- 	enum exynos_crtc_mode		mode;
+ };
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 6e2092d..55154a6 100644
+index 55154a6..3713be7 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -1102,7 +1102,8 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
+@@ -299,7 +299,7 @@ static int fimd_mgr_initialize(struct exynos_drm_manager *mgr,
+ 	struct exynos_drm_private *priv;
+ 	priv = drm_dev->dev_private;
+ 
+-	mgr->drm_dev = ctx->drm_dev = drm_dev;
++	ctx->drm_dev = drm_dev;
+ 	ctx->pipe = priv->pipe++;
+ 
+ 	/* attach this sub driver to iommu mapping if supported. */
+@@ -1102,7 +1102,7 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
  	struct drm_device *drm_dev = data;
  
  	fimd_mgr_initialize(&ctx->manager, drm_dev);
--	exynos_drm_crtc_create(&ctx->manager, ctx->pipe);
-+	exynos_drm_crtc_create(&ctx->manager, ctx->pipe,
-+			       EXYNOS_DISPLAY_TYPE_LCD);
+-	exynos_drm_crtc_create(&ctx->manager, ctx->pipe,
++	exynos_drm_crtc_create(&ctx->manager, drm_dev, ctx->pipe,
+ 			       EXYNOS_DISPLAY_TYPE_LCD);
  	if (ctx->display)
  		exynos_drm_create_enc_conn(drm_dev, ctx->display);
- 
-@@ -1143,11 +1144,10 @@ static int fimd_probe(struct platform_device *pdev)
- 	if (!ctx)
- 		return -ENOMEM;
- 
--	ctx->manager.type = EXYNOS_DISPLAY_TYPE_LCD;
- 	ctx->manager.ops = &fimd_manager_ops;
- 
- 	ret = exynos_drm_component_add(dev, EXYNOS_DEVICE_TYPE_CRTC,
--				       ctx->manager.type);
-+				       EXYNOS_DISPLAY_TYPE_LCD);
- 	if (ret)
- 		return ret;
- 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index 785d2fe..3cee0fd 100644
+index 3cee0fd..03687db 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -558,7 +558,8 @@ static int vidi_bind(struct device *dev, struct device *master, void *data)
+@@ -301,7 +301,7 @@ static int vidi_mgr_initialize(struct exynos_drm_manager *mgr,
+ 	struct vidi_context *ctx = manager_to_vidi(mgr);
+ 	struct exynos_drm_private *priv = drm_dev->dev_private;
+ 
+-	mgr->drm_dev = ctx->drm_dev = drm_dev;
++	ctx->drm_dev = drm_dev;
+ 	ctx->pipe = priv->pipe++;
+ 
+ 	return 0;
+@@ -558,7 +558,7 @@ static int vidi_bind(struct device *dev, struct device *master, void *data)
  
  	vidi_mgr_initialize(&ctx->manager, drm_dev);
  
--	ret = exynos_drm_crtc_create(&ctx->manager, ctx->pipe);
-+	ret = exynos_drm_crtc_create(&ctx->manager, ctx->pipe,
-+				     EXYNOS_DISPLAY_TYPE_VIDI);
+-	ret = exynos_drm_crtc_create(&ctx->manager, ctx->pipe,
++	ret = exynos_drm_crtc_create(&ctx->manager, drm_dev, ctx->pipe,
+ 				     EXYNOS_DISPLAY_TYPE_VIDI);
  	if (ret) {
  		DRM_ERROR("failed to create crtc.\n");
- 		return ret;
-@@ -593,7 +594,6 @@ static int vidi_probe(struct platform_device *pdev)
- 	if (!ctx)
- 		return -ENOMEM;
- 
--	ctx->manager.type = EXYNOS_DISPLAY_TYPE_VIDI;
- 	ctx->manager.ops = &vidi_manager_ops;
- 	ctx->display.type = EXYNOS_DISPLAY_TYPE_VIDI;
- 	ctx->display.ops = &vidi_display_ops;
-@@ -601,7 +601,7 @@ static int vidi_probe(struct platform_device *pdev)
- 	ctx->pdev = pdev;
- 
- 	ret = exynos_drm_component_add(&pdev->dev, EXYNOS_DEVICE_TYPE_CRTC,
--					ctx->manager.type);
-+					EXYNOS_DISPLAY_TYPE_VIDI);
- 	if (ret)
- 		return ret;
- 
 diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index 8301503..1167099 100644
+index 1167099..d8f2b6d 100644
 --- a/drivers/gpu/drm/exynos/exynos_mixer.c
 +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -1256,7 +1256,8 @@ static int mixer_bind(struct device *dev, struct device *manager, void *data)
+@@ -862,7 +862,7 @@ static int mixer_initialize(struct exynos_drm_manager *mgr,
+ 	struct exynos_drm_private *priv;
+ 	priv = drm_dev->dev_private;
+ 
+-	mgr->drm_dev = mixer_ctx->drm_dev = drm_dev;
++	mixer_ctx->drm_dev = drm_dev;
+ 	mixer_ctx->pipe = priv->pipe++;
+ 
+ 	/* acquire resources: regs, irqs, clocks */
+@@ -1256,7 +1256,7 @@ static int mixer_bind(struct device *dev, struct device *manager, void *data)
  	if (ret)
  		return ret;
  
--	ret = exynos_drm_crtc_create(&ctx->manager, ctx->pipe);
-+	ret = exynos_drm_crtc_create(&ctx->manager, ctx->pipe,
-+				     EXYNOS_DISPLAY_TYPE_HDMI);
+-	ret = exynos_drm_crtc_create(&ctx->manager, ctx->pipe,
++	ret = exynos_drm_crtc_create(&ctx->manager, drm_dev, ctx->pipe,
+ 				     EXYNOS_DISPLAY_TYPE_HDMI);
  	if (ret) {
  		mixer_mgr_remove(&ctx->manager);
- 		return ret;
-@@ -1296,7 +1297,6 @@ static int mixer_probe(struct platform_device *pdev)
- 
- 	mutex_init(&ctx->mixer_mutex);
- 
--	ctx->manager.type = EXYNOS_DISPLAY_TYPE_HDMI;
- 	ctx->manager.ops = &mixer_manager_ops;
- 
- 	if (dev->of_node) {
-@@ -1320,7 +1320,7 @@ static int mixer_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, ctx);
- 
- 	ret = exynos_drm_component_add(&pdev->dev, EXYNOS_DEVICE_TYPE_CRTC,
--					ctx->manager.type);
-+					EXYNOS_DISPLAY_TYPE_HDMI);
- 	if (ret)
- 		return ret;
- 
 -- 
 1.9.3
