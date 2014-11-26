@@ -1,304 +1,185 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v2 3/5] pinctrl: exynos: Fix GPIO setup failure because domain
- clock being gated
-Date: Wed, 26 Nov 2014 15:24:15 +0100
-Message-ID: <1417011857-10419-4-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v2 5/5] clk: samsung: Fix memory leak of clock gate/divider/mux
+ structures
+Date: Wed, 26 Nov 2014 15:24:17 +0100
+Message-ID: <1417011857-10419-6-git-send-email-k.kozlowski@samsung.com>
 References: <1417011857-10419-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:10264 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750816AbaKZOYo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Nov 2014 09:24:44 -0500
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1417011857-10419-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>
-Cc: Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Russell King <linux@arm.linux.org.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The audio subsystem on Exynos 5420 has separate clocks and GPIO. To
-operate properly on GPIOs the main block clock 'mau_epll' must be
-enabled.
+While fixing audss clock access when domain is gated (commit "clk:
+samsung: Fix clock disable failure because domain being gated") generic
+code from clk-gate/divider/mux was taken and modified.
 
-This was observed on Peach Pi/Pit and Arndale Octa (after enabling i2s0)
-after introducing runtime PM to pl330 DMA driver. After that commit the
-'mau_epll' was gated, because the "amba" clock was disabled and there
-were no more users of mau_epll.
+This generic code leaks memory allocated for internal structures (struct
+clk_gate/clk_divider/clk_mux). Fix the leak by using resourced managed
+allocations.
 
-The system hang just before probing i2s0 because
-samsung_pinmux_setup() tried to access memory from audss block which was
-gated.
-
-Add a clock property to the pinctrl driver and enable the clock during
-GPIO setup. During normal GPIO operations (set, get, set_direction) the
-clock is not enabled.
+The audss clocks are now attached to platform device.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- .../bindings/pinctrl/samsung-pinctrl.txt           |   6 ++
- drivers/pinctrl/samsung/pinctrl-samsung.c          | 110 +++++++++++++++++++--
- drivers/pinctrl/samsung/pinctrl-samsung.h          |   2 +
- 3 files changed, 111 insertions(+), 7 deletions(-)
+ drivers/clk/samsung/clk-exynos-audss.c | 63 ++++++++++++++--------------------
+ 1 file changed, 26 insertions(+), 37 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-index 8425838a6dff..eb121daabe9d 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-@@ -93,6 +93,12 @@ Required Properties:
-   pin configuration should use the bindings listed in the "pinctrl-bindings.txt"
-   file.
+diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+index 9ec7de866ab4..229d54981825 100644
+--- a/drivers/clk/samsung/clk-exynos-audss.c
++++ b/drivers/clk/samsung/clk-exynos-audss.c
+@@ -142,8 +142,6 @@ static const struct clk_ops audss_clk_gate_ops = {
+ /*
+  * A simplified copy of clk-gate.c:clk_register_gate() to mimic
+  * clk-gate behavior while using customized ops.
+- *
+- * TODO: just like clk-gate it leaks memory for struct clk_gate.
+  */
+ static struct clk *audss_clk_register_gate(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags, u8 bit_idx)
+@@ -153,7 +151,7 @@ static struct clk *audss_clk_register_gate(struct device *dev, const char *name,
+ 	struct clk_init_data init;
  
-+Optional Properties:
-+- clocks: Optional clock needed to access the block. Will be enabled/disabled
-+  during GPIO configuration, suspend and resume but not during GPIO operations
-+  (like set, get, set direction).
-+- clock-names: Must be "block".
-+
- External GPIO and Wakeup Interrupts:
+ 	/* allocate the gate */
+-	gate = kzalloc(sizeof(struct clk_gate), GFP_KERNEL);
++	gate = devm_kzalloc(dev, sizeof(struct clk_gate), GFP_KERNEL);
+ 	if (!gate)
+ 		return ERR_PTR(-ENOMEM);
  
- The controller supports two types of external interrupts over gpio. The first
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index ec580af35856..96419aba7650 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -24,6 +24,7 @@
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/slab.h>
-+#include <linux/clk.h>
- #include <linux/err.h>
- #include <linux/gpio.h>
- #include <linux/irqdomain.h>
-@@ -55,6 +56,32 @@ static LIST_HEAD(drvdata_list);
+@@ -172,9 +170,6 @@ static struct clk *audss_clk_register_gate(struct device *dev, const char *name,
  
- static unsigned int pin_base;
+ 	clk = clk_register(dev, &gate->hw);
  
-+static int pctl_clk_enable(struct pinctrl_dev *pctldev)
-+{
-+	struct samsung_pinctrl_drv_data *drvdata;
-+	int ret;
-+
-+	drvdata = pinctrl_dev_get_drvdata(pctldev);
-+	if (!drvdata->clk)
-+		return 0;
-+
-+	ret = clk_enable(drvdata->clk);
-+	if (ret)
-+		dev_err(pctldev->dev, "failed to enable clock: %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static void pctl_clk_disable(struct pinctrl_dev *pctldev)
-+{
-+	struct samsung_pinctrl_drv_data *drvdata;
-+
-+	drvdata = pinctrl_dev_get_drvdata(pctldev);
-+
-+	/* clk/core.c does the check if clk != NULL */
-+	clk_disable(drvdata->clk);
-+}
-+
- static inline struct samsung_pin_bank *gc_to_pin_bank(struct gpio_chip *gc)
- {
- 	return container_of(gc, struct samsung_pin_bank, gpio_chip);
-@@ -374,7 +401,9 @@ static void samsung_pinmux_setup(struct pinctrl_dev *pctldev, unsigned selector,
- 	const struct samsung_pmx_func *func;
- 	const struct samsung_pin_group *grp;
- 
-+	pctl_clk_enable(pctldev);
- 	drvdata = pinctrl_dev_get_drvdata(pctldev);
-+
- 	func = &drvdata->pmx_functions[selector];
- 	grp = &drvdata->pin_groups[group];
- 
-@@ -398,6 +427,8 @@ static void samsung_pinmux_setup(struct pinctrl_dev *pctldev, unsigned selector,
- 	writel(data, reg + type->reg_offset[PINCFG_TYPE_FUNC]);
- 
- 	spin_unlock_irqrestore(&bank->slock, flags);
-+
-+	pctl_clk_disable(pctldev);
+-	if (IS_ERR(clk))
+-		kfree(gate);
+-
+ 	return clk;
  }
  
- /* enable a specified pinmux by writing to registers */
-@@ -469,20 +500,37 @@ static int samsung_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
- {
- 	int i, ret;
+@@ -238,7 +233,7 @@ static struct clk *audss_clk_register_divider(struct device *dev,
+ 	struct clk_init_data init;
  
-+	ret = pctl_clk_enable(pctldev);
-+	if (ret)
-+		goto out;
-+
- 	for (i = 0; i < num_configs; i++) {
- 		ret = samsung_pinconf_rw(pctldev, pin, &configs[i], true);
- 		if (ret < 0)
--			return ret;
-+			goto out;
- 	} /* for each config */
+ 	/* allocate the divider */
+-	div = kzalloc(sizeof(struct clk_divider), GFP_KERNEL);
++	div = devm_kzalloc(dev, sizeof(struct clk_divider), GFP_KERNEL);
+ 	if (!div)
+ 		return ERR_PTR(-ENOMEM);
  
--	return 0;
-+out:
-+	pctl_clk_disable(pctldev);
-+
-+	return ret;
+@@ -260,9 +255,6 @@ static struct clk *audss_clk_register_divider(struct device *dev,
+ 	/* register the clock */
+ 	clk = clk_register(dev, &div->hw);
+ 
+-	if (IS_ERR(clk))
+-		kfree(div);
+-
+ 	return clk;
  }
  
- /* get the pin config settings for a specified pin */
- static int samsung_pinconf_get(struct pinctrl_dev *pctldev, unsigned int pin,
- 					unsigned long *config)
- {
--	return samsung_pinconf_rw(pctldev, pin, config, false);
-+	int ret;
-+
-+	ret = pctl_clk_enable(pctldev);
-+	if (ret)
-+		return ret;
-+
-+	ret = samsung_pinconf_rw(pctldev, pin, config, false);
-+
-+	pctl_clk_disable(pctldev);
-+
-+	return ret;
+@@ -319,7 +311,7 @@ static struct clk *audss_clk_register_mux(struct device *dev, const char *name,
+ 	u32 mask = BIT(width) - 1;
+ 
+ 	/* allocate the mux */
+-	mux = kzalloc(sizeof(struct clk_mux), GFP_KERNEL);
++	mux = devm_kzalloc(dev, sizeof(struct clk_mux), GFP_KERNEL);
+ 	if (!mux)
+ 		return ERR_PTR(-ENOMEM);
+ 
+@@ -340,9 +332,6 @@ static struct clk *audss_clk_register_mux(struct device *dev, const char *name,
+ 
+ 	clk = clk_register(dev, &mux->hw);
+ 
+-	if (IS_ERR(clk))
+-		kfree(mux);
+-
+ 	return clk;
  }
  
- /* set the pin config settings for a specified pin group */
-@@ -1057,10 +1105,23 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
- 	}
- 	drvdata->dev = dev;
+@@ -398,9 +387,9 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
  
-+	drvdata->clk = clk_get(&pdev->dev, "block");
-+	if (!IS_ERR(drvdata->clk)) {
-+		ret = clk_prepare_enable(drvdata->clk);
-+		if (ret) {
-+			dev_err(dev, "failed to enable clk: %d\n", ret);
-+			return ret;
-+		}
-+	} else {
-+		drvdata->clk = NULL;
-+	}
-+
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	drvdata->virt_base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(drvdata->virt_base))
--		return PTR_ERR(drvdata->virt_base);
-+	if (IS_ERR(drvdata->virt_base)) {
-+		ret = PTR_ERR(drvdata->virt_base);
-+		goto err;
-+	}
- 
- 	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
- 	if (res)
-@@ -1068,12 +1129,12 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
- 
- 	ret = samsung_gpiolib_register(pdev, drvdata);
- 	if (ret)
--		return ret;
-+		goto err;
- 
- 	ret = samsung_pinctrl_register(pdev, drvdata);
- 	if (ret) {
- 		samsung_gpiolib_unregister(pdev, drvdata);
--		return ret;
-+		goto err;
  	}
  
- 	if (ctrl->eint_gpio_init)
-@@ -1085,6 +1146,22 @@ static int samsung_pinctrl_probe(struct platform_device *pdev)
+-	clk_table[EXYNOS_MOUT_AUDSS] = audss_clk_register_mux(NULL, "mout_audss",
+-				mout_audss_p, ARRAY_SIZE(mout_audss_p),
+-				CLK_SET_RATE_NO_REPARENT, 0, 1);
++	clk_table[EXYNOS_MOUT_AUDSS] = audss_clk_register_mux(&pdev->dev,
++			"mout_audss", mout_audss_p, ARRAY_SIZE(mout_audss_p),
++			CLK_SET_RATE_NO_REPARENT, 0, 1);
  
- 	/* Add to the global list */
- 	list_add_tail(&drvdata->node, &drvdata_list);
-+	clk_disable(drvdata->clk); /* Leave prepared */
-+
-+	return 0;
-+
-+err:
-+	if (drvdata->clk)
-+		clk_disable_unprepare(drvdata->clk);
-+
-+	return ret;
-+}
-+
-+static int samsung_pinctrl_remove(struct platform_device *pdev)
-+{
-+	struct samsung_pinctrl_drv_data *drvdata = platform_get_drvdata(pdev);
-+
-+	clk_disable_unprepare(drvdata->clk);
+ 	cdclk = devm_clk_get(&pdev->dev, "cdclk");
+ 	sclk_audio = devm_clk_get(&pdev->dev, "sclk_audio");
+@@ -408,40 +397,40 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 		mout_i2s_p[1] = __clk_get_name(cdclk);
+ 	if (!IS_ERR(sclk_audio))
+ 		mout_i2s_p[2] = __clk_get_name(sclk_audio);
+-	clk_table[EXYNOS_MOUT_I2S] = audss_clk_register_mux(NULL, "mout_i2s",
+-				mout_i2s_p, ARRAY_SIZE(mout_i2s_p),
+-				CLK_SET_RATE_NO_REPARENT, 2, 2);
++	clk_table[EXYNOS_MOUT_I2S] = audss_clk_register_mux(&pdev->dev,
++			"mout_i2s", mout_i2s_p, ARRAY_SIZE(mout_i2s_p),
++			CLK_SET_RATE_NO_REPARENT, 2, 2);
  
- 	return 0;
- }
-@@ -1102,6 +1179,13 @@ static void samsung_pinctrl_suspend_dev(
- 	void __iomem *virt_base = drvdata->virt_base;
- 	int i;
+-	clk_table[EXYNOS_DOUT_SRP] = audss_clk_register_divider(NULL, "dout_srp",
+-				"mout_audss", 0, 0, 4);
++	clk_table[EXYNOS_DOUT_SRP] = audss_clk_register_divider(&pdev->dev,
++			"dout_srp", "mout_audss", 0, 0, 4);
  
-+	if (drvdata->clk) {
-+		if (clk_enable(drvdata->clk)) {
-+			dev_err(drvdata->dev, "failed to enable clock\n");
-+			return;
-+		}
-+	}
-+
- 	for (i = 0; i < drvdata->nr_banks; i++) {
- 		struct samsung_pin_bank *bank = &drvdata->pin_banks[i];
- 		void __iomem *reg = virt_base + bank->pctl_offset;
-@@ -1133,6 +1217,8 @@ static void samsung_pinctrl_suspend_dev(
+-	clk_table[EXYNOS_DOUT_AUD_BUS] = audss_clk_register_divider(NULL,
++	clk_table[EXYNOS_DOUT_AUD_BUS] = audss_clk_register_divider(&pdev->dev,
+ 				"dout_aud_bus", "dout_srp", 0, 4, 4);
  
- 	if (drvdata->suspend)
- 		drvdata->suspend(drvdata);
-+
-+	clk_disable(drvdata->clk);
- }
+-	clk_table[EXYNOS_DOUT_I2S] = audss_clk_register_divider(NULL, "dout_i2s",
+-				"mout_i2s", 0, 8, 4);
++	clk_table[EXYNOS_DOUT_I2S] = audss_clk_register_divider(&pdev->dev,
++			"dout_i2s", "mout_i2s", 0, 8, 4);
  
- /**
-@@ -1148,6 +1234,13 @@ static void samsung_pinctrl_resume_dev(struct samsung_pinctrl_drv_data *drvdata)
- 	void __iomem *virt_base = drvdata->virt_base;
- 	int i;
+-	clk_table[EXYNOS_SRP_CLK] = audss_clk_register_gate(NULL, "srp_clk",
+-				"dout_srp", CLK_SET_RATE_PARENT, 0);
++	clk_table[EXYNOS_SRP_CLK] = audss_clk_register_gate(&pdev->dev,
++			"srp_clk", "dout_srp", CLK_SET_RATE_PARENT, 0);
  
-+	if (drvdata->clk) {
-+		if (clk_enable(drvdata->clk)) {
-+			dev_err(drvdata->dev, "failed to enable clock\n");
-+			return;
-+		}
-+	}
-+
- 	if (drvdata->resume)
- 		drvdata->resume(drvdata);
+-	clk_table[EXYNOS_I2S_BUS] = audss_clk_register_gate(NULL, "i2s_bus",
+-				"dout_aud_bus", CLK_SET_RATE_PARENT, 2);
++	clk_table[EXYNOS_I2S_BUS] = audss_clk_register_gate(&pdev->dev,
++			"i2s_bus", "dout_aud_bus", CLK_SET_RATE_PARENT, 2);
  
-@@ -1181,6 +1274,8 @@ static void samsung_pinctrl_resume_dev(struct samsung_pinctrl_drv_data *drvdata)
- 			if (widths[type])
- 				writel(bank->pm_save[type], reg + offs[type]);
+-	clk_table[EXYNOS_SCLK_I2S] = audss_clk_register_gate(NULL, "sclk_i2s",
+-				"dout_i2s", CLK_SET_RATE_PARENT, 3);
++	clk_table[EXYNOS_SCLK_I2S] = audss_clk_register_gate(&pdev->dev,
++			"sclk_i2s", "dout_i2s", CLK_SET_RATE_PARENT, 3);
+ 
+-	clk_table[EXYNOS_PCM_BUS] = audss_clk_register_gate(NULL, "pcm_bus",
+-				 "sclk_pcm", CLK_SET_RATE_PARENT, 4);
++	clk_table[EXYNOS_PCM_BUS] = audss_clk_register_gate(&pdev->dev,
++			"pcm_bus", "sclk_pcm", CLK_SET_RATE_PARENT, 4);
+ 
+ 	sclk_pcm_in = devm_clk_get(&pdev->dev, "sclk_pcm_in");
+ 	if (!IS_ERR(sclk_pcm_in))
+ 		sclk_pcm_p = __clk_get_name(sclk_pcm_in);
+-	clk_table[EXYNOS_SCLK_PCM] = audss_clk_register_gate(NULL, "sclk_pcm",
+-				sclk_pcm_p, CLK_SET_RATE_PARENT, 5);
++	clk_table[EXYNOS_SCLK_PCM] = audss_clk_register_gate(&pdev->dev,
++			"sclk_pcm", sclk_pcm_p, CLK_SET_RATE_PARENT, 5);
+ 
+ 	if (variant == TYPE_EXYNOS5420) {
+-		clk_table[EXYNOS_ADMA] = audss_clk_register_gate(NULL, "adma",
+-				"dout_srp", CLK_SET_RATE_PARENT, 9);
++		clk_table[EXYNOS_ADMA] = audss_clk_register_gate(&pdev->dev,
++				"adma", "dout_srp", CLK_SET_RATE_PARENT, 9);
  	}
-+
-+	clk_disable(drvdata->clk);
- }
  
- /**
-@@ -1264,6 +1359,7 @@ MODULE_DEVICE_TABLE(of, samsung_pinctrl_dt_match);
- 
- static struct platform_driver samsung_pinctrl_driver = {
- 	.probe		= samsung_pinctrl_probe,
-+	.remove		= samsung_pinctrl_remove,
- 	.driver = {
- 		.name	= "samsung-pinctrl",
- 		.of_match_table = samsung_pinctrl_dt_match,
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index 1b8c0139d604..666cb23eb9f2 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -201,6 +201,7 @@ struct samsung_pin_ctrl {
-  * struct samsung_pinctrl_drv_data: wrapper for holding driver data together.
-  * @node: global list node
-  * @virt_base: register base address of the controller.
-+ * @clk: Optional clock to enable/disable during setup. May be NULL.
-  * @dev: device instance representing the controller.
-  * @irq: interrpt number used by the controller to notify gpio interrupts.
-  * @ctrl: pin controller instance managed by the driver.
-@@ -218,6 +219,7 @@ struct samsung_pinctrl_drv_data {
- 	void __iomem			*virt_base;
- 	struct device			*dev;
- 	int				irq;
-+	struct clk			*clk;
- 
- 	struct pinctrl_desc		pctl;
- 	struct pinctrl_dev		*pctl_dev;
+ 	for (i = 0; i < clk_data.clk_num; i++) {
 -- 
 1.9.1
