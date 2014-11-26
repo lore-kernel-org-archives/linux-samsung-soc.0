@@ -1,162 +1,39 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH] ARM: exynos_defconfig: disable CONFIG_EXYNOS5420_MCPM;
- not stable
-Date: Thu, 27 Nov 2014 03:11:18 +0900
-Message-ID: <547617C6.2050601@kernel.org>
-References: <1414796382-5447-1-git-send-email-khilman@kernel.org>	<000e01cffb39$5ef0a2d0$1cd1e870$@kernel.org>	<7hegtaq26c.fsf@deeprootsystems.com>	<CAMAWPa-mLAFL7v8hHA5R-eBzpMFK-E-xcvjoV8Bn6tTwgP53Uw@mail.gmail.com>	<CAOesGMhvTDN4J6AdUDHKV0Sp4NT6a4QEMUDWOayQqhhD+C4acw@mail.gmail.com>	<CAMAWPa-sz5jT9izEONVZR2Z4mzuivKaNHSgyR+eP13tWZ84hYw@mail.gmail.com>	<CAOesGMgSkJ8xkBgN7OpuDzT=ehaAd6kvbx5_tC50x78pvpkTwg@mail.gmail.com>	<CAOesGMh-7md4PdQX1Wvk0jO+87j+fxSvBnVD_osjNd2zQ4L43w@mail.gmail.com>	<044101d00852$3f421420$bdc63c60$@kernel.org>	<CAMAWPa-qk0DEmPNz5LZgJq9AuGhRxuY00XwxtEikt_vh-iozVg@mail.gmail.com>	<CAM4voa==Ram0xXTL=SnKktyRt7VFphQxBJgcf9Yi9Zio0QctHw@mail.gmail.com>	<7hvbm2ixmo.fsf@deeprootsystems.com>	<CAM4voa=budowQ+vnCAQhWj95Hx+yBnRAaDrFrjkQa2ubjrRwUQ@mail.gmail.com> <7hmw7dg81l.fsf@de
- eprootsystems.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH 1/2] drm/exynos/fimd: don't initialize 'ret' variable in
+ fimd_probe()
+Date: Wed, 26 Nov 2014 16:13:02 -0200
+Message-ID: <1417025583-4054-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:60820 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752455AbaKZSL2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Nov 2014 13:11:28 -0500
-In-Reply-To: <7hmw7dg81l.fsf@deeprootsystems.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, nicolas.pitre@linaro.org
 
-On 11/27/14 02:56, Kevin Hilman wrote:
-> Abhilash Kesavan <kesavan.abhilash@gmail.com> writes:
-> 
->> Hi Kevin,
->>
->> On Wed, Nov 26, 2014 at 6:30 AM, Kevin Hilman <khilman@kernel.org> wrote:
->>> Hi Abhilash,
->>>
->>> Abhilash Kesavan <kesavan.abhilash@gmail.com> writes:
->>>
->>> [...]
->>>
->>>>>> To be honest, since I don't have the exynos5420 arndale, chromebook...but smdk
->>>>>> which has different bootloader, I couldn't test it...I'll try to make a test
->>>>>> farm like you guys...
->>>>>
->>>>> Do you have some colleagues with any other 542x hardware?  I had
->>>>> assumed that linux-next was being better tested on the publicaly
->>>>> available, and widely available boards like odroid-xu3 and
->>>>> Chromebook2, but I've come to realize the hard way that that is not
->>>>
->>>> Are you seeing this on Chromebook2 (Peach-Pi 5800) too ?
->>>
->>> No, it seems that my exynos5800-peach-pi is not having this problem,
->>> which suggests it's a bootloader setup issue.
->>>
->>>>> the case.  You mention your board has a different bootloader.  Do you
->>>>> suspect there's a bootloader issue on these other platforms?  If so,
->>>>> could you elaborate on possible fixes?  I'm more than willing to test
->>>>> any proposed fixes, but I'm not familiar enough yet with these SoCs to
->>>>> figure out the underlying issues alone.
->>>>>
->>>>> Until you have a working board farm, you could start having a closer
->>>>> look at the boot logs we're already producing.  Admittedly linux-next
->>>>> broken in many ways besides this one for exynos currently, but it has
->>>>> been having these imprecise aborts well before the other recent
->>>>> issues.
->>>>>
->>>>> Also, It's very possible that this issue is not even MCPM related at
->>>>> all, and MCPM is just uncovering a previously hidden bug.  It would be
->>>>> very helpful if people more familiar with this hardware and SoC would
->>>>> investigate bug reports like these.
->>>>
->>>> The 3 boards I have access to (SMDK5420, Chromebook Peach-Pi and
->>>> Chromebook Peach-Pit) work fine with MCPM enabled.
->>>
->>> Thanks for helping look into this.
->>>
->>>> I am not sure why
->>>> it is failing only on the above mentioned boards as there is nothing
->>>> specific to them in the MCPM back-end.
->>>>
->>>> I assume that when you default to platsmp (on disabling MCPM), the
->>>> non-working boards boot all cores upto userspace without any issues ?
->>>
->>> Nope.  With MCPM disabled:
->>>
->>>   - 5420/arndale-octa: CPU0-3 come up (A15s)
->>>   - 5422/odroid-xu3: only CPU0 (A7)
->>>   - 5800/peach-pi: only CPU0 (A15)
->>>
->>> Note that with MCPM enabled, the arndale-octa gets the same result.
->>> Peach-pi on the other hand gets all 8 CPUs, and the odroid-xu3 only gets
->>> 6/8 CPUs (see other thread on that topic.)
->>>
->>>> Based on the timeline (problems started about 2.5 months back), there
->>>> have only been a couple of changes in the 5420 MCPM back-end. Could
->>>> you revert the following commits and check if things improve.
->>>>
->>>> 20fe6f9 ARM: EXYNOS: Support cluster power off on exynos5420/5800
->>>> fbb0499 ARM: 8083/1: exynos: activate the CCI on boot CPU/cluster
->>>> using the MCPM loopback
->>>>
->>>> These might not revert cleanly, so instead of the above you could also
->>>> comment the following 2 lines:
->>>>
->>>>
->>>> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c
->>>> b/arch/arm/mach-exynos/mcpm-exynos.c
->>>> index dc9a764..9a07188 100644
->>>> --- a/arch/arm/mach-exynos/mcpm-exynos.c
->>>> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
->>>> @@ -152,7 +152,7 @@ static void exynos_power_down(void)
->>>>                 exynos_cpu_power_down(cpunr);
->>>>
->>>>                 if (exynos_cluster_unused(cluster)) {
->>>> -                       exynos_cluster_power_down(cluster);
->>>> +                       //exynos_cluster_power_down(cluster);
->>>>                         last_man = true;
->>>>                 }
->>> 2>         } else if (cpu_use_count[cpu][cluster] == 1) {
->>>> @@ -356,8 +356,8 @@ static int __init exynos_mcpm_init(void)
->>>>         ret = mcpm_platform_register(&exynos_power_ops);
->>>>         if (!ret)
->>>>                 ret = mcpm_sync_init(exynos_pm_power_up_setup);
->>>> -       if (!ret)
->>>> -               ret = mcpm_loopback(exynos_cache_off); /* turn on the CCI */
->>>> +       //if (!ret)
->>>> +               //ret = mcpm_loopback(exynos_cache_off); /* turn on the CCI */
->>>>         if (ret) {
->>>>                 iounmap(ns_sram_base_addr);
->>>>                 return ret;
->>>>
->>>>
->>>>
->>>> If you still get aborts then I suspect that the problem is with the
->>>> bootloader configuration but am not sure.
->>>
->>> Nice.  With those lines commented out, the arndale-octa is not geting
->>> imprecise aborts anymore, and this is the platform where those aborts
->>> seem to prevent booting into a full userspace (as originally reported by
->>> Tyler.)
->>>
->>> More specifically, with only the loopback call to turn off CCI commented
->>> out, the imprecise aborts go away.
->>
->> I can't see how enabling snoops for the boot cluster is causing these
->> aborts. Perhaps as Krzysztof commented it has something to do with the
->> secure firmware/tz software on these boards ? Other than there does
->> not appear to be any difference between the working/non-working
->> setups.
-> 
-> Perhaps the secure firmware is preventing the CCI to be enabled by the
-> kernel, and that is causing the imprecise abort?
-> 
-> Is there a way to update/replace the BL1/BL2/TZ firmware blobs with
-> something that is known to be working better?  
-> 
-Seems current problem you mentioned is due to different bootloader as I
-commented before, but to release bootloader images (bl1, bl2 and so on)
-should be handled by board manufacture not SoC vendor I think...even
-though the images are provided by vendor for manufacture. To be honest
-I'm not sure what procedure should be passed in Samsung side for now
-because we including Abhilash are belong to just development team. Need
-some time but I can't confirm that...sorry. Let us try.
-
-BTW, Kevin do you know current version for bootloader images on the boards?
-
-Thanks,
-Kukjin
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+V2UgIHNldCBpdCBpbiB0aGUgYmVnaW5uaW5nIG9mIHRoZSBmdW5jdGlvbiwgdGh1cyBubyBuZWVk
+IHRvIHNldCBpdCBhdAppbml0aWFsaXphdGlvbi4KClNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFk
+b3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KLS0tCiBkcml2ZXJzL2dwdS9k
+cm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIHwgMiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5z
+ZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2ZpbWQuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
+bV9maW1kLmMKaW5kZXggMjZmOTRlNS4uMGM5ZGVmOSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZmltZC5jCkBAIC0xMTM0LDcgKzExMzQsNyBAQCBzdGF0aWMgaW50IGZpbWRf
+cHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAlzdHJ1Y3QgZmltZF9jb250ZXh0
+ICpjdHg7CiAJc3RydWN0IGRldmljZV9ub2RlICppODBfaWZfdGltaW5nczsKIAlzdHJ1Y3QgcmVz
+b3VyY2UgKnJlczsKLQlpbnQgcmV0ID0gLUVJTlZBTDsKKwlpbnQgcmV0OwogCiAJaWYgKCFkZXYt
+Pm9mX25vZGUpCiAJCXJldHVybiAtRU5PREVWOwotLSAKMS45LjMKCl9fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
+LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
