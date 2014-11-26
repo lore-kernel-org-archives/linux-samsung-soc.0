@@ -1,78 +1,36 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [RFC] ARM: exynos: MCPM: [is this a] fix for secondary boot on 5422?
-Date: Wed, 26 Nov 2014 08:00:27 -0800
-Message-ID: <7ha93egdes.fsf@deeprootsystems.com>
-References: <1416896510-24612-1-git-send-email-khilman@kernel.org>
-	<loom.20141126T100245-113@post.gmane.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v2 0/5] Fix Arndale Octa/Peach Pi boot on Audio subsystem
+ clocks
+Date: Wed, 26 Nov 2014 17:31:46 +0100
+Message-ID: <54760072.8010307@collabora.co.uk>
+References: <1417011857-10419-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f176.google.com ([209.85.192.176]:51811 "EHLO
-	mail-pd0-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751110AbaKZQAb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Nov 2014 11:00:31 -0500
-Received: by mail-pd0-f176.google.com with SMTP id y10so3043976pdj.21
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2014 08:00:31 -0800 (PST)
-In-Reply-To: <loom.20141126T100245-113@post.gmane.org> (Heesub Shin's message
-	of "Wed, 26 Nov 2014 09:35:29 +0000 (UTC)")
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1417011857-10419-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>
+Cc: Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heesub Shin <heesub.shin@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
 
-Hello,
+Hello Krzysztof,
 
-Heesub Shin <heesub.shin@samsung.com> writes:
+On 11/26/2014 03:24 PM, Krzysztof Kozlowski wrote:
+> Description
+> ===========
+> This patchset tries to solve dependency between AudioSS components
+> (clocks and GPIO) and main clock controller on Exynos platform.
+> 
+> This solves boot failure of Peach Pi/Pit and Arndale Octa [1].
+> 
 
->> Using the current exynos_defconfig on the exynos5422-odroid-xu3, only
->> 6 of 8 CPUs come online with MCPM boot.  CPU0 is an A7, CPUs 1-4 are
->> A15s and CPU5-7 are the other A7s, but with the current code, CPUs 5
->> and 7 do not boot:
->> 
->>    [...]
->>    Exynos MCPM support installed
->>    CPU1: update cpu_capacity 1535
->>    CPU1: thread -1, cpu 0, socket 0, mpidr 80000000
->>    CPU2: update cpu_capacity 1535
->>    CPU2: thread -1, cpu 1, socket 0, mpidr 80000001
->>    CPU3: update cpu_capacity 1535
->>    CPU3: thread -1, cpu 2, socket 0, mpidr 80000002
->>    CPU4: update cpu_capacity 1535
->>    CPU4: thread -1, cpu 3, socket 0, mpidr 80000003
->>    CPU5: failed to come online
->>    CPU6: update cpu_capacity 448
->>    CPU6: thread -1, cpu 2, socket 1, mpidr 80000102
->>    CPU7: failed to come online
->>    Brought up 6 CPUs
->>    CPU: WARNING: CPU(s) started in wrong/inconsistent modes
->>    (primary CPU mode 0x13)
->>    CPU: This may indicate a broken bootloader or firmware.
->> 
->> Thanks to a tip from Abhilash, this patch gets all 8 CPUs booting
->> again, but the warning about CPUs started in inconsistent modes
->> remains.  Also, not being terribly familiar with Exynos internals,
->> it's not at all obvious to me why this register write (done for *all*
->> secondaries) makes things work works for the 2 secondary CPUs that
->> didn't come online.  It's also not obvious whether this is the right
->> general fix, since it doesn't seem to be needed on other 542x or 5800
->> platforms.
->
-> Very interesting to see your post. I was also suffering from the same 
-> problem with my Odroid-XU3 board. With your patch 8 CPUs are brought up, 
-> but Cortex-A15 CPUs are always offline, showing low performance.
->
-> heesub@odroid:~$ cat /sys/devices/system/cpu/online
-> 0,5-7
-> heesub@odroid:~$ cat /sys/devices/system/cpu/offline
-> 1-4
->
-> Any suggestion?
+I tested and patches #2, #3, #4 solves the boot failure I was facing.
+So for the whole series on an Exynos5420 Peach Pit:
 
-That's probably because you have the big.LITTLE switcher enabled in your
-.config (which is the default when using exynos_defconfig).
+Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-If you modify your .config and set CONFIG_BL_SWITCHER=n, you will see
-all 8 cores online.
+Thanks a lot for solving this issue.
 
-Kevin
+Best regards,
+Javier
