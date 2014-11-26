@@ -1,36 +1,50 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v2 0/5] Fix Arndale Octa/Peach Pi boot on Audio subsystem
- clocks
-Date: Wed, 26 Nov 2014 17:31:46 +0100
-Message-ID: <54760072.8010307@collabora.co.uk>
-References: <1417011857-10419-1-git-send-email-k.kozlowski@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: Samsung: Add arndale_rt5631 machine driver and
+ binding
+Date: Wed, 26 Nov 2014 16:44:55 +0000
+Message-ID: <20141126164455.GK7712@sirena.org.uk>
+References: <1416993784-29239-1-git-send-email-krishna.md@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1417011857-10419-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>
-Cc: Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="/RvYOEQaqo9O34Ko"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:39539 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750856AbaKZQqt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 26 Nov 2014 11:46:49 -0500
+Content-Disposition: inline
+In-Reply-To: <1416993784-29239-1-git-send-email-krishna.md@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krishna Mohan Dani <krishna.md@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, kgene.kim@samsung.com, Claude Youn <claude.youn@gmail.com>
 
-Hello Krzysztof,
 
-On 11/26/2014 03:24 PM, Krzysztof Kozlowski wrote:
-> Description
-> ===========
-> This patchset tries to solve dependency between AudioSS components
-> (clocks and GPIO) and main clock controller on Exynos platform.
-> 
-> This solves boot failure of Peach Pi/Pit and Arndale Octa [1].
-> 
+--/RvYOEQaqo9O34Ko
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I tested and patches #2, #3, #4 solves the boot failure I was facing.
-So for the whole series on an Exynos5420 Peach Pit:
+On Wed, Nov 26, 2014 at 02:53:04PM +0530, Krishna Mohan Dani wrote:
+> Adding machine driver to instantiate I2S based realtek's ALC5631
+> sound card on Arndale board.
 
-Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Applied, thanks.
 
-Thanks a lot for solving this issue.
+--/RvYOEQaqo9O34Ko
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Best regards,
-Javier
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUdgOGAAoJECTWi3JdVIfQjAQH/14K3zJgZE/UywebqJ69gb8J
+QRhs3M4ulm/H1sVwMX/RgTsqglWpFR2f8z/5vQbI20GOlmkMC5zNe6KRQFt1QtgL
+tmq7aJ6gTuV544Y8oSmkjJ7+fDGDkeVqA0zmOus/pEbAg35qCqWYicpiDzbWRP3t
+Ib9mlDJtCMk0ay2FPbgvNBdbb2CRemaEF4fxjnLafTx7FxoypHCh1VG3FIZub5bS
+WpdeMw4w6XgiAgFq0FE3oc7spI98UZ3P+2res+SQLlBX8qOvDHebD0FeWAmfto0j
+kEwiZ3rmLGfC9gPZ8khT2/PY65AQm/k0AS1PylaktMlZH4Xt3D4n/OsyeG/GQlI=
+=RuhV
+-----END PGP SIGNATURE-----
+
+--/RvYOEQaqo9O34Ko--
