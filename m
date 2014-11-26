@@ -1,56 +1,50 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH v2] ARM: EXYNOS: use u8 for val[] in struct exynos_pmu_conf
-Date: Thu, 27 Nov 2014 02:49:01 +0900
-Message-ID: <5476128D.6070400@kernel.org>
-References: <1787532.9Q2MHGpzCz@amdc1032>
+From: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCHv3 0/3] ARM: dts: add the support of Exynos3250-based Monk
+ board
+Date: Thu, 27 Nov 2014 02:49:40 +0900
+Message-ID: <547612B4.8000909@kernel.org>
+References: <1416826670-29438-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:58683 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750926AbaKZRtI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Nov 2014 12:49:08 -0500
-In-Reply-To: <1787532.9Q2MHGpzCz@amdc1032>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1416826670-29438-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, geunsik.lim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Pankaj Dubey <pankaj.dubey@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-kernel@vger.kernel.org, Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On 11/27/14 02:21, Bartlomiej Zolnierkiewicz wrote:
-> Values stored in val[] are never bigger than a byte.
+On 11/24/14 19:57, Chanwoo Choi wrote:
+> This patchset adds the support of Exynos3250-based Monk board and Exynos-based
+> boards compatible string and description to remove build warning. Also, this
+> patchset includes a patch which remove unused dt node for command line in
+> Exynos3250-based Rinato dts file.
 > 
->    text    data     bss     dec     hex filename
->    7716    3692       8   11416    2c98 arch/arm/mach-exynos/pmu.o.before
->    5436    1908       8    7352    1cb8 arch/arm/mach-exynos/pmu.o.after
+> Changes from v2:
+> - Include new patches by Chanwoo Choi with following patch[1]
+>   [1] http://www.spinics.net/lists/arm-kernel/msg368443.html
 > 
-> Cc: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
-> v2:
-> - rebased on top of next-20141126 branch of linux-next kernel tree
->   (it also applies fine to for-next branch of linux-samsung.git)
+> Changes from v1:
+> - Fix minor issue
 > 
->  arch/arm/mach-exynos/pmu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Chanwoo Choi (2):
+>   ARM: exynos: Add Exynos-based boards compatible string and description
+>   ARM: dts: Remove unused command line from Exynos3250-based Rinato board
 > 
-> diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-> index ccb0120..c15761c 100644
-> --- a/arch/arm/mach-exynos/pmu.c
-> +++ b/arch/arm/mach-exynos/pmu.c
-> @@ -25,7 +25,7 @@
->  
->  struct exynos_pmu_conf {
->  	unsigned int offset;
-> -	unsigned int val[NUM_SYS_POWERDOWN];
-> +	u8 val[NUM_SYS_POWERDOWN];
->  };
->  
->  struct exynos_pmu_data {
-
+> Youngjun Cho (1):
+>   ARM: dts: add board dts file for Exynos3250-based Monk board
+> 
+>  .../devicetree/bindings/arm/samsung-boards.txt     |  19 +-
+>  arch/arm/boot/dts/Makefile                         |   3 +-
+>  arch/arm/boot/dts/exynos3250-monk.dts              | 579 +++++++++++++++++++++
+>  arch/arm/boot/dts/exynos3250-rinato.dts            |   4 -
+>  4 files changed, 595 insertions(+), 10 deletions(-)
+>  create mode 100644 arch/arm/boot/dts/exynos3250-monk.dts
+> 
 Applied, thanks.
 
 - Kukjin
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
