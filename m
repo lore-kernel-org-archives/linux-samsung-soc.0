@@ -1,261 +1,82 @@
-From: Krishna Mohan Dani <krishna.md@samsung.com>
-Subject: [PATCH] ASoC: Samsung: Add arndale_rt5631 machine driver and binding
-Date: Wed, 26 Nov 2014 14:53:04 +0530
-Message-ID: <1416993784-29239-1-git-send-email-krishna.md@samsung.com>
+From: Heesub Shin <heesub.shin@samsung.com>
+Subject: Re: [RFC] ARM: exynos: MCPM: [is this a] fix for secondary boot on 5422?
+Date: Wed, 26 Nov 2014 09:35:29 +0000 (UTC)
+Message-ID: <loom.20141126T100245-113@post.gmane.org>
+References: <1416896510-24612-1-git-send-email-khilman@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:24516 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750914AbaKZJXR (ORCPT
+Received: from plane.gmane.org ([80.91.229.3]:38283 "EHLO plane.gmane.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750988AbaKZJkG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Nov 2014 04:23:17 -0500
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NFN00I8K3ER7710@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 26 Nov 2014 18:23:15 +0900 (KST)
+	Wed, 26 Nov 2014 04:40:06 -0500
+Received: from list by plane.gmane.org with local (Exim 4.69)
+	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
+	id 1XtZ4u-00044l-PA
+	for linux-samsung-soc@vger.kernel.org; Wed, 26 Nov 2014 10:40:05 +0100
+Received: from 210.94.41.89 ([210.94.41.89])
+        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
+        id 1AlnuQ-0007hv-00
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2014 10:40:04 +0100
+Received: from heesub.shin by 210.94.41.89 with local (Gmexim 0.1 (Debian))
+        id 1AlnuQ-0007hv-00
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2014 10:40:04 +0100
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
-Cc: kgene.kim@samsung.com, broonie@kernel.org, Claude Youn <claude.youn@gmail.com>
+To: linux-samsung-soc@vger.kernel.org
 
-Adding machine driver to instantiate I2S based realtek's ALC5631
-sound card on Arndale board.
+Kevin Hilman <khilman <at> kernel.org> writes:
 
-There are other variants of Audio Daughter Cards for Arndale
-Board for which support already exists but there is no support for
-Realtek's alc5631 codec hence support for ALC5631 based machine
-driver is being added.
-This patch also documents the device tree binding for the Arndale
-board based machine driver.
+> 
+> From: Kevin Hilman <khilman <at> linaro.org>
+> 
+> Using the current exynos_defconfig on the exynos5422-odroid-xu3, only
+> 6 of 8 CPUs come online with MCPM boot.  CPU0 is an A7, CPUs 1-4 are
+> A15s and CPU5-7 are the other A7s, but with the current code, CPUs 5
+> and 7 do not boot:
+> 
+>    [...]
+>    Exynos MCPM support installed
+>    CPU1: update cpu_capacity 1535
+>    CPU1: thread -1, cpu 0, socket 0, mpidr 80000000
+>    CPU2: update cpu_capacity 1535
+>    CPU2: thread -1, cpu 1, socket 0, mpidr 80000001
+>    CPU3: update cpu_capacity 1535
+>    CPU3: thread -1, cpu 2, socket 0, mpidr 80000002
+>    CPU4: update cpu_capacity 1535
+>    CPU4: thread -1, cpu 3, socket 0, mpidr 80000003
+>    CPU5: failed to come online
+>    CPU6: update cpu_capacity 448
+>    CPU6: thread -1, cpu 2, socket 1, mpidr 80000102
+>    CPU7: failed to come online
+>    Brought up 6 CPUs
+>    CPU: WARNING: CPU(s) started in wrong/inconsistent modes
+>    (primary CPU mode 0x13)
+>    CPU: This may indicate a broken bootloader or firmware.
+> 
+> Thanks to a tip from Abhilash, this patch gets all 8 CPUs booting
+> again, but the warning about CPUs started in inconsistent modes
+> remains.  Also, not being terribly familiar with Exynos internals,
+> it's not at all obvious to me why this register write (done for *all*
+> secondaries) makes things work works for the 2 secondary CPUs that
+> didn't come online.  It's also not obvious whether this is the right
+> general fix, since it doesn't seem to be needed on other 542x or 5800
+> platforms.
 
-Signed-off-by: Claude Youn <claude.youn@gmail.com>
-Signed-off-by: Krishna Mohan Dani <krishna.md@samsung.com>
----
- .../devicetree/bindings/sound/arndale.txt          |   24 ++++
- sound/soc/samsung/Kconfig                          |    6 +
- sound/soc/samsung/Makefile                         |    2 +
- sound/soc/samsung/arndale_rt5631.c                 |  150 ++++++++++++++++++++
- 4 files changed, 182 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/arndale.txt
- create mode 100644 sound/soc/samsung/arndale_rt5631.c
+Hi,
 
-diff --git a/Documentation/devicetree/bindings/sound/arndale.txt b/Documentation/devicetree/bindings/sound/arndale.txt
-new file mode 100644
-index 0000000..0e76946
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/arndale.txt
-@@ -0,0 +1,24 @@
-+Audio Binding for Arndale boards
-+
-+Required properties:
-+- compatible : Can be the following,
-+			"samsung,arndale-rt5631"
-+
-+- samsung,audio-cpu: The phandle of the Samsung I2S controller
-+- samsung,audio-codec: The phandle of the audio codec
-+
-+Optional:
-+- samsung,model: The name of the sound-card
-+
-+Arndale Boards has many audio daughter cards, one of them is
-+rt5631/alc5631. Below example shows audio bindings for rt5631/
-+alc5631 based codec.
-+
-+Example:
-+
-+sound {
-+		compatible = "samsung,arndale-rt5631";
-+
-+		samsung,audio-cpu = <&i2s0>
-+		samsung,audio-codec = <&rt5631>;
-+};
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index 55a3869..80b5c61 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -239,3 +239,9 @@ config SND_SOC_ODROIDX2
- 	select SND_SAMSUNG_I2S
- 	help
- 	  Say Y here to enable audio support for the Odroid-X2/U3.
-+
-+config SND_SOC_ARNDALE_RT5631_ALC5631
-+        tristate "Audio support for RT5631(ALC5631) on Arndale Board"
-+        depends on SND_SOC_SAMSUNG
-+        select SND_SAMSUNG_I2S
-+        select SND_SOC_RT5631
-diff --git a/sound/soc/samsung/Makefile b/sound/soc/samsung/Makefile
-index 91505dd..31e3dba 100644
---- a/sound/soc/samsung/Makefile
-+++ b/sound/soc/samsung/Makefile
-@@ -45,6 +45,7 @@ snd-soc-lowland-objs := lowland.o
- snd-soc-littlemill-objs := littlemill.o
- snd-soc-bells-objs := bells.o
- snd-soc-odroidx2-max98090-objs := odroidx2_max98090.o
-+snd-soc-arndale-rt5631-objs := arndale_rt5631.o
- 
- obj-$(CONFIG_SND_SOC_SAMSUNG_JIVE_WM8750) += snd-soc-jive-wm8750.o
- obj-$(CONFIG_SND_SOC_SAMSUNG_NEO1973_WM8753) += snd-soc-neo1973-wm8753.o
-@@ -71,3 +72,4 @@ obj-$(CONFIG_SND_SOC_LOWLAND) += snd-soc-lowland.o
- obj-$(CONFIG_SND_SOC_LITTLEMILL) += snd-soc-littlemill.o
- obj-$(CONFIG_SND_SOC_BELLS) += snd-soc-bells.o
- obj-$(CONFIG_SND_SOC_ODROIDX2) += snd-soc-odroidx2-max98090.o
-+obj-$(CONFIG_SND_SOC_ARNDALE_RT5631_ALC5631) += snd-soc-arndale-rt5631.o
-diff --git a/sound/soc/samsung/arndale_rt5631.c b/sound/soc/samsung/arndale_rt5631.c
-new file mode 100644
-index 0000000..1e2b61c
---- /dev/null
-+++ b/sound/soc/samsung/arndale_rt5631.c
-@@ -0,0 +1,150 @@
-+/*
-+ *  arndale_rt5631.c
-+ *
-+ *  Copyright (c) 2014, Insignal Co., Ltd.
-+ *
-+ *  Author: Claude <claude@insginal.co.kr>
-+ *
-+ *  This program is free software; you can redistribute  it and/or modify it
-+ *  under  the terms of  the GNU General  Public License as published by the
-+ *  Free Software Foundation;  either version 2 of the  License, or (at your
-+ *  option) any later version.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/clk.h>
-+
-+#include <sound/soc.h>
-+#include <sound/soc-dapm.h>
-+#include <sound/pcm.h>
-+#include <sound/pcm_params.h>
-+
-+#include "i2s.h"
-+
-+static int arndale_hw_params(struct snd_pcm_substream *substream,
-+	struct snd_pcm_hw_params *params)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct snd_soc_dai *cpu_dai = rtd->cpu_dai;
-+	struct snd_soc_dai *codec_dai = rtd->codec_dai;
-+	int rfs, ret;
-+	unsigned long rclk;
-+
-+	rfs = 256;
-+
-+	rclk = params_rate(params) * rfs;
-+
-+	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_CDCLK,
-+					0, SND_SOC_CLOCK_OUT);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = snd_soc_dai_set_sysclk(cpu_dai, SAMSUNG_I2S_RCLKSRC_0,
-+					0, SND_SOC_CLOCK_OUT);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = snd_soc_dai_set_sysclk(codec_dai, 0, rclk, SND_SOC_CLOCK_OUT);
-+	if (ret < 0)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static struct snd_soc_ops arndale_ops = {
-+	.hw_params = arndale_hw_params,
-+};
-+
-+static struct snd_soc_dai_link arndale_rt5631_dai[] = {
-+	{
-+		.name = "RT5631 HiFi",
-+		.stream_name = "Primary",
-+		.codec_dai_name = "rt5631-hifi",
-+		.dai_fmt = SND_SOC_DAIFMT_I2S
-+			| SND_SOC_DAIFMT_NB_NF
-+			| SND_SOC_DAIFMT_CBS_CFS,
-+		.ops = &arndale_ops,
-+	},
-+};
-+
-+static struct snd_soc_card arndale_rt5631 = {
-+	.name = "Arndale RT5631",
-+	.dai_link = arndale_rt5631_dai,
-+	.num_links = ARRAY_SIZE(arndale_rt5631_dai),
-+};
-+
-+static int arndale_audio_probe(struct platform_device *pdev)
-+{
-+	int n, ret;
-+	struct device_node *np = pdev->dev.of_node;
-+	struct snd_soc_card *card = &arndale_rt5631;
-+
-+	card->dev = &pdev->dev;
-+
-+	for (n = 0; np && n < ARRAY_SIZE(arndale_rt5631_dai); n++) {
-+		if (!arndale_rt5631_dai[n].cpu_dai_name) {
-+			arndale_rt5631_dai[n].cpu_of_node = of_parse_phandle(np,
-+					"samsung,audio-cpu", n);
-+
-+			if (!arndale_rt5631_dai[n].cpu_of_node) {
-+				dev_err(&pdev->dev,
-+				"Property 'samsung,audio-cpu' missing or invalid\n");
-+				return -EINVAL;
-+			}
-+		}
-+		if (!arndale_rt5631_dai[n].platform_name)
-+			arndale_rt5631_dai[n].platform_of_node =
-+					arndale_rt5631_dai[n].cpu_of_node;
-+
-+		arndale_rt5631_dai[n].codec_name = NULL;
-+		arndale_rt5631_dai[n].codec_of_node = of_parse_phandle(np,
-+					"samsung,audio-codec", n);
-+		if (!arndale_rt5631_dai[0].codec_of_node) {
-+			dev_err(&pdev->dev,
-+			"Property 'samsung,audio-codec' missing or invalid\n");
-+			return -EINVAL;
-+		}
-+	}
-+
-+	ret = devm_snd_soc_register_card(card->dev, card);
-+
-+	if (ret)
-+		dev_err(&pdev->dev, "snd_soc_register_card() failed:%d\n", ret);
-+
-+	return ret;
-+}
-+
-+static int arndale_audio_remove(struct platform_device *pdev)
-+{
-+	struct snd_soc_card *card = platform_get_drvdata(pdev);
-+
-+	snd_soc_unregister_card(card);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id samsung_arndale_rt5631_of_match[] __maybe_unused = {
-+	{ .compatible = "samsung,arndale-rt5631", },
-+	{ .compatible = "samsung,arndale-alc5631", },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, samsung_arndale_rt5631_of_match);
-+
-+static struct platform_driver arndale_audio_driver = {
-+	.driver = {
-+		.name   = "arndale-audio",
-+		.owner  = THIS_MODULE,
-+		.pm = &snd_soc_pm_ops,
-+		.of_match_table = of_match_ptr(samsung_arndale_rt5631_of_match),
-+	},
-+	.probe = arndale_audio_probe,
-+	.remove = arndale_audio_remove,
-+};
-+
-+module_platform_driver(arndale_audio_driver);
-+
-+MODULE_AUTHOR("Claude <claude@insignal.co.kr>");
-+MODULE_DESCRIPTION("ALSA SoC Driver for Arndale Board");
-+MODULE_LICENSE("GPL");
--- 
-1.7.9.5
+Very interesting to see your post. I was also suffering from the same 
+problem with my Odroid-XU3 board. With your patch 8 CPUs are brought up, 
+but Cortex-A15 CPUs are always offline, showing low performance.
+
+heesub@odroid:~$ cat /sys/devices/system/cpu/online
+0,5-7
+heesub@odroid:~$ cat /sys/devices/system/cpu/offline
+1-4
+
+Any suggestion?
+
+Thanks a lot!!
+Heesub
