@@ -1,69 +1,67 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH v12 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
-Date: Wed, 26 Nov 2014 10:27:11 -0800
-Message-ID: <7hlhmxes1s.fsf@deeprootsystems.com>
-References: <1416576682-5255-1-git-send-email-thomas.ab@samsung.com>
-	<7hioi4l92v.fsf@deeprootsystems.com>
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH] ARM: exynos_defconfig: disable CONFIG_EXYNOS5420_MCPM;
+ not stable
+Date: Wed, 26 Nov 2014 13:41:20 -0500 (EST)
+Message-ID: <alpine.LFD.2.11.1411261314310.11690@knanqh.ubzr>
+References: <1414796382-5447-1-git-send-email-khilman@kernel.org> <000e01cffb39$5ef0a2d0$1cd1e870$@kernel.org> <7hegtaq26c.fsf@deeprootsystems.com> <CAMAWPa-mLAFL7v8hHA5R-eBzpMFK-E-xcvjoV8Bn6tTwgP53Uw@mail.gmail.com> <CAOesGMhvTDN4J6AdUDHKV0Sp4NT6a4QEMUDWOayQqhhD+C4acw@mail.gmail.com>
+ <CAMAWPa-sz5jT9izEONVZR2Z4mzuivKaNHSgyR+eP13tWZ84hYw@mail.gmail.com> <CAOesGMgSkJ8xkBgN7OpuDzT=ehaAd6kvbx5_tC50x78pvpkTwg@mail.gmail.com> <CAOesGMh-7md4PdQX1Wvk0jO+87j+fxSvBnVD_osjNd2zQ4L43w@mail.gmail.com> <044101d00852$3f421420$bdc63c60$@kernel.org>
+ <CAMAWPa-qk0DEmPNz5LZgJq9AuGhRxuY00XwxtEikt_vh-iozVg@mail.gmail.com> <CAM4voa==Ram0xXTL=SnKktyRt7VFphQxBJgcf9Yi9Zio0QctHw@mail.gmail.com> <7hvbm2ixmo.fsf@deeprootsystems.com> <CAM4voa=budowQ+vnCAQhWj95Hx+yBnRAaDrFrjkQa2ubjrRwUQ@mail.gmail.com>
+ <7hmw7dg81l.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <7hioi4l92v.fsf@deeprootsystems.com> (Kevin Hilman's message of
-	"Mon, 24 Nov 2014 10:58:16 -0800")
-Sender: linux-pm-owner@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com, linux-samsung-soc@vger.kernel.org, mturquette@linaro.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, l.majewski@samsung.com, viresh.kumar@linaro.org, heiko@sntech.de, cw00.choi@samsung.com
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f46.google.com ([209.85.192.46]:57991 "EHLO
+	mail-qg0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750828AbaKZSlY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 26 Nov 2014 13:41:24 -0500
+Received: by mail-qg0-f46.google.com with SMTP id z107so2443619qgd.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2014 10:41:23 -0800 (PST)
+In-Reply-To: <7hmw7dg81l.fsf@deeprootsystems.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Kevin Hilman <khilman@kernel.org> writes:
+On Wed, 26 Nov 2014, Kevin Hilman wrote:
 
-> Hi Thomas,
->
-> Thomas Abraham <thomas.ab@samsung.com> writes:
->
->> Changes since v11:
->> - Rebased on top of git://linuxtv.org/snawrocki/samsung.git for-v3.19-exynos-clk
->
-> Thanks for rebasing/reposting.
->
->> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
->> drivers and enables the use of cpufreq-dt driver for these platforms. This
->> series also enables cpufreq support for Exynos5420 using arm_big_little cpufreq
->> driver.
->>
->> This series is based on the following branch.
->> git://linuxtv.org/snawrocki/samsung.git for-v3.19-exynos-clk
->>
->> This series depends on the following patch which can be picked from
->> git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git samsung/dt
->> e540920cf21c (ARM: dts: add CPU nodes for Exynos4 SoCs).
->>
->> This patch series has been tested on Exynos4210/5250/5420 based boards.
->> Tomasz Figa had plans to take this in the Samsung clock tree for v3.19
->> (http://www.spinics.net/lists/linux-samsung-soc/msg37933.html).
->> Sylwester, could you consider to merge this in your tree?
->
-> I tested this on exynos5800-peach-pi, and noticed a few things.
->
-> First, since voltage scaling is not currently supported, the CPU cluster
-> regulators (vdd_arm, and vdd_kfc) have to be set at sufficietnly high
-> voltage to support all the OPPs, otherwise things will likely hang.  I
-> think you should include something like the patch below[1] in this
-> series as well.
->
-> Second, as with earlier versions of this series, I'm still seeing lots
-> of "wait_until_divider_stable: timeout in divider stablization" messages
-> coming out when running powertop.
+> Abhilash Kesavan <kesavan.abhilash@gmail.com> writes:
+> 
+> > Hi Kevin,
+> >
+> > On Wed, Nov 26, 2014 at 6:30 AM, Kevin Hilman <khilman@kernel.org> wrote:
+> >> [...]
+> >>
+> >> More specifically, with only the loopback call to turn off CCI commented
+> >> out, the imprecise aborts go away.
+> >
+> > I can't see how enabling snoops for the boot cluster is causing these
+> > aborts. Perhaps as Krzysztof commented it has something to do with the
+> > secure firmware/tz software on these boards ? Other than there does
+> > not appear to be any difference between the working/non-working
+> > setups.
+> 
+> Perhaps the secure firmware is preventing the CCI to be enabled by the
+> kernel, and that is causing the imprecise abort?
 
-And, I just found another issue:
+That is well possible.
 
-On exynos5800-peach-pi, setting the cpufreq default governor to
-performance at compile time (CONFIG_CPU_FREQ_DEFAULT_GOV_PERFORMANCE=y)
-makes the kernel boot hang when the cpufreq driver is initialized.
+Now...... if the bootloader/firmware does not let Linux deal with both 
+the CCI and caches then MCPM simply has no more purpose for this board.  
+The whole point of MCPM is actually to handle the CCI properly and the 
+most efficient way despite all the possible races and opportunities for 
+memory corruptions. And yes, this is a complex task.
 
-However, setting the compile-time default to the userspace governor, and
-then setting the performance governor via sysfs after the boot finishes
-seems to work fine.
+So there is actually two choices: the firmware let Linux take care of it 
+via the MCPM layer (easy), or the firmware has to implement it all 
+_properly_ (hard) behind an interface such as PSCI, at which point MCPM 
+should be configured out.
 
-Kevin
+If the firmware does not let Linux interact with the CCI _and_ does not 
+implement full MCPM-like services then the platform is broken and only a 
+firmware upgrade could fix that.  It might still be possible to boot all 
+CPUs through other means, but power management would then be severely 
+limited.
 
 
+Nicolas
