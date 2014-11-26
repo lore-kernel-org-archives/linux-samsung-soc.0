@@ -1,46 +1,53 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH 2/3] regulator: max77802: Fill regulator modes
- translation callback
-Date: Wed, 26 Nov 2014 19:43:34 +0000
-Message-ID: <20141126194334.GW7712@sirena.org.uk>
-References: <1415707485-28563-1-git-send-email-javier.martinez@collabora.co.uk>
- <1415707485-28563-3-git-send-email-javier.martinez@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HvxUWqUQYk36AMou"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1415707485-28563-3-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Olof Johansson <olof@lixom.net>, Chris Zhong <zyw@rock-chips.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH 0/6] drm/exynos: remove struct exynos_drm_manager
+Date: Wed, 26 Nov 2014 19:08:59 -0200
+Message-ID: <1417036145-11017-1-git-send-email-gustavo@padovan.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f178.google.com ([209.85.216.178]:58669 "EHLO
+	mail-qc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751028AbaKZVJP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 26 Nov 2014 16:09:15 -0500
+Received: by mail-qc0-f178.google.com with SMTP id b13so3061863qcw.9
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2014 13:09:14 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
---HvxUWqUQYk36AMou
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Following the removal of struct exynos_drm_overlay we now remove the manager
+one as well. This remove another abstrastraction layer from exynos drm.
+We can now use known names like CRTC and Planes instead of manager and overlay.
 
-On Tue, Nov 11, 2014 at 01:04:44PM +0100, Javier Martinez Canillas wrote:
-> The max77802 PMIC regulators output can be configured in one of two
-> modes: Output ON (normal) and Output ON in Low Power Mode. Some of
+This patchset along with the ones I sent before[0][1] also helps clear the path for
+the upcoming atomic modesetting work.
 
-Applied, thanks.
+The patchset is based on the other 2 patchset. So be sure to apply them first
+or pick everything from here:
 
---HvxUWqUQYk36AMou
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+https://git.kernel.org/cgit/linux/kernel/git/padovan/drm-exynos.git/log/?h=cleanup-try2
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+[0] http://www.spinics.net/lists/linux-samsung-soc/msg39502.html
+[1] http://www.spinics.net/lists/linux-samsung-soc/msg39614.html
 
-iQEcBAEBAgAGBQJUdi1lAAoJECTWi3JdVIfQqO8H/ifaTgiQYAOHIoHtMRgpS2+w
-VpmdaYOtReg2WDDJ6q7lIO8tGmFPRj6wtnbNT7gKKXPmy5VrjKKVxCgXLMtIWb+/
-v5XfPmf+WXxtEPqUpxqnepBN0bgMdXOa7SMCnHgghrjwtuDHS5LI/HDiTfJMWmlN
-dq59dvCkuojtGQY7WRn4tOVWqaKsC0zwBipghpUB+pXJnbIfJze7t5LDBwKaNXxR
-8gmxQdNTq5PEfhui0ptsnoVoc7zP66Hwf70hNybxD09i/uarwO1GdpZnFl6C9oKR
-5C4fwYe9x54KDqMSoJtpspyd/0c4IXdRWCNIDhoqBELl3J7hEIlebl7Dic3zN/I=
-=aeW3
------END PGP SIGNATURE-----
+Gustavo Padovan (6):
+  drm/exynos: rename base object of struct exynos_drm_crtc to 'base'
+  drm/exynos: add pipe param to exynos_drm_crtc_create()
+  drm/exynos: remove pipe member of struct exynos_drm_manager
+  drm/exynos: move 'type' from manager to crtc struct
+  drm/exynos: remove drm_dev from struct exynos_drm_manager
+  drm/exynos: remove struct exynos_drm_manager
 
---HvxUWqUQYk36AMou--
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c  |  82 +++++++++----------
+ drivers/gpu/drm/exynos/exynos_drm_crtc.h  |   6 +-
+ drivers/gpu/drm/exynos/exynos_drm_drv.h   |  65 ++++++---------
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c  | 127 ++++++++++++++----------------
+ drivers/gpu/drm/exynos/exynos_drm_plane.c |  26 +++---
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c  |  85 +++++++++-----------
+ drivers/gpu/drm/exynos/exynos_mixer.c     | 109 ++++++++++++-------------
+ 7 files changed, 234 insertions(+), 266 deletions(-)
+
+-- 
+1.9.3
