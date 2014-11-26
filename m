@@ -1,175 +1,46 @@
-From: Alim Akhtar <alim.akhtar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V2 2/2] arm64: exynos: Add bus1 pinctrl node on exynos7
-Date: Wed, 26 Nov 2014 18:59:01 +0530
-Message-ID: <CAGOxZ52XtT-Aq-HJFq7GAzfAq6GEdrzKeez_=fwJR-Z2rkUF+g@mail.gmail.com>
-References: <CAGOxZ53TUvZhSDLfeCuyvBwVcrkQhFnftQzk1DbkU_krdoFbZA@mail.gmail.com>
- <1416834381-11314-1-git-send-email-gautam.vivek@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1416834381-11314-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-usb <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, robh+dt <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Jaewon Kim <jaewon02.kim@samsung.com>
+Subject: [PATCH v3 0/2] Add regulator-haptic driver
+Date: Wed, 26 Nov 2014 22:30:00 +0900
+Message-ID: <1417008602-22841-1-git-send-email-jaewon02.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:40670 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752623AbaKZNaH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 26 Nov 2014 08:30:07 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Jaewon Kim <jaewon02.kim@samsung.com>
 
-Hi Vivek,
+This patch series adds regulator-haptic driver.
+The regulator-haptic has haptic motor and it is controlled by
+voltage of regulator via force feedback framework.
 
-On Mon, Nov 24, 2014 at 6:36 PM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> BUS1 pinctrl provides gpios for usb and power regulator
-> available on exynos7-espresso board. So add relevant device
-> node for pinctrl-bus1.
->
-> Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> ---
->
-Looks good to me.
-Reviewed-by: Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Changes in v3:
+  - fix typo in Documentation
+  - add define in header file
 
-> This patch was part of series:
-> "[PATCH 00/11] Exynos7: Adding USB 3.0 support"
->  https://lkml.org/lkml/2014/11/21/247
->
-> Changes since V1:
->  - Added support for all pin banks which are part of BUS1 pin controller.
->
->  arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi |   82 +++++++++++++++++++++++
->  arch/arm64/boot/dts/exynos/exynos7.dtsi         |    7 ++
->  2 files changed, 89 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
-> index 2eef4a2..c367f0a 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
-> @@ -335,6 +335,88 @@
->         };
->  };
->
-> +&pinctrl_bus1 {
-> +       gpf0: gpf0 {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +
-> +       gpf1: gpf1 {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +
-> +       gpf2: gpf2 {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +
-> +       gpf3: gpf3 {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +
-> +       gpf4: gpf4 {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +
-> +       gpf5: gpf5 {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +
-> +       gpg1: gpg1 {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +
-> +       gpg2: gpg2 {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +
-> +       gph1: gph1 {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +
-> +       gpv6: gpv6 {
-> +               gpio-controller;
-> +               #gpio-cells = <2>;
-> +
-> +               interrupt-controller;
-> +               #interrupt-cells = <2>;
-> +       };
-> +};
-> +
->  &pinctrl_nfc {
->         gpj0: gpj0 {
->                 gpio-controller;
-> diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> index 1d9e4c9..e633b02 100644
-> --- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> +++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
-> @@ -26,6 +26,7 @@
->                 pinctrl5 = &pinctrl_ese;
->                 pinctrl6 = &pinctrl_fsys0;
->                 pinctrl7 = &pinctrl_fsys1;
-> +               pinctrl8 = &pinctrl_bus1;
->         };
->
->         cpus {
-> @@ -242,6 +243,12 @@
->                         interrupts = <0 383 0>;
->                 };
->
-> +               pinctrl_bus1: pinctrl@14870000 {
-> +                       compatible = "samsung,exynos7-pinctrl";
-> +                       reg = <0x14870000 0x1000>;
-> +                       interrupts = <0 384 0>;
-> +               };
-> +
->                 pinctrl_nfc: pinctrl@14cd0000 {
->                         compatible = "samsung,exynos7-pinctrl";
->                         reg = <0x14cd0000 0x1000>;
-> --
-> 1.7.10.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Changes in v2:
+  - remove driver owner
+  - merge enable/disable function
+  - support platform data
+ - fix wrong suspends_state check in regulator_haptic_resume()
 
+Jaewon Kim (2):
+  Input: add regulator haptic driver
+  ARM: dts: Add regulator-haptic device node for exynos3250-rinato
 
+ .../devicetree/bindings/input/regulator-haptic.txt |   21 ++
+ arch/arm/boot/dts/exynos3250-rinato.dts            |    7 +
+ drivers/input/misc/Kconfig                         |   11 +
+ drivers/input/misc/Makefile                        |    1 +
+ drivers/input/misc/regulator-haptic.c              |  247 ++++++++++++++++++++
+ include/linux/input/regulator-haptic.h             |   31 +++
+ 6 files changed, 318 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/regulator-haptic.txt
+ create mode 100644 drivers/input/misc/regulator-haptic.c
+ create mode 100644 include/linux/input/regulator-haptic.h
 
 -- 
-Regards,
-Alim
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.7.9.5
