@@ -1,155 +1,103 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH] ARM: exynos_defconfig: disable CONFIG_EXYNOS5420_MCPM; not stable
-Date: Tue, 25 Nov 2014 17:00:47 -0800
-Message-ID: <7hvbm2ixmo.fsf@deeprootsystems.com>
-References: <1414796382-5447-1-git-send-email-khilman@kernel.org>
-	<000e01cffb39$5ef0a2d0$1cd1e870$@kernel.org>
-	<7hegtaq26c.fsf@deeprootsystems.com>
-	<CAMAWPa-mLAFL7v8hHA5R-eBzpMFK-E-xcvjoV8Bn6tTwgP53Uw@mail.gmail.com>
-	<CAOesGMhvTDN4J6AdUDHKV0Sp4NT6a4QEMUDWOayQqhhD+C4acw@mail.gmail.com>
-	<CAMAWPa-sz5jT9izEONVZR2Z4mzuivKaNHSgyR+eP13tWZ84hYw@mail.gmail.com>
-	<CAOesGMgSkJ8xkBgN7OpuDzT=ehaAd6kvbx5_tC50x78pvpkTwg@mail.gmail.com>
-	<CAOesGMh-7md4PdQX1Wvk0jO+87j+fxSvBnVD_osjNd2zQ4L43w@mail.gmail.com>
-	<044101d00852$3f421420$bdc63c60$@kernel.org>
-	<CAMAWPa-qk0DEmPNz5LZgJq9AuGhRxuY00XwxtEikt_vh-iozVg@mail.gmail.com>
-	<CAM4voa==Ram0xXTL=SnKktyRt7VFphQxBJgcf9Yi9Zio0QctHw@mail.gmail.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v2 1/2] Input: add regulator haptic driver
+Date: Wed, 26 Nov 2014 11:01:43 +0530
+Message-ID: <547565BF.3040304@samsung.com>
+References: <1416840651-17141-1-git-send-email-jaewon02.kim@samsung.com>
+ <1416840651-17141-2-git-send-email-jaewon02.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:56796 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751002AbaKZBAu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Nov 2014 20:00:50 -0500
-Received: by mail-pa0-f45.google.com with SMTP id lj1so1691031pab.18
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2014 17:00:49 -0800 (PST)
-In-Reply-To: <CAM4voa==Ram0xXTL=SnKktyRt7VFphQxBJgcf9Yi9Zio0QctHw@mail.gmail.com>
-	(Abhilash Kesavan's message of "Tue, 25 Nov 2014 11:31:18 +0530")
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-input-owner@vger.kernel.org>
+In-reply-to: <1416840651-17141-2-git-send-email-jaewon02.kim@samsung.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Jaewon Kim <jaewon02.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Dan Murphy <dmurphy@ti.com>, Chanwoo Choi <cw00.choi@samsung.com>, Hyunhee Kim <hyunhee.kim@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Abhilash,
+Hi Jaewon,
 
-Abhilash Kesavan <kesavan.abhilash@gmail.com> writes:
-
-[...]
-
->>> To be honest, since I don't have the exynos5420 arndale, chromebook...but smdk
->>> which has different bootloader, I couldn't test it...I'll try to make a test
->>> farm like you guys...
->>
->> Do you have some colleagues with any other 542x hardware?  I had
->> assumed that linux-next was being better tested on the publicaly
->> available, and widely available boards like odroid-xu3 and
->> Chromebook2, but I've come to realize the hard way that that is not
+On Monday 24 November 2014 08:20 PM, Jaewon Kim wrote:
+> This patch adds support for haptic driver controlled by
+> voltage of regulator. And this driver support for
+> Force Feedback interface from input framework
 >
-> Are you seeing this on Chromebook2 (Peach-Pi 5800) too ?
-
-No, it seems that my exynos5800-peach-pi is not having this problem,
-which suggests it's a bootloader setup issue.
-
->> the case.  You mention your board has a different bootloader.  Do you
->> suspect there's a bootloader issue on these other platforms?  If so,
->> could you elaborate on possible fixes?  I'm more than willing to test
->> any proposed fixes, but I'm not familiar enough yet with these SoCs to
->> figure out the underlying issues alone.
->>
->> Until you have a working board farm, you could start having a closer
->> look at the boot logs we're already producing.  Admittedly linux-next
->> broken in many ways besides this one for exynos currently, but it has
->> been having these imprecise aborts well before the other recent
->> issues.
->>
->> Also, It's very possible that this issue is not even MCPM related at
->> all, and MCPM is just uncovering a previously hidden bug.  It would be
->> very helpful if people more familiar with this hardware and SoC would
->> investigate bug reports like these.
+> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+> Signed-off-by: Hyunhee Kim <hyunhee.kim@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>   .../devicetree/bindings/input/regulator-haptic.txt |   24 ++
+>   drivers/input/misc/Kconfig                         |   11 +
+>   drivers/input/misc/Makefile                        |    1 +
+>   drivers/input/misc/regulator-haptic.c              |  247 ++++++++++++++++++++
+>   include/linux/input/regulator-haptic.h             |   30 +++
+>   5 files changed, 313 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/input/regulator-haptic.txt
+>   create mode 100644 drivers/input/misc/regulator-haptic.c
+>   create mode 100644 include/linux/input/regulator-haptic.h
 >
-> The 3 boards I have access to (SMDK5420, Chromebook Peach-Pi and
-> Chromebook Peach-Pit) work fine with MCPM enabled. 
+> diff --git a/Documentation/devicetree/bindings/input/regulator-haptic.txt b/Documentation/devicetree/bindings/input/regulator-haptic.txt
+> new file mode 100644
+> index 0000000..5a44e8f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/regulator-haptic.txt
+> @@ -0,0 +1,24 @@
+> +* Requlator Haptic Device Tree Bindings
 
-Thanks for helping look into this.
+Nit: %s/Requlator/Regulator
 
-> I am not sure why
-> it is failing only on the above mentioned boards as there is nothing
-> specific to them in the MCPM back-end.
+> +
+> +The regulator haptic driver controlled by voltage of regulator.
+> +This driver implemented via Force Feedback interface.
+> +
+
+[Snip]
+
+> diff --git a/include/linux/input/regulator-haptic.h b/include/linux/input/regulator-haptic.h
+> new file mode 100644
+> index 0000000..15a629c
+> --- /dev/null
+> +++ b/include/linux/input/regulator-haptic.h
+> @@ -0,0 +1,30 @@
+> +/*
+> + * Regulator Haptic Platform Data
+> + *
+> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> + * Author: Jaewon Kim <jaewon02.kim@samsung.com>
+> + * Author: Hyunhee Kim <hyunhee.kim@samsung.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef _REGULATOR_HAPTIC_H
+> +
+
+Please define _REGULATOR_HAPTIC_H here as:
+#define _REGULATOR_HAPTIC_H
+
+> +/*
+> + * struct regulator_haptic_data - Platform device data
+> + *
+> + * @regulator: Power supply to the haptic motor
+> + * @max_volt: maximum voltage value supplied to the haptic motor.
+> + * 		<The unit of the voltage is a micro>
+> + * @min_volt: minimum voltage value supplied to the haptic motor.
+> + * 		<The unit of the voltage is a micro>
+> + */
+> +struct regulator_haptic_data {
+> +	struct regulator *regulator;
+> +	unsigned int max_volt;
+> +	unsigned int min_volt;
+> +};
+> +
+> +#endif /* _REGULATOR_HAPTIC_H */
 >
-> I assume that when you default to platsmp (on disabling MCPM), the
-> non-working boards boot all cores upto userspace without any issues ?
 
-Nope.  With MCPM disabled:
+With these two minor fixes please feel free to add:
 
-  - 5420/arndale-octa: CPU0-3 come up (A15s)
-  - 5422/odroid-xu3: only CPU0 (A7)
-  - 5800/peach-pi: only CPU0 (A15)
+Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Note that with MCPM enabled, the arndale-octa gets the same result.
-Peach-pi on the other hand gets all 8 CPUs, and the odroid-xu3 only gets
-6/8 CPUs (see other thread on that topic.)
 
-> Based on the timeline (problems started about 2.5 months back), there
-> have only been a couple of changes in the 5420 MCPM back-end. Could
-> you revert the following commits and check if things improve.
->
-> 20fe6f9 ARM: EXYNOS: Support cluster power off on exynos5420/5800
-> fbb0499 ARM: 8083/1: exynos: activate the CCI on boot CPU/cluster
-> using the MCPM loopback
->
-> These might not revert cleanly, so instead of the above you could also
-> comment the following 2 lines:
->
->
-> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c
-> b/arch/arm/mach-exynos/mcpm-exynos.c
-> index dc9a764..9a07188 100644
-> --- a/arch/arm/mach-exynos/mcpm-exynos.c
-> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
-> @@ -152,7 +152,7 @@ static void exynos_power_down(void)
->                 exynos_cpu_power_down(cpunr);
->
->                 if (exynos_cluster_unused(cluster)) {
-> -                       exynos_cluster_power_down(cluster);
-> +                       //exynos_cluster_power_down(cluster);
->                         last_man = true;
->                 }
-2>         } else if (cpu_use_count[cpu][cluster] == 1) {
-> @@ -356,8 +356,8 @@ static int __init exynos_mcpm_init(void)
->         ret = mcpm_platform_register(&exynos_power_ops);
->         if (!ret)
->                 ret = mcpm_sync_init(exynos_pm_power_up_setup);
-> -       if (!ret)
-> -               ret = mcpm_loopback(exynos_cache_off); /* turn on the CCI */
-> +       //if (!ret)
-> +               //ret = mcpm_loopback(exynos_cache_off); /* turn on the CCI */
->         if (ret) {
->                 iounmap(ns_sram_base_addr);
->                 return ret;
->
->
->
-> If you still get aborts then I suspect that the problem is with the
-> bootloader configuration but am not sure. 
-
-Nice.  With those lines commented out, the arndale-octa is not geting
-imprecise aborts anymore, and this is the platform where those aborts
-seem to prevent booting into a full userspace (as originally reported by
-Tyler.)
-
-More specifically, with only the loopback call to turn off CCI commented
-out, the imprecise aborts go away.
-
-The odroid-xu3 is still getting them, but these seem to happen whether
-or not MCPM is enabled, so must a different issue related to the
-bootloader setup.
-
-> I am OK with disabling
-> 5420_MCPM in the default configuration in such a case. This would
-> however mean that S2R also stops working by default on 5420.
-
-Disabling the option isn't my first choice either, I would rather see
-this issue debugged and fixed by folks that are more familiar with MCPM
-on Exynos.
-
-Kevin
+Thanks,
+Pankaj Dubey
