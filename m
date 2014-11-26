@@ -1,82 +1,123 @@
-From: Heesub Shin <heesub.shin@samsung.com>
-Subject: Re: [RFC] ARM: exynos: MCPM: [is this a] fix for secondary boot on 5422?
-Date: Wed, 26 Nov 2014 09:35:29 +0000 (UTC)
-Message-ID: <loom.20141126T100245-113@post.gmane.org>
-References: <1416896510-24612-1-git-send-email-khilman@kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [PATCH] dmaengine: pl330: Set residue in tx_status callback
+Date: Wed, 26 Nov 2014 15:14:55 +0530
+Message-ID: <1416995095-13763-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from plane.gmane.org ([80.91.229.3]:38283 "EHLO plane.gmane.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750988AbaKZJkG (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:13296 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750848AbaKZJvw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Nov 2014 04:40:06 -0500
-Received: from list by plane.gmane.org with local (Exim 4.69)
-	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
-	id 1XtZ4u-00044l-PA
-	for linux-samsung-soc@vger.kernel.org; Wed, 26 Nov 2014 10:40:05 +0100
-Received: from 210.94.41.89 ([210.94.41.89])
-        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2014 10:40:04 +0100
-Received: from heesub.shin by 210.94.41.89 with local (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2014 10:40:04 +0100
+	Wed, 26 Nov 2014 04:51:52 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org
+Cc: vinod.koul@intel.com, broonie@kernel.org, lars@metafoo.de, Dylan Reid <dgreid@chromium.org>
 
-Kevin Hilman <khilman <at> kernel.org> writes:
+Fill txstate.residue with the amount of bytes remaining in the current
+transfer if the transfer is not complete.  This will be of particular
+use to i2s DMA transfers, providing more accurate hw_ptr values to ASoC.
 
-> 
-> From: Kevin Hilman <khilman <at> linaro.org>
-> 
-> Using the current exynos_defconfig on the exynos5422-odroid-xu3, only
-> 6 of 8 CPUs come online with MCPM boot.  CPU0 is an A7, CPUs 1-4 are
-> A15s and CPU5-7 are the other A7s, but with the current code, CPUs 5
-> and 7 do not boot:
-> 
->    [...]
->    Exynos MCPM support installed
->    CPU1: update cpu_capacity 1535
->    CPU1: thread -1, cpu 0, socket 0, mpidr 80000000
->    CPU2: update cpu_capacity 1535
->    CPU2: thread -1, cpu 1, socket 0, mpidr 80000001
->    CPU3: update cpu_capacity 1535
->    CPU3: thread -1, cpu 2, socket 0, mpidr 80000002
->    CPU4: update cpu_capacity 1535
->    CPU4: thread -1, cpu 3, socket 0, mpidr 80000003
->    CPU5: failed to come online
->    CPU6: update cpu_capacity 448
->    CPU6: thread -1, cpu 2, socket 1, mpidr 80000102
->    CPU7: failed to come online
->    Brought up 6 CPUs
->    CPU: WARNING: CPU(s) started in wrong/inconsistent modes
->    (primary CPU mode 0x13)
->    CPU: This may indicate a broken bootloader or firmware.
-> 
-> Thanks to a tip from Abhilash, this patch gets all 8 CPUs booting
-> again, but the warning about CPUs started in inconsistent modes
-> remains.  Also, not being terribly familiar with Exynos internals,
-> it's not at all obvious to me why this register write (done for *all*
-> secondaries) makes things work works for the 2 secondary CPUs that
-> didn't come online.  It's also not obvious whether this is the right
-> general fix, since it doesn't seem to be needed on other 542x or 5800
-> platforms.
+I had taken the code from Dylan Reid <dgreid@chromium.org> patch from the
+below link and modified according to the current dmaengine framework.
+http://comments.gmane.org/gmane.linux.kernel.samsung-soc/23007
 
-Hi,
+Cc: Dylan Reid <dgreid@chromium.org>
+Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+---
 
-Very interesting to see your post. I was also suffering from the same 
-problem with my Odroid-XU3 board. With your patch 8 CPUs are brought up, 
-but Cortex-A15 CPUs are always offline, showing low performance.
+This patch has been tested for audio playback on exynos5420 peach-pit.
 
-heesub@odroid:~$ cat /sys/devices/system/cpu/online
-0,5-7
-heesub@odroid:~$ cat /sys/devices/system/cpu/offline
-1-4
+ drivers/dma/pl330.c |   67 +++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 files changed, 65 insertions(+), 2 deletions(-)
 
-Any suggestion?
-
-Thanks a lot!!
-Heesub
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index b7493d2..db880ae 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -2182,11 +2182,74 @@ static void pl330_free_chan_resources(struct dma_chan *chan)
+ 	pm_runtime_put_autosuspend(pch->dmac->ddma.dev);
+ }
+ 
++static inline int
++pl330_src_addr_in_desc(struct dma_pl330_desc *desc, unsigned int sar)
++{
++	return ((desc->px.src_addr <= sar) &&
++		(sar <= (desc->px.src_addr + desc->px.bytes)));
++}
++
++static inline int
++pl330_dst_addr_in_desc(struct dma_pl330_desc *desc, unsigned int dar)
++{
++	return ((desc->px.dst_addr <= dar) &&
++		(dar <= (desc->px.dst_addr + desc->px.bytes)));
++}
++
+ static enum dma_status
+ pl330_tx_status(struct dma_chan *chan, dma_cookie_t cookie,
+ 		 struct dma_tx_state *txstate)
+ {
+-	return dma_cookie_status(chan, cookie, txstate);
++	dma_addr_t sar, dar;
++	struct dma_pl330_chan *pch = to_pchan(chan);
++	void __iomem *regs = pch->dmac->base;
++	struct pl330_thread *thrd = pch->thread;
++	struct dma_pl330_desc *desc;
++	unsigned int residue = 0;
++	unsigned long flags;
++	bool first = true;
++	dma_cookie_t first_c, current_c;
++	dma_cookie_t used;
++	enum dma_status ret;
++
++	ret = dma_cookie_status(chan, cookie, txstate);
++	if (ret == DMA_COMPLETE || !txstate)
++		return ret;
++
++	used = txstate->used;
++
++	spin_lock_irqsave(&pch->lock, flags);
++	sar = readl(regs + SA(thrd->id));
++	dar = readl(regs + DA(thrd->id));
++
++	list_for_each_entry(desc, &pch->work_list, node) {
++		if (desc->status == BUSY) {
++			current_c = desc->txd.cookie;
++			if (first) {
++				first_c = desc->txd.cookie;
++				first = false;
++			}
++
++			if (first_c < current_c)
++				residue += desc->px.bytes;
++			else {
++				if (desc->rqcfg.src_inc && pl330_src_addr_in_desc(desc, sar)) {
++					residue += desc->px.bytes;
++					residue -= sar - desc->px.src_addr;
++				} else if (desc->rqcfg.dst_inc && pl330_dst_addr_in_desc(desc, dar)) {
++					residue += desc->px.bytes;
++					residue -= dar - desc->px.dst_addr;
++				}
++			}
++		} else if (desc->status == PREP)
++			residue += desc->px.bytes;
++
++		if (desc->txd.cookie == used)
++			break;
++	}
++	spin_unlock_irqrestore(&pch->lock, flags);
++	dma_set_residue(txstate, residue);
++	return ret;
+ }
+ 
+ static void pl330_issue_pending(struct dma_chan *chan)
+@@ -2631,7 +2694,7 @@ static int pl330_dma_device_slave_caps(struct dma_chan *dchan,
+ 	caps->directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
+ 	caps->cmd_pause = false;
+ 	caps->cmd_terminate = true;
+-	caps->residue_granularity = DMA_RESIDUE_GRANULARITY_DESCRIPTOR;
++	caps->residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
+ 
+ 	return 0;
+ }
+-- 
+1.7.4.4
