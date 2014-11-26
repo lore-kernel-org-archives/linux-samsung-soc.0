@@ -1,91 +1,52 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH V2 1/2] pinctrl: exynos: Add BUS1 pin controller for exynos7
-Date: Wed, 26 Nov 2014 19:03:46 +0530
-Message-ID: <CAGOxZ51P30BY2sOhUeMRK64CGF1fNcc-63RCXiAqZ6Rgpv3K7Q@mail.gmail.com>
-References: <CAFp+6iF-N63YSsdv2a6=MYp_mD=eQY_Oi8=9JVNU5dG0BA7YGQ@mail.gmail.com>
- <1416834177-11170-1-git-send-email-gautam.vivek@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1416834177-11170-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-usb <linux-usb@vger.kernel.org>, devicetree@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, robh+dt <robh+dt@kernel.org>, kgene <kgene@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH v2 0/5] Fix Arndale Octa/Peach Pi boot on Audio subsystem clocks
+Date: Wed, 26 Nov 2014 15:24:12 +0100
+Message-ID: <1417011857-10419-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>
+Cc: Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Vivek,
+Hi,
 
-On Mon, Nov 24, 2014 at 6:32 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
-> USB and Power regulator on Exynos7 require gpios available
-> in BUS1 pin controller block.
-> So adding the BUS1 pinctrl support.
->
-> Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> ---
-Looks good to me.
-Thanks!
+Changes since v1
+================
+1. clocks-audss: Reimplement own clock register functions instead
+   changing clk API. Minor fixes. (after idea from Tomasz Figa)
+2. Add new patches: fix for pinctrl and minor fixes in clk-audss.
 
-Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+Description
+===========
+This patchset tries to solve dependency between AudioSS components
+(clocks and GPIO) and main clock controller on Exynos platform.
 
->
-> This patch was part of series:
-> "[PATCH 00/11] Exynos7: Adding USB 3.0 support"
->  https://lkml.org/lkml/2014/11/21/247
->
-> Changes since V1:
->  - Added support for all pin banks which are part of BUS1 pin controller.
->
->  drivers/pinctrl/samsung/pinctrl-exynos.c |   19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
->
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> index d5d4cfc..44e60dc 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> @@ -1300,6 +1300,20 @@ static const struct samsung_pin_bank_data exynos7_pin_banks7[] __initconst = {
->         EXYNOS_PIN_BANK_EINTG(8, 0x060, "gpr3", 0x0c),
->  };
->
-> +/* pin banks of exynos7 pin-controller - BUS1 */
-> +static const struct samsung_pin_bank_data exynos7_pin_banks8[] __initconst = {
-> +       EXYNOS_PIN_BANK_EINTG(8, 0x020, "gpf0", 0x00),
-> +       EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpf1", 0x04),
-> +       EXYNOS_PIN_BANK_EINTG(4, 0x060, "gpf2", 0x08),
-> +       EXYNOS_PIN_BANK_EINTG(5, 0x080, "gpf3", 0x0c),
-> +       EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpf4", 0x10),
-> +       EXYNOS_PIN_BANK_EINTG(8, 0x0c0, "gpf5", 0x14),
-> +       EXYNOS_PIN_BANK_EINTG(5, 0x0e0, "gpg1", 0x18),
-> +       EXYNOS_PIN_BANK_EINTG(5, 0x100, "gpg2", 0x1c),
-> +       EXYNOS_PIN_BANK_EINTG(6, 0x120, "gph1", 0x20),
-> +       EXYNOS_PIN_BANK_EINTG(3, 0x140, "gpv6", 0x24),
-> +};
-> +
->  const struct samsung_pin_ctrl exynos7_pin_ctrl[] __initconst = {
->         {
->                 /* pin-controller instance 0 Alive data */
-> @@ -1342,5 +1356,10 @@ const struct samsung_pin_ctrl exynos7_pin_ctrl[] __initconst = {
->                 .pin_banks      = exynos7_pin_banks7,
->                 .nr_banks       = ARRAY_SIZE(exynos7_pin_banks7),
->                 .eint_gpio_init = exynos_eint_gpio_init,
-> +       }, {
-> +               /* pin-controller instance 8 BUS1 data */
-> +               .pin_banks      = exynos7_pin_banks8,
-> +               .nr_banks       = ARRAY_SIZE(exynos7_pin_banks8),
-> +               .eint_gpio_init = exynos_eint_gpio_init,
->         },
->  };
-> --
-> 1.7.10.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This solves boot failure of Peach Pi/Pit and Arndale Octa [1].
+
+Any access to memory of audss block (like checking if clock is enabled
+or configuring GPIO) will hang if main audss clock is gated.
+
+Tested on Arndale Octa board.
+
+[1] http://www.spinics.net/lists/linux-samsung-soc/msg39331.html
+
+Best regards,
+Krzysztof Kozlowski
 
 
+Krzysztof Kozlowski (3):
+  clk: samsung: Fix clock disable failure because domain being gated
+  pinctrl: exynos: Fix GPIO setup failure because domain clock being
+    gated
+  ARM: dts: exynos5420: Add clock for audss pinctrl
+
+ .../bindings/pinctrl/samsung-pinctrl.txt           |   6 +
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |   3 +
+ drivers/clk/samsung/clk-exynos-audss.c             | 367 +++++++++++++++++++--
+ drivers/pinctrl/samsung/pinctrl-samsung.c          | 110 +++++-
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |   2 +
+ 5 files changed, 446 insertions(+), 42 deletions(-)
 
 -- 
-Regards,
-Alim
+1.9.1
+
