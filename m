@@ -1,99 +1,107 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 2/6] drm/exynos: add pipe param to exynos_drm_crtc_create()
-Date: Wed, 26 Nov 2014 19:09:01 -0200
-Message-ID: <1417036145-11017-3-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 3/6] drm/exynos: remove pipe member of struct exynos_drm_manager
+Date: Wed, 26 Nov 2014 19:09:02 -0200
+Message-ID: <1417036145-11017-4-git-send-email-gustavo@padovan.org>
 References: <1417036145-11017-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f53.google.com ([209.85.216.53]:48413 "EHLO
+	mail-qa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751028AbaKZVJY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 26 Nov 2014 16:09:24 -0500
+Received: by mail-qa0-f53.google.com with SMTP id bm13so2535788qab.12
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Nov 2014 13:09:24 -0800 (PST)
 In-Reply-To: <1417036145-11017-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-R2V0IHRoZSBwaXBlIHZhbHVlIGZyb20gYSBwYXJhbWV0ZXIgaW5zdGVhZCBvZiBnZXR0aW5nIGl0
-IGZyb20KbWFuYWdlci0+cGlwZS4gV2UgYXJlIHJlbW92aW5nIG1hbmFnZXItPnBpcGUuCgpTaWdu
-ZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28u
-dWs+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYyB8IDggKysr
-Ky0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmggfCAyICstCiBk
-cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIHwgMiArLQogZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYyB8IDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX21peGVyLmMgICAgfCAyICstCiA1IGZpbGVzIGNoYW5nZWQsIDggaW5zZXJ0
-aW9ucygrKSwgOCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5
-bm9zL2V4eW5vc19kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2NydGMuYwppbmRleCAxY2RmNzA1Li42OGFhZTM4IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9k
-cm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9jcnRjLmMKQEAgLTI5OSw3ICsyOTksNyBAQCBzdGF0aWMgdm9pZCBleHlub3Nf
-ZHJtX2NydGNfYXR0YWNoX21vZGVfcHJvcGVydHkoc3RydWN0IGRybV9jcnRjICpjcnRjKQogCWRy
-bV9vYmplY3RfYXR0YWNoX3Byb3BlcnR5KCZjcnRjLT5iYXNlLCBwcm9wLCAwKTsKIH0KIAotaW50
-IGV4eW5vc19kcm1fY3J0Y19jcmVhdGUoc3RydWN0IGV4eW5vc19kcm1fbWFuYWdlciAqbWFuYWdl
-cikKK2ludCBleHlub3NfZHJtX2NydGNfY3JlYXRlKHN0cnVjdCBleHlub3NfZHJtX21hbmFnZXIg
-Km1hbmFnZXIsIGludCBwaXBlKQogewogCXN0cnVjdCBleHlub3NfZHJtX2NydGMgKmV4eW5vc19j
-cnRjOwogCXN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lOwpAQCAtMzE2LDggKzMxNiw4IEBAIGludCBl
-eHlub3NfZHJtX2NydGNfY3JlYXRlKHN0cnVjdCBleHlub3NfZHJtX21hbmFnZXIgKm1hbmFnZXIp
-CiAKIAlleHlub3NfY3J0Yy0+ZHBtcyA9IERSTV9NT0RFX0RQTVNfT0ZGOwogCWV4eW5vc19jcnRj
-LT5tYW5hZ2VyID0gbWFuYWdlcjsKLQlleHlub3NfY3J0Yy0+cGlwZSA9IG1hbmFnZXItPnBpcGU7
-Ci0JcGxhbmUgPSBleHlub3NfcGxhbmVfaW5pdChtYW5hZ2VyLT5kcm1fZGV2LCAxIDw8IG1hbmFn
-ZXItPnBpcGUsCisJZXh5bm9zX2NydGMtPnBpcGUgPSBwaXBlOworCXBsYW5lID0gZXh5bm9zX3Bs
-YW5lX2luaXQobWFuYWdlci0+ZHJtX2RldiwgMSA8PCBwaXBlLAogCQkJCSAgRFJNX1BMQU5FX1RZ
-UEVfUFJJTUFSWSk7CiAJaWYgKElTX0VSUihwbGFuZSkpIHsKIAkJcmV0ID0gUFRSX0VSUihwbGFu
-ZSk7CkBAIC0zMjcsNyArMzI3LDcgQEAgaW50IGV4eW5vc19kcm1fY3J0Y19jcmVhdGUoc3RydWN0
-IGV4eW5vc19kcm1fbWFuYWdlciAqbWFuYWdlcikKIAltYW5hZ2VyLT5jcnRjID0gJmV4eW5vc19j
-cnRjLT5iYXNlOwogCWNydGMgPSAmZXh5bm9zX2NydGMtPmJhc2U7CiAKLQlwcml2YXRlLT5jcnRj
-W21hbmFnZXItPnBpcGVdID0gY3J0YzsKKwlwcml2YXRlLT5jcnRjW3BpcGVdID0gY3J0YzsKIAog
-CXJldCA9IGRybV9jcnRjX2luaXRfd2l0aF9wbGFuZXMobWFuYWdlci0+ZHJtX2RldiwgY3J0Yywg
-cGxhbmUsIE5VTEwsCiAJCQkJCSZleHlub3NfY3J0Y19mdW5jcyk7CmRpZmYgLS1naXQgYS9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5oIGIvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2NydGMuaAppbmRleCBkYmQ0MjI3Li5mMWJlZTg0IDEwMDY0NAotLS0g
-YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5oCisrKyBiL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmgKQEAgLTE3LDcgKzE3LDcgQEAKIAogI2lu
-Y2x1ZGUgImV4eW5vc19kcm1fZHJ2LmgiCiAKLWludCBleHlub3NfZHJtX2NydGNfY3JlYXRlKHN0
-cnVjdCBleHlub3NfZHJtX21hbmFnZXIgKm1hbmFnZXIpOworaW50IGV4eW5vc19kcm1fY3J0Y19j
-cmVhdGUoc3RydWN0IGV4eW5vc19kcm1fbWFuYWdlciAqbWFuYWdlciwgaW50IHBpcGUpOwogaW50
-IGV4eW5vc19kcm1fY3J0Y19lbmFibGVfdmJsYW5rKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIGlu
-dCBwaXBlKTsKIHZvaWQgZXh5bm9zX2RybV9jcnRjX2Rpc2FibGVfdmJsYW5rKHN0cnVjdCBkcm1f
-ZGV2aWNlICpkZXYsIGludCBwaXBlKTsKIHZvaWQgZXh5bm9zX2RybV9jcnRjX2ZpbmlzaF9wYWdl
-ZmxpcChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBpbnQgcGlwZSk7CmRpZmYgLS1naXQgYS9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jIGIvZHJpdmVycy9ncHUvZHJtL2V4
-eW5vcy9leHlub3NfZHJtX2ZpbWQuYwppbmRleCAwYzlkZWY5Li4xZjgzYTc1IDEwMDY0NAotLS0g
-YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCisrKyBiL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKQEAgLTExMDIsNyArMTEwMiw3IEBAIHN0
-YXRpYyBpbnQgZmltZF9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldiwgc3RydWN0IGRldmljZSAqbWFz
-dGVyLCB2b2lkICpkYXRhKQogCXN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2ID0gZGF0YTsKIAog
-CWZpbWRfbWdyX2luaXRpYWxpemUoJmN0eC0+bWFuYWdlciwgZHJtX2Rldik7Ci0JZXh5bm9zX2Ry
-bV9jcnRjX2NyZWF0ZSgmY3R4LT5tYW5hZ2VyKTsKKwlleHlub3NfZHJtX2NydGNfY3JlYXRlKCZj
-dHgtPm1hbmFnZXIsIGN0eC0+cGlwZSk7CiAJaWYgKGN0eC0+ZGlzcGxheSkKIAkJZXh5bm9zX2Ry
-bV9jcmVhdGVfZW5jX2Nvbm4oZHJtX2RldiwgY3R4LT5kaXNwbGF5KTsKIApkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMKaW5kZXggN2Y5Y2U3My4uZTc4NzY0ZiAxMDA2NDQK
-LS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYworKysgYi9kcml2
-ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jCkBAIC01NTgsNyArNTU4LDcgQEAg
-c3RhdGljIGludCB2aWRpX2JpbmQoc3RydWN0IGRldmljZSAqZGV2LCBzdHJ1Y3QgZGV2aWNlICpt
-YXN0ZXIsIHZvaWQgKmRhdGEpCiAKIAl2aWRpX21ncl9pbml0aWFsaXplKCZjdHgtPm1hbmFnZXIs
-IGRybV9kZXYpOwogCi0JcmV0ID0gZXh5bm9zX2RybV9jcnRjX2NyZWF0ZSgmY3R4LT5tYW5hZ2Vy
-KTsKKwlyZXQgPSBleHlub3NfZHJtX2NydGNfY3JlYXRlKCZjdHgtPm1hbmFnZXIsIGN0eC0+cGlw
-ZSk7CiAJaWYgKHJldCkgewogCQlEUk1fRVJST1IoImZhaWxlZCB0byBjcmVhdGUgY3J0Yy5cbiIp
-OwogCQlyZXR1cm4gcmV0OwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKaW5kZXgg
-YjY0Njc0YS4uOWQ3ZGNmYyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
-b3NfbWl4ZXIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCkBA
-IC0xMjU2LDcgKzEyNTYsNyBAQCBzdGF0aWMgaW50IG1peGVyX2JpbmQoc3RydWN0IGRldmljZSAq
-ZGV2LCBzdHJ1Y3QgZGV2aWNlICptYW5hZ2VyLCB2b2lkICpkYXRhKQogCWlmIChyZXQpCiAJCXJl
-dHVybiByZXQ7CiAKLQlyZXQgPSBleHlub3NfZHJtX2NydGNfY3JlYXRlKCZjdHgtPm1hbmFnZXIp
-OworCXJldCA9IGV4eW5vc19kcm1fY3J0Y19jcmVhdGUoJmN0eC0+bWFuYWdlciwgY3R4LT5waXBl
-KTsKIAlpZiAocmV0KSB7CiAJCW1peGVyX21ncl9yZW1vdmUoJmN0eC0+bWFuYWdlcik7CiAJCXJl
-dHVybiByZXQ7Ci0tIAoxLjkuMwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
-cmktZGV2ZWwK
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+It is not longer used. This is part of the process of removing
+struct exynos_drm_manager entirely.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 2 +-
+ drivers/gpu/drm/exynos/exynos_drm_drv.h  | 2 --
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 2 +-
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c | 2 +-
+ drivers/gpu/drm/exynos/exynos_mixer.c    | 2 +-
+ 5 files changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 68aae38..0fe981b 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -436,7 +436,7 @@ int exynos_drm_crtc_get_pipe_from_type(struct drm_device *drm_dev,
+ 
+ 		exynos_crtc = to_exynos_crtc(crtc);
+ 		if (exynos_crtc->manager->type == out_type)
+-			return exynos_crtc->manager->pipe;
++			return exynos_crtc->pipe;
+ 	}
+ 
+ 	return -EPERM;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 0a565f8..1d024c0 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -207,7 +207,6 @@ struct exynos_drm_manager_ops {
+  * @type: one of EXYNOS_DISPLAY_TYPE_LCD and HDMI.
+  * @drm_dev: pointer to the drm device
+  * @crtc: crtc object.
+- * @pipe: the pipe number for this crtc/manager
+  * @ops: pointer to callbacks for exynos drm specific functionality
+  * @ctx: A pointer to the manager's implementation specific context
+  */
+@@ -216,7 +215,6 @@ struct exynos_drm_manager {
+ 	enum exynos_drm_output_type type;
+ 	struct drm_device *drm_dev;
+ 	struct drm_crtc *crtc;
+-	int pipe;
+ 	struct exynos_drm_manager_ops *ops;
+ };
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 1f83a75..6e2092d 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -300,7 +300,7 @@ static int fimd_mgr_initialize(struct exynos_drm_manager *mgr,
+ 	priv = drm_dev->dev_private;
+ 
+ 	mgr->drm_dev = ctx->drm_dev = drm_dev;
+-	mgr->pipe = ctx->pipe = priv->pipe++;
++	ctx->pipe = priv->pipe++;
+ 
+ 	/* attach this sub driver to iommu mapping if supported. */
+ 	if (is_drm_iommu_supported(ctx->drm_dev)) {
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index e78764f..785d2fe 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -302,7 +302,7 @@ static int vidi_mgr_initialize(struct exynos_drm_manager *mgr,
+ 	struct exynos_drm_private *priv = drm_dev->dev_private;
+ 
+ 	mgr->drm_dev = ctx->drm_dev = drm_dev;
+-	mgr->pipe = ctx->pipe = priv->pipe++;
++	ctx->pipe = priv->pipe++;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
+index 9d7dcfc..8301503 100644
+--- a/drivers/gpu/drm/exynos/exynos_mixer.c
++++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+@@ -863,7 +863,7 @@ static int mixer_initialize(struct exynos_drm_manager *mgr,
+ 	priv = drm_dev->dev_private;
+ 
+ 	mgr->drm_dev = mixer_ctx->drm_dev = drm_dev;
+-	mgr->pipe = mixer_ctx->pipe = priv->pipe++;
++	mixer_ctx->pipe = priv->pipe++;
+ 
+ 	/* acquire resources: regs, irqs, clocks */
+ 	ret = mixer_resources_init(mixer_ctx);
+-- 
+1.9.3
