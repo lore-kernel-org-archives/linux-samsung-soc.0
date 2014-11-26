@@ -1,98 +1,61 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [RESEND,2/7] ARM: Exynos: add support for sub-power domains
-Date: Wed, 26 Nov 2014 16:00:03 +0530
-Message-ID: <5475ABAB.9040103@samsung.com>
-References: <1416814256-24288-3-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Abhilash Kesavan <a.kesavan@samsung.com>
+Subject: [PATCH 0/4] Add CPU clock support for Exynos7
+Date: Wed, 26 Nov 2014 16:47:47 +0530
+Message-ID: <1417000671-11996-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:37187 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751036AbaKZKaJ (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:40239 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751118AbaKZLSO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Nov 2014 05:30:09 -0500
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Wed, 26 Nov 2014 06:18:14 -0500
+Received: from epcpsbgr4.samsung.com
+ (u144.gpu120.samsung.co.kr [203.254.230.144])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NFN00KMH6I71L40@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 26 Nov 2014 19:30:07 +0900 (KST)
-In-reply-to: <1416814256-24288-3-git-send-email-a.hajda@samsung.com>
+ with ESMTP id <0NFN00DIY8QCD140@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 26 Nov 2014 20:18:12 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com, mturquette@linaro.org
+Cc: linux-samsung-soc@vger.kernel.org, kesavan.abhilash@gmail.com
 
-+CC: Amit Daniel Kachhap
+These patches add the atlas clocks on Exynos7. It also modifies the
+existing cpu clock infrastructure to handle exynos7 differences. These
+patches are a pre-requisite for enabling CPUFreq on Exynos7.
 
-Hi Andrzej,
+Following are the dependencies:
+1) arch: arm64: Enable support for Samsung Exynos7 SoC
+http://www.spinics.net/lists/linux-samsung-soc/msg38734.html
+2) cpufreq: use generic cpufreq drivers for exynos platforms
+http://www.spinics.net/lists/linux-samsung-soc/msg39332.html
 
-On Monday 24 November 2014 01:00 PM, Andrzej Hajda wrote:
-> From: Marek Szyprowski <m.szyprowski@samsung.com>
->
-> This patch adds support for making one power domain a sub-domain of
-> other domain. This is useful for modeling power dependences for devices
-> like TV Mixer or Camera ISP, which needs to have more than one power
-> domain enabled to be operational.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->
-> ---
-> Documentation/devicetree/bindings/arm/exynos/power_domain.txt | 2 ++
->   arch/arm/mach-exynos/pm_domains.c                             | 9 ++++++++-
->   2 files changed, 10 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> index abde1ea..cad9476 100644
-> --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> @@ -22,6 +22,8 @@ Optional Properties:
->   	- pclkN, clkN: Pairs of parent of input clock and input clock to the
->   		devices in this power domain. Maximum of 4 pairs (N = 0 to 3)
->   		are supported currently.
-> +- power-domain-master: phandle to a master power domain that the given domain
-> +		       is a part of
->
+For testing I have applied the following:
+1) mfd: sec: add S2MPS15 PMIC support
+https://lkml.org/lkml/2014/10/14/50
+2) regulator: s2mps11: add support for S2MPS15 regulators
+https://lkml.org/lkml/2014/10/14/52
+3) Regulators dt nodes were added in the espresso dts file and I2C channel 4
+which has the PMIC on it was tested.
 
-If you are trying to make parent, child relationship using this, please 
-have a look to following thread [1] where Amit also trying to make such 
-attempt and some discussion are happening on this thread, so that we can 
-come up with single approach for all such needs.
+Abhilash Kesavan (4):
+  clk: samsung: exynos7: add clocks for CPU block
+  clk: samsung: retrieve the clock provider information from
+    samsung_cmu_register_one
+  clk: samsung: add cpu clock support for Exynos7
+  clk: samsung: add cpu clock configuration data and instantiate cpu
+    clock
 
-[1]: https://patchwork.kernel.org/patch/5366171/
+ .../devicetree/bindings/clock/exynos7-clock.txt    |    6 +
+ drivers/clk/samsung/clk-cpu.c                      |  130 ++++++++++++++++-
+ drivers/clk/samsung/clk-cpu.h                      |   38 ++++-
+ drivers/clk/samsung/clk-exynos4.c                  |    2 +-
+ drivers/clk/samsung/clk-exynos5250.c               |    2 +-
+ drivers/clk/samsung/clk-exynos5420.c               |    4 +-
+ drivers/clk/samsung/clk-exynos7.c                  |  147 ++++++++++++++++++++
+ drivers/clk/samsung/clk.c                          |    6 +-
+ drivers/clk/samsung/clk.h                          |    4 +-
+ include/dt-bindings/clock/exynos7-clk.h            |   21 ++-
+ 10 files changed, 347 insertions(+), 13 deletions(-)
 
-Thanks,
-Pankaj Dubey
-
->   Node of a device using power domains must have a samsung,power-domain property
->   defined with a phandle to respective power domain.
-> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-> index 20f2671..373ac62 100644
-> --- a/arch/arm/mach-exynos/pm_domains.c
-> +++ b/arch/arm/mach-exynos/pm_domains.c
-> @@ -108,7 +108,7 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
->   static __init int exynos4_pm_init_power_domain(void)
->   {
->   	struct platform_device *pdev;
-> -	struct device_node *np;
-> +	struct device_node *np, *master_np;
->
->   	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
->   		struct exynos_pm_domain *pd;
-> @@ -159,6 +159,13 @@ no_clk:
->
->   		pm_genpd_init(&pd->pd, NULL, !on);
->   		of_genpd_add_provider_simple(np, &pd->pd);
-> +
-> +		/* make master and slave hierarchy */
-> +		master_np = of_parse_phandle(np, "power-domain-master", 0);
-> +		if (master_np) {
-> +			pm_genpd_add_subdomain_names(master_np->name, np->name);
-> +			of_node_put(master_np);
-> +		}
->   	}
->
->   	return 0;
->
+-- 
+1.7.9.5
