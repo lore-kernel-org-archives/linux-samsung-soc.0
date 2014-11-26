@@ -1,67 +1,155 @@
 From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH v12 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
-Date: Tue, 25 Nov 2014 11:57:47 -0800
-Message-ID: <CAMAWPa87AFhtFaCo3RSY_qD+1DSmvhU8idOLvYwadkk5GLwaOQ@mail.gmail.com>
-References: <1416576682-5255-1-git-send-email-thomas.ab@samsung.com>
-	<7hioi4l92v.fsf@deeprootsystems.com>
+Subject: Re: [PATCH] ARM: exynos_defconfig: disable CONFIG_EXYNOS5420_MCPM; not stable
+Date: Tue, 25 Nov 2014 17:00:47 -0800
+Message-ID: <7hvbm2ixmo.fsf@deeprootsystems.com>
+References: <1414796382-5447-1-git-send-email-khilman@kernel.org>
+	<000e01cffb39$5ef0a2d0$1cd1e870$@kernel.org>
+	<7hegtaq26c.fsf@deeprootsystems.com>
+	<CAMAWPa-mLAFL7v8hHA5R-eBzpMFK-E-xcvjoV8Bn6tTwgP53Uw@mail.gmail.com>
+	<CAOesGMhvTDN4J6AdUDHKV0Sp4NT6a4QEMUDWOayQqhhD+C4acw@mail.gmail.com>
+	<CAMAWPa-sz5jT9izEONVZR2Z4mzuivKaNHSgyR+eP13tWZ84hYw@mail.gmail.com>
+	<CAOesGMgSkJ8xkBgN7OpuDzT=ehaAd6kvbx5_tC50x78pvpkTwg@mail.gmail.com>
+	<CAOesGMh-7md4PdQX1Wvk0jO+87j+fxSvBnVD_osjNd2zQ4L43w@mail.gmail.com>
+	<044101d00852$3f421420$bdc63c60$@kernel.org>
+	<CAMAWPa-qk0DEmPNz5LZgJq9AuGhRxuY00XwxtEikt_vh-iozVg@mail.gmail.com>
+	<CAM4voa==Ram0xXTL=SnKktyRt7VFphQxBJgcf9Yi9Zio0QctHw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:33192 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750809AbaKYT6F (ORCPT
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:56796 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751002AbaKZBAu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Nov 2014 14:58:05 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id D223F2011B
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2014 19:57:59 +0000 (UTC)
-Received: from mail-wg0-f45.google.com (mail-wg0-f45.google.com [74.125.82.45])
-	(using TLSv1 with cipher AES128-SHA (128/128 bits))
-	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPSA id 2BB4E201FA
-	for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2014 19:57:49 +0000 (UTC)
-Received: by mail-wg0-f45.google.com with SMTP id b13so1849002wgh.4
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2014 11:57:47 -0800 (PST)
-In-Reply-To: <7hioi4l92v.fsf@deeprootsystems.com>
+	Tue, 25 Nov 2014 20:00:50 -0500
+Received: by mail-pa0-f45.google.com with SMTP id lj1so1691031pab.18
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Nov 2014 17:00:49 -0800 (PST)
+In-Reply-To: <CAM4voa==Ram0xXTL=SnKktyRt7VFphQxBJgcf9Yi9Zio0QctHw@mail.gmail.com>
+	(Abhilash Kesavan's message of "Tue, 25 Nov 2014 11:31:18 +0530")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.ab@samsung.com>
-Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Thomas,
+Hi Abhilash,
 
-On Mon, Nov 24, 2014 at 10:58 AM, Kevin Hilman <khilman@kernel.org> wrote:
+Abhilash Kesavan <kesavan.abhilash@gmail.com> writes:
 
 [...]
 
-> Second, as with earlier versions of this series, I'm still seeing lots
-> of "wait_until_divider_stable: timeout in divider stablization" messages
-> coming out when running powertop.
+>>> To be honest, since I don't have the exynos5420 arndale, chromebook...but smdk
+>>> which has different bootloader, I couldn't test it...I'll try to make a test
+>>> farm like you guys...
+>>
+>> Do you have some colleagues with any other 542x hardware?  I had
+>> assumed that linux-next was being better tested on the publicaly
+>> available, and widely available boards like odroid-xu3 and
+>> Chromebook2, but I've come to realize the hard way that that is not
+>
+> Are you seeing this on Chromebook2 (Peach-Pi 5800) too ?
 
-I found a simpler way to reproduce these messages.  If I simply use
-the userspace governor and cycle through all the A7 OPPs, I'll hit
-this message (script below[1]).  Note that I'm also using my DTS
-change that fixes the vdd_arm and vdd_kfc voltages to a voltage that
-is high enough for all the OPPs.
+No, it seems that my exynos5800-peach-pi is not having this problem,
+which suggests it's a bootloader setup issue.
+
+>> the case.  You mention your board has a different bootloader.  Do you
+>> suspect there's a bootloader issue on these other platforms?  If so,
+>> could you elaborate on possible fixes?  I'm more than willing to test
+>> any proposed fixes, but I'm not familiar enough yet with these SoCs to
+>> figure out the underlying issues alone.
+>>
+>> Until you have a working board farm, you could start having a closer
+>> look at the boot logs we're already producing.  Admittedly linux-next
+>> broken in many ways besides this one for exynos currently, but it has
+>> been having these imprecise aborts well before the other recent
+>> issues.
+>>
+>> Also, It's very possible that this issue is not even MCPM related at
+>> all, and MCPM is just uncovering a previously hidden bug.  It would be
+>> very helpful if people more familiar with this hardware and SoC would
+>> investigate bug reports like these.
+>
+> The 3 boards I have access to (SMDK5420, Chromebook Peach-Pi and
+> Chromebook Peach-Pit) work fine with MCPM enabled. 
+
+Thanks for helping look into this.
+
+> I am not sure why
+> it is failing only on the above mentioned boards as there is nothing
+> specific to them in the MCPM back-end.
+>
+> I assume that when you default to platsmp (on disabling MCPM), the
+> non-working boards boot all cores upto userspace without any issues ?
+
+Nope.  With MCPM disabled:
+
+  - 5420/arndale-octa: CPU0-3 come up (A15s)
+  - 5422/odroid-xu3: only CPU0 (A7)
+  - 5800/peach-pi: only CPU0 (A15)
+
+Note that with MCPM enabled, the arndale-octa gets the same result.
+Peach-pi on the other hand gets all 8 CPUs, and the odroid-xu3 only gets
+6/8 CPUs (see other thread on that topic.)
+
+> Based on the timeline (problems started about 2.5 months back), there
+> have only been a couple of changes in the 5420 MCPM back-end. Could
+> you revert the following commits and check if things improve.
+>
+> 20fe6f9 ARM: EXYNOS: Support cluster power off on exynos5420/5800
+> fbb0499 ARM: 8083/1: exynos: activate the CCI on boot CPU/cluster
+> using the MCPM loopback
+>
+> These might not revert cleanly, so instead of the above you could also
+> comment the following 2 lines:
+>
+>
+> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c
+> b/arch/arm/mach-exynos/mcpm-exynos.c
+> index dc9a764..9a07188 100644
+> --- a/arch/arm/mach-exynos/mcpm-exynos.c
+> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
+> @@ -152,7 +152,7 @@ static void exynos_power_down(void)
+>                 exynos_cpu_power_down(cpunr);
+>
+>                 if (exynos_cluster_unused(cluster)) {
+> -                       exynos_cluster_power_down(cluster);
+> +                       //exynos_cluster_power_down(cluster);
+>                         last_man = true;
+>                 }
+2>         } else if (cpu_use_count[cpu][cluster] == 1) {
+> @@ -356,8 +356,8 @@ static int __init exynos_mcpm_init(void)
+>         ret = mcpm_platform_register(&exynos_power_ops);
+>         if (!ret)
+>                 ret = mcpm_sync_init(exynos_pm_power_up_setup);
+> -       if (!ret)
+> -               ret = mcpm_loopback(exynos_cache_off); /* turn on the CCI */
+> +       //if (!ret)
+> +               //ret = mcpm_loopback(exynos_cache_off); /* turn on the CCI */
+>         if (ret) {
+>                 iounmap(ns_sram_base_addr);
+>                 return ret;
+>
+>
+>
+> If you still get aborts then I suspect that the problem is with the
+> bootloader configuration but am not sure. 
+
+Nice.  With those lines commented out, the arndale-octa is not geting
+imprecise aborts anymore, and this is the platform where those aborts
+seem to prevent booting into a full userspace (as originally reported by
+Tyler.)
+
+More specifically, with only the loopback call to turn off CCI commented
+out, the imprecise aborts go away.
+
+The odroid-xu3 is still getting them, but these seem to happen whether
+or not MCPM is enabled, so must a different issue related to the
+bootloader setup.
+
+> I am OK with disabling
+> 5420_MCPM in the default configuration in such a case. This would
+> however mean that S2R also stops working by default on 5420.
+
+Disabling the option isn't my first choice either, I would rather see
+this issue debugged and fixed by folks that are more familiar with MCPM
+on Exynos.
 
 Kevin
-
-[1]
-#!/bin/sh
-cpu=cpu4
-reg_name=vdd_kfc
-cpu_reg=$(dirname `find /sys/class/regulator/regulator.*/ -name name
--exec grep -l $reg_name {} \;`)
-echo $cpu_reg
-
-# Cycle through frequencies (and check voltage)
-cd /sys/devices/system/cpu/$cpu/cpufreq
-echo userspace > scaling_governor
-for freq in `cat scaling_available_frequencies`; do
-  echo ${freq} > scaling_setspeed
-  echo -n "current freq: "
-  cat scaling_cur_freq
-  echo -n "current voltage: "
-  cat ${cpu_reg}/microvolts
-  sleep 1
-done
