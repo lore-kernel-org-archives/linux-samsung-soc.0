@@ -1,62 +1,46 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [RESEND PATCH 1/2] ARM: dts: exynos4x12: Device tree node definition
- for TMU on Exynos4x12
-Date: Thu, 27 Nov 2014 02:56:52 +0900
-Message-ID: <54761464.2080005@kernel.org>
-References: <1416474343-1283-1-git-send-email-l.majewski@samsung.com> <035001d005fd$7abac670$70305350$@kernel.org> <20141124094926.04ffacfd@amdc2363>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH 0/6] drm/exynos: unify plane update path and avoid DPMS for
+ planes
+Date: Wed, 26 Nov 2014 16:10:48 -0200
+Message-ID: <1417025454-3916-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:59675 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751028AbaKZR44 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Nov 2014 12:56:56 -0500
-In-Reply-To: <20141124094926.04ffacfd@amdc2363>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, linux-arm-kernel@lists.infradead.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On 11/24/14 17:49, Lukasz Majewski wrote:
-> Hi Kukjin,
-> 
->> Lukasz Majewski wrote:
->>>
->> + Bart, Tomasz and MLs
->>
->> Hi Lukasz,
->>
->> Please post including MLs, even resending.
->>
->> Will apply for v3.19, and just note that you asked me to apply this
->> for 3.18 in personal talk but I couldn't see any requirements for
->> fixes-3.18. If I'm missing something, please let me know.
-> 
-> The thing is that by default Exynos 4412 (trats2) can run with modified
-> cpufreq to support SW governed overclocking (BOOST).
-> 
-> To provide safe BOOST operation, TMU (thermal) _must_ be configured.
-> Configuration is not possible when trats2 DTS lacks of those patches.
-> 
-Well, AFAIK the BOOST mode is only available on only Samsung mobile not
-mainline and so I think this is not for bug fix in mainline for 3.18...
-
-- Kukjin
-
-> So, yes there is a requirement to add those patches to v3.18 (if not
-> possible please add it to v3.19).
-> 
->>
->> Thanks,
->> Kukjin
->>
->>> The TMU device tree node definition for Exynos4x12 family of SoCs.
->>>
->>> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
->>> Reviewed-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
->>> Reviewed-by: Tomasz Figa <tomasz.figa@gmail.com>
->>> ---
->>>  arch/arm/boot/dts/exynos4x12.dtsi | 10 ++++++++++
->>>  1 file changed, 10 insertions(+)
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+VGhpcyBzZXJpZXMgaXMgdHJ5IHRvIHVuaWZ5IGFsbCB0aGUgcGF0aHMgb24gZXh5bm9zIERSTSB0
+aGF0IGhhbmRsZSBwbGFuZQp1cGRhdGVzLiBOb3cgU2V0UGxhbmUsIFBhZ2VGbGlwIGFuZCBTZXRD
+cnRjIChmYiBjaGFuZ2VkIG9ubHkpIGFyZSBhbGwKcHJvY2Vzc2VkIGJ5IHRoZSBzYW1lIGZ1bmN0
+aW9uOiBleHlub3NfdXBkYXRlX3BsYW5lKCkuCgpJbiB0aGUgdW5pZnkgcHJvY2VzcyB0aGUgRFBN
+UyBvcGVyYXRpb25zIHdlcmUgcmVtb3ZlZCBzaW5jZSB3ZSBhcmUgbm90IGluIGZ1bGwKbW9kZXNl
+dCBwYXRoLgoKVGhpcyBhcHBsaWVzIG9uIHRvcCBvZiBteSBsYXN0IGNsZWFudXBbMF0gYW5kIGlz
+IHBhcnQgb2YgbXkgb25nb2luZyBjbGVhbnVwCndvcmsgb24gZXh5bm9zIGRybS4KClswXSBodHRw
+Oi8vd3d3LnNwaW5pY3MubmV0L2xpc3RzL2xpbnV4LXNhbXN1bmctc29jL21zZzM5NTAyLmh0bWwK
+Ckd1c3Rhdm8gUGFkb3ZhbiAoNik6CiAgZHJtL2V4eW5vczogRG9uJ3QgdG91Y2ggRFBNUyB3aGVu
+IHVwZGF0aW5nIG92ZXJsYXkgcGxhbmVzCiAgZHJtL2V4eW5vczogZG9uJ3QgZG8gYW55IERQTVMg
+b3BlcmF0aW9uIHdoaWxlIHVwZGF0aW5nIHBsYW5lcwogIGRybS9leHlub3M6IHJlbW92ZSBleHlu
+b3NfcGxhbmVfY29tbWl0KCkgd3JhcHBlcgogIGRybS9leHlub3M6IHVuaWZ5IHBsYW5lIHVwZGF0
+ZSBvbiBleHlub3NfdXBkYXRlX3BsYW5lKCkKICBkcm0vZXh5bm9zOiBjYWxsIGV4eW5vc191cGRh
+dGVfcGxhbmUoKSBkaXJlY3RseSBvbiBwYWdlIGZsaXBzCiAgZHJtL2V4eW5vczogcmVtb3ZlIGV4
+eW5vc19kcm1fY3J0Y19tb2RlX3NldF9jb21taXQoKQoKIGRyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9jcnRjLmMgIHwgMzEgKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLQog
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMgfCAxOCArKysrKystLS0t
+LS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFuZS5oIHwgIDYg
+KysrKystCiAzIGZpbGVzIGNoYW5nZWQsIDIzIGluc2VydGlvbnMoKyksIDMyIGRlbGV0aW9ucygt
+KQoKLS0gCjEuOS4zCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
