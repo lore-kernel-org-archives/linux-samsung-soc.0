@@ -1,51 +1,104 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: [GIT PULL 2/4] Samsung serial updates for v3.19
-Date: Thu, 27 Nov 2014 16:06:35 +0900
-Message-ID: <5476CD7B.4020808@kernel.org>
+Subject: [GIT PULL 3/4] Samsung 3rd round of DT updates for v3.19
+Date: Thu, 27 Nov 2014 16:06:42 +0900
+Message-ID: <5476CD82.5050705@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:36266 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.19.201]:36300 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750922AbaK0HGj (ORCPT
+	id S1751005AbaK0HGq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Nov 2014 02:06:39 -0500
+	Thu, 27 Nov 2014 02:06:46 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
-Cc: arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>
+Cc: arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Arnd, Olof, Kevin
+The following changes since commit a427d15062ac46a00a22d2f0b9d05093c18ff2f1:
 
-Please pull this branch for exynos7 SoC into arm-soc.
-Note Greg agreed to upstream via arm-soc tree.
-
-Thanks,
-Kukjin
-
-The following changes since commit f114040e3ea6e07372334ade75d1ee0775c355e1:
-
-  Linux 3.18-rc1 (2014-10-19 18:08:38 -0700)
+  ARM: dts: Add micro SD card SDHCI node for exynos4412-trats
+(2014-11-07 08:28:24 +0900)
 
 are available in the git repository at:
 
   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-tags/samsung-driver
+tags/samsung-dt-3
 
-for you to fetch changes up to edeeec85f7145fe8f2a5ffe250a8ee6b1fe4ab28:
+for you to fetch changes up to 1888eb75e68caceaab2fe0db820bd6ed574a468f:
 
-  serial: samsung: Fix serial config dependencies for exynos7
-(2014-11-22 00:09:25 +0900)
-
-----------------------------------------------------------------
-Samsung driver update for v3.19
-
-- Change samsung serial dependencies for exynos7 (ARMv8)
+  ARM: dts: add sysreg phandle to i2c device nodes for exynos
+(2014-11-27 03:24:45 +0900)
 
 ----------------------------------------------------------------
+Samsung 3rd DT updates for v3.19
+
+- exynos3250
+  : remove unused bootargs on exynos3250-rinato
+  : add new board dt file for exynos3250-monk
+- exynos4
+  : add missing clock for MFC
+  : specify default clocks for camera
+- exynos4x12
+  : add TMU related DT nodes
+- exynos4412-trats2
+  : add max77693-haptic and pwm nodes, enable TMU support
+- exynos4412-odroid
+  : specify audio clock parents and rates
+- exynos5250 and exynos5420
+  : add syscon based phandle to i2c device nodes
+- exynos5250-spring
+  : add trackpad, temperature sensor and usb3505 pinctrl
+
+Note: based on previous tags/samsung-dt-2 for v3.19
+
+----------------------------------------------------------------
+Andreas Faerber (3):
+      ARM: dts: Add usb3503 pinctrl to exynos5250-spring
+      ARM: dts: Add temperature sensor to exynos5250-spring
+      ARM: dts: Add trackpad to exynos5250-spring
+
+Chanwoo Choi (2):
+      Documentation: devicetree: Add Exynos-based boards compatible string
+      ARM: dts: Remove unused bootargs from exynos3250-rinato
+
+Jaewon Kim (2):
+      ARM: dts: add pwm node for exynos4412-trats2
+      ARM: dts: Add max77693-haptic node for exynos4412-trats2
+
+Lukasz Majewski (2):
+      ARM: dts: Device tree node definition for TMU on exynos4x12
+      ARM: dts: Enable TMU support for exynos4412-trats2
+
+Marek Szyprowski (1):
+      ARM: dts: add missing clock to MFC device for exynos4
+
 Pankaj Dubey (1):
-      serial: samsung: Fix serial config dependencies for exynos7
+      ARM: dts: add sysreg phandle to i2c device nodes for exynos
 
- drivers/tty/serial/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Sylwester Nawrocki (2):
+      ARM: dts: Specify default clocks for Exynos4 camera devices
+      ARM: dts: Specify audio clock parents and rates for
+exynos4412-odroid-common
+
+Youngjun Cho (1):
+      ARM: dts: add board dts file for Exynos3250-based Monk board
+
+ .../devicetree/bindings/arm/samsung-boards.txt     |  19 +-
+ .../devicetree/bindings/i2c/i2c-s3c2410.txt        |   1 +
+ arch/arm/boot/dts/Makefile                         |   3 +-
+ arch/arm/boot/dts/exynos3250-monk.dts              | 579
++++++++++++++++++++++
+ arch/arm/boot/dts/exynos3250-rinato.dts            |   4 -
+ arch/arm/boot/dts/exynos4.dtsi                     |   4 +-
+ arch/arm/boot/dts/exynos4210-trats.dts             |  16 +
+ arch/arm/boot/dts/exynos4210-universal_c210.dts    |  16 +
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |  26 +
+ arch/arm/boot/dts/exynos4412-trats2.dts            |  50 +-
+ arch/arm/boot/dts/exynos4x12.dtsi                  |  10 +
+ arch/arm/boot/dts/exynos5250-spring.dts            |  30 ++
+ arch/arm/boot/dts/exynos5250.dtsi                  |   4 +
+ arch/arm/boot/dts/exynos5420.dtsi                  |   4 +
+ 14 files changed, 751 insertions(+), 15 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos3250-monk.dts
