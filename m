@@ -1,81 +1,57 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH] ARM: exynos_defconfig: disable CONFIG_EXYNOS5420_MCPM;
- not stable
-Date: Thu, 27 Nov 2014 18:57:03 +0000
-Message-ID: <547773FF.9000205@arm.com>
-References: <1414796382-5447-1-git-send-email-khilman@kernel.org> <000e01cffb39$5ef0a2d0$1cd1e870$@kernel.org> <7hegtaq26c.fsf@deeprootsystems.com> <CAMAWPa-mLAFL7v8hHA5R-eBzpMFK-E-xcvjoV8Bn6tTwgP53Uw@mail.gmail.com> <CAOesGMhvTDN4J6AdUDHKV0Sp4NT6a4QEMUDWOayQqhhD+C4acw@mail.gmail.com> <CAMAWPa-sz5jT9izEONVZR2Z4mzuivKaNHSgyR+eP13tWZ84hYw@mail.gmail.com> <CAOesGMgSkJ8xkBgN7OpuDzT=ehaAd6kvbx5_tC50x78pvpkTwg@mail.gmail.com> <CAOesGMh-7md4PdQX1Wvk0jO+87j+fxSvBnVD_osjNd2zQ4L43w@mail.gmail.com> <044101d00852$3f421420$bdc63c60$@kernel.org> <CAMAWPa-qk0DEmPNz5LZgJq9AuGhRxuY00XwxtEikt_vh-iozVg@mail.gmail.com> <CAM4voa==Ram0xXTL=SnKktyRt7VFphQxBJgcf9Yi9Zio0QctHw@mail.gmail.com> <7hvbm2ixmo.fsf@deeprootsystems.com> <CAM4voa=budowQ+vnCAQhWj95Hx+yBnRAaDrFrjkQa2ubjrRwUQ@mail.gmail.com> <7hmw7dg81l.fsf@de
- eprootsystems.com> <alpine.LFD.2.11.1411261314310.11690@knanqh.ubzr>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v9 0/7] Enable L2 cache support on Exynos4210/4x12 SoCs
+Date: Thu, 27 Nov 2014 22:51:00 +0000
+Message-ID: <20141127225100.GA3840@n2100.arm.linux.org.uk>
+References: <1416224909-4290-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:33319 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750910AbaK0S5E convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Nov 2014 13:57:04 -0500
-In-Reply-To: <alpine.LFD.2.11.1411261314310.11690@knanqh.ubzr>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1416224909-4290-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, linux-omap@vger.kernel.org, linus.walleij@linaro.org, tony@atomide.com, drake@endlessm.com, loeliger@gmail.com, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Kevin Hilman <khilman@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>
 
+On Mon, Nov 17, 2014 at 12:48:22PM +0100, Marek Szyprowski wrote:
+> This is an updated patchset, which intends to add support for L2 cache
+> on Exynos4 SoCs on boards running under secure firmware, which requires
+> certain initialization steps to be done with help of firmware, as
+> selected registers are writable only from secure mode.
+> 
+> First four patches extend existing support for secure write in L2C driver
+> to account for design of secure firmware running on Exynos. Namely:
+>  1) direct read access to certain registers is needed on Exynos, because
+>     secure firmware calls set several registers at once,
+>  2) not all boards are running secure firmware, so .write_sec callback
+>     needs to be installed in Exynos firmware ops initialization code,
+>  3) write access to {DATA,TAG}_LATENCY_CTRL registers fron non-secure world
+>     is not allowed and so must use l2c_write_sec as well,
+>  4) on certain boards, default value of prefetch register is incorrect
+>     and must be overridden at L2C initialization.
+> For boards running with firmware that provides access to individual
+> L2C registers this series should introduce no functional changes. However
+> since the driver is widely used on other platforms I'd like to kindly ask
+> any interested people for testing.
+> 
+> Further three patches add implementation of .write_sec and .configure
+> callbacks for Exynos secure firmware and necessary DT nodes to enable
+> L2 cache.
+> 
+> Changes in this version tested on Exynos4412-based TRATS2 and OdroidU3+
+> boards (both with secure firmware). There should be no functional change
+> for Exynos boards running without secure firmware. I do not have access
+> to affected non-Exynos boards, so I could not test on them.
 
+So, I applied this series, and now I get a conflicts between my tree and
+arm-soc for:
 
-On 26/11/14 18:41, Nicolas Pitre wrote:
-> On Wed, 26 Nov 2014, Kevin Hilman wrote:
->
->> Abhilash Kesavan <kesavan.abhilash@gmail.com> writes:
->>
->>> Hi Kevin,
->>>
->>> On Wed, Nov 26, 2014 at 6:30 AM, Kevin Hilman <khilman@kernel.org> wrote:
->>>> [...]
->>>>
->>>> More specifically, with only the loopback call to turn off CCI commented
->>>> out, the imprecise aborts go away.
->>>
->>> I can't see how enabling snoops for the boot cluster is causing these
->>> aborts. Perhaps as Krzysztof commented it has something to do with the
->>> secure firmware/tz software on these boards ? Other than there does
->>> not appear to be any difference between the working/non-working
->>> setups.
->>
->> Perhaps the secure firmware is preventing the CCI to be enabled by the
->> kernel, and that is causing the imprecise abort?
->
-> That is well possible.
->
-> Now...... if the bootloader/firmware does not let Linux deal with both
-> the CCI and caches then MCPM simply has no more purpose for this board.
-> The whole point of MCPM is actually to handle the CCI properly and the
-> most efficient way despite all the possible races and opportunities for
-> memory corruptions. And yes, this is a complex task.
->
-> So there is actually two choices: the firmware let Linux take care of it
-> via the MCPM layer (easy), or the firmware has to implement it all
-> _properly_ (hard) behind an interface such as PSCI, at which point MCPM
-> should be configured out.
->
-> If the firmware does not let Linux interact with the CCI _and_ does not
-> implement full MCPM-like services then the platform is broken and only a
-> firmware upgrade could fix that.  It might still be possible to boot all
-> CPUs through other means, but power management would then be severely
-> limited.
->
+arch/arm/mach-exynos/firmware.c
+arch/arm/mach-exynos/sleep.S
 
-Thanks Nico for the detailed description on the requirements for using
-MCPM. This is the kind of issue I was worried in the other thread on
-Fijitsu platform. That's the reason I was asking the information about
-their secure firmware and what exactly it configures so that we won't
-end up with similar situation on there too and definitely not to push
-PSCI. I completely agree with you that making a some change in firmware
-to give control of CCI to kernel is easy.
+So, I'm going to un-stage the exynos bits, and we'll have to work out
+some way to handle those.
 
-Probably if the vendors disagree to apply this small fix to the firmware
-we should provide them with *only choice* of PSCI implementation which
-is quite complex and easy to get it wrong. That might trigger them to
-provide a small fix to use MCPM.
-
-Regards,
-Sudeep
+-- 
+FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
+according to speedtest.net.
