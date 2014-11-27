@@ -1,95 +1,36 @@
-From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 02/19] clk: samsung: Add binding documentation for
- Exynos5433 clock controller
-Date: Thu, 27 Nov 2014 20:29:20 +0900
-Message-ID: <54770B10.3050804@samsung.com>
-References: <1417073716-22997-1-git-send-email-cw00.choi@samsung.com>
- <1417073716-22997-3-git-send-email-cw00.choi@samsung.com>
- <20141127112113.GC857@leverpostej>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 11/19] clk: samsung: exynos5433: Add clocks for CMU_BUS{0|1|2} domains
+Date: Thu, 27 Nov 2014 12:41:51 +0100
+Message-ID: <6217579.xNXtO7YiDs@wuerfel>
+References: <1417073716-22997-1-git-send-email-cw00.choi@samsung.com> <1417073716-22997-12-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20141127112113.GC857@leverpostej>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "geunsik.lim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <geunsik.lim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, a.kesavan@samsung.
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.24]:59399 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753329AbaK0Lm1 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 27 Nov 2014 06:42:27 -0500
+In-Reply-To: <1417073716-22997-12-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, mark.rutland@arm.com, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, kyungmin.park@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, geunsik.lim@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Dear Mark,
-
-On 11/27/2014 08:21 PM, Mark Rutland wrote:
-> On Thu, Nov 27, 2014 at 07:34:59AM +0000, Chanwoo Choi wrote:
->> This patch add binding documentation for Exynos5433 clock controller.
->> Exynos5433 has various clock domains So, this documentation explains
->> the detailed clock domains ans usage guide.
->>
->> Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Acked-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> Acked-by: Geunsik Lim <geunsik.lim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> ---
->>  .../devicetree/bindings/clock/exynos5433-clock.txt | 106 +++++++++++++++++++++
->>  1 file changed, 106 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/clock/exynos5433-clock.txt
->>
->> diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
->> new file mode 100644
->> index 0000000..72cd0ba
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
->> @@ -0,0 +1,106 @@
->> +* Samsung Exynos5433 CMU (Clock Management Units)
->> +
->> +The Exynos5433 clock controller generates and supplies clock to various
->> +controllers within the Exynos5433 SoC.
->> +
->> +Required Properties:
->> +
->> +- compatible: should be one of the following.
->> +  - "samsung,exynos5433-cmu-top"   - clock controller compatible for CMU_TOP
->> +    which generates clocks for IMEM/FSYS/G3D/GSCL/HEVC/MSCL/G2D/MFC/PERIC/PERIS
->> +    domains and bus clocks.
->> +  - "samsung,exynos5433-cmu-cpif"  - clock controller compatible for CMU_CPIF
->> +    which generates clocks for LLI (Low Latency Interface) IP.
->> +  - "samsung,exynos5433-cmu-mif"   - clock controller compatible for CMU_MIF
->> +    which generates clocks for DRAM Memory Controller domain.
->> +  - "samsung,exynos5433-cmu-peric" - clock controller compatible for CMU_PERIC
->> +    which generates clocks for UART/I2C/SPI/I2S/PCM/SPDIF/PWM/SLIMBUS IPs.
->> +  - "samsung,exynos5433-cmu-peris" - clock controller compatible for CMU_PERIS
->> +    which generates clocks for PMU/TMU/MCT/WDT/RTC/SECKEY/TZPC IPs.
->> +  - "samsung,exynos5433-cmu-fsys"  - clock controller compatible for CMU_FSYS
->> +    which generates clocks for USB/UFS/SDMMC/TSI/PDMA IPs.
->> +
->> +- reg: physical base address of the controller and length of memory mapped
->> +  region.
->> +
->> +- #clock-cells: should be 1.
->> +
->> +Each clock is assigned an identifier and client nodes can use this identifier
->> +to specify the clock which they consume.
->> +
->> +All available clocks are defined as preprocessor macros in
->> +dt-bindings/clock/exynos5433.h header and can be used in device
->> +tree sources.
+On Thursday 27 November 2014 16:35:08 Chanwoo Choi wrote:
+> +  - "samsung,exynos5433-cmu-bus0", "samsung,exynos5433-cmu-bus1"
+> +    and "samsung,exynos5433-cmu-bus2" - clock controller compatible for CMU_BUS
+> +    which generates global data buses clock and global peripheral buses clock.
+>  
+>  - reg: physical base address of the controller and length of memory mapped
+>    region.
 > 
-> That header should be added as part of this patch, otehrwise this is
-> incomplete.
 
-OK, I'll merge two patches (patch2 and patch3) by solving this issue.
+This looks like you are duplicating the bindings and the code, but
+it's really the same hardware multiple times with minor variations
+that you should be able to describe properly here. Why not make
+three nodes with the same compatible string and have them handled
+by the same code?
 
-patch2 : [PATCH 02/19] clk: samsung: Add binding documentation for Exynos5433 clock controller
-patch3 : [PATCH 03/19] clk: samsung: exynos5433: Add clocks using common clock framework
-
-Thanks for your review.
-
-Best Regards,
-Chanwoo Choi
-
-
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+	Arnd
