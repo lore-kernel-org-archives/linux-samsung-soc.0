@@ -1,82 +1,115 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH v2 1/2] ARM: EXYNOS: apply S5P_CENTRAL_SEQ_OPTION fix only when
- necessary
-Date: Thu, 27 Nov 2014 17:51:24 +0100
-Message-ID: <1417107085-26159-2-git-send-email-b.zolnierkie@samsung.com>
-References: <1417107085-26159-1-git-send-email-b.zolnierkie@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1417107085-26159-1-git-send-email-b.zolnierkie@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Colin Cross <ccross@google.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com
+From: Nicolas Pitre <nicolas.pitre@linaro.org>
+Subject: Re: [PATCH] ARM: exynos_defconfig: disable CONFIG_EXYNOS5420_MCPM;
+ not stable
+Date: Thu, 27 Nov 2014 12:06:30 -0500 (EST)
+Message-ID: <alpine.LFD.2.11.1411271204570.11690@knanqh.ubzr>
+References: <1414796382-5447-1-git-send-email-khilman@kernel.org> <000e01cffb39$5ef0a2d0$1cd1e870$@kernel.org> <7hegtaq26c.fsf@deeprootsystems.com> <CAMAWPa-mLAFL7v8hHA5R-eBzpMFK-E-xcvjoV8Bn6tTwgP53Uw@mail.gmail.com> <CAOesGMhvTDN4J6AdUDHKV0Sp4NT6a4QEMUDWOayQqhhD+C4acw@mail.gmail.com>
+ <CAMAWPa-sz5jT9izEONVZR2Z4mzuivKaNHSgyR+eP13tWZ84hYw@mail.gmail.com> <CAOesGMgSkJ8xkBgN7OpuDzT=ehaAd6kvbx5_tC50x78pvpkTwg@mail.gmail.com> <CAOesGMh-7md4PdQX1Wvk0jO+87j+fxSvBnVD_osjNd2zQ4L43w@mail.gmail.com> <044101d00852$3f421420$bdc63c60$@kernel.org>
+ <CAMAWPa-qk0DEmPNz5LZgJq9AuGhRxuY00XwxtEikt_vh-iozVg@mail.gmail.com> <CAM4voa==Ram0xXTL=SnKktyRt7VFphQxBJgcf9Yi9Zio0QctHw@mail.gmail.com> <7hvbm2ixmo.fsf@deeprootsystems.com> <CAM4voa=budowQ+vnCAQhWj95Hx+yBnRAaDrFrjkQa2ubjrRwUQ@mail.gmail.com>
+ <7hmw7dg81l.fsf@deeprootsystems.com> <alpine.LFD.2.11.1411261314310.11690@knanqh.ubzr> <CAM4voan5=UY=rp+5KPDGjN=RszBB5miCLDFukUXQ-3F6EN1HLw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f182.google.com ([209.85.216.182]:33373 "EHLO
+	mail-qc0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750870AbaK0RGk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 27 Nov 2014 12:06:40 -0500
+Received: by mail-qc0-f182.google.com with SMTP id r5so3878905qcx.27
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Nov 2014 09:06:39 -0800 (PST)
+In-Reply-To: <CAM4voan5=UY=rp+5KPDGjN=RszBB5miCLDFukUXQ-3F6EN1HLw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: Kevin Hilman <khilman@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Commit c2dd114d2486 ("ARM: EXYNOS: fix register setup for AFTR mode
-code") added S5P_CENTRAL_SEQ_OPTION register setup fix for all
-Exynos SoCs to AFTR mode code-path.  It turned out that for coupled
-cpuidle AFTR mode on Exynos4210 (added by the next patch) applying
-this fix causes lockup so enable it in the AFTR mode code-path only
-on SoCs that require it (in the suspend code-path it can be always
-applied like it was before commit c2dd114d2486).
+On Thu, 27 Nov 2014, Abhilash Kesavan wrote:
 
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Colin Cross <ccross@google.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
-v2:
-- no changes
+> Hi Kevin,
+> 
+> On Thu, Nov 27, 2014 at 12:11 AM, Nicolas Pitre
+> <nicolas.pitre@linaro.org> wrote:
+> > On Wed, 26 Nov 2014, Kevin Hilman wrote:
+> >
+> >> Abhilash Kesavan <kesavan.abhilash@gmail.com> writes:
+> >>
+> >> > Hi Kevin,
+> >> >
+> >> > On Wed, Nov 26, 2014 at 6:30 AM, Kevin Hilman <khilman@kernel.org> wrote:
+> >> >> [...]
+> >> >>
+> >> >> More specifically, with only the loopback call to turn off CCI commented
+> >> >> out, the imprecise aborts go away.
+> >> >
+> >> > I can't see how enabling snoops for the boot cluster is causing these
+> >> > aborts. Perhaps as Krzysztof commented it has something to do with the
+> >> > secure firmware/tz software on these boards ? Other than there does
+> >> > not appear to be any difference between the working/non-working
+> >> > setups.
+> >>
+> >> Perhaps the secure firmware is preventing the CCI to be enabled by the
+> >> kernel, and that is causing the imprecise abort?
+> >
+> > That is well possible.
+> >
+> > Now...... if the bootloader/firmware does not let Linux deal with both
+> > the CCI and caches then MCPM simply has no more purpose for this board.
+> > The whole point of MCPM is actually to handle the CCI properly and the
+> > most efficient way despite all the possible races and opportunities for
+> > memory corruptions. And yes, this is a complex task.
+> >
+> > So there is actually two choices: the firmware let Linux take care of it
+> > via the MCPM layer (easy), or the firmware has to implement it all
+> > _properly_ (hard) behind an interface such as PSCI, at which point MCPM
+> > should be configured out.
+> >
+> > If the firmware does not let Linux interact with the CCI _and_ does not
+> > implement full MCPM-like services then the platform is broken and only a
+> > firmware upgrade could fix that.  It might still be possible to boot all
+> > CPUs through other means, but power management would then be severely
+> > limited.
+> 
+> How about restricting the mcpm initialization to only known working
+> boards like chromebooks and smdk. This would be better than disabling
+> the config altogether from exynos_defconfig. The non-working boards
+> would then default to platsmp. Assuming that the firmware handles all
+> CCI/cache activities then platsmp may work for secondary core boot-up
+> ?
+> 
+> Can you please apply the below diff and test the non-working boards
+> with CONFIG_EXYNOS5420_MCPM enabled.
 
- arch/arm/mach-exynos/pm.c      | 11 +++++++----
- arch/arm/mach-exynos/suspend.c |  4 ++++
- 2 files changed, 11 insertions(+), 4 deletions(-)
+I'd much prefer if the CCI is non accessible on some board that the 
+device tree file for that board be modified instead by marking the CCI 
+as unavailable.
 
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 86f3ecd8..159eb4c 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -97,10 +97,6 @@ void exynos_pm_central_suspend(void)
- 	tmp = pmu_raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
- 	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
- 	pmu_raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
--
--	/* Setting SEQ_OPTION register */
--	pmu_raw_writel(S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0,
--		       S5P_CENTRAL_SEQ_OPTION);
- }
- 
- int exynos_pm_central_resume(void)
-@@ -164,6 +160,13 @@ void exynos_enter_aftr(void)
- 
- 	exynos_pm_central_suspend();
- 
-+	if (of_machine_is_compatible("samsung,exynos4212") ||
-+	    of_machine_is_compatible("samsung,exynos4412")) {
-+		/* Setting SEQ_OPTION register */
-+		pmu_raw_writel(S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0,
-+			       S5P_CENTRAL_SEQ_OPTION);
-+	}
-+
- 	cpu_suspend(0, exynos_aftr_finisher);
- 
- 	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9) {
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index f8e7dcd..9c67a15 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -282,6 +282,10 @@ static int exynos_pm_suspend(void)
- {
- 	exynos_pm_central_suspend();
- 
-+	/* Setting SEQ_OPTION register */
-+	pmu_raw_writel(S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0,
-+		       S5P_CENTRAL_SEQ_OPTION);
-+
- 	if (read_cpuid_part() == ARM_CPU_PART_CORTEX_A9)
- 		exynos_cpu_save_register();
- 
--- 
-1.8.2.3
+
+> 
+> diff --git a/arch/arm/mach-exynos/mcpm-exynos.c
+> b/arch/arm/mach-exynos/mcpm-exynos.c
+> index b0d3c2e..34d77bb 100644
+> --- a/arch/arm/mach-exynos/mcpm-exynos.c
+> +++ b/arch/arm/mach-exynos/mcpm-exynos.c
+> @@ -316,8 +316,9 @@ static void __init exynos_cache_off(void)
+>  }
+> 
+>  static const struct of_device_id exynos_dt_mcpm_match[] = {
+> -       { .compatible = "samsung,exynos5420" },
+> -       { .compatible = "samsung,exynos5800" },
+> +       { .compatible = "samsung,smdk5420" },
+> +       { .compatible = "google,pi" },
+> +       { .compatible = "google,pit" },
+>         {},
+>  };
+> 
+> On a different note, I did not see any mainline support for Odroid
+> Xu3, are you testing this board with a non-mainline kernel ?
+> 
+> Regards,
+> Abhilash
+> >
+> >
+> >
+> > Nicolas
+> 
+> 
