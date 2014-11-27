@@ -1,148 +1,215 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [01/19] pinctrl: exynos: Add support for Exynos5433
-Date: Thu, 27 Nov 2014 19:49:00 +0900
-Message-ID: <5477019C.50101@samsung.com>
-References: <1417073716-22997-2-git-send-email-cw00.choi@samsung.com>
- <5476FC4E.7030505@samsung.com>
+From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH 16/19] arm64: dts: exynos: Add dts files for 64-bit
+ Exynos5433 SoC
+Date: Thu, 27 Nov 2014 11:18:34 +0000
+Message-ID: <20141127111834.GB857@leverpostej>
+References: <1417073716-22997-1-git-send-email-cw00.choi@samsung.com>
+ <1417073716-22997-17-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:26696 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751761AbaK0KtF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Nov 2014 05:49:05 -0500
-In-reply-to: <5476FC4E.7030505@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1417073716-22997-17-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Language: en-US
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "geunsik.lim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <geunsik.lim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, a.kesavan@samsung.
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, kyungmin.park@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, geunsik.lim@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Pankaj,
+On Thu, Nov 27, 2014 at 07:35:13AM +0000, Chanwoo Choi wrote:
+> This patch adds new Exynos5433 dtsi to support 64-bit Exynos5433 SoC
+> based on Octal core CPUs (quad Cortex-A57 and quad Cortex-A53).
+>
+> Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+> Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> Cc: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+> Cc: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
+> Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Geunsik Lim <geunsik.lim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi | 698 +++++++++++++++++++++
+>  arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 523 +++++++++++++++
+>  2 files changed, 1221 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433.dtsi
 
-On 11/27/2014 07:26 PM, Pankaj Dubey wrote:
-> Hi Chanwoo,
-> 
-> On Thursday 27 November 2014 01:04 PM, Chanwoo Choi wrote:
->> This patch adds driver data for Exynos5433 SoC. Exynos5433 includes 228 multi-
->> functional input/output port pins and 135 memory port pins. There are 41 general
->> port groups and 2 memory port groups.
->>
->> Cc: Tomasz Figa <tomasz.figa@gmail.com>
->> Cc: Thomas Abraham <thomas.abraham@linaro.org>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Acked-by: Geunsik Lim <geunsik.lim@samsung.com>
->> Acked-by: Inki Dae <inki.dae@samsung.com>
->>
->> ---
->> drivers/pinctrl/samsung/pinctrl-exynos.c  | 163 ++++++++++++++++++++++++++++++
->>   drivers/pinctrl/samsung/pinctrl-samsung.c |   2 +
->>   drivers/pinctrl/samsung/pinctrl-samsung.h |   1 +
->>   3 files changed, 166 insertions(+)
->>
->> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
->> index 8e3e0c0..bd4c4ec 100644
->> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
->> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
->> @@ -1268,6 +1268,169 @@ struct samsung_pin_ctrl exynos5420_pin_ctrl[] = {
->>       },
->>   };
->>
->> +/* pin banks of exynos5433 pin-controller - ALIVE */
->> +static struct samsung_pin_bank exynos5433_pin_banks0[] = {
->> +    EXYNOS_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
->> +    EXYNOS_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
->> +    EXYNOS_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
->> +    EXYNOS_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
->> +};
->> +
->> +/* pin banks of exynos5433 pin-controller - AUD */
->> +static struct samsung_pin_bank exynos5433_pin_banks1[] = {
->> +    EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
->> +    EXYNOS_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
->> +};
->> +
->> +/* pin banks of exynos5433 pin-controller - CPIF */
->> +static struct samsung_pin_bank exynos5433_pin_banks2[] = {
->> +    EXYNOS_PIN_BANK_EINTG(2, 0x000, "gpv6", 0x00),
->> +};
->> +
->> +/* pin banks of exynos5433 pin-controller - eSE */
->> +static struct samsung_pin_bank exynos5433_pin_banks3[] = {
->> +    EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj2", 0x00),
->> +};
->> +
->> +/* pin banks of exynos5433 pin-controller - FINGER */
->> +static struct samsung_pin_bank exynos5433_pin_banks4[] = {
->> +    EXYNOS_PIN_BANK_EINTG(4, 0x000, "gpd5", 0x00),
->> +};
->> +
->> +/* pin banks of exynos5433 pin-controller - FSYS */
->> +static struct samsung_pin_bank exynos5433_pin_banks5[] = {
->> +    EXYNOS_PIN_BANK_EINTG(6, 0x000, "gph1", 0x00),
->> +    EXYNOS_PIN_BANK_EINTG(7, 0x020, "gpr4", 0x04),
->> +    EXYNOS_PIN_BANK_EINTG(5, 0x040, "gpr0", 0x08),
->> +    EXYNOS_PIN_BANK_EINTG(8, 0x060, "gpr1", 0x0c),
->> +    EXYNOS_PIN_BANK_EINTG(2, 0x080, "gpr2", 0x10),
->> +    EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpr3", 0x14),
->> +};
->> +
->> +/* pin banks of exynos5433 pin-controller - IMEM */
->> +static struct samsung_pin_bank exynos5433_pin_banks6[] = {
->> +    EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpf0", 0x00),
-> 
-> Is this complete?
+[...]
 
-Exynos5433 has gpf1~gpf5. But, This patch did not include gpf1~gpf5.
-because gpf1~gpf5 of Exynos5433 has different offset of EINT register.
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433.dtsi b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> new file mode 100644
+> index 0000000..3d8b576
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> @@ -0,0 +1,523 @@
+> +/*
+> + * Samsung's Exynos5433 SoC device tree source
+> + *
+> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> + *             http://www.samsung.com
+> + *
+> + * Samsung's Exynos5433 SoC device nodes are listed in this file. Exynos5433
+> + * based board files can include this file and provide values for board specfic
+> + * bindings.
+> + *
+> + * Note: This file does not include device nodes for all the controllers in
+> + * Exynos5433 SoC. As device tree coverage for Exynos5433 increases, additional
+> + * nodes can be added to this file.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include "skeleton.dtsi"
+> +#include <dt-bindings/clock/exynos5433.h>
+> +
 
-gpf1~gpf5 is included in IMEM (0x11090000) part But,EINT register of gpf1~gpf5
-is included in ALIVE (0x10580000) part. So, I'll consider how to support
-gpf1~gpf5 gpios.
+Just to check: no memory reservations required for any reason?
 
-> 
->> +};
->> +
->> +/* pin banks of exynos5433 pin-controller - NFC */
->> +static struct samsung_pin_bank exynos5433_pin_banks7[] = {
->> +    EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj0", 0x00),
->> +};
->> +
->> +/* pin banks of exynos5433 pin-controller - PERIC */
->> +static struct samsung_pin_bank exynos5433_pin_banks8[] = {
->> +    EXYNOS_PIN_BANK_EINTG(6, 0x000, "gpv7", 0x00),
->> +    EXYNOS_PIN_BANK_EINTG(5, 0x020, "gpb0", 0x04),
->> +    EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpc0", 0x08),
->> +    EXYNOS_PIN_BANK_EINTG(2, 0x060, "gpc1", 0x0c),
->> +    EXYNOS_PIN_BANK_EINTG(6, 0x080, "gpc2", 0x10),
->> +    EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpc3", 0x14),
->> +    EXYNOS_PIN_BANK_EINTG(2, 0x0c0, "gpg0", 0x18),
->> +    EXYNOS_PIN_BANK_EINTG(4, 0x0e0, "gpd0", 0x1c),
->> +    EXYNOS_PIN_BANK_EINTG(6, 0x100, "gpd1", 0x20),
->> +    EXYNOS_PIN_BANK_EINTG(8, 0x120, "gpd2", 0x24),
->> +    EXYNOS_PIN_BANK_EINTG(5, 0x140, "gpd4", 0x28),
->> +    EXYNOS_PIN_BANK_EINTG(2, 0x160, "gpd8", 0x2c),
->> +    EXYNOS_PIN_BANK_EINTG(7, 0x180, "gpd6", 0x30),
->> +    EXYNOS_PIN_BANK_EINTG(3, 0x1a0, "gpd7", 0x34),
->> +    EXYNOS_PIN_BANK_EINTG(5, 0x1c0, "gpg1", 0x38),
->> +    EXYNOS_PIN_BANK_EINTG(2, 0x1e0, "gpg2", 0x3c),
->> +    EXYNOS_PIN_BANK_EINTG(8, 0x200, "gpg3", 0x40),
->> +};
->> +
->> +/* pin banks of exynos5433 pin-controller - TOUCH */
->> +static struct samsung_pin_bank exynos5433_pin_banks9[] = {
->> +    EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj1", 0x00),
->> +};
->> +
->> +/*
->> + * Samsung pinctrl driver data for Exynos5433 SoC. Exynos5433 SoC includes
->> + * four gpio/pin-mux/pinconfig controllers.
-> 
-> four? I can see you added 10.
+There also don't appear to be any memory nodes. Typically if that's
+filled in by the bootloader/FW we'd have an empty node (or one with a
+zero size entry) and a comment regarding the FW.
 
-You're right. I'll fix it.
+> +/ {
+> +       compatible = "samsung,exynos5433";
+> +       #address-cells = <1>;
+> +       #size-cells = <1>;
 
-Best Regards,
-Chanwoo Choi
+Not two, on both counts? The CPUs can address more than 32 bits.
+
+Is there nothing in the physical address space above 0xffffffff?
+
+[...]
+
+> +       cpus {
+> +               #address-cells = <2>;
+> +               #size-cells = <0>;
+> +
+> +               cpu0: cpu@100 {
+> +                       device_type = "cpu";
+> +                       compatible = "arm,cortex-a53", "arm,armv8";
+> +                       enable-method = "psci";
+
+While the CPU nodes have enable-methods, I didn't spot a PSCI node
+anywhere, so this dts cannot possibly have been used to bring up an SMP
+system.
+
+How has this dts been tested?
+
+What PSCI revision have you implemented? Have have you tested it?
+
+I take it from the presence of GICH/GICV in the gic node that CPUs enter
+the kernel at EL2?
+
+> +                       reg = <0x0 0x100>;
+> +                       clock-frequency = <1050000000>;
+
+What uses this?
+
+> +               };
+
+[...]
+
+> +       soc: soc {
+> +               compatible = "simple-bus";
+> +               #address-cells = <1>;
+> +               #size-cells = <1>;
+> +               ranges;
+> +
+> +               fixed-rate-clocks {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +
+> +                       xusbxti: clock@0 {
+> +                               compatible = "fixed-clock";
+> +                               clock-output-names = "xusbxti";
+> +                               #clock-cells = <0>;
+> +                       };
+> +               };
+
+Get rid of the fixed-rate-clocks container node. It's pointless and
+messy. Given you only have one there's no need for the bogus
+unit-address either.
+
+> +
+> +               cmu_top: clock-controller@0x10030000{
+
+s/@0x/@/ -- a unit-address should not have the leading '0x'. Please
+apply that to the rest of the file.
+
+> +                       compatible = "samsung,exynos5433-cmu-top";
+> +                       reg = <0x10030000 0x0c04>;
+> +                       #clock-cells = <1>;
+> +               };
+
+[...]
+
+> +               mct@101c0000 {
+> +                       compatible = "samsung,exynos4210-mct";
+> +                       reg = <0x101c0000 0x800>;
+> +                       interrupts = <0 102 0>, <0 103 0>, <0 104 0>, <0 105 0>,
+> +                               <0 106 0>, <0 107 0>, <0 108 0>, <0 109>,
+> +                               <0 110 0>, <0 111 0>, <0 112 0>, <0 113 0>;
+> +                       clocks = <&cmu_top CLK_FIN_PLL>, <&cmu_peris CLK_PCLK_MCT>;
+> +                       clock-names = "fin_pll", "mct";
+> +               };
+
+Hase this block had no changes whatsoever since its use in Exynos4210?
+Do we not need a "samsung,exynos5433-mct" comaptible string too?
+
+> +
+> +               gic:interrupt-controller@11001000 {
+> +                       compatible = "arm,cortex-a15-gic";
+
+Given this is multi-cluster, surely this is an external GIC-400, for
+which we have a supported compatible string?
+
+So this should at least be:
+
+	compatible = "arm,gic-400", "arm,cortex-a15-gic";
+
+> +                       #interrupt-cells = <3>;
+> +                       interrupt-controller;
+> +                       reg =   <0x11001000 0x1000>,
+> +                               <0x11002000 0x1000>,
+> +                               <0x11004000 0x2000>,
+> +                               <0x11006000 0x2000>;
+
+As far as I am aware, the GICC size is 8KiB. Regardless of whether we
+currently use the second page of registers, they should be described.
+
+> +                       interrupts = <1 9 0xf04>;
+> +               };
+> +
+> +               serial_0: serial@14C10000 {
+
+Nit: Please be consistent with capitalisation of hex. IMO it's better
+to leave it all lower-case.
+
+[...]
+
+> +               timer {
+> +                       compatible = "arm,armv8-timer";
+> +                       interrupts = <1 13 0xff01>,
+> +                                    <1 14 0xff01>,
+> +                                    <1 11 0xff01>,
+> +                                    <1 10 0xff01>;
+> +                       clock-frequency = <24000000>;
+> +                       use-clocksource-only;
+> +                       use-physical-timer;
+
+As Marc said, NAK for these last three properties.
+
+There is no excuse for not setting CNTFRQ_EL0, especially given a PSCI
+implementation. The last two properties have never been supported in
+mainline, and shouldn't be necessary regardless.
+
+Thanks,
+Mark.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
