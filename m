@@ -1,71 +1,59 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 11/19] clk: samsung: exynos5433: Add clocks for
- CMU_BUS{0|1|2} domains
-Date: Thu, 27 Nov 2014 21:14:42 +0900
-Message-ID: <547715B2.3070508@samsung.com>
+From: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 01/19] pinctrl: exynos: Add support for Exynos5433
+Date: Thu, 27 Nov 2014 21:14:59 +0900
+Message-ID: <CA+Ln22FtvUD1HqH9PCGPCRu8Cyc6u4oNnsrEWyKYODtCT8wKHQ@mail.gmail.com>
 References: <1417073716-22997-1-git-send-email-cw00.choi@samsung.com>
- <1417073716-22997-12-git-send-email-cw00.choi@samsung.com>
- <6217579.xNXtO7YiDs@wuerfel> <54771173.6090408@samsung.com>
- <54771518.1010004@samsung.com>
+	<1417073716-22997-2-git-send-email-cw00.choi@samsung.com>
+	<3904347.Bp2gmpYM49@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:37630 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753487AbaK0MOq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Nov 2014 07:14:46 -0500
-In-reply-to: <54771518.1010004@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <3904347.Bp2gmpYM49@wuerfel>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, InKi Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chanho Park <chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, geunsik.lim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, "sw0312.kim" <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jaehoon Chung <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, mark.rutland@arm.com, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, tomasz.figa@gmail.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, kyungmin.park@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, geunsik.lim@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Sylwester,
-
-On 11/27/2014 09:12 PM, Sylwester Nawrocki wrote:
-> Hi,
-> 
-> On 27/11/14 12:56, Chanwoo Choi wrote:
->> On 11/27/2014 08:41 PM, Arnd Bergmann wrote:
->>>> On Thursday 27 November 2014 16:35:08 Chanwoo Choi wrote:
->>>>>> +  - "samsung,exynos5433-cmu-bus0", "samsung,exynos5433-cmu-bus1"
->>>>>> +    and "samsung,exynos5433-cmu-bus2" - clock controller compatible for CMU_BUS
->>>>>> +    which generates global data buses clock and global peripheral buses clock.
->>>>>>  
->>>>>>  - reg: physical base address of the controller and length of memory mapped
->>>>>>    region.
->>>>>>
->>>>
->>>> This looks like you are duplicating the bindings and the code, but
->>>> it's really the same hardware multiple times with minor variations
->>>> that you should be able to describe properly here. Why not make
->>>> three nodes with the same compatible string and have them handled
->>>> by the same code?
+2014-11-27 20:45 GMT+09:00 Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>:
+> On Thursday 27 November 2014 16:34:58 Chanwoo Choi wrote:
+>> +
+>> +/*
+>> + * Samsung pinctrl driver data for Exynos5433 SoC. Exynos5433 SoC includes
+>> + * four gpio/pin-mux/pinconfig controllers.
+>> + */
+>> +struct samsung_pin_ctrl exynos5433_pin_ctrl[] = {
+>> +       {
+>> +               /* pin-controller instance 0 data */
+>> +               .pin_banks      = exynos5433_pin_banks0,
+>> +               .nr_banks       = ARRAY_SIZE(exynos5433_pin_banks0),
+>> +               .eint_wkup_init = exynos_eint_wkup_init,
+>> +               .suspend        = exynos_pinctrl_suspend,
+>> +               .resume         = exynos_pinctrl_resume,
+>> +               .label          = "exynos5433-gpio-ctrl0",
+>> +       }, {
 >>
->> Each CMU_BUSx domain of Exynos5433 have different base address as following:
->> - CMU_BUS0's base address and range : 0x1360_0000 ~ 0x1360_0b04
->> - CMU_BUS1's base address and range : 0x1480_0000 ~ 0x1480_0b04
->> - CMU_BUS2's base address and range : 0x1340_0000 ~ 0x1340_0b04
->>
->> So, I implement CMU_BUSx domain which has each compatible string.
-> 
-> You can always have multiple entries in the reg property. I've done
-> something like this for the exynos4415 CMU_ISPx units:
-> 
-> 	cmu_isp: clock-controller@12060000 {
-> 		compatible = "samsung,exynos4415-cmu-isp";
-> 		reg = <0x12060000 0xB10>, <0x12070000 0xB10>;
-> 		#clock-cells = <1>;
-> 
-> 		assigned-clocks = <&cmu CLK_FOUT_ISP_PLL>;
-> 		assigned-clock-rates = <300000000>;
-> 	};
+>
+> I'm counting nine controllers, not four ;-)
+>
+> These seem to all be fairly regular,
 
-Thanks for your guide.
+Yup, especially considering what Chanwoo mentioned about the great
+idea someone came up with about putting EINT registers of one of the
+controllers in different pin controller.
 
-I'll re-implment CMU_BUSx domain according to your guide.
+> my impression is that with the
+> move to arm64, you should come up with a new binding that can fully
+> describe each controller so you don't have to add new code and bindings
+> for each future SoC that uses the same scheme.
 
-Best Regards,
-Chanwoo Choi
+Still, this is exactly the same thing I thought when initially refactoring this
+driver 2 years ago and what was dismissed at that time due to people
+supposedly not wanting that much data in DT. If this point of view has changed,
+then I fully support your view, though.
+
+Best regards,
+Tomasz
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
