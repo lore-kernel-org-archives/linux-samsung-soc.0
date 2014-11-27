@@ -1,49 +1,72 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH v6 1/2] i2c: s3c2410: add Sysreg phandle to i2c device nodes
-Date: Thu, 27 Nov 2014 08:19:11 +0530
-Message-ID: <54769127.3020102@samsung.com>
-References: <1416818867-29156-1-git-send-email-pankaj.dubey@samsung.com>
- <1416818867-29156-2-git-send-email-pankaj.dubey@samsung.com>
- <54761F38.4030102@kernel.org>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH 1/1] thermal: cpu_cooling: check for the readiness of
+ cpufreq layer
+Date: Thu, 27 Nov 2014 09:38:39 +0530
+Message-ID: <CAKohponxUWVT1mjRfJarNtj-+=rXNOa_ONHUjmdu_+6N+=ZjPQ@mail.gmail.com>
+References: <1417024212-1775-1-git-send-email-edubezval@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:24738 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753072AbaK0CtT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Nov 2014 21:49:19 -0500
-In-reply-to: <54761F38.4030102@kernel.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1417024212-1775-1-git-send-email-edubezval@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Linux PM <linux-pm@vger.kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, LKML <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Rob Herring <robh+dt@kernel.org>, Zhang Rui <rui.zhang@intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, thomas.ab@samsung.com, Rob Herring <robh+dt@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, Russell King <linux@arm.linux.org.uk>, devicetree@vger.kernel.org, linux-doc@vger.kernel.org
 
-On Thursday 27 November 2014 12:13 AM, Kukjin Kim wrote:
-> On 11/24/14 17:47, Pankaj Dubey wrote:
->> This patch adds syscon based phandle to i2c device nodes of exynos5250
->> and exynos5420. These phandles will be used to save restore i2c sysreg
->> configuration register during s2r from i2c driver.
->>
->> CC: Rob Herring <robh+dt@kernel.org>
->> CC: Randy Dunlap <rdunlap@infradead.org>
->> CC: Russell King <linux@arm.linux.org.uk>
->> CC: devicetree@vger.kernel.org
->> CC: linux-doc@vger.kernel.org
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Few nits..
+
+On 26 November 2014 at 23:20, Eduardo Valentin <edubezval@gmail.com> wrote:
+
+> Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+> ---
+
+The normal practice is to write the non-commitable part here ...
+
+>  drivers/thermal/cpu_cooling.c                      | 5 +++++
+>  drivers/thermal/db8500_cpufreq_cooling.c           | 5 -----
+>  drivers/thermal/imx_thermal.c                      | 5 -----
+>  drivers/thermal/samsung/exynos_thermal_common.c    | 2 +-
+>  drivers/thermal/ti-soc-thermal/ti-thermal-common.c | 6 ------
+>  5 files changed, 6 insertions(+), 17 deletions(-)
+> ---
+
+But this works as well :)
+
+> This is attempt to organize the cpu cooling vs. cpufreq boot sequencing.
+> The main change in this patch, as in the commit log, is to have the check
+> for the cpufreq layer in the cpu cooling device registration, instead of
+> in thermal drivers. This way, drivers don't need to bother about it, they
+> just need to propagate the error value.
 >
-> Applied with change the subject 'ARM: dts: add sysreg phandle to...'
+> This change was tested on top of:
+> (0) - Viresh's change in cpufreq layer and cpufreq-dt (up to patch 4):
+> https://patchwork.kernel.org/patch/5384141/
+> https://patchwork.kernel.org/patch/5384151/
+> https://patchwork.kernel.org/patch/5384161/
+> https://patchwork.kernel.org/patch/5384171/
+> (1) - fix of thermal core:
+> https://patchwork.kernel.org/patch/5326991/
 >
-
-Thanks for correcting subject message.
-
-> BTW I'm holding on 2nd because conflicts between pm update and cleanup
-> branches in my tree...
-
-Please let me know if anything to be done from my end.
-
-Thanks,
-Pankaj Dubey
+> After Viresh's changes, cpufreq-dt is properly sequenced with cpu cooling
+> registration. Non-of based drivers also should take advantage if these
+> changes, as now they do not need to check for cpufreq layer. The check is
+> where it belongs, in cpu cooling device registration.
 >
-> - Kukjin
+> BR, Eduardo Valentin
+>
+>
+> diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
+> index 1ab0018..9e6945b 100644
+> --- a/drivers/thermal/cpu_cooling.c
+> +++ b/drivers/thermal/cpu_cooling.c
+> @@ -440,6 +440,11 @@ __cpufreq_cooling_register(struct device_node *np,
+>         int ret = 0, i;
+>         struct cpufreq_policy policy;
+>
+> +       if (!cpufreq_get_current_driver() || !cpufreq_frequency_get_table(0)) {
+
+Only !cpufreq_frequency_get_table(0) is enough here.
+
+For rest:
+
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
