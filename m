@@ -1,116 +1,81 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH] ARM: exynos_defconfig: disable CONFIG_EXYNOS5420_MCPM;
- not stable
-Date: Thu, 27 Nov 2014 22:21:33 +0530
-Message-ID: <CAM4voan5=UY=rp+5KPDGjN=RszBB5miCLDFukUXQ-3F6EN1HLw@mail.gmail.com>
-References: <1414796382-5447-1-git-send-email-khilman@kernel.org>
-	<000e01cffb39$5ef0a2d0$1cd1e870$@kernel.org>
-	<7hegtaq26c.fsf@deeprootsystems.com>
-	<CAMAWPa-mLAFL7v8hHA5R-eBzpMFK-E-xcvjoV8Bn6tTwgP53Uw@mail.gmail.com>
-	<CAOesGMhvTDN4J6AdUDHKV0Sp4NT6a4QEMUDWOayQqhhD+C4acw@mail.gmail.com>
-	<CAMAWPa-sz5jT9izEONVZR2Z4mzuivKaNHSgyR+eP13tWZ84hYw@mail.gmail.com>
-	<CAOesGMgSkJ8xkBgN7OpuDzT=ehaAd6kvbx5_tC50x78pvpkTwg@mail.gmail.com>
-	<CAOesGMh-7md4PdQX1Wvk0jO+87j+fxSvBnVD_osjNd2zQ4L43w@mail.gmail.com>
-	<044101d00852$3f421420$bdc63c60$@kernel.org>
-	<CAMAWPa-qk0DEmPNz5LZgJq9AuGhRxuY00XwxtEikt_vh-iozVg@mail.gmail.com>
-	<CAM4voa==Ram0xXTL=SnKktyRt7VFphQxBJgcf9Yi9Zio0QctHw@mail.gmail.com>
-	<7hvbm2ixmo.fsf@deeprootsystems.com>
-	<CAM4voa=budowQ+vnCAQhWj95Hx+yBnRAaDrFrjkQa2ubjrRwUQ@mail.gmail.com>
-	<7hmw7dg81l.fsf@deeprootsystems.com>
-	<alpine.LFD.2.11.1411261314310.11690@knanqh.ubzr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f46.google.com ([209.85.216.46]:54361 "EHLO
-	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751706AbaK0Qve (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Nov 2014 11:51:34 -0500
-Received: by mail-qa0-f46.google.com with SMTP id u7so3477832qaz.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Nov 2014 08:51:33 -0800 (PST)
-In-Reply-To: <alpine.LFD.2.11.1411261314310.11690@knanqh.ubzr>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH v2 0/2] cpuidle: exynos: add coupled cpuidle support for
+ Exynos4210
+Date: Thu, 27 Nov 2014 17:51:23 +0100
+Message-ID: <1417107085-26159-1-git-send-email-b.zolnierkie@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Colin Cross <ccross@google.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-kernel@lists.linaro.org, b.zolnierkie@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: Kevin Hilman <khilman@kernel.org>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, "linaro-kernel@lists.linaro.org" <linaro-kernel@lists.linaro.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Hi Kevin,
+Hi,
 
-On Thu, Nov 27, 2014 at 12:11 AM, Nicolas Pitre
-<nicolas.pitre@linaro.org> wrote:
-> On Wed, 26 Nov 2014, Kevin Hilman wrote:
->
->> Abhilash Kesavan <kesavan.abhilash@gmail.com> writes:
->>
->> > Hi Kevin,
->> >
->> > On Wed, Nov 26, 2014 at 6:30 AM, Kevin Hilman <khilman@kernel.org> wrote:
->> >> [...]
->> >>
->> >> More specifically, with only the loopback call to turn off CCI commented
->> >> out, the imprecise aborts go away.
->> >
->> > I can't see how enabling snoops for the boot cluster is causing these
->> > aborts. Perhaps as Krzysztof commented it has something to do with the
->> > secure firmware/tz software on these boards ? Other than there does
->> > not appear to be any difference between the working/non-working
->> > setups.
->>
->> Perhaps the secure firmware is preventing the CCI to be enabled by the
->> kernel, and that is causing the imprecise abort?
->
-> That is well possible.
->
-> Now...... if the bootloader/firmware does not let Linux deal with both
-> the CCI and caches then MCPM simply has no more purpose for this board.
-> The whole point of MCPM is actually to handle the CCI properly and the
-> most efficient way despite all the possible races and opportunities for
-> memory corruptions. And yes, this is a complex task.
->
-> So there is actually two choices: the firmware let Linux take care of it
-> via the MCPM layer (easy), or the firmware has to implement it all
-> _properly_ (hard) behind an interface such as PSCI, at which point MCPM
-> should be configured out.
->
-> If the firmware does not let Linux interact with the CCI _and_ does not
-> implement full MCPM-like services then the platform is broken and only a
-> firmware upgrade could fix that.  It might still be possible to boot all
-> CPUs through other means, but power management would then be severely
-> limited.
+The following patchset adds coupled cpuidle support for Exynos4210
+to an existing cpuidle-exynos driver.  As a result it enables AFTR
+mode to be used by default on Exynos4210 without the need to hot
+unplug CPU1 first.
 
-How about restricting the mcpm initialization to only known working
-boards like chromebooks and smdk. This would be better than disabling
-the config altogether from exynos_defconfig. The non-working boards
-would then default to platsmp. Assuming that the firmware handles all
-CCI/cache activities then platsmp may work for secondary core boot-up
-?
+This work is heavily based on earlier cpuidle-exynos4210 driver from
+Daniel Lezcano:
 
-Can you please apply the below diff and test the non-working boards
-with CONFIG_EXYNOS5420_MCPM enabled.
+http://www.spinics.net/lists/linux-samsung-soc/msg28134.html
 
-diff --git a/arch/arm/mach-exynos/mcpm-exynos.c
-b/arch/arm/mach-exynos/mcpm-exynos.c
-index b0d3c2e..34d77bb 100644
---- a/arch/arm/mach-exynos/mcpm-exynos.c
-+++ b/arch/arm/mach-exynos/mcpm-exynos.c
-@@ -316,8 +316,9 @@ static void __init exynos_cache_off(void)
- }
+Changes from Daniel's code include:
+- porting code to current kernels
+- fixing it to work on my setup (by using S5P_INFORM register
+  instead of S5P_VA_SYSRAM one on Revison 1.1 and retrying poking
+  CPU1 out of the BOOT ROM if necessary)
+- fixing rare lockup caused by waiting for CPU1 to get stuck in
+  the BOOT ROM (CPU hotplug code in arch/arm/mach-exynos/platsmp.c
+  doesn't require this and works fine)
+- moving Exynos specific code to arch/arm/mach-exynos/pm.c
+- using cpu_boot_reg_base() helper instead of BOOT_VECTOR macro
+- using exynos_cpu_*() helpers instead of accessing registers
+  directly
+- using arch_send_wakeup_ipi_mask() instead of dsb_sev()
+  (this matches CPU hotplug code in arch/arm/mach-exynos/platsmp.c)
+- integrating separate exynos4210-cpuidle driver into existing
+  exynos-cpuidle one
 
- static const struct of_device_id exynos_dt_mcpm_match[] = {
--       { .compatible = "samsung,exynos5420" },
--       { .compatible = "samsung,exynos5800" },
-+       { .compatible = "samsung,smdk5420" },
-+       { .compatible = "google,pi" },
-+       { .compatible = "google,pit" },
-        {},
- };
+patch #1 is a fix for Exynos platform PM code preparing it for
+coupled cpuidle support
 
-On a different note, I did not see any mainline support for Odroid
-Xu3, are you testing this board with a non-mainline kernel ?
+patch #2 adds coupled cpuidle AFTR mode for Exynos4210
 
-Regards,
-Abhilash
->
->
->
-> Nicolas
+The patchset depends on:
+- for-next branch (760a7d4763c8) of linux-samsung.git kernel tree
+
+v2:
+- rebased on top of for-next branch (commit: 760a7d4763c8) of
+  linux-samsung.git kernel tree (the patchset also applies fine
+  to next-20141126 branch of linux-next kernel tree but needs
+  CPUIDLE_FLAG_TIME_VALID flag usage removed to fix build)
+- added Signed-off-by from Daniel Lezcano to patch #2
+- added separate struct cpuidle_driver exynos_coupled_idle_driver
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (2):
+  ARM: EXYNOS: apply S5P_CENTRAL_SEQ_OPTION fix only when necessary
+  cpuidle: exynos: add coupled cpuidle support for Exynos4210
+
+ arch/arm/mach-exynos/common.h                |   4 +
+ arch/arm/mach-exynos/exynos.c                |   4 +
+ arch/arm/mach-exynos/platsmp.c               |   2 +-
+ arch/arm/mach-exynos/pm.c                    | 133 ++++++++++++++++++++++++++-
+ arch/arm/mach-exynos/suspend.c               |   4 +
+ drivers/cpuidle/Kconfig.arm                  |   1 +
+ drivers/cpuidle/cpuidle-exynos.c             |  77 +++++++++++++++-
+ include/linux/platform_data/cpuidle-exynos.h |  20 ++++
+ 8 files changed, 235 insertions(+), 10 deletions(-)
+ create mode 100644 include/linux/platform_data/cpuidle-exynos.h
+
+-- 
+1.8.2.3
+
