@@ -1,7 +1,8 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v4 5/7] regulator: max77686: Add GPIO control
-Date: Thu, 27 Nov 2014 12:20:51 +0100
-Message-ID: <1417087253-12306-6-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v4 4/7] regulator: Use ena_gpio supplied with generic regulator
+ bindings
+Date: Thu, 27 Nov 2014 12:20:50 +0100
+Message-ID: <1417087253-12306-5-git-send-email-k.kozlowski@samsung.com>
 References: <1417087253-12306-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1417087253-12306-1-git-send-email-k.kozlowski@samsung.com>
@@ -10,155 +11,199 @@ To: Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark 
 Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add enable control over GPIO for regulators supporting this: LDO20,
-LDO21, LDO22, buck8 and buck9.
+Use ena_gpio from regulator constraints (filled by parsing generic
+bindings) to initialize the GPIO enable control. Support also the old
+way: ena_gpio supplied in regulator_config structure.
 
-This is needed for proper (and full) configuration of the Maxim 77686
-PMIC without creating redundant 'regulator-fixed' entries.
+This also adds a new set_ena_gpio() callback in regulator_ops structure
+which driver may provide to actually enable the GPIO control in
+hardware.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/regulator/max77686.c | 58 ++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 53 insertions(+), 5 deletions(-)
+ drivers/regulator/core.c         | 96 ++++++++++++++++++++++++++++++----------
+ include/linux/regulator/driver.h |  5 +++
+ 2 files changed, 78 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/regulator/max77686.c b/drivers/regulator/max77686.c
-index 10d206266ac2..0d6bddad0ef4 100644
---- a/drivers/regulator/max77686.c
-+++ b/drivers/regulator/max77686.c
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index bbf93c9caca3..1760184cd8dc 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
 @@ -26,6 +26,7 @@
- #include <linux/bug.h>
- #include <linux/err.h>
  #include <linux/gpio.h>
+ #include <linux/gpio/consumer.h>
+ #include <linux/of.h>
 +#include <linux/of_gpio.h>
- #include <linux/slab.h>
- #include <linux/platform_device.h>
- #include <linux/regulator/driver.h>
-@@ -46,6 +47,11 @@
- #define MAX77686_DVS_UVSTEP	12500
- 
- /*
-+ * Value for configuring buck[89] and LDO{20,21,22} as GPIO control.
-+ * It is the same as 'off' for other regulators.
-+ */
-+#define MAX77686_GPIO_CONTROL		0x0
-+/*
-  * Values used for configuring LDOs and bucks.
-  * Forcing low power mode: LDO1, 3-5, 9, 13, 17-26
-  */
-@@ -82,6 +88,8 @@ enum max77686_ramp_rate {
- };
- 
- struct max77686_data {
-+	unsigned long long gpio_enabled:MAX77686_REGULATORS;
-+
- 	/* Array indexed by regulator id */
- 	unsigned int opmode[MAX77686_REGULATORS];
- };
-@@ -100,6 +108,26 @@ static unsigned int max77686_get_opmode_shift(int id)
+ #include <linux/regmap.h>
+ #include <linux/regulator/of_regulator.h>
+ #include <linux/regulator/consumer.h>
+@@ -1044,6 +1045,14 @@ static int set_machine_constraints(struct regulator_dev *rdev,
+ 		}
  	}
- }
  
-+/*
-+ * When regulator is configured for GPIO control then it
-+ * replaces "normal" mode. Any change from low power mode to normal
-+ * should actually change to GPIO control.
-+ * Map normal mode to proper value for such regulators.
-+ */
-+static unsigned int max77686_map_normal_mode(struct max77686_data *max77686,
-+					     int id)
-+{
-+	switch (id) {
-+	case MAX77686_BUCK8:
-+	case MAX77686_BUCK9:
-+	case MAX77686_LDO20 ... MAX77686_LDO22:
-+		if (max77686->gpio_enabled & (1 << id))
-+			return MAX77686_GPIO_CONTROL;
++	if (rdev->constraints->use_ena_gpio && ops->set_ena_gpio) {
++		ret = ops->set_ena_gpio(rdev);
++		if (ret < 0) {
++			rdev_err(rdev, "failed to set enable GPIO control\n");
++			goto out;
++		}
 +	}
 +
-+	return MAX77686_NORMAL;
-+}
-+
- /* Some BUCKs and LDOs supports Normal[ON/OFF] mode during suspend */
- static int max77686_set_suspend_disable(struct regulator_dev *rdev)
- {
-@@ -136,7 +164,7 @@ static int max77686_set_suspend_mode(struct regulator_dev *rdev,
- 		val = MAX77686_LDO_LOWPOWER_PWRREQ;
- 		break;
- 	case REGULATOR_MODE_NORMAL:			/* ON in Normal Mode */
--		val = MAX77686_NORMAL;
-+		val = max77686_map_normal_mode(max77686, id);
- 		break;
- 	default:
- 		pr_warn("%s: regulator_suspend_mode : 0x%x not supported\n",
-@@ -160,7 +188,7 @@ static int max77686_ldo_set_suspend_mode(struct regulator_dev *rdev,
- {
- 	unsigned int val;
- 	struct max77686_data *max77686 = rdev_get_drvdata(rdev);
--	int ret;
-+	int ret, id = rdev_get_id(rdev);
+ 	print_constraints(rdev);
+ 	return 0;
+ out:
+@@ -1660,36 +1669,36 @@ EXPORT_SYMBOL_GPL(regulator_bulk_unregister_supply_alias);
  
- 	switch (mode) {
- 	case REGULATOR_MODE_STANDBY:			/* switch off */
-@@ -170,7 +198,7 @@ static int max77686_ldo_set_suspend_mode(struct regulator_dev *rdev,
- 		val = MAX77686_LDO_LOWPOWER_PWRREQ;
- 		break;
- 	case REGULATOR_MODE_NORMAL:			/* ON in Normal Mode */
--		val = MAX77686_NORMAL;
-+		val = max77686_map_normal_mode(max77686, id);
- 		break;
- 	default:
- 		pr_warn("%s: regulator_suspend_mode : 0x%x not supported\n",
-@@ -184,7 +212,7 @@ static int max77686_ldo_set_suspend_mode(struct regulator_dev *rdev,
+ /* Manage enable GPIO list. Same GPIO pin can be shared among regulators */
+ static int regulator_ena_gpio_request(struct regulator_dev *rdev,
+-				const struct regulator_config *config)
++					unsigned int gpio,
++					bool gpio_invert,
++					unsigned int gpio_flags)
+ {
+ 	struct regulator_enable_gpio *pin;
+ 	struct gpio_desc *gpiod;
+ 	int ret;
+ 
+-	gpiod = gpio_to_desc(config->ena_gpio);
++	gpiod = gpio_to_desc(gpio);
+ 
+ 	list_for_each_entry(pin, &regulator_ena_gpio_list, list) {
+ 		if (pin->gpiod == gpiod) {
+-			rdev_dbg(rdev, "GPIO %d is already used\n",
+-				config->ena_gpio);
++			rdev_dbg(rdev, "GPIO %d is already used\n", gpio);
+ 			goto update_ena_gpio_to_rdev;
+ 		}
+ 	}
+ 
+-	ret = gpio_request_one(config->ena_gpio,
+-				GPIOF_DIR_OUT | config->ena_gpio_flags,
++	ret = gpio_request_one(gpio, GPIOF_DIR_OUT | gpio_flags,
+ 				rdev_get_name(rdev));
  	if (ret)
  		return ret;
  
--	max77686->opmode[rdev_get_id(rdev)] = val;
-+	max77686->opmode[id] = val;
+ 	pin = kzalloc(sizeof(struct regulator_enable_gpio), GFP_KERNEL);
+ 	if (pin == NULL) {
+-		gpio_free(config->ena_gpio);
++		gpio_free(gpio);
+ 		return -ENOMEM;
+ 	}
+ 
+ 	pin->gpiod = gpiod;
+-	pin->ena_gpio_invert = config->ena_gpio_invert;
++	pin->ena_gpio_invert = gpio_invert;
+ 	list_add(&pin->list, &regulator_ena_gpio_list);
+ 
+ update_ena_gpio_to_rdev:
+@@ -1698,6 +1707,59 @@ update_ena_gpio_to_rdev:
  	return 0;
  }
  
-@@ -197,7 +225,7 @@ static int max77686_enable(struct regulator_dev *rdev)
- 	shift = max77686_get_opmode_shift(id);
- 
- 	if (max77686->opmode[id] == MAX77686_OFF_PWRREQ)
--		max77686->opmode[id] = MAX77686_NORMAL;
-+		max77686->opmode[id] = max77686_map_normal_mode(max77686, id);
- 
- 	return regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
- 				  rdev->desc->enable_mask,
-@@ -229,6 +257,25 @@ static int max77686_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay)
- 				  MAX77686_RAMP_RATE_MASK, ramp_value << 6);
- }
- 
-+static int max77686_enable_gpio_control(struct regulator_dev *rdev)
++/*
++ * Request GPIO for enable control from regulator_config
++ * or init_data->constraints.
++ */
++static int regulator_ena_gpio_setup(struct regulator_dev *rdev,
++			const struct regulator_config *config,
++			const struct regulator_init_data *init_data)
 +{
-+	struct max77686_data *max77686 = rdev_get_drvdata(rdev);
-+	int id = rdev_get_id(rdev);
++	unsigned int gpio_flags;
++	bool gpio_invert;
++	int gpio, ret;
 +
-+	switch (id) {
-+	case MAX77686_BUCK8:
-+	case MAX77686_BUCK9:
-+	case MAX77686_LDO20 ... MAX77686_LDO22:
-+		max77686->gpio_enabled |= (1 << id);
++	if (config->ena_gpio || config->ena_gpio_initialized) {
++		gpio = config->ena_gpio;
++		gpio_invert = config->ena_gpio_invert;
++		gpio_flags = config->ena_gpio_flags;
++	} else if (init_data && init_data->constraints.use_ena_gpio) {
++		const struct regulation_constraints *c = &init_data->constraints;
 +
-+		return regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
-+					rdev->desc->enable_mask,
-+					MAX77686_GPIO_CONTROL);
++		gpio = c->ena_gpio;
++		gpio_invert = false;
++		gpio_flags = GPIOF_OUT_INIT_HIGH;
++
++		if (c->ena_gpio_flags & OF_GPIO_ACTIVE_LOW) {
++			gpio_invert = true;
++			gpio_flags = GPIOF_OUT_INIT_LOW;
++		}
++
++		if (c->ena_gpio_open_drain)
++			gpio_flags |= GPIOF_OPEN_DRAIN;
++	} else {
++		return 0;
 +	}
 +
-+	return -EINVAL;
++	if (!gpio_is_valid(gpio))
++		return 0;
++
++	ret = regulator_ena_gpio_request(rdev, gpio, gpio_invert, gpio_flags);
++	if (ret != 0) {
++		rdev_err(rdev, "Failed to request enable GPIO%d: %d\n",
++				 gpio, ret);
++		return ret;
++	}
++
++	if (gpio_flags & GPIOF_OUT_INIT_HIGH)
++		rdev->ena_gpio_state = 1;
++
++	if (gpio_invert)
++		rdev->ena_gpio_state = !rdev->ena_gpio_state;
++
++	return 0;
 +}
 +
- static struct regulator_ops max77686_ops = {
- 	.list_voltage		= regulator_list_voltage_linear,
- 	.map_voltage		= regulator_map_voltage_linear,
-@@ -239,6 +286,7 @@ static struct regulator_ops max77686_ops = {
- 	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
- 	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
- 	.set_suspend_mode	= max77686_set_suspend_mode,
-+	.set_ena_gpio		= max77686_enable_gpio_control,
+ static void regulator_ena_gpio_free(struct regulator_dev *rdev)
+ {
+ 	struct regulator_enable_gpio *pin, *n;
+@@ -3650,21 +3712,9 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 
+ 	dev_set_drvdata(&rdev->dev, rdev);
+ 
+-	if ((config->ena_gpio || config->ena_gpio_initialized) &&
+-	    gpio_is_valid(config->ena_gpio)) {
+-		ret = regulator_ena_gpio_request(rdev, config);
+-		if (ret != 0) {
+-			rdev_err(rdev, "Failed to request enable GPIO%d: %d\n",
+-				 config->ena_gpio, ret);
+-			goto wash;
+-		}
+-
+-		if (config->ena_gpio_flags & GPIOF_OUT_INIT_HIGH)
+-			rdev->ena_gpio_state = 1;
+-
+-		if (config->ena_gpio_invert)
+-			rdev->ena_gpio_state = !rdev->ena_gpio_state;
+-	}
++	ret = regulator_ena_gpio_setup(rdev, config, init_data);
++	if (ret != 0)
++		goto wash;
+ 
+ 	/* set regulator constraints */
+ 	if (init_data)
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index 28da08e4671f..fe967a0c6ce7 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -118,6 +118,9 @@ struct regulator_linear_range {
+  *                       suspended.
+  * @set_suspend_mode: Set the operating mode for the regulator when the
+  *                    system is suspended.
++ * @set_ena_gpio: Turn on GPIO enable control for given regulator. Called
++ *                by core during registration of regulator when regulator
++ *                was configured for this mode by standard binding.
+  *
+  * This struct describes regulator operations which can be implemented by
+  * regulator chip drivers.
+@@ -183,6 +186,8 @@ struct regulator_ops {
+ 
+ 	/* set regulator suspend operating mode (defined in consumer.h) */
+ 	int (*set_suspend_mode) (struct regulator_dev *, unsigned int mode);
++
++	int (*set_ena_gpio)(struct regulator_dev *);
  };
  
- static struct regulator_ops max77686_ldo_ops = {
+ /*
 -- 
 1.9.1
