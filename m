@@ -1,7 +1,8 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v4 2/7] regulator: dt-bindings: Document the ena-gpios property
-Date: Thu, 27 Nov 2014 12:20:48 +0100
-Message-ID: <1417087253-12306-3-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v4 6/7] mfd/regulator: dt-bindings: max77686: Document gpio
+ properties
+Date: Thu, 27 Nov 2014 12:20:52 +0100
+Message-ID: <1417087253-12306-7-git-send-email-k.kozlowski@samsung.com>
 References: <1417087253-12306-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1417087253-12306-1-git-send-email-k.kozlowski@samsung.com>
@@ -10,28 +11,44 @@ To: Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark 
 Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Document new properties for regulators (ena-gpios and
-ena-gpio-open-drain) for enabling control over GPIO.
+Document usage of ena-gpios properties which turn on external/GPIO
+control over regulator.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- Documentation/devicetree/bindings/regulator/regulator.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/devicetree/bindings/mfd/max77686.txt | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/regulator/regulator.txt b/Documentation/devicetree/bindings/regulator/regulator.txt
-index 4e7ed762b3bb..dad57b3badc7 100644
---- a/Documentation/devicetree/bindings/regulator/regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/regulator.txt
-@@ -30,6 +30,10 @@ Optional properties:
- 	- regulator-off-in-suspend: regulator should be off in suspend state.
- 	- regulator-suspend-microvolt: regulator should be set to this voltage
- 	  in suspend.
-+- ena-gpios: GPIO to use for enable control. Actual implementation depends
-+  on regulator driver. The bindings documentation for given driver describes
-+  which regulator actually supports it.
-+- ena-gpio-open-drain: GPIO is open drain type.
+diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Documentation/devicetree/bindings/mfd/max77686.txt
+index 75fdfaf41831..93c4cd07ffc8 100644
+--- a/Documentation/devicetree/bindings/mfd/max77686.txt
++++ b/Documentation/devicetree/bindings/mfd/max77686.txt
+@@ -37,8 +37,12 @@ to get matched with their hardware counterparts as follow:
+   Regulators which can be turned off during system suspend:
+ 	-LDOn	:	2, 6-8, 10-12, 14-16,
+ 	-BUCKn	:	1-4.
+-  Use standard regulator bindings for it ('regulator-off-in-suspend').
  
- Deprecated properties:
- - regulator-compatible: If a regulator chip contains multiple
++  Regulators which can be configured for GPIO enable control:
++	-LDOn	:	20, 21, 22
++	-BUCKn	:	8, 9
++  Use standard regulator bindings for these ('regulator-off-in-suspend',
++  'ena-gpios').
+ 
+ Example:
+ 
+@@ -65,4 +69,12 @@ Example:
+ 				regulator-always-on;
+ 				regulator-boot-on;
+ 			};
++
++			buck9_reg {
++				regulator-compatible = "BUCK9";
++				regulator-name = "CAM_ISP_CORE_1.2V";
++				regulator-min-microvolt = <1000000>;
++				regulator-max-microvolt = <1200000>;
++				ena-gpios = <&gpm0 3 GPIO_ACTIVE_HIGH>;
++			};
+ 	}
 -- 
 1.9.1
