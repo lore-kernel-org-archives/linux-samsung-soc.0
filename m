@@ -1,72 +1,63 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH 1/1] thermal: cpu_cooling: check for the readiness of
- cpufreq layer
-Date: Thu, 27 Nov 2014 09:38:39 +0530
-Message-ID: <CAKohponxUWVT1mjRfJarNtj-+=rXNOa_ONHUjmdu_+6N+=ZjPQ@mail.gmail.com>
-References: <1417024212-1775-1-git-send-email-edubezval@gmail.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: [GIT PULL 1/4] Samsung 3rd round of PM updates for v3.19
+Date: Thu, 27 Nov 2014 16:06:26 +0900
+Message-ID: <5476CD72.2010203@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1417024212-1775-1-git-send-email-edubezval@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Linux PM <linux-pm@vger.kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, LKML <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Rob Herring <robh+dt@kernel.org>, Zhang Rui <rui.zhang@intel.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.19.201]:36229 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750866AbaK0HGc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 27 Nov 2014 02:06:32 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
+Cc: arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Few nits..
+The following changes since commit c645a598f99768e6cc82129081458dfdd0c273b7:
 
-On 26 November 2014 at 23:20, Eduardo Valentin <edubezval@gmail.com> wrote:
+  ARM: EXYNOS: Call regulator core suspend prepare and finish functions
+(2014-11-21 22:49:47 +0900)
 
-> Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
-> ---
+are available in the git repository at:
 
-The normal practice is to write the non-commitable part here ...
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+tags/samsung-pm-3
 
->  drivers/thermal/cpu_cooling.c                      | 5 +++++
->  drivers/thermal/db8500_cpufreq_cooling.c           | 5 -----
->  drivers/thermal/imx_thermal.c                      | 5 -----
->  drivers/thermal/samsung/exynos_thermal_common.c    | 2 +-
->  drivers/thermal/ti-soc-thermal/ti-thermal-common.c | 6 ------
->  5 files changed, 6 insertions(+), 17 deletions(-)
-> ---
+for you to fetch changes up to b04fa9f704aa818b87509ff4149bba810ef8bbd8:
 
-But this works as well :)
+  ARM: EXYNOS: use u8 for val[] in struct exynos_pmu_conf (2014-11-27
+02:47:05 +0900)
 
-> This is attempt to organize the cpu cooling vs. cpufreq boot sequencing.
-> The main change in this patch, as in the commit log, is to have the check
-> for the cpufreq layer in the cpu cooling device registration, instead of
-> in thermal drivers. This way, drivers don't need to bother about it, they
-> just need to propagate the error value.
->
-> This change was tested on top of:
-> (0) - Viresh's change in cpufreq layer and cpufreq-dt (up to patch 4):
-> https://patchwork.kernel.org/patch/5384141/
-> https://patchwork.kernel.org/patch/5384151/
-> https://patchwork.kernel.org/patch/5384161/
-> https://patchwork.kernel.org/patch/5384171/
-> (1) - fix of thermal core:
-> https://patchwork.kernel.org/patch/5326991/
->
-> After Viresh's changes, cpufreq-dt is properly sequenced with cpu cooling
-> registration. Non-of based drivers also should take advantage if these
-> changes, as now they do not need to check for cpufreq layer. The check is
-> where it belongs, in cpu cooling device registration.
->
-> BR, Eduardo Valentin
->
->
-> diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
-> index 1ab0018..9e6945b 100644
-> --- a/drivers/thermal/cpu_cooling.c
-> +++ b/drivers/thermal/cpu_cooling.c
-> @@ -440,6 +440,11 @@ __cpufreq_cooling_register(struct device_node *np,
->         int ret = 0, i;
->         struct cpufreq_policy policy;
->
-> +       if (!cpufreq_get_current_driver() || !cpufreq_frequency_get_table(0)) {
+----------------------------------------------------------------
+Samsung PM 3rd updates for v3.19
 
-Only !cpufreq_frequency_get_table(0) is enough here.
+- exynos3250
+  : add PMU support
 
-For rest:
+- PMU refactoring
+  : move restart code into PMU driver
+  : move restart code for exynos440 into clk driver
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+- use u8 for val[] in struct exynos_pmu_conf
+
+Note that this branch is based on tags/samsung-exynos-v3.19
+
+----------------------------------------------------------------
+Bartlomiej Zolnierkiewicz (2):
+      ARM: EXYNOS: add exynos3250 PMU support
+      ARM: EXYNOS: use u8 for val[] in struct exynos_pmu_conf
+
+Pankaj Dubey (2):
+      clk: exynos5440: move restart code into clock driver
+      ARM: EXYNOS: move restart code into pmu driver
+
+ arch/arm/mach-exynos/common.h        |   1 -
+ arch/arm/mach-exynos/exynos.c        |  23 -----
+ arch/arm/mach-exynos/pmu.c           | 192
+++++++++++++++++++++++++++++++++++-
+ arch/arm/mach-exynos/regs-pmu.h      | 128 +++++++++++++++++++++++
+ drivers/clk/samsung/clk-exynos5440.c |  29 +++++-
+ 5 files changed, 347 insertions(+), 26 deletions(-)
