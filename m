@@ -1,8 +1,8 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v4 6/7] mfd/regulator: dt-bindings: max77686: Document gpio
- properties
-Date: Thu, 27 Nov 2014 12:20:52 +0100
-Message-ID: <1417087253-12306-7-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v4 7/7] ARM: dts: exynos4412-trats: Switch max77686 regulators
+ to GPIO control
+Date: Thu, 27 Nov 2014 12:20:53 +0100
+Message-ID: <1417087253-12306-8-git-send-email-k.kozlowski@samsung.com>
 References: <1417087253-12306-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1417087253-12306-1-git-send-email-k.kozlowski@samsung.com>
@@ -11,44 +11,102 @@ To: Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark 
 Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Document usage of ena-gpios properties which turn on external/GPIO
-control over regulator.
+Remove fixed regulators (duplicating what max77686 provides) and
+add GPIO control to max77686 regulators. Add of_compatible to
+voltage-regulators node.
+
+This gives the system full control over those regulators. Previously
+the state of such regulators was a mixture of what max77686 driver set
+over I2C and what regulator-fixed set through GPIO.
+
+Removal of 'regulator-always-on' from CAM_ISP_CORE_1.2V (buck9) allows
+disabling it when it is not used. Previously this regulator was always
+enabled because its enable state is a OR of:
+ - ENB9 GPIO (turned always on by regulator-fixed),
+ - BUCK9EN field in BUCK9CTRL register (off by max77686 through I2C).
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- Documentation/devicetree/bindings/mfd/max77686.txt | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/exynos4412-trats2.dts | 25 +++++--------------------
+ 1 file changed, 5 insertions(+), 20 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Documentation/devicetree/bindings/mfd/max77686.txt
-index 75fdfaf41831..93c4cd07ffc8 100644
---- a/Documentation/devicetree/bindings/mfd/max77686.txt
-+++ b/Documentation/devicetree/bindings/mfd/max77686.txt
-@@ -37,8 +37,12 @@ to get matched with their hardware counterparts as follow:
-   Regulators which can be turned off during system suspend:
- 	-LDOn	:	2, 6-8, 10-12, 14-16,
- 	-BUCKn	:	1-4.
--  Use standard regulator bindings for it ('regulator-off-in-suspend').
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 7a68e0832cd6..4ba981eae32e 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -58,15 +58,6 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
  
-+  Regulators which can be configured for GPIO enable control:
-+	-LDOn	:	20, 21, 22
-+	-BUCKn	:	8, 9
-+  Use standard regulator bindings for these ('regulator-off-in-suspend',
-+  'ena-gpios').
+-		vemmc_reg: regulator-0 {
+-			compatible = "regulator-fixed";
+-			regulator-name = "VMEM_VDD_2.8V";
+-			regulator-min-microvolt = <2800000>;
+-			regulator-max-microvolt = <2800000>;
+-			gpio = <&gpk0 2 0>;
+-			enable-active-high;
+-		};
+-
+ 		cam_io_reg: voltage-regulator-1 {
+ 			compatible = "regulator-fixed";
+ 			regulator-name = "CAM_SENSOR_A";
+@@ -94,16 +85,6 @@
+ 			enable-active-high;
+ 		};
  
- Example:
+-		cam_isp_core_reg: voltage-regulator-4 {
+-			compatible = "regulator-fixed";
+-			regulator-name = "CAM_ISP_CORE_1.2V_EN";
+-			regulator-min-microvolt = <1200000>;
+-			regulator-max-microvolt = <1200000>;
+-			gpio = <&gpm0 3 0>;
+-			enable-active-high;
+-			regulator-always-on;
+-		};
+-
+ 		ps_als_reg: voltage-regulator-5 {
+ 			compatible = "regulator-fixed";
+ 			regulator-name = "LED_A_3.0V";
+@@ -405,6 +386,7 @@
+ 					regulator-name = "VTF_2.8V";
+ 					regulator-min-microvolt = <2800000>;
+ 					regulator-max-microvolt = <2800000>;
++					ena-gpios = <&gpy2 0 GPIO_ACTIVE_HIGH>;
+ 				};
  
-@@ -65,4 +69,12 @@ Example:
- 				regulator-always-on;
- 				regulator-boot-on;
+ 				ldo22_reg: ldo22 {
+@@ -412,6 +394,7 @@
+ 					regulator-name = "VMEM_VDD_2.8V";
+ 					regulator-min-microvolt = <2800000>;
+ 					regulator-max-microvolt = <2800000>;
++					ena-gpios = <&gpk0 2 GPIO_ACTIVE_HIGH>;
+ 				};
+ 
+ 				ldo23_reg: ldo23 {
+@@ -518,6 +501,7 @@
+ 					regulator-name = "VMEM_VDDF_3.0V";
+ 					regulator-min-microvolt = <2850000>;
+ 					regulator-max-microvolt = <2850000>;
++					ena-gpios = <&gpk0 2 GPIO_ACTIVE_HIGH>;
+ 				};
+ 
+ 				buck9_reg: buck9 {
+@@ -525,6 +509,7 @@
+ 					regulator-name = "CAM_ISP_CORE_1.2V";
+ 					regulator-min-microvolt = <1000000>;
+ 					regulator-max-microvolt = <1200000>;
++					ena-gpios = <&gpm0 3 GPIO_ACTIVE_HIGH>;
+ 				};
  			};
-+
-+			buck9_reg {
-+				regulator-compatible = "BUCK9";
-+				regulator-name = "CAM_ISP_CORE_1.2V";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1200000>;
-+				ena-gpios = <&gpm0 3 GPIO_ACTIVE_HIGH>;
-+			};
- 	}
+ 		};
+@@ -591,7 +576,7 @@
+ 		broken-cd;
+ 		non-removable;
+ 		card-detect-delay = <200>;
+-		vmmc-supply = <&vemmc_reg>;
++		vmmc-supply = <&ldo22_reg>;
+ 		clock-frequency = <400000000>;
+ 		samsung,dw-mshc-ciu-div = <0>;
+ 		samsung,dw-mshc-sdr-timing = <2 3>;
 -- 
 1.9.1
