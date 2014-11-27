@@ -1,112 +1,164 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v4 3/7] regulator: of: Parse ena-gpios property from DTS
-Date: Thu, 27 Nov 2014 12:20:49 +0100
-Message-ID: <1417087253-12306-4-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v4 5/7] regulator: max77686: Add GPIO control
+Date: Thu, 27 Nov 2014 12:20:51 +0100
+Message-ID: <1417087253-12306-6-git-send-email-k.kozlowski@samsung.com>
 References: <1417087253-12306-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1417087253-12306-1-git-send-email-k.kozlowski@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Drivers often add custom DTS properties for parsing the GPIO for
-regulator enable control. Some of them don't have to do this in a
-special custom way and would work with a generic approach (e.g. S5M8767,
-S2MPS1x, MAX77686). As such drivers have to do this on their own,
-multiple different bindings are added and each driver duplicates similar
-code.
+Add enable control over GPIO for regulators supporting this: LDO20,
+LDO21, LDO22, buck8 and buck9.
 
-Add a generic binding so the regulator core will do this work for
-drivers. This should offload some work from drivers and also limit
-creation of new custom properties for GPIO control.
-
-The patch only fills regulator constraints with data from DTS. Data will
-be used by regulator core in consecutive patch.
+This is needed for proper (and full) configuration of the Maxim 77686
+PMIC without creating redundant 'regulator-fixed' entries.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/regulator/of_regulator.c  | 11 +++++++++++
- include/linux/regulator/machine.h | 13 +++++++++++++
- 2 files changed, 24 insertions(+)
+ drivers/regulator/max77686.c | 58 ++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 53 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
-index 03edb175f3ae..f64739a97296 100644
---- a/drivers/regulator/of_regulator.c
-+++ b/drivers/regulator/of_regulator.c
-@@ -13,6 +13,7 @@
- #include <linux/module.h>
- #include <linux/slab.h>
- #include <linux/of.h>
+diff --git a/drivers/regulator/max77686.c b/drivers/regulator/max77686.c
+index 10d206266ac2..0d6bddad0ef4 100644
+--- a/drivers/regulator/max77686.c
++++ b/drivers/regulator/max77686.c
+@@ -26,6 +26,7 @@
+ #include <linux/bug.h>
+ #include <linux/err.h>
+ #include <linux/gpio.h>
 +#include <linux/of_gpio.h>
- #include <linux/regulator/machine.h>
+ #include <linux/slab.h>
+ #include <linux/platform_device.h>
  #include <linux/regulator/driver.h>
- #include <linux/regulator/of_regulator.h>
-@@ -31,6 +32,7 @@ static void of_get_regulation_constraints(struct device_node *np,
- 	struct regulation_constraints *constraints = &(*init_data)->constraints;
- 	struct regulator_state *suspend_state;
- 	struct device_node *suspend_np;
-+	enum of_gpio_flags gpio_flags;
- 	int ret, i;
- 	u32 pval;
+@@ -46,6 +47,11 @@
+ #define MAX77686_DVS_UVSTEP	12500
  
-@@ -81,6 +83,15 @@ static void of_get_regulation_constraints(struct device_node *np,
- 	if (!ret)
- 		constraints->enable_time = pval;
+ /*
++ * Value for configuring buck[89] and LDO{20,21,22} as GPIO control.
++ * It is the same as 'off' for other regulators.
++ */
++#define MAX77686_GPIO_CONTROL		0x0
++/*
+  * Values used for configuring LDOs and bucks.
+  * Forcing low power mode: LDO1, 3-5, 9, 13, 17-26
+  */
+@@ -82,6 +88,8 @@ enum max77686_ramp_rate {
+ };
  
-+	constraints->ena_gpio = of_get_named_gpio_flags(np, "ena-gpios", 0,
-+							&gpio_flags);
-+	if (gpio_is_valid(constraints->ena_gpio)) {
-+		constraints->use_ena_gpio = true;
-+		constraints->ena_gpio_open_drain = of_property_read_bool(np,
-+							   "ena-gpio-open-drain");
-+		constraints->ena_gpio_flags = gpio_flags;
+ struct max77686_data {
++	unsigned long long gpio_enabled:MAX77686_REGULATORS;
++
+ 	/* Array indexed by regulator id */
+ 	unsigned int opmode[MAX77686_REGULATORS];
+ };
+@@ -100,6 +108,26 @@ static unsigned int max77686_get_opmode_shift(int id)
+ 	}
+ }
+ 
++/*
++ * When regulator is configured for GPIO control then it
++ * replaces "normal" mode. Any change from low power mode to normal
++ * should actually change to GPIO control.
++ * Map normal mode to proper value for such regulators.
++ */
++static unsigned int max77686_map_normal_mode(struct max77686_data *max77686,
++					     int id)
++{
++	switch (id) {
++	case MAX77686_BUCK8:
++	case MAX77686_BUCK9:
++	case MAX77686_LDO20 ... MAX77686_LDO22:
++		if (max77686->gpio_enabled & (1 << id))
++			return MAX77686_GPIO_CONTROL;
 +	}
 +
- 	for (i = 0; i < ARRAY_SIZE(regulator_states); i++) {
- 		switch (i) {
- 		case PM_SUSPEND_MEM:
-diff --git a/include/linux/regulator/machine.h b/include/linux/regulator/machine.h
-index 0b08d05d470b..2faf2b3b71e7 100644
---- a/include/linux/regulator/machine.h
-+++ b/include/linux/regulator/machine.h
-@@ -95,6 +95,13 @@ struct regulator_state {
-  *                 mode.
-  * @initial_state: Suspend state to set by default.
-  * @initial_mode: Mode to set at startup.
-+ *
-+ * @use_ena_gpio: True if ena_gpio is a valid GPIO to use for enable control.
-+ *                If false, all other ena_gpio* fields are ignored.
-+ * @ena_gpio: GPIO to use for enable control
-+ * @ena_gpio_open_drain: Is GPIO open drain
-+ * @ena_gpio_flags: Flags for GPIO request, see enum of_gpio_flags
-+ *
-  * @ramp_delay: Time to settle down after voltage change (unit: uV/us)
-  * @enable_time: Turn-on time of the rails (unit: microseconds)
-  */
-@@ -130,6 +137,12 @@ struct regulation_constraints {
- 	/* mode to set on startup */
- 	unsigned int initial_mode;
- 
-+	/* enable control over GPIO */
-+	bool use_ena_gpio;
-+	int ena_gpio;
-+	bool ena_gpio_open_drain;
-+	unsigned int ena_gpio_flags;
++	return MAX77686_NORMAL;
++}
 +
- 	unsigned int ramp_delay;
- 	unsigned int enable_time;
+ /* Some BUCKs and LDOs supports Normal[ON/OFF] mode during suspend */
+ static int max77686_set_suspend_disable(struct regulator_dev *rdev)
+ {
+@@ -136,7 +164,7 @@ static int max77686_set_suspend_mode(struct regulator_dev *rdev,
+ 		val = MAX77686_LDO_LOWPOWER_PWRREQ;
+ 		break;
+ 	case REGULATOR_MODE_NORMAL:			/* ON in Normal Mode */
+-		val = MAX77686_NORMAL;
++		val = max77686_map_normal_mode(max77686, id);
+ 		break;
+ 	default:
+ 		pr_warn("%s: regulator_suspend_mode : 0x%x not supported\n",
+@@ -160,7 +188,7 @@ static int max77686_ldo_set_suspend_mode(struct regulator_dev *rdev,
+ {
+ 	unsigned int val;
+ 	struct max77686_data *max77686 = rdev_get_drvdata(rdev);
+-	int ret;
++	int ret, id = rdev_get_id(rdev);
  
+ 	switch (mode) {
+ 	case REGULATOR_MODE_STANDBY:			/* switch off */
+@@ -170,7 +198,7 @@ static int max77686_ldo_set_suspend_mode(struct regulator_dev *rdev,
+ 		val = MAX77686_LDO_LOWPOWER_PWRREQ;
+ 		break;
+ 	case REGULATOR_MODE_NORMAL:			/* ON in Normal Mode */
+-		val = MAX77686_NORMAL;
++		val = max77686_map_normal_mode(max77686, id);
+ 		break;
+ 	default:
+ 		pr_warn("%s: regulator_suspend_mode : 0x%x not supported\n",
+@@ -184,7 +212,7 @@ static int max77686_ldo_set_suspend_mode(struct regulator_dev *rdev,
+ 	if (ret)
+ 		return ret;
+ 
+-	max77686->opmode[rdev_get_id(rdev)] = val;
++	max77686->opmode[id] = val;
+ 	return 0;
+ }
+ 
+@@ -197,7 +225,7 @@ static int max77686_enable(struct regulator_dev *rdev)
+ 	shift = max77686_get_opmode_shift(id);
+ 
+ 	if (max77686->opmode[id] == MAX77686_OFF_PWRREQ)
+-		max77686->opmode[id] = MAX77686_NORMAL;
++		max77686->opmode[id] = max77686_map_normal_mode(max77686, id);
+ 
+ 	return regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
+ 				  rdev->desc->enable_mask,
+@@ -229,6 +257,25 @@ static int max77686_set_ramp_delay(struct regulator_dev *rdev, int ramp_delay)
+ 				  MAX77686_RAMP_RATE_MASK, ramp_value << 6);
+ }
+ 
++static int max77686_enable_gpio_control(struct regulator_dev *rdev)
++{
++	struct max77686_data *max77686 = rdev_get_drvdata(rdev);
++	int id = rdev_get_id(rdev);
++
++	switch (id) {
++	case MAX77686_BUCK8:
++	case MAX77686_BUCK9:
++	case MAX77686_LDO20 ... MAX77686_LDO22:
++		max77686->gpio_enabled |= (1 << id);
++
++		return regmap_update_bits(rdev->regmap, rdev->desc->enable_reg,
++					rdev->desc->enable_mask,
++					MAX77686_GPIO_CONTROL);
++	}
++
++	return -EINVAL;
++}
++
+ static struct regulator_ops max77686_ops = {
+ 	.list_voltage		= regulator_list_voltage_linear,
+ 	.map_voltage		= regulator_map_voltage_linear,
+@@ -239,6 +286,7 @@ static struct regulator_ops max77686_ops = {
+ 	.set_voltage_sel	= regulator_set_voltage_sel_regmap,
+ 	.set_voltage_time_sel	= regulator_set_voltage_time_sel,
+ 	.set_suspend_mode	= max77686_set_suspend_mode,
++	.set_ena_gpio		= max77686_enable_gpio_control,
+ };
+ 
+ static struct regulator_ops max77686_ldo_ops = {
 -- 
 1.9.1
