@@ -1,266 +1,240 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 14/19] clk: samsung: exynos5433: Add clocks for CMU_GSCL domain
-Date: Thu, 27 Nov 2014 16:35:11 +0900
-Message-ID: <1417073716-22997-15-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 01/19] pinctrl: exynos: Add support for Exynos5433
+Date: Thu, 27 Nov 2014 16:34:58 +0900
+Message-ID: <1417073716-22997-2-git-send-email-cw00.choi@samsung.com>
 References: <1417073716-22997-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1417073716-22997-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, kyungmin.park@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, geunsik.lim@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, cw00.choi@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: mark.rutland@arm.com, jh80.chung@samsung.com, geunsik.lim@samsung.com, kgene.kim@samsung.com, arnd@arndb.de, cw00.choi@samsung.com, catalin.marinas@arm.com, linus.walleij@linaro.org, will.deacon@arm.com, tomasz.figa@gmail.com, a.kesavan@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, thomas.abraham@linaro.org, linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com, olof@lixom.net, chanho61.park@samsung.com, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds the divider/gate of CMU_GSCL domain which contains gscaler
-clocks.
+This patch adds driver data for Exynos5433 SoC. Exynos5433 includes 228 multi-
+functional input/output port pins and 135 memory port pins. There are 41 general
+port groups and 2 memory port groups.
 
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Inki Dae <inki.dae@samsung.com>
 Acked-by: Geunsik Lim <geunsik.lim@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
 ---
- .../devicetree/bindings/clock/exynos5433-clock.txt |   8 ++
- drivers/clk/samsung/clk-exynos5433.c               | 143 +++++++++++++++++++++
- include/dt-bindings/clock/exynos5433.h             |  37 +++++-
- 3 files changed, 187 insertions(+), 1 deletion(-)
+ drivers/pinctrl/samsung/pinctrl-exynos.c  | 163 ++++++++++++++++++++++++++++++
+ drivers/pinctrl/samsung/pinctrl-samsung.c |   2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h |   1 +
+ 3 files changed, 166 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-index 589ed93..bf72817 100644
---- a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
-@@ -30,6 +30,8 @@ Required Properties:
-     which generates global data buses clock and global peripheral buses clock.
-   - "samsung,exynos5433-cmu-g3d"  - clock controller compatible for CMU_G3D
-     which generates clocks for 3D Graphics Engine IP.
-+  - "samsung,exynos5433-cmu-gscl"  - clock controller compatible for CMU_GSCL
-+    which generates clocks for GSCALER IPs.
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index 8e3e0c0..bd4c4ec 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -1268,6 +1268,169 @@ struct samsung_pin_ctrl exynos5420_pin_ctrl[] = {
+ 	},
+ };
  
- - reg: physical base address of the controller and length of memory mapped
-   region.
-@@ -123,6 +125,12 @@ Example 1: Examples of clock controller nodes are listed below.
- 		#clock-cells = <1>;
- 	};
- 
-+	cmu_gscl: clock-controller@0x13cf0000 {
-+		compatible = "samsung,exynos5433-cmu-gscl";
-+		reg = <0x13cf0000 0x0b10>;
-+		#clock-cells = <1>;
-+	};
++/* pin banks of exynos5433 pin-controller - ALIVE */
++static struct samsung_pin_bank exynos5433_pin_banks0[] = {
++	EXYNOS_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
++	EXYNOS_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
++	EXYNOS_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
++	EXYNOS_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
++};
 +
- Example 2: UART controller node that consumes the clock generated by the clock
- 	   controller.
- 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 920bc3c..f515b95 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -543,6 +543,10 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
- 			ENABLE_ACLK_TOP, 21, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_FSYS_200, "aclk_fsys_200", "div_aclk_fsys_200",
- 			ENABLE_ACLK_TOP, 18, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_GSCL_111, "aclk_gscl_111", "div_aclk_gscl_111",
-+			ENABLE_ACLK_TOP, 15, 0, 0),
-+	GATE(CLK_ACLK_GSCL_333, "aclk_gscl_333", "div_aclk_gscl_333",
-+			ENABLE_ACLK_TOP, 14, 0, 0),
- 	GATE(CLK_ACLK_G2D_266, "aclk_g2d_266", "div_aclk_g2d_266",
- 			ENABLE_ACLK_TOP, 2, CLK_IGNORE_UNUSED, 0),
- 	GATE(CLK_ACLK_G2D_400, "aclk_g2d_400", "div_aclk_g2d_400",
-@@ -3264,3 +3268,142 @@ static void __init exynos5433_cmu_g3d_init(struct device_node *np)
- }
- CLK_OF_DECLARE(exynos5433_cmu_g3d, "samsung,exynos5433-cmu-g3d",
- 		exynos5433_cmu_g3d_init);
++/* pin banks of exynos5433 pin-controller - AUD */
++static struct samsung_pin_bank exynos5433_pin_banks1[] = {
++	EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
++	EXYNOS_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
++};
++
++/* pin banks of exynos5433 pin-controller - CPIF */
++static struct samsung_pin_bank exynos5433_pin_banks2[] = {
++	EXYNOS_PIN_BANK_EINTG(2, 0x000, "gpv6", 0x00),
++};
++
++/* pin banks of exynos5433 pin-controller - eSE */
++static struct samsung_pin_bank exynos5433_pin_banks3[] = {
++	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj2", 0x00),
++};
++
++/* pin banks of exynos5433 pin-controller - FINGER */
++static struct samsung_pin_bank exynos5433_pin_banks4[] = {
++	EXYNOS_PIN_BANK_EINTG(4, 0x000, "gpd5", 0x00),
++};
++
++/* pin banks of exynos5433 pin-controller - FSYS */
++static struct samsung_pin_bank exynos5433_pin_banks5[] = {
++	EXYNOS_PIN_BANK_EINTG(6, 0x000, "gph1", 0x00),
++	EXYNOS_PIN_BANK_EINTG(7, 0x020, "gpr4", 0x04),
++	EXYNOS_PIN_BANK_EINTG(5, 0x040, "gpr0", 0x08),
++	EXYNOS_PIN_BANK_EINTG(8, 0x060, "gpr1", 0x0c),
++	EXYNOS_PIN_BANK_EINTG(2, 0x080, "gpr2", 0x10),
++	EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpr3", 0x14),
++};
++
++/* pin banks of exynos5433 pin-controller - IMEM */
++static struct samsung_pin_bank exynos5433_pin_banks6[] = {
++	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpf0", 0x00),
++};
++
++/* pin banks of exynos5433 pin-controller - NFC */
++static struct samsung_pin_bank exynos5433_pin_banks7[] = {
++	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj0", 0x00),
++};
++
++/* pin banks of exynos5433 pin-controller - PERIC */
++static struct samsung_pin_bank exynos5433_pin_banks8[] = {
++	EXYNOS_PIN_BANK_EINTG(6, 0x000, "gpv7", 0x00),
++	EXYNOS_PIN_BANK_EINTG(5, 0x020, "gpb0", 0x04),
++	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpc0", 0x08),
++	EXYNOS_PIN_BANK_EINTG(2, 0x060, "gpc1", 0x0c),
++	EXYNOS_PIN_BANK_EINTG(6, 0x080, "gpc2", 0x10),
++	EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpc3", 0x14),
++	EXYNOS_PIN_BANK_EINTG(2, 0x0c0, "gpg0", 0x18),
++	EXYNOS_PIN_BANK_EINTG(4, 0x0e0, "gpd0", 0x1c),
++	EXYNOS_PIN_BANK_EINTG(6, 0x100, "gpd1", 0x20),
++	EXYNOS_PIN_BANK_EINTG(8, 0x120, "gpd2", 0x24),
++	EXYNOS_PIN_BANK_EINTG(5, 0x140, "gpd4", 0x28),
++	EXYNOS_PIN_BANK_EINTG(2, 0x160, "gpd8", 0x2c),
++	EXYNOS_PIN_BANK_EINTG(7, 0x180, "gpd6", 0x30),
++	EXYNOS_PIN_BANK_EINTG(3, 0x1a0, "gpd7", 0x34),
++	EXYNOS_PIN_BANK_EINTG(5, 0x1c0, "gpg1", 0x38),
++	EXYNOS_PIN_BANK_EINTG(2, 0x1e0, "gpg2", 0x3c),
++	EXYNOS_PIN_BANK_EINTG(8, 0x200, "gpg3", 0x40),
++};
++
++/* pin banks of exynos5433 pin-controller - TOUCH */
++static struct samsung_pin_bank exynos5433_pin_banks9[] = {
++	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj1", 0x00),
++};
 +
 +/*
-+ * Register offset definitions for CMU_GSCL
++ * Samsung pinctrl driver data for Exynos5433 SoC. Exynos5433 SoC includes
++ * four gpio/pin-mux/pinconfig controllers.
 + */
-+#define MUX_SEL_GSCL				0x0200
-+#define MUX_ENABLE_GSCL				0x0300
-+#define	MUX_STAT_GSCL				0x0400
-+#define	ENABLE_ACLK_GSCL			0x0800
-+#define	ENABLE_ACLK_GSCL_SECURE_SMMU_GSCL0	0x0804
-+#define	ENABLE_ACLK_GSCL_SECURE_SMMU_GSCL1	0x0808
-+#define	ENABLE_ACLK_GSCL_SECURE_SMMU_GSCL2	0x080c
-+#define	ENABLE_PCLK_GSCL			0x0900
-+#define	ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL0	0x0904
-+#define	ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL1	0x0908
-+#define	ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL2	0x090c
-+#define	ENABLE_IP_GSCL0				0x0b00
-+#define	ENABLE_IP_GSCL1				0x0b04
-+#define	ENABLE_IP_GSCL_SECURE_SMMU_GSCL0	0x0b08
-+#define	ENABLE_IP_GSCL_SECURE_SMMU_GSCL1	0x0b0c
-+#define	ENABLE_IP_GSCL_SECURE_SMMU_GSCL2	0x0b10
-+
-+static unsigned long gscl_clk_regs[] __initdata = {
-+	MUX_SEL_GSCL,
-+	MUX_ENABLE_GSCL,
-+	MUX_STAT_GSCL,
-+	ENABLE_ACLK_GSCL,
-+	ENABLE_ACLK_GSCL_SECURE_SMMU_GSCL0,
-+	ENABLE_ACLK_GSCL_SECURE_SMMU_GSCL1,
-+	ENABLE_ACLK_GSCL_SECURE_SMMU_GSCL2,
-+	ENABLE_PCLK_GSCL,
-+	ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL0,
-+	ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL1,
-+	ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL2,
-+	ENABLE_IP_GSCL0,
-+	ENABLE_IP_GSCL1,
-+	ENABLE_IP_GSCL_SECURE_SMMU_GSCL0,
-+	ENABLE_IP_GSCL_SECURE_SMMU_GSCL1,
-+	ENABLE_IP_GSCL_SECURE_SMMU_GSCL2,
++struct samsung_pin_ctrl exynos5433_pin_ctrl[] = {
++	{
++		/* pin-controller instance 0 data */
++		.pin_banks	= exynos5433_pin_banks0,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks0),
++		.eint_wkup_init = exynos_eint_wkup_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl0",
++	}, {
++		/* pin-controller instance 1 data */
++		.pin_banks	= exynos5433_pin_banks1,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks1),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl1",
++	}, {
++		/* pin-controller instance 2 data */
++		.pin_banks	= exynos5433_pin_banks2,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks2),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl2",
++	}, {
++		/* pin-controller instance 3 data */
++		.pin_banks	= exynos5433_pin_banks3,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks3),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl3",
++	}, {
++		/* pin-controller instance 4 data */
++		.pin_banks	= exynos5433_pin_banks4,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks4),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl4",
++	}, {
++		/* pin-controller instance 5 data */
++		.pin_banks	= exynos5433_pin_banks5,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks5),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl5",
++	}, {
++		/* pin-controller instance 6 data */
++		.pin_banks	= exynos5433_pin_banks6,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks6),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl6",
++	}, {
++		/* pin-controller instance 7 data */
++		.pin_banks	= exynos5433_pin_banks7,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks7),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl7",
++	}, {
++		/* pin-controller instance 8 data */
++		.pin_banks	= exynos5433_pin_banks8,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks8),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl8",
++	}, {
++		/* pin-controller instance 9 data */
++		.pin_banks	= exynos5433_pin_banks9,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks9),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl9",
++	},
 +};
 +
-+/* list of all parent clock list */
-+PNAME(aclk_gscl_111_user_p)	= { "fin_pll", "aclk_gscl_111", };
-+PNAME(aclk_gscl_333_user_p)	= { "fin_pll", "aclk_gscl_333", };
-+
-+static struct samsung_mux_clock gscl_mux_clks[] __initdata = {
-+	/* MUX_SEL_GSCL */
-+	MUX(CLK_MOUT_ACLK_GSCL_111_USER, "mout_aclk_gscl_111_user",
-+			aclk_gscl_111_user_p, MUX_SEL_GSCL, 4, 1),
-+	MUX(CLK_MOUT_ACLK_GSCL_333_USER, "mout_aclk_gscl_333_user",
-+			aclk_gscl_333_user_p, MUX_SEL_GSCL, 4, 1),
-+};
-+
-+static struct samsung_gate_clock gscl_gate_clks[] __initdata = {
-+	/* ENABLE_ACLK_GSCL */
-+	GATE(CLK_ACLK_BTS_GSCL2, "aclk_bts_gscl2", "mout_aclk_gscl_333_user",
-+			ENABLE_ACLK_GSCL, 11, 0, 0),
-+	GATE(CLK_ACLK_BTS_GSCL1, "aclk_bts_gscl1", "mout_aclk_gscl_333_user",
-+			ENABLE_ACLK_GSCL, 10, 0, 0),
-+	GATE(CLK_ACLK_BTS_GSCL0, "aclk_bts_gscl0", "mout_aclk_gscl_333_user",
-+			ENABLE_ACLK_GSCL, 9, 0, 0),
-+	GATE(CLK_ACLK_AHB2APB_GSCLP, "aclk_ahb2apb_gsclp",
-+			"mout_aclk_gscl_111_user", ENABLE_ACLK_GSCL,
-+			8, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_XIU_GSCLX, "aclk_xiu_gsclx", "mout_aclk_gscl_333_user",
-+			ENABLE_ACLK_GSCL, 7, 0, 0),
-+	GATE(CLK_ACLK_GSCLNP_111, "aclk_gsclnp_111", "mout_aclk_gscl_111_user",
-+			ENABLE_ACLK_GSCL, 6, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_ACLK_GSCLRTND_333, "aclk_gsclrtnd_333",
-+			"mout_aclk_gscl_333_user", ENABLE_ACLK_GSCL, 5, 0, 0),
-+	GATE(CLK_ACLK_GSCLBEND_333, "aclk_gsclbend_333",
-+			"mout_aclk_gscl_333_user", ENABLE_ACLK_GSCL, 4, 0, 0),
-+	GATE(CLK_ACLK_GSD, "aclk_gsd", "mout_aclk_gscl_333_user",
-+			ENABLE_ACLK_GSCL, 3, 0, 0),
-+	GATE(CLK_ACLK_GSCL2, "aclk_gscl2", "mout_aclk_gscl_333_user",
-+			ENABLE_ACLK_GSCL, 2, 0, 0),
-+	GATE(CLK_ACLK_GSCL1, "aclk_gscl1", "mout_aclk_gscl_333_user",
-+			ENABLE_ACLK_GSCL, 1, 0, 0),
-+	GATE(CLK_ACLK_GSCL0, "aclk_gscl0", "mout_aclk_gscl_333_user",
-+			ENABLE_ACLK_GSCL, 0, 0, 0),
-+
-+	/* ENABLE_ACLK_GSCL_SECURE_SMMU_GSCL0 */
-+	GATE(CLK_ACLK_SMMU_GSCL0, "aclk_smmu_gscl0", "mout_aclk_gscl_333_user",
-+			ENABLE_ACLK_GSCL_SECURE_SMMU_GSCL0, 0, 0, 0),
-+
-+	/* ENABLE_ACLK_GSCL_SECURE_SMMU_GSCL1 */
-+	GATE(CLK_ACLK_SMMU_GSCL1, "aclk_smmu_gscl1", "mout_aclk_gscl_333_user",
-+			ENABLE_ACLK_GSCL_SECURE_SMMU_GSCL1, 0, 0, 0),
-+
-+	/* ENABLE_ACLK_GSCL_SECURE_SMMU_GSCL2 */
-+	GATE(CLK_ACLK_SMMU_GSCL2, "aclk_smmu_gscl2", "mout_aclk_gscl_333_user",
-+			ENABLE_ACLK_GSCL_SECURE_SMMU_GSCL2, 0, 0, 0),
-+
-+	/* ENABLE_PCLK_GSCL */
-+	GATE(CLK_PCLK_BTS_GSCL2, "pclk_bts_gscl2", "mout_aclk_gscl_111_user",
-+			ENABLE_PCLK_GSCL, 7, 0, 0),
-+	GATE(CLK_PCLK_BTS_GSCL1, "pclk_bts_gscl1", "mout_aclk_gscl_111_user",
-+			ENABLE_PCLK_GSCL, 6, 0, 0),
-+	GATE(CLK_PCLK_BTS_GSCL0, "pclk_bts_gscl0", "mout_aclk_gscl_111_user",
-+			ENABLE_PCLK_GSCL, 5, 0, 0),
-+	GATE(CLK_PCLK_PMU_GSCL, "pclk_pmu_gscl", "mout_aclk_gscl_111_user",
-+			ENABLE_PCLK_GSCL, 4, CLK_IGNORE_UNUSED, 0),
-+	GATE(CLK_PCLK_SYSREG_GSCL, "pclk_sysreg_gscl",
-+			"mout_aclk_gscl_111_user", ENABLE_PCLK_GSCL, 3, 0, 0),
-+	GATE(CLK_PCLK_GSCL2, "pclk_gscl2", "mout_aclk_gscl_111_user",
-+			ENABLE_PCLK_GSCL, 2, 0, 0),
-+	GATE(CLK_PCLK_GSCL1, "pclk_gscl1", "mout_aclk_gscl_111_user",
-+			ENABLE_PCLK_GSCL, 1, 0, 0),
-+	GATE(CLK_PCLK_GSCL0, "pclk_gscl0", "mout_aclk_gscl_111_user",
-+			ENABLE_PCLK_GSCL, 0, 0, 0),
-+
-+	/* ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL0 */
-+	GATE(CLK_PCLK_SMMU_GSCL0, "pclk_smmu_gscl0", "mout_aclk_gscl_111_user",
-+		ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL0, 0, 0, 0),
-+
-+	/* ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL1 */
-+	GATE(CLK_PCLK_SMMU_GSCL1, "pclk_smmu_gscl1", "mout_aclk_gscl_111_user",
-+		ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL0, 0, 0, 0),
-+
-+	/* ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL2 */
-+	GATE(CLK_PCLK_SMMU_GSCL2, "pclk_smmu_gscl2", "mout_aclk_gscl_111_user",
-+		ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL0, 0, 0, 0),
-+};
-+
-+static struct samsung_cmu_info gscl_cmu_info __initdata = {
-+	.mux_clks		= gscl_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(gscl_mux_clks),
-+	.gate_clks		= gscl_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(gscl_gate_clks),
-+	.nr_clk_ids		= GSCL_NR_CLK,
-+	.clk_regs		= gscl_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(gscl_clk_regs),
-+};
-+
-+static void __init exynos5433_cmu_gscl_init(struct device_node *np)
-+{
-+	samsung_cmu_register_one(np, &gscl_cmu_info);
-+}
-+CLK_OF_DECLARE(exynos5433_cmu_gscl, "samsung,exynos5433-cmu-gscl",
-+		exynos5433_cmu_gscl_init);
-diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
-index d0fda01..c408af4 100644
---- a/include/dt-bindings/clock/exynos5433.h
-+++ b/include/dt-bindings/clock/exynos5433.h
-@@ -148,8 +148,10 @@
- #define CLK_SCLK_UFSUNIPRO_FSYS		229
- #define CLK_SCLK_USBHOST30_FSYS		230
- #define CLK_SCLK_USBDRD30_FSYS		231
-+#define CLK_ACLK_GSCL_111		232
-+#define CLK_ACLK_GSCL_333		233
- 
--#define TOP_NR_CLK			232
-+#define TOP_NR_CLK			234
- 
- /* CMU_CPIF */
- #define CLK_FOUT_MPHY_PLL		1
-@@ -829,4 +831,37 @@
- 
- #define G3D_NR_CLK					20
- 
-+/* CMU_GSCL */
-+#define CLK_MOUT_ACLK_GSCL_111_USER			1
-+#define CLK_MOUT_ACLK_GSCL_333_USER			2
-+
-+#define CLK_ACLK_BTS_GSCL2				3
-+#define CLK_ACLK_BTS_GSCL1				4
-+#define CLK_ACLK_BTS_GSCL0				5
-+#define CLK_ACLK_AHB2APB_GSCLP				6
-+#define CLK_ACLK_XIU_GSCLX				7
-+#define CLK_ACLK_GSCLNP_111				8
-+#define CLK_ACLK_GSCLRTND_333				9
-+#define CLK_ACLK_GSCLBEND_333				10
-+#define CLK_ACLK_GSD					11
-+#define CLK_ACLK_GSCL2					12
-+#define CLK_ACLK_GSCL1					13
-+#define CLK_ACLK_GSCL0					14
-+#define CLK_ACLK_SMMU_GSCL0				15
-+#define CLK_ACLK_SMMU_GSCL1				16
-+#define CLK_ACLK_SMMU_GSCL2				17
-+#define CLK_PCLK_BTS_GSCL2				18
-+#define CLK_PCLK_BTS_GSCL1				19
-+#define CLK_PCLK_BTS_GSCL0				20
-+#define CLK_PCLK_PMU_GSCL				21
-+#define CLK_PCLK_SYSREG_GSCL				22
-+#define CLK_PCLK_GSCL2					23
-+#define CLK_PCLK_GSCL1					24
-+#define CLK_PCLK_GSCL0					25
-+#define CLK_PCLK_SMMU_GSCL0				26
-+#define CLK_PCLK_SMMU_GSCL1				27
-+#define CLK_PCLK_SMMU_GSCL2				28
-+
-+#define GSCL_NR_CLK					29
-+
- #endif /* _DT_BINDINGS_CLOCK_EXYNOS5433_H */
+ /* pin banks of exynos7 pin-controller - ALIVE */
+ static struct samsung_pin_bank exynos7_pin_banks0[] = {
+ 	EXYNOS_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index e0ba851..4eb61ea 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -1226,6 +1226,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
+ 		.data = (void *)exynos5260_pin_ctrl },
+ 	{ .compatible = "samsung,exynos5420-pinctrl",
+ 		.data = (void *)exynos5420_pin_ctrl },
++	{ .compatible = "samsung,exynos5433-pinctrl",
++		.data = (void *)exynos5433_pin_ctrl },
+ 	{ .compatible = "samsung,s5pv210-pinctrl",
+ 		.data = (void *)s5pv210_pin_ctrl },
+ 	{ .compatible = "samsung,exynos7-pinctrl",
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
+index e737d1f..d260356 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.h
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+@@ -245,6 +245,7 @@ extern struct samsung_pin_ctrl exynos4415_pin_ctrl[];
+ extern struct samsung_pin_ctrl exynos5250_pin_ctrl[];
+ extern struct samsung_pin_ctrl exynos5260_pin_ctrl[];
+ extern struct samsung_pin_ctrl exynos5420_pin_ctrl[];
++extern struct samsung_pin_ctrl exynos5433_pin_ctrl[];
+ extern const struct samsung_pin_ctrl exynos7_pin_ctrl[];
+ extern struct samsung_pin_ctrl s3c64xx_pin_ctrl[];
+ extern struct samsung_pin_ctrl s3c2412_pin_ctrl[];
 -- 
 1.8.5.5
