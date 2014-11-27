@@ -1,135 +1,129 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH 11/19] clk: samsung: exynos5433: Add clocks for CMU_BUS{0|1|2} domains
-Date: Thu, 27 Nov 2014 15:02:26 +0100
-Message-ID: <2120788.f3P3CC6nYQ@wuerfel>
-References: <1417073716-22997-1-git-send-email-cw00.choi@samsung.com> <2232281.fbydzq3GMs@wuerfel> <CAGTfZH3KmwhJNFdmeWnujbbUbtLf5vSi6i2dbV62DeCtV7n4TQ@mail.gmail.com>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH 1/1] thermal: cpu_cooling: check for the readiness of
+ cpufreq layer
+Date: Thu, 27 Nov 2014 10:08:06 -0400
+Message-ID: <20141127140803.GA3342@developer>
+References: <1417024212-1775-1-git-send-email-edubezval@gmail.com>
+ <CAKohponxUWVT1mjRfJarNtj-+=rXNOa_ONHUjmdu_+6N+=ZjPQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAGTfZH3KmwhJNFdmeWnujbbUbtLf5vSi6i2dbV62DeCtV7n4TQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "catalin.marinas-5wv7dgnIgG8@public.gmane.org" <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, "tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "geunsik.lim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <geunsik.lim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <jh80.chung@samsu>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAKohponxUWVT1mjRfJarNtj-+=rXNOa_ONHUjmdu_+6N+=ZjPQ@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Linux PM <linux-pm@vger.kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, LKML <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Rob Herring <robh+dt@kernel.org>, Zhang Rui <rui.zhang@intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thursday 27 November 2014 22:41:49 Chanwoo Choi wrote:
-> 2014=EB=85=84 11=EC=9B=94 27=EC=9D=BC =EB=AA=A9=EC=9A=94=EC=9D=BC, Ar=
-nd Bergmann<arnd-r2nGTMty4D4@public.gmane.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1=ED=95=9C=
- =EB=A9=94=EC=8B=9C=EC=A7=80:
+
+--VbJkn9YxBvnuCH5J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+
+Hello Viresh,
+
+On Thu, Nov 27, 2014 at 09:38:39AM +0530, Viresh Kumar wrote:
+> Few nits..
 >=20
-> > On Thursday 27 November 2014 21:58:53 Chanwoo Choi wrote:
-> > > Dear Arnd,
-> > >
-> > > On 11/27/2014 09:35 PM, Arnd Bergmann wrote:
-> > > > On Thursday 27 November 2014 13:12:08 Sylwester Nawrocki wrote:
-> > > >> On 27/11/14 12:56, Chanwoo Choi wrote:
-> > > >>> On 11/27/2014 08:41 PM, Arnd Bergmann wrote:
-> > > >>>>> On Thursday 27 November 2014 16:35:08 Chanwoo Choi wrote:
-> > > >>>>>>> +  - "samsung,exynos5433-cmu-bus0", "samsung,exynos5433-c=
-mu-bus1"
-> > > >>>>>>> +    and "samsung,exynos5433-cmu-bus2" - clock controller
-> > compatible for CMU_BUS
-> > > >>>>>>> +    which generates global data buses clock and global
-> > peripheral buses clock.
-> > > >>>>>>>
-> > > >>>>>>>  - reg: physical base address of the controller and lengt=
-h of
-> > memory mapped
-> > > >>>>>>>    region.
-> > > >>>>>>>
-> > > >>>>>
-> > > >>>>> This looks like you are duplicating the bindings and the co=
-de, but
-> > > >>>>> it's really the same hardware multiple times with minor var=
-iations
-> > > >>>>> that you should be able to describe properly here. Why not =
-make
-> > > >>>>> three nodes with the same compatible string and have them h=
-andled
-> > > >>>>> by the same code?
-> > > >>>
-> > > >>> Each CMU_BUSx domain of Exynos5433 have different base addres=
-s as
-> > following:
-> > > >>> - CMU_BUS0's base address and range : 0x1360_0000 ~ 0x1360_0b=
-04
-> > > >>> - CMU_BUS1's base address and range : 0x1480_0000 ~ 0x1480_0b=
-04
-> > > >>> - CMU_BUS2's base address and range : 0x1340_0000 ~ 0x1340_0b=
-04
-> > > >>>
-> > > >>> So, I implement CMU_BUSx domain which has each compatible str=
-ing.
-> > > >
-> > > > But the base address is in the reg property, not in the compati=
-ble
-> > > > property. What I mean is to have multiple nodes like
-> > >
-> > > The merged clock driver in mainline have different compatible str=
-ing
-> > > if base addresss of clock domain is different. So, I implemented =
-each
-> > CMU_BUSx domain
-> > > with different compatible string.
+> On 26 November 2014 at 23:20, Eduardo Valentin <edubezval@gmail.com> wrot=
+e:
+>=20
+> > Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+> > ---
+>=20
+> The normal practice is to write the non-commitable part here ...
+>=20
+
+err... normal practice by whom? hehe...
+
+My "normal" practice is to allow people to read the diff stat before my
+extra comments :-)
+
+> >  drivers/thermal/cpu_cooling.c                      | 5 +++++
+> >  drivers/thermal/db8500_cpufreq_cooling.c           | 5 -----
+> >  drivers/thermal/imx_thermal.c                      | 5 -----
+> >  drivers/thermal/samsung/exynos_thermal_common.c    | 2 +-
+> >  drivers/thermal/ti-soc-thermal/ti-thermal-common.c | 6 ------
+> >  5 files changed, 6 insertions(+), 17 deletions(-)
+> > ---
+>=20
+> But this works as well :)
+>=20
+
+hehe ok.
+
+> > This is attempt to organize the cpu cooling vs. cpufreq boot sequencing.
+> > The main change in this patch, as in the commit log, is to have the che=
+ck
+> > for the cpufreq layer in the cpu cooling device registration, instead of
+> > in thermal drivers. This way, drivers don't need to bother about it, th=
+ey
+> > just need to propagate the error value.
 > >
-> > Why?
->=20
->=20
-> As I explained on below, each clock domain have different clocks.
-> So, clocks have unique clock name.
->=20
->  If clock driver use only one compatible for various clock domain, cl=
-ock
-> driver have to know the base address of each domain for distinction o=
-f
-> clock domain. I think It is stong dependency between device and drive=
-r.
-
-No, not at all. You can have lots of clock controllers with the same
-compatible string defining different instances of the same IP block,
-e.g. for compatible=3D"fixed-clock".
-
+> > This change was tested on top of:
+> > (0) - Viresh's change in cpufreq layer and cpufreq-dt (up to patch 4):
+> > https://patchwork.kernel.org/patch/5384141/
+> > https://patchwork.kernel.org/patch/5384151/
+> > https://patchwork.kernel.org/patch/5384161/
+> > https://patchwork.kernel.org/patch/5384171/
+> > (1) - fix of thermal core:
+> > https://patchwork.kernel.org/patch/5326991/
 > >
-> > > >     clock-controller@113600000 {
-> > > >             reg =3D <0 0x113600000 0 0x1000>;
-> > > >             compatible =3D "samsung,exynos5433-cmu";
-> > > >             #clock-cells =3D <1>;
-> > > >     };
-> > > >
-> > > >     clock-controller@114800000 {
-> > > >             reg =3D <0 0x114800000 0 0x1000>;
-> > > >             compatible =3D "samsung,exynos5433-cmu";
-> > > >             #clock-cells =3D <1>;
-> > > >     };
-> > > >
-> > > > The code will just map the local registers for each instance an=
-d then
-> > > > provide the clocks of the right instance when asked for it.
-> > >
-> > > Each clock domain has not the same mux/divider/clock. So, just on=
-e
-> > compatible
-> > > string could not support all of clock domains.
+> > After Viresh's changes, cpufreq-dt is properly sequenced with cpu cooli=
+ng
+> > registration. Non-of based drivers also should take advantage if these
+> > changes, as now they do not need to check for cpufreq layer. The check =
+is
+> > where it belongs, in cpu cooling device registration.
 > >
-> > What are the specific differences?
+> > BR, Eduardo Valentin
+> >
+> >
+> > diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_coolin=
+g.c
+> > index 1ab0018..9e6945b 100644
+> > --- a/drivers/thermal/cpu_cooling.c
+> > +++ b/drivers/thermal/cpu_cooling.c
+> > @@ -440,6 +440,11 @@ __cpufreq_cooling_register(struct device_node *np,
+> >         int ret =3D 0, i;
+> >         struct cpufreq_policy policy;
+> >
+> > +       if (!cpufreq_get_current_driver() || !cpufreq_frequency_get_tab=
+le(0)) {
 >=20
+> Only !cpufreq_frequency_get_table(0) is enough here.
 >=20
->=20
-> > I'm not sure that difference among clock domains because I think it=
- is
-> dependent on the opinion of architect of SoC.
->=20
-> cmu_bus0/1/2 are much similar. Just cmu_bus2 has one more mux/gate cl=
-ock
-> than cmu_bus0/1.
 
-Yes, that's what I mean. You can simply model that extra mux/gate
-in the driver, as long as nothing ever tries to access the clock.
+Yeah, I thought of it too. Just combined what people had in their
+drivers here. But I agree that latter is enough.
 
-	Arnd
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> For rest:
+>=20
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+Ok.
+
+though.. "normal practice" says  ack's are oftern used by the maintainer
+of the affected code (quoting Documentation/SubmittingPatches) :-)
+BR, Eduardo Valenti
+
+--VbJkn9YxBvnuCH5J
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUdzA7AAoJEMLUO4d9pOJWX3gH/2658mc74Nu2gPLi5YK0Etp4
+Av4yKKK0XKMlGdPr5bkZrn4S5864eKQTkaDM9+9dhoAoGgCToKkZfbTn11bqhUL2
+WGj0JLpBvKlIYHX4nLRwrweVPWYjdzK4sKLL8H1di1WTX2os6l+plPcwutIqv4wn
+Kzia+YdcvOl+O4bbIgIiyeqBoY2pHn7srlp5Adc01YppCzTbWIjcuyaeBJJ0UzvT
+cI6tHg5mNX1BtKMVE/Slu/aIb4hVNoeyB00UhJ9pRL3T8wLoAEFP5mgh1xZe9mjS
+xQJhamtXtGyEKzdpf2c+gZ2c/7oUN7B30jN9/3li8wrd+QxOy6W/21XsjLwZ/x0=
+=5ifV
+-----END PGP SIGNATURE-----
+
+--VbJkn9YxBvnuCH5J--
