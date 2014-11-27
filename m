@@ -1,104 +1,52 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 11/19] clk: samsung: exynos5433: Add clocks for
- CMU_BUS{0|1|2} domains
-Date: Thu, 27 Nov 2014 21:58:53 +0900
-Message-ID: <5477200D.5030706@samsung.com>
-References: <1417073716-22997-1-git-send-email-cw00.choi@samsung.com>
- <54771173.6090408@samsung.com> <54771518.1010004@samsung.com>
- <3556463.Me1EFEY7Zb@wuerfel>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v4 1/7] mfd: max77686/802: Remove support for board files
+Date: Thu, 27 Nov 2014 13:03:01 +0000
+Message-ID: <20141127130301.GX7712@sirena.org.uk>
+References: <1417087253-12306-1-git-send-email-k.kozlowski@samsung.com>
+ <1417087253-12306-2-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="OyvoBEGRARVUNgID"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:41730 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755049AbaK0M64 (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:40829 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751476AbaK0NFI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Nov 2014 07:58:56 -0500
-In-reply-to: <3556463.Me1EFEY7Zb@wuerfel>
+	Thu, 27 Nov 2014 08:05:08 -0500
+Content-Disposition: inline
+In-Reply-To: <1417087253-12306-2-git-send-email-k.kozlowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, mark.rutland@arm.com, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, tomasz.figa@gmail.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, kyungmin.park@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, geunsik.lim@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Dear Arnd,
 
-On 11/27/2014 09:35 PM, Arnd Bergmann wrote:
-> On Thursday 27 November 2014 13:12:08 Sylwester Nawrocki wrote:
->> On 27/11/14 12:56, Chanwoo Choi wrote:
->>> On 11/27/2014 08:41 PM, Arnd Bergmann wrote:
->>>>> On Thursday 27 November 2014 16:35:08 Chanwoo Choi wrote:
->>>>>>> +  - "samsung,exynos5433-cmu-bus0", "samsung,exynos5433-cmu-bus1"
->>>>>>> +    and "samsung,exynos5433-cmu-bus2" - clock controller compatible for CMU_BUS
->>>>>>> +    which generates global data buses clock and global peripheral buses clock.
->>>>>>>  
->>>>>>>  - reg: physical base address of the controller and length of memory mapped
->>>>>>>    region.
->>>>>>>
->>>>>
->>>>> This looks like you are duplicating the bindings and the code, but
->>>>> it's really the same hardware multiple times with minor variations
->>>>> that you should be able to describe properly here. Why not make
->>>>> three nodes with the same compatible string and have them handled
->>>>> by the same code?
->>>
->>> Each CMU_BUSx domain of Exynos5433 have different base address as following:
->>> - CMU_BUS0's base address and range : 0x1360_0000 ~ 0x1360_0b04
->>> - CMU_BUS1's base address and range : 0x1480_0000 ~ 0x1480_0b04
->>> - CMU_BUS2's base address and range : 0x1340_0000 ~ 0x1340_0b04
->>>
->>> So, I implement CMU_BUSx domain which has each compatible string.
-> 
-> But the base address is in the reg property, not in the compatible
-> property. What I mean is to have multiple nodes like
+--OyvoBEGRARVUNgID
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The merged clock driver in mainline have different compatible string
-if base addresss of clock domain is different. So, I implemented each CMU_BUSx domain
-with different compatible string.
+On Thu, Nov 27, 2014 at 12:20:47PM +0100, Krzysztof Kozlowski wrote:
+> The driver is used only on Exynos based boards with DTS support.
+> After removal of board file support from max77686 and max77802 regulator
+> drivers, the MFD driver can be converted to DTS-only version. This
+> simplifies a little the code:
 
-> 
-> 	clock-controller@113600000 {
-> 		reg = <0 0x113600000 0 0x1000>;
-> 		compatible = "samsung,exynos5433-cmu";
-> 		#clock-cells = <1>;
-> 	};
-> 
-> 	clock-controller@114800000 {
-> 		reg = <0 0x114800000 0 0x1000>;
-> 		compatible = "samsung,exynos5433-cmu";
-> 		#clock-cells = <1>;
-> 	};
-> 
-> The code will just map the local registers for each instance and then
-> provide the clocks of the right instance when asked for it.
+Why is this a dependency for new features in the regulator core?
 
-Each clock domain has not the same mux/divider/clock. So, just one compatible
-string could not support all of clock domains.
+--OyvoBEGRARVUNgID
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Best Regards,
-Chanwoo Choi
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-> 
->> You can always have multiple entries in the reg property. I've done
->> something like this for the exynos4415 CMU_ISPx units:
->>
->>         cmu_isp: clock-controller@12060000 {
->>                 compatible = "samsung,exynos4415-cmu-isp";
->>                 reg = <0x12060000 0xB10>, <0x12070000 0xB10>;
->>                 #clock-cells = <1>;
->>
->>                 assigned-clocks = <&cmu CLK_FOUT_ISP_PLL>;
->>                 assigned-clock-rates = <300000000>;
->>         };
-> 
-> This is a different problem, this is a clock controller with multiple
-> sets of registers that are all different. In case of the cmu, it seems
-> that they are all the same, you just have multiple copies at different
-> locations, and they are connected to different devices.
-> 
-> 	Arnd
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+iQEcBAEBAgAGBQJUdyEEAAoJECTWi3JdVIfQvlAH/2uI9u76rfQSrvibGcW40bC4
+TXugFJSI9ZTqjRDu/b4Np5axJ10YaBd38I/KcOOp3gSrMf55NuJLbdIad8h1tv0R
+u6tCUwlBZBodj7hVbUSk04GP/wXhxYtVoz0W+gnrrwXwyf+aVGil8N/75GdpNqFs
+lQkVv8lSeqQBpzYLBPTyLHP96InULspDMQMFM3GNL2x3QkKXxD6UYWseTUeKnQLg
+XLYf44ngTwTOmCaCGH+x79L+YkwH2C383y4g2dUM9SMAQQ8QpVXz4FWPW0HT9aWL
+oa8t03T9AimjQJM95Z9C01nmTppRLabWD7nPfbPZrLAAmkHO+9Jc5FC5ozYgZWU=
+=7jjJ
+-----END PGP SIGNATURE-----
+
+--OyvoBEGRARVUNgID--
