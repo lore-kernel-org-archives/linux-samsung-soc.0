@@ -1,53 +1,141 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 15/19] arm64: exynos5433: Enable ARMv8-based Exynos5433 SoC
- support
-Date: Thu, 27 Nov 2014 16:35:12 +0900
-Message-ID: <1417073716-22997-16-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 02/19] clk: samsung: Add binding documentation for Exynos5433
+ clock controller
+Date: Thu, 27 Nov 2014 16:34:59 +0900
+Message-ID: <1417073716-22997-3-git-send-email-cw00.choi@samsung.com>
 References: <1417073716-22997-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:29957 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752656AbaK0HfW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Nov 2014 02:35:22 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1417073716-22997-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: kgene.kim@samsung.com, mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, kyungmin.park@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, geunsik.lim@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, cw00.choi@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds the necessary Kconfig entries to enable
-support for the ARMv8 based Exynos5433 SoC.
+This patch add binding documentation for Exynos5433 clock controller.
+Exynos5433 has various clock domains So, this documentation explains
+the detailed clock domains ans usage guide.
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Geunsik Lim <geunsik.lim@samsung.com>
 Acked-by: Inki Dae <inki.dae@samsung.com>
+Acked-by: Geunsik Lim <geunsik.lim@samsung.com>
 ---
- arch/arm64/Kconfig | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ .../devicetree/bindings/clock/exynos5433-clock.txt | 106 +++++++++++++++++++++
+ 1 file changed, 106 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos5433-clock.txt
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index f4536e0..8a5e8a0 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -152,6 +152,16 @@ config ARCH_EXYNOS
- 	help
- 	  This enables support for Samsung Exynos SoC family
- 
-+config ARCH_EXYNOS5433
-+	bool "ARMv8 based Samsung Exynos5433"
-+	select ARCH_EXYNOS
-+	select COMMON_CLK_SAMSUNG
-+	select PINCTRL
-+	select PINCTRL_EXYNOS
+diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+new file mode 100644
+index 0000000..72cd0ba
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+@@ -0,0 +1,106 @@
++* Samsung Exynos5433 CMU (Clock Management Units)
 +
-+	help
-+	  This enables support for Samsung Exynos5433 SoC family
++The Exynos5433 clock controller generates and supplies clock to various
++controllers within the Exynos5433 SoC.
 +
- config ARCH_EXYNOS7
- 	bool "ARMv8 based Samsung Exynos7"
- 	select ARCH_EXYNOS
++Required Properties:
++
++- compatible: should be one of the following.
++  - "samsung,exynos5433-cmu-top"   - clock controller compatible for CMU_TOP
++    which generates clocks for IMEM/FSYS/G3D/GSCL/HEVC/MSCL/G2D/MFC/PERIC/PERIS
++    domains and bus clocks.
++  - "samsung,exynos5433-cmu-cpif"  - clock controller compatible for CMU_CPIF
++    which generates clocks for LLI (Low Latency Interface) IP.
++  - "samsung,exynos5433-cmu-mif"   - clock controller compatible for CMU_MIF
++    which generates clocks for DRAM Memory Controller domain.
++  - "samsung,exynos5433-cmu-peric" - clock controller compatible for CMU_PERIC
++    which generates clocks for UART/I2C/SPI/I2S/PCM/SPDIF/PWM/SLIMBUS IPs.
++  - "samsung,exynos5433-cmu-peris" - clock controller compatible for CMU_PERIS
++    which generates clocks for PMU/TMU/MCT/WDT/RTC/SECKEY/TZPC IPs.
++  - "samsung,exynos5433-cmu-fsys"  - clock controller compatible for CMU_FSYS
++    which generates clocks for USB/UFS/SDMMC/TSI/PDMA IPs.
++
++- reg: physical base address of the controller and length of memory mapped
++  region.
++
++- #clock-cells: should be 1.
++
++Each clock is assigned an identifier and client nodes can use this identifier
++to specify the clock which they consume.
++
++All available clocks are defined as preprocessor macros in
++dt-bindings/clock/exynos5433.h header and can be used in device
++tree sources.
++
++Example 1: Examples of clock controller nodes are listed below.
++
++	cmu_top: clock-controller@0x10030000 {
++		compatible = "samsung,exynos5433-cmu-top";
++		reg = <0x10030000 0x0c04>;
++		#clock-cells = <1>;
++	};
++
++	cmu_cpif: clock-controller@0x10fc0000 {
++		compatible = "samsung,exynos5433-cmu-cpif";
++		reg = <0x10fc0000 0x0c04>;
++		#clock-cells = <1>;
++	};
++
++	cmu_mif: clock-controller@0x105b0000 {
++		compatible = "samsung,exynos5433-cmu-mif";
++		reg = <0x105b0000 0x100c>;
++		#clock-cells = <1>;
++	};
++
++	cmu_peric: clock-controller@0x14c80000 {
++		compatible = "samsung,exynos5433-cmu-peric";
++		reg = <0x14c80000 0x0b08>;
++		#clock-cells = <1>;
++	};
++
++	cmu_peris: clock-controller@0x10040000 {
++		compatible = "samsung,exynos5433-cmu-peris";
++		reg = <0x10040000 0x0b20>;
++		#clock-cells = <1>;
++	};
++
++	cmu_fsys: clock-controller@0x156e0000 {
++		compatible = "samsung,exynos5433-cmu-fsys";
++		reg = <0x156e0000 0x0b04>;
++		#clock-cells = <1>;
++	};
++
++Example 2: UART controller node that consumes the clock generated by the clock
++	   controller.
++
++	serial_0: serial@14C10000 {
++		compatible = "samsung,exynos5433-uart";
++		reg = <0x14C10000 0x100>;
++		interrupts = <0 421 0>;
++		clocks = <&cmu_peric CLK_PCLK_UART0>,
++			 <&cmu_peric CLK_SCLK_UART0>;
++		clock-names = "uart", "clk_uart_baud0";
++		pinctrl-names = "default";
++		pinctrl-0 = <&uart0_bus>;
++		status = "disabled";
++	};
++
++Example 3: SPI controller node that consumes the clock generated by the clock
++	   controller.
++
++	spi_0: spi@14d20000 {
++		compatible = "samsung,exynos7-spi";
++		reg = <0x14d20000 0x100>;
++		interrupts = <0 432 0>;
++		dmas = <&pdma0 9>, <&pdma0 8>;
++		dma-names = "tx", "rx";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&cmu_peric CLK_PCLK_SPI0>,
++			 <&cmu_top CLK_SCLK_SPI0_PERIC>;
++		clock-names = "spi", "spi_busclk0";
++		samsung,spi-src-clk = <0>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&spi0_bus>;
++		status = "disabled";
++	};
 -- 
 1.8.5.5
