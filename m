@@ -1,65 +1,106 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v4 2/7] regulator: dt-bindings: Document the ena-gpios
- property
-Date: Thu, 27 Nov 2014 18:30:58 +0000
-Message-ID: <20141127183058.GB7712@sirena.org.uk>
+Subject: Re: [PATCH v4 4/7] regulator: Use ena_gpio supplied with generic
+ regulator bindings
+Date: Thu, 27 Nov 2014 18:43:42 +0000
+Message-ID: <20141127184342.GC7712@sirena.org.uk>
 References: <1417087253-12306-1-git-send-email-k.kozlowski@samsung.com>
- <1417087253-12306-3-git-send-email-k.kozlowski@samsung.com>
+ <1417087253-12306-5-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4802fQj3DlSA+WXC"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="VkCVF37ElD4C4GZ7"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:41155 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750840AbaK0SoK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 27 Nov 2014 13:44:10 -0500
 Content-Disposition: inline
-In-Reply-To: <1417087253-12306-3-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+In-Reply-To: <1417087253-12306-5-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Cc: Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-List-Id: linux-samsung-soc@vger.kernel.org
 
 
---4802fQj3DlSA+WXC
+--VkCVF37ElD4C4GZ7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 27, 2014 at 12:20:48PM +0100, Krzysztof Kozlowski wrote:
+On Thu, Nov 27, 2014 at 12:20:50PM +0100, Krzysztof Kozlowski wrote:
+> Use ena_gpio from regulator constraints (filled by parsing generic
+> bindings) to initialize the GPIO enable control. Support also the old
+> way: ena_gpio supplied in regulator_config structure.
+>=20
+> This also adds a new set_ena_gpio() callback in regulator_ops structure
+> which driver may provide to actually enable the GPIO control in
+> hardware.
 
-> +- ena-gpios: GPIO to use for enable control. Actual implementation depends
-> +  on regulator driver. The bindings documentation for given driver describes
-> +  which regulator actually supports it.
-> +- ena-gpio-open-drain: GPIO is open drain type.
+This seems really confused like it's trying to work around some other
+problem - this all feels like it's at the wrong abstraction level.  As
+far as I can tell this is trying to fix bugs in the previous patch and
+do some other refactorings (the "also add this other random op" bit
+especially) but I'm really not clear what the goal is.
 
-I'm relly not a big fan of adding a fixed name property here with no
-override capability, it means that the naming won't reflect the specific
-regulator design so closely and in practice for many of the PMICs the
-GPIO control can do rather more than just control enables and supports
-reprogramming.  The latter case where we've got a signal which can
-sometimes be simply and enable but sometimes more makes it especially
-worrying to have the property always be there, it's something that might
-work in some configurations but could easily be broken if we try to
-exploit more advanced functionality (things also triggering other
-configuration changes at the same time).
+Please try to think if the code you're writing makes sense at the big
+picture level rather than just band aiding specific problems you see.
+It's also a good idea to keep random code motion separate from
+functional changes since it makes it much easier to follow what each is
+supposed to do.
 
-Factoring out the code is good but it seems better to have it be
-something which drivers can control, for example by having them
-explicitly specify a property name to use or perhaps a flag to enable
-the default name.
+> @@ -1044,6 +1045,14 @@ static int set_machine_constraints(struct regulato=
+r_dev *rdev,
+>  		}
+>  	}
+> =20
+> +	if (rdev->constraints->use_ena_gpio && ops->set_ena_gpio) {
+> +		ret =3D ops->set_ena_gpio(rdev);
+> +		if (ret < 0) {
+> +			rdev_err(rdev, "failed to set enable GPIO control\n");
+> +			goto out;
+> +		}
+> +	}
 
-We also need an invert option.
+Why do we need some special magic operation for GPIO based enables
+that's separate to any other enable operation?  This seems really
+confusing, if the constraint setting doesn't work somehow for GPIO based
+enables we should fix that.  Though since this operation takes no
+parameters it's hard to see how it's supposed to apply constraints
+unless it reparses them which doesn't seem like a good idea...
 
---4802fQj3DlSA+WXC
+>  static int regulator_ena_gpio_request(struct regulator_dev *rdev,
+> -				const struct regulator_config *config)
+
+> -	ret =3D gpio_request_one(config->ena_gpio,
+> -				GPIOF_DIR_OUT | config->ena_gpio_flags,
+> +	ret =3D gpio_request_one(gpio, GPIOF_DIR_OUT | gpio_flags,
+>  				rdev_get_name(rdev));
+
+> +/*
+> + * Request GPIO for enable control from regulator_config
+> + * or init_data->constraints.
+> + */
+> +static int regulator_ena_gpio_setup(struct regulator_dev *rdev,
+> +			const struct regulator_config *config,
+> +			const struct regulator_init_data *init_data)
+
+Why is setting up the GPIO different to requesting it, especially given
+that we have an existing function called _request() which still exists?
+
+--VkCVF37ElD4C4GZ7
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBAgAGBQJUd23hAAoJECTWi3JdVIfQay8H/jIeCloCCEW8WC1Fzf3AW8ft
-F2rYuuVJnc7vDyzFLIrN6V9pYN2IE2HHdwzat5NCUipdHkZIO0fDXez4Y+YYsdPO
-nSq7o3UxMEwawaxcxjOiGNzVuEwl80PQCGh1Gzn2bvZpwUDsZvBbT/vnRGMe75dr
-ywom1+xXPOCiaxatdvNmWJShQOgQwMfvXIDOh78qbx5baSvlAatShRB3Cr745lb1
-YDHun+mZ/EDarhwPaH9/oS5BjMsPjItVQqHO6ep3JrFHy8faJTdW5yypuW9RdbUS
-hh75PD9fLXoHApI0y4zEXZvytxnlgcSNJChDFBumjir69Ji3V1jYftFRGG94g1M=
-=7Ncs
+iQEcBAEBAgAGBQJUd3DdAAoJECTWi3JdVIfQubEH/jxO9kh8fwL2jJoGAEkeE20D
+btT3H3TlSuPN9k96FKZEPARBKUkSjH8cORtPl1PE0qOkMMTjl+Zh2dotUEtZf+lK
+cxxYt4HRo8uSbg7Kmz5waZsVE3fRgmCzzJW/hiYakiuSI2t9792fyokpJdpTphoS
+8gZ5bxUXQedUrrqn9V3qvorZOBFzhENsKpnrdDG9R4Y74SBqpwf0lPRNEdlKK2C9
+UzVh2riLgJofGjvzxV1ykcUt1596rEbEXc5rZJ2ekRsWmfcuB4a0X01ZNvKV/Tjq
+92aIHq9qwq9EKfYa6rCr5GMAGH439jcPIX16nW25CYvNgCSNFvlcywKwbr8EUh4=
+=WT6H
 -----END PGP SIGNATURE-----
 
---4802fQj3DlSA+WXC--
+--VkCVF37ElD4C4GZ7--
