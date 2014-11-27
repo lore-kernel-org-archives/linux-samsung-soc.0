@@ -1,141 +1,109 @@
-From: Chanwoo Choi <cwchoi00-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 11/19] clk: samsung: exynos5433: Add clocks for
- CMU_BUS{0|1|2} domains
-Date: Fri, 28 Nov 2014 00:58:22 +0900
-Message-ID: <CAGTfZH1fXVVT0594wRRKerrRmXRp6weWTkZymErAnbP3ntdMug@mail.gmail.com>
-References: <1417073716-22997-1-git-send-email-cw00.choi@samsung.com>
-	<2150099.t3m9xROUE3@wuerfel>
-	<CAGTfZH1C28s7trTh9+PhrnLnmJ9vpsKtAA61ASK-LA_1d_cihg@mail.gmail.com>
-	<3844465.a5d3AtOSOo@wuerfel>
-Reply-To: cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] PM / Domains: Add pm_genpd_lookup() API to lookup domain by device node
+Date: Thu, 27 Nov 2014 17:42:51 +0100
+Message-ID: <2598170.BNh0BBOOkI@vostro.rjw.lan>
+References: <1417097653-22599-1-git-send-email-ulf.hansson@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <3844465.a5d3AtOSOo@wuerfel>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "catalin.marinas-5wv7dgnIgG8@public.gmane.org" <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, "tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "geunsik.lim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <geunsik.lim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <jh80.chung@samsu>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1417097653-22599-1-git-send-email-ulf.hansson@linaro.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@linaro.org>, linux-pm@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Nov 28, 2014 at 12:51 AM, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
-> On Friday 28 November 2014 00:44:07 Chanwoo Choi wrote:
->> >
->> >> +#define bus_div_clks(num)                        \
->> >> +static struct samsung_div_clock bus##num_div_clks[] __initdata = {    \
->> >> +    /* DIV_BUS */                            \
->> >> +    DIV(CLK_DIV_PCLK_BUS##num_133, "div_pclk_bus"#num"_133",    \
->> >> +            "aclk_bus"#num"_400", DIV_BUS##num, 0, 3),    \
->> >> +};                                    \
->> >
->> > To illustrate my point further: CLK_DIV_PCLK_BUS0/1/2 are all the
->> > same, and so are DIV_BUS0/1/2, so you should not need to duplicate
->> > the definitions at all but just call them 'CLK_DIV_PCLK_BUS'
->> > and 'DIV_BUS'.
->>
->> CLK_DIV_PCLK_BUS0/1/2 is not all the same.
->> Each CLK_DIV_PCLK_BUS0/1/2 must need the unique clock number.
->> Because some device may need some clocks by using unique clock number.
->
-> This is from your original patch:
->
-> +/* CMU_BUS0 */
-> +#define CLK_DIV_PCLK_BUS0_133                          1
-> +
-> +#define CLK_ACLK_AHB2APB_BUS0P                         2
-> +#define CLK_ACLK_BUS0NP_133                            3
-> +#define CLK_ACLK_BUS0ND_400                            4
-> +#define CLK_PCLK_BUS0SRVND_133                         5
-> +#define CLK_PCLK_PMU_BUS0                              6
-> +#define CLK_PCLK_SYSREG_BUS0                           7
-> +
-> +#define BUS0_NR_CLK                                    8
-> +
-> +/* CMU_BUS1 */
-> +#define CLK_DIV_PCLK_BUS1_133                          1
-> +
-> +#define CLK_ACLK_AHB2APB_BUS1P                         2
-> +#define CLK_ACLK_BUS1NP_133                            3
-> +#define CLK_ACLK_BUS1ND_400                            4
-> +#define CLK_PCLK_BUS1SRVND_133                         5
-> +#define CLK_PCLK_PMU_BUS1                              6
-> +#define CLK_PCLK_SYSREG_BUS1                           7
-> +
-> +#define BUS1_NR_CLK                                    8
-> +
-> +/* CMU_BUS2 */
-> +#define CLK_MOUT_ACLK_BUS2_400_USER                    1
-> +
-> +#define CLK_DIV_PCLK_BUS2_133                          2
-> +
-> +#define CLK_ACLK_AHB2APB_BUS2P                         3
-> +#define CLK_ACLK_BUS2NP_133                            4
-> +#define CLK_ACLK_BUS2BEND_400                          5
-> +#define CLK_ACLK_BUS2RTND_400                          6
-> +#define CLK_PCLK_BUS2SRVND_133                         7
-> +#define CLK_PCLK_PMU_BUS2                              8
-> +#define CLK_PCLK_SYSREG_BUS2                           9
-> +
-> +#define BUS2_NR_CLK                                    10
->
->
-> The numbers are arbitrarily assigned, but for bus0 and bus1,
-> they are all identical, while bus2 uses a lightly different
-> numbering, which you could easily change, e.g. by using the
-> numbers you have for bus2 on bus0 and bus1 as well.
-
-OK, I'll remove duplicate clock number due to the same on other clock domain.
-
-If use only CLK_DIV_PCLK_BUS instead of CLK_DIV_PCLK_BUS0/1/2,
-I think I have to use three compatible string for each CMU_BUSx domain
-as following:.
-
-clocks = <&cmu_bus0 CLK_DIV_PCLK_BUS>;
-clocks = <&cmu_bus1 CLK_DIV_PCLK_BUS>;
-clocks = <&cmu_bus2 CLK_DIV_PCLK_BUS>;
-
->
-> + * Register offset definitions for CMU_BUS0
+On Thursday, November 27, 2014 03:14:13 PM Ulf Hansson wrote:
+> In a step to move away from using genpd's name based APIs, such as the
+> pm_genpd_add_subdomain_names(), provide an API to lookup an already
+> initialized generic PM domain by its device node.
+> 
+> This API would typically be a called from SOC specific code, to fetch a
+> handle to the domain. Especially convenient to configure subdomains and
+> when the hierarchy of the domains are described in DT.
+> 
+> Do note, before pm_genpd_init() is invoked to initialize a generic PM
+> domain, it's the callers responsibility to assign the new ->dev_node
+> pointer in the struct generic_pm_domain, to enable pm_genpd_lookup() to
+> find the domain.
+> 
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+> 
+> The background to why I propose this patch comes from a discussion around the
+> below patchset:
+> https://lkml.org/lkml/2014/11/24/290
+> 
+> 
+> ---
+>  drivers/base/power/domain.c | 26 ++++++++++++++++++++++++++
+>  include/linux/pm_domain.h   |  2 ++
+>  2 files changed, 28 insertions(+)
+> 
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index 735c473..34555eb 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -75,6 +75,32 @@ struct generic_pm_domain *dev_to_genpd(struct device *dev)
+>  	return pd_to_genpd(dev->pm_domain);
+>  }
+>  
+> +/**
+> + * pm_genpd_lookup - Fetch a generic PM domain object by device node
+> + * @node: Device node to a corresponding genpd.
+> + *
+> + * Returns a valid pointer to struct generic_pm_domain on success or ERR_PTR()
+> + * on failure.
 > + */
-> +#define DIV_BUS0                       0x0600
-> +#define DIV_STAT_BUS0                  0x0700
-> +#define ENABLE_ACLK_BUS0               0x0800
-> +#define ENABLE_PCLK_BUS0               0x0900
-> +#define ENABLE_IP_BUS0                 0x0b00
-> +#define ENABLE_IP_BUS1                 0x0b04
+> +struct generic_pm_domain *pm_genpd_lookup(struct device_node *node)
+> +{
+> +	struct generic_pm_domain *genpd = ERR_PTR(-ENOENT), *gpd;
 > +
->
-> +/*
-> + * Register offset definitions for CMU_BUS1
-> + */
-> +#define DIV_BUS1                       0x0600
-> +#define DIV_STAT_BUS1                  0x0700
-> +#define ENABLE_ACLK_BUS1               0x0800
-> +#define ENABLE_PCLK_BUS1               0x0900
-> +#define ENABLE_IP_BUS10                        0x0b00
-> +#define ENABLE_IP_BUS11                        0x0b04
->
-> +/*
-> + * Register offset definitions for CMU_BUS2
-> + */
-> +#define MUX_SEL_BUS2                   0x0200
-> +#define MUX_ENABLE_BUS2                        0x0300
-> +#define MUX_STAT_BUS2                  0x0400
-> +#define DIV_BUS2                       0x0600
-> +#define DIV_STAT_BUS2                  0x0700
-> +#define ENABLE_ACLK_BUS2               0x0800
-> +#define ENABLE_PCLK_BUS2               0x0900
-> +#define ENABLE_IP_BUS20                        0x0b00
-> +#define ENABLE_IP_BUS21                        0x0b04
->
-> More importantly, the register offsets are all identical, except that
-> bus2 has the additional MUX_SEL and MUX_ENABLE definitions. It's very
-> obvious that this is the same hardware block in multiple instances.
+> +	if (IS_ERR_OR_NULL(node))
+> +		return ERR_PTR(-EINVAL);
+> +
+> +	mutex_lock(&gpd_list_lock);
+> +	list_for_each_entry(gpd, &gpd_list, gpd_list_node) {
+> +		if (gpd->dev_node == node) {
+> +			genpd = gpd;
+> +			break;
+> +		}
+> +	}
+> +	mutex_unlock(&gpd_list_lock);
+> +	return genpd;
+> +}
+> +EXPORT_SYMBOL_GPL(pm_genpd_lookup);
+> +
+>  static int genpd_stop_dev(struct generic_pm_domain *genpd, struct device *dev)
+>  {
+>  	return GENPD_DEV_TIMED_CALLBACK(genpd, int, stop, dev,
+> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+> index 8cbd32e..322cb7c 100644
+> --- a/include/linux/pm_domain.h
+> +++ b/include/linux/pm_domain.h
+> @@ -53,6 +53,7 @@ struct generic_pm_domain {
+>  	struct dev_power_governor *gov;
+>  	struct work_struct power_off_work;
+>  	const char *name;
+> +	struct device_node *dev_node;	/* Device node for the PM domain */
 
-You're right. I'll remove duplicate offset definition.
+Please don't add DT-specific members to generic data structures.
 
-Best Regards,
-Chanwoo Choi
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+You can use struct fwnode_handle (currently in linux-next) instead.
+
+>  	unsigned int in_progress;	/* Number of devices being suspended now */
+>  	atomic_t sd_count;	/* Number of subdomains with power "on" */
+>  	enum gpd_status status;	/* Current state of the domain */
+> @@ -126,6 +127,7 @@ static inline struct generic_pm_domain_data *dev_gpd_data(struct device *dev)
+>  }
+>  
+>  extern struct generic_pm_domain *dev_to_genpd(struct device *dev);
+> +extern struct generic_pm_domain *pm_genpd_lookup(struct device_node *node);
+>  extern int __pm_genpd_add_device(struct generic_pm_domain *genpd,
+>  				 struct device *dev,
+>  				 struct gpd_timing_data *td);
+> 
+
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
