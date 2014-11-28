@@ -1,34 +1,57 @@
 From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 0/3] add Display support for exynos3250 Rinato board
-Date: Fri, 28 Nov 2014 20:39:48 +0900
-Message-ID: <1417174791-7339-1-git-send-email-inki.dae@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:46710 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750870AbaK1Ljy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Nov 2014 06:39:54 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 3/3] ARM: dts: add Panel device support for exynos3250-rinato
+Date: Fri, 28 Nov 2014 20:39:51 +0900
+Message-ID: <1417174791-7339-4-git-send-email-inki.dae@samsung.com>
+References: <1417174791-7339-1-git-send-email-inki.dae@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1417174791-7339-1-git-send-email-inki.dae@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-Cc: airlied@linux.ie, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux-samsung-soc@vger.kernel.org, a.hajda@samsung.com, kgene.kim@samsung.com, thierry.reding@gmail.com, Inki Dae <inki.dae@samsung.com>
+Cc: mark.rutland@arm.com, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, a.hajda@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch series adds Display support for exynos3250 Rinato board.
-For this, it adds fimd, MIPI-DSI and Panel device nodes to
-exynos3250-rinato dts file, and adds a s6e63j0x03 Amoled panel device
-driver which is based on MIPI-DSI bus.
-
-Inki Dae (3):
-  ARM: dts: add fimd device support for exynos3250-rinato
-  drm/panel: add s6e63j0x03 LCD Panel driver
-  ARM: dts: add Panel device support for exynos3250-rinato
-
- arch/arm/boot/dts/exynos3250-rinato.dts  |   70 +++
- drivers/gpu/drm/panel/Kconfig            |    6 +
- drivers/gpu/drm/panel/Makefile           |    1 +
- drivers/gpu/drm/panel/panel-s6e63j0x03.c |  693 ++++++++++++++++++++++++++++++
- 4 files changed, 770 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-s6e63j0x03.c
-
--- 
-1.7.9.5
+VGhpcyBwYXRjaCBhZGRzIE1JUEktRFNJIGFuZCBNSVBJLURTSSBiYXNlZCBTNkU2M0owWDAzIEFN
+T0xFRCBwYW5lbApkZXZpY2Ugbm9kZXMgZm9yIEV4eW5vczMyNTAgUmluYXRvIGJvYXJkLgoKU2ln
+bmVkLW9mZi1ieTogSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgpBY2tlZC1ieTogS3l1
+bmdtaW4gUGFyayA8a3l1bmdtaW4ucGFya0BzYW1zdW5nLmNvbT4KLS0tCiBhcmNoL2FybS9ib290
+L2R0cy9leHlub3MzMjUwLXJpbmF0by5kdHMgfCAgIDU5ICsrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysKIDEgZmlsZSBjaGFuZ2VkLCA1OSBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEv
+YXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zMzI1MC1yaW5hdG8uZHRzIGIvYXJjaC9hcm0vYm9vdC9k
+dHMvZXh5bm9zMzI1MC1yaW5hdG8uZHRzCmluZGV4IDc5YWE5MTYuLjZlMGU5MGQgMTAwNjQ0Ci0t
+LSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAtcmluYXRvLmR0cworKysgYi9hcmNoL2Fy
+bS9ib290L2R0cy9leHlub3MzMjUwLXJpbmF0by5kdHMKQEAgLTEyNSw2ICsxMjUsNjUgQEAKIAl9
+OwogfTsKIAorJmRzaV8wIHsKKwl2ZGRjb3JlLXN1cHBseSA9IDwmbGRvNl9yZWc+OworCXZkZGlv
+LXN1cHBseSA9IDwmbGRvNl9yZWc+OworCXNhbXN1bmcscGxsLWNsb2NrLWZyZXF1ZW5jeSA9IDwy
+NDAwMDAwMD47CisJc3RhdHVzID0gIm9rYXkiOworCisJcG9ydHMgeworCQkjYWRkcmVzcy1jZWxs
+cyA9IDwxPjsKKwkJI3NpemUtY2VsbHMgPSA8MD47CisKKwkJcG9ydEAxIHsKKwkJCXJlZyA9IDwx
+PjsKKworCQkJZHNpX291dDogZW5kcG9pbnQgeworCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmZHNp
+X2luPjsKKwkJCQlzYW1zdW5nLGJ1cnN0LWNsb2NrLWZyZXF1ZW5jeSA9IDwyNTAwMDAwMDA+Owor
+CQkJCXNhbXN1bmcsZXNjLWNsb2NrLWZyZXF1ZW5jeSA9IDwyMDAwMDAwMD47CisJCQl9OworCQl9
+OworCX07CisKKwlwYW5lbEAwIHsKKwkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLHM2ZTYzajB4MDMi
+OworCQlyZWcgPSA8MD47CisJCXZkZDMtc3VwcGx5ID0gPCZsZG8xNl9yZWc+OworCQl2Y2ktc3Vw
+cGx5ID0gPCZsZG8yMF9yZWc+OworCQlyZXNldC1ncGlvcyA9IDwmZ3BlMCAxIDA+OworCQl0ZS1n
+cGlvcyA9IDwmZ3B4MCA2IDA+OworCQlwb3dlci1vbi1kZWxheT0gPDMwPjsKKwkJcG93ZXItb2Zm
+LWRlbGF5PSA8MTIwPjsKKwkJcmVzZXQtZGVsYXkgPSA8NT47CisJCWluaXQtZGVsYXkgPSA8MTAw
+PjsKKwkJZmxpcC1ob3Jpem9udGFsOworCQlmbGlwLXZlcnRpY2FsOworCQlwYW5lbC13aWR0aC1t
+bSA9IDwyOT47CisJCXBhbmVsLWhlaWdodC1tbSA9IDwyOT47CisKKwkJZGlzcGxheS10aW1pbmdz
+IHsKKwkJCXRpbWluZy0wIHsKKwkJCQljbG9jay1mcmVxdWVuY3kgPSA8MD47CisJCQkJaGFjdGl2
+ZSA9IDwzMjA+OworCQkJCXZhY3RpdmUgPSA8MzIwPjsKKwkJCQloZnJvbnQtcG9yY2ggPSA8MT47
+CisJCQkJaGJhY2stcG9yY2ggPSA8MT47CisJCQkJaHN5bmMtbGVuID0gPDE+OworCQkJCXZmcm9u
+dC1wb3JjaCA9IDwxNTA+OworCQkJCXZiYWNrLXBvcmNoID0gPDE+OworCQkJCXZzeW5jLWxlbiA9
+IDwyPjsKKwkJCX07CisJCX07CisKKwkJcG9ydCB7CisJCQlkc2lfaW46IGVuZHBvaW50IHsKKwkJ
+CQlyZW1vdGUtZW5kcG9pbnQgPSA8JmRzaV9vdXQ+OworCQkJfTsKKwkJfTsKKwl9OworfTsKKwog
+JmZpbWQgewogCXN0YXR1cyA9ICJva2F5IjsKIAotLSAKMS43LjkuNQoKX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
+cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
