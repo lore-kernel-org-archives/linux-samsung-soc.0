@@ -1,73 +1,271 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v4 4/7] regulator: Use ena_gpio supplied with generic
- regulator bindings
-Date: Fri, 28 Nov 2014 15:07:29 +0000
-Message-ID: <20141128150729.GP7712@sirena.org.uk>
-References: <1417087253-12306-1-git-send-email-k.kozlowski@samsung.com>
- <1417087253-12306-5-git-send-email-k.kozlowski@samsung.com>
- <20141127184342.GC7712@sirena.org.uk>
- <1417170655.18249.24.camel@AMDC1943>
- <20141128113859.GH7712@sirena.org.uk>
- <1417184044.18249.39.camel@AMDC1943>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH RFT 2/2] arm: dts: disable CCI on exynos420 based
+ arndale-octa
+Date: Fri, 28 Nov 2014 16:19:37 +0100
+Message-ID: <1417187977.19247.4.camel@AMDC1943>
+References: <1417186209-5256-1-git-send-email-a.kesavan@samsung.com>
+ <1417186209-5256-2-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="5YTekl7Q9pOfbcU3"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:42154 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751198AbaK1PHx (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:22267 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751166AbaK1PTm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Nov 2014 10:07:53 -0500
-Content-Disposition: inline
-In-Reply-To: <1417184044.18249.39.camel@AMDC1943>
+	Fri, 28 Nov 2014 10:19:42 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NFR0087H9DEA620@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 28 Nov 2014 15:22:26 +0000 (GMT)
+In-reply-to: <1417186209-5256-2-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Abhilash Kesavan <a.kesavan@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, khilman@kernel.org, nicolas.pitre@linaro.org, lorenzo.pieralisi@arm.com, punit.agrawal@arm.com, will.deacon@arm.com, mark.rutland@arm.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, olof@lixom.net, kgene.kim@samsung.com, javier.martinez@collabora.co.uk, b.zolnierkie@samsung.com, kesavan.abhilash@gmail.com, arnd@arndb.de
+
+On pi=C4=85, 2014-11-28 at 20:20 +0530, Abhilash Kesavan wrote:
+> The arndale-octa board was giving "imprecise external aborts" during
+> boot-up with MCPM enabled. CCI enablement of the boot cluster was fou=
+nd
+> to be the cause of these aborts (possibly because the secure f/w was =
+not
+> allowing it). Hence, disable CCI for the arndale-octa board.
+>=20
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5420-arndale-octa.dts |    4 ++++
+>  arch/arm/boot/dts/exynos5420.dtsi             |    2 +-
+>  2 files changed, 5 insertions(+), 1 deletion(-)
+
+I tested these 2 patches on Arndale Octa but there are no improvements.
+I still got imprecise aborts (some not fatal and sometimes killing init
+with full backtrace).
+
+Tested on next-20141128. System booted from microSD (bootloader from
+Linaro Ubuntu Saucy server image):
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+U-Boot 2012.07 (Feb 15 2014 - 17:29:55) for ARNDALE OCTA
+
+CPU: Exynos5420 Rev2.0 [Samsung SOC on SMP Platform Base on ARM CortexA=
+15]
+APLL =3D 800MHz, KPLL =3D 600MHz
+MPLL =3D 532MHz, BPLL =3D 800MHz
+
+Board: ARNDALE OCTA
+DRAM:  2 GiB
+WARNING: Caches not enabled
+
+TrustZone Enabled BSP
+BL1 version:
+
+Checking Boot Mode ... SDMMC
+MMC:   S5P_MSHC2: 0, S5P_MSHC0: 1
+MMC Device 0: 29.3 GiB
+MMC Device 1: 7.3 GiB
+MMC Device 2: MMC Device 2 not found
+there are pending interrupts 0x00000001
+In:    serial
+Out:   serial
+Err:   serial
+Net:   No ethernet found.
+(Re)start USB...
+USB:   Register 1313 NbrPorts 3
+USB EHCI 1.00
+scanning bus for devices... The request port(2) is not configured
+The request port(2) is not configured
+3 USB Device(s) found
+       scanning bus for storage devices... 0 Storage Device(s) found
+       scanning usb for ethernet devices... 1 Ethernet Device(s) found
+Hit any key to stop autoboot:  0
+ARNDALE # uTTY
+Unknown command 'uTTY' - try 'help'
+ARNDALE # run nn
+reading uImage
+
+3674704 bytes read
+reading uInitrd
+
+2330480 bytes read
+reading board.dtb
+
+33680 bytes read
+## Booting kernel from Legacy Image at 20007000 ...
+   Image Name:   Linux-exynos5420-arndale-octa
+   Image Type:   ARM Linux Kernel Image (uncompressed)
+   Data Size:    3674640 Bytes =3D 3.5 MiB
+   Load Address: 41008000
+   Entry Point:  41008000
+   Verifying Checksum ... OK
+## Loading init Ramdisk from Legacy Image at 22000000 ...
+   Image Name:   initramfs
+   Image Type:   ARM Linux RAMDisk Image (uncompressed)
+   Data Size:    2330416 Bytes =3D 2.2 MiB
+   Load Address: 00000000
+   Entry Point:  00000000
+   Verifying Checksum ... OK
+## Flattened Device Tree blob at 21f00000
+   Booting using the fdt blob at 0x21f00000
+   Loading Kernel Image ... OK
+OK
+   Using Device Tree in place at 21f00000, end 21f0b38f
+
+Starting kernel ...
+
+[    0.000000] Booting Linux on physical CPU 0x0
+[    0.000000] Linux version 3.18.0-rc6-next-20141128-00007-g33b7bf7da1=
+33 (k.kozlowski@AMDC1943) (gcc version 4.7.3 (Ubuntu/Linaro 4.7.3-12ubu=
+ntu1) ) #24 SMP PREEMPT Fri Nov 28 16:13:43 CET 2014
+[    0.000000] CPU: ARMv7 Processor [412fc0f3] revision 3 (ARMv7), cr=3D=
+10c5387d
+
+=2E..
+[   12.874514] VFS: Mounted root (ext4 filesystem) readonly on device 1=
+79:67.
+[   12.887392] devtmpfs: mounted
+[   12.889321] Freeing unused kernel memory: 324K (c0669000 - c06ba000)
+[   12.951241] Unhandled fault: imprecise external abort (0x406) at 0x0=
+0000000
+[   12.966312] Kernel panic - not syncing: Attempted to kill init! exit=
+code=3D0x00000007
+[   12.966312]
+[   12.973980] CPU: 0 PID: 1 Comm: bash Tainted: G        W      3.18.0=
+-rc6-next-20141128-00007-g33b7bf7da133 #24
+[   12.983938] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[   12.990014] [<c0014d44>] (unwind_backtrace) from [<c0011c88>] (show_=
+stack+0x10/0x14)
+[   12.997723] [<c0011c88>] (show_stack) from [<c048e82c>] (dump_stack+=
+0x70/0xbc)
+[   13.004911] [<c048e82c>] (dump_stack) from [<c048a8c0>] (panic+0x94/=
+0x20c)
+[   13.011753] [<c048a8c0>] (panic) from [<c0026500>] (do_exit+0x944/0x=
+988)
+[   13.018424] [<c0026500>] (do_exit) from [<c00265f4>] (do_group_exit+=
+0x3c/0xbc)
+[   13.025621] [<c00265f4>] (do_group_exit) from [<c0030d60>] (get_sign=
+al+0x218/0x8c4)
+[   13.033247] [<c0030d60>] (get_signal) from [<c048a39c>] (do_signal+0=
+x84/0x350)
+[   13.040438] [<c048a39c>] (do_signal) from [<c00115ec>] (do_work_pend=
+ing+0xbc/0xcc)
+[   13.047979] [<c00115ec>] (do_work_pending) from [<c000f1f8>] (work_p=
+ending+0xc/0x20)
+[   13.055693] CPU1: stopping
+[   13.058385] CPU: 1 PID: 0 Comm: swapper/1 Tainted: G        W      3=
+=2E18.0-rc6-next-20141128-00007-g33b7bf7da133 #24
+[   13.068790] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[   13.074858] [<c0014d44>] (unwind_backtrace) from [<c0011c88>] (show_=
+stack+0x10/0x14)
+[   13.082573] [<c0011c88>] (show_stack) from [<c048e82c>] (dump_stack+=
+0x70/0xbc)
+[   13.089762] [<c048e82c>] (dump_stack) from [<c0013e14>] (handle_IPI+=
+0x158/0x18c)
+[   13.097128] [<c0013e14>] (handle_IPI) from [<c00086f4>] (gic_handle_=
+irq+0x60/0x68)
+[   13.104669] [<c00086f4>] (gic_handle_irq) from [<c00127c4>] (__irq_s=
+vc+0x44/0x7c)
+[   13.112112] Exception stack(0xee4c3fa0 to 0xee4c3fe8)
+[   13.117135] 3fa0: c000fd7c ee4c3fe8 ee4c3ff0 00000000 c06c24e8 c0499=
+7e0 c06fa60a c06fa60a
+[   13.125287] 3fc0: 00000001 412fc0f3 00000000 00000000 00000001 ee4c3=
+fe8 c000fd7c c000fd80
+[   13.133429] 3fe0: 60000013 ffffffff
+[   13.136895] [<c00127c4>] (__irq_svc) from [<c000fd80>] (arch_cpu_idl=
+e+0x20/0x3c)
+[   13.144272] [<c000fd80>] (arch_cpu_idle) from [<c0059d0c>] (cpu_star=
+tup_entry+0x11c/0x1a0)
+[   13.152499] [<c0059d0c>] (cpu_startup_entry) from [<40008784>] (0x40=
+008784)
+[   13.159424] CPU2: stopping
+[   13.162102] CPU: 2 PID: 0 Comm: swapper/2 Tainted: G        W      3=
+=2E18.0-rc6-next-20141128-00007-g33b7bf7da133 #24
+[   13.172508] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[   13.178577] [<c0014d44>] (unwind_backtrace) from [<c0011c88>] (show_=
+stack+0x10/0x14)
+[   13.186291] [<c0011c88>] (show_stack) from [<c048e82c>] (dump_stack+=
+0x70/0xbc)
+[   13.193479] [<c048e82c>] (dump_stack) from [<c0013e14>] (handle_IPI+=
+0x158/0x18c)
+[   13.200845] [<c0013e14>] (handle_IPI) from [<c00086f4>] (gic_handle_=
+irq+0x60/0x68)
+[   13.208386] [<c00086f4>] (gic_handle_irq) from [<c00127c4>] (__irq_s=
+vc+0x44/0x7c)
+[   13.215833] Exception stack(0xee4c5fa0 to 0xee4c5fe8)
+[   13.220854] 5fa0: c000fd7c ee4c5fe8 ee4c5ff0 00000000 c06c24e8 c0499=
+7e0 c06fa60a c06fa60a
+[   13.229006] 5fc0: 00000001 412fc0f3 00000000 00000000 00000001 ee4c5=
+fe8 c000fd7c c000fd80
+[   13.237149] 5fe0: 60000113 ffffffff
+[   13.240612] [<c00127c4>] (__irq_svc) from [<c000fd80>] (arch_cpu_idl=
+e+0x20/0x3c)
+[   13.247986] [<c000fd80>] (arch_cpu_idle) from [<c0059d0c>] (cpu_star=
+tup_entry+0x11c/0x1a0)
+[   13.256218] [<c0059d0c>] (cpu_startup_entry) from [<40008784>] (0x40=
+008784)
+[   13.263144] CPU3: stopping
+[   13.265823] CPU: 3 PID: 0 Comm: swapper/3 Tainted: G        W      3=
+=2E18.0-rc6-next-20141128-00007-g33b7bf7da133 #24
+[   13.276230] Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+[   13.282300] [<c0014d44>] (unwind_backtrace) from [<c0011c88>] (show_=
+stack+0x10/0x14)
+[   13.290012] [<c0011c88>] (show_stack) from [<c048e82c>] (dump_stack+=
+0x70/0xbc)
+[   13.297200] [<c048e82c>] (dump_stack) from [<c0013e14>] (handle_IPI+=
+0x158/0x18c)
+[   13.304565] [<c0013e14>] (handle_IPI) from [<c00086f4>] (gic_handle_=
+irq+0x60/0x68)
+[   13.312108] [<c00086f4>] (gic_handle_irq) from [<c00127c4>] (__irq_s=
+vc+0x44/0x7c)
+[   13.319553] Exception stack(0xee4c7fa0 to 0xee4c7fe8)
+[   13.324576] 7fa0: c000fd7c ee4c7fe8 ee4c7ff0 00000000 c06c24e8 c0499=
+7e0 c06fa60a c06fa60a
+[   13.332727] 7fc0: 00000001 412fc0f3 00000000 00000000 00000001 ee4c7=
+fe8 c000fd7c c000fd80
+[   13.340870] 7fe0: 60000113 ffffffff
+[   13.344335] [<c00127c4>] (__irq_svc) from [<c000fd80>] (arch_cpu_idl=
+e+0x20/0x3c)
+[   13.351710] [<c000fd80>] (arch_cpu_idle) from [<c0059d0c>] (cpu_star=
+tup_entry+0x11c/0x1a0)
+[   13.359939] [<c0059d0c>] (cpu_startup_entry) from [<40008784>] (0x40=
+008784)
+[   13.366878] ---[ end Kernel panic - not syncing: Attempted to kill i=
+nit! exitcode=3D0x00000007
+[   13.366878]
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Best regards,
+Krzysztof
 
 
---5YTekl7Q9pOfbcU3
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Nov 28, 2014 at 03:14:04PM +0100, Krzysztof Kozlowski wrote:
-> On pi=C4=85, 2014-11-28 at 11:38 +0000, Mark Brown wrote:
-
-> > This sort of thing is a sign that we're not saving much by moving the
-> > parsing to the core and perhaps there's more flexiblity here...=20
-
-> The driver receive callbacks (or exposes other kind of interface) for
-> other core-generalized code. Recent example is parsing regulator mode
-> (added by Javier) and .of_map_mode() callback.
-
-Right, but that's actually doing some device specific translation and
-successfully factoring out the bulk of the code - the fact that it's
-taking parameters and returning data is a good sign.  This is a callback
-placed randomly away from any other related code (adding to the
-confusion - it's not integrated into the rest of the flow around this at
-all) without a clear purpose.
-
-> I thought how to do this without this additional set_ena_gpio() call.
-> One way would be to extend the regulator modes (FAST/IDLE/STANDBY/ and
-> GPIO) but this would look somehow unnatural.
-
-Yes, that's absolutely hideous.
-
---5YTekl7Q9pOfbcU3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUeI+xAAoJECTWi3JdVIfQwhwH/1CrTJZXExrRsl5sFVkCURuQ
-pyRP5xBkiVsZ1fTL4Y/em9spw7tfbx2/iA43qcLyo8YyWN309vVQWcUaVcts2ulg
-TCPAVgVb8EUfrrqPJddIVxCKqURz0qGwdGJFmJvsswG4S6rN9fvN2j8VHTTKstEb
-i0QPy91wNNNl8l12+SGJinE8heOgnXiiplUzDhxtunq+MRZCQdTNoPoeEWRr9pic
-4vYdwTrnwRg/GDd2E+Qdl4lSHaO2BDsmRX4sUlBlD95BIi8MfDOOCAoxmumoUQiU
-FOJqdSvQhkvbXGK/hhTkrTi1DXXYxMNQaCWnDpV+oHvs9D7dDyR2t8b8pkgPxYY=
-=1wcJ
------END PGP SIGNATURE-----
-
---5YTekl7Q9pOfbcU3--
+> diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm=
+/boot/dts/exynos5420-arndale-octa.dts
+> index aa7a7d7..db2c1c4 100644
+> --- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+> +++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+> @@ -372,3 +372,7 @@
+>  &usbdrd_dwc3_1 {
+>  	dr_mode =3D "host";
+>  };
+> +
+> +&cci {
+> +	status =3D "disabled";
+> +};
+> diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/ex=
+ynos5420.dtsi
+> index 517e50f..0a82ae7 100644
+> --- a/arch/arm/boot/dts/exynos5420.dtsi
+> +++ b/arch/arm/boot/dts/exynos5420.dtsi
+> @@ -120,7 +120,7 @@
+>  		};
+>  	};
+> =20
+> -	cci@10d20000 {
+> +	cci: cci@10d20000 {
+>  		compatible =3D "arm,cci-400";
+>  		#address-cells =3D <1>;
+>  		#size-cells =3D <1>;
