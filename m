@@ -1,69 +1,111 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v9 0/7] Enable L2 cache support on Exynos4210/4x12 SoCs
-Date: Fri, 28 Nov 2014 12:11:38 +0100
-Message-ID: <3059840.P4aX5Il9dy@wuerfel>
-References: <1416224909-4290-1-git-send-email-m.szyprowski@samsung.com> <20141127225100.GA3840@n2100.arm.linux.org.uk> <54783899.2060604@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <54783899.2060604@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, lauraa@codeaurora.org, tony@atomide.com, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, loeliger@gmail.com, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, linux-omap@vger.kernel.org, drake@endlessm.com
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [PATCH 1/2] drm/exynos: fimd: Remove drm_dev pointer from fimd_context
+Date: Fri, 28 Nov 2014 16:44:00 +0530
+Message-ID: <1417173241-27802-1-git-send-email-ajaykumar.rs@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:62607 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750922AbaK1LUq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 28 Nov 2014 06:20:46 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com
+Cc: jy0922.shim@samsung.com, jg1.han@samsung.com, seanpaul@google.com, ajaynumb@gmail.com, bhushan.r@samsung.com, prashanth.g@samsung.com, Ajay Kumar <ajaykumar.rs@samsung.com>
 
-On Friday 28 November 2014 09:55:53 Marek Szyprowski wrote:
-> On 2014-11-27 23:51, Russell King - ARM Linux wrote:
-> > On Mon, Nov 17, 2014 at 12:48:22PM +0100, Marek Szyprowski wrote:
-> >>
-> >> Changes in this version tested on Exynos4412-based TRATS2 and OdroidU3+
-> >> boards (both with secure firmware). There should be no functional change
-> >> for Exynos boards running without secure firmware. I do not have access
-> >> to affected non-Exynos boards, so I could not test on them.
-> > So, I applied this series, and now I get a conflicts between my tree and
-> > arm-soc for:
-> >
-> > arch/arm/mach-exynos/firmware.c
-> > arch/arm/mach-exynos/sleep.S
-> >
-> > So, I'm going to un-stage the exynos bits, and we'll have to work out
-> > some way to handle those.
+ctx->drm_dev is unnecessary since it can be easily
+accessed via ctx->manager->drm_dev, cleaning it up.
 
-Ok
+Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c |   25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
 
-> I've already pointed that those patches depend on other previously merged to
-> exynos and arm-soc trees, but both Arnd and Kukjin said that those patch 
-> series
-> should go via your kernel tree:
-> 
-> https://lkml.org/lkml/2014/11/15/158
-> 
-> That's why in v9 I rebased patches once again onto vanilla v3.18-rc4 and 
-> uploaded
-> to your patch tracker. I see the following two possibilities to get them 
-> merged:
-> 
-> 1. Merge patches to rmk tree and resolve the merge conflict. The 
-> conflict IS quite
-> easy to resolve - both trees, arm-soc and rmk only adds some code and 
-> the goal is
-> simply to have both chunks added.
-> 
-> 2. Merge the previous version (v8 from the above link) to arm-soc tree, 
-> where it
-> applies cleanly on for-next, preferably with Russell's Acked-by.
-> 
-> Arnd, Russell: which approach do you prefer? How can I help to get it 
-> merged?
-
-I'm fine with it either way. Russell, if you like you can merge
-http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung v3.19-next/pm-samsung-2
-into your tree and resolve the conflict on your end, we have a stable
-copy of that branch queued in next/soc.
-
-If you prefer v8 to go through arm-soc, that's fine with me too, or
-we could share a branch with v9 of Marek's series and have that merged
-into arm-soc/next/soc to resolve the conflict.
-
-	arnd
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index e5810d1..122c851 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -159,7 +159,6 @@ struct fimd_win_data {
+ struct fimd_context {
+ 	struct exynos_drm_manager	manager;
+ 	struct device			*dev;
+-	struct drm_device		*drm_dev;
+ 	struct clk			*bus_clk;
+ 	struct clk			*lcd_clk;
+ 	void __iomem			*regs;
+@@ -298,17 +297,17 @@ static int fimd_mgr_initialize(struct exynos_drm_manager *mgr,
+ 	struct exynos_drm_private *priv;
+ 	priv = drm_dev->dev_private;
+ 
+-	mgr->drm_dev = ctx->drm_dev = drm_dev;
++	mgr->drm_dev = drm_dev;
+ 	mgr->pipe = ctx->pipe = priv->pipe++;
+ 
+ 	/* attach this sub driver to iommu mapping if supported. */
+-	if (is_drm_iommu_supported(ctx->drm_dev)) {
++	if (is_drm_iommu_supported(mgr->drm_dev)) {
+ 		/*
+ 		 * If any channel is already active, iommu will throw
+ 		 * a PAGE FAULT when enabled. So clear any channel if enabled.
+ 		 */
+ 		fimd_clear_channel(mgr);
+-		drm_iommu_attach_device(ctx->drm_dev, ctx->dev);
++		drm_iommu_attach_device(mgr->drm_dev, ctx->dev);
+ 	}
+ 
+ 	return 0;
+@@ -319,8 +318,8 @@ static void fimd_mgr_remove(struct exynos_drm_manager *mgr)
+ 	struct fimd_context *ctx = mgr_to_fimd(mgr);
+ 
+ 	/* detach this sub driver from iommu mapping if supported. */
+-	if (is_drm_iommu_supported(ctx->drm_dev))
+-		drm_iommu_detach_device(ctx->drm_dev, ctx->dev);
++	if (is_drm_iommu_supported(mgr->drm_dev))
++		drm_iommu_detach_device(mgr->drm_dev, ctx->dev);
+ }
+ 
+ static u32 fimd_calc_clkdiv(struct fimd_context *ctx,
+@@ -1001,7 +1000,7 @@ static void fimd_te_handler(struct exynos_drm_manager *mgr)
+ 	struct fimd_context *ctx = mgr_to_fimd(mgr);
+ 
+ 	/* Checks the crtc is detached already from encoder */
+-	if (ctx->pipe < 0 || !ctx->drm_dev)
++	if (ctx->pipe < 0 || !mgr->drm_dev)
+ 		return;
+ 
+ 	/*
+@@ -1018,7 +1017,7 @@ static void fimd_te_handler(struct exynos_drm_manager *mgr)
+ 	}
+ 
+ 	if (test_bit(0, &ctx->irq_flags))
+-		drm_handle_vblank(ctx->drm_dev, ctx->pipe);
++		drm_handle_vblank(mgr->drm_dev, ctx->pipe);
+ }
+ 
+ static struct exynos_drm_manager_ops fimd_manager_ops = {
+@@ -1047,17 +1046,19 @@ static irqreturn_t fimd_irq_handler(int irq, void *dev_id)
+ 		writel(clear_bit, ctx->regs + VIDINTCON1);
+ 
+ 	/* check the crtc is detached already from encoder */
+-	if (ctx->pipe < 0 || !ctx->drm_dev)
++	if (ctx->pipe < 0 || !ctx->manager.drm_dev)
+ 		goto out;
+ 
+ 	if (ctx->i80_if) {
+-		exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
++		exynos_drm_crtc_finish_pageflip(ctx->manager.drm_dev,
++								ctx->pipe);
+ 
+ 		/* Exits triggering mode */
+ 		atomic_set(&ctx->triggering, 0);
+ 	} else {
+-		drm_handle_vblank(ctx->drm_dev, ctx->pipe);
+-		exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
++		drm_handle_vblank(ctx->manager.drm_dev, ctx->pipe);
++		exynos_drm_crtc_finish_pageflip(ctx->manager.drm_dev,
++								ctx->pipe);
+ 
+ 		/* set wait vsync event to zero and wake up queue. */
+ 		if (atomic_read(&ctx->wait_vsync_event)) {
+-- 
+1.7.9.5
