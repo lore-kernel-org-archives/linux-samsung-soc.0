@@ -1,57 +1,53 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: [PATCH 3/3] ARM: dts: add Panel device support for exynos3250-rinato
-Date: Fri, 28 Nov 2014 20:39:51 +0900
-Message-ID: <1417174791-7339-4-git-send-email-inki.dae@samsung.com>
-References: <1417174791-7339-1-git-send-email-inki.dae@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v4 2/7] regulator: dt-bindings: Document the ena-gpios
+ property
+Date: Fri, 28 Nov 2014 12:54:27 +0100
+Message-ID: <1417175667.18249.26.camel@AMDC1943>
+References: <1417087253-12306-1-git-send-email-k.kozlowski@samsung.com>
+ <1417087253-12306-3-git-send-email-k.kozlowski@samsung.com>
+ <20141127183058.GB7712@sirena.org.uk> <1417165784.18249.15.camel@AMDC1943>
+ <20141128112116.GG7712@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1417174791-7339-1-git-send-email-inki.dae@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
-Cc: mark.rutland@arm.com, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, a.hajda@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20141128112116.GG7712-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-VGhpcyBwYXRjaCBhZGRzIE1JUEktRFNJIGFuZCBNSVBJLURTSSBiYXNlZCBTNkU2M0owWDAzIEFN
-T0xFRCBwYW5lbApkZXZpY2Ugbm9kZXMgZm9yIEV4eW5vczMyNTAgUmluYXRvIGJvYXJkLgoKU2ln
-bmVkLW9mZi1ieTogSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgpBY2tlZC1ieTogS3l1
-bmdtaW4gUGFyayA8a3l1bmdtaW4ucGFya0BzYW1zdW5nLmNvbT4KLS0tCiBhcmNoL2FybS9ib290
-L2R0cy9leHlub3MzMjUwLXJpbmF0by5kdHMgfCAgIDU5ICsrKysrKysrKysrKysrKysrKysrKysr
-KysrKysrKysKIDEgZmlsZSBjaGFuZ2VkLCA1OSBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0IGEv
-YXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zMzI1MC1yaW5hdG8uZHRzIGIvYXJjaC9hcm0vYm9vdC9k
-dHMvZXh5bm9zMzI1MC1yaW5hdG8uZHRzCmluZGV4IDc5YWE5MTYuLjZlMGU5MGQgMTAwNjQ0Ci0t
-LSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAtcmluYXRvLmR0cworKysgYi9hcmNoL2Fy
-bS9ib290L2R0cy9leHlub3MzMjUwLXJpbmF0by5kdHMKQEAgLTEyNSw2ICsxMjUsNjUgQEAKIAl9
-OwogfTsKIAorJmRzaV8wIHsKKwl2ZGRjb3JlLXN1cHBseSA9IDwmbGRvNl9yZWc+OworCXZkZGlv
-LXN1cHBseSA9IDwmbGRvNl9yZWc+OworCXNhbXN1bmcscGxsLWNsb2NrLWZyZXF1ZW5jeSA9IDwy
-NDAwMDAwMD47CisJc3RhdHVzID0gIm9rYXkiOworCisJcG9ydHMgeworCQkjYWRkcmVzcy1jZWxs
-cyA9IDwxPjsKKwkJI3NpemUtY2VsbHMgPSA8MD47CisKKwkJcG9ydEAxIHsKKwkJCXJlZyA9IDwx
-PjsKKworCQkJZHNpX291dDogZW5kcG9pbnQgeworCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwmZHNp
-X2luPjsKKwkJCQlzYW1zdW5nLGJ1cnN0LWNsb2NrLWZyZXF1ZW5jeSA9IDwyNTAwMDAwMDA+Owor
-CQkJCXNhbXN1bmcsZXNjLWNsb2NrLWZyZXF1ZW5jeSA9IDwyMDAwMDAwMD47CisJCQl9OworCQl9
-OworCX07CisKKwlwYW5lbEAwIHsKKwkJY29tcGF0aWJsZSA9ICJzYW1zdW5nLHM2ZTYzajB4MDMi
-OworCQlyZWcgPSA8MD47CisJCXZkZDMtc3VwcGx5ID0gPCZsZG8xNl9yZWc+OworCQl2Y2ktc3Vw
-cGx5ID0gPCZsZG8yMF9yZWc+OworCQlyZXNldC1ncGlvcyA9IDwmZ3BlMCAxIDA+OworCQl0ZS1n
-cGlvcyA9IDwmZ3B4MCA2IDA+OworCQlwb3dlci1vbi1kZWxheT0gPDMwPjsKKwkJcG93ZXItb2Zm
-LWRlbGF5PSA8MTIwPjsKKwkJcmVzZXQtZGVsYXkgPSA8NT47CisJCWluaXQtZGVsYXkgPSA8MTAw
-PjsKKwkJZmxpcC1ob3Jpem9udGFsOworCQlmbGlwLXZlcnRpY2FsOworCQlwYW5lbC13aWR0aC1t
-bSA9IDwyOT47CisJCXBhbmVsLWhlaWdodC1tbSA9IDwyOT47CisKKwkJZGlzcGxheS10aW1pbmdz
-IHsKKwkJCXRpbWluZy0wIHsKKwkJCQljbG9jay1mcmVxdWVuY3kgPSA8MD47CisJCQkJaGFjdGl2
-ZSA9IDwzMjA+OworCQkJCXZhY3RpdmUgPSA8MzIwPjsKKwkJCQloZnJvbnQtcG9yY2ggPSA8MT47
-CisJCQkJaGJhY2stcG9yY2ggPSA8MT47CisJCQkJaHN5bmMtbGVuID0gPDE+OworCQkJCXZmcm9u
-dC1wb3JjaCA9IDwxNTA+OworCQkJCXZiYWNrLXBvcmNoID0gPDE+OworCQkJCXZzeW5jLWxlbiA9
-IDwyPjsKKwkJCX07CisJCX07CisKKwkJcG9ydCB7CisJCQlkc2lfaW46IGVuZHBvaW50IHsKKwkJ
-CQlyZW1vdGUtZW5kcG9pbnQgPSA8JmRzaV9vdXQ+OworCQkJfTsKKwkJfTsKKwl9OworfTsKKwog
-JmZpbWQgewogCXN0YXR1cyA9ICJva2F5IjsKIAotLSAKMS43LjkuNQoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApk
-cmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5v
-cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On pi=C4=85, 2014-11-28 at 11:21 +0000, Mark Brown wrote:
+> On Fri, Nov 28, 2014 at 10:09:44AM +0100, Krzysztof Kozlowski wrote:
+>=20
+> > I understand your concerns here however I didn't want to overengine=
+er
+> > this. Is the same GPIO (on more complex PMICs) used in different
+> > contexts? Like enable control and something more in the same time?
+>=20
+> Yes, and it's often reprogrammable at runtime.
+
+I have doubts if generalized code could support such configuration...
+
+>=20
+> > Something like:
+> >  struct regulator_desc desc {
+> >  	.name		=3D "LDO1
+> >  	.of_match	=3D of_match_ptr("LDO1"),
+> >  	.regulators_node =3D of_match_ptr("voltage-regulators"),
+> >  	.ops		=3D &max77686_ldo_ops,
+> > +	.of_ena_gpio	=3D of_match_ptr("ena-gpios"),
+> >  ...
+> >  }
+>=20
+> Yes, and note that this also means existing bindings can use the core
+> code.
+
+Thanks for idea,
+Krzysztof
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
