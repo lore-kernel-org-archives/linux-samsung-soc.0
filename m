@@ -1,46 +1,57 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL 3/4] Samsung 3rd round of DT updates for v3.19
-Date: Fri, 28 Nov 2014 13:30:51 +0100
-Message-ID: <201411281330.52164.arnd@arndb.de>
-References: <5476CD82.5050705@kernel.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH] ARM: exynos_defconfig: Enable CONFIG_FHANDLE
+Date: Fri, 28 Nov 2014 13:35:41 +0100
+Message-ID: <54786C1D.3050306@collabora.co.uk>
+References: <1417176414-21558-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.187]:58369 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750976AbaK1MbB (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:43763 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751041AbaK1MgD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Nov 2014 07:31:01 -0500
-In-Reply-To: <5476CD82.5050705@kernel.org>
+	Fri, 28 Nov 2014 07:36:03 -0500
+In-Reply-To: <1417176414-21558-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, arm@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Andreas Faerber <afaerber@suse.de>
 
-On Thursday 27 November 2014, Kukjin Kim wrote:
-> Samsung 3rd DT updates for v3.19
+Hello Sjoerd,
+
+On 11/28/2014 01:06 PM, Sjoerd Simons wrote:
+> CONFIG_FHANDLE is required by systemd, which is the default init system
+> in more and more distributions. So lets enable it for Exynos as well
+> (it's already enabled in multi_v7_defconfig)
 > 
-> - exynos3250
->   : remove unused bootargs on exynos3250-rinato
->   : add new board dt file for exynos3250-monk
-> - exynos4
->   : add missing clock for MFC
->   : specify default clocks for camera
-> - exynos4x12
->   : add TMU related DT nodes
-> - exynos4412-trats2
->   : add max77693-haptic and pwm nodes, enable TMU support
-> - exynos4412-odroid
->   : specify audio clock parents and rates
-> - exynos5250 and exynos5420
->   : add syscon based phandle to i2c device nodes
-> - exynos5250-spring
->   : add trackpad, temperature sensor and usb3505 pinctrl
+> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> ---
+>  arch/arm/configs/exynos_defconfig | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Note: based on previous tags/samsung-dt-2 for v3.19
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index e419fac..d4751ef 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -1,4 +1,5 @@
+>  CONFIG_SYSVIPC=y
+> +CONFIG_FHANDLE=y
 
-Pulled into next/dt, thanks!
+This is certainly required for newer systemd and has to be enabled.
 
-	Arnd
+But it would also be great to have enabled all the config symbols
+that are listed as requirements in the systemd README file:
+
+http://cgit.freedesktop.org/systemd/systemd/tree/README.
+
+Tony added that support to OMAP2+ defconfig in commit 673ce00c
+("ARM: omap2plus_defconfig: Add support for distros with systemd")
+so the same should be done in exynos_defconfig.
+
+That can of course be a follow-up patch though, so for $subject:
+
+Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+
+Best regards,
+Javier
