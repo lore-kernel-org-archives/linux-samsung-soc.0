@@ -1,57 +1,44 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH] ARM: exynos_defconfig: Enable CONFIG_FHANDLE
-Date: Fri, 28 Nov 2014 13:35:41 +0100
-Message-ID: <54786C1D.3050306@collabora.co.uk>
-References: <1417176414-21558-1-git-send-email-sjoerd.simons@collabora.co.uk>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL 4/4] Samsung exynos7 updates for v3.19
+Date: Fri, 28 Nov 2014 13:35:55 +0100
+Message-ID: <201411281335.55663.arnd@arndb.de>
+References: <5476CD88.1030406@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:43763 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751041AbaK1MgD (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.187]:60517 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751339AbaK1Mg2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Nov 2014 07:36:03 -0500
-In-Reply-To: <1417176414-21558-1-git-send-email-sjoerd.simons@collabora.co.uk>
+	Fri, 28 Nov 2014 07:36:28 -0500
+In-Reply-To: <5476CD88.1030406@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, Andreas Faerber <afaerber@suse.de>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene@kernel.org>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, arm@kernel.org, Mike Turquette <mturquette@linaro.org>
 
-Hello Sjoerd,
-
-On 11/28/2014 01:06 PM, Sjoerd Simons wrote:
-> CONFIG_FHANDLE is required by systemd, which is the default init system
-> in more and more distributions. So lets enable it for Exynos as well
-> (it's already enabled in multi_v7_defconfig)
+On Thursday 27 November 2014, Kukjin Kim wrote:
+> Samsung arch/arm64 DT updates for v3.19
 > 
-> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-> ---
->  arch/arm/configs/exynos_defconfig | 1 +
->  1 file changed, 1 insertion(+)
+> - to support ARMv8 based exynos7 SoC
+>   : add initial device tree and add pinctrl, PMU, mmc, i2c, rtc,
+>     watchdog, and adc nodes for exynos7 SoC and exynos7 based
+>     espresso board.
 > 
-> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-> index e419fac..d4751ef 100644
-> --- a/arch/arm/configs/exynos_defconfig
-> +++ b/arch/arm/configs/exynos_defconfig
-> @@ -1,4 +1,5 @@
->  CONFIG_SYSVIPC=y
-> +CONFIG_FHANDLE=y
+> NOTE that this is including following dependencies
+> : cleanup/dts-subdirs in arm-soc for arm64 vendor support
+> : tags/samsung-driver for samsung serial
+> : for-v3.19/exynos-clk in samsung-clk tree for exynos7 clk
+> 
+> One more NOTE, for support exynos7 we need Liviu's "arm64: Create
+> link to include/dt-bindings to enable C preprocessor use" in arm-soc
+> tree and arm64 defconfig update should be handled directly.
 
-This is certainly required for newer systemd and has to be enabled.
+I'm confused by the dependencies. I don't see a "for-v3.19/exynos-clk"
+in arm-soc, you haven't put the clk maintainer on Cc and I see no indication
+that he has this in his tree already, so I'm not pulling this until further
+clarification.
 
-But it would also be great to have enabled all the config symbols
-that are listed as requirements in the systemd README file:
-
-http://cgit.freedesktop.org/systemd/systemd/tree/README.
-
-Tony added that support to OMAP2+ defconfig in commit 673ce00c
-("ARM: omap2plus_defconfig: Add support for distros with systemd")
-so the same should be done in exynos_defconfig.
-
-That can of course be a follow-up patch though, so for $subject:
-
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-
-Best regards,
-Javier
+	Arnd
