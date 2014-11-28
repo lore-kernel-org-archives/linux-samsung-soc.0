@@ -1,96 +1,125 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCHv3 1/1] thermal: cpu_cooling: check for the readiness of
- cpufreq layer
-Date: Fri, 28 Nov 2014 11:09:35 -0400
-Message-ID: <20141128150932.GA24720@developer>
-References: <1417186410-24551-1-git-send-email-edubezval@gmail.com>
- <20141128171024.GW3836@n2100.arm.linux.org.uk>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 03/12] PM / Domains: Add notifier support for power domain
+ transitions
+Date: Fri, 28 Nov 2014 19:04:32 +0100
+Message-ID: <5478B930.4090300@samsung.com>
+References: <1414986790-11940-1-git-send-email-amit.daniel@samsung.com>
+ <1414986790-11940-4-git-send-email-amit.daniel@samsung.com>
+ <1651173.5xzCFxz3LI@vostro.rjw.lan> <7hmw88gn3q.fsf@deeprootsystems.com>
+ <CADGdYn5Prbbe6Rz=OfVMXm3dinCPrE-N0fn23dMMhZb8GzXm-Q@mail.gmail.com>
+ <5458B1FA.7050401@samsung.com> <7h8ujmsvcv.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f48.google.com ([209.85.216.48]:49712 "EHLO
-	mail-qa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750898AbaK1RPo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Nov 2014 12:15:44 -0500
-Content-Disposition: inline
-In-Reply-To: <20141128171024.GW3836@n2100.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <7h8ujmsvcv.fsf@deeprootsystems.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Kevin Hilman <khilman@kernel.org>
+Cc: amit daniel kachhap <amit.daniel@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, pankaj.dubey@samsung.com, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, LAK <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Linux PM <linux-pm@vger.kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, Lukasz Majewski <l.majewski@samsung.com>, devicetree@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, LKML <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, Grant Likely <grant.likely@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, linux-arm-kernel@lists.infradead.org
 
+On 07/11/14 19:45, Kevin Hilman wrote:
+> Sylwester Nawrocki <s.nawrocki@samsung.com> writes:
+>> On 04/11/14 07:44, amit daniel kachhap wrote:
+>>> On Mon, Nov 3, 2014 at 11:53 PM, Kevin Hilman <khilman@kernel.org> wrote:
+>>>> "Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
+>>>>> On Monday, November 03, 2014 09:23:01 AM Amit Daniel Kachhap wrote:
+[...]
+>> Indeed, the somehow complicated power domain power on/off sequences
+>> are SoC specific.  They involve not only groups of clocks (usually
+>> gate, mux clock registers of all devices in a power domain) but also
+>> SoC-specific PMU (Power Management Unit) registers.
+>> I assume it would be inappropriate to push such details to device 
+>> drivers.  Moreover, a device driver could not be even loaded.
+>>
+>> Since the clocks' state is already maintained by clk driver we came 
+>> up with an idea of having generic calls from power domain driver back 
+>> to the clock controller driver.
+> 
+> For the clock tree, it still seems to me that this is better handled in
+> the SoC clock driver.  For example, when a power domain is about to be
+> gated, all the devices in that domain are runtime suspended, and
+> presumably all of their gate clocks are disabled.  Now, doesn't the
+> clock driver know the clock tree parent-child hierarchy and shouldn't it
+> be capable of saving the state of parent clocks (like mux clocks) etc?
+> 
+> Stated diffrently, it still seems to me like we're pushing functionality
+> in PM core notifiers that should be the responsibility of subsystem
+> drivers. 
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+My apologies for not replying earlier, I got distracted by other 
+activities.
 
-Russel,
+I'd prefer not adding anything new to the PM core, however there are
+dependencies between the power domain and clock controller driver 
+which are hard to model in the current APIs.  I assume resorting to 
+inter-exynos-driver API is not a good idea either.
 
-On Fri, Nov 28, 2014 at 05:10:24PM +0000, Russell King - ARM Linux wrote:
-> On Fri, Nov 28, 2014 at 10:53:30AM -0400, Eduardo Valentin wrote:
-> > diff --git a/drivers/thermal/samsung/exynos_thermal_common.c b/drivers/=
-thermal/samsung/exynos_thermal_common.c
-> > index 3f5ad25..d4eaa1b 100644
-> > --- a/drivers/thermal/samsung/exynos_thermal_common.c
-> > +++ b/drivers/thermal/samsung/exynos_thermal_common.c
-> > @@ -371,9 +371,10 @@ int exynos_register_thermal(struct thermal_sensor_=
-conf *sensor_conf)
-> >  		th_zone->cool_dev[th_zone->cool_dev_size] =3D
-> >  					cpufreq_cooling_register(&mask_val);
-> >  		if (IS_ERR(th_zone->cool_dev[th_zone->cool_dev_size])) {
-> > -			dev_err(sensor_conf->dev,
-> > -				"Failed to register cpufreq cooling device\n");
-> > -			ret =3D -EINVAL;
-> > +			ret =3D PTR_ERR(th_zone->cool_dev[th_zone->cool_dev_size]);
-> > +			if (ret !=3D -EPROBE_DEFER)
-> > +				dev_err(sensor_conf->dev,
-> > +					"Failed to register cpufreq cooling device\n");
->=20
-> Something which bugs me quite a lot is when there is an error code (which
-> tells you why something didn't work) and you have an error message, and
-> the error message doesn't bother printing the error code.
->=20
-> You might as well just print "Failed\n" and leave it at that, or md5sum
-> the error message and print the sum instead. :)
->=20
+Saving/restoring the clock hierarchy in the clock controller driver
+during the power domain state transitions has a caveat that the clock
+turn off/on sequences are IP/SoC subsystem specific.  So simply 
+restoring saved registers from memory is not going to work.
 
-I like the md5sum better! :-)
+The other detail I might have forgotten to mention is that the whole
+clock controller may be in same power domain as the consumer devices.
+That means the clock controller's registers must not be touched when
+a related power domain is turned off.  Naturally when a power domain 
+gets switched off all the clock controller's registers reset to their 
+default values.  If we decided to use pm_runtime_{get_sync, put} in
+the clock controller driver I'm not sure how it would need to interact
+with the clk API.
+In current mainline there is an issue with exynos4x12 that the system
+may hang if clk_summary is attempted to read as the clock controller
+driver doesn't take the ISP power domain into account.
 
+[...]
+>>>> Personally, I'm uncomfortable with notifiers like this because it
+>>>> suggests that underlying frameworks are not doing the right thing, or
+>>>> are not being used.  (I also don't like the implementation here where a
+>>>> single global notifier list is maintained by the core, but the notifiers
+>>>> are actually triggered by SoC specific code.)
+>>>
+>>> Yes right the global notifier block can be moved to per genpd structure.
+>>> Also SoC trigger can be moved to core files.
+>>>>
+>>>> IIUC, the usage in this series seems to be that certain clock related
+>>>> registers need to be saved/restored across a power domain transition.
+>>>>
+>>>> Wouldn't an alternative solution be to add a feature to the clock driver
+>>>> such that the state of each clock is saved when the clock is disabled,
+>>>> and restored when the clock is enabled?   That would allow any clock
+>>>> context to survive any power domain transtion also, correct?
+>>>
+>>> I also thought about same. But the trigger point for this would be
+>>> driver calling clk disable/enable and not the power domain. so this 
+>>> will lead to lot of save/restore for each power domain child.
+>>
+>> Even though we would have saved/restored at that points still the power
+>> domain driver would need to enforce some specific clock/PMU registers 
+>> state before/after a power domain state transition. And this is what I 
+>> found difficult with the existing APIs.
+> 
+> This is what I'm not understanding.
+> 
+> Why can't the power domain driver's power_on/power_off callback just
+> call the PMU APIs and/or the clk_enable/_disable calls it needs?
 
-> Knowing why something failed allows you to read the source, and find
-> possible reasons for the failure (which could come down to one reason)
-> and allows faster resolution of the problem.
->=20
+I was concerned that it would not have been reliable by using the clk 
+API due to the clk enable refcounting.  But that might not be a valid 
+argument, since as you pointed out when a power domain is about to 
+be gated related the clocks should be already disabled.
 
-Sure. I will resend with the error codes in the error messages. Makes
-completely sense.
+The other concern was atomicity in enabling/disabling groups of clocks,
+i.e. setting group of bits in a clock gate register at once, rather
+than a bit for each clock one by one.  But I'm not 100% sure about 
+such a hardware requirement myself, would need to do some more testing 
+and/or find a hardware engineer who could explain this. 
 
-Thanks for taking the time and reviewing.
+Additionally specifying clocks in device tree would be a bit messy and
+there would very likely anyway be an additional information required 
+in the power domain driver per each power domain regarding the clock 
+handling sequence. 
 
-
-Eduardo Valentin
-
-> --=20
-> FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-> according to speedtest.net.
-
---a8Wt8u1KmwUX3Y2C
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUeJAhAAoJEMLUO4d9pOJWNtgIAIVUhNPVtwVWHQGEfglfo9P9
-8lluSQs00PNqhA6zkn7nz9emKkhkiUKebxCRa3ni9Rf/SwWAGf4a70jO5/7xoHIB
-yq0DHIjVDf2s7H+EpaAisuDCU5i2SRxTPg+r9CMM2hZWMczQ5SEkuMJ3LvoifhJ6
-bXpTXw14vv/2Ko2LaOp1fM3zUnbCleVILpn+MWPgwIBz8TQSQQrJQ+KELzxvLZtB
-vLrnFa9K9wPZMWZcwCXRY+2aklaayMgcRWCcEBNzxcZ6hi8m6068Kow0d8LvHcQo
-hmWvxaaHlyFuMvSaaYik374PlMrB0OY1NqqIJgExoqYsWMkd7f0XaIjspOq6NP8=
-=0+hj
------END PGP SIGNATURE-----
-
---a8Wt8u1KmwUX3Y2C--
+-- 
+Regards,
+Sylwester
