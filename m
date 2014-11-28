@@ -1,111 +1,69 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH V2] PM / Domains: Add pm_genpd_lookup() API to lookup domain by firmware node
-Date: Fri, 28 Nov 2014 11:38:35 +0100
-Message-ID: <1417171115-5789-1-git-send-email-ulf.hansson@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:42598 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751056AbaK1Kiq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Nov 2014 05:38:46 -0500
-Received: by mail-la0-f46.google.com with SMTP id q1so556071lam.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Nov 2014 02:38:45 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v9 0/7] Enable L2 cache support on Exynos4210/4x12 SoCs
+Date: Fri, 28 Nov 2014 12:11:38 +0100
+Message-ID: <3059840.P4aX5Il9dy@wuerfel>
+References: <1416224909-4290-1-git-send-email-m.szyprowski@samsung.com> <20141127225100.GA3840@n2100.arm.linux.org.uk> <54783899.2060604@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <54783899.2060604@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, lauraa@codeaurora.org, tony@atomide.com, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, loeliger@gmail.com, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, linux-omap@vger.kernel.org, drake@endlessm.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@linaro.org>, linux-pm@vger.kernel.org
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
 
-In a step to move away from using genpd's name based APIs, such as the
-pm_genpd_add_subdomain_names(), provide an API to lookup an already
-initialized generic PM domain by its firmware node.
+On Friday 28 November 2014 09:55:53 Marek Szyprowski wrote:
+> On 2014-11-27 23:51, Russell King - ARM Linux wrote:
+> > On Mon, Nov 17, 2014 at 12:48:22PM +0100, Marek Szyprowski wrote:
+> >>
+> >> Changes in this version tested on Exynos4412-based TRATS2 and OdroidU3+
+> >> boards (both with secure firmware). There should be no functional change
+> >> for Exynos boards running without secure firmware. I do not have access
+> >> to affected non-Exynos boards, so I could not test on them.
+> > So, I applied this series, and now I get a conflicts between my tree and
+> > arm-soc for:
+> >
+> > arch/arm/mach-exynos/firmware.c
+> > arch/arm/mach-exynos/sleep.S
+> >
+> > So, I'm going to un-stage the exynos bits, and we'll have to work out
+> > some way to handle those.
 
-This API would typically be a called from SOC specific code, to fetch a
-handle to the domain. Especially convenient to configure subdomains and
-when the hierarchy of the domains are described in DT.
+Ok
 
-Do note, before pm_genpd_init() is invoked to initialize a generic PM
-domain, it's the callers responsibility to assign the new ->fwnode
-pointer in the struct generic_pm_domain, to enable pm_genpd_lookup() to
-find the domain.
+> I've already pointed that those patches depend on other previously merged to
+> exynos and arm-soc trees, but both Arnd and Kukjin said that those patch 
+> series
+> should go via your kernel tree:
+> 
+> https://lkml.org/lkml/2014/11/15/158
+> 
+> That's why in v9 I rebased patches once again onto vanilla v3.18-rc4 and 
+> uploaded
+> to your patch tracker. I see the following two possibilities to get them 
+> merged:
+> 
+> 1. Merge patches to rmk tree and resolve the merge conflict. The 
+> conflict IS quite
+> easy to resolve - both trees, arm-soc and rmk only adds some code and 
+> the goal is
+> simply to have both chunks added.
+> 
+> 2. Merge the previous version (v8 from the above link) to arm-soc tree, 
+> where it
+> applies cleanly on for-next, preferably with Russell's Acked-by.
+> 
+> Arnd, Russell: which approach do you prefer? How can I help to get it 
+> merged?
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
+I'm fine with it either way. Russell, if you like you can merge
+http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung v3.19-next/pm-samsung-2
+into your tree and resolve the conflict on your end, we have a stable
+copy of that branch queued in next/soc.
 
-Changes in v2:
-	Change from using struct device_node to struct fwnode_handle.
-	Updated commit header accordingly.
+If you prefer v8 to go through arm-soc, that's fine with me too, or
+we could share a branch with v9 of Marek's series and have that merged
+into arm-soc/next/soc to resolve the conflict.
 
----
- drivers/base/power/domain.c | 27 +++++++++++++++++++++++++++
- include/linux/pm_domain.h   |  4 ++++
- 2 files changed, 31 insertions(+)
-
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 735c473..2d881d5 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -75,6 +75,33 @@ struct generic_pm_domain *dev_to_genpd(struct device *dev)
- 	return pd_to_genpd(dev->pm_domain);
- }
- 
-+/**
-+ * pm_genpd_lookup - Fetch a generic PM domain object by firmware node.
-+ * @node: Firmware node to a corresponding genpd.
-+ *
-+ * Returns a valid pointer to struct generic_pm_domain on success or ERR_PTR()
-+ * on failure.
-+ */
-+struct generic_pm_domain *pm_genpd_lookup(struct fwnode_handle *node)
-+{
-+	struct generic_pm_domain *genpd = ERR_PTR(-ENOENT), *gpd;
-+
-+	if (IS_ERR_OR_NULL(node))
-+		return ERR_PTR(-EINVAL);
-+
-+	mutex_lock(&gpd_list_lock);
-+	list_for_each_entry(gpd, &gpd_list, gpd_list_node) {
-+		if (gpd->fwnode == node) {
-+			genpd = gpd;
-+			break;
-+		}
-+	}
-+	mutex_unlock(&gpd_list_lock);
-+
-+	return genpd;
-+}
-+EXPORT_SYMBOL_GPL(pm_genpd_lookup);
-+
- static int genpd_stop_dev(struct generic_pm_domain *genpd, struct device *dev)
- {
- 	return GENPD_DEV_TIMED_CALLBACK(genpd, int, stop, dev,
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 8cbd32e..aa01050 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -43,6 +43,8 @@ struct gpd_cpuidle_data {
- 	struct cpuidle_state *idle_state;
- };
- 
-+struct fwnode_handle;
-+
- struct generic_pm_domain {
- 	struct dev_pm_domain domain;	/* PM domain operations */
- 	struct list_head gpd_list_node;	/* Node in the global PM domains list */
-@@ -53,6 +55,7 @@ struct generic_pm_domain {
- 	struct dev_power_governor *gov;
- 	struct work_struct power_off_work;
- 	const char *name;
-+	struct fwnode_handle *fwnode;	/* Firware node for the PM domain */
- 	unsigned int in_progress;	/* Number of devices being suspended now */
- 	atomic_t sd_count;	/* Number of subdomains with power "on" */
- 	enum gpd_status status;	/* Current state of the domain */
-@@ -126,6 +129,7 @@ static inline struct generic_pm_domain_data *dev_gpd_data(struct device *dev)
- }
- 
- extern struct generic_pm_domain *dev_to_genpd(struct device *dev);
-+extern struct generic_pm_domain *pm_genpd_lookup(struct fwnode_handle *node);
- extern int __pm_genpd_add_device(struct generic_pm_domain *genpd,
- 				 struct device *dev,
- 				 struct gpd_timing_data *td);
--- 
-1.9.1
+	arnd
