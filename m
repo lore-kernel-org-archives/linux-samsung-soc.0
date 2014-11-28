@@ -1,105 +1,67 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH V2 1/3] PM / Domains: Initial PM clock support for genpd
-Date: Fri, 28 Nov 2014 01:05:30 +0100
-Message-ID: <3169286.RI9fuSo8ZA@vostro.rjw.lan>
-References: <1417099911-12688-1-git-send-email-ulf.hansson@linaro.org> <1417099911-12688-2-git-send-email-ulf.hansson@linaro.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [03/19] clk: samsung: exynos5433: Add clocks using common clock
+ framework
+Date: Fri, 28 Nov 2014 10:57:17 +0900
+Message-ID: <5477D67D.2080407@samsung.com>
+References: <1417073716-22997-4-git-send-email-cw00.choi@samsung.com>
+ <54770FA2.9090804@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1417099911-12688-2-git-send-email-ulf.hansson@linaro.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Kevin Hilman <khilman@linaro.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <54770FA2.9090804@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, kyungmin.park@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, geunsik.lim@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thursday, November 27, 2014 03:51:49 PM Ulf Hansson wrote:
-> It's quite common for PM domains to use PM clocks. Typically from SOC
-> specific code, the per device PM clock list is created and
-> pm_clk_suspend|resume() are invoked to handle clock gating/ungating.
-> 
-> A step towards consolidation is to integrate PM clock support into
-> genpd, which is what this patch does.
-> 
-> In this initial step, the calls to the pm_clk_suspend|resume() are
-> handled within genpd, but the per device PM clock list still needs to
-> be created from SOC specific code. It seems reasonable to have gendp to
-> handle that as well, but that left to future patches to address.
-> 
-> It's not every users of genpd that are keen on using PM clocks thus we
-> need to provide this a configuration option for genpd. Therefore let's
-> add flag field in the genpd struct to keep this information and define
-> a new PM_DOMAIN_PM_CLK bit can then be set at initialization.
-> 
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
-> 
-> Changes in v2:
-> 	Set ->start() callback to pm_clk_resume() and fixed comment.
-> 
-> ---
->  drivers/base/power/domain.c | 7 +++++++
->  include/linux/pm_domain.h   | 3 +++
->  2 files changed, 10 insertions(+)
-> 
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 735c473..42ba5a0 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -12,6 +12,7 @@
->  #include <linux/pm_runtime.h>
->  #include <linux/pm_domain.h>
->  #include <linux/pm_qos.h>
-> +#include <linux/pm_clock.h>
->  #include <linux/slab.h>
->  #include <linux/err.h>
->  #include <linux/sched.h>
-> @@ -1928,6 +1929,12 @@ void pm_genpd_init(struct generic_pm_domain *genpd,
->  	genpd->domain.ops.complete = pm_genpd_complete;
->  	genpd->dev_ops.save_state = pm_genpd_default_save_state;
->  	genpd->dev_ops.restore_state = pm_genpd_default_restore_state;
-> +
-> +	if (genpd->flags & PM_DOMAIN_PM_CLK) {
-> +		genpd->dev_ops.stop = pm_clk_suspend;
-> +		genpd->dev_ops.start = pm_clk_resume;
-> +	}
-> +
->  	mutex_lock(&gpd_list_lock);
->  	list_add(&genpd->gpd_list_node, &gpd_list);
->  	mutex_unlock(&gpd_list_lock);
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 8cbd32e..4ba06a4f 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -14,6 +14,7 @@
->  #include <linux/pm.h>
->  #include <linux/err.h>
->  #include <linux/of.h>
-> +#include <linux/bitops.h>
->  #include <linux/notifier.h>
->  #include <linux/cpuidle.h>
+Hi Pankaj,
 
-If you defined the flag as
-
-	#define PM_DOMAIN_FLAGS_PM_CLK	(1U << 0)
-
-(which is a kind of usual way to do that), you wouldn't need the
-bitops.h above.
-
-Moreover, I personally don't like #defines in struct definitions.
-
->  
-> @@ -76,6 +77,8 @@ struct generic_pm_domain {
->  			  struct device *dev);
->  	void (*detach_dev)(struct generic_pm_domain *domain,
->  			   struct device *dev);
-> +	unsigned int flags;		/* Bit field of configs for genpd */
-> +#define PM_DOMAIN_PM_CLK	BIT(0)	/* PM domain uses PM clk */
->  };
->  
->  static inline struct generic_pm_domain *pd_to_genpd(struct dev_pm_domain *pd)
+On 11/27/2014 08:48 PM, Pankaj Dubey wrote:
+> Hi Chanwoo,
 > 
+> On Thursday 27 November 2014 01:05 PM, Chanwoo Choi wrote:
+>> This patch adds the support for CMU (Clock Management Units) of Exynos5433
+>> which is 64bit SoC and has Octa-cores. This patch supports necessary clocks
+>> for kernel boot as following:
+>> - PLL/MMC/UART/MCT/I2C/SPI
+>>
+>> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Acked-by: Inki Dae <inki.dae@samsung.com>
+>> Acked-by: Geunsik Lim <geunsik.lim@samsung.com>
+>>
+>> ---
+>> drivers/clk/samsung/Makefile           |   1 +
+>>   drivers/clk/samsung/clk-exynos5433.c   | 971 +++++++++++++++++++++++++++++++++
+>>   include/dt-bindings/clock/exynos5433.h | 200 +++++++
+>>   3 files changed, 1172 insertions(+)
+>>   create mode 100644 drivers/clk/samsung/clk-exynos5433.c
+>>   create mode 100644 include/dt-bindings/clock/exynos5433.h
+>>
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+(snip)
+
+>> +
+>> +static struct samsung_div_clock top_div_clks[] __initdata = {
+>> +    /* DIV_TOP2 */
+>> +    DIV(CLK_DIV_ACLK_FSYS_200, "div_aclk_fsys_200", "mout_bus_pll_user",
+>> +            DIV_TOP2, 0, 3),
+>> +
+>> +    /* DIV_TOP3 */
+>> +    DIV(CLK_DIV_ACLK_IMEM_SSSX, "div_aclk_imem_sssx",
+>> +            "mout_bus_pll_user", DIV_TOP3, 24, 3),
+> 
+> Isn't this clock name should be div_aclk_imem_sssx_266 as per UM?
+
+You're right. So, I fxied clock name on patch11[1] for CMU_BUSx domains.
+- [1] [PATCH 11/19] clk: samsung: exynos5433: Add clocks for CMU_BUS{0|1|2} domains
+
+ 	/* DIV_TOP3 */
+-	DIV(CLK_DIV_ACLK_IMEM_SSSX, "div_aclk_imem_sssx",
++	DIV(CLK_DIV_ACLK_IMEM_SSSX_266, "div_aclk_imem_sssx_266",
+ 			"mout_bus_pll_user", DIV_TOP3, 24, 3),
+
+Best Regards,
+Chanwoo Choi
