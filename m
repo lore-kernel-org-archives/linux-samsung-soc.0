@@ -1,111 +1,111 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH v4 4/7] regulator: Use ena_gpio supplied with generic
- regulator bindings
-Date: Fri, 28 Nov 2014 11:30:55 +0100
-Message-ID: <1417170655.18249.24.camel@AMDC1943>
-References: <1417087253-12306-1-git-send-email-k.kozlowski@samsung.com>
- <1417087253-12306-5-git-send-email-k.kozlowski@samsung.com>
- <20141127184342.GC7712@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH V2] PM / Domains: Add pm_genpd_lookup() API to lookup domain by firmware node
+Date: Fri, 28 Nov 2014 11:38:35 +0100
+Message-ID: <1417171115-5789-1-git-send-email-ulf.hansson@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:48222 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751156AbaK1KbA (ORCPT
+Received: from mail-la0-f46.google.com ([209.85.215.46]:42598 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751056AbaK1Kiq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Nov 2014 05:31:00 -0500
-In-reply-to: <20141127184342.GC7712@sirena.org.uk>
+	Fri, 28 Nov 2014 05:38:46 -0500
+Received: by mail-la0-f46.google.com with SMTP id q1so556071lam.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 28 Nov 2014 02:38:45 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Lee Jones <lee.jones@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@linaro.org>, linux-pm@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
 
+In a step to move away from using genpd's name based APIs, such as the
+pm_genpd_add_subdomain_names(), provide an API to lookup an already
+initialized generic PM domain by its firmware node.
 
-On czw, 2014-11-27 at 18:43 +0000, Mark Brown wrote:
-> On Thu, Nov 27, 2014 at 12:20:50PM +0100, Krzysztof Kozlowski wrote:
-> > Use ena_gpio from regulator constraints (filled by parsing generic
-> > bindings) to initialize the GPIO enable control. Support also the old
-> > way: ena_gpio supplied in regulator_config structure.
-> > 
-> > This also adds a new set_ena_gpio() callback in regulator_ops structure
-> > which driver may provide to actually enable the GPIO control in
-> > hardware.
-> 
-> This seems really confused like it's trying to work around some other
-> problem - this all feels like it's at the wrong abstraction level.  As
-> far as I can tell this is trying to fix bugs in the previous patch and
-> do some other refactorings (the "also add this other random op" bit
-> especially) but I'm really not clear what the goal is.
-> 
-> Please try to think if the code you're writing makes sense at the big
-> picture level rather than just band aiding specific problems you see.
-> It's also a good idea to keep random code motion separate from
-> functional changes since it makes it much easier to follow what each is
-> supposed to do.
-> 
-> > @@ -1044,6 +1045,14 @@ static int set_machine_constraints(struct regulator_dev *rdev,
-> >  		}
-> >  	}
-> >  
-> > +	if (rdev->constraints->use_ena_gpio && ops->set_ena_gpio) {
-> > +		ret = ops->set_ena_gpio(rdev);
-> > +		if (ret < 0) {
-> > +			rdev_err(rdev, "failed to set enable GPIO control\n");
-> > +			goto out;
-> > +		}
-> > +	}
-> 
-> Why do we need some special magic operation for GPIO based enables
-> that's separate to any other enable operation?  This seems really
-> confusing, if the constraint setting doesn't work somehow for GPIO based
-> enables we should fix that.  Though since this operation takes no
-> parameters it's hard to see how it's supposed to apply constraints
-> unless it reparses them which doesn't seem like a good idea...
+This API would typically be a called from SOC specific code, to fetch a
+handle to the domain. Especially convenient to configure subdomains and
+when the hierarchy of the domains are described in DT.
 
-The regulator driver no longer parses GPIO control from DTS. So somehow
-it should be notified that regulator core parsed this and GPIO should be
-enabled.
+Do note, before pm_genpd_init() is invoked to initialize a generic PM
+domain, it's the callers responsibility to assign the new ->fwnode
+pointer in the struct generic_pm_domain, to enable pm_genpd_lookup() to
+find the domain.
 
-That is the purpose of ops->set_ena_gpio() call.
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+---
 
-> 
-> >  static int regulator_ena_gpio_request(struct regulator_dev *rdev,
-> > -				const struct regulator_config *config)
-> 
-> > -	ret = gpio_request_one(config->ena_gpio,
-> > -				GPIOF_DIR_OUT | config->ena_gpio_flags,
-> > +	ret = gpio_request_one(gpio, GPIOF_DIR_OUT | gpio_flags,
-> >  				rdev_get_name(rdev));
-> 
-> > +/*
-> > + * Request GPIO for enable control from regulator_config
-> > + * or init_data->constraints.
-> > + */
-> > +static int regulator_ena_gpio_setup(struct regulator_dev *rdev,
-> > +			const struct regulator_config *config,
-> > +			const struct regulator_init_data *init_data)
-> 
-> Why is setting up the GPIO different to requesting it, especially given
-> that we have an existing function called _request() which still exists?
+Changes in v2:
+	Change from using struct device_node to struct fwnode_handle.
+	Updated commit header accordingly.
 
-Maybe the name was not a best choice. The setup calls request.
+---
+ drivers/base/power/domain.c | 27 +++++++++++++++++++++++++++
+ include/linux/pm_domain.h   |  4 ++++
+ 2 files changed, 31 insertions(+)
 
-My patchset here tried to retain the compatibility with
-"config.ena_gpio" way so the core would accept GPIOs passed in one of
-two ways:
-1. old: config.ena_gpio,
-2. new: parsed by core from DTS.
-
-The request function previously worked only on "config.ena_gpio" and I
-changed it here to accept any GPIO. The setup uses one of GPIO methods
-(old or new) and calls request with appropriate GPIO.
-
-Anyway this will change after your comments about not using constraints
-(patch 3/7). I'll keep your comments about big picture level in mind and
-start working on next version.
-
-Thanks for feedback!
-
-Best regards,
-Krzysztof
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 735c473..2d881d5 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -75,6 +75,33 @@ struct generic_pm_domain *dev_to_genpd(struct device *dev)
+ 	return pd_to_genpd(dev->pm_domain);
+ }
+ 
++/**
++ * pm_genpd_lookup - Fetch a generic PM domain object by firmware node.
++ * @node: Firmware node to a corresponding genpd.
++ *
++ * Returns a valid pointer to struct generic_pm_domain on success or ERR_PTR()
++ * on failure.
++ */
++struct generic_pm_domain *pm_genpd_lookup(struct fwnode_handle *node)
++{
++	struct generic_pm_domain *genpd = ERR_PTR(-ENOENT), *gpd;
++
++	if (IS_ERR_OR_NULL(node))
++		return ERR_PTR(-EINVAL);
++
++	mutex_lock(&gpd_list_lock);
++	list_for_each_entry(gpd, &gpd_list, gpd_list_node) {
++		if (gpd->fwnode == node) {
++			genpd = gpd;
++			break;
++		}
++	}
++	mutex_unlock(&gpd_list_lock);
++
++	return genpd;
++}
++EXPORT_SYMBOL_GPL(pm_genpd_lookup);
++
+ static int genpd_stop_dev(struct generic_pm_domain *genpd, struct device *dev)
+ {
+ 	return GENPD_DEV_TIMED_CALLBACK(genpd, int, stop, dev,
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index 8cbd32e..aa01050 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -43,6 +43,8 @@ struct gpd_cpuidle_data {
+ 	struct cpuidle_state *idle_state;
+ };
+ 
++struct fwnode_handle;
++
+ struct generic_pm_domain {
+ 	struct dev_pm_domain domain;	/* PM domain operations */
+ 	struct list_head gpd_list_node;	/* Node in the global PM domains list */
+@@ -53,6 +55,7 @@ struct generic_pm_domain {
+ 	struct dev_power_governor *gov;
+ 	struct work_struct power_off_work;
+ 	const char *name;
++	struct fwnode_handle *fwnode;	/* Firware node for the PM domain */
+ 	unsigned int in_progress;	/* Number of devices being suspended now */
+ 	atomic_t sd_count;	/* Number of subdomains with power "on" */
+ 	enum gpd_status status;	/* Current state of the domain */
+@@ -126,6 +129,7 @@ static inline struct generic_pm_domain_data *dev_gpd_data(struct device *dev)
+ }
+ 
+ extern struct generic_pm_domain *dev_to_genpd(struct device *dev);
++extern struct generic_pm_domain *pm_genpd_lookup(struct fwnode_handle *node);
+ extern int __pm_genpd_add_device(struct generic_pm_domain *genpd,
+ 				 struct device *dev,
+ 				 struct gpd_timing_data *td);
+-- 
+1.9.1
