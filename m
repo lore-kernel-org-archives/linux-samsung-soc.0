@@ -1,67 +1,37 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [03/19] clk: samsung: exynos5433: Add clocks using common clock
- framework
-Date: Fri, 28 Nov 2014 10:57:17 +0900
-Message-ID: <5477D67D.2080407@samsung.com>
-References: <1417073716-22997-4-git-send-email-cw00.choi@samsung.com>
- <54770FA2.9090804@samsung.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH 1/1] thermal: cpu_cooling: check for the readiness of
+ cpufreq layer
+Date: Fri, 28 Nov 2014 07:58:52 +0530
+Message-ID: <CAKohpok90KG7ZcY8qq7g-VmhPSCsn83Ut_K_QJqC2b+efWiXkg@mail.gmail.com>
+References: <1417024212-1775-1-git-send-email-edubezval@gmail.com>
+	<CAKohponxUWVT1mjRfJarNtj-+=rXNOa_ONHUjmdu_+6N+=ZjPQ@mail.gmail.com>
+	<20141127140803.GA3342@developer>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <54770FA2.9090804@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, kyungmin.park@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, geunsik.lim@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20141127140803.GA3342@developer>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Linux PM <linux-pm@vger.kernel.org>, Lukasz Majewski <l.majewski@samsung.com>, LKML <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Naveen Krishna Chatradhi <ch.naveen@samsung.com>, Rob Herring <robh+dt@kernel.org>, Zhang Rui <rui.zhang@intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Pankaj,
+On 27 November 2014 at 19:38, Eduardo Valentin <edubezval@gmail.com> wrote:
+>> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+>
+> Ok.
+>
+> though.. "normal practice" says  ack's are oftern used by the maintainer
+> of the affected code (quoting Documentation/SubmittingPatches) :-)
 
-On 11/27/2014 08:48 PM, Pankaj Dubey wrote:
-> Hi Chanwoo,
-> 
-> On Thursday 27 November 2014 01:05 PM, Chanwoo Choi wrote:
->> This patch adds the support for CMU (Clock Management Units) of Exynos5433
->> which is 64bit SoC and has Octa-cores. This patch supports necessary clocks
->> for kernel boot as following:
->> - PLL/MMC/UART/MCT/I2C/SPI
->>
->> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> Cc: Tomasz Figa <tomasz.figa@gmail.com>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Acked-by: Inki Dae <inki.dae@samsung.com>
->> Acked-by: Geunsik Lim <geunsik.lim@samsung.com>
->>
->> ---
->> drivers/clk/samsung/Makefile           |   1 +
->>   drivers/clk/samsung/clk-exynos5433.c   | 971 +++++++++++++++++++++++++++++++++
->>   include/dt-bindings/clock/exynos5433.h | 200 +++++++
->>   3 files changed, 1172 insertions(+)
->>   create mode 100644 drivers/clk/samsung/clk-exynos5433.c
->>   create mode 100644 include/dt-bindings/clock/exynos5433.h
->>
+Hehe :)
 
-(snip)
+Another paragraph from the same file:
 
->> +
->> +static struct samsung_div_clock top_div_clks[] __initdata = {
->> +    /* DIV_TOP2 */
->> +    DIV(CLK_DIV_ACLK_FSYS_200, "div_aclk_fsys_200", "mout_bus_pll_user",
->> +            DIV_TOP2, 0, 3),
->> +
->> +    /* DIV_TOP3 */
->> +    DIV(CLK_DIV_ACLK_IMEM_SSSX, "div_aclk_imem_sssx",
->> +            "mout_bus_pll_user", DIV_TOP3, 24, 3),
-> 
-> Isn't this clock name should be div_aclk_imem_sssx_266 as per UM?
+Acked-by: does not necessarily indicate acknowledgement of the entire patch.
+For example, if a patch affects multiple subsystems and has an Acked-by: from
+one subsystem maintainer then this usually indicates acknowledgement of just
+the part which affects that maintainer's code.  Judgement should be used here.
+When in doubt people should refer to the original discussion in the mailing
+list archives.
 
-You're right. So, I fxied clock name on patch11[1] for CMU_BUSx domains.
-- [1] [PATCH 11/19] clk: samsung: exynos5433: Add clocks for CMU_BUS{0|1|2} domains
-
- 	/* DIV_TOP3 */
--	DIV(CLK_DIV_ACLK_IMEM_SSSX, "div_aclk_imem_sssx",
-+	DIV(CLK_DIV_ACLK_IMEM_SSSX_266, "div_aclk_imem_sssx_266",
- 			"mout_bus_pll_user", DIV_TOP3, 24, 3),
-
-Best Regards,
-Chanwoo Choi
+So my Acked-by was as cpufreq subsystem Maintainer :)
