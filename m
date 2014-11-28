@@ -1,53 +1,45 @@
-From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v4 2/7] regulator: dt-bindings: Document the ena-gpios
- property
-Date: Fri, 28 Nov 2014 12:54:27 +0100
-Message-ID: <1417175667.18249.26.camel@AMDC1943>
-References: <1417087253-12306-1-git-send-email-k.kozlowski@samsung.com>
- <1417087253-12306-3-git-send-email-k.kozlowski@samsung.com>
- <20141127183058.GB7712@sirena.org.uk> <1417165784.18249.15.camel@AMDC1943>
- <20141128112116.GG7712@sirena.org.uk>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 3/5] pinctrl: exynos: add exynos5410 SoC specific data
+Date: Fri, 28 Nov 2014 12:59:35 +0100
+Message-ID: <CACRpkdZie8JJGxSPkc8PPvC3qZkWhe5WqmpSKSoDFwqRd6tR_Q@mail.gmail.com>
+References: <547104D5.4030803@suse.de>
+	<1416695185-5198-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20141128112116.GG7712-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1416695185-5198-1-git-send-email-afaerber@suse.de>
+Sender: linux-gpio-owner@vger.kernel.org
+To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, =?UTF-8?B?6rmA7ZWZ7KO8?= <ruppi.kim@hardkernel.com>, Humberto Naves <hsnaves@gmail.com>, Jan Kiszka <jan.kiszka@siemens.com>, Johann Pfefferl <johann.pfefferl@siemens.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "open list:PIN CONTROL SUBSY..." <linux-gpio@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On pi=C4=85, 2014-11-28 at 11:21 +0000, Mark Brown wrote:
-> On Fri, Nov 28, 2014 at 10:09:44AM +0100, Krzysztof Kozlowski wrote:
->=20
-> > I understand your concerns here however I didn't want to overengine=
-er
-> > this. Is the same GPIO (on more complex PMICs) used in different
-> > contexts? Like enable control and something more in the same time?
->=20
-> Yes, and it's often reprogrammable at runtime.
+On Sat, Nov 22, 2014 at 11:26 PM, Andreas F=C3=A4rber <afaerber@suse.de=
+> wrote:
 
-I have doubts if generalized code could support such configuration...
+> From: Hakjoo Kim <ruppi.kim@hardkernel.com>
+>
+> Add Samsung EXYNOS5410 SoC specific data to enable pinctrl
+> support for all platforms based on EXYNOS5410.
+>
+> Signed-off-by: Hakjoo Kim <ruppi.kim@hardkernel.com>
+> [AF: Rebased onto Exynos5260 and irq_chip consolidation]
+> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+> ---
+>  v2 -> v3:
+>  * Rebased (.svc, .{g,w}eint_{con,mask,pend} fields dropped)
+>
+>  v1 -> v2:
+>  * Filled in Sob from Hakjoo Kim
 
->=20
-> > Something like:
-> >  struct regulator_desc desc {
-> >  	.name		=3D "LDO1
-> >  	.of_match	=3D of_match_ptr("LDO1"),
-> >  	.regulators_node =3D of_match_ptr("voltage-regulators"),
-> >  	.ops		=3D &max77686_ldo_ops,
-> > +	.of_ena_gpio	=3D of_match_ptr("ena-gpios"),
-> >  ...
-> >  }
->=20
-> Yes, and note that this also means existing bindings can use the core
-> code.
+Is this based on the pinctrl devel branch so I can apply it?
 
-Thanks for idea,
-Krzysztof
+I'd like Tomasz ACK on it first though.
 
+Yours,
+Linus Walleij
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
 n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+the body of a message to majordomo@vger.kernel.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
