@@ -1,81 +1,91 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH RFC v2 07/12] PM / Domains: export pm_genpd_lookup_name
-Date: Fri, 28 Nov 2014 14:22:09 +0530
-Message-ID: <CADGdYn70xe=JcXwMiQ4FXpq4pwHVhv+1Kp7YM_t=R_qk-_hk8A@mail.gmail.com>
-References: <1416833572-6880-1-git-send-email-amit.daniel@samsung.com>
-	<1416834256-11225-1-git-send-email-amit.daniel@samsung.com>
-	<1416834256-11225-7-git-send-email-amit.daniel@samsung.com>
-	<CAPDyKFqE_qhrRs3X9s9juyPH_Zcq8vdE_amqKM3VUnMjHtL2Rg@mail.gmail.com>
-	<CADGdYn6fAScrpz4Va=THtC1ZgT+rYN_gQuE6NnRaCiN4NErg5g@mail.gmail.com>
-	<CAPDyKFo0epKqKuwHS_CKMG2hF+J=Fdve9kPK2EVeeR7FvdoJmg@mail.gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v9 0/7] Enable L2 cache support on Exynos4210/4x12 SoCs
+Date: Fri, 28 Nov 2014 09:55:53 +0100
+Message-ID: <54783899.2060604@samsung.com>
+References: <1416224909-4290-1-git-send-email-m.szyprowski@samsung.com>
+ <20141127225100.GA3840@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f179.google.com ([209.85.160.179]:65528 "EHLO
-	mail-yk0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751134AbaK1IwL (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:22594 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751046AbaK1Iz6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Nov 2014 03:52:11 -0500
-In-Reply-To: <CAPDyKFo0epKqKuwHS_CKMG2hF+J=Fdve9kPK2EVeeR7FvdoJmg@mail.gmail.com>
+	Fri, 28 Nov 2014 03:55:58 -0500
+In-reply-to: <20141127225100.GA3840@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Kevin Hilman <khilman@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, linux-omap@vger.kernel.org, linus.walleij@linaro.org, tony@atomide.com, drake@endlessm.com, loeliger@gmail.com, Mark Rutland <mark.rutland@arm.com>
 
-On Thu, Nov 27, 2014 at 7:50 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 25 November 2014 at 09:48, amit daniel kachhap
-> <amit.daniel@samsung.com> wrote:
->> On Tue, Nov 25, 2014 at 1:05 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>> On 24 November 2014 at 14:04, Amit Daniel Kachhap
->>> <amit.daniel@samsung.com> wrote:
->>>> This API may be needed to set the power domain parent/child relationship
->>>> in the power domain platform driver. The parent relationship is
->>>> generally set after the child power domain is registered with the power
->>>> domain subsystem. In this case, pm_genpd_lookup_name API might be
->>>> useful.
->>>
->>> I think this is a step in the wrong direction. Instead we should be
->>> working on removing the "name" based APIs from genpd.
->>>
->>> The proper way should be to pass the PM domain as a parameter to the
->>> APIs instead.
->> Yes i understand but i had a special requirement for using this API
->> during pd probe.
->>  I cannot use hierarchy to represent parent/child pd nodes as it will
->> break the existing SoC's. In my case all the PD nodes are linear. The
->> parent/child relationship are established in the second pass after all
->> the PD entries are registered with the help of this API.
->> Although there a way that i can always keep parent PD's before the
->> child PD's in DT in linear order. Will check this approach.
->
-> I had some thinking around this, could the below approach work?
->
-> I just posted a patch[1] adding a new pm_genpd_lookup() API, which is
-> using a "DT device node" to fetch the genpd. The idea is to use that
-> API to get the genpd handle which is needed to configure a subdomain
-> through pm_genpd_add_subdomain() API.
-I looked at your patch. I seems fine. i will test them and post the
-new version of my series.
+Hello,
 
-Regards,
-Amit D
+On 2014-11-27 23:51, Russell King - ARM Linux wrote:
+> On Mon, Nov 17, 2014 at 12:48:22PM +0100, Marek Szyprowski wrote:
+>> This is an updated patchset, which intends to add support for L2 cache
+>> on Exynos4 SoCs on boards running under secure firmware, which requires
+>> certain initialization steps to be done with help of firmware, as
+>> selected registers are writable only from secure mode.
+>>
+>> First four patches extend existing support for secure write in L2C driver
+>> to account for design of secure firmware running on Exynos. Namely:
+>>   1) direct read access to certain registers is needed on Exynos, because
+>>      secure firmware calls set several registers at once,
+>>   2) not all boards are running secure firmware, so .write_sec callback
+>>      needs to be installed in Exynos firmware ops initialization code,
+>>   3) write access to {DATA,TAG}_LATENCY_CTRL registers fron non-secure world
+>>      is not allowed and so must use l2c_write_sec as well,
+>>   4) on certain boards, default value of prefetch register is incorrect
+>>      and must be overridden at L2C initialization.
+>> For boards running with firmware that provides access to individual
+>> L2C registers this series should introduce no functional changes. However
+>> since the driver is widely used on other platforms I'd like to kindly ask
+>> any interested people for testing.
+>>
+>> Further three patches add implementation of .write_sec and .configure
+>> callbacks for Exynos secure firmware and necessary DT nodes to enable
+>> L2 cache.
+>>
+>> Changes in this version tested on Exynos4412-based TRATS2 and OdroidU3+
+>> boards (both with secure firmware). There should be no functional change
+>> for Exynos boards running without secure firmware. I do not have access
+>> to affected non-Exynos boards, so I could not test on them.
+> So, I applied this series, and now I get a conflicts between my tree and
+> arm-soc for:
 >
-> In principle you will have to walk through the DT a couple of times,
-> initialize those domains (and subdomains) which either don't have a
-> parent domain or which parent domain already has been initialized. I
-> guess you need a somewhat clever loop to do that, but I think it's
-> doable.
+> arch/arm/mach-exynos/firmware.c
+> arch/arm/mach-exynos/sleep.S
 >
-> Obviously we also need to have a generic binding for a "parent
-> domain". I like Geert's proposal from the other patch, which means
-> using "power-domains = <&pd_xyz>".
->
-> Kind regards
-> Uffe
->
-> [1]
-> http://marc.info/?l=linux-pm&m=141709766008458&w=2
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> So, I'm going to un-stage the exynos bits, and we'll have to work out
+> some way to handle those.
+
+I've already pointed that those patches depend on other previously merged to
+exynos and arm-soc trees, but both Arnd and Kukjin said that those patch 
+series
+should go via your kernel tree:
+
+https://lkml.org/lkml/2014/11/15/158
+
+That's why in v9 I rebased patches once again onto vanilla v3.18-rc4 and 
+uploaded
+to your patch tracker. I see the following two possibilities to get them 
+merged:
+
+1. Merge patches to rmk tree and resolve the merge conflict. The 
+conflict IS quite
+easy to resolve - both trees, arm-soc and rmk only adds some code and 
+the goal is
+simply to have both chunks added.
+
+2. Merge the previous version (v8 from the above link) to arm-soc tree, 
+where it
+applies cleanly on for-next, preferably with Russell's Acked-by.
+
+Arnd, Russell: which approach do you prefer? How can I help to get it 
+merged?
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
