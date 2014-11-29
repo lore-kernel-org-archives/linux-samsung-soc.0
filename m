@@ -1,80 +1,82 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH] clocksource: exynos_mct: fix exynos4_mct_write
-Date: Sun, 30 Nov 2014 07:18:56 +0900
-Message-ID: <025001d00c22$77a6b5e0$66f421a0$@kernel.org>
-References: <1413941828-5547-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+Subject: RE: [PATCH v5 2/6] drivers: soc: Add support for Exynos PMU driver
+Date: Sun, 30 Nov 2014 08:24:48 +0900
+Message-ID: <029c01d00c2b$aaeab560$00c02020$@kernel.org>
+References: <1417270508-11174-1-git-send-email-amit.daniel@samsung.com>
+ <1417270508-11174-3-git-send-email-amit.daniel@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:60800 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751304AbaK2WS6 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:28846 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751762AbaK2XYv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 29 Nov 2014 17:18:58 -0500
-Received: from epcpsbgr5.samsung.com
- (u145.gpu120.samsung.co.kr [203.254.230.145])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Sat, 29 Nov 2014 18:24:51 -0500
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NFT009D7NBLVI40@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sun, 30 Nov 2014 07:18:57 +0900 (KST)
-In-reply-to: <1413941828-5547-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ with ESMTP id <0NFT007T2QDCMV10@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sun, 30 Nov 2014 08:24:48 +0900 (KST)
+In-reply-to: <1417270508-11174-3-git-send-email-amit.daniel@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tobias Jakobi' <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, 'Daniel Lezcano' <daniel.lezcano@linaro.org>, thomas.ab@samsung.com
-Cc: dianders@chromium.org
+To: 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: b.zolnierkie@samsung.com, pankaj.dubey@samsung.com
 
-Tobias Jakobi wrote:
+Amit Daniel Kachhap wrote:
 > 
-> EXYNOS4_MCT_L_MASK is defined as 0xffffff00, so applying this bitmask
-> produces a number outside the range 0x00 to 0xff, which always results
-> in execution of the default switch statement.
+> This patch moves Exynos PMU driver implementation from "arm/mach-exynos"
+> to "drivers/soc/samsung". This driver is mainly used for setting misc
+> bits of register from PMU IP of Exynos SoC which will be required to
+> configure before Suspend/Resume. Currently all these settings are done
+> in "arch/arm/mach-exynos/pmu.c" but moving ahead for ARM64 based SoC
+> support, there is a need of this PMU driver in driver/* folder.
 > 
-> Obviously this is wrong and git history shows that the bitmask inversion
-> was incorrectly set during a refactoring of the MCT code.
+> This driver uses existing DT binding information and there should
+> be no functionality change in the supported platforms.
 > 
-> Fix this by putting the inversion at the correct position again.
-> 
-> Reported-by: GP Orcullo <kinsamanka@gmail.com>
-> Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-
-+ Daniel, Thomas,
-
-adding Doug's review tag from previous his reply.
-
-Reviewed-by: Doug Anderson <dianders@chromium.org>
-
-And
-
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-
-Daniel,
-
-Since this is obvious fix, can you please pick into your tree?
-If any problem, please kindly let me know.
-
-Thanks,
-Kukjin
-
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
 > ---
->  drivers/clocksource/exynos_mct.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  arch/arm/mach-exynos/Makefile                      |    2 +-
+>  drivers/soc/Kconfig                                |    1 +
+>  drivers/soc/Makefile                               |    1 +
+>  drivers/soc/samsung/Kconfig                        |   20 ++++++++++++++++++++
+>  drivers/soc/samsung/Makefile                       |    1 +
+>  .../pmu.c => drivers/soc/samsung/exynos-pmu.c      |    0
+>  6 files changed, 24 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/soc/samsung/Kconfig
+>  create mode 100644 drivers/soc/samsung/Makefile
+>  rename arch/arm/mach-exynos/pmu.c => drivers/soc/samsung/exynos-pmu.c (100%)
 > 
-> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-> index 9403061..83564c9 100644
-> --- a/drivers/clocksource/exynos_mct.c
-> +++ b/drivers/clocksource/exynos_mct.c
-> @@ -97,8 +97,8 @@ static void exynos4_mct_write(unsigned int value, unsigned long offset)
->  	writel_relaxed(value, reg_base + offset);
+> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+> index bcefb54..b91b382 100644
+> --- a/arch/arm/mach-exynos/Makefile
+> +++ b/arch/arm/mach-exynos/Makefile
+> @@ -9,7 +9,7 @@ ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/$(src)/include -I$(srctree)
 > 
->  	if (likely(offset >= EXYNOS4_MCT_L_BASE(0))) {
-> -		stat_addr = (offset & ~EXYNOS4_MCT_L_MASK) + MCT_L_WSTAT_OFFSET;
-> -		switch (offset & EXYNOS4_MCT_L_MASK) {
-> +		stat_addr = (offset & EXYNOS4_MCT_L_MASK) + MCT_L_WSTAT_OFFSET;
-> +		switch (offset & ~EXYNOS4_MCT_L_MASK) {
->  		case MCT_L_TCON_OFFSET:
->  			mask = 1 << 3;		/* L_TCON write status */
->  			break;
-> --
-> 2.0.4
+>  # Core
+> 
+> -obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o
+> +obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o exynos-smc.o firmware.o
+> 
+>  obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o sleep.o
+>  obj-$(CONFIG_PM_SLEEP)		+= suspend.o
+> diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+> index 76d6bd4..90f33b9 100644
+> --- a/drivers/soc/Kconfig
+> +++ b/drivers/soc/Kconfig
+> @@ -3,5 +3,6 @@ menu "SOC (System On Chip) specific Drivers"
+>  source "drivers/soc/qcom/Kconfig"
+>  source "drivers/soc/ti/Kconfig"
+>  source "drivers/soc/versatile/Kconfig"
+> +source "drivers/soc/samsung/Kconfig"
+
+Alphabetical order?
+
+[...]
+
+- Kukjin
