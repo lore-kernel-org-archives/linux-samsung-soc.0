@@ -1,51 +1,40 @@
-From: tjakobi@math.uni-bielefeld.de
-Subject: drm: exynos: mixer: fix using usleep() in atomic context
-Date: Sun, 30 Nov 2014 01:35:25 +0100
-Message-ID: <1417307725-5975-2-git-send-email-tjakobi@math.uni-bielefeld.de>
-References: <1417307725-5975-1-git-send-email-tjakobi@math.uni-bielefeld.de>
-Content-Transfer-Encoding: 7BIT
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v5 0/6] exynos: Move pmu driver to driver/soc folder and add exynos7 support
+Date: Sun, 30 Nov 2014 12:49:46 +0100
+Message-ID: <2615519.HqpqtJvKZ1@wuerfel>
+References: <1417270508-11174-1-git-send-email-amit.daniel@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from unibi-smtp-b.hrz.uni-bielefeld.de ([129.70.208.22]:60140 "EHLO
-	unibi-smtp-b.hrz.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751804AbaK3Auo (ORCPT
+Received: from mout.kundenserver.de ([212.227.126.131]:59828 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752467AbaK3Ltv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 29 Nov 2014 19:50:44 -0500
-Received: from leena.entropy ([84.119.19.8])
- by unibi-smtp-b.hrz.uni-bielefeld.de
- (Oracle Communications Messaging Server 7u4-23.01(7.0.4.23.0) 64bit (built Aug
- 10 2011)) with ESMTPPA id <0NFT00K8VTNFTJ90@unibi-smtp-b.hrz.uni-bielefeld.de>
- for linux-samsung-soc@vger.kernel.org; Sun, 30 Nov 2014 01:35:42 +0100 (CET)
-In-reply-to: <1417307725-5975-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+	Sun, 30 Nov 2014 06:49:51 -0500
+In-Reply-To: <1417270508-11174-1-git-send-email-amit.daniel@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, Tomasz Stanislawski <t.stanislaws@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com, kgene.kim@samsung.com, b.zolnierkie@samsung.com
 
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+On Saturday 29 November 2014 19:45:02 Amit Daniel Kachhap wrote:
+> This patch series [1 - 6] performs,
+> 
+> 1) Moves pmu driver to driver/soc/samsung folder. This is needed as exynos7 is
+>    an arm64 based platform and hence PMU driver should be in driver folder.
+>    Some discussion happened about this in the v1 version. Finally adding it in
+>    driver/soc folder as it too SoC specific and not a general driver.
+>    Entire discussion can be found here (A).
+> 2) Add exynos7 PMU support.
+> 3) Enables the driver for 32bit arm exynos platforms.
+> 
+> TODO: There is some suggestion to split the PMU data for 32 bit and 64 bit
+> Exynos SOC. This can be implemented as a separate optimization patches.
+> Submitting this version without much change from previous version as the merge
+> window is near.
 
-This patch fixes calling usleep_range() after taking reg_slock
-using spin_lock_irqsave(). The mdelay() is used instead.
-Waiting in atomic context is not the best idea in general.
-Hopefully, waiting occurs only when Video Processor fails
-to reset correctly.
+I only now saw this series. I think it's a bad idea to have this code shared
+with arm64 at all, and I want to see a proper driver for the PMU.
 
-Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_mixer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index a41c84e..cc7cccc 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -632,7 +632,7 @@ static void vp_win_reset(struct mixer_context *ctx)
- 		/* waiting until VP_SRESET_PROCESSING is 0 */
- 		if (~vp_reg_read(res, VP_SRESET) & VP_SRESET_PROCESSING)
- 			break;
--		usleep_range(10000, 12000);
-+		mdelay(10);
- 	}
- 	WARN(tries == 0, "failed to reset Video Processor\n");
- }
--- 
-2.0.4
+	Arnd
