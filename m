@@ -1,40 +1,55 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v5 0/6] exynos: Move pmu driver to driver/soc folder and add exynos7 support
-Date: Sun, 30 Nov 2014 12:49:46 +0100
-Message-ID: <2615519.HqpqtJvKZ1@wuerfel>
-References: <1417270508-11174-1-git-send-email-amit.daniel@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v3 3/5] pinctrl: exynos: add exynos5410 SoC specific data
+Date: Sun, 30 Nov 2014 21:13:30 +0900
+Message-ID: <CA+Ln22HEs83SYOF9txBPfd=77EB3Hcwerra=7e97AvP0JBjCFw@mail.gmail.com>
+References: <547104D5.4030803@suse.de>
+	<1416695185-5198-1-git-send-email-afaerber@suse.de>
+	<CACRpkdZie8JJGxSPkc8PPvC3qZkWhe5WqmpSKSoDFwqRd6tR_Q@mail.gmail.com>
+	<54786567.4050305@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.131]:59828 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752467AbaK3Ltv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 30 Nov 2014 06:49:51 -0500
-In-Reply-To: <1417270508-11174-1-git-send-email-amit.daniel@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <54786567.4050305@suse.de>
+Sender: linux-gpio-owner@vger.kernel.org
+To: =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, =?UTF-8?B?6rmA7ZWZ7KO8?= <ruppi.kim@hardkernel.com>, Humberto Naves <hsnaves@gmail.com>, Jan Kiszka <jan.kiszka@siemens.com>, Johann Pfefferl <johann.pfefferl@siemens.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "PIN CONTROL SUBSY..." <linux-gpio@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-samsung-soc@vger.kernel.org, pankaj.dubey@samsung.com, kgene.kim@samsung.com, b.zolnierkie@samsung.com
 
-On Saturday 29 November 2014 19:45:02 Amit Daniel Kachhap wrote:
-> This patch series [1 - 6] performs,
-> 
-> 1) Moves pmu driver to driver/soc/samsung folder. This is needed as exynos7 is
->    an arm64 based platform and hence PMU driver should be in driver folder.
->    Some discussion happened about this in the v1 version. Finally adding it in
->    driver/soc folder as it too SoC specific and not a general driver.
->    Entire discussion can be found here (A).
-> 2) Add exynos7 PMU support.
-> 3) Enables the driver for 32bit arm exynos platforms.
-> 
-> TODO: There is some suggestion to split the PMU data for 32 bit and 64 bit
-> Exynos SOC. This can be implemented as a separate optimization patches.
-> Submitting this version without much change from previous version as the merge
-> window is near.
+Hi Andreas,
 
-I only now saw this series. I think it's a bad idea to have this code shared
-with arm64 at all, and I want to see a proper driver for the PMU.
+2014-11-28 21:07 GMT+09:00 Andreas F=C3=A4rber <afaerber@suse.de>:
+> Am 28.11.2014 um 12:59 schrieb Linus Walleij:
+>> On Sat, Nov 22, 2014 at 11:26 PM, Andreas F=C3=A4rber <afaerber@suse=
+=2Ede> wrote:
+>>
+>>> From: Hakjoo Kim <ruppi.kim@hardkernel.com>
+>>>
+>>> Add Samsung EXYNOS5410 SoC specific data to enable pinctrl
+>>> support for all platforms based on EXYNOS5410.
+>>>
+>>> Signed-off-by: Hakjoo Kim <ruppi.kim@hardkernel.com>
+>>> [AF: Rebased onto Exynos5260 and irq_chip consolidation]
+>>> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+>>> ---
+>>>  v2 -> v3:
+>>>  * Rebased (.svc, .{g,w}eint_{con,mask,pend} fields dropped)
+>>>
+>>>  v1 -> v2:
+>>>  * Filled in Sob from Hakjoo Kim
+>>
+>> Is this based on the pinctrl devel branch so I can apply it?
+>
+> It was based on the Samsung for-next tree. I can rebase if needed.
 
-	Arnd
+Yes, please rebase (and please make sure that all the structs are
+const, which became possible after recent changes). Otherwise the
+patch looks good.
+
+Best regards,
+Tomasz
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
