@@ -1,68 +1,40 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: drm: exynos: mixer: fix using usleep() in atomic context
-Date: Mon, 01 Dec 2014 17:16:17 +0100
-Message-ID: <7454d0630d95195d41c3906637e223af@math.uni-bielefeld.de>
-References: <1417307725-5975-1-git-send-email-tjakobi@math.uni-bielefeld.de>
- <1417307725-5975-2-git-send-email-tjakobi@math.uni-bielefeld.de>
- <20141201155447.GE11943@ulmo.nvidia.com>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH RFT 2/2] arm: dts: disable CCI on exynos420 based arndale-octa
+Date: Mon, 01 Dec 2014 10:50:29 -0800
+Message-ID: <7hbnnn5hmy.fsf@deeprootsystems.com>
+References: <1417186209-5256-1-git-send-email-a.kesavan@samsung.com>
+	<1417186209-5256-2-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:60423 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752874AbaLAQQU (ORCPT
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:42464 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752771AbaLASuc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Dec 2014 11:16:20 -0500
-In-Reply-To: <20141201155447.GE11943@ulmo.nvidia.com>
+	Mon, 1 Dec 2014 13:50:32 -0500
+Received: by mail-pa0-f51.google.com with SMTP id ey11so11540210pad.24
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Dec 2014 10:50:32 -0800 (PST)
+In-Reply-To: <1417186209-5256-2-git-send-email-a.kesavan@samsung.com>
+	(Abhilash Kesavan's message of "Fri, 28 Nov 2014 20:20:09 +0530")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, Tomasz Stanislawski <t.stanislaws@samsung.com>, dri-devel@lists.freedesktop.org
+To: Abhilash Kesavan <a.kesavan@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, nicolas.pitre@linaro.org, lorenzo.pieralisi@arm.com, punit.agrawal@arm.com, will.deacon@arm.com, mark.rutland@arm.com, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, dianders@chromium.org, olof@lixom.net, kgene.kim@samsung.com, javier.martinez@collabora.co.uk, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, kesavan.abhilash@gmail.com, arnd@arndb.de
 
-On 2014-12-01 16:54, Thierry Reding wrote:
-> On Sun, Nov 30, 2014 at 01:35:25AM +0100, tjakobi@math.uni-bielefeld.de 
-> wrote:
->> From: Tomasz Stanislawski <t.stanislaws@samsung.com>
->> 
->> This patch fixes calling usleep_range() after taking reg_slock
->> using spin_lock_irqsave(). The mdelay() is used instead.
->> Waiting in atomic context is not the best idea in general.
->> Hopefully, waiting occurs only when Video Processor fails
->> to reset correctly.
->> 
->> Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
->> ---
->>  drivers/gpu/drm/exynos/exynos_mixer.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->> 
->> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c 
->> b/drivers/gpu/drm/exynos/exynos_mixer.c
->> index a41c84e..cc7cccc 100644
->> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
->> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
->> @@ -632,7 +632,7 @@ static void vp_win_reset(struct mixer_context 
->> *ctx)
->>  		/* waiting until VP_SRESET_PROCESSING is 0 */
->>  		if (~vp_reg_read(res, VP_SRESET) & VP_SRESET_PROCESSING)
->>  			break;
->> -		usleep_range(10000, 12000);
->> +		mdelay(10);
->>  	}
->>  	WARN(tries == 0, "failed to reset Video Processor\n");
->>  }
-> 
-> I can't see a reason why you would need to hold the lock around this
-> code. Perhaps a better way to fix this would be to drop the lock before
-> calling vp_win_reset()?
-> 
-> Thierry
+Abhilash Kesavan <a.kesavan@samsung.com> writes:
 
-Hmm, I'm pretty new to spinlocks (only have worked with the usual mutex 
-stuff in userspace), but wouldn't that mean that it is then possible for 
-mixer_win_reset to execute while a (previous) vp_win_reset is still 
-running?
+> The arndale-octa board was giving "imprecise external aborts" during
+> boot-up with MCPM enabled. CCI enablement of the boot cluster was found
+> to be the cause of these aborts (possibly because the secure f/w was not
+> allowing it). Hence, disable CCI for the arndale-octa board.
+>
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 
-With best wishes,
-Tobias
+Tested-by: Kevin Hilman <khilman@linaro.org>
+
+Tested on top of next-20141128 with exynos_defconfig on my Octa board
+and I'm not seeing the imprecise aborts anymore.  
+
+Thanks,
+
+Kevin
