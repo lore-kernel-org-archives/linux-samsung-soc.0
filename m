@@ -1,60 +1,140 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH V2 1/2] pinctrl: exynos: Add BUS1 pin controller for exynos7
-Date: Mon, 1 Dec 2014 19:51:53 +0530
-Message-ID: <CAFp+6iHiC9mouT-v_yGHm5adDerCpT-s7EeWwwwYi-NzdLBnrA@mail.gmail.com>
-References: <CAFp+6iF-N63YSsdv2a6=MYp_mD=eQY_Oi8=9JVNU5dG0BA7YGQ@mail.gmail.com>
-	<1416834177-11170-1-git-send-email-gautam.vivek@samsung.com>
-	<CAGOxZ51P30BY2sOhUeMRK64CGF1fNcc-63RCXiAqZ6Rgpv3K7Q@mail.gmail.com>
-	<CAFp+6iFcMGTBQDcdK0cbcu0s9a3022nogaUvbPA2ZsCN80hRSA@mail.gmail.com>
-	<CAFp+6iFaf_RMprLCLXK=o=KGSTQuVL3geKx5yfevTuvFdjYLNg@mail.gmail.com>
-	<CACRpkdY8sEJMr-cxzrUEW1sqP3bGLH=Q2hDP1NBQ5m9A+RhP5Q@mail.gmail.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2 3/5] pinctrl: exynos: Fix GPIO setup failure because
+ domain clock being gated
+Date: Mon, 1 Dec 2014 23:34:59 +0900
+Message-ID: <CA+Ln22H_a9CWxrYO_i9Esm6keXA8XLLYmE1Vg-8ynamJ1sAwpQ@mail.gmail.com>
+References: <1417011857-10419-1-git-send-email-k.kozlowski@samsung.com>
+	<1417011857-10419-4-git-send-email-k.kozlowski@samsung.com>
+	<CACRpkdb8F8YcvFeHPvOKHjx_p4HEpimck3XRabB3oHpZTdmRQQ@mail.gmail.com>
+	<1417183724.18249.36.camel@AMDC1943>
+	<CA+Ln22Ejo51VPWf6DmuRvV_fZr_H=-BXAshSPSOokNE1bz=-QA@mail.gmail.com>
+	<1417423043.4055.14.camel@AMDC1943>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f169.google.com ([209.85.216.169]:48044 "EHLO
-	mail-qc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753448AbaLAOVy (ORCPT
+Received: from mail-oi0-f45.google.com ([209.85.218.45]:60404 "EHLO
+	mail-oi0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753659AbaLAOfA convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Dec 2014 09:21:54 -0500
-In-Reply-To: <CACRpkdY8sEJMr-cxzrUEW1sqP3bGLH=Q2hDP1NBQ5m9A+RhP5Q@mail.gmail.com>
+	Mon, 1 Dec 2014 09:35:00 -0500
+In-Reply-To: <1417423043.4055.14.camel@AMDC1943>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Alim Akhtar <alim.akhtar@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-usb <linux-usb@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, robh+dt <robh+dt@kernel.org>, kgene <kgene@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>, Russell King <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Fri, Nov 28, 2014 at 9:15 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Fri, Nov 28, 2014 at 4:39 AM, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
->> On Fri, Nov 28, 2014 at 9:05 AM, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
+2014-12-01 17:37 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.com=
+>:
 >
->>>> On Mon, Nov 24, 2014 at 6:32 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
->>>>> USB and Power regulator on Exynos7 require gpios available
->>>>> in BUS1 pin controller block.
->>>>> So adding the BUS1 pinctrl support.
->>>>>
->>>>> Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
->>>>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->>>>> Cc: Linus Walleij <linus.walleij@linaro.org>
+> On nie, 2014-11-30 at 21:19 +0900, Tomasz Figa wrote:
+>> Hi Krzysztof,
 >>
->> If the change looks good, will it be possible to pick it fo 3.19-rc1 ?
->> That will really help enabling USB IP on exynos7.
+>> 2014-11-28 23:08 GMT+09:00 Krzysztof Kozlowski <k.kozlowski@samsung.=
+com>:
+>> > On pi=C4=85, 2014-11-28 at 15:04 +0100, Linus Walleij wrote:
+>> >> On Wed, Nov 26, 2014 at 3:24 PM, Krzysztof Kozlowski
+>> >> <k.kozlowski@samsung.com> wrote:
+>> >>
+>> >> > The audio subsystem on Exynos 5420 has separate clocks and GPIO=
+=2E To
+>> >> > operate properly on GPIOs the main block clock 'mau_epll' must =
+be
+>> >> > enabled.
+>> >> >
+>> >> > This was observed on Peach Pi/Pit and Arndale Octa (after enabl=
+ing i2s0)
+>> >> > after introducing runtime PM to pl330 DMA driver. After that co=
+mmit the
+>> >> > 'mau_epll' was gated, because the "amba" clock was disabled and=
+ there
+>> >> > were no more users of mau_epll.
+>> >> >
+>> >> > The system hang just before probing i2s0 because
+>> >> > samsung_pinmux_setup() tried to access memory from audss block =
+which was
+>> >> > gated.
+>> >> >
+>> >> > Add a clock property to the pinctrl driver and enable the clock=
+ during
+>> >> > GPIO setup. During normal GPIO operations (set, get, set_direct=
+ion) the
+>> >> > clock is not enabled.
+>>
+>> Could you make sure that possibility of gating this clock is worth t=
+he
+>> effort of adding gating code to all affected drivers? If there is no
+>> significant change in power consumption maybe it could be simply kee=
+p
+>> running all the time?
 >
-> As you know the Exynos driver has a maintainer, Tomasz Figa, I will not
-> merge patches without his ACK.
+> I had an impression that last time you disliked such idea:
+> http://www.spinics.net/lists/arm-kernel/msg338127.html
+> That's why I developed these patches. Because keeping a clock always =
+on,
+> even when it is unused, is undesirable.
+
+I was mostly concerned about the particular solution implemented by
+that patch that kept the clocks enabled on all platforms, not only the
+affected one. However...
+
 >
-> Apart from that, there are *again* a lot of Exynos patches flying around and
-> I start to loose track of them. If they do not apply together and start to
-> conflict I will just ask Tomasz to stack them and provide a pull request
-> again.
+> Anyway, I did some simple measurements (after booting Arndale Octa
+> to /bin/sh, idle):
+>  - with mau_epll gated: ~523 mA
+>  - with mau_epll always on: ~531 mA
+>
+> Keeping it on increases energy usage by 1.5% in idle (with measuremen=
+t
+> uncertainty ~0.4%).
+>
 
-True, this merge cycle has surely got number of exynos7 related
-patches in flight,
-which are difficult to keep track of.
-Thanks for asking Tomasz.
+=2E..this definitely shows that the effort isn't worthless, which means
+that your patch goes in the right direction.
 
+>
+>> Also isn't a similar problem happening due to power domains? I belie=
+ve
+>> the whole maudio block is located in a separate power domain but
+>> somehow it doesn't get turned off?
+>
+> There is Maudio power domain... but I think it is not related here.
 
+Could you somehow check what happens when the maudio power domain is
+turned off and maudio pin controller is accessed? Could you also check
+the difference in power consumption with this domain powered on and
+off?
 
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+> Pinctrl driver does not have runtime PM and is not attached to a doma=
+in.
+> I thought about other solution to this problem (with utilization of
+> power domains):
+>  - add runtime PM to pinctrl and audss clocks,
+>  - attach pinctrl and audss clocks to maudio power domain,
+>  - enable the clock when power domain is turned on.
+> However almost the same changes had to be added to pinctrl and audss
+> clocks drivers (replace clock_enable() with pm_runtime_get_sync()).
+
+Well, if the dependency is there due to hardware design, I think it
+needs to be reflected in the drivers as well.
+
+=46ew other issues that came to my mind:
+
+ - Your previous patch added clock control only to pinctrl operations.
+Shouldn't GPIO operations be included as well?
+
+ - If power domain dependency is there too, what happens with GPIO
+pins if the domain is powered off? If they lose their states, wouldn't
+it necessary to keep the domain powered on whenever there is some GPIO
+pin requested (which usually =3D in use)? (I'd assume that special
+functions shouldn't take a reference on runtime PM, because they are
+related to IP blocks in the same PM domain, which will implicitly keep
+the domain powered on.)
+
+ - Doesn't the clock controller also lose its state whenever the power
+domain is powered off? I guess that would be similar to ISP clock
+controller, issues of which are still not resolved in mainline.
+Sylwester could tell you more about this, I guess.
+
+Best regards,
+Tomasz
