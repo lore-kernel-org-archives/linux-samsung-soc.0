@@ -1,36 +1,50 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH V3 3/3] ARM: shmobile: Convert to genpd flags for PM
- clocks for R-mobile
-Date: Mon, 1 Dec 2014 10:36:24 +0100
-Message-ID: <CAMuHMdVntNxw+zciOQfayfJbMMV+AqOyZMqeB2FY=Q5eA=r0rw@mail.gmail.com>
-References: <1417163403-7070-1-git-send-email-ulf.hansson@linaro.org>
-	<1417163403-7070-4-git-send-email-ulf.hansson@linaro.org>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH V2] PM / Domains: Add pm_genpd_lookup() API to lookup
+ domain by firmware node
+Date: Mon, 1 Dec 2014 11:26:10 +0100
+Message-ID: <CAPDyKFpX5nXR18pKdLrtDrPK60p1y2CEqq+--3z3jczRRmKrqA@mail.gmail.com>
+References: <1417171115-5789-1-git-send-email-ulf.hansson@linaro.org>
+	<5765394.eQjV2VvkSL@vostro.rjw.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1417163403-7070-4-git-send-email-ulf.hansson@linaro.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@linaro.org>, Simon Horman <horms@verge.net.au>, Linux PM list <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Arnd Bergmann <arnd@arndb.de>, Linux-sh list <linux-sh@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f172.google.com ([209.85.216.172]:64684 "EHLO
+	mail-qc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752795AbaLAK0L (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 1 Dec 2014 05:26:11 -0500
+Received: by mail-qc0-f172.google.com with SMTP id m20so7410366qcx.31
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Dec 2014 02:26:10 -0800 (PST)
+In-Reply-To: <5765394.eQjV2VvkSL@vostro.rjw.lan>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On Fri, Nov 28, 2014 at 9:30 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> Instead of using the dev_ops ->stop|start() callbacks for genpd, let's
-> convert to use genpd's flag field and set it to GENPD_PM_CLK.
+On 29 November 2014 at 01:30, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> On Friday, November 28, 2014 11:38:35 AM Ulf Hansson wrote:
+>> In a step to move away from using genpd's name based APIs, such as the
+>> pm_genpd_add_subdomain_names(), provide an API to lookup an already
+>> initialized generic PM domain by its firmware node.
+>>
+>> This API would typically be a called from SOC specific code, to fetch a
+>> handle to the domain. Especially convenient to configure subdomains and
+>> when the hierarchy of the domains are described in DT.
+>>
+>> Do note, before pm_genpd_init() is invoked to initialize a generic PM
+>> domain, it's the callers responsibility to assign the new ->fwnode
+>> pointer in the struct generic_pm_domain, to enable pm_genpd_lookup() to
+>> find the domain.
+>>
+>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 >
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> I have no problems with that, but do you have a user for it?
 
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Amit Daniel Kachhap, posted a patchset which is adding subdomains
+configured from DT for Exynos. It's from there the idea to this patch
+comes from. Amit is about to post a new version, based on this patch.
 
-(tested on r8a7740/armadillo-multiplatform and sh73a0/kzm9g-multiplatform).
+https://lkml.org/lkml/2014/11/24/290
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Kind regards
+Uffe
