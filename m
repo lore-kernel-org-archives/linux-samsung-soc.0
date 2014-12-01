@@ -1,57 +1,68 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH V2 1/2] pinctrl: exynos: Add BUS1 pin controller for exynos7
-Date: Tue, 2 Dec 2014 01:07:11 +0900
-Message-ID: <CA+Ln22GHVinmpJccYYxNjYeApj3miy_zGMnWd8e5AOt0PCjh9g@mail.gmail.com>
-References: <CAFp+6iF-N63YSsdv2a6=MYp_mD=eQY_Oi8=9JVNU5dG0BA7YGQ@mail.gmail.com>
-	<1416834177-11170-1-git-send-email-gautam.vivek@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: drm: exynos: mixer: fix using usleep() in atomic context
+Date: Mon, 01 Dec 2014 17:16:17 +0100
+Message-ID: <7454d0630d95195d41c3906637e223af@math.uni-bielefeld.de>
+References: <1417307725-5975-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1417307725-5975-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <20141201155447.GE11943@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1416834177-11170-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, USB list <linux-usb@vger.kernel.org>, devicetree <devicetree@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Rob Herring <robh+dt@kernel.org>, Kukjin Kim <kgene@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:60423 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752874AbaLAQQU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 1 Dec 2014 11:16:20 -0500
+In-Reply-To: <20141201155447.GE11943@ulmo.nvidia.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, Tomasz Stanislawski <t.stanislaws@samsung.com>, dri-devel@lists.freedesktop.org
 
-Hi Vivek,
+On 2014-12-01 16:54, Thierry Reding wrote:
+> On Sun, Nov 30, 2014 at 01:35:25AM +0100, tjakobi@math.uni-bielefeld.de 
+> wrote:
+>> From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+>> 
+>> This patch fixes calling usleep_range() after taking reg_slock
+>> using spin_lock_irqsave(). The mdelay() is used instead.
+>> Waiting in atomic context is not the best idea in general.
+>> Hopefully, waiting occurs only when Video Processor fails
+>> to reset correctly.
+>> 
+>> Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+>> ---
+>>  drivers/gpu/drm/exynos/exynos_mixer.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>> 
+>> diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c 
+>> b/drivers/gpu/drm/exynos/exynos_mixer.c
+>> index a41c84e..cc7cccc 100644
+>> --- a/drivers/gpu/drm/exynos/exynos_mixer.c
+>> +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+>> @@ -632,7 +632,7 @@ static void vp_win_reset(struct mixer_context 
+>> *ctx)
+>>  		/* waiting until VP_SRESET_PROCESSING is 0 */
+>>  		if (~vp_reg_read(res, VP_SRESET) & VP_SRESET_PROCESSING)
+>>  			break;
+>> -		usleep_range(10000, 12000);
+>> +		mdelay(10);
+>>  	}
+>>  	WARN(tries == 0, "failed to reset Video Processor\n");
+>>  }
+> 
+> I can't see a reason why you would need to hold the lock around this
+> code. Perhaps a better way to fix this would be to drop the lock before
+> calling vp_win_reset()?
+> 
+> Thierry
 
-Please see my comments below.
+Hmm, I'm pretty new to spinlocks (only have worked with the usual mutex 
+stuff in userspace), but wouldn't that mean that it is then possible for 
+mixer_win_reset to execute while a (previous) vp_win_reset is still 
+running?
 
-2014-11-24 22:02 GMT+09:00 Vivek Gautam <gautam.vivek@samsung.com>:
-> USB and Power regulator on Exynos7 require gpios available
-> in BUS1 pin controller block.
-> So adding the BUS1 pinctrl support.
->
-> Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> ---
->
-> This patch was part of series:
-> "[PATCH 00/11] Exynos7: Adding USB 3.0 support"
->  https://lkml.org/lkml/2014/11/21/247
->
-> Changes since V1:
->  - Added support for all pin banks which are part of BUS1 pin controller.
->
->  drivers/pinctrl/samsung/pinctrl-exynos.c |   19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
-
-I have missed this with previous patch, but DT bindings documentation
-should list all aliases for all supported compatible strings, because
-they are required for correct operation. There is a small section
-about aliases in [1] already, so please add there information about
-aliases for Exynos7 pin controllers along with their names, e.g.
-
-Aliases for controllers compatible with "samsung,exynos7-pinctrl":
- - pinctrl0: pin controller of ALIVE block,
- - pinctrl1: pin controller of BUS0 block,
- [...]
- - pinctrl8: pin controller of BUS1 block.
-
-[1] Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-
-I guess you can do this in separate patch or respin this one with this added.
-
-Best regards,
-Tomasz
+With best wishes,
+Tobias
