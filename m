@@ -1,67 +1,372 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH V2] PM / Domains: Add pm_genpd_lookup() API to lookup
- domain by firmware node
-Date: Mon, 1 Dec 2014 17:27:39 +0530
-Message-ID: <CADGdYn5aLr69PrqO5RvU4q6HU9pPZ+1tWL27cc=cVazAvSVFpQ@mail.gmail.com>
-References: <1417171115-5789-1-git-send-email-ulf.hansson@linaro.org>
-	<5765394.eQjV2VvkSL@vostro.rjw.lan>
-	<CAPDyKFpX5nXR18pKdLrtDrPK60p1y2CEqq+--3z3jczRRmKrqA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Subject: [PATCH] ARM: dts: Add dts file for odroid XU3 board
+Date: Mon,  1 Dec 2014 13:59:30 +0100
+Message-ID: <1417438770-28696-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f52.google.com ([209.85.213.52]:59187 "EHLO
-	mail-yh0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751287AbaLAL5k (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:47434 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753298AbaLAM7g (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Dec 2014 06:57:40 -0500
-In-Reply-To: <CAPDyKFpX5nXR18pKdLrtDrPK60p1y2CEqq+--3z3jczRRmKrqA@mail.gmail.com>
+	Mon, 1 Dec 2014 07:59:36 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Mon, Dec 1, 2014 at 3:56 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On 29 November 2014 at 01:30, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
->> On Friday, November 28, 2014 11:38:35 AM Ulf Hansson wrote:
->>> In a step to move away from using genpd's name based APIs, such as the
->>> pm_genpd_add_subdomain_names(), provide an API to lookup an already
->>> initialized generic PM domain by its firmware node.
->>>
->>> This API would typically be a called from SOC specific code, to fetch a
->>> handle to the domain. Especially convenient to configure subdomains and
->>> when the hierarchy of the domains are described in DT.
->>>
->>> Do note, before pm_genpd_init() is invoked to initialize a generic PM
->>> domain, it's the callers responsibility to assign the new ->fwnode
->>> pointer in the struct generic_pm_domain, to enable pm_genpd_lookup() to
->>> find the domain.
->>>
->>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
->>
->> I have no problems with that, but do you have a user for it?
->
-> Amit Daniel Kachhap, posted a patchset which is adding subdomains
-> configured from DT for Exynos. It's from there the idea to this patch
-> comes from. Amit is about to post a new version, based on this patch.
+Add DTS for the Hardkernel Odroid XU3. The name of the DTS file is kept the
+same as the vendors naming, which means it's prefixed with exynos5422
+instead of exynos5800 as the SoC name even though it includes the
+exyno5800 dtsi.
 
-Hi Ulf,
+Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+---
+ arch/arm/boot/dts/Makefile                 |   1 +
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 325 +++++++++++++++++++++++++++++
+ 2 files changed, 326 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos5422-odroidxu3.dts
 
-I was trying to use this API but i felt there is a better way of just exporting
-of_genpd_get_from_provider as a similar API is used to register the
-power domain.
-
-Check if this make sense www.spinics.net/lists/arm-kernel/msg382665.html.
-
-Regards,
-Amit
-
-
->
-> https://lkml.org/lkml/2014/11/24/290
->
-> Kind regards
-> Uffe
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 38c89ca..0a898cc 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -86,6 +86,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+ 	exynos5420-arndale-octa.dtb \
+ 	exynos5420-peach-pit.dtb \
+ 	exynos5420-smdk5420.dtb \
++	exynos5422-odroidxu3.dtb \
+ 	exynos5440-sd5v1.dtb \
+ 	exynos5440-ssdk5440.dtb \
+ 	exynos5800-peach-pi.dtb
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+new file mode 100644
+index 0000000..fe37004
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -0,0 +1,325 @@
++/*
++ * Hardkernel Odroid XU3 board device tree source
++ *
++ * Copyright (c) 2014 Collabora Ltd.
++ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/dts-v1/;
++#include "exynos5800.dtsi"
++
++/ {
++	model = "Hardkernel Odroid XU3";
++	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
++
++	memory {
++		reg = <0x20000000 0x80000000>;
++	};
++
++	fimd@14400000 {
++		status = "okay";
++	};
++
++	firmware@02073000 {
++		compatible = "samsung,secure-firmware";
++		reg = <0x02073000 0x1000>;
++	};
++
++	fixed-rate-clocks {
++		oscclk {
++			compatible = "samsung,exynos5420-oscclk";
++			clock-frequency = <24000000>;
++		};
++	};
++
++	hsi2c_4: i2c@12CA0000 {
++		status = "okay";
++
++		s2mps11_pmic@66 {
++			compatible = "samsung,s2mps11-pmic";
++			reg = <0x66>;
++			s2mps11,buck2-ramp-delay = <12>;
++			s2mps11,buck34-ramp-delay = <12>;
++			s2mps11,buck16-ramp-delay = <12>;
++			s2mps11,buck6-ramp-enable = <1>;
++			s2mps11,buck2-ramp-enable = <1>;
++			s2mps11,buck3-ramp-enable = <1>;
++			s2mps11,buck4-ramp-enable = <1>;
++
++			s2mps11_osc: clocks {
++				#clock-cells = <1>;
++				clock-output-names = "s2mps11_ap",
++						"s2mps11_cp", "s2mps11_bt";
++			};
++
++			regulators {
++				ldo1_reg: LDO1 {
++					regulator-name = "vdd_ldo1";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo3_reg: LDO3 {
++					regulator-name = "vdd_ldo3";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo5_reg: LDO5 {
++					regulator-name = "vdd_ldo5";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo6_reg: LDO6 {
++					regulator-name = "vdd_ldo6";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo7_reg: LDO7 {
++					regulator-name = "vdd_ldo7";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo8_reg: LDO8 {
++					regulator-name = "vdd_ldo8";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo9_reg: LDO9 {
++					regulator-name = "vdd_ldo9";
++					regulator-min-microvolt = <3000000>;
++					regulator-max-microvolt = <3000000>;
++					regulator-always-on;
++				};
++
++				ldo10_reg: LDO10 {
++					regulator-name = "vdd_ldo10";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo11_reg: LDO11 {
++					regulator-name = "vdd_ldo11";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo12_reg: LDO12 {
++					regulator-name = "vdd_ldo12";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo13_reg: LDO13 {
++					regulator-name = "vdd_ldo13";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++				};
++
++				ldo15_reg: LDO15 {
++					regulator-name = "vdd_ldo15";
++					regulator-min-microvolt = <3100000>;
++					regulator-max-microvolt = <3100000>;
++					regulator-always-on;
++				};
++
++				ldo16_reg: LDO16 {
++					regulator-name = "vdd_ldo16";
++					regulator-min-microvolt = <2200000>;
++					regulator-max-microvolt = <2200000>;
++					regulator-always-on;
++				};
++
++				ldo17_reg: LDO17 {
++					regulator-name = "tsp_avdd";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-always-on;
++				};
++
++				ldo19_reg: LDO19 {
++					regulator-name = "vdd_sd";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++				};
++
++				ldo24_reg: LDO24 {
++					regulator-name = "tsp_io";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++				};
++
++				buck1_reg: BUCK1 {
++					regulator-name = "vdd_mif";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1300000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck2_reg: BUCK2 {
++					regulator-name = "vdd_arm";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck3_reg: BUCK3 {
++					regulator-name = "vdd_int";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck4_reg: BUCK4 {
++					regulator-name = "vdd_g3d";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck5_reg: BUCK5 {
++					regulator-name = "vdd_mem";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck6_reg: BUCK6 {
++					regulator-name = "vdd_kfc";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck7_reg: BUCK7 {
++					regulator-name = "vdd_1.0v_ldo";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck8_reg: BUCK8 {
++					regulator-name = "vdd_1.8v_ldo";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck9_reg: BUCK9 {
++					regulator-name = "vdd_2.8v_ldo";
++					regulator-min-microvolt = <3000000>;
++					regulator-max-microvolt = <3750000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck10_reg: BUCK10 {
++					regulator-name = "vdd_vmem";
++					regulator-min-microvolt = <2850000>;
++					regulator-max-microvolt = <2850000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++			};
++		};
++	};
++
++	i2c_2: i2c@12C80000 {
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <66000>;
++		status = "okay";
++
++		hdmiddc@50 {
++			compatible = "samsung,exynos4210-hdmiddc";
++			reg = <0x50>;
++		};
++	};
++
++	rtc@101E0000 {
++		status = "okay";
++	};
++
++};
++
++&hdmi {
++	status = "okay";
++	hpd-gpio = <&gpx3 7 0>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&hdmi_hpd_irq>;
++
++	vdd_osc-supply = <&ldo10_reg>;
++	vdd_pll-supply = <&ldo8_reg>;
++	vdd-supply = <&ldo8_reg>;
++};
++
++
++&mmc_0 {
++	status = "okay";
++	broken-cd;
++	card-detect-delay = <200>;
++	samsung,dw-mshc-ciu-div = <3>;
++	samsung,dw-mshc-sdr-timing = <0 4>;
++	samsung,dw-mshc-ddr-timing = <0 2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
++	bus-width = <8>;
++	cap-mmc-highspeed;
++};
++
++&mmc_2 {
++	status = "okay";
++	card-detect-delay = <200>;
++	samsung,dw-mshc-ciu-div = <3>;
++	samsung,dw-mshc-sdr-timing = <0 4>;
++	samsung,dw-mshc-ddr-timing = <0 2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
++	bus-width = <4>;
++	cap-sd-highspeed;
++};
++
++&pinctrl_0 {
++	hdmi_hpd_irq: hdmi-hpd-irq {
++		samsung,pins = "gpx3-7";
++		samsung,pin-function = <0>;
++		samsung,pin-pud = <1>;
++		samsung,pin-drv = <0>;
++	};
++};
++
++&usbdrd_dwc3_0 {
++	dr_mode = "host";
++};
++
++&usbdrd_dwc3_1 {
++	dr_mode = "otg";
++};
+-- 
+2.1.3
