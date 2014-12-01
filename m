@@ -1,87 +1,61 @@
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH] PM/ Domains: Export of_genpd_get_from_provider function.
-Date: Mon, 01 Dec 2014 17:11:08 +0530
-Message-ID: <1417434068-7344-1-git-send-email-amit.daniel@samsung.com>
-References: <CAPDyKFpX5nXR18pKdLrtDrPK60p1y2CEqq+--3z3jczRRmKrqA@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH V4 0/3] PM / Domains: Add initial PM clock support to genpd
+Date: Mon,  1 Dec 2014 12:50:20 +0100
+Message-ID: <1417434623-31301-1-git-send-email-ulf.hansson@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:40249 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753143AbaLALsa (ORCPT
+Received: from mail-la0-f46.google.com ([209.85.215.46]:61778 "EHLO
+	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753568AbaLALu3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Dec 2014 06:48:30 -0500
-In-reply-to: <CAPDyKFpX5nXR18pKdLrtDrPK60p1y2CEqq+--3z3jczRRmKrqA@mail.gmail.com>
+	Mon, 1 Dec 2014 06:50:29 -0500
+Received: by mail-la0-f46.google.com with SMTP id q1so3657271lam.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Dec 2014 03:50:28 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, ulf.hansson@linaro.org, rjw@rjwysocki.net, len.brown@intel.com, gregkh@linuxfoundation.org, khilman@linaro.org, Amit Daniel Kachhap <amit.daniel@samsung.com>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@linaro.org>, Simon Horman <horms@verge.net.au>, linux-pm@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Arnd Bergmann <arnd@arndb.de>, Ulf Hansson <ulf.hansson@linaro.org>
 
-This function looks up a PM domain form the provider. This will be
-useful to add parent/child domain relationship from the SoC specific
-code. The caller of the function must make sure that PM domain provider
-is already registered.
+Changes in v4:
+	-Applied acks/tested by tags.
+	-Change name of define, affects all patches.
 
-Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
----
-This patch may solve the same purpose which is done by earlier posts
-1) https://lkml.org/lkml/2014/11/24/319 - In this there were comments
-for not using the PM domain name.
+Changes in v3:
+	-Fixed comments from Rafael for patch 1.
+	-Change name of define, affects all patches.
 
-2) Ulf Hansson posted a patch 
-http://www.spinics.net/lists/linux-samsung-soc/msg39745.html which also solves
-similar purpose but I feel this is slightly complex and involves changing
-the genpd structure.
+Changes in v2:
+	-Small fixes in patch 1.
 
 
- drivers/base/power/domain.c |    3 ++-
- include/linux/pm_domain.h   |    8 ++++++++
- 2 files changed, 10 insertions(+), 1 deletion(-)
+It's quite common for PM domains to use PM clocks. Typically from SOC specific
+code, the per device PM clock list is created and pm_clk_suspend|resume() are
+invoked to handle clock gating/ungating.
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index d822753..5d7a2c1 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -2129,7 +2129,7 @@ EXPORT_SYMBOL_GPL(of_genpd_del_provider);
-  * Returns a valid pointer to struct generic_pm_domain on success or ERR_PTR()
-  * on failure.
-  */
--static struct generic_pm_domain *of_genpd_get_from_provider(
-+struct generic_pm_domain *of_genpd_get_from_provider(
- 					struct of_phandle_args *genpdspec)
- {
- 	struct generic_pm_domain *genpd = ERR_PTR(-ENOENT);
-@@ -2149,6 +2149,7 @@ static struct generic_pm_domain *of_genpd_get_from_provider(
- 
- 	return genpd;
- }
-+EXPORT_SYMBOL_GPL(of_genpd_get_from_provider);
- 
- /**
-  * genpd_dev_pm_detach - Detach a device from its PM domain.
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 9690827..4954e24 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -282,6 +282,8 @@ typedef struct generic_pm_domain *(*genpd_xlate_t)(struct of_phandle_args *args,
- int __of_genpd_add_provider(struct device_node *np, genpd_xlate_t xlate,
- 			void *data);
- void of_genpd_del_provider(struct device_node *np);
-+struct generic_pm_domain *of_genpd_get_from_provider(
-+			struct of_phandle_args *genpdspec);
- 
- struct generic_pm_domain *__of_genpd_xlate_simple(
- 					struct of_phandle_args *genpdspec,
-@@ -299,6 +301,12 @@ static inline int __of_genpd_add_provider(struct device_node *np,
- }
- static inline void of_genpd_del_provider(struct device_node *np) {}
- 
-+static inline struct generic_pm_domain *of_genpd_get_from_provider(
-+			struct of_phandle_args *genpdspec)
-+{
-+	return NULL;
-+}
-+
- #define __of_genpd_xlate_simple		NULL
- #define __of_genpd_xlate_onecell	NULL
- 
+A step towards consolidation is to integrate PM clock support into genpd, which
+is what this patchset does.
+
+In this initial step, the calls to the pm_clk_suspend|resume() are handled
+within genpd, but the per device PM clock list still needs to be created from
+SOC specific code. It seems reasonable to have gendp to handle that as well, but
+that left to future patchsets to address.
+
+It's not every users of genpd that are keen on using PM clocks thus we need
+to provide this a configuration option for genpd.
+
+In patch 2 and patch 3, we convert some of the SH-MOBILE SOCs to start using the
+new PM clock support in genpd.
+
+
+Ulf Hansson (3):
+  PM / Domains: Initial PM clock support for genpd
+  ARM: shmobile: Convert to genpd flags for PM clocks for r8a7779
+  ARM: shmobile: Convert to genpd flags for PM clocks for R-mobile
+
+ arch/arm/mach-shmobile/pm-r8a7779.c | 3 +--
+ arch/arm/mach-shmobile/pm-rmobile.c | 3 +--
+ drivers/base/power/domain.c         | 7 +++++++
+ include/linux/pm_domain.h           | 4 ++++
+ 4 files changed, 13 insertions(+), 4 deletions(-)
+
 -- 
-1.7.9.5
+1.9.1
