@@ -1,372 +1,60 @@
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: [PATCH] ARM: dts: Add dts file for odroid XU3 board
-Date: Mon,  1 Dec 2014 13:59:30 +0100
-Message-ID: <1417438770-28696-1-git-send-email-sjoerd.simons@collabora.co.uk>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH V2 1/2] pinctrl: exynos: Add BUS1 pin controller for exynos7
+Date: Mon, 1 Dec 2014 19:51:53 +0530
+Message-ID: <CAFp+6iHiC9mouT-v_yGHm5adDerCpT-s7EeWwwwYi-NzdLBnrA@mail.gmail.com>
+References: <CAFp+6iF-N63YSsdv2a6=MYp_mD=eQY_Oi8=9JVNU5dG0BA7YGQ@mail.gmail.com>
+	<1416834177-11170-1-git-send-email-gautam.vivek@samsung.com>
+	<CAGOxZ51P30BY2sOhUeMRK64CGF1fNcc-63RCXiAqZ6Rgpv3K7Q@mail.gmail.com>
+	<CAFp+6iFcMGTBQDcdK0cbcu0s9a3022nogaUvbPA2ZsCN80hRSA@mail.gmail.com>
+	<CAFp+6iFaf_RMprLCLXK=o=KGSTQuVL3geKx5yfevTuvFdjYLNg@mail.gmail.com>
+	<CACRpkdY8sEJMr-cxzrUEW1sqP3bGLH=Q2hDP1NBQ5m9A+RhP5Q@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:47434 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753298AbaLAM7g (ORCPT
+Received: from mail-qc0-f169.google.com ([209.85.216.169]:48044 "EHLO
+	mail-qc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753448AbaLAOVy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Dec 2014 07:59:36 -0500
+	Mon, 1 Dec 2014 09:21:54 -0500
+In-Reply-To: <CACRpkdY8sEJMr-cxzrUEW1sqP3bGLH=Q2hDP1NBQ5m9A+RhP5Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Alim Akhtar <alim.akhtar@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-usb <linux-usb@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, robh+dt <robh+dt@kernel.org>, kgene <kgene@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
 
-Add DTS for the Hardkernel Odroid XU3. The name of the DTS file is kept the
-same as the vendors naming, which means it's prefixed with exynos5422
-instead of exynos5800 as the SoC name even though it includes the
-exyno5800 dtsi.
+On Fri, Nov 28, 2014 at 9:15 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Fri, Nov 28, 2014 at 4:39 AM, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
+>> On Fri, Nov 28, 2014 at 9:05 AM, Vivek Gautam <gautamvivek1987@gmail.com> wrote:
+>
+>>>> On Mon, Nov 24, 2014 at 6:32 PM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
+>>>>> USB and Power regulator on Exynos7 require gpios available
+>>>>> in BUS1 pin controller block.
+>>>>> So adding the BUS1 pinctrl support.
+>>>>>
+>>>>> Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
+>>>>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>>>>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>>
+>> If the change looks good, will it be possible to pick it fo 3.19-rc1 ?
+>> That will really help enabling USB IP on exynos7.
+>
+> As you know the Exynos driver has a maintainer, Tomasz Figa, I will not
+> merge patches without his ACK.
+>
+> Apart from that, there are *again* a lot of Exynos patches flying around and
+> I start to loose track of them. If they do not apply together and start to
+> conflict I will just ask Tomasz to stack them and provide a pull request
+> again.
 
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
----
- arch/arm/boot/dts/Makefile                 |   1 +
- arch/arm/boot/dts/exynos5422-odroidxu3.dts | 325 +++++++++++++++++++++++++++++
- 2 files changed, 326 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos5422-odroidxu3.dts
+True, this merge cycle has surely got number of exynos7 related
+patches in flight,
+which are difficult to keep track of.
+Thanks for asking Tomasz.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 38c89ca..0a898cc 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -86,6 +86,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
- 	exynos5420-arndale-octa.dtb \
- 	exynos5420-peach-pit.dtb \
- 	exynos5420-smdk5420.dtb \
-+	exynos5422-odroidxu3.dtb \
- 	exynos5440-sd5v1.dtb \
- 	exynos5440-ssdk5440.dtb \
- 	exynos5800-peach-pi.dtb
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-new file mode 100644
-index 0000000..fe37004
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -0,0 +1,325 @@
-+/*
-+ * Hardkernel Odroid XU3 board device tree source
-+ *
-+ * Copyright (c) 2014 Collabora Ltd.
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/dts-v1/;
-+#include "exynos5800.dtsi"
-+
-+/ {
-+	model = "Hardkernel Odroid XU3";
-+	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
-+
-+	memory {
-+		reg = <0x20000000 0x80000000>;
-+	};
-+
-+	fimd@14400000 {
-+		status = "okay";
-+	};
-+
-+	firmware@02073000 {
-+		compatible = "samsung,secure-firmware";
-+		reg = <0x02073000 0x1000>;
-+	};
-+
-+	fixed-rate-clocks {
-+		oscclk {
-+			compatible = "samsung,exynos5420-oscclk";
-+			clock-frequency = <24000000>;
-+		};
-+	};
-+
-+	hsi2c_4: i2c@12CA0000 {
-+		status = "okay";
-+
-+		s2mps11_pmic@66 {
-+			compatible = "samsung,s2mps11-pmic";
-+			reg = <0x66>;
-+			s2mps11,buck2-ramp-delay = <12>;
-+			s2mps11,buck34-ramp-delay = <12>;
-+			s2mps11,buck16-ramp-delay = <12>;
-+			s2mps11,buck6-ramp-enable = <1>;
-+			s2mps11,buck2-ramp-enable = <1>;
-+			s2mps11,buck3-ramp-enable = <1>;
-+			s2mps11,buck4-ramp-enable = <1>;
-+
-+			s2mps11_osc: clocks {
-+				#clock-cells = <1>;
-+				clock-output-names = "s2mps11_ap",
-+						"s2mps11_cp", "s2mps11_bt";
-+			};
-+
-+			regulators {
-+				ldo1_reg: LDO1 {
-+					regulator-name = "vdd_ldo1";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo3_reg: LDO3 {
-+					regulator-name = "vdd_ldo3";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo5_reg: LDO5 {
-+					regulator-name = "vdd_ldo5";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo6_reg: LDO6 {
-+					regulator-name = "vdd_ldo6";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo7_reg: LDO7 {
-+					regulator-name = "vdd_ldo7";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo8_reg: LDO8 {
-+					regulator-name = "vdd_ldo8";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo9_reg: LDO9 {
-+					regulator-name = "vdd_ldo9";
-+					regulator-min-microvolt = <3000000>;
-+					regulator-max-microvolt = <3000000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo10_reg: LDO10 {
-+					regulator-name = "vdd_ldo10";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo11_reg: LDO11 {
-+					regulator-name = "vdd_ldo11";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo12_reg: LDO12 {
-+					regulator-name = "vdd_ldo12";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo13_reg: LDO13 {
-+					regulator-name = "vdd_ldo13";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo15_reg: LDO15 {
-+					regulator-name = "vdd_ldo15";
-+					regulator-min-microvolt = <3100000>;
-+					regulator-max-microvolt = <3100000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo16_reg: LDO16 {
-+					regulator-name = "vdd_ldo16";
-+					regulator-min-microvolt = <2200000>;
-+					regulator-max-microvolt = <2200000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo17_reg: LDO17 {
-+					regulator-name = "tsp_avdd";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo19_reg: LDO19 {
-+					regulator-name = "vdd_sd";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo24_reg: LDO24 {
-+					regulator-name = "tsp_io";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-always-on;
-+				};
-+
-+				buck1_reg: BUCK1 {
-+					regulator-name = "vdd_mif";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1300000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck2_reg: BUCK2 {
-+					regulator-name = "vdd_arm";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1500000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck3_reg: BUCK3 {
-+					regulator-name = "vdd_int";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1400000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck4_reg: BUCK4 {
-+					regulator-name = "vdd_g3d";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1400000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck5_reg: BUCK5 {
-+					regulator-name = "vdd_mem";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1400000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck6_reg: BUCK6 {
-+					regulator-name = "vdd_kfc";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1500000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck7_reg: BUCK7 {
-+					regulator-name = "vdd_1.0v_ldo";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1500000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck8_reg: BUCK8 {
-+					regulator-name = "vdd_1.8v_ldo";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1500000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck9_reg: BUCK9 {
-+					regulator-name = "vdd_2.8v_ldo";
-+					regulator-min-microvolt = <3000000>;
-+					regulator-max-microvolt = <3750000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck10_reg: BUCK10 {
-+					regulator-name = "vdd_vmem";
-+					regulator-min-microvolt = <2850000>;
-+					regulator-max-microvolt = <2850000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+			};
-+		};
-+	};
-+
-+	i2c_2: i2c@12C80000 {
-+		samsung,i2c-sda-delay = <100>;
-+		samsung,i2c-max-bus-freq = <66000>;
-+		status = "okay";
-+
-+		hdmiddc@50 {
-+			compatible = "samsung,exynos4210-hdmiddc";
-+			reg = <0x50>;
-+		};
-+	};
-+
-+	rtc@101E0000 {
-+		status = "okay";
-+	};
-+
-+};
-+
-+&hdmi {
-+	status = "okay";
-+	hpd-gpio = <&gpx3 7 0>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&hdmi_hpd_irq>;
-+
-+	vdd_osc-supply = <&ldo10_reg>;
-+	vdd_pll-supply = <&ldo8_reg>;
-+	vdd-supply = <&ldo8_reg>;
-+};
-+
-+
-+&mmc_0 {
-+	status = "okay";
-+	broken-cd;
-+	card-detect-delay = <200>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <0 2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
-+	bus-width = <8>;
-+	cap-mmc-highspeed;
-+};
-+
-+&mmc_2 {
-+	status = "okay";
-+	card-detect-delay = <200>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <0 2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
-+	bus-width = <4>;
-+	cap-sd-highspeed;
-+};
-+
-+&pinctrl_0 {
-+	hdmi_hpd_irq: hdmi-hpd-irq {
-+		samsung,pins = "gpx3-7";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <1>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
-+
-+&usbdrd_dwc3_0 {
-+	dr_mode = "host";
-+};
-+
-+&usbdrd_dwc3_1 {
-+	dr_mode = "otg";
-+};
+
+
 -- 
-2.1.3
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
