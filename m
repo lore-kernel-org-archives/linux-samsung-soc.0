@@ -1,68 +1,67 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] clk: samsung: exynos4415: Fix build with PM_SLEEP disabled
-Date: Mon, 01 Dec 2014 10:12:54 +0100
-Message-ID: <1417425174-26694-1-git-send-email-k.kozlowski@samsung.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH V3 0/3] PM / Domains: Add initial PM clock support to genpd
+Date: Mon, 1 Dec 2014 10:35:10 +0100
+Message-ID: <CAMuHMdXEP2oU60CsavpHZw5y+uw9e8eHRyY4OQcYbhdML5_R5A@mail.gmail.com>
+References: <1417163403-7070-1-git-send-email-ulf.hansson@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <1417163403-7070-1-git-send-email-ulf.hansson@linaro.org>
+Sender: linux-sh-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@linaro.org>, Simon Horman <horms@verge.net.au>, Linux PM list <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Arnd Bergmann <arnd@arndb.de>, Linux-sh list <linux-sh@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-=46ix following build errors when PM_SLEEP is disabled (e.g. by disabli=
-ng
-SUSPEND and HIBERNATION):
+On Fri, Nov 28, 2014 at 9:30 AM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> Changes in v3:
+>         -Fixed comments from Rafael for patch 1.
+>         -Change name of define, affects all patches.
+>
+> Changes in v2:
+>         -Small fixes in patch 1.
+>
+>
+> It's quite common for PM domains to use PM clocks. Typically from SOC specific
+> code, the per device PM clock list is created and pm_clk_suspend|resume() are
+> invoked to handle clock gating/ungating.
+>
+> A step towards consolidation is to integrate PM clock support into genpd, which
+> is what this patchset does.
+>
+> In this initial step, the calls to the pm_clk_suspend|resume() are handled
+> within genpd, but the per device PM clock list still needs to be created from
+> SOC specific code. It seems reasonable to have gendp to handle that as well, but
+> that left to future patchsets to address.
+>
+> It's not every users of genpd that are keen on using PM clocks thus we need
+> to provide this a configuration option for genpd.
+>
+> In patch 2 and patch 3, we convert some of the SH-MOBILE SOCs to start using the
+> new PM clock support in genpd.
+>
+>
+> Ulf Hansson (3):
+>   PM / Domains: Initial PM clock support for genpd
+>   ARM: shmobile: Convert to genpd flags for PM clocks for r8a7779
+>   ARM: shmobile: Convert to genpd flags for PM clocks for R-mobile
+>
+>  arch/arm/mach-shmobile/pm-r8a7779.c | 3 +--
+>  arch/arm/mach-shmobile/pm-rmobile.c | 3 +--
+>  drivers/base/power/domain.c         | 7 +++++++
+>  include/linux/pm_domain.h           | 4 ++++
+>  4 files changed, 13 insertions(+), 4 deletions(-)
 
-drivers/clk/samsung/clk-exynos4415.c: In function =E2=80=98exynos4415_c=
-mu_init=E2=80=99:
-drivers/clk/samsung/clk-exynos4415.c:982:2: error: =E2=80=98exynos4415_=
-ctx=E2=80=99 undeclared (first use in this function)
-drivers/clk/samsung/clk-exynos4415.c:982:2: note: each undeclared ident=
-ifier is reported only once for each function it appears in
-drivers/clk/samsung/clk-exynos4415.c: In function =E2=80=98exynos4415_c=
-mu_dmc_init=E2=80=99:
-drivers/clk/samsung/clk-exynos4415.c:1123:2: error: =E2=80=98exynos4415=
-_dmc_ctx=E2=80=99 undeclared (first use in this function)
-make[3]: *** [drivers/clk/samsung/clk-exynos4415.o] Error 1
+For the series:
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos4415.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/drivers/clk/samsung/clk-exynos4415.c b/drivers/clk/samsung=
-/clk-exynos4415.c
-index c7208c7a3add..2123fc251e0f 100644
---- a/drivers/clk/samsung/clk-exynos4415.c
-+++ b/drivers/clk/samsung/clk-exynos4415.c
-@@ -118,12 +118,13 @@ enum exynos4415_plls {
- 	nr_plls,
- };
-=20
-+static struct samsung_clk_provider *exynos4415_ctx;
-+
- /*
-  * Support for CMU save/restore across system suspends
-  */
- #ifdef CONFIG_PM_SLEEP
- static struct samsung_clk_reg_dump *exynos4415_clk_regs;
--static struct samsung_clk_provider *exynos4415_ctx;
-=20
- static unsigned long exynos4415_cmu_clk_regs[] __initdata =3D {
- 	SRC_LEFTBUS,
-@@ -1031,9 +1032,10 @@ enum exynos4415_dmc_plls {
- 	nr_dmc_plls,
- };
-=20
-+static struct samsung_clk_provider *exynos4415_dmc_ctx;
-+
- #ifdef CONFIG_PM_SLEEP
- static struct samsung_clk_reg_dump *exynos4415_dmc_clk_regs;
--static struct samsung_clk_provider *exynos4415_dmc_ctx;
-=20
- static unsigned long exynos4415_cmu_dmc_clk_regs[] __initdata =3D {
- 	MPLL_LOCK,
---=20
-1.9.1
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
