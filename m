@@ -1,107 +1,265 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv2 00/19] arm64: Add the support for new 64-bit Exynos5433 SoC
-Date: Tue, 02 Dec 2014 17:49:37 +0900
-Message-ID: <1417510196-6714-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:13699 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751091AbaLBIuA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Dec 2014 03:50:00 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 02/19] clk: samsung: exynos5433: Add MUX clocks of CMU_TOP
+ domain
+Date: Tue, 02 Dec 2014 17:49:39 +0900
+Message-ID: <1417510196-6714-3-git-send-email-cw00.choi@samsung.com>
+References: <1417510196-6714-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1417510196-6714-1-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, marc.zyngier-5wv7dgnIgG8@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, geunsik.lim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, geunsik.lim@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, cw00.choi@samsung.com, a.kesavan@samsung.com, pankaj.dubey@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-This patchset adds new 64-bit Exynos5433 Samsung SoC which contains quad
-Cortex-A57 and quad Cortex-A53. It is desigend with the 20nm low power process.
+This patch adds the MUX (multiplexer) clocks for CMU_TOP domain of Exynos5433.
+CMU_TOP domain provides source clocks to other CMU domains.
 
-This patchset include some patches such as:
-- Support booting of Exynos5433
-- Support UART/MCT/GIC/HSI2C/SPI/PDMA/MSHC
-- Support the clock control for Exynos5433 using common clk framework
+Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Acked-by: Geunsik Lim <geunsik.lim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/clk/samsung/clk-exynos5433.c   | 90 ++++++++++++++++++++++++++++++++++
+ include/dt-bindings/clock/exynos5433.h | 31 +++++++++++-
+ 2 files changed, 119 insertions(+), 2 deletions(-)
 
-This patchst is based on linux-samsung.git (branch: v3.19-next/dt-samsung-64)
-
-This patchset has the dependency as following list:
-: The Exynos7 patchset[1] specified dependent patchset for 64-bit SoC.
- So, this patchset used same dependent patchset of Exynos7 patchset and Exynos7
- patchset about pinctrl patch. Additionally, SPI/MMC/PDMA patch [2-5] is used
- for kernel booting and mounting rootfs.
-
-1. [PATCH v7 0/7] Enable support for Samsung Exynos7 SoC
-- [1] http://www.spinics.net/lists/linux-samsung-soc/msg38734.html
-2. [PATCH] spi: s3c64xx: add support for exynos7 SPI controller
-- [2] http://www.spinics.net/lists/linux-samsung-soc/msg38607.html
-3. [PATCH V7] mmc: dw_mmc: Add IDMAC 64-bit address mode support
-- [3] https://lkml.org/lkml/2014/10/20/58
-4. [PATCH] mmc: dw_mmc: exynos: Add support for exynos7
-- [4] http://www.spinics.net/lists/linux-mmc/msg28294.html
-5. [PATCH] dmaengine: pl330: Correct device assignment
-- [5] https://lkml.org/lkml/2014/11/6/207
-
-Changes from v1:
-- Merge two patches (patch2, patch3) to solve incomplete description [by Arnd]
-- Exynos5433 Clock driver
- : Fix wrong register and code clean by using space instead of tab [Pankaj]
- : Add CLK_IGNORE_UNUSED flag to pclk_sysreg_* clock for accessing system control register
- : Remove duplicate definition on the patch for CMU_BUS{0|1|2} domain
-- Exynos5433 SoC DTS
- : Remove un-supported properties of arch_timer [by Marc and Mark]
- : Remove 'clock-frequency' property from 'cpus' dt node
- : Fix interrupt type from edge rising triggering to level high triggering
-   because Cortex-A53/A57 use level triggering.
- : Fix defult address-size/size-celss from 1 to 2 because Exynos5433 is 64-bit SoC
- : Modify 'fin_pll' dt node to remove un-needed and ugly code
- : Move 'chipid' dt node under 'soc'
- : Use lowercase on all case in exynos5433.dtsi
- : Add PSCI dt node for secondary cpu boot
- : Add 'samsung,exynos5433' compatible to MCT dt node
-- Divide pinctrl patch from this patchset
-- Add new following patches:
-  : clocksource: exynos_mct: Add the support for Exynos 64bit SoC
-  : arm64: Enable Exynos5433 SoC in the defconfig
-
-Chanwoo Choi (18):
-  clk: samsung: exynos5433: Add clocks using common clock framework
-  clk: samsung: exynos5433: Add MUX clocks of CMU_TOP domain
-  clk: samsung: exynos5433: Add clocks for CMU_PERIC domain
-  clk: samsung: exynos5433: Add clocks for CMU_PERIS domain
-  clk: samsung: exynos5433: Add clocks for CMU_G2D domain
-  clk: samsung: exynos5433: Add clocks for CMU_MIF domain
-  clk: samsung: exynos5433: Add clocks for CMU_DISP domain
-  clk: samsung: exynos5433: Add clocks for CMU_AUD domain
-  clk: samsung: exynos5433: Add clocks for CMU_BUS{0|1|2} domains
-  clk: samsung: exynos5433: Add missing clocks for CMU_FSYS domain
-  clk: samsung: exynos5433: Add clocks for CMU_G3D domain
-  clk: samsung: exynos5433: Add clocks for CMU_GSCL domain
-  arm64: exynos5433: Enable ARMv8-based Exynos5433 SoC support
-  arm64: dts: exynos: Add dts files for 64-bit Exynos5433 SoC
-  arm64: dts: exynos: Add SPI/PDMA dt node for Exynos5433
-  serial: samsung: Add the support for Exynos5433 SoC
-  clocksource: exynos_mct: Add the support for Exynos 64bit SoC
-  arm64: Enable Exynos5433 SoC in the defconfig
-
-Jaehoon Chung (1):
-  arm64: dts: exynos: Add MSHC dt node for Exynos5433
-
- .../devicetree/bindings/clock/exynos5433-clock.txt |  167 +
- arch/arm64/Kconfig                                 |   10 +
- arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi |  698 ++++
- arch/arm64/boot/dts/exynos/exynos5433.dtsi         |  675 ++++
- arch/arm64/configs/defconfig                       |    1 +
- drivers/clk/samsung/Makefile                       |    1 +
- drivers/clk/samsung/clk-exynos5433.c               | 3369 ++++++++++++++++++++
- drivers/clocksource/Kconfig                        |    1 -
- drivers/clocksource/exynos_mct.c                   |    4 +
- drivers/tty/serial/samsung.c                       |   56 +-
- include/dt-bindings/clock/exynos5433.h             |  843 +++++
- 11 files changed, 5804 insertions(+), 21 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/exynos5433-clock.txt
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
- create mode 100644 arch/arm64/boot/dts/exynos/exynos5433.dtsi
- create mode 100644 drivers/clk/samsung/clk-exynos5433.c
- create mode 100644 include/dt-bindings/clock/exynos5433.h
-
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 0877663..88e8cac 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -208,6 +208,7 @@ PNAME(mout_mphy_pll_user_p)	= { "fin_pll", "sclk_mphy_pll", };
+ PNAME(mout_mfc_pll_user_p)	= { "fin_pll", "sclk_mfc_pll", };
+ PNAME(mout_bus_pll_user_p)	= { "fin_pll", "sclk_bus_pll", };
+ PNAME(mout_bus_pll_user_t_p)	= { "fin_pll", "mout_bus_pll_user", };
++PNAME(mout_mphy_pll_user_t_p)	= { "fin_pll", "mout_mphy_pll_user", };
+ 
+ PNAME(mout_bus_mfc_pll_user_p)	= { "mout_bus_pll_user", "mout_mfc_pll_user",};
+ PNAME(mout_mfc_bus_pll_user_p)	= { "mout_mfc_pll_user", "mout_bus_pll_user",};
+@@ -215,6 +216,12 @@ PNAME(mout_aclk_cam1_552_b_p)	= { "mout_aclk_cam1_552_a",
+ 				    "mout_mfc_pll_user", };
+ PNAME(mout_aclk_cam1_552_a_p)	= { "mout_isp_pll", "mout_bus_pll_user", };
+ 
++PNAME(mout_aclk_mfc_400_c_p)	= { "mout_aclk_mfc_400_b",
++				    "mout_mphy_pll_user", };
++PNAME(mout_aclk_mfc_400_b_p)	= { "mout_aclk_mfc_400_a",
++				    "mout_bus_pll_user", };
++PNAME(mout_aclk_mfc_400_a_p)	= { "mout_mfc_pll_user", "mout_isp_pll", };
++
+ PNAME(mout_bus_mphy_pll_user_p)	= { "mout_bus_pll_user",
+ 				    "mout_mphy_pll_user", };
+ PNAME(mout_aclk_mscl_b_p)	= { "mout_aclk_mscl_400_a",
+@@ -231,11 +238,26 @@ PNAME(mout_sclk_mmc0_d_p)	= { "mout_sclk_mmc0_c", "mout_isp_pll", };
+ PNAME(mout_sclk_mmc0_c_p)	= { "mout_sclk_mmc0_b", "mout_mphy_pll_user",};
+ PNAME(mout_sclk_mmc0_b_p)	= { "mout_sclk_mmc0_a", "mout_mfc_pll_user", };
+ 
++PNAME(mout_sclk_spdif_p)	= { "sclk_audio0", "sclk_audio1",
++				    "fin_pll", "ioclk_spdif_extclk", };
++PNAME(mout_sclk_audio1_p)	= { "ioclk_audiocdclk1", "fin_pll",
++				    "mout_aud_pll_user_t",};
++PNAME(mout_sclk_audio0_p)	= { "ioclk_audiocdclk0", "fin_pll",
++				    "mout_aud_pll_user_t",};
++
+ static struct samsung_fixed_factor_clock top_fixed_factor_clks[] __initdata = {
+ 	FFACTOR(0, "sclk_bus_pll", "fout_bus_pll", 1, 1, 0),
+ 	FFACTOR(0, "sclk_mfc_pll", "fout_mfc_pll", 1, 1, 0),
+ };
+ 
++static struct samsung_fixed_rate_clock top_fixed_clks[] __initdata = {
++	/* Xi2s{0|1}CDCLK input clock for I2S/PCM */
++	FRATE(0, "ioclk_audiocdclk1", NULL, CLK_IS_ROOT, 100000000),
++	FRATE(0, "ioclk_audiocdclk0", NULL, CLK_IS_ROOT, 100000000),
++	/* Xi2s1SDI input clock for SPDIF */
++	FRATE(0, "ioclk_spdif_extclk", NULL, CLK_IS_ROOT, 100000000),
++};
++
+ static struct samsung_mux_clock top_mux_clks[] __initdata = {
+ 	/* MUX_SEL_TOP0 */
+ 	MUX(CLK_MOUT_AUD_PLL, "mout_aud_pll", mout_aud_pll_p, MUX_SEL_TOP0,
+@@ -281,6 +303,14 @@ static struct samsung_mux_clock top_mux_clks[] __initdata = {
+ 	MUX(CLK_MOUT_ACLK_G2D_400_A, "mout_aclk_g2d_400_a",
+ 			mout_bus_mfc_pll_user_p, MUX_SEL_TOP3, 0, 1),
+ 
++	/* MUX_SEL_TOP4 */
++	MUX(CLK_MOUT_ACLK_MFC_400_C, "mout_aclk_mfc_400_c",
++			mout_aclk_mfc_400_c_p, MUX_SEL_TOP4, 8, 1),
++	MUX(CLK_MOUT_ACLK_MFC_400_B, "mout_aclk_mfc_400_b",
++			mout_aclk_mfc_400_b_p, MUX_SEL_TOP4, 4, 1),
++	MUX(CLK_MOUT_ACLK_MFC_400_A, "mout_aclk_mfc_400_a",
++			mout_aclk_mfc_400_a_p, MUX_SEL_TOP4, 0, 1),
++
+ 	/* MUX_SEL_TOP_MSCL */
+ 	MUX(CLK_MOUT_SCLK_JPEG_C, "mout_sclk_jpeg_c", mout_sclk_jpeg_c_p,
+ 			MUX_SEL_TOP_MSCL, 8, 1),
+@@ -289,6 +319,20 @@ static struct samsung_mux_clock top_mux_clks[] __initdata = {
+ 	MUX(CLK_MOUT_SCLK_JPEG_A, "mout_sclk_jpeg_a", mout_bus_pll_user_t_p,
+ 			MUX_SEL_TOP_MSCL, 0, 1),
+ 
++	/* MUX_SEL_TOP_CAM1 */
++	MUX(CLK_MOUT_SCLK_ISP_SENSOR2, "mout_sclk_isp_sensor2",
++			mout_bus_pll_user_t_p, MUX_SEL_TOP_CAM1, 24, 1),
++	MUX(CLK_MOUT_SCLK_ISP_SENSOR1, "mout_sclk_isp_sensor1",
++			mout_bus_pll_user_t_p, MUX_SEL_TOP_CAM1, 20, 1),
++	MUX(CLK_MOUT_SCLK_ISP_SENSOR0, "mout_sclk_isp_sensor0",
++			mout_bus_pll_user_t_p, MUX_SEL_TOP_CAM1, 16, 1),
++	MUX(CLK_MOUT_SCLK_ISP_UART, "mout_sclk_isp_uart",
++			mout_bus_pll_user_t_p, MUX_SEL_TOP_CAM1, 8, 1),
++	MUX(CLK_MOUT_SCLK_ISP_SPI1, "mout_sclk_isp_spi1",
++			mout_bus_pll_user_t_p, MUX_SEL_TOP_CAM1, 4, 1),
++	MUX(CLK_MOUT_SCLK_ISP_SPI0, "mout_sclk_isp_spi0",
++			mout_bus_pll_user_t_p, MUX_SEL_TOP_CAM1, 0, 1),
++
+ 	/* MUX_SEL_TOP_FSYS0 */
+ 	MUX(CLK_MOUT_SCLK_MMC2_B, "mout_sclk_mmc2_b", mout_sclk_mmc2_b_p,
+ 			MUX_SEL_TOP_FSYS0, 28, 1),
+@@ -307,6 +351,16 @@ static struct samsung_mux_clock top_mux_clks[] __initdata = {
+ 	MUX(CLK_MOUT_SCLK_MMC0_A, "mout_sclk_mmc0_a", mout_bus_pll_user_t_p,
+ 			MUX_SEL_TOP_FSYS0, 0, 1),
+ 
++	/* MUX_SEL_TOP_FSYS1 */
++	MUX(CLK_MOUT_SCLK_PCIE_100, "mout_sclk_pcie_100", mout_bus_pll_user_t_p,
++			MUX_SEL_TOP_FSYS1, 12, 1),
++	MUX(CLK_MOUT_SCLK_UFSUNIPRO, "mout_sclk_ufsunipro",
++			mout_mphy_pll_user_t_p, MUX_SEL_TOP_FSYS1, 8, 1),
++	MUX(CLK_MOUT_SCLK_USBHOST30, "mout_sclk_usbhost30",
++			mout_bus_pll_user_t_p, MUX_SEL_TOP_FSYS1, 4, 1),
++	MUX(CLK_MOUT_SCLK_USBDRD30, "mout_sclk_usbdrd30",
++			mout_bus_pll_user_t_p, MUX_SEL_TOP_FSYS1, 0, 1),
++
+ 	/* MUX_SEL_TOP_PERIC0 */
+ 	MUX(CLK_MOUT_SCLK_SPI4, "mout_sclk_spi4", mout_bus_pll_user_t_p,
+ 			MUX_SEL_TOP_PERIC0, 28, 1),
+@@ -324,6 +378,16 @@ static struct samsung_mux_clock top_mux_clks[] __initdata = {
+ 			MUX_SEL_TOP_PERIC0, 4, 1),
+ 	MUX(CLK_MOUT_SCLK_SPI0, "mout_sclk_spi0", mout_bus_pll_user_t_p,
+ 			MUX_SEL_TOP_PERIC0, 0, 1),
++
++	/* MUX_SEL_TOP_PERIC1 */
++	MUX(CLK_MOUT_SCLK_SLIMBUS, "mout_sclk_slimbus", mout_aud_pll_user_p,
++			MUX_SEL_TOP_PERIC1, 16, 1),
++	MUX(CLK_MOUT_SCLK_SPDIF, "mout_sclk_spdif", mout_sclk_spdif_p,
++			MUX_SEL_TOP_PERIC1, 12, 2),
++	MUX(CLK_MOUT_SCLK_AUDIO1, "mout_sclk_audio1", mout_sclk_audio1_p,
++			MUX_SEL_TOP_PERIC1, 4, 2),
++	MUX(CLK_MOUT_SCLK_AUDIO0, "mout_sclk_audio0", mout_sclk_audio0_p,
++			MUX_SEL_TOP_PERIC1, 0, 2),
+ };
+ 
+ static struct samsung_div_clock top_div_clks[] __initdata = {
+@@ -387,6 +451,16 @@ static struct samsung_div_clock top_div_clks[] __initdata = {
+ 	DIV(CLK_DIV_SCLK_UART0, "div_sclk_uart0", "mout_sclk_uart1",
+ 			DIV_TOP_PERIC2, 0, 4),
+ 
++	/* DIV_TOP_PERIC3 */
++	DIV(CLK_DIV_SCLK_I2S1, "div_sclk_i2s1", "sclk_audio1",
++			DIV_TOP_PERIC3, 16, 6),
++	DIV(CLK_DIV_SCLK_PCM1, "div_sclk_pcm1", "sclk_audio1",
++			DIV_TOP_PERIC3, 8, 8),
++	DIV(CLK_DIV_SCLK_AUDIO1, "div_sclk_audio1", "mout_sclk_audio1",
++			DIV_TOP_PERIC3, 4, 4),
++	DIV(CLK_DIV_SCLK_AUDIO0, "div_sclk_audio0", "mout_sclk_audio0",
++			DIV_TOP_PERIC3, 0, 4),
++
+ 	/* DIV_TOP_PERIC4 */
+ 	DIV(CLK_DIV_SCLK_SPI4_B, "div_sclk_spi4_b", "div_sclk_spi4_a",
+ 			DIV_TOP_PERIC4, 16, 8),
+@@ -420,6 +494,12 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
+ 			ENABLE_SCLK_TOP_PERIC, 12, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI3_PERIC, "sclk_spi3_peric", "div_sclk_spi3_b",
+ 			ENABLE_SCLK_TOP_PERIC, 11, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_SPDIF_PERIC, "sclk_spdif_peric", "mout_sclk_spdif",
++			ENABLE_SCLK_TOP_PERIC, 9, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_I2S1_PERIC, "sclk_i2s1_peric", "div_sclk_i2s1",
++			ENABLE_SCLK_TOP_PERIC, 8, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_PCM1_PERIC, "sclk_pcm1_peric", "div_sclk_pcm1",
++			ENABLE_SCLK_TOP_PERIC, 7, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_UART2_PERIC, "sclk_uart2_peric", "div_sclk_uart2",
+ 			ENABLE_SCLK_TOP_PERIC, 5, 0, 0),
+ 	GATE(CLK_SCLK_UART1_PERIC, "sclk_uart1_peric", "div_sclk_uart1",
+@@ -432,6 +512,14 @@ static struct samsung_gate_clock top_gate_clks[] __initdata = {
+ 			ENABLE_SCLK_TOP_PERIC, 1, CLK_SET_RATE_PARENT, 0),
+ 	GATE(CLK_SCLK_SPI0_PERIC, "sclk_spi0_peric", "div_sclk_spi0_b",
+ 			ENABLE_SCLK_TOP_PERIC, 0, CLK_SET_RATE_PARENT, 0),
++
++	/* MUX_ENABLE_TOP_PERIC1 */
++	GATE(CLK_SCLK_SLIMBUS, "sclk_slimbus", "mout_sclk_slimbus",
++			MUX_ENABLE_TOP_PERIC1, 16, 0, 0),
++	GATE(CLK_SCLK_AUDIO1, "sclk_audio1", "div_sclk_audio1",
++			MUX_ENABLE_TOP_PERIC1, 4, 0, 0),
++	GATE(CLK_SCLK_AUDIO0, "sclk_audio0", "div_sclk_audio0",
++			MUX_ENABLE_TOP_PERIC1, 0, 0, 0),
+ };
+ 
+ /*
+@@ -518,6 +606,8 @@ static struct samsung_cmu_info top_cmu_info __initdata = {
+ 	.nr_div_clks		= ARRAY_SIZE(top_div_clks),
+ 	.gate_clks		= top_gate_clks,
+ 	.nr_gate_clks		= ARRAY_SIZE(top_gate_clks),
++	.fixed_clks		= top_fixed_clks,
++	.nr_fixed_clks		= ARRAY_SIZE(top_fixed_clks),
+ 	.fixed_factor_clks	= top_fixed_factor_clks,
+ 	.nr_fixed_factor_clks	= ARRAY_SIZE(top_fixed_factor_clks),
+ 	.nr_clk_ids		= TOP_NR_CLK,
+diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
+index ea35d52..e0f7928 100644
+--- a/include/dt-bindings/clock/exynos5433.h
++++ b/include/dt-bindings/clock/exynos5433.h
+@@ -51,6 +51,23 @@
+ #define CLK_MOUT_SCLK_SPI2		44
+ #define CLK_MOUT_SCLK_SPI1		45
+ #define CLK_MOUT_SCLK_SPI0		46
++#define CLK_MOUT_ACLK_MFC_400_C		47
++#define CLK_MOUT_ACLK_MFC_400_B		48
++#define CLK_MOUT_ACLK_MFC_400_A		49
++#define CLK_MOUT_SCLK_ISP_SENSOR2	50
++#define CLK_MOUT_SCLK_ISP_SENSOR1	51
++#define CLK_MOUT_SCLK_ISP_SENSOR0	52
++#define CLK_MOUT_SCLK_ISP_UART		53
++#define CLK_MOUT_SCLK_ISP_SPI1		54
++#define CLK_MOUT_SCLK_ISP_SPI0		55
++#define CLK_MOUT_SCLK_PCIE_100		56
++#define CLK_MOUT_SCLK_UFSUNIPRO		57
++#define CLK_MOUT_SCLK_USBHOST30		58
++#define CLK_MOUT_SCLK_USBDRD30		59
++#define CLK_MOUT_SCLK_SLIMBUS		60
++#define CLK_MOUT_SCLK_SPDIF		61
++#define CLK_MOUT_SCLK_AUDIO1		62
++#define CLK_MOUT_SCLK_AUDIO0		63
+ 
+ #define CLK_DIV_ACLK_FSYS_200		100
+ #define CLK_DIV_ACLK_IMEM_SSSX		101
+@@ -79,6 +96,10 @@
+ #define CLK_DIV_SCLK_SPI4_A		124
+ #define CLK_DIV_SCLK_SPI3_B		125
+ #define CLK_DIV_SCLK_SPI3_A		126
++#define CLK_DIV_SCLK_I2S1		127
++#define CLK_DIV_SCLK_PCM1		128
++#define CLK_DIV_SCLK_AUDIO1		129
++#define CLK_DIV_SCLK_AUDIO0		130
+ 
+ #define CLK_ACLK_PERIC_66		200
+ #define CLK_ACLK_PERIS_66		201
+@@ -94,8 +115,14 @@
+ #define CLK_SCLK_SPI2_PERIC		211
+ #define CLK_SCLK_SPI1_PERIC		212
+ #define CLK_SCLK_SPI0_PERIC		213
+-
+-#define TOP_NR_CLK			214
++#define CLK_SCLK_SPDIF_PERIC		214
++#define CLK_SCLK_I2S1_PERIC		215
++#define CLK_SCLK_PCM1_PERIC		216
++#define CLK_SCLK_SLIMBUS		217
++#define CLK_SCLK_AUDIO1			218
++#define CLK_SCLK_AUDIO0			219
++
++#define TOP_NR_CLK			220
+ 
+ /* CMU_CPIF */
+ #define CLK_FOUT_MPHY_PLL		1
 -- 
 1.8.5.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
