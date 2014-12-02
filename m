@@ -1,106 +1,119 @@
-From: Yadwinder Singh Brar <yadi.brar@samsung.com>
-Subject: [PATCH] mfd: max77686: Fix parent of rtc device
-Date: Tue, 02 Dec 2014 18:15:39 +0530
-Message-ID: <1417524339-4604-1-git-send-email-yadi.brar@samsung.com>
+From: =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] mfd: max77686: Fix parent of rtc device
+Date: Tue, 02 Dec 2014 14:33:33 +0100
+Message-ID: <547DBFAD.30605@samsung.com>
 References: <1417523620-4311-1-git-send-email-yadi.brar@samsung.com>
+ <1417524339-4604-1-git-send-email-yadi.brar@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:47492 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751211AbaLBMqw (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:59800 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932079AbaLBNdi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Dec 2014 07:46:52 -0500
-In-reply-to: <1417523620-4311-1-git-send-email-yadi.brar@samsung.com>
+	Tue, 2 Dec 2014 08:33:38 -0500
+In-reply-to: <1417524339-4604-1-git-send-email-yadi.brar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: lee.jones@linaro.org, sameo@linux.intel.com, akpm@linux-foundation.org, tomasz.figa@gmail.com, robh+dt@kernel.org, yadi.brar01@gmail.com, Yadwinder Singh Brar <yadi.brar@samsung.com>
+To: Yadwinder Singh Brar <yadi.brar@samsung.com>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: lee.jones@linaro.org, sameo@linux.intel.com, akpm@linux-foundation.org, tomasz.figa@gmail.com, robh+dt@kernel.org, yadi.brar01@gmail.com
 
-rtc have different i2c client than power(pmic) block. So rtc device should
-sit under its own i2c client in device hierarchy, which reflects in sysfs also.
-This patch modifies code to register rtc cell with rtc->dev as parent.
+On 02.12.2014 13:45, Yadwinder Singh Brar wrote:
+> rtc have different i2c client than power(pmic) block. So rtc device should
+> sit under its own i2c client in device hierarchy, which reflects in sysfs also.
+> This patch modifies code to register rtc cell with rtc->dev as parent.
+> 
+> Without this patch :
+> # ls /sys/class/i2c-adapter/i2c-0/0-0009/
+> driver         max77686-pmic  modalias       power          uevent
+> max77686-clk   max77686-rtc   name           subsystem
+> 
+> After applying patch :
+> # ls /sys/class/i2c-adapter/i2c-0/0-0006/
+> driver/        modalias       power/         uevent
+> max77686-rtc/  name           subsystem/
+> 
+> Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+> ---
+> 
+> Or Can we follow another (exhaustive but more cleaner) approach, which will
+> be more like code refactoring and cleanup rather than only fix:
+> Since rtc uses i2c client, which gets created using i2c_new_dummy() and is not
+> shared by any other cell of max77686. So we can covert rtc platform driver
+> itself to i2c client driver. It will also allow to expilicitly describe
+> max77686-rtc in DT which we can't do now.
+> It can be applicable to some other existing and new mfd pmic drivers.
+> Any suggestion/comments ?
 
-Without this patch :
-# ls /sys/class/i2c-adapter/i2c-0/0-0009/
-driver         max77686-pmic  modalias       power          uevent
-max77686-clk   max77686-rtc   name           subsystem
+Hi,
 
-After applying patch :
-# ls /sys/class/i2c-adapter/i2c-0/0-0006/
-driver/        modalias       power/         uevent
-max77686-rtc/  name           subsystem/
+What kind of problem is solved by this patch?
 
-Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
----
+Best regards,
+Krzysztof
 
-Or Can we follow another (exhaustive but more cleaner) approach, which will
-be more like code refactoring and cleanup rather than only fix:
-Since rtc uses i2c client, which gets created using i2c_new_dummy() and is not
-shared by any other cell of max77686. So we can covert rtc platform driver
-itself to i2c client driver. It will also allow to expilicitly describe
-max77686-rtc in DT which we can't do now.
-It can be applicable to some other existing and new mfd pmic drivers.
-Any suggestion/comments ?
 
----
- drivers/mfd/max77686.c |   22 ++++++++++++++++++++--
- 1 files changed, 20 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
-index 929795e..22c0948 100644
---- a/drivers/mfd/max77686.c
-+++ b/drivers/mfd/max77686.c
-@@ -39,10 +39,13 @@
- 
- static const struct mfd_cell max77686_devs[] = {
- 	{ .name = "max77686-pmic", },
--	{ .name = "max77686-rtc", },
- 	{ .name = "max77686-clk", },
- };
- 
-+static const struct mfd_cell max77686_rtc_dev[] = {
-+	{ .name = "max77686-rtc", },
-+};
-+
- static const struct mfd_cell max77802_devs[] = {
- 	{ .name = "max77802-pmic", },
- 	{ .name = "max77802-clk", },
-@@ -332,14 +335,27 @@ static int max77686_i2c_probe(struct i2c_client *i2c,
- 		goto err_del_irqc;
- 	}
- 
-+	if (max77686->type == TYPE_MAX77686) {
-+		ret = mfd_add_devices(&max77686->rtc->dev, -1, max77686_rtc_dev,
-+			1, NULL, 0, NULL);
-+		if (ret < 0) {
-+			dev_err(&max77686->rtc->dev,
-+				"failed to add RTC device %d\n", ret);
-+			goto err_del_rtc_irqc;
-+		}
-+	}
-+
- 	ret = mfd_add_devices(max77686->dev, -1, cells, n_devs, NULL, 0, NULL);
- 	if (ret < 0) {
- 		dev_err(&i2c->dev, "failed to add MFD devices: %d\n", ret);
--		goto err_del_rtc_irqc;
-+		goto err_del_rtc_dev;
- 	}
- 
- 	return 0;
- 
-+err_del_rtc_dev:
-+	if (max77686->type == TYPE_MAX77686)
-+		mfd_remove_devices(&max77686->rtc->dev);
- err_del_rtc_irqc:
- 	regmap_del_irq_chip(max77686->irq, max77686->rtc_irq_data);
- err_del_irqc:
-@@ -356,6 +372,8 @@ static int max77686_i2c_remove(struct i2c_client *i2c)
- 	struct max77686_dev *max77686 = i2c_get_clientdata(i2c);
- 
- 	mfd_remove_devices(max77686->dev);
-+	if (max77686->type == TYPE_MAX77686)
-+		mfd_remove_devices(&max77686->rtc->dev);
- 
- 	regmap_del_irq_chip(max77686->irq, max77686->rtc_irq_data);
- 	regmap_del_irq_chip(max77686->irq, max77686->irq_data);
--- 
-1.7.0.4
+> 
+> ---
+>  drivers/mfd/max77686.c |   22 ++++++++++++++++++++--
+>  1 files changed, 20 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
+> index 929795e..22c0948 100644
+> --- a/drivers/mfd/max77686.c
+> +++ b/drivers/mfd/max77686.c
+> @@ -39,10 +39,13 @@
+>  
+>  static const struct mfd_cell max77686_devs[] = {
+>  	{ .name = "max77686-pmic", },
+> -	{ .name = "max77686-rtc", },
+>  	{ .name = "max77686-clk", },
+>  };
+>  
+> +static const struct mfd_cell max77686_rtc_dev[] = {
+> +	{ .name = "max77686-rtc", },
+> +};
+> +
+>  static const struct mfd_cell max77802_devs[] = {
+>  	{ .name = "max77802-pmic", },
+>  	{ .name = "max77802-clk", },
+> @@ -332,14 +335,27 @@ static int max77686_i2c_probe(struct i2c_client *i2c,
+>  		goto err_del_irqc;
+>  	}
+>  
+> +	if (max77686->type == TYPE_MAX77686) {
+> +		ret = mfd_add_devices(&max77686->rtc->dev, -1, max77686_rtc_dev,
+> +			1, NULL, 0, NULL);
+> +		if (ret < 0) {
+> +			dev_err(&max77686->rtc->dev,
+> +				"failed to add RTC device %d\n", ret);
+> +			goto err_del_rtc_irqc;
+> +		}
+> +	}
+> +
+>  	ret = mfd_add_devices(max77686->dev, -1, cells, n_devs, NULL, 0, NULL);
+>  	if (ret < 0) {
+>  		dev_err(&i2c->dev, "failed to add MFD devices: %d\n", ret);
+> -		goto err_del_rtc_irqc;
+> +		goto err_del_rtc_dev;
+>  	}
+>  
+>  	return 0;
+>  
+> +err_del_rtc_dev:
+> +	if (max77686->type == TYPE_MAX77686)
+> +		mfd_remove_devices(&max77686->rtc->dev);
+>  err_del_rtc_irqc:
+>  	regmap_del_irq_chip(max77686->irq, max77686->rtc_irq_data);
+>  err_del_irqc:
+> @@ -356,6 +372,8 @@ static int max77686_i2c_remove(struct i2c_client *i2c)
+>  	struct max77686_dev *max77686 = i2c_get_clientdata(i2c);
+>  
+>  	mfd_remove_devices(max77686->dev);
+> +	if (max77686->type == TYPE_MAX77686)
+> +		mfd_remove_devices(&max77686->rtc->dev);
+>  
+>  	regmap_del_irq_chip(max77686->irq, max77686->rtc_irq_data);
+>  	regmap_del_irq_chip(max77686->irq, max77686->irq_data);
+> 
