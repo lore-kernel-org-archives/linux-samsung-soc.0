@@ -1,170 +1,237 @@
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: Re: [PATCH v3 00/19] Exynos SYSMMU (IOMMU) integration with DT and
- DMA-mapping subsystem
-Date: Tue, 02 Dec 2014 10:59:26 +0100
-Message-ID: <1417514366.21830.22.camel@collabora.co.uk>
-References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="sha-1"; protocol="application/x-pkcs7-signature";
-	boundary="=-/s6GUZ+fuvC+wTkJqzSg"
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCHv2] pinctrl: exynos: Add support for Exynos5433
+Date: Tue, 02 Dec 2014 19:19:11 +0900
+Message-ID: <1417515551-29981-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:48609 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751141AbaLBJ7c (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:48465 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750964AbaLBKTP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Dec 2014 04:59:32 -0500
-In-Reply-To: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com>
+	Tue, 2 Dec 2014 05:19:15 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh@kernel.org>, Will Deacon <will.deacon@arm.com>, David Wodhouse <dwmw2@infradead.org>, Inki Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+To: tomasz.figa@gmail.com, thomas.abraham@linaro.org, linus.walleij@linaro.org
+Cc: kgene.kim@samsung.com, inki.dae@samsung.com, geunsik.lim@samsung.com, kyungmin.park@samsung.com, pankaj.dubey@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
 
+This patch adds driver data for Exynos5433 SoC. Exynos5433 includes 228 multi-
+functional input/output port pins and 135 memory port pins. There are 41 general
+port groups and 2 memory port groups.
 
---=-/s6GUZ+fuvC+wTkJqzSg
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Geunsik Lim <geunsik.lim@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
+---
+Changes from v1:
+- Fix the wrong number of Exynos5433 (four -> ten)
+- Divide pinctrl patch from following patch[1]
+ [1] https://lkml.org/lkml/2014/12/2/134
 
-Hey Marek, Inki,
+ drivers/pinctrl/samsung/pinctrl-exynos.c  | 163 ++++++++++++++++++++++++++++++
+ drivers/pinctrl/samsung/pinctrl-samsung.c |   2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h |   1 +
+ 3 files changed, 166 insertions(+)
 
-On Wed, 2014-11-19 at 12:15 +0100, Marek Szyprowski wrote:
-> Hello Everyone,
->=20
-> This is another attempt to finally make Exynos SYSMMU driver fully
-> integrated with DMA-mapping subsystem. The main change from previous
-> version is a rebase onto latest "automatic DMA configuration for IOMMU
-> masters" patches from Will Deacon.
-
-Do you happen to know if anyone is working on iommu/dma-mapping patches
-for Exynos 5 based on this patchset?=20
-
-For some background to that question, We (re-)discovered yesterday that
-the out-of-tree exynos-reference kernel iommu patches are required to
-get HDMI out working on exynos 5 boards. The current situation in
-mainline is rather broken, HDMI output without CONFIG_DRM_EXYNOS_IOMMU
-results in just displaying stripes[0]. While turning on
-CONFIG_DRM_EXYNOS_IOMMU causes a kernel oops at boot....
-
-
-0: http://people.collabora.com/~sjoerd/14120001.jpg
-
---=20
-Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Collabora Ltd.
-
---=-/s6GUZ+fuvC+wTkJqzSg
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIIUzDCCBsIw
-ggWqoAMCAQICEAoE3yF0XU0rjOozcgUAUOkwDQYJKoZIhvcNAQEFBQAwZTELMAkGA1UEBhMCVVMx
-FTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEkMCIGA1UE
-AxMbRGlnaUNlcnQgQXNzdXJlZCBJRCBSb290IENBMB4XDTA2MTExMDAwMDAwMFoXDTIxMTExMDAw
-MDAwMFowYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3
-LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMIIBIjANBgkq
-hkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6IItmfnKwkKVpYBzQHDSnlZUXKnE0kEGj8kz/E1FkVyB
-n+0snPgWWd+etSQVwpi5tHdJ3InECtqvy15r7a2wcTHrzzpADEZNk+yLejYIA6sMNP4YSYL+x8cx
-SIB8HqIPkg5QycaH6zY/2DDD/6b3+6LNb3Mj/qxWBZDwMiEWicZwiPkFl32jx0PdAug7Pe2xQaPt
-P77blUjE7h6z8rwMK5nQxl0SQoHhg26Ccz8mSxSQrllmCsSNvtLOBq6thG9IhJtPQLnxTPKvmPv2
-zkBdXPao8S+v7Iki8msYZbHBc63X8djPHgp0XEK4aH631XcKJ1Z8D2KkPzIUYJX9BwSiCQIDAQAB
-o4IDbzCCA2swDgYDVR0PAQH/BAQDAgGGMDsGA1UdJQQ0MDIGCCsGAQUFBwMBBggrBgEFBQcDAgYI
-KwYBBQUHAwMGCCsGAQUFBwMEBggrBgEFBQcDCDCCAcYGA1UdIASCAb0wggG5MIIBtQYLYIZIAYb9
-bAEDAAQwggGkMDoGCCsGAQUFBwIBFi5odHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJl
-cG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUHAgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAA
-dABoAGkAcwAgAEMAZQByAHQAaQBmAGkAYwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAg
-AGEAYwBjAGUAcAB0AGEAbgBjAGUAIABvAGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMA
-UAAvAEMAUABTACAAYQBuAGQAIAB0AGgAZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABB
-AGcAcgBlAGUAbQBlAG4AdAAgAHcAaABpAGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkA
-dAB5ACAAYQBuAGQAIABhAHIAZQAgAGkAbgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBp
-AG4AIABiAHkAIAByAGUAZgBlAHIAZQBuAGMAZQAuMA8GA1UdEwEB/wQFMAMBAf8wfQYIKwYBBQUH
-AQEEcTBvMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wRwYIKwYBBQUHMAKG
-O2h0dHA6Ly93d3cuZGlnaWNlcnQuY29tL0NBQ2VydHMvRGlnaUNlcnRBc3N1cmVkSURSb290Q0Eu
-Y3J0MIGBBgNVHR8EejB4MDqgOKA2hjRodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRB
-c3N1cmVkSURSb290Q0EuY3JsMDqgOKA2hjRodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vRGlnaUNl
-cnRBc3N1cmVkSURSb290Q0EuY3JsMB0GA1UdDgQWBBQVABIrE5iymQftHt+ivlcNK2cCzTAfBgNV
-HSMEGDAWgBRF66Kv9JLLgjEtUYunpyGd823IDzANBgkqhkiG9w0BAQUFAAOCAQEAhGFOQR64dgQq
-tbbvj/JVhbldVv4KmObkvWWKfUAp0/yxXUX9OrgqWzNLJFzNubTkc61hXXatdDOKZtUjr0wfcm5F
-2XVAu6I7z41JL8BBsOIpo1E4Q1CZFKwzBjViiX13qVIH5WwgV7aBum+8s8KU7XYCgNl8zoWoHOzH
-Q0pLsVfPcs7f9SU8yyJP/Z9S0TfLCLs4PuDVPm95Ca1bfDGzdzXD5GP5aAqYB+dGOHeE0j6XvAqg
-qKwlT0RukeHSWq9r7zAcjaNEQrMQiyP61+Y1dDesz+urWB/JiCP/NtQH6jRqR+qdlWyeKU9T7eMr
-lSBOKs+WYHr4LIDwlVLOKZaBYjCCBv8wggXnoAMCAQICEA2fwUKNhvkL8dN88tUFvVwwDQYJKoZI
-hvcNAQEFBQAwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQ
-d3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xMB4XDTE0
-MDIxNzAwMDAwMFoXDTE1MDMxMjEyMDAwMFowgaQxCzAJBgNVBAYTAkdCMRcwFQYDVQQIEw5DYW1i
-cmlkZ2VzaGlyZTESMBAGA1UEBxMJQ2FtYnJpZGdlMRYwFAYDVQQKEw1Db2xsYWJvcmEgTHRkMQow
-CAYDVQQLEwExMRYwFAYDVQQDEw1Tam9lcmQgU2ltb25zMSwwKgYJKoZIhvcNAQkBFh1zam9lcmQu
-c2ltb25zQGNvbGxhYm9yYS5jby51azCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAN4Q
-EHeW1NbogMVZpHedG7o509/L4VBhqQd8j8JViWd+yvLlxOBw/gY+7ioHMatrQY2VvY6QOLle2Xqs
-CDvELcXMxwyFpBC0Ia+CVE+5pF+0IMuVkGIL1T8LHeKZYeRP+uFXtmWzas12hsMILNRmK7Q5PACm
-+v/6HFn111hLKkANBtRHIRiDbFQOiluNeR2bq+ck1y2+X//SGumA1XZFdCB/1VcRJXDdFnYdU3j/
-RkoiGggo3MSq3mJ6yV7sqzk04fTLFvfL0KadCMauputeGBybEiFAt6rCm5TkyUqoDOTU07byOEXO
-M32EGeYeV515RzARTpOSE9sdmRq0jNNAqGsCAwEAAaOCA2wwggNoMB8GA1UdIwQYMBaAFBUAEisT
-mLKZB+0e36K+Vw0rZwLNMB0GA1UdDgQWBBRaTG8RXMDSFO5XcrjqYs/YDlmqSDAoBgNVHREEITAf
-gR1zam9lcmQuc2ltb25zQGNvbGxhYm9yYS5jby51azAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMH0GA1UdHwR2MHQwOKA2oDSGMmh0dHA6Ly9jcmwzLmRpZ2lj
-ZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3JsMDigNqA0hjJodHRwOi8vY3JsNC5kaWdp
-Y2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0xLmNybDCCAcUGA1UdIASCAbwwggG4MIIBtAYK
-YIZIAYb9bAQBAjCCAaQwOgYIKwYBBQUHAgEWLmh0dHA6Ly93d3cuZGlnaWNlcnQuY29tL3NzbC1j
-cHMtcmVwb3NpdG9yeS5odG0wggFkBggrBgEFBQcCAjCCAVYeggFSAEEAbgB5ACAAdQBzAGUAIABv
-AGYAIAB0AGgAaQBzACAAQwBlAHIAdABpAGYAaQBjAGEAdABlACAAYwBvAG4AcwB0AGkAdAB1AHQA
-ZQBzACAAYQBjAGMAZQBwAHQAYQBuAGMAZQAgAG8AZgAgAHQAaABlACAARABpAGcAaQBDAGUAcgB0
-ACAAQwBQAC8AQwBQAFMAIABhAG4AZAAgAHQAaABlACAAUgBlAGwAeQBpAG4AZwAgAFAAYQByAHQA
-eQAgAEEAZwByAGUAZQBtAGUAbgB0ACAAdwBoAGkAYwBoACAAbABpAG0AaQB0ACAAbABpAGEAYgBp
-AGwAaQB0AHkAIABhAG4AZAAgAGEAcgBlACAAaQBuAGMAbwByAHAAbwByAGEAdABlAGQAIABoAGUA
-cgBlAGkAbgAgAGIAeQAgAHIAZQBmAGUAcgBlAG4AYwBlAC4wdwYIKwYBBQUHAQEEazBpMCQGCCsG
-AQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQQYIKwYBBQUHMAKGNWh0dHA6Ly9jYWNl
-cnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRENBLTEuY3J0MAwGA1UdEwEB/wQCMAAw
-DQYJKoZIhvcNAQEFBQADggEBAAc8CwXSms3RbIx+bhxFsGQoN+RpHtjnPvMPPAobv7rxdhQPPz+N
-6h3hpVzegeW2XhyZVC8MT0U6uWXrk+1uQUAXrJEG+W2X8yTEoHDS/SCF/POOsj/ekaDuNE9JJB/9
-cspoa4W+W8pX1sRurBDFHL0DBudUQ1PgvTSLPOHtfKQpu4gRb2u8KpJermp/IvPLImX9xSCbYKQM
-2L0wbpStFIYdyKCKuXuQxOX3BdBKLCFvcIDE6hjj3UpOlThCbeul2Tz5jARCfRK4OUxnXyb/Tp5j
-tshIAa2ZMGaTH9ApeY7P6C2ONF+Mh5yV/raWXOnJ9dEg6/sXcbdiieqzLKYBIgQwggb/MIIF56AD
-AgECAhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBBQUAMGIxCzAJBgNVBAYTAlVTMRUwEwYD
-VQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xITAfBgNVBAMTGERp
-Z2lDZXJ0IEFzc3VyZWQgSUQgQ0EtMTAeFw0xNDAyMTcwMDAwMDBaFw0xNTAzMTIxMjAwMDBaMIGk
-MQswCQYDVQQGEwJHQjEXMBUGA1UECBMOQ2FtYnJpZGdlc2hpcmUxEjAQBgNVBAcTCUNhbWJyaWRn
-ZTEWMBQGA1UEChMNQ29sbGFib3JhIEx0ZDEKMAgGA1UECxMBMTEWMBQGA1UEAxMNU2pvZXJkIFNp
-bW9uczEsMCoGCSqGSIb3DQEJARYdc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28udWswggEiMA0G
-CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDeEBB3ltTW6IDFWaR3nRu6OdPfy+FQYakHfI/CVYln
-fsry5cTgcP4GPu4qBzGra0GNlb2OkDi5Xtl6rAg7xC3FzMcMhaQQtCGvglRPuaRftCDLlZBiC9U/
-Cx3imWHkT/rhV7Zls2rNdobDCCzUZiu0OTwApvr/+hxZ9ddYSypADQbURyEYg2xUDopbjXkdm6vn
-JNctvl//0hrpgNV2RXQgf9VXESVw3RZ2HVN4/0ZKIhoIKNzEqt5iesle7Ks5NOH0yxb3y9CmnQjG
-rqbrXhgcmxIhQLeqwpuU5MlKqAzk1NO28jhFzjN9hBnmHledeUcwEU6TkhPbHZkatIzTQKhrAgMB
-AAGjggNsMIIDaDAfBgNVHSMEGDAWgBQVABIrE5iymQftHt+ivlcNK2cCzTAdBgNVHQ4EFgQUWkxv
-EVzA0hTuV3K46mLP2A5ZqkgwKAYDVR0RBCEwH4Edc2pvZXJkLnNpbW9uc0Bjb2xsYWJvcmEuY28u
-dWswDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMEBggrBgEFBQcDAjB9BgNVHR8E
-djB0MDigNqA0hjJodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1cmVkSURDQS0x
-LmNybDA4oDagNIYyaHR0cDovL2NybDQuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0QXNzdXJlZElEQ0Et
-MS5jcmwwggHFBgNVHSAEggG8MIIBuDCCAbQGCmCGSAGG/WwEAQIwggGkMDoGCCsGAQUFBwIBFi5o
-dHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9zc2wtY3BzLXJlcG9zaXRvcnkuaHRtMIIBZAYIKwYBBQUH
-AgIwggFWHoIBUgBBAG4AeQAgAHUAcwBlACAAbwBmACAAdABoAGkAcwAgAEMAZQByAHQAaQBmAGkA
-YwBhAHQAZQAgAGMAbwBuAHMAdABpAHQAdQB0AGUAcwAgAGEAYwBjAGUAcAB0AGEAbgBjAGUAIABv
-AGYAIAB0AGgAZQAgAEQAaQBnAGkAQwBlAHIAdAAgAEMAUAAvAEMAUABTACAAYQBuAGQAIAB0AGgA
-ZQAgAFIAZQBsAHkAaQBuAGcAIABQAGEAcgB0AHkAIABBAGcAcgBlAGUAbQBlAG4AdAAgAHcAaABp
-AGMAaAAgAGwAaQBtAGkAdAAgAGwAaQBhAGIAaQBsAGkAdAB5ACAAYQBuAGQAIABhAHIAZQAgAGkA
-bgBjAG8AcgBwAG8AcgBhAHQAZQBkACAAaABlAHIAZQBpAG4AIABiAHkAIAByAGUAZgBlAHIAZQBu
-AGMAZQAuMHcGCCsGAQUFBwEBBGswaTAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQu
-Y29tMEEGCCsGAQUFBzAChjVodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vRGlnaUNlcnRBc3N1
-cmVkSURDQS0xLmNydDAMBgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBBQUAA4IBAQAHPAsF0prN0WyM
-fm4cRbBkKDfkaR7Y5z7zDzwKG7+68XYUDz8/jeod4aVc3oHltl4cmVQvDE9FOrll65PtbkFAF6yR
-Bvltl/MkxKBw0v0ghfzzjrI/3pGg7jRPSSQf/XLKaGuFvlvKV9bEbqwQxRy9AwbnVENT4L00izzh
-7XykKbuIEW9rvCqSXq5qfyLzyyJl/cUgm2CkDNi9MG6UrRSGHcigirl7kMTl9wXQSiwhb3CAxOoY
-491KTpU4Qm3rpdk8+YwEQn0SuDlMZ18m/06eY7bISAGtmTBmkx/QKXmOz+gtjjRfjIeclf62llzp
-yfXRIOv7F3G3YonqsyymASIEMYIDEDCCAwwCAQEwdjBiMQswCQYDVQQGEwJVUzEVMBMGA1UEChMM
-RGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3d3cuZGlnaWNlcnQuY29tMSEwHwYDVQQDExhEaWdpQ2Vy
-dCBBc3N1cmVkIElEIENBLTECEA2fwUKNhvkL8dN88tUFvVwwCQYFKw4DAhoFAKCCAW8wGAYJKoZI
-hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTQxMjAyMDk1OTI2WjAjBgkqhkiG
-9w0BCQQxFgQU2Yy0RnXDIs/F3Dzg44vSfjy4FkowgYUGCSsGAQQBgjcQBDF4MHYwYjELMAkGA1UE
-BhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcGA1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEh
-MB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0xAhANn8FCjYb5C/HTfPLVBb1cMIGHBgsq
-hkiG9w0BCRACCzF4oHYwYjELMAkGA1UEBhMCVVMxFTATBgNVBAoTDERpZ2lDZXJ0IEluYzEZMBcG
-A1UECxMQd3d3LmRpZ2ljZXJ0LmNvbTEhMB8GA1UEAxMYRGlnaUNlcnQgQXNzdXJlZCBJRCBDQS0x
-AhANn8FCjYb5C/HTfPLVBb1cMA0GCSqGSIb3DQEBAQUABIIBAEMpG68IWUwfjOil5+g3l5KkZ0/V
-bKtBzn2iVnDXtFa1vBmO/BJQfQTw28T3wCyOEKYOCRVHFf1+WopD6+2WEv03Jbama+vMur71VWOc
-yById3A/pydwdoLYFmTEtyHPpVwuLq19quyBpDCfmUxTPf3+0TzV/kuBynuRhOlqIf3jKDge6XK6
-4lW+bn5GBTLFpj33oJfe7aByes84xPMKshN8vytFDN5LCRUfFCbCAh6eWUItCe0SwK3iiXv3pf9g
-sMvUFEZxAswvsyF4jhwOyxD9Mrt8o+RvREBaPrT7uxfdqeWxFr7JD2mkb1eG4ZBghwQUtSmPbTD4
-AxGmn/gn8hIAAAAAAAA=
-
-
---=-/s6GUZ+fuvC+wTkJqzSg--
+diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+index d5d4cfc..67da569 100644
+--- a/drivers/pinctrl/samsung/pinctrl-exynos.c
++++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+@@ -1240,6 +1240,169 @@ const struct samsung_pin_ctrl exynos5420_pin_ctrl[] __initconst = {
+ 	},
+ };
+ 
++/* pin banks of exynos5433 pin-controller - ALIVE */
++static struct samsung_pin_bank exynos5433_pin_banks0[] = {
++	EXYNOS_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
++	EXYNOS_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
++	EXYNOS_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
++	EXYNOS_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
++};
++
++/* pin banks of exynos5433 pin-controller - AUD */
++static struct samsung_pin_bank exynos5433_pin_banks1[] = {
++	EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
++	EXYNOS_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
++};
++
++/* pin banks of exynos5433 pin-controller - CPIF */
++static struct samsung_pin_bank exynos5433_pin_banks2[] = {
++	EXYNOS_PIN_BANK_EINTG(2, 0x000, "gpv6", 0x00),
++};
++
++/* pin banks of exynos5433 pin-controller - eSE */
++static struct samsung_pin_bank exynos5433_pin_banks3[] = {
++	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj2", 0x00),
++};
++
++/* pin banks of exynos5433 pin-controller - FINGER */
++static struct samsung_pin_bank exynos5433_pin_banks4[] = {
++	EXYNOS_PIN_BANK_EINTG(4, 0x000, "gpd5", 0x00),
++};
++
++/* pin banks of exynos5433 pin-controller - FSYS */
++static struct samsung_pin_bank exynos5433_pin_banks5[] = {
++	EXYNOS_PIN_BANK_EINTG(6, 0x000, "gph1", 0x00),
++	EXYNOS_PIN_BANK_EINTG(7, 0x020, "gpr4", 0x04),
++	EXYNOS_PIN_BANK_EINTG(5, 0x040, "gpr0", 0x08),
++	EXYNOS_PIN_BANK_EINTG(8, 0x060, "gpr1", 0x0c),
++	EXYNOS_PIN_BANK_EINTG(2, 0x080, "gpr2", 0x10),
++	EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpr3", 0x14),
++};
++
++/* pin banks of exynos5433 pin-controller - IMEM */
++static struct samsung_pin_bank exynos5433_pin_banks6[] = {
++	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpf0", 0x00),
++};
++
++/* pin banks of exynos5433 pin-controller - NFC */
++static struct samsung_pin_bank exynos5433_pin_banks7[] = {
++	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj0", 0x00),
++};
++
++/* pin banks of exynos5433 pin-controller - PERIC */
++static struct samsung_pin_bank exynos5433_pin_banks8[] = {
++	EXYNOS_PIN_BANK_EINTG(6, 0x000, "gpv7", 0x00),
++	EXYNOS_PIN_BANK_EINTG(5, 0x020, "gpb0", 0x04),
++	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpc0", 0x08),
++	EXYNOS_PIN_BANK_EINTG(2, 0x060, "gpc1", 0x0c),
++	EXYNOS_PIN_BANK_EINTG(6, 0x080, "gpc2", 0x10),
++	EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpc3", 0x14),
++	EXYNOS_PIN_BANK_EINTG(2, 0x0c0, "gpg0", 0x18),
++	EXYNOS_PIN_BANK_EINTG(4, 0x0e0, "gpd0", 0x1c),
++	EXYNOS_PIN_BANK_EINTG(6, 0x100, "gpd1", 0x20),
++	EXYNOS_PIN_BANK_EINTG(8, 0x120, "gpd2", 0x24),
++	EXYNOS_PIN_BANK_EINTG(5, 0x140, "gpd4", 0x28),
++	EXYNOS_PIN_BANK_EINTG(2, 0x160, "gpd8", 0x2c),
++	EXYNOS_PIN_BANK_EINTG(7, 0x180, "gpd6", 0x30),
++	EXYNOS_PIN_BANK_EINTG(3, 0x1a0, "gpd7", 0x34),
++	EXYNOS_PIN_BANK_EINTG(5, 0x1c0, "gpg1", 0x38),
++	EXYNOS_PIN_BANK_EINTG(2, 0x1e0, "gpg2", 0x3c),
++	EXYNOS_PIN_BANK_EINTG(8, 0x200, "gpg3", 0x40),
++};
++
++/* pin banks of exynos5433 pin-controller - TOUCH */
++static struct samsung_pin_bank exynos5433_pin_banks9[] = {
++	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj1", 0x00),
++};
++
++/*
++ * Samsung pinctrl driver data for Exynos5433 SoC. Exynos5433 SoC includes
++ * ten gpio/pin-mux/pinconfig controllers.
++ */
++struct samsung_pin_ctrl exynos5433_pin_ctrl[] = {
++	{
++		/* pin-controller instance 0 data */
++		.pin_banks	= exynos5433_pin_banks0,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks0),
++		.eint_wkup_init = exynos_eint_wkup_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl0",
++	}, {
++		/* pin-controller instance 1 data */
++		.pin_banks	= exynos5433_pin_banks1,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks1),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl1",
++	}, {
++		/* pin-controller instance 2 data */
++		.pin_banks	= exynos5433_pin_banks2,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks2),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl2",
++	}, {
++		/* pin-controller instance 3 data */
++		.pin_banks	= exynos5433_pin_banks3,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks3),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl3",
++	}, {
++		/* pin-controller instance 4 data */
++		.pin_banks	= exynos5433_pin_banks4,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks4),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl4",
++	}, {
++		/* pin-controller instance 5 data */
++		.pin_banks	= exynos5433_pin_banks5,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks5),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl5",
++	}, {
++		/* pin-controller instance 6 data */
++		.pin_banks	= exynos5433_pin_banks6,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks6),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl6",
++	}, {
++		/* pin-controller instance 7 data */
++		.pin_banks	= exynos5433_pin_banks7,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks7),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl7",
++	}, {
++		/* pin-controller instance 8 data */
++		.pin_banks	= exynos5433_pin_banks8,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks8),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl8",
++	}, {
++		/* pin-controller instance 9 data */
++		.pin_banks	= exynos5433_pin_banks9,
++		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks9),
++		.eint_gpio_init = exynos_eint_gpio_init,
++		.suspend	= exynos_pinctrl_suspend,
++		.resume		= exynos_pinctrl_resume,
++		.label		= "exynos5433-gpio-ctrl9",
++	},
++};
++
+ /* pin banks of exynos7 pin-controller - ALIVE */
+ static const struct samsung_pin_bank_data exynos7_pin_banks0[] __initconst = {
+ 	EXYNOS_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
+index 32940a0..26ac7a1 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.c
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
+@@ -1239,6 +1239,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
+ 		.data = (void *)exynos5260_pin_ctrl },
+ 	{ .compatible = "samsung,exynos5420-pinctrl",
+ 		.data = (void *)exynos5420_pin_ctrl },
++	{ .compatible = "samsung,exynos5433-pinctrl",
++		.data = (void *)exynos5433_pin_ctrl },
+ 	{ .compatible = "samsung,s5pv210-pinctrl",
+ 		.data = (void *)s5pv210_pin_ctrl },
+ 	{ .compatible = "samsung,exynos7-pinctrl",
+diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
+index 1b8c013..c1239ff 100644
+--- a/drivers/pinctrl/samsung/pinctrl-samsung.h
++++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+@@ -271,6 +271,7 @@ extern const struct samsung_pin_ctrl exynos4415_pin_ctrl[];
+ extern const struct samsung_pin_ctrl exynos5250_pin_ctrl[];
+ extern const struct samsung_pin_ctrl exynos5260_pin_ctrl[];
+ extern const struct samsung_pin_ctrl exynos5420_pin_ctrl[];
++extern const struct samsung_pin_ctrl exynos5433_pin_ctrl[];
+ extern const struct samsung_pin_ctrl exynos7_pin_ctrl[];
+ extern const struct samsung_pin_ctrl s3c64xx_pin_ctrl[];
+ extern const struct samsung_pin_ctrl s3c2412_pin_ctrl[];
+-- 
+1.8.5.5
