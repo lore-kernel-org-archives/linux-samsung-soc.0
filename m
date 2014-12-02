@@ -1,237 +1,116 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv2] pinctrl: exynos: Add support for Exynos5433
-Date: Tue, 02 Dec 2014 19:19:11 +0900
-Message-ID: <1417515551-29981-1-git-send-email-cw00.choi@samsung.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 16/19] arm64: dts: exynos: Add dts files for 64-bit
+ Exynos5433 SoC
+Date: Tue, 2 Dec 2014 10:42:39 +0000
+Message-ID: <20141202104239.GA23671@leverpostej>
+References: <1417073716-22997-1-git-send-email-cw00.choi@samsung.com>
+ <1417073716-22997-17-git-send-email-cw00.choi@samsung.com>
+ <20141127111834.GB857@leverpostej>
+ <54787621.4000503@samsung.com>
+ <20141128140059.GH25883@leverpostej>
+ <547BD0BA.7080809@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:48465 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750964AbaLBKTP (ORCPT
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:35867 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751211AbaLBKmo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Dec 2014 05:19:15 -0500
+	Tue, 2 Dec 2014 05:42:44 -0500
+Content-Disposition: inline
+In-Reply-To: <547BD0BA.7080809@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: tomasz.figa@gmail.com, thomas.abraham@linaro.org, linus.walleij@linaro.org
-Cc: kgene.kim@samsung.com, inki.dae@samsung.com, geunsik.lim@samsung.com, kyungmin.park@samsung.com, pankaj.dubey@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "arnd@arndb.de" <arnd@arndb.de>, "olof@lixom.net" <olof@lixom.net>, Catalin Marinas <Catalin.Marinas@arm.com>, Will Deacon <Will.Deacon@arm.com>, "s.nawrocki@samsung.com" <s.nawrocki@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "inki.dae@samsung.com" <inki.dae@samsung.com>, "chanho61.park@samsung.com" <chanho61.park@samsung.com>, "geunsik.lim@samsung.com" <geunsik.lim@samsung.com>, "sw0312.kim@samsung.com" <sw0312.kim@samsung.com>, "jh80.chung@samsung.com" <jh80.chung@samsung.com>, a.kesavan@samsung.
 
-This patch adds driver data for Exynos5433 SoC. Exynos5433 includes 228 multi-
-functional input/output port pins and 135 memory port pins. There are 41 general
-port groups and 2 memory port groups.
+On Mon, Dec 01, 2014 at 02:21:46AM +0000, Chanwoo Choi wrote:
+> Dear Mark,
+> 
+> On 11/28/2014 11:00 PM, Mark Rutland wrote:
+> > On Fri, Nov 28, 2014 at 01:18:25PM +0000, Chanwoo Choi wrote:
+> >> Dear Mark,
+> >>
+> >> On 11/27/2014 08:18 PM, Mark Rutland wrote:
+> >>> On Thu, Nov 27, 2014 at 07:35:13AM +0000, Chanwoo Choi wrote:
+> >>>> This patch adds new Exynos5433 dtsi to support 64-bit Exynos5433 SoC
+> >>>> based on Octal core CPUs (quad Cortex-A57 and quad Cortex-A53).
+> >>>>
+> >>>> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> >>>> Cc: Mark Rutland <mark.rutland@arm.com>
+> >>>> Cc: Arnd Bergmann <arnd@arndb.de>
+> >>>> Cc: Olof Johansson <olof@lixom.net>
+> >>>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> >>>> Cc: Will Deacon <will.deacon@arm.com>
+> >>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> >>>> Acked-by: Inki Dae <inki.dae@samsung.com>
+> >>>> Acked-by: Geunsik Lim <geunsik.lim@samsung.com>
+> >>>> ---
+> >>>>  arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi | 698 +++++++++++++++++++++
+> >>>>  arch/arm64/boot/dts/exynos/exynos5433.dtsi         | 523 +++++++++++++++
+> >>>>  2 files changed, 1221 insertions(+)
+> >>>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
+> >>>>  create mode 100644 arch/arm64/boot/dts/exynos/exynos5433.dtsi
+> >>>
+> >
+> > [...]
+> >
+> >>>> +       cpus {
+> >>>> +               #address-cells = <2>;
+> >>>> +               #size-cells = <0>;
+> >>>> +
+> >>>> +               cpu0: cpu@100 {
+> >>>> +                       device_type = "cpu";
+> >>>> +                       compatible = "arm,cortex-a53", "arm,armv8";
+> >>>> +                       enable-method = "psci";
+> >>>
+> >>> While the CPU nodes have enable-methods, I didn't spot a PSCI node
+> >>> anywhere, so this dts cannot possibly have been used to bring up an SMP
+> >>> system.
+> >>>
+> >>> How has this dts been tested?
+> >>>
+> >>> What PSCI revision have you implemented? Have have you tested it?
+> >>
+> >> My mistake,
+> >> Exynos5433 supports PSCI v0.1. I'll add following PSCI nodes:
+> >> I tested the boot of secondary cpu.
+> >>
+> >>         psci {
+> >>                 compatible = "arm,psci";
+> >>                 method = "smc";
+> >>                 cpu_off = <0x84000002>;
+> >>                 cpu_on = <0xC4000003>;
+> >>         };
+> >
+> > Ok. I take it _any_ CPU may be hotplugged (including CPU0), given that
+> > you don't have MIGRATE_INFO_TYPE from PSCI 0.2 to tell you that this is
+> > not possible? If not, attempting to hotplug CPU0 will result in a BUG()
+> > and the kernel will explode.
+> >
+> > Has that been tested?
+> 
+> I just tested secondary CPU on during kernel booting after added 'psci' dt node.
+> So, I got the ON state of Octa CPUs.
+> 
+> Maybe I need more time to implement CPU0 and secondary cpu hotplugged dynamically on runtime.
 
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Geunsik Lim <geunsik.lim@samsung.com>
-Acked-by: Inki Dae <inki.dae@samsung.com>
----
-Changes from v1:
-- Fix the wrong number of Exynos5433 (four -> ten)
-- Divide pinctrl patch from following patch[1]
- [1] https://lkml.org/lkml/2014/12/2/134
+So currently PSCI CPU_OFF is not implemented at all?
 
- drivers/pinctrl/samsung/pinctrl-exynos.c  | 163 ++++++++++++++++++++++++++++++
- drivers/pinctrl/samsung/pinctrl-samsung.c |   2 +
- drivers/pinctrl/samsung/pinctrl-samsung.h |   1 +
- 3 files changed, 166 insertions(+)
+> > Do all CPUs enter the kernel at EL2?
+> 
+> I didn't consider EL2 for hypervisor mode.
+> First role of this job, I'll implement CPU on/off and suspend by using PSCI.
 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index d5d4cfc..67da569 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -1240,6 +1240,169 @@ const struct samsung_pin_ctrl exynos5420_pin_ctrl[] __initconst = {
- 	},
- };
- 
-+/* pin banks of exynos5433 pin-controller - ALIVE */
-+static struct samsung_pin_bank exynos5433_pin_banks0[] = {
-+	EXYNOS_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
-+	EXYNOS_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
-+	EXYNOS_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
-+	EXYNOS_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
-+};
-+
-+/* pin banks of exynos5433 pin-controller - AUD */
-+static struct samsung_pin_bank exynos5433_pin_banks1[] = {
-+	EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
-+};
-+
-+/* pin banks of exynos5433 pin-controller - CPIF */
-+static struct samsung_pin_bank exynos5433_pin_banks2[] = {
-+	EXYNOS_PIN_BANK_EINTG(2, 0x000, "gpv6", 0x00),
-+};
-+
-+/* pin banks of exynos5433 pin-controller - eSE */
-+static struct samsung_pin_bank exynos5433_pin_banks3[] = {
-+	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj2", 0x00),
-+};
-+
-+/* pin banks of exynos5433 pin-controller - FINGER */
-+static struct samsung_pin_bank exynos5433_pin_banks4[] = {
-+	EXYNOS_PIN_BANK_EINTG(4, 0x000, "gpd5", 0x00),
-+};
-+
-+/* pin banks of exynos5433 pin-controller - FSYS */
-+static struct samsung_pin_bank exynos5433_pin_banks5[] = {
-+	EXYNOS_PIN_BANK_EINTG(6, 0x000, "gph1", 0x00),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x020, "gpr4", 0x04),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x040, "gpr0", 0x08),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x060, "gpr1", 0x0c),
-+	EXYNOS_PIN_BANK_EINTG(2, 0x080, "gpr2", 0x10),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpr3", 0x14),
-+};
-+
-+/* pin banks of exynos5433 pin-controller - IMEM */
-+static struct samsung_pin_bank exynos5433_pin_banks6[] = {
-+	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpf0", 0x00),
-+};
-+
-+/* pin banks of exynos5433 pin-controller - NFC */
-+static struct samsung_pin_bank exynos5433_pin_banks7[] = {
-+	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj0", 0x00),
-+};
-+
-+/* pin banks of exynos5433 pin-controller - PERIC */
-+static struct samsung_pin_bank exynos5433_pin_banks8[] = {
-+	EXYNOS_PIN_BANK_EINTG(6, 0x000, "gpv7", 0x00),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x020, "gpb0", 0x04),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpc0", 0x08),
-+	EXYNOS_PIN_BANK_EINTG(2, 0x060, "gpc1", 0x0c),
-+	EXYNOS_PIN_BANK_EINTG(6, 0x080, "gpc2", 0x10),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpc3", 0x14),
-+	EXYNOS_PIN_BANK_EINTG(2, 0x0c0, "gpg0", 0x18),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x0e0, "gpd0", 0x1c),
-+	EXYNOS_PIN_BANK_EINTG(6, 0x100, "gpd1", 0x20),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x120, "gpd2", 0x24),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x140, "gpd4", 0x28),
-+	EXYNOS_PIN_BANK_EINTG(2, 0x160, "gpd8", 0x2c),
-+	EXYNOS_PIN_BANK_EINTG(7, 0x180, "gpd6", 0x30),
-+	EXYNOS_PIN_BANK_EINTG(3, 0x1a0, "gpd7", 0x34),
-+	EXYNOS_PIN_BANK_EINTG(5, 0x1c0, "gpg1", 0x38),
-+	EXYNOS_PIN_BANK_EINTG(2, 0x1e0, "gpg2", 0x3c),
-+	EXYNOS_PIN_BANK_EINTG(8, 0x200, "gpg3", 0x40),
-+};
-+
-+/* pin banks of exynos5433 pin-controller - TOUCH */
-+static struct samsung_pin_bank exynos5433_pin_banks9[] = {
-+	EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj1", 0x00),
-+};
-+
-+/*
-+ * Samsung pinctrl driver data for Exynos5433 SoC. Exynos5433 SoC includes
-+ * ten gpio/pin-mux/pinconfig controllers.
-+ */
-+struct samsung_pin_ctrl exynos5433_pin_ctrl[] = {
-+	{
-+		/* pin-controller instance 0 data */
-+		.pin_banks	= exynos5433_pin_banks0,
-+		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks0),
-+		.eint_wkup_init = exynos_eint_wkup_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
-+		.label		= "exynos5433-gpio-ctrl0",
-+	}, {
-+		/* pin-controller instance 1 data */
-+		.pin_banks	= exynos5433_pin_banks1,
-+		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks1),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
-+		.label		= "exynos5433-gpio-ctrl1",
-+	}, {
-+		/* pin-controller instance 2 data */
-+		.pin_banks	= exynos5433_pin_banks2,
-+		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks2),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
-+		.label		= "exynos5433-gpio-ctrl2",
-+	}, {
-+		/* pin-controller instance 3 data */
-+		.pin_banks	= exynos5433_pin_banks3,
-+		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks3),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
-+		.label		= "exynos5433-gpio-ctrl3",
-+	}, {
-+		/* pin-controller instance 4 data */
-+		.pin_banks	= exynos5433_pin_banks4,
-+		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks4),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
-+		.label		= "exynos5433-gpio-ctrl4",
-+	}, {
-+		/* pin-controller instance 5 data */
-+		.pin_banks	= exynos5433_pin_banks5,
-+		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks5),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
-+		.label		= "exynos5433-gpio-ctrl5",
-+	}, {
-+		/* pin-controller instance 6 data */
-+		.pin_banks	= exynos5433_pin_banks6,
-+		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks6),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
-+		.label		= "exynos5433-gpio-ctrl6",
-+	}, {
-+		/* pin-controller instance 7 data */
-+		.pin_banks	= exynos5433_pin_banks7,
-+		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks7),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
-+		.label		= "exynos5433-gpio-ctrl7",
-+	}, {
-+		/* pin-controller instance 8 data */
-+		.pin_banks	= exynos5433_pin_banks8,
-+		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks8),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
-+		.label		= "exynos5433-gpio-ctrl8",
-+	}, {
-+		/* pin-controller instance 9 data */
-+		.pin_banks	= exynos5433_pin_banks9,
-+		.nr_banks	= ARRAY_SIZE(exynos5433_pin_banks9),
-+		.eint_gpio_init = exynos_eint_gpio_init,
-+		.suspend	= exynos_pinctrl_suspend,
-+		.resume		= exynos_pinctrl_resume,
-+		.label		= "exynos5433-gpio-ctrl9",
-+	},
-+};
-+
- /* pin banks of exynos7 pin-controller - ALIVE */
- static const struct samsung_pin_bank_data exynos7_pin_banks0[] __initconst = {
- 	EXYNOS_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.c b/drivers/pinctrl/samsung/pinctrl-samsung.c
-index 32940a0..26ac7a1 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.c
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.c
-@@ -1239,6 +1239,8 @@ static const struct of_device_id samsung_pinctrl_dt_match[] = {
- 		.data = (void *)exynos5260_pin_ctrl },
- 	{ .compatible = "samsung,exynos5420-pinctrl",
- 		.data = (void *)exynos5420_pin_ctrl },
-+	{ .compatible = "samsung,exynos5433-pinctrl",
-+		.data = (void *)exynos5433_pin_ctrl },
- 	{ .compatible = "samsung,s5pv210-pinctrl",
- 		.data = (void *)s5pv210_pin_ctrl },
- 	{ .compatible = "samsung,exynos7-pinctrl",
-diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
-index 1b8c013..c1239ff 100644
---- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-+++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-@@ -271,6 +271,7 @@ extern const struct samsung_pin_ctrl exynos4415_pin_ctrl[];
- extern const struct samsung_pin_ctrl exynos5250_pin_ctrl[];
- extern const struct samsung_pin_ctrl exynos5260_pin_ctrl[];
- extern const struct samsung_pin_ctrl exynos5420_pin_ctrl[];
-+extern const struct samsung_pin_ctrl exynos5433_pin_ctrl[];
- extern const struct samsung_pin_ctrl exynos7_pin_ctrl[];
- extern const struct samsung_pin_ctrl s3c64xx_pin_ctrl[];
- extern const struct samsung_pin_ctrl s3c2412_pin_ctrl[];
--- 
-1.8.5.5
+Is there any reason not to enter the kernel at EL2?
+
+PSCI 0.2 mandates entering at EL2 if present (and not under a
+hypervisor), and it gives the kernel a lot more flexibility to fix
+things up (and there's less for FW to restore) even when a hypervisor is
+not in use.
+
+Implementing all that to EL2 is _simpler_ than implementing it to EL1.
+The kernel will restore what it needs to.
+
+Thanks,
+Mark.
