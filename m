@@ -1,47 +1,236 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] cpuidle: add MAINTAINERS entry for ARM Exynos cpuidle driver
-Date: Tue, 02 Dec 2014 16:41:35 +0100
-Message-ID: <1616359.KRpRrFqxfV@amdc1032>
+From: Chanwoo Choi <cwchoi00-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 14/19] arm64: dts: exynos: Add dts files for 64-bit
+ Exynos5433 SoC
+Date: Wed, 3 Dec 2014 00:47:51 +0900
+Message-ID: <CAGTfZH0vSbiyd4P4JaeQ+pWmxwL=FMjcC475JZAnhFnTG9-M0g@mail.gmail.com>
+References: <1417510196-6714-1-git-send-email-cw00.choi@samsung.com>
+	<1417510196-6714-15-git-send-email-cw00.choi@samsung.com>
+	<20141202110909.GB23671@leverpostej>
+	<547DA818.2050908@samsung.com>
+	<20141202121310.GH23671@leverpostej>
+Reply-To: cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Kukjin Kim <kgene@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20141202121310.GH23671@leverpostej>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: "jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "geunsik.lim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <geunsik.lim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "arnd-r2nGTMty4D4@public.gmane.org" <arnd-r2nGTMty4D4@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marc Zyngier <Marc.Zyngier-5wv7dgnIgG8@public.gmane.org>, Catalin Marinas <Catalin.Marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org" <olof>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Since there has been quite a lot of development going on for
-ARM Exynos cpuidle driver recently I would like to add separate
-MAINTAINERS entry for it and add myself as the primary maintainer.
+Dear Mark,
 
-The merging process would remain (almost) unchanged with patches
-going (with my Ack) through Daniel's or Kukjin's tree.
+On Tue, Dec 2, 2014 at 9:13 PM, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org> wrote:
+> Hi,
+>
+>> >> +       psci {
+>> >> +               compatible = "arm,psci";
+>> >> +               method = "smc";
+>> >> +               cpu_off = <0x84000002>;
+>> >> +               cpu_on = <0xC4000003>;
+>> >> +       };
+>> >
+>> > Given your comments on the latest posting, has CPU_OFF been tested, and
+>> > does it work for _all_ CPUs (including CPU0)?
+>>
+>> At current version,
+>> CPU_OFF of Exynos5433 is not working. I'm now working to find the cause of CPU_OFF fail.
+>> (I got CPU_ON of Exynos5433 all cores.)
+>
+> CPU_OFF should not be described in the DT unless it works.
 
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- MAINTAINERS |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+OK, I'll drop 'cpu_off" property on next patchset. After fixing it,
+I'll re-send separate patch.
 
-Index: b/MAINTAINERS
-===================================================================
---- a/MAINTAINERS	2014-11-27 18:02:51.988225868 +0100
-+++ b/MAINTAINERS	2014-12-02 15:56:52.792997513 +0100
-@@ -2701,6 +2701,16 @@ T:	git git://git.kernel.org/pub/scm/linu
- S:	Maintained
- F:	drivers/cpuidle/cpuidle-big_little.c
- 
-+CPUIDLE DRIVER - ARM EXYNOS
-+M:	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-+M:	Daniel Lezcano <daniel.lezcano@linaro.org>
-+M:	Kukjin Kim <kgene@kernel.org>
-+L:	linux-pm@vger.kernel.org
-+L:	linux-samsung-soc@vger.kernel.org
-+S:	Supported
-+F:	drivers/cpuidle/cpuidle-exynos.c
-+F:	arch/arm/mach-exynos/pm.c
-+
- CPUIDLE DRIVERS
- M:	Rafael J. Wysocki <rjw@rjwysocki.net>
- M:	Daniel Lezcano <daniel.lezcano@linaro.org>
+>
+> [...]
+>
+>> >> +       soc: soc {
+>> >> +               compatible = "simple-bus";
+>> >> +               #address-cells = <1>;
+>> >> +               #size-cells = <1>;
+>> >> +               ranges;
+>> >
+>> > Is that valid when changing the number of cells? The address spaces
+>> > aren't strictly identical in that case, and I'd expect a translation
+>> > something like:
+>> >
+>> >         ranges = <0x0 0x0 0x0 0xff000000>;
+>>
+>> I'll fix it after checking correct spec.
+>
+> Thanks.
+>
+> [...]
+>
+>> >> +               gic:interrupt-controller@11001000 {
+>> >> +                       compatible = "arm,gic-400";
+>> >> +                       #interrupt-cells = <3>;
+>> >> +                       interrupt-controller;
+>> >> +                       reg =   <0x11001000 0x1000>,
+>> >> +                               <0x11002000 0x1000>,
+>> >> +                               <0x11004000 0x2000>,
+>> >> +                               <0x11006000 0x2000>;
+>> >> +                       interrupts = <1 9 0xf04>;
+>> >> +               };
+>> >
+>> > The GICC needs to be 0x2000 long to map the GICC_DIR, which is at
+>> > 0x1000-0x1003.
+>>
+>> Do you mean that following dt node is right for gic-400?
+>>
+>>                 reg =   <0x11001000 0x1000>,
+>>                         <0x11002000 0x2000>,    <- I changed the the range of GICC.
+>>                         <0x11004000 0x2000>,
+>>                         <0x11006000 0x2000>;
+>
+> Yes.
+
+OK. I'll fix it.
+
+>
+> [...]
+>
+>> >> +               pinctrl_alive: pinctrl@10580000 {
+>> >> +                       compatible = "samsung,exynos5433-pinctrl";
+>> >> +                       reg = <0x10580000 0x1000>;
+>> >> +
+>> >> +                       wakeup-interrupt-controller {
+>> >> +                               compatible = "samsung,exynos7-wakeup-eint";
+>> >> +                               interrupts = <0 16 0>;
+>> >> +                       };
+>> >> +               };
+>> >
+>> > How exactly does the wakeup interrupt controller interact with the GIC?
+>> > Surely the relationship between the two should be described?
+>>
+>> The pinctrl_alive contains the alive part of GPIO PAD (gpa0~gpa3).
+>>
+>> The each GPA0/GPA1 of pinctrl_alive pad did map to unique SPI number of GIC
+>> amd GPA2/GPA3 use only one interrupt (SPI[16])  as following:
+>>
+>>         +&pinctrl_alive {
+>>         +       gpa0: gpa0 {
+>>         +               gpio-controller;
+>>         +               #gpio-cells = <2>;
+>>         +
+>>         +               interrupt-controller;
+>>         +               interrupt-parent = <&gic>;
+>>         +               interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
+>>         +                            <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>;
+>>         +               #interrupt-cells = <2>;
+>>         +       };
+>>         +
+>>         +       gpa1: gpa1 {
+>>         +               gpio-controller;
+>>         +               #gpio-cells = <2>;
+>>         +
+>>         +               interrupt-controller;
+>>         +               interrupt-parent = <&gic>;
+>>         +               interrupts = <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
+>>         +                            <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
+>>         +               #interrupt-cells = <2>;
+>>         +       };
+>>
+>>         gpa0-0 - SPI[0]
+>>         gpa0-1 - SPI[1]
+>>         gpa0-2 - SPI[2]
+>>         gpa0-3 - SPI[3]
+>>         gpa0-4 - SPI[4]
+>>         gpa0-5 - SPI[5]
+>>         gpa0-6 - SPI[6]
+>>         gpa0-7 - SPI[7]
+>>
+>>         gpa1-0 - SPI[8]
+>>         gpa1-1 - SPI[9]
+>>         gpa1-2 - SPI[10]
+>>         gpa1-3 - SPI[11]
+>>         gpa1-4 - SPI[12]
+>>         gpa1-5 - SPI[13]
+>>         gpa1-6 - SPI[14]
+>>         gpa1-7 - SPI[15]
+>>
+>>         GPA2/GPA3 use only one interrupt (SPI[16]).
+>>
+>> The pinctrl-exynos.c driver initialized external wakeup interrupt
+>> (e.g., GPA0/GPA1/GPA2/GPA3 of Exynos5433) in exynos_eint_wkup_init() function.
+>>
+>> Following patch[1] adds the control for Exynos5433 wakeup irq.The exynos5433_pin_ctrl structure
+>> includes '.eint_wkup_init = exynos_eint_wkup_init;' fields to handle wakeup interrupt of Exynos SoC.
+>>
+>> [PATCHv2] pinctrl: exynos: Add support for Exynos543
+>> - https://lkml.org/lkml/2014/12/2/207
+>>
+>>         +struct samsung_pin_ctrl exynos5433_pin_ctrl[] = {
+>>         +       {
+>>         +               /* pin-controller instance 0 data */
+>>         +               .pin_banks      = exynos5433_pin_banks0,
+>>         +               .nr_banks       = ARRAY_SIZE(exynos5433_pin_banks0),
+>>         +               .eint_wkup_init = exynos_eint_wkup_init,
+>>         +               .suspend        = exynos_pinctrl_suspend,
+>>         +               .resume         = exynos_pinctrl_resume,
+>>         +               .label          = "exynos5433-gpio-ctrl0",
+>>         +       }, {
+>>
+>> And,
+>> 'struct exynos_irq_chip exynos7_wkup_irq_chip' handles the external interrupt of Exynos5433 SoC
+>> because Exynos5433 is the same with Exynos7 EINT (External Interrupt) register offset.
+>>
+>> We can check it following patch[1] to control wakeup interrupt for Exynos7/Exynos5433.
+>> - [1] [patch] pinctrl: exynos: Add irq_chip instance for Exynos7 wakeup interrupts
+>>   https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-pinctrl.git/commit/?h=for-next&id=14c255d35b25126149fb2fd199b030404229af65
+>>
+>>
+>>         +static struct exynos_irq_chip exynos7_wkup_irq_chip __initdata = {
+>>         + .chip = {
+>>         + .name = "exynos7_wkup_irq_chip",
+>>         + .irq_unmask = exynos_irq_unmask,
+>>         + .irq_mask = exynos_irq_mask,
+>>         + .irq_ack = exynos_irq_ack,
+>>         + .irq_set_type = exynos_irq_set_type,
+>>         + .irq_set_wake = exynos_wkup_irq_set_wake,
+>>         + .irq_request_resources = exynos_irq_request_resources,
+>>         + .irq_release_resources = exynos_irq_release_resources,
+>>         + },
+>>         + .eint_con = EXYNOS7_WKUP_ECON_OFFSET,
+>>         + .eint_mask = EXYNOS7_WKUP_EMASK_OFFSET,
+>>         + .eint_pend = EXYNOS7_WKUP_EPEND_OFFSET,
+>>         +};
+>>
+>> If happen external interrupt by pressing power button, the ops of 'struct exynos_irq_chip exynos7_wkup_irq_chip'
+>> would handle the interrupt.
+>>
+>> For exampl, If I use following GPAx as interrupt, I can check it on the result of /proc/interrupts.
+>>         gpa2-7 - power key
+>>         gpa2-0 - volume-up key
+>>         gpa2-1 - volume-up key
+>>         gpa0-7 - s2mps13 pmic irq
+>>
+>> 'exynos7_wkup_irq_chip' would handle the external interrupt(gpa).
+>>
+>> #cat /proc/interrupts
+>>   1:          0          0          0          0          0          0          0  exynos7_wkup_irq_chip   0  volume-up key
+>>   2:          0          0          0          0          0          0          0  exynos7_wkup_irq_chip   1  volume-down key
+>>   7:          0          0          0          0          0          0          0  exynos7_wkup_irq_chip   7  s2mps13
+>>   8:          0          0          0          0          0          0          0  exynos7_wkup_irq_chip   7  power key
+>>
+>>
+>> IMHO,
+>> Happen SPI -> GIC -> Cortex-A57/Cortex-A53 -> pinctrl-exynos.c -> exynos7_wkup_irq_chip -> irq handling
+>
+> So physically interrupts are fed into the wakeup IRQ chip, which routes
+> them to the GIC? And we describe such in DT, as opposed to pretending
+> interrupts are fed straight into the GIC, and bolting the wakeup
+> controller on the side?
+
+GIC is well working with pinctrl-exynos.c for Exynos SoC in mainline kernel.
+Do you want to know the detailed relation between GIC and
+pinctrl-exynos driver or not?
+If I misunderstand, please let me know your question again.
+
+Best Regards,
+Chanwoo Choi
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
