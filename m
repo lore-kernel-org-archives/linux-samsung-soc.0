@@ -1,60 +1,43 @@
-From: Tyler Baker <tyler.baker@linaro.org>
-Subject: Re: [PATCH RFT 2/2] arm: dts: disable CCI on exynos420 based arndale-octa
-Date: Mon, 1 Dec 2014 11:52:20 -0800
-Message-ID: <CANMBJr60MOoHfeSYJK2dN-oyJtLaFWQ3ubjXLQYKfj1WQ8Qb2w@mail.gmail.com>
-References: <1417186209-5256-1-git-send-email-a.kesavan@samsung.com>
-	<1417186209-5256-2-git-send-email-a.kesavan@samsung.com>
-	<7hbnnn5hmy.fsf@deeprootsystems.com>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH V4 1/3] PM / Domains: Initial PM clock support for genpd
+Date: Mon, 01 Dec 2014 17:09:45 -0800
+Message-ID: <7h7fya502u.fsf@deeprootsystems.com>
+References: <1417434623-31301-1-git-send-email-ulf.hansson@linaro.org>
+	<1417434623-31301-2-git-send-email-ulf.hansson@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f181.google.com ([209.85.212.181]:64344 "EHLO
-	mail-wi0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932156AbaLATwW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Dec 2014 14:52:22 -0500
-Received: by mail-wi0-f181.google.com with SMTP id r20so18666234wiv.8
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Dec 2014 11:52:20 -0800 (PST)
-In-Reply-To: <7hbnnn5hmy.fsf@deeprootsystems.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1417434623-31301-2-git-send-email-ulf.hansson@linaro.org> (Ulf
+	Hansson's message of "Mon, 1 Dec 2014 12:50:21 +0100")
+Sender: linux-pm-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Simon Horman <horms@verge.net.au>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Abhilash Kesavan <a.kesavan@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, nicolas.pitre@linaro.org, lorenzo.pieralisi@arm.com, punit.agrawal@arm.com, will.deacon@arm.com, mark.rutland@arm.com, kgene@kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dianders@chromium.org, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, javier.martinez@collabora.co.uk, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Arnd Bergmann <arnd@arndb.de>
 
-On 1 December 2014 at 10:50, Kevin Hilman <khilman@kernel.org> wrote:
-> Abhilash Kesavan <a.kesavan@samsung.com> writes:
->
->> The arndale-octa board was giving "imprecise external aborts" during
->> boot-up with MCPM enabled. CCI enablement of the boot cluster was found
->> to be the cause of these aborts (possibly because the secure f/w was not
->> allowing it). Hence, disable CCI for the arndale-octa board.
->>
->> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
->
-> Tested-by: Kevin Hilman <khilman@linaro.org>
->
-> Tested on top of next-20141128 with exynos_defconfig on my Octa board
-> and I'm not seeing the imprecise aborts anymore.
->
-> Thanks,
->
-> Kevin
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Ulf Hansson <ulf.hansson@linaro.org> writes:
 
-Tested-by: Tyler Baker <tyler.baker@linaro.org>
+> It's quite common for PM domains to use PM clocks. Typically from SOC
+> specific code, the per device PM clock list is created and
+> pm_clk_suspend|resume() are invoked to handle clock gating/ungating.
+>
+> A step towards consolidation is to integrate PM clock support into
+> genpd, which is what this patch does.
+>
+> In this initial step, the calls to the pm_clk_suspend|resume() are
+> handled within genpd, but the per device PM clock list still needs to
+> be created from SOC specific code. It seems reasonable to have gendp to
+> handle that as well, but that left to future patches to address.
+>
+> It's not every users of genpd that are keen on using PM clocks, thus we
+> need to provide this a configuration option for genpd. Therefore let's
+> add flag field in the genpd struct to keep this information and define
+> a new GENDP_FLAG_PM_CLK bit for it.
+>
+> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Tested on top of mainline/master with exynos_defconfig on my
-arndale-octa board.
-One hundred boots attempted with no imprecise aborts.
+Acked-by: Kevin Hilman <khilman@linaro.org>
 
-Cheers,
+Are you also planning to add a way to enable this option from DT?
 
--- 
-Tyler Baker
-Tech Lead, LAVA
-Linaro.org | Open source software for ARM SoCs
-Follow Linaro: http://www.facebook.com/pages/Linaro
-http://twitter.com/#!/linaroorg - http://www.linaro.org/linaro-blog
+Kevin
