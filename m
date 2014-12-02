@@ -1,80 +1,145 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynos4415: Fix build with PM_SLEEP disabled
-Date: Tue, 02 Dec 2014 10:53:32 +0900
-Message-ID: <547D1B9C.9030900@samsung.com>
-References: <1417425174-26694-1-git-send-email-k.kozlowski@samsung.com>
+From: Padma Venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH] dmaengine: pl330: Set residue in tx_status callback
+Date: Tue, 2 Dec 2014 11:08:15 +0530
+Message-ID: <CAAgF-BfpU72KTJjVd8jWStD8yJ5sSmXOiQm77xQunO2QhC9ExQ@mail.gmail.com>
+References: <1416995095-13763-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:47943 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753424AbaLBBxf (ORCPT
+Received: from mail-yk0-f169.google.com ([209.85.160.169]:50933 "EHLO
+	mail-yk0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752714AbaLBFiQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Dec 2014 20:53:35 -0500
-In-reply-to: <1417425174-26694-1-git-send-email-k.kozlowski@samsung.com>
+	Tue, 2 Dec 2014 00:38:16 -0500
+In-Reply-To: <1416995095-13763-1-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, vinod.koul@intel.com, broonie@kernel.org, lars@metafoo.de, Dylan Reid <dgreid@chromium.org>
 
-On 12/01/2014 06:12 PM, Krzysztof Kozlowski wrote:
-> Fix following build errors when PM_SLEEP is disabled (e.g. by disabli=
-ng
-> SUSPEND and HIBERNATION):
->=20
-> drivers/clk/samsung/clk-exynos4415.c: In function =E2=80=98exynos4415=
-_cmu_init=E2=80=99:
-> drivers/clk/samsung/clk-exynos4415.c:982:2: error: =E2=80=98exynos441=
-5_ctx=E2=80=99 undeclared (first use in this function)
-> drivers/clk/samsung/clk-exynos4415.c:982:2: note: each undeclared ide=
-ntifier is reported only once for each function it appears in
-> drivers/clk/samsung/clk-exynos4415.c: In function =E2=80=98exynos4415=
-_cmu_dmc_init=E2=80=99:
-> drivers/clk/samsung/clk-exynos4415.c:1123:2: error: =E2=80=98exynos44=
-15_dmc_ctx=E2=80=99 undeclared (first use in this function)
-> make[3]: *** [drivers/clk/samsung/clk-exynos4415.o] Error 1
->=20
-> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Hi Vinod/Lars,
+
+On 11/26/14, Padmavathi Venna <padma.v@samsung.com> wrote:
+> Fill txstate.residue with the amount of bytes remaining in the current
+> transfer if the transfer is not complete.  This will be of particular
+> use to i2s DMA transfers, providing more accurate hw_ptr values to ASoC.
+>
+> I had taken the code from Dylan Reid <dgreid@chromium.org> patch from the
+> below link and modified according to the current dmaengine framework.
+> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/23007
+>
+> Cc: Dylan Reid <dgreid@chromium.org>
+> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 > ---
->  drivers/clk/samsung/clk-exynos4415.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/samsung/clk-exynos4415.c b/drivers/clk/samsu=
-ng/clk-exynos4415.c
-> index c7208c7a3add..2123fc251e0f 100644
-> --- a/drivers/clk/samsung/clk-exynos4415.c
-> +++ b/drivers/clk/samsung/clk-exynos4415.c
-> @@ -118,12 +118,13 @@ enum exynos4415_plls {
->  	nr_plls,
->  };
-> =20
-> +static struct samsung_clk_provider *exynos4415_ctx;
+>
+> This patch has been tested for audio playback on exynos5420 peach-pit.
+>
+>  drivers/dma/pl330.c |   67
+> +++++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 files changed, 65 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+> index b7493d2..db880ae 100644
+> --- a/drivers/dma/pl330.c
+> +++ b/drivers/dma/pl330.c
+> @@ -2182,11 +2182,74 @@ static void pl330_free_chan_resources(struct
+> dma_chan *chan)
+>  	pm_runtime_put_autosuspend(pch->dmac->ddma.dev);
+>  }
+>
+> +static inline int
+> +pl330_src_addr_in_desc(struct dma_pl330_desc *desc, unsigned int sar)
+> +{
+> +	return ((desc->px.src_addr <= sar) &&
+> +		(sar <= (desc->px.src_addr + desc->px.bytes)));
+> +}
 > +
->  /*
->   * Support for CMU save/restore across system suspends
->   */
->  #ifdef CONFIG_PM_SLEEP
->  static struct samsung_clk_reg_dump *exynos4415_clk_regs;
-> -static struct samsung_clk_provider *exynos4415_ctx;
-> =20
->  static unsigned long exynos4415_cmu_clk_regs[] __initdata =3D {
->  	SRC_LEFTBUS,
-> @@ -1031,9 +1032,10 @@ enum exynos4415_dmc_plls {
->  	nr_dmc_plls,
->  };
-> =20
-> +static struct samsung_clk_provider *exynos4415_dmc_ctx;
+> +static inline int
+> +pl330_dst_addr_in_desc(struct dma_pl330_desc *desc, unsigned int dar)
+> +{
+> +	return ((desc->px.dst_addr <= dar) &&
+> +		(dar <= (desc->px.dst_addr + desc->px.bytes)));
+> +}
 > +
->  #ifdef CONFIG_PM_SLEEP
->  static struct samsung_clk_reg_dump *exynos4415_dmc_clk_regs;
-> -static struct samsung_clk_provider *exynos4415_dmc_ctx;
-> =20
->  static unsigned long exynos4415_cmu_dmc_clk_regs[] __initdata =3D {
->  	MPLL_LOCK,
->=20
+>  static enum dma_status
+>  pl330_tx_status(struct dma_chan *chan, dma_cookie_t cookie,
+>  		 struct dma_tx_state *txstate)
+>  {
+> -	return dma_cookie_status(chan, cookie, txstate);
+> +	dma_addr_t sar, dar;
+> +	struct dma_pl330_chan *pch = to_pchan(chan);
+> +	void __iomem *regs = pch->dmac->base;
+> +	struct pl330_thread *thrd = pch->thread;
+> +	struct dma_pl330_desc *desc;
+> +	unsigned int residue = 0;
+> +	unsigned long flags;
+> +	bool first = true;
+> +	dma_cookie_t first_c, current_c;
+> +	dma_cookie_t used;
+> +	enum dma_status ret;
+> +
+> +	ret = dma_cookie_status(chan, cookie, txstate);
+> +	if (ret == DMA_COMPLETE || !txstate)
+> +		return ret;
+> +
+> +	used = txstate->used;
+> +
+> +	spin_lock_irqsave(&pch->lock, flags);
+> +	sar = readl(regs + SA(thrd->id));
+> +	dar = readl(regs + DA(thrd->id));
+> +
+> +	list_for_each_entry(desc, &pch->work_list, node) {
+> +		if (desc->status == BUSY) {
+> +			current_c = desc->txd.cookie;
+> +			if (first) {
+> +				first_c = desc->txd.cookie;
+> +				first = false;
+> +			}
+> +
+> +			if (first_c < current_c)
+> +				residue += desc->px.bytes;
+> +			else {
+> +				if (desc->rqcfg.src_inc && pl330_src_addr_in_desc(desc, sar)) {
+> +					residue += desc->px.bytes;
+> +					residue -= sar - desc->px.src_addr;
+> +				} else if (desc->rqcfg.dst_inc && pl330_dst_addr_in_desc(desc, dar)) {
+> +					residue += desc->px.bytes;
+> +					residue -= dar - desc->px.dst_addr;
+> +				}
+> +			}
+> +		} else if (desc->status == PREP)
+> +			residue += desc->px.bytes;
+> +
+> +		if (desc->txd.cookie == used)
+> +			break;
+> +	}
+> +	spin_unlock_irqrestore(&pch->lock, flags);
+> +	dma_set_residue(txstate, residue);
+> +	return ret;
+>  }
+>
+>  static void pl330_issue_pending(struct dma_chan *chan)
+> @@ -2631,7 +2694,7 @@ static int pl330_dma_device_slave_caps(struct dma_chan
+> *dchan,
+>  	caps->directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
+>  	caps->cmd_pause = false;
+>  	caps->cmd_terminate = true;
+> -	caps->residue_granularity = DMA_RESIDUE_GRANULARITY_DESCRIPTOR;
+> +	caps->residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
+>
+>  	return 0;
+>  }
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Any comment on this patch?
 
-Thanks,
-Chanwoo Choi
+Thanks
+Padma
+> --
+> 1.7.4.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
