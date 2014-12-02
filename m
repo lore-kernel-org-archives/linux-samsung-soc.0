@@ -1,69 +1,107 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V2 RESEND] arm: dts: Exynos5: Use pmu_system_controller
- phandle for dp phy
-Date: Tue, 02 Dec 2014 17:39:58 +0900
-Message-ID: <000501d00e0b$8e0e8610$aa2b9230$%han@samsung.com>
-References: <1416807683-2257-1-git-send-email-gautam.vivek@samsung.com>
- <CABxcv=mmJp2c=ZC8=0+TW0-x3g7RnELTAFY24KJRjUgf+QrDcQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCHv2 00/19] arm64: Add the support for new 64-bit Exynos5433 SoC
+Date: Tue, 02 Dec 2014 17:49:37 +0900
+Message-ID: <1417510196-6714-1-git-send-email-cw00.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:19602 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750891AbaLBIim (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:13699 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751091AbaLBIuA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Dec 2014 03:38:42 -0500
-In-reply-to: <CABxcv=mmJp2c=ZC8=0+TW0-x3g7RnELTAFY24KJRjUgf+QrDcQ@mail.gmail.com>
-Content-language: ko
+	Tue, 2 Dec 2014 03:50:00 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Javier Martinez Canillas' <javier@dowhile0.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Vivek Gautam' <gautam.vivek@samsung.com>
-Cc: 'Linux Kernel' <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, 'Javier Martinez Canillas' <javier.martinez@collabora.co.uk>, 'Ajay Kumar' <ajaykumar.rs@samsung.com>, 'Kukjin Kim' <kgene@kernel.org>, 'Thierry Reding' <thierry.reding@gmail.com>, 'Jingoo Han' <jg1.han@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kgene.kim@samsung.com, mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, geunsik.lim@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, cw00.choi@samsung.com, a.kesavan@samsung.com, pankaj.dubey@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Tuesday, December 02, 2014 5:17 PM, Javier Martinez Canillas wrote:
-> 
-> Hello Kukjin,
-> 
-> On Mon, Nov 24, 2014 at 6:41 AM, Vivek Gautam <gautam.vivek@samsung.com> wrote:
-> > DP PHY now require pmu-system-controller to handle PMU register
-> > to control PHY's power isolation. Adding the same to dp-phy
-> > node.
-> >
-> > Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> > Reviewed-by: Jingoo Han <jg1.han@samsung.com>
-> > Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> > Cc: Kukjin Kim <kgene@kernel.org>
-> 
-> Any opinions about $subject?
-> 
-> This patch is -rc material since is needed after commit a5ec598 ("phy:
-> exynos-dp-video: Use syscon
-> support to control pmu register") which landed in 3.18. That means
-> that display for Exynos is currently broken in 3.18.
-> 
-> I think it's too late for the 3.18 -rc cycle but at least it would be
-> great to have this merged for 3.19 and backport to stable kernels to
-> have display working again.
+This patchset adds new 64-bit Exynos5433 Samsung SoC which contains quad
+Cortex-A57 and quad Cortex-A53. It is desigend with the 20nm low power process.
 
-I agree with this suggestion.
+This patchset include some patches such as:
+- Support booting of Exynos5433
+- Support UART/MCT/GIC/HSI2C/SPI/PDMA/MSHC
+- Support the clock control for Exynos5433 using common clk framework
 
-> 
-> Thierry had concerns that this change breaks DT backward compability
-> but actually it was already been broken by a5ec598 which changed the
-> DT binding for the phy-exynos-dp-video driver so we should either
-> apply this patch now or revert a5ec598.
+This patchst is based on linux-samsung.git (branch: v3.19-next/dt-samsung-64)
 
-I think that very few people might use old properties for Exynos DP.
-Actually, DT backward compatibility will not be the considerable problem
-in my opinion.
+This patchset has the dependency as following list:
+: The Exynos7 patchset[1] specified dependent patchset for 64-bit SoC.
+ So, this patchset used same dependent patchset of Exynos7 patchset and Exynos7
+ patchset about pinctrl patch. Additionally, SPI/MMC/PDMA patch [2-5] is used
+ for kernel booting and mounting rootfs.
 
-But, in order to keep the DT backward compatibility, we should revert
-a5ec598, and send another patch for keeping the DT backward compatibility.
+1. [PATCH v7 0/7] Enable support for Samsung Exynos7 SoC
+- [1] http://www.spinics.net/lists/linux-samsung-soc/msg38734.html
+2. [PATCH] spi: s3c64xx: add support for exynos7 SPI controller
+- [2] http://www.spinics.net/lists/linux-samsung-soc/msg38607.html
+3. [PATCH V7] mmc: dw_mmc: Add IDMAC 64-bit address mode support
+- [3] https://lkml.org/lkml/2014/10/20/58
+4. [PATCH] mmc: dw_mmc: exynos: Add support for exynos7
+- [4] http://www.spinics.net/lists/linux-mmc/msg28294.html
+5. [PATCH] dmaengine: pl330: Correct device assignment
+- [5] https://lkml.org/lkml/2014/11/6/207
 
-Best regards,
-Jingoo Han
+Changes from v1:
+- Merge two patches (patch2, patch3) to solve incomplete description [by Arnd]
+- Exynos5433 Clock driver
+ : Fix wrong register and code clean by using space instead of tab [Pankaj]
+ : Add CLK_IGNORE_UNUSED flag to pclk_sysreg_* clock for accessing system control register
+ : Remove duplicate definition on the patch for CMU_BUS{0|1|2} domain
+- Exynos5433 SoC DTS
+ : Remove un-supported properties of arch_timer [by Marc and Mark]
+ : Remove 'clock-frequency' property from 'cpus' dt node
+ : Fix interrupt type from edge rising triggering to level high triggering
+   because Cortex-A53/A57 use level triggering.
+ : Fix defult address-size/size-celss from 1 to 2 because Exynos5433 is 64-bit SoC
+ : Modify 'fin_pll' dt node to remove un-needed and ugly code
+ : Move 'chipid' dt node under 'soc'
+ : Use lowercase on all case in exynos5433.dtsi
+ : Add PSCI dt node for secondary cpu boot
+ : Add 'samsung,exynos5433' compatible to MCT dt node
+- Divide pinctrl patch from this patchset
+- Add new following patches:
+  : clocksource: exynos_mct: Add the support for Exynos 64bit SoC
+  : arm64: Enable Exynos5433 SoC in the defconfig
 
-> 
-> Thanks a lot and best regards,
-> Javier
+Chanwoo Choi (18):
+  clk: samsung: exynos5433: Add clocks using common clock framework
+  clk: samsung: exynos5433: Add MUX clocks of CMU_TOP domain
+  clk: samsung: exynos5433: Add clocks for CMU_PERIC domain
+  clk: samsung: exynos5433: Add clocks for CMU_PERIS domain
+  clk: samsung: exynos5433: Add clocks for CMU_G2D domain
+  clk: samsung: exynos5433: Add clocks for CMU_MIF domain
+  clk: samsung: exynos5433: Add clocks for CMU_DISP domain
+  clk: samsung: exynos5433: Add clocks for CMU_AUD domain
+  clk: samsung: exynos5433: Add clocks for CMU_BUS{0|1|2} domains
+  clk: samsung: exynos5433: Add missing clocks for CMU_FSYS domain
+  clk: samsung: exynos5433: Add clocks for CMU_G3D domain
+  clk: samsung: exynos5433: Add clocks for CMU_GSCL domain
+  arm64: exynos5433: Enable ARMv8-based Exynos5433 SoC support
+  arm64: dts: exynos: Add dts files for 64-bit Exynos5433 SoC
+  arm64: dts: exynos: Add SPI/PDMA dt node for Exynos5433
+  serial: samsung: Add the support for Exynos5433 SoC
+  clocksource: exynos_mct: Add the support for Exynos 64bit SoC
+  arm64: Enable Exynos5433 SoC in the defconfig
+
+Jaehoon Chung (1):
+  arm64: dts: exynos: Add MSHC dt node for Exynos5433
+
+ .../devicetree/bindings/clock/exynos5433-clock.txt |  167 +
+ arch/arm64/Kconfig                                 |   10 +
+ arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi |  698 ++++
+ arch/arm64/boot/dts/exynos/exynos5433.dtsi         |  675 ++++
+ arch/arm64/configs/defconfig                       |    1 +
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos5433.c               | 3369 ++++++++++++++++++++
+ drivers/clocksource/Kconfig                        |    1 -
+ drivers/clocksource/exynos_mct.c                   |    4 +
+ drivers/tty/serial/samsung.c                       |   56 +-
+ include/dt-bindings/clock/exynos5433.h             |  843 +++++
+ 11 files changed, 5804 insertions(+), 21 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos5433-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos5433.dtsi
+ create mode 100644 drivers/clk/samsung/clk-exynos5433.c
+ create mode 100644 include/dt-bindings/clock/exynos5433.h
+
+-- 
+1.8.5.5
