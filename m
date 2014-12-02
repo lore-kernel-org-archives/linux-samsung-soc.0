@@ -1,70 +1,263 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCH 18/19] clocksource: exynos_mct: Add the support for Exynos
- 64bit SoC
-Date: Tue, 02 Dec 2014 17:49:55 +0900
-Message-ID: <1417510196-6714-19-git-send-email-cw00.choi@samsung.com>
+Subject: [PATCH 04/19] clk: samsung: exynos5433: Add clocks for CMU_PERIS
+ domain
+Date: Tue, 02 Dec 2014 17:49:41 +0900
+Message-ID: <1417510196-6714-5-git-send-email-cw00.choi@samsung.com>
 References: <1417510196-6714-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1417510196-6714-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, geunsik.lim@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, cw00.choi@samsung.com, a.kesavan@samsung.com, pankaj.dubey@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>
+Cc: mark.rutland@arm.com, jh80.chung@samsung.com, geunsik.lim@samsung.com, kgene.kim@samsung.com, arnd@arndb.de, cw00.choi@samsung.com, marc.zyngier@arm.com, catalin.marinas@arm.com, will.deacon@arm.com, tomasz.figa@gmail.com, a.kesavan@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, s.nawrocki@samsung.com, pankaj.dubey@samsung.com, olof@lixom.net, chanho61.park@samsung.com, devicetree@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds the support for Exynos 64bit SoC. The delay_timer is only used
-for Exynos 32bit SoC.
+This patch adds missing gate clocks of CMU_PERIS domain
+which includes TMU/TZPC/SECKEY/CHIPID/TOPRTC/EFUSE IPs.
+The special clocks of CMU_PERIS use fin_pll source clock directly.
 
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
+Acked-by: Geunsik Lim <geunsik.lim@samsung.com>
 ---
- drivers/clocksource/Kconfig      | 1 -
- drivers/clocksource/exynos_mct.c | 4 ++++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos5433.c   | 146 ++++++++++++++++++++++++++++++++-
+ include/dt-bindings/clock/exynos5433.h |  33 +++++++-
+ 2 files changed, 176 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 9042060..27ef3fa 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -134,7 +134,6 @@ config CLKSRC_METAG_GENERIC
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index a48b36c..7e4612f 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -248,6 +248,7 @@ PNAME(mout_sclk_audio0_p)	= { "ioclk_audiocdclk0", "fin_pll",
+ static struct samsung_fixed_factor_clock top_fixed_factor_clks[] __initdata = {
+ 	FFACTOR(0, "sclk_bus_pll", "fout_bus_pll", 1, 1, 0),
+ 	FFACTOR(0, "sclk_mfc_pll", "fout_mfc_pll", 1, 1, 0),
++	FFACTOR(0, "oscclk_efuse_common", "fin_pll", 1, 1, 0),
+ };
  
- config CLKSRC_EXYNOS_MCT
- 	def_bool y if ARCH_EXYNOS
--	depends on !ARM64
- 	help
- 	  Support for Multi Core Timer controller on Exynos SoCs.
+ static struct samsung_fixed_rate_clock top_fixed_clks[] __initdata = {
+@@ -957,15 +958,69 @@ CLK_OF_DECLARE(exynos5433_cmu_peric, "samsung,exynos5433-cmu-peric",
+ /*
+  * Register offset definitions for CMU_PERIS
+  */
+-#define ENABLE_ACLK_PERIS		0x0800
+-#define ENABLE_PCLK_PERIS		0x0900
++#define ENABLE_ACLK_PERIS				0x0800
++#define ENABLE_PCLK_PERIS				0x0900
++#define ENABLE_PCLK_PERIS_SECURE_TZPC			0x0904
++#define ENABLE_PCLK_PERIS_SECURE_SECKEY_APBIF		0x0908
++#define ENABLE_PCLK_PERIS_SECURE_CHIPID_APBIF		0x090c
++#define ENABLE_PCLK_PERIS_SECURE_TOPRTC			0x0910
++#define ENABLE_PCLK_PERIS_SECURE_CUSTOM_EFUSE_APBIF	0x0914
++#define ENABLE_PCLK_PERIS_SECURE_ANTIRBK_CNT_APBIF	0x0918
++#define ENABLE_PCLK_PERIS_SECURE_OTP_CON_APBIF		0x091c
++#define ENABLE_SCLK_PERIS				0x0a00
++#define ENABLE_SCLK_PERIS_SECURE_SECKEY			0x0a04
++#define ENABLE_SCLK_PERIS_SECURE_CHIPID			0x0a08
++#define ENABLE_SCLK_PERIS_SECURE_TOPRTC			0x0a0c
++#define ENABLE_SCLK_PERIS_SECURE_CUSTOM_EFUSE		0x0a10
++#define ENABLE_SCLK_PERIS_SECURE_ANTIRBK_CNT		0x0a14
++#define ENABLE_SCLK_PERIS_SECURE_OTP_CON		0x0a18
++#define ENABLE_IP_PERIS0				0x0b00
++#define ENABLE_IP_PERIS1				0x0b04
++#define ENABLE_IP_PERIS_SECURE_TZPC			0x0b08
++#define ENABLE_IP_PERIS_SECURE_SECKEY			0x0b0c
++#define ENABLE_IP_PERIS_SECURE_CHIPID			0x0b10
++#define ENABLE_IP_PERIS_SECURE_TOPRTC			0x0b14
++#define ENABLE_IP_PERIS_SECURE_CUSTOM_EFUSE		0x0b18
++#define ENABLE_IP_PERIS_SECURE_ANTIBRK_CNT		0x0b1c
++#define ENABLE_IP_PERIS_SECURE_OTP_CON			0x0b20
  
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 9403061..b840ea1 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -223,6 +223,7 @@ static u64 notrace exynos4_read_sched_clock(void)
- 	return exynos4_read_count_32();
- }
+ static unsigned long peris_clk_regs[] __initdata = {
+ 	ENABLE_ACLK_PERIS,
+ 	ENABLE_PCLK_PERIS,
++	ENABLE_PCLK_PERIS_SECURE_TZPC,
++	ENABLE_PCLK_PERIS_SECURE_SECKEY_APBIF,
++	ENABLE_PCLK_PERIS_SECURE_CHIPID_APBIF,
++	ENABLE_PCLK_PERIS_SECURE_TOPRTC,
++	ENABLE_PCLK_PERIS_SECURE_CUSTOM_EFUSE_APBIF,
++	ENABLE_PCLK_PERIS_SECURE_ANTIRBK_CNT_APBIF,
++	ENABLE_PCLK_PERIS_SECURE_OTP_CON_APBIF,
++	ENABLE_SCLK_PERIS,
++	ENABLE_SCLK_PERIS_SECURE_SECKEY,
++	ENABLE_SCLK_PERIS_SECURE_CHIPID,
++	ENABLE_SCLK_PERIS_SECURE_TOPRTC,
++	ENABLE_SCLK_PERIS_SECURE_CUSTOM_EFUSE,
++	ENABLE_SCLK_PERIS_SECURE_ANTIRBK_CNT,
++	ENABLE_SCLK_PERIS_SECURE_OTP_CON,
++	ENABLE_IP_PERIS0,
++	ENABLE_IP_PERIS1,
++	ENABLE_IP_PERIS_SECURE_TZPC,
++	ENABLE_IP_PERIS_SECURE_SECKEY,
++	ENABLE_IP_PERIS_SECURE_CHIPID,
++	ENABLE_IP_PERIS_SECURE_TOPRTC,
++	ENABLE_IP_PERIS_SECURE_CUSTOM_EFUSE,
++	ENABLE_IP_PERIS_SECURE_ANTIBRK_CNT,
++	ENABLE_IP_PERIS_SECURE_OTP_CON,
+ };
  
-+#if defined(CONFIG_ARM)
- static struct delay_timer exynos4_delay_timer;
+ static struct samsung_gate_clock peris_gate_clks[] __initdata = {
++	/* ENABLE_ACLK_PERIS */
++	GATE(CLK_ACLK_AHB2APB_PERIS1P, "aclk_ahb2apb_peris1p", "aclk_peris_66",
++			ENABLE_ACLK_PERIS, 2, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_AHB2APB_PERIS0P, "aclk_ahb2apb_peris0p", "aclk_peris_66",
++			ENABLE_ACLK_PERIS, 1, CLK_IGNORE_UNUSED, 0),
++	GATE(CLK_ACLK_PERISNP_66, "aclk_perisnp_66", "aclk_peris_66",
++			ENABLE_ACLK_PERIS, 0, CLK_IGNORE_UNUSED, 0),
++
+ 	/* ENABLE_PCLK_PERIS */
+ 	GATE(CLK_PCLK_HPM_APBIF, "pclk_hpm_apbif", "aclk_peris_66",
+ 			ENABLE_PCLK_PERIS, 30, CLK_IGNORE_UNUSED, 0),
+@@ -987,6 +1042,93 @@ static struct samsung_gate_clock peris_gate_clks[] __initdata = {
+ 			ENABLE_PCLK_PERIS, 15, CLK_IGNORE_UNUSED, 0),
+ 	GATE(CLK_PCLK_HDMI_CEC, "pclk_hdmi_cec", "aclk_peris_66",
+ 			ENABLE_PCLK_PERIS, 14, CLK_IGNORE_UNUSED, 0),
++
++	/* ENABLE_PCLK_PERIS_SECURE_TZPC */
++	GATE(CLK_PCLK_TZPC12, "pclk_tzpc12", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 12, 0, 0),
++	GATE(CLK_PCLK_TZPC11, "pclk_tzpc11", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 11, 0, 0),
++	GATE(CLK_PCLK_TZPC10, "pclk_tzpc10", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 10, 0, 0),
++	GATE(CLK_PCLK_TZPC9, "pclk_tzpc9", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 9, 0, 0),
++	GATE(CLK_PCLK_TZPC8, "pclk_tzpc8", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 8, 0, 0),
++	GATE(CLK_PCLK_TZPC7, "pclk_tzpc7", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 7, 0, 0),
++	GATE(CLK_PCLK_TZPC6, "pclk_tzpc6", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 6, 0, 0),
++	GATE(CLK_PCLK_TZPC5, "pclk_tzpc5", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 5, 0, 0),
++	GATE(CLK_PCLK_TZPC4, "pclk_tzpc4", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 4, 0, 0),
++	GATE(CLK_PCLK_TZPC3, "pclk_tzpc3", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 3, 0, 0),
++	GATE(CLK_PCLK_TZPC2, "pclk_tzpc2", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 2, 0, 0),
++	GATE(CLK_PCLK_TZPC1, "pclk_tzpc1", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 1, 0, 0),
++	GATE(CLK_PCLK_TZPC0, "pclk_tzpc0", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TZPC, 0, 0, 0),
++
++	/* ENABLE_PCLK_PERIS_SECURE_SECKEY_APBIF */
++	GATE(CLK_PCLK_SECKEY_APBIF, "pclk_seckey_apbif", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_SECKEY_APBIF, 0, 0, 0),
++
++	/* ENABLE_PCLK_PERIS_SECURE_CHIPID_APBIF */
++	GATE(CLK_PCLK_CHIPID_APBIF, "pclk_chipid_apbif", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_CHIPID_APBIF, 0, 0, 0),
++
++	/* ENABLE_PCLK_PERIS_SECURE_TOPRTC */
++	GATE(CLK_PCLK_TOPRTC, "pclk_toprtc", "aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_TOPRTC, 0, 0, 0),
++
++	/* ENABLE_PCLK_PERIS_SECURE_CUSTOM_EFUSE_APBIF */
++	GATE(CLK_PCLK_CUSTOM_EFUSE_APBIF, "pclk_custom_efuse_apbif",
++			"aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_CUSTOM_EFUSE_APBIF, 0, 0, 0),
++
++	/* ENABLE_PCLK_PERIS_SECURE_ANTIRBK_CNT_APBIF */
++	GATE(CLK_PCLK_ANTIRBK_CNT_APBIF, "pclk_antirbk_cnt_apbif",
++			"aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_ANTIRBK_CNT_APBIF, 0, 0, 0),
++
++	/* ENABLE_PCLK_PERIS_SECURE_OTP_CON_APBIF */
++	GATE(CLK_PCLK_OTP_CON_APBIF, "pclk_otp_con_apbif",
++			"aclk_peris_66",
++			ENABLE_PCLK_PERIS_SECURE_OTP_CON_APBIF, 0, 0, 0),
++
++	/* ENABLE_SCLK_PERIS */
++	GATE(CLK_SCLK_ASV_TB, "sclk_asv_tb", "oscclk_efuse_common",
++			ENABLE_SCLK_PERIS, 10, 0, 0),
++	GATE(CLK_SCLK_TMU1, "sclk_tmu1", "oscclk_efuse_common",
++			ENABLE_SCLK_PERIS, 4, 0, 0),
++	GATE(CLK_SCLK_TMU0, "sclk_tmu0", "oscclk_efuse_common",
++			ENABLE_SCLK_PERIS, 3, 0, 0),
++
++	/* ENABLE_SCLK_PERIS_SECURE_SECKEY */
++	GATE(CLK_SCLK_SECKEY, "sclk_seckey", "oscclk_efuse_common",
++			ENABLE_SCLK_PERIS_SECURE_SECKEY, 0, 0, 0),
++
++	/* ENABLE_SCLK_PERIS_SECURE_CHIPID */
++	GATE(CLK_SCLK_CHIPID, "sclk_chipid", "oscclk_efuse_common",
++			ENABLE_SCLK_PERIS_SECURE_CHIPID, 0, 0, 0),
++
++	/* ENABLE_SCLK_PERIS_SECURE_TOPRTC */
++	GATE(CLK_SCLK_TOPRTC, "sclk_toprtc", "oscclk_efuse_common",
++			ENABLE_SCLK_PERIS_SECURE_TOPRTC, 0, 0, 0),
++
++	/* ENABLE_SCLK_PERIS_SECURE_CUSTOM_EFUSE */
++	GATE(CLK_SCLK_CUSTOM_EFUSE, "sclk_custom_efuse", "oscclk_efuse_common",
++			ENABLE_SCLK_PERIS_SECURE_CUSTOM_EFUSE, 0, 0, 0),
++
++	/* ENABLE_SCLK_PERIS_SECURE_ANTIRBK_CNT */
++	GATE(CLK_SCLK_ANTIRBK_CNT, "sclk_antirbk_cnt", "oscclk_efuse_common",
++			ENABLE_SCLK_PERIS_SECURE_ANTIRBK_CNT, 0, 0, 0),
++
++	/* ENABLE_SCLK_PERIS_SECURE_OTP_CON */
++	GATE(CLK_SCLK_OTP_CON, "sclk_otp_con", "oscclk_efuse_common",
++			ENABLE_SCLK_PERIS_SECURE_OTP_CON, 0, 0, 0),
+ };
  
- static cycles_t exynos4_read_current_timer(void)
-@@ -231,14 +232,17 @@ static cycles_t exynos4_read_current_timer(void)
- 			 "cycles_t needs to move to 32-bit for ARM64 usage");
- 	return exynos4_read_count_32();
- }
-+#endif
+ static struct samsung_cmu_info peris_cmu_info __initdata = {
+diff --git a/include/dt-bindings/clock/exynos5433.h b/include/dt-bindings/clock/exynos5433.h
+index 8535917..48eb6f3 100644
+--- a/include/dt-bindings/clock/exynos5433.h
++++ b/include/dt-bindings/clock/exynos5433.h
+@@ -227,8 +227,39 @@
+ #define	CLK_PCLK_WDT_ATLAS		8
+ #define	CLK_PCLK_MCT			9
+ #define	CLK_PCLK_HDMI_CEC		10
++#define CLK_ACLK_AHB2APB_PERIS1P	11
++#define CLK_ACLK_AHB2APB_PERIS0P	12
++#define CLK_ACLK_PERISNP_66		13
++#define CLK_PCLK_TZPC12			14
++#define CLK_PCLK_TZPC11			15
++#define CLK_PCLK_TZPC10			16
++#define CLK_PCLK_TZPC9			17
++#define CLK_PCLK_TZPC8			18
++#define CLK_PCLK_TZPC7			19
++#define CLK_PCLK_TZPC6			20
++#define CLK_PCLK_TZPC5			21
++#define CLK_PCLK_TZPC4			22
++#define CLK_PCLK_TZPC3			23
++#define CLK_PCLK_TZPC2			24
++#define CLK_PCLK_TZPC1			25
++#define CLK_PCLK_TZPC0			26
++#define CLK_PCLK_SECKEY_APBIF		27
++#define CLK_PCLK_CHIPID_APBIF		28
++#define CLK_PCLK_TOPRTC			29
++#define CLK_PCLK_CUSTOM_EFUSE_APBIF	30
++#define CLK_PCLK_ANTIRBK_CNT_APBIF	31
++#define CLK_PCLK_OTP_CON_APBIF		32
++#define CLK_SCLK_ASV_TB			33
++#define CLK_SCLK_TMU1			34
++#define CLK_SCLK_TMU0			35
++#define CLK_SCLK_SECKEY			36
++#define CLK_SCLK_CHIPID			37
++#define CLK_SCLK_TOPRTC			38
++#define CLK_SCLK_CUSTOM_EFUSE		39
++#define CLK_SCLK_ANTIRBK_CNT		40
++#define CLK_SCLK_OTP_CON		41
  
- static void __init exynos4_clocksource_init(void)
- {
- 	exynos4_mct_frc_start();
+-#define PERIS_NR_CLK			11
++#define PERIS_NR_CLK			42
  
-+#if defined(CONFIG_ARM)
- 	exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
- 	exynos4_delay_timer.freq = clk_rate;
- 	register_current_timer_delay(&exynos4_delay_timer);
-+#endif
- 
- 	if (clocksource_register_hz(&mct_frc, clk_rate))
- 		panic("%s: can't register clocksource\n", mct_frc.name);
+ /* CMU_FSYS */
+ #define CLK_MOUT_ACLK_FSYS_200_USER	1
 -- 
 1.8.5.5
