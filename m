@@ -1,82 +1,106 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH 0/4] removal of extra abstraction layers
-Date: Tue, 2 Dec 2014 10:38:47 -0200
-Message-ID: <20141202123847.GA9426@joana>
-References: <1416853266-10584-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Yadwinder Singh Brar <yadi.brar@samsung.com>
+Subject: [PATCH] mfd: max77686: Fix parent of rtc device
+Date: Tue, 02 Dec 2014 18:15:39 +0530
+Message-ID: <1417524339-4604-1-git-send-email-yadi.brar@samsung.com>
+References: <1417523620-4311-1-git-send-email-yadi.brar@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f169.google.com ([209.85.216.169]:58108 "EHLO
-	mail-qc0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932724AbaLBMiw (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:47492 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751211AbaLBMqw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Dec 2014 07:38:52 -0500
-Received: by mail-qc0-f169.google.com with SMTP id w7so9283438qcr.28
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Dec 2014 04:38:51 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1416853266-10584-1-git-send-email-gustavo@padovan.org>
+	Tue, 2 Dec 2014 07:46:52 -0500
+In-reply-to: <1417523620-4311-1-git-send-email-yadi.brar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+To: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: lee.jones@linaro.org, sameo@linux.intel.com, akpm@linux-foundation.org, tomasz.figa@gmail.com, robh+dt@kernel.org, yadi.brar01@gmail.com, Yadwinder Singh Brar <yadi.brar@samsung.com>
 
-Hi Inki,
+rtc have different i2c client than power(pmic) block. So rtc device should
+sit under its own i2c client in device hierarchy, which reflects in sysfs also.
+This patch modifies code to register rtc cell with rtc->dev as parent.
 
-Can you please review this? I also have sent other two patch sets that sits on
-top of this one. Thanks.
+Without this patch :
+# ls /sys/class/i2c-adapter/i2c-0/0-0009/
+driver         max77686-pmic  modalias       power          uevent
+max77686-clk   max77686-rtc   name           subsystem
 
-	Gustavo
+After applying patch :
+# ls /sys/class/i2c-adapter/i2c-0/0-0006/
+driver/        modalias       power/         uevent
+max77686-rtc/  name           subsystem/
 
-2014-11-24 Gustavo Padovan <gustavo@padovan.org>:
+Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
+---
 
-> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> 
-> Hi Inki,                                                                        
->                                                                                 
-> In this series I've removed some level of indirection from the exynos_drm_code. 
-> There two moves in these patches, first we remove all exynos_drm_crtc_plane_*() 
-> wrappers and call the manager specific functions directly. The other change is  
-> the removal of struct exynos_drm_overlay(). In my understanding the overlay     
-> struct was just storing plane data in a 1:1 relationship so it made sense to    
-> merge its fields in struct exynos_drm_plane and remove another abstraction from 
-> the driver.                                                                     
->                                                                                 
-> Next steps:                                                                     
->                                                                                 
-> During our initial investigation on the Exynos DRM driver we've spoted a few    
-> abstractions that could be removed to get a more clean and less abstract code.  
->         - struct exynos_drm_manager: this is just a helper of                   
->         struct exynos_drm_crtc,  I suggest we could merge them both.            
->         - struct *_win_data: Most of the share common fields and could be merged
->         int struct exynos_drm_plane.                                            
->         - some more function wrapper can be removed as well.                    
->                                                                                 
-> After these changes intead of looking to manager and win_data we will look into 
-> crtc and planes. The new names give us more clue about what a piece of code is  
-> doing since they are already defined and used by the whole DRM ecossytem.       
->                                                                                 
-> What your thoughts on this? I've seen that you pushed some patches to remove    
-> static usage of managers so I would like to check with you which direction are  
-> you planning to go with this. I've done some code[0] around this but now it     
-> needs a rebase against you exynos-drm-next.                                     
->                                                                                 
-> [0] https://git.kernel.org/cgit/linux/kernel/git/padovan/drm-exynos.git/log/?h=cleanup
-> 
-> Gustavo Padovan (4):
->   drm/exynos: move to_exynos_crtc() macro to main header
->   drm/exynos: expose struct exynos_drm_crtc
->   drm/exynos: remove exynos_drm_crtc_plane_* wrappers
->   drm/exynos: remove struct exynos_drm_overlay
-> 
->  drivers/gpu/drm/exynos/exynos_drm_crtc.c  | 66 ---------------------
->  drivers/gpu/drm/exynos/exynos_drm_crtc.h  |  2 +-
->  drivers/gpu/drm/exynos/exynos_drm_drv.h   | 43 +++++++++++++-
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c  | 44 +++++++-------
->  drivers/gpu/drm/exynos/exynos_drm_plane.c | 96 +++++++++++++++----------------
->  drivers/gpu/drm/exynos/exynos_drm_vidi.c  | 38 ++++++------
->  drivers/gpu/drm/exynos/exynos_mixer.c     | 50 ++++++++--------
->  7 files changed, 156 insertions(+), 183 deletions(-)
-> 
-> -- 
-> 1.9.3
-> 
+Or Can we follow another (exhaustive but more cleaner) approach, which will
+be more like code refactoring and cleanup rather than only fix:
+Since rtc uses i2c client, which gets created using i2c_new_dummy() and is not
+shared by any other cell of max77686. So we can covert rtc platform driver
+itself to i2c client driver. It will also allow to expilicitly describe
+max77686-rtc in DT which we can't do now.
+It can be applicable to some other existing and new mfd pmic drivers.
+Any suggestion/comments ?
+
+---
+ drivers/mfd/max77686.c |   22 ++++++++++++++++++++--
+ 1 files changed, 20 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/mfd/max77686.c b/drivers/mfd/max77686.c
+index 929795e..22c0948 100644
+--- a/drivers/mfd/max77686.c
++++ b/drivers/mfd/max77686.c
+@@ -39,10 +39,13 @@
+ 
+ static const struct mfd_cell max77686_devs[] = {
+ 	{ .name = "max77686-pmic", },
+-	{ .name = "max77686-rtc", },
+ 	{ .name = "max77686-clk", },
+ };
+ 
++static const struct mfd_cell max77686_rtc_dev[] = {
++	{ .name = "max77686-rtc", },
++};
++
+ static const struct mfd_cell max77802_devs[] = {
+ 	{ .name = "max77802-pmic", },
+ 	{ .name = "max77802-clk", },
+@@ -332,14 +335,27 @@ static int max77686_i2c_probe(struct i2c_client *i2c,
+ 		goto err_del_irqc;
+ 	}
+ 
++	if (max77686->type == TYPE_MAX77686) {
++		ret = mfd_add_devices(&max77686->rtc->dev, -1, max77686_rtc_dev,
++			1, NULL, 0, NULL);
++		if (ret < 0) {
++			dev_err(&max77686->rtc->dev,
++				"failed to add RTC device %d\n", ret);
++			goto err_del_rtc_irqc;
++		}
++	}
++
+ 	ret = mfd_add_devices(max77686->dev, -1, cells, n_devs, NULL, 0, NULL);
+ 	if (ret < 0) {
+ 		dev_err(&i2c->dev, "failed to add MFD devices: %d\n", ret);
+-		goto err_del_rtc_irqc;
++		goto err_del_rtc_dev;
+ 	}
+ 
+ 	return 0;
+ 
++err_del_rtc_dev:
++	if (max77686->type == TYPE_MAX77686)
++		mfd_remove_devices(&max77686->rtc->dev);
+ err_del_rtc_irqc:
+ 	regmap_del_irq_chip(max77686->irq, max77686->rtc_irq_data);
+ err_del_irqc:
+@@ -356,6 +372,8 @@ static int max77686_i2c_remove(struct i2c_client *i2c)
+ 	struct max77686_dev *max77686 = i2c_get_clientdata(i2c);
+ 
+ 	mfd_remove_devices(max77686->dev);
++	if (max77686->type == TYPE_MAX77686)
++		mfd_remove_devices(&max77686->rtc->dev);
+ 
+ 	regmap_del_irq_chip(max77686->irq, max77686->rtc_irq_data);
+ 	regmap_del_irq_chip(max77686->irq, max77686->irq_data);
+-- 
+1.7.0.4
