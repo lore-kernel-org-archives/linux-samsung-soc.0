@@ -1,43 +1,80 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH V4 1/3] PM / Domains: Initial PM clock support for genpd
-Date: Mon, 01 Dec 2014 17:09:45 -0800
-Message-ID: <7h7fya502u.fsf@deeprootsystems.com>
-References: <1417434623-31301-1-git-send-email-ulf.hansson@linaro.org>
-	<1417434623-31301-2-git-send-email-ulf.hansson@linaro.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos4415: Fix build with PM_SLEEP disabled
+Date: Tue, 02 Dec 2014 10:53:32 +0900
+Message-ID: <547D1B9C.9030900@samsung.com>
+References: <1417425174-26694-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1417434623-31301-2-git-send-email-ulf.hansson@linaro.org> (Ulf
-	Hansson's message of "Mon, 1 Dec 2014 12:50:21 +0100")
-Sender: linux-pm-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Simon Horman <horms@verge.net.au>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Arnd Bergmann <arnd@arndb.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:47943 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753424AbaLBBxf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 1 Dec 2014 20:53:35 -0500
+In-reply-to: <1417425174-26694-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Ulf Hansson <ulf.hansson@linaro.org> writes:
+On 12/01/2014 06:12 PM, Krzysztof Kozlowski wrote:
+> Fix following build errors when PM_SLEEP is disabled (e.g. by disabli=
+ng
+> SUSPEND and HIBERNATION):
+>=20
+> drivers/clk/samsung/clk-exynos4415.c: In function =E2=80=98exynos4415=
+_cmu_init=E2=80=99:
+> drivers/clk/samsung/clk-exynos4415.c:982:2: error: =E2=80=98exynos441=
+5_ctx=E2=80=99 undeclared (first use in this function)
+> drivers/clk/samsung/clk-exynos4415.c:982:2: note: each undeclared ide=
+ntifier is reported only once for each function it appears in
+> drivers/clk/samsung/clk-exynos4415.c: In function =E2=80=98exynos4415=
+_cmu_dmc_init=E2=80=99:
+> drivers/clk/samsung/clk-exynos4415.c:1123:2: error: =E2=80=98exynos44=
+15_dmc_ctx=E2=80=99 undeclared (first use in this function)
+> make[3]: *** [drivers/clk/samsung/clk-exynos4415.o] Error 1
+>=20
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos4415.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/samsung/clk-exynos4415.c b/drivers/clk/samsu=
+ng/clk-exynos4415.c
+> index c7208c7a3add..2123fc251e0f 100644
+> --- a/drivers/clk/samsung/clk-exynos4415.c
+> +++ b/drivers/clk/samsung/clk-exynos4415.c
+> @@ -118,12 +118,13 @@ enum exynos4415_plls {
+>  	nr_plls,
+>  };
+> =20
+> +static struct samsung_clk_provider *exynos4415_ctx;
+> +
+>  /*
+>   * Support for CMU save/restore across system suspends
+>   */
+>  #ifdef CONFIG_PM_SLEEP
+>  static struct samsung_clk_reg_dump *exynos4415_clk_regs;
+> -static struct samsung_clk_provider *exynos4415_ctx;
+> =20
+>  static unsigned long exynos4415_cmu_clk_regs[] __initdata =3D {
+>  	SRC_LEFTBUS,
+> @@ -1031,9 +1032,10 @@ enum exynos4415_dmc_plls {
+>  	nr_dmc_plls,
+>  };
+> =20
+> +static struct samsung_clk_provider *exynos4415_dmc_ctx;
+> +
+>  #ifdef CONFIG_PM_SLEEP
+>  static struct samsung_clk_reg_dump *exynos4415_dmc_clk_regs;
+> -static struct samsung_clk_provider *exynos4415_dmc_ctx;
+> =20
+>  static unsigned long exynos4415_cmu_dmc_clk_regs[] __initdata =3D {
+>  	MPLL_LOCK,
+>=20
 
-> It's quite common for PM domains to use PM clocks. Typically from SOC
-> specific code, the per device PM clock list is created and
-> pm_clk_suspend|resume() are invoked to handle clock gating/ungating.
->
-> A step towards consolidation is to integrate PM clock support into
-> genpd, which is what this patch does.
->
-> In this initial step, the calls to the pm_clk_suspend|resume() are
-> handled within genpd, but the per device PM clock list still needs to
-> be created from SOC specific code. It seems reasonable to have gendp to
-> handle that as well, but that left to future patches to address.
->
-> It's not every users of genpd that are keen on using PM clocks, thus we
-> need to provide this a configuration option for genpd. Therefore let's
-> add flag field in the genpd struct to keep this information and define
-> a new GENDP_FLAG_PM_CLK bit for it.
->
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Acked-by: Kevin Hilman <khilman@linaro.org>
-
-Are you also planning to add a way to enable this option from DT?
-
-Kevin
+Thanks,
+Chanwoo Choi
