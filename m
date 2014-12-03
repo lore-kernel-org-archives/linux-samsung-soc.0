@@ -1,50 +1,69 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v4 1/2] soc: samsung: add exynos chipid driver support
-Date: Wed, 03 Dec 2014 11:43:24 +0100
-Message-ID: <19026872.NZqUJn3Abb@wuerfel>
-References: <1417594658-2931-1-git-send-email-pankaj.dubey@samsung.com> <1417594658-2931-2-git-send-email-pankaj.dubey@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [GIT PULL 4/4] Samsung exynos7 updates for v3.19
+Date: Wed, 03 Dec 2014 19:49:34 +0900
+Message-ID: <020801d00ee6$d3992380$7acb6a80$@kernel.org>
+References: <5476CD88.1030406@kernel.org> <201411281335.55663.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:64801 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750963AbaLCKoT (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:17908 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750840AbaLCKth (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Dec 2014 05:44:19 -0500
-In-Reply-To: <1417594658-2931-2-git-send-email-pankaj.dubey@samsung.com>
+	Wed, 3 Dec 2014 05:49:37 -0500
+Received: from epcpsbgr2.samsung.com
+ (u142.gpu120.samsung.co.kr [203.254.230.142])
+ by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NG000DR862NTDB0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 03 Dec 2014 19:49:35 +0900 (KST)
+In-reply-to: 
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, heiko@sntech.de, Linus Walleij <linus.walleij@linaro.org>, tomasz.figa@gmail.com, Rob Herring <robh+dt@kernel.org>, thomas.ab@samsung.com, Grant Likely <grant.likely@linaro.org>
+To: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, 'Mike Turquette' <mturquette@linaro.org>, arm@kernel.org, 'Kevin Hilman' <khilman@linaro.org>, 'Kukjin Kim' <kgene@kernel.org>, 'Olof Johansson' <olof@lixom.net>
 
-> Exynos SoCs have Chipid, for identification of product IDs
-> and SoC revisions. This patch intendes to provide initialization
-> code for all these functionalites, at the same time it provides some
-> sysfs entries for accessing these information to userspace.
+Kukjin Kim wrote:
 > 
-> This driver usese existing binding for exnos-chipid.
+> Arnd Bergmann wrote:
+> >
+> > On Thursday 27 November 2014, Kukjin Kim wrote:
+> > > Samsung arch/arm64 DT updates for v3.19
+> > >
+> > > - to support ARMv8 based exynos7 SoC
+> > >   : add initial device tree and add pinctrl, PMU, mmc, i2c, rtc,
+> > >     watchdog, and adc nodes for exynos7 SoC and exynos7 based
+> > >     espresso board.
+> > >
+> > > NOTE that this is including following dependencies
+> > > : cleanup/dts-subdirs in arm-soc for arm64 vendor support
+> > > : tags/samsung-driver for samsung serial
+> > > : for-v3.19/exynos-clk in samsung-clk tree for exynos7 clk
+> > >
+> > > One more NOTE, for support exynos7 we need Liviu's "arm64: Create
+> > > link to include/dt-bindings to enable C preprocessor use" in arm-soc
+> > > tree and arm64 defconfig update should be handled directly.
+> >
+> > I'm confused by the dependencies. I don't see a "for-v3.19/exynos-clk"
+> > in arm-soc, you haven't put the clk maintainer on Cc and I see no indication
+> > that he has this in his tree already, so I'm not pulling this until further
+> > clarification.
+> >
+> Hi,
+> 
+> Sorry for insufficient description.
+> 
+> Since the exynos7 stuff requires regarding clk stuff for kernel build, I talked
+> to Mike, Sylwester and Mike suggested pulling the branch into Samsung tree.
+> 
+> http://www.spinics.net/lists/linux-samsung-soc/msg39368.html
+> 
+> If any problems, please let me know.
+> 
+Hi Arnd,
 
-Nice!
+Do you have any concerns on this?
 
-On Wednesday 03 December 2014 13:47:37 Pankaj Dubey wrote:
-
-> +       soc_dev_attr->soc_id = exynos_product_id_to_name(soc_product_id);
-> +
-> +       soc_dev = soc_device_register(soc_dev_attr);
-> +       if (IS_ERR(soc_dev))
-> +               goto free_rev;
-> +
-> +       device_create_file(soc_device_to_device(soc_dev), &exynos_product_attr);
-> +       device_create_file(soc_device_to_device(soc_dev),
-> +                               &exynos_main_rev_attr);
-> +       device_create_file(soc_device_to_device(soc_dev), &exynos_sub_rev_attr);
-> +
-
-I don't like the idea of having three extra nonstandard properties here,
-especially when you are not using the machine field for anything useful.
-
-Also, all three of these just come from the same register, why expose
-them all as the machine and revision standard properties.
-
-	Arnd
+- Kukjin
