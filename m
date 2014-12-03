@@ -1,32 +1,42 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v9 0/7] Enable L2 cache support on Exynos4210/4x12 SoCs
-Date: Wed, 3 Dec 2014 16:03:32 +0000
-Message-ID: <20141203160332.GA11502@n2100.arm.linux.org.uk>
-References: <1416224909-4290-1-git-send-email-m.szyprowski@samsung.com>
- <20141127225100.GA3840@n2100.arm.linux.org.uk>
- <54783899.2060604@samsung.com>
- <3059840.P4aX5Il9dy@wuerfel>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH] ARM: dts: Add dts file for odroid XU3 board
+Date: Wed, 03 Dec 2014 11:53:10 -0800
+Message-ID: <7hzjb4y0gp.fsf@deeprootsystems.com>
+References: <1417438770-28696-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:35873 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751923AbaLCQDr (ORCPT
+Received: from mail-pd0-f174.google.com ([209.85.192.174]:42316 "EHLO
+	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750862AbaLCTxN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Dec 2014 11:03:47 -0500
-Content-Disposition: inline
-In-Reply-To: <3059840.P4aX5Il9dy@wuerfel>
+	Wed, 3 Dec 2014 14:53:13 -0500
+Received: by mail-pd0-f174.google.com with SMTP id w10so16002480pde.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 03 Dec 2014 11:53:13 -0800 (PST)
+In-Reply-To: <1417438770-28696-1-git-send-email-sjoerd.simons@collabora.co.uk>
+	(Sjoerd Simons's message of "Mon, 1 Dec 2014 13:59:30 +0100")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>, Mark Rutland <mark.rutland@arm.com>, linux-samsung-soc@vger.kernel.org, lauraa@codeaurora.org, tony@atomide.com, linus.walleij@linaro.org, linux-kernel@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>, loeliger@gmail.com, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, linux-omap@vger.kernel.org, drake@endlessm.com
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Fri, Nov 28, 2014 at 12:11:38PM +0100, Arnd Bergmann wrote:
-> I'm fine with it either way. Russell, if you like you can merge
-> http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung v3.19-next/pm-samsung-2
+Sjoerd Simons <sjoerd.simons@collabora.co.uk> writes:
 
-It'd be nicer to have a git URL for it.
+> Add DTS for the Hardkernel Odroid XU3. The name of the DTS file is kept the
+> same as the vendors naming, which means it's prefixed with exynos5422
+> instead of exynos5800 as the SoC name even though it includes the
+> exyno5800 dtsi.
+>
+> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+Tested-by: Kevin Hilman <khilman@linaro.org>
+
+Tried this on top of linux-next (next-20141125 and next20141203) and
+boots fine on my odroid-xu3. 
+
+Thanks for doing this, I've been meaning to get a DTS upstream for this
+platform myself.  I also noticed that the imprecise aborts I've been
+seeing when booting this board with the smdk5420 DTS are gone, so I
+don't have to dig into those now either.  Thanks!  :)
+
+Kevin
