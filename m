@@ -1,47 +1,96 @@
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: [PATCH] hwrandom / exynos / PM: Use CONFIG_PM in #ifdef
-Date: Wed, 03 Dec 2014 02:40:35 +0100
-Message-ID: <1743562.8SOccckWiK@vostro.rjw.lan>
+Subject: [PATCH] drm / exynos / PM: Replace CONFIG_PM_RUNTIME with CONFIG_PM
+Date: Wed, 03 Dec 2014 02:53:44 +0100
+Message-ID: <19437813.I83iiGloeA@vostro.rjw.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-samsung-soc@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from v094114.home.net.pl ([79.96.170.134]:63629 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1751005AbaLCBcU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 2 Dec 2014 20:32:20 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Jingoo Han <jg1.han@samsung.com>, Inki Dae <inki.dae@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, David Airlie <airlied@linux.ie>, Kukjin Kim <kgene.kim@samsung.com>, dri-devel@lists.freedesktop.org, Linux PM list <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
 From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-CONFIG_PM is defined as the alternative of CONFIG_PM_RUNTIME and
-CONFIG_PM_SLEEP, so it can be used instead of that.
+After commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if PM_SLEEP is
+selected) PM_RUNTIME is always set if PM is set, so #ifdef blocks
+depending on CONFIG_PM_RUNTIME may now be changed to depend on
+CONFIG_PM.
 
-Besides, after commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if
-PM_SLEEP is selected) PM_RUNTIME is always set if PM is set, so
-using the alternative isn't even necessary.
-
-Use CONFIG_PM instead of it in drivers/char/hw_random/exynos-rng.c.
+Replace CONFIG_PM_RUNTIME with CONFIG_PM in 4 files under
+gpu/drm/exynos/.
 
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
 
+Note: This depends on commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if
+PM_SLEEP is selected) which is only in linux-next at the moment (via the
+linux-pm tree).
+
 Please let me know if it is OK to take this one into linux-pm.
 
 ---
- drivers/char/hw_random/exynos-rng.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/exynos/exynos_drm_fimc.c    |    2 +-
+ drivers/gpu/drm/exynos/exynos_drm_g2d.c     |    2 +-
+ drivers/gpu/drm/exynos/exynos_drm_gsc.c     |    2 +-
+ drivers/gpu/drm/exynos/exynos_drm_rotator.c |    2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-Index: linux-pm/drivers/char/hw_random/exynos-rng.c
+Index: linux-pm/drivers/gpu/drm/exynos/exynos_drm_fimc.c
 ===================================================================
---- linux-pm.orig/drivers/char/hw_random/exynos-rng.c
-+++ linux-pm/drivers/char/hw_random/exynos-rng.c
-@@ -143,7 +143,7 @@ static int exynos_rng_remove(struct plat
- 	return 0;
+--- linux-pm.orig/drivers/gpu/drm/exynos/exynos_drm_fimc.c
++++ linux-pm/drivers/gpu/drm/exynos/exynos_drm_fimc.c
+@@ -1817,7 +1817,7 @@ static int fimc_resume(struct device *de
  }
+ #endif
  
--#if defined(CONFIG_PM_SLEEP) || defined(CONFIG_PM_RUNTIME)
+-#ifdef CONFIG_PM_RUNTIME
 +#ifdef CONFIG_PM
- static int exynos_rng_runtime_suspend(struct device *dev)
+ static int fimc_runtime_suspend(struct device *dev)
  {
- 	struct platform_device *pdev = to_platform_device(dev);
-
+ 	struct fimc_context *ctx = get_fimc_context(dev);
+Index: linux-pm/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+===================================================================
+--- linux-pm.orig/drivers/gpu/drm/exynos/exynos_drm_gsc.c
++++ linux-pm/drivers/gpu/drm/exynos/exynos_drm_gsc.c
+@@ -1764,7 +1764,7 @@ static int gsc_resume(struct device *dev
+ }
+ #endif
+ 
+-#ifdef CONFIG_PM_RUNTIME
++#ifdef CONFIG_PM
+ static int gsc_runtime_suspend(struct device *dev)
+ {
+ 	struct gsc_context *ctx = get_gsc_context(dev);
+Index: linux-pm/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+===================================================================
+--- linux-pm.orig/drivers/gpu/drm/exynos/exynos_drm_rotator.c
++++ linux-pm/drivers/gpu/drm/exynos/exynos_drm_rotator.c
+@@ -822,7 +822,7 @@ static int rotator_resume(struct device
+ }
+ #endif
+ 
+-#ifdef CONFIG_PM_RUNTIME
++#ifdef CONFIG_PM
+ static int rotator_runtime_suspend(struct device *dev)
+ {
+ 	struct rot_context *rot = dev_get_drvdata(dev);
+Index: linux-pm/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+===================================================================
+--- linux-pm.orig/drivers/gpu/drm/exynos/exynos_drm_g2d.c
++++ linux-pm/drivers/gpu/drm/exynos/exynos_drm_g2d.c
+@@ -1540,7 +1540,7 @@ static int g2d_resume(struct device *dev
+ }
+ #endif
+ 
+-#ifdef CONFIG_PM_RUNTIME
++#ifdef CONFIG_PM
+ static int g2d_runtime_suspend(struct device *dev)
+ {
+ 	struct g2d_data *g2d = dev_get_drvdata(dev);
