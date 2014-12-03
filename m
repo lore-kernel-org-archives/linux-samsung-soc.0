@@ -1,44 +1,40 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH] ARM: samsung: add exynos-chipid binding information
-Date: Wed, 03 Dec 2014 13:14:24 +0530
-Message-ID: <1417592664-10672-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:22469 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750815AbaLCHwF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Dec 2014 02:52:05 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jaewon Kim <jaewon02.kim@samsung.com>
+Subject: [PATCH v5 2/2] ARM: dts: Add haptics node for exynos3250-rinato
+Date: Wed, 03 Dec 2014 16:55:28 +0900
+Message-ID: <1417593328-8223-3-git-send-email-jaewon02.kim@samsung.com>
+References: <1417593328-8223-1-git-send-email-jaewon02.kim@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1417593328-8223-1-git-send-email-jaewon02.kim@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Jaewon Kim <jaewon02.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, robh+dt@kernel.org, ijc+devicetree@hellion.org.uk, pawel.moll@arm.com, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Exynos SoC's DT files are using Chipid device nodes, but it's binding
-information is missing. This patch adds exynos-chipid binding information.
+This patch adds regulator-haptic device node controlled by regulator.
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 ---
- .../bindings/arm/samsung/exynos-chipid.txt         |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos-chipid.txt
+ arch/arm/boot/dts/exynos3250-rinato.dts |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.txt b/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.txt
-new file mode 100644
-index 0000000..85c5dfd
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/samsung/exynos-chipid.txt
-@@ -0,0 +1,12 @@
-+SAMSUNG Exynos SoCs Chipid driver.
+diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
+index 84380fa..da03005 100644
+--- a/arch/arm/boot/dts/exynos3250-rinato.dts
++++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+@@ -104,6 +104,13 @@
+ 			};
+ 		};
+ 	};
 +
-+Required properties:
-+- compatible : Should at least contain "samsung,exynos4210-chipid".
-+
-+- reg: offset and length of the register set
-+
-+Example:
-+	chipid@10000000 {
-+		compatible = "samsung,exynos4210-chipid";
-+		reg = <0x10000000 0x100>;
++	haptics {
++		compatible = "regulator-haptic";
++		haptic-supply = <&motor_reg>;
++		min-microvolt = <1100000>;
++		max-microvolt = <2700000>;
 +	};
+ };
+ 
+ &adc {
 -- 
 1.7.9.5
