@@ -1,97 +1,50 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] mfd: max77686: Fix parent of rtc device
-Date: Wed, 03 Dec 2014 10:25:34 +0100
-Message-ID: <1417598734.23732.11.camel@AMDC1943>
-References: <1417523620-4311-1-git-send-email-yadi.brar@samsung.com>
- <1417524339-4604-1-git-send-email-yadi.brar@samsung.com>
- <547DBFAD.30605@samsung.com> <000001d00ed7$db623bb0$9226b310$%brar@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v4 1/2] soc: samsung: add exynos chipid driver support
+Date: Wed, 03 Dec 2014 11:43:24 +0100
+Message-ID: <19026872.NZqUJn3Abb@wuerfel>
+References: <1417594658-2931-1-git-send-email-pankaj.dubey@samsung.com> <1417594658-2931-2-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:47360 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751031AbaLCJZi (ORCPT
+Received: from mout.kundenserver.de ([212.227.17.24]:64801 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750963AbaLCKoT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Dec 2014 04:25:38 -0500
-In-reply-to: <000001d00ed7$db623bb0$9226b310$%brar@samsung.com>
+	Wed, 3 Dec 2014 05:44:19 -0500
+In-Reply-To: <1417594658-2931-2-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yadwinder Singh Brar <yadi.brar@samsung.com>
-Cc: devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lee.jones@linaro.org, sameo@linux.intel.com, akpm@linux-foundation.org, tomasz.figa@gmail.com, robh+dt@kernel.org, yadi.brar01@gmail.com
+To: linux-arm-kernel@lists.infradead.org
+Cc: Pankaj Dubey <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, heiko@sntech.de, Linus Walleij <linus.walleij@linaro.org>, tomasz.figa@gmail.com, Rob Herring <robh+dt@kernel.org>, thomas.ab@samsung.com, Grant Likely <grant.likely@linaro.org>
 
-On =C5=9Bro, 2014-12-03 at 14:32 +0530, Yadwinder Singh Brar wrote:
->=20
-> On Tuesday, December 02, 2014 7:04 PM, Krzysztof Koz=C5=82owski wrote=
-:=20
-> > On 02.12.2014 13:45, Yadwinder Singh Brar wrote:
-> > > rtc have different i2c client than power(pmic) block. So rtc devi=
-ce
-> > > should sit under its own i2c client in device hierarchy, which
-> > reflects in sysfs also.
-> > > This patch modifies code to register rtc cell with rtc->dev as
-> > parent.
-> > >
-> > > Without this patch :
-> > > # ls /sys/class/i2c-adapter/i2c-0/0-0009/
-> > > driver         max77686-pmic  modalias       power          ueven=
-t
-> > > max77686-clk   max77686-rtc   name           subsystem
-> > >
-> > > After applying patch :
-> > > # ls /sys/class/i2c-adapter/i2c-0/0-0006/
-> > > driver/        modalias       power/         uevent
-> > > max77686-rtc/  name           subsystem/
-> > >
-> > > Signed-off-by: Yadwinder Singh Brar <yadi.brar@samsung.com>
-> > > ---
-> > >
-> > > Or Can we follow another (exhaustive but more cleaner) approach,
-> > which
-> > > will be more like code refactoring and cleanup rather than only f=
-ix:
-> > > Since rtc uses i2c client, which gets created using i2c_new_dummy=
-()
-> > > and is not shared by any other cell of max77686. So we can covert=
- rtc
-> > > platform driver itself to i2c client driver. It will also allow t=
-o
-> > > expilicitly describe max77686-rtc in DT which we can't do now.
-> > > It can be applicable to some other existing and new mfd pmic driv=
-ers.
-> > > Any suggestion/comments ?
-> >=20
-> > Hi,
-> >=20
-> > What kind of problem is solved by this patch?
-> >
->=20
-> Let me try to explain once again :)
-> After seeing a message "i2c i2c-0: .... , addr=3D0x06, .." in dmesg l=
-og,
-> I was not able to find any such device in sysfs as well as device tre=
-e.
-> There was no device under /sys/class/i2c-dev/i2c-0/device/0-0006/
-> Isn't something wrong or missing ?
->=20
-> This patch fixes that missing parent child relation, which IMO
-> should be correct always, though it causes any major problem or not.
+> Exynos SoCs have Chipid, for identification of product IDs
+> and SoC revisions. This patch intendes to provide initialization
+> code for all these functionalites, at the same time it provides some
+> sysfs entries for accessing these information to userspace.
+> 
+> This driver usese existing binding for exnos-chipid.
 
-OK, I got your point. I'm fine with both solutions and the patch looks
-good, so:
-Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Nice!
 
-> Still I am thinking, 0-0006 slave device(rtc) shouldn't also appear i=
-n DT?
-> As DT should describe the hardware that we are using.
+On Wednesday 03 December 2014 13:47:37 Pankaj Dubey wrote:
 
-Your patch properly describes the hardware. However from driver
-perspective, the RTC here is not an standalone driver and depends on
-parent (MFD) driver.
+> +       soc_dev_attr->soc_id = exynos_product_id_to_name(soc_product_id);
+> +
+> +       soc_dev = soc_device_register(soc_dev_attr);
+> +       if (IS_ERR(soc_dev))
+> +               goto free_rev;
+> +
+> +       device_create_file(soc_device_to_device(soc_dev), &exynos_product_attr);
+> +       device_create_file(soc_device_to_device(soc_dev),
+> +                               &exynos_main_rev_attr);
+> +       device_create_file(soc_device_to_device(soc_dev), &exynos_sub_rev_attr);
+> +
 
-Although max77686 RTC could have its own DeviceTree node, I think it
-should still be put under main MFD driver's node, because the parent
-manages stuff like interrupts.
+I don't like the idea of having three extra nonstandard properties here,
+especially when you are not using the machine field for anything useful.
 
-Best regards,
-Krzysztof
+Also, all three of these just come from the same register, why expose
+them all as the machine and revision standard properties.
+
+	Arnd
