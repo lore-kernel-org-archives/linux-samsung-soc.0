@@ -1,64 +1,66 @@
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [PATCH v3 3/3] clk: samsung: remove unnecessary inclusion of header
+Subject: Re: [PATCH 3/3] clk: samsung: remove unnecessary inclusion of header
  files from clk.h
-Date: Wed, 03 Dec 2014 17:01:32 +0530
-Message-ID: <1417606292-26063-4-git-send-email-pankaj.dubey@samsung.com>
-References: <1417606292-26063-1-git-send-email-pankaj.dubey@samsung.com>
+Date: Wed, 03 Dec 2014 17:12:32 +0530
+Message-ID: <547EF728.90505@samsung.com>
+References: <1411796519-19417-1-git-send-email-pankaj.dubey@samsung.com>
+ <1411796519-19417-4-git-send-email-pankaj.dubey@samsung.com>
+ <547DD98D.3000101@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:23936 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753351AbaLCLiy (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:64024 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752141AbaLCLml (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Dec 2014 06:38:54 -0500
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Wed, 3 Dec 2014 06:42:41 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NG0008MY8CTKV00@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 03 Dec 2014 20:38:53 +0900 (KST)
-In-reply-to: <1417606292-26063-1-git-send-email-pankaj.dubey@samsung.com>
+ with ESMTP id <0NG000JQU8J4JF60@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 03 Dec 2014 20:42:40 +0900 (KST)
+In-reply-to: <547DD98D.3000101@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, mturquette@linaro.org, Pankaj Dubey <pankaj.dubey@samsung.com>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tomasz.figa@gmail.com, mturquette@linaro.org, naushad@samsung.com
 
-Let's remove unnecessary include of header files from clk.h and add
-required one in clk.c
+Hi Sylwester,
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
- drivers/clk/samsung/clk.c |    1 +
- drivers/clk/samsung/clk.h |    4 ----
- 2 files changed, 1 insertion(+), 4 deletions(-)
+On Tuesday 02 December 2014 08:53 PM, Sylwester Nawrocki wrote:
+> Hi Pankaj,
+>
+> On 27/09/14 07:41, Pankaj Dubey wrote:
+>> Let's remove unnecessary include of header files from clk.h and add
+>> required one in clk.c
+>>
+>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>> ---
+>>   drivers/clk/samsung/clk.c |    3 ++-
+>>   drivers/clk/samsung/clk.h |    4 ----
+>>   2 files changed, 2 insertions(+), 5 deletions(-)
+>>
+> Please make sure there is no build breaks with various configs when
+> sending patches.
 
-diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
-index 1b4cf3b..75d4215 100644
---- a/drivers/clk/samsung/clk.c
-+++ b/drivers/clk/samsung/clk.c
-@@ -12,6 +12,7 @@
- */
- 
- #include <linux/syscore_ops.h>
-+#include <linux/of_address.h>
- #include "clk.h"
- 
- static LIST_HEAD(clock_reg_cache_list);
-diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
-index 101a43b..8acabe1 100644
---- a/drivers/clk/samsung/clk.h
-+++ b/drivers/clk/samsung/clk.h
-@@ -13,12 +13,8 @@
- #ifndef __SAMSUNG_CLK_H
- #define __SAMSUNG_CLK_H
- 
--#include <linux/clk.h>
- #include <linux/clkdev.h>
--#include <linux/io.h>
- #include <linux/clk-provider.h>
--#include <linux/of.h>
--#include <linux/of_address.h>
- #include "clk-pll.h"
- 
- /**
--- 
-1.7.9.5
+I am sure that I compile tested this before submitting. Looks like 
+following commit [1] needs "linux/syscore-ops.h" in clk.c, before that 
+it was not needed.
+
+1: clk: samsung: Factor out the common code to clk.c [SHA_ID: 
+16a9013b83b5106c83cf]
+
+Anyways, I can see patches are not getting cleanly applied so, just now 
+I resend them [2] after rebasing please have a look.
+
+2: http://comments.gmane.org/gmane.linux.kernel.samsung-soc/40639
+
+Thanks,
+Pankaj Dubey
+>
+> --
+> Regards,
+> Sylwester
+>
