@@ -1,152 +1,67 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH] dmaengine: pl330: Set residue in tx_status callback
-Date: Tue, 02 Dec 2014 18:25:49 +0100
-Message-ID: <547DF61D.3010909@metafoo.de>
-References: <1416995095-13763-1-git-send-email-padma.v@samsung.com>
- <CAAgF-BfpU72KTJjVd8jWStD8yJ5sSmXOiQm77xQunO2QhC9ExQ@mail.gmail.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] cpuidle: add MAINTAINERS entry for ARM Exynos cpuidle driver
+Date: Wed, 03 Dec 2014 01:08:28 +0100
+Message-ID: <1466322.AKaPtIKjPo@vostro.rjw.lan>
+References: <1616359.KRpRrFqxfV@amdc1032>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAAgF-BfpU72KTJjVd8jWStD8yJ5sSmXOiQm77xQunO2QhC9ExQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Padma Venkat <padma.kvr@gmail.com>, Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, vinod.koul@intel.com, broonie@kernel.org, dmaengine@vger.kernel.org, Dylan Reid <dgreid@chromium.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from v094114.home.net.pl ([79.96.170.134]:61191 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S932722AbaLBXrH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 2 Dec 2014 18:47:07 -0500
+In-Reply-To: <1616359.KRpRrFqxfV@amdc1032>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 12/02/2014 06:38 AM, Padma Venkat wrote:
-> Hi Vinod/Lars,
->
-> On 11/26/14, Padmavathi Venna <padma.v@samsung.com> wrote:
->> Fill txstate.residue with the amount of bytes remaining in the current
->> transfer if the transfer is not complete.  This will be of particular
->> use to i2s DMA transfers, providing more accurate hw_ptr values to ASoC.
->>
->> I had taken the code from Dylan Reid <dgreid@chromium.org> patch from the
->> below link and modified according to the current dmaengine framework.
->> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/23007
->>
->> Cc: Dylan Reid <dgreid@chromium.org>
->> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
->> ---
->>
->> This patch has been tested for audio playback on exynos5420 peach-pit.
->>
->>   drivers/dma/pl330.c |   67
->> +++++++++++++++++++++++++++++++++++++++++++++++++-
->>   1 files changed, 65 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
->> index b7493d2..db880ae 100644
->> --- a/drivers/dma/pl330.c
->> +++ b/drivers/dma/pl330.c
->> @@ -2182,11 +2182,74 @@ static void pl330_free_chan_resources(struct
->> dma_chan *chan)
->>   	pm_runtime_put_autosuspend(pch->dmac->ddma.dev);
->>   }
->>
->> +static inline int
->> +pl330_src_addr_in_desc(struct dma_pl330_desc *desc, unsigned int sar)
->> +{
->> +	return ((desc->px.src_addr <= sar) &&
->> +		(sar <= (desc->px.src_addr + desc->px.bytes)));
->> +}
->> +
->> +static inline int
->> +pl330_dst_addr_in_desc(struct dma_pl330_desc *desc, unsigned int dar)
->> +{
->> +	return ((desc->px.dst_addr <= dar) &&
->> +		(dar <= (desc->px.dst_addr + desc->px.bytes)));
->> +}
->> +
->>   static enum dma_status
->>   pl330_tx_status(struct dma_chan *chan, dma_cookie_t cookie,
->>   		 struct dma_tx_state *txstate)
->>   {
->> -	return dma_cookie_status(chan, cookie, txstate);
->> +	dma_addr_t sar, dar;
->> +	struct dma_pl330_chan *pch = to_pchan(chan);
->> +	void __iomem *regs = pch->dmac->base;
->> +	struct pl330_thread *thrd = pch->thread;
->> +	struct dma_pl330_desc *desc;
->> +	unsigned int residue = 0;
->> +	unsigned long flags;
->> +	bool first = true;
->> +	dma_cookie_t first_c, current_c;
->> +	dma_cookie_t used;
->> +	enum dma_status ret;
->> +
->> +	ret = dma_cookie_status(chan, cookie, txstate);
->> +	if (ret == DMA_COMPLETE || !txstate)
->> +		return ret;
->> +
->> +	used = txstate->used;
->> +
->> +	spin_lock_irqsave(&pch->lock, flags);
->> +	sar = readl(regs + SA(thrd->id));
->> +	dar = readl(regs + DA(thrd->id));
->> +
->> +	list_for_each_entry(desc, &pch->work_list, node) {
->> +		if (desc->status == BUSY) {
->> +			current_c = desc->txd.cookie;
->> +			if (first) {
->> +				first_c = desc->txd.cookie;
->> +				first = false;
->> +			}
->> +
->> +			if (first_c < current_c)
->> +				residue += desc->px.bytes;
->> +			else {
->> +				if (desc->rqcfg.src_inc && pl330_src_addr_in_desc(desc, sar)) {
->> +					residue += desc->px.bytes;
->> +					residue -= sar - desc->px.src_addr;
->> +				} else if (desc->rqcfg.dst_inc && pl330_dst_addr_in_desc(desc, dar)) {
->> +					residue += desc->px.bytes;
->> +					residue -= dar - desc->px.dst_addr;
->> +				}
->> +			}
->> +		} else if (desc->status == PREP)
->> +			residue += desc->px.bytes;
->> +
->> +		if (desc->txd.cookie == used)
->> +			break;
->> +	}
->> +	spin_unlock_irqrestore(&pch->lock, flags);
->> +	dma_set_residue(txstate, residue);
->> +	return ret;
->>   }
->>
->>   static void pl330_issue_pending(struct dma_chan *chan)
->> @@ -2631,7 +2694,7 @@ static int pl330_dma_device_slave_caps(struct dma_chan
->> *dchan,
->>   	caps->directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
->>   	caps->cmd_pause = false;
->>   	caps->cmd_terminate = true;
->> -	caps->residue_granularity = DMA_RESIDUE_GRANULARITY_DESCRIPTOR;
->> +	caps->residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
->>
->>   	return 0;
->>   }
->
-> Any comment on this patch?
+On Tuesday, December 02, 2014 04:41:35 PM Bartlomiej Zolnierkiewicz wrote:
+> Since there has been quite a lot of development going on for
+> ARM Exynos cpuidle driver recently I would like to add separate
+> MAINTAINERS entry for it and add myself as the primary maintainer.
+> 
+> The merging process would remain (almost) unchanged with patches
+> going (with my Ack) through Daniel's or Kukjin's tree.
+> 
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-Well it doesn't break audio, but I don't think it has the correct haviour 
-for all cases yet.
+Daniel, do you want me to apply this, or are you going to do that?
 
-Again, the semantics are that it should return the progress of the transfer 
-for which the allocation function returned the cookie that is passe to this 
-function. You have to consider that there might be multiple different 
-descriptors submitted and in the work list, not just the one we want to know 
-the status of. The big problem with the pl330 driver is that the current 
-structure of the driver makes it not so easy to implement the residue 
-reporting correctly.
+> ---
+>  MAINTAINERS |   10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> Index: b/MAINTAINERS
+> ===================================================================
+> --- a/MAINTAINERS	2014-11-27 18:02:51.988225868 +0100
+> +++ b/MAINTAINERS	2014-12-02 15:56:52.792997513 +0100
+> @@ -2701,6 +2701,16 @@ T:	git git://git.kernel.org/pub/scm/linu
+>  S:	Maintained
+>  F:	drivers/cpuidle/cpuidle-big_little.c
+>  
+> +CPUIDLE DRIVER - ARM EXYNOS
+> +M:	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> +M:	Daniel Lezcano <daniel.lezcano@linaro.org>
+> +M:	Kukjin Kim <kgene@kernel.org>
+> +L:	linux-pm@vger.kernel.org
+> +L:	linux-samsung-soc@vger.kernel.org
+> +S:	Supported
+> +F:	drivers/cpuidle/cpuidle-exynos.c
+> +F:	arch/arm/mach-exynos/pm.c
+> +
+>  CPUIDLE DRIVERS
+>  M:	Rafael J. Wysocki <rjw@rjwysocki.net>
+>  M:	Daniel Lezcano <daniel.lezcano@linaro.org>
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-- Lars
+-- 
+I speak only for myself.
+Rafael J. Wysocki, Intel Open Source Technology Center.
