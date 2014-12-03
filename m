@@ -1,62 +1,45 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] media / PM: Replace CONFIG_PM_RUNTIME with CONFIG_PM
-Date: Wed, 03 Dec 2014 12:24:26 +0100
-Message-ID: <547EF2EA.70309@samsung.com>
-References: <4139875.fkJ48z9AaU@vostro.rjw.lan>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v3 0/3] Few cleanups for samsung clock
+Date: Wed, 03 Dec 2014 17:01:29 +0530
+Message-ID: <1417606292-26063-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:54794 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751190AbaLCLYm (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:63047 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753092AbaLCLi3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Dec 2014 06:24:42 -0500
-In-reply-to: <4139875.fkJ48z9AaU@vostro.rjw.lan>
+	Wed, 3 Dec 2014 06:38:29 -0500
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NG000FAD8BXYQ10@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 03 Dec 2014 20:38:21 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-media@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Kamil Debski <k.debski@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, Linux PM list <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: tomasz.figa@gmail.com, s.nawrocki@samsung.com, mturquette@linaro.org, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-On 03/12/14 03:13, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> After commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if PM_SLEEP is
-> selected) PM_RUNTIME is always set if PM is set, so #ifdef blocks
-> depending on CONFIG_PM_RUNTIME may now be changed to depend on
-> CONFIG_PM.
-> 
-> The alternative of CONFIG_PM_SLEEP and CONFIG_PM_RUNTIME may be
-> replaced with CONFIG_PM too.
-> 
-> Make these changes everywhere under drivers/media/.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+This patch series does some cleanup of samsung clock files and fixes
+one typo in clk.h.
 
-Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+All patches in this series can be applied independently. Just for keep
+track of them I grouped them in series.
 
-> ---
-> 
-> Note: This depends on commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if
-> PM_SLEEP is selected) which is only in linux-next at the moment (via the
-> linux-pm tree).
-> 
-> Please let me know if it is OK to take this one into linux-pm.
+Changes since v2:
+ - Rebased patch against latest kgene/for-next.
+ - Fix build break by not removing syscore_ops.h from clk.h.
 
-I'm fine with this being merged through linux-pm as far as the exynos/s5p
-drivers are concerned.
+Changes since v1:
+ - Added patch commit message description to patch 1/3 and 2/3.
 
-> ---
->  drivers/media/platform/coda/coda-common.c       |    4 ++--
->  drivers/media/platform/exynos4-is/fimc-core.c   |    6 +++---
->  drivers/media/platform/exynos4-is/fimc-is-i2c.c |    2 +-
->  drivers/media/platform/exynos4-is/fimc-lite.c   |    2 +-
->  drivers/media/platform/exynos4-is/mipi-csis.c   |    2 +-
->  drivers/media/platform/s5p-jpeg/jpeg-core.c     |    4 ++--
->  drivers/media/platform/s5p-mfc/s5p_mfc.c        |    2 +-
->  drivers/media/platform/s5p-mfc/s5p_mfc_pm.c     |   10 ++++------
->  8 files changed, 15 insertions(+), 17 deletions(-)
+Pankaj Dubey (3):
+  clk: samsung: Spelling s/bwtween/between/
+  clk: samsung: remove unnecessary CONFIG_OF from clk.c
+  clk: samsung: remove unnecessary inclusion of header files from clk.h
 
---
-Regards,
-Sylwester
+ drivers/clk/samsung/clk.c |    3 +--
+ drivers/clk/samsung/clk.h |    6 +-----
+ 2 files changed, 2 insertions(+), 7 deletions(-)
+
+-- 
+1.7.9.5
