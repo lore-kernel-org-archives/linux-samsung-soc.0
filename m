@@ -1,106 +1,122 @@
-From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH] dmaengine: pl330: Set residue in tx_status callback
-Date: Wed, 3 Dec 2014 10:17:54 +0530
-Message-ID: <CAAgF-BfPyaOhhrA5L8vm2WDnhBYDexJFkGxqL1GsL2TMB8z=Rw@mail.gmail.com>
-References: <1416995095-13763-1-git-send-email-padma.v@samsung.com>
-	<CAAgF-BfpU72KTJjVd8jWStD8yJ5sSmXOiQm77xQunO2QhC9ExQ@mail.gmail.com>
-	<547DF61D.3010909@metafoo.de>
+From: jonghwa3.lee@samsung.com
+Subject: Re: [PATCH] soc: samsung: pmu: split up SoC specific PMU data
+Date: Wed, 03 Dec 2014 14:34:20 +0900
+Message-ID: <547EA0DC.70800@samsung.com>
+References: <1417364162-29981-1-git-send-email-pankaj.dubey@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f171.google.com ([209.85.160.171]:53562 "EHLO
-	mail-yk0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750891AbaLCErz (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:46265 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750707AbaLCFeY convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Dec 2014 23:47:55 -0500
-In-Reply-To: <547DF61D.3010909@metafoo.de>
+	Wed, 3 Dec 2014 00:34:24 -0500
+In-reply-to: <1417364162-29981-1-git-send-email-pankaj.dubey@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, vinod.koul@intel.com, broonie@kernel.org, Dylan Reid <dgreid@chromium.org>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, b.zolnierkie@samsung.com, amit.daniel@samsung.com, kgene.kim@samsung.com, arnd@arndb.de, thomas.ab@samsung.com
 
-Hi Lars,
+On 2014=EB=85=84 12=EC=9B=94 01=EC=9D=BC 01:16, Pankaj Dubey wrote:
 
-[snip]
->>> +
->>> +	ret = dma_cookie_status(chan, cookie, txstate);
->>> +	if (ret == DMA_COMPLETE || !txstate)
->>> +		return ret;
->>> +
->>> +	used = txstate->used;
->>> +
->>> +	spin_lock_irqsave(&pch->lock, flags);
->>> +	sar = readl(regs + SA(thrd->id));
->>> +	dar = readl(regs + DA(thrd->id));
->>> +
->>> +	list_for_each_entry(desc, &pch->work_list, node) {
->>> +		if (desc->status == BUSY) {
->>> +			current_c = desc->txd.cookie;
->>> +			if (first) {
->>> +				first_c = desc->txd.cookie;
->>> +				first = false;
->>> +			}
->>> +
->>> +			if (first_c < current_c)
->>> +				residue += desc->px.bytes;
->>> +			else {
->>> +				if (desc->rqcfg.src_inc && pl330_src_addr_in_desc(desc, sar)) {
->>> +					residue += desc->px.bytes;
->>> +					residue -= sar - desc->px.src_addr;
->>> +				} else if (desc->rqcfg.dst_inc && pl330_dst_addr_in_desc(desc, dar))
->>> {
->>> +					residue += desc->px.bytes;
->>> +					residue -= dar - desc->px.dst_addr;
->>> +				}
->>> +			}
->>> +		} else if (desc->status == PREP)
->>> +			residue += desc->px.bytes;
->>> +
->>> +		if (desc->txd.cookie == used)
->>> +			break;
->>> +	}
->>> +	spin_unlock_irqrestore(&pch->lock, flags);
->>> +	dma_set_residue(txstate, residue);
->>> +	return ret;
->>>   }
-[snip]
->>
->> Any comment on this patch?
->
-> Well it doesn't break audio, but I don't think it has the correct haviour
-> for all cases yet.
+> This patch splits up exynos-pmu.c file, and moves PMU configuration d=
+ata
+> and functions handing those data into SoC specific PMU files, keeping
+> driver structure and common functionality into exynos-pmu.c.
+>=20
+> At the same time it also separates compilation of these different SoC=
+ PMU files
+> based on CONFIG_ARM64 and CONFIG_ARM. This way we can reduce overhead=
+ of ARM64
+> SoC's PMU getting compiled when kernel is built for ARM and vice-vers=
+a.
+>=20
+> This patch also removes .owner field from exynos-pmu.c as it's redund=
+ant for
+> drivers calling platform_driver_register to register platform_driver.
+>=20
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> ---
+> This patch is prepared on top of kgene/for-next and following patch [=
+1] from
+> Amit Daniel.
+>=20
+> [1]: http://www.spinics.net/lists/linux-samsung-soc/msg39797.html
+>=20
+> This patch tries to address some of concerns raised for using exynos-=
+pmu.c for
+> ARM and ARM64 based SoC at these threads [2], [3].
+>=20
+> [2]: http://www.spinics.net/lists/linux-samsung-soc/msg39809.html
+> [3]: https://lkml.org/lkml/2014/11/24/322
+>=20
+> Since Exynos SoC's has similar PMU IP, and already existing bindings =
+can be
+> used, it makes sense to keep single driver for both ARM and ARM64 bas=
+ed SoCs.
+> All common functionalties are in exynos-pmu.c whereas SoC specific da=
+ta and=20
+> handling are moved into SoC specific exynosNNNN-pmu files.
+>=20
+> All changes are compiled tested only. Any improvements/suggestions ar=
+e most
+> welcome.
+>=20
+>  drivers/soc/samsung/Makefile         |    9 +-
+>  drivers/soc/samsung/exynos-pmu.c     | 1293 +-----------------------=
+----------
+>  drivers/soc/samsung/exynos-pmu.h     |   63 ++
+>  drivers/soc/samsung/exynos3250-pmu.c |  176 +++++
+>  drivers/soc/samsung/exynos4-pmu.c    |  223 ++++++
+>  drivers/soc/samsung/exynos5250-pmu.c |  196 ++++++
+>  drivers/soc/samsung/exynos5420-pmu.c |  298 ++++++++
+>  drivers/soc/samsung/exynos7-pmu.c    |  441 ++++++++++++
+>  8 files changed, 1412 insertions(+), 1287 deletions(-)
+>  create mode 100644 drivers/soc/samsung/exynos-pmu.h
+>  create mode 100644 drivers/soc/samsung/exynos3250-pmu.c
+>  create mode 100644 drivers/soc/samsung/exynos4-pmu.c
+>  create mode 100644 drivers/soc/samsung/exynos5250-pmu.c
+>  create mode 100644 drivers/soc/samsung/exynos5420-pmu.c
+>  create mode 100644 drivers/soc/samsung/exynos7-pmu.c
+>=20
 
-OK. Any way of testing other cases like scatter-gather and memcopy.  I
-verified memcopy in dmatest but it seems not doing anything with
-residue bytes.
+=2E..
 
->
-> Again, the semantics are that it should return the progress of the transfer
->
-> for which the allocation function returned the cookie that is passe to this
+> diff --git a/drivers/soc/samsung/exynos-pmu.h b/drivers/soc/samsung/e=
+xynos-pmu.h
+> new file mode 100644
+> index 0000000..4adc5a3
+> --- /dev/null
+> +++ b/drivers/soc/samsung/exynos-pmu.h
+> @@ -0,0 +1,63 @@
+> +/*
+> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * Header for EXYNOS PMU Driver support
+> + *
+> + * This program is free software; you can redistribute it and/or mod=
+ify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef __EXYNOSPMU_H
+> +#define __EXYNOSPMU_H
+> +
+> +#include <linux/io.h>
+> +
+> +#define PMU_TABLE_END	(-1U)
+> +
+> +static void __iomem *pmu_base_addr;
+> +
 
-May be my understanding is wrong. For clarification..In the
-snd_dmaengine_pcm_pointer it is subtracting the residue bytes from the
-total buffer bytes not from period bytes. So how it expects
-the progress of the transfer of the passed cookie which just holds period bytes?
+AFAIK, static variable in header file can't be used globally. It would =
+be placed
+in exynos-pmu.c or elsewhere and then only extern declaration is allowe=
+d here.
+If I'm wrong, please let me know.
 
->
-> function. You have to consider that there might be multiple different
-> descriptors submitted and in the work list, not just the one we want to know
-
-Even though there are multiple descriptors in the work list, at a time
-only two descriptors are in busy state(as per the documentation in the
-driver) and all the descriptors cookie number is in incremental order.
-Not sure for other cases how it will be.
-
->
-> the status of. The big problem with the pl330 driver is that the current
-> structure of the driver makes it not so easy to implement the residue
-> reporting correctly.
->
-> - Lars
-
-Thanks
-Padma
->
->
+Thanks.
+Jonghwa
