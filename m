@@ -1,42 +1,57 @@
 From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH] ARM: dts: Add dts file for odroid XU3 board
-Date: Wed, 03 Dec 2014 11:53:10 -0800
-Message-ID: <7hzjb4y0gp.fsf@deeprootsystems.com>
-References: <1417438770-28696-1-git-send-email-sjoerd.simons@collabora.co.uk>
+Subject: Re: [PATCH v2 2/7] ARM: Exynos: add support for sub-power domains
+Date: Wed, 03 Dec 2014 11:57:05 -0800
+Message-ID: <7hvblsy0a6.fsf@deeprootsystems.com>
+References: <1416814256-24288-3-git-send-email-a.hajda@samsung.com>
+	<1417610024-29748-1-git-send-email-m.szyprowski@samsung.com>
+	<CAMuHMdWjZTRVrdcdu2toj9FYi5gOgw_Hf23SRh=9-QKwQDJy0g@mail.gmail.com>
+	<547F065A.5030505@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f174.google.com ([209.85.192.174]:42316 "EHLO
-	mail-pd0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750862AbaLCTxN (ORCPT
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:42499 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750893AbaLCT5I (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Dec 2014 14:53:13 -0500
-Received: by mail-pd0-f174.google.com with SMTP id w10so16002480pde.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 03 Dec 2014 11:53:13 -0800 (PST)
-In-Reply-To: <1417438770-28696-1-git-send-email-sjoerd.simons@collabora.co.uk>
-	(Sjoerd Simons's message of "Mon, 1 Dec 2014 13:59:30 +0100")
+	Wed, 3 Dec 2014 14:57:08 -0500
+Received: by mail-pa0-f46.google.com with SMTP id lj1so16285806pab.5
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 03 Dec 2014 11:57:08 -0800 (PST)
+In-Reply-To: <547F065A.5030505@samsung.com> (Marek Szyprowski's message of
+	"Wed, 03 Dec 2014 13:47:22 +0100")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
 
-Sjoerd Simons <sjoerd.simons@collabora.co.uk> writes:
+Marek Szyprowski <m.szyprowski@samsung.com> writes:
 
-> Add DTS for the Hardkernel Odroid XU3. The name of the DTS file is kept the
-> same as the vendors naming, which means it's prefixed with exynos5422
-> instead of exynos5800 as the SoC name even though it includes the
-> exyno5800 dtsi.
+> Hello,
 >
-> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> On 2014-12-03 13:36, Geert Uytterhoeven wrote:
+>> Hi Marek,
+>>
+>> On Wed, Dec 3, 2014 at 1:33 PM, Marek Szyprowski
+>> <m.szyprowski@samsung.com> wrote:
+>>> diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+>>> index abde1ea8a119..b884358ebb1a 100644
+>>> --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+>>> +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+>>> @@ -22,6 +22,8 @@ Optional Properties:
+>>>          - pclkN, clkN: Pairs of parent of input clock and input clock to the
+>>>                  devices in this power domain. Maximum of 4 pairs (N = 0 to 3)
+>>>                  are supported currently.
+>>> +- samsung,power-domain: phandle to a master power domain that the given domain
+>>> +                      is a part of
+>> For new DTSes I'd recommend using the generic "power-domains" only.
+>
+> I think that some consistency in dts style will be really an added
+> value. In my opinion for
+> all existing DTSes we should keep using 'samsung,power-domain' (even
+> for defining a parent
+> power domains) and for all new DTSes, the generic 'power-domains'
+> binding should be used.
 
-Tested-by: Kevin Hilman <khilman@linaro.org>
-
-Tried this on top of linux-next (next-20141125 and next20141203) and
-boots fine on my odroid-xu3. 
-
-Thanks for doing this, I've been meaning to get a DTS upstream for this
-platform myself.  I also noticed that the imprecise aborts I've been
-seeing when booting this board with the smdk5420 DTS are gone, so I
-don't have to dig into those now either.  Thanks!  :)
+Or even better, convert the existing DTSs to use generic power-domain
+first, and then use generic ones going forward also.
 
 Kevin
