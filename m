@@ -1,69 +1,62 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [GIT PULL 4/4] Samsung exynos7 updates for v3.19
-Date: Wed, 03 Dec 2014 19:49:34 +0900
-Message-ID: <020801d00ee6$d3992380$7acb6a80$@kernel.org>
-References: <5476CD88.1030406@kernel.org> <201411281335.55663.arnd@arndb.de>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] media / PM: Replace CONFIG_PM_RUNTIME with CONFIG_PM
+Date: Wed, 03 Dec 2014 12:24:26 +0100
+Message-ID: <547EF2EA.70309@samsung.com>
+References: <4139875.fkJ48z9AaU@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:17908 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750840AbaLCKth (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:54794 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751190AbaLCLYm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Dec 2014 05:49:37 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NG000DR862NTDB0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 03 Dec 2014 19:49:35 +0900 (KST)
-In-reply-to: 
-Content-language: ko
+	Wed, 3 Dec 2014 06:24:42 -0500
+In-reply-to: <4139875.fkJ48z9AaU@vostro.rjw.lan>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, 'Mike Turquette' <mturquette@linaro.org>, arm@kernel.org, 'Kevin Hilman' <khilman@linaro.org>, 'Kukjin Kim' <kgene@kernel.org>, 'Olof Johansson' <olof@lixom.net>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, linux-media@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Kamil Debski <k.debski@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, Linux PM list <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Kukjin Kim wrote:
+On 03/12/14 03:13, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > 
-> Arnd Bergmann wrote:
-> >
-> > On Thursday 27 November 2014, Kukjin Kim wrote:
-> > > Samsung arch/arm64 DT updates for v3.19
-> > >
-> > > - to support ARMv8 based exynos7 SoC
-> > >   : add initial device tree and add pinctrl, PMU, mmc, i2c, rtc,
-> > >     watchdog, and adc nodes for exynos7 SoC and exynos7 based
-> > >     espresso board.
-> > >
-> > > NOTE that this is including following dependencies
-> > > : cleanup/dts-subdirs in arm-soc for arm64 vendor support
-> > > : tags/samsung-driver for samsung serial
-> > > : for-v3.19/exynos-clk in samsung-clk tree for exynos7 clk
-> > >
-> > > One more NOTE, for support exynos7 we need Liviu's "arm64: Create
-> > > link to include/dt-bindings to enable C preprocessor use" in arm-soc
-> > > tree and arm64 defconfig update should be handled directly.
-> >
-> > I'm confused by the dependencies. I don't see a "for-v3.19/exynos-clk"
-> > in arm-soc, you haven't put the clk maintainer on Cc and I see no indication
-> > that he has this in his tree already, so I'm not pulling this until further
-> > clarification.
-> >
-> Hi,
+> After commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if PM_SLEEP is
+> selected) PM_RUNTIME is always set if PM is set, so #ifdef blocks
+> depending on CONFIG_PM_RUNTIME may now be changed to depend on
+> CONFIG_PM.
 > 
-> Sorry for insufficient description.
+> The alternative of CONFIG_PM_SLEEP and CONFIG_PM_RUNTIME may be
+> replaced with CONFIG_PM too.
 > 
-> Since the exynos7 stuff requires regarding clk stuff for kernel build, I talked
-> to Mike, Sylwester and Mike suggested pulling the branch into Samsung tree.
+> Make these changes everywhere under drivers/media/.
 > 
-> http://www.spinics.net/lists/linux-samsung-soc/msg39368.html
-> 
-> If any problems, please let me know.
-> 
-Hi Arnd,
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Do you have any concerns on this?
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-- Kukjin
+> ---
+> 
+> Note: This depends on commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if
+> PM_SLEEP is selected) which is only in linux-next at the moment (via the
+> linux-pm tree).
+> 
+> Please let me know if it is OK to take this one into linux-pm.
+
+I'm fine with this being merged through linux-pm as far as the exynos/s5p
+drivers are concerned.
+
+> ---
+>  drivers/media/platform/coda/coda-common.c       |    4 ++--
+>  drivers/media/platform/exynos4-is/fimc-core.c   |    6 +++---
+>  drivers/media/platform/exynos4-is/fimc-is-i2c.c |    2 +-
+>  drivers/media/platform/exynos4-is/fimc-lite.c   |    2 +-
+>  drivers/media/platform/exynos4-is/mipi-csis.c   |    2 +-
+>  drivers/media/platform/s5p-jpeg/jpeg-core.c     |    4 ++--
+>  drivers/media/platform/s5p-mfc/s5p_mfc.c        |    2 +-
+>  drivers/media/platform/s5p-mfc/s5p_mfc_pm.c     |   10 ++++------
+>  8 files changed, 15 insertions(+), 17 deletions(-)
+
+--
+Regards,
+Sylwester
