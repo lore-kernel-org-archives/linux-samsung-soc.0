@@ -1,107 +1,227 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH] drm / exynos / PM: Replace CONFIG_PM_RUNTIME with CONFIG_PM
-Date: Wed, 03 Dec 2014 10:40:57 +0900
-Message-ID: <000f01d00e9a$2f84f720$8e8ee560$%han@samsung.com>
-References: <19437813.I83iiGloeA@vostro.rjw.lan>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: [PATCH] media / PM: Replace CONFIG_PM_RUNTIME with CONFIG_PM
+Date: Wed, 03 Dec 2014 03:13:55 +0100
+Message-ID: <4139875.fkJ48z9AaU@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:56135 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750831AbaLCBjl (ORCPT
+Received: from v094114.home.net.pl ([79.96.170.134]:62570 "HELO
+	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1750730AbaLCBwc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Dec 2014 20:39:41 -0500
-In-reply-to: <19437813.I83iiGloeA@vostro.rjw.lan>
-Content-language: ko
+	Tue, 2 Dec 2014 20:52:32 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "'Rafael J. Wysocki'" <rjw@rjwysocki.net>, linux-samsung-soc@vger.kernel.org
-Cc: 'Inki Dae' <inki.dae@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'David Airlie' <airlied@linux.ie>, 'Kukjin Kim' <kgene.kim@samsung.com>, dri-devel@lists.freedesktop.org, 'Linux PM list' <linux-pm@vger.kernel.org>, 'Linux Kernel Mailing List' <linux-kernel@vger.kernel.org>, 'Jingoo Han' <jg1.han@samsung.com>
+To: linux-media@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <m.chehab@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Kamil Debski <k.debski@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, Linux PM list <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-On Wednesday, December 03, 2014 10:54 AM, Rafael J. Wysocki wrote:
-> 
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> After commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if PM_SLEEP is
-> selected) PM_RUNTIME is always set if PM is set, so #ifdef blocks
-> depending on CONFIG_PM_RUNTIME may now be changed to depend on
-> CONFIG_PM.
-> 
-> Replace CONFIG_PM_RUNTIME with CONFIG_PM in 4 files under
-> gpu/drm/exynos/.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Reviewed-by: Jingoo Han <jg1.han@samsung.com>
+After commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if PM_SLEEP is
+selected) PM_RUNTIME is always set if PM is set, so #ifdef blocks
+depending on CONFIG_PM_RUNTIME may now be changed to depend on
+CONFIG_PM.
 
-Best regards,
-Jingoo Han
+The alternative of CONFIG_PM_SLEEP and CONFIG_PM_RUNTIME may be
+replaced with CONFIG_PM too.
 
-> ---
-> 
-> Note: This depends on commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if
-> PM_SLEEP is selected) which is only in linux-next at the moment (via the
-> linux-pm tree).
-> 
-> Please let me know if it is OK to take this one into linux-pm.
-> 
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fimc.c    |    2 +-
->  drivers/gpu/drm/exynos/exynos_drm_g2d.c     |    2 +-
->  drivers/gpu/drm/exynos/exynos_drm_gsc.c     |    2 +-
->  drivers/gpu/drm/exynos/exynos_drm_rotator.c |    2 +-
->  4 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> Index: linux-pm/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> ===================================================================
-> --- linux-pm.orig/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> +++ linux-pm/drivers/gpu/drm/exynos/exynos_drm_fimc.c
-> @@ -1817,7 +1817,7 @@ static int fimc_resume(struct device *de
->  }
->  #endif
-> 
-> -#ifdef CONFIG_PM_RUNTIME
-> +#ifdef CONFIG_PM
->  static int fimc_runtime_suspend(struct device *dev)
->  {
->  	struct fimc_context *ctx = get_fimc_context(dev);
-> Index: linux-pm/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> ===================================================================
-> --- linux-pm.orig/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> +++ linux-pm/drivers/gpu/drm/exynos/exynos_drm_gsc.c
-> @@ -1764,7 +1764,7 @@ static int gsc_resume(struct device *dev
->  }
->  #endif
-> 
-> -#ifdef CONFIG_PM_RUNTIME
-> +#ifdef CONFIG_PM
->  static int gsc_runtime_suspend(struct device *dev)
->  {
->  	struct gsc_context *ctx = get_gsc_context(dev);
-> Index: linux-pm/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> ===================================================================
-> --- linux-pm.orig/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> +++ linux-pm/drivers/gpu/drm/exynos/exynos_drm_rotator.c
-> @@ -822,7 +822,7 @@ static int rotator_resume(struct device
->  }
->  #endif
-> 
-> -#ifdef CONFIG_PM_RUNTIME
-> +#ifdef CONFIG_PM
->  static int rotator_runtime_suspend(struct device *dev)
->  {
->  	struct rot_context *rot = dev_get_drvdata(dev);
-> Index: linux-pm/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> ===================================================================
-> --- linux-pm.orig/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> +++ linux-pm/drivers/gpu/drm/exynos/exynos_drm_g2d.c
-> @@ -1540,7 +1540,7 @@ static int g2d_resume(struct device *dev
->  }
->  #endif
-> 
-> -#ifdef CONFIG_PM_RUNTIME
-> +#ifdef CONFIG_PM
->  static int g2d_runtime_suspend(struct device *dev)
->  {
->  	struct g2d_data *g2d = dev_get_drvdata(dev);
+Make these changes everywhere under drivers/media/.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+Note: This depends on commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if
+PM_SLEEP is selected) which is only in linux-next at the moment (via the
+linux-pm tree).
+
+Please let me know if it is OK to take this one into linux-pm.
+
+---
+ drivers/media/platform/coda/coda-common.c       |    4 ++--
+ drivers/media/platform/exynos4-is/fimc-core.c   |    6 +++---
+ drivers/media/platform/exynos4-is/fimc-is-i2c.c |    2 +-
+ drivers/media/platform/exynos4-is/fimc-lite.c   |    2 +-
+ drivers/media/platform/exynos4-is/mipi-csis.c   |    2 +-
+ drivers/media/platform/s5p-jpeg/jpeg-core.c     |    4 ++--
+ drivers/media/platform/s5p-mfc/s5p_mfc.c        |    2 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_pm.c     |   10 ++++------
+ 8 files changed, 15 insertions(+), 17 deletions(-)
+
+Index: linux-pm/drivers/media/platform/s5p-jpeg/jpeg-core.c
+===================================================================
+--- linux-pm.orig/drivers/media/platform/s5p-jpeg/jpeg-core.c
++++ linux-pm/drivers/media/platform/s5p-jpeg/jpeg-core.c
+@@ -2632,7 +2632,7 @@ static int s5p_jpeg_remove(struct platfo
+ 	return 0;
+ }
+ 
+-#if defined(CONFIG_PM_RUNTIME) || defined(CONFIG_PM_SLEEP)
++#ifdef CONFIG_PM
+ static int s5p_jpeg_runtime_suspend(struct device *dev)
+ {
+ 	struct s5p_jpeg *jpeg = dev_get_drvdata(dev);
+@@ -2682,7 +2682,7 @@ static int s5p_jpeg_runtime_resume(struc
+ 
+ 	return 0;
+ }
+-#endif /* CONFIG_PM_RUNTIME || CONFIG_PM_SLEEP */
++#endif /* CONFIG_PM */
+ 
+ #ifdef CONFIG_PM_SLEEP
+ static int s5p_jpeg_suspend(struct device *dev)
+Index: linux-pm/drivers/media/platform/s5p-mfc/s5p_mfc.c
+===================================================================
+--- linux-pm.orig/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ linux-pm/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -1302,7 +1302,7 @@ static int s5p_mfc_resume(struct device
+ }
+ #endif
+ 
+-#ifdef CONFIG_PM_RUNTIME
++#ifdef CONFIG_PM
+ static int s5p_mfc_runtime_suspend(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+Index: linux-pm/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
+===================================================================
+--- linux-pm.orig/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
++++ linux-pm/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
+@@ -13,9 +13,7 @@
+ #include <linux/clk.h>
+ #include <linux/err.h>
+ #include <linux/platform_device.h>
+-#ifdef CONFIG_PM_RUNTIME
+ #include <linux/pm_runtime.h>
+-#endif
+ #include "s5p_mfc_common.h"
+ #include "s5p_mfc_debug.h"
+ #include "s5p_mfc_pm.h"
+@@ -67,7 +65,7 @@ int s5p_mfc_init_pm(struct s5p_mfc_dev *
+ 	}
+ 
+ 	atomic_set(&pm->power, 0);
+-#ifdef CONFIG_PM_RUNTIME
++#ifdef CONFIG_PM
+ 	pm->device = &dev->plat_dev->dev;
+ 	pm_runtime_enable(pm->device);
+ #endif
+@@ -93,7 +91,7 @@ void s5p_mfc_final_pm(struct s5p_mfc_dev
+ 	}
+ 	clk_unprepare(pm->clock_gate);
+ 	clk_put(pm->clock_gate);
+-#ifdef CONFIG_PM_RUNTIME
++#ifdef CONFIG_PM
+ 	pm_runtime_disable(pm->device);
+ #endif
+ }
+@@ -120,7 +118,7 @@ void s5p_mfc_clock_off(void)
+ 
+ int s5p_mfc_power_on(void)
+ {
+-#ifdef CONFIG_PM_RUNTIME
++#ifdef CONFIG_PM
+ 	return pm_runtime_get_sync(pm->device);
+ #else
+ 	atomic_set(&pm->power, 1);
+@@ -130,7 +128,7 @@ int s5p_mfc_power_on(void)
+ 
+ int s5p_mfc_power_off(void)
+ {
+-#ifdef CONFIG_PM_RUNTIME
++#ifdef CONFIG_PM
+ 	return pm_runtime_put_sync(pm->device);
+ #else
+ 	atomic_set(&pm->power, 0);
+Index: linux-pm/drivers/media/platform/exynos4-is/fimc-is-i2c.c
+===================================================================
+--- linux-pm.orig/drivers/media/platform/exynos4-is/fimc-is-i2c.c
++++ linux-pm/drivers/media/platform/exynos4-is/fimc-is-i2c.c
+@@ -81,7 +81,7 @@ static int fimc_is_i2c_remove(struct pla
+ 	return 0;
+ }
+ 
+-#if defined(CONFIG_PM_RUNTIME) || defined(CONFIG_PM_SLEEP)
++#ifdef CONFIG_PM
+ static int fimc_is_i2c_runtime_suspend(struct device *dev)
+ {
+ 	struct fimc_is_i2c *isp_i2c = dev_get_drvdata(dev);
+Index: linux-pm/drivers/media/platform/exynos4-is/fimc-lite.c
+===================================================================
+--- linux-pm.orig/drivers/media/platform/exynos4-is/fimc-lite.c
++++ linux-pm/drivers/media/platform/exynos4-is/fimc-lite.c
+@@ -1588,7 +1588,7 @@ err_clk_put:
+ 	return ret;
+ }
+ 
+-#ifdef CONFIG_PM_RUNTIME
++#ifdef CONFIG_PM
+ static int fimc_lite_runtime_resume(struct device *dev)
+ {
+ 	struct fimc_lite *fimc = dev_get_drvdata(dev);
+Index: linux-pm/drivers/media/platform/exynos4-is/mipi-csis.c
+===================================================================
+--- linux-pm.orig/drivers/media/platform/exynos4-is/mipi-csis.c
++++ linux-pm/drivers/media/platform/exynos4-is/mipi-csis.c
+@@ -978,7 +978,7 @@ static int s5pcsis_resume(struct device
+ }
+ #endif
+ 
+-#ifdef CONFIG_PM_RUNTIME
++#ifdef CONFIG_PM
+ static int s5pcsis_runtime_suspend(struct device *dev)
+ {
+ 	return s5pcsis_pm_suspend(dev, true);
+Index: linux-pm/drivers/media/platform/exynos4-is/fimc-core.c
+===================================================================
+--- linux-pm.orig/drivers/media/platform/exynos4-is/fimc-core.c
++++ linux-pm/drivers/media/platform/exynos4-is/fimc-core.c
+@@ -832,7 +832,7 @@ err:
+ 	return -ENXIO;
+ }
+ 
+-#if defined(CONFIG_PM_RUNTIME) || defined(CONFIG_PM_SLEEP)
++#ifdef CONFIG_PM
+ static int fimc_m2m_suspend(struct fimc_dev *fimc)
+ {
+ 	unsigned long flags;
+@@ -871,7 +871,7 @@ static int fimc_m2m_resume(struct fimc_d
+ 
+ 	return 0;
+ }
+-#endif /* CONFIG_PM_RUNTIME || CONFIG_PM_SLEEP */
++#endif /* CONFIG_PM */
+ 
+ static const struct of_device_id fimc_of_match[];
+ 
+@@ -1039,7 +1039,7 @@ err_sclk:
+ 	return ret;
+ }
+ 
+-#ifdef CONFIG_PM_RUNTIME
++#ifdef CONFIG_PM
+ static int fimc_runtime_resume(struct device *dev)
+ {
+ 	struct fimc_dev *fimc =	dev_get_drvdata(dev);
+Index: linux-pm/drivers/media/platform/coda/coda-common.c
+===================================================================
+--- linux-pm.orig/drivers/media/platform/coda/coda-common.c
++++ linux-pm/drivers/media/platform/coda/coda-common.c
+@@ -1980,7 +1980,7 @@ static int coda_probe(struct platform_de
+ 
+ 	/*
+ 	 * Start activated so we can directly call coda_hw_init in
+-	 * coda_fw_callback regardless of whether CONFIG_PM_RUNTIME is
++	 * coda_fw_callback regardless of whether CONFIG_PM is
+ 	 * enabled or whether the device is associated with a PM domain.
+ 	 */
+ 	pm_runtime_get_noresume(&pdev->dev);
+@@ -2013,7 +2013,7 @@ static int coda_remove(struct platform_d
+ 	return 0;
+ }
+ 
+-#ifdef CONFIG_PM_RUNTIME
++#ifdef CONFIG_PM
+ static int coda_runtime_resume(struct device *dev)
+ {
+ 	struct coda_dev *cdev = dev_get_drvdata(dev);
