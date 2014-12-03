@@ -1,67 +1,47 @@
 From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] cpuidle: add MAINTAINERS entry for ARM Exynos cpuidle driver
-Date: Wed, 03 Dec 2014 01:08:28 +0100
-Message-ID: <1466322.AKaPtIKjPo@vostro.rjw.lan>
-References: <1616359.KRpRrFqxfV@amdc1032>
+Subject: [PATCH] hwrandom / exynos / PM: Use CONFIG_PM in #ifdef
+Date: Wed, 03 Dec 2014 02:40:35 +0100
+Message-ID: <1743562.8SOccckWiK@vostro.rjw.lan>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:61191 "HELO
-	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S932722AbaLBXrH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Dec 2014 18:47:07 -0500
-In-Reply-To: <1616359.KRpRrFqxfV@amdc1032>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux PM list <linux-pm@vger.kernel.org>, Herbert Xu <herbert@gondor.apana.org.au>, Paul Gortmaker <paul.gortmaker@windriver.com>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene@kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Tuesday, December 02, 2014 04:41:35 PM Bartlomiej Zolnierkiewicz wrote:
-> Since there has been quite a lot of development going on for
-> ARM Exynos cpuidle driver recently I would like to add separate
-> MAINTAINERS entry for it and add myself as the primary maintainer.
-> 
-> The merging process would remain (almost) unchanged with patches
-> going (with my Ack) through Daniel's or Kukjin's tree.
-> 
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-Daniel, do you want me to apply this, or are you going to do that?
+CONFIG_PM is defined as the alternative of CONFIG_PM_RUNTIME and
+CONFIG_PM_SLEEP, so it can be used instead of that.
 
-> ---
->  MAINTAINERS |   10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> Index: b/MAINTAINERS
-> ===================================================================
-> --- a/MAINTAINERS	2014-11-27 18:02:51.988225868 +0100
-> +++ b/MAINTAINERS	2014-12-02 15:56:52.792997513 +0100
-> @@ -2701,6 +2701,16 @@ T:	git git://git.kernel.org/pub/scm/linu
->  S:	Maintained
->  F:	drivers/cpuidle/cpuidle-big_little.c
->  
-> +CPUIDLE DRIVER - ARM EXYNOS
-> +M:	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> +M:	Daniel Lezcano <daniel.lezcano@linaro.org>
-> +M:	Kukjin Kim <kgene@kernel.org>
-> +L:	linux-pm@vger.kernel.org
-> +L:	linux-samsung-soc@vger.kernel.org
-> +S:	Supported
-> +F:	drivers/cpuidle/cpuidle-exynos.c
-> +F:	arch/arm/mach-exynos/pm.c
-> +
->  CPUIDLE DRIVERS
->  M:	Rafael J. Wysocki <rjw@rjwysocki.net>
->  M:	Daniel Lezcano <daniel.lezcano@linaro.org>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Besides, after commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if
+PM_SLEEP is selected) PM_RUNTIME is always set if PM is set, so
+using the alternative isn't even necessary.
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+Use CONFIG_PM instead of it in drivers/char/hw_random/exynos-rng.c.
+
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+
+Please let me know if it is OK to take this one into linux-pm.
+
+---
+ drivers/char/hw_random/exynos-rng.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+Index: linux-pm/drivers/char/hw_random/exynos-rng.c
+===================================================================
+--- linux-pm.orig/drivers/char/hw_random/exynos-rng.c
++++ linux-pm/drivers/char/hw_random/exynos-rng.c
+@@ -143,7 +143,7 @@ static int exynos_rng_remove(struct plat
+ 	return 0;
+ }
+ 
+-#if defined(CONFIG_PM_SLEEP) || defined(CONFIG_PM_RUNTIME)
++#ifdef CONFIG_PM
+ static int exynos_rng_runtime_suspend(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+
