@@ -1,110 +1,77 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH] dmaengine: pl330: Set residue in tx_status callback
-Date: Thu, 04 Dec 2014 21:15:09 +0100
-Message-ID: <5480C0CD.8050207@metafoo.de>
-References: <1416995095-13763-1-git-send-email-padma.v@samsung.com>	<CAAgF-BfpU72KTJjVd8jWStD8yJ5sSmXOiQm77xQunO2QhC9ExQ@mail.gmail.com>	<547DF61D.3010909@metafoo.de> <CAAgF-BfPyaOhhrA5L8vm2WDnhBYDexJFkGxqL1GsL2TMB8z=Rw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Tyler Baker <tyler.baker@linaro.org>
+Subject: [PATCH] ARM: multi_v7_defconfig: enable MAX77686 PMIC drivers for exynos4412-prime based SoCs
+Date: Thu,  4 Dec 2014 13:24:24 -0800
+Message-ID: <1417728264-7268-1-git-send-email-tyler.baker@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp-out-076.synserver.de ([212.40.185.76]:1026 "EHLO
-	smtp-out-074.synserver.de" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S933094AbaLDUPB (ORCPT
+Received: from mail-pa0-f48.google.com ([209.85.220.48]:54473 "EHLO
+	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932911AbaLDVYy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Dec 2014 15:15:01 -0500
-In-Reply-To: <CAAgF-BfPyaOhhrA5L8vm2WDnhBYDexJFkGxqL1GsL2TMB8z=Rw@mail.gmail.com>
+	Thu, 4 Dec 2014 16:24:54 -0500
+Received: by mail-pa0-f48.google.com with SMTP id rd3so18771891pab.21
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Dec 2014 13:24:54 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, vinod.koul@intel.com, broonie@kernel.org, Dylan Reid <dgreid@chromium.org>
+To: linux-arm-kernel@lists.infradead.org, arm@kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Tyler Baker <tyler.baker@linaro.org>
 
-On 12/03/2014 05:47 AM, Padma Venkat wrote:
-> Hi Lars,
->
-> [snip]
->>>> +
->>>> +	ret = dma_cookie_status(chan, cookie, txstate);
->>>> +	if (ret == DMA_COMPLETE || !txstate)
->>>> +		return ret;
->>>> +
->>>> +	used = txstate->used;
->>>> +
->>>> +	spin_lock_irqsave(&pch->lock, flags);
->>>> +	sar = readl(regs + SA(thrd->id));
->>>> +	dar = readl(regs + DA(thrd->id));
->>>> +
->>>> +	list_for_each_entry(desc, &pch->work_list, node) {
->>>> +		if (desc->status == BUSY) {
->>>> +			current_c = desc->txd.cookie;
->>>> +			if (first) {
->>>> +				first_c = desc->txd.cookie;
->>>> +				first = false;
->>>> +			}
->>>> +
->>>> +			if (first_c < current_c)
->>>> +				residue += desc->px.bytes;
->>>> +			else {
->>>> +				if (desc->rqcfg.src_inc && pl330_src_addr_in_desc(desc, sar)) {
->>>> +					residue += desc->px.bytes;
->>>> +					residue -= sar - desc->px.src_addr;
->>>> +				} else if (desc->rqcfg.dst_inc && pl330_dst_addr_in_desc(desc, dar))
->>>> {
->>>> +					residue += desc->px.bytes;
->>>> +					residue -= dar - desc->px.dst_addr;
->>>> +				}
->>>> +			}
->>>> +		} else if (desc->status == PREP)
->>>> +			residue += desc->px.bytes;
->>>> +
->>>> +		if (desc->txd.cookie == used)
->>>> +			break;
->>>> +	}
->>>> +	spin_unlock_irqrestore(&pch->lock, flags);
->>>> +	dma_set_residue(txstate, residue);
->>>> +	return ret;
->>>>    }
-> [snip]
->>>
->>> Any comment on this patch?
->>
->> Well it doesn't break audio, but I don't think it has the correct haviour
->> for all cases yet.
->
-> OK. Any way of testing other cases like scatter-gather and memcopy.  I
-> verified memcopy in dmatest but it seems not doing anything with
-> residue bytes.
+This patch enables the MAX77686 PMIC drivers in the multi_v7_defconfig used
+on exynos4412-prime family of SoCs [1]. The exynos4412-prime based boards
+are producing the following runtime errors only on the multi_v7_defconfig [2]:
 
-E.g. I think your current patch fails if more than one transfer has been 
-submitted. In that case you'll count the bytes for all of them rather than 
-just the one requested.
+kern.err: deviceless supply vdd_arm not found, using dummy regulator
+kern.err: exynos-cpufreq exynos-cpufreq: failed to set cpu voltage to 1287500
+kern.err: cpufreq: __target_index: Failed to change cpu frequency: -22
 
->
->>
->> Again, the semantics are that it should return the progress of the transfer
->>
->> for which the allocation function returned the cookie that is passe to this
->
-> May be my understanding is wrong. For clarification..In the
-> snd_dmaengine_pcm_pointer it is subtracting the residue bytes from the
-> total buffer bytes not from period bytes. So how it expects
-> the progress of the transfer of the passed cookie which just holds period bytes?
+I reviewed the exynos_defconfig, which does not produce these runtime
+errors. It was obvious that the exynos_defconfig has the PMIC drivers
+enabled, whereas the multi_v7_defconfig does not. This patch has been tested 
+on a odroid-u2 and a odroid-u3 board. It has resolved the runtime errors.
+Therefore, I purpose we enabled these drivers in the multi_v7_defconfig.
 
-The issue that makes implementing this correctly for the pl330 driver 
-complicated is that the driver allocates one cookie per segment/period, but 
-the external API works with one cookie per transfer. All those cookies that 
-are assigned to the segments/periods that are not the first in a transfer 
-are not externally visible.
+[1] http://www.hardkernel.com/main/products/prdt_info.php?g_code=G135270682824
+[2] http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc7-48-g7cc78f8/arm-multi_v7_defconfig/lab-tbaker-00/boot-exynos4412-odroidu3.html
 
-dmaengine_prep_slave_sg() and friends create a transfer and return 
-descriptor for this transfer with a single cookie. If that cookie is passed 
-to dmaengine_tx_status() the function is supposed to report the progress on 
-that one transfer that was previously allocated and returned that cookie 
-number. residue is the total number of bytes that are still left to to be 
-processed for that transfer.
+Signed-off-by: Tyler Baker <tyler.baker@linaro.org>
+---
+ arch/arm/configs/multi_v7_defconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-I've started reworking the pl330 driver to only have a single cookie per 
-transfer, instead of one per period/segment. This makes implementing the 
-residue reporting a lot easier. I never finished that work though, but I can 
-try to see if I can revive it next week.
-
-- Lars
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 930bfcb..d789658 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -280,6 +280,7 @@ CONFIG_MFD_AS3722=y
+ CONFIG_MFD_BCM590XX=y
+ CONFIG_MFD_CROS_EC=y
+ CONFIG_MFD_CROS_EC_SPI=y
++CONFIG_MFD_MAX77686=y
+ CONFIG_MFD_MAX8907=y
+ CONFIG_MFD_SEC_CORE=y
+ CONFIG_MFD_STMPE=y
+@@ -294,6 +295,7 @@ CONFIG_REGULATOR_GPIO=y
+ CONFIG_MFD_SYSCON=y
+ CONFIG_POWER_RESET_SYSCON=y
+ CONFIG_REGULATOR_MAX8907=y
++CONFIG_REGULATOR_MAX77686=y
+ CONFIG_REGULATOR_PALMAS=y
+ CONFIG_REGULATOR_S2MPS11=y
+ CONFIG_REGULATOR_S5M8767=y
+@@ -399,6 +401,7 @@ CONFIG_RTC_CLASS=y
+ CONFIG_RTC_DRV_AS3722=y
+ CONFIG_RTC_DRV_DS1307=y
+ CONFIG_RTC_DRV_MAX8907=y
++CONFIG_RTC_DRV_MAX77686=y
+ CONFIG_RTC_DRV_PALMAS=y
+ CONFIG_RTC_DRV_TWL4030=y
+ CONFIG_RTC_DRV_TPS6586X=y
+@@ -433,6 +436,7 @@ CONFIG_NVEC_POWER=y
+ CONFIG_NVEC_PAZ00=y
+ CONFIG_QCOM_GSBI=y
+ CONFIG_COMMON_CLK_QCOM=y
++CONFIG_COMMON_CLK_MAX77686=y
+ CONFIG_APQ_MMCC_8084=y
+ CONFIG_MSM_GCC_8660=y
+ CONFIG_MSM_MMCC_8960=y
+-- 
+2.1.3
