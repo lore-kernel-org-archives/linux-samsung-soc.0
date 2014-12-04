@@ -1,77 +1,46 @@
-From: Tyler Baker <tyler.baker@linaro.org>
-Subject: [PATCH] ARM: multi_v7_defconfig: enable MAX77686 PMIC drivers for exynos4412-prime based SoCs
-Date: Thu,  4 Dec 2014 13:24:24 -0800
-Message-ID: <1417728264-7268-1-git-send-email-tyler.baker@linaro.org>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH v2] ARM: dts: Add dts file for odroid XU3 board
+Date: Thu, 04 Dec 2014 13:47:11 -0800
+Message-ID: <7hoarjw0io.fsf@deeprootsystems.com>
+References: <1417721269-19342-1-git-send-email-sjoerd.simons@collabora.co.uk>
+Mime-Version: 1.0
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f48.google.com ([209.85.220.48]:54473 "EHLO
-	mail-pa0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932911AbaLDVYy (ORCPT
+Received: from mail-pa0-f47.google.com ([209.85.220.47]:50697 "EHLO
+	mail-pa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753381AbaLDVrP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Dec 2014 16:24:54 -0500
-Received: by mail-pa0-f48.google.com with SMTP id rd3so18771891pab.21
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Dec 2014 13:24:54 -0800 (PST)
+	Thu, 4 Dec 2014 16:47:15 -0500
+Received: by mail-pa0-f47.google.com with SMTP id kq14so18823645pab.20
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Dec 2014 13:47:14 -0800 (PST)
+In-Reply-To: <1417721269-19342-1-git-send-email-sjoerd.simons@collabora.co.uk>
+	(Sjoerd Simons's message of "Thu, 4 Dec 2014 20:27:49 +0100")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, arm@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, Tyler Baker <tyler.baker@linaro.org>
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Tyler Baker <tyler.baker@linaro.org>, Heesub Shin <heesub.shin@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-This patch enables the MAX77686 PMIC drivers in the multi_v7_defconfig used
-on exynos4412-prime family of SoCs [1]. The exynos4412-prime based boards
-are producing the following runtime errors only on the multi_v7_defconfig [2]:
+Sjoerd Simons <sjoerd.simons@collabora.co.uk> writes:
 
-kern.err: deviceless supply vdd_arm not found, using dummy regulator
-kern.err: exynos-cpufreq exynos-cpufreq: failed to set cpu voltage to 1287500
-kern.err: cpufreq: __target_index: Failed to change cpu frequency: -22
+> Add DTS for the Hardkernel Odroid XU3. The name of the DTS file is kept the
+> same as the vendors naming, which means it's prefixed with exynos5422
+> instead of exynos5800 as the SoC name even though it includes the
+> exyno5800 dtsi.
+>
+> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> ---
+> Changes since v1:
+>   * Add chosen/linux,stdout-path to point the serial console device
+>   * Change memory start offset to 0x40000000 to match the vendors DTS (pointed
+>     out by Heesub Shin)
+>   * Declare base address & size for the memory banks to be used by the MFC
+>
+> Kevin, Tyler, even though the changes are small i didn't want to just stick
+> your Tested-By on. Could you both be so kind to retest this on your XU3's ?
 
-I reviewed the exynos_defconfig, which does not produce these runtime
-errors. It was obvious that the exynos_defconfig has the PMIC drivers
-enabled, whereas the multi_v7_defconfig does not. This patch has been tested 
-on a odroid-u2 and a odroid-u3 board. It has resolved the runtime errors.
-Therefore, I purpose we enabled these drivers in the multi_v7_defconfig.
+Tested-by: Kevin Hilman <khilman@linaro.org>
 
-[1] http://www.hardkernel.com/main/products/prdt_info.php?g_code=G135270682824
-[2] http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc7-48-g7cc78f8/arm-multi_v7_defconfig/lab-tbaker-00/boot-exynos4412-odroidu3.html
+Tested on top of linux-next(ish) and Javier's dp-integ branch and it's
+booting fine including HDMI display output.
 
-Signed-off-by: Tyler Baker <tyler.baker@linaro.org>
----
- arch/arm/configs/multi_v7_defconfig | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 930bfcb..d789658 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -280,6 +280,7 @@ CONFIG_MFD_AS3722=y
- CONFIG_MFD_BCM590XX=y
- CONFIG_MFD_CROS_EC=y
- CONFIG_MFD_CROS_EC_SPI=y
-+CONFIG_MFD_MAX77686=y
- CONFIG_MFD_MAX8907=y
- CONFIG_MFD_SEC_CORE=y
- CONFIG_MFD_STMPE=y
-@@ -294,6 +295,7 @@ CONFIG_REGULATOR_GPIO=y
- CONFIG_MFD_SYSCON=y
- CONFIG_POWER_RESET_SYSCON=y
- CONFIG_REGULATOR_MAX8907=y
-+CONFIG_REGULATOR_MAX77686=y
- CONFIG_REGULATOR_PALMAS=y
- CONFIG_REGULATOR_S2MPS11=y
- CONFIG_REGULATOR_S5M8767=y
-@@ -399,6 +401,7 @@ CONFIG_RTC_CLASS=y
- CONFIG_RTC_DRV_AS3722=y
- CONFIG_RTC_DRV_DS1307=y
- CONFIG_RTC_DRV_MAX8907=y
-+CONFIG_RTC_DRV_MAX77686=y
- CONFIG_RTC_DRV_PALMAS=y
- CONFIG_RTC_DRV_TWL4030=y
- CONFIG_RTC_DRV_TPS6586X=y
-@@ -433,6 +436,7 @@ CONFIG_NVEC_POWER=y
- CONFIG_NVEC_PAZ00=y
- CONFIG_QCOM_GSBI=y
- CONFIG_COMMON_CLK_QCOM=y
-+CONFIG_COMMON_CLK_MAX77686=y
- CONFIG_APQ_MMCC_8084=y
- CONFIG_MSM_GCC_8660=y
- CONFIG_MSM_MMCC_8960=y
--- 
-2.1.3
+Kevin
