@@ -1,38 +1,110 @@
-From: Tyler Baker <tyler.baker@linaro.org>
-Subject: Re: [PATCH v2] ARM: dts: Add dts file for odroid XU3 board
-Date: Thu, 4 Dec 2014 12:07:01 -0800
-Message-ID: <CANMBJr5e_tc9P8g=kh5ARJ1ARnLG2RX2AKVbd2j-=4X8x1uARg@mail.gmail.com>
-References: <1417721269-19342-1-git-send-email-sjoerd.simons@collabora.co.uk>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH] dmaengine: pl330: Set residue in tx_status callback
+Date: Thu, 04 Dec 2014 21:15:09 +0100
+Message-ID: <5480C0CD.8050207@metafoo.de>
+References: <1416995095-13763-1-git-send-email-padma.v@samsung.com>	<CAAgF-BfpU72KTJjVd8jWStD8yJ5sSmXOiQm77xQunO2QhC9ExQ@mail.gmail.com>	<547DF61D.3010909@metafoo.de> <CAAgF-BfPyaOhhrA5L8vm2WDnhBYDexJFkGxqL1GsL2TMB8z=Rw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f43.google.com ([74.125.82.43]:43267 "EHLO
-	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751590AbaLDUHD (ORCPT
+Received: from smtp-out-076.synserver.de ([212.40.185.76]:1026 "EHLO
+	smtp-out-074.synserver.de" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S933094AbaLDUPB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Dec 2014 15:07:03 -0500
-Received: by mail-wg0-f43.google.com with SMTP id l18so23802690wgh.16
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Dec 2014 12:07:01 -0800 (PST)
-In-Reply-To: <1417721269-19342-1-git-send-email-sjoerd.simons@collabora.co.uk>
+	Thu, 4 Dec 2014 15:15:01 -0500
+In-Reply-To: <CAAgF-BfPyaOhhrA5L8vm2WDnhBYDexJFkGxqL1GsL2TMB8z=Rw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Kevin Hilman <khilman@kernel.org>, Heesub Shin <heesub.shin@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: Padma Venkat <padma.kvr@gmail.com>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, vinod.koul@intel.com, broonie@kernel.org, Dylan Reid <dgreid@chromium.org>
 
-On 4 December 2014 at 11:27, Sjoerd Simons
-<sjoerd.simons@collabora.co.uk> wrote:
-> Add DTS for the Hardkernel Odroid XU3. The name of the DTS file is kept the
-> same as the vendors naming, which means it's prefixed with exynos5422
-> instead of exynos5800 as the SoC name even though it includes the
-> exyno5800 dtsi.
+On 12/03/2014 05:47 AM, Padma Venkat wrote:
+> Hi Lars,
 >
-> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> [snip]
+>>>> +
+>>>> +	ret = dma_cookie_status(chan, cookie, txstate);
+>>>> +	if (ret == DMA_COMPLETE || !txstate)
+>>>> +		return ret;
+>>>> +
+>>>> +	used = txstate->used;
+>>>> +
+>>>> +	spin_lock_irqsave(&pch->lock, flags);
+>>>> +	sar = readl(regs + SA(thrd->id));
+>>>> +	dar = readl(regs + DA(thrd->id));
+>>>> +
+>>>> +	list_for_each_entry(desc, &pch->work_list, node) {
+>>>> +		if (desc->status == BUSY) {
+>>>> +			current_c = desc->txd.cookie;
+>>>> +			if (first) {
+>>>> +				first_c = desc->txd.cookie;
+>>>> +				first = false;
+>>>> +			}
+>>>> +
+>>>> +			if (first_c < current_c)
+>>>> +				residue += desc->px.bytes;
+>>>> +			else {
+>>>> +				if (desc->rqcfg.src_inc && pl330_src_addr_in_desc(desc, sar)) {
+>>>> +					residue += desc->px.bytes;
+>>>> +					residue -= sar - desc->px.src_addr;
+>>>> +				} else if (desc->rqcfg.dst_inc && pl330_dst_addr_in_desc(desc, dar))
+>>>> {
+>>>> +					residue += desc->px.bytes;
+>>>> +					residue -= dar - desc->px.dst_addr;
+>>>> +				}
+>>>> +			}
+>>>> +		} else if (desc->status == PREP)
+>>>> +			residue += desc->px.bytes;
+>>>> +
+>>>> +		if (desc->txd.cookie == used)
+>>>> +			break;
+>>>> +	}
+>>>> +	spin_unlock_irqrestore(&pch->lock, flags);
+>>>> +	dma_set_residue(txstate, residue);
+>>>> +	return ret;
+>>>>    }
+> [snip]
+>>>
+>>> Any comment on this patch?
+>>
+>> Well it doesn't break audio, but I don't think it has the correct haviour
+>> for all cases yet.
+>
+> OK. Any way of testing other cases like scatter-gather and memcopy.  I
+> verified memcopy in dmatest but it seems not doing anything with
+> residue bytes.
 
-Tested-by: Tyler Baker <tyler.baker@linaro.org>
+E.g. I think your current patch fails if more than one transfer has been 
+submitted. In that case you'll count the bytes for all of them rather than 
+just the one requested.
 
-Tested this atop of next-20141204, both on exynos_defconfig and
-multi_v7_defconfig. All configurations boot fine on my odroid-xu3
-board.
+>
+>>
+>> Again, the semantics are that it should return the progress of the transfer
+>>
+>> for which the allocation function returned the cookie that is passe to this
+>
+> May be my understanding is wrong. For clarification..In the
+> snd_dmaengine_pcm_pointer it is subtracting the residue bytes from the
+> total buffer bytes not from period bytes. So how it expects
+> the progress of the transfer of the passed cookie which just holds period bytes?
 
-Cheers,
-Tyler
+The issue that makes implementing this correctly for the pl330 driver 
+complicated is that the driver allocates one cookie per segment/period, but 
+the external API works with one cookie per transfer. All those cookies that 
+are assigned to the segments/periods that are not the first in a transfer 
+are not externally visible.
+
+dmaengine_prep_slave_sg() and friends create a transfer and return 
+descriptor for this transfer with a single cookie. If that cookie is passed 
+to dmaengine_tx_status() the function is supposed to report the progress on 
+that one transfer that was previously allocated and returned that cookie 
+number. residue is the total number of bytes that are still left to to be 
+processed for that transfer.
+
+I've started reworking the pl330 driver to only have a single cookie per 
+transfer, instead of one per period/segment. This makes implementing the 
+residue reporting a lot easier. I never finished that work though, but I can 
+try to see if I can revive it next week.
+
+- Lars
