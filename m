@@ -1,245 +1,391 @@
-From: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Subject: Re: [PATCH] media / PM: Replace CONFIG_PM_RUNTIME with CONFIG_PM
-Date: Thu, 4 Dec 2014 16:08:40 -0200
-Message-ID: <20141204160840.7d021bf1@recife.lan>
-References: <4139875.fkJ48z9AaU@vostro.rjw.lan>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <4139875.fkJ48z9AaU@vostro.rjw.lan>
-Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-media@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Kamil Debski <k.debski@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, Linux PM list <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Subject: [PATCH v2] ARM: dts: Add dts file for odroid XU3 board
+Date: Thu,  4 Dec 2014 20:27:49 +0100
+Message-ID: <1417721269-19342-1-git-send-email-sjoerd.simons@collabora.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:52170 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932914AbaLDT1y (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 4 Dec 2014 14:27:54 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Kevin Hilman <khilman@kernel.org>, Tyler Baker <tyler.baker@linaro.org>, Heesub Shin <heesub.shin@samsung.com>
+Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Em Wed, 03 Dec 2014 03:13:55 +0100
-"Rafael J. Wysocki" <rjw@rjwysocki.net> escreveu:
+Add DTS for the Hardkernel Odroid XU3. The name of the DTS file is kept the
+same as the vendors naming, which means it's prefixed with exynos5422
+instead of exynos5800 as the SoC name even though it includes the
+exyno5800 dtsi.
 
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> After commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if PM_SLEEP is
-> selected) PM_RUNTIME is always set if PM is set, so #ifdef blocks
-> depending on CONFIG_PM_RUNTIME may now be changed to depend on
-> CONFIG_PM.
-> 
-> The alternative of CONFIG_PM_SLEEP and CONFIG_PM_RUNTIME may be
-> replaced with CONFIG_PM too.
-> 
-> Make these changes everywhere under drivers/media/.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+---
+Changes since v1:
+  * Add chosen/linux,stdout-path to point the serial console device
+  * Change memory start offset to 0x40000000 to match the vendors DTS (pointed
+    out by Heesub Shin)
+  * Declare base address & size for the memory banks to be used by the MFC
 
-Acked-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+Kevin, Tyler, even though the changes are small i didn't want to just stick
+your Tested-By on. Could you both be so kind to retest this on your XU3's ?
 
-Feel free to apply it via your tree.
+Heesub, I would still love to know the reason for having the memory start
+address at 0x40000000 for this board?
 
-PS.: I won't doubt that you would find some extra checks for
-PM_RUNTIME on other places at media, as I remember I merged some
-things like that recently - I think they are there for 3.19, but
-it needs to be double-checked.
+ arch/arm/boot/dts/Makefile                 |   1 +
+ arch/arm/boot/dts/exynos5422-odroidxu3.dts | 332 +++++++++++++++++++++++++++++
+ 2 files changed, 333 insertions(+)
+ create mode 100644 arch/arm/boot/dts/exynos5422-odroidxu3.dts
 
-Regards,
-Mauro
-
-> ---
-> 
-> Note: This depends on commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if
-> PM_SLEEP is selected) which is only in linux-next at the moment (via the
-> linux-pm tree).
-> 
-> Please let me know if it is OK to take this one into linux-pm.
-> 
-> ---
->  drivers/media/platform/coda/coda-common.c       |    4 ++--
->  drivers/media/platform/exynos4-is/fimc-core.c   |    6 +++---
->  drivers/media/platform/exynos4-is/fimc-is-i2c.c |    2 +-
->  drivers/media/platform/exynos4-is/fimc-lite.c   |    2 +-
->  drivers/media/platform/exynos4-is/mipi-csis.c   |    2 +-
->  drivers/media/platform/s5p-jpeg/jpeg-core.c     |    4 ++--
->  drivers/media/platform/s5p-mfc/s5p_mfc.c        |    2 +-
->  drivers/media/platform/s5p-mfc/s5p_mfc_pm.c     |   10 ++++------
->  8 files changed, 15 insertions(+), 17 deletions(-)
-> 
-> Index: linux-pm/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> +++ linux-pm/drivers/media/platform/s5p-jpeg/jpeg-core.c
-> @@ -2632,7 +2632,7 @@ static int s5p_jpeg_remove(struct platfo
->  	return 0;
->  }
->  
-> -#if defined(CONFIG_PM_RUNTIME) || defined(CONFIG_PM_SLEEP)
-> +#ifdef CONFIG_PM
->  static int s5p_jpeg_runtime_suspend(struct device *dev)
->  {
->  	struct s5p_jpeg *jpeg = dev_get_drvdata(dev);
-> @@ -2682,7 +2682,7 @@ static int s5p_jpeg_runtime_resume(struc
->  
->  	return 0;
->  }
-> -#endif /* CONFIG_PM_RUNTIME || CONFIG_PM_SLEEP */
-> +#endif /* CONFIG_PM */
->  
->  #ifdef CONFIG_PM_SLEEP
->  static int s5p_jpeg_suspend(struct device *dev)
-> Index: linux-pm/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> ===================================================================
-> --- linux-pm.orig/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> +++ linux-pm/drivers/media/platform/s5p-mfc/s5p_mfc.c
-> @@ -1302,7 +1302,7 @@ static int s5p_mfc_resume(struct device
->  }
->  #endif
->  
-> -#ifdef CONFIG_PM_RUNTIME
-> +#ifdef CONFIG_PM
->  static int s5p_mfc_runtime_suspend(struct device *dev)
->  {
->  	struct platform_device *pdev = to_platform_device(dev);
-> Index: linux-pm/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
-> ===================================================================
-> --- linux-pm.orig/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
-> +++ linux-pm/drivers/media/platform/s5p-mfc/s5p_mfc_pm.c
-> @@ -13,9 +13,7 @@
->  #include <linux/clk.h>
->  #include <linux/err.h>
->  #include <linux/platform_device.h>
-> -#ifdef CONFIG_PM_RUNTIME
->  #include <linux/pm_runtime.h>
-> -#endif
->  #include "s5p_mfc_common.h"
->  #include "s5p_mfc_debug.h"
->  #include "s5p_mfc_pm.h"
-> @@ -67,7 +65,7 @@ int s5p_mfc_init_pm(struct s5p_mfc_dev *
->  	}
->  
->  	atomic_set(&pm->power, 0);
-> -#ifdef CONFIG_PM_RUNTIME
-> +#ifdef CONFIG_PM
->  	pm->device = &dev->plat_dev->dev;
->  	pm_runtime_enable(pm->device);
->  #endif
-> @@ -93,7 +91,7 @@ void s5p_mfc_final_pm(struct s5p_mfc_dev
->  	}
->  	clk_unprepare(pm->clock_gate);
->  	clk_put(pm->clock_gate);
-> -#ifdef CONFIG_PM_RUNTIME
-> +#ifdef CONFIG_PM
->  	pm_runtime_disable(pm->device);
->  #endif
->  }
-> @@ -120,7 +118,7 @@ void s5p_mfc_clock_off(void)
->  
->  int s5p_mfc_power_on(void)
->  {
-> -#ifdef CONFIG_PM_RUNTIME
-> +#ifdef CONFIG_PM
->  	return pm_runtime_get_sync(pm->device);
->  #else
->  	atomic_set(&pm->power, 1);
-> @@ -130,7 +128,7 @@ int s5p_mfc_power_on(void)
->  
->  int s5p_mfc_power_off(void)
->  {
-> -#ifdef CONFIG_PM_RUNTIME
-> +#ifdef CONFIG_PM
->  	return pm_runtime_put_sync(pm->device);
->  #else
->  	atomic_set(&pm->power, 0);
-> Index: linux-pm/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-> ===================================================================
-> --- linux-pm.orig/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-> +++ linux-pm/drivers/media/platform/exynos4-is/fimc-is-i2c.c
-> @@ -81,7 +81,7 @@ static int fimc_is_i2c_remove(struct pla
->  	return 0;
->  }
->  
-> -#if defined(CONFIG_PM_RUNTIME) || defined(CONFIG_PM_SLEEP)
-> +#ifdef CONFIG_PM
->  static int fimc_is_i2c_runtime_suspend(struct device *dev)
->  {
->  	struct fimc_is_i2c *isp_i2c = dev_get_drvdata(dev);
-> Index: linux-pm/drivers/media/platform/exynos4-is/fimc-lite.c
-> ===================================================================
-> --- linux-pm.orig/drivers/media/platform/exynos4-is/fimc-lite.c
-> +++ linux-pm/drivers/media/platform/exynos4-is/fimc-lite.c
-> @@ -1588,7 +1588,7 @@ err_clk_put:
->  	return ret;
->  }
->  
-> -#ifdef CONFIG_PM_RUNTIME
-> +#ifdef CONFIG_PM
->  static int fimc_lite_runtime_resume(struct device *dev)
->  {
->  	struct fimc_lite *fimc = dev_get_drvdata(dev);
-> Index: linux-pm/drivers/media/platform/exynos4-is/mipi-csis.c
-> ===================================================================
-> --- linux-pm.orig/drivers/media/platform/exynos4-is/mipi-csis.c
-> +++ linux-pm/drivers/media/platform/exynos4-is/mipi-csis.c
-> @@ -978,7 +978,7 @@ static int s5pcsis_resume(struct device
->  }
->  #endif
->  
-> -#ifdef CONFIG_PM_RUNTIME
-> +#ifdef CONFIG_PM
->  static int s5pcsis_runtime_suspend(struct device *dev)
->  {
->  	return s5pcsis_pm_suspend(dev, true);
-> Index: linux-pm/drivers/media/platform/exynos4-is/fimc-core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/media/platform/exynos4-is/fimc-core.c
-> +++ linux-pm/drivers/media/platform/exynos4-is/fimc-core.c
-> @@ -832,7 +832,7 @@ err:
->  	return -ENXIO;
->  }
->  
-> -#if defined(CONFIG_PM_RUNTIME) || defined(CONFIG_PM_SLEEP)
-> +#ifdef CONFIG_PM
->  static int fimc_m2m_suspend(struct fimc_dev *fimc)
->  {
->  	unsigned long flags;
-> @@ -871,7 +871,7 @@ static int fimc_m2m_resume(struct fimc_d
->  
->  	return 0;
->  }
-> -#endif /* CONFIG_PM_RUNTIME || CONFIG_PM_SLEEP */
-> +#endif /* CONFIG_PM */
->  
->  static const struct of_device_id fimc_of_match[];
->  
-> @@ -1039,7 +1039,7 @@ err_sclk:
->  	return ret;
->  }
->  
-> -#ifdef CONFIG_PM_RUNTIME
-> +#ifdef CONFIG_PM
->  static int fimc_runtime_resume(struct device *dev)
->  {
->  	struct fimc_dev *fimc =	dev_get_drvdata(dev);
-> Index: linux-pm/drivers/media/platform/coda/coda-common.c
-> ===================================================================
-> --- linux-pm.orig/drivers/media/platform/coda/coda-common.c
-> +++ linux-pm/drivers/media/platform/coda/coda-common.c
-> @@ -1980,7 +1980,7 @@ static int coda_probe(struct platform_de
->  
->  	/*
->  	 * Start activated so we can directly call coda_hw_init in
-> -	 * coda_fw_callback regardless of whether CONFIG_PM_RUNTIME is
-> +	 * coda_fw_callback regardless of whether CONFIG_PM is
->  	 * enabled or whether the device is associated with a PM domain.
->  	 */
->  	pm_runtime_get_noresume(&pdev->dev);
-> @@ -2013,7 +2013,7 @@ static int coda_remove(struct platform_d
->  	return 0;
->  }
->  
-> -#ifdef CONFIG_PM_RUNTIME
-> +#ifdef CONFIG_PM
->  static int coda_runtime_resume(struct device *dev)
->  {
->  	struct coda_dev *cdev = dev_get_drvdata(dev);
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-media" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 38c89ca..0a898cc 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -86,6 +86,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
+ 	exynos5420-arndale-octa.dtb \
+ 	exynos5420-peach-pit.dtb \
+ 	exynos5420-smdk5420.dtb \
++	exynos5422-odroidxu3.dtb \
+ 	exynos5440-sd5v1.dtb \
+ 	exynos5440-ssdk5440.dtb \
+ 	exynos5800-peach-pi.dtb
+diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+new file mode 100644
+index 0000000..0dc9cf8
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+@@ -0,0 +1,332 @@
++/*
++ * Hardkernel Odroid XU3 board device tree source
++ *
++ * Copyright (c) 2014 Collabora Ltd.
++ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/dts-v1/;
++#include "exynos5800.dtsi"
++
++/ {
++	model = "Hardkernel Odroid XU3";
++	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
++
++	memory {
++		reg = <0x40000000 0x80000000>;
++	};
++
++	chosen {
++		linux,stdout-path = &serial_2;
++	};
++
++	fimd@14400000 {
++		status = "okay";
++	};
++
++	firmware@02073000 {
++		compatible = "samsung,secure-firmware";
++		reg = <0x02073000 0x1000>;
++	};
++
++	fixed-rate-clocks {
++		oscclk {
++			compatible = "samsung,exynos5420-oscclk";
++			clock-frequency = <24000000>;
++		};
++	};
++
++	hsi2c_4: i2c@12CA0000 {
++		status = "okay";
++
++		s2mps11_pmic@66 {
++			compatible = "samsung,s2mps11-pmic";
++			reg = <0x66>;
++			s2mps11,buck2-ramp-delay = <12>;
++			s2mps11,buck34-ramp-delay = <12>;
++			s2mps11,buck16-ramp-delay = <12>;
++			s2mps11,buck6-ramp-enable = <1>;
++			s2mps11,buck2-ramp-enable = <1>;
++			s2mps11,buck3-ramp-enable = <1>;
++			s2mps11,buck4-ramp-enable = <1>;
++
++			s2mps11_osc: clocks {
++				#clock-cells = <1>;
++				clock-output-names = "s2mps11_ap",
++						"s2mps11_cp", "s2mps11_bt";
++			};
++
++			regulators {
++				ldo1_reg: LDO1 {
++					regulator-name = "vdd_ldo1";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo3_reg: LDO3 {
++					regulator-name = "vdd_ldo3";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo5_reg: LDO5 {
++					regulator-name = "vdd_ldo5";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo6_reg: LDO6 {
++					regulator-name = "vdd_ldo6";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo7_reg: LDO7 {
++					regulator-name = "vdd_ldo7";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo8_reg: LDO8 {
++					regulator-name = "vdd_ldo8";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo9_reg: LDO9 {
++					regulator-name = "vdd_ldo9";
++					regulator-min-microvolt = <3000000>;
++					regulator-max-microvolt = <3000000>;
++					regulator-always-on;
++				};
++
++				ldo10_reg: LDO10 {
++					regulator-name = "vdd_ldo10";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo11_reg: LDO11 {
++					regulator-name = "vdd_ldo11";
++					regulator-min-microvolt = <1000000>;
++					regulator-max-microvolt = <1000000>;
++					regulator-always-on;
++				};
++
++				ldo12_reg: LDO12 {
++					regulator-name = "vdd_ldo12";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++				};
++
++				ldo13_reg: LDO13 {
++					regulator-name = "vdd_ldo13";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++				};
++
++				ldo15_reg: LDO15 {
++					regulator-name = "vdd_ldo15";
++					regulator-min-microvolt = <3100000>;
++					regulator-max-microvolt = <3100000>;
++					regulator-always-on;
++				};
++
++				ldo16_reg: LDO16 {
++					regulator-name = "vdd_ldo16";
++					regulator-min-microvolt = <2200000>;
++					regulator-max-microvolt = <2200000>;
++					regulator-always-on;
++				};
++
++				ldo17_reg: LDO17 {
++					regulator-name = "tsp_avdd";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-always-on;
++				};
++
++				ldo19_reg: LDO19 {
++					regulator-name = "vdd_sd";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++				};
++
++				ldo24_reg: LDO24 {
++					regulator-name = "tsp_io";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-always-on;
++				};
++
++				buck1_reg: BUCK1 {
++					regulator-name = "vdd_mif";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1300000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck2_reg: BUCK2 {
++					regulator-name = "vdd_arm";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck3_reg: BUCK3 {
++					regulator-name = "vdd_int";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck4_reg: BUCK4 {
++					regulator-name = "vdd_g3d";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck5_reg: BUCK5 {
++					regulator-name = "vdd_mem";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck6_reg: BUCK6 {
++					regulator-name = "vdd_kfc";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck7_reg: BUCK7 {
++					regulator-name = "vdd_1.0v_ldo";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck8_reg: BUCK8 {
++					regulator-name = "vdd_1.8v_ldo";
++					regulator-min-microvolt = <800000>;
++					regulator-max-microvolt = <1500000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck9_reg: BUCK9 {
++					regulator-name = "vdd_2.8v_ldo";
++					regulator-min-microvolt = <3000000>;
++					regulator-max-microvolt = <3750000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++
++				buck10_reg: BUCK10 {
++					regulator-name = "vdd_vmem";
++					regulator-min-microvolt = <2850000>;
++					regulator-max-microvolt = <2850000>;
++					regulator-always-on;
++					regulator-boot-on;
++				};
++			};
++		};
++	};
++
++	i2c_2: i2c@12C80000 {
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <66000>;
++		status = "okay";
++
++		hdmiddc@50 {
++			compatible = "samsung,exynos4210-hdmiddc";
++			reg = <0x50>;
++		};
++	};
++
++	rtc@101E0000 {
++		status = "okay";
++	};
++};
++
++&hdmi {
++	status = "okay";
++	hpd-gpio = <&gpx3 7 0>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&hdmi_hpd_irq>;
++
++	vdd_osc-supply = <&ldo10_reg>;
++	vdd_pll-supply = <&ldo8_reg>;
++	vdd-supply = <&ldo8_reg>;
++};
++
++&mfc {
++	samsung,mfc-r = <0x43000000 0x800000>;
++	samsung,mfc-l = <0x51000000 0x800000>;
++};
++
++&mmc_0 {
++	status = "okay";
++	broken-cd;
++	card-detect-delay = <200>;
++	samsung,dw-mshc-ciu-div = <3>;
++	samsung,dw-mshc-sdr-timing = <0 4>;
++	samsung,dw-mshc-ddr-timing = <0 2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
++	bus-width = <8>;
++	cap-mmc-highspeed;
++};
++
++&mmc_2 {
++	status = "okay";
++	card-detect-delay = <200>;
++	samsung,dw-mshc-ciu-div = <3>;
++	samsung,dw-mshc-sdr-timing = <0 4>;
++	samsung,dw-mshc-ddr-timing = <0 2>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
++	bus-width = <4>;
++	cap-sd-highspeed;
++};
++
++&pinctrl_0 {
++	hdmi_hpd_irq: hdmi-hpd-irq {
++		samsung,pins = "gpx3-7";
++		samsung,pin-function = <0>;
++		samsung,pin-pud = <1>;
++		samsung,pin-drv = <0>;
++	};
++};
++
++&usbdrd_dwc3_0 {
++	dr_mode = "host";
++};
++
++&usbdrd_dwc3_1 {
++	dr_mode = "otg";
++};
+-- 
+2.1.3
