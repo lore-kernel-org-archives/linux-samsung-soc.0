@@ -1,80 +1,56 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v7 08/11] arm/arm64: Unexport restart handlers
-Date: Thu, 04 Dec 2014 06:51:49 -0800
-Message-ID: <54807505.2000406@roeck-us.net>
-References: <1408495538-27480-1-git-send-email-linux@roeck-us.net>	<1408495538-27480-9-git-send-email-linux@roeck-us.net>	<CAMuHMdVqCa+m1oMkuRHcTZKw2CWNHJVotWBwfTnfBNT11UPEjw@mail.gmail.com>	<54806F2A.7070107@roeck-us.net> <CAMuHMdX-WsVErpiZ_EbFSGxeJEfpu3cRaZzitupiSAA2hXEJ8g@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH V4 1/3] PM / Domains: Initial PM clock support for genpd
+Date: Thu, 4 Dec 2014 16:00:02 +0100
+Message-ID: <CAPDyKFpPFismu2Cv4DBX7Eao5EBx4xXXz4K_6pfbitavfGZLTA@mail.gmail.com>
+References: <1417434623-31301-1-git-send-email-ulf.hansson@linaro.org>
+	<1417434623-31301-2-git-send-email-ulf.hansson@linaro.org>
+	<7h7fya502u.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdX-WsVErpiZ_EbFSGxeJEfpu3cRaZzitupiSAA2hXEJ8g@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Russell King <linux@arm.linux.org.uk>, Wim Van Sebroeck <wim@iguana.be>, Catalin Marinas <catalin.marinas@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Andrew Morton <akpm@linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Linux PM list <linux-pm@vger.kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Randy Dunlap <rdunlap@infradead.org>, Will Deacon <will.deacon@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Jonas Jensen <jonas.jensen@gmail.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>, linux-arm-kernel@lists.infradead.o
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f174.google.com ([209.85.216.174]:48022 "EHLO
+	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932173AbaLDPAD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 4 Dec 2014 10:00:03 -0500
+Received: by mail-qc0-f174.google.com with SMTP id c9so12750601qcz.5
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Dec 2014 07:00:02 -0800 (PST)
+In-Reply-To: <7h7fya502u.fsf@deeprootsystems.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kevin Hilman <khilman@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Simon Horman <horms@verge.net.au>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@arm.linux.org.uk>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Grygorii Strashko <grygorii.strashko@ti.com>, Arnd Bergmann <arnd@arndb.de>
 
-On 12/04/2014 06:44 AM, Geert Uytterhoeven wrote:
-> Hi G=C3=BCnther,
+On 2 December 2014 at 02:09, Kevin Hilman <khilman@kernel.org> wrote:
+> Ulf Hansson <ulf.hansson@linaro.org> writes:
 >
-> On Thu, Dec 4, 2014 at 3:26 PM, Guenter Roeck <linux@roeck-us.net> wr=
-ote:
->> On 12/04/2014 05:36 AM, Geert Uytterhoeven wrote:
->>> On Wed, Aug 20, 2014 at 2:45 AM, Guenter Roeck <linux@roeck-us.net>=
- wrote:
->>>> Implementing a restart handler in a module don't make sense
->>>> as there would be no guarantee that the module is loaded when
->>>> a restart is needed. Unexport arm_pm_restart to ensure that
->>>> no one gets the idea to do it anyway.
->>>
->>> Why not? I was just going to do that, but I got greeted by:
+>> It's quite common for PM domains to use PM clocks. Typically from SOC
+>> specific code, the per device PM clock list is created and
+>> pm_clk_suspend|resume() are invoked to handle clock gating/ungating.
 >>
->> Because you should register a restart handler instead, like the othe=
-r
->> drivers in the same directory now do.
->
-> That's a different thing. "there would be no guarantee that the modul=
-e is
-> loaded when a restart is needed" is also valid for restart handlers..=
-=2E
->
-
-Not really, because you are supposed to unregister the restart handler
-on unload. Sure, you can instead clear arm_pm_reastart and leave the sy=
-stem
-with no means to restart ...
-
-Guenter
-
->>> ERROR: "arm_pm_restart" [drivers/power/reset/rmobile-reset.ko] unde=
-fined!
->>>
->>> So now we have to make sure all reset drivers for a zillion differe=
-nt
->>> hardware devices are builtin, and can't be modular?
->>>
->> No. All those drivers need to do is to register a restart handler us=
-ing
->> the API provided in the patch series.
+>> A step towards consolidation is to integrate PM clock support into
+>> genpd, which is what this patch does.
 >>
->> Ultimately all restart handlers should do that and arm_pm_restart sh=
-ould
->> go away entirely. That was the point of the patch series.
+>> In this initial step, the calls to the pm_clk_suspend|resume() are
+>> handled within genpd, but the per device PM clock list still needs to
+>> be created from SOC specific code. It seems reasonable to have gendp to
+>> handle that as well, but that left to future patches to address.
+>>
+>> It's not every users of genpd that are keen on using PM clocks, thus we
+>> need to provide this a configuration option for genpd. Therefore let's
+>> add flag field in the genpd struct to keep this information and define
+>> a new GENDP_FLAG_PM_CLK bit for it.
+>>
+>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+>> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
 >
-> Good. That's what I'm doing right know ;-)
+> Acked-by: Kevin Hilman <khilman@linaro.org>
 >
-> Gr{oetje,eeting}s,
->
->                          Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linu=
-x-m68k.org
->
-> In personal conversations with technical people, I call myself a hack=
-er. But
-> when I'm talking to journalists I just say "programmer" or something =
-like that.
->                                  -- Linus Torvalds
->
+> Are you also planning to add a way to enable this option from DT?
 
+I am thinking of that, yes. Though I wanted the discussion around how
+to deal with creating the PM clock lists while using PM domains to
+settle first.
+
+Kind regards
+Uffe
