@@ -1,98 +1,66 @@
 From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] PM/ Domains: Export of_genpd_get_from_provider function.
-Date: Thu, 4 Dec 2014 16:39:45 +0100
-Message-ID: <CAPDyKFo15y-ENW9M3bratoWQ_DL_mfT3FwQE4i+pscR0crmyBA@mail.gmail.com>
-References: <CAPDyKFpX5nXR18pKdLrtDrPK60p1y2CEqq+--3z3jczRRmKrqA@mail.gmail.com>
-	<1417434068-7344-1-git-send-email-amit.daniel@samsung.com>
+Subject: Re: [PATCH V2] PM / Domains: Add pm_genpd_lookup() API to lookup
+ domain by firmware node
+Date: Thu, 4 Dec 2014 16:42:16 +0100
+Message-ID: <CAPDyKFozWmOuCA_uR1b7BAxhYUGUFp48K0b4tTR-cWjzjgR2FQ@mail.gmail.com>
+References: <1417171115-5789-1-git-send-email-ulf.hansson@linaro.org>
+	<5765394.eQjV2VvkSL@vostro.rjw.lan>
+	<CAPDyKFpX5nXR18pKdLrtDrPK60p1y2CEqq+--3z3jczRRmKrqA@mail.gmail.com>
+	<CADGdYn5aLr69PrqO5RvU4q6HU9pPZ+1tWL27cc=cVazAvSVFpQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1417434068-7344-1-git-send-email-amit.daniel@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kevin Hilman <khilman@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qg0-f45.google.com ([209.85.192.45]:38320 "EHLO
+	mail-qg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932335AbaLDPmX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 4 Dec 2014 10:42:23 -0500
+Received: by mail-qg0-f45.google.com with SMTP id f51so12583203qge.4
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Dec 2014 07:42:22 -0800 (PST)
+In-Reply-To: <CADGdYn5aLr69PrqO5RvU4q6HU9pPZ+1tWL27cc=cVazAvSVFpQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: amit daniel kachhap <amit.daniel@samsung.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, Kevin Hilman <khilman@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 1 December 2014 at 12:41, Amit Daniel Kachhap
+On 1 December 2014 at 12:57, amit daniel kachhap
 <amit.daniel@samsung.com> wrote:
-> This function looks up a PM domain form the provider. This will be
-> useful to add parent/child domain relationship from the SoC specific
-> code. The caller of the function must make sure that PM domain provider
-> is already registered.
+> On Mon, Dec 1, 2014 at 3:56 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+>> On 29 November 2014 at 01:30, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+>>> On Friday, November 28, 2014 11:38:35 AM Ulf Hansson wrote:
+>>>> In a step to move away from using genpd's name based APIs, such as the
+>>>> pm_genpd_add_subdomain_names(), provide an API to lookup an already
+>>>> initialized generic PM domain by its firmware node.
+>>>>
+>>>> This API would typically be a called from SOC specific code, to fetch a
+>>>> handle to the domain. Especially convenient to configure subdomains and
+>>>> when the hierarchy of the domains are described in DT.
+>>>>
+>>>> Do note, before pm_genpd_init() is invoked to initialize a generic PM
+>>>> domain, it's the callers responsibility to assign the new ->fwnode
+>>>> pointer in the struct generic_pm_domain, to enable pm_genpd_lookup() to
+>>>> find the domain.
+>>>>
+>>>> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+>>>
+>>> I have no problems with that, but do you have a user for it?
+>>
+>> Amit Daniel Kachhap, posted a patchset which is adding subdomains
+>> configured from DT for Exynos. It's from there the idea to this patch
+>> comes from. Amit is about to post a new version, based on this patch.
 >
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
-> This patch may solve the same purpose which is done by earlier posts
-> 1) https://lkml.org/lkml/2014/11/24/319 - In this there were comments
-> for not using the PM domain name.
+> Hi Ulf,
 >
-> 2) Ulf Hansson posted a patch
-> http://www.spinics.net/lists/linux-samsung-soc/msg39745.html which also solves
-> similar purpose but I feel this is slightly complex and involves changing
-> the genpd structure.
+> I was trying to use this API but i felt there is a better way of just exporting
+> of_genpd_get_from_provider as a similar API is used to register the
+> power domain.
 >
->
->  drivers/base/power/domain.c |    3 ++-
->  include/linux/pm_domain.h   |    8 ++++++++
->  2 files changed, 10 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index d822753..5d7a2c1 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -2129,7 +2129,7 @@ EXPORT_SYMBOL_GPL(of_genpd_del_provider);
->   * Returns a valid pointer to struct generic_pm_domain on success or ERR_PTR()
->   * on failure.
->   */
-> -static struct generic_pm_domain *of_genpd_get_from_provider(
-> +struct generic_pm_domain *of_genpd_get_from_provider(
->                                         struct of_phandle_args *genpdspec)
->  {
->         struct generic_pm_domain *genpd = ERR_PTR(-ENOENT);
-> @@ -2149,6 +2149,7 @@ static struct generic_pm_domain *of_genpd_get_from_provider(
->
->         return genpd;
->  }
-> +EXPORT_SYMBOL_GPL(of_genpd_get_from_provider);
->
->  /**
->   * genpd_dev_pm_detach - Detach a device from its PM domain.
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 9690827..4954e24 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -282,6 +282,8 @@ typedef struct generic_pm_domain *(*genpd_xlate_t)(struct of_phandle_args *args,
->  int __of_genpd_add_provider(struct device_node *np, genpd_xlate_t xlate,
->                         void *data);
->  void of_genpd_del_provider(struct device_node *np);
-> +struct generic_pm_domain *of_genpd_get_from_provider(
-> +                       struct of_phandle_args *genpdspec);
->
->  struct generic_pm_domain *__of_genpd_xlate_simple(
->                                         struct of_phandle_args *genpdspec,
-> @@ -299,6 +301,12 @@ static inline int __of_genpd_add_provider(struct device_node *np,
->  }
->  static inline void of_genpd_del_provider(struct device_node *np) {}
->
-> +static inline struct generic_pm_domain *of_genpd_get_from_provider(
-> +                       struct of_phandle_args *genpdspec)
-> +{
-> +       return NULL;
-> +}
-> +
->  #define __of_genpd_xlate_simple                NULL
->  #define __of_genpd_xlate_onecell       NULL
->
-> --
-> 1.7.9.5
+> Check if this make sense www.spinics.net/lists/arm-kernel/msg382665.html.
 >
 
-This seems like a good approach!
+That makes sense!
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-
-Do, note that you will have to resend the patch to linux-pm list as
-well. Unless Rafael is happy to pick it up from here.
+So, let's drop $subject patch.
 
 Kind regards
 Uffe
