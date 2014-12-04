@@ -1,57 +1,89 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Add missing static to file-scope declarations
-Date: Thu, 04 Dec 2014 13:30:41 +0100
-Message-ID: <1417696241-26726-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v7 08/11] arm/arm64: Unexport restart handlers
+Date: Thu, 4 Dec 2014 14:36:27 +0100
+Message-ID: <CAMuHMdVqCa+m1oMkuRHcTZKw2CWNHJVotWBwfTnfBNT11UPEjw@mail.gmail.com>
+References: <1408495538-27480-1-git-send-email-linux@roeck-us.net>
+	<1408495538-27480-9-git-send-email-linux@roeck-us.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1408495538-27480-9-git-send-email-linux@roeck-us.net>
+Sender: linux-pm-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Russell King <linux@arm.linux.org.uk>, Wim Van Sebroeck <wim@iguana.be>, Catalin Marinas <catalin.marinas@arm.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Andrew Morton <akpm@linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Linux PM list <linux-pm@vger.kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Tomasz Figa <t.figa@samsung.com>, Randy Dunlap <rdunlap@infradead.org>, Will Deacon <will.deacon@arm.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Jonas Jensen <jonas.jensen@gmail.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, Ingo Molnar <mingo@kernel.org>, linux-arm-kernel@lists.infradead.o
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The 'pm_data', 'exynos_release_ret_regs' and
-'exynos5420_release_ret_regs' are not exported nor used outside of
-suspend.c file. Make them static.
+Hi G=C3=BCnther,
 
-This fixes following sparse warnings:
-arch/arm/mach-exynos/suspend.c:83:23: warning: symbol 'pm_data' was not declared. Should it be static?
-arch/arm/mach-exynos/suspend.c:106:14: warning: symbol 'exynos_release_ret_regs' was not declared. Should it be static?
-arch/arm/mach-exynos/suspend.c:117:14: warning: symbol 'exynos5420_release_ret_regs' was not declared. Should it be static?
+On Wed, Aug 20, 2014 at 2:45 AM, Guenter Roeck <linux@roeck-us.net> wro=
+te:
+> Implementing a restart handler in a module don't make sense
+> as there would be no guarantee that the module is loaded when
+> a restart is needed. Unexport arm_pm_restart to ensure that
+> no one gets the idea to do it anyway.
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/mach-exynos/suspend.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Why not? I was just going to do that, but I got greeted by:
 
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index f8e7dcd17055..6131c16a4a5d 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -80,7 +80,7 @@ struct exynos_pm_data {
- 	int (*cpu_suspend)(unsigned long);
- };
- 
--struct exynos_pm_data *pm_data;
-+static struct exynos_pm_data *pm_data;
- 
- static int exynos5420_cpu_state;
- static unsigned int exynos_pmu_spare3;
-@@ -103,7 +103,7 @@ static const struct exynos_wkup_irq exynos5250_wkup_irq[] = {
- 	{ /* sentinel */ },
- };
- 
--unsigned int exynos_release_ret_regs[] = {
-+static unsigned int exynos_release_ret_regs[] = {
- 	S5P_PAD_RET_MAUDIO_OPTION,
- 	S5P_PAD_RET_GPIO_OPTION,
- 	S5P_PAD_RET_UART_OPTION,
-@@ -114,7 +114,7 @@ unsigned int exynos_release_ret_regs[] = {
- 	REG_TABLE_END,
- };
- 
--unsigned int exynos5420_release_ret_regs[] = {
-+static unsigned int exynos5420_release_ret_regs[] = {
- 	EXYNOS_PAD_RET_DRAM_OPTION,
- 	EXYNOS_PAD_RET_MAUDIO_OPTION,
- 	EXYNOS_PAD_RET_JTAG_OPTION,
--- 
-1.9.1
+ERROR: "arm_pm_restart" [drivers/power/reset/rmobile-reset.ko] undefine=
+d!
+
+So now we have to make sure all reset drivers for a zillion different
+hardware devices are builtin, and can't be modular?
+
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> Acked-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+> v7: No change
+> v6: No change
+> v5: No change
+> v4: No change
+> v3: No change
+> v2: No change
+>
+>  arch/arm/kernel/process.c   | 1 -
+>  arch/arm64/kernel/process.c | 1 -
+>  2 files changed, 2 deletions(-)
+>
+> diff --git a/arch/arm/kernel/process.c b/arch/arm/kernel/process.c
+> index ea279f7..250b6f6 100644
+> --- a/arch/arm/kernel/process.c
+> +++ b/arch/arm/kernel/process.c
+> @@ -121,7 +121,6 @@ void (*pm_power_off)(void);
+>  EXPORT_SYMBOL(pm_power_off);
+>
+>  void (*arm_pm_restart)(enum reboot_mode reboot_mode, const char *cmd=
+);
+> -EXPORT_SYMBOL_GPL(arm_pm_restart);
+>
+>  /*
+>   * This is our default idle handler.
+> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.=
+c
+> index 0d3fb9f..398ab05 100644
+> --- a/arch/arm64/kernel/process.c
+> +++ b/arch/arm64/kernel/process.c
+> @@ -98,7 +98,6 @@ void (*pm_power_off)(void);
+>  EXPORT_SYMBOL_GPL(pm_power_off);
+>
+>  void (*arm_pm_restart)(enum reboot_mode reboot_mode, const char *cmd=
+);
+> -EXPORT_SYMBOL_GPL(arm_pm_restart);
+>
+>  /*
+>   * This is our default idle handler.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-=
+m68k.org
+
+In personal conversations with technical people, I call myself a hacker=
+=2E But
+when I'm talking to journalists I just say "programmer" or something li=
+ke that.
+                                -- Linus Torvalds
