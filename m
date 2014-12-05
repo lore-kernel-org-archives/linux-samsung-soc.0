@@ -1,64 +1,58 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] dmaengine: pl330: Set residue in tx_status callback
-Date: Fri, 5 Dec 2014 15:18:43 +0000
-Message-ID: <20141205151843.GV11285@n2100.arm.linux.org.uk>
-References: <1416995095-13763-1-git-send-email-padma.v@samsung.com>
- <CAAgF-BfpU72KTJjVd8jWStD8yJ5sSmXOiQm77xQunO2QhC9ExQ@mail.gmail.com>
- <547DF61D.3010909@metafoo.de>
- <CAAgF-BfPyaOhhrA5L8vm2WDnhBYDexJFkGxqL1GsL2TMB8z=Rw@mail.gmail.com>
- <CAJe_Zhd2-vBgAoJsBt7JCOYDuTZrBCScSZ1HaNO3gNTZ-P6A9A@mail.gmail.com>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
+ Refactor the driver to use commit-like)
+Date: Fri, 5 Dec 2014 10:13:51 -0600
+Message-ID: <5481D9BF.2090007@ti.com>
+References: <5481D913.9040109@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:39473 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751018AbaLEPSx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Dec 2014 10:18:53 -0500
-Content-Disposition: inline
-In-Reply-To: <CAJe_Zhd2-vBgAoJsBt7JCOYDuTZrBCScSZ1HaNO3gNTZ-P6A9A@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-next-owner@vger.kernel.org>
+In-Reply-To: <5481D913.9040109@ti.com>
+Sender: linux-next-owner@vger.kernel.org
+To: Kevin Hilman <khilman@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: linux-omap <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next <linux-next@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jaswinder.singh@linaro.org>
-Cc: Padma Venkat <padma.kvr@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Padmavathi Venna <padma.v@samsung.com>, "Koul, Vinod" <vinod.koul@intel.com>, Mark Brown <broonie@kernel.org>, dmaengine@vger.kernel.org, Dylan Reid <dgreid@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Wed, Dec 03, 2014 at 01:21:37PM +0530, Jassi Brar wrote:
-> because the reasoning above seems incorrect considering the following
-> documentation...
+On 12/05/2014 10:10 AM, Nishanth Menon wrote:
+> next-20141204 fails to boot, but next-20141203 boots fine with
+> omap2plus_defconfig.
 > 
-> Documentation/crypto/async-tx-api.txt says
-                       ^^^^^^^^^^^^
+> Panda-ES(4460):
+> https://github.com/nmenon/kernel-test-logs/blob/next-20141204/omap2plus_defconfig/pandaboard-es.txt
+> Panda(4430):
+> https://github.com/nmenon/kernel-test-logs/blob/next-20141204/omap2plus_defconfig/pandaboard-vanilla.txt
+> 
+> at the point of hang (JTAG):
+>  pandaboard-es:
+> 	cpu0: http://slexy.org/view/s2eIFqkRd5
+> 	cpu1: http://slexy.org/view/s2Tysb6gpL
+> 
+> Case #1:
+> Disabling CPUIDLE allows boot to proceed. there does not seem to have
+> been any change in drivers/cpuidle and arch/arm/mach-omap2 w.r.t this.
+> 
+> Case #2: Reverting the following allows boot.
+> 
+> From next-20141204
+> 10df7d5 ARM: 8211/1: l2c: Add support for overriding prefetch settings
+> revert this  -> boot still fails
+> 
+> d42ced0 ARM: 8210/1: l2c: Get outer cache .write_sec callback from
+> mach_desc only if not NULL
+> revert this  -> boot still fails
+> 
+> 46b9af8 ARM: 8209/1: l2c: Add interface to ask hypervisor to configure L2C
+> revert this  -> boot still fails
+> 
+> c94e325 ARM: 8208/1: l2c: Refactor the driver to use commit-like
+> revert this  -> boot passed (first bad commit).
+> 
+> 
 
-async-tx-api is not the DMA slave API.
++ linux-samsung soc and updated Thomaz's mail ID (gmail now).
 
->   " .... Once a driver-specific threshold is met the driver
-> automatically issues pending operations.  An application can force this
-> event by calling async_tx_issue_pending_all(). ...."
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-DMA slave users do not call this function.  This documentation is not
-relevant for DMA slave.
-
-> include/linux/dmaengine.h says
->   dma_async_tx_descriptor.tx_submit(): set the prepared descriptor(s)
-> to be executed by the engine
-
-It doesn't say when.
-
-> so theoretically a driver, not starting transfer until
-> issue_pending(), is "broken".
-
-It isn't.  DMA slave engine implementations have been needing the
-issue_pending() call since their dawn, so it's something that they've
-always needed.
-
-> At best the patch@04abf5daf7d makes the driver slightly more
-> complicated and the reason behind confusion such as in this thread.
-
-That may be, and yes, it _might_ be worth discussing whether this should
-be relaxed or not, but that should be done as a proposal, not trying to
-hide it as a bug fix.  It isn't.
 
 -- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+Regards,
+Nishanth Menon
