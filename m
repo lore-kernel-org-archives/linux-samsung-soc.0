@@ -1,55 +1,48 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] media / PM: Replace CONFIG_PM_RUNTIME with CONFIG_PM
-Date: Fri, 05 Dec 2014 03:19:48 +0100
-Message-ID: <4616754.qb41AxUOEJ@vostro.rjw.lan>
-References: <4139875.fkJ48z9AaU@vostro.rjw.lan> <20141204160840.7d021bf1@recife.lan>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH] ARM: multi_v7_defconfig: enable MAX77686 PMIC drivers
+ for exynos4412-prime based SoCs
+Date: Thu, 4 Dec 2014 23:17:17 -0800
+Message-ID: <20141205071717.GA29274@quad.lixom.net>
+References: <1417728264-7268-1-git-send-email-tyler.baker@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:51114 "HELO
-	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S933009AbaLEB6V (ORCPT
+Received: from mail-pa0-f45.google.com ([209.85.220.45]:64581 "EHLO
+	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750891AbaLEHRR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Dec 2014 20:58:21 -0500
-In-Reply-To: <20141204160840.7d021bf1@recife.lan>
+	Fri, 5 Dec 2014 02:17:17 -0500
+Received: by mail-pa0-f45.google.com with SMTP id lj1so157602pab.18
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Dec 2014 23:17:16 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1417728264-7268-1-git-send-email-tyler.baker@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
-Cc: linux-media@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Kamil Debski <k.debski@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, Linux PM list <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Tyler Baker <tyler.baker@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, arm@kernel.org, linux-samsung-soc@vger.kernel.org
 
-On Thursday, December 04, 2014 04:08:40 PM Mauro Carvalho Chehab wrote:
-> Em Wed, 03 Dec 2014 03:13:55 +0100
-> "Rafael J. Wysocki" <rjw@rjwysocki.net> escreveu:
+On Thu, Dec 04, 2014 at 01:24:24PM -0800, Tyler Baker wrote:
+> This patch enables the MAX77686 PMIC drivers in the multi_v7_defconfig used
+> on exynos4412-prime family of SoCs [1]. The exynos4412-prime based boards
+> are producing the following runtime errors only on the multi_v7_defconfig [2]:
 > 
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > 
-> > After commit b2b49ccbdd54 (PM: Kconfig: Set PM_RUNTIME if PM_SLEEP is
-> > selected) PM_RUNTIME is always set if PM is set, so #ifdef blocks
-> > depending on CONFIG_PM_RUNTIME may now be changed to depend on
-> > CONFIG_PM.
-> > 
-> > The alternative of CONFIG_PM_SLEEP and CONFIG_PM_RUNTIME may be
-> > replaced with CONFIG_PM too.
-> > 
-> > Make these changes everywhere under drivers/media/.
-> > 
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> kern.err: deviceless supply vdd_arm not found, using dummy regulator
+> kern.err: exynos-cpufreq exynos-cpufreq: failed to set cpu voltage to 1287500
+> kern.err: cpufreq: __target_index: Failed to change cpu frequency: -22
 > 
-> Acked-by: Mauro Carvalho Chehab <mchehab@osg.samsung.com>
+> I reviewed the exynos_defconfig, which does not produce these runtime
+> errors. It was obvious that the exynos_defconfig has the PMIC drivers
+> enabled, whereas the multi_v7_defconfig does not. This patch has been tested 
+> on a odroid-u2 and a odroid-u3 board. It has resolved the runtime errors.
+> Therefore, I purpose we enabled these drivers in the multi_v7_defconfig.
 > 
-> Feel free to apply it via your tree.
+> [1] http://www.hardkernel.com/main/products/prdt_info.php?g_code=G135270682824
+> [2] http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc7-48-g7cc78f8/arm-multi_v7_defconfig/lab-tbaker-00/boot-exynos4412-odroidu3.html
+> 
 
-Thanks!
+FWIW, the 5250-based Samsung Chromebook also uses 77686.
 
-> PS.: I won't doubt that you would find some extra checks for
-> PM_RUNTIME on other places at media, as I remember I merged some
-> things like that recently - I think they are there for 3.19, but
-> it needs to be double-checked.
+Applied to next/defconfig for 3.19 after fixing up some fuzz.
 
-That's fine.  There is at least one case when I need to wait for
-other trees to get merged due to files being moved around, so I'll
-do a second round during the merge window anyway.
 
-Kind regards,
-Rafael
+-Olof
