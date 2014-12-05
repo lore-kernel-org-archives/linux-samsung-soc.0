@@ -1,50 +1,42 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
- Refactor the driver to use commit-like)
-Date: Fri, 5 Dec 2014 16:23:13 +0000
-Message-ID: <20141205162312.GB11502@n2100.arm.linux.org.uk>
-References: <5481D913.9040109@ti.com>
- <5481D9BF.2090007@ti.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5481D9BF.2090007@ti.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Nishanth Menon <nm@ti.com>
-Cc: Kevin Hilman <khilman@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-omap <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next <linux-next@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RFC 0/3] devfreq: exynos: Add driver for Exynos3250
+Date: Fri, 05 Dec 2014 17:46:25 +0100
+Message-ID: <1417797988-29225-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Dec 05, 2014 at 10:13:51AM -0600, Nishanth Menon wrote:
-> On 12/05/2014 10:10 AM, Nishanth Menon wrote:
-> > Case #2: Reverting the following allows boot.
-> > 
-> > From next-20141204
-> > 10df7d5 ARM: 8211/1: l2c: Add support for overriding prefetch settings
-> > revert this  -> boot still fails
-> > 
-> > d42ced0 ARM: 8210/1: l2c: Get outer cache .write_sec callback from
-> > mach_desc only if not NULL
-> > revert this  -> boot still fails
-> > 
-> > 46b9af8 ARM: 8209/1: l2c: Add interface to ask hypervisor to configure L2C
-> > revert this  -> boot still fails
-> > 
-> > c94e325 ARM: 8208/1: l2c: Refactor the driver to use commit-like
-> > revert this  -> boot passed (first bad commit).
-> > 
-> > 
-> 
-> + linux-samsung soc and updated Thomaz's mail ID (gmail now).
+Hi,
 
-Given where we are in the cycle (-final likely this weekend) the only
-thing we can do right now is to drop the patch set; exynos (and mvebu)
-will have to wait another cycle until this patch set (hopefully in a
-revised form) can be merged.
+The aim of patchset is to gather feedback about adding new devfreq driver for
+Exynos 3250, along with the bindings.
 
-I think we need 8208/1 split up into smaller changes so that the cause
-of this regression can be found.
+Chanwoo,
+You were the author of our initial exynos3_bus.c driver so do you
+want me to add your Signed-off-by?
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (3):
+  devfreq: dt-bindings: Document Exynos3250 devfreq driver
+  devfreq: exynos: Add driver for Exynos3250
+  ARM: dts: Add devfreq to Exynos3250 and Rinato board
+
+ .../bindings/arm/samsung/exynos3250-devfreq.txt    |  66 ++
+ arch/arm/boot/dts/exynos3250-rinato.dts            |  10 +
+ arch/arm/boot/dts/exynos3250.dtsi                  |  32 +
+ drivers/devfreq/Kconfig                            |  12 +
+ drivers/devfreq/Makefile                           |   1 +
+ drivers/devfreq/exynos/Makefile                    |   1 +
+ drivers/devfreq/exynos/exynos3_bus.c               | 842 +++++++++++++++++++++
+ 7 files changed, 964 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/samsung/exynos3250-devfreq.txt
+ create mode 100644 drivers/devfreq/exynos/exynos3_bus.c
 
 -- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+1.9.1
+
