@@ -1,48 +1,115 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] ARM: multi_v7_defconfig: enable MAX77686 PMIC drivers
- for exynos4412-prime based SoCs
-Date: Thu, 4 Dec 2014 23:17:17 -0800
-Message-ID: <20141205071717.GA29274@quad.lixom.net>
-References: <1417728264-7268-1-git-send-email-tyler.baker@linaro.org>
+From: amit daniel kachhap <amit.daniel@samsung.com>
+Subject: Re: [PATCH] PM/ Domains: Export of_genpd_get_from_provider function.
+Date: Fri, 5 Dec 2014 13:55:12 +0530
+Message-ID: <CADGdYn5tAV2QjJ1Q0vi-EoSzvaoaOnCzemR+=X3MqotY9T8d2Q@mail.gmail.com>
+References: <CAPDyKFpX5nXR18pKdLrtDrPK60p1y2CEqq+--3z3jczRRmKrqA@mail.gmail.com>
+	<1417434068-7344-1-git-send-email-amit.daniel@samsung.com>
+	<CAPDyKFo15y-ENW9M3bratoWQ_DL_mfT3FwQE4i+pscR0crmyBA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f45.google.com ([209.85.220.45]:64581 "EHLO
-	mail-pa0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750891AbaLEHRR (ORCPT
+Received: from mail-yh0-f53.google.com ([209.85.213.53]:35217 "EHLO
+	mail-yh0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752172AbaLEIZN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Dec 2014 02:17:17 -0500
-Received: by mail-pa0-f45.google.com with SMTP id lj1so157602pab.18
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 04 Dec 2014 23:17:16 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1417728264-7268-1-git-send-email-tyler.baker@linaro.org>
+	Fri, 5 Dec 2014 03:25:13 -0500
+In-Reply-To: <CAPDyKFo15y-ENW9M3bratoWQ_DL_mfT3FwQE4i+pscR0crmyBA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tyler Baker <tyler.baker@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, arm@kernel.org, linux-samsung-soc@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Kevin Hilman <khilman@linaro.org>
 
-On Thu, Dec 04, 2014 at 01:24:24PM -0800, Tyler Baker wrote:
-> This patch enables the MAX77686 PMIC drivers in the multi_v7_defconfig used
-> on exynos4412-prime family of SoCs [1]. The exynos4412-prime based boards
-> are producing the following runtime errors only on the multi_v7_defconfig [2]:
-> 
-> kern.err: deviceless supply vdd_arm not found, using dummy regulator
-> kern.err: exynos-cpufreq exynos-cpufreq: failed to set cpu voltage to 1287500
-> kern.err: cpufreq: __target_index: Failed to change cpu frequency: -22
-> 
-> I reviewed the exynos_defconfig, which does not produce these runtime
-> errors. It was obvious that the exynos_defconfig has the PMIC drivers
-> enabled, whereas the multi_v7_defconfig does not. This patch has been tested 
-> on a odroid-u2 and a odroid-u3 board. It has resolved the runtime errors.
-> Therefore, I purpose we enabled these drivers in the multi_v7_defconfig.
-> 
-> [1] http://www.hardkernel.com/main/products/prdt_info.php?g_code=G135270682824
-> [2] http://storage.armcloud.us/kernel-ci/mainline/v3.18-rc7-48-g7cc78f8/arm-multi_v7_defconfig/lab-tbaker-00/boot-exynos4412-odroidu3.html
-> 
+On Thu, Dec 4, 2014 at 9:09 PM, Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> On 1 December 2014 at 12:41, Amit Daniel Kachhap
+> <amit.daniel@samsung.com> wrote:
+>> This function looks up a PM domain form the provider. This will be
+>> useful to add parent/child domain relationship from the SoC specific
+>> code. The caller of the function must make sure that PM domain provider
+>> is already registered.
+>>
+>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>> ---
+>> This patch may solve the same purpose which is done by earlier posts
+>> 1) https://lkml.org/lkml/2014/11/24/319 - In this there were comments
+>> for not using the PM domain name.
+>>
+>> 2) Ulf Hansson posted a patch
+>> http://www.spinics.net/lists/linux-samsung-soc/msg39745.html which also solves
+>> similar purpose but I feel this is slightly complex and involves changing
+>> the genpd structure.
+>>
+>>
+>>  drivers/base/power/domain.c |    3 ++-
+>>  include/linux/pm_domain.h   |    8 ++++++++
+>>  2 files changed, 10 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+>> index d822753..5d7a2c1 100644
+>> --- a/drivers/base/power/domain.c
+>> +++ b/drivers/base/power/domain.c
+>> @@ -2129,7 +2129,7 @@ EXPORT_SYMBOL_GPL(of_genpd_del_provider);
+>>   * Returns a valid pointer to struct generic_pm_domain on success or ERR_PTR()
+>>   * on failure.
+>>   */
+>> -static struct generic_pm_domain *of_genpd_get_from_provider(
+>> +struct generic_pm_domain *of_genpd_get_from_provider(
+>>                                         struct of_phandle_args *genpdspec)
+>>  {
+>>         struct generic_pm_domain *genpd = ERR_PTR(-ENOENT);
+>> @@ -2149,6 +2149,7 @@ static struct generic_pm_domain *of_genpd_get_from_provider(
+>>
+>>         return genpd;
+>>  }
+>> +EXPORT_SYMBOL_GPL(of_genpd_get_from_provider);
+>>
+>>  /**
+>>   * genpd_dev_pm_detach - Detach a device from its PM domain.
+>> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+>> index 9690827..4954e24 100644
+>> --- a/include/linux/pm_domain.h
+>> +++ b/include/linux/pm_domain.h
+>> @@ -282,6 +282,8 @@ typedef struct generic_pm_domain *(*genpd_xlate_t)(struct of_phandle_args *args,
+>>  int __of_genpd_add_provider(struct device_node *np, genpd_xlate_t xlate,
+>>                         void *data);
+>>  void of_genpd_del_provider(struct device_node *np);
+>> +struct generic_pm_domain *of_genpd_get_from_provider(
+>> +                       struct of_phandle_args *genpdspec);
+>>
+>>  struct generic_pm_domain *__of_genpd_xlate_simple(
+>>                                         struct of_phandle_args *genpdspec,
+>> @@ -299,6 +301,12 @@ static inline int __of_genpd_add_provider(struct device_node *np,
+>>  }
+>>  static inline void of_genpd_del_provider(struct device_node *np) {}
+>>
+>> +static inline struct generic_pm_domain *of_genpd_get_from_provider(
+>> +                       struct of_phandle_args *genpdspec)
+>> +{
+>> +       return NULL;
+>> +}
+>> +
+>>  #define __of_genpd_xlate_simple                NULL
+>>  #define __of_genpd_xlate_onecell       NULL
+>>
+>> --
+>> 1.7.9.5
+>>
+>
+> This seems like a good approach!
+>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Thanks.
+>
+> Do, note that you will have to resend the patch to linux-pm list as
+> well. Unless Rafael is happy to pick it up from here.
+Sure. My fault.
 
-FWIW, the 5250-based Samsung Chromebook also uses 77686.
-
-Applied to next/defconfig for 3.19 after fixing up some fuzz.
-
-
--Olof
+Regards,
+Amit
+>
+> Kind regards
+> Uffe
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
