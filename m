@@ -1,42 +1,148 @@
 From: Vinod Koul <vinod.koul@intel.com>
 Subject: Re: [PATCH] dmaengine: pl330: Set residue in tx_status callback
-Date: Fri, 5 Dec 2014 20:40:14 +0530
-Message-ID: <20141205151014.GK3411@intel.com>
+Date: Fri, 5 Dec 2014 20:45:16 +0530
+Message-ID: <20141205151516.GL3411@intel.com>
 References: <1416995095-13763-1-git-send-email-padma.v@samsung.com>
  <CAAgF-BfpU72KTJjVd8jWStD8yJ5sSmXOiQm77xQunO2QhC9ExQ@mail.gmail.com>
  <547DF61D.3010909@metafoo.de>
+ <CAAgF-BfPyaOhhrA5L8vm2WDnhBYDexJFkGxqL1GsL2TMB8z=Rw@mail.gmail.com>
+ <CAJe_Zhd2-vBgAoJsBt7JCOYDuTZrBCScSZ1HaNO3gNTZ-P6A9A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:45802 "EHLO mga02.intel.com"
+Received: from mga01.intel.com ([192.55.52.88]:53182 "EHLO mga01.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750920AbaLEPKK (ORCPT
+	id S1751023AbaLEPPA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Dec 2014 10:10:10 -0500
+	Fri, 5 Dec 2014 10:15:00 -0500
 Content-Disposition: inline
-In-Reply-To: <547DF61D.3010909@metafoo.de>
+In-Reply-To: <CAJe_Zhd2-vBgAoJsBt7JCOYDuTZrBCScSZ1HaNO3gNTZ-P6A9A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Padma Venkat <padma.kvr@gmail.com>, Padmavathi Venna <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dmaengine@vger.kernel.org, broonie@kernel.org, Dylan Reid <dgreid@chromium.org>
+To: Jassi Brar <jaswinder.singh@linaro.org>
+Cc: Padma Venkat <padma.kvr@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Padmavathi Venna <padma.v@samsung.com>, Mark Brown <broonie@kernel.org>, dmaengine@vger.kernel.org, Dylan Reid <dgreid@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Tue, Dec 02, 2014 at 06:25:49PM +0100, Lars-Peter Clausen wrote:
-> On 12/02/2014 06:38 AM, Padma Venkat wrote:
+On Wed, Dec 03, 2014 at 01:21:37PM +0530, Jassi Brar wrote:
+> On 3 December 2014 at 10:17, Padma Venkat <padma.kvr@gmail.com> wrote:
+> > Hi Lars,
+> >
+> > [snip]
+> >>>> +
+> >>>> +   ret = dma_cookie_status(chan, cookie, txstate);
+> >>>> +   if (ret == DMA_COMPLETE || !txstate)
+> >>>> +           return ret;
+> >>>> +
+> >>>> +   used = txstate->used;
+> >>>> +
+> >>>> +   spin_lock_irqsave(&pch->lock, flags);
+> >>>> +   sar = readl(regs + SA(thrd->id));
+> >>>> +   dar = readl(regs + DA(thrd->id));
+> >>>> +
+> >>>> +   list_for_each_entry(desc, &pch->work_list, node) {
+> >>>> +           if (desc->status == BUSY) {
+> >>>> +                   current_c = desc->txd.cookie;
+> >>>> +                   if (first) {
+> >>>> +                           first_c = desc->txd.cookie;
+> >>>> +                           first = false;
+> >>>> +                   }
+> >>>> +
+> >>>> +                   if (first_c < current_c)
+> >>>> +                           residue += desc->px.bytes;
+> >>>> +                   else {
+> >>>> +                           if (desc->rqcfg.src_inc && pl330_src_addr_in_desc(desc, sar)) {
+> >>>> +                                   residue += desc->px.bytes;
+> >>>> +                                   residue -= sar - desc->px.src_addr;
+> >>>> +                           } else if (desc->rqcfg.dst_inc && pl330_dst_addr_in_desc(desc, dar))
+> >>>> {
+> >>>> +                                   residue += desc->px.bytes;
+> >>>> +                                   residue -= dar - desc->px.dst_addr;
+> >>>> +                           }
+> >>>> +                   }
+> >>>> +           } else if (desc->status == PREP)
+> >>>> +                   residue += desc->px.bytes;
+> >>>> +
+> >>>> +           if (desc->txd.cookie == used)
+> >>>> +                   break;
+> >>>> +   }
+> >>>> +   spin_unlock_irqrestore(&pch->lock, flags);
+> >>>> +   dma_set_residue(txstate, residue);
+> >>>> +   return ret;
+> >>>>   }
+> > [snip]
+> >>>
+> >>> Any comment on this patch?
+> >>
+> >> Well it doesn't break audio, but I don't think it has the correct haviour
+> >> for all cases yet.
+> >
+> > OK. Any way of testing other cases like scatter-gather and memcopy.  I
+> > verified memcopy in dmatest but it seems not doing anything with
+> > residue bytes.
+> >
+> >>
+> >> Again, the semantics are that it should return the progress of the transfer
+> >>
+> >> for which the allocation function returned the cookie that is passe to this
+> >
+> > May be my understanding is wrong. For clarification..In the
+> > snd_dmaengine_pcm_pointer it is subtracting the residue bytes from the
+> > total buffer bytes not from period bytes. So how it expects
+> > the progress of the transfer of the passed cookie which just holds period bytes?
+> >
+> >>
+> >> function. You have to consider that there might be multiple different
+> >> descriptors submitted and in the work list, not just the one we want to know
+> >
+> > Even though there are multiple descriptors in the work list, at a time
+> > only two descriptors are in busy state(as per the documentation in the
+> > driver) and all the descriptors cookie number is in incremental order.
+> > Not sure for other cases how it will be.
+> >
+> Yes.
 > 
-> Well it doesn't break audio, but I don't think it has the correct
-> haviour for all cases yet.
+> Tracing the history ... I think we could have done without
 > 
-> Again, the semantics are that it should return the progress of the
-> transfer for which the allocation function returned the cookie that
-> is passe to this function. You have to consider that there might be
-> multiple different descriptors submitted and in the work list, not
-> just the one we want to know the status of. The big problem with the
-> pl330 driver is that the current structure of the driver makes it
-> not so easy to implement the residue reporting correctly.
+> 04abf5daf7d  dma: pl330: Differentiate between submitted and issued descriptors
+> 
+>     The pl330 dmaengine driver currently does not differentiate
+> between submitted
+>     and issued descriptors. It won't start transferring a newly submitted
+>     descriptor until issue_pending() is called, but only if it is idle. If it is
+>     active and a new descriptor is submitted before it goes idle it will happily
+>     start the newly submitted descriptor once all earlier submitted
+> descriptors have
+>     been completed. This is not a 100% correct with regards to the dmaengine
+>     interface semantics. A descriptor is not supposed to be started
+> until the next
+>     issue_pending() call after the descriptor has been submitted.
+> 
+> 
+> because the reasoning above seems incorrect considering the following
+> documentation...
+> 
+> Documentation/crypto/async-tx-api.txt says
+>   " .... Once a driver-specific threshold is met the driver
+> automatically issues pending operations.  An application can force this
+> event by calling async_tx_issue_pending_all(). ...."
+> 
+> And
+> 
+> include/linux/dmaengine.h says
+>   dma_async_tx_descriptor.tx_submit(): set the prepared descriptor(s)
+> to be executed by the engine
+"to be" here can lead to different conculsion. I will reword this :)
 
-well you can use the completed_cookie as hint. This was last trasaction
-which was issues, so calculate remianing bytes for this and subsequent ones
-resiude would only be size of transaction
+@tx_submit: accept the descriptor and assign ordered cookie and mark the
+descriptor pending. To be pushed on .issue_pending() call
 
 -- 
 ~Vinod
+> 
+> so theoretically a driver, not starting transfer until
+> issue_pending(), is "broken".
+> At best the patch@04abf5daf7d makes the driver slightly more
+> complicated and the reason behind confusion such as in this thread.
+> 
+> -jassi
+
+-- 
