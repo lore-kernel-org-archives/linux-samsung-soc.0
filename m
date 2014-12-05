@@ -1,83 +1,109 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] iommu: Fix build of allmod/allyes config on ARMv8 architecture
-Date: Fri, 05 Dec 2014 14:47:37 +0100
-Message-ID: <1417787257-10056-1-git-send-email-k.kozlowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Subject: [PATCH] clk: samsung: Fix Exynos 5420 pinctrl setup and clock disable
+ failure due to domain being gated
+Date: Fri, 05 Dec 2014 15:15:34 +0100
+Message-ID: <1417788934-23447-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:22106 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753206AbaLENr4 (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:61596 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750891AbaLEOV7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Dec 2014 08:47:56 -0500
+	Fri, 5 Dec 2014 09:21:59 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kevin Hilman <khilman@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 Cc: Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Disable the Exynos IOMMU on ARMv8-A architecture so the build won't fai=
-l.
-The Exynos7 is not supported yet by Exynos IOMMU driver.
+Audio subsystem clocks are located in separate block. On Exynos 5420 if
+clock for this block (from main clock domain) 'mau_epll' is gated then
+any read or write to audss registers will block.
 
-This fixes following build errors on ARMv8 (allmodconfig, allyesconfig)=
-:
+This kind of boot hang was observed on Arndale Octa and Peach Pi/Pit
+after introducing runtime PM to pl330 DMA driver. After that commit the
+'mau_epll' was gated, because the "amba" clock was disabled and there
+were no more users of mau_epll.
 
-drivers/iommu/exynos-iommu.c: In function =E2=80=98pgtable_flush=E2=80=99=
-:
-drivers/iommu/exynos-iommu.c:694:2: error: implicit declaration of func=
-tion =E2=80=98dmac_flush_range=E2=80=99 [-Werror=3Dimplicit-function-de=
-claration]
-  dmac_flush_range(vastart, vaend);
-  ^
-drivers/iommu/exynos-iommu.c:695:2: error: implicit declaration of func=
-tion =E2=80=98outer_flush_range=E2=80=99 [-Werror=3Dimplicit-function-d=
-eclaration]
-  outer_flush_range(virt_to_phys(vastart),
-  ^
-In file included from include/uapi/linux/stddef.h:1:0,
-                 from include/linux/stddef.h:4,
-                 from ./include/uapi/linux/posix_types.h:4,
-                 from include/uapi/linux/types.h:13,
-                 from include/linux/types.h:5,
-                 from include/linux/io.h:21,
-                 from drivers/iommu/exynos-iommu.c:15:
-drivers/iommu/exynos-iommu.c: In function =E2=80=98alloc_lv2entry=E2=80=
-=99:
-drivers/iommu/exynos-iommu.c:853:10: warning: cast from pointer to inte=
-ger of different size [-Wpointer-to-int-cast]
-   BUG_ON((unsigned int)pent & (LV2TABLE_SIZE - 1));
-          ^
-include/linux/compiler.h:160:42: note: in definition of macro =E2=80=98=
-unlikely=E2=80=99
- # define unlikely(x) __builtin_expect(!!(x), 0)
-                                          ^
-drivers/iommu/exynos-iommu.c:853:3: note: in expansion of macro =E2=80=98=
-BUG_ON=E2=80=99
-   BUG_ON((unsigned int)pent & (LV2TABLE_SIZE - 1));
-   ^
-cc1: some warnings being treated as errors
-make[2]: *** [drivers/iommu/exynos-iommu.o] Error 1
-make[1]: *** [drivers/iommu] Error 2
-make[1]: *** Waiting for unfinished jobs....
+The system hang on one of steps:
+1. Disabling unused clocks from audss block.
+2. During audss GPIO setup (just before probing i2s0 because
+   samsung_pinmux_setup() tried to access memory from audss block which was
+   gated.
+
+Add a workaround for this by enabling the 'mau_epll' clock in probe.
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- drivers/iommu/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos-audss.c | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-index 30f0e61341c5..dbdcb5be8583 100644
---- a/drivers/iommu/Kconfig
-+++ b/drivers/iommu/Kconfig
-@@ -187,7 +187,7 @@ config TEGRA_IOMMU_SMMU
-=20
- config EXYNOS_IOMMU
- 	bool "Exynos IOMMU Support"
--	depends on ARCH_EXYNOS
-+	depends on ARCH_EXYNOS && !ARCH_EXYNOS7
- 	select IOMMU_API
- 	select ARM_DMA_USE_IOMMU
- 	help
---=20
+diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/samsung/clk-exynos-audss.c
+index acce708ace18..0916a81fa932 100644
+--- a/drivers/clk/samsung/clk-exynos-audss.c
++++ b/drivers/clk/samsung/clk-exynos-audss.c
+@@ -29,6 +29,13 @@ static DEFINE_SPINLOCK(lock);
+ static struct clk **clk_table;
+ static void __iomem *reg_base;
+ static struct clk_onecell_data clk_data;
++/*
++ * On Exynos5420 this will be a clock which has to be enabled before any
++ * access to audss registers. Typically a child of EPLL.
++ *
++ * On other platforms this will be -ENODEV.
++ */
++static struct clk *epll;
+ 
+ #define ASS_CLK_SRC 0x0
+ #define ASS_CLK_DIV 0x4
+@@ -98,6 +105,8 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "failed to map audss registers\n");
+ 		return PTR_ERR(reg_base);
+ 	}
++	/* EPLL don't have to be enabled for boards other than Exynos5420 */
++	epll = ERR_PTR(-ENODEV);
+ 
+ 	clk_table = devm_kzalloc(&pdev->dev,
+ 				sizeof(struct clk *) * EXYNOS_AUDSS_MAX_CLKS,
+@@ -115,8 +124,20 @@ static int exynos_audss_clk_probe(struct platform_device *pdev)
+ 	pll_in = devm_clk_get(&pdev->dev, "pll_in");
+ 	if (!IS_ERR(pll_ref))
+ 		mout_audss_p[0] = __clk_get_name(pll_ref);
+-	if (!IS_ERR(pll_in))
++	if (!IS_ERR(pll_in)) {
+ 		mout_audss_p[1] = __clk_get_name(pll_in);
++
++		if (variant == TYPE_EXYNOS5420) {
++			epll = pll_in;
++
++			ret = clk_prepare_enable(epll);
++			if (ret) {
++				dev_err(&pdev->dev,
++						"failed to prepare the epll clock\n");
++				return ret;
++			}
++		}
++	}
+ 	clk_table[EXYNOS_MOUT_AUDSS] = clk_register_mux(NULL, "mout_audss",
+ 				mout_audss_p, ARRAY_SIZE(mout_audss_p),
+ 				CLK_SET_RATE_NO_REPARENT,
+@@ -203,6 +224,9 @@ unregister:
+ 			clk_unregister(clk_table[i]);
+ 	}
+ 
++	if (!IS_ERR(epll))
++		clk_disable_unprepare(epll);
++
+ 	return ret;
+ }
+ 
+@@ -217,6 +241,9 @@ static int exynos_audss_clk_remove(struct platform_device *pdev)
+ 			clk_unregister(clk_table[i]);
+ 	}
+ 
++	if (!IS_ERR(epll))
++		clk_disable_unprepare(epll);
++
+ 	return 0;
+ }
+ 
+-- 
 1.9.1
