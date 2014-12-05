@@ -1,34 +1,54 @@
-From: Dave Airlie <airlied@gmail.com>
-Subject: Re: [PATCH 0/4] removal of extra abstraction layers
-Date: Sat, 6 Dec 2014 06:06:31 +1000
-Message-ID: <CAPM=9twYXeMJ-HRoC69SbDyz4Uu14Fz=9ZNmBGmWMS3mkG+c+g@mail.gmail.com>
-References: <1416853266-10584-1-git-send-email-gustavo@padovan.org>
- <20141202123847.GA9426@joana>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20141202123847.GA9426@joana>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>, Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel <dri-devel@lists.freedesktop.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH] spi/s3c64xx: Remove redundant runtime PM management
+Date: Fri,  5 Dec 2014 20:27:42 +0000
+Message-ID: <1417811262-11652-1-git-send-email-broonie@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:49636 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751172AbaLEU2F (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 5 Dec 2014 15:28:05 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-spi@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>
 
-T24gMiBEZWNlbWJlciAyMDE0IGF0IDIyOjM4LCBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm9AcGFk
-b3Zhbi5vcmc+IHdyb3RlOgo+IEhpIElua2ksCj4KPiBDYW4geW91IHBsZWFzZSByZXZpZXcgdGhp
-cz8gSSBhbHNvIGhhdmUgc2VudCBvdGhlciB0d28gcGF0Y2ggc2V0cyB0aGF0IHNpdHMgb24KPiB0
-b3Agb2YgdGhpcyBvbmUuIFRoYW5rcy4KCklua2ksIGFueSBwbGFucyBvbiB3aGVuIHlvdSBjYW4g
-Z2V0IHRvIGxvb2tpbmcgYXQgdGhpcz8KCkkgdGhpbmsgY2xlYW5pbmcgdXAgZXh5bm9zIHNvIHdl
-IGNhbiBnZXQgYXRvbWljIHVzaW5nIGl0IGlzIHNvbWV0aGluZwp0aGF0IHdpbGwgYmVuZWZpdCBp
-dCBoZWF2aWx5LgoKRGF2ZS4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+The device already asks the core to hold a runtime PM reference while it
+is active so it is redundant to open code that in the driver itself.
+
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi-s3c64xx.c | 9 ---------
+ 1 file changed, 9 deletions(-)
+
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 9c616091429d..197bcf093174 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -346,16 +346,8 @@ static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
+ 		spi->dma_tx = sdd->tx_dma.ch;
+ 	}
+ 
+-	ret = pm_runtime_get_sync(&sdd->pdev->dev);
+-	if (ret < 0) {
+-		dev_err(dev, "Failed to enable device: %d\n", ret);
+-		goto out_tx;
+-	}
+-
+ 	return 0;
+ 
+-out_tx:
+-	dma_release_channel(sdd->tx_dma.ch);
+ out_rx:
+ 	dma_release_channel(sdd->rx_dma.ch);
+ out:
+@@ -372,7 +364,6 @@ static int s3c64xx_spi_unprepare_transfer(struct spi_master *spi)
+ 		dma_release_channel(sdd->tx_dma.ch);
+ 	}
+ 
+-	pm_runtime_put(&sdd->pdev->dev);
+ 	return 0;
+ }
+ 
+-- 
+2.1.3
