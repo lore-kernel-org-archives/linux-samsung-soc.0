@@ -1,61 +1,46 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
- Refactor the driver to use commit-like)
-Date: Mon, 8 Dec 2014 15:11:26 +0000
-Message-ID: <20141208151126.GD11502@n2100.arm.linux.org.uk>
-References: <5481D913.9040109@ti.com>
- <5481D9BF.2090007@ti.com>
- <20141205162312.GB11502@n2100.arm.linux.org.uk>
- <CA+Ln22EFKRm_9HPaVvL7zFdmmB5Zz5RnJKbZkESVOBOLPvUnGA@mail.gmail.com>
- <20141208122235.GC11502@n2100.arm.linux.org.uk>
- <5485AD80.1050008@ti.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PATCH 0/4] removal of extra abstraction layers
+Date: Mon, 8 Dec 2014 15:03:22 -0200
+Message-ID: <20141208170322.GA31894@joana>
+References: <1416853266-10584-1-git-send-email-gustavo@padovan.org>
+ <20141202123847.GA9426@joana>
+ <CAPM=9twYXeMJ-HRoC69SbDyz4Uu14Fz=9ZNmBGmWMS3mkG+c+g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f49.google.com ([209.85.216.49]:38340 "EHLO
+	mail-qa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750908AbaLHRD3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 8 Dec 2014 12:03:29 -0500
+Received: by mail-qa0-f49.google.com with SMTP id s7so3589542qap.36
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 08 Dec 2014 09:03:28 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <5485AD80.1050008@ti.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Nishanth Menon <nm@ti.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kevin Hilman <khilman@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-omap <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next <linux-next@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+In-Reply-To: <CAPM=9twYXeMJ-HRoC69SbDyz4Uu14Fz=9ZNmBGmWMS3mkG+c+g@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Dave Airlie <airlied@gmail.com>
+Cc: Inki Dae <inki.dae@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel <dri-devel@lists.freedesktop.org>
 
-On Mon, Dec 08, 2014 at 07:54:08AM -0600, Nishanth Menon wrote:
-> On 12/08/2014 06:22 AM, Russell King - ARM Linux wrote:
-> > On Mon, Dec 08, 2014 at 08:54:18PM +0900, Tomasz Figa wrote:
-> >> 2014-12-06 1:23 GMT+09:00 Russell King - ARM Linux <linux@arm.linux.org.uk>:
-> >>> Given where we are in the cycle (-final likely this weekend) the only
-> >>> thing we can do right now is to drop the patch set; exynos (and mvebu)
-> >>> will have to wait another cycle until this patch set (hopefully in a
-> >>> revised form) can be merged.
-> >>
-> >> Or a fix could be queued on top of this. Since (I believe) this series
-> >> has been queued for 3.19, we have 6 or 7 RC releases ahead, which
-> >> could be used for the purpose of fixing things (as they are supposed
-> >> to?).
-> > 
-> > They were merged on 27th November, so they would've been in linux-next
-> > from about last Monday.  Nishanth reported a failure on Friday, the
+Hi Inki,
+
+2014-12-06 Dave Airlie <airlied@gmail.com>:
+
+> On 2 December 2014 at 22:38, Gustavo Padovan <gustavo@padovan.org> wrote:
+> > Hi Inki,
+> >
+> > Can you please review this? I also have sent other two patch sets that sits on
+> > top of this one. Thanks.
 > 
-> For what ever it is worth, the l2c changes actually appeared on
-> Thursday CST (next-20141204). Found the regression against
-> next-20141203 tag and it took me a day to track it down (after looking
-> at a few other regressions as well)..
+> Inki, any plans on when you can get to looking at this?
+> 
+> I think cleaning up exynos so we can get atomic using it is something
+> that will benefit it heavily.
 
-I wonder if that's because I didn't push my tree out until Tuesday-ish.
-It takes around 48 hours between when I push stuff out to it appearing
-in linux-next, which is not particularly desirable, but unavoidable due
-to timezone differences.
+Besides these patches I have other two clean up patchsets[0][1] that are very
+important for atomic support, can you review these two too?
 
-I did decide that I wouldn't push it out the same day I merged it because
-I wanted it to run through my build/boot system, which it did successfully,
-but then my OMAP4 build doesn't have CPU idle enabled (and as you've
-identified, when CPU idle is disabled, it works.)
+[0] http://www.spinics.net/lists/linux-samsung-soc/msg39614.html
+[1] http://www.spinics.net/lists/linux-samsung-soc/msg39632.html
 
-The problem there is that if I decide not to push some merged changes out,
-it takes several days before I get around to touching the kernel tree
-again.  Hence why it took from Thursday until Tuesday for it to eventually
-get pushed out.
-
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+	Gustavo
