@@ -1,53 +1,132 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH 05/19] clk: samsung: exynos5433: Add clocks for CMU_G2D
+From: Pankaj Dubey <pankaj.dubey-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 06/19] clk: samsung: exynos5433: Add clocks for CMU_MIF
  domain
-Date: Mon, 08 Dec 2014 17:06:11 +0530
-Message-ID: <54858D2B.3040809@samsung.com>
+Date: Mon, 08 Dec 2014 17:07:37 +0530
+Message-ID: <54858D81.1080003@samsung.com>
 References: <1417510196-6714-1-git-send-email-cw00.choi@samsung.com>
- <1417510196-6714-6-git-send-email-cw00.choi@samsung.com>
+ <1417510196-6714-7-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:16441 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755256AbaLHLgE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Dec 2014 06:36:04 -0500
-In-reply-to: <1417510196-6714-6-git-send-email-cw00.choi@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1417510196-6714-7-git-send-email-cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, marc.zyngier-5wv7dgnIgG8@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, will.deacon-5wv7dgnIgG8@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, chanho61.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, geunsik.lim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jh80.chung-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, geunsik.lim@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
 Hi Chanwoo,
 
 On Tuesday 02 December 2014 02:19 PM, Chanwoo Choi wrote:
-> This patch adds ths mux/divider/gate clocksof CMU_G2D domain which includes
+> This patch adds the mux/divider/gate clock fo CMU_MIF domain which includes
 
-nit: %s/clocksof/clocks of
+nit: %s/fo/of
 
-> G2D/MDMA IPs. The CMU_G2D must need the clocks related to G2D by providing
-> CMU_TOP domain. So, this patch add several clocks for G2D from CMU_TOP domain.
+> the clocks for DMC(DRAM memory controller) and CCI(Cache Coherent Interconnect).
+> The CMU_MIF domain provides the source clocks for CMU_DISP/CMU_BUS2.
 >
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Inki Dae <inki.dae@samsung.com>
-> Acked-by: Geunsik Lim <geunsik.lim@samsung.com>
+> Cc: Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Geunsik Lim <geunsik.lim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
->   .../devicetree/bindings/clock/exynos5433-clock.txt |   8 ++
->   drivers/clk/samsung/clk-exynos5433.c               | 144 +++++++++++++++++++++
->   include/dt-bindings/clock/exynos5433.h             |  42 +++++-
->   3 files changed, 193 insertions(+), 1 deletion(-)
+>   drivers/clk/samsung/clk-exynos5433.c   | 590 +++++++++++++++++++++++++++++++++
+>   include/dt-bindings/clock/exynos5433.h | 190 ++++++++++-
+>   2 files changed, 779 insertions(+), 1 deletion(-)
 >
 
-Verified all changes in clock file against UM I have with me, all 
-changes are OK.
+[snip]
 
-With small nit in commit message feel free to add:
+>
+>   static struct samsung_pll_clock mif_pll_clks[] __initdata = {
+> @@ -768,9 +888,479 @@ static struct samsung_pll_clock mif_pll_clks[] __initdata = {
+>   		MFC_PLL_LOCK, MFC_PLL_CON0, exynos5443_pll_rates),
+>   };
+>
+> +/* list of all parent clock list */
+> +PNAME(mout_mfc_pll_div2_p)	= { "mout_mfc_pll", "dout_mfc_pll", };
+> +PNAME(mout_bus_pll_div2_p)	= { "mout_bus_pll", "dout_bus_pll", };
+> +PNAME(mout_mem1_pll_div2_p)	= { "mout_mem1_pll", "dout_mem1_pll", };
+> +PNAME(mout_mem0_pll_div2_p)	= { "mout_mem0_pll", "dout_mem0_pll", };
+> +PNAME(mout_mfc_pll_p)		= { "fin_pll", "fout_mfc_pll", };
+> +PNAME(mout_bus_pll_p)		= { "fin_pll", "fout_bus_pll", };
+> +PNAME(mout_mem1_pll_p)		= { "fin_pll", "fout_mem1_pll", };
+> +PNAME(mout_mem0_pll_p)		= { "fin_pll", "fout_mem0_pll", };
+> +
+> +PNAME(mout_clk2x_phy_c_p)	= { "mout_mem0_pll_div2", "mout_clkm_phy_b", };
+> +PNAME(mout_clk2x_phy_b_p)	= { "mout_bus_pll_div2", "mout_clkm_phy_a", };
+> +PNAME(mout_clk2x_phy_a_p)	= { "mout_bus_pll_div2", "mout_mfc_pll_div2", };
+> +PNAME(mout_clkm_phy_c_p)	= { "mout_mem0_pll_div2", "mout_clkm_phy_b", };
 
-Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+As mout_clk2x_phy_c_p and mout_clkm_phy_c_p both has same parent list 
+one of them can be dropped.
+
+> +PNAME(mout_clkm_phy_b_p)	= { "mout_mem1_pll_div2", "mout_clkm_phy_a", };
+> +PNAME(mout_clkm_phy_a_p)	= { "mout_bus_pll_div2", "mout_mfc_pll_div2", };
+
+As mout_clk2x_phy_a_p and mout_clkm_phy_a_p both has same parent list 
+one of them can be dropped.
+
+> +
+> +PNAME(mout_aclk_mifnm_200_p)	= { "mout_mem0_pll_div2", "div_mif_pre", };
+> +PNAME(mout_aclk_mifnm_400_p)	= { "mout_mem1_pll_div2", "mout_bus_pll_div2",};
+> +
+> +PNAME(mout_aclk_disp_333_b_p)	= { "mout_aclk_disp_333_a",
+> +				    "mout_bus_pll_div2", };
+> +PNAME(mout_aclk_disp_333_a_p)	= { "mout_mfc_pll_div2", "sclk_mphy_pll", };
+> +
+> +PNAME(mout_sclk_decon_vclk_c_p)	= { "mout_sclk_decon_vclk_b",
+> +				    "sclk_mphy_pll", };
+> +PNAME(mout_sclk_decon_vclk_b_p)	= { "mout_sclk_decon_vclk_a",
+> +				    "mout_mfc_pll_div2", };
+> +PNAME(mout_sclk_decon_vclk_a_p)	= { "fin_pll", "mout_bus_pll_div2", };
+> +PNAME(mout_sclk_decon_eclk_c_p)	= { "mout_sclk_decon_eclk_b",
+> +				    "sclk_mphy_pll", };
+> +PNAME(mout_sclk_decon_eclk_b_p)	= { "mout_sclk_decon_eclk_a",
+> +				    "mout_mfc_pll_div2", };
+> +PNAME(mout_sclk_decon_eclk_a_p)	= { "fin_pll", "mout_bus_pll_div2", };
+> +
+> +PNAME(mout_sclk_decon_tv_eclk_c_p) = { "mout_sclk_decon_tv_eclk_b",
+> +				       "sclk_mphy_pll", };
+> +PNAME(mout_sclk_decon_tv_eclk_b_p) = { "mout_sclk_decon_tv_eclk_a",
+> +				       "mout_mfc_pll_div2", };
+> +PNAME(mout_sclk_decon_tv_eclk_a_p) = { "fin_pll", "mout_bus_pll_div2", };
+> +PNAME(mout_sclk_dsd_c_p)	= { "mout_sclk_dsd_b", "mout_bus_pll_div2", };
+> +PNAME(mout_sclk_dsd_b_p)	= { "mout_sclk_dsd_a", "sclk_mphy_pll", };
+> +PNAME(mout_sclk_dsd_a_p)	= { "fin_pll", "mout_mfc_pll_div2", };
+> +
+> +PNAME(mout_sclk_dsim0_c_p)	= { "mout_sclk_dsim0_b", "sclk_mphy_pll", };
+> +PNAME(mout_sclk_dsim0_b_p)	= { "mout_sclk_dsim0_a", "mout_mfc_pll_div2" };
+> +PNAME(mout_sclk_dsim0_a_p)	= { "fin_pll", "mout_bus_pll_div2", };
+> +
+> +PNAME(mout_sclk_decon_tv_vclk_c_p) = { "mout_sclk_decon_tv_vclk_b",
+> +				       "sclk_mphy_pll", };
+> +PNAME(mout_sclk_decon_tv_vclk_b_p) = { "mout_sclk_decon_tv_vclk_a",
+> +				       "mout_mfc_pll_div2", };
+> +PNAME(mout_sclk_decon_tv_vclk_a_p) = { "fin_pll", "mout_bus_pll_div2", };
+> +PNAME(mout_sclk_dsim1_c_p)	= { "mout_sclk_dsim1_b", "sclk_mphy_pll", };
+> +PNAME(mout_sclk_dsim1_b_p)	= { "mout_sclk_dsim1_a", "mout_mfc_pll_div2",};
+> +PNAME(mout_sclk_dsim1_a_p)	= { "fin_pll", "mout_bus_pll_div2", };
+> +
+
+Same way I can see {"fin_pll", "mout_bus_pll_div2", } this combination 
+of parents is repeated six times above in different PNAME, which can be 
+replaced by one PNAME list with some common name, thus saving of 5 lines.
+
+> +static struct samsung_fixed_factor_clock mif_fixed_factor_clks[] __initdata = {
+> +	/* dout_{mfc|bus|mem1|mem0}_pll is half fixed rate from parent mux */
+> +	FFACTOR(CLK_DOUT_MFC_PLL, "dout_mfc_pll", "mout_mfc_pll", 1, 1, 0),
+> +	FFACTOR(CLK_DOUT_BUS_PLL, "dout_bus_pll", "mout_bus_pll", 1, 1, 0),
+> +	FFACTOR(CLK_DOUT_MEM1_PLL, "dout_mem1_pll", "mout_mem1_pll", 1, 1, 0),
+> +	FFACTOR(CLK_DOUT_MEM0_PLL, "dout_mem0_pll", "mout_mem0_pll", 1, 1, 0),
+> +};
+> +
+
 
 Thanks,
 Pankaj Dubey
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
