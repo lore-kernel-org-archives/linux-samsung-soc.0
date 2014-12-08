@@ -1,79 +1,39 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ASoC: samsung: i2s: Add missing assignment of variant_regs
-Date: Mon, 08 Dec 2014 18:45:54 +0100
-Message-ID: <1418060754-7064-1-git-send-email-s.nawrocki@samsung.com>
+Subject: Re: [PATCH] ASoC: samsung: request memory region in driver probe()
+Date: Mon, 08 Dec 2014 19:01:27 +0100
+Message-ID: <5485E777.8070203@samsung.com>
+References: <1418049376-32129-1-git-send-email-s.nawrocki@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:44557 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755462AbaLHRq3 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:31549 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756083AbaLHSBr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Dec 2014 12:46:29 -0500
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout3.samsung.com
+	Mon, 8 Dec 2014 13:01:47 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout1.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NG900MU3YPFBP40@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 09 Dec 2014 02:46:27 +0900 (KST)
+ 17 2011)) with ESMTP id <0NG9007U9ZLTZ150@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 08 Dec 2014 18:05:53 +0000 (GMT)
+In-reply-to: <1418049376-32129-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: broonie@kernel.org
-Cc: padma.v@samsung.com, drake@endlessm.com, sbkim73@samsung.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: padma.v@samsung.com, drake@endlessm.com, sbkim73@samsung.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
 
-Add assignment of the variant_regs field which is missing in commit
-a5a56871f804edac93a53b5e871c0e9818fb9033 ("ASoC: samsung: add support
-for exynos7 I2S controller"). Without this attempting to probe the
-secondary DAI fails with an error like:
+On 08/12/14 15:36, Sylwester Nawrocki wrote:
+> The memory mapped registers region is common for both DAIs so request
+> it in the I2S platform device driver probe for the platform device
+> corresponding to the primary DAI, rather than in the ASoC DAI probe
+> callback. While at it switch to devm_ioremap_resource(). This also
+> drops the hard coded (0x100) register region size in the driver.
 
-[    1.763026] Unable to handle kernel NULL pointer dereference at virtual address 0000000c
-[    1.780895] pgd = c0004000
-[    1.783606] [0000000c] *pgd=00000000
-[    1.838255] Internal error: Oops: 5 [#1] PREEMPT SMP ARM
-[    1.843514] Modules linked in:
-[    1.846558] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 3.18.0-rc1-00009-g5dcb01e-dirty #1521
-[    1.854887] task: ee00a800 ti: ee088000 task.ti: ee088000
-[    1.860284] PC is at i2s_txctrl+0x40/0x2d4
-[    1.864350] LR is at i2s_txctrl+0x28/0x2d4
-[    1.868428] pc : [<c036ffd4>]    lr : [<c036ffbc>]    psr: 60000153
-[    1.868428] sp : ee089dc0  ip : 00000000  fp : ee21f000
-[    1.879883] r10: 00000000  r9 : ee21fb00  r8 : c06406c4
-[    1.885091] r7 : ee21fb00  r6 : 00000000  r5 : f00f6000  r4 : ed943410
-[    1.891601] r3 : 0000016c  r2 : c0464550  r1 : c055cef8  r0 : ed943610
-[    1.898113] Flags: nZCv  IRQs on  FIQs off  Mode SVC_32  ISA ARM  Segment kernel
-[    1.905490] Control: 10c5387d  Table: 4000404a  DAC: 00000015
-[    1.911218] Process swapper/0 (pid: 1, stack limit = 0xee088240)
-[    1.917208] Stack: (0xee089dc0 to 0xee08a000)
-...
-[    2.068431] [<c036ffd4>] (i2s_txctrl) from [<c03719fc>] (samsung_i2s_dai_probe+0xb8/0x450)
-[    2.076676] [<c03719fc>] (samsung_i2s_dai_probe) from [<c03607e0>] (snd_soc_register_card+0xd98/0x1348)
-[    2.086044] [<c03607e0>] (snd_soc_register_card) from [<c03726e4>] (odroidx2_audio_probe+0xa8/0x11c)
-[    2.095160] [<c03726e4>] (odroidx2_audio_probe) from [<c0249dd0>] (platform_drv_probe+0x48/0xa4)
-[    2.103922] [<c0249dd0>] (platform_drv_probe) from [<c0248988>] (driver_probe_device+0x10c/0x22c)
-[    2.112773] [<c0248988>] (driver_probe_device) from [<c0248b34>] (__driver_attach+0x8c/0x90)
-[    2.121192] [<c0248b34>] (__driver_attach) from [<c02471c8>] (bus_for_each_dev+0x54/0x88)
-[    2.129352] [<c02471c8>] (bus_for_each_dev) from [<c0248188>] (bus_add_driver+0xd4/0x1d0)
-[    2.137510] [<c0248188>] (bus_add_driver) from [<c024915c>] (driver_register+0x78/0xf4)
-[    2.145499] [<c024915c>] (driver_register) from [<c0008924>] (do_one_initcall+0x80/0x1b8)
-[    2.153670] [<c0008924>] (do_one_initcall) from [<c05b7d40>] (kernel_init_freeable+0xfc/0x1c8)
-[    2.162260] [<c05b7d40>] (kernel_init_freeable) from [<c04146c0>] (kernel_init+0x8/0xec)
-[    2.170330] [<c04146c0>] (kernel_init) from [<c000e7f8>] (ret_from_fork+0x14/0x3c)
-[    2.177873] Code: e5940000 e59f128c e59f228c e2800010 (e59c700c)
+Please ignore this patch, there is one iounmap() call removal missing
+in it. I'll resend it updated together with other patch(es) I'm working
+on to get the CDCLK gating issue on Odroid X2/U3 fixed.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- sound/soc/samsung/i2s.c |    2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index c7aafcd..eca17dc 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -1261,6 +1261,8 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 			ret = -ENOMEM;
- 			goto err;
- 		}
-+
-+		sec_dai->variant_regs = pri_dai->variant_regs;
- 		sec_dai->dma_playback.dma_addr = regs_base + I2STXDS;
- 		sec_dai->dma_playback.ch_name = "tx-sec";
- 
 -- 
-1.7.9.5
+Thanks,
+Sylwester
