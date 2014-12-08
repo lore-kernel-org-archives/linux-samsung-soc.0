@@ -1,47 +1,44 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
- Refactor the driver to use commit-like)
-Date: Mon, 8 Dec 2014 07:54:08 -0600
-Message-ID: <5485AD80.1050008@ti.com>
-References: <5481D913.9040109@ti.com> <5481D9BF.2090007@ti.com> <20141205162312.GB11502@n2100.arm.linux.org.uk> <CA+Ln22EFKRm_9HPaVvL7zFdmmB5Zz5RnJKbZkESVOBOLPvUnGA@mail.gmail.com> <20141208122235.GC11502@n2100.arm.linux.org.uk>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] dmaengine: pl330: Set residue in tx_status callback
+Date: Mon, 8 Dec 2014 14:23:21 +0000
+Message-ID: <20141208142321.GE11285@n2100.arm.linux.org.uk>
+References: <1416995095-13763-1-git-send-email-padma.v@samsung.com>
+ <CAAgF-BfpU72KTJjVd8jWStD8yJ5sSmXOiQm77xQunO2QhC9ExQ@mail.gmail.com>
+ <547DF61D.3010909@metafoo.de>
+ <CAAgF-BfPyaOhhrA5L8vm2WDnhBYDexJFkGxqL1GsL2TMB8z=Rw@mail.gmail.com>
+ <CAJe_Zhd2-vBgAoJsBt7JCOYDuTZrBCScSZ1HaNO3gNTZ-P6A9A@mail.gmail.com>
+ <20141205151843.GV11285@n2100.arm.linux.org.uk>
+ <CAJe_ZhfDsfehCXHB6pCuQ6672kXBYFxh687cZT1qaSCOyLy76g@mail.gmail.com>
+ <20141208130727.GK16827@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from arroyo.ext.ti.com ([192.94.94.40]:43842 "EHLO arroyo.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755446AbaLHNyv (ORCPT
+Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:45271 "EHLO
+	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1755046AbaLHOXg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Dec 2014 08:54:51 -0500
-In-Reply-To: <20141208122235.GC11502@n2100.arm.linux.org.uk>
+	Mon, 8 Dec 2014 09:23:36 -0500
+Content-Disposition: inline
+In-Reply-To: <20141208130727.GK16827@intel.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Kevin Hilman <khilman@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-omap <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next <linux-next@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Jassi Brar <jaswinder.singh@linaro.org>, Padma Venkat <padma.kvr@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Padmavathi Venna <padma.v@samsung.com>, Mark Brown <broonie@kernel.org>, dmaengine@vger.kernel.org, Dylan Reid <dgreid@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 12/08/2014 06:22 AM, Russell King - ARM Linux wrote:
-> On Mon, Dec 08, 2014 at 08:54:18PM +0900, Tomasz Figa wrote:
->> 2014-12-06 1:23 GMT+09:00 Russell King - ARM Linux <linux@arm.linux.org.uk>:
->>> Given where we are in the cycle (-final likely this weekend) the only
->>> thing we can do right now is to drop the patch set; exynos (and mvebu)
->>> will have to wait another cycle until this patch set (hopefully in a
->>> revised form) can be merged.
->>
->> Or a fix could be queued on top of this. Since (I believe) this series
->> has been queued for 3.19, we have 6 or 7 RC releases ahead, which
->> could be used for the purpose of fixing things (as they are supposed
->> to?).
-> 
-> They were merged on 27th November, so they would've been in linux-next
-> from about last Monday.  Nishanth reported a failure on Friday, the
+On Mon, Dec 08, 2014 at 06:37:27PM +0530, Vinod Koul wrote:
+> I actually like the split model, you can also prepare txn ahead of time and
+> submit them when needed.
 
-For what ever it is worth, the l2c changes actually appeared on
-Thursday CST (next-20141204). Found the regression against
-next-20141203 tag and it took me a day to track it down (after looking
-at a few other regressions as well)..
+Actually, you can't - that's not permitted.  I have email(s) from Dan
+explicitly stating that it is permitted for a driver to take a spinlock
+in their prepare callback, and release it when the descriptor is
+submitted.  Several DMA engine drivers (particularly those in for
+async_tx) do exactly that.
 
-Anyways...
+The reason that submit is separate from prepare is to allow DMA engine
+users to set a callback - if it weren't for that, there wouldn't be a
+submit step, prepare would have done everything.
 
 -- 
-Regards,
-Nishanth Menon
+FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
+according to speedtest.net.
