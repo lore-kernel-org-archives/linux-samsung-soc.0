@@ -1,39 +1,54 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] ASoC: samsung: request memory region in driver probe()
-Date: Mon, 08 Dec 2014 19:01:27 +0100
-Message-ID: <5485E777.8070203@samsung.com>
-References: <1418049376-32129-1-git-send-email-s.nawrocki@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] ASoC: samsung: i2s: Add missing assignment of
+ variant_regs
+Date: Mon, 8 Dec 2014 20:47:11 +0000
+Message-ID: <20141208204711.GF11764@sirena.org.uk>
+References: <1418060754-7064-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="qfesBOB4TKwppX3D"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:31549 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756083AbaLHSBr (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:52341 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755105AbaLHUrT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Dec 2014 13:01:47 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout1.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NG9007U9ZLTZ150@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 08 Dec 2014 18:05:53 +0000 (GMT)
-In-reply-to: <1418049376-32129-1-git-send-email-s.nawrocki@samsung.com>
+	Mon, 8 Dec 2014 15:47:19 -0500
+Content-Disposition: inline
+In-Reply-To: <1418060754-7064-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: broonie@kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Cc: padma.v@samsung.com, drake@endlessm.com, sbkim73@samsung.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
 
-On 08/12/14 15:36, Sylwester Nawrocki wrote:
-> The memory mapped registers region is common for both DAIs so request
-> it in the I2S platform device driver probe for the platform device
-> corresponding to the primary DAI, rather than in the ASoC DAI probe
-> callback. While at it switch to devm_ioremap_resource(). This also
-> drops the hard coded (0x100) register region size in the driver.
 
-Please ignore this patch, there is one iounmap() call removal missing
-in it. I'll resend it updated together with other patch(es) I'm working
-on to get the CDCLK gating issue on Odroid X2/U3 fixed.
+--qfesBOB4TKwppX3D
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
--- 
-Thanks,
-Sylwester
+On Mon, Dec 08, 2014 at 06:45:54PM +0100, Sylwester Nawrocki wrote:
+
+> Add assignment of the variant_regs field which is missing in commit
+> a5a56871f804edac93a53b5e871c0e9818fb9033 ("ASoC: samsung: add support
+> for exynos7 I2S controller"). Without this attempting to probe the
+> secondary DAI fails with an error like:
+
+Applied, thanks.  Broader testing of changes before sending them
+upstream would be good...
+
+--qfesBOB4TKwppX3D
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUhg5PAAoJECTWi3JdVIfQp1cH/i+e68G/6FoThfqJq8mmyj4k
+mH/141HzVk8s6/KxZ7hL3DhTsbHkiEbrMp18oj6SF3C+FTuoLqd4ofwWeeeIxoNW
+fRJGGvmISDaj+B6GoXhwJn5ds8r8Ebn/sIDlFyZgnHMhNQs+Fs4fteOa34Dd+TX/
+50ma2q8l2OSX3cDzzhUyGpg3DH92Bl8LBVF8FPAXwPT4rRLp54fViZeZPoMMs66U
+L7rmfkNWkKbwrgWS6umj1bLIT498U1mRqqWO/wPeQMcDojvsPFu2q8tK/Fq4Rmbe
+axTP9bxRHbbwsbRT6Chyq6g5lfsT9wbTQC6adv8UNdact3kgPXgMK8AwGTK7zVM=
+=lq01
+-----END PGP SIGNATURE-----
+
+--qfesBOB4TKwppX3D--
