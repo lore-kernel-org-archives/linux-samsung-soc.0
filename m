@@ -1,101 +1,41 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: [PATCH 12/19] clk: samsung: exynos5433: Add clocks for CMU_GSCL
- domain
-Date: Tue, 09 Dec 2014 13:18:24 +0530
-Message-ID: <5486A948.7010906@samsung.com>
-References: <1417510196-6714-1-git-send-email-cw00.choi@samsung.com>
- <1417510196-6714-13-git-send-email-cw00.choi@samsung.com>
+From: Hyungwon Hwang <human.hwang@samsung.com>
+Subject: [PATCH v2 1/3] ARM: dts: add fimd device support for exynos3250-rinato
+Date: Tue, 09 Dec 2014 18:29:04 +0900
+Message-ID: <1418117346-9078-2-git-send-email-human.hwang@samsung.com>
+References: <1418117346-9078-1-git-send-email-human.hwang@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1417510196-6714-13-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, geunsik.lim@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <1418117346-9078-1-git-send-email-human.hwang@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, a.hajda@samsung.com, kyungmin.park@samsung.com, robh+dt@kernel.org, Hyungwon Hwang <human.hwang@samsung.com>, galak@codeaurora.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Chanwoo,
-
-On Tuesday 02 December 2014 02:19 PM, Chanwoo Choi wrote:
-> This patch adds the divider/gate of CMU_GSCL domain which contains gscaler
-> clocks.
->
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Inki Dae <inki.dae@samsung.com>
-> Acked-by: Geunsik Lim <geunsik.lim@samsung.com>
-> ---
->   .../devicetree/bindings/clock/exynos5433-clock.txt |   8 ++
->   drivers/clk/samsung/clk-exynos5433.c               | 144 +++++++++++++++++++++
->   include/dt-bindings/clock/exynos5433.h             |  37 +++++-
->   3 files changed, 188 insertions(+), 1 deletion(-)
->
-
-[snip]
-
->   }
->   CLK_OF_DECLARE(exynos5433_cmu_g3d, "samsung,exynos5433-cmu-g3d",
->   		exynos5433_cmu_g3d_init);
-> +
-> +/*
-> + * Register offset definitions for CMU_GSCL
-> + */
-> +#define MUX_SEL_GSCL				0x0200
-> +#define MUX_ENABLE_GSCL				0x0300
-> +#define	MUX_STAT_GSCL				0x0400
-> +#define	ENABLE_ACLK_GSCL			0x0800
-> +#define	ENABLE_ACLK_GSCL_SECURE_SMMU_GSCL0	0x0804
-> +#define	ENABLE_ACLK_GSCL_SECURE_SMMU_GSCL1	0x0808
-> +#define	ENABLE_ACLK_GSCL_SECURE_SMMU_GSCL2	0x080c
-> +#define	ENABLE_PCLK_GSCL			0x0900
-> +#define	ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL0	0x0904
-> +#define	ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL1	0x0908
-> +#define	ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL2	0x090c
-> +#define	ENABLE_IP_GSCL0				0x0b00
-> +#define	ENABLE_IP_GSCL1				0x0b04
-> +#define	ENABLE_IP_GSCL_SECURE_SMMU_GSCL0	0x0b08
-> +#define	ENABLE_IP_GSCL_SECURE_SMMU_GSCL1	0x0b0c
-> +#define	ENABLE_IP_GSCL_SECURE_SMMU_GSCL2	0x0b10
-> +
-
-nit: tabspace after #define should be changed to one whitespace.
-
-> +static unsigned long gscl_clk_regs[] __initdata = {
-> +	MUX_SEL_GSCL,
-> +	MUX_ENABLE_GSCL,
-> +	MUX_STAT_GSCL,
-> +	ENABLE_ACLK_GSCL,
-> +	ENABLE_ACLK_GSCL_SECURE_SMMU_GSCL0,
-> +	ENABLE_ACLK_GSCL_SECURE_SMMU_GSCL1,
-> +	ENABLE_ACLK_GSCL_SECURE_SMMU_GSCL2,
-> +	ENABLE_PCLK_GSCL,
-> +	ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL0,
-> +	ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL1,
-> +	ENABLE_PCLK_GSCL_SECURE_SMMU_GSCL2,
-> +	ENABLE_IP_GSCL0,
-> +	ENABLE_IP_GSCL1,
-> +	ENABLE_IP_GSCL_SECURE_SMMU_GSCL0,
-> +	ENABLE_IP_GSCL_SECURE_SMMU_GSCL1,
-> +	ENABLE_IP_GSCL_SECURE_SMMU_GSCL2,
-> +};
-> +
-> +/* list of all parent clock list */
-> +PNAME(aclk_gscl_111_user_p)	= { "fin_pll", "aclk_gscl_111", };
-> +PNAME(aclk_gscl_333_user_p)	= { "fin_pll", "aclk_gscl_333", };
-> +
-> +static struct samsung_mux_clock gscl_mux_clks[] __initdata = {
-> +	/* MUX_SEL_GSCL */
-> +	MUX(CLK_MOUT_ACLK_GSCL_111_USER, "mout_aclk_gscl_111_user",
-> +			aclk_gscl_111_user_p, MUX_SEL_GSCL, 4, 1),
-> +	MUX(CLK_MOUT_ACLK_GSCL_333_USER, "mout_aclk_gscl_333_user",
-> +			aclk_gscl_333_user_p, MUX_SEL_GSCL, 4, 1),
-
-aclk_gscl_333_user mux clock has a shift of '0'.
-
-> +};
-> +
-
-Thanks,
-Pankaj Dubey
+RnJvbTogSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1bmcuY29tPgoKVGhpcyBwYXRjaCBhZGRzIGZp
+bWQgZGV2aWNlIG5vZGUgd2hpY2ggaXMgYSBkaXNwbGF5IGNvbnRyb2xsZXIKZm9yIEV4eW5vczMy
+NTAgUmluYXRvIGJvYXJkLgoKU2lnbmVkLW9mZi1ieTogSW5raSBEYWUgPGlua2kuZGFlQHNhbXN1
+bmcuY29tPgpTaWduZWQtb2ZmLWJ5OiBIeXVuZ3dvbiBId2FuZyA8aHVtYW4uaHdhbmdAc2Ftc3Vu
+Zy5jb20+CkFja2VkLWJ5OiBLeXVuZ21pbiBQYXJrIDxreXVuZ21pbi5wYXJrQHNhbXN1bmcuY29t
+PgotLS0KQ2hhbmdlcyBmb3IgdjI6Ci0gTm9uZQoKIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMy
+NTAtcmluYXRvLmR0cyB8IDExICsrKysrKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0
+aW9ucygrKQoKZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAtcmluYXRv
+LmR0cyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAtcmluYXRvLmR0cwppbmRleCA4MGFh
+OGI0Li43OWFhOTE2IDEwMDY0NAotLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3MzMjUwLXJp
+bmF0by5kdHMKKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zMzI1MC1yaW5hdG8uZHRzCkBA
+IC0xMjUsNiArMTI1LDE3IEBACiAJfTsKIH07CiAKKyZmaW1kIHsKKwlzdGF0dXMgPSAib2theSI7
+CisKKwlpODAtaWYtdGltaW5ncyB7CisJCWNzLXNldHVwID0gPDA+OworCQl3ci1zZXR1cCA9IDww
+PjsKKwkJd3ItYWN0ID0gPDE+OworCQl3ci1ob2xkID0gPDA+OworCX07Cit9OworCiAmaTJjXzAg
+ewogCSNhZGRyZXNzLWNlbGxzID0gPDE+OwogCSNzaXplLWNlbGxzID0gPDA+OwotLSAKMS45LjEK
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
