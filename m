@@ -1,124 +1,75 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [RFC PATCHv2 5/7] ARM: dts: Add PPMU dt node for Exynos3250
-Date: Tue, 09 Dec 2014 23:13:04 +0900
-Message-ID: <1418134386-14681-6-git-send-email-cw00.choi@samsung.com>
-References: <1418134386-14681-1-git-send-email-cw00.choi@samsung.com>
+From: Jassi Brar <jaswinder.singh@linaro.org>
+Subject: Re: [PATCH] dmaengine: pl330: Set residue in tx_status callback
+Date: Tue, 9 Dec 2014 20:48:04 +0530
+Message-ID: <CAJe_ZhfKFdrV8=oMiH0hJeOmGAmPNbZ7rUXsqN+Ak7PvOnZEmA@mail.gmail.com>
+References: <1416995095-13763-1-git-send-email-padma.v@samsung.com>
+	<CAAgF-BfpU72KTJjVd8jWStD8yJ5sSmXOiQm77xQunO2QhC9ExQ@mail.gmail.com>
+	<547DF61D.3010909@metafoo.de>
+	<CAAgF-BfPyaOhhrA5L8vm2WDnhBYDexJFkGxqL1GsL2TMB8z=Rw@mail.gmail.com>
+	<CAJe_Zhd2-vBgAoJsBt7JCOYDuTZrBCScSZ1HaNO3gNTZ-P6A9A@mail.gmail.com>
+	<20141205151843.GV11285@n2100.arm.linux.org.uk>
+	<CAJe_ZhfDsfehCXHB6pCuQ6672kXBYFxh687cZT1qaSCOyLy76g@mail.gmail.com>
+	<20141208130727.GK16827@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1418134386-14681-1-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, k.kozlowski@samsung.com, kgene.kim@samsung.com, b.zolnierkie@samsung.com, rafael.j.wysocki@intel.com, tomasz.figa@gmail.com, cw00.choi@samsung.com, kyungmin.park@samsung.com, myungjoo.ham@samsung.com, linux-samsung-soc@vger.kernel.org, a.kesavan@samsung.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f172.google.com ([209.85.216.172]:40527 "EHLO
+	mail-qc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754080AbaLIPSG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 9 Dec 2014 10:18:06 -0500
+Received: by mail-qc0-f172.google.com with SMTP id m20so555890qcx.17
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Dec 2014 07:18:04 -0800 (PST)
+In-Reply-To: <20141208130727.GK16827@intel.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Padma Venkat <padma.kvr@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Padmavathi Venna <padma.v@samsung.com>, Mark Brown <broonie@kernel.org>, dmaengine@vger.kernel.org, Dylan Reid <dgreid@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-This patch add PPMU (Performance Profiling Monitoring Units) dt node
-to estimate the utilization of each IP in Exynos SoC throught DEVFREQ Event
-subsystem.
+On 8 December 2014 at 18:37, Vinod Koul <vinod.koul@intel.com> wrote:
+> On Sat, Dec 06, 2014 at 12:31:01PM +0530, Jassi Brar wrote:
+>> It does, though, create an "awkward situation" when a channel is
+>> active while new requests are submitted - why would the channel want
+>> to stop after current transfer and await fresh issue_pending()? It's
+>> not that the request can be modified after submission.
+>>
+>> And it isn't that tx_submit() is meant for 'sleepable' preparation for
+>> the transfer and we need another call to be issued from atomic
+>> context. From what I see most drivers don't need to sleep in
+>> tx_submit(). In fact, from a quick look most clients seem to suffer
+>> from the ritual i.e, there's nothing between tx_submit() and
+>> issue_pending() calls. And when there is indeed some code, it seems
+>> that can be moved just before tx_submit().
+>>
+>> Last and apparently the least of all, we can never enforce the same
+>> behavior of the api on Async dma and have uniform behavior over the
+>> api.
+>>
+>> So, if all tx_submit() does is put the request in controller driver's
+>> internal queue and the client can't touch the request after
+>> tx_submit(), why not merge the tx_submit() and issue_pending()?
+> You are thinking from an API point and not what can be done with this API.
+>
+"awkward situation" and "ritual suffering" above, are two practical
+issues that we see.
 
-This patch adds following PPMU dt nodes:
-- PPMU_DMC0	0x106a0000
-- PPMU_DMC1	0x106b0000
-- PPMU_RIGHTBUS 0x112A0000
-- PPMU_LEFTBUS  0x116A0000
-- PPMU_CAMIF    0x11AC0000
-- PPMU_LCD0     0x11E40000
-- PPMU_3D       0x13220000
-- PPMU_MFC_L    0x13660000
-- PPMU_CPU	0x106c0000
+> Today this API allows you to collate all pending txn and start while
+> dmaengine driver can collate and submit as a batch to hardware and not waste
+> time in getting irq and then setting next one. Sadly none of the drivers use
+> this feature...
+>
+So we at least agree that the "feature" is unused so far.
+And I doubt if it would ever make sense to batch transfers in slave
+dma (unlike offloading on async-dma) because the user has to also
+setup the master for each queued request, mostly if not always.
 
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/boot/dts/exynos3250.dtsi | 66 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+> I actually like the split model, you can also prepare txn ahead of time and
+> submit them when needed. If you don't like this, then please do as most
+> implementation do today, call prepare and submit in series. Flexiblity in
+> API is a better option IMO
+>
+As Russell pointed out, that ain't the case either.
+So we are yet to figure out benefits of having explicit
+issue_pending() after tx_submit().
 
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index c743f60..70a9120 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -529,6 +529,72 @@
- 			compatible = "arm,cortex-a7-pmu";
- 			interrupts = <0 18 0>, <0 19 0>;
- 		};
-+
-+		ppmu_dmc0: ppmu_dmc0@106a0000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x106a0000 0x2000>;
-+			status = "disabled";
-+		};
-+
-+		ppmu_dmc1: ppmu_dmc1@106b0000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x106b0000 0x2000>;
-+			status = "disabled";
-+		};
-+
-+		ppmu_cpu: ppmu_cpu@106c0000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x106c0000 0x2000>;
-+			status = "disabled";
-+		};
-+
-+		ppmu_rightbus: ppmu_rightbus@112a0000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x112a0000 0x2000>;
-+			clocks = <&cmu CLK_PPMURIGHT>;
-+			clock-names = "ppmu";
-+			status = "disabled";
-+		};
-+
-+		ppmu_leftbus: ppmu_leftbus0@116a0000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x116a0000 0x2000>;
-+			clocks = <&cmu CLK_PPMULEFT>;
-+			clock-names = "ppmu";
-+			status = "disabled";
-+		};
-+
-+		ppmu_camif: ppmu_camif@11ac0000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x11ac0000 0x2000>;
-+			clocks = <&cmu CLK_PPMUCAMIF>;
-+			clock-names = "ppmu";
-+			status = "disabled";
-+		};
-+
-+		ppmu_lcd0: ppmu_lcd0@11e40000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x11e40000 0x2000>;
-+			clocks = <&cmu CLK_PPMULCD0>;
-+			clock-names = "ppmu";
-+			status = "disabled";
-+		};
-+
-+		ppmu_g3d: ppmu_g3d@13220000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x13220000 0x2000>;
-+			clocks = <&cmu CLK_PPMUG3D>;
-+			clock-names = "ppmu";
-+			status = "disabled";
-+		};
-+
-+		ppmu_mfc_l: ppmu_mfc_l@13660000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x13660000 0x2000>;
-+			clocks = <&cmu CLK_PPMUMFC_L>;
-+			clock-names = "ppmu";
-+			status = "disabled";
-+		};
- 	};
- };
- 
--- 
-1.8.5.5
+-Jassi
