@@ -1,50 +1,113 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH] dmaengine: pl330: Set residue in tx_status callback
-Date: Tue, 9 Dec 2014 11:40:03 +0530
-Message-ID: <20141209061003.GX16827@intel.com>
-References: <1416995095-13763-1-git-send-email-padma.v@samsung.com>
- <CAAgF-BfpU72KTJjVd8jWStD8yJ5sSmXOiQm77xQunO2QhC9ExQ@mail.gmail.com>
- <547DF61D.3010909@metafoo.de>
- <CAAgF-BfPyaOhhrA5L8vm2WDnhBYDexJFkGxqL1GsL2TMB8z=Rw@mail.gmail.com>
- <CAJe_Zhd2-vBgAoJsBt7JCOYDuTZrBCScSZ1HaNO3gNTZ-P6A9A@mail.gmail.com>
- <20141205151843.GV11285@n2100.arm.linux.org.uk>
- <CAJe_ZhfDsfehCXHB6pCuQ6672kXBYFxh687cZT1qaSCOyLy76g@mail.gmail.com>
- <20141208130727.GK16827@intel.com>
- <20141208142321.GE11285@n2100.arm.linux.org.uk>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH 03/19] clk: samsung: exynos5433: Add clocks for CMU_PERIC
+ domain
+Date: Tue, 09 Dec 2014 11:43:01 +0530
+Message-ID: <548692ED.4080301@samsung.com>
+References: <1417510196-6714-1-git-send-email-cw00.choi@samsung.com>
+ <1417510196-6714-4-git-send-email-cw00.choi@samsung.com>
+ <54858C13.8020704@samsung.com> <54864C90.9040205@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:30927 "EHLO mga11.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750766AbaLIGJs (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:19339 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756266AbaLIGND (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Dec 2014 01:09:48 -0500
-Content-Disposition: inline
-In-Reply-To: <20141208142321.GE11285@n2100.arm.linux.org.uk>
+	Tue, 9 Dec 2014 01:13:03 -0500
+In-reply-to: <54864C90.9040205@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Jassi Brar <jaswinder.singh@linaro.org>, Padma Venkat <padma.kvr@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Padmavathi Venna <padma.v@samsung.com>, Mark Brown <broonie@kernel.org>, dmaengine@vger.kernel.org, Dylan Reid <dgreid@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, mark.rutland@arm.com, marc.zyngier@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, s.nawrocki@samsung.com, tomasz.figa@gmail.com, kyungmin.park@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, geunsik.lim@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Inha Song <ideal.song@samsung.com>
 
-On Mon, Dec 08, 2014 at 02:23:21PM +0000, Russell King - ARM Linux wrote:
-> On Mon, Dec 08, 2014 at 06:37:27PM +0530, Vinod Koul wrote:
-> > I actually like the split model, you can also prepare txn ahead of time and
-> > submit them when needed.
-> 
-> Actually, you can't - that's not permitted.  I have email(s) from Dan
-> explicitly stating that it is permitted for a driver to take a spinlock
-> in their prepare callback, and release it when the descriptor is
-> submitted.  Several DMA engine drivers (particularly those in for
-> async_tx) do exactly that.
-> 
-> The reason that submit is separate from prepare is to allow DMA engine
-> users to set a callback - if it weren't for that, there wouldn't be a
-> submit step, prepare would have done everything.
-Yes thats right.
 
-Do you mind pointing to thread Dan replied, I would like to add these bits
-and anything else missing to Documentation
 
-Thanks
--- 
-~Vinod
+On Tuesday 09 December 2014 06:42 AM, Chanwoo Choi wrote:
+> Hi Pankaj,
+>
+> On 12/08/2014 08:31 PM, Pankaj Dubey wrote:
+>> Hi Chanwoo,
+>>
+>> On Tuesday 02 December 2014 02:19 PM, Chanwoo Choi wrote:
+>>> This patch adds missing divider/gate clocks of CMU_PERIC domain
+>>> which includes I2S/PCM/SPDIF/PWM/SLIMBUS IPs. The SPI/I2S may use
+>>> external input clock which has 'ioclk_*' prefix.
+>>>
+>>> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>>> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>> [ideal.song: Change clk flags of to pclk_gpio_* clk, pclk_gpio_* should be always on.]
+>>> Signed-off-by: Inha Song <ideal.song@samsung.com>
+>>> Acked-by: Inki Dae <inki.dae@samsung.com>
+>>> Acked-by: Geunsik Lim <geunsik.lim@samsung.com>
+>>> ---
+>>>    drivers/clk/samsung/clk-exynos5433.c   | 80 +++++++++++++++++++++++++++++++++-
+>>>    include/dt-bindings/clock/exynos5433.h | 34 ++++++++++++++-
+>>>    2 files changed, 112 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+>>> index 88e8cac..a48b36c 100644
+>>> --- a/drivers/clk/samsung/clk-exynos5433.c
+>>> +++ b/drivers/clk/samsung/clk-exynos5433.c
+>>> @@ -256,6 +256,14 @@ static struct samsung_fixed_rate_clock top_fixed_clks[] __initdata = {
+>>>        FRATE(0, "ioclk_audiocdclk0", NULL, CLK_IS_ROOT, 100000000),
+>>>        /* Xi2s1SDI input clock for SPDIF */
+>>>        FRATE(0, "ioclk_spdif_extclk", NULL, CLK_IS_ROOT, 100000000),
+>>> +    /* XspiCLK[4:0] input clock for SPI */
+>>> +    FRATE(0, "ioclk_spi4_clk_in", NULL, CLK_IS_ROOT, 50000000),
+>>> +    FRATE(0, "ioclk_spi3_clk_in", NULL, CLK_IS_ROOT, 50000000),
+>>> +    FRATE(0, "ioclk_spi2_clk_in", NULL, CLK_IS_ROOT, 50000000),
+>>> +    FRATE(0, "ioclk_spi1_clk_in", NULL, CLK_IS_ROOT, 50000000),
+>>> +    FRATE(0, "ioclk_spi0_clk_in", NULL, CLK_IS_ROOT, 50000000),
+>>> +    /* Xi2s1SCLK input clock for I2S1_BCLK */
+>>> +    FRATE(0, "ioclk_i2s1_bclk_in", NULL, CLK_IS_ROOT, 12288000),
+>>>    };
+>>>
+>>>    static struct samsung_mux_clock top_mux_clks[] __initdata = {
+>>> @@ -760,6 +768,7 @@ CLK_OF_DECLARE(exynos5433_cmu_mif, "samsung,exynos5433-cmu-mif",
+>>>     * Register offset definitions for CMU_PERIC
+>>>     */
+>>>    #define DIV_PERIC            0x0600
+>>> +#define DIV_STAT_PERIC            0x0700
+>>>    #define ENABLE_ACLK_PERIC        0x0800
+>>>    #define ENABLE_PCLK_PERIC0        0x0900
+>>>    #define ENABLE_PCLK_PERIC1        0x0904
+>>> @@ -770,6 +779,7 @@ CLK_OF_DECLARE(exynos5433_cmu_mif, "samsung,exynos5433-cmu-mif",
+>>>
+>>>    static unsigned long peric_clk_regs[] __initdata = {
+>>>        DIV_PERIC,
+>>> +    DIV_STAT_PERIC,
+>>
+>> IMO, this line should have been added in first place itself when you added peric_clk_regs.
+>
+> Why? I want to locate it according to address base.
+
+Since DIV_PERIC and DIV_STAT_PERIC both has same address base, why not 
+to add DIV_STAT_PERIC at the same place when you added DIV_PERIC?
+
+Anyways, this was just my opinion as I don't see any dependency why we 
+should add it here? I left this up to you.
+
+>
+>>
+>>>        ENABLE_ACLK_PERIC,
+>>>        ENABLE_PCLK_PERIC0,
+>>>        ENABLE_PCLK_PERIC1,
+>>> @@ -779,14 +789,57 @@ static unsigned long peric_clk_regs[] __initdata = {
+>>>        ENABLE_IP_PERIC2,
+>>>    };
+>>>
+>>> +static struct samsung_div_clock peric_div_clks[] __initdata = {
+>>> +    /* DIV_PERIC */
+>>> +    DIV(CLK_DIV_SCLK_SCI, "div_sclk_sci", "fin_pll", DIV_PERIC, 4, 8),
+>>
+>> As per UM I have DIV_SCLK_SCI has 4 bit wide as [7:4] please cross verify.
+>
+> You're right. It is my mistake. I'll fix it.
+>
+> Best Regards,
+> Chanwoo Choi
+>
+Thanks,
+Pankaj Dubey
