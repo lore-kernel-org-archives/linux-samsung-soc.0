@@ -1,75 +1,31 @@
-From: Jassi Brar <jaswinder.singh@linaro.org>
-Subject: Re: [PATCH] dmaengine: pl330: Set residue in tx_status callback
-Date: Tue, 9 Dec 2014 20:48:04 +0530
-Message-ID: <CAJe_ZhfKFdrV8=oMiH0hJeOmGAmPNbZ7rUXsqN+Ak7PvOnZEmA@mail.gmail.com>
-References: <1416995095-13763-1-git-send-email-padma.v@samsung.com>
-	<CAAgF-BfpU72KTJjVd8jWStD8yJ5sSmXOiQm77xQunO2QhC9ExQ@mail.gmail.com>
-	<547DF61D.3010909@metafoo.de>
-	<CAAgF-BfPyaOhhrA5L8vm2WDnhBYDexJFkGxqL1GsL2TMB8z=Rw@mail.gmail.com>
-	<CAJe_Zhd2-vBgAoJsBt7JCOYDuTZrBCScSZ1HaNO3gNTZ-P6A9A@mail.gmail.com>
-	<20141205151843.GV11285@n2100.arm.linux.org.uk>
-	<CAJe_ZhfDsfehCXHB6pCuQ6672kXBYFxh687cZT1qaSCOyLy76g@mail.gmail.com>
-	<20141208130727.GK16827@intel.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Subject: Re: drm/exynos: some small forgotten patch
+Date: Tue, 09 Dec 2014 16:36:50 +0100
+Message-ID: <6e484e3842eaf5cae98abc7508faeb7e@math.uni-bielefeld.de>
+References: <1417307725-5975-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <5486E685.50509@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f172.google.com ([209.85.216.172]:40527 "EHLO
-	mail-qc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754080AbaLIPSG (ORCPT
+Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:39197 "EHLO
+	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754080AbaLIPgx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Dec 2014 10:18:06 -0500
-Received: by mail-qc0-f172.google.com with SMTP id m20so555890qcx.17
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Dec 2014 07:18:04 -0800 (PST)
-In-Reply-To: <20141208130727.GK16827@intel.com>
+	Tue, 9 Dec 2014 10:36:53 -0500
+In-Reply-To: <5486E685.50509@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Padma Venkat <padma.kvr@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Padmavathi Venna <padma.v@samsung.com>, Mark Brown <broonie@kernel.org>, dmaengine@vger.kernel.org, Dylan Reid <dgreid@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 
-On 8 December 2014 at 18:37, Vinod Koul <vinod.koul@intel.com> wrote:
-> On Sat, Dec 06, 2014 at 12:31:01PM +0530, Jassi Brar wrote:
->> It does, though, create an "awkward situation" when a channel is
->> active while new requests are submitted - why would the channel want
->> to stop after current transfer and await fresh issue_pending()? It's
->> not that the request can be modified after submission.
->>
->> And it isn't that tx_submit() is meant for 'sleepable' preparation for
->> the transfer and we need another call to be issued from atomic
->> context. From what I see most drivers don't need to sleep in
->> tx_submit(). In fact, from a quick look most clients seem to suffer
->> from the ritual i.e, there's nothing between tx_submit() and
->> issue_pending() calls. And when there is indeed some code, it seems
->> that can be moved just before tx_submit().
->>
->> Last and apparently the least of all, we can never enforce the same
->> behavior of the api on Async dma and have uniform behavior over the
->> api.
->>
->> So, if all tx_submit() does is put the request in controller driver's
->> internal queue and the client can't touch the request after
->> tx_submit(), why not merge the tx_submit() and issue_pending()?
-> You are thinking from an API point and not what can be done with this API.
->
-"awkward situation" and "ritual suffering" above, are two practical
-issues that we see.
+On 2014-12-09 13:09, Inki Dae wrote:
+> That might be a patch I missed. Can you tell me the Subject?
+Uhm, I think that is obvious from the mail?
+http://www.spinics.net/lists/linux-samsung-soc/msg39811.html
 
-> Today this API allows you to collate all pending txn and start while
-> dmaengine driver can collate and submit as a batch to hardware and not waste
-> time in getting irq and then setting next one. Sadly none of the drivers use
-> this feature...
->
-So we at least agree that the "feature" is unused so far.
-And I doubt if it would ever make sense to batch transfers in slave
-dma (unlike offloading on async-dma) because the user has to also
-setup the master for each queued request, mostly if not always.
+Anyway, I'm still waiting for Thierry's reply on that matter.
 
-> I actually like the split model, you can also prepare txn ahead of time and
-> submit them when needed. If you don't like this, then please do as most
-> implementation do today, call prepare and submit in series. Flexiblity in
-> API is a better option IMO
->
-As Russell pointed out, that ain't the case either.
-So we are yet to figure out benefits of having explicit
-issue_pending() after tx_submit().
-
--Jassi
+With best wishes,
+Tobias
