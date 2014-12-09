@@ -1,109 +1,139 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH] drm/exynos/fimd: only finish pageflip if START == START_S
-Date: Tue, 09 Dec 2014 21:50:54 +0900
-Message-ID: <5486F02E.9040408@samsung.com>
-References: <1416939145-5618-1-git-send-email-gustavo@padovan.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] clk: samsung: Fix Exynos 5420 pinctrl setup and clock
+ disable failure due to domain being gated
+Date: Tue, 09 Dec 2014 13:59:42 +0100
+Message-ID: <1418129982.19339.6.camel@AMDC1943>
+References: <1417788934-23447-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1416939145-5618-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:60359 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932197AbaLIM7r (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 9 Dec 2014 07:59:47 -0500
+In-reply-to: <1417788934-23447-1-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kevin Hilman <khilman@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-T24gMjAxNOuFhCAxMeyblCAyNuydvCAwMzoxMiwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZy
-b206IERhbmllbCBLdXJ0eiA8ZGprdXJ0ekBjaHJvbWl1bS5vcmc+Cj4gCj4gQSBmcmFtZWJ1ZmZl
-ciBnZXRzIGNvbW1pdHRlZCB0byBGSU1EJ3MgZGVmYXVsdCB3aW5kb3cgbGlrZSB0aGlzOgo+ICBl
-eHlub3NfZHJtX2NydGNfdXBkYXRlKCkKPiAgIGV4eW5vc19wbGFuZV9jb21taXQoKQo+ICAgIGZp
-bWRfd2luX2NvbW1pdCgpCj4gCj4gZmltZF93aW5fY29tbWl0KCkgcHJvZ3JhbXMgQlVGX1NUQVJU
-WzBdLiAgQXQgZWFjaCB2YmxhbmssIEZJTUQgaGFyZHdhcmUKPiBjb3BpZXMgdGhlIHZhbHVlIGZy
-b20gQlVGX1NUQVJUIHRvIEJVRl9TVEFSVF9TIChCVUZfU1RBUlQncyBzaGFkb3cKPiByZWdpc3Rl
-ciksIHN0YXJ0cyBzY2FubmluZyBvdXQgZnJvbSBCVUZfU1RBUlRfUywgYW5kIGFzc2VydHMgaXRz
-IGlycS4KPiAKPiBUaGlzIGlycSBpcyBoYW5kbGVkIGJ5IGZpbWRfaXJxX2hhbmRsZXIoKSwgd2hp
-Y2ggY2FsbHMKPiBleHlub3NfZHJtX2NydGNfZmluaXNoX3BhZ2VmbGlwKCkgdG8gZnJlZSB0aGUg
-b2xkIGJ1ZmZlciB0aGF0IEZJTUQganVzdAo+IGZpbmlzaGVkIHNjYW5uaW5nIG91dCwgYW5kIHBv
-dGVudGlhbGx5IGNvbW1pdCB0aGUgbmV4dCBwZW5kaW5nIGZsaXAuCj4gCj4gVGhlcmUgaXMgYSBy
-YWNlLCBob3dldmVyLCBpZiBmaW1kX3dpbl9jb21taXQoKSBwcm9ncmFtcyBCVUZfU1RBUlQoMCkK
-PiBiZXR3ZWVuIHRoZSBhY3R1YWwgdmJsYW5rIGlycSwgYW5kIGl0cyBjb3JyZXNwb25kaW5nIGZp
-bWRfaXJxX2hhbmRsZXIoKS4KPiAKPiAgPT4gRklNRCB2Ymxhbms6IEJVRl9TVEFSVF9TWzBdIDo9
-IEJVRl9TVEFSVFswXSwgYW5kIGlycSBhc3NlcnRlZAo+ICB8ID0+IGZpbWRfd2luX2NvbW1pdCgw
-KSB3cml0ZXMgbmV3IEJVRl9TVEFSVFswXQo+ICB8ICAgIGV4eW5vc19kcm1fY3J0Y190cnlfZG9f
-ZmxpcCgpIG1hcmtzIGV4eW5vc19mYiBhcyBwcmVwYXJlZAo+ICA9PiBmaW1kX2lycV9oYW5kbGVy
-KCkKPiAgICAgZXh5bm9zX2RybV9jcnRjX2ZpbmlzaF9wYWdlZmxpcCgpIHNlZXMgcHJlcGFyZWQg
-ZXh5bm9zX2ZiLAo+ICAgICAgICAgIGFuZCB1bm1hcHMgIm9sZCIgZmIKPiAgPT0+IGJ1dCwgc2lu
-Y2UgQlVGX1NUQVJUX1NbMF0gc3RpbGwgcG9pbnRzIHRvIHRoYXQgIm9sZCIgZmIuLi4KPiAgPT0+
-IEZJTUQgaW9tbXUgZmF1bHQKPiAKPiBUaGlzIHBhdGNoIGVuc3VyZXMgdGhhdCBmaW1kX2lycV9o
-YW5kbGVyKCkgb25seSBjYWxscwo+IGV4eW5vc19kcm1fY3J0Y19maW5pc2hfcGFnZWZsaXAoKSBp
-ZiBhbnkgcHJldmlvdXNseSBzY2hlZHVsZWQgZmxpcAo+IGhhcyByZWFsbHkgY29tcGxldGVkLgo+
-IAo+IFRoaXMgd29ya3MgYmVjYXVzZSBleHlub3NfZHJtX2NydGMncyBmbGlwIGZpZm8gZW5zdXJl
-cyB0aGF0Cj4gZmltZF93aW5fY29tbWl0KCkgaXMgbmV2ZXIgY2FsbGVkIG1vcmUgdGhhbiBvbmNl
-IHBlcgo+IGV4eW5vc19kcm1fY3J0Y19maW5pc2hfcGFnZWZsaXAoKS4KPiAKPiBTaWduZWQtb2Zm
-LWJ5OiBEYW5pZWwgS3VydHogPGRqa3VydHpAY2hyb21pdW0ub3JnPgo+IFJldmlld2VkLWJ5OiBT
-ZWFuIFBhdWwgPHNlYW5wYXVsQGNocm9taXVtLm9yZz4KPiBTaWduZWQtb2ZmLWJ5OiBHdXN0YXZv
-IFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4gLS0tCj4gIGRyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgfCAyNiArKysrKysrKysrKysrKysr
-KysrKysrKysrKwo+ICBpbmNsdWRlL3ZpZGVvL3NhbXN1bmdfZmltZC5oICAgICAgICAgICAgIHwg
-IDEgKwo+ICAyIGZpbGVzIGNoYW5nZWQsIDI3IGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYyBiL2RyaXZlcnMvZ3B1
-L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKPiBpbmRleCBlNTgxMGQxLi5hZmIwNTg2IDEw
-MDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKPiAr
-KysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCj4gQEAgLTU1LDYg
-KzU1LDcgQEAKPiAgI2RlZmluZSBWSURPU0RfRCh3aW4pCQkoVklET1NEX0JBU0UgKyAweDBDICsg
-KHdpbikgKiAxNikKPiAgCj4gICNkZWZpbmUgVklEV3hfQlVGX1NUQVJUKHdpbiwgYnVmKQkoVklE
-V19CVUZfU1RBUlQoYnVmKSArICh3aW4pICogOCkKPiArI2RlZmluZSBWSURXeF9CVUZfU1RBUlRf
-Uyh3aW4sIGJ1ZikgICAgIChWSURXX0JVRl9TVEFSVF9TKGJ1ZikgKyAod2luKSAqIDgpCj4gICNk
-ZWZpbmUgVklEV3hfQlVGX0VORCh3aW4sIGJ1ZikJCShWSURXX0JVRl9FTkQoYnVmKSArICh3aW4p
-ICogOCkKPiAgI2RlZmluZSBWSURXeF9CVUZfU0laRSh3aW4sIGJ1ZikJKFZJRFdfQlVGX1NJWkUo
-YnVmKSArICh3aW4pICogNCkKPiAgCj4gQEAgLTEwMzksNiArMTA0MCw3IEBAIHN0YXRpYyBpcnFy
-ZXR1cm5fdCBmaW1kX2lycV9oYW5kbGVyKGludCBpcnEsIHZvaWQgKmRldl9pZCkKPiAgewo+ICAJ
-c3RydWN0IGZpbWRfY29udGV4dCAqY3R4ID0gKHN0cnVjdCBmaW1kX2NvbnRleHQgKilkZXZfaWQ7
-Cj4gIAl1MzIgdmFsLCBjbGVhcl9iaXQ7Cj4gKwl1MzIgc3RhcnQsIHN0YXJ0X3M7Cj4gIAo+ICAJ
-dmFsID0gcmVhZGwoY3R4LT5yZWdzICsgVklESU5UQ09OMSk7Cj4gIAo+IEBAIC0xMDY2LDYgKzEw
-NjgsMzAgQEAgc3RhdGljIGlycXJldHVybl90IGZpbWRfaXJxX2hhbmRsZXIoaW50IGlycSwgdm9p
-ZCAqZGV2X2lkKQo+ICAJCX0KPiAgCX0KPiAgCj4gKwkvKgo+ICsJICogRW5zdXJlIGZpbmlzaF9w
-YWdlZmxpcCBpcyBjYWxsZWQgaWZmIGEgcGVuZGluZyBmbGlwIGhhcyBjb21wbGV0ZWQuCj4gKwkg
-KiBUaGlzIHdvcmtzIGFyb3VuZCBhIHJhY2UgYmV0d2VlbiBhIHBhZ2VfZmxpcCByZXF1ZXN0IGFu
-ZCB0aGUgbGF0ZW5jeQo+ICsJICogYmV0d2VlbiB2YmxhbmsgaW50ZXJydXB0IGFuZCB0aGlzIGly
-cV9oYW5kbGVyOgo+ICsJICogICA9PiBGSU1EIHZibGFuazogQlVGX1NUQVJUX1NbMF0gOj0gQlVG
-X1NUQVJUWzBdLCBhbmQgYXNzZXJ0cyBpcnEKPiArCSAqICAgfCA9PiBmaW1kX3dpbl9jb21taXQo
-MCkgd3JpdGVzIG5ldyBCVUZfU1RBUlRbMF0KPiArCSAqICAgfCAgICBleHlub3NfZHJtX2NydGNf
-dHJ5X2RvX2ZsaXAoKSBtYXJrcyBleHlub3NfZmIgYXMgcHJlcGFyZWQKPiArCSAqICAgPT4gZmlt
-ZF9pcnFfaGFuZGxlcigpCj4gKwkgKiAgICAgICBleHlub3NfZHJtX2NydGNfZmluaXNoX3BhZ2Vm
-bGlwKCkgc2VlcyBwcmVwYXJlZCBleHlub3NfZmIsCj4gKwkgKiAgICAgICAgICAgYW5kIHVubWFw
-cyAib2xkIiBmYgo+ICsJICogICA9PT4gYnV0LCBzaW5jZSBCVUZfU1RBUlRfU1swXSBzdGlsbCBw
-b2ludHMgdG8gdGhhdCAib2xkIiBmYi4uLgo+ICsJICogICA9PT4gRklNRCBpb21tdSBmYXVsdAo+
-ICsJICovCj4gKwlzdGFydCA9IHJlYWRsKGN0eC0+cmVncyArIFZJRFd4X0JVRl9TVEFSVCgwLCAw
-KSk7Cj4gKwlzdGFydF9zID0gcmVhZGwoY3R4LT5yZWdzICsgVklEV3hfQlVGX1NUQVJUX1MoMCwg
-MCkpOwo+ICsJaWYgKHN0YXJ0ID09IHN0YXJ0X3MpCj4gKwkJZXh5bm9zX2RybV9jcnRjX2Zpbmlz
-aF9wYWdlZmxpcChjdHgtPmRybV9kZXYsIGN0eC0+cGlwZSk7Cj4gKwo+ICsJLyogc2V0IHdhaXQg
-dnN5bmMgZXZlbnQgdG8gemVybyBhbmQgd2FrZSB1cCBxdWV1ZS4gKi8KPiArCWlmIChhdG9taWNf
-cmVhZCgmY3R4LT53YWl0X3ZzeW5jX2V2ZW50KSkgewo+ICsJCWF0b21pY19zZXQoJmN0eC0+d2Fp
-dF92c3luY19ldmVudCwgMCk7Cj4gKwkJd2FrZV91cCgmY3R4LT53YWl0X3ZzeW5jX3F1ZXVlKTsK
-PiArCX0KCllvdXIgcGF0Y2ggbWFrZXMgY29kZXMgZHVwbGljYXRlZC4gQWJvdmUgY29kZXMgeW91
-IGFkZGVkIGFyZSBjYWxsZWQKYWxyZWFkeSBpbiBjYXNlIG9mIHVzaW5nIFJHQiBpbnRlcmZhY2Uu
-IFNvIG1vdmUgYWxsIHlvdXIgY29kZXMgaW50byBSR0IKaW50ZXJmYWNlIHJvdXRpbmUgaWYgdGhl
-c2UgY29kZXMgYXJlIG9ubHkgdmFsaWQgaW4gY2FzZSBvZiBSR0IgaW50ZXJmYWNlLgoKVGhhbmtz
-LApJbmtpIERhZQoKPiArCj4gIG91dDoKPiAgCXJldHVybiBJUlFfSEFORExFRDsKPiAgfQo+IGRp
-ZmYgLS1naXQgYS9pbmNsdWRlL3ZpZGVvL3NhbXN1bmdfZmltZC5oIGIvaW5jbHVkZS92aWRlby9z
-YW1zdW5nX2ZpbWQuaAo+IGluZGV4IGEyMGU0YTMuLmY4MWQwODEgMTAwNjQ0Cj4gLS0tIGEvaW5j
-bHVkZS92aWRlby9zYW1zdW5nX2ZpbWQuaAo+ICsrKyBiL2luY2x1ZGUvdmlkZW8vc2Ftc3VuZ19m
-aW1kLmgKPiBAQCAtMjkxLDYgKzI5MSw3IEBACj4gIAo+ICAvKiBWaWRlbyBidWZmZXIgYWRkcmVz
-c2VzICovCj4gICNkZWZpbmUgVklEV19CVUZfU1RBUlQoX2J1ZmYpCQkJKDB4QTAgKyAoKF9idWZm
-KSAqIDgpKQo+ICsjZGVmaW5lIFZJRFdfQlVGX1NUQVJUX1MoX2J1ZmYpICAgICAgICAgICAgICAg
-ICAoMHg0MEEwICsgKChfYnVmZikgKiA4KSkKPiAgI2RlZmluZSBWSURXX0JVRl9TVEFSVDEoX2J1
-ZmYpCQkJKDB4QTQgKyAoKF9idWZmKSAqIDgpKQo+ICAjZGVmaW5lIFZJRFdfQlVGX0VORChfYnVm
-ZikJCQkoMHhEMCArICgoX2J1ZmYpICogOCkpCj4gICNkZWZpbmUgVklEV19CVUZfRU5EMShfYnVm
-ZikJCQkoMHhENCArICgoX2J1ZmYpICogOCkpCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
-aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On pi=C4=85, 2014-12-05 at 15:15 +0100, Krzysztof Kozlowski wrote:
+> Audio subsystem clocks are located in separate block. On Exynos 5420 =
+if
+> clock for this block (from main clock domain) 'mau_epll' is gated the=
+n
+> any read or write to audss registers will block.
+>=20
+> This kind of boot hang was observed on Arndale Octa and Peach Pi/Pit
+> after introducing runtime PM to pl330 DMA driver. After that commit t=
+he
+> 'mau_epll' was gated, because the "amba" clock was disabled and there
+> were no more users of mau_epll.
+>=20
+> The system hang on one of steps:
+> 1. Disabling unused clocks from audss block.
+> 2. During audss GPIO setup (just before probing i2s0 because
+>    samsung_pinmux_setup() tried to access memory from audss block whi=
+ch was
+>    gated.
+>=20
+> Add a workaround for this by enabling the 'mau_epll' clock in probe.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos-audss.c | 29 ++++++++++++++++++++++++=
+++++-
+>  1 file changed, 28 insertions(+), 1 deletion(-)
+
+Sorry for pinging so quick but merge window is open and it looks like
+booting Exynos542x boards will be broken (because pl330 will no longer
+hold adma clock enabled so whole audss domain will be gated).
+
+This is a non-intrusive workaround for that issue, as wanted by
+Sylwester:
+https://lkml.org/lkml/2014/12/5/223
+
+Any comments on this?
+
+Best regards,
+Krzysztof
+
+
+> diff --git a/drivers/clk/samsung/clk-exynos-audss.c b/drivers/clk/sam=
+sung/clk-exynos-audss.c
+> index acce708ace18..0916a81fa932 100644
+> --- a/drivers/clk/samsung/clk-exynos-audss.c
+> +++ b/drivers/clk/samsung/clk-exynos-audss.c
+> @@ -29,6 +29,13 @@ static DEFINE_SPINLOCK(lock);
+>  static struct clk **clk_table;
+>  static void __iomem *reg_base;
+>  static struct clk_onecell_data clk_data;
+> +/*
+> + * On Exynos5420 this will be a clock which has to be enabled before=
+ any
+> + * access to audss registers. Typically a child of EPLL.
+> + *
+> + * On other platforms this will be -ENODEV.
+> + */
+> +static struct clk *epll;
+> =20
+>  #define ASS_CLK_SRC 0x0
+>  #define ASS_CLK_DIV 0x4
+> @@ -98,6 +105,8 @@ static int exynos_audss_clk_probe(struct platform_=
+device *pdev)
+>  		dev_err(&pdev->dev, "failed to map audss registers\n");
+>  		return PTR_ERR(reg_base);
+>  	}
+> +	/* EPLL don't have to be enabled for boards other than Exynos5420 *=
+/
+> +	epll =3D ERR_PTR(-ENODEV);
+> =20
+>  	clk_table =3D devm_kzalloc(&pdev->dev,
+>  				sizeof(struct clk *) * EXYNOS_AUDSS_MAX_CLKS,
+> @@ -115,8 +124,20 @@ static int exynos_audss_clk_probe(struct platfor=
+m_device *pdev)
+>  	pll_in =3D devm_clk_get(&pdev->dev, "pll_in");
+>  	if (!IS_ERR(pll_ref))
+>  		mout_audss_p[0] =3D __clk_get_name(pll_ref);
+> -	if (!IS_ERR(pll_in))
+> +	if (!IS_ERR(pll_in)) {
+>  		mout_audss_p[1] =3D __clk_get_name(pll_in);
+> +
+> +		if (variant =3D=3D TYPE_EXYNOS5420) {
+> +			epll =3D pll_in;
+> +
+> +			ret =3D clk_prepare_enable(epll);
+> +			if (ret) {
+> +				dev_err(&pdev->dev,
+> +						"failed to prepare the epll clock\n");
+> +				return ret;
+> +			}
+> +		}
+> +	}
+>  	clk_table[EXYNOS_MOUT_AUDSS] =3D clk_register_mux(NULL, "mout_audss=
+",
+>  				mout_audss_p, ARRAY_SIZE(mout_audss_p),
+>  				CLK_SET_RATE_NO_REPARENT,
+> @@ -203,6 +224,9 @@ unregister:
+>  			clk_unregister(clk_table[i]);
+>  	}
+> =20
+> +	if (!IS_ERR(epll))
+> +		clk_disable_unprepare(epll);
+> +
+>  	return ret;
+>  }
+> =20
+> @@ -217,6 +241,9 @@ static int exynos_audss_clk_remove(struct platfor=
+m_device *pdev)
+>  			clk_unregister(clk_table[i]);
+>  	}
+> =20
+> +	if (!IS_ERR(epll))
+> +		clk_disable_unprepare(epll);
+> +
+>  	return 0;
+>  }
+> =20
