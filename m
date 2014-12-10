@@ -1,81 +1,52 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH] clk: samsung: Fix Exynos 5420 pinctrl setup and clock disable failure due to domain being gated
-Date: Wed, 10 Dec 2014 09:35:31 -0800
-Message-ID: <7hlhmfo1b0.fsf@deeprootsystems.com>
-References: <1417788934-23447-1-git-send-email-k.kozlowski@samsung.com>
-	<1418129982.19339.6.camel@AMDC1943> <5486F69B.6020005@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [RFC 00/15] Resource tracking/allocation framework
+Date: Wed, 10 Dec 2014 17:39:18 +0000
+Message-ID: <20141210173918.GN11285@n2100.arm.linux.org.uk>
+References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
+ <20141210161620.GM11285@n2100.arm.linux.org.uk>
+ <CA+tnuKYSDZ0mtzQ_g1QjovJwG01OgPjSXuozEBXQsEZv_2o-=w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f41.google.com ([209.85.220.41]:43919 "EHLO
-	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756089AbaLJRff convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Dec 2014 12:35:35 -0500
-Received: by mail-pa0-f41.google.com with SMTP id rd3so3217472pab.14
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Dec 2014 09:35:34 -0800 (PST)
-In-Reply-To: <5486F69B.6020005@samsung.com> (Sylwester Nawrocki's message of
-	"Tue, 09 Dec 2014 14:18:19 +0100")
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <CA+tnuKYSDZ0mtzQ_g1QjovJwG01OgPjSXuozEBXQsEZv_2o-=w@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: A H <andrzej.hajda@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, open list <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Kishon Vijay Abraham I <kishon@ti.com>, Andrzej Hajda <a.hajda@samsung.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Sylwester Nawrocki <s.nawrocki@samsung.com> writes:
-
-> On 09/12/14 13:59, Krzysztof Kozlowski wrote:
->> On pi=C4=85, 2014-12-05 at 15:15 +0100, Krzysztof Kozlowski wrote:
->>> > Audio subsystem clocks are located in separate block. On Exynos 5=
-420 if
->>> > clock for this block (from main clock domain) 'mau_epll' is gated=
- then
->>> > any read or write to audss registers will block.
->>> >=20
->>> > This kind of boot hang was observed on Arndale Octa and Peach Pi/=
-Pit
->>> > after introducing runtime PM to pl330 DMA driver. After that comm=
-it the
->>> > 'mau_epll' was gated, because the "amba" clock was disabled and t=
-here
->>> > were no more users of mau_epll.
->>> >=20
->>> > The system hang on one of steps:
->>> > 1. Disabling unused clocks from audss block.
->>> > 2. During audss GPIO setup (just before probing i2s0 because
->>> >    samsung_pinmux_setup() tried to access memory from audss block=
- which was
->>> >    gated.
->>> >=20
->>> > Add a workaround for this by enabling the 'mau_epll' clock in pro=
-be.
->>> >=20
->>> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>> > ---
->>> >  drivers/clk/samsung/clk-exynos-audss.c | 29 ++++++++++++++++++++=
-++++++++-
->>> >  1 file changed, 28 insertions(+), 1 deletion(-)
->>
->> Sorry for pinging so quick but merge window is open and it looks lik=
-e
->> booting Exynos542x boards will be broken (because pl330 will no long=
-er
->> hold adma clock enabled so whole audss domain will be gated).
->>=20
->> This is a non-intrusive workaround for that issue, as wanted by
->> Sylwester:
->> https://lkml.org/lkml/2014/12/5/223
->>=20
->> Any comments on this?
->
-> The patch looks OK to me, it would be good though if someone else
-> has confirmed it fixes the bug. I don't have any clock patches queued
-> at the moment. Perhaps you could apply it directly, Mike ?
-
-I confirm it fixes the boot hang in linux-next (next-20141210) on my
-exynos5800-peach-pi and exynos5420-arndale-octa.  Tested both
-exynos_defconfig and multi_v7_defconfig.
-
-Tested-by: Kevin Hilman <khilman@linaro.org>
-
-Kevin
+T24gV2VkLCBEZWMgMTAsIDIwMTQgYXQgMDY6MjM6NDlQTSArMDEwMCwgQSBIIHdyb3RlOgo+IDEw
+IGdydSAyMDE0IDE3OjE2ICJSdXNzZWxsIEtpbmcgLSBBUk0gTGludXgiIDxsaW51eEBhcm0ubGlu
+dXgub3JnLnVrPgo+IG5hcGlzYcWCKGEpOgo+ID4KPiA+IE9uIFdlZCwgRGVjIDEwLCAyMDE0IGF0
+IDA0OjQ4OjE4UE0gKzAxMDAsIEFuZHJ6ZWogSGFqZGEgd3JvdGU6Cj4gPiA+IDMuIFRoZXJlIGFy
+ZSBkcml2ZXJzIHdoaWNoIGNhbiB3b3JrIHdpdGhvdXQgc3BlY2lmaWMgcmVzb3VyY2UsIGJ1dCBp
+Zgo+ID4gPiAgIHRoZSByZXNvdXJjZSBiZWNvbWVzIGF2YWlsYWJsZS91bmF2YWlsYWJsZSBpdCBj
+YW4gZG8gc29tZSBhZGRpdGlvbmFsCj4gc3R1ZmYuCj4gPiA+ICAgQW4gZXhhbXBsZSBvZiBzdWNo
+IGRyaXZlciBpcyBEUk0gZHJpdmVyIChtb3JlIHByZWNpc2VseQo+IGRybV9jb25uZWN0b3IpIC0K
+PiA+ID4gICBpdCBjYW4gc3RhcnQgd2l0aG91dCBhdHRhY2hlZCBkcm1fcGFuZWwsIGJ1dCBpZiB0
+aGUgcGFuZWwgYmVjb21lcwo+IGF2YWlsYWJsZSBpdAo+ID4gPiAgIGNhbiByZWFjdCBieSBnZW5l
+cmF0aW5nIEhQRCBldmVudCBhbmQgc3RhcnQgdXNpbmcgaXQuCj4gPgo+ID4gQmFkIGV4YW1wbGUs
+IGFuZCBhY3R1YWxseSBpbmNvcnJlY3QuICBEUk0gY29ubmVjdG9ycyBhcmUgcmVmZXJlbmNlZCBp
+bgo+ID4gdXNlcnNwYWNlIGJ5IGFuIElEUiBudW1iZXIsIHdoaWNoIGNhbiBiZSByZS11c2VkIGlu
+IHRoZSBjYXNlIG9mIGEKPiA+IGNvbm5lY3RvciBhcHBlYXJpbmcsIGRpc2FwcGVhcmluZywgYW5k
+IHRoZW4gYSBkaWZmZXJlbnQgY29ubmVjdG9yCj4gPiByZS1hcHBlYXJpbmcuCj4gCj4gQnV0IGl0
+IGlzIG5vdCBhYm91dCByZWFwcGVhcmluZyBvZiBkcm1fY29ubmVjdG9yLCBpdCBpcyBhYm91dCBy
+ZWFwcGVhcmluZwo+IG9mIGRybV9wYW5lbCB3aGljaCBpcyBmb3J0dW5hdGVseSBub3QgYSBwYXJ0
+IG9mIGRybSBkcml2ZXIuIENvbm5lY3RvciBoZXJlCj4gaXMgb25seSBjb25zdW1lciBvZiBkcm1f
+cGFuZWwgd2hpY2ggc2hvdWxkIGhhdmUgcG9zc2liaWxpdHkgdG8gcmVjZWl2ZQo+IG5vdGlmaWNh
+dGlvbnMgb24gcGFuZWwgKGRpcy0pYXBwZWFyYW5jZS4KCk9rYXksIHNvIHRoYXQncyBleGFjdGx5
+IGxpa2UgYSBwYW5lbCBiZWluZyAiaG90cGx1Z2dlZCIgdG8gdGhlIGNvbm5lY3RvciwKd2hpY2gg
+c2hvdWxkIGJlIGZpbmUuCgotLSAKRlRUQyBicm9hZGJhbmQgZm9yIDAuOG1pbGUgbGluZTogY3Vy
+cmVudGx5IGF0IDkuNU1icHMgZG93biA0MDBrYnBzIHVwCmFjY29yZGluZyB0byBzcGVlZHRlc3Qu
+bmV0LgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
