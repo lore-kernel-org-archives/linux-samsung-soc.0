@@ -1,65 +1,103 @@
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
-Subject: Re: [PATCH RFT 1/2] drivers: bus: check cci device tree node
- status
-Date: Wed, 10 Dec 2014 13:29:25 -0500 (EST)
-Message-ID: <alpine.LFD.2.11.1412101328520.470@knanqh.ubzr>
-References: <1417186209-5256-1-git-send-email-a.kesavan@samsung.com> <CAM4voakjWgnEXoXT1LH2ZFBy=U4vfXFXS1Su8VB7Cd3s3wqmSA@mail.gmail.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Subject: Re: [PATCH 0/4] removal of extra abstraction layers
+Date: Wed, 10 Dec 2014 19:43:27 +0000
+Message-ID: <CAPj87rPj218ATxtFh_Yq7uM-YZ_nJqL0pFm7z=c2EJNY0wJ4Zg@mail.gmail.com>
+References: <1416853266-10584-1-git-send-email-gustavo@padovan.org>
+ <20141202123847.GA9426@joana>
+ <CAPM=9twYXeMJ-HRoC69SbDyz4Uu14Fz=9ZNmBGmWMS3mkG+c+g@mail.gmail.com>
+ <20141208170322.GA31894@joana>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f42.google.com ([209.85.216.42]:65017 "EHLO
-	mail-qa0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932744AbaLJS33 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Dec 2014 13:29:29 -0500
-Received: by mail-qa0-f42.google.com with SMTP id j7so2409518qaq.15
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Dec 2014 10:29:28 -0800 (PST)
-In-Reply-To: <CAM4voakjWgnEXoXT1LH2ZFBy=U4vfXFXS1Su8VB7Cd3s3wqmSA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0693621123=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20141208170322.GA31894@joana>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kevin Hilman <khilman@kernel.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, punit.agrawal@arm.com, Will Deacon <will.deacon@arm.com>, "mark.rutland" <mark.rutland@arm.com>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, =?ISO-8859-2?Q?Krzysztof_Koz=B3owski?= <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Arnd Bergmann <arnd@arndb.de>
 
-On Wed, 10 Dec 2014, Abhilash Kesavan wrote:
+--===============0693621123==
+Content-Type: multipart/alternative; boundary=047d7ba982bea19bcd0509e1df6f
 
-> Hi,
-> 
-> On Fri, Nov 28, 2014 at 8:20 PM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
-> > The arm-cci driver completes the probe sequence even if the cci node is
-> > marked as disabled. Add a check in the driver to honour the cci status
-> > in the device tree.
+--047d7ba982bea19bcd0509e1df6f
+Content-Type: text/plain; charset=UTF-8
+
+Hi,
+
+On 8 December 2014 at 17:03, Gustavo Padovan <gustavo@padovan.org> wrote:
+
+> 2014-12-06 Dave Airlie <airlied@gmail.com>:
+> > On 2 December 2014 at 22:38, Gustavo Padovan <gustavo@padovan.org>
+> wrote:
+> > > Can you please review this? I also have sent other two patch sets that
+> sits on
+> > > top of this one. Thanks.
 > >
-> > Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> 
-> This patch helps disable CCI on the Arndale Octa board thus resolving
-> some imprecise aborts seen on that board. Kindly review.
-
-Acked-by: Nicolas Pitre <nico@linaro.org>
-
-
-> 
-> Regards,
-> Abhilash
-> > ---
-> >  drivers/bus/arm-cci.c |    3 +++
-> >  1 file changed, 3 insertions(+)
+> > Inki, any plans on when you can get to looking at this?
 > >
-> > diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
-> > index 860da40..0ce5e2d 100644
-> > --- a/drivers/bus/arm-cci.c
-> > +++ b/drivers/bus/arm-cci.c
-> > @@ -1312,6 +1312,9 @@ static int cci_probe(void)
-> >         if (!np)
-> >                 return -ENODEV;
-> >
-> > +       if (!of_device_is_available(np))
-> > +               return -ENODEV;
-> > +
-> >         cci_config = of_match_node(arm_cci_matches, np)->data;
-> >         if (!cci_config)
-> >                 return -ENODEV;
-> > --
-> > 1.7.9.5
-> >
-> 
-> 
+> > I think cleaning up exynos so we can get atomic using it is something
+> > that will benefit it heavily.
+>
+> Besides these patches I have other two clean up patchsets[0][1] that are
+> very
+> important for atomic support, can you review these two too?
+>
+
+It'd be fantastic to get the START == START_S fix merged too:
+http://www.spinics.net/lists/linux-samsung-soc/msg40128.html
+
+Cheers,
+Daniel
+
+--047d7ba982bea19bcd0509e1df6f
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi,<div class=3D"gmail_extra"><br><div class=3D"gmail_quot=
+e">On 8 December 2014 at 17:03, Gustavo Padovan <span dir=3D"ltr">&lt;<a hr=
+ef=3D"mailto:gustavo@padovan.org" target=3D"_blank">gustavo@padovan.org</a>=
+&gt;</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"margin:0px=
+ 0px 0px 0.8ex;border-left-width:1px;border-left-color:rgb(204,204,204);bor=
+der-left-style:solid;padding-left:1ex">2014-12-06 Dave Airlie &lt;<a href=
+=3D"mailto:airlied@gmail.com">airlied@gmail.com</a>&gt;:<span class=3D""><b=
+r>
+&gt; On 2 December 2014 at 22:38, Gustavo Padovan &lt;<a href=3D"mailto:gus=
+tavo@padovan.org">gustavo@padovan.org</a>&gt; wrote:<br>&gt; &gt; Can you p=
+lease review this? I also have sent other two patch sets that sits on<br>
+&gt; &gt; top of this one. Thanks.<br>
+&gt;<br>
+&gt; Inki, any plans on when you can get to looking at this?<br>
+&gt;<br>
+&gt; I think cleaning up exynos so we can get atomic using it is something<=
+br>
+&gt; that will benefit it heavily.<br>
+<br>
+</span>Besides these patches I have other two clean up patchsets[0][1] that=
+ are very<br>
+important for atomic support, can you review these two too?<br></blockquote=
+><div><br></div><div>It&#39;d be fantastic to get the START =3D=3D START_S =
+fix merged too:</div><div><a href=3D"http://www.spinics.net/lists/linux-sam=
+sung-soc/msg40128.html">http://www.spinics.net/lists/linux-samsung-soc/msg4=
+0128.html</a></div><div><br></div><div>Cheers,</div><div>Daniel=C2=A0</div>=
+</div></div></div>
+
+--047d7ba982bea19bcd0509e1df6f--
+
+--===============0693621123==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+--===============0693621123==--
