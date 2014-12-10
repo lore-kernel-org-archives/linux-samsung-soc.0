@@ -1,147 +1,138 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFC PATCHv2 0/7] devfreq: Add devfreq-event class to provide raw
- data for devfreq device
-Date: Wed, 10 Dec 2014 11:07:26 +0100
-Message-ID: <1418206046.16644.26.camel@AMDC1943>
-References: <1418134386-14681-1-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: [PATCH v2 00/17] thermal: exynos: Thermal code rework to use device
+ tree
+Date: Wed, 10 Dec 2014 13:09:39 +0100
+Message-ID: <1418213396-743-1-git-send-email-l.majewski@samsung.com>
+References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:41212 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751979AbaLJKHa (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:45380 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751189AbaLJMKZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Dec 2014 05:07:30 -0500
-In-reply-to: <1418134386-14681-1-git-send-email-cw00.choi@samsung.com>
+	Wed, 10 Dec 2014 07:10:25 -0500
+In-reply-to: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, rafael.j.wysocki@intel.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, b.zolnierkie@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>
+Cc: Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
 
-On wto, 2014-12-09 at 23:12 +0900, Chanwoo Choi wrote:
-> This patchset add new devfreq_event class to provide raw data to determine
-> current utilization of device  which is used for devfreq governor.
-> 
-> [Description of devfreq-event class]
-> This patchset add new devfreq_event class for devfreq_event device which provide
-> raw data (e.g., memory bus utilization/GPU utilization). This raw data from
-> devfreq_event data would be used for the governor of devfreq subsystem.
-> - devfreq_event device : Provide raw data for governor of existing devfreq device
-> - devfreq device       : Monitor device state and change frequency/voltage of device
->                          using the raw data from devfreq_event device
-> 
-> The devfreq subsystem support generic DVFS(Dynamic Voltage/Frequency Scaling)
-> for Non-CPU Devices. The devfreq device would dertermine current device state
-> using various governor (e.g., ondemand, performance, powersave). After completed
-> determination of system state, devfreq device would change the frequency/voltage
-> of devfreq device according to the result of governor.
-> 
-> But, devfreq governor must need basic data which indicates current device state.
-> Existing devfreq subsystem only consider devfreq device which check current system
-> state and determine proper system state using basic data. There is no subsystem
-> for device providing basic data to devfreq device.
-> 
-> The devfreq subsystem must need devfreq_event device(data-provider device) for
-> existing devfreq device. So, this patch add new devfreq_event class for
-> devfreq_event device which read various basic data(e.g, memory bus utilization,
-> GPU utilization) and provide measured data to existing devfreq device through
-> standard APIs of devfreq_event class.
-> 
-> The following description explains the feature of two kind of devfreq class:
-> - devfreq class (existing)
->  : devfreq consumer device use raw data from devfreq_event device for
->    determining proper current system state and change voltage/frequency
->    dynamically using various governors.
-> - devfreq_event class (new)
->  : Provide measured raw data to devfreq device for governor
-> 
-> Also, the devfreq-event device would support various type event as following:
->  : DEVFREQ_EVENT_TYPE_RAW_DATA
->  : DEVFREQ_EVENT_TYPE_UTILIZATION
->  : DEVFREQ_EVENT_TYPE_BANDWIDTH
->  : DEVFREQ_EVENT_TYPE_LATENCY
-> 
-> [For example]
-> If board dts includes PPMU_DMC0/DMC1/CPU event node,
-> would show following sysfs entry. Also devfreq driver(e.g., exynos4_bus.c)
-> can get the instance of devfreq-event device by using provided API and then
-> get raw data which reflect the current state of device.
-> 
+1. Introduction
 
-Hi,
+Following patches aim to clean up the current implementation of the thermal
+framework on Exynos devices.
 
-Overall I like the idea. I understand that now devfreq devices (like
-exynos devfreq) should bind themselves to buses, not to PPMU. It makes
-sense to me because bus clock and bus voltage are properties of bus, not
-monitoring unit.
+The main goal was to use a generic code for reading thermal configuration
+(of-thermal.c). Due to that redundant exynos_thermal_common.[h|c] files
+were removed.
 
-I see that this is still a RFC so it would be hard to base current
-devfreq work on top of it.
+Around 400 lines of code (LOC) were removed directly by this patch, which
+is around 20% of the Exynos thermal code base.
 
-One more general comment: you're adding a some API which is not used by
-current devfreq_event user (exynos). For example the exclusive flag or
-event types. I think it will be simpler to stick to the basic approach
-(reduced API). If some other user emerges then new API will be added.
+This work should NOT bring any functional changes to Exynos thermal 
+subsystem.
 
-Best regards,
-Krzysztof
+2. Patch-set structure
+
+Then the cpu_cooling functionality has been preserved to allow cooling
+devices by reducing operating frequency. Definition of trip points and
+cpufreq's cooling properties were moved to device tree.
+
+Then the rework of the way in which configuration data is provided to
+the Exynos thermal subsystem was performed. Now device tree is used for
+configuration.
+
+Patch series end with removing exynos5250/exynos3250 TMU compatibles.
+Both SoCs have thermal management unit (TMU) compatible with the one first 
+introduced at Exynos4412.
+
+3. Dead code removal
+
+Thermal support for some SoCs, previously available in the exynos_tmu_data.c 
+file, was removed since, as of (almost) 3.19-rc1, they didn't have TMU bindings.
+
+Moreover, support for cpu_cooling devices was preserved only on those
+SoCs which had available and working cpufreq driver.
+
+4. Testing
+
+Test devices:
+- Exynos4210 - Trats (TMU zone + cpu_cooling)
+- Exynos4412 - Trats2/Odroid U3 (TMU zone + cpu_cooling)
+- Exynos5250 - Arndale (TMU zone + cpu_cooling)
+- Exynos5420 - Arndale-octa (only TMU zones)
+
+Unfortunately, I don't posses Exynos5440 for testing. Its functionality
+has been preserved in the code, but not tested on the hardware. I would
+be grateful for help in testing.
+
+5. This work apply on the following tree:
+
+kernel.org: 'linux-soc-thermal/next' - Eduardo Velentin's tree
+SHA1: c42c7a44c7a543dcb388c1ee1a798e6ed76ad8cf
 
 
-> -sh-3.2# pwd
-> /sys/class/devfreq_event
-> -sh-3.2# ls -al
-> total 0
-> drwxr-xr-x  2 root root 0 Jan  7 11:10 .
-> drwxr-xr-x 37 root root 0 Jan  7 11:10 ..
-> lrwxrwxrwx  1 root root 0 Jan  7 11:10 event.0 -> ../../devices/soc/106a0000.ppmu_dmc0/devfreq_event/event.0
-> lrwxrwxrwx  1 root root 0 Jan  7 11:10 event.1 -> ../../devices/soc/106a0000.ppmu_dmc0/devfreq_event/event.1
-> lrwxrwxrwx  1 root root 0 Jan  7 11:10 event.2 -> ../../devices/soc/106a0000.ppmu_dmc0/devfreq_event/event.2
-> lrwxrwxrwx  1 root root 0 Jan  7 11:10 event.3 -> ../../devices/soc/106a0000.ppmu_dmc0/devfreq_event/event.3
-> lrwxrwxrwx  1 root root 0 Jan  7 11:10 event.4 -> ../../devices/soc/106b0000.ppmu_dmc1/devfreq_event/event.4
-> lrwxrwxrwx  1 root root 0 Jan  7 11:10 event.5 -> ../../devices/soc/106c0000.ppmu_cpu/devfreq_event/event.5
-> lrwxrwxrwx  1 root root 0 Jan  7 11:10 event.6 -> ../../devices/soc/106c0000.ppmu_cpu/devfreq_event/event.6
-> lrwxrwxrwx  1 root root 0 Jan  7 11:10 event.7 -> ../../devices/soc/106c0000.ppmu_cpu/devfreq_event/event.7
-> lrwxrwxrwx  1 root root 0 Jan  7 11:10 event.8 -> ../../devices/soc/106c0000.ppmu_cpu/devfreq_event/event.8
-> 
-> Changes from v1:
-> - Code clean
-> - Add the description of devfreq-event structure
-> - Add 'is_enabled' function to devfreq_event_ops structure
-> - Add 'enable_count' field to devfreq_event_dev structure
-> - Check whether devfreq-event device is enabled or not
->   during calling devfreq_event API
-> - Define the type of devfreq-event device as following
->   : DEVFREQ_EVENT_TYPE_RAW_DATA
->   : DEVFREQ_EVENT_TYPE_UTILIZATION
->   : DEVFREQ_EVENT_TYPE_BANDWIDTH
->   : DEVFREQ_EVENT_TYPE_LATENCY
-> - Add the exclusive feature of devfreq-event device.
->   If devfreq-event device is used on only on devfreq driver,
->   should used 'devfreq_enable_event_dev_exclusive()' function
-> - Add new patch6 for test on Exynos3250-based Rinato board
-> 
-> Chanwoo Choi (7):
->   devfreq: event: Add new devfreq_event class to provide basic data for devfreq governor
->   devfreq: event: Add the list of supported devfreq-event type
->   devfreq: event: Add the exclusive flag for devfreq-event device
->   devfreq: event: Add exynos-ppmu devfreq event driver
->   ARM: dts: Add PPMU dt node for Exynos3250
->   ARM: dts: Add PPMU dt node for Exynos4 SoC
->   ARM: dts: exynos: Add PPMU dt node to Exynos3250-based Rinato board
-> 
->  arch/arm/boot/dts/exynos3250-rinato.dts |  55 +++++
->  arch/arm/boot/dts/exynos3250.dtsi       |  66 ++++++
->  arch/arm/boot/dts/exynos4.dtsi          |  96 ++++++++
->  arch/arm/boot/dts/exynos4210.dtsi       |   8 +
->  drivers/devfreq/Kconfig                 |  11 +
->  drivers/devfreq/Makefile                |   5 +-
->  drivers/devfreq/devfreq-event.c         | 363 ++++++++++++++++++++++++++++
->  drivers/devfreq/event/Makefile          |   2 +
->  drivers/devfreq/event/exynos-ppmu.c     | 409 ++++++++++++++++++++++++++++++++
->  include/linux/devfreq.h                 | 178 ++++++++++++++
->  10 files changed, 1192 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/devfreq/devfreq-event.c
->  create mode 100644 drivers/devfreq/event/Makefile
->  create mode 100644 drivers/devfreq/event/exynos-ppmu.c
-> 
+Lukasz Majewski (17):
+  thermal: exynos: cosmetic: Correct comment format
+  thermal: exynos: Provide thermal_exynos.h file to be included in
+    device tree files
+  thermal: dts: trats: Enable TMU on the Exynos4210 trats device
+  thermal: dts: exynos: Add LD010 regulator node necessary for TMU on
+    Odroid
+  thermal: dts: Enable TMU at Exynos4412 based Odroid U3 device
+  thermal: cpu_cooling: dts: Define device tree bindings for Exynos cpu
+    cooling functionality
+  thermal: cpu_cooling: Modify exynos thermal code to use device tree
+    for cpu cooling configuration
+  thermal: exynos: dts: Add default definition of the TMU sensor
+    parameter
+  thermal: dts: Default trip points definition for Exynos5420 SoCs
+  thermal: exynos: dts: Define default thermal-zones for Exynos4
+  thermal: dts: exynos: Trip points and sensor configuration data for
+    Exynos5440
+  thermal: exynos: dts: Provide device tree bindings identical to one in
+    exynos_tmu_data.c
+  thermal: samsung: core: Exynos TMU rework to use device tree for
+    configuration
+  thermal: exynos: Remove exynos_thermal_common.[c|h] files
+  thermal: exynos: Remove exynos_tmu_data.c file
+  thermal: exynos: Make Exynos5250 TMU compatible with Exynos4412
+  thermal: exynos: Make Exynos3250 TMU compatible with Exynos4412
+
+ arch/arm/boot/dts/exynos3250.dtsi                 |   6 +-
+ arch/arm/boot/dts/exynos4-cpu-thermal.dtsi        |  52 +++
+ arch/arm/boot/dts/exynos4.dtsi                    |   5 +
+ arch/arm/boot/dts/exynos4210-trats.dts            |  19 +
+ arch/arm/boot/dts/exynos4210.dtsi                 |  43 ++-
+ arch/arm/boot/dts/exynos4212.dtsi                 |  20 +
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi   |  27 ++
+ arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi |  24 ++
+ arch/arm/boot/dts/exynos4412-trats2.dts           |  15 +
+ arch/arm/boot/dts/exynos4412.dtsi                 |  32 ++
+ arch/arm/boot/dts/exynos4x12.dtsi                 |   3 +
+ arch/arm/boot/dts/exynos5250.dtsi                 |  29 +-
+ arch/arm/boot/dts/exynos5420-trip-points.dtsi     |  35 ++
+ arch/arm/boot/dts/exynos5420.dtsi                 |  33 ++
+ arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi |  25 ++
+ arch/arm/boot/dts/exynos5440-trip-points.dtsi     |  25 ++
+ arch/arm/boot/dts/exynos5440.dtsi                 |  18 +
+ drivers/cpufreq/exynos-cpufreq.c                  |  23 +-
+ drivers/thermal/samsung/Makefile                  |   2 -
+ drivers/thermal/samsung/exynos_thermal_common.c   | 427 ----------------------
+ drivers/thermal/samsung/exynos_thermal_common.h   | 106 ------
+ drivers/thermal/samsung/exynos_tmu.c              | 337 ++++++++++-------
+ drivers/thermal/samsung/exynos_tmu.h              |  80 +---
+ drivers/thermal/samsung/exynos_tmu_data.c         | 264 -------------
+ include/dt-bindings/thermal/thermal_exynos.h      |  37 ++
+ 25 files changed, 669 insertions(+), 1018 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos4-cpu-thermal.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5420-trip-points.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi
+ create mode 100644 arch/arm/boot/dts/exynos5440-trip-points.dtsi
+ delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.c
+ delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.h
+ delete mode 100644 drivers/thermal/samsung/exynos_tmu_data.c
+ create mode 100644 include/dt-bindings/thermal/thermal_exynos.h
+
+-- 
+2.0.0.rc2
