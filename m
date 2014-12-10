@@ -1,108 +1,177 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [RFC 09/15] phy: add restrack support
-Date: Wed, 10 Dec 2014 16:48:27 +0100
-Message-ID: <1418226513-14105-10-git-send-email-a.hajda@samsung.com>
+Subject: [RFC 12/15] drm/exynos/dpi: use common of_graph functions
+Date: Wed, 10 Dec 2014 16:48:30 +0100
+Message-ID: <1418226513-14105-13-git-send-email-a.hajda@samsung.com>
 References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: open list <linux-kernel@vger.kernel.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh+dt@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Andrzej Hajda <a.hajda@samsung.com>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, Mark Brown <broonie@kernel.org>, Grant Likely <grant.likely@linaro.org>, Russell King <linux@arm.linux.org.uk>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>b
 List-Id: linux-samsung-soc@vger.kernel.org
 
-UEhZcyBzdXBwb3J0cyBkaWZmZXJlbnQgbWV0aG9kcyBvZiBsb29rdXAuClRoZSBwYXRjaCBhZGRz
-IHJlc3RyYWNrIHN1cHBvcnQgb25seSB0byBEVCBiYXNlZCBQSFlzLgoKU2lnbmVkLW9mZi1ieTog
-QW5kcnplaiBIYWpkYSA8YS5oYWpkYUBzYW1zdW5nLmNvbT4KLS0tCiBkcml2ZXJzL3BoeS9waHkt
-Y29yZS5jICAgfCA5MCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKysKIGluY2x1ZGUvbGludXgvcGh5L3BoeS5oICB8ICAzICsrCiBpbmNsdWRlL2xpbnV4L3Jl
-c3RyYWNrLmggfCAgMSArCiAzIGZpbGVzIGNoYW5nZWQsIDk0IGluc2VydGlvbnMoKykKCmRpZmYg
-LS1naXQgYS9kcml2ZXJzL3BoeS9waHktY29yZS5jIGIvZHJpdmVycy9waHkvcGh5LWNvcmUuYwpp
-bmRleCBmZjVlZWM1Li40NDllYzRlIDEwMDY0NAotLS0gYS9kcml2ZXJzL3BoeS9waHktY29yZS5j
-CisrKyBiL2RyaXZlcnMvcGh5L3BoeS1jb3JlLmMKQEAgLTIyLDYgKzIyLDcgQEAKICNpbmNsdWRl
-IDxsaW51eC9pZHIuaD4KICNpbmNsdWRlIDxsaW51eC9wbV9ydW50aW1lLmg+CiAjaW5jbHVkZSA8
-bGludXgvcmVndWxhdG9yL2NvbnN1bWVyLmg+CisjaW5jbHVkZSA8bGludXgvcmVzdHJhY2suaD4K
-IAogc3RhdGljIHN0cnVjdCBjbGFzcyAqcGh5X2NsYXNzOwogc3RhdGljIERFRklORV9NVVRFWChw
-aHlfcHJvdmlkZXJfbXV0ZXgpOwpAQCAtNzU0LDYgKzc1NSw4IEBAIHN0cnVjdCBwaHlfcHJvdmlk
-ZXIgKl9fb2ZfcGh5X3Byb3ZpZGVyX3JlZ2lzdGVyKHN0cnVjdCBkZXZpY2UgKmRldiwKIAlsaXN0
-X2FkZF90YWlsKCZwaHlfcHJvdmlkZXItPmxpc3QsICZwaHlfcHJvdmlkZXJfbGlzdCk7CiAJbXV0
-ZXhfdW5sb2NrKCZwaHlfcHJvdmlkZXJfbXV0ZXgpOwogCisJcmVzdHJhY2tfdXAoUkVTVFJBQ0tf
-VFlQRV9QSFksIGRldi0+b2Zfbm9kZSwgcGh5X3Byb3ZpZGVyKTsKKwogCXJldHVybiBwaHlfcHJv
-dmlkZXI7CiB9CiBFWFBPUlRfU1lNQk9MX0dQTChfX29mX3BoeV9wcm92aWRlcl9yZWdpc3Rlcik7
-CkBAIC04MDQsNiArODA3LDkgQEAgdm9pZCBvZl9waHlfcHJvdmlkZXJfdW5yZWdpc3RlcihzdHJ1
-Y3QgcGh5X3Byb3ZpZGVyICpwaHlfcHJvdmlkZXIpCiAJaWYgKElTX0VSUihwaHlfcHJvdmlkZXIp
-KQogCQlyZXR1cm47CiAKKwlyZXN0cmFja19kb3duKFJFU1RSQUNLX1RZUEVfUEhZLCBwaHlfcHJv
-dmlkZXItPmRldi0+b2Zfbm9kZSwKKwkJICAgICAgcGh5X3Byb3ZpZGVyKTsKKwogCW11dGV4X2xv
-Y2soJnBoeV9wcm92aWRlcl9tdXRleCk7CiAJbGlzdF9kZWwoJnBoeV9wcm92aWRlci0+bGlzdCk7
-CiAJa2ZyZWUocGh5X3Byb3ZpZGVyKTsKQEAgLTgyOCw2ICs4MzQsOTAgQEAgdm9pZCBkZXZtX29m
-X3BoeV9wcm92aWRlcl91bnJlZ2lzdGVyKHN0cnVjdCBkZXZpY2UgKmRldiwKIH0KIEVYUE9SVF9T
-WU1CT0xfR1BMKGRldm1fb2ZfcGh5X3Byb3ZpZGVyX3VucmVnaXN0ZXIpOwogCitpbnQgb2ZfZ2V0
-X3BoeV9zcGVjKHN0cnVjdCBkZXZpY2UgKmRldiwgY29uc3QgY2hhciAqbmFtZSwKKwkJc3RydWN0
-IG9mX3BoYW5kbGVfYXJncyAqc3BlYykKK3sKKwlzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wID0gZGV2
-LT5vZl9ub2RlOworCWludCBpZHg7CisKKwlpZHggPSBvZl9wcm9wZXJ0eV9tYXRjaF9zdHJpbmco
-bnAsICJwaHktbmFtZXMiLCBuYW1lKTsKKworCXJldHVybiBvZl9wYXJzZV9waGFuZGxlX3dpdGhf
-YXJncyhucCwgInBoeXMiLCAiI3BoeS1jZWxscyIsIGlkeCwgc3BlYyk7Cit9CisKK3N0cnVjdCBw
-aHlfcmVzdHJhY2tfZGVzYyB7CisJc3RydWN0IHBoeSAqKnB0cjsKKwljb25zdCBjaGFyICpuYW1l
-OworCXN0cnVjdCBvZl9waGFuZGxlX2FyZ3Mgc3BlYzsKKwlzdHJ1Y3QgcmVzdHJhY2tfZGVzYyBk
-ZXNjOworfTsKKworc3RhdGljIGludCBwaHlfcmVzdHJhY2tfaW5pdChzdHJ1Y3QgZGV2aWNlICpk
-ZXYsCisJCXN0cnVjdCByZXN0cmFja19kZXNjICpkZXNjKQoreworCXN0cnVjdCBwaHlfcmVzdHJh
-Y2tfZGVzYyAqcmQgPSByZXN0cmFja19kZXNjX3RvX3JkKHJkLCBkZXNjKTsKKwlpbnQgcmV0Owor
-CisJcmV0ID0gb2ZfZ2V0X3BoeV9zcGVjKGRldiwgcmQtPm5hbWUsICZyZC0+c3BlYyk7CisJaWYg
-KCFyZXQpCisJCWRlc2MtPmlmX2lkID0gcmQtPnNwZWMubnA7CisJcmV0dXJuIHJldDsKK30KKwor
-c3RhdGljIHZvaWQgcGh5X3Jlc3RyYWNrX2Rlc3Ryb3koc3RydWN0IGRldmljZSAqZGV2LAorCQlz
-dHJ1Y3QgcmVzdHJhY2tfZGVzYyAqZGVzYykKK3sKKwlzdHJ1Y3QgcGh5X3Jlc3RyYWNrX2Rlc2Mg
-KnJkID0gcmVzdHJhY2tfZGVzY190b19yZChyZCwgZGVzYyk7CisKKwlvZl9ub2RlX3B1dChkZXNj
-LT5pZl9pZCk7CisJa2ZyZWUocmQpOworfQorCitzdGF0aWMgaW50IHBoeV9yZXN0cmFja19pZnVw
-KHN0cnVjdCBkZXZpY2UgKmRldiwKKwkJc3RydWN0IHJlc3RyYWNrX2Rlc2MgKmRlc2MsIHZvaWQg
-KmRhdGEpCit7CisJc3RydWN0IHBoeV9yZXN0cmFja19kZXNjICpyZCA9IHJlc3RyYWNrX2Rlc2Nf
-dG9fcmQocmQsIGRlc2MpOworCXN0cnVjdCBwaHlfcHJvdmlkZXIgKnBoeV9wcm92aWRlciA9IGRh
-dGE7CisKKwkqcmQtPnB0ciA9IHBoeV9wcm92aWRlci0+b2ZfeGxhdGUocGh5X3Byb3ZpZGVyLT5k
-ZXYsICZyZC0+c3BlYyk7CisJcmV0dXJuIFBUUl9FUlJfT1JfWkVSTygqcmQtPnB0cik7Cit9CisK
-K3N0YXRpYyB2b2lkIHBoeV9yZXN0cmFja19pZmRvd24oc3RydWN0IGRldmljZSAqZGV2LAorCQlz
-dHJ1Y3QgcmVzdHJhY2tfZGVzYyAqZGVzYywgdm9pZCAqZGF0YSkKK3sKKwlzdHJ1Y3QgcGh5X3Jl
-c3RyYWNrX2Rlc2MgKnJkID0gcmVzdHJhY2tfZGVzY190b19yZChyZCwgZGVzYyk7CisKKwkqcmQt
-PnB0ciA9IEVSUl9QVFIoLUVQUk9CRV9ERUZFUik7Cit9CisKK3N0YXRpYyBjb25zdCBzdHJ1Y3Qg
-cmVzdHJhY2tfb3BzIHBoeV9yZXN0cmFja19vcHMgPSB7CisJLmlmX3R5cGUgPSBSRVNUUkFDS19U
-WVBFX1BIWSwKKwkuaW5pdCA9IHBoeV9yZXN0cmFja19pbml0LAorCS5kZXN0cm95ID0gcGh5X3Jl
-c3RyYWNrX2Rlc3Ryb3ksCisJLmlmX3VwID0gcGh5X3Jlc3RyYWNrX2lmdXAsCisJLmlmX2Rvd24g
-PSBwaHlfcmVzdHJhY2tfaWZkb3duLAorfTsKKworLyoqCisgKiBwaHlfcmVzdHJhY2tfZGVzYyAt
-IHBoeSByZXNvdXJjZSBkZXNjcmlwdG9yIGFsbG9jYXRvcgorICogQHBoeTogcG9pbnRlciB0byB2
-YXJpYWJsZSB3aGljaCB3aWxsIGJlIHNldCB0byBwaHkgaGFuZGxlCisgKiBAbmFtZTogbmFtZSBv
-ZiBwaHkKKyAqCisgKiBUaGUgZnVuY3Rpb24gY3JlYXRlcyByZXNvdXJjZSBkZXNjcmlwdGlvbiBm
-b3IgcGh5LCB3aGljaCBzaGFsbCBiZSB1c2VkCisgKiBieSAqcmVzdHJhY2tfcmVnaXN0ZXIgZnVu
-Y3Rpb25zLgorICovCitzdHJ1Y3QgcmVzdHJhY2tfZGVzYyAqcGh5X3Jlc3RyYWNrX2Rlc2Moc3Ry
-dWN0IHBoeSAqKnBoeSwgY29uc3QgY2hhciAqbmFtZSkKK3sKKwlzdHJ1Y3QgcGh5X3Jlc3RyYWNr
-X2Rlc2MgKnJkOworCisJUkVTVFJBQ0tfREVTQ19BTExPQyhyZCwgcGh5X3Jlc3RyYWNrX29wcywg
-cGh5LCBuYW1lKTsKKworCXJldHVybiByZCA/ICZyZC0+ZGVzYyA6IEVSUl9QVFIoLUVOT01FTSk7
-Cit9CitFWFBPUlRfU1lNQk9MX0dQTChwaHlfcmVzdHJhY2tfZGVzYyk7CisKKwogLyoqCiAgKiBw
-aHlfcmVsZWFzZSgpIC0gcmVsZWFzZSB0aGUgcGh5CiAgKiBAZGV2OiB0aGUgZGV2IG1lbWJlciB3
-aXRoaW4gcGh5CmRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3BoeS9waHkuaCBiL2luY2x1ZGUv
-bGludXgvcGh5L3BoeS5oCmluZGV4IDhjYjZmODEuLjE0ZDE3NmMgMTAwNjQ0Ci0tLSBhL2luY2x1
-ZGUvbGludXgvcGh5L3BoeS5oCisrKyBiL2luY2x1ZGUvbGludXgvcGh5L3BoeS5oCkBAIC0xNzQs
-NiArMTc0LDkgQEAgc3RydWN0IHBoeV9wcm92aWRlciAqX19kZXZtX29mX3BoeV9wcm92aWRlcl9y
-ZWdpc3RlcihzdHJ1Y3QgZGV2aWNlICpkZXYsCiB2b2lkIG9mX3BoeV9wcm92aWRlcl91bnJlZ2lz
-dGVyKHN0cnVjdCBwaHlfcHJvdmlkZXIgKnBoeV9wcm92aWRlcik7CiB2b2lkIGRldm1fb2ZfcGh5
-X3Byb3ZpZGVyX3VucmVnaXN0ZXIoc3RydWN0IGRldmljZSAqZGV2LAogCXN0cnVjdCBwaHlfcHJv
-dmlkZXIgKnBoeV9wcm92aWRlcik7CisKK3N0cnVjdCByZXN0cmFja19kZXNjOworc3RydWN0IHJl
-c3RyYWNrX2Rlc2MgKnBoeV9yZXN0cmFja19kZXNjKHN0cnVjdCBwaHkgKipwaHksIGNvbnN0IGNo
-YXIgKm5hbWUpOwogI2Vsc2UKIHN0YXRpYyBpbmxpbmUgaW50IHBoeV9wbV9ydW50aW1lX2dldChz
-dHJ1Y3QgcGh5ICpwaHkpCiB7CmRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3Jlc3RyYWNrLmgg
-Yi9pbmNsdWRlL2xpbnV4L3Jlc3RyYWNrLmgKaW5kZXggNjcwN2RjZS4uNDExZDc5MSAxMDA2NDQK
-LS0tIGEvaW5jbHVkZS9saW51eC9yZXN0cmFjay5oCisrKyBiL2luY2x1ZGUvbGludXgvcmVzdHJh
-Y2suaApAQCAtNyw2ICs3LDcgQEAKICNkZWZpbmUgUkVTVFJBQ0tfVFlQRV9SRUdVTEFUT1IgMgog
-I2RlZmluZSBSRVNUUkFDS19UWVBFX0dQSU8gMwogI2RlZmluZSBSRVNUUkFDS19UWVBFX0NMT0NL
-IDQKKyNkZWZpbmUgUkVTVFJBQ0tfVFlQRV9QSFkgNQogCiBzdHJ1Y3QgZGV2aWNlOwogc3RydWN0
-IHJlc3RyYWNrX2N0eDsKLS0gCjEuOS4xCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbAo=
+The patch removes private of_graph functions and uses common ones.
+
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c | 117 +++++++-------------------------
+ 1 file changed, 24 insertions(+), 93 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+index 37678cf..91a29e1 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+@@ -14,6 +14,7 @@
+ #include <drm/drm_crtc_helper.h>
+ #include <drm/drm_panel.h>
+ 
++#include <linux/of_graph.h>
+ #include <linux/regulator/consumer.h>
+ 
+ #include <video/of_videomode.h>
+@@ -21,6 +22,15 @@
+ 
+ #include "exynos_drm_drv.h"
+ 
++/* possible of_graph port nodes used by device */
++enum {
++	FIMD_PORT_IN0,
++	FIMD_PORT_IN1,
++	FIMD_PORT_IN2,
++	FIMD_PORT_RGB,
++	FIMD_PORT_WRB,
++};
++
+ struct exynos_dpi {
+ 	struct exynos_drm_display display;
+ 	struct device *dev;
+@@ -171,102 +181,12 @@ static struct exynos_drm_display_ops exynos_dpi_display_ops = {
+ 	.dpms = exynos_dpi_dpms
+ };
+ 
+-/* of_* functions will be removed after merge of of_graph patches */
+-static struct device_node *
+-of_get_child_by_name_reg(struct device_node *parent, const char *name, u32 reg)
+-{
+-	struct device_node *np;
+-
+-	for_each_child_of_node(parent, np) {
+-		u32 r;
+-
+-		if (!np->name || of_node_cmp(np->name, name))
+-			continue;
+-
+-		if (of_property_read_u32(np, "reg", &r) < 0)
+-			r = 0;
+-
+-		if (reg == r)
+-			break;
+-	}
+-
+-	return np;
+-}
+-
+-static struct device_node *of_graph_get_port_by_reg(struct device_node *parent,
+-						    u32 reg)
+-{
+-	struct device_node *ports, *port;
+-
+-	ports = of_get_child_by_name(parent, "ports");
+-	if (ports)
+-		parent = ports;
+-
+-	port = of_get_child_by_name_reg(parent, "port", reg);
+-
+-	of_node_put(ports);
+-
+-	return port;
+-}
+-
+-static struct device_node *
+-of_graph_get_endpoint_by_reg(struct device_node *port, u32 reg)
+-{
+-	return of_get_child_by_name_reg(port, "endpoint", reg);
+-}
+-
+-static struct device_node *
+-of_graph_get_remote_port_parent(const struct device_node *node)
+-{
+-	struct device_node *np;
+-	unsigned int depth;
+-
+-	np = of_parse_phandle(node, "remote-endpoint", 0);
+-
+-	/* Walk 3 levels up only if there is 'ports' node. */
+-	for (depth = 3; depth && np; depth--) {
+-		np = of_get_next_parent(np);
+-		if (depth == 2 && of_node_cmp(np->name, "ports"))
+-			break;
+-	}
+-	return np;
+-}
+-
+-enum {
+-	FIMD_PORT_IN0,
+-	FIMD_PORT_IN1,
+-	FIMD_PORT_IN2,
+-	FIMD_PORT_RGB,
+-	FIMD_PORT_WRB,
+-};
+-
+-static struct device_node *exynos_dpi_of_find_panel_node(struct device *dev)
+-{
+-	struct device_node *np, *ep;
+-
+-	np = of_graph_get_port_by_reg(dev->of_node, FIMD_PORT_RGB);
+-	if (!np)
+-		return NULL;
+-
+-	ep = of_graph_get_endpoint_by_reg(np, 0);
+-	of_node_put(np);
+-	if (!ep)
+-		return NULL;
+-
+-	np = of_graph_get_remote_port_parent(ep);
+-	of_node_put(ep);
+-
+-	return np;
+-}
+-
+ static int exynos_dpi_parse_dt(struct exynos_dpi *ctx)
+ {
+ 	struct device *dev = ctx->dev;
+ 	struct device_node *dn = dev->of_node;
+ 	struct device_node *np;
+ 
+-	ctx->panel_node = exynos_dpi_of_find_panel_node(dev);
+-
+ 	np = of_get_child_by_name(dn, "display-timings");
+ 	if (np) {
+ 		struct videomode *vm;
+@@ -289,10 +209,21 @@ static int exynos_dpi_parse_dt(struct exynos_dpi *ctx)
+ 		return 0;
+ 	}
+ 
+-	if (!ctx->panel_node)
+-		return -EINVAL;
++	np = NULL;
++	while ((np = of_graph_get_next_endpoint(dev->of_node, np))) {
++		struct of_endpoint ep;
+ 
+-	return 0;
++		of_graph_parse_endpoint(np, &ep);
++		if (ep.port != FIMD_PORT_RGB)
++			continue;
++
++		ctx->panel_node = of_graph_get_remote_port_parent(np);
++		of_node_put(np);
++
++		return ctx->panel_node ? 0 : -EINVAL;
++	}
++
++	return -EINVAL;
+ }
+ 
+ struct exynos_drm_display *exynos_dpi_probe(struct device *dev)
+-- 
+1.9.1
