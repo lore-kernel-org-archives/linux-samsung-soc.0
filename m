@@ -1,177 +1,54 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: [RFC 12/15] drm/exynos/dpi: use common of_graph functions
-Date: Wed, 10 Dec 2014 16:48:30 +0100
-Message-ID: <1418226513-14105-13-git-send-email-a.hajda@samsung.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC 04/15] regulator: add restrack support
+Date: Wed, 10 Dec 2014 16:07:20 +0000
+Message-ID: <20141210160720.GS11764@sirena.org.uk>
 References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: open list <linux-kernel@vger.kernel.org>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>b
+ <1418226513-14105-5-git-send-email-a.hajda@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="W/1XGRQlv2BMqnS3"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1418226513-14105-5-git-send-email-a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrzej Hajda <a.hajda-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "open list:GPIO SUBSYSTEM" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:DRM PANEL DRIVERS" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "open list:OPEN FIRMWARE AND..." <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, boris.brezillon@
 List-Id: linux-samsung-soc@vger.kernel.org
 
-The patch removes private of_graph functions and uses common ones.
 
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_dpi.c | 117 +++++++-------------------------
- 1 file changed, 24 insertions(+), 93 deletions(-)
+--W/1XGRQlv2BMqnS3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-index 37678cf..91a29e1 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
-@@ -14,6 +14,7 @@
- #include <drm/drm_crtc_helper.h>
- #include <drm/drm_panel.h>
- 
-+#include <linux/of_graph.h>
- #include <linux/regulator/consumer.h>
- 
- #include <video/of_videomode.h>
-@@ -21,6 +22,15 @@
- 
- #include "exynos_drm_drv.h"
- 
-+/* possible of_graph port nodes used by device */
-+enum {
-+	FIMD_PORT_IN0,
-+	FIMD_PORT_IN1,
-+	FIMD_PORT_IN2,
-+	FIMD_PORT_RGB,
-+	FIMD_PORT_WRB,
-+};
-+
- struct exynos_dpi {
- 	struct exynos_drm_display display;
- 	struct device *dev;
-@@ -171,102 +181,12 @@ static struct exynos_drm_display_ops exynos_dpi_display_ops = {
- 	.dpms = exynos_dpi_dpms
- };
- 
--/* of_* functions will be removed after merge of of_graph patches */
--static struct device_node *
--of_get_child_by_name_reg(struct device_node *parent, const char *name, u32 reg)
--{
--	struct device_node *np;
--
--	for_each_child_of_node(parent, np) {
--		u32 r;
--
--		if (!np->name || of_node_cmp(np->name, name))
--			continue;
--
--		if (of_property_read_u32(np, "reg", &r) < 0)
--			r = 0;
--
--		if (reg == r)
--			break;
--	}
--
--	return np;
--}
--
--static struct device_node *of_graph_get_port_by_reg(struct device_node *parent,
--						    u32 reg)
--{
--	struct device_node *ports, *port;
--
--	ports = of_get_child_by_name(parent, "ports");
--	if (ports)
--		parent = ports;
--
--	port = of_get_child_by_name_reg(parent, "port", reg);
--
--	of_node_put(ports);
--
--	return port;
--}
--
--static struct device_node *
--of_graph_get_endpoint_by_reg(struct device_node *port, u32 reg)
--{
--	return of_get_child_by_name_reg(port, "endpoint", reg);
--}
--
--static struct device_node *
--of_graph_get_remote_port_parent(const struct device_node *node)
--{
--	struct device_node *np;
--	unsigned int depth;
--
--	np = of_parse_phandle(node, "remote-endpoint", 0);
--
--	/* Walk 3 levels up only if there is 'ports' node. */
--	for (depth = 3; depth && np; depth--) {
--		np = of_get_next_parent(np);
--		if (depth == 2 && of_node_cmp(np->name, "ports"))
--			break;
--	}
--	return np;
--}
--
--enum {
--	FIMD_PORT_IN0,
--	FIMD_PORT_IN1,
--	FIMD_PORT_IN2,
--	FIMD_PORT_RGB,
--	FIMD_PORT_WRB,
--};
--
--static struct device_node *exynos_dpi_of_find_panel_node(struct device *dev)
--{
--	struct device_node *np, *ep;
--
--	np = of_graph_get_port_by_reg(dev->of_node, FIMD_PORT_RGB);
--	if (!np)
--		return NULL;
--
--	ep = of_graph_get_endpoint_by_reg(np, 0);
--	of_node_put(np);
--	if (!ep)
--		return NULL;
--
--	np = of_graph_get_remote_port_parent(ep);
--	of_node_put(ep);
--
--	return np;
--}
--
- static int exynos_dpi_parse_dt(struct exynos_dpi *ctx)
- {
- 	struct device *dev = ctx->dev;
- 	struct device_node *dn = dev->of_node;
- 	struct device_node *np;
- 
--	ctx->panel_node = exynos_dpi_of_find_panel_node(dev);
--
- 	np = of_get_child_by_name(dn, "display-timings");
- 	if (np) {
- 		struct videomode *vm;
-@@ -289,10 +209,21 @@ static int exynos_dpi_parse_dt(struct exynos_dpi *ctx)
- 		return 0;
- 	}
- 
--	if (!ctx->panel_node)
--		return -EINVAL;
-+	np = NULL;
-+	while ((np = of_graph_get_next_endpoint(dev->of_node, np))) {
-+		struct of_endpoint ep;
- 
--	return 0;
-+		of_graph_parse_endpoint(np, &ep);
-+		if (ep.port != FIMD_PORT_RGB)
-+			continue;
-+
-+		ctx->panel_node = of_graph_get_remote_port_parent(np);
-+		of_node_put(np);
-+
-+		return ctx->panel_node ? 0 : -EINVAL;
-+	}
-+
-+	return -EINVAL;
- }
- 
- struct exynos_drm_display *exynos_dpi_probe(struct device *dev)
--- 
-1.9.1
+On Wed, Dec 10, 2014 at 04:48:22PM +0100, Andrzej Hajda wrote:
+> Regulators supports various methods of lookup.
+> The patch adds restrack support only to DT based regulators.
+
+Why, what does this mean and how might one use it?  I've not looked at
+the code since I don't know what it's supposed to accomplish...
+
+One very high level thing is that anything that only works for DT only
+seems to be a non-starter, the API should be hiding details of the
+firmware interface.
+
+--W/1XGRQlv2BMqnS3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUiG+3AAoJECTWi3JdVIfQmAwH/jiUhtG2zZjX7a2DvVgSimtx
+Ed87dh0BkNgWFNjrbsMbEBlThMTPHFJDPrA3jOuXvBkOeW1AENCdWLpHUmNhMiL5
+XG1hWqS3RaPMYdFK1UBH18hzrn7QwdBh2WbTcRU5lMyvM2tCiQVMFS/LNNivcYhJ
+lY1y5Ol0cTLU0uTh12vSNK53x4tsgbWCAFYOn91F3Kh572wnTYvo3WVub8Cv/7wP
+KjOMQ24tzUD4fWFL2LNkRF8XM1yXesB6JdTogtXxyv0wh0GhF0bYVxeMcHFKqWoq
+BqEQllGFsJHEvYSghmd2m0cd3D1csRDkmOfFUDnkoTMjtzPQsPvzk4Ti+Nr2zIs=
+=1JPy
+-----END PGP SIGNATURE-----
+
+--W/1XGRQlv2BMqnS3--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
