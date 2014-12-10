@@ -1,136 +1,148 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH v2] drm/exynos/fimd: only finish pageflip if START == START_S
-Date: Wed, 10 Dec 2014 14:57:02 -0200
-Message-ID: <1418230622-744-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f181.google.com ([209.85.216.181]:36300 "EHLO
-	mail-qc0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756870AbaLJQ5M (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Dec 2014 11:57:12 -0500
-Received: by mail-qc0-f181.google.com with SMTP id m20so2433304qcx.26
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Dec 2014 08:57:11 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: A H <andrzej.hajda@gmail.com>
+Subject: Re: [RFC 00/15] Resource tracking/allocation framework
+Date: Wed, 10 Dec 2014 18:23:49 +0100
+Message-ID: <CA+tnuKYSDZ0mtzQ_g1QjovJwG01OgPjSXuozEBXQsEZv_2o-=w@mail.gmail.com>
+References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
+ <20141210161620.GM11285@n2100.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: multipart/mixed; boundary="===============0092008341=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20141210161620.GM11285@n2100.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, open list <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Kishon Vijay Abraham I <kishon@ti.com>, Andrzej Hajda <a.hajda@samsung.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Daniel Kurtz <djkurtz@chromium.org>
 
-From: Daniel Kurtz <djkurtz@chromium.org>
+--===============0092008341==
+Content-Type: multipart/alternative; boundary=001a11c38be840a7290509dfec03
 
-A framebuffer gets committed to FIMD's default window like this:
- exynos_drm_crtc_update()
-  exynos_plane_commit()
-   fimd_win_commit()
+--001a11c38be840a7290509dfec03
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-fimd_win_commit() programs BUF_START[0].  At each vblank, FIMD hardware
-copies the value from BUF_START to BUF_START_S (BUF_START's shadow
-register), starts scanning out from BUF_START_S, and asserts its irq.
+10 gru 2014 17:16 "Russell King - ARM Linux" <linux@arm.linux.org.uk>
+napisa=C5=82(a):
+>
+> On Wed, Dec 10, 2014 at 04:48:18PM +0100, Andrzej Hajda wrote:
+> > 3. There are drivers which can work without specific resource, but if
+> >   the resource becomes available/unavailable it can do some additional
+stuff.
+> >   An example of such driver is DRM driver (more precisely
+drm_connector) -
+> >   it can start without attached drm_panel, but if the panel becomes
+available it
+> >   can react by generating HPD event and start using it.
+>
+> Bad example, and actually incorrect.  DRM connectors are referenced in
+> userspace by an IDR number, which can be re-used in the case of a
+> connector appearing, disappearing, and then a different connector
+> re-appearing.
 
-This irq is handled by fimd_irq_handler(), which calls
-exynos_drm_crtc_finish_pageflip() to free the old buffer that FIMD just
-finished scanning out, and potentially commit the next pending flip.
+But it is not about reappearing of drm_connector, it is about reappearing
+of drm_panel which is fortunately not a part of drm driver. Connector here
+is only consumer of drm_panel which should have possibility to receive
+notifications on panel (dis-)appearance.
 
-There is a race, however, if fimd_win_commit() programs BUF_START(0)
-between the actual vblank irq, and its corresponding fimd_irq_handler().
+Regards
+Andrzej
 
- => FIMD vblank: BUF_START_S[0] := BUF_START[0], and irq asserted
- | => fimd_win_commit(0) writes new BUF_START[0]
- |    exynos_drm_crtc_try_do_flip() marks exynos_fb as prepared
- => fimd_irq_handler()
-    exynos_drm_crtc_finish_pageflip() sees prepared exynos_fb,
-         and unmaps "old" fb
- ==> but, since BUF_START_S[0] still points to that "old" fb...
- ==> FIMD iommu fault
+>
+> DRM really is *not* safe to hotplug like this: DRM is more a card-level
+> thing, which is why we have the component helpers - which allow us to
+> merge several devices into one logical card-like device in a generic
+> manner.
+>
+> DRM needs a stable picture of the CRTCs, encoders and connectors, which
+> should _never_ change during the lifetime of the DRM device.  Devices
+> attached to connectors can be hotplugged, but that's about the limit of
+> hot-plugging in DRM.
+>
+> --
+> FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
+> according to speedtest.net.
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-This patch ensures that fimd_irq_handler() only calls
-exynos_drm_crtc_finish_pageflip() if any previously scheduled flip
-has really completed.
+--001a11c38be840a7290509dfec03
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-This works because exynos_drm_crtc's flip fifo ensures that
-fimd_win_commit() is never called more than once per
-exynos_drm_crtc_finish_pageflip().
+<p dir=3D"ltr"><br>
+10 gru 2014 17:16 &quot;Russell King - ARM Linux&quot; &lt;<a href=3D"mailt=
+o:linux@arm.linux.org.uk">linux@arm.linux.org.uk</a>&gt; napisa=C5=82(a):<b=
+r>
+&gt;<br>
+&gt; On Wed, Dec 10, 2014 at 04:48:18PM +0100, Andrzej Hajda wrote:<br>
+&gt; &gt; 3. There are drivers which can work without specific resource, bu=
+t if<br>
+&gt; &gt;=C2=A0 =C2=A0the resource becomes available/unavailable it can do =
+some additional stuff.<br>
+&gt; &gt;=C2=A0 =C2=A0An example of such driver is DRM driver (more precise=
+ly drm_connector) -<br>
+&gt; &gt;=C2=A0 =C2=A0it can start without attached drm_panel, but if the p=
+anel becomes available it<br>
+&gt; &gt;=C2=A0 =C2=A0can react by generating HPD event and start using it.=
+<br>
+&gt;<br>
+&gt; Bad example, and actually incorrect.=C2=A0 DRM connectors are referenc=
+ed in<br>
+&gt; userspace by an IDR number, which can be re-used in the case of a<br>
+&gt; connector appearing, disappearing, and then a different connector<br>
+&gt; re-appearing.</p>
+<p dir=3D"ltr">But it is not about reappearing of drm_connector, it is abou=
+t reappearing of drm_panel which is fortunately not a part of drm driver. C=
+onnector here is only consumer of drm_panel which should have possibility t=
+o receive notifications on panel (dis-)appearance. </p>
+<p dir=3D"ltr">Regards<br>
+Andrzej</p>
+<p dir=3D"ltr">&gt;<br>
+&gt; DRM really is *not* safe to hotplug like this: DRM is more a card-leve=
+l<br>
+&gt; thing, which is why we have the component helpers - which allow us to<=
+br>
+&gt; merge several devices into one logical card-like device in a generic<b=
+r>
+&gt; manner.<br>
+&gt;<br>
+&gt; DRM needs a stable picture of the CRTCs, encoders and connectors, whic=
+h<br>
+&gt; should _never_ change during the lifetime of the DRM device.=C2=A0 Dev=
+ices<br>
+&gt; attached to connectors can be hotplugged, but that&#39;s about the lim=
+it of<br>
+&gt; hot-plugging in DRM.<br>
+&gt;<br>
+&gt; --<br>
+&gt; FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up<=
+br>
+&gt; according to <a href=3D"http://speedtest.net">speedtest.net</a>.<br>
+&gt; _______________________________________________<br>
+&gt; dri-devel mailing list<br>
+&gt; <a href=3D"mailto:dri-devel@lists.freedesktop.org">dri-devel@lists.fre=
+edesktop.org</a><br>
+&gt; <a href=3D"http://lists.freedesktop.org/mailman/listinfo/dri-devel">ht=
+tp://lists.freedesktop.org/mailman/listinfo/dri-devel</a></p>
 
-Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-Reviewed-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 31 ++++++++++++++++++++++++-------
- include/video/samsung_fimd.h             |  1 +
- 2 files changed, 25 insertions(+), 7 deletions(-)
+--001a11c38be840a7290509dfec03--
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index e5810d1..95bac27 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -55,6 +55,7 @@
- #define VIDOSD_D(win)		(VIDOSD_BASE + 0x0C + (win) * 16)
- 
- #define VIDWx_BUF_START(win, buf)	(VIDW_BUF_START(buf) + (win) * 8)
-+#define VIDWx_BUF_START_S(win, buf)     (VIDW_BUF_START_S(buf) + (win) * 8)
- #define VIDWx_BUF_END(win, buf)		(VIDW_BUF_END(buf) + (win) * 8)
- #define VIDWx_BUF_SIZE(win, buf)	(VIDW_BUF_SIZE(buf) + (win) * 4)
- 
-@@ -1039,6 +1040,7 @@ static irqreturn_t fimd_irq_handler(int irq, void *dev_id)
- {
- 	struct fimd_context *ctx = (struct fimd_context *)dev_id;
- 	u32 val, clear_bit;
-+	u32 start, start_s;
- 
- 	val = readl(ctx->regs + VIDINTCON1);
- 
-@@ -1051,19 +1053,34 @@ static irqreturn_t fimd_irq_handler(int irq, void *dev_id)
- 		goto out;
- 
- 	if (ctx->i80_if) {
--		exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
--
- 		/* Exits triggering mode */
- 		atomic_set(&ctx->triggering, 0);
- 	} else {
- 		drm_handle_vblank(ctx->drm_dev, ctx->pipe);
-+	}
-+
-+	/*
-+	 * Ensure finish_pageflip is called iff a pending flip has completed.
-+	 * This works around a race between a page_flip request and the latency
-+	 * between vblank interrupt and this irq_handler:
-+	 *   => FIMD vblank: BUF_START_S[0] := BUF_START[0], and asserts irq
-+	 *   | => fimd_win_commit(0) writes new BUF_START[0]
-+	 *   |    exynos_drm_crtc_try_do_flip() marks exynos_fb as prepared
-+	 *   => fimd_irq_handler()
-+	 *       exynos_drm_crtc_finish_pageflip() sees prepared exynos_fb,
-+	 *           and unmaps "old" fb
-+	 *   ==> but, since BUF_START_S[0] still points to that "old" fb...
-+	 *   ==> FIMD iommu fault
-+	 */
-+	start = readl(ctx->regs + VIDWx_BUF_START(0, 0));
-+	start_s = readl(ctx->regs + VIDWx_BUF_START_S(0, 0));
-+	if (start == start_s)
- 		exynos_drm_crtc_finish_pageflip(ctx->drm_dev, ctx->pipe);
- 
--		/* set wait vsync event to zero and wake up queue. */
--		if (atomic_read(&ctx->wait_vsync_event)) {
--			atomic_set(&ctx->wait_vsync_event, 0);
--			wake_up(&ctx->wait_vsync_queue);
--		}
-+	/* set wait vsync event to zero and wake up queue. */
-+	if (atomic_read(&ctx->wait_vsync_event)) {
-+		atomic_set(&ctx->wait_vsync_event, 0);
-+		wake_up(&ctx->wait_vsync_queue);
- 	}
- 
- out:
-diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
-index a20e4a3..f81d081 100644
---- a/include/video/samsung_fimd.h
-+++ b/include/video/samsung_fimd.h
-@@ -291,6 +291,7 @@
- 
- /* Video buffer addresses */
- #define VIDW_BUF_START(_buff)			(0xA0 + ((_buff) * 8))
-+#define VIDW_BUF_START_S(_buff)                 (0x40A0 + ((_buff) * 8))
- #define VIDW_BUF_START1(_buff)			(0xA4 + ((_buff) * 8))
- #define VIDW_BUF_END(_buff)			(0xD0 + ((_buff) * 8))
- #define VIDW_BUF_END1(_buff)			(0xD4 + ((_buff) * 8))
--- 
-1.9.3
+--===============0092008341==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+--===============0092008341==--
