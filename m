@@ -1,57 +1,56 @@
-From: Julian Calaby <julian.calaby@gmail.com>
-Subject: Re: [PATCH 0/20] fix misspelling of current function in
-	string
-Date: Wed, 10 Dec 2014 13:56:23 +1100
-Message-ID: <CAGRGNgVGEo8qqpjDvYOJRBtEjXsKmFtXSQrS_Q+tDEYS+nAQqA@mail.gmail.com>
-References: <1417980062-25151-1-git-send-email-Julia.Lawall@lip6.fr>
- <CAGRGNgWDJqV=XD+6q26Ma=m1sEi1kvLWsjq6=RjRVSFTxow0Qg@mail.gmail.com>
- <alpine.DEB.2.02.1412080738210.2100@localhost6.localdomain6>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH RFT 1/2] drivers: bus: check cci device tree node status
+Date: Wed, 10 Dec 2014 09:31:34 +0530
+Message-ID: <CAM4voakjWgnEXoXT1LH2ZFBy=U4vfXFXS1Su8VB7Cd3s3wqmSA@mail.gmail.com>
+References: <1417186209-5256-1-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <alpine.DEB.2.02.1412080738210.2100@localhost6.localdomain6>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Julia Lawall <julia.lawall@lip6.fr>
-Cc: "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>, linux-samsung-soc@vger.kernel.org, linux-scsi <linux-scsi@vger.kernel.org>, linux-pci@vger.kernel.org, linux-wireless <linux-wireless@vger.kernel.org>, intel-gfx@lists.freedesktop.org, linux-usb@vger.kernel.org, kernel-janitors@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, netdev <netdev@vger.kernel.org>, linux-mtd@lists.infradead.org, linux@rasmusvillemoes.dk, Joe Perches <joe@perches.com>, "Mailing List,
- Arm" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f44.google.com ([209.85.216.44]:60491 "EHLO
+	mail-qa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754833AbaLJEBf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 9 Dec 2014 23:01:35 -0500
+Received: by mail-qa0-f44.google.com with SMTP id i13so1450542qae.17
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Dec 2014 20:01:34 -0800 (PST)
+In-Reply-To: <1417186209-5256-1-git-send-email-a.kesavan@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kevin Hilman <khilman@kernel.org>, Nicolas Pitre <nicolas.pitre@linaro.org>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, punit.agrawal@arm.com, Will Deacon <will.deacon@arm.com>, "mark.rutland" <mark.rutland@arm.com>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Douglas Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Me2 <kesavan.abhilash@gmail.com>, Arnd Bergmann <arnd@arndb.de>
 
-SGkgSnVsaWEsCgpPbiBNb24sIERlYyA4LCAyMDE0IGF0IDU6NDMgUE0sIEp1bGlhIExhd2FsbCA8
-anVsaWEubGF3YWxsQGxpcDYuZnI+IHdyb3RlOgo+IE9uIE1vbiwgOCBEZWMgMjAxNCwgSnVsaWFu
-IENhbGFieSB3cm90ZToKPgo+PiBIaSBKdWxpYSwKPj4KPj4gT24gTW9uLCBEZWMgOCwgMjAxNCBh
-dCA2OjIwIEFNLCBKdWxpYSBMYXdhbGwgPEp1bGlhLkxhd2FsbEBsaXA2LmZyPiB3cm90ZToKPj4g
-PiBUaGVzZSBwYXRjaGVzIHJlcGxhY2Ugd2hhdCBhcHBlYXJzIHRvIGJlIGEgcmVmZXJlbmNlIHRv
-IHRoZSBuYW1lIG9mIHRoZQo+PiA+IGN1cnJlbnQgZnVuY3Rpb24gYnV0IGlzIG1pc3NwZWxsZWQg
-aW4gc29tZSB3YXkgYnkgZWl0aGVyIHRoZSBuYW1lIG9mIHRoZQo+PiA+IGZ1bmN0aW9uIGl0c2Vs
-Ziwgb3IgYnkgJXMgYW5kIHRoZW4gX19mdW5jX18gaW4gYW4gYXJndW1lbnQgbGlzdC4KPj4KPj4g
-V291bGQgdGhlcmUgYmUgYW55IHZhbHVlIGluIGRvaW5nIHRoaXMgZm9yIF9hbGxfIGNhc2VzIHdo
-ZXJlIHRoZQo+PiBmdW5jdGlvbiBuYW1lIGlzIHdyaXR0ZW4gaW4gYSBmb3JtYXQgc3RyaW5nPwo+
-Cj4gUHJvYmFibHkuICBCdXQgdGhlcmUgYXJlIGEgbG90IG9mIHRoZW0uICBFdmVuIGZvciB0aGUg
-bWlzc3BlbGxpbmdzLCBJIGhhdmUKPiBvbmx5IGRvbiBhYm91dCAxLzMgb2YgdGhlIGNhc2VzLgo+
-Cj4gT24gdGhlIG90aGVyIGhhbmQsIHRoZSBtaXNzcGVsbGluZyBoYXZlIHRvIGJlIGNoZWNrZWQg
-Y2FyZWZ1bGx5LCBiZWNhdXNlIGEKPiBtaXNzcGVsbGluZyBvZiBvbmUgdGhpbmcgY291bGQgYmUg
-dGhlIGNvcnJlY3Qgc3BlbGxpbmcgb2YgdGhlIHRoaW5nIHRoc3QKPiB3YXMgYWN0dWFsbHkgaW50
-ZW5kZWQuCj4KPiBKb2UsIGhvd2V2ZXIsIHBvaW50cyBvdXQgdGhhdCBhIGxvdCBvZiB0aGVzZSBw
-cmludHMgYXJlIGp1c3QgZm9yIGZ1bmN0aW9uCj4gdHJhY2luZywgYW5kIGNvdWxkIGJlIHJlbW92
-ZWQuICBJIHdvcmtlZCBvbiBhbm90aGVyIHNlbWFudGljIHBhdGNoIHRoYXQKPiB0cmllcyB0byBk
-byB0aGF0LiAgSXQgbWlnaHQgYmUgYmV0dGVyIHRvIHJlbW92ZSB0aG9zZSBwcmludHMgY29tcGxl
-dGVseSwKPiByYXRoZXIgdGhhbiBzZW5kaW5nIG9uZSBwYXRjaCB0byB0cmFuc2Zvcm0gdGhlbSBh
-bmQgdGhlbiBvbmUgcGF0Y2ggdG8KPiByZW1vdmUgdGhlbSBhZnRlciB0aGF0LiAgVGhhdCBpcyB3
-aHkgZm9yIHRoaXMgc2VyaWVzIEkgZGlkIG9ubHkgdGhlIG9uZXMKPiB3aGVyZSB0aGVyZSB3YXMg
-YWN0dWFsbHkgYSBwcm9ibGVtLgoKT2ssIHRoYXQgbWFrZXMgc2Vuc2UuCgpFaXRoZXIgd2F5IHRo
-b3VnaCwgdGhpcyBpcyBhIHJlYWxseSBpbnRlcmVzdGluZyBhcHBsaWNhdGlvbiBvZiB0aGUKc2Vt
-YW50aWMgcGF0Y2hpbmcuIE5pY2Ugd29yayEKClRoYW5rcywKCi0tIApKdWxpYW4gQ2FsYWJ5CgpF
-bWFpbDoganVsaWFuLmNhbGFieUBnbWFpbC5jb20KUHJvZmlsZTogaHR0cDovL3d3dy5nb29nbGUu
-Y29tL3Byb2ZpbGVzL2p1bGlhbi5jYWxhYnkvCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCkludGVsLWdmeCBtYWlsaW5nIGxpc3QKSW50ZWwtZ2Z4QGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
-dGluZm8vaW50ZWwtZ2Z4Cg==
+Hi,
+
+On Fri, Nov 28, 2014 at 8:20 PM, Abhilash Kesavan <a.kesavan@samsung.com> wrote:
+> The arm-cci driver completes the probe sequence even if the cci node is
+> marked as disabled. Add a check in the driver to honour the cci status
+> in the device tree.
+>
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+
+This patch helps disable CCI on the Arndale Octa board thus resolving
+some imprecise aborts seen on that board. Kindly review.
+
+Regards,
+Abhilash
+> ---
+>  drivers/bus/arm-cci.c |    3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
+> index 860da40..0ce5e2d 100644
+> --- a/drivers/bus/arm-cci.c
+> +++ b/drivers/bus/arm-cci.c
+> @@ -1312,6 +1312,9 @@ static int cci_probe(void)
+>         if (!np)
+>                 return -ENODEV;
+>
+> +       if (!of_device_is_available(np))
+> +               return -ENODEV;
+> +
+>         cci_config = of_match_node(arm_cci_matches, np)->data;
+>         if (!cci_config)
+>                 return -ENODEV;
+> --
+> 1.7.9.5
+>
