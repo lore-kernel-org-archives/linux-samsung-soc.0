@@ -1,148 +1,81 @@
-From: A H <andrzej.hajda@gmail.com>
-Subject: Re: [RFC 00/15] Resource tracking/allocation framework
-Date: Wed, 10 Dec 2014 18:23:49 +0100
-Message-ID: <CA+tnuKYSDZ0mtzQ_g1QjovJwG01OgPjSXuozEBXQsEZv_2o-=w@mail.gmail.com>
-References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
- <20141210161620.GM11285@n2100.arm.linux.org.uk>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH] clk: samsung: Fix Exynos 5420 pinctrl setup and clock disable failure due to domain being gated
+Date: Wed, 10 Dec 2014 09:35:31 -0800
+Message-ID: <7hlhmfo1b0.fsf@deeprootsystems.com>
+References: <1417788934-23447-1-git-send-email-k.kozlowski@samsung.com>
+	<1418129982.19339.6.camel@AMDC1943> <5486F69B.6020005@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0092008341=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20141210161620.GM11285@n2100.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Alexandre Courbot <gnurou@gmail.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, open list <linux-kernel@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Kishon Vijay Abraham I <kishon@ti.com>, Andrzej Hajda <a.hajda@samsung.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Grant Likely <grant.likely@linaro.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f41.google.com ([209.85.220.41]:43919 "EHLO
+	mail-pa0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756089AbaLJRff convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 10 Dec 2014 12:35:35 -0500
+Received: by mail-pa0-f41.google.com with SMTP id rd3so3217472pab.14
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Dec 2014 09:35:34 -0800 (PST)
+In-Reply-To: <5486F69B.6020005@samsung.com> (Sylwester Nawrocki's message of
+	"Tue, 09 Dec 2014 14:18:19 +0100")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
---===============0092008341==
-Content-Type: multipart/alternative; boundary=001a11c38be840a7290509dfec03
+Sylwester Nawrocki <s.nawrocki@samsung.com> writes:
 
---001a11c38be840a7290509dfec03
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-10 gru 2014 17:16 "Russell King - ARM Linux" <linux@arm.linux.org.uk>
-napisa=C5=82(a):
+> On 09/12/14 13:59, Krzysztof Kozlowski wrote:
+>> On pi=C4=85, 2014-12-05 at 15:15 +0100, Krzysztof Kozlowski wrote:
+>>> > Audio subsystem clocks are located in separate block. On Exynos 5=
+420 if
+>>> > clock for this block (from main clock domain) 'mau_epll' is gated=
+ then
+>>> > any read or write to audss registers will block.
+>>> >=20
+>>> > This kind of boot hang was observed on Arndale Octa and Peach Pi/=
+Pit
+>>> > after introducing runtime PM to pl330 DMA driver. After that comm=
+it the
+>>> > 'mau_epll' was gated, because the "amba" clock was disabled and t=
+here
+>>> > were no more users of mau_epll.
+>>> >=20
+>>> > The system hang on one of steps:
+>>> > 1. Disabling unused clocks from audss block.
+>>> > 2. During audss GPIO setup (just before probing i2s0 because
+>>> >    samsung_pinmux_setup() tried to access memory from audss block=
+ which was
+>>> >    gated.
+>>> >=20
+>>> > Add a workaround for this by enabling the 'mau_epll' clock in pro=
+be.
+>>> >=20
+>>> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>> > ---
+>>> >  drivers/clk/samsung/clk-exynos-audss.c | 29 ++++++++++++++++++++=
+++++++++-
+>>> >  1 file changed, 28 insertions(+), 1 deletion(-)
+>>
+>> Sorry for pinging so quick but merge window is open and it looks lik=
+e
+>> booting Exynos542x boards will be broken (because pl330 will no long=
+er
+>> hold adma clock enabled so whole audss domain will be gated).
+>>=20
+>> This is a non-intrusive workaround for that issue, as wanted by
+>> Sylwester:
+>> https://lkml.org/lkml/2014/12/5/223
+>>=20
+>> Any comments on this?
 >
-> On Wed, Dec 10, 2014 at 04:48:18PM +0100, Andrzej Hajda wrote:
-> > 3. There are drivers which can work without specific resource, but if
-> >   the resource becomes available/unavailable it can do some additional
-stuff.
-> >   An example of such driver is DRM driver (more precisely
-drm_connector) -
-> >   it can start without attached drm_panel, but if the panel becomes
-available it
-> >   can react by generating HPD event and start using it.
->
-> Bad example, and actually incorrect.  DRM connectors are referenced in
-> userspace by an IDR number, which can be re-used in the case of a
-> connector appearing, disappearing, and then a different connector
-> re-appearing.
+> The patch looks OK to me, it would be good though if someone else
+> has confirmed it fixes the bug. I don't have any clock patches queued
+> at the moment. Perhaps you could apply it directly, Mike ?
 
-But it is not about reappearing of drm_connector, it is about reappearing
-of drm_panel which is fortunately not a part of drm driver. Connector here
-is only consumer of drm_panel which should have possibility to receive
-notifications on panel (dis-)appearance.
+I confirm it fixes the boot hang in linux-next (next-20141210) on my
+exynos5800-peach-pi and exynos5420-arndale-octa.  Tested both
+exynos_defconfig and multi_v7_defconfig.
 
-Regards
-Andrzej
+Tested-by: Kevin Hilman <khilman@linaro.org>
 
->
-> DRM really is *not* safe to hotplug like this: DRM is more a card-level
-> thing, which is why we have the component helpers - which allow us to
-> merge several devices into one logical card-like device in a generic
-> manner.
->
-> DRM needs a stable picture of the CRTCs, encoders and connectors, which
-> should _never_ change during the lifetime of the DRM device.  Devices
-> attached to connectors can be hotplugged, but that's about the limit of
-> hot-plugging in DRM.
->
-> --
-> FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-> according to speedtest.net.
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
-
---001a11c38be840a7290509dfec03
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-<p dir=3D"ltr"><br>
-10 gru 2014 17:16 &quot;Russell King - ARM Linux&quot; &lt;<a href=3D"mailt=
-o:linux@arm.linux.org.uk">linux@arm.linux.org.uk</a>&gt; napisa=C5=82(a):<b=
-r>
-&gt;<br>
-&gt; On Wed, Dec 10, 2014 at 04:48:18PM +0100, Andrzej Hajda wrote:<br>
-&gt; &gt; 3. There are drivers which can work without specific resource, bu=
-t if<br>
-&gt; &gt;=C2=A0 =C2=A0the resource becomes available/unavailable it can do =
-some additional stuff.<br>
-&gt; &gt;=C2=A0 =C2=A0An example of such driver is DRM driver (more precise=
-ly drm_connector) -<br>
-&gt; &gt;=C2=A0 =C2=A0it can start without attached drm_panel, but if the p=
-anel becomes available it<br>
-&gt; &gt;=C2=A0 =C2=A0can react by generating HPD event and start using it.=
-<br>
-&gt;<br>
-&gt; Bad example, and actually incorrect.=C2=A0 DRM connectors are referenc=
-ed in<br>
-&gt; userspace by an IDR number, which can be re-used in the case of a<br>
-&gt; connector appearing, disappearing, and then a different connector<br>
-&gt; re-appearing.</p>
-<p dir=3D"ltr">But it is not about reappearing of drm_connector, it is abou=
-t reappearing of drm_panel which is fortunately not a part of drm driver. C=
-onnector here is only consumer of drm_panel which should have possibility t=
-o receive notifications on panel (dis-)appearance. </p>
-<p dir=3D"ltr">Regards<br>
-Andrzej</p>
-<p dir=3D"ltr">&gt;<br>
-&gt; DRM really is *not* safe to hotplug like this: DRM is more a card-leve=
-l<br>
-&gt; thing, which is why we have the component helpers - which allow us to<=
-br>
-&gt; merge several devices into one logical card-like device in a generic<b=
-r>
-&gt; manner.<br>
-&gt;<br>
-&gt; DRM needs a stable picture of the CRTCs, encoders and connectors, whic=
-h<br>
-&gt; should _never_ change during the lifetime of the DRM device.=C2=A0 Dev=
-ices<br>
-&gt; attached to connectors can be hotplugged, but that&#39;s about the lim=
-it of<br>
-&gt; hot-plugging in DRM.<br>
-&gt;<br>
-&gt; --<br>
-&gt; FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up<=
-br>
-&gt; according to <a href=3D"http://speedtest.net">speedtest.net</a>.<br>
-&gt; _______________________________________________<br>
-&gt; dri-devel mailing list<br>
-&gt; <a href=3D"mailto:dri-devel@lists.freedesktop.org">dri-devel@lists.fre=
-edesktop.org</a><br>
-&gt; <a href=3D"http://lists.freedesktop.org/mailman/listinfo/dri-devel">ht=
-tp://lists.freedesktop.org/mailman/listinfo/dri-devel</a></p>
-
---001a11c38be840a7290509dfec03--
-
---===============0092008341==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
-
---===============0092008341==--
+Kevin
