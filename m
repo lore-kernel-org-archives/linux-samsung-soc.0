@@ -1,45 +1,33 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [RFC 00/15] Resource tracking/allocation framework
-Date: Wed, 10 Dec 2014 16:16:20 +0000
-Message-ID: <20141210161620.GM11285@n2100.arm.linux.org.uk>
-References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH v4 0/3] Fix Arndale Octa/Peach Pi boot on Audio subsystem clocks
+Date: Wed, 10 Dec 2014 08:17:26 -0800
+Message-ID: <7h4mt3pjhl.fsf@deeprootsystems.com>
+References: <1417777254-26579-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gw-1.arm.linux.org.uk ([78.32.30.217]:49900 "EHLO
-	pandora.arm.linux.org.uk" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751330AbaLJQQh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Dec 2014 11:16:37 -0500
-Content-Disposition: inline
-In-Reply-To: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1417777254-26579-1-git-send-email-k.kozlowski@samsung.com>
+	(Krzysztof Kozlowski's message of "Fri, 05 Dec 2014 12:00:51 +0100")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, boris.brezillon@free-e
 
-On Wed, Dec 10, 2014 at 04:48:18PM +0100, Andrzej Hajda wrote:
-> 3. There are drivers which can work without specific resource, but if
->   the resource becomes available/unavailable it can do some additional stuff.
->   An example of such driver is DRM driver (more precisely drm_connector) -
->   it can start without attached drm_panel, but if the panel becomes available it
->   can react by generating HPD event and start using it.
+Hi Krzysztof,
 
-Bad example, and actually incorrect.  DRM connectors are referenced in
-userspace by an IDR number, which can be re-used in the case of a
-connector appearing, disappearing, and then a different connector
-re-appearing.
+Krzysztof Kozlowski <k.kozlowski@samsung.com> writes:
 
-DRM really is *not* safe to hotplug like this: DRM is more a card-level
-thing, which is why we have the component helpers - which allow us to
-merge several devices into one logical card-like device in a generic
-manner.
+> Changes since v3
+> ================
+> 1. Patch 1/3: Fix issues pointed by Sylwester.
+> 2. Add Javier's tested-by [1]
 
-DRM needs a stable picture of the CRTCs, encoders and connectors, which
-should _never_ change during the lifetime of the DRM device.  Devices
-attached to connectors can be hotplugged, but that's about the limit of
-hot-plugging in DRM.
+I tested this series on top of next-20141210 (exynos_defconfig and
+multi_v7_defconfig) on exynos5800-peach-pi and exynos5420-arndale-octa
+it fixes the boot hangs I was seeing with linux-next on those platforms.
 
--- 
-FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
-according to speedtest.net.
+Feel free to add:
+
+Tested-by: Kevin Hilman <khilman@linaro.org>
+
+Kevin
