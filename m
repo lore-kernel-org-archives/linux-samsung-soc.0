@@ -1,87 +1,75 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH RFT 1/2] drivers: bus: check cci device tree node status
-Date: Wed, 10 Dec 2014 10:46:22 +0530
-Message-ID: <5487D726.6000603@arm.com>
-References: <1417186209-5256-1-git-send-email-a.kesavan@samsung.com>	<CAM4voakjWgnEXoXT1LH2ZFBy=U4vfXFXS1Su8VB7Cd3s3wqmSA@mail.gmail.com>	<5487C897.9050405@arm.com> <CAM4voa=TQeOMTHmM2iBquDRwoEFPAgUFeMwJ73H4qdcSmR1Lug@mail.gmail.com>
+From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V2 1/2] pinctrl: exynos: Add BUS1 pin controller for exynos7
+Date: Wed, 10 Dec 2014 13:51:55 +0530
+Message-ID: <CAFp+6iHKx-donDzM0pBcdEw9RJtMxCSB6GfiMttTvhGVSSaN_A@mail.gmail.com>
+References: <CAFp+6iF-N63YSsdv2a6=MYp_mD=eQY_Oi8=9JVNU5dG0BA7YGQ@mail.gmail.com>
+	<1416834177-11170-1-git-send-email-gautam.vivek@samsung.com>
+	<CA+Ln22GHVinmpJccYYxNjYeApj3miy_zGMnWd8e5AOt0PCjh9g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:34596 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750708AbaLJFQa convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Dec 2014 00:16:30 -0500
-In-Reply-To: <CAM4voa=TQeOMTHmM2iBquDRwoEFPAgUFeMwJ73H4qdcSmR1Lug@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CA+Ln22GHVinmpJccYYxNjYeApj3miy_zGMnWd8e5AOt0PCjh9g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, USB list <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alim Akhtar <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kevin Hilman <khilman@kernel.org>, "nicolas.pitre@linaro.org" <nicolas.pitre@linaro.org>, Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, Punit Agrawal <Punit.Agrawal@arm.com>, Will Deacon <Will.Deacon@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Douglas Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+
+Hi Tomasz,
 
 
-
-On Wednesday 10 December 2014 09:55 AM, Abhilash Kesavan wrote:
-> Hi Sudeep,
+On Mon, Dec 1, 2014 at 9:37 PM, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Hi Vivek,
 >
-> On Wed, Dec 10, 2014 at 9:44 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->> Hi Abhilash,
->>
->> On Wednesday 10 December 2014 09:31 AM, Abhilash Kesavan wrote:
->>>
->>> Hi,
->>>
->>> On Fri, Nov 28, 2014 at 8:20 PM, Abhilash Kesavan <a.kesavan@samsung.com>
->>> wrote:
->>>>
->>>> The arm-cci driver completes the probe sequence even if the cci node is
->>>> marked as disabled. Add a check in the driver to honour the cci status
->>>> in the device tree.
->>>>
->>>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
->>>
->>>
->>> This patch helps disable CCI on the Arndale Octa board thus resolving
->>> some imprecise aborts seen on that board. Kindly review.
->>>
->>> Regards,
->>> Abhilash
->>>>
->>>> ---
->>>>    drivers/bus/arm-cci.c |    3 +++
->>>>    1 file changed, 3 insertions(+)
->>>>
->>>> diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
->>>> index 860da40..0ce5e2d 100644
->>>> --- a/drivers/bus/arm-cci.c
->>>> +++ b/drivers/bus/arm-cci.c
->>>> @@ -1312,6 +1312,9 @@ static int cci_probe(void)
->>>>           if (!np)
->>>>                   return -ENODEV;
->>>>
->>>> +       if (!of_device_is_available(np))
->>>> +               return -ENODEV;
->>>> +
->>
->>
->> IIUC, by this change you are disabling the MCPM boot protocol here.
->> Is there any alternative boot protocol that works on this platform
->> to boot all 8 cores ? Sorry by quick grep couldn't find one, hence
->> so I am asking.
+> Please see my comments below.
 >
-> Thanks for the reply.
-> On disabling MCPM, we will default to platsmp.c/firmware.c which boots
-> 4 cores as per Kevin's comment here[1]. This was the original behavior
-> before MCPM was enabled for all 5420 based SoCs.
+> 2014-11-24 22:02 GMT+09:00 Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>:
+>> USB and Power regulator on Exynos7 require gpios available
+>> in BUS1 pin controller block.
+>> So adding the BUS1 pinctrl support.
+>>
+>> Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>> ---
+>>
+>> This patch was part of series:
+>> "[PATCH 00/11] Exynos7: Adding USB 3.0 support"
+>>  https://lkml.org/lkml/2014/11/21/247
+>>
+>> Changes since V1:
+>>  - Added support for all pin banks which are part of BUS1 pin controller.
+>>
+>>  drivers/pinctrl/samsung/pinctrl-exynos.c |   19 +++++++++++++++++++
+>>  1 file changed, 19 insertions(+)
 >
+> I have missed this with previous patch, but DT bindings documentation
+> should list all aliases for all supported compatible strings, because
+> they are required for correct operation. There is a small section
+> about aliases in [1] already, so please add there information about
+> aliases for Exynos7 pin controllers along with their names, e.g.
+>
+> Aliases for controllers compatible with "samsung,exynos7-pinctrl":
+>  - pinctrl0: pin controller of ALIVE block,
+>  - pinctrl1: pin controller of BUS0 block,
+>  [...]
+>  - pinctrl8: pin controller of BUS1 block.
+>
+> [1] Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+>
+> I guess you can do this in separate patch or respin this one with this added.
 
-Thanks for pointing that out. I assume the firmware can handle the
-alternate boot protocol and no more workarounds are needed especially
-when getting CPUIdle working in this mode.
+Sure, i will add the aliases in a separate patch.
+I missed to update the patch in this cycle :-(
+So we can queue up the reworked version for 3.20.
 
-Anyways the patch makes sense irrespective how it works on exynos, so
-you can add,
 
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 
-Regards,
-Sudeep
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
