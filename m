@@ -1,388 +1,154 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [RFC PATCHv2 1/7] devfreq: event: Add new devfreq_event class to
- provide basic data for devfreq governor
-Date: Wed, 10 Dec 2014 10:37:00 +0100
-Message-ID: <1418204220.16644.14.camel@AMDC1943>
-References: <1418134386-14681-1-git-send-email-cw00.choi@samsung.com>
- <1418134386-14681-2-git-send-email-cw00.choi@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
+ Refactor the driver to use commit-like)
+Date: Wed, 10 Dec 2014 10:42:33 +0100
+Message-ID: <54881589.20105@samsung.com>
+References: <5481D913.9040109@ti.com> <5481D9BF.2090007@ti.com>
+ <20141209165746.GA29935@kahuna>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1418134386-14681-2-git-send-email-cw00.choi@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com, rafael.j.wysocki@intel.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, b.zolnierkie@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-reply-to: <20141209165746.GA29935@kahuna>
+Sender: linux-omap-owner@vger.kernel.org
+To: Nishanth Menon <nm@ti.com>, Kevin Hilman <khilman@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>
+Cc: linux-omap <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next <linux-next@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On wto, 2014-12-09 at 23:13 +0900, Chanwoo Choi wrote:
-> This patch add new devfreq_event class for devfreq_event device which provide
-> raw data (e.g., memory bus utilization/GPU utilization). This raw data from
-> devfreq_event data would be used for the governor of devfreq subsystem.
-> - devfreq_event device : Provide raw data for governor of existing devfreq device
-> - devfreq device       : Monitor device state and change frequency/voltage of device
->                          using the raw data from devfreq_event device
-> 
-> The devfreq subsystem support generic DVFS(Dynamic Voltage/Frequency Scaling)
-> for Non-CPU Devices. The devfreq device would dertermine current device state
-> using various governor (e.g., ondemand, performance, powersave). After completed
-> determination of system state, devfreq device would change the frequency/voltage
-> of devfreq device according to the result of governor.
-> 
-> But, devfreq governor must need basic data which indicates current device state.
-> Existing devfreq subsystem only consider devfreq device which check current system
-> state and determine proper system state using basic data. There is no subsystem
-> for device providing basic data to devfreq device.
-> 
-> The devfreq subsystem must need devfreq_event device(data-provider device) for
-> existing devfreq device. So, this patch add new devfreq_event class for
-> devfreq_event device which read various basic data(e.g, memory bus utilization,
-> GPU utilization) and provide measured data to existing devfreq device through
-> standard APIs of devfreq_event class.
-> 
-> The following description explains the feature of two kind of devfreq class:
-> - devfreq class (existing)
->  : devfreq consumer device use raw data from devfreq_event device for
->    determining proper current system state and change voltage/frequency
->    dynamically using various governors.
-> 
-> - devfreq_event class (new)
->  : Provide measured raw data to devfreq device for governor
-> 
-> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Cc: Kyungmin Park <kyungmin.park@samsung.com>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  drivers/devfreq/Kconfig         |   2 +
->  drivers/devfreq/Makefile        |   5 +-
->  drivers/devfreq/devfreq-event.c | 302 ++++++++++++++++++++++++++++++++++++++++
->  drivers/devfreq/event/Makefile  |   1 +
->  include/linux/devfreq.h         | 141 +++++++++++++++++++
->  5 files changed, 450 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/devfreq/devfreq-event.c
->  create mode 100644 drivers/devfreq/event/Makefile
-> 
-> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-> index faf4e70..4d15b62 100644
-> --- a/drivers/devfreq/Kconfig
-> +++ b/drivers/devfreq/Kconfig
-> @@ -87,4 +87,6 @@ config ARM_EXYNOS5_BUS_DEVFREQ
->  	  It reads PPMU counters of memory controllers and adjusts the
->  	  operating frequencies and voltages with OPP support.
->  
-> +comment "DEVFREQ Event Drivers"
+Hello,
+
+On 2014-12-09 17:57, Nishanth Menon wrote:
+> On 10:13-20141205, Nishanth Menon wrote:
+>> On 12/05/2014 10:10 AM, Nishanth Menon wrote:
+>>> next-20141204 fails to boot, but next-20141203 boots fine with
+>>> omap2plus_defconfig.
+>>>
+>>> Panda-ES(4460):
+>>> https://github.com/nmenon/kernel-test-logs/blob/next-20141204/omap2plus_defconfig/pandaboard-es.txt
+>>> Panda(4430):
+>>> https://github.com/nmenon/kernel-test-logs/blob/next-20141204/omap2plus_defconfig/pandaboard-vanilla.txt
+>>>
+>>> at the point of hang (JTAG):
+>>>   pandaboard-es:
+>>> 	cpu0: http://slexy.org/view/s2eIFqkRd5
+>>> 	cpu1: http://slexy.org/view/s2Tysb6gpL
+>>>
+>>> Case #1:
+>>> Disabling CPUIDLE allows boot to proceed. there does not seem to have
+>>> been any change in drivers/cpuidle and arch/arm/mach-omap2 w.r.t this.
+>>>
+>>> Case #2: Reverting the following allows boot.
+>>>
+>>>  From next-20141204
+>>> 10df7d5 ARM: 8211/1: l2c: Add support for overriding prefetch settings
+>>> revert this  -> boot still fails
+>>>
+>>> d42ced0 ARM: 8210/1: l2c: Get outer cache .write_sec callback from
+>>> mach_desc only if not NULL
+>>> revert this  -> boot still fails
+>>>
+>>> 46b9af8 ARM: 8209/1: l2c: Add interface to ask hypervisor to configure L2C
+>>> revert this  -> boot still fails
+>>>
+>>> c94e325 ARM: 8208/1: l2c: Refactor the driver to use commit-like
+>>> revert this  -> boot passed (first bad commit).
+>>>
+>>>
+>> + linux-samsung soc and updated Thomaz's mail ID (gmail now).
+> Spend a few mins trying to track this down and it does look like commit
+> c94e325 does a kmemdup for the data as part of l2x0_of_init->__l2c_init
+>
+> This fails since the invocation is in early_init. doing it a bit later
+> as the following hack makes it work
+> diff --git a/arch/arm/mach-omap2/board-generic.c b/arch/arm/mach-omap2/board-generic.c
+> index 608079a..0bc6bd9 100644
+> --- a/arch/arm/mach-omap2/board-generic.c
+> +++ b/arch/arm/mach-omap2/board-generic.c
+> @@ -170,12 +170,19 @@ static const char *const omap4_boards_compat[] __initconst = {
+>   	NULL,
+>   };
+>   
 > +
->  endif # PM_DEVFREQ
-> diff --git a/drivers/devfreq/Makefile b/drivers/devfreq/Makefile
-> index 16138c9..a1ffabe 100644
-> --- a/drivers/devfreq/Makefile
-> +++ b/drivers/devfreq/Makefile
-> @@ -1,4 +1,4 @@
-> -obj-$(CONFIG_PM_DEVFREQ)	+= devfreq.o
-> +obj-$(CONFIG_PM_DEVFREQ)		+= devfreq.o devfreq-event.o
->  obj-$(CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND)	+= governor_simpleondemand.o
->  obj-$(CONFIG_DEVFREQ_GOV_PERFORMANCE)	+= governor_performance.o
->  obj-$(CONFIG_DEVFREQ_GOV_POWERSAVE)	+= governor_powersave.o
-> @@ -7,3 +7,6 @@ obj-$(CONFIG_DEVFREQ_GOV_USERSPACE)	+= governor_userspace.o
->  # DEVFREQ Drivers
->  obj-$(CONFIG_ARM_EXYNOS4_BUS_DEVFREQ)	+= exynos/
->  obj-$(CONFIG_ARM_EXYNOS5_BUS_DEVFREQ)	+= exynos/
-> +
-> +# DEVFREQ Event Drivers
-> +obj-$(CONFIG_PM_DEVFREQ)		+= event/
-> diff --git a/drivers/devfreq/devfreq-event.c b/drivers/devfreq/devfreq-event.c
-> new file mode 100644
-> index 0000000..b47329f
-> --- /dev/null
-> +++ b/drivers/devfreq/devfreq-event.c
-> @@ -0,0 +1,302 @@
-> +/*
-> + * devfreq-event: Generic DEVFREQ Event class driver
-> + *
-> + * Copyright (C) 2014 Samsung Electronics
-> + * Chanwoo Choi <cw00.choi@samsung.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This driver is based on drivers/devfreq/devfreq.c
-> + */
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/sched.h>
-> +#include <linux/errno.h>
-> +#include <linux/err.h>
-> +#include <linux/init.h>
-> +#include <linux/module.h>
-> +#include <linux/slab.h>
-> +#include <linux/stat.h>
-> +#include <linux/pm_opp.h>
-> +#include <linux/devfreq.h>
-> +#include <linux/workqueue.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/list.h>
-> +#include <linux/printk.h>
-> +#include <linux/hrtimer.h>
-> +#include <linux/of.h>
-> +#include "governor.h"
-> +
-> +static struct class *devfreq_event_class;
-> +
-> +/* The list of all devfreq event list */
-> +static LIST_HEAD(devfreq_event_list);
-> +static DEFINE_MUTEX(devfreq_event_list_lock);
-> +
-> +#define to_devfreq_event(DEV) container_of(DEV, struct devfreq_event_dev, dev)
-> +
-> +struct devfreq_event_dev *devfreq_add_event_device(struct device *dev,
-> +					struct devfreq_event_desc *desc)
+> +static void tmp_init_irq(void)
 > +{
-> +	struct devfreq_event_dev *event_dev;
-> +	static atomic_t event_no = ATOMIC_INIT(0);
-> +	int ret;
+> +	omap_l2_cache_init();
+> +	omap_gic_of_init();
+> +}
 > +
-> +	if (!dev || !desc)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	if (!desc->name || !desc->ops)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	event_dev = kzalloc(sizeof(struct devfreq_event_dev), GFP_KERNEL);
-> +	if (!event_dev)
-> +		return ERR_PTR(-ENOMEM);
+>   DT_MACHINE_START(OMAP4_DT, "Generic OMAP4 (Flattened Device Tree)")
+>   	.reserve	= omap_reserve,
+>   	.smp		= smp_ops(omap4_smp_ops),
+>   	.map_io		= omap4_map_io,
+>   	.init_early	= omap4430_init_early,
+> -	.init_irq	= omap_gic_of_init,
+> +	.init_irq	= tmp_init_irq,
+>   	.init_machine	= omap_generic_init,
+>   	.init_late	= omap4430_init_late,
+>   	.init_time	= omap4_local_timer_init,
+> diff --git a/arch/arm/mach-omap2/io.c b/arch/arm/mach-omap2/io.c
+> index 03cbb16..f97847d 100644
+> --- a/arch/arm/mach-omap2/io.c
+> +++ b/arch/arm/mach-omap2/io.c
+> @@ -627,7 +627,6 @@ void __init omap4430_init_early(void)
+>   	omap44xx_clockdomains_init();
+>   	omap44xx_hwmod_init();
+>   	omap_hwmod_init_postsetup();
+> -	omap_l2_cache_init();
+>   	omap_clk_soc_init = omap4xxx_dt_clk_init;
+>   }
+>   
 
-Is this memory freed anywhere when driver is removed? I couldn't find
-it. I couldn't also find function like devfreq_remove_event_device()
-which would be reverting all the work done when adding.
+Please note that am43xx_init_early() also calls omap_l2_cache_init(),
+so similar fix is needed for "Generic AM43 (Flattened Device Tree)"
+machines.
 
-> +
-> +	mutex_lock(&devfreq_event_list_lock);
-> +
-> +	mutex_init(&event_dev->lock);
-> +	event_dev->desc = desc;
-> +	event_dev->dev.parent = dev;
-> +	event_dev->dev.class = devfreq_event_class;
-> +
-> +	dev_set_name(&event_dev->dev, "event.%d",
-> +		     atomic_inc_return(&event_no) - 1);
-> +	ret = device_register(&event_dev->dev);
-> +	if (ret != 0) {
-> +		put_device(&event_dev->dev);
-> +		goto err;
+I've briefly looked how the initialization is done on various omap
+platforms, but I don't see the good generic place for omap_l2_cache_init().
+IMHO the best solution will be to completely switch to generic/common l2c
+initialization and provide ".l2c_aux_val" and ".l2c_aux_mask" in machine
+descriptor. For the time being something like proposed above can be used.
+
+I assume that now it won't be possible to get l2c patches back to -next,
+so I will resend them (again...) with the omap related fix.
+
+> diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
+> index e5948c5..0ca90db 100644
+> --- a/arch/arm/mm/cache-l2x0.c
+> +++ b/arch/arm/mm/cache-l2x0.c
+> @@ -848,8 +848,11 @@ static int __init __l2c_init(const struct l2c_init_data *data,
+>   	 * context from callers can access the structure.
+>   	 */
+>   	l2x0_data = kmemdup(data, sizeof(*data), GFP_KERNEL);
+> -	if (!l2x0_data)
+> +	if (!l2x0_data) {
+> +		pr_err("%s no mem %d\n", __func__, sizeof(*data));
+> +		dump_stack();
+>   		return -ENOMEM;
 > +	}
-> +	dev_set_drvdata(&event_dev->dev, event_dev);
-> +
-> +	/* Add devfreq event device to devfreq_event_list */
-> +	INIT_LIST_HEAD(&event_dev->node);
-> +	list_add(&event_dev->node, &devfreq_event_list);
-> +
-> +	mutex_unlock(&devfreq_event_list_lock);
-> +
-> +	return event_dev;
-> +err:
+>   
+>   	/*
+>   	 * Sanity check the aux values.  aux_mask is the bits we preserve
+> @@ -1647,6 +1650,7 @@ int __init l2x0_of_init(u32 aux_val, u32 aux_mask)
+>   	struct device_node *np;
+>   	struct resource res;
+>   	u32 cache_id, old_aux;
+> +	int r;
+>   
+>   	np = of_find_matching_node(NULL, l2x0_ids);
+>   	if (!np)
+> @@ -1693,6 +1697,8 @@ int __init l2x0_of_init(u32 aux_val, u32 aux_mask)
+>   	else
+>   		cache_id = readl_relaxed(l2x0_base + L2X0_CACHE_ID);
+>   
+> -	return __l2c_init(data, aux_val, aux_mask, cache_id);
+> +	r = __l2c_init(data, aux_val, aux_mask, cache_id);
+> +	pr_err("%s: %d\n", __func__, r);
+> +	return r;
+>   }
+>
 
-Missing 'mutex_unlock(&devfreq_event_list_lock)' here.
-
-
-> +	kfree(event_dev);
-> +	return ERR_PTR(ret);
-> +}
-> +EXPORT_SYMBOL(devfreq_add_event_device);
-> +
-> +struct devfreq_event_dev *devfreq_get_event_dev(const char *event_dev_name)
-> +{
-> +	struct devfreq_event_dev *event_dev;
-> +
-> +	mutex_lock(&devfreq_event_list_lock);
-> +	list_for_each_entry(event_dev, &devfreq_event_list, node) {
-> +		if (!strcmp(event_dev->desc->name, event_dev_name))
-> +			goto out;
-> +	}
-> +	event_dev = NULL;
-> +out:
-> +	mutex_unlock(&devfreq_event_list_lock);
-> +
-> +	return event_dev;
-> +}
-> +EXPORT_SYMBOL_GPL(devfreq_get_event_dev);
-> +
-> +struct devfreq_event_dev *devfreq_get_event_dev_by_phandle(struct device *dev,
-> +						      int index)
-> +{
-> +	struct device_node *node;
-> +	struct devfreq_event_dev *event_dev;
-> +
-> +	if (!dev->of_node) {
-> +		dev_err(dev, "device does not have a device node entry\n");
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	node = of_parse_phandle(dev->of_node, "devfreq-events", index);
-> +	if (!node) {
-> +		dev_err(dev, "failed to get phandle in %s node\n",
-> +			dev->of_node->full_name);
-> +		return ERR_PTR(-ENODEV);
-> +	}
-> +
-> +	event_dev = devfreq_get_event_dev(node->name);
-> +	if (!event_dev) {
-> +		dev_err(dev, "unable to get devfreq-event device : %s\n",
-> +			node->name);
-
-of_node_put() for node obtained with of_parse_phandle().
-
-> +		return ERR_PTR(-ENODEV);
-> +	}
-> +
-> +	return event_dev;
-> +}
-> +EXPORT_SYMBOL_GPL(devfreq_get_event_dev_by_phandle);
-> +
-> +int devfreq_put_event_dev(struct devfreq_event_dev *event_dev)
-> +{
-
-of_node_put() here to decrement refcnt from of_parse_phandle()?
-
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(devfreq_put_event_dev);
-> +
-> +int devfreq_enable_event_dev(struct devfreq_event_dev *event_dev)
-> +{
-> +	int ret = 0;
-> +
-> +	if (!event_dev || !event_dev->desc)
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&event_dev->lock);
-> +	if (event_dev->desc->ops && event_dev->desc->ops->enable) {
-> +		ret = event_dev->desc->ops->enable(event_dev);
-> +		if (ret < 0)
-> +			goto err;
-> +	}
-> +	event_dev->enable_count++;
-> +err:
-> +	mutex_unlock(&event_dev->lock);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(devfreq_enable_event_dev);
-> +
-> +int devfreq_disable_event_dev(struct devfreq_event_dev *event_dev)
-> +{
-> +	int ret = 0;
-> +
-> +	if (!event_dev || !event_dev->desc)
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&event_dev->lock);
-> +	if (event_dev->enable_count > 0) {
-> +		event_dev->enable_count--;
-> +	} else {
-> +		dev_warn(&event_dev->dev, "unbalanced enable_count\n");
-> +		ret = -EINVAL;
-> +		goto err;
-> +	}
-> +
-> +	if (event_dev->desc->ops && event_dev->desc->ops->disable) {
-> +		ret = event_dev->desc->ops->disable(event_dev);
-> +		if (ret < 0) {
-> +			event_dev->enable_count++;
-> +			goto err;
-> +		}
-> +	}
-> +err:
-> +	mutex_unlock(&event_dev->lock);
-> +
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(devfreq_disable_event_dev);
-> +
-> +bool devfreq_is_enabled_event_dev(struct devfreq_event_dev *event_dev)
-> +{
-> +	bool enabled = false;
-> +
-> +	if (!event_dev || !event_dev->desc)
-> +		return enabled;
-> +
-> +	if (!(event_dev->enable_count > 0))
-> +		return enabled;
-> +
-> +	if (event_dev->desc->ops && event_dev->desc->ops->is_enabled)
-> +		enabled = event_dev->desc->ops->is_enabled(event_dev);
-> +
-> +	return enabled;
-> +}
-> +EXPORT_SYMBOL_GPL(devfreq_is_enabled_event_dev);
-> +
-> +int devfreq_set_event_event_dev(struct devfreq_event_dev *event_dev)
-
-The convention of names you use is not obvious to me. I would expect
-rather devfreq_event_dev_XXX (where XXX is "set_event", "is_enabled"
-etc).
-The one above is good example what is the issue with current convention:
-devfreq_set_event_event_dev
-            ^     ^
-This double "event" looks weird.
-
-> +{
-> +	if (!event_dev || !event_dev->desc)
-> +		return -EINVAL;
-> +
-> +	if (!devfreq_is_enabled_event_dev(event_dev))
-> +		return -EPERM;
-> +
-> +	if (event_dev->desc->ops && event_dev->desc->ops->set_event)
-> +		return event_dev->desc->ops->set_event(event_dev);
-
-No mutexes here? What exactly is protected by mutex?
-
-> +
-> +	return -EINVAL;
-> +}
-> +EXPORT_SYMBOL_GPL(devfreq_set_event_event_dev);
-> +
-> +int devfreq_get_event_event_dev(struct devfreq_event_dev *event_dev,
-> +				int *total_event)
-> +{
-> +	if (!event_dev || !event_dev->desc)
-> +		return -EINVAL;
-> +
-> +	if (!devfreq_is_enabled_event_dev(event_dev))
-> +		return -EPERM;
-> +
-> +	if (event_dev->desc->ops && event_dev->desc->ops->get_event)
-> +		return event_dev->desc->ops->get_event(event_dev, total_event);
-> +
-> +	return -EINVAL;
-> +}
-> +EXPORT_SYMBOL_GPL(devfreq_get_event_event_dev);
-> +
-> +int devfreq_reset_event_dev(struct devfreq_event_dev *event_dev)
-> +{
-> +	if (!event_dev || !event_dev->desc)
-> +		return -EINVAL;
-> +
-> +	if (!devfreq_is_enabled_event_dev(event_dev))
-> +		return -EPERM;
-> +
-> +	if (event_dev->desc->ops && event_dev->desc->ops->reset)
-> +		return event_dev->desc->ops->reset(event_dev);
-
-Same here, no mutex?
-> +
-> +	return -EINVAL;
-> +}
-> +EXPORT_SYMBOL_GPL(devfreq_reset_event_dev);
-> +
-> +void *event_dev_get_drvdata(struct devfreq_event_dev *event_dev)
-> +{
-> +	return event_dev->desc->driver_data;
-> +}
-> +EXPORT_SYMBOL_GPL(event_dev_get_drvdata);
-
-Best regards,
-Krzysztof
-
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
