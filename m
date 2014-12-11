@@ -1,141 +1,79 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH/RFC 14/14] ARM: dts: Switch Odroid X2/U2 to simple-audio-card
-Date: Thu, 11 Dec 2014 18:45:52 +0100
-Message-ID: <1418319952-10163-15-git-send-email-s.nawrocki@samsung.com>
-References: <1418319952-10163-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:24397 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932412AbaLKRrJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Dec 2014 12:47:09 -0500
-In-reply-to: <1418319952-10163-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mike Turquette <mturquette@linaro.org>
+Subject: Re: [GIT PULL] samsung clk cleanups and fixes for v3.19
+Date: Thu, 11 Dec 2014 12:17:57 -0800
+Message-ID: <20141211201757.20398.64771@quantum>
+References: <54819F54.1060705@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <54819F54.1060705@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
-Cc: broonie@kernel.org, padma.v@samsung.com, drake@endlessm.com, sbkim73@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, devicetree@vger.kernel.org
 
-Now when the CDCLK I2S output clock can be handled through the clock
-API the Odroid X2/U3 can be switched to the simple-audio-card DT binding.
+Quoting Sylwester Nawrocki (2014-12-05 04:04:36)
+> 
+> Hi Mike,
+> 
+> This includes a few bug fix and cleanup patches for clk/samsung.
+> Please pull for 3.19 if it looks OK.
+> 
+> The following changes since commit 2e41b9fc11f2d242f39b36ceba833471629ba3d5:
+> 
+>   clk: samsung: Spelling s/bwtween/between/ (2014-12-02 12:28:20 +0100)
+> 
+> are available in the git repository at:
+> 
+>   git://linuxtv.org/snawrocki/samsung.git tags/for-v3.19-exynos-clk-2
+> 
+> for you to fetch changes up to c31844ffdbd4e73a16c66e9d7df8ec290ab4b159:
+> 
+>   clk: samsung: Fix double add of syscore ops after driver rebind (2014-12-02
+> 16:22:59 +0100)
 
-Cc: devicetree@vger.kernel.org
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- arch/arm/boot/dts/exynos4.dtsi                  |    3 +++
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   19 ++++++++++++++++---
- arch/arm/boot/dts/exynos4412-odroidu3.dts       |    8 +++++---
- arch/arm/boot/dts/exynos4412-odroidx2.dts       |    8 ++++++--
- 4 files changed, 30 insertions(+), 8 deletions(-)
+Pulled.
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index e1ce457..5f9e72f 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -66,6 +66,7 @@
- 		dmas = <&pdma0 12>, <&pdma0 11>, <&pdma0 10>;
- 		dma-names = "tx", "rx", "tx-sec";
- 		samsung,idma-addr = <0x03000000>;
-+		#sound-dai-cells = <1>;
- 		status = "disabled";
- 	};
+Regards,
+Mike
 
-@@ -378,6 +379,7 @@
- 		clock-output-names = "i2s_cdclk1";
- 		dmas = <&pdma1 12>, <&pdma1 11>;
- 		dma-names = "tx", "rx";
-+		#sound-dai-cells = <1>;
- 		status = "disabled";
- 	};
-
-@@ -390,6 +392,7 @@
- 		clock-output-names = "i2s_cdclk2";
- 		dmas = <&pdma0 14>, <&pdma0 13>;
- 		dma-names = "tx", "rx";
-+		#sound-dai-cells = <1>;
- 		status = "disabled";
- 	};
-
-diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index 956737e..89fed7a 100644
---- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-+++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -43,9 +43,7 @@
- 	};
-
- 	sound: sound {
--		compatible = "samsung,odroidx2-audio";
--		samsung,i2s-controller = <&i2s0>;
--		samsung,audio-codec = <&max98090>;
-+		compatible = "simple-audio-card";
- 		assigned-clocks = <&clock_audss EXYNOS_MOUT_AUDSS>,
- 				<&clock_audss EXYNOS_MOUT_I2S>,
- 				<&clock_audss EXYNOS_DOUT_SRP>,
-@@ -56,6 +54,20 @@
- 				<0>,
- 				<192000000>,
- 				<19200000>;
-+
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,bitclock-master = <&link0_codec>;
-+		simple-audio-card,frame-master = <&link0_codec>;
-+
-+		simple-audio-card,cpu {
-+			sound-dai = <&i2s0 0>;
-+			system-clock-frequency = <19200000>;
-+		};
-+
-+		link0_codec: simple-audio-card,codec {
-+			sound-dai = <&max98090>;
-+			clocks = <&i2s0 0>;
-+		};
- 	};
-
- 	mmc@12550000 {
-@@ -360,6 +372,7 @@
- 			interrupts = <0 0>;
- 			clocks = <&i2s0 0>;
- 			clock-names = "mclk";
-+			#sound-dai-cells = <0>;
- 		};
- 	};
-
-diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-index c8a64be..44684e5 100644
---- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-@@ -49,9 +49,11 @@
- };
-
- &sound {
--	compatible = "samsung,odroidu3-audio";
--	samsung,model = "Odroid-U3";
--	samsung,audio-routing =
-+	simple-audio-card,name = "Odroid-U3";
-+	simple-audio-card,widgets =
-+		"Headphone", "Headphone Jack",
-+		"Speakers", "Speakers";
-+	simple-audio-card,routing =
- 		"Headphone Jack", "HPL",
- 		"Headphone Jack", "HPR",
- 		"Headphone Jack", "MICBIAS",
-diff --git a/arch/arm/boot/dts/exynos4412-odroidx2.dts b/arch/arm/boot/dts/exynos4412-odroidx2.dts
-index 96b43f4..6e33678 100644
---- a/arch/arm/boot/dts/exynos4412-odroidx2.dts
-+++ b/arch/arm/boot/dts/exynos4412-odroidx2.dts
-@@ -23,8 +23,12 @@
- };
-
- &sound {
--	samsung,model = "Odroid-X2";
--	samsung,audio-routing =
-+	simple-audio-card,name = "Odroid-X2";
-+	simple-audio-card,widgets =
-+		"Headphone", "Headphone Jack",
-+		"Microphone", "Mic Jack",
-+		"Microphone", "DMIC";
-+	simple-audio-card,routing =
- 		"Headphone Jack", "HPL",
- 		"Headphone Jack", "HPR",
- 		"IN1", "Mic Jack",
---
-1.7.9.5
+> 
+> ----------------------------------------------------------------
+> - exynos4415 and exynos audio subsystem clk driver (build
+>   with PM_SLEEP disabled, resource release) fixes
+> - minor cleanups in drivers/clk/samsung/clk.c (spelling,
+>   includes)
+> - modification of the exynos4 HDMI PHY clock definition to
+>   model dependency of "sclk_hdmiphy" on the "hdmi" clock
+> 
+> ----------------------------------------------------------------
+> Andrzej Hajda (1):
+>       clk: samsung: exynos4: set parent of sclk_hdmiphy to hdmi
+> 
+> Krzysztof Kozlowski (2):
+>       clk: samsung: exynos4415: Fix build with PM_SLEEP disabled
+>       clk: samsung: Fix double add of syscore ops after driver rebind
+> 
+> Pankaj Dubey (2):
+>       clk: samsung: remove unnecessary CONFIG_OF from clk.c
+>       clk: samsung: remove unnecessary inclusion of header files from clk.h
+> 
+>  drivers/clk/samsung/clk-exynos-audss.c |    4 ++++
+>  drivers/clk/samsung/clk-exynos4.c      |    2 +-
+>  drivers/clk/samsung/clk-exynos4415.c   |    6 ++++--
+>  drivers/clk/samsung/clk.c              |    4 ++--
+>  drivers/clk/samsung/clk.h              |    4 ----
+>  5 files changed, 11 insertions(+), 9 deletions(-)
+> 
+> --
+> Thanks,
+> Sylwester
