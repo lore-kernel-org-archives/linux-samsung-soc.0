@@ -1,111 +1,60 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH 3/4] arm: dts: exynos5250: Use regulator for USB 2.0 VBUS supply
-Date: Thu, 11 Dec 2014 17:32:46 +0530
-Message-ID: <1418299367-2412-4-git-send-email-gautam.vivek@samsung.com>
+From: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 4/4] arm: dts: exynos5250: Remove vbus gpio property from usb
+ 2.0 host
+Date: Thu, 11 Dec 2014 17:32:47 +0530
+Message-ID: <1418299367-2412-5-git-send-email-gautam.vivek@samsung.com>
 References: <1418299367-2412-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:42613 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751985AbaLKMMq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Dec 2014 07:12:46 -0500
-In-reply-to: <1418299367-2412-1-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1418299367-2412-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-Cc: robh+dt@kernel.org, kishon@ti.com, k.debski@samsung.com, kgene@kernel.org, jg1.han@samsung.com, Vivek Gautam <gautam.vivek@samsung.com>
 
-Start using VBUS regulator for USB 2.0 phy, so that we can
-remove the gpio property from host's node later.
+Now that we can use the VBUS regulator for USB 2.0 phy, we can
+remove the vbus-gpio property from usb 2.0 host to avoid
+duplicate gpio settings.
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- arch/arm/boot/dts/exynos5250-smdk5250.dts |   22 ++++++++++++++++++++++
- arch/arm/boot/dts/exynos5250-snow.dts     |   22 ++++++++++++++++++++++
- 2 files changed, 44 insertions(+)
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |    4 ----
+ arch/arm/boot/dts/exynos5250-snow.dts     |    4 ----
+ 2 files changed, 8 deletions(-)
 
 diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index a759100..85e74df 100644
+index 85e74df..281b962 100644
 --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
 +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -361,6 +361,17 @@
- 		samsung,audio-codec = <&wm8994>;
+@@ -372,10 +372,6 @@
+ 		enable-active-high;
  	};
  
-+	usb2_vbus_reg: regulator-usb2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "P5.0V_USB2";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gpx2 6 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usb2_vbus_en>;
-+		enable-active-high;
-+	};
-+
- 	usb@12110000 {
- 		samsung,vbus-gpio = <&gpx2 6 0>;
- 	};
-@@ -418,4 +429,15 @@
- 		samsung,pin-pud = <0>;
- 		samsung,pin-drv = <0>;
- 	};
-+
-+	usb2_vbus_en: usb2-vbus-en {
-+		samsung,pins = "gpx2-6";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
-+
-+&usb2_phy_gen {
-+	vbus-supply = <&usb2_vbus_reg>;
- };
+-	usb@12110000 {
+-		samsung,vbus-gpio = <&gpx2 6 0>;
+-	};
+-
+ 	dp-controller@145B0000 {
+ 		samsung,color-space = <0>;
+ 		samsung,dynamic-range = <0>;
 diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index 60429ad..8085750 100644
+index 8085750..ee966c3 100644
 --- a/arch/arm/boot/dts/exynos5250-snow.dts
 +++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -285,6 +285,17 @@
- 		vbus-supply = <&usb3_vbus_reg>;
+@@ -296,10 +296,6 @@
+ 		enable-active-high;
  	};
  
-+	usb2_vbus_reg: regulator-usb2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "P5.0V_USB2";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		gpio = <&gpx1 1 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usb2_vbus_en>;
-+		enable-active-high;
-+	};
-+
- 	usb@12110000 {
- 		samsung,vbus-gpio = <&gpx1 1 0>;
- 	};
-@@ -616,6 +627,13 @@
- 		samsung,pin-pud = <0>;
- 		samsung,pin-drv = <0>;
- 	};
-+
-+	usb2_vbus_en: usb2-vbus-en {
-+		samsung,pins = "gpx1-1";
-+		samsung,pin-function = <1>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
- };
- 
- &spi_1 {
-@@ -628,4 +646,8 @@
- 	dr_mode = "host";
- };
- 
-+&usb2_phy_gen {
-+	vbus-supply = <&usb2_vbus_reg>;
-+};
-+
- #include "cros-ec-keyboard.dtsi"
+-	usb@12110000 {
+-		samsung,vbus-gpio = <&gpx1 1 0>;
+-	};
+-
+ 	fixed-rate-clocks {
+ 		xxti {
+ 			compatible = "samsung,clock-xxti";
 -- 
 1.7.10.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
