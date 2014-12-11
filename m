@@ -1,113 +1,97 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH/RFC 06/14] ASoC: samsung: i2s: Move clk enable to the platform
+Subject: [PATCH/RFC 05/14] ASoC: samsung: i2s: Move clk_get() to platform
  driver probe()
-Date: Thu, 11 Dec 2014 18:45:44 +0100
-Message-ID: <1418319952-10163-7-git-send-email-s.nawrocki@samsung.com>
+Date: Thu, 11 Dec 2014 18:45:43 +0100
+Message-ID: <1418319952-10163-6-git-send-email-s.nawrocki@samsung.com>
 References: <1418319952-10163-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:24379 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:24375 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932412AbaLKRql (ORCPT
+	with ESMTP id S932412AbaLKRqi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Dec 2014 12:46:41 -0500
+	Thu, 11 Dec 2014 12:46:38 -0500
 Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NGF00GCPIPSI090@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 12 Dec 2014 02:46:40 +0900 (KST)
+ 17 2011)) with ESMTP id <0NGF00FSEIPP8790@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 12 Dec 2014 02:46:37 +0900 (KST)
 In-reply-to: <1418319952-10163-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
 Cc: broonie@kernel.org, padma.v@samsung.com, drake@endlessm.com, sbkim73@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Gating the I2S bus clock in the driver's runtime PM callbacks has
-currently really no effect since the clock is being enabled
-in the DAI's probe() and thus is permanently turned on. Now we just
-move the enable to the platform driver's probe(), which doesn't
-change the situation much. It will allow us to register later on
-a clock provider already in samsung_i2s_probe().
+Acquire the I2S interface clock in driver probe() callback
+as it's a per-device not a per-DAI clock. While at it switch
+to the resource managed clk_get().
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/i2s.c |   25 +++++++++++--------------
- 1 file changed, 11 insertions(+), 14 deletions(-)
+ sound/soc/samsung/i2s.c |   19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
 
 diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 56fe01d..871925b 100644
+index 5d8aebd..56fe01d 100644
 --- a/sound/soc/samsung/i2s.c
 +++ b/sound/soc/samsung/i2s.c
-@@ -969,7 +969,6 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
- {
- 	struct i2s_dai *i2s = to_info(dai);
+@@ -971,18 +971,12 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
  	struct i2s_dai *other = i2s->pri_dai ? : i2s->sec_dai;
--	int ret;
+ 	int ret;
  
- 	if (is_secondary(i2s)) { /* If this is probe on the secondary DAI */
+-	if (other && other->clk) { /* If this is probe on secondary */
++	if (is_secondary(i2s)) { /* If this is probe on the secondary DAI */
  		samsung_asoc_init_dma_data(dai, &other->sec_dai->dma_playback,
-@@ -977,12 +976,6 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
+ 					   NULL);
  		goto probe_exit;
  	}
  
--	ret = clk_prepare_enable(i2s->clk);
--	if (ret != 0) {
--		dev_err(&i2s->pdev->dev, "failed to enable clock: %d\n", ret);
--		return ret;
+-	i2s->clk = clk_get(&i2s->pdev->dev, "iis");
+-	if (IS_ERR(i2s->clk)) {
+-		dev_err(&i2s->pdev->dev, "failed to get i2s_clock\n");
+-		return PTR_ERR(i2s->clk);
 -	}
 -
+ 	ret = clk_prepare_enable(i2s->clk);
+ 	if (ret != 0) {
+ 		dev_err(&i2s->pdev->dev, "failed to enable clock: %d\n", ret);
+@@ -991,10 +985,6 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
+ 
  	samsung_asoc_init_dma_data(dai, &i2s->dma_playback, &i2s->dma_capture);
  
+-	if (other) {
+-		other->clk = i2s->clk;
+-	}
+-
  	if (i2s->quirks & QUIRK_NEED_RSTCLR)
-@@ -1014,18 +1007,12 @@ probe_exit:
- static int samsung_i2s_dai_remove(struct snd_soc_dai *dai)
- {
- 	struct i2s_dai *i2s = snd_soc_dai_get_drvdata(dai);
--	struct i2s_dai *other = i2s->pri_dai ? : i2s->sec_dai;
--
--	if (!other || !other->clk) {
+ 		writel(CON_RSTCLR, i2s->addr + I2SCON);
  
-+	if (!is_secondary(i2s)) {
- 		if (i2s->quirks & QUIRK_NEED_RSTCLR)
+@@ -1032,7 +1022,6 @@ static int samsung_i2s_dai_remove(struct snd_soc_dai *dai)
  			writel(0, i2s->addr + I2SCON);
--
--		clk_disable_unprepare(i2s->clk);
+ 
+ 		clk_disable_unprepare(i2s->clk);
+-		clk_put(i2s->clk);
  	}
  
--	i2s->clk = NULL;
--
- 	return 0;
- }
+ 	i2s->clk = NULL;
+@@ -1222,6 +1211,11 @@ static int samsung_i2s_probe(struct platform_device *pdev)
  
-@@ -1139,6 +1126,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 	u32 regs_base, quirks = 0, idma_addr = 0;
- 	struct device_node *np = pdev->dev.of_node;
- 	const struct samsung_i2s_dai_data *i2s_dai_data;
-+	int ret;
+ 	regs_base = res->start;
  
- 	/* Call during Seconday interface registration */
- 	i2s_dai_data = samsung_i2s_get_driver_data(pdev);
-@@ -1216,6 +1204,12 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "Failed to get iis clock\n");
- 		return PTR_ERR(pri_dai->clk);
- 	}
-+
-+	ret = clk_prepare_enable(pri_dai->clk);
-+	if (ret != 0) {
-+		dev_err(&pdev->dev, "failed to enable clock: %d\n", ret);
-+		return ret;
++	pri_dai->clk = devm_clk_get(&pdev->dev, "iis");
++	if (IS_ERR(pri_dai->clk)) {
++		dev_err(&pdev->dev, "Failed to get iis clock\n");
++		return PTR_ERR(pri_dai->clk);
 +	}
  	pri_dai->dma_playback.dma_addr = regs_base + I2STXD;
  	pri_dai->dma_capture.dma_addr = regs_base + I2SRXD;
  	pri_dai->dma_playback.ch_name = "tx";
-@@ -1286,6 +1280,9 @@ static int samsung_i2s_remove(struct platform_device *pdev)
- 		pm_runtime_disable(&pdev->dev);
- 	}
+@@ -1253,6 +1247,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
  
-+	if (!is_secondary(i2s))
-+		clk_disable_unprepare(i2s->clk);
-+
- 	i2s->pri_dai = NULL;
- 	i2s->sec_dai = NULL;
- 
+ 		sec_dai->dma_playback.dma_size = 4;
+ 		sec_dai->addr = pri_dai->addr;
++		sec_dai->clk = pri_dai->clk;
+ 		sec_dai->quirks = quirks;
+ 		sec_dai->idma_playback.dma_addr = idma_addr;
+ 		sec_dai->pri_dai = pri_dai;
 -- 
 1.7.9.5
