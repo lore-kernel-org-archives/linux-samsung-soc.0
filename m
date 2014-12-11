@@ -1,39 +1,93 @@
-From: Jassi Brar <jaswinder.singh@linaro.org>
-Subject: Re: [PATCH] dmaengine: pl330: Set residue in tx_status callback
-Date: Thu, 11 Dec 2014 11:42:27 +0530
-Message-ID: <CAJe_ZhdeTp3RAm-QQu04XVF-oOppV2zx8_7G7MOTF+ziqzbvCQ@mail.gmail.com>
-References: <1416995095-13763-1-git-send-email-padma.v@samsung.com>
-	<CAAgF-BfpU72KTJjVd8jWStD8yJ5sSmXOiQm77xQunO2QhC9ExQ@mail.gmail.com>
-	<547DF61D.3010909@metafoo.de>
-	<CAAgF-BfPyaOhhrA5L8vm2WDnhBYDexJFkGxqL1GsL2TMB8z=Rw@mail.gmail.com>
-	<CAJe_Zhd2-vBgAoJsBt7JCOYDuTZrBCScSZ1HaNO3gNTZ-P6A9A@mail.gmail.com>
-	<20141205151843.GV11285@n2100.arm.linux.org.uk>
-	<CAJe_ZhfDsfehCXHB6pCuQ6672kXBYFxh687cZT1qaSCOyLy76g@mail.gmail.com>
-	<20141208130727.GK16827@intel.com>
-	<CAJe_ZhfKFdrV8=oMiH0hJeOmGAmPNbZ7rUXsqN+Ak7PvOnZEmA@mail.gmail.com>
-	<20141211044758.GH16827@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v5 0/2] Introducing Exynos ChipId driver
+Date: Thu, 11 Dec 2014 13:37:42 +0530
+Message-ID: <1418285264-21763-1-git-send-email-pankaj.dubey@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f179.google.com ([209.85.216.179]:61313 "EHLO
-	mail-qc0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758859AbaLKGM2 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:22464 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964919AbaLKIPT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Dec 2014 01:12:28 -0500
-Received: by mail-qc0-f179.google.com with SMTP id c9so3314474qcz.38
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Dec 2014 22:12:28 -0800 (PST)
-In-Reply-To: <20141211044758.GH16827@intel.com>
+	Thu, 11 Dec 2014 03:15:19 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Padma Venkat <padma.kvr@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Padmavathi Venna <padma.v@samsung.com>, Mark Brown <broonie@kernel.org>, dmaengine@vger.kernel.org, Dylan Reid <dgreid@chromium.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux@arm.linux.org.uk, kgene.kim@samsung.com, heiko@sntech.de, arnd@arndb.de, thomas.ab@samsung.com, tomasz.figa@gmail.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-On 11 December 2014 at 10:17, Vinod Koul <vinod.koul@intel.com> wrote:
-> On Tue, Dec 09, 2014 at 08:48:04PM +0530, Jassi Brar wrote:
->> As Russell pointed out, that ain't the case either.
->> So we are yet to figure out benefits of having explicit
->> issue_pending() after tx_submit().
-> callback ?
->
-The callback is set after prep() and before tx_submit(), but here we
-talk after tx_submit().
+This patch series introduces Exynos Chipid platform driver.
+Each Exynos SoC has ChipID block which can give information about SoC's
+product Id and revision number.
+At the same time it reduces dependency of mach-exynos files from plat-samsung,
+by removing samsung_rev API, similar API is introduced in chipid driver itself
+to get revision number and product id. 
+
+This patch series is based on Kukjin Kim's for-next having SHA_ID:
+9db7d78aca2c7fbc19a26ce2ef01c805dc010c72
+
+It can also be cleanly applied on latest (next-20141209) linux-next.
+
+This has been tested against both tree on Exynos3250 and Exynos5250 (SMDK) board.
+
+Revision 4 and it's discussion can be found here
+ - https://lkml.org/lkml/2014/12/3/115
+
+Changes since v4:
+ - Removed custom sysfs entries as they were not providing any new information
+   as pointed out by Arnd.
+ - Removed functions exporting product_id and revision, instead we will export
+   exynos_chipid_info structure. It will be helpfull when we need to provide more
+   fields of chipid outside of chipid, as commented by Yadwinder
+ - Converted all funcions as __init. 
+
+Change since v3: 
+ - This patch set contains 5/6 and 6/6 patch from v3 series.
+ - Made EXYNOS_CHIPID config option non-user selectable,
+   as suggested by Tomasz Figa.
+ - Made uniform macro for EXYNOS4/5_SOC_MASK as EXYNOS_SOC_MASK as
+   suggested by Tomasz Figa.
+ - Made local variables static in chipid driver.
+ - Added existing SoC's product id's.
+ - Added platform driver support.
+
+Changes since v2:
+ - Reorganized patches as suggested by Tomasz Figa.
+ - Addressed review comments of Tomasz Figa in i2c-s3c2410.c file.
+
+Changes since v1:
+ - Added patch to move i2c interrupt re-configuration code from exynos.c
+   to i2c driver, as suggested by Arnd.
+ - After above patch only user of SYS_I2C_CFG register is pm.c so moving
+   save/restore of this register also into i2c driver.
+ - Spiltted up exynos4 and exynos5 machine descriptors to get rid from
+   soc_is_exynos4/exynos5 kind of macros, as suggested by Arnd.
+ - Changed location of chipid driver to "drivers/soc".
+ - Added drivers/base/soc.c provided infrastructure to make SoC specific 
+   information avaible to user space via sysfs entry, as suggested by Arnd.
+
+
+Pankaj Dubey (2):
+  soc: samsung: add exynos chipid driver support
+  ARM: EXYNOS: refactoring of mach-exynos to enable chipid driver
+
+ arch/arm/mach-exynos/Kconfig                 |   2 +
+ arch/arm/mach-exynos/common.h                |  54 ++++-----
+ arch/arm/mach-exynos/exynos.c                |  77 +++++-------
+ arch/arm/mach-exynos/include/mach/map.h      |   2 -
+ arch/arm/mach-exynos/platsmp.c               |   2 +-
+ arch/arm/mach-exynos/pm.c                    |   8 +-
+ arch/arm/plat-samsung/cpu.c                  |  14 ---
+ arch/arm/plat-samsung/include/plat/cpu.h     |   2 -
+ arch/arm/plat-samsung/include/plat/map-s5p.h |   1 -
+ drivers/soc/Kconfig                          |   1 +
+ drivers/soc/Makefile                         |   1 +
+ drivers/soc/samsung/Kconfig                  |  14 +++
+ drivers/soc/samsung/Makefile                 |   1 +
+ drivers/soc/samsung/exynos-chipid.c          | 168 +++++++++++++++++++++++++++
+ include/linux/soc/samsung/exynos-soc.h       |  51 ++++++++
+ 15 files changed, 296 insertions(+), 102 deletions(-)
+ create mode 100644 drivers/soc/samsung/Kconfig
+ create mode 100644 drivers/soc/samsung/Makefile
+ create mode 100644 drivers/soc/samsung/exynos-chipid.c
+ create mode 100644 include/linux/soc/samsung/exynos-soc.h
+
+-- 
+2.2.0
