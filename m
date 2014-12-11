@@ -1,106 +1,59 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH/RFC 09/14] ASoC: samsung: i2s: Add spinlock in place of
- local_irq_* calls
-Date: Thu, 11 Dec 2014 18:45:47 +0100
-Message-ID: <1418319952-10163-10-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH/RFC 11/14] ASoC: samsung: odroidx2: Handle I2S CDCLK clock
+ conditionally
+Date: Thu, 11 Dec 2014 18:45:49 +0100
+Message-ID: <1418319952-10163-12-git-send-email-s.nawrocki@samsung.com>
 References: <1418319952-10163-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:42916 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:42925 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932412AbaLKRqv (ORCPT
+	with ESMTP id S932412AbaLKRq5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Dec 2014 12:46:51 -0500
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	Thu, 11 Dec 2014 12:46:57 -0500
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout3.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NGF00K6QIQ2WC50@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 12 Dec 2014 02:46:50 +0900 (KST)
+ 17 2011)) with ESMTP id <0NGF00K6UIQ8WC50@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 12 Dec 2014 02:46:56 +0900 (KST)
 In-reply-to: <1418319952-10163-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org
 Cc: broonie@kernel.org, padma.v@samsung.com, drake@endlessm.com, sbkim73@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-It seems this driver hasn't been updated for SMP, as local_irq_save/
-local_irq_restore doesn't provide proper protection of read/modify/write
-of the device's registers on such systems. Introduce a spinlock serializing
-access to the register region, it will be helpful later when some of
-the registers are made also accessible through the clk API.
+If the codec control it's master clock provider by the I2S module
+we should not be touching it with set_sysclk() calls.
+So skip the set_sysclk() call in the machine driver if "clocks"
+property is found in the codec device node.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/i2s.c |   18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+ sound/soc/samsung/odroidx2_max98090.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index a131621..e8e0107 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -94,6 +94,10 @@ struct i2s_dai {
- 	u32	suspend_i2scon;
- 	u32	suspend_i2spsr;
- 	const struct samsung_i2s_variant_regs *variant_regs;
+diff --git a/sound/soc/samsung/odroidx2_max98090.c b/sound/soc/samsung/odroidx2_max98090.c
+index 3c8f604..ca94938 100644
+--- a/sound/soc/samsung/odroidx2_max98090.c
++++ b/sound/soc/samsung/odroidx2_max98090.c
+@@ -21,6 +21,8 @@ struct odroidx2_drv_data {
+ /* The I2S CDCLK output clock frequency for the MAX98090 codec */
+ #define MAX98090_MCLK 19200000
+ 
++static struct snd_soc_dai_link odroidx2_dai[];
 +
-+	/* Spinlock protecting access to the device's registers */
-+	spinlock_t spinlock;
-+	spinlock_t *lock;
- };
+ static int odroidx2_late_probe(struct snd_soc_card *card)
+ {
+ 	struct snd_soc_dai *codec_dai = card->rtd[0].codec_dai;
+@@ -29,7 +31,9 @@ static int odroidx2_late_probe(struct snd_soc_card *card)
  
- /* Lock for cross i/f checks */
-@@ -867,10 +871,10 @@ static int i2s_trigger(struct snd_pcm_substream *substream,
- 	case SNDRV_PCM_TRIGGER_START:
- 	case SNDRV_PCM_TRIGGER_RESUME:
- 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
--		local_irq_save(flags);
-+		spin_lock_irqsave(i2s->lock, flags);
- 
- 		if (config_setup(i2s)) {
--			local_irq_restore(flags);
-+			spin_unlock_irqrestore(i2s->lock, flags);
- 			return -EINVAL;
- 		}
- 
-@@ -879,12 +883,12 @@ static int i2s_trigger(struct snd_pcm_substream *substream,
- 		else
- 			i2s_txctrl(i2s, 1);
- 
--		local_irq_restore(flags);
-+		spin_unlock_irqrestore(i2s->lock, flags);
- 		break;
- 	case SNDRV_PCM_TRIGGER_STOP:
- 	case SNDRV_PCM_TRIGGER_SUSPEND:
- 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
--		local_irq_save(flags);
-+		spin_lock_irqsave(i2s->lock, flags);
- 
- 		if (capture) {
- 			i2s_rxctrl(i2s, 0);
-@@ -894,7 +898,7 @@ static int i2s_trigger(struct snd_pcm_substream *substream,
- 			i2s_fifo(i2s, FIC_TXFLUSH);
- 		}
- 
--		local_irq_restore(flags);
-+		spin_unlock_irqrestore(i2s->lock, flags);
- 		break;
- 	}
- 
-@@ -1157,6 +1161,9 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
-+	spin_lock_init(&pri_dai->spinlock);
-+	pri_dai->lock = &pri_dai->spinlock;
+ 	ret = snd_soc_dai_set_sysclk(codec_dai, 0, MAX98090_MCLK,
+ 						SND_SOC_CLOCK_IN);
+-	if (ret < 0)
 +
- 	if (!np) {
- 		res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
- 		if (!res) {
-@@ -1234,6 +1241,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
- 			return -ENOMEM;
- 		}
++	if (ret < 0 || of_find_property(odroidx2_dai[0].codec_of_node,
++					"clocks", NULL))
+ 		return ret;
  
-+		sec_dai->lock = &pri_dai->spinlock;
- 		sec_dai->variant_regs = pri_dai->variant_regs;
- 		sec_dai->dma_playback.dma_addr = regs_base + I2STXDS;
- 		sec_dai->dma_playback.ch_name = "tx-sec";
+ 	/* Set the cpu DAI configuration in order to use CDCLK */
 -- 
 1.7.9.5
