@@ -1,52 +1,66 @@
-From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH 0/4] phy: samsung-usb2: Add support for Vbus regulator
-Date: Thu, 11 Dec 2014 18:21:45 +0530
-Message-ID: <CAFp+6iEDvBDfg6FepOs48+CwoDhdEKAnF5C0MrHdBgPFSot5TQ@mail.gmail.com>
-References: <1418299367-2412-1-git-send-email-gautam.vivek@samsung.com>
-	<063D6719AE5E284EB5DD2968C1650D6D1CA0B0EB@AcuExch.aculab.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFC 04/15] regulator: add restrack support
+Date: Thu, 11 Dec 2014 12:58:37 +0000
+Message-ID: <20141211125837.GV11764@sirena.org.uk>
+References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
+ <1418226513-14105-5-git-send-email-a.hajda@samsung.com>
+ <20141210160720.GS11764@sirena.org.uk>
+ <548976D2.7080005@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <063D6719AE5E284EB5DD2968C1650D6D1CA0B0EB@AcuExch.aculab.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: David Laight <David.Laight@aculab.com>
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "kishon@ti.com" <kishon@ti.com>, "k.debski@samsung.com" <k.debski@samsung.com>, "kgene@kernel.org" <kgene@kernel.org>, "jg1.han@samsung.com" <jg1.han@samsung.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="5FNPeqk0egs0iuvD"
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <548976D2.7080005@samsung.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, boris.brezillon@
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Dec 11, 2014 at 5:52 PM, David Laight <David.Laight@aculab.com> wrote:
-> From: Vivek Gautam
->> This has been on my to-do list for sometime.
->> Until now the host controller (specifically ehci-exynos) is responsible
->> for enabling VBUS supply. This opens up one more issue which is, when
->> only ohci-exynos is enabled and ehci-exynosis disabled then VBUS was
->> never enabled (since ohci did not have the code to enabled the VBUS supply).
->>
->> Rather it should be wise to move the VBUS related stuff to phy driver and
->> let phy take care of enabling it.
->>
->> This patch series adds that VBUS regulator to phy-samsung-usb2 driver,
->> adds necessary binding information as well as vbus-supply properties
->> to phy nodes on exynos5250 systems.
-> ...
->
-> Does this go anyway to allowing devices to be powered from a micro-usb
-> connector while acting as a USB host (USB OTG).
-> ie when you want VBUS disabled even though it would normally
-> need to be enabled.
 
-Sorry i didn't get your second line.
+--5FNPeqk0egs0iuvD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This change allows HOST and HSIC phys to enable VBUS for the devices
-connected to it.
-Although now i think there can be a flaw in this approach
-when only in OTG mode, when DEVICE phy is being used, even then
-the regulator will be turned on causing power unnecessary consumption.
+On Thu, Dec 11, 2014 at 11:49:54AM +0100, Andrzej Hajda wrote:
+> On 12/10/2014 05:07 PM, Mark Brown wrote:
+> > On Wed, Dec 10, 2014 at 04:48:22PM +0100, Andrzej Hajda wrote:
 
+> >> Regulators supports various methods of lookup.
+> >> The patch adds restrack support only to DT based regulators.
 
+> > Why, what does this mean and how might one use it?  I've not looked at
+> > the code since I don't know what it's supposed to accomplish...
 
+> Looking at this patch makes no sense without looking at cover letter
+> or at the patch adding restrack framework. In short adding restrack support
+> to regulators will allow to:
 
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
+I did look at the cover letter and glance at the first couple of patches
+but I still can't tell what this is really intended to do.  There's a
+lot of implementation detail but not a lot of high level overview so
+it's not very clear to me how exactly this solves problems or how it is
+different to the component framework, it sounds very similar.
+
+I'd expect someone reading the change in the regulator API to have at
+least some idea how this fits in with the rest of the API and how to use
+it, and probably more importantly I'd expect to be able to understand
+why this is DT only.
+
+--5FNPeqk0egs0iuvD
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUiZT9AAoJECTWi3JdVIfQt+cH/0dvoIx1Mg0GgnLlbSrzaC/+
+e9DXQHbh/ynUlqjM60wKCz/xo0mD/glSQQbZaCkpADoBWObnLDnydaGEg8w9fGub
+bN2gDtOcelvibN4ID1nZshRFHWFa1ubdGksf8v2nqvX7cvmdVcw0XLKIjiVlp4aI
+UVhr3RIqZEn4cCmw4FfrAxrxXMJfm9ehl5mecBKRuUlVGWFgw49AEG2GjKnnt2fM
+KogSkZdKOQpaWRQpst+wGnDnOUpYooe3ojfxBIxv6aZyCndXtUMO4Lr+55yhp5n7
+v+j0yRBmUmOPckm+MYU2/Ops09ROpD/FlShbb3jf+HxgLdy6W/kK45N11oadLu4=
+=wRH4
+-----END PGP SIGNATURE-----
+
+--5FNPeqk0egs0iuvD--
