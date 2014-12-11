@@ -1,44 +1,52 @@
-From: David Laight <David.Laight-ZS65k/vG3HxXrIkS9f7CXA@public.gmane.org>
-Subject: RE: [PATCH 0/4] phy: samsung-usb2: Add support for Vbus regulator
-Date: Thu, 11 Dec 2014 12:22:56 +0000
-Message-ID: <063D6719AE5E284EB5DD2968C1650D6D1CA0B0EB@AcuExch.aculab.com>
+From: Vivek Gautam <gautamvivek1987@gmail.com>
+Subject: Re: [PATCH 0/4] phy: samsung-usb2: Add support for Vbus regulator
+Date: Thu, 11 Dec 2014 18:21:45 +0530
+Message-ID: <CAFp+6iEDvBDfg6FepOs48+CwoDhdEKAnF5C0MrHdBgPFSot5TQ@mail.gmail.com>
 References: <1418299367-2412-1-git-send-email-gautam.vivek@samsung.com>
+	<063D6719AE5E284EB5DD2968C1650D6D1CA0B0EB@AcuExch.aculab.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1418299367-2412-1-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Content-Language: en-US
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Vivek Gautam' <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "kishon-l0cyMroinI0@public.gmane.org" <kishon-l0cyMroinI0@public.gmane.org>, "k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <063D6719AE5E284EB5DD2968C1650D6D1CA0B0EB@AcuExch.aculab.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: David Laight <David.Laight@aculab.com>
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "kishon@ti.com" <kishon@ti.com>, "k.debski@samsung.com" <k.debski@samsung.com>, "kgene@kernel.org" <kgene@kernel.org>, "jg1.han@samsung.com" <jg1.han@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Vivek Gautam
-> This has been on my to-do list for sometime.
-> Until now the host controller (specifically ehci-exynos) is responsible
-> for enabling VBUS supply. This opens up one more issue which is, when
-> only ohci-exynos is enabled and ehci-exynosis disabled then VBUS was
-> never enabled (since ohci did not have the code to enabled the VBUS supply).
-> 
-> Rather it should be wise to move the VBUS related stuff to phy driver and
-> let phy take care of enabling it.
-> 
-> This patch series adds that VBUS regulator to phy-samsung-usb2 driver,
-> adds necessary binding information as well as vbus-supply properties
-> to phy nodes on exynos5250 systems.
-...
+On Thu, Dec 11, 2014 at 5:52 PM, David Laight <David.Laight@aculab.com> wrote:
+> From: Vivek Gautam
+>> This has been on my to-do list for sometime.
+>> Until now the host controller (specifically ehci-exynos) is responsible
+>> for enabling VBUS supply. This opens up one more issue which is, when
+>> only ohci-exynos is enabled and ehci-exynosis disabled then VBUS was
+>> never enabled (since ohci did not have the code to enabled the VBUS supply).
+>>
+>> Rather it should be wise to move the VBUS related stuff to phy driver and
+>> let phy take care of enabling it.
+>>
+>> This patch series adds that VBUS regulator to phy-samsung-usb2 driver,
+>> adds necessary binding information as well as vbus-supply properties
+>> to phy nodes on exynos5250 systems.
+> ...
+>
+> Does this go anyway to allowing devices to be powered from a micro-usb
+> connector while acting as a USB host (USB OTG).
+> ie when you want VBUS disabled even though it would normally
+> need to be enabled.
 
-Does this go anyway to allowing devices to be powered from a micro-usb
-connector while acting as a USB host (USB OTG).
-ie when you want VBUS disabled even though it would normally
-need to be enabled.
+Sorry i didn't get your second line.
 
-	David
+This change allows HOST and HSIC phys to enable VBUS for the devices
+connected to it.
+Although now i think there can be a flaw in this approach
+when only in OTG mode, when DEVICE phy is being used, even then
+the regulator will be turned on causing power unnecessary consumption.
 
 
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+-- 
+Best Regards
+Vivek Gautam
+Samsung R&D Institute, Bangalore
+India
