@@ -1,60 +1,51 @@
 From: Andrzej Hajda <a.hajda@samsung.com>
 Subject: Re: [RFC 04/15] regulator: add restrack support
-Date: Fri, 12 Dec 2014 09:21:01 +0100
-Message-ID: <548AA56D.8060202@samsung.com>
-References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com> <1418226513-14105-5-git-send-email-a.hajda@samsung.com> <20141210160720.GS11764@sirena.org.uk> <548976D2.7080005@samsung.com> <20141211125837.GV11764@sirena.org.uk> <20141211134327.GO11285@n2100.arm.linux.org.uk>
+Date: Fri, 12 Dec 2014 09:22:29 +0100
+Message-ID: <548AA5C5.4060204@samsung.com>
+References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
+ <1418226513-14105-5-git-send-email-a.hajda@samsung.com>
+ <20141210160720.GS11764@sirena.org.uk> <548976D2.7080005@samsung.com>
+ <20141211125837.GV11764@sirena.org.uk>
+ <20141211134327.GO11285@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from plane.gmane.org ([80.91.229.3]:42589 "EHLO plane.gmane.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S965817AbaLLIVu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Dec 2014 03:21:50 -0500
-Received: from list by plane.gmane.org with local (Exim 4.69)
-	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
-	id 1XzLTS-0003UX-UV
-	for linux-samsung-soc@vger.kernel.org; Fri, 12 Dec 2014 09:21:18 +0100
-Received: from 217-67-201-162.itsa.net.pl ([217.67.201.162])
-        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Dec 2014 09:21:18 +0100
-Received: from a.hajda by 217-67-201-162.itsa.net.pl with local (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 12 Dec 2014 09:21:18 +0100
-In-Reply-To: <20141211134327.GO11285@n2100.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20141211134327.GO11285@n2100.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Mark Brown <broonie@kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, open list <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Grant Likely <grant.likely@linaro.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.orglinux-gpio@vger.kernel.orglinux-kernel@vger.kernel.orgdri-devel@lists.freedesktop.orgdevicetree@vger.kernel.orglinux-kernel@vger.kernel.orglinux-arm-kernel@lists.infradead.orgdri-devel@lists.freedesktop.orgdevicetree@vger.kernel.org
 
-On 12/11/2014 02:43 PM, Russell King - ARM Linux wrote:
-> On Thu, Dec 11, 2014 at 12:58:37PM +0000, Mark Brown wrote:
->> I'd expect someone reading the change in the regulator API to have at
->> least some idea how this fits in with the rest of the API and how to use
->> it, and probably more importantly I'd expect to be able to understand
->> why this is DT only.
-> 
-> Yep.
-> 
-> This is a repetitive problem, and I fully agree with your concern about
-> stuff which is supposed to be arch-independent being designed with only
-> DT in mind.
-> 
-> New core kernel features should *not* be designed with only DT in mind -
-> DT is not the only firmware description language which the kernel
-> supports.  Folk need to understand that if they design a new arch
-> independent kernel feature where the sole use case is with DT, that new
-> feature is probably going to get rejected, especially when it's
-> something as generic as resource tracking.
-> 
-> The world is not DT only.
-> 
-
-OK. I will post next version of patchset with resource/provider lookup
-left to frameworks (regulators, clock, etc), this way it will be fully
-firmware agnostic. I will add also better description of the framework.
-
-Regards
-Andrzej
+T24gMTIvMTEvMjAxNCAwMjo0MyBQTSwgUnVzc2VsbCBLaW5nIC0gQVJNIExpbnV4IHdyb3RlOgo+
+IE9uIFRodSwgRGVjIDExLCAyMDE0IGF0IDEyOjU4OjM3UE0gKzAwMDAsIE1hcmsgQnJvd24gd3Jv
+dGU6Cj4+IEknZCBleHBlY3Qgc29tZW9uZSByZWFkaW5nIHRoZSBjaGFuZ2UgaW4gdGhlIHJlZ3Vs
+YXRvciBBUEkgdG8gaGF2ZSBhdAo+PiBsZWFzdCBzb21lIGlkZWEgaG93IHRoaXMgZml0cyBpbiB3
+aXRoIHRoZSByZXN0IG9mIHRoZSBBUEkgYW5kIGhvdyB0byB1c2UKPj4gaXQsIGFuZCBwcm9iYWJs
+eSBtb3JlIGltcG9ydGFudGx5IEknZCBleHBlY3QgdG8gYmUgYWJsZSB0byB1bmRlcnN0YW5kCj4+
+IHdoeSB0aGlzIGlzIERUIG9ubHkuCj4gCj4gWWVwLgo+IAo+IFRoaXMgaXMgYSByZXBldGl0aXZl
+IHByb2JsZW0sIGFuZCBJIGZ1bGx5IGFncmVlIHdpdGggeW91ciBjb25jZXJuIGFib3V0Cj4gc3R1
+ZmYgd2hpY2ggaXMgc3VwcG9zZWQgdG8gYmUgYXJjaC1pbmRlcGVuZGVudCBiZWluZyBkZXNpZ25l
+ZCB3aXRoIG9ubHkKPiBEVCBpbiBtaW5kLgo+IAo+IE5ldyBjb3JlIGtlcm5lbCBmZWF0dXJlcyBz
+aG91bGQgKm5vdCogYmUgZGVzaWduZWQgd2l0aCBvbmx5IERUIGluIG1pbmQgLQo+IERUIGlzIG5v
+dCB0aGUgb25seSBmaXJtd2FyZSBkZXNjcmlwdGlvbiBsYW5ndWFnZSB3aGljaCB0aGUga2VybmVs
+Cj4gc3VwcG9ydHMuICBGb2xrIG5lZWQgdG8gdW5kZXJzdGFuZCB0aGF0IGlmIHRoZXkgZGVzaWdu
+IGEgbmV3IGFyY2gKPiBpbmRlcGVuZGVudCBrZXJuZWwgZmVhdHVyZSB3aGVyZSB0aGUgc29sZSB1
+c2UgY2FzZSBpcyB3aXRoIERULCB0aGF0IG5ldwo+IGZlYXR1cmUgaXMgcHJvYmFibHkgZ29pbmcg
+dG8gZ2V0IHJlamVjdGVkLCBlc3BlY2lhbGx5IHdoZW4gaXQncwo+IHNvbWV0aGluZyBhcyBnZW5l
+cmljIGFzIHJlc291cmNlIHRyYWNraW5nLgo+IAo+IFRoZSB3b3JsZCBpcyBub3QgRFQgb25seS4K
+PiAKCk9LLiBJIHdpbGwgcG9zdCBuZXh0IHZlcnNpb24gb2YgcGF0Y2hzZXQgd2l0aCByZXNvdXJj
+ZS9wcm92aWRlciBsb29rdXAKbGVmdCB0byBmcmFtZXdvcmtzIChyZWd1bGF0b3JzLCBjbG9jaywg
+ZXRjKSwgdGhpcyB3YXkgaXQgd2lsbCBiZSBmdWxseQpmaXJtd2FyZSBhZ25vc3RpYy4gSSB3aWxs
+IGFkZCBhbHNvIGJldHRlciBkZXNjcmlwdGlvbiBvZiB0aGUgZnJhbWV3b3JrLgoKUmVnYXJkcwpB
+bmRyemVqCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
+aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
