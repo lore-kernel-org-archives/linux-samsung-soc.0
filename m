@@ -1,80 +1,62 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH V2 RESEND] arm: dts: Exynos5: Use pmu_system_controller
- phandle for dp phy
-Date: Fri, 12 Dec 2014 10:36:52 +0100
-Message-ID: <548AB734.2030907@collabora.co.uk>
-References: <1416807683-2257-1-git-send-email-gautam.vivek@samsung.com> <CABxcv=mmJp2c=ZC8=0+TW0-x3g7RnELTAFY24KJRjUgf+QrDcQ@mail.gmail.com> <000501d00e0b$8e0e8610$aa2b9230$%han@samsung.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH V8 00/14] drm/exynos: few patches to enhance bridge chip
+ support
+Date: Fri, 12 Dec 2014 10:51:50 +0100
+Message-ID: <548ABAB6.6010200@collabora.co.uk>
+References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com> <CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <000501d00e0b$8e0e8610$aa2b9230$%han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Kukjin Kim' <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Vivek Gautam' <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: 'Linux Kernel' <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, 'Ajay Kumar' <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Thierry Reding' <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:33815 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965582AbaLLJwA (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 12 Dec 2014 04:52:00 -0500
+In-Reply-To: <CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ajay kumar <ajaynumb@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Sean Paul <seanpaul@google.com>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>
 
-[adding arm-soc maintainers to cc]
+Hello,
 
-Hello Kukjin,
+On 11/18/2014 07:20 AM, Ajay kumar wrote:
+> On Sat, Nov 15, 2014 at 3:24 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
+>> This series is based on master branch of Linus tree at:
+>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+>>
 
-On 12/02/2014 09:39 AM, Jingoo Han wrote:
-> On Tuesday, December 02, 2014 5:17 PM, Javier Martinez Canillas wrote:
->> On Mon, Nov 24, 2014 at 6:41 AM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> > DP PHY now require pmu-system-controller to handle PMU register
->> > to control PHY's power isolation. Adding the same to dp-phy
->> > node.
->> >
->> > Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> > Reviewed-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> > Tested-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
->> > Cc: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->> 
->> Any opinions about $subject?
->> 
->> This patch is -rc material since is needed after commit a5ec598 ("phy:
->> exynos-dp-video: Use syscon
->> support to control pmu register") which landed in 3.18. That means
->> that display for Exynos is currently broken in 3.18.
->> 
->> I think it's too late for the 3.18 -rc cycle but at least it would be
->> great to have this merged for 3.19 and backport to stable kernels to
->> have display working again.
-> 
-> I agree with this suggestion.
->
+This series has been in the mailing lists for months and have been tested
+by many people. What else is missing before it can be merged?
 
-Sorry for being nagging with this but 3.18 has been released and the Exynos
-DP video PHY is not working because this patch was not merged :(
+It would be great to have proper display support on platforms that have a
+eDP to LVDS bridge chip (e.g: Snow, Peach Pit and Spring Chromebooks) and
+everything is in place but this series which had been missing many kernel
+releases already.
 
-So, it would be good if this can be pushed before the merge window for 3.19
-closes or we may end with another kernel release with a non-working display.
- 
->> 
->> Thierry had concerns that this change breaks DT backward compability
->> but actually it was already been broken by a5ec598 which changed the
->> DT binding for the phy-exynos-dp-video driver so we should either
->> apply this patch now or revert a5ec598.
-> 
-> I think that very few people might use old properties for Exynos DP.
-> Actually, DT backward compatibility will not be the considerable problem
-> in my opinion.
-> 
-> But, in order to keep the DT backward compatibility, we should revert
-> a5ec598, and send another patch for keeping the DT backward compatibility.
->
+>>
+>> Changes since V7:
+>>         -- Address comments from Tomi and Laurent:
+>>                 -- Use videoports and endpoints to represent the connection between
+>>                    encoder, bridge and the panel, instead of using phandles.
+>>         -- Address comments from Daniel:
+>>                 -- Make the patch description more descriptive.
+>>                 -- remove device pointer from drm_bridge, and just use
+>>                    device_node instead.
+>>                 -- don't pass encoder pointer to bridge_attach.
+>>         -- Address comments from Sean Paul:
+>>                 -- Remove bridge from mode_config, and pull out drm_bridge
+>>                    functions from drm_crtc.c to drm_bridge.c
+>>
 
-I'm not sure if is worth it to revert a5ec598 and maintain DT backward
-compatibility in this case since it seems there aren't real mainline
-users of Exynos DP, otherwise someone would had cared that 3.18 is broken.
+Tomi and Laurent,
 
-IMHO just $subject has to be picked to make the DTS use the new DT binding
-of the phy-exynos-dp-video driver. Maybe arm-soc maintainers can pick
-$subject directly since Kukjin seems to be busy?
+You asked Ajay to change his series to use the video port and enpoints DT
+bindings instead of phandles, could you please review his latest version?
+
+I guess is now too late for 3.19 since we are in the middle of the merge
+window but it would be great if this series can at least made it to 3.20.
 
 Thanks a lot and best regards,
 Javier
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
