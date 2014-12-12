@@ -1,62 +1,73 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH V8 00/14] drm/exynos: few patches to enhance bridge chip
- support
-Date: Fri, 12 Dec 2014 10:51:50 +0100
-Message-ID: <548ABAB6.6010200@collabora.co.uk>
-References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com> <CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH 1/3] ARM: dts: Add power and lid GPIO keys pinctrl for exynos5250-snow
+Date: Fri, 12 Dec 2014 11:25:49 +0100
+Message-ID: <1418379951-5551-2-git-send-email-javier.martinez@collabora.co.uk>
+References: <1418379951-5551-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:33815 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:33853 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965582AbaLLJwA (ORCPT
+	with ESMTP id S1750867AbaLLK0J (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Dec 2014 04:52:00 -0500
-In-Reply-To: <CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com>
+	Fri, 12 Dec 2014 05:26:09 -0500
+In-Reply-To: <1418379951-5551-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ajay kumar <ajaynumb@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, InKi Dae <inki.dae@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Sean Paul <seanpaul@google.com>, Thierry Reding <thierry.reding@gmail.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Hello,
+The Exynos5250 Snow Chromebook has GPIO keys for power and lid
+so the SoC I/O pins have to be configured in external interrupt
+mode. Currently, this is working without setting the pinctrl
+lines but is better to set it explicitly instead of relying on
+the previous state of the I/O pins.
 
-On 11/18/2014 07:20 AM, Ajay kumar wrote:
-> On Sat, Nov 15, 2014 at 3:24 PM, Ajay Kumar <ajaykumar.rs@samsung.com> wrote:
->> This series is based on master branch of Linus tree at:
->> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
->>
+The DTS snippets were taken from the downstream ChromeOS tree.
 
-This series has been in the mailing lists for months and have been tested
-by many people. What else is missing before it can be merged?
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
+ arch/arm/boot/dts/exynos5250-snow.dts | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-It would be great to have proper display support on platforms that have a
-eDP to LVDS bridge chip (e.g: Snow, Peach Pit and Spring Chromebooks) and
-everything is in place but this series which had been missing many kernel
-releases already.
-
->>
->> Changes since V7:
->>         -- Address comments from Tomi and Laurent:
->>                 -- Use videoports and endpoints to represent the connection between
->>                    encoder, bridge and the panel, instead of using phandles.
->>         -- Address comments from Daniel:
->>                 -- Make the patch description more descriptive.
->>                 -- remove device pointer from drm_bridge, and just use
->>                    device_node instead.
->>                 -- don't pass encoder pointer to bridge_attach.
->>         -- Address comments from Sean Paul:
->>                 -- Remove bridge from mode_config, and pull out drm_bridge
->>                    functions from drm_crtc.c to drm_bridge.c
->>
-
-Tomi and Laurent,
-
-You asked Ajay to change his series to use the video port and enpoints DT
-bindings instead of phandles, could you please review his latest version?
-
-I guess is now too late for 3.19 since we are in the middle of the merge
-window but it would be great if this series can at least made it to 3.20.
-
-Thanks a lot and best regards,
-Javier
+diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
+index effaf2a..b9aeec4 100644
+--- a/arch/arm/boot/dts/exynos5250-snow.dts
++++ b/arch/arm/boot/dts/exynos5250-snow.dts
+@@ -33,6 +33,8 @@
+ 
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
++		pinctrl-names = "default";
++		pinctrl-0 = <&power_key_irq &lid_irq>;
+ 
+ 		power {
+ 			label = "Power";
+@@ -540,6 +542,13 @@
+ };
+ 
+ &pinctrl_0 {
++	power_key_irq: power-key-irq {
++		samsung,pins = "gpx1-3";
++		samsung,pin-function = <0xf>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
+ 	ec_irq: ec-irq {
+ 		samsung,pins = "gpx1-6";
+ 		samsung,pin-function = <0>;
+@@ -575,6 +584,13 @@
+ 		samsung,pin-drv = <0>;
+ 	};
+ 
++	lid_irq: lid-irq {
++		samsung,pins = "gpx3-5";
++		samsung,pin-function = <0xf>;
++		samsung,pin-pud = <0>;
++		samsung,pin-drv = <0>;
++	};
++
+ 	hdmi_hpd_irq: hdmi-hpd-irq {
+ 		samsung,pins = "gpx3-7";
+ 		samsung,pin-function = <0>;
+-- 
+2.1.0
