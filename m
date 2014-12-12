@@ -1,427 +1,421 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [RFC PATCHv2 1/7] devfreq: event: Add new devfreq_event class to
- provide basic data for devfreq governor
-Date: Fri, 12 Dec 2014 12:42:53 +0900
-Message-ID: <548A643D.10508@samsung.com>
-References: <1418134386-14681-1-git-send-email-cw00.choi@samsung.com>
- <1418134386-14681-2-git-send-email-cw00.choi@samsung.com>
- <1418204220.16644.14.camel@AMDC1943> <5488FDCE.2060009@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v5 1/2] soc: samsung: add exynos chipid driver support
+Date: Fri, 12 Dec 2014 13:15:43 +0530
+Message-ID: <548A9D27.1000504@samsung.com>
+References: <1418285264-21763-1-git-send-email-pankaj.dubey@samsung.com>
+ <1418285264-21763-2-git-send-email-pankaj.dubey@samsung.com>
+ <CAL_JsqKaf+w_D-xLCUizuTmxwT7uUHExA=qMpawQ+00G7uMcBg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <5488FDCE.2060009@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: devicetree@vger.kernel.org, kgene.kim@samsung.com, linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org, tomasz.figa@gmail.com, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, myungjoo.ham@samsung.com, a.kesavan@samsung.com, linux-arm-kernel@lists.infradead.org, b.zolnierkie@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:45149 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759338AbaLLHqF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 12 Dec 2014 02:46:05 -0500
+In-reply-to: <CAL_JsqKaf+w_D-xLCUizuTmxwT7uUHExA=qMpawQ+00G7uMcBg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, =?UTF-8?B?SGVpa28gU3TDvGJuZXI=?= <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, Thomas Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-Hi Krzysztof,
+Hi Rob,
 
-I replied again this mail because I'll use the mutex for set_event()/get_event()
-according to your comment. But, of_parse_phandle() seems that this function
-don't need the of_node_put() function.
+On Thursday 11 December 2014 11:00 PM, Rob Herring wrote:
+> On Thu, Dec 11, 2014 at 2:07 AM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+>> Exynos SoCs have Chipid, for identification of product IDs
+>> and SoC revisions. This patch intendes to provide initialization
+>> code for all these functionalites.
+>>
+>> This driver usese existing binding for exnos-chipid.
+>
+> s/usese/uses/
+> s/exnos/exynos/
+>
+
+I'll fix this.
+
+>>
+>> CC: Grant Likely <grant.likely@linaro.org>
+>> CC: Rob Herring <robh+dt@kernel.org>
+>> CC: Linus Walleij <linus.walleij@linaro.org>
+>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>> ---
+>>   drivers/soc/Kconfig                    |   1 +
+>>   drivers/soc/Makefile                   |   1 +
+>>   drivers/soc/samsung/Kconfig            |  14 +++
+>>   drivers/soc/samsung/Makefile           |   1 +
+>>   drivers/soc/samsung/exynos-chipid.c    | 168 +++++++++++++++++++++++++++++++++
+>>   include/linux/soc/samsung/exynos-soc.h |  51 ++++++++++
+>>   6 files changed, 236 insertions(+)
+>>   create mode 100644 drivers/soc/samsung/Kconfig
+>>   create mode 100644 drivers/soc/samsung/Makefile
+>>   create mode 100644 drivers/soc/samsung/exynos-chipid.c
+>>   create mode 100644 include/linux/soc/samsung/exynos-soc.h
+>>
+>> diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+>> index 76d6bd4..c3abfbe 100644
+>> --- a/drivers/soc/Kconfig
+>> +++ b/drivers/soc/Kconfig
+>> @@ -1,6 +1,7 @@
+>>   menu "SOC (System On Chip) specific Drivers"
+>>
+>>   source "drivers/soc/qcom/Kconfig"
+>> +source "drivers/soc/samsung/Kconfig"
+>>   source "drivers/soc/ti/Kconfig"
+>>   source "drivers/soc/versatile/Kconfig"
+>>
+>> diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+>> index 063113d..620366f 100644
+>> --- a/drivers/soc/Makefile
+>> +++ b/drivers/soc/Makefile
+>> @@ -3,6 +3,7 @@
+>>   #
+>>
+>>   obj-$(CONFIG_ARCH_QCOM)                += qcom/
+>> +obj-$(CONFIG_SOC_SAMSUNG)      += samsung/
+>>   obj-$(CONFIG_ARCH_TEGRA)       += tegra/
+>>   obj-$(CONFIG_SOC_TI)           += ti/
+>>   obj-$(CONFIG_PLAT_VERSATILE)   += versatile/
+>> diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+>> new file mode 100644
+>> index 0000000..2d83652
+>> --- /dev/null
+>> +++ b/drivers/soc/samsung/Kconfig
+>> @@ -0,0 +1,14 @@
+>> +#
+>> +# SAMSUNG SoC drivers
+>> +#
+>> +menu "Samsung SOC driver support"
+>> +
+>> +config SOC_SAMSUNG
+>> +       bool
+>> +
+>> +config EXYNOS_CHIPID
+>> +       bool
+>> +       depends on ARCH_EXYNOS
+>> +       select SOC_BUS
+>
+> This is going to show an empty menu when ARCH_EXYNOS is not enabled.
+> The whole menu should probably have "if ARCH_EXYNOS" instead.
+>
+
+OK, I can add 'depends on ARCH_EXYNOS' for menu above so that it should 
+not show empty menu option if ARCH_EXNOS is not enabled.
+
+>> +
+>> +endmenu
+>> diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+>> new file mode 100644
+>> index 0000000..855ca05
+>> --- /dev/null
+>> +++ b/drivers/soc/samsung/Makefile
+>> @@ -0,0 +1 @@
+>> +obj-$(CONFIG_EXYNOS_CHIPID)    += exynos-chipid.o
+>> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+>> new file mode 100644
+>> index 0000000..8968f83
+>> --- /dev/null
+>> +++ b/drivers/soc/samsung/exynos-chipid.c
+>> @@ -0,0 +1,168 @@
+>> +/*
+>> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+>> + *           http://www.samsung.com/
+>> + *
+>> + * EXYNOS - CHIP ID support
+>> + * Author: Pankaj Dubey <pankaj.dubey@samsung.com>
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +#include <linux/io.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/sys_soc.h>
+>> +#include <linux/soc/samsung/exynos-soc.h>
+>> +
+>> +#define EXYNOS_SUBREV_MASK     (0xF << 4)
+>> +#define EXYNOS_MAINREV_MASK    (0xF << 0)
+>> +#define EXYNOS_REV_MASK                (EXYNOS_SUBREV_MASK | EXYNOS_MAINREV_MASK)
+>> +
+>> +static void __iomem *exynos_chipid_base;
+>> +
+>> +struct exynos_chipid_info exynos_soc_info;
+>> +EXPORT_SYMBOL(exynos_soc_info);
+>
+> The soc_device already has similar data.Why is this needed? Is it
+> temporary for compatibility?
+
+struct soc_device_attribute can hold these two (product_id, and 
+revision) but they are defined as char * in soc_device_atttribute, and I 
+feel it's more specific for exposing via sysfs.
+Also existing code in mach-exynos compares them via product_id/revision 
+macros, so I can say to keep compatibility.
+
+> For early use?
+
+Yes, partially correct. These parameters will be required in during 
+early boot, from mach-exynos/platsmp.c, by that time probe of chipid 
+would not have happened. But usage of this is not limited to early 
+users, even mach-exynos/pm.c will use this later any point of time.
+Since there are early users I added "exynos_chipid_early_init" which 
+will be called via mach-exynos.c at very early stage [1].
+
+[1]: https://lkml.org/lkml/2014/12/11/47
 
 
-On 12/11/2014 11:13 AM, Chanwoo Choi wrote:
-> Hi Krzysztof,
-> 
-> First of all, thanks for your review.
-> 
-> On 12/10/2014 06:37 PM, Krzysztof Kozlowski wrote:
->> On wto, 2014-12-09 at 23:13 +0900, Chanwoo Choi wrote:
->>> This patch add new devfreq_event class for devfreq_event device which provide
->>> raw data (e.g., memory bus utilization/GPU utilization). This raw data from
->>> devfreq_event data would be used for the governor of devfreq subsystem.
->>> - devfreq_event device : Provide raw data for governor of existing devfreq device
->>> - devfreq device       : Monitor device state and change frequency/voltage of device
->>>                          using the raw data from devfreq_event device
->>>
->>> The devfreq subsystem support generic DVFS(Dynamic Voltage/Frequency Scaling)
->>> for Non-CPU Devices. The devfreq device would dertermine current device state
->>> using various governor (e.g., ondemand, performance, powersave). After completed
->>> determination of system state, devfreq device would change the frequency/voltage
->>> of devfreq device according to the result of governor.
->>>
->>> But, devfreq governor must need basic data which indicates current device state.
->>> Existing devfreq subsystem only consider devfreq device which check current system
->>> state and determine proper system state using basic data. There is no subsystem
->>> for device providing basic data to devfreq device.
->>>
->>> The devfreq subsystem must need devfreq_event device(data-provider device) for
->>> existing devfreq device. So, this patch add new devfreq_event class for
->>> devfreq_event device which read various basic data(e.g, memory bus utilization,
->>> GPU utilization) and provide measured data to existing devfreq device through
->>> standard APIs of devfreq_event class.
->>>
->>> The following description explains the feature of two kind of devfreq class:
->>> - devfreq class (existing)
->>>  : devfreq consumer device use raw data from devfreq_event device for
->>>    determining proper current system state and change voltage/frequency
->>>    dynamically using various governors.
->>>
->>> - devfreq_event class (new)
->>>  : Provide measured raw data to devfreq device for governor
->>>
->>> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
->>> Cc: Kyungmin Park <kyungmin.park@samsung.com>
->>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>> ---
->>>  drivers/devfreq/Kconfig         |   2 +
->>>  drivers/devfreq/Makefile        |   5 +-
->>>  drivers/devfreq/devfreq-event.c | 302 ++++++++++++++++++++++++++++++++++++++++
->>>  drivers/devfreq/event/Makefile  |   1 +
->>>  include/linux/devfreq.h         | 141 +++++++++++++++++++
->>>  5 files changed, 450 insertions(+), 1 deletion(-)
->>>  create mode 100644 drivers/devfreq/devfreq-event.c
->>>  create mode 100644 drivers/devfreq/event/Makefile
->>>
->>> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
->>> index faf4e70..4d15b62 100644
->>> --- a/drivers/devfreq/Kconfig
->>> +++ b/drivers/devfreq/Kconfig
->>> @@ -87,4 +87,6 @@ config ARM_EXYNOS5_BUS_DEVFREQ
->>>  	  It reads PPMU counters of memory controllers and adjusts the
->>>  	  operating frequencies and voltages with OPP support.
->>>  
->>> +comment "DEVFREQ Event Drivers"
->>> +
->>>  endif # PM_DEVFREQ
->>> diff --git a/drivers/devfreq/Makefile b/drivers/devfreq/Makefile
->>> index 16138c9..a1ffabe 100644
->>> --- a/drivers/devfreq/Makefile
->>> +++ b/drivers/devfreq/Makefile
->>> @@ -1,4 +1,4 @@
->>> -obj-$(CONFIG_PM_DEVFREQ)	+= devfreq.o
->>> +obj-$(CONFIG_PM_DEVFREQ)		+= devfreq.o devfreq-event.o
->>>  obj-$(CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND)	+= governor_simpleondemand.o
->>>  obj-$(CONFIG_DEVFREQ_GOV_PERFORMANCE)	+= governor_performance.o
->>>  obj-$(CONFIG_DEVFREQ_GOV_POWERSAVE)	+= governor_powersave.o
->>> @@ -7,3 +7,6 @@ obj-$(CONFIG_DEVFREQ_GOV_USERSPACE)	+= governor_userspace.o
->>>  # DEVFREQ Drivers
->>>  obj-$(CONFIG_ARM_EXYNOS4_BUS_DEVFREQ)	+= exynos/
->>>  obj-$(CONFIG_ARM_EXYNOS5_BUS_DEVFREQ)	+= exynos/
->>> +
->>> +# DEVFREQ Event Drivers
->>> +obj-$(CONFIG_PM_DEVFREQ)		+= event/
->>> diff --git a/drivers/devfreq/devfreq-event.c b/drivers/devfreq/devfreq-event.c
->>> new file mode 100644
->>> index 0000000..b47329f
->>> --- /dev/null
->>> +++ b/drivers/devfreq/devfreq-event.c
->>> @@ -0,0 +1,302 @@
->>> +/*
->>> + * devfreq-event: Generic DEVFREQ Event class driver
->>> + *
->>> + * Copyright (C) 2014 Samsung Electronics
->>> + * Chanwoo Choi <cw00.choi@samsung.com>
->>> + *
->>> + * This program is free software; you can redistribute it and/or modify
->>> + * it under the terms of the GNU General Public License version 2 as
->>> + * published by the Free Software Foundation.
->>> + *
->>> + * This driver is based on drivers/devfreq/devfreq.c
->>> + */
->>> +
->>> +#include <linux/kernel.h>
->>> +#include <linux/sched.h>
->>> +#include <linux/errno.h>
->>> +#include <linux/err.h>
->>> +#include <linux/init.h>
->>> +#include <linux/module.h>
->>> +#include <linux/slab.h>
->>> +#include <linux/stat.h>
->>> +#include <linux/pm_opp.h>
->>> +#include <linux/devfreq.h>
->>> +#include <linux/workqueue.h>
->>> +#include <linux/platform_device.h>
->>> +#include <linux/list.h>
->>> +#include <linux/printk.h>
->>> +#include <linux/hrtimer.h>
->>> +#include <linux/of.h>
->>> +#include "governor.h"
->>> +
->>> +static struct class *devfreq_event_class;
->>> +
->>> +/* The list of all devfreq event list */
->>> +static LIST_HEAD(devfreq_event_list);
->>> +static DEFINE_MUTEX(devfreq_event_list_lock);
->>> +
->>> +#define to_devfreq_event(DEV) container_of(DEV, struct devfreq_event_dev, dev)
->>> +
->>> +struct devfreq_event_dev *devfreq_add_event_device(struct device *dev,
->>> +					struct devfreq_event_desc *desc)
->>> +{
->>> +	struct devfreq_event_dev *event_dev;
->>> +	static atomic_t event_no = ATOMIC_INIT(0);
->>> +	int ret;
->>> +
->>> +	if (!dev || !desc)
->>> +		return ERR_PTR(-EINVAL);
->>> +
->>> +	if (!desc->name || !desc->ops)
->>> +		return ERR_PTR(-EINVAL);
->>> +
->>> +	event_dev = kzalloc(sizeof(struct devfreq_event_dev), GFP_KERNEL);
->>> +	if (!event_dev)
->>> +		return ERR_PTR(-ENOMEM);
->>
->> Is this memory freed anywhere when driver is removed? I couldn't find
->> it. I couldn't also find function like devfreq_remove_event_device()
->> which would be reverting all the work done when adding.
-> 
-> You're right. I'll use devm_kzalloc instead of kzalloc.
-> 
->>
->>> +
->>> +	mutex_lock(&devfreq_event_list_lock);
->>> +
->>> +	mutex_init(&event_dev->lock);
->>> +	event_dev->desc = desc;
->>> +	event_dev->dev.parent = dev;
->>> +	event_dev->dev.class = devfreq_event_class;
->>> +
->>> +	dev_set_name(&event_dev->dev, "event.%d",
->>> +		     atomic_inc_return(&event_no) - 1);
->>> +	ret = device_register(&event_dev->dev);
->>> +	if (ret != 0) {
->>> +		put_device(&event_dev->dev);
->>> +		goto err;
->>> +	}
->>> +	dev_set_drvdata(&event_dev->dev, event_dev);
->>> +
->>> +	/* Add devfreq event device to devfreq_event_list */
->>> +	INIT_LIST_HEAD(&event_dev->node);
->>> +	list_add(&event_dev->node, &devfreq_event_list);
->>> +
->>> +	mutex_unlock(&devfreq_event_list_lock);
->>> +
->>> +	return event_dev;
->>> +err:
->>
->> Missing 'mutex_unlock(&devfreq_event_list_lock)' here.
-> 
-> OK. I'll fix it.
-> 
->>
->>
->>> +	kfree(event_dev);
->>> +	return ERR_PTR(ret);
->>> +}
->>> +EXPORT_SYMBOL(devfreq_add_event_device);
->>> +
->>> +struct devfreq_event_dev *devfreq_get_event_dev(const char *event_dev_name)
->>> +{
->>> +	struct devfreq_event_dev *event_dev;
->>> +
->>> +	mutex_lock(&devfreq_event_list_lock);
->>> +	list_for_each_entry(event_dev, &devfreq_event_list, node) {
->>> +		if (!strcmp(event_dev->desc->name, event_dev_name))
->>> +			goto out;
->>> +	}
->>> +	event_dev = NULL;
->>> +out:
->>> +	mutex_unlock(&devfreq_event_list_lock);
->>> +
->>> +	return event_dev;
->>> +}
->>> +EXPORT_SYMBOL_GPL(devfreq_get_event_dev);
->>> +
->>> +struct devfreq_event_dev *devfreq_get_event_dev_by_phandle(struct device *dev,
->>> +						      int index)
->>> +{
->>> +	struct device_node *node;
->>> +	struct devfreq_event_dev *event_dev;
->>> +
->>> +	if (!dev->of_node) {
->>> +		dev_err(dev, "device does not have a device node entry\n");
->>> +		return ERR_PTR(-EINVAL);
->>> +	}
->>> +
->>> +	node = of_parse_phandle(dev->of_node, "devfreq-events", index);
->>> +	if (!node) {
->>> +		dev_err(dev, "failed to get phandle in %s node\n",
->>> +			dev->of_node->full_name);
->>> +		return ERR_PTR(-ENODEV);
->>> +	}
->>> +
->>> +	event_dev = devfreq_get_event_dev(node->name);
->>> +	if (!event_dev) {
->>> +		dev_err(dev, "unable to get devfreq-event device : %s\n",
->>> +			node->name);
->>
->> of_node_put() for node obtained with of_parse_phandle().
-> 
-> OK. I'll add it.
+> If for early use, then it
+> should not be exported.
 
-of_parse_phandle() seems that it don't need of_node_put().
+Other reason to make and expose this structure was we can see that other 
+fields of chipid bank (other than product_id and revision, which is not 
+part of this patch as of now) can be used by other driver such as ASV 
+(which is not yet part of mainline but is there for every exynos SoC).
 
-> 
->>
->>> +		return ERR_PTR(-ENODEV);
->>> +	}
->>> +
->>> +	return event_dev;
->>> +}
->>> +EXPORT_SYMBOL_GPL(devfreq_get_event_dev_by_phandle);
->>> +
->>> +int devfreq_put_event_dev(struct devfreq_event_dev *event_dev)
->>> +{
->>
->> of_node_put() here to decrement refcnt from of_parse_phandle()?
-> 
-> It is my mistake. I think that devfreq_put_event_dev is not necesssary.
-> I'll remove it.
-> 
->>
->>> +	return 0;
->>> +}
->>> +EXPORT_SYMBOL_GPL(devfreq_put_event_dev);
->>> +
->>> +int devfreq_enable_event_dev(struct devfreq_event_dev *event_dev)
->>> +{
->>> +	int ret = 0;
->>> +
->>> +	if (!event_dev || !event_dev->desc)
->>> +		return -EINVAL;
->>> +
->>> +	mutex_lock(&event_dev->lock);
->>> +	if (event_dev->desc->ops && event_dev->desc->ops->enable) {
->>> +		ret = event_dev->desc->ops->enable(event_dev);
->>> +		if (ret < 0)
->>> +			goto err;
->>> +	}
->>> +	event_dev->enable_count++;
->>> +err:
->>> +	mutex_unlock(&event_dev->lock);
->>> +
->>> +	return ret;
->>> +}
->>> +EXPORT_SYMBOL_GPL(devfreq_enable_event_dev);
->>> +
->>> +int devfreq_disable_event_dev(struct devfreq_event_dev *event_dev)
->>> +{
->>> +	int ret = 0;
->>> +
->>> +	if (!event_dev || !event_dev->desc)
->>> +		return -EINVAL;
->>> +
->>> +	mutex_lock(&event_dev->lock);
->>> +	if (event_dev->enable_count > 0) {
->>> +		event_dev->enable_count--;
->>> +	} else {
->>> +		dev_warn(&event_dev->dev, "unbalanced enable_count\n");
->>> +		ret = -EINVAL;
->>> +		goto err;
->>> +	}
->>> +
->>> +	if (event_dev->desc->ops && event_dev->desc->ops->disable) {
->>> +		ret = event_dev->desc->ops->disable(event_dev);
->>> +		if (ret < 0) {
->>> +			event_dev->enable_count++;
->>> +			goto err;
->>> +		}
->>> +	}
->>> +err:
->>> +	mutex_unlock(&event_dev->lock);
->>> +
->>> +	return ret;
->>> +}
->>> +EXPORT_SYMBOL_GPL(devfreq_disable_event_dev);
->>> +
->>> +bool devfreq_is_enabled_event_dev(struct devfreq_event_dev *event_dev)
->>> +{
->>> +	bool enabled = false;
->>> +
->>> +	if (!event_dev || !event_dev->desc)
->>> +		return enabled;
->>> +
->>> +	if (!(event_dev->enable_count > 0))
->>> +		return enabled;
->>> +
->>> +	if (event_dev->desc->ops && event_dev->desc->ops->is_enabled)
->>> +		enabled = event_dev->desc->ops->is_enabled(event_dev);
->>> +
->>> +	return enabled;
->>> +}
->>> +EXPORT_SYMBOL_GPL(devfreq_is_enabled_event_dev);
->>> +
->>> +int devfreq_set_event_event_dev(struct devfreq_event_dev *event_dev)
->>
->> The convention of names you use is not obvious to me. I would expect
->> rather devfreq_event_dev_XXX (where XXX is "set_event", "is_enabled"
->> etc).
->> The one above is good example what is the issue with current convention:
->> devfreq_set_event_event_dev
->>             ^     ^
->> This double "event" looks weird.
-> 
-> You're right. I'll have to fix the function name according to your comment.
-> 
->>
->>> +{
->>> +	if (!event_dev || !event_dev->desc)
->>> +		return -EINVAL;
->>> +
->>> +	if (!devfreq_is_enabled_event_dev(event_dev))
->>> +		return -EPERM;
->>> +
->>> +	if (event_dev->desc->ops && event_dev->desc->ops->set_event)
->>> +		return event_dev->desc->ops->set_event(event_dev);
->>
->> No mutexes here? What exactly is protected by mutex?
-> 
-> I used the mutex when devfreq-event class read/write the data of devfreq_event_dev structure.
+I do not exported this in my PATCH v4 [2] of this, and instead provided 
+exposed functions to directly access product_id and revision, but 
+sometime in future when we will need other fields of chipid bank, we 
+will end-up adding new exported function for each new field, so decided 
+to expose this structure itself.
 
-I'll use mutex for set_event() function according to your comment.
+[2]: http://www.spinics.net/lists/linux-samsung-soc/msg39913.html
 
-> 
->>
->>> +
->>> +	return -EINVAL;
->>> +}
->>> +EXPORT_SYMBOL_GPL(devfreq_set_event_event_dev);
->>> +
->>> +int devfreq_get_event_event_dev(struct devfreq_event_dev *event_dev,
->>> +				int *total_event)
->>> +{
->>> +	if (!event_dev || !event_dev->desc)
->>> +		return -EINVAL;
->>> +
->>> +	if (!devfreq_is_enabled_event_dev(event_dev))
->>> +		return -EPERM;
->>> +
->>> +	if (event_dev->desc->ops && event_dev->desc->ops->get_event)
->>> +		return event_dev->desc->ops->get_event(event_dev, total_event);
->>> +
->>> +	return -EINVAL;
->>> +}
->>> +EXPORT_SYMBOL_GPL(devfreq_get_event_event_dev);
->>> +
->>> +int devfreq_reset_event_dev(struct devfreq_event_dev *event_dev)
->>> +{
->>> +	if (!event_dev || !event_dev->desc)
->>> +		return -EINVAL;
->>> +
->>> +	if (!devfreq_is_enabled_event_dev(event_dev))
->>> +		return -EPERM;
->>> +
->>> +	if (event_dev->desc->ops && event_dev->desc->ops->reset)
->>> +		return event_dev->desc->ops->reset(event_dev);
->>
->> Same here, no mutex?
-> 
-> I replied it on previous your question.
+>
+>
+>> +
+>> +static const char * __init product_id_to_name(unsigned int product_id)
+>> +{
+>> +       const char *soc_name;
+>> +       unsigned int soc_id = product_id & EXYNOS_SOC_MASK;
+>> +
+>> +       switch (soc_id) {
+>> +       case EXYNOS3250_SOC_ID:
+>> +               soc_name = "EXYNOS3250";
+>> +               break;
+>> +       case EXYNOS4210_SOC_ID:
+>> +               soc_name = "EXYNOS4210";
+>> +               break;
+>> +       case EXYNOS4212_SOC_ID:
+>> +               soc_name = "EXYNOS4212";
+>> +               break;
+>> +       case EXYNOS4412_SOC_ID:
+>> +               soc_name = "EXYNOS4412";
+>> +               break;
+>> +       case EXYNOS4415_SOC_ID:
+>> +               soc_name = "EXYNOS4415";
+>> +               break;
+>> +       case EXYNOS5250_SOC_ID:
+>> +               soc_name = "EXYNOS5250";
+>> +               break;
+>> +       case EXYNOS5260_SOC_ID:
+>> +               soc_name = "EXYNOS5260";
+>> +               break;
+>> +       case EXYNOS5420_SOC_ID:
+>> +               soc_name = "EXYNOS5420";
+>> +               break;
+>> +       case EXYNOS5440_SOC_ID:
+>> +               soc_name = "EXYNOS5440";
+>> +               break;
+>> +       case EXYNOS5800_SOC_ID:
+>> +               soc_name = "EXYNOS5800";
+>> +               break;
+>> +       default:
+>> +               soc_name = "UNKNOWN";
+>> +       }
+>> +       return soc_name;
+>> +}
+>> +
+>> +static const struct of_device_id of_exynos_chipid_ids[] __initconst = {
+>> +       {
+>> +               .compatible     = "samsung,exynos4210-chipid",
+>> +       },
+>> +       {},
+>> +};
+>> +
+>> +/**
+>> + *  exynos_chipid_early_init: Early chipid initialization
+>> + *  @dev: pointer to chipid device
+>> + */
+>> +void __init exynos_chipid_early_init(struct device *dev)
+>> +{
+>> +       struct device_node *np;
+>> +       const struct of_device_id *match;
+>> +
+>> +       if (exynos_chipid_base)
+>> +               return;
+>> +
+>> +       if (!dev)
+>> +               np = of_find_matching_node_and_match(NULL,
+>> +                       of_exynos_chipid_ids, &match);
+>> +       else
+>> +               np = dev->of_node;
+>> +
+>> +       if (!np)
+>> +               panic("%s, failed to find chipid node\n", __func__);
+>
+> Do you really want to halt booting here?
 
-I'll use mutex for set_event() function according to your comment.
+Since some critical configuration are done in platsmp.c based on 
+product_id and revision, I don't see any point moving ahead without it.
+Even if we allow to continue here it will crash or lead to system 
+malfunction later during system boot for existing SoC support.
 
-Best Regards,
-Chanwoo Choi
+Your console may not be up to
+> see the panic anyway.
+
+I feel this we can still see via earlyprintk.
+
+>
+>> +
+>> +       exynos_chipid_base = of_iomap(np, 0);
+>
+> Once you read the rev and product_id, do you need to keep the mapping?
+>
+
+OK. I can unmap it, once all fields are read.
+
+>> +
+>> +       if (!exynos_chipid_base)
+>> +               panic("%s: failed to map registers\n", __func__);
+>> +
+>> +       exynos_soc_info.product_id  = __raw_readl(exynos_chipid_base);
+>> +       exynos_soc_info.revision = exynos_soc_info.product_id & EXYNOS_REV_MASK;
+>> +}
+>> +
+>> +static int __init exynos_chipid_probe(struct platform_device *pdev)
+>> +{
+>> +       struct soc_device_attribute *soc_dev_attr;
+>> +       struct soc_device *soc_dev;
+>> +       struct device_node *root;
+>> +       int ret;
+>> +
+>> +       exynos_chipid_early_init(&pdev->dev);
+>> +
+>> +       soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
+>> +       if (!soc_dev_attr)
+>> +               return -ENODEV;
+>> +
+>> +       soc_dev_attr->family = "Samsung Exynos";
+>> +
+>> +       root = of_find_node_by_path("/");
+>> +       ret = of_property_read_string(root, "model", &soc_dev_attr->machine);
+>> +       of_node_put(root);
+>> +       if (ret)
+>> +               goto free_soc;
+>
+> Should a lack of model really be a reason to not load the soc_device?
+
+No. I can make it optional and initialize machine with some default value.
+
+>
+>> +
+>> +       soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%d",
+>> +                                       exynos_soc_info.revision);
+>> +       if (!soc_dev_attr->revision)
+>> +               goto free_soc;
+>> +
+>> +       soc_dev_attr->soc_id = product_id_to_name(exynos_soc_info.product_id);
+>> +
+>> +       soc_dev = soc_device_register(soc_dev_attr);
+>> +       if (IS_ERR(soc_dev))
+>> +               goto free_rev;
+>> +
+>> +       soc_device_to_device(soc_dev);
+>> +
+>> +       dev_info(&pdev->dev, "Exynos: CPU[%s] CPU_REV[0x%x] Detected\n",
+>> +                       product_id_to_name(exynos_soc_info.product_id),
+>> +                       exynos_soc_info.revision);
+>> +       return 0;
+>> +free_rev:
+>> +       kfree(soc_dev_attr->revision);
+>> +free_soc:
+>> +       kfree(soc_dev_attr);
+>> +       return -EINVAL;
+>> +}
+>> +
+>> +static struct platform_driver exynos_chipid_driver __initdata = {
+>> +       .driver = {
+>> +               .name = "exynos-chipid",
+>> +               .of_match_table = of_exynos_chipid_ids,
+>> +       },
+>> +       .probe = exynos_chipid_probe,
+>> +};
+>> +
+>> +static int __init exynos_chipid_init(void)
+>> +{
+>> +       return platform_driver_register(&exynos_chipid_driver);
+>> +}
+>> +core_initcall(exynos_chipid_init);
+>> +
+>> diff --git a/include/linux/soc/samsung/exynos-soc.h b/include/linux/soc/samsung/exynos-soc.h
+>> new file mode 100644
+>> index 0000000..d2d9f05
+>> --- /dev/null
+>> +++ b/include/linux/soc/samsung/exynos-soc.h
+>> @@ -0,0 +1,51 @@
+>> +/*
+>> + * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+>> + *             http://www.samsung.com
+>> + *
+>> + * Header for EXYNOS SoC Chipid support
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +#ifndef __EXYNOS_SOC_H
+>> +#define __EXYNOS_SOC_H
+>> +
+>> +#define EXYNOS3250_SOC_ID      0xE3472000
+>> +#define EXYNOS4210_SOC_ID      0x43210000
+>> +#define EXYNOS4212_SOC_ID      0x43220000
+>> +#define EXYNOS4412_SOC_ID      0xE4412000
+>> +#define EXYNOS4415_SOC_ID      0xE4415000
+>> +#define EXYNOS5250_SOC_ID      0x43520000
+>> +#define EXYNOS5260_SOC_ID      0xE5260000
+>> +#define EXYNOS5410_SOC_ID      0xE5410000
+>> +#define EXYNOS5420_SOC_ID      0xE5420000
+>> +#define EXYNOS5440_SOC_ID      0xE5440000
+>> +#define EXYNOS5800_SOC_ID      0xE5422000
+>> +
+>> +#define EXYNOS_SOC_MASK                0xFFFFF000
+>> +
+>> +#define EXYNOS4210_REV_0       0x0
+>> +#define EXYNOS4210_REV_1_0     0x10
+>> +#define EXYNOS4210_REV_1_1     0x11
+>> +
+>> +/**
+>> + * Struct exynos_chipid_info
+>> + * @soc_product_id: product id allocated to exynos SoC
+>> + * @soc_revision: revision of exynos SoC
+>> + */
+>> +
+>> +struct exynos_chipid_info {
+>> +       u32 product_id;
+>> +       u32 revision;
+>> +};
+>
+> Exposing this struct kernel wide in an SOC specific way concerns me. I
+> would not like to see this done on every SOC family. That would become
+> a mess.
+>
+
+As of today chip-id can live up by exposing two APIs for getting 
+product_id and revision, but in future when we need to access other 
+fields we may end up adding new exported functions/extern functions. We 
+had a discussion about it in Patch V4 [3].
+
+[3]: https://lkml.org/lkml/2014/12/10/748
+
+
+Thanks,
+Pankaj Dubey
+> Rob
+>
