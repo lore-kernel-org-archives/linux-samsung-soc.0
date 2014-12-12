@@ -1,73 +1,43 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 1/3] ARM: dts: Add power and lid GPIO keys pinctrl for exynos5250-snow
-Date: Fri, 12 Dec 2014 11:25:49 +0100
-Message-ID: <1418379951-5551-2-git-send-email-javier.martinez@collabora.co.uk>
-References: <1418379951-5551-1-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH 0/3] Small updates to Snow and Peach Pit/Pi DTS
+Date: Fri, 12 Dec 2014 11:25:48 +0100
+Message-ID: <1418379951-5551-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:33853 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:33847 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750867AbaLLK0J (ORCPT
+	with ESMTP id S1757345AbaLLK0P (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 12 Dec 2014 05:26:09 -0500
-In-Reply-To: <1418379951-5551-1-git-send-email-javier.martinez@collabora.co.uk>
+	Fri, 12 Dec 2014 05:26:15 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-The Exynos5250 Snow Chromebook has GPIO keys for power and lid
-so the SoC I/O pins have to be configured in external interrupt
-mode. Currently, this is working without setting the pinctrl
-lines but is better to set it explicitly instead of relying on
-the previous state of the I/O pins.
+Hello Kukjin,
 
-The DTS snippets were taken from the downstream ChromeOS tree.
+This series adds some DTS snippets that were missing in the mainline
+Snow and Peach Pit/Pi Device Trees but are present in the downstream
+ChromeOS kernel.
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- arch/arm/boot/dts/exynos5250-snow.dts | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+The series is composed of the following patches:
 
-diff --git a/arch/arm/boot/dts/exynos5250-snow.dts b/arch/arm/boot/dts/exynos5250-snow.dts
-index effaf2a..b9aeec4 100644
---- a/arch/arm/boot/dts/exynos5250-snow.dts
-+++ b/arch/arm/boot/dts/exynos5250-snow.dts
-@@ -33,6 +33,8 @@
- 
- 	gpio-keys {
- 		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&power_key_irq &lid_irq>;
- 
- 		power {
- 			label = "Power";
-@@ -540,6 +542,13 @@
- };
- 
- &pinctrl_0 {
-+	power_key_irq: power-key-irq {
-+		samsung,pins = "gpx1-3";
-+		samsung,pin-function = <0xf>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
- 	ec_irq: ec-irq {
- 		samsung,pins = "gpx1-6";
- 		samsung,pin-function = <0>;
-@@ -575,6 +584,13 @@
- 		samsung,pin-drv = <0>;
- 	};
- 
-+	lid_irq: lid-irq {
-+		samsung,pins = "gpx3-5";
-+		samsung,pin-function = <0xf>;
-+		samsung,pin-pud = <0>;
-+		samsung,pin-drv = <0>;
-+	};
-+
- 	hdmi_hpd_irq: hdmi-hpd-irq {
- 		samsung,pins = "gpx3-7";
- 		samsung,pin-function = <0>;
--- 
-2.1.0
+Javier Martinez Canillas (3):
+  ARM: dts: Add power and lid GPIO keys pinctrl for exynos5250-snow
+  ARM: dts: Add lid GPIO key device node for Peach boards
+  ARM: dts: Set Peach boards USB WebCam regulators to always on
+
+ arch/arm/boot/dts/exynos5250-snow.dts      | 16 ++++++++++++++++
+ arch/arm/boot/dts/exynos5420-peach-pit.dts | 19 ++++++++++++++++++-
+ arch/arm/boot/dts/exynos5800-peach-pi.dts  | 20 +++++++++++++++++++-
+ 3 files changed, 53 insertions(+), 2 deletions(-)
+
+Patch #1 adds some pinctrl lines for the GPIO keys in the Snow DTS.
+
+Patch #2 adds a device node and pinctrl lines for the lid GPIO in
+the Peach boards DTS.
+
+Patch #3 sets the regulators that supply voltage to the USB WebCam
+in Peach boards as always on.
+
+Best regards,
+Javier
