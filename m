@@ -1,195 +1,157 @@
-From: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Subject: [PATCH RFC v3 1/2] PM / Domains: Extend API pm_genpd_dev_need_restore
- to use restore types
-Date: Sat, 13 Dec 2014 22:21:57 +0530
-Message-ID: <1418489518-7252-1-git-send-email-amit.daniel@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, khilman@linaro.org, rjw@rjwysocki.net, len.brown@intel.com, ulf.hansson@linaro.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.ab@samsung.com, pankaj.dubey@samsung.com, m.szyprowski@samsung.com, geert+renesas@glider.be, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Amit Daniel Kachhap <amit.daniel@samsung.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH v5 1/2] soc: samsung: add exynos chipid driver support
+Date: Sat, 13 Dec 2014 11:58:54 -0600
+Message-ID: <CAL_JsqKA491FC44LRQQaKA3-3XKisJ2kRJCD9E5xQww=JV6+bg@mail.gmail.com>
+References: <1418285264-21763-1-git-send-email-pankaj.dubey@samsung.com>
+ <1418285264-21763-2-git-send-email-pankaj.dubey@samsung.com>
+ <CAL_JsqKaf+w_D-xLCUizuTmxwT7uUHExA=qMpawQ+00G7uMcBg@mail.gmail.com> <548A9D27.1000504@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wg0-f54.google.com ([74.125.82.54]:39365 "EHLO
+	mail-wg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751073AbaLMR7Q (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 13 Dec 2014 12:59:16 -0500
+In-Reply-To: <548A9D27.1000504@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Arnd Bergmann <arnd@arndb.de>, Thomas Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 
-Instead of using bool to restore suspended devices initially, use flags
-like GPD_DEV_SUSPEND_INIT, GPD_DEV_RESTORE_INIT and GPD_DEV_RESTORE_FORCE.
-The first two flags will be similar to the existing true/false functionality.
-The third flag may be used to force restore of suspended devices
-whenever their associated power domain is turned on.
+On Fri, Dec 12, 2014 at 1:45 AM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> Hi Rob,
+>
+> On Thursday 11 December 2014 11:00 PM, Rob Herring wrote:
+>>
+>> On Thu, Dec 11, 2014 at 2:07 AM, Pankaj Dubey <pankaj.dubey@samsung.com>
+>> wrote:
+>>>
+>>> Exynos SoCs have Chipid, for identification of product IDs
+>>> and SoC revisions. This patch intendes to provide initialization
+>>> code for all these functionalites.
 
-Currently, PD power off function powers off all the associated unused
-devices. The functionality added in this patch is similar to it.
+[...]
 
-This feature may be used for those devices which are always in ON state
-if the PD associated with them is ON but may need local runtime resume
-and suspend during PD On/Off. These devices (like clock) may not implement
-complete pm_runtime calls such as pm_runtime_get/pm_runtime_put due to
-subsystems interaction behaviour or any other reason.
+>>> +static void __iomem *exynos_chipid_base;
+>>> +
+>>> +struct exynos_chipid_info exynos_soc_info;
+>>> +EXPORT_SYMBOL(exynos_soc_info);
+>>
+>>
+>> The soc_device already has similar data.Why is this needed? Is it
+>> temporary for compatibility?
+>
+>
+> struct soc_device_attribute can hold these two (product_id, and revision)
+> but they are defined as char * in soc_device_atttribute, and I feel it's
+> more specific for exposing via sysfs.
 
-The model works like,
-    DEV1 (Attaches itself with PD but no calls to pm_runtime_get and
-    /	pm_runtime_put. Its local runtime_suspend/resume is invoked via
-   /	GPD_DEV_RESTORE_FORCE option)
-  /
-PD -- DEV2 (Implements complete PM runtime and calls pm_runtime_get and
-  \	pm_runtime_put. This in turn invokes PD On/Off)
-   \
-    DEV3 (Similar to DEV1)
+But what is exposed generically for sysfs should also be exposed
+internally in the kernel generically.
 
-Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
----
-This work is continuation of earlier work,
+> Also existing code in mach-exynos compares them via product_id/revision
+> macros, so I can say to keep compatibility.
 
-In V2: Completely removed notfiers and add support for huge clock list to be
-	suspended and restored. There was some issue in this as some clocks are
-	not exposed and are just initialised by bootloaders. This approach
-	required all of them to be exposed which is cumbersome. Also some
-	clock API's set_parent are disabling the original parent clocks
-	which is not required.
-	Link (https://lkml.org/lkml/2014/11/24/290)
+Perhaps you will have to change the users. Otherwise, I don't see the
+point in moving this code as is. If there are a lot of users, then
+having both old and new interface and moving them over one by one
+would be okay. However, if this is widely used that is a problem in
+itself.
 
-In V1: Implemented PM Domain notfier such as PD_ON_PRE, PD_ON_POST
-	PD_OFF_PRE and PD_OFF_POST. This was not supported and other
-	options suggested. link (http://www.spinics.net/lists/linux-samsung-soc/msg38442.html)
+>> For early use?
+>
+>
+> Yes, partially correct. These parameters will be required in during early
+> boot, from mach-exynos/platsmp.c, by that time probe of chipid would not
+> have happened. But usage of this is not limited to early users, even
+> mach-exynos/pm.c will use this later any point of time.
+> Since there are early users I added "exynos_chipid_early_init" which will be
+> called via mach-exynos.c at very early stage [1].
+>
+> [1]: https://lkml.org/lkml/2014/12/11/47
+>
+>
+>> If for early use, then it
+>> should not be exported.
+>
+>
+> Other reason to make and expose this structure was we can see that other
+> fields of chipid bank (other than product_id and revision, which is not part
+> of this patch as of now) can be used by other driver such as ASV (which is
+> not yet part of mainline but is there for every exynos SoC).
+>
+> I do not exported this in my PATCH v4 [2] of this, and instead provided
+> exposed functions to directly access product_id and revision, but sometime
+> in future when we will need other fields of chipid bank, we will end-up
+> adding new exported function for each new field, so decided to expose this
+> structure itself.
 
-This work may also assist exynos iommu pm runtime posted earlier by Marek
-http://lists.linaro.org/pipermail/linaro-mm-sig/2014-August/004099.html
-	
- drivers/base/power/domain.c | 40 ++++++++++++++++++++++++++++++++++++----
- include/linux/pm_domain.h   | 15 +++++++++++++--
- 2 files changed, 49 insertions(+), 6 deletions(-)
+More on this below.
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 6a103a3..d955a05 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -49,6 +49,7 @@
- 
- static LIST_HEAD(gpd_list);
- static DEFINE_MUTEX(gpd_list_lock);
-+static void __pm_genpd_restore_devices(struct generic_pm_domain *genpd);
- 
- static struct generic_pm_domain *pm_genpd_lookup_name(const char *domain_name)
- {
-@@ -176,6 +177,8 @@ static int genpd_power_on(struct generic_pm_domain *genpd)
- 	pr_warn("%s: Power-%s latency exceeded, new value %lld ns\n",
- 		genpd->name, "on", elapsed_ns);
- 
-+	__pm_genpd_restore_devices(genpd);
-+
- 	return ret;
- }
- 
-@@ -453,6 +456,24 @@ static void __pm_genpd_restore_device(struct pm_domain_data *pdd,
- }
- 
- /**
-+ * __pm_genpd_restore_devices- Restore the pre-suspend state of all device
-+ *				according to the restore flag.
-+ * @genpd: PM domain the device belongs to.
-+ */
-+static void __pm_genpd_restore_devices(struct generic_pm_domain *genpd)
-+{
-+	struct pm_domain_data *pdd;
-+	struct generic_pm_domain_data *gpd_data;
-+
-+	/* Force restore the devices according to the restore flag */
-+	list_for_each_entry(pdd, &genpd->dev_list, list_node) {
-+		gpd_data = to_gpd_data(pdd);
-+		if (gpd_data->force_restore == true)
-+			__pm_genpd_restore_device(pdd, genpd);
-+	}
-+}
-+
-+/**
-  * genpd_abort_poweroff - Check if a PM domain power off should be aborted.
-  * @genpd: PM domain to check.
-  *
-@@ -1469,6 +1490,7 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
- 	gpd_data->base.dev = dev;
- 	list_add_tail(&gpd_data->base.list_node, &genpd->dev_list);
- 	gpd_data->need_restore = -1;
-+	gpd_data->force_restore = false;
- 	gpd_data->td.constraint_changed = true;
- 	gpd_data->td.effective_constraint_ns = -1;
- 	mutex_unlock(&gpd_data->lock);
-@@ -1561,18 +1583,28 @@ int pm_genpd_remove_device(struct generic_pm_domain *genpd,
- /**
-  * pm_genpd_dev_need_restore - Set/unset the device's "need restore" flag.
-  * @dev: Device to set/unset the flag for.
-- * @val: The new value of the device's "need restore" flag.
-+ * @val: This can have values GPD_DEV_SUSPEND_INIT or GPD_DEV_RESTORE_INIT
-+ *	together with GPD_DEV_RESTORE_FORCE.
-  */
--void pm_genpd_dev_need_restore(struct device *dev, bool val)
-+void pm_genpd_dev_need_restore(struct device *dev, unsigned int val)
- {
- 	struct pm_subsys_data *psd;
-+	struct generic_pm_domain_data *pdd;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&dev->power.lock, flags);
- 
- 	psd = dev_to_psd(dev);
--	if (psd && psd->domain_data)
--		to_gpd_data(psd->domain_data)->need_restore = val ? 1 : 0;
-+	if (psd && psd->domain_data) {
-+		pdd = to_gpd_data(psd->domain_data);
-+		if (val & GPD_DEV_SUSPEND_INIT)
-+			pdd->need_restore = 0;
-+		else if (val & GPD_DEV_RESTORE_INIT)
-+			pdd->need_restore = 1;
-+
-+		if (val & GPD_DEV_RESTORE_FORCE)
-+			pdd->force_restore = true;
-+	}
- 
- 	spin_unlock_irqrestore(&dev->power.lock, flags);
- }
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 6cd20d5..8aa74ee 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -20,6 +20,15 @@
- /* Defines used for the flags field in the struct generic_pm_domain */
- #define GENPD_FLAG_PM_CLK	(1U << 0) /* PM domain uses PM clk */
- 
-+/* Defines used for the types of restore */
-+#define	GPD_DEV_SUSPEND_INIT	0x1	/* Initiate the device runtime as
-+					   suspend/resume/suspend... */
-+#define	GPD_DEV_RESTORE_INIT	0x10	/* Initiate the device runtime as
-+					   resume/suspend/suspend... */
-+#define	GPD_DEV_RESTORE_FORCE	0x100	/* Force these devices to always do
-+					   resume in PD power on. Initial
-+					   behaviour can be one of the above */
-+
- enum gpd_status {
- 	GPD_STATE_ACTIVE = 0,	/* PM domain is active */
- 	GPD_STATE_WAIT_MASTER,	/* PM domain's master is being waited for */
-@@ -116,6 +125,7 @@ struct generic_pm_domain_data {
- 	struct mutex lock;
- 	unsigned int refcount;
- 	int need_restore;
-+	bool force_restore;
- };
- 
- #ifdef CONFIG_PM_GENERIC_DOMAINS
-@@ -140,7 +150,7 @@ extern int __pm_genpd_name_add_device(const char *domain_name,
- 
- extern int pm_genpd_remove_device(struct generic_pm_domain *genpd,
- 				  struct device *dev);
--extern void pm_genpd_dev_need_restore(struct device *dev, bool val);
-+extern void pm_genpd_dev_need_restore(struct device *dev, unsigned int val);
- extern int pm_genpd_add_subdomain(struct generic_pm_domain *genpd,
- 				  struct generic_pm_domain *new_subdomain);
- extern int pm_genpd_add_subdomain_names(const char *master_name,
-@@ -187,7 +197,8 @@ static inline int pm_genpd_remove_device(struct generic_pm_domain *genpd,
- {
- 	return -ENOSYS;
- }
--static inline void pm_genpd_dev_need_restore(struct device *dev, bool val) {}
-+static inline void pm_genpd_dev_need_restore(struct device *dev,
-+						unsigned int val) {}
- static inline int pm_genpd_add_subdomain(struct generic_pm_domain *genpd,
- 					 struct generic_pm_domain *new_sd)
- {
--- 
-2.2.0
+
+>>> +void __init exynos_chipid_early_init(struct device *dev)
+>>> +{
+>>> +       struct device_node *np;
+>>> +       const struct of_device_id *match;
+>>> +
+>>> +       if (exynos_chipid_base)
+>>> +               return;
+>>> +
+>>> +       if (!dev)
+>>> +               np = of_find_matching_node_and_match(NULL,
+>>> +                       of_exynos_chipid_ids, &match);
+>>> +       else
+>>> +               np = dev->of_node;
+>>> +
+>>> +       if (!np)
+>>> +               panic("%s, failed to find chipid node\n", __func__);
+>>
+>>
+>> Do you really want to halt booting here?
+>
+>
+> Since some critical configuration are done in platsmp.c based on product_id
+> and revision, I don't see any point moving ahead without it.
+> Even if we allow to continue here it will crash or lead to system
+> malfunction later during system boot for existing SoC support.
+>
+> Your console may not be up to
+>>
+>> see the panic anyway.
+>
+>
+> I feel this we can still see via earlyprintk.
+
+You can, yes. So when you don't boot getting no messages, you then
+have to recompile to enable earlyprintk for exynos, load a new kernel,
+and change your command line. That's not very good from a support
+point of view. It would be better to boot while failing to boot
+secondary cpus than not boot printing nothing. It is much better to
+provide the warnings rather than have to debug why you are not
+booting.
+
+>>> +struct exynos_chipid_info {
+>>> +       u32 product_id;
+>>> +       u32 revision;
+>>> +};
+>>
+>>
+>> Exposing this struct kernel wide in an SOC specific way concerns me. I
+>> would not like to see this done on every SOC family. That would become
+>> a mess.
+>>
+>
+> As of today chip-id can live up by exposing two APIs for getting product_id
+> and revision, but in future when we need to access other fields we may end
+> up adding new exported functions/extern functions. We had a discussion about
+> it in Patch V4 [3].
+
+Yes, but every SOC has an id and revision, so we should expose them in
+a common way. For other fields, the mechanism to retrieve them should
+probably be common, but the data could be custom.
+
+Rob
+
+>
+> [3]: https://lkml.org/lkml/2014/12/10/748
