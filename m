@@ -1,152 +1,180 @@
-From: AH <najdrozszy@gmail.com>
-Subject: Re: [RFC 01/15] drivers/base: add track framework
-Date: Sat, 13 Dec 2014 00:12:19 +0100
-Message-ID: <548B7653.7020004@gmail.com>
-References: <1418226513-14105-2-git-send-email-a.hajda@samsung.com> <20141212163653.GO11764@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20141212163653.GO11764@sirena.org.uk>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>, Andrzej Hajda <a.hajda@samsung.com>
-Cc: open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, ARM/CLKDEV SUPPORT <linux-arm-kernel@lists.infradead.org>, GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>, DRM PANEL DRIVERS <dri-devel@lists.freedesktop.org>, "ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>
+From: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Subject: [PATCH RFC v3 2/2] clk: samsung: Add PM runtime support for clocks.
+Date: Sat, 13 Dec 2014 22:21:58 +0530
+Message-ID: <1418489518-7252-2-git-send-email-amit.daniel@samsung.com>
+References: <1418489518-7252-1-git-send-email-amit.daniel@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:45021 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751412AbaLMQ65 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 13 Dec 2014 11:58:57 -0500
+In-reply-to: <1418489518-7252-1-git-send-email-amit.daniel@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, khilman@linaro.org, rjw@rjwysocki.net, len.brown@intel.com, ulf.hansson@linaro.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.ab@samsung.com, pankaj.dubey@samsung.com, m.szyprowski@samsung.com, geert+renesas@glider.be, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Amit Daniel Kachhap <amit.daniel@samsung.com>
 
-Hi Mark,
+This patch adds PM runtime support for clocks associated with Power
+Domain. The PM runtime suspend/resume handlers will be called when the
+power domain associated with it, is turned on/off.
 
-Thanks for review.
+The registration of clocks happen in early initailisation. The probe
+is later called to register the clock device with the power domain.
 
-Mark Brown wrote on 12.12.2014 17:36:
-> On Wed, Dec 10, 2014 at 04:48:19PM +0100, Andrzej Hajda wrote:
->> track is a generic framework for safe tracking presence of any kernel objects
->> having an id. There are no special requirements about type of object or its
->> id. Id shall be unique.
->
-> This is pretty confusing, when it talks about "kernel objects" that
-> sounds like it means struct kobject but in fact there's no connection
-> with that or any of the other kernel object stuff.  Perhaps it makes
-> sense but it should be addressed.
->
+Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+---
+ drivers/clk/samsung/clk.c | 95 +++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/samsung/clk.h | 11 ++++++
+ 2 files changed, 106 insertions(+)
 
-OK
-
->> Typical usage of the framework by consumer looks as follow:
->> 1. Consumer registers notifier callback for objects with given id.
->
-> This is also a custom thing not connected with the notifier mechanism
-> implemented by struct notifier_block.  Again this should probably be
-> addressed, even if it's just used internally it seems like there should
-> be some opportunity for code reuse here.
-
-I though about using notfier_block, but beside the struct itself there 
-wouldn't be too much code to reuse. In my previous attempt of this 
-framework more arguments were passed to the callback so I have dropped
-this idea completely, but now after simplifying the callback it fits better.
-
->
->> +	case track_task_up:
->> +		node = track_get_node(track, task->type, task->id, true);
->> +
->> +		node->up = true;
->> +		node->data = task->data;
->> +		list_for_each_entry_safe(itb, node->itb_next, &node->itb_head,
->> +					 list)
->> +			itb->callback(itb, node->data, true);
->> +		return;
->> +	case track_task_down:
->
-> I'm not sure the up and down naming is the most obvious naming for
-> users.  It's obviously inspired by semaphores but it's not entirely
-> obvious that this is going to make things clear and meaningful for
-> someone trying to understand the interface.
-
-In my 1st attempt I have called the framework interface_tracker, so it 
-was named ifup/ifdown after unix commands:) Now it is less obvious.
-Finding good names is always painful, anyway I will think about it.
-
->
->> +static int track_process_queue(struct tracker *track)
->> +{
->> +	struct track_task *task, *ptask = NULL;
->> +	unsigned long flags;
->> +	bool empty;
->> +
->> +	/* Queue non-emptiness is used as a sentinel to prevent processing
->> +	 * by multiple threads, so we cannot delete entry from the queue
->> +	 * until it is processed.
->> +	 */
->> +	while (true) {
->> +		spin_lock_irqsave(&track->queue_lock, flags);
->> +
->> +		if (ptask)
->> +			list_del(&ptask->list);
->> +		task = list_first_entry(&track->queue,
->> +					struct track_task, list);
->> +
->> +		empty = list_empty(&track->queue);
->> +		if (empty)
->> +			complete_all(&track->queue_empty);
->> +
->> +		spin_unlock_irqrestore(&track->queue_lock, flags);
->
-> Here we get a task from the head of the list and drop the lock, leaving
-> the task on the list...
-
-Yes and it is explained in the comment few lines above.
-
->
->> +		kfree(ptask);
->> +
->> +		if (empty)
->> +			break;
->> +
->> +		track_process_task(track, task);
->
-> ...we then go and do some other stuff, including processing that task,
-> without the lock or or any other means I can see of excluding other
-> users before going round and removing the task.  This seems to leave us
-> vulnerable to double execution.
-
-No, if you look at track_add_task function you will see that the queue 
-is processed only if it is initially empty, otherwise the task is only 
-added to the queue, so it will be processed after processing earlier tasks.
-So the rule is that if someone add task to the queue it checks if the 
-queue is empty, in such case it process all tasks from the queue until
-the queue becomes empty, even the tasks added by other processed.
-This way all tasks are serialized.
-
-
-> I *think* this is supposed to be
-> handled by your comment "Provider should take care of calling
-> notifications synchronously in proper order" in the changelog but that's
-> a bit obscure, it's not specific about what the requirements are (or
-> what the limits are supposed to be on the notification callbacks).
-
-No, this comment is just to avoid advertising object (ie calling 
-track_up) that can be just removed by concurrent thread.
-
-
->
-> I'm also unclear what is supposed to happen if adding a notification
-> races with removing the thing being watched.
->
-
-The sequence should be always as follows:
-1. create thing, then call track_up(thing).
-...
-2. call track_down(thing) then remove thing.
-
-If we put 1 into probe and 2 into remove callback of the driver it will 
-be safe - we are synchronised by device_lock. But if, for some reason, 
-we want to create object after probe we should do own synchronization or 
-just put device_lock around 1. The same applies if we want to remove
-object earlier. This is the comment above about. I will expand it to 
-more verbose explanation.
-
-Regards
-Andrzej
-
-
-
-
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index dd1f7c9..c517aa8 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -11,6 +11,10 @@
+  * clock framework for Samsung platforms.
+ */
+ 
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pm_domain.h>
++#include <linux/pm_runtime.h>
+ #include <linux/syscore_ops.h>
+ #include "clk.h"
+ 
+@@ -370,6 +374,93 @@ static void samsung_clk_sleep_init(void __iomem *reg_base,
+ 		unsigned long nr_rdump) {}
+ #endif
+ 
++static int samsung_cmu_runtime_suspend(struct device *dev)
++{
++	struct samsung_clock_pd_reg_cache *reg_cache;
++
++	reg_cache = dev_get_drvdata(dev);
++	samsung_clk_save(reg_cache->reg_base, reg_cache->rdump,
++			reg_cache->rd_num);
++	return 0;
++}
++
++static int samsung_cmu_runtime_resume(struct device *dev)
++{
++	struct samsung_clock_pd_reg_cache *reg_cache;
++
++	reg_cache = dev_get_drvdata(dev);
++	samsung_clk_restore(reg_cache->reg_base, reg_cache->rdump,
++			reg_cache->rd_num);
++	return 0;
++}
++
++#define MAX_CMU_DEVICE_MATCH	50
++static int samsung_cmu_count;
++static struct of_device_id samsung_cmu_match[MAX_CMU_DEVICE_MATCH];
++MODULE_DEVICE_TABLE(of, samsung_cmu_match);
++
++static void samsung_clk_pd_init(struct device_node *np, void __iomem *reg_base,
++				struct samsung_cmu_info *cmu)
++{
++	struct samsung_clock_pd_reg_cache *pd_reg_cache;
++	const char *name;
++
++	if (samsung_cmu_count == MAX_CMU_DEVICE_MATCH)
++		panic("Maximum clock device limit reached.\n");
++
++	if (of_property_read_string_index(np, "compatible", 0, &name))
++		panic("Invalid DT node.\n");
++
++	pd_reg_cache = kzalloc(sizeof(struct samsung_clock_pd_reg_cache),
++			GFP_KERNEL);
++	if (!pd_reg_cache)
++		panic("Could not allocate register reg_cache.\n");
++
++	pd_reg_cache->rdump = samsung_clk_alloc_reg_dump(cmu->pd_clk_regs,
++				cmu->nr_pd_clk_regs);
++	if (!pd_reg_cache->rdump)
++		panic("Could not allocate register dump storage.\n");
++
++	pd_reg_cache->reg_base = reg_base;
++	pd_reg_cache->rd_num = cmu->nr_pd_clk_regs;
++
++	/* Fill up the compatible string and data */
++	samsung_cmu_match[samsung_cmu_count].data = pd_reg_cache;
++	strcpy(samsung_cmu_match[samsung_cmu_count].compatible, name);
++	samsung_cmu_count++;
++}
++
++static int __init samsung_cmu_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct of_device_id *match;
++
++	/* get the platform data */
++	match = (struct of_device_id *)of_match_node(samsung_cmu_match,
++							pdev->dev.of_node);
++	if (!match)
++		return 0;
++	platform_set_drvdata(pdev, (void *)match->data);
++	pm_runtime_enable(dev);
++	pm_genpd_dev_need_restore(dev,
++				GPD_DEV_RESTORE_FORCE | GPD_DEV_SUSPEND_INIT);
++	return 0;
++}
++
++static const struct dev_pm_ops samsung_cmu_pm_ops = {
++	SET_RUNTIME_PM_OPS(samsung_cmu_runtime_suspend,
++			samsung_cmu_runtime_resume, NULL)
++};
++
++static struct platform_driver samsung_cmu_driver = {
++	.driver = {
++		.name   = "exynos-clk",
++		.of_match_table = samsung_cmu_match,
++		.pm = &samsung_cmu_pm_ops,
++	},
++	.probe = samsung_cmu_probe,
++};
++
+ /*
+  * Common function which registers plls, muxes, dividers and gates
+  * for each CMU. It also add CMU register list to register cache.
+@@ -409,5 +500,9 @@ void __init samsung_cmu_register_one(struct device_node *np,
+ 		samsung_clk_sleep_init(reg_base, cmu->clk_regs,
+ 			cmu->nr_clk_regs);
+ 
++	if (cmu->pd_clk_regs)
++		samsung_clk_pd_init(np, reg_base, cmu);
++
+ 	samsung_clk_of_add_provider(np, ctx);
+ }
++module_platform_driver(samsung_cmu_driver);
+diff --git a/drivers/clk/samsung/clk.h b/drivers/clk/samsung/clk.h
+index 3f471e9..c184ec1 100644
+--- a/drivers/clk/samsung/clk.h
++++ b/drivers/clk/samsung/clk.h
+@@ -331,6 +331,12 @@ struct samsung_clock_reg_cache {
+ 	unsigned int rd_num;
+ };
+ 
++struct samsung_clock_pd_reg_cache {
++	void __iomem *reg_base;
++	struct samsung_clk_reg_dump *rdump;
++	unsigned int rd_num;
++};
++
+ struct samsung_cmu_info {
+ 	/* list of pll clocks and respective count */
+ 	struct samsung_pll_clock *pll_clks;
+@@ -356,6 +362,11 @@ struct samsung_cmu_info {
+ 	/* list and number of clocks registers */
+ 	unsigned long *clk_regs;
+ 	unsigned int nr_clk_regs;
++
++	/* list and number of clocks to be saved/restored during
++	 * power domain shutdown */
++	unsigned long *pd_clk_regs;
++	unsigned int nr_pd_clk_regs;
+ };
+ 
+ extern struct samsung_clk_provider *__init samsung_clk_init(
+-- 
+2.2.0
