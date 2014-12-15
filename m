@@ -1,80 +1,82 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v3 18/19] iommu: exynos: init from dt-specific callback instead of initcall
-Date: Mon, 15 Dec 2014 20:19:57 +0200
-Message-ID: <1582013.9WDR2r2f3r@avalon>
-References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com> <4894156.QdIh4JzSl0@avalon> <20141215181323.GX20738@arm.com>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH] clk: samsung: Fix Exynos 5420 pinctrl setup and clock disable failure due to domain being gated
+Date: Mon, 15 Dec 2014 14:26:18 -0800
+Message-ID: <7h8ui8h7n9.fsf@deeprootsystems.com>
+References: <1417788934-23447-1-git-send-email-k.kozlowski@samsung.com>
+	<1418129982.19339.6.camel@AMDC1943> <5486F69B.6020005@samsung.com>
+	<7hlhmfo1b0.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:47304 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750879AbaLOST6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Dec 2014 13:19:58 -0500
-In-Reply-To: <20141215181323.GX20738@arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <7hlhmfo1b0.fsf@deeprootsystems.com> (Kevin Hilman's message of
+	"Wed, 10 Dec 2014 09:35:31 -0800")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Will Deacon <will.deacon@arm.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Rob Herring <robh@kernel.org>, Thierry Reding <treding@nvidia.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Inki Dae <inki.dae@samsung.com>, Joerg Roedel <joro@8bytes.org>, Tomasz Figa <tomasz.figa@gmail.com>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Cho KyongHo <pullip.cho@samsung.com>, David Wodhouse <dwmw2@infradead.org>
 
-On Monday 15 December 2014 18:13:23 Will Deacon wrote:
-> On Mon, Dec 15, 2014 at 05:53:48PM +0000, Laurent Pinchart wrote:
-> > Hi Will,
-> 
-> Hello again :)
-> 
-> > On Monday 15 December 2014 17:43:02 Will Deacon wrote:
-> > > On Mon, Dec 15, 2014 at 05:27:30PM +0000, Laurent Pinchart wrote:
-> > > > On Monday 15 December 2014 17:17:00 Will Deacon wrote:
-> > > > > Creating the platform device manually for the IOMMU is indeed
-> > > > > grotty, but I don't really understand why it's needed. Interrupt
-> > > > > controllers, for example, seem to get by without one.
-> > > > 
-> > > > There's several reasons, one of the most compelling ones I can think
-> > > > of at the moment is runtime PM. IRQ controllers close to the CPU use
-> > > > CPU PM notifiers instead. Note that IRQ controllers that are further
-> > > > away from the CPU (such as GPIO-based IRQ controllers) are real
-> > > > platform devices and use runtime PM.
-> > > 
-> > > Ok, that's a good point, but the IOMMU will still probe later anyway,
-> > > right?
-> >
-> > That depends on the driver implementation, using OF node match an IOMMU
-> > driver doesn't have to register a struct driver. Assuming we require
-> > IOMMU drivers to register a struct driver, a platform device should then
-> > be probed at a later time.
-> > 
-> > However, if we wait until the IOMMU gets probed to initialize runtime PM
-> > and make it functional, we'll be back in square one if the IOMMU gets
-> > probed after the bus master, as the bus master could start issuing bus
-> > requests at probe time with the IOMMU not powered yet.
-> 
-> True, but couldn't the early init code do enough to get the thing
-> functional? That said, I'm showing my ignorance here as I'm not familiar
-> with the PM code (and the software models I have for the SMMU clearly don't
-> implement anything in this regard).
+Kevin Hilman <khilman@kernel.org> writes:
 
-We're reaching the limits of my knowledge as well. If the IOMMU is in a power 
-domain different than the bus masters the driver would at least need to ensure 
-that the power domain is turned on, which might be a bit hackish without 
-runtime PM.
+> Sylwester Nawrocki <s.nawrocki@samsung.com> writes:
+>
+>> On 09/12/14 13:59, Krzysztof Kozlowski wrote:
+>>> On pi=C4=85, 2014-12-05 at 15:15 +0100, Krzysztof Kozlowski wrote:
+>>>> > Audio subsystem clocks are located in separate block. On Exynos =
+5420 if
+>>>> > clock for this block (from main clock domain) 'mau_epll' is gate=
+d then
+>>>> > any read or write to audss registers will block.
+>>>> >=20
+>>>> > This kind of boot hang was observed on Arndale Octa and Peach Pi=
+/Pit
+>>>> > after introducing runtime PM to pl330 DMA driver. After that com=
+mit the
+>>>> > 'mau_epll' was gated, because the "amba" clock was disabled and =
+there
+>>>> > were no more users of mau_epll.
+>>>> >=20
+>>>> > The system hang on one of steps:
+>>>> > 1. Disabling unused clocks from audss block.
+>>>> > 2. During audss GPIO setup (just before probing i2s0 because
+>>>> >    samsung_pinmux_setup() tried to access memory from audss bloc=
+k which was
+>>>> >    gated.
+>>>> >=20
+>>>> > Add a workaround for this by enabling the 'mau_epll' clock in pr=
+obe.
+>>>> >=20
+>>>> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+>>>> > ---
+>>>> >  drivers/clk/samsung/clk-exynos-audss.c | 29 +++++++++++++++++++=
++++++++++-
+>>>> >  1 file changed, 28 insertions(+), 1 deletion(-)
+>>>
+>>> Sorry for pinging so quick but merge window is open and it looks li=
+ke
+>>> booting Exynos542x boards will be broken (because pl330 will no lon=
+ger
+>>> hold adma clock enabled so whole audss domain will be gated).
+>>>=20
+>>> This is a non-intrusive workaround for that issue, as wanted by
+>>> Sylwester:
+>>> https://lkml.org/lkml/2014/12/5/223
+>>>=20
+>>> Any comments on this?
+>>
+>> The patch looks OK to me, it would be good though if someone else
+>> has confirmed it fixes the bug. I don't have any clock patches queue=
+d
+>> at the moment. Perhaps you could apply it directly, Mike ?
+>
+> I confirm it fixes the boot hang in linux-next (next-20141210) on my
+> exynos5800-peach-pi and exynos5420-arndale-octa.  Tested both
+> exynos_defconfig and multi_v7_defconfig.
+>
+> Tested-by: Kevin Hilman <khilman@linaro.org>
 
-> > > > IOMMUs are not as low-level as system interrupt controllers or system
-> > > > clocks. I'm beginning to agree with Thierry that they should be
-> > > > treated as normal platform devices as they're not required earlier
-> > > > than probe time of their bus master devices.
-> > > 
-> > > Well, I think you'd have to propose patches for discussion since I'm
-> > > certainly not wed to the current approach; I just want something that
-> > > allows of_{dma,iommu}_configure to run with the information it needs.
-> > 
-> > Do we need of_dma_configure() to run when the device is created, or could
-> > we postpone it to just before probe time ?
-> 
-> I'm not sure I can answer that one... Arnd?
+What's the status of this patch?  linux-next is still broken for severa=
+l
+Exynos5 platforms without this fix.
 
--- 
-Regards,
-
-Laurent Pinchart
+Kevin
