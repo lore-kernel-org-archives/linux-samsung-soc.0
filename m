@@ -1,82 +1,71 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH] clk: samsung: Fix Exynos 5420 pinctrl setup and clock disable failure due to domain being gated
-Date: Mon, 15 Dec 2014 14:26:18 -0800
-Message-ID: <7h8ui8h7n9.fsf@deeprootsystems.com>
-References: <1417788934-23447-1-git-send-email-k.kozlowski@samsung.com>
-	<1418129982.19339.6.camel@AMDC1943> <5486F69B.6020005@samsung.com>
-	<7hlhmfo1b0.fsf@deeprootsystems.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH V8 00/14] drm/exynos: few patches to enhance bridge chip
+ support
+Date: Tue, 16 Dec 2014 01:37:51 +0200
+Message-ID: <3197445.qizQc0zeRb@avalon>
+References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com>
+ <CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com>
+ <548ABAB6.6010200@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <7hlhmfo1b0.fsf@deeprootsystems.com> (Kevin Hilman's message of
-	"Wed, 10 Dec 2014 09:35:31 -0800")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>, Mike Turquette <mturquette@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <548ABAB6.6010200@collabora.co.uk>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: dri-devel@lists.freedesktop.org
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Ajay Kumar <ajaykumar.rs@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Ajay kumar <ajaynumb@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Kevin Hilman <khilman@kernel.org> writes:
-
-> Sylwester Nawrocki <s.nawrocki@samsung.com> writes:
->
->> On 09/12/14 13:59, Krzysztof Kozlowski wrote:
->>> On pi=C4=85, 2014-12-05 at 15:15 +0100, Krzysztof Kozlowski wrote:
->>>> > Audio subsystem clocks are located in separate block. On Exynos =
-5420 if
->>>> > clock for this block (from main clock domain) 'mau_epll' is gate=
-d then
->>>> > any read or write to audss registers will block.
->>>> >=20
->>>> > This kind of boot hang was observed on Arndale Octa and Peach Pi=
-/Pit
->>>> > after introducing runtime PM to pl330 DMA driver. After that com=
-mit the
->>>> > 'mau_epll' was gated, because the "amba" clock was disabled and =
-there
->>>> > were no more users of mau_epll.
->>>> >=20
->>>> > The system hang on one of steps:
->>>> > 1. Disabling unused clocks from audss block.
->>>> > 2. During audss GPIO setup (just before probing i2s0 because
->>>> >    samsung_pinmux_setup() tried to access memory from audss bloc=
-k which was
->>>> >    gated.
->>>> >=20
->>>> > Add a workaround for this by enabling the 'mau_epll' clock in pr=
-obe.
->>>> >=20
->>>> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
->>>> > ---
->>>> >  drivers/clk/samsung/clk-exynos-audss.c | 29 +++++++++++++++++++=
-+++++++++-
->>>> >  1 file changed, 28 insertions(+), 1 deletion(-)
->>>
->>> Sorry for pinging so quick but merge window is open and it looks li=
-ke
->>> booting Exynos542x boards will be broken (because pl330 will no lon=
-ger
->>> hold adma clock enabled so whole audss domain will be gated).
->>>=20
->>> This is a non-intrusive workaround for that issue, as wanted by
->>> Sylwester:
->>> https://lkml.org/lkml/2014/12/5/223
->>>=20
->>> Any comments on this?
->>
->> The patch looks OK to me, it would be good though if someone else
->> has confirmed it fixes the bug. I don't have any clock patches queue=
-d
->> at the moment. Perhaps you could apply it directly, Mike ?
->
-> I confirm it fixes the boot hang in linux-next (next-20141210) on my
-> exynos5800-peach-pi and exynos5420-arndale-octa.  Tested both
-> exynos_defconfig and multi_v7_defconfig.
->
-> Tested-by: Kevin Hilman <khilman@linaro.org>
-
-What's the status of this patch?  linux-next is still broken for severa=
-l
-Exynos5 platforms without this fix.
-
-Kevin
+SGkgSmF2aWVyLAoKT24gRnJpZGF5IDEyIERlY2VtYmVyIDIwMTQgMTA6NTE6NTAgSmF2aWVyIE1h
+cnRpbmV6IENhbmlsbGFzIHdyb3RlOgo+IEhlbGxvLAo+IAo+IE9uIDExLzE4LzIwMTQgMDc6MjAg
+QU0sIEFqYXkga3VtYXIgd3JvdGU6Cj4gPiBPbiBTYXQsIE5vdiAxNSwgMjAxNCBhdCAzOjI0IFBN
+LCBBamF5IEt1bWFyIHdyb3RlOgo+ID4+IFRoaXMgc2VyaWVzIGlzIGJhc2VkIG9uIG1hc3RlciBi
+cmFuY2ggb2YgTGludXMgdHJlZSBhdDoKPiA+PiBnaXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2Nt
+L2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0Cj4gCj4gVGhpcyBzZXJpZXMgaGFz
+IGJlZW4gaW4gdGhlIG1haWxpbmcgbGlzdHMgZm9yIG1vbnRocyBhbmQgaGF2ZSBiZWVuIHRlc3Rl
+ZAo+IGJ5IG1hbnkgcGVvcGxlLiBXaGF0IGVsc2UgaXMgbWlzc2luZyBiZWZvcmUgaXQgY2FuIGJl
+IG1lcmdlZD8KPiAKPiBJdCB3b3VsZCBiZSBncmVhdCB0byBoYXZlIHByb3BlciBkaXNwbGF5IHN1
+cHBvcnQgb24gcGxhdGZvcm1zIHRoYXQgaGF2ZSBhCj4gZURQIHRvIExWRFMgYnJpZGdlIGNoaXAg
+KGUuZzogU25vdywgUGVhY2ggUGl0IGFuZCBTcHJpbmcgQ2hyb21lYm9va3MpIGFuZAo+IGV2ZXJ5
+dGhpbmcgaXMgaW4gcGxhY2UgYnV0IHRoaXMgc2VyaWVzIHdoaWNoIGhhZCBiZWVuIG1pc3Npbmcg
+bWFueSBrZXJuZWwKPiByZWxlYXNlcyBhbHJlYWR5Lgo+IAo+ID4+IENoYW5nZXMgc2luY2UgVjc6
+Cj4gPj4gICAgICAgICAtLSBBZGRyZXNzIGNvbW1lbnRzIGZyb20gVG9taSBhbmQgTGF1cmVudDoK
+PiA+PiAgICAgICAgICAgICAgICAgLS0gVXNlIHZpZGVvcG9ydHMgYW5kIGVuZHBvaW50cyB0byBy
+ZXByZXNlbnQgdGhlCj4gPj4gICAgICAgICAgICAgICAgIGNvbm5lY3Rpb24gYmV0d2Vlbgo+ID4+
+ICAgICAgICAgICAgICAgICAKPiA+PiAgICAgICAgICAgICAgICAgICAgZW5jb2RlciwgYnJpZGdl
+IGFuZCB0aGUgcGFuZWwsIGluc3RlYWQgb2YgdXNpbmcKPiA+PiAgICAgICAgICAgICAgICAgICAg
+cGhhbmRsZXMuCj4gPj4gICAgICAgICAKPiA+PiAgICAgICAgIC0tIEFkZHJlc3MgY29tbWVudHMg
+ZnJvbSBEYW5pZWw6Cj4gPj4gICAgICAgICAgICAgICAgIC0tIE1ha2UgdGhlIHBhdGNoIGRlc2Ny
+aXB0aW9uIG1vcmUgZGVzY3JpcHRpdmUuCj4gPj4gICAgICAgICAgICAgICAgIC0tIHJlbW92ZSBk
+ZXZpY2UgcG9pbnRlciBmcm9tIGRybV9icmlkZ2UsIGFuZCBqdXN0IHVzZQo+ID4+ICAgICAgICAg
+ICAgICAgICAKPiA+PiAgICAgICAgICAgICAgICAgICAgZGV2aWNlX25vZGUgaW5zdGVhZC4KPiA+
+PiAgICAgICAgICAgICAgICAgCj4gPj4gICAgICAgICAgICAgICAgIC0tIGRvbid0IHBhc3MgZW5j
+b2RlciBwb2ludGVyIHRvIGJyaWRnZV9hdHRhY2guCj4gPj4gICAgICAgICAKPiA+PiAgICAgICAg
+IC0tIEFkZHJlc3MgY29tbWVudHMgZnJvbSBTZWFuIFBhdWw6Cj4gPj4gICAgICAgICAgICAgICAg
+IC0tIFJlbW92ZSBicmlkZ2UgZnJvbSBtb2RlX2NvbmZpZywgYW5kIHB1bGwgb3V0Cj4gPj4gICAg
+ICAgICAgICAgICAgIGRybV9icmlkZ2UKPiA+PiAgICAgICAgICAgICAgICAgCj4gPj4gICAgICAg
+ICAgICAgICAgICAgIGZ1bmN0aW9ucyBmcm9tIGRybV9jcnRjLmMgdG8gZHJtX2JyaWRnZS5jCj4g
+Cj4gVG9taSBhbmQgTGF1cmVudCwKPiAKPiBZb3UgYXNrZWQgQWpheSB0byBjaGFuZ2UgaGlzIHNl
+cmllcyB0byB1c2UgdGhlIHZpZGVvIHBvcnQgYW5kIGVucG9pbnRzIERUCj4gYmluZGluZ3MgaW5z
+dGVhZCBvZiBwaGFuZGxlcywgY291bGQgeW91IHBsZWFzZSByZXZpZXcgaGlzIGxhdGVzdCB2ZXJz
+aW9uPwo+IAo+IEkgZ3Vlc3MgaXMgbm93IHRvbyBsYXRlIGZvciAzLjE5IHNpbmNlIHdlIGFyZSBp
+biB0aGUgbWlkZGxlIG9mIHRoZSBtZXJnZQo+IHdpbmRvdyBidXQgaXQgd291bGQgYmUgZ3JlYXQg
+aWYgdGhpcyBzZXJpZXMgY2FuIGF0IGxlYXN0IG1hZGUgaXQgdG8gMy4yMC4KCkkgZG9uJ3QgaGF2
+ZSB0aW1lIHRvIHJldmlldyB0aGUgc2VyaWVzIGluIGRldGFpbHMgcmlnaHQgbm93LCBidXQgSSdt
+IGhhcHB5IAp3aXRoIHRoZSBEVCBiaW5kaW5ncywgYW5kIGhhdmUgbm8gYmlnIGlzc3VlIHdpdGgg
+dGhlIHJlc3Qgb2YgdGhlIHBhdGNoZXMuIEkgCmRvbid0IHJlYWxseSBsaWtlIHRoZSBvZl9kcm1f
+ZmluZF9icmlkZ2UoKSBjb25jZXB0IGludHJvZHVjZWQgaW4gMDMvMTQgYnV0IEkgCndvbid0IG5h
+Y2sgaXQgZ2l2ZW4gbGFjayBvZiB0aW1lIHRvIGltcGxlbWVudCBhbiBhbHRlcm5hdGl2ZSBwcm9w
+b3NhbC4gSXQncyBhbiAKaW50ZXJuYWwgQVBJLCBpdCBjYW4gYWx3YXlzIGJlIHJld29ya2VkIGxh
+dGVyIGFueXdheS4KCi0tIApSZWdhcmRzLAoKTGF1cmVudCBQaW5jaGFydAoKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
+dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
