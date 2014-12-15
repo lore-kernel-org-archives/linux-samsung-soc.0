@@ -1,68 +1,96 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC 02/15] drivers/base: add restrack framework
-Date: Mon, 15 Dec 2014 11:38:32 +0000
-Message-ID: <20141215113832.GX11764@sirena.org.uk>
-References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
- <1418226513-14105-3-git-send-email-a.hajda@samsung.com>
- <20141212165230.GP11764@sirena.org.uk>
- <548E9BB9.806@samsung.com>
+Subject: Re: [RFC 01/15] drivers/base: add track framework
+Date: Mon, 15 Dec 2014 12:55:57 +0000
+Message-ID: <20141215125557.GB11764@sirena.org.uk>
+References: <548B7653.7020004@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="elthcBrLbYw+6uqa"
+	protocol="application/pgp-signature"; boundary="jmbcokH0GrqI2Ucc"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59983 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60213 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751458AbaLOLjq (ORCPT
+	with ESMTP id S1751034AbaLOM4e (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Dec 2014 06:39:46 -0500
+	Mon, 15 Dec 2014 07:56:34 -0500
 Content-Disposition: inline
-In-Reply-To: <548E9BB9.806@samsung.com>
+In-Reply-To: <548B7653.7020004@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Hajda <a.hajda@samsung.com>
-Cc: open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, boris.brezillon@
+To: AH <najdrozszy@gmail.com>
+Cc: Andrzej Hajda <a.hajda@samsung.com>, open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, ARM/CLKDEV SUPPORT <linux-arm-kernel@lists.infradead.org>, GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>, DRM PANEL DRIVERS <dri-devel@lists.freedesktop.org>, "ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>
 
 
---elthcBrLbYw+6uqa
+--jmbcokH0GrqI2Ucc
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 15, 2014 at 09:28:41AM +0100, Andrzej Hajda wrote:
-> On 12/12/2014 05:52 PM, Mark Brown wrote:
-> > On Wed, Dec 10, 2014 at 04:48:20PM +0100, Andrzej Hajda wrote:
+On Sat, Dec 13, 2014 at 12:12:19AM +0100, AH wrote:
+> Mark Brown wrote on 12.12.2014 17:36:
+> >On Wed, Dec 10, 2014 at 04:48:19PM +0100, Andrzej Hajda wrote:
 
-> > I don't know about anyone else but I'm having a hard time reading the
-> > restrack name, it looks like a misspelling of restack to me.
+> >>+		kfree(ptask);
+> >>+
+> >>+		if (empty)
+> >>+			break;
+> >>+
+> >>+		track_process_task(track, task);
 
-> Any alternative names?
+> >...we then go and do some other stuff, including processing that task,
+> >without the lock or or any other means I can see of excluding other
+> >users before going round and removing the task.  This seems to leave us
+> >vulnerable to double execution.
 
-Well, even just res_track would help.
+> No, if you look at track_add_task function you will see that the queue is
+> processed only if it is initially empty, otherwise the task is only added=
+ to
+> the queue, so it will be processed after processing earlier tasks.
+> So the rule is that if someone add task to the queue it checks if the que=
+ue
+> is empty, in such case it process all tasks from the queue until
+> the queue becomes empty, even the tasks added by other processed.
+> This way all tasks are serialized.
 
-> I will move the code for provider matching to frameworks,
-> so it will be easy to add just dev_info after every failed attempt
-> of getting resource, including deferring. This is the simplest solution
-> and it should be similar in verbosity to deferred probing.
+This is all pretty fiddly and seems fragile - if nothing else the code
+seems undercommented since the above is only going to be apparent with
+following through multiple functions and we're relying on both owner and
+list emptiness with more than one place where a task can get processed.
 
-> Maybe other solution is to provide debug_fs (or device) attribute showing
-> restrack status per device.
+> >I'm also unclear what is supposed to happen if adding a notification
+> >races with removing the thing being watched.
 
-I think both are useful - it's often helpful to have a listing of what
-resources have actually been registered, for example to help spot typos.
+> The sequence should be always as follows:
+> 1. create thing, then call track_up(thing).
+> ...
+> 2. call track_down(thing) then remove thing.
 
---elthcBrLbYw+6uqa
+> If we put 1 into probe and 2 into remove callback of the driver it will be
+> safe - we are synchronised by device_lock. But if, for some reason, we wa=
+nt
+> to create object after probe we should do own synchronization or just put
+> device_lock around 1. The same applies if we want to remove
+> object earlier. This is the comment above about. I will expand it to more
+> verbose explanation.
+
+You can't rely on the device lock here since this isn't tied to kobjects
+or anything at all - it's a freestanding interface someone could pick up
+and use in another context.  Besides, that isn't really my concern - my
+concern is what happens if something asks to wait for=20
+
+--jmbcokH0GrqI2Ucc
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBAgAGBQJUjsg3AAoJECTWi3JdVIfQ0B8H/RvF/DMTN70TqlHNn9pDjcBk
-TH7amwHd0crIonpZ/NzYIKbmi3GuwBYmcLgPodqEfd0+0wqYiyvp7mF2WQWtRUlI
-KOPghdPrJjDF1k1qJH9XP9bpvqX4k1b+MIWA2SzI0MBkiiXD5g5wZlHmzx+gvBzG
-tsRavBntWRbs0k6xBosyoUFJPD3IUQtYOhgYFkS5FhJjg0uFgokHLO0kL2Fl/5Mp
-vYALsrJJNhT55jgBlckAy6i+fE9+4qltVqw+bGCEUxOdFwlA5PtdA+PjHZqRu4pE
-sWyrpo+P5f47aO7yA9tvgIcjP5KRmbYT/Wa/dvfleWP3xXL85qs1AaeWApeE5Bw=
-=G4p5
+iQEcBAEBAgAGBQJUjtpdAAoJECTWi3JdVIfQZ0QH/iMfDK/L9XpgMZHOWJDq1X3N
+HfV1l6yDxaz5H8Css3wMm4KFpVS39H5LIFxhijJdQmX15+F6rPqKnvKCvHb6A05b
+ZoXJoGPePUPOIXK7iivTO+WqhckHzpxDxJ7lghuOSb/40UOZRbvnfFUWIzB4cP+o
+4pvUfA1lckvXEuGc1ucMzQjzGmvahrxDWeK6Yha349tl1UDf5gTX9eA2LWLSvaHG
+++koEZ+F5LM4PM01lpMSdkCeTPmPrVlhes9SVtHZBk676AkSuxx2XGoUDcN3xaTE
+ttvbqHAfE7VtfcBbIB0mwwggl6iA96wKjwslINLQHO5ZXU9dUy0NOFqMtjUWgNk=
+=oZ29
 -----END PGP SIGNATURE-----
 
---elthcBrLbYw+6uqa--
+--jmbcokH0GrqI2Ucc--
