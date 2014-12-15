@@ -1,96 +1,42 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [RFC 01/15] drivers/base: add track framework
-Date: Mon, 15 Dec 2014 12:55:57 +0000
-Message-ID: <20141215125557.GB11764@sirena.org.uk>
-References: <548B7653.7020004@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="jmbcokH0GrqI2Ucc"
+Subject: [PATCH] iommu/exynos: Fix arm64 allmodconfig build
+Date: Mon, 15 Dec 2014 13:00:13 +0000
+Message-ID: <1418648413-32013-1-git-send-email-broonie@kernel.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60213 "EHLO
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:60224 "EHLO
 	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751034AbaLOM4e (ORCPT
+	with ESMTP id S1750723AbaLONAf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 15 Dec 2014 07:56:34 -0500
-Content-Disposition: inline
-In-Reply-To: <548B7653.7020004@gmail.com>
+	Mon, 15 Dec 2014 08:00:35 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: AH <najdrozszy@gmail.com>
-Cc: Andrzej Hajda <a.hajda@samsung.com>, open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, ARM/CLKDEV SUPPORT <linux-arm-kernel@lists.infradead.org>, GPIO SUBSYSTEM <linux-gpio@vger.kernel.org>, DRM PANEL DRIVERS <dri-devel@lists.freedesktop.org>, "ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>
+To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@kernel.org>
 
+The Exynos IOMMU driver uses the ARM specific dmac_flush_range() and
+outer_flush_range() functions. This breaks the build on arm64 allmodconfig
+in -next since support has been merged for some Exynos ARMv8 SoCs. Add a
+dependency on ARM to keep things building until either the driver has the
+ARM dependencies removed or the ARMv8 architecture code implements these
+ARM specific APIs.
 
---jmbcokH0GrqI2Ucc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/iommu/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Sat, Dec 13, 2014 at 12:12:19AM +0100, AH wrote:
-> Mark Brown wrote on 12.12.2014 17:36:
-> >On Wed, Dec 10, 2014 at 04:48:19PM +0100, Andrzej Hajda wrote:
-
-> >>+		kfree(ptask);
-> >>+
-> >>+		if (empty)
-> >>+			break;
-> >>+
-> >>+		track_process_task(track, task);
-
-> >...we then go and do some other stuff, including processing that task,
-> >without the lock or or any other means I can see of excluding other
-> >users before going round and removing the task.  This seems to leave us
-> >vulnerable to double execution.
-
-> No, if you look at track_add_task function you will see that the queue is
-> processed only if it is initially empty, otherwise the task is only added=
- to
-> the queue, so it will be processed after processing earlier tasks.
-> So the rule is that if someone add task to the queue it checks if the que=
-ue
-> is empty, in such case it process all tasks from the queue until
-> the queue becomes empty, even the tasks added by other processed.
-> This way all tasks are serialized.
-
-This is all pretty fiddly and seems fragile - if nothing else the code
-seems undercommented since the above is only going to be apparent with
-following through multiple functions and we're relying on both owner and
-list emptiness with more than one place where a task can get processed.
-
-> >I'm also unclear what is supposed to happen if adding a notification
-> >races with removing the thing being watched.
-
-> The sequence should be always as follows:
-> 1. create thing, then call track_up(thing).
-> ...
-> 2. call track_down(thing) then remove thing.
-
-> If we put 1 into probe and 2 into remove callback of the driver it will be
-> safe - we are synchronised by device_lock. But if, for some reason, we wa=
-nt
-> to create object after probe we should do own synchronization or just put
-> device_lock around 1. The same applies if we want to remove
-> object earlier. This is the comment above about. I will expand it to more
-> verbose explanation.
-
-You can't rely on the device lock here since this isn't tied to kobjects
-or anything at all - it's a freestanding interface someone could pick up
-and use in another context.  Besides, that isn't really my concern - my
-concern is what happens if something asks to wait for=20
-
---jmbcokH0GrqI2Ucc
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUjtpdAAoJECTWi3JdVIfQZ0QH/iMfDK/L9XpgMZHOWJDq1X3N
-HfV1l6yDxaz5H8Css3wMm4KFpVS39H5LIFxhijJdQmX15+F6rPqKnvKCvHb6A05b
-ZoXJoGPePUPOIXK7iivTO+WqhckHzpxDxJ7lghuOSb/40UOZRbvnfFUWIzB4cP+o
-4pvUfA1lckvXEuGc1ucMzQjzGmvahrxDWeK6Yha349tl1UDf5gTX9eA2LWLSvaHG
-++koEZ+F5LM4PM01lpMSdkCeTPmPrVlhes9SVtHZBk676AkSuxx2XGoUDcN3xaTE
-ttvbqHAfE7VtfcBbIB0mwwggl6iA96wKjwslINLQHO5ZXU9dUy0NOFqMtjUWgNk=
-=oZ29
------END PGP SIGNATURE-----
-
---jmbcokH0GrqI2Ucc--
+diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+index 01e8bfae569b..325188eef1c1 100644
+--- a/drivers/iommu/Kconfig
++++ b/drivers/iommu/Kconfig
+@@ -187,7 +187,7 @@ config TEGRA_IOMMU_SMMU
+ 
+ config EXYNOS_IOMMU
+ 	bool "Exynos IOMMU Support"
+-	depends on ARCH_EXYNOS
++	depends on ARCH_EXYNOS && ARM
+ 	select IOMMU_API
+ 	select ARM_DMA_USE_IOMMU
+ 	help
+-- 
+2.1.3
