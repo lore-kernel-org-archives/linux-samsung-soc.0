@@ -1,80 +1,100 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH v3 18/19] iommu: exynos: init from dt-specific callback instead of initcall
-Date: Sun, 14 Dec 2014 14:45:36 +0200
-Message-ID: <1826772.xgprzQcfXd@avalon>
-References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com> <1416395748-10731-19-git-send-email-m.szyprowski@samsung.com>
+From: Chanho Park <chanho61.park@samsung.com>
+Subject: RE: [PATCH v3 0/2] serial: samsung: add support for early console
+Date: Mon, 15 Dec 2014 15:47:40 +0900
+Message-ID: <012101d01833$0547ba90$0fd72fb0$@samsung.com>
+References: <1413804511-32441-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:45754 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753700AbaLNMpj (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:49917 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750802AbaLOGrj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 14 Dec 2014 07:45:39 -0500
-In-Reply-To: <1416395748-10731-19-git-send-email-m.szyprowski@samsung.com>
+	Mon, 15 Dec 2014 01:47:39 -0500
+Received: from epcpsbgr3.samsung.com
+ (u143.gpu120.samsung.co.kr [203.254.230.143])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NGM00HYY2VD8N20@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 15 Dec 2014 15:47:37 +0900 (KST)
+In-reply-to: <1413804511-32441-1-git-send-email-m.szyprowski@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, Rob Herring <robh@kernel.org>, Thierry Reding <treding@nvidia.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Inki Dae <inki.dae@samsung.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, linaro-mm-sig@lists.linaro.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Cho KyongHo <pullip.cho@samsung.com>, David Wodhouse <dwmw2@infradead.org>
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene@kernel.org
+Cc: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, thomas.ab@samsung.com, 'Alim Akhtar' <alim.akhtar@samsung.com>
 
-Hi Marek,
+Hi,
 
-Thank you for the patch.
+I found this patchset was not merget even 3.19 merge window. As you know,
+there is no support of legacy early_printk on arm64. I need this patchset to
+support exynos arm64 board properly.
 
-On Wednesday 19 November 2014 12:15:47 Marek Szyprowski wrote:
-> This patch introduces IOMMU_OF_DECLARE-based initialization to the
-> driver, which replaces subsys_initcall-based procedure.
-> exynos_iommu_of_setup ensures that each sysmmu controller is probed
-> before its master device.
+Dear Kukjin,
+
+Could you pick up this patchset in your tree?
+
+Best Regards,
+Chanho Park
+
+> -----Original Message-----
+> From: linux-arm-kernel [mailto:linux-arm-kernel-
+> bounces@lists.infradead.org] On Behalf Of Marek Szyprowski
+> Sent: Monday, October 20, 2014 8:28 PM
+> To: linux-samsung-soc@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org
+> Cc: Tomasz Figa; Kyungmin Park; thomas.ab@samsung.com; Alim Akhtar;
+> Marek Szyprowski
+> Subject: [PATCH v3 0/2] serial: samsung: add support for early console
 > 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/iommu/exynos-iommu.c | 28 +++++++++++++++++++++++++++-
->  1 file changed, 27 insertions(+), 1 deletion(-)
+> This patchset adds support for early console defined in device tree. As
+> an example, DTS files for all Exynos4 based machines are updated with
+> the correct value for common chosen/sdtout property.
 > 
-> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
-> index cd28dc09db39..88f9afe641a0 100644
-> --- a/drivers/iommu/exynos-iommu.c
-> +++ b/drivers/iommu/exynos-iommu.c
-
-[snip]
-
-> @@ -1125,4 +1134,21 @@ err_reg_driver:
->  	kmem_cache_destroy(lv2table_kmem_cache);
->  	return ret;
->  }
-> -subsys_initcall(exynos_iommu_init);
-> +
-> +static int __init exynos_iommu_of_setup(struct device_node *np)
-> +{
-> +	struct platform_device *pdev;
-> +
-> +	if (!init_done)
-> +		exynos_iommu_init();
-> +
-> +	pdev = of_platform_device_create(np, NULL, platform_bus_type.dev_root);
-> +	if (IS_ERR(pdev))
-> +		return PTR_ERR(pdev);
-
-If we end up having to create the IOMMU platform devices from within the 
-drivers, the introduction of IOMMU_OF_DECLARE starts to feel like a workaround 
-to me. I wonder whether it wouldn't then be better to let the driver core 
-instantiate the IOMMU platform device from DT as for all other devices, and 
-use device notifiers to defer probe of the bus masters until the required 
-IOMMU(s) are registered.
-
-Will, what's your opinion on that ?
-
-> +
-> +	of_iommu_set_ops(np, &exynos_iommu_ops);
-> +	return 0;
-> +}
-> +
-> +IOMMU_OF_DECLARE(exynos_iommu_of, "samsung,exynos-sysmmu",
-> +		 exynos_iommu_of_setup);
-
--- 
-Regards,
-
-Laurent Pinchart
+> To get it fully functional on ARM architecture, additional improvements
+> (support for early_ioremap) are needed in early console code.
+> 
+> Best regards
+> Marek Szyprowski
+> Samsung R&D Institute Poland
+> 
+> Change log:
+> 
+> v3:
+> - rebased onto v3.18-rc1
+> - removed options from documentation (they are not yet supported)
+> 
+> v2: http://www.spinics.net/lists/linux-samsung-soc/msg37278.html
+> - added support for command line based initialization
+> 
+> v1: http://www.spinics.net/lists/linux-samsung-soc/msg37094.html
+> - initial version
+> 
+> Tomasz Figa (2):
+>   serial: samsung: Add support for early console
+>   ARM: dts: exynos4: Add stdout-path properties
+> 
+>  Documentation/kernel-parameters.txt             |  12 +++
+>  arch/arm/boot/dts/exynos4210-origen.dts         |   1 +
+>  arch/arm/boot/dts/exynos4210-smdkv310.dts       |   1 +
+>  arch/arm/boot/dts/exynos4210-trats.dts          |   1 +
+>  arch/arm/boot/dts/exynos4210-universal_c210.dts |   1 +
+>  arch/arm/boot/dts/exynos4412-odroid-common.dtsi |   4 +
+>  arch/arm/boot/dts/exynos4412-origen.dts         |   1 +
+>  arch/arm/boot/dts/exynos4412-smdk4412.dts       |   1 +
+>  arch/arm/boot/dts/exynos4412-tiny4412.dts       |   4 +
+>  arch/arm/boot/dts/exynos4412-trats2.dts         |   1 +
+>  drivers/tty/serial/Kconfig                      |   1 +
+>  drivers/tty/serial/samsung.c                    | 103
+> ++++++++++++++++++++++++
+>  12 files changed, 131 insertions(+)
+> 
+> --
+> 1.9.2
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
