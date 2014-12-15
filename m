@@ -1,104 +1,68 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH 2/2] Input: atmel_mxt_ts - Split out touchpad initialisation logic
-Date: Mon, 15 Dec 2014 11:39:07 +0100
-Message-ID: <1418639947-28765-3-git-send-email-javier.martinez@collabora.co.uk>
-References: <1418639947-28765-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <1418639947-28765-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-input-owner@vger.kernel.org
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Henrik Rydberg <rydberg@euromail.se>, Nick Dyer <nick.dyer@itdev.co.uk>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yufeng Shen <miletus@chromium.org>, Benson Leung <bleung@chromium.org>, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [RFC 02/15] drivers/base: add restrack framework
+Date: Mon, 15 Dec 2014 11:38:32 +0000
+Message-ID: <20141215113832.GX11764@sirena.org.uk>
+References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
+ <1418226513-14105-3-git-send-email-a.hajda@samsung.com>
+ <20141212165230.GP11764@sirena.org.uk>
+ <548E9BB9.806@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="elthcBrLbYw+6uqa"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:59983 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751458AbaLOLjq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 15 Dec 2014 06:39:46 -0500
+Content-Disposition: inline
+In-Reply-To: <548E9BB9.806@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andrzej Hajda <a.hajda@samsung.com>
+Cc: open list <linux-kernel@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Turquette <mturquette@linaro.org>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Inki Dae <inki.dae@samsung.com>, Kishon Vijay Abraham I <kishon@ti.com>, Liam Girdwood <lgirdwood@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, boris.brezillon@
 
-From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
-If the "linux,gpio-keymap" DT property is defined, the T19 keys are configured
-and the device is setup as a touchpad rather than a touchscreen. The logic is
-part of the input device initialization routine but it can be factored out to
-its own function to simplify the former.
+--elthcBrLbYw+6uqa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-[javier: Adapt to latest driver changes and modify commit message accordingly]
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
----
- drivers/input/touchscreen/atmel_mxt_ts.c | 48 +++++++++++++++++++-------------
- 1 file changed, 28 insertions(+), 20 deletions(-)
+On Mon, Dec 15, 2014 at 09:28:41AM +0100, Andrzej Hajda wrote:
+> On 12/12/2014 05:52 PM, Mark Brown wrote:
+> > On Wed, Dec 10, 2014 at 04:48:20PM +0100, Andrzej Hajda wrote:
 
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index aaa9e07..01fda60 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -1756,15 +1756,40 @@ static int mxt_read_t100_config(struct mxt_data *data)
- static int mxt_input_open(struct input_dev *dev);
- static void mxt_input_close(struct input_dev *dev);
- 
-+static bool mxt_initialize_t19(struct input_dev *input_dev,
-+			       struct mxt_data *data)
-+{
-+	const struct mxt_platform_data *pdata = data->pdata;
-+	int i;
-+
-+	if (pdata->t19_num_keys) {
-+		__set_bit(INPUT_PROP_BUTTONPAD, input_dev->propbit);
-+
-+		for (i = 0; i < pdata->t19_num_keys; i++)
-+			if (pdata->t19_keymap[i] != KEY_RESERVED)
-+				input_set_capability(input_dev, EV_KEY,
-+						     pdata->t19_keymap[i]);
-+
-+		input_abs_set_res(input_dev, ABS_X, MXT_PIXELS_PER_MM);
-+		input_abs_set_res(input_dev, ABS_Y, MXT_PIXELS_PER_MM);
-+		input_abs_set_res(input_dev, ABS_MT_POSITION_X,
-+				  MXT_PIXELS_PER_MM);
-+		input_abs_set_res(input_dev, ABS_MT_POSITION_Y,
-+				  MXT_PIXELS_PER_MM);
-+
-+		input_dev->name = "Atmel maXTouch Touchpad";
-+		return true;
-+	}
-+	return false;
-+}
-+
- static int mxt_initialize_input_device(struct mxt_data *data, int multitouch)
- {
- 	struct device *dev = &data->client->dev;
--	const struct mxt_platform_data *pdata = data->pdata;
- 	struct input_dev *input_dev;
- 	int error;
- 	unsigned int num_mt_slots;
- 	unsigned int mt_flags = 0;
--	int i;
- 
- 	switch (multitouch) {
- 	case MXT_TOUCH_MULTI_T9:
-@@ -1800,26 +1825,9 @@ static int mxt_initialize_input_device(struct mxt_data *data, int multitouch)
- 	set_bit(EV_ABS, input_dev->evbit);
- 	input_set_capability(input_dev, EV_KEY, BTN_TOUCH);
- 
--	if (pdata->t19_num_keys) {
--		__set_bit(INPUT_PROP_BUTTONPAD, input_dev->propbit);
--
--		for (i = 0; i < pdata->t19_num_keys; i++)
--			if (pdata->t19_keymap[i] != KEY_RESERVED)
--				input_set_capability(input_dev, EV_KEY,
--						     pdata->t19_keymap[i]);
--
-+	if (mxt_initialize_t19(input_dev, data))
- 		mt_flags |= INPUT_MT_POINTER;
- 
--		input_abs_set_res(input_dev, ABS_X, MXT_PIXELS_PER_MM);
--		input_abs_set_res(input_dev, ABS_Y, MXT_PIXELS_PER_MM);
--		input_abs_set_res(input_dev, ABS_MT_POSITION_X,
--				  MXT_PIXELS_PER_MM);
--		input_abs_set_res(input_dev, ABS_MT_POSITION_Y,
--				  MXT_PIXELS_PER_MM);
--
--		input_dev->name = "Atmel maXTouch Touchpad";
--	}
--
- 	/* For single touch */
- 	input_set_abs_params(input_dev, ABS_X,
- 			     0, data->max_x, 0, 0);
--- 
-2.1.3
+> > I don't know about anyone else but I'm having a hard time reading the
+> > restrack name, it looks like a misspelling of restack to me.
 
+> Any alternative names?
+
+Well, even just res_track would help.
+
+> I will move the code for provider matching to frameworks,
+> so it will be easy to add just dev_info after every failed attempt
+> of getting resource, including deferring. This is the simplest solution
+> and it should be similar in verbosity to deferred probing.
+
+> Maybe other solution is to provide debug_fs (or device) attribute showing
+> restrack status per device.
+
+I think both are useful - it's often helpful to have a listing of what
+resources have actually been registered, for example to help spot typos.
+
+--elthcBrLbYw+6uqa
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUjsg3AAoJECTWi3JdVIfQ0B8H/RvF/DMTN70TqlHNn9pDjcBk
+TH7amwHd0crIonpZ/NzYIKbmi3GuwBYmcLgPodqEfd0+0wqYiyvp7mF2WQWtRUlI
+KOPghdPrJjDF1k1qJH9XP9bpvqX4k1b+MIWA2SzI0MBkiiXD5g5wZlHmzx+gvBzG
+tsRavBntWRbs0k6xBosyoUFJPD3IUQtYOhgYFkS5FhJjg0uFgokHLO0kL2Fl/5Mp
+vYALsrJJNhT55jgBlckAy6i+fE9+4qltVqw+bGCEUxOdFwlA5PtdA+PjHZqRu4pE
+sWyrpo+P5f47aO7yA9tvgIcjP5KRmbYT/Wa/dvfleWP3xXL85qs1AaeWApeE5Bw=
+=G4p5
+-----END PGP SIGNATURE-----
+
+--elthcBrLbYw+6uqa--
