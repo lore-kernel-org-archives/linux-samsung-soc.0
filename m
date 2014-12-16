@@ -1,100 +1,85 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH] clk: samsung: Fix Exynos 5420 pinctrl setup and clock
- disable failure due to domain being gated
-Date: Tue, 16 Dec 2014 09:20:15 +0100
-Message-ID: <1418718015.28527.4.camel@AMDC1943>
-References: <1417788934-23447-1-git-send-email-k.kozlowski@samsung.com>
- <1418129982.19339.6.camel@AMDC1943> <5486F69B.6020005@samsung.com>
- <7hlhmfo1b0.fsf@deeprootsystems.com> <7h8ui8h7n9.fsf@deeprootsystems.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v3 18/19] iommu: exynos: init from dt-specific callback
+ instead of initcall
+Date: Tue, 16 Dec 2014 11:58:06 +0100
+Message-ID: <5490103E.9000503@samsung.com>
+References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com>
+ <4894156.QdIh4JzSl0@avalon> <20141215181323.GX20738@arm.com>
+ <1582013.9WDR2r2f3r@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:47278 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750914AbaLPIUU (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:55942 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751326AbaLPK6L (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Dec 2014 03:20:20 -0500
-In-reply-to: <7h8ui8h7n9.fsf@deeprootsystems.com>
+	Tue, 16 Dec 2014 05:58:11 -0500
+Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NGO005XG9BOUP20@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 16 Dec 2014 11:02:12 +0000 (GMT)
+In-reply-to: <1582013.9WDR2r2f3r@avalon>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>, Mike Turquette <mturquette@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Will Deacon <will.deacon@arm.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Rob Herring <robh@kernel.org>, Thierry Reding <treding@nvidia.com>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Inki Dae <inki.dae@samsung.com>, Joerg Roedel <joro@8bytes.org>, Tomasz Figa <tomasz.figa@gmail.com>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Cho KyongHo <pullip.cho@samsung.com>, David Wodhouse <dwmw2@infradead.org>
 
-On pon, 2014-12-15 at 14:26 -0800, Kevin Hilman wrote:
-> Kevin Hilman <khilman@kernel.org> writes:
->=20
-> > Sylwester Nawrocki <s.nawrocki@samsung.com> writes:
-> >
-> >> On 09/12/14 13:59, Krzysztof Kozlowski wrote:
-> >>> On pi=C4=85, 2014-12-05 at 15:15 +0100, Krzysztof Kozlowski wrote=
-:
-> >>>> > Audio subsystem clocks are located in separate block. On Exyno=
-s 5420 if
-> >>>> > clock for this block (from main clock domain) 'mau_epll' is ga=
-ted then
-> >>>> > any read or write to audss registers will block.
-> >>>> >=20
-> >>>> > This kind of boot hang was observed on Arndale Octa and Peach =
-Pi/Pit
-> >>>> > after introducing runtime PM to pl330 DMA driver. After that c=
-ommit the
-> >>>> > 'mau_epll' was gated, because the "amba" clock was disabled an=
-d there
-> >>>> > were no more users of mau_epll.
-> >>>> >=20
-> >>>> > The system hang on one of steps:
-> >>>> > 1. Disabling unused clocks from audss block.
-> >>>> > 2. During audss GPIO setup (just before probing i2s0 because
-> >>>> >    samsung_pinmux_setup() tried to access memory from audss bl=
-ock which was
-> >>>> >    gated.
-> >>>> >=20
-> >>>> > Add a workaround for this by enabling the 'mau_epll' clock in =
-probe.
-> >>>> >=20
-> >>>> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> >>>> > ---
-> >>>> >  drivers/clk/samsung/clk-exynos-audss.c | 29 +++++++++++++++++=
-+++++++++++-
-> >>>> >  1 file changed, 28 insertions(+), 1 deletion(-)
-> >>>
-> >>> Sorry for pinging so quick but merge window is open and it looks =
-like
-> >>> booting Exynos542x boards will be broken (because pl330 will no l=
-onger
-> >>> hold adma clock enabled so whole audss domain will be gated).
-> >>>=20
-> >>> This is a non-intrusive workaround for that issue, as wanted by
-> >>> Sylwester:
-> >>> https://lkml.org/lkml/2014/12/5/223
-> >>>=20
-> >>> Any comments on this?
-> >>
-> >> The patch looks OK to me, it would be good though if someone else
-> >> has confirmed it fixes the bug. I don't have any clock patches que=
-ued
-> >> at the moment. Perhaps you could apply it directly, Mike ?
-> >
-> > I confirm it fixes the boot hang in linux-next (next-20141210) on m=
-y
-> > exynos5800-peach-pi and exynos5420-arndale-octa.  Tested both
-> > exynos_defconfig and multi_v7_defconfig.
-> >
-> > Tested-by: Kevin Hilman <khilman@linaro.org>
->=20
-> What's the status of this patch?  linux-next is still broken for seve=
-ral
-> Exynos5 platforms without this fix.
+Hello,
 
-I believe not only next is broken but also current mainline because
-runtime PM for pl330 was merged yesterday...
+On 2014-12-15 19:19, Laurent Pinchart wrote:
+> On Monday 15 December 2014 18:13:23 Will Deacon wrote:
+>> On Mon, Dec 15, 2014 at 05:53:48PM +0000, Laurent Pinchart wrote:
+>>> On Monday 15 December 2014 17:43:02 Will Deacon wrote:
+>>>> On Mon, Dec 15, 2014 at 05:27:30PM +0000, Laurent Pinchart wrote:
+>>>>> On Monday 15 December 2014 17:17:00 Will Deacon wrote:
+>>>>>> Creating the platform device manually for the IOMMU is indeed
+>>>>>> grotty, but I don't really understand why it's needed. Interrupt
+>>>>>> controllers, for example, seem to get by without one.
+>>>>> There's several reasons, one of the most compelling ones I can think
+>>>>> of at the moment is runtime PM. IRQ controllers close to the CPU use
+>>>>> CPU PM notifiers instead. Note that IRQ controllers that are further
+>>>>> away from the CPU (such as GPIO-based IRQ controllers) are real
+>>>>> platform devices and use runtime PM.
+>>>> Ok, that's a good point, but the IOMMU will still probe later anyway,
+>>>> right?
+>>> That depends on the driver implementation, using OF node match an IOMMU
+>>> driver doesn't have to register a struct driver. Assuming we require
+>>> IOMMU drivers to register a struct driver, a platform device should then
+>>> be probed at a later time.
+>>>
+>>> However, if we wait until the IOMMU gets probed to initialize runtime PM
+>>> and make it functional, we'll be back in square one if the IOMMU gets
+>>> probed after the bus master, as the bus master could start issuing bus
+>>> requests at probe time with the IOMMU not powered yet.
+>> True, but couldn't the early init code do enough to get the thing
+>> functional? That said, I'm showing my ignorance here as I'm not familiar
+>> with the PM code (and the software models I have for the SMMU clearly don't
+>> implement anything in this regard).
+> We're reaching the limits of my knowledge as well. If the IOMMU is in a power
+> domain different than the bus masters the driver would at least need to ensure
+> that the power domain is turned on, which might be a bit hackish without
+> runtime PM.
 
-The patch received two tested-bys (Kevin's and Javier's) and Sylwester'=
-s
-ack.
+In case of Exynos SoC both IOMMU and master device are in the same power 
+domain.
+During iommu_attach() call driver needs to have power domain enabled, 
+but power
+domain driver is probed from arch_initcall(). I wanted to move power domain
+initialization earlier to ensure that it will happen before IOMMU driver 
+probe,
+that not really a problem. Right now it usually works, because power 
+domains are
+enabled by bootloader.
 
-Mike, could you pick the patch and send it to Linus after rc1?
+However please not that I would really like to have something merged. The
+discussion about iommu controllers lasts for about 2 years and we still 
+don't
+have ANYTHING working in mainline, so lets merge the of_iommu glue and then
+check how the remaining issues can be solved.
 
-Best regards,
-Krzysztof
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
