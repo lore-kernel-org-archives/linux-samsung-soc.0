@@ -1,85 +1,87 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH RFC v3 1/2] PM / Domains: Extend API pm_genpd_dev_need_restore to use restore types
-Date: Tue, 16 Dec 2014 14:10:25 -0800
-Message-ID: <7h61dbdz5a.fsf@deeprootsystems.com>
-References: <1418489518-7252-1-git-send-email-amit.daniel@samsung.com>
-	<54901341.20106@samsung.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [Linaro-mm-sig] [PATCH v3 18/19] iommu: exynos: init from dt-specific callback instead of initcall
+Date: Wed, 17 Dec 2014 01:24:42 +0200
+Message-ID: <1652354.DLhQnkm7xS@avalon>
+References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com> <24892200.rsOlz53AM6@avalon> <1921117.BkWucCVOZq@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f170.google.com ([209.85.192.170]:43404 "EHLO
-	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751083AbaLPWK2 (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:48913 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751480AbaLPXYj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Dec 2014 17:10:28 -0500
-Received: by mail-pd0-f170.google.com with SMTP id v10so14779348pde.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Dec 2014 14:10:28 -0800 (PST)
-In-Reply-To: <54901341.20106@samsung.com> (Marek Szyprowski's message of "Tue,
-	16 Dec 2014 12:10:57 +0100")
+	Tue, 16 Dec 2014 18:24:39 -0500
+In-Reply-To: <1921117.BkWucCVOZq@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rjw@rjwysocki.net, len.brown@intel.com, ulf.hansson@linaro.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.ab@samsung.com, pankaj.dubey@samsung.com, geert+renesas@glider.be, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linaro-mm-sig@lists.linaro.org, Rob Herring <robh@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Inki Dae <inki.dae@samsung.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <treding@nvidia.com>, Cho KyongHo <pullip.cho@samsung.com>, David Wodhouse <dwmw2@infradead.org>, linux-arm-kernel@lists.infradead.org
 
-Marek Szyprowski <m.szyprowski@samsung.com> writes:
+Hi Arnd,
 
-> Hello,
->
-> On 2014-12-13 17:51, Amit Daniel Kachhap wrote:
->> Instead of using bool to restore suspended devices initially, use flags
->> like GPD_DEV_SUSPEND_INIT, GPD_DEV_RESTORE_INIT and GPD_DEV_RESTORE_FORCE.
->> The first two flags will be similar to the existing true/false functionality.
->> The third flag may be used to force restore of suspended devices
->> whenever their associated power domain is turned on.
->>
->> Currently, PD power off function powers off all the associated unused
->> devices. The functionality added in this patch is similar to it.
->>
->> This feature may be used for those devices which are always in ON state
->> if the PD associated with them is ON but may need local runtime resume
->> and suspend during PD On/Off. These devices (like clock) may not implement
->> complete pm_runtime calls such as pm_runtime_get/pm_runtime_put due to
->> subsystems interaction behaviour or any other reason.
->>
->> The model works like,
->>      DEV1 (Attaches itself with PD but no calls to pm_runtime_get and
->>      /	pm_runtime_put. Its local runtime_suspend/resume is invoked via
->>     /	GPD_DEV_RESTORE_FORCE option)
->>    /
->> PD -- DEV2 (Implements complete PM runtime and calls pm_runtime_get and
->>    \	pm_runtime_put. This in turn invokes PD On/Off)
->>     \
->>      DEV3 (Similar to DEV1)
->>
->> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->
-> The idea of adding new gen_pd flag and reusing runtime pm calls intead
-> of additional notifiers looks promising, but I have some doubts. 
+On Tuesday 16 December 2014 13:10:59 Arnd Bergmann wrote:
+> On Tuesday 16 December 2014 14:07:11 Laurent Pinchart wrote:
+> > On Tuesday 16 December 2014 12:40:28 Arnd Bergmann wrote:
+> > > On Monday 15 December 2014 18:13:23 Will Deacon wrote:
+> > > >>>> IOMMUs are not as low-level as system interrupt controllers or
+> > > >>>> system clocks. I'm beginning to agree with Thierry that they should
+> > > >>>> be treated as normal platform devices as they're not required
+> > > >>>> earlier than probe time of their bus master devices.
+> > > >>> 
+> > > >>> Well, I think you'd have to propose patches for discussion since I'm
+> > > >>> certainly not wed to the current approach; I just want something
+> > > >>> that allows of_{dma,iommu}_configure to run with the information it
+> > > >>> needs.
+> > > >> 
+> > > >> Do we need of_dma_configure() to run when the device is created, or
+> > > >> could we postpone it to just before probe time ?
+> > > > 
+> > > > I'm not sure I can answer that one... Arnd?
+> > > 
+> > > I believe we could postpone it to probe time, but I'd rather not.
+> > > The way I see the arguments in favor, we have mainly cosmetic arguments:
+> > > 
+> > > - Doing it at probe time would eliminate the ugly section magic hack
+> > > - iommu drivers could be implemented as loadable modules with platform
+> > >   drivers, for consistency with most other drivers
+> > 
+> > The main argument, from my point of view, is that handling IOMMUs are
+> > normal platform devices allow using all the kernel infrastructure that
+> > depends on a struct device. The dev_* print helpers are nice to have, but
+> > what would make a big difference is the ability to use runtime PM.
+> 
+> Right, I agree that would be nice.
+> 
+> > > On the other hand, I see:
+> > > 
+> > > - DMA configuration is traditionally done at device creation time, and
+> > >   changing that is more likely to introduce bugs than leaving it
+> > >   where it is.
+> > > 
+> > > - On a lot of machines, the IOMMU is optional, and the probe function
+> > >   cannot know the difference between an IOMMU driver that is left out
+> > >   of the kernel and one that will be initialized later, using a fixed
+> > >   entry point for initializing the IOMMU makes the behavior consistent
+> > 
+> > I'm not advocating for IOMMU support being built as a loadable module. It
+> > might be nice from a development point of view, but that's about it.
+> 
+> We'd still have to deal with deferred probing, or with ordering the iommu
+> initcalls before the dma master initcalls in some other way, so the
+> problem is not that different from loadable modules. Do you have an idea
+> for how to solve that?
 
-I agree, this is better than notifiers, but I have some doubts too.
+If we forbid the IOMMU driver from being compiled as a module can't we just 
+rely on deferred probing ? The bus master driver will just be reprobed after 
+the IOMMU gets probed, like for other devices.
 
-> don't see any guarantee that devices with GPD_DEV_RESTORE_FORCE flag
-> will be suspended after all "normal" devices and restored before
-> them. Without such assumption it will be hard to use this approach for
-> iommu related activities, because device might need to use (in its
-> suspend/resume callbacks) the functionality provided by the other
-> device with GPD_DEV_RESTORE_FORCE flag. Maybe some additional flags
-> like suspend/resume priority (or more flags) will solve somehow this
-> dependency.
+This could fail in case the IOMMU device permanently fails to probe. There 
+would be something very wrong in the system in that case, Enabling the bus 
+masters totally transparently without IOMMU support could not be such a good 
+idea.
 
-At a deeper level, the problem with this approach is that this is more
-generically a runtime PM dependency problem, not a genpd problem.  For
-example, what happens when the same kind of dependency exists on a
-platform using a custom PM domain instead of genpd (like ACPI.) ?
+-- 
+Regards,
 
-What's needed to solve this problem is a generalized way to have runtime
-PM dependencies between devices.  Runtime PM already automatically
-handles parent devices as one type of dependent device (e.g. a parent
-device needs to be runtime PM resumed before its child.)  So what's
-needed is a generic way to other PM dependencies with the runtime PM
-core (not the genpd core.)
-
-If runtime PM handles the dependencies corretcly, then genpd (and any
-other PM domain) will get them "for free".
-
-Kevin
+Laurent Pinchart
