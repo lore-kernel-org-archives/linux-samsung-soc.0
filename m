@@ -1,59 +1,45 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH 0/2] Input: atmel_mxt_ts - Add support for T100 multi-touch
-Date: Tue, 16 Dec 2014 17:49:09 +0100
-Message-ID: <54906285.3060907@collabora.co.uk>
-References: <1418639947-28765-1-git-send-email-javier.martinez@collabora.co.uk> <54905AD7.4070205@itdev.co.uk> <54905F00.4020107@collabora.co.uk> <54906031.8020309@itdev.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 01/13] drm/irq: Remove negative CRTC index special-case
+Date: Tue, 16 Dec 2014 17:53:23 +0100
+Message-ID: <1418748815-15434-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:39379 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750916AbaLPQtQ (ORCPT
+Received: from mail-pd0-f175.google.com ([209.85.192.175]:42341 "EHLO
+	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750950AbaLPQxk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Dec 2014 11:49:16 -0500
-In-Reply-To: <54906031.8020309@itdev.co.uk>
+	Tue, 16 Dec 2014 11:53:40 -0500
+Received: by mail-pd0-f175.google.com with SMTP id g10so12279170pdj.34
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Dec 2014 08:53:40 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Nick Dyer <nick.dyer@itdev.co.uk>
-Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Henrik Rydberg <rydberg@euromail.se>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yufeng Shen <miletus@chromium.org>, Benson Leung <bleung@chromium.org>, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, Gerd Hoffmann <kraxel@redhat.com>, Mark Yao <mark.yao@rock-chips.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, linux-samsung-soc@vger.kernel.org
 
-Hello Nick,
+From: Thierry Reding <treding@nvidia.com>
 
-On 12/16/2014 05:39 PM, Nick Dyer wrote:
-> On 16/12/14 16:34, Javier Martinez Canillas wrote:
->> On 12/16/2014 05:16 PM, Nick Dyer wrote:
->>>> Nick Dyer (1):
->>>>   Input: atmel_mxt_ts - Implement support for T100 touch object
->>> I posted an updated version of this patch on 9th December and would prefer
->>> you apply that rather than this version, since it contains some useful
->>> additional work.
->>>
->>> A link to it:
->>> http://www.spinics.net/lists/kernel/msg1885519.html
->> 
->> Great, I didn't know about your patch since I was not in the cc list.
->> 
->> Thanks for posting and feel free to discard these patches.
-> 
-> No worries! Do you want me to put you on CC in future?
-> 
+The drm_send_vblank_event() function treats negative CRTC indices as
+meaning that a driver doesn't have proper VBLANK handling. This is the
+only place where DRM needs negative CRTC indices, so in order to enable
+subsequent cleanup, remove this special case and replace it by the more
+obvious check for whether or not VBLANK support was initialized.
 
-Yes, please cc me and also to Sjoerd since we are working on machines
-that have Atmel maxtouch chips.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpu/drm/drm_irq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> I will add a todo to pick up your second change "Split out touchpad
-> initialisation logic" into patches I have waiting for upstream, it is a
-> sensible refactoring I think.
-> 
-
-Awesome, what do you think about the change to have a common input device
-initialization function that I squashed in your original patch?
-mxt_initialize_t100_input_device() and mxt_initialize_t9_input_device()
-are very similar so I think that is a sensible refactoring as well.
-
-If you agree with the change I can post it on top of your patch once it
-lands in mainline.
-
-Best regards,
-Javier
+diff --git a/drivers/gpu/drm/drm_irq.c b/drivers/gpu/drm/drm_irq.c
+index 75647e7f012b..a24658162284 100644
+--- a/drivers/gpu/drm/drm_irq.c
++++ b/drivers/gpu/drm/drm_irq.c
+@@ -934,7 +934,7 @@ void drm_send_vblank_event(struct drm_device *dev, int crtc,
+ 	struct timeval now;
+ 	unsigned int seq;
+ 
+-	if (crtc >= 0) {
++	if (dev->num_crtcs > 0) {
+ 		seq = drm_vblank_count_and_time(dev, crtc, &now);
+ 	} else {
+ 		seq = 0;
+-- 
+2.1.3
