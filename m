@@ -1,119 +1,77 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH v2] drm/exynos/fimd: only finish pageflip if START ==
- START_S
-Date: Tue, 16 Dec 2014 21:10:20 +0900
-Message-ID: <5490212C.4010901@samsung.com>
-References: <1418230622-744-1-git-send-email-gustavo@padovan.org>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [Linaro-mm-sig] [PATCH v3 18/19] iommu: exynos: init from
+	dt-specific callback instead of initcall
+Date: Tue, 16 Dec 2014 13:10:59 +0100
+Message-ID: <1921117.BkWucCVOZq@wuerfel>
+References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com>
+	<1681211.YVY9bd22gV@wuerfel> <24892200.rsOlz53AM6@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1418230622-744-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <24892200.rsOlz53AM6@avalon>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNOuFhCAxMuyblCAxMeydvCAwMTo1NywgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEZy
-b206IERhbmllbCBLdXJ0eiA8ZGprdXJ0ekBjaHJvbWl1bS5vcmc+Cj4gCj4gQSBmcmFtZWJ1ZmZl
-ciBnZXRzIGNvbW1pdHRlZCB0byBGSU1EJ3MgZGVmYXVsdCB3aW5kb3cgbGlrZSB0aGlzOgo+ICBl
-eHlub3NfZHJtX2NydGNfdXBkYXRlKCkKPiAgIGV4eW5vc19wbGFuZV9jb21taXQoKQo+ICAgIGZp
-bWRfd2luX2NvbW1pdCgpCj4gCj4gZmltZF93aW5fY29tbWl0KCkgcHJvZ3JhbXMgQlVGX1NUQVJU
-WzBdLiAgQXQgZWFjaCB2YmxhbmssIEZJTUQgaGFyZHdhcmUKPiBjb3BpZXMgdGhlIHZhbHVlIGZy
-b20gQlVGX1NUQVJUIHRvIEJVRl9TVEFSVF9TIChCVUZfU1RBUlQncyBzaGFkb3cKPiByZWdpc3Rl
-ciksIHN0YXJ0cyBzY2FubmluZyBvdXQgZnJvbSBCVUZfU1RBUlRfUywgYW5kIGFzc2VydHMgaXRz
-IGlycS4KPiAKPiBUaGlzIGlycSBpcyBoYW5kbGVkIGJ5IGZpbWRfaXJxX2hhbmRsZXIoKSwgd2hp
-Y2ggY2FsbHMKPiBleHlub3NfZHJtX2NydGNfZmluaXNoX3BhZ2VmbGlwKCkgdG8gZnJlZSB0aGUg
-b2xkIGJ1ZmZlciB0aGF0IEZJTUQganVzdAo+IGZpbmlzaGVkIHNjYW5uaW5nIG91dCwgYW5kIHBv
-dGVudGlhbGx5IGNvbW1pdCB0aGUgbmV4dCBwZW5kaW5nIGZsaXAuCj4gCj4gVGhlcmUgaXMgYSBy
-YWNlLCBob3dldmVyLCBpZiBmaW1kX3dpbl9jb21taXQoKSBwcm9ncmFtcyBCVUZfU1RBUlQoMCkK
-PiBiZXR3ZWVuIHRoZSBhY3R1YWwgdmJsYW5rIGlycSwgYW5kIGl0cyBjb3JyZXNwb25kaW5nIGZp
-bWRfaXJxX2hhbmRsZXIoKS4KPiAKPiAgPT4gRklNRCB2Ymxhbms6IEJVRl9TVEFSVF9TWzBdIDo9
-IEJVRl9TVEFSVFswXSwgYW5kIGlycSBhc3NlcnRlZAo+ICB8ID0+IGZpbWRfd2luX2NvbW1pdCgw
-KSB3cml0ZXMgbmV3IEJVRl9TVEFSVFswXQo+ICB8ICAgIGV4eW5vc19kcm1fY3J0Y190cnlfZG9f
-ZmxpcCgpIG1hcmtzIGV4eW5vc19mYiBhcyBwcmVwYXJlZAo+ICA9PiBmaW1kX2lycV9oYW5kbGVy
-KCkKPiAgICAgZXh5bm9zX2RybV9jcnRjX2ZpbmlzaF9wYWdlZmxpcCgpIHNlZXMgcHJlcGFyZWQg
-ZXh5bm9zX2ZiLAo+ICAgICAgICAgIGFuZCB1bm1hcHMgIm9sZCIgZmIKPiAgPT0+IGJ1dCwgc2lu
-Y2UgQlVGX1NUQVJUX1NbMF0gc3RpbGwgcG9pbnRzIHRvIHRoYXQgIm9sZCIgZmIuLi4KPiAgPT0+
-IEZJTUQgaW9tbXUgZmF1bHQKPiAKPiBUaGlzIHBhdGNoIGVuc3VyZXMgdGhhdCBmaW1kX2lycV9o
-YW5kbGVyKCkgb25seSBjYWxscwo+IGV4eW5vc19kcm1fY3J0Y19maW5pc2hfcGFnZWZsaXAoKSBp
-ZiBhbnkgcHJldmlvdXNseSBzY2hlZHVsZWQgZmxpcAo+IGhhcyByZWFsbHkgY29tcGxldGVkLgo+
-IAo+IFRoaXMgd29ya3MgYmVjYXVzZSBleHlub3NfZHJtX2NydGMncyBmbGlwIGZpZm8gZW5zdXJl
-cyB0aGF0Cj4gZmltZF93aW5fY29tbWl0KCkgaXMgbmV2ZXIgY2FsbGVkIG1vcmUgdGhhbiBvbmNl
-IHBlcgo+IGV4eW5vc19kcm1fY3J0Y19maW5pc2hfcGFnZWZsaXAoKS4KPiAKPiBTaWduZWQtb2Zm
-LWJ5OiBEYW5pZWwgS3VydHogPGRqa3VydHpAY2hyb21pdW0ub3JnPgo+IFJldmlld2VkLWJ5OiBT
-ZWFuIFBhdWwgPHNlYW5wYXVsQGNocm9taXVtLm9yZz4KPiBTaWduZWQtb2ZmLWJ5OiBHdXN0YXZv
-IFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4gLS0tCj4gIGRyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgfCAzMSArKysrKysrKysrKysrKysr
-KysrKysrKystLS0tLS0tCj4gIGluY2x1ZGUvdmlkZW8vc2Ftc3VuZ19maW1kLmggICAgICAgICAg
-ICAgfCAgMSArCj4gIDIgZmlsZXMgY2hhbmdlZCwgMjUgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlv
-bnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2ZpbWQuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKPiBpbmRl
-eCBlNTgxMGQxLi45NWJhYzI3IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9maW1kLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19k
-cm1fZmltZC5jCj4gQEAgLTU1LDYgKzU1LDcgQEAKPiAgI2RlZmluZSBWSURPU0RfRCh3aW4pCQko
-VklET1NEX0JBU0UgKyAweDBDICsgKHdpbikgKiAxNikKPiAgCj4gICNkZWZpbmUgVklEV3hfQlVG
-X1NUQVJUKHdpbiwgYnVmKQkoVklEV19CVUZfU1RBUlQoYnVmKSArICh3aW4pICogOCkKPiArI2Rl
-ZmluZSBWSURXeF9CVUZfU1RBUlRfUyh3aW4sIGJ1ZikgICAgIChWSURXX0JVRl9TVEFSVF9TKGJ1
-ZikgKyAod2luKSAqIDgpCj4gICNkZWZpbmUgVklEV3hfQlVGX0VORCh3aW4sIGJ1ZikJCShWSURX
-X0JVRl9FTkQoYnVmKSArICh3aW4pICogOCkKPiAgI2RlZmluZSBWSURXeF9CVUZfU0laRSh3aW4s
-IGJ1ZikJKFZJRFdfQlVGX1NJWkUoYnVmKSArICh3aW4pICogNCkKPiAgCj4gQEAgLTEwMzksNiAr
-MTA0MCw3IEBAIHN0YXRpYyBpcnFyZXR1cm5fdCBmaW1kX2lycV9oYW5kbGVyKGludCBpcnEsIHZv
-aWQgKmRldl9pZCkKPiAgewo+ICAJc3RydWN0IGZpbWRfY29udGV4dCAqY3R4ID0gKHN0cnVjdCBm
-aW1kX2NvbnRleHQgKilkZXZfaWQ7Cj4gIAl1MzIgdmFsLCBjbGVhcl9iaXQ7Cj4gKwl1MzIgc3Rh
-cnQsIHN0YXJ0X3M7Cj4gIAo+ICAJdmFsID0gcmVhZGwoY3R4LT5yZWdzICsgVklESU5UQ09OMSk7
-Cj4gIAo+IEBAIC0xMDUxLDE5ICsxMDUzLDM0IEBAIHN0YXRpYyBpcnFyZXR1cm5fdCBmaW1kX2ly
-cV9oYW5kbGVyKGludCBpcnEsIHZvaWQgKmRldl9pZCkKPiAgCQlnb3RvIG91dDsKPiAgCj4gIAlp
-ZiAoY3R4LT5pODBfaWYpIHsKPiAtCQlleHlub3NfZHJtX2NydGNfZmluaXNoX3BhZ2VmbGlwKGN0
-eC0+ZHJtX2RldiwgY3R4LT5waXBlKTsKPiAtCj4gIAkJLyogRXhpdHMgdHJpZ2dlcmluZyBtb2Rl
-ICovCj4gIAkJYXRvbWljX3NldCgmY3R4LT50cmlnZ2VyaW5nLCAwKTsKPiAgCX0gZWxzZSB7Cj4g
-IAkJZHJtX2hhbmRsZV92YmxhbmsoY3R4LT5kcm1fZGV2LCBjdHgtPnBpcGUpOwo+ICsJfQo+ICsK
-PiArCS8qCj4gKwkgKiBFbnN1cmUgZmluaXNoX3BhZ2VmbGlwIGlzIGNhbGxlZCBpZmYgYSBwZW5k
-aW5nIGZsaXAgaGFzIGNvbXBsZXRlZC4KPiArCSAqIFRoaXMgd29ya3MgYXJvdW5kIGEgcmFjZSBi
-ZXR3ZWVuIGEgcGFnZV9mbGlwIHJlcXVlc3QgYW5kIHRoZSBsYXRlbmN5Cj4gKwkgKiBiZXR3ZWVu
-IHZibGFuayBpbnRlcnJ1cHQgYW5kIHRoaXMgaXJxX2hhbmRsZXI6Cj4gKwkgKiAgID0+IEZJTUQg
-dmJsYW5rOiBCVUZfU1RBUlRfU1swXSA6PSBCVUZfU1RBUlRbMF0sIGFuZCBhc3NlcnRzIGlycQo+
-ICsJICogICB8ID0+IGZpbWRfd2luX2NvbW1pdCgwKSB3cml0ZXMgbmV3IEJVRl9TVEFSVFswXQo+
-ICsJICogICB8ICAgIGV4eW5vc19kcm1fY3J0Y190cnlfZG9fZmxpcCgpIG1hcmtzIGV4eW5vc19m
-YiBhcyBwcmVwYXJlZAo+ICsJICogICA9PiBmaW1kX2lycV9oYW5kbGVyKCkKPiArCSAqICAgICAg
-IGV4eW5vc19kcm1fY3J0Y19maW5pc2hfcGFnZWZsaXAoKSBzZWVzIHByZXBhcmVkIGV4eW5vc19m
-YiwKPiArCSAqICAgICAgICAgICBhbmQgdW5tYXBzICJvbGQiIGZiCj4gKwkgKiAgID09PiBidXQs
-IHNpbmNlIEJVRl9TVEFSVF9TWzBdIHN0aWxsIHBvaW50cyB0byB0aGF0ICJvbGQiIGZiLi4uCj4g
-KwkgKiAgID09PiBGSU1EIGlvbW11IGZhdWx0Cj4gKwkgKi8KPiArCXN0YXJ0ID0gcmVhZGwoY3R4
-LT5yZWdzICsgVklEV3hfQlVGX1NUQVJUKDAsIDApKTsKPiArCXN0YXJ0X3MgPSByZWFkbChjdHgt
-PnJlZ3MgKyBWSURXeF9CVUZfU1RBUlRfUygwLCAwKSk7Cj4gKwlpZiAoc3RhcnQgPT0gc3RhcnRf
-cykKPiAgCQlleHlub3NfZHJtX2NydGNfZmluaXNoX3BhZ2VmbGlwKGN0eC0+ZHJtX2RldiwgY3R4
-LT5waXBlKTsKCkRpZCB5b3UgdGVzdCBhYnZvZSBjb2RlcyBvbiBJODAgbW9kZT8gSWYgbm90IHNv
-LCBJIHRoaW5rIHRoaXMgZnVuY3Rpb24Kc2hvdWxkIGJlIGNhbGxlZCBvbmx5IGluIGNhc2Ugb2Yg
-UkdCIG1vZGUgdW50aWwgY2hlY2tlZC4KCj4gIAo+IC0JCS8qIHNldCB3YWl0IHZzeW5jIGV2ZW50
-IHRvIHplcm8gYW5kIHdha2UgdXAgcXVldWUuICovCj4gLQkJaWYgKGF0b21pY19yZWFkKCZjdHgt
-PndhaXRfdnN5bmNfZXZlbnQpKSB7Cj4gLQkJCWF0b21pY19zZXQoJmN0eC0+d2FpdF92c3luY19l
-dmVudCwgMCk7Cj4gLQkJCXdha2VfdXAoJmN0eC0+d2FpdF92c3luY19xdWV1ZSk7Cj4gLQkJfQo+
-ICsJLyogc2V0IHdhaXQgdnN5bmMgZXZlbnQgdG8gemVybyBhbmQgd2FrZSB1cCBxdWV1ZS4gKi8K
-PiArCWlmIChhdG9taWNfcmVhZCgmY3R4LT53YWl0X3ZzeW5jX2V2ZW50KSkgewo+ICsJCWF0b21p
-Y19zZXQoJmN0eC0+d2FpdF92c3luY19ldmVudCwgMCk7Cj4gKwkJd2FrZV91cCgmY3R4LT53YWl0
-X3ZzeW5jX3F1ZXVlKTsKCkFuZCBpbiBjYXNlIG9mIGk4MCBtb2RlLCB3YWl0X3ZzeW5jX3F1ZXVl
-IHdpbGwgYmUgd2FrZWQgdXAgYnkKZmltZF90ZV9oYW5kbGVyIHNvIEkgdGhpbmsgYWJvdmUgcmVs
-ZXZhbnQgY29kZXMgc2hvdWxkIGJlIGNhbGxlZCBvbmx5IGluCmNhc2Ugb2YgUkdCIG1vZGUuCgpU
-aGFua3MsCklua2kgRGFlCgo+ICAJfQo+ICAKPiAgb3V0Ogo+IGRpZmYgLS1naXQgYS9pbmNsdWRl
-L3ZpZGVvL3NhbXN1bmdfZmltZC5oIGIvaW5jbHVkZS92aWRlby9zYW1zdW5nX2ZpbWQuaAo+IGlu
-ZGV4IGEyMGU0YTMuLmY4MWQwODEgMTAwNjQ0Cj4gLS0tIGEvaW5jbHVkZS92aWRlby9zYW1zdW5n
-X2ZpbWQuaAo+ICsrKyBiL2luY2x1ZGUvdmlkZW8vc2Ftc3VuZ19maW1kLmgKPiBAQCAtMjkxLDYg
-KzI5MSw3IEBACj4gIAo+ICAvKiBWaWRlbyBidWZmZXIgYWRkcmVzc2VzICovCj4gICNkZWZpbmUg
-VklEV19CVUZfU1RBUlQoX2J1ZmYpCQkJKDB4QTAgKyAoKF9idWZmKSAqIDgpKQo+ICsjZGVmaW5l
-IFZJRFdfQlVGX1NUQVJUX1MoX2J1ZmYpICAgICAgICAgICAgICAgICAoMHg0MEEwICsgKChfYnVm
-ZikgKiA4KSkKPiAgI2RlZmluZSBWSURXX0JVRl9TVEFSVDEoX2J1ZmYpCQkJKDB4QTQgKyAoKF9i
-dWZmKSAqIDgpKQo+ICAjZGVmaW5lIFZJRFdfQlVGX0VORChfYnVmZikJCQkoMHhEMCArICgoX2J1
-ZmYpICogOCkpCj4gICNkZWZpbmUgVklEV19CVUZfRU5EMShfYnVmZikJCQkoMHhENCArICgoX2J1
-ZmYpICogOCkpCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
-bAo=
+On Tuesday 16 December 2014 14:07:11 Laurent Pinchart wrote:
+> Hi Arnd,
+> 
+> On Tuesday 16 December 2014 12:40:28 Arnd Bergmann wrote:
+> > On Monday 15 December 2014 18:13:23 Will Deacon wrote:
+> > >>>> IOMMUs are not as low-level as system interrupt controllers or
+> > >>>> system clocks. I'm beginning to agree with Thierry that they should
+> > >>>> be treated as normal platform devices as they're not required
+> > >>>> earlier than probe time of their bus master devices.
+> > >>> 
+> > >>> Well, I think you'd have to propose patches for discussion since I'm
+> > >>> certainly not wed to the current approach; I just want something that
+> > >>> allows of_{dma,iommu}_configure to run with the information it needs.
+> > >> 
+> > >> Do we need of_dma_configure() to run when the device is created, or
+> > >> could we postpone it to just before probe time ?
+> > > 
+> > > I'm not sure I can answer that one... Arnd?
+> > 
+> > I believe we could postpone it to probe time, but I'd rather not.
+> > The way I see the arguments in favor, we have mainly cosmetic arguments:
+> > 
+> > - Doing it at probe time would eliminate the ugly section magic hack
+> > - iommu drivers could be implemented as loadable modules with platform
+> >   drivers, for consistency with most other drivers
+> 
+> The main argument, from my point of view, is that handling IOMMUs are normal 
+> platform devices allow using all the kernel infrastructure that depends on a 
+> struct device. The dev_* print helpers are nice to have, but what would make a 
+> big difference is the ability to use runtime PM.
+
+Right, I agree that would be nice.
+
+> > On the other hand, I see:
+> > 
+> > - DMA configuration is traditionally done at device creation time, and
+> >   changing that is more likely to introduce bugs than leaving it
+> >   where it is.
+> > - On a lot of machines, the IOMMU is optional, and the probe function
+> >   cannot know the difference between an IOMMU driver that is left out
+> >   of the kernel and one that will be initialized later, using a fixed
+> >   entry point for initializing the IOMMU makes the behavior consistent
+> 
+> I'm not advocating for IOMMU support being built as a loadable module. It 
+> might be nice from a development point of view, but that's about it.
+
+We'd still have to deal with deferred probing, or with ordering the iommu
+initcalls before the dma master initcalls in some other way, so the
+problem is not that different from loadable modules. Do you have an idea
+for how to solve that?
+
+	Arnd
