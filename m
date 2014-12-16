@@ -1,39 +1,85 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] iommu/exynos: Fix arm64 allmodconfig build
-Date: Tue, 16 Dec 2014 21:40:48 +0100
-Message-ID: <2060329.N1WYSODiQy@wuerfel>
-References: <1418658882-14809-1-git-send-email-broonie@kernel.org>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH RFC v3 1/2] PM / Domains: Extend API pm_genpd_dev_need_restore to use restore types
+Date: Tue, 16 Dec 2014 14:10:25 -0800
+Message-ID: <7h61dbdz5a.fsf@deeprootsystems.com>
+References: <1418489518-7252-1-git-send-email-amit.daniel@samsung.com>
+	<54901341.20106@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:56643 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750983AbaLPUlc (ORCPT
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:43404 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751083AbaLPWK2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Dec 2014 15:41:32 -0500
-In-Reply-To: <1418658882-14809-1-git-send-email-broonie@kernel.org>
+	Tue, 16 Dec 2014 17:10:28 -0500
+Received: by mail-pd0-f170.google.com with SMTP id v10so14779348pde.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Dec 2014 14:10:28 -0800 (PST)
+In-Reply-To: <54901341.20106@samsung.com> (Marek Szyprowski's message of "Tue,
+	16 Dec 2014 12:10:57 +0100")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Mark Brown <broonie@kernel.org>, Will Deacon <will.deacon@arm.com>, Krzysztof =?utf-8?B?S296xYJvd3NraQ==?= <k.kozlowski@samsung.com>, Joerg Roedel <joro@8bytes.org>, Olof Johansson <olof@lixom.net>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rjw@rjwysocki.net, len.brown@intel.com, ulf.hansson@linaro.org, tomasz.figa@gmail.com, kgene.kim@samsung.com, s.nawrocki@samsung.com, thomas.ab@samsung.com, pankaj.dubey@samsung.com, geert+renesas@glider.be, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Monday 15 December 2014 15:54:42 Mark Brown wrote:
-> The Exynos IOMMU driver uses the ARM specific dmac_flush_range() and
-> outer_flush_range() functions. This breaks the build on arm64 allmodconfig
-> in -next since support has been merged for some Exynos ARMv8 SoCs. Add a
-> dependency on ARM to keep things building until either the driver has the
-> ARM dependencies removed or the ARMv8 architecture code implements these
-> ARM specific APIs.
-> 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
-> 
-> Resending to the arm-soc people since the addition of the Exynos
-> platform for ARMv8 went via them, Krzysztof also sent a fix for this
-> earlier but it there's been no response.
-> 
+Marek Szyprowski <m.szyprowski@samsung.com> writes:
 
-Applied to fixes branch, thansk!
+> Hello,
+>
+> On 2014-12-13 17:51, Amit Daniel Kachhap wrote:
+>> Instead of using bool to restore suspended devices initially, use flags
+>> like GPD_DEV_SUSPEND_INIT, GPD_DEV_RESTORE_INIT and GPD_DEV_RESTORE_FORCE.
+>> The first two flags will be similar to the existing true/false functionality.
+>> The third flag may be used to force restore of suspended devices
+>> whenever their associated power domain is turned on.
+>>
+>> Currently, PD power off function powers off all the associated unused
+>> devices. The functionality added in this patch is similar to it.
+>>
+>> This feature may be used for those devices which are always in ON state
+>> if the PD associated with them is ON but may need local runtime resume
+>> and suspend during PD On/Off. These devices (like clock) may not implement
+>> complete pm_runtime calls such as pm_runtime_get/pm_runtime_put due to
+>> subsystems interaction behaviour or any other reason.
+>>
+>> The model works like,
+>>      DEV1 (Attaches itself with PD but no calls to pm_runtime_get and
+>>      /	pm_runtime_put. Its local runtime_suspend/resume is invoked via
+>>     /	GPD_DEV_RESTORE_FORCE option)
+>>    /
+>> PD -- DEV2 (Implements complete PM runtime and calls pm_runtime_get and
+>>    \	pm_runtime_put. This in turn invokes PD On/Off)
+>>     \
+>>      DEV3 (Similar to DEV1)
+>>
+>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>
+> The idea of adding new gen_pd flag and reusing runtime pm calls intead
+> of additional notifiers looks promising, but I have some doubts. 
 
-	Arnd
+I agree, this is better than notifiers, but I have some doubts too.
+
+> don't see any guarantee that devices with GPD_DEV_RESTORE_FORCE flag
+> will be suspended after all "normal" devices and restored before
+> them. Without such assumption it will be hard to use this approach for
+> iommu related activities, because device might need to use (in its
+> suspend/resume callbacks) the functionality provided by the other
+> device with GPD_DEV_RESTORE_FORCE flag. Maybe some additional flags
+> like suspend/resume priority (or more flags) will solve somehow this
+> dependency.
+
+At a deeper level, the problem with this approach is that this is more
+generically a runtime PM dependency problem, not a genpd problem.  For
+example, what happens when the same kind of dependency exists on a
+platform using a custom PM domain instead of genpd (like ACPI.) ?
+
+What's needed to solve this problem is a generalized way to have runtime
+PM dependencies between devices.  Runtime PM already automatically
+handles parent devices as one type of dependent device (e.g. a parent
+device needs to be runtime PM resumed before its child.)  So what's
+needed is a generic way to other PM dependencies with the runtime PM
+core (not the genpd core.)
+
+If runtime PM handles the dependencies corretcly, then genpd (and any
+other PM domain) will get them "for free".
+
+Kevin
