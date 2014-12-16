@@ -1,103 +1,38 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 13/13] drm/irq: Move some prototypes to drm_crtc.h
-Date: Tue, 16 Dec 2014 17:53:35 +0100
-Message-ID: <1418748815-15434-13-git-send-email-thierry.reding@gmail.com>
-References: <1418748815-15434-1-git-send-email-thierry.reding@gmail.com>
+From: Nick Dyer <nick.dyer@itdev.co.uk>
+Subject: Re: [PATCH 0/2] Input: atmel_mxt_ts - Add support for T100 multi-touch
+Date: Tue, 16 Dec 2014 17:07:32 +0000
+Message-ID: <549066D4.7000302@itdev.co.uk>
+References: <1418639947-28765-1-git-send-email-javier.martinez@collabora.co.uk> <54905AD7.4070205@itdev.co.uk> <54905F00.4020107@collabora.co.uk> <54906031.8020309@itdev.co.uk> <54906285.3060907@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1418748815-15434-1-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Mark Yao <mark.yao@rock-chips.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from kdh-gw.itdev.co.uk ([89.21.227.133]:17097 "EHLO
+	hermes.kdh.itdev.co.uk" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1750873AbaLPRHm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 16 Dec 2014 12:07:42 -0500
+In-Reply-To: <54906285.3060907@collabora.co.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Henrik Rydberg <rydberg@euromail.se>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yufeng Shen <miletus@chromium.org>, Benson Leung <bleung@chromium.org>, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoZSBuZXcgcHJvdG90
-eXBlcyB0aGF0IGRlYWwgd2l0aCBzdHJ1Y3QgZHJtX2NydGMgKiBkaXJlY3RseSBhcmUgYmV0dGVy
-CmxvY2F0ZWQgaW4gaW5jbHVkZS9kcm0vZHJtX2NydGMuaCBhbG9uZyB3aXRoIHRoZSBvdGhlciBm
-dW5jdGlvbnMgdGhhdApkZWFsIHdpdGggQ1JUQ3MuCgpTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJl
-ZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgotLS0KIGluY2x1ZGUvZHJtL2RybVAuaCAgICAgfCAx
-NyArKysrLS0tLS0tLS0tLS0tLQogaW5jbHVkZS9kcm0vZHJtX2NydGMuaCB8IDE1ICsrKysrKysr
-KysrKysrKwogMiBmaWxlcyBjaGFuZ2VkLCAxOSBpbnNlcnRpb25zKCspLCAxMyBkZWxldGlvbnMo
-LSkKCmRpZmYgLS1naXQgYS9pbmNsdWRlL2RybS9kcm1QLmggYi9pbmNsdWRlL2RybS9kcm1QLmgK
-aW5kZXggN2JhZWYxZGZmNWYzLi40ODA5YjZmOGJlOGIgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvZHJt
-L2RybVAuaAorKysgYi9pbmNsdWRlL2RybS9kcm1QLmgKQEAgLTEwNjksMjcgKzEwNjksMTYgQEAg
-ZXh0ZXJuIGludCBkcm1fdmJsYW5rX2luaXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgdW5zaWdu
-ZWQgaW50IG51bV9jcnRjcyk7CiBleHRlcm4gaW50IGRybV93YWl0X3ZibGFuayhzdHJ1Y3QgZHJt
-X2RldmljZSAqZGV2LCB2b2lkICpkYXRhLAogCQkJICAgc3RydWN0IGRybV9maWxlICpmaWxwKTsK
-IGV4dGVybiB1MzIgZHJtX3ZibGFua19jb3VudChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBpbnQg
-cGlwZSk7Ci1leHRlcm4gdTMyIGRybV9jcnRjX3ZibGFua19jb3VudChzdHJ1Y3QgZHJtX2NydGMg
-KmNydGMpOwogZXh0ZXJuIHUzMiBkcm1fdmJsYW5rX2NvdW50X2FuZF90aW1lKHN0cnVjdCBkcm1f
-ZGV2aWNlICpkZXYsIHVuc2lnbmVkIGludCBwaXBlLAogCQkJCSAgICAgc3RydWN0IHRpbWV2YWwg
-KnZibGFua3RpbWUpOwotZXh0ZXJuIHUzMiBkcm1fY3J0Y192YmxhbmtfY291bnRfYW5kX3RpbWUo
-c3RydWN0IGRybV9jcnRjICpjcnRjLAotCQkJCQkgIHN0cnVjdCB0aW1ldmFsICp2Ymxhbmt0aW1l
-KTsKIGV4dGVybiB2b2lkIGRybV9zZW5kX3ZibGFua19ldmVudChzdHJ1Y3QgZHJtX2RldmljZSAq
-ZGV2LCB1bnNpZ25lZCBpbnQgcGlwZSwKIAkJCQkgIHN0cnVjdCBkcm1fcGVuZGluZ192Ymxhbmtf
-ZXZlbnQgKmUpOwotZXh0ZXJuIHZvaWQgZHJtX2NydGNfc2VuZF92YmxhbmtfZXZlbnQoc3RydWN0
-IGRybV9jcnRjICpjcnRjLAotCQkJCSAgICAgICBzdHJ1Y3QgZHJtX3BlbmRpbmdfdmJsYW5rX2V2
-ZW50ICplKTsKIGV4dGVybiBib29sIGRybV9oYW5kbGVfdmJsYW5rKHN0cnVjdCBkcm1fZGV2aWNl
-ICpkZXYsIHVuc2lnbmVkIGludCBwaXBlKTsKLWV4dGVybiBib29sIGRybV9jcnRjX2hhbmRsZV92
-Ymxhbmsoc3RydWN0IGRybV9jcnRjICpjcnRjKTsKIGV4dGVybiBpbnQgZHJtX3ZibGFua19nZXQo
-c3RydWN0IGRybV9kZXZpY2UgKmRldiwgdW5zaWduZWQgaW50IHBpcGUpOwogZXh0ZXJuIHZvaWQg
-ZHJtX3ZibGFua19wdXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgdW5zaWduZWQgaW50IHBpcGUp
-OwotZXh0ZXJuIGludCBkcm1fY3J0Y192YmxhbmtfZ2V0KHN0cnVjdCBkcm1fY3J0YyAqY3J0Yyk7
-Ci1leHRlcm4gdm9pZCBkcm1fY3J0Y192YmxhbmtfcHV0KHN0cnVjdCBkcm1fY3J0YyAqY3J0Yyk7
-CiBleHRlcm4gdm9pZCBkcm1fd2FpdF9vbmVfdmJsYW5rKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYs
-IHVuc2lnbmVkIGludCBwaXBlKTsKLWV4dGVybiB2b2lkIGRybV9jcnRjX3dhaXRfb25lX3ZibGFu
-ayhzdHJ1Y3QgZHJtX2NydGMgKmNydGMpOwogZXh0ZXJuIHZvaWQgZHJtX3ZibGFua19vZmYoc3Ry
-dWN0IGRybV9kZXZpY2UgKmRldiwgdW5zaWduZWQgaW50IHBpcGUpOwogZXh0ZXJuIHZvaWQgZHJt
-X3ZibGFua19vbihzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCB1bnNpZ25lZCBpbnQgcGlwZSk7Ci1l
-eHRlcm4gdm9pZCBkcm1fY3J0Y192Ymxhbmtfb2ZmKHN0cnVjdCBkcm1fY3J0YyAqY3J0Yyk7Ci1l
-eHRlcm4gdm9pZCBkcm1fY3J0Y192Ymxhbmtfb24oc3RydWN0IGRybV9jcnRjICpjcnRjKTsKIGV4
-dGVybiB2b2lkIGRybV92YmxhbmtfY2xlYW51cChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KTsKIAog
-ZXh0ZXJuIGludCBkcm1fY2FsY192Ymx0aW1lc3RhbXBfZnJvbV9zY2Fub3V0cG9zKHN0cnVjdCBk
-cm1fZGV2aWNlICpkZXYsCkBAIC0xMDk4LDggKzEwODcsNiBAQCBleHRlcm4gaW50IGRybV9jYWxj
-X3ZibHRpbWVzdGFtcF9mcm9tX3NjYW5vdXRwb3Moc3RydWN0IGRybV9kZXZpY2UgKmRldiwKIAkJ
-CQkJCSB1bnNpZ25lZCBmbGFncywKIAkJCQkJCSBjb25zdCBzdHJ1Y3QgZHJtX2NydGMgKnJlZmNy
-dGMsCiAJCQkJCQkgY29uc3Qgc3RydWN0IGRybV9kaXNwbGF5X21vZGUgKm1vZGUpOwotZXh0ZXJu
-IHZvaWQgZHJtX2NhbGNfdGltZXN0YW1waW5nX2NvbnN0YW50cyhzdHJ1Y3QgZHJtX2NydGMgKmNy
-dGMsCi0JCQkJCSAgICBjb25zdCBzdHJ1Y3QgZHJtX2Rpc3BsYXlfbW9kZSAqbW9kZSk7CiAKIC8q
-KgogICogZHJtX2NydGNfdmJsYW5rX3dhaXRxdWV1ZSAtIGdldCB2Ymxhbmsgd2FpdHF1ZXVlIGZv
-ciB0aGUgQ1JUQwpAQCAtMTEwNyw2ICsxMDk0LDEwIEBAIGV4dGVybiB2b2lkIGRybV9jYWxjX3Rp
-bWVzdGFtcGluZ19jb25zdGFudHMoc3RydWN0IGRybV9jcnRjICpjcnRjLAogICoKICAqIFRoaXMg
-ZnVuY3Rpb24gcmV0dXJucyBhIHBvaW50ZXIgdG8gdGhlIHZibGFuayB3YWl0cXVldWUgZm9yIHRo
-ZSBDUlRDLgogICogRHJpdmVycyBjYW4gdXNlIHRoaXMgdG8gaW1wbGVtZW50IHZibGFuayB3YWl0
-cyB1c2luZyB3YWl0X2V2ZW50KCkgJiBjby4KKyAqCisgKiBYWFg6IE1vdmUgdGhpcyB0byBpbmNs
-dWRlL2RybS9kcm1fY3J0Yy5oIG9uY2UgcGVyLUNSVEMgVkJMQU5LIGRhdGEgaGFzCisgKiBtb3Zl
-ZCBpbnRvIHN0cnVjdCBkcm1fY3J0Yy4gSXQgY2FuJ3QgY3VycmVudGx5IGJlIG1vdmVkIGJlY2F1
-c2UgZHJtX2NydGMuaAorICogZG9lc24ndCBrbm93IHRoZSBkZWZpbml0aW9uIG9mIHN0cnVjdCBk
-cm1fZGV2aWNlLgogICovCiBzdGF0aWMgaW5saW5lIHdhaXRfcXVldWVfaGVhZF90ICpkcm1fY3J0
-Y192Ymxhbmtfd2FpdHF1ZXVlKHN0cnVjdCBkcm1fY3J0YyAqY3J0YykKIHsKZGlmZiAtLWdpdCBh
-L2luY2x1ZGUvZHJtL2RybV9jcnRjLmggYi9pbmNsdWRlL2RybS9kcm1fY3J0Yy5oCmluZGV4IGVh
-NGRjNGNjNDljNi4uYzFiNjM5ZjU1NDAxIDEwMDY0NAotLS0gYS9pbmNsdWRlL2RybS9kcm1fY3J0
-Yy5oCisrKyBiL2luY2x1ZGUvZHJtL2RybV9jcnRjLmgKQEAgLTExNDcsNiArMTE0NywyMSBAQCBl
-eHRlcm4gaW50IGRybV9jcnRjX2luaXRfd2l0aF9wbGFuZXMoc3RydWN0IGRybV9kZXZpY2UgKmRl
-diwKIGV4dGVybiB2b2lkIGRybV9jcnRjX2NsZWFudXAoc3RydWN0IGRybV9jcnRjICpjcnRjKTsK
-IGV4dGVybiB1bnNpZ25lZCBpbnQgZHJtX2NydGNfaW5kZXgoc3RydWN0IGRybV9jcnRjICpjcnRj
-KTsKIAorZXh0ZXJuIHUzMiBkcm1fY3J0Y192YmxhbmtfY291bnQoc3RydWN0IGRybV9jcnRjICpj
-cnRjKTsKK2V4dGVybiB1MzIgZHJtX2NydGNfdmJsYW5rX2NvdW50X2FuZF90aW1lKHN0cnVjdCBk
-cm1fY3J0YyAqY3J0YywKKwkJCQkJICBzdHJ1Y3QgdGltZXZhbCAqdmJsYW5rdGltZSk7CitleHRl
-cm4gdm9pZCBkcm1fY3J0Y19zZW5kX3ZibGFua19ldmVudChzdHJ1Y3QgZHJtX2NydGMgKmNydGMs
-CisJCQkJICAgICAgIHN0cnVjdCBkcm1fcGVuZGluZ192YmxhbmtfZXZlbnQgKmUpOworZXh0ZXJu
-IGJvb2wgZHJtX2NydGNfaGFuZGxlX3ZibGFuayhzdHJ1Y3QgZHJtX2NydGMgKmNydGMpOworZXh0
-ZXJuIGludCBkcm1fY3J0Y192YmxhbmtfZ2V0KHN0cnVjdCBkcm1fY3J0YyAqY3J0Yyk7CitleHRl
-cm4gdm9pZCBkcm1fY3J0Y192YmxhbmtfcHV0KHN0cnVjdCBkcm1fY3J0YyAqY3J0Yyk7CitleHRl
-cm4gdm9pZCBkcm1fY3J0Y193YWl0X29uZV92Ymxhbmsoc3RydWN0IGRybV9jcnRjICpjcnRjKTsK
-K2V4dGVybiB2b2lkIGRybV9jcnRjX3ZibGFua19vZmYoc3RydWN0IGRybV9jcnRjICpjcnRjKTsK
-K2V4dGVybiB2b2lkIGRybV9jcnRjX3ZibGFua19vbihzdHJ1Y3QgZHJtX2NydGMgKmNydGMpOwor
-CitleHRlcm4gdm9pZCBkcm1fY2FsY190aW1lc3RhbXBpbmdfY29uc3RhbnRzKHN0cnVjdCBkcm1f
-Y3J0YyAqY3J0YywKKwkJCQkJICAgIGNvbnN0IHN0cnVjdCBkcm1fZGlzcGxheV9tb2RlICptb2Rl
-KTsKKwogLyoqCiAgKiBkcm1fY3J0Y19tYXNrIC0gZmluZCB0aGUgbWFzayBvZiBhIHJlZ2lzdGVy
-ZWQgQ1JUQwogICogQGNydGM6IENSVEMgdG8gZmluZCBtYXNrIGZvcgotLSAKMi4xLjMKCl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
-aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On 16/12/14 16:49, Javier Martinez Canillas wrote:
+> Awesome, what do you think about the change to have a common input device
+> initialization function that I squashed in your original patch?
+> mxt_initialize_t100_input_device() and mxt_initialize_t9_input_device()
+> are very similar so I think that is a sensible refactoring as well.
+> 
+> If you agree with the change I can post it on top of your patch once it
+> lands in mainline.
+
+I had been keeping them separate on the basis that we don't want changes to
+support new T100 features to cause regressions in the old T9 handling. But
+there is a fair amount of duplication as you say, probably worth addressing.
+
+FWIW I have a queue of stuff that might be considered higher priority, the
+next 15-patch set would be up to "add regulator control support":
+https://github.com/ndyer/linux/compare/dtor:next...for-dtor
+
+It does cause me some issues to merge upstream refactorings past that lot...
