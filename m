@@ -1,120 +1,81 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv4 5/8] ARM: dts: Add PPMU dt node for Exynos3250 SoC
-Date: Wed, 17 Dec 2014 08:26:54 +0900
-Message-ID: <1418772417-5164-6-git-send-email-cw00.choi@samsung.com>
-References: <1418772417-5164-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1418772417-5164-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: myungjoo.ham@samsung.com
-Cc: kgene.kim@samsung.com, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, cw00.choi@samsung.com, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Subject: [PATCHv3] clocksource: exynos_mct: Add the support for Exynos 64bit SoC
+Date: Wed, 17 Dec 2014 08:46:11 +0900
+Message-ID: <1418773571-10834-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:47655 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751013AbaLPXq0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 16 Dec 2014 18:46:26 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: daniel.lezcano@linaro.org, tglx@linutronix.de, kgene.kim@samsung.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Mark Rutland <mark.rutland@arm.com>
 
-This patch add PPMU (Platform Performance Monitoring Unit) dt node
-to estimate the utilization of each IP in Exynos SoC throught DEVFREQ Event
-subsystem.
+This patch adds the support for Exynos 64bit SoC. The delay_timer is only used
+for Exynos 32bit SoC.
 
-This patch adds following PPMU dt nodes:
-- PPMU_DMC0     0x106a0000
-- PPMU_DMC1     0x106b0000
-- PPMU_RIGHTBUS 0x112A0000
-- PPMU_LEFTBUS  0x116A0000
-- PPMU_CAMIF    0x11AC0000
-- PPMU_LCD0     0x11E40000
-- PPMU_FSYS     0x12630000
-- PPMU_3D       0x13220000
-- PPMU_MFC      0x13660000
-- PPMU_CPU      0x106c0000
-
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
 Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos3250.dtsi | 72 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
+This patch set is tested on 64-bit Exynos SoC. I send only this patch from
+following patchst[1].
+[1] https://lkml.org/lkml/2014/12/2/134
 
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index c743f60..f0322f2 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -529,6 +529,78 @@
- 			compatible = "arm,cortex-a7-pmu";
- 			interrupts = <0 18 0>, <0 19 0>;
- 		};
-+
-+		ppmu_dmc0: ppmu_dmc0@106a0000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x106a0000 0x2000>;
-+			status = "disabled";
-+		};
-+
-+		ppmu_dmc1: ppmu_dmc1@106b0000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x106b0000 0x2000>;
-+			status = "disabled";
-+		};
-+
-+		ppmu_cpu: ppmu_cpu@106c0000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x106c0000 0x2000>;
-+			status = "disabled";
-+		};
-+
-+		ppmu_rightbus: ppmu_rightbus@112a0000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x112a0000 0x2000>;
-+			clocks = <&cmu CLK_PPMURIGHT>;
-+			clock-names = "ppmu";
-+			status = "disabled";
-+		};
-+
-+		ppmu_leftbus: ppmu_leftbus0@116a0000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x116a0000 0x2000>;
-+			clocks = <&cmu CLK_PPMULEFT>;
-+			clock-names = "ppmu";
-+			status = "disabled";
-+		};
-+
-+		ppmu_camif: ppmu_camif@11ac0000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x11ac0000 0x2000>;
-+			clocks = <&cmu CLK_PPMUCAMIF>;
-+			clock-names = "ppmu";
-+			status = "disabled";
-+		};
-+
-+		ppmu_lcd0: ppmu_lcd0@11e40000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x11e40000 0x2000>;
-+			clocks = <&cmu CLK_PPMULCD0>;
-+			clock-names = "ppmu";
-+			status = "disabled";
-+		};
-+
-+		ppmu_fsys: ppmu_fsys@12630000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x12630000 0x2000>;
-+			status = "disabled";
-+		};
-+
-+		ppmu_g3d: ppmu_g3d@13220000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x13220000 0x2000>;
-+			clocks = <&cmu CLK_PPMUG3D>;
-+			clock-names = "ppmu";
-+			status = "disabled";
-+		};
-+
-+		ppmu_mfc: ppmu_mfc@13660000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x13660000 0x2000>;
-+			clocks = <&cmu CLK_PPMUMFC_L>;
-+			clock-names = "ppmu";
-+			status = "disabled";
-+		};
- 	};
- };
+Changes from v2:
+- None
+Changes from v1:
+- Use CONFIG_ARM instead of CONFIG_ARM64
+
+ drivers/clocksource/Kconfig      | 1 -
+ drivers/clocksource/exynos_mct.c | 4 ++++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 9042060..27ef3fa 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -134,7 +134,6 @@ config CLKSRC_METAG_GENERIC
  
+ config CLKSRC_EXYNOS_MCT
+ 	def_bool y if ARCH_EXYNOS
+-	depends on !ARM64
+ 	help
+ 	  Support for Multi Core Timer controller on Exynos SoCs.
+ 
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 9403061..b840ea1 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -223,6 +223,7 @@ static u64 notrace exynos4_read_sched_clock(void)
+ 	return exynos4_read_count_32();
+ }
+ 
++#if defined(CONFIG_ARM)
+ static struct delay_timer exynos4_delay_timer;
+ 
+ static cycles_t exynos4_read_current_timer(void)
+@@ -231,14 +232,17 @@ static cycles_t exynos4_read_current_timer(void)
+ 			 "cycles_t needs to move to 32-bit for ARM64 usage");
+ 	return exynos4_read_count_32();
+ }
++#endif
+ 
+ static void __init exynos4_clocksource_init(void)
+ {
+ 	exynos4_mct_frc_start();
+ 
++#if defined(CONFIG_ARM)
+ 	exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
+ 	exynos4_delay_timer.freq = clk_rate;
+ 	register_current_timer_delay(&exynos4_delay_timer);
++#endif
+ 
+ 	if (clocksource_register_hz(&mct_frc, clk_rate))
+ 		panic("%s: can't register clocksource\n", mct_frc.name);
 -- 
 1.8.5.5
