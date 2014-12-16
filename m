@@ -1,54 +1,53 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 02/13] drm/bochs: Store correct CRTC index in events
-Date: Tue, 16 Dec 2014 17:53:24 +0100
-Message-ID: <1418748815-15434-2-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH 04/13] drm/imx: Make pipe number unsigned
+Date: Tue, 16 Dec 2014 17:53:26 +0100
+Message-ID: <1418748815-15434-4-git-send-email-thierry.reding@gmail.com>
 References: <1418748815-15434-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f54.google.com ([209.85.220.54]:56740 "EHLO
-	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750981AbaLPQxo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Dec 2014 11:53:44 -0500
-Received: by mail-pa0-f54.google.com with SMTP id fb1so14506677pad.27
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Dec 2014 08:53:44 -0800 (PST)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1418748815-15434-1-git-send-email-thierry.reding@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: dri-devel@lists.freedesktop.org
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, Gerd Hoffmann <kraxel@redhat.com>, Mark Yao <mark.yao@rock-chips.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Mark Yao <mark.yao@rock-chips.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
-
-Previously a negative pipe caused a special case to be triggered for
-drivers that didn't have proper VBLANK support. The trigger for this
-special case is now independent of the pipe, so the correct CRTC index
-can now be stored in events.
-
-Cc: Gerd Hoffmann <kraxel@redhat.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/gpu/drm/bochs/bochs_kms.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
-index 26bcd03a8cb6..c219c1de3722 100644
---- a/drivers/gpu/drm/bochs/bochs_kms.c
-+++ b/drivers/gpu/drm/bochs/bochs_kms.c
-@@ -113,13 +113,14 @@ static int bochs_crtc_page_flip(struct drm_crtc *crtc,
- 	struct bochs_device *bochs =
- 		container_of(crtc, struct bochs_device, crtc);
- 	struct drm_framebuffer *old_fb = crtc->primary->fb;
-+	unsigned int pipe = drm_crtc_index(crtc);
- 	unsigned long irqflags;
- 
- 	crtc->primary->fb = fb;
- 	bochs_crtc_mode_set_base(crtc, 0, 0, old_fb);
- 	if (event) {
- 		spin_lock_irqsave(&bochs->dev->event_lock, irqflags);
--		drm_send_vblank_event(bochs->dev, -1, event);
-+		drm_send_vblank_event(bochs->dev, pipe, event);
- 		spin_unlock_irqrestore(&bochs->dev->event_lock, irqflags);
- 	}
- 	return 0;
--- 
-2.1.3
+RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoZXJlJ3Mgbm8gcmVh
+c29uIHdoYXRzb2V2ZXIgd2h5IHRoaXMgc2hvdWxkIGV2ZXIgYmUgbmVnYXRpdmUuCgpDYzogUGhp
+bGlwcCBaYWJlbCA8cC56YWJlbEBwZW5ndXRyb25peC5kZT4KU2lnbmVkLW9mZi1ieTogVGhpZXJy
+eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vaW14L2lt
+eC1kcm0tY29yZS5jIHwgNCArKy0tCiBkcml2ZXJzL2dwdS9kcm0vaW14L2lteC1kcm0uaCAgICAg
+IHwgMiArLQogMiBmaWxlcyBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0p
+CgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2lteC9pbXgtZHJtLWNvcmUuYyBiL2RyaXZl
+cnMvZ3B1L2RybS9pbXgvaW14LWRybS1jb3JlLmMKaW5kZXggYjI1MDEzMGRlYmM4Li5jNTJlY2Nj
+NThhOTUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9pbXgvaW14LWRybS1jb3JlLmMKKysr
+IGIvZHJpdmVycy9ncHUvZHJtL2lteC9pbXgtZHJtLWNvcmUuYwpAQCAtNDQsNyArNDQsNyBAQCBz
+dHJ1Y3QgaW14X2RybV9kZXZpY2UgewogCiBzdHJ1Y3QgaW14X2RybV9jcnRjIHsKIAlzdHJ1Y3Qg
+ZHJtX2NydGMJCQkJKmNydGM7Ci0JaW50CQkJCQlwaXBlOworCXVuc2lnbmVkIGludAkJCQlwaXBl
+OwogCXN0cnVjdCBpbXhfZHJtX2NydGNfaGVscGVyX2Z1bmNzCWlteF9kcm1faGVscGVyX2Z1bmNz
+OwogCXN0cnVjdCBkZXZpY2Vfbm9kZQkJCSpwb3J0OwogfTsKQEAgLTUyLDcgKzUyLDcgQEAgc3Ry
+dWN0IGlteF9kcm1fY3J0YyB7CiBzdGF0aWMgaW50IGxlZ2FjeWZiX2RlcHRoID0gMTY7CiBtb2R1
+bGVfcGFyYW0obGVnYWN5ZmJfZGVwdGgsIGludCwgMDQ0NCk7CiAKLWludCBpbXhfZHJtX2NydGNf
+aWQoc3RydWN0IGlteF9kcm1fY3J0YyAqY3J0YykKK3Vuc2lnbmVkIGludCBpbXhfZHJtX2NydGNf
+aWQoc3RydWN0IGlteF9kcm1fY3J0YyAqY3J0YykKIHsKIAlyZXR1cm4gY3J0Yy0+cGlwZTsKIH0K
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9pbXgvaW14LWRybS5oIGIvZHJpdmVycy9ncHUv
+ZHJtL2lteC9pbXgtZHJtLmgKaW5kZXggNzQ1M2FlMDBjNDEyLi5hMTViODAzMTlhNmEgMTAwNjQ0
+Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9pbXgvaW14LWRybS5oCisrKyBiL2RyaXZlcnMvZ3B1L2Ry
+bS9pbXgvaW14LWRybS5oCkBAIC0xMiw3ICsxMiw3IEBAIHN0cnVjdCBkcm1fZnJhbWVidWZmZXI7
+CiBzdHJ1Y3QgaW14X2RybV9jcnRjOwogc3RydWN0IHBsYXRmb3JtX2RldmljZTsKIAotaW50IGlt
+eF9kcm1fY3J0Y19pZChzdHJ1Y3QgaW14X2RybV9jcnRjICpjcnRjKTsKK3Vuc2lnbmVkIGludCBp
+bXhfZHJtX2NydGNfaWQoc3RydWN0IGlteF9kcm1fY3J0YyAqY3J0Yyk7CiAKIHN0cnVjdCBpbXhf
+ZHJtX2NydGNfaGVscGVyX2Z1bmNzIHsKIAlpbnQgKCplbmFibGVfdmJsYW5rKShzdHJ1Y3QgZHJt
+X2NydGMgKmNydGMpOwotLSAKMi4xLjMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
+Zm8vZHJpLWRldmVsCg==
