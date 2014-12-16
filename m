@@ -1,44 +1,47 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 06/13] drm/rockchip: Store correct CRTC index in events
-Date: Tue, 16 Dec 2014 17:53:28 +0100
-Message-ID: <1418748815-15434-6-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH 05/13] drm/imx: Store correct CRTC index in events
+Date: Tue, 16 Dec 2014 17:53:27 +0100
+Message-ID: <1418748815-15434-5-git-send-email-thierry.reding@gmail.com>
 References: <1418748815-15434-1-git-send-email-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f53.google.com ([209.85.220.53]:61913 "EHLO
+	mail-pa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751049AbaLPQx6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 16 Dec 2014 11:53:58 -0500
+Received: by mail-pa0-f53.google.com with SMTP id kq14so14478842pab.40
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Dec 2014 08:53:57 -0800 (PST)
 In-Reply-To: <1418748815-15434-1-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: dri-devel@lists.freedesktop.org
-Cc: linux-samsung-soc@vger.kernel.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Mark Yao <mark.yao@rock-chips.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, Gerd Hoffmann <kraxel@redhat.com>, Mark Yao <mark.yao@rock-chips.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, linux-samsung-soc@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KCkEgbmVnYXRpdmUgcGlw
-ZSBjYXVzZXMgYSBzcGVjaWFsIGNhc2UgdG8gYmUgdHJpZ2dlcmVkIGZvciBkcml2ZXJzIHRoYXQK
-ZG9uJ3QgaGF2ZSBwcm9wZXIgVkJMQU5LIHN1cHBvcnQuIFJvY2tjaGlwIGRvZXMgc3VwcG9ydCBW
-QkxBTktzLCBzbwp0aGVyZSBpcyBubyBuZWVkIGZvciB0aGUgZmFsbGJhY2sgY29kZS4KCkNjOiBN
-YXJrIFlhbyA8bWFyay55YW9Acm9jay1jaGlwcy5jb20+ClNpZ25lZC1vZmYtYnk6IFRoaWVycnkg
-UmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlw
-L3JvY2tjaGlwX2RybV92b3AuYyB8IDIgKy0KIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigr
-KSwgMSBkZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9y
-b2NrY2hpcF9kcm1fdm9wLmMgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJt
-X3ZvcC5jCmluZGV4IGU3Y2EyNWIzZmIzOC4uOTk5NjE2ZDIxNmFjIDEwMDY0NAotLS0gYS9kcml2
-ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX3ZvcC5jCisrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fdm9wLmMKQEAgLTk1OCw3ICs5NTgsNyBAQCBzdGF0
-aWMgdm9pZCB2b3Bfd2luX3N0YXRlX2NvbXBsZXRlKHN0cnVjdCB2b3Bfd2luICp2b3Bfd2luLAog
-CiAJaWYgKHN0YXRlLT5ldmVudCkgewogCQlzcGluX2xvY2tfaXJxc2F2ZSgmZHJtLT5ldmVudF9s
-b2NrLCBmbGFncyk7Ci0JCWRybV9zZW5kX3ZibGFua19ldmVudChkcm0sIC0xLCBzdGF0ZS0+ZXZl
-bnQpOworCQlkcm1fc2VuZF92YmxhbmtfZXZlbnQoZHJtLCB2b3AtPnBpcGUsIHN0YXRlLT5ldmVu
-dCk7CiAJCXNwaW5fdW5sb2NrX2lycXJlc3RvcmUoJmRybS0+ZXZlbnRfbG9jaywgZmxhZ3MpOwog
-CX0KIAotLSAKMi4xLjMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRl
-dmVsCg==
+From: Thierry Reding <treding@nvidia.com>
+
+A negative pipe causes a special case to be triggered for drivers that
+don't have proper VBLANK support. i.MX does support VBLANKs, so there is
+no need for the fallback code.
+
+Cc: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/gpu/drm/imx/ipuv3-crtc.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/imx/ipuv3-crtc.c b/drivers/gpu/drm/imx/ipuv3-crtc.c
+index ebee59cb96d8..df3e8b6101b3 100644
+--- a/drivers/gpu/drm/imx/ipuv3-crtc.c
++++ b/drivers/gpu/drm/imx/ipuv3-crtc.c
+@@ -209,7 +209,8 @@ static void ipu_crtc_handle_pageflip(struct ipu_crtc *ipu_crtc)
+ 
+ 	spin_lock_irqsave(&drm->event_lock, flags);
+ 	if (ipu_crtc->page_flip_event)
+-		drm_send_vblank_event(drm, -1, ipu_crtc->page_flip_event);
++		drm_send_vblank_event(drm, imx_drm_crtc_id(ipu_crtc->imx_crtc),
++				      ipu_crtc->page_flip_event);
+ 	ipu_crtc->page_flip_event = NULL;
+ 	imx_drm_crtc_vblank_put(ipu_crtc->imx_crtc);
+ 	spin_unlock_irqrestore(&drm->event_lock, flags);
+-- 
+2.1.3
