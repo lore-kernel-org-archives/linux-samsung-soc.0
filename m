@@ -1,57 +1,71 @@
-From: Arnd Bergmann <arnd@arndb.de>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Subject: Re: [PATCH v3 18/19] iommu: exynos: init from dt-specific callback instead of initcall
-Date: Tue, 16 Dec 2014 12:40:28 +0100
-Message-ID: <1681211.YVY9bd22gV@wuerfel>
-References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com> <4894156.QdIh4JzSl0@avalon> <20141215181323.GX20738@arm.com>
+Date: Tue, 16 Dec 2014 14:07:11 +0200
+Message-ID: <24892200.rsOlz53AM6@avalon>
+References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com> <20141215181323.GX20738@arm.com> <1681211.YVY9bd22gV@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.126.130]:52505 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750915AbaLPLlB (ORCPT
+Received: from galahad.ideasonboard.com ([185.26.127.97]:48292 "EHLO
+	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750885AbaLPMHK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Dec 2014 06:41:01 -0500
-In-Reply-To: <20141215181323.GX20738@arm.com>
+	Tue, 16 Dec 2014 07:07:10 -0500
+In-Reply-To: <1681211.YVY9bd22gV@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Will Deacon <will.deacon@arm.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, David Wodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>, Tomasz Figa <tomasz.figa@gmail.com>, Cho KyongHo <pullip.cho@samsung.com>, Inki Dae <inki.dae@samsung.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <treding@nvidia.com>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, Will Deacon <will.deacon@arm.com>, Rob Herring <robh@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, David Wodhouse <dwmw2@infradead.org>, Joerg Roedel <joro@8bytes.org>, Tomasz Figa <tomasz.figa@gmail.com>, Cho KyongHo <pullip.cho@samsung.com>, Inki Dae <inki.dae@samsung.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <treding@nvidia.com>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Monday 15 December 2014 18:13:23 Will Deacon wrote:
-> > > > IOMMUs are not as low-level as system interrupt controllers or system
-> > > > clocks. I'm beginning to agree with Thierry that they should be treated
-> > > > as normal platform devices as they're not required earlier than probe
-> > > > time of their bus master devices.
-> > > 
-> > > Well, I think you'd have to propose patches for discussion since I'm
-> > > certainly not wed to the current approach; I just want something that
-> > > allows of_{dma,iommu}_configure to run with the information it needs.
+Hi Arnd,
+
+On Tuesday 16 December 2014 12:40:28 Arnd Bergmann wrote:
+> On Monday 15 December 2014 18:13:23 Will Deacon wrote:
+> >>>> IOMMUs are not as low-level as system interrupt controllers or
+> >>>> system clocks. I'm beginning to agree with Thierry that they should
+> >>>> be treated as normal platform devices as they're not required
+> >>>> earlier than probe time of their bus master devices.
+> >>> 
+> >>> Well, I think you'd have to propose patches for discussion since I'm
+> >>> certainly not wed to the current approach; I just want something that
+> >>> allows of_{dma,iommu}_configure to run with the information it needs.
+> >> 
+> >> Do we need of_dma_configure() to run when the device is created, or
+> >> could we postpone it to just before probe time ?
 > > 
-> > Do we need of_dma_configure() to run when the device is created, or could we 
-> > postpone it to just before probe time ?
+> > I'm not sure I can answer that one... Arnd?
 > 
-> I'm not sure I can answer that one... Arnd?
+> I believe we could postpone it to probe time, but I'd rather not.
+> The way I see the arguments in favor, we have mainly cosmetic arguments:
+> 
+> - Doing it at probe time would eliminate the ugly section magic hack
+> - iommu drivers could be implemented as loadable modules with platform
+>   drivers, for consistency with most other drivers
 
-I believe we could postpone it to probe time, but I'd rather not.
-The way I see the arguments in favor, we have mainly cosmetic arguments:
+The main argument, from my point of view, is that handling IOMMUs are normal 
+platform devices allow using all the kernel infrastructure that depends on a 
+struct device. The dev_* print helpers are nice to have, but what would make a 
+big difference is the ability to use runtime PM.
 
-- Doing it at probe time would eliminate the ugly section magic hack
-- iommu drivers could be implemented as loadable modules with platform
-  drivers, for consistency with most other drivers
+> On the other hand, I see:
+> 
+> - DMA configuration is traditionally done at device creation time, and
+>   changing that is more likely to introduce bugs than leaving it
+>   where it is.
+> - On a lot of machines, the IOMMU is optional, and the probe function
+>   cannot know the difference between an IOMMU driver that is left out
+>   of the kernel and one that will be initialized later, using a fixed
+>   entry point for initializing the IOMMU makes the behavior consistent
 
-On the other hand, I see:
+I'm not advocating for IOMMU support being built as a loadable module. It 
+might be nice from a development point of view, but that's about it.
 
-- DMA configuration is traditionally done at device creation time, and
-  changing that is more likely to introduce bugs than leaving it
-  where it is.
-- On a lot of machines, the IOMMU is optional, and the probe function
-  cannot know the difference between an IOMMU driver that is left out
-  of the kernel and one that will be initialized later, using a fixed
-  entry point for initializing the IOMMU makes the behavior consistent
+> There is a third option in theory, which is to only enable the IOMMU
+> as part of dma_set_mask(). I've done that in the past on powerpc, but
+> the new approach seems cleaner.
 
-There is a third option in theory, which is to only enable the IOMMU
-as part of dma_set_mask(). I've done that in the past on powerpc, but
-the new approach seems cleaner.
+-- 
+Regards,
 
-	Arnd
+Laurent Pinchart
