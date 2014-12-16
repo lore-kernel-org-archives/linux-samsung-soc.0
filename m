@@ -1,64 +1,80 @@
 From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 12/13] drm/irq: Expel legacy API
-Date: Tue, 16 Dec 2014 19:00:54 +0100
-Message-ID: <20141216180054.GA2711@phenom.ffwll.local>
+Subject: Re: [PATCH 11/13] drm/irq: Document return values more consistently
+Date: Tue, 16 Dec 2014 19:02:29 +0100
+Message-ID: <20141216180229.GB2711@phenom.ffwll.local>
 References: <1418748815-15434-1-git-send-email-thierry.reding@gmail.com>
- <1418748815-15434-12-git-send-email-thierry.reding@gmail.com>
- <20141216175928.GZ2711@phenom.ffwll.local>
+ <1418748815-15434-11-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wi0-f180.google.com ([209.85.212.180]:50059 "EHLO
+	mail-wi0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751218AbaLPSBy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 16 Dec 2014 13:01:54 -0500
+Received: by mail-wi0-f180.google.com with SMTP id n3so13401802wiv.13
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Dec 2014 10:01:52 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <20141216175928.GZ2711@phenom.ffwll.local>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org, Mark Yao <mark.yao@rock-chips.com>
+In-Reply-To: <1418748815-15434-11-git-send-email-thierry.reding@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, Philipp Zabel <p.zabel@pengutronix.de>, Gerd Hoffmann <kraxel@redhat.com>, Mark Yao <mark.yao@rock-chips.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, linux-samsung-soc@vger.kernel.org
 
-T24gVHVlLCBEZWMgMTYsIDIwMTQgYXQgMDY6NTk6MjhQTSArMDEwMCwgRGFuaWVsIFZldHRlciB3
-cm90ZToKPiBPbiBUdWUsIERlYyAxNiwgMjAxNCBhdCAwNTo1MzozNFBNICswMTAwLCBUaGllcnJ5
-IFJlZGluZyB3cm90ZToKPiA+IEZyb206IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5j
-b20+Cj4gPiAKPiA+IFRoZXNlIGxlZ2FjeSBmdW5jdGlvbnMgYWxsIG9wZXJhdGUgb24gdGhlIHN0
-cnVjdCBkcm1fZGV2aWNlICogYW5kIGFuCj4gPiBpbmRleCB0byB0aGUgQ1JUQyB0aGF0IHRoZXkg
-c2hvdWxkIGFjY2Vzcy4gVGhpcyBpcyBiYWQgYmVjYXVzZSBpdAo+ID4gcmVxdWlyZXMga2VlcGlu
-ZyB0cmFjayBvZiBhIGdsb2JhbCBkYXRhIHN0cnVjdHVyZXMgdG8gcmVzb2x2ZSB0aGUgaW5kZXgK
-PiA+IHRvIENSVEMgb2JqZWN0IGxvb2t1cC4gSW4gb3JkZXIgdG8gZ2V0IHJpZCBvZiB0aGlzIGds
-b2JhbCBkYXRhIG5ldyBBUElzCj4gPiBoYXZlIGJlZW4gaW50cm9kdWNlZCB0aGF0IG9wZXJhdGUg
-ZGlyZWN0bHkgb24gdGhlc2Ugb2JqZWN0cy4gQ3VycmVudGx5Cj4gPiB0aGUgbmV3IGZ1bmN0aW9u
-cyBzdGlsbCBvcGVyYXRlIG9uIHRoZSBvbGQgZGF0YSwgYnV0IHRoZSBnb2FsIGlzIHRvCj4gPiBl
-dmVudHVhbGx5IG1vdmUgdGhhdCBkYXRhIGludG8gc3RydWN0IGRybV9jcnRjLiBJbiBvcmRlciB0
-byBzdGFydAo+ID4gY29udmVyc2lvbiBvZiBkcml2ZXJzIHRvIHRoZSBuZXcgQVBJLCBtb3ZlIHRo
-ZSBvbGQgQVBJIGF3YXkuCj4gPiAKPiA+IFNpZ25lZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5nIDx0
-cmVkaW5nQG52aWRpYS5jb20+Cj4gCj4gSW1vIHdlIHNob3VsZCB0cnkgdG8gc2hhcmUgY29kZSBi
-ZXR3ZWVuIHRoZSBsZWdhY3kgdmJsYW5rIGNvZGUgYW5kIHdoYXQKPiB3ZSdyZSBub3cgYnVpbGRp
-bmcgdXAgd2l0aCB0aGUgZHJtX2NydGNfIHByZWZpeGVkIGZ1bmN0aW9ucyBmb3IgbmF0aXZlIGtt
-cwo+IGRyaXZlcnMuIEluc3RlYWQgSSB0aGluayB3ZSBzaG91bGQgZG8gZnVsbCBjb3BpZXMgd2l0
-aCB0aGUgZm9sbG93aW5nCj4gcmVjaXBlOgo+IC0gTG9vayBhdCBhIGdpdmVuIGZ1bmN0aW9uIGFu
-ZCBtYWtlIHN1cmUgYWxsIGttcyBkcml2ZXJzIChhbmQgYW55Cj4gICBjYWxsY2hhaW5zIHVzZWQg
-Ynkga21zIGRyaXZlcnMpIHVzZXMgdGhlIGRybV9jcnRjXyB2YXJpYW50IGFuZCB0aGF0IGFueQo+
-ICAgdW1zIGRyaXZlcnMgdXNlcyB0aGUgZHJtX3ZibGFua18gdmVyc2lvbi4gU28gYmlnIGF1ZGl0
-Lgo+IC0gVGhlbiBmb3IgZWFjaCBzdWNoIGZ1bmN0aW9uIGNvcHkgaXQgdG8gZHJtX2lycV9sZWdh
-Y3kuYyBhbmQgbWFyayB0aGUgb2xkCj4gICBjb3B5IGluIGRybV9pcnEuYyBhcyBzdGF0aWMgYW5k
-IGRyb3AgdGhlIEVYUE9SVF9TWU1CT0wgZm9yIGl0Lgo+IC0gVGhlbiBpbmxpbmUgdGhlIGxvZ2lj
-IGZvciBuYXRpdmUga21zIGRyaXZlcnMuCj4gCj4gSnVzdCBtb3ZpbmcgdGhlIGZ1bmN0aW9ucyBh
-cm91bmQgZG9lc24ndCByZWFsbHkgaGVscCB1cyBhdCBhbGwgc2luY2Ugd2UKPiBzdGlsbCBoYXZl
-IHRoZSBwcm9ibGVtIHRoYXQgYm90aCB1bXMgYW5kIGttcyBjb2RlIHVzZXMgdGhlbS4gV2hpY2gg
-bWVhbnMKPiB3ZSBjYW4ndCB1c2UgZHJtX2NydGMgYW5kIHN0b3JlIHZibGFuayBkYXRhIGluIHRo
-ZXJlLgoKVGhlcmUncyB0aGUgYWRkZWQgcHJvYmxlbSB0aGF0IG1vdmluZyBicmVha3MgZ2l0IGJs
-YW1lIChhdCBsZWFzdCBpbgpkZWZhdWx0IG1vZGUpIGEgYml0LCBzbyBiZXR0ZXIgdG8ga2VlcCB0
-aGUgdmVyc2lvbiB0aGF0IHdlIHdhbnQgdG8KdHJhbnNmb3JtIGludG8gdGhlIGttcy1uYXRpdmUg
-b25lcyB3aGVyZSB0aGV5IGN1cnJlbnRseSBhcmUuCi1EYW5pZWwKLS0gCkRhbmllbCBWZXR0ZXIK
-U29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCis0MSAoMCkgNzkgMzY1IDU3IDQ4
-IC0gaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+On Tue, Dec 16, 2014 at 05:53:33PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> Some of the functions are documented inconsistently. Add Returns:
+> sections where missing and use consistent style to describe the return
+> value.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+
+With the comment in patch 9 addressed patches 1-11 are
+
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+
+> ---
+>  drivers/gpu/drm/drm_irq.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_irq.c b/drivers/gpu/drm/drm_irq.c
+> index b34900a8e172..ef5d993f06ee 100644
+> --- a/drivers/gpu/drm/drm_irq.c
+> +++ b/drivers/gpu/drm/drm_irq.c
+> @@ -991,6 +991,9 @@ EXPORT_SYMBOL(drm_crtc_send_vblank_event);
+>   * drm_vblank_enable - enable the vblank interrupt on a CRTC
+>   * @dev: DRM device
+>   * @pipe: CRTC index
+> + *
+> + * Returns:
+> + * Zero on success or a negative error code on failure.
+>   */
+>  static int drm_vblank_enable(struct drm_device *dev, unsigned int pipe)
+>  {
+> @@ -1035,7 +1038,7 @@ static int drm_vblank_enable(struct drm_device *dev, unsigned int pipe)
+>   * This is the legacy version of drm_crtc_vblank_get().
+>   *
+>   * Returns:
+> - * Zero on success, nonzero on failure.
+> + * Zero on success or a negative error code on failure.
+>   */
+>  int drm_vblank_get(struct drm_device *dev, unsigned int pipe)
+>  {
+> @@ -1072,7 +1075,7 @@ EXPORT_SYMBOL(drm_vblank_get);
+>   * This is the native kms version of drm_vblank_off().
+>   *
+>   * Returns:
+> - * Zero on success, nonzero on failure.
+> + * Zero on success or a negative error code on failure.
+>   */
+>  int drm_crtc_vblank_get(struct drm_crtc *crtc)
+>  {
+> -- 
+> 2.1.3
+> 
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
