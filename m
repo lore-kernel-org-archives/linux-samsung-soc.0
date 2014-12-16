@@ -1,15 +1,17 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 01/13] drm/irq: Remove negative CRTC index special-case
-Date: Tue, 16 Dec 2014 17:53:23 +0100
-Message-ID: <1418748815-15434-1-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH 02/13] drm/bochs: Store correct CRTC index in events
+Date: Tue, 16 Dec 2014 17:53:24 +0100
+Message-ID: <1418748815-15434-2-git-send-email-thierry.reding@gmail.com>
+References: <1418748815-15434-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f175.google.com ([209.85.192.175]:42341 "EHLO
-	mail-pd0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750950AbaLPQxk (ORCPT
+Received: from mail-pa0-f54.google.com ([209.85.220.54]:56740 "EHLO
+	mail-pa0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750981AbaLPQxo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Dec 2014 11:53:40 -0500
-Received: by mail-pd0-f175.google.com with SMTP id g10so12279170pdj.34
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Dec 2014 08:53:40 -0800 (PST)
+	Tue, 16 Dec 2014 11:53:44 -0500
+Received: by mail-pa0-f54.google.com with SMTP id fb1so14506677pad.27
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Dec 2014 08:53:44 -0800 (PST)
+In-Reply-To: <1418748815-15434-1-git-send-email-thierry.reding@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: dri-devel@lists.freedesktop.org
@@ -17,29 +19,36 @@ Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, Inki Dae <inki.dae@samsung.com>, Phi
 
 From: Thierry Reding <treding@nvidia.com>
 
-The drm_send_vblank_event() function treats negative CRTC indices as
-meaning that a driver doesn't have proper VBLANK handling. This is the
-only place where DRM needs negative CRTC indices, so in order to enable
-subsequent cleanup, remove this special case and replace it by the more
-obvious check for whether or not VBLANK support was initialized.
+Previously a negative pipe caused a special case to be triggered for
+drivers that didn't have proper VBLANK support. The trigger for this
+special case is now independent of the pipe, so the correct CRTC index
+can now be stored in events.
 
+Cc: Gerd Hoffmann <kraxel@redhat.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/gpu/drm/drm_irq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/bochs/bochs_kms.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_irq.c b/drivers/gpu/drm/drm_irq.c
-index 75647e7f012b..a24658162284 100644
---- a/drivers/gpu/drm/drm_irq.c
-+++ b/drivers/gpu/drm/drm_irq.c
-@@ -934,7 +934,7 @@ void drm_send_vblank_event(struct drm_device *dev, int crtc,
- 	struct timeval now;
- 	unsigned int seq;
+diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
+index 26bcd03a8cb6..c219c1de3722 100644
+--- a/drivers/gpu/drm/bochs/bochs_kms.c
++++ b/drivers/gpu/drm/bochs/bochs_kms.c
+@@ -113,13 +113,14 @@ static int bochs_crtc_page_flip(struct drm_crtc *crtc,
+ 	struct bochs_device *bochs =
+ 		container_of(crtc, struct bochs_device, crtc);
+ 	struct drm_framebuffer *old_fb = crtc->primary->fb;
++	unsigned int pipe = drm_crtc_index(crtc);
+ 	unsigned long irqflags;
  
--	if (crtc >= 0) {
-+	if (dev->num_crtcs > 0) {
- 		seq = drm_vblank_count_and_time(dev, crtc, &now);
- 	} else {
- 		seq = 0;
+ 	crtc->primary->fb = fb;
+ 	bochs_crtc_mode_set_base(crtc, 0, 0, old_fb);
+ 	if (event) {
+ 		spin_lock_irqsave(&bochs->dev->event_lock, irqflags);
+-		drm_send_vblank_event(bochs->dev, -1, event);
++		drm_send_vblank_event(bochs->dev, pipe, event);
+ 		spin_unlock_irqrestore(&bochs->dev->event_lock, irqflags);
+ 	}
+ 	return 0;
 -- 
 2.1.3
