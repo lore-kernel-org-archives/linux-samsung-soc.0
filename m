@@ -1,67 +1,27 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [Linaro-mm-sig] [PATCH v3 18/19] iommu: exynos: init from dt-specific callback instead of initcall
-Date: Thu, 18 Dec 2014 00:38:48 +0200
-Message-ID: <8659758.tlvrKN7xmj@avalon>
-References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com> <3147207.bM49L5sBIQ@avalon> <2127001.foickmBNkZ@wuerfel>
+From: nick <xerofoify@gmail.com>
+Subject: Weird/Unneeded call to msleep in exynos_mipi_dsi_wr_data in
+ exynos_mipi_dsi_common.c
+Date: Wed, 17 Dec 2014 17:57:24 -0500
+Message-ID: <54920A54.2060608@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from galahad.ideasonboard.com ([185.26.127.97]:50221 "EHLO
-	galahad.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750949AbaLQWio (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Dec 2014 17:38:44 -0500
-In-Reply-To: <2127001.foickmBNkZ@wuerfel>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: inki.dae@samsung.com
+Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dh09.lee@samsung.com, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, tomi.valkeinen@ti.com, kgene@kernel.org, plagnioj@jcrosoft.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linaro-mm-sig@lists.linaro.org, Rob Herring <robh@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, Tomasz Figa <tomasz.figa@gmail.com>, Inki Dae <inki.dae@samsung.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <treding@nvidia.com>, Cho KyongHo <pullip.cho@samsung.com>, David Wodhouse <dwmw2@infradead.org>, linux-arm-kernel@lists.infradead.org
 
-Hi Arnd,
-
-On Wednesday 17 December 2014 22:58:47 Arnd Bergmann wrote:
-> On Wednesday 17 December 2014 18:02:51 Laurent Pinchart wrote:
-> > On Wednesday 17 December 2014 16:41:33 Arnd Bergmann wrote:
-> >> On Wednesday 17 December 2014 16:39:02 Laurent Pinchart wrote:
-> >>> On Wednesday 17 December 2014 15:27:36 Arnd Bergmann wrote:
-> >>>> On Wednesday 17 December 2014 01:24:42 Laurent Pinchart wrote:
-> >>>>> If we forbid the IOMMU driver from being compiled as a module
-> >>>>> can't we just rely on deferred probing ? The bus master driver
-> >>>>> will just be reprobed after the IOMMU gets probed, like for other
-> >>>>> devices.
-> >>>>> 
-> >>>>> This could fail in case the IOMMU device permanently fails to
-> >>>>> probe. There would be something very wrong in the system in that
-> >>>>> case, Enabling the bus masters totally transparently without IOMMU
-> >>>>> support could not be such a good idea.
-> >>>> 
-> >>>> I believe in the majority of cases today, the IOMMU is entirely
-> >>>> optional. There are valid reasons for not including the IOMMU driver
-> >>>> in the kernel, e.g. when you know that all the machines with that
-> >>>> driver can DMA to all of their RAM and you want to avoid the
-> >>>> overhead of IOTLB misses.
-> >>> 
-> >>> Should that really be controlled by compiling the IOMMU driver out,
-> >>> wouldn't it be better to disable the IOMMU devices in DT in that case
-> >>> ?
-> >> 
-> >> It's a policy decision that should only depend on the user. Modifying
-> >> the DT is wrong here IMHO because the device is still connected to the
-> >> IOMMU in hardware and we should correctly represent that.
-> > 
-> > I was thinking about setting status = "disabled" on the IOMMU nodes, not
-> > removing the IOMMU references in the bus master nodes.
-> 
-> But that still requires a modification of the DT. The hardware is the
-> same, so I don't see why we should update the dtb based on kernel
-> configuration.
-
-It wouldn't be the first time we encode configuration information in DT, but I 
-agree it's not an optimal solution. Setting iommu=off on the kernel command 
-line is better, and should be easy to implement.
-
--- 
-Regards,
-
-Laurent Pinchart
+Greetings Fellow Maintainers,
+Sorry if I wasting your time but it seems there is a unneeded call to msleep and rather trivial fix me to fix in the file,exynos_mipi_dsi_common.c for the function,exynos_mipi_dsi_wr_data . If there is a valid reason for this call please let me known when any of you  have some free time. Otherwise I will send in a patch to remove this unneeded
+call to msleep.
+Thanks,
+Nick  
