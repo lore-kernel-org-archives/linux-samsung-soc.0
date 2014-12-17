@@ -1,54 +1,25 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH V8 00/14] drm/exynos: few patches to enhance bridge chip
- support
-Date: Wed, 17 Dec 2014 10:31:41 +0100
-Message-ID: <54914D7D.9060108@collabora.co.uk>
-References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com>
- <CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com>
- <548ABAB6.6010200@collabora.co.uk> <3197445.qizQc0zeRb@avalon>
+From: Nick Dyer <nick.dyer@itdev.co.uk>
+Subject: Re: [PATCH 0/2] Input: atmel_mxt_ts - Add support for T100 multi-touch
+Date: Wed, 17 Dec 2014 10:06:52 +0000
+Message-ID: <549155BC.4080803@itdev.co.uk>
+References: <1418639947-28765-1-git-send-email-javier.martinez@collabora.co.uk> <54905AD7.4070205@itdev.co.uk> <54905F00.4020107@collabora.co.uk> <54906031.8020309@itdev.co.uk> <54906285.3060907@collabora.co.uk> <549066D4.7000302@itdev.co.uk> <54906FEB.7060702@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <3197445.qizQc0zeRb@avalon>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, dri-devel@lists.freedesktop.org
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Ajay kumar <ajaynumb@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <54906FEB.7060702@collabora.co.uk>
+Sender: linux-input-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Henrik Rydberg <rydberg@euromail.se>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Olof Johansson <olof@lixom.net>, Yufeng Shen <miletus@chromium.org>, Benson Leung <bleung@chromium.org>, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello Laurent and Tomi,
-
-On 12/16/2014 12:37 AM, Laurent Pinchart wrote:
-> Hi Javier,
->> Tomi and Laurent,
->> 
->> You asked Ajay to change his series to use the video port and enpoints DT
->> bindings instead of phandles, could you please review his latest version?
->> 
->> I guess is now too late for 3.19 since we are in the middle of the merge
->> window but it would be great if this series can at least made it to 3.20.
+On 16/12/14 17:46, Javier Martinez Canillas wrote:
+> On 12/16/2014 06:07 PM, Nick Dyer wrote:
+>> I had been keeping them separate on the basis that we don't want changes to
+>> support new T100 features to cause regressions in the old T9 handling. But
+>> there is a fair amount of duplication as you say, probably worth addressing.
 > 
-> I don't have time to review the series in details right now, but I'm happy 
-> with the DT bindings, and have no big issue with the rest of the patches. I 
-> don't really like the of_drm_find_bridge() concept introduced in 03/14 but I 
-> won't nack it given lack of time to implement an alternative proposal. It's an 
-> internal API, it can always be reworked later anyway.
-> 
+> Yeah but if there are regressions I think we should address those instead of
+> duplicating code, to make the driver more maintainable in the long term.
 
-Thanks a lot for taking the time to look at the DT bindings, then I guess
-that the series are finally ready to be merged?
-
-Ajay's series don't apply cleanly anymore because it has been a while since
-he posted it but he can rebase on top of 3.19-rc1 once it is released and
-re-resend.
-
-Best regards,
-Javier
+True enough. We will have to be careful to test on both types of device.
