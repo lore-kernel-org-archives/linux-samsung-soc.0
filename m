@@ -1,100 +1,96 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH] ARM: SAMSUNG: remove dead #elif CONFIG_S3C24XX_DMAC
-Date: Wed, 17 Dec 2014 17:16:43 +0100
-Message-ID: <2864831.LEPnyFh3Il@phil>
-References: <1418830837-7422-1-git-send-email-stefan.hengelein@fau.de> <1921250.jGHJ6gZqGf@wuerfel>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [alsa-devel] [PATCH/RFC 12/14] ASoC: samsung: i2s: Add clock
+ provider for the I2S internal clocks
+Date: Wed, 17 Dec 2014 18:00:10 +0100
+Message-ID: <5491B69A.6080901@samsung.com>
+References: <1418319952-10163-1-git-send-email-s.nawrocki@samsung.com>
+ <1418319952-10163-13-git-send-email-s.nawrocki@samsung.com>
+ <20141212200342.GV11764@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:45112 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750885AbaLQQRk (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:59921 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750953AbaLQRAQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Dec 2014 11:17:40 -0500
-In-Reply-To: <1921250.jGHJ6gZqGf@wuerfel>
+	Wed, 17 Dec 2014 12:00:16 -0500
+In-reply-to: <20141212200342.GV11764@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Stefan Hengelein <stefan.hengelein@fau.de>, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, m.szyprowski@samsung.com, Linus Walleij <linus.walleij@linaro.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, padma.v@samsung.com, sbkim73@samsung.com, drake@endlessm.com
 
-Am Mittwoch, 17. Dezember 2014, 16:52:40 schrieb Arnd Bergmann:
-> On Wednesday 17 December 2014 16:40:37 Stefan Hengelein wrote:
-> > The corresponding CPP-block can never be selected since there are
-> > conflicting Kconfig constraints:
-> > - CONFIG_S3C24XX_DMAC has a dependency on ARCH_S3C24XX
-> > - The surrounding CPP-block needs CONFIG_S3C64XX_DEV_SPI0 to be defined.
-> > 
-> >   - CONFIG_S3C64XX_DEV_SPI0 is only selected by MACH_WLF_CRAGG_6410
-> >   - MACH_WLF_CRAGG_6410 however has a dependency on ARCH_S3C64XX
-> >   
-> >     (through a surrounding if-statement in Kconfig)
-> > 
-> > - ARCH_S3C64XX and ARCH_S3C24XX are mutually exclusive since they are
-> > 
-> >   declared in the same choice and cannot be enabled at the same time.
-> > 
-> > Hence, the innner block
-> > 
-> >     "#elif defined(CONFIG_S3C24XX_DMAC)"
-> > 
-> > cannot be enabled at the same time with the surrounding block
-> > 
-> >     "#ifdef CONFIG_S3C64XX_DEV_SPI0"
-> > 
-> > and therefore is dead.
-> > 
-> > This (logical) defect has been found with the undertaker tool
-> > (https://undertaker.cs.fau.de)
+On 12/12/14 21:03, Mark Brown wrote:
+> On Thu, Dec 11, 2014 at 06:45:50PM +0100, Sylwester Nawrocki wrote:
 > 
-> Nice catch!
+>> +Optional Properties:
+>>
+>>  - samsung,idma-addr: Internal DMA register base address of the audio
+>>    sub system(used in secondary sound source).
+>>  - pinctrl-0: Should specify pin control groups used for this controller.
+>>  - pinctrl-names: Should contain only one value - "default".
+>> +- #clock-cells: should be 1, this property must be present if the I2S device
+>> +  is a clock provider in terms of the common clock bindings, described in
+>> +  ../clock/clock-bindings.txt.
+>> +- clock-output-names: from the common clock bindings, names of the CDCLK
+>> +  I2S output clocks, suggested values are "i2s_cdclk0", "i2s_cdclk1",
+>> +  "i2s_cdclk3" for the I2S0, I2S1, I2S2 devices recpectively.
+>> +
 > 
-> > Signed-off-by: Stefan Hengelein <stefan.hengelein@fau.de>
-> > ---
-> > 
-> >  arch/arm/plat-samsung/devs.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> > 
-> > diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-> > index 83c7d15..b38b601 100644
-> > --- a/arch/arm/plat-samsung/devs.c
-> > +++ b/arch/arm/plat-samsung/devs.c
-> > @@ -1134,8 +1134,6 @@ void __init s3c64xx_spi0_set_platdata(int
-> > (*cfg_gpio)(void), int src_clk_nr,> 
-> >  	pd.filter = pl330_filter;
-> >  
-> >  #elif defined(CONFIG_S3C64XX_PL080)
-> >  
-> >  	pd.filter = pl08x_filter_id;
-> > 
-> > -#elif defined(CONFIG_S3C24XX_DMAC)
-> > -	pd.filter = s3c24xx_dma_filter;
-> > 
-> >  #endif
-> >  
-> >  	s3c_set_platdata(&pd, sizeof(pd), &s3c64xx_device_spi0);
+> Why not make this mandatory going forwards?  You can add a note saying
+> that older DTs may not have it.
+
+I guess that makes more sense, I'll move it to the mandatory properties
+section.
+
+>> +The assignment of indices for the I2Sx clock provider is as follows:
+>> + 0 - the CDCLK (CODECLKO) gate clock,
+>> + 1 - the RCLK prescaler divider clock (corresponding to the IISPSR register),
+>> + 2 - the RCLKSRC mux clock (corresponding to RCLKSRC bit in register IISMOD).
 > 
-> This was introduced in 7f99ef2284b46f ("ARM: SAMSUNG: set
-> s3c24xx_dma_filter for s3c64xx-spi0 device"), but never used on s3c24xx as
-> far as I can tell. Heiko, can you comment on the patch? Did this
-> simply get obsoleted by the DT conversion of s3c2416 and s3c2443?
+> Why use the indicies here, they only seem to add obscurity?
 
-We just have no in-tree users currently.
+I didn't want to create a separate header file, with all the GPL copyright
+notice header etc, for just this enumeration.
+Anyway I'll put these as macro definitions into include/dt-bindings/sound
+/samsung-i2s.h.
 
-The S3C2416 and S3C2450 use the same type of spi controllers as the s3c64xx. 
-When writing the s3c24xx dma driver I also used this to test the driver. The 
-change was necessary to make the driver talk to my s3c2416 device, so it made 
-sense at the time.
+>> +		clk_put(rclksrc);
+>> +	}
+>> +	/*
+> 
+> Missing blank line.
+> 
+>> +	 * Register the mux and div clocks only if both source clocks
+>> +	 * are available, i.e. for the I2S0 instance and versions with
+>> +	 * QUIRK_NO_MUXPSR quirk not set.
+>> +	 */
+> 
+> Why not proceed even if one is missing?  This repeats in words the if
+> statement but doesn't explain why we're doing this.
 
-As the s3c24xx-dma driver currently is still lacking dt support [burried 
-somewhere on my todo list], board files are also currently the only way to do 
-fast spi on those at all.
+Right, I should have said here that this is really to distinguish between
+I2S0 and I2S1, I2S2. So we register the mux and div clocks only for
+the IIS Multi Audio Interface (I2S0) and not for the IIS Bus Interface
+(I2S1, I2S2) instances.
+However, it seems I got confused by same compatible string set for
+I2S0..I2S2 in arch/arm/boot/dts/exynos4.dtsi - "samsung,s5pv210-i2s",
+where for I2S1, I2S2 it should be "samsung,s3c6410-i2s". So we have,
+for example, QUIRK_NO_MUXPSR set for them. There seems to be no similar
+bug in arch/arm/boot/dts/exynos5250.dtsi.
+I'll drop that mux input clock test the and fix the compatible strings
+for exynos4 in dts.
 
-So removing this is dependent on how hard we want to make it for downstream 
-users [there seem to be a small number of those]. If this were part of 
-removing all non-dt cruft from the driver after s3c64xx migrated to be dt-only 
-I wouldn't object, but as it only affects the 2 lines of s3c24xx support, 
-personally I'd like to keep it around :-) .
+>> +	ret = of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
+>> +				  &i2s->clk_data);
+>> +	if (ret < 0) {
+>> +		dev_err(dev, "failed to add clock provider\n");
+> 
+> Best practice is to print the error code.
 
+Yeah, I'll add it.
 
-Heiko
+--
+Regards,
+Sylwester
