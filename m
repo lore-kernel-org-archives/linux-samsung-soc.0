@@ -1,96 +1,121 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [alsa-devel] [PATCH/RFC 12/14] ASoC: samsung: i2s: Add clock
- provider for the I2S internal clocks
-Date: Wed, 17 Dec 2014 18:00:10 +0100
-Message-ID: <5491B69A.6080901@samsung.com>
-References: <1418319952-10163-1-git-send-email-s.nawrocki@samsung.com>
- <1418319952-10163-13-git-send-email-s.nawrocki@samsung.com>
- <20141212200342.GV11764@sirena.org.uk>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH RFC v3 1/2] PM / Domains: Extend API pm_genpd_dev_need_restore to use restore types
+Date: Wed, 17 Dec 2014 10:25:09 -0800
+Message-ID: <7h4msub0ca.fsf@deeprootsystems.com>
+References: <1418489518-7252-1-git-send-email-amit.daniel@samsung.com>
+	<54901341.20106@samsung.com> <7h61dbdz5a.fsf@deeprootsystems.com>
+	<CADGdYn4WQ6i29ecTthu7eNUfSSQ--YESGyHcA1_9CdK-h53hxA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:59921 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750953AbaLQRAQ (ORCPT
+Received: from mail-pd0-f170.google.com ([209.85.192.170]:45534 "EHLO
+	mail-pd0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751214AbaLQSZM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Dec 2014 12:00:16 -0500
-In-reply-to: <20141212200342.GV11764@sirena.org.uk>
+	Wed, 17 Dec 2014 13:25:12 -0500
+Received: by mail-pd0-f170.google.com with SMTP id v10so16722486pde.29
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2014 10:25:12 -0800 (PST)
+In-Reply-To: <CADGdYn4WQ6i29ecTthu7eNUfSSQ--YESGyHcA1_9CdK-h53hxA@mail.gmail.com>
+	(amit daniel kachhap's message of "Wed, 17 Dec 2014 20:06:48 +0530")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, padma.v@samsung.com, sbkim73@samsung.com, drake@endlessm.com
+To: amit daniel kachhap <amit.daniel@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 12/12/14 21:03, Mark Brown wrote:
-> On Thu, Dec 11, 2014 at 06:45:50PM +0100, Sylwester Nawrocki wrote:
-> 
->> +Optional Properties:
+amit daniel kachhap <amit.daniel@samsung.com> writes:
+
+> On Wed, Dec 17, 2014 at 3:40 AM, Kevin Hilman <khilman@kernel.org> wrote:
+>> Marek Szyprowski <m.szyprowski@samsung.com> writes:
 >>
->>  - samsung,idma-addr: Internal DMA register base address of the audio
->>    sub system(used in secondary sound source).
->>  - pinctrl-0: Should specify pin control groups used for this controller.
->>  - pinctrl-names: Should contain only one value - "default".
->> +- #clock-cells: should be 1, this property must be present if the I2S device
->> +  is a clock provider in terms of the common clock bindings, described in
->> +  ../clock/clock-bindings.txt.
->> +- clock-output-names: from the common clock bindings, names of the CDCLK
->> +  I2S output clocks, suggested values are "i2s_cdclk0", "i2s_cdclk1",
->> +  "i2s_cdclk3" for the I2S0, I2S1, I2S2 devices recpectively.
->> +
-> 
-> Why not make this mandatory going forwards?  You can add a note saying
-> that older DTs may not have it.
+>>> Hello,
+>>>
+>>> On 2014-12-13 17:51, Amit Daniel Kachhap wrote:
+>>>> Instead of using bool to restore suspended devices initially, use flags
+>>>> like GPD_DEV_SUSPEND_INIT, GPD_DEV_RESTORE_INIT and GPD_DEV_RESTORE_FORCE.
+>>>> The first two flags will be similar to the existing true/false functionality.
+>>>> The third flag may be used to force restore of suspended devices
+>>>> whenever their associated power domain is turned on.
+>>>>
+>>>> Currently, PD power off function powers off all the associated unused
+>>>> devices. The functionality added in this patch is similar to it.
+>>>>
+>>>> This feature may be used for those devices which are always in ON state
+>>>> if the PD associated with them is ON but may need local runtime resume
+>>>> and suspend during PD On/Off. These devices (like clock) may not implement
+>>>> complete pm_runtime calls such as pm_runtime_get/pm_runtime_put due to
+>>>> subsystems interaction behaviour or any other reason.
+>>>>
+>>>> The model works like,
+>>>>      DEV1 (Attaches itself with PD but no calls to pm_runtime_get and
+>>>>      /       pm_runtime_put. Its local runtime_suspend/resume is invoked via
+>>>>     /        GPD_DEV_RESTORE_FORCE option)
+>>>>    /
+>>>> PD -- DEV2 (Implements complete PM runtime and calls pm_runtime_get and
+>>>>    \ pm_runtime_put. This in turn invokes PD On/Off)
+>>>>     \
+>>>>      DEV3 (Similar to DEV1)
+>>>>
+>>>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+>>>
+>>> The idea of adding new gen_pd flag and reusing runtime pm calls intead
+>>> of additional notifiers looks promising, but I have some doubts.
+>>
+>> I agree, this is better than notifiers, but I have some doubts too.
+>
+> Thanks,
+>
+>>
+>>> don't see any guarantee that devices with GPD_DEV_RESTORE_FORCE flag
+>>> will be suspended after all "normal" devices and restored before
+>>> them. Without such assumption it will be hard to use this approach for
+>>> iommu related activities, because device might need to use (in its
+>>> suspend/resume callbacks) the functionality provided by the other
+>>> device with GPD_DEV_RESTORE_FORCE flag. Maybe some additional flags
+>>> like suspend/resume priority (or more flags) will solve somehow this
+>>> dependency.
+>>
+>> At a deeper level, the problem with this approach is that this is more
+>> generically a runtime PM dependency problem, not a genpd problem.  For
+>> example, what happens when the same kind of dependency exists on a
+>> platform using a custom PM domain instead of genpd (like ACPI.) ?
+>
+> This patch does not try to solve runtime PM dependencies between
+> devices. As an example, if there are three devices D1, D2, D3 in a
+> power domain. Device D3 would update the power domain state
+> requirement using runtime PM API but devices D1 and D2 do not want to
+> control the domain but just want to be notified when the power domain
+> state changes.
 
-I guess that makes more sense, I'll move it to the mandatory properties
-section.
+Yes, I understand that.  
 
->> +The assignment of indices for the I2Sx clock provider is as follows:
->> + 0 - the CDCLK (CODECLKO) gate clock,
->> + 1 - the RCLK prescaler divider clock (corresponding to the IISPSR register),
->> + 2 - the RCLKSRC mux clock (corresponding to RCLKSRC bit in register IISMOD).
-> 
-> Why use the indicies here, they only seem to add obscurity?
+The question is: what do you do when you have the same dependency
+problem and you're not using genpd (for example, some SoCs have
+implmeented their own PM domains, and ACPI devices are managed by their
+own PM domain, not genpd.)
 
-I didn't want to create a separate header file, with all the GPL copyright
-notice header etc, for just this enumeration.
-Anyway I'll put these as macro definitions into include/dt-bindings/sound
-/samsung-i2s.h.
+>> What's needed to solve this problem is a generalized way to have runtime
+>> PM dependencies between devices.  Runtime PM already automatically
+>> handles parent devices as one type of dependent device (e.g. a parent
+>> device needs to be runtime PM resumed before its child.)  So what's
+>> needed is a generic way to other PM dependencies with the runtime PM
+>> core (not the genpd core.)
+>
+> Considering the example above with three devices, device D1 and D2 are
+> passive components in this power domain. These devices only need to
+> know the state changes of the power domains but would not control the
+> power domain themselves nor put forth constraints in the power domain
+> state changes. So I did not clearly understand as to how this example
+> could be solved by introducing changes in runtime PM core.
 
->> +		clk_put(rclksrc);
->> +	}
->> +	/*
-> 
-> Missing blank line.
-> 
->> +	 * Register the mux and div clocks only if both source clocks
->> +	 * are available, i.e. for the I2S0 instance and versions with
->> +	 * QUIRK_NO_MUXPSR quirk not set.
->> +	 */
-> 
-> Why not proceed even if one is missing?  This repeats in words the if
-> statement but doesn't explain why we're doing this.
+Your solution only solves the problems for devices managed by genpd.
 
-Right, I should have said here that this is really to distinguish between
-I2S0 and I2S1, I2S2. So we register the mux and div clocks only for
-the IIS Multi Audio Interface (I2S0) and not for the IIS Bus Interface
-(I2S1, I2S2) instances.
-However, it seems I got confused by same compatible string set for
-I2S0..I2S2 in arch/arm/boot/dts/exynos4.dtsi - "samsung,s5pv210-i2s",
-where for I2S1, I2S2 it should be "samsung,s3c6410-i2s". So we have,
-for example, QUIRK_NO_MUXPSR set for them. There seems to be no similar
-bug in arch/arm/boot/dts/exynos5250.dtsi.
-I'll drop that mux input clock test the and fix the compatible strings
-for exynos4 in dts.
+If I understood your example correctly, what you really want to solve
+this problem more generically is to be able to tell the runtime PM core
+that D3 has a dependency on D1 and D2.  Then, whenver the runtime PM
+core is doing get/put operations for D3, it needs to also do them for D1
+and D2.
 
->> +	ret = of_clk_add_provider(dev->of_node, of_clk_src_onecell_get,
->> +				  &i2s->clk_data);
->> +	if (ret < 0) {
->> +		dev_err(dev, "failed to add clock provider\n");
-> 
-> Best practice is to print the error code.
+This will accomplish the same as your proposed approach, but work for
+any devices in any PM domains.
 
-Yeah, I'll add it.
-
---
-Regards,
-Sylwester
+Kevin
