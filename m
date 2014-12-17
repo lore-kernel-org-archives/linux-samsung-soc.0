@@ -1,154 +1,394 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] usb: dwc2: add support for initial state for dual-role mode
-Date: Wed, 17 Dec 2014 14:49:53 +0100
-Message-ID: <1418824193-19182-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:49975 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750946AbaLQNuL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Dec 2014 08:50:11 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH] [media] s5p-jpeg: Adding Exynos7 Jpeg variant support
+Date: Wed, 17 Dec 2014 15:15:44 +0100
+Message-ID: <54919010.8020507@samsung.com>
+References: <1418801229-7532-1-git-send-email-tony.kn@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1418801229-7532-1-git-send-email-tony.kn@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: Tony K Nadackal <tony.kn@samsung.com>
+Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, mchehab@osg.samsung.com, kgene@kernel.org, k.debski@samsung.com, s.nawrocki@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com, bhushan.r@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Paul Zimmerman <paulz@synopsys.com>, Felipe Balbi <balbi@ti.com>
 
-DWC2 module on Exynos SoCs is used only as peripheral controller (UDC),
-so add support for selecting default initial state for dual-role mode. The
-default init mode can be overridden by device tree 'dr_mode' property.
-This patch enables to use usb gadget on Exynos SoCs, when DWC2 driver has
-been compiled as 'dual-role driver'.
+Hi Tony,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/usb/dwc2/core.h     |  3 +++
- drivers/usb/dwc2/platform.c | 62 ++++++++++++++++++++++++++++++++++++++-------
- 2 files changed, 56 insertions(+), 9 deletions(-)
+Thanks for the patches.
 
-diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
-index 7a70a13..b0fed4e 100644
---- a/drivers/usb/dwc2/core.h
-+++ b/drivers/usb/dwc2/core.h
-@@ -354,6 +354,7 @@ struct dwc2_core_params {
- 	int reload_ctl;
- 	int ahbcfg;
- 	int uframe_sched;
-+	int default_dr_mode;
- };
- 
- /**
-@@ -570,6 +571,8 @@ struct dwc2_hsotg {
- 	struct dwc2_core_params *core_params;
- 	enum usb_otg_state op_state;
- 	enum usb_dr_mode dr_mode;
-+	unsigned int hcd_enabled:1;
-+	unsigned int gadget_enabled:1;
- 
- 	struct phy *phy;
- 	struct usb_phy *uphy;
-diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c
-index 6a795aa..8abf437 100644
---- a/drivers/usb/dwc2/platform.c
-+++ b/drivers/usb/dwc2/platform.c
-@@ -76,6 +76,7 @@ static const struct dwc2_core_params params_bcm2835 = {
- 	.reload_ctl			= 0,
- 	.ahbcfg				= 0x10,
- 	.uframe_sched			= 0,
-+	.default_dr_mode		= USB_DR_MODE_OTG,
- };
- 
- static const struct dwc2_core_params params_rk3066 = {
-@@ -104,6 +105,36 @@ static const struct dwc2_core_params params_rk3066 = {
- 	.reload_ctl			= -1,
- 	.ahbcfg				= 0x7, /* INCR16 */
- 	.uframe_sched			= -1,
-+	.default_dr_mode		= USB_DR_MODE_OTG,
-+};
-+
-+static const struct dwc2_core_params params_s3c_hsotg = {
-+	.otg_cap			= -1,
-+	.otg_ver			= -1,
-+	.dma_enable			= 0,
-+	.dma_desc_enable		= 0,
-+	.speed				= -1,
-+	.enable_dynamic_fifo		= -1,
-+	.en_multiple_tx_fifo		= -1,
-+	.host_rx_fifo_size		= -1,
-+	.host_nperio_tx_fifo_size	= -1,
-+	.host_perio_tx_fifo_size	= -1,
-+	.max_transfer_size		= -1,
-+	.max_packet_count		= -1,
-+	.host_channels			= -1,
-+	.phy_type			= -1,
-+	.phy_utmi_width			= -1,
-+	.phy_ulpi_ddr			= -1,
-+	.phy_ulpi_ext_vbus		= -1,
-+	.i2c_enable			= -1,
-+	.ulpi_fs_ls			= -1,
-+	.host_support_fs_ls_low_power	= -1,
-+	.host_ls_low_power_phy_clk	= -1,
-+	.ts_dline			= -1,
-+	.reload_ctl			= -1,
-+	.ahbcfg				= -1,
-+	.uframe_sched			= -1,
-+	.default_dr_mode		= USB_DR_MODE_PERIPHERAL,
- };
- 
- /**
-@@ -121,8 +152,10 @@ static int dwc2_driver_remove(struct platform_device *dev)
- {
- 	struct dwc2_hsotg *hsotg = platform_get_drvdata(dev);
- 
--	dwc2_hcd_remove(hsotg);
--	s3c_hsotg_remove(hsotg);
-+	if (hsotg->hcd_enabled)
-+		dwc2_hcd_remove(hsotg);
-+	if (hsotg->gadget_enabled)
-+		s3c_hsotg_remove(hsotg);
- 
- 	return 0;
- }
-@@ -131,7 +164,7 @@ static const struct of_device_id dwc2_of_match_table[] = {
- 	{ .compatible = "brcm,bcm2835-usb", .data = &params_bcm2835 },
- 	{ .compatible = "rockchip,rk3066-usb", .data = &params_rk3066 },
- 	{ .compatible = "snps,dwc2", .data = NULL },
--	{ .compatible = "samsung,s3c6400-hsotg", .data = NULL},
-+	{ .compatible = "samsung,s3c6400-hsotg", .data = &params_s3c_hsotg },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, dwc2_of_match_table);
-@@ -211,15 +244,26 @@ static int dwc2_driver_probe(struct platform_device *dev)
- 		(unsigned long)res->start, hsotg->regs);
- 
- 	hsotg->dr_mode = of_usb_get_dr_mode(dev->dev.of_node);
-+	if (hsotg->dr_mode == USB_DR_MODE_UNKNOWN &&
-+	    params->default_dr_mode > USB_DR_MODE_UNKNOWN)
-+		hsotg->dr_mode = params->default_dr_mode;
- 
- 	spin_lock_init(&hsotg->lock);
- 	mutex_init(&hsotg->init_mutex);
--	retval = dwc2_gadget_init(hsotg, irq);
--	if (retval)
--		return retval;
--	retval = dwc2_hcd_init(hsotg, irq, params);
--	if (retval)
--		return retval;
-+
-+	if (hsotg->dr_mode != USB_DR_MODE_HOST) {
-+		retval = dwc2_gadget_init(hsotg, irq);
-+		if (retval)
-+			return retval;
-+		hsotg->gadget_enabled = 1;
-+	}
-+
-+	if (hsotg->dr_mode != USB_DR_MODE_PERIPHERAL) {
-+		retval = dwc2_hcd_init(hsotg, irq, params);
-+		if (retval)
-+			return retval;
-+		hsotg->hcd_enabled = 1;
-+	}
- 
- 	platform_set_drvdata(dev, hsotg);
- 
+Please process them with scripts/checkpatch.pl as you will be submitting
+the next version - they contain many coding style related issues.
+
+My remaining comments below.
+
+On 12/17/2014 08:27 AM, Tony K Nadackal wrote:
+> Fimp_jpeg used in Exynos7 is a revised version. Some register
+> configurations are slightly different from Jpeg in Exynos4.
+> Added one more variant SJPEG_EXYNOS7 to handle these differences.
+>
+> Signed-off-by: Tony K Nadackal <tony.kn@samsung.com>
+> ---
+> This patch is created and tested on top of linux-next-20141210.
+> It can be cleanly applied on media-next and kgene/for-next.
+>
+>   .../bindings/media/exynos-jpeg-codec.txt           |  2 +-
+>   drivers/media/platform/s5p-jpeg/jpeg-core.c        | 69 +++++++++++++++++++---
+>   drivers/media/platform/s5p-jpeg/jpeg-core.h        |  1 +
+>   drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c  | 33 ++++++-----
+>   drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.h  |  8 ++-
+>   drivers/media/platform/s5p-jpeg/jpeg-regs.h        | 17 ++++--
+>   6 files changed, 98 insertions(+), 32 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt b/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
+> index bf52ed4..cd19417 100644
+> --- a/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
+> +++ b/Documentation/devicetree/bindings/media/exynos-jpeg-codec.txt
+> @@ -4,7 +4,7 @@ Required properties:
+>
+>   - compatible	: should be one of:
+>   		  "samsung,s5pv210-jpeg", "samsung,exynos4210-jpeg",
+> -		  "samsung,exynos3250-jpeg";
+> +		  "samsung,exynos3250-jpeg", "samsung,exynos7-jpeg";
+>   - reg		: address and length of the JPEG codec IP register set;
+>   - interrupts	: specifies the JPEG codec IP interrupt;
+>   - clock-names   : should contain:
+> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+> index 54fa5d9..ad42a4e 100644
+> --- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
+> +++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
+> @@ -1225,8 +1225,9 @@ static int s5p_jpeg_try_fmt_vid_cap(struct file *file, void *priv,
+>   		return -EINVAL;
+>   	}
+>
+> -	if ((ctx->jpeg->variant->version != SJPEG_EXYNOS4) ||
+> -	    (ctx->mode != S5P_JPEG_DECODE))
+> +	if (((ctx->jpeg->variant->version != SJPEG_EXYNOS4) &&
+> +		(ctx->jpeg->variant->version != SJPEG_EXYNOS7)) ||
+> +		(ctx->mode != S5P_JPEG_DECODE))
+>   		goto exit;
+>
+>   	/*
+> @@ -1349,7 +1350,8 @@ static int s5p_jpeg_s_fmt(struct s5p_jpeg_ctx *ct, struct v4l2_format *f)
+>   		 * the JPEG_IMAGE_SIZE register. In order to avoid sysmmu
+>   		 * page fault calculate proper buffer size in such a case.
+>   		 */
+> -		if (ct->jpeg->variant->version == SJPEG_EXYNOS4 &&
+> +		if (((ct->jpeg->variant->version == SJPEG_EXYNOS4) ||
+> +			(ct->jpeg->variant->version == SJPEG_EXYNOS7)) &&
+>   		    f_type == FMT_TYPE_OUTPUT && ct->mode == S5P_JPEG_ENCODE)
+>   			q_data->size = exynos4_jpeg_get_output_buffer_size(ct,
+>   							f,
+> @@ -1901,7 +1903,6 @@ static void exynos4_jpeg_device_run(void *priv)
+>
+>   	if (ctx->mode == S5P_JPEG_ENCODE) {
+>   		exynos4_jpeg_sw_reset(jpeg->regs);
+> -		exynos4_jpeg_set_interrupt(jpeg->regs);
+>   		exynos4_jpeg_set_huf_table_enable(jpeg->regs, 1);
+>
+>   		exynos4_jpeg_set_huff_tbl(jpeg->regs);
+> @@ -1918,20 +1919,60 @@ static void exynos4_jpeg_device_run(void *priv)
+>   		exynos4_jpeg_set_stream_size(jpeg->regs, ctx->cap_q.w,
+>   							ctx->cap_q.h);
+>
+> -		exynos4_jpeg_set_enc_out_fmt(jpeg->regs, ctx->subsampling);
+> -		exynos4_jpeg_set_img_fmt(jpeg->regs, ctx->out_q.fmt->fourcc);
+> +		if (ctx->jpeg->variant->version == SJPEG_EXYNOS7) {
+> +			exynos4_jpeg_set_interrupt(jpeg->regs, SJPEG_EXYNOS7);
+> +			exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
+> +					ctx->subsampling, EXYNOS7_ENC_FMT_MASK);
+> +			exynos4_jpeg_set_img_fmt(jpeg->regs,
+> +					ctx->out_q.fmt->fourcc,
+> +					EXYNOS7_SWAP_CHROMA_SHIFT);
+> +		} else {
+> +			exynos4_jpeg_set_interrupt(jpeg->regs, SJPEG_EXYNOS4);
+> +			exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
+> +					ctx->subsampling, EXYNOS4_ENC_FMT_MASK);
+> +			exynos4_jpeg_set_img_fmt(jpeg->regs,
+> +					ctx->out_q.fmt->fourcc,
+> +					EXYNOS4_SWAP_CHROMA_SHIFT);
+> +		}
+> +
+
+I'd implement it this way:
+
+exynos4_jpeg_set_interrupt(jpeg->regs, ctx->jpeg->variant->version);
+exynos4_jpeg_set_enc_out_fmt(jpeg->regs, ctx->subsampling, 	
+			(ctx->jpeg->variant->version == SJPEG_EXYNOS4) ?
+				EXYNOS4_ENC_FMT_MASK :
+				EXYNOS7_ENC_FMT_MASK);
+exynos4_jpeg_set_img_fmt(jpeg->regs, ctx->out_q.fmt->fourcc,
+			(ctx->jpeg->variant->version == SJPEG_EXYNOS4) ?
+				EXYNOS4_SWAP_CHROMA_SHIFT :
+				EXYNOS7_SWAP_CHROMA_SHIFT);
+
+>   		exynos4_jpeg_set_img_addr(ctx);
+>   		exynos4_jpeg_set_jpeg_addr(ctx);
+>   		exynos4_jpeg_set_encode_hoff_cnt(jpeg->regs,
+>   							ctx->out_q.fmt->fourcc);
+>   	} else {
+>   		exynos4_jpeg_sw_reset(jpeg->regs);
+> -		exynos4_jpeg_set_interrupt(jpeg->regs);
+>   		exynos4_jpeg_set_img_addr(ctx);
+>   		exynos4_jpeg_set_jpeg_addr(ctx);
+> -		exynos4_jpeg_set_img_fmt(jpeg->regs, ctx->cap_q.fmt->fourcc);
+>
+> -		bitstream_size = DIV_ROUND_UP(ctx->out_q.size, 32);
+> +		if (ctx->jpeg->variant->version == SJPEG_EXYNOS7) {
+> +			exynos4_jpeg_set_interrupt(jpeg->regs, SJPEG_EXYNOS7);
+> +			exynos4_jpeg_set_huff_tbl(jpeg->regs);
+> +			exynos4_jpeg_set_huf_table_enable(jpeg->regs, 1);
+> +
+> +			/*
+> +			 * JPEG IP allows storing 4 quantization tables
+> +			 * We fill table 0 for luma and table 1 for chroma
+> +			 */
+> +			exynos4_jpeg_set_qtbl_lum(jpeg->regs,
+> +							ctx->compr_quality);
+> +			exynos4_jpeg_set_qtbl_chr(jpeg->regs,
+> +							ctx->compr_quality);
+
+Is it really required to setup quantization tables for encoding?
+
+> +			exynos4_jpeg_set_stream_size(jpeg->regs, ctx->cap_q.w,
+> +					ctx->cap_q.h);
+
+For exynos4 this function writes the number of samples per line and
+number lines of the resulting JPEG image and is used only during
+encoding. Is the semantics of the related register different in case of
+Exynos7?
+
+> +			exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
+> +					ctx->subsampling, EXYNOS7_ENC_FMT_MASK);
+> +			exynos4_jpeg_set_img_fmt(jpeg->regs,
+> +					ctx->cap_q.fmt->fourcc,
+> +					EXYNOS7_SWAP_CHROMA_SHIFT);
+> +			bitstream_size = DIV_ROUND_UP(ctx->out_q.size, 16);
+> +		} else {
+> +			exynos4_jpeg_set_interrupt(jpeg->regs, SJPEG_EXYNOS4);
+> +			exynos4_jpeg_set_img_fmt(jpeg->regs,
+> +					ctx->cap_q.fmt->fourcc,
+> +					EXYNOS4_SWAP_CHROMA_SHIFT);
+> +			bitstream_size = DIV_ROUND_UP(ctx->out_q.size, 32);
+> +		}
+>
+>   		exynos4_jpeg_set_dec_bitstream_size(jpeg->regs, bitstream_size);
+>   	}
+> @@ -2729,6 +2770,13 @@ static struct s5p_jpeg_variant exynos4_jpeg_drvdata = {
+>   	.fmt_ver_flag	= SJPEG_FMT_FLAG_EXYNOS4,
+>   };
+>
+> +static struct s5p_jpeg_variant exynos7_jpeg_drvdata = {
+> +	.version	= SJPEG_EXYNOS7,
+> +	.jpeg_irq	= exynos4_jpeg_irq,
+> +	.m2m_ops	= &exynos4_jpeg_m2m_ops,
+> +	.fmt_ver_flag	= SJPEG_FMT_FLAG_EXYNOS4,
+> +};
+> +
+>   static const struct of_device_id samsung_jpeg_match[] = {
+>   	{
+>   		.compatible = "samsung,s5pv210-jpeg",
+> @@ -2742,6 +2790,9 @@ static const struct of_device_id samsung_jpeg_match[] = {
+>   	}, {
+>   		.compatible = "samsung,exynos4212-jpeg",
+>   		.data = &exynos4_jpeg_drvdata,
+> +	}, {
+> +		.compatible = "samsung,exynos7-jpeg",
+> +		.data = &exynos7_jpeg_drvdata,
+>   	},
+>   	{},
+>   };
+> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.h b/drivers/media/platform/s5p-jpeg/jpeg-core.h
+> index 764b32d..734710a 100644
+> --- a/drivers/media/platform/s5p-jpeg/jpeg-core.h
+> +++ b/drivers/media/platform/s5p-jpeg/jpeg-core.h
+> @@ -71,6 +71,7 @@
+>   #define SJPEG_S5P		1
+>   #define SJPEG_EXYNOS3250	2
+>   #define SJPEG_EXYNOS4		3
+> +#define SJPEG_EXYNOS7		4
+
+As you adding a new variant I propose to turn these macros into enum.
+
+>   enum exynos4_jpeg_result {
+>   	OK_ENC_OR_DEC,
+> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
+> index e53f13a..2611259 100644
+> --- a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
+> +++ b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.c
+> @@ -49,7 +49,8 @@ void exynos4_jpeg_set_enc_dec_mode(void __iomem *base, unsigned int mode)
+>   	}
+>   }
+>
+> -void exynos4_jpeg_set_img_fmt(void __iomem *base, unsigned int img_fmt)
+> +void exynos4_jpeg_set_img_fmt(void __iomem *base, unsigned int img_fmt,
+> +					unsigned int shift)
+>   {
+>   	unsigned int reg;
+>
+> @@ -71,48 +72,48 @@ void exynos4_jpeg_set_img_fmt(void __iomem *base, unsigned int img_fmt)
+>   	case V4L2_PIX_FMT_NV24:
+>   		reg = reg | EXYNOS4_ENC_YUV_444_IMG |
+>   				EXYNOS4_YUV_444_IP_YUV_444_2P_IMG |
+> -				EXYNOS4_SWAP_CHROMA_CBCR;
+> +				EXYNOS_SWAP_CHROMA_CBCR(shift);
+>   		break;
+>   	case V4L2_PIX_FMT_NV42:
+>   		reg = reg | EXYNOS4_ENC_YUV_444_IMG |
+>   				EXYNOS4_YUV_444_IP_YUV_444_2P_IMG |
+> -				EXYNOS4_SWAP_CHROMA_CRCB;
+> +				EXYNOS_SWAP_CHROMA_CRCB(shift);
+>   		break;
+>   	case V4L2_PIX_FMT_YUYV:
+>   		reg = reg | EXYNOS4_DEC_YUV_422_IMG |
+>   				EXYNOS4_YUV_422_IP_YUV_422_1P_IMG |
+> -				EXYNOS4_SWAP_CHROMA_CBCR;
+> +				EXYNOS_SWAP_CHROMA_CBCR(shift);
+>   		break;
+>
+>   	case V4L2_PIX_FMT_YVYU:
+>   		reg = reg | EXYNOS4_DEC_YUV_422_IMG |
+>   				EXYNOS4_YUV_422_IP_YUV_422_1P_IMG |
+> -				EXYNOS4_SWAP_CHROMA_CRCB;
+> +				EXYNOS_SWAP_CHROMA_CRCB(shift);
+>   		break;
+>   	case V4L2_PIX_FMT_NV16:
+>   		reg = reg | EXYNOS4_DEC_YUV_422_IMG |
+>   				EXYNOS4_YUV_422_IP_YUV_422_2P_IMG |
+> -				EXYNOS4_SWAP_CHROMA_CBCR;
+> +				EXYNOS_SWAP_CHROMA_CBCR(shift);
+>   		break;
+>   	case V4L2_PIX_FMT_NV61:
+>   		reg = reg | EXYNOS4_DEC_YUV_422_IMG |
+>   				EXYNOS4_YUV_422_IP_YUV_422_2P_IMG |
+> -				EXYNOS4_SWAP_CHROMA_CRCB;
+> +				EXYNOS_SWAP_CHROMA_CRCB(shift);
+>   		break;
+>   	case V4L2_PIX_FMT_NV12:
+>   		reg = reg | EXYNOS4_DEC_YUV_420_IMG |
+>   				EXYNOS4_YUV_420_IP_YUV_420_2P_IMG |
+> -				EXYNOS4_SWAP_CHROMA_CBCR;
+> +				EXYNOS_SWAP_CHROMA_CBCR(shift);
+>   		break;
+>   	case V4L2_PIX_FMT_NV21:
+>   		reg = reg | EXYNOS4_DEC_YUV_420_IMG |
+>   				EXYNOS4_YUV_420_IP_YUV_420_2P_IMG |
+> -				EXYNOS4_SWAP_CHROMA_CRCB;
+> +				EXYNOS_SWAP_CHROMA_CRCB(shift);
+>   		break;
+>   	case V4L2_PIX_FMT_YUV420:
+>   		reg = reg | EXYNOS4_DEC_YUV_420_IMG |
+>   				EXYNOS4_YUV_420_IP_YUV_420_3P_IMG |
+> -				EXYNOS4_SWAP_CHROMA_CBCR;
+> +				EXYNOS_SWAP_CHROMA_CBCR(shift);
+>   		break;
+>   	default:
+>   		break;
+> @@ -122,12 +123,13 @@ void exynos4_jpeg_set_img_fmt(void __iomem *base, unsigned int img_fmt)
+>   	writel(reg, base + EXYNOS4_IMG_FMT_REG);
+>   }
+>
+> -void exynos4_jpeg_set_enc_out_fmt(void __iomem *base, unsigned int out_fmt)
+> +void exynos4_jpeg_set_enc_out_fmt(void __iomem *base, unsigned int out_fmt,
+> +					unsigned int mask)
+>   {
+>   	unsigned int reg;
+>
+>   	reg = readl(base + EXYNOS4_IMG_FMT_REG) &
+> -			~EXYNOS4_ENC_FMT_MASK; /* clear enc format */
+> +			~EXYNOS_ENC_FMT_MASK(mask); /* clear enc format */
+>
+>   	switch (out_fmt) {
+>   	case V4L2_JPEG_CHROMA_SUBSAMPLING_GRAY:
+> @@ -153,9 +155,12 @@ void exynos4_jpeg_set_enc_out_fmt(void __iomem *base, unsigned int out_fmt)
+>   	writel(reg, base + EXYNOS4_IMG_FMT_REG);
+>   }
+>
+> -void exynos4_jpeg_set_interrupt(void __iomem *base)
+> +void exynos4_jpeg_set_interrupt(void __iomem *base, unsigned int version)
+>   {
+> -	writel(EXYNOS4_INT_EN_ALL, base + EXYNOS4_INT_EN_REG);
+> +	unsigned int reg;
+> +
+> +	reg = readl(base + EXYNOS4_INT_EN_REG) & ~EXYNOS4_INT_EN_MASK(version);
+> +	writel(EXYNOS4_INT_EN_ALL(version), base + EXYNOS4_INT_EN_REG);
+>   }
+
+I believe that adding readl is a fix. I'd enclose it into separate
+patch and explain its merit.
+
+>   unsigned int exynos4_jpeg_get_int_status(void __iomem *base)
+> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.h b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.h
+> index c228d28..b425199 100644
+> --- a/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.h
+> +++ b/drivers/media/platform/s5p-jpeg/jpeg-hw-exynos4.h
+> @@ -15,10 +15,12 @@
+>
+>   void exynos4_jpeg_sw_reset(void __iomem *base);
+>   void exynos4_jpeg_set_enc_dec_mode(void __iomem *base, unsigned int mode);
+> -void exynos4_jpeg_set_img_fmt(void __iomem *base, unsigned int img_fmt);
+> -void exynos4_jpeg_set_enc_out_fmt(void __iomem *base, unsigned int out_fmt);
+> +void exynos4_jpeg_set_img_fmt(void __iomem *base, unsigned int img_fmt,
+> +					unsigned int shift);
+> +void exynos4_jpeg_set_enc_out_fmt(void __iomem *base, unsigned int out_fmt,
+> +							unsigned int mask);
+>   void exynos4_jpeg_set_enc_tbl(void __iomem *base);
+> -void exynos4_jpeg_set_interrupt(void __iomem *base);
+> +void exynos4_jpeg_set_interrupt(void __iomem *base, unsigned int variant);
+>   unsigned int exynos4_jpeg_get_int_status(void __iomem *base);
+>   void exynos4_jpeg_set_huf_table_enable(void __iomem *base, int value);
+>   void exynos4_jpeg_set_sys_int_enable(void __iomem *base, int value);
+> diff --git a/drivers/media/platform/s5p-jpeg/jpeg-regs.h b/drivers/media/platform/s5p-jpeg/jpeg-regs.h
+> index 050fc44..08bef4e 100644
+> --- a/drivers/media/platform/s5p-jpeg/jpeg-regs.h
+> +++ b/drivers/media/platform/s5p-jpeg/jpeg-regs.h
+> @@ -230,13 +230,15 @@
+>   #define EXYNOS4_SOFT_RESET_HI		(1 << 29)
+>
+>   /* JPEG INT Register bit */
+> -#define EXYNOS4_INT_EN_MASK		(0x1f << 0)
+> +#define EXYNOS4_INT_EN_MASK(version)	(((version) == SJPEG_EXYNOS7) \
+> +						? (0x1ff << 0) : (0x1f << 0))
+>   #define EXYNOS4_PROT_ERR_INT_EN		(1 << 0)
+>   #define EXYNOS4_IMG_COMPLETION_INT_EN	(1 << 1)
+>   #define EXYNOS4_DEC_INVALID_FORMAT_EN	(1 << 2)
+>   #define EXYNOS4_MULTI_SCAN_ERROR_EN	(1 << 3)
+>   #define EXYNOS4_FRAME_ERR_EN		(1 << 4)
+> -#define EXYNOS4_INT_EN_ALL		(0x1f << 0)
+> +#define EXYNOS4_INT_EN_ALL(version)    (((version) == SJPEG_EXYNOS7) \
+> +						? (0x1b6 << 0) : (0x1f << 0))
+>
+>   #define EXYNOS4_MOD_REG_PROC_ENC	(0 << 3)
+>   #define EXYNOS4_MOD_REG_PROC_DEC	(1 << 3)
+> @@ -294,8 +296,11 @@
+>   #define EXYNOS4_YUV_420_IP_YUV_420_2P_IMG	(4 << EXYNOS4_YUV_420_IP_SHIFT)
+>   #define EXYNOS4_YUV_420_IP_YUV_420_3P_IMG	(5 << EXYNOS4_YUV_420_IP_SHIFT)
+>
+> +#define EXYNOS4_ENC_FMT_MASK			3
+> +#define EXYNOS7_ENC_FMT_MASK			7
+>   #define EXYNOS4_ENC_FMT_SHIFT			24
+> -#define EXYNOS4_ENC_FMT_MASK			(3 << EXYNOS4_ENC_FMT_SHIFT)
+> +#define EXYNOS_ENC_FMT_MASK(mask)		((mask) \
+> +						<< EXYNOS4_ENC_FMT_SHIFT)
+>   #define EXYNOS4_ENC_FMT_GRAY			(0 << EXYNOS4_ENC_FMT_SHIFT)
+>   #define EXYNOS4_ENC_FMT_YUV_444			(1 << EXYNOS4_ENC_FMT_SHIFT)
+>   #define EXYNOS4_ENC_FMT_YUV_422			(2 << EXYNOS4_ENC_FMT_SHIFT)
+> @@ -303,8 +308,10 @@
+>
+>   #define EXYNOS4_JPEG_DECODED_IMG_FMT_MASK	0x03
+>
+> -#define EXYNOS4_SWAP_CHROMA_CRCB		(1 << 26)
+> -#define EXYNOS4_SWAP_CHROMA_CBCR		(0 << 26)
+> +#define EXYNOS7_SWAP_CHROMA_SHIFT		27
+> +#define EXYNOS4_SWAP_CHROMA_SHIFT		26
+> +#define EXYNOS_SWAP_CHROMA_CRCB(shift)		(1 << (shift))
+> +#define EXYNOS_SWAP_CHROMA_CBCR(shift)		(0 << (shift))
+>
+>   /* JPEG HUFF count Register bit */
+>   #define EXYNOS4_HUFF_COUNT_MASK			0xffff
+>
+
+
 -- 
-1.9.2
+Best Regards,
+Jacek Anaszewski
