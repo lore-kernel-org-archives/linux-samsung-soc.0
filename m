@@ -1,55 +1,61 @@
-From: =?UTF-8?Q?Michel_D=c3=a4nzer?= <michel@daenzer.net>
-Subject: Re: [PATCH 08/13] drm/irq: Check for valid VBLANK before dereference
-Date: Wed, 17 Dec 2014 12:11:11 +0900
-Message-ID: <5490F44F.30709@daenzer.net>
-References: <1418748815-15434-1-git-send-email-thierry.reding@gmail.com>
- <1418748815-15434-8-git-send-email-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1418748815-15434-8-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>, linux-samsung-soc@vger.kernel.org, Benjamin Gaignard <benjamin.gaignard@linaro.org>, dri-devel@lists.freedesktop.org, Mark Yao <mark.yao@rock-chips.com>
+From: Jaewon Kim <jaewon02.kim@samsung.com>
+Subject: [PATCH v7 0/3] Add regulator-haptic driver
+Date: Wed, 17 Dec 2014 12:35:05 +0900
+Message-ID: <1418787308-29019-1-git-send-email-jaewon02.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:55723 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751066AbaLQDfP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 16 Dec 2014 22:35:15 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Jaewon Kim <jaewon02.kim@samsung.com>
 
-T24gMTcuMTIuMjAxNCAwMTo1MywgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gRnJvbTogVGhpZXJy
-eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KPiAKPiBXaGVuIGFjY2Vzc2luZyB0aGUgYXJy
-YXkgb2YgcGVyLUNSVEMgVkJMQU5LIHN0cnVjdHVyZXMgd2UgbXVzdCBhbHdheXMKPiBjaGVjayB0
-aGF0IHRoZSBpbmRleCBpbnRvIHRoZSBhcnJheSBpcyB2YWxpZCBiZWZvcmUgZGVyZWZlcmVuY2lu
-ZyB0bwo+IGF2b2lkIGNyYXNoaW5nLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFRoaWVycnkgUmVkaW5n
-IDx0cmVkaW5nQG52aWRpYS5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1faXJxLmMg
-fCA3ICsrKysrLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlv
-bnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9pcnEuYyBiL2RyaXZl
-cnMvZ3B1L2RybS9kcm1faXJxLmMKPiBpbmRleCBhMjQ2NTgxNjIyODQuLmNiMjA3ZTA0NzUwNSAx
-MDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2lycS5jCj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL2RybV9pcnEuYwo+IEBAIC0xMDcwLDEwICsxMDcwLDEwIEBAIHZvaWQgZHJtX3ZibGFu
-a19wdXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgaW50IGNydGMpCj4gIHsKPiAgCXN0cnVjdCBk
-cm1fdmJsYW5rX2NydGMgKnZibGFuayA9ICZkZXYtPnZibGFua1tjcnRjXTsKPiAgCj4gLQlpZiAo
-V0FSTl9PTihhdG9taWNfcmVhZCgmdmJsYW5rLT5yZWZjb3VudCkgPT0gMCkpCj4gKwlpZiAoV0FS
-Tl9PTihjcnRjID49IGRldi0+bnVtX2NydGNzKSkKPiAgCQlyZXR1cm47Cj4gIAo+IC0JaWYgKFdB
-Uk5fT04oY3J0YyA+PSBkZXYtPm51bV9jcnRjcykpCj4gKwlpZiAoV0FSTl9PTihhdG9taWNfcmVh
-ZCgmdmJsYW5rLT5yZWZjb3VudCkgPT0gMCkpCj4gIAkJcmV0dXJuOwo+ICAKPiAgCS8qIExhc3Qg
-dXNlciBzY2hlZHVsZXMgaW50ZXJydXB0IGRpc2FibGUgKi8KPiBAQCAtMTM1Niw2ICsxMzU2LDkg
-QEAgdm9pZCBkcm1fdmJsYW5rX3Bvc3RfbW9kZXNldChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBp
-bnQgY3J0YykKPiAgCWlmICghZGV2LT5udW1fY3J0Y3MpCj4gIAkJcmV0dXJuOwo+ICAKPiArCWlm
-IChXQVJOX09OKGNydGMgPj0gZGV2LT5udW1fY3J0Y3MpKQo+ICsJCXJldHVybjsKPiArCj4gIAlp
-ZiAodmJsYW5rLT5pbm1vZGVzZXQpIHsKPiAgCQlzcGluX2xvY2tfaXJxc2F2ZSgmZGV2LT52Ymxf
-bG9jaywgaXJxZmxhZ3MpOwo+ICAJCWRldi0+dmJsYW5rX2Rpc2FibGVfYWxsb3dlZCA9IHRydWU7
-Cj4gCgpJdCB3b3VsZCBwcm9iYWJseSBiZSBiZXR0ZXIgdG8gdXNlIFdBUk5fT05fT05DRSwgb3Ro
-ZXJ3aXNlIGFueSBidWdzCnRyaWdnZXJpbmcgdGhlc2UgbWlnaHQgZmxvb2QgZG1lc2cuCgoKLS0g
-CkVhcnRobGluZyBNaWNoZWwgRMOkbnplciAgICAgICAgICAgICAgIHwgICAgICAgICAgICAgICBo
-dHRwOi8vd3d3LmFtZC5jb20KTGlicmUgc29mdHdhcmUgZW50aHVzaWFzdCAgICAgICAgICAgICB8
-ICAgICAgICAgICAgIE1lc2EgYW5kIFggZGV2ZWxvcGVyCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+This patch series adds regulator-haptic driver.
+The regulator-haptic has haptic motor and it is controlled by
+voltage of regulator via force feedback framework.
+
+Changes in v7:
+ - move platform_data or of_node check.
+ - prevent to start playing effect when kernel entering suspend state.
+
+Changes in v6:
+ - prevent racing condition
+
+Changes in v5:
+ - give preference to platform data
+
+Changes in v4:
+ - _regulator_get() -> _regulator_get_exclusive()
+
+Changes in v3:
+ - fix typo in Documentation
+ - add define in header file
+
+Changes in v2:
+ - remove driver owner
+ - merge enable/disable function
+ - support platform data
+ - fix wrong suspends_state check in regulator_haptic_resume()
+
+Jaewon Kim (3):
+  Input: add regulator haptic driver
+  ARM: dts: exynos3250-rinato: Add regulator-haptic node for haptics
+  ARM: dts: exynos3250-monk: Add regulator-haptic node for haptics
+
+ .../devicetree/bindings/input/regulator-haptic.txt |   21 ++
+ arch/arm/boot/dts/exynos3250-monk.dts              |    7 +
+ arch/arm/boot/dts/exynos3250-rinato.dts            |    7 +
+ drivers/input/misc/Kconfig                         |   11 +
+ drivers/input/misc/Makefile                        |    1 +
+ drivers/input/misc/regulator-haptic.c              |  247 ++++++++++++++++++++
+ include/linux/platform_data/regulator-haptic.h     |   29 +++
+ 7 files changed, 323 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/regulator-haptic.txt
+ create mode 100644 drivers/input/misc/regulator-haptic.c
+ create mode 100644 include/linux/platform_data/regulator-haptic.h
+
+-- 
+1.7.9.5
