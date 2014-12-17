@@ -1,267 +1,133 @@
-From: Tony K Nadackal <tony.kn@samsung.com>
-Subject: [PATCH] clk: samsung: exynos7: Add clocks for MSCL block
-Date: Wed, 17 Dec 2014 13:03:37 +0530
-Message-ID: <1418801617-7593-1-git-send-email-tony.kn@samsung.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: drm: exynos: mixer: fix using usleep() in atomic context
+Date: Wed, 17 Dec 2014 08:54:36 +0100
+Message-ID: <20141217075433.GA2814@ulmo>
+References: <1417307725-5975-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1417307725-5975-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <20141201155447.GE11943@ulmo.nvidia.com>
+ <7454d0630d95195d41c3906637e223af@math.uni-bielefeld.de>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:37983 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750995AbaLQHlP (ORCPT
+Received: from mail-wg0-f43.google.com ([74.125.82.43]:33793 "EHLO
+	mail-wg0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751602AbaLQHyj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Dec 2014 02:41:15 -0500
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NGP001XAUOO0UD0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 17 Dec 2014 16:41:12 +0900 (KST)
+	Wed, 17 Dec 2014 02:54:39 -0500
+Received: by mail-wg0-f43.google.com with SMTP id l18so19591602wgh.2
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 16 Dec 2014 23:54:38 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <7454d0630d95195d41c3906637e223af@math.uni-bielefeld.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: tomasz.figa@gmail.com, mturquette@linaro.org, kgene@kernel.org, a.kesavan@samsung.com, s.nawrocki@samsung.com, bhushan.r@samsung.com, Tony K Nadackal <tony.kn@samsung.com>
+To: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+Cc: linux-samsung-soc@vger.kernel.org, Tomasz Stanislawski <t.stanislaws@samsung.com>, dri-devel@lists.freedesktop.org
 
-Add clock support for the MSCL block for Exynos7.
 
-Signed-off-by: Tony K Nadackal <tony.kn@samsung.com>
----
- .../devicetree/bindings/clock/exynos7-clock.txt    |   1 +
- drivers/clk/samsung/clk-exynos7.c                  | 124 +++++++++++++++++++++
- include/dt-bindings/clock/exynos7-clk.h            |  40 ++++++-
- 3 files changed, 164 insertions(+), 1 deletion(-)
+--1yeeQ81UyVL57Vl7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/clock/exynos7-clock.txt b/Documentation/devicetree/bindings/clock/exynos7-clock.txt
-index 6d3d5f8..d0e048c 100644
---- a/Documentation/devicetree/bindings/clock/exynos7-clock.txt
-+++ b/Documentation/devicetree/bindings/clock/exynos7-clock.txt
-@@ -34,6 +34,7 @@ Required Properties for Clock Controller:
- 	- "samsung,exynos7-clock-peris"
- 	- "samsung,exynos7-clock-fsys0"
- 	- "samsung,exynos7-clock-fsys1"
-+	- "samsung,exynos7-clock-mscl"
- 
-  - reg: physical base address of the controller and the length of
- 	memory mapped region.
-diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
-index a79bf23..95c1160 100644
---- a/drivers/clk/samsung/clk-exynos7.c
-+++ b/drivers/clk/samsung/clk-exynos7.c
-@@ -34,6 +34,7 @@
- #define DIV_TOPC0		0x0600
- #define DIV_TOPC1		0x0604
- #define DIV_TOPC3		0x060C
-+#define	ENABLE_ACLK_TOPC1	0x0804
- 
- static struct samsung_fixed_factor_clock topc_fixed_factor_clks[] __initdata = {
- 	FFACTOR(0, "ffac_topc_bus0_pll_div2", "mout_bus0_pll_ctrl", 1, 2, 0),
-@@ -107,6 +108,7 @@ static struct samsung_mux_clock topc_mux_clks[] __initdata = {
- 
- 	MUX(0, "mout_aclk_ccore_133", mout_topc_group2,	MUX_SEL_TOPC2, 4, 2),
- 
-+	MUX(0, "mout_aclk_mscl_532", mout_topc_group2, MUX_SEL_TOPC3, 20, 2),
- 	MUX(0, "mout_aclk_peris_66", mout_topc_group2, MUX_SEL_TOPC3, 24, 2),
- };
- 
-@@ -114,6 +116,8 @@ static struct samsung_div_clock topc_div_clks[] __initdata = {
- 	DIV(DOUT_ACLK_CCORE_133, "dout_aclk_ccore_133", "mout_aclk_ccore_133",
- 		DIV_TOPC0, 4, 4),
- 
-+	DIV(DOUT_ACLK_MSCL_532, "dout_aclk_mscl_532", "mout_aclk_mscl_532",
-+		DIV_TOPC1, 20, 4),
- 	DIV(DOUT_ACLK_PERIS, "dout_aclk_peris_66", "mout_aclk_peris_66",
- 		DIV_TOPC1, 24, 4),
- 
-@@ -127,6 +131,11 @@ static struct samsung_div_clock topc_div_clks[] __initdata = {
- 		DIV_TOPC3, 16, 3),
- };
- 
-+static struct samsung_gate_clock topc_gate_clks[] __initdata = {
-+	GATE(ACLK_MSCL_532, "aclk_mscl_532", "dout_aclk_mscl_532",
-+		ENABLE_ACLK_TOPC1, 20, 0, 0),
-+};
-+
- static struct samsung_pll_clock topc_pll_clks[] __initdata = {
- 	PLL(pll_1451x, 0, "fout_bus0_pll", "fin_pll", BUS0_PLL_LOCK,
- 		BUS0_PLL_CON0, NULL),
-@@ -147,6 +156,8 @@ static struct samsung_cmu_info topc_cmu_info __initdata = {
- 	.nr_mux_clks		= ARRAY_SIZE(topc_mux_clks),
- 	.div_clks		= topc_div_clks,
- 	.nr_div_clks		= ARRAY_SIZE(topc_div_clks),
-+	.gate_clks		= topc_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(topc_gate_clks),
- 	.fixed_factor_clks	= topc_fixed_factor_clks,
- 	.nr_fixed_factor_clks	= ARRAY_SIZE(topc_fixed_factor_clks),
- 	.nr_clk_ids		= TOPC_NR_CLK,
-@@ -743,3 +754,116 @@ static void __init exynos7_clk_fsys1_init(struct device_node *np)
- 
- CLK_OF_DECLARE(exynos7_clk_fsys1, "samsung,exynos7-clock-fsys1",
- 	exynos7_clk_fsys1_init);
-+
-+#define MUX_SEL_MSCL			0x0200
-+#define DIV_MSCL			0x0600
-+#define ENABLE_ACLK_MSCL		0x0800
-+#define ENABLE_PCLK_MSCL		0x0900
-+
-+/* List of parent clocks for Muxes in CMU_MSCL */
-+PNAME(mout_aclk_mscl_532_user_p)	= { "fin_pll", "aclk_mscl_532" };
-+
-+static unsigned long mscl_clk_regs[] __initdata = {
-+	MUX_SEL_MSCL,
-+	DIV_MSCL,
-+	ENABLE_ACLK_MSCL,
-+	ENABLE_PCLK_MSCL,
-+};
-+
-+static struct samsung_mux_clock mscl_mux_clks[] __initdata = {
-+	MUX(USERMUX_ACLK_MSCL_532, "usermux_aclk_mscl_532",
-+		mout_aclk_mscl_532_user_p, MUX_SEL_MSCL, 0, 1),
-+};
-+static struct samsung_div_clock mscl_div_clks[] __initdata = {
-+	DIV(DOUT_PCLK_MSCL, "dout_pclk_mscl", "usermux_aclk_mscl_532",
-+			DIV_MSCL, 0, 3),
-+};
-+static struct samsung_gate_clock mscl_gate_clks[] __initdata = {
-+
-+	GATE(ACLK_MSCL_0, "aclk_mscl_0", "usermux_aclk_mscl_532",
-+			ENABLE_ACLK_MSCL, 31, 0, 0),
-+	GATE(ACLK_MSCL_1, "aclk_mscl_1", "usermux_aclk_mscl_532",
-+			ENABLE_ACLK_MSCL, 30, 0, 0),
-+	GATE(ACLK_JPEG, "aclk_jpeg", "usermux_aclk_mscl_532",
-+			ENABLE_ACLK_MSCL, 29, 0, 0),
-+	GATE(ACLK_G2D, "aclk_g2d", "usermux_aclk_mscl_532",
-+			ENABLE_ACLK_MSCL, 28, 0, 0),
-+	GATE(ACLK_LH_ASYNC_SI_MSCL_0, "aclk_lh_async_si_mscl_0",
-+			"usermux_aclk_mscl_532",
-+			ENABLE_ACLK_MSCL, 27, 0, 0),
-+	GATE(ACLK_LH_ASYNC_SI_MSCL_1, "aclk_lh_async_si_mscl_1",
-+			"usermux_aclk_mscl_532",
-+			ENABLE_ACLK_MSCL, 26, 0, 0),
-+	GATE(ACLK_XIU_MSCLX_0, "aclk_xiu_msclx_0", "usermux_aclk_mscl_532",
-+			ENABLE_ACLK_MSCL, 25, 0, 0),
-+	GATE(ACLK_XIU_MSCLX_1, "aclk_xiu_msclx_1", "usermux_aclk_mscl_532",
-+			ENABLE_ACLK_MSCL, 24, 0, 0),
-+	GATE(ACLK_AXI2ACEL_BRIDGE, "aclk_axi2acel_bridge",
-+			"usermux_aclk_mscl_532",
-+			ENABLE_ACLK_MSCL, 23, 0, 0),
-+	GATE(ACLK_QE_MSCL_0, "aclk_qe_mscl_0", "usermux_aclk_mscl_532",
-+			ENABLE_ACLK_MSCL, 22, 0, 0),
-+	GATE(ACLK_QE_MSCL_1, "aclk_qe_mscl_1", "usermux_aclk_mscl_532",
-+			ENABLE_ACLK_MSCL, 21, 0, 0),
-+	GATE(ACLK_QE_JPEG, "aclk_qe_jpeg", "usermux_aclk_mscl_532",
-+			ENABLE_ACLK_MSCL, 20, 0, 0),
-+	GATE(ACLK_QE_G2D, "aclk_qe_g2d", "usermux_aclk_mscl_532",
-+			ENABLE_ACLK_MSCL, 19, 0, 0),
-+	GATE(ACLK_PPMU_MSCL_0, "aclk_ppmu_mscl_0", "usermux_aclk_mscl_532",
-+			ENABLE_ACLK_MSCL, 18, 0, 0),
-+	GATE(ACLK_PPMU_MSCL_1, "aclk_ppmu_mscl_1", "usermux_aclk_mscl_532",
-+			ENABLE_ACLK_MSCL, 17, 0, 0),
-+	GATE(ACLK_MSCLNP_133, "aclk_msclnp_133", "usermux_aclk_mscl_532",
-+			ENABLE_ACLK_MSCL, 16, 0, 0),
-+	GATE(ACLK_AHB2APB_MSCL0P, "aclk_ahb2apb_mscl0p",
-+			"usermux_aclk_mscl_532",
-+			ENABLE_ACLK_MSCL, 15, 0, 0),
-+	GATE(ACLK_AHB2APB_MSCL1P, "aclk_ahb2apb_mscl1p",
-+			"usermux_aclk_mscl_532",
-+			ENABLE_ACLK_MSCL, 14, 0, 0),
-+
-+	GATE(PCLK_MSCL_0, "pclk_mscl_0", "dout_pclk_mscl",
-+			ENABLE_PCLK_MSCL, 31, 0, 0),
-+	GATE(PCLK_MSCL_1, "pclk_mscl_1", "dout_pclk_mscl",
-+			ENABLE_PCLK_MSCL, 30, 0, 0),
-+	GATE(PCLK_JPEG, "pclk_jpeg", "dout_pclk_mscl",
-+			ENABLE_PCLK_MSCL, 29, 0, 0),
-+	GATE(PCLK_G2D, "pclk_g2d", "dout_pclk_mscl",
-+			ENABLE_PCLK_MSCL, 28, 0, 0),
-+	GATE(PCLK_QE_MSCL_0, "pclk_qe_mscl_0", "dout_pclk_mscl",
-+			ENABLE_PCLK_MSCL, 27, 0, 0),
-+	GATE(PCLK_QE_MSCL_1, "pclk_qe_mscl_1", "dout_pclk_mscl",
-+			ENABLE_PCLK_MSCL, 26, 0, 0),
-+	GATE(PCLK_QE_JPEG, "pclk_qe_jpeg", "dout_pclk_mscl",
-+			ENABLE_PCLK_MSCL, 25, 0, 0),
-+	GATE(PCLK_QE_G2D, "pclk_qe_g2d", "dout_pclk_mscl",
-+			ENABLE_PCLK_MSCL, 24, 0, 0),
-+	GATE(PCLK_PPMU_MSCL_0, "pclk_ppmu_mscl_0", "dout_pclk_mscl",
-+			ENABLE_PCLK_MSCL, 23, 0, 0),
-+	GATE(PCLK_PPMU_MSCL_1, "pclk_ppmu_mscl_1", "dout_pclk_mscl",
-+			ENABLE_PCLK_MSCL, 22, 0, 0),
-+	GATE(PCLK_AXI2ACEL_BRIDGE, "pclk_axi2acel_bridge", "dout_pclk_mscl",
-+			ENABLE_PCLK_MSCL, 21, 0, 0),
-+	GATE(PCLK_PMU_MSCL, "pclk_pmu_mscl", "dout_pclk_mscl",
-+			ENABLE_PCLK_MSCL, 20, 0, 0),
-+};
-+
-+static struct samsung_cmu_info mscl_cmu_info __initdata = {
-+	.mux_clks		= mscl_mux_clks,
-+	.nr_mux_clks		= ARRAY_SIZE(mscl_mux_clks),
-+	.div_clks		= mscl_div_clks,
-+	.nr_div_clks		= ARRAY_SIZE(mscl_div_clks),
-+	.gate_clks		= mscl_gate_clks,
-+	.nr_gate_clks		= ARRAY_SIZE(mscl_gate_clks),
-+	.nr_clk_ids		= MSCL_NR_CLK,
-+	.clk_regs		= mscl_clk_regs,
-+	.nr_clk_regs		= ARRAY_SIZE(mscl_clk_regs),
-+};
-+
-+static void __init exynos7_clk_mscl_init(struct device_node *np)
-+{
-+	samsung_cmu_register_one(np, &mscl_cmu_info);
-+}
-+
-+CLK_OF_DECLARE(exynos7_clk_mscl, "samsung,exynos7-clock-mscl",
-+		exynos7_clk_mscl_init);
-diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
-index e0bad38..dff504a 100644
---- a/include/dt-bindings/clock/exynos7-clk.h
-+++ b/include/dt-bindings/clock/exynos7-clk.h
-@@ -17,7 +17,9 @@
- #define DOUT_SCLK_CC_PLL		4
- #define DOUT_SCLK_MFC_PLL		5
- #define DOUT_ACLK_CCORE_133		6
--#define TOPC_NR_CLK			7
-+#define DOUT_ACLK_MSCL_532		7
-+#define ACLK_MSCL_532			8
-+#define TOPC_NR_CLK			9
- 
- /* TOP0 */
- #define DOUT_ACLK_PERIC1		1
-@@ -90,4 +92,40 @@
- #define ACLK_MMC0			2
- #define FSYS1_NR_CLK			3
- 
-+/* MSCL */
-+#define USERMUX_ACLK_MSCL_532		1
-+#define DOUT_PCLK_MSCL			2
-+#define ACLK_MSCL_0			3
-+#define ACLK_MSCL_1			4
-+#define ACLK_JPEG			5
-+#define ACLK_G2D			6
-+#define ACLK_LH_ASYNC_SI_MSCL_0		7
-+#define ACLK_LH_ASYNC_SI_MSCL_1		8
-+#define ACLK_AXI2ACEL_BRIDGE		9
-+#define ACLK_XIU_MSCLX_0		10
-+#define ACLK_XIU_MSCLX_1		11
-+#define ACLK_QE_MSCL_0			12
-+#define ACLK_QE_MSCL_1			13
-+#define ACLK_QE_JPEG			14
-+#define ACLK_QE_G2D			15
-+#define ACLK_PPMU_MSCL_0		16
-+#define ACLK_PPMU_MSCL_1		17
-+#define ACLK_MSCLNP_133			18
-+#define ACLK_AHB2APB_MSCL0P		19
-+#define ACLK_AHB2APB_MSCL1P		20
-+
-+#define PCLK_MSCL_0			21
-+#define PCLK_MSCL_1			22
-+#define PCLK_JPEG			23
-+#define PCLK_G2D			24
-+#define PCLK_QE_MSCL_0			25
-+#define PCLK_QE_MSCL_1			26
-+#define PCLK_QE_JPEG			27
-+#define PCLK_QE_G2D			28
-+#define PCLK_PPMU_MSCL_0		29
-+#define PCLK_PPMU_MSCL_1		30
-+#define PCLK_AXI2ACEL_BRIDGE		31
-+#define PCLK_PMU_MSCL			32
-+#define MSCL_NR_CLK			33
-+
- #endif /* _DT_BINDINGS_CLOCK_EXYNOS7_H */
--- 
-2.2.0
+On Mon, Dec 01, 2014 at 05:16:17PM +0100, Tobias Jakobi wrote:
+> On 2014-12-01 16:54, Thierry Reding wrote:
+> >On Sun, Nov 30, 2014 at 01:35:25AM +0100, tjakobi@math.uni-bielefeld.de
+> >wrote:
+> >>From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+> >>
+> >>This patch fixes calling usleep_range() after taking reg_slock
+> >>using spin_lock_irqsave(). The mdelay() is used instead.
+> >>Waiting in atomic context is not the best idea in general.
+> >>Hopefully, waiting occurs only when Video Processor fails
+> >>to reset correctly.
+> >>
+> >>Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
+> >>---
+> >> drivers/gpu/drm/exynos/exynos_mixer.c | 2 +-
+> >> 1 file changed, 1 insertion(+), 1 deletion(-)
+> >>
+> >>diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c
+> >>b/drivers/gpu/drm/exynos/exynos_mixer.c
+> >>index a41c84e..cc7cccc 100644
+> >>--- a/drivers/gpu/drm/exynos/exynos_mixer.c
+> >>+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
+> >>@@ -632,7 +632,7 @@ static void vp_win_reset(struct mixer_context *ctx)
+> >> 		/* waiting until VP_SRESET_PROCESSING is 0 */
+> >> 		if (~vp_reg_read(res, VP_SRESET) & VP_SRESET_PROCESSING)
+> >> 			break;
+> >>-		usleep_range(10000, 12000);
+> >>+		mdelay(10);
+> >> 	}
+> >> 	WARN(tries =3D=3D 0, "failed to reset Video Processor\n");
+> >> }
+> >
+> >I can't see a reason why you would need to hold the lock around this
+> >code. Perhaps a better way to fix this would be to drop the lock before
+> >calling vp_win_reset()?
+> >
+> >Thierry
+>=20
+> Hmm, I'm pretty new to spinlocks (only have worked with the usual mutex
+> stuff in userspace), but wouldn't that mean that it is then possible for
+> mixer_win_reset to execute while a (previous) vp_win_reset is still runni=
+ng?
+
+Indeed it would. I didn't look properly. Looking more closely it seems
+the call stack for this looks something like:
+
+	vp_win_reset()
+	mixer_win_reset()
+	mixer_poweron()
+	mixer_dpms()
+	exynos_drm_crtc_dpms()
+
+Which can then be called from two places:
+
+	exynos_drm_crtc_commit()
+	drm_crtc_helper_set_mode()
+	drm_crtc_helper_set_config()
+
+	drm_helper_connector_dpms()
+	drm_crtc_helper_set_config()
+
+drm_crtc_helper_set_config() itself must be called with the all modeset
+locks held, so I don't see a way how vp_win_reset() could be called
+concurrently.
+
+Anyway, even if you're still concerned about concurrent accesses to the
+register you'd better lock this section with a mutex to avoid excessive
+spinning. In fact I think a better option would be to extend the mutex
+in mixer_poweron() to encompass the whole function. This currently looks
+broken because one process could go to sleep in pm_runtime_get_sync() or
+clk_prepare_enable() and another process start running mixer_poweron()
+concurrently, getting to the second mutex_lock() sooner than the first
+process. So the lock being dropped between checking for ctx->powered and
+setting it doesn't actually prevent a race.
+
+Then again, nobody seems to have cared so far...
+
+Thierry
+
+--1yeeQ81UyVL57Vl7
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJUkTa5AAoJEN0jrNd/PrOhmuoP+QG6HoYQ2JvvavBMgEZRnVM5
+M4fwU986KLkYzQkQ+EhR+qIIaCzntwr6kFb9EV0OdS2N3NssS4FYVGa7Bf6wEEWT
+r2Vqm5KIObcFi5XpBIkCdB0hjjMO/rKbQjwUNgZdIm2dWpuMJ6d7nDTEqlu0Jlft
+nUDMkZguVYkIGEYK1YEEkawjIDfs5b0B1L969runvncMHg/PN8uIviqDmURqnu+N
++NJh0X+I2/fMW4c+Z7sZjqakU00ID8aQ/douXVBkl8I3zq4Hi7w/Pn1ec6mhPbix
+rgqaFMRQxWaAI0cM8cKeg/kd8CtaTFz1+AC55TTkaFika1afgEQqZcHFPLy/oC4H
+gXnmmpF8H6Ukj6aypEMyNwZROiV+WyhB92F26bsiMH9nUavhvm6A3U86xtxHOs63
+60PpkLLMVd4k1k3caYJoEu/psYAN/0LOq+kOUvKxXUKWMjyLG/U8OpencQ+z0Okr
+ki9BBtf3Ur66hg3PtWHm+E1r5ZiPZmKVll2EHHb2/at/Mocv+mdQzgphQUXy22nL
+WYZiy1KX2K5L4V80hcBHs2Vl7FY8Gbz0HhCebsPbi47Yo35S/2V1JAKGDDl5oBes
+ZiI5YXaPg6nPuxdOpgONaMYJb89F+WRKQkb0avPpLT/TLl/DezmOan7FHSzQEOq6
+wtbQ6AvkPV4UaGkSJIav
+=qy0k
+-----END PGP SIGNATURE-----
+
+--1yeeQ81UyVL57Vl7--
