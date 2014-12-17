@@ -1,81 +1,31 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv3] clocksource: exynos_mct: Add the support for Exynos 64bit SoC
-Date: Wed, 17 Dec 2014 08:46:11 +0900
-Message-ID: <1418773571-10834-1-git-send-email-cw00.choi@samsung.com>
+From: YoungJun Cho <yj44.cho@samsung.com>
+Subject: [RESEND PATCH 0/2] ARM: dts: add display device nodes for Exynos4415
+Date: Wed, 17 Dec 2014 09:39:40 +0900
+Message-ID: <1418776782-6691-1-git-send-email-yj44.cho@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:47655 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751013AbaLPXq0 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:63393 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750810AbaLQAjr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 16 Dec 2014 18:46:26 -0500
+	Tue, 16 Dec 2014 19:39:47 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: daniel.lezcano@linaro.org, tglx@linutronix.de, kgene.kim@samsung.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Mark Rutland <mark.rutland@arm.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, kgene.kim@samsung.com, mark.rutland@arm.com, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, robh+dt@kernel.org, galak@codeaurora.org, kyungmin.park@samsung.com, inki.dae@samsung.com
 
-This patch adds the support for Exynos 64bit SoC. The delay_timer is only used
-for Exynos 32bit SoC.
+This patch series adds display device nodes for Exynos4415 SoC support.
+The drm/exynos part of original patchset[1] was merged but DTS part is not yet.
 
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
-This patch set is tested on 64-bit Exynos SoC. I send only this patch from
-following patchst[1].
-[1] https://lkml.org/lkml/2014/12/2/134
+This is based on for-next branch in linux-samsung git.
 
-Changes from v2:
-- None
-Changes from v1:
-- Use CONFIG_ARM instead of CONFIG_ARM64
+[1] http://www.spinics.net/lists/linux-samsung-soc/msg38649.html
 
- drivers/clocksource/Kconfig      | 1 -
- drivers/clocksource/exynos_mct.c | 4 ++++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+YoungJun Cho (2):
+  ARM: dts: add fimd device node to exynos4415.dtsi
+  ARM: dts: add mipi dsi device node to exynos4415.dtsi
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 9042060..27ef3fa 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -134,7 +134,6 @@ config CLKSRC_METAG_GENERIC
- 
- config CLKSRC_EXYNOS_MCT
- 	def_bool y if ARCH_EXYNOS
--	depends on !ARM64
- 	help
- 	  Support for Multi Core Timer controller on Exynos SoCs.
- 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 9403061..b840ea1 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -223,6 +223,7 @@ static u64 notrace exynos4_read_sched_clock(void)
- 	return exynos4_read_count_32();
- }
- 
-+#if defined(CONFIG_ARM)
- static struct delay_timer exynos4_delay_timer;
- 
- static cycles_t exynos4_read_current_timer(void)
-@@ -231,14 +232,17 @@ static cycles_t exynos4_read_current_timer(void)
- 			 "cycles_t needs to move to 32-bit for ARM64 usage");
- 	return exynos4_read_count_32();
- }
-+#endif
- 
- static void __init exynos4_clocksource_init(void)
- {
- 	exynos4_mct_frc_start();
- 
-+#if defined(CONFIG_ARM)
- 	exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
- 	exynos4_delay_timer.freq = clk_rate;
- 	register_current_timer_delay(&exynos4_delay_timer);
-+#endif
- 
- 	if (clocksource_register_hz(&mct_frc, clk_rate))
- 		panic("%s: can't register clocksource\n", mct_frc.name);
+ arch/arm/boot/dts/exynos4415.dtsi | 27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
 -- 
-1.8.5.5
+1.9.0
