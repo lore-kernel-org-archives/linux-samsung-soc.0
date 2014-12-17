@@ -1,97 +1,154 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH RFC v3 1/2] PM / Domains: Extend API
- pm_genpd_dev_need_restore to use restore types
-Date: Wed, 17 Dec 2014 14:08:12 +0100
-Message-ID: <5491803C.4030000@samsung.com>
-References: <1418489518-7252-1-git-send-email-amit.daniel@samsung.com>
- <54901341.20106@samsung.com>
- <CADGdYn60ONwuLtcdXSegbQLgFaF-me+mZY6-LPYRQvdfmWFMdA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <CADGdYn60ONwuLtcdXSegbQLgFaF-me+mZY6-LPYRQvdfmWFMdA@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: amit daniel kachhap <amit.daniel@samsung.com>
-Cc: LAK <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Len Brown <len.brown@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] usb: dwc2: add support for initial state for dual-role mode
+Date: Wed, 17 Dec 2014 14:49:53 +0100
+Message-ID: <1418824193-19182-1-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:49975 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750946AbaLQNuL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 17 Dec 2014 08:50:11 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Robert Baldyga <r.baldyga@samsung.com>, Paul Zimmerman <paulz@synopsys.com>, Felipe Balbi <balbi@ti.com>
 
-Hello,
+DWC2 module on Exynos SoCs is used only as peripheral controller (UDC),
+so add support for selecting default initial state for dual-role mode. The
+default init mode can be overridden by device tree 'dr_mode' property.
+This patch enables to use usb gadget on Exynos SoCs, when DWC2 driver has
+been compiled as 'dual-role driver'.
 
-On 2014-12-17 03:43, amit daniel kachhap wrote:
-> On Tue, Dec 16, 2014 at 4:40 PM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> Hello,
->>
->> On 2014-12-13 17:51, Amit Daniel Kachhap wrote:
->>> Instead of using bool to restore suspended devices initially, use flags
->>> like GPD_DEV_SUSPEND_INIT, GPD_DEV_RESTORE_INIT and GPD_DEV_RESTORE_FORCE.
->>> The first two flags will be similar to the existing true/false
->>> functionality.
->>> The third flag may be used to force restore of suspended devices
->>> whenever their associated power domain is turned on.
->>>
->>> Currently, PD power off function powers off all the associated unused
->>> devices. The functionality added in this patch is similar to it.
->>>
->>> This feature may be used for those devices which are always in ON state
->>> if the PD associated with them is ON but may need local runtime resume
->>> and suspend during PD On/Off. These devices (like clock) may not implement
->>> complete pm_runtime calls such as pm_runtime_get/pm_runtime_put due to
->>> subsystems interaction behaviour or any other reason.
->>>
->>> The model works like,
->>>       DEV1 (Attaches itself with PD but no calls to pm_runtime_get and
->>>       /  pm_runtime_put. Its local runtime_suspend/resume is invoked via
->>>      /   GPD_DEV_RESTORE_FORCE option)
->>>     /
->>> PD -- DEV2 (Implements complete PM runtime and calls pm_runtime_get and
->>>     \    pm_runtime_put. This in turn invokes PD On/Off)
->>>      \
->>>       DEV3 (Similar to DEV1)
->>>
->>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
->>
->> The idea of adding new gen_pd flag and reusing runtime pm calls intead of
->> additional
->> notifiers looks promising, but I have some doubts. I don't see any guarantee
->> that
->> devices with GPD_DEV_RESTORE_FORCE flag will be suspended after all "normal"
->> devices
->> and restored before them. Without such assumption it will be hard to use
->> this approach
->> for iommu related activities, because device might need to use (in its
->> suspend/resume
->> callbacks) the functionality provided by the other device with
->> GPD_DEV_RESTORE_FORCE
->> flag. Maybe some additional flags like suspend/resume priority (or more
->> flags) will
->> solve somehow this dependency.
-> Thanks for pointing this issue out. I agree that there is no priority
-> in suspending devices with this flag. But this works well in syncing
-> with power domain on/off as the devices of these types have only
-> dependency with power domain. BTW I tested this implementation with
-> your first version of IOMMU save/restore patches. Although i have not
-> posted those but they work fine. I can post those after cleaning them
-> up.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/usb/dwc2/core.h     |  3 +++
+ drivers/usb/dwc2/platform.c | 62 ++++++++++++++++++++++++++++++++++++++-------
+ 2 files changed, 56 insertions(+), 9 deletions(-)
 
-Right, they will work, but mainly because right now master devices don't
-do any memory DMA operations in suspend/resume callbacks. However, to 
-propose
-it as a generic solution, the priority and the order of operations 
-should be
-somehow determined.
-
-> Here, the ordering between various devices is taken care as they are
-> probed at different point of time(clock then IOMMU). so the suspend
-> happens in reverse probe order and resume happens in probe order. I
-> will check more on this and get back.
-
-Right now, it probably used the order of probing. Because iommu controllers
-are probed earlier, so they are handled before the master devices.
-
-Best regards
+diff --git a/drivers/usb/dwc2/core.h b/drivers/usb/dwc2/core.h
+index 7a70a13..b0fed4e 100644
+--- a/drivers/usb/dwc2/core.h
++++ b/drivers/usb/dwc2/core.h
+@@ -354,6 +354,7 @@ struct dwc2_core_params {
+ 	int reload_ctl;
+ 	int ahbcfg;
+ 	int uframe_sched;
++	int default_dr_mode;
+ };
+ 
+ /**
+@@ -570,6 +571,8 @@ struct dwc2_hsotg {
+ 	struct dwc2_core_params *core_params;
+ 	enum usb_otg_state op_state;
+ 	enum usb_dr_mode dr_mode;
++	unsigned int hcd_enabled:1;
++	unsigned int gadget_enabled:1;
+ 
+ 	struct phy *phy;
+ 	struct usb_phy *uphy;
+diff --git a/drivers/usb/dwc2/platform.c b/drivers/usb/dwc2/platform.c
+index 6a795aa..8abf437 100644
+--- a/drivers/usb/dwc2/platform.c
++++ b/drivers/usb/dwc2/platform.c
+@@ -76,6 +76,7 @@ static const struct dwc2_core_params params_bcm2835 = {
+ 	.reload_ctl			= 0,
+ 	.ahbcfg				= 0x10,
+ 	.uframe_sched			= 0,
++	.default_dr_mode		= USB_DR_MODE_OTG,
+ };
+ 
+ static const struct dwc2_core_params params_rk3066 = {
+@@ -104,6 +105,36 @@ static const struct dwc2_core_params params_rk3066 = {
+ 	.reload_ctl			= -1,
+ 	.ahbcfg				= 0x7, /* INCR16 */
+ 	.uframe_sched			= -1,
++	.default_dr_mode		= USB_DR_MODE_OTG,
++};
++
++static const struct dwc2_core_params params_s3c_hsotg = {
++	.otg_cap			= -1,
++	.otg_ver			= -1,
++	.dma_enable			= 0,
++	.dma_desc_enable		= 0,
++	.speed				= -1,
++	.enable_dynamic_fifo		= -1,
++	.en_multiple_tx_fifo		= -1,
++	.host_rx_fifo_size		= -1,
++	.host_nperio_tx_fifo_size	= -1,
++	.host_perio_tx_fifo_size	= -1,
++	.max_transfer_size		= -1,
++	.max_packet_count		= -1,
++	.host_channels			= -1,
++	.phy_type			= -1,
++	.phy_utmi_width			= -1,
++	.phy_ulpi_ddr			= -1,
++	.phy_ulpi_ext_vbus		= -1,
++	.i2c_enable			= -1,
++	.ulpi_fs_ls			= -1,
++	.host_support_fs_ls_low_power	= -1,
++	.host_ls_low_power_phy_clk	= -1,
++	.ts_dline			= -1,
++	.reload_ctl			= -1,
++	.ahbcfg				= -1,
++	.uframe_sched			= -1,
++	.default_dr_mode		= USB_DR_MODE_PERIPHERAL,
+ };
+ 
+ /**
+@@ -121,8 +152,10 @@ static int dwc2_driver_remove(struct platform_device *dev)
+ {
+ 	struct dwc2_hsotg *hsotg = platform_get_drvdata(dev);
+ 
+-	dwc2_hcd_remove(hsotg);
+-	s3c_hsotg_remove(hsotg);
++	if (hsotg->hcd_enabled)
++		dwc2_hcd_remove(hsotg);
++	if (hsotg->gadget_enabled)
++		s3c_hsotg_remove(hsotg);
+ 
+ 	return 0;
+ }
+@@ -131,7 +164,7 @@ static const struct of_device_id dwc2_of_match_table[] = {
+ 	{ .compatible = "brcm,bcm2835-usb", .data = &params_bcm2835 },
+ 	{ .compatible = "rockchip,rk3066-usb", .data = &params_rk3066 },
+ 	{ .compatible = "snps,dwc2", .data = NULL },
+-	{ .compatible = "samsung,s3c6400-hsotg", .data = NULL},
++	{ .compatible = "samsung,s3c6400-hsotg", .data = &params_s3c_hsotg },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, dwc2_of_match_table);
+@@ -211,15 +244,26 @@ static int dwc2_driver_probe(struct platform_device *dev)
+ 		(unsigned long)res->start, hsotg->regs);
+ 
+ 	hsotg->dr_mode = of_usb_get_dr_mode(dev->dev.of_node);
++	if (hsotg->dr_mode == USB_DR_MODE_UNKNOWN &&
++	    params->default_dr_mode > USB_DR_MODE_UNKNOWN)
++		hsotg->dr_mode = params->default_dr_mode;
+ 
+ 	spin_lock_init(&hsotg->lock);
+ 	mutex_init(&hsotg->init_mutex);
+-	retval = dwc2_gadget_init(hsotg, irq);
+-	if (retval)
+-		return retval;
+-	retval = dwc2_hcd_init(hsotg, irq, params);
+-	if (retval)
+-		return retval;
++
++	if (hsotg->dr_mode != USB_DR_MODE_HOST) {
++		retval = dwc2_gadget_init(hsotg, irq);
++		if (retval)
++			return retval;
++		hsotg->gadget_enabled = 1;
++	}
++
++	if (hsotg->dr_mode != USB_DR_MODE_PERIPHERAL) {
++		retval = dwc2_hcd_init(hsotg, irq, params);
++		if (retval)
++			return retval;
++		hsotg->hcd_enabled = 1;
++	}
+ 
+ 	platform_set_drvdata(dev, hsotg);
+ 
 -- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+1.9.2
