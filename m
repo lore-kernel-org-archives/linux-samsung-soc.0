@@ -1,73 +1,57 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: Re: DT on s3c24xx
-Date: Thu, 18 Dec 2014 11:34:15 +0300
-Message-ID: <CA+E=qVeU4hEX2x9uAPfgqEgpxvA7bUBWqWJtBJdbP=RK6ghfEQ@mail.gmail.com>
-References: <CA+E=qVf4nT5x-fRFBu=Wv_VKUnEMAEP4GgJG8em8NyUFkwtbPg@mail.gmail.com>
- <20141218075205.GB10857@pengutronix.de>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH RFC v3 1/2] PM / Domains: Extend API
+ pm_genpd_dev_need_restore to use restore types
+Date: Thu, 18 Dec 2014 11:05:18 +0100
+Message-ID: <5492A6DE.5020704@samsung.com>
+References: <1418489518-7252-1-git-send-email-amit.daniel@samsung.com>
+ <CADGdYn4WQ6i29ecTthu7eNUfSSQ--YESGyHcA1_9CdK-h53hxA@mail.gmail.com>
+ <7h4msub0ca.fsf@deeprootsystems.com> <5418986.E58ik2Q1Hm@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:50341 "EHLO
-	mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752385AbaLRIeg convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Dec 2014 03:34:36 -0500
-In-Reply-To: <20141218075205.GB10857@pengutronix.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <5418986.E58ik2Q1Hm@vostro.rjw.lan>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>
+Cc: amit daniel kachhap <amit.daniel@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Len Brown <len.brown@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: arm-linux <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-On Thu, Dec 18, 2014 at 10:52 AM, Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> wrote:
-> Hello,
+On 18/12/14 01:58, Rafael J. Wysocki wrote:
+>>>> What's needed to solve this problem is a generalized way to have runtime
+>>>> > >> PM dependencies between devices.  Runtime PM already automatically
+>>>> > >> handles parent devices as one type of dependent device (e.g. a parent
+>>>> > >> device needs to be runtime PM resumed before its child.)  So what's
+>>>> > >> needed is a generic way to other PM dependencies with the runtime PM
+>>>> > >> core (not the genpd core.)
+>>> > >
+>>> > > Considering the example above with three devices, device D1 and D2 are
+>>> > > passive components in this power domain. These devices only need to
+>>> > > know the state changes of the power domains but would not control the
+>>> > > power domain themselves nor put forth constraints in the power domain
+>>> > > state changes. So I did not clearly understand as to how this example
+>>> > > could be solved by introducing changes in runtime PM core.
+>> > 
+>> > Your solution only solves the problems for devices managed by genpd.
+>> > 
+>> > If I understood your example correctly, what you really want to solve
+>> > this problem more generically is to be able to tell the runtime PM core
+>> > that D3 has a dependency on D1 and D2.  Then, whenver the runtime PM
+>> > core is doing get/put operations for D3, it needs to also do them for D1
+>> > and D2.
 
-Hi Uwe,
+Indeed, I think it would solve most of the problems if we were able to
+model the PM dependencies between devices which would then be handled
+in the PM core.  I recall something like this has been proposed a while
+ago [1].
 
-> [Cc +=3D linusw, linux-gpio]
+>> > This will accomplish the same as your proposed approach, but work for
+>> > any devices in any PM domains.
 >
-> On Wed, Dec 17, 2014 at 10:04:24PM +0300, Vasily Khoruzhick wrote:
->> I'd like to port several s3c24xx to DT, and I'm stuck with s3c24xx L=
-CD
->> controller and power drivers for H1940 and RX1950.
->>
->> Please see [1]. I want to move this function into another LCD power
->> driver, but I'm not sure what to do with s3c_gpio_cfgpin(). I need t=
-o
->> change pin function in runtime, and as far as I understand it should
->> be handled via pinctrl driver somehow. But how?
-> You can pass >1 pinctrl setups to a node:
->
->         somedevice {
->                 pinctrl-names =3D "default", "foo", "bar";
->                 pinctrl-0 =3D <&pinctrl_somedevice_default>;
->                 pinctrl-1 =3D <&pinctrl_somedevice_foo>;
->                 pinctrl-2 =3D <&pinctrl_somedevice_bar>;
->                 cfg-gpios =3D <&gpio4 12 3>, <&gpio2 7 5>;
->         };
->
-> Then I think you can fiddle with pinctrl_select_state(). For the gpio=
-s
-> you can then use the standard gpiod_{request,direction_{in,out}put}
-> combo.
+> Plus, it is not limited to runtime PM, really.  It affects system suspend
+> too.
 
-Thanks for you response!
+[1] https://lkml.org/lkml/2009/8/26/485
 
-Can I change pin function after gpio was requested? In low-power state
-(i.e. when display is disabled) it's gpio driving some level,
-and in active state it's some LCD controller pin (don't remember which
-one exactly)
-
+-- 
 Regards,
-Vasily
-
->
-> Best regards
-> Uwe
->
-> --
-> Pengutronix e.K.                           | Uwe Kleine-K=C3=B6nig   =
-         |
-> Industrial Linux Solutions                 | http://www.pengutronix.d=
-e/  |
+Sylwester
