@@ -1,51 +1,88 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 21/29] drm/exynos: remove mode_set() ops from exynos_crtc
-Date: Thu, 18 Dec 2014 11:58:47 -0200
-Message-ID: <1418911135-5207-22-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 25/29] drm/exynos: atomic phase 1: use
+ drm_plane_helper_disable()
+Date: Thu, 18 Dec 2014 11:58:51 -0200
+Message-ID: <1418911135-5207-26-git-send-email-gustavo@padovan.org>
 References: <1418911135-5207-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f177.google.com ([209.85.216.177]:55589 "EHLO
-	mail-qc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752322AbaLROA2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Dec 2014 09:00:28 -0500
-Received: by mail-qc0-f177.google.com with SMTP id x3so855350qcv.8
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Dec 2014 06:00:28 -0800 (PST)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1418911135-5207-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-It is no longer used anywhere.
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_drv.h | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 4c930d0..d490b49 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -167,7 +167,6 @@ struct exynos_drm_display {
-  *
-  * @dpms: control device power.
-  * @mode_fixup: fix mode data before applying it
-- * @mode_set: set the given mode to the manager
-  * @commit: set current hw specific display mode to hw.
-  * @enable_vblank: specific driver callback for enabling vblank interrupt.
-  * @disable_vblank: specific driver callback for disabling vblank interrupt.
-@@ -186,8 +185,6 @@ struct exynos_drm_crtc_ops {
- 	bool (*mode_fixup)(struct exynos_drm_crtc *crtc,
- 				const struct drm_display_mode *mode,
- 				struct drm_display_mode *adjusted_mode);
--	void (*mode_set)(struct exynos_drm_crtc *crtc,
--				const struct drm_display_mode *mode);
- 	void (*commit)(struct exynos_drm_crtc *crtc);
- 	int (*enable_vblank)(struct exynos_drm_crtc *crtc);
- 	void (*disable_vblank)(struct exynos_drm_crtc *crtc);
--- 
-1.9.3
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+VGhlIGF0b21pYyBoZWxwZXIgdG8gZGlzYWJsZSBwbGFuZXMgYWxzbyB1c2VzIGV4eW5vc191cGRh
+dGVfcGxhbmUoKSB0bwpkaXNhYmxlIHBsYW5lIHNvIHdlIGhhZCB0byBhZGFwdCBpdCB0byBib3Ro
+IGNvbW1pdCBhbmQgZGlzYWJsZSBwbGFuZXMuCgpBIGNoZWNrIGZvciBOVUxMIENSVEMgd2FzIGFk
+ZGVkIHRvIGV4eW5vc19wbGFuZV9tb2RlX3NldCgpIHNpbmNlIHBsYW5lcwp0byBiZSBkaXNhYmxl
+ZCBoYXZlIHBsYW5lX3N0YXRlLT5jcnRjIHNldCB0byBOVUxMLgoKQWxzbyB3aW5fZGlzYWJsZSgp
+IGNhbGxiYWNrIHVzZXMgcGxhbmUtPmNydGMgYXMgYXJnIGZvciB0aGUgc2FtZSByZWFzb24uCgpl
+eHlub3NfZHJtX2ZiX2dldF9idWZfY250KCkgbmVlZHMgYSBmYiBjaGVjayB0b28gdG8gYXZvaWQg
+YSBudWxsIHBvaW50ZXIuCgpTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rhdm8u
+cGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlu
+b3NfZHJtX2ZiLmMgICAgfCAgMiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X3BsYW5lLmMgfCAyNCArKysrKysrKysrKysrKysrKystLS0tLS0KIDIgZmlsZXMgY2hhbmdlZCwg
+MTkgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9mYi5jCmluZGV4IGQzNDZkMWUuLjQ3MDQ1NmQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlu
+b3MvZXh5bm9zX2RybV9mYi5jCkBAIC0xMzYsNyArMTM2LDcgQEAgdW5zaWduZWQgaW50IGV4eW5v
+c19kcm1fZmJfZ2V0X2J1Zl9jbnQoc3RydWN0IGRybV9mcmFtZWJ1ZmZlciAqZmIpCiAKIAlleHlu
+b3NfZmIgPSB0b19leHlub3NfZmIoZmIpOwogCi0JcmV0dXJuIGV4eW5vc19mYi0+YnVmX2NudDsK
+KwlyZXR1cm4gZXh5bm9zX2ZiID8gZXh5bm9zX2ZiLT5idWZfY250IDogMDsKIH0KIAogc3RydWN0
+IGRybV9mcmFtZWJ1ZmZlciAqCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fcGxhbmUuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9wbGFu
+ZS5jCmluZGV4IDFjNjdmYmMuLmRmY2EyMTggMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9wbGFuZS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX2RybV9wbGFuZS5jCkBAIC05OCw2ICs5OCw5IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19wbGFu
+ZV9tb2RlX3NldChzdHJ1Y3QgZHJtX3BsYW5lICpwbGFuZSwgc3RydWN0IGRybV9jcnRjICpjcnRj
+CiAJdW5zaWduZWQgaW50IGFjdHVhbF93OwogCXVuc2lnbmVkIGludCBhY3R1YWxfaDsKIAorCWlm
+ICghY3J0YykKKwkJcmV0dXJuOworCiAJYWN0dWFsX3cgPSBleHlub3NfcGxhbmVfZ2V0X3NpemUo
+Y3J0Y194LCBjcnRjX3csIGNydGMtPm1vZGUuaGRpc3BsYXkpOwogCWFjdHVhbF9oID0gZXh5bm9z
+X3BsYW5lX2dldF9zaXplKGNydGNfeSwgY3J0Y19oLCBjcnRjLT5tb2RlLnZkaXNwbGF5KTsKIApA
+QCAtMTQwLDggKzE0Myw2IEBAIHN0YXRpYyB2b2lkIGV4eW5vc19wbGFuZV9tb2RlX3NldChzdHJ1
+Y3QgZHJtX3BsYW5lICpwbGFuZSwgc3RydWN0IGRybV9jcnRjICpjcnRjCiAJCQlleHlub3NfcGxh
+bmUtPmNydGNfeCwgZXh5bm9zX3BsYW5lLT5jcnRjX3ksCiAJCQlleHlub3NfcGxhbmUtPmNydGNf
+d2lkdGgsIGV4eW5vc19wbGFuZS0+Y3J0Y19oZWlnaHQpOwogCi0JcGxhbmUtPmNydGMgPSBjcnRj
+OwotCiAJaWYgKGV4eW5vc19jcnRjLT5vcHMtPndpbl9tb2RlX3NldCkKIAkJZXh5bm9zX2NydGMt
+Pm9wcy0+d2luX21vZGVfc2V0KGV4eW5vc19jcnRjLCBleHlub3NfcGxhbmUpOwogfQpAQCAtMTc5
+LDE1ICsxODAsMjYgQEAgZXh5bm9zX3VwZGF0ZV9wbGFuZShzdHJ1Y3QgZHJtX3BsYW5lICpwbGFu
+ZSwgc3RydWN0IGRybV9jcnRjICpjcnRjLAogCQkgICAgIHVpbnQzMl90IHNyY194LCB1aW50MzJf
+dCBzcmNfeSwKIAkJICAgICB1aW50MzJfdCBzcmNfdywgdWludDMyX3Qgc3JjX2gpCiB7Ci0Jc3Ry
+dWN0IGV4eW5vc19kcm1fY3J0YyAqZXh5bm9zX2NydGMgPSB0b19leHlub3NfY3J0YyhjcnRjKTsK
+IAlzdHJ1Y3QgZXh5bm9zX2RybV9wbGFuZSAqZXh5bm9zX3BsYW5lID0gdG9fZXh5bm9zX3BsYW5l
+KHBsYW5lKTsKKwlzdHJ1Y3QgZXh5bm9zX2RybV9jcnRjICpleHlub3NfY3J0YzsKIAogCWV4eW5v
+c19wbGFuZV9tb2RlX3NldChwbGFuZSwgY3J0YywgZmIsIGNydGNfeCwgY3J0Y195LAogCQkJICAg
+ICAgY3J0Y193LCBjcnRjX2gsIHNyY194ID4+IDE2LCBzcmNfeSA+PiAxNiwKIAkJCSAgICAgIHNy
+Y193ID4+IDE2LCBzcmNfaCA+PiAxNik7CiAKLQlpZiAoZXh5bm9zX2NydGMtPm9wcy0+d2luX2Nv
+bW1pdCkKLQkJZXh5bm9zX2NydGMtPm9wcy0+d2luX2NvbW1pdChleHlub3NfY3J0YywgZXh5bm9z
+X3BsYW5lLT56cG9zKTsKKwlpZiAoZmIpIHsKKwkJZXh5bm9zX2NydGMgPSB0b19leHlub3NfY3J0
+YyhjcnRjKTsKKwkJaWYgKGV4eW5vc19jcnRjLT5vcHMtPndpbl9jb21taXQpCisJCQlleHlub3Nf
+Y3J0Yy0+b3BzLT53aW5fY29tbWl0KGV4eW5vc19jcnRjLAorCQkJCQkJICAgICBleHlub3NfcGxh
+bmUtPnpwb3MpOworCX0gZWxzZSB7CisJCWV4eW5vc19jcnRjID0gdG9fZXh5bm9zX2NydGMocGxh
+bmUtPmNydGMpOworCQlpZiAoZXh5bm9zX2NydGMtPm9wcy0+d2luX2Rpc2FibGUpCisJCQlleHlu
+b3NfY3J0Yy0+b3BzLT53aW5fZGlzYWJsZShleHlub3NfY3J0YywKKwkJCQkJCSAgICAgIGV4eW5v
+c19wbGFuZS0+enBvcyk7CisJfQorCisJcGxhbmUtPmNydGMgPSBjcnRjOwogfQogCiBzdGF0aWMg
+aW50IGV4eW5vc19kaXNhYmxlX3BsYW5lKHN0cnVjdCBkcm1fcGxhbmUgKnBsYW5lKQpAQCAtMjI0
+LDcgKzIzNiw3IEBAIHN0YXRpYyBpbnQgZXh5bm9zX3BsYW5lX3NldF9wcm9wZXJ0eShzdHJ1Y3Qg
+ZHJtX3BsYW5lICpwbGFuZSwKIAogc3RhdGljIHN0cnVjdCBkcm1fcGxhbmVfZnVuY3MgZXh5bm9z
+X3BsYW5lX2Z1bmNzID0gewogCS51cGRhdGVfcGxhbmUJPSBkcm1fcGxhbmVfaGVscGVyX3VwZGF0
+ZSwKLQkuZGlzYWJsZV9wbGFuZQk9IGV4eW5vc19kaXNhYmxlX3BsYW5lLAorCS5kaXNhYmxlX3Bs
+YW5lCT0gZHJtX3BsYW5lX2hlbHBlcl9kaXNhYmxlLAogCS5kZXN0cm95CT0gZXh5bm9zX3BsYW5l
+X2Rlc3Ryb3ksCiAJLnNldF9wcm9wZXJ0eQk9IGV4eW5vc19wbGFuZV9zZXRfcHJvcGVydHksCiB9
+OwotLSAKMS45LjMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Cg==
