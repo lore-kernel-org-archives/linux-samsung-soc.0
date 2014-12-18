@@ -1,124 +1,52 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH RFC v3 1/2] PM / Domains: Extend API pm_genpd_dev_need_restore to use restore types
-Date: Thu, 18 Dec 2014 01:58:55 +0100
-Message-ID: <5418986.E58ik2Q1Hm@vostro.rjw.lan>
-References: <1418489518-7252-1-git-send-email-amit.daniel@samsung.com> <CADGdYn4WQ6i29ecTthu7eNUfSSQ--YESGyHcA1_9CdK-h53hxA@mail.gmail.com> <7h4msub0ca.fsf@deeprootsystems.com>
+From: Jaewon Kim <jaewon02.kim@samsung.com>
+Subject: Re: [PATCH v7 1/3] Input: add regulator haptic driver
+Date: Thu, 18 Dec 2014 10:17:42 +0900
+Message-ID: <54922B36.8050306@samsung.com>
+References: <1418787308-29019-1-git-send-email-jaewon02.kim@samsung.com>
+ <1418787308-29019-2-git-send-email-jaewon02.kim@samsung.com>
+ <20141217220602.GC32399@dtor-ws>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from v094114.home.net.pl ([79.96.170.134]:60636 "HELO
-	v094114.home.net.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1750995AbaLRAhK (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:18775 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751489AbaLRBRq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 17 Dec 2014 19:37:10 -0500
-In-Reply-To: <7h4msub0ca.fsf@deeprootsystems.com>
+	Wed, 17 Dec 2014 20:17:46 -0500
+In-reply-to: <20141217220602.GC32399@dtor-ws>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: amit daniel kachhap <amit.daniel@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Len Brown <len.brown@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Hyunhee Kim <hyunhee.kim@samsung.com>
 
-On Wednesday, December 17, 2014 10:25:09 AM Kevin Hilman wrote:
-> amit daniel kachhap <amit.daniel@samsung.com> writes:
-> 
-> > On Wed, Dec 17, 2014 at 3:40 AM, Kevin Hilman <khilman@kernel.org> wrote:
-> >> Marek Szyprowski <m.szyprowski@samsung.com> writes:
-> >>
-> >>> Hello,
-> >>>
-> >>> On 2014-12-13 17:51, Amit Daniel Kachhap wrote:
-> >>>> Instead of using bool to restore suspended devices initially, use flags
-> >>>> like GPD_DEV_SUSPEND_INIT, GPD_DEV_RESTORE_INIT and GPD_DEV_RESTORE_FORCE.
-> >>>> The first two flags will be similar to the existing true/false functionality.
-> >>>> The third flag may be used to force restore of suspended devices
-> >>>> whenever their associated power domain is turned on.
-> >>>>
-> >>>> Currently, PD power off function powers off all the associated unused
-> >>>> devices. The functionality added in this patch is similar to it.
-> >>>>
-> >>>> This feature may be used for those devices which are always in ON state
-> >>>> if the PD associated with them is ON but may need local runtime resume
-> >>>> and suspend during PD On/Off. These devices (like clock) may not implement
-> >>>> complete pm_runtime calls such as pm_runtime_get/pm_runtime_put due to
-> >>>> subsystems interaction behaviour or any other reason.
-> >>>>
-> >>>> The model works like,
-> >>>>      DEV1 (Attaches itself with PD but no calls to pm_runtime_get and
-> >>>>      /       pm_runtime_put. Its local runtime_suspend/resume is invoked via
-> >>>>     /        GPD_DEV_RESTORE_FORCE option)
-> >>>>    /
-> >>>> PD -- DEV2 (Implements complete PM runtime and calls pm_runtime_get and
-> >>>>    \ pm_runtime_put. This in turn invokes PD On/Off)
-> >>>>     \
-> >>>>      DEV3 (Similar to DEV1)
-> >>>>
-> >>>> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> >>>
-> >>> The idea of adding new gen_pd flag and reusing runtime pm calls intead
-> >>> of additional notifiers looks promising, but I have some doubts.
-> >>
-> >> I agree, this is better than notifiers, but I have some doubts too.
-> >
-> > Thanks,
-> >
-> >>
-> >>> don't see any guarantee that devices with GPD_DEV_RESTORE_FORCE flag
-> >>> will be suspended after all "normal" devices and restored before
-> >>> them. Without such assumption it will be hard to use this approach for
-> >>> iommu related activities, because device might need to use (in its
-> >>> suspend/resume callbacks) the functionality provided by the other
-> >>> device with GPD_DEV_RESTORE_FORCE flag. Maybe some additional flags
-> >>> like suspend/resume priority (or more flags) will solve somehow this
-> >>> dependency.
-> >>
-> >> At a deeper level, the problem with this approach is that this is more
-> >> generically a runtime PM dependency problem, not a genpd problem.  For
-> >> example, what happens when the same kind of dependency exists on a
-> >> platform using a custom PM domain instead of genpd (like ACPI.) ?
-> >
-> > This patch does not try to solve runtime PM dependencies between
-> > devices. As an example, if there are three devices D1, D2, D3 in a
-> > power domain. Device D3 would update the power domain state
-> > requirement using runtime PM API but devices D1 and D2 do not want to
-> > control the domain but just want to be notified when the power domain
-> > state changes.
-> 
-> Yes, I understand that.  
-> 
-> The question is: what do you do when you have the same dependency
-> problem and you're not using genpd (for example, some SoCs have
-> implmeented their own PM domains, and ACPI devices are managed by their
-> own PM domain, not genpd.)
-> 
-> >> What's needed to solve this problem is a generalized way to have runtime
-> >> PM dependencies between devices.  Runtime PM already automatically
-> >> handles parent devices as one type of dependent device (e.g. a parent
-> >> device needs to be runtime PM resumed before its child.)  So what's
-> >> needed is a generic way to other PM dependencies with the runtime PM
-> >> core (not the genpd core.)
-> >
-> > Considering the example above with three devices, device D1 and D2 are
-> > passive components in this power domain. These devices only need to
-> > know the state changes of the power domains but would not control the
-> > power domain themselves nor put forth constraints in the power domain
-> > state changes. So I did not clearly understand as to how this example
-> > could be solved by introducing changes in runtime PM core.
-> 
-> Your solution only solves the problems for devices managed by genpd.
-> 
-> If I understood your example correctly, what you really want to solve
-> this problem more generically is to be able to tell the runtime PM core
-> that D3 has a dependency on D1 and D2.  Then, whenver the runtime PM
-> core is doing get/put operations for D3, it needs to also do them for D1
-> and D2.
-> 
-> This will accomplish the same as your proposed approach, but work for
-> any devices in any PM domains.
+Hi Dmity,
 
-Plus, it is not limited to runtime PM, really.  It affects system suspend
-too.
+2014=EB=85=84 12=EC=9B=94 18=EC=9D=BC 07:06=EC=97=90 Dmitry Torokhov =EC=
+=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
+> HI Jaewon,
+>
+> On Wed, Dec 17, 2014 at 12:35:06PM +0900, Jaewon Kim wrote:
+>> This patch adds support for haptic driver controlled by
+>> voltage of regulator. And this driver support for
+>> Force Feedback interface from input framework
+>>
+>> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+>> Signed-off-by: Hyunhee Kim <hyunhee.kim@samsung.com>
+>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+> Does the driver still work if you apply the patch below on top of you=
+rs?
+>
+> Thanks.
+>
 
+Yes, there is no problem to apply this one first.
 
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+Thanks to review my patches.
+
+Thanks
+Jaewon Kim
