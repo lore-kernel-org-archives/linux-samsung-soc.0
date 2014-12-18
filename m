@@ -1,133 +1,94 @@
-From: Kevin Hilman <khilman@kernel.org>
+From: Mike Turquette <mturquette@linaro.org>
 Subject: Re: [PATCH] clk: samsung: Fix Exynos 5420 pinctrl setup and clock
  disable failure due to domain being gated
-Date: Thu, 18 Dec 2014 14:10:34 -0800
-Message-ID: <CAMAWPa-Q0oges=k7ZqXhh4R3NYtWeCRtgxdhxmZrV46zU4D2jg@mail.gmail.com>
+Date: Thu, 18 Dec 2014 14:32:30 -0800
+Message-ID: <20141218223230.29014.90296@quantum>
 References: <1417788934-23447-1-git-send-email-k.kozlowski@samsung.com>
-	<1418129982.19339.6.camel@AMDC1943>
-	<5486F69B.6020005@samsung.com>
-	<7hlhmfo1b0.fsf@deeprootsystems.com>
-	<7h8ui8h7n9.fsf@deeprootsystems.com>
-	<1418718015.28527.4.camel@AMDC1943>
-	<20141217152322.29014.7739@quantum>
-	<20141218065848.29014.24886@quantum>
+ <1418129982.19339.6.camel@AMDC1943> <5486F69B.6020005@samsung.com>
+ <7hlhmfo1b0.fsf@deeprootsystems.com> <7h8ui8h7n9.fsf@deeprootsystems.com>
+ <1418718015.28527.4.camel@AMDC1943> <20141217152322.29014.7739@quantum>
+ <20141218065848.29014.24886@quantum>
+ <CAMAWPa-Q0oges=k7ZqXhh4R3NYtWeCRtgxdhxmZrV46zU4D2jg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.19.201]:51611 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751273AbaLRWKk convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Dec 2014 17:10:40 -0500
-Received: from mail.kernel.org (localhost [127.0.0.1])
-	by mail.kernel.org (Postfix) with ESMTP id 323CD2052F
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Dec 2014 22:10:39 +0000 (UTC)
-Received: from mail-wg0-f46.google.com (mail-wg0-f46.google.com [74.125.82.46])
-	(using TLSv1 with cipher AES128-SHA (128/128 bits))
-	(No client certificate requested)
-	by mail.kernel.org (Postfix) with ESMTPSA id 0C3A8203E3
-	for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Dec 2014 22:10:36 +0000 (UTC)
-Received: by mail-wg0-f46.google.com with SMTP id x13so2844546wgg.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Dec 2014 14:10:34 -0800 (PST)
-In-Reply-To: <20141218065848.29014.24886@quantum>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <CAMAWPa-Q0oges=k7ZqXhh4R3NYtWeCRtgxdhxmZrV46zU4D2jg@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, lkml <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Turquette <mturquette@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-On Wed, Dec 17, 2014 at 10:58 PM, Mike Turquette <mturquette@linaro.org=
-> wrote:
-> Quoting Mike Turquette (2014-12-17 07:23:22)
->> Quoting Krzysztof Kozlowski (2014-12-16 00:20:15)
->> > On pon, 2014-12-15 at 14:26 -0800, Kevin Hilman wrote:
->> > > Kevin Hilman <khilman@kernel.org> writes:
->> > >
->> > > > Sylwester Nawrocki <s.nawrocki@samsung.com> writes:
->> > > >
->> > > >> On 09/12/14 13:59, Krzysztof Kozlowski wrote:
->> > > >>> On pi=C4=85, 2014-12-05 at 15:15 +0100, Krzysztof Kozlowski =
-wrote:
->> > > >>>> > Audio subsystem clocks are located in separate block. On =
-Exynos 5420 if
->> > > >>>> > clock for this block (from main clock domain) 'mau_epll' =
-is gated then
->> > > >>>> > any read or write to audss registers will block.
->> > > >>>> >
->> > > >>>> > This kind of boot hang was observed on Arndale Octa and P=
-each Pi/Pit
->> > > >>>> > after introducing runtime PM to pl330 DMA driver. After t=
-hat commit the
->> > > >>>> > 'mau_epll' was gated, because the "amba" clock was disabl=
-ed and there
->> > > >>>> > were no more users of mau_epll.
->> > > >>>> >
->> > > >>>> > The system hang on one of steps:
->> > > >>>> > 1. Disabling unused clocks from audss block.
->> > > >>>> > 2. During audss GPIO setup (just before probing i2s0 beca=
-use
->> > > >>>> >    samsung_pinmux_setup() tried to access memory from aud=
-ss block which was
->> > > >>>> >    gated.
->> > > >>>> >
->> > > >>>> > Add a workaround for this by enabling the 'mau_epll' cloc=
-k in probe.
->> > > >>>> >
->> > > >>>> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.c=
-om>
->> > > >>>> > ---
->> > > >>>> >  drivers/clk/samsung/clk-exynos-audss.c | 29 ++++++++++++=
-++++++++++++++++-
->> > > >>>> >  1 file changed, 28 insertions(+), 1 deletion(-)
->> > > >>>
->> > > >>> Sorry for pinging so quick but merge window is open and it l=
-ooks like
->> > > >>> booting Exynos542x boards will be broken (because pl330 will=
- no longer
->> > > >>> hold adma clock enabled so whole audss domain will be gated)=
-=2E
->> > > >>>
->> > > >>> This is a non-intrusive workaround for that issue, as wanted=
- by
->> > > >>> Sylwester:
->> > > >>> https://lkml.org/lkml/2014/12/5/223
->> > > >>>
->> > > >>> Any comments on this?
->> > > >>
->> > > >> The patch looks OK to me, it would be good though if someone =
-else
->> > > >> has confirmed it fixes the bug. I don't have any clock patche=
-s queued
->> > > >> at the moment. Perhaps you could apply it directly, Mike ?
->> > > >
->> > > > I confirm it fixes the boot hang in linux-next (next-20141210)=
- on my
->> > > > exynos5800-peach-pi and exynos5420-arndale-octa.  Tested both
->> > > > exynos_defconfig and multi_v7_defconfig.
->> > > >
->> > > > Tested-by: Kevin Hilman <khilman@linaro.org>
->> > >
->> > > What's the status of this patch?  linux-next is still broken for=
- several
->> > > Exynos5 platforms without this fix.
->> >
->> > I believe not only next is broken but also current mainline becaus=
-e
->> > runtime PM for pl330 was merged yesterday...
->> >
->> > The patch received two tested-bys (Kevin's and Javier's) and Sylwe=
-ster's
->> > ack.
->> >
->> > Mike, could you pick the patch and send it to Linus after rc1?
->>
->> Will do.
->
-> To be clear, I pulled this into clk-next towards -rc1, so it won't ne=
-ed
-> to go through as an -rc fix.
-
-This hit today's linux-next, and exynos5 platforms are happily booting
-again.  Thanks!
-
-Kevin
+UXVvdGluZyBLZXZpbiBIaWxtYW4gKDIwMTQtMTItMTggMTQ6MTA6MzQpCj4gT24gV2VkLCBEZWMg
+MTcsIDIwMTQgYXQgMTA6NTggUE0sIE1pa2UgVHVycXVldHRlIDxtdHVycXVldHRlQGxpbmFyby5v
+cmc+IHdyb3RlOgo+ID4gUXVvdGluZyBNaWtlIFR1cnF1ZXR0ZSAoMjAxNC0xMi0xNyAwNzoyMzoy
+MikKPiA+PiBRdW90aW5nIEtyenlzenRvZiBLb3psb3dza2kgKDIwMTQtMTItMTYgMDA6MjA6MTUp
+Cj4gPj4gPiBPbiBwb24sIDIwMTQtMTItMTUgYXQgMTQ6MjYgLTA4MDAsIEtldmluIEhpbG1hbiB3
+cm90ZToKPiA+PiA+ID4gS2V2aW4gSGlsbWFuIDxraGlsbWFuQGtlcm5lbC5vcmc+IHdyaXRlczoK
+PiA+PiA+ID4KPiA+PiA+ID4gPiBTeWx3ZXN0ZXIgTmF3cm9ja2kgPHMubmF3cm9ja2lAc2Ftc3Vu
+Zy5jb20+IHdyaXRlczoKPiA+PiA+ID4gPgo+ID4+ID4gPiA+PiBPbiAwOS8xMi8xNCAxMzo1OSwg
+S3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToKPiA+PiA+ID4gPj4+IE9uIHBpxIUsIDIwMTQtMTIt
+MDUgYXQgMTU6MTUgKzAxMDAsIEtyenlzenRvZiBLb3psb3dza2kgd3JvdGU6Cj4gPj4gPiA+ID4+
+Pj4gPiBBdWRpbyBzdWJzeXN0ZW0gY2xvY2tzIGFyZSBsb2NhdGVkIGluIHNlcGFyYXRlIGJsb2Nr
+LiBPbiBFeHlub3MgNTQyMCBpZgo+ID4+ID4gPiA+Pj4+ID4gY2xvY2sgZm9yIHRoaXMgYmxvY2sg
+KGZyb20gbWFpbiBjbG9jayBkb21haW4pICdtYXVfZXBsbCcgaXMgZ2F0ZWQgdGhlbgo+ID4+ID4g
+PiA+Pj4+ID4gYW55IHJlYWQgb3Igd3JpdGUgdG8gYXVkc3MgcmVnaXN0ZXJzIHdpbGwgYmxvY2su
+Cj4gPj4gPiA+ID4+Pj4gPgo+ID4+ID4gPiA+Pj4+ID4gVGhpcyBraW5kIG9mIGJvb3QgaGFuZyB3
+YXMgb2JzZXJ2ZWQgb24gQXJuZGFsZSBPY3RhIGFuZCBQZWFjaCBQaS9QaXQKPiA+PiA+ID4gPj4+
+PiA+IGFmdGVyIGludHJvZHVjaW5nIHJ1bnRpbWUgUE0gdG8gcGwzMzAgRE1BIGRyaXZlci4gQWZ0
+ZXIgdGhhdCBjb21taXQgdGhlCj4gPj4gPiA+ID4+Pj4gPiAnbWF1X2VwbGwnIHdhcyBnYXRlZCwg
+YmVjYXVzZSB0aGUgImFtYmEiIGNsb2NrIHdhcyBkaXNhYmxlZCBhbmQgdGhlcmUKPiA+PiA+ID4g
+Pj4+PiA+IHdlcmUgbm8gbW9yZSB1c2VycyBvZiBtYXVfZXBsbC4KPiA+PiA+ID4gPj4+PiA+Cj4g
+Pj4gPiA+ID4+Pj4gPiBUaGUgc3lzdGVtIGhhbmcgb24gb25lIG9mIHN0ZXBzOgo+ID4+ID4gPiA+
+Pj4+ID4gMS4gRGlzYWJsaW5nIHVudXNlZCBjbG9ja3MgZnJvbSBhdWRzcyBibG9jay4KPiA+PiA+
+ID4gPj4+PiA+IDIuIER1cmluZyBhdWRzcyBHUElPIHNldHVwIChqdXN0IGJlZm9yZSBwcm9iaW5n
+IGkyczAgYmVjYXVzZQo+ID4+ID4gPiA+Pj4+ID4gICAgc2Ftc3VuZ19waW5tdXhfc2V0dXAoKSB0
+cmllZCB0byBhY2Nlc3MgbWVtb3J5IGZyb20gYXVkc3MgYmxvY2sgd2hpY2ggd2FzCj4gPj4gPiA+
+ID4+Pj4gPiAgICBnYXRlZC4KPiA+PiA+ID4gPj4+PiA+Cj4gPj4gPiA+ID4+Pj4gPiBBZGQgYSB3
+b3JrYXJvdW5kIGZvciB0aGlzIGJ5IGVuYWJsaW5nIHRoZSAnbWF1X2VwbGwnIGNsb2NrIGluIHBy
+b2JlLgo+ID4+ID4gPiA+Pj4+ID4KPiA+PiA+ID4gPj4+PiA+IFNpZ25lZC1vZmYtYnk6IEtyenlz
+enRvZiBLb3psb3dza2kgPGsua296bG93c2tpQHNhbXN1bmcuY29tPgo+ID4+ID4gPiA+Pj4+ID4g
+LS0tCj4gPj4gPiA+ID4+Pj4gPiAgZHJpdmVycy9jbGsvc2Ftc3VuZy9jbGstZXh5bm9zLWF1ZHNz
+LmMgfCAyOSArKysrKysrKysrKysrKysrKysrKysrKysrKysrLQo+ID4+ID4gPiA+Pj4+ID4gIDEg
+ZmlsZSBjaGFuZ2VkLCAyOCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4gPj4gPiA+ID4+
+Pgo+ID4+ID4gPiA+Pj4gU29ycnkgZm9yIHBpbmdpbmcgc28gcXVpY2sgYnV0IG1lcmdlIHdpbmRv
+dyBpcyBvcGVuIGFuZCBpdCBsb29rcyBsaWtlCj4gPj4gPiA+ID4+PiBib290aW5nIEV4eW5vczU0
+MnggYm9hcmRzIHdpbGwgYmUgYnJva2VuIChiZWNhdXNlIHBsMzMwIHdpbGwgbm8gbG9uZ2VyCj4g
+Pj4gPiA+ID4+PiBob2xkIGFkbWEgY2xvY2sgZW5hYmxlZCBzbyB3aG9sZSBhdWRzcyBkb21haW4g
+d2lsbCBiZSBnYXRlZCkuCj4gPj4gPiA+ID4+Pgo+ID4+ID4gPiA+Pj4gVGhpcyBpcyBhIG5vbi1p
+bnRydXNpdmUgd29ya2Fyb3VuZCBmb3IgdGhhdCBpc3N1ZSwgYXMgd2FudGVkIGJ5Cj4gPj4gPiA+
+ID4+PiBTeWx3ZXN0ZXI6Cj4gPj4gPiA+ID4+PiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxNC8x
+Mi81LzIyMwo+ID4+ID4gPiA+Pj4KPiA+PiA+ID4gPj4+IEFueSBjb21tZW50cyBvbiB0aGlzPwo+
+ID4+ID4gPiA+Pgo+ID4+ID4gPiA+PiBUaGUgcGF0Y2ggbG9va3MgT0sgdG8gbWUsIGl0IHdvdWxk
+IGJlIGdvb2QgdGhvdWdoIGlmIHNvbWVvbmUgZWxzZQo+ID4+ID4gPiA+PiBoYXMgY29uZmlybWVk
+IGl0IGZpeGVzIHRoZSBidWcuIEkgZG9uJ3QgaGF2ZSBhbnkgY2xvY2sgcGF0Y2hlcyBxdWV1ZWQK
+PiA+PiA+ID4gPj4gYXQgdGhlIG1vbWVudC4gUGVyaGFwcyB5b3UgY291bGQgYXBwbHkgaXQgZGly
+ZWN0bHksIE1pa2UgPwo+ID4+ID4gPiA+Cj4gPj4gPiA+ID4gSSBjb25maXJtIGl0IGZpeGVzIHRo
+ZSBib290IGhhbmcgaW4gbGludXgtbmV4dCAobmV4dC0yMDE0MTIxMCkgb24gbXkKPiA+PiA+ID4g
+PiBleHlub3M1ODAwLXBlYWNoLXBpIGFuZCBleHlub3M1NDIwLWFybmRhbGUtb2N0YS4gIFRlc3Rl
+ZCBib3RoCj4gPj4gPiA+ID4gZXh5bm9zX2RlZmNvbmZpZyBhbmQgbXVsdGlfdjdfZGVmY29uZmln
+Lgo+ID4+ID4gPiA+Cj4gPj4gPiA+ID4gVGVzdGVkLWJ5OiBLZXZpbiBIaWxtYW4gPGtoaWxtYW5A
+bGluYXJvLm9yZz4KPiA+PiA+ID4KPiA+PiA+ID4gV2hhdCdzIHRoZSBzdGF0dXMgb2YgdGhpcyBw
+YXRjaD8gIGxpbnV4LW5leHQgaXMgc3RpbGwgYnJva2VuIGZvciBzZXZlcmFsCj4gPj4gPiA+IEV4
+eW5vczUgcGxhdGZvcm1zIHdpdGhvdXQgdGhpcyBmaXguCj4gPj4gPgo+ID4+ID4gSSBiZWxpZXZl
+IG5vdCBvbmx5IG5leHQgaXMgYnJva2VuIGJ1dCBhbHNvIGN1cnJlbnQgbWFpbmxpbmUgYmVjYXVz
+ZQo+ID4+ID4gcnVudGltZSBQTSBmb3IgcGwzMzAgd2FzIG1lcmdlZCB5ZXN0ZXJkYXkuLi4KPiA+
+PiA+Cj4gPj4gPiBUaGUgcGF0Y2ggcmVjZWl2ZWQgdHdvIHRlc3RlZC1ieXMgKEtldmluJ3MgYW5k
+IEphdmllcidzKSBhbmQgU3lsd2VzdGVyJ3MKPiA+PiA+IGFjay4KPiA+PiA+Cj4gPj4gPiBNaWtl
+LCBjb3VsZCB5b3UgcGljayB0aGUgcGF0Y2ggYW5kIHNlbmQgaXQgdG8gTGludXMgYWZ0ZXIgcmMx
+Pwo+ID4+Cj4gPj4gV2lsbCBkby4KPiA+Cj4gPiBUbyBiZSBjbGVhciwgSSBwdWxsZWQgdGhpcyBp
+bnRvIGNsay1uZXh0IHRvd2FyZHMgLXJjMSwgc28gaXQgd29uJ3QgbmVlZAo+ID4gdG8gZ28gdGhy
+b3VnaCBhcyBhbiAtcmMgZml4Lgo+IAo+IFRoaXMgaGl0IHRvZGF5J3MgbGludXgtbmV4dCwgYW5k
+IGV4eW5vczUgcGxhdGZvcm1zIGFyZSBoYXBwaWx5IGJvb3RpbmcKPiBhZ2Fpbi4gIFRoYW5rcyEK
+ClRoYW5rcyBmb3IgdGVzdGluZyBpdCBLZXZpbi4KClJlZ2FyZHMsCk1pa2UKCj4gCj4gS2V2aW4K
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFy
+bS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
+ZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1r
+ZXJuZWwK
