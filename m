@@ -1,137 +1,130 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 25/29] drm/exynos: atomic phase 1: use
- drm_plane_helper_disable()
-Date: Thu, 18 Dec 2014 16:30:26 +0100
-Message-ID: <20141218153026.GN2711@phenom.ffwll.local>
-References: <1418911135-5207-1-git-send-email-gustavo@padovan.org>
- <1418911135-5207-26-git-send-email-gustavo@padovan.org>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH] ARM: SAMSUNG: remove dead #elif CONFIG_S3C24XX_DMAC
+Date: Thu, 18 Dec 2014 20:03:58 +0100
+Message-ID: <1645416.VNQj8YWB7M@phil>
+References: <1418830837-7422-1-git-send-email-stefan.hengelein@fau.de> <2864831.LEPnyFh3Il@phil> <CABv5NL_SLyY9-yookdTVdNXzCmUEqJ_QB6ofzw_q0H7Vcwbzfg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f182.google.com ([209.85.212.182]:39778 "EHLO
-	mail-wi0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750953AbaLRPac (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:54348 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751549AbaLRTE2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Dec 2014 10:30:32 -0500
-Received: by mail-wi0-f182.google.com with SMTP id h11so2213435wiw.9
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Dec 2014 07:30:30 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <1418911135-5207-26-git-send-email-gustavo@padovan.org>
+	Thu, 18 Dec 2014 14:04:28 -0500
+In-Reply-To: <CABv5NL_SLyY9-yookdTVdNXzCmUEqJ_QB6ofzw_q0H7Vcwbzfg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+To: Stefan Hengelein <stefan.hengelein@fau.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Thu, Dec 18, 2014 at 11:58:51AM -0200, Gustavo Padovan wrote:
-> From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-> 
-> The atomic helper to disable planes also uses exynos_update_plane() to
-> disable plane so we had to adapt it to both commit and disable planes.
-> 
-> A check for NULL CRTC was added to exynos_plane_mode_set() since planes
-> to be disabled have plane_state->crtc set to NULL.
-> 
-> Also win_disable() callback uses plane->crtc as arg for the same reason.
-> 
-> exynos_drm_fb_get_buf_cnt() needs a fb check too to avoid a null pointer.
-> 
-> Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Hi Stefan,
 
-Thierry has patches to add an optional atomic_disable vfunc to plane
-helpers, which seems useful for you too. Until that patch has landed maybe
-just carry Thierry's patch locally. Or undo the merge done here again
-later on.
--Daniel
+Am Donnerstag, 18. Dezember 2014, 14:43:01 schrieb Stefan Hengelein:
+> So you actually tested the code I removed in the patch? can you
+> provide a configuration that compiles that piece of code?
 
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fb.c    |  2 +-
->  drivers/gpu/drm/exynos/exynos_drm_plane.c | 24 ++++++++++++++++++------
->  2 files changed, 19 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fb.c b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-> index d346d1e..470456d 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fb.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fb.c
-> @@ -136,7 +136,7 @@ unsigned int exynos_drm_fb_get_buf_cnt(struct drm_framebuffer *fb)
->  
->  	exynos_fb = to_exynos_fb(fb);
->  
-> -	return exynos_fb->buf_cnt;
-> +	return exynos_fb ? exynos_fb->buf_cnt : 0;
->  }
->  
->  struct drm_framebuffer *
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> index 1c67fbc..dfca218 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
-> @@ -98,6 +98,9 @@ static void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc
->  	unsigned int actual_w;
->  	unsigned int actual_h;
->  
-> +	if (!crtc)
-> +		return;
-> +
->  	actual_w = exynos_plane_get_size(crtc_x, crtc_w, crtc->mode.hdisplay);
->  	actual_h = exynos_plane_get_size(crtc_y, crtc_h, crtc->mode.vdisplay);
->  
-> @@ -140,8 +143,6 @@ static void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc
->  			exynos_plane->crtc_x, exynos_plane->crtc_y,
->  			exynos_plane->crtc_width, exynos_plane->crtc_height);
->  
-> -	plane->crtc = crtc;
-> -
->  	if (exynos_crtc->ops->win_mode_set)
->  		exynos_crtc->ops->win_mode_set(exynos_crtc, exynos_plane);
->  }
-> @@ -179,15 +180,26 @@ exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
->  		     uint32_t src_x, uint32_t src_y,
->  		     uint32_t src_w, uint32_t src_h)
->  {
-> -	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
->  	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
-> +	struct exynos_drm_crtc *exynos_crtc;
->  
->  	exynos_plane_mode_set(plane, crtc, fb, crtc_x, crtc_y,
->  			      crtc_w, crtc_h, src_x >> 16, src_y >> 16,
->  			      src_w >> 16, src_h >> 16);
->  
-> -	if (exynos_crtc->ops->win_commit)
-> -		exynos_crtc->ops->win_commit(exynos_crtc, exynos_plane->zpos);
-> +	if (fb) {
-> +		exynos_crtc = to_exynos_crtc(crtc);
-> +		if (exynos_crtc->ops->win_commit)
-> +			exynos_crtc->ops->win_commit(exynos_crtc,
-> +						     exynos_plane->zpos);
-> +	} else {
-> +		exynos_crtc = to_exynos_crtc(plane->crtc);
-> +		if (exynos_crtc->ops->win_disable)
-> +			exynos_crtc->ops->win_disable(exynos_crtc,
-> +						      exynos_plane->zpos);
-> +	}
-> +
-> +	plane->crtc = crtc;
->  }
->  
->  static int exynos_disable_plane(struct drm_plane *plane)
-> @@ -224,7 +236,7 @@ static int exynos_plane_set_property(struct drm_plane *plane,
->  
->  static struct drm_plane_funcs exynos_plane_funcs = {
->  	.update_plane	= drm_plane_helper_update,
-> -	.disable_plane	= exynos_disable_plane,
-> +	.disable_plane	= drm_plane_helper_disable,
->  	.destroy	= exynos_plane_destroy,
->  	.set_property	= exynos_plane_set_property,
->  };
-> -- 
-> 1.9.3
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+Yep, one of my boards (Asus eeeReader DR-900) was actually able to transmit
+stuff via the libertas spi wifi driver using the s3c64xx-spi driver.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+The smdk2416 is currently the only board for the s3c2416 in the kernel. I don't
+know if it had actual spi devices connected, but if it had, a suitable diff would
+look something like the diff below. Of course hooking up spi devices would
+work the same in any out-of-tree board for the supported socs.
+
+
+For people reading along, the s3c24xx spi distribution is as follows:
+s3c2410, s3c2412, s3c2440: (I think) two s3c24xx-spi
+s3c2443: one s3c64xx-spi and one s3c24xx-spi
+s3c2416: one s3c64xx-spi
+s3c2450: two s3c64xx-spi
+
+
+Heiko
+
+
+------------ 8< ------------
+diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
+index 9eb2229..5210e5d 100644
+--- a/arch/arm/mach-s3c24xx/Kconfig
++++ b/arch/arm/mach-s3c24xx/Kconfig
+@@ -419,6 +419,8 @@ config MACH_SMDK2416
+ 	select S3C_DEV_HSMMC1
+ 	select S3C_DEV_NAND
+ 	select S3C_DEV_USB_HOST
++	select S3C64XX_DEV_SPI0
++	select S3C2443_SETUP_SPI
+ 	help
+ 	  Say Y here if you are using an SMDK2416
+ 
+diff --git a/arch/arm/mach-s3c24xx/mach-smdk2416.c b/arch/arm/mach-s3c24xx/mach-smdk2416.c
+index 86394f7..b6c6ff4 100644
+--- a/arch/arm/mach-s3c24xx/mach-smdk2416.c
++++ b/arch/arm/mach-s3c24xx/mach-smdk2416.c
+@@ -52,6 +52,9 @@
+ #include <linux/platform_data/s3c-hsudc.h>
+ #include <plat/samsung-time.h>
+ 
++#include <linux/spi/spi.h>
++#include <linux/platform_data/spi-s3c64xx.h>
++
+ #include <plat/fb.h>
+ 
+ #include "common.h"
+@@ -207,6 +210,26 @@ static struct s3c_sdhci_platdata smdk2416_hsmmc1_pdata __initdata = {
+ 	.cd_type		= S3C_SDHCI_CD_NONE,
+ };
+ 
++struct s3c64xx_spi_csinfo libertas_cs_info = {
++	.fb_delay = 0,
++	.line = 128, /* gpio cs line */
++};
++
++
++static struct spi_board_info spi_board_info[] = {
++    {
++	.modalias		= "libertas_spi",
++	.max_speed_hz		= 1200000,
++	.bus_num		= 0,
++	.irq			= 12, /* some interrupt number */
++	.chip_select		= 0,
++	.mode			= SPI_MODE_3,
++	.controller_data	= &libertas_cs_info,
++/*	.platform_data		= &foo1_pdata, */
++    },
++};
++
++
+ static struct platform_device *smdk2416_devices[] __initdata = {
+ 	&s3c_device_fb,
+ 	&s3c_device_wdt,
+@@ -216,6 +239,7 @@ static struct platform_device *smdk2416_devices[] __initdata = {
+ 	&s3c_device_hsmmc1,
+ 	&s3c_device_usb_hsudc,
+ 	&s3c2443_device_dma,
++	&s3c64xx_device_spi0,
+ };
+ 
+ static void __init smdk2416_init_time(void)
+@@ -250,6 +274,9 @@ static void __init smdk2416_machine_init(void)
+ 	gpio_request(S3C2410_GPB(1), "Display Reset");
+ 	gpio_direction_output(S3C2410_GPB(1), 1);
+ 
++	s3c64xx_spi0_set_platdata(NULL, 0, ARRAY_SIZE(spi_board_info));
++	spi_register_board_info(spi_board_info, ARRAY_SIZE(spi_board_info));
++
+ 	platform_add_devices(smdk2416_devices, ARRAY_SIZE(smdk2416_devices));
+ 	smdk_machine_init();
+ }
+diff --git a/arch/arm/mach-s3c24xx/setup-spi.c b/arch/arm/mach-s3c24xx/setup-spi.c
+index 3d47e02..d66c4e0 100644
+--- a/arch/arm/mach-s3c24xx/setup-spi.c
++++ b/arch/arm/mach-s3c24xx/setup-spi.c
+@@ -16,6 +16,7 @@
+ 
+ #include <mach/hardware.h>
+ #include <mach/regs-gpio.h>
++#include <mach/gpio-samsung.h>
+ 
+ #ifdef CONFIG_S3C64XX_DEV_SPI0
+ int s3c64xx_spi0_cfg_gpio(void)
