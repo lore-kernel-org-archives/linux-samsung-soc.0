@@ -1,43 +1,106 @@
-From: nick <xerofoify@gmail.com>
-Subject: Re: Weird/Unneeded call to msleep in exynos_mipi_dsi_wr_data in
- exynos_mipi_dsi_common.c
-Date: Thu, 18 Dec 2014 08:48:10 -0500
-Message-ID: <5492DB1A.2020704@gmail.com>
-References: <54920A54.2060608@gmail.com> <5492ABE7.1060900@samsung.com>	
- <5492D80E.3010906@gmail.com> <1418909978.2236.0.camel@pengutronix.de>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: [PATCH 01/29] drm/exynos/fimd: only finish pageflip if START ==
+ START_S
+Date: Thu, 18 Dec 2014 11:58:27 -0200
+Message-ID: <1418911135-5207-2-git-send-email-gustavo@padovan.org>
+References: <1418911135-5207-1-git-send-email-gustavo@padovan.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1418909978.2236.0.camel@pengutronix.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Lucas Stach <l.stach@pengutronix.de>
-Cc: =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, dh09.lee@samsung.com, linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org, inki.dae@samsung.com, kyungmin.park@samsung.com, tomi.valkeinen@ti.com, kgene@kernel.org, plagnioj@jcrosoft.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1418911135-5207-1-git-send-email-gustavo@padovan.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Lucas,
-That's fair do you known of anyone who does have the hardware so we can test my patch. If you do then we can get this fixed rather
-easily.
-Cheers Nick 
-
-On 2014-12-18 08:39 AM, Lucas Stach wrote:
-> Am Donnerstag, den 18.12.2014, 08:35 -0500 schrieb nick:
->> Krzysztof,
->> If we look at the code for this function, it already is handling the data correctly. In addition  the locks 
->> seem to be better protection then msleep. Further more is no reason for this delay as we are neither resetting 
->> the hardware or waiting for the hardware here so why is it needed? I don't have Exynos based hardware lying
->> around through to test it.
-> 
-> If you can't test it, don't touch it. It's that simple.
-> 
-> Regards,
-> Lucas
-> 
+RnJvbTogRGFuaWVsIEt1cnR6IDxkamt1cnR6QGNocm9taXVtLm9yZz4KCkEgZnJhbWVidWZmZXIg
+Z2V0cyBjb21taXR0ZWQgdG8gRklNRCdzIGRlZmF1bHQgd2luZG93IGxpa2UgdGhpczoKIGV4eW5v
+c19kcm1fY3J0Y191cGRhdGUoKQogIGV4eW5vc19wbGFuZV9jb21taXQoKQogICBmaW1kX3dpbl9j
+b21taXQoKQoKZmltZF93aW5fY29tbWl0KCkgcHJvZ3JhbXMgQlVGX1NUQVJUWzBdLiAgQXQgZWFj
+aCB2YmxhbmssIEZJTUQgaGFyZHdhcmUKY29waWVzIHRoZSB2YWx1ZSBmcm9tIEJVRl9TVEFSVCB0
+byBCVUZfU1RBUlRfUyAoQlVGX1NUQVJUJ3Mgc2hhZG93CnJlZ2lzdGVyKSwgc3RhcnRzIHNjYW5u
+aW5nIG91dCBmcm9tIEJVRl9TVEFSVF9TLCBhbmQgYXNzZXJ0cyBpdHMgaXJxLgoKVGhpcyBpcnEg
+aXMgaGFuZGxlZCBieSBmaW1kX2lycV9oYW5kbGVyKCksIHdoaWNoIGNhbGxzCmV4eW5vc19kcm1f
+Y3J0Y19maW5pc2hfcGFnZWZsaXAoKSB0byBmcmVlIHRoZSBvbGQgYnVmZmVyIHRoYXQgRklNRCBq
+dXN0CmZpbmlzaGVkIHNjYW5uaW5nIG91dCwgYW5kIHBvdGVudGlhbGx5IGNvbW1pdCB0aGUgbmV4
+dCBwZW5kaW5nIGZsaXAuCgpUaGVyZSBpcyBhIHJhY2UsIGhvd2V2ZXIsIGlmIGZpbWRfd2luX2Nv
+bW1pdCgpIHByb2dyYW1zIEJVRl9TVEFSVCgwKQpiZXR3ZWVuIHRoZSBhY3R1YWwgdmJsYW5rIGly
+cSwgYW5kIGl0cyBjb3JyZXNwb25kaW5nIGZpbWRfaXJxX2hhbmRsZXIoKS4KCiA9PiBGSU1EIHZi
+bGFuazogQlVGX1NUQVJUX1NbMF0gOj0gQlVGX1NUQVJUWzBdLCBhbmQgaXJxIGFzc2VydGVkCiB8
+ID0+IGZpbWRfd2luX2NvbW1pdCgwKSB3cml0ZXMgbmV3IEJVRl9TVEFSVFswXQogfCAgICBleHlu
+b3NfZHJtX2NydGNfdHJ5X2RvX2ZsaXAoKSBtYXJrcyBleHlub3NfZmIgYXMgcHJlcGFyZWQKID0+
+IGZpbWRfaXJxX2hhbmRsZXIoKQogICAgZXh5bm9zX2RybV9jcnRjX2ZpbmlzaF9wYWdlZmxpcCgp
+IHNlZXMgcHJlcGFyZWQgZXh5bm9zX2ZiLAogICAgICAgICBhbmQgdW5tYXBzICJvbGQiIGZiCiA9
+PT4gYnV0LCBzaW5jZSBCVUZfU1RBUlRfU1swXSBzdGlsbCBwb2ludHMgdG8gdGhhdCAib2xkIiBm
+Yi4uLgogPT0+IEZJTUQgaW9tbXUgZmF1bHQKClRoaXMgcGF0Y2ggZW5zdXJlcyB0aGF0IGZpbWRf
+aXJxX2hhbmRsZXIoKSBvbmx5IGNhbGxzCmV4eW5vc19kcm1fY3J0Y19maW5pc2hfcGFnZWZsaXAo
+KSBpZiBhbnkgcHJldmlvdXNseSBzY2hlZHVsZWQgZmxpcApoYXMgcmVhbGx5IGNvbXBsZXRlZC4K
+ClRoaXMgd29ya3MgYmVjYXVzZSBleHlub3NfZHJtX2NydGMncyBmbGlwIGZpZm8gZW5zdXJlcyB0
+aGF0CmZpbWRfd2luX2NvbW1pdCgpIGlzIG5ldmVyIGNhbGxlZCBtb3JlIHRoYW4gb25jZSBwZXIK
+ZXh5bm9zX2RybV9jcnRjX2ZpbmlzaF9wYWdlZmxpcCgpLgoKU2lnbmVkLW9mZi1ieTogRGFuaWVs
+IEt1cnR6IDxkamt1cnR6QGNocm9taXVtLm9yZz4KUmV2aWV3ZWQtYnk6IFNlYW4gUGF1bCA8c2Vh
+bnBhdWxAY2hyb21pdW0ub3JnPgpTaWduZWQtb2ZmLWJ5OiBHdXN0YXZvIFBhZG92YW4gPGd1c3Rh
+dm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Ci0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfZHJtX2ZpbWQuYyB8IDI2ICsrKysrKysrKysrKysrKysrKysrKystLS0tCiBpbmNsdWRl
+L3ZpZGVvL3NhbXN1bmdfZmltZC5oICAgICAgICAgICAgIHwgIDEgKwogMiBmaWxlcyBjaGFuZ2Vk
+LCAyMyBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19kcm1fZmltZC5jCmluZGV4IGU1ODEwZDEuLmIzNzkxODIgMTAwNjQ0Ci0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9maW1kLmMKKysrIGIvZHJpdmVycy9ncHUv
+ZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZpbWQuYwpAQCAtNTUsNiArNTUsNyBAQAogI2RlZmluZSBW
+SURPU0RfRCh3aW4pCQkoVklET1NEX0JBU0UgKyAweDBDICsgKHdpbikgKiAxNikKIAogI2RlZmlu
+ZSBWSURXeF9CVUZfU1RBUlQod2luLCBidWYpCShWSURXX0JVRl9TVEFSVChidWYpICsgKHdpbikg
+KiA4KQorI2RlZmluZSBWSURXeF9CVUZfU1RBUlRfUyh3aW4sIGJ1ZikgICAgIChWSURXX0JVRl9T
+VEFSVF9TKGJ1ZikgKyAod2luKSAqIDgpCiAjZGVmaW5lIFZJRFd4X0JVRl9FTkQod2luLCBidWYp
+CQkoVklEV19CVUZfRU5EKGJ1ZikgKyAod2luKSAqIDgpCiAjZGVmaW5lIFZJRFd4X0JVRl9TSVpF
+KHdpbiwgYnVmKQkoVklEV19CVUZfU0laRShidWYpICsgKHdpbikgKiA0KQogCkBAIC0xMDM5LDYg
+KzEwNDAsNyBAQCBzdGF0aWMgaXJxcmV0dXJuX3QgZmltZF9pcnFfaGFuZGxlcihpbnQgaXJxLCB2
+b2lkICpkZXZfaWQpCiB7CiAJc3RydWN0IGZpbWRfY29udGV4dCAqY3R4ID0gKHN0cnVjdCBmaW1k
+X2NvbnRleHQgKilkZXZfaWQ7CiAJdTMyIHZhbCwgY2xlYXJfYml0OworCXUzMiBzdGFydCwgc3Rh
+cnRfczsKIAogCXZhbCA9IHJlYWRsKGN0eC0+cmVncyArIFZJRElOVENPTjEpOwogCkBAIC0xMDUw
+LDE1ICsxMDUyLDMxIEBAIHN0YXRpYyBpcnFyZXR1cm5fdCBmaW1kX2lycV9oYW5kbGVyKGludCBp
+cnEsIHZvaWQgKmRldl9pZCkKIAlpZiAoY3R4LT5waXBlIDwgMCB8fCAhY3R4LT5kcm1fZGV2KQog
+CQlnb3RvIG91dDsKIAotCWlmIChjdHgtPmk4MF9pZikgeworCWlmICghY3R4LT5pODBfaWYpCisJ
+CWRybV9oYW5kbGVfdmJsYW5rKGN0eC0+ZHJtX2RldiwgY3R4LT5waXBlKTsKKworCS8qCisJICog
+RW5zdXJlIGZpbmlzaF9wYWdlZmxpcCBpcyBjYWxsZWQgaWZmIGEgcGVuZGluZyBmbGlwIGhhcyBj
+b21wbGV0ZWQuCisJICogVGhpcyB3b3JrcyBhcm91bmQgYSByYWNlIGJldHdlZW4gYSBwYWdlX2Zs
+aXAgcmVxdWVzdCBhbmQgdGhlIGxhdGVuY3kKKwkgKiBiZXR3ZWVuIHZibGFuayBpbnRlcnJ1cHQg
+YW5kIHRoaXMgaXJxX2hhbmRsZXI6CisJICogICA9PiBGSU1EIHZibGFuazogQlVGX1NUQVJUX1Nb
+MF0gOj0gQlVGX1NUQVJUWzBdLCBhbmQgYXNzZXJ0cyBpcnEKKwkgKiAgIHwgPT4gZmltZF93aW5f
+Y29tbWl0KDApIHdyaXRlcyBuZXcgQlVGX1NUQVJUWzBdCisJICogICB8ICAgIGV4eW5vc19kcm1f
+Y3J0Y190cnlfZG9fZmxpcCgpIG1hcmtzIGV4eW5vc19mYiBhcyBwcmVwYXJlZAorCSAqICAgPT4g
+ZmltZF9pcnFfaGFuZGxlcigpCisJICogICAgICAgZXh5bm9zX2RybV9jcnRjX2ZpbmlzaF9wYWdl
+ZmxpcCgpIHNlZXMgcHJlcGFyZWQgZXh5bm9zX2ZiLAorCSAqICAgICAgICAgICBhbmQgdW5tYXBz
+ICJvbGQiIGZiCisJICogICA9PT4gYnV0LCBzaW5jZSBCVUZfU1RBUlRfU1swXSBzdGlsbCBwb2lu
+dHMgdG8gdGhhdCAib2xkIiBmYi4uLgorCSAqICAgPT0+IEZJTUQgaW9tbXUgZmF1bHQKKwkgKi8K
+KwlzdGFydCA9IHJlYWRsKGN0eC0+cmVncyArIFZJRFd4X0JVRl9TVEFSVCgwLCAwKSk7CisJc3Rh
+cnRfcyA9IHJlYWRsKGN0eC0+cmVncyArIFZJRFd4X0JVRl9TVEFSVF9TKDAsIDApKTsKKwlpZiAo
+c3RhcnQgPT0gc3RhcnRfcykKIAkJZXh5bm9zX2RybV9jcnRjX2ZpbmlzaF9wYWdlZmxpcChjdHgt
+PmRybV9kZXYsIGN0eC0+cGlwZSk7CiAKKwlpZiAoY3R4LT5pODBfaWYpIHsKIAkJLyogRXhpdHMg
+dHJpZ2dlcmluZyBtb2RlICovCiAJCWF0b21pY19zZXQoJmN0eC0+dHJpZ2dlcmluZywgMCk7CiAJ
+fSBlbHNlIHsKLQkJZHJtX2hhbmRsZV92YmxhbmsoY3R4LT5kcm1fZGV2LCBjdHgtPnBpcGUpOwot
+CQlleHlub3NfZHJtX2NydGNfZmluaXNoX3BhZ2VmbGlwKGN0eC0+ZHJtX2RldiwgY3R4LT5waXBl
+KTsKLQogCQkvKiBzZXQgd2FpdCB2c3luYyBldmVudCB0byB6ZXJvIGFuZCB3YWtlIHVwIHF1ZXVl
+LiAqLwogCQlpZiAoYXRvbWljX3JlYWQoJmN0eC0+d2FpdF92c3luY19ldmVudCkpIHsKIAkJCWF0
+b21pY19zZXQoJmN0eC0+d2FpdF92c3luY19ldmVudCwgMCk7CmRpZmYgLS1naXQgYS9pbmNsdWRl
+L3ZpZGVvL3NhbXN1bmdfZmltZC5oIGIvaW5jbHVkZS92aWRlby9zYW1zdW5nX2ZpbWQuaAppbmRl
+eCBhMjBlNGEzLi5mODFkMDgxIDEwMDY0NAotLS0gYS9pbmNsdWRlL3ZpZGVvL3NhbXN1bmdfZmlt
+ZC5oCisrKyBiL2luY2x1ZGUvdmlkZW8vc2Ftc3VuZ19maW1kLmgKQEAgLTI5MSw2ICsyOTEsNyBA
+QAogCiAvKiBWaWRlbyBidWZmZXIgYWRkcmVzc2VzICovCiAjZGVmaW5lIFZJRFdfQlVGX1NUQVJU
+KF9idWZmKQkJCSgweEEwICsgKChfYnVmZikgKiA4KSkKKyNkZWZpbmUgVklEV19CVUZfU1RBUlRf
+UyhfYnVmZikgICAgICAgICAgICAgICAgICgweDQwQTAgKyAoKF9idWZmKSAqIDgpKQogI2RlZmlu
+ZSBWSURXX0JVRl9TVEFSVDEoX2J1ZmYpCQkJKDB4QTQgKyAoKF9idWZmKSAqIDgpKQogI2RlZmlu
+ZSBWSURXX0JVRl9FTkQoX2J1ZmYpCQkJKDB4RDAgKyAoKF9idWZmKSAqIDgpKQogI2RlZmluZSBW
+SURXX0JVRl9FTkQxKF9idWZmKQkJCSgweEQ0ICsgKChfYnVmZikgKiA4KSkKLS0gCjEuOS4zCgpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
+bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3Rz
+LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
