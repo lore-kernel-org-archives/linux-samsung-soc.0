@@ -1,63 +1,57 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 14/29] drm/exynos: rename base object of struct
- exynos_drm_crtc to 'base'
-Date: Thu, 18 Dec 2014 11:58:40 -0200
-Message-ID: <1418911135-5207-15-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 13/29] drm/exynos: remove exynos_drm_crtc_mode_set_commit()
+Date: Thu, 18 Dec 2014 11:58:39 -0200
+Message-ID: <1418911135-5207-14-git-send-email-gustavo@padovan.org>
 References: <1418911135-5207-1-git-send-email-gustavo@padovan.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qa0-f53.google.com ([209.85.216.53]:48825 "EHLO
+	mail-qa0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752287AbaLRN7u (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 18 Dec 2014 08:59:50 -0500
+Received: by mail-qa0-f53.google.com with SMTP id j7so828064qaq.12
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Dec 2014 05:59:50 -0800 (PST)
 In-Reply-To: <1418911135-5207-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-J2Jhc2UnIGlzIG1vcmUgd2lkZWx5IHVzZWQgbmFtZSBpbiB0aGUgZHJtIHN1YnN5c3RlbSBmb3Ig
-dGhlIGJhc2Ugb2JqZWN0LgoKU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZv
-LnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
-bm9zX2RybV9jcnRjLmMgfCA0ICsrLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2Ry
-bV9kcnYuaCAgfCA3ICsrKy0tLS0KIDIgZmlsZXMgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspLCA2
-IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
-X2RybV9jcnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCmlu
-ZGV4IDViM2QxODIuLjFjZGY3MDUgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2RybV9jcnRjLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
-X2NydGMuYwpAQCAtMzI0LDggKzMyNCw4IEBAIGludCBleHlub3NfZHJtX2NydGNfY3JlYXRlKHN0
-cnVjdCBleHlub3NfZHJtX21hbmFnZXIgKm1hbmFnZXIpCiAJCWdvdG8gZXJyX3BsYW5lOwogCX0K
-IAotCW1hbmFnZXItPmNydGMgPSAmZXh5bm9zX2NydGMtPmRybV9jcnRjOwotCWNydGMgPSAmZXh5
-bm9zX2NydGMtPmRybV9jcnRjOworCW1hbmFnZXItPmNydGMgPSAmZXh5bm9zX2NydGMtPmJhc2U7
-CisJY3J0YyA9ICZleHlub3NfY3J0Yy0+YmFzZTsKIAogCXByaXZhdGUtPmNydGNbbWFuYWdlci0+
-cGlwZV0gPSBjcnRjOwogCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
-c19kcm1fZHJ2LmggYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKaW5k
-ZXggMTg3ZGRlNS4uMGE1NjVmOCAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfZHJtX2Rydi5oCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9k
-cnYuaApAQCAtMjMsOCArMjMsNyBAQAogI2RlZmluZSBNQVhfRkJfQlVGRkVSCTQKICNkZWZpbmUg
-REVGQVVMVF9aUE9TCS0xCiAKLSNkZWZpbmUgdG9fZXh5bm9zX2NydGMoeCkJY29udGFpbmVyX29m
-KHgsIHN0cnVjdCBleHlub3NfZHJtX2NydGMsXAotCQkJCWRybV9jcnRjKQorI2RlZmluZSB0b19l
-eHlub3NfY3J0Yyh4KQljb250YWluZXJfb2YoeCwgc3RydWN0IGV4eW5vc19kcm1fY3J0YywgYmFz
-ZSkKICNkZWZpbmUgdG9fZXh5bm9zX3BsYW5lKHgpCWNvbnRhaW5lcl9vZih4LCBzdHJ1Y3QgZXh5
-bm9zX2RybV9wbGFuZSwgYmFzZSkKIAogLyogVGhpcyBlbnVtZXJhdGVzIGRldmljZSB0eXBlLiAq
-LwpAQCAtMjI5LDcgKzIyOCw3IEBAIGVudW0gZXh5bm9zX2NydGNfbW9kZSB7CiAvKgogICogRXh5
-bm9zIHNwZWNpZmljIGNydGMgc3RydWN0dXJlLgogICoKLSAqIEBkcm1fY3J0YzogY3J0YyBvYmpl
-Y3QuCisgKiBAYmFzZTogY3J0YyBvYmplY3QuCiAgKiBAbWFuYWdlcjogdGhlIG1hbmFnZXIgYXNz
-b2NpYXRlZCB3aXRoIHRoaXMgY3J0YwogICogQHBpcGU6IGEgY3J0YyBpbmRleCBjcmVhdGVkIGF0
-IGxvYWQoKSB3aXRoIGEgbmV3IGNydGMgb2JqZWN0IGNyZWF0aW9uCiAgKglhbmQgdGhlIGNydGMg
-b2JqZWN0IHdvdWxkIGJlIHNldCB0byBwcml2YXRlLT5jcnRjIGFycmF5CkBAIC0yNDIsNyArMjQx
-LDcgQEAgZW51bSBleHlub3NfY3J0Y19tb2RlIHsKICAqIEBtb2RlOiBzdG9yZSB0aGUgY3J0YyBt
-b2RlIHZhbHVlCiAgKi8KIHN0cnVjdCBleHlub3NfZHJtX2NydGMgewotCXN0cnVjdCBkcm1fY3J0
-YwkJCWRybV9jcnRjOworCXN0cnVjdCBkcm1fY3J0YwkJCWJhc2U7CiAJc3RydWN0IGV4eW5vc19k
-cm1fbWFuYWdlcgkqbWFuYWdlcjsKIAl1bnNpZ25lZCBpbnQJCQlwaXBlOwogCXVuc2lnbmVkIGlu
-dAkJCWRwbXM7Ci0tIAoxLjkuMwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
-cmktZGV2ZWwK
+From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+
+This was just as extra chain in the call stack. We just rename it to
+_set_base() and let it do everything alone.
+
+Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+---
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 185dabe..5b3d182 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -113,7 +113,7 @@ exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
+ 				     crtc_w, crtc_h, x, y, crtc_w, crtc_h);
+ }
+ 
+-static int exynos_drm_crtc_mode_set_commit(struct drm_crtc *crtc, int x, int y,
++static int exynos_drm_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
+ 					  struct drm_framebuffer *old_fb)
+ {
+ 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+@@ -134,12 +134,6 @@ static int exynos_drm_crtc_mode_set_commit(struct drm_crtc *crtc, int x, int y,
+ 				   crtc_w, crtc_h, x, y, crtc_w, crtc_h);
+ }
+ 
+-static int exynos_drm_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
+-					  struct drm_framebuffer *old_fb)
+-{
+-	return exynos_drm_crtc_mode_set_commit(crtc, x, y, old_fb);
+-}
+-
+ static void exynos_drm_crtc_disable(struct drm_crtc *crtc)
+ {
+ 	struct drm_plane *plane;
+-- 
+1.9.3
