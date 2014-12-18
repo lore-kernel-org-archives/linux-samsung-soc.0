@@ -1,123 +1,201 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH] clk: samsung: Fix Exynos 5420 pinctrl setup and clock disable
- failure due to domain being gated
-Date: Wed, 17 Dec 2014 22:58:48 -0800
-Message-ID: <20141218065848.29014.24886@quantum>
-References: <1417788934-23447-1-git-send-email-k.kozlowski@samsung.com>
- <1418129982.19339.6.camel@AMDC1943> <5486F69B.6020005@samsung.com>
- <7hlhmfo1b0.fsf@deeprootsystems.com> <7h8ui8h7n9.fsf@deeprootsystems.com>
- <1418718015.28527.4.camel@AMDC1943> <20141217152322.29014.7739@quantum>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv4 1/8] devfreq: event: Add new devfreq_event class to
+ provide basic data for devfreq governor
+Date: Thu, 18 Dec 2014 16:23:52 +0900
+Message-ID: <54928108.5080603@samsung.com>
+References: <1527528755.303581418883865069.JavaMail.weblogic@epmlwas01d>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f171.google.com ([209.85.192.171]:64535 "EHLO
-	mail-pd0-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751944AbaLRG64 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Dec 2014 01:58:56 -0500
-Received: by mail-pd0-f171.google.com with SMTP id y13so822858pdi.2
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 17 Dec 2014 22:58:55 -0800 (PST)
-In-Reply-To: <20141217152322.29014.7739@quantum>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1527528755.303581418883865069.JavaMail.weblogic@epmlwas01d>
+Sender: linux-pm-owner@vger.kernel.org
+To: myungjoo.ham@samsung.com
+Cc: =?UTF-8?B?6rmA6rWt7KeE?= <kgene.kim@samsung.com>, =?UTF-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, ABHILASH KESAVAN <a.kesavan@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 
-Quoting Mike Turquette (2014-12-17 07:23:22)
-> Quoting Krzysztof Kozlowski (2014-12-16 00:20:15)
-> > On pon, 2014-12-15 at 14:26 -0800, Kevin Hilman wrote:
-> > > Kevin Hilman <khilman@kernel.org> writes:
-> > >=20
-> > > > Sylwester Nawrocki <s.nawrocki@samsung.com> writes:
-> > > >
-> > > >> On 09/12/14 13:59, Krzysztof Kozlowski wrote:
-> > > >>> On pi=C4=85, 2014-12-05 at 15:15 +0100, Krzysztof Kozlowski w=
-rote:
-> > > >>>> > Audio subsystem clocks are located in separate block. On E=
-xynos 5420 if
-> > > >>>> > clock for this block (from main clock domain) 'mau_epll' i=
-s gated then
-> > > >>>> > any read or write to audss registers will block.
-> > > >>>> >=20
-> > > >>>> > This kind of boot hang was observed on Arndale Octa and Pe=
-ach Pi/Pit
-> > > >>>> > after introducing runtime PM to pl330 DMA driver. After th=
-at commit the
-> > > >>>> > 'mau_epll' was gated, because the "amba" clock was disable=
-d and there
-> > > >>>> > were no more users of mau_epll.
-> > > >>>> >=20
-> > > >>>> > The system hang on one of steps:
-> > > >>>> > 1. Disabling unused clocks from audss block.
-> > > >>>> > 2. During audss GPIO setup (just before probing i2s0 becau=
-se
-> > > >>>> >    samsung_pinmux_setup() tried to access memory from auds=
-s block which was
-> > > >>>> >    gated.
-> > > >>>> >=20
-> > > >>>> > Add a workaround for this by enabling the 'mau_epll' clock=
- in probe.
-> > > >>>> >=20
-> > > >>>> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.co=
-m>
-> > > >>>> > ---
-> > > >>>> >  drivers/clk/samsung/clk-exynos-audss.c | 29 +++++++++++++=
-+++++++++++++++-
-> > > >>>> >  1 file changed, 28 insertions(+), 1 deletion(-)
-> > > >>>
-> > > >>> Sorry for pinging so quick but merge window is open and it lo=
-oks like
-> > > >>> booting Exynos542x boards will be broken (because pl330 will =
-no longer
-> > > >>> hold adma clock enabled so whole audss domain will be gated).
-> > > >>>=20
-> > > >>> This is a non-intrusive workaround for that issue, as wanted =
-by
-> > > >>> Sylwester:
-> > > >>> https://lkml.org/lkml/2014/12/5/223
-> > > >>>=20
-> > > >>> Any comments on this?
-> > > >>
-> > > >> The patch looks OK to me, it would be good though if someone e=
-lse
-> > > >> has confirmed it fixes the bug. I don't have any clock patches=
- queued
-> > > >> at the moment. Perhaps you could apply it directly, Mike ?
-> > > >
-> > > > I confirm it fixes the boot hang in linux-next (next-20141210) =
-on my
-> > > > exynos5800-peach-pi and exynos5420-arndale-octa.  Tested both
-> > > > exynos_defconfig and multi_v7_defconfig.
-> > > >
-> > > > Tested-by: Kevin Hilman <khilman@linaro.org>
-> > >=20
-> > > What's the status of this patch?  linux-next is still broken for =
-several
-> > > Exynos5 platforms without this fix.
-> >=20
-> > I believe not only next is broken but also current mainline because
-> > runtime PM for pl330 was merged yesterday...
-> >=20
-> > The patch received two tested-bys (Kevin's and Javier's) and Sylwes=
-ter's
-> > ack.
-> >=20
-> > Mike, could you pick the patch and send it to Linus after rc1?
->=20
-> Will do.
+Dear Myungjoo,
 
-To be clear, I pulled this into clk-next towards -rc1, so it won't need
-to go through as an -rc fix.
+Thanks for your review.
 
-Regards,
-Mike
+On 12/18/2014 03:24 PM, MyungJoo Ham wrote:
+> Hi Chanwoo,
+> 
+> I love the idea and I now have a little mechanical issues in your code.
+> 
+>> ---
+>>  drivers/devfreq/Kconfig         |   2 +
+>>  drivers/devfreq/Makefile        |   5 +-
+>>  drivers/devfreq/devfreq-event.c | 449 ++++++++++++++++++++++++++++++++++++++++
+>>  drivers/devfreq/event/Makefile  |   1 +
+>>  include/linux/devfreq.h         | 160 ++++++++++++++
+>>  5 files changed, 616 insertions(+), 1 deletion(-)
+>>  create mode 100644 drivers/devfreq/devfreq-event.c
+>>  create mode 100644 drivers/devfreq/event/Makefile
+>>
+>> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+>> index faf4e70..4d15b62 100644
+>> --- a/drivers/devfreq/Kconfig
+>> +++ b/drivers/devfreq/Kconfig
+>> @@ -87,4 +87,6 @@ config ARM_EXYNOS5_BUS_DEVFREQ
+>>  	  It reads PPMU counters of memory controllers and adjusts the
+>>  	  operating frequencies and voltages with OPP support.
+>>  
+>> +comment "DEVFREQ Event Drivers"
+>> +
+>>  endif # PM_DEVFREQ
+>> diff --git a/drivers/devfreq/Makefile b/drivers/devfreq/Makefile
+>> index 16138c9..a1ffabe 100644
+>> --- a/drivers/devfreq/Makefile
+>> +++ b/drivers/devfreq/Makefile
+>> @@ -1,4 +1,4 @@
+>> -obj-$(CONFIG_PM_DEVFREQ)	+= devfreq.o
+>> +obj-$(CONFIG_PM_DEVFREQ)		+= devfreq.o devfreq-event.o
+>>  obj-$(CONFIG_DEVFREQ_GOV_SIMPLE_ONDEMAND)	+= governor_simpleondemand.o
+>>  obj-$(CONFIG_DEVFREQ_GOV_PERFORMANCE)	+= governor_performance.o
+>>  obj-$(CONFIG_DEVFREQ_GOV_POWERSAVE)	+= governor_powersave.o
+>> @@ -7,3 +7,6 @@ obj-$(CONFIG_DEVFREQ_GOV_USERSPACE)	+= governor_userspace.o
+>>  # DEVFREQ Drivers
+>>  obj-$(CONFIG_ARM_EXYNOS4_BUS_DEVFREQ)	+= exynos/
+>>  obj-$(CONFIG_ARM_EXYNOS5_BUS_DEVFREQ)	+= exynos/
+>> +
+>> +# DEVFREQ Event Drivers
+>> +obj-$(CONFIG_PM_DEVFREQ)		+= event/
+>>
+> 
+> It looks getting mature fast.
+> However, I would like to suggest you to
+> 
+> allow not to compile devfreq-event.c and not include its compiled object
+>   if devfreq.c is required but devfreq-event.c is not required.
+>   (e.g., add CONFIG_PM_DEVFREQ_EVENT and let it be enabled when needed)
+>   just a little concern for lightweight devices.
+>     (this change might require a bit more work on the header as well)
+>   - Or do you think devfreq-event.c will become almost mandatory for
+>    most devfreq drivers?
 
->=20
-> Regards,
-> Mike
->=20
-> >=20
-> > Best regards,
-> > Krzysztof
-> >=20
+I agree your opinion.
+I'll add CONFIG_PM_DEVFREQ_EVENT according to your comment.
+
+> 
+> 
+> [snip]
+> 
+>> diff --git a/drivers/devfreq/devfreq-event.c b/drivers/devfreq/devfreq-event.c
+>> new file mode 100644
+>> index 0000000..0e1948e
+>> --- /dev/null
+>> +++ b/drivers/devfreq/devfreq-event.c
+>> @@ -0,0 +1,449 @@
+>> +/*
+>> + * devfreq-event: Generic DEVFREQ Event class driver
+> 
+> DEVFREQ is a generic DVFS mechanism (or subsystem).
+> 
+> Plus, I thought devfreq-event is considered to be a "framework"
+> for devfreq event class drivers. Am I mistaken?
+
+You're right. just "class driver" description is not proper.
+I'll modify the description of devfreq-event.c as following:
+or If you have other opinion, would you please let me know about it?
+
+	devfreq-event: DEVFREQ-Event Framework to provide raw data of Non-CPU Devices.
+
+
+> [snip]
+> 
+>> +struct devfreq_event_dev *devfreq_event_add_edev(struct device *dev,
+>> +                                               struct devfreq_event_desc *desc)
+>> +{
+>> +       struct devfreq_event_dev *edev;
+>> +       static atomic_t event_no = ATOMIC_INIT(0);
+>> +       int ret;
+>> +
+>> +       if (!dev || !desc)
+>> +               return ERR_PTR(-EINVAL);
+>> +
+>> +       if (!desc->name || !desc->ops)
+>> +               return ERR_PTR(-EINVAL);
+>> +
+>> +       if (!desc->ops->set_event || !desc->ops->get_event)
+>> +               return ERR_PTR(-EINVAL);
+>> +
+>> +       edev = devm_kzalloc(dev, sizeof(*edev), GFP_KERNEL);
+>> +       if (!edev)
+>> +               return ERR_PTR(-ENOMEM);
+>> +
+>> +       mutex_lock(&devfreq_event_list_lock);
+> 
+> You seem to lock that global lock too long. That lock is only required
+> while you operate the list. The data to be protected by this mutex is
+> devfreq_event_list. Until the new entry is added to the list, the new
+> entry is free from protection. (may be delayed right before list_add)
+
+OK. I'll move global lock right before calling list_add() on below.
+
+> 
+>> +       mutex_init(&edev->lock);
+>> +       edev->desc = desc;
+>> +       edev->dev.parent = dev;
+>> +       edev->dev.class = devfreq_event_class;
+>> +       edev->dev.release = devfreq_event_release_edev;
+>> +
+>> +       dev_set_name(&edev->dev, "event.%d", atomic_inc_return(&event_no) - 1);
+>> +       ret = device_register(&edev->dev);
+>> +       if (ret < 0) {
+>> +               put_device(&edev->dev);
+>> +               mutex_unlock(&devfreq_event_list_lock);
+>> +               return ERR_PTR(ret);
+>> +       }
+>> +       dev_set_drvdata(&edev->dev, edev);
+>> +
+>> +       INIT_LIST_HEAD(&edev->node);
+>> +       list_add(&edev->node, &devfreq_event_list);
+>> +       mutex_unlock(&devfreq_event_list_lock);
+>> +
+>> +       return edev;
+>> +}
+> 
+> 
+> 
+> [snip / reversed maybe.. sorry]
+> 
+>> +/**
+>> + * devfreq_event_is_enabled() - Check whether devfreq-event dev is enabled or
+>> + *                             not.
+>> + * @edev       : the devfreq-event device
+>> + *
+>> + * Note that this function check whether devfreq-event dev is enabled or not.
+>> + * If return true, the devfreq-event dev is enabeld. If return false, the
+>> + * devfreq-event dev is disabled.
+>> + */
+>> +bool devfreq_event_is_enabled(struct devfreq_event_dev *edev)
+>> +{
+>> +       bool enabled = false;
+>> +
+>> +       if (!edev || !edev->desc)
+>> +               return enabled;
+>> +
+>> +       mutex_lock(&edev->lock);
+>> +
+>> +       if (edev->enable_count > 0)
+>> +               enabled = true;
+>> +
+>> +       if (edev->desc->ops && edev->desc->ops->is_enabled)
+>> +               enabled |= edev->desc->ops->is_enabled(edev);
+> 
+> What does it mean when enabled_count > 0 and ops->is_enabled() is false? or..
+> What does it mean when enabled_count = 0 and ops->is_enabled() is true?
+> 
+> If you do enable_count in the subsystem, why would we rely on
+> ops->is_enabled()? Are you assuming that a device MAY turn itself off
+> without any kernel control (ops->disable()) and it is still a correct
+> behabior?
+
+You're right. devfreq_event_is_enabled() has ambiguous operation according to your comment.
+
+I'll only control the enable_count in the subsystem without ops->is_enabled()
+and then remove the is_enabled function in the structre devfreq_event_ops.
+
+Best Regards,
+Chanwoo Choi
