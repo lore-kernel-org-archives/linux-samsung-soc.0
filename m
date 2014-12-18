@@ -1,54 +1,122 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH v7 1/3] Input: add regulator haptic driver
-Date: Wed, 17 Dec 2014 17:20:33 -0800
-Message-ID: <1633066.YGSdCsNTgy@dtor-glaptop>
-References: <1418787308-29019-1-git-send-email-jaewon02.kim@samsung.com> <20141217220602.GC32399@dtor-ws> <54922B36.8050306@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [PATCHv4 1/8] devfreq: event: Add new devfreq_event class to
+ provide basic data for devfreq governor
+Date: Thu, 18 Dec 2014 06:24:26 +0000 (GMT)
+Message-ID: <1527528755.303581418883865069.JavaMail.weblogic@epmlwas01d>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <54922B36.8050306@samsung.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Jaewon Kim <jaewon02.kim@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-input@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, Hyunhee Kim <hyunhee.kim@samsung.com>
+Content-Transfer-Encoding: base64
+Return-path: <linux-pm-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-pm-owner@vger.kernel.org
+To: =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>
+Cc: =?utf-8?Q?=EA=B9=80=EA=B5=AD=EC=A7=84?= <kgene.kim@samsung.com>, =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, ABHILASH KESAVAN <a.kesavan@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, =?utf-8?Q?=EB=8C=80=EC=9D=B8=EA=B8=B0?= <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thursday, December 18, 2014 10:17:42 AM Jaewon Kim wrote:
-> Hi Dmity,
->=20
-> 2014=EB=85=84 12=EC=9B=94 18=EC=9D=BC 07:06=EC=97=90 Dmitry Torokhov =
-=EC=9D=B4(=EA=B0=80) =EC=93=B4 =EA=B8=80:
-> > HI Jaewon,
-> >=20
-> > On Wed, Dec 17, 2014 at 12:35:06PM +0900, Jaewon Kim wrote:
-> >> This patch adds support for haptic driver controlled by
-> >> voltage of regulator. And this driver support for
-> >> Force Feedback interface from input framework
-> >>=20
-> >> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
-> >> Signed-off-by: Hyunhee Kim <hyunhee.kim@samsung.com>
-> >> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> >> Tested-by: Chanwoo Choi <cw00.choi@samsung.com>
-> >> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> >> Reviewed-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> >=20
-> > Does the driver still work if you apply the patch below on top of y=
-ours?
-> >=20
-> > Thanks.
->=20
-> Yes, there is no problem to apply this one first.
+SGkgQ2hhbndvbywNCg0KSSBsb3ZlIHRoZSBpZGVhIGFuZCBJIG5vdyBoYXZlIGEgbGl0dGxlIG1l
+Y2hhbmljYWwgaXNzdWVzIGluIHlvdXIgY29kZS4NCg0KPiAtLS0NCj4gIGRyaXZlcnMvZGV2ZnJl
+cS9LY29uZmlnICAgICAgICAgfCAgIDIgKw0KPiAgZHJpdmVycy9kZXZmcmVxL01ha2VmaWxlICAg
+ICAgICB8ICAgNSArLQ0KPiAgZHJpdmVycy9kZXZmcmVxL2RldmZyZXEtZXZlbnQuYyB8IDQ0OSAr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ICBkcml2ZXJzL2RldmZy
+ZXEvZXZlbnQvTWFrZWZpbGUgIHwgICAxICsNCj4gIGluY2x1ZGUvbGludXgvZGV2ZnJlcS5oICAg
+ICAgICAgfCAxNjAgKysrKysrKysrKysrKysNCj4gIDUgZmlsZXMgY2hhbmdlZCwgNjE2IGluc2Vy
+dGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2Rl
+dmZyZXEvZGV2ZnJlcS1ldmVudC5jDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9kZXZm
+cmVxL2V2ZW50L01ha2VmaWxlDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9kZXZmcmVxL0tj
+b25maWcgYi9kcml2ZXJzL2RldmZyZXEvS2NvbmZpZw0KPiBpbmRleCBmYWY0ZTcwLi40ZDE1YjYy
+IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2RldmZyZXEvS2NvbmZpZw0KPiArKysgYi9kcml2ZXJz
+L2RldmZyZXEvS2NvbmZpZw0KPiBAQCAtODcsNCArODcsNiBAQCBjb25maWcgQVJNX0VYWU5PUzVf
+QlVTX0RFVkZSRVENCj4gIAkgIEl0IHJlYWRzIFBQTVUgY291bnRlcnMgb2YgbWVtb3J5IGNvbnRy
+b2xsZXJzIGFuZCBhZGp1c3RzIHRoZQ0KPiAgCSAgb3BlcmF0aW5nIGZyZXF1ZW5jaWVzIGFuZCB2
+b2x0YWdlcyB3aXRoIE9QUCBzdXBwb3J0Lg0KPiAgDQo+ICtjb21tZW50ICJERVZGUkVRIEV2ZW50
+IERyaXZlcnMiDQo+ICsNCj4gIGVuZGlmICMgUE1fREVWRlJFUQ0KPiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9kZXZmcmVxL01ha2VmaWxlIGIvZHJpdmVycy9kZXZmcmVxL01ha2VmaWxlDQo+IGluZGV4
+IDE2MTM4YzkuLmExZmZhYmUgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZGV2ZnJlcS9NYWtlZmls
+ZQ0KPiArKysgYi9kcml2ZXJzL2RldmZyZXEvTWFrZWZpbGUNCj4gQEAgLTEsNCArMSw0IEBADQo+
+IC1vYmotJChDT05GSUdfUE1fREVWRlJFUSkJKz0gZGV2ZnJlcS5vDQo+ICtvYmotJChDT05GSUdf
+UE1fREVWRlJFUSkJCSs9IGRldmZyZXEubyBkZXZmcmVxLWV2ZW50Lm8NCj4gIG9iai0kKENPTkZJ
+R19ERVZGUkVRX0dPVl9TSU1QTEVfT05ERU1BTkQpCSs9IGdvdmVybm9yX3NpbXBsZW9uZGVtYW5k
+Lm8NCj4gIG9iai0kKENPTkZJR19ERVZGUkVRX0dPVl9QRVJGT1JNQU5DRSkJKz0gZ292ZXJub3Jf
+cGVyZm9ybWFuY2Uubw0KPiAgb2JqLSQoQ09ORklHX0RFVkZSRVFfR09WX1BPV0VSU0FWRSkJKz0g
+Z292ZXJub3JfcG93ZXJzYXZlLm8NCj4gQEAgLTcsMyArNyw2IEBAIG9iai0kKENPTkZJR19ERVZG
+UkVRX0dPVl9VU0VSU1BBQ0UpCSs9IGdvdmVybm9yX3VzZXJzcGFjZS5vDQo+ICAjIERFVkZSRVEg
+RHJpdmVycw0KPiAgb2JqLSQoQ09ORklHX0FSTV9FWFlOT1M0X0JVU19ERVZGUkVRKQkrPSBleHlu
+b3MvDQo+ICBvYmotJChDT05GSUdfQVJNX0VYWU5PUzVfQlVTX0RFVkZSRVEpCSs9IGV4eW5vcy8N
+Cj4gKw0KPiArIyBERVZGUkVRIEV2ZW50IERyaXZlcnMNCj4gK29iai0kKENPTkZJR19QTV9ERVZG
+UkVRKQkJKz0gZXZlbnQvDQo+IA0KDQpJdCBsb29rcyBnZXR0aW5nIG1hdHVyZSBmYXN0Lg0KSG93
+ZXZlciwgSSB3b3VsZCBsaWtlIHRvIHN1Z2dlc3QgeW91IHRvDQoNCmFsbG93IG5vdCB0byBjb21w
+aWxlIGRldmZyZXEtZXZlbnQuYyBhbmQgbm90IGluY2x1ZGUgaXRzIGNvbXBpbGVkIG9iamVjdA0K
+ICBpZiBkZXZmcmVxLmMgaXMgcmVxdWlyZWQgYnV0IGRldmZyZXEtZXZlbnQuYyBpcyBub3QgcmVx
+dWlyZWQuDQogIChlLmcuLCBhZGQgQ09ORklHX1BNX0RFVkZSRVFfRVZFTlQgYW5kIGxldCBpdCBi
+ZSBlbmFibGVkIHdoZW4gbmVlZGVkKQ0KICBqdXN0IGEgbGl0dGxlIGNvbmNlcm4gZm9yIGxpZ2h0
+d2VpZ2h0IGRldmljZXMuDQogICAgKHRoaXMgY2hhbmdlIG1pZ2h0IHJlcXVpcmUgYSBiaXQgbW9y
+ZSB3b3JrIG9uIHRoZSBoZWFkZXIgYXMgd2VsbCkNCiAgLSBPciBkbyB5b3UgdGhpbmsgZGV2ZnJl
+cS1ldmVudC5jIHdpbGwgYmVjb21lIGFsbW9zdCBtYW5kYXRvcnkgZm9yDQogICBtb3N0IGRldmZy
+ZXEgZHJpdmVycz8NCg0KDQpbc25pcF0NCg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9kZXZmcmVx
+L2RldmZyZXEtZXZlbnQuYyBiL2RyaXZlcnMvZGV2ZnJlcS9kZXZmcmVxLWV2ZW50LmMNCj4gbmV3
+IGZpbGUgbW9kZSAxMDA2NDQNCj4gaW5kZXggMDAwMDAwMC4uMGUxOTQ4ZQ0KPiAtLS0gL2Rldi9u
+dWxsDQo+ICsrKyBiL2RyaXZlcnMvZGV2ZnJlcS9kZXZmcmVxLWV2ZW50LmMNCj4gQEAgLTAsMCAr
+MSw0NDkgQEANCj4gKy8qDQo+ICsgKiBkZXZmcmVxLWV2ZW50OiBHZW5lcmljIERFVkZSRVEgRXZl
+bnQgY2xhc3MgZHJpdmVyDQoNCkRFVkZSRVEgaXMgYSBnZW5lcmljIERWRlMgbWVjaGFuaXNtIChv
+ciBzdWJzeXN0ZW0pLg0KDQpQbHVzLCBJIHRob3VnaHQgZGV2ZnJlcS1ldmVudCBpcyBjb25zaWRl
+cmVkIHRvIGJlIGEgImZyYW1ld29yayINCmZvciBkZXZmcmVxIGV2ZW50IGNsYXNzIGRyaXZlcnMu
+IEFtIEkgbWlzdGFrZW4/DQoNCltzbmlwXQ0KDQo+ICtzdHJ1Y3QgZGV2ZnJlcV9ldmVudF9kZXYg
+KmRldmZyZXFfZXZlbnRfYWRkX2VkZXYoc3RydWN0IGRldmljZSAqZGV2LA0KPiArICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgZGV2ZnJlcV9ldmVu
+dF9kZXNjICpkZXNjKQ0KPiArew0KPiArICAgICAgIHN0cnVjdCBkZXZmcmVxX2V2ZW50X2RldiAq
+ZWRldjsNCj4gKyAgICAgICBzdGF0aWMgYXRvbWljX3QgZXZlbnRfbm8gPSBBVE9NSUNfSU5JVCgw
+KTsNCj4gKyAgICAgICBpbnQgcmV0Ow0KPiArDQo+ICsgICAgICAgaWYgKCFkZXYgfHwgIWRlc2Mp
+DQo+ICsgICAgICAgICAgICAgICByZXR1cm4gRVJSX1BUUigtRUlOVkFMKTsNCj4gKw0KPiArICAg
+ICAgIGlmICghZGVzYy0+bmFtZSB8fCAhZGVzYy0+b3BzKQ0KPiArICAgICAgICAgICAgICAgcmV0
+dXJuIEVSUl9QVFIoLUVJTlZBTCk7DQo+ICsNCj4gKyAgICAgICBpZiAoIWRlc2MtPm9wcy0+c2V0
+X2V2ZW50IHx8ICFkZXNjLT5vcHMtPmdldF9ldmVudCkNCj4gKyAgICAgICAgICAgICAgIHJldHVy
+biBFUlJfUFRSKC1FSU5WQUwpOw0KPiArDQo+ICsgICAgICAgZWRldiA9IGRldm1fa3phbGxvYyhk
+ZXYsIHNpemVvZigqZWRldiksIEdGUF9LRVJORUwpOw0KPiArICAgICAgIGlmICghZWRldikNCj4g
+KyAgICAgICAgICAgICAgIHJldHVybiBFUlJfUFRSKC1FTk9NRU0pOw0KPiArDQo+ICsgICAgICAg
+bXV0ZXhfbG9jaygmZGV2ZnJlcV9ldmVudF9saXN0X2xvY2spOw0KDQpZb3Ugc2VlbSB0byBsb2Nr
+IHRoYXQgZ2xvYmFsIGxvY2sgdG9vIGxvbmcuIFRoYXQgbG9jayBpcyBvbmx5IHJlcXVpcmVkDQp3
+aGlsZSB5b3Ugb3BlcmF0ZSB0aGUgbGlzdC4gVGhlIGRhdGEgdG8gYmUgcHJvdGVjdGVkIGJ5IHRo
+aXMgbXV0ZXggaXMNCmRldmZyZXFfZXZlbnRfbGlzdC4gVW50aWwgdGhlIG5ldyBlbnRyeSBpcyBh
+ZGRlZCB0byB0aGUgbGlzdCwgdGhlIG5ldw0KZW50cnkgaXMgZnJlZSBmcm9tIHByb3RlY3Rpb24u
+IChtYXkgYmUgZGVsYXllZCByaWdodCBiZWZvcmUgbGlzdF9hZGQpDQoNCj4gKyAgICAgICBtdXRl
+eF9pbml0KCZlZGV2LT5sb2NrKTsNCj4gKyAgICAgICBlZGV2LT5kZXNjID0gZGVzYzsNCj4gKyAg
+ICAgICBlZGV2LT5kZXYucGFyZW50ID0gZGV2Ow0KPiArICAgICAgIGVkZXYtPmRldi5jbGFzcyA9
+IGRldmZyZXFfZXZlbnRfY2xhc3M7DQo+ICsgICAgICAgZWRldi0+ZGV2LnJlbGVhc2UgPSBkZXZm
+cmVxX2V2ZW50X3JlbGVhc2VfZWRldjsNCj4gKw0KPiArICAgICAgIGRldl9zZXRfbmFtZSgmZWRl
+di0+ZGV2LCAiZXZlbnQuJWQiLCBhdG9taWNfaW5jX3JldHVybigmZXZlbnRfbm8pIC0gMSk7DQo+
+ICsgICAgICAgcmV0ID0gZGV2aWNlX3JlZ2lzdGVyKCZlZGV2LT5kZXYpOw0KPiArICAgICAgIGlm
+IChyZXQgPCAwKSB7DQo+ICsgICAgICAgICAgICAgICBwdXRfZGV2aWNlKCZlZGV2LT5kZXYpOw0K
+PiArICAgICAgICAgICAgICAgbXV0ZXhfdW5sb2NrKCZkZXZmcmVxX2V2ZW50X2xpc3RfbG9jayk7
+DQo+ICsgICAgICAgICAgICAgICByZXR1cm4gRVJSX1BUUihyZXQpOw0KPiArICAgICAgIH0NCj4g
+KyAgICAgICBkZXZfc2V0X2RydmRhdGEoJmVkZXYtPmRldiwgZWRldik7DQo+ICsNCj4gKyAgICAg
+ICBJTklUX0xJU1RfSEVBRCgmZWRldi0+bm9kZSk7DQo+ICsgICAgICAgbGlzdF9hZGQoJmVkZXYt
+Pm5vZGUsICZkZXZmcmVxX2V2ZW50X2xpc3QpOw0KPiArICAgICAgIG11dGV4X3VubG9jaygmZGV2
+ZnJlcV9ldmVudF9saXN0X2xvY2spOw0KPiArDQo+ICsgICAgICAgcmV0dXJuIGVkZXY7DQo+ICt9
+DQoNCg0KDQpbc25pcCAvIHJldmVyc2VkIG1heWJlLi4gc29ycnldDQoNCj4gKy8qKg0KPiArICog
+ZGV2ZnJlcV9ldmVudF9pc19lbmFibGVkKCkgLSBDaGVjayB3aGV0aGVyIGRldmZyZXEtZXZlbnQg
+ZGV2IGlzIGVuYWJsZWQgb3INCj4gKyAqICAgICAgICAgICAgICAgICAgICAgICAgICAgICBub3Qu
+DQo+ICsgKiBAZWRldiAgICAgICA6IHRoZSBkZXZmcmVxLWV2ZW50IGRldmljZQ0KPiArICoNCj4g
+KyAqIE5vdGUgdGhhdCB0aGlzIGZ1bmN0aW9uIGNoZWNrIHdoZXRoZXIgZGV2ZnJlcS1ldmVudCBk
+ZXYgaXMgZW5hYmxlZCBvciBub3QuDQo+ICsgKiBJZiByZXR1cm4gdHJ1ZSwgdGhlIGRldmZyZXEt
+ZXZlbnQgZGV2IGlzIGVuYWJlbGQuIElmIHJldHVybiBmYWxzZSwgdGhlDQo+ICsgKiBkZXZmcmVx
+LWV2ZW50IGRldiBpcyBkaXNhYmxlZC4NCj4gKyAqLw0KPiArYm9vbCBkZXZmcmVxX2V2ZW50X2lz
+X2VuYWJsZWQoc3RydWN0IGRldmZyZXFfZXZlbnRfZGV2ICplZGV2KQ0KPiArew0KPiArICAgICAg
+IGJvb2wgZW5hYmxlZCA9IGZhbHNlOw0KPiArDQo+ICsgICAgICAgaWYgKCFlZGV2IHx8ICFlZGV2
+LT5kZXNjKQ0KPiArICAgICAgICAgICAgICAgcmV0dXJuIGVuYWJsZWQ7DQo+ICsNCj4gKyAgICAg
+ICBtdXRleF9sb2NrKCZlZGV2LT5sb2NrKTsNCj4gKw0KPiArICAgICAgIGlmIChlZGV2LT5lbmFi
+bGVfY291bnQgPiAwKQ0KPiArICAgICAgICAgICAgICAgZW5hYmxlZCA9IHRydWU7DQo+ICsNCj4g
+KyAgICAgICBpZiAoZWRldi0+ZGVzYy0+b3BzICYmIGVkZXYtPmRlc2MtPm9wcy0+aXNfZW5hYmxl
+ZCkNCj4gKyAgICAgICAgICAgICAgIGVuYWJsZWQgfD0gZWRldi0+ZGVzYy0+b3BzLT5pc19lbmFi
+bGVkKGVkZXYpOw0KDQpXaGF0IGRvZXMgaXQgbWVhbiB3aGVuIGVuYWJsZWRfY291bnQgPiAwIGFu
+ZCBvcHMtPmlzX2VuYWJsZWQoKSBpcyBmYWxzZT8gb3IuLg0KV2hhdCBkb2VzIGl0IG1lYW4gd2hl
+biBlbmFibGVkX2NvdW50ID0gMCBhbmQgb3BzLT5pc19lbmFibGVkKCkgaXMgdHJ1ZT8NCg0KSWYg
+eW91IGRvIGVuYWJsZV9jb3VudCBpbiB0aGUgc3Vic3lzdGVtLCB3aHkgd291bGQgd2UgcmVseSBv
+bg0Kb3BzLT5pc19lbmFibGVkKCk/IEFyZSB5b3UgYXNzdW1pbmcgdGhhdCBhIGRldmljZSBNQVkg
+dHVybiBpdHNlbGYgb2ZmDQp3aXRob3V0IGFueSBrZXJuZWwgY29udHJvbCAob3BzLT5kaXNhYmxl
+KCkpIGFuZCBpdCBpcyBzdGlsbCBhIGNvcnJlY3QNCmJlaGFiaW9yPw0KDQo+ICsNCj4gKyAgICAg
+ICBtdXRleF91bmxvY2soJmVkZXYtPmxvY2spOw0KPiArDQo+ICsgICAgICAgcmV0dXJuIGVuYWJs
+ZWQ7DQo+ICt9DQo+ICtFWFBPUlRfU1lNQk9MX0dQTChkZXZmcmVxX2V2ZW50X2lzX2VuYWJsZWQp
+Ow0KDQoNCkNoZWVycywNCk15dW5nSm9vDQoNCg==
 
-Thank you. Then I'll fold it into yours and queue the driver for the ne=
-xt=20
-release.
 
-Thanks.
-
---=20
-Dmitry
---
-To unsubscribe from this list: send the line "unsubscribe linux-input" =
-in
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
