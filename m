@@ -1,42 +1,73 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 29/29] drm/exynos: atomic phase 2: keep track of framebuffer
- pointer
-Date: Thu, 18 Dec 2014 11:58:55 -0200
-Message-ID: <1418911135-5207-30-git-send-email-gustavo@padovan.org>
-References: <1418911135-5207-1-git-send-email-gustavo@padovan.org>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: Weird/Unneeded call to msleep in exynos_mipi_dsi_wr_data in exynos_mipi_dsi_common.c
+Date: Thu, 18 Dec 2014 16:05:01 +0200
+Message-ID: <5492DF0D.3080607@ti.com>
+References: <54920A54.2060608@gmail.com> <5492ABE7.1060900@samsung.com>	 <5492D80E.3010906@gmail.com> <1418909978.2236.0.camel@pengutronix.de> <5492DB1A.2020704@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1418911135-5207-1-git-send-email-gustavo@padovan.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-samsung-soc@vger.kernel.org
-Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature";
+	boundary="VJdv1a0WcfBdG5ccDTovVrxNXvv0tl9jm"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5492DB1A.2020704@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: nick <xerofoify@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>, =?UTF-8?B?S3J6eXN6dG9mIEtvesWCbw==?= =?UTF-8?B?d3NraQ==?= <k.kozlowski@samsung.com>, inki.dae@samsung.com, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, dh09.lee@samsung.com, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com, kgene@kernel.org, plagnioj@jcrosoft.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
-VXNlIGRybV9hdG9taWNfc2V0X2ZiX2Zvcl9wbGFuZSgpIGluIHRoZSBsZWdhY3kgcGFnZV9mbGlw
-IHBhdGggdG8ga2VlcAp0cmFjayBvZiB0aGUgZnJhbWVidWZmZXIgcG9pbnRlciBhbmQgcmVmZXJl
-bmNlLgoKU2lnbmVkLW9mZi1ieTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29s
-bGFib3JhLmNvLnVrPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRj
-LmMgfCA0ICsrKysKIDEgZmlsZSBjaGFuZ2VkLCA0IGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jIGIvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuYwppbmRleCBjZjE2ODQ0Li5iNTEwYmFjIDEwMDY0
-NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCisrKyBiL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMKQEAgLTIxOSw2ICsyMTksMTAg
-QEAgc3RhdGljIGludCBleHlub3NfZHJtX2NydGNfcGFnZV9mbGlwKHN0cnVjdCBkcm1fY3J0YyAq
-Y3J0YywKIAkJCQkgICAgY3J0Y193LCBjcnRjX2gsIGNydGMtPngsIGNydGMtPnksCiAJCQkJICAg
-IGNydGNfdywgY3J0Y19oKTsKIAl9CisKKwlpZiAoY3J0Yy0+cHJpbWFyeS0+c3RhdGUpCisJCWRy
-bV9hdG9taWNfc2V0X2ZiX2Zvcl9wbGFuZShjcnRjLT5wcmltYXJ5LT5zdGF0ZSwgZmIpOworCiBv
-dXQ6CiAJbXV0ZXhfdW5sb2NrKCZkZXYtPnN0cnVjdF9tdXRleCk7CiAJcmV0dXJuIHJldDsKLS0g
-CjEuOS4zCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+--VJdv1a0WcfBdG5ccDTovVrxNXvv0tl9jm
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+On 18/12/14 15:48, nick wrote:
+> Lucas,
+> That's fair do you known of anyone who does have the hardware so we can=
+ test my patch. If you do then we can get this fixed rather
+> easily.
+> Cheers Nick=20
+>=20
+> On 2014-12-18 08:39 AM, Lucas Stach wrote:
+>> Am Donnerstag, den 18.12.2014, 08:35 -0500 schrieb nick:
+>>> Krzysztof,
+>>> If we look at the code for this function, it already is handling the =
+data correctly. In addition  the locks=20
+>>> seem to be better protection then msleep. Further more is no reason f=
+or this delay as we are neither resetting=20
+>>> the hardware or waiting for the hardware here so why is it needed? I =
+don't have Exynos based hardware lying
+>>> around through to test it.
+>>
+>> If you can't test it, don't touch it. It's that simple.
+
+There seems to be multiple msleep(20)s in exynos_mipi_dsi_common.c, a
+few with /* FIXME */ and a few without any comments. Looks like bad (but
+relatively harmless) code to me, but as Lucas said, if you can't test
+it, don't touch it.
+
+ Tomi
+
+
+
+--VJdv1a0WcfBdG5ccDTovVrxNXvv0tl9jm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJUkt8NAAoJEPo9qoy8lh71p8MP/1fXGGsVE1n0j+uRmqziiHyw
+FD/g3tEGQ/tdtg+rWbEbpX20rAcLbo3ieFV17rFHrjrcOMvRMPaEjHnIqpM5MCBM
+8cs33yx7Ljc+0ge6v567Q4xWIzBlsP3k5W/ebRivRn9NoMLc3A8p4ssh6KAW9GNK
+l7Jg1WL4igSgXA4cMAauuUu5jDGCtAywcrG/RHR2tNP1hnkixdfiAHzSodb6xHjI
+TXYPHZhCNc8hJevLV9Ux0vv9J18eBj2X15ghB7KWsR6ujYf4gjIn/UNAGxgANoVH
+eslWIbZeJB8oA9bOGT9zdG2vF8Hsu/a2IHtNYalxygt5tXPvuTzewmMBxBlQSQ0b
+CC80SJH76TePtH/9csf417rusivI96D5kion24JZjGXwvsgkx1rKeThQEEa/tIxe
+t0oC1OtnxlpCDpxAHoZoZ6FNAoMZe/+5wWThDrdwsmrHGuTR/epYhKoIS4KxeZkS
+9x3k78Iwlu0hxOqb5Q7jeM3/3Ody/RJg/JN17QLJxMWgTk7JIGZpXEst/r3lG3xB
+jCmyqjXBP7SWEyEz6MUNM7jxi4oPjVSmgKPZSFdx2H65fjNB6zyCsaMri/IuzUfd
+FhXD3VbXyAn4It5WIZjcvdS/MsrkwSmEBKVonTXkqYONGpwEYmMq7bs9gUvMeWSn
+LRY0RtZ0ktPOK8UvumK+
+=lGJn
+-----END PGP SIGNATURE-----
+
+--VJdv1a0WcfBdG5ccDTovVrxNXvv0tl9jm--
