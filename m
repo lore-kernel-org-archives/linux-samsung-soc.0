@@ -1,16 +1,16 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 20/29] drm/exynos: don't duplicate drm_display_mode in fimd context
-Date: Thu, 18 Dec 2014 11:58:46 -0200
-Message-ID: <1418911135-5207-21-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 22/29] drm/exynos: create exynos_check_plane()
+Date: Thu, 18 Dec 2014 11:58:48 -0200
+Message-ID: <1418911135-5207-23-git-send-email-gustavo@padovan.org>
 References: <1418911135-5207-1-git-send-email-gustavo@padovan.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f53.google.com ([209.85.192.53]:48414 "EHLO
-	mail-qg0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752316AbaLROAX (ORCPT
+Received: from mail-qa0-f51.google.com ([209.85.216.51]:39525 "EHLO
+	mail-qa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752287AbaLROAX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Thu, 18 Dec 2014 09:00:23 -0500
-Received: by mail-qg0-f53.google.com with SMTP id l89so836421qgf.26
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Dec 2014 06:00:23 -0800 (PST)
+Received: by mail-qa0-f51.google.com with SMTP id k15so790549qaq.24
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Dec 2014 06:00:22 -0800 (PST)
 In-Reply-To: <1418911135-5207-1-git-send-email-gustavo@padovan.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -19,76 +19,148 @@ Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Gustavo Padovan <gust
 
 From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-We can safely use the mode stored in the crtc.
+Split update plane in two parts, an initial check part that can fail
+and the update part that can't fail.
+
+This is a important step for the upcoming atomic modesetting support.
 
 Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 ---
- drivers/gpu/drm/exynos/exynos_drm_crtc.c |  5 -----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 12 +-----------
- 2 files changed, 1 insertion(+), 16 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c  | 11 ++++++++--
+ drivers/gpu/drm/exynos/exynos_drm_plane.c | 34 +++++++++++++++++++------------
+ drivers/gpu/drm/exynos/exynos_drm_plane.h | 11 +++++-----
+ 3 files changed, 36 insertions(+), 20 deletions(-)
 
 diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 9e8ed5f..357fcd5 100644
+index 357fcd5..a85c451 100644
 --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
 +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -89,7 +89,6 @@ exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
- 			  struct drm_display_mode *adjusted_mode, int x, int y,
- 			  struct drm_framebuffer *old_fb)
- {
--	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+@@ -92,6 +92,7 @@ exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
  	struct drm_framebuffer *fb = crtc->primary->fb;
  	unsigned int crtc_w;
  	unsigned int crtc_h;
-@@ -102,10 +101,6 @@ exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
++	int ret;
  
+ 	/*
+ 	 * copy the mode data adjusted by mode_fixup() into crtc->mode
+@@ -99,10 +100,16 @@ exynos_drm_crtc_mode_set(struct drm_crtc *crtc, struct drm_display_mode *mode,
+ 	 */
+ 	memcpy(&crtc->mode, adjusted_mode, sizeof(*adjusted_mode));
+ 
++	ret = exynos_check_plane(crtc->primary, fb);
++	if (ret < 0)
++		return ret;
++
  	crtc_w = fb->width - x;
  	crtc_h = fb->height - y;
--
--	if (exynos_crtc->ops->mode_set)
--		exynos_crtc->ops->mode_set(exynos_crtc, &crtc->mode);
--
- 	return exynos_plane_mode_set(crtc->primary, crtc, fb, 0, 0,
- 				     crtc_w, crtc_h, x, y, crtc_w, crtc_h);
- }
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 25c41f7..0e01b17 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -165,7 +165,6 @@ struct fimd_context {
- 	struct clk			*lcd_clk;
- 	void __iomem			*regs;
- 	struct regmap			*sysreg;
--	struct drm_display_mode		mode;
- 	struct fimd_win_data		win_data[WINDOWS_NR];
- 	unsigned int			default_win;
- 	unsigned long			irq_flags;
-@@ -346,18 +345,10 @@ static bool fimd_mode_fixup(struct exynos_drm_crtc *crtc,
- 	return true;
+-	return exynos_plane_mode_set(crtc->primary, crtc, fb, 0, 0,
+-				     crtc_w, crtc_h, x, y, crtc_w, crtc_h);
++	exynos_plane_mode_set(crtc->primary, crtc, fb, 0, 0,
++			      crtc_w, crtc_h, x, y, crtc_w, crtc_h);
++
++	return 0;
  }
  
--static void fimd_mode_set(struct exynos_drm_crtc *crtc,
--		const struct drm_display_mode *in_mode)
--{
--	struct fimd_context *ctx = crtc->ctx;
--
--	drm_mode_copy(&ctx->mode, in_mode);
--}
--
- static void fimd_commit(struct exynos_drm_crtc *crtc)
+ static int exynos_drm_crtc_mode_set_base(struct drm_crtc *crtc, int x, int y,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.c b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+index 95442e6..358cff6 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.c
+@@ -12,6 +12,7 @@
+ #include <drm/drmP.h>
+ 
+ #include <drm/exynos_drm.h>
++#include <drm/drm_plane_helper.h>
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_crtc.h"
+ #include "exynos_drm_fb.h"
+@@ -61,16 +62,9 @@ static int exynos_plane_get_size(int start, unsigned length, unsigned last)
+ 	return size;
+ }
+ 
+-int exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+-			  struct drm_framebuffer *fb, int crtc_x, int crtc_y,
+-			  unsigned int crtc_w, unsigned int crtc_h,
+-			  uint32_t src_x, uint32_t src_y,
+-			  uint32_t src_w, uint32_t src_h)
++int exynos_check_plane(struct drm_plane *plane, struct drm_framebuffer *fb)
  {
- 	struct fimd_context *ctx = crtc->ctx;
--	struct drm_display_mode *mode = &ctx->mode;
-+	struct drm_display_mode *mode = &crtc->base.mode;
- 	struct fimd_driver_data *driver_data = ctx->driver_data;
- 	void *timing_base = ctx->regs + driver_data->timing_base;
- 	u32 val, clkdiv;
-@@ -1017,7 +1008,6 @@ static void fimd_te_handler(struct exynos_drm_crtc *crtc)
- static struct exynos_drm_crtc_ops fimd_crtc_ops = {
- 	.dpms = fimd_dpms,
- 	.mode_fixup = fimd_mode_fixup,
--	.mode_set = fimd_mode_set,
- 	.commit = fimd_commit,
- 	.enable_vblank = fimd_enable_vblank,
- 	.disable_vblank = fimd_disable_vblank,
+ 	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+-	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+-	unsigned int actual_w;
+-	unsigned int actual_h;
+ 	int nr;
+ 	int i;
+ 
+@@ -89,6 +83,20 @@ int exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+ 				i, (unsigned long)exynos_plane->dma_addr[i]);
+ 	}
+ 
++	return 0;
++}
++
++void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
++			  struct drm_framebuffer *fb, int crtc_x, int crtc_y,
++			  unsigned int crtc_w, unsigned int crtc_h,
++			  uint32_t src_x, uint32_t src_y,
++			  uint32_t src_w, uint32_t src_h)
++{
++	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
++	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
++	unsigned int actual_w;
++	unsigned int actual_h;
++
+ 	actual_w = exynos_plane_get_size(crtc_x, crtc_w, crtc->mode.hdisplay);
+ 	actual_h = exynos_plane_get_size(crtc_y, crtc_h, crtc->mode.vdisplay);
+ 
+@@ -135,8 +143,6 @@ int exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+ 
+ 	if (exynos_crtc->ops->win_mode_set)
+ 		exynos_crtc->ops->win_mode_set(exynos_crtc, exynos_plane);
+-
+-	return 0;
+ }
+ 
+ void exynos_plane_dpms(struct drm_plane *plane, int mode)
+@@ -177,12 +183,14 @@ exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
+ 	struct exynos_drm_plane *exynos_plane = to_exynos_plane(plane);
+ 	int ret;
+ 
+-	ret = exynos_plane_mode_set(plane, crtc, fb, crtc_x, crtc_y,
+-			crtc_w, crtc_h, src_x >> 16, src_y >> 16,
+-			src_w >> 16, src_h >> 16);
++	ret = exynos_check_plane(plane, fb);
+ 	if (ret < 0)
+ 		return ret;
+ 
++	exynos_plane_mode_set(plane, crtc, fb, crtc_x, crtc_y,
++			      crtc_w, crtc_h, src_x >> 16, src_y >> 16,
++			      src_w >> 16, src_h >> 16);
++
+ 	if (exynos_crtc->ops->win_commit)
+ 		exynos_crtc->ops->win_commit(exynos_crtc, exynos_plane->zpos);
+ 
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_plane.h b/drivers/gpu/drm/exynos/exynos_drm_plane.h
+index d25c079..59d4075 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_plane.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_plane.h
+@@ -9,11 +9,12 @@
+  *
+  */
+ 
+-int exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
+-			  struct drm_framebuffer *fb, int crtc_x, int crtc_y,
+-			  unsigned int crtc_w, unsigned int crtc_h,
+-			  uint32_t src_x, uint32_t src_y,
+-			  uint32_t src_w, uint32_t src_h);
++int exynos_check_plane(struct drm_plane *plane, struct drm_framebuffer *fb);
++void exynos_plane_mode_set(struct drm_plane *plane, struct drm_crtc *crtc,
++			   struct drm_framebuffer *fb, int crtc_x, int crtc_y,
++			   unsigned int crtc_w, unsigned int crtc_h,
++			   uint32_t src_x, uint32_t src_y,
++			   uint32_t src_w, uint32_t src_h);
+ int exynos_update_plane(struct drm_plane *plane, struct drm_crtc *crtc,
+ 			struct drm_framebuffer *fb, int crtc_x, int crtc_y,
+ 			unsigned int crtc_w, unsigned int crtc_h,
 -- 
 1.9.3
