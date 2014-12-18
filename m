@@ -1,94 +1,72 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH] clk: samsung: Fix Exynos 5420 pinctrl setup and clock
- disable failure due to domain being gated
-Date: Thu, 18 Dec 2014 14:32:30 -0800
-Message-ID: <20141218223230.29014.90296@quantum>
-References: <1417788934-23447-1-git-send-email-k.kozlowski@samsung.com>
- <1418129982.19339.6.camel@AMDC1943> <5486F69B.6020005@samsung.com>
- <7hlhmfo1b0.fsf@deeprootsystems.com> <7h8ui8h7n9.fsf@deeprootsystems.com>
- <1418718015.28527.4.camel@AMDC1943> <20141217152322.29014.7739@quantum>
- <20141218065848.29014.24886@quantum>
- <CAMAWPa-Q0oges=k7ZqXhh4R3NYtWeCRtgxdhxmZrV46zU4D2jg@mail.gmail.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [Linaro-mm-sig] [PATCH v3 18/19] iommu: exynos: init from
+	dt-specific callback instead of initcall
+Date: Fri, 19 Dec 2014 00:21:59 +0100
+Message-ID: <1793344.bWpPveHxzq@wuerfel>
+References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com>
+	<5219064.gvW43bShnl@wuerfel> <1518515.QutUfiWrAf@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAMAWPa-Q0oges=k7ZqXhh4R3NYtWeCRtgxdhxmZrV46zU4D2jg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Stephen Boyd <sboyd@codeaurora.org>, Tomasz Figa <tomasz.figa@gmail.com>, lkml <linux-kernel@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <1518515.QutUfiWrAf@avalon>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-UXVvdGluZyBLZXZpbiBIaWxtYW4gKDIwMTQtMTItMTggMTQ6MTA6MzQpCj4gT24gV2VkLCBEZWMg
-MTcsIDIwMTQgYXQgMTA6NTggUE0sIE1pa2UgVHVycXVldHRlIDxtdHVycXVldHRlQGxpbmFyby5v
-cmc+IHdyb3RlOgo+ID4gUXVvdGluZyBNaWtlIFR1cnF1ZXR0ZSAoMjAxNC0xMi0xNyAwNzoyMzoy
-MikKPiA+PiBRdW90aW5nIEtyenlzenRvZiBLb3psb3dza2kgKDIwMTQtMTItMTYgMDA6MjA6MTUp
-Cj4gPj4gPiBPbiBwb24sIDIwMTQtMTItMTUgYXQgMTQ6MjYgLTA4MDAsIEtldmluIEhpbG1hbiB3
-cm90ZToKPiA+PiA+ID4gS2V2aW4gSGlsbWFuIDxraGlsbWFuQGtlcm5lbC5vcmc+IHdyaXRlczoK
-PiA+PiA+ID4KPiA+PiA+ID4gPiBTeWx3ZXN0ZXIgTmF3cm9ja2kgPHMubmF3cm9ja2lAc2Ftc3Vu
-Zy5jb20+IHdyaXRlczoKPiA+PiA+ID4gPgo+ID4+ID4gPiA+PiBPbiAwOS8xMi8xNCAxMzo1OSwg
-S3J6eXN6dG9mIEtvemxvd3NraSB3cm90ZToKPiA+PiA+ID4gPj4+IE9uIHBpxIUsIDIwMTQtMTIt
-MDUgYXQgMTU6MTUgKzAxMDAsIEtyenlzenRvZiBLb3psb3dza2kgd3JvdGU6Cj4gPj4gPiA+ID4+
-Pj4gPiBBdWRpbyBzdWJzeXN0ZW0gY2xvY2tzIGFyZSBsb2NhdGVkIGluIHNlcGFyYXRlIGJsb2Nr
-LiBPbiBFeHlub3MgNTQyMCBpZgo+ID4+ID4gPiA+Pj4+ID4gY2xvY2sgZm9yIHRoaXMgYmxvY2sg
-KGZyb20gbWFpbiBjbG9jayBkb21haW4pICdtYXVfZXBsbCcgaXMgZ2F0ZWQgdGhlbgo+ID4+ID4g
-PiA+Pj4+ID4gYW55IHJlYWQgb3Igd3JpdGUgdG8gYXVkc3MgcmVnaXN0ZXJzIHdpbGwgYmxvY2su
-Cj4gPj4gPiA+ID4+Pj4gPgo+ID4+ID4gPiA+Pj4+ID4gVGhpcyBraW5kIG9mIGJvb3QgaGFuZyB3
-YXMgb2JzZXJ2ZWQgb24gQXJuZGFsZSBPY3RhIGFuZCBQZWFjaCBQaS9QaXQKPiA+PiA+ID4gPj4+
-PiA+IGFmdGVyIGludHJvZHVjaW5nIHJ1bnRpbWUgUE0gdG8gcGwzMzAgRE1BIGRyaXZlci4gQWZ0
-ZXIgdGhhdCBjb21taXQgdGhlCj4gPj4gPiA+ID4+Pj4gPiAnbWF1X2VwbGwnIHdhcyBnYXRlZCwg
-YmVjYXVzZSB0aGUgImFtYmEiIGNsb2NrIHdhcyBkaXNhYmxlZCBhbmQgdGhlcmUKPiA+PiA+ID4g
-Pj4+PiA+IHdlcmUgbm8gbW9yZSB1c2VycyBvZiBtYXVfZXBsbC4KPiA+PiA+ID4gPj4+PiA+Cj4g
-Pj4gPiA+ID4+Pj4gPiBUaGUgc3lzdGVtIGhhbmcgb24gb25lIG9mIHN0ZXBzOgo+ID4+ID4gPiA+
-Pj4+ID4gMS4gRGlzYWJsaW5nIHVudXNlZCBjbG9ja3MgZnJvbSBhdWRzcyBibG9jay4KPiA+PiA+
-ID4gPj4+PiA+IDIuIER1cmluZyBhdWRzcyBHUElPIHNldHVwIChqdXN0IGJlZm9yZSBwcm9iaW5n
-IGkyczAgYmVjYXVzZQo+ID4+ID4gPiA+Pj4+ID4gICAgc2Ftc3VuZ19waW5tdXhfc2V0dXAoKSB0
-cmllZCB0byBhY2Nlc3MgbWVtb3J5IGZyb20gYXVkc3MgYmxvY2sgd2hpY2ggd2FzCj4gPj4gPiA+
-ID4+Pj4gPiAgICBnYXRlZC4KPiA+PiA+ID4gPj4+PiA+Cj4gPj4gPiA+ID4+Pj4gPiBBZGQgYSB3
-b3JrYXJvdW5kIGZvciB0aGlzIGJ5IGVuYWJsaW5nIHRoZSAnbWF1X2VwbGwnIGNsb2NrIGluIHBy
-b2JlLgo+ID4+ID4gPiA+Pj4+ID4KPiA+PiA+ID4gPj4+PiA+IFNpZ25lZC1vZmYtYnk6IEtyenlz
-enRvZiBLb3psb3dza2kgPGsua296bG93c2tpQHNhbXN1bmcuY29tPgo+ID4+ID4gPiA+Pj4+ID4g
-LS0tCj4gPj4gPiA+ID4+Pj4gPiAgZHJpdmVycy9jbGsvc2Ftc3VuZy9jbGstZXh5bm9zLWF1ZHNz
-LmMgfCAyOSArKysrKysrKysrKysrKysrKysrKysrKysrKysrLQo+ID4+ID4gPiA+Pj4+ID4gIDEg
-ZmlsZSBjaGFuZ2VkLCAyOCBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4gPj4gPiA+ID4+
-Pgo+ID4+ID4gPiA+Pj4gU29ycnkgZm9yIHBpbmdpbmcgc28gcXVpY2sgYnV0IG1lcmdlIHdpbmRv
-dyBpcyBvcGVuIGFuZCBpdCBsb29rcyBsaWtlCj4gPj4gPiA+ID4+PiBib290aW5nIEV4eW5vczU0
-MnggYm9hcmRzIHdpbGwgYmUgYnJva2VuIChiZWNhdXNlIHBsMzMwIHdpbGwgbm8gbG9uZ2VyCj4g
-Pj4gPiA+ID4+PiBob2xkIGFkbWEgY2xvY2sgZW5hYmxlZCBzbyB3aG9sZSBhdWRzcyBkb21haW4g
-d2lsbCBiZSBnYXRlZCkuCj4gPj4gPiA+ID4+Pgo+ID4+ID4gPiA+Pj4gVGhpcyBpcyBhIG5vbi1p
-bnRydXNpdmUgd29ya2Fyb3VuZCBmb3IgdGhhdCBpc3N1ZSwgYXMgd2FudGVkIGJ5Cj4gPj4gPiA+
-ID4+PiBTeWx3ZXN0ZXI6Cj4gPj4gPiA+ID4+PiBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxNC8x
-Mi81LzIyMwo+ID4+ID4gPiA+Pj4KPiA+PiA+ID4gPj4+IEFueSBjb21tZW50cyBvbiB0aGlzPwo+
-ID4+ID4gPiA+Pgo+ID4+ID4gPiA+PiBUaGUgcGF0Y2ggbG9va3MgT0sgdG8gbWUsIGl0IHdvdWxk
-IGJlIGdvb2QgdGhvdWdoIGlmIHNvbWVvbmUgZWxzZQo+ID4+ID4gPiA+PiBoYXMgY29uZmlybWVk
-IGl0IGZpeGVzIHRoZSBidWcuIEkgZG9uJ3QgaGF2ZSBhbnkgY2xvY2sgcGF0Y2hlcyBxdWV1ZWQK
-PiA+PiA+ID4gPj4gYXQgdGhlIG1vbWVudC4gUGVyaGFwcyB5b3UgY291bGQgYXBwbHkgaXQgZGly
-ZWN0bHksIE1pa2UgPwo+ID4+ID4gPiA+Cj4gPj4gPiA+ID4gSSBjb25maXJtIGl0IGZpeGVzIHRo
-ZSBib290IGhhbmcgaW4gbGludXgtbmV4dCAobmV4dC0yMDE0MTIxMCkgb24gbXkKPiA+PiA+ID4g
-PiBleHlub3M1ODAwLXBlYWNoLXBpIGFuZCBleHlub3M1NDIwLWFybmRhbGUtb2N0YS4gIFRlc3Rl
-ZCBib3RoCj4gPj4gPiA+ID4gZXh5bm9zX2RlZmNvbmZpZyBhbmQgbXVsdGlfdjdfZGVmY29uZmln
-Lgo+ID4+ID4gPiA+Cj4gPj4gPiA+ID4gVGVzdGVkLWJ5OiBLZXZpbiBIaWxtYW4gPGtoaWxtYW5A
-bGluYXJvLm9yZz4KPiA+PiA+ID4KPiA+PiA+ID4gV2hhdCdzIHRoZSBzdGF0dXMgb2YgdGhpcyBw
-YXRjaD8gIGxpbnV4LW5leHQgaXMgc3RpbGwgYnJva2VuIGZvciBzZXZlcmFsCj4gPj4gPiA+IEV4
-eW5vczUgcGxhdGZvcm1zIHdpdGhvdXQgdGhpcyBmaXguCj4gPj4gPgo+ID4+ID4gSSBiZWxpZXZl
-IG5vdCBvbmx5IG5leHQgaXMgYnJva2VuIGJ1dCBhbHNvIGN1cnJlbnQgbWFpbmxpbmUgYmVjYXVz
-ZQo+ID4+ID4gcnVudGltZSBQTSBmb3IgcGwzMzAgd2FzIG1lcmdlZCB5ZXN0ZXJkYXkuLi4KPiA+
-PiA+Cj4gPj4gPiBUaGUgcGF0Y2ggcmVjZWl2ZWQgdHdvIHRlc3RlZC1ieXMgKEtldmluJ3MgYW5k
-IEphdmllcidzKSBhbmQgU3lsd2VzdGVyJ3MKPiA+PiA+IGFjay4KPiA+PiA+Cj4gPj4gPiBNaWtl
-LCBjb3VsZCB5b3UgcGljayB0aGUgcGF0Y2ggYW5kIHNlbmQgaXQgdG8gTGludXMgYWZ0ZXIgcmMx
-Pwo+ID4+Cj4gPj4gV2lsbCBkby4KPiA+Cj4gPiBUbyBiZSBjbGVhciwgSSBwdWxsZWQgdGhpcyBp
-bnRvIGNsay1uZXh0IHRvd2FyZHMgLXJjMSwgc28gaXQgd29uJ3QgbmVlZAo+ID4gdG8gZ28gdGhy
-b3VnaCBhcyBhbiAtcmMgZml4Lgo+IAo+IFRoaXMgaGl0IHRvZGF5J3MgbGludXgtbmV4dCwgYW5k
-IGV4eW5vczUgcGxhdGZvcm1zIGFyZSBoYXBwaWx5IGJvb3RpbmcKPiBhZ2Fpbi4gIFRoYW5rcyEK
-ClRoYW5rcyBmb3IgdGVzdGluZyBpdCBLZXZpbi4KClJlZ2FyZHMsCk1pa2UKCj4gCj4gS2V2aW4K
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFy
-bS1rZXJuZWwgbWFpbGluZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9y
-ZwpodHRwOi8vbGlzdHMuaW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1r
-ZXJuZWwK
+On Thursday 18 December 2014 22:36:14 Laurent Pinchart wrote:
+> 
+> > (currently only on ARM64, not ARM32, until someone adds support). I can see
+> > your point regarding machines that have a mandatory IOMMU with no fallback
+> > when there is no driver, but we can support them by making the iommu driver
+> > selected through Kconfig for that platform, while still allowing other
+> > platforms to work with drivers left out of the kernel.
+> 
+> The question is how to tell the kernel not to wait for an IOMMU that will 
+> never be there. Would a kernel command line argument be an acceptable solution 
+> or do we need something more automatic ?
+
+I would hope that we can find an automatic solution without relying on
+the command line.
+
+Unfortunately, I also remembered one case in support of what Lucas mentioned
+and that would break this: There is at least one SoC that uses cache-coherent
+DMA only when the IOMMU (ARM SMMU IIRC)is enabled, but is non-coherent
+otherwise. We can't really express that in DT, so we actually do rely on
+the IOMMU driver to be present on this machine when any "iommus" properties
+are used, as they would always come in combination with "dma-coherent"
+properties that are otherwise wrong.
+
+We can still enforce this by requiring the smmu driver to be built into
+the kernel on this platform, but simply saying that the device cannot
+support DMA as long as there is an iommus property but no driver for
+it does make a lot of sense.
+
+Note that there are more than two ways that the kernel could treat
+the situation of probing a device with a valid iommus reference but
+no driver loaded for the iommu:
+
+a) assume all iommu drivers are initialized early, so use linear or
+   swiotlb dma_map_ops, and probe the driver normally. This breaks
+   the scenario with conditionally coherent devices, and requires doing
+   the iommu init early
+b) assume all iommu drivers are initialized early, so disallow any DMA
+   by setting a zero dma_mask but allow the driver to be probed using
+   polling I/O mode (useful for slow devices like UART or SPI)
+   This breaks devices that require DMA but can fall back to linear
+   or swiotlb mappings, and requires doing the iommu init early.
+c) defer probing until an iommu driver is gets initialized. This breaks
+   both the cases where we could fall back to a sane behavior without
+   iommu, but it would let us use a proper driver with regular power
+   management etc.
+
+	Arnd
