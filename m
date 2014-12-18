@@ -1,57 +1,114 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: DT on s3c24xx
-Date: Thu, 18 Dec 2014 08:52:05 +0100
-Message-ID: <20141218075205.GB10857@pengutronix.de>
-References: <CA+E=qVf4nT5x-fRFBu=Wv_VKUnEMAEP4GgJG8em8NyUFkwtbPg@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: Enable runtime PM automatically?
+Date: Thu, 18 Dec 2014 09:32:19 +0100
+Message-ID: <CAMuHMdWFHfTSoVR4-JJXZiyHe0XeetzGKqoQnyU5ahZurYNZDw@mail.gmail.com>
+References: <CAMuHMdWY_ne+S3zKrEYqVyU8=S-at=+rGuEkYNauF4s2KaKNdw@mail.gmail.com>
+	<2631000.5asdLXAEtK@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:45725 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751857AbaLRHwY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Dec 2014 02:52:24 -0500
-Content-Disposition: inline
-In-Reply-To: <CA+E=qVf4nT5x-fRFBu=Wv_VKUnEMAEP4GgJG8em8NyUFkwtbPg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <2631000.5asdLXAEtK@vostro.rjw.lan>
+Sender: linux-pm-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Kevin Hilman <khilman@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Len Brown <len.brown@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Linux PM list <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: arm-linux <linux-arm-kernel@lists.infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org
 
-Hello,
+Hi Rafael,
 
-[Cc +=3D linusw, linux-gpio]
+Thanks for your comments!
 
-On Wed, Dec 17, 2014 at 10:04:24PM +0300, Vasily Khoruzhick wrote:
-> I'd like to port several s3c24xx to DT, and I'm stuck with s3c24xx LC=
-D
-> controller and power drivers for H1940 and RX1950.
->=20
-> Please see [1]. I want to move this function into another LCD power
-> driver, but I'm not sure what to do with s3c_gpio_cfgpin(). I need to
-> change pin function in runtime, and as far as I understand it should
-> be handled via pinctrl driver somehow. But how?
-You can pass >1 pinctrl setups to a node:
+On Thu, Dec 18, 2014 at 1:57 AM, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> On Wednesday, December 17, 2014 08:33:13 PM Geert Uytterhoeven wrote:
+>> On Tue, Dec 16, 2014 at 11:10 PM, Kevin Hilman <khilman@kernel.org> wrote:
+>> > At a deeper level, the problem with this approach is that this is more
+>> > generically a runtime PM dependency problem, not a genpd problem.  For
+>> > example, what happens when the same kind of dependency exists on a
+>> > platform using a custom PM domain instead of genpd (like ACPI.) ?
+>> >
+>> > What's needed to solve this problem is a generalized way to have runtime
+>> > PM dependencies between devices.  Runtime PM already automatically
+>> > handles parent devices as one type of dependent device (e.g. a parent
+>> > device needs to be runtime PM resumed before its child.)  So what's
+>> > needed is a generic way to other PM dependencies with the runtime PM
+>> > core (not the genpd core.)
+>> >
+>> > If runtime PM handles the dependencies corretcly, then genpd (and any
+>> > other PM domain) will get them "for free".
+>>
+>> Having the proper dependencies is not sufficient. Currently drivers have to do
+>> something to use runtime PM.
+>>
+>> By default, runtime PM is disabled for a device
+>> ("device.power.disable_depth = 1").
+>
+> Which isn't the case for PCI devices.
 
-	somedevice {
-		pinctrl-names =3D "default", "foo", "bar";
-		pinctrl-0 =3D <&pinctrl_somedevice_default>;
-		pinctrl-1 =3D <&pinctrl_somedevice_foo>;
-		pinctrl-2 =3D <&pinctrl_somedevice_bar>;
-		cfg-gpios =3D <&gpio4 12 3>, <&gpio2 7 5>;
-	};
+I didn't know that.
 
-Then I think you can fiddle with pinctrl_select_state(). For the gpios
-you can then use the standard gpiod_{request,direction_{in,out}put}
-combo.
+The above code excerpt comes from pm_runtime_init(), which is called from
+device_pm_init() / device_initialize() / device_register(), so I
+assume it applies
+to PCI, too? Can you please tell me where it's overridden by PCI?
 
-Best regards
-Uwe
+>> However, if PM domains are active, drivers must be runtime PM-aware for the
+>> gpd_dev_ops.start() method to be called in the first place (perhaps this is just
+>> one bug that's easy to fix --- the device is "assumed suspended", but can be
+>> used). They must
+>>   1. call pm_runtime_enable() to enable runtime PM for the device,
+>>   2. call pm_runtime_get_sync() to prevent the device from being put in a
+>>     low-power state at any time. This second call has the
+>> "side-effect" of calling
+>>     gpd_dev_ops.start().
+>>
+>> Hence, if PM domains are enabled, wouldn't it make sense to
+>>   1. enable runtime PM by default, for all devices (bound and unbound),
+>
+> I guess you mean for devices with and without drivers here?
 
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+Yes, indeed.
+
+>>   2. call pm_runtime_get_sync(), for all devices bound to a driver.
+>> Of course we have to keep track if drivers call any of the pm_runtime_*()
+>> methods theirselves, as that would have to move them from automatic to
+>> manual mode.
+>>
+>> Would this be feasible?
+>
+> PCI does something similar and IMO it would make sense to do that for all
+> devices, at least where we have a known way to power them up/down without a
+> driver.
+
+OK.
+
+> There's a couple of questions, though
+>  First, how many drivers would break  if we enabled runtime PM by default?
+
+If the default also calls pm_runtime_get_sync() automatically, I don't see
+a big issue there, as the device won't be runtime-suspended automatically,
+just like before?
+
+> Second, if we do that, how do we figure out the initial value of runtime
+> PM status in general?
+
+Do you mean in the context of the following paragraph from
+Documentation/power/runtime_pm.txt?
+
+"In addition to that, the initial runtime PM status of all devices is
+ 'suspended', but it need not reflect the actual physical state of the device."
+
+> Finally, what about drivers that need to work with and without PM domains
+> (for example, some systems they run on have PM domains, while some other don't)?
+
+We already have the last issue now, but currently it breaks in subtle ways
+on the systems where there are PM domains.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
