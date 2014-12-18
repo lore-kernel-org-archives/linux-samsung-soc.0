@@ -1,120 +1,87 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 15/29] drm/exynos: add pipe param to exynos_drm_crtc_create()
-Date: Thu, 18 Dec 2014 11:58:41 -0200
-Message-ID: <1418911135-5207-16-git-send-email-gustavo@padovan.org>
+Subject: [PATCH 16/29] drm/exynos: remove pipe member of struct
+ exynos_drm_manager
+Date: Thu, 18 Dec 2014 11:58:42 -0200
+Message-ID: <1418911135-5207-17-git-send-email-gustavo@padovan.org>
 References: <1418911135-5207-1-git-send-email-gustavo@padovan.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f172.google.com ([209.85.216.172]:46734 "EHLO
-	mail-qc0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752287AbaLRN75 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Dec 2014 08:59:57 -0500
-Received: by mail-qc0-f172.google.com with SMTP id m20so873025qcx.31
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 18 Dec 2014 05:59:57 -0800 (PST)
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1418911135-5207-1-git-send-email-gustavo@padovan.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+Cc: Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
-
-Get the pipe value from a parameter instead of getting it from
-manager->pipe. We are removing manager->pipe.
-
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 8 ++++----
- drivers/gpu/drm/exynos/exynos_drm_crtc.h | 2 +-
- drivers/gpu/drm/exynos/exynos_drm_fimd.c | 2 +-
- drivers/gpu/drm/exynos/exynos_drm_vidi.c | 2 +-
- drivers/gpu/drm/exynos/exynos_mixer.c    | 2 +-
- 5 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index 1cdf705..68aae38 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -299,7 +299,7 @@ static void exynos_drm_crtc_attach_mode_property(struct drm_crtc *crtc)
- 	drm_object_attach_property(&crtc->base, prop, 0);
- }
- 
--int exynos_drm_crtc_create(struct exynos_drm_manager *manager)
-+int exynos_drm_crtc_create(struct exynos_drm_manager *manager, int pipe)
- {
- 	struct exynos_drm_crtc *exynos_crtc;
- 	struct drm_plane *plane;
-@@ -316,8 +316,8 @@ int exynos_drm_crtc_create(struct exynos_drm_manager *manager)
- 
- 	exynos_crtc->dpms = DRM_MODE_DPMS_OFF;
- 	exynos_crtc->manager = manager;
--	exynos_crtc->pipe = manager->pipe;
--	plane = exynos_plane_init(manager->drm_dev, 1 << manager->pipe,
-+	exynos_crtc->pipe = pipe;
-+	plane = exynos_plane_init(manager->drm_dev, 1 << pipe,
- 				  DRM_PLANE_TYPE_PRIMARY);
- 	if (IS_ERR(plane)) {
- 		ret = PTR_ERR(plane);
-@@ -327,7 +327,7 @@ int exynos_drm_crtc_create(struct exynos_drm_manager *manager)
- 	manager->crtc = &exynos_crtc->base;
- 	crtc = &exynos_crtc->base;
- 
--	private->crtc[manager->pipe] = crtc;
-+	private->crtc[pipe] = crtc;
- 
- 	ret = drm_crtc_init_with_planes(manager->drm_dev, crtc, plane, NULL,
- 					&exynos_crtc_funcs);
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.h b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-index dbd4227..f1bee84 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.h
-@@ -17,7 +17,7 @@
- 
- #include "exynos_drm_drv.h"
- 
--int exynos_drm_crtc_create(struct exynos_drm_manager *manager);
-+int exynos_drm_crtc_create(struct exynos_drm_manager *manager, int pipe);
- int exynos_drm_crtc_enable_vblank(struct drm_device *dev, int pipe);
- void exynos_drm_crtc_disable_vblank(struct drm_device *dev, int pipe);
- void exynos_drm_crtc_finish_pageflip(struct drm_device *dev, int pipe);
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index 495d7e2..5e94fea 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -1094,7 +1094,7 @@ static int fimd_bind(struct device *dev, struct device *master, void *data)
- 	struct drm_device *drm_dev = data;
- 
- 	fimd_mgr_initialize(&ctx->manager, drm_dev);
--	exynos_drm_crtc_create(&ctx->manager);
-+	exynos_drm_crtc_create(&ctx->manager, ctx->pipe);
- 	if (ctx->display)
- 		exynos_drm_create_enc_conn(drm_dev, ctx->display);
- 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index 7f9ce73..e78764f 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -558,7 +558,7 @@ static int vidi_bind(struct device *dev, struct device *master, void *data)
- 
- 	vidi_mgr_initialize(&ctx->manager, drm_dev);
- 
--	ret = exynos_drm_crtc_create(&ctx->manager);
-+	ret = exynos_drm_crtc_create(&ctx->manager, ctx->pipe);
- 	if (ret) {
- 		DRM_ERROR("failed to create crtc.\n");
- 		return ret;
-diff --git a/drivers/gpu/drm/exynos/exynos_mixer.c b/drivers/gpu/drm/exynos/exynos_mixer.c
-index b64674a..9d7dcfc 100644
---- a/drivers/gpu/drm/exynos/exynos_mixer.c
-+++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -1256,7 +1256,7 @@ static int mixer_bind(struct device *dev, struct device *manager, void *data)
- 	if (ret)
- 		return ret;
- 
--	ret = exynos_drm_crtc_create(&ctx->manager);
-+	ret = exynos_drm_crtc_create(&ctx->manager, ctx->pipe);
- 	if (ret) {
- 		mixer_mgr_remove(&ctx->manager);
- 		return ret;
--- 
-1.9.3
+RnJvbTogR3VzdGF2byBQYWRvdmFuIDxndXN0YXZvLnBhZG92YW5AY29sbGFib3JhLmNvLnVrPgoK
+SXQgaXMgbm90IGxvbmdlciB1c2VkLiBUaGlzIGlzIHBhcnQgb2YgdGhlIHByb2Nlc3Mgb2YgcmVt
+b3ZpbmcKc3RydWN0IGV4eW5vc19kcm1fbWFuYWdlciBlbnRpcmVseS4KClNpZ25lZC1vZmYtYnk6
+IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5jby51az4KLS0tCiBk
+cml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jIHwgMiArLQogZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oICB8IDIgLS0KIGRyaXZlcnMvZ3B1L2RybS9l
+eHlub3MvZXh5bm9zX2RybV9maW1kLmMgfCAyICstCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
+eW5vc19kcm1fdmlkaS5jIHwgMiArLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfbWl4
+ZXIuYyAgICB8IDIgKy0KIDUgZmlsZXMgY2hhbmdlZCwgNCBpbnNlcnRpb25zKCspLCA2IGRlbGV0
+aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9j
+cnRjLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fY3J0Yy5jCmluZGV4IDY4
+YWFlMzguLjBmZTk4MWIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9jcnRjLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMu
+YwpAQCAtNDM2LDcgKzQzNiw3IEBAIGludCBleHlub3NfZHJtX2NydGNfZ2V0X3BpcGVfZnJvbV90
+eXBlKHN0cnVjdCBkcm1fZGV2aWNlICpkcm1fZGV2LAogCiAJCWV4eW5vc19jcnRjID0gdG9fZXh5
+bm9zX2NydGMoY3J0Yyk7CiAJCWlmIChleHlub3NfY3J0Yy0+bWFuYWdlci0+dHlwZSA9PSBvdXRf
+dHlwZSkKLQkJCXJldHVybiBleHlub3NfY3J0Yy0+bWFuYWdlci0+cGlwZTsKKwkJCXJldHVybiBl
+eHlub3NfY3J0Yy0+cGlwZTsKIAl9CiAKIAlyZXR1cm4gLUVQRVJNOwpkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2Rydi5oIGIvZHJpdmVycy9ncHUvZHJtL2V4
+eW5vcy9leHlub3NfZHJtX2Rydi5oCmluZGV4IDBhNTY1ZjguLjFkMDI0YzAgMTAwNjQ0Ci0tLSBh
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaAorKysgYi9kcml2ZXJzL2dw
+dS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHJ2LmgKQEAgLTIwNyw3ICsyMDcsNiBAQCBzdHJ1Y3Qg
+ZXh5bm9zX2RybV9tYW5hZ2VyX29wcyB7CiAgKiBAdHlwZTogb25lIG9mIEVYWU5PU19ESVNQTEFZ
+X1RZUEVfTENEIGFuZCBIRE1JLgogICogQGRybV9kZXY6IHBvaW50ZXIgdG8gdGhlIGRybSBkZXZp
+Y2UKICAqIEBjcnRjOiBjcnRjIG9iamVjdC4KLSAqIEBwaXBlOiB0aGUgcGlwZSBudW1iZXIgZm9y
+IHRoaXMgY3J0Yy9tYW5hZ2VyCiAgKiBAb3BzOiBwb2ludGVyIHRvIGNhbGxiYWNrcyBmb3IgZXh5
+bm9zIGRybSBzcGVjaWZpYyBmdW5jdGlvbmFsaXR5CiAgKiBAY3R4OiBBIHBvaW50ZXIgdG8gdGhl
+IG1hbmFnZXIncyBpbXBsZW1lbnRhdGlvbiBzcGVjaWZpYyBjb250ZXh0CiAgKi8KQEAgLTIxNiw3
+ICsyMTUsNiBAQCBzdHJ1Y3QgZXh5bm9zX2RybV9tYW5hZ2VyIHsKIAllbnVtIGV4eW5vc19kcm1f
+b3V0cHV0X3R5cGUgdHlwZTsKIAlzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2RldjsKIAlzdHJ1Y3Qg
+ZHJtX2NydGMgKmNydGM7Ci0JaW50IHBpcGU7CiAJc3RydWN0IGV4eW5vc19kcm1fbWFuYWdlcl9v
+cHMgKm9wczsKIH07CiAKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9z
+X2RybV9maW1kLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmltZC5jCmlu
+ZGV4IDVlOTRmZWEuLmE3NDk0MTggMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
+ZXh5bm9zX2RybV9maW1kLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2ZpbWQuYwpAQCAtMzAwLDcgKzMwMCw3IEBAIHN0YXRpYyBpbnQgZmltZF9tZ3JfaW5pdGlhbGl6
+ZShzdHJ1Y3QgZXh5bm9zX2RybV9tYW5hZ2VyICptZ3IsCiAJcHJpdiA9IGRybV9kZXYtPmRldl9w
+cml2YXRlOwogCiAJbWdyLT5kcm1fZGV2ID0gY3R4LT5kcm1fZGV2ID0gZHJtX2RldjsKLQltZ3It
+PnBpcGUgPSBjdHgtPnBpcGUgPSBwcml2LT5waXBlKys7CisJY3R4LT5waXBlID0gcHJpdi0+cGlw
+ZSsrOwogCiAJLyogYXR0YWNoIHRoaXMgc3ViIGRyaXZlciB0byBpb21tdSBtYXBwaW5nIGlmIHN1
+cHBvcnRlZC4gKi8KIAlpZiAoaXNfZHJtX2lvbW11X3N1cHBvcnRlZChjdHgtPmRybV9kZXYpKSB7
+CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlkaS5jIGIv
+ZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYwppbmRleCBlNzg3NjRmLi43
+ODVkMmZlIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fdmlk
+aS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMKQEAgLTMw
+Miw3ICszMDIsNyBAQCBzdGF0aWMgaW50IHZpZGlfbWdyX2luaXRpYWxpemUoc3RydWN0IGV4eW5v
+c19kcm1fbWFuYWdlciAqbWdyLAogCXN0cnVjdCBleHlub3NfZHJtX3ByaXZhdGUgKnByaXYgPSBk
+cm1fZGV2LT5kZXZfcHJpdmF0ZTsKIAogCW1nci0+ZHJtX2RldiA9IGN0eC0+ZHJtX2RldiA9IGRy
+bV9kZXY7Ci0JbWdyLT5waXBlID0gY3R4LT5waXBlID0gcHJpdi0+cGlwZSsrOworCWN0eC0+cGlw
+ZSA9IHByaXYtPnBpcGUrKzsKIAogCXJldHVybiAwOwogfQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX21peGVyLmMKaW5kZXggOWQ3ZGNmYy4uODMwMTUwMyAxMDA2NDQKLS0tIGEvZHJpdmVycy9n
+cHUvZHJtL2V4eW5vcy9leHlub3NfbWl4ZXIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
+L2V4eW5vc19taXhlci5jCkBAIC04NjMsNyArODYzLDcgQEAgc3RhdGljIGludCBtaXhlcl9pbml0
+aWFsaXplKHN0cnVjdCBleHlub3NfZHJtX21hbmFnZXIgKm1nciwKIAlwcml2ID0gZHJtX2Rldi0+
+ZGV2X3ByaXZhdGU7CiAKIAltZ3ItPmRybV9kZXYgPSBtaXhlcl9jdHgtPmRybV9kZXYgPSBkcm1f
+ZGV2OwotCW1nci0+cGlwZSA9IG1peGVyX2N0eC0+cGlwZSA9IHByaXYtPnBpcGUrKzsKKwltaXhl
+cl9jdHgtPnBpcGUgPSBwcml2LT5waXBlKys7CiAKIAkvKiBhY3F1aXJlIHJlc291cmNlczogcmVn
+cywgaXJxcywgY2xvY2tzICovCiAJcmV0ID0gbWl4ZXJfcmVzb3VyY2VzX2luaXQobWl4ZXJfY3R4
+KTsKLS0gCjEuOS4zCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
