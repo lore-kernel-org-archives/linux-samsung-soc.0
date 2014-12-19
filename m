@@ -1,49 +1,166 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v2 16/16] ARM: dts: Fix I2S1, I2S2 compatible for exynos4 SoCs
-Date: Fri, 19 Dec 2014 14:55:36 +0100
-Message-ID: <1418997336-17777-17-git-send-email-s.nawrocki@samsung.com>
-References: <1418997336-17777-1-git-send-email-s.nawrocki@samsung.com>
+From: Stefan Hengelein <stefan.hengelein@fau.de>
+Subject: Re: [PATCH] ARM: SAMSUNG: remove dead #elif CONFIG_S3C24XX_DMAC
+Date: Fri, 19 Dec 2014 15:15:09 +0100
+Message-ID: <CABv5NL_GisHMZVK03M3j_cGMVcoZ7L+Czt5TP2Sp4abBeUxuCQ@mail.gmail.com>
+References: <1418830837-7422-1-git-send-email-stefan.hengelein@fau.de>
+	<2864831.LEPnyFh3Il@phil>
+	<CABv5NL_SLyY9-yookdTVdNXzCmUEqJ_QB6ofzw_q0H7Vcwbzfg@mail.gmail.com>
+	<1645416.VNQj8YWB7M@phil>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:31478 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752501AbaLSOA0 (ORCPT
+Received: from mail-yh0-f41.google.com ([209.85.213.41]:51255 "EHLO
+	mail-yh0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752460AbaLSOPK convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Dec 2014 09:00:26 -0500
-In-reply-to: <1418997336-17777-1-git-send-email-s.nawrocki@samsung.com>
+	Fri, 19 Dec 2014 09:15:10 -0500
+In-Reply-To: <1645416.VNQj8YWB7M@phil>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: broonie@kernel.org, kgene@kernel.org, alsa-devel@alsa-project.org
-Cc: padma.v@samsung.com, drake@endlessm.com, sbkim73@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
 
-I2S1, I2S2 on Exynos4 SoC series have limited functionality compared
-to I2S0, "samsung,s3c6410-i2s" compatible should be used for them.
+=46rom what i can see, the block was already dead when it was introduce=
+d.
+d2193ce2 changed the "if ARCH_S3C64XX" into the Kconfig file itself,
+before it was around the source statement in arch/arm/Kconfig
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
- arch/arm/boot/dts/exynos4.dtsi |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+if there are really just downstream users that explicitly have to add
+a statement to select S3C64XX_DEV_SPI0 and therefore add the
+possibility to enable the block i want to remove, i'd argue that these
+downstream users could also add the block itself. I'm not sure how
+intuitive it might be for downstream users to add a select in Kconfig
+to enable their machine to communicate with a device, but i'm also not
+familiar with the hardware we're talking about.
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 5f9e72f..71dc876 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -371,7 +371,7 @@
- 	};
- 
- 	i2s1: i2s@13960000 {
--		compatible = "samsung,s5pv210-i2s";
-+		compatible = "samsung,s3c6410-i2s";
- 		reg = <0x13960000 0x100>;
- 		clocks = <&clock CLK_I2S1>;
- 		clock-names = "iis";
-@@ -384,7 +384,7 @@
- 	};
- 
- 	i2s2: i2s@13970000 {
--		compatible = "samsung,s5pv210-i2s";
-+		compatible = "samsung,s3c6410-i2s";
- 		reg = <0x13970000 0x100>;
- 		clocks = <&clock CLK_I2S2>;
- 		clock-names = "iis";
--- 
-1.7.9.5
+However, i'd prefer to have a consistent upstream state and leave
+these problems to downstream users, but that's for the Maintainer to
+decide :)
+
+
+
+2014-12-18 20:03 GMT+01:00 Heiko St=C3=BCbner <heiko@sntech.de>:
+> Hi Stefan,
+>
+> Am Donnerstag, 18. Dezember 2014, 14:43:01 schrieb Stefan Hengelein:
+>> So you actually tested the code I removed in the patch? can you
+>> provide a configuration that compiles that piece of code?
+>
+> Yep, one of my boards (Asus eeeReader DR-900) was actually able to tr=
+ansmit
+> stuff via the libertas spi wifi driver using the s3c64xx-spi driver.
+>
+> The smdk2416 is currently the only board for the s3c2416 in the kerne=
+l. I don't
+> know if it had actual spi devices connected, but if it had, a suitabl=
+e diff would
+> look something like the diff below. Of course hooking up spi devices =
+would
+> work the same in any out-of-tree board for the supported socs.
+>
+>
+> For people reading along, the s3c24xx spi distribution is as follows:
+> s3c2410, s3c2412, s3c2440: (I think) two s3c24xx-spi
+> s3c2443: one s3c64xx-spi and one s3c24xx-spi
+> s3c2416: one s3c64xx-spi
+> s3c2450: two s3c64xx-spi
+>
+>
+> Heiko
+>
+>
+> ------------ 8< ------------
+> diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kc=
+onfig
+> index 9eb2229..5210e5d 100644
+> --- a/arch/arm/mach-s3c24xx/Kconfig
+> +++ b/arch/arm/mach-s3c24xx/Kconfig
+> @@ -419,6 +419,8 @@ config MACH_SMDK2416
+>         select S3C_DEV_HSMMC1
+>         select S3C_DEV_NAND
+>         select S3C_DEV_USB_HOST
+> +       select S3C64XX_DEV_SPI0
+> +       select S3C2443_SETUP_SPI
+>         help
+>           Say Y here if you are using an SMDK2416
+>
+> diff --git a/arch/arm/mach-s3c24xx/mach-smdk2416.c b/arch/arm/mach-s3=
+c24xx/mach-smdk2416.c
+> index 86394f7..b6c6ff4 100644
+> --- a/arch/arm/mach-s3c24xx/mach-smdk2416.c
+> +++ b/arch/arm/mach-s3c24xx/mach-smdk2416.c
+> @@ -52,6 +52,9 @@
+>  #include <linux/platform_data/s3c-hsudc.h>
+>  #include <plat/samsung-time.h>
+>
+> +#include <linux/spi/spi.h>
+> +#include <linux/platform_data/spi-s3c64xx.h>
+> +
+>  #include <plat/fb.h>
+>
+>  #include "common.h"
+> @@ -207,6 +210,26 @@ static struct s3c_sdhci_platdata smdk2416_hsmmc1=
+_pdata __initdata =3D {
+>         .cd_type                =3D S3C_SDHCI_CD_NONE,
+>  };
+>
+> +struct s3c64xx_spi_csinfo libertas_cs_info =3D {
+> +       .fb_delay =3D 0,
+> +       .line =3D 128, /* gpio cs line */
+> +};
+> +
+> +
+> +static struct spi_board_info spi_board_info[] =3D {
+> +    {
+> +       .modalias               =3D "libertas_spi",
+> +       .max_speed_hz           =3D 1200000,
+> +       .bus_num                =3D 0,
+> +       .irq                    =3D 12, /* some interrupt number */
+> +       .chip_select            =3D 0,
+> +       .mode                   =3D SPI_MODE_3,
+> +       .controller_data        =3D &libertas_cs_info,
+> +/*     .platform_data          =3D &foo1_pdata, */
+> +    },
+> +};
+> +
+> +
+>  static struct platform_device *smdk2416_devices[] __initdata =3D {
+>         &s3c_device_fb,
+>         &s3c_device_wdt,
+> @@ -216,6 +239,7 @@ static struct platform_device *smdk2416_devices[]=
+ __initdata =3D {
+>         &s3c_device_hsmmc1,
+>         &s3c_device_usb_hsudc,
+>         &s3c2443_device_dma,
+> +       &s3c64xx_device_spi0,
+>  };
+>
+>  static void __init smdk2416_init_time(void)
+> @@ -250,6 +274,9 @@ static void __init smdk2416_machine_init(void)
+>         gpio_request(S3C2410_GPB(1), "Display Reset");
+>         gpio_direction_output(S3C2410_GPB(1), 1);
+>
+> +       s3c64xx_spi0_set_platdata(NULL, 0, ARRAY_SIZE(spi_board_info)=
+);
+> +       spi_register_board_info(spi_board_info, ARRAY_SIZE(spi_board_=
+info));
+> +
+>         platform_add_devices(smdk2416_devices, ARRAY_SIZE(smdk2416_de=
+vices));
+>         smdk_machine_init();
+>  }
+> diff --git a/arch/arm/mach-s3c24xx/setup-spi.c b/arch/arm/mach-s3c24x=
+x/setup-spi.c
+> index 3d47e02..d66c4e0 100644
+> --- a/arch/arm/mach-s3c24xx/setup-spi.c
+> +++ b/arch/arm/mach-s3c24xx/setup-spi.c
+> @@ -16,6 +16,7 @@
+>
+>  #include <mach/hardware.h>
+>  #include <mach/regs-gpio.h>
+> +#include <mach/gpio-samsung.h>
+>
+>  #ifdef CONFIG_S3C64XX_DEV_SPI0
+>  int s3c64xx_spi0_cfg_gpio(void)
+>
