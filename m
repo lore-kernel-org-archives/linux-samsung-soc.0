@@ -1,84 +1,35 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: dts: exynos3250: replace number by macro in gpio
- keys
-Date: Fri, 19 Dec 2014 17:41:40 +0900
-Message-ID: <5493E4C4.8080208@samsung.com>
-References: <1418978370-22542-1-git-send-email-beomho.seo@samsung.com>
- <1418978370-22542-2-git-send-email-beomho.seo@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [PATCH 0/2] Add pinctrl support for audio IPs on exynos7
+Date: Fri, 19 Dec 2014 18:40:57 +0530
+Message-ID: <1418994659-5222-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:60612 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751802AbaLSIlm (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:53078 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752163AbaLSNSs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Dec 2014 03:41:42 -0500
-In-reply-to: <1418978370-22542-2-git-send-email-beomho.seo@samsung.com>
+	Fri, 19 Dec 2014 08:18:48 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Beomho Seo <beomho.seo@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, kgene.kim@samsung.com, yj44.cho@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, kyungmin.park@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, linus.walleij@linaro.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com
 
-Hi Beomho,
+Audio interface IPs I2S, PCM and SPDIF on Exynos7 requires GPIOs
+available on AUD and BUS0 pin controller blocks. So add support
+for all. 
 
-On 12/19/2014 05:39 PM, Beomho Seo wrote:
-> This patch replace number by macro in gpio keys for exynos 3250 boards.
-> 
-> Cc: Youngjun Cho <yj44.cho@samsung.com>
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
+This patchset is dependent on BUS1 pin control support from Vivek
+in the below link
+https://patchwork.kernel.org/patch/5467321/
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+Padmavathi Venna (2):
+  pinctrl: exynos: Add AUDIO pin controller for exynos7
+  arm64: dts: Add pinctrl support for audio IPs on exynos7
 
-Thanks,
-Chanwoo CHoi
+ .../bindings/pinctrl/samsung-pinctrl.txt           |    1 +
+ arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    |   56 ++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            |    7 +++
+ drivers/pinctrl/samsung/pinctrl-exynos.c           |   10 ++++
+ 4 files changed, 74 insertions(+), 0 deletions(-)
 
-> ---
->  arch/arm/boot/dts/exynos3250-monk.dts   |    3 ++-
->  arch/arm/boot/dts/exynos3250-rinato.dts |    3 ++-
->  2 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
-> index 2129ab98..792a2c7 100644
-> --- a/arch/arm/boot/dts/exynos3250-monk.dts
-> +++ b/arch/arm/boot/dts/exynos3250-monk.dts
-> @@ -15,6 +15,7 @@
->  /dts-v1/;
->  #include "exynos3250.dtsi"
->  #include <dt-bindings/input/input.h>
-> +#include <dt-bindings/gpio/gpio.h>
->  
->  / {
->  	model = "Samsung Monk board";
-> @@ -37,7 +38,7 @@
->  		compatible = "gpio-keys";
->  
->  		power_key {
-> -			gpios = <&gpx2 7 1>;
-> +			gpios = <&gpx2 7 GPIO_ACTIVE_LOW>;
->  			linux,code = <KEY_POWER>;
->  			label = "power key";
->  			debounce-interval = <10>;
-> diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-> index c186ac6..3493bca 100644
-> --- a/arch/arm/boot/dts/exynos3250-rinato.dts
-> +++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-> @@ -15,6 +15,7 @@
->  /dts-v1/;
->  #include "exynos3250.dtsi"
->  #include <dt-bindings/input/input.h>
-> +#include <dt-bindings/gpio/gpio.h>
->  
->  / {
->  	model = "Samsung Rinato board";
-> @@ -37,7 +38,7 @@
->  		compatible = "gpio-keys";
->  
->  		power_key {
-> -			gpios = <&gpx2 7 1>;
-> +			gpios = <&gpx2 7 GPIO_ACTIVE_LOW>;
->  			linux,code = <KEY_POWER>;
->  			label = "power key";
->  			debounce-interval = <10>;
-> 
+-- 
+1.7.4.4
