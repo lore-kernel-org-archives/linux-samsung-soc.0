@@ -1,48 +1,71 @@
-From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Subject: Re: [PATCH 4/4] PM: Eliminate CONFIG_PM_RUNTIME
-Date: Fri, 19 Dec 2014 09:13:29 +0100
-Message-ID: <CAMuHMdUn3KSTdh4nFL=G54SM7NWpQsmeg1GYYRz=+uXH9rbEGg@mail.gmail.com>
-References: <472992175.g1ArEYGFPo@vostro.rjw.lan>
-	<2635409.SWsBMlb9s4@vostro.rjw.lan>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <2635409.SWsBMlb9s4-sKB8Sp2ER+y1GS7QM15AGw@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
-Cc: Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Christian Daudt <bcm-xK7y4jjYLqYh9ZMKESR00Q@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, linux-ar
+From: Beomho Seo <beomho.seo@samsung.com>
+Subject: [PATCH 2/2] ARM: dts: exynos3250: replace number by macro in gpio keys
+Date: Fri, 19 Dec 2014 17:39:30 +0900
+Message-ID: <1418978370-22542-2-git-send-email-beomho.seo@samsung.com>
+References: <1418978370-22542-1-git-send-email-beomho.seo@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:16853 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752050AbaLSIje (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 19 Dec 2014 03:39:34 -0500
+In-reply-to: <1418978370-22542-1-git-send-email-beomho.seo@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, yj44.cho@samsung.com, cw00.choi@samsung.com, inki.dae@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, kyungmin.park@samsung.com, beomho.seo@samsung.com
 
-On Fri, Dec 19, 2014 at 3:03 AM, Rafael J. Wysocki <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org> wrote:
-> --- linux-pm.orig/arch/mips/configs/lemote2f_defconfig
-> +++ linux-pm/arch/mips/configs/lemote2f_defconfig
-> @@ -37,7 +37,7 @@ CONFIG_MIPS32_N32=y
->  CONFIG_PM=y
-  ^^^^^^^^^^^
->  CONFIG_HIBERNATION=y
->  CONFIG_PM_STD_PARTITION="/dev/hda3"
-> -CONFIG_PM_RUNTIME=y
-> +CONFIG_PM=y
-   ^^^^^^^^^^^
-Now we have two of them
+This patch replace number by macro in gpio keys for exynos 3250 boards.
 
->  CONFIG_CPU_FREQ=y
->  CONFIG_CPU_FREQ_DEBUG=y
->  CONFIG_CPU_FREQ_STAT=m
+Cc: Youngjun Cho <yj44.cho@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
+---
+ arch/arm/boot/dts/exynos3250-monk.dts   |    3 ++-
+ arch/arm/boot/dts/exynos3250-rinato.dts |    3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-Other defconfig files may be affected, too.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
+index 2129ab98..792a2c7 100644
+--- a/arch/arm/boot/dts/exynos3250-monk.dts
++++ b/arch/arm/boot/dts/exynos3250-monk.dts
+@@ -15,6 +15,7 @@
+ /dts-v1/;
+ #include "exynos3250.dtsi"
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+ 	model = "Samsung Monk board";
+@@ -37,7 +38,7 @@
+ 		compatible = "gpio-keys";
+ 
+ 		power_key {
+-			gpios = <&gpx2 7 1>;
++			gpios = <&gpx2 7 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_POWER>;
+ 			label = "power key";
+ 			debounce-interval = <10>;
+diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
+index c186ac6..3493bca 100644
+--- a/arch/arm/boot/dts/exynos3250-rinato.dts
++++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+@@ -15,6 +15,7 @@
+ /dts-v1/;
+ #include "exynos3250.dtsi"
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+ 	model = "Samsung Rinato board";
+@@ -37,7 +38,7 @@
+ 		compatible = "gpio-keys";
+ 
+ 		power_key {
+-			gpios = <&gpx2 7 1>;
++			gpios = <&gpx2 7 GPIO_ACTIVE_LOW>;
+ 			linux,code = <KEY_POWER>;
+ 			label = "power key";
+ 			debounce-interval = <10>;
+-- 
+1.7.9.5
