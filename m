@@ -1,166 +1,138 @@
-From: Stefan Hengelein <stefan.hengelein@fau.de>
-Subject: Re: [PATCH] ARM: SAMSUNG: remove dead #elif CONFIG_S3C24XX_DMAC
-Date: Fri, 19 Dec 2014 15:15:09 +0100
-Message-ID: <CABv5NL_GisHMZVK03M3j_cGMVcoZ7L+Czt5TP2Sp4abBeUxuCQ@mail.gmail.com>
-References: <1418830837-7422-1-git-send-email-stefan.hengelein@fau.de>
-	<2864831.LEPnyFh3Il@phil>
-	<CABv5NL_SLyY9-yookdTVdNXzCmUEqJ_QB6ofzw_q0H7Vcwbzfg@mail.gmail.com>
-	<1645416.VNQj8YWB7M@phil>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH 2/9] hwmon: dts: Doc: Add DTS doc to explain how to use PWM
+ FAN as a cooling device
+Date: Fri, 19 Dec 2014 16:32:24 +0100
+Message-ID: <20141219163224.34796e5d@amdc2363>
+References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
+ <1418897591-18332-3-git-send-email-l.majewski@samsung.com>
+ <1418899337.23532.9.camel@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f41.google.com ([209.85.213.41]:51255 "EHLO
-	mail-yh0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752460AbaLSOPK convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Dec 2014 09:15:10 -0500
-In-Reply-To: <1645416.VNQj8YWB7M@phil>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1418899337.23532.9.camel@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Guenter Roeck <linux@roeck-us.net>, lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
 
-=46rom what i can see, the block was already dead when it was introduce=
-d.
-d2193ce2 changed the "if ARCH_S3C64XX" into the Kconfig file itself,
-before it was around the source statement in arch/arm/Kconfig
+Hi Sjoerd,
 
-if there are really just downstream users that explicitly have to add
-a statement to select S3C64XX_DEV_SPI0 and therefore add the
-possibility to enable the block i want to remove, i'd argue that these
-downstream users could also add the block itself. I'm not sure how
-intuitive it might be for downstream users to add a select in Kconfig
-to enable their machine to communicate with a device, but i'm also not
-familiar with the hardware we're talking about.
+Thanks for your feedback and sorry for a late reply.
 
-However, i'd prefer to have a consistent upstream state and leave
-these problems to downstream users, but that's for the Maintainer to
-decide :)
+> On Thu, 2014-12-18 at 11:13 +0100, Lukasz Majewski wrote:
+> > Several new properties to allow PWM fan working as a cooling device
+> > have been combined into this single commit.
+> > 
+> > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> > ---
+> >  .../devicetree/bindings/hwmon/pwm-fan.txt          | 28
+> > ++++++++++++++++++++++ 1 file changed, 28 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
+> > b/Documentation/devicetree/bindings/hwmon/pwm-fan.txt index
+> > 610757c..3877810 100644 ---
+> > a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt +++
+> > b/Documentation/devicetree/bindings/hwmon/pwm-fan.txt @@ -3,10
+> > +3,38 @@ Bindings for a fan connected to the PWM lines Required
+> > properties:
+> >  - compatible	: "pwm-fan"
+> >  - pwms		: the PWM that is used to control the PWM fan
+> > +- cooling-pwm-values      : PWM duty cycle values relative to
+> > +			    cooling-max-pwm-value correspondig to
+> > +			    proper cooling states
+> > +- default-pulse-width     : Property specifying default pulse
+> > width for FAN
+> > +			    at system boot (zero to disable FAN on
+> > boot).
+> > +			    Allowed range is 0 to 255
+> 
+> The 0..255 range seems somewhat random. Would be nicer to either use
+> the approach of pwm-backlight (iotw, have the range go from the first
+> to the last entry of cooling-pwm-values) 
+
+I'm OK to change the default-pulse-width to be similar to
+"default-brightness-level" (as it is in
+Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt)
+
+> or simply have be the duty
+> lenght in NS as entries instead of the current indirection.
+
+I'd prefer to keep the indirection - as it is utilized in the current
+pwm-fan.c driver.
+
+> 
+> I assumed your cooling-pwm-values are a [0..255] range as well instead
+> of nanoseconds (would be good to make that more clear)?
+
+Your assumption is correct. cooling-pwm-values are indeed in the
+[0..255] range. I will add this information in v2.
+
+> 
+> Also having more consistent names would be nice.. To take
+> pwm-backlight as inspiration, cooling-levels and
+> default-cooling-level would make it more clear the second property
+> picks a default setting from the first one.
+
+I agree.
+
+> 
+> One thing i do wonder, is having an explicit default setting useful?
+> Should it not default to maximum cooling unless otherwise configured
+> by either the thermal framework or sysfs ?
+
+Enabling pan to full RPM was the default behaviour in the current
+pwm-fan.c file.
+
+To be honest, there is no need to enable fan to full RPM speed in this
+board for following reasons:
+1. In Odroid the FAN is optional (stacked on top of a heat sink) - very
+often it is just enough to only have the heat sink.
+
+2. Odroid has thermal enabled by default and IMHO it would be more
+feasible to allow thermal to control fan from the very beginning.
+
+However, I can also understand if the policy for hwmon implies a rule
+to enable by default all fans to full RPM speed.
+
+> 
+> 
+> > +Thorough description of the following bindings:
+> > +		cooling-min-state = <0>;
+> > +		cooling-max-state = <3>;
+> > +		#cooling-cells = <2>;
+> > +		thermal-zone {
+> > +			cpu_thermal: cpu-thermal {
+> > +			cooling-maps {
+> > +				map0 {
+> > +				     trip = <&cpu_alert1>;
+> > +				     cooling-device = <&fan0 0 1>;
+> > +				};
+> > +			};
+> > +		};
+> > +
+> > +for PWM FAN used as cooling device can be found at:
+> > +./Documentation/devicetree/bindings/thermal/thermal.txt
+> >  
+> >  Example:
+> >  	pwm-fan {
+> >  		compatible = "pwm-fan";
+> >  		status = "okay";
+> >  		pwms = <&pwm 0 10000 0>;
+> > +		cooling-min-state = <0>;
+> > +		cooling-max-state = <3>;
+> > +		#cooling-cells = <2>;
+> > +		cooling-pwm-values = <0 102 170 255>;
+> > +		default-pulse-width = <0>;
+> >  	};
+> 
+> 
 
 
 
-2014-12-18 20:03 GMT+01:00 Heiko St=C3=BCbner <heiko@sntech.de>:
-> Hi Stefan,
->
-> Am Donnerstag, 18. Dezember 2014, 14:43:01 schrieb Stefan Hengelein:
->> So you actually tested the code I removed in the patch? can you
->> provide a configuration that compiles that piece of code?
->
-> Yep, one of my boards (Asus eeeReader DR-900) was actually able to tr=
-ansmit
-> stuff via the libertas spi wifi driver using the s3c64xx-spi driver.
->
-> The smdk2416 is currently the only board for the s3c2416 in the kerne=
-l. I don't
-> know if it had actual spi devices connected, but if it had, a suitabl=
-e diff would
-> look something like the diff below. Of course hooking up spi devices =
-would
-> work the same in any out-of-tree board for the supported socs.
->
->
-> For people reading along, the s3c24xx spi distribution is as follows:
-> s3c2410, s3c2412, s3c2440: (I think) two s3c24xx-spi
-> s3c2443: one s3c64xx-spi and one s3c24xx-spi
-> s3c2416: one s3c64xx-spi
-> s3c2450: two s3c64xx-spi
->
->
-> Heiko
->
->
-> ------------ 8< ------------
-> diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kc=
-onfig
-> index 9eb2229..5210e5d 100644
-> --- a/arch/arm/mach-s3c24xx/Kconfig
-> +++ b/arch/arm/mach-s3c24xx/Kconfig
-> @@ -419,6 +419,8 @@ config MACH_SMDK2416
->         select S3C_DEV_HSMMC1
->         select S3C_DEV_NAND
->         select S3C_DEV_USB_HOST
-> +       select S3C64XX_DEV_SPI0
-> +       select S3C2443_SETUP_SPI
->         help
->           Say Y here if you are using an SMDK2416
->
-> diff --git a/arch/arm/mach-s3c24xx/mach-smdk2416.c b/arch/arm/mach-s3=
-c24xx/mach-smdk2416.c
-> index 86394f7..b6c6ff4 100644
-> --- a/arch/arm/mach-s3c24xx/mach-smdk2416.c
-> +++ b/arch/arm/mach-s3c24xx/mach-smdk2416.c
-> @@ -52,6 +52,9 @@
->  #include <linux/platform_data/s3c-hsudc.h>
->  #include <plat/samsung-time.h>
->
-> +#include <linux/spi/spi.h>
-> +#include <linux/platform_data/spi-s3c64xx.h>
-> +
->  #include <plat/fb.h>
->
->  #include "common.h"
-> @@ -207,6 +210,26 @@ static struct s3c_sdhci_platdata smdk2416_hsmmc1=
-_pdata __initdata =3D {
->         .cd_type                =3D S3C_SDHCI_CD_NONE,
->  };
->
-> +struct s3c64xx_spi_csinfo libertas_cs_info =3D {
-> +       .fb_delay =3D 0,
-> +       .line =3D 128, /* gpio cs line */
-> +};
-> +
-> +
-> +static struct spi_board_info spi_board_info[] =3D {
-> +    {
-> +       .modalias               =3D "libertas_spi",
-> +       .max_speed_hz           =3D 1200000,
-> +       .bus_num                =3D 0,
-> +       .irq                    =3D 12, /* some interrupt number */
-> +       .chip_select            =3D 0,
-> +       .mode                   =3D SPI_MODE_3,
-> +       .controller_data        =3D &libertas_cs_info,
-> +/*     .platform_data          =3D &foo1_pdata, */
-> +    },
-> +};
-> +
-> +
->  static struct platform_device *smdk2416_devices[] __initdata =3D {
->         &s3c_device_fb,
->         &s3c_device_wdt,
-> @@ -216,6 +239,7 @@ static struct platform_device *smdk2416_devices[]=
- __initdata =3D {
->         &s3c_device_hsmmc1,
->         &s3c_device_usb_hsudc,
->         &s3c2443_device_dma,
-> +       &s3c64xx_device_spi0,
->  };
->
->  static void __init smdk2416_init_time(void)
-> @@ -250,6 +274,9 @@ static void __init smdk2416_machine_init(void)
->         gpio_request(S3C2410_GPB(1), "Display Reset");
->         gpio_direction_output(S3C2410_GPB(1), 1);
->
-> +       s3c64xx_spi0_set_platdata(NULL, 0, ARRAY_SIZE(spi_board_info)=
-);
-> +       spi_register_board_info(spi_board_info, ARRAY_SIZE(spi_board_=
-info));
-> +
->         platform_add_devices(smdk2416_devices, ARRAY_SIZE(smdk2416_de=
-vices));
->         smdk_machine_init();
->  }
-> diff --git a/arch/arm/mach-s3c24xx/setup-spi.c b/arch/arm/mach-s3c24x=
-x/setup-spi.c
-> index 3d47e02..d66c4e0 100644
-> --- a/arch/arm/mach-s3c24xx/setup-spi.c
-> +++ b/arch/arm/mach-s3c24xx/setup-spi.c
-> @@ -16,6 +16,7 @@
->
->  #include <mach/hardware.h>
->  #include <mach/regs-gpio.h>
-> +#include <mach/gpio-samsung.h>
->
->  #ifdef CONFIG_S3C64XX_DEV_SPI0
->  int s3c64xx_spi0_cfg_gpio(void)
->
+-- 
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
