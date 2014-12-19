@@ -1,67 +1,123 @@
 From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH 1/2] pinctrl: exynos: Add AUDIO pin controller for exynos7
-Date: Fri, 19 Dec 2014 18:40:58 +0530
-Message-ID: <1418994659-5222-2-git-send-email-padma.v@samsung.com>
+Subject: [PATCH 2/2] arm64: dts: Add pinctrl support for audio IPs on exynos7
+Date: Fri, 19 Dec 2014 18:40:59 +0530
+Message-ID: <1418994659-5222-3-git-send-email-padma.v@samsung.com>
 References: <1418994659-5222-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:37729 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752446AbaLSNTU (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:53175 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751974AbaLSNTu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Dec 2014 08:19:20 -0500
+	Fri, 19 Dec 2014 08:19:50 -0500
 In-reply-to: <1418994659-5222-1-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 Cc: kgene.kim@samsung.com, linus.walleij@linaro.org, tomasz.figa@gmail.com, s.nawrocki@samsung.com
 
-Audio IPs on Exynos7 require gpios available in AUDIO
-pin controller block. So adding the AUDIO pinctrl support.
+Add pinctrl support for I2S,PCM,SPDIF
 
 Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 ---
- .../bindings/pinctrl/samsung-pinctrl.txt           |    1 +
- drivers/pinctrl/samsung/pinctrl-exynos.c           |   10 ++++++++++
- 2 files changed, 11 insertions(+), 0 deletions(-)
+ arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi |   56 +++++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7.dtsi         |    7 +++
+ 2 files changed, 63 insertions(+), 0 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-index c88ba35..9d2a995 100644
---- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
-@@ -181,6 +181,7 @@ Aliases for controllers compatible with "samsung,exynos7-pinctrl":
- - pinctrl6: pin controller of FSYS0 block,
- - pinctrl7: pin controller of FSYS1 block,
- - pinctrl8: pin controller of BUS1 block,
-+- pinctrl9: pin controller of AUDIO block,
- 
- Example: A pin-controller node with pin banks:
- 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 2a85cb4..c8f83f9 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -1314,6 +1314,11 @@ static const struct samsung_pin_bank_data exynos7_pin_banks8[] __initconst = {
- 	EXYNOS_PIN_BANK_EINTG(3, 0x140, "gpv6", 0x24),
- };
- 
-+static const struct samsung_pin_bank_data exynos7_pin_banks9[] __initconst = {
-+	EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
-+	EXYNOS_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
-+};
+diff --git a/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
+index c367f0a..a5aeb07 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
+@@ -333,6 +333,29 @@
+ 		samsung,pin-pud = <3>;
+ 		samsung,pin-drv = <0>;
+ 	};
 +
- const struct samsung_pin_ctrl exynos7_pin_ctrl[] __initconst = {
- 	{
- 		/* pin-controller instance 0 Alive data */
-@@ -1361,5 +1366,10 @@ const struct samsung_pin_ctrl exynos7_pin_ctrl[] __initconst = {
- 		.pin_banks	= exynos7_pin_banks8,
- 		.nr_banks	= ARRAY_SIZE(exynos7_pin_banks8),
- 		.eint_gpio_init = exynos_eint_gpio_init,
-+	}, {
-+		/* pin-controller instance 9 AUD data */
-+		.pin_banks	= exynos7_pin_banks9,
-+		.nr_banks	= ARRAY_SIZE(exynos7_pin_banks9),
-+		.eint_gpio_init = exynos_eint_gpio_init,
- 	},
++	i2s1_bus: i2s1-bus {
++		samsung,pins = "gpd4-0", "gpd4-1", "gpd4-2",
++				"gpd4-3", "gpd4-4";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <1>;
++		samsung,pin-drv = <0>;
++	};
++
++	pcm1_bus: pcm1-bus {
++		samsung,pins = "gpd4-0", "gpd4-2",
++				"gpd4-3", "gpd4-4";
++		samsung,pin-function = <3>;
++		samsung,pin-pud = <1>;
++		samsung,pin-drv = <0>;
++	};
++
++	spdif_bus: spdif-bus {
++		samsung,pins = "gpd4-3", "gpd4-4";
++		samsung,pin-function = <4>;
++		samsung,pin-pud = <1>;
++		samsung,pin-drv = <0>;
++	};
  };
+ 
+ &pinctrl_bus1 {
+@@ -668,3 +691,36 @@
+ 		samsung,pin-drv = <2>;
+ 	};
+ };
++
++&pinctrl_aud {
++	gpz0: gpz0 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	gpz1: gpz1 {
++		gpio-controller;
++		#gpio-cells = <2>;
++
++		interrupt-controller;
++		#interrupt-cells = <2>;
++	};
++
++	i2s0_bus: i2s0-bus {
++		samsung,pins = "gpz0-0", "gpz0-1", "gpz0-2", "gpz0-3",
++				"gpz0-4";
++		samsung,pin-function = <2>;
++		samsung,pin-pud = <1>;
++		samsung,pin-drv = <0>;
++	};
++
++	pcm0_bus: pcm0-bus {
++		samsung,pins = "gpz1-0", "gpz1-1", "gpz1-2", "gpz1-3";
++		samsung,pin-function = <5>;
++		samsung,pin-pud = <1>;
++		samsung,pin-drv = <0>;
++	};
++};
+diff --git a/arch/arm64/boot/dts/exynos/exynos7.dtsi b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+index e633b02..eeaa9b8d 100644
+--- a/arch/arm64/boot/dts/exynos/exynos7.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos7.dtsi
+@@ -27,6 +27,7 @@
+ 		pinctrl6 = &pinctrl_fsys0;
+ 		pinctrl7 = &pinctrl_fsys1;
+ 		pinctrl8 = &pinctrl_bus1;
++		pinctrl9 = &pinctrl_aud;
+ 	};
+ 
+ 	cpus {
+@@ -285,6 +286,12 @@
+ 			interrupts = <0 203 0>;
+ 		};
+ 
++		pinctrl_aud: pinctrl@114b0000 {
++			compatible = "samsung,exynos7-pinctrl";
++			reg = <0x114b0000 0x1000>;
++			interrupts = <0 92 0>;
++		};
++
+ 		hsi2c_0: hsi2c@13640000 {
+ 			compatible = "samsung,exynos7-hsi2c";
+ 			reg = <0x13640000 0x1000>;
 -- 
 1.7.4.4
