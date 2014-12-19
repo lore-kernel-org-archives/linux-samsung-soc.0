@@ -1,57 +1,144 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynos7: Add clocks for MSCL block
-Date: Fri, 19 Dec 2014 17:21:58 +0100
-Message-ID: <549450A6.9020205@samsung.com>
-References: <1418801617-7593-1-git-send-email-tony.kn@samsung.com>
+From: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 2/9] hwmon: dts: Doc: Add DTS doc to explain how to use PWM
+ FAN as a cooling device
+Date: Fri, 19 Dec 2014 17:25:58 +0100
+Message-ID: <20141219172558.6216c1cd@amdc2363>
+References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
+ <1418897591-18332-3-git-send-email-l.majewski@samsung.com>
+ <5492E46C.3080100@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:27935 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751218AbaLSQWE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 19 Dec 2014 11:22:04 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout3.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NGU00HR28BG7OB0@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 19 Dec 2014 16:26:04 +0000 (GMT)
-In-reply-to: <1418801617-7593-1-git-send-email-tony.kn@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <5492E46C.3080100-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Cc: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jean Delvare <jdelvare-l3A5Bk7waGM@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lukasz Majewski <l.majewski-AM3owJQeAb5mR6Xm/wNWPw@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tony K Nadackal <tony.kn@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, mturquette@linaro.org, kgene@kernel.org, a.kesavan@samsung.com, bhushan.r@samsung.com
 
-Hi,
+Hi Guenter,
 
-On 17/12/14 08:33, Tony K Nadackal wrote:
-> Add clock support for the MSCL block for Exynos7.
+> On 12/18/2014 02:13 AM, Lukasz Majewski wrote:
+> > Several new properties to allow PWM fan working as a cooling device
+> > have been combined into this single commit.
+> >
+> > Signed-off-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > ---
+> >   .../devicetree/bindings/hwmon/pwm-fan.txt          | 28
+> > ++++++++++++++++++++++ 1 file changed, 28 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
+> > b/Documentation/devicetree/bindings/hwmon/pwm-fan.txt index
+> > 610757c..3877810 100644 ---
+> > a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt +++
+> > b/Documentation/devicetree/bindings/hwmon/pwm-fan.txt @@ -3,10
+> > +3,38 @@ Bindings for a fan connected to the PWM lines Required
+> > properties:
+> >   - compatible	: "pwm-fan"
+> >   - pwms		: the PWM that is used to control the PWM
+> > fan +- cooling-pwm-values      : PWM duty cycle values relative to
+> > +			    cooling-max-pwm-value correspondig to
+> > +			    proper cooling states
 > 
-> Signed-off-by: Tony K Nadackal <tony.kn@samsung.com>
-> ---
->  .../devicetree/bindings/clock/exynos7-clock.txt    |   1 +
->  drivers/clk/samsung/clk-exynos7.c                  | 124 +++++++++++++++++++++
->  include/dt-bindings/clock/exynos7-clk.h            |  40 ++++++-
->  3 files changed, 164 insertions(+), 1 deletion(-)
+> I don't understand what you mean with "relative to". Please elaborate.
+> Do you mean "associated with" ?
+
+I meant that cooling-pwm-values is no greater than
+cooling-max-pwm-value (which was present in some earlier version of
+this patch and had value of 255).
+
+This description is wrong and will be reworded.
+
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/exynos7-clock.txt b/Documentation/devicetree/bindings/clock/exynos7-clock.txt
-> index 6d3d5f8..d0e048c 100644
-> --- a/Documentation/devicetree/bindings/clock/exynos7-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/exynos7-clock.txt
-> @@ -34,6 +34,7 @@ Required Properties for Clock Controller:
->  	- "samsung,exynos7-clock-peris"
->  	- "samsung,exynos7-clock-fsys0"
->  	- "samsung,exynos7-clock-fsys1"
-> +	- "samsung,exynos7-clock-mscl"
+> Where is "cooling-max-pwm-value" defined, 
 
-I can't see anything controversial in the patch, but I've got some doubts
-regarding the compatible string. Is there a SoC named just "Exynos7"?
-If not, what are exact SoC names the "samsung,exynos7-clock-mscl" compatible
-is supposed to cover ?
-It would be good to list in this file the exact SoCs names this binding applies
-to, unless there is indeed Exynos7 SoC.
+It was present in some early version of this patch.
 
+> and how is this all expected
+> to relate to the maximum duty cycle value provided by the pwm device ?
+> 
+> > +- default-pulse-width     : Property specifying default pulse
+> > width for FAN
+> > +			    at system boot (zero to disable FAN on
+> > boot).
+> > +			    Allowed range is 0 to 255
+> 
+> You'll need dt maintainer approval for the new properties.
+
+I'm wondering how this patch series will get merged. It touches three
+different subsystems (thermal, hwmon and device tree for Exynos). 
+
+For me it would be best to use thermal tree (hence Odroid U3 fan is
+supposed to work as a cooling device) with ACKs from other subsystems
+maintainers.
+
+> 
+> One thing I wonder about though is why you use "default-pulse-width"
+> and not "default-pwm". Seems to be arbitrary. I don't see
+> "pulse-width" used anywhere in the upstream kernel.
+
+Believe or not I've also considered the default-pwm name.
+
+> 
+> I am somewhat concerned that you define the new properties as
+> mandatory. That means existing configurations will fail, which does
+> not seem to be a good idea. It would be more appropriate to not
+> configure the thermal device if the new properties are not provided.
+
+Very good point. I will do that for v2.
+
+> 
+> The newly introduced semantics also conflicts with the current
+> semantics, which sets the initial duty cycle initially to the maximum
+> allowed duty cycle as reported by the pwm device itself.
+
+Ok. I will stick to above policy and then the "default-pulse-width"
+property can be removed.
+
+> 
+> Guenter
+> 
+> > +
+> > +Thorough description of the following bindings:
+> > +		cooling-min-state = <0>;
+> > +		cooling-max-state = <3>;
+> > +		#cooling-cells = <2>;
+> > +		thermal-zone {
+> > +			cpu_thermal: cpu-thermal {
+> > +			cooling-maps {
+> > +				map0 {
+> > +				     trip = <&cpu_alert1>;
+> > +				     cooling-device = <&fan0 0 1>;
+> > +				};
+> > +			};
+> > +		};
+> > +
+> > +for PWM FAN used as cooling device can be found at:
+> > +./Documentation/devicetree/bindings/thermal/thermal.txt
+> >
+> >   Example:
+> >   	pwm-fan {
+> >   		compatible = "pwm-fan";
+> >   		status = "okay";
+> >   		pwms = <&pwm 0 10000 0>;
+> > +		cooling-min-state = <0>;
+> > +		cooling-max-state = <3>;
+> > +		#cooling-cells = <2>;
+> > +		cooling-pwm-values = <0 102 170 255>;
+> > +		default-pulse-width = <0>;
+> >   	};
+> >
+> 
+
+
+
+-- 
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
 --
-Thanks,
-Sylwester
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
