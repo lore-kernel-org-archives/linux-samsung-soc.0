@@ -1,172 +1,145 @@
-From: Tony K Nadackal <tony.kn@samsung.com>
-Subject: RE: [PATCH] [media] s5p-jpeg: Adding Exynos7 Jpeg variant support
-Date: Fri, 19 Dec 2014 09:07:40 +0530
-Message-ID: <001801d01b3d$2cb181d0$86148570$@samsung.com>
-References: <1418801229-7532-1-git-send-email-tony.kn@samsung.com>
- <54919010.8020507@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCHv4 1/8] devfreq: event: Add new devfreq_event class to
+ provide basic data for devfreq governor
+Date: Fri, 19 Dec 2014 15:46:06 +0900
+Message-ID: <5493C9AE.1020202@samsung.com>
+References: <1107836838.16761418955089663.JavaMail.weblogic@epmlwas08d>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:9129 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751194AbaLSDg4 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:61297 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751230AbaLSGqL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 18 Dec 2014 22:36:56 -0500
-In-reply-to: <54919010.8020507@samsung.com>
-Content-language: en-us
+	Fri, 19 Dec 2014 01:46:11 -0500
+In-reply-to: <1107836838.16761418955089663.JavaMail.weblogic@epmlwas08d>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jacek Anaszewski' <j.anaszewski@samsung.com>
-Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, mchehab@osg.samsung.com, kgene@kernel.org, k.debski@samsung.com, s.nawrocki@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com, bhushan.r@samsung.com
+To: myungjoo.ham@samsung.com
+Cc: =?UTF-8?B?6rmA6rWt7KeE?= <kgene.kim@samsung.com>, =?UTF-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, ABHILASH KESAVAN <a.kesavan@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Jacek,
+Dear Myungjoo,
 
-On Wednesday, December 17, 2014 7:46 PM Jacek Anaszewski wrote,
-> Hi Tony,
+On 12/19/2014 11:11 AM, MyungJoo Ham wrote:
+>>   
+>>  Dear Myungjoo,
+>>
+>> Thanks for your review.
+>>
+>> On 12/18/2014 03:24 PM, MyungJoo Ham wrote:
+>>> Hi Chanwoo,
+>>>
+>>> I love the idea and I now have a little mechanical issues in your code.
+>>>
+>>>> ---
+>>>>  drivers/devfreq/Kconfig         |   2 +
+>>>>  drivers/devfreq/Makefile        |   5 +-
+>>>>  drivers/devfreq/devfreq-event.c | 449 ++++++++++++++++++++++++++++++++++++++++
+>>>>  drivers/devfreq/event/Makefile  |   1 +
+>>>>  include/linux/devfreq.h         | 160 ++++++++++++++
+>>>>  5 files changed, 616 insertions(+), 1 deletion(-)
+>>>>  create mode 100644 drivers/devfreq/devfreq-event.c
+>>>>  create mode 100644 drivers/devfreq/event/Makefile
+>>>>
 > 
-> Thanks for the patches.
+> []
 > 
-
-Thanks for the review.
-
-> Please process them with scripts/checkpatch.pl as you will be submitting the
-next
-> version - they contain many coding style related issues.
+>>
+>>>
+>>>
+>>> [snip]
+>>>
+>>>> diff --git a/drivers/devfreq/devfreq-event.c b/drivers/devfreq/devfreq-event.c
+>>>> new file mode 100644
+>>>> index 0000000..0e1948e
+>>>> --- /dev/null
+>>>> +++ b/drivers/devfreq/devfreq-event.c
+>>>> @@ -0,0 +1,449 @@
+>>>> +/*
+>>>> + * devfreq-event: Generic DEVFREQ Event class driver
+>>>
+>>> DEVFREQ is a generic DVFS mechanism (or subsystem).
+>>>
+>>> Plus, I thought devfreq-event is considered to be a "framework"
+>>> for devfreq event class drivers. Am I mistaken?
+>>
+>> You're right. just "class driver" description is not proper.
+>> I'll modify the description of devfreq-event.c as following:
+>> or If you have other opinion, would you please let me know about it?
+>>
+>> 	devfreq-event: DEVFREQ-Event Framework to provide raw data of Non-CPU Devices.
 > 
-
-I ran checkpatch before posting. Do you find any checkpatch related issues in
-the patch?
-
-> My remaining comments below.
+> devfreq-event: a framework to provide raw data and events of devfreq devices
 > 
+> should be enough.
 
-[snip]
-
-> > +		if (ctx->jpeg->variant->version == SJPEG_EXYNOS7) {
-> > +			exynos4_jpeg_set_interrupt(jpeg->regs,
-> SJPEG_EXYNOS7);
-> > +			exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
-> > +					ctx->subsampling,
-> EXYNOS7_ENC_FMT_MASK);
-> > +			exynos4_jpeg_set_img_fmt(jpeg->regs,
-> > +					ctx->out_q.fmt->fourcc,
-> > +					EXYNOS7_SWAP_CHROMA_SHIFT);
-> > +		} else {
-> > +			exynos4_jpeg_set_interrupt(jpeg->regs,
-> SJPEG_EXYNOS4);
-> > +			exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
-> > +					ctx->subsampling,
-> EXYNOS4_ENC_FMT_MASK);
-> > +			exynos4_jpeg_set_img_fmt(jpeg->regs,
-> > +					ctx->out_q.fmt->fourcc,
-> > +					EXYNOS4_SWAP_CHROMA_SHIFT);
-> > +		}
-> > +
-> 
-> I'd implement it this way:
-> 
-> exynos4_jpeg_set_interrupt(jpeg->regs, ctx->jpeg->variant->version);
-> exynos4_jpeg_set_enc_out_fmt(jpeg->regs, ctx->subsampling,
-> 			(ctx->jpeg->variant->version == SJPEG_EXYNOS4) ?
-> 				EXYNOS4_ENC_FMT_MASK :
-> 				EXYNOS7_ENC_FMT_MASK);
-> exynos4_jpeg_set_img_fmt(jpeg->regs, ctx->out_q.fmt->fourcc,
-> 			(ctx->jpeg->variant->version == SJPEG_EXYNOS4) ?
-> 				EXYNOS4_SWAP_CHROMA_SHIFT :
-> 				EXYNOS7_SWAP_CHROMA_SHIFT);
-> 
-
-OK. Looks goods to me. Thanks for the suggestion.
-
-> >   		exynos4_jpeg_set_img_addr(ctx);
-> >   		exynos4_jpeg_set_jpeg_addr(ctx);
-> >   		exynos4_jpeg_set_encode_hoff_cnt(jpeg->regs,
-> >   							ctx->out_q.fmt->fourcc);
-> >   	} else {
-> >   		exynos4_jpeg_sw_reset(jpeg->regs);
-> > -		exynos4_jpeg_set_interrupt(jpeg->regs);
-> >   		exynos4_jpeg_set_img_addr(ctx);
-> >   		exynos4_jpeg_set_jpeg_addr(ctx);
-> > -		exynos4_jpeg_set_img_fmt(jpeg->regs, ctx->cap_q.fmt-
-> >fourcc);
-> >
-> > -		bitstream_size = DIV_ROUND_UP(ctx->out_q.size, 32);
-> > +		if (ctx->jpeg->variant->version == SJPEG_EXYNOS7) {
-> > +			exynos4_jpeg_set_interrupt(jpeg->regs,
-> SJPEG_EXYNOS7);
-> > +			exynos4_jpeg_set_huff_tbl(jpeg->regs);
-> > +			exynos4_jpeg_set_huf_table_enable(jpeg->regs, 1);
-> > +
-> > +			/*
-> > +			 * JPEG IP allows storing 4 quantization tables
-> > +			 * We fill table 0 for luma and table 1 for chroma
-> > +			 */
-> > +			exynos4_jpeg_set_qtbl_lum(jpeg->regs,
-> > +							ctx->compr_quality);
-> > +			exynos4_jpeg_set_qtbl_chr(jpeg->regs,
-> > +							ctx->compr_quality);
-> 
-> Is it really required to setup quantization tables for encoding?
-> 
-
-Without setting up the quantization tables, encoder is working fine.
-But, as per Exynos7 User Manual setting up the quantization tables are required
-for encoding also.
-
-> > +			exynos4_jpeg_set_stream_size(jpeg->regs, ctx-
-> >cap_q.w,
-> > +					ctx->cap_q.h);
-> 
-> For exynos4 this function writes the number of samples per line and number
-> lines of the resulting JPEG image and is used only during encoding. Is the
-> semantics of the related register different in case of Exynos7?
-> 
-
-Yes. In case of Exynos7 Encoding, This step is required.
-
-[snip]
-
-> > --- a/drivers/media/platform/s5p-jpeg/jpeg-core.h
-> > +++ b/drivers/media/platform/s5p-jpeg/jpeg-core.h
-> > @@ -71,6 +71,7 @@
-> >   #define SJPEG_S5P		1
-> >   #define SJPEG_EXYNOS3250	2
-> >   #define SJPEG_EXYNOS4		3
-> > +#define SJPEG_EXYNOS7		4
-> 
-> As you adding a new variant I propose to turn these macros into enum.
-> 
-
-Ok. I will make this change in my next version.
-
-[snip]
-
-> > -void exynos4_jpeg_set_interrupt(void __iomem *base)
-> > +void exynos4_jpeg_set_interrupt(void __iomem *base, unsigned int
-> > +version)
-> >   {
-> > -	writel(EXYNOS4_INT_EN_ALL, base + EXYNOS4_INT_EN_REG);
-> > +	unsigned int reg;
-> > +
-> > +	reg = readl(base + EXYNOS4_INT_EN_REG) &
-> ~EXYNOS4_INT_EN_MASK(version);
-> > +	writel(EXYNOS4_INT_EN_ALL(version), base + EXYNOS4_INT_EN_REG);
-> >   }
-> 
-> I believe that adding readl is a fix. I'd enclose it into separate patch and
-explain its
-> merit.
-> 
-
-Thanks for the suggestion.  I will make a separate patch for this bug fix.
-
-[snip]
+OK, I'll modify it.
 
 > 
-> --
-> Best Regards,
-> Jacek Anaszewski
+> 
+> []
+>>> [snip / reversed maybe.. sorry]
+>>>
+>>>> +/**
+>>>> + * devfreq_event_is_enabled() - Check whether devfreq-event dev is enabled or
+>>>> + *                             not.
+>>>> + * @edev       : the devfreq-event device
+>>>> + *
+>>>> + * Note that this function check whether devfreq-event dev is enabled or not.
+>>>> + * If return true, the devfreq-event dev is enabeld. If return false, the
+>>>> + * devfreq-event dev is disabled.
+>>>> + */
+>>>> +bool devfreq_event_is_enabled(struct devfreq_event_dev *edev)
+>>>> +{
+>>>> +       bool enabled = false;
+>>>> +
+>>>> +       if (!edev || !edev->desc)
+>>>> +               return enabled;
+>>>> +
+>>>> +       mutex_lock(&edev->lock);
+>>>> +
+>>>> +       if (edev->enable_count > 0)
+>>>> +               enabled = true;
+>>>> +
+>>>> +       if (edev->desc->ops && edev->desc->ops->is_enabled)
+>>>> +               enabled |= edev->desc->ops->is_enabled(edev);
+>>>
+>>> What does it mean when enabled_count > 0 and ops->is_enabled() is false? or..
+>>> What does it mean when enabled_count = 0 and ops->is_enabled() is true?
+>>>
+>>> If you do enable_count in the subsystem, why would we rely on
+>>> ops->is_enabled()? Are you assuming that a device MAY turn itself off
+>>> without any kernel control (ops->disable()) and it is still a correct
+>>> behabior?
+>>
+>> You're right. devfreq_event_is_enabled() has ambiguous operation according to your comment.
+>>
+>> I'll only control the enable_count in the subsystem without ops->is_enabled()
+>> and then remove the is_enabled function in the structre devfreq_event_ops.
+>>
+>> Best Regards,
+>> Chanwoo Choi
+>>
+> 
+> [Off-Topic]
+> 
+> The name of devfreq-event may look quite intersecting with irq-driven governors,
+> which are being proposed these days.
+> 
+> Although they may look intersecting, we can have them independently;
+> this as a sub-class and that as a governor. And we can consider to
+> provide a common infrastructure for irq-driven mechanisms in devfreq or
+> devfreq-event when we irq-driven DVFS become more general, which I
+> expect in 2 ~ 3 years.
+> 
+> So for now, both can go independently.
 
-Thanks,
-Tony K Nadackal
+I understand your opinion.
+I want to handle the devfreq-event framework independently from irq-driven governor.
+
+After completing the devfreq-event and the support for exynos-busfreq dt,
+If you agree, I'll consider how to implement irq-driven governor as the devfreq governor.
+
+Best Regards,
+Chanwoo Choi
