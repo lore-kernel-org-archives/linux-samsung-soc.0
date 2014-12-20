@@ -1,85 +1,47 @@
-From: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
-Subject: [PATCH] arch: arm: plat-samsung: setup-camif.c:  Remove some unused functions
-Date: Sat, 20 Dec 2014 13:38:36 +0100
-Message-ID: <1419079116-31868-1-git-send-email-rickard_strandqvist@spectrumdigital.se>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] ARM: SAMSUNG: remove dead #elif CONFIG_S3C24XX_DMAC
+Date: Sat, 20 Dec 2014 21:06:17 +0100
+Message-ID: <23285910.CzU2Gzn1KL@wuerfel>
+References: <1418830837-7422-1-git-send-email-stefan.hengelein@fau.de> <1645416.VNQj8YWB7M@phil> <CABv5NL_GisHMZVK03M3j_cGMVcoZ7L+Czt5TP2Sp4abBeUxuCQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mout.kundenserver.de ([212.227.17.24]:54758 "EHLO
+	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750831AbaLTUHQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 20 Dec 2014 15:07:16 -0500
+In-Reply-To: <CABv5NL_GisHMZVK03M3j_cGMVcoZ7L+Czt5TP2Sp4abBeUxuCQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Stefan Hengelein <stefan.hengelein@fau.de>
+Cc: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, linux-arm-kernel@lists.infradead.org, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
 
-Removes some functions that are not used anywhere:
-s3c_camif_gpio_put() s3c_camif_gpio_get()
+On Friday 19 December 2014 15:15:09 Stefan Hengelein wrote:
+> From what i can see, the block was already dead when it was introduced.
+> d2193ce2 changed the "if ARCH_S3C64XX" into the Kconfig file itself,
+> before it was around the source statement in arch/arm/Kconfig
+> 
+> if there are really just downstream users that explicitly have to add
+> a statement to select S3C64XX_DEV_SPI0 and therefore add the
+> possibility to enable the block i want to remove, i'd argue that these
+> downstream users could also add the block itself. I'm not sure how
+> intuitive it might be for downstream users to add a select in Kconfig
+> to enable their machine to communicate with a device, but i'm also not
+> familiar with the hardware we're talking about.
+> 
+> However, i'd prefer to have a consistent upstream state and leave
+> these problems to downstream users, but that's for the Maintainer to
+> decide 
 
-This was partially found by using a static code analysis program called cppcheck.
+In general, I totally agree: dead code should be eliminated and out of
+tree users of dead code can add it back as a patch.
 
-Signed-off-by: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
----
- arch/arm/plat-samsung/setup-camif.c |   41 -----------------------------------
- include/media/s3c_camif.h           |    4 ----
- 2 files changed, 45 deletions(-)
+However, in this case, I'd lean more towards leaving the code in there,
+basically because the current code correctly documents what the hardware
+requirements are, and that is helpful even for reading the code when you
+work on DT based support for the same hardware. Eventually we will be
+able to remove the entire function.
 
-diff --git a/arch/arm/plat-samsung/setup-camif.c b/arch/arm/plat-samsung/setup-camif.c
-index 72d8edb..3a56ee3 100644
---- a/arch/arm/plat-samsung/setup-camif.c
-+++ b/arch/arm/plat-samsung/setup-camif.c
-@@ -28,44 +28,3 @@ static void camif_get_gpios(int *gpio_start, int *gpio_reset)
- 	*gpio_reset = S3C64XX_GPF(3);
- #endif
- }
--
--int s3c_camif_gpio_get(void)
--{
--	int gpio_start, gpio_reset;
--	int ret, i;
--
--	camif_get_gpios(&gpio_start, &gpio_reset);
--
--	for (i = 0; i < S3C_CAMIF_NUM_GPIOS; i++) {
--		int gpio = gpio_start + i;
--
--		if (gpio == gpio_reset)
--			continue;
--
--		ret = gpio_request(gpio, "camif");
--		if (!ret)
--			ret = s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(2));
--		if (ret) {
--			pr_err("failed to configure GPIO %d\n", gpio);
--			for (--i; i >= 0; i--)
--				gpio_free(gpio--);
--			return ret;
--		}
--		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_NONE);
--	}
--
--	return 0;
--}
--
--void s3c_camif_gpio_put(void)
--{
--	int i, gpio_start, gpio_reset;
--
--	camif_get_gpios(&gpio_start, &gpio_reset);
--
--	for (i = 0; i < S3C_CAMIF_NUM_GPIOS; i++) {
--		int gpio = gpio_start + i;
--		if (gpio != gpio_reset)
--			gpio_free(gpio);
--	}
--}
-diff --git a/include/media/s3c_camif.h b/include/media/s3c_camif.h
-index df96c2c..aa2f851 100644
---- a/include/media/s3c_camif.h
-+++ b/include/media/s3c_camif.h
-@@ -38,8 +38,4 @@ struct s3c_camif_plat_data {
- 	int (*gpio_put)(void);
- };
- 
--/* Platform default helper functions */
--int s3c_camif_gpio_get(void);
--int s3c_camif_gpio_put(void);
--
- #endif /* MEDIA_S3C_CAMIF_ */
--- 
-1.7.10.4
+	Arnd
