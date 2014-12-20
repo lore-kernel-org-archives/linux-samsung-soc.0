@@ -1,51 +1,50 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH 4/4] PM: Eliminate CONFIG_PM_RUNTIME
-Date: Fri, 19 Dec 2014 23:25:51 +0100
-Message-ID: <1504884.AVoVpOfIGf@vostro.rjw.lan>
-References: <472992175.g1ArEYGFPo@vostro.rjw.lan> <9470157.PyHoGoSGz1@vostro.rjw.lan> <7h1tnv2tu9.fsf@deeprootsystems.com>
+From: nick <xerofoify@gmail.com>
+Subject: Revisiting  Limitations  in fimic-isp.h
+Date: Sat, 20 Dec 2014 01:22:31 -0500
+Message-ID: <549515A7.2000302@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <7h1tnv2tu9.fsf@deeprootsystems.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Linux PM list <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Russell King <linux@arm.linux.org.uk>, Christian Daudt <bcm@fixthebug.org>, Matt Porter <mporter@linaro.org>, Kukjin Kim <kgene@kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Maxime Ripard <maxime.ripard@free-electrons.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Tony Lindgren <tony@atomide.com>, Ralf Baechle <ralf@linux-mips.org>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Mark Brown <broonie@kernel.org>, Olof Johansson <olof@lixom.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: kyungmin.park@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, mchehab@osg.samsung.com, linux-kernel@vger.kernel.org, kgene@kernel.org, s.nawrocki@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Friday, December 19, 2014 01:49:34 PM Kevin Hilman wrote:
-> "Rafael J. Wysocki" <rjw@rjwysocki.net> writes:
-> 
-> [...]
-> 
-> > Fixed up patch is appended, thanks!
-> >
-> >
-> > ---
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Subject: PM: Eliminate CONFIG_PM_RUNTIME
-> >
-> > Having switched over all of the users of CONFIG_PM_RUNTIME to use
-> > CONFIG_PM directly, turn the latter into a user-selectable option
-> > and drop the former entirely from the tree.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> 
-> Acked-by: Kevin Hilman <khilman@linaro.org>
-> 
-> I assume you're planning to get this in early in the v3.19-rc cycle,
-> correct?  That way we can hopefully avoid conflicts with the various
-> defconfig changes we're taking through the arm-soc tree.
+Greetings Maintainers,
+I am wondering about these constraints : 
+/* FIXME: revisit these constraints */
+#define FIMC_ISP_SINK_WIDTH_MIN         (16 + 8)
+#define FIMC_ISP_SINK_HEIGHT_MIN        (12 + 8)
+#define FIMC_ISP_SOURCE_WIDTH_MIN       8
+#define FIMC_ISP_SOURCE_HEIGHT_MIN      8
+#define FIMC_ISP_CAC_MARGIN_WIDTH       16
+#define FIMC_ISP_CAC_MARGIN_HEIGHT      12
 
-I'm going to send a pull request with these changes tomorrow.
+#define FIMC_ISP_SINK_WIDTH_MAX         (4000 - 16)
+#define FIMC_ISP_SINK_HEIGHT_MAX        (4000 + 12)
+#define FIMC_ISP_SOURCE_WIDTH_MAX       4000
+#define FIMC_ISP_SOURCE_HEIGHT_MAX      4000
 
-> Also, thanks for taking care of all the tree-wide changes.  This is a
-> great change.
+#define FIMC_ISP_NUM_FORMATS            3
+#define FIMC_ISP_REQ_BUFS_MIN           2
+#define FIMC_ISP_REQ_BUFS_MAX           32
 
-Thanks!
-
-
--- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+#define FIMC_ISP_SD_PAD_SINK            0
+#define FIMC_ISP_SD_PAD_SRC_FIFO        1
+#define FIMC_ISP_SD_PAD_SRC_DMA         2
+#define FIMC_ISP_SD_PADS_NUM            3
+#define FIMC_ISP_MAX_PLANES     
+Whenever you get around to it, please tell if there are any issues here we need to clean up as the numbers 
+seem fine to me. Unfortunately, I didn't write the driver so I am double checking with the writers to make
+sure I aren't missing something :).
+Thanks,
+Nick  
