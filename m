@@ -1,47 +1,102 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH] ARM: SAMSUNG: remove dead #elif CONFIG_S3C24XX_DMAC
-Date: Sat, 20 Dec 2014 21:06:17 +0100
-Message-ID: <23285910.CzU2Gzn1KL@wuerfel>
-References: <1418830837-7422-1-git-send-email-stefan.hengelein@fau.de> <1645416.VNQj8YWB7M@phil> <CABv5NL_GisHMZVK03M3j_cGMVcoZ7L+Czt5TP2Sp4abBeUxuCQ@mail.gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: drm: exynos: mixer: fix using usleep() in atomic context
+Date: Mon, 22 Dec 2014 00:04:59 +0900
+Message-ID: <CAAQKjZMu=CwXZdUdo505ZLn+eWRPzMwXMJ3zmo0kT+Dji2y33Q@mail.gmail.com>
+References: <1417307725-5975-1-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <1417307725-5975-2-git-send-email-tjakobi@math.uni-bielefeld.de>
+ <20141201155447.GE11943@ulmo.nvidia.com>
+ <7454d0630d95195d41c3906637e223af@math.uni-bielefeld.de>
+ <20141217075433.GA2814@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mout.kundenserver.de ([212.227.17.24]:54758 "EHLO
-	mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750831AbaLTUHQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 20 Dec 2014 15:07:16 -0500
-In-Reply-To: <CABv5NL_GisHMZVK03M3j_cGMVcoZ7L+Czt5TP2Sp4abBeUxuCQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20141217075433.GA2814@ulmo>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Seung-Woo Kim <sw0312.kim@samsung.com>
+Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>, Tobias Jakobi <tjakobi@math.uni-bielefeld.de>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Stefan Hengelein <stefan.hengelein@fau.de>
-Cc: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, linux-arm-kernel@lists.infradead.org, kgene@kernel.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
 
-On Friday 19 December 2014 15:15:09 Stefan Hengelein wrote:
-> From what i can see, the block was already dead when it was introduced.
-> d2193ce2 changed the "if ARCH_S3C64XX" into the Kconfig file itself,
-> before it was around the source statement in arch/arm/Kconfig
-> 
-> if there are really just downstream users that explicitly have to add
-> a statement to select S3C64XX_DEV_SPI0 and therefore add the
-> possibility to enable the block i want to remove, i'd argue that these
-> downstream users could also add the block itself. I'm not sure how
-> intuitive it might be for downstream users to add a select in Kconfig
-> to enable their machine to communicate with a device, but i'm also not
-> familiar with the hardware we're talking about.
-> 
-> However, i'd prefer to have a consistent upstream state and leave
-> these problems to downstream users, but that's for the Maintainer to
-> decide 
-
-In general, I totally agree: dead code should be eliminated and out of
-tree users of dead code can add it back as a patch.
-
-However, in this case, I'd lean more towards leaving the code in there,
-basically because the current code correctly documents what the hardware
-requirements are, and that is helpful even for reading the code when you
-work on DT based support for the same hardware. Eventually we will be
-able to remove the entire function.
-
-	Arnd
+U29ycnkgZm9yIGxhdGUuCgoKMjAxNC0xMi0xNyAxNjo1NCBHTVQrMDk6MDAgVGhpZXJyeSBSZWRp
+bmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT46Cj4gT24gTW9uLCBEZWMgMDEsIDIwMTQgYXQg
+MDU6MTY6MTdQTSArMDEwMCwgVG9iaWFzIEpha29iaSB3cm90ZToKPj4gT24gMjAxNC0xMi0wMSAx
+Njo1NCwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4+ID5PbiBTdW4sIE5vdiAzMCwgMjAxNCBhdCAw
+MTozNToyNUFNICswMTAwLCB0amFrb2JpQG1hdGgudW5pLWJpZWxlZmVsZC5kZQo+PiA+d3JvdGU6
+Cj4+ID4+RnJvbTogVG9tYXN6IFN0YW5pc2xhd3NraSA8dC5zdGFuaXNsYXdzQHNhbXN1bmcuY29t
+Pgo+PiA+Pgo+PiA+PlRoaXMgcGF0Y2ggZml4ZXMgY2FsbGluZyB1c2xlZXBfcmFuZ2UoKSBhZnRl
+ciB0YWtpbmcgcmVnX3Nsb2NrCj4+ID4+dXNpbmcgc3Bpbl9sb2NrX2lycXNhdmUoKS4gVGhlIG1k
+ZWxheSgpIGlzIHVzZWQgaW5zdGVhZC4KPj4gPj5XYWl0aW5nIGluIGF0b21pYyBjb250ZXh0IGlz
+IG5vdCB0aGUgYmVzdCBpZGVhIGluIGdlbmVyYWwuCj4+ID4+SG9wZWZ1bGx5LCB3YWl0aW5nIG9j
+Y3VycyBvbmx5IHdoZW4gVmlkZW8gUHJvY2Vzc29yIGZhaWxzCj4+ID4+dG8gcmVzZXQgY29ycmVj
+dGx5Lgo+PiA+Pgo+PiA+PlNpZ25lZC1vZmYtYnk6IFRvbWFzeiBTdGFuaXNsYXdza2kgPHQuc3Rh
+bmlzbGF3c0BzYW1zdW5nLmNvbT4KPj4gPj4tLS0KPj4gPj4gZHJpdmVycy9ncHUvZHJtL2V4eW5v
+cy9leHlub3NfbWl4ZXIuYyB8IDIgKy0KPj4gPj4gMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9u
+KCspLCAxIGRlbGV0aW9uKC0pCj4+ID4+Cj4+ID4+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
+bS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4gPj5iL2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5
+bm9zX21peGVyLmMKPj4gPj5pbmRleCBhNDFjODRlLi5jYzdjY2NjIDEwMDY0NAo+PiA+Pi0tLSBh
+L2RyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX21peGVyLmMKPj4gPj4rKysgYi9kcml2ZXJz
+L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19taXhlci5jCj4+ID4+QEAgLTYzMiw3ICs2MzIsNyBAQCBz
+dGF0aWMgdm9pZCB2cF93aW5fcmVzZXQoc3RydWN0IG1peGVyX2NvbnRleHQgKmN0eCkKPj4gPj4g
+ICAgICAgICAgICAvKiB3YWl0aW5nIHVudGlsIFZQX1NSRVNFVF9QUk9DRVNTSU5HIGlzIDAgKi8K
+Pj4gPj4gICAgICAgICAgICBpZiAofnZwX3JlZ19yZWFkKHJlcywgVlBfU1JFU0VUKSAmIFZQX1NS
+RVNFVF9QUk9DRVNTSU5HKQo+PiA+PiAgICAgICAgICAgICAgICAgICAgYnJlYWs7Cj4+ID4+LSAg
+ICAgICAgICAgdXNsZWVwX3JhbmdlKDEwMDAwLCAxMjAwMCk7Cj4+ID4+KyAgICAgICAgICAgbWRl
+bGF5KDEwKTsKPj4gPj4gICAgfQo+PiA+PiAgICBXQVJOKHRyaWVzID09IDAsICJmYWlsZWQgdG8g
+cmVzZXQgVmlkZW8gUHJvY2Vzc29yXG4iKTsKPj4gPj4gfQo+PiA+Cj4+ID5JIGNhbid0IHNlZSBh
+IHJlYXNvbiB3aHkgeW91IHdvdWxkIG5lZWQgdG8gaG9sZCB0aGUgbG9jayBhcm91bmQgdGhpcwo+
+PiA+Y29kZS4gUGVyaGFwcyBhIGJldHRlciB3YXkgdG8gZml4IHRoaXMgd291bGQgYmUgdG8gZHJv
+cCB0aGUgbG9jayBiZWZvcmUKPj4gPmNhbGxpbmcgdnBfd2luX3Jlc2V0KCk/Cj4+ID4KPj4gPlRo
+aWVycnkKPj4KPj4gSG1tLCBJJ20gcHJldHR5IG5ldyB0byBzcGlubG9ja3MgKG9ubHkgaGF2ZSB3
+b3JrZWQgd2l0aCB0aGUgdXN1YWwgbXV0ZXgKPj4gc3R1ZmYgaW4gdXNlcnNwYWNlKSwgYnV0IHdv
+dWxkbid0IHRoYXQgbWVhbiB0aGF0IGl0IGlzIHRoZW4gcG9zc2libGUgZm9yCj4+IG1peGVyX3dp
+bl9yZXNldCB0byBleGVjdXRlIHdoaWxlIGEgKHByZXZpb3VzKSB2cF93aW5fcmVzZXQgaXMgc3Rp
+bGwgcnVubmluZz8KPgo+IEluZGVlZCBpdCB3b3VsZC4gSSBkaWRuJ3QgbG9vayBwcm9wZXJseS4g
+TG9va2luZyBtb3JlIGNsb3NlbHkgaXQgc2VlbXMKPiB0aGUgY2FsbCBzdGFjayBmb3IgdGhpcyBs
+b29rcyBzb21ldGhpbmcgbGlrZToKPgo+ICAgICAgICAgdnBfd2luX3Jlc2V0KCkKPiAgICAgICAg
+IG1peGVyX3dpbl9yZXNldCgpCj4gICAgICAgICBtaXhlcl9wb3dlcm9uKCkKPiAgICAgICAgIG1p
+eGVyX2RwbXMoKQo+ICAgICAgICAgZXh5bm9zX2RybV9jcnRjX2RwbXMoKQo+Cj4gV2hpY2ggY2Fu
+IHRoZW4gYmUgY2FsbGVkIGZyb20gdHdvIHBsYWNlczoKPgo+ICAgICAgICAgZXh5bm9zX2RybV9j
+cnRjX2NvbW1pdCgpCj4gICAgICAgICBkcm1fY3J0Y19oZWxwZXJfc2V0X21vZGUoKQo+ICAgICAg
+ICAgZHJtX2NydGNfaGVscGVyX3NldF9jb25maWcoKQo+Cj4gICAgICAgICBkcm1faGVscGVyX2Nv
+bm5lY3Rvcl9kcG1zKCkKPiAgICAgICAgIGRybV9jcnRjX2hlbHBlcl9zZXRfY29uZmlnKCkKPgo+
+IGRybV9jcnRjX2hlbHBlcl9zZXRfY29uZmlnKCkgaXRzZWxmIG11c3QgYmUgY2FsbGVkIHdpdGgg
+dGhlIGFsbCBtb2Rlc2V0Cj4gbG9ja3MgaGVsZCwgc28gSSBkb24ndCBzZWUgYSB3YXkgaG93IHZw
+X3dpbl9yZXNldCgpIGNvdWxkIGJlIGNhbGxlZAo+IGNvbmN1cnJlbnRseS4KPgo+IEFueXdheSwg
+ZXZlbiBpZiB5b3UncmUgc3RpbGwgY29uY2VybmVkIGFib3V0IGNvbmN1cnJlbnQgYWNjZXNzZXMg
+dG8gdGhlCj4gcmVnaXN0ZXIgeW91J2QgYmV0dGVyIGxvY2sgdGhpcyBzZWN0aW9uIHdpdGggYSBt
+dXRleCB0byBhdm9pZCBleGNlc3NpdmUKPiBzcGlubmluZy4gSW4gZmFjdCBJIHRoaW5rIGEgYmV0
+dGVyIG9wdGlvbiB3b3VsZCBiZSB0byBleHRlbmQgdGhlIG11dGV4Cj4gaW4gbWl4ZXJfcG93ZXJv
+bigpIHRvIGVuY29tcGFzcyB0aGUgd2hvbGUgZnVuY3Rpb24uIFRoaXMgY3VycmVudGx5IGxvb2tz
+Cj4gYnJva2VuIGJlY2F1c2Ugb25lIHByb2Nlc3MgY291bGQgZ28gdG8gc2xlZXAgaW4gcG1fcnVu
+dGltZV9nZXRfc3luYygpIG9yCj4gY2xrX3ByZXBhcmVfZW5hYmxlKCkgYW5kIGFub3RoZXIgcHJv
+Y2VzcyBzdGFydCBydW5uaW5nIG1peGVyX3Bvd2Vyb24oKQo+IGNvbmN1cnJlbnRseSwgZ2V0dGlu
+ZyB0byB0aGUgc2Vjb25kIG11dGV4X2xvY2soKSBzb29uZXIgdGhhbiB0aGUgZmlyc3QKPiBwcm9j
+ZXNzLiBTbyB0aGUgbG9jayBiZWluZyBkcm9wcGVkIGJldHdlZW4gY2hlY2tpbmcgZm9yIGN0eC0+
+cG93ZXJlZCBhbmQKPiBzZXR0aW5nIGl0IGRvZXNuJ3QgYWN0dWFsbHkgcHJldmVudCBhIHJhY2Uu
+CgpUaGUgdXNlIG9mIHNwaW4gbG9jaywgcmVnX3Nsb2NrLCBoYXMgYmVlbiB1c2VkIGZvciBhIGxv
+bmcgdGltZSBhbmQgd2UKaGFkbid0IHNvbWUgY2xlYW51cHMgdG8gc3BpbiBsb2NrIGNvZGVzIHNv
+IGZhci4gVGhlIHNwaW4gbG9jayBpcyBhbHNvCnVzZWQgaW4gaGVyZSBhbmQgdGhlcmUgb2YgbWl4
+ZXIgZHJpdmVyLiBBbmQgYXQgbGVhc3QsIGl0IHNlZW1zIHRoYXQKdGhlIHVzZSBvZiBzcGluIGxv
+Y2sgaXNuJ3QgcmVxdWlyZWQgaW4gbWl4ZXJfd2luX3Jlc2V0LiBJIGRvbid0IHNlZQphbnkgYXRv
+bWljIGNvbnRleHRzIGluIG1peGVyIG1vZHVsZSBleGNlcHQgaW50ZXJydXB0IGhhbmRsZXIuCgpU
+byBTZXVuZy1Xb28sCkkga25vdyB0aGF0IHlvdSByZWZlcnJlZCB0byBtaXhlciBjb2RlcyBvZiB2
+NGwyIGJhc2VkIG1peGVyIGRyaXZlci4gU28Kd2FzIHRoZSBzcGluIGxvY2sgdXNlZCBpbiBvcmln
+aW4gdjRsMiBkcml2ZXI/IG9yIElzIHRoZXJlIGFueSByZWFzb24KdGhhdCB5b3UgdXNlZCB0aGUg
+c3BpbiBsb2NrPwoKQW55d2F5LCB3ZSB3aWxsIGhhdmUgc29tZSB0ZXN0aW5nIHRvIGNoZWNrIGhk
+bWkgYW5kIG1peGVyIGRyaXZlcnMKd2l0aG91dCBzcGluIGxvY2suIFNvIHdlIHdpbGwgcmVtb3Zl
+IG9yIHJlcGxhY2UgaXQgd2l0aCBtdXRleCBpZgpuZWVkZWQuCgpUaGFua3MsCklua2kgRGFlCgo+
+Cj4gVGhlbiBhZ2Fpbiwgbm9ib2R5IHNlZW1zIHRvIGhhdmUgY2FyZWQgc28gZmFyLi4uCj4KPiBU
+aGllcnJ5Cj4KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+Xwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnCj4gaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1k
+ZXZlbAo+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
+aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
