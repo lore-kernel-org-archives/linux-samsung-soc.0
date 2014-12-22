@@ -1,76 +1,51 @@
-From: Tony K Nadackal <tony.kn@samsung.com>
-Subject: RE: [PATCH] clk: samsung: exynos7: Add clocks for MSCL block
-Date: Mon, 22 Dec 2014 17:16:03 +0530
-Message-ID: <000901d01ddc$eac0d120$c0427360$@samsung.com>
-References: <1418801617-7593-1-git-send-email-tony.kn@samsung.com>
- <549450A6.9020205@samsung.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH 27/28] ASoC: samsung: drop owner assignment from
+ platform_drivers
+Date: Mon, 22 Dec 2014 12:02:53 +0000
+Message-ID: <20141222120253.GG17800@sirena.org.uk>
+References: <1419196495-9626-1-git-send-email-wsa@the-dreams.de>
+ <1419196495-9626-28-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="IuhbYIxU28t+Kd57"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:36439 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754481AbaLVLpi (ORCPT
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:43792 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754726AbaLVMDV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Dec 2014 06:45:38 -0500
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NGZ008PLFC050B0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 22 Dec 2014 20:45:36 +0900 (KST)
-In-reply-to: <549450A6.9020205@samsung.com>
-Content-language: en-us
+	Mon, 22 Dec 2014 07:03:21 -0500
+Content-Disposition: inline
+In-Reply-To: <1419196495-9626-28-git-send-email-wsa@the-dreams.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, mturquette@linaro.org, kgene@kernel.org, a.kesavan@samsung.com, bhushan.r@samsung.com, tony.kn@samsung.com
-
-Hi Sylwester,
-
-On  Friday, December 19, 2014 9:52 PM Sylwester Nawrocki wrote,
-
-> Hi,
-> 
-> On 17/12/14 08:33, Tony K Nadackal wrote:
-> > Add clock support for the MSCL block for Exynos7.
-> >
-> > Signed-off-by: Tony K Nadackal <tony.kn@samsung.com>
-> > ---
-> >  .../devicetree/bindings/clock/exynos7-clock.txt    |   1 +
-> >  drivers/clk/samsung/clk-exynos7.c                  | 124
-+++++++++++++++++++++
-> >  include/dt-bindings/clock/exynos7-clk.h            |  40 ++++++-
-> >  3 files changed, 164 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/exynos7-clock.txt
-> > b/Documentation/devicetree/bindings/clock/exynos7-clock.txt
-> > index 6d3d5f8..d0e048c 100644
-> > --- a/Documentation/devicetree/bindings/clock/exynos7-clock.txt
-> > +++ b/Documentation/devicetree/bindings/clock/exynos7-clock.txt
-> > @@ -34,6 +34,7 @@ Required Properties for Clock Controller:
-> >  	- "samsung,exynos7-clock-peris"
-> >  	- "samsung,exynos7-clock-fsys0"
-> >  	- "samsung,exynos7-clock-fsys1"
-> > +	- "samsung,exynos7-clock-mscl"
-> 
-> I can't see anything controversial in the patch, but I've got some doubts
-regarding
-> the compatible string. Is there a SoC named just "Exynos7"?
-
-Yes, We have an SoC named Exynos7.
-Please refer http://www.spinics.net/lists/linux-samsung-soc/msg36765.html
-
-> If not, what are exact SoC names the "samsung,exynos7-clock-mscl" compatible
-> is supposed to cover ?
-> It would be good to list in this file the exact SoCs names this binding
-applies to,
-> unless there is indeed Exynos7 SoC.
-> 
-> --
-> Thanks,
-> Sylwester
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 
 
-Regards,
-Tony
+--IuhbYIxU28t+Kd57
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Sun, Dec 21, 2014 at 10:14:48PM +0100, Wolfram Sang wrote:
+> This platform_driver does not need to set an owner, it will be populated by the
+> driver core.
+
+Applied, thanks.
+
+--IuhbYIxU28t+Kd57
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUmAhsAAoJECTWi3JdVIfQvl4H/REH/n7ikDPfUntT1mGK2CNc
+37tDsCjhuWiwDuJaoCJIe4dUg8HGZBphNeK3lEGFvd8iI2brHyLi+kwPmVzqI4wW
+lfzzBr1eoLmZwMfU3wc0ExYyFt/2wBZtTkhVKmLdSSLXM5orzg3FdT0EX2P1qJyo
+ZrbKVB/traPvjEhQUPBGFVkG6UfenisnhAPla9wjj/SCb/rRCl+WgltsYSwg3sZ4
+l0KnkmvY3scXGHAfuHn12L+IeCEbX3pZWWYatdLAkx2HBbyT79y/OcxdFoGkBkUc
+zhSM7rvFpkSPZTmnNDcMuOT7siL0DSNblV2K1BiIJajn8qTqxPEYIkda2swBAng=
+=YOR6
+-----END PGP SIGNATURE-----
+
+--IuhbYIxU28t+Kd57--
