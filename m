@@ -1,53 +1,54 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 00/11] Exynos7: Adding USB 3.0 support
-Date: Mon, 22 Dec 2014 15:47:41 +0100
-Message-ID: <54982F0D.6040702@samsung.com>
-References: <1416576954-11997-1-git-send-email-gautam.vivek@samsung.com>
- <20141121151130.GD7508@saruman> <54704BF0.1000903@ti.com>
- <5470A7C5.1070302@kernel.org>
- <CAFp+6iE5XJ+TGu+8TvRFd3Up-kzki3VPD4k6gPXaYbscfwnz4w@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: exynos7: Add clocks for MSCL block
+Date: Mon, 22 Dec 2014 15:57:47 +0100
+Message-ID: <5498316B.9050906@samsung.com>
+References: <1418801617-7593-1-git-send-email-tony.kn@samsung.com>
+ <549450A6.9020205@samsung.com> <000901d01ddc$eac0d120$c0427360$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:32393 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754300AbaLVOrt (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:29806 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754975AbaLVO5x (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 22 Dec 2014 09:47:49 -0500
-In-reply-to: <CAFp+6iE5XJ+TGu+8TvRFd3Up-kzki3VPD4k6gPXaYbscfwnz4w@mail.gmail.com>
+	Mon, 22 Dec 2014 09:57:53 -0500
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0NGZ000W4OF7MZ60@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 22 Dec 2014 15:01:55 +0000 (GMT)
+In-reply-to: <000901d01ddc$eac0d120$c0427360$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautamvivek1987@gmail.com>
-Cc: Kukjin Kim <kgene@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Felipe Balbi <balbi@ti.com>, Vivek Gautam <gautam.vivek@samsung.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, Greg KH <gregkh@linuxfoundation.org>, Tomasz Figa <tomasz.figa@gmail.com>, robh+dt <robh+dt@kernel.org>, Alan Stern <stern@rowland.harvard.edu>, Kukjin Kim <kgene.kim@samsung.com>
+To: Tony K Nadackal <tony.kn@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, mturquette@linaro.org, kgene@kernel.org, a.kesavan@samsung.com, bhushan.r@samsung.com
 
-Hi Vivek,
+On 22/12/14 12:46, Tony K Nadackal wrote:
+>>> diff --git a/Documentation/devicetree/bindings/clock/exynos7-clock.txt
+>>> > > b/Documentation/devicetree/bindings/clock/exynos7-clock.txt
+>>> > > index 6d3d5f8..d0e048c 100644
+>>> > > --- a/Documentation/devicetree/bindings/clock/exynos7-clock.txt
+>>> > > +++ b/Documentation/devicetree/bindings/clock/exynos7-clock.txt
+>>> > > @@ -34,6 +34,7 @@ Required Properties for Clock Controller:
+>>> > >  	- "samsung,exynos7-clock-peris"
+>>> > >  	- "samsung,exynos7-clock-fsys0"
+>>> > >  	- "samsung,exynos7-clock-fsys1"
+>>> > > +	- "samsung,exynos7-clock-mscl"
+>> > 
+>> > I can't see anything controversial in the patch, but I've got some doubts
+>> > regarding the compatible string. Is there a SoC named just "Exynos7"?
+>
+> Yes, We have an SoC named Exynos7.
+> Please refer http://www.spinics.net/lists/linux-samsung-soc/msg36765.html
 
-On 25/11/14 12:48, Vivek Gautam wrote:
-> On Sat, Nov 22, 2014 at 8:42 PM, Kukjin Kim <kgene@kernel.org> wrote:
->> > On 11/22/14 17:40, Kishon Vijay Abraham I wrote:
->>> >> On Friday 21 November 2014 08:41 PM, Felipe Balbi wrote:
-...
->>>> >>> I took dwc3 driver patches.
->>> >>
->>> >> I took the phy patches.
->>> >>
->> > I'll take DT changes once exynos7 is landing into samsung tree :)
->> >
-> You too may want to pick the sole clock driver patch in this series
-> for 3.19 ? :-)
-> "clk: exynos7: Add required clock tree for USB"
-> 
-> Please let me know if the merge window is still open on your side so
-> that you can pick this patch.
+I've queued this patch for 3.20. Would be nice to have a Reviewed-by tag
+from someone else who has access to the SoC documentation though.
 
-My apologies, it seems I have missed this patch. :/
-Feel free to ping me off the list in future if there is no response
-for more than week.
-I queued this patch now for 3.20.  I'm putting all the exynos7 clk
-patches on a separate branch which could then be pulled into samsung
-arm tree for the dependant dts changes.
+Is Exynos7420 User Manual applicable to this?
+Exynos 7 (Octa?) seems like a marketing name to me. In technical documents
+there are usually more specific names used, like exynos7410 or exynos7420.
 
 -- 
-Thanks,
+Regards,
 Sylwester
