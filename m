@@ -1,91 +1,67 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: [PATCH v2 6/8] hwmon: thermal: Extract __set_pwm() function to only
- modify PWM duty cycle
-Date: Mon, 22 Dec 2014 17:27:46 +0100
-Message-ID: <1419265668-32283-7-git-send-email-l.majewski@samsung.com>
-References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
- <1419265668-32283-1-git-send-email-l.majewski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1419265668-32283-1-git-send-email-l.majewski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>, Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Guenter Roeck <linux@roeck-us.net>
-Cc: lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
+ Refactor the driver to use commit-like)
+Date: Mon, 22 Dec 2014 17:04:12 +0000
+Message-ID: <20141222170411.GL11502@n2100.arm.linux.org.uk>
+References: <5481D913.9040109@ti.com>
+ <5481D9BF.2090007@ti.com>
+ <20141209165746.GA29935@kahuna>
+ <54881589.20105@samsung.com>
+ <20141211092945.GE11502@n2100.arm.linux.org.uk>
+ <54897528.4030804@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-next-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <54897528.4030804@samsung.com>
+Sender: linux-next-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Nishanth Menon <nm@ti.com>, Kevin Hilman <khilman@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-omap <linux-omap@vger.kernel.org>, "tony@atomide.com" <tony@atomide.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-next <linux-next@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-It was necessary to decouple code handling writing to sysfs from the one
-responsible for setting PWM of the fan.
-Due to that, new __set_pwm() method was extracted, which is responsible for
-only setting new PWM duty cycle.
+On Thu, Dec 11, 2014 at 11:42:48AM +0100, Marek Szyprowski wrote:
+> On 2014-12-11 10:29, Russell King - ARM Linux wrote:
+> >On Wed, Dec 10, 2014 at 10:42:33AM +0100, Marek Szyprowski wrote:
+> >>I assume that now it won't be possible to get l2c patches back to -next,
+> >>so I will resend them (again...) with the omap related fix.
+> >What, you mean you don't know the fundamental rules of kernel development?
+> >
+> >No one should ever dump any new code into linux-next during a merge
+> >window which is not a fix for a regression or a bug fix, period.
+> >
+> >Linus has in the past taken a snapshot of linux-next at the beginning
+> >of a merge window, and then threatened to refuse to merge anything that
+> >wasn't in his local snapshot, or which doesn't qualify as the above.
+> >
+> >So no, it won't be possible, because I play by the community rules when
+> >it comes to what gets merged and at what time in the cycle.
+> 
+> I know the rules. It was just my whining, that it is yet another release
+> cycle
+> that got missed. It is really disappointing, that those patches have been
+> floating for months and noone found issues related to different order of
+> initialization. It took way to long to get them scheduled for testing in
+> -next.
 
-Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
----
-Changes for v2:
-- None
----
- drivers/hwmon/pwm-fan.c | 35 ++++++++++++++++++++++-------------
- 1 file changed, 22 insertions(+), 13 deletions(-)
+Right, so - we're now at -rc1, and we should see about queuing this up
+sooner rather than later - in its fixed form.  From what I can see,
+there's been little progress on the OMAP problem.
 
-diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
-index 1991d903..870e100 100644
---- a/drivers/hwmon/pwm-fan.c
-+++ b/drivers/hwmon/pwm-fan.c
-@@ -33,21 +33,15 @@ struct pwm_fan_ctx {
- 	unsigned char pwm_value;
- };
- 
--static ssize_t set_pwm(struct device *dev, struct device_attribute *attr,
--		       const char *buf, size_t count)
-+static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
- {
--	struct pwm_fan_ctx *ctx = dev_get_drvdata(dev);
--	unsigned long pwm, duty;
--	ssize_t ret;
--
--	if (kstrtoul(buf, 10, &pwm) || pwm > MAX_PWM)
--		return -EINVAL;
--
--	mutex_lock(&ctx->lock);
-+	unsigned long duty;
-+	int ret;
- 
- 	if (ctx->pwm_value == pwm)
--		goto exit_set_pwm_no_change;
-+		return 0;
- 
-+	mutex_lock(&ctx->lock);
- 	if (pwm == 0) {
- 		pwm_disable(ctx->pwm);
- 		goto exit_set_pwm;
-@@ -66,13 +60,28 @@ static ssize_t set_pwm(struct device *dev, struct device_attribute *attr,
- 
- exit_set_pwm:
- 	ctx->pwm_value = pwm;
--exit_set_pwm_no_change:
--	ret = count;
- exit_set_pwm_err:
- 	mutex_unlock(&ctx->lock);
- 	return ret;
- }
- 
-+static ssize_t set_pwm(struct device *dev, struct device_attribute *attr,
-+		       const char *buf, size_t count)
-+{
-+	struct pwm_fan_ctx *ctx = dev_get_drvdata(dev);
-+	unsigned long pwm;
-+	int ret;
-+
-+	if (kstrtoul(buf, 10, &pwm) || pwm > MAX_PWM)
-+		return -EINVAL;
-+
-+	ret = __set_pwm(ctx, pwm);
-+	if (ret)
-+		return ret;
-+
-+	return count;
-+}
-+
- static ssize_t show_pwm(struct device *dev,
- 			struct device_attribute *attr, char *buf)
- {
+Nishanth - can we push OMAP over to using the generic DT L2C
+initialisation (the one from init_IRQ in arch/arm/kernel/irq.c) and
+kill the SoC specific stuff in arch/arm/mach-omap2/omap4-common.c ?
+
+>From what I can see, in the DT case, the only thing which is used
+there is the ioremap() to provide omap4_get_l2cache_base() with
+something to return.  Everything else - the initialisation of the
+l2c_write_sec pointer, and the aux mask and values - can be specified
+via the machine_desc struct.
+
+That only leaves the non-DT stuff to worry about this, and from what I
+understand, that's going to be removed soon.  If we're going to keep
+the non-DT stuff, we should implement a new machine_desc hook for it
+instead of hijacking one of the existing callbacks.
+
 -- 
-2.0.0.rc2
+FTTC broadband for 0.8mile line: currently at 9.5Mbps down 400kbps up
+according to speedtest.net.
