@@ -1,79 +1,63 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH v2 00/17] thermal: exynos: Thermal code rework to use
- device tree
-Date: Tue, 23 Dec 2014 20:57:38 +0530
-Message-ID: <CAM4voam14GOE2u1KaRubsrVGBPcWibOQBeibyM=C6SrBFjuiWg@mail.gmail.com>
-References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
-	<1418213396-743-1-git-send-email-l.majewski@samsung.com>
-	<20141210102712.GA2919@developer>
-	<20141210151925.61a0b091@amdc2363>
-	<CAM4voakxJPjfGu3gkpCbDS+SY1TP39Of+0ed=5jS55ARn95pYg@mail.gmail.com>
-	<20141222172133.6e69fc21@amdc2363>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: regression: OMAP4 (next-20141204) (bisect to: ARM: 8208/1: l2c:
+ Refactor the driver to use commit-like)
+Date: Tue, 23 Dec 2014 10:05:24 -0600
+Message-ID: <549992C4.7000603@ti.com>
+References: <5481D913.9040109@ti.com> <5481D9BF.2090007@ti.com> <20141209165746.GA29935@kahuna> <54881589.20105@samsung.com> <20141211092945.GE11502@n2100.arm.linux.org.uk> <54897528.4030804@samsung.com> <20141222170411.GL11502@n2100.arm.linux.org.uk> <CAGo_u6pKUj9x8sCFY0wJCVDkBjT77xetu+XZ+DqWTjEWnvZePA@mail.gmail.com> <20141222172838.GM11502@n2100.arm.linux.org.uk> <54994B30.8040606@samsung.com> <20141223111045.GN11502@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f177.google.com ([209.85.216.177]:63268 "EHLO
-	mail-qc0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755981AbaLWP1l (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 23 Dec 2014 10:27:41 -0500
-In-Reply-To: <20141222172133.6e69fc21@amdc2363>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <20141223111045.GN11502@n2100.arm.linux.org.uk>
+Sender: linux-omap-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Kevin Hilman <khilman@linaro.org>, Arnd Bergmann <arnd@arndb.de>, "tony@atomide.com" <tony@atomide.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-next <linux-next@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-Hi Lukasz,
+On 12/23/2014 05:10 AM, Russell King - ARM Linux wrote:
+> On Tue, Dec 23, 2014 at 12:00:00PM +0100, Marek Szyprowski wrote:
+>> I hope I did it right: https://lkml.org/lkml/2014/12/23/158
+>> Please test, because I have no access to Omap hardware.
+> 
+> Patch 1/8 looks like I'd expect it to.  Nishanth, please test with your
+> failing scenario, thanks.
+> 
+3.19-rc1
+ 1:                      am437x-sk: BOOT: PASS:
+http://slexy.org/raw/s2ARFeCcDp
+ 2:                    am43xx-epos: BOOT: PASS:
+http://slexy.org/raw/s2Kzli0GYS
+ 3:                   am43xx-gpevm: BOOT: PASS:
+http://slexy.org/raw/s2DMkJGmdF
+ 4:                  pandaboard-es: BOOT: PASS:
+http://slexy.org/raw/s204jfptrr
+ 5:             pandaboard-vanilla: BOOT: PASS:
+http://slexy.org/raw/s2cbd82pMI
+ 6:                        sdp4430: BOOT: PASS:
+http://slexy.org/raw/s21bzlzUNr
+TOTAL = 6 boards, Booted Boards = 6, No Boot boards = 0
 
-On Mon, Dec 22, 2014 at 9:51 PM, Lukasz Majewski <l.majewski@samsung.com> wrote:
-> Hi Abhilash,
->
->> Hi Lukasz and Eduardo,
->>
->> [...]
->> >
->> > Although, this shouldn't be a problem.
->> >
->> >> That is why we had the cycle with cpufreq folks, remember?
->> >>
->> >> (I will have a look in your patches)
->> >
->> > It would be great if those patches could find their way to therma
->> > -next. Then also Abhilash could benefit from them.
->>
->> I have a couple of 5420/5800 based chromebooks that I will test this
->> series on. Is it OK for me to start basing my Exynos7 TMU support on
->> this series ? Please let me know if I can help in any other way with
->> this.
->
-> I'm fine if you rebase on top of my patches.
->
-> However, it is up to Eduardo when he decides to pull them to -next
-> branch.
->
-> I hope that it will happen soon.
 
-I tested a Peach Pit (5420 based chromebook) with your patches and
-they work well (temperatures and software tripping). However, my
-earlier comments with regards to duplicate exynos_tmu_initialize() and
-the thermal zone showing as disabled in sysfs .
+against the patch series: (all am437x platforms fail)
 
-Also, I think the documentation for the dt properties are missing ?
+testing
+ 1:                      am437x-sk: BOOT: FAIL:
+http://slexy.org/raw/s2yhDXyF7o
+ 2:                    am43xx-epos: BOOT: FAIL:
+http://slexy.org/raw/s2m9cSdt55
+ 3:                   am43xx-gpevm: BOOT: FAIL:
+http://slexy.org/raw/s2MqFFBuIl
+ 4:                  pandaboard-es: BOOT: PASS:
+http://slexy.org/raw/s2XwggyB0a
+ 5:             pandaboard-vanilla: BOOT: PASS:
+http://slexy.org/raw/s25WDvtbob
+ 6:                        sdp4430: BOOT: PASS:
+http://slexy.org/raw/s2gjynR1Co
+TOTAL = 6 boards, Booted Boards = 3, No Boot boards = 3
 
-I will post my exynos7 work based on your patches soon. Please take a look.
+I am trying to understand what is different in AM437x except that it
+is a single A9 instead of OMAP4 style dual A9s.
 
+-- 
 Regards,
-Abhilash
->
->>
->> Regards,
->> Abhilash
->
->
->
-> --
-> Best regards,
->
-> Lukasz Majewski
->
-> Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+Nishanth Menon
