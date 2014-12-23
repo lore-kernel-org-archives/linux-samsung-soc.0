@@ -1,43 +1,55 @@
-From: Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH 2/4] ARM: dts: Add hsotg node for exynos3250
-Date: Tue, 23 Dec 2014 21:46:30 +0900
-Message-ID: <1419338792-22853-3-git-send-email-jaewon02.kim@samsung.com>
-References: <1419338792-22853-1-git-send-email-jaewon02.kim@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1419338792-22853-1-git-send-email-jaewon02.kim@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, Jaewon Kim <jaewon02.kim@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 0/3]  clk: samsung: Use samsung_cmu_register_one() to
+ simplify code
+Date: Tue, 23 Dec 2014 14:41:39 +0100
+Message-ID: <54997113.2080804@samsung.com>
+References: <1419320423-19228-1-git-send-email-cw00.choi@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:11144 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755862AbaLWNlr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 23 Dec 2014 08:41:47 -0500
+In-reply-to: <1419320423-19228-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: tomasz.figa@gmail.com, kgene.kim@samsung.com, kyungmin.park@samsung.com, inki.dae@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch adds device tree node for hsotg to control USB 2.0 Device.
+Hi Chanwoo,
 
-Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
----
- arch/arm/boot/dts/exynos3250.dtsi |   11 +++++++++++
- 1 file changed, 11 insertions(+)
+On 23/12/14 08:40, Chanwoo Choi wrote:
+> This patch-set uses the samsung_cmu_register_one() function to simplify the
+> clock driver for Exynos3250/Exynos4415 SoC and change return value of
+> samsung_cmu_register_one() because some clock driver may need the instance
+> of samsung_clk_provider structure.
+> 
+> Chanwoo Choi (3):
+>   clk: samsung: Changes the return value of samsung_cmu_register_one()
+>   clk: samsung: exynos3250: Use samsung_cmu_register_one() to simplify code
+>   clk: samsung: exynos4415: Use samsung_cmu_register_one() to simplify code
+> 
+>  drivers/clk/samsung/clk-exynos3250.c | 217 ++++++++---------------------------
+>  drivers/clk/samsung/clk-exynos4415.c | 216 ++++++++--------------------------
+>  drivers/clk/samsung/clk.c            |  13 ++-
+>  drivers/clk/samsung/clk.h            |   3 +-
+>  4 files changed, 107 insertions(+), 342 deletions(-)
 
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index d976007..e5c891a 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -255,6 +255,17 @@
- 			status = "disabled";
- 		};
- 
-+		hsotg: hsotg@12480000 {
-+			compatible = "snps,dwc2";
-+			reg = <0x12480000 0x20000>;
-+			interrupts = <0 141 0>;
-+			clocks = <&cmu CLK_USBOTG>;
-+			clock-names = "otg";
-+			phys = <&exynos_usbphy 0>;
-+			phy-names = "usb2-phy";
-+			status = "disabled";
-+		};
-+
- 		mshc_0: mshc@12510000 {
- 			compatible = "samsung,exynos5250-dw-mshc";
- 			reg = <0x12510000 0x1000>;
+Thanks for the cleanup, I've queued that for 3.20. And fixed a minor
+checkpatch warning when applying:
+
+ERROR: "foo* __init bar" should be "foo * __init bar"
+#29: FILE: drivers/clk/samsung/clk.c:377:
++struct samsung_clk_provider* __init samsung_cmu_register_one(
+
+total: 1 errors, 0 warnings, 42 lines checked
+
+0001-clk-samsung-Changes-the-return-value-of-samsung_cmu_.patch has style
+problems, please review.
+
 -- 
-1.7.9.5
+Thanks,
+Sylwester
