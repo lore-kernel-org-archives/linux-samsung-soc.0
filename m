@@ -1,42 +1,33 @@
-From: Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH v2 1/4] ARM: dts: Add exynos_usbphy node for exynos3250
-Date: Wed, 24 Dec 2014 14:45:30 +0900
-Message-ID: <1419399933-3707-2-git-send-email-jaewon02.kim@samsung.com>
-References: <1419399933-3707-1-git-send-email-jaewon02.kim@samsung.com>
+From: Paolo Pisati <p.pisati@gmail.com>
+Subject: Re: [PATCH] clk: samsung: Fix Exynos 5420 pinctrl setup and clock
+ disable failure due to domain being gated
+Date: Wed, 24 Dec 2014 17:36:26 +0100
+Message-ID: <20141224163626.GA3902@peachpi>
+References: <1417788934-23447-1-git-send-email-k.kozlowski@samsung.com>
+ <1418129982.19339.6.camel@AMDC1943>
+ <5486F69B.6020005@samsung.com>
+ <7hlhmfo1b0.fsf@deeprootsystems.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1419399933-3707-1-git-send-email-jaewon02.kim@samsung.com>
+Content-Disposition: inline
+In-Reply-To: <7hlhmfo1b0.fsf@deeprootsystems.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, Jaewon Kim <jaewon02.kim@samsung.com>
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds device tree node for exynos_usbphy to use USB 2.0 Device.
+On Wed, Dec 10, 2014 at 09:35:31AM -0800, Kevin Hilman wrote:
+> 
+> I confirm it fixes the boot hang in linux-next (next-20141210) on my
+> exynos5800-peach-pi and exynos5420-arndale-octa.  Tested both
+> exynos_defconfig and multi_v7_defconfig.
+> 
+> Tested-by: Kevin Hilman <khilman@linaro.org>
 
-Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
----
- arch/arm/boot/dts/exynos3250.dtsi |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+does audio work on your peach pi? because kernel boots fine, but i can't get any
+audio out of it
 
-diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
-index 2246549..27d385f 100644
---- a/arch/arm/boot/dts/exynos3250.dtsi
-+++ b/arch/arm/boot/dts/exynos3250.dtsi
-@@ -279,6 +279,16 @@
- 			status = "disabled";
- 		};
- 
-+		exynos_usbphy: exynos-usbphy@125B0000 {
-+			compatible = "samsung,exynos3250-usb2-phy";
-+			reg = <0x125B0000 0x100>;
-+			samsung,pmureg-phandle = <&pmu_system_controller>;
-+			clocks = <&cmu CLK_USBOTG>, <&cmu CLK_SCLK_UPLL>;
-+			clock-names = "phy", "ref";
-+			#phy-cells = <1>;
-+			status = "disabled";
-+		};
-+
- 		amba {
- 			compatible = "arm,amba-bus";
- 			#address-cells = <1>;
 -- 
-1.7.9.5
+bye,
+p.
