@@ -1,35 +1,48 @@
-From: Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH v2 0/4] ARM: dts: Add USB node for exynos3250 SoC boards
-Date: Wed, 24 Dec 2014 14:45:29 +0900
-Message-ID: <1419399933-3707-1-git-send-email-jaewon02.kim@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:63636 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750740AbaLXFpi (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 24 Dec 2014 00:45:38 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jaewon Kim <jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 2/4] ARM: dts: Add hsotg node for exynos3250
+Date: Wed, 24 Dec 2014 14:45:31 +0900
+Message-ID: <1419399933-3707-3-git-send-email-jaewon02.kim@samsung.com>
+References: <1419399933-3707-1-git-send-email-jaewon02.kim@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1419399933-3707-1-git-send-email-jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Chanwoo Choi <cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jaewon Kim <jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, Jaewon Kim <jaewon02.kim@samsung.com>
 
-This patch series adds USB device node and phy for exynos3250 SoC.
-And enables for rinato and monk boards.
+This patch adds device tree node for hsotg to control USB 2.0 Device.
 
-Changes in v2:
- - remove unnessasary property "samsung,sysreg-phandle"
- - change "xusbxti" clock to "CLK_SCLK_UPLL"
+Signed-off-by: Jaewon Kim <jaewon02.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ arch/arm/boot/dts/exynos3250.dtsi |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Jaewon Kim (4):
-  ARM: dts: Add exynos_usbphy node for exynos3250
-  ARM: dts: Add hsotg node for exynos3250
-  ARM: dts: Enable USB node for exynos3250-rinato
-  ARM: dts: Enable USB node for exynos3250-monk
-
- arch/arm/boot/dts/exynos3250-monk.dts   |   10 ++++++++++
- arch/arm/boot/dts/exynos3250-rinato.dts |   10 ++++++++++
- arch/arm/boot/dts/exynos3250.dtsi       |   21 +++++++++++++++++++++
- 3 files changed, 41 insertions(+)
-
+diff --git a/arch/arm/boot/dts/exynos3250.dtsi b/arch/arm/boot/dts/exynos3250.dtsi
+index 27d385f..204a84b 100644
+--- a/arch/arm/boot/dts/exynos3250.dtsi
++++ b/arch/arm/boot/dts/exynos3250.dtsi
+@@ -255,6 +255,17 @@
+ 			status = "disabled";
+ 		};
+ 
++		hsotg: hsotg@12480000 {
++			compatible = "snps,dwc2";
++			reg = <0x12480000 0x20000>;
++			interrupts = <0 141 0>;
++			clocks = <&cmu CLK_USBOTG>;
++			clock-names = "otg";
++			phys = <&exynos_usbphy 0>;
++			phy-names = "usb2-phy";
++			status = "disabled";
++		};
++
+ 		mshc_0: mshc@12510000 {
+ 			compatible = "samsung,exynos5250-dw-mshc";
+ 			reg = <0x12510000 0x1000>;
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
