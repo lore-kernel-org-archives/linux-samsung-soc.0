@@ -1,90 +1,191 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: [PATCH v10 2/8] ARM: l2c: Refactor the driver to use commit-like
- interface
-Date: Tue, 23 Dec 2014 11:13:24 -0600
-Message-ID: <5499A2B4.2080909@ti.com>
-References: <1419331716-8972-1-git-send-email-m.szyprowski@samsung.com> <1419331716-8972-3-git-send-email-m.szyprowski@samsung.com> <20141223170613.GM23854@atomide.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <20141223170613.GM23854@atomide.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Tony Lindgren <tony@atomide.com>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, linus.walleij@linaro.org, drake@endlessm.com, loeliger@gmail.com, Mark Rutland <mark.rutland@arm.com>, khilman@linaro.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Add exynos3250 suspend-to-ram support
+Date: Wed, 24 Dec 2014 11:37:09 +0900
+Message-ID: <1419388629-27066-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:50512 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750909AbaLXChN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 23 Dec 2014 21:37:13 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: ben-linux@fluff.org, kyungmin.park@samsung.com, inki.dae@samsung.com, cw00.choi@samsung.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 12/23/2014 11:06 AM, Tony Lindgren wrote:
-> * Marek Szyprowski <m.szyprowski@samsung.com> [141223 02:51]:
->> From: Tomasz Figa <t.figa@samsung.com>
->>
->> Certain implementations of secure hypervisors (namely the one found on
->> Samsung Exynos-based boards) do not provide access to individual L2C
->> registers. This makes the .write_sec()-based interface insufficient and
->> provoking ugly hacks.
->>
->> This patch is first step to make the driver not rely on availability of
->> writes to individual registers. This is achieved by refactoring the
->> driver to use a commit-like operation scheme: all register values are
->> prepared first and stored in an instance of l2x0_regs struct and then a
->> single callback is responsible to flush those values to the hardware.
-> 
-> The first patch of the series applied things boot with no problem.
-> But after applying this one I get the following on am437x:
-> 
-> Unhandled fault: imprecise external abort (0xc06) at 0xb6f33884
-> 
-> Probably the same issue Nishanth mentioned.
-> 
+This patch adds the support for suspend-to-ram feature of Exynos3250 SoC.
+Exynos3250 don't contain the L2 cache.
 
-yep - just finished the bisect... came to the same conclusion..
+The measured power-consumption in suspend state:
+- before entering suspend : 31mA
+- in suspend state : 16mA
 
-c8c3a07fa6a8e9b27a1658e0d305b6f7e0fa068f is the first bad commit
-commit c8c3a07fa6a8e9b27a1658e0d305b6f7e0fa068f
-Author: Tomasz Figa <t.figa@samsung.com>
-Date:   Tue Dec 23 11:48:30 2014 +0100
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+This patch is based on v3.19-rc1 and is tested on Exynos3250-based Rinato board.
 
-    ARM: l2c: Refactor the driver to use commit-like interface
+ arch/arm/mach-exynos/regs-pmu.h |  3 ++
+ arch/arm/mach-exynos/suspend.c  | 77 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 80 insertions(+)
 
-    Certain implementations of secure hypervisors (namely the one found on
-    Samsung Exynos-based boards) do not provide access to individual L2C
-    registers. This makes the .write_sec()-based interface
-insufficient and
-    provoking ugly hacks.
-
-    This patch is first step to make the driver not rely on
-availability of
-    writes to individual registers. This is achieved by refactoring the
-    driver to use a commit-like operation scheme: all register values are
-    prepared first and stored in an instance of l2x0_regs struct and
-then a
-    single callback is responsible to flush those values to the hardware.
-
-    Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-    Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-
-:040000 040000 74c6c74a0dc0612d124cd759951adf2a1e4124ee
-8082aabb474f8659231de744d87cd8dbd6dd79bb M	arch
-
-
-$ git bisect log
-git bisect start
-# good: [97bf6af1f928216fd6c5a66e8a57bfa95a659672] Linux 3.19-rc1
-git bisect good 97bf6af1f928216fd6c5a66e8a57bfa95a659672
-# bad: [9afe195db6558621bd8bac379ed65ef121930684] ARM: dts: exynos4:
-Add nodes for L2 cache controller
-git bisect bad 9afe195db6558621bd8bac379ed65ef121930684
-# bad: [0a89ef4dd870bbf692e30fef6c8182d7b8b42e17] ARM: l2c: Get outer
-cache .write_sec callback from mach_desc only if not NULL
-git bisect bad 0a89ef4dd870bbf692e30fef6c8182d7b8b42e17
-# bad: [c8c3a07fa6a8e9b27a1658e0d305b6f7e0fa068f] ARM: l2c: Refactor
-the driver to use commit-like interface
-git bisect bad c8c3a07fa6a8e9b27a1658e0d305b6f7e0fa068f
-# good: [080ab387c653b8655dc1ee790658b618399db2aa] ARM: OMAP2+: use
-common l2cache initialization code
-git bisect good 080ab387c653b8655dc1ee790658b618399db2aa
-
-
+diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+index b5f4406..eb461e1 100644
+--- a/arch/arm/mach-exynos/regs-pmu.h
++++ b/arch/arm/mach-exynos/regs-pmu.h
+@@ -160,12 +160,14 @@
+ #define EXYNOS5_L2RSTDISABLE_VALUE		BIT(3)
+ 
+ #define S5P_PAD_RET_MAUDIO_OPTION		0x3028
++#define S5P_PAD_RET_MMC2_OPTION			0x30c8
+ #define S5P_PAD_RET_GPIO_OPTION			0x3108
+ #define S5P_PAD_RET_UART_OPTION			0x3128
+ #define S5P_PAD_RET_MMCA_OPTION			0x3148
+ #define S5P_PAD_RET_MMCB_OPTION			0x3168
+ #define S5P_PAD_RET_EBIA_OPTION			0x3188
+ #define S5P_PAD_RET_EBIB_OPTION			0x31A8
++#define S5P_PAD_RET_SPI_OPTION			0x31c8
+ 
+ #define S5P_PS_HOLD_CONTROL			0x330C
+ #define S5P_PS_HOLD_EN				(1 << 31)
+@@ -326,6 +328,7 @@
+ 			(EXYNOS3_ARM_CORE0_OPTION + ((_nr) * 0x80))
+ 
+ #define EXYNOS3_ARM_COMMON_OPTION			0x2408
++#define EXYNOS3_ARM_L2_OPTION				0x2608
+ #define EXYNOS3_TOP_PWR_OPTION				0x2C48
+ #define EXYNOS3_CORE_TOP_PWR_OPTION			0x2CA8
+ #define EXYNOS3_XUSBXTI_DURATION			0x341C
+diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+index f8e7dcd..d6feef3 100644
+--- a/arch/arm/mach-exynos/suspend.c
++++ b/arch/arm/mach-exynos/suspend.c
+@@ -91,6 +91,12 @@ static unsigned int exynos_pmu_spare3;
+ 
+ static u32 exynos_irqwake_intmask = 0xffffffff;
+ 
++static const struct exynos_wkup_irq exynos3250_wkup_irq[] = {
++	{ 73, BIT(1) }, /* RTC alarm */
++	{ 74, BIT(2) }, /* RTC tick */
++	{ /* sentinel */ },
++};
++
+ static const struct exynos_wkup_irq exynos4_wkup_irq[] = {
+ 	{ 76, BIT(1) }, /* RTC alarm */
+ 	{ 77, BIT(2) }, /* RTC tick */
+@@ -114,6 +120,19 @@ unsigned int exynos_release_ret_regs[] = {
+ 	REG_TABLE_END,
+ };
+ 
++unsigned int exynos3250_release_ret_regs[] = {
++	S5P_PAD_RET_MAUDIO_OPTION,
++	S5P_PAD_RET_GPIO_OPTION,
++	S5P_PAD_RET_UART_OPTION,
++	S5P_PAD_RET_MMCA_OPTION,
++	S5P_PAD_RET_MMCB_OPTION,
++	S5P_PAD_RET_EBIA_OPTION,
++	S5P_PAD_RET_EBIB_OPTION,
++	S5P_PAD_RET_MMC2_OPTION,
++	S5P_PAD_RET_SPI_OPTION,
++	REG_TABLE_END,
++};
++
+ unsigned int exynos5420_release_ret_regs[] = {
+ 	EXYNOS_PAD_RET_DRAM_OPTION,
+ 	EXYNOS_PAD_RET_MAUDIO_OPTION,
+@@ -173,6 +192,12 @@ static int exynos_cpu_suspend(unsigned long arg)
+ 	return exynos_cpu_do_idle();
+ }
+ 
++static int exynos3250_cpu_suspend(unsigned long arg)
++{
++	flush_cache_all();
++	return exynos_cpu_do_idle();
++}
++
+ static int exynos5420_cpu_suspend(unsigned long arg)
+ {
+ 	/* MCPM works with HW CPU identifiers */
+@@ -230,6 +255,23 @@ static void exynos_pm_prepare(void)
+ 	pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
+ }
+ 
++static void exynos3250_pm_prepare(void)
++{
++	unsigned int tmp;
++
++	/* Set wake-up mask registers */
++	exynos_pm_set_wakeup_mask();
++
++	tmp = pmu_raw_readl(EXYNOS3_ARM_L2_OPTION);
++	tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
++	pmu_raw_writel(tmp, EXYNOS3_ARM_L2_OPTION);
++
++	exynos_pm_enter_sleep_mode();
++
++	/* ensure at least INFORM0 has the resume address */
++	pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
++}
++
+ static void exynos5420_pm_prepare(void)
+ {
+ 	unsigned int tmp;
+@@ -344,6 +386,28 @@ early_wakeup:
+ 	pmu_raw_writel(0x0, S5P_INFORM1);
+ }
+ 
++static void exynos3250_pm_resume(void)
++{
++	u32 cpuid = read_cpuid_part();
++
++	if (exynos_pm_central_resume())
++		goto early_wakeup;
++
++	/* For release retention */
++	exynos_pm_release_retention();
++
++	pmu_raw_writel(S5P_USE_STANDBY_WFI_ALL, S5P_CENTRAL_SEQ_OPTION);
++
++	if (call_firmware_op(resume) == -ENOSYS
++	    && cpuid == ARM_CPU_PART_CORTEX_A9)
++		exynos_cpu_restore_register();
++
++early_wakeup:
++
++	/* Clear SLEEP mode set in INFORM1 */
++	pmu_raw_writel(0x0, S5P_INFORM1);
++}
++
+ static void exynos5420_prepare_pm_resume(void)
+ {
+ 	if (IS_ENABLED(CONFIG_EXYNOS5420_MCPM))
+@@ -483,6 +547,16 @@ static const struct platform_suspend_ops exynos_suspend_ops = {
+ 	.valid		= suspend_valid_only_mem,
+ };
+ 
++static const struct exynos_pm_data exynos3250_pm_data = {
++	.wkup_irq	= exynos3250_wkup_irq,
++	.wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
++	.release_ret_regs = exynos3250_release_ret_regs,
++	.pm_suspend	= exynos_pm_suspend,
++	.pm_resume	= exynos3250_pm_resume,
++	.pm_prepare	= exynos3250_pm_prepare,
++	.cpu_suspend	= exynos3250_cpu_suspend,
++};
++
+ static const struct exynos_pm_data exynos4_pm_data = {
+ 	.wkup_irq	= exynos4_wkup_irq,
+ 	.wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
+@@ -518,6 +592,9 @@ static struct exynos_pm_data exynos5420_pm_data = {
+ 
+ static struct of_device_id exynos_pmu_of_device_ids[] = {
+ 	{
++		.compatible = "samsung,exynos3250-pmu",
++		.data = &exynos3250_pm_data,
++	}, {
+ 		.compatible = "samsung,exynos4210-pmu",
+ 		.data = &exynos4_pm_data,
+ 	}, {
 -- 
-Regards,
-Nishanth Menon
+1.8.5.5
