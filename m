@@ -1,7 +1,7 @@
 From: Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH v2 4/4] ARM: dts: Enable USB node for exynos3250-monk
-Date: Wed, 24 Dec 2014 14:45:33 +0900
-Message-ID: <1419399933-3707-5-git-send-email-jaewon02.kim@samsung.com>
+Subject: [PATCH v2 3/4] ARM: dts: Enable USB node for exynos3250-rinato
+Date: Wed, 24 Dec 2014 14:45:32 +0900
+Message-ID: <1419399933-3707-4-git-send-email-jaewon02.kim@samsung.com>
 References: <1419399933-3707-1-git-send-email-jaewon02.kim@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1419399933-3707-1-git-send-email-jaewon02.kim@samsung.com>
@@ -10,18 +10,18 @@ To: Kukjin Kim <kgene@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, Jaewon Kim <jaewon02.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds device tree node for hsotg to control USB 2.0 Device.
+This patch enables hsotg and usbphy node to use USB 2.0 Device.
 
 Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
 ---
- arch/arm/boot/dts/exynos3250-monk.dts |   10 ++++++++++
+ arch/arm/boot/dts/exynos3250-rinato.dts |   10 ++++++++++
  1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
-index 24822aa..0c1d85d 100644
---- a/arch/arm/boot/dts/exynos3250-monk.dts
-+++ b/arch/arm/boot/dts/exynos3250-monk.dts
-@@ -134,6 +134,16 @@
+diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
+index 80aa8b4..bf4c17b 100644
+--- a/arch/arm/boot/dts/exynos3250-rinato.dts
++++ b/arch/arm/boot/dts/exynos3250-rinato.dts
+@@ -125,6 +125,16 @@
  	};
  };
  
