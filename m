@@ -1,33 +1,30 @@
-From: Paolo Pisati <p.pisati@gmail.com>
-Subject: Re: [PATCH] clk: samsung: Fix Exynos 5420 pinctrl setup and clock
- disable failure due to domain being gated
-Date: Wed, 24 Dec 2014 17:36:26 +0100
-Message-ID: <20141224163626.GA3902@peachpi>
-References: <1417788934-23447-1-git-send-email-k.kozlowski@samsung.com>
- <1418129982.19339.6.camel@AMDC1943>
- <5486F69B.6020005@samsung.com>
- <7hlhmfo1b0.fsf@deeprootsystems.com>
+From: Ming Lei <tom.leiming@gmail.com>
+Subject: kernel panic when booting on exynos 5440
+Date: Thu, 25 Dec 2014 16:48:31 +0800
+Message-ID: <CACVXFVNCZdMyHQ1fzZDGs7h7X9vWmMVBJFRqWs7_P=WBQUYk1g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <7hlhmfo1b0.fsf@deeprootsystems.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Mike Turquette <mturquette@linaro.org>, Tomasz Figa <tomasz.figa@gmail.com>, Stephen Boyd <sboyd@codeaurora.org>, Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-oi0-f41.google.com ([209.85.218.41]:32926 "EHLO
+	mail-oi0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751668AbaLYIsd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 25 Dec 2014 03:48:33 -0500
+Received: by mail-oi0-f41.google.com with SMTP id i138so15246367oig.0
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Dec 2014 00:48:31 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-On Wed, Dec 10, 2014 at 09:35:31AM -0800, Kevin Hilman wrote:
-> 
-> I confirm it fixes the boot hang in linux-next (next-20141210) on my
-> exynos5800-peach-pi and exynos5420-arndale-octa.  Tested both
-> exynos_defconfig and multi_v7_defconfig.
-> 
-> Tested-by: Kevin Hilman <khilman@linaro.org>
+Hi Pankaj,
 
-does audio work on your peach pi? because kernel boots fine, but i can't get any
-audio out of it
+In your commit fce9e5bb2(ARM: EXYNOS: Add support for
+mapping PMU base address via DT), 'pmu_base_addr' is
+only parsed for very limited machines from the table of
+'exynos_dt_pmu_match'.  For other boards, 'pmu_base_addr'
+will keep its default value of null, then panic() is triggered.
 
--- 
-bye,
-p.
+What do you think about the problem?
+
+Thanks,
+Ming Lei
