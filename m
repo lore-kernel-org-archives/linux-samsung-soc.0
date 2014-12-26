@@ -1,106 +1,102 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: Re: kernel panic when booting on exynos 5440
-Date: Thu, 25 Dec 2014 16:23:46 +0530
-Message-ID: <549BECBA.4060707@samsung.com>
-References: <CACVXFVNCZdMyHQ1fzZDGs7h7X9vWmMVBJFRqWs7_P=WBQUYk1g@mail.gmail.com>
- <549BE7CC.1000005@samsung.com>
- <CACVXFVMOmq4rzXtaLNFn2NE-X=__dTJFANWtuJZS9m9szV0JuQ@mail.gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PULL] drm-exynos-next 2014-12-22
+Date: Fri, 26 Dec 2014 10:18:32 +0900
+Message-ID: <549CB768.3000903@samsung.com>
+References: <20141222130418.GJ16419@joana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:50607 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751996AbaLYKxZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Dec 2014 05:53:25 -0500
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NH400DYUWWZAL60@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 25 Dec 2014 19:53:23 +0900 (KST)
-In-reply-to: <CACVXFVMOmq4rzXtaLNFn2NE-X=__dTJFANWtuJZS9m9szV0JuQ@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-reply-to: <20141222130418.GJ16419@joana>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ming Lei <tom.leiming@gmail.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>
 
-
-On Thursday 25 December 2014 04:13 PM, Ming Lei wrote:
-> On Thu, Dec 25, 2014 at 6:32 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
->> +CC: Thomas Abraham
->>
->> Hi Ming,
->>
->> On Thursday 25 December 2014 02:18 PM, Ming Lei wrote:
->>>
->>> Hi Pankaj,
->>>
->>> In your commit fce9e5bb2(ARM: EXYNOS: Add support for
->>> mapping PMU base address via DT), 'pmu_base_addr' is
->>> only parsed for very limited machines from the table of
->>> 'exynos_dt_pmu_match'.  For other boards, 'pmu_base_addr'
->>> will keep its default value of null, then panic() is triggered.
->>>
->>
->> Yes, it will.
->> As exynos5440 DT does not have PMU device node, neither above mentioned
->> patch added corresponding matching device_id.
->> If I remember correctly, I might have missed this because exynos5440 DT was
->> not having PMU node.
->>
->>> What do you think about the problem?
->>
->>
->> I missed this part, and I should have taken care of this in original patch
->> itself. Well as of now I can think of only one solution that if we really
->> want to keep support for exynos5440 in mainline kernel, to avoid above issue
->> we should skip pmu mapping for exynos5440. In this case following patch will
->> do this work.
->>
->> Also I will like to know from Kukjin that what best can be done now.
->> If he is OK with below solution I can post the same.
->>
->> ---------------------------------------------------------------
->>
->> Subject: [PATCH] ARM: EXYNOS: do not try to map PMU for exynos5440
->>
->> Commit id: 2e94ac42898f84d76e3c21dd91bc is not taking care
->> of mapping of exynos5440 PMU register which will result in kernel panic.
->> As of now let's avoid mapping of exynos5440 PMU.
->>
->> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
->> ---
->>   arch/arm/mach-exynos/exynos.c | 3 ++-
->>   1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
->> index c13d083..1891b8c 100644
->> --- a/arch/arm/mach-exynos/exynos.c
->> +++ b/arch/arm/mach-exynos/exynos.c
->> @@ -208,7 +208,8 @@ static void __init exynos_init_irq(void)
->>           * DT is not unflatten so we can't use DT APIs before
->>           * init_irq
->>           */
->> -       exynos_map_pmu();
->> +       if (!of_machine_is_compatible("samsung,exynos5440"))
->> +               exynos_map_pmu();
->>   }
->
-> If I remember correctly, there are other SoCs which have not been
-> included in the pmu mapping list, and looks these SoCs need
-> to be handled too.
->
-
-As far as I can see in today's linux-next and kgene/for-next tree, only 
-exynos5440 PMU mapping is missing. If I am missing anything please 
-specify exact SoC name, which you think need to be handled.
-
-Thanks,
-Pankaj Dubey
-
->
-> Thanks,
-> Ming Lei
->
+T24gMjAxNOuFhCAxMuyblCAyMuydvCAyMjowNCwgR3VzdGF2byBQYWRvdmFuIHdyb3RlOgo+IEhp
+IERhdmUsCj4gCj4gSGVyZSBnb2VzIGEgYnVuY2ggb2YgY2xlYW4gdXAgZm9yIHRoZSBleHlub3Mg
+ZHJpdmVyLiBJJ3ZlIHBvc3RlZCB0aGlzIHdvcmsgaW4KPiB0aGUgbWFpbGluZyBsaXN0IHR3aWNl
+IGJ1dCBuZXZlciBnb3QgYSByZXZpZXcgb24gaXQsIGZpcnN0IHRpbWUgd2FzIGFib3V0IGEKCk5l
+dmVyIG5vLiBJIGFscmVhZHkgaGFkIGEgcmV2aWV3IGFuZCB0aGV5IC0geW91ciBmaXJzdCB0aW1l
+IHBhdGNoIHNldCAtCmhhZCBiZWVuIG1lcmdlZCB0byBleHlub3MtZHJtLW5leHQtdG9kby4gSSB3
+YXMgbW92aW5nIHRoZW0gdG8KZXh5bm9zLWRybS1uZXh0IGxvY2FsbHkgYnV0IG9uZSBvZiB5b3Vy
+IHBhdGNoIHNldCB3YXMgbm90IHJlYXNvbmFibGUgdG8KbWUgc28gSSBnYXZlIHlvdSBvbmUgY29t
+bWVudC4gQWZ0ZXIgdGhhdCwgeW91IHBvc3RlZCBuZXh0IHBhdGNoIHNldAp3aGljaCBpbmNsdWRl
+IG5ldyBjaGFuZ2VzIGFuZCBwYXRjaGVzIGp1c3QgOSBkYXlzIGFnby4gU28gdGhleSBzaG91bGQK
+YWxzbyBiZSByZXZpZXdlZCBlbm91Z2ggYXQgbGVhc3QgZm9yIHR3byB3ZWVrcy4KClBsZWFzZSwg
+ZG8gbm90IGh1cnJ5LiBTdWNoIGJpZyBjaGFuZ2VzIHNob3VsZCByZWFsbHkgYmUgcmV2aWV3ZWQg
+ZW5vdWdoLgpJIHdpbGwgd2FpdCBmb3Igb3RoZXIgcmV2aWV3cyBhbmQgdGhlbSBtZXJnZSB0aGVt
+IGlmIHJldmlld2VkIGVub3VnaC4gSWYKbm9ib2R5IGhhdmUgcmV2aWV3cyB0aGVuIEkgd2lsbCBt
+ZXJnZSB0aGVtLiBTbyBwbGVhc2UsIGRvbid0IHdvcnJ5IGFib3V0CnRoYXQuCgpUaGFua3MsCklu
+a2kgRGFlCgo+IG1vbnRoIGFnby4gVGhpcyB3b3JrIGlzIHRoZSBmaXJzdCBidWlsZGluZyBibG9j
+ayBmb3IgdGhlIGF0b21pYyBtb2Rlc2V0dGluZyBvbgo+IGV4eW5vcy4KPiAKPiBJbiB0aGUgcHVs
+bCByZXF1ZXN0IHdlIGhhdmU6Cj4gIAo+IC0gcmVtb3ZhbCBvZiBzdHJ1Y3QgZXh5bm9zX2RybV9v
+dmVybGF5IGFuZCBzdHJ1Y3QgZXh5bm9zX2RybV9tYW5hZ2VyLiAKPiBleHlub3NfZHJtX292ZXJs
+YXkgd2FzIG1lcmdlZCB3aXRoIGV4eW5vc19kcm1fcGxhbmUgYW5kIGV4eW5vc19kcm1fbWFuYWdl
+cgo+IHdpdGggZXh5bm9zX2RybV9jcnRjIHJlbW92aW5nIHR3byBleHRyYSBhbmQgdW5uZWNlc3Nh
+cnkgYWJzdHJhY3Rpb25zIGxldmVscyAKPiBmcm9tIHRoZSBleHlub3MgY29kZS4gSXQgYWxzbyBt
+YWtlcyB1bmRlcnN0YW5kaW5nIG9mIHRoZSBjb2RlIGVhc2llciBzaW5jZQo+IG5vdyB3ZSB0YWxr
+IHVzaW5nIGtub3duIG5hbWVzIGxpa2UgQ1JUQyBhbmQgUGxhbmVzIGluc3RlYWQgb2YgbWFuYWdl
+ciBhbmQgCj4gb3ZlcmxheS4KPiAKPiAtIHJlbW92YWwgb2YgRFBNUyBvcGVyYXRpb25zIGZyb20g
+cGxhY2VzIHdoZXJlIGl0IGlzIG5vdCBuZWVkLCBlLmcuLCB1cGRhdGluZyAKPiBwbGFuZXMuCj4g
+Cj4gLSB1bmlmaWNhdGlvbiBvZiBwbGFuZSB1cGRhdGUgb24gZXh5bm9zX3VwZGF0ZV9wbGFuZSgp
+LiBOb3cgYWxsIHBpZWNlcyBvZiBjb2RlCj4gdGhhdCB3YW50cyB0byB1cGRhdGUgYSBwbGFuZSBz
+aG91bGQgYmUgdXNpbmcgdGhpcyBmdW5jdGlvbi4KPiAKPiBUaGVyZSBhcmUgYWxzbyBzb21lIHNt
+YWxscyBmaXhlcyBhbmQgY2xlYW4gdXBzLgo+ICAKPiAJR3VzdGF2byAKPiAgCj4gLS0tIAo+IFRo
+ZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgNGUwY2Q2ODExNTYyMGJjMzIzNmZmNGU1
+OGU0YzA3Mzk0ODYyOWI0MToKPiAKPiAgIGRybTogc3RpOiBmaXggbW9kdWxlIGNvbXBpbGF0aW9u
+IGlzc3VlICgyMDE0LTEyLTE1IDE3OjA3OjU3ICsxMDAwKQo+IAo+IGFyZSBhdmFpbGFibGUgaW4g
+dGhlIGdpdCByZXBvc2l0b3J5IGF0Ogo+IAo+ICAgZ2l0Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3Nj
+bS9saW51eC9rZXJuZWwvZ2l0L3BhZG92YW4vZHJtLWV4eW5vcy1uZXh0LmdpdCBtYXN0ZXIKPiAK
+PiBmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gMzFkZDE2MGY0MjEzOGZmZjYyYTdjOWJh
+NzFjZDBmNDdiNjc4ZmU0ZDoKPiAKPiAgIGRybS9leHlub3M6IGNyZWF0ZSBleHlub3NfY2hlY2tf
+cGxhbmUoKSAoMjAxNC0xMi0xOSAxNTo0MTowNSAtMDIwMCkKPiAKPiAtLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gR3VzdGF2
+byBQYWRvdmFuICgyMSk6Cj4gICAgICAgZHJtL2V4eW5vczogbW92ZSB0b19leHlub3NfY3J0Yygp
+IG1hY3JvIHRvIG1haW4gaGVhZGVyCj4gICAgICAgZHJtL2V4eW5vczogZXhwb3NlIHN0cnVjdCBl
+eHlub3NfZHJtX2NydGMKPiAgICAgICBkcm0vZXh5bm9zOiByZW1vdmUgZXh5bm9zX2RybV9jcnRj
+X3BsYW5lXyogd3JhcHBlcnMKPiAgICAgICBkcm0vZXh5bm9zOiByZW1vdmUgc3RydWN0IGV4eW5v
+c19kcm1fb3ZlcmxheQo+ICAgICAgIGRybS9leHlub3MvZmltZDogZG9uJ3QgaW5pdGlhbGl6ZSAn
+cmV0JyB2YXJpYWJsZSBpbiBmaW1kX3Byb2JlKCkKPiAgICAgICBkcm0vZXh5bm9zL3ZpZGk6IHJl
+bW92ZSB1c2VsZXNzIG9wcy0+Y29tbWl0KCkKPiAgICAgICBkcm0vZXh5bm9zOiBEb24ndCB0b3Vj
+aCBEUE1TIHdoZW4gdXBkYXRpbmcgb3ZlcmxheSBwbGFuZXMKPiAgICAgICBkcm0vZXh5bm9zOiBk
+b24ndCBkbyBhbnkgRFBNUyBvcGVyYXRpb24gd2hpbGUgdXBkYXRpbmcgcGxhbmVzCj4gICAgICAg
+ZHJtL2V4eW5vczogcmVtb3ZlIGV4eW5vc19wbGFuZV9jb21taXQoKSB3cmFwcGVyCj4gICAgICAg
+ZHJtL2V4eW5vczogdW5pZnkgcGxhbmUgdXBkYXRlIG9uIGV4eW5vc191cGRhdGVfcGxhbmUoKQo+
+ICAgICAgIGRybS9leHlub3M6IGNhbGwgZXh5bm9zX3VwZGF0ZV9wbGFuZSgpIGRpcmVjdGx5IG9u
+IHBhZ2UgZmxpcHMKPiAgICAgICBkcm0vZXh5bm9zOiByZW1vdmUgZXh5bm9zX2RybV9jcnRjX21v
+ZGVfc2V0X2NvbW1pdCgpCj4gICAgICAgZHJtL2V4eW5vczogcmVuYW1lIGJhc2Ugb2JqZWN0IG9m
+IHN0cnVjdCBleHlub3NfZHJtX2NydGMgdG8gJ2Jhc2UnCj4gICAgICAgZHJtL2V4eW5vczogYWRk
+IHBpcGUgcGFyYW0gdG8gZXh5bm9zX2RybV9jcnRjX2NyZWF0ZSgpCj4gICAgICAgZHJtL2V4eW5v
+czogcmVtb3ZlIHBpcGUgbWVtYmVyIG9mIHN0cnVjdCBleHlub3NfZHJtX21hbmFnZXIKPiAgICAg
+ICBkcm0vZXh5bm9zOiBtb3ZlICd0eXBlJyBmcm9tIG1hbmFnZXIgdG8gY3J0YyBzdHJ1Y3QKPiAg
+ICAgICBkcm0vZXh5bm9zOiByZW1vdmUgZHJtX2RldiBmcm9tIHN0cnVjdCBleHlub3NfZHJtX21h
+bmFnZXIKPiAgICAgICBkcm0vZXh5bm9zOiByZW1vdmUgc3RydWN0IGV4eW5vc19kcm1fbWFuYWdl
+cgo+ICAgICAgIGRybS9leHlub3M6IGRvbid0IGR1cGxpY2F0ZSBkcm1fZGlzcGxheV9tb2RlIGlu
+IGZpbWQgY29udGV4dAo+ICAgICAgIGRybS9leHlub3M6IHJlbW92ZSBtb2RlX3NldCgpIG9wcyBm
+cm9tIGV4eW5vc19jcnRjCj4gICAgICAgZHJtL2V4eW5vczogY3JlYXRlIGV4eW5vc19jaGVja19w
+bGFuZSgpCj4gCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9jcnRjLmMgIHwg
+MTg1ICsrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2NydGMuaCAgfCAgIDggKyst
+Cj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcnYuaCAgIHwgIDgzICsrKysr
+KysrKysrKysrKy0tLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJt
+X2ZpbWQuYyAgfCAxODEgKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmMg
+fCAxMzggKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0KPiAgZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3BsYW5lLmggfCAgMTcgKysrLS0KPiAgZHJpdmVy
+cy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYyAgfCAxMzUgKysrKysrKysrKysrKysr
+KystLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5v
+c19taXhlci5jICAgICB8IDE1OSArKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLQo+ICA4IGZpbGVzIGNoYW5nZWQsIDQxMiBpbnNlcnRpb25zKCspLCA0OTQgZGVs
+ZXRpb25zKC0pCj4gCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZl
+bAo=
