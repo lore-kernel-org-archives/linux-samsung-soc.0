@@ -1,43 +1,32 @@
 From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH V3 2/2] pinctrl: exynos: Add BUS1 pin controller for exynos7
-Date: Sun, 28 Dec 2014 20:23:28 +0900
-Message-ID: <549FE830.7020801@gmail.com>
-References: <1418200780-22363-1-git-send-email-gautam.vivek@samsung.com> <1418200780-22363-2-git-send-email-gautam.vivek@samsung.com>
+Subject: Re: [PATCH 1/2] pinctrl: exynos: Add AUDIO pin controller for exynos7
+Date: Sun, 28 Dec 2014 20:24:23 +0900
+Message-ID: <549FE867.5000306@gmail.com>
+References: <1418994659-5222-1-git-send-email-padma.v@samsung.com> <1418994659-5222-2-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pd0-f179.google.com ([209.85.192.179]:35292 "EHLO
-	mail-pd0-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751366AbaL1LXc (ORCPT
+Received: from mail-pd0-f182.google.com ([209.85.192.182]:35220 "EHLO
+	mail-pd0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751508AbaL1LY0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 28 Dec 2014 06:23:32 -0500
-In-Reply-To: <1418200780-22363-2-git-send-email-gautam.vivek@samsung.com>
+	Sun, 28 Dec 2014 06:24:26 -0500
+In-Reply-To: <1418994659-5222-2-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-Cc: robh+dt@kernel.org, kgene@kernel.org, alim.akhtar@samsung.com, Linus Walleij <linus.walleij@linaro.org>
+To: Padmavathi Venna <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Cc: kgene.kim@samsung.com, linus.walleij@linaro.org, s.nawrocki@samsung.com
 
-On 10.12.2014 17:39, Vivek Gautam wrote:
-> USB and Power regulator on Exynos7 require gpios available
-> in BUS1 pin controller block.
-> So adding the BUS1 pinctrl support.
+On 19.12.2014 22:10, Padmavathi Venna wrote:
+> Audio IPs on Exynos7 require gpios available in AUDIO
+> pin controller block. So adding the AUDIO pinctrl support.
 >
-> Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch@gmail.com>
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 > ---
->
-> Changes since V2:
->   - Added documentation on alias for BUS1 pin controller block.
->
-> Changes since V1:
->   - Added support for all pin banks which are part of BUS1 pin controller.
->
->   .../devicetree/bindings/pinctrl/samsung-pinctrl.txt |    1 +
->   drivers/pinctrl/samsung/pinctrl-exynos.c            |   19 +++++++++++++++++++
->   2 files changed, 20 insertions(+)
+>   .../bindings/pinctrl/samsung-pinctrl.txt           |    1 +
+>   drivers/pinctrl/samsung/pinctrl-exynos.c           |   10 ++++++++++
+>   2 files changed, 11 insertions(+), 0 deletions(-)
 
 Acked-by: Tomasz Figa <tomasz.figa@gmail.com>
 
