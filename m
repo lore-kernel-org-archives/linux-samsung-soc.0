@@ -1,38 +1,48 @@
-From: Ming Lei <tom.leiming@gmail.com>
-Subject: Re: kernel panic when booting on exynos 5440
-Date: Fri, 26 Dec 2014 09:39:11 +0800
-Message-ID: <CACVXFVOTieySjaihsUSf++p6sM1LouoEhfQmZ2uguyeirZ0uJA@mail.gmail.com>
-References: <CACVXFVNCZdMyHQ1fzZDGs7h7X9vWmMVBJFRqWs7_P=WBQUYk1g@mail.gmail.com>
-	<549BE7CC.1000005@samsung.com>
-	<CACVXFVMOmq4rzXtaLNFn2NE-X=__dTJFANWtuJZS9m9szV0JuQ@mail.gmail.com>
-	<549BECBA.4060707@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v3 3/5] pinctrl: exynos: add exynos5410 SoC specific data
+Date: Sun, 28 Dec 2014 20:16:24 +0900
+Message-ID: <549FE688.1060601@gmail.com>
+References: <547104D5.4030803@suse.de> <1416695185-5198-1-git-send-email-afaerber@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f44.google.com ([209.85.218.44]:59314 "EHLO
-	mail-oi0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750725AbaLZBjM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 25 Dec 2014 20:39:12 -0500
-Received: by mail-oi0-f44.google.com with SMTP id e131so21165528oig.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 25 Dec 2014 17:39:11 -0800 (PST)
-In-Reply-To: <549BECBA.4060707@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1416695185-5198-1-git-send-email-afaerber@suse.de>
+Sender: linux-gpio-owner@vger.kernel.org
+To: =?UTF-8?B?QW5kcmVhcyBGw6RyYmVy?= <afaerber@suse.de>, linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene@kernel.org>, =?UTF-8?B?6rmA7ZWZ7KO8?= <ruppi.kim@hardkernel.com>, Humberto Naves <hsnaves@gmail.com>, Jan Kiszka <jan.kiszka@siemens.com>, Johann Pfefferl <johann.pfefferl@siemens.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Thomas Abraham <thomas.abraham@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "open list:PIN CONTROL SUBSY..." <linux-gpio@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>
 
-On Thu, Dec 25, 2014 at 6:53 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
->> If I remember correctly, there are other SoCs which have not been
->> included in the pmu mapping list, and looks these SoCs need
->> to be handled too.
->>
+Hi Andreas,
+
+On 23.11.2014 07:26, Andreas F=C3=A4rber wrote:
+> From: Hakjoo Kim <ruppi.kim@hardkernel.com>
 >
-> As far as I can see in today's linux-next and kgene/for-next tree, only
-> exynos5440 PMU mapping is missing. If I am missing anything please specify
-> exact SoC name, which you think need to be handled.
+> Add Samsung EXYNOS5410 SoC specific data to enable pinctrl
+> support for all platforms based on EXYNOS5410.
+>
+> Signed-off-by: Hakjoo Kim <ruppi.kim@hardkernel.com>
+> [AF: Rebased onto Exynos5260 and irq_chip consolidation]
+> Signed-off-by: Andreas F=C3=A4rber <afaerber@suse.de>
+> ---
+>   v2 -> v3:
+>   * Rebased (.svc, .{g,w}eint_{con,mask,pend} fields dropped)
+>
+>   v1 -> v2:
+>   * Filled in Sob from Hakjoo Kim
 
-You are right, it is my fault.
+Any news on this patch? I'd like to ACK it, but apparently it is waitin=
+g=20
+for a rebase.
 
-Thanks
-Ming Lei
+Sorry for the delay, unfortunately things are a little bit busy on my=20
+side nowadays.
+
+Best regards,
+Tomasz
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
