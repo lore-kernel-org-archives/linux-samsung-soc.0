@@ -1,104 +1,143 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v10 2/8] ARM: l2c: Refactor the driver to use commit-like
- interface
-Date: Sun, 28 Dec 2014 20:34:18 +0900
-Message-ID: <549FEABA.10206@gmail.com>
-References: <1419331716-8972-1-git-send-email-m.szyprowski@samsung.com> <1419331716-8972-3-git-send-email-m.szyprowski@samsung.com> <20141223170613.GM23854@atomide.com> <5499A2B4.2080909@ti.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 01/19] pinctrl: exynos: Add support for Exynos5433
+Date: Mon, 29 Dec 2014 08:33:42 +0900
+Message-ID: <54A09356.5000207@samsung.com>
+References: <1417073716-22997-1-git-send-email-cw00.choi@samsung.com>
+ <1417073716-22997-2-git-send-email-cw00.choi@samsung.com>
+ <549FE7C9.5010909@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <5499A2B4.2080909@ti.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Nishanth Menon <nm@ti.com>, Tony Lindgren <tony@atomide.com>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, linus.walleij@linaro.org, drake@endlessm.com, loeliger@gmail.com, Mark Rutland <mark.rutland@arm.com>, khilman@linaro.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <549FE7C9.5010909@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, kyungmin.park@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, geunsik.lim@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Nishanth, Tony,
+Hi Tomasz,
 
-On 24.12.2014 02:13, Nishanth Menon wrote:
-> On 12/23/2014 11:06 AM, Tony Lindgren wrote:
->> * Marek Szyprowski <m.szyprowski@samsung.com> [141223 02:51]:
->>> From: Tomasz Figa <t.figa@samsung.com>
->>>
->>> Certain implementations of secure hypervisors (namely the one found on
->>> Samsung Exynos-based boards) do not provide access to individual L2C
->>> registers. This makes the .write_sec()-based interface insufficient and
->>> provoking ugly hacks.
->>>
->>> This patch is first step to make the driver not rely on availability of
->>> writes to individual registers. This is achieved by refactoring the
->>> driver to use a commit-like operation scheme: all register values are
->>> prepared first and stored in an instance of l2x0_regs struct and then a
->>> single callback is responsible to flush those values to the hardware.
+On 12/28/2014 08:21 PM, Tomasz Figa wrote:
+> Hi Chanwoo,
+> 
+> On 27.11.2014 16:34, Chanwoo Choi wrote:
+>> This patch adds driver data for Exynos5433 SoC. Exynos5433 includes 228 multi-
+>> functional input/output port pins and 135 memory port pins. There are 41 general
+>> port groups and 2 memory port groups.
 >>
->> The first patch of the series applied things boot with no problem.
->> But after applying this one I get the following on am437x:
->>
->> Unhandled fault: imprecise external abort (0xc06) at 0xb6f33884
->>
->> Probably the same issue Nishanth mentioned.
->>
->
-> yep - just finished the bisect... came to the same conclusion..
->
-> c8c3a07fa6a8e9b27a1658e0d305b6f7e0fa068f is the first bad commit
-> commit c8c3a07fa6a8e9b27a1658e0d305b6f7e0fa068f
-> Author: Tomasz Figa <t.figa@samsung.com>
-> Date:   Tue Dec 23 11:48:30 2014 +0100
->
->      ARM: l2c: Refactor the driver to use commit-like interface
->
->      Certain implementations of secure hypervisors (namely the one found on
->      Samsung Exynos-based boards) do not provide access to individual L2C
->      registers. This makes the .write_sec()-based interface
-> insufficient and
->      provoking ugly hacks.
->
->      This patch is first step to make the driver not rely on
-> availability of
->      writes to individual registers. This is achieved by refactoring the
->      driver to use a commit-like operation scheme: all register values are
->      prepared first and stored in an instance of l2x0_regs struct and
-> then a
->      single callback is responsible to flush those values to the hardware.
->
->      Signed-off-by: Tomasz Figa <t.figa@samsung.com>
->      Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->
-> :040000 040000 74c6c74a0dc0612d124cd759951adf2a1e4124ee
-> 8082aabb474f8659231de744d87cd8dbd6dd79bb M	arch
->
->
-> $ git bisect log
-> git bisect start
-> # good: [97bf6af1f928216fd6c5a66e8a57bfa95a659672] Linux 3.19-rc1
-> git bisect good 97bf6af1f928216fd6c5a66e8a57bfa95a659672
-> # bad: [9afe195db6558621bd8bac379ed65ef121930684] ARM: dts: exynos4:
-> Add nodes for L2 cache controller
-> git bisect bad 9afe195db6558621bd8bac379ed65ef121930684
-> # bad: [0a89ef4dd870bbf692e30fef6c8182d7b8b42e17] ARM: l2c: Get outer
-> cache .write_sec callback from mach_desc only if not NULL
-> git bisect bad 0a89ef4dd870bbf692e30fef6c8182d7b8b42e17
-> # bad: [c8c3a07fa6a8e9b27a1658e0d305b6f7e0fa068f] ARM: l2c: Refactor
-> the driver to use commit-like interface
-> git bisect bad c8c3a07fa6a8e9b27a1658e0d305b6f7e0fa068f
-> # good: [080ab387c653b8655dc1ee790658b618399db2aa] ARM: OMAP2+: use
-> common l2cache initialization code
-> git bisect good 080ab387c653b8655dc1ee790658b618399db2aa
->
->
+>> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+>> Cc: Thomas Abraham <thomas.abraham@linaro.org>
+>> Cc: Linus Walleij <linus.walleij@linaro.org>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Acked-by: Geunsik Lim <geunsik.lim@samsung.com>
+>> Acked-by: Inki Dae <inki.dae@samsung.com>
+>> ---
+>>   drivers/pinctrl/samsung/pinctrl-exynos.c  | 163 ++++++++++++++++++++++++++++++
+>>   drivers/pinctrl/samsung/pinctrl-samsung.c |   2 +
+>>   drivers/pinctrl/samsung/pinctrl-samsung.h |   1 +
+>>   3 files changed, 166 insertions(+)
+> 
+> Any plans for a respin? Apparently this patch needs a rebase. Also some comments below.
 
-May I ask you (or anyone else working on OMAP) to try to figure out what 
-the issue is? It is stopping L2 cache support for Exynos4 being merged 
-and Exynos people don't have access to any of affected boards to do 
-anything about it. After all, this is generic code, so I believe 
-community should cooperate with pushing it forward. (Of course I 
-understand it is a holiday season at the moment, so I don't expect any 
-solution right at this moment :))
+I'll rebase it on latest kernel and re-send it on next time.
 
-Apparently patch 1/8 solved problems with some of the boards. Could you 
-check how those boards differ and look for potential causes?
+> 
+>>
+>> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
+>> index 8e3e0c0..bd4c4ec 100644
+>> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+>> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+>> @@ -1268,6 +1268,169 @@ struct samsung_pin_ctrl exynos5420_pin_ctrl[] = {
+>>       },
+>>   };
+>>
+>> +/* pin banks of exynos5433 pin-controller - ALIVE */
+>> +static struct samsung_pin_bank exynos5433_pin_banks0[] = {
+> 
+> Maybe instead the structure could be named exynos5433_pin_bank_alive? Similarly for remaining banks.
+> 
+> Also please, if not done already, please remember about documenting alias IDs of particular controllers in DT binding documentation.
+> 
+>> +    EXYNOS_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
+>> +    EXYNOS_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
+>> +    EXYNOS_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
+>> +    EXYNOS_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
+>> +};
+>> +
+>> +/* pin banks of exynos5433 pin-controller - AUD */
+>> +static struct samsung_pin_bank exynos5433_pin_banks1[] = {
+>> +    EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
+>> +    EXYNOS_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
+>> +};
+>> +
+>> +/* pin banks of exynos5433 pin-controller - CPIF */
+>> +static struct samsung_pin_bank exynos5433_pin_banks2[] = {
+>> +    EXYNOS_PIN_BANK_EINTG(2, 0x000, "gpv6", 0x00),
+>> +};
+>> +
+>> +/* pin banks of exynos5433 pin-controller - eSE */
+>> +static struct samsung_pin_bank exynos5433_pin_banks3[] = {
+>> +    EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj2", 0x00),
+>> +};
+>> +
+>> +/* pin banks of exynos5433 pin-controller - FINGER */
+>> +static struct samsung_pin_bank exynos5433_pin_banks4[] = {
+>> +    EXYNOS_PIN_BANK_EINTG(4, 0x000, "gpd5", 0x00),
+>> +};
+>> +
+>> +/* pin banks of exynos5433 pin-controller - FSYS */
+>> +static struct samsung_pin_bank exynos5433_pin_banks5[] = {
+>> +    EXYNOS_PIN_BANK_EINTG(6, 0x000, "gph1", 0x00),
+>> +    EXYNOS_PIN_BANK_EINTG(7, 0x020, "gpr4", 0x04),
+>> +    EXYNOS_PIN_BANK_EINTG(5, 0x040, "gpr0", 0x08),
+>> +    EXYNOS_PIN_BANK_EINTG(8, 0x060, "gpr1", 0x0c),
+>> +    EXYNOS_PIN_BANK_EINTG(2, 0x080, "gpr2", 0x10),
+>> +    EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpr3", 0x14),
+>> +};
+>> +
+>> +/* pin banks of exynos5433 pin-controller - IMEM */
+>> +static struct samsung_pin_bank exynos5433_pin_banks6[] = {
+>> +    EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpf0", 0x00),
+>> +};
+>> +
+>> +/* pin banks of exynos5433 pin-controller - NFC */
+>> +static struct samsung_pin_bank exynos5433_pin_banks7[] = {
+>> +    EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj0", 0x00),
+>> +};
+>> +
+>> +/* pin banks of exynos5433 pin-controller - PERIC */
+>> +static struct samsung_pin_bank exynos5433_pin_banks8[] = {
+>> +    EXYNOS_PIN_BANK_EINTG(6, 0x000, "gpv7", 0x00),
+>> +    EXYNOS_PIN_BANK_EINTG(5, 0x020, "gpb0", 0x04),
+>> +    EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpc0", 0x08),
+>> +    EXYNOS_PIN_BANK_EINTG(2, 0x060, "gpc1", 0x0c),
+>> +    EXYNOS_PIN_BANK_EINTG(6, 0x080, "gpc2", 0x10),
+>> +    EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpc3", 0x14),
+>> +    EXYNOS_PIN_BANK_EINTG(2, 0x0c0, "gpg0", 0x18),
+>> +    EXYNOS_PIN_BANK_EINTG(4, 0x0e0, "gpd0", 0x1c),
+>> +    EXYNOS_PIN_BANK_EINTG(6, 0x100, "gpd1", 0x20),
+>> +    EXYNOS_PIN_BANK_EINTG(8, 0x120, "gpd2", 0x24),
+>> +    EXYNOS_PIN_BANK_EINTG(5, 0x140, "gpd4", 0x28),
+>> +    EXYNOS_PIN_BANK_EINTG(2, 0x160, "gpd8", 0x2c),
+>> +    EXYNOS_PIN_BANK_EINTG(7, 0x180, "gpd6", 0x30),
+>> +    EXYNOS_PIN_BANK_EINTG(3, 0x1a0, "gpd7", 0x34),
+>> +    EXYNOS_PIN_BANK_EINTG(5, 0x1c0, "gpg1", 0x38),
+>> +    EXYNOS_PIN_BANK_EINTG(2, 0x1e0, "gpg2", 0x3c),
+>> +    EXYNOS_PIN_BANK_EINTG(8, 0x200, "gpg3", 0x40),
+>> +};
+>> +
+>> +/* pin banks of exynos5433 pin-controller - TOUCH */
+>> +static struct samsung_pin_bank exynos5433_pin_banks9[] = {
+>> +    EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj1", 0x00),
+>> +};
+>> +
+>> +/*
+>> + * Samsung pinctrl driver data for Exynos5433 SoC. Exynos5433 SoC includes
+>> + * four gpio/pin-mux/pinconfig controllers.
+> 
+> Looks like "four" is a copy/paste error here.
 
-Best regards,
-Tomasz
+Mistake. I'll fix it.
+
+Best Regards,
+Chanwoo Choi
