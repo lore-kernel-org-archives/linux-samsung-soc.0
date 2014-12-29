@@ -1,329 +1,137 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH] ARM: dts: exynos4412-trats2: Add suspend configuration for
- max77686 regulators
-Date: Mon, 29 Dec 2014 09:52:20 +0100
-Message-ID: <1419843140-21281-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:12737 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751685AbaL2Iwa (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Dec 2014 03:52:30 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v2 7/8] hwmon: thermal: Read PWM FAN configuration from
+ device tree
+Date: Mon, 29 Dec 2014 04:50:23 -0800
+Message-ID: <20141229125023.GA18083@roeck-us.net>
+References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
+ <1419265668-32283-1-git-send-email-l.majewski@samsung.com>
+ <1419265668-32283-8-git-send-email-l.majewski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1419265668-32283-8-git-send-email-l.majewski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Eduardo Valentin <edubezval@gmail.com>, Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 
-Add suspend to RAM configuration for max77686 regulators. Some LDOs and
-bucks are disabled. This reduces energy consumption during S2R,
-approximately from 17 mA to 9 mA.
+On Mon, Dec 22, 2014 at 05:27:47PM +0100, Lukasz Majewski wrote:
+> Code for reading PWM FAN configuration data via device tree.
+> 
+> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> ---
 
-Additionally remove old and not supported bindings:
- - regulator-mem-off
- - regulator-mem-idle
- - regulator-mem-on
-The max77686 driver does not parse them and they are not documented
-anywere.
+The headline is quite misleading. Please provide the affected subsystem (hwmon)
+and the affected driver (pwm-fan) in the hwmon-customary form
+	hwmon: (pwm-fan) Description
 
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+The Description should explain what the patch is about.
 
----
+> Changes for v2:
+> - Rename pwm_fan_max_states to pwm_fan_cooling_levels
+> - Moving pwm_fan_of_get_cooling_data() call after setting end enabling PWM FAN
+> - pwm_fan_of_get_cooling_data() now can fail - preserving old behaviour
+> - Remove unnecessary dev_err() call
+> ---
+>  drivers/hwmon/pwm-fan.c | 48 +++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 47 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+> index 870e100..8e68308 100644
+> --- a/drivers/hwmon/pwm-fan.c
+> +++ b/drivers/hwmon/pwm-fan.c
+> @@ -30,7 +30,10 @@
+>  struct pwm_fan_ctx {
+>  	struct mutex lock;
+>  	struct pwm_device *pwm;
+> -	unsigned char pwm_value;
+> +	unsigned int pwm_value;
+> +	unsigned int pwm_fan_state;
+> +	unsigned int pwm_fan_max_state;
+> +	unsigned int *pwm_fan_cooling_levels;
+>  };
+>  
+>  static int  __set_pwm(struct pwm_fan_ctx *ctx, unsigned long pwm)
+> @@ -100,6 +103,47 @@ static struct attribute *pwm_fan_attrs[] = {
+>  
+>  ATTRIBUTE_GROUPS(pwm_fan);
+>  
+> +int pwm_fan_of_get_cooling_data(struct device *dev, struct pwm_fan_ctx *ctx)
+> +{
+> +	struct device_node *np = dev->of_node;
+> +	struct property *pp;
+> +	int len, num, i;
+> +
+> +	pp = of_find_property(np, "cooling-levels", &len);
+> +	if (!pp) {
+> +		dev_err(dev, "Property: 'cooling-levels' not found\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (len == 0) {
+> +		dev_err(dev, "Length wrong value!\n");
 
-Previously this was part of [1] patchset. There were no changes in this
-patch since last version (v6) of that patchset.
+Semantics. "Wrong length" would be better.
 
-[1] https://lkml.org/lkml/2014/10/29/261
----
- arch/arm/boot/dts/exynos4412-trats2.dts | 72 +++++++++++++++++++--------------
- 1 file changed, 42 insertions(+), 30 deletions(-)
+> +		return -EINVAL;
+> +	}
+> +
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 29231b452643..c9b70b6fdaf2 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -225,7 +225,6 @@
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1000000>;
- 					regulator-always-on;
--					regulator-mem-on;
- 				};
- 
- 				ldo2_reg: ldo2 {
-@@ -234,7 +233,9 @@
- 					regulator-min-microvolt = <1200000>;
- 					regulator-max-microvolt = <1200000>;
- 					regulator-always-on;
--					regulator-mem-on;
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
- 				};
- 
- 				ldo3_reg: ldo3 {
-@@ -243,7 +244,6 @@
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
- 					regulator-always-on;
--					regulator-mem-on;
- 				};
- 
- 				ldo4_reg: ldo4 {
-@@ -252,7 +252,6 @@
- 					regulator-min-microvolt = <2800000>;
- 					regulator-max-microvolt = <2800000>;
- 					regulator-always-on;
--					regulator-mem-on;
- 				};
- 
- 				ldo5_reg: ldo5 {
-@@ -261,7 +260,6 @@
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
- 					regulator-always-on;
--					regulator-mem-on;
- 				};
- 
- 				ldo6_reg: ldo6 {
-@@ -270,7 +268,9 @@
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1000000>;
- 					regulator-always-on;
--					regulator-mem-on;
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
- 				};
- 
- 				ldo7_reg: ldo7 {
-@@ -279,7 +279,9 @@
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1000000>;
- 					regulator-always-on;
--					regulator-mem-on;
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
- 				};
- 
- 				ldo8_reg: ldo8 {
-@@ -287,7 +289,9 @@
- 					regulator-name = "VMIPI_1.0V";
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1000000>;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				ldo9_reg: ldo9 {
-@@ -295,7 +299,6 @@
- 					regulator-name = "CAM_ISP_MIPI_1.2V";
- 					regulator-min-microvolt = <1200000>;
- 					regulator-max-microvolt = <1200000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo10_reg: ldo10 {
-@@ -303,7 +306,9 @@
- 					regulator-name = "VMIPI_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				ldo11_reg: ldo11 {
-@@ -312,7 +317,9 @@
- 					regulator-min-microvolt = <1950000>;
- 					regulator-max-microvolt = <1950000>;
- 					regulator-always-on;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				ldo12_reg: ldo12 {
-@@ -320,7 +327,9 @@
- 					regulator-name = "VUOTG_3.0V";
- 					regulator-min-microvolt = <3000000>;
- 					regulator-max-microvolt = <3000000>;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				ldo13_reg: ldo13 {
-@@ -328,7 +337,6 @@
- 					regulator-name = "NFC_AVDD_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo14_reg: ldo14 {
-@@ -337,7 +345,9 @@
- 					regulator-min-microvolt = <1950000>;
- 					regulator-max-microvolt = <1950000>;
- 					regulator-always-on;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				ldo15_reg: ldo15 {
-@@ -345,7 +355,9 @@
- 					regulator-name = "VHSIC_1.0V";
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1000000>;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
- 				};
- 
- 				ldo16_reg: ldo16 {
-@@ -353,7 +365,9 @@
- 					regulator-name = "VHSIC_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
- 				};
- 
- 				ldo17_reg: ldo17 {
-@@ -361,7 +375,6 @@
- 					regulator-name = "CAM_SENSOR_CORE_1.2V";
- 					regulator-min-microvolt = <1200000>;
- 					regulator-max-microvolt = <1200000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo18_reg: ldo18 {
-@@ -369,7 +382,6 @@
- 					regulator-name = "CAM_ISP_SEN_IO_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo19_reg: ldo19 {
-@@ -377,7 +389,6 @@
- 					regulator-name = "VT_CAM_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo20_reg: ldo20 {
-@@ -385,7 +396,6 @@
- 					regulator-name = "VDDQ_PRE_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo21_reg: ldo21 {
-@@ -393,7 +403,6 @@
- 					regulator-name = "VTF_2.8V";
- 					regulator-min-microvolt = <2800000>;
- 					regulator-max-microvolt = <2800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo22_reg: ldo22 {
-@@ -408,7 +417,6 @@
- 					regulator-name = "TSP_AVDD_3.3V";
- 					regulator-min-microvolt = <3300000>;
- 					regulator-max-microvolt = <3300000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo24_reg: ldo24 {
-@@ -416,7 +424,6 @@
- 					regulator-name = "TSP_VDD_1.8V";
- 					regulator-min-microvolt = <1800000>;
- 					regulator-max-microvolt = <1800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo25_reg: ldo25 {
-@@ -424,7 +431,6 @@
- 					regulator-name = "LCD_VCC_3.3V";
- 					regulator-min-microvolt = <2800000>;
- 					regulator-max-microvolt = <2800000>;
--					regulator-mem-idle;
- 				};
- 
- 				ldo26_reg: ldo26 {
-@@ -432,7 +438,6 @@
- 					regulator-name = "MOTOR_VCC_3.0V";
- 					regulator-min-microvolt = <3000000>;
- 					regulator-max-microvolt = <3000000>;
--					regulator-mem-idle;
- 				};
- 
- 				buck1_reg: buck1 {
-@@ -442,7 +447,9 @@
- 					regulator-max-microvolt = <1100000>;
- 					regulator-always-on;
- 					regulator-boot-on;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				buck2_reg: buck2 {
-@@ -452,7 +459,9 @@
- 					regulator-max-microvolt = <1500000>;
- 					regulator-always-on;
- 					regulator-boot-on;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-on-in-suspend;
-+					};
- 				};
- 
- 				buck3_reg: buck3 {
-@@ -462,7 +471,9 @@
- 					regulator-max-microvolt = <1150000>;
- 					regulator-always-on;
- 					regulator-boot-on;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				buck4_reg: buck4 {
-@@ -471,7 +482,9 @@
- 					regulator-min-microvolt = <850000>;
- 					regulator-max-microvolt = <1150000>;
- 					regulator-boot-on;
--					regulator-mem-off;
-+					regulator-state-mem {
-+						regulator-off-in-suspend;
-+					};
- 				};
- 
- 				buck5_reg: buck5 {
-@@ -510,7 +523,6 @@
- 					regulator-name = "CAM_ISP_CORE_1.2V";
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1200000>;
--					regulator-mem-off;
- 				};
- 			};
- 		};
--- 
-1.9.1
+of_property_count_elems_of_size() might be more appropriate here.
+
+> +	ctx->pwm_fan_cooling_levels = devm_kzalloc(dev, len, GFP_KERNEL);
+> +	if (!ctx->pwm_fan_cooling_levels)
+> +		return -ENOMEM;
+> +
+> +	num = len / sizeof(u32);
+
+What if 'num' is 0 ? Is that guaranteed to never happen ?
+
+> +	if (of_property_read_u32_array(np, pp->name,
+> +				       ctx->pwm_fan_cooling_levels, num)) {
+> +		dev_err(dev, "Property: %s cannot be read!\n", pp->name);
+
+The ':' after 'Property' in those error messages doesn't seem to make much sense
+to me.
+
+> +		return -EINVAL;
+
+of_property_read_u32_array() returns an error code. Please use it.
+
+> +	}
+> +
+> +	for (i = 0; i < num; i++) {
+> +		if (ctx->pwm_fan_cooling_levels[i] > MAX_PWM) {
+> +			dev_err(dev, "PWM fan state[%d]:%d > %d\n", i,
+> +				ctx->pwm_fan_cooling_levels[i], MAX_PWM);
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	ctx->pwm_fan_max_state = num - 1;
+> +
+> +	return 0;
+> +}
+> +
+>  static int pwm_fan_probe(struct platform_device *pdev)
+>  {
+>  	struct device *hwmon;
+> @@ -145,6 +189,8 @@ static int pwm_fan_probe(struct platform_device *pdev)
+>  		pwm_disable(ctx->pwm);
+>  		return PTR_ERR(hwmon);
+>  	}
+> +
+> +	pwm_fan_of_get_cooling_data(&pdev->dev, ctx);
+
+Now this is odd. Adding a function to return an error code just to ignore it
+doesn't make much sense. While it makes sense to ignore errors if there is no
+cooling data in the devicetree, errors due to bad devicetree data should not be
+ignored.
+
+I am also a bit concerned that you make this call _after_ instantiating the
+hwmon device; this may potentially result in a race condition. Please ensure
+that this is not the case.
+
+Thanks,
+Guenter
