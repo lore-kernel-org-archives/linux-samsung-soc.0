@@ -1,143 +1,214 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 01/19] pinctrl: exynos: Add support for Exynos5433
-Date: Mon, 29 Dec 2014 08:33:42 +0900
-Message-ID: <54A09356.5000207@samsung.com>
-References: <1417073716-22997-1-git-send-email-cw00.choi@samsung.com>
- <1417073716-22997-2-git-send-email-cw00.choi@samsung.com>
- <549FE7C9.5010909@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <549FE7C9.5010909@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, mark.rutland@arm.com, arnd@arndb.de, olof@lixom.net, catalin.marinas@arm.com, will.deacon@arm.com, s.nawrocki@samsung.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, kyungmin.park@samsung.com, inki.dae@samsung.com, chanho61.park@samsung.com, geunsik.lim@samsung.com, sw0312.kim@samsung.com, jh80.chung@samsung.com, a.kesavan@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCHv6 2/9] devfreq: event: Add the list of supported devfreq-event
+ type
+Date: Mon, 29 Dec 2014 09:04:06 +0900
+Message-ID: <1419811453-16160-3-git-send-email-cw00.choi@samsung.com>
+References: <1419811453-16160-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1419811453-16160-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: myungjoo.ham@samsung.com
+Cc: kgene.kim@samsung.com, kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, cw00.choi@samsung.com, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Tomasz,
+This patch adds the list of supported devfreq-event type as following.
+Each devfreq-event device driver would support the various devfreq-event type
+for devfreq governor at the same time.
+- DEVFREQ_EVENT_TYPE_RAW_DATA
+- DEVFREQ_EVENT_TYPE_UTILIZATION
+- DEVFREQ_EVENT_TYPE_BANDWIDTH
+- DEVFREQ_EVENT_TYPE_LATENCY
 
-On 12/28/2014 08:21 PM, Tomasz Figa wrote:
-> Hi Chanwoo,
-> 
-> On 27.11.2014 16:34, Chanwoo Choi wrote:
->> This patch adds driver data for Exynos5433 SoC. Exynos5433 includes 228 multi-
->> functional input/output port pins and 135 memory port pins. There are 41 general
->> port groups and 2 memory port groups.
->>
->> Cc: Tomasz Figa <tomasz.figa@gmail.com>
->> Cc: Thomas Abraham <thomas.abraham@linaro.org>
->> Cc: Linus Walleij <linus.walleij@linaro.org>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Acked-by: Geunsik Lim <geunsik.lim@samsung.com>
->> Acked-by: Inki Dae <inki.dae@samsung.com>
->> ---
->>   drivers/pinctrl/samsung/pinctrl-exynos.c  | 163 ++++++++++++++++++++++++++++++
->>   drivers/pinctrl/samsung/pinctrl-samsung.c |   2 +
->>   drivers/pinctrl/samsung/pinctrl-samsung.h |   1 +
->>   3 files changed, 166 insertions(+)
-> 
-> Any plans for a respin? Apparently this patch needs a rebase. Also some comments below.
+Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ drivers/devfreq/devfreq-event.c | 58 ++++++++++++++++++++++++++++++++++++-----
+ include/linux/devfreq-event.h   | 25 +++++++++++++++---
+ 2 files changed, 73 insertions(+), 10 deletions(-)
 
-I'll rebase it on latest kernel and re-send it on next time.
+diff --git a/drivers/devfreq/devfreq-event.c b/drivers/devfreq/devfreq-event.c
+index 81448ba..64c1764 100644
+--- a/drivers/devfreq/devfreq-event.c
++++ b/drivers/devfreq/devfreq-event.c
+@@ -20,6 +20,9 @@
+ #include <linux/list.h>
+ #include <linux/of.h>
+ 
++#define EVENT_TYPE_RAW_DATA_MAX		ULONG_MAX
++#define EVENT_TYPE_UTILIZATION_MAX	100
++
+ static struct class *devfreq_event_class;
+ 
+ /* The list of all devfreq event list */
+@@ -132,7 +135,8 @@ EXPORT_SYMBOL_GPL(devfreq_event_is_enabled);
+  * Note that this function set the event to the devfreq-event device to start
+  * for getting the event data which could be various event type.
+  */
+-int devfreq_event_set_event(struct devfreq_event_dev *edev)
++int devfreq_event_set_event(struct devfreq_event_dev *edev,
++				enum devfreq_event_type type)
+ {
+ 	int ret;
+ 
+@@ -146,7 +150,15 @@ int devfreq_event_set_event(struct devfreq_event_dev *edev)
+ 		return -EPERM;
+ 
+ 	mutex_lock(&edev->lock);
+-	ret = edev->desc->ops->set_event(edev);
++
++	if ((edev->desc->type & type) == 0) {
++		dev_err(&edev->dev, "unsupported devfreq-event type\n");
++		mutex_unlock(&edev->lock);
++		return -EINVAL;
++	}
++
++	ret = edev->desc->ops->set_event(edev, type);
++
+ 	mutex_unlock(&edev->lock);
+ 
+ 	return ret;
+@@ -162,6 +174,7 @@ EXPORT_SYMBOL_GPL(devfreq_event_set_event);
+  * after stoping the progress of whole sequence of devfreq-event dev.
+  */
+ int devfreq_event_get_event(struct devfreq_event_dev *edev,
++			    enum devfreq_event_type type,
+ 			    struct devfreq_event_data *edata)
+ {
+ 	int ret;
+@@ -175,18 +188,49 @@ int devfreq_event_get_event(struct devfreq_event_dev *edev,
+ 	if (!devfreq_event_is_enabled(edev))
+ 		return -EINVAL;
+ 
++	mutex_lock(&edev->lock);
++
++	if ((edev->desc->type & type) == 0) {
++		dev_err(&edev->dev, "unsupported devfreq-event type\n");
++		return -EINVAL;
++	}
++
+ 	edata->event = edata->total_event = 0;
++	ret = edev->desc->ops->get_event(edev, type, edata);
++	if (ret < 0
++		|| edata->total_event <= 0
++		|| edata->event > edata->total_event) {
++		edata->event = edata->total_event = 0;
++		mutex_unlock(&edev->lock);
++		return -EINVAL;
++	}
+ 
+-	mutex_lock(&edev->lock);
+-	ret = edev->desc->ops->get_event(edev, edata);
+-	mutex_unlock(&edev->lock);
++	switch (type) {
++	case DEVFREQ_EVENT_TYPE_RAW_DATA:
++	case DEVFREQ_EVENT_TYPE_BANDWIDTH:
++	case DEVFREQ_EVENT_TYPE_LATENCY:
++		if ((edata->event > EVENT_TYPE_RAW_DATA_MAX) ||
++			(edata->total_event > EVENT_TYPE_RAW_DATA_MAX)) {
++			edata->event = edata->total_event = 0;
++			ret = -EINVAL;
++		}
++		break;
++	case DEVFREQ_EVENT_TYPE_UTILIZATION:
++		edata->total_event = EVENT_TYPE_UTILIZATION_MAX;
+ 
+-	if ((edata->total_event <= 0)
+-		|| (edata->event > edata->total_event)) {
++		if (edata->event > EVENT_TYPE_UTILIZATION_MAX) {
++			edata->event = edata->total_event = 0;
++			ret = -EINVAL;
++		}
++		break;
++	default:
+ 		edata->event = edata->total_event = 0;
+ 		ret = -EINVAL;
++		break;
+ 	}
+ 
++	mutex_unlock(&edev->lock);
++
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(devfreq_event_get_event);
+diff --git a/include/linux/devfreq-event.h b/include/linux/devfreq-event.h
+index 6023be8..6b86c1d 100644
+--- a/include/linux/devfreq-event.h
++++ b/include/linux/devfreq-event.h
+@@ -36,6 +36,14 @@ struct devfreq_event_dev {
+ 	const struct devfreq_event_desc *desc;
+ };
+ 
++/* The supported type by devfreq-event device */
++enum devfreq_event_type {
++	DEVFREQ_EVENT_TYPE_RAW_DATA	= BIT(0),
++	DEVFREQ_EVENT_TYPE_UTILIZATION	= BIT(1),
++	DEVFREQ_EVENT_TYPE_BANDWIDTH	= BIT(2),
++	DEVFREQ_EVENT_TYPE_LATENCY	= BIT(3),
++};
++
+ /**
+  * struct devfreq_event_data - the devfreq-event data
+  *
+@@ -69,8 +77,10 @@ struct devfreq_event_ops {
+ 	int (*reset)(struct devfreq_event_dev *edev);
+ 
+ 	/* Mandatory functions */
+-	int (*set_event)(struct devfreq_event_dev *edev);
++	int (*set_event)(struct devfreq_event_dev *edev,
++			 enum devfreq_event_type type);
+ 	int (*get_event)(struct devfreq_event_dev *edev,
++			 enum devfreq_event_type type,
+ 			 struct devfreq_event_data *edata);
+ };
+ 
+@@ -79,6 +89,10 @@ struct devfreq_event_ops {
+  *
+  * @name	: the name of devfreq-event device.
+  * @driver_data	: the private data for devfreq-event driver.
++ * @event_type	: the supported devfreq-event type among as following
++ *		  - DEVFREQ_EVENT_TYPE_UTILIZATION
++ *		  - DEVFREQ_EVENT_TYPE_BANDWIDTH
++ *		  - DEVFREQ_EVENT_TYPE_LATENCY
+  * @ops		: the operation to control devfreq-event device.
+  *
+  * Each devfreq-event device is described with a this structure.
+@@ -87,6 +101,7 @@ struct devfreq_event_ops {
+ struct devfreq_event_desc {
+ 	const char *name;
+ 	void *driver_data;
++	enum devfreq_event_type type;
+ 
+ 	struct devfreq_event_ops *ops;
+ };
+@@ -95,8 +110,10 @@ struct devfreq_event_desc {
+ extern int devfreq_event_enable_edev(struct devfreq_event_dev *edev);
+ extern int devfreq_event_disable_edev(struct devfreq_event_dev *edev);
+ extern bool devfreq_event_is_enabled(struct devfreq_event_dev *edev);
+-extern int devfreq_event_set_event(struct devfreq_event_dev *edev);
++extern int devfreq_event_set_event(struct devfreq_event_dev *edev,
++				enum devfreq_event_type type);
+ extern int devfreq_event_get_event(struct devfreq_event_dev *edev,
++				enum devfreq_event_type type,
+ 				struct devfreq_event_data *edata);
+ extern int devfreq_event_reset_event(struct devfreq_event_dev *edev);
+ extern void *devfreq_event_get_drvdata(struct devfreq_event_dev *edev);
+@@ -123,12 +140,14 @@ static inline bool devfreq_event_is_enabled(struct devfreq_event_dev *edev);
+ 	return false;
+ }
+ 
+-static inline int devfreq_event_set_event(struct devfreq_event_dev *edev);
++static inline int devfreq_event_set_event(struct devfreq_event_dev *edev,
++					enum devfreq_event_type type)
+ {
+ 	return -EINVAL;
+ }
+ 
+ static inline int devfreq_event_get_event(struct devfreq_event_dev *edev,
++					enum devfreq_event_type type,
+ 					struct devfreq_event_data *edata)
+ {
+ 	return -EINVAL;
+-- 
+1.8.5.5
 
-> 
->>
->> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
->> index 8e3e0c0..bd4c4ec 100644
->> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
->> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
->> @@ -1268,6 +1268,169 @@ struct samsung_pin_ctrl exynos5420_pin_ctrl[] = {
->>       },
->>   };
->>
->> +/* pin banks of exynos5433 pin-controller - ALIVE */
->> +static struct samsung_pin_bank exynos5433_pin_banks0[] = {
-> 
-> Maybe instead the structure could be named exynos5433_pin_bank_alive? Similarly for remaining banks.
-> 
-> Also please, if not done already, please remember about documenting alias IDs of particular controllers in DT binding documentation.
-> 
->> +    EXYNOS_PIN_BANK_EINTW(8, 0x000, "gpa0", 0x00),
->> +    EXYNOS_PIN_BANK_EINTW(8, 0x020, "gpa1", 0x04),
->> +    EXYNOS_PIN_BANK_EINTW(8, 0x040, "gpa2", 0x08),
->> +    EXYNOS_PIN_BANK_EINTW(8, 0x060, "gpa3", 0x0c),
->> +};
->> +
->> +/* pin banks of exynos5433 pin-controller - AUD */
->> +static struct samsung_pin_bank exynos5433_pin_banks1[] = {
->> +    EXYNOS_PIN_BANK_EINTG(7, 0x000, "gpz0", 0x00),
->> +    EXYNOS_PIN_BANK_EINTG(4, 0x020, "gpz1", 0x04),
->> +};
->> +
->> +/* pin banks of exynos5433 pin-controller - CPIF */
->> +static struct samsung_pin_bank exynos5433_pin_banks2[] = {
->> +    EXYNOS_PIN_BANK_EINTG(2, 0x000, "gpv6", 0x00),
->> +};
->> +
->> +/* pin banks of exynos5433 pin-controller - eSE */
->> +static struct samsung_pin_bank exynos5433_pin_banks3[] = {
->> +    EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj2", 0x00),
->> +};
->> +
->> +/* pin banks of exynos5433 pin-controller - FINGER */
->> +static struct samsung_pin_bank exynos5433_pin_banks4[] = {
->> +    EXYNOS_PIN_BANK_EINTG(4, 0x000, "gpd5", 0x00),
->> +};
->> +
->> +/* pin banks of exynos5433 pin-controller - FSYS */
->> +static struct samsung_pin_bank exynos5433_pin_banks5[] = {
->> +    EXYNOS_PIN_BANK_EINTG(6, 0x000, "gph1", 0x00),
->> +    EXYNOS_PIN_BANK_EINTG(7, 0x020, "gpr4", 0x04),
->> +    EXYNOS_PIN_BANK_EINTG(5, 0x040, "gpr0", 0x08),
->> +    EXYNOS_PIN_BANK_EINTG(8, 0x060, "gpr1", 0x0c),
->> +    EXYNOS_PIN_BANK_EINTG(2, 0x080, "gpr2", 0x10),
->> +    EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpr3", 0x14),
->> +};
->> +
->> +/* pin banks of exynos5433 pin-controller - IMEM */
->> +static struct samsung_pin_bank exynos5433_pin_banks6[] = {
->> +    EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpf0", 0x00),
->> +};
->> +
->> +/* pin banks of exynos5433 pin-controller - NFC */
->> +static struct samsung_pin_bank exynos5433_pin_banks7[] = {
->> +    EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj0", 0x00),
->> +};
->> +
->> +/* pin banks of exynos5433 pin-controller - PERIC */
->> +static struct samsung_pin_bank exynos5433_pin_banks8[] = {
->> +    EXYNOS_PIN_BANK_EINTG(6, 0x000, "gpv7", 0x00),
->> +    EXYNOS_PIN_BANK_EINTG(5, 0x020, "gpb0", 0x04),
->> +    EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpc0", 0x08),
->> +    EXYNOS_PIN_BANK_EINTG(2, 0x060, "gpc1", 0x0c),
->> +    EXYNOS_PIN_BANK_EINTG(6, 0x080, "gpc2", 0x10),
->> +    EXYNOS_PIN_BANK_EINTG(8, 0x0a0, "gpc3", 0x14),
->> +    EXYNOS_PIN_BANK_EINTG(2, 0x0c0, "gpg0", 0x18),
->> +    EXYNOS_PIN_BANK_EINTG(4, 0x0e0, "gpd0", 0x1c),
->> +    EXYNOS_PIN_BANK_EINTG(6, 0x100, "gpd1", 0x20),
->> +    EXYNOS_PIN_BANK_EINTG(8, 0x120, "gpd2", 0x24),
->> +    EXYNOS_PIN_BANK_EINTG(5, 0x140, "gpd4", 0x28),
->> +    EXYNOS_PIN_BANK_EINTG(2, 0x160, "gpd8", 0x2c),
->> +    EXYNOS_PIN_BANK_EINTG(7, 0x180, "gpd6", 0x30),
->> +    EXYNOS_PIN_BANK_EINTG(3, 0x1a0, "gpd7", 0x34),
->> +    EXYNOS_PIN_BANK_EINTG(5, 0x1c0, "gpg1", 0x38),
->> +    EXYNOS_PIN_BANK_EINTG(2, 0x1e0, "gpg2", 0x3c),
->> +    EXYNOS_PIN_BANK_EINTG(8, 0x200, "gpg3", 0x40),
->> +};
->> +
->> +/* pin banks of exynos5433 pin-controller - TOUCH */
->> +static struct samsung_pin_bank exynos5433_pin_banks9[] = {
->> +    EXYNOS_PIN_BANK_EINTG(3, 0x000, "gpj1", 0x00),
->> +};
->> +
->> +/*
->> + * Samsung pinctrl driver data for Exynos5433 SoC. Exynos5433 SoC includes
->> + * four gpio/pin-mux/pinconfig controllers.
-> 
-> Looks like "four" is a copy/paste error here.
-
-Mistake. I'll fix it.
-
-Best Regards,
-Chanwoo Choi
