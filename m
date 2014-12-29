@@ -1,43 +1,36 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH v2 6/8] hwmon: thermal: Extract __set_pwm() function to
- only modify PWM duty cycle
-Date: Mon, 29 Dec 2014 04:52:45 -0800
-Message-ID: <20141229125245.GB18083@roeck-us.net>
-References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
- <1419265668-32283-1-git-send-email-l.majewski@samsung.com>
- <1419265668-32283-7-git-send-email-l.majewski@samsung.com>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: [PATCH v10 2/8] ARM: l2c: Refactor the driver to use commit-like
+ interface
+Date: Mon, 29 Dec 2014 08:29:58 -0600
+Message-ID: <20141229142958.GA10746@kahuna>
+References: <1419331716-8972-1-git-send-email-m.szyprowski@samsung.com>
+ <1419331716-8972-3-git-send-email-m.szyprowski@samsung.com>
+ <20141223170613.GM23854@atomide.com>
+ <5499A2B4.2080909@ti.com>
+ <549FEABA.10206@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bh-25.webhostbox.net ([208.91.199.152]:34885 "EHLO
-	bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751521AbaL2MyC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 29 Dec 2014 07:54:02 -0500
-Received: from mailnull by bh-25.webhostbox.net with sa-checked (Exim 4.82)
-	(envelope-from <linux@roeck-us.net>)
-	id 1Y5Zpi-004LI6-VP
-	for linux-samsung-soc@vger.kernel.org; Mon, 29 Dec 2014 12:54:03 +0000
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1419265668-32283-7-git-send-email-l.majewski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <549FEABA.10206@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Tony Lindgren <tony@atomide.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, linus.walleij@linaro.org, drake@endlessm.com, loeliger@gmail.com, Mark Rutland <mark.rutland@arm.com>, khilman@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
 
-On Mon, Dec 22, 2014 at 05:27:46PM +0100, Lukasz Majewski wrote:
-> It was necessary to decouple code handling writing to sysfs from the one
-> responsible for setting PWM of the fan.
-> Due to that, new __set_pwm() method was extracted, which is responsible for
-> only setting new PWM duty cycle.
-> 
-> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> ---
+On 20:34-20141228, Tomasz Figa wrote:
+> May I ask you (or anyone else working on OMAP) to try to figure out
+> what the issue is? It is stopping L2 cache support for Exynos4 being
 
-Please provide the affected subsystem and the affected driver in the header.
-While it may make sense to explain that the patch is to prepare the driver for
-thermal use, this should be part of the descriptive text. The patch is,
-however, not not a thermal subsystem related patch. The 'thermal:' in the
-headline is thus misleading, and you should drop it.
+http://slexy.org/view/s2BnzxVglj
+Took a register dump and compared -> Got the same dump
+http://slexy.org/view/s21YRHpzeW .
 
-Guenter
+Basically, this implies: possible sequence change broke AM437x or
+some secure function call (which i have'nt dumped).
+
+Is it possible to break up this patch into easier patches?
+
+-- 
+Regards,
+Nishanth Menon
