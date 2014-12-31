@@ -1,98 +1,54 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [RFC PATCHv2 4/8] clk: samsung: exynos4: Add divider clock id for
- memory bus frequency
-Date: Wed, 31 Dec 2014 14:19:48 +0900
-Message-ID: <1420003192-5576-5-git-send-email-cw00.choi@samsung.com>
-References: <1420003192-5576-1-git-send-email-cw00.choi@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1420003192-5576-1-git-send-email-cw00.choi@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: myungjoo.ham@samsung.com
-Cc: mark.rutland@arm.com, k.kozlowski@samsung.com, kgene.kim@samsung.com, b.zolnierkie@samsung.com, linux-pm@vger.kernel.org, rafael.j.wysocki@intel.com, tomasz.figa@gmail.com, linux-kernel@vger.kernel.org, inki.dae@samsung.com, cw00.choi@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, a.kesavan@samsung.com, linux-arm-kernel@lists.infradead.org
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH v3 0/4] mmc: dw_mmc: exynos: Add HS400 support
+Date: Wed, 31 Dec 2014 12:13:01 +0530
+Message-ID: <1420008185-24758-1-git-send-email-alim.akhtar@samsung.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: chris@printf.net, ulf.hansson@linaro.org, jh80.chung@samsung.com, tgih.jun@samsung.com, dianders@chromium.org, alim.akhtar@gmail.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, a.kesavan@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds the divider clock id for Exynos4 memory bus frequency.
-The clock id is used fo DVFS (Dynamic Voltage/Frequency Scaling)
-feature of exynos memory bus frequency.
+This serise is second part of [1] which was posted by Seungwon Jeon few months back.
+This adds HS400 mode support for exynos dw_mmc host controller.
 
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- drivers/clk/samsung/clk-exynos4.c   | 10 +++++-----
- include/dt-bindings/clock/exynos4.h |  7 ++++++-
- 2 files changed, 11 insertions(+), 6 deletions(-)
+Currently tested on Exynos5800-peach-pi platform and exynos7 platform for HS400 mode.
 
-diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
-index 88e8c6b..51462e8 100644
---- a/drivers/clk/samsung/clk-exynos4.c
-+++ b/drivers/clk/samsung/clk-exynos4.c
-@@ -703,12 +703,12 @@ static struct samsung_mux_clock exynos4x12_mux_clks[] __initdata = {
- 
- /* list of divider clocks supported in all exynos4 soc's */
- static struct samsung_div_clock exynos4_div_clks[] __initdata = {
--	DIV(0, "div_gdl", "mout_gdl", DIV_LEFTBUS, 0, 3),
-+	DIV(CLK_DIV_GDL, "div_gdl", "mout_gdl", DIV_LEFTBUS, 0, 3),
- 	DIV(0, "div_gpl", "div_gdl", DIV_LEFTBUS, 4, 3),
- 	DIV(0, "div_clkout_leftbus", "mout_clkout_leftbus",
- 			CLKOUT_CMU_LEFTBUS, 8, 6),
- 
--	DIV(0, "div_gdr", "mout_gdr", DIV_RIGHTBUS, 0, 3),
-+	DIV(CLK_DIV_GDR, "div_gdr", "mout_gdr", DIV_RIGHTBUS, 0, 3),
- 	DIV(0, "div_gpr", "div_gdr", DIV_RIGHTBUS, 4, 3),
- 	DIV(0, "div_clkout_rightbus", "mout_clkout_rightbus",
- 			CLKOUT_CMU_RIGHTBUS, 8, 6),
-@@ -781,10 +781,10 @@ static struct samsung_div_clock exynos4_div_clks[] __initdata = {
- 			CLK_SET_RATE_PARENT, 0),
- 	DIV(0, "div_clkout_top", "mout_clkout_top", CLKOUT_CMU_TOP, 8, 6),
- 
--	DIV(0, "div_acp", "mout_dmc_bus", DIV_DMC0, 0, 3),
-+	DIV(CLK_DIV_ACP, "div_acp", "mout_dmc_bus", DIV_DMC0, 0, 3),
- 	DIV(0, "div_acp_pclk", "div_acp", DIV_DMC0, 4, 3),
- 	DIV(0, "div_dphy", "mout_dphy", DIV_DMC0, 8, 3),
--	DIV(0, "div_dmc", "mout_dmc_bus", DIV_DMC0, 12, 3),
-+	DIV(CLK_DIV_DMC, "div_dmc", "mout_dmc_bus", DIV_DMC0, 12, 3),
- 	DIV(0, "div_dmcd", "div_dmc", DIV_DMC0, 16, 3),
- 	DIV(0, "div_dmcp", "div_dmcd", DIV_DMC0, 20, 3),
- 	DIV(0, "div_pwi", "mout_pwi", DIV_DMC1, 8, 4),
-@@ -829,7 +829,7 @@ static struct samsung_div_clock exynos4x12_div_clks[] __initdata = {
- 	DIV_F(CLK_DIV_MCUISP1, "div_mcuisp1", "div_mcuisp0", E4X12_DIV_ISP1,
- 						8, 3, CLK_GET_RATE_NOCACHE, 0),
- 	DIV(CLK_SCLK_FIMG2D, "sclk_fimg2d", "mout_g2d", DIV_DMC1, 0, 4),
--	DIV(0, "div_c2c", "mout_c2c", DIV_DMC1, 4, 3),
-+	DIV(CLK_DIV_C2C, "div_c2c", "mout_c2c", DIV_DMC1, 4, 3),
- 	DIV(0, "div_c2c_aclk", "div_c2c", DIV_DMC1, 12, 3),
- };
- 
-diff --git a/include/dt-bindings/clock/exynos4.h b/include/dt-bindings/clock/exynos4.h
-index 34fe28c..c4b1676 100644
---- a/include/dt-bindings/clock/exynos4.h
-+++ b/include/dt-bindings/clock/exynos4.h
-@@ -262,8 +262,13 @@
- #define CLK_DIV_MCUISP1		453 /* Exynos4x12 only */
- #define CLK_DIV_ACLK200		454 /* Exynos4x12 only */
- #define CLK_DIV_ACLK400_MCUISP	455 /* Exynos4x12 only */
-+#define CLK_DIV_ACP		456
-+#define CLK_DIV_DMC		457
-+#define CLK_DIV_C2C		458 /* Exynos4x12 only */
-+#define CLK_DIV_GDL		459
-+#define CLK_DIV_GDR		460
- 
- /* must be greater than maximal clock id */
--#define CLK_NR_CLKS		456
-+#define CLK_NR_CLKS		461
- 
- #endif /* _DT_BINDINGS_CLOCK_EXYNOS_4_H */
+Appreciate testing on other exynos5 platform which supports emmc5.0
+
+[1] http://www.spinics.net/lists/linux-mmc/msg25599.html
+
+Changes in V3:
+	rebased on ulf's next (commit: 607b448 mmc: core: Make tuning block patterns static)
+
+Seungwon Jeon (4):
+  mmc: dw_mmc: exynos: incorporate ciu_div into timing property
+  mmc: dw_mmc: exynos: support eMMC's HS400 mode
+  ARM: dts: drop dw-mshc-ciu-div property from Exynos
+  ARM: dts: add HS400 support for Exynos5420 and exynos5800
+
+ .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   21 +-
+ arch/arm/boot/dts/exynos3250-monk.dts              |    5 +-
+ arch/arm/boot/dts/exynos3250-rinato.dts            |    5 +-
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi    |    5 +-
+ arch/arm/boot/dts/exynos4412-origen.dts            |    5 +-
+ arch/arm/boot/dts/exynos4412-trats2.dts            |    5 +-
+ arch/arm/boot/dts/exynos5250-arndale.dts           |   10 +-
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |   10 +-
+ arch/arm/boot/dts/exynos5250-snow.dts              |   15 +-
+ arch/arm/boot/dts/exynos5250-spring.dts            |   10 +-
+ arch/arm/boot/dts/exynos5260-xyref5260.dts         |   10 +-
+ arch/arm/boot/dts/exynos5410-smdk5410.dts          |   10 +-
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts      |   10 +-
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |   15 +-
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |    7 +
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |   15 +-
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |   15 +-
+ drivers/mmc/host/dw_mmc-exynos.c                   |  242 +++++++++++++++-----
+ drivers/mmc/host/dw_mmc-exynos.h                   |   18 +-
+ drivers/mmc/host/dw_mmc.c                          |   16 +-
+ drivers/mmc/host/dw_mmc.h                          |    2 +
+ 21 files changed, 308 insertions(+), 143 deletions(-)
+
 -- 
-1.8.5.5
+1.7.9.5
+
