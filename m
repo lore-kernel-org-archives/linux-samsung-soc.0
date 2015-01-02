@@ -1,260 +1,128 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 1/4] mmc: dw_mmc: exynos: incorporate ciu_div into
- timing property
-Date: Fri, 2 Jan 2015 11:30:44 +0100
-Message-ID: <CAPDyKFrXzU0DA0GrQxBNRY0hPm6t=Y9i5Fuc516ZHkUFZKEnjw@mail.gmail.com>
-References: <1420008185-24758-1-git-send-email-alim.akhtar@samsung.com>
-	<1420008185-24758-2-git-send-email-alim.akhtar@samsung.com>
+From: Daniel Stone <daniel@fooishbar.org>
+Subject: Re: [PATCH V8 00/14] drm/exynos: few patches to enhance bridge chip
+ support
+Date: Fri, 2 Jan 2015 13:10:14 +0000
+Message-ID: <CAPj87rN4HZzDt5JBLyTRmKZs7XcOG=0ha7ZQf9hmjPAFgTyhYQ@mail.gmail.com>
+References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com>
+ <CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com>
+ <548ABAB6.6010200@collabora.co.uk> <3197445.qizQc0zeRb@avalon>
+ <54914D7D.9060108@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f47.google.com ([209.85.216.47]:39223 "EHLO
-	mail-qa0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750958AbbABKap (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Jan 2015 05:30:45 -0500
-Received: by mail-qa0-f47.google.com with SMTP id n4so12538231qaq.6
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 02 Jan 2015 02:30:44 -0800 (PST)
-In-Reply-To: <1420008185-24758-2-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============0243660068=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <54914D7D.9060108@collabora.co.uk>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay kumar <ajaynumb@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Jaehoon Chung <jh80.chung@samsung.com>, "tgih.jun@samsung.com" <tgih.jun@samsung.com>, Doug Anderson <dianders@chromium.org>, Alim Akhtar <alim.akhtar@gmail.com>, Kukjin Kim <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, ABHILASH KESAVAN <a.kesavan@samsung.com>
 
-On 31 December 2014 at 07:43, Alim Akhtar <alim.akhtar@samsung.com> wrote:
-> From: Seungwon Jeon <tgih.jun@samsung.com>
->
-> ciu_div may not be common value for all speed mode.
-> So, it needs to be attached to CLKSEL timing.
-> This also introduce a new compatibale 'dw-mshc-hs200-timing'
-> for selecting hs200 timing value
+--===============0243660068==
+Content-Type: multipart/alternative; boundary=047d7bb03946b1973e050bab0f8d
 
-According to the patch you are adding a new DT property not a
-"compatible". Please update the commit message.
+--047d7bb03946b1973e050bab0f8d
+Content-Type: text/plain; charset=UTF-8
 
-The rest looks good to me.
+Hi Ajay,
 
-Kind regards
-Uffe
+On 17 December 2014 at 09:31, Javier Martinez Canillas <
+javier.martinez@collabora.co.uk> wrote:
 
+> On 12/16/2014 12:37 AM, Laurent Pinchart wrote:
+> >> You asked Ajay to change his series to use the video port and enpoints
+> DT
+> >> bindings instead of phandles, could you please review his latest
+> version?
+> >>
+> >> I guess is now too late for 3.19 since we are in the middle of the merge
+> >> window but it would be great if this series can at least made it to
+> 3.20.
+> >
+> > I don't have time to review the series in details right now, but I'm
+> happy
+> > with the DT bindings, and have no big issue with the rest of the
+> patches. I
+> > don't really like the of_drm_find_bridge() concept introduced in 03/14
+> but I
+> > won't nack it given lack of time to implement an alternative proposal.
+> It's an
+> > internal API, it can always be reworked later anyway.
 >
-> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   15 ++--
->  drivers/mmc/host/dw_mmc-exynos.c                   |   81 ++++++++++++++------
->  drivers/mmc/host/dw_mmc-exynos.h                   |    1 +
->  3 files changed, 67 insertions(+), 30 deletions(-)
+> Thanks a lot for taking the time to look at the DT bindings, then I guess
+> that the series are finally ready to be merged?
 >
-> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> index ee4fc05..06455de 100644
-> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> @@ -23,10 +23,6 @@ Required Properties:
->         - "samsung,exynos7-dw-mshc-smu": for controllers with Samsung Exynos7
->           specific extensions having an SMU.
+> Ajay's series don't apply cleanly anymore because it has been a while since
+> he posted it but he can rebase on top of 3.19-rc1 once it is released and
+> re-resend.
 >
-> -* samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
-> -  unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
-> -  ignored for Exynos4 SoC's. The valid range of divider value is 0 to 7.
-> -
->  * samsung,dw-mshc-sdr-timing: Specifies the value of CIU clock phase shift value
->    in transmit mode and CIU clock phase shift value in receive mode for single
->    data rate mode operation. Refer notes below for the order of the cells and the
-> @@ -37,11 +33,16 @@ Required Properties:
->    data rate mode operation. Refer notes below for the order of the cells and the
->    valid values.
->
-> +* samsung,dw-mshc-hs200-timing: Similar with dw-mshc-sdr-timing.
-> +
->    Notes for the sdr-timing and ddr-timing values:
->
->      The order of the cells should be
->        - First Cell: CIU clock phase shift value for tx mode.
->        - Second Cell: CIU clock phase shift value for rx mode.
-> +      - Thrid Cell: Specifies the divider value for the card interface
-> +        unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
-> +        ignored for Exynos4 SoC's. The valid range of divider value is 0 to 7.
->
->      Valid values for SDR and DDR CIU clock timing for Exynos5250:
->        - valid value for tx phase shift and rx phase shift is 0 to 7.
-> @@ -79,8 +80,8 @@ Example:
->                 broken-cd;
->                 fifo-depth = <0x80>;
->                 card-detect-delay = <200>;
-> -               samsung,dw-mshc-ciu-div = <3>;
-> -               samsung,dw-mshc-sdr-timing = <2 3>;
-> -               samsung,dw-mshc-ddr-timing = <1 2>;
-> +               samsung,dw-mshc-sdr-timing = <2 3 3>;
-> +               samsung,dw-mshc-ddr-timing = <1 2 3>;
-> +               samsung,dw-mshc-hs200-timing = <0 2 3>;
->                 bus-width = <8>;
->         };
-> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
-> index 12a5eaa..be6530e 100644
-> --- a/drivers/mmc/host/dw_mmc-exynos.c
-> +++ b/drivers/mmc/host/dw_mmc-exynos.c
-> @@ -40,6 +40,7 @@ struct dw_mci_exynos_priv_data {
->         u8                              ciu_div;
->         u32                             sdr_timing;
->         u32                             ddr_timing;
-> +       u32                             hs200_timing;
->         u32                             cur_speed;
->  };
->
-> @@ -71,6 +72,21 @@ static struct dw_mci_exynos_compatible {
->         },
->  };
->
-> +static inline u8 dw_mci_exynos_get_ciu_div(struct dw_mci *host)
-> +{
-> +       struct dw_mci_exynos_priv_data *priv = host->priv;
-> +
-> +       if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS4412)
-> +               return EXYNOS4412_FIXED_CIU_CLK_DIV;
-> +       else if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS4210)
-> +               return EXYNOS4210_FIXED_CIU_CLK_DIV;
-> +       else if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
-> +                       priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
-> +               return SDMMC_CLKSEL_GET_DIV(mci_readl(host, CLKSEL64)) + 1;
-> +       else
-> +               return SDMMC_CLKSEL_GET_DIV(mci_readl(host, CLKSEL)) + 1;
-> +}
-> +
->  static int dw_mci_exynos_priv_init(struct dw_mci *host)
->  {
->         struct dw_mci_exynos_priv_data *priv = host->priv;
-> @@ -85,6 +101,8 @@ static int dw_mci_exynos_priv_init(struct dw_mci *host)
->                            SDMMC_MPSCTRL_NON_SECURE_WRITE_BIT);
->         }
->
-> +       priv->ciu_div = dw_mci_exynos_get_ciu_div(host);
-> +
->         return 0;
->  }
->
-> @@ -92,7 +110,7 @@ static int dw_mci_exynos_setup_clock(struct dw_mci *host)
->  {
->         struct dw_mci_exynos_priv_data *priv = host->priv;
->
-> -       host->bus_hz /= (priv->ciu_div + 1);
-> +       host->bus_hz /= priv->ciu_div;
->
->         return 0;
->  }
-> @@ -177,9 +195,14 @@ static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
->         struct dw_mci_exynos_priv_data *priv = host->priv;
->         unsigned int wanted = ios->clock;
->         unsigned long actual;
-> -       u8 div = priv->ciu_div + 1;
->
-> -       if (ios->timing == MMC_TIMING_MMC_DDR52) {
-> +       if (ios->timing == MMC_TIMING_MMC_HS200) {
-> +               if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
-> +                       priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
-> +                       mci_writel(host, CLKSEL64, priv->hs200_timing);
-> +               else
-> +                       mci_writel(host, CLKSEL, priv->hs200_timing);
-> +       } else if (ios->timing == MMC_TIMING_MMC_DDR52) {
->                 if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
->                         priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
->                         mci_writel(host, CLKSEL64, priv->ddr_timing);
-> @@ -208,6 +231,7 @@ static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
->                 wanted = EXYNOS_CCLKIN_MIN;
->
->         if (wanted != priv->cur_speed) {
-> +               u8 div = dw_mci_exynos_get_ciu_div(host);
->                 int ret = clk_set_rate(host->ciu_clk, wanted * div);
->                 if (ret)
->                         dev_warn(host->dev,
-> @@ -220,14 +244,34 @@ static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
->         }
->  }
->
-> +static int dw_mci_exynos_dt_populate_timing(struct dw_mci *host,
-> +                                           unsigned int ctrl_type,
-> +                                           const char *propname,
-> +                                           u32 *out_values)
-> +{
-> +       struct device_node *np = host->dev->of_node;
-> +       u32 timing[3];
-> +       int ret;
-> +
-> +       ret = of_property_read_u32_array(np, propname, timing, 3);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (ctrl_type == DW_MCI_TYPE_EXYNOS4412 ||
-> +           ctrl_type == DW_MCI_TYPE_EXYNOS4210)
-> +               timing[2] = 0;
-> +
-> +       *out_values = SDMMC_CLKSEL_TIMING(timing[0], timing[1], timing[2]);
-> +
-> +       return 0;
-> +}
-> +
-> +
->  static int dw_mci_exynos_parse_dt(struct dw_mci *host)
->  {
->         struct dw_mci_exynos_priv_data *priv;
->         struct device_node *np = host->dev->of_node;
-> -       u32 timing[2];
-> -       u32 div = 0;
-> -       int idx;
-> -       int ret;
-> +       int idx, ret;
->
->         priv = devm_kzalloc(host->dev, sizeof(*priv), GFP_KERNEL);
->         if (!priv)
-> @@ -238,29 +282,20 @@ static int dw_mci_exynos_parse_dt(struct dw_mci *host)
->                         priv->ctrl_type = exynos_compat[idx].ctrl_type;
->         }
->
-> -       if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS4412)
-> -               priv->ciu_div = EXYNOS4412_FIXED_CIU_CLK_DIV - 1;
-> -       else if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS4210)
-> -               priv->ciu_div = EXYNOS4210_FIXED_CIU_CLK_DIV - 1;
-> -       else {
-> -               of_property_read_u32(np, "samsung,dw-mshc-ciu-div", &div);
-> -               priv->ciu_div = div;
-> -       }
-> -
-> -       ret = of_property_read_u32_array(np,
-> -                       "samsung,dw-mshc-sdr-timing", timing, 2);
-> +       ret = dw_mci_exynos_dt_populate_timing(host, priv->ctrl_type,
-> +                       "samsung,dw-mshc-sdr-timing", &priv->sdr_timing);
->         if (ret)
->                 return ret;
->
-> -       priv->sdr_timing = SDMMC_CLKSEL_TIMING(timing[0], timing[1], div);
-> -
-> -       ret = of_property_read_u32_array(np,
-> -                       "samsung,dw-mshc-ddr-timing", timing, 2);
-> +       ret = dw_mci_exynos_dt_populate_timing(host, priv->ctrl_type,
-> +                       "samsung,dw-mshc-ddr-timing", &priv->ddr_timing);
->         if (ret)
->                 return ret;
->
-> -       priv->ddr_timing = SDMMC_CLKSEL_TIMING(timing[0], timing[1], div);
-> +       dw_mci_exynos_dt_populate_timing(host, priv->ctrl_type,
-> +               "samsung,dw-mshc-hs200-timing", &priv->hs200_timing);
->         host->priv = priv;
-> +
->         return 0;
->  }
->
-> diff --git a/drivers/mmc/host/dw_mmc-exynos.h b/drivers/mmc/host/dw_mmc-exynos.h
-> index 7872ce5..c04ecef 100644
-> --- a/drivers/mmc/host/dw_mmc-exynos.h
-> +++ b/drivers/mmc/host/dw_mmc-exynos.h
-> @@ -21,6 +21,7 @@
->  #define SDMMC_CLKSEL_CCLK_DRIVE(x)     (((x) & 7) << 16)
->  #define SDMMC_CLKSEL_CCLK_DIVIDER(x)   (((x) & 7) << 24)
->  #define SDMMC_CLKSEL_GET_DRV_WD3(x)    (((x) >> 16) & 0x7)
-> +#define SDMMC_CLKSEL_GET_DIV(x)                (((x) >> 24) & 0x7)
->  #define SDMMC_CLKSEL_TIMING(x, y, z)   (SDMMC_CLKSEL_CCLK_SAMPLE(x) |  \
->                                          SDMMC_CLKSEL_CCLK_DRIVE(y) |   \
->                                          SDMMC_CLKSEL_CCLK_DIVIDER(z))
-> --
-> 1.7.9.5
->
+
+Do you have any plans to rebase this so it's ready for merging?
+
+Thierry, Daniel, Dave - whose tree would this be best to merge through?
+
+Cheers,
+Daniel
+
+--047d7bb03946b1973e050bab0f8d
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr">Hi Ajay,<div class=3D"gmail_extra"><br><div class=3D"gmail=
+_quote">On 17 December 2014 at 09:31, Javier Martinez Canillas <span dir=3D=
+"ltr">&lt;<a href=3D"mailto:javier.martinez@collabora.co.uk" target=3D"_bla=
+nk">javier.martinez@collabora.co.uk</a>&gt;</span> wrote:<br><blockquote cl=
+ass=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;p=
+adding-left:1ex">On 12/16/2014 12:37 AM, Laurent Pinchart wrote:<br><span c=
+lass=3D"">&gt;&gt; You asked Ajay to change his series to use the video por=
+t and enpoints DT<br>
+&gt;&gt; bindings instead of phandles, could you please review his latest v=
+ersion?<br>
+&gt;&gt;<br>
+&gt;&gt; I guess is now too late for 3.19 since we are in the middle of the=
+ merge<br>
+&gt;&gt; window but it would be great if this series can at least made it t=
+o 3.20.<br>
+&gt;<br>
+&gt; I don&#39;t have time to review the series in details right now, but I=
+&#39;m happy<br>
+&gt; with the DT bindings, and have no big issue with the rest of the patch=
+es. I<br>
+&gt; don&#39;t really like the of_drm_find_bridge() concept introduced in 0=
+3/14 but I<br>
+&gt; won&#39;t nack it given lack of time to implement an alternative propo=
+sal. It&#39;s an<br>
+&gt; internal API, it can always be reworked later anyway.<br>
+<br>
+</span>Thanks a lot for taking the time to look at the DT bindings, then I =
+guess<br>
+that the series are finally ready to be merged?<br>
+<br>
+Ajay&#39;s series don&#39;t apply cleanly anymore because it has been a whi=
+le since<br>
+he posted it but he can rebase on top of 3.19-rc1 once it is released and<b=
+r>
+re-resend.<br></blockquote><div><br></div><div>Do you have any plans to reb=
+ase this so it&#39;s ready for merging?</div><div><br></div><div>Thierry, D=
+aniel, Dave - whose tree would this be best to merge through?</div><div><br=
+></div><div>Cheers,</div><div>Daniel=C2=A0</div></div></div></div>
+
+--047d7bb03946b1973e050bab0f8d--
+
+--===============0243660068==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+--===============0243660068==--
