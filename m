@@ -1,130 +1,91 @@
-From: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
-Subject: [PATCH] video: fbdev: exynos: exynos_mipi_dsi_common:  Remove some unused functions
-Date: Thu,  1 Jan 2015 20:14:24 +0100
-Message-ID: <1420139664-3008-1-git-send-email-rickard_strandqvist@spectrumdigital.se>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f175.google.com ([209.85.212.175]:58054 "EHLO
-	mail-wi0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750956AbbAATLZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 Jan 2015 14:11:25 -0500
-Received: by mail-wi0-f175.google.com with SMTP id l15so26824604wiw.14
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 Jan 2015 11:11:23 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v10 2/8] ARM: l2c: Refactor the driver to use commit-like
+ interface
+Date: Fri, 02 Jan 2015 17:55:06 +0900
+Message-ID: <54A65CEA.9060202@gmail.com>
+References: <1419331716-8972-1-git-send-email-m.szyprowski@samsung.com> <1419331716-8972-3-git-send-email-m.szyprowski@samsung.com> <54A19C17.1020909@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-omap-owner@vger.kernel.org>
+In-Reply-To: <54A19C17.1020909@ti.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Nishanth Menon <nm@ti.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, linus.walleij@linaro.org, tony@atomide.com, drake@endlessm.com, loeliger@gmail.com, Mark Rutland <mark.rutland@arm.com>, khilman@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>, Donghwa Lee <dh09.lee@samsung.com>
-Cc: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>, Kyungmin Park <kyungmin.park@samsung.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Removes some functions that are not used anywhere:
-exynos_mipi_dsi_fifo_clear() exynos_mipi_dsi_set_data_transfer_mode()
-exynos_mipi_dsi_enable_frame_done_int()
+On 30.12.2014 03:23, Nishanth Menon wrote:
+> On 12/23/2014 04:48 AM, Marek Szyprowski wrote:
+>
+>> -static void l2c310_resume(void)
+>> +static void l2c310_configure(void __iomem *base)
+>>   {
+>> -	void __iomem *base = l2x0_base;
+>> +	unsigned revision;
+>>
+>> -	if (!(readl_relaxed(base + L2X0_CTRL) & L2X0_CTRL_EN)) {
+>> -		unsigned revision;
+>> -
+>> -		/* restore pl310 setup */
+>> -		writel_relaxed(l2x0_saved_regs.tag_latency,
+>> -			       base + L310_TAG_LATENCY_CTRL);
+>> -		writel_relaxed(l2x0_saved_regs.data_latency,
+>> -			       base + L310_DATA_LATENCY_CTRL);
+>> -		writel_relaxed(l2x0_saved_regs.filter_end,
+>> -			       base + L310_ADDR_FILTER_END);
+>> -		writel_relaxed(l2x0_saved_regs.filter_start,
+>> -			       base + L310_ADDR_FILTER_START);
+>> -
+>> -		revision = readl_relaxed(base + L2X0_CACHE_ID) &
+>> -				L2X0_CACHE_ID_RTL_MASK;
+>> -
+>> -		if (revision >= L310_CACHE_ID_RTL_R2P0)
+>> -			l2c_write_sec(l2x0_saved_regs.prefetch_ctrl, base,
+>> -				      L310_PREFETCH_CTRL);
+>> -		if (revision >= L310_CACHE_ID_RTL_R3P0)
+>> -			l2c_write_sec(l2x0_saved_regs.pwr_ctrl, base,
+>> -				      L310_POWER_CTRL);
+>> -
+>> -		l2c_enable(base, l2x0_saved_regs.aux_ctrl, 8);
+>> -
+>> -		/* Re-enable full-line-of-zeros for Cortex-A9 */
+>> -		if (l2x0_saved_regs.aux_ctrl & L310_AUX_CTRL_FULL_LINE_ZERO)
+>> -			set_auxcr(get_auxcr() | BIT(3) | BIT(2) | BIT(1));
+>> -	}
+>> +	/* restore pl310 setup */
+>> +	writel_relaxed(l2x0_saved_regs.tag_latency,
+>> +		       base + L310_TAG_LATENCY_CTRL);
+>> +	writel_relaxed(l2x0_saved_regs.data_latency,
+>> +		       base + L310_DATA_LATENCY_CTRL);
+>> +	writel_relaxed(l2x0_saved_regs.filter_end,
+>> +		       base + L310_ADDR_FILTER_END);
+>> +	writel_relaxed(l2x0_saved_regs.filter_start,
+>> +		       base + L310_ADDR_FILTER_START);
+>> +
+>
+> ^^ The above change broke AM437xx. Looks like the change causes the
+> following behavior difference on AM437x. For some reason, touching any
+> of the above 4 registers(even with the values read from the same
+> registers) causes AM437x to go beserk. Comment the 4 writes and we
+> reach shell. looks like l2c310_resume is not invoked prior to this
+> series. :(.. now that we reuse that logic to actually do programming,
+> we start to see the problem.
 
-This was partially found by using a static code analysis program called cppcheck.
+OK, I probably have answer for this. Apparently all four register above 
+cannot be written in non-secure mode and they should go through 
+l2c_write_sec(). More on this can be found in CoreLink Level 2 Cache 
+Controller L2C-310 Technical Reference Manual, 3.2. Register summary, 
+table 3.1. I have checked the TRM for r3p3, but I guess this should be 
+uniform for all revisions.
 
-Signed-off-by: Rickard Strandqvist <rickard_strandqvist@spectrumdigital.se>
----
- .../video/fbdev/exynos/exynos_mipi_dsi_common.c    |   53 --------------------
- .../video/fbdev/exynos/exynos_mipi_dsi_common.h    |    7 ---
- 2 files changed, 60 deletions(-)
+Why this worked before? The registers were not written unless respective 
+properties in DT were present and OMAP do not have them in DT. Current 
+code always writes them, which should not really matter if the code is 
+correct. (But it isn't - writel_relaxed() can't be used directly for 
+those registers.)
 
-diff --git a/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c b/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c
-index 85edabf..d7b4abc 100644
---- a/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c
-+++ b/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.c
-@@ -690,15 +690,6 @@ void exynos_mipi_dsi_init_interrupt(struct mipi_dsim_device *dsim)
- 	exynos_mipi_dsi_set_interrupt_mask(dsim, src, 1);
- }
- 
--int exynos_mipi_dsi_enable_frame_done_int(struct mipi_dsim_device *dsim,
--	unsigned int enable)
--{
--	/* enable only frame done interrupt */
--	exynos_mipi_dsi_set_interrupt_mask(dsim, INTMSK_FRAME_DONE, enable);
--
--	return 0;
--}
--
- void exynos_mipi_dsi_stand_by(struct mipi_dsim_device *dsim,
- 		unsigned int enable)
- {
-@@ -819,30 +810,6 @@ int exynos_mipi_dsi_set_hs_enable(struct mipi_dsim_device *dsim)
- 	return 0;
- }
- 
--int exynos_mipi_dsi_set_data_transfer_mode(struct mipi_dsim_device *dsim,
--		unsigned int mode)
--{
--	if (mode) {
--		if (dsim->state != DSIM_STATE_HSCLKEN) {
--			dev_err(dsim->dev, "HS Clock lane is not enabled.\n");
--			return -EINVAL;
--		}
--
--		exynos_mipi_dsi_set_lcdc_transfer_mode(dsim, 0);
--	} else {
--		if (dsim->state == DSIM_STATE_INIT || dsim->state ==
--			DSIM_STATE_ULPS) {
--			dev_err(dsim->dev,
--				"DSI Master is not STOP or HSDT state.\n");
--			return -EINVAL;
--		}
--
--		exynos_mipi_dsi_set_cpu_transfer_mode(dsim, 0);
--	}
--
--	return 0;
--}
--
- int exynos_mipi_dsi_get_frame_done_status(struct mipi_dsim_device *dsim)
- {
- 	return _exynos_mipi_dsi_get_frame_done_status(dsim);
-@@ -855,26 +822,6 @@ int exynos_mipi_dsi_clear_frame_done(struct mipi_dsim_device *dsim)
- 	return 0;
- }
- 
--int exynos_mipi_dsi_fifo_clear(struct mipi_dsim_device *dsim,
--				unsigned int val)
--{
--	int try = TRY_FIFO_CLEAR;
--
--	exynos_mipi_dsi_sw_reset_release(dsim);
--	exynos_mipi_dsi_func_reset(dsim);
--
--	do {
--		if (exynos_mipi_dsi_get_sw_reset_release(dsim)) {
--			exynos_mipi_dsi_init_interrupt(dsim);
--			dev_dbg(dsim->dev, "reset release done.\n");
--			return 0;
--		}
--	} while (--try);
--
--	dev_err(dsim->dev, "failed to clear dsim fifo.\n");
--	return -EAGAIN;
--}
--
- MODULE_AUTHOR("InKi Dae <inki.dae@samsung.com>");
- MODULE_DESCRIPTION("Samusung SoC MIPI-DSI common driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.h b/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.h
-index 4125522..5c1c30b 100644
---- a/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.h
-+++ b/drivers/video/fbdev/exynos/exynos_mipi_dsi_common.h
-@@ -31,16 +31,9 @@ int exynos_mipi_dsi_set_display_mode(struct mipi_dsim_device *dsim,
- 			struct mipi_dsim_config *dsim_info);
- int exynos_mipi_dsi_init_link(struct mipi_dsim_device *dsim);
- int exynos_mipi_dsi_set_hs_enable(struct mipi_dsim_device *dsim);
--int exynos_mipi_dsi_set_data_transfer_mode(struct mipi_dsim_device *dsim,
--		unsigned int mode);
--int exynos_mipi_dsi_enable_frame_done_int(struct mipi_dsim_device *dsim,
--	unsigned int enable);
- int exynos_mipi_dsi_get_frame_done_status(struct mipi_dsim_device *dsim);
- int exynos_mipi_dsi_clear_frame_done(struct mipi_dsim_device *dsim);
- 
- extern struct fb_info *registered_fb[FB_MAX] __read_mostly;
- 
--int exynos_mipi_dsi_fifo_clear(struct mipi_dsim_device *dsim,
--				unsigned int val);
--
- #endif /* _EXYNOS_MIPI_DSI_COMMON_H */
--- 
-1.7.10.4
+Could you check if replacing those four writel_relaxed() with 
+l2c_write_sec() does the thing?
+
+Best regards,
+Tomasz
