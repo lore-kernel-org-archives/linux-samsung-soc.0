@@ -1,82 +1,120 @@
-From: Daniel Stone <daniel@fooishbar.org>
-Subject: Re: [PATCH V8 00/14] drm/exynos: few patches to enhance bridge chip
- support
-Date: Fri, 2 Jan 2015 13:19:46 +0000
-Message-ID: <CAPj87rPP9FxiF3n=XZ8GEcZD9K4yjc3O22b9gY6iHmEvc15cew@mail.gmail.com>
-References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com>
- <CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com>
- <548ABAB6.6010200@collabora.co.uk> <3197445.qizQc0zeRb@avalon>
- <54914D7D.9060108@collabora.co.uk>
- <CAPj87rN4HZzDt5JBLyTRmKZs7XcOG=0ha7ZQf9hmjPAFgTyhYQ@mail.gmail.com>
- <CAEC9eQPKC05C0uJr0eKEuG1eqWohYqV=2seWQtanRFryDgF0ng@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0292384619=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAEC9eQPKC05C0uJr0eKEuG1eqWohYqV=2seWQtanRFryDgF0ng@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ajay kumar <ajaynumb@gmail.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, Ajay Kumar <ajaykumar.rs@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Kukjin Kim <kgene.kim@samsung.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH RESEND v2 0/7] platform/chrome: Add user-space dev inferface support
+Date: Fri,  2 Jan 2015 14:32:45 +0100
+Message-ID: <1420205572-2640-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:59993 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751945AbbABNdR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 2 Jan 2015 08:33:17 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
---===============0292384619==
-Content-Type: multipart/alternative; boundary=bcaec53d550dcd4e86050bab313c
+Hello,
 
---bcaec53d550dcd4e86050bab313c
-Content-Type: text/plain; charset=UTF-8
+The mainline ChromeOS Embedded Controller (EC) driver is still missing some
+features that are present in the downstream ChromiumOS tree. These are:
 
-Hi Ajay,
+  - Low Pin Count (LPC) interface
+  - User-space device interface
+  - Access to vboot context stored on a block device
+  - Access to vboot context stored on EC's nvram
+  - Power Delivery Device
+  - Support for multiple EC in a system
 
-On 2 January 2015 at 13:14, Ajay kumar <ajaynumb@gmail.com> wrote:
+This is a second version of a series that adds support for the first two of
+the missing features: the EC LPC and EC character device interfaces that
+are used by user-space to access the ChromeOS EC. The support patches were
+taken from the downstream ChromiumOS 3.14 tree with the fixes and cleanups
+squashed to have a minimal patch-set.
 
-> This series is sitting out there since long without any ACKs.
-> If people can ACK this series, I am ready to rebase and send ASAP.
->
+The version of the ChromeOS EC chardev driver in this series still does not
+reflect the latest one that is in the downstream ChromiumOS 3.14 kernel but
+makes the delta shorter. Following patches will add the remaining missing
+features until both trees are in sync. I preferred to first add the initial
+support and then adding the other features to both maintain the original
+patch history in the downstream kernel and so preserve the patch authorship
+and also make the diff to have a working cros user-space interface smaller.
 
-Both Tomi and Laurent have acked this in principle for now in <
-548EF081.8090009@ti.com> and <3197445.qizQc0zeRb@avalon>, so another series
-would be quite good I think.
+Version 1 of this series was [0] and added the Chrome EC chardev driver
+and the sysfs interface to drivers/mfd since that is what is done in the
+downstream ChromiumOS kernel but Lee Jones asked to find a better place
+since those are not really multi-function device drivers. So this version
+places them under drivers/platform/chrome since MAINTAINERS says that this
+sub-directory is "CHROME HARDWARE PLATFORM SUPPORT" which seems a good fit.
 
-Cheers,
-Daniel
+A big change in this version is that the ioctl API is modified to make it
+64-bit safe and compatible with both 64 and 32 bit user-space binaries.
+The data structures passed as arguments to ioctl commands had pointers fields
+and these have different byte boundaries alignment requirement so the previous
+version had a compat ioctl interface. The feedback was that this had to be
+avoided since this was a new ioctl API so the pointers fields were replaced
+with a set of fixed-size arrays to be used instead. This has the drawback that
+more data could be used and copied between user and kernel space so feedback
+is welcomed if there is a better approach to solve this kind of issues.
 
---bcaec53d550dcd4e86050bab313c
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+The patches were tested on an Exynos5420 Peach Pit Chromebook and (thanks to
+Bill Richardson) on an x86 Pixel Chromebook using an ectool [1] modified to
+use the new ioctl API. The LPC interface driver and the lightbar sysfs driver
+were also tested on the Pixel Chromebook.
 
-<div dir=3D"ltr">Hi Ajay,<div class=3D"gmail_extra"><br><div class=3D"gmail=
-_quote">On 2 January 2015 at 13:14, Ajay kumar <span dir=3D"ltr">&lt;<a hre=
-f=3D"mailto:ajaynumb@gmail.com" target=3D"_blank">ajaynumb@gmail.com</a>&gt=
-;</span> wrote:<br><blockquote class=3D"gmail_quote" style=3D"margin:0px 0p=
-x 0px 0.8ex;border-left-width:1px;border-left-color:rgb(204,204,204);border=
--left-style:solid;padding-left:1ex">This series is sitting out there since =
-long without any ACKs.<br>
-If people can ACK this series, I am ready to rebase and send ASAP.<br></blo=
-ckquote><div><br></div><div>Both Tomi and Laurent have acked this in princi=
-ple for now in=C2=A0<span style=3D"color:rgb(0,0,0);white-space:pre-wrap">&=
-lt;<a href=3D"mailto:548EF081.8090009@ti.com">548EF081.8090009@ti.com</a>&g=
-t; and=C2=A0</span><span style=3D"color:rgb(0,0,0);white-space:pre-wrap">&l=
-t;3197445.qizQc0zeRb@avalon&gt;</span>, so another series would be quite go=
-od I think.</div><div><br></div><div>Cheers,</div><div>Daniel=C2=A0</div></=
-div></div></div>
+The series is composed of the following patches:
 
---bcaec53d550dcd4e86050bab313c--
+Bill Richardson (4):
+  mfd: cros_ec: Add cros_ec_lpc driver for x86 devices
+  platform/chrome: Add Chrome OS EC userspace device interface
+  platform/chrome: Create sysfs attributes for the ChromeOS EC.
+  platform/chrome: Expose Chrome OS Lightbar to users
 
---===============0292384619==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
+Javier Martinez Canillas (3):
+  mfd: cros_ec: Use fixed size arrays to transfer data with the EC
+  mfd: cros_ec: Add char dev and virtual dev pointers
+  mfd: cros_ec: Instantiate ChromeOS EC character device
 
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+ Documentation/ioctl/ioctl-number.txt       |   1 +
+ drivers/i2c/busses/i2c-cros-ec-tunnel.c    |  51 +---
+ drivers/input/keyboard/cros_ec_keyb.c      |  13 +-
+ drivers/mfd/Kconfig                        |  10 +
+ drivers/mfd/Makefile                       |   1 +
+ drivers/mfd/cros_ec.c                      |  19 +-
+ drivers/mfd/cros_ec_lpc.c                  | 305 ++++++++++++++++++++++++
+ drivers/platform/chrome/Kconfig            |  14 +-
+ drivers/platform/chrome/Makefile           |   2 +
+ drivers/platform/chrome/cros_ec_dev.c      | 274 +++++++++++++++++++++
+ drivers/platform/chrome/cros_ec_dev.h      |  53 +++++
+ drivers/platform/chrome/cros_ec_lightbar.c | 367 +++++++++++++++++++++++++++++
+ drivers/platform/chrome/cros_ec_sysfs.c    | 271 +++++++++++++++++++++
+ include/linux/mfd/cros_ec.h                |  23 +-
+ 14 files changed, 1342 insertions(+), 62 deletions(-)
+ create mode 100644 drivers/mfd/cros_ec_lpc.c
+ create mode 100644 drivers/platform/chrome/cros_ec_dev.c
+ create mode 100644 drivers/platform/chrome/cros_ec_dev.h
+ create mode 100644 drivers/platform/chrome/cros_ec_lightbar.c
+ create mode 100644 drivers/platform/chrome/cros_ec_sysfs.c
 
---===============0292384619==--
+Patch #1 modified the struct cros_ec_command structure so it can be used
+as an ioctl argument and be 64 and 32 bit safe and patch #2 adds fields
+to the struct cros_ec_device that will be needed by the EC chardev driver.
+
+Patch #3 adds support for the EC LPC interface used on x86 Chromebooks.
+
+Patch #4 adds the ChromeOS chardev driver and patch #5 instantiates it
+from the mfd cros_ec driver.
+
+Patch #6 exposes sysfs attributes that can be used by user space programs
+to get information and control the ChromeOS EC.
+
+Patch #7 exposes sysfs attributes that are used to control the lightbar
+RGB LEDs found on the Pixel Chromebook.
+
+The patches must be applied together and in that order due dependencies,
+probably through the mfd tree.
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2014/11/17/429
+[1]: git://git.collabora.co.uk/git/user/javier/ec.git mainline-ioctl
