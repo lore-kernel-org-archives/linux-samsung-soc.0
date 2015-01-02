@@ -1,132 +1,102 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: [PATCH v10 2/8] ARM: l2c: Refactor the driver to use commit-like
- interface
-Date: Fri, 2 Jan 2015 11:57:17 -0600
-Message-ID: <54A6DBFD.1040900@ti.com>
-References: <1419331716-8972-1-git-send-email-m.szyprowski@samsung.com> <1419331716-8972-3-git-send-email-m.szyprowski@samsung.com> <54A19C17.1020909@ti.com> <54A65CEA.9060202@gmail.com>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v2 08/17] thermal: exynos: dts: Add default definition of
+ the TMU sensor parameter
+Date: Fri, 2 Jan 2015 14:11:41 -0400
+Message-ID: <20150102181139.GA12130@developer>
+References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
+ <1418213396-743-1-git-send-email-l.majewski@samsung.com>
+ <1418213396-743-9-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <54A65CEA.9060202@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, linus.walleij@linaro.org, tony@atomide.com, drake@endlessm.com, loeliger@gmail.com, Mark Rutland <mark.rutland@arm.com>, khilman@linaro.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="DocE+STaALJfprDB"
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1418213396-743-9-git-send-email-l.majewski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 01/02/2015 02:55 AM, Tomasz Figa wrote:
-> On 30.12.2014 03:23, Nishanth Menon wrote:
->> On 12/23/2014 04:48 AM, Marek Szyprowski wrote:
->>
->>> -static void l2c310_resume(void)
->>> +static void l2c310_configure(void __iomem *base)
->>>   {
->>> -	void __iomem *base = l2x0_base;
->>> +	unsigned revision;
->>>
->>> -	if (!(readl_relaxed(base + L2X0_CTRL) & L2X0_CTRL_EN)) {
->>> -		unsigned revision;
->>> -
->>> -		/* restore pl310 setup */
->>> -		writel_relaxed(l2x0_saved_regs.tag_latency,
->>> -			       base + L310_TAG_LATENCY_CTRL);
->>> -		writel_relaxed(l2x0_saved_regs.data_latency,
->>> -			       base + L310_DATA_LATENCY_CTRL);
->>> -		writel_relaxed(l2x0_saved_regs.filter_end,
->>> -			       base + L310_ADDR_FILTER_END);
->>> -		writel_relaxed(l2x0_saved_regs.filter_start,
->>> -			       base + L310_ADDR_FILTER_START);
->>> -
->>> -		revision = readl_relaxed(base + L2X0_CACHE_ID) &
->>> -				L2X0_CACHE_ID_RTL_MASK;
->>> -
->>> -		if (revision >= L310_CACHE_ID_RTL_R2P0)
->>> -			l2c_write_sec(l2x0_saved_regs.prefetch_ctrl, base,
->>> -				      L310_PREFETCH_CTRL);
->>> -		if (revision >= L310_CACHE_ID_RTL_R3P0)
->>> -			l2c_write_sec(l2x0_saved_regs.pwr_ctrl, base,
->>> -				      L310_POWER_CTRL);
->>> -
->>> -		l2c_enable(base, l2x0_saved_regs.aux_ctrl, 8);
->>> -
->>> -		/* Re-enable full-line-of-zeros for Cortex-A9 */
->>> -		if (l2x0_saved_regs.aux_ctrl & L310_AUX_CTRL_FULL_LINE_ZERO)
->>> -			set_auxcr(get_auxcr() | BIT(3) | BIT(2) | BIT(1));
->>> -	}
->>> +	/* restore pl310 setup */
->>> +	writel_relaxed(l2x0_saved_regs.tag_latency,
->>> +		       base + L310_TAG_LATENCY_CTRL);
->>> +	writel_relaxed(l2x0_saved_regs.data_latency,
->>> +		       base + L310_DATA_LATENCY_CTRL);
->>> +	writel_relaxed(l2x0_saved_regs.filter_end,
->>> +		       base + L310_ADDR_FILTER_END);
->>> +	writel_relaxed(l2x0_saved_regs.filter_start,
->>> +		       base + L310_ADDR_FILTER_START);
->>> +
->>
->> ^^ The above change broke AM437xx. Looks like the change causes the
->> following behavior difference on AM437x. For some reason, touching any
->> of the above 4 registers(even with the values read from the same
->> registers) causes AM437x to go beserk. Comment the 4 writes and we
->> reach shell. looks like l2c310_resume is not invoked prior to this
->> series. :(.. now that we reuse that logic to actually do programming,
->> we start to see the problem.
-> 
-> OK, I probably have answer for this. Apparently all four register above 
-> cannot be written in non-secure mode and they should go through 
-> l2c_write_sec(). More on this can be found in CoreLink Level 2 Cache 
-> Controller L2C-310 Technical Reference Manual, 3.2. Register summary, 
-> table 3.1. I have checked the TRM for r3p3, but I guess this should be 
-> uniform for all revisions.
 
-Yep, you seemed to have caught the issue correctly.
+--DocE+STaALJfprDB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Why this worked before? The registers were not written unless respective 
-> properties in DT were present and OMAP do not have them in DT. Current 
-> code always writes them, which should not really matter if the code is 
-> correct. (But it isn't - writel_relaxed() can't be used directly for 
-> those registers.)
-> 
-> Could you check if replacing those four writel_relaxed() with 
-> l2c_write_sec() does the thing?
+Lukasz,
 
-Considering that
-https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/arch/arm/mach-omap2/omap4-common.c#n169
-has no implementation of DATA,TAG_LATENCY, FILTER_*
-I did a few patches for those - separate from this series and posted
-(v2 of the series):
-https://patchwork.kernel.org/patch/5560231/
-https://patchwork.kernel.org/patch/5560211/
+On Wed, Dec 10, 2014 at 01:09:47PM +0100, Lukasz Majewski wrote:
+> Exynos 4 and 5 family of SoCs uses almost identical TMU sensor to measure=
+ the
+> on chip temperature. For this reason it is possible to group TMU configur=
+ation
+> parameters in one dts file.
+>=20
+> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> ---
+> Changes for v2:
+> - None
+> ---
+>  arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi | 24 +++++++++++++++++=
+++++++
+>  1 file changed, 24 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
+>=20
+> diff --git a/arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi b/arch/arm=
+/boot/dts/exynos4412-tmu-sensor-conf.dtsi
+> new file mode 100644
+> index 0000000..ee6d8bb
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi
+> @@ -0,0 +1,24 @@
+> +/*
+> + * Device tree sources for Exynos4412 TMU sensor configuration
+> + *
+> + * Copyright (c) 2014 Lukasz Majewski <l.majewski@samsung.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + */
+> +
+> +#include <dt-bindings/thermal/thermal_exynos.h>
+> +
+> +#thermal-sensor-cells =3D <0>;
+> +gain =3D <8>;
+> +reference_voltage =3D <16>;
+> +noise_cancel_mode =3D <4>;
+> +efuse_value =3D <55>;
+> +min_efuse_value =3D <40>;
+> +max_efuse_value =3D <100>;
+> +first_point_trim =3D <25>;
+> +second_point_trim =3D <85>;
+> +default_temp_offset =3D <50>;
+> +cal_type =3D <TYPE_ONE_POINT_TRIMMING>;
 
-Anyways, l2c_write_sec will refuse to write if the read value is same
-as requested value - that is exactly what we want here. So, for
-testing, I hacked it and remove the check to force the writes
-(http://slexy.org/view/s2p8c3gl32)
+Are the above properties specific to exynos? For specific DT entries,
+they need to be marked with a prefix. Please read the 'Device Specific
+Data' section of Device tree Documentation [1].
 
-The replaced raw_writels with secure writes(fix needed for this
-patch): http://slexy.org/view/s21PbM73tt
+[1] - http://devicetree.org/Device_Tree_Usage
+> --=20
+> 2.0.0.rc2
+>=20
 
-(with secure writes, my patches and force write hack applied):
- 1: am437x-sk: BOOT: PASS: http://slexy.org/raw/s2BxqX5NOz
- 2: am43xx-epos: BOOT: PASS: http://slexy.org/raw/s2VkKYuYed
- 3: am43xx-gpevm: BOOT: PASS: http://slexy.org/raw/s2kO95WSuY
- 4: pandaboard-es: BOOT: PASS: http://slexy.org/raw/s21sx5gmUl
- 5: pandaboard-vanilla: BOOT: PASS: http://slexy.org/raw/s21lpUJK6r
- 6: sdp4430: BOOT: PASS: http://slexy.org/raw/s21UVKHle5
+--DocE+STaALJfprDB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-(with just secure writes and none of my patches or hacks applied):
- 1: am437x-sk: BOOT: PASS: http://slexy.org/raw/s21UxoDdo5
- 2: am43xx-epos: BOOT: PASS: http://slexy.org/raw/s2ECrLZ1FH
- 3: am43xx-gpevm: BOOT: PASS: http://slexy.org/raw/s2CowTVA9P
- 4: pandaboard-es: BOOT: PASS: http://slexy.org/raw/s205MVIWf0
- 5: pandaboard-vanilla: BOOT: PASS: http://slexy.org/raw/s29oJ66Rqs
- 6: sdp4430: BOOT: PASS: http://slexy.org/raw/s20jLzW2cX
+iQEcBAEBAgAGBQJUpt9SAAoJEMLUO4d9pOJWaAIH/1B3HG+gO7r+DleSD+WAnUMb
+dsnWDIBBF8hNDvIEqLk+QsI+RQj3qNQa9WnIZZASdGWCgFdnc1rLWV9NGjUHYFDf
+CoD1D1sFIeEZXkS2Nbd3+/1RabuELOZLSsTIErT8Zo3YO3cDEm8Jv6m+6VuuC2Fs
+XPktuJTRul+PM4P+dUlJ3Z/EBM8SywEzZZriB0qcMAI6CPd7b1ZLQMMUiUJSyJRX
+lRcX4vQxSVqpB0dtyTq3bqEVEJddYjduTBFMgMhbtsZ62rp0kU1vGDt5sdDTgvcd
+BsFSEOjWq1oXS136SCokB1TsLVwEpkaySGDdiFxny/UQW9LYqs4JAvtA10Rp2dU=
+=fggP
+-----END PGP SIGNATURE-----
 
-
-Awesome :). Thanks for catching this.
-
--- 
-Regards,
-Nishanth Menon
+--DocE+STaALJfprDB--
