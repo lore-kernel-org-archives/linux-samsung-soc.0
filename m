@@ -1,47 +1,103 @@
-From: Javier Martinez Canillas <javier@dowhile0.org>
-Subject: Re: 3.19-rc1: peach*: display not working (missing patches)
-Date: Fri, 2 Jan 2015 11:03:53 +0100
-Message-ID: <CABxcv=mJ=pGdU700PWF2B4iCjLzG7SGo-6XWFFs814n4-v9PuA@mail.gmail.com>
-References: <20141223101616.GA6238@peachpi>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2 2/7] ARM: Exynos: add support for sub-power domains
+Date: Fri, 02 Jan 2015 11:20:06 +0100
+Message-ID: <54A670D6.3060100@samsung.com>
+References: <1416814256-24288-3-git-send-email-a.hajda@samsung.com>
+ <1417610024-29748-1-git-send-email-m.szyprowski@samsung.com>
+ <CADGdYn5N-hw7P0+0Z4hZk33NeV30UR+h8joHfC1qSo_mRfzofg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f51.google.com ([74.125.82.51]:37309 "EHLO
-	mail-wg0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750727AbbABKDy (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:21222 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750737AbbABKUL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Jan 2015 05:03:54 -0500
-Received: by mail-wg0-f51.google.com with SMTP id x12so23938280wgg.10
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 02 Jan 2015 02:03:53 -0800 (PST)
-In-Reply-To: <20141223101616.GA6238@peachpi>
+	Fri, 2 Jan 2015 05:20:11 -0500
+In-reply-to: <CADGdYn5N-hw7P0+0Z4hZk33NeV30UR+h8joHfC1qSo_mRfzofg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Paolo Pisati <p.pisati@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-samsung <linux-samsung-soc@vger.kernel.org>
+To: amit daniel kachhap <amit.daniel@samsung.com>, Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, LAK <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>
 
-[adding Kukjin and Vivek as cc]
+Hello,
 
-Hello Paolo,
-
-On Tue, Dec 23, 2014 at 11:16 AM, Paolo Pisati <p.pisati@gmail.com> wrote:
-> Hi,
+On 2014-12-04 04:45, amit daniel kachhap wrote:
+> On Wed, Dec 3, 2014 at 6:03 PM, Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> This patch adds support for making one power domain a sub-domain of
+>> other domain. This is useful for modeling power dependences for devices
+>> like TV Mixer or Camera ISP, which needs to have more than one power
+>> domain enabled to be operational.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>   Documentation/devicetree/bindings/arm/exynos/power_domain.txt |  2 ++
+>>   arch/arm/mach-exynos/pm_domains.c                             | 11 ++++++++++-
+>>   2 files changed, 12 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+>> index abde1ea8a119..b884358ebb1a 100644
+>> --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+>> +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+>> @@ -22,6 +22,8 @@ Optional Properties:
+>>          - pclkN, clkN: Pairs of parent of input clock and input clock to the
+>>                  devices in this power domain. Maximum of 4 pairs (N = 0 to 3)
+>>                  are supported currently.
+>> +- samsung,power-domain: phandle to a master power domain that the given domain
+>> +                      is a part of
+>>
+>>   Node of a device using power domains must have a samsung,power-domain property
+>>   defined with a phandle to respective power domain.
+>> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+>> index 20f267121b3e..fa9a47ddad81 100644
+>> --- a/arch/arm/mach-exynos/pm_domains.c
+>> +++ b/arch/arm/mach-exynos/pm_domains.c
+>> @@ -108,7 +108,7 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
+>>   static __init int exynos4_pm_init_power_domain(void)
+>>   {
+>>          struct platform_device *pdev;
+>> -       struct device_node *np;
+>> +       struct device_node *np, *master_np;
+>>
+>>          for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
+>>                  struct exynos_pm_domain *pd;
+>> @@ -159,6 +159,15 @@ no_clk:
+>>
+>>                  pm_genpd_init(&pd->pd, NULL, !on);
+>>                  of_genpd_add_provider_simple(np, &pd->pd);
+>> +
+>> +               /* make master and slave hierarchy */
+>> +               master_np = of_parse_phandle(np, "samsung,power-domain", 0);
+>> +               if (!master_np)
+>> +                       master_np = of_parse_phandle(np, "power-domains", 0);
+>> +               if (master_np) {
+>> +                       pm_genpd_add_subdomain_names(master_np->name, np->name);
+>> +                       of_node_put(master_np);
+>> +               }
+>>          }
+> Hi Marek,
 >
-> 3.19-rc1 still misses these two patches:
->
-> 156823e arm: dts: Exynos5: Use pmu_system_controller phandle for dp phy
-> 03c16e7 ARM: exynos_defconfig: Enable options for display panel support156823e
->
-> and without them, the display doesn't turn on on my peachpi: can we have them
-> queued for rc2?
+> In the my patch series posted earlier i added this feature in a
+> slightly different way. (https://lkml.org/lkml/2014/11/24/320)
+> Parent PD's are not added in the same loop but in the second loop.
+> This will make sure that the parents PD are registered before the
+> child PD's and we can get away from the assumption of child/parent
+> PD's position in the Device Tree. This is a still a work in progress.
+> Also posted a patch earlier regarding this,
+> http://www.spinics.net/lists/linux-samsung-soc/msg39836.html.
 
-Yes, Vivek re-posted his dp phy patch a couple of times and I pinged
-Kukjin several times about this both during the 3.18 -rc cycle (since
-this also affected 3.18 where display is not working) and during the
-3.19 merge window but unfortunately it was not picked yet...
+Right, your approach seems to be more error prone. Do you plan to resend 
+your
+patch with the parent domain phandle renamed to generic 'power-domains' 
+property,
+like Geert suggested?
 
-I hope he can merge those patches as 3.19 fixes during the -rc cycle
-to avoid having another kernel release with a non-working display on
-Exynos5 boards.
+I would like to send Exynos4 HDMI patches based on top of your work and 
+have them
+finally merged (they are waiting since v3.17...)
 
-Best regards,
-Javier
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
