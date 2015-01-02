@@ -1,31 +1,89 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: [PATCH v10 2/8] ARM: l2c: Refactor the driver to use commit-like
- interface
-Date: Fri, 2 Jan 2015 09:38:45 -0600
-Message-ID: <54A6BB85.70805@ti.com>
-References: <1419331716-8972-1-git-send-email-m.szyprowski@samsung.com>	<1419331716-8972-3-git-send-email-m.szyprowski@samsung.com>	<54A19C17.1020909@ti.com> <CA+Ln22G3kVA_-tsjAxbe2rqSHeLtdU2X_EhNL0uW3cUCgaWLgg@mail.gmail.com> <54A2BBDC.1020900@ti.com> <54A66143.2080506@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <54A66143.2080506@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Laura Abbott <lauraa@codeaurora.org>, Linus Walleij <linus.walleij@linaro.org>, Tony Lindgren <tony@atomide.com>, Daniel Drake <drake@endlessm.com>, Jon Loeliger <loeliger@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Kevin Hilman <khilman@linaro.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: [PATCH RESEND] ARM: exynos_defconfig: Enable options for display panel support
+Date: Fri,  2 Jan 2015 17:11:29 +0100
+Message-ID: <1420215089-2093-1-git-send-email-javier.martinez@collabora.co.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:60206 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751177AbbABQLs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 2 Jan 2015 11:11:48 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Doug Anderson <dianders@chromium.org>, Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-On 01/02/2015 03:13 AM, Tomasz Figa wrote:
+Many Exynos devices have a display panel. Most of them just have
+a simple panel while others have more complex configurations that
+requires an embedded DisplayPort (eDP) to LVDS bridges.
 
-> However I'm not sure about your concern about using l2x0_data before 
-> kmemdup(). I don't see any code potentially doing this.
+This patch enables the following features to be built in the kernel
+image to support both setups:
 
-It is not terribly important, but anyways [1] is what I had in mind..
+- Direct Rendering Manager (DRM)
+- DRM bridge registration and lookup framework
+- Parade ps8622/ps8625 eDP/LVDS bridge
+- NXP ptn3460 eDP/LVDS bridge
+- Exynos Fully Interactive Mobile Display controller (FIMD)
+- Panel registration and lookup framework
+- Simple panels
+- Backlight & LCD device support
 
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Tested-by: Kevin Hilman <khilman@linaro.org>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
 
+Hello Kukjin,
 
-[1]
-https://github.com/nmenon/linux-2.6-playground/commit/40f65e4707856f7b35872cf2225bf8beaf43552c#diff-56925866b8b499d75763bf5a1d7f1666L883
+You dropped this patch since exynos drm was causing boot hangs on some
+platforms but the fix for that issue is already in linux-next (commit:
+f1e9203 clk: samsung: Fix Exynos 5420 pinctrl setup and clock disable
+failure due to domain being gated) so I think it makes sense to enable
+the display options again.
 
+NOTE: Display panel is still not working since patch "arm: dts: Exynos5:
+Use pmu_system_controller phandle for dp phy" is needed [0] but I think
+we should enable display options to catch the regressions easier.
+
+Best regards,
+Javier
+
+[0]: https://lkml.org/lkml/2014/11/24/10
+
+ arch/arm/configs/exynos_defconfig | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 22beed3..27cdd52 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -111,11 +111,26 @@ CONFIG_REGULATOR_S2MPA01=y
+ CONFIG_REGULATOR_S2MPS11=y
+ CONFIG_REGULATOR_S5M8767=y
+ CONFIG_REGULATOR_TPS65090=y
++CONFIG_DRM=y
++CONFIG_DRM_BRIDGE=y
++CONFIG_DRM_PTN3460=y
++CONFIG_DRM_PS8622=y
++CONFIG_DRM_EXYNOS=y
++CONFIG_DRM_EXYNOS_FIMD=y
++CONFIG_DRM_EXYNOS_DP=y
++CONFIG_DRM_PANEL=y
++CONFIG_DRM_PANEL_SIMPLE=y
+ CONFIG_FB=y
+ CONFIG_FB_MODE_HELPERS=y
+ CONFIG_FB_SIMPLE=y
+ CONFIG_EXYNOS_VIDEO=y
+ CONFIG_EXYNOS_MIPI_DSI=y
++CONFIG_BACKLIGHT_LCD_SUPPORT=y
++CONFIG_LCD_CLASS_DEVICE=y
++CONFIG_LCD_PLATFORM=y
++CONFIG_BACKLIGHT_CLASS_DEVICE=y
++CONFIG_BACKLIGHT_GENERIC=y
++CONFIG_BACKLIGHT_PWM=y
+ CONFIG_FRAMEBUFFER_CONSOLE=y
+ CONFIG_FONTS=y
+ CONFIG_FONT_7x14=y
 -- 
-Regards,
-Nishanth Menon
+2.1.3
