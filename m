@@ -1,89 +1,118 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH RESEND] ARM: exynos_defconfig: Enable options for display panel support
-Date: Fri,  2 Jan 2015 17:11:29 +0100
-Message-ID: <1420215089-2093-1-git-send-email-javier.martinez@collabora.co.uk>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:60206 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751177AbbABQLs (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Jan 2015 11:11:48 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH v3 1/4] mmc: dw_mmc: exynos: incorporate ciu_div into
+ timing property
+Date: Fri, 2 Jan 2015 08:58:08 -0800
+Message-ID: <CAD=FV=WXzPt=VKxB=KHK+hC=RN6WbmdnQcLUT4zFQ0Ud7BFanQ@mail.gmail.com>
+References: <1420008185-24758-1-git-send-email-alim.akhtar@samsung.com>
+	<1420008185-24758-2-git-send-email-alim.akhtar@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1420008185-24758-2-git-send-email-alim.akhtar@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, Alim Akhtar <alim.akhtar@gmail.com>, kgene@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>, Alexandru Stan <amstan@google.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Many Exynos devices have a display panel. Most of them just have
-a simple panel while others have more complex configurations that
-requires an embedded DisplayPort (eDP) to LVDS bridges.
+Alim,
 
-This patch enables the following features to be built in the kernel
-image to support both setups:
+On Tue, Dec 30, 2014 at 10:43 PM, Alim Akhtar <alim.akhtar@samsung.com> wrote:
+> From: Seungwon Jeon <tgih.jun@samsung.com>
+>
+> ciu_div may not be common value for all speed mode.
+> So, it needs to be attached to CLKSEL timing.
 
-- Direct Rendering Manager (DRM)
-- DRM bridge registration and lookup framework
-- Parade ps8622/ps8625 eDP/LVDS bridge
-- NXP ptn3460 eDP/LVDS bridge
-- Exynos Fully Interactive Mobile Display controller (FIMD)
-- Panel registration and lookup framework
-- Simple panels
-- Backlight & LCD device support
+The more time I've spent looking at all of this stuff the less I like
+the exynos bindings.  Personally I'd prefer to see the exynos bindings
+fixed rather than go further down the path of these bindings.
 
-Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Tested-by: Kevin Hilman <khilman@linaro.org>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
+Specifically:
 
-Hello Kukjin,
+1. The "drive" really should be specified quite differently.
+According to the DesignWare docs, the "drive" phase is there to meet
+hold time requirements.  Hold time requirements are different for
+different SD/MMC modes and are specified in nanoseconds (SDR104 is
+.8ns, ID mode is 5.0ns).  There is a per-SoC parameter needed that
+indicates some built-in delay (in nanoseconds) and that shouldn't
+change based on clock speed or card mode.
 
-You dropped this patch since exynos drm was causing boot hangs on some
-platforms but the fix for that issue is already in linux-next (commit:
-f1e9203 clk: samsung: Fix Exynos 5420 pinctrl setup and clock disable
-failure due to domain being gated) so I think it makes sense to enable
-the display options again.
+2. The ciu_div really ought to be automatic.  Start out at a divide by
+4.  If you end up with both drive and sample at phases of 0, 90, 180,
+270 then you can change to divide by 2.
 
-NOTE: Display panel is still not working since patch "arm: dts: Exynos5:
-Use pmu_system_controller phandle for dp phy" is needed [0] but I think
-we should enable display options to catch the regressions easier.
+I still haven't looked at every last detail of these delays though, so
+please correct me if I'm wrong.  I've added Alex who may have looked
+at this more than I have.
 
-Best regards,
-Javier
 
-[0]: https://lkml.org/lkml/2014/11/24/10
+With all of the above, there's also the fact that (I think) we should
+be moving towards working with the clock phase API since all of your
+values are effectively specifying clock phases, just in a very arcane
+way.
 
- arch/arm/configs/exynos_defconfig | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
 
-diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
-index 22beed3..27cdd52 100644
---- a/arch/arm/configs/exynos_defconfig
-+++ b/arch/arm/configs/exynos_defconfig
-@@ -111,11 +111,26 @@ CONFIG_REGULATOR_S2MPA01=y
- CONFIG_REGULATOR_S2MPS11=y
- CONFIG_REGULATOR_S5M8767=y
- CONFIG_REGULATOR_TPS65090=y
-+CONFIG_DRM=y
-+CONFIG_DRM_BRIDGE=y
-+CONFIG_DRM_PTN3460=y
-+CONFIG_DRM_PS8622=y
-+CONFIG_DRM_EXYNOS=y
-+CONFIG_DRM_EXYNOS_FIMD=y
-+CONFIG_DRM_EXYNOS_DP=y
-+CONFIG_DRM_PANEL=y
-+CONFIG_DRM_PANEL_SIMPLE=y
- CONFIG_FB=y
- CONFIG_FB_MODE_HELPERS=y
- CONFIG_FB_SIMPLE=y
- CONFIG_EXYNOS_VIDEO=y
- CONFIG_EXYNOS_MIPI_DSI=y
-+CONFIG_BACKLIGHT_LCD_SUPPORT=y
-+CONFIG_LCD_CLASS_DEVICE=y
-+CONFIG_LCD_PLATFORM=y
-+CONFIG_BACKLIGHT_CLASS_DEVICE=y
-+CONFIG_BACKLIGHT_GENERIC=y
-+CONFIG_BACKLIGHT_PWM=y
- CONFIG_FRAMEBUFFER_CONSOLE=y
- CONFIG_FONTS=y
- CONFIG_FONT_7x14=y
--- 
-2.1.3
+> This also introduce a new compatibale 'dw-mshc-hs200-timing'
+> for selecting hs200 timing value
+
+As per above, I don't think this is needed.
+
+
+> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   15 ++--
+>  drivers/mmc/host/dw_mmc-exynos.c                   |   81 ++++++++++++++------
+>  drivers/mmc/host/dw_mmc-exynos.h                   |    1 +
+>  3 files changed, 67 insertions(+), 30 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> index ee4fc05..06455de 100644
+> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> @@ -23,10 +23,6 @@ Required Properties:
+>         - "samsung,exynos7-dw-mshc-smu": for controllers with Samsung Exynos7
+>           specific extensions having an SMU.
+>
+> -* samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
+> -  unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
+> -  ignored for Exynos4 SoC's. The valid range of divider value is 0 to 7.
+> -
+>  * samsung,dw-mshc-sdr-timing: Specifies the value of CIU clock phase shift value
+>    in transmit mode and CIU clock phase shift value in receive mode for single
+>    data rate mode operation. Refer notes below for the order of the cells and the
+> @@ -37,11 +33,16 @@ Required Properties:
+>    data rate mode operation. Refer notes below for the order of the cells and the
+>    valid values.
+>
+> +* samsung,dw-mshc-hs200-timing: Similar with dw-mshc-sdr-timing.
+> +
+>    Notes for the sdr-timing and ddr-timing values:
+>
+>      The order of the cells should be
+>        - First Cell: CIU clock phase shift value for tx mode.
+>        - Second Cell: CIU clock phase shift value for rx mode.
+> +      - Thrid Cell: Specifies the divider value for the card interface
+> +        unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
+> +        ignored for Exynos4 SoC's. The valid range of divider value is 0 to 7.
+>
+>      Valid values for SDR and DDR CIU clock timing for Exynos5250:
+>        - valid value for tx phase shift and rx phase shift is 0 to 7.
+> @@ -79,8 +80,8 @@ Example:
+>                 broken-cd;
+>                 fifo-depth = <0x80>;
+>                 card-detect-delay = <200>;
+> -               samsung,dw-mshc-ciu-div = <3>;
+> -               samsung,dw-mshc-sdr-timing = <2 3>;
+> -               samsung,dw-mshc-ddr-timing = <1 2>;
+> +               samsung,dw-mshc-sdr-timing = <2 3 3>;
+> +               samsung,dw-mshc-ddr-timing = <1 2 3>;
+> +               samsung,dw-mshc-hs200-timing = <0 2 3>;
+
+You are breaking backward compatibility here.  If your change is
+merged then all old boards will instantly break.  Since the "dts" and
+code changes will likely be merged through different trees you'll end
+up with a bunch of broken trees until everything is merged together.
+Even if you don't subscribe to the stable bindings theory this is not
+acceptable.
+
+-Doug
