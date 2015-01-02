@@ -1,118 +1,132 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v3 1/4] mmc: dw_mmc: exynos: incorporate ciu_div into
- timing property
-Date: Fri, 2 Jan 2015 08:58:08 -0800
-Message-ID: <CAD=FV=WXzPt=VKxB=KHK+hC=RN6WbmdnQcLUT4zFQ0Ud7BFanQ@mail.gmail.com>
-References: <1420008185-24758-1-git-send-email-alim.akhtar@samsung.com>
-	<1420008185-24758-2-git-send-email-alim.akhtar@samsung.com>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: [PATCH v10 2/8] ARM: l2c: Refactor the driver to use commit-like
+ interface
+Date: Fri, 2 Jan 2015 11:57:17 -0600
+Message-ID: <54A6DBFD.1040900@ti.com>
+References: <1419331716-8972-1-git-send-email-m.szyprowski@samsung.com> <1419331716-8972-3-git-send-email-m.szyprowski@samsung.com> <54A19C17.1020909@ti.com> <54A65CEA.9060202@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1420008185-24758-2-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, Alim Akhtar <alim.akhtar@gmail.com>, kgene@kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>, Alexandru Stan <amstan@google.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <54A65CEA.9060202@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomasz Figa <tomasz.figa@gmail.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, linus.walleij@linaro.org, tony@atomide.com, drake@endlessm.com, loeliger@gmail.com, Mark Rutland <mark.rutland@arm.com>, khilman@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Alim,
+On 01/02/2015 02:55 AM, Tomasz Figa wrote:
+> On 30.12.2014 03:23, Nishanth Menon wrote:
+>> On 12/23/2014 04:48 AM, Marek Szyprowski wrote:
+>>
+>>> -static void l2c310_resume(void)
+>>> +static void l2c310_configure(void __iomem *base)
+>>>   {
+>>> -	void __iomem *base = l2x0_base;
+>>> +	unsigned revision;
+>>>
+>>> -	if (!(readl_relaxed(base + L2X0_CTRL) & L2X0_CTRL_EN)) {
+>>> -		unsigned revision;
+>>> -
+>>> -		/* restore pl310 setup */
+>>> -		writel_relaxed(l2x0_saved_regs.tag_latency,
+>>> -			       base + L310_TAG_LATENCY_CTRL);
+>>> -		writel_relaxed(l2x0_saved_regs.data_latency,
+>>> -			       base + L310_DATA_LATENCY_CTRL);
+>>> -		writel_relaxed(l2x0_saved_regs.filter_end,
+>>> -			       base + L310_ADDR_FILTER_END);
+>>> -		writel_relaxed(l2x0_saved_regs.filter_start,
+>>> -			       base + L310_ADDR_FILTER_START);
+>>> -
+>>> -		revision = readl_relaxed(base + L2X0_CACHE_ID) &
+>>> -				L2X0_CACHE_ID_RTL_MASK;
+>>> -
+>>> -		if (revision >= L310_CACHE_ID_RTL_R2P0)
+>>> -			l2c_write_sec(l2x0_saved_regs.prefetch_ctrl, base,
+>>> -				      L310_PREFETCH_CTRL);
+>>> -		if (revision >= L310_CACHE_ID_RTL_R3P0)
+>>> -			l2c_write_sec(l2x0_saved_regs.pwr_ctrl, base,
+>>> -				      L310_POWER_CTRL);
+>>> -
+>>> -		l2c_enable(base, l2x0_saved_regs.aux_ctrl, 8);
+>>> -
+>>> -		/* Re-enable full-line-of-zeros for Cortex-A9 */
+>>> -		if (l2x0_saved_regs.aux_ctrl & L310_AUX_CTRL_FULL_LINE_ZERO)
+>>> -			set_auxcr(get_auxcr() | BIT(3) | BIT(2) | BIT(1));
+>>> -	}
+>>> +	/* restore pl310 setup */
+>>> +	writel_relaxed(l2x0_saved_regs.tag_latency,
+>>> +		       base + L310_TAG_LATENCY_CTRL);
+>>> +	writel_relaxed(l2x0_saved_regs.data_latency,
+>>> +		       base + L310_DATA_LATENCY_CTRL);
+>>> +	writel_relaxed(l2x0_saved_regs.filter_end,
+>>> +		       base + L310_ADDR_FILTER_END);
+>>> +	writel_relaxed(l2x0_saved_regs.filter_start,
+>>> +		       base + L310_ADDR_FILTER_START);
+>>> +
+>>
+>> ^^ The above change broke AM437xx. Looks like the change causes the
+>> following behavior difference on AM437x. For some reason, touching any
+>> of the above 4 registers(even with the values read from the same
+>> registers) causes AM437x to go beserk. Comment the 4 writes and we
+>> reach shell. looks like l2c310_resume is not invoked prior to this
+>> series. :(.. now that we reuse that logic to actually do programming,
+>> we start to see the problem.
+> 
+> OK, I probably have answer for this. Apparently all four register above 
+> cannot be written in non-secure mode and they should go through 
+> l2c_write_sec(). More on this can be found in CoreLink Level 2 Cache 
+> Controller L2C-310 Technical Reference Manual, 3.2. Register summary, 
+> table 3.1. I have checked the TRM for r3p3, but I guess this should be 
+> uniform for all revisions.
 
-On Tue, Dec 30, 2014 at 10:43 PM, Alim Akhtar <alim.akhtar@samsung.com> wrote:
-> From: Seungwon Jeon <tgih.jun@samsung.com>
->
-> ciu_div may not be common value for all speed mode.
-> So, it needs to be attached to CLKSEL timing.
+Yep, you seemed to have caught the issue correctly.
 
-The more time I've spent looking at all of this stuff the less I like
-the exynos bindings.  Personally I'd prefer to see the exynos bindings
-fixed rather than go further down the path of these bindings.
+> 
+> Why this worked before? The registers were not written unless respective 
+> properties in DT were present and OMAP do not have them in DT. Current 
+> code always writes them, which should not really matter if the code is 
+> correct. (But it isn't - writel_relaxed() can't be used directly for 
+> those registers.)
+> 
+> Could you check if replacing those four writel_relaxed() with 
+> l2c_write_sec() does the thing?
 
-Specifically:
+Considering that
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/arch/arm/mach-omap2/omap4-common.c#n169
+has no implementation of DATA,TAG_LATENCY, FILTER_*
+I did a few patches for those - separate from this series and posted
+(v2 of the series):
+https://patchwork.kernel.org/patch/5560231/
+https://patchwork.kernel.org/patch/5560211/
 
-1. The "drive" really should be specified quite differently.
-According to the DesignWare docs, the "drive" phase is there to meet
-hold time requirements.  Hold time requirements are different for
-different SD/MMC modes and are specified in nanoseconds (SDR104 is
-.8ns, ID mode is 5.0ns).  There is a per-SoC parameter needed that
-indicates some built-in delay (in nanoseconds) and that shouldn't
-change based on clock speed or card mode.
+Anyways, l2c_write_sec will refuse to write if the read value is same
+as requested value - that is exactly what we want here. So, for
+testing, I hacked it and remove the check to force the writes
+(http://slexy.org/view/s2p8c3gl32)
 
-2. The ciu_div really ought to be automatic.  Start out at a divide by
-4.  If you end up with both drive and sample at phases of 0, 90, 180,
-270 then you can change to divide by 2.
+The replaced raw_writels with secure writes(fix needed for this
+patch): http://slexy.org/view/s21PbM73tt
 
-I still haven't looked at every last detail of these delays though, so
-please correct me if I'm wrong.  I've added Alex who may have looked
-at this more than I have.
-
-
-With all of the above, there's also the fact that (I think) we should
-be moving towards working with the clock phase API since all of your
-values are effectively specifying clock phases, just in a very arcane
-way.
-
-
-> This also introduce a new compatibale 'dw-mshc-hs200-timing'
-> for selecting hs200 timing value
-
-As per above, I don't think this is needed.
+(with secure writes, my patches and force write hack applied):
+ 1: am437x-sk: BOOT: PASS: http://slexy.org/raw/s2BxqX5NOz
+ 2: am43xx-epos: BOOT: PASS: http://slexy.org/raw/s2VkKYuYed
+ 3: am43xx-gpevm: BOOT: PASS: http://slexy.org/raw/s2kO95WSuY
+ 4: pandaboard-es: BOOT: PASS: http://slexy.org/raw/s21sx5gmUl
+ 5: pandaboard-vanilla: BOOT: PASS: http://slexy.org/raw/s21lpUJK6r
+ 6: sdp4430: BOOT: PASS: http://slexy.org/raw/s21UVKHle5
 
 
-> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   15 ++--
->  drivers/mmc/host/dw_mmc-exynos.c                   |   81 ++++++++++++++------
->  drivers/mmc/host/dw_mmc-exynos.h                   |    1 +
->  3 files changed, 67 insertions(+), 30 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> index ee4fc05..06455de 100644
-> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
-> @@ -23,10 +23,6 @@ Required Properties:
->         - "samsung,exynos7-dw-mshc-smu": for controllers with Samsung Exynos7
->           specific extensions having an SMU.
->
-> -* samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
-> -  unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
-> -  ignored for Exynos4 SoC's. The valid range of divider value is 0 to 7.
-> -
->  * samsung,dw-mshc-sdr-timing: Specifies the value of CIU clock phase shift value
->    in transmit mode and CIU clock phase shift value in receive mode for single
->    data rate mode operation. Refer notes below for the order of the cells and the
-> @@ -37,11 +33,16 @@ Required Properties:
->    data rate mode operation. Refer notes below for the order of the cells and the
->    valid values.
->
-> +* samsung,dw-mshc-hs200-timing: Similar with dw-mshc-sdr-timing.
-> +
->    Notes for the sdr-timing and ddr-timing values:
->
->      The order of the cells should be
->        - First Cell: CIU clock phase shift value for tx mode.
->        - Second Cell: CIU clock phase shift value for rx mode.
-> +      - Thrid Cell: Specifies the divider value for the card interface
-> +        unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
-> +        ignored for Exynos4 SoC's. The valid range of divider value is 0 to 7.
->
->      Valid values for SDR and DDR CIU clock timing for Exynos5250:
->        - valid value for tx phase shift and rx phase shift is 0 to 7.
-> @@ -79,8 +80,8 @@ Example:
->                 broken-cd;
->                 fifo-depth = <0x80>;
->                 card-detect-delay = <200>;
-> -               samsung,dw-mshc-ciu-div = <3>;
-> -               samsung,dw-mshc-sdr-timing = <2 3>;
-> -               samsung,dw-mshc-ddr-timing = <1 2>;
-> +               samsung,dw-mshc-sdr-timing = <2 3 3>;
-> +               samsung,dw-mshc-ddr-timing = <1 2 3>;
-> +               samsung,dw-mshc-hs200-timing = <0 2 3>;
+(with just secure writes and none of my patches or hacks applied):
+ 1: am437x-sk: BOOT: PASS: http://slexy.org/raw/s21UxoDdo5
+ 2: am43xx-epos: BOOT: PASS: http://slexy.org/raw/s2ECrLZ1FH
+ 3: am43xx-gpevm: BOOT: PASS: http://slexy.org/raw/s2CowTVA9P
+ 4: pandaboard-es: BOOT: PASS: http://slexy.org/raw/s205MVIWf0
+ 5: pandaboard-vanilla: BOOT: PASS: http://slexy.org/raw/s29oJ66Rqs
+ 6: sdp4430: BOOT: PASS: http://slexy.org/raw/s20jLzW2cX
 
-You are breaking backward compatibility here.  If your change is
-merged then all old boards will instantly break.  Since the "dts" and
-code changes will likely be merged through different trees you'll end
-up with a bunch of broken trees until everything is merged together.
-Even if you don't subscribe to the stable bindings theory this is not
-acceptable.
 
--Doug
+Awesome :). Thanks for catching this.
+
+-- 
+Regards,
+Nishanth Menon
