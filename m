@@ -1,120 +1,77 @@
 From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: [PATCH RESEND v2 0/7] platform/chrome: Add user-space dev inferface support
-Date: Fri,  2 Jan 2015 14:32:45 +0100
-Message-ID: <1420205572-2640-1-git-send-email-javier.martinez@collabora.co.uk>
+Subject: [PATCH RESEND v2 2/7] mfd: cros_ec: Add char dev and virtual dev pointers
+Date: Fri,  2 Jan 2015 14:32:47 +0100
+Message-ID: <1420205572-2640-3-git-send-email-javier.martinez@collabora.co.uk>
+References: <1420205572-2640-1-git-send-email-javier.martinez@collabora.co.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:59993 "EHLO
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:60001 "EHLO
 	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751945AbbABNdR (ORCPT
+	with ESMTP id S1752012AbbABNdT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Jan 2015 08:33:17 -0500
+	Fri, 2 Jan 2015 08:33:19 -0500
+In-Reply-To: <1420205572-2640-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Lee Jones <lee.jones@linaro.org>
 Cc: Olof Johansson <olof@lixom.net>, Doug Anderson <dianders@chromium.org>, Bill Richardson <wfrichar@chromium.org>, Simon Glass <sjg@google.com>, Gwendal Grignou <gwendal@google.com>, Jonathan Corbet <corbet@lwn.net>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Hello,
+The ChromeOS Embedded Controller has to be accessed by applications.
+A virtual character device is used as an interface with user-space.
 
-The mainline ChromeOS Embedded Controller (EC) driver is still missing some
-features that are present in the downstream ChromiumOS tree. These are:
+Extend the struct cros_ec_device with the fields needed by the driver
+of this virtual character device.
 
-  - Low Pin Count (LPC) interface
-  - User-space device interface
-  - Access to vboot context stored on a block device
-  - Access to vboot context stored on EC's nvram
-  - Power Delivery Device
-  - Support for multiple EC in a system
+Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+---
 
-This is a second version of a series that adds support for the first two of
-the missing features: the EC LPC and EC character device interfaces that
-are used by user-space to access the ChromeOS EC. The support patches were
-taken from the downstream ChromiumOS 3.14 tree with the fixes and cleanups
-squashed to have a minimal patch-set.
+Changes since v1: None, new patch.
 
-The version of the ChromeOS EC chardev driver in this series still does not
-reflect the latest one that is in the downstream ChromiumOS 3.14 kernel but
-makes the delta shorter. Following patches will add the remaining missing
-features until both trees are in sync. I preferred to first add the initial
-support and then adding the other features to both maintain the original
-patch history in the downstream kernel and so preserve the patch authorship
-and also make the diff to have a working cros user-space interface smaller.
+ include/linux/mfd/cros_ec.h | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-Version 1 of this series was [0] and added the Chrome EC chardev driver
-and the sysfs interface to drivers/mfd since that is what is done in the
-downstream ChromiumOS kernel but Lee Jones asked to find a better place
-since those are not really multi-function device drivers. So this version
-places them under drivers/platform/chrome since MAINTAINERS says that this
-sub-directory is "CHROME HARDWARE PLATFORM SUPPORT" which seems a good fit.
-
-A big change in this version is that the ioctl API is modified to make it
-64-bit safe and compatible with both 64 and 32 bit user-space binaries.
-The data structures passed as arguments to ioctl commands had pointers fields
-and these have different byte boundaries alignment requirement so the previous
-version had a compat ioctl interface. The feedback was that this had to be
-avoided since this was a new ioctl API so the pointers fields were replaced
-with a set of fixed-size arrays to be used instead. This has the drawback that
-more data could be used and copied between user and kernel space so feedback
-is welcomed if there is a better approach to solve this kind of issues.
-
-The patches were tested on an Exynos5420 Peach Pit Chromebook and (thanks to
-Bill Richardson) on an x86 Pixel Chromebook using an ectool [1] modified to
-use the new ioctl API. The LPC interface driver and the lightbar sysfs driver
-were also tested on the Pixel Chromebook.
-
-The series is composed of the following patches:
-
-Bill Richardson (4):
-  mfd: cros_ec: Add cros_ec_lpc driver for x86 devices
-  platform/chrome: Add Chrome OS EC userspace device interface
-  platform/chrome: Create sysfs attributes for the ChromeOS EC.
-  platform/chrome: Expose Chrome OS Lightbar to users
-
-Javier Martinez Canillas (3):
-  mfd: cros_ec: Use fixed size arrays to transfer data with the EC
-  mfd: cros_ec: Add char dev and virtual dev pointers
-  mfd: cros_ec: Instantiate ChromeOS EC character device
-
- Documentation/ioctl/ioctl-number.txt       |   1 +
- drivers/i2c/busses/i2c-cros-ec-tunnel.c    |  51 +---
- drivers/input/keyboard/cros_ec_keyb.c      |  13 +-
- drivers/mfd/Kconfig                        |  10 +
- drivers/mfd/Makefile                       |   1 +
- drivers/mfd/cros_ec.c                      |  19 +-
- drivers/mfd/cros_ec_lpc.c                  | 305 ++++++++++++++++++++++++
- drivers/platform/chrome/Kconfig            |  14 +-
- drivers/platform/chrome/Makefile           |   2 +
- drivers/platform/chrome/cros_ec_dev.c      | 274 +++++++++++++++++++++
- drivers/platform/chrome/cros_ec_dev.h      |  53 +++++
- drivers/platform/chrome/cros_ec_lightbar.c | 367 +++++++++++++++++++++++++++++
- drivers/platform/chrome/cros_ec_sysfs.c    | 271 +++++++++++++++++++++
- include/linux/mfd/cros_ec.h                |  23 +-
- 14 files changed, 1342 insertions(+), 62 deletions(-)
- create mode 100644 drivers/mfd/cros_ec_lpc.c
- create mode 100644 drivers/platform/chrome/cros_ec_dev.c
- create mode 100644 drivers/platform/chrome/cros_ec_dev.h
- create mode 100644 drivers/platform/chrome/cros_ec_lightbar.c
- create mode 100644 drivers/platform/chrome/cros_ec_sysfs.c
-
-Patch #1 modified the struct cros_ec_command structure so it can be used
-as an ioctl argument and be 64 and 32 bit safe and patch #2 adds fields
-to the struct cros_ec_device that will be needed by the EC chardev driver.
-
-Patch #3 adds support for the EC LPC interface used on x86 Chromebooks.
-
-Patch #4 adds the ChromeOS chardev driver and patch #5 instantiates it
-from the mfd cros_ec driver.
-
-Patch #6 exposes sysfs attributes that can be used by user space programs
-to get information and control the ChromeOS EC.
-
-Patch #7 exposes sysfs attributes that are used to control the lightbar
-RGB LEDs found on the Pixel Chromebook.
-
-The patches must be applied together and in that order due dependencies,
-probably through the mfd tree.
-
-Best regards,
-Javier
-
-[0]: https://lkml.org/lkml/2014/11/17/429
-[1]: git://git.collabora.co.uk/git/user/javier/ec.git mainline-ioctl
+diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+index 71675b1..324a346 100644
+--- a/include/linux/mfd/cros_ec.h
++++ b/include/linux/mfd/cros_ec.h
+@@ -16,6 +16,7 @@
+ #ifndef __LINUX_MFD_CROS_EC_H
+ #define __LINUX_MFD_CROS_EC_H
+ 
++#include <linux/cdev.h>
+ #include <linux/notifier.h>
+ #include <linux/mfd/cros_ec_commands.h>
+ #include <linux/mutex.h>
+@@ -59,9 +60,17 @@ struct cros_ec_command {
+  *
+  * @ec_name: name of EC device (e.g. 'chromeos-ec')
+  * @phys_name: name of physical comms layer (e.g. 'i2c-4')
+- * @dev: Device pointer
++ * @dev: Device pointer for physical comms device
++ * @vdev: Device pointer for virtual comms device
++ * @cdev: Character device structure for virtual comms device
+  * @was_wake_device: true if this device was set to wake the system from
+  * sleep at the last suspend
++ * @cmd_readmem: direct read of the EC memory-mapped region, if supported
++ *     @offset is within EC_LPC_ADDR_MEMMAP region.
++ *     @bytes: number of bytes to read. zero means "read a string" (including
++ *     the trailing '\0'). At most only EC_MEMMAP_SIZE bytes can be read.
++ *     Caller must ensure that the buffer is large enough for the result when
++ *     reading a string.
+  *
+  * @priv: Private data
+  * @irq: Interrupt to use
+@@ -90,8 +99,12 @@ struct cros_ec_device {
+ 	const char *ec_name;
+ 	const char *phys_name;
+ 	struct device *dev;
++	struct device *vdev;
++	struct cdev cdev;
+ 	bool was_wake_device;
+ 	struct class *cros_class;
++	int (*cmd_readmem)(struct cros_ec_device *ec, unsigned int offset,
++			   unsigned int bytes, void *dest);
+ 
+ 	/* These are used to implement the platform-specific interface */
+ 	void *priv;
+-- 
+2.1.3
