@@ -1,63 +1,202 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 3/3] ARM: dts: add Panel device support for
- exynos3250-rinato
-Date: Sat, 03 Jan 2015 15:51:58 +0900
-Message-ID: <54A7918E.2020009@samsung.com>
-References: <1417174791-7339-1-git-send-email-inki.dae@samsung.com>
- <1417174791-7339-4-git-send-email-inki.dae@samsung.com>
+From: Lukasz Majewski <l.majewski@majess.pl>
+Subject: Re: [PATCH v2 00/17] thermal: exynos: Thermal code rework to use
+ device tree
+Date: Sat, 3 Jan 2015 20:53:45 +0100
+Message-ID: <20150103205345.6fa87471@jawa>
+References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
+	<1418213396-743-1-git-send-email-l.majewski@samsung.com>
+	<20150102182524.GA12310@developer>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <1417174791-7339-4-git-send-email-inki.dae@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+ boundary="Sig_/LQhKq/fBV5WMTgzgkNhL5hK"; protocol="application/pgp-signature"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from 8.mo2.mail-out.ovh.net ([188.165.52.147]:53993 "EHLO
+	8.mo2.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751294AbbACVLP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 3 Jan 2015 16:11:15 -0500
+Received: from mail91.ha.ovh.net (b9.ovh.net [213.186.33.59])
+	by mo2.mail-out.ovh.net (Postfix) with SMTP id 811B3FFADAC
+	for <linux-samsung-soc@vger.kernel.org>; Sat,  3 Jan 2015 20:54:34 +0100 (CET)
+In-Reply-To: <20150102182524.GA12310@developer>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 
-T24gMjAxNOuFhCAxMeyblCAyOOydvCAyMDozOSwgSW5raSBEYWUgd3JvdGU6Cj4gVGhpcyBwYXRj
-aCBhZGRzIE1JUEktRFNJIGFuZCBNSVBJLURTSSBiYXNlZCBTNkU2M0owWDAzIEFNT0xFRCBwYW5l
-bAo+IGRldmljZSBub2RlcyBmb3IgRXh5bm9zMzI1MCBSaW5hdG8gYm9hcmQuCgpIaSBNci4gS3Vr
-amluLAoKUGxlYXNlLCBwaW5nfgoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiBTaWduZWQtb2ZmLWJ5
-OiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+Cj4gQWNrZWQtYnk6IEt5dW5nbWluIFBh
-cmsgPGt5dW5nbWluLnBhcmtAc2Ftc3VuZy5jb20+Cj4gLS0tCj4gIGFyY2gvYXJtL2Jvb3QvZHRz
-L2V4eW5vczMyNTAtcmluYXRvLmR0cyB8ICAgNTkgKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKwo+ICAxIGZpbGUgY2hhbmdlZCwgNTkgaW5zZXJ0aW9ucygrKQo+IAo+IGRpZmYgLS1naXQg
-YS9hcmNoL2FybS9ib290L2R0cy9leHlub3MzMjUwLXJpbmF0by5kdHMgYi9hcmNoL2FybS9ib290
-L2R0cy9leHlub3MzMjUwLXJpbmF0by5kdHMKPiBpbmRleCA3OWFhOTE2Li42ZTBlOTBkIDEwMDY0
-NAo+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAtcmluYXRvLmR0cwo+ICsrKyBi
-L2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAtcmluYXRvLmR0cwo+IEBAIC0xMjUsNiArMTI1
-LDY1IEBACj4gIAl9Owo+ICB9Owo+ICAKPiArJmRzaV8wIHsKPiArCXZkZGNvcmUtc3VwcGx5ID0g
-PCZsZG82X3JlZz47Cj4gKwl2ZGRpby1zdXBwbHkgPSA8JmxkbzZfcmVnPjsKPiArCXNhbXN1bmcs
-cGxsLWNsb2NrLWZyZXF1ZW5jeSA9IDwyNDAwMDAwMD47Cj4gKwlzdGF0dXMgPSAib2theSI7Cj4g
-Kwo+ICsJcG9ydHMgewo+ICsJCSNhZGRyZXNzLWNlbGxzID0gPDE+Owo+ICsJCSNzaXplLWNlbGxz
-ID0gPDA+Owo+ICsKPiArCQlwb3J0QDEgewo+ICsJCQlyZWcgPSA8MT47Cj4gKwo+ICsJCQlkc2lf
-b3V0OiBlbmRwb2ludCB7Cj4gKwkJCQlyZW1vdGUtZW5kcG9pbnQgPSA8JmRzaV9pbj47Cj4gKwkJ
-CQlzYW1zdW5nLGJ1cnN0LWNsb2NrLWZyZXF1ZW5jeSA9IDwyNTAwMDAwMDA+Owo+ICsJCQkJc2Ft
-c3VuZyxlc2MtY2xvY2stZnJlcXVlbmN5ID0gPDIwMDAwMDAwPjsKPiArCQkJfTsKPiArCQl9Owo+
-ICsJfTsKPiArCj4gKwlwYW5lbEAwIHsKPiArCQljb21wYXRpYmxlID0gInNhbXN1bmcsczZlNjNq
-MHgwMyI7Cj4gKwkJcmVnID0gPDA+Owo+ICsJCXZkZDMtc3VwcGx5ID0gPCZsZG8xNl9yZWc+Owo+
-ICsJCXZjaS1zdXBwbHkgPSA8JmxkbzIwX3JlZz47Cj4gKwkJcmVzZXQtZ3Bpb3MgPSA8JmdwZTAg
-MSAwPjsKPiArCQl0ZS1ncGlvcyA9IDwmZ3B4MCA2IDA+Owo+ICsJCXBvd2VyLW9uLWRlbGF5PSA8
-MzA+Owo+ICsJCXBvd2VyLW9mZi1kZWxheT0gPDEyMD47Cj4gKwkJcmVzZXQtZGVsYXkgPSA8NT47
-Cj4gKwkJaW5pdC1kZWxheSA9IDwxMDA+Owo+ICsJCWZsaXAtaG9yaXpvbnRhbDsKPiArCQlmbGlw
-LXZlcnRpY2FsOwo+ICsJCXBhbmVsLXdpZHRoLW1tID0gPDI5PjsKPiArCQlwYW5lbC1oZWlnaHQt
-bW0gPSA8Mjk+Owo+ICsKPiArCQlkaXNwbGF5LXRpbWluZ3Mgewo+ICsJCQl0aW1pbmctMCB7Cj4g
-KwkJCQljbG9jay1mcmVxdWVuY3kgPSA8MD47Cj4gKwkJCQloYWN0aXZlID0gPDMyMD47Cj4gKwkJ
-CQl2YWN0aXZlID0gPDMyMD47Cj4gKwkJCQloZnJvbnQtcG9yY2ggPSA8MT47Cj4gKwkJCQloYmFj
-ay1wb3JjaCA9IDwxPjsKPiArCQkJCWhzeW5jLWxlbiA9IDwxPjsKPiArCQkJCXZmcm9udC1wb3Jj
-aCA9IDwxNTA+Owo+ICsJCQkJdmJhY2stcG9yY2ggPSA8MT47Cj4gKwkJCQl2c3luYy1sZW4gPSA8
-Mj47Cj4gKwkJCX07Cj4gKwkJfTsKPiArCj4gKwkJcG9ydCB7Cj4gKwkJCWRzaV9pbjogZW5kcG9p
-bnQgewo+ICsJCQkJcmVtb3RlLWVuZHBvaW50ID0gPCZkc2lfb3V0PjsKPiArCQkJfTsKPiArCQl9
-Owo+ICsJfTsKPiArfTsKPiArCj4gICZmaW1kIHsKPiAgCXN0YXR1cyA9ICJva2F5IjsKPiAgCj4g
-CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2
-ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+--Sig_/LQhKq/fBV5WMTgzgkNhL5hK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, 2 Jan 2015 14:25:26 -0400
+Eduardo Valentin <edubezval@gmail.com> wrote:
+
+>=20
+> Lukasz,
+>=20
+> On Wed, Dec 10, 2014 at 01:09:39PM +0100, Lukasz Majewski wrote:
+> > 1. Introduction
+> >=20
+> > Following patches aim to clean up the current implementation of the
+> > thermal framework on Exynos devices.
+> >=20
+> > The main goal was to use a generic code for reading thermal
+> > configuration (of-thermal.c). Due to that redundant
+> > exynos_thermal_common.[h|c] files were removed.
+> >=20
+> > Around 400 lines of code (LOC) were removed directly by this patch,
+> > which is around 20% of the Exynos thermal code base.
+> >=20
+> > This work should NOT bring any functional changes to Exynos thermal=20
+> > subsystem.
+> >=20
+> > 2. Patch-set structure
+> >=20
+> > Then the cpu_cooling functionality has been preserved to allow
+> > cooling devices by reducing operating frequency. Definition of trip
+> > points and cpufreq's cooling properties were moved to device tree.
+> >=20
+> > Then the rework of the way in which configuration data is provided
+> > to the Exynos thermal subsystem was performed. Now device tree is
+> > used for configuration.
+> >=20
+> > Patch series end with removing exynos5250/exynos3250 TMU
+> > compatibles. Both SoCs have thermal management unit (TMU)
+> > compatible with the one first introduced at Exynos4412.
+> >=20
+> > 3. Dead code removal
+> >=20
+> > Thermal support for some SoCs, previously available in the
+> > exynos_tmu_data.c file, was removed since, as of (almost) 3.19-rc1,
+> > they didn't have TMU bindings.
+> >=20
+> > Moreover, support for cpu_cooling devices was preserved only on
+> > those SoCs which had available and working cpufreq driver.
+> >=20
+> > 4. Testing
+> >=20
+> > Test devices:
+> > - Exynos4210 - Trats (TMU zone + cpu_cooling)
+> > - Exynos4412 - Trats2/Odroid U3 (TMU zone + cpu_cooling)
+> > - Exynos5250 - Arndale (TMU zone + cpu_cooling)
+> > - Exynos5420 - Arndale-octa (only TMU zones)
+> >=20
+> > Unfortunately, I don't posses Exynos5440 for testing. Its
+> > functionality has been preserved in the code, but not tested on the
+> > hardware. I would be grateful for help in testing.
+> >=20
+> > 5. This work apply on the following tree:
+> >=20
+> > kernel.org: 'linux-soc-thermal/next' - Eduardo Velentin's tree
+> > SHA1: c42c7a44c7a543dcb388c1ee1a798e6ed76ad8cf
+> >=20
+> >=20
+> > Lukasz Majewski (17):
+> >   thermal: exynos: cosmetic: Correct comment format
+> >   thermal: exynos: Provide thermal_exynos.h file to be included in
+> >     device tree files
+> >   thermal: dts: trats: Enable TMU on the Exynos4210 trats device
+> >   thermal: dts: exynos: Add LD010 regulator node necessary for TMU
+> > on Odroid
+> >   thermal: dts: Enable TMU at Exynos4412 based Odroid U3 device
+> >   thermal: cpu_cooling: dts: Define device tree bindings for Exynos
+> > cpu cooling functionality
+> >   thermal: cpu_cooling: Modify exynos thermal code to use device
+> > tree for cpu cooling configuration
+> >   thermal: exynos: dts: Add default definition of the TMU sensor
+> >     parameter
+> >   thermal: dts: Default trip points definition for Exynos5420 SoCs
+> >   thermal: exynos: dts: Define default thermal-zones for Exynos4
+> >   thermal: dts: exynos: Trip points and sensor configuration data
+> > for Exynos5440
+> >   thermal: exynos: dts: Provide device tree bindings identical to
+> > one in exynos_tmu_data.c
+> >   thermal: samsung: core: Exynos TMU rework to use device tree for
+> >     configuration
+> >   thermal: exynos: Remove exynos_thermal_common.[c|h] files
+> >   thermal: exynos: Remove exynos_tmu_data.c file
+> >   thermal: exynos: Make Exynos5250 TMU compatible with Exynos4412
+> >   thermal: exynos: Make Exynos3250 TMU compatible with Exynos4412
+> >=20
+> >  arch/arm/boot/dts/exynos3250.dtsi                 |   6 +-
+> >  arch/arm/boot/dts/exynos4-cpu-thermal.dtsi        |  52 +++
+> >  arch/arm/boot/dts/exynos4.dtsi                    |   5 +
+> >  arch/arm/boot/dts/exynos4210-trats.dts            |  19 +
+> >  arch/arm/boot/dts/exynos4210.dtsi                 |  43 ++-
+> >  arch/arm/boot/dts/exynos4212.dtsi                 |  20 +
+> >  arch/arm/boot/dts/exynos4412-odroid-common.dtsi   |  27 ++
+> >  arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi |  24 ++
+> >  arch/arm/boot/dts/exynos4412-trats2.dts           |  15 +
+> >  arch/arm/boot/dts/exynos4412.dtsi                 |  32 ++
+> >  arch/arm/boot/dts/exynos4x12.dtsi                 |   3 +
+> >  arch/arm/boot/dts/exynos5250.dtsi                 |  29 +-
+> >  arch/arm/boot/dts/exynos5420-trip-points.dtsi     |  35 ++
+> >  arch/arm/boot/dts/exynos5420.dtsi                 |  33 ++
+> >  arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi |  25 ++
+> >  arch/arm/boot/dts/exynos5440-trip-points.dtsi     |  25 ++
+> >  arch/arm/boot/dts/exynos5440.dtsi                 |  18 +
+> >  drivers/cpufreq/exynos-cpufreq.c                  |  23 +-
+> >  drivers/thermal/samsung/Makefile                  |   2 -
+> >  drivers/thermal/samsung/exynos_thermal_common.c   | 427
+> > ----------------------
+> > drivers/thermal/samsung/exynos_thermal_common.h   | 106 ------
+> > drivers/thermal/samsung/exynos_tmu.c              | 337
+> > ++++++++++------- drivers/thermal/samsung/exynos_tmu.h
+> > |  80 +--- drivers/thermal/samsung/exynos_tmu_data.c         | 264
+> > ------------- include/dt-bindings/thermal/thermal_exynos.h      |
+> > 37 ++ 25 files changed, 669 insertions(+), 1018 deletions(-)
+>=20
+> Pretty good work moving data out of your driver. Impressed.
+>=20
+> I sent out a couple of comments, most are minor. Major part is on
+> duplication of of-thermal parser.
+>=20
+
+Thanks for your feedback.
+
+> >  create mode 100644 arch/arm/boot/dts/exynos4-cpu-thermal.dtsi
+> >  create mode 100644
+> > arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi create mode
+> > 100644 arch/arm/boot/dts/exynos5420-trip-points.dtsi create mode
+> > 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi create
+> > mode 100644 arch/arm/boot/dts/exynos5440-trip-points.dtsi
+>=20
+> good stuff here too. Only concern is regarding 'type' property
+> (possible to reuse compatible) and exynos specific data.
+>=20
+> >  delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.c
+> >  delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.h
+> >  delete mode 100644 drivers/thermal/samsung/exynos_tmu_data.c
+> >  create mode 100644 include/dt-bindings/thermal/thermal_exynos.h
+> >=20
+> > --=20
+> > 2.0.0.rc2
+> >=20
+>=20
+> Apologize for late answer.
+
+I will be able to address your comments no sooner than next Monday.
+Moreover I still believe that we will manage to add this code to your
+-next branch :-)
+
+>=20
+> Cheers,
+>=20
+> Eduardo Valentin.
+
+Best regards,
+Lukasz Majewski
+
+--Sig_/LQhKq/fBV5WMTgzgkNhL5hK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iEYEARECAAYFAlSoSNAACgkQf9/hG2YwgjGy2gCgg6DyGSSMs09wTEDgeG2tOCrd
+SSoAnic06xjMXYSzgm0E8orn5Bj5Yt4w
+=iRqj
+-----END PGP SIGNATURE-----
+
+--Sig_/LQhKq/fBV5WMTgzgkNhL5hK--
