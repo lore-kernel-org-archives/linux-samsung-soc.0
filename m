@@ -1,202 +1,74 @@
-From: Lukasz Majewski <l.majewski@majess.pl>
-Subject: Re: [PATCH v2 00/17] thermal: exynos: Thermal code rework to use
- device tree
-Date: Sat, 3 Jan 2015 20:53:45 +0100
-Message-ID: <20150103205345.6fa87471@jawa>
-References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
-	<1418213396-743-1-git-send-email-l.majewski@samsung.com>
-	<20150102182524.GA12310@developer>
+From: Ming Lei <tom.leiming@gmail.com>
+Subject: Re: kernel panic when booting on exynos 5440
+Date: Sun, 4 Jan 2015 10:57:27 +0800
+Message-ID: <CACVXFVOVS=sVqxe3q3_SShxoTkHy+yi4+2Go9k4gqhUgBjiZFQ@mail.gmail.com>
+References: <CACVXFVNCZdMyHQ1fzZDGs7h7X9vWmMVBJFRqWs7_P=WBQUYk1g@mail.gmail.com>
+	<549BE7CC.1000005@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
- boundary="Sig_/LQhKq/fBV5WMTgzgkNhL5hK"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 8.mo2.mail-out.ovh.net ([188.165.52.147]:53993 "EHLO
-	8.mo2.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751294AbbACVLP (ORCPT
+Received: from mail-ob0-f182.google.com ([209.85.214.182]:34742 "EHLO
+	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751765AbbADC51 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 3 Jan 2015 16:11:15 -0500
-Received: from mail91.ha.ovh.net (b9.ovh.net [213.186.33.59])
-	by mo2.mail-out.ovh.net (Postfix) with SMTP id 811B3FFADAC
-	for <linux-samsung-soc@vger.kernel.org>; Sat,  3 Jan 2015 20:54:34 +0100 (CET)
-In-Reply-To: <20150102182524.GA12310@developer>
+	Sat, 3 Jan 2015 21:57:27 -0500
+Received: by mail-ob0-f182.google.com with SMTP id wo20so56898007obc.13
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 03 Jan 2015 18:57:27 -0800 (PST)
+In-Reply-To: <549BE7CC.1000005@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
+To: Pankaj Dubey <pankaj.dubey@samsung.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>
 
---Sig_/LQhKq/fBV5WMTgzgkNhL5hK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Guys,
 
-On Fri, 2 Jan 2015 14:25:26 -0400
-Eduardo Valentin <edubezval@gmail.com> wrote:
+On Thu, Dec 25, 2014 at 6:32 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
+> +CC: Thomas Abraham
+>
+> Hi Ming,
+>
+> On Thursday 25 December 2014 02:18 PM, Ming Lei wrote:
+>>
+>> Hi Pankaj,
+>>
+>> In your commit fce9e5bb2(ARM: EXYNOS: Add support for
+>> mapping PMU base address via DT), 'pmu_base_addr' is
+>> only parsed for very limited machines from the table of
+>> 'exynos_dt_pmu_match'.  For other boards, 'pmu_base_addr'
+>> will keep its default value of null, then panic() is triggered.
+>>
+>
+> Yes, it will.
+> As exynos5440 DT does not have PMU device node, neither above mentioned
+> patch added corresponding matching device_id.
+> If I remember correctly, I might have missed this because exynos5440 DT was
+> not having PMU node.
+>
+>> What do you think about the problem?
+>
+>
+> I missed this part, and I should have taken care of this in original patch
+> itself. Well as of now I can think of only one solution that if we really
+> want to keep support for exynos5440 in mainline kernel, to avoid above issue
+> we should skip pmu mapping for exynos5440. In this case following patch will
+> do this work.
+>
+> Also I will like to know from Kukjin that what best can be done now.
+> If he is OK with below solution I can post the same.
+>
+> ---------------------------------------------------------------
+>
+> Subject: [PATCH] ARM: EXYNOS: do not try to map PMU for exynos5440
+>
+> Commit id: 2e94ac42898f84d76e3c21dd91bc is not taking care
+> of mapping of exynos5440 PMU register which will result in kernel panic.
+> As of now let's avoid mapping of exynos5440 PMU.
+>
+> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 
->=20
-> Lukasz,
->=20
-> On Wed, Dec 10, 2014 at 01:09:39PM +0100, Lukasz Majewski wrote:
-> > 1. Introduction
-> >=20
-> > Following patches aim to clean up the current implementation of the
-> > thermal framework on Exynos devices.
-> >=20
-> > The main goal was to use a generic code for reading thermal
-> > configuration (of-thermal.c). Due to that redundant
-> > exynos_thermal_common.[h|c] files were removed.
-> >=20
-> > Around 400 lines of code (LOC) were removed directly by this patch,
-> > which is around 20% of the Exynos thermal code base.
-> >=20
-> > This work should NOT bring any functional changes to Exynos thermal=20
-> > subsystem.
-> >=20
-> > 2. Patch-set structure
-> >=20
-> > Then the cpu_cooling functionality has been preserved to allow
-> > cooling devices by reducing operating frequency. Definition of trip
-> > points and cpufreq's cooling properties were moved to device tree.
-> >=20
-> > Then the rework of the way in which configuration data is provided
-> > to the Exynos thermal subsystem was performed. Now device tree is
-> > used for configuration.
-> >=20
-> > Patch series end with removing exynos5250/exynos3250 TMU
-> > compatibles. Both SoCs have thermal management unit (TMU)
-> > compatible with the one first introduced at Exynos4412.
-> >=20
-> > 3. Dead code removal
-> >=20
-> > Thermal support for some SoCs, previously available in the
-> > exynos_tmu_data.c file, was removed since, as of (almost) 3.19-rc1,
-> > they didn't have TMU bindings.
-> >=20
-> > Moreover, support for cpu_cooling devices was preserved only on
-> > those SoCs which had available and working cpufreq driver.
-> >=20
-> > 4. Testing
-> >=20
-> > Test devices:
-> > - Exynos4210 - Trats (TMU zone + cpu_cooling)
-> > - Exynos4412 - Trats2/Odroid U3 (TMU zone + cpu_cooling)
-> > - Exynos5250 - Arndale (TMU zone + cpu_cooling)
-> > - Exynos5420 - Arndale-octa (only TMU zones)
-> >=20
-> > Unfortunately, I don't posses Exynos5440 for testing. Its
-> > functionality has been preserved in the code, but not tested on the
-> > hardware. I would be grateful for help in testing.
-> >=20
-> > 5. This work apply on the following tree:
-> >=20
-> > kernel.org: 'linux-soc-thermal/next' - Eduardo Velentin's tree
-> > SHA1: c42c7a44c7a543dcb388c1ee1a798e6ed76ad8cf
-> >=20
-> >=20
-> > Lukasz Majewski (17):
-> >   thermal: exynos: cosmetic: Correct comment format
-> >   thermal: exynos: Provide thermal_exynos.h file to be included in
-> >     device tree files
-> >   thermal: dts: trats: Enable TMU on the Exynos4210 trats device
-> >   thermal: dts: exynos: Add LD010 regulator node necessary for TMU
-> > on Odroid
-> >   thermal: dts: Enable TMU at Exynos4412 based Odroid U3 device
-> >   thermal: cpu_cooling: dts: Define device tree bindings for Exynos
-> > cpu cooling functionality
-> >   thermal: cpu_cooling: Modify exynos thermal code to use device
-> > tree for cpu cooling configuration
-> >   thermal: exynos: dts: Add default definition of the TMU sensor
-> >     parameter
-> >   thermal: dts: Default trip points definition for Exynos5420 SoCs
-> >   thermal: exynos: dts: Define default thermal-zones for Exynos4
-> >   thermal: dts: exynos: Trip points and sensor configuration data
-> > for Exynos5440
-> >   thermal: exynos: dts: Provide device tree bindings identical to
-> > one in exynos_tmu_data.c
-> >   thermal: samsung: core: Exynos TMU rework to use device tree for
-> >     configuration
-> >   thermal: exynos: Remove exynos_thermal_common.[c|h] files
-> >   thermal: exynos: Remove exynos_tmu_data.c file
-> >   thermal: exynos: Make Exynos5250 TMU compatible with Exynos4412
-> >   thermal: exynos: Make Exynos3250 TMU compatible with Exynos4412
-> >=20
-> >  arch/arm/boot/dts/exynos3250.dtsi                 |   6 +-
-> >  arch/arm/boot/dts/exynos4-cpu-thermal.dtsi        |  52 +++
-> >  arch/arm/boot/dts/exynos4.dtsi                    |   5 +
-> >  arch/arm/boot/dts/exynos4210-trats.dts            |  19 +
-> >  arch/arm/boot/dts/exynos4210.dtsi                 |  43 ++-
-> >  arch/arm/boot/dts/exynos4212.dtsi                 |  20 +
-> >  arch/arm/boot/dts/exynos4412-odroid-common.dtsi   |  27 ++
-> >  arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi |  24 ++
-> >  arch/arm/boot/dts/exynos4412-trats2.dts           |  15 +
-> >  arch/arm/boot/dts/exynos4412.dtsi                 |  32 ++
-> >  arch/arm/boot/dts/exynos4x12.dtsi                 |   3 +
-> >  arch/arm/boot/dts/exynos5250.dtsi                 |  29 +-
-> >  arch/arm/boot/dts/exynos5420-trip-points.dtsi     |  35 ++
-> >  arch/arm/boot/dts/exynos5420.dtsi                 |  33 ++
-> >  arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi |  25 ++
-> >  arch/arm/boot/dts/exynos5440-trip-points.dtsi     |  25 ++
-> >  arch/arm/boot/dts/exynos5440.dtsi                 |  18 +
-> >  drivers/cpufreq/exynos-cpufreq.c                  |  23 +-
-> >  drivers/thermal/samsung/Makefile                  |   2 -
-> >  drivers/thermal/samsung/exynos_thermal_common.c   | 427
-> > ----------------------
-> > drivers/thermal/samsung/exynos_thermal_common.h   | 106 ------
-> > drivers/thermal/samsung/exynos_tmu.c              | 337
-> > ++++++++++------- drivers/thermal/samsung/exynos_tmu.h
-> > |  80 +--- drivers/thermal/samsung/exynos_tmu_data.c         | 264
-> > ------------- include/dt-bindings/thermal/thermal_exynos.h      |
-> > 37 ++ 25 files changed, 669 insertions(+), 1018 deletions(-)
->=20
-> Pretty good work moving data out of your driver. Impressed.
->=20
-> I sent out a couple of comments, most are minor. Major part is on
-> duplication of of-thermal parser.
->=20
+Is there any opportunity to merge the fix? Or exynos5440 will not be
+supported in future?
 
-Thanks for your feedback.
 
-> >  create mode 100644 arch/arm/boot/dts/exynos4-cpu-thermal.dtsi
-> >  create mode 100644
-> > arch/arm/boot/dts/exynos4412-tmu-sensor-conf.dtsi create mode
-> > 100644 arch/arm/boot/dts/exynos5420-trip-points.dtsi create mode
-> > 100644 arch/arm/boot/dts/exynos5440-tmu-sensor-conf.dtsi create
-> > mode 100644 arch/arm/boot/dts/exynos5440-trip-points.dtsi
->=20
-> good stuff here too. Only concern is regarding 'type' property
-> (possible to reuse compatible) and exynos specific data.
->=20
-> >  delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.c
-> >  delete mode 100644 drivers/thermal/samsung/exynos_thermal_common.h
-> >  delete mode 100644 drivers/thermal/samsung/exynos_tmu_data.c
-> >  create mode 100644 include/dt-bindings/thermal/thermal_exynos.h
-> >=20
-> > --=20
-> > 2.0.0.rc2
-> >=20
->=20
-> Apologize for late answer.
-
-I will be able to address your comments no sooner than next Monday.
-Moreover I still believe that we will manage to add this code to your
--next branch :-)
-
->=20
-> Cheers,
->=20
-> Eduardo Valentin.
-
-Best regards,
-Lukasz Majewski
-
---Sig_/LQhKq/fBV5WMTgzgkNhL5hK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iEYEARECAAYFAlSoSNAACgkQf9/hG2YwgjGy2gCgg6DyGSSMs09wTEDgeG2tOCrd
-SSoAnic06xjMXYSzgm0E8orn5Bj5Yt4w
-=iRqj
------END PGP SIGNATURE-----
-
---Sig_/LQhKq/fBV5WMTgzgkNhL5hK--
+Thanks,
+Ming Lei
