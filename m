@@ -1,74 +1,143 @@
-From: Ming Lei <tom.leiming@gmail.com>
-Subject: Re: kernel panic when booting on exynos 5440
-Date: Sun, 4 Jan 2015 10:57:27 +0800
-Message-ID: <CACVXFVOVS=sVqxe3q3_SShxoTkHy+yi4+2Go9k4gqhUgBjiZFQ@mail.gmail.com>
-References: <CACVXFVNCZdMyHQ1fzZDGs7h7X9vWmMVBJFRqWs7_P=WBQUYk1g@mail.gmail.com>
-	<549BE7CC.1000005@samsung.com>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH v3 1/4] mmc: dw_mmc: exynos: incorporate ciu_div into
+ timing property
+Date: Mon, 5 Jan 2015 04:13:33 +0530
+Message-ID: <CAGOxZ509kASim7keNkAGj5gAGO02=7vZM=VL-MRMObv3x+CzTg@mail.gmail.com>
+References: <1420008185-24758-1-git-send-email-alim.akhtar@samsung.com>
+ <1420008185-24758-2-git-send-email-alim.akhtar@samsung.com> <CAD=FV=WXzPt=VKxB=KHK+hC=RN6WbmdnQcLUT4zFQ0Ud7BFanQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f182.google.com ([209.85.214.182]:34742 "EHLO
-	mail-ob0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751765AbbADC51 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 3 Jan 2015 21:57:27 -0500
-Received: by mail-ob0-f182.google.com with SMTP id wo20so56898007obc.13
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 03 Jan 2015 18:57:27 -0800 (PST)
-In-Reply-To: <549BE7CC.1000005@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=WXzPt=VKxB=KHK+hC=RN6WbmdnQcLUT4zFQ0Ud7BFanQ@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, kgene <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>, Alexandru Stan <amstan@google.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Pankaj Dubey <pankaj.dubey@samsung.com>
-Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.ab@samsung.com>
 
-Hi Guys,
+Hi Doug,
+Thanks for looking into this series.
 
-On Thu, Dec 25, 2014 at 6:32 PM, Pankaj Dubey <pankaj.dubey@samsung.com> wrote:
-> +CC: Thomas Abraham
+On Fri, Jan 2, 2015 at 10:28 PM, Doug Anderson <dianders@chromium.org> wrote:
+> Alim,
 >
-> Hi Ming,
->
-> On Thursday 25 December 2014 02:18 PM, Ming Lei wrote:
+> On Tue, Dec 30, 2014 at 10:43 PM, Alim Akhtar <alim.akhtar@samsung.com> wrote:
+>> From: Seungwon Jeon <tgih.jun@samsung.com>
 >>
->> Hi Pankaj,
+>> ciu_div may not be common value for all speed mode.
+>> So, it needs to be attached to CLKSEL timing.
+>
+> The more time I've spent looking at all of this stuff the less I like
+> the exynos bindings.  Personally I'd prefer to see the exynos bindings
+> fixed rather than go further down the path of these bindings.
+>
+> Specifically:
+>
+> 1. The "drive" really should be specified quite differently.
+> According to the DesignWare docs, the "drive" phase is there to meet
+> hold time requirements.  Hold time requirements are different for
+> different SD/MMC modes and are specified in nanoseconds (SDR104 is
+> .8ns, ID mode is 5.0ns).  There is a per-SoC parameter needed that
+> indicates some built-in delay (in nanoseconds) and that shouldn't
+> change based on clock speed or card mode.
+>
+Yes, "drive" phase shift are there to meet hold time requirements. And
+that why we in general don't change it as those are fixed for a
+SoC/Board based on actual measurement of the same.
+
+> 2. The ciu_div really ought to be automatic.  Start out at a divide by
+> 4.  If you end up with both drive and sample at phases of 0, 90, 180,
+> 270 then you can change to divide by 2.
+>
+> I still haven't looked at every last detail of these delays though, so
+> please correct me if I'm wrong.  I've added Alex who may have looked
+> at this more than I have.
+>
+Thanks, suggestions/comments are welcome.
+>
+> With all of the above, there's also the fact that (I think) we should
+> be moving towards working with the clock phase API since all of your
+> values are effectively specifying clock phases, just in a very arcane
+> way.
+>
+That is something nice to have, and should be done at some point.
+As you know exynos implements a custom register called CLKSEL, and it
+allows us to set the required "sample" phase shift. And exynos uses
+"variable delay tuning" as per DW databook to set "sample" phase shift
+based on tuning data.
+>
+>> This also introduce a new compatibale 'dw-mshc-hs200-timing'
+>> for selecting hs200 timing value
+>
+> As per above, I don't think this is needed.
+>
+>
+>> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> ---
+>>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   15 ++--
+>>  drivers/mmc/host/dw_mmc-exynos.c                   |   81 ++++++++++++++------
+>>  drivers/mmc/host/dw_mmc-exynos.h                   |    1 +
+>>  3 files changed, 67 insertions(+), 30 deletions(-)
 >>
->> In your commit fce9e5bb2(ARM: EXYNOS: Add support for
->> mapping PMU base address via DT), 'pmu_base_addr' is
->> only parsed for very limited machines from the table of
->> 'exynos_dt_pmu_match'.  For other boards, 'pmu_base_addr'
->> will keep its default value of null, then panic() is triggered.
+>> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> index ee4fc05..06455de 100644
+>> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> @@ -23,10 +23,6 @@ Required Properties:
+>>         - "samsung,exynos7-dw-mshc-smu": for controllers with Samsung Exynos7
+>>           specific extensions having an SMU.
 >>
+>> -* samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
+>> -  unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
+>> -  ignored for Exynos4 SoC's. The valid range of divider value is 0 to 7.
+>> -
+>>  * samsung,dw-mshc-sdr-timing: Specifies the value of CIU clock phase shift value
+>>    in transmit mode and CIU clock phase shift value in receive mode for single
+>>    data rate mode operation. Refer notes below for the order of the cells and the
+>> @@ -37,11 +33,16 @@ Required Properties:
+>>    data rate mode operation. Refer notes below for the order of the cells and the
+>>    valid values.
+>>
+>> +* samsung,dw-mshc-hs200-timing: Similar with dw-mshc-sdr-timing.
+>> +
+>>    Notes for the sdr-timing and ddr-timing values:
+>>
+>>      The order of the cells should be
+>>        - First Cell: CIU clock phase shift value for tx mode.
+>>        - Second Cell: CIU clock phase shift value for rx mode.
+>> +      - Thrid Cell: Specifies the divider value for the card interface
+>> +        unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
+>> +        ignored for Exynos4 SoC's. The valid range of divider value is 0 to 7.
+>>
+>>      Valid values for SDR and DDR CIU clock timing for Exynos5250:
+>>        - valid value for tx phase shift and rx phase shift is 0 to 7.
+>> @@ -79,8 +80,8 @@ Example:
+>>                 broken-cd;
+>>                 fifo-depth = <0x80>;
+>>                 card-detect-delay = <200>;
+>> -               samsung,dw-mshc-ciu-div = <3>;
+>> -               samsung,dw-mshc-sdr-timing = <2 3>;
+>> -               samsung,dw-mshc-ddr-timing = <1 2>;
+>> +               samsung,dw-mshc-sdr-timing = <2 3 3>;
+>> +               samsung,dw-mshc-ddr-timing = <1 2 3>;
+>> +               samsung,dw-mshc-hs200-timing = <0 2 3>;
 >
-> Yes, it will.
-> As exynos5440 DT does not have PMU device node, neither above mentioned
-> patch added corresponding matching device_id.
-> If I remember correctly, I might have missed this because exynos5440 DT was
-> not having PMU node.
+> You are breaking backward compatibility here.  If your change is
+> merged then all old boards will instantly break.  Since the "dts" and
+> code changes will likely be merged through different trees you'll end
+> up with a bunch of broken trees until everything is merged together.
+> Even if you don't subscribe to the stable bindings theory this is not
+> acceptable.
 >
->> What do you think about the problem?
->
->
-> I missed this part, and I should have taken care of this in original patch
-> itself. Well as of now I can think of only one solution that if we really
-> want to keep support for exynos5440 in mainline kernel, to avoid above issue
-> we should skip pmu mapping for exynos5440. In this case following patch will
-> do this work.
->
-> Also I will like to know from Kukjin that what best can be done now.
-> If he is OK with below solution I can post the same.
->
-> ---------------------------------------------------------------
->
-> Subject: [PATCH] ARM: EXYNOS: do not try to map PMU for exynos5440
->
-> Commit id: 2e94ac42898f84d76e3c21dd91bc is not taking care
-> of mapping of exynos5440 PMU register which will result in kernel panic.
-> As of now let's avoid mapping of exynos5440 PMU.
->
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+yes the major concern in this series is probably this, which breaks
+things unless everything merge in one go and via one tree. Thats why I
+re-based everything including dts change on mmc-tree for this case and
+added device-tree mailing list for more opinion etc.
 
-Is there any opportunity to merge the fix? Or exynos5440 will not be
-supported in future?
+> -Doug
 
 
-Thanks,
-Ming Lei
+
+-- 
+Regards,
+Alim
