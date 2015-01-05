@@ -1,56 +1,27 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [alsa-devel] [PATCH 2/3] ASoC: samsung: Document Trats2 audio
- subsystem bindings
-Date: Mon, 5 Jan 2015 15:29:18 +0000
-Message-ID: <20150105152918.GT11764@sirena.org.uk>
-References: <1420457117-11030-1-git-send-email-ideal.song@samsung.com>
- <1420457117-11030-3-git-send-email-ideal.song@samsung.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v11 1/9] ARM: OMAP2+: use common l2cache initialization
+ code
+Date: Mon, 5 Jan 2015 08:21:12 -0800
+Message-ID: <20150105162111.GA4081@atomide.com>
+References: <1420460348-20302-1-git-send-email-m.szyprowski@samsung.com>
+ <1420460348-20302-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="QkB+3dXt7G8Wz8Uy"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mezzanine.sirena.org.uk ([106.187.55.193]:36358 "EHLO
-	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753421AbbAEP37 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Jan 2015 10:29:59 -0500
-Content-Disposition: inline
-In-Reply-To: <1420457117-11030-3-git-send-email-ideal.song@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
-To: Inha Song <ideal.song@samsung.com>
-Cc: alsa-devel@alsa-project.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, s.nawrocki@samsung.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@arm.linux.org.uk, kgene@kernel.org, sbkim73@samsung.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.de, grant.likely@linaro.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-
-
---QkB+3dXt7G8Wz8Uy
 Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-omap-owner@vger.kernel.org>
 Content-Disposition: inline
+In-Reply-To: <1420460348-20302-2-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, linus.walleij@linaro.org, drake@endlessm.com, loeliger@gmail.com, Mark Rutland <mark.rutland@arm.com>, nm@ti.com, khilman@linaro.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Jan 05, 2015 at 08:25:16PM +0900, Inha Song wrote:
+* Marek Szyprowski <m.szyprowski@samsung.com> [150105 04:22]:
+> This patch implements generic DT L2C initialisation (the one from
+> init_IRQ in arch/arm/kernel/irq.c) for Omap4 and AM43 platforms and
+> kills the SoC specific stuff in arch/arm/mach-omap2/omap4-common.c.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-> + - clocks : Reference to the codec master clock
-> + - clock-names : The clock should be named "mclk"
+Seems to work just fine for me:
 
-This should be done in the CODEC driver, not in the machine driver - the
-CODEC always needs the clock, it's not something specific to this
-machine.  Even if we decide that for Linux the best thing to do is to
-manage the clock in the machine driver it should be described in the DT
-as being attached to the CODEC.
-
---QkB+3dXt7G8Wz8Uy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUqq3NAAoJECTWi3JdVIfQ8cAH/2pVZixTXEAT+S4w4GyZmGNe
-TzjisRZtOWzl+8G5QN5EEZqHsyXh9BZHz9hmNndCWUjZT96e4IKZPmriNK+rPbOF
-QRYzloUrlTPhXsTIiBGOuoLWjam0MJqFoidhQ5wJ3TwuGZ6G18U9n9kPXcfCeJMD
-2OO8uPei+xOy1UX95fZBeQAnrx25+ZgGscNZh6gZXtFNeXoGAMoCQFh8yk2VwL/T
-qtO7yTjgQ4Ubis7MsJPmvUHtxxLU4faLhDD3b+j2WQ/NrDHC/p9500492EGR5Ze8
-nx0tI6za/gewfzuMGzFWgXCROPVxMLt+eYLHdwmOCiEImZ+wz3Rlwi2WIQjA+a4=
-=T/eS
------END PGP SIGNATURE-----
-
---QkB+3dXt7G8Wz8Uy--
+Acked-by: Tony Lindgren <tony@atomide.com>
