@@ -1,58 +1,91 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v5 4/5] mfd/regulator: dt-bindings: max77686: Document gpio
- properties
-Date: Mon, 05 Jan 2015 12:48:44 +0100
-Message-ID: <1420458525-22576-5-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v5 1/5] regulator: Copy config passed during registration
+Date: Mon, 05 Jan 2015 12:48:41 +0100
+Message-ID: <1420458525-22576-2-git-send-email-k.kozlowski@samsung.com>
 References: <1420458525-22576-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:42803 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753405AbbAELux (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Jan 2015 06:50:53 -0500
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-reply-to: <1420458525-22576-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Document usage of maxim,ena-gpios properties which turn on external/GPIO
-control over regulator.
+Copy the 'regulator_config' structure passed to regulator_register()
+function so the driver could safely modify it after parsing init data.
+
+The driver may want to change the config as a result of specific init
+data parsed by regulator core (e.g. when core handled parsing device
+tree).
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- Documentation/devicetree/bindings/mfd/max77686.txt | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/regulator/core.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mfd/max77686.txt b/Documentation/devicetree/bindings/mfd/max77686.txt
-index 75fdfaf41831..e39f0bc1f55e 100644
---- a/Documentation/devicetree/bindings/mfd/max77686.txt
-+++ b/Documentation/devicetree/bindings/mfd/max77686.txt
-@@ -39,6 +39,12 @@ to get matched with their hardware counterparts as follow:
- 	-BUCKn	:	1-4.
-   Use standard regulator bindings for it ('regulator-off-in-suspend').
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index e225711bb8bc..c13b557a560e 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -3581,20 +3581,21 @@ static void rdev_init_debugfs(struct regulator_dev *rdev)
+  */
+ struct regulator_dev *
+ regulator_register(const struct regulator_desc *regulator_desc,
+-		   const struct regulator_config *config)
++		   const struct regulator_config *cfg)
+ {
+ 	const struct regulation_constraints *constraints = NULL;
+ 	const struct regulator_init_data *init_data;
++	struct regulator_config *config = NULL;
+ 	static atomic_t regulator_no = ATOMIC_INIT(0);
+ 	struct regulator_dev *rdev;
+ 	struct device *dev;
+ 	int ret, i;
+ 	const char *supply = NULL;
  
-+  LDO20, LDO21, LDO22, BUCK8 and BUCK9 can be configured to GPIO enable
-+  control. To turn this feature on this property must be added to the regulator
-+  sub-node:
-+	- maxim,ena-gpios :	one GPIO specifier enable control (the gpio
-+				flags are actually ignored and always
-+				ACTIVE_HIGH is used)
+-	if (regulator_desc == NULL || config == NULL)
++	if (regulator_desc == NULL || cfg == NULL)
+ 		return ERR_PTR(-EINVAL);
  
- Example:
+-	dev = config->dev;
++	dev = cfg->dev;
+ 	WARN_ON(!dev);
  
-@@ -65,4 +71,12 @@ Example:
- 				regulator-always-on;
- 				regulator-boot-on;
- 			};
+ 	if (regulator_desc->name == NULL || regulator_desc->ops == NULL)
+@@ -3624,6 +3625,16 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 	if (rdev == NULL)
+ 		return ERR_PTR(-ENOMEM);
+ 
++	/*
++	 * Duplicate the config so the driver could override it after
++	 * parsing init data.
++	 */
++	config = kmemdup(cfg, sizeof(*cfg), GFP_KERNEL);
++	if (config == NULL) {
++		kfree(rdev);
++		return ERR_PTR(-ENOMEM);
++	}
 +
-+			buck9_reg {
-+				regulator-compatible = "BUCK9";
-+				regulator-name = "CAM_ISP_CORE_1.2V";
-+				regulator-min-microvolt = <1000000>;
-+				regulator-max-microvolt = <1200000>;
-+				maxim,ena-gpios = <&gpm0 3 GPIO_ACTIVE_HIGH>;
-+			};
- 	}
+ 	init_data = regulator_of_get_init_data(dev, regulator_desc,
+ 					       &rdev->dev.of_node);
+ 	if (!init_data) {
+@@ -3752,6 +3763,7 @@ add_dev:
+ 	rdev_init_debugfs(rdev);
+ out:
+ 	mutex_unlock(&regulator_list_mutex);
++	kfree(config);
+ 	return rdev;
+ 
+ unset_supplies:
 -- 
 1.9.1
