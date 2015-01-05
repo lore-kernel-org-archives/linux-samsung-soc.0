@@ -1,354 +1,110 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v2] ARM: dts: Add dts file for odroid XU3 board
-Date: Mon, 05 Jan 2015 17:18:46 +0900
-Message-ID: <54AA48E6.3040404@samsung.com>
-References: <1417721269-19342-1-git-send-email-sjoerd.simons@collabora.co.uk>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH RESEND] ARM: exynos_defconfig: Enable options for display
+ panel support
+Date: Mon, 05 Jan 2015 09:48:11 +0100
+Message-ID: <1420447691.3918.2.camel@AMDC1943>
+References: <1420215089-2093-1-git-send-email-javier.martinez@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:17952 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753036AbbAEISj (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:31520 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753283AbbAEIsU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Jan 2015 03:18:39 -0500
-In-reply-to: <1417721269-19342-1-git-send-email-sjoerd.simons@collabora.co.uk>
+	Mon, 5 Jan 2015 03:48:20 -0500
+In-reply-to: <1420215089-2093-1-git-send-email-javier.martinez@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kukjin Kim <kgene.kim@samsung.com>, Kevin Hilman <khilman@kernel.org>, Tyler Baker <tyler.baker@linaro.org>, Heesub Shin <heesub.shin@samsung.com>
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hi Sjoerd,
-
-On 12/05/2014 04:27 AM, Sjoerd Simons wrote:
-> Add DTS for the Hardkernel Odroid XU3. The name of the DTS file is kept the
-> same as the vendors naming, which means it's prefixed with exynos5422
-> instead of exynos5800 as the SoC name even though it includes the
-> exyno5800 dtsi.
-> 
-> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+On pi=C4=85, 2015-01-02 at 17:11 +0100, Javier Martinez Canillas wrote:
+> Many Exynos devices have a display panel. Most of them just have
+> a simple panel while others have more complex configurations that
+> requires an embedded DisplayPort (eDP) to LVDS bridges.
+>=20
+> This patch enables the following features to be built in the kernel
+> image to support both setups:
+>=20
+> - Direct Rendering Manager (DRM)
+> - DRM bridge registration and lookup framework
+> - Parade ps8622/ps8625 eDP/LVDS bridge
+> - NXP ptn3460 eDP/LVDS bridge
+> - Exynos Fully Interactive Mobile Display controller (FIMD)
+> - Panel registration and lookup framework
+> - Simple panels
+> - Backlight & LCD device support
+>=20
+> Signed-off-by: Javier Martinez Canillas <javier.martinez@collabora.co=
+=2Euk>
+> Tested-by: Kevin Hilman <khilman@linaro.org>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > ---
-> Changes since v1:
->   * Add chosen/linux,stdout-path to point the serial console device
->   * Change memory start offset to 0x40000000 to match the vendors DTS (pointed
->     out by Heesub Shin)
->   * Declare base address & size for the memory banks to be used by the MFC
-> 
-> Kevin, Tyler, even though the changes are small i didn't want to just stick
-> your Tested-By on. Could you both be so kind to retest this on your XU3's ?
-> 
-> Heesub, I would still love to know the reason for having the memory start
-> address at 0x40000000 for this board?
-> 
->  arch/arm/boot/dts/Makefile                 |   1 +
->  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 332 +++++++++++++++++++++++++++++
->  2 files changed, 333 insertions(+)
->  create mode 100644 arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> 
-> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-> index 38c89ca..0a898cc 100644
-> --- a/arch/arm/boot/dts/Makefile
-> +++ b/arch/arm/boot/dts/Makefile
-> @@ -86,6 +86,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos4210-origen.dtb \
->  	exynos5420-arndale-octa.dtb \
->  	exynos5420-peach-pit.dtb \
->  	exynos5420-smdk5420.dtb \
-> +	exynos5422-odroidxu3.dtb \
->  	exynos5440-sd5v1.dtb \
->  	exynos5440-ssdk5440.dtb \
->  	exynos5800-peach-pi.dtb
-> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> new file mode 100644
-> index 0000000..0dc9cf8
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-> @@ -0,0 +1,332 @@
-> +/*
-> + * Hardkernel Odroid XU3 board device tree source
-> + *
-> + * Copyright (c) 2014 Collabora Ltd.
-> + * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +/dts-v1/;
-> +#include "exynos5800.dtsi"
-> +
-> +/ {
-> +	model = "Hardkernel Odroid XU3";
-> +	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
-> +
-> +	memory {
-> +		reg = <0x40000000 0x80000000>;
-> +	};
-> +
-> +	chosen {
-> +		linux,stdout-path = &serial_2;
-> +	};
-> +
-> +	fimd@14400000 {
-> +		status = "okay";
-> +	};
-> +
-> +	firmware@02073000 {
-> +		compatible = "samsung,secure-firmware";
-> +		reg = <0x02073000 0x1000>;
-> +	};
-> +
-> +	fixed-rate-clocks {
-> +		oscclk {
-> +			compatible = "samsung,exynos5420-oscclk";
-> +			clock-frequency = <24000000>;
-> +		};
-> +	};
-> +
-> +	hsi2c_4: i2c@12CA0000 {
-> +		status = "okay";
-> +
-> +		s2mps11_pmic@66 {
-> +			compatible = "samsung,s2mps11-pmic";
-> +			reg = <0x66>;
-> +			s2mps11,buck2-ramp-delay = <12>;
-> +			s2mps11,buck34-ramp-delay = <12>;
-> +			s2mps11,buck16-ramp-delay = <12>;
-> +			s2mps11,buck6-ramp-enable = <1>;
-> +			s2mps11,buck2-ramp-enable = <1>;
-> +			s2mps11,buck3-ramp-enable = <1>;
-> +			s2mps11,buck4-ramp-enable = <1>;
-> +
-> +			s2mps11_osc: clocks {
-> +				#clock-cells = <1>;
-> +				clock-output-names = "s2mps11_ap",
-> +						"s2mps11_cp", "s2mps11_bt";
-> +			};
-> +
-> +			regulators {
-> +				ldo1_reg: LDO1 {
-> +					regulator-name = "vdd_ldo1";
-> +					regulator-min-microvolt = <1000000>;
-> +					regulator-max-microvolt = <1000000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo3_reg: LDO3 {
-> +					regulator-name = "vdd_ldo3";
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo5_reg: LDO5 {
-> +					regulator-name = "vdd_ldo5";
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo6_reg: LDO6 {
-> +					regulator-name = "vdd_ldo6";
-> +					regulator-min-microvolt = <1000000>;
-> +					regulator-max-microvolt = <1000000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo7_reg: LDO7 {
-> +					regulator-name = "vdd_ldo7";
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo8_reg: LDO8 {
-> +					regulator-name = "vdd_ldo8";
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo9_reg: LDO9 {
-> +					regulator-name = "vdd_ldo9";
-> +					regulator-min-microvolt = <3000000>;
-> +					regulator-max-microvolt = <3000000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo10_reg: LDO10 {
-> +					regulator-name = "vdd_ldo10";
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo11_reg: LDO11 {
-> +					regulator-name = "vdd_ldo11";
-> +					regulator-min-microvolt = <1000000>;
-> +					regulator-max-microvolt = <1000000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo12_reg: LDO12 {
-> +					regulator-name = "vdd_ldo12";
-> +					regulator-min-microvolt = <1800000>;
-> +					regulator-max-microvolt = <1800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo13_reg: LDO13 {
-> +					regulator-name = "vdd_ldo13";
-> +					regulator-min-microvolt = <2800000>;
-> +					regulator-max-microvolt = <2800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo15_reg: LDO15 {
-> +					regulator-name = "vdd_ldo15";
-> +					regulator-min-microvolt = <3100000>;
-> +					regulator-max-microvolt = <3100000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo16_reg: LDO16 {
-> +					regulator-name = "vdd_ldo16";
-> +					regulator-min-microvolt = <2200000>;
-> +					regulator-max-microvolt = <2200000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo17_reg: LDO17 {
-> +					regulator-name = "tsp_avdd";
-> +					regulator-min-microvolt = <3300000>;
-> +					regulator-max-microvolt = <3300000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo19_reg: LDO19 {
-> +					regulator-name = "vdd_sd";
-> +					regulator-min-microvolt = <2800000>;
-> +					regulator-max-microvolt = <2800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				ldo24_reg: LDO24 {
-> +					regulator-name = "tsp_io";
-> +					regulator-min-microvolt = <2800000>;
-> +					regulator-max-microvolt = <2800000>;
-> +					regulator-always-on;
-> +				};
-> +
-> +				buck1_reg: BUCK1 {
-> +					regulator-name = "vdd_mif";
-> +					regulator-min-microvolt = <800000>;
-> +					regulator-max-microvolt = <1300000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck2_reg: BUCK2 {
-> +					regulator-name = "vdd_arm";
-> +					regulator-min-microvolt = <800000>;
-> +					regulator-max-microvolt = <1500000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck3_reg: BUCK3 {
-> +					regulator-name = "vdd_int";
-> +					regulator-min-microvolt = <800000>;
-> +					regulator-max-microvolt = <1400000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck4_reg: BUCK4 {
-> +					regulator-name = "vdd_g3d";
-> +					regulator-min-microvolt = <800000>;
-> +					regulator-max-microvolt = <1400000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck5_reg: BUCK5 {
-> +					regulator-name = "vdd_mem";
-> +					regulator-min-microvolt = <800000>;
-> +					regulator-max-microvolt = <1400000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck6_reg: BUCK6 {
-> +					regulator-name = "vdd_kfc";
-> +					regulator-min-microvolt = <800000>;
-> +					regulator-max-microvolt = <1500000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck7_reg: BUCK7 {
-> +					regulator-name = "vdd_1.0v_ldo";
-> +					regulator-min-microvolt = <800000>;
-> +					regulator-max-microvolt = <1500000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck8_reg: BUCK8 {
-> +					regulator-name = "vdd_1.8v_ldo";
-> +					regulator-min-microvolt = <800000>;
-> +					regulator-max-microvolt = <1500000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck9_reg: BUCK9 {
-> +					regulator-name = "vdd_2.8v_ldo";
-> +					regulator-min-microvolt = <3000000>;
-> +					regulator-max-microvolt = <3750000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +
-> +				buck10_reg: BUCK10 {
-> +					regulator-name = "vdd_vmem";
-> +					regulator-min-microvolt = <2850000>;
-> +					regulator-max-microvolt = <2850000>;
-> +					regulator-always-on;
-> +					regulator-boot-on;
-> +				};
-> +			};
-> +		};
-> +	};
-> +
-> +	i2c_2: i2c@12C80000 {
-> +		samsung,i2c-sda-delay = <100>;
-> +		samsung,i2c-max-bus-freq = <66000>;
-> +		status = "okay";
-> +
-> +		hdmiddc@50 {
-> +			compatible = "samsung,exynos4210-hdmiddc";
-> +			reg = <0x50>;
-> +		};
-> +	};
-> +
-> +	rtc@101E0000 {
-> +		status = "okay";
-> +	};
-> +};
-> +
-> +&hdmi {
-> +	status = "okay";
-> +	hpd-gpio = <&gpx3 7 0>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&hdmi_hpd_irq>;
-> +
-> +	vdd_osc-supply = <&ldo10_reg>;
-> +	vdd_pll-supply = <&ldo8_reg>;
-> +	vdd-supply = <&ldo8_reg>;
+>=20
+> Hello Kukjin,
+>=20
+> You dropped this patch since exynos drm was causing boot hangs on som=
+e
+> platforms but the fix for that issue is already in linux-next (commit=
+:
+> f1e9203 clk: samsung: Fix Exynos 5420 pinctrl setup and clock disable
+> failure due to domain being gated) so I think it makes sense to enabl=
+e
+> the display options again.
 
-ldo10 and ldo8 are right? I think ldo7 and ldo6 are related with hdmi
-from schematic.
+I think these issues were unrelated to each other. DRM was disabled
+because of infinite deferred probing of DRM components. I saw Inki was
+sending some patches for it but I am not sure if they were merged.
 
-Thanks.
+Best regards,
+Krzysztof
+
+
+>=20
+> NOTE: Display panel is still not working since patch "arm: dts: Exyno=
+s5:
+> Use pmu_system_controller phandle for dp phy" is needed [0] but I thi=
+nk
+> we should enable display options to catch the regressions easier.
+>=20
+> Best regards,
+> Javier
+>=20
+> [0]: https://lkml.org/lkml/2014/11/24/10
+>=20
+>  arch/arm/configs/exynos_defconfig | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>=20
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exy=
+nos_defconfig
+> index 22beed3..27cdd52 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -111,11 +111,26 @@ CONFIG_REGULATOR_S2MPA01=3Dy
+>  CONFIG_REGULATOR_S2MPS11=3Dy
+>  CONFIG_REGULATOR_S5M8767=3Dy
+>  CONFIG_REGULATOR_TPS65090=3Dy
+> +CONFIG_DRM=3Dy
+> +CONFIG_DRM_BRIDGE=3Dy
+> +CONFIG_DRM_PTN3460=3Dy
+> +CONFIG_DRM_PS8622=3Dy
+> +CONFIG_DRM_EXYNOS=3Dy
+> +CONFIG_DRM_EXYNOS_FIMD=3Dy
+> +CONFIG_DRM_EXYNOS_DP=3Dy
+> +CONFIG_DRM_PANEL=3Dy
+> +CONFIG_DRM_PANEL_SIMPLE=3Dy
+>  CONFIG_FB=3Dy
+>  CONFIG_FB_MODE_HELPERS=3Dy
+>  CONFIG_FB_SIMPLE=3Dy
+>  CONFIG_EXYNOS_VIDEO=3Dy
+>  CONFIG_EXYNOS_MIPI_DSI=3Dy
+> +CONFIG_BACKLIGHT_LCD_SUPPORT=3Dy
+> +CONFIG_LCD_CLASS_DEVICE=3Dy
+> +CONFIG_LCD_PLATFORM=3Dy
+> +CONFIG_BACKLIGHT_CLASS_DEVICE=3Dy
+> +CONFIG_BACKLIGHT_GENERIC=3Dy
+> +CONFIG_BACKLIGHT_PWM=3Dy
+>  CONFIG_FRAMEBUFFER_CONSOLE=3Dy
+>  CONFIG_FONTS=3Dy
+>  CONFIG_FONT_7x14=3Dy
