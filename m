@@ -1,63 +1,55 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: 3.19-rc1: peach*: display not working (missing patches)
-Date: Mon, 05 Jan 2015 22:20:52 +0900
-Message-ID: <059f01d028ea$6e02cd00$4a086700$@kernel.org>
-References: <20141223101616.GA6238@peachpi>
- <CABxcv=mJ=pGdU700PWF2B4iCjLzG7SGo-6XWFFs814n4-v9PuA@mail.gmail.com>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH RESEND] ARM: exynos_defconfig: Enable options for display
+ panel support
+Date: Mon, 05 Jan 2015 14:22:19 +0100
+Message-ID: <54AA900B.4000403@collabora.co.uk>
+References: <1420215089-2093-1-git-send-email-javier.martinez@collabora.co.uk> <047c01d028e7$311858e0$93490aa0$@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:28675 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753292AbbAENUy (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:35506 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753264AbbAENW0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Jan 2015 08:20:54 -0500
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NHP005XKH2SRMC0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 05 Jan 2015 22:20:52 +0900 (KST)
-In-reply-to: <CABxcv=mJ=pGdU700PWF2B4iCjLzG7SGo-6XWFFs814n4-v9PuA@mail.gmail.com>
-Content-language: ko
+	Mon, 5 Jan 2015 08:22:26 -0500
+In-Reply-To: <047c01d028e7$311858e0$93490aa0$@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Javier Martinez Canillas' <javier@dowhile0.org>, 'Paolo Pisati' <p.pisati@gmail.com>, 'Kukjin Kim' <kgene@kernel.org>, 'Vivek Gautam' <gautam.vivek@samsung.com>
-Cc: 'linux-samsung' <linux-samsung-soc@vger.kernel.org>
+To: Kukjin Kim <kgene@kernel.org>
+Cc: 'Doug Anderson' <dianders@chromium.org>, 'Kevin Hilman' <khilman@linaro.org>, 'Olof Johansson' <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, 'Vivek Gautam' <gautam.vivek@samsung.com>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Javier Martinez Canillas wrote:
-> 
-> [adding Kukjin and Vivek as cc]
-> 
-> Hello Paolo,
-> 
-> On Tue, Dec 23, 2014 at 11:16 AM, Paolo Pisati <p.pisati@gmail.com> wrote:
-> > Hi,
-> >
-> > 3.19-rc1 still misses these two patches:
-> >
-> > 156823e arm: dts: Exynos5: Use pmu_system_controller phandle for dp phy
-> > 03c16e7 ARM: exynos_defconfig: Enable options for display panel support156823e
-> >
-> > and without them, the display doesn't turn on on my peachpi: can we have them
-> > queued for rc2?
-> 
-> Yes, Vivek re-posted his dp phy patch a couple of times and I pinged
-> Kukjin several times about this both during the 3.18 -rc cycle (since
-> this also affected 3.18 where display is not working) and during the
-> 3.19 merge window but unfortunately it was not picked yet...
-> 
-> I hope he can merge those patches as 3.19 fixes during the -rc cycle
-> to avoid having another kernel release with a non-working display on
-> Exynos5 boards.
-> 
-Hi,
+Hello Kukjin,
 
-Hmm...Probably I've queued the patch into -fixes if I remember correctly but
-unfortunately only in my local at that time because all of pull-requests for
-3.19 have been sent out before that. Then, maybe I've missed it :(
+>> 
+>> Hello Kukjin,
+>> 
+> Hi Javier,
+> 
+> Happy new year :)
+>
 
-Anyway, I'll take the patch for 3.19-rc. Thanks and sorry for that.
+Thanks, happy new year for you as well!
 
-- Kukjin
+>> You dropped this patch since exynos drm was causing boot hangs on some
+>> platforms but the fix for that issue is already in linux-next (commit:
+>> f1e9203 clk: samsung: Fix Exynos 5420 pinctrl setup and clock disable
+>> failure due to domain being gated) so I think it makes sense to enable
+>> the display options again.
+>> 
+>> NOTE: Display panel is still not working since patch "arm: dts: Exynos5:
+>> Use pmu_system_controller phandle for dp phy" is needed [0] but I think
+>> we should enable display options to catch the regressions easier.
+>> 
+> Agreed with your suggestion and I'll pick this up into Samsung tree soon.
+> 
+
+Perfect, I hope you can pick my peach pit/pi and snow DTS updates series
+as well since those patches have been in the list for some time.
+
+> Thanks,
+> Kukjin
+> 
+
+Best regards,
+Javier
