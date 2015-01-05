@@ -1,8 +1,8 @@
 From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [PATCH v5 5/5] ARM: dts: exynos4412-trats: Switch max77686 regulators
- to GPIO control
-Date: Mon, 05 Jan 2015 12:48:45 +0100
-Message-ID: <1420458525-22576-6-git-send-email-k.kozlowski@samsung.com>
+Subject: [PATCH v5 2/5] regulator: Allow parsing custom properties when using
+ simplified DT parsing
+Date: Mon, 05 Jan 2015 12:48:42 +0100
+Message-ID: <1420458525-22576-3-git-send-email-k.kozlowski@samsung.com>
 References: <1420458525-22576-1-git-send-email-k.kozlowski@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1420458525-22576-1-git-send-email-k.kozlowski@samsung.com>
@@ -11,101 +11,123 @@ To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-
 Cc: Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Remove fixed regulators (duplicating what max77686 provides) and
-add GPIO enable control to max77686 regulators.
+When drivers use simplified DT parsing method (they provide
+'regulator_desc.of_match') they still may want to parse custom
+properties for some of the regulators. For example some of the
+regulators support GPIO enable control.
 
-This gives the system full control over those regulators. Previously
-the state of such regulators was a mixture of what max77686 driver set
-over I2C and what regulator-fixed set through GPIO.
+Add a driver-supplied callback for such case. This way the regulator
+core parses common bindings offloading a lot of code from drivers and
+still custom properties may be used.
 
-Removal of 'regulator-always-on' from CAM_ISP_CORE_1.2V (buck9) allows
-disabling it when it is not used. Previously this regulator was always
-enabled because its enable state is a OR of:
- - ENB9 GPIO (turned always on by regulator-fixed),
- - BUCK9EN field in BUCK9CTRL register (off by max77686 through I2C).
+The callback, called for each parsed regulator, may modify the
+'regulator_config' initially passed to regulator_register().
 
 Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 ---
- arch/arm/boot/dts/exynos4412-trats2.dts | 25 +++++--------------------
- 1 file changed, 5 insertions(+), 20 deletions(-)
+ drivers/regulator/core.c         |  2 +-
+ drivers/regulator/internal.h     |  2 ++
+ drivers/regulator/of_regulator.c | 11 +++++++++++
+ include/linux/regulator/driver.h | 13 +++++++++++++
+ 4 files changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 405d4f337e89..186c210680c1 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -58,15 +58,6 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index c13b557a560e..5fae8cabd254 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -3635,7 +3635,7 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 		return ERR_PTR(-ENOMEM);
+ 	}
  
--		vemmc_reg: regulator-0 {
--			compatible = "regulator-fixed";
--			regulator-name = "VMEM_VDD_2.8V";
--			regulator-min-microvolt = <2800000>;
--			regulator-max-microvolt = <2800000>;
--			gpio = <&gpk0 2 0>;
--			enable-active-high;
--		};
--
- 		cam_io_reg: voltage-regulator-1 {
- 			compatible = "regulator-fixed";
- 			regulator-name = "CAM_SENSOR_A";
-@@ -94,16 +85,6 @@
- 			enable-active-high;
- 		};
+-	init_data = regulator_of_get_init_data(dev, regulator_desc,
++	init_data = regulator_of_get_init_data(dev, regulator_desc, config,
+ 					       &rdev->dev.of_node);
+ 	if (!init_data) {
+ 		init_data = config->init_data;
+diff --git a/drivers/regulator/internal.h b/drivers/regulator/internal.h
+index 80ba2a35a04b..c74ac8734023 100644
+--- a/drivers/regulator/internal.h
++++ b/drivers/regulator/internal.h
+@@ -38,11 +38,13 @@ struct regulator {
+ #ifdef CONFIG_OF
+ struct regulator_init_data *regulator_of_get_init_data(struct device *dev,
+ 			         const struct regulator_desc *desc,
++				 struct regulator_config *config,
+ 				 struct device_node **node);
+ #else
+ static inline struct regulator_init_data *
+ regulator_of_get_init_data(struct device *dev,
+ 			   const struct regulator_desc *desc,
++			   struct regulator_config *config,
+ 			   struct device_node **node)
+ {
+ 	return NULL;
+diff --git a/drivers/regulator/of_regulator.c b/drivers/regulator/of_regulator.c
+index 91eaaf010524..24e812c48d93 100644
+--- a/drivers/regulator/of_regulator.c
++++ b/drivers/regulator/of_regulator.c
+@@ -270,6 +270,7 @@ EXPORT_SYMBOL_GPL(of_regulator_match);
  
--		cam_isp_core_reg: voltage-regulator-4 {
--			compatible = "regulator-fixed";
--			regulator-name = "CAM_ISP_CORE_1.2V_EN";
--			regulator-min-microvolt = <1200000>;
--			regulator-max-microvolt = <1200000>;
--			gpio = <&gpm0 3 0>;
--			enable-active-high;
--			regulator-always-on;
--		};
--
- 		ps_als_reg: voltage-regulator-5 {
- 			compatible = "regulator-fixed";
- 			regulator-name = "LED_A_3.0V";
-@@ -405,6 +386,7 @@
- 					regulator-name = "VTF_2.8V";
- 					regulator-min-microvolt = <2800000>;
- 					regulator-max-microvolt = <2800000>;
-+					maxim,ena-gpios = <&gpy2 0 GPIO_ACTIVE_HIGH>;
- 				};
+ struct regulator_init_data *regulator_of_get_init_data(struct device *dev,
+ 					    const struct regulator_desc *desc,
++					    struct regulator_config *config,
+ 					    struct device_node **node)
+ {
+ 	struct device_node *search, *child;
+@@ -307,6 +308,16 @@ struct regulator_init_data *regulator_of_get_init_data(struct device *dev,
+ 			break;
+ 		}
  
- 				ldo22_reg: ldo22 {
-@@ -412,6 +394,7 @@
- 					regulator-name = "VMEM_VDD_2.8V";
- 					regulator-min-microvolt = <2800000>;
- 					regulator-max-microvolt = <2800000>;
-+					maxim,ena-gpios = <&gpk0 2 GPIO_ACTIVE_HIGH>;
- 				};
++		if (desc->of_parse_cb) {
++			if (desc->of_parse_cb(child, desc, config)) {
++				dev_err(dev,
++					"driver callback failed to parse DT for regulator %s\n",
++					child->name);
++				init_data = NULL;
++				break;
++			}
++		}
++
+ 		of_node_get(child);
+ 		*node = child;
+ 		break;
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index 5f1e9ca47417..d4ad5b5a02bb 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -21,6 +21,7 @@
  
- 				ldo23_reg: ldo23 {
-@@ -518,6 +501,7 @@
- 					regulator-name = "VMEM_VDDF_3.0V";
- 					regulator-min-microvolt = <2850000>;
- 					regulator-max-microvolt = <2850000>;
-+					maxim,ena-gpios = <&gpk0 2 GPIO_ACTIVE_HIGH>;
- 				};
+ struct regmap;
+ struct regulator_dev;
++struct regulator_config;
+ struct regulator_init_data;
+ struct regulator_enable_gpio;
  
- 				buck9_reg: buck9 {
-@@ -525,6 +509,7 @@
- 					regulator-name = "CAM_ISP_CORE_1.2V";
- 					regulator-min-microvolt = <1000000>;
- 					regulator-max-microvolt = <1200000>;
-+					maxim,ena-gpios = <&gpm0 3 GPIO_ACTIVE_HIGH>;
- 				};
- 			};
- 		};
-@@ -587,7 +572,7 @@
- 		broken-cd;
- 		non-removable;
- 		card-detect-delay = <200>;
--		vmmc-supply = <&vemmc_reg>;
-+		vmmc-supply = <&ldo22_reg>;
- 		clock-frequency = <400000000>;
- 		samsung,dw-mshc-ciu-div = <0>;
- 		samsung,dw-mshc-sdr-timing = <2 3>;
+@@ -205,6 +206,15 @@ enum regulator_type {
+  * @supply_name: Identifying the regulator supply
+  * @of_match: Name used to identify regulator in DT.
+  * @regulators_node: Name of node containing regulator definitions in DT.
++ * @of_parse_cb: Optional callback called only if of_match is present.
++ *               Will be called for each regulator parsed from DT, during
++ *               init_data parsing.
++ *               The regulator_config passed as argument to the callback will
++ *               be a copy of config passed to regulator_register, valid only
++ *               for this particular call. Callback may freely change the
++ *               config but it cannot store it for later usage.
++ *               Callback should return 0 on success or negative ERRNO
++ *               indicating failure.
+  * @id: Numerical identifier for the regulator.
+  * @ops: Regulator operations table.
+  * @irq: Interrupt number for the regulator.
+@@ -251,6 +261,9 @@ struct regulator_desc {
+ 	const char *supply_name;
+ 	const char *of_match;
+ 	const char *regulators_node;
++	int (*of_parse_cb)(struct device_node *,
++			    const struct regulator_desc *,
++			    struct regulator_config *);
+ 	int id;
+ 	bool continuous_voltage_range;
+ 	unsigned n_voltages;
 -- 
 1.9.1
