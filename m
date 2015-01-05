@@ -1,122 +1,43 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V8 00/14] drm/exynos: few patches to enhance bridge chip
- support
-Date: Mon, 5 Jan 2015 14:50:16 +0100
-Message-ID: <20150105135015.GA12010@ulmo.nvidia.com>
-References: <1416045309-13359-1-git-send-email-ajaykumar.rs@samsung.com>
- <CAEC9eQOrKw2Z1q-ztFfadXmsL3CTcAkkv9kcS2QnDOAVSh2AuQ@mail.gmail.com>
- <548ABAB6.6010200@collabora.co.uk> <3197445.qizQc0zeRb@avalon>
- <54914D7D.9060108@collabora.co.uk>
- <CAPj87rN4HZzDt5JBLyTRmKZs7XcOG=0ha7ZQf9hmjPAFgTyhYQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v4 2/3] pinctrl: exynos: Fix GPIO setup failure because
+ domain clock being gated
+Date: Mon, 5 Jan 2015 15:05:46 +0100
+Message-ID: <CACRpkdaVJKmMzc0uNL1XK8w93Cf_yWcdW9w4E2NFxroWEkkzZg@mail.gmail.com>
+References: <1417777254-26579-1-git-send-email-k.kozlowski@samsung.com>
+	<1417777254-26579-3-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1981909144=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAPj87rN4HZzDt5JBLyTRmKZs7XcOG=0ha7ZQf9hmjPAFgTyhYQ@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Stone <daniel@fooishbar.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sean Paul <seanpaul@google.com>, Daniel Vetter <daniel.vetter@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, Ajay Kumar <ajaykumar.rs@samsung.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Ajay kumar <ajaynumb@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Pannaga Bhushan Reddy Patel <bhushan.r@samsung.com>, Prashanth G <prashanth.g@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1417777254-26579-3-git-send-email-k.kozlowski@samsung.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene@kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>, Kevin Hilman <khilman@kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Fri, Dec 5, 2014 at 12:00 PM, Krzysztof Kozlowski
+<k.kozlowski@samsung.com> wrote:
 
---===============1981909144==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="T4sUOijqQbZv57TR"
-Content-Disposition: inline
+> The audio subsystem on Exynos 5420 has separate clocks and GPIO. To
+> operate properly on GPIOs the main block clock 'mau_epll' must be
+> enabled.
+>
+> This was observed on Peach Pi/Pit and Arndale Octa (after enabling i2s0)
+> after introducing runtime PM to pl330 DMA driver. After that commit the
+> 'mau_epll' was gated, because the "amba" clock was disabled and there
+> were no more users of mau_epll.
+>
+> The system hang just before probing i2s0 because
+> samsung_pinmux_setup() tried to access memory from audss block which was
+> gated.
+>
+> Add a clock property to the pinctrl driver and enable the clock during
+> GPIO setup. During normal GPIO operations (set, get, set_direction) the
+> clock is not enabled.
+>
+> Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
+Tomasz, is this OK and should I apply it for fixes or next?
 
---T4sUOijqQbZv57TR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jan 02, 2015 at 01:10:14PM +0000, Daniel Stone wrote:
-> Hi Ajay,
->=20
-> On 17 December 2014 at 09:31, Javier Martinez Canillas <
-> javier.martinez@collabora.co.uk> wrote:
->=20
-> > On 12/16/2014 12:37 AM, Laurent Pinchart wrote:
-> > >> You asked Ajay to change his series to use the video port and enpoin=
-ts
-> > DT
-> > >> bindings instead of phandles, could you please review his latest
-> > version?
-> > >>
-> > >> I guess is now too late for 3.19 since we are in the middle of the m=
-erge
-> > >> window but it would be great if this series can at least made it to
-> > 3.20.
-> > >
-> > > I don't have time to review the series in details right now, but I'm
-> > happy
-> > > with the DT bindings, and have no big issue with the rest of the
-> > patches. I
-> > > don't really like the of_drm_find_bridge() concept introduced in 03/14
-> > but I
-> > > won't nack it given lack of time to implement an alternative proposal.
-> > It's an
-> > > internal API, it can always be reworked later anyway.
-> >
-> > Thanks a lot for taking the time to look at the DT bindings, then I gue=
-ss
-> > that the series are finally ready to be merged?
-> >
-> > Ajay's series don't apply cleanly anymore because it has been a while s=
-ince
-> > he posted it but he can rebase on top of 3.19-rc1 once it is released a=
-nd
-> > re-resend.
-> >
->=20
-> Do you have any plans to rebase this so it's ready for merging?
->=20
-> Thierry, Daniel, Dave - whose tree would this be best to merge through?
-
-The plan is for me to take the bridge patches through the drm/panel
-tree. I'm going to look at these patches again later this week but from
-a very quick peek there don't seem to be any major issues left.
-
-Thierry
-
---T4sUOijqQbZv57TR
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUqpaXAAoJEN0jrNd/PrOhM0gP/3LQ4ubyf8oC1nAytarOZon5
-LTY3O2gTDPx8PKkhCdyy7h99CU/X06eNIDb1tko017peRZbFdMCfJCBZ/DtilvCk
-DZxt5OWu2wv6Xk5tq8S32tjYT2sKiAmSlcdJEZikLanJFzSWHjCEcAtu379tO2cM
-1obhJrFYLBuIIBrDFYPnOOlKu6yXWaAW3cuSp0qGiNayCDkHigbimsIrusLCV5an
-Ypv6soIUbk+ZiIv7vNkZvVkjc/2mb0AsaWVoXb4wzZxOSEBU/AyiMwKeRQOtdRIL
-1Em2/De4SCwDgZVmouaT0xON532AEbn16fUJDjoAnc8JrzruPY6DWnOL5x0OhFTb
-8ZNh+oK7u9pT0CL4jzjCQ6BsWmCEP4epapzAKasQYMS6YHHxB5eQ5DJvZvsS7BmN
-JIpg61FcPLuSyEnOHBi+ZltH2MfbVXiKrbEuJfT+nd7Bakp4rErC+T5j3AXq2QvR
-FQiqhFY9lean21zCLATx/LtGHj75+riaOEmV2QRx2geWlx8gh8AD01b5AFsl7eZD
-vIBD0kHgGhIbtSwy+9sZ99MKZP7vGfJQkEbwCqF3s7UCQ3WtWoQ/aLexaxGV8l0e
-53ncq7wdzTCcd1n7NJZA1D62hJsWubn214thqJkDSLnmu9hDmzSAaHJco8j+/ZyT
-3OlQJD3eyVELEcDcZk7O
-=trO7
------END PGP SIGNATURE-----
-
---T4sUOijqQbZv57TR--
-
---===============1981909144==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
-cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
-
---===============1981909144==--
+Yours,
+Linus Walleij
