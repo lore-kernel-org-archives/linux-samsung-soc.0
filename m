@@ -1,143 +1,205 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH v3 1/4] mmc: dw_mmc: exynos: incorporate ciu_div into
- timing property
-Date: Mon, 5 Jan 2015 04:13:33 +0530
-Message-ID: <CAGOxZ509kASim7keNkAGj5gAGO02=7vZM=VL-MRMObv3x+CzTg@mail.gmail.com>
-References: <1420008185-24758-1-git-send-email-alim.akhtar@samsung.com>
- <1420008185-24758-2-git-send-email-alim.akhtar@samsung.com> <CAD=FV=WXzPt=VKxB=KHK+hC=RN6WbmdnQcLUT4zFQ0Ud7BFanQ@mail.gmail.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Add exynos3250 suspend-to-ram support
+Date: Mon, 05 Jan 2015 09:35:25 +0900
+Message-ID: <54A9DC4D.1050600@samsung.com>
+References: <1419388629-27066-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CAD=FV=WXzPt=VKxB=KHK+hC=RN6WbmdnQcLUT4zFQ0Ud7BFanQ@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Doug Anderson <dianders@chromium.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, kgene <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>, Alexandru Stan <amstan@google.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:18200 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753085AbbAEAf2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 4 Jan 2015 19:35:28 -0500
+In-reply-to: <1419388629-27066-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, ben-linux@fluff.org, kyungmin.park@samsung.com, inki.dae@samsung.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Doug,
-Thanks for looking into this series.
+Dear Kukjin,
 
-On Fri, Jan 2, 2015 at 10:28 PM, Doug Anderson <dianders@chromium.org> wrote:
-> Alim,
->
-> On Tue, Dec 30, 2014 at 10:43 PM, Alim Akhtar <alim.akhtar@samsung.com> wrote:
->> From: Seungwon Jeon <tgih.jun@samsung.com>
->>
->> ciu_div may not be common value for all speed mode.
->> So, it needs to be attached to CLKSEL timing.
->
-> The more time I've spent looking at all of this stuff the less I like
-> the exynos bindings.  Personally I'd prefer to see the exynos bindings
-> fixed rather than go further down the path of these bindings.
->
-> Specifically:
->
-> 1. The "drive" really should be specified quite differently.
-> According to the DesignWare docs, the "drive" phase is there to meet
-> hold time requirements.  Hold time requirements are different for
-> different SD/MMC modes and are specified in nanoseconds (SDR104 is
-> .8ns, ID mode is 5.0ns).  There is a per-SoC parameter needed that
-> indicates some built-in delay (in nanoseconds) and that shouldn't
-> change based on clock speed or card mode.
->
-Yes, "drive" phase shift are there to meet hold time requirements. And
-that why we in general don't change it as those are fixed for a
-SoC/Board based on actual measurement of the same.
+Could you please review this patch-set?
 
-> 2. The ciu_div really ought to be automatic.  Start out at a divide by
-> 4.  If you end up with both drive and sample at phases of 0, 90, 180,
-> 270 then you can change to divide by 2.
->
-> I still haven't looked at every last detail of these delays though, so
-> please correct me if I'm wrong.  I've added Alex who may have looked
-> at this more than I have.
->
-Thanks, suggestions/comments are welcome.
->
-> With all of the above, there's also the fact that (I think) we should
-> be moving towards working with the clock phase API since all of your
-> values are effectively specifying clock phases, just in a very arcane
-> way.
->
-That is something nice to have, and should be done at some point.
-As you know exynos implements a custom register called CLKSEL, and it
-allows us to set the required "sample" phase shift. And exynos uses
-"variable delay tuning" as per DW databook to set "sample" phase shift
-based on tuning data.
->
->> This also introduce a new compatibale 'dw-mshc-hs200-timing'
->> for selecting hs200 timing value
->
-> As per above, I don't think this is needed.
->
->
->> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
->> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
->> ---
->>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   15 ++--
->>  drivers/mmc/host/dw_mmc-exynos.c                   |   81 ++++++++++++++------
->>  drivers/mmc/host/dw_mmc-exynos.h                   |    1 +
->>  3 files changed, 67 insertions(+), 30 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
->> index ee4fc05..06455de 100644
->> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
->> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
->> @@ -23,10 +23,6 @@ Required Properties:
->>         - "samsung,exynos7-dw-mshc-smu": for controllers with Samsung Exynos7
->>           specific extensions having an SMU.
->>
->> -* samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
->> -  unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
->> -  ignored for Exynos4 SoC's. The valid range of divider value is 0 to 7.
->> -
->>  * samsung,dw-mshc-sdr-timing: Specifies the value of CIU clock phase shift value
->>    in transmit mode and CIU clock phase shift value in receive mode for single
->>    data rate mode operation. Refer notes below for the order of the cells and the
->> @@ -37,11 +33,16 @@ Required Properties:
->>    data rate mode operation. Refer notes below for the order of the cells and the
->>    valid values.
->>
->> +* samsung,dw-mshc-hs200-timing: Similar with dw-mshc-sdr-timing.
->> +
->>    Notes for the sdr-timing and ddr-timing values:
->>
->>      The order of the cells should be
->>        - First Cell: CIU clock phase shift value for tx mode.
->>        - Second Cell: CIU clock phase shift value for rx mode.
->> +      - Thrid Cell: Specifies the divider value for the card interface
->> +        unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
->> +        ignored for Exynos4 SoC's. The valid range of divider value is 0 to 7.
->>
->>      Valid values for SDR and DDR CIU clock timing for Exynos5250:
->>        - valid value for tx phase shift and rx phase shift is 0 to 7.
->> @@ -79,8 +80,8 @@ Example:
->>                 broken-cd;
->>                 fifo-depth = <0x80>;
->>                 card-detect-delay = <200>;
->> -               samsung,dw-mshc-ciu-div = <3>;
->> -               samsung,dw-mshc-sdr-timing = <2 3>;
->> -               samsung,dw-mshc-ddr-timing = <1 2>;
->> +               samsung,dw-mshc-sdr-timing = <2 3 3>;
->> +               samsung,dw-mshc-ddr-timing = <1 2 3>;
->> +               samsung,dw-mshc-hs200-timing = <0 2 3>;
->
-> You are breaking backward compatibility here.  If your change is
-> merged then all old boards will instantly break.  Since the "dts" and
-> code changes will likely be merged through different trees you'll end
-> up with a bunch of broken trees until everything is merged together.
-> Even if you don't subscribe to the stable bindings theory this is not
-> acceptable.
->
-yes the major concern in this series is probably this, which breaks
-things unless everything merge in one go and via one tree. Thats why I
-re-based everything including dts change on mmc-tree for this case and
-added device-tree mailing list for more opinion etc.
+I tested this patch-set on Exynos3250-baesd Rinato board.
 
-> -Doug
+Best Regards,
+Chanwoo Choi
 
-
-
--- 
-Regards,
-Alim
+On 12/24/2014 11:37 AM, Chanwoo Choi wrote:
+> This patch adds the support for suspend-to-ram feature of Exynos3250 SoC.
+> Exynos3250 don't contain the L2 cache.
+> 
+> The measured power-consumption in suspend state:
+> - before entering suspend : 31mA
+> - in suspend state : 16mA
+> 
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+> This patch is based on v3.19-rc1 and is tested on Exynos3250-based Rinato board.
+> 
+>  arch/arm/mach-exynos/regs-pmu.h |  3 ++
+>  arch/arm/mach-exynos/suspend.c  | 77 +++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 80 insertions(+)
+> 
+> diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
+> index b5f4406..eb461e1 100644
+> --- a/arch/arm/mach-exynos/regs-pmu.h
+> +++ b/arch/arm/mach-exynos/regs-pmu.h
+> @@ -160,12 +160,14 @@
+>  #define EXYNOS5_L2RSTDISABLE_VALUE		BIT(3)
+>  
+>  #define S5P_PAD_RET_MAUDIO_OPTION		0x3028
+> +#define S5P_PAD_RET_MMC2_OPTION			0x30c8
+>  #define S5P_PAD_RET_GPIO_OPTION			0x3108
+>  #define S5P_PAD_RET_UART_OPTION			0x3128
+>  #define S5P_PAD_RET_MMCA_OPTION			0x3148
+>  #define S5P_PAD_RET_MMCB_OPTION			0x3168
+>  #define S5P_PAD_RET_EBIA_OPTION			0x3188
+>  #define S5P_PAD_RET_EBIB_OPTION			0x31A8
+> +#define S5P_PAD_RET_SPI_OPTION			0x31c8
+>  
+>  #define S5P_PS_HOLD_CONTROL			0x330C
+>  #define S5P_PS_HOLD_EN				(1 << 31)
+> @@ -326,6 +328,7 @@
+>  			(EXYNOS3_ARM_CORE0_OPTION + ((_nr) * 0x80))
+>  
+>  #define EXYNOS3_ARM_COMMON_OPTION			0x2408
+> +#define EXYNOS3_ARM_L2_OPTION				0x2608
+>  #define EXYNOS3_TOP_PWR_OPTION				0x2C48
+>  #define EXYNOS3_CORE_TOP_PWR_OPTION			0x2CA8
+>  #define EXYNOS3_XUSBXTI_DURATION			0x341C
+> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
+> index f8e7dcd..d6feef3 100644
+> --- a/arch/arm/mach-exynos/suspend.c
+> +++ b/arch/arm/mach-exynos/suspend.c
+> @@ -91,6 +91,12 @@ static unsigned int exynos_pmu_spare3;
+>  
+>  static u32 exynos_irqwake_intmask = 0xffffffff;
+>  
+> +static const struct exynos_wkup_irq exynos3250_wkup_irq[] = {
+> +	{ 73, BIT(1) }, /* RTC alarm */
+> +	{ 74, BIT(2) }, /* RTC tick */
+> +	{ /* sentinel */ },
+> +};
+> +
+>  static const struct exynos_wkup_irq exynos4_wkup_irq[] = {
+>  	{ 76, BIT(1) }, /* RTC alarm */
+>  	{ 77, BIT(2) }, /* RTC tick */
+> @@ -114,6 +120,19 @@ unsigned int exynos_release_ret_regs[] = {
+>  	REG_TABLE_END,
+>  };
+>  
+> +unsigned int exynos3250_release_ret_regs[] = {
+> +	S5P_PAD_RET_MAUDIO_OPTION,
+> +	S5P_PAD_RET_GPIO_OPTION,
+> +	S5P_PAD_RET_UART_OPTION,
+> +	S5P_PAD_RET_MMCA_OPTION,
+> +	S5P_PAD_RET_MMCB_OPTION,
+> +	S5P_PAD_RET_EBIA_OPTION,
+> +	S5P_PAD_RET_EBIB_OPTION,
+> +	S5P_PAD_RET_MMC2_OPTION,
+> +	S5P_PAD_RET_SPI_OPTION,
+> +	REG_TABLE_END,
+> +};
+> +
+>  unsigned int exynos5420_release_ret_regs[] = {
+>  	EXYNOS_PAD_RET_DRAM_OPTION,
+>  	EXYNOS_PAD_RET_MAUDIO_OPTION,
+> @@ -173,6 +192,12 @@ static int exynos_cpu_suspend(unsigned long arg)
+>  	return exynos_cpu_do_idle();
+>  }
+>  
+> +static int exynos3250_cpu_suspend(unsigned long arg)
+> +{
+> +	flush_cache_all();
+> +	return exynos_cpu_do_idle();
+> +}
+> +
+>  static int exynos5420_cpu_suspend(unsigned long arg)
+>  {
+>  	/* MCPM works with HW CPU identifiers */
+> @@ -230,6 +255,23 @@ static void exynos_pm_prepare(void)
+>  	pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
+>  }
+>  
+> +static void exynos3250_pm_prepare(void)
+> +{
+> +	unsigned int tmp;
+> +
+> +	/* Set wake-up mask registers */
+> +	exynos_pm_set_wakeup_mask();
+> +
+> +	tmp = pmu_raw_readl(EXYNOS3_ARM_L2_OPTION);
+> +	tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
+> +	pmu_raw_writel(tmp, EXYNOS3_ARM_L2_OPTION);
+> +
+> +	exynos_pm_enter_sleep_mode();
+> +
+> +	/* ensure at least INFORM0 has the resume address */
+> +	pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
+> +}
+> +
+>  static void exynos5420_pm_prepare(void)
+>  {
+>  	unsigned int tmp;
+> @@ -344,6 +386,28 @@ early_wakeup:
+>  	pmu_raw_writel(0x0, S5P_INFORM1);
+>  }
+>  
+> +static void exynos3250_pm_resume(void)
+> +{
+> +	u32 cpuid = read_cpuid_part();
+> +
+> +	if (exynos_pm_central_resume())
+> +		goto early_wakeup;
+> +
+> +	/* For release retention */
+> +	exynos_pm_release_retention();
+> +
+> +	pmu_raw_writel(S5P_USE_STANDBY_WFI_ALL, S5P_CENTRAL_SEQ_OPTION);
+> +
+> +	if (call_firmware_op(resume) == -ENOSYS
+> +	    && cpuid == ARM_CPU_PART_CORTEX_A9)
+> +		exynos_cpu_restore_register();
+> +
+> +early_wakeup:
+> +
+> +	/* Clear SLEEP mode set in INFORM1 */
+> +	pmu_raw_writel(0x0, S5P_INFORM1);
+> +}
+> +
+>  static void exynos5420_prepare_pm_resume(void)
+>  {
+>  	if (IS_ENABLED(CONFIG_EXYNOS5420_MCPM))
+> @@ -483,6 +547,16 @@ static const struct platform_suspend_ops exynos_suspend_ops = {
+>  	.valid		= suspend_valid_only_mem,
+>  };
+>  
+> +static const struct exynos_pm_data exynos3250_pm_data = {
+> +	.wkup_irq	= exynos3250_wkup_irq,
+> +	.wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
+> +	.release_ret_regs = exynos3250_release_ret_regs,
+> +	.pm_suspend	= exynos_pm_suspend,
+> +	.pm_resume	= exynos3250_pm_resume,
+> +	.pm_prepare	= exynos3250_pm_prepare,
+> +	.cpu_suspend	= exynos3250_cpu_suspend,
+> +};
+> +
+>  static const struct exynos_pm_data exynos4_pm_data = {
+>  	.wkup_irq	= exynos4_wkup_irq,
+>  	.wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
+> @@ -518,6 +592,9 @@ static struct exynos_pm_data exynos5420_pm_data = {
+>  
+>  static struct of_device_id exynos_pmu_of_device_ids[] = {
+>  	{
+> +		.compatible = "samsung,exynos3250-pmu",
+> +		.data = &exynos3250_pm_data,
+> +	}, {
+>  		.compatible = "samsung,exynos4210-pmu",
+>  		.data = &exynos4_pm_data,
+>  	}, {
+> 
