@@ -1,55 +1,48 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH RESEND] ARM: exynos_defconfig: Enable options for display
- panel support
-Date: Mon, 05 Jan 2015 14:22:19 +0100
-Message-ID: <54AA900B.4000403@collabora.co.uk>
-References: <1420215089-2093-1-git-send-email-javier.martinez@collabora.co.uk> <047c01d028e7$311858e0$93490aa0$@kernel.org>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: 3.19-rc1: peach*: display not working (missing patches)
+Date: Mon, 5 Jan 2015 14:25:38 +0100
+Message-ID: <CABxcv==s_rv2q64rTTKptkJ4zMQG6AoUiSQQLYQVUGxg2tMoeQ@mail.gmail.com>
+References: <20141223101616.GA6238@peachpi>
+	<CABxcv=mJ=pGdU700PWF2B4iCjLzG7SGo-6XWFFs814n4-v9PuA@mail.gmail.com>
+	<059f01d028ea$6e02cd00$4a086700$@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:35506 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753264AbbAENW0 (ORCPT
+Received: from mail-wg0-f52.google.com ([74.125.82.52]:40435 "EHLO
+	mail-wg0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752924AbbAENZk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Jan 2015 08:22:26 -0500
-In-Reply-To: <047c01d028e7$311858e0$93490aa0$@kernel.org>
+	Mon, 5 Jan 2015 08:25:40 -0500
+Received: by mail-wg0-f52.google.com with SMTP id x12so27580678wgg.39
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Jan 2015 05:25:39 -0800 (PST)
+In-Reply-To: <059f01d028ea$6e02cd00$4a086700$@kernel.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>
-Cc: 'Doug Anderson' <dianders@chromium.org>, 'Kevin Hilman' <khilman@linaro.org>, 'Olof Johansson' <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, 'Vivek Gautam' <gautam.vivek@samsung.com>, 'Krzysztof Kozlowski' <k.kozlowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: Paolo Pisati <p.pisati@gmail.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-samsung <linux-samsung-soc@vger.kernel.org>
 
 Hello Kukjin,
 
->> 
->> Hello Kukjin,
->> 
-> Hi Javier,
-> 
-> Happy new year :)
+On Mon, Jan 5, 2015 at 2:20 PM, Kukjin Kim <kgene@kernel.org> wrote:
+> Javier Martinez Canillas wrote:
+>>
+>> I hope he can merge those patches as 3.19 fixes during the -rc cycle
+>> to avoid having another kernel release with a non-working display on
+>> Exynos5 boards.
+>>
+> Hi,
+>
+> Hmm...Probably I've queued the patch into -fixes if I remember correctly but
+> unfortunately only in my local at that time because all of pull-requests for
+> 3.19 have been sent out before that. Then, maybe I've missed it :(
+>
+> Anyway, I'll take the patch for 3.19-rc. Thanks and sorry for that.
 >
 
-Thanks, happy new year for you as well!
+Great, thanks a lot for your help!
 
->> You dropped this patch since exynos drm was causing boot hangs on some
->> platforms but the fix for that issue is already in linux-next (commit:
->> f1e9203 clk: samsung: Fix Exynos 5420 pinctrl setup and clock disable
->> failure due to domain being gated) so I think it makes sense to enable
->> the display options again.
->> 
->> NOTE: Display panel is still not working since patch "arm: dts: Exynos5:
->> Use pmu_system_controller phandle for dp phy" is needed [0] but I think
->> we should enable display options to catch the regressions easier.
->> 
-> Agreed with your suggestion and I'll pick this up into Samsung tree soon.
-> 
-
-Perfect, I hope you can pick my peach pit/pi and snow DTS updates series
-as well since those patches have been in the list for some time.
-
-> Thanks,
-> Kukjin
-> 
+> - Kukjin
+>
 
 Best regards,
 Javier
