@@ -1,230 +1,63 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [RESEND PATCH v6] ARM: EXYNOS: Remove i2c sys configuration
- related code
-Date: Mon, 05 Jan 2015 22:01:57 +0900
-Message-ID: <049e01d028e7$c9b4f360$5d1eda20$@kernel.org>
-References: <1420450146-27112-1-git-send-email-pankaj.dubey@samsung.com>
+Subject: RE: 3.19-rc1: peach*: display not working (missing patches)
+Date: Mon, 05 Jan 2015 22:20:52 +0900
+Message-ID: <059f01d028ea$6e02cd00$4a086700$@kernel.org>
+References: <20141223101616.GA6238@peachpi>
+ <CABxcv=mJ=pGdU700PWF2B4iCjLzG7SGo-6XWFFs814n4-v9PuA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:53135 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753246AbbAENCA (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:28675 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753292AbbAENUy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Jan 2015 08:02:00 -0500
-Received: from epcpsbgr2.samsung.com
- (u142.gpu120.samsung.co.kr [203.254.230.142])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+	Mon, 5 Jan 2015 08:20:54 -0500
+Received: from epcpsbgr1.samsung.com
+ (u141.gpu120.samsung.co.kr [203.254.230.141])
+ by mailout3.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NHP0023TG7AJ570@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 05 Jan 2015 22:01:58 +0900 (KST)
-In-reply-to: <1420450146-27112-1-git-send-email-pankaj.dubey@samsung.com>
+ with ESMTP id <0NHP005XKH2SRMC0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 05 Jan 2015 22:20:52 +0900 (KST)
+In-reply-to: <CABxcv=mJ=pGdU700PWF2B4iCjLzG7SGo-6XWFFs814n4-v9PuA@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Pankaj Dubey' <pankaj.dubey@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene@kernel.org, linux@arm.linux.org.uk, b.zolnierkie@samsung.com, thomas.ab@samsung.com
+To: 'Javier Martinez Canillas' <javier@dowhile0.org>, 'Paolo Pisati' <p.pisati@gmail.com>, 'Kukjin Kim' <kgene@kernel.org>, 'Vivek Gautam' <gautam.vivek@samsung.com>
+Cc: 'linux-samsung' <linux-samsung-soc@vger.kernel.org>
 
-Pankaj Dubey wrote:
+Javier Martinez Canillas wrote:
 > 
-> As all these code has been moved into i2c driver, now we can
-> safely remove them from machine files.
+> [adding Kukjin and Vivek as cc]
 > 
-> CC: Russell King <linux@arm.linux.org.uk>
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> ---
-> This patch is leftover patch from patch series [1], resending it after rebasing.
-> It can be cleanly applied on kgene/for-next and linux-next/next-20150103.
+> Hello Paolo,
 > 
-> [1]: http://www.spinics.net/lists/linux-samsung-soc/msg39440.html
+> On Tue, Dec 23, 2014 at 11:16 AM, Paolo Pisati <p.pisati@gmail.com> wrote:
+> > Hi,
+> >
+> > 3.19-rc1 still misses these two patches:
+> >
+> > 156823e arm: dts: Exynos5: Use pmu_system_controller phandle for dp phy
+> > 03c16e7 ARM: exynos_defconfig: Enable options for display panel support156823e
+> >
+> > and without them, the display doesn't turn on on my peachpi: can we have them
+> > queued for rc2?
 > 
-Hi Pankaj,
+> Yes, Vivek re-posted his dp phy patch a couple of times and I pinged
+> Kukjin several times about this both during the 3.18 -rc cycle (since
+> this also affected 3.18 where display is not working) and during the
+> 3.19 merge window but unfortunately it was not picked yet...
+> 
+> I hope he can merge those patches as 3.19 fixes during the -rc cycle
+> to avoid having another kernel release with a non-working display on
+> Exynos5 boards.
+> 
+Hi,
 
-Happy new year and looks good to me. Nice cleanup ;)
+Hmm...Probably I've queued the patch into -fixes if I remember correctly but
+unfortunately only in my local at that time because all of pull-requests for
+3.19 have been sent out before that. Then, maybe I've missed it :(
 
-Thanks for your gentle reminder and will apply.
+Anyway, I'll take the patch for 3.19-rc. Thanks and sorry for that.
 
 - Kukjin
-
-> 
->  arch/arm/mach-exynos/exynos.c           | 39 ++-------------------------------
->  arch/arm/mach-exynos/include/mach/map.h |  3 ---
->  arch/arm/mach-exynos/pm.c               |  3 ++-
->  arch/arm/mach-exynos/regs-sys.h         | 22 -------------------
->  arch/arm/mach-exynos/suspend.c          |  7 ------
->  5 files changed, 4 insertions(+), 70 deletions(-)
->  delete mode 100644 arch/arm/mach-exynos/regs-sys.h
-> 
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index c13d083..2c84439 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -27,20 +27,16 @@
->  #include <asm/mach/map.h>
->  #include <asm/memory.h>
-> 
-> +#include <mach/map.h>
-> +
->  #include "common.h"
->  #include "mfc.h"
->  #include "regs-pmu.h"
-> -#include "regs-sys.h"
-> 
->  void __iomem *pmu_base_addr;
-> 
->  static struct map_desc exynos4_iodesc[] __initdata = {
->  	{
-> -		.virtual	= (unsigned long)S3C_VA_SYS,
-> -		.pfn		= __phys_to_pfn(EXYNOS4_PA_SYSCON),
-> -		.length		= SZ_64K,
-> -		.type		= MT_DEVICE,
-> -	}, {
->  		.virtual	= (unsigned long)S5P_VA_SROMC,
->  		.pfn		= __phys_to_pfn(EXYNOS4_PA_SROMC),
->  		.length		= SZ_4K,
-> @@ -70,11 +66,6 @@ static struct map_desc exynos4_iodesc[] __initdata = {
-> 
->  static struct map_desc exynos5_iodesc[] __initdata = {
->  	{
-> -		.virtual	= (unsigned long)S3C_VA_SYS,
-> -		.pfn		= __phys_to_pfn(EXYNOS5_PA_SYSCON),
-> -		.length		= SZ_64K,
-> -		.type		= MT_DEVICE,
-> -	}, {
->  		.virtual	= (unsigned long)S5P_VA_SROMC,
->  		.pfn		= __phys_to_pfn(EXYNOS5_PA_SROMC),
->  		.length		= SZ_4K,
-> @@ -213,32 +204,6 @@ static void __init exynos_init_irq(void)
-> 
->  static void __init exynos_dt_machine_init(void)
->  {
-> -	struct device_node *i2c_np;
-> -	const char *i2c_compat = "samsung,s3c2440-i2c";
-> -	unsigned int tmp;
-> -	int id;
-> -
-> -	/*
-> -	 * Exynos5's legacy i2c controller and new high speed i2c
-> -	 * controller have muxed interrupt sources. By default the
-> -	 * interrupts for 4-channel HS-I2C controller are enabled.
-> -	 * If node for first four channels of legacy i2c controller
-> -	 * are available then re-configure the interrupts via the
-> -	 * system register.
-> -	 */
-> -	if (soc_is_exynos5()) {
-> -		for_each_compatible_node(i2c_np, NULL, i2c_compat) {
-> -			if (of_device_is_available(i2c_np)) {
-> -				id = of_alias_get_id(i2c_np, "i2c");
-> -				if (id < 4) {
-> -					tmp = readl(EXYNOS5_SYS_I2C_CFG);
-> -					writel(tmp & ~(0x1 << id),
-> -							EXYNOS5_SYS_I2C_CFG);
-> -				}
-> -			}
-> -		}
-> -	}
-> -
->  	/*
->  	 * This is called from smp_prepare_cpus if we've built for SMP, but
->  	 * we still need to set it up for PM and firmware ops if not.
-> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-> index 1ad3f49..de3ae59 100644
-> --- a/arch/arm/mach-exynos/include/mach/map.h
-> +++ b/arch/arm/mach-exynos/include/mach/map.h
-> @@ -24,9 +24,6 @@
-> 
->  #define EXYNOS_PA_CHIPID		0x10000000
-> 
-> -#define EXYNOS4_PA_SYSCON		0x10010000
-> -#define EXYNOS5_PA_SYSCON		0x10050100
-> -
->  #define EXYNOS4_PA_CMU			0x10030000
->  #define EXYNOS5_PA_CMU			0x10010000
-> 
-> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> index 86f3ecd..dfc8594 100644
-> --- a/arch/arm/mach-exynos/pm.c
-> +++ b/arch/arm/mach-exynos/pm.c
-> @@ -23,12 +23,13 @@
->  #include <asm/smp_scu.h>
->  #include <asm/suspend.h>
-> 
-> +#include <mach/map.h>
-> +
->  #include <plat/pm-common.h>
-> 
->  #include "common.h"
->  #include "exynos-pmu.h"
->  #include "regs-pmu.h"
-> -#include "regs-sys.h"
-> 
->  static inline void __iomem *exynos_boot_vector_addr(void)
->  {
-> diff --git a/arch/arm/mach-exynos/regs-sys.h b/arch/arm/mach-exynos/regs-sys.h
-> deleted file mode 100644
-> index 84332b0..0000000
-> --- a/arch/arm/mach-exynos/regs-sys.h
-> +++ /dev/null
-> @@ -1,22 +0,0 @@
-> -/*
-> - * Copyright (c) 2014 Samsung Electronics Co., Ltd.
-> - *             http://www.samsung.com
-> - *
-> - * EXYNOS - system register definition
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> -*/
-> -
-> -#ifndef __ASM_ARCH_REGS_SYS_H
-> -#define __ASM_ARCH_REGS_SYS_H __FILE__
-> -
-> -#include <mach/map.h>
-> -
-> -#define S5P_SYSREG(x)                          (S3C_VA_SYS + (x))
-> -
-> -/* For EXYNOS5 */
-> -#define EXYNOS5_SYS_I2C_CFG                    S5P_SYSREG(0x0234)
-> -
-> -#endif /* __ASM_ARCH_REGS_SYS_H */
-> diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-> index f8e7dcd..342797b 100644
-> --- a/arch/arm/mach-exynos/suspend.c
-> +++ b/arch/arm/mach-exynos/suspend.c
-> @@ -34,7 +34,6 @@
-> 
->  #include "common.h"
->  #include "regs-pmu.h"
-> -#include "regs-sys.h"
->  #include "exynos-pmu.h"
-> 
->  #define S5P_CHECK_SLEEP 0x00000BAD
-> @@ -53,10 +52,6 @@ struct exynos_wkup_irq {
->  	u32 mask;
->  };
-> 
-> -static struct sleep_save exynos5_sys_save[] = {
-> -	SAVE_ITEM(EXYNOS5_SYS_I2C_CFG),
-> -};
-> -
->  static struct sleep_save exynos_core_save[] = {
->  	/* SROM side */
->  	SAVE_ITEM(S5P_SROM_BW),
-> @@ -497,8 +492,6 @@ static const struct exynos_pm_data exynos5250_pm_data = {
->  	.wkup_irq	= exynos5250_wkup_irq,
->  	.wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
->  	.release_ret_regs = exynos_release_ret_regs,
-> -	.extra_save	= exynos5_sys_save,
-> -	.num_extra_save	= ARRAY_SIZE(exynos5_sys_save),
->  	.pm_suspend	= exynos_pm_suspend,
->  	.pm_resume	= exynos_pm_resume,
->  	.pm_prepare	= exynos_pm_prepare,
-> --
-> 2.2.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
