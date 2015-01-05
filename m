@@ -1,43 +1,50 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH RESEND] ARM: exynos_defconfig: Enable options for display
- panel support
-Date: Mon, 05 Jan 2015 10:09:48 +0100
-Message-ID: <54AA54DC.6000407@collabora.co.uk>
-References: <1420215089-2093-1-git-send-email-javier.martinez@collabora.co.uk> <1420447691.3918.2.camel@AMDC1943>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1420447691.3918.2.camel@AMDC1943>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: do not try to map PMU for exynos5440
+Date: Mon, 05 Jan 2015 14:44:28 +0530
+Message-ID: <1420449268-24707-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:18368 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753807AbbAEJWL (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 5 Jan 2015 04:22:11 -0500
+Received: from epcpsbgr5.samsung.com
+ (u145.gpu120.samsung.co.kr [203.254.230.145])
+ by mailout2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTP id <0NHP009QL60XRH00@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 05 Jan 2015 18:22:09 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene@kernel.org, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>
 
-Hello Krzysztof,
+Commit id: 2e94ac42898f84d76e3c21dd91bc is not taking care
+of mapping of exynos5440 PMU register which will result in kernel panic
+on exynos5440.
 
->> Hello Kukjin,
->> 
->> You dropped this patch since exynos drm was causing boot hangs on some
->> platforms but the fix for that issue is already in linux-next (commit:
->> f1e9203 clk: samsung: Fix Exynos 5420 pinctrl setup and clock disable
->> failure due to domain being gated) so I think it makes sense to enable
->> the display options again.
-> 
-> I think these issues were unrelated to each other. DRM was disabled
-> because of infinite deferred probing of DRM components. I saw Inki was
-> sending some patches for it but I am not sure if they were merged.
->
+As exynos5440 DTS does not have PMU node, and also we are skipping
+exynos_pm_init in case of exynos5440, let's avoid mapping of exynos5440 PMU.
 
-Ups, you are completely right and it was my bad for pasting the wrong
-commit fixing the boot hang when DRM was enabled, I actually meant commit:
-("820687be drm/exynos: move Exynos platform drivers registration to init")
-which also landed in v3.19-rc1.
+Reported-by: Ming Lei <tom.leiming@gmail.com>
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+---
+ arch/arm/mach-exynos/exynos.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Sorry for the confusion.
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index c13d083..1891b8c 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -208,7 +208,8 @@ static void __init exynos_init_irq(void)
+ 	 * DT is not unflatten so we can't use DT APIs before
+ 	 * init_irq
+ 	 */
+-	exynos_map_pmu();
++	if (!of_machine_is_compatible("samsung,exynos5440"))
++		exynos_map_pmu();
+ }
  
-> Best regards,
-> Krzysztof
-
-Best regards,
-Javier
+ static void __init exynos_dt_machine_init(void)
+-- 
+2.2.0
