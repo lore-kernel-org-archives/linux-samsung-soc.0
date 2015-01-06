@@ -1,74 +1,30 @@
-From: Beomho Seo <beomho.seo@samsung.com>
-Subject: [PATCH RESEND 2/2] ARM: dts: exynos3250: replace number by macro in
- gpio keys
-Date: Tue, 06 Jan 2015 12:43:29 +0900
-Message-ID: <1420515809-5151-3-git-send-email-beomho.seo@samsung.com>
-References: <1420515809-5151-1-git-send-email-beomho.seo@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:30367 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753379AbbAFDne (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Jan 2015 22:43:34 -0500
-In-reply-to: <1420515809-5151-1-git-send-email-beomho.seo@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Beomho Seo <beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH RESEND 0/2] ARM: dts: exynos3250: revise property for gpio-keys
+ node
+Date: Tue, 06 Jan 2015 12:43:27 +0900
+Message-ID: <1420515809-5151-1-git-send-email-beomho.seo@samsung.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, yj44.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cw00.choi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, beomho.seo-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
-Cc: kgene.kim@samsung.com, yj44.cho@samsung.com, cw00.choi@samsung.com, inki.dae@samsung.com, beomho.seo@samsung.com, Kukjin Kim <kgene@kernel.org>
 
-This patch replace number by macro in gpio keys for exynos 3250 boards.
+This patch revises property of gpio-keys node.
+The first patch remove unecessary property.
+And then, replace by macro in gpio keys.
 
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Youngjun Cho <yj44.cho@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
----
- arch/arm/boot/dts/exynos3250-monk.dts   |    3 ++-
- arch/arm/boot/dts/exynos3250-rinato.dts |    3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+Beomho Seo (2):
+  ARM: dts: exynos3250: remove unecessary property of gpio-keys node
+  ARM: dts: exynos3250: replace number by macro in gpio keys
 
-diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
-index 2129ab98..792a2c7 100644
---- a/arch/arm/boot/dts/exynos3250-monk.dts
-+++ b/arch/arm/boot/dts/exynos3250-monk.dts
-@@ -15,6 +15,7 @@
- /dts-v1/;
- #include "exynos3250.dtsi"
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	model = "Samsung Monk board";
-@@ -37,7 +38,7 @@
- 		compatible = "gpio-keys";
- 
- 		power_key {
--			gpios = <&gpx2 7 1>;
-+			gpios = <&gpx2 7 GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
- 			label = "power key";
- 			debounce-interval = <10>;
-diff --git a/arch/arm/boot/dts/exynos3250-rinato.dts b/arch/arm/boot/dts/exynos3250-rinato.dts
-index c186ac6..3493bca 100644
---- a/arch/arm/boot/dts/exynos3250-rinato.dts
-+++ b/arch/arm/boot/dts/exynos3250-rinato.dts
-@@ -15,6 +15,7 @@
- /dts-v1/;
- #include "exynos3250.dtsi"
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	model = "Samsung Rinato board";
-@@ -37,7 +38,7 @@
- 		compatible = "gpio-keys";
- 
- 		power_key {
--			gpios = <&gpx2 7 1>;
-+			gpios = <&gpx2 7 GPIO_ACTIVE_LOW>;
- 			linux,code = <KEY_POWER>;
- 			label = "power key";
- 			debounce-interval = <10>;
+ arch/arm/boot/dts/exynos3250-monk.dts   |    5 ++---
+ arch/arm/boot/dts/exynos3250-rinato.dts |    5 ++---
+ 2 files changed, 4 insertions(+), 6 deletions(-)
+
 -- 
 1.7.9.5
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
