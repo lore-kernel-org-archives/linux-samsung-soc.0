@@ -1,81 +1,52 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v2 06/16] ASoC: samsung: i2s: Move clk
- enable to the platform driver probe()
-Date: Tue, 6 Jan 2015 18:06:19 +0000
-Message-ID: <20150106180619.GN2634@sirena.org.uk>
+Subject: Re: [PATCH v2 01/16] ASoC: samsung: i2s: Remove unused gpios field
+ from struct i2s
+Date: Tue, 6 Jan 2015 18:13:39 +0000
+Message-ID: <20150106181339.GO2634@sirena.org.uk>
 References: <1418997336-17777-1-git-send-email-s.nawrocki@samsung.com>
- <1418997336-17777-7-git-send-email-s.nawrocki@samsung.com>
+ <1418997336-17777-2-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4761836745454779082=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <1418997336-17777-7-git-send-email-s.nawrocki@samsung.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, padma.v@samsung.com, sbkim73@samsung.com, drake@endlessm.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---===============4761836745454779082==
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="sA8oU60uXPLxwof5"
+	protocol="application/pgp-signature"; boundary="YgZDKPIOvldTssBR"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mezzanine.sirena.org.uk ([106.187.55.193]:38991 "EHLO
+	mezzanine.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932434AbbAFSNs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 6 Jan 2015 13:13:48 -0500
 Content-Disposition: inline
+In-Reply-To: <1418997336-17777-2-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: kgene@kernel.org, alsa-devel@alsa-project.org, padma.v@samsung.com, drake@endlessm.com, sbkim73@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
 
---sA8oU60uXPLxwof5
+--YgZDKPIOvldTssBR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Dec 19, 2014 at 02:55:26PM +0100, Sylwester Nawrocki wrote:
-> Gating the I2S bus clock in the driver's runtime PM callbacks has
-> currently really no effect since the clock is being enabled
-> in the DAI's probe() and thus is permanently turned on. Now we just
-> move the enable to the platform driver's probe(), which doesn't
-> change the situation much. It will allow us to register a clock
-> provider already in samsung_i2s_probe() function.
+On Fri, Dec 19, 2014 at 02:55:21PM +0100, Sylwester Nawrocki wrote:
+> The 'gpios' field in 'struct i2s' is now unused, this change
+> seems to be missing in commit 0429ffeff460c4302bd1520e6
+> ("ASoC: samsung: Remove obsolete GPIO based DT pinmuxing").
 
-That doesn't sound quite right - the normal idiom for this stuff is to
-enable on probe, mark the device as active then if runtime PM is enabled
-it can idle the device and turn off the clock.  That way if runtime PM
-is disabled things continue to run.  I've not checked to see if this is
-actually happening correctly all the way through but that's what's
-supposed to happen and means that enabling in the probe should still
-result in working clock management.
+Applied, thanks.
 
-It will as things currently stand be broken for the dual DAI case so
-this is a fix for that (the dual DAI case will double enable if both
-links are in use) but the analysis isn't quite correct.
-
---sA8oU60uXPLxwof5
+--YgZDKPIOvldTssBR
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBAgAGBQJUrCQaAAoJECTWi3JdVIfQlIUH/RYdJ2VwQHhaRl9ov9rsuiHx
-bxF8VH2rHFlfBq4wccmY8OrTmBopXo21gVDgaML23FJkMwsLhuydc+GNL9NfHB7z
-PXh0UGWlzJJLVNyzMUmAHj0KmZxQhRxqZzdSs2PwlC54XqsMdBw0Hhp2gO1PRHou
-kf16wAe4tKDKXblgDncG4t8vHNYu4ETk7sH/PfyfItihlKek1XllA2l2nCAWZqO8
-IuqRx+ZUpZdceOVXrXzo/HHloKQ4dwbyrE2aFm5u4vHroyInV3kR4HZsO7vpVwTV
-sMUw720/nApvU1dQp06mztQT0+xtVbF+eqIJWiZDaLBR1pFtSabqH/OSAFm1DDo=
-=N9kF
+iQEcBAEBAgAGBQJUrCXSAAoJECTWi3JdVIfQeEIH/A/rCfw+aqTKD++CX/fOv4Mi
+RUqAQvLYCY7Rj75+DHoIGOfz2eIzGtJa8VtBpDXOhzWbyp1ibZIlXZxeV8sy05of
+hdizgRhqTyH4FnNSbCY/002jnyW4wCokITNfRoWz6Q57UJLWBmMWkyFzcFJvVxwF
+jZSrUMxLDnkGXBlqq4KLQmdcBPlt6DYgLq2JxFmH0XZLQwO6fbkpuWRMDqNs4YTz
+61WHHkVpeB9a7otBHXZyrlGPbOLhwuaGKti59cwJwhqtxoikb7Zz229mJp04DKsx
+9hAlosRa2kcqVrOU+0cBPLTa2F6x/3BSyxiJ7YsAhrDTCOjr/HognOIb5/Czexs=
+=RjbT
 -----END PGP SIGNATURE-----
 
---sA8oU60uXPLxwof5--
-
---===============4761836745454779082==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============4761836745454779082==--
+--YgZDKPIOvldTssBR--
