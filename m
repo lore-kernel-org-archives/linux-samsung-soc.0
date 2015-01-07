@@ -1,57 +1,82 @@
 From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PATCH 25/29] drm/exynos: atomic phase 1: use
- drm_plane_helper_disable()
-Date: Wed, 7 Jan 2015 17:10:24 -0200
-Message-ID: <20150107191024.GB2001@joana>
+Subject: Re: [PATCH 26/29] drm/exynos: atomic phase 1: add
+ atomic_begin()/atomic_flush()
+Date: Wed, 7 Jan 2015 17:29:14 -0200
+Message-ID: <20150107192914.GC2001@joana>
 References: <1418911135-5207-1-git-send-email-gustavo@padovan.org>
- <1418911135-5207-26-git-send-email-gustavo@padovan.org>
- <54A2B46C.7060401@samsung.com>
+ <1418911135-5207-27-git-send-email-gustavo@padovan.org>
+ <54A2B9D0.8000602@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yh0-f53.google.com ([209.85.213.53]:43211 "EHLO
+	mail-yh0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752880AbbAGT3S convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 7 Jan 2015 14:29:18 -0500
+Received: by mail-yh0-f53.google.com with SMTP id i57so932147yha.26
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Jan 2015 11:29:18 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <54A2B46C.7060401@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, dri-devel@lists.freedesktop.org
+In-Reply-To: <54A2B9D0.8000602@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-MjAxNC0xMi0zMCBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+OgoKPiBPbiAyMDE064WE
-IDEy7JuUIDE47J28IDIyOjU4LCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gPiBGcm9tOiBHdXN0
-YXZvIFBhZG92YW4gPGd1c3Rhdm8ucGFkb3ZhbkBjb2xsYWJvcmEuY28udWs+Cj4gPiAKPiA+IFRo
-ZSBhdG9taWMgaGVscGVyIHRvIGRpc2FibGUgcGxhbmVzIGFsc28gdXNlcyBleHlub3NfdXBkYXRl
-X3BsYW5lKCkgdG8KPiA+IGRpc2FibGUgcGxhbmUgc28gd2UgaGFkIHRvIGFkYXB0IGl0IHRvIGJv
-dGggY29tbWl0IGFuZCBkaXNhYmxlIHBsYW5lcy4KPiA+IAo+ID4gQSBjaGVjayBmb3IgTlVMTCBD
-UlRDIHdhcyBhZGRlZCB0byBleHlub3NfcGxhbmVfbW9kZV9zZXQoKSBzaW5jZSBwbGFuZXMKPiA+
-IHRvIGJlIGRpc2FibGVkIGhhdmUgcGxhbmVfc3RhdGUtPmNydGMgc2V0IHRvIE5VTEwuCj4gPiAK
-PiA+IEFsc28gd2luX2Rpc2FibGUoKSBjYWxsYmFjayB1c2VzIHBsYW5lLT5jcnRjIGFzIGFyZyBm
-b3IgdGhlIHNhbWUgcmVhc29uLgo+ID4gCj4gPiBleHlub3NfZHJtX2ZiX2dldF9idWZfY250KCkg
-bmVlZHMgYSBmYiBjaGVjayB0b28gdG8gYXZvaWQgYSBudWxsIHBvaW50ZXIuCj4gPiAKPiA+IFNp
-Z25lZC1vZmYtYnk6IEd1c3Rhdm8gUGFkb3ZhbiA8Z3VzdGF2by5wYWRvdmFuQGNvbGxhYm9yYS5j
-by51az4KPiA+IC0tLQo+ID4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5j
-ICAgIHwgIDIgKy0KPiA+ICBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fcGxhbmUu
-YyB8IDI0ICsrKysrKysrKysrKysrKysrKy0tLS0tLQo+ID4gIDIgZmlsZXMgY2hhbmdlZCwgMTkg
-aW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkKPiA+IAo+ID4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9mYi5jIGIvZHJpdmVycy9ncHUvZHJtL2V4eW5v
-cy9leHlub3NfZHJtX2ZiLmMKPiA+IGluZGV4IGQzNDZkMWUuLjQ3MDQ1NmQgMTAwNjQ0Cj4gPiAt
-LS0gYS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZmIuYwo+ID4gKysrIGIvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2ZiLmMKPiA+IEBAIC0xMzYsNyArMTM2LDcg
-QEAgdW5zaWduZWQgaW50IGV4eW5vc19kcm1fZmJfZ2V0X2J1Zl9jbnQoc3RydWN0IGRybV9mcmFt
-ZWJ1ZmZlciAqZmIpCj4gPiAgCj4gPiAgCWV4eW5vc19mYiA9IHRvX2V4eW5vc19mYihmYik7Cj4g
-PiAgCj4gPiAtCXJldHVybiBleHlub3NfZmItPmJ1Zl9jbnQ7Cj4gPiArCXJldHVybiBleHlub3Nf
-ZmIgPyBleHlub3NfZmItPmJ1Zl9jbnQgOiAwOwo+IAo+IFRoaXMgY2hhbmdlIGlzbid0IHJlbGF0
-ZWQgd2l0aCB0aGlzIHBhdGNoLgoKVGhpcyBwYXRjaCB3aWxsIGJlIHJld29ya2VkIHRvIHVzZSBh
-dG9taWNfZGlzYWJsZSgpIGFzIHN1Z2dlc3RlZCBieSBEYW5pZWwKVmV0dGVyIGluIHRoZSBwcmV2
-aW91cyBjb21tZW50LgoKCUd1c3Rhdm8KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+2014-12-30 Inki Dae <inki.dae@samsung.com>:
+
+> On 2014=EB=85=84 12=EC=9B=94 18=EC=9D=BC 22:58, Gustavo Padovan wrote=
+:
+> > From: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> >=20
+> > Add CRTC callbacks .atomic_begin() .atomic_flush(). On exynos they
+> > unprotect the windows before the commit and protects it after based=
+ on
+> > a plane mask tha store which plane will be updated.
+>=20
+> tha? Typo?
+
+Okay.
+
+>=20
+> >=20
+> > For that we create two new exynos_crtc callbacks: .win_protect() an=
+d
+> > .win_unprotect(). The only driver that implement those now is FIMD.
+> >=20
+> > Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
+> > ---
+> >  drivers/gpu/drm/exynos/exynos_drm_crtc.c  | 34 +++++++++++++++++++
+> >  drivers/gpu/drm/exynos/exynos_drm_drv.h   |  4 +++
+> >  drivers/gpu/drm/exynos/exynos_drm_fimd.c  | 56 +++++++++++++++++++=
++++---------
+> >  drivers/gpu/drm/exynos/exynos_drm_plane.c |  4 +++
+> >  4 files changed, 82 insertions(+), 16 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu=
+/drm/exynos/exynos_drm_crtc.c
+> > index 74980c5..f231eb8 100644
+> > --- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> > +++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+> > @@ -156,6 +156,38 @@ static void exynos_drm_crtc_disable(struct drm=
+_crtc *crtc)
+> >  	}
+> >  }
+> > =20
+> > +static void exynos_crtc_atomic_begin(struct drm_crtc *crtc)
+> > +{
+> > +	struct exynos_drm_crtc *exynos_crtc =3D to_exynos_crtc(crtc);
+> > +	struct drm_plane *plane;
+> > +	int index =3D 0;
+> > +
+>=20
+> Isn't drm_modest_lock_all(dev) required? Or is this function atomic
+> context? I didn't look into all codes yet so there may be my missing =
+point.
+
+the atomic code already protects it by calling drm_modeset_lock_all() s=
+o we
+are running in a safe context.
+
+	Gustavo
