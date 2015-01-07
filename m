@@ -1,41 +1,30 @@
 From: Jaewon Kim <jaewon02.kim@samsung.com>
-Subject: [PATCH RESEND 2/2] ARM: dts: exynos3250-monk: Add regulator-haptic
- node for haptics
-Date: Wed, 07 Jan 2015 23:01:53 +0900
-Message-ID: <1420639313-897-3-git-send-email-jaewon02.kim@samsung.com>
-References: <1420639313-897-1-git-send-email-jaewon02.kim@samsung.com>
+Subject: [PATCH RESEND v2 0/4] ARM: dts: Add USB node for exynos3250 SoC boards
+Date: Wed, 07 Jan 2015 23:08:17 +0900
+Message-ID: <1420639701-1524-1-git-send-email-jaewon02.kim@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1420639313-897-1-git-send-email-jaewon02.kim@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Kukjin Kim <kgene@kernel.org>
 Cc: linux-samsung-soc@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, Jaewon Kim <jaewon02.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds regulator-haptic device node controlled by regulator.
+This patch series adds USB device node and phy for exynos3250 SoC.
+And enables for rinato and monk boards.
 
-Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- arch/arm/boot/dts/exynos3250-monk.dts |    7 +++++++
- 1 file changed, 7 insertions(+)
+Changes in v2:
+ - remove unnessasary property "samsung,sysreg-phandle"
+ - change "xusbxti" clock to "CLK_SCLK_UPLL"
 
-diff --git a/arch/arm/boot/dts/exynos3250-monk.dts b/arch/arm/boot/dts/exynos3250-monk.dts
-index 24822aa..7102d88 100644
---- a/arch/arm/boot/dts/exynos3250-monk.dts
-+++ b/arch/arm/boot/dts/exynos3250-monk.dts
-@@ -109,6 +109,13 @@
- 			};
- 		};
- 	};
-+
-+	haptics {
-+		compatible = "regulator-haptic";
-+		haptic-supply = <&motor_reg>;
-+		min-microvolt = <1100000>;
-+		max-microvolt = <2700000>;
-+	};
- };
- 
- &adc {
+Jaewon Kim (4):
+  ARM: dts: Add exynos_usbphy node for exynos3250
+  ARM: dts: Add hsotg node for exynos3250
+  ARM: dts: Enable USB node for exynos3250-rinato
+  ARM: dts: Enable USB node for exynos3250-monk
+
+ arch/arm/boot/dts/exynos3250-monk.dts   |   10 ++++++++++
+ arch/arm/boot/dts/exynos3250-rinato.dts |   10 ++++++++++
+ arch/arm/boot/dts/exynos3250.dtsi       |   21 +++++++++++++++++++++
+ 3 files changed, 41 insertions(+)
+
 -- 
 1.7.9.5
