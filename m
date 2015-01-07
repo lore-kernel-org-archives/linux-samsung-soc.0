@@ -1,177 +1,54 @@
-From: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] [media] s5p-jpeg: Adding Exynos7 Jpeg variant support
-Date: Wed, 07 Jan 2015 13:39:25 +0100
-Message-ID: <54AD28FD.4020703@samsung.com>
-References: <1418801229-7532-1-git-send-email-tony.kn@samsung.com>
- <54919010.8020507@samsung.com> <001801d01b3d$2cb181d0$86148570$@samsung.com>
- <54AD0033.1020103@samsung.com> <000a01d02a72$bc6e06b0$354a1410$@samsung.com>
+From: Anand Moon <moon.linux@yahoo.com>
+Subject: [PATCH v2] ARM: exynos_defconfig: Enable CONFIG_LOCKUP_DETECTOR
+Date: Wed,  7 Jan 2015 18:29:02 +0530
+Message-ID: <1420635542-7202-1-git-send-email-moon.linux@yahoo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <000a01d02a72$bc6e06b0$354a1410$@samsung.com>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tony K Nadackal <tony.kn-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, bhushan.r-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Doug Anderson <dianders@chromium.org>, Kevin Hilman <khilman@linaro.org>, Sachin Kamat <sachin.kamat@samsung.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Tushar Behera <tushar.behera@linaro.org>
+Cc: Anand Moon <moon.linux@yahoo.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Tony,
+Enable CONFIG_LOCKUP_DETECTOR to validate kernel locks state for exynos SOC.
 
-On 01/07/2015 01:08 PM, Tony K Nadackal wrote:
-> Dear Jacek,
->
-> On Wednesday, January 07, 2015 3:15 PM Jacek Anaszewski wrote,
->
->> Hi Tony,
->>
->> Sorry for late response, just got back from vacation.
->>
->> On 12/19/2014 04:37 AM, Tony K Nadackal wrote:
->>> Hi Jacek,
->>>
->>> On Wednesday, December 17, 2014 7:46 PM Jacek Anaszewski wrote,
->>>> Hi Tony,
->>>>
->>>> Thanks for the patches.
->>>>
->>>
->>> Thanks for the review.
->>>
->>>> Please process them with scripts/checkpatch.pl as you will be
->>>> submitting the
->>> next
->>>> version - they contain many coding style related issues.
->>>>
->>>
->>> I ran checkpatch before posting. Do you find any checkpatch related
->>> issues in the patch?
->>
->> There was a problem on my side, sorry for making confusion.
->>
->>>> My remaining comments below.
->>>>
->>>
->>> [snip]
->>>
->>>>> +		if (ctx->jpeg->variant->version == SJPEG_EXYNOS7) {
->>>>> +			exynos4_jpeg_set_interrupt(jpeg->regs,
->>>> SJPEG_EXYNOS7);
->>>>> +			exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
->>>>> +					ctx->subsampling,
->>>> EXYNOS7_ENC_FMT_MASK);
->>>>> +			exynos4_jpeg_set_img_fmt(jpeg->regs,
->>>>> +					ctx->out_q.fmt->fourcc,
->>>>> +					EXYNOS7_SWAP_CHROMA_SHIFT);
->>>>> +		} else {
->>>>> +			exynos4_jpeg_set_interrupt(jpeg->regs,
->>>> SJPEG_EXYNOS4);
->>>>> +			exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
->>>>> +					ctx->subsampling,
->>>> EXYNOS4_ENC_FMT_MASK);
->>>>> +			exynos4_jpeg_set_img_fmt(jpeg->regs,
->>>>> +					ctx->out_q.fmt->fourcc,
->>>>> +					EXYNOS4_SWAP_CHROMA_SHIFT);
->>>>> +		}
->>>>> +
->>>>
->>>> I'd implement it this way:
->>>>
->>>> exynos4_jpeg_set_interrupt(jpeg->regs, ctx->jpeg->variant->version);
->>>> exynos4_jpeg_set_enc_out_fmt(jpeg->regs, ctx->subsampling,
->>>> 			(ctx->jpeg->variant->version == SJPEG_EXYNOS4) ?
->>>> 				EXYNOS4_ENC_FMT_MASK :
->>>> 				EXYNOS7_ENC_FMT_MASK);
->>>> exynos4_jpeg_set_img_fmt(jpeg->regs, ctx->out_q.fmt->fourcc,
->>>> 			(ctx->jpeg->variant->version == SJPEG_EXYNOS4) ?
->>>> 				EXYNOS4_SWAP_CHROMA_SHIFT :
->>>> 				EXYNOS7_SWAP_CHROMA_SHIFT);
->>>>
->>>
->>> OK. Looks goods to me. Thanks for the suggestion.
->>>
->>>>>     		exynos4_jpeg_set_img_addr(ctx);
->>>>>     		exynos4_jpeg_set_jpeg_addr(ctx);
->>>>>     		exynos4_jpeg_set_encode_hoff_cnt(jpeg->regs,
->>>>>
-> ctx->out_q.fmt->fourcc);
->>>>>     	} else {
->>>>>     		exynos4_jpeg_sw_reset(jpeg->regs);
->>>>> -		exynos4_jpeg_set_interrupt(jpeg->regs);
->>>>>     		exynos4_jpeg_set_img_addr(ctx);
->>>>>     		exynos4_jpeg_set_jpeg_addr(ctx);
->>>>> -		exynos4_jpeg_set_img_fmt(jpeg->regs, ctx->cap_q.fmt-
->>>>> fourcc);
->>>>>
->>>>> -		bitstream_size = DIV_ROUND_UP(ctx->out_q.size, 32);
->>>>> +		if (ctx->jpeg->variant->version == SJPEG_EXYNOS7) {
->>>>> +			exynos4_jpeg_set_interrupt(jpeg->regs,
->>>> SJPEG_EXYNOS7);
->>>>> +			exynos4_jpeg_set_huff_tbl(jpeg->regs);
->>>>> +			exynos4_jpeg_set_huf_table_enable(jpeg->regs, 1);
->>>>> +
->>>>> +			/*
->>>>> +			 * JPEG IP allows storing 4 quantization tables
->>>>> +			 * We fill table 0 for luma and table 1 for chroma
->>>>> +			 */
->>>>> +			exynos4_jpeg_set_qtbl_lum(jpeg->regs,
->>>>> +							ctx->compr_quality);
->>>>> +			exynos4_jpeg_set_qtbl_chr(jpeg->regs,
->>>>> +							ctx->compr_quality);
->>>>
->>>> Is it really required to setup quantization tables for encoding?
->>>>
->>>
->>> Without setting up the quantization tables, encoder is working fine.
->>> But, as per Exynos7 User Manual setting up the quantization tables are
->>> required for encoding also.
->>
->
-> Sorry I also got it mixed up.
-> *Decoder* works fine without setting up the quantization tables. But this step
-> is mentioned in User Manual.
+Enabling CONFIG_LOCKUP_DETECTOR help validator tracks the 'state' of lock-classes,
+and it tracks dependencies between different lock-classes.
+The validator maintains a rolling proof that the state and
+the dependencies are correct.
 
-I'm ok with it provided that you will get an ack from Samsung SOCs
-maintainer.
+Changes since v2:
+ * Made commit message more clear
+ * Corrected grammer in code comment
 
->> Actually I intended to ask if setting the quantization tables is required for
->> *decoding*, as you set it also in decoding path, whereas for Exynos4 it is not
->> required. I looks strange for me as quantization tables are usually required
-> only
->> for encoding raw images.
->> The same is related to huffman tables.
->
-> Huffman table is required for Exynos7 decoding.
-> User Manual says about  Update_Huf_Tbl [bit 19 of PEG_CNTL], "User/Host should
-> mandatory program this Bit as "1" for every decoder operation. SFR
-> "HUFF_TBL_ENT" and SFR "HUFF_CNT" should be programmed accordingly for every
-> encoder/decoder operation."
+Tested on Exynos5422 ODROID XU3 board.
 
-Same situation as above.
+Signed-off-by: Anand Moon <moon.linux@yahoo.com>
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/configs/exynos_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
->>
->>>>> +			exynos4_jpeg_set_stream_size(jpeg->regs, ctx-
->>>>> cap_q.w,
->>>>> +					ctx->cap_q.h);
->>>>
->>>> For exynos4 this function writes the number of samples per line and
->>>> number lines of the resulting JPEG image and is used only during
->>>> encoding. Is the semantics of the related register different in case of
-> Exynos7?
->>>>
->>>
->>> Yes. In case of Exynos7 Encoding, This step is required.
->>
->> Ack.
->
-> I will request Kukjin or any Samsung colleagues who has access to Exynos7 Manual
-> to give ack or tested by.
-
-This is a good idea.
-
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 5ef14de..ecd9987 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -178,6 +178,7 @@ CONFIG_PRINTK_TIME=y
+ CONFIG_DEBUG_FS=y
+ CONFIG_MAGIC_SYSRQ=y
+ CONFIG_DEBUG_KERNEL=y
++CONFIG_LOCKUP_DETECTOR=y
+ CONFIG_DETECT_HUNG_TASK=y
+ CONFIG_DEBUG_RT_MUTEXES=y
+ CONFIG_DEBUG_SPINLOCK=y
 -- 
-Best Regards,
-Jacek Anaszewski
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+2.1.0
