@@ -1,68 +1,166 @@
-From: Anand Moon <moon.linux@yahoo.com>
-Subject: Re: [PATCH v2] ARM: exynos_defconfig: Enable CONFIG_LOCKUP_DETECTOR
-Date: Wed, 7 Jan 2015 14:39:07 +0000 (UTC)
-Message-ID: <1208619911.5855211.1420641548080.JavaMail.yahoo@jws106113.mail.bf1.yahoo.com>
-References: <1420635542-7202-1-git-send-email-moon.linux@yahoo.com>
- <1420637261.32552.4.camel@AMDC1943>
- <157605903.5809859.1420638996780.JavaMail.yahoo@jws10677.mail.bf1.yahoo.com>
- <1420640600.32552.7.camel@AMDC1943>
-Reply-To: Anand Moon <moon.linux@yahoo.com>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: [PATCH v12 0/9] Enable L2 cache support on Exynos4210/4x12 SoCs
+Date: Wed, 7 Jan 2015 10:39:07 -0600
+Message-ID: <54AD612B.6030906@ti.com>
+References: <1420630224-8887-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1420640600.32552.7.camel@AMDC1943>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kevin Hilman <khilman@linaro.org>, Russell King <linux@arm.linux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tushar Behera <tushar.behera@linaro.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1420630224-8887-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, linus.walleij@linaro.org, tony@atomide.com, drake@endlessm.com, loeliger@gmail.com, Mark Rutland <mark.rutland@arm.com>, khilman@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-aGkgS3N6eXN6dG9mIEtvemxvd3NraUhpLAoKU29ycnkgZm9yIHRoZSBub2lzZS4gRHJvcCBpdC4K
-CgotQW5hbmQgTW9vbgoKCgpPbiBXZWRuZXNkYXksIEphbnVhcnkgNywgMjAxNSA3OjUzIFBNLCBL
-cnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxvd3NraUBzYW1zdW5nLmNvbT4gd3JvdGU6Ck9uIMWb
-cm8sIDIwMTUtMDEtMDcgYXQgMTM6NTYgKzAwMDAsIEFuYW5kIE1vb24gd3JvdGU6Cj4gSGkgS3N6
-eXN6dG9mIEtvemxvd3NraSwKPiAKPiBJIHBpY2tlZCB1cCB0aGUgYmVsbG93IGxpbmUgZnJvbSAK
-PiAKPiAKPiBEb2N1bWVudGF0aW9uL2xvY2tpbmcvbG9ja2RlcC1kZXNpZ24udHh0ICBsaW5lIG5v
-IDE4Cj4gCj4gSSB1bmRlcnN0YW5kIHRoYXQgYnkgZW5hYmxpbmcgdGhpcyBmbGFnIHdlIGNvdWxk
-IGRldGVjdCBwb3NzaWJsZSAKPiAKPiBkZWFkbG9jayBzaXR1YXRpb24gd2l0aCB0aGUga2VybmVs
-LiBTb3JyeSBmb3IgdGhlIG5vaXNlLgoKLi4uYW5kIGxvY2tkZXAtZGVzaWduLnR4dCBkZXNjcmli
-ZXMgTE9DS0RFUC4gTm90IExPQ0tVUC4gU28gd2h5IHlvdSBhcmUKZW5hYmxpbmcgbG9ja3VwPwoK
-QmVzdCByZWdhcmRzLApLcnp5c3p0b2YKCgo+IAo+IAo+IC1BbmFuZCBNb29uCj4gCj4gCj4gCj4g
-T24gV2VkbmVzZGF5LCBKYW51YXJ5IDcsIDIwMTUgNjo1NyBQTSwgS3J6eXN6dG9mIEtvemxvd3Nr
-aSA8ay5rb3psb3dza2lAc2Ftc3VuZy5jb20+IHdyb3RlOgo+IE9uIMWbcm8sIDIwMTUtMDEtMDcg
-YXQgMTg6MjkgKzA1MzAsIEFuYW5kIE1vb24gd3JvdGU6Cj4gPiBFbmFibGUgQ09ORklHX0xPQ0tV
-UF9ERVRFQ1RPUiB0byB2YWxpZGF0ZSBrZXJuZWwgbG9ja3Mgc3RhdGUgZm9yIGV4eW5vcyBTT0Mu
-Cj4gPiAKPiA+IEVuYWJsaW5nIENPTkZJR19MT0NLVVBfREVURUNUT1IgaGVscCB2YWxpZGF0b3Ig
-dHJhY2tzIHRoZSAnc3RhdGUnIG9mIGxvY2stY2xhc3NlcywKPiA+IGFuZCBpdCB0cmFja3MgZGVw
-ZW5kZW5jaWVzIGJldHdlZW4gZGlmZmVyZW50IGxvY2stY2xhc3Nlcy4KPiA+IFRoZSB2YWxpZGF0
-b3IgbWFpbnRhaW5zIGEgcm9sbGluZyBwcm9vZiB0aGF0IHRoZSBzdGF0ZSBhbmQKPiA+IHRoZSBk
-ZXBlbmRlbmNpZXMgYXJlIGNvcnJlY3QuCj4gCj4gVW5mb3J0dW5hdGVseSB0aGlzIGlzIG5vdCBj
-b3JyZWN0LiBMb2NrdXAgZGV0ZWN0b3IgZG9lcyBzb21ldGhpbmcgZWxzZS4KPiBQbGVhc2UgcmVh
-ZCB0aGUgaGVscC9tYW51YWwgZm9yIExPQ0tVUF9ERVRFQ1RPUi4gWW91IGNhbiBmaW5kIGluCj4g
-bGliL0tjb25maWcuZGVidWcgKGFyb3VuZCBsaW5lIDY2NykuCj4gCj4gQmVzdCByZWdhcmRzLAo+
-IEtyenlzenRvZgo+IAo+ID4gCj4gPiBDaGFuZ2VzIHNpbmNlIHYyOgo+ID4gICogTWFkZSBjb21t
-aXQgbWVzc2FnZSBtb3JlIGNsZWFyCj4gPiAgKiBDb3JyZWN0ZWQgZ3JhbW1lciBpbiBjb2RlIGNv
-bW1lbnQKPiA+IAo+ID4gVGVzdGVkIG9uIEV4eW5vczU0MjIgT0RST0lEIFhVMyBib2FyZC4KPiA+
-IAo+ID4gU2lnbmVkLW9mZi1ieTogQW5hbmQgTW9vbiA8bW9vbi5saW51eEB5YWhvby5jb20+Cj4g
-PiBSZXZpZXdlZC1ieTogS3J6eXN6dG9mIEtvemxvd3NraSA8ay5rb3psb3dza2lAc2Ftc3VuZy5j
-b20+Cj4gPiAtLS0KPiA+ICBhcmNoL2FybS9jb25maWdzL2V4eW5vc19kZWZjb25maWcgfCAxICsK
-PiA+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykKPiA+IAo+ID4gZGlmZiAtLWdpdCBh
-L2FyY2gvYXJtL2NvbmZpZ3MvZXh5bm9zX2RlZmNvbmZpZyBiL2FyY2gvYXJtL2NvbmZpZ3MvZXh5
-bm9zX2RlZmNvbmZpZwo+ID4gaW5kZXggNWVmMTRkZS4uZWNkOTk4NyAxMDA2NDQKPiA+IC0tLSBh
-L2FyY2gvYXJtL2NvbmZpZ3MvZXh5bm9zX2RlZmNvbmZpZwo+ID4gKysrIGIvYXJjaC9hcm0vY29u
-Zmlncy9leHlub3NfZGVmY29uZmlnCj4gPiBAQCAtMTc4LDYgKzE3OCw3IEBAIENPTkZJR19QUklO
-VEtfVElNRT15Cj4gPiAgQ09ORklHX0RFQlVHX0ZTPXkKPiA+ICBDT05GSUdfTUFHSUNfU1lTUlE9
-eQo+ID4gIENPTkZJR19ERUJVR19LRVJORUw9eQo+ID4gK0NPTkZJR19MT0NLVVBfREVURUNUT1I9
-eQo+ID4gIENPTkZJR19ERVRFQ1RfSFVOR19UQVNLPXkKPiA+ICBDT05GSUdfREVCVUdfUlRfTVVU
-RVhFUz15Cj4gPiAgQ09ORklHX0RFQlVHX1NQSU5MT0NLPXkKCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0
-CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFk
-ZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+On 01/07/2015 05:30 AM, Marek Szyprowski wrote:
+> This is an updated patchset, which intends to add support for L2 cache
+> on Exynos4 SoCs on boards running under secure firmware, which requires
+> certain initialization steps to be done with help of firmware, as
+> selected registers are writable only from secure mode.
+> 
+> First patch updates Omap2+ platforms by moving l2cache initialization to
+> common code. This will resolve too early call to l2cache init, what might
+> cause kmalloc failure in code added in next patches.
+> 
+> Next patch fixes access method to latency and filter settings in l2cache
+> driver.
+> 
+> Next four patches extend existing support for secure write in L2C driver
+> to account for design of secure firmware running on Exynos. Namely:
+>  1) direct read access to certain registers is needed on Exynos, because
+>     secure firmware calls set several registers at once,
+>  2) not all boards are running secure firmware, so .write_sec callback
+>     needs to be installed in Exynos firmware ops initialization code,
+>  3) write access to {DATA,TAG}_LATENCY_CTRL registers fron non-secure world
+>     is not allowed and so must use l2c_write_sec as well,
+>  4) on certain boards, default value of prefetch register is incorrect
+>     and must be overridden at L2C initialization.
+> For boards running with firmware that provides access to individual
+> L2C registers this series should introduce no functional changes. However
+> since the driver is widely used on other platforms I'd like to kindly ask
+> any interested people for testing.
+> 
+> Further three patches add implementation of .write_sec and .configure
+> callbacks for Exynos secure firmware and necessary DT nodes to enable
+> L2 cache.
+> 
+> Changes in this version tested on Exynos4412-based TRATS2 and OdroidU3+
+> boards (both with secure firmware). There should be no functional change
+> for Exynos boards running without secure firmware. OMAP based platforms
+> were tested by Nishanth Menon and Tony Lindgren.
+> 
+> Depends on:
+> - v3.19-rc2
+> 
+> Changelog:
+> 
+> Changes since v11:
+> (https://lkml.org/lkml/2015/1/5/254)
+> - Added changes suggested by Nishanth to 'ARM: l2c: use l2c_write_sec()
+>   for restoring latency and filter regs' patch
+> - Fixed 'checkpatch --strict' issues
+> - Added Nishanth's and Tony's acked/tested tags
+> 
+> Changes since v10:
+> (https://lkml.org/lkml/2014/12/23/151)
+> - Added patch, which fixes access method to latency and filter settings
+>   in l2cache
+> 
+> Changes since v9:
+> (https://lkml.org/lkml/2014/11/17/217)
+> - Rebased onto vanilla v3.19-rc1
+> - Added patch for Omap2+ (move l2cache initialization to common code), what
+>   fixes too early initialization (kmalloc failure)
+> 
+> Changes since v8:
+> (http://lkml.org/lkml/2014/11/13/263)
+> - Rebased onto vanilla v3.18-rc3 and added required includes, which were
+>   previously added by other patches
+> - Added Acked-by tags for Exynos part
+> 
+> Changes since v7:
+> (https://lkml.org/lkml/2014/10/29/158)
+> - rebased onto arm-soc/for-next kernel tree (depends on patches merged to
+>   v3.18-rc3 and arm-soc/samsung/pm2 branch)
+> - removed 'ARM: l2c: unify L2C-310 OF initialization error messages' patch
+>   (no longer needed)
+> 
+> Changes since v6:
+> (https://lkml.org/lkml/2014/10/27/233)
+> - changed PL310 to L2C-310 prefix in error messages
+> - added patch shortening the error message about incorrect associativity
+> 
+> Changes since v5:
+> (https://lkml.org/lkml/2014/9/24/364)
+> - rebased onto v3.18-rc2
+> - added error message about missing properties values
+> 
+> Changes since v4:
+> (https://lkml.org/lkml/2014/8/26/461)
+>  - rewrote the code accessing l2x0_saved_regs from assembly code
+>  - added comment and reworked unconditional call to SMC_CMD_L2X0INVALL
+> 
+> 
+> Patch summary:
+> 
+> Marek Szyprowski (2):
+>   ARM: OMAP2+: use common l2cache initialization code
+>   ARM: l2c: use l2c_write_sec() for restoring latency and filter regs
+> 
+> Tomasz Figa (7):
+>   ARM: l2c: Refactor the driver to use commit-like interface
+>   ARM: l2c: Add interface to ask hypervisor to configure L2C
+>   ARM: l2c: Get outer cache .write_sec callback from mach_desc only if
+>     not NULL
+>   ARM: l2c: Add support for overriding prefetch settings
+>   ARM: EXYNOS: Add .write_sec outer cache callback for L2C-310
+>   ARM: EXYNOS: Add support for non-secure L2X0 resume
+>   ARM: dts: exynos4: Add nodes for L2 cache controller
+> 
+>  Documentation/devicetree/bindings/arm/l2cc.txt |  10 +
+>  arch/arm/boot/dts/exynos4210.dtsi              |   9 +
+>  arch/arm/boot/dts/exynos4x12.dtsi              |  14 ++
+>  arch/arm/include/asm/outercache.h              |   3 +
+>  arch/arm/kernel/irq.c                          |   3 +-
+>  arch/arm/mach-exynos/firmware.c                |  50 +++++
+>  arch/arm/mach-exynos/sleep.S                   |  46 +++++
+>  arch/arm/mach-omap2/board-generic.c            |   6 +
+>  arch/arm/mach-omap2/common.h                   |   8 +
+>  arch/arm/mach-omap2/omap4-common.c             |  16 +-
+>  arch/arm/mm/cache-l2x0.c                       | 272 ++++++++++++++++---------
+>  11 files changed, 325 insertions(+), 112 deletions(-)
+> 
+
+Did a re-run of the tests - and all look good on TI platforms that I
+have access to.
+
+ 1: am335x-evm: BOOT: PASS: http://slexy.org/raw/s21ndr0q1k
+ 2: am335x-sk: BOOT: PASS: http://slexy.org/raw/s2r1UKeFPt
+ 3: am3517-evm: BOOT: PASS: http://slexy.org/raw/s2uUU4iBSa
+ 4: am37x-evm: BOOT: PASS: http://slexy.org/raw/s215NYMPek
+ 5: am437x-sk: BOOT: PASS: http://slexy.org/raw/s20uQ9Ap5y
+ 6: am43xx-epos: BOOT: PASS: http://slexy.org/raw/s21d1tVstA
+ 7: am43xx-gpevm: BOOT: PASS: http://slexy.org/raw/s212pvpS5M
+ 8: BeagleBoard-X15(am57xx-evm): BOOT: PASS:
+http://slexy.org/raw/s21SmDLOXT
+ 9: BeagleBoard-XM: BOOT: PASS: http://slexy.org/raw/s221NFJt7X
+10: beagleboard-vanilla: BOOT: PASS: http://slexy.org/raw/s2Ux1Uhb6t
+11: beaglebone-black: BOOT: PASS: http://slexy.org/raw/s2yYU3pfDX
+12: beaglebone: BOOT: PASS: http://slexy.org/raw/s29bwGVFZ3
+13: craneboard: BOOT: PASS: http://slexy.org/raw/s2SvbHHARF
+14: dra72x-evm: BOOT: PASS: http://slexy.org/raw/s20SDUtrIk
+15: dra7xx-evm: BOOT: PASS: http://slexy.org/raw/s2mJ0BkX13
+16: OMAP3430-Labrador(LDP): BOOT: PASS: http://slexy.org/raw/s22VlwObok
+17: omap5-evm: BOOT: PASS: http://slexy.org/raw/s2iI8KthlS
+18: pandaboard-es: BOOT: PASS: http://slexy.org/raw/s20bFdCiYz
+19: pandaboard-vanilla: BOOT: PASS: http://slexy.org/raw/s21DucPhWr
+20: sdp2430: BOOT: PASS: http://slexy.org/raw/s21nOPfnQ7
+21: sdp3430: BOOT: PASS: http://slexy.org/raw/s2lUCkOWuU
+22: sdp4430: BOOT: PASS: http://slexy.org/raw/s21cNNKpNL
+TOTAL = 22 boards, Booted Boards = 22, No Boot boards = 0
+
+
+-- 
+Regards,
+Nishanth Menon
