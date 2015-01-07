@@ -1,390 +1,73 @@
-From: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: [PATCH v3] ARM: dts: Add dts file for odroid XU3 board
-Date: Wed,  7 Jan 2015 23:53:48 +0100
-Message-ID: <1420671228-24692-1-git-send-email-sjoerd.simons@collabora.co.uk>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tyler Baker <tyler.baker-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Heesub Shin <heesub.shin-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Subject: [PATCH RESEND] pwm: samsung: Fix output race on disabling
+Date: Wed,  7 Jan 2015 23:58:17 +0100
+Message-ID: <1420671497-25270-1-git-send-email-sjoerd.simons@collabora.co.uk>
+Return-path: <linux-pwm-owner@vger.kernel.org>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-pwm@vger.kernel.org, Ajay Kumar <ajaykumar.rs@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Add DTS for the Hardkernel Odroid XU3. The name of the DTS file is kept the
-same as the vendors naming, which means it's prefixed with exynos5422
-instead of exynos5800 as the SoC name even though it includes the
-exyno5800 dtsi.
+When disabling the samsung PWM the output state remains at the level it
+was in the end of a pwm cycle. In other words, calling pwm_disable when
+at 100% duty will keep the output active, while at all other setting the
+output will go/stay inactive. On top of that the samsung PWM settings are
+double-buffered, which means the new settings only get applied at the
+start of a new PWM cycle.
 
-Signed-off-by: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+This results in a race if the PWM is at 100% duty and a driver calls:
+  pwm_config (pwm, 0, period);
+  pwm_disable (pwm);
+
+In this case the PWMs output will unexpectedly stay active, unless a new
+PWM cycle happened to start between the register writes in _config and
+_disable. As far as i can tell this is a regression introduced by 3bdf878,
+before that a call to pwm_config would call pwm_samsung_enable which,
+while heavy-handed, made sure the expected settings were live.
+
+To resolve this, while not re-introducing the issues 3bdf878 (flickering
+as the PWM got reset while in a PWM cycle). Only force an update of the
+settings when at 100% duty, which shouldn't have a noticeable effect on
+the output but is enough to ensure the behaviour is as expected on
+disable.
+
+Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 ---
-Changes since v1:
- * Add chosen/linux,stdout-path to point the serial console device
- * Change memory start offset to 0x40000000 to match the vendors DTS (pointed
-   out by Heesub Shin)
-  * Declare base address & size for the memory banks to be used by the MFC
+ drivers/pwm/pwm-samsung.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
 
-Changes since v2:
-  * Correct hdmi supplies (spotted by Joonyoung Shim). This currently doesn't
-    have a practical impact as all supplies are always-on, but makes the dts
-    match the schematics.
-
- arch/arm/boot/dts/Makefile                 |   1 +
- arch/arm/boot/dts/exynos5422-odroidxu3.dts | 332 +++++++++++++++++++++++++++++
- 2 files changed, 333 insertions(+)
- create mode 100644 arch/arm/boot/dts/exynos5422-odroidxu3.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 91bd5bd..df397c2 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -98,6 +98,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += exynos3250-monk.dtb \
- 	exynos5420-arndale-octa.dtb \
- 	exynos5420-peach-pit.dtb \
- 	exynos5420-smdk5420.dtb \
-+	exynos5422-odroidxu3.dtb \
- 	exynos5440-sd5v1.dtb \
- 	exynos5440-ssdk5440.dtb \
- 	exynos5800-peach-pi.dtb
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-new file mode 100644
-index 0000000..c29123c
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -0,0 +1,332 @@
-+/*
-+ * Hardkernel Odroid XU3 board device tree source
-+ *
-+ * Copyright (c) 2014 Collabora Ltd.
-+ * Copyright (c) 2013 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
+diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+index 3e9b583..3e252dc 100644
+--- a/drivers/pwm/pwm-samsung.c
++++ b/drivers/pwm/pwm-samsung.c
+@@ -335,6 +335,27 @@ static int pwm_samsung_config(struct pwm_chip *chip, struct pwm_device *pwm,
+ 	writel(tcnt, our_chip->base + REG_TCNTB(pwm->hwpwm));
+ 	writel(tcmp, our_chip->base + REG_TCMPB(pwm->hwpwm));
+ 
++	/* In case the PWM is currently at 100% duty, trigger a manual update to
++	 * prevent unexpected results when disabling the pwm */
++	if (chan->period_ns/chan->tin_ns == chan->duty_ns/chan->tin_ns) {
++		unsigned int tcon_chan = to_tcon_channel(pwm->hwpwm);
++		u32 tcon;
++		unsigned long flags;
 +
-+/dts-v1/;
-+#include "exynos5800.dtsi"
++		dev_dbg(our_chip->chip.dev, "Forcing manual update");
 +
-+/ {
-+	model = "Hardkernel Odroid XU3";
-+	compatible = "hardkernel,odroid-xu3", "samsung,exynos5800", "samsung,exynos5";
++		spin_lock_irqsave(&samsung_pwm_lock, flags);
 +
-+	memory {
-+		reg = <0x40000000 0x80000000>;
-+	};
++		tcon = readl(our_chip->base + REG_TCON);
++		tcon |= TCON_MANUALUPDATE(tcon_chan);
++		writel(tcon, our_chip->base + REG_TCON);
 +
-+	chosen {
-+		linux,stdout-path = &serial_2;
-+	};
++		tcon &= ~TCON_MANUALUPDATE(tcon_chan);
++		writel(tcon, our_chip->base + REG_TCON);
 +
-+	fimd@14400000 {
-+		status = "okay";
-+	};
++		spin_unlock_irqrestore(&samsung_pwm_lock, flags);
++	}
 +
-+	firmware@02073000 {
-+		compatible = "samsung,secure-firmware";
-+		reg = <0x02073000 0x1000>;
-+	};
-+
-+	fixed-rate-clocks {
-+		oscclk {
-+			compatible = "samsung,exynos5420-oscclk";
-+			clock-frequency = <24000000>;
-+		};
-+	};
-+
-+	hsi2c_4: i2c@12CA0000 {
-+		status = "okay";
-+
-+		s2mps11_pmic@66 {
-+			compatible = "samsung,s2mps11-pmic";
-+			reg = <0x66>;
-+			s2mps11,buck2-ramp-delay = <12>;
-+			s2mps11,buck34-ramp-delay = <12>;
-+			s2mps11,buck16-ramp-delay = <12>;
-+			s2mps11,buck6-ramp-enable = <1>;
-+			s2mps11,buck2-ramp-enable = <1>;
-+			s2mps11,buck3-ramp-enable = <1>;
-+			s2mps11,buck4-ramp-enable = <1>;
-+
-+			s2mps11_osc: clocks {
-+				#clock-cells = <1>;
-+				clock-output-names = "s2mps11_ap",
-+						"s2mps11_cp", "s2mps11_bt";
-+			};
-+
-+			regulators {
-+				ldo1_reg: LDO1 {
-+					regulator-name = "vdd_ldo1";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo3_reg: LDO3 {
-+					regulator-name = "vdd_ldo3";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo5_reg: LDO5 {
-+					regulator-name = "vdd_ldo5";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo6_reg: LDO6 {
-+					regulator-name = "vdd_ldo6";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo7_reg: LDO7 {
-+					regulator-name = "vdd_ldo7";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo8_reg: LDO8 {
-+					regulator-name = "vdd_ldo8";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo9_reg: LDO9 {
-+					regulator-name = "vdd_ldo9";
-+					regulator-min-microvolt = <3000000>;
-+					regulator-max-microvolt = <3000000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo10_reg: LDO10 {
-+					regulator-name = "vdd_ldo10";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo11_reg: LDO11 {
-+					regulator-name = "vdd_ldo11";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo12_reg: LDO12 {
-+					regulator-name = "vdd_ldo12";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo13_reg: LDO13 {
-+					regulator-name = "vdd_ldo13";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo15_reg: LDO15 {
-+					regulator-name = "vdd_ldo15";
-+					regulator-min-microvolt = <3100000>;
-+					regulator-max-microvolt = <3100000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo16_reg: LDO16 {
-+					regulator-name = "vdd_ldo16";
-+					regulator-min-microvolt = <2200000>;
-+					regulator-max-microvolt = <2200000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo17_reg: LDO17 {
-+					regulator-name = "tsp_avdd";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo19_reg: LDO19 {
-+					regulator-name = "vdd_sd";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-always-on;
-+				};
-+
-+				ldo24_reg: LDO24 {
-+					regulator-name = "tsp_io";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-always-on;
-+				};
-+
-+				buck1_reg: BUCK1 {
-+					regulator-name = "vdd_mif";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1300000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck2_reg: BUCK2 {
-+					regulator-name = "vdd_arm";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1500000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck3_reg: BUCK3 {
-+					regulator-name = "vdd_int";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1400000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck4_reg: BUCK4 {
-+					regulator-name = "vdd_g3d";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1400000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck5_reg: BUCK5 {
-+					regulator-name = "vdd_mem";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1400000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck6_reg: BUCK6 {
-+					regulator-name = "vdd_kfc";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1500000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck7_reg: BUCK7 {
-+					regulator-name = "vdd_1.0v_ldo";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1500000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck8_reg: BUCK8 {
-+					regulator-name = "vdd_1.8v_ldo";
-+					regulator-min-microvolt = <800000>;
-+					regulator-max-microvolt = <1500000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck9_reg: BUCK9 {
-+					regulator-name = "vdd_2.8v_ldo";
-+					regulator-min-microvolt = <3000000>;
-+					regulator-max-microvolt = <3750000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+
-+				buck10_reg: BUCK10 {
-+					regulator-name = "vdd_vmem";
-+					regulator-min-microvolt = <2850000>;
-+					regulator-max-microvolt = <2850000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+				};
-+			};
-+		};
-+	};
-+
-+	i2c_2: i2c@12C80000 {
-+		samsung,i2c-sda-delay = <100>;
-+		samsung,i2c-max-bus-freq = <66000>;
-+		status = "okay";
-+
-+		hdmiddc@50 {
-+			compatible = "samsung,exynos4210-hdmiddc";
-+			reg = <0x50>;
-+		};
-+	};
-+
-+	rtc@101E0000 {
-+		status = "okay";
-+	};
-+};
-+
-+&hdmi {
-+	status = "okay";
-+	hpd-gpio = <&gpx3 7 0>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&hdmi_hpd_irq>;
-+
-+	vdd_osc-supply = <&ldo7_reg>;
-+	vdd_pll-supply = <&ldo6_reg>;
-+	vdd-supply = <&ldo6_reg>;
-+};
-+
-+&mfc {
-+	samsung,mfc-r = <0x43000000 0x800000>;
-+	samsung,mfc-l = <0x51000000 0x800000>;
-+};
-+
-+&mmc_0 {
-+	status = "okay";
-+	broken-cd;
-+	card-detect-delay = <200>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <0 2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd0_clk &sd0_cmd &sd0_bus4 &sd0_bus8>;
-+	bus-width = <8>;
-+	cap-mmc-highspeed;
-+};
-+
-+&mmc_2 {
-+	status = "okay";
-+	card-detect-delay = <200>;
-+	samsung,dw-mshc-ciu-div = <3>;
-+	samsung,dw-mshc-sdr-timing = <0 4>;
-+	samsung,dw-mshc-ddr-timing = <0 2>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&sd2_clk &sd2_cmd &sd2_cd &sd2_bus4>;
-+	bus-width = <4>;
-+	cap-sd-highspeed;
-+};
-+
-+&pinctrl_0 {
-+	hdmi_hpd_irq: hdmi-hpd-irq {
-+		samsung,pins = "gpx3-7";
-+		samsung,pin-function = <0>;
-+		samsung,pin-pud = <1>;
-+		samsung,pin-drv = <0>;
-+	};
-+};
-+
-+&usbdrd_dwc3_0 {
-+	dr_mode = "host";
-+};
-+
-+&usbdrd_dwc3_1 {
-+	dr_mode = "otg";
-+};
+ 	chan->period_ns = period_ns;
+ 	chan->tin_ns = tin_ns;
+ 	chan->duty_ns = duty_ns;
 -- 
 2.1.4
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
