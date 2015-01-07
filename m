@@ -1,98 +1,164 @@
-From: Ming Lei <tom.leiming@gmail.com>
-Subject: [PATCH] ARM: EXYNOS: fix booting oops on exynos5440
-Date: Wed,  7 Jan 2015 11:25:41 +0800
-Message-ID: <1420601141-20566-1-git-send-email-tom.leiming@gmail.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yk0-f181.google.com ([209.85.160.181]:59492 "EHLO
-	mail-yk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754852AbbAGDZv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Jan 2015 22:25:51 -0500
-Received: by mail-yk0-f181.google.com with SMTP id 142so251881ykq.12
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Jan 2015 19:25:50 -0800 (PST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: [PATCH v2 6/6] drivers: soc: Add support for Exynos PMU driver
+Date: Wed, 07 Jan 2015 11:01:28 +0530
+Message-ID: <1420608688-10459-7-git-send-email-pankaj.dubey@samsung.com>
+References: <1420608688-10459-1-git-send-email-pankaj.dubey@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1420608688-10459-1-git-send-email-pankaj.dubey@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kgene@kernel.org, linux@arm.linux.org.uk, b.zolnierkie@samsung.com, amit.daniel@samsung.com, arnd@arndb.de, thomas.ab@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@nvidia.com>, Andy Gross <agross@codeaurora.org>, Santosh Shilimkar <santosh.shilimkar@ti.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Ming Lei <tom.leiming@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-This patch is based on previous one(ARM: EXYNOS: enable all
-secondary cores for exynos5440) in below link:
+This patch moves Exynos PMU driver implementation from "arm/mach-exynos"
+to "drivers/soc/samsung". This driver is mainly used for setting misc
+bits of register from PMU IP of Exynos SoC which will be required to
+configure before Suspend/Resume. Currently all these settings are done
+in "arch/arm/mach-exynos/pmu.c" but moving ahead for ARM64 based SoC
+support, there is a need of this PMU driver in driver/* folder.
 
-	http://marc.info/?l=linux-arm-kernel&m=136299947514599&w=2
+This driver uses existing DT binding information and there should
+be no functionality change in the supported platforms.
 
-Without this patch, the following kernel oops is triggered:
-
-[    0.171477] CPU1: Booted secondary processor
-[    0.182685] pgd = c0003000
-[    0.185444] [00002084] *pgd=80000080004003, *pmd=00000000
-[    0.190917] Internal error: Oops: 206 [#1] PREEMPT SMP ARM
-[    0.196468] Modules linked in:
-[    0.199596] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 3.18.0-00005-g3b10a366-dirty #27
-[    0.207579] task: eb098000 ti: eb046000 task.ti: eb046000
-[    0.213049] PC is at exynos_boot_secondary+0x4c/0x2a0
-[    0.218169] LR is at write_pen_release+0x2c/0x70
-[    0.222856] pc : [<c00316e0>]    lr : [<c0031618>]    psr: 60000113
-[    0.222856] sp : eb047e80  ip : 00000000  fp : eb047ebc
-[    0.234486] r10: c07bda8c  r9 : 00000000  r8 : c07bdc78
-[    0.239781] r7 : 00002084  r6 : 00000001  r5 : 00000001  r4 : 807bda8c
-[    0.246378] r3 : 00002084  r2 : 00002080  r1 : c07664cc  r0 : c076b600
-[    0.252976] Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
-[    0.260354] Control: 30c5387d  Table: 80003000  DAC: fffffffd
-[    0.266168] Process swapper/0 (pid: 1, stack limit = 0xeb046238)
-[    0.272245] Stack: (0xeb047e80 to 0xeb048000)
-[    0.276674] 7e80: eb047eb4 eb047e90 c004fda0 c00576c4 ffffffff 807bda8c 00000000 c07bda6c
-[    0.284919] 7ea0: 00000001 eb09ad00 00000000 c07bda8c eb047ee4 eb047ec0 c002775c c00316a0
-[    0.293165] 7ec0: 00000001 00000000 00000001 00000000 c0766508 eb09ad00 eb047f14 eb047ee8
-[    0.301411] 7ee0: c0034ffc c00276b8 c04c5ef0 00000017 00000001 c0766508 c076650c c07665e8
-[    0.309657] 7f00: c0774ef4 c04cd7f8 eb047f2c eb047f18 c00350e4 c0034f34 00000001 00000001
-[    0.317903] 7f20: eb047f54 eb047f30 c06fccf8 c0035084 c07595ac 00000000 00000000 00000000
-[    0.326149] 7f40: 00000000 00000000 eb047f94 eb047f58 c06eddb0 c06fcc80 c04c7c00 c0054c00
-[    0.334395] 7f60: eb047f94 eb047f70 c0054a78 c07bd580 c04bcce4 00000000 00000000 00000000
-[    0.342641] 7f80: 00000000 00000000 eb047fac eb047f98 c04bcd00 c06edd40 eb046000 00000000
-[    0.350886] 7fa0: 00000000 eb047fb0 c0021808 c04bccf0 00000000 00000000 00000000 00000000
-[    0.359133] 7fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[    0.367379] 7fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 00000000
-[    0.375636] [<c00316e0>] (exynos_boot_secondary) from [<c002775c>] (__cpu_up+0xb0/0x160)
-[    0.383789] [<c002775c>] (__cpu_up) from [<c0034ffc>] (_cpu_up+0xd4/0x150)
-[    0.390731] [<c0034ffc>] (_cpu_up) from [<c00350e4>] (cpu_up+0x6c/0x94)
-[    0.397415] [<c00350e4>] (cpu_up) from [<c06fccf8>] (smp_init+0x84/0xb8)
-[    0.404186] [<c06fccf8>] (smp_init) from [<c06eddb0>] (kernel_init_freeable+0x7c/0x1d0)
-[    0.412258] [<c06eddb0>] (kernel_init_freeable) from [<c04bcd00>] (kernel_init+0x1c/0xfc)
-[    0.420504] [<c04bcd00>] (kernel_init) from [<c0021808>] (ret_from_fork+0x14/0x20)
-[    0.428141] Code: e5983000 e1a02382 e2827004 e0833007 (e5931000)
-[    0.434335] ---[ end trace 1400ecdd391c2ea1 ]---
-[    0.438988] Kernel panic - not syncing: Fatal exception
-[    0.444286] ---[ end Kernel panic - not syncing: Fatal exception
-
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Amit Daniel Kachhap <amit.daniel@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
-Signed-off-by: Ming Lei <tom.leiming@gmail.com>
+CC: Linus Walleij <linus.walleij@linaro.org>
+CC: Stephen Warren <swarren@nvidia.com>
+CC: Andy Gross <agross@codeaurora.org>
+CC: Santosh Shilimkar <santosh.shilimkar@ti.com>
+Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
+Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 ---
- arch/arm/mach-exynos/platsmp.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm/mach-exynos/Kconfig                         |  1 +
+ arch/arm/mach-exynos/Makefile                        |  4 +---
+ drivers/soc/Kconfig                                  |  1 +
+ drivers/soc/Makefile                                 |  1 +
+ drivers/soc/samsung/Kconfig                          | 20 ++++++++++++++++++++
+ drivers/soc/samsung/Makefile                         |  4 ++++
+ .../pmu.c => drivers/soc/samsung/exynos-pmu.c        |  0
+ .../mach-exynos => drivers/soc/samsung}/exynos-pmu.h |  0
+ .../soc/samsung}/exynos3250-pmu.c                    |  0
+ .../soc/samsung}/exynos4-pmu.c                       |  0
+ .../soc/samsung}/exynos5250-pmu.c                    |  0
+ .../soc/samsung}/exynos5420-pmu.c                    |  0
+ 12 files changed, 28 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/soc/samsung/Kconfig
+ create mode 100644 drivers/soc/samsung/Makefile
+ rename arch/arm/mach-exynos/pmu.c => drivers/soc/samsung/exynos-pmu.c (100%)
+ rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos-pmu.h (100%)
+ rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos3250-pmu.c (100%)
+ rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos4-pmu.c (100%)
+ rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5250-pmu.c (100%)
+ rename {arch/arm/mach-exynos => drivers/soc/samsung}/exynos5420-pmu.c (100%)
 
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 41ae28d..61cb7a3 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -103,6 +103,8 @@ static inline void __iomem *cpu_boot_reg_base(void)
- {
- 	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
- 		return pmu_base_addr + S5P_INFORM5;
-+	else if (soc_is_exynos5440())
-+		return S5P_VA_CHIPID + 0x560;
- 	return sysram_base_addr;
- }
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 603820e..2e00b75 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -25,6 +25,7 @@ menuconfig ARCH_EXYNOS
+ 	select S5P_DEV_MFC
+ 	select SRAM
+ 	select MFD_SYSCON
++	select SOC_SAMSUNG
+ 	help
+ 	  Support for SAMSUNG EXYNOS SoCs (EXYNOS4/5)
  
-@@ -177,7 +179,7 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
- 	 */
- 	write_pen_release(core_id);
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index 462df1b..b91b382 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -9,9 +9,7 @@ ccflags-$(CONFIG_ARCH_MULTIPLATFORM) += -I$(srctree)/$(src)/include -I$(srctree)
  
--	if (!exynos_cpu_power_state(core_id)) {
-+	if (!soc_is_exynos5440() && !exynos_cpu_power_state(core_id)) {
- 		exynos_cpu_power_up(core_id);
- 		timeout = 10;
+ # Core
  
+-obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o pmu.o exynos-smc.o firmware.o \
+-					exynos3250-pmu.o exynos4-pmu.o \
+-					exynos5250-pmu.o exynos5420-pmu.o
++obj-$(CONFIG_ARCH_EXYNOS)	+= exynos.o exynos-smc.o firmware.o
+ 
+ obj-$(CONFIG_EXYNOS_CPU_SUSPEND) += pm.o sleep.o
+ obj-$(CONFIG_PM_SLEEP)		+= suspend.o
+diff --git a/drivers/soc/Kconfig b/drivers/soc/Kconfig
+index 76d6bd4..c3abfbe 100644
+--- a/drivers/soc/Kconfig
++++ b/drivers/soc/Kconfig
+@@ -1,6 +1,7 @@
+ menu "SOC (System On Chip) specific Drivers"
+ 
+ source "drivers/soc/qcom/Kconfig"
++source "drivers/soc/samsung/Kconfig"
+ source "drivers/soc/ti/Kconfig"
+ source "drivers/soc/versatile/Kconfig"
+ 
+diff --git a/drivers/soc/Makefile b/drivers/soc/Makefile
+index 063113d..620366f 100644
+--- a/drivers/soc/Makefile
++++ b/drivers/soc/Makefile
+@@ -3,6 +3,7 @@
+ #
+ 
+ obj-$(CONFIG_ARCH_QCOM)		+= qcom/
++obj-$(CONFIG_SOC_SAMSUNG)	+= samsung/
+ obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
+ obj-$(CONFIG_SOC_TI)		+= ti/
+ obj-$(CONFIG_PLAT_VERSATILE)	+= versatile/
+diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+new file mode 100644
+index 0000000..6855cc4
+--- /dev/null
++++ b/drivers/soc/samsung/Kconfig
+@@ -0,0 +1,20 @@
++#
++# SAMSUNG SOC drivers
++#
++menu "Samsung SOC drivers support"
++
++config SOC_SAMSUNG
++	bool
++
++config EXYNOS_PMU
++	bool "Support Exynos Power Management Unit"
++	depends on ARCH_EXYNOS
++	default y
++	help
++	  Exynos SoC have Power Management Unit (PMU) which controls power and
++	  operation state of various components in Exynos SoC. This driver
++	  provides implementation of PMU driver and provides various
++	  functionality like initialisation and transition to various low power
++	  states.
++
++endmenu
+diff --git a/drivers/soc/samsung/Makefile b/drivers/soc/samsung/Makefile
+new file mode 100644
+index 0000000..d746a1d
+--- /dev/null
++++ b/drivers/soc/samsung/Makefile
+@@ -0,0 +1,4 @@
++ifdef CONFIG_ARM
++obj-$(CONFIG_EXYNOS_PMU)	+= exynos-pmu.o exynos3250-pmu.o exynos4-pmu.o \
++					exynos5250-pmu.o exynos5420-pmu.o
++endif
+diff --git a/arch/arm/mach-exynos/pmu.c b/drivers/soc/samsung/exynos-pmu.c
+similarity index 100%
+rename from arch/arm/mach-exynos/pmu.c
+rename to drivers/soc/samsung/exynos-pmu.c
+diff --git a/arch/arm/mach-exynos/exynos-pmu.h b/drivers/soc/samsung/exynos-pmu.h
+similarity index 100%
+rename from arch/arm/mach-exynos/exynos-pmu.h
+rename to drivers/soc/samsung/exynos-pmu.h
+diff --git a/arch/arm/mach-exynos/exynos3250-pmu.c b/drivers/soc/samsung/exynos3250-pmu.c
+similarity index 100%
+rename from arch/arm/mach-exynos/exynos3250-pmu.c
+rename to drivers/soc/samsung/exynos3250-pmu.c
+diff --git a/arch/arm/mach-exynos/exynos4-pmu.c b/drivers/soc/samsung/exynos4-pmu.c
+similarity index 100%
+rename from arch/arm/mach-exynos/exynos4-pmu.c
+rename to drivers/soc/samsung/exynos4-pmu.c
+diff --git a/arch/arm/mach-exynos/exynos5250-pmu.c b/drivers/soc/samsung/exynos5250-pmu.c
+similarity index 100%
+rename from arch/arm/mach-exynos/exynos5250-pmu.c
+rename to drivers/soc/samsung/exynos5250-pmu.c
+diff --git a/arch/arm/mach-exynos/exynos5420-pmu.c b/drivers/soc/samsung/exynos5420-pmu.c
+similarity index 100%
+rename from arch/arm/mach-exynos/exynos5420-pmu.c
+rename to drivers/soc/samsung/exynos5420-pmu.c
 -- 
-1.9.1
+2.2.0
