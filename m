@@ -1,183 +1,68 @@
-From: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] [media] s5p-jpeg: Adding Exynos7 Jpeg variant support
-Date: Wed, 07 Jan 2015 10:45:23 +0100
-Message-ID: <54AD0033.1020103@samsung.com>
-References: <1418801229-7532-1-git-send-email-tony.kn@samsung.com>
- <54919010.8020507@samsung.com> <001801d01b3d$2cb181d0$86148570$@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <001801d01b3d$2cb181d0$86148570$@samsung.com>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tony K Nadackal <tony.kn-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, bhushan.r-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [PATCH] ARM: dts: exynos4412-trats2: Add Maxim 77693 fuel gauge node
+Date: Wed, 07 Jan 2015 10:50:32 +0100
+Message-ID: <1420624232-31238-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Tony,
+Add node for fuel gauge present in Maxim 77693 PMIC. This allows control
+over battery charging state on Trats2 board.
 
-Sorry for late response, just got back from vacation.
+The fuel gauge is compatible with max17042 battery driver (Maxim
+17042/17047/17050).  Although datasheet rev 2.2 for MAX77693 describes
+fuel gauge as Maxim 17042-like, the chip on Trats2 board identifies
+itself as Maxim 17047-like.
 
-On 12/19/2014 04:37 AM, Tony K Nadackal wrote:
-> Hi Jacek,
->
-> On Wednesday, December 17, 2014 7:46 PM Jacek Anaszewski wrote,
->> Hi Tony,
->>
->> Thanks for the patches.
->>
->
-> Thanks for the review.
->
->> Please process them with scripts/checkpatch.pl as you will be submitting the
-> next
->> version - they contain many coding style related issues.
->>
->
-> I ran checkpatch before posting. Do you find any checkpatch related issues in
-> the patch?
+Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+---
+ arch/arm/boot/dts/exynos4412-trats2.dts | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-There was a problem on my side, sorry for making confusion.
-
->> My remaining comments below.
->>
->
-> [snip]
->
->>> +		if (ctx->jpeg->variant->version == SJPEG_EXYNOS7) {
->>> +			exynos4_jpeg_set_interrupt(jpeg->regs,
->> SJPEG_EXYNOS7);
->>> +			exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
->>> +					ctx->subsampling,
->> EXYNOS7_ENC_FMT_MASK);
->>> +			exynos4_jpeg_set_img_fmt(jpeg->regs,
->>> +					ctx->out_q.fmt->fourcc,
->>> +					EXYNOS7_SWAP_CHROMA_SHIFT);
->>> +		} else {
->>> +			exynos4_jpeg_set_interrupt(jpeg->regs,
->> SJPEG_EXYNOS4);
->>> +			exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
->>> +					ctx->subsampling,
->> EXYNOS4_ENC_FMT_MASK);
->>> +			exynos4_jpeg_set_img_fmt(jpeg->regs,
->>> +					ctx->out_q.fmt->fourcc,
->>> +					EXYNOS4_SWAP_CHROMA_SHIFT);
->>> +		}
->>> +
->>
->> I'd implement it this way:
->>
->> exynos4_jpeg_set_interrupt(jpeg->regs, ctx->jpeg->variant->version);
->> exynos4_jpeg_set_enc_out_fmt(jpeg->regs, ctx->subsampling,
->> 			(ctx->jpeg->variant->version == SJPEG_EXYNOS4) ?
->> 				EXYNOS4_ENC_FMT_MASK :
->> 				EXYNOS7_ENC_FMT_MASK);
->> exynos4_jpeg_set_img_fmt(jpeg->regs, ctx->out_q.fmt->fourcc,
->> 			(ctx->jpeg->variant->version == SJPEG_EXYNOS4) ?
->> 				EXYNOS4_SWAP_CHROMA_SHIFT :
->> 				EXYNOS7_SWAP_CHROMA_SHIFT);
->>
->
-> OK. Looks goods to me. Thanks for the suggestion.
->
->>>    		exynos4_jpeg_set_img_addr(ctx);
->>>    		exynos4_jpeg_set_jpeg_addr(ctx);
->>>    		exynos4_jpeg_set_encode_hoff_cnt(jpeg->regs,
->>>    							ctx->out_q.fmt->fourcc);
->>>    	} else {
->>>    		exynos4_jpeg_sw_reset(jpeg->regs);
->>> -		exynos4_jpeg_set_interrupt(jpeg->regs);
->>>    		exynos4_jpeg_set_img_addr(ctx);
->>>    		exynos4_jpeg_set_jpeg_addr(ctx);
->>> -		exynos4_jpeg_set_img_fmt(jpeg->regs, ctx->cap_q.fmt-
->>> fourcc);
->>>
->>> -		bitstream_size = DIV_ROUND_UP(ctx->out_q.size, 32);
->>> +		if (ctx->jpeg->variant->version == SJPEG_EXYNOS7) {
->>> +			exynos4_jpeg_set_interrupt(jpeg->regs,
->> SJPEG_EXYNOS7);
->>> +			exynos4_jpeg_set_huff_tbl(jpeg->regs);
->>> +			exynos4_jpeg_set_huf_table_enable(jpeg->regs, 1);
->>> +
->>> +			/*
->>> +			 * JPEG IP allows storing 4 quantization tables
->>> +			 * We fill table 0 for luma and table 1 for chroma
->>> +			 */
->>> +			exynos4_jpeg_set_qtbl_lum(jpeg->regs,
->>> +							ctx->compr_quality);
->>> +			exynos4_jpeg_set_qtbl_chr(jpeg->regs,
->>> +							ctx->compr_quality);
->>
->> Is it really required to setup quantization tables for encoding?
->>
->
-> Without setting up the quantization tables, encoder is working fine.
-> But, as per Exynos7 User Manual setting up the quantization tables are required
-> for encoding also.
-
-Actually I intended to ask if setting the quantization tables is
-required for *decoding*, as you set it also in decoding path, whereas
-for Exynos4 it is not required. I looks strange for me as quantization
-tables are usually required only for encoding raw images.
-The same is related to huffman tables.
-
->>> +			exynos4_jpeg_set_stream_size(jpeg->regs, ctx-
->>> cap_q.w,
->>> +					ctx->cap_q.h);
->>
->> For exynos4 this function writes the number of samples per line and number
->> lines of the resulting JPEG image and is used only during encoding. Is the
->> semantics of the related register different in case of Exynos7?
->>
->
-> Yes. In case of Exynos7 Encoding, This step is required.
-
-Ack.
-
-> [snip]
->
->>> --- a/drivers/media/platform/s5p-jpeg/jpeg-core.h
->>> +++ b/drivers/media/platform/s5p-jpeg/jpeg-core.h
->>> @@ -71,6 +71,7 @@
->>>    #define SJPEG_S5P		1
->>>    #define SJPEG_EXYNOS3250	2
->>>    #define SJPEG_EXYNOS4		3
->>> +#define SJPEG_EXYNOS7		4
->>
->> As you adding a new variant I propose to turn these macros into enum.
->>
->
-> Ok. I will make this change in my next version.
-
-Thanks.
-
-> [snip]
->
->>> -void exynos4_jpeg_set_interrupt(void __iomem *base)
->>> +void exynos4_jpeg_set_interrupt(void __iomem *base, unsigned int
->>> +version)
->>>    {
->>> -	writel(EXYNOS4_INT_EN_ALL, base + EXYNOS4_INT_EN_REG);
->>> +	unsigned int reg;
->>> +
->>> +	reg = readl(base + EXYNOS4_INT_EN_REG) &
->> ~EXYNOS4_INT_EN_MASK(version);
->>> +	writel(EXYNOS4_INT_EN_ALL(version), base + EXYNOS4_INT_EN_REG);
->>>    }
->>
->> I believe that adding readl is a fix. I'd enclose it into separate patch and
-> explain its
->> merit.
->>
->
-> Thanks for the suggestion.  I will make a separate patch for this bug fix.
-
-Great.
-
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 496a05faca37..7b3e58d781d8 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -15,6 +15,7 @@
+ /dts-v1/;
+ #include "exynos4412.dtsi"
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/interrupt-controller/irq.h>
+ 
+ / {
+ 	model = "Samsung Trats 2 based on Exynos4412";
+@@ -24,6 +25,7 @@
+ 		i2c9 = &i2c_ak8975;
+ 		i2c10 = &i2c_cm36651;
+ 		i2c11 = &i2c_max77693;
++		i2c12 = &i2c_max77693_fuel;
+ 	};
+ 
+ 	memory {
+@@ -562,6 +564,22 @@
+ 		};
+ 	};
+ 
++	i2c_max77693_fuel: i2c-gpio-3 {
++		compatible = "i2c-gpio";
++		gpios = <&gpf1 5 GPIO_ACTIVE_HIGH>, <&gpf1 4 GPIO_ACTIVE_HIGH>;
++		i2c-gpio,delay-us = <2>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "okay";
++
++		max77693-fuel-gauge@36 {
++			compatible = "maxim,max17047";
++			interrupt-parent = <&gpx2>;
++			interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
++			reg = <0x36>;
++		};
++	};
++
+ 	mmc@12550000 {
+ 		num-slots = <1>;
+ 		broken-cd;
 -- 
-Best Regards,
-Jacek Anaszewski
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.9.1
