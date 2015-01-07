@@ -1,58 +1,177 @@
-From: Anand Moon <moon.linux@yahoo.com>
-Subject: Re: [PATCH] ARM: exynos_defconfig: Enable CONFIG_LOCKUP_DETECTOR
-Date: Wed, 7 Jan 2015 12:30:59 +0000 (UTC)
-Message-ID: <800144515.5769004.1420633859663.JavaMail.yahoo@jws10601.mail.bf1.yahoo.com>
-References: <1420632932-6964-1-git-send-email-moon.linux@yahoo.com>
- <1420633348.32552.2.camel@AMDC1943>
-Reply-To: Anand Moon <moon.linux@yahoo.com>
+From: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH] [media] s5p-jpeg: Adding Exynos7 Jpeg variant support
+Date: Wed, 07 Jan 2015 13:39:25 +0100
+Message-ID: <54AD28FD.4020703@samsung.com>
+References: <1418801229-7532-1-git-send-email-tony.kn@samsung.com>
+ <54919010.8020507@samsung.com> <001801d01b3d$2cb181d0$86148570$@samsung.com>
+ <54AD0033.1020103@samsung.com> <000a01d02a72$bc6e06b0$354a1410$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1420633348.32552.2.camel@AMDC1943>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Cc: Kevin Hilman <khilman@linaro.org>, Russell King <linux@arm.linux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Vivek Gautam <gautam.vivek@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tushar Behera <tushar.behera@linaro.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <000a01d02a72$bc6e06b0$354a1410$@samsung.com>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tony K Nadackal <tony.kn-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, bhushan.r-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-SGkgS3J6eXN6dG9mIEtvemxvd3NraSwKClRoYW5rcyBmb3IgcmV2aWV3CgpJIHdpbGwgc2VuZCBw
-YXRjaCB2MiB3aXRoIHByb3BlciByZWFzb24uCgotQW5hbmQgTW9vbgoKCgpPbiBXZWRuZXNkYXks
-IEphbnVhcnkgNywgMjAxNSA1OjUyIFBNLCBLcnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxvd3Nr
-aUBzYW1zdW5nLmNvbT4gd3JvdGU6Ck9uIMWbcm8sIDIwMTUtMDEtMDcgYXQgMTc6NDUgKzA1MzAs
-IEFuYW5kIE1vb24gd3JvdGU6Cj4gQVJNIEVuYWJsZSBDT05GSUdfTE9DS1VQX0RFVEVDVE9SIHRv
-IHZhbGlkYXRpb24gb2Yga2VybmVsIGxvY2tzCj4gCj4gdjIgRml4ZWQgdGhlIGNvbW1pdCBsb2cK
-PiBUaGlzIGNvbmZpZyBpdGVtIGhlbHBzIGdldHRpbmcgc29tZSB1c2VmdWwgaW5mb3JtYXRpb24g
-d2hlbiBsb2NrdXAKPiBoYXBwZW5zLiBJZiB5b3Ugd2FudCB0byB2YWxpZGF0ZSBsb2NrcyB0aGVu
-IHByb2JhYmx5IHlvdSB3YW50Cj4gUFJPVkVfTE9DS0lORy4uLiBidXQgaXRzIG92ZXJoZWFkIGlz
-IGxhcmdlci4KPiAKPiBBbnl3YXkgdGhlIG92ZXJoZWFkIG9mIExPQ0tVUF9ERVRFQ1RPUiBpcyBz
-bWFsbCBhbmQgbXVsdGlfdjdfZGVmY29uZmlnCj4gaGFzIGl0IGVuYWJsZWQgc28gSSBndWVzcyBl
-eHlub3MgbWF5IGRvIGl0IGFzIHdlbGwuCgpFcnI/IFdoeSBkaWQgeW91IGluY2x1ZGUgbXkgcmVz
-cG9uc2UgYXMgY29tbWl0IG1lc3NhZ2U/IEl0IGRvZXMgbm90CnJlYWxseSBtYWtlIHNlbnNlLgoK
-TGV0IG1lIHBvaW50IHRoaXMgb25jZSBhZ2FpbjoKMS4gVGhlIGNvbW1pdCBtZXNzYWdlIGlzIGlu
-YWNjdXJhdGUgYmVjYXVzZSBDT05GSUdfTE9DS1VQX0RFVEVDVE9SIGRvZXMKbm90IHZhbGlkYXRl
-IHRoZSBsb2Nrcy4KMi4gUGxlYXNlIHdyaXRlIHByb3BlciBjb21taXQgbWVzc2FnZSBkZXNjcmli
-aW5nIFdIWSB5b3Ugd2FudCB0byBhZGQKdGhpcyBjb25maWcgb3B0aW9uLgoKQmVzdCByZWdhcmRz
-LApLcnp5c3p0b2YKCj4gCj4gVGVzdGVkIG9uIEV4eW5vczU0MjIgT0RST0lEIFhVMyBib2FyZC4K
-PiAKPiBTaWduZWQtb2ZmLWJ5OiBBbmFuZCBNb29uIDxtb29uLmxpbnV4QHlhaG9vLmNvbT4KPiBS
-ZXZpZXdlZC1ieTogS3J6eXN6dG9mIEtvemxvd3NraSA8ay5rb3psb3dza2lAc2Ftc3VuZy5jb20+
-Cj4gLS0tCj4gIGFyY2gvYXJtL2NvbmZpZ3MvZXh5bm9zX2RlZmNvbmZpZyB8IDEgKwo+ICAxIGZp
-bGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykKPiAKPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vY29u
-Zmlncy9leHlub3NfZGVmY29uZmlnIGIvYXJjaC9hcm0vY29uZmlncy9leHlub3NfZGVmY29uZmln
-Cj4gaW5kZXggNWVmMTRkZS4uZWNkOTk4NyAxMDA2NDQKPiAtLS0gYS9hcmNoL2FybS9jb25maWdz
-L2V4eW5vc19kZWZjb25maWcKPiArKysgYi9hcmNoL2FybS9jb25maWdzL2V4eW5vc19kZWZjb25m
-aWcKPiBAQCAtMTc4LDYgKzE3OCw3IEBAIENPTkZJR19QUklOVEtfVElNRT15Cj4gIENPTkZJR19E
-RUJVR19GUz15Cj4gIENPTkZJR19NQUdJQ19TWVNSUT15Cj4gIENPTkZJR19ERUJVR19LRVJORUw9
-eQo+ICtDT05GSUdfTE9DS1VQX0RFVEVDVE9SPXkKPiAgQ09ORklHX0RFVEVDVF9IVU5HX1RBU0s9
-eQo+ICBDT05GSUdfREVCVUdfUlRfTVVURVhFUz15Cj4gIENPTkZJR19ERUJVR19TUElOTE9DSz15
-CgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1h
-cm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5v
-cmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0t
-a2VybmVsCg==
+Hi Tony,
+
+On 01/07/2015 01:08 PM, Tony K Nadackal wrote:
+> Dear Jacek,
+>
+> On Wednesday, January 07, 2015 3:15 PM Jacek Anaszewski wrote,
+>
+>> Hi Tony,
+>>
+>> Sorry for late response, just got back from vacation.
+>>
+>> On 12/19/2014 04:37 AM, Tony K Nadackal wrote:
+>>> Hi Jacek,
+>>>
+>>> On Wednesday, December 17, 2014 7:46 PM Jacek Anaszewski wrote,
+>>>> Hi Tony,
+>>>>
+>>>> Thanks for the patches.
+>>>>
+>>>
+>>> Thanks for the review.
+>>>
+>>>> Please process them with scripts/checkpatch.pl as you will be
+>>>> submitting the
+>>> next
+>>>> version - they contain many coding style related issues.
+>>>>
+>>>
+>>> I ran checkpatch before posting. Do you find any checkpatch related
+>>> issues in the patch?
+>>
+>> There was a problem on my side, sorry for making confusion.
+>>
+>>>> My remaining comments below.
+>>>>
+>>>
+>>> [snip]
+>>>
+>>>>> +		if (ctx->jpeg->variant->version == SJPEG_EXYNOS7) {
+>>>>> +			exynos4_jpeg_set_interrupt(jpeg->regs,
+>>>> SJPEG_EXYNOS7);
+>>>>> +			exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
+>>>>> +					ctx->subsampling,
+>>>> EXYNOS7_ENC_FMT_MASK);
+>>>>> +			exynos4_jpeg_set_img_fmt(jpeg->regs,
+>>>>> +					ctx->out_q.fmt->fourcc,
+>>>>> +					EXYNOS7_SWAP_CHROMA_SHIFT);
+>>>>> +		} else {
+>>>>> +			exynos4_jpeg_set_interrupt(jpeg->regs,
+>>>> SJPEG_EXYNOS4);
+>>>>> +			exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
+>>>>> +					ctx->subsampling,
+>>>> EXYNOS4_ENC_FMT_MASK);
+>>>>> +			exynos4_jpeg_set_img_fmt(jpeg->regs,
+>>>>> +					ctx->out_q.fmt->fourcc,
+>>>>> +					EXYNOS4_SWAP_CHROMA_SHIFT);
+>>>>> +		}
+>>>>> +
+>>>>
+>>>> I'd implement it this way:
+>>>>
+>>>> exynos4_jpeg_set_interrupt(jpeg->regs, ctx->jpeg->variant->version);
+>>>> exynos4_jpeg_set_enc_out_fmt(jpeg->regs, ctx->subsampling,
+>>>> 			(ctx->jpeg->variant->version == SJPEG_EXYNOS4) ?
+>>>> 				EXYNOS4_ENC_FMT_MASK :
+>>>> 				EXYNOS7_ENC_FMT_MASK);
+>>>> exynos4_jpeg_set_img_fmt(jpeg->regs, ctx->out_q.fmt->fourcc,
+>>>> 			(ctx->jpeg->variant->version == SJPEG_EXYNOS4) ?
+>>>> 				EXYNOS4_SWAP_CHROMA_SHIFT :
+>>>> 				EXYNOS7_SWAP_CHROMA_SHIFT);
+>>>>
+>>>
+>>> OK. Looks goods to me. Thanks for the suggestion.
+>>>
+>>>>>     		exynos4_jpeg_set_img_addr(ctx);
+>>>>>     		exynos4_jpeg_set_jpeg_addr(ctx);
+>>>>>     		exynos4_jpeg_set_encode_hoff_cnt(jpeg->regs,
+>>>>>
+> ctx->out_q.fmt->fourcc);
+>>>>>     	} else {
+>>>>>     		exynos4_jpeg_sw_reset(jpeg->regs);
+>>>>> -		exynos4_jpeg_set_interrupt(jpeg->regs);
+>>>>>     		exynos4_jpeg_set_img_addr(ctx);
+>>>>>     		exynos4_jpeg_set_jpeg_addr(ctx);
+>>>>> -		exynos4_jpeg_set_img_fmt(jpeg->regs, ctx->cap_q.fmt-
+>>>>> fourcc);
+>>>>>
+>>>>> -		bitstream_size = DIV_ROUND_UP(ctx->out_q.size, 32);
+>>>>> +		if (ctx->jpeg->variant->version == SJPEG_EXYNOS7) {
+>>>>> +			exynos4_jpeg_set_interrupt(jpeg->regs,
+>>>> SJPEG_EXYNOS7);
+>>>>> +			exynos4_jpeg_set_huff_tbl(jpeg->regs);
+>>>>> +			exynos4_jpeg_set_huf_table_enable(jpeg->regs, 1);
+>>>>> +
+>>>>> +			/*
+>>>>> +			 * JPEG IP allows storing 4 quantization tables
+>>>>> +			 * We fill table 0 for luma and table 1 for chroma
+>>>>> +			 */
+>>>>> +			exynos4_jpeg_set_qtbl_lum(jpeg->regs,
+>>>>> +							ctx->compr_quality);
+>>>>> +			exynos4_jpeg_set_qtbl_chr(jpeg->regs,
+>>>>> +							ctx->compr_quality);
+>>>>
+>>>> Is it really required to setup quantization tables for encoding?
+>>>>
+>>>
+>>> Without setting up the quantization tables, encoder is working fine.
+>>> But, as per Exynos7 User Manual setting up the quantization tables are
+>>> required for encoding also.
+>>
+>
+> Sorry I also got it mixed up.
+> *Decoder* works fine without setting up the quantization tables. But this step
+> is mentioned in User Manual.
+
+I'm ok with it provided that you will get an ack from Samsung SOCs
+maintainer.
+
+>> Actually I intended to ask if setting the quantization tables is required for
+>> *decoding*, as you set it also in decoding path, whereas for Exynos4 it is not
+>> required. I looks strange for me as quantization tables are usually required
+> only
+>> for encoding raw images.
+>> The same is related to huffman tables.
+>
+> Huffman table is required for Exynos7 decoding.
+> User Manual says about  Update_Huf_Tbl [bit 19 of PEG_CNTL], "User/Host should
+> mandatory program this Bit as "1" for every decoder operation. SFR
+> "HUFF_TBL_ENT" and SFR "HUFF_CNT" should be programmed accordingly for every
+> encoder/decoder operation."
+
+Same situation as above.
+
+>>
+>>>>> +			exynos4_jpeg_set_stream_size(jpeg->regs, ctx-
+>>>>> cap_q.w,
+>>>>> +					ctx->cap_q.h);
+>>>>
+>>>> For exynos4 this function writes the number of samples per line and
+>>>> number lines of the resulting JPEG image and is used only during
+>>>> encoding. Is the semantics of the related register different in case of
+> Exynos7?
+>>>>
+>>>
+>>> Yes. In case of Exynos7 Encoding, This step is required.
+>>
+>> Ack.
+>
+> I will request Kukjin or any Samsung colleagues who has access to Exynos7 Manual
+> to give ack or tested by.
+
+This is a good idea.
+
+-- 
+Best Regards,
+Jacek Anaszewski
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
