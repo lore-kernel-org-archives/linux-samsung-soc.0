@@ -1,71 +1,183 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH v3 00/19] Exynos SYSMMU (IOMMU) integration with DT and
- DMA-mapping subsystem
-Date: Wed, 07 Jan 2015 10:33:29 +0100
-Message-ID: <54ACFD69.1020500@collabora.co.uk>
-References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com> <1417514366.21830.22.camel@collabora.co.uk> <54818768.3080303@samsung.com> <CABxcv=n=eNqbyBbOk1Wb87tCnnLZAJQurmCdeTOSqMZMbNaSHw@mail.gmail.com> <54AC93E0.8010705@samsung.com>
+From: Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH] [media] s5p-jpeg: Adding Exynos7 Jpeg variant support
+Date: Wed, 07 Jan 2015 10:45:23 +0100
+Message-ID: <54AD0033.1020103@samsung.com>
+References: <1418801229-7532-1-git-send-email-tony.kn@samsung.com>
+ <54919010.8020507@samsung.com> <001801d01b3d$2cb181d0$86148570$@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:38775 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752458AbbAGJdf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Jan 2015 04:33:35 -0500
-In-Reply-To: <54AC93E0.8010705@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <001801d01b3d$2cb181d0$86148570$@samsung.com>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tony K Nadackal <tony.kn-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, mchehab-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org, kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, bhushan.r-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joonyoung Shim <jy0922.shim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Inki Dae <inki.dae@samsung.com>, iommu@lists.linux-foundation.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linaro-mm-sig@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, Joerg Roedel <joro@8bytes.org>, Thierry Reding <treding@nvidia.com>, Olof Johansson <olof@lixom.net>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Rob Herring <robh@kernel.org>, Will Deacon <will.deacon@arm.com>, David Wodhouse <dwmw2@infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>
 
-Hello Joonyoung,
+Hi Tony,
 
-On 01/07/2015 03:03 AM, Joonyoung Shim wrote:
-> On 01/06/2015 06:49 PM, Javier Martinez Canillas wrote:
->> 
->> Also I tried forcing the kernel to not disable unused power domains by
->> passing the pd_ignore_unused parameter to the kernel command line. I
->> see on the kernel log a "genpd: Not disabling unused power domains"
->> message but HDMI output still has the stripes that Sjoerd mentioned.
->> Do you know if Exynos DRM HDMI in mainline is supposed to work without
->> SysMMU / IOMMU support?
->> 
-> 
-> I don't think iommu support and power domain issue are related. I also
-> get displaying stripes via hdmi but it is just power domain issue
-> regardless iommu support.
-> 
-> I observed 8th bit from 0x1445000C register of mixer is set to 1 with
-> displaying stripes. It means "The graphic layer0 line buffer underflow".
-> There was same underflow issue on Exynos4 based boards. As Marek said,
-> because LCD0 power domain was turned off.
+Sorry for late response, just got back from vacation.
+
+On 12/19/2014 04:37 AM, Tony K Nadackal wrote:
+> Hi Jacek,
 >
-
-Interesting, thanks a lot for sharing this information.
- 
-> I just tried to turn off DISP1 power domain at u-boot and DISP1 power
-> domain is turned on from kernel hdmi and mixer driver on odroid xu3 
-> board. As the result, i can see displaying penguin logo from hdmi.
+> On Wednesday, December 17, 2014 7:46 PM Jacek Anaszewski wrote,
+>> Hi Tony,
+>>
+>> Thanks for the patches.
+>>
 >
-
-Can you share the patches you are using to turn on the DISP1 power domain
-since AFAIU the kernel does not know about the DISP1 power domain after
-commit d51cad7df871 ("ARM: dts: remove display power domain for exynos5420").
-
-I tried reverting that commit before so the kernel knows about the DISP1
-power domain and booting with pd_ignore_unused but still had the stripes.
- 
-> But the problem exists still because it is failed to control on/off of
-> DISP1 power domain more than twice from kernel hdmi and mixer driver.[0]
+> Thanks for the review.
 >
+>> Please process them with scripts/checkpatch.pl as you will be submitting the
+> next
+>> version - they contain many coding style related issues.
+>>
+>
+> I ran checkpatch before posting. Do you find any checkpatch related issues in
+> the patch?
 
-Something that is not clear to me is how display panel is working on the
-Peach boards if this is a power domain issue since according to the manual
-both the modules used for display (LCD controller and DP) and the modules
-used for HDMI (MIXER and HDMI) belong to the same power domain (DISP1).
+There was a problem on my side, sorry for making confusion.
 
-Or am I misunderstanding something? 
+>> My remaining comments below.
+>>
+>
+> [snip]
+>
+>>> +		if (ctx->jpeg->variant->version == SJPEG_EXYNOS7) {
+>>> +			exynos4_jpeg_set_interrupt(jpeg->regs,
+>> SJPEG_EXYNOS7);
+>>> +			exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
+>>> +					ctx->subsampling,
+>> EXYNOS7_ENC_FMT_MASK);
+>>> +			exynos4_jpeg_set_img_fmt(jpeg->regs,
+>>> +					ctx->out_q.fmt->fourcc,
+>>> +					EXYNOS7_SWAP_CHROMA_SHIFT);
+>>> +		} else {
+>>> +			exynos4_jpeg_set_interrupt(jpeg->regs,
+>> SJPEG_EXYNOS4);
+>>> +			exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
+>>> +					ctx->subsampling,
+>> EXYNOS4_ENC_FMT_MASK);
+>>> +			exynos4_jpeg_set_img_fmt(jpeg->regs,
+>>> +					ctx->out_q.fmt->fourcc,
+>>> +					EXYNOS4_SWAP_CHROMA_SHIFT);
+>>> +		}
+>>> +
+>>
+>> I'd implement it this way:
+>>
+>> exynos4_jpeg_set_interrupt(jpeg->regs, ctx->jpeg->variant->version);
+>> exynos4_jpeg_set_enc_out_fmt(jpeg->regs, ctx->subsampling,
+>> 			(ctx->jpeg->variant->version == SJPEG_EXYNOS4) ?
+>> 				EXYNOS4_ENC_FMT_MASK :
+>> 				EXYNOS7_ENC_FMT_MASK);
+>> exynos4_jpeg_set_img_fmt(jpeg->regs, ctx->out_q.fmt->fourcc,
+>> 			(ctx->jpeg->variant->version == SJPEG_EXYNOS4) ?
+>> 				EXYNOS4_SWAP_CHROMA_SHIFT :
+>> 				EXYNOS7_SWAP_CHROMA_SHIFT);
+>>
+>
+> OK. Looks goods to me. Thanks for the suggestion.
+>
+>>>    		exynos4_jpeg_set_img_addr(ctx);
+>>>    		exynos4_jpeg_set_jpeg_addr(ctx);
+>>>    		exynos4_jpeg_set_encode_hoff_cnt(jpeg->regs,
+>>>    							ctx->out_q.fmt->fourcc);
+>>>    	} else {
+>>>    		exynos4_jpeg_sw_reset(jpeg->regs);
+>>> -		exynos4_jpeg_set_interrupt(jpeg->regs);
+>>>    		exynos4_jpeg_set_img_addr(ctx);
+>>>    		exynos4_jpeg_set_jpeg_addr(ctx);
+>>> -		exynos4_jpeg_set_img_fmt(jpeg->regs, ctx->cap_q.fmt-
+>>> fourcc);
+>>>
+>>> -		bitstream_size = DIV_ROUND_UP(ctx->out_q.size, 32);
+>>> +		if (ctx->jpeg->variant->version == SJPEG_EXYNOS7) {
+>>> +			exynos4_jpeg_set_interrupt(jpeg->regs,
+>> SJPEG_EXYNOS7);
+>>> +			exynos4_jpeg_set_huff_tbl(jpeg->regs);
+>>> +			exynos4_jpeg_set_huf_table_enable(jpeg->regs, 1);
+>>> +
+>>> +			/*
+>>> +			 * JPEG IP allows storing 4 quantization tables
+>>> +			 * We fill table 0 for luma and table 1 for chroma
+>>> +			 */
+>>> +			exynos4_jpeg_set_qtbl_lum(jpeg->regs,
+>>> +							ctx->compr_quality);
+>>> +			exynos4_jpeg_set_qtbl_chr(jpeg->regs,
+>>> +							ctx->compr_quality);
+>>
+>> Is it really required to setup quantization tables for encoding?
+>>
+>
+> Without setting up the quantization tables, encoder is working fine.
+> But, as per Exynos7 User Manual setting up the quantization tables are required
+> for encoding also.
 
-Thanks a lot for your help and best regards,
-Javier
+Actually I intended to ask if setting the quantization tables is
+required for *decoding*, as you set it also in decoding path, whereas
+for Exynos4 it is not required. I looks strange for me as quantization
+tables are usually required only for encoding raw images.
+The same is related to huffman tables.
+
+>>> +			exynos4_jpeg_set_stream_size(jpeg->regs, ctx-
+>>> cap_q.w,
+>>> +					ctx->cap_q.h);
+>>
+>> For exynos4 this function writes the number of samples per line and number
+>> lines of the resulting JPEG image and is used only during encoding. Is the
+>> semantics of the related register different in case of Exynos7?
+>>
+>
+> Yes. In case of Exynos7 Encoding, This step is required.
+
+Ack.
+
+> [snip]
+>
+>>> --- a/drivers/media/platform/s5p-jpeg/jpeg-core.h
+>>> +++ b/drivers/media/platform/s5p-jpeg/jpeg-core.h
+>>> @@ -71,6 +71,7 @@
+>>>    #define SJPEG_S5P		1
+>>>    #define SJPEG_EXYNOS3250	2
+>>>    #define SJPEG_EXYNOS4		3
+>>> +#define SJPEG_EXYNOS7		4
+>>
+>> As you adding a new variant I propose to turn these macros into enum.
+>>
+>
+> Ok. I will make this change in my next version.
+
+Thanks.
+
+> [snip]
+>
+>>> -void exynos4_jpeg_set_interrupt(void __iomem *base)
+>>> +void exynos4_jpeg_set_interrupt(void __iomem *base, unsigned int
+>>> +version)
+>>>    {
+>>> -	writel(EXYNOS4_INT_EN_ALL, base + EXYNOS4_INT_EN_REG);
+>>> +	unsigned int reg;
+>>> +
+>>> +	reg = readl(base + EXYNOS4_INT_EN_REG) &
+>> ~EXYNOS4_INT_EN_MASK(version);
+>>> +	writel(EXYNOS4_INT_EN_ALL(version), base + EXYNOS4_INT_EN_REG);
+>>>    }
+>>
+>> I believe that adding readl is a fix. I'd enclose it into separate patch and
+> explain its
+>> merit.
+>>
+>
+> Thanks for the suggestion.  I will make a separate patch for this bug fix.
+
+Great.
+
+-- 
+Best Regards,
+Jacek Anaszewski
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
