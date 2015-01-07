@@ -1,35 +1,68 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v11 1/9] ARM: OMAP2+: use common l2cache initialization code
-Date: Wed, 7 Jan 2015 23:37:09 +0900
-Message-ID: <CA+Ln22ECR_rCLz8VW0WYDNqa3xb0b-b4Em-8156wNR60GvB1cQ@mail.gmail.com>
-References: <1420460348-20302-1-git-send-email-m.szyprowski@samsung.com>
-	<1420460348-20302-2-git-send-email-m.szyprowski@samsung.com>
-	<2975078.sXsfBJkaoi@wuerfel>
+From: Anand Moon <moon.linux@yahoo.com>
+Subject: Re: [PATCH v2] ARM: exynos_defconfig: Enable CONFIG_LOCKUP_DETECTOR
+Date: Wed, 7 Jan 2015 14:39:07 +0000 (UTC)
+Message-ID: <1208619911.5855211.1420641548080.JavaMail.yahoo@jws106113.mail.bf1.yahoo.com>
+References: <1420635542-7202-1-git-send-email-moon.linux@yahoo.com>
+ <1420637261.32552.4.camel@AMDC1943>
+ <157605903.5809859.1420638996780.JavaMail.yahoo@jws10677.mail.bf1.yahoo.com>
+ <1420640600.32552.7.camel@AMDC1943>
+Reply-To: Anand Moon <moon.linux@yahoo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2975078.sXsfBJkaoi@wuerfel>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Nishanth Menon <nm@ti.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Daniel Drake <drake@endlessm.com>, Jon Loeliger <loeliger@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Laura Abbott <lauraa@codeaurora.org>, linux-omap <linux-omap@vger.kernel.org>, Kevin Hilman <khilman@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1420640600.32552.7.camel@AMDC1943>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Cc: Kevin Hilman <khilman@linaro.org>, Russell King <linux@arm.linux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Sachin Kamat <sachin.kamat@samsung.com>, Doug Anderson <dianders@chromium.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Tushar Behera <tushar.behera@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-2015-01-06 5:25 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
-> On Monday 05 January 2015 13:19:00 Marek Szyprowski wrote:
->>  DT_MACHINE_START(OMAP4_DT, "Generic OMAP4 (Flattened Device Tree)")
->> +       .l2c_aux_val    = OMAP_L2C_AUX_CTRL,
->> +       .l2c_aux_mask   = 0xcf9fffff,
->> +       .l2c_write_sec  = omap4_l2c310_write_sec,
->>         .reserve        = omap_reserve,
->>         .smp            = smp_ops(omap4_smp_ops),
->>         .map_io         = omap4_map_io,
->>
->
-> Could we also get those values into the dts files? Clearly we
-> can't remove them here without breaking compatibility with old
-> dtbs, but it would be nice to have all new dtbs do the right thing.
-
-Sounds like a good next step after merging this series. :)
-
-Best regards,
-Tomasz
+aGkgS3N6eXN6dG9mIEtvemxvd3NraUhpLAoKU29ycnkgZm9yIHRoZSBub2lzZS4gRHJvcCBpdC4K
+CgotQW5hbmQgTW9vbgoKCgpPbiBXZWRuZXNkYXksIEphbnVhcnkgNywgMjAxNSA3OjUzIFBNLCBL
+cnp5c3p0b2YgS296bG93c2tpIDxrLmtvemxvd3NraUBzYW1zdW5nLmNvbT4gd3JvdGU6Ck9uIMWb
+cm8sIDIwMTUtMDEtMDcgYXQgMTM6NTYgKzAwMDAsIEFuYW5kIE1vb24gd3JvdGU6Cj4gSGkgS3N6
+eXN6dG9mIEtvemxvd3NraSwKPiAKPiBJIHBpY2tlZCB1cCB0aGUgYmVsbG93IGxpbmUgZnJvbSAK
+PiAKPiAKPiBEb2N1bWVudGF0aW9uL2xvY2tpbmcvbG9ja2RlcC1kZXNpZ24udHh0ICBsaW5lIG5v
+IDE4Cj4gCj4gSSB1bmRlcnN0YW5kIHRoYXQgYnkgZW5hYmxpbmcgdGhpcyBmbGFnIHdlIGNvdWxk
+IGRldGVjdCBwb3NzaWJsZSAKPiAKPiBkZWFkbG9jayBzaXR1YXRpb24gd2l0aCB0aGUga2VybmVs
+LiBTb3JyeSBmb3IgdGhlIG5vaXNlLgoKLi4uYW5kIGxvY2tkZXAtZGVzaWduLnR4dCBkZXNjcmli
+ZXMgTE9DS0RFUC4gTm90IExPQ0tVUC4gU28gd2h5IHlvdSBhcmUKZW5hYmxpbmcgbG9ja3VwPwoK
+QmVzdCByZWdhcmRzLApLcnp5c3p0b2YKCgo+IAo+IAo+IC1BbmFuZCBNb29uCj4gCj4gCj4gCj4g
+T24gV2VkbmVzZGF5LCBKYW51YXJ5IDcsIDIwMTUgNjo1NyBQTSwgS3J6eXN6dG9mIEtvemxvd3Nr
+aSA8ay5rb3psb3dza2lAc2Ftc3VuZy5jb20+IHdyb3RlOgo+IE9uIMWbcm8sIDIwMTUtMDEtMDcg
+YXQgMTg6MjkgKzA1MzAsIEFuYW5kIE1vb24gd3JvdGU6Cj4gPiBFbmFibGUgQ09ORklHX0xPQ0tV
+UF9ERVRFQ1RPUiB0byB2YWxpZGF0ZSBrZXJuZWwgbG9ja3Mgc3RhdGUgZm9yIGV4eW5vcyBTT0Mu
+Cj4gPiAKPiA+IEVuYWJsaW5nIENPTkZJR19MT0NLVVBfREVURUNUT1IgaGVscCB2YWxpZGF0b3Ig
+dHJhY2tzIHRoZSAnc3RhdGUnIG9mIGxvY2stY2xhc3NlcywKPiA+IGFuZCBpdCB0cmFja3MgZGVw
+ZW5kZW5jaWVzIGJldHdlZW4gZGlmZmVyZW50IGxvY2stY2xhc3Nlcy4KPiA+IFRoZSB2YWxpZGF0
+b3IgbWFpbnRhaW5zIGEgcm9sbGluZyBwcm9vZiB0aGF0IHRoZSBzdGF0ZSBhbmQKPiA+IHRoZSBk
+ZXBlbmRlbmNpZXMgYXJlIGNvcnJlY3QuCj4gCj4gVW5mb3J0dW5hdGVseSB0aGlzIGlzIG5vdCBj
+b3JyZWN0LiBMb2NrdXAgZGV0ZWN0b3IgZG9lcyBzb21ldGhpbmcgZWxzZS4KPiBQbGVhc2UgcmVh
+ZCB0aGUgaGVscC9tYW51YWwgZm9yIExPQ0tVUF9ERVRFQ1RPUi4gWW91IGNhbiBmaW5kIGluCj4g
+bGliL0tjb25maWcuZGVidWcgKGFyb3VuZCBsaW5lIDY2NykuCj4gCj4gQmVzdCByZWdhcmRzLAo+
+IEtyenlzenRvZgo+IAo+ID4gCj4gPiBDaGFuZ2VzIHNpbmNlIHYyOgo+ID4gICogTWFkZSBjb21t
+aXQgbWVzc2FnZSBtb3JlIGNsZWFyCj4gPiAgKiBDb3JyZWN0ZWQgZ3JhbW1lciBpbiBjb2RlIGNv
+bW1lbnQKPiA+IAo+ID4gVGVzdGVkIG9uIEV4eW5vczU0MjIgT0RST0lEIFhVMyBib2FyZC4KPiA+
+IAo+ID4gU2lnbmVkLW9mZi1ieTogQW5hbmQgTW9vbiA8bW9vbi5saW51eEB5YWhvby5jb20+Cj4g
+PiBSZXZpZXdlZC1ieTogS3J6eXN6dG9mIEtvemxvd3NraSA8ay5rb3psb3dza2lAc2Ftc3VuZy5j
+b20+Cj4gPiAtLS0KPiA+ICBhcmNoL2FybS9jb25maWdzL2V4eW5vc19kZWZjb25maWcgfCAxICsK
+PiA+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykKPiA+IAo+ID4gZGlmZiAtLWdpdCBh
+L2FyY2gvYXJtL2NvbmZpZ3MvZXh5bm9zX2RlZmNvbmZpZyBiL2FyY2gvYXJtL2NvbmZpZ3MvZXh5
+bm9zX2RlZmNvbmZpZwo+ID4gaW5kZXggNWVmMTRkZS4uZWNkOTk4NyAxMDA2NDQKPiA+IC0tLSBh
+L2FyY2gvYXJtL2NvbmZpZ3MvZXh5bm9zX2RlZmNvbmZpZwo+ID4gKysrIGIvYXJjaC9hcm0vY29u
+Zmlncy9leHlub3NfZGVmY29uZmlnCj4gPiBAQCAtMTc4LDYgKzE3OCw3IEBAIENPTkZJR19QUklO
+VEtfVElNRT15Cj4gPiAgQ09ORklHX0RFQlVHX0ZTPXkKPiA+ICBDT05GSUdfTUFHSUNfU1lTUlE9
+eQo+ID4gIENPTkZJR19ERUJVR19LRVJORUw9eQo+ID4gK0NPTkZJR19MT0NLVVBfREVURUNUT1I9
+eQo+ID4gIENPTkZJR19ERVRFQ1RfSFVOR19UQVNLPXkKPiA+ICBDT05GSUdfREVCVUdfUlRfTVVU
+RVhFUz15Cj4gPiAgQ09ORklHX0RFQlVHX1NQSU5MT0NLPXkKCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0
+CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMuaW5mcmFk
+ZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
