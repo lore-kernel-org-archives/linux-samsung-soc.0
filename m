@@ -1,45 +1,151 @@
-From: Jonathan Stone -SISA <j.stone@samsung.com>
-Subject: RE: [PATCH v2] ARM: dts: Add dts file for odroid XU3 board
-Date: Wed, 07 Jan 2015 23:49:22 +0000
-Message-ID: <6203C077F070A646AA0FCB4B5F1795D248114CA6@sisaex01sj>
-References: <1417721269-19342-1-git-send-email-sjoerd.simons@collabora.co.uk>
- <54AA48E6.3040404@samsung.com> <1420470469.15910.134.camel@collabora.co.uk>
- <69242715.30115.1420655868687.JavaMail.yahoo@jws10659.mail.bf1.yahoo.com>
- <1420670333.6075.2.camel@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w2.samsung.com ([211.189.100.12]:64951 "EHLO
-	usmailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755479AbbAGXtZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Jan 2015 18:49:25 -0500
-In-reply-to: <1420670333.6075.2.camel@collabora.co.uk>
-Content-language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCHv7 00/10] devfreq: Add devfreq-event class to provide raw data
+ for devfreq device
+Date: Thu, 08 Jan 2015 08:51:07 +0900
+Message-ID: <1420674677-3077-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: myungjoo.ham@samsung.com, kgene@kernel.org
+Cc: kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, robh+dt@kernel.org, cw00.choi@samsung.com, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Anand Moon <moon.linux@yahoo.com>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Kevin Hilman <khilman@kernel.org>, Tyler Baker <tyler.baker@linaro.org>, Heesub Shin <heesub.shin@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-DQpPbiBPbiBXZWQsIDIwMTUtMDEtMDcgYXQgMTg6MzcgKzAwMDAsIFNqb2VyZCBTaW1vbnMgd3Jp
-dGVzIHdyb3RlOg0KPk9uIFdlZCwgMjAxNS0wMS0wNyBhdCAxODozNyArMDAwMCwgQW5hbmQgTW9v
-biB3cm90ZTo+DQpbLi4uXQ0KDQo+PiBPbmx5IDQgY29yZSBjcHUncyBhcmUgb24gbXkgYm9hcmQu
-IEFsc28gQ3B1RnJlcSBpcyBub3Qgd29ya2luZy4NCj4gDQo+IENhbiB5b3Ugc2hhcmUgc29tZSBw
-b2ludCBvbiB0aGlzLg0KDQo+VGhlIGRlZmNvbmZpZyBpcyB1c2luZyB0aGUgYkwgc3dpdGNoZXIs
-IHdoaWNoIHBhaXJzIHVwIGJpZyBhbmQgbGl0dGxlIGNvcmVzIHRvIG1ha2UgdGhlbSBhcHBlYXIg
-YXMgb25lIGNvcmUuLiBTbyBmb3IgOCByZWFsIGNvcmVzLCB5b3UnbGwgZ2V0DQo+NCAidmlydHVh
-bCBjb3JlcyIuDQoNClRoYXQgY29uZmlndXJhdGlvbiBpcyBhcHByb3ByaWF0ZSBmb3IgdGhlIDU0
-MjAsIHdoaWNoIGFsbGVnZWRseSBoYXMgYSBoYXJkd2FyZSBidWcgaW4gdGhlIGNhY2hlLWNvaGVy
-ZW5jZSBiZXR3ZWVuIHRoZSBDb3J0ZXgtQTcgYmxvY2sgYW5kIHRoZSBDb3J0ZXgtQTE1IGJsb2Nr
-Lg0KTmV3ZXIgRXh5bm9zIDUgU29DcyAtLSA1NDIyLzU4MDAsIDU2MjAsIGV0YyAtLSBkb24ndCBo
-YXZlIHRoYXQgYnVnLiBUaGUgc2NoZWR1bGVyIHNob3VsZCBjb25maWd1cmVkIHRvICBkbyBITVAg
-b24gYWxsIDggKG9yIDYpIGNvcmVzLg0KSSBkb24ndCBoYXZlIGEgNTQxMCwgYnV0IEkgYXNzdW1l
-IGl0IGhhcyB0aGUgc2FtZSBidWcgYXMgdGhlIDU0MjAuDQoNClRoZSBYVTMga2VybmVsIHN1cHBs
-aWVkIGJ5IEhhcmRLZXJuZWwgc2hvd3MgYWxsIDggY29yZXMsIGFuZCBkb2VzIEhNUCBzY2hlZHVs
-aW5nIGFjcm9zcyBhbGwgOC4NCg0KSSB0cmllZCB2MS4wIG9mIHRoZSBPZHJvaWQtWFUzIERUQiBw
-YXRjaCwgYXBwbGllZCB0byBsaW51eC1uZXh0IDIwMTUwMTA3LiAgSSdtIG9ubHkgc2VlaW5nIDEg
-Y29yZSBydW5uaW5nIG9uIG15IE9kcm9pZC1YVTMuICBUaGUgVVNCIDMuMCBwb3J0IHdvcmtzIChn
-cmVhdCEpIGJ1dCBJJ20gbm90IGdldHRpbmcgYW55IEhETUkgb3V0cHV0LiAgSSBkaWRuJ3QgdHJ5
-IERpc3BsYXlQb3J0LiAgIEknbGwgZ2xhZGx5IHRyeSB2MiBvZiB0aGUgcGF0Y2ggb24gYW4gWFUz
-OyBpcyB0aGVyZSBhIGJldHRlciBiYXNlIHRvIGFwcGx5IHRoZSBwYXRjaCB0bz8NCg0KDQo=
+This patchset add new devfreq_event class to provide raw data to determine
+current utilization of device  which is used for devfreq governor.
+
+The following description explains the feature of two kind of devfreq class:
+- devfreq class (existing)
+ : devfreq consumer device use raw data from devfreq_event device for
+   determining proper current system state and change voltage/frequency
+   dynamically using various governors.
+- devfreq_event class (new)
+ : Provide measured raw data to devfreq device for governor
+
+---------------
+Changes from v6:
+- This patchset is based on v3.19-rc3.
+1. devfreq-event class driver
+- Fix build break if devfreq-event framework is off
+- Add resource-managed function for devfreq-event device
+: devm_devfreq_event_add_edev()
+: devm_devfreq_event_remove_edev()
+
+Changes from v5:
+- Rebase these patch-set on v3.19-rc1 and Test it.
+1. exynos-ppmu.c
+- Change the error value when of_iomap() fail to map the memory
+- Remove owner setting of platform_driver
+- Add exynos_ppmu_disable() function
+2. exynos dts file
+- Add PPMU node to Exynos3250-based Monk board
+- Remove ppmu_cpu node on Exynos4412-based TRATS2 board and add ppmu_leftbus/rightbus node
+
+Changes from v4:
+1. devfreq-event class driver
+- Add devfreq_event_get_edev_count() function
+- Modify the simple description of devfreq-event framework in devfreq-event.c
+- Minimize the usage range of global lock usage in devfreq_event_add_edev()
+- Remove '_is_enabled()' function pointer in devfreq_event_ops structure
+- Add separte CONFIG_PM_DEVFREQ_EVENT configuration
+- Add new devfreq-event.h header file including devfreq-event helper functions
+2. exynos dts file
+- Add new patch to support PPMU with DEVFREQ-event on Exynos4412-based TRATS2
+
+Changes from v3:
+1. devfreq-event class driver
+- Fix return value of devfreq_event_get_event()
+- Add new structure devfreq_event_data for devfreq_event_get_event()
+- Modify the prototype of devfreq_event_get_event() function
+- Call of_node_put after calling of_parse_phandle() to decrement refcount
+2. exynos-ppmu driver
+- Modify usage of devfreq_event_get_event() function
+  according to new prototype of this funciton
+- Add the additional description to exynos-ppmu.txt how to add PPMU node
+  in board dts file
+- Use 'PPMU_EVENT' macro to remove duplicate codes
+- Add the support of PPMU for Exynos5260
+3. exynos dts file
+- Add missing PPMU_FSYS node to exynos3250.dtsi
+- Fix 'ppmu_mfc_l' node name as 'ppmu_mfc' because exynos3250 has only one MFC IP.
+- Add missing PPMU_ACP/G3D to exynos4.dtsi
+4. etc
+- Fix wrong abbreviation of PPMU (PPMU :Platform Performance Monitoring Unit)
+- Add new patch to support the PPMU of Exynos5260 SoC
+
+Changes from v2:
+1. devfreq-event class driver
+- Rename all the helper functions of devfreq-event device
+- Add devfreq_event_remove_edev() instead of devfreq_put_event_dev()
+- Add devfreq_event_release_edev() to initialize it before put device
+- Add the detailed description of devfreq-event API
+- Add the attributes of devfreq-event class (enable_count)
+- Check the overflow about event/total_event data in devfreq_event_get_event()
+- Remove the 'exclusive flag' feature
+- Set set_event()/get_event() functions as mandary
+- Add missing of_node_put() call
+- Change variable type of 'get_event()' funciton from 'int' to 'u64'
+2. exynos-ppmu driver
+- Remove un-used field (struct devfreq)
+- Use 'of_get_child_by_name()' instead of 'of_find_node_by_name()'
+- Add missing of_node_put() call
+- Fix wrong clock control
+- Use devfreq_event_remove_edev() instead of devfreq_remove_device()
+- Add the documentation for exynos-ppmu driver
+- Remove 'enable/disable/is_enabled/reset' function of exynos-ppmu driver
+3. exynos3250-rinato.dts
+- Add ppmu_{leftbus|rightbus} dt node and remove ppmu_cpu dt node
+
+Changes from v1:
+- Code clean
+- Add the description of devfreq-event structure
+- Add 'is_enabled' function to devfreq_event_ops structure
+- Add 'enable_count' field to devfreq_event_dev structure
+- Check whether devfreq-event device is enabled or not
+  during calling devfreq_event API
+- Define the type of devfreq-event device as following
+  : DEVFREQ_EVENT_TYPE_RAW_DATA
+  : DEVFREQ_EVENT_TYPE_UTILIZATION
+  : DEVFREQ_EVENT_TYPE_BANDWIDTH
+  : DEVFREQ_EVENT_TYPE_LATENCY
+- Add the exclusive feature of devfreq-event device.
+  If devfreq-event device is used on only on devfreq driver,
+  should used 'devfreq_enable_event_dev_exclusive()' function
+- Add new patch6 for test on Exynos3250-based Rinato board
+
+Chanwoo Choi (10):
+  devfreq: event: Add new devfreq_event class to provide basic data for devfreq governor
+  devfreq: event: Add the list of supported devfreq-event type
+  devfreq: event: Add resource-managed function for devfreq-event device
+  devfreq: event: Add exynos-ppmu devfreq-event driver
+  devfreq: event: Add documentation for exynos-ppmu devfreq-event driver
+  ARM: dts: Add PPMU dt node for Exynos3250 SoC
+  ARM: dts: Add PPMU dt node for Exynos4 SoCs
+  ARM: dts: Add PPMU dt node for Exynos5260 SoC
+  ARM: dts: exynos: Add PPMU node to Exynos3250-based Rinato/Monk board
+  ARM: dts: exynos: Add PPMU node for Exynos4412-based TRATS2 board
+
+ .../bindings/devfreq/event/exynos-ppmu.txt         | 110 ++++
+ arch/arm/boot/dts/exynos3250-monk.dts              |  40 ++
+ arch/arm/boot/dts/exynos3250-rinato.dts            |  40 ++
+ arch/arm/boot/dts/exynos3250.dtsi                  |  74 +++
+ arch/arm/boot/dts/exynos4.dtsi                     | 108 ++++
+ arch/arm/boot/dts/exynos4210.dtsi                  |   8 +
+ arch/arm/boot/dts/exynos4412-trats2.dts            |  40 ++
+ arch/arm/boot/dts/exynos5260.dtsi                  |  90 ++++
+ drivers/devfreq/Kconfig                            |   2 +
+ drivers/devfreq/Makefile                           |   6 +-
+ drivers/devfreq/devfreq-event.c                    | 573 +++++++++++++++++++++
+ drivers/devfreq/event/Kconfig                      |  25 +
+ drivers/devfreq/event/Makefile                     |   2 +
+ drivers/devfreq/event/exynos-ppmu.c                | 399 ++++++++++++++
+ include/linux/devfreq-event.h                      | 205 ++++++++
+ 15 files changed, 1721 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
+ create mode 100644 drivers/devfreq/devfreq-event.c
+ create mode 100644 drivers/devfreq/event/Kconfig
+ create mode 100644 drivers/devfreq/event/Makefile
+ create mode 100644 drivers/devfreq/event/exynos-ppmu.c
+ create mode 100644 include/linux/devfreq-event.h
+
+-- 
+1.8.5.5
+
