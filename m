@@ -1,157 +1,53 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH v2 21/21] irqchip: gic: Drop support for gic_arch_extn
-Date: Wed,  7 Jan 2015 17:42:56 +0000
-Message-ID: <1420652576-22309-22-git-send-email-marc.zyngier@arm.com>
-References: <1420652576-22309-1-git-send-email-marc.zyngier@arm.com>
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <1420652576-22309-1-git-send-email-marc.zyngier@arm.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Benoit Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PULL] drm-exynos-next 2014-12-22
+Date: Wed, 7 Jan 2015 16:06:08 -0200
+Message-ID: <20150107180608.GA2001@joana>
+References: <20141222130418.GJ16419@joana>
+ <549CB768.3000903@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <549CB768.3000903@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Now that the users of gic_arch_extn have been fixed, drop the
-"feature" for good. This leads to the removal of some now useless
-locking.
-
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
----
- drivers/irqchip/irq-gic.c       | 54 -----------------------------------------
- include/linux/irqchip/arm-gic.h |  2 --
- 2 files changed, 56 deletions(-)
-
-diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-index 23fe3be..78d4dee 100644
---- a/drivers/irqchip/irq-gic.c
-+++ b/drivers/irqchip/irq-gic.c
-@@ -80,19 +80,6 @@ static DEFINE_RAW_SPINLOCK(irq_controller_lock);
- #define NR_GIC_CPU_IF 8
- static u8 gic_cpu_map[NR_GIC_CPU_IF] __read_mostly;
- 
--/*
-- * Supported arch specific GIC irq extension.
-- * Default make them NULL.
-- */
--struct irq_chip gic_arch_extn = {
--	.irq_eoi	= NULL,
--	.irq_mask	= NULL,
--	.irq_unmask	= NULL,
--	.irq_retrigger	= NULL,
--	.irq_set_type	= NULL,
--	.irq_set_wake	= NULL,
--};
--
- #ifndef MAX_GIC_NR
- #define MAX_GIC_NR	1
- #endif
-@@ -155,32 +142,18 @@ static void gic_mask_irq(struct irq_data *d)
- {
- 	u32 mask = 1 << (gic_irq(d) % 32);
- 
--	raw_spin_lock(&irq_controller_lock);
- 	writel_relaxed(mask, gic_dist_base(d) + GIC_DIST_ENABLE_CLEAR + (gic_irq(d) / 32) * 4);
--	if (gic_arch_extn.irq_mask)
--		gic_arch_extn.irq_mask(d);
--	raw_spin_unlock(&irq_controller_lock);
- }
- 
- static void gic_unmask_irq(struct irq_data *d)
- {
- 	u32 mask = 1 << (gic_irq(d) % 32);
- 
--	raw_spin_lock(&irq_controller_lock);
--	if (gic_arch_extn.irq_unmask)
--		gic_arch_extn.irq_unmask(d);
- 	writel_relaxed(mask, gic_dist_base(d) + GIC_DIST_ENABLE_SET + (gic_irq(d) / 32) * 4);
--	raw_spin_unlock(&irq_controller_lock);
- }
- 
- static void gic_eoi_irq(struct irq_data *d)
- {
--	if (gic_arch_extn.irq_eoi) {
--		raw_spin_lock(&irq_controller_lock);
--		gic_arch_extn.irq_eoi(d);
--		raw_spin_unlock(&irq_controller_lock);
--	}
--
- 	writel_relaxed(gic_irq(d), gic_cpu_base(d) + GIC_CPU_EOI);
- }
- 
-@@ -196,23 +169,13 @@ static int gic_set_type(struct irq_data *d, unsigned int type)
- 	if (type != IRQ_TYPE_LEVEL_HIGH && type != IRQ_TYPE_EDGE_RISING)
- 		return -EINVAL;
- 
--	raw_spin_lock(&irq_controller_lock);
--
--	if (gic_arch_extn.irq_set_type)
--		gic_arch_extn.irq_set_type(d, type);
--
- 	gic_configure_irq(gicirq, type, base, NULL);
- 
--	raw_spin_unlock(&irq_controller_lock);
--
- 	return 0;
- }
- 
- static int gic_retrigger(struct irq_data *d)
- {
--	if (gic_arch_extn.irq_retrigger)
--		return gic_arch_extn.irq_retrigger(d);
--
- 	/* the genirq layer expects 0 if we can't retrigger in hardware */
- 	return 0;
- }
-@@ -244,21 +207,6 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
- }
- #endif
- 
--#ifdef CONFIG_PM
--static int gic_set_wake(struct irq_data *d, unsigned int on)
--{
--	int ret = -ENXIO;
--
--	if (gic_arch_extn.irq_set_wake)
--		ret = gic_arch_extn.irq_set_wake(d, on);
--
--	return ret;
--}
--
--#else
--#define gic_set_wake	NULL
--#endif
--
- static void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
- {
- 	u32 irqstat, irqnr;
-@@ -321,7 +269,6 @@ static struct irq_chip gic_chip = {
- #ifdef CONFIG_SMP
- 	.irq_set_affinity	= gic_set_affinity,
- #endif
--	.irq_set_wake		= gic_set_wake,
- };
- 
- void __init gic_cascade_irq(unsigned int gic_nr, unsigned int irq)
-@@ -985,7 +932,6 @@ void __init gic_init_bases(unsigned int gic_nr, int irq_start,
- 		set_handle_irq(gic_handle_irq);
- 	}
- 
--	gic_chip.flags |= gic_arch_extn.flags;
- 	gic_dist_init(gic);
- 	gic_cpu_init(gic);
- 	gic_pm_init(gic);
-diff --git a/include/linux/irqchip/arm-gic.h b/include/linux/irqchip/arm-gic.h
-index 36ec4ae..9de976b 100644
---- a/include/linux/irqchip/arm-gic.h
-+++ b/include/linux/irqchip/arm-gic.h
-@@ -95,8 +95,6 @@
- 
- struct device_node;
- 
--extern struct irq_chip gic_arch_extn;
--
- void gic_set_irqchip_flags(unsigned long flags);
- void gic_init_bases(unsigned int, int, void __iomem *, void __iomem *,
- 		    u32 offset, struct device_node *);
--- 
-2.1.4
-
+MjAxNC0xMi0yNiBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+OgoKPiBPbiAyMDE064WE
+IDEy7JuUIDIy7J28IDIyOjA0LCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gPiBIaSBEYXZlLAo+
+ID4KPiA+IEhlcmUgZ29lcyBhIGJ1bmNoIG9mIGNsZWFuIHVwIGZvciB0aGUgZXh5bm9zIGRyaXZl
+ci4gSSd2ZSBwb3N0ZWQgdGhpcyB3b3JrIGluCj4gPiB0aGUgbWFpbGluZyBsaXN0IHR3aWNlIGJ1
+dCBuZXZlciBnb3QgYSByZXZpZXcgb24gaXQsIGZpcnN0IHRpbWUgd2FzIGFib3V0IGEKPiAKPiBO
+ZXZlciBuby4gSSBhbHJlYWR5IGhhZCBhIHJldmlldyBhbmQgdGhleSAtIHlvdXIgZmlyc3QgdGlt
+ZSBwYXRjaCBzZXQgLQo+IGhhZCBiZWVuIG1lcmdlZCB0byBleHlub3MtZHJtLW5leHQtdG9kby4g
+SSB3YXMgbW92aW5nIHRoZW0gdG8KPiBleHlub3MtZHJtLW5leHQgbG9jYWxseSBidXQgb25lIG9m
+IHlvdXIgcGF0Y2ggc2V0IHdhcyBub3QgcmVhc29uYWJsZSB0bwo+IG1lIHNvIEkgZ2F2ZSB5b3Ug
+b25lIGNvbW1lbnQuIEFmdGVyIHRoYXQsIHlvdSBwb3N0ZWQgbmV4dCBwYXRjaCBzZXQKPiB3aGlj
+aCBpbmNsdWRlIG5ldyBjaGFuZ2VzIGFuZCBwYXRjaGVzIGp1c3QgOSBkYXlzIGFnby4gU28gdGhl
+eSBzaG91bGQKPiBhbHNvIGJlIHJldmlld2VkIGVub3VnaCBhdCBsZWFzdCBmb3IgdHdvIHdlZWtz
+LgoKU28gcGxlYXNlIG5vdGlmeSBvbiB0aGUgbWFpbGluZyBsaXN0IHdoYXQgeW91IGFyZSBkb2lu
+Zy4gVG8gbWUgaXQgbG9va2VkIHRoYXQKYWxsIHBhdGNoZXMgYnV0IG9uZSBkaWRuJ3QgZ2V0IGFu
+eSByZXZpZXcuIEkgaGF2ZSBhIGxvdCBvZiBwZW5kaW5nIHdvcmsgdG8gZG8Kb24gdG9wIG9mIHRo
+aXMgcHVsbCByZXF1ZXN0IGFuZCByZXZpZXcgb24gdGhlbSBpcyBxdWl0ZSBpbXBvcnRhbnQgZm9y
+IG1lIHRvCmtlZXAgd29ya2luZyBvbiBuZXcgY2hhbmdlcy4KCj4gCj4gUGxlYXNlLCBkbyBub3Qg
+aHVycnkuIFN1Y2ggYmlnIGNoYW5nZXMgc2hvdWxkIHJlYWxseSBiZSByZXZpZXdlZCBlbm91Z2gu
+Cj4gSSB3aWxsIHdhaXQgZm9yIG90aGVyIHJldmlld3MgYW5kIHRoZW0gbWVyZ2UgdGhlbSBpZiBy
+ZXZpZXdlZCBlbm91Z2guIElmCj4gbm9ib2R5IGhhdmUgcmV2aWV3cyB0aGVuIEkgd2lsbCBtZXJn
+ZSB0aGVtLiBTbyBwbGVhc2UsIGRvbid0IHdvcnJ5IGFib3V0Cj4gdGhhdC4KCkl0IGlzIGJlZW4g
+YSB3YXkgbW9yZSB0aGFuIHR3byB3ZWVrcyBub3csIGNhbiB5b3UgcGxlYXNlIG1lcmdlIGFsbCBt
+eQpwYXRjaGVzIGJ1dCB0aGUgMyBvbmVzIHlvdSBoYWQgY29tbWVudGVkIG9uPyBJJ2xsIHNlbmQg
+dXBkYXRlZCBwYXRjaGVzIGZvcgp0aG9zZS4KCkFsc28gY2FuIHlvdSBhZGQgeW91IHRyZWUgdG8g
+dGhlIGxpbnV4LW5leHQgYnVpbGQ/CgoJR3VzdGF2bwpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBs
+aXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2RyaS1kZXZlbAo=
