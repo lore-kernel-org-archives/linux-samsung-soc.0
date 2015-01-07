@@ -1,134 +1,199 @@
-From: santosh shilimkar <santosh.shilimkar@oracle.com>
-Subject: Re: [PATCH v2 00/21] irqchip: gic: killing gic_arch_extn and co,
- slowly
-Date: Wed, 07 Jan 2015 10:45:58 -0800
-Message-ID: <54AD7EE6.8090009@oracle.com>
-References: <1420652576-22309-1-git-send-email-marc.zyngier@arm.com>
+From: Anand Moon <moon.linux@yahoo.com>
+Subject: Re: [PATCH v2] ARM: dts: Add dts file for odroid XU3 board
+Date: Wed, 7 Jan 2015 18:37:48 +0000 (UTC)
+Message-ID: <69242715.30115.1420655868687.JavaMail.yahoo@jws10659.mail.bf1.yahoo.com>
+References: <1417721269-19342-1-git-send-email-sjoerd.simons@collabora.co.uk>
+ <54AA48E6.3040404@samsung.com> <1420470469.15910.134.camel@collabora.co.uk>
+Reply-To: Anand Moon <moon.linux@yahoo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from userp1040.oracle.com ([156.151.31.81]:33345 "EHLO
-	userp1040.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754399AbbAGSr3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Jan 2015 13:47:29 -0500
-In-Reply-To: <1420652576-22309-1-git-send-email-marc.zyngier@arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1420470469.15910.134.camel@collabora.co.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kevin Hilman <khilman@kernel.org>, Tyler Baker <tyler.baker@linaro.org>, Heesub Shin <heesub.shin@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Benoit Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
 
-Marc,
+Hi Sjoerd,
 
-On 1/7/2015 9:42 AM, Marc Zyngier wrote:
-> The gic_arch_extn hack that a number of platform use has been nagging
-> me for too long. It is only there for the benefit of a few platform,
-> and yet it impacts all GIC users. Moreover, it gives people the wrong
-> idea ("let's use it to put some new custom hack in there"...).
->
-> But now that stacked irq domains have landed in -next, the time has
-> come for gic_arch_extn to meet the Big Bit Bucket.
->
-> This patch series takes several steps towards the elimination of
-> gic_arch_extn:
->
-> - moves Tegra's legacy interrupt controller support to
->    drivers/irqchip, implementing a stacked domain on top of the
->    standard GIC.
->
-> - OMAP, imx6 and exynos are also converted to stacked domains, but
->    their implementation is left in place (the code is far too
->    intricately mixed with other details of the platform for me to even
->    try to move it). Some OMAP variants get a special treatment as we
->    also kill the crossbar horror (more on that below).
->
-> - shmobile, ux500 and zynq are only slightly modified.
->
-> - The GIC itself is cleaned up, and some other bits and bobs are
->    adjusted for a good measure.
->
-> About the TI crossbar:
->
-> - The allocation of interrupts in this domain is fairly similar to
->    what we do for MSI (see the GICv2m driver), and stacked domains have
->    proved to be a fitting solution.
->
-> - The current description in DT is currently entierely inaccurate, and
->    as we already broke it for the OMAP WUGEN block, we might as well do
->    it again for the TI crossbar.
->
-> - The way crossbar, WUGEN and GIC interract is quite complex (this is
->    effectively a stack of three interrupt controllers with interesting
->    exceptions and braindead routing), and stacked domains are the right
->    abstraction for that.
->
-> - Other platforms (Freescale Vybrid) are starting to come up with the
->    same type of things, and it'd be good to avoid them following the
->    same broken model.
->
-> - It removes a few lines from the code base so it can't completely be
->    a bad idea!
->
-> So this patch series does exactly that: make the crossbar a stacked
-> interrupt controller that only takes care of setting up the routing,
-> fix the DTs to represent the actual HW, and remove a bit of the
-> craziness from the GIC code.
->
-> It is worth realizing that:
->
-> - I haven't been able to test this as much as I would have wanted to
->    (it's only been tested on tegra2 and omap5).
->
-> - I've created DT bindings when needed, updated existing ones, but I
->    haven't created a binding for platforms that already used an
->    undocumented one (imx6, I'm looking at you).
->
-> - I've relaxed quite a bit of the locking in the GIC code. I believe
->    this is safe, but someone else should give it a long hard look.
->
-> - This actively *breaks* existing setups. Once you boot a new kernel
->    with an old DT, suspend/resume *will* be broken. Old kernels on a
->    new DT won't even boot! You've been warned. This really outline the
->    necessity of actually describing the HW in device trees...
->
-> As for the patches, they are on top of 3.19-rc3.
->
-> I've pushed the code to:
-> git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git irq/die-gic-arch-extn-die-die-die
->
-> Comments welcome,
->
-> 	 M.
->
-> Marc Zyngier (21):
->    ARM: tegra: irq: nuke leftovers from non-DT support
->    irqchip: tegra: add DT-based support for legacy interrupt controller
->    ARM: tegra: skip gic_arch_extn setup if DT has a LIC node
->    ARM: tegra: update DTs to expose legacy interrupt controller
->    DT: tegra: add binding for the legacy interrupt controller
->    ARM: tegra: remove old LIC support
->    genirq: Add irqchip_set_wake_parent
->    irqchip: crossbar: convert dra7 crossbar to stacked domains
->    DT: update ti,irq-crossbar binding
->    irqchip: GIC: get rid of routable domain
->    DT: arm,gic: kill arm,routable-irqs
->    ARM: omap: convert wakeupgen to stacked domains
->    DT: omap4/5: add binding for the wake-up generator
->    ARM: imx6: convert GPC to stacked domains
->    ARM: exynos4/5: convert pmu wakeup to stacked domains
->    DT: exynos: update PMU binding
->    irqchip: gic: add an entry point to set up irqchip flags
->    ARM: shmobile: remove use of gic_arch_extn.irq_set_wake
->    ARM: ux500: switch from gic_arch_extn to gic_set_irqchip_flags
->    ARM: zynq: switch from gic_arch_extn to gic_set_irqchip_flags
->    irqchip: gic: Drop support for gic_arch_extn
->
-Thanks a lot for killing those gic_arch_extn and cross-bar with
-newly added stacked domains. It cleans up the GIC code for better.
-Feel free to add my ack if you need one.
+I am using 3.18.0 kernel on my odroidxu3 board.
+Using exynos_defconfig I am able to boot the board.
 
-Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
+Are you able to get all the 8 core CPU up and running ?
 
-Regards,
-Snatosh
+
+Only 4 core cpu's are on my board. Also CpuFreq is not working.
+
+Can you share some point on this.
+
+
+root@odroid-xu3:/usr/src/odroidxu3-3.18.y-debug# cat /proc/cpuinfo | grep processor
+processor : 0
+processor : 5
+processor : 6
+processor : 7
+
+
+Below are the logs of the board.
+
+[    9.720905] Registering SWP/SWPB emulation handler
+[    9.725457] big.LITTLE switcher initializing
+[    9.729518] CPU0 paired with CPU4
+[    9.732805] CPU5 paired with CPU3
+[    9.736069] CPU6 paired with CPU2
+[    9.739386] CPU7 paired with CPU1
+[    9.742688] GIC ID for CPU 0 cluster 1 is 4
+[    9.746816] GIC ID for CPU 0 cluster 0 is 0
+[    9.800575] IRQ153 no longer affine to CPU1
+[    9.803065] CPU1: shutdown
+[    9.813482] GIC ID for CPU 1 cluster 0 is 1
+[    9.869776] IRQ154 no longer affine to CPU2
+[    9.872218] CPU2: shutdown
+[    9.879985] GIC ID for CPU 2 cluster 0 is 2
+[    9.924656] IRQ155 no longer affine to CPU3
+[    9.927094] CPU3: shutdown
+[    9.935544] GIC ID for CPU 3 cluster 0 is 3
+[    9.989578] IRQ160 no longer affine to CPU4
+[    9.991787] CPU4: shutdown
+[   10.001003] GIC ID for CPU 1 cluster 1 is 5
+[   10.003812] GIC ID for CPU 2 cluster 1 is 6
+[   10.007976] GIC ID for CPU 3 cluster 1 is 7
+[   10.015308] big.LITTLE switcher initialized
+[   10.031368] registered taskstats version 1
+[   10.038110] pinctrl core: add 2 pinmux maps
+[   10.038374] samsung-pinctrl 13400000.pinctrl: found group selector 39 for gpx3-7
+[   10.038541] samsung-pinctrl 13400000.pinctrl: found group selector 39 for gpx3-7
+[   10.038586] samsung-pinctrl 13400000.pinctrl: request pin 39 (gpx3-7) for 14530000.hdmi
+[   10.039440] of_get_named_gpiod_flags: parsed 'hpd-gpio' property of node '/hdmi@14530000[0]' - status (0)
+[   10.040227] exynos-hdmi 14530000.hdmi: Looking up vdd-supply from device tree
+[   10.042869] exynos-hdmi 14530000.hdmi: Looking up vdd_osc-supply from device tree
+[   10.044700] exynos-hdmi 14530000.hdmi: Looking up vdd_pll-supply from device tree
+[   10.046528] exynos-hdmi 14530000.hdmi: Looking up hdmi-en-supply from device tree
+[   10.046558] exynos-hdmi 14530000.hdmi: Looking up hdmi-en-supply property in node /hdmi@14530000 failed
+[   10.048281] samsung-pinctrl 13400000.pinctrl: request pin 39 (gpx3-7) for gpx3:39
+[   10.071915] exynos-mixer 14450000.mixer: probe start
+[   10.076942] exynos-sysmmu 14650000.sysmmu: Enabled
+[   10.076975] exynos-mixer 14450000.mixer: exynos_iommu_attach_device: Attached IOMMU with pgtable 0x42264000
+[   10.077570] exynos-drm exynos-drm: bound 14450000.mixer (ops mixer_component_ops)
+[   10.089655] exynos-drm exynos-drm: bound 14530000.hdmi (ops hdmi_component_ops)
+[   10.095639] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+[   10.102242] [drm] No driver support for vblank timestamp query.
+[   10.161814] cma: cma_alloc(cma c11c3218, count 2025, align 8)
+[   10.256074] cma: cma_alloc(): returned ef6cd400
+[   10.457934] Console: switching to colour frame buffer device 274x77
+[   10.511095] exynos-drm exynos-drm: fb0:  frame buffer device
+[   10.516212] exynos-drm exynos-drm: registered panic notifier
+[   10.537871] [drm] Initialized exynos 1.0.0 20110530 on minor 0
+[   10.545873] s3c-rtc 101e0000.rtc: setting system clock to 2015-01-07 17:50:09 UTC (1420653009)
+[   10.553979] power-domain: Power-off latency exceeded, new value 388375 ns
+[   10.560076] power-domain: Power-off latency exceeded, new value 6221750 ns
+[   10.567225] power-domain: Power-off latency exceeded, new value 248791 ns
+[   10.573666] power-domain: Power-off latency exceeded, new value 6502916 ns
+[   11.093083] MAIN_DC: disabling
+[   11.099738] ALSA device list:
+[   11.101347]   No soundcards found.
+[   11.117975] Freeing unused kernel memory: 1732K (c079b000 - c094c000)
+[   11.775702] systemd-udevd[1676]: starting version 204
+[   15.298783] EXT4-fs (mmcblk0p2): mounted filesystem with ordered data mode. Opts: (null)
+[   17.878286] init: plymouth-upstart-bridge main process (1732) terminated with status 1
+[   17.885458] init: plymouth-upstart-bridge main process ended, respawning
+[   18.211733] init: plymouth-upstart-bridge main process (1741) terminated with status 1
+[   18.219007] init: plymouth-upstart-bridge main process ended, respawning
+[   18.432104] init: plymouth-upstart-bridge main process (1745) terminated with status 1
+[   18.439365] init: plymouth-upstart-bridge main process ended, respawning
+[   22.612268] EXT4-fs (mmcblk0p2): re-mounted. Opts: errors=remount-ro
+[   26.072597] systemd-udevd[1923]: starting version 204
+[   32.854190] Bluetooth: Core ver 2.19
+[   32.856710] NET: Registered protocol family 31
+[   32.856733] Bluetooth: HCI device and connection manager initialized
+[   32.857604] Bluetooth: HCI socket layer initialized
+[   32.877598] Bluetooth: L2CAP socket layer initialized
+[   32.879515] Bluetooth: SCO socket layer initialized
+[   33.282331] Bluetooth: BNEP (Ethernet Emulation) ver 1.3
+[   33.282356] Bluetooth: BNEP filters: protocol multicast
+[   33.282600] Bluetooth: BNEP socket layer initialized
+[   33.371899] _cpu_up: attempt to bring up CPU 2 failed
+[   33.380836] Bluetooth: RFCOMM TTY layer initialized
+[   33.381088] Bluetooth: RFCOMM socket layer initialized
+[   33.381439] Bluetooth: RFCOMM ver 1.11
+[   33.410276] _cpu_up: attempt to bring up CPU 3 failed
+[   33.414848] _cpu_up: attempt to bring up CPU 4 failed
+[   33.419857] _cpu_up: attempt to bring up CPU 1 failed
+[   38.518916] NET: Registered protocol family 10
+[   46.590494] init: failsafe main process (2550) killed by TERM signal
+[   50.596528] smsc95xx 5-1.1:1.0 eth0: hardware isn't capable of remote wakeup
+
+
+-Anand Moon
+
+
+
+On Monday, January 5, 2015 9:00 PM, Sjoerd Simons <sjoerd.simons@collabora.co.uk> wrote:
+On Mon, 2015-01-05 at 17:18 +0900, Joonyoung Shim wrote:
+> Hi Sjoerd,
+> 
+> On 12/05/2014 04:27 AM, Sjoerd Simons wrote:
+> > Add DTS for the Hardkernel Odroid XU3. The name of the DTS file is kept the
+> > same as the vendors naming, which means it's prefixed with exynos5422
+> > instead of exynos5800 as the SoC name even though it includes the
+> > exyno5800 dtsi.
+> > 
+> > Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> > ---
+> > Changes since v1:
+> >   * Add chosen/linux,stdout-path to point the serial console device
+> >   * Change memory start offset to 0x40000000 to match the vendors DTS (pointed
+> >     out by Heesub Shin)
+> >   * Declare base address & size for the memory banks to be used by the MFC
+> > 
+> > Kevin, Tyler, even though the changes are small i didn't want to just stick
+> > your Tested-By on. Could you both be so kind to retest this on your XU3's ?
+> > 
+> > Heesub, I would still love to know the reason for having the memory start
+> > address at 0x40000000 for this board?
+> > 
+> >  arch/arm/boot/dts/Makefile                 |   1 +
+> >  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 332 +++++++++++++++++++++++++++++
+> >  2 files changed, 333 insertions(+)
+> >  create mode 100644 arch/arm/boot/dts/exynos5422-odroidxu3.dts
+> > 
+> > diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> > index 38c89ca..0a898cc 100644
+
+
+> > +
+> > +&hdmi {
+> > +    status = "okay";
+> > +    hpd-gpio = <&gpx3 7 0>;
+> > +    pinctrl-names = "default";
+> > +    pinctrl-0 = <&hdmi_hpd_irq>;
+> > +
+> > +    vdd_osc-supply = <&ldo10_reg>;
+> > +    vdd_pll-supply = <&ldo8_reg>;
+> > +    vdd-supply = <&ldo8_reg>;
+> 
+> ldo10 and ldo8 are right? I think ldo7 and ldo6 are related with hdmi
+> from schematic.
+
+Nice catch. I followed hardkernels dts here, which refers to ldo10 &
+ldo8, however double-checking the schematics indeed indicate that ldo7
+and ldo6 are used the HDMI supplies. 
+
+I'll do some testing and follow-up
+
+-- 
+Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Collabora Ltd.
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
