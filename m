@@ -1,55 +1,46 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v5 0/5] regulator: Allow parsing custom DT properties
- with simplified DT parse
-Date: Thu, 8 Jan 2015 20:16:36 +0000
-Message-ID: <20150108201636.GE2634@sirena.org.uk>
-References: <1420458525-22576-1-git-send-email-k.kozlowski@samsung.com>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH v12 0/6] cpufreq: use generic cpufreq drivers for exynos platforms
+Date: Thu, 8 Jan 2015 13:17:35 -0800
+Message-ID: <CAMAWPa9fUJVjJ8V+93AkHy9DtEmUUnGs4MJDGcsoMdWwGmg5qg@mail.gmail.com>
+References: <1416576682-5255-1-git-send-email-thomas.ab@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="JLqpAN9gGHZowk+m"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1420458525-22576-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1416576682-5255-1-git-send-email-thomas.ab@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Thomas Abraham <thomas.ab@samsung.com>
+Cc: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Lukasz Majewski <l.majewski@samsung.com>, Viresh Kumar <viresh.kumar@linaro.org>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Chanwoo Choi <cw00.choi@samsung.com>, Kevin Hilman <khilman@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Fri, Nov 21, 2014 at 5:31 AM, Thomas Abraham <thomas.ab@samsung.com> wrote:
+> Changes since v11:
+> - Rebased on top of git://linuxtv.org/snawrocki/samsung.git for-v3.19-exynos-clk
+>
+> This patch series removes the use of Exynos4210 and Exynos5250 specific cpufreq
+> drivers and enables the use of cpufreq-dt driver for these platforms. This
+> series also enables cpufreq support for Exynos5420 using arm_big_little cpufreq
+> driver.
+>
+> This series is based on the following branch.
+> git://linuxtv.org/snawrocki/samsung.git for-v3.19-exynos-clk
+>
+> This series depends on the following patch which can be picked from
+> git://git.kernel.org/pub/scm/linux/kernel/git/arm/arm-soc.git samsung/dt
+> e540920cf21c (ARM: dts: add CPU nodes for Exynos4 SoCs).
+>
+> This patch series has been tested on Exynos4210/5250/5420 based boards.
+> Tomasz Figa had plans to take this in the Samsung clock tree for v3.19
+> (http://www.spinics.net/lists/linux-samsung-soc/msg37933.html).
+> Sylwester, could you consider to merge this in your tree?
 
---JLqpAN9gGHZowk+m
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+CPUfreq for exynos is still not upstream.  What's the status of this
+series?  It's been ver a month since there's been any activity here
+(or any responses to the issues I reported.)
 
-On Mon, Jan 05, 2015 at 12:48:40PM +0100, Krzysztof Kozlowski wrote:
-> Hi,
->=20
->=20
-> The patchset adds:
-> 1. a way of parsing custom DT properties by the driver when simplified
->    DT parsing method is used,
-> 2. GPIO enable control to the max77686 driver.
+On a related note, this series only does frequency scaling. Is there
+any work going on to also enable voltage scaling for the CPU rails as
+well?
 
-Applied 1-4, thanks.
+Thanks,
 
---JLqpAN9gGHZowk+m
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBAgAGBQJUruWjAAoJECTWi3JdVIfQd/IH/RuLGU10FeNFRf6CWJoXQ5go
-BjTGJl4L5OnKyWv0WSpO8UmBl22y1Q11SoTBLGzxKpkDEZXtRiA9kZLEVugTjHXW
-AJauBic/edRCVOZX5PbrUBkS416zcgGBxALk2TthUVydXcKhCwUJTLrKgxDQZlsk
-+fNG8/5UpuwHyR2dhOrCdpPVTXG8An6KofE6c0X6l591vwzR2oVZ/ntVQw2xqP3q
-T0tmzfTjdmc1vlhZbenSsWWmCxbm3fBCavofeYr5LVm3/EPC4qHmbrMnzw1NElnr
-8jT6PDvIGEh07b6LCb4EVN7Ens6jNT2FoH0HzDKOYIJZDju/ToA9/kRWJf/Ppm4=
-=K8HL
------END PGP SIGNATURE-----
-
---JLqpAN9gGHZowk+m--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Kevin
