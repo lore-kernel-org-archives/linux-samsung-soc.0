@@ -1,126 +1,72 @@
-From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Subject: Re: [PATCH RFT 1/2] drivers: bus: check cci device tree node status
-Date: Thu, 8 Jan 2015 20:57:34 +0530
-Message-ID: <CAM4voamaqoje8Ccz3+UxvxaHN6GBd=QC5wRjVcz9Osfc=4aeiw@mail.gmail.com>
-References: <1417186209-5256-1-git-send-email-a.kesavan@samsung.com>
-	<CAM4voakjWgnEXoXT1LH2ZFBy=U4vfXFXS1Su8VB7Cd3s3wqmSA@mail.gmail.com>
-	<5487C897.9050405@arm.com>
-	<CAM4voa=TQeOMTHmM2iBquDRwoEFPAgUFeMwJ73H4qdcSmR1Lug@mail.gmail.com>
-	<5487D726.6000603@arm.com>
-	<54AE278F.4020003@arm.com>
+From: Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2] ARM: dts: Add dts file for odroid XU3 board
+Date: Fri, 09 Jan 2015 00:29:25 +0900
+Message-ID: <54AEA255.1000100@kernel.org>
+References: <1417721269-19342-1-git-send-email-sjoerd.simons@collabora.co.uk>	 <54AA48E6.3040404@samsung.com> <1420470469.15910.134.camel@collabora.co.uk>	 <69242715.30115.1420655868687.JavaMail.yahoo@jws10659.mail.bf1.yahoo.com>	 <1420670333.6075.2.camel@collabora.co.uk>	 <6203C077F070A646AA0FCB4B5F1795D248114CA6@sisaex01sj> <1420706948.6075.17.camel@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f44.google.com ([209.85.216.44]:63908 "EHLO
-	mail-qa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754697AbbAHP1f (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Jan 2015 10:27:35 -0500
-Received: by mail-qa0-f44.google.com with SMTP id bm13so7670628qab.3
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Jan 2015 07:27:34 -0800 (PST)
-In-Reply-To: <54AE278F.4020003@arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1420706948.6075.17.camel-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: Jonathan Stone -SISA <j.stone-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Anand Moon <moon.linux-/E1597aS9LQAvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tyler Baker <tyler.baker-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Heesub Shin <heesub.shin-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kevin Hilman <khilman@kernel.org>, "nicolas.pitre@linaro.org" <nicolas.pitre@linaro.org>, Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, Punit Agrawal <Punit.Agrawal@arm.com>, Will Deacon <Will.Deacon@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Douglas Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Hi Sudeep,
+On 01/08/15 17:49, Sjoerd Simons wrote:
+> On Wed, 2015-01-07 at 23:49 +0000, Jonathan Stone -SISA wrote:
+>>
+>> On On Wed, 2015-01-07 at 18:37 +0000, Sjoerd Simons writes wrote:
+>>> On Wed, 2015-01-07 at 18:37 +0000, Anand Moon wrote:>
+>> [...]
+>>
+>>>> Only 4 core cpu's are on my board. Also CpuFreq is not working.
+>>>
+>>> Can you share some point on this.
+>>
+>>> The defconfig is using the bL switcher, which pairs up big and little cores to make them appear as one core.. So for 8 real cores, you'll get
+>>> 4 "virtual cores".
+>>
+>> That configuration is appropriate for the 5420, which allegedly has a hardware bug in the cache-coherence between the Cortex-A7 block and the Cortex-A15 block.
+>> Newer Exynos 5 SoCs -- 5422/5800, 5620, etc -- don't have that bug. The scheduler should configured to  do HMP on all 8 (or 6) cores.
+>> I don't have a 5410, but I assume it has the same bug as the 5420.
+> 
+> Yes the kernel/scheduler could be configured like that, but
+> exynos_defconfig turns on bL rather then HMP. 
+> 
+> Now it's not unthinkable to add code/dts properties to select the
+> right/preferred scheduling strategy depending on the board (HMP vs. bL).
+> But proper HMP scheduling is still a work in progress in mainline and
+> iirc specifically on the XU3 there are open issue wrt. MCPM and its
+> secure firmware. I've added Kevin to the CC as he's been working on this
+> topic so should know the status a lot better then i do.
+> 
+>> The XU3 kernel supplied by HardKernel shows all 8 cores, and does HMP scheduling across all 8.
+> 
+> Yes, that's independant of the dts though as mentioned above. Also there
+> are still opne issues to booting up all cores on an XU3 afaik. See 
+>    http://www.spinics.net/lists/linux-samsung-soc/msg39523.html
+> 
+>> I tried v1.0 of the Odroid-XU3 DTB patch, applied to linux-next
+>> 20150107.  I'm only seeing 1 core running on my Odroid-XU3.  The USB
+>> 3.0 port works (great!) but I'm not getting any HDMI output. I didn't
+>> try DisplayPort.   I'll gladly try v2 of the patch on an XU3; is there
+>> a better base to apply the patch to?
+> 
+> HDMI output is broken on all exynos boards in mainline atm. For exynos
+> 5, see the thread here:
+>  http://www.spinics.net/lists/linux-samsung-soc/msg40708.html
+> 
+> As far as a i know with the DTS as posted (just posted v3 with a small
+> improvement), all base functionality that can work on mainline (MMC/SD,
+> network, USB2, USB3) works. Some less important bits (fan control &
+> power sensors) are outstanding, but that really shouldn't block the
+> merge of the DTS.
+> 
+Sjoerd, thanks. I'll take your updated patch once you submit version3.
 
-On Thu, Jan 8, 2015 at 12:15 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
-> Hi Abhilash,
->
-> On Wednesday 10 December 2014 10:46 AM, Sudeep Holla wrote:
->>
->>
->>
->> On Wednesday 10 December 2014 09:55 AM, Abhilash Kesavan wrote:
->>>
->>> Hi Sudeep,
->>>
->>> On Wed, Dec 10, 2014 at 9:44 AM, Sudeep Holla <sudeep.holla@arm.com>
->>> wrote:
->>>>
->>>> Hi Abhilash,
->>>>
->>>> On Wednesday 10 December 2014 09:31 AM, Abhilash Kesavan wrote:
->>>>>
->>>>>
->>>>> Hi,
->>>>>
->>>>> On Fri, Nov 28, 2014 at 8:20 PM, Abhilash Kesavan
->>>>> <a.kesavan@samsung.com>
->>>>> wrote:
->>>>>>
->>>>>>
->>>>>> The arm-cci driver completes the probe sequence even if the cci node
->>>>>> is
->>>>>> marked as disabled. Add a check in the driver to honour the cci status
->>>>>> in the device tree.
->>>>>>
->>>>>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
->>>>>
->>>>>
->>>>>
->>>>> This patch helps disable CCI on the Arndale Octa board thus resolving
->>>>> some imprecise aborts seen on that board. Kindly review.
->>>>>
->>>>> Regards,
->>>>> Abhilash
->>>>>>
->>>>>>
->>>>>> ---
->>>>>>     drivers/bus/arm-cci.c |    3 +++
->>>>>>     1 file changed, 3 insertions(+)
->>>>>>
->>>>>> diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
->>>>>> index 860da40..0ce5e2d 100644
->>>>>> --- a/drivers/bus/arm-cci.c
->>>>>> +++ b/drivers/bus/arm-cci.c
->>>>>> @@ -1312,6 +1312,9 @@ static int cci_probe(void)
->>>>>>            if (!np)
->>>>>>                    return -ENODEV;
->>>>>>
->>>>>> +       if (!of_device_is_available(np))
->>>>>> +               return -ENODEV;
->>>>>> +
->>>>
->>>>
->>>>
->>>> IIUC, by this change you are disabling the MCPM boot protocol here.
->>>> Is there any alternative boot protocol that works on this platform
->>>> to boot all 8 cores ? Sorry by quick grep couldn't find one, hence
->>>> so I am asking.
->>>
->>>
->>> Thanks for the reply.
->>> On disabling MCPM, we will default to platsmp.c/firmware.c which boots
->>> 4 cores as per Kevin's comment here[1]. This was the original behavior
->>> before MCPM was enabled for all 5420 based SoCs.
->>>
->>
->> Thanks for pointing that out. I assume the firmware can handle the
->> alternate boot protocol and no more workarounds are needed especially
->> when getting CPUIdle working in this mode.
->>
->> Anyways the patch makes sense irrespective how it works on exynos, so
->> you can add,
->>
->> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
->>
->
-> What's the status of this patch. It was useful for me on vexpress for some
-> testing. Please feel free to add
->
-> Tested-by: Sudeep Holla <sudeep.holla@arm.com>
->
-> if this is not yet queued.
-
-Thanks for the tested-by. This patch has not been merged yet; I am not
-quite sure who is supposed to pick this up.
-
-Regards,
-Abhilash
->
-> Regards,
-> Sudeep
->
+- Kukjin
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
