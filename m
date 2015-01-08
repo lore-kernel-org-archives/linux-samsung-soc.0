@@ -1,104 +1,469 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v2 06/21] ARM: tegra: remove old LIC support
-Date: Thu, 8 Jan 2015 12:29:55 +0100
-Message-ID: <20150108112954.GK1987@ulmo.nvidia.com>
-References: <1420652576-22309-1-git-send-email-marc.zyngier@arm.com>
- <1420652576-22309-7-git-send-email-marc.zyngier@arm.com>
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH v3 2/4] mmc: dw_mmc: exynos: support eMMC's HS400 mode
+Date: Thu, 8 Jan 2015 19:47:15 +0530
+Message-ID: <CAGOxZ510Mv4V3raed3MiShe-A+=4Zfu_LAv2a6H2c0M738OaVg@mail.gmail.com>
+References: <1420008185-24758-1-git-send-email-alim.akhtar@samsung.com>
+ <1420008185-24758-3-git-send-email-alim.akhtar@samsung.com>
+ <54ADE178.10100@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="M9kwpIYUMbI/2cCx"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:36047 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756255AbbAHLaA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Jan 2015 06:30:00 -0500
-Content-Disposition: inline
-In-Reply-To: <1420652576-22309-7-git-send-email-marc.zyngier@arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <54ADE178.10100@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Seungwon Jeon <tgih.jun@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Douglas Anderson <dianders@chromium.org>, kgene <kgene@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Abhilash Kesavan <a.kesavan@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Benoit Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
+
+Hi Jaehoon,
+
+On Thu, Jan 8, 2015 at 7:16 AM, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> On 12/31/2014 03:43 PM, Alim Akhtar wrote:
+>> From: Seungwon Jeon <tgih.jun@samsung.com>
+>>
+>> Implements HS400 support for exynos host driver.
+>> And this patch includes some updates as new mode is added.
+>>
+>> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+>> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+>> ---
+>>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    6 +
+>>  drivers/mmc/host/dw_mmc-exynos.c                   |  177 +++++++++++++++-----
+>>  drivers/mmc/host/dw_mmc-exynos.h                   |   17 +-
+>>  drivers/mmc/host/dw_mmc.c                          |   16 +-
+>>  drivers/mmc/host/dw_mmc.h                          |    2 +
+>>  5 files changed, 178 insertions(+), 40 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> index 06455de..be30c94 100644
+>> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+>> @@ -34,6 +34,7 @@ Required Properties:
+>>    valid values.
+>>
+>>  * samsung,dw-mshc-hs200-timing: Similar with dw-mshc-sdr-timing.
+>> +* samsung,dw-mshc-hs400-timing: Similar with dw-mshc-ddr-timing.
+>>
+>>    Notes for the sdr-timing and ddr-timing values:
+>>
+>> @@ -51,6 +52,9 @@ Required Properties:
+>>        - if CIU clock divider value is 0 (that is divide by 1), both tx and rx
+>>          phase shift clocks should be 0.
+>>
+>> +* read-strobe-delay: RCLK (Data strobe) delay to control HS400 mode
+>> +  (Latency value for delay line in Read path)
+>> +
+>>  Required properties for a slot (Deprecated - Recommend to use one slot per host):
+>>
+>>  * gpios: specifies a list of gpios used for command, clock and data bus. The
+>> @@ -83,5 +87,7 @@ Example:
+>>               samsung,dw-mshc-sdr-timing = <2 3 3>;
+>>               samsung,dw-mshc-ddr-timing = <1 2 3>;
+>>               samsung,dw-mshc-hs200-timing = <0 2 3>;
+>> +             samsung,dw-mshc-hs400-timing = <0 2 1>;
+>> +             read-strobe-delay = <90>;
+>>               bus-width = <8>;
+>>       };
+>> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+>> index be6530e..d37a631 100644
+>> --- a/drivers/mmc/host/dw_mmc-exynos.c
+>> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+>> @@ -41,7 +41,12 @@ struct dw_mci_exynos_priv_data {
+>>       u32                             sdr_timing;
+>>       u32                             ddr_timing;
+>>       u32                             hs200_timing;
+>> +     u32                             hs400_timing;
+>> +     u32                             tuned_sample;
+>>       u32                             cur_speed;
+>> +     u32                             dqs_delay;
+>> +     u32                             saved_dqs_en;
+>> +     u32                             saved_strobe_ctrl;
+>>  };
+>>
+>>  static struct dw_mci_exynos_compatible {
+>> @@ -101,6 +106,16 @@ static int dw_mci_exynos_priv_init(struct dw_mci *host)
+>>                          SDMMC_MPSCTRL_NON_SECURE_WRITE_BIT);
+>>       }
+>>
+>> +     if (priv->ctrl_type >= DW_MCI_TYPE_EXYNOS5420) {
+>> +             priv->saved_strobe_ctrl = mci_readl(host, HS400_DLINE_CTRL);
+>> +             priv->saved_dqs_en = mci_readl(host, HS400_DQS_EN);
+>> +             priv->saved_dqs_en |= AXI_NON_BLOCKING_WR;
+>> +             mci_writel(host, HS400_DQS_EN, priv->saved_dqs_en);
+>> +             if (!priv->dqs_delay)
+>> +                     priv->dqs_delay =
+>> +                             DQS_CTRL_GET_RD_DELAY(priv->saved_strobe_ctrl);
+>> +     }
+>> +
+>>       priv->ciu_div = dw_mci_exynos_get_ciu_div(host);
+>>
+>>       return 0;
+>> @@ -115,6 +130,25 @@ static int dw_mci_exynos_setup_clock(struct dw_mci *host)
+>>       return 0;
+>>  }
+>>
+>> +static void dw_mci_exynos_set_clksel_timing(struct dw_mci *host, u32 timing)
+>> +{
+>> +     struct dw_mci_exynos_priv_data *priv = host->priv;
+>> +     u32 clksel;
+>> +
+>> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+>> +             priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+>> +             clksel = mci_readl(host, CLKSEL64);
+>> +     else
+>> +             clksel = mci_readl(host, CLKSEL);
+>> +
+>> +     clksel = (clksel & ~SDMMC_CLKSEL_TIMING_MASK) | timing;
+>> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+>> +             priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+>> +             mci_writel(host, CLKSEL64, clksel);
+>> +     else
+>> +             mci_writel(host, CLKSEL, clksel);
+>> +}
+>> +
+>>  #ifdef CONFIG_PM_SLEEP
+>>  static int dw_mci_exynos_suspend(struct device *dev)
+>>  {
+>> @@ -190,35 +224,37 @@ static void dw_mci_exynos_prepare_command(struct dw_mci *host, u32 *cmdr)
+>>       }
+>>  }
+>>
+>> -static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+>> +static void dw_mci_exynos_config_hs400(struct dw_mci *host, u32 timing)
+>>  {
+>>       struct dw_mci_exynos_priv_data *priv = host->priv;
+>> -     unsigned int wanted = ios->clock;
+>> -     unsigned long actual;
+>> +     u32 dqs, strobe;
+>>
+>> -     if (ios->timing == MMC_TIMING_MMC_HS200) {
+>> -             if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+>> -                     priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+>> -                     mci_writel(host, CLKSEL64, priv->hs200_timing);
+>> -             else
+>> -                     mci_writel(host, CLKSEL, priv->hs200_timing);
+>> -     } else if (ios->timing == MMC_TIMING_MMC_DDR52) {
+>> -             if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+>> -                     priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+>> -                     mci_writel(host, CLKSEL64, priv->ddr_timing);
+>> -             else
+>> -                     mci_writel(host, CLKSEL, priv->ddr_timing);
+>> -             /* Should be double rate for DDR mode */
+>> -             if (ios->bus_width == MMC_BUS_WIDTH_8)
+>> -                     wanted <<= 1;
+>> +     /*
+>> +      * Exynos5420 and above controller supports HS400 mode
+>> +      */
+>> +     if (priv->ctrl_type < DW_MCI_TYPE_EXYNOS5420)
+>> +             return;
+>> +
+>> +     dqs = priv->saved_dqs_en;
+>> +     strobe = priv->saved_strobe_ctrl;
+>> +
+>> +     if (timing == MMC_TIMING_MMC_HS400) {
+>> +             dqs |= DATA_STROBE_EN;
+>> +             strobe = DQS_CTRL_RD_DELAY(strobe, priv->dqs_delay);
+>>       } else {
+>> -             if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+>> -                     priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+>> -                     mci_writel(host, CLKSEL64, priv->sdr_timing);
+>> -             else
+>> -                     mci_writel(host, CLKSEL, priv->sdr_timing);
+>> +             dqs &= ~DATA_STROBE_EN;
+>>       }
+>>
+>> +     mci_writel(host, HS400_DQS_EN, dqs);
+>> +     mci_writel(host, HS400_DLINE_CTRL, strobe);
+>> +}
+>> +
+>> +static void dw_mci_exynos_adjust_clock(struct dw_mci *host, unsigned int wanted)
+>> +{
+>> +     struct dw_mci_exynos_priv_data *priv = host->priv;
+>> +     unsigned long actual;
+>> +     u8 div;
+>> +     int ret;
+>>       /*
+>>        * Don't care if wanted clock is zero or
+>>        * ciu clock is unavailable
+>> @@ -230,18 +266,55 @@ static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+>>       if (wanted < EXYNOS_CCLKIN_MIN)
+>>               wanted = EXYNOS_CCLKIN_MIN;
+>>
+>> -     if (wanted != priv->cur_speed) {
+>> -             u8 div = dw_mci_exynos_get_ciu_div(host);
+>> -             int ret = clk_set_rate(host->ciu_clk, wanted * div);
+>> -             if (ret)
+>> -                     dev_warn(host->dev,
+>> -                             "failed to set clk-rate %u error: %d\n",
+>> -                              wanted * div, ret);
+>> -             actual = clk_get_rate(host->ciu_clk);
+>> -             host->bus_hz = actual / div;
+>> -             priv->cur_speed = wanted;
+>> -             host->current_speed = 0;
+>> +     if (wanted == priv->cur_speed)
+>> +             return;
+>> +
+>> +     div = dw_mci_exynos_get_ciu_div(host);
+>> +     ret = clk_set_rate(host->ciu_clk, wanted * div);
+>> +     if (ret)
+>> +             dev_warn(host->dev,
+>> +                     "failed to set clk-rate %u error: %d\n",
+>> +                     wanted * div, ret);
+>> +     actual = clk_get_rate(host->ciu_clk);
+>> +     host->bus_hz = actual / div;
+>> +     priv->cur_speed = wanted;
+>> +     host->current_speed = 0;
+>> +}
+>> +
+>> +static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+>> +{
+>> +     struct dw_mci_exynos_priv_data *priv = host->priv;
+>> +     unsigned int wanted = ios->clock;
+>> +     u32 timing = ios->timing, clksel;
+>> +
+>> +     switch (timing) {
+>> +     case MMC_TIMING_MMC_HS400:
+>> +             /* Update tuned sample timing */
+>> +             clksel = SDMMC_CLKSEL_UP_SAMPLE(
+>> +                             priv->hs400_timing, priv->tuned_sample);
+>> +             wanted <<= 1;
+>> +             break;
+>> +     case MMC_TIMING_MMC_HS200:
+>> +             clksel = priv->hs200_timing;
+>> +             break;
+>> +     case MMC_TIMING_MMC_DDR52:
+>> +             clksel = priv->ddr_timing;
+>> +             /* Should be double rate for DDR mode */
+>> +             if (ios->bus_width == MMC_BUS_WIDTH_8)
+>> +                     wanted <<= 1;
+>> +             break;
+>> +     default:
+>> +             clksel = priv->sdr_timing;
+>>       }
+>> +
+>> +     /* Set clock timing for the requested speed mode*/
+>> +     dw_mci_exynos_set_clksel_timing(host, clksel);
+>> +
+>> +     /* Configure setting for HS400 */
+>> +     dw_mci_exynos_config_hs400(host, timing);
+>> +
+>> +     /* Configure clock rate */
+>> +     dw_mci_exynos_adjust_clock(host, wanted);
+>>  }
+>>
+>>  static int dw_mci_exynos_dt_populate_timing(struct dw_mci *host,
+>> @@ -294,6 +367,14 @@ static int dw_mci_exynos_parse_dt(struct dw_mci *host)
+>>
+>>       dw_mci_exynos_dt_populate_timing(host, priv->ctrl_type,
+>>               "samsung,dw-mshc-hs200-timing", &priv->hs200_timing);
+>> +
+>> +     ret = dw_mci_exynos_dt_populate_timing(host, priv->ctrl_type,
+>> +                     "samsung,dw-mshc-hs400-timing", &priv->hs400_timing);
+>> +     if (!ret && of_property_read_u32(np,
+>> +                             "read-strobe-delay", &priv->dqs_delay))
+>> +             dev_info(host->dev,
+>> +                     "read-strobe-delay is not found, assuming usage of default value\n");
+>> +
+>>       host->priv = priv;
+>>
+>>       return 0;
+>> @@ -320,7 +401,9 @@ static inline void dw_mci_exynos_set_clksmpl(struct dw_mci *host, u8 sample)
+>>               clksel = mci_readl(host, CLKSEL64);
+>>       else
+>>               clksel = mci_readl(host, CLKSEL);
+>> -     clksel = (clksel & ~0x7) | SDMMC_CLKSEL_CCLK_SAMPLE(sample);
+>> +
+>> +     clksel = SDMMC_CLKSEL_UP_SAMPLE(clksel, sample);
+>> +
+>>       if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+>>               priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+>>               mci_writel(host, CLKSEL64, clksel);
+>> @@ -339,13 +422,16 @@ static inline u8 dw_mci_exynos_move_next_clksmpl(struct dw_mci *host)
+>>               clksel = mci_readl(host, CLKSEL64);
+>>       else
+>>               clksel = mci_readl(host, CLKSEL);
+>> +
+>>       sample = (clksel + 1) & 0x7;
+>> -     clksel = (clksel & ~0x7) | sample;
+>> +     clksel = SDMMC_CLKSEL_UP_SAMPLE(clksel, sample);
+>> +
+>>       if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+>>               priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+>>               mci_writel(host, CLKSEL64, clksel);
+>>       else
+>>               mci_writel(host, CLKSEL, clksel);
+>> +
+>>       return sample;
+>>  }
+>>
+>> @@ -378,6 +464,7 @@ out:
+>>  static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot)
+>>  {
+>>       struct dw_mci *host = slot->host;
+>> +     struct dw_mci_exynos_priv_data *priv = host->priv;
+>>       struct mmc_host *mmc = slot->mmc;
+>>       u8 start_smpl, smpl, candiates = 0;
+>>       s8 found = -1;
+>> @@ -395,14 +482,27 @@ static int dw_mci_exynos_execute_tuning(struct dw_mci_slot *slot)
+>>       } while (start_smpl != smpl);
+>>
+>>       found = dw_mci_exynos_get_best_clksmpl(candiates);
+>> -     if (found >= 0)
+>> +     if (found >= 0) {
+>>               dw_mci_exynos_set_clksmpl(host, found);
+>> -     else
+>> +             priv->tuned_sample = found;
+>> +     } else {
+>>               ret = -EIO;
+>> +     }
+>>
+>>       return ret;
+>>  }
+>>
+>> +int dw_mci_exynos_prepare_hs400_tuning(struct dw_mci *host,
+>> +                                     struct mmc_ios *ios)
+>> +{
+>> +     struct dw_mci_exynos_priv_data *priv = host->priv;
+>> +
+>> +     dw_mci_exynos_set_clksel_timing(host, priv->hs400_timing);
+>> +     dw_mci_exynos_adjust_clock(host, (ios->clock) << 1);
+>> +
+>> +     return 0;
+>> +}
+>> +
+>>  /* Common capabilities of Exynos4/Exynos5 SoC */
+>>  static unsigned long exynos_dwmmc_caps[4] = {
+>>       MMC_CAP_1_8V_DDR | MMC_CAP_8_BIT_DATA | MMC_CAP_CMD23,
+>> @@ -419,6 +519,7 @@ static const struct dw_mci_drv_data exynos_drv_data = {
+>>       .set_ios                = dw_mci_exynos_set_ios,
+>>       .parse_dt               = dw_mci_exynos_parse_dt,
+>>       .execute_tuning         = dw_mci_exynos_execute_tuning,
+>> +     .prepare_hs400_tuning   = dw_mci_exynos_prepare_hs400_tuning,
+>>  };
+>>
+>>  static const struct of_device_id dw_mci_exynos_match[] = {
+>> diff --git a/drivers/mmc/host/dw_mmc-exynos.h b/drivers/mmc/host/dw_mmc-exynos.h
+>> index c04ecef..e7faffe 100644
+>> --- a/drivers/mmc/host/dw_mmc-exynos.h
+>> +++ b/drivers/mmc/host/dw_mmc-exynos.h
+>> @@ -12,21 +12,36 @@
+>>  #ifndef _DW_MMC_EXYNOS_H_
+>>  #define _DW_MMC_EXYNOS_H_
+>>
+>> -/* Extended Register's Offset */
+>>  #define SDMMC_CLKSEL                 0x09C
+>>  #define SDMMC_CLKSEL64                       0x0A8
+>>
+>> +/* Extended Register's Offset */
+>> +#define SDMMC_HS400_DQS_EN           0x180
+>> +#define SDMMC_HS400_ASYNC_FIFO_CTRL  0x184
+>> +#define SDMMC_HS400_DLINE_CTRL               0x188
+>> +
+>>  /* CLKSEL register defines */
+>>  #define SDMMC_CLKSEL_CCLK_SAMPLE(x)  (((x) & 7) << 0)
+>>  #define SDMMC_CLKSEL_CCLK_DRIVE(x)   (((x) & 7) << 16)
+>>  #define SDMMC_CLKSEL_CCLK_DIVIDER(x) (((x) & 7) << 24)
+>>  #define SDMMC_CLKSEL_GET_DRV_WD3(x)  (((x) >> 16) & 0x7)
+>>  #define SDMMC_CLKSEL_GET_DIV(x)              (((x) >> 24) & 0x7)
+>> +#define SDMMC_CLKSEL_UP_SAMPLE(x, y) (((x) & ~SDMMC_CLKSEL_CCLK_SAMPLE(7)) |\
+>> +                                      SDMMC_CLKSEL_CCLK_SAMPLE(y))
+>>  #define SDMMC_CLKSEL_TIMING(x, y, z) (SDMMC_CLKSEL_CCLK_SAMPLE(x) |  \
+>>                                        SDMMC_CLKSEL_CCLK_DRIVE(y) |   \
+>>                                        SDMMC_CLKSEL_CCLK_DIVIDER(z))
+>> +#define SDMMC_CLKSEL_TIMING_MASK     SDMMC_CLKSEL_TIMING(0x7, 0x7, 0x7)
+>>  #define SDMMC_CLKSEL_WAKEUP_INT              BIT(11)
+>>
+>> +/* HS400 control defines */
+>> +#define DATA_STROBE_EN                       BIT(0)
+> Add comment "xxx register defines."
+>
+Ok, will add
+>> +#define AXI_NON_BLOCKING_WR  BIT(7)
+>
+> I can't find this bit and comment..where?
+>
+This is Bit[7] of RCLK_EN register.
+>> +
+>> +/* Delay Line Control defines */
+>> +#define DQS_CTRL_RD_DELAY(x, y)              (((x) & ~0x3FF) | ((y) & 0x3FF))
+>
+> I'm not understanding this define... clear and set?
+>
+yes, clear default and set the one pass from Device Tree.
+> Best Regards,
+> Jaehoon Chung
+>
+>> +#define DQS_CTRL_GET_RD_DELAY(x)     ((x) & 0x3FF)
+>> +
+>>  /* Protector Register */
+>>  #define SDMMC_EMMCP_BASE     0x1000
+>>  #define SDMMC_MPSECURITY     (SDMMC_EMMCP_BASE + 0x0010)
+>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>> index 2e8abc8..43a3a5b 100644
+>> --- a/drivers/mmc/host/dw_mmc.c
+>> +++ b/drivers/mmc/host/dw_mmc.c
+>> @@ -1084,7 +1084,8 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>>       regs = mci_readl(slot->host, UHS_REG);
+>>
+>>       /* DDR mode set */
+>> -     if (ios->timing == MMC_TIMING_MMC_DDR52)
+>> +     if (ios->timing == MMC_TIMING_MMC_DDR52 ||
+>> +         ios->timing == MMC_TIMING_MMC_HS400)
+>>               regs |= ((0x1 << slot->id) << 16);
+>>       else
+>>               regs &= ~((0x1 << slot->id) << 16);
+>> @@ -1321,6 +1322,18 @@ static int dw_mci_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>>       return err;
+>>  }
+>>
+>> +int dw_mci_prepare_hs400_tuning(struct mmc_host *mmc, struct mmc_ios *ios)
+>> +{
+>> +     struct dw_mci_slot *slot = mmc_priv(mmc);
+>> +     struct dw_mci *host = slot->host;
+>> +     const struct dw_mci_drv_data *drv_data = host->drv_data;
+>> +
+>> +     if (drv_data && drv_data->prepare_hs400_tuning)
+>> +             return drv_data->prepare_hs400_tuning(host, ios);
+>> +
+>> +     return 0;
+>> +}
+>> +
+>>  static const struct mmc_host_ops dw_mci_ops = {
+>>       .request                = dw_mci_request,
+>>       .pre_req                = dw_mci_pre_req,
+>> @@ -1333,6 +1346,7 @@ static const struct mmc_host_ops dw_mci_ops = {
+>>       .card_busy              = dw_mci_card_busy,
+>>       .start_signal_voltage_switch = dw_mci_switch_voltage,
+>>       .init_card              = dw_mci_init_card,
+>> +     .prepare_hs400_tuning   = dw_mci_prepare_hs400_tuning,
+>>  };
+>>
+>>  static void dw_mci_request_end(struct dw_mci *host, struct mmc_request *mrq)
+>> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+>> index 18c4afe..d239867 100644
+>> --- a/drivers/mmc/host/dw_mmc.h
+>> +++ b/drivers/mmc/host/dw_mmc.h
+>> @@ -271,5 +271,7 @@ struct dw_mci_drv_data {
+>>       void            (*set_ios)(struct dw_mci *host, struct mmc_ios *ios);
+>>       int             (*parse_dt)(struct dw_mci *host);
+>>       int             (*execute_tuning)(struct dw_mci_slot *slot);
+>> +     int             (*prepare_hs400_tuning)(struct dw_mci *host,
+>> +                                             struct mmc_ios *ios);
+>>  };
+>>  #endif /* _DW_MMC_H_ */
+>>
+>
 
 
---M9kwpIYUMbI/2cCx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Wed, Jan 07, 2015 at 05:42:41PM +0000, Marc Zyngier wrote:
-[...]
-> diff --git a/arch/arm/mach-tegra/irq.c b/arch/arm/mach-tegra/irq.c
-[...]
->  void __init tegra_init_irq(void)
->  {
-> -	int i;
-> -	void __iomem *distbase;
-> -
-> -	if (of_find_matching_node(NULL, tegra_ictlr_match))
-> -		goto skip_extn_setup;
-> -
-> -	tegra_legacy_irq_syscore_init();
-> -
-> -	distbase = IO_ADDRESS(TEGRA_ARM_INT_DIST_BASE);
-> -	num_ictlrs = readl_relaxed(distbase + GIC_DIST_CTR) & 0x1f;
-> -
-> -	if (num_ictlrs > ARRAY_SIZE(ictlr_reg_base)) {
-> -		WARN(1, "Too many (%d) interrupt controllers found. Maximum is %d.",
-> -			num_ictlrs, ARRAY_SIZE(ictlr_reg_base));
-> -		num_ictlrs = ARRAY_SIZE(ictlr_reg_base);
-> -	}
-> -
-> -	for (i = 0; i < num_ictlrs; i++) {
-> -		void __iomem *ictlr = ictlr_reg_base[i];
-> -		writel(~0, ictlr + ICTLR_CPU_IER_CLR);
-> -		writel(0, ictlr + ICTLR_CPU_IEP_CLASS);
-> -	}
-> -
-> -	gic_arch_extn.irq_ack = tegra_ack;
-> -	gic_arch_extn.irq_eoi = tegra_eoi;
-> -	gic_arch_extn.irq_mask = tegra_mask;
-> -	gic_arch_extn.irq_unmask = tegra_unmask;
-> -	gic_arch_extn.irq_retrigger = tegra_retrigger;
-> -	gic_arch_extn.irq_set_wake = tegra_set_wake;
-> -	gic_arch_extn.flags = IRQCHIP_MASK_ON_SUSPEND;
-> +	if (!of_find_matching_node(NULL, tegra_ictlr_match))
-> +		pr_warn("Outdated DT detected, suspend/resume will NOT work\n");
-
-I'm not very happy about the ABI breakage here, but I also realize that
-we need this change to properly describe the hardware. To make it more
-obvious that people really should update their DTBs, maybe turn this
-into a WARN()?
-
-> -skip_extn_setup:
->  	tegra114_gic_cpu_pm_registration();
-
-I'm not intimately familiar with the GIC, but is this really SoC
-specific? Doesn't anybody else need this? Comparing to the GIC spec the
-write of 0x1e0 to the GIC_CPU_CTRL register (which I assume corresponds
-to GICC_CTLR in the spec), this simply disables the IRQ and FIQ bypass
-signals for both group 0 and group 1.
-
-Thierry
-
---M9kwpIYUMbI/2cCx
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAEBAgAGBQJUrmoyAAoJEN0jrNd/PrOhu1wP/RtpeWYFylfZC7uKVM7d2+Um
-ywP7hZ2o6vDLe5SkghstWJfcoE1VFW1VQSpMopHaC31Ig5yTUDUDmEel+FndETj0
-3P+4O5wBaxAT9unY7xivINlUuPIHxaobbSzSE8EEEEezOcT1SIf6P/rZSPEEM0my
-2FMdp6JPv3CQgobNe0U+5mUspcblMMG7liOz1Xnf+qH1crX45bGFjp91Ay5MVgEW
-W/zDMRr19pHcrW/Xh/lrX/+M1VllXzsZHHiK+2tXKdnjmdBfCWKKJKIOknpRIp6W
-Ww5mSaetS+g0MNwVHiijc5zUEM6StjG7M+gpTzyMJ0MXwQF5anLqYvvaXHWITnY1
-x5lyqZEW7lfSAdKCjyvgQDmu4RNjdHNVbH7/WO+Wuu5USuyp8Zk8p8x7cFkSKvja
-ela3OAlhCnLvqVEiEM3H2RJJ/wLolu73CqK1avYUOOwjPysRkJvo4yBAMHlCkUIG
-IeaMHbB0jgZMo3oG/fvcIpY7vBqXL+GyvF3m8uryrjV3q8YGtSCnJLH3HOJ2nVp4
-CZGcg3OMNKHTc+wmXBu+JEBF2vY5ESeVd9Q651/ptFSOtiCjSBmlWgNONyj/Z7+6
-r+lhXz56sFhpW0v21XXjrp49RXzY67Oz1CeL4cg73MLE2Y1gHRAag86FPLU1giOe
-0TBbPEXl7UR+yUba5OSE
-=K1QU
------END PGP SIGNATURE-----
-
---M9kwpIYUMbI/2cCx--
+-- 
+Regards,
+Alim
