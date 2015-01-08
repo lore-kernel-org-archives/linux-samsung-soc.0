@@ -1,138 +1,278 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv7 03/10] devfreq: event: Add resource-managed function for
- devfreq-event device
-Date: Thu, 08 Jan 2015 08:51:10 +0900
-Message-ID: <1420674677-3077-4-git-send-email-cw00.choi@samsung.com>
-References: <1420674677-3077-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1420674677-3077-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: myungjoo.ham@samsung.com, kgene@kernel.org
-Cc: kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, robh+dt@kernel.org, cw00.choi@samsung.com, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH v3 1/4] mmc: dw_mmc: exynos: incorporate ciu_div into
+ timing property
+Date: Thu, 08 Jan 2015 10:36:32 +0900
+Message-ID: <54ADDF20.8000807@samsung.com>
+References: <1420008185-24758-1-git-send-email-alim.akhtar@samsung.com>
+ <1420008185-24758-2-git-send-email-alim.akhtar@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <1420008185-24758-2-git-send-email-alim.akhtar@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, linux-mmc@vger.kernel.org
+Cc: chris@printf.net, ulf.hansson@linaro.org, tgih.jun@samsung.com, dianders@chromium.org, alim.akhtar@gmail.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, a.kesavan@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch add the resource-managed function for devfreq-event device as
-following functions. The devm_devfreq_event_add_edev() manages automatically
-the memory of devfreq-event device using resource management.
-- devm_devfreq_event_add_edev()
-- devm_devfreq_event_remove_edev()
+Hi, 
 
-Cc: Myungjoo Ham <myungjoo.ham@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
- drivers/devfreq/devfreq-event.c | 63 +++++++++++++++++++++++++++++++++++++++++
- include/linux/devfreq-event.h   | 16 +++++++++++
- 2 files changed, 79 insertions(+)
+On 12/31/2014 03:43 PM, Alim Akhtar wrote:
+> From: Seungwon Jeon <tgih.jun@samsung.com>
+> 
+> ciu_div may not be common value for all speed mode.
+> So, it needs to be attached to CLKSEL timing.
+> This also introduce a new compatibale 'dw-mshc-hs200-timing'
+> for selecting hs200 timing value
+> 
+> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
+> ---
+>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   15 ++--
+>  drivers/mmc/host/dw_mmc-exynos.c                   |   81 ++++++++++++++------
+>  drivers/mmc/host/dw_mmc-exynos.h                   |    1 +
+>  3 files changed, 67 insertions(+), 30 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> index ee4fc05..06455de 100644
+> --- a/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+> @@ -23,10 +23,6 @@ Required Properties:
+>  	- "samsung,exynos7-dw-mshc-smu": for controllers with Samsung Exynos7
+>  	  specific extensions having an SMU.
+>  
+> -* samsung,dw-mshc-ciu-div: Specifies the divider value for the card interface
+> -  unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
+> -  ignored for Exynos4 SoC's. The valid range of divider value is 0 to 7.
+> -
+>  * samsung,dw-mshc-sdr-timing: Specifies the value of CIU clock phase shift value
+>    in transmit mode and CIU clock phase shift value in receive mode for single
+>    data rate mode operation. Refer notes below for the order of the cells and the
+> @@ -37,11 +33,16 @@ Required Properties:
+>    data rate mode operation. Refer notes below for the order of the cells and the
+>    valid values.
+>  
+> +* samsung,dw-mshc-hs200-timing: Similar with dw-mshc-sdr-timing.
 
-diff --git a/drivers/devfreq/devfreq-event.c b/drivers/devfreq/devfreq-event.c
-index 64c1764..5301e2b 100644
---- a/drivers/devfreq/devfreq-event.c
-+++ b/drivers/devfreq/devfreq-event.c
-@@ -451,6 +451,69 @@ int devfreq_event_remove_edev(struct devfreq_event_dev *edev)
- }
- EXPORT_SYMBOL_GPL(devfreq_event_remove_edev);
- 
-+static int devm_devfreq_event_match(struct device *dev, void *res, void *data)
-+{
-+	struct devfreq_event_dev **r = res;
-+
-+	if (WARN_ON(!r || !*r))
-+		return 0;
-+
-+	return *r == data;
-+}
-+
-+static void devm_devfreq_event_release(struct device *dev, void *res)
-+{
-+	devfreq_event_remove_edev(*(struct devfreq_event_dev **)res);
-+}
-+
-+/**
-+ * devm_devfreq_event_add_edev() - Resource-managed devfreq_event_add_edev()
-+ * @dev		: the device owning the devfreq-event device being created
-+ * @desc	: the devfreq-event device's decriptor which include essential
-+ *		  data for devfreq-event device.
-+ *
-+ * Note that this function manages automatically the memory of devfreq-event
-+ * device using device resource management and simplify the free operation
-+ * for memory of devfreq-event device.
-+ */
-+struct devfreq_event_dev *devm_devfreq_event_add_edev(struct device *dev,
-+						struct devfreq_event_desc *desc)
-+{
-+	struct devfreq_event_dev **ptr, *edev;
-+
-+	ptr = devres_alloc(devm_devfreq_event_release, sizeof(*ptr), GFP_KERNEL);
-+	if (!ptr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	edev = devfreq_event_add_edev(dev, desc);
-+	if (IS_ERR(edev)) {
-+		devres_free(ptr);
-+		return ERR_PTR(-ENOMEM);
-+	}
-+
-+	*ptr = edev;
-+	devres_add(dev, ptr);
-+
-+	return edev;
-+}
-+EXPORT_SYMBOL(devm_devfreq_event_add_edev);
-+
-+/**
-+ * devm_devfreq_event_remove_edev()- Resource-managed devfreq_event_remove_edev()
-+ * @dev		: the device owning the devfreq-event device being created
-+ * @edev	: the devfreq-event device
-+ *
-+ * Note that this function manages automatically the memory of devfreq-event
-+ * device using device resource management.
-+ */
-+void devm_devfreq_event_remove_edev(struct device *dev,
-+				struct devfreq_event_dev *edev)
-+{
-+	WARN_ON(devres_release(dev, devm_devfreq_event_release,
-+			       devm_devfreq_event_match, edev));
-+}
-+EXPORT_SYMBOL(devm_devfreq_event_remove_edev);
-+
- /*
-  * Device attributes for devfreq-event class.
-  */
-diff --git a/include/linux/devfreq-event.h b/include/linux/devfreq-event.h
-index 13a5703..3c44ad1 100644
---- a/include/linux/devfreq-event.h
-+++ b/include/linux/devfreq-event.h
-@@ -123,6 +123,10 @@ extern int devfreq_event_get_edev_count(struct device *dev);
- extern struct devfreq_event_dev *devfreq_event_add_edev(struct device *dev,
- 				struct devfreq_event_desc *desc);
- extern int devfreq_event_remove_edev(struct devfreq_event_dev *edev);
-+extern struct devfreq_event_dev *devm_devfreq_event_add_edev(struct device *dev,
-+				struct devfreq_event_desc *desc);
-+extern void devm_devfreq_event_remove_edev(struct device *dev,
-+				struct devfreq_event_dev *edev);
- 
- #else
- static inline int devfreq_event_enable_edev(struct devfreq_event_dev *edev)
-@@ -184,6 +188,18 @@ static inline int devfreq_event_remove_edev(struct devfreq_event_dev *edev)
- {
- 	return -EINVAL;
- }
-+
-+static inline struct devfreq_event_dev *devm_devfreq_event_add_edev(
-+					struct device *dev,
-+					struct devfreq_event_desc *desc)
-+{
-+	return ERR_PTR(-EINVAL);
-+}
-+
-+static inline void devm_devfreq_event_remove_edev(struct device *dev,
-+					struct devfreq_event_dev *edev)
-+{
-+}
- #endif /* CONFIG_PM_DEVFREQ_EVENT */
- 
- #endif /* __LINUX_DEVFREQ_EVENT_H__ */
--- 
-1.8.5.5
+What does this comment mean? "Similar with dw-mshc-sdr-timing"
+how about adding the comment "optional"?
+
+And i think this timing doesn't need, we can reuse the sdr-timing or ddr-timing.
+Because it's re-configurated at tuning time, isn't?
+
+> +
+>    Notes for the sdr-timing and ddr-timing values:
+>  
+>      The order of the cells should be
+>        - First Cell: CIU clock phase shift value for tx mode.
+>        - Second Cell: CIU clock phase shift value for rx mode.
+> +      - Thrid Cell: Specifies the divider value for the card interface
+> +        unit (ciu) clock. This property is applicable only for Exynos5 SoC's and
+> +        ignored for Exynos4 SoC's. The valid range of divider value is 0 to 7.
+>  
+>      Valid values for SDR and DDR CIU clock timing for Exynos5250:
+>        - valid value for tx phase shift and rx phase shift is 0 to 7.
+> @@ -79,8 +80,8 @@ Example:
+>  		broken-cd;
+>  		fifo-depth = <0x80>;
+>  		card-detect-delay = <200>;
+> -		samsung,dw-mshc-ciu-div = <3>;
+> -		samsung,dw-mshc-sdr-timing = <2 3>;
+> -		samsung,dw-mshc-ddr-timing = <1 2>;
+> +		samsung,dw-mshc-sdr-timing = <2 3 3>;
+> +		samsung,dw-mshc-ddr-timing = <1 2 3>;
+> +		samsung,dw-mshc-hs200-timing = <0 2 3>;
+>  		bus-width = <8>;
+>  	};
+> diff --git a/drivers/mmc/host/dw_mmc-exynos.c b/drivers/mmc/host/dw_mmc-exynos.c
+> index 12a5eaa..be6530e 100644
+> --- a/drivers/mmc/host/dw_mmc-exynos.c
+> +++ b/drivers/mmc/host/dw_mmc-exynos.c
+> @@ -40,6 +40,7 @@ struct dw_mci_exynos_priv_data {
+>  	u8				ciu_div;
+>  	u32				sdr_timing;
+>  	u32				ddr_timing;
+> +	u32				hs200_timing;
+>  	u32				cur_speed;
+>  };
+>  
+> @@ -71,6 +72,21 @@ static struct dw_mci_exynos_compatible {
+>  	},
+>  };
+>  
+> +static inline u8 dw_mci_exynos_get_ciu_div(struct dw_mci *host)
+> +{
+> +	struct dw_mci_exynos_priv_data *priv = host->priv;
+> +
+> +	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS4412)
+> +		return EXYNOS4412_FIXED_CIU_CLK_DIV;
+> +	else if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS4210)
+> +		return EXYNOS4210_FIXED_CIU_CLK_DIV;
+> +	else if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+> +			priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+> +		return SDMMC_CLKSEL_GET_DIV(mci_readl(host, CLKSEL64)) + 1;
+> +	else
+> +		return SDMMC_CLKSEL_GET_DIV(mci_readl(host, CLKSEL)) + 1;
+
+If need this, I think more readable that use the switch-case statement. how about?
+
+       switch (priv->ctrl_type) {
+       case DW_MCI_TYPE_EXYNOS4412:
+                return EXYNOS4412_FIXED_CIU_CLK_DIV;
+       case DW_MCI_TYPE_EXYNOS4210:
+                return EXYNOS4210_FIXED_CIU_CLK_DIV;
+       case DW_MCI_TYPE_EXYNOS7:
+       case DW_MCI_TYPE_EXYNOS7_SMU:
+                return SDMMC_CLKSEL_GET_DIV(mci_readl(host, CLKSEL64)) + 1;
+       default:
+                return SDMMC_CLKSEL_GET_DIV(mci_readl(host, CLKSEL)) + 1;
+       }
+
+
+> +}
+> +
+>  static int dw_mci_exynos_priv_init(struct dw_mci *host)
+>  {
+>  	struct dw_mci_exynos_priv_data *priv = host->priv;
+> @@ -85,6 +101,8 @@ static int dw_mci_exynos_priv_init(struct dw_mci *host)
+>  			   SDMMC_MPSCTRL_NON_SECURE_WRITE_BIT);
+>  	}
+>  
+> +	priv->ciu_div = dw_mci_exynos_get_ciu_div(host);
+> +
+>  	return 0;
+>  }
+>  
+> @@ -92,7 +110,7 @@ static int dw_mci_exynos_setup_clock(struct dw_mci *host)
+>  {
+>  	struct dw_mci_exynos_priv_data *priv = host->priv;
+>  
+> -	host->bus_hz /= (priv->ciu_div + 1);
+> +	host->bus_hz /= priv->ciu_div;
+>  
+>  	return 0;
+>  }
+> @@ -177,9 +195,14 @@ static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+>  	struct dw_mci_exynos_priv_data *priv = host->priv;
+>  	unsigned int wanted = ios->clock;
+>  	unsigned long actual;
+> -	u8 div = priv->ciu_div + 1;
+>  
+> -	if (ios->timing == MMC_TIMING_MMC_DDR52) {
+> +	if (ios->timing == MMC_TIMING_MMC_HS200) {
+> +		if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+> +			priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+> +			mci_writel(host, CLKSEL64, priv->hs200_timing);
+> +		else
+> +			mci_writel(host, CLKSEL, priv->hs200_timing);
+> +	} else if (ios->timing == MMC_TIMING_MMC_DDR52) {
+>  		if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS7 ||
+>  			priv->ctrl_type == DW_MCI_TYPE_EXYNOS7_SMU)
+>  			mci_writel(host, CLKSEL64, priv->ddr_timing);
+> @@ -208,6 +231,7 @@ static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+>  		wanted = EXYNOS_CCLKIN_MIN;
+>  
+>  	if (wanted != priv->cur_speed) {
+> +		u8 div = dw_mci_exynos_get_ciu_div(host);
+>  		int ret = clk_set_rate(host->ciu_clk, wanted * div);
+>  		if (ret)
+>  			dev_warn(host->dev,
+> @@ -220,14 +244,34 @@ static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
+>  	}
+>  }
+>  
+> +static int dw_mci_exynos_dt_populate_timing(struct dw_mci *host,
+> +					    unsigned int ctrl_type,
+> +					    const char *propname,
+> +					    u32 *out_values)
+> +{
+> +	struct device_node *np = host->dev->of_node;
+> +	u32 timing[3];
+> +	int ret;
+> +
+> +	ret = of_property_read_u32_array(np, propname, timing, 3);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (ctrl_type == DW_MCI_TYPE_EXYNOS4412 ||
+> +	    ctrl_type == DW_MCI_TYPE_EXYNOS4210)
+> +		timing[2] = 0;
+
+Is it set to 0 into dt-file?
+
+> +
+> +	*out_values = SDMMC_CLKSEL_TIMING(timing[0], timing[1], timing[2]);
+> +
+> +	return 0;
+> +}
+> +
+> +
+>  static int dw_mci_exynos_parse_dt(struct dw_mci *host)
+>  {
+>  	struct dw_mci_exynos_priv_data *priv;
+>  	struct device_node *np = host->dev->of_node;
+> -	u32 timing[2];
+> -	u32 div = 0;
+> -	int idx;
+> -	int ret;
+> +	int idx, ret;
+>  
+>  	priv = devm_kzalloc(host->dev, sizeof(*priv), GFP_KERNEL);
+>  	if (!priv)
+> @@ -238,29 +282,20 @@ static int dw_mci_exynos_parse_dt(struct dw_mci *host)
+>  			priv->ctrl_type = exynos_compat[idx].ctrl_type;
+>  	}
+>  
+> -	if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS4412)
+> -		priv->ciu_div = EXYNOS4412_FIXED_CIU_CLK_DIV - 1;
+> -	else if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS4210)
+> -		priv->ciu_div = EXYNOS4210_FIXED_CIU_CLK_DIV - 1;
+> -	else {
+> -		of_property_read_u32(np, "samsung,dw-mshc-ciu-div", &div);
+> -		priv->ciu_div = div;
+> -	}
+> -
+> -	ret = of_property_read_u32_array(np,
+> -			"samsung,dw-mshc-sdr-timing", timing, 2);
+> +	ret = dw_mci_exynos_dt_populate_timing(host, priv->ctrl_type,
+> +			"samsung,dw-mshc-sdr-timing", &priv->sdr_timing);
+>  	if (ret)
+>  		return ret;
+>  
+> -	priv->sdr_timing = SDMMC_CLKSEL_TIMING(timing[0], timing[1], div);
+> -
+> -	ret = of_property_read_u32_array(np,
+> -			"samsung,dw-mshc-ddr-timing", timing, 2);
+> +	ret = dw_mci_exynos_dt_populate_timing(host, priv->ctrl_type,
+> +			"samsung,dw-mshc-ddr-timing", &priv->ddr_timing);
+>  	if (ret)
+>  		return ret;
+>  
+> -	priv->ddr_timing = SDMMC_CLKSEL_TIMING(timing[0], timing[1], div);
+> +	dw_mci_exynos_dt_populate_timing(host, priv->ctrl_type,
+> +		"samsung,dw-mshc-hs200-timing", &priv->hs200_timing);
+
+hs200-timing is optional, so it needs not to check return value, right?
+
+Best Regards,
+Jaehoon Chung
+
+>  	host->priv = priv;
+> +
+>  	return 0;
+>  }
+>  
+> diff --git a/drivers/mmc/host/dw_mmc-exynos.h b/drivers/mmc/host/dw_mmc-exynos.h
+> index 7872ce5..c04ecef 100644
+> --- a/drivers/mmc/host/dw_mmc-exynos.h
+> +++ b/drivers/mmc/host/dw_mmc-exynos.h
+> @@ -21,6 +21,7 @@
+>  #define SDMMC_CLKSEL_CCLK_DRIVE(x)	(((x) & 7) << 16)
+>  #define SDMMC_CLKSEL_CCLK_DIVIDER(x)	(((x) & 7) << 24)
+>  #define SDMMC_CLKSEL_GET_DRV_WD3(x)	(((x) >> 16) & 0x7)
+> +#define SDMMC_CLKSEL_GET_DIV(x)		(((x) >> 24) & 0x7)
+>  #define SDMMC_CLKSEL_TIMING(x, y, z)	(SDMMC_CLKSEL_CCLK_SAMPLE(x) |	\
+>  					 SDMMC_CLKSEL_CCLK_DRIVE(y) |	\
+>  					 SDMMC_CLKSEL_CCLK_DIVIDER(z))
+> 
 
