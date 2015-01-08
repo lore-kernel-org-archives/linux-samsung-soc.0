@@ -1,188 +1,142 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [RESEND PATCH] ARM: EXYNOS: Add exynos3250 suspend-to-ram support
-Date: Thu, 08 Jan 2015 10:50:38 +0900
-Message-ID: <1420681838-4292-1-git-send-email-cw00.choi@samsung.com>
+From: Nishanth Menon <nm@ti.com>
+Subject: Re: [PATCH v2 00/21] irqchip: gic: killing gic_arch_extn and co,
+ slowly
+Date: Wed, 7 Jan 2015 21:31:42 -0600
+Message-ID: <20150108033141.GA24237@kahuna>
+References: <1420652576-22309-1-git-send-email-marc.zyngier@arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:13621 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752466AbbAHBum (ORCPT
+Received: from bear.ext.ti.com ([192.94.94.41]:51459 "EHLO bear.ext.ti.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752640AbbAHDcx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Jan 2015 20:50:42 -0500
+	Wed, 7 Jan 2015 22:32:53 -0500
+Content-Disposition: inline
+In-Reply-To: <1420652576-22309-1-git-send-email-marc.zyngier@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org
-Cc: ben-linux@fluff.org, kyungmin.park@samsung.com, inki.dae@samsung.com, cw00.choi@samsung.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Benoit Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <ssantosh@kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
 
-This patch adds the support for suspend-to-ram feature of Exynos3250 SoC.
-Exynos3250 don't contain the L2 cache.
+On 17:42-20150107, Marc Zyngier wrote:
+> As for the patches, they are on top of 3.19-rc3.
+Applied the 21 patches and gave a quick dry run on various boards
+BASE = v3.19-rc3 + 1 uImage+dtb patch for 
+IRQ = v3.19-rc3 + irq series
 
-Cc: Kukjin Kim <kgene@kernel.org>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
----
-Depend on:
-- v3.19-rc3
+NOTE: I am yet to dig in deeper to figure out which platform may have
+valid regressions etc. will do that tomorrow. meanwhile, some raw test
+results below:
++++v3.19-rc3 - BOOT TEST+++
+boot
+ 1:                     am335x-evm: BOOT: PASS: http://slexy.org/raw/s2IOPX99Ty
+ 2:                      am335x-sk: BOOT: FAIL: http://slexy.org/raw/s2dzt0lTF7
+ 3:                     am3517-evm: BOOT: PASS: http://slexy.org/raw/s23yAMKuRx
+ 4:                      am37x-evm: BOOT: PASS: http://slexy.org/raw/s20vsYwsYQ
+ 5:                      am437x-sk: BOOT: PASS: http://slexy.org/raw/s2QgujFs6l
+ 6:                    am43xx-epos: BOOT: PASS: http://slexy.org/raw/s2QHVg9XcB
+ 7:                   am43xx-gpevm: BOOT: PASS: http://slexy.org/raw/s2Ep5DEQuk
+ 8:    BeagleBoard-X15(am57xx-evm): BOOT: PASS: http://slexy.org/raw/s20STBNTs9
+ 9:                 BeagleBoard-XM: BOOT: PASS: http://slexy.org/raw/s2UhG6u7yM
+10:            beagleboard-vanilla: BOOT: PASS: http://slexy.org/raw/s2QB7ECFKw
+11:               beaglebone-black: BOOT: PASS: http://slexy.org/raw/s20iAe7yTa
+12:                     beaglebone: BOOT: PASS: http://slexy.org/raw/s20Uui1gkn
+13:                     craneboard: BOOT: PASS: http://slexy.org/raw/s21DcY6gn4
+14:                     dra72x-evm: BOOT: PASS: http://slexy.org/raw/s2qj7IvmaV
+15:                     dra7xx-evm: BOOT: PASS: http://slexy.org/raw/s20lLxN8bR
+16:         OMAP3430-Labrador(LDP): BOOT: PASS: http://slexy.org/raw/s20GmT9ASX
+17:                           n900: BOOT: FAIL: http://slexy.org/raw/s2riSEzfea
+18:                      omap5-evm: BOOT: PASS: http://slexy.org/raw/s21adCD3Js
+19:                  pandaboard-es: BOOT: PASS: http://slexy.org/raw/s21Am3vEzM
+20:             pandaboard-vanilla: BOOT: PASS: http://slexy.org/raw/s2XLmW2ONB
+21:                        sdp2430: BOOT: PASS: http://slexy.org/raw/s21ehzlzyv
+22:                        sdp3430: BOOT: PASS: http://slexy.org/raw/s24gh1VUnl
+23:                        sdp4430: BOOT: PASS: http://slexy.org/raw/s2HfgkFfOx
+TOTAL = 23 boards, Booted Boards = 21, No Boot boards = 2
++++ IRQ - BOOT TEST+++
+boot
+ 1:                     am335x-evm: BOOT: PASS: http://slexy.org/raw/s21411sejg
+ 2:                      am335x-sk: BOOT: PASS: http://slexy.org/raw/s209N4Tu4E
+ 3:                     am3517-evm: BOOT: PASS: http://slexy.org/raw/s2Shbhciy8
+ 4:                      am37x-evm: BOOT: PASS: http://slexy.org/raw/s20wfqH0Wo
+ 5:                      am437x-sk: BOOT: PASS: http://slexy.org/raw/s21uAXcB12
+ 6:                    am43xx-epos: BOOT: PASS: http://slexy.org/raw/s26MGCZz0i
+ 7:                   am43xx-gpevm: BOOT: PASS: http://slexy.org/raw/s2c8IGmWfB
+ 8:    BeagleBoard-X15(am57xx-evm): BOOT: FAIL: http://slexy.org/raw/s2u1yV4hHK
+ 9:                 BeagleBoard-XM: BOOT: PASS: http://slexy.org/raw/s20zzOBKWJ
+10:            beagleboard-vanilla: BOOT: PASS: http://slexy.org/raw/s2wffxWVGa
+11:               beaglebone-black: BOOT: PASS: http://slexy.org/raw/s2Yshc0Vkw
+12:                     beaglebone: BOOT: PASS: http://slexy.org/raw/s2Ki0ohBVf
+13:                     craneboard: BOOT: PASS: http://slexy.org/raw/s2GVlDWkzP
+14:                     dra72x-evm: BOOT: PASS: http://slexy.org/raw/s2dfZIVZ42
+15:                     dra7xx-evm: BOOT: PASS: http://slexy.org/raw/s25UqvqVna
+16:         OMAP3430-Labrador(LDP): BOOT: PASS: http://slexy.org/raw/s20plEBPRB
+17:                           n900: BOOT: FAIL: http://slexy.org/raw/s20zeM6YUP
+18:                      omap5-evm: BOOT: PASS: http://slexy.org/raw/s2JOb4VEGJ
+19:                  pandaboard-es: BOOT: PASS: http://slexy.org/raw/s20jCqY4OV
+20:             pandaboard-vanilla: BOOT: PASS: http://slexy.org/raw/s21TuquMeN
+21:                        sdp2430: BOOT: PASS: http://slexy.org/raw/s20z1S6w1a
+22:                        sdp3430: BOOT: PASS: http://slexy.org/raw/s20SJo6BqV
+23:                        sdp4430: BOOT: PASS: http://slexy.org/raw/s204Bn9azX
+TOTAL = 23 boards, Booted Boards = 21, No Boot boards = 2
++++v3.19-rc3 - POWER TEST+++
+power
+ 1:                     am335x-evm: BOOT: PASS: err=10 warn=24, CPUFreq: PASS, CPUIdle: N/A: http://slexy.org/raw/s20t02tklu
+ 2:                      am335x-sk: BOOT: FAIL: http://slexy.org/raw/s2HX7WisAk
+ 3:                     am3517-evm: BOOT: FAIL: http://slexy.org/raw/s2mdCPTUBw
+ 4:                      am37x-evm: BOOT: FAIL: http://slexy.org/raw/s2beWlmPMy
+ 5:                      am437x-sk: BOOT: PASS: crit=2 err=12 warn=25, CPUFreq: N/A, CPUIdle: N/A: http://slexy.org/raw/s2Z0QTrATC
+ 6:                    am43xx-epos: BOOT: PASS: crit=2 err=15 warn=26, CPUFreq: N/A, CPUIdle: N/A: http://slexy.org/raw/s21VqMaKE5
+ 7:                   am43xx-gpevm: BOOT: PASS: crit=2 err=12 warn=25, CPUFreq: N/A, CPUIdle: N/A: http://slexy.org/raw/s28zvJSBnv
+ 8:    BeagleBoard-X15(am57xx-evm): BOOT: PASS: err=20 warn=24, CPUFreq: PASS, CPUIdle: N/A: http://slexy.org/raw/s2754wOSyR
+ 9:                 BeagleBoard-XM: BOOT: PASS: err=9 warn=19, CPUFreq: PASS, CPUIdle: FAIL: http://slexy.org/raw/s21yJVYSQX
+10:            beagleboard-vanilla: BOOT: PASS: err=9 warn=25, CPUFreq: PASS, CPUIdle: FAIL: http://slexy.org/raw/s2ePKa43mj
+11:               beaglebone-black: BOOT: PASS: err=8 warn=25, CPUFreq: PASS, CPUIdle: N/A: http://slexy.org/raw/s2gFTc8yGz
+12:                     beaglebone: BOOT: PASS: err=9 warn=20, CPUFreq: PASS, CPUIdle: N/A: http://slexy.org/raw/s2c9LVVWez
+13:                     craneboard: BOOT: PASS: err=20 warn=60, CPUFreq: N/A, CPUIdle: N/A: http://slexy.org/raw/s210m3vNqa
+14:                     dra72x-evm: BOOT: PASS: crit=2 err=14 warn=27, CPUFreq: N/A, CPUIdle: N/A: http://slexy.org/raw/s2nCfZhtlX
+15:                     dra7xx-evm: BOOT: PASS: err=11 warn=31, CPUFreq: PASS, CPUIdle: N/A: http://slexy.org/raw/s2Ikj5xQNE
+16:         OMAP3430-Labrador(LDP): BOOT: PASS: err=7 warn=25, CPUFreq: PASS, CPUIdle: FAIL: http://slexy.org/raw/s2tfdy65xq
+17:                           n900: BOOT: FAIL: http://slexy.org/raw/s21ByECFQh
+18:                      omap5-evm: BOOT: PASS: err=15 warn=24, CPUFreq: PASS, CPUIdle: N/A: http://slexy.org/raw/s21Jd8hDT3
+19:                  pandaboard-es: BOOT: PASS: err=20 warn=33, CPUFreq: PASS, CPUIdle: PASS: http://slexy.org/raw/s20fKLg0PV
+20:             pandaboard-vanilla: BOOT: PASS: err=20 warn=31, CPUFreq: PASS, CPUIdle: PASS: http://slexy.org/raw/s207BtiFCQ
+21:                        sdp2430: BOOT: FAIL: http://slexy.org/raw/s2016uSIuh
+22:                        sdp3430: BOOT: PASS: err=22 warn=28, CPUFreq: PASS, CPUIdle: FAIL: http://slexy.org/raw/s205w47Ubl
+23:                        sdp4430: BOOT: PASS: err=21 warn=33, CPUFreq: PASS, CPUIdle: PASS: http://slexy.org/raw/s23YNhbaUe
+TOTAL = 23 boards, Booted Boards = 18, No Boot boards = 5
+TOTAL CPUFREQ enabled boards = 13.  CPUFREQ functional boards = 13, CPUFREQ failed boards = 0
+TOTAL CPUIdle enabled boards = 7.  CPUIdle functional boards = 3, CPUIdle failed boards = 4
++++ IRQ - POWER TEST+++
+power
+ 1:                     am335x-evm: BOOT: PASS: err=10 warn=24, CPUFreq: PASS, CPUIdle: N/A: http://slexy.org/raw/s2luRdrwTo
+ 2:                      am335x-sk: BOOT: PASS: err=8 warn=24, CPUFreq: PASS, CPUIdle: N/A: http://slexy.org/raw/s20rhziuEz
+ 3:                     am3517-evm: BOOT: FAIL: http://slexy.org/raw/s20yHRtY5f
+ 4:                      am37x-evm: BOOT: FAIL: http://slexy.org/raw/s2eh5wioQj
+ 5:                      am437x-sk: BOOT: PASS: crit=2 err=12 warn=25, CPUFreq: N/A, CPUIdle: N/A: http://slexy.org/raw/s213VjGWo1
+ 6:                    am43xx-epos: BOOT: PASS: crit=2 err=15 warn=26, CPUFreq: N/A, CPUIdle: N/A: http://slexy.org/raw/s20JCs4KKY
+ 7:                   am43xx-gpevm: BOOT: PASS: crit=2 err=12 warn=25, CPUFreq: N/A, CPUIdle: N/A: http://slexy.org/raw/s20RScmcvK
+ 8:    BeagleBoard-X15(am57xx-evm): BOOT: FAIL: http://slexy.org/raw/s2155P8obZ
+ 9:                 BeagleBoard-XM: BOOT: PASS: err=9 warn=19, CPUFreq: PASS, CPUIdle: FAIL: http://slexy.org/raw/s2018sfpgM
+10:            beagleboard-vanilla: BOOT: PASS: err=9 warn=25, CPUFreq: PASS, CPUIdle: FAIL: http://slexy.org/raw/s28pJudRI4
+11:               beaglebone-black: BOOT: PASS: err=8 warn=25, CPUFreq: PASS, CPUIdle: N/A: http://slexy.org/raw/s2VNAfNqxl
+12:                     beaglebone: BOOT: PASS: err=9 warn=20, CPUFreq: PASS, CPUIdle: N/A: http://slexy.org/raw/s20Ep0UYpp
+13:                     craneboard: BOOT: PASS: err=20 warn=60, CPUFreq: N/A, CPUIdle: N/A: http://slexy.org/raw/s2qyzBJXF1
+14:                     dra72x-evm: BOOT: PASS: crit=2 err=14 warn=27, CPUFreq: N/A, CPUIdle: N/A: http://slexy.org/raw/s2czDXEdYH
+15:                     dra7xx-evm: BOOT: PASS: err=11 warn=31, CPUFreq: PASS, CPUIdle: N/A: http://slexy.org/raw/s2029U2gMt
+16:         OMAP3430-Labrador(LDP): BOOT: PASS: err=7 warn=25, CPUFreq: PASS, CPUIdle: FAIL: http://slexy.org/raw/s20pTYJKV4
+17:                           n900: BOOT: FAIL: http://slexy.org/raw/s2kKNGkdK8
+18:                      omap5-evm: BOOT: PASS: err=15 warn=24, CPUFreq: PASS, CPUIdle: N/A: http://slexy.org/raw/s2FpijcXbP
+19:                  pandaboard-es: BOOT: PASS: err=20 warn=33, CPUFreq: PASS, CPUIdle: PASS: http://slexy.org/raw/s2i1S7kdqK
+20:             pandaboard-vanilla: BOOT: PASS: err=20 warn=31, CPUFreq: PASS, CPUIdle: PASS: http://slexy.org/raw/s21v9TjuAr
+21:                        sdp2430: BOOT: FAIL: http://slexy.org/raw/s207WeE74f
+22:                        sdp3430: BOOT: PASS: err=22 warn=28, CPUFreq: PASS, CPUIdle: FAIL: http://slexy.org/raw/s21OSk7p87
+23:                        sdp4430: BOOT: PASS: err=21 warn=33, CPUFreq: PASS, CPUIdle: PASS: http://slexy.org/raw/s2z01QnTgx
+TOTAL = 23 boards, Booted Boards = 18, No Boot boards = 5
+TOTAL CPUFREQ enabled boards = 13.  CPUFREQ functional boards = 13, CPUFREQ failed boards = 0
+TOTAL CPUIdle enabled boards = 7.  CPUIdle functional boards = 3, CPUIdle failed boards = 4
 
- arch/arm/mach-exynos/regs-pmu.h |  3 ++
- arch/arm/mach-exynos/suspend.c  | 77 +++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 80 insertions(+)
-
-diff --git a/arch/arm/mach-exynos/regs-pmu.h b/arch/arm/mach-exynos/regs-pmu.h
-index b5f4406..eb461e1 100644
---- a/arch/arm/mach-exynos/regs-pmu.h
-+++ b/arch/arm/mach-exynos/regs-pmu.h
-@@ -160,12 +160,14 @@
- #define EXYNOS5_L2RSTDISABLE_VALUE		BIT(3)
- 
- #define S5P_PAD_RET_MAUDIO_OPTION		0x3028
-+#define S5P_PAD_RET_MMC2_OPTION			0x30c8
- #define S5P_PAD_RET_GPIO_OPTION			0x3108
- #define S5P_PAD_RET_UART_OPTION			0x3128
- #define S5P_PAD_RET_MMCA_OPTION			0x3148
- #define S5P_PAD_RET_MMCB_OPTION			0x3168
- #define S5P_PAD_RET_EBIA_OPTION			0x3188
- #define S5P_PAD_RET_EBIB_OPTION			0x31A8
-+#define S5P_PAD_RET_SPI_OPTION			0x31c8
- 
- #define S5P_PS_HOLD_CONTROL			0x330C
- #define S5P_PS_HOLD_EN				(1 << 31)
-@@ -326,6 +328,7 @@
- 			(EXYNOS3_ARM_CORE0_OPTION + ((_nr) * 0x80))
- 
- #define EXYNOS3_ARM_COMMON_OPTION			0x2408
-+#define EXYNOS3_ARM_L2_OPTION				0x2608
- #define EXYNOS3_TOP_PWR_OPTION				0x2C48
- #define EXYNOS3_CORE_TOP_PWR_OPTION			0x2CA8
- #define EXYNOS3_XUSBXTI_DURATION			0x341C
-diff --git a/arch/arm/mach-exynos/suspend.c b/arch/arm/mach-exynos/suspend.c
-index f8e7dcd..d6feef3 100644
---- a/arch/arm/mach-exynos/suspend.c
-+++ b/arch/arm/mach-exynos/suspend.c
-@@ -91,6 +91,12 @@ static unsigned int exynos_pmu_spare3;
- 
- static u32 exynos_irqwake_intmask = 0xffffffff;
- 
-+static const struct exynos_wkup_irq exynos3250_wkup_irq[] = {
-+	{ 73, BIT(1) }, /* RTC alarm */
-+	{ 74, BIT(2) }, /* RTC tick */
-+	{ /* sentinel */ },
-+};
-+
- static const struct exynos_wkup_irq exynos4_wkup_irq[] = {
- 	{ 76, BIT(1) }, /* RTC alarm */
- 	{ 77, BIT(2) }, /* RTC tick */
-@@ -114,6 +120,19 @@ unsigned int exynos_release_ret_regs[] = {
- 	REG_TABLE_END,
- };
- 
-+unsigned int exynos3250_release_ret_regs[] = {
-+	S5P_PAD_RET_MAUDIO_OPTION,
-+	S5P_PAD_RET_GPIO_OPTION,
-+	S5P_PAD_RET_UART_OPTION,
-+	S5P_PAD_RET_MMCA_OPTION,
-+	S5P_PAD_RET_MMCB_OPTION,
-+	S5P_PAD_RET_EBIA_OPTION,
-+	S5P_PAD_RET_EBIB_OPTION,
-+	S5P_PAD_RET_MMC2_OPTION,
-+	S5P_PAD_RET_SPI_OPTION,
-+	REG_TABLE_END,
-+};
-+
- unsigned int exynos5420_release_ret_regs[] = {
- 	EXYNOS_PAD_RET_DRAM_OPTION,
- 	EXYNOS_PAD_RET_MAUDIO_OPTION,
-@@ -173,6 +192,12 @@ static int exynos_cpu_suspend(unsigned long arg)
- 	return exynos_cpu_do_idle();
- }
- 
-+static int exynos3250_cpu_suspend(unsigned long arg)
-+{
-+	flush_cache_all();
-+	return exynos_cpu_do_idle();
-+}
-+
- static int exynos5420_cpu_suspend(unsigned long arg)
- {
- 	/* MCPM works with HW CPU identifiers */
-@@ -230,6 +255,23 @@ static void exynos_pm_prepare(void)
- 	pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
- }
- 
-+static void exynos3250_pm_prepare(void)
-+{
-+	unsigned int tmp;
-+
-+	/* Set wake-up mask registers */
-+	exynos_pm_set_wakeup_mask();
-+
-+	tmp = pmu_raw_readl(EXYNOS3_ARM_L2_OPTION);
-+	tmp &= ~EXYNOS5_OPTION_USE_RETENTION;
-+	pmu_raw_writel(tmp, EXYNOS3_ARM_L2_OPTION);
-+
-+	exynos_pm_enter_sleep_mode();
-+
-+	/* ensure at least INFORM0 has the resume address */
-+	pmu_raw_writel(virt_to_phys(exynos_cpu_resume), S5P_INFORM0);
-+}
-+
- static void exynos5420_pm_prepare(void)
- {
- 	unsigned int tmp;
-@@ -344,6 +386,28 @@ early_wakeup:
- 	pmu_raw_writel(0x0, S5P_INFORM1);
- }
- 
-+static void exynos3250_pm_resume(void)
-+{
-+	u32 cpuid = read_cpuid_part();
-+
-+	if (exynos_pm_central_resume())
-+		goto early_wakeup;
-+
-+	/* For release retention */
-+	exynos_pm_release_retention();
-+
-+	pmu_raw_writel(S5P_USE_STANDBY_WFI_ALL, S5P_CENTRAL_SEQ_OPTION);
-+
-+	if (call_firmware_op(resume) == -ENOSYS
-+	    && cpuid == ARM_CPU_PART_CORTEX_A9)
-+		exynos_cpu_restore_register();
-+
-+early_wakeup:
-+
-+	/* Clear SLEEP mode set in INFORM1 */
-+	pmu_raw_writel(0x0, S5P_INFORM1);
-+}
-+
- static void exynos5420_prepare_pm_resume(void)
- {
- 	if (IS_ENABLED(CONFIG_EXYNOS5420_MCPM))
-@@ -483,6 +547,16 @@ static const struct platform_suspend_ops exynos_suspend_ops = {
- 	.valid		= suspend_valid_only_mem,
- };
- 
-+static const struct exynos_pm_data exynos3250_pm_data = {
-+	.wkup_irq	= exynos3250_wkup_irq,
-+	.wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
-+	.release_ret_regs = exynos3250_release_ret_regs,
-+	.pm_suspend	= exynos_pm_suspend,
-+	.pm_resume	= exynos3250_pm_resume,
-+	.pm_prepare	= exynos3250_pm_prepare,
-+	.cpu_suspend	= exynos3250_cpu_suspend,
-+};
-+
- static const struct exynos_pm_data exynos4_pm_data = {
- 	.wkup_irq	= exynos4_wkup_irq,
- 	.wake_disable_mask = ((0xFF << 8) | (0x1F << 1)),
-@@ -518,6 +592,9 @@ static struct exynos_pm_data exynos5420_pm_data = {
- 
- static struct of_device_id exynos_pmu_of_device_ids[] = {
- 	{
-+		.compatible = "samsung,exynos3250-pmu",
-+		.data = &exynos3250_pm_data,
-+	}, {
- 		.compatible = "samsung,exynos4210-pmu",
- 		.data = &exynos4_pm_data,
- 	}, {
 -- 
-1.8.5.5
+Regards,
+Nishanth Menon
