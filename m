@@ -1,51 +1,66 @@
-From: Nishanth Menon <nm@ti.com>
-Subject: Re: [PATCH v2 15/21] ARM: exynos4/5: convert pmu wakeup to stacked
- domains
-Date: Thu, 8 Jan 2015 10:58:31 -0600
-Message-ID: <20150108165831.GB19124@kahuna>
-References: <1420652576-22309-1-git-send-email-marc.zyngier@arm.com>
- <1420652576-22309-16-git-send-email-marc.zyngier@arm.com>
+From: Gustavo Padovan <gustavo@padovan.org>
+Subject: Re: [PULL] drm-exynos-next 2014-12-22
+Date: Thu, 8 Jan 2015 15:18:23 -0200
+Message-ID: <20150108171823.GD2001@joana>
+References: <20141222130418.GJ16419@joana> <549CB768.3000903@samsung.com>
+ <20150107180608.GA2001@joana> <54AE06D1.9010105@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <1420652576-22309-16-git-send-email-marc.zyngier@arm.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Benoit Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Santosh Shilimkar <ssantosh@kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
+In-Reply-To: <54AE06D1.9010105@samsung.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Inki Dae <inki.dae@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 17:42-20150107, Marc Zyngier wrote:
-> Exynos has been (ab)using the gic_arch_extn to provide
-> wakeup from suspend, and it makes a lot of sense to convert
-> this code to use stacked domains instead.
-> 
-> This patch does just this, updating the DT files to actually
-> reflect what the HW provides.
-> 
-> BIG FAT WARNING: because the DTs were so far lying by not
-> exposing the fact that the PMU block is actually the first
-> interrupt controller in the chain for RTC, kernels with this patch
-> applied wont have any suspend-resume facility when booted
-> with old DTs, and old kernels with updated DTs may not even boot.
-> 
-> Also, I stronly suspect that there is more than two wake-up
-> interrupts on these platforms, but I leave it to the maintainers
-> to fix their mess.
-> 
-
-minor checkpatch warnings:
-
-+WARNING: line over 80 characters
-+#230: FILE: arch/arm/mach-exynos/suspend.c:208:
-++	return irq_domain_alloc_irqs_parent(domain, virq, nr_irqs, &parent_args);
-+WARNING: line over 80 characters
-+#274: FILE: arch/arm/mach-exynos/suspend.c:252:
-++#define EXYNOS_PMU_IRQ(symbol,name)	OF_DECLARE_2(irqchip, symbol, name, exynos_pmu_irq_init)
-+ERROR: space required after that ',' (ctx:VxV)
-+#274: FILE: arch/arm/mach-exynos/suspend.c:252:
-++#define EXYNOS_PMU_IRQ(symbol,name)	OF_DECLARE_2(irqchip, symbol, name, exynos_pmu_irq_init)
-+                              ^
--- 
-Regards,
-Nishanth Menon
+MjAxNS0wMS0wOCBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+OgoKPiBPbiAyMDE164WE
+IDAx7JuUIDA47J28IDAzOjA2LCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gPiAyMDE0LTEyLTI2
+IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT46Cj4gPgo+ID4+IE9uIDIwMTTrhYQgMTLs
+m5QgMjLsnbwgMjI6MDQsIEd1c3Rhdm8gUGFkb3ZhbiB3cm90ZToKPiA+Pj4gSGkgRGF2ZSwKPiA+
+Pj4KPiA+Pj4gSGVyZSBnb2VzIGEgYnVuY2ggb2YgY2xlYW4gdXAgZm9yIHRoZSBleHlub3MgZHJp
+dmVyLiBJJ3ZlIHBvc3RlZCB0aGlzIHdvcmsgaW4KPiA+Pj4gdGhlIG1haWxpbmcgbGlzdCB0d2lj
+ZSBidXQgbmV2ZXIgZ290IGEgcmV2aWV3IG9uIGl0LCBmaXJzdCB0aW1lIHdhcyBhYm91dCBhCj4g
+Pj4KPiA+PiBOZXZlciBuby4gSSBhbHJlYWR5IGhhZCBhIHJldmlldyBhbmQgdGhleSAtIHlvdXIg
+Zmlyc3QgdGltZSBwYXRjaCBzZXQgLQo+ID4+IGhhZCBiZWVuIG1lcmdlZCB0byBleHlub3MtZHJt
+LW5leHQtdG9kby4gSSB3YXMgbW92aW5nIHRoZW0gdG8KPiA+PiBleHlub3MtZHJtLW5leHQgbG9j
+YWxseSBidXQgb25lIG9mIHlvdXIgcGF0Y2ggc2V0IHdhcyBub3QgcmVhc29uYWJsZSB0bwo+ID4+
+IG1lIHNvIEkgZ2F2ZSB5b3Ugb25lIGNvbW1lbnQuIEFmdGVyIHRoYXQsIHlvdSBwb3N0ZWQgbmV4
+dCBwYXRjaCBzZXQKPiA+PiB3aGljaCBpbmNsdWRlIG5ldyBjaGFuZ2VzIGFuZCBwYXRjaGVzIGp1
+c3QgOSBkYXlzIGFnby4gU28gdGhleSBzaG91bGQKPiA+PiBhbHNvIGJlIHJldmlld2VkIGVub3Vn
+aCBhdCBsZWFzdCBmb3IgdHdvIHdlZWtzLgo+ID4KPiA+IFNvIHBsZWFzZSBub3RpZnkgb24gdGhl
+IG1haWxpbmcgbGlzdCB3aGF0IHlvdSBhcmUgZG9pbmcuIFRvIG1lIGl0IGxvb2tlZCB0aGF0Cj4g
+PiBhbGwgcGF0Y2hlcyBidXQgb25lIGRpZG4ndCBnZXQgYW55IHJldmlldy4gSSBoYXZlIGEgbG90
+IG9mIHBlbmRpbmcgd29yayB0byBkbwo+ID4gb24gdG9wIG9mIHRoaXMgcHVsbCByZXF1ZXN0IGFu
+ZCByZXZpZXcgb24gdGhlbSBpcyBxdWl0ZSBpbXBvcnRhbnQgZm9yIG1lIHRvCj4gPiBrZWVwIHdv
+cmtpbmcgb24gbmV3IGNoYW5nZXMuCj4gPgo+ID4+Cj4gPj4gUGxlYXNlLCBkbyBub3QgaHVycnku
+IFN1Y2ggYmlnIGNoYW5nZXMgc2hvdWxkIHJlYWxseSBiZSByZXZpZXdlZCBlbm91Z2guCj4gPj4g
+SSB3aWxsIHdhaXQgZm9yIG90aGVyIHJldmlld3MgYW5kIHRoZW0gbWVyZ2UgdGhlbSBpZiByZXZp
+ZXdlZCBlbm91Z2guIElmCj4gPj4gbm9ib2R5IGhhdmUgcmV2aWV3cyB0aGVuIEkgd2lsbCBtZXJn
+ZSB0aGVtLiBTbyBwbGVhc2UsIGRvbid0IHdvcnJ5IGFib3V0Cj4gPj4gdGhhdC4KPiA+Cj4gPiBJ
+dCBpcyBiZWVuIGEgd2F5IG1vcmUgdGhhbiB0d28gd2Vla3Mgbm93LCBjYW4geW91IHBsZWFzZSBt
+ZXJnZSBhbGwgbXkKPiA+IHBhdGNoZXMgYnV0IHRoZSAzIG9uZXMgeW91IGhhZCBjb21tZW50ZWQg
+b24/IEknbGwgc2VuZCB1cGRhdGVkIHBhdGNoZXMgZm9yCj4gPiB0aG9zZS4KPiAKPiBBY3R1YWxs
+eSwgSSBhbSB3YWl0aW5nIGZvciB5b3VyIHJlcGx5IGJlY2F1c2UgeW91ciBzZWNvbmQgcGF0Y2gg
+c2VyaWVzCj4gaW5jbHVkZXMgdGhlIGNoYW5nZXMgYW5kIHVwZGF0ZXMgcmVsYXRlZCB0byBhdG9t
+aWMgcGFnZSBmbGlwIGFuZCBtb2RlCj4gc2V0dGluZywgd2hpY2ggZG9lc24ndCBoYXZlIGNvbnNp
+c3RlbmN5IHdpdGggeW91ciBmaXJzdCBwYXRjaCBzZXJpZXMuCj4gQW55d2F5LCBJJ2xsIG1lcmdl
+IHRoZSBvbmx5IGNsZWFudXAgcGFydHMgdG8gZXh5bm9zLWRybS1uZXh0LiBQbGVhc2UsCj4gcG9z
+dCBhdG9taWMgcGFydHMgYWZ0ZXIgdXBkYXRpbmcgbGF0ZXIuIEluIGFkZGl0aW9uLCBJJ2xsIG5v
+dCBtZXJnZQo+ICdbUEFUQ0ggMDEvMjldIGRybS9leHlub3MvZmltZDogb25seSBmaW5pc2ggcGFn
+ZWZsaXAgaWYgU1RBUlQgPT0KPiBTVEFSVF9TJyBiZWNhdXNlIG5vdCBjbGVhciB0byBtZSBhcyBJ
+IGFscmVhZHkgbWVudGlvbmVkIGJlZm9yZS4KClRoYW5rIHlvdS4gWWVzLCBJZiB5b3UgbWVyZ2Ug
+YWxsIHRoZSBwYXRjaGVzIG9uIHRoaXMgcHVsbCByZXF1ZXN0IEknbGwgYmUgZmluZQp3aXRoIGl0
+LiBJdCBoYXMgb25seSB0aGUgY2xlYW4gdXBzLgoKCUd1c3Rhdm8KX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
