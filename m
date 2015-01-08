@@ -1,66 +1,55 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: Re: [PULL] drm-exynos-next 2014-12-22
-Date: Thu, 8 Jan 2015 15:18:23 -0200
-Message-ID: <20150108171823.GD2001@joana>
-References: <20141222130418.GJ16419@joana> <549CB768.3000903@samsung.com>
- <20150107180608.GA2001@joana> <54AE06D1.9010105@samsung.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v5 0/5] regulator: Allow parsing custom DT properties
+ with simplified DT parse
+Date: Thu, 8 Jan 2015 20:16:36 +0000
+Message-ID: <20150108201636.GE2634@sirena.org.uk>
+References: <1420458525-22576-1-git-send-email-k.kozlowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="JLqpAN9gGHZowk+m"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <54AE06D1.9010105@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Inki Dae <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+In-Reply-To: <1420458525-22576-1-git-send-email-k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-MjAxNS0wMS0wOCBJbmtpIERhZSA8aW5raS5kYWVAc2Ftc3VuZy5jb20+OgoKPiBPbiAyMDE164WE
-IDAx7JuUIDA47J28IDAzOjA2LCBHdXN0YXZvIFBhZG92YW4gd3JvdGU6Cj4gPiAyMDE0LTEyLTI2
-IElua2kgRGFlIDxpbmtpLmRhZUBzYW1zdW5nLmNvbT46Cj4gPgo+ID4+IE9uIDIwMTTrhYQgMTLs
-m5QgMjLsnbwgMjI6MDQsIEd1c3Rhdm8gUGFkb3ZhbiB3cm90ZToKPiA+Pj4gSGkgRGF2ZSwKPiA+
-Pj4KPiA+Pj4gSGVyZSBnb2VzIGEgYnVuY2ggb2YgY2xlYW4gdXAgZm9yIHRoZSBleHlub3MgZHJp
-dmVyLiBJJ3ZlIHBvc3RlZCB0aGlzIHdvcmsgaW4KPiA+Pj4gdGhlIG1haWxpbmcgbGlzdCB0d2lj
-ZSBidXQgbmV2ZXIgZ290IGEgcmV2aWV3IG9uIGl0LCBmaXJzdCB0aW1lIHdhcyBhYm91dCBhCj4g
-Pj4KPiA+PiBOZXZlciBuby4gSSBhbHJlYWR5IGhhZCBhIHJldmlldyBhbmQgdGhleSAtIHlvdXIg
-Zmlyc3QgdGltZSBwYXRjaCBzZXQgLQo+ID4+IGhhZCBiZWVuIG1lcmdlZCB0byBleHlub3MtZHJt
-LW5leHQtdG9kby4gSSB3YXMgbW92aW5nIHRoZW0gdG8KPiA+PiBleHlub3MtZHJtLW5leHQgbG9j
-YWxseSBidXQgb25lIG9mIHlvdXIgcGF0Y2ggc2V0IHdhcyBub3QgcmVhc29uYWJsZSB0bwo+ID4+
-IG1lIHNvIEkgZ2F2ZSB5b3Ugb25lIGNvbW1lbnQuIEFmdGVyIHRoYXQsIHlvdSBwb3N0ZWQgbmV4
-dCBwYXRjaCBzZXQKPiA+PiB3aGljaCBpbmNsdWRlIG5ldyBjaGFuZ2VzIGFuZCBwYXRjaGVzIGp1
-c3QgOSBkYXlzIGFnby4gU28gdGhleSBzaG91bGQKPiA+PiBhbHNvIGJlIHJldmlld2VkIGVub3Vn
-aCBhdCBsZWFzdCBmb3IgdHdvIHdlZWtzLgo+ID4KPiA+IFNvIHBsZWFzZSBub3RpZnkgb24gdGhl
-IG1haWxpbmcgbGlzdCB3aGF0IHlvdSBhcmUgZG9pbmcuIFRvIG1lIGl0IGxvb2tlZCB0aGF0Cj4g
-PiBhbGwgcGF0Y2hlcyBidXQgb25lIGRpZG4ndCBnZXQgYW55IHJldmlldy4gSSBoYXZlIGEgbG90
-IG9mIHBlbmRpbmcgd29yayB0byBkbwo+ID4gb24gdG9wIG9mIHRoaXMgcHVsbCByZXF1ZXN0IGFu
-ZCByZXZpZXcgb24gdGhlbSBpcyBxdWl0ZSBpbXBvcnRhbnQgZm9yIG1lIHRvCj4gPiBrZWVwIHdv
-cmtpbmcgb24gbmV3IGNoYW5nZXMuCj4gPgo+ID4+Cj4gPj4gUGxlYXNlLCBkbyBub3QgaHVycnku
-IFN1Y2ggYmlnIGNoYW5nZXMgc2hvdWxkIHJlYWxseSBiZSByZXZpZXdlZCBlbm91Z2guCj4gPj4g
-SSB3aWxsIHdhaXQgZm9yIG90aGVyIHJldmlld3MgYW5kIHRoZW0gbWVyZ2UgdGhlbSBpZiByZXZp
-ZXdlZCBlbm91Z2guIElmCj4gPj4gbm9ib2R5IGhhdmUgcmV2aWV3cyB0aGVuIEkgd2lsbCBtZXJn
-ZSB0aGVtLiBTbyBwbGVhc2UsIGRvbid0IHdvcnJ5IGFib3V0Cj4gPj4gdGhhdC4KPiA+Cj4gPiBJ
-dCBpcyBiZWVuIGEgd2F5IG1vcmUgdGhhbiB0d28gd2Vla3Mgbm93LCBjYW4geW91IHBsZWFzZSBt
-ZXJnZSBhbGwgbXkKPiA+IHBhdGNoZXMgYnV0IHRoZSAzIG9uZXMgeW91IGhhZCBjb21tZW50ZWQg
-b24/IEknbGwgc2VuZCB1cGRhdGVkIHBhdGNoZXMgZm9yCj4gPiB0aG9zZS4KPiAKPiBBY3R1YWxs
-eSwgSSBhbSB3YWl0aW5nIGZvciB5b3VyIHJlcGx5IGJlY2F1c2UgeW91ciBzZWNvbmQgcGF0Y2gg
-c2VyaWVzCj4gaW5jbHVkZXMgdGhlIGNoYW5nZXMgYW5kIHVwZGF0ZXMgcmVsYXRlZCB0byBhdG9t
-aWMgcGFnZSBmbGlwIGFuZCBtb2RlCj4gc2V0dGluZywgd2hpY2ggZG9lc24ndCBoYXZlIGNvbnNp
-c3RlbmN5IHdpdGggeW91ciBmaXJzdCBwYXRjaCBzZXJpZXMuCj4gQW55d2F5LCBJJ2xsIG1lcmdl
-IHRoZSBvbmx5IGNsZWFudXAgcGFydHMgdG8gZXh5bm9zLWRybS1uZXh0LiBQbGVhc2UsCj4gcG9z
-dCBhdG9taWMgcGFydHMgYWZ0ZXIgdXBkYXRpbmcgbGF0ZXIuIEluIGFkZGl0aW9uLCBJJ2xsIG5v
-dCBtZXJnZQo+ICdbUEFUQ0ggMDEvMjldIGRybS9leHlub3MvZmltZDogb25seSBmaW5pc2ggcGFn
-ZWZsaXAgaWYgU1RBUlQgPT0KPiBTVEFSVF9TJyBiZWNhdXNlIG5vdCBjbGVhciB0byBtZSBhcyBJ
-IGFscmVhZHkgbWVudGlvbmVkIGJlZm9yZS4KClRoYW5rIHlvdS4gWWVzLCBJZiB5b3UgbWVyZ2Ug
-YWxsIHRoZSBwYXRjaGVzIG9uIHRoaXMgcHVsbCByZXF1ZXN0IEknbGwgYmUgZmluZQp3aXRoIGl0
-LiBJdCBoYXMgb25seSB0aGUgY2xlYW4gdXBzLgoKCUd1c3Rhdm8KX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
-ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+--JLqpAN9gGHZowk+m
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jan 05, 2015 at 12:48:40PM +0100, Krzysztof Kozlowski wrote:
+> Hi,
+>=20
+>=20
+> The patchset adds:
+> 1. a way of parsing custom DT properties by the driver when simplified
+>    DT parsing method is used,
+> 2. GPIO enable control to the max77686 driver.
+
+Applied 1-4, thanks.
+
+--JLqpAN9gGHZowk+m
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUruWjAAoJECTWi3JdVIfQd/IH/RuLGU10FeNFRf6CWJoXQ5go
+BjTGJl4L5OnKyWv0WSpO8UmBl22y1Q11SoTBLGzxKpkDEZXtRiA9kZLEVugTjHXW
+AJauBic/edRCVOZX5PbrUBkS416zcgGBxALk2TthUVydXcKhCwUJTLrKgxDQZlsk
++fNG8/5UpuwHyR2dhOrCdpPVTXG8An6KofE6c0X6l591vwzR2oVZ/ntVQw2xqP3q
+T0tmzfTjdmc1vlhZbenSsWWmCxbm3fBCavofeYr5LVm3/EPC4qHmbrMnzw1NElnr
+8jT6PDvIGEh07b6LCb4EVN7Ens6jNT2FoH0HzDKOYIJZDju/ToA9/kRWJf/Ppm4=
+=K8HL
+-----END PGP SIGNATURE-----
+
+--JLqpAN9gGHZowk+m--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
