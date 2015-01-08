@@ -1,87 +1,98 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PULL] drm-exynos-next 2014-12-22
-Date: Thu, 08 Jan 2015 13:25:53 +0900
-Message-ID: <54AE06D1.9010105@samsung.com>
-References: <20141222130418.GJ16419@joana> <549CB768.3000903@samsung.com>
- <20150107180608.GA2001@joana>
+From: Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [PATCH RFT 1/2] drivers: bus: check cci device tree node status
+Date: Thu, 08 Jan 2015 12:15:35 +0530
+Message-ID: <54AE278F.4020003@arm.com>
+References: <1417186209-5256-1-git-send-email-a.kesavan@samsung.com>	<CAM4voakjWgnEXoXT1LH2ZFBy=U4vfXFXS1Su8VB7Cd3s3wqmSA@mail.gmail.com>	<5487C897.9050405@arm.com> <CAM4voa=TQeOMTHmM2iBquDRwoEFPAgUFeMwJ73H4qdcSmR1Lug@mail.gmail.com> <5487D726.6000603@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:14270 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753247AbbAHEZ4 convert rfc822-to-8bit (ORCPT
+Received: from service87.mimecast.com ([91.220.42.44]:56735 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752289AbbAHGpq convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Jan 2015 23:25:56 -0500
-Received: from epcpsbgr3.samsung.com
- (u143.gpu120.samsung.co.kr [203.254.230.143])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NHU002SMCB5KEC0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 08 Jan 2015 13:25:53 +0900 (KST)
-In-reply-to: <20150107180608.GA2001@joana>
+	Thu, 8 Jan 2015 01:45:46 -0500
+In-Reply-To: <5487D726.6000603@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Gustavo Padovan <gustavo@padovan.org>
-Cc: Dave Airlie <airlied@gmail.com>, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kevin Hilman <khilman@kernel.org>, "nicolas.pitre@linaro.org" <nicolas.pitre@linaro.org>, Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, Punit Agrawal <Punit.Agrawal@arm.com>, Will Deacon <Will.Deacon@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Douglas Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-On 2015=EB=85=84 01=EC=9B=94 08=EC=9D=BC 03:06, Gustavo Padovan wrote:
-> 2014-12-26 Inki Dae <inki.dae@samsung.com>:
->=20
->> On 2014=EB=85=84 12=EC=9B=94 22=EC=9D=BC 22:04, Gustavo Padovan wrot=
-e:
->>> Hi Dave,
+Hi Abhilash,
+
+On Wednesday 10 December 2014 10:46 AM, Sudeep Holla wrote:
+>
+>
+> On Wednesday 10 December 2014 09:55 AM, Abhilash Kesavan wrote:
+>> Hi Sudeep,
+>>
+>> On Wed, Dec 10, 2014 at 9:44 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>>> Hi Abhilash,
 >>>
->>> Here goes a bunch of clean up for the exynos driver. I've posted th=
-is work in
->>> the mailing list twice but never got a review on it, first time was=
- about a
+>>> On Wednesday 10 December 2014 09:31 AM, Abhilash Kesavan wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>> On Fri, Nov 28, 2014 at 8:20 PM, Abhilash Kesavan <a.kesavan@samsung.com>
+>>>> wrote:
+>>>>>
+>>>>> The arm-cci driver completes the probe sequence even if the cci node is
+>>>>> marked as disabled. Add a check in the driver to honour the cci status
+>>>>> in the device tree.
+>>>>>
+>>>>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+>>>>
+>>>>
+>>>> This patch helps disable CCI on the Arndale Octa board thus resolving
+>>>> some imprecise aborts seen on that board. Kindly review.
+>>>>
+>>>> Regards,
+>>>> Abhilash
+>>>>>
+>>>>> ---
+>>>>>     drivers/bus/arm-cci.c |    3 +++
+>>>>>     1 file changed, 3 insertions(+)
+>>>>>
+>>>>> diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
+>>>>> index 860da40..0ce5e2d 100644
+>>>>> --- a/drivers/bus/arm-cci.c
+>>>>> +++ b/drivers/bus/arm-cci.c
+>>>>> @@ -1312,6 +1312,9 @@ static int cci_probe(void)
+>>>>>            if (!np)
+>>>>>                    return -ENODEV;
+>>>>>
+>>>>> +       if (!of_device_is_available(np))
+>>>>> +               return -ENODEV;
+>>>>> +
+>>>
+>>>
+>>> IIUC, by this change you are disabling the MCPM boot protocol here.
+>>> Is there any alternative boot protocol that works on this platform
+>>> to boot all 8 cores ? Sorry by quick grep couldn't find one, hence
+>>> so I am asking.
 >>
->> Never no. I already had a review and they - your first time patch se=
-t -
->> had been merged to exynos-drm-next-todo. I was moving them to
->> exynos-drm-next locally but one of your patch set was not reasonable=
- to
->> me so I gave you one comment. After that, you posted next patch set
->> which include new changes and patches just 9 days ago. So they shoul=
-d
->> also be reviewed enough at least for two weeks.
->=20
-> So please notify on the mailing list what you are doing. To me it loo=
-ked that
-> all patches but one didn't get any review. I have a lot of pending wo=
-rk to do
-> on top of this pull request and review on them is quite important for=
- me to
-> keep working on new changes.
->=20
+>> Thanks for the reply.
+>> On disabling MCPM, we will default to platsmp.c/firmware.c which boots
+>> 4 cores as per Kevin's comment here[1]. This was the original behavior
+>> before MCPM was enabled for all 5420 based SoCs.
 >>
->> Please, do not hurry. Such big changes should really be reviewed eno=
-ugh.
->> I will wait for other reviews and them merge them if reviewed enough=
-=2E If
->> nobody have reviews then I will merge them. So please, don't worry a=
-bout
->> that.
->=20
-> It is been a way more than two weeks now, can you please merge all my
-> patches but the 3 ones you had commented on? I'll send updated patche=
-s for
-> those.
+>
+> Thanks for pointing that out. I assume the firmware can handle the
+> alternate boot protocol and no more workarounds are needed especially
+> when getting CPUIdle working in this mode.
+>
+> Anyways the patch makes sense irrespective how it works on exynos, so
+> you can add,
+>
+> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+>
 
-Actually, I am waiting for your reply because your second patch series
-includes the changes and updates related to atomic page flip and mode
-setting, which doesn't have consistency with your first patch series.
-Anyway, I'll merge the only cleanup parts to exynos-drm-next. Please,
-post atomic parts after updating later. In addition, I'll not merge
-'[PATCH 01/29] drm/exynos/fimd: only finish pageflip if START =3D=3D
-START_S' because not clear to me as I already mentioned before.
+What's the status of this patch. It was useful for me on vexpress for 
+some testing. Please feel free to add
 
-And lastly, thanks for your contribution. :)
-Inki Dae
+Tested-by: Sudeep Holla <sudeep.holla@arm.com>
 
->=20
-> Also can you add you tree to the linux-next build?
->=20
-> 	Gustavo
->=20
+if this is not yet queued.
+
+Regards,
+Sudeep
