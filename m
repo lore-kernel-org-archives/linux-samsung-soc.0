@@ -1,112 +1,87 @@
-From: Paul Zimmerman <Paul.Zimmerman@synopsys.com>
-Subject: RE: [PATCH v3 00/30] usb: updates for dwc2 gadget driver
-Date: Fri, 9 Jan 2015 20:35:19 +0000
-Message-ID: <A2CA0424C0A6F04399FB9E1CD98E0304845066AC@US01WEMBX2.internal.synopsys.com>
-References: <1420807150-27022-1-git-send-email-yousaf.kaukab@intel.com>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH v2] ARM: dts: Add dts file for odroid XU3 board
+Date: Fri, 09 Jan 2015 13:06:52 -0800
+Message-ID: <7hmw5rvf2r.fsf@deeprootsystems.com>
+References: <1417721269-19342-1-git-send-email-sjoerd.simons@collabora.co.uk>
+	<54AA48E6.3040404@samsung.com>
+	<1420470469.15910.134.camel@collabora.co.uk>
+	<69242715.30115.1420655868687.JavaMail.yahoo@jws10659.mail.bf1.yahoo.com>
+	<1420670333.6075.2.camel@collabora.co.uk>
+	<6203C077F070A646AA0FCB4B5F1795D248114CA6@sisaex01sj>
+	<1420706948.6075.17.camel@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtprelay.synopsys.com ([198.182.60.111]:38071 "EHLO
-	smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751137AbbAIUfV convert rfc822-to-8bit (ORCPT
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:44137 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750998AbbAIVGz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Jan 2015 15:35:21 -0500
-In-Reply-To: <1420807150-27022-1-git-send-email-yousaf.kaukab@intel.com>
-Content-Language: en-US
+	Fri, 9 Jan 2015 16:06:55 -0500
+Received: by mail-pa0-f52.google.com with SMTP id eu11so20585677pac.11
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Jan 2015 13:06:55 -0800 (PST)
+In-Reply-To: <1420706948.6075.17.camel@collabora.co.uk> (Sjoerd Simons's
+	message of "Thu, 08 Jan 2015 09:49:08 +0100")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, Mian Yousaf Kaukab <yousaf.kaukab@intel.com>
-Cc: "gregory.herrero@intel.com" <gregory.herrero@intel.com>, "sergei.shtylyov@cogentembedded.com" <sergei.shtylyov@cogentembedded.com>, "r.baldyga@samsung.com" <r.baldyga@samsung.com>, "dinguyen@opensource.altera.com" <dinguyen@opensource.altera.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "balbi@ti.com" <balbi@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: Jonathan Stone -SISA <j.stone@samsung.com>, Anand Moon <moon.linux@yahoo.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Tyler Baker <tyler.baker@linaro.org>, Heesub Shin <heesub.shin@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-CCing more of the Samsung folks and linux-kernel.
+Sjoerd Simons <sjoerd.simons@collabora.co.uk> writes:
 
-Robert, Marek, can you test this series on your platform, please? If
-I don't hear from you soon, I'll just ack it and we can deal with any
-breakage later.
+> On Wed, 2015-01-07 at 23:49 +0000, Jonathan Stone -SISA wrote:
+>> 
+>> On On Wed, 2015-01-07 at 18:37 +0000, Sjoerd Simons writes wrote:
+>> >On Wed, 2015-01-07 at 18:37 +0000, Anand Moon wrote:>
+>> [...]
+>> 
+>> >> Only 4 core cpu's are on my board. Also CpuFreq is not working.
+>> > 
+>> > Can you share some point on this.
+>> 
+>> >The defconfig is using the bL switcher, which pairs up big and
+>> > little cores to make them appear as one core.. So for 8 real
+>> > cores, you'll get
+>> >4 "virtual cores".
+>> 
+>> That configuration is appropriate for the 5420, which allegedly has
+>> a hardware bug in the cache-coherence between the Cortex-A7 block
+>> and the Cortex-A15 block.
+>> Newer Exynos 5 SoCs -- 5422/5800, 5620, etc -- don't have that
+>> bug. The scheduler should configured to do HMP on all 8 (or 6)
+>> cores.
+>> I don't have a 5410, but I assume it has the same bug as the 5420.
+>
+> Yes the kernel/scheduler could be configured like that, but
+> exynos_defconfig turns on bL rather then HMP. 
+>
+> Now it's not unthinkable to add code/dts properties to select the
+> right/preferred scheduling strategy depending on the board (HMP vs. bL).
+> But proper HMP scheduling is still a work in progress in mainline 
 
--- 
-Paul
+Yes, HMP scheduling is not yet ready for mainline, which is why the
+switcher is enabled by default.  If you turn the switcher off, you will
+indeed get all 8 cores, but you may get some rather strange and
+sub-optimal results with performance since from the scheduler
+perspective, it will balance tasks across all 8 CPUs as if they were
+identical.
 
-> From: Mian Yousaf Kaukab [mailto:yousaf.kaukab@intel.com]
-> Sent: Friday, January 09, 2015 4:39 AM
-> 
-> Hi,
-> This patchset consists of various bug fixes and feature enhancements for the
-> dwc2 gadget driver. All the patches are verified on dwc2 v3.0a with dedicated
-> fifos. Main focus of testing was with dma enabled. Although basic testing
-> without dma was also done.
-> 
-> It is based on testing/next branch in Felipe's git and
-> 
-> Tested-by: Dinh Nguyen <dinguyen@opensource.altera.com>
-> 
-> Thank you,
-> 
-> Best regards,
-> Yousaf
-> 
-> History:
-> v3:
->  - Fixed comment from Sergei Shtylyov
->  - Updated "usb: dwc2: gadget: don't process XferCompl on setup packet" to
->    apply the check on endpoint 0 only.
->  - Fixed regression in "usb: dwc2: gadget: manage ep0 state in software" for
->    dwc2 ip v2.93a, found by Dinh Nguyen.
-> 
-> v2:
->  - Rebased to Felipe's testing/next with https://lkml.org/lkml/2014/12/16/135
->    applied on top.
->  - Fixed comments from  Robert Baldyga
->  - Some cosmetic changes
->  - Replaced usb: dwc2: gadget: process setup packet on transfer complete
->    with
->    usb: dwc2: gadget: don't process XferCompl on setup packet
->  - Updated usb: dwc2: gadget: provide gadget handle to the phy
->    so that otg_set_peripheral is called in both udc_start and udc_stop.
-> 
-> v1:
->  - Addressed comments from Sergei Shtylyov
-> 
-> Gregory Herrero (13):
->   usb: dwc2: gadget: register gadget handle to the phy
->   usb: dwc2: gadget: write correct value in ahbcfg register
->   usb: dwc2: gadget: don't erase gahbcfg register when enabling dma
->   usb: dwc2: gadget: add device tree property to enable dma
->   Documentation: dt-bindings: add dt binding info for dwc2 g-use-dma
->   usb: dwc2: gadget: configure fifos from device tree
->   Documentation: dt-bindings: add dt binding info for dwc2 fifo resizing
->   usb: dwc2: gadget: don't block after fifo flush timeout
->   usb: dwc2: gadget: add vbus_session support
->   usb: dwc2: gadget: reset fifo_map when initializing fifos
->   usb: dwc2: gadget: fix pullup handling
->   usb: dwc2: gadget: add vbus_draw support
->   usb: dwc2: gadget: force gadget initialization in dev mode
-> 
-> Mian Yousaf Kaukab (17):
->   usb: dwc2: gadget: mask fifo empty irq with dma
->   usb: dwc2: gadget: don't process XferCompl on setup packet
->   usb: dwc2: gadget: don't embed ep0 buffers
->   usb: dwc2: gadget: fix error path in dwc2_gadget_init
->   usb: dwc2: gadget: add bi-directional endpoint support
->   usb: dwc2: gadget: check interrupts for all endpoints
->   usb: dwc2: gadget: remove unused members from hsotg_req
->   usb: dwc2: gadget: fix debug loop limits
->   usb: dwc2: gadget: consider all tx fifos
->   usb: dwc2: gadget: kill requests after disabling ep
->   usb: dwc2: gadget: manage ep0 state in software
->   usb: dwc2: gadget: fix zero length packet transfers
->   usb: dwc2: gadget: dont warn if endpoint is not enabled
->   usb: dwc2: gadget: rename sent_zlp to send_zlp
->   usb: dwc2: gadget: pick smallest acceptable fifo
->   usb: dwc2: gadget: fix fifo allocation leak
->   usb: dwc2: gadget: report disconnection after reset
-> 
->  Documentation/devicetree/bindings/usb/dwc2.txt |   4 +
->  drivers/usb/dwc2/core.h                        |  46 +-
->  drivers/usb/dwc2/gadget.c                      | 792 ++++++++++++++++---------
->  drivers/usb/dwc2/hw.h                          |   1 +
->  4 files changed, 556 insertions(+), 287 deletions(-)
-> 
-> --
-> 1.9.1
+> and iirc specifically on the XU3 there are open issue wrt. MCPM and
+> its secure firmware. I've added Kevin to the CC as he's been working
+> on this topic so should know the status a lot better then i do.
+
+The broken firmware issues don't affect scheduling directly, but affect
+the low-power states that are available to the kernel.  Since the
+firwmware doesn't allow proper access to CCI, low-power states that
+require MCPM are not available, which, among other things, means the
+clusters can not be powered down.
+
+>> The XU3 kernel supplied by HardKernel shows all 8 cores, and does HMP scheduling across all 8.
+>
+> Yes, that's independant of the dts though as mentioned above. Also there
+> are still opne issues to booting up all cores on an XU3 afaik. See 
+>    http://www.spinics.net/lists/linux-samsung-soc/msg39523.html
+
+I haven't looked closely at the hardkernel tree to see what HMP
+scheduling patches they're using, but it must be something out of tree.
+
+Kevin
