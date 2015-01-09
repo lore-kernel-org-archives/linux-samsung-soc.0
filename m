@@ -1,87 +1,78 @@
 From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH v2] ARM: dts: Add dts file for odroid XU3 board
-Date: Fri, 09 Jan 2015 13:06:52 -0800
-Message-ID: <7hmw5rvf2r.fsf@deeprootsystems.com>
-References: <1417721269-19342-1-git-send-email-sjoerd.simons@collabora.co.uk>
-	<54AA48E6.3040404@samsung.com>
-	<1420470469.15910.134.camel@collabora.co.uk>
-	<69242715.30115.1420655868687.JavaMail.yahoo@jws10659.mail.bf1.yahoo.com>
-	<1420670333.6075.2.camel@collabora.co.uk>
-	<6203C077F070A646AA0FCB4B5F1795D248114CA6@sisaex01sj>
-	<1420706948.6075.17.camel@collabora.co.uk>
+Subject: Re: [PATCH RFT 1/2] drivers: bus: check cci device tree node status
+Date: Fri, 09 Jan 2015 13:09:56 -0800
+Message-ID: <7hfvbjvexn.fsf@deeprootsystems.com>
+References: <1417186209-5256-1-git-send-email-a.kesavan@samsung.com>
+	<CAM4voakjWgnEXoXT1LH2ZFBy=U4vfXFXS1Su8VB7Cd3s3wqmSA@mail.gmail.com>
+	<5487C897.9050405@arm.com>
+	<CAM4voa=TQeOMTHmM2iBquDRwoEFPAgUFeMwJ73H4qdcSmR1Lug@mail.gmail.com>
+	<5487D726.6000603@arm.com> <54AE278F.4020003@arm.com>
+	<CAM4voamaqoje8Ccz3+UxvxaHN6GBd=QC5wRjVcz9Osfc=4aeiw@mail.gmail.com>
+	<54AF62D2.7000400@arm.com>
+	<CAM4voamN1A-sqCDR2bT5rHRBARH2SmfA1wYkXZRn9oi-4-Gj8g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f52.google.com ([209.85.220.52]:44137 "EHLO
-	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750998AbbAIVGz (ORCPT
+Received: from mail-pa0-f44.google.com ([209.85.220.44]:54258 "EHLO
+	mail-pa0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751990AbbAIVKA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Jan 2015 16:06:55 -0500
-Received: by mail-pa0-f52.google.com with SMTP id eu11so20585677pac.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Jan 2015 13:06:55 -0800 (PST)
-In-Reply-To: <1420706948.6075.17.camel@collabora.co.uk> (Sjoerd Simons's
-	message of "Thu, 08 Jan 2015 09:49:08 +0100")
+	Fri, 9 Jan 2015 16:10:00 -0500
+Received: by mail-pa0-f44.google.com with SMTP id et14so20642766pad.3
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Jan 2015 13:09:59 -0800 (PST)
+In-Reply-To: <CAM4voamN1A-sqCDR2bT5rHRBARH2SmfA1wYkXZRn9oi-4-Gj8g@mail.gmail.com>
+	(Abhilash Kesavan's message of "Fri, 9 Jan 2015 21:58:42 +0530")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Cc: Jonathan Stone -SISA <j.stone@samsung.com>, Anand Moon <moon.linux@yahoo.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Tyler Baker <tyler.baker@linaro.org>, Heesub Shin <heesub.shin@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "nicolas.pitre@linaro.org" <nicolas.pitre@linaro.org>, Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, Punit Agrawal <Punit.Agrawal@arm.com>, Will Deacon <Will.Deacon@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, Krzysztof =?utf-8?Q?Koz=C5=82owski?= <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Douglas Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Sjoerd Simons <sjoerd.simons@collabora.co.uk> writes:
+Abhilash Kesavan <kesavan.abhilash@gmail.com> writes:
 
-> On Wed, 2015-01-07 at 23:49 +0000, Jonathan Stone -SISA wrote:
->> 
->> On On Wed, 2015-01-07 at 18:37 +0000, Sjoerd Simons writes wrote:
->> >On Wed, 2015-01-07 at 18:37 +0000, Anand Moon wrote:>
+> Hi Arnd/Olof,
+>
+> On Fri, Jan 9, 2015 at 10:40 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>>
+>>
+>> On Thursday 08 January 2015 08:57 PM, Abhilash Kesavan wrote:
+>>>
+>>> Hi Sudeep,
+>>>
+>>> On Thu, Jan 8, 2015 at 12:15 PM, Sudeep Holla <sudeep.holla@arm.com>
+>>> wrote:
+>>>>
+>>>> Hi Abhilash,
+>>
+>>
 >> [...]
->> 
->> >> Only 4 core cpu's are on my board. Also CpuFreq is not working.
->> > 
->> > Can you share some point on this.
->> 
->> >The defconfig is using the bL switcher, which pairs up big and
->> > little cores to make them appear as one core.. So for 8 real
->> > cores, you'll get
->> >4 "virtual cores".
->> 
->> That configuration is appropriate for the 5420, which allegedly has
->> a hardware bug in the cache-coherence between the Cortex-A7 block
->> and the Cortex-A15 block.
->> Newer Exynos 5 SoCs -- 5422/5800, 5620, etc -- don't have that
->> bug. The scheduler should configured to do HMP on all 8 (or 6)
->> cores.
->> I don't have a 5410, but I assume it has the same bug as the 5420.
+>>
+>>>>
+>>>> What's the status of this patch. It was useful for me on vexpress for
+>>>> some
+>>>> testing. Please feel free to add
+>>>>
+>>>> Tested-by: Sudeep Holla <sudeep.holla@arm.com>
+>>>>
+>>>> if this is not yet queued.
+>>>
+>>>
+>>> Thanks for the tested-by. This patch has not been merged yet; I am not
+>>> quite sure who is supposed to pick this up.
+>>>
+>>
+>> So far, most of the CCI patches are merged through arm-soc.
 >
-> Yes the kernel/scheduler could be configured like that, but
-> exynos_defconfig turns on bL rather then HMP. 
->
-> Now it's not unthinkable to add code/dts properties to select the
-> right/preferred scheduling strategy depending on the board (HMP vs. bL).
-> But proper HMP scheduling is still a work in progress in mainline 
+> Would you be OK picking this up as is or do you want me to re-send
+> this with the RFT tag dropped ?
 
-Yes, HMP scheduling is not yet ready for mainline, which is why the
-switcher is enabled by default.  If you turn the switcher off, you will
-indeed get all 8 cores, but you may get some rather strange and
-sub-optimal results with performance since from the scheduler
-perspective, it will balance tasks across all 8 CPUs as if they were
-identical.
+Please resend without the RFT, and collect the Tested-by tags
+you can add mine:
 
-> and iirc specifically on the XU3 there are open issue wrt. MCPM and
-> its secure firmware. I've added Kevin to the CC as he's been working
-> on this topic so should know the status a lot better then i do.
+Tested-by: Kevin Hilman <khilman@linaro.org>
 
-The broken firmware issues don't affect scheduling directly, but affect
-the low-power states that are available to the kernel.  Since the
-firwmware doesn't allow proper access to CCI, low-power states that
-require MCPM are not available, which, among other things, means the
-clusters can not be powered down.
+Please send to arm@kernel.org where patches targeted for the arm-soc
+tree are collected.
 
->> The XU3 kernel supplied by HardKernel shows all 8 cores, and does HMP scheduling across all 8.
->
-> Yes, that's independant of the dts though as mentioned above. Also there
-> are still opne issues to booting up all cores on an XU3 afaik. See 
->    http://www.spinics.net/lists/linux-samsung-soc/msg39523.html
-
-I haven't looked closely at the hardkernel tree to see what HMP
-scheduling patches they're using, but it must be something out of tree.
+Thanks,
 
 Kevin
