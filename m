@@ -1,258 +1,85 @@
-From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/4] clk: samsung: exynos7: add clocks for SPI block
-Date: Fri, 9 Jan 2015 17:24:07 +0530
-Message-ID: <CAFp+6iHaJ3b9+ERygksNLcyG9PxP2yf-6BTtwFgFgcUOqX+PVg@mail.gmail.com>
-References: <1418995427-7712-1-git-send-email-padma.v@samsung.com>
-	<1418995427-7712-3-git-send-email-padma.v@samsung.com>
-	<CAFp+6iFzawDY1wFA-2AQUHFCk54WsaCJAOkrqvX9t7b-XugY8g@mail.gmail.com>
+From: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
+Subject: Re: Exynos IOMMU driver doesn't work?
+Date: Fri, 9 Jan 2015 16:34:25 +0100
+Message-ID: <CABxcv=n26-A86OmsqviEUz=XSF6QP6K0s=Dfzc43x4+if_qP7A@mail.gmail.com>
+References: <CAOhR-w2vQbyYrWsvZjs-Pt6tU6m9BmH-T5tuBDSyUXteWgxP0Q@mail.gmail.com>
+	<CAOhR-w1gH6zzSZcw-0Lo0zc+p1Mt0=4aqWEZ0Agz4xw0uHsq7A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAFp+6iFzawDY1wFA-2AQUHFCk54WsaCJAOkrqvX9t7b-XugY8g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <CAOhR-w1gH6zzSZcw-0Lo0zc+p1Mt0=4aqWEZ0Agz4xw0uHsq7A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Hongbo Zhang <hongbo.zhang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Jan 9, 2015 at 5:18 PM, Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Hi Padma,
->
->
-> On Fri, Dec 19, 2014 at 6:53 PM, Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
->> Add clock support for 5 SPI channels.
->>
->> Signed-off-by: Padmavathi Venna <padma.v-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->> ---
->>  drivers/clk/samsung/clk-exynos7.c       |   73 +++++++++++++++++++++++++++++++
->>  include/dt-bindings/clock/exynos7-clk.h |   22 ++++++++-
->>  2 files changed, 93 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/samsung/clk-exynos7.c b/drivers/clk/samsung/clk-exynos7.c
->> index 954f9a0..cf5e50e 100644
->> --- a/drivers/clk/samsung/clk-exynos7.c
->> +++ b/drivers/clk/samsung/clk-exynos7.c
->> @@ -166,9 +166,15 @@ CLK_OF_DECLARE(exynos7_clk_topc, "samsung,exynos7-clock-topc",
->>  #define MUX_SEL_TOP00                  0x0200
->>  #define MUX_SEL_TOP01                  0x0204
->>  #define MUX_SEL_TOP03                  0x020C
->> +#define MUX_SEL_TOP0_PERIC1            0x0234
->> +#define MUX_SEL_TOP0_PERIC2            0x0238
->>  #define MUX_SEL_TOP0_PERIC3            0x023C
->>  #define DIV_TOP03                      0x060C
->> +#define DIV_TOP0_PERIC1                        0x0634
->> +#define DIV_TOP0_PERIC2                        0x0638
->>  #define DIV_TOP0_PERIC3                        0x063C
->> +#define ENABLE_SCLK_TOP0_PERIC1                0x0A34
->> +#define ENABLE_SCLK_TOP0_PERIC2                0x0A38
->>  #define ENABLE_SCLK_TOP0_PERIC3                0x0A3C
->>
->>  /* List of parent clocks for Muxes in CMU_TOP0 */
->> @@ -194,9 +200,15 @@ static unsigned long top0_clk_regs[] __initdata = {
->>         MUX_SEL_TOP00,
->>         MUX_SEL_TOP01,
->>         MUX_SEL_TOP03,
->> +       MUX_SEL_TOP0_PERIC1,
->> +       MUX_SEL_TOP0_PERIC2,
->>         MUX_SEL_TOP0_PERIC3,
->>         DIV_TOP03,
->> +       DIV_TOP0_PERIC1,
->> +       DIV_TOP0_PERIC2,
->>         DIV_TOP0_PERIC3,
->> +       ENABLE_SCLK_TOP0_PERIC1,
->> +       ENABLE_SCLK_TOP0_PERIC2,
->>         ENABLE_SCLK_TOP0_PERIC3,
->>  };
->>
->> @@ -218,10 +230,16 @@ static struct samsung_mux_clock top0_mux_clks[] __initdata = {
->>         MUX(0, "mout_aclk_peric1_66", mout_top0_group1, MUX_SEL_TOP03, 12, 2),
->>         MUX(0, "mout_aclk_peric0_66", mout_top0_group1, MUX_SEL_TOP03, 20, 2),
->>
->> +       MUX(0, "mout_sclk_spi1", mout_top0_group1, MUX_SEL_TOP0_PERIC1, 8, 2),
->> +       MUX(0, "mout_sclk_spi0", mout_top0_group1, MUX_SEL_TOP0_PERIC1, 20, 2),
->> +
->> +       MUX(0, "mout_sclk_spi3", mout_top0_group1, MUX_SEL_TOP0_PERIC2, 8, 2),
->> +       MUX(0, "mout_sclk_spi2", mout_top0_group1, MUX_SEL_TOP0_PERIC2, 20, 2),
->>         MUX(0, "mout_sclk_uart3", mout_top0_group1, MUX_SEL_TOP0_PERIC3, 4, 2),
->>         MUX(0, "mout_sclk_uart2", mout_top0_group1, MUX_SEL_TOP0_PERIC3, 8, 2),
->>         MUX(0, "mout_sclk_uart1", mout_top0_group1, MUX_SEL_TOP0_PERIC3, 12, 2),
->>         MUX(0, "mout_sclk_uart0", mout_top0_group1, MUX_SEL_TOP0_PERIC3, 16, 2),
->> +       MUX(0, "mout_sclk_spi4", mout_top0_group1, MUX_SEL_TOP0_PERIC3, 20, 2),
->>  };
->>
->>  static struct samsung_div_clock top0_div_clks[] __initdata = {
->> @@ -230,13 +248,29 @@ static struct samsung_div_clock top0_div_clks[] __initdata = {
->>         DIV(DOUT_ACLK_PERIC0, "dout_aclk_peric0_66", "mout_aclk_peric0_66",
->>                 DIV_TOP03, 20, 6),
->>
->> +       DIV(0, "dout_sclk_spi1", "mout_sclk_spi1", DIV_TOP0_PERIC1, 8, 12),
->> +       DIV(0, "dout_sclk_spi0", "mout_sclk_spi0", DIV_TOP0_PERIC1, 20, 12),
->> +
->> +       DIV(0, "dout_sclk_spi3", "mout_sclk_spi3", DIV_TOP0_PERIC2, 8, 12),
->> +       DIV(0, "dout_sclk_spi2", "mout_sclk_spi2", DIV_TOP0_PERIC2, 20, 12),
->> +
->>         DIV(0, "dout_sclk_uart3", "mout_sclk_uart3", DIV_TOP0_PERIC3, 4, 4),
->>         DIV(0, "dout_sclk_uart2", "mout_sclk_uart2", DIV_TOP0_PERIC3, 8, 4),
->>         DIV(0, "dout_sclk_uart1", "mout_sclk_uart1", DIV_TOP0_PERIC3, 12, 4),
->>         DIV(0, "dout_sclk_uart0", "mout_sclk_uart0", DIV_TOP0_PERIC3, 16, 4),
->> +       DIV(0, "dout_sclk_spi4", "mout_sclk_spi4", DIV_TOP0_PERIC3, 20, 12),
->>  };
->>
->>  static struct samsung_gate_clock top0_gate_clks[] __initdata = {
->> +       GATE(CLK_SCLK_SPI1, "sclk_spi1", "dout_sclk_spi1",
->> +               ENABLE_SCLK_TOP0_PERIC1, 8, CLK_SET_RATE_PARENT, 0),
->> +       GATE(CLK_SCLK_SPI0, "sclk_spi0", "dout_sclk_spi0",
->> +               ENABLE_SCLK_TOP0_PERIC1, 20, CLK_SET_RATE_PARENT, 0),
->> +
->> +       GATE(CLK_SCLK_SPI3, "sclk_spi3", "dout_sclk_spi3",
->> +               ENABLE_SCLK_TOP0_PERIC2, 8, CLK_SET_RATE_PARENT, 0),
->> +       GATE(CLK_SCLK_SPI2, "sclk_spi2", "dout_sclk_spi2",
->> +               ENABLE_SCLK_TOP0_PERIC2, 20, CLK_SET_RATE_PARENT, 0),
->>         GATE(CLK_SCLK_UART3, "sclk_uart3", "dout_sclk_uart3",
->>                 ENABLE_SCLK_TOP0_PERIC3, 4, 0, 0),
->>         GATE(CLK_SCLK_UART2, "sclk_uart2", "dout_sclk_uart2",
->> @@ -245,6 +279,8 @@ static struct samsung_gate_clock top0_gate_clks[] __initdata = {
->>                 ENABLE_SCLK_TOP0_PERIC3, 12, 0, 0),
->>         GATE(CLK_SCLK_UART0, "sclk_uart0", "dout_sclk_uart0",
->>                 ENABLE_SCLK_TOP0_PERIC3, 16, 0, 0),
->> +       GATE(CLK_SCLK_SPI4, "sclk_spi4", "dout_sclk_spi4",
->> +               ENABLE_SCLK_TOP0_PERIC3, 20, CLK_SET_RATE_PARENT, 0),
->>  };
->>
->>  static struct samsung_fixed_factor_clock top0_fixed_factor_clks[] __initdata = {
->> @@ -520,6 +556,7 @@ static void __init exynos7_clk_peric0_init(struct device_node *np)
->>  /* Register Offset definitions for CMU_PERIC1 (0x14C80000) */
->>  #define MUX_SEL_PERIC10                        0x0200
->>  #define MUX_SEL_PERIC11                        0x0204
->> +#define MUX_SEL_PERIC12                        0x0208
->>  #define ENABLE_PCLK_PERIC1             0x0900
->>  #define ENABLE_SCLK_PERIC10            0x0A00
->>
->> @@ -531,10 +568,16 @@ PNAME(mout_aclk_peric1_66_p)      = { "fin_pll", "dout_aclk_peric1_66" };
->>  PNAME(mout_sclk_uart1_p)       = { "fin_pll", "sclk_uart1" };
->>  PNAME(mout_sclk_uart2_p)       = { "fin_pll", "sclk_uart2" };
->>  PNAME(mout_sclk_uart3_p)       = { "fin_pll", "sclk_uart3" };
->> +PNAME(mout_sclk_spi0_p)                = { "fin_pll", "sclk_spi0" };
->> +PNAME(mout_sclk_spi1_p)                = { "fin_pll", "sclk_spi1" };
->> +PNAME(mout_sclk_spi2_p)                = { "fin_pll", "sclk_spi2" };
->> +PNAME(mout_sclk_spi3_p)                = { "fin_pll", "sclk_spi3" };
->> +PNAME(mout_sclk_spi4_p)                = { "fin_pll", "sclk_spi4" };
->>
->>  static unsigned long peric1_clk_regs[] __initdata = {
->>         MUX_SEL_PERIC10,
->>         MUX_SEL_PERIC11,
->> +       MUX_SEL_PERIC12,
->>         ENABLE_PCLK_PERIC1,
->>         ENABLE_SCLK_PERIC10,
->>  };
->> @@ -543,6 +586,16 @@ static struct samsung_mux_clock peric1_mux_clks[] __initdata = {
->>         MUX(0, "mout_aclk_peric1_66_user", mout_aclk_peric1_66_p,
->>                 MUX_SEL_PERIC10, 0, 1),
->>
->> +       MUX_F(0, "mout_sclk_spi0_user", mout_sclk_spi0_p,
->> +               MUX_SEL_PERIC11, 0, 1, CLK_SET_RATE_PARENT, 0),
->> +       MUX_F(0, "mout_sclk_spi1_user", mout_sclk_spi1_p,
->> +               MUX_SEL_PERIC11, 4, 1, CLK_SET_RATE_PARENT, 0),
->> +       MUX_F(0, "mout_sclk_spi2_user", mout_sclk_spi2_p,
->> +               MUX_SEL_PERIC11, 8, 1, CLK_SET_RATE_PARENT, 0),
->> +       MUX_F(0, "mout_sclk_spi3_user", mout_sclk_spi3_p,
->> +               MUX_SEL_PERIC11, 12, 1, CLK_SET_RATE_PARENT, 0),
->> +       MUX_F(0, "mout_sclk_spi4_user", mout_sclk_spi4_p,
->> +               MUX_SEL_PERIC11, 16, 1, CLK_SET_RATE_PARENT, 0),
->>         MUX(0, "mout_sclk_uart1_user", mout_sclk_uart1_p,
->>                 MUX_SEL_PERIC11, 20, 1),
->>         MUX(0, "mout_sclk_uart2_user", mout_sclk_uart2_p,
->> @@ -568,6 +621,16 @@ static struct samsung_gate_clock peric1_gate_clks[] __initdata = {
->>                 ENABLE_PCLK_PERIC1, 10, 0, 0),
->>         GATE(PCLK_UART3, "pclk_uart3", "mout_aclk_peric1_66_user",
->>                 ENABLE_PCLK_PERIC1, 11, 0, 0),
->> +       GATE(PCLK_SPI0, "pclk_spi0", "mout_aclk_peric1_66_user",
->> +               ENABLE_PCLK_PERIC1, 12, 0, 0),
->> +       GATE(PCLK_SPI1, "pclk_spi1", "mout_aclk_peric1_66_user",
->> +               ENABLE_PCLK_PERIC1, 13, 0, 0),
->> +       GATE(PCLK_SPI2, "pclk_spi2", "mout_aclk_peric1_66_user",
->> +               ENABLE_PCLK_PERIC1, 14, 0, 0),
->> +       GATE(PCLK_SPI3, "pclk_spi3", "mout_aclk_peric1_66_user",
->> +               ENABLE_PCLK_PERIC1, 15, 0, 0),
->> +       GATE(PCLK_SPI4, "pclk_spi4", "mout_aclk_peric1_66_user",
->> +               ENABLE_PCLK_PERIC1, 16, 0, 0),
->>
->>         GATE(SCLK_UART1, "sclk_uart1_user", "mout_sclk_uart1_user",
->>                 ENABLE_SCLK_PERIC10, 9, 0, 0),
->> @@ -575,6 +638,16 @@ static struct samsung_gate_clock peric1_gate_clks[] __initdata = {
->>                 ENABLE_SCLK_PERIC10, 10, 0, 0),
->>         GATE(SCLK_UART3, "sclk_uart3_user", "mout_sclk_uart3_user",
->>                 ENABLE_SCLK_PERIC10, 11, 0, 0),
->> +       GATE(SCLK_SPI0, "sclk_spi0_user", "mout_sclk_spi0_user",
->> +               ENABLE_SCLK_PERIC10, 12, CLK_SET_RATE_PARENT, 0),
->> +       GATE(SCLK_SPI1, "sclk_spi1_user", "mout_sclk_spi1_user",
->> +               ENABLE_SCLK_PERIC10, 13, CLK_SET_RATE_PARENT, 0),
->> +       GATE(SCLK_SPI2, "sclk_spi2_user", "mout_sclk_spi2_user",
->> +               ENABLE_SCLK_PERIC10, 14, CLK_SET_RATE_PARENT, 0),
->> +       GATE(SCLK_SPI3, "sclk_spi3_user", "mout_sclk_spi3_user",
->> +               ENABLE_SCLK_PERIC10, 15, CLK_SET_RATE_PARENT, 0),
->> +       GATE(SCLK_SPI4, "sclk_spi4_user", "mout_sclk_spi4_user",
->> +               ENABLE_SCLK_PERIC10, 16, CLK_SET_RATE_PARENT, 0),
->>  };
->>
->>  static struct samsung_cmu_info peric1_cmu_info __initdata = {
->> diff --git a/include/dt-bindings/clock/exynos7-clk.h b/include/dt-bindings/clock/exynos7-clk.h
->> index a6c4d8e..3bba9ec 100644
->> --- a/include/dt-bindings/clock/exynos7-clk.h
->> +++ b/include/dt-bindings/clock/exynos7-clk.h
->> @@ -26,7 +26,13 @@
->>  #define CLK_SCLK_UART1                 4
->>  #define CLK_SCLK_UART2                 5
->>  #define CLK_SCLK_UART3                 6
->> -#define TOP0_NR_CLK                    7
->> +#define CLK_SCLK_SPI0                  7
->> +#define CLK_SCLK_SPI1                  8
->> +#define CLK_SCLK_SPI2                  9
->> +#define CLK_SCLK_SPI3                  10
->> +#define CLK_SCLK_SPI4                  11
->> +#define CLK_SCLK_SPI5                  12
->
-> I don't see this CLK_SCLK_SPI5 being used anywhere in the patch.
-> Possibly you didn't want to add it here.
->
->> +#define TOP0_NR_CLK                    13
->>
->>  /* TOP1 */
->>  #define DOUT_ACLK_FSYS1_200            1
->> @@ -70,7 +76,19 @@
->>  #define PCLK_HSI2C6                    9
->>  #define PCLK_HSI2C7                    10
->>  #define PCLK_HSI2C8                    11
->> -#define PERIC1_NR_CLK                  12
->> +#define PCLK_SPI0                      12
->> +#define PCLK_SPI1                      13
->> +#define PCLK_SPI2                      14
->> +#define PCLK_SPI3                      15
->> +#define PCLK_SPI4                      16
->> +#define PCLK_SPI5                      17
->> +#define SCLK_SPI0                      18
->> +#define SCLK_SPI1                      19
->> +#define SCLK_SPI2                      20
->> +#define SCLK_SPI3                      21
->> +#define SCLK_SPI4                      22
->> +#define SCLK_SPI5                      23
->
-> Same here for SCLK_SPI5, unused in the patch.
->
-> [snip]
->
-> The rest all looks good in this patch. I have also verified from the Exynos7 UM.
+[adding Marek, Sjoerd and Joonyoung that were discussing about iommu
+support in another thread]
 
-missed it earlier. You may also want to add update documentation for
-clock sources
-of peric1 block.
+Hello Hongbo,
 
+On Fri, Jan 9, 2015 at 8:31 AM, Hongbo Zhang <hongbo.zhang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> Add linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org mailing list.
+>
+> On 7 January 2015 at 18:31, Hongbo Zhang <hongbo.zhang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+>> Hi Cho KyongHo, Joerg et al,
+>> I found the latest Exynos IOMMU driver doesn't work, the line 481:
+>> BUG_ON(!has_sysmmu(dev));
+>> in function __exynos_sysmmu_enable() in file exynos-iommu.c triggers
+>> kernel panic.
+>>
+>> Then I found the dev->archdata.iommu isn't initialized at all, it
+>> should be the root cause.
+>>
 
--- 
-Best Regards
-Vivek Gautam
-Samsung R&D Institute, Bangalore
-India
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+That's correct, I found the same the other day since and thought about
+posting a patch to return -ENODEV if !has_sysmmu(dev) instead to avoid
+the driver to panic the kernel. But then I realized this is already
+fixed in Marek's "[PATCH v3 00/19] Exynos SYSMMU (IOMMU) integration
+with DT and DMA-mapping subsystem" series [0].
+
+>> Another problem is this driver is added support of device tree, but
+>> there is no device tree nodes in the dts file, so I had to search from
+>> internet and added those nodes manually.
+>>
+>> I've found these links of v12 and v13 patches
+>> https://lkml.org/lkml/2014/4/27/171
+>> https://lkml.org/lkml/2014/5/12/34
+>> patch v13 was merged into mainline kernel, but as a part of v12, it
+>> isn't complete and doesn't work alone, eg dts nodes are missing.
+>> (I didn't research much dev->archdata.iommu initialization error is
+>> introduced by which patch, but it seems in very old codes there is no
+>> such problem)
+>>
+
+Yes, please take a look to Marek series [0]. Keep in mind that the
+series does not support all sysmmu revisions so IOMMU is not supported
+for some SoCs (e.g: Exynos5). Support for that is planned once that
+series land into mainline though [1].
+
+May I ask why are you interested in IOMMU support on Exynos? I'm
+asking because the reason why I tried to enable IOMMU support (and hit
+the same issue) was to try using the Exynos DRM HDMI driver with IOMMU
+since I found that HDMI is working on the downstream Samsung kernel
+[2] that has IOMMU support, but is not working on mainline.
+
+At the end the HDMI problem seems to not be IOMMU related but
+something with the power domains and clocking but in case you are
+facing the same issue, you may be interested in that discussion [3].
+
+Best regards,
+Javier
+
+[0]: http://www.spinics.net/lists/linux-samsung-soc/msg39168.html
+[1]: http://www.spinics.net/lists/linux-samsung-soc/msg39980.html
+[2]: git-9UaJU3cA/F/QT0dZR+AlfA@public.gmane.org:exynos-reference/kernel.git
+[3]: http://www.spinics.net/lists/linux-samsung-soc/msg40828.html
