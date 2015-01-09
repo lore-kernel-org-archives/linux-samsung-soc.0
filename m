@@ -1,419 +1,112 @@
-From: Stefan Agner <stefan@agner.ch>
-Subject: Re: [PATCH v2 14/21] ARM: imx6: convert GPC to stacked domains
-Date: Fri, 09 Jan 2015 18:40:38 +0100
-Message-ID: <e8cdeef8763e808940d08f4c1b12b71c@agner.ch>
-References: <1420652576-22309-1-git-send-email-marc.zyngier@arm.com>
- <1420652576-22309-15-git-send-email-marc.zyngier@arm.com>
+From: Paul Zimmerman <Paul.Zimmerman@synopsys.com>
+Subject: RE: [PATCH v3 00/30] usb: updates for dwc2 gadget driver
+Date: Fri, 9 Jan 2015 20:35:19 +0000
+Message-ID: <A2CA0424C0A6F04399FB9E1CD98E0304845066AC@US01WEMBX2.internal.synopsys.com>
+References: <1420807150-27022-1-git-send-email-yousaf.kaukab@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <1420652576-22309-15-git-send-email-marc.zyngier@arm.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Benoit Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtprelay.synopsys.com ([198.182.60.111]:38071 "EHLO
+	smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751137AbbAIUfV convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 9 Jan 2015 15:35:21 -0500
+In-Reply-To: <1420807150-27022-1-git-send-email-yousaf.kaukab@intel.com>
+Content-Language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Mian Yousaf Kaukab <yousaf.kaukab@intel.com>
+Cc: "gregory.herrero@intel.com" <gregory.herrero@intel.com>, "sergei.shtylyov@cogentembedded.com" <sergei.shtylyov@cogentembedded.com>, "r.baldyga@samsung.com" <r.baldyga@samsung.com>, "dinguyen@opensource.altera.com" <dinguyen@opensource.altera.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "balbi@ti.com" <balbi@ti.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Marc,
+CCing more of the Samsung folks and linux-kernel.
 
-On 2015-01-07 18:42, Marc Zyngier wrote:
-> IMX6 has been (ab)using the gic_arch_extn to provide
-> wakeup from suspend, and it makes a lot of sense to convert
-> this code to use stacked domains instead.
+Robert, Marek, can you test this series on your platform, please? If
+I don't hear from you soon, I'll just ack it and we can deal with any
+breakage later.
+
+-- 
+Paul
+
+> From: Mian Yousaf Kaukab [mailto:yousaf.kaukab@intel.com]
+> Sent: Friday, January 09, 2015 4:39 AM
 > 
-> This patch does just this, updating the DT files to actually
-> reflect what the HW provides.
+> Hi,
+> This patchset consists of various bug fixes and feature enhancements for the
+> dwc2 gadget driver. All the patches are verified on dwc2 v3.0a with dedicated
+> fifos. Main focus of testing was with dma enabled. Although basic testing
+> without dma was also done.
 > 
-> BIG FAT WARNING: because the DTs were so far lying by not
-> exposing the fact that the GPC block is actually the first
-> interrupt controller in the chain, kernels with this patch
-> applied wont have any suspend-resume facility when booted
-> with old DTs, and old kernels with updated DTs won't even boot.
+> It is based on testing/next branch in Felipe's git and
 > 
-> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-> ---
->  arch/arm/boot/dts/imx6qdl.dtsi  |   6 +-
->  arch/arm/boot/dts/imx6sl.dtsi   |   5 +-
->  arch/arm/boot/dts/imx6sx.dtsi   |   5 +-
->  arch/arm/mach-imx/common.h      |   1 -
->  arch/arm/mach-imx/gpc.c         | 127 ++++++++++++++++++++++++++++++++--------
->  arch/arm/mach-imx/mach-imx6q.c  |   1 -
->  arch/arm/mach-imx/mach-imx6sl.c |   1 -
->  arch/arm/mach-imx/mach-imx6sx.c |   1 -
->  8 files changed, 116 insertions(+), 31 deletions(-)
+> Tested-by: Dinh Nguyen <dinguyen@opensource.altera.com>
 > 
-> diff --git a/arch/arm/boot/dts/imx6qdl.dtsi b/arch/arm/boot/dts/imx6qdl.dtsi
-> index 4fc03b7..c16d428 100644
-> --- a/arch/arm/boot/dts/imx6qdl.dtsi
-> +++ b/arch/arm/boot/dts/imx6qdl.dtsi
-> @@ -53,6 +53,7 @@
->  		interrupt-controller;
->  		reg = <0x00a01000 0x1000>,
->  		      <0x00a00100 0x100>;
-> +		interrupt-parent = <&intc>;
->  	};
->  
->  	clocks {
-> @@ -82,7 +83,7 @@
->  		#address-cells = <1>;
->  		#size-cells = <1>;
->  		compatible = "simple-bus";
-> -		interrupt-parent = <&intc>;
-> +		interrupt-parent = <&gpc>;
->  		ranges;
->  
->  		dma_apbh: dma-apbh@00110000 {
-> @@ -122,6 +123,7 @@
->  			compatible = "arm,cortex-a9-twd-timer";
->  			reg = <0x00a00600 0x20>;
->  			interrupts = <1 13 0xf01>;
-> +			interrupt-parent = <&intc>;
->  			clocks = <&clks IMX6QDL_CLK_TWD>;
->  		};
->  
-> @@ -694,8 +696,10 @@
->  			gpc: gpc@020dc000 {
->  				compatible = "fsl,imx6q-gpc";
->  				reg = <0x020dc000 0x4000>;
-> +				interrupt-controller;
-
-#interrupt-cells = <3>; is missing here.
-
-I tested the patchset on a Colibri iMX6, but the module stopped booting
-at some point. No error, no warn, but it looked like IRQ's are not
-working:
-
-[    1.623939] platform sound: Driver imx-sgtl5000 requests probe
-deferral
-[    1.630677] backlight supply power not found, using dummy regulator
-[    1.637067] pwm-backlight backlight: unable to request PWM, trying
-legacy API
-[    1.644271] pwm-backlight backlight: unable to request legacy PWM
-[    1.650534] platform backlight: Driver pwm-backlight requests probe
-deferral
-[    1.658080] platform 2028000.ssi: Driver fsl-ssi-dai requests probe
-deferral
-[    1.665441] fec 2188000.ethernet eth0: Freescale FEC PHY driver
-[Micrel KSZ8041] (mii_bus:phy_addr=2188000.ethernet:00, irq=-1)
-[    1.677157] IPv6: ADDRCONF(NETDEV_UP): eth0: link is not ready
-[freeze]
-
-I figured out that the GPC code did not get called. After digging
-through the parsing code, I found the reason: irq_find_host always opted
-to intc because this was missing... So, interrupt-cells mandatory for
-all interrupt-controller? Maybe we could add a warn somewhere..?
-
-With that in place, it worked fine:
-
-Tested-by: Stefan Agner <stefan@agner.ch>
-
->  				interrupts = <0 89 IRQ_TYPE_LEVEL_HIGH>,
->  					     <0 90 IRQ_TYPE_LEVEL_HIGH>;
-> +				interrupt-parent = <&intc>;
->  			};
->  
->  			gpr: iomuxc-gpr@020e0000 {
-> diff --git a/arch/arm/boot/dts/imx6sl.dtsi b/arch/arm/boot/dts/imx6sl.dtsi
-> index 36ab8e0..35099b7 100644
-> --- a/arch/arm/boot/dts/imx6sl.dtsi
-> +++ b/arch/arm/boot/dts/imx6sl.dtsi
-> @@ -72,6 +72,7 @@
->  		interrupt-controller;
->  		reg = <0x00a01000 0x1000>,
->  		      <0x00a00100 0x100>;
-> +		interrupt-parent = <&intc>;
->  	};
->  
->  	clocks {
-> @@ -95,7 +96,7 @@
->  		#address-cells = <1>;
->  		#size-cells = <1>;
->  		compatible = "simple-bus";
-> -		interrupt-parent = <&intc>;
-> +		interrupt-parent = <&gpc>;
->  		ranges;
->  
->  		ocram: sram@00900000 {
-> @@ -603,7 +604,9 @@
->  			gpc: gpc@020dc000 {
->  				compatible = "fsl,imx6sl-gpc", "fsl,imx6q-gpc";
->  				reg = <0x020dc000 0x4000>;
-> +				interrupt-controller;
->  				interrupts = <0 89 IRQ_TYPE_LEVEL_HIGH>;
-> +				interrupt-parent = <&intc>;
->  			};
->  
->  			gpr: iomuxc-gpr@020e0000 {
-> diff --git a/arch/arm/boot/dts/imx6sx.dtsi b/arch/arm/boot/dts/imx6sx.dtsi
-> index 7a24fee..c476e67 100644
-> --- a/arch/arm/boot/dts/imx6sx.dtsi
-> +++ b/arch/arm/boot/dts/imx6sx.dtsi
-> @@ -88,6 +88,7 @@
->  		interrupt-controller;
->  		reg = <0x00a01000 0x1000>,
->  		      <0x00a00100 0x100>;
-> +		interrupt-parent = <&intc>;
->  	};
->  
->  	clocks {
-> @@ -131,7 +132,7 @@
->  		#address-cells = <1>;
->  		#size-cells = <1>;
->  		compatible = "simple-bus";
-> -		interrupt-parent = <&intc>;
-> +		interrupt-parent = <&gpc>;
->  		ranges;
->  
->  		pmu {
-> @@ -700,7 +701,9 @@
->  			gpc: gpc@020dc000 {
->  				compatible = "fsl,imx6sx-gpc", "fsl,imx6q-gpc";
->  				reg = <0x020dc000 0x4000>;
-> +				interrupt-controller;
->  				interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
-> +				interrupt-parent = <&intc>;
->  			};
->  
->  			iomuxc: iomuxc@020e0000 {
-> diff --git a/arch/arm/mach-imx/common.h b/arch/arm/mach-imx/common.h
-> index cfcdb62..7052302 100644
-> --- a/arch/arm/mach-imx/common.h
-> +++ b/arch/arm/mach-imx/common.h
-> @@ -102,7 +102,6 @@ static inline void imx_scu_map_io(void) {}
->  static inline void imx_smp_prepare(void) {}
->  #endif
->  void imx_src_init(void);
-> -void imx_gpc_init(void);
->  void imx_gpc_pre_suspend(bool arm_power_off);
->  void imx_gpc_post_resume(void);
->  void imx_gpc_mask_all(void);
-> diff --git a/arch/arm/mach-imx/gpc.c b/arch/arm/mach-imx/gpc.c
-> index 5f3602e..240109b 100644
-> --- a/arch/arm/mach-imx/gpc.c
-> +++ b/arch/arm/mach-imx/gpc.c
-> @@ -22,6 +22,7 @@
->  #define GPC_PGC_CPU_PDN		0x2a0
->  
->  #define IMR_NUM			4
-> +#define GPC_MAX_IRQS		(IMR_NUM * 32)
->  
->  static void __iomem *gpc_base;
->  static u32 gpc_wake_irqs[IMR_NUM];
-> @@ -56,17 +57,17 @@ void imx_gpc_post_resume(void)
->  
->  static int imx_gpc_irq_set_wake(struct irq_data *d, unsigned int on)
->  {
-> -	unsigned int idx = d->hwirq / 32 - 1;
-> +	unsigned int idx = d->hwirq / 32;
->  	u32 mask;
->  
-> -	/* Sanity check for SPI irq */
-> -	if (d->hwirq < 32)
-> -		return -EINVAL;
-> -
->  	mask = 1 << d->hwirq % 32;
->  	gpc_wake_irqs[idx] = on ? gpc_wake_irqs[idx] | mask :
->  				  gpc_wake_irqs[idx] & ~mask;
->  
-> +	/*
-> +	 * Do *not* call into the parent, as the GIC doesn't have any
-> +	 * wake-up facility...
-> +	 */
->  	return 0;
->  }
->  
-> @@ -96,7 +97,7 @@ void imx_gpc_hwirq_unmask(unsigned int hwirq)
->  	void __iomem *reg;
->  	u32 val;
->  
-> -	reg = gpc_base + GPC_IMR1 + (hwirq / 32 - 1) * 4;
-> +	reg = gpc_base + GPC_IMR1 + hwirq / 32 * 4;
->  	val = readl_relaxed(reg);
->  	val &= ~(1 << hwirq % 32);
->  	writel_relaxed(val, reg);
-> @@ -107,7 +108,7 @@ void imx_gpc_hwirq_mask(unsigned int hwirq)
->  	void __iomem *reg;
->  	u32 val;
->  
-> -	reg = gpc_base + GPC_IMR1 + (hwirq / 32 - 1) * 4;
-> +	reg = gpc_base + GPC_IMR1 + hwirq / 32 * 4;
->  	val = readl_relaxed(reg);
->  	val |= 1 << (hwirq % 32);
->  	writel_relaxed(val, reg);
-> @@ -115,37 +116,115 @@ void imx_gpc_hwirq_mask(unsigned int hwirq)
->  
->  static void imx_gpc_irq_unmask(struct irq_data *d)
->  {
-> -	/* Sanity check for SPI irq */
-> -	if (d->hwirq < 32)
-> -		return;
-> -
->  	imx_gpc_hwirq_unmask(d->hwirq);
-> +	irq_chip_unmask_parent(d);
->  }
->  
->  static void imx_gpc_irq_mask(struct irq_data *d)
->  {
-> -	/* Sanity check for SPI irq */
-> -	if (d->hwirq < 32)
-> -		return;
-> -
->  	imx_gpc_hwirq_mask(d->hwirq);
-> +	irq_chip_mask_parent(d);
-> +}
-
-This two function end up very small, can't we just alter
-imx_gpc_hwirq_unmask to use struct irq_data directly?
-
-Code looks fine to me:
-
-Acked-by: Stefan Agner <stefan@agner.ch>
-
-> +
-> +static struct irq_chip imx_gpc_chip = {
-> +	.name		= "GPC",
-> +	.irq_eoi	= irq_chip_eoi_parent,
-> +	.irq_mask	= imx_gpc_irq_mask,
-> +	.irq_unmask	= imx_gpc_irq_unmask,
-> +	.irq_retrigger	= irq_chip_retrigger_hierarchy,
-> +	.irq_set_wake	= imx_gpc_irq_set_wake,
-> +};
-> +
-> +static int imx_gpc_domain_xlate(struct irq_domain *domain,
-> +				struct device_node *controller,
-> +				const u32 *intspec,
-> +				unsigned int intsize,
-> +				unsigned long *out_hwirq,
-> +				unsigned int *out_type)
-> +{
-> +	if (domain->of_node != controller)
-> +		return -EINVAL;	/* Shouldn't happen, really... */
-> +	if (intsize != 3)
-> +		return -EINVAL;	/* Not GIC compliant */
-> +	if (intspec[0] != 0)
-> +		return -EINVAL;	/* No PPI should point to this domain */
-> +
-> +	*out_hwirq = intspec[1];
-> +	*out_type = intspec[2];
-> +	return 0;
-> +}
-> +
-> +static int imx_gpc_domain_alloc(struct irq_domain *domain,
-> +				  unsigned int virq,
-> +				  unsigned int nr_irqs, void *data)
-> +{
-> +	struct of_phandle_args *args = data;
-> +	struct of_phandle_args parent_args;
-> +	irq_hw_number_t hwirq;
-> +	int i;
-> +
-> +	if (args->args_count != 3)
-> +		return -EINVAL;	/* Not GIC compliant */
-> +	if (args->args[0] != 0)
-> +		return -EINVAL;	/* No PPI should point to this domain */
-> +
-> +	hwirq = args->args[1];
-> +	if (hwirq >= GPC_MAX_IRQS)
-> +		return -EINVAL;	/* Can't deal with this */
-> +
-> +	for (i = 0; i < nr_irqs; i++)
-> +		irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
-> +					      &imx_gpc_chip, NULL);
-> +
-> +	parent_args = *args;
-> +	parent_args.np = domain->parent->of_node;
-> +	return irq_domain_alloc_irqs_parent(domain, virq, nr_irqs, &parent_args);
->  }
->  
-> -void __init imx_gpc_init(void)
-> +static struct irq_domain_ops imx_gpc_domain_ops = {
-> +	.xlate	= imx_gpc_domain_xlate,
-> +	.alloc	= imx_gpc_domain_alloc,
-> +	.free	= irq_domain_free_irqs_common,
-> +};
-> +
-> +static int __init imx_gpc_init(struct device_node *node,
-> +			       struct device_node *parent)
->  {
-> -	struct device_node *np;
-> +	struct irq_domain *parent_domain, *domain;
->  	int i;
->  
-> -	np = of_find_compatible_node(NULL, NULL, "fsl,imx6q-gpc");
-> -	gpc_base = of_iomap(np, 0);
-> -	WARN_ON(!gpc_base);
-> +	if (!parent) {
-> +		pr_err("%s: no parent, giving up\n", node->full_name);
-> +		return -ENODEV;
-> +	}
-> +
-> +	parent_domain = irq_find_host(parent);
-> +	if (!parent_domain) {
-> +		pr_err("%s: unable to obtain parent domain\n", node->full_name);
-> +		return -ENXIO;
-> +	}
-> +
-> +	gpc_base = of_iomap(node, 0);
-> +	if (WARN_ON(!gpc_base))
-> +	        return -ENOMEM;
-> +
-> +	domain = irq_domain_add_hierarchy(parent_domain, 0, GPC_MAX_IRQS,
-> +					  node, &imx_gpc_domain_ops,
-> +					  NULL);
-> +	if (!domain) {
-> +		iounmap(gpc_base);
-> +		return -ENOMEM;
-> +	}
->  
->  	/* Initially mask all interrupts */
->  	for (i = 0; i < IMR_NUM; i++)
->  		writel_relaxed(~0, gpc_base + GPC_IMR1 + i * 4);
->  
-> -	/* Register GPC as the secondary interrupt controller behind GIC */
-> -	gic_arch_extn.irq_mask = imx_gpc_irq_mask;
-> -	gic_arch_extn.irq_unmask = imx_gpc_irq_unmask;
-> -	gic_arch_extn.irq_set_wake = imx_gpc_irq_set_wake;
-> +	return 0;
->  }
-> +
-> +/*
-> + * We cannot use the IRQCHIP_DECLARE macro that lives in
-> + * drivers/irqchip, so we're forced to roll our own. Not very nice.
-> + */
-> +OF_DECLARE_2(irqchip, imx_gpc, "fsl,imx6q-gpc", imx_gpc_init);
-> diff --git a/arch/arm/mach-imx/mach-imx6q.c b/arch/arm/mach-imx/mach-imx6q.c
-> index 5057d61..bbe6ff8 100644
-> --- a/arch/arm/mach-imx/mach-imx6q.c
-> +++ b/arch/arm/mach-imx/mach-imx6q.c
-> @@ -390,7 +390,6 @@ static void __init imx6q_init_irq(void)
->  	imx_init_revision_from_anatop();
->  	imx_init_l2cache();
->  	imx_src_init();
-> -	imx_gpc_init();
->  	irqchip_init();
->  }
->  
-> diff --git a/arch/arm/mach-imx/mach-imx6sl.c b/arch/arm/mach-imx/mach-imx6sl.c
-> index 24bfaaf..d39c274 100644
-> --- a/arch/arm/mach-imx/mach-imx6sl.c
-> +++ b/arch/arm/mach-imx/mach-imx6sl.c
-> @@ -64,7 +64,6 @@ static void __init imx6sl_init_irq(void)
->  	imx_init_revision_from_anatop();
->  	imx_init_l2cache();
->  	imx_src_init();
-> -	imx_gpc_init();
->  	irqchip_init();
->  }
->  
-> diff --git a/arch/arm/mach-imx/mach-imx6sx.c b/arch/arm/mach-imx/mach-imx6sx.c
-> index 7a96c65..72fa22d 100644
-> --- a/arch/arm/mach-imx/mach-imx6sx.c
-> +++ b/arch/arm/mach-imx/mach-imx6sx.c
-> @@ -84,7 +84,6 @@ static void __init imx6sx_init_irq(void)
->  	imx_init_revision_from_anatop();
->  	imx_init_l2cache();
->  	imx_src_init();
-> -	imx_gpc_init();
->  	irqchip_init();
->  }
-
+> Thank you,
+> 
+> Best regards,
+> Yousaf
+> 
+> History:
+> v3:
+>  - Fixed comment from Sergei Shtylyov
+>  - Updated "usb: dwc2: gadget: don't process XferCompl on setup packet" to
+>    apply the check on endpoint 0 only.
+>  - Fixed regression in "usb: dwc2: gadget: manage ep0 state in software" for
+>    dwc2 ip v2.93a, found by Dinh Nguyen.
+> 
+> v2:
+>  - Rebased to Felipe's testing/next with https://lkml.org/lkml/2014/12/16/135
+>    applied on top.
+>  - Fixed comments from  Robert Baldyga
+>  - Some cosmetic changes
+>  - Replaced usb: dwc2: gadget: process setup packet on transfer complete
+>    with
+>    usb: dwc2: gadget: don't process XferCompl on setup packet
+>  - Updated usb: dwc2: gadget: provide gadget handle to the phy
+>    so that otg_set_peripheral is called in both udc_start and udc_stop.
+> 
+> v1:
+>  - Addressed comments from Sergei Shtylyov
+> 
+> Gregory Herrero (13):
+>   usb: dwc2: gadget: register gadget handle to the phy
+>   usb: dwc2: gadget: write correct value in ahbcfg register
+>   usb: dwc2: gadget: don't erase gahbcfg register when enabling dma
+>   usb: dwc2: gadget: add device tree property to enable dma
+>   Documentation: dt-bindings: add dt binding info for dwc2 g-use-dma
+>   usb: dwc2: gadget: configure fifos from device tree
+>   Documentation: dt-bindings: add dt binding info for dwc2 fifo resizing
+>   usb: dwc2: gadget: don't block after fifo flush timeout
+>   usb: dwc2: gadget: add vbus_session support
+>   usb: dwc2: gadget: reset fifo_map when initializing fifos
+>   usb: dwc2: gadget: fix pullup handling
+>   usb: dwc2: gadget: add vbus_draw support
+>   usb: dwc2: gadget: force gadget initialization in dev mode
+> 
+> Mian Yousaf Kaukab (17):
+>   usb: dwc2: gadget: mask fifo empty irq with dma
+>   usb: dwc2: gadget: don't process XferCompl on setup packet
+>   usb: dwc2: gadget: don't embed ep0 buffers
+>   usb: dwc2: gadget: fix error path in dwc2_gadget_init
+>   usb: dwc2: gadget: add bi-directional endpoint support
+>   usb: dwc2: gadget: check interrupts for all endpoints
+>   usb: dwc2: gadget: remove unused members from hsotg_req
+>   usb: dwc2: gadget: fix debug loop limits
+>   usb: dwc2: gadget: consider all tx fifos
+>   usb: dwc2: gadget: kill requests after disabling ep
+>   usb: dwc2: gadget: manage ep0 state in software
+>   usb: dwc2: gadget: fix zero length packet transfers
+>   usb: dwc2: gadget: dont warn if endpoint is not enabled
+>   usb: dwc2: gadget: rename sent_zlp to send_zlp
+>   usb: dwc2: gadget: pick smallest acceptable fifo
+>   usb: dwc2: gadget: fix fifo allocation leak
+>   usb: dwc2: gadget: report disconnection after reset
+> 
+>  Documentation/devicetree/bindings/usb/dwc2.txt |   4 +
+>  drivers/usb/dwc2/core.h                        |  46 +-
+>  drivers/usb/dwc2/gadget.c                      | 792 ++++++++++++++++---------
+>  drivers/usb/dwc2/hw.h                          |   1 +
+>  4 files changed, 556 insertions(+), 287 deletions(-)
+> 
+> --
+> 1.9.1
