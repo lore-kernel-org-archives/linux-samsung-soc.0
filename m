@@ -1,46 +1,51 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH RFT 1/2] drivers: bus: check cci device tree node status
-Date: Fri, 09 Jan 2015 10:40:42 +0530
-Message-ID: <54AF62D2.7000400@arm.com>
-References: <1417186209-5256-1-git-send-email-a.kesavan@samsung.com>	<CAM4voakjWgnEXoXT1LH2ZFBy=U4vfXFXS1Su8VB7Cd3s3wqmSA@mail.gmail.com>	<5487C897.9050405@arm.com>	<CAM4voa=TQeOMTHmM2iBquDRwoEFPAgUFeMwJ73H4qdcSmR1Lug@mail.gmail.com>	<5487D726.6000603@arm.com>	<54AE278F.4020003@arm.com> <CAM4voamaqoje8Ccz3+UxvxaHN6GBd=QC5wRjVcz9Osfc=4aeiw@mail.gmail.com>
+From: Hongbo Zhang <hongbo.zhang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: Exynos IOMMU driver doesn't work?
+Date: Fri, 9 Jan 2015 15:31:18 +0800
+Message-ID: <CAOhR-w1gH6zzSZcw-0Lo0zc+p1Mt0=4aqWEZ0Agz4xw0uHsq7A@mail.gmail.com>
+References: <CAOhR-w2vQbyYrWsvZjs-Pt6tU6m9BmH-T5tuBDSyUXteWgxP0Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:59945 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751108AbbAIFKw convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Jan 2015 00:10:52 -0500
-In-Reply-To: <CAM4voamaqoje8Ccz3+UxvxaHN6GBd=QC5wRjVcz9Osfc=4aeiw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <CAOhR-w2vQbyYrWsvZjs-Pt6tU6m9BmH-T5tuBDSyUXteWgxP0Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org, pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Abhilash Kesavan <kesavan.abhilash@gmail.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kevin Hilman <khilman@kernel.org>, "nicolas.pitre@linaro.org" <nicolas.pitre@linaro.org>, Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, Punit Agrawal <Punit.Agrawal@arm.com>, Will Deacon <Will.Deacon@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, =?UTF-8?B?S3J6eXN6dG9mIEtvesWCb3dza2k=?= <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Douglas Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
+Add linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org mailing list.
 
-
-On Thursday 08 January 2015 08:57 PM, Abhilash Kesavan wrote:
-> Hi Sudeep,
+On 7 January 2015 at 18:31, Hongbo Zhang <hongbo.zhang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> Hi Cho KyongHo, Joerg et al,
+> I found the latest Exynos IOMMU driver doesn't work, the line 481:
+> BUG_ON(!has_sysmmu(dev));
+> in function __exynos_sysmmu_enable() in file exynos-iommu.c triggers
+> kernel panic.
 >
-> On Thu, Jan 8, 2015 at 12:15 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
->> Hi Abhilash,
-
-[...]
-
->>
->> What's the status of this patch. It was useful for me on vexpress for some
->> testing. Please feel free to add
->>
->> Tested-by: Sudeep Holla <sudeep.holla@arm.com>
->>
->> if this is not yet queued.
+> Then I found the dev->archdata.iommu isn't initialized at all, it
+> should be the root cause.
 >
-> Thanks for the tested-by. This patch has not been merged yet; I am not
-> quite sure who is supposed to pick this up.
+> Am I right? any comment, solution?
 >
-
-So far, most of the CCI patches are merged through arm-soc.
-
-Regards,
-Sudeep
+> Another problem is this driver is added support of device tree, but
+> there is no device tree nodes in the dts file, so I had to search from
+> internet and added those nodes manually.
+>
+> I've found these links of v12 and v13 patches
+> https://lkml.org/lkml/2014/4/27/171
+> https://lkml.org/lkml/2014/5/12/34
+> patch v13 was merged into mainline kernel, but as a part of v12, it
+> isn't complete and doesn't work alone, eg dts nodes are missing.
+> (I didn't research much dev->archdata.iommu initialization error is
+> introduced by which patch, but it seems in very old codes there is no
+> such problem)
+>
+> Thanks.
