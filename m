@@ -1,53 +1,88 @@
-From: Abhilash Kesavan <a.kesavan@samsung.com>
-Subject: [PATCH 1/2] drivers: bus: check cci device tree node status
-Date: Sat, 10 Jan 2015 08:41:35 +0530
-Message-ID: <1420859496-27533-1-git-send-email-a.kesavan@samsung.com>
+From: Abhilash Kesavan <kesavan.abhilash@gmail.com>
+Subject: Re: [PATCH RFT 1/2] drivers: bus: check cci device tree node status
+Date: Sat, 10 Jan 2015 08:51:27 +0530
+Message-ID: <CAM4voa=cbMDW=b4sESpGb0S+0tHYw06LC94P_=sxJo4CMYXtng@mail.gmail.com>
+References: <1417186209-5256-1-git-send-email-a.kesavan@samsung.com>
+	<CAM4voakjWgnEXoXT1LH2ZFBy=U4vfXFXS1Su8VB7Cd3s3wqmSA@mail.gmail.com>
+	<5487C897.9050405@arm.com>
+	<CAM4voa=TQeOMTHmM2iBquDRwoEFPAgUFeMwJ73H4qdcSmR1Lug@mail.gmail.com>
+	<5487D726.6000603@arm.com>
+	<54AE278F.4020003@arm.com>
+	<CAM4voamaqoje8Ccz3+UxvxaHN6GBd=QC5wRjVcz9Osfc=4aeiw@mail.gmail.com>
+	<54AF62D2.7000400@arm.com>
+	<CAM4voamN1A-sqCDR2bT5rHRBARH2SmfA1wYkXZRn9oi-4-Gj8g@mail.gmail.com>
+	<7hfvbjvexn.fsf@deeprootsystems.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:62950 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753495AbbAJDTL (ORCPT
+Received: from mail-qg0-f45.google.com ([209.85.192.45]:37360 "EHLO
+	mail-qg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753099AbbAJDV2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Jan 2015 22:19:11 -0500
-Received: from epcpsbgr4.samsung.com
- (u144.gpu120.samsung.co.kr [203.254.230.144])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NHX0005JYJXSCA0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 10 Jan 2015 12:19:09 +0900 (KST)
+	Fri, 9 Jan 2015 22:21:28 -0500
+Received: by mail-qg0-f45.google.com with SMTP id z107so11796973qgd.4
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Jan 2015 19:21:27 -0800 (PST)
+In-Reply-To: <7hfvbjvexn.fsf@deeprootsystems.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, arm@kernel.org, arnd@arndb.de, khilman@kernel.org, olof@lixom.net
-Cc: linux-samsung-soc@vger.kernel.org, kesavan.abhilash@gmail.com, sudeep.holla@arm.com, nicolas.pitre@linaro.org, Punit.Agrawal@arm.com, Will.Deacon@arm.com, Mark.Rutland@arm.com, k.kozlowski@samsung.com
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, "nicolas.pitre@linaro.org" <nicolas.pitre@linaro.org>, Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>, Punit Agrawal <Punit.Agrawal@arm.com>, Will Deacon <Will.Deacon@arm.com>, Mark Rutland <Mark.Rutland@arm.com>, =?UTF-8?Q?Krzysztof_Koz=C5=82owski?= <k.kozlowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Douglas Anderson <dianders@chromium.org>, Kukjin Kim <kgene@kernel.org>, Olof Johansson <olof@lixom.net>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-The arm-cci driver completes the probe sequence even if the cci node is
-marked as disabled. Add a check in the driver to honour the cci status
-in the device tree.
+Hi Kevin,
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-Acked-by: Nicolas Pitre <nico@linaro.org>
-Tested-by: Sudeep Holla <sudeep.holla@arm.com>
-Tested-by: Kevin Hilman <khilman@linaro.org>
----
-Changes:
-	- Re-sending without the RFT tags
+On Sat, Jan 10, 2015 at 2:39 AM, Kevin Hilman <khilman@kernel.org> wrote:
+> Abhilash Kesavan <kesavan.abhilash@gmail.com> writes:
+>
+>> Hi Arnd/Olof,
+>>
+>> On Fri, Jan 9, 2015 at 10:40 AM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+>>>
+>>>
+>>> On Thursday 08 January 2015 08:57 PM, Abhilash Kesavan wrote:
+>>>>
+>>>> Hi Sudeep,
+>>>>
+>>>> On Thu, Jan 8, 2015 at 12:15 PM, Sudeep Holla <sudeep.holla@arm.com>
+>>>> wrote:
+>>>>>
+>>>>> Hi Abhilash,
+>>>
+>>>
+>>> [...]
+>>>
+>>>>>
+>>>>> What's the status of this patch. It was useful for me on vexpress for
+>>>>> some
+>>>>> testing. Please feel free to add
+>>>>>
+>>>>> Tested-by: Sudeep Holla <sudeep.holla@arm.com>
+>>>>>
+>>>>> if this is not yet queued.
+>>>>
+>>>>
+>>>> Thanks for the tested-by. This patch has not been merged yet; I am not
+>>>> quite sure who is supposed to pick this up.
+>>>>
+>>>
+>>> So far, most of the CCI patches are merged through arm-soc.
+>>
+>> Would you be OK picking this up as is or do you want me to re-send
+>> this with the RFT tag dropped ?
+>
+> Please resend without the RFT, and collect the Tested-by tags
+> you can add mine:
+>
+> Tested-by: Kevin Hilman <khilman@linaro.org>
+>
+> Please send to arm@kernel.org where patches targeted for the arm-soc
+> tree are collected.
 
- drivers/bus/arm-cci.c | 3 +++
- 1 file changed, 3 insertions(+)
+I have done as suggested. Kindly check.
 
-diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
-index 860da40..0ce5e2d 100644
---- a/drivers/bus/arm-cci.c
-+++ b/drivers/bus/arm-cci.c
-@@ -1312,6 +1312,9 @@ static int cci_probe(void)
- 	if (!np)
- 		return -ENODEV;
- 
-+	if (!of_device_is_available(np))
-+		return -ENODEV;
-+
- 	cci_config = of_match_node(arm_cci_matches, np)->data;
- 	if (!cci_config)
- 		return -ENODEV;
--- 
-2.2.0
+Regards,
+Abhilash
+>
+> Thanks,
+>
+> Kevin
+>
