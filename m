@@ -1,197 +1,167 @@
-From: Tony K Nadackal <tony.kn@samsung.com>
-Subject: RE: [PATCH] [media] s5p-jpeg: Adding Exynos7 Jpeg variant support
-Date: Mon, 12 Jan 2015 16:57:10 +0530
-Message-ID: <001901d02e5a$ba32a540$2e97efc0$@samsung.com>
-References: <1418801229-7532-1-git-send-email-tony.kn@samsung.com>
- <54919010.8020507@samsung.com> <001801d01b3d$2cb181d0$86148570$@samsung.com>
- <54AD0033.1020103@samsung.com> <000a01d02a72$bc6e06b0$354a1410$@samsung.com>
- <54AD28FD.4020703@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:15850 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750910AbbALL0z (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Jan 2015 06:26:55 -0500
-In-reply-to: <54AD28FD.4020703@samsung.com>
-Content-language: en-us
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [PATCHv8 0/9] devfreq: Add devfreq-event class to provide raw data for
+ devfreq device
+Date: Mon, 12 Jan 2015 21:34:48 +0900
+Message-ID: <1421066097-26237-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: myungjoo.ham@samsung.com, kgene@kernel.org
+Cc: kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, robh+dt@kernel.org, cw00.choi@samsung.com, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene@kernel.org
-Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, mchehab@osg.samsung.com, 'Jacek Anaszewski' <j.anaszewski@samsung.com>, k.debski@samsung.com, s.nawrocki@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com, bhushan.r@samsung.com
 
-Hi Kukjin,
+This patchset add new devfreq_event class to provide raw data to determine
+current utilization of device  which is used for devfreq governor.
 
-On Wednesday, January 07, 2015 6:09 PM, Jacek Anaszewski wrote,
-> Hi Tony,
-> 
-> On 01/07/2015 01:08 PM, Tony K Nadackal wrote:
-> > Dear Jacek,
-> >
-> > On Wednesday, January 07, 2015 3:15 PM Jacek Anaszewski wrote,
-> >
-> >> Hi Tony,
-> >>
-> >> Sorry for late response, just got back from vacation.
-> >>
-> >> On 12/19/2014 04:37 AM, Tony K Nadackal wrote:
-> >>> Hi Jacek,
-> >>>
-> >>> On Wednesday, December 17, 2014 7:46 PM Jacek Anaszewski wrote,
-> >>>> Hi Tony,
-> >>>>
-> >>>> Thanks for the patches.
-> >>>>
-> >>>
-> >>> Thanks for the review.
-> >>>
-> >>>> Please process them with scripts/checkpatch.pl as you will be
-> >>>> submitting the
-> >>> next
-> >>>> version - they contain many coding style related issues.
-> >>>>
-> >>>
-> >>> I ran checkpatch before posting. Do you find any checkpatch related
-> >>> issues in the patch?
-> >>
-> >> There was a problem on my side, sorry for making confusion.
-> >>
-> >>>> My remaining comments below.
-> >>>>
-> >>>
-> >>> [snip]
-> >>>
-> >>>>> +		if (ctx->jpeg->variant->version == SJPEG_EXYNOS7) {
-> >>>>> +			exynos4_jpeg_set_interrupt(jpeg->regs,
-> >>>> SJPEG_EXYNOS7);
-> >>>>> +			exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
-> >>>>> +					ctx->subsampling,
-> >>>> EXYNOS7_ENC_FMT_MASK);
-> >>>>> +			exynos4_jpeg_set_img_fmt(jpeg->regs,
-> >>>>> +					ctx->out_q.fmt->fourcc,
-> >>>>> +
-> 	EXYNOS7_SWAP_CHROMA_SHIFT);
-> >>>>> +		} else {
-> >>>>> +			exynos4_jpeg_set_interrupt(jpeg->regs,
-> >>>> SJPEG_EXYNOS4);
-> >>>>> +			exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
-> >>>>> +					ctx->subsampling,
-> >>>> EXYNOS4_ENC_FMT_MASK);
-> >>>>> +			exynos4_jpeg_set_img_fmt(jpeg->regs,
-> >>>>> +					ctx->out_q.fmt->fourcc,
-> >>>>> +
-> 	EXYNOS4_SWAP_CHROMA_SHIFT);
-> >>>>> +		}
-> >>>>> +
-> >>>>
-> >>>> I'd implement it this way:
-> >>>>
-> >>>> exynos4_jpeg_set_interrupt(jpeg->regs,
-> >>>> ctx->jpeg->variant->version); exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
-> ctx->subsampling,
-> >>>> 			(ctx->jpeg->variant->version == SJPEG_EXYNOS4) ?
-> >>>> 				EXYNOS4_ENC_FMT_MASK :
-> >>>> 				EXYNOS7_ENC_FMT_MASK);
-> >>>> exynos4_jpeg_set_img_fmt(jpeg->regs, ctx->out_q.fmt->fourcc,
-> >>>> 			(ctx->jpeg->variant->version == SJPEG_EXYNOS4) ?
-> >>>> 				EXYNOS4_SWAP_CHROMA_SHIFT :
-> >>>> 				EXYNOS7_SWAP_CHROMA_SHIFT);
-> >>>>
-> >>>
-> >>> OK. Looks goods to me. Thanks for the suggestion.
-> >>>
-> >>>>>     		exynos4_jpeg_set_img_addr(ctx);
-> >>>>>     		exynos4_jpeg_set_jpeg_addr(ctx);
-> >>>>>     		exynos4_jpeg_set_encode_hoff_cnt(jpeg->regs,
-> >>>>>
-> > ctx->out_q.fmt->fourcc);
-> >>>>>     	} else {
-> >>>>>     		exynos4_jpeg_sw_reset(jpeg->regs);
-> >>>>> -		exynos4_jpeg_set_interrupt(jpeg->regs);
-> >>>>>     		exynos4_jpeg_set_img_addr(ctx);
-> >>>>>     		exynos4_jpeg_set_jpeg_addr(ctx);
-> >>>>> -		exynos4_jpeg_set_img_fmt(jpeg->regs, ctx->cap_q.fmt-
-> >>>>> fourcc);
-> >>>>>
-> >>>>> -		bitstream_size = DIV_ROUND_UP(ctx->out_q.size, 32);
-> >>>>> +		if (ctx->jpeg->variant->version == SJPEG_EXYNOS7) {
-> >>>>> +			exynos4_jpeg_set_interrupt(jpeg->regs,
-> >>>> SJPEG_EXYNOS7);
-> >>>>> +			exynos4_jpeg_set_huff_tbl(jpeg->regs);
-> >>>>> +			exynos4_jpeg_set_huf_table_enable(jpeg-
-> >regs, 1);
-> >>>>> +
-> >>>>> +			/*
-> >>>>> +			 * JPEG IP allows storing 4 quantization tables
-> >>>>> +			 * We fill table 0 for luma and table 1 for
-chroma
-> >>>>> +			 */
-> >>>>> +			exynos4_jpeg_set_qtbl_lum(jpeg->regs,
-> >>>>> +							ctx-
-> >compr_quality);
-> >>>>> +			exynos4_jpeg_set_qtbl_chr(jpeg->regs,
-> >>>>> +							ctx-
-> >compr_quality);
-> >>>>
-> >>>> Is it really required to setup quantization tables for encoding?
-> >>>>
-> >>>
-> >>> Without setting up the quantization tables, encoder is working fine.
-> >>> But, as per Exynos7 User Manual setting up the quantization tables
-> >>> are required for encoding also.
-> >>
-> >
-> > Sorry I also got it mixed up.
-> > *Decoder* works fine without setting up the quantization tables. But
-> > this step is mentioned in User Manual.
-> 
-> I'm ok with it provided that you will get an ack from Samsung SOCs maintainer.
-> 
-> >> Actually I intended to ask if setting the quantization tables is
-> >> required for *decoding*, as you set it also in decoding path, whereas
-> >> for Exynos4 it is not required. I looks strange for me as
-> >> quantization tables are usually required
-> > only
-> >> for encoding raw images.
-> >> The same is related to huffman tables.
-> >
-> > Huffman table is required for Exynos7 decoding.
-> > User Manual says about  Update_Huf_Tbl [bit 19 of PEG_CNTL],
-> > "User/Host should mandatory program this Bit as "1" for every decoder
-> > operation. SFR "HUFF_TBL_ENT" and SFR "HUFF_CNT" should be programmed
-> > accordingly for every encoder/decoder operation."
-> 
-> Same situation as above.
-> 
-> >>
-> >>>>> +			exynos4_jpeg_set_stream_size(jpeg->regs, ctx-
-> >>>>> cap_q.w,
-> >>>>> +					ctx->cap_q.h);
-> >>>>
-> >>>> For exynos4 this function writes the number of samples per line and
-> >>>> number lines of the resulting JPEG image and is used only during
-> >>>> encoding. Is the semantics of the related register different in
-> >>>> case of
-> > Exynos7?
-> >>>>
-> >>>
-> >>> Yes. In case of Exynos7 Encoding, This step is required.
-> >>
-> >> Ack.
-> >
-> > I will request Kukjin or any Samsung colleagues who has access to
-> > Exynos7 Manual to give ack or tested by.
-> 
-> This is a good idea.
+The following description explains the feature of two kind of devfreq class:
+- devfreq class (existing)
+ : devfreq consumer device use raw data from devfreq_event device for
+   determining proper current system state and change voltage/frequency
+   dynamically using various governors.
+- devfreq_event class (new)
+ : Provide measured raw data to devfreq device for governor
 
-Will you please take care of this..?
+---------
+Changelog:
 
-> 
-> --
-> Best Regards,
-> Jacek Anaszewski
+Changes from v7:
+(https://lkml.org/lkml/2015/1/7/795)
+- Use EXPORT_SYMBOL_GPL macro instead of EXPORT_SYMBOL
+- Fix the binding document of exynos-ppmu.c driver
+- Drop the devfreq-event type patch because it isnt' clear
+- Fix bug of devfreq_event_add_edev() when fail to execute device_register()
+- Modify resource free operation on following functions:
+  : devfreq_event_remove_edev()
+  : devfreq_event_release_edev()
 
-Thanks and Regards
-Tony
+Changes from v6:
+(https://lkml.org/lkml/2014/12/28/139)
+- This patchset is based on v3.19-rc3.
+1. devfreq-event class driver
+- Fix build break if devfreq-event framework is off
+- Add resource-managed function for devfreq-event device
+: devm_devfreq_event_add_edev()
+: devm_devfreq_event_remove_edev()
+
+Changes from v5:
+(https://lkml.org/lkml/2014/12/22/527)
+- Rebase these patch-set on v3.19-rc1 and Test it.
+1. exynos-ppmu.c
+- Change the error value when of_iomap() fail to map the memory
+- Remove owner setting of platform_driver
+- Add exynos_ppmu_disable() function
+2. exynos dts file
+- Add PPMU node to Exynos3250-based Monk board
+- Remove ppmu_cpu node on Exynos4412-based TRATS2 board and add ppmu_leftbus/rightbus node
+
+Changes from v4:
+(https://lkml.org/lkml/2014/12/16/511)
+1. devfreq-event class driver
+- Add devfreq_event_get_edev_count() function
+- Modify the simple description of devfreq-event framework in devfreq-event.c
+- Minimize the usage range of global lock usage in devfreq_event_add_edev()
+- Remove '_is_enabled()' function pointer in devfreq_event_ops structure
+- Add separte CONFIG_PM_DEVFREQ_EVENT configuration
+- Add new devfreq-event.h header file including devfreq-event helper functions
+2. exynos dts file
+- Add new patch to support PPMU with DEVFREQ-event on Exynos4412-based TRATS2
+
+Changes from v3:
+(https://lkml.org/lkml/2014/12/12/219)
+1. devfreq-event class driver
+- Fix return value of devfreq_event_get_event()
+- Add new structure devfreq_event_data for devfreq_event_get_event()
+- Modify the prototype of devfreq_event_get_event() function
+- Call of_node_put after calling of_parse_phandle() to decrement refcount
+2. exynos-ppmu driver
+- Modify usage of devfreq_event_get_event() function
+  according to new prototype of this funciton
+- Add the additional description to exynos-ppmu.txt how to add PPMU node
+  in board dts file
+- Use 'PPMU_EVENT' macro to remove duplicate codes
+- Add the support of PPMU for Exynos5260
+3. exynos dts file
+- Add missing PPMU_FSYS node to exynos3250.dtsi
+- Fix 'ppmu_mfc_l' node name as 'ppmu_mfc' because exynos3250 has only one MFC IP.
+- Add missing PPMU_ACP/G3D to exynos4.dtsi
+4. etc
+- Fix wrong abbreviation of PPMU (PPMU :Platform Performance Monitoring Unit)
+- Add new patch to support the PPMU of Exynos5260 SoC
+
+Changes from v2:
+(https://lkml.org/lkml/2014/12/9/304)
+1. devfreq-event class driver
+- Rename all the helper functions of devfreq-event device
+- Add devfreq_event_remove_edev() instead of devfreq_put_event_dev()
+- Add devfreq_event_release_edev() to initialize it before put device
+- Add the detailed description of devfreq-event API
+- Add the attributes of devfreq-event class (enable_count)
+- Check the overflow about event/total_event data in devfreq_event_get_event()
+- Remove the 'exclusive flag' feature
+- Set set_event()/get_event() functions as mandary
+- Add missing of_node_put() call
+- Change variable type of 'get_event()' funciton from 'int' to 'u64'
+2. exynos-ppmu driver
+- Remove un-used field (struct devfreq)
+- Use 'of_get_child_by_name()' instead of 'of_find_node_by_name()'
+- Add missing of_node_put() call
+- Fix wrong clock control
+- Use devfreq_event_remove_edev() instead of devfreq_remove_device()
+- Add the documentation for exynos-ppmu driver
+- Remove 'enable/disable/is_enabled/reset' function of exynos-ppmu driver
+3. exynos3250-rinato.dts
+- Add ppmu_{leftbus|rightbus} dt node and remove ppmu_cpu dt node
+
+Changes from v1:
+(https://lkml.org/lkml/2014/9/5/11)
+- Code clean
+- Add the description of devfreq-event structure
+- Add 'is_enabled' function to devfreq_event_ops structure
+- Add 'enable_count' field to devfreq_event_dev structure
+- Check whether devfreq-event device is enabled or not
+  during calling devfreq_event API
+- Define the type of devfreq-event device as following
+  : DEVFREQ_EVENT_TYPE_RAW_DATA
+  : DEVFREQ_EVENT_TYPE_UTILIZATION
+  : DEVFREQ_EVENT_TYPE_BANDWIDTH
+  : DEVFREQ_EVENT_TYPE_LATENCY
+- Add the exclusive feature of devfreq-event device.
+  If devfreq-event device is used on only on devfreq driver,
+  should used 'devfreq_enable_event_dev_exclusive()' function
+- Add new patch6 for test on Exynos3250-based Rinato board
+
+Chanwoo Choi (9):
+  devfreq: event: Add new devfreq_event class to provide basic data for devfreq governor
+  devfreq: event: Add resource-managed function for devfreq-event device
+  devfreq: event: Add exynos-ppmu devfreq-event driver
+  devfreq: event: Add documentation for exynos-ppmu devfreq-event driver
+  ARM: dts: Add PPMU dt node for Exynos3250 SoC
+  ARM: dts: Add PPMU dt node for Exynos4 SoCs
+  ARM: dts: Add PPMU dt node for Exynos5260 SoC
+  ARM: dts: exynos: Add PPMU node to Exynos3250-based Rinato/Monk board
+  ARM: dts: exynos: Add PPMU node for Exynos4412-based TRATS2 board
+
+ .../bindings/devfreq/event/exynos-ppmu.txt         | 110 +++++
+ arch/arm/boot/dts/exynos3250-monk.dts              |  40 ++
+ arch/arm/boot/dts/exynos3250-rinato.dts            |  40 ++
+ arch/arm/boot/dts/exynos3250.dtsi                  |  74 +++
+ arch/arm/boot/dts/exynos4.dtsi                     | 108 +++++
+ arch/arm/boot/dts/exynos4210.dtsi                  |   8 +
+ arch/arm/boot/dts/exynos4412-trats2.dts            |  40 ++
+ arch/arm/boot/dts/exynos5260.dtsi                  |  90 ++++
+ drivers/devfreq/Kconfig                            |   2 +
+ drivers/devfreq/Makefile                           |   6 +-
+ drivers/devfreq/devfreq-event.c                    | 511 +++++++++++++++++++++
+ drivers/devfreq/event/Kconfig                      |  25 +
+ drivers/devfreq/event/Makefile                     |   2 +
+ drivers/devfreq/event/exynos-ppmu.c                | 398 ++++++++++++++++
+ include/linux/devfreq-event.h                      | 186 ++++++++
+ 15 files changed, 1639 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
+ create mode 100644 drivers/devfreq/devfreq-event.c
+ create mode 100644 drivers/devfreq/event/Kconfig
+ create mode 100644 drivers/devfreq/event/Makefile
+ create mode 100644 drivers/devfreq/event/exynos-ppmu.c
+ create mode 100644 include/linux/devfreq-event.h
+
+-- 
+1.8.5.5
