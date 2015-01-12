@@ -1,73 +1,35 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCHv7 02/10] devfreq: event: Add the list of supported
- devfreq-event type
-Date: Mon, 12 Jan 2015 07:15:54 +0000 (GMT)
-Message-ID: <768125446.886831421046952335.JavaMail.weblogic@epmlwas09a>
-Reply-To: myungjoo.ham@samsung.com
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH] i2c: exynos5: Move initialization code to
+ subsys_initcall()
+Date: Mon, 12 Jan 2015 08:50:19 +0100
+Message-ID: <20150112075019.GB22880@pengutronix.de>
+References: <1421031182-18992-1-git-send-email-jy0922.shim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-pm-owner@vger.kernel.org>
-MIME-version: 1.0
-Sender: linux-pm-owner@vger.kernel.org
-To: =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>, "kgene@kernel.org" <kgene@kernel.org>
-Cc: =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, ABHILASH KESAVAN <a.kesavan@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, =?utf-8?Q?=EB=8C=80=EC=9D=B8=EA=B8=B0?= <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1421031182-18992-1-git-send-email-jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-PiAgIA0KPiAgVGhpcyBwYXRjaCBhZGRzIHRoZSBsaXN0IG9mIHN1cHBvcnRlZCBkZXZmcmVxLWV2
-ZW50IHR5cGUgYXMgZm9sbG93aW5nLg0KPiBFYWNoIGRldmZyZXEtZXZlbnQgZGV2aWNlIGRyaXZl
-ciB3b3VsZCBzdXBwb3J0IHRoZSB2YXJpb3VzIGRldmZyZXEtZXZlbnQgdHlwZQ0KPiBmb3IgZGV2
-ZnJlcSBnb3Zlcm5vciBhdCB0aGUgc2FtZSB0aW1lLg0KPiAtIERFVkZSRVFfRVZFTlRfVFlQRV9S
-QVdfREFUQQ0KPiAtIERFVkZSRVFfRVZFTlRfVFlQRV9VVElMSVpBVElPTg0KPiAtIERFVkZSRVFf
-RVZFTlRfVFlQRV9CQU5EV0lEVEgNCj4gLSBERVZGUkVRX0VWRU5UX1RZUEVfTEFURU5DWQ0KDQpE
-aWQgeW91IHRyeSB0byBzYXk6DQoNCkEgZGV2ZnJlcS1ldmVudCBkZXZpY2UgbWF5IHN1cHBvcnQg
-bXVsdGlwbGUgZGV2ZnJlcS1ldmVudCB0eXBlcw0Kc2ltdWx0YW5lb3VzbHkuDQoNCklmIHNvLCB5
-b3VyIHN3aXRjaCBleHByZXNzaW9ucyBhcmUgZ29pbmcgdG8gc2NyZXcgdXAuDQoNCg0KPiANCj4g
-Q2M6IE15dW5nSm9vIEhhbSA8bXl1bmdqb28uaGFtQHNhbXN1bmcuY29tPg0KPiBDYzogS3l1bmdt
-aW4gUGFyayA8a3l1bmdtaW4ucGFya0BzYW1zdW5nLmNvbT4NCj4gU2lnbmVkLW9mZi1ieTogQ2hh
-bndvbyBDaG9pIDxjdzAwLmNob2lAc2Ftc3VuZy5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9kZXZm
-cmVxL2RldmZyZXEtZXZlbnQuYyB8IDU4ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKy0tLS0tDQo+ICBpbmNsdWRlL2xpbnV4L2RldmZyZXEtZXZlbnQuaCAgIHwgMjUgKysrKysr
-KysrKysrKysrLS0tDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDczIGluc2VydGlvbnMoKyksIDEwIGRl
-bGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZGV2ZnJlcS9kZXZmcmVxLWV2
-ZW50LmMgYi9kcml2ZXJzL2RldmZyZXEvZGV2ZnJlcS1ldmVudC5jDQo+IGluZGV4IDgxNDQ4YmEu
-LjY0YzE3NjQgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvZGV2ZnJlcS9kZXZmcmVxLWV2ZW50LmMN
-Cj4gKysrIGIvZHJpdmVycy9kZXZmcmVxL2RldmZyZXEtZXZlbnQuYw0KPiAgDQpbXQ0KPiAtCW11
-dGV4X2xvY2soJmVkZXYtPmxvY2spOw0KPiAtCXJldCA9IGVkZXYtPmRlc2MtPm9wcy0+Z2V0X2V2
-ZW50KGVkZXYsIGVkYXRhKTsNCj4gLQltdXRleF91bmxvY2soJmVkZXYtPmxvY2spOw0KPiArCXN3
-aXRjaCAodHlwZSkgew0KDQpCaXR3aXNlIHZhbHVlIHdpdGggc3dpdGNoPyAod2hhdCBpZiB0eXBl
-ID0gUkFXX0RBVEEgfCBCQU5EV0lEVEgsIG1lYW5pbmcNCnRoaXMgaXMgcmF3IGRhdGEgb2YgdGhl
-IGJhbmR3aXRkaC4pDQoNCj4gKwljYXNlIERFVkZSRVFfRVZFTlRfVFlQRV9SQVdfREFUQToNCj4g
-KwljYXNlIERFVkZSRVFfRVZFTlRfVFlQRV9CQU5EV0lEVEg6DQo+ICsJY2FzZSBERVZGUkVRX0VW
-RU5UX1RZUEVfTEFURU5DWToNCj4gKwkJaWYgKChlZGF0YS0+ZXZlbnQgPiBFVkVOVF9UWVBFX1JB
-V19EQVRBX01BWCkgfHwNCj4gKwkJCShlZGF0YS0+dG90YWxfZXZlbnQgPiBFVkVOVF9UWVBFX1JB
-V19EQVRBX01BWCkpIHsNCg0KSXMgaXQgcG9zc2libGUgZm9yIHVuc2lnbmVkIGxvbmcgZWRhdGEt
-PmV2ZW50L3RvdGFsX2V2ZW50IHRvIGJlDQogID4gRVZFTlRfVFlQRV9SQVdfREFUQV9NQVggPSBV
-TE9OR19NQVg/DQoNCldoYXQgd2FzIHlvdXIgaW50ZW50aW9uPw0KDQpJZiB5b3Ugd2VyZSB0cnlp
-bmcgdG8gZGV0ZWN0IG92ZXJmbG93LCB5b3UgbmVlZCB0byByZXRoaW5rIGFib3V0IGl0Lg0KSWYg
-bm90LCAob3ZlcmZsb3cgaXMgaGFybWxlc3Mgb3Igbm90IGdvaW5nIHRvIGhhcHBlbikgeW91IGRv
-bid0IG5lZWQgdG8NCmNoZWNrIGl0Lg0KDQoNCj4gKwkJCWVkYXRhLT5ldmVudCA9IGVkYXRhLT50
-b3RhbF9ldmVudCA9IDA7DQo+ICsJCQlyZXQgPSAtRUlOVkFMOw0KPiArCQl9DQo+ICsJCWJyZWFr
-Ow0KPiArCWNhc2UgREVWRlJFUV9FVkVOVF9UWVBFX1VUSUxJWkFUSU9OOg0KPiArCQllZGF0YS0+
-dG90YWxfZXZlbnQgPSBFVkVOVF9UWVBFX1VUSUxJWkFUSU9OX01BWDsNCj4gIA0KPiAtCWlmICgo
-ZWRhdGEtPnRvdGFsX2V2ZW50IDw9IDApDQo+IC0JCXx8IChlZGF0YS0+ZXZlbnQgPiBlZGF0YS0+
-dG90YWxfZXZlbnQpKSB7DQo+ICsJCWlmIChlZGF0YS0+ZXZlbnQgPiBFVkVOVF9UWVBFX1VUSUxJ
-WkFUSU9OX01BWCkgew0KPiArCQkJZWRhdGEtPmV2ZW50ID0gZWRhdGEtPnRvdGFsX2V2ZW50ID0g
-MDsNCj4gKwkJCXJldCA9IC1FSU5WQUw7DQo+ICsJCX0NCj4gKwkJYnJlYWs7DQo+ICsJZGVmYXVs
-dDoNCj4gIAkJZWRhdGEtPmV2ZW50ID0gZWRhdGEtPnRvdGFsX2V2ZW50ID0gMDsNCj4gIAkJcmV0
-ID0gLUVJTlZBTDsNCj4gKwkJYnJlYWs7DQo+ICAJfQ0KPiAgDQo+ICsJbXV0ZXhfdW5sb2NrKCZl
-ZGV2LT5sb2NrKTsNCj4gKw0KPiAgCXJldHVybiByZXQ7DQo+ICB9DQo+ICBFWFBPUlRfU1lNQk9M
-X0dQTChkZXZmcmVxX2V2ZW50X2dldF9ldmVudCk7DQo+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xp
-bnV4L2RldmZyZXEtZXZlbnQuaCBiL2luY2x1ZGUvbGludXgvZGV2ZnJlcS1ldmVudC5oDQo+IGlu
-ZGV4IGI3MzYzZjUuLjEzYTU3MDMgMTAwNjQ0DQo+IC0tLSBhL2luY2x1ZGUvbGludXgvZGV2ZnJl
-cS1ldmVudC5oDQo+ICsrKyBiL2luY2x1ZGUvbGludXgvZGV2ZnJlcS1ldmVudC5oDQo+IEBAIC0z
-Niw2ICszNiwxNCBAQCBzdHJ1Y3QgZGV2ZnJlcV9ldmVudF9kZXYgew0KPiAgCWNvbnN0IHN0cnVj
-dCBkZXZmcmVxX2V2ZW50X2Rlc2MgKmRlc2M7DQo+ICB9Ow0KPiAgDQo+ICsvKiBUaGUgc3VwcG9y
-dGVkIHR5cGUgYnkgZGV2ZnJlcS1ldmVudCBkZXZpY2UgKi8NCj4gK2VudW0gZGV2ZnJlcV9ldmVu
-dF90eXBlIHsNCj4gKwlERVZGUkVRX0VWRU5UX1RZUEVfUkFXX0RBVEEJPSBCSVQoMCksDQo+ICsJ
-REVWRlJFUV9FVkVOVF9UWVBFX1VUSUxJWkFUSU9OCT0gQklUKDEpLA0KPiArCURFVkZSRVFfRVZF
-TlRfVFlQRV9CQU5EV0lEVEgJPSBCSVQoMiksDQo+ICsJREVWRlJFUV9FVkVOVF9UWVBFX0xBVEVO
-Q1kJPSBCSVQoMyksDQo+ICt9Ow0KPiArDQoNCihCZWluZyBjdXJpb3VzKSBJcyBpdCBwb3NzaWJs
-ZSB0byBoYXZlIG11bHRpcGxlIHR5cGVzDQpzaW11bHRhbmVvdXNseT8NCg0KDQpbXQ0K
+Hello,
 
+On Mon, Jan 12, 2015 at 11:53:02AM +0900, Joonyoung Shim wrote:
+> This is required in order to ensure that core system devices such as
+> voltage regulators attached via I2C are available early in boot.
+Deferred probing isn't an option? If so I suggest adding the reasoning
+in a comment to stop the next person converting it to that.
+(And if not, please fix accordingly to use deferred probing.)
 
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
