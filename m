@@ -1,62 +1,42 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: [GIT PULL] Samsung exynos7 updates for v3.20
-Date: Mon, 12 Jan 2015 17:30:32 +0900
-Message-ID: <54B38628.5090902@kernel.org>
+Subject: Re: [PATCH v3] ARM: dts: Add dts file for odroid XU3 board
+Date: Mon, 12 Jan 2015 17:37:59 +0900
+Message-ID: <54B387E7.3080406@kernel.org>
+References: <1420671228-24692-1-git-send-email-sjoerd.simons@collabora.co.uk> <7htwzzvq0v.fsf@deeprootsystems.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:60600 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:60900 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751040AbbALIai (ORCPT
+	id S1751341AbbALIiI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Jan 2015 03:30:38 -0500
+	Mon, 12 Jan 2015 03:38:08 -0500
+In-Reply-To: <7htwzzvq0v.fsf@deeprootsystems.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Kevin Hilman <khilman@kernel.org>
+Cc: Sjoerd Simons <sjoerd.simons@collabora.co.uk>, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Tyler Baker <tyler.baker@linaro.org>, Heesub Shin <heesub.shin@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, linux-arm-kernel@lists.infradead.org
 
-Hi again,
+On 01/10/15 02:10, Kevin Hilman wrote:
+> Sjoerd Simons <sjoerd.simons@collabora.co.uk> writes:
+> 
+>> Add DTS for the Hardkernel Odroid XU3. The name of the DTS file is kept the
+>> same as the vendors naming, which means it's prefixed with exynos5422
+>> instead of exynos5800 as the SoC name even though it includes the
+>> exyno5800 dtsi.
+>>
+>> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+> 
+> Boot tested on top of next-20150109 (with and without my hack for
+> bringing up 8 cores.)
+> 
+> Tested-by: Kevin Hilman <khilman@linaro.org>
+> 
+Thanks for your test, Kevin.
 
-Please pull arm64 based exynos7 stuff for v3.20 and as you know I've
-tried this in 3.19 but couldn't because of some dependencies like clk.
-Now all of dependencies already resolved so this should be fine for v3.20.
-
-If any problems, please kindly let me know.
+I've applied, need to update devicetree bindings for samsung-boards
+though because it can be updated later.
 
 Thanks,
 Kukjin
-
-The following changes since commit 97bf6af1f928216fd6c5a66e8a57bfa95a659672:
-
-  Linux 3.19-rc1 (2014-12-20 17:08:50 -0800)
-
-are available in the git repository at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-v3.20-next/dt-samsung-64
-
-Abhilash Kesavan (2):
-      arm64: dts: Add PMU DT node for exynos7 SoC
-      arm64: dts: Add nodes for mmc, i2c, rtc, watchdog, adc on exynos7
-
-Alim Akhtar (1):
-      arm64: Enable ARMv8 based exynos7 SoC support
-
-Naveen Krishna Ch (2):
-      arm64: dts: Add initial device tree support for exynos7
-      arm64: dts: Add initial pinctrl support to exynos7
-
- .../devicetree/bindings/arm/samsung/pmu.txt        |    1 +
- arch/arm64/Kconfig                                 |   17 +
- arch/arm64/boot/dts/Makefile                       |    1 +
- arch/arm64/boot/dts/exynos/Makefile                |    5 +
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |   84 +++
- arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    |  588
-++++++++++++++++++++
- arch/arm64/boot/dts/exynos/exynos7.dtsi            |  530
-++++++++++++++++++
- 7 files changed, 1226 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm64/boot/dts/exynos/Makefile
- create mode 100644 arch/arm64/boot/dts/exynos/exynos7-espresso.dts
- create mode 100644 arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
- create mode 100644 arch/arm64/boot/dts/exynos/exynos7.dtsi
