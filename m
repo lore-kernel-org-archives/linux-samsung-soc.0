@@ -1,45 +1,45 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [RESEND PATCH] ARM: EXYNOS: Add exynos3250 suspend-to-ram support
-Date: Mon, 12 Jan 2015 17:44:57 +0900
-Message-ID: <54B38989.4030700@kernel.org>
-References: <1420681838-4292-1-git-send-email-cw00.choi@samsung.com>
+Subject: Re: [PATCH RESEND] ARM: EXYNOS: Recognize Samsung MFC v8 devices
+Date: Mon, 12 Jan 2015 17:45:58 +0900
+Message-ID: <54B389C6.5050701@kernel.org>
+References: <1420671974-25938-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:33276 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:33358 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751335AbbALIpE (ORCPT
+	id S1752217AbbALIqF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Jan 2015 03:45:04 -0500
-In-Reply-To: <1420681838-4292-1-git-send-email-cw00.choi@samsung.com>
+	Mon, 12 Jan 2015 03:46:05 -0500
+In-Reply-To: <1420671974-25938-1-git-send-email-sjoerd.simons@collabora.co.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: kgene@kernel.org, ben-linux@fluff.org, kyungmin.park@samsung.com, inki.dae@samsung.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: Kukjin Kim <kgene@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-On 01/08/15 10:50, Chanwoo Choi wrote:
-> This patch adds the support for suspend-to-ram feature of Exynos3250 SoC.
-> Exynos3250 don't contain the L2 cache.
+On 01/08/15 08:06, Sjoerd Simons wrote:
+> Also setup memory allocations for version 8 of the MFC as present in
+> Samsung Exynos 5422/5800 SoCs
 > 
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Signed-off-by: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 > ---
-> Depend on:
-> - v3.19-rc3
+>  arch/arm/mach-exynos/exynos.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-Chanwoo,
+> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+> index c13d083..b343a1a 100644
+> --- a/arch/arm/mach-exynos/exynos.c
+> +++ b/arch/arm/mach-exynos/exynos.c
+> @@ -282,6 +282,7 @@ static void __init exynos_reserve(void)
+>  		"samsung,mfc-v5",
+>  		"samsung,mfc-v6",
+>  		"samsung,mfc-v7",
+> +		"samsung,mfc-v8",
+>  	};
+>  
+>  	for (i = 0; i < ARRAY_SIZE(mfc_mem); i++)
 
-Can you please let me know why this is depending on v3.19-rc3?
-If I apply this on top of my tree not including some stuff between
-v3.19-rc1 and v3.19-rc3, is there a problem?
+Applied, thanks.
 
->  arch/arm/mach-exynos/regs-pmu.h |  3 ++
->  arch/arm/mach-exynos/suspend.c  | 77 +++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 80 insertions(+)
-
-[...]
-
-Thanks,
-Kukjin
+- Kukjin
