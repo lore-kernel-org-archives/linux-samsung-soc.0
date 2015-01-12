@@ -1,143 +1,58 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [PATCHv8 4/9] devfreq: event: Add documentation for exynos-ppmu
- devfreq-event driver
-Date: Mon, 12 Jan 2015 21:34:52 +0900
-Message-ID: <1421066097-26237-5-git-send-email-cw00.choi@samsung.com>
-References: <1421066097-26237-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1421066097-26237-1-git-send-email-cw00.choi@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: myungjoo.ham@samsung.com, kgene@kernel.org
-Cc: kyungmin.park@samsung.com, rafael.j.wysocki@intel.com, mark.rutland@arm.com, a.kesavan@samsung.com, tomasz.figa@gmail.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, robh+dt@kernel.org, cw00.choi@samsung.com, inki.dae@samsung.com, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+From: Alim Akhtar <alim.akhtar@gmail.com>
+Subject: Re: [PATCH v3 1/4] mmc: dw_mmc: exynos: incorporate ciu_div into
+ timing property
+Date: Mon, 12 Jan 2015 19:22:47 +0530
+Message-ID: <CAGOxZ52Fn3Q=mhkX+CPZsnNz-T5z09xR6ZGYhjYMQ9BOugs_+g@mail.gmail.com>
+References: <1420008185-24758-1-git-send-email-alim.akhtar@samsung.com>
+ <1420008185-24758-2-git-send-email-alim.akhtar@samsung.com>
+ <CAD=FV=WXzPt=VKxB=KHK+hC=RN6WbmdnQcLUT4zFQ0Ud7BFanQ@mail.gmail.com>
+ <CAGOxZ509kASim7keNkAGj5gAGO02=7vZM=VL-MRMObv3x+CzTg@mail.gmail.com> <CAD=FV=U0U2ycmd4jyVyFiEq0+3ujSpdBeFg27iYYbMRxpRCmmQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <CAD=FV=U0U2ycmd4jyVyFiEq0+3ujSpdBeFg27iYYbMRxpRCmmQ@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Doug Anderson <dianders@chromium.org>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, Seungwon Jeon <tgih.jun@samsung.com>, kgene <kgene@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Abhilash Kesavan <a.kesavan@samsung.com>, Alexandru Stan <amstan@google.com>, =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Olof Johansson <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds the documentation for Exynos PPMU (Platform Performance
-Monitoring Unit) devfreq-event driver.
+Hi Doug,
 
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
-Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
----
- .../bindings/devfreq/event/exynos-ppmu.txt         | 110 +++++++++++++++++++++
- 1 file changed, 110 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
+On Tue, Jan 6, 2015 at 6:37 AM, Doug Anderson <dianders@chromium.org> wrote:
+> Alim,
+>
+> On Sun, Jan 4, 2015 at 2:43 PM, Alim Akhtar <alim.akhtar@gmail.com> wrote:
+>>> You are breaking backward compatibility here.  If your change is
+>>> merged then all old boards will instantly break.  Since the "dts" and
+>>> code changes will likely be merged through different trees you'll end
+>>> up with a bunch of broken trees until everything is merged together.
+>>> Even if you don't subscribe to the stable bindings theory this is not
+>>> acceptable.
+>>>
+>> yes the major concern in this series is probably this, which breaks
+>> things unless everything merge in one go and via one tree. Thats why I
+>> re-based everything including dts change on mmc-tree for this case and
+>> added device-tree mailing list for more opinion etc.
+>
+> Got it.  I doubt that folks will like this, but I could be wrong.  In
+> order for this to work, you'd need all changes in the series to land
+> in _both_ the ARMSoC tree and the MMC tree.  That's not unheard of,
+> but it doesn't seem ideal.
+>
+> You also break bisect-ability here since without the code the DTS
+> change will break things and without the DTS change the code will
+> break things.
+>
+> If you add all the above to the fact that bindings are supposed to be
+> stable (ish) I'm not convinced this will land.
+>
+Hmmm......Ok, let me take a re-look on this, I will try to use
+existing bindings.
+>
+> -Doug
 
-diff --git a/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
-new file mode 100644
-index 0000000..b54bf3a
---- /dev/null
-+++ b/Documentation/devicetree/bindings/devfreq/event/exynos-ppmu.txt
-@@ -0,0 +1,110 @@
-+
-+* Samsung Exynos PPMU (Platform Performance Monitoring Unit) device
-+
-+The Samsung Exynos SoC has PPMU (Platform Performance Monitoring Unit) for
-+each IP. PPMU provides the primitive values to get performance data. These
-+PPMU events provide information of the SoC's behaviors so that you may
-+use to analyze system performance, to make behaviors visible and to count
-+usages of each IP (DMC, CPU, RIGHTBUS, LEFTBUS, CAM interface, LCD, G3D, MFC).
-+The Exynos PPMU driver uses the devfreq-event class to provide event data
-+to various devfreq devices. The devfreq devices would use the event data when
-+derterming the current state of each IP.
-+
-+Required properties:
-+- compatible: Should be "samsung,exynos-ppmu".
-+- reg: physical base address of each PPMU and length of memory mapped region.
-+
-+Optional properties:
-+- clock-names : the name of clock used by the PPMU, "ppmu"
-+- clocks : phandles for clock specified in "clock-names" property
-+- #clock-cells: should be 1.
-+
-+Example1 : PPMU nodes in exynos3250.dtsi are listed below.
-+
-+		ppmu_dmc0: ppmu_dmc0@106a0000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x106a0000 0x2000>;
-+			status = "disabled";
-+		};
-+
-+		ppmu_dmc1: ppmu_dmc1@106b0000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x106b0000 0x2000>;
-+			status = "disabled";
-+		};
-+
-+		ppmu_cpu: ppmu_cpu@106c0000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x106c0000 0x2000>;
-+			status = "disabled";
-+		};
-+
-+		ppmu_rightbus: ppmu_rightbus@112a0000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x112a0000 0x2000>;
-+			clocks = <&cmu CLK_PPMURIGHT>;
-+			clock-names = "ppmu";
-+			status = "disabled";
-+		};
-+
-+		ppmu_leftbus: ppmu_leftbus0@116a0000 {
-+			compatible = "samsung,exynos-ppmu";
-+			reg = <0x116a0000 0x2000>;
-+			clocks = <&cmu CLK_PPMULEFT>;
-+			clock-names = "ppmu";
-+			status = "disabled";
-+		};
-+
-+Example2 : Events of each PPMU node in exynos3250-rinato.dts are listed below.
-+
-+	&ppmu_dmc0 {
-+		status = "okay";
-+
-+		events {
-+			ppmu_dmc0_3: ppmu-event3-dmc0 {
-+				event-name = "ppmu-event3-dmc0";
-+			};
-+
-+			ppmu_dmc0_2: ppmu-event2-dmc0 {
-+				event-name = "ppmu-event2-dmc0";
-+			};
-+
-+			ppmu_dmc0_1: ppmu-event1-dmc0 {
-+				event-name = "ppmu-event1-dmc0";
-+			};
-+
-+			ppmu_dmc0_0: ppmu-event0-dmc0 {
-+				event-name = "ppmu-event0-dmc0";
-+			};
-+		};
-+	};
-+
-+	&ppmu_dmc1 {
-+		status = "okay";
-+
-+		events {
-+			ppmu_dmc1_3: ppmu-event3-dmc1 {
-+				event-name = "ppmu-event3-dmc1";
-+			};
-+		};
-+	};
-+
-+	&ppmu_leftbus {
-+		status = "okay";
-+
-+		events {
-+			ppmu_leftbus_3: ppmu-event3-leftbus {
-+				event-name = "ppmu-event3-leftbus";
-+			};
-+		};
-+	};
-+
-+	&ppmu_rightbus {
-+		status = "okay";
-+
-+		events {
-+			ppmu_rightbus_3: ppmu-event3-rightbus {
-+				event-name = "ppmu-event3-rightbus";
-+			};
-+		};
-+	};
+
+
 -- 
-1.8.5.5
+Regards,
+Alim
