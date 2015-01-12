@@ -1,35 +1,76 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH] i2c: exynos5: Move initialization code to
- subsys_initcall()
-Date: Mon, 12 Jan 2015 08:50:19 +0100
-Message-ID: <20150112075019.GB22880@pengutronix.de>
-References: <1421031182-18992-1-git-send-email-jy0922.shim@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [PATCHv7 03/10] devfreq: event: Add resource-managed function for
+ devfreq-event device
+Date: Mon, 12 Jan 2015 08:00:17 +0000 (GMT)
+Message-ID: <765071676.891461421049614417.JavaMail.weblogic@epmlwas09a>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1421031182-18992-1-git-send-email-jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-pm-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-pm-owner@vger.kernel.org
+To: =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>, "kgene@kernel.org" <kgene@kernel.org>
+Cc: =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, ABHILASH KESAVAN <a.kesavan@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, =?utf-8?Q?=EB=8C=80=EC=9D=B8=EA=B8=B0?= <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
+PiAgIA0KPiAgVGhpcyBwYXRjaCBhZGQgdGhlIHJlc291cmNlLW1hbmFnZWQgZnVuY3Rpb24gZm9y
+IGRldmZyZXEtZXZlbnQgZGV2aWNlIGFzDQo+IGZvbGxvd2luZyBmdW5jdGlvbnMuIFRoZSBkZXZt
+X2RldmZyZXFfZXZlbnRfYWRkX2VkZXYoKSBtYW5hZ2VzIGF1dG9tYXRpY2FsbHkNCj4gdGhlIG1l
+bW9yeSBvZiBkZXZmcmVxLWV2ZW50IGRldmljZSB1c2luZyByZXNvdXJjZSBtYW5hZ2VtZW50Lg0K
+PiAtIGRldm1fZGV2ZnJlcV9ldmVudF9hZGRfZWRldigpDQo+IC0gZGV2bV9kZXZmcmVxX2V2ZW50
+X3JlbW92ZV9lZGV2KCkNCj4gDQo+IENjOiBNeXVuZ2pvbyBIYW0gPG15dW5nam9vLmhhbUBzYW1z
+dW5nLmNvbT4NCj4gQ2M6IEt5dW5nbWluIFBhcmsgPGt5dW5nbWluLnBhcmtAc2Ftc3VuZy5jb20+
+DQo+IFNpZ25lZC1vZmYtYnk6IENoYW53b28gQ2hvaSA8Y3cwMC5jaG9pQHNhbXN1bmcuY29tPg0K
+PiAtLS0NCj4gIGRyaXZlcnMvZGV2ZnJlcS9kZXZmcmVxLWV2ZW50LmMgfCA2MyArKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0KPiAgaW5jbHVkZS9saW51eC9kZXZmcmVx
+LWV2ZW50LmggICB8IDE2ICsrKysrKysrKysrDQo+ICAyIGZpbGVzIGNoYW5nZWQsIDc5IGluc2Vy
+dGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2RldmZyZXEvZGV2ZnJlcS1ldmVu
+dC5jIGIvZHJpdmVycy9kZXZmcmVxL2RldmZyZXEtZXZlbnQuYw0KPiBpbmRleCA2NGMxNzY0Li41
+MzAxZTJiIDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL2RldmZyZXEvZGV2ZnJlcS1ldmVudC5jDQo+
+ICsrKyBiL2RyaXZlcnMvZGV2ZnJlcS9kZXZmcmVxLWV2ZW50LmMNCj4gQEAgLTQ1MSw2ICs0NTEs
+NjkgQEAgaW50IGRldmZyZXFfZXZlbnRfcmVtb3ZlX2VkZXYoc3RydWN0IGRldmZyZXFfZXZlbnRf
+ZGV2ICplZGV2KQ0KPiAgfQ0KPiAgRVhQT1JUX1NZTUJPTF9HUEwoZGV2ZnJlcV9ldmVudF9yZW1v
+dmVfZWRldik7DQo+ICANCj4gK3N0YXRpYyBpbnQgZGV2bV9kZXZmcmVxX2V2ZW50X21hdGNoKHN0
+cnVjdCBkZXZpY2UgKmRldiwgdm9pZCAqcmVzLCB2b2lkICpkYXRhKQ0KPiArew0KPiArCXN0cnVj
+dCBkZXZmcmVxX2V2ZW50X2RldiAqKnIgPSByZXM7DQo+ICsNCj4gKwlpZiAoV0FSTl9PTighciB8
+fCAhKnIpKQ0KPiArCQlyZXR1cm4gMDsNCj4gKw0KPiArCXJldHVybiAqciA9PSBkYXRhOw0KPiAr
+fQ0KPiArDQo+ICtzdGF0aWMgdm9pZCBkZXZtX2RldmZyZXFfZXZlbnRfcmVsZWFzZShzdHJ1Y3Qg
+ZGV2aWNlICpkZXYsIHZvaWQgKnJlcykNCj4gK3sNCj4gKwlkZXZmcmVxX2V2ZW50X3JlbW92ZV9l
+ZGV2KCooc3RydWN0IGRldmZyZXFfZXZlbnRfZGV2ICoqKXJlcyk7DQo+ICt9DQoNCklzbid0IGRl
+di1mcmVlIGZ1bmN0aW9ucyBzdXBwb3NlZCB0byBjaGVjayBpZiBpdCBpcyBhbHJlYWR5IGZyZWVk
+IG9yIG5vdD8NCg0KPiArDQo+ICsvKioNCj4gKyAqIGRldm1fZGV2ZnJlcV9ldmVudF9hZGRfZWRl
+digpIC0gUmVzb3VyY2UtbWFuYWdlZCBkZXZmcmVxX2V2ZW50X2FkZF9lZGV2KCkNCj4gKyAqIEBk
+ZXYJCTogdGhlIGRldmljZSBvd25pbmcgdGhlIGRldmZyZXEtZXZlbnQgZGV2aWNlIGJlaW5nIGNy
+ZWF0ZWQNCj4gKyAqIEBkZXNjCTogdGhlIGRldmZyZXEtZXZlbnQgZGV2aWNlJ3MgZGVjcmlwdG9y
+IHdoaWNoIGluY2x1ZGUgZXNzZW50aWFsDQo+ICsgKgkJICBkYXRhIGZvciBkZXZmcmVxLWV2ZW50
+IGRldmljZS4NCj4gKyAqDQo+ICsgKiBOb3RlIHRoYXQgdGhpcyBmdW5jdGlvbiBtYW5hZ2VzIGF1
+dG9tYXRpY2FsbHkgdGhlIG1lbW9yeSBvZiBkZXZmcmVxLWV2ZW50DQo+ICsgKiBkZXZpY2UgdXNp
+bmcgZGV2aWNlIHJlc291cmNlIG1hbmFnZW1lbnQgYW5kIHNpbXBsaWZ5IHRoZSBmcmVlIG9wZXJh
+dGlvbg0KPiArICogZm9yIG1lbW9yeSBvZiBkZXZmcmVxLWV2ZW50IGRldmljZS4NCj4gKyAqLw0K
+PiArc3RydWN0IGRldmZyZXFfZXZlbnRfZGV2ICpkZXZtX2RldmZyZXFfZXZlbnRfYWRkX2VkZXYo
+c3RydWN0IGRldmljZSAqZGV2LA0KPiArCQkJCQkJc3RydWN0IGRldmZyZXFfZXZlbnRfZGVzYyAq
+ZGVzYykNCj4gK3sNCj4gKwlzdHJ1Y3QgZGV2ZnJlcV9ldmVudF9kZXYgKipwdHIsICplZGV2Ow0K
+PiArDQo+ICsJcHRyID0gZGV2cmVzX2FsbG9jKGRldm1fZGV2ZnJlcV9ldmVudF9yZWxlYXNlLCBz
+aXplb2YoKnB0ciksIEdGUF9LRVJORUwpOw0KPiArCWlmICghcHRyKQ0KPiArCQlyZXR1cm4gRVJS
+X1BUUigtRU5PTUVNKTsNCj4gKw0KPiArCWVkZXYgPSBkZXZmcmVxX2V2ZW50X2FkZF9lZGV2KGRl
+diwgZGVzYyk7DQo+ICsJaWYgKElTX0VSUihlZGV2KSkgew0KPiArCQlkZXZyZXNfZnJlZShwdHIp
+Ow0KPiArCQlyZXR1cm4gRVJSX1BUUigtRU5PTUVNKTsNCj4gKwl9DQo+ICsNCj4gKwkqcHRyID0g
+ZWRldjsNCj4gKwlkZXZyZXNfYWRkKGRldiwgcHRyKTsNCj4gKw0KPiArCXJldHVybiBlZGV2Ow0K
+PiArfQ0KPiArRVhQT1JUX1NZTUJPTChkZXZtX2RldmZyZXFfZXZlbnRfYWRkX2VkZXYpOw0KDQpZ
+b3UgYXJlIHVzaW5nIEdQTCBTeW1ib2wgaW4gdGhpcyBmdW5jdGlvbiAoZGV2cmVzX2FsbG9jKS4N
+Cg0KPiArDQo+ICsvKioNCj4gKyAqIGRldm1fZGV2ZnJlcV9ldmVudF9yZW1vdmVfZWRldigpLSBS
+ZXNvdXJjZS1tYW5hZ2VkIGRldmZyZXFfZXZlbnRfcmVtb3ZlX2VkZXYoKQ0KPiArICogQGRldgkJ
+OiB0aGUgZGV2aWNlIG93bmluZyB0aGUgZGV2ZnJlcS1ldmVudCBkZXZpY2UgYmVpbmcgY3JlYXRl
+ZA0KPiArICogQGVkZXYJOiB0aGUgZGV2ZnJlcS1ldmVudCBkZXZpY2UNCj4gKyAqDQo+ICsgKiBO
+b3RlIHRoYXQgdGhpcyBmdW5jdGlvbiBtYW5hZ2VzIGF1dG9tYXRpY2FsbHkgdGhlIG1lbW9yeSBv
+ZiBkZXZmcmVxLWV2ZW50DQo+ICsgKiBkZXZpY2UgdXNpbmcgZGV2aWNlIHJlc291cmNlIG1hbmFn
+ZW1lbnQuDQo+ICsgKi8NCj4gK3ZvaWQgZGV2bV9kZXZmcmVxX2V2ZW50X3JlbW92ZV9lZGV2KHN0
+cnVjdCBkZXZpY2UgKmRldiwNCj4gKwkJCQlzdHJ1Y3QgZGV2ZnJlcV9ldmVudF9kZXYgKmVkZXYp
+DQo+ICt7DQo+ICsJV0FSTl9PTihkZXZyZXNfcmVsZWFzZShkZXYsIGRldm1fZGV2ZnJlcV9ldmVu
+dF9yZWxlYXNlLA0KPiArCQkJICAgICAgIGRldm1fZGV2ZnJlcV9ldmVudF9tYXRjaCwgZWRldikp
+Ow0KPiArfQ0KPiArRVhQT1JUX1NZTUJPTChkZXZtX2RldmZyZXFfZXZlbnRfcmVtb3ZlX2VkZXYp
+Ow0KDQpIZXJlIHlvdSBhcmUgdXNpbmcgR1BMIHN5bWJvbCBhcyB3ZWxsIChkZXZyZXNfcmVsZWFz
+ZSkuDQoNCltdDQo=
 
-On Mon, Jan 12, 2015 at 11:53:02AM +0900, Joonyoung Shim wrote:
-> This is required in order to ensure that core system devices such as
-> voltage regulators attached via I2C are available early in boot.
-Deferred probing isn't an option? If so I suggest adding the reasoning
-in a comment to stop the next person converting it to that.
-(And if not, please fix accordingly to use deferred probing.)
 
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
