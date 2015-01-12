@@ -1,58 +1,100 @@
-From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Subject: Re: [PATCH RESEND 0/4] Small updates to Snow and Peach Pit/Pi DTS
-Date: Mon, 12 Jan 2015 11:41:06 +0100
-Message-ID: <54B3A4C2.8070304@collabora.co.uk>
-References: <1420212257-22443-1-git-send-email-javier.martinez@collabora.co.uk>
+From: Hongbo Zhang <hongbo.zhang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: Exynos IOMMU driver doesn't work?
+Date: Mon, 12 Jan 2015 18:51:29 +0800
+Message-ID: <CAOhR-w0BcdrSLw7fVOTokNrQkcfsRj8skm6fn1UCMGgDeGDNKA@mail.gmail.com>
+References: <CAOhR-w2vQbyYrWsvZjs-Pt6tU6m9BmH-T5tuBDSyUXteWgxP0Q@mail.gmail.com>
+	<CAOhR-w1gH6zzSZcw-0Lo0zc+p1Mt0=4aqWEZ0Agz4xw0uHsq7A@mail.gmail.com>
+	<CABxcv=n26-A86OmsqviEUz=XSF6QP6K0s=Dfzc43x4+if_qP7A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from bhuna.collabora.co.uk ([93.93.135.160]:48461 "EHLO
-	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752573AbbALKlL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Jan 2015 05:41:11 -0500
-In-Reply-To: <1420212257-22443-1-git-send-email-javier.martinez@collabora.co.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <CABxcv=n26-A86OmsqviEUz=XSF6QP6K0s=Dfzc43x4+if_qP7A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
+Cc: "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Doug Anderson <dianders@chromium.org>, Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 
-Hello Kukjin,
+On 9 January 2015 at 23:34, Javier Martinez Canillas
+<javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org> wrote:
+> [adding Marek, Sjoerd and Joonyoung that were discussing about iommu
+> support in another thread]
 
-On 01/02/2015 04:24 PM, Javier Martinez Canillas wrote:
-> 
-> This series adds some DTS snippets that were missing in the mainline
-> Snow and Peach Pit/Pi Device Trees but are present in the downstream
-> ChromeOS kernel.
-> 
-> The series is composed of the following patches:
-> 
-> Javier Martinez Canillas (4):
->   ARM: dts: Add power and lid GPIO keys pinctrl for exynos5250-snow
->   ARM: dts: Add lid GPIO key device node for Peach boards
->   ARM: dts: Set Peach boards USB WebCam regulators to always on
->   ARM: dts: Configure regulators for suspend on exynos Peach boards
-> 
->  arch/arm/boot/dts/exynos5250-snow.dts      |  16 +++++
->  arch/arm/boot/dts/exynos5420-peach-pit.dts | 100 +++++++++++++++++++++++++++-
->  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 101 ++++++++++++++++++++++++++++-
->  3 files changed, 215 insertions(+), 2 deletions(-)
-> 
-> Patch #1 adds some pinctrl lines for the GPIO keys in the Snow DTS.
-> 
-> Patch #2 adds a device node and pinctrl lines for the lid GPIO in
-> the Peach boards DTS.
-> 
-> Patch #3 sets the regulators that supply voltage to the USB WebCam
-> in Peach boards as always on.
-> 
-> Patch #4 configures the max77802 regulators on the Peach Pit and Pi
-> boards to be enabled or disabled during system suspend.
-> 
+Thank you Javier.
 
-I saw that you collected some DTS patches for 3.20 but these are not
-included. Any comments about this series?
+>
+> Hello Hongbo,
+>
+> On Fri, Jan 9, 2015 at 8:31 AM, Hongbo Zhang <hongbo.zhang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+>> Add linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org mailing list.
+>>
+>> On 7 January 2015 at 18:31, Hongbo Zhang <hongbo.zhang-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+>>> Hi Cho KyongHo, Joerg et al,
+>>> I found the latest Exynos IOMMU driver doesn't work, the line 481:
+>>> BUG_ON(!has_sysmmu(dev));
+>>> in function __exynos_sysmmu_enable() in file exynos-iommu.c triggers
+>>> kernel panic.
+>>>
+>>> Then I found the dev->archdata.iommu isn't initialized at all, it
+>>> should be the root cause.
+>>>
+>
+> That's correct, I found the same the other day since and thought about
+> posting a patch to return -ENODEV if !has_sysmmu(dev) instead to avoid
+> the driver to panic the kernel. But then I realized this is already
+> fixed in Marek's "[PATCH v3 00/19] Exynos SYSMMU (IOMMU) integration
+> with DT and DMA-mapping subsystem" series [0].
+>
+>>> Another problem is this driver is added support of device tree, but
+>>> there is no device tree nodes in the dts file, so I had to search from
+>>> internet and added those nodes manually.
+>>>
+>>> I've found these links of v12 and v13 patches
+>>> https://lkml.org/lkml/2014/4/27/171
+>>> https://lkml.org/lkml/2014/5/12/34
+>>> patch v13 was merged into mainline kernel, but as a part of v12, it
+>>> isn't complete and doesn't work alone, eg dts nodes are missing.
+>>> (I didn't research much dev->archdata.iommu initialization error is
+>>> introduced by which patch, but it seems in very old codes there is no
+>>> such problem)
+>>>
+>
+> Yes, please take a look to Marek series [0]. Keep in mind that the
+> series does not support all sysmmu revisions so IOMMU is not supported
+> for some SoCs (e.g: Exynos5). Support for that is planned once that
+> series land into mainline though [1].
+>
+> May I ask why are you interested in IOMMU support on Exynos? I'm
+> asking because the reason why I tried to enable IOMMU support (and hit
+> the same issue) was to try using the Exynos DRM HDMI driver with IOMMU
+> since I found that HDMI is working on the downstream Samsung kernel
+> [2] that has IOMMU support, but is not working on mainline.
 
-Thanks a lot and best regards,
-Javier
+Because I am testing vfio-platform patches, IOMMU is used in this case.
+http://www.spinics.net/lists/kvm-arm/msg12445.html
+
+And I am glad to find a working kernel as you pointed out, then I
+found these two commits in this tree may solve my problem:
+841a7fe TEMP/TO POST: iommu: exynos: Add "mmu-masters" support
+bd7e4c7 TEMP/TO POST: ARM: dts: add System MMU nodes of Exynos SoCs
+
+>
+> At the end the HDMI problem seems to not be IOMMU related but
+> something with the power domains and clocking but in case you are
+> facing the same issue, you may be interested in that discussion [3].
+>
+> Best regards,
+> Javier
+>
+> [0]: http://www.spinics.net/lists/linux-samsung-soc/msg39168.html
+> [1]: http://www.spinics.net/lists/linux-samsung-soc/msg39980.html
+> [2]: git-9UaJU3cA/F/QT0dZR+AlfA@public.gmane.org:exynos-reference/kernel.git
+> [3]: http://www.spinics.net/lists/linux-samsung-soc/msg40828.html
