@@ -1,156 +1,197 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv7 02/10] devfreq: event: Add the list of supported
- devfreq-event type
-Date: Mon, 12 Jan 2015 20:17:20 +0900
-Message-ID: <54B3AD40.3040308@samsung.com>
-References: <768125446.886831421046952335.JavaMail.weblogic@epmlwas09a>
+From: Tony K Nadackal <tony.kn@samsung.com>
+Subject: RE: [PATCH] [media] s5p-jpeg: Adding Exynos7 Jpeg variant support
+Date: Mon, 12 Jan 2015 16:57:10 +0530
+Message-ID: <001901d02e5a$ba32a540$2e97efc0$@samsung.com>
+References: <1418801229-7532-1-git-send-email-tony.kn@samsung.com>
+ <54919010.8020507@samsung.com> <001801d01b3d$2cb181d0$86148570$@samsung.com>
+ <54AD0033.1020103@samsung.com> <000a01d02a72$bc6e06b0$354a1410$@samsung.com>
+ <54AD28FD.4020703@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <768125446.886831421046952335.JavaMail.weblogic@epmlwas09a>
-Sender: linux-pm-owner@vger.kernel.org
-To: myungjoo.ham@samsung.com
-Cc: "kgene@kernel.org" <kgene@kernel.org>, =?UTF-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, ABHILASH KESAVAN <a.kesavan@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:15850 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750910AbbALL0z (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 12 Jan 2015 06:26:55 -0500
+In-reply-to: <54AD28FD.4020703@samsung.com>
+Content-language: en-us
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: kgene@kernel.org
+Cc: linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, mchehab@osg.samsung.com, 'Jacek Anaszewski' <j.anaszewski@samsung.com>, k.debski@samsung.com, s.nawrocki@samsung.com, robh+dt@kernel.org, mark.rutland@arm.com, bhushan.r@samsung.com
 
-Dear Myungjoo,
+Hi Kukjin,
 
-On 01/12/2015 04:15 PM, MyungJoo Ham wrote:
->>  =20
->>  This patch adds the list of supported devfreq-event type as followi=
-ng.
->> Each devfreq-event device driver would support the various devfreq-e=
-vent type
->> for devfreq governor at the same time.
->> - DEVFREQ_EVENT_TYPE_RAW_DATA
->> - DEVFREQ_EVENT_TYPE_UTILIZATION
->> - DEVFREQ_EVENT_TYPE_BANDWIDTH
->> - DEVFREQ_EVENT_TYPE_LATENCY
->=20
-> Did you try to say:
->=20
-> A devfreq-event device may support multiple devfreq-event types
-> simultaneously.
+On Wednesday, January 07, 2015 6:09 PM, Jacek Anaszewski wrote,
+> Hi Tony,
+> 
+> On 01/07/2015 01:08 PM, Tony K Nadackal wrote:
+> > Dear Jacek,
+> >
+> > On Wednesday, January 07, 2015 3:15 PM Jacek Anaszewski wrote,
+> >
+> >> Hi Tony,
+> >>
+> >> Sorry for late response, just got back from vacation.
+> >>
+> >> On 12/19/2014 04:37 AM, Tony K Nadackal wrote:
+> >>> Hi Jacek,
+> >>>
+> >>> On Wednesday, December 17, 2014 7:46 PM Jacek Anaszewski wrote,
+> >>>> Hi Tony,
+> >>>>
+> >>>> Thanks for the patches.
+> >>>>
+> >>>
+> >>> Thanks for the review.
+> >>>
+> >>>> Please process them with scripts/checkpatch.pl as you will be
+> >>>> submitting the
+> >>> next
+> >>>> version - they contain many coding style related issues.
+> >>>>
+> >>>
+> >>> I ran checkpatch before posting. Do you find any checkpatch related
+> >>> issues in the patch?
+> >>
+> >> There was a problem on my side, sorry for making confusion.
+> >>
+> >>>> My remaining comments below.
+> >>>>
+> >>>
+> >>> [snip]
+> >>>
+> >>>>> +		if (ctx->jpeg->variant->version == SJPEG_EXYNOS7) {
+> >>>>> +			exynos4_jpeg_set_interrupt(jpeg->regs,
+> >>>> SJPEG_EXYNOS7);
+> >>>>> +			exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
+> >>>>> +					ctx->subsampling,
+> >>>> EXYNOS7_ENC_FMT_MASK);
+> >>>>> +			exynos4_jpeg_set_img_fmt(jpeg->regs,
+> >>>>> +					ctx->out_q.fmt->fourcc,
+> >>>>> +
+> 	EXYNOS7_SWAP_CHROMA_SHIFT);
+> >>>>> +		} else {
+> >>>>> +			exynos4_jpeg_set_interrupt(jpeg->regs,
+> >>>> SJPEG_EXYNOS4);
+> >>>>> +			exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
+> >>>>> +					ctx->subsampling,
+> >>>> EXYNOS4_ENC_FMT_MASK);
+> >>>>> +			exynos4_jpeg_set_img_fmt(jpeg->regs,
+> >>>>> +					ctx->out_q.fmt->fourcc,
+> >>>>> +
+> 	EXYNOS4_SWAP_CHROMA_SHIFT);
+> >>>>> +		}
+> >>>>> +
+> >>>>
+> >>>> I'd implement it this way:
+> >>>>
+> >>>> exynos4_jpeg_set_interrupt(jpeg->regs,
+> >>>> ctx->jpeg->variant->version); exynos4_jpeg_set_enc_out_fmt(jpeg->regs,
+> ctx->subsampling,
+> >>>> 			(ctx->jpeg->variant->version == SJPEG_EXYNOS4) ?
+> >>>> 				EXYNOS4_ENC_FMT_MASK :
+> >>>> 				EXYNOS7_ENC_FMT_MASK);
+> >>>> exynos4_jpeg_set_img_fmt(jpeg->regs, ctx->out_q.fmt->fourcc,
+> >>>> 			(ctx->jpeg->variant->version == SJPEG_EXYNOS4) ?
+> >>>> 				EXYNOS4_SWAP_CHROMA_SHIFT :
+> >>>> 				EXYNOS7_SWAP_CHROMA_SHIFT);
+> >>>>
+> >>>
+> >>> OK. Looks goods to me. Thanks for the suggestion.
+> >>>
+> >>>>>     		exynos4_jpeg_set_img_addr(ctx);
+> >>>>>     		exynos4_jpeg_set_jpeg_addr(ctx);
+> >>>>>     		exynos4_jpeg_set_encode_hoff_cnt(jpeg->regs,
+> >>>>>
+> > ctx->out_q.fmt->fourcc);
+> >>>>>     	} else {
+> >>>>>     		exynos4_jpeg_sw_reset(jpeg->regs);
+> >>>>> -		exynos4_jpeg_set_interrupt(jpeg->regs);
+> >>>>>     		exynos4_jpeg_set_img_addr(ctx);
+> >>>>>     		exynos4_jpeg_set_jpeg_addr(ctx);
+> >>>>> -		exynos4_jpeg_set_img_fmt(jpeg->regs, ctx->cap_q.fmt-
+> >>>>> fourcc);
+> >>>>>
+> >>>>> -		bitstream_size = DIV_ROUND_UP(ctx->out_q.size, 32);
+> >>>>> +		if (ctx->jpeg->variant->version == SJPEG_EXYNOS7) {
+> >>>>> +			exynos4_jpeg_set_interrupt(jpeg->regs,
+> >>>> SJPEG_EXYNOS7);
+> >>>>> +			exynos4_jpeg_set_huff_tbl(jpeg->regs);
+> >>>>> +			exynos4_jpeg_set_huf_table_enable(jpeg-
+> >regs, 1);
+> >>>>> +
+> >>>>> +			/*
+> >>>>> +			 * JPEG IP allows storing 4 quantization tables
+> >>>>> +			 * We fill table 0 for luma and table 1 for
+chroma
+> >>>>> +			 */
+> >>>>> +			exynos4_jpeg_set_qtbl_lum(jpeg->regs,
+> >>>>> +							ctx-
+> >compr_quality);
+> >>>>> +			exynos4_jpeg_set_qtbl_chr(jpeg->regs,
+> >>>>> +							ctx-
+> >compr_quality);
+> >>>>
+> >>>> Is it really required to setup quantization tables for encoding?
+> >>>>
+> >>>
+> >>> Without setting up the quantization tables, encoder is working fine.
+> >>> But, as per Exynos7 User Manual setting up the quantization tables
+> >>> are required for encoding also.
+> >>
+> >
+> > Sorry I also got it mixed up.
+> > *Decoder* works fine without setting up the quantization tables. But
+> > this step is mentioned in User Manual.
+> 
+> I'm ok with it provided that you will get an ack from Samsung SOCs maintainer.
+> 
+> >> Actually I intended to ask if setting the quantization tables is
+> >> required for *decoding*, as you set it also in decoding path, whereas
+> >> for Exynos4 it is not required. I looks strange for me as
+> >> quantization tables are usually required
+> > only
+> >> for encoding raw images.
+> >> The same is related to huffman tables.
+> >
+> > Huffman table is required for Exynos7 decoding.
+> > User Manual says about  Update_Huf_Tbl [bit 19 of PEG_CNTL],
+> > "User/Host should mandatory program this Bit as "1" for every decoder
+> > operation. SFR "HUFF_TBL_ENT" and SFR "HUFF_CNT" should be programmed
+> > accordingly for every encoder/decoder operation."
+> 
+> Same situation as above.
+> 
+> >>
+> >>>>> +			exynos4_jpeg_set_stream_size(jpeg->regs, ctx-
+> >>>>> cap_q.w,
+> >>>>> +					ctx->cap_q.h);
+> >>>>
+> >>>> For exynos4 this function writes the number of samples per line and
+> >>>> number lines of the resulting JPEG image and is used only during
+> >>>> encoding. Is the semantics of the related register different in
+> >>>> case of
+> > Exynos7?
+> >>>>
+> >>>
+> >>> Yes. In case of Exynos7 Encoding, This step is required.
+> >>
+> >> Ack.
+> >
+> > I will request Kukjin or any Samsung colleagues who has access to
+> > Exynos7 Manual to give ack or tested by.
+> 
+> This is a good idea.
 
-I think that one devfreq-event device can support multiple devfreq-even=
-t types.
-but, devfreq-event device might provide only value at one point.
+Will you please take care of this..?
 
-But,
-This patch is ambiguous and includes a bug according to your comment
-(below switch statement). I'll drop this patch on next patch-set.
+> 
+> --
+> Best Regards,
+> Jacek Anaszewski
 
-This patch will be posted on further patch-set after resolving some iss=
-ue.
-
-Best Regards,
-Chanwoo Choi
-
->=20
-> If so, your switch expressions are going to screw up.
->=20
->=20
->>
->> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
->> Cc: Kyungmin Park <kyungmin.park@samsung.com>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> ---
->>  drivers/devfreq/devfreq-event.c | 58 ++++++++++++++++++++++++++++++=
-++++++-----
->>  include/linux/devfreq-event.h   | 25 +++++++++++++++---
->>  2 files changed, 73 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/devfreq/devfreq-event.c b/drivers/devfreq/devfr=
-eq-event.c
->> index 81448ba..64c1764 100644
->> --- a/drivers/devfreq/devfreq-event.c
->> +++ b/drivers/devfreq/devfreq-event.c
->> =20
-> []
->> -	mutex_lock(&edev->lock);
->> -	ret =3D edev->desc->ops->get_event(edev, edata);
->> -	mutex_unlock(&edev->lock);
->> +	switch (type) {
->=20
-> Bitwise value with switch? (what if type =3D RAW_DATA | BANDWIDTH, me=
-aning
-> this is raw data of the bandwitdh.)
->=20
->> +	case DEVFREQ_EVENT_TYPE_RAW_DATA:
->> +	case DEVFREQ_EVENT_TYPE_BANDWIDTH:
->> +	case DEVFREQ_EVENT_TYPE_LATENCY:
->> +		if ((edata->event > EVENT_TYPE_RAW_DATA_MAX) ||
->> +			(edata->total_event > EVENT_TYPE_RAW_DATA_MAX)) {
->=20
-> Is it possible for unsigned long edata->event/total_event to be
->   > EVENT_TYPE_RAW_DATA_MAX =3D ULONG_MAX?
->=20
-> What was your intention?
->=20
-> If you were trying to detect overflow, you need to rethink about it.
-> If not, (overflow is harmless or not going to happen) you don't need =
-to
-> check it.
->=20
->=20
->> +			edata->event =3D edata->total_event =3D 0;
->> +			ret =3D -EINVAL;
->> +		}
->> +		break;
->> +	case DEVFREQ_EVENT_TYPE_UTILIZATION:
->> +		edata->total_event =3D EVENT_TYPE_UTILIZATION_MAX;
->> =20
->> -	if ((edata->total_event <=3D 0)
->> -		|| (edata->event > edata->total_event)) {
->> +		if (edata->event > EVENT_TYPE_UTILIZATION_MAX) {
->> +			edata->event =3D edata->total_event =3D 0;
->> +			ret =3D -EINVAL;
->> +		}
->> +		break;
->> +	default:
->>  		edata->event =3D edata->total_event =3D 0;
->>  		ret =3D -EINVAL;
->> +		break;
->>  	}
->> =20
->> +	mutex_unlock(&edev->lock);
->> +
->>  	return ret;
->>  }
->>  EXPORT_SYMBOL_GPL(devfreq_event_get_event);
->> diff --git a/include/linux/devfreq-event.h b/include/linux/devfreq-e=
-vent.h
->> index b7363f5..13a5703 100644
->> --- a/include/linux/devfreq-event.h
->> +++ b/include/linux/devfreq-event.h
->> @@ -36,6 +36,14 @@ struct devfreq_event_dev {
->>  	const struct devfreq_event_desc *desc;
->>  };
->> =20
->> +/* The supported type by devfreq-event device */
->> +enum devfreq_event_type {
->> +	DEVFREQ_EVENT_TYPE_RAW_DATA	=3D BIT(0),
->> +	DEVFREQ_EVENT_TYPE_UTILIZATION	=3D BIT(1),
->> +	DEVFREQ_EVENT_TYPE_BANDWIDTH	=3D BIT(2),
->> +	DEVFREQ_EVENT_TYPE_LATENCY	=3D BIT(3),
->> +};
->> +
->=20
-> (Being curious) Is it possible to have multiple types
-> simultaneously?
->=20
->=20
-> []
-> N=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BDr=EF=BF=BD=EF=BF=BDy=EF=
-=BF=BD=EF=BF=BD=EF=BF=BDb=EF=BF=BDX=EF=BF=BD=EF=BF=BD=C7=A7v=EF=BF=BD^=EF=
-=BF=BD)=DE=BA{.n=EF=BF=BD+=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD{=EF=BF=BD=
-=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BDx,=EF=BF=BD=C8=A7=EF=BF=BD=17=EF=BF=
-=BD=EF=BF=BD=DC=A8}=EF=BF=BD=EF=BF=BD=EF=BF=BD=C6=A0z=EF=BF=BD&j:+v=EF=BF=
-=BD=EF=BF=BD=EF=BF=BD=07=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BDzZ+=EF=BF=BD=
-=EF=BF=BD+zf=EF=BF=BD=EF=BF=BD=EF=BF=BDh=EF=BF=BD=EF=BF=BD=EF=BF=BD~=EF=
-=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BDi=EF=BF=BD=EF=BF=BD=EF=BF=BDz=EF=BF=BD=
-=1E=EF=BF=BDw=EF=BF=BD=EF=BF=BD=EF=BF=BD?=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
-=BF=BD&=EF=BF=BD)=DF=A2=1Bfl=3D=3D=3D
->=20
-
+Thanks and Regards
+Tony
