@@ -1,49 +1,52 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [RESEND PATCH] ARM: EXYNOS: Add exynos3250 suspend-to-ram support
-Date: Mon, 12 Jan 2015 18:28:25 +0900
-Message-ID: <54B393B9.6060806@kernel.org>
-References: <1420681838-4292-1-git-send-email-cw00.choi@samsung.com> <54B38989.4030700@kernel.org> <54B38B24.20804@samsung.com>
+From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Subject: Re: [PATCH v5 1/2] soc: samsung: add exynos chipid driver support
+Date: Mon, 12 Jan 2015 14:59:23 +0530
+Message-ID: <54B393F3.8070403@samsung.com>
+References: <1418285264-21763-1-git-send-email-pankaj.dubey@samsung.com>
+ <CAL_JsqKaf+w_D-xLCUizuTmxwT7uUHExA=qMpawQ+00G7uMcBg@mail.gmail.com>
+ <548A9D27.1000504@samsung.com> <1521226.qVx3V7aJT6@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:36430 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751969AbbALJ2k (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Jan 2015 04:28:40 -0500
-In-Reply-To: <54B38B24.20804@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1521226.qVx3V7aJT6@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Rob Herring <robherring2@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, =?windows-1252?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Thomas Abraham <thomas.ab@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Kukjin Kim <kgene@kernel.org>, ben-linux@fluff.org, kyungmin.park@samsung.com, inki.dae@samsung.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 01/12/15 17:51, Chanwoo Choi wrote:
-> Dear Kukjin,
-> 
-> On 01/12/2015 05:44 PM, Kukjin Kim wrote:
->> On 01/08/15 10:50, Chanwoo Choi wrote:
->>> This patch adds the support for suspend-to-ram feature of Exynos3250 SoC.
->>> Exynos3250 don't contain the L2 cache.
+Hi Arnd,
+
+Sorry for late reply.
+
+On Friday 12 December 2014 05:01 PM, Arnd Bergmann wrote:
+> On Friday 12 December 2014 13:15:43 Pankaj Dubey wrote:
+>>>> +
+>>>> +static void __iomem *exynos_chipid_base;
+>>>> +
+>>>> +struct exynos_chipid_info exynos_soc_info;
+>>>> +EXPORT_SYMBOL(exynos_soc_info);
 >>>
->>> Cc: Kukjin Kim <kgene@kernel.org>
->>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
->>> ---
->>> Depend on:
->>> - v3.19-rc3
->>>
->> Chanwoo,
+>>> The soc_device already has similar data.Why is this needed? Is it
+>>> temporary for compatibility?
 >>
->> Can you please let me know why this is depending on v3.19-rc3?
->> If I apply this on top of my tree not including some stuff between
->> v3.19-rc1 and v3.19-rc3, is there a problem?
-> 
-> No problem.
-> I'm sorry. It is my mistake about using meaning of dependency.
-> This patch can be applied on v3.19-rc1. I just tested it on v3.19-rc3.
-> 
-OK, applied.
+>> struct soc_device_attribute can hold these two (product_id, and
+>> revision) but they are defined as char * in soc_device_atttribute, and I
+>> feel it's more specific for exposing via sysfs.
+>> Also existing code in mach-exynos compares them via product_id/revision
+>> macros, so I can say to keep compatibility.
+>
+> We had a similar discussion about the Marvell SoCs a while ago, and at
+> the time we concluded that it would be best to create a platform-
+> independent API to match the strings in soc_device_attribute against
+> a list of strings in the driver, either by matching the start of the
+> string, or using the glob_match() function. Would that work for you?
+>
+
+It might be useful, will you please point me to that discussion so that 
+I can dig more and see how I can reuse it, or if required work on it.
 
 Thanks,
-Kukjin
+Pankaj Dubey
+> 	Arnd
+>
