@@ -1,207 +1,198 @@
-From: Gustavo Padovan <gustavo@padovan.org>
-Subject: [PATCH 2/2] drm/exynos: track vblank events on a per crtc basis
-Date: Mon, 12 Jan 2015 16:01:03 -0200
-Message-ID: <1421085663-12504-2-git-send-email-gustavo@padovan.org>
-References: <1421085663-12504-1-git-send-email-gustavo@padovan.org>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: [PATCH v3 00/21] irqchip: gic: killing gic_arch_extn and co, slowly
+Date: Mon, 12 Jan 2015 18:26:06 +0000
+Message-ID: <1421087187-26988-1-git-send-email-marc.zyngier@arm.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f54.google.com ([209.85.192.54]:40424 "EHLO
-	mail-qg0-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751103AbbALSBN (ORCPT
+Received: from foss-mx-na.foss.arm.com ([217.140.108.86]:60274 "EHLO
+	foss-mx-na.foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751896AbbALS0h (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Jan 2015 13:01:13 -0500
-Received: by mail-qg0-f54.google.com with SMTP id l89so18796192qgf.13
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jan 2015 10:01:12 -0800 (PST)
-In-Reply-To: <1421085663-12504-1-git-send-email-gustavo@padovan.org>
+	Mon, 12 Jan 2015 13:26:37 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, inki.dae@samsung.com, Mandeep Singh Baines <msb@chromium.org>
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Benoit Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>
+Cc: Stefan Agner <stefan@agner.ch>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
 
-From: Mandeep Singh Baines <msb@chromium.org>
+The gic_arch_extn hack that a number of platform use has been nagging
+me for too long. It is only there for the benefit of a few platform,
+and yet it impacts all GIC users. Moreover, it gives people the wrong
+idea ("let's use it to put some new custom hack in there"...).
 
-The goal of the change is to make sure we send the vblank event on the
-current vblank. My hope is to fix any races that might be causing flicker.
-After this change I only see a flicker in the transition plymouth and
-X11.
+But now that stacked irq domains have been merged into 3.19, the time
+has come for gic_arch_extn to meet the Big Bit Bucket.
 
-Simplified the code by tracking vblank events on a per-crtc basis. This
-allowed me to remove all error paths from the callback. It also allowed
-me to remove the vblank wait from the callback.
+This patch series takes several steps towards the elimination of
+gic_arch_extn:
 
-Signed-off-by: Mandeep Singh Baines <msb@chromium.org>
-Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.co.uk>
----
- drivers/gpu/drm/exynos/exynos_drm_crtc.c | 39 ++++++++------------------------
- drivers/gpu/drm/exynos/exynos_drm_drv.c  | 19 ----------------
- drivers/gpu/drm/exynos/exynos_drm_drv.h  |  6 ++---
- 3 files changed, 12 insertions(+), 52 deletions(-)
+- moves Tegra's legacy interrupt controller support to
+  drivers/irqchip, implementing a stacked domain on top of the
+  standard GIC.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index a85c451..b1f1b25 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -34,9 +34,8 @@ static void exynos_drm_crtc_dpms(struct drm_crtc *crtc, int mode)
- 	if (mode > DRM_MODE_DPMS_ON) {
- 		/* wait for the completion of page flip. */
- 		if (!wait_event_timeout(exynos_crtc->pending_flip_queue,
--				!atomic_read(&exynos_crtc->pending_flip),
--				HZ/20))
--			atomic_set(&exynos_crtc->pending_flip, 0);
-+				(exynos_crtc->event == NULL), HZ/20))
-+			exynos_crtc->event = NULL;
- 		drm_crtc_vblank_off(crtc);
- 	}
- 
-@@ -166,7 +165,6 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
- 				     uint32_t page_flip_flags)
- {
- 	struct drm_device *dev = crtc->dev;
--	struct exynos_drm_private *dev_priv = dev->dev_private;
- 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
- 	struct drm_framebuffer *old_fb = crtc->primary->fb;
- 	unsigned int crtc_w, crtc_h;
-@@ -194,12 +192,6 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
- 			goto out;
- 		}
- 
--		spin_lock_irq(&dev->event_lock);
--		list_add_tail(&event->base.link,
--				&dev_priv->pageflip_event_list);
--		atomic_set(&exynos_crtc->pending_flip, 1);
--		spin_unlock_irq(&dev->event_lock);
--
- 		crtc->primary->fb = fb;
- 		crtc_w = fb->width - crtc->x;
- 		crtc_h = fb->height - crtc->y;
-@@ -209,14 +201,12 @@ static int exynos_drm_crtc_page_flip(struct drm_crtc *crtc,
- 		if (ret) {
- 			crtc->primary->fb = old_fb;
- 
--			spin_lock_irq(&dev->event_lock);
- 			drm_vblank_put(dev, exynos_crtc->pipe);
--			list_del(&event->base.link);
--			atomic_set(&exynos_crtc->pending_flip, 0);
--			spin_unlock_irq(&dev->event_lock);
- 
- 			goto out;
- 		}
-+
-+		exynos_crtc->event = event;
- 	}
- out:
- 	mutex_unlock(&dev->struct_mutex);
-@@ -315,7 +305,6 @@ struct exynos_drm_crtc *exynos_drm_crtc_create(struct drm_device *drm_dev,
- 		return ERR_PTR(-ENOMEM);
- 
- 	init_waitqueue_head(&exynos_crtc->pending_flip_queue);
--	atomic_set(&exynos_crtc->pending_flip, 0);
- 
- 	exynos_crtc->dpms = DRM_MODE_DPMS_OFF;
- 	exynos_crtc->pipe = pipe;
-@@ -382,27 +371,19 @@ void exynos_drm_crtc_disable_vblank(struct drm_device *dev, int pipe)
- void exynos_drm_crtc_finish_pageflip(struct drm_device *dev, int pipe)
- {
- 	struct exynos_drm_private *dev_priv = dev->dev_private;
--	struct drm_pending_vblank_event *e, *t;
- 	struct drm_crtc *drm_crtc = dev_priv->crtc[pipe];
- 	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(drm_crtc);
--	unsigned long flags;
- 
--	spin_lock_irqsave(&dev->event_lock, flags);
-+	if (exynos_crtc->event) {
- 
--	list_for_each_entry_safe(e, t, &dev_priv->pageflip_event_list,
--			base.link) {
--		/* if event's pipe isn't same as crtc then ignore it. */
--		if (pipe != e->pipe)
--			continue;
--
--		list_del(&e->base.link);
--		drm_send_vblank_event(dev, -1, e);
-+		spin_lock_irq(&dev->event_lock);
-+		drm_send_vblank_event(dev, -1, exynos_crtc->event);
- 		drm_vblank_put(dev, pipe);
--		atomic_set(&exynos_crtc->pending_flip, 0);
- 		wake_up(&exynos_crtc->pending_flip_queue);
--	}
-+		spin_unlock_irq(&dev->event_lock);
- 
--	spin_unlock_irqrestore(&dev->event_lock, flags);
-+		exynos_crtc->event = NULL;
-+	}
- }
- 
- void exynos_drm_crtc_complete_scanout(struct drm_framebuffer *fb)
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-index b60fd9b..731cdbc 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-@@ -61,7 +61,6 @@ static int exynos_drm_load(struct drm_device *dev, unsigned long flags)
- 	if (!private)
- 		return -ENOMEM;
- 
--	INIT_LIST_HEAD(&private->pageflip_event_list);
- 	dev_set_drvdata(dev->dev, dev);
- 	dev->dev_private = (void *)private;
- 
-@@ -237,27 +236,9 @@ static void exynos_drm_preclose(struct drm_device *dev,
- 
- static void exynos_drm_postclose(struct drm_device *dev, struct drm_file *file)
- {
--	struct exynos_drm_private *private = dev->dev_private;
--	struct drm_pending_vblank_event *v, *vt;
--	struct drm_pending_event *e, *et;
--	unsigned long flags;
--
- 	if (!file->driver_priv)
- 		return;
- 
--	/* Release all events not unhandled by page flip handler. */
--	spin_lock_irqsave(&dev->event_lock, flags);
--	list_for_each_entry_safe(v, vt, &private->pageflip_event_list,
--			base.link) {
--		if (v->base.file_priv == file) {
--			list_del(&v->base.link);
--			drm_vblank_put(dev, v->pipe);
--			v->base.destroy(&v->base);
--		}
--	}
--
--	spin_unlock_irqrestore(&dev->event_lock, flags);
--
- 	kfree(file->driver_priv);
- 	file->driver_priv = NULL;
- }
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index d490b49..7411af2 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -216,6 +216,7 @@ enum exynos_crtc_mode {
-  *	this pipe value.
-  * @dpms: store the crtc dpms value
-  * @mode: store the crtc mode value
-+ * @event: vblank event that is currently queued for flip
-  * @ops: pointer to callbacks for exynos drm specific functionality
-  * @ctx: A pointer to the crtc's implementation specific context
-  */
-@@ -226,7 +227,7 @@ struct exynos_drm_crtc {
- 	unsigned int			dpms;
- 	enum exynos_crtc_mode		mode;
- 	wait_queue_head_t		pending_flip_queue;
--	atomic_t			pending_flip;
-+	struct drm_pending_vblank_event	*event;
- 	struct exynos_drm_crtc_ops	*ops;
- 	void				*ctx;
- };
-@@ -256,9 +257,6 @@ struct drm_exynos_file_private {
- struct exynos_drm_private {
- 	struct drm_fb_helper *fb_helper;
- 
--	/* list head for new event to be added. */
--	struct list_head pageflip_event_list;
--
- 	/*
- 	 * created crtc object would be contained at this array and
- 	 * this array is used to be aware of which crtc did it request vblank.
+- OMAP, imx6 and exynos are also converted to stacked domains, but
+  their implementation is left in place (the code is far too
+  intricately mixed with other details of the platform for me to even
+  try to move it). Some OMAP variants get a special treatment as we
+  also kill the crossbar horror (more on that below).
+
+- shmobile, ux500 and zynq are only slightly modified.
+
+- The GIC itself is cleaned up, and some other bits and bobs are
+  adjusted for a good measure.
+
+About the TI crossbar:
+
+- The allocation of interrupts in this domain is fairly similar to
+  what we do for MSI (see the GICv2m driver), and stacked domains have
+  proved to be a fitting solution.
+
+- The current description in DT is currently entierely inaccurate, and
+  as we're already breaking it for the WUGEN block, we might as well
+  do it again for the crossbar.
+
+- The way crossbar, WUGEN and GIC interract is quite complex (this is
+  effectively a stack of three interrupt controllers with interesting
+  exceptions and braindead routing), and stacked domains are the right
+  abstraction for that.
+
+- Other platforms (Freescale Vybrid) are starting to come up with the
+  same type of things, and it'd be good to avoid them following the
+  same broken model.
+
+- It removes a few lines from the code base so it can't completely be
+  a bad idea!
+
+So this patch series does exactly that: make the crossbar a stacked
+interrupt controller that only takes care of setting up the routing,
+fix the DTs to represent the actual HW, and remove a bit of the
+craziness from the GIC code.
+
+It is worth realizing that:
+
+- I haven't been able to test this as much as I would have wanted to
+  (it's only been tested on tegra2 and omap5).
+
+- I've created DT bindings when needed, updated existing ones, but I
+  haven't created a binding for platforms that already used an
+  undocumented one (imx6, I'm looking at you).
+
+- I've relaxed quite a bit of the locking in the GIC code. I believe
+  this is safe, but someone else should give it a long hard look.
+
+- This actively *breaks* existing setups. Once you boot a new kernel
+  with an old DT, suspend/resume *will* be broken. Old kernels on a
+  new DT won't even boot! You've been warned. This really outline the
+  necessity of actually describing the HW in device trees...
+
+As for the patches, they are on top of 3.19-rc3.
+
+I've pushed the code to:
+git://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git irq/die-gic-arch-extn-die-die-die
+
+I'm still targetting 3.20 for this, but obviously things are getting
+quite tight. I'd very much like to hear from the maintainers about
+their views concerning this series.
+
+Thanks,
+
+	 M.
+
+>From v2 [2]:
+- Addressed numerous comments from Thierry
+- Merged bug fixes from Nishanth
+- Merged bug fix from Stefan
+
+>From v1 [1]:
+- Rebased on 3.19-rc3
+- Added crossbar conversion to stacked domains
+- Merged bug fixes from Nishanth
+
+Marc Zyngier (21):
+  ARM: tegra: irq: nuke leftovers from non-DT support
+  irqchip: tegra: add DT-based support for legacy interrupt controller
+  ARM: tegra: skip gic_arch_extn setup if DT has a LIC node
+  ARM: tegra: update DTs to expose legacy interrupt controller
+  DT: tegra: add binding for the legacy interrupt controller
+  ARM: tegra: remove old LIC support
+  genirq: Add irqchip_set_wake_parent
+  irqchip: crossbar: convert dra7 crossbar to stacked domains
+  DT: update ti,irq-crossbar binding
+  irqchip: GIC: get rid of routable domain
+  DT: arm,gic: kill arm,routable-irqs
+  DT: omap4/5: add binding for the wake-up generator
+  ARM: omap: convert wakeupgen to stacked domains
+  ARM: imx6: convert GPC to stacked domains
+  ARM: exynos4/5: convert pmu wakeup to stacked domains
+  DT: exynos: update PMU binding
+  irqchip: gic: add an entry point to set up irqchip flags
+  ARM: shmobile: remove use of gic_arch_extn.irq_set_wake
+  ARM: ux500: switch from gic_arch_extn to gic_set_irqchip_flags
+  ARM: zynq: switch from gic_arch_extn to gic_set_irqchip_flags
+  irqchip: gic: Drop support for gic_arch_extn
+
+ Documentation/devicetree/bindings/arm/gic.txt      |   6 -
+ .../devicetree/bindings/arm/omap/crossbar.txt      |  18 +-
+ .../devicetree/bindings/arm/samsung/pmu.txt        |  13 +
+ .../interrupt-controller/nvidia,tegra-ictlr.txt    |  43 +++
+ .../interrupt-controller/ti,omap4-wugen-mpu        |  33 ++
+ arch/arm/boot/dts/am4372.dtsi                      |  11 +-
+ arch/arm/boot/dts/am437x-gp-evm.dts                |   1 -
+ arch/arm/boot/dts/am437x-sk-evm.dts                |   1 -
+ arch/arm/boot/dts/am43x-epos-evm.dts               |   1 -
+ arch/arm/boot/dts/am57xx-beagle-x15.dts            |   3 +-
+ arch/arm/boot/dts/dra7-evm.dts                     |   2 +-
+ arch/arm/boot/dts/dra7.dtsi                        |  43 ++-
+ arch/arm/boot/dts/dra72-evm.dts                    |   1 -
+ arch/arm/boot/dts/dra72x.dtsi                      |   3 +-
+ arch/arm/boot/dts/dra74x.dtsi                      |   5 +-
+ arch/arm/boot/dts/exynos4.dtsi                     |   3 +
+ arch/arm/boot/dts/exynos5250.dtsi                  |   3 +
+ arch/arm/boot/dts/exynos5420.dtsi                  |   3 +
+ arch/arm/boot/dts/imx6qdl.dtsi                     |   7 +-
+ arch/arm/boot/dts/imx6sl.dtsi                      |   5 +-
+ arch/arm/boot/dts/imx6sx.dtsi                      |   5 +-
+ arch/arm/boot/dts/omap4-duovero.dtsi               |   2 -
+ arch/arm/boot/dts/omap4-panda-common.dtsi          |   8 +-
+ arch/arm/boot/dts/omap4-sdp.dts                    |   8 +-
+ arch/arm/boot/dts/omap4-var-som-om44.dtsi          |   2 -
+ arch/arm/boot/dts/omap4.dtsi                       |  18 +-
+ arch/arm/boot/dts/omap5-cm-t54.dts                 |   1 -
+ arch/arm/boot/dts/omap5-uevm.dts                   |   2 -
+ arch/arm/boot/dts/omap5.dtsi                       |  26 +-
+ arch/arm/boot/dts/tegra114.dtsi                    |  16 +-
+ arch/arm/boot/dts/tegra124.dtsi                    |  16 +-
+ arch/arm/boot/dts/tegra20.dtsi                     |  15 +-
+ arch/arm/boot/dts/tegra30.dtsi                     |  16 +-
+ arch/arm/mach-exynos/exynos.c                      |  14 +-
+ arch/arm/mach-exynos/suspend.c                     | 122 ++++++-
+ arch/arm/mach-imx/common.h                         |   1 -
+ arch/arm/mach-imx/gpc.c                            | 127 +++++--
+ arch/arm/mach-imx/mach-imx6q.c                     |   1 -
+ arch/arm/mach-imx/mach-imx6sl.c                    |   1 -
+ arch/arm/mach-imx/mach-imx6sx.c                    |   1 -
+ arch/arm/mach-omap2/omap-wakeupgen.c               | 125 +++++--
+ arch/arm/mach-omap2/omap-wakeupgen.h               |   1 -
+ arch/arm/mach-omap2/omap4-common.c                 |   5 -
+ arch/arm/mach-shmobile/intc-sh73a0.c               |   7 +-
+ arch/arm/mach-shmobile/setup-r8a7779.c             |   7 +-
+ arch/arm/mach-tegra/iomap.h                        |  15 -
+ arch/arm/mach-tegra/irq.c                          | 209 +-----------
+ arch/arm/mach-tegra/irq.h                          |   6 -
+ arch/arm/mach-tegra/tegra.c                        |   1 -
+ arch/arm/mach-ux500/cpu.c                          |   2 +-
+ arch/arm/mach-zynq/common.c                        |   2 +-
+ drivers/irqchip/Makefile                           |   1 +
+ drivers/irqchip/irq-crossbar.c                     | 207 +++++++-----
+ drivers/irqchip/irq-gic.c                          | 112 +------
+ drivers/irqchip/irq-tegra.c                        | 368 +++++++++++++++++++++
+ include/linux/irq.h                                |   1 +
+ include/linux/irqchip/arm-gic.h                    |   9 +-
+ include/linux/irqchip/irq-crossbar.h               |  11 -
+ kernel/irq/chip.c                                  |  16 +
+ 59 files changed, 1098 insertions(+), 614 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/nvidia,tegra-ictlr.txt
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,omap4-wugen-mpu
+ create mode 100644 drivers/irqchip/irq-tegra.c
+ delete mode 100644 include/linux/irqchip/irq-crossbar.h
+
 -- 
-1.9.3
+2.1.4
