@@ -1,38 +1,54 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V3 2/2] pinctrl: exynos: Add BUS1 pin controller for exynos7
-Date: Mon, 12 Jan 2015 10:14:53 +0100
-Message-ID: <CACRpkdbtJZ4wKh=wF8t8-NAvi9P1OapP_x61VUdz1WRjSwcYEw@mail.gmail.com>
-References: <1418200780-22363-1-git-send-email-gautam.vivek@samsung.com>
-	<1418200780-22363-2-git-send-email-gautam.vivek@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1418200780-22363-2-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, root <alim.akhtar-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: [RFC 0/3] mmc: Add dynamic frequency scaling
+Date: Mon, 12 Jan 2015 10:23:02 +0100
+Message-ID: <1421054585-9032-1-git-send-email-k.kozlowski@samsung.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 10, 2014 at 9:39 AM, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+Hi,
 
-> USB and Power regulator on Exynos7 require gpios available
-> in BUS1 pin controller block.
-> So adding the BUS1 pinctrl support.
->
-> Signed-off-by: Naveen Krishna Ch <naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Cc: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> ---
->
-> Changes since V2:
->  - Added documentation on alias for BUS1 pin controller block.
 
-Patch applied with Tomasz ACK.
+I would like to hear some comments about idea of scaling MMC clock
+frequency. The basic idea is to lower the clock when device is
+completely idle or not busy enough.
 
-Yours,
-Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+The patchset adds MMC card as a devfreq device and uses simple_ondemand
+as governor. In idle this gave benefits (less energy consumed during
+idle):
+1. Trats2 (Exynos4412): 2.6%
+2. Rinato (Exynos3250): 1%
+
+but (especially on Rinato) it had impact on performance (probably
+because ondemand triggering a little to late). What is interesting
+manually changing the clock (without this patchset) gave slightly
+bigger benefits. Maybe the devfreq introduces noticeable overhead?
+
+
+Comments are welcomed. Maybe on other platforms this has bigger impact?
+
+Best regards,
+Krzysztof
+
+
+Krzysztof Kozlowski (3):
+  mmc: Add dynamic frequency scaling
+  ARM: dts: Specify MSHC realistic clocks and use frequency scaling
+  ARM: dts: Use frequency scaling for MSHC
+
+ Documentation/devicetree/bindings/mmc/mmc.txt |   2 +
+ arch/arm/boot/dts/exynos3250-rinato.dts       |   1 +
+ arch/arm/boot/dts/exynos4412-trats2.dts       |   4 +-
+ drivers/mmc/card/block.c                      | 247 ++++++++++++++++++++++++++
+ drivers/mmc/core/Kconfig                      |  16 ++
+ drivers/mmc/core/core.h                       |   1 -
+ drivers/mmc/core/host.c                       |   2 +
+ include/linux/mmc/card.h                      |   8 +
+ include/linux/mmc/host.h                      |   3 +
+ 9 files changed, 282 insertions(+), 2 deletions(-)
+
+-- 
+1.9.1
+
