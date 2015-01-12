@@ -1,41 +1,49 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: [RFC 2/3] ARM: dts: Specify MSHC realistic clocks and use frequency
- scaling
-Date: Mon, 12 Jan 2015 10:23:04 +0100
-Message-ID: <1421054585-9032-3-git-send-email-k.kozlowski@samsung.com>
-References: <1421054585-9032-1-git-send-email-k.kozlowski@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1421054585-9032-1-git-send-email-k.kozlowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Chris Ball <chris@printf.net>, Ulf Hansson <ulf.hansson@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org, Kukjin Kim <kgene@kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: Re: [RESEND PATCH] ARM: EXYNOS: Add exynos3250 suspend-to-ram support
+Date: Mon, 12 Jan 2015 18:28:25 +0900
+Message-ID: <54B393B9.6060806@kernel.org>
+References: <1420681838-4292-1-git-send-email-cw00.choi@samsung.com> <54B38989.4030700@kernel.org> <54B38B24.20804@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:36430 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751969AbbALJ2k (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 12 Jan 2015 04:28:40 -0500
+In-Reply-To: <54B38B24.20804@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, ben-linux@fluff.org, kyungmin.park@samsung.com, inki.dae@samsung.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Lower the dw_mmc host clock from 400 MHz to 100 MHz because there are a
-lot of MMC errors above 100 MHz.
+On 01/12/15 17:51, Chanwoo Choi wrote:
+> Dear Kukjin,
+> 
+> On 01/12/2015 05:44 PM, Kukjin Kim wrote:
+>> On 01/08/15 10:50, Chanwoo Choi wrote:
+>>> This patch adds the support for suspend-to-ram feature of Exynos3250 SoC.
+>>> Exynos3250 don't contain the L2 cache.
+>>>
+>>> Cc: Kukjin Kim <kgene@kernel.org>
+>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> ---
+>>> Depend on:
+>>> - v3.19-rc3
+>>>
+>> Chanwoo,
+>>
+>> Can you please let me know why this is depending on v3.19-rc3?
+>> If I apply this on top of my tree not including some stuff between
+>> v3.19-rc1 and v3.19-rc3, is there a problem?
+> 
+> No problem.
+> I'm sorry. It is my mistake about using meaning of dependency.
+> This patch can be applied on v3.19-rc1. I just tested it on v3.19-rc3.
+> 
+OK, applied.
 
-Enable frequency scaling to reduce energy consumption. In idle this
-reduced energy consumption by 2.6% (from 119.5 mA to 116.4 mA).
-
-Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
----
- arch/arm/boot/dts/exynos4412-trats2.dts | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
-index 29231b452643..21f1236ae979 100644
---- a/arch/arm/boot/dts/exynos4412-trats2.dts
-+++ b/arch/arm/boot/dts/exynos4412-trats2.dts
-@@ -558,7 +558,9 @@
- 		non-removable;
- 		card-detect-delay = <200>;
- 		vmmc-supply = <&vemmc_reg>;
--		clock-frequency = <400000000>;
-+		clock-frequency = <100000000>;
-+		clock-freq-min-max = <400000 100000000>;
-+		frequency-scaling;
- 		samsung,dw-mshc-ciu-div = <0>;
- 		samsung,dw-mshc-sdr-timing = <2 3>;
- 		samsung,dw-mshc-ddr-timing = <1 2>;
--- 
-1.9.1
+Thanks,
+Kukjin
