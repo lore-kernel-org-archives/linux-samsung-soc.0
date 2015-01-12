@@ -1,56 +1,32 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH 1/3] ARM: dts: add fimd device support for
- exynos3250-rinato
-Date: Mon, 12 Jan 2015 18:46:02 +0900
-Message-ID: <54B397DA.7020109@samsung.com>
-References: <1417174791-7339-1-git-send-email-inki.dae@samsung.com>
- <1417174791-7339-2-git-send-email-inki.dae@samsung.com>
- <54A7914D.5080601@samsung.com> <54B38FFA.9060103@kernel.org>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [PATCHv7 06/10] ARM: dts: Add PPMU dt node for Exynos3250 SoC
+Date: Mon, 12 Jan 2015 09:48:34 +0000 (GMT)
+Message-ID: <673354552.903841421056111417.JavaMail.weblogic@epmlwas01a>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <54B38FFA.9060103@kernel.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Kukjin Kim <kgene@kernel.org>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, dri-devel@lists.freedesktop.org, a.hajda@samsung.com, robh+dt@kernel.org, galak@codeaurora.org, kgene.kim@samsung.com
+Return-path: <linux-pm-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-pm-owner@vger.kernel.org
+To: =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>, "kgene@kernel.org" <kgene@kernel.org>
+Cc: =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, ABHILASH KESAVAN <a.kesavan@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, =?utf-8?Q?=EB=8C=80=EC=9D=B8=EA=B8=B0?= <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-T24gMjAxNeuFhCAwMeyblCAxMuydvCAxODoxMiwgS3VramluIEtpbSB3cm90ZToKPiBPbiAwMS8w
-My8xNSAxNTo1MCwgSW5raSBEYWUgd3JvdGU6Cj4+IE9uIDIwMTTrhYQgMTHsm5QgMjjsnbwgMjA6
-MzksIElua2kgRGFlIHdyb3RlOgo+Pj4gVGhpcyBwYXRjaCBhZGRzIGZpbWQgZGV2aWNlIG5vZGUg
-d2hpY2ggaXMgYSBkaXNwbGF5IGNvbnRyb2xsZXIKPj4+IGZvciBFeHlub3MzMjUwIFJpbmF0byBi
-b2FyZC4KPj4KPj4gSGkgS3VramluLAo+Pgo+PiBQbGVhc2UsIHBpbmd+Cj4+Cj4+IFRoYW5rcywK
-Pj4gSW5raSBEYWUKPj4KPj4+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBJbmtpIERhZSA8aW5raS5kYWVA
-c2Ftc3VuZy5jb20+Cj4+PiBBY2tlZC1ieTogS3l1bmdtaW4gUGFyayA8a3l1bmdtaW4ucGFya0Bz
-YW1zdW5nLmNvbT4KPj4+IC0tLQo+Pj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAtcmlu
-YXRvLmR0cyB8ICAgMTEgKysrKysrKysrKysKPj4+ICAxIGZpbGUgY2hhbmdlZCwgMTEgaW5zZXJ0
-aW9ucygrKQo+Pj4KPj4+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlub3MzMjUw
-LXJpbmF0by5kdHMgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3MzMjUwLXJpbmF0by5kdHMKPj4+
-IGluZGV4IDgwYWE4YjQuLjc5YWE5MTYgMTAwNjQ0Cj4+PiAtLS0gYS9hcmNoL2FybS9ib290L2R0
-cy9leHlub3MzMjUwLXJpbmF0by5kdHMKPj4+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5v
-czMyNTAtcmluYXRvLmR0cwo+Pj4gQEAgLTEyNSw2ICsxMjUsMTcgQEAKPj4+ICAJfTsKPj4+ICB9
-Owo+Pj4gIAo+Pj4gKyZmaW1kIHsKPj4+ICsJc3RhdHVzID0gIm9rYXkiOwo+Pj4gKwo+Pj4gKwlp
-ODAtaWYtdGltaW5ncyB7Cj4+PiArCQljcy1zZXR1cCA9IDwwPjsKPj4+ICsJCXdyLXNldHVwID0g
-PDA+Owo+Pj4gKwkJd3ItYWN0ID0gPDE+Owo+Pj4gKwkJd3ItaG9sZCA9IDwwPjsKPj4+ICsJfTsK
-Pj4+ICt9Owo+Pj4gKwo+Pj4gICZpMmNfMCB7Cj4+PiAgCSNhZGRyZXNzLWNlbGxzID0gPDE+Owo+
-Pj4gIAkjc2l6ZS1jZWxscyA9IDwwPjsKPj4+Cj4gCj4gQXBwbGllZCB0aGlzIGFuZCAzcmQgb25l
-Lgo+IEJUVywgSSBjYW4ndCBzZWUgdGhlICJzYW1zdW5nLHM2ZTYzajB4MDMiIHN1cHBvcnQgeWV0
-PwoKSSBzZW50IGl0IHdpdGggYSBzZXBhcmF0ZWQgcGF0Y2ggQ2NpbmcgeW91LiBZb3UgY2FuIHJl
-ZmVyIHRvIGJlbG93IGxpbmssCmh0dHA6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvbGludXgtc2Ft
-c3VuZy1zb2MvbXNnMzk3NTYuaHRtbAoKVGhhbmtzLApJbmtpIERhZQoKPiAKPiAtIEt1a2ppbgo+
-IC0tCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vi
-c2NyaWJlIGRldmljZXRyZWUiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9t
-b0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5r
-ZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiAKCl9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVs
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxt
-YW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+PiAgIA0KPiAgVGhpcyBwYXRjaCBhZGQgUFBNVSAoUGxhdGZvcm0gUGVyZm9ybWFuY2UgTW9uaXRv
+cmluZyBVbml0KSBkdCBub2RlDQo+IHRvIGVzdGltYXRlIHRoZSB1dGlsaXphdGlvbiBvZiBlYWNo
+IElQIGluIEV4eW5vcyBTb0MgdGhyb3VnaHQgREVWRlJFUSBFdmVudA0KPiBzdWJzeXN0ZW0uDQo+
+IA0KPiBUaGlzIHBhdGNoIGFkZHMgZm9sbG93aW5nIFBQTVUgZHQgbm9kZXM6DQo+IC0gUFBNVV9E
+TUMwICAgICAweDEwNmEwMDAwDQo+IC0gUFBNVV9ETUMxICAgICAweDEwNmIwMDAwDQo+IC0gUFBN
+VV9SSUdIVEJVUyAweDExMkEwMDAwDQo+IC0gUFBNVV9MRUZUQlVTICAweDExNkEwMDAwDQo+IC0g
+UFBNVV9DQU1JRiAgICAweDExQUMwMDAwDQo+IC0gUFBNVV9MQ0QwICAgICAweDExRTQwMDAwDQo+
+IC0gUFBNVV9GU1lTICAgICAweDEyNjMwMDAwDQo+IC0gUFBNVV8zRCAgICAgICAweDEzMjIwMDAw
+DQo+IC0gUFBNVV9NRkMgICAgICAweDEzNjYwMDAwDQo+IC0gUFBNVV9DUFUgICAgICAweDEwNmMw
+MDAwDQo+IA0KPiBDYzogS3VramluIEtpbSA8a2dlbmVAa2VybmVsLm9yZz4NCj4gU2lnbmVkLW9m
+Zi1ieTogQ2hhbndvbyBDaG9pIDxjdzAwLmNob2lAc2Ftc3VuZy5jb20+DQo+IEFja2VkLWJ5OiBL
+eXVuZ21pbiBQYXJrIDxreXVuZ21pbi5wYXJrQHNhbXN1bmcuY29tPg0KPiAtLS0NCj4gIGFyY2gv
+YXJtL2Jvb3QvZHRzL2V4eW5vczMyNTAuZHRzaSB8IDc0ICsrKysrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDc0IGluc2VydGlvbnMoKykNCj4g
+DQoNCkFja2VkLWJ5OiBNeXVuZ0pvbyBIYW0gPG15dW5nam9vLmhhbUBzYW1zdW5nLmNvbT4NCg0K
+
+
