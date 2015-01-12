@@ -1,51 +1,43 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv7 04/10] devfreq: event: Add exynos-ppmu devfreq-event
- driver
-Date: Mon, 12 Jan 2015 17:39:28 +0900
-Message-ID: <54B38840.9080308@samsung.com>
-References: <603055177.891931421049871049.JavaMail.weblogic@epmlwas09a>
+From: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH] i2c: exynos5: Move initialization code to subsys_initcall()
+Date: Mon, 12 Jan 2015 17:43:50 +0900
+Message-ID: <54B38946.3020406@samsung.com>
+References: <1421031182-18992-1-git-send-email-jy0922.shim@samsung.com>
+ <20150112075019.GB22880@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:44294 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751638AbbALIjb (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Jan 2015 03:39:31 -0500
-In-reply-to: <603055177.891931421049871049.JavaMail.weblogic@epmlwas09a>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20150112075019.GB22880-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: =?windows-1252?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, naveenkrishna.ch-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, tomi.valkeinen-l0cyMroinI0@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: myungjoo.ham@samsung.com
-Cc: "kgene@kernel.org" <kgene@kernel.org>, =?UTF-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, ABHILASH KESAVAN <a.kesavan@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Dear Myungjoo,
++Cc Tomi Valkeinen,
 
-On 01/12/2015 05:04 PM, MyungJoo Ham wrote:
->>   
->>  This patch adds exynos-ppmu devfreq-event driver to get performance data
->> of each IP for Samsung Exynos SoC. These event from Exynos PPMU provide
->> useful information about the behavior of the SoC that you can use when
->> analyzing system performance, and made visible and can be counted using
->> logic in each IP.
->>
->> This patch is based on existing drivers/devfreq/exynos/exynos-ppmu.c
->>
->> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
->> Cc: Kyungmin Park <kyungmin.park@samsung.com>
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> ---
->>  drivers/devfreq/event/Kconfig       |   9 +
->>  drivers/devfreq/event/Makefile      |   1 +
->>  drivers/devfreq/event/exynos-ppmu.c | 399 ++++++++++++++++++++++++++++++++++++
->>  3 files changed, 409 insertions(+)
->>  create mode 100644 drivers/devfreq/event/exynos-ppmu.c
->>
-> 
-> Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-> 
+Hi Uwe,
 
-Thanks for your reviw.
+On 01/12/2015 04:50 PM, Uwe Kleine-K=F6nig wrote:
+> Hello,
+>=20
+> On Mon, Jan 12, 2015 at 11:53:02AM +0900, Joonyoung Shim wrote:
+>> This is required in order to ensure that core system devices such as
+>> voltage regulators attached via I2C are available early in boot.
+> Deferred probing isn't an option? If so I suggest adding the reasonin=
+g
+> in a comment to stop the next person converting it to that.
+> (And if not, please fix accordingly to use deferred probing.)
+>=20
 
-Best Regards,
-Chanwoo Choi
+I couldn't get penguin logo since the commit 92b004d ("video/logo:
+prevent use of logos after they have been freed") and i just tried old
+way because i missed the flow to move to deferred probing.
+
+=46b driver probe seems to be ran between fb_logo_late_init late_initca=
+ll
+and the freeing of the logos.
+
+Any ideas?
+
+Thanks for pointing.
