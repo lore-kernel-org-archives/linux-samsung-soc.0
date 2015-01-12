@@ -1,36 +1,53 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH v3 20/21] ARM: zynq: switch from gic_arch_extn to gic_set_irqchip_flags
-Date: Mon, 12 Jan 2015 18:26:26 +0000
-Message-ID: <1421087187-26988-21-git-send-email-marc.zyngier@arm.com>
-References: <1421087187-26988-1-git-send-email-marc.zyngier@arm.com>
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <1421087187-26988-1-git-send-email-marc.zyngier@arm.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Benoit Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>
-Cc: Stefan Agner <stefan@agner.ch>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
+From: Anand Moon <moon.linux@yahoo.com>
+Subject: [PATCH v3] ARM: exynos_defconfig Enable CONFIG_LOCKUP_DETECTOR.
+Date: Tue, 13 Jan 2015 00:20:14 +0530
+Message-ID: <1421088614-4662-1-git-send-email-moon.linux@yahoo.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sachin Kamat <sachin.kamat@samsung.com>, Anand Moon <moon.linux@yahoo.com>, Vivek Gautam <gautam.vivek@samsung.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Instead of directly touching gic_arch_extn, which is about to
-be removed, use gic_set_irqchip_flags instead.
+On enabling CONFIG_LOCKUP_DETECTOR the kernel to act as a watchdog
+to detect hard and soft lockups. Enabling CONFIG_LOCKUP_DETECTOR
+don't introduce much overhead on exyons SOC.
 
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+CONFIG_LOCKUP_DETECTOR is enabled on multi_v7_defconfig.
+
+Changes since v3:
+ * Made commit message more clear
+ * Corrected difference between CONFIG_LOCKUP_DETECTOR and CONFIG_LOCKDEP.
+
+Tested on Exynos5422 ODROID XU3 board.
+
+Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Signed-off-by: Anand Moon <moon.linux@yahoo.com>
 ---
- arch/arm/mach-zynq/common.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/configs/exynos_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-zynq/common.c b/arch/arm/mach-zynq/common.c
-index 26f92c2..82734d5 100644
---- a/arch/arm/mach-zynq/common.c
-+++ b/arch/arm/mach-zynq/common.c
-@@ -188,7 +188,7 @@ static void __init zynq_map_io(void)
- 
- static void __init zynq_irq_init(void)
- {
--	gic_arch_extn.flags = IRQCHIP_SKIP_SET_WAKE | IRQCHIP_MASK_ON_SUSPEND;
-+	gic_set_irqchip_flags(IRQCHIP_SKIP_SET_WAKE | IRQCHIP_MASK_ON_SUSPEND);
- 	irqchip_init();
- }
- 
+diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+index 5ef14de..64b2fe9 100644
+--- a/arch/arm/configs/exynos_defconfig
++++ b/arch/arm/configs/exynos_defconfig
+@@ -182,6 +182,7 @@ CONFIG_DETECT_HUNG_TASK=y
+ CONFIG_DEBUG_RT_MUTEXES=y
+ CONFIG_DEBUG_SPINLOCK=y
+ CONFIG_DEBUG_MUTEXES=y
++CONFIG_LOCKUP_DETECTOR=y
+ CONFIG_DEBUG_INFO=y
+ CONFIG_DEBUG_USER=y
+ CONFIG_CRYPTO_SHA256=y
 -- 
-2.1.4
-
+2.1.0
