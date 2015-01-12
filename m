@@ -1,43 +1,90 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH v2 00/21] irqchip: gic: killing gic_arch_extn and co, slowly
-Date: Mon, 12 Jan 2015 08:14:46 -0600
-Message-ID: <CAL_JsqLLGn1mZr7eNuLA1=M7BcwFRdOQ6xQGo+bbc2aScAVrnQ@mail.gmail.com>
-References: <1420652576-22309-1-git-send-email-marc.zyngier@arm.com>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH v2 06/17] thermal: cpu_cooling: dts: Define device tree
+ bindings for Exynos cpu cooling functionality
+Date: Mon, 12 Jan 2015 10:24:20 -0400
+Message-ID: <20150112142417.GA28377@developer>
+References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
+ <1418213396-743-1-git-send-email-l.majewski@samsung.com>
+ <1418213396-743-7-git-send-email-l.majewski@samsung.com>
+ <20150102181529.GC12130@developer>
+ <20150112150916.43f5b7ff@amdc2363>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <1420652576-22309-1-git-send-email-marc.zyngier@arm.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Benoit Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="9amGYk9869ThD9tj"
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20150112150916.43f5b7ff@amdc2363>
+Sender: linux-pm-owner@vger.kernel.org
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Zhang Rui <rui.zhang@intel.com>, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Jan 7, 2015 at 11:42 AM, Marc Zyngier <marc.zyngier@arm.com> wrote:
-> The gic_arch_extn hack that a number of platform use has been nagging
-> me for too long. It is only there for the benefit of a few platform,
-> and yet it impacts all GIC users. Moreover, it gives people the wrong
-> idea ("let's use it to put some new custom hack in there"...).
->
-> But now that stacked irq domains have landed in -next, the time has
-> come for gic_arch_extn to meet the Big Bit Bucket.
 
-[...]
+--9amGYk9869ThD9tj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> - This actively *breaks* existing setups. Once you boot a new kernel
->   with an old DT, suspend/resume *will* be broken. Old kernels on a
->   new DT won't even boot! You've been warned. This really outline the
->   necessity of actually describing the HW in device trees...
 
-Just to be clear, you need some agreement from the maintainers of
-those platforms before doing this. It doesn't appear there is
-disagreement, but I don't see any explicit agreement either.
+On Mon, Jan 12, 2015 at 03:09:16PM +0100, Lukasz Majewski wrote:
+> Hi Eduardo,
+>=20
+> > > Presented patch aims to move data necessary for correct CPU cooling
+> > > device configuration from exynos_tmu_data.c to device tree. =20
+> >=20
+> > I believe the patch title is misleading. Looks like you are changing
+> > something at cpu cooling, but in fact, you are changing DTS files. I
+> > would suggest you to use a prefix like 'arm: dts: ....'
+>=20
+> Now this patch name is:
+> thermal: cpu_cooling: dts: ......
+>=20
+> All the code in this patch adds bindings for 'thermal-zone' to map
+> cooling device to proper trip points.
+> In fact this is solely related to cpu_cooling...
+>=20
+> From the above, I think that the already provided convention is more
+> suitable and "arm: dts: cpu_cooling: thermal" seems a bit awkward for
+> me.
+>=20
+> If you don't regard my justification as valid, then I will fix this.
 
-This seems to model the interrupts as chained, but at least for some
-cases aren't these auxiliary controllers in parallel to the GIC? In
-other words, do the they require configuration for interrupts to work
-for the normal non-wakeup use? I'm not sure that the h/w is being
-modeled any more accurately if that is the case. However, we don't
-really have a way to describe an interrupt line is connected to 2
-interrupt parents in DT, so I'm not sure what else you could do here.
+Still, the naming is confusing. With that prefix you are saying this
+patch is something generic about cpu cooling and thermal dts. And that
+is not what this patch is about.
 
-Rob
+Saying "arm: dts: add cpu cooling bindings for Exynos" is a short and
+direct subject. Besides, you have the plus to call the attention of the
+ARM and device tree maintainers. It will be also in my radar.
+
+
+The original subject also makes me think you are dealing with C code,
+while the former says already upfront that you are talking about arm dts
+bindings.=20
+
+Cheers,
+>=20
+> --=20
+> Best regards,
+>=20
+> Lukasz Majewski
+>=20
+> Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+
+--9amGYk9869ThD9tj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBAgAGBQJUs9j+AAoJEMLUO4d9pOJWS3wH/Rqd70bP60PzUDtuZsL1HGdY
+iGbR1Hb1FDN1ws4EqjZ+aqq6kE4Tt2+tK0uZvaGLZHv0gPtuiRQmhsT9QSIjMc1t
+sgKolzOpVAlqf63pJrBsLwGKVEdtkqj3KJSj+s2sNS1UMLlq5xvWhABkUbAXf1Qv
+pkM4FZue/u/9MYVByLmj8R+V755OA4dTDHjHRPGIGXo2Q0S+qDlIvZ/rs3oolwjw
+nUSvdVJe1VKXKeJhPvxdTTRKOb9bF+s+TNbvbjndVre19LXvVj8jcWiPUO8EqngW
+KkTI9lYIY250P96YzI3G0Z34gg9LUjPabNHN/ncZRw+FRx1m85wEBHyc9299Ak0=
+=oGmc
+-----END PGP SIGNATURE-----
+
+--9amGYk9869ThD9tj--
