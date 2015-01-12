@@ -1,24 +1,28 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: [GIT PULL] Samsung fixes for v3.19
-Date: Mon, 12 Jan 2015 17:26:56 +0900
-Message-ID: <54B38550.6010707@kernel.org>
+Subject: [GIT PULL] Samsung exynos7 updates for v3.20
+Date: Mon, 12 Jan 2015 17:30:32 +0900
+Message-ID: <54B38628.5090902@kernel.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:60462 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:60600 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751537AbbALI1D (ORCPT
+	id S1751040AbbALIai (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Jan 2015 03:27:03 -0500
+	Mon, 12 Jan 2015 03:30:38 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, Kevin Hilman <khilman@linaro.org>
 Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Arnd, Olof, Kevin
+Hi again,
 
-Please pull samsung fixes for v3.19.
+Please pull arm64 based exynos7 stuff for v3.20 and as you know I've
+tried this in 3.19 but couldn't because of some dependencies like clk.
+Now all of dependencies already resolved so this should be fine for v3.20.
+
+If any problems, please kindly let me know.
 
 Thanks,
 Kukjin
@@ -29,18 +33,30 @@ The following changes since commit 97bf6af1f928216fd6c5a66e8a57bfa95a659672:
 
 are available in the git repository at:
   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-v3.19-samsung-fixes
+v3.20-next/dt-samsung-64
 
-Andreas Faerber (1):
-      ARM: exynos_defconfig: Enable LM90 driver
+Abhilash Kesavan (2):
+      arm64: dts: Add PMU DT node for exynos7 SoC
+      arm64: dts: Add nodes for mmc, i2c, rtc, watchdog, adc on exynos7
 
-Javier Martinez Canillas (1):
-      ARM: exynos_defconfig: Enable options for display panel support
+Alim Akhtar (1):
+      arm64: Enable ARMv8 based exynos7 SoC support
 
-Vivek Gautam (1):
-      arm: dts: Use pmu_system_controller phandle for dp phy
+Naveen Krishna Ch (2):
+      arm64: dts: Add initial device tree support for exynos7
+      arm64: dts: Add initial pinctrl support to exynos7
 
- arch/arm/boot/dts/exynos5250.dtsi |    2 +-
- arch/arm/boot/dts/exynos5420.dtsi |    4 ++--
- arch/arm/configs/exynos_defconfig |   18 +++++++++++++++++-
- 3 files changed, 20 insertions(+), 4 deletions(-)
+ .../devicetree/bindings/arm/samsung/pmu.txt        |    1 +
+ arch/arm64/Kconfig                                 |   17 +
+ arch/arm64/boot/dts/Makefile                       |    1 +
+ arch/arm64/boot/dts/exynos/Makefile                |    5 +
+ arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |   84 +++
+ arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    |  588
+++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            |  530
+++++++++++++++++++
+ 7 files changed, 1226 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/exynos/Makefile
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7.dtsi
