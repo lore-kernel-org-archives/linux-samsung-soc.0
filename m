@@ -1,89 +1,83 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2 1/6] ARM: Exynos: add support for sub-power domains
-Date: Tue, 13 Jan 2015 10:39:46 +0100
-Message-ID: <1421141991-15155-2-git-send-email-m.szyprowski@samsung.com>
-References: <1421141991-15155-1-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v2 0/6] Enable HDMI support on Exynos platforms
+Date: Tue, 13 Jan 2015 10:39:45 +0100
+Message-ID: <1421141991-15155-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:14699 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750969AbbAMJkA (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:17556 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750990AbbAMJkA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Tue, 13 Jan 2015 04:40:00 -0500
 Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
+ by mailout3.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NI400FEK0DBUZA0@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 13 Jan 2015 09:43:59 +0000 (GMT)
-In-reply-to: <1421141991-15155-1-git-send-email-m.szyprowski@samsung.com>
+ 17 2011)) with ESMTP id <0NI400HF60DDSKA0@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 13 Jan 2015 09:44:01 +0000 (GMT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, kyungmin.park@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Ulf Hansson <ulf.hansson@linaro.org>
 
-This patch adds support for making one power domain a sub-domain of
-other domain. This is useful for modeling power dependences for devices
-like TV Mixer or Camera ISP, which needs to have more than one power
-domain enabled to be operational.
+Hi all,
 
-Based on previous work by Amit Daniel Kachhap <amit.daniel@samsung.com>.
+This is yet another approach to submit patches, which enables HDMI
+support for two Exynos based platforms: UniversalC210 and Odroid X2/U3.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- .../bindings/arm/exynos/power_domain.txt           |  2 ++
- arch/arm/mach-exynos/pm_domains.c                  | 28 ++++++++++++++++++++++
- 2 files changed, 30 insertions(+)
+Beside DTS changes, this patchset adds parent domain support for Exynos
+PM domains. This was the most controversial patch in the previous
+attempts, but I hope I fixes all reported issues and made it really
+generic. For more details see individual patches.
 
-diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-index f4445e5..28918a9 100644
---- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-+++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-@@ -22,6 +22,8 @@ Optional Properties:
- 	- pclkN, clkN: Pairs of parent of input clock and input clock to the
- 		devices in this power domain. Maximum of 4 pairs (N = 0 to 3)
- 		are supported currently.
-+- power-domains: generic power domain binding pointing to a master power domain
-+		 that the given domain is a part of
- 
- Node of a device using power domains must have a power-domains property
- defined with a phandle to respective power domain.
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 20f2671..37266a8 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -161,6 +161,34 @@ no_clk:
- 		of_genpd_add_provider_simple(np, &pd->pd);
- 	}
- 
-+	/* Assign the child power domains to their parents */
-+	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
-+		struct generic_pm_domain *child_domain, *parent_domain;
-+		struct of_phandle_args args;
-+
-+		args.np = np;
-+		args.args_count = 0;
-+		child_domain = of_genpd_get_from_provider(&args);
-+		if (!child_domain)
-+			continue;
-+
-+		if (of_parse_phandle_with_args(np, "power-domains",
-+					 "#power-domain-cells", 0, &args) != 0)
-+			continue;
-+
-+		parent_domain = of_genpd_get_from_provider(&args);
-+		if (!parent_domain)
-+			continue;
-+
-+		if (pm_genpd_add_subdomain(parent_domain, child_domain))
-+			pr_warn("%s failed to add subdomain: %s\n",
-+				parent_domain->name, child_domain->name);
-+		else
-+			pr_info("%s has as child subdomain: %s.\n",
-+				parent_domain->name, child_domain->name);
-+		of_node_put(np);
-+	}
-+
- 	return 0;
- }
- arch_initcall(exynos4_pm_init_power_domain);
+The patchset is based on my previous patch:
+'ARM: DTS: Exynos: convert to generic power domain bindings'
+(http://www.spinics.net/lists/linux-samsung-soc/msg40584.html)
+and requires 2 patches that have been merged to v3.19-rc4:
+'clk: samsung: exynos4: set parent of sclk_hdmiphy to hdmi'
+(commit df019a5c0f7083001cb694f44821ca506425bda2) and
+'PM / Domains: Export of_genpd_get_from_provider function'
+(commit 7496fcbe8a643097efc061160e1c3b65ee2fa350).
+
+Regards
+Marek Szyprowski
+
+Change log:
+
+v2:
+- rewrote subdomains patch according to suggestions from Geert
+  Uytterhoeven and Amit Daniel Kachhap.
+
+v1 resend: (http://www.spinics.net/lists/linux-samsung-soc/msg39428.html)
+- added handling of generic 'power-domains' binding in subdomains
+
+v1: (http://www.spinics.net/lists/linux-samsung-soc/msg38914.html)
+- resolved power domain on/off issue with 'clk: samsung: exynos4: set
+  parent of mixer gate clock to hdmi' patch
+
+v0: (http://www.spinics.net/lists/linux-samsung-soc/msg33498.html)
+- first attempt, used 'always on' power domains hack
+
+
+Andrzej Hajda (1):
+  ARM: dts: exynos5250: add display power domain
+
+Marek Szyprowski (4):
+  ARM: Exynos: add support for sub-power domains
+  ARM: dts: exynos4: add hdmi related nodes
+  ARM: dts: exynos4: add dependency between TV and LCD0 power domains
+  ARM: dts: exynos4412-odroid: enable hdmi support
+
+Tomasz Stanislawski (1):
+  ARM: dts: exynos4210-universal_c210: enable hdmi support
+
+ .../bindings/arm/exynos/power_domain.txt           |  2 +
+ arch/arm/boot/dts/exynos4.dtsi                     | 41 ++++++++++++++++
+ arch/arm/boot/dts/exynos4210-universal_c210.dts    | 57 ++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4210.dtsi                  |  8 +++
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi    | 44 +++++++++++++++++
+ arch/arm/boot/dts/exynos4x12.dtsi                  | 11 +++++
+ arch/arm/boot/dts/exynos5250.dtsi                  | 10 ++++
+ arch/arm/mach-exynos/pm_domains.c                  | 28 +++++++++++
+ 8 files changed, 201 insertions(+)
+
 -- 
 1.9.2
