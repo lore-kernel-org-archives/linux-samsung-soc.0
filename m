@@ -1,100 +1,106 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCHv3 1/8] devfreq: exynos: Add generic exynos memory bus
- frequency driver
-Date: Tue, 13 Jan 2015 19:29:42 +0900
-Message-ID: <54B4F396.3090105@samsung.com>
-References: <2009992739.970611421140038667.JavaMail.weblogic@epmlwas05d>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 1/6] ARM: Exynos: add support for sub-power domains
+Date: Tue, 13 Jan 2015 11:44:25 +0100
+Message-ID: <CAPDyKFpVuoKN0EgZG2qso3GbYZFqEMet2Ca06J7u8YEO=-JfCg@mail.gmail.com>
+References: <1421141991-15155-1-git-send-email-m.szyprowski@samsung.com>
+	<1421141991-15155-2-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:36815 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752116AbbAMK3p (ORCPT
+Received: from mail-qc0-f178.google.com ([209.85.216.178]:33518 "EHLO
+	mail-qc0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751028AbbAMKo0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 Jan 2015 05:29:45 -0500
-In-reply-to: <2009992739.970611421140038667.JavaMail.weblogic@epmlwas05d>
+	Tue, 13 Jan 2015 05:44:26 -0500
+Received: by mail-qc0-f178.google.com with SMTP id p6so1522929qcv.9
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Jan 2015 02:44:25 -0800 (PST)
+In-Reply-To: <1421141991-15155-2-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: myungjoo.ham@samsung.com
-Cc: "kgene@kernel.org" <kgene@kernel.org>, =?UTF-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, ABHILASH KESAVAN <a.kesavan@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, =?UTF-8?B?64yA7J246riw?= <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Geert Uytterhoeven <geert@linux-m68k.org>
 
-On 01/13/2015 06:07 PM, MyungJoo Ham wrote:
->>  
->> Dear Myungjoo,
->>
->> On 01/13/2015 05:42 PM, MyungJoo Ham wrote:
->>>>   
->>>>  This patch adds the generic exynos bus frequency driver for memory bus
->>>> with DEVFREQ framework. The Samsung Exynos SoCs have the common architecture
->>>> for memory bus between DRAM memory and MMC/sub IP in SoC. This driver can
->>>> support the memory bus frequency driver for Exynos SoCs.
->>>>
->>>> Each memory bus block has a clock for memory bus speed and frequency
->>>> table which is changed according to the utilization of memory bus on runtime.
->>>> And then each memory bus group has the one more memory bus blocks and
->>>> OPP table (including frequency and voltage), regulator, devfreq-event
->>>> devices.
->>>>
->>>> There are a little difference about the number of memory bus because each Exynos
->>>> SoC have the different sub-IP and different memory bus speed. In spite of this
->>>> difference among Exynos SoCs, we can support almost Exynos SoC by adding
->>>> unique data of memory bus to devicetree file.
->>>>
->>>> Cc: Myungjoo Ham <myungjoo.ham@samsung.com>
->>>> Cc: Kyungmin Park <kyungmin.park@samsung.com>
->>>> Cc: Kukjin Kim <kgene@kernel.org>
->>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>> ---
->>>>  drivers/devfreq/Kconfig          |  15 +
->>>>  drivers/devfreq/Makefile         |   1 +
->>>>  drivers/devfreq/exynos-busfreq.c | 589 +++++++++++++++++++++++++++++++++++++++
->>>>  3 files changed, 605 insertions(+)
->>>>  create mode 100644 drivers/devfreq/exynos-busfreq.c
->>>
->>> Exynos drivers are located at drivers/devfreq/exynos/
->>> Please relocate/rename exynos-busfreq.c
->>
->> OK. I'll move it at drivers/devfreq/exynos directory.
->> Do you prefer 'exynos-bus.c' instead of 'exynos-busfreq.c'?
->> If you reply, I'll change it.
-> 
-> exynos-bus looks more pretty :)
+On 13 January 2015 at 10:39, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+> This patch adds support for making one power domain a sub-domain of
+> other domain. This is useful for modeling power dependences for devices
+> like TV Mixer or Camera ISP, which needs to have more than one power
+> domain enabled to be operational.
+>
+> Based on previous work by Amit Daniel Kachhap <amit.daniel@samsung.com>.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  .../bindings/arm/exynos/power_domain.txt           |  2 ++
+>  arch/arm/mach-exynos/pm_domains.c                  | 28 ++++++++++++++++++++++
+>  2 files changed, 30 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+> index f4445e5..28918a9 100644
+> --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+> +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+> @@ -22,6 +22,8 @@ Optional Properties:
+>         - pclkN, clkN: Pairs of parent of input clock and input clock to the
+>                 devices in this power domain. Maximum of 4 pairs (N = 0 to 3)
+>                 are supported currently.
+> +- power-domains: generic power domain binding pointing to a master power domain
+> +                that the given domain is a part of
 
-OK, I'll change the driver name according to your comment.
+I would prefer this to be documented as a generic way to configure
+power domain parents, in
+Documentation/devicetree/bindings/power/power_domain.txt.
 
-Best Regards,
-Chanwoo Choi
+>
+>  Node of a device using power domains must have a power-domains property
+>  defined with a phandle to respective power domain.
+> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+> index 20f2671..37266a8 100644
+> --- a/arch/arm/mach-exynos/pm_domains.c
+> +++ b/arch/arm/mach-exynos/pm_domains.c
+> @@ -161,6 +161,34 @@ no_clk:
+>                 of_genpd_add_provider_simple(np, &pd->pd);
+>         }
+>
+> +       /* Assign the child power domains to their parents */
+> +       for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
+> +               struct generic_pm_domain *child_domain, *parent_domain;
+> +               struct of_phandle_args args;
+> +
+> +               args.np = np;
+> +               args.args_count = 0;
+> +               child_domain = of_genpd_get_from_provider(&args);
+> +               if (!child_domain)
+> +                       continue;
+> +
+> +               if (of_parse_phandle_with_args(np, "power-domains",
+> +                                        "#power-domain-cells", 0, &args) != 0)
+> +                       continue;
+> +
+> +               parent_domain = of_genpd_get_from_provider(&args);
+> +               if (!parent_domain)
+> +                       continue;
+> +
+> +               if (pm_genpd_add_subdomain(parent_domain, child_domain))
+> +                       pr_warn("%s failed to add subdomain: %s\n",
+> +                               parent_domain->name, child_domain->name);
+> +               else
+> +                       pr_info("%s has as child subdomain: %s.\n",
+> +                               parent_domain->name, child_domain->name);
+> +               of_node_put(np);
+> +       }
 
-> 
->>
->>>
->>> []
->>>
->>>> diff --git a/drivers/devfreq/exynos-busfreq.c b/drivers/devfreq/exynos-busfreq.c
->>>> new file mode 100644
->>>> index 0000000..b180f43
->>>> --- /dev/null
->>>> +++ b/drivers/devfreq/exynos-busfreq.c
->>>
->>> []
->>>
->>>> +
->>>> +#define BUS_SATURATION_RATIO	40
->>>
->>> In order to be a common driver, this should be tunable.
->>>
->>> Because .dts is supposed to have hardware configuration only,
->>> you may keep a table of { chip-name, saturation ratio} in this
->>> driver and look up the saturation ratio based on the chip-name.
->>
->> OK, I'll add new property for saturation_ratio.
->>
->> I'll implement to use default saturation_ratio value ,
->> if dt node don't include saturation_ratio property.
-> 
-> Yes. I didn't talk with DT maintainers and I do not have much
-> experience with DT; however, it appears that such values are not
-> recommended to be in DTS files and this value is determined by
-> the SoC model number without complications in the driver file.
-> 
+How do you maintain the order of how domains are being initialized?
+For example, don't you need to initialize all "parents" prior their
+children?
+
+> +
+>         return 0;
+>  }
+>  arch_initcall(exynos4_pm_init_power_domain);
+> --
+> 1.9.2
+>
+
+I noticed this patch wasn't sent to linux-arm, I guess it should?
+
+Kind regards
+Uffe
