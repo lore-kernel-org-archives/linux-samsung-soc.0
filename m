@@ -1,91 +1,89 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH v3 00/19] Exynos SYSMMU (IOMMU) integration with DT and
- DMA-mapping subsystem
-Date: Tue, 13 Jan 2015 17:40:01 +0900
-Message-ID: <54B4D9E1.10400@samsung.com>
-References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com>
- <1417514366.21830.22.camel@collabora.co.uk> <54818768.3080303@samsung.com>
- <CABxcv=n=eNqbyBbOk1Wb87tCnnLZAJQurmCdeTOSqMZMbNaSHw@mail.gmail.com>
- <54AC93E0.8010705@samsung.com> <54ACFD69.1020500@collabora.co.uk>
- <54AD0293.70909@samsung.com> <54AEB384.2040005@collabora.co.uk>
- <54B36C5A.6050109@samsung.com> <54B3F1B7.7090307@collabora.co.uk>
- <54B4ABFB.5000501@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: Re: [PATCHv3 1/8] devfreq: exynos: Add generic exynos memory bus
+ frequency driver
+Date: Tue, 13 Jan 2015 08:42:18 +0000 (GMT)
+Message-ID: <520952065.968311421138534993.JavaMail.weblogic@epmlwas05d>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:16072 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751054AbbAMIjr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 Jan 2015 03:39:47 -0500
-Received: from epcpsbgr1.samsung.com
- (u141.gpu120.samsung.co.kr [203.254.230.141])
- by mailout4.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTP id <0NI300DY5XE83VB0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 13 Jan 2015 17:39:45 +0900 (KST)
-In-reply-to: <54B4ABFB.5000501@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?utf-8?Q?=EC=B5=9C=EC=B0=AC=EC=9A=B0?= <cw00.choi@samsung.com>, "kgene@kernel.org" <kgene@kernel.org>
+Cc: =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park@samsung.com>, "rafael.j.wysocki@intel.com" <rafael.j.wysocki@intel.com>, "mark.rutland@arm.com" <mark.rutland@arm.com>, ABHILASH KESAVAN <a.kesavan@samsung.com>, "tomasz.figa@gmail.com" <tomasz.figa@gmail.com>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, "robh+dt@kernel.org" <robh+dt@kernel.org>, =?utf-8?Q?=EB=8C=80=EC=9D=B8=EA=B8=B0?= <inki.dae@samsung.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Javier Martinez Canillas <javier@dowhile0.org>, Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linaro-mm-sig@lists.linaro.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, iommu@lists.linux-foundation.org, Tomasz Figa <tomasz.figa@gmail.com>, Inki Dae <inki.dae@samsung.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kukjin Kim <kgene.kim@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Olof Johansson <olof@lixom.net>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <treding@nvidia.com>, Cho KyongHo <pullip.cho@samsung.com>, David Wodhouse <dwmw2@infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 01/13/2015 02:24 PM, Joonyoung Shim wrote:
-> Hi,
-> 
-> On 01/13/2015 01:09 AM, Javier Martinez Canillas wrote:
->> Hello Joonyoung,
->>
->> On 01/12/2015 07:40 AM, Joonyoung Shim wrote:
->>>> And also making changes to the clocks in the clk-exynos5420 driver. Can
->>>> you please explain the rationale for those changes? I'm asking because
->>>> without your clock changes (only adding the DISP1 pd and making the
->>>> devices as consumers), I've HDMI output too but video is even worse. This
->>>> [0] is the minimal change I have on top of 3.19-rc3 to have some output.
->>>>
->>>
->>> I just refer below patches,
->>> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/34576
->>>
->>> But i'm not sure whether DISP1 power domain is same case with MFC power domain.
->>>
->>
->> Thanks a lot for sharing those patches, now your changes are much more
->> clear to me.
->>
->>>>
->>>> So there seems to be two issues here, one is the mixer and hdmi modules not
->>>> being attached to the DISP1 power domain and another one is the clocks setup
->>>> not being correct to have proper HDMI video output.
->>>>  
->>>
->>> Hmm, i can see normal hdmi output still from latest upstream
->>> kernel(3.19-rc4) with my kernel changes and u-boot changes(DISP1 power
->>> domain disable) of prior mail on odroid xu3 board.
->>>
->>
->> I thought you said on another email that after commit 2ed127697eb1 which
->> landed on 3.19-rc1 you had bad HDMI output?
->>
->> In your changes, it was missing the SW_ACLK_400_DISP1 and USER_ACLK_400_DISP1
->> clock mux outputs that goes to internal buses in the DISP1. Adding IDs for
->> these in the exynos5420 clock driver and to the parent and input clock paris
->> list in the DISP1 power domain gives me a good HDMI output on 3.19-rc2.
->>
->> Also, the SW_ACLK_300_DISP1 and USER_ACLK_300_DISP1 are needed for the FIMD
->> parent and input clock respectively. Adding those to the clocks list of the
->> DISP1 power domain gives me working display + HDMI on my Exynos5800 Peach Pi.
->>
->> These are the changes I have now [0]. Please let me know what you think.
->>
-> 
-> Good, it's working with your patch without u-boot changes and reverting
-> of commit 2ed127697eb.
-> 
-
-But i also get stripe hdmi output if hdmi/mixer drivers aren't defered
-probed, because DISP1 power domain isn't disabled on booting by defered
-probe so is always on.
-
-Thanks.
+PiAgIA0KPiAgVGhpcyBwYXRjaCBhZGRzIHRoZSBnZW5lcmljIGV4eW5vcyBidXMgZnJlcXVlbmN5
+IGRyaXZlciBmb3IgbWVtb3J5IGJ1cw0KPiB3aXRoIERFVkZSRVEgZnJhbWV3b3JrLiBUaGUgU2Ft
+c3VuZyBFeHlub3MgU29DcyBoYXZlIHRoZSBjb21tb24gYXJjaGl0ZWN0dXJlDQo+IGZvciBtZW1v
+cnkgYnVzIGJldHdlZW4gRFJBTSBtZW1vcnkgYW5kIE1NQy9zdWIgSVAgaW4gU29DLiBUaGlzIGRy
+aXZlciBjYW4NCj4gc3VwcG9ydCB0aGUgbWVtb3J5IGJ1cyBmcmVxdWVuY3kgZHJpdmVyIGZvciBF
+eHlub3MgU29Dcy4NCj4gDQo+IEVhY2ggbWVtb3J5IGJ1cyBibG9jayBoYXMgYSBjbG9jayBmb3Ig
+bWVtb3J5IGJ1cyBzcGVlZCBhbmQgZnJlcXVlbmN5DQo+IHRhYmxlIHdoaWNoIGlzIGNoYW5nZWQg
+YWNjb3JkaW5nIHRvIHRoZSB1dGlsaXphdGlvbiBvZiBtZW1vcnkgYnVzIG9uIHJ1bnRpbWUuDQo+
+IEFuZCB0aGVuIGVhY2ggbWVtb3J5IGJ1cyBncm91cCBoYXMgdGhlIG9uZSBtb3JlIG1lbW9yeSBi
+dXMgYmxvY2tzIGFuZA0KPiBPUFAgdGFibGUgKGluY2x1ZGluZyBmcmVxdWVuY3kgYW5kIHZvbHRh
+Z2UpLCByZWd1bGF0b3IsIGRldmZyZXEtZXZlbnQNCj4gZGV2aWNlcy4NCj4gDQo+IFRoZXJlIGFy
+ZSBhIGxpdHRsZSBkaWZmZXJlbmNlIGFib3V0IHRoZSBudW1iZXIgb2YgbWVtb3J5IGJ1cyBiZWNh
+dXNlIGVhY2ggRXh5bm9zDQo+IFNvQyBoYXZlIHRoZSBkaWZmZXJlbnQgc3ViLUlQIGFuZCBkaWZm
+ZXJlbnQgbWVtb3J5IGJ1cyBzcGVlZC4gSW4gc3BpdGUgb2YgdGhpcw0KPiBkaWZmZXJlbmNlIGFt
+b25nIEV4eW5vcyBTb0NzLCB3ZSBjYW4gc3VwcG9ydCBhbG1vc3QgRXh5bm9zIFNvQyBieSBhZGRp
+bmcNCj4gdW5pcXVlIGRhdGEgb2YgbWVtb3J5IGJ1cyB0byBkZXZpY2V0cmVlIGZpbGUuDQo+IA0K
+PiBDYzogTXl1bmdqb28gSGFtIDxteXVuZ2pvby5oYW1Ac2Ftc3VuZy5jb20+DQo+IENjOiBLeXVu
+Z21pbiBQYXJrIDxreXVuZ21pbi5wYXJrQHNhbXN1bmcuY29tPg0KPiBDYzogS3VramluIEtpbSA8
+a2dlbmVAa2VybmVsLm9yZz4NCj4gU2lnbmVkLW9mZi1ieTogQ2hhbndvbyBDaG9pIDxjdzAwLmNo
+b2lAc2Ftc3VuZy5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9kZXZmcmVxL0tjb25maWcgICAgICAg
+ICAgfCAgMTUgKw0KPiAgZHJpdmVycy9kZXZmcmVxL01ha2VmaWxlICAgICAgICAgfCAgIDEgKw0K
+PiAgZHJpdmVycy9kZXZmcmVxL2V4eW5vcy1idXNmcmVxLmMgfCA1ODkgKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrDQo+ICAzIGZpbGVzIGNoYW5nZWQsIDYwNSBpbnNlcnRp
+b25zKCspDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9kZXZmcmVxL2V4eW5vcy1idXNm
+cmVxLmMNCg0KRXh5bm9zIGRyaXZlcnMgYXJlIGxvY2F0ZWQgYXQgZHJpdmVycy9kZXZmcmVxL2V4
+eW5vcy8NClBsZWFzZSByZWxvY2F0ZS9yZW5hbWUgZXh5bm9zLWJ1c2ZyZXEuYw0KDQpbXQ0KDQo+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2RldmZyZXEvZXh5bm9zLWJ1c2ZyZXEuYyBiL2RyaXZlcnMv
+ZGV2ZnJlcS9leHlub3MtYnVzZnJlcS5jDQo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+IGluZGV4
+IDAwMDAwMDAuLmIxODBmNDMNCj4gLS0tIC9kZXYvbnVsbA0KPiArKysgYi9kcml2ZXJzL2RldmZy
+ZXEvZXh5bm9zLWJ1c2ZyZXEuYw0KDQpbXQ0KDQo+ICsNCj4gKyNkZWZpbmUgQlVTX1NBVFVSQVRJ
+T05fUkFUSU8JNDANCg0KSW4gb3JkZXIgdG8gYmUgYSBjb21tb24gZHJpdmVyLCB0aGlzIHNob3Vs
+ZCBiZSB0dW5hYmxlLg0KDQpCZWNhdXNlIC5kdHMgaXMgc3VwcG9zZWQgdG8gaGF2ZSBoYXJkd2Fy
+ZSBjb25maWd1cmF0aW9uIG9ubHksDQp5b3UgbWF5IGtlZXAgYSB0YWJsZSBvZiB7IGNoaXAtbmFt
+ZSwgc2F0dXJhdGlvbiByYXRpb30gaW4gdGhpcw0KZHJpdmVyIGFuZCBsb29rIHVwIHRoZSBzYXR1
+cmF0aW9uIHJhdGlvIGJhc2VkIG9uIHRoZSBjaGlwLW5hbWUuDQoNCj4gKyNkZWZpbmUgU0FGRVZP
+TFQJCTUwMDAwDQo+ICsNCj4gK3N0cnVjdCBleHlub3NfbWVtb3J5X2J1c19vcHBfaW5mbyB7DQo+
+ICsJdW5zaWduZWQgbG9uZyByYXRlOw0KPiArCXVuc2lnbmVkIGxvbmcgdm9sdDsNCj4gK307DQo+
+ICsNCj4gK3N0cnVjdCBleHlub3NfbWVtb3J5X2J1c19ibG9jayB7DQo+ICsJc3RydWN0IGNsayAq
+Y2xrOw0KPiArCXN0cnVjdCBleHlub3NfbWVtb3J5X2J1c19vcHBfaW5mbyAqZnJlcV90YWJsZTsN
+Cj4gK307DQo+ICsNCg0KW10NCg0KPiArI2lmZGVmIENPTkZJR19QTV9TTEVFUA0KPiArc3RhdGlj
+IGludCBleHlub3NfYnVzZnJlcV9yZXN1bWUoc3RydWN0IGRldmljZSAqZGV2KQ0KPiArew0KPiAr
+CXN0cnVjdCBleHlub3NfbWVtb3J5X2J1c19kYXRhICpkYXRhID0gZGV2X2dldF9kcnZkYXRhKGRl
+dik7DQo+ICsJaW50IHJldDsNCj4gKw0KPiArCXJldCA9IGV4eW5vc19idXNmcmVxX2VuYWJsZV9l
+ZGV2KGRhdGEpOw0KPiArCWlmIChyZXQgPCAwKSB7DQo+ICsJCWRldl9lcnIoZGV2LCAiZmFpbGVk
+IHRvIGVuYWJsZSB0aGUgZGV2ZnJlcS1ldmVudCBkZXZpY2VzXG4iKTsNCj4gKwkJcmV0dXJuIHJl
+dDsNCj4gKwl9DQo+ICsNCj4gKwlyZXR1cm4gMDsNCj4gK30NCj4gKw0KPiArc3RhdGljIGludCBl
+eHlub3NfYnVzZnJlcV9zdXNwZW5kKHN0cnVjdCBkZXZpY2UgKmRldikNCj4gK3sNCj4gKwlzdHJ1
+Y3QgZXh5bm9zX21lbW9yeV9idXNfZGF0YSAqZGF0YSA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOw0K
+PiArCWludCByZXQ7DQo+ICsNCj4gKwlyZXQgPSBleHlub3NfYnVzZnJlcV9kaXNhYmxlX2VkZXYo
+ZGF0YSk7DQo+ICsJaWYgKHJldCA8IDApIHsNCj4gKwkJZGV2X2VycihkZXYsICJmYWlsZWQgdG8g
+ZGlzYWJsZSB0aGUgZGV2ZnJlcS1ldmVudCBkZXZpY2VzXG4iKTsNCj4gKwkJcmV0dXJuIHJldDsN
+Cj4gKwl9DQo+ICsNCj4gKwlyZXR1cm4gMDsNCj4gK30NCj4gKyNlbmRpZg0KDQpQbGVhc2UgZGlz
+YWJsZSByZWd1bGF0b3IgYXQgc3VzcGVuZCBhbmQgcmVzdW1lIGl0IGF0IHJlc3VtZS4NCg0KWW91
+IG1heSBpbnRlcmZlcmUgd2l0aCBsb3ctcG93ZXIgbW9kZSBvZiBjb3JyZXNwb25kaW5nIHZvbHRh
+Z2UgbGluZSwNCndoaWNoIGlzIG9mdGVuIGltcGxlbWVudGVkIHRvIGJlIGFjdGl2YXRlZCBpZiB0
+aGUgcmVndWxhdG9yIGlzDQpleHBsaWNpdGVseSBkaXNhYmxlZCBmb3IgImFsaXZlIiByZWd1bGF0
+b3JzIGxpa2UgdGhpcyBvbmUuDQoNCj4gKw0KPiArc3RhdGljIGNvbnN0IHN0cnVjdCBkZXZfcG1f
+b3BzIGV4eW5vc19idXNmcmVxX3BtID0gew0KPiArCVNFVF9TWVNURU1fU0xFRVBfUE1fT1BTKGV4
+eW5vc19idXNmcmVxX3N1c3BlbmQsIGV4eW5vc19idXNmcmVxX3Jlc3VtZSkNCj4gK307DQo+ICsN
+Cj4gK3N0YXRpYyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2aWNlX2lkIGV4eW5vc19idXNmcmVxX29mX21h
+dGNoW10gPSB7DQo+ICsJeyAuY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vcy1tZW1vcnktYnVz
+IiwgfSwNCj4gKwl7IC8qIHNlbnRpbmVsICovIH0sDQo+ICt9Ow0KPiArTU9EVUxFX0RFVklDRV9U
+QUJMRShvZiwgZXh5bm9zX2J1c2ZyZXFfb2ZfbWF0Y2gpOw0KPiArDQo+ICtzdGF0aWMgc3RydWN0
+IHBsYXRmb3JtX2RyaXZlciBleHlub3NfYnVzZnJlcV9wbGF0ZHJ2ID0gew0KPiArCS5wcm9iZQkJ
+PSBleHlub3NfYnVzZnJlcV9wcm9iZSwNCj4gKwkucmVtb3ZlCQk9IGV4eW5vc19idXNmcmVxX3Jl
+bW92ZSwNCj4gKwkuZHJpdmVyID0gew0KPiArCQkubmFtZQk9ICJleHlub3MtbWVtb3J5LWJ1cyIs
+DQo+ICsJCS5vd25lcgk9IFRISVNfTU9EVUxFLA0KPiArCQkucG0JPSAmZXh5bm9zX2J1c2ZyZXFf
+cG0sDQo+ICsJCS5vZl9tYXRjaF90YWJsZSA9IG9mX21hdGNoX3B0cihleHlub3NfYnVzZnJlcV9v
+Zl9tYXRjaCksDQo+ICsJfSwNCj4gK307DQo+ICttb2R1bGVfcGxhdGZvcm1fZHJpdmVyKGV4eW5v
+c19idXNmcmVxX3BsYXRkcnYpOw0KPiArDQo+ICtNT0RVTEVfREVTQ1JJUFRJT04oIkdlbmVyaWMg
+RXh5bm9zIE1lbW9yeSBCdXMgRnJlcXVlbmN5IGRyaXZlciIpOw0KPiArTU9EVUxFX0FVVEhPUigi
+Q2hhbndvbyBDaG9pIDxjdzAwLmNob2lAc2Ftc3VuZy5jb20+Iik7DQo+ICtNT0RVTEVfTElDRU5T
+RSgiR1BMIHYyIik7DQo+IC0tIA0KPiAxLjguNS41DQo+IA0KPiANCg==
