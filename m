@@ -1,65 +1,44 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Samsung fixes for v3.19
-Date: Mon, 12 Jan 2015 14:11:31 -0800
-Message-ID: <20150112221131.GC22090@quad.lixom.net>
-References: <54B38550.6010707@kernel.org>
+From: Inha Song <ideal.song@samsung.com>
+Subject: Re: [alsa-devel] [PATCH 2/3] ASoC: samsung: Document Trats2 audio
+ subsystem bindings
+Date: Tue, 13 Jan 2015 10:27:34 +0900
+Message-ID: <20150113102734.7a3aa77a@songinha-Samsung-DeskTop-System>
+References: <1420457117-11030-1-git-send-email-ideal.song@samsung.com>
+ <1420457117-11030-3-git-send-email-ideal.song@samsung.com>
+ <20150105152918.GT11764@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yh0-f51.google.com ([209.85.213.51]:49999 "EHLO
-	mail-yh0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751000AbbALWLU (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:25747 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751789AbbAMB1i (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Jan 2015 17:11:20 -0500
-Received: by mail-yh0-f51.google.com with SMTP id a41so10936629yho.10
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jan 2015 14:11:19 -0800 (PST)
-Content-Disposition: inline
-In-Reply-To: <54B38550.6010707@kernel.org>
+	Mon, 12 Jan 2015 20:27:38 -0500
+In-reply-to: <20150105152918.GT11764@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sbkim73@samsung.com, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, tiwai@suse.de, robh+dt@kernel.org, kgene@kernel.org, s.nawrocki@samsung.com, galak@codeaurora.org, grant.likely@linaro.org, linux-arm-kernel@lists.infradead.org
 
-Hi,
+Hi Mark,
 
-On Mon, Jan 12, 2015 at 05:26:56PM +0900, Kukjin Kim wrote:
-> Hi Arnd, Olof, Kevin
-> 
-> Please pull samsung fixes for v3.19.
-> 
-> Thanks,
-> Kukjin
-> 
-> The following changes since commit 97bf6af1f928216fd6c5a66e8a57bfa95a659672:
-> 
->   Linux 3.19-rc1 (2014-12-20 17:08:50 -0800)
-> 
-> are available in the git repository at:
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> v3.19-samsung-fixes
-> 
-> Andreas Faerber (1):
->       ARM: exynos_defconfig: Enable LM90 driver
-> 
-> Javier Martinez Canillas (1):
->       ARM: exynos_defconfig: Enable options for display panel support
-> 
-> Vivek Gautam (1):
->       arm: dts: Use pmu_system_controller phandle for dp phy
-> 
->  arch/arm/boot/dts/exynos5250.dtsi |    2 +-
->  arch/arm/boot/dts/exynos5420.dtsi |    4 ++--
->  arch/arm/configs/exynos_defconfig |   18 +++++++++++++++++-
->  3 files changed, 20 insertions(+), 4 deletions(-)
+Thank you for your feedback and sorry for late response.
 
-Please write a tag description and sign it. You used to do this, why stop?
+I think, I should remove clock settings in machine driver.
+If the clock settings are necessary, I will add "assigned-clocks" nodes
+in trats2 sound DT like odroid board.
 
-Also, you're not explaining what these patches fixes. I can see the usefulness
-in the display configuration options, but I'm less sure why 3.19 needs the LM90
-driver if it's just for consistency?
+Best Regards,
+Inha Song.
 
-Finally, please explain why pmu breaks. Sounds like an incompatible binding
-change?
-
-
--Olof
+> On Mon, Jan 05, 2015 at 08:25:16PM +0900, Inha Song wrote:
+> 
+> > + - clocks : Reference to the codec master clock
+> > + - clock-names : The clock should be named "mclk"
+> 
+> This should be done in the CODEC driver, not in the machine driver - the
+> CODEC always needs the clock, it's not something specific to this
+> machine.  Even if we decide that for Linux the best thing to do is to
+> manage the clock in the machine driver it should be described in the DT
+> as being attached to the CODEC.
