@@ -1,37 +1,57 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC 05/15] gpio: move DT parsing code to separate functions
-Date: Tue, 13 Jan 2015 07:17:29 +0100
-Message-ID: <CACRpkdZLw=dTQ0zcHYSJ7rC5k3hjTJ-i__25eDyY8gz6PpnpsA@mail.gmail.com>
-References: <1418226513-14105-1-git-send-email-a.hajda@samsung.com>
- <1418226513-14105-6-git-send-email-a.hajda@samsung.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH v3] ARM: exynos_defconfig Enable CONFIG_LOCKUP_DETECTOR.
+Date: Tue, 13 Jan 2015 09:18:08 +0100
+Message-ID: <1421137088.8355.1.camel@AMDC1943>
+References: <1421088614-4662-1-git-send-email-moon.linux@yahoo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1418226513-14105-6-git-send-email-a.hajda@samsung.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Andrzej Hajda <a.hajda@samsung.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Cc: "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Mike Turquette <mturquette@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mark Brown <broonie@kernel.org>, open list <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Grant Likely <grant.likely@linaro.org>, Russell King <linux@arm.linux.org.uk>, "moderated list:ARM/CLKDEV SUPPORT" <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:16370 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751054AbbAMISN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 13 Jan 2015 03:18:13 -0500
+In-reply-to: <1421088614-4662-1-git-send-email-moon.linux@yahoo.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Anand Moon <moon.linux@yahoo.com>
+Cc: Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene@kernel.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Doug Anderson <dianders@chromium.org>, Sachin Kamat <sachin.kamat@samsung.com>, Vivek Gautam <gautam.vivek@samsung.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Tushar Behera <tushar.behera@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-T24gV2VkLCBEZWMgMTAsIDIwMTQgYXQgNDo0OCBQTSwgQW5kcnplaiBIYWpkYSA8YS5oYWpkYUBz
-YW1zdW5nLmNvbT4gd3JvdGU6Cgo+IFRoZSBwYXRjaCBtb3ZlcyBEZXZpY2UgVHJlZSBwYXJzaW5n
-IGxvZ2ljIHRvIHNlcGFyYXRlCj4gZnVuY3Rpb24uCj4KPiBTaWduZWQtb2ZmLWJ5OiBBbmRyemVq
-IEhhamRhIDxhLmhhamRhQHNhbXN1bmcuY29tPgoKSSB0aGluayB0aGlzIHBhdGNoIG5lZWQgdG8g
-YmUgcmViYXNlZCBvbiB0aGUgR1BJTyBkZXZlbCBicmFuY2gsIGJ1dApsb29rcyBsaWtlIGl0IG1h
-a2VzIHRoaW5ncyBjbGVhbmVyIHNvIGNhbiBzdGFuZCBvbiBpdHMgb3duIG1lcml0cy4KV2UgbW92
-ZXMgc3R1ZmYgYXJvdW5kIGEgYml0IGluIHRoZSBPRiBjb2RlIHRob3VnaC4KClBsZWFzZSByZW1l
-bWJlciB0byBzZW5kIHRoaXMgcGF0Y2ggdG8gdGhlIGxpbnV4LWdwaW8gbGlzdCBhbmQgY29tYWlu
-dGFpbmVyCkFsZXhhbmRyZSBDb3VyYm90IG9uIHJlcG9zdHMuIChDYy10YWdzIGluIHRoZSBwYXRj
-aCBhcmUgZ29vZApmb3IgdGhpcy4pCgpZb3VycywKTGludXMgV2FsbGVpagpfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
-CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9w
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On wto, 2015-01-13 at 00:20 +0530, Anand Moon wrote:
+> On enabling CONFIG_LOCKUP_DETECTOR the kernel to act as a watchdog
+> to detect hard and soft lockups. Enabling CONFIG_LOCKUP_DETECTOR
+> don't introduce much overhead on exyons SOC.
+> 
+> CONFIG_LOCKUP_DETECTOR is enabled on multi_v7_defconfig.
+> 
+> Changes since v3:
+>  * Made commit message more clear
+>  * Corrected difference between CONFIG_LOCKUP_DETECTOR and CONFIG_LOCKDEP.
+> 
+> Tested on Exynos5422 ODROID XU3 board.
+> 
+> Reviewed-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Signed-off-by: Anand Moon <moon.linux@yahoo.com>
+
+Now it looks okay. My reviewed-by may stay on.
+
+Best regards,
+Krzysztof
+
+> ---
+>  arch/arm/configs/exynos_defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm/configs/exynos_defconfig b/arch/arm/configs/exynos_defconfig
+> index 5ef14de..64b2fe9 100644
+> --- a/arch/arm/configs/exynos_defconfig
+> +++ b/arch/arm/configs/exynos_defconfig
+> @@ -182,6 +182,7 @@ CONFIG_DETECT_HUNG_TASK=y
+>  CONFIG_DEBUG_RT_MUTEXES=y
+>  CONFIG_DEBUG_SPINLOCK=y
+>  CONFIG_DEBUG_MUTEXES=y
+> +CONFIG_LOCKUP_DETECTOR=y
+>  CONFIG_DEBUG_INFO=y
+>  CONFIG_DEBUG_USER=y
+>  CONFIG_CRYPTO_SHA256=y
