@@ -1,44 +1,42 @@
-From: Inha Song <ideal.song@samsung.com>
-Subject: Re: [alsa-devel] [PATCH 2/3] ASoC: samsung: Document Trats2 audio
- subsystem bindings
-Date: Tue, 13 Jan 2015 10:27:34 +0900
-Message-ID: <20150113102734.7a3aa77a@songinha-Samsung-DeskTop-System>
-References: <1420457117-11030-1-git-send-email-ideal.song@samsung.com>
- <1420457117-11030-3-git-send-email-ideal.song@samsung.com>
- <20150105152918.GT11764@sirena.org.uk>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 2/2] arm: dts: disable CCI on exynos420 based arndale-octa
+Date: Mon, 12 Jan 2015 18:05:48 -0800
+Message-ID: <20150113020548.GC28758@quad.lixom.net>
+References: <1420859496-27533-1-git-send-email-a.kesavan@samsung.com>
+ <1420859496-27533-2-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:25747 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751789AbbAMB1i (ORCPT
+Received: from mail-yk0-f181.google.com ([209.85.160.181]:62460 "EHLO
+	mail-yk0-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752419AbbAMCFi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Jan 2015 20:27:38 -0500
-In-reply-to: <20150105152918.GT11764@sirena.org.uk>
+	Mon, 12 Jan 2015 21:05:38 -0500
+Received: by mail-yk0-f181.google.com with SMTP id 142so186878ykq.12
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Jan 2015 18:05:37 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <1420859496-27533-2-git-send-email-a.kesavan@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: mark.rutland@arm.com, devicetree@vger.kernel.org, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, sbkim73@samsung.com, linux-kernel@vger.kernel.org, lgirdwood@gmail.com, tiwai@suse.de, robh+dt@kernel.org, kgene@kernel.org, s.nawrocki@samsung.com, galak@codeaurora.org, grant.likely@linaro.org, linux-arm-kernel@lists.infradead.org
+To: Abhilash Kesavan <a.kesavan@samsung.com>
+Cc: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, arm@kernel.org, arnd@arndb.de, khilman@kernel.org, linux-samsung-soc@vger.kernel.org, kesavan.abhilash@gmail.com, sudeep.holla@arm.com, nicolas.pitre@linaro.org, Punit.Agrawal@arm.com, Will.Deacon@arm.com, Mark.Rutland@arm.com, k.kozlowski@samsung.com
 
-Hi Mark,
-
-Thank you for your feedback and sorry for late response.
-
-I think, I should remove clock settings in machine driver.
-If the clock settings are necessary, I will add "assigned-clocks" nodes
-in trats2 sound DT like odroid board.
-
-Best Regards,
-Inha Song.
-
-> On Mon, Jan 05, 2015 at 08:25:16PM +0900, Inha Song wrote:
+On Sat, Jan 10, 2015 at 08:41:36AM +0530, Abhilash Kesavan wrote:
+> The arndale-octa board was giving "imprecise external aborts" during
+> boot-up with MCPM enabled. CCI enablement of the boot cluster was found
+> to be the cause of these aborts (possibly because the secure f/w was not
+> allowing it). Hence, disable CCI for the arndale-octa board.
 > 
-> > + - clocks : Reference to the codec master clock
-> > + - clock-names : The clock should be named "mclk"
-> 
-> This should be done in the CODEC driver, not in the machine driver - the
-> CODEC always needs the clock, it's not something specific to this
-> machine.  Even if we decide that for Linux the best thing to do is to
-> manage the clock in the machine driver it should be described in the DT
-> as being attached to the CODEC.
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+> Tested-by: Kevin Hilman <khilman@linaro.org>
+> Tested-by: Tyler Baker <tyler.baker@linaro.org>
+
+Applied 1-2 to fixes for 3.19.
+
+Fixed two typos (arm->ARM in subject, and 420->5420).
+
+
+Thanks,
+
+-Olof
