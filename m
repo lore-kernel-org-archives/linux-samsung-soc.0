@@ -1,126 +1,96 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: [GIT PULL RE-SEND] Samsung fixes for v3.19
-Date: Thu, 15 Jan 2015 00:05:18 +0900
-Message-ID: <54B685AE.5080508@kernel.org>
-References: <54B38550.6010707@kernel.org> <20150112221131.GC22090@quad.lixom.net>
+From: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 2/8] thermal: Provide stub for thermal_cdev_update()
+ function
+Date: Wed, 14 Jan 2015 16:07:53 +0100
+Message-ID: <20150114160753.48f903da@amdc2363>
+References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
+ <1419265668-32283-1-git-send-email-l.majewski@samsung.com>
+ <1419265668-32283-3-git-send-email-l.majewski@samsung.com>
+ <20150102184028.GA12371@developer>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:43036 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752432AbbANPF0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Jan 2015 10:05:26 -0500
-In-Reply-To: <20150112221131.GC22090@quad.lixom.net>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20150102184028.GA12371@developer>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jean Delvare <jdelvare-l3A5Bk7waGM@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lukasz Majewski <l.majewski-AM3owJQeAb5mR6Xm/wNWPw@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Abhilash Kesavan <kesavan.abhilash-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Kukjin Kim <kgene@kernel.org>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, Kevin Hilman <khilman@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi,
+Hi Eduardo,
 
-Oops, it's totally my fault and mistake. Actually my git command for
-pull-request was correct but the git tool was old version :-( because
-there are two git in my laptop, anyway sorry for that and I'm resending
-with signed tag has been created before.
-
-Please pull if you're OK with my comments on your questions below.
-
-
-The following changes since commit 97bf6af1f928216fd6c5a66e8a57bfa95a659672:
-
-  Linux 3.19-rc1 (2014-12-20 17:08:50 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-tags/samsung-fixes-3.19
-
-for you to fetch changes up to 26d13bf77b8e59adf4953577ba48e1903545bf7f:
-
-  ARM: exynos_defconfig: Enable LM90 driver (2015-01-12 17:16:32 +0900)
-
-----------------------------------------------------------------
-Samsung fixes for v3.19
-- exynos_defconfig: enable LM90 driver and display panel support
-   - HWMON
-   - SENSORS_LM90
-   - Direct Rendering Manager (DRM)
-   - DRM bridge registration and lookup framework
-   - Parade ps8622/ps8625 eDP/LVDS bridge
-   - NXP ptn3460 eDP/LVDS bridge
-   - Exynos Fully Interactive Mobile Display controller (FIMD)
-   - Panel registration and lookup framework
-   - Simple panels
-   - Backlight & LCD device support
-
-- use pmu_system_controller phandle for dp phy
-  : DP PHY requires pmu_system_controller to handle PMU reg. now
-
-----------------------------------------------------------------
-Andreas Faerber (1):
-      ARM: exynos_defconfig: Enable LM90 driver
-
-Javier Martinez Canillas (1):
-      ARM: exynos_defconfig: Enable options for display panel support
-
-Vivek Gautam (1):
-      arm: dts: Use pmu_system_controller phandle for dp phy
-
- arch/arm/boot/dts/exynos5250.dtsi |  2 +-
- arch/arm/boot/dts/exynos5420.dtsi |  4 ++--
- arch/arm/configs/exynos_defconfig | 18 +++++++++++++++++-
- 3 files changed, 20 insertions(+), 4 deletions(-)
-
-On 01/13/15 07:11, Olof Johansson wrote:
-> Hi,
+> On Mon, Dec 22, 2014 at 05:27:42PM +0100, Lukasz Majewski wrote:
+> > Odroid U3 fan can work without being registered as OF cooling device
+> > (with CONFIG_THERMAL_OF disabled).
+> > In this situation it can be controlled via PWM entry at
+> > /sys/class/hwmon/hwmon0/pwm1.
+> > 
+> > Therefore, the thermal_cdev_update() function needs a stub
+> > to allow clean compilation.
 > 
-> On Mon, Jan 12, 2015 at 05:26:56PM +0900, Kukjin Kim wrote:
->> Hi Arnd, Olof, Kevin
->>
->> Please pull samsung fixes for v3.19.
->>
->> Thanks,
->> Kukjin
->>
->> The following changes since commit 97bf6af1f928216fd6c5a66e8a57bfa95a659672:
->>
->>   Linux 3.19-rc1 (2014-12-20 17:08:50 -0800)
->>
->> are available in the git repository at:
->>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
->> v3.19-samsung-fixes
->>
->> Andreas Faerber (1):
->>       ARM: exynos_defconfig: Enable LM90 driver
->>
->> Javier Martinez Canillas (1):
->>       ARM: exynos_defconfig: Enable options for display panel support
->>
->> Vivek Gautam (1):
->>       arm: dts: Use pmu_system_controller phandle for dp phy
->>
->>  arch/arm/boot/dts/exynos5250.dtsi |    2 +-
->>  arch/arm/boot/dts/exynos5420.dtsi |    4 ++--
->>  arch/arm/configs/exynos_defconfig |   18 +++++++++++++++++-
->>  3 files changed, 20 insertions(+), 4 deletions(-)
-> 
-> Please write a tag description and sign it. You used to do this, why stop?
-> 
-> Also, you're not explaining what these patches fixes. I can see the usefulness
-> in the display configuration options, but I'm less sure why 3.19 needs the LM90
-> driver if it's just for consistency?
-> 
-Yeah it could be but I think, updating defconfig would be helpful
-anytime if possible.
+> I am not sure I understand what you are attempting to do here. What is
+> the relation that you see between CONFIG_OF_THERMAL and
+> thermal_cdev_update? 
 
-> Finally, please explain why pmu breaks. Sounds like an incompatible binding
-> change?
+It should be CONFIG_THERMAL, not CONFIG_OF_THERMAL.
 
-Yes, correct so it is required even though the change has been done in
-v3.18 not v3.19...commit a5ec59865025 (phy: exynos-dp-video: Use syscon
-support to control pmu register)
+The thermal_cdev_update() is necessary since pwm-fan code can be
+run without THERMAL subsystem (and such configuration is perfectly
+valid).
 
-Thanks,
-Kukjin
+> 
+> > 
+> > Signed-off-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > ---
+> > Changes for v2:
+> > - New patch
+> > ---
+> >  include/linux/thermal.h | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+> > index 871123c..b3515b5 100644
+> > --- a/include/linux/thermal.h
+> > +++ b/include/linux/thermal.h
+> > @@ -332,6 +332,7 @@ struct thermal_cooling_device *
+> >  thermal_of_cooling_device_register(struct device_node *np,
+> >  				   char *type, void *devdata,
+> >  				   const struct
+> > thermal_cooling_device_ops *); +void thermal_cdev_update(struct
+> > thermal_cooling_device *); #else
+> >  static inline struct thermal_zone_device *
+> >  thermal_zone_of_sensor_register(struct device *dev, int id, void
+> > *data, @@ -353,6 +354,10 @@
+> > thermal_of_cooling_device_register(struct device_node *np, {
+> >  	return NULL;
+> >  }
+> > +
+> > +static inline void thermal_cdev_update(struct
+> > thermal_cooling_device *cdev) +{
+> > +}
+> >  #endif
+> >  struct thermal_zone_device *thermal_zone_device_register(const
+> > char *, int, int, void *, struct thermal_zone_device_ops *,
+> > @@ -375,7 +380,6 @@ int thermal_zone_get_temp(struct
+> > thermal_zone_device *tz, unsigned long *temp); int
+> > get_tz_trend(struct thermal_zone_device *, int); struct
+> > thermal_instance *get_thermal_instance(struct thermal_zone_device
+> > *, struct thermal_cooling_device *, int); -void
+> > thermal_cdev_update(struct thermal_cooling_device *); void
+> > thermal_notify_framework(struct thermal_zone_device *, int); 
+> >  #ifdef CONFIG_NET
+> > -- 
+> > 2.0.0.rc2
+> > 
+
+
+-- 
+Best regards,
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
