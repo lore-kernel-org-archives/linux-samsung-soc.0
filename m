@@ -1,34 +1,60 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 16/16] ARM: dts: Fix I2S1,
- I2S2 compatible for exynos4 SoCs
-Date: Wed, 14 Jan 2015 12:57:51 +0100
-Message-ID: <54B659BF.4000803@samsung.com>
-References: <1418997336-17777-1-git-send-email-s.nawrocki@samsung.com>
- <1418997336-17777-17-git-send-email-s.nawrocki@samsung.com>
- <20150106181517.GQ2634@sirena.org.uk>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH v4 0/2] mmc: dw_mmc: exynos: Add HS400 support
+Date: Wed, 14 Jan 2015 22:32:49 +0900
+Message-ID: <54B67001.2090002@samsung.com>
+References: <1421231446-4776-1-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:10541 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751966AbbANL54 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:21046 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751159AbbANNcw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Jan 2015 06:57:56 -0500
-In-reply-to: <20150106181517.GQ2634@sirena.org.uk>
+	Wed, 14 Jan 2015 08:32:52 -0500
+In-reply-to: <1421231446-4776-1-git-send-email-alim.akhtar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: kgene@kernel.org, alsa-devel@alsa-project.org, padma.v@samsung.com, drake@endlessm.com, sbkim73@samsung.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@samsung.com>, linux-mmc@vger.kernel.org
+Cc: devicetree@vger.kernel.org, ulf.hansson@linaro.org, linux-samsung-soc@vger.kernel.org, tgih.jun@samsung.com, chris@printf.net, dianders@chromium.org, jh80.chung@samsung.com, kgene@kernel.org, a.kesavan@samsung.com, alim.akhtar@gmail.com, linux-arm-kernel@lists.infradead.org
 
-On 06/01/15 19:15, Mark Brown wrote:
-> On Fri, Dec 19, 2014 at 02:55:36PM +0100, Sylwester Nawrocki wrote:
->> > I2S1, I2S2 on Exynos4 SoC series have limited functionality compared
->> > to I2S0, "samsung,s3c6410-i2s" compatible should be used for them.
->> > 
->> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->> > ---
->
-> This should probably go to stable as a bug fix too.
+Hi, Alim.
 
-Sounds like a reasonable thing to do, I will Cc stable in next iteration.
+On 01/14/2015 07:30 PM, Alim Akhtar wrote:
+> This adds HS400 mode support for exynos dw_mmc host controller.
+> 
+> Currently tested on Exynos5800-peach-pi platform for HS400 mode.
+> Tested HS200 mode with this series applied, HS200 still works.
+> 
+> Appreciate testing on other exynos5/7 platform which supports emmc5.0
+
+I will test this patch on exynos5/7 board.
+
+Best Regards,
+Jaehoon Chung
+> 
+> Changes in V4:
+> 	* drop the idea of changing existing binding for ciu_div as per [1]
+>         * addressed comments from Jaehoon Chung [2]
+> 
+> [1] http://www.spinics.net/lists/linux-samsung-soc/msg40923.html
+> [2] http://www.spinics.net/lists/devicetree/msg64373.html
+> 
+> Changes in V3:
+> 	rebased on ulf's next (commit: 607b448 mmc: core: Make tuning block patterns static)
+> 
+> Seungwon Jeon (2):
+>   mmc: dw_mmc: exynos: Support eMMC's HS400 mode
+>   ARM: dts: Add HS400 support for exynos5420 and exynos5800
+> 
+>  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    7 +
+>  arch/arm/boot/dts/exynos5420-peach-pit.dts         |    4 +-
+>  arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |    7 +
+>  arch/arm/boot/dts/exynos5420-smdk5420.dts          |    4 +-
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts          |    4 +-
+>  drivers/mmc/host/dw_mmc-exynos.c                   |  187 ++++++++++++++++----
+>  drivers/mmc/host/dw_mmc-exynos.h                   |   19 +-
+>  drivers/mmc/host/dw_mmc.c                          |   16 +-
+>  drivers/mmc/host/dw_mmc.h                          |    2 +
+>  9 files changed, 212 insertions(+), 38 deletions(-)
+> 
