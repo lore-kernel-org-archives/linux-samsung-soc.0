@@ -1,77 +1,45 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: [RESEND PATCH v3] clocksource: exynos_mct: Add the support for Exynos
- 64bit SoC
-Date: Wed, 14 Jan 2015 14:33:23 +0900
-Message-ID: <1421213603-5020-1-git-send-email-cw00.choi@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: daniel.lezcano@linaro.org, tglx@linutronix.de
-Cc: kgene@kernel.org, cw00.choi@samsung.com, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mark Rutland <mark.rutland@arm.com>
+From: Alim Akhtar <alim.akhtar@samsung.com>
+Subject: [PATCH v4 0/2] mmc: dw_mmc: exynos: Add HS400 support
+Date: Wed, 14 Jan 2015 16:00:44 +0530
+Message-ID: <1421231446-4776-1-git-send-email-alim.akhtar@samsung.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: chris@printf.net, ulf.hansson@linaro.org, jh80.chung@samsung.com, tgih.jun@samsung.com, dianders@chromium.org, alim.akhtar@gmail.com, kgene@kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, a.kesavan@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds the support for Exynos 64bit SoC. The delay_timer is only used
-for Exynos 32bit SoC.
+This adds HS400 mode support for exynos dw_mmc host controller.
 
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
----
-This patch set is tested on 64-bit Exynos SoC. I send only this patch from
-following patchst[1].
-[1] https://lkml.org/lkml/2014/12/2/134
+Currently tested on Exynos5800-peach-pi platform for HS400 mode.
+Tested HS200 mode with this series applied, HS200 still works.
 
-Changes from v2:
-- None
-Changes from v1:
-- Use CONFIG_ARM instead of CONFIG_ARM64
+Appreciate testing on other exynos5/7 platform which supports emmc5.0
 
- drivers/clocksource/Kconfig      | 1 -
- drivers/clocksource/exynos_mct.c | 4 ++++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+Changes in V4:
+	* drop the idea of changing existing binding for ciu_div as per [1]
+        * addressed comments from Jaehoon Chung [2]
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index fc01ec2..be38119 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -135,7 +135,6 @@ config CLKSRC_METAG_GENERIC
- 
- config CLKSRC_EXYNOS_MCT
- 	def_bool y if ARCH_EXYNOS
--	depends on !ARM64
- 	help
- 	  Support for Multi Core Timer controller on Exynos SoCs.
- 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index 9403061..b840ea1 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -223,6 +223,7 @@ static u64 notrace exynos4_read_sched_clock(void)
- 	return exynos4_read_count_32();
- }
- 
-+#if defined(CONFIG_ARM)
- static struct delay_timer exynos4_delay_timer;
- 
- static cycles_t exynos4_read_current_timer(void)
-@@ -231,14 +232,17 @@ static cycles_t exynos4_read_current_timer(void)
- 			 "cycles_t needs to move to 32-bit for ARM64 usage");
- 	return exynos4_read_count_32();
- }
-+#endif
- 
- static void __init exynos4_clocksource_init(void)
- {
- 	exynos4_mct_frc_start();
- 
-+#if defined(CONFIG_ARM)
- 	exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
- 	exynos4_delay_timer.freq = clk_rate;
- 	register_current_timer_delay(&exynos4_delay_timer);
-+#endif
- 
- 	if (clocksource_register_hz(&mct_frc, clk_rate))
- 		panic("%s: can't register clocksource\n", mct_frc.name);
+[1] http://www.spinics.net/lists/linux-samsung-soc/msg40923.html
+[2] http://www.spinics.net/lists/devicetree/msg64373.html
+
+Changes in V3:
+	rebased on ulf's next (commit: 607b448 mmc: core: Make tuning block patterns static)
+
+Seungwon Jeon (2):
+  mmc: dw_mmc: exynos: Support eMMC's HS400 mode
+  ARM: dts: Add HS400 support for exynos5420 and exynos5800
+
+ .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |    7 +
+ arch/arm/boot/dts/exynos5420-peach-pit.dts         |    4 +-
+ arch/arm/boot/dts/exynos5420-pinctrl.dtsi          |    7 +
+ arch/arm/boot/dts/exynos5420-smdk5420.dts          |    4 +-
+ arch/arm/boot/dts/exynos5800-peach-pi.dts          |    4 +-
+ drivers/mmc/host/dw_mmc-exynos.c                   |  187 ++++++++++++++++----
+ drivers/mmc/host/dw_mmc-exynos.h                   |   19 +-
+ drivers/mmc/host/dw_mmc.c                          |   16 +-
+ drivers/mmc/host/dw_mmc.h                          |    2 +
+ 9 files changed, 212 insertions(+), 38 deletions(-)
+
 -- 
-1.8.5.5
+1.7.9.5
+
