@@ -1,89 +1,84 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 2/7] ARM: Exynos: add support for sub-power domains
-Date: Wed, 14 Jan 2015 14:44:46 +0100
-Message-ID: <1421243091-10778-3-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH v3 7/7] ARM: dts: exynos5250: add display power domain
+Date: Wed, 14 Jan 2015 14:44:51 +0100
+Message-ID: <1421243091-10778-8-git-send-email-m.szyprowski@samsung.com>
 References: <1421243091-10778-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:16641 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753041AbbANNpE (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:22491 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753115AbbANNpE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 14 Jan 2015 08:45:04 -0500
-Received: from eucpsbgm2.samsung.com (unknown [203.254.199.245])
- by mailout4.w1.samsung.com
+Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
+ by mailout2.w1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NI600K0N6DP1040@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 Jan 2015 13:49:01 +0000 (GMT)
+ 17 2011)) with ESMTP id <0NI600KD46DUHG10@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 Jan 2015 13:49:06 +0000 (GMT)
 In-reply-to: <1421243091-10778-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, kyungmin.park@samsung.com
 
-This patch adds support for making one power domain a sub-domain of
-other domain. This is useful for modeling power dependences for devices
-like TV Mixer or Camera ISP, which needs to have more than one power
-domain enabled to be operational.
+From: Andrzej Hajda <a.hajda@samsung.com>
 
-Based on previous work by Amit Daniel Kachhap <amit.daniel@samsung.com>.
+The patch adds domain definition and references to it in appropriate devices.
 
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+[mszyprow: rebased onto generic power domains dt bindings]
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
- .../bindings/arm/exynos/power_domain.txt           |  2 ++
- arch/arm/mach-exynos/pm_domains.c                  | 28 ++++++++++++++++++++++
- 2 files changed, 30 insertions(+)
+ arch/arm/boot/dts/exynos5250.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-index f4445e5..1e09703 100644
---- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-+++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-@@ -22,6 +22,8 @@ Optional Properties:
- 	- pclkN, clkN: Pairs of parent of input clock and input clock to the
- 		devices in this power domain. Maximum of 4 pairs (N = 0 to 3)
- 		are supported currently.
-+- power-domains: phandle pointing to the parent power domain, for more details
-+		 see Documentation/devicetree/bindings/power/power_domain.txt
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 2b5a62c..cf4a6ec 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -102,6 +102,12 @@
+ 		#power-domain-cells = <0>;
+ 	};
  
- Node of a device using power domains must have a power-domains property
- defined with a phandle to respective power domain.
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 20f2671..37266a8 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -161,6 +161,34 @@ no_clk:
- 		of_genpd_add_provider_simple(np, &pd->pd);
- 	}
++	pd_disp1: disp1-power-domain@100440A0 {
++		compatible = "samsung,exynos4210-pd";
++		reg = <0x100440A0 0x20>;
++		#power-domain-cells = <0>;
++	};
++
+ 	clock: clock-controller@10010000 {
+ 		compatible = "samsung,exynos5250-clock";
+ 		reg = <0x10010000 0x30000>;
+@@ -719,6 +725,7 @@
+ 	hdmi: hdmi {
+ 		compatible = "samsung,exynos4212-hdmi";
+ 		reg = <0x14530000 0x70000>;
++		power-domains = <&pd_disp1>;
+ 		interrupts = <0 95 0>;
+ 		clocks = <&clock CLK_HDMI>, <&clock CLK_SCLK_HDMI>,
+ 			 <&clock CLK_SCLK_PIXEL>, <&clock CLK_SCLK_HDMIPHY>,
+@@ -731,6 +738,7 @@
+ 	mixer {
+ 		compatible = "samsung,exynos5250-mixer";
+ 		reg = <0x14450000 0x10000>;
++		power-domains = <&pd_disp1>;
+ 		interrupts = <0 94 0>;
+ 		clocks = <&clock CLK_MIXER>, <&clock CLK_SCLK_HDMI>;
+ 		clock-names = "mixer", "sclk_hdmi";
+@@ -743,6 +751,7 @@
+ 	};
  
-+	/* Assign the child power domains to their parents */
-+	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
-+		struct generic_pm_domain *child_domain, *parent_domain;
-+		struct of_phandle_args args;
-+
-+		args.np = np;
-+		args.args_count = 0;
-+		child_domain = of_genpd_get_from_provider(&args);
-+		if (!child_domain)
-+			continue;
-+
-+		if (of_parse_phandle_with_args(np, "power-domains",
-+					 "#power-domain-cells", 0, &args) != 0)
-+			continue;
-+
-+		parent_domain = of_genpd_get_from_provider(&args);
-+		if (!parent_domain)
-+			continue;
-+
-+		if (pm_genpd_add_subdomain(parent_domain, child_domain))
-+			pr_warn("%s failed to add subdomain: %s\n",
-+				parent_domain->name, child_domain->name);
-+		else
-+			pr_info("%s has as child subdomain: %s.\n",
-+				parent_domain->name, child_domain->name);
-+		of_node_put(np);
-+	}
-+
- 	return 0;
- }
- arch_initcall(exynos4_pm_init_power_domain);
+ 	dp: dp-controller@145B0000 {
++		power-domains = <&pd_disp1>;
+ 		clocks = <&clock CLK_DP>;
+ 		clock-names = "dp";
+ 		phys = <&dp_phy>;
+@@ -750,6 +759,7 @@
+ 	};
+ 
+ 	fimd: fimd@14400000 {
++		power-domains = <&pd_disp1>;
+ 		clocks = <&clock CLK_SCLK_FIMD1>, <&clock CLK_FIMD1>;
+ 		clock-names = "sclk_fimd", "fimd";
+ 	};
 -- 
 1.9.2
