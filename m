@@ -1,42 +1,51 @@
-From: Mike Turquette <mturquette@linaro.org>
-Subject: Re: [PATCH 2/2] clk: exynos-audss: Fix memory leak on driver unbind or probe
- failure
-Date: Wed, 14 Jan 2015 14:25:04 -0800
-Message-ID: <20150114222504.22722.49023@quantum>
-References: <1420451561-12360-1-git-send-email-k.kozlowski@samsung.com>
- <1420451561-12360-2-git-send-email-k.kozlowski@samsung.com>
- <54AEF541.1090700@codeaurora.org>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v3 13/21] ARM: omap: convert wakeupgen to stacked domains
+Date: Wed, 14 Jan 2015 14:28:14 -0800
+Message-ID: <20150114222814.GU2419@atomide.com>
+References: <1421087187-26988-1-git-send-email-marc.zyngier@arm.com>
+ <1421087187-26988-14-git-send-email-marc.zyngier@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <54AEF541.1090700@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1421087187-26988-14-git-send-email-marc.zyngier@arm.com>
+Sender: linux-omap-owner@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Benoit Cousson <bcousson@baylibre.com>, Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>, Stefan Agner <stefan@agner.ch>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Quoting Stephen Boyd (2015-01-08 13:23:13)
-> On 01/05/2015 01:52 AM, Krzysztof Kozlowski wrote:
-> > The memory allocated by basic clock divider/gate/mux (struct clk_gate,
-> > clk_divider and clk_mux) was leaking. During driver unbind or probe
-> > failure the driver only unregistered the clocks.
-> >
-> > Use clk_unregister_{gate,divider,mux} to release all resources.
-> >
-> > Signed-off-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-> >
+* Marc Zyngier <marc.zyngier@arm.com> [150112 10:30]:
+> OMAP4/5 has been (ab)using the gic_arch_extn to provide
+> wakeup from suspend, and it makes a lot of sense to convert
+> this code to use stacked domains instead.
 > 
-> Reviewed-by: Stephen Boyd <sboyd@codeaurora.org>
+> This patch does just this, updating the DT files to actually
+> reflect what the HW provides.
+> 
+> BIG FAT WARNING: because the DTs were so far lying by not
+> exposing the WUGEN HW block, kernels with this patch applied
+> won't have any suspend-resume facility when booted with old DTs,
+> and old kernels with updated DTs won't even boot.
+> 
+> On a platform with this patch applied, the system looks like
+> this:
+> 
+> root@bacon-fat:~# cat /proc/interrupts
+>             CPU0       CPU1
+>  16:          0          0     WUGEN  37  gp_timer
+>  19:     233799     155916       GIC  27  arch_timer
+>  23:          0          0     WUGEN   9  l3-dbg-irq
+>  24:          1          0     WUGEN  10  l3-app-irq
+>  27:        282          0     WUGEN  13  omap-dma-engine
+>  44:          0          0  4ae10000.gpio  13  DMA
 
-I've applied both patches to clk-next. Krzysztof, let me know if you
-would prefer to take the audss patch through the samsung clock branch
-instead (to include it in a later pull request).
+FYI, the legacy irq numbers are now all wrong since commit
+9a1091ef0017 ("irqchip: gic: Support hierarchy irq domain.").
+
+Started a separate thread "Regression with legacy IRQ numbers
+caused by 9a1091ef0017" on it, will give these a try once
+that's sorted out.
 
 Regards,
-Mike
 
-> 
-> -- 
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+Tony
