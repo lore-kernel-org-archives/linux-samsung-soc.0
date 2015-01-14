@@ -1,105 +1,67 @@
-From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
-Subject: Re: [PATCH v2 0/6] Enable HDMI support on Exynos platforms
-Date: Wed, 14 Jan 2015 16:25:40 +0100
-Message-ID: <54B68A74.8070405@math.uni-bielefeld.de>
-References: <1421141991-15155-1-git-send-email-m.szyprowski@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: Re: [RESEND PATCH] ARM: EXYNOS: Add exynos3250 suspend-to-ram support
+Date: Thu, 15 Jan 2015 00:27:38 +0900
+Message-ID: <54B68AEA.7090406@kernel.org>
+References: <1420681838-4292-1-git-send-email-cw00.choi@samsung.com> <54B38989.4030700@kernel.org> <54B38B24.20804@samsung.com> <54B393B9.6060806@kernel.org> <54B3A477.8080705@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp.math.uni-bielefeld.de ([129.70.45.10]:57328 "EHLO
-	smtp.math.uni-bielefeld.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752432AbbANPZm (ORCPT
+Received: from mail.kernel.org ([198.145.29.136]:45666 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751936AbbANP1p (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Jan 2015 10:25:42 -0500
-In-Reply-To: <1421141991-15155-1-git-send-email-m.szyprowski@samsung.com>
+	Wed, 14 Jan 2015 10:27:45 -0500
+In-Reply-To: <54B3A477.8080705@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Kukjin Kim <kgene@kernel.org>, ben-linux@fluff.org, kyungmin.park@samsung.com, inki.dae@samsung.com, k.kozlowski@samsung.com, b.zolnierkie@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hello,
+On 01/12/15 19:39, Chanwoo Choi wrote:
+> Dear Kukjin,
+> 
+> On 01/12/2015 06:28 PM, Kukjin Kim wrote:
+>> On 01/12/15 17:51, Chanwoo Choi wrote:
+>>> Dear Kukjin,
+>>>
+>>> On 01/12/2015 05:44 PM, Kukjin Kim wrote:
+>>>> On 01/08/15 10:50, Chanwoo Choi wrote:
+>>>>> This patch adds the support for suspend-to-ram feature of Exynos3250 SoC.
+>>>>> Exynos3250 don't contain the L2 cache.
+>>>>>
+>>>>> Cc: Kukjin Kim <kgene@kernel.org>
+>>>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>>>> Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>>> ---
+>>>>> Depend on:
+>>>>> - v3.19-rc3
+>>>>>
+>>>> Chanwoo,
+>>>>
+>>>> Can you please let me know why this is depending on v3.19-rc3?
+>>>> If I apply this on top of my tree not including some stuff between
+>>>> v3.19-rc1 and v3.19-rc3, is there a problem?
+>>>
+>>> No problem.
+>>> I'm sorry. It is my mistake about using meaning of dependency.
+>>> This patch can be applied on v3.19-rc1. I just tested it on v3.19-rc3.
+>>>
+>> OK, applied.
+> 
+> Thanks for your apply.
+> 
+> I check this patch on your git repository on following:
+> https://git.kernel.org/cgit/linux/kernel/git/kgene/linux-samsung.git/commit/?h=v3.20-next/update-samsung&id=e2fb3668567d0b70563cca0d1e350afd5053e4a3
+> 
+> Although this patch contains a little decription of patch,
+> applied patch don't include any description of patch.
+> 
+> If you possible, please add the description of patch.
+> 
+You're right. Maybe I've missed the contents when I applied.
 
-I've applied v6 of the HDMI patchset (together with the patches the set
-depends on) onto torvalds/master, but I'm seeing a lot of warnings
-(coming from __clk_{unprepare,disable}) that seem to originate from the
-fimc subsystem.
+I've just restored your git log with small modification.
 
-Since the patchset also changes PM domain handling (which shows up in
-the log as well), I was wondering if this is related?
-
-Full boot log here:
-http://www.math.uni-bielefeld.de/~tjakobi/archive/clk_warnings.txt
-
-That's the tree I'm currently using:
-https://github.com/tobiasjakobi/linux-odroid/commits/odroid-3.19.y
-(maybe I'm missing something here?)
-
-
-With best wishes,
-Tobias
-
-PS: This is on a ODROID-X2.
-
-
-Marek Szyprowski wrote:
-> Hi all,
-> 
-> This is yet another approach to submit patches, which enables HDMI
-> support for two Exynos based platforms: UniversalC210 and Odroid X2/U3.
-> 
-> Beside DTS changes, this patchset adds parent domain support for Exynos
-> PM domains. This was the most controversial patch in the previous
-> attempts, but I hope I fixes all reported issues and made it really
-> generic. For more details see individual patches.
-> 
-> The patchset is based on my previous patch:
-> 'ARM: DTS: Exynos: convert to generic power domain bindings'
-> (http://www.spinics.net/lists/linux-samsung-soc/msg40584.html)
-> and requires 2 patches that have been merged to v3.19-rc4:
-> 'clk: samsung: exynos4: set parent of sclk_hdmiphy to hdmi'
-> (commit df019a5c0f7083001cb694f44821ca506425bda2) and
-> 'PM / Domains: Export of_genpd_get_from_provider function'
-> (commit 7496fcbe8a643097efc061160e1c3b65ee2fa350).
-> 
-> Regards
-> Marek Szyprowski
-> 
-> Change log:
-> 
-> v2:
-> - rewrote subdomains patch according to suggestions from Geert
->   Uytterhoeven and Amit Daniel Kachhap.
-> 
-> v1 resend: (http://www.spinics.net/lists/linux-samsung-soc/msg39428.html)
-> - added handling of generic 'power-domains' binding in subdomains
-> 
-> v1: (http://www.spinics.net/lists/linux-samsung-soc/msg38914.html)
-> - resolved power domain on/off issue with 'clk: samsung: exynos4: set
->   parent of mixer gate clock to hdmi' patch
-> 
-> v0: (http://www.spinics.net/lists/linux-samsung-soc/msg33498.html)
-> - first attempt, used 'always on' power domains hack
-> 
-> 
-> Andrzej Hajda (1):
->   ARM: dts: exynos5250: add display power domain
-> 
-> Marek Szyprowski (4):
->   ARM: Exynos: add support for sub-power domains
->   ARM: dts: exynos4: add hdmi related nodes
->   ARM: dts: exynos4: add dependency between TV and LCD0 power domains
->   ARM: dts: exynos4412-odroid: enable hdmi support
-> 
-> Tomasz Stanislawski (1):
->   ARM: dts: exynos4210-universal_c210: enable hdmi support
-> 
->  .../bindings/arm/exynos/power_domain.txt           |  2 +
->  arch/arm/boot/dts/exynos4.dtsi                     | 41 ++++++++++++++++
->  arch/arm/boot/dts/exynos4210-universal_c210.dts    | 57 ++++++++++++++++++++++
->  arch/arm/boot/dts/exynos4210.dtsi                  |  8 +++
->  arch/arm/boot/dts/exynos4412-odroid-common.dtsi    | 44 +++++++++++++++++
->  arch/arm/boot/dts/exynos4x12.dtsi                  | 11 +++++
->  arch/arm/boot/dts/exynos5250.dtsi                  | 10 ++++
->  arch/arm/mach-exynos/pm_domains.c                  | 28 +++++++++++
->  8 files changed, 201 insertions(+)
-> 
+Thanks,
+Kukjin
