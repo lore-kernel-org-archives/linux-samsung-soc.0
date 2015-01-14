@@ -1,121 +1,102 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH V3 06/15] ASoC: samsung: i2s: Add get_other_dai helper function
-Date: Wed, 14 Jan 2015 19:42:33 +0100
-Message-ID: <1421260962-16892-7-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH V3 08/15] ASoC: samsung: i2s: Add spinlock in place of
+ local_irq_* calls
+Date: Wed, 14 Jan 2015 19:42:35 +0100
+Message-ID: <1421260962-16892-9-git-send-email-s.nawrocki@samsung.com>
 References: <1421260962-16892-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:19944 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754434AbbANSnc (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:40201 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754120AbbANSnk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Jan 2015 13:43:32 -0500
+	Wed, 14 Jan 2015 13:43:40 -0500
 In-reply-to: <1421260962-16892-1-git-send-email-s.nawrocki@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: broonie@kernel.org, kgene@kernel.org
 Cc: padma.v@samsung.com, drake@endlessm.com, sbkim73@samsung.com, alsa-devel@alsa-project.org, devicetree@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-The code to get pointer to the other DAI is repeated multiple
-times. Add a helper function and use it instead.
+It seems this driver hasn't been updated for SMP, as local_irq_save/
+local_irq_restore don't provide proper protection of read/modify/write
+of the device's registers on such systems. Introduce a spinlock
+serializing access to the register region, it will be helpful later
+when I2SMOD, I2SPSR registers are made also accessible through the
+clk API.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 ---
- sound/soc/samsung/i2s.c |   24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+ sound/soc/samsung/i2s.c |   18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
 diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index f75c19e..cab2a2a 100644
+index 2bac719..20cc51f 100644
 --- a/sound/soc/samsung/i2s.c
 +++ b/sound/soc/samsung/i2s.c
-@@ -130,10 +130,16 @@ static inline bool tx_active(struct i2s_dai *i2s)
- 	return active ? true : false;
- }
- 
-+/* Return pointer to the other DAI */
-+static inline struct i2s_dai *get_other_dai(struct i2s_dai *i2s)
-+{
-+	return i2s->pri_dai ? : i2s->sec_dai;
-+}
+@@ -94,6 +94,10 @@ struct i2s_dai {
+ 	u32	suspend_i2scon;
+ 	u32	suspend_i2spsr;
+ 	const struct samsung_i2s_variant_regs *variant_regs;
 +
- /* If the other interface of the controller is transmitting data */
- static inline bool other_tx_active(struct i2s_dai *i2s)
- {
--	struct i2s_dai *other = i2s->pri_dai ? : i2s->sec_dai;
-+	struct i2s_dai *other = get_other_dai(i2s);
++	/* Spinlock protecting access to the device's registers */
++	spinlock_t spinlock;
++	spinlock_t *lock;
+ };
  
- 	return tx_active(other);
- }
-@@ -160,7 +166,7 @@ static inline bool rx_active(struct i2s_dai *i2s)
- /* If the other interface of the controller is receiving data */
- static inline bool other_rx_active(struct i2s_dai *i2s)
- {
--	struct i2s_dai *other = i2s->pri_dai ? : i2s->sec_dai;
-+	struct i2s_dai *other = get_other_dai(i2s);
+ /* Lock for cross i/f checks */
+@@ -867,10 +871,10 @@ static int i2s_trigger(struct snd_pcm_substream *substream,
+ 	case SNDRV_PCM_TRIGGER_START:
+ 	case SNDRV_PCM_TRIGGER_RESUME:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
+-		local_irq_save(flags);
++		spin_lock_irqsave(i2s->lock, flags);
  
- 	return rx_active(other);
- }
-@@ -461,7 +467,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
- 	  int clk_id, unsigned int rfs, int dir)
- {
- 	struct i2s_dai *i2s = to_info(dai);
--	struct i2s_dai *other = i2s->pri_dai ? : i2s->sec_dai;
-+	struct i2s_dai *other = get_other_dai(i2s);
- 	u32 mod = readl(i2s->addr + I2SMOD);
- 	const struct samsung_i2s_variant_regs *i2s_regs = i2s->variant_regs;
- 	unsigned int cdcon_mask = 1 << i2s_regs->cdclkcon_off;
-@@ -733,7 +739,7 @@ static int i2s_startup(struct snd_pcm_substream *substream,
- 	  struct snd_soc_dai *dai)
- {
- 	struct i2s_dai *i2s = to_info(dai);
--	struct i2s_dai *other = i2s->pri_dai ? : i2s->sec_dai;
-+	struct i2s_dai *other = get_other_dai(i2s);
- 	unsigned long flags;
+ 		if (config_setup(i2s)) {
+-			local_irq_restore(flags);
++			spin_unlock_irqrestore(i2s->lock, flags);
+ 			return -EINVAL;
+ 		}
  
- 	spin_lock_irqsave(&lock, flags);
-@@ -760,7 +766,7 @@ static void i2s_shutdown(struct snd_pcm_substream *substream,
- 	struct snd_soc_dai *dai)
- {
- 	struct i2s_dai *i2s = to_info(dai);
--	struct i2s_dai *other = i2s->pri_dai ? : i2s->sec_dai;
-+	struct i2s_dai *other = get_other_dai(i2s);
- 	unsigned long flags;
- 	const struct samsung_i2s_variant_regs *i2s_regs = i2s->variant_regs;
+@@ -879,12 +883,12 @@ static int i2s_trigger(struct snd_pcm_substream *substream,
+ 		else
+ 			i2s_txctrl(i2s, 1);
  
-@@ -791,7 +797,7 @@ static void i2s_shutdown(struct snd_pcm_substream *substream,
+-		local_irq_restore(flags);
++		spin_unlock_irqrestore(i2s->lock, flags);
+ 		break;
+ 	case SNDRV_PCM_TRIGGER_STOP:
+ 	case SNDRV_PCM_TRIGGER_SUSPEND:
+ 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
+-		local_irq_save(flags);
++		spin_lock_irqsave(i2s->lock, flags);
  
- static int config_setup(struct i2s_dai *i2s)
- {
--	struct i2s_dai *other = i2s->pri_dai ? : i2s->sec_dai;
-+	struct i2s_dai *other = get_other_dai(i2s);
- 	unsigned rfs, bfs, blc;
- 	u32 psr;
+ 		if (capture) {
+ 			i2s_rxctrl(i2s, 0);
+@@ -894,7 +898,7 @@ static int i2s_trigger(struct snd_pcm_substream *substream,
+ 			i2s_fifo(i2s, FIC_TXFLUSH);
+ 		}
  
-@@ -899,7 +905,7 @@ static int i2s_set_clkdiv(struct snd_soc_dai *dai,
- 	int div_id, int div)
- {
- 	struct i2s_dai *i2s = to_info(dai);
--	struct i2s_dai *other = i2s->pri_dai ? : i2s->sec_dai;
-+	struct i2s_dai *other = get_other_dai(i2s);
+-		local_irq_restore(flags);
++		spin_unlock_irqrestore(i2s->lock, flags);
+ 		break;
+ 	}
  
- 	switch (div_id) {
- 	case SAMSUNG_I2S_DIV_BCLK:
-@@ -968,7 +974,7 @@ static int i2s_resume(struct snd_soc_dai *dai)
- static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
- {
- 	struct i2s_dai *i2s = to_info(dai);
--	struct i2s_dai *other = i2s->pri_dai ? : i2s->sec_dai;
-+	struct i2s_dai *other = get_other_dai(i2s);
+@@ -1157,6 +1161,9 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
  
- 	if (is_secondary(i2s)) { /* If this is probe on the secondary DAI */
- 		samsung_asoc_init_dma_data(dai, &other->sec_dai->dma_playback,
-@@ -1271,7 +1277,7 @@ static int samsung_i2s_remove(struct platform_device *pdev)
- 	struct i2s_dai *i2s, *other;
++	spin_lock_init(&pri_dai->spinlock);
++	pri_dai->lock = &pri_dai->spinlock;
++
+ 	if (!np) {
+ 		res = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+ 		if (!res) {
+@@ -1234,6 +1241,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 			return -ENOMEM;
+ 		}
  
- 	i2s = dev_get_drvdata(&pdev->dev);
--	other = i2s->pri_dai ? : i2s->sec_dai;
-+	other = get_other_dai(i2s);
- 
- 	if (other) {
- 		other->pri_dai = NULL;
++		sec_dai->lock = &pri_dai->spinlock;
+ 		sec_dai->variant_regs = pri_dai->variant_regs;
+ 		sec_dai->dma_playback.dma_addr = regs_base + I2STXDS;
+ 		sec_dai->dma_playback.ch_name = "tx-sec";
 -- 
 1.7.9.5
