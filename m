@@ -1,29 +1,31 @@
 From: Kevin Hilman <khilman@linaro.org>
 Subject: Re: [PATCH] ARM: dts: exynos5422-odroidxu3: add INA2xx sensors
-Date: Wed, 14 Jan 2015 15:42:03 -0800
-Message-ID: <7h4mrtq69g.fsf@linaro.org>
+Date: Wed, 14 Jan 2015 15:44:39 -0800
+Message-ID: <7hy4p5orko.fsf@linaro.org>
 References: <1421193801-24637-1-git-send-email-khilman@kernel.org>
-	<54B69180.2010403@kernel.org>
+	<1421270704.2450.138.camel@collabora.co.uk>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f51.google.com ([209.85.220.51]:45201 "EHLO
-	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751999AbbANXmG (ORCPT
+Received: from mail-pa0-f52.google.com ([209.85.220.52]:44179 "EHLO
+	mail-pa0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751217AbbANXol (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Jan 2015 18:42:06 -0500
-Received: by mail-pa0-f51.google.com with SMTP id ey11so13603088pad.10
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Jan 2015 15:42:05 -0800 (PST)
-In-Reply-To: <54B69180.2010403@kernel.org> (Kukjin Kim's message of "Thu, 15
-	Jan 2015 00:55:44 +0900")
+	Wed, 14 Jan 2015 18:44:41 -0500
+Received: by mail-pa0-f52.google.com with SMTP id eu11so13563264pac.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Jan 2015 15:44:41 -0800 (PST)
+In-Reply-To: <1421270704.2450.138.camel@collabora.co.uk> (Sjoerd Simons's
+	message of "Wed, 14 Jan 2015 22:25:04 +0100")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+To: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>
 
-Kukjin Kim <kgene@kernel.org> writes:
+Sjoerd Simons <sjoerd.simons@collabora.co.uk> writes:
 
-> On 01/14/15 09:03, Kevin Hilman wrote:
+> Hey kevin,
+>
+> On Tue, 2015-01-13 at 16:03 -0800, Kevin Hilman wrote:
 >> From: Kevin Hilman <khilman@linaro.org>
 >> 
 >> The odroid-xu3 has 4 INA231 current sensors on board which can be
@@ -52,20 +54,6 @@ Kukjin Kim <kgene@kernel.org> writes:
 >> index c29123c0734d..7874da20939f 100644
 >> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
 >> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
->> @@ -174,6 +174,13 @@
->>  					regulator-always-on;
->>  				};
->>  
->> +				ldo26_reg: LDO26 {
->> +					regulator-name = "vdd_ldo26";
->> +					regulator-min-microvolt = <3000000>;
->> +					regulator-max-microvolt = <3000000>;
->> +					regulator-always-on;
->> +				};
->> +
->>  				buck1_reg: BUCK1 {
->>  					regulator-name = "vdd_mif";
->>  					regulator-min-microvolt = <800000>;
 >> @@ -257,6 +264,38 @@
 >>  		};
 >>  	};
@@ -75,41 +63,17 @@ Kukjin Kim <kgene@kernel.org> writes:
 >> +
 >> +		/* A15 cluster: VDD_ARM */
 >> +		ina220@40 {
+>                    ^ ina231@40 ?
 >> +			compatible = "ti,ina230";
->> +			reg = <0x40>;
->> +			shunt-resistor = <10000>;
->> +		};
->> +
->> +		/* memory: VDD_MEM */
->> +		ina220@41 {
->> +			compatible = "ti,ina230";
->> +			reg = <0x41>;
->> +			shunt-resistor = <10000>;
->> +		};
->> +
->> +		/* GPU: VDD_G3D */
->> +		ina220@44 {
->> +			compatible = "ti,ina230";
->> +			reg = <0x44>;
->> +			shunt-resistor = <10000>;
->> +		};
->> +
->> +		/* A7 cluster: VDD_KFC */
->> +		ina220@45 {
->> +			compatible = "ti,ina230";
->> +			reg = <0x45>;
->> +			shunt-resistor = <10000>;
->> +		};
->> +	};
->> +
->>  	i2c_2: i2c@12C80000 {
->>  		samsung,i2c-sda-delay = <100>;
->>  		samsung,i2c-max-bus-freq = <66000>;
 >
-> Looks good to me and applied. To be honest, I'm not sure about the
-> values in the node of shunt-resistor though ;)
+> This feels incredibly nitpicky, but would it not better to use ti,ina231
+> as it's an INA231 chip not a INA230? (And add the compatibility string
+> to the driver)
 
-I didn't measure the values, but used the values from the DTS that's
-part of the hardkernel tree.
+Hmm, you're right.  Until recently, I thought these were INA230s, but
+squinted enough at the schematic yesterday to notice they were marked as
+INA231, so updated the changelog, but not the DTS.
+
+Will re-spin with a compatible string update to the driver.
 
 Kevin
