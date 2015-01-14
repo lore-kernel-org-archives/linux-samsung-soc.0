@@ -1,51 +1,115 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH v3 13/21] ARM: omap: convert wakeupgen to stacked domains
-Date: Wed, 14 Jan 2015 14:28:14 -0800
-Message-ID: <20150114222814.GU2419@atomide.com>
-References: <1421087187-26988-1-git-send-email-marc.zyngier@arm.com>
- <1421087187-26988-14-git-send-email-marc.zyngier@arm.com>
+From: Kevin Hilman <khilman@linaro.org>
+Subject: Re: [PATCH] ARM: dts: exynos5422-odroidxu3: add INA2xx sensors
+Date: Wed, 14 Jan 2015 15:42:03 -0800
+Message-ID: <7h4mrtq69g.fsf@linaro.org>
+References: <1421193801-24637-1-git-send-email-khilman@kernel.org>
+	<54B69180.2010403@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1421087187-26988-14-git-send-email-marc.zyngier@arm.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Benoit Cousson <bcousson@baylibre.com>, Nishanth Menon <nm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Kukjin Kim <kgene.kim@samsung.com>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Michal Simek <michal.simek@xilinx.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jason Cooper <jason@lakedaemon.net>, Thomas Gleixner <tglx@linutronix.de>, Stefan Agner <stefan@agner.ch>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pa0-f51.google.com ([209.85.220.51]:45201 "EHLO
+	mail-pa0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751999AbbANXmG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 Jan 2015 18:42:06 -0500
+Received: by mail-pa0-f51.google.com with SMTP id ey11so13603088pad.10
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Jan 2015 15:42:05 -0800 (PST)
+In-Reply-To: <54B69180.2010403@kernel.org> (Kukjin Kim's message of "Thu, 15
+	Jan 2015 00:55:44 +0900")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
 
-* Marc Zyngier <marc.zyngier@arm.com> [150112 10:30]:
-> OMAP4/5 has been (ab)using the gic_arch_extn to provide
-> wakeup from suspend, and it makes a lot of sense to convert
-> this code to use stacked domains instead.
-> 
-> This patch does just this, updating the DT files to actually
-> reflect what the HW provides.
-> 
-> BIG FAT WARNING: because the DTs were so far lying by not
-> exposing the WUGEN HW block, kernels with this patch applied
-> won't have any suspend-resume facility when booted with old DTs,
-> and old kernels with updated DTs won't even boot.
-> 
-> On a platform with this patch applied, the system looks like
-> this:
-> 
-> root@bacon-fat:~# cat /proc/interrupts
->             CPU0       CPU1
->  16:          0          0     WUGEN  37  gp_timer
->  19:     233799     155916       GIC  27  arch_timer
->  23:          0          0     WUGEN   9  l3-dbg-irq
->  24:          1          0     WUGEN  10  l3-app-irq
->  27:        282          0     WUGEN  13  omap-dma-engine
->  44:          0          0  4ae10000.gpio  13  DMA
+Kukjin Kim <kgene@kernel.org> writes:
 
-FYI, the legacy irq numbers are now all wrong since commit
-9a1091ef0017 ("irqchip: gic: Support hierarchy irq domain.").
+> On 01/14/15 09:03, Kevin Hilman wrote:
+>> From: Kevin Hilman <khilman@linaro.org>
+>> 
+>> The odroid-xu3 has 4 INA231 current sensors on board which can be
+>> accessed from the Linux via the hwmon interface.
+>> 
+>> There is one sensor for each of these power rails:
+>> 
+>> - A15 cluster: VDD_ARM
+>> - A7 cluster: VDD_KFC
+>> - GPU: VDD_G3D
+>> - memory: VDD_MEM
+>> 
+>> In addition to adding the sensors, LDO26 from the PMIC needs to be
+>> enabled because it's powering these sensor.
+>> 
+>> Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+>> Cc: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+>> Signed-off-by: Kevin Hilman <khilman@linaro.org>
+>> ---
+>> Applies on top of "ARM: dts: Add dts file for odroid XU3 board" from Sjoerd Simons.
+>> 
+>>  arch/arm/boot/dts/exynos5422-odroidxu3.dts | 39 ++++++++++++++++++++++++++++++
+>>  1 file changed, 39 insertions(+)
+>> 
+>> diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>> index c29123c0734d..7874da20939f 100644
+>> --- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>> +++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
+>> @@ -174,6 +174,13 @@
+>>  					regulator-always-on;
+>>  				};
+>>  
+>> +				ldo26_reg: LDO26 {
+>> +					regulator-name = "vdd_ldo26";
+>> +					regulator-min-microvolt = <3000000>;
+>> +					regulator-max-microvolt = <3000000>;
+>> +					regulator-always-on;
+>> +				};
+>> +
+>>  				buck1_reg: BUCK1 {
+>>  					regulator-name = "vdd_mif";
+>>  					regulator-min-microvolt = <800000>;
+>> @@ -257,6 +264,38 @@
+>>  		};
+>>  	};
+>>  
+>> +	i2c_0: i2c@12C60000 {
+>> +		status = "okay";
+>> +
+>> +		/* A15 cluster: VDD_ARM */
+>> +		ina220@40 {
+>> +			compatible = "ti,ina230";
+>> +			reg = <0x40>;
+>> +			shunt-resistor = <10000>;
+>> +		};
+>> +
+>> +		/* memory: VDD_MEM */
+>> +		ina220@41 {
+>> +			compatible = "ti,ina230";
+>> +			reg = <0x41>;
+>> +			shunt-resistor = <10000>;
+>> +		};
+>> +
+>> +		/* GPU: VDD_G3D */
+>> +		ina220@44 {
+>> +			compatible = "ti,ina230";
+>> +			reg = <0x44>;
+>> +			shunt-resistor = <10000>;
+>> +		};
+>> +
+>> +		/* A7 cluster: VDD_KFC */
+>> +		ina220@45 {
+>> +			compatible = "ti,ina230";
+>> +			reg = <0x45>;
+>> +			shunt-resistor = <10000>;
+>> +		};
+>> +	};
+>> +
+>>  	i2c_2: i2c@12C80000 {
+>>  		samsung,i2c-sda-delay = <100>;
+>>  		samsung,i2c-max-bus-freq = <66000>;
+>
+> Looks good to me and applied. To be honest, I'm not sure about the
+> values in the node of shunt-resistor though ;)
 
-Started a separate thread "Regression with legacy IRQ numbers
-caused by 9a1091ef0017" on it, will give these a try once
-that's sorted out.
+I didn't measure the values, but used the values from the DTS that's
+part of the hardkernel tree.
 
-Regards,
-
-Tony
+Kevin
