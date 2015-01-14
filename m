@@ -1,51 +1,141 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 1/2] pinctrl: exynos: Add AUDIO pin controller for exynos7
-Date: Wed, 14 Jan 2015 23:27:44 +0900
-Message-ID: <CA+Ln22GhnW5jcXdQfYaJ_aM4Wq9OHXvShHHaxLKjJi+dp6Afcg@mail.gmail.com>
-References: <1418994659-5222-1-git-send-email-padma.v@samsung.com>
-	<1418994659-5222-2-git-send-email-padma.v@samsung.com>
-	<CACRpkdZopjCN_GMEPQFd_NWa0Ddocqt3aViLrZ7Yh3ui_YcBAg@mail.gmail.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH v2 1/8] thermal: Provide stub for
+ thermal_of_cooling_device_register() function
+Date: Wed, 14 Jan 2015 16:01:06 +0100
+Message-ID: <20150114160106.20aa160b@amdc2363>
+References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
+ <1419265668-32283-1-git-send-email-l.majewski@samsung.com>
+ <1419265668-32283-2-git-send-email-l.majewski@samsung.com>
+ <20150102185426.GC12485@developer> <20150102190339.GA22356@developer>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oi0-f43.google.com ([209.85.218.43]:59097 "EHLO
-	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752602AbbANO1o (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Jan 2015 09:27:44 -0500
-In-Reply-To: <CACRpkdZopjCN_GMEPQFd_NWa0Ddocqt3aViLrZ7Yh3ui_YcBAg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <20150102190339.GA22356@developer>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>
+Cc: Kamil Debski <k.debski@samsung.com>, Jean Delvare <jdelvare@suse.de>, Guenter Roeck <linux@roeck-us.net>, lm-sensors@lm-sensors.org, Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, devicetree@vger.kernel.org, Lukasz Majewski <l.majewski@majess.pl>, Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Abhilash Kesavan <a.kesavan@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Padmavathi Venna <padma.v@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Hi Linus,
+Hi Eduardo,
 
-2015-01-14 20:40 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
-> On Fri, Dec 19, 2014 at 2:10 PM, Padmavathi Venna <padma.v@samsung.com> wrote:
->
->> Audio IPs on Exynos7 require gpios available in AUDIO
->> pin controller block. So adding the AUDIO pinctrl support.
->>
->> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> (...)
->> --- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
->> +++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
->> @@ -181,6 +181,7 @@ Aliases for controllers compatible with "samsung,exynos7-pinctrl":
->>  - pinctrl6: pin controller of FSYS0 block,
->>  - pinctrl7: pin controller of FSYS1 block,
->>  - pinctrl8: pin controller of BUS1 block,
->> +- pinctrl9: pin controller of AUDIO block,
->
-> This doesn't apply at all, the list has never been in the document merged
-> upstream.
+> On Fri, Jan 02, 2015 at 02:54:28PM -0400, Eduardo Valentin wrote:
+> > On Mon, Dec 22, 2014 at 05:27:41PM +0100, Lukasz Majewski wrote:
+> > > Odroid U3 fan can work without being registered as OF cooling
+> > > device (with CONFIG_THERMAL_OF disabled).
+> > > In this situation it can be controlled via PWM entry at
+> > > /sys/class/hwmon/hwmon0/pwm1.
+> > >=20
+> > > Therefore, the thermal_of_cooling_device_register() function
+> > > needs a stub to allow clean compilation.
+> > >=20
+> > > Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> >=20
+> > Acked-by: Eduardo Valentin <edubezval@gmail.com>
+>=20
+> Sorry, too fast,
+>=20
+> This is actually
+> Nacked-by: Eduardo Valentin <edubezval@gmail.com>
+>=20
+> :-)
+>=20
+> I get this error:
+> drivers/thermal/thermal_core.c:1210:1: error: redefinition of
+> =E2=80=98thermal_of_cooling_device_register=E2=80=99
+>  thermal_of_cooling_device_register(struct device_node *np,
+>   ^
+>   In file included from drivers/thermal/thermal_core.c:34:0:
+>   include/linux/thermal.h:321:1: note: previous definition of
+>   =E2=80=98thermal_of_cooling_device_register=E2=80=99 was here
+>    thermal_of_cooling_device_register(struct device_node *np,
+>     ^
+>=20
+>=20
+> We provide the function in thermal core even if CONFIG_THERMAL_OF is
+> not set.
 
-I believe this patch depends on patch [1], which was mentioned in
-cover letter and which you seem to have applied two days ago. If it
-still doesn't apply, please let me know if I should collect the
-patches myself and prepare a pull request for you.
+Unfortunately the PWM fan subsystem can work perfectly fine without
+CONFIG_THERMAL.
 
-[1] https://patchwork.kernel.org/patch/5467321/
+I think that it would be enough to make something like this in
+the ./include/linux/thermal.h:
 
+#ifdef CONFIG_THERMAL
+	static inline struct thermal_cooling_device *
+		thermal_of_cooling_device_register(struct device_node
+		*np, char *type, void *devdata,
+				   const struct
+		thermal_cooling_device_ops *ops) {
+		return NULL;
+	}
+#else
+	[ already present declaration of
+	thermal_of_cooling_device_register() ]
+#endif /* CONFIG_THERMAL */
+
+
+
+> >=20
+> > > ---
+> > > Changes for v2:
+> > > - None
+> > > ---
+> > >  include/linux/thermal.h | 14 +++++++++++---
+> > >  1 file changed, 11 insertions(+), 3 deletions(-)
+> > >=20
+> > > diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+> > > index 2de3d9e..871123c 100644
+> > > --- a/include/linux/thermal.h
+> > > +++ b/include/linux/thermal.h
+> > > @@ -328,6 +328,10 @@ thermal_zone_of_sensor_register(struct
+> > > device *dev, int id, void *data, const struct
+> > > thermal_zone_of_device_ops *ops); void
+> > > thermal_zone_of_sensor_unregister(struct device *dev, struct
+> > > thermal_zone_device *tz); +struct thermal_cooling_device *
+> > > +thermal_of_cooling_device_register(struct device_node *np,
+> > > +				   char *type, void *devdata,
+> > > +				   const struct
+> > > thermal_cooling_device_ops *); #else
+> > >  static inline struct thermal_zone_device *
+> > >  thermal_zone_of_sensor_register(struct device *dev, int id, void
+> > > *data, @@ -342,6 +346,13 @@ void
+> > > thermal_zone_of_sensor_unregister(struct device *dev, {
+> > >  }
+> > > =20
+> > > +static inline struct thermal_cooling_device *
+> > > +thermal_of_cooling_device_register(struct device_node *np,
+> > > +				   char *type, void *devdata,
+> > > +				   const struct
+> > > thermal_cooling_device_ops *ops) +{
+> > > +	return NULL;
+> > > +}
+> > >  #endif
+> > >  struct thermal_zone_device *thermal_zone_device_register(const
+> > > char *, int, int, void *, struct thermal_zone_device_ops *,
+> > > @@ -357,9 +368,6 @@ void thermal_zone_device_update(struct
+> > > thermal_zone_device *);=20
+> > >  struct thermal_cooling_device
+> > > *thermal_cooling_device_register(char *, void *, const struct
+> > > thermal_cooling_device_ops *); -struct thermal_cooling_device *
+> > > -thermal_of_cooling_device_register(struct device_node *np, char
+> > > *, void *,
+> > > -				   const struct
+> > > thermal_cooling_device_ops *); void
+> > > thermal_cooling_device_unregister(struct thermal_cooling_device
+> > > *); struct thermal_zone_device
+> > > *thermal_zone_get_zone_by_name(const char *name); int
+> > > thermal_zone_get_temp(struct thermal_zone_device *tz, unsigned
+> > > long *temp); -- 2.0.0.rc2
+> > >=20
+>=20
+>=20
+
+
+
+--=20
 Best regards,
-Tomasz
+
+Lukasz Majewski
+
+Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
