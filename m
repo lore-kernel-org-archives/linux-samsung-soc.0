@@ -1,120 +1,33 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH] ARM: EXYNOS: enable 4 cores secondary cpu up for exynos5440
-Date: Thu, 15 Jan 2015 01:19:17 +0900
-Message-ID: <54B69705.1010902@kernel.org>
-References: <1356980980-3387-1-git-send-email-kgene.kim@samsung.com> <CACVXFVMWJa3rg45s2CmC_Oz=eO5Oxa+s0PEUjKdYhRqeYu73Hw@mail.gmail.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v5 0/7] Enable L2 cache support on Exynos4210/4x12 SoCs
+Date: Wed, 14 Jan 2015 16:21:50 +0000
+Message-ID: <20150114162150.GQ11502@n2100.arm.linux.org.uk>
+References: <1411556741-5810-1-git-send-email-m.szyprowski@samsung.com>
+ <20150114154603.GK3843@piout.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:48670 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751390AbbANQT0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Jan 2015 11:19:26 -0500
-In-Reply-To: <CACVXFVMWJa3rg45s2CmC_Oz=eO5Oxa+s0PEUjKdYhRqeYu73Hw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20150114154603.GK3843@piout.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Belloni <alexandre.belloni@free-electrons.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, tony@atomide.com, linus.walleij@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, drake@endlessm.com, loeliger@gmail.com, Kyungmin Park <kyungmin.park@samsung.com>, santosh.shilimkar@ti.com, linux-omap@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ming Lei <tom.leiming@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-On 01/07/15 11:31, Ming Lei wrote:
-> Hi Kukjin,
+On Wed, Jan 14, 2015 at 04:46:03PM +0100, Alexandre Belloni wrote:
+> Hi,
 > 
-Hi Ming Lei,
+> This patch set hasn't moved since while. We actually need patch 4 to
+> properly configure prefetch on sama5d4. What would be needed to come to
+> an agreement ?
 
-Sorry for late response.
+What do you mean "hasn't moved since a while" - there has been movement.
+It was discovered that it breaks OMAP4 platforms.
 
-> On Tue, Jan 1, 2013 at 3:09 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> No need to check power on/off with pmu control to support hotplug
->> in/out on exynos5440. And this patch enables 4 cores on exynos5440.
-> 
-> Without this patch, oops will be triggered during kernel booting on
-> exynos5440, so could this one be pushed out?
-> 
-Yeah, I know exynos5440 requires this at least kernel boot but something
-like soc_is_xxx should be updated with others in these days...so I need
-some time for this.
+Since then, work has been done to resolve that breakage, and I've merged
+the recent patch set into my tree for further regression testing, and
+I'm going to push it out to linux-next later this week.
 
-Thanks,
-Kukjin
-
-> Thanks,
-> Ming Lei
-> 
->>
->> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
->> ---
->>  arch/arm/mach-exynos/platsmp.c |   37 ++++++++++++++++++++++---------------
->>  1 file changed, 22 insertions(+), 15 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
->> index c5c840e..495a501 100644
->> --- a/arch/arm/mach-exynos/platsmp.c
->> +++ b/arch/arm/mach-exynos/platsmp.c
->> @@ -40,6 +40,8 @@ static inline void __iomem *cpu_boot_reg_base(void)
->>  {
->>         if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
->>                 return S5P_INFORM5;
->> +       else if (soc_is_exynos5440())
->> +               return (S5P_VA_CHIPID + 0x560);
->>         return S5P_VA_SYSRAM;
->>  }
->>
->> @@ -116,27 +118,30 @@ static int __cpuinit exynos_boot_secondary(unsigned int cpu, struct task_struct
->>          */
->>         write_pen_release(phys_cpu);
->>
->> -       if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN)) {
->> -               __raw_writel(S5P_CORE_LOCAL_PWR_EN,
->> -                            S5P_ARM_CORE1_CONFIGURATION);
->> +       if (!soc_is_exynos5440()) {
->> +               if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN)) {
->> +                       __raw_writel(S5P_CORE_LOCAL_PWR_EN,
->> +                                    S5P_ARM_CORE1_CONFIGURATION);
->>
->> -               timeout = 10;
->> +                       timeout = 10;
->>
->> -               /* wait max 10 ms until cpu1 is on */
->> -               while ((__raw_readl(S5P_ARM_CORE1_STATUS)
->> -                       & S5P_CORE_LOCAL_PWR_EN) != S5P_CORE_LOCAL_PWR_EN) {
->> -                       if (timeout-- == 0)
->> -                               break;
->> +                       /* wait max 10 ms until cpu1 is on */
->> +                       while ((__raw_readl(S5P_ARM_CORE1_STATUS)
->> +                               & S5P_CORE_LOCAL_PWR_EN) != S5P_CORE_LOCAL_PWR_EN) {
->> +                               if (timeout-- == 0)
->> +                                       break;
->>
->> -                       mdelay(1);
->> -               }
->> +                               mdelay(1);
->> +                       }
->>
->> -               if (timeout == 0) {
->> -                       printk(KERN_ERR "cpu1 power enable failed");
->> -                       spin_unlock(&boot_lock);
->> -                       return -ETIMEDOUT;
->> +                       if (timeout == 0) {
->> +                               printk(KERN_ERR "cpu1 power enable failed");
->> +                               spin_unlock(&boot_lock);
->> +                               return -ETIMEDOUT;
->> +                       }
->>                 }
->>         }
->> +
->>         /*
->>          * Send the secondary CPU a soft interrupt, thereby causing
->>          * the boot monitor to read the system wide flags register,
->> @@ -178,6 +183,8 @@ static void __init exynos_smp_init_cpus(void)
->>
->>         if (soc_is_exynos5250())
->>                 ncores = 2;
->> +       else if (soc_is_exynos5440())
->> +               ncores = 4;
->>         else
->>                 ncores = scu_base ? scu_get_core_count(scu_base) : 1;
->>
->> --
->> 1.7.10.4
+-- 
+FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
+according to speedtest.net.
