@@ -1,126 +1,60 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: [GIT PULL RE-SEND] Samsung exynos7 updates for v3.20
-Date: Thu, 15 Jan 2015 00:07:16 +0900
-Message-ID: <54B68624.8000706@kernel.org>
-References: <54B38628.5090902@kernel.org>
+Subject: Re: [PATCH RESEND 0/4] Small updates to Snow and Peach Pit/Pi DTS
+Date: Thu, 15 Jan 2015 00:12:51 +0900
+Message-ID: <54B68773.10805@kernel.org>
+References: <1420212257-22443-1-git-send-email-javier.martinez@collabora.co.uk> <54B3A4C2.8070304@collabora.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <54B38628.5090902@kernel.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene@kernel.org>
-Cc: Kevin Hilman <khilman@linaro.org>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Olof Johansson' <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <54B3A4C2.8070304@collabora.co.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Doug Anderson <dianders@chromium.org>, Kevin Hilman <khilman@linaro.org>, Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On 01/12/15 19:41, Javier Martinez Canillas wrote:
+> Hello Kukjin,
+> 
 Hi,
 
-Sorry, I'm resending this pull-request because of missing signed-tag.
-
-Please pull. If any problems, please let me know.
-
-Thanks,
-Kukjin
-
-The following changes since commit 97bf6af1f928216fd6c5a66e8a57bfa95a659672:
-
-  Linux 3.19-rc1 (2014-12-20 17:08:50 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-tags/samsung-dt-64
-
-for you to fetch changes up to 6f56eef1f9aba3747c811780a4768618167d5c97:
-
-  arm64: Enable ARMv8 based exynos7 SoC support (2014-12-23 00:19:08 +0900)
-
-----------------------------------------------------------------
-Samsung arch/arm64 DT updates for v3.19
-
-- to support ARMv8 based exynos7 SoC
-  : add initial device tree for pinctrl, PMU, mmc, i2c, rtc,
-    watchdog, and adc nodes for exynos7 SoC and exynos7 based
-    espresso board.
-
-----------------------------------------------------------------
-Abhilash Kesavan (2):
-      arm64: dts: Add PMU DT node for exynos7 SoC
-      arm64: dts: Add nodes for mmc, i2c, rtc, watchdog, adc on exynos7
-
-Alim Akhtar (1):
-      arm64: Enable ARMv8 based exynos7 SoC support
-
-Naveen Krishna Ch (2):
-      arm64: dts: Add initial device tree support for exynos7
-      arm64: dts: Add initial pinctrl support to exynos7
-
- .../devicetree/bindings/arm/samsung/pmu.txt        |   1 +
- arch/arm64/Kconfig                                 |  17 +
- arch/arm64/boot/dts/Makefile                       |   1 +
- arch/arm64/boot/dts/exynos/Makefile                |   5 +
- arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |  84 +++
- arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    | 588
-+++++++++++++++++++++
- arch/arm64/boot/dts/exynos/exynos7.dtsi            | 530
-+++++++++++++++++++
- 7 files changed, 1226 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/Makefile
- create mode 100644 arch/arm64/boot/dts/exynos/exynos7-espresso.dts
- create mode 100644 arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
- create mode 100644 arch/arm64/boot/dts/exynos/exynos7.dtsi
-
-
-On 01/12/15 17:30, Kukjin Kim wrote:
-> Hi again,
+> On 01/02/2015 04:24 PM, Javier Martinez Canillas wrote:
+>>
+>> This series adds some DTS snippets that were missing in the mainline
+>> Snow and Peach Pit/Pi Device Trees but are present in the downstream
+>> ChromeOS kernel.
+>>
+>> The series is composed of the following patches:
+>>
+>> Javier Martinez Canillas (4):
+>>   ARM: dts: Add power and lid GPIO keys pinctrl for exynos5250-snow
+>>   ARM: dts: Add lid GPIO key device node for Peach boards
+>>   ARM: dts: Set Peach boards USB WebCam regulators to always on
+>>   ARM: dts: Configure regulators for suspend on exynos Peach boards
+>>
+>>  arch/arm/boot/dts/exynos5250-snow.dts      |  16 +++++
+>>  arch/arm/boot/dts/exynos5420-peach-pit.dts | 100 +++++++++++++++++++++++++++-
+>>  arch/arm/boot/dts/exynos5800-peach-pi.dts  | 101 ++++++++++++++++++++++++++++-
+>>  3 files changed, 215 insertions(+), 2 deletions(-)
+>>
+>> Patch #1 adds some pinctrl lines for the GPIO keys in the Snow DTS.
+>>
+>> Patch #2 adds a device node and pinctrl lines for the lid GPIO in
+>> the Peach boards DTS.
+>>
+>> Patch #3 sets the regulators that supply voltage to the USB WebCam
+>> in Peach boards as always on.
+>>
+>> Patch #4 configures the max77802 regulators on the Peach Pit and Pi
+>> boards to be enabled or disabled during system suspend.
+>>
 > 
-> Please pull arm64 based exynos7 stuff for v3.20 and as you know I've
-> tried this in 3.19 but couldn't because of some dependencies like clk.
-> Now all of dependencies already resolved so this should be fine for v3.20.
+> I saw that you collected some DTS patches for 3.20 but these are not
+> included. Any comments about this series?
 > 
-> If any problems, please kindly let me know.
-> 
-> Thanks,
-> Kukjin
-> 
-> The following changes since commit 97bf6af1f928216fd6c5a66e8a57bfa95a659672:
-> 
->   Linux 3.19-rc1 (2014-12-20 17:08:50 -0800)
-> 
-> are available in the git repository at:
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> v3.20-next/dt-samsung-64
-> 
-> Abhilash Kesavan (2):
->       arm64: dts: Add PMU DT node for exynos7 SoC
->       arm64: dts: Add nodes for mmc, i2c, rtc, watchdog, adc on exynos7
-> 
-> Alim Akhtar (1):
->       arm64: Enable ARMv8 based exynos7 SoC support
-> 
-> Naveen Krishna Ch (2):
->       arm64: dts: Add initial device tree support for exynos7
->       arm64: dts: Add initial pinctrl support to exynos7
-> 
->  .../devicetree/bindings/arm/samsung/pmu.txt        |    1 +
->  arch/arm64/Kconfig                                 |   17 +
->  arch/arm64/boot/dts/Makefile                       |    1 +
->  arch/arm64/boot/dts/exynos/Makefile                |    5 +
->  arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |   84 +++
->  arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    |  588
-> ++++++++++++++++++++
->  arch/arm64/boot/dts/exynos/exynos7.dtsi            |  530
-> ++++++++++++++++++
->  7 files changed, 1226 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/exynos/Makefile
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos7-espresso.dts
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
->  create mode 100644 arch/arm64/boot/dts/exynos/exynos7.dtsi
+Yeah, but I don't think I checked all of submitted patches including
+this at that time and I'll have a look at this series soon.
+
+Thanks for your gentle reminder.
+
+- Kukjin
