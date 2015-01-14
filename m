@@ -1,62 +1,77 @@
-From: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Subject: Re: [PATCH v3 00/19] Exynos SYSMMU (IOMMU) integration with DT and
-	DMA-mapping subsystem
-Date: Wed, 14 Jan 2015 01:24:01 +0100
-Message-ID: <54B5B721.4070309@collabora.co.uk>
-References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com>
-	<1417514366.21830.22.camel@collabora.co.uk>
-	<54818768.3080303@samsung.com>
-	<CABxcv=n=eNqbyBbOk1Wb87tCnnLZAJQurmCdeTOSqMZMbNaSHw@mail.gmail.com>
-	<54AC93E0.8010705@samsung.com>
-	<54ACFD69.1020500@collabora.co.uk> <54AD0293.70909@samsung.com>
-	<54AEB384.2040005@collabora.co.uk> <54B36C5A.6050109@samsung.com>
-	<54B3F1B7.7090307@collabora.co.uk> <54B4ABFB.5000501@samsung.com>
-	<54B5B5F6.3030607@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <54B5B5F6.3030607-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Shaik Ameer Basha <shaik.ameer-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, David Wodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Gustavo Padovan <gustavo.padovan-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: [RESEND PATCH v3] clocksource: exynos_mct: Add the support for Exynos
+ 64bit SoC
+Date: Wed, 14 Jan 2015 14:33:23 +0900
+Message-ID: <1421213603-5020-1-git-send-email-cw00.choi@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: daniel.lezcano@linaro.org, tglx@linutronix.de
+Cc: kgene@kernel.org, cw00.choi@samsung.com, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mark Rutland <mark.rutland@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 01/14/2015 01:19 AM, Javier Martinez Canillas wrote:
-> 
-> I dug further on this issue and found that the cause is that the exynos_mixer
-> driver needs some clocks (CLK_HDMI and CLK_SCLK_HDMI) grabbed by exynos_hdmi
-> to be kept enabled after hdmi_poweroff (drivers/gpu/drm/exynos/exynos_hdmi.c).
-> 
-> Otherwise, any access to mixer device registers leads to an imprecise external
-> abort error. The following change [0] to the Exynos DRM HDMI driver makes the
-> issue to not happen and I can successfully execute:
-> 
-> # echo 1 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
-> # echo 0 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
-> 
-> Only not disabling the hdmi clock [1]: is enough but doing so makes sometimes the
-> DISP1 power domain disabling fails. It doesn't seem to have side effect though
-> since I also see the signal in the HDMI display to go standby and then on again.
-> 
-> # echo 0 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
-> # echo 1 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
-> [   63.089080] Power domain disp1-power-domain disable failed
-> # echo 0 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
-> #
-> 
-> That error message when both clocks are not disabled on hdmi_poweroff() though.
-> 
+This patch adds the support for Exynos 64bit SoC. The delay_timer is only used
+for Exynos 32bit SoC.
 
-This should be: "That error message is not shown when both clocks are disabled".
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+This patch set is tested on 64-bit Exynos SoC. I send only this patch from
+following patchst[1].
+[1] https://lkml.org/lkml/2014/12/2/134
 
-Best regards,
-Javier
+Changes from v2:
+- None
+Changes from v1:
+- Use CONFIG_ARM instead of CONFIG_ARM64
+
+ drivers/clocksource/Kconfig      | 1 -
+ drivers/clocksource/exynos_mct.c | 4 ++++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index fc01ec2..be38119 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -135,7 +135,6 @@ config CLKSRC_METAG_GENERIC
+ 
+ config CLKSRC_EXYNOS_MCT
+ 	def_bool y if ARCH_EXYNOS
+-	depends on !ARM64
+ 	help
+ 	  Support for Multi Core Timer controller on Exynos SoCs.
+ 
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 9403061..b840ea1 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -223,6 +223,7 @@ static u64 notrace exynos4_read_sched_clock(void)
+ 	return exynos4_read_count_32();
+ }
+ 
++#if defined(CONFIG_ARM)
+ static struct delay_timer exynos4_delay_timer;
+ 
+ static cycles_t exynos4_read_current_timer(void)
+@@ -231,14 +232,17 @@ static cycles_t exynos4_read_current_timer(void)
+ 			 "cycles_t needs to move to 32-bit for ARM64 usage");
+ 	return exynos4_read_count_32();
+ }
++#endif
+ 
+ static void __init exynos4_clocksource_init(void)
+ {
+ 	exynos4_mct_frc_start();
+ 
++#if defined(CONFIG_ARM)
+ 	exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
+ 	exynos4_delay_timer.freq = clk_rate;
+ 	register_current_timer_delay(&exynos4_delay_timer);
++#endif
+ 
+ 	if (clocksource_register_hz(&mct_frc, clk_rate))
+ 		panic("%s: can't register clocksource\n", mct_frc.name);
+-- 
+1.8.5.5
