@@ -1,98 +1,104 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: [PATCH] ARM: dts: exynos5422-odroidxu3: add INA2xx sensors
-Date: Tue, 13 Jan 2015 16:03:21 -0800
-Message-ID: <1421193801-24637-1-git-send-email-khilman@kernel.org>
+From: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
+Subject: Re: [PATCH v3 00/19] Exynos SYSMMU (IOMMU) integration with DT and
+ DMA-mapping subsystem
+Date: Wed, 14 Jan 2015 01:19:02 +0100
+Message-ID: <54B5B5F6.3030607@collabora.co.uk>
+References: <1416395748-10731-1-git-send-email-m.szyprowski@samsung.com> <1417514366.21830.22.camel@collabora.co.uk> <54818768.3080303@samsung.com> <CABxcv=n=eNqbyBbOk1Wb87tCnnLZAJQurmCdeTOSqMZMbNaSHw@mail.gmail.com> <54AC93E0.8010705@samsung.com> <54ACFD69.1020500@collabora.co.uk> <54AD0293.70909@samsung.com> <54AEB384.2040005@collabora.co.uk> <54B36C5A.6050109@samsung.com> <54B3F1B7.7090307@collabora.co.uk> <54B4ABFB.5000501@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:53976 "EHLO mail.kernel.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750995AbbANADX (ORCPT
+Received: from bhuna.collabora.co.uk ([93.93.135.160]:51919 "EHLO
+	bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751451AbbANATL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 Jan 2015 19:03:23 -0500
+	Tue, 13 Jan 2015 19:19:11 -0500
+In-Reply-To: <54B4ABFB.5000501@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linaro-kernel@lists.linaro.org, Kevin Hilman <khilman@linaro.org>, Javier Martinez Canillas <javier.martinez@collabora.co.uk>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>
+To: Joonyoung Shim <jy0922.shim@samsung.com>, Javier Martinez Canillas <javier@dowhile0.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linaro-mm-sig@lists.linaro.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>, Gustavo Padovan <gustavo.padovan@collabora.co.uk>, Joerg Roedel <joro@8bytes.org>, Will Deacon <will.deacon@arm.com>, iommu@lists.linux-foundation.org, Tomasz Figa <tomasz.figa@gmail.com>, Inki Dae <inki.dae@samsung.com>, Sjoerd Simons <sjoerd.simons@collabora.co.uk>, Kukjin Kim <kgene.kim@samsung.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Olof Johansson <olof@lixom.net>, Kyungmin Park <kyungmin.park@samsung.com>, Thierry Reding <treding@nvidia.com>, Cho KyongHo <pullip.cho@samsung.com>, David Wodhouse <dwmw2@infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-From: Kevin Hilman <khilman@linaro.org>
+Hello Joonyoung,
 
-The odroid-xu3 has 4 INA231 current sensors on board which can be
-accessed from the Linux via the hwmon interface.
+On 01/13/2015 06:24 AM, Joonyoung Shim wrote:
+>> 
+>> Yes, I was not able to trigger that by running modetest but by turning off
+>> my HDMI monitor and then turning it on again. When the monitor is turned
+>> on then I see a "Power domain power-domain disable failed" and the imprecise
+>> external abort error.
+>> 
+>> I had to disable CONFIG_DRM_EXYNOS_DP in order to trigger though and that
+>> is why I was not able to reproduce it before.
+>> 
+>> I think though that this is a separate issue of the HDMI not working since
+>> power domains should be able to have many consumers devices and I see that
+>> other power domains are used that way.
+>> 
+> 
+> OK, we need more investigation.
+>
 
-There is one sensor for each of these power rails:
+I dug further on this issue and found that the cause is that the exynos_mixer
+driver needs some clocks (CLK_HDMI and CLK_SCLK_HDMI) grabbed by exynos_hdmi
+to be kept enabled after hdmi_poweroff (drivers/gpu/drm/exynos/exynos_hdmi.c).
 
-- A15 cluster: VDD_ARM
-- A7 cluster: VDD_KFC
-- GPU: VDD_G3D
-- memory: VDD_MEM
+Otherwise, any access to mixer device registers leads to an imprecise external
+abort error. The following change [0] to the Exynos DRM HDMI driver makes the
+issue to not happen and I can successfully execute:
 
-In addition to adding the sensors, LDO26 from the PMIC needs to be
-enabled because it's powering these sensor.
+# echo 1 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
+# echo 0 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
 
-Cc: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-Cc: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Signed-off-by: Kevin Hilman <khilman@linaro.org>
----
-Applies on top of "ARM: dts: Add dts file for odroid XU3 board" from Sjoerd Simons.
+Only not disabling the hdmi clock [1]: is enough but doing so makes sometimes the
+DISP1 power domain disabling fails. It doesn't seem to have side effect though
+since I also see the signal in the HDMI display to go standby and then on again.
 
- arch/arm/boot/dts/exynos5422-odroidxu3.dts | 39 ++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+# echo 0 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
+# echo 1 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
+[   63.089080] Power domain disp1-power-domain disable failed
+# echo 0 > /sys/devices/platform/exynos-drm/graphics/fb0/blank
+#
 
-diff --git a/arch/arm/boot/dts/exynos5422-odroidxu3.dts b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-index c29123c0734d..7874da20939f 100644
---- a/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-+++ b/arch/arm/boot/dts/exynos5422-odroidxu3.dts
-@@ -174,6 +174,13 @@
- 					regulator-always-on;
- 				};
+That error message when both clocks are not disabled on hdmi_poweroff() though.
+
+I tried different things like set parent of mixer clock to hdmi clock instead
+of aclk200_disp1 or make the Exynos DRM mixer driver to grab the hdmi clock
+from  DT and prepare_enable from mixer_poweron() but in all cases the same
+imprecise external abort error was triggered by mixer_poweron() trying to access
+the mixer registers.
+
+Any ideas?
+
+Thanks a lot and best regards,
+Javier
+
+[0]:
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 5765a161abdd..0887911cfdd5 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -2084,8 +2084,8 @@ static void hdmi_poweroff(struct exynos_drm_display *display)
  
-+				ldo26_reg: LDO26 {
-+					regulator-name = "vdd_ldo26";
-+					regulator-min-microvolt = <3000000>;
-+					regulator-max-microvolt = <3000000>;
-+					regulator-always-on;
-+				};
-+
- 				buck1_reg: BUCK1 {
- 					regulator-name = "vdd_mif";
- 					regulator-min-microvolt = <800000>;
-@@ -257,6 +264,38 @@
- 		};
- 	};
+        cancel_delayed_work(&hdata->hotplug_work);
  
-+	i2c_0: i2c@12C60000 {
-+		status = "okay";
-+
-+		/* A15 cluster: VDD_ARM */
-+		ina220@40 {
-+			compatible = "ti,ina230";
-+			reg = <0x40>;
-+			shunt-resistor = <10000>;
-+		};
-+
-+		/* memory: VDD_MEM */
-+		ina220@41 {
-+			compatible = "ti,ina230";
-+			reg = <0x41>;
-+			shunt-resistor = <10000>;
-+		};
-+
-+		/* GPU: VDD_G3D */
-+		ina220@44 {
-+			compatible = "ti,ina230";
-+			reg = <0x44>;
-+			shunt-resistor = <10000>;
-+		};
-+
-+		/* A7 cluster: VDD_KFC */
-+		ina220@45 {
-+			compatible = "ti,ina230";
-+			reg = <0x45>;
-+			shunt-resistor = <10000>;
-+		};
-+	};
-+
- 	i2c_2: i2c@12C80000 {
- 		samsung,i2c-sda-delay = <100>;
- 		samsung,i2c-max-bus-freq = <66000>;
--- 
-2.1.3
+-       clk_disable_unprepare(res->sclk_hdmi);
+-       clk_disable_unprepare(res->hdmi);
+ 
+        /* reset pmu hdmiphy control bit to disable hdmiphy */
+        regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
+
+
+[1]:
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 5765a161abdd..628bff96d543 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -2085,7 +2085,7 @@ static void hdmi_poweroff(struct exynos_drm_display *display)
+        cancel_delayed_work(&hdata->hotplug_work);
+ 
+        clk_disable_unprepare(res->sclk_hdmi);
+-       clk_disable_unprepare(res->hdmi);
+ 
+        /* reset pmu hdmiphy control bit to disable hdmiphy */
+        regmap_update_bits(hdata->pmureg, PMU_HDMI_PHY_CONTROL,
