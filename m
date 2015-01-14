@@ -1,40 +1,51 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v3 1/7 RESEND] PM / Domains: Add a note about power domain subdomains
-Date: Wed, 14 Jan 2015 15:19:12 +0100
-Message-ID: <CAMuHMdW62vnig3=g76mq24BgHcOqpwBh_DQK=kb=A9WaRaGR+w@mail.gmail.com>
-References: <1421243091-10778-2-git-send-email-m.szyprowski@samsung.com>
-	<1421244735-10844-1-git-send-email-m.szyprowski@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 1/2] pinctrl: exynos: Add AUDIO pin controller for exynos7
+Date: Wed, 14 Jan 2015 23:27:44 +0900
+Message-ID: <CA+Ln22GhnW5jcXdQfYaJ_aM4Wq9OHXvShHHaxLKjJi+dp6Afcg@mail.gmail.com>
+References: <1418994659-5222-1-git-send-email-padma.v@samsung.com>
+	<1418994659-5222-2-git-send-email-padma.v@samsung.com>
+	<CACRpkdZopjCN_GMEPQFd_NWa0Ddocqt3aViLrZ7Yh3ui_YcBAg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f48.google.com ([209.85.215.48]:63505 "EHLO
-	mail-la0-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753084AbbANOTO (ORCPT
+Received: from mail-oi0-f43.google.com ([209.85.218.43]:59097 "EHLO
+	mail-oi0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752602AbbANO1o (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Jan 2015 09:19:14 -0500
-In-Reply-To: <1421244735-10844-1-git-send-email-m.szyprowski@samsung.com>
+	Wed, 14 Jan 2015 09:27:44 -0500
+In-Reply-To: <CACRpkdZopjCN_GMEPQFd_NWa0Ddocqt3aViLrZ7Yh3ui_YcBAg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Padmavathi Venna <padma.v@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On Wed, Jan 14, 2015 at 3:12 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> This patch adds a note on defining subdomains to generic PM domain
-> binding documentation to let power domain providers use common approach
-> for defining power domain hierarchy.
+Hi Linus,
+
+2015-01-14 20:40 GMT+09:00 Linus Walleij <linus.walleij@linaro.org>:
+> On Fri, Dec 19, 2014 at 2:10 PM, Padmavathi Venna <padma.v@samsung.com> wrote:
 >
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Audio IPs on Exynos7 require gpios available in AUDIO
+>> pin controller block. So adding the AUDIO pinctrl support.
+>>
+>> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+> (...)
+>> --- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+>> +++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+>> @@ -181,6 +181,7 @@ Aliases for controllers compatible with "samsung,exynos7-pinctrl":
+>>  - pinctrl6: pin controller of FSYS0 block,
+>>  - pinctrl7: pin controller of FSYS1 block,
+>>  - pinctrl8: pin controller of BUS1 block,
+>> +- pinctrl9: pin controller of AUDIO block,
+>
+> This doesn't apply at all, the list has never been in the document merged
+> upstream.
 
-Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+I believe this patch depends on patch [1], which was mentioned in
+cover letter and which you seem to have applied two days ago. If it
+still doesn't apply, please let me know if I should collect the
+patches myself and prepare a pull request for you.
 
-Gr{oetje,eeting}s,
+[1] https://patchwork.kernel.org/patch/5467321/
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Best regards,
+Tomasz
