@@ -1,91 +1,126 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH v3 1/7 RESEND] PM / Domains: Add a note about power domain subdomains
-Date: Wed, 14 Jan 2015 16:09:02 +0100
-Message-ID: <CAPDyKFp68ggbvf0M_co4-eBcrKf7XuOXUNQUgWRY-Do_-ipgGw@mail.gmail.com>
-References: <1421243091-10778-2-git-send-email-m.szyprowski@samsung.com>
-	<1421244735-10844-1-git-send-email-m.szyprowski@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: [GIT PULL RE-SEND] Samsung exynos7 updates for v3.20
+Date: Thu, 15 Jan 2015 00:07:16 +0900
+Message-ID: <54B68624.8000706@kernel.org>
+References: <54B38628.5090902@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qg0-f45.google.com ([209.85.192.45]:44943 "EHLO
-	mail-qg0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753976AbbANPJD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Jan 2015 10:09:03 -0500
-Received: by mail-qg0-f45.google.com with SMTP id z107so7304024qgd.4
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Jan 2015 07:09:02 -0800 (PST)
-In-Reply-To: <1421244735-10844-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <54B38628.5090902@kernel.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene@kernel.org>
+Cc: Kevin Hilman <khilman@linaro.org>, arm@kernel.org, Arnd Bergmann <arnd@arndb.de>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Olof Johansson' <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Geert Uytterhoeven <geert@linux-m68k.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-On 14 January 2015 at 15:12, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> This patch adds a note on defining subdomains to generic PM domain
-> binding documentation to let power domain providers use common approach
-> for defining power domain hierarchy.
->
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Hi,
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Sorry, I'm resending this pull-request because of missing signed-tag.
 
-Kind regards
-Uffe
+Please pull. If any problems, please let me know.
 
-> ---
-> RESEND version:
-> - fixed spelling mistakes, thanks go to Geert!
-> ---
->  .../devicetree/bindings/power/power_domain.txt     | 29 ++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/power/power_domain.txt b/Documentation/devicetree/bindings/power/power_domain.txt
-> index 98c1667..eeea45b 100644
-> --- a/Documentation/devicetree/bindings/power/power_domain.txt
-> +++ b/Documentation/devicetree/bindings/power/power_domain.txt
-> @@ -19,6 +19,16 @@ Required properties:
->     providing multiple PM domains (e.g. power controllers), but can be any value
->     as specified by device tree binding documentation of particular provider.
->
-> +Optional properties:
-> + - power-domains : A phandle and PM domain specifier as defined by bindings of
-> +                   the power controller specified by phandle.
-> +   Some power domains might be powered from another power domain (or have
-> +   other hardware specific dependencies). For representing such dependency
-> +   a standard PM domain consumer binding is used. When provided, all domains
-> +   created by the given provider should be subdomains of the domain
-> +   specified by this binding. More details about power domain specifier are
-> +   available in the next section.
-> +
->  Example:
->
->         power: power-controller@12340000 {
-> @@ -30,6 +40,25 @@ Example:
->  The node above defines a power controller that is a PM domain provider and
->  expects one cell as its phandle argument.
->
-> +Example 2:
-> +
-> +       parent: power-controller@12340000 {
-> +               compatible = "foo,power-controller";
-> +               reg = <0x12340000 0x1000>;
-> +               #power-domain-cells = <1>;
-> +       };
-> +
-> +       child: power-controller@12340000 {
-> +               compatible = "foo,power-controller";
-> +               reg = <0x12341000 0x1000>;
-> +               power-domains = <&parent 0>;
-> +               #power-domain-cells = <1>;
-> +       };
-> +
-> +The nodes above define two power controllers: 'parent' and 'child'.
-> +Domains created by the 'child' power controller are subdomains of '0' power
-> +domain provided by the 'parent' power controller.
-> +
->  ==PM domain consumers==
->
->  Required properties:
-> --
-> 1.9.2
->
+Thanks,
+Kukjin
+
+The following changes since commit 97bf6af1f928216fd6c5a66e8a57bfa95a659672:
+
+  Linux 3.19-rc1 (2014-12-20 17:08:50 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+tags/samsung-dt-64
+
+for you to fetch changes up to 6f56eef1f9aba3747c811780a4768618167d5c97:
+
+  arm64: Enable ARMv8 based exynos7 SoC support (2014-12-23 00:19:08 +0900)
+
+----------------------------------------------------------------
+Samsung arch/arm64 DT updates for v3.19
+
+- to support ARMv8 based exynos7 SoC
+  : add initial device tree for pinctrl, PMU, mmc, i2c, rtc,
+    watchdog, and adc nodes for exynos7 SoC and exynos7 based
+    espresso board.
+
+----------------------------------------------------------------
+Abhilash Kesavan (2):
+      arm64: dts: Add PMU DT node for exynos7 SoC
+      arm64: dts: Add nodes for mmc, i2c, rtc, watchdog, adc on exynos7
+
+Alim Akhtar (1):
+      arm64: Enable ARMv8 based exynos7 SoC support
+
+Naveen Krishna Ch (2):
+      arm64: dts: Add initial device tree support for exynos7
+      arm64: dts: Add initial pinctrl support to exynos7
+
+ .../devicetree/bindings/arm/samsung/pmu.txt        |   1 +
+ arch/arm64/Kconfig                                 |  17 +
+ arch/arm64/boot/dts/Makefile                       |   1 +
+ arch/arm64/boot/dts/exynos/Makefile                |   5 +
+ arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |  84 +++
+ arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    | 588
++++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos7.dtsi            | 530
++++++++++++++++++++
+ 7 files changed, 1226 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/Makefile
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos7.dtsi
+
+
+On 01/12/15 17:30, Kukjin Kim wrote:
+> Hi again,
+> 
+> Please pull arm64 based exynos7 stuff for v3.20 and as you know I've
+> tried this in 3.19 but couldn't because of some dependencies like clk.
+> Now all of dependencies already resolved so this should be fine for v3.20.
+> 
+> If any problems, please kindly let me know.
+> 
+> Thanks,
+> Kukjin
+> 
+> The following changes since commit 97bf6af1f928216fd6c5a66e8a57bfa95a659672:
+> 
+>   Linux 3.19-rc1 (2014-12-20 17:08:50 -0800)
+> 
+> are available in the git repository at:
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> v3.20-next/dt-samsung-64
+> 
+> Abhilash Kesavan (2):
+>       arm64: dts: Add PMU DT node for exynos7 SoC
+>       arm64: dts: Add nodes for mmc, i2c, rtc, watchdog, adc on exynos7
+> 
+> Alim Akhtar (1):
+>       arm64: Enable ARMv8 based exynos7 SoC support
+> 
+> Naveen Krishna Ch (2):
+>       arm64: dts: Add initial device tree support for exynos7
+>       arm64: dts: Add initial pinctrl support to exynos7
+> 
+>  .../devicetree/bindings/arm/samsung/pmu.txt        |    1 +
+>  arch/arm64/Kconfig                                 |   17 +
+>  arch/arm64/boot/dts/Makefile                       |    1 +
+>  arch/arm64/boot/dts/exynos/Makefile                |    5 +
+>  arch/arm64/boot/dts/exynos/exynos7-espresso.dts    |   84 +++
+>  arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi    |  588
+> ++++++++++++++++++++
+>  arch/arm64/boot/dts/exynos/exynos7.dtsi            |  530
+> ++++++++++++++++++
+>  7 files changed, 1226 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/exynos/Makefile
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7-espresso.dts
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7-pinctrl.dtsi
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos7.dtsi
