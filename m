@@ -1,264 +1,115 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: [PATCH v3 16/16] thermal: exynos: Remove exynos_tmu_data.c file
-Date: Wed, 14 Jan 2015 14:41:14 +0100
-Message-ID: <1421242874-3425-17-git-send-email-l.majewski@samsung.com>
-References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
- <1421242874-3425-1-git-send-email-l.majewski@samsung.com>
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-reply-to: <1421242874-3425-1-git-send-email-l.majewski@samsung.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>
-Cc: Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v3 1/7] PM / Domains: Add a note about power domain subdomains
+Date: Wed, 14 Jan 2015 14:55:19 +0100
+Message-ID: <CAMuHMdVCAYMpz4x8Re9X75CDxSFpOw-k5o+PfANWxUq5MYsELw@mail.gmail.com>
+References: <1421243091-10778-1-git-send-email-m.szyprowski@samsung.com>
+	<1421243091-10778-2-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:38845 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752387AbbANNzU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 Jan 2015 08:55:20 -0500
+In-Reply-To: <1421243091-10778-2-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Ulf Hansson <ulf.hansson@linaro.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 
-Data already present in the exynos_tmu_data.c file has been moved to the
-appropriate device tree files.
+Hi Marek,
 
-Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
----
-Changes for v2:
-- None
-Changes for v3:
-- None
----
- drivers/thermal/samsung/exynos_tmu_data.c | 228 ------------------------------
- 1 file changed, 228 deletions(-)
- delete mode 100644 drivers/thermal/samsung/exynos_tmu_data.c
+On Wed, Jan 14, 2015 at 2:44 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> This patch adds a note on defining subdomains to generic PM domain
+> binding documentation to let power domain providers use common approach
+> for defining power domain hierarchy.
 
-diff --git a/drivers/thermal/samsung/exynos_tmu_data.c b/drivers/thermal/samsung/exynos_tmu_data.c
-deleted file mode 100644
-index a993f3d..0000000
---- a/drivers/thermal/samsung/exynos_tmu_data.c
-+++ /dev/null
-@@ -1,228 +0,0 @@
--/*
-- * exynos_tmu_data.c - Samsung EXYNOS tmu data file
-- *
-- *  Copyright (C) 2013 Samsung Electronics
-- *  Amit Daniel Kachhap <amit.daniel@samsung.com>
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-- *
-- */
--
--#include "exynos_thermal_common.h"
--#include "exynos_tmu.h"
--
--struct exynos_tmu_init_data const exynos4210_default_tmu_data = {
--	.tmu_data = {
--		{
--		.threshold = 80,
--		.trigger_levels[0] = 5,
--		.trigger_levels[1] = 20,
--		.trigger_levels[2] = 30,
--		.trigger_enable[0] = true,
--		.trigger_enable[1] = true,
--		.trigger_enable[2] = true,
--		.trigger_enable[3] = false,
--		.trigger_type[0] = THROTTLE_ACTIVE,
--		.trigger_type[1] = THROTTLE_ACTIVE,
--		.trigger_type[2] = SW_TRIP,
--		.max_trigger_level = 4,
--		.non_hw_trigger_levels = 3,
--		.gain = 15,
--		.reference_voltage = 7,
--		.cal_type = TYPE_ONE_POINT_TRIMMING,
--		.min_efuse_value = 40,
--		.max_efuse_value = 100,
--		.first_point_trim = 25,
--		.second_point_trim = 85,
--		.default_temp_offset = 50,
--		.type = SOC_ARCH_EXYNOS4210,
--		},
--	},
--	.tmu_count = 1,
--};
--
--#define EXYNOS3250_TMU_DATA \
--	.threshold_falling = 10, \
--	.trigger_levels[0] = 70, \
--	.trigger_levels[1] = 95, \
--	.trigger_levels[2] = 110, \
--	.trigger_levels[3] = 120, \
--	.trigger_enable[0] = true, \
--	.trigger_enable[1] = true, \
--	.trigger_enable[2] = true, \
--	.trigger_enable[3] = false, \
--	.trigger_type[0] = THROTTLE_ACTIVE, \
--	.trigger_type[1] = THROTTLE_ACTIVE, \
--	.trigger_type[2] = SW_TRIP, \
--	.trigger_type[3] = HW_TRIP, \
--	.max_trigger_level = 4, \
--	.non_hw_trigger_levels = 3, \
--	.gain = 8, \
--	.reference_voltage = 16, \
--	.noise_cancel_mode = 4, \
--	.cal_type = TYPE_TWO_POINT_TRIMMING, \
--	.efuse_value = 55, \
--	.min_efuse_value = 40, \
--	.max_efuse_value = 100, \
--	.first_point_trim = 25, \
--	.second_point_trim = 85, \
--	.default_temp_offset = 50
--
--struct exynos_tmu_init_data const exynos3250_default_tmu_data = {
--	.tmu_data = {
--		{
--			EXYNOS3250_TMU_DATA,
--			.type = SOC_ARCH_EXYNOS3250,
--		},
--	},
--	.tmu_count = 1,
--};
--
--#define EXYNOS4412_TMU_DATA \
--	.threshold_falling = 10, \
--	.trigger_levels[0] = 70, \
--	.trigger_levels[1] = 95, \
--	.trigger_levels[2] = 110, \
--	.trigger_levels[3] = 120, \
--	.trigger_enable[0] = true, \
--	.trigger_enable[1] = true, \
--	.trigger_enable[2] = true, \
--	.trigger_enable[3] = false, \
--	.trigger_type[0] = THROTTLE_ACTIVE, \
--	.trigger_type[1] = THROTTLE_ACTIVE, \
--	.trigger_type[2] = SW_TRIP, \
--	.trigger_type[3] = HW_TRIP, \
--	.max_trigger_level = 4, \
--	.non_hw_trigger_levels = 3, \
--	.gain = 8, \
--	.reference_voltage = 16, \
--	.noise_cancel_mode = 4, \
--	.cal_type = TYPE_ONE_POINT_TRIMMING, \
--	.efuse_value = 55, \
--	.min_efuse_value = 40, \
--	.max_efuse_value = 100, \
--	.first_point_trim = 25, \
--	.second_point_trim = 85, \
--	.default_temp_offset = 50
--
--struct exynos_tmu_init_data const exynos4412_default_tmu_data = {
--	.tmu_data = {
--		{
--			EXYNOS4412_TMU_DATA,
--			.type = SOC_ARCH_EXYNOS4412,
--		},
--	},
--	.tmu_count = 1,
--};
--
--struct exynos_tmu_init_data const exynos5250_default_tmu_data = {
--	.tmu_data = {
--		{
--			EXYNOS4412_TMU_DATA,
--			.type = SOC_ARCH_EXYNOS5250,
--		},
--	},
--	.tmu_count = 1,
--};
--
--#define __EXYNOS5260_TMU_DATA	\
--	.threshold_falling = 10, \
--	.trigger_levels[0] = 85, \
--	.trigger_levels[1] = 103, \
--	.trigger_levels[2] = 110, \
--	.trigger_levels[3] = 120, \
--	.trigger_enable[0] = true, \
--	.trigger_enable[1] = true, \
--	.trigger_enable[2] = true, \
--	.trigger_enable[3] = false, \
--	.trigger_type[0] = THROTTLE_ACTIVE, \
--	.trigger_type[1] = THROTTLE_ACTIVE, \
--	.trigger_type[2] = SW_TRIP, \
--	.trigger_type[3] = HW_TRIP, \
--	.max_trigger_level = 4, \
--	.non_hw_trigger_levels = 3, \
--	.gain = 8, \
--	.reference_voltage = 16, \
--	.noise_cancel_mode = 4, \
--	.cal_type = TYPE_ONE_POINT_TRIMMING, \
--	.efuse_value = 55, \
--	.min_efuse_value = 40, \
--	.max_efuse_value = 100, \
--	.first_point_trim = 25, \
--	.second_point_trim = 85, \
--	.default_temp_offset = 50,
--
--#define EXYNOS5260_TMU_DATA \
--	__EXYNOS5260_TMU_DATA \
--	.type = SOC_ARCH_EXYNOS5260
--
--struct exynos_tmu_init_data const exynos5260_default_tmu_data = {
--	.tmu_data = {
--		{ EXYNOS5260_TMU_DATA },
--		{ EXYNOS5260_TMU_DATA },
--		{ EXYNOS5260_TMU_DATA },
--		{ EXYNOS5260_TMU_DATA },
--		{ EXYNOS5260_TMU_DATA },
--	},
--	.tmu_count = 5,
--};
--
--#define EXYNOS5420_TMU_DATA \
--	__EXYNOS5260_TMU_DATA \
--	.type = SOC_ARCH_EXYNOS5420
--
--#define EXYNOS5420_TMU_DATA_SHARED \
--	__EXYNOS5260_TMU_DATA \
--	.type = SOC_ARCH_EXYNOS5420_TRIMINFO
--
--struct exynos_tmu_init_data const exynos5420_default_tmu_data = {
--	.tmu_data = {
--		{ EXYNOS5420_TMU_DATA },
--		{ EXYNOS5420_TMU_DATA },
--		{ EXYNOS5420_TMU_DATA_SHARED },
--		{ EXYNOS5420_TMU_DATA_SHARED },
--		{ EXYNOS5420_TMU_DATA_SHARED },
--	},
--	.tmu_count = 5,
--};
--
--#define EXYNOS5440_TMU_DATA \
--	.trigger_levels[0] = 100, \
--	.trigger_levels[4] = 105, \
--	.trigger_enable[0] = 1, \
--	.trigger_type[0] = SW_TRIP, \
--	.trigger_type[4] = HW_TRIP, \
--	.max_trigger_level = 5, \
--	.non_hw_trigger_levels = 1, \
--	.gain = 5, \
--	.reference_voltage = 16, \
--	.noise_cancel_mode = 4, \
--	.cal_type = TYPE_ONE_POINT_TRIMMING, \
--	.efuse_value = 0x5b2d, \
--	.min_efuse_value = 16, \
--	.max_efuse_value = 76, \
--	.first_point_trim = 25, \
--	.second_point_trim = 70, \
--	.default_temp_offset = 25, \
--	.type = SOC_ARCH_EXYNOS5440
--
--struct exynos_tmu_init_data const exynos5440_default_tmu_data = {
--	.tmu_data = {
--		{ EXYNOS5440_TMU_DATA } ,
--		{ EXYNOS5440_TMU_DATA } ,
--		{ EXYNOS5440_TMU_DATA } ,
--	},
--	.tmu_count = 3,
--};
--- 
-2.0.0.rc2
+Thanks!
 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  .../devicetree/bindings/power/power_domain.txt     | 29 ++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/power/power_domain.txt b/Documentation/devicetree/bindings/power/power_domain.txt
+> index 98c1667..eeea45b 100644
+> --- a/Documentation/devicetree/bindings/power/power_domain.txt
+> +++ b/Documentation/devicetree/bindings/power/power_domain.txt
+> @@ -19,6 +19,16 @@ Required properties:
+>     providing multiple PM domains (e.g. power controllers), but can be any value
+>     as specified by device tree binding documentation of particular provider.
+>
+> +Optional properties:
+> + - power-domains : A phandle and PM domain specifier as defined by bindings of
+> +                   the power controller specified by phandle.
+> +   Some power domains might be powered from other power domain (or have
+
+s/other/another/
+
+> +   other hardware specific dependency). For representing such dependency
+
+s/dependency/dependencies/ (twice)
+
+> +   a standard PM domain consumer binging is used. When provided, all domains
+
+binding
+
+> +   created by the given provider should be a subdomain of the domain
+
+s/a subdomain/subdomains/
+
+> +   specified by this binding. More details about power domain specifier is
+
+s/is/are/
+
+> +   available in the the next section.
+
+duplicate "the"
+
+> +
+>  Example:
+>
+>         power: power-controller@12340000 {
+> @@ -30,6 +40,25 @@ Example:
+>  The node above defines a power controller that is a PM domain provider and
+>  expects one cell as its phandle argument.
+>
+> +Example 2:
+> +
+> +       parent: power-controller@12340000 {
+> +               compatible = "foo,power-controller";
+> +               reg = <0x12340000 0x1000>;
+> +               #power-domain-cells = <1>;
+> +       };
+> +
+> +       child: power-controller@12340000 {
+> +               compatible = "foo,power-controller";
+> +               reg = <0x12341000 0x1000>;
+> +               power-domains = <&parent 0>;
+> +               #power-domain-cells = <1>;
+> +       };
+> +
+> +The nodes above defines two power controllers: 'parent' and 'child'.
+
+s/defines/define/
+
+> +Domains created by 'child' power controller are subdomains of '0' power
+
+the 'child' power controller
+
+> +domain provided by 'parent' power controller.
+
+the 'parent' power controller.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
