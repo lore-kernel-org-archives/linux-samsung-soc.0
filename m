@@ -1,99 +1,213 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v3 5/7] ARM: dts: exynos4412-odroid: enable hdmi support
-Date: Wed, 14 Jan 2015 14:44:49 +0100
-Message-ID: <1421243091-10778-6-git-send-email-m.szyprowski@samsung.com>
-References: <1421243091-10778-1-git-send-email-m.szyprowski@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:16641 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753036AbbANNpG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Jan 2015 08:45:06 -0500
-Received: from eucpsbgm1.samsung.com (unknown [203.254.199.244])
- by mailout4.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0NI600KYF6DQ0Y30@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 Jan 2015 13:49:02 +0000 (GMT)
-In-reply-to: <1421243091-10778-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: [PATCH v3 06/16] arm: dts: Adding CPU cooling binding for Exynos SoCs
+Date: Wed, 14 Jan 2015 14:41:04 +0100
+Message-ID: <1421242874-3425-7-git-send-email-l.majewski@samsung.com>
+References: <1412872737-624-1-git-send-email-l.majewski@samsung.com>
+ <1421242874-3425-1-git-send-email-l.majewski@samsung.com>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-reply-to: <1421242874-3425-1-git-send-email-l.majewski@samsung.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Eduardo Valentin <edubezval@gmail.com>, Zhang Rui <rui.zhang@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Kukjin Kim <kgene@kernel.org>
+Cc: Linux PM list <linux-pm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Lukasz Majewski <l.majewski@majess.pl>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Abhilash Kesavan <kesavan.abhilash@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, kyungmin.park@samsung.com
 
-This patch adds nodes specific to Exynos4412 based Odroid X/X2/U2/U3
-boards required for enabling HDMI display.
+Presented patch aims to move data necessary for correct CPU cooling device
+configuration from exynos_tmu_data.c to device tree.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
 ---
- arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 44 +++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+Changes for v2:
+- None
+Changes for v3:
+- Adjust CPU's DT nodes to work with newest ti-soc-thermal/next branch
+- Patch title has been changed from "thermal: cpu_cooling: dts: ..."
+---
+ arch/arm/boot/dts/exynos4210-trats.dts          | 15 +++++++++++++++
+ arch/arm/boot/dts/exynos4210.dtsi               |  5 ++++-
+ arch/arm/boot/dts/exynos4212.dtsi               |  5 ++++-
+ arch/arm/boot/dts/exynos4412-odroid-common.dtsi | 15 +++++++++++++++
+ arch/arm/boot/dts/exynos4412-trats2.dts         | 15 +++++++++++++++
+ arch/arm/boot/dts/exynos4412.dtsi               |  5 ++++-
+ arch/arm/boot/dts/exynos5250.dtsi               | 20 +++++++++++++++++++-
+ 7 files changed, 76 insertions(+), 4 deletions(-)
 
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+index 61009f4..4cd8926 100644
+--- a/arch/arm/boot/dts/exynos4210-trats.dts
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -428,6 +428,21 @@
+ 		status = "okay";
+ 	};
+ 
++	thermal-zones {
++		cpu_thermal: cpu-thermal {
++			cooling-maps {
++				map0 {
++				    /* Corresponds to 800MHz at freq_table */
++				    cooling-device = <&cpu0 2 2>;
++				};
++				map1 {
++				   /* Corresponds to 200MHz at freq_table */
++				   cooling-device = <&cpu0 4 4>;
++			       };
++		       };
++		};
++	};
++
+ 	camera {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <>;
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index bcc9e63..2e66df8 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -35,10 +35,13 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		cpu@900 {
++		cpu0: cpu@900 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0x900>;
++			cooling-min-level = <4>;
++			cooling-max-level = <2>;
++			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+ 		cpu@901 {
+diff --git a/arch/arm/boot/dts/exynos4212.dtsi b/arch/arm/boot/dts/exynos4212.dtsi
+index dd0a43e..5be03288 100644
+--- a/arch/arm/boot/dts/exynos4212.dtsi
++++ b/arch/arm/boot/dts/exynos4212.dtsi
+@@ -26,10 +26,13 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		cpu@A00 {
++		cpu0: cpu@A00 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0xA00>;
++			cooling-min-level = <13>;
++			cooling-max-level = <7>;
++			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+ 		cpu@A01 {
 diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-index 3fbf588..e10efa8 100644
+index c7517fc..4838a2a 100644
 --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
 +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-@@ -231,6 +231,20 @@
- 					regulator-always-on;
- 				};
- 
-+				ldo8_reg: ldo@8 {
-+					regulator-compatible = "LDO8";
-+					regulator-name = "VDD10_HDMI_1.0V";
-+					regulator-min-microvolt = <1000000>;
-+					regulator-max-microvolt = <1000000>;
-+				};
-+
-+				ldo10_reg: ldo@10 {
-+					regulator-compatible = "LDO10";
-+					regulator-name = "VDDQ_MIPIHSI_1.8V";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+				};
-+
- 				ldo11_reg: LDO11 {
- 					regulator-name = "VDD18_ABB1_1.8V";
- 					regulator-min-microvolt = <1800000>;
-@@ -389,6 +403,31 @@
- 	ehci: ehci@12580000 {
+@@ -401,6 +401,21 @@
+ 		vtmu-supply = <&ldo10_reg>;
  		status = "okay";
  	};
 +
-+	mixer: mixer@12C10000 {
-+		status = "okay";
-+	};
-+
-+	hdmi@12D00000 {
-+		hpd-gpio = <&gpx3 7 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&hdmi_hpd>;
-+		vdd-supply = <&ldo8_reg>;
-+		vdd_osc-supply = <&ldo10_reg>;
-+		vdd_pll-supply = <&ldo8_reg>;
-+		ddc = <&hdmi_ddc>;
-+		status = "okay";
-+	};
-+
-+	hdmi_ddc: i2c@13880000 {
-+		status = "okay";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&i2c2_bus>;
-+	};
-+
-+	i2c@138E0000 {
-+		status = "okay";
++	thermal-zones {
++		cpu_thermal: cpu-thermal {
++			cooling-maps {
++				map0 {
++				    /* Corresponds to 800MHz at freq_table */
++				    cooling-device = <&cpu0 7 7>;
++				};
++				map1 {
++				   /* Corresponds to 200MHz at freq_table */
++				   cooling-device = <&cpu0 13 13>;
++			       };
++		       };
++		};
 +	};
  };
  
  &pinctrl_1 {
-@@ -403,4 +442,9 @@
- 		samsung,pin-pud = <0>;
- 		samsung,pin-drv = <0>;
+diff --git a/arch/arm/boot/dts/exynos4412-trats2.dts b/arch/arm/boot/dts/exynos4412-trats2.dts
+index 29231b4..8c2c584 100644
+--- a/arch/arm/boot/dts/exynos4412-trats2.dts
++++ b/arch/arm/boot/dts/exynos4412-trats2.dts
+@@ -863,6 +863,21 @@
+ 		pulldown-ohm = <100000>; /* 100K */
+ 		io-channels = <&adc 2>;  /* Battery temperature */
  	};
 +
-+	hdmi_hpd: hdmi-hpd {
-+		samsung,pins = "gpx3-7";
-+		samsung,pin-pud = <1>;
++	thermal-zones {
++		cpu_thermal: cpu-thermal {
++			cooling-maps {
++				map0 {
++				    /* Corresponds to 800MHz at freq_table */
++				    cooling-device = <&cpu0 7 7>;
++				};
++				map1 {
++				   /* Corresponds to 200MHz at freq_table */
++				   cooling-device = <&cpu0 13 13>;
++			       };
++		       };
++		};
 +	};
  };
+ 
+ &pinctrl_0 {
+diff --git a/arch/arm/boot/dts/exynos4412.dtsi b/arch/arm/boot/dts/exynos4412.dtsi
+index 0f6ec93..68ad43b 100644
+--- a/arch/arm/boot/dts/exynos4412.dtsi
++++ b/arch/arm/boot/dts/exynos4412.dtsi
+@@ -26,10 +26,13 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		cpu@A00 {
++		cpu0: cpu@A00 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a9";
+ 			reg = <0xA00>;
++			cooling-min-level = <13>;
++			cooling-max-level = <7>;
++			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 
+ 		cpu@A01 {
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 0a229fc..dd5c3a0 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -58,11 +58,14 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		cpu@0 {
++		cpu0: cpu@0 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0>;
+ 			clock-frequency = <1700000000>;
++			cooling-min-level = <15>;
++			cooling-max-level = <9>;
++			#cooling-cells = <2>; /* min followed by max */
+ 		};
+ 		cpu@1 {
+ 			device_type = "cpu";
+@@ -241,6 +244,21 @@
+ 		clock-names = "tmu_apbif";
+ 	};
+ 
++	thermal-zones {
++		cpu_thermal: cpu-thermal {
++			cooling-maps {
++				map0 {
++				    /* Corresponds to 800MHz at freq_table */
++				    cooling-device = <&cpu0 9 9>;
++				};
++				map1 {
++				   /* Corresponds to 200MHz at freq_table */
++				   cooling-device = <&cpu0 15 15>;
++			       };
++		       };
++		};
++	};
++
+ 	serial@12C00000 {
+ 		clocks = <&clock CLK_UART0>, <&clock CLK_SCLK_UART0>;
+ 		clock-names = "uart", "clk_uart_baud0";
 -- 
-1.9.2
+2.0.0.rc2
+
