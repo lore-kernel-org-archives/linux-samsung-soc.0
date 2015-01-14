@@ -1,47 +1,120 @@
 From: Kukjin Kim <kgene@kernel.org>
-Subject: Re: [PATCH] ARM: DTS: Exynos: convert to generic power domain bindings
-Date: Thu, 15 Jan 2015 01:11:08 +0900
-Message-ID: <54B6951C.8070807@kernel.org>
-References: <1420191389-1409-1-git-send-email-m.szyprowski@samsung.com> <CABxcv==zC2Sjp+ezO9HBgynbbEqDrv94VO85LPkv02Ok0LUD_Q@mail.gmail.com>
+Subject: Re: [PATCH] ARM: EXYNOS: enable 4 cores secondary cpu up for exynos5440
+Date: Thu, 15 Jan 2015 01:19:17 +0900
+Message-ID: <54B69705.1010902@kernel.org>
+References: <1356980980-3387-1-git-send-email-kgene.kim@samsung.com> <CACVXFVMWJa3rg45s2CmC_Oz=eO5Oxa+s0PEUjKdYhRqeYu73Hw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.kernel.org ([198.145.29.136]:48265 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.136]:48670 "EHLO mail.kernel.org"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752497AbbANQLQ (ORCPT
+	id S1751390AbbANQT0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Jan 2015 11:11:16 -0500
-In-Reply-To: <CABxcv==zC2Sjp+ezO9HBgynbbEqDrv94VO85LPkv02Ok0LUD_Q@mail.gmail.com>
+	Wed, 14 Jan 2015 11:19:26 -0500
+In-Reply-To: <CACVXFVMWJa3rg45s2CmC_Oz=eO5Oxa+s0PEUjKdYhRqeYu73Hw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javier Martinez Canillas <javier@dowhile0.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene@kernel.org>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Ulf Hansson <ulf.hansson@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kevin Hilman <khilman@kernel.org>
+To: Ming Lei <tom.leiming@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Pankaj Dubey <pankaj.dubey@samsung.com>, Thomas Abraham <thomas.ab@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 
-On 01/13/15 01:50, Javier Martinez Canillas wrote:
-> Hello Marek,
+On 01/07/15 11:31, Ming Lei wrote:
+> Hi Kukjin,
 > 
-> On Fri, Jan 2, 2015 at 10:36 AM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
->> This patch replaces all custom samsung,power-domain device tree properties
->> with generic power domain bindings and updates documentation Samsung's devices
->> refering to old binding.
->>
->> Suggested-by: Kevin Hilman <khilman@kernel.org>
->> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Hi Ming Lei,
+
+Sorry for late response.
+
+> On Tue, Jan 1, 2013 at 3:09 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>> No need to check power on/off with pmu control to support hotplug
+>> in/out on exynos5440. And this patch enables 4 cores on exynos5440.
 > 
-> It looks to me like a very nice cleanup.
+> Without this patch, oops will be triggered during kernel booting on
+> exynos5440, so could this one be pushed out?
 > 
-> Reviewed-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> 
-> and on an Exynos5800 Peach Pi Chromebook:
-> 
-> Tested-by: Javier Martinez Canillas <javier.martinez@collabora.co.uk>
-> 
-Thanks your guys. Yeah, using generic something would be better and
-basically I have no objection. But need to check there is no side-effect
-because sometimes general cannot cover all of customs ;) Anyway I'll
-look at this change about that in this weekend.
+Yeah, I know exynos5440 requires this at least kernel boot but something
+like soc_is_xxx should be updated with others in these days...so I need
+some time for this.
 
 Thanks,
 Kukjin
+
+> Thanks,
+> Ming Lei
+> 
+>>
+>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+>> ---
+>>  arch/arm/mach-exynos/platsmp.c |   37 ++++++++++++++++++++++---------------
+>>  1 file changed, 22 insertions(+), 15 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+>> index c5c840e..495a501 100644
+>> --- a/arch/arm/mach-exynos/platsmp.c
+>> +++ b/arch/arm/mach-exynos/platsmp.c
+>> @@ -40,6 +40,8 @@ static inline void __iomem *cpu_boot_reg_base(void)
+>>  {
+>>         if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
+>>                 return S5P_INFORM5;
+>> +       else if (soc_is_exynos5440())
+>> +               return (S5P_VA_CHIPID + 0x560);
+>>         return S5P_VA_SYSRAM;
+>>  }
+>>
+>> @@ -116,27 +118,30 @@ static int __cpuinit exynos_boot_secondary(unsigned int cpu, struct task_struct
+>>          */
+>>         write_pen_release(phys_cpu);
+>>
+>> -       if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN)) {
+>> -               __raw_writel(S5P_CORE_LOCAL_PWR_EN,
+>> -                            S5P_ARM_CORE1_CONFIGURATION);
+>> +       if (!soc_is_exynos5440()) {
+>> +               if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN)) {
+>> +                       __raw_writel(S5P_CORE_LOCAL_PWR_EN,
+>> +                                    S5P_ARM_CORE1_CONFIGURATION);
+>>
+>> -               timeout = 10;
+>> +                       timeout = 10;
+>>
+>> -               /* wait max 10 ms until cpu1 is on */
+>> -               while ((__raw_readl(S5P_ARM_CORE1_STATUS)
+>> -                       & S5P_CORE_LOCAL_PWR_EN) != S5P_CORE_LOCAL_PWR_EN) {
+>> -                       if (timeout-- == 0)
+>> -                               break;
+>> +                       /* wait max 10 ms until cpu1 is on */
+>> +                       while ((__raw_readl(S5P_ARM_CORE1_STATUS)
+>> +                               & S5P_CORE_LOCAL_PWR_EN) != S5P_CORE_LOCAL_PWR_EN) {
+>> +                               if (timeout-- == 0)
+>> +                                       break;
+>>
+>> -                       mdelay(1);
+>> -               }
+>> +                               mdelay(1);
+>> +                       }
+>>
+>> -               if (timeout == 0) {
+>> -                       printk(KERN_ERR "cpu1 power enable failed");
+>> -                       spin_unlock(&boot_lock);
+>> -                       return -ETIMEDOUT;
+>> +                       if (timeout == 0) {
+>> +                               printk(KERN_ERR "cpu1 power enable failed");
+>> +                               spin_unlock(&boot_lock);
+>> +                               return -ETIMEDOUT;
+>> +                       }
+>>                 }
+>>         }
+>> +
+>>         /*
+>>          * Send the secondary CPU a soft interrupt, thereby causing
+>>          * the boot monitor to read the system wide flags register,
+>> @@ -178,6 +183,8 @@ static void __init exynos_smp_init_cpus(void)
+>>
+>>         if (soc_is_exynos5250())
+>>                 ncores = 2;
+>> +       else if (soc_is_exynos5440())
+>> +               ncores = 4;
+>>         else
+>>                 ncores = scu_base ? scu_get_core_count(scu_base) : 1;
+>>
+>> --
+>> 1.7.10.4
