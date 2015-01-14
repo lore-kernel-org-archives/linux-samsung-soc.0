@@ -1,152 +1,79 @@
-From: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 2/9] hwmon: dts: Doc: Add DTS doc to explain how to use PWM
- FAN as a cooling device
-Date: Wed, 14 Jan 2015 14:56:32 +0100
-Message-ID: <20150114145632.3010f836@amdc2363>
-References: <1418897591-18332-1-git-send-email-l.majewski@samsung.com>
- <1418897591-18332-3-git-send-email-l.majewski@samsung.com>
- <1418899337.23532.9.camel@collabora.co.uk> <20141219163224.34796e5d@amdc2363>
- <20141219160237.GA2199@roeck-us.net> <20141219171301.1527d81e@amdc2363>
- <1420455034.15910.53.camel@collabora.co.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1420455034.15910.53.camel-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
-Cc: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kamil Debski <k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Jean Delvare <jdelvare-l3A5Bk7waGM@public.gmane.org>, lm-sensors-GZX6beZjE8VD60Wz+7aTrA@public.gmane.org, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lukasz Majewski <l.majewski-AM3owJQeAb5mR6Xm/wNWPw@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v3 1/7 RESEND] PM / Domains: Add a note about power domain
+ subdomains
+Date: Wed, 14 Jan 2015 15:12:15 +0100
+Message-ID: <1421244735-10844-1-git-send-email-m.szyprowski@samsung.com>
+References: <1421243091-10778-2-git-send-email-m.szyprowski@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:18282 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752101AbbANOMb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 Jan 2015 09:12:31 -0500
+In-reply-to: <1421243091-10778-2-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene@kernel.org>, Tobias Jakobi <Liquid.Acid@gmx.net>, Daniel Drake <drake@endlessm.com>, Andrzej Hajda <a.hajda@samsung.com>, Inki Dae <inki.dae@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, kyungmin.park@samsung.com, Pankaj Dubey <pankaj.dubey@samsung.com>, Amit Daniel Kachhap <amit.daniel@samsung.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Ulf Hansson <ulf.hansson@linaro.org>, devicetree@vger.kernel.org
 
-Hi Sjoerd,
+This patch adds a note on defining subdomains to generic PM domain
+binding documentation to let power domain providers use common approach
+for defining power domain hierarchy.
 
-> Hey Lukasz,
-> 
-> Blame the holiday season for my late reply ;)
-> 
-> On Fri, 2014-12-19 at 17:13 +0100, Lukasz Majewski wrote:
-> > Hi Guenter,
-> > 
-> > > On Fri, Dec 19, 2014 at 04:32:24PM +0100, Lukasz Majewski wrote:
-> > > > Hi Sjoerd,
-> > > > 
-> > > > Thanks for your feedback and sorry for a late reply.
-> > > > 
-> > > > > On Thu, 2014-12-18 at 11:13 +0100, Lukasz Majewski wrote:
-> > > > > > Several new properties to allow PWM fan working as a cooling
-> > > > > > device have been combined into this single commit.
-> > > > > > 
-> > > > > > Signed-off-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > > > > > ---
-> > > > > >  .../devicetree/bindings/hwmon/pwm-fan.txt          | 28
-> > > > > > ++++++++++++++++++++++ 1 file changed, 28 insertions(+)
-> > > > > > 
-> > > > > > diff --git
-> > > > > > a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt
-> > > > > > b/Documentation/devicetree/bindings/hwmon/pwm-fan.txt index
-> > > > > > 610757c..3877810 100644 ---
-> > > > > > a/Documentation/devicetree/bindings/hwmon/pwm-fan.txt +++
-> > > > > > b/Documentation/devicetree/bindings/hwmon/pwm-fan.txt @@
-> > > > > > -3,10 +3,38 @@ Bindings for a fan connected to the PWM
-> > > > > > lines Required properties:
-> > > > > >  - compatible	: "pwm-fan"
-> > > > > >  - pwms		: the PWM that is used to control the
-> > > > > > PWM fan +- cooling-pwm-values      : PWM duty cycle values
-> > > > > > relative to
-> > > > > > +			    cooling-max-pwm-value
-> > > > > > correspondig to
-> > > > > > +			    proper cooling states
-> > > > > > +- default-pulse-width     : Property specifying default
-> > > > > > pulse width for FAN
-> > > > > > +			    at system boot (zero to disable
-> > > > > > FAN on boot).
-> > > > > > +			    Allowed range is 0 to 255
-> > > > > 
-> > > > > The 0..255 range seems somewhat random. Would be nicer to
-> > > > > either use the approach of pwm-backlight (iotw, have the
-> > > > > range go from the first to the last entry of
-> > > > > cooling-pwm-values) 
-> > > > 
-> > > > I'm OK to change the default-pulse-width to be similar to
-> > > > "default-brightness-level" (as it is in
-> > > > Documentation/devicetree/bindings/video/backlight/pwm-backlight.txt)
-> > > > 
-> > > > > or simply have be the duty
-> > > > > lenght in NS as entries instead of the current indirection.
-> > > > 
-> > > > I'd prefer to keep the indirection - as it is utilized in the
-> > > > current pwm-fan.c driver.
-> > > > 
-> > > FWIW, devicetree information is supposed to be implementation
-> > > independent. So this is a poor argument.
-> > 
-> > Many other pwm drivers use the indirection - e.g. mentioned
-> > pwm-backlight.
-> 
-> I don't specifically mind the indirection, i was just thinking out
-> loud whether it added value (but if it's quite common, might indeed
-> be good to keep the pattern). What i do dislike is the number of
-> levels is being set to an arbitrary levels, as that will very rarely
-> match the actual number of distinct pwm levels you 
-> 
-> One thing though, when following the pattern of the pwm-backlight
-> driver; In pwm-backlight the highest index of brightness-levels is
-> always 100% duty cycle.. On e.g. XU3 the vendor kernel never drives
-> the fan at 100% duty (maximum of 91%). So it would be nice if the dt
-> bindigns could model that e.g. by having:
-> 
-> pwm-levels = <20>; // 21 distinct pwm levels
-> valid-pwm-level = <5 15 18>; /* 5 15 and 18 are usable levels - pwm
-> will default to highest level */
-> 
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+RESEND version:
+- fixed spelling mistakes, thanks go to Geert!
+---
+ .../devicetree/bindings/power/power_domain.txt     | 29 ++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-Could you review v2 of this patch series?
-
-http://www.spinics.net/lists/devicetree/msg63159.html
-
-> 
-> > > > Enabling pan to full RPM was the default behaviour in the
-> > > > current pwm-fan.c file.
-> > > > 
-> > > > To be honest, there is no need to enable fan to full RPM speed
-> > > > in this board for following reasons:
-> > > > 1. In Odroid the FAN is optional (stacked on top of a heat
-> > > > sink) - very often it is just enough to only have the heat sink.
-> > > > 
-> > > > 2. Odroid has thermal enabled by default and IMHO it would be
-> > > > more feasible to allow thermal to control fan from the very
-> > > > beginning.
-> > > > 
-> > > > However, I can also understand if the policy for hwmon implies a
-> > > > rule to enable by default all fans to full RPM speed.
-> > > > 
-> > > Why and how does that all suggest that the current default
-> > > behavior should be changed ?
-> > 
-> > I wanted to avoid the unpleasant sound for full speed fan when
-> > thermal is not enabled by default.
-> > 
-> > But as I said, I fully understand the policy and I would be happy to
-> > comply with it as thermal should reduce the fan speed anyway at boot
-> > time.
-> 
-> Yeah, what happens on my XU3 is that u-boot sets the pwm to 100% duty
-> and the thermal infrastructure turns it off as soon as it gets into
-> control, which works quite nicely (and keeps my sanity as that fan at
-> 100% is *loud*)...  So if you want to avoid unpleasant sounds, just
-> build with thermal :p
-> 
-> 
-
-
-
+diff --git a/Documentation/devicetree/bindings/power/power_domain.txt b/Documentation/devicetree/bindings/power/power_domain.txt
+index 98c1667..eeea45b 100644
+--- a/Documentation/devicetree/bindings/power/power_domain.txt
++++ b/Documentation/devicetree/bindings/power/power_domain.txt
+@@ -19,6 +19,16 @@ Required properties:
+    providing multiple PM domains (e.g. power controllers), but can be any value
+    as specified by device tree binding documentation of particular provider.
+ 
++Optional properties:
++ - power-domains : A phandle and PM domain specifier as defined by bindings of
++                   the power controller specified by phandle.
++   Some power domains might be powered from another power domain (or have
++   other hardware specific dependencies). For representing such dependency
++   a standard PM domain consumer binding is used. When provided, all domains
++   created by the given provider should be subdomains of the domain
++   specified by this binding. More details about power domain specifier are
++   available in the next section.
++
+ Example:
+ 
+ 	power: power-controller@12340000 {
+@@ -30,6 +40,25 @@ Example:
+ The node above defines a power controller that is a PM domain provider and
+ expects one cell as its phandle argument.
+ 
++Example 2:
++
++	parent: power-controller@12340000 {
++		compatible = "foo,power-controller";
++		reg = <0x12340000 0x1000>;
++		#power-domain-cells = <1>;
++	};
++
++	child: power-controller@12340000 {
++		compatible = "foo,power-controller";
++		reg = <0x12341000 0x1000>;
++		power-domains = <&parent 0>;
++		#power-domain-cells = <1>;
++	};
++
++The nodes above define two power controllers: 'parent' and 'child'.
++Domains created by the 'child' power controller are subdomains of '0' power
++domain provided by the 'parent' power controller.
++
+ ==PM domain consumers==
+ 
+ Required properties:
 -- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung R&D Institute Poland (SRPOL) | Linux Platform Group
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.9.2
