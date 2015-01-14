@@ -1,133 +1,105 @@
-From: Alexandre Belloni <alexandre.belloni@free-electrons.com>
-Subject: Re: [PATCH v5 0/7] Enable L2 cache support on Exynos4210/4x12 SoCs
-Date: Wed, 14 Jan 2015 16:46:03 +0100
-Message-ID: <20150114154603.GK3843@piout.net>
-References: <1411556741-5810-1-git-send-email-m.szyprowski@samsung.com>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: Re: [RESEND PATCH v3] clocksource: exynos_mct: Add the support for
+ Exynos 64bit SoC
+Date: Thu, 15 Jan 2015 00:51:14 +0900
+Message-ID: <54B69072.4080607@kernel.org>
+References: <1421213603-5020-1-git-send-email-cw00.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1411556741-5810-1-git-send-email-m.szyprowski@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, lauraa@codeaurora.org, tony@atomide.com, linus.walleij@linaro.org, Tomasz Figa <tomasz.figa@gmail.com>, drake@endlessm.com, loeliger@gmail.com, Kyungmin Park <kyungmin.park@samsung.com>, santosh.shilimkar@ti.com, Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-omap@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.kernel.org ([198.145.29.136]:47202 "EHLO mail.kernel.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750939AbbANPvW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 Jan 2015 10:51:22 -0500
+In-Reply-To: <1421213603-5020-1-git-send-email-cw00.choi@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: daniel.lezcano@linaro.org, tglx@linutronix.de, kgene@kernel.org, inki.dae@samsung.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Mark Rutland <mark.rutland@arm.com>, Doug Anderson <dianders@chromium.org>, 'Olof Johansson' <olof@lixom.net>
+
+On 01/14/15 14:33, Chanwoo Choi wrote:
 
 Hi,
 
-This patch set hasn't moved since while. We actually need patch 4 to
-properly configure prefetch on sama5d4. What would be needed to come to
-an agreement ?
++ Doug, Olof
 
-On 24/09/2014 at 13:05:34 +0200, Marek Szyprowski wrote :
-> This is an updated patchset, which intends to add support for L2 cache
-> on Exynos4 SoCs on boards running under secure firmware, which requires
-> certain initialization steps to be done with help of firmware, as
-> selected registers are writable only from secure mode.
+> This patch adds the support for Exynos 64bit SoC. The delay_timer is only used
+> for Exynos 32bit SoC.
 > 
-> First four patches extend existing support for secure write in L2C driver
-> to account for design of secure firmware running on Exynos. Namely:
->  1) direct read access to certain registers is needed on Exynos, because
->     secure firmware calls set several registers at once,
->  2) not all boards are running secure firmware, so .write_sec callback
->     needs to be installed in Exynos firmware ops initialization code,
->  3) write access to {DATA,TAG}_LATENCY_CTRL registers fron non-secure world
->     is not allowed and so must use l2c_write_sec as well,
->  4) on certain boards, default value of prefetch register is incorrect
->     and must be overridden at L2C initialization.
-> For boards running with firmware that provides access to individual
-> L2C registers this series should introduce no functional changes. However
-> since the driver is widely used on other platforms I'd like to kindly ask
-> any interested people for testing.
-> 
-> Further three patches add implementation of .write_sec and .configure
-> callbacks for Exynos secure firmware and necessary DT nodes to enable
-> L2 cache.
-> 
-> Changes in this version tested on Exynos4412-based TRATS2 and OdroidU3+
-> boards (both with secure firmware). There should be no functional change
-> for Exynos boards running without secure firmware. I do not have access
-> to affected non-Exynos boards, so I could not test on them.
-> 
-> 
-> Depends on:
->  - [PATCH v3 0/5] Firmware-assisted suspend/resume of Exynos SoCs
->    (https://lkml.org/lkml/2014/8/26/445)
-> 
-> 
-> Changelog:
-> 
-> Changes since v4:
-> (https://lkml.org/lkml/2014/8/26/461)
->  - rewrote the code accessing l2x0_saved_regs from assembly code
->  - added comment and reworked unconditional call to SMC_CMD_L2X0INVALL
-> 
-> Changes since v3:
-> (https://lkml.org/lkml/2014/7/17/600)
->  - fixed issues with references to initdata on resume path by creating
->    a copy of affected structure (pointed out by Russell King),
->  - fixed unnecessary full reconfiguration of L2C controller on resume
->    (configuration is already determined after initialization, so the
->     only thing to do is to push those values to the controller),
->  - rebased on next-20140717 tag of linux-next tree and last versions
->    of dependencies.
-> 
-> Changes since v2:
-> (https://lkml.org/lkml/2014/6/25/416)
->  - refactored L2C driver to use commit-like interface and make it no longer
->    depend on availability of writes to individual registers,
->  - moved L2C resume to assembly code, because doing it later makes some
->    systems unstable - this is also needed for deeper cpuidle modes,
->  - dropped unnecessary patch hacking around the .write_sec interface,
->  - dropped patch making the driver use l2c_write_sec() for LATENCY_CTRL
->    registers as Exynos is no longer affected and I'm not aware of any
->    reports that this is also needed on other platforms (can be applied
->    separately if it turns out to be so),
->  - rebased onto next-20140717 tag of linux-next tree.
-> 
-> Changes since v1:
-> (https://www.mail-archive.com/linux-omap@vger.kernel.org/msg106323.html)
->  - rebased onto for-next branch of linux-samsung tree,
->  - changed argument order of outer_cache.write_sec() callback to match
->    l2c_write_sec() function in cache-l2x0.c,
->  - added support of overriding of prefetch settings to work around incorrect
->    default settings on certain Exynos4x12-based boards,
->  - added call to firmware to invalidate whole L2 cache before setting enable
->    bit in L2C control register (required by Exynos secure firmware).
-> 
-> 
-> Patch summary:
-> 
-> Tomasz Figa (7):
->   ARM: l2c: Refactor the driver to use commit-like interface
->   ARM: l2c: Add interface to ask hypervisor to configure L2C
->   ARM: l2c: Get outer cache .write_sec callback from mach_desc only if
->     not NULL
->   ARM: l2c: Add support for overriding prefetch settings
->   ARM: EXYNOS: Add .write_sec outer cache callback for L2C-310
->   ARM: EXYNOS: Add support for non-secure L2X0 resume
->   ARM: dts: exynos4: Add nodes for L2 cache controller
-> 
->  Documentation/devicetree/bindings/arm/l2cc.txt |  10 +
->  arch/arm/boot/dts/exynos4210.dtsi              |   9 +
->  arch/arm/boot/dts/exynos4x12.dtsi              |  14 ++
->  arch/arm/include/asm/outercache.h              |   3 +
->  arch/arm/kernel/irq.c                          |   3 +-
->  arch/arm/mach-exynos/firmware.c                |  50 +++++
->  arch/arm/mach-exynos/sleep.S                   |  46 +++++
->  arch/arm/mm/cache-l2x0.c                       | 255 ++++++++++++++++---------
->  8 files changed, 294 insertions(+), 96 deletions(-)
-> 
-> -- 
-> 1.9.2
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Yes, the Exynos MCT(Multi-Core Timer) is 64bit timer and it is available
+on 64bit exynos SoC such as exynos7. But basically ARMv8 architecture is
+including ARM ARCH timer (ARM Generic Timer) and exynos7 also has
+implemented it and additionally its access is faster than using memory
+mapped register called SFR for MCT...so Doug submitted patch to use MCT
+on 32bit exynos SoCs before.
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+I know using MCT on 64bit exynos is usefulness for Power Management and
+I need to talk to relevant guys in office again. If anything, I'll let
+you know.
+
+Thanks,
+Kukjin
+
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+> This patch set is tested on 64-bit Exynos SoC. I send only this patch from
+> following patchst[1].
+> [1] https://lkml.org/lkml/2014/12/2/134
+> 
+> Changes from v2:
+> - None
+> Changes from v1:
+> - Use CONFIG_ARM instead of CONFIG_ARM64
+> 
+>  drivers/clocksource/Kconfig      | 1 -
+>  drivers/clocksource/exynos_mct.c | 4 ++++
+>  2 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index fc01ec2..be38119 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -135,7 +135,6 @@ config CLKSRC_METAG_GENERIC
+>  
+>  config CLKSRC_EXYNOS_MCT
+>  	def_bool y if ARCH_EXYNOS
+> -	depends on !ARM64
+>  	help
+>  	  Support for Multi Core Timer controller on Exynos SoCs.
+>  
+> diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+> index 9403061..b840ea1 100644
+> --- a/drivers/clocksource/exynos_mct.c
+> +++ b/drivers/clocksource/exynos_mct.c
+> @@ -223,6 +223,7 @@ static u64 notrace exynos4_read_sched_clock(void)
+>  	return exynos4_read_count_32();
+>  }
+>  
+> +#if defined(CONFIG_ARM)
+>  static struct delay_timer exynos4_delay_timer;
+>  
+>  static cycles_t exynos4_read_current_timer(void)
+> @@ -231,14 +232,17 @@ static cycles_t exynos4_read_current_timer(void)
+>  			 "cycles_t needs to move to 32-bit for ARM64 usage");
+>  	return exynos4_read_count_32();
+>  }
+> +#endif
+>  
+>  static void __init exynos4_clocksource_init(void)
+>  {
+>  	exynos4_mct_frc_start();
+>  
+> +#if defined(CONFIG_ARM)
+>  	exynos4_delay_timer.read_current_timer = &exynos4_read_current_timer;
+>  	exynos4_delay_timer.freq = clk_rate;
+>  	register_current_timer_delay(&exynos4_delay_timer);
+> +#endif
+>  
+>  	if (clocksource_register_hz(&mct_frc, clk_rate))
+>  		panic("%s: can't register clocksource\n", mct_frc.name);
